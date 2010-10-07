@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- This file was written by the JAVA GraphML Library.-->
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
+  <key id="name" for="node" attr.name="name" attr.type="string">
+    <default>unknown</default>
+  </key>
+  <key id="return" for="node" attr.name="return" attr.type="string">
+    <default>unknown</default>
+  </key>
+  <key id="relation" for="edge" attr.name="name" attr.type="string">
+    <default>unknown</default>
+  </key>
+  <graph id="G" edgedefault="directed">
+    <node id="n0">
+      <data key="type">method</data>
+    </node>
+    <node id="n1"/>
+    <node id="n2">
+      <data key="type">method</data>
+      <data key="name">getAllCars()</data>
+      <data key="return">array</data>
+    </node>
+    <node id="n3">
+      <data key="type">method</data>
+      <data key="name">addCar()</data>
+    </node>
+    <node id="n4"/>
+    <node id="n5">
+      <data key="type">class</data>
+      <data key="name">Car</data>
+    </node>
+    <node id="n6">
+      <data key="type">argument</data>
+      <data key="name">brandName</data>
+    </node>
+    <node id="n7">
+      <data key="type">class</data>
+      <data key="name">Animal</data>
+    </node>
+    <node id="n8">
+      <data key="type">class</data>
+      <data key="name">Elephant</data>
+    </node>
+    <node id="n9">
+      <data key="type">variable</data>
+      <data key="name">foo</data>
+    </node>
+    <edge id="e0" source="n0" target="n2">
+      <data key="relation">calls</data>
+    </edge>
+    <edge id="e1" source="n0" target="n1">
+      <data key="relation">calls</data>
+    </edge>
+    <edge id="e2" source="n1" target="n3">
+      <data key="relation">declared in</data>
+    </edge>
+    <edge id="e3" source="n3" target="n2"/>
+    <edge id="e4" source="n2" target="n4"/>
+      <data key="relation">declared in</data>
+    <edge id="e5" source="n3" target="n5"/>
+    <edge id="e6" source="n5" target="n4">
+      <data key="relation">declared in</data>
+    </edge>
+    <edge id="e7" source="n7" target="n5"/>
+    <edge id="e8" source="n6" target="n5"/>
+    <edge id="e9" source="n2" target="n9"/>
+  </graph>
+</graphml>
