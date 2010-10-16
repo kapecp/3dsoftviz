@@ -4,9 +4,7 @@
 #include <osg/BoundsChecking>
 #include <osgViewer/Viewer>
 
-using namespace osg;
-using namespace osgGA;
-using namespace Vwr;
+namespace Vwr {
 
 CameraManipulator::CameraManipulator()
 {
@@ -63,7 +61,7 @@ void CameraManipulator::home(double /*currentTime*/)
     _thrown = false;
 }
 
-void CameraManipulator::home(const GUIEventAdapter& ea ,GUIActionAdapter& us)
+void CameraManipulator::home(const osgGA::GUIEventAdapter& ea ,osgGA::GUIActionAdapter& us)
 {
     home(ea.getTime());
     us.requestRedraw();
@@ -71,7 +69,7 @@ void CameraManipulator::home(const GUIEventAdapter& ea ,GUIActionAdapter& us)
 }
 
 
-void CameraManipulator::init(const GUIEventAdapter& ,GUIActionAdapter& )
+void CameraManipulator::init(const osgGA::GUIEventAdapter& ,osgGA::GUIActionAdapter& )
 {
     flushMouseEventStack();
 }
@@ -84,11 +82,11 @@ void CameraManipulator::getUsage(osg::ApplicationUsage& usage) const
     usage.addKeyboardMouseBinding("Trackball: -","When in stereo, reduce the fusion distance");
 }
 
-bool CameraManipulator::handle(const GUIEventAdapter& ea, GUIActionAdapter& us)
+bool CameraManipulator::handle(const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& us)
 {
     switch(ea.getEventType())
     {
-        case(GUIEventAdapter::FRAME):
+        case(osgGA::GUIEventAdapter::FRAME):
         {
 			return handleFrame(ea, us);
         }
@@ -100,32 +98,32 @@ bool CameraManipulator::handle(const GUIEventAdapter& ea, GUIActionAdapter& us)
 
     switch(ea.getEventType())
     {
-        case(GUIEventAdapter::PUSH):
+        case(osgGA::GUIEventAdapter::PUSH):
         {
 			return handlePush(ea, us);
         }
-        case(GUIEventAdapter::RELEASE):
+        case(osgGA::GUIEventAdapter::RELEASE):
         {
             return handleRelease(ea, us);
         }
-        case(GUIEventAdapter::DRAG):
-        case(GUIEventAdapter::SCROLL):
+        case(osgGA::GUIEventAdapter::DRAG):
+        case(osgGA::GUIEventAdapter::SCROLL):
         {
 			return handleScroll(ea, us);
         }
-        case(GUIEventAdapter::MOVE):
+        case(osgGA::GUIEventAdapter::MOVE):
         {
             return false;
         }
-		case(GUIEventAdapter::KEYDOWN):
+		case(osgGA::GUIEventAdapter::KEYDOWN):
 		{
 			return handleKeyDown(ea, us);
 		}
-		case(GUIEventAdapter::KEYUP):
+		case(osgGA::GUIEventAdapter::KEYUP):
 		{
 			return handleKeyUp( ea, us );
 		}
-        case(GUIEventAdapter::FRAME):
+        case(osgGA::GUIEventAdapter::FRAME):
 		{
             if (_thrown)
             {
@@ -188,7 +186,7 @@ bool CameraManipulator::handleRelease(const osgGA::GUIEventAdapter& ea, osgGA::G
 
 bool CameraManipulator::handlePush(const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& us)
 {
-	if (ea.getButtonMask() == GUIEventAdapter::MIDDLE_MOUSE_BUTTON)
+	if (ea.getButtonMask() == osgGA::GUIEventAdapter::MIDDLE_MOUSE_BUTTON)
 	{
 		if (_distance != 0)
 		{
@@ -257,7 +255,7 @@ void CameraManipulator::flushMouseEventStack()
 }
 
 
-void CameraManipulator::addMouseEvent(const GUIEventAdapter& ea)
+void CameraManipulator::addMouseEvent(const osgGA::GUIEventAdapter& ea)
 {
     _ga_t1 = _ga_t0;
     _ga_t0 = &ea;
@@ -311,7 +309,7 @@ bool CameraManipulator::calcMovement()
     float dy=0.0f;
     unsigned int buttonMask=osgGA::GUIEventAdapter::NONE;
 
-    if (_ga_t0->getEventType()==GUIEventAdapter::SCROLL)
+    if (_ga_t0->getEventType()==osgGA::GUIEventAdapter::SCROLL)
     {
         switch (_ga_t0->getScrollingMotion()) {
         case osgGA::GUIEventAdapter::SCROLL_UP:
@@ -335,7 +333,7 @@ bool CameraManipulator::calcMovement()
         default:
             break;
         }
-        buttonMask=GUIEventAdapter::SCROLL;
+        buttonMask=osgGA::GUIEventAdapter::SCROLL;
     } 
     else 
     {
@@ -365,7 +363,7 @@ bool CameraManipulator::calcMovement()
             _delta_frame_time / (_ga_t0->getTime() - _ga_t1->getTime()) :
             1.0;
 
-    if (buttonMask==GUIEventAdapter::RIGHT_MOUSE_BUTTON)
+    if (buttonMask==osgGA::GUIEventAdapter::RIGHT_MOUSE_BUTTON)
     {
 
         // rotate camera.
@@ -391,7 +389,7 @@ bool CameraManipulator::calcMovement()
         return true;
 
     }
-    else if (buttonMask==(GUIEventAdapter::LEFT_MOUSE_BUTTON|GUIEventAdapter::RIGHT_MOUSE_BUTTON))
+    else if (buttonMask==(osgGA::GUIEventAdapter::LEFT_MOUSE_BUTTON|osgGA::GUIEventAdapter::RIGHT_MOUSE_BUTTON))
     {
 
         // pan model.
@@ -408,7 +406,7 @@ bool CameraManipulator::calcMovement()
         return true;
 
     }
-    else if (buttonMask==GUIEventAdapter::SCROLL)
+    else if (buttonMask==osgGA::GUIEventAdapter::SCROLL)
     {
 
         // zoom model.
@@ -493,7 +491,7 @@ axis = p2^p1;
      */
     if (t > 1.0) t = 1.0;
     if (t < -1.0) t = -1.0;
-    angle = inRadians(asin(t));
+    angle = osg::inRadians(asin(t));
 
 }
 
@@ -685,3 +683,6 @@ void CameraManipulator::stop()
 	verticalSpeed = 0.0;
 	pitchSpeed = 0.0;
 }
+
+} // namespace
+
