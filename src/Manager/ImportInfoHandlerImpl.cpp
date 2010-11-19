@@ -7,7 +7,7 @@ namespace Manager {
 void ImportInfoHandlerImpl::addMessage (
 	const std::wstring text
 ) {
-
+	throw "not implemented";
 }
 
 void ImportInfoHandlerImpl::reportError (
