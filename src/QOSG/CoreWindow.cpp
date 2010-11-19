@@ -350,9 +350,12 @@ void CoreWindow::loadFile()
 {
 	QString fileName = QFileDialog::getOpenFileName(this,
 		tr("Open GraphML"), ".", tr("GraphML Files (*.graphml)"));
-    Manager::GraphManager::getInstance()->loadGraph(fileName);
 
-	viewerWidget->getCameraManipulator()->home();
+	if (fileName != "") {
+		Manager::GraphManager::getInstance()->loadGraph(fileName);
+
+		viewerWidget->getCameraManipulator()->home();
+	}
 }
 
 void CoreWindow::labelOnOff(bool)

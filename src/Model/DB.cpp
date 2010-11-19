@@ -8,10 +8,13 @@ Model::DB::DB()
 {
     this->appConf = Util::ApplicationConfig::get();
     
-    DB::openConnection(appConf->getValue("Model.DB.HostName"),
-                        appConf->getValue("Model.DB.DbName"),
-                        appConf->getValue("Model.DB.UserName"),
-                        appConf->getValue("Model.DB.Pass"));
+    DB::openConnection(
+    	appConf->getValue("Model.DB.HostName"),
+        appConf->getValue("Model.DB.DbName"),
+        appConf->getValue("Model.DB.UserName"),
+        appConf->getValue("Model.DB.Pass"),
+        appConf->getBoolValue("Model.DB.RequireSSL", true)
+    );
 }
 
 Model::DB::~DB()
@@ -27,7 +30,7 @@ void Model::DB::closeConnection()
     }
 }
 
-bool Model::DB::openConnection(QString host_name, QString db_name, QString user_name, QString pass)
+bool Model::DB::openConnection(QString host_name, QString db_name, QString user_name, QString pass, bool requireSSL)
 {
     if(conn.isOpen()) {
         qDebug() << "[Model::DB::openConnection] Database connection already open.";
@@ -36,12 +39,18 @@ bool Model::DB::openConnection(QString host_name, QString db_name, QString user_
     if(conn.database().isValid()) {
         conn.removeDatabase(conn.connectionName());
     }
+
     conn = QSqlDatabase::addDatabase("QPSQL");
+
     conn.setHostName(host_name);
     conn.setDatabaseName(db_name);
     conn.setUserName(user_name);
     conn.setPassword(pass);
-    conn.setConnectOptions("requiressl=1");
+
+    if (requireSSL) {
+    	conn.setConnectOptions("requiressl=1");
+    }
+
     if(!conn.open()) {
         qDebug() << "[Model::DB::openConnection] Could not establish database connection: " << conn.lastError().databaseText();
         return false;
@@ -50,4 +59,3 @@ bool Model::DB::openConnection(QString host_name, QString db_name, QString user_
         return true;
     }
 }
-

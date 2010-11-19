@@ -6,6 +6,7 @@
 #define UTIL_HASHMAPSINGLETON_DEF 1
 
 #include <iostream>
+#include <memory>
 #include <QMap>
 #include <OpenThreads/Mutex>
 #include <Qt/qstring.h>
@@ -80,6 +81,17 @@ namespace Util
 			 */
 			QString getValue(QString key);
 
+			long getNumericValue (
+				QString key,
+				std::auto_ptr<long> minValue,
+				std::auto_ptr<long> maxValue,
+				const long defaultValue
+			);
+
+			bool getBoolValue (
+				QString key,
+				const bool defaultValue
+			);
 
 			/**
 			*  \fn public  getList

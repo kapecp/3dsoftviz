@@ -5,6 +5,7 @@
  */
 
 #include "Core/Core.h"
+#include "Util/ApplicationConfig.h"
 
 AppCore::Core * AppCore::Core::core;
 
@@ -12,12 +13,27 @@ AppCore::Core::Core(QApplication * app)
 {
     core = this;
 
+    Util::ApplicationConfig *appConf = Util::ApplicationConfig::get();
+
     messageWindows = new QOSG::MessageWindows();
     this->alg = new Layout::FRAlgorithm();
     this->thr = new Layout::LayoutThread(this->alg);
     this->cg = new Vwr::CoreGraph();
     this->cw = new QOSG::CoreWindow(0, this->cg, app, this->thr);
-    this->cw->resize(1024, 768);
+    this->cw->resize(
+    	appConf->getNumericValue (
+    		"UI.MainWindow.DefaultWidth",
+    		std::auto_ptr<long> (new long(200)),
+    		std::auto_ptr<long> (NULL),
+    		1024
+    	),
+    	appConf->getNumericValue (
+			"UI.MainWindow.DefaultHeight",
+			std::auto_ptr<long> (new long(200)),
+			std::auto_ptr<long> (NULL),
+			768
+		)
+    );
     this->cw->show();
 
     app->exec();
