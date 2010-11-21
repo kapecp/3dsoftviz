@@ -1,5 +1,5 @@
 #ifndef Importer_ImportInfoHandlerEmpty_H
-#define Importer_ImportInfoHandler_H
+#define Importer_ImportInfoHandlerEmpty_H
 //-----------------------------------------------------------------------------
 #include "Importer/ImportInfoHandler.h"
 //-----------------------------------------------------------------------------
