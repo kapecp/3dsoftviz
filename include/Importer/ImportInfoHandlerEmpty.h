@@ -16,7 +16,7 @@ class ImportInfoHandlerEmpty
 public:
 
 	/***/
-	virtual ~ImportInfoHandler (void) {};
+	virtual ~ImportInfoHandlerEmpty (void) {};
 
 	/***/
 	virtual void addMessage (
