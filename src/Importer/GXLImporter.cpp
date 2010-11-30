@@ -1,13 +1,44 @@
 #include "Importer/GXLImporter.h"
+//-----------------------------------------------------------------------------
+#include "Util/Adapter_iostream_to_QIODevice.h"
+//-----------------------------------------------------------------------------
+#include <QtXml/QXmlStreamReader>
+//-----------------------------------------------------------------------------
+#include <memory>
 
 namespace Importer {
 
 bool GXLImporter::import (
 	ImporterContext &context
 ) {
-	throw "not implemented";
+	Util::Adapter_iostream_to_QIODevice dev (context.getStream());
+	QXmlStreamReader xml (&dev);
 
-	return true;
+	bool ok = true;
+
+	while (
+		ok
+		&&
+		!xml.hasError ()
+		&&
+		!xml.atEnd ()
+	) {
+
+	}
+
+	if (
+		!ok
+		||
+		xml.hasError ()
+	) {
+		context.getInfoHandler ().reportError (
+			std::wstring (L"Zvoleny subor nie je validny GXL subor.")
+		);
+	}
+
+	xml.clear ();
+
+	return ok && !xml.hasError ();
 }
 
 } // namespace
