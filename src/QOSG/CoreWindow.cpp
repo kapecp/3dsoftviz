@@ -349,7 +349,7 @@ void CoreWindow::removeMetaNodes()
 void CoreWindow::loadFile()
 {
 	QString fileName = QFileDialog::getOpenFileName(this,
-		tr("Open GraphML"), ".", tr("GraphML Files (*.graphml)"));
+		tr("Open file"), ".", tr("GraphML files (*.graphml);;GXL files (*.gxl);;RSF files (*.rsf)"));
 
 	if (fileName != "") {
 		Manager::GraphManager::getInstance()->loadGraph(fileName);

@@ -14,23 +14,26 @@ bool GXLImporter::import (
 	Util::Adapter_iostream_to_QIODevice dev (context.getStream());
 	QXmlStreamReader xml (&dev);
 
+	context.getInfoHandler ().reportError (
+		std::wstring (L"Gxl")
+	);
+
 	bool ok = true;
 
-	while (
-		ok
-		&&
-		!xml.hasError ()
-		&&
-		!xml.atEnd ()
-	) {
-
+	if (ok) {
+		ok = !xml.hasError ();
 	}
 
-	if (
-		!ok
-		||
-		xml.hasError ()
-	) {
+	while (ok && !xml.atEnd ()) {
+
+
+
+		if (ok) {
+			ok = !xml.hasError ();
+		}
+	}
+
+	if (!ok) {
 		context.getInfoHandler ().reportError (
 			std::wstring (L"Zvoleny subor nie je validny GXL subor.")
 		);
@@ -38,7 +41,7 @@ bool GXLImporter::import (
 
 	xml.clear ();
 
-	return ok && !xml.hasError ();
+	return ok;
 }
 
 } // namespace
