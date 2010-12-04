@@ -248,7 +248,7 @@ namespace Data
 		*  \param   isOriented   true, if the Edge is oriented  
 		*  \return osg::ref_ptr the added Edge
 		*/
-		void Data::Graph::addMultiEdge(QString name, osg::ref_ptr<Data::Node> srcNode, osg::ref_ptr<Data::Node> dstNode, Data::Type* type, bool isOriented, osg::ref_ptr<Data::Edge> replacedSingleEdge);
+		void addMultiEdge(QString name, osg::ref_ptr<Data::Node> srcNode, osg::ref_ptr<Data::Node> dstNode, Data::Type* type, bool isOriented, osg::ref_ptr<Data::Edge> replacedSingleEdge);
 
 		/**
 		*  \fn public isParralel(osg::ref_ptr<Data::Node> srcNode, osg::ref_ptr<Data::Node> dstNode)
@@ -257,7 +257,7 @@ namespace Data
 		*  \param   dstNode     ending Node of the Edge
 		*  \return bool value, if edge is MultiType
 		*/
-		bool Data::Graph::isParralel(osg::ref_ptr<Data::Node> srcNode, osg::ref_ptr<Data::Node> dstNode);
+		bool isParralel(osg::ref_ptr<Data::Node> srcNode, osg::ref_ptr<Data::Node> dstNode);
 
 		/**
 		*  \fn public getMultiEdgeNeighbour(osg::ref_ptr<Data::Edge> multiEdge)
@@ -265,7 +265,7 @@ namespace Data
 		*  \param   multiEdge    multiEdge type Edge whose non Multi Node is searched
 		*  \return osg::ref_ptr the found non Multi Node neigbour
 		*/
-		osg::ref_ptr<Data::Node> Data::Graph::getMultiEdgeNeighbour(osg::ref_ptr<Data::Edge> multiEdge);
+		osg::ref_ptr<Data::Node> getMultiEdgeNeighbour(osg::ref_ptr<Data::Edge> multiEdge);
 
 		/**
 		*  \fn public  removeEdge(osg::ref_ptr<Data::Edge> edge)
@@ -395,7 +395,7 @@ namespace Data
 		*  \brief Returns MultiType for multi-Nodes (in Multi Edge case)
 		*  \return Data::Type * MultiType for the Nodes
 		*/
-		Data::Type* Data::Graph::getNodeMultiType();
+		Data::Type* getNodeMultiType();
 
 		/**
 		*  \fn public  getEdgeMetaType
