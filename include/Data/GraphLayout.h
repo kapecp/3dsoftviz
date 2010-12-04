@@ -74,12 +74,22 @@ namespace Data
 		static const QString META_NODE_TYPE;
 
 		/**
+		*  const QString MULTI_NODE_TYPE
+		*  \brief Constant identifier of MultiType name used for multi-Nodes as identified by MetaSettings of the GraphLayout
+		*/
+		static const QString MULTI_NODE_TYPE;
+
+		/**
 		*  const QString META_EDGE_TYPE
 		*  \brief Constant identifier of MetaType name used for meta-Edges as identified by MetaSettings of the GraphLayout
 		*/
 		static const QString META_EDGE_TYPE;
     
-
+		/**
+		*  const QString MULTI_EDGE_TYPE
+		*  \brief Constant identifier of MultiType name used for multi-Edges as identified by MetaSettings of the GraphLayout
+		*/
+		static const QString MULTI_EDGE_TYPE;
 		/**
 		*  \fn public constructor  GraphLayout(qlonglong layout_id, Data::Graph* graph, QString name, QSqlDatabase* conn)
 		*  \brief Creates new GraphLayout object

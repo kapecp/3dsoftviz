@@ -218,6 +218,7 @@ namespace Data
 		*  \param   settings     settings of the Type
 		*  \return Data::Type * the added Type
 		*/
+
 		Data::Type* addType(QString name, QMap <QString, QString> *settings = 0); //implemented
 
 		/**
@@ -237,6 +238,34 @@ namespace Data
 		*/
 		void removeNode(osg::ref_ptr<Data::Node> node);
         
+		/**
+		*  \fn public  addMultiEdge(QString name, osg::ref_ptr<Data::Node> srcNode, osg::ref_ptr<Data::Node> dstNode, Data::Type* type, bool isOriented, osg::ref_ptr<Data::Edge> replacedSingleEdge)
+		*  \brief Adds an Edge of MultiEdge type to Graph
+		*  \param   name     name of the Edge
+		*  \param   srcNode    starting Node of the Edge
+		*  \param   dstNode     ending Node of the Edge
+		*  \param   type    Type of the Edge
+		*  \param   isOriented   true, if the Edge is oriented  
+		*  \return osg::ref_ptr the added Edge
+		*/
+		void Data::Graph::addMultiEdge(QString name, osg::ref_ptr<Data::Node> srcNode, osg::ref_ptr<Data::Node> dstNode, Data::Type* type, bool isOriented, osg::ref_ptr<Data::Edge> replacedSingleEdge);
+
+		/**
+		*  \fn public isParralel(osg::ref_ptr<Data::Node> srcNode, osg::ref_ptr<Data::Node> dstNode)
+		* brief tests if edge between srcNode and dstNode is MultiNode type
+		*  \param   srcNode    starting Node of the Edge
+		*  \param   dstNode     ending Node of the Edge
+		*  \return bool value, if edge is MultiType
+		*/
+		bool Data::Graph::isParralel(osg::ref_ptr<Data::Node> srcNode, osg::ref_ptr<Data::Node> dstNode);
+
+		/**
+		*  \fn public getMultiEdgeNeighbour(osg::ref_ptr<Data::Edge> multiEdge)
+		* brief gets closer neighbour Node of non MultiNode type
+		*  \param   multiEdge    multiEdge type Edge whose non Multi Node is searched
+		*  \return osg::ref_ptr the found non Multi Node neigbour
+		*/
+		osg::ref_ptr<Data::Node> Data::Graph::getMultiEdgeNeighbour(osg::ref_ptr<Data::Edge> multiEdge);
 
 		/**
 		*  \fn public  removeEdge(osg::ref_ptr<Data::Edge> edge)
@@ -360,6 +389,13 @@ namespace Data
 		*  \return Data::Type * MetaType for the Nodes
 		*/
 		Data::Type* getNodeMetaType(); 
+
+		/**
+		*  \fn public  getNodeMultiType
+		*  \brief Returns MultiType for multi-Nodes (in Multi Edge case)
+		*  \return Data::Type * MultiType for the Nodes
+		*/
+		Data::Type* Data::Graph::getNodeMultiType();
 
 		/**
 		*  \fn public  getEdgeMetaType

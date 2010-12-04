@@ -224,19 +224,159 @@ osg::ref_ptr<Data::Node> Data::Graph::addNode(QString name, Data::Type* type, os
 
 osg::ref_ptr<Data::Edge> Data::Graph::addEdge(QString name, osg::ref_ptr<Data::Node> srcNode, osg::ref_ptr<Data::Node> dstNode, Data::Type* type, bool isOriented) 
 {
-    osg::ref_ptr<Data::Edge> edge = new Data::Edge(this->incEleIdCounter(), name, this, srcNode, dstNode, type, isOriented);
+	if(isParralel(srcNode, dstNode))
+	{
+		//adding multi edge to graph
+		addMultiEdge(name, srcNode, dstNode, type, isOriented, NULL);
+	}
+	else
+	{
+		//adding single edge to graph
 
-	edge->linkNodes(&this->newEdges);
-    if((type!=NULL && type->isMeta()) || ((srcNode->getType()!=NULL && srcNode->getType()->isMeta()) || (dstNode->getType()!=NULL && dstNode->getType()->isMeta()))) {
-        //ak je type meta, alebo je meta jeden z uzlov (ma type meta)
-        edge->linkNodes(this->metaEdges);
-        this->metaEdgesByType.insert(type->getId(),edge);
-    } else {
-        edge->linkNodes(this->edges);
-        this->edgesByType.insert(type->getId(),edge);
-    }
+		osg::ref_ptr<Data::Edge> edge = new Data::Edge(this->incEleIdCounter(), name, this, srcNode, dstNode, type, isOriented);
 
-    return edge;
+		edge->linkNodes(&this->newEdges);
+		if((type!=NULL && type->isMeta()) || ((srcNode->getType()!=NULL && srcNode->getType()->isMeta()) || (dstNode->getType()!=NULL && dstNode->getType()->isMeta())))
+		{
+			//ak je type meta, alebo je meta jeden z uzlov (ma type meta)
+			edge->linkNodes(this->metaEdges);
+			this->metaEdgesByType.insert(type->getId(),edge);
+		} else
+		{
+			edge->linkNodes(this->edges);
+		}
+		return edge;
+	}
+
+    return NULL;
+}
+
+void Data::Graph::addMultiEdge(QString name, osg::ref_ptr<Data::Node> srcNode, osg::ref_ptr<Data::Node> dstNode, Data::Type* type, bool isOriented, osg::ref_ptr<Data::Edge> replacedSingleEdge)
+{
+	Data::Type* mtype;
+
+	Data::Type* metype;
+
+			QList<Data::Type*> mtypes = getTypesByName(Data::GraphLayout::MULTI_NODE_TYPE);
+
+			if(mtypes.isEmpty())
+			{
+				//adding META_NODE_TYPE settings if necessary
+				QMap<QString, QString> *settings = new QMap<QString, QString>;
+
+				settings->insert("scale", "5");
+				settings->insert("textureFile", Util::ApplicationConfig::get()->getValue("Viewer.Textures.Node"));
+				settings->insert("color.R", "1");
+				settings->insert("color.G", "1");
+				settings->insert("color.B", "1");
+				settings->insert("color.A", "1");
+
+				mtype = this->addType(Data::GraphLayout::MULTI_NODE_TYPE, settings);
+			}
+			else
+			{
+				mtype = mtypes[0];
+			}
+
+			QList<Data::Type*> metypes = getTypesByName(Data::GraphLayout::MULTI_EDGE_TYPE);
+
+			if(mtypes.isEmpty())
+			{
+				//adding META_EDGE_TYPE settings if necessary
+				QMap<QString, QString> *settings = new QMap<QString, QString>;
+
+				settings->insert("scale", "Viewer.Textures.EdgeScale");
+				settings->insert("textureFile", Util::ApplicationConfig::get()->getValue("Viewer.Textures.Edge"));
+				settings->insert("color.R", "1");
+				settings->insert("color.G", "1");
+				settings->insert("color.B", "1");
+				settings->insert("color.A", "1");
+
+				metype = this->addType(Data::GraphLayout::MULTI_EDGE_TYPE, settings);
+			}
+			else
+			{
+				metype = metypes[0];
+			}
+
+			//adding MULTI edges w/ MULTI node
+			osg::ref_ptr<Data::Node> parallelNode = addNode("PNode", mtype);
+
+			osg::ref_ptr<Data::Edge> edge1 = new Data::Edge(this->incEleIdCounter(), name, this, srcNode, parallelNode, metype, isOriented);
+			edge1->linkNodes(this->edges);
+
+			this->edgesByType.insert(type->getId(),edge1);
+
+			osg::ref_ptr<Data::Edge> edge2 = new Data::Edge(this->incEleIdCounter(), name, this, parallelNode, dstNode, metype, isOriented);
+			edge2->linkNodes(this->edges);
+
+			this->edgesByType.insert(type->getId(),edge2);
+
+			if(replacedSingleEdge!= NULL)
+			{
+				removeEdge(replacedSingleEdge);
+			}
+}
+
+osg::ref_ptr<Data::Node> Data::Graph::getMultiEdgeNeighbour(osg::ref_ptr<Data::Edge> multiEdge)
+{
+	osg::ref_ptr<Data::Node> multiNode = NULL;
+
+	if(multiEdge->getSrcNode()->getType()->getName()=="multiNode")
+		multiNode = multiEdge->getSrcNode();
+	if(multiEdge->getDstNode()->getType()->getName()=="multiNode")
+		multiNode = multiEdge->getDstNode();
+	if(multiNode == NULL)
+		return NULL;
+
+	QMap<qlonglong, osg::ref_ptr<Data::Edge> >::iterator i = multiNode->getEdges()->begin();
+
+		while (i != multiNode->getEdges()->end())
+		{
+			if((*i)->getId()!= multiEdge->getId())
+			{
+				if((*i)->getSrcNode()->getType()->getName()!= "multiNode")
+				{
+					return (*i)->getSrcNode();
+				}
+				else
+				{
+					return (*i)->getDstNode();
+				}
+			}
+			i++;
+		}
+
+	return NULL;
+}
+
+bool Data::Graph::isParralel(osg::ref_ptr<Data::Node> srcNode, osg::ref_ptr<Data::Node> dstNode)
+{
+	QMap<qlonglong, osg::ref_ptr<Data::Edge> >::iterator i = srcNode->getEdges()->begin();
+	bool isMulti = false;
+
+		while (i != srcNode->getEdges()->end()) 
+		{
+			if ((srcNode->getId() == (*i)->getSrcNode()->getId() && dstNode->getId() == (*i)->getDstNode()->getId()) || (srcNode->getId() == (*i)->getDstNode()->getId() && dstNode->getId() == (*i)->getSrcNode()->getId()))
+			{
+				isMulti= true;
+
+				this->addMultiEdge((*i)->getName(), (*i)->getSrcNode(), (*i)->getDstNode(), (*i)->getType(), (*i)->isOriented(), (*i));
+
+				break;
+			}
+			else 
+			{
+				osg::ref_ptr<Data::Node> neghbourNode = getMultiEdgeNeighbour((*i));
+				if(neghbourNode!= NULL && (neghbourNode->getId() == (*i)->getSrcNode()->getId() || neghbourNode->getId() == (*i)->getDstNode()->getId()))
+				{
+					isMulti= true;
+					break;
+				}
+			}
+			i++;			
+		}
+	return isMulti;
 }
 
 Data::Type* Data::Graph::addType(QString name, QMap <QString, QString> *settings)
@@ -367,6 +507,22 @@ Data::Type* Data::Graph::getNodeMetaType()
         if(this->types->contains(typeId)) return this->types->value(typeId);
         return NULL;
     }
+}
+
+Data::Type* Data::Graph::getNodeMultiType()
+{
+		QMap<QString, QString> *settings = new QMap<QString, QString>;
+
+		settings->insert("scale", Util::ApplicationConfig::get()->getValue("Viewer.Textures.DefaultNodeScale"));
+		settings->insert("textureFile", Util::ApplicationConfig::get()->getValue("Viewer.Textures.MetaNode"));
+		settings->insert("color.R", "0.8");
+		settings->insert("color.G", "0.1");
+		settings->insert("color.B", "0.1");
+		settings->insert("color.A", "0.8");
+
+        Data::MetaType* type = this->addMetaType(Data::GraphLayout::MULTI_NODE_TYPE, settings);
+        //this->selectedLayout->setMetaSetting(Data::GraphLayout::META_NODE_TYPE,QString::number(type->getId()));
+        return type;
 }
 
 Data::Type* Data::Graph::getEdgeMetaType()

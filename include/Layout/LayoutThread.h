@@ -3,7 +3,7 @@
 
 #include <QThread>
 #include "Util/ApplicationConfig.h"
-#include "Layout/Layout.h"
+//#include "Layout/Layout.h"
 #include "Layout/FRAlgorithm.h"
 
 namespace Layout

@@ -26,7 +26,7 @@
 #include "Viewer/EdgeGroup.h"
 #include "Viewer/NodeGroup.h"
 
-#include "Layout/Layout.h"
+//#include "Layout/Layout.h"
 #include "Util/ApplicationConfig.h"
 #include "Data/Edge.h"
 #include "Data/Node.h"

@@ -13,11 +13,11 @@ void ImportInfoHandlerImpl::addMessage (
 void ImportInfoHandlerImpl::reportError (
 	const std::wstring text
 ) {
-	AppCore::Core::getInstance()->messageWindows->showMessageBox (
+	/*AppCore::Core::getInstance()->messageWindows->showMessageBox (
 		"Chyba",
 		QString::fromStdWString (text),
 		true
-	);
+	);*/
 }
 
 void ImportInfoHandlerImpl::setProgress (
