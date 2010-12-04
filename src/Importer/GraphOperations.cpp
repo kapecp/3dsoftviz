@@ -25,6 +25,8 @@ bool GraphOperations::addDefaultTypes (
 
 		ok = (NULL != nodeType);
 	}
+
+	return ok;
 }
 
 } // namespace
