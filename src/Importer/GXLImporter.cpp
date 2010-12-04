@@ -1,6 +1,7 @@
 #include "Importer/GXLImporter.h"
 //-----------------------------------------------------------------------------
 #include "Importer/GraphOperations.h"
+#include "Importer/ReadNodesStore.h"
 //-----------------------------------------------------------------------------
 #include "Util/Adapter_iostream_to_QIODevice.h"
 //-----------------------------------------------------------------------------
@@ -18,7 +19,7 @@ bool GXLImporter::import (
 
 	GraphOperations graphOp (context.getGraph ());
 
-	std::auto_ptr<QMap<QString, osg::ref_ptr<Data::Node> > > readNodes (new QMap<QString, osg::ref_ptr<Data::Node> >());
+	ReadNodesStore readNodes;
 
 	bool ok = true;
 
@@ -114,7 +115,7 @@ bool GXLImporter::import (
 				}
 
 				if (ok) {
-					readNodes->insert (nodeName, node);
+					readNodes.addNode (nodeName, node);
 				}
 			}
 
@@ -179,13 +180,13 @@ bool GXLImporter::import (
 				QString edgeName = nodeFromName + nodeToName;
 
 				if (ok) {
-					ok = readNodes->contains (nodeFromName);
+					ok = readNodes.contains (nodeFromName);
 
 					context.getInfoHandler ().reportError (ok, std::wstring (L"Edge references invalid source node."));
 				}
 
 				if (ok) {
-					ok = readNodes->contains (nodeToName);
+					ok = readNodes.contains (nodeToName);
 
 					context.getInfoHandler ().reportError (ok, std::wstring (L"Edge references invalid destination node."));
 				}
@@ -193,8 +194,8 @@ bool GXLImporter::import (
 				if (ok) {
 					osg::ref_ptr<Data::Edge> edge = context.getGraph().addEdge(
 						edgeName,
-						readNodes->value (nodeFromName),
-						readNodes->value (nodeToName),
+						readNodes.get (nodeFromName),
+						readNodes.get (nodeToName),
 						edgeType,
 						oriented
 					);

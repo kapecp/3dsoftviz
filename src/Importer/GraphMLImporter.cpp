@@ -1,6 +1,7 @@
 #include "Importer/GraphMLImporter.h"
 //-----------------------------------------------------------------------------
 #include "Importer/GraphOperations.h"
+#include "Importer/ReadNodesStore.h"
 //-----------------------------------------------------------------------------
 #include "Util/Adapter_iostream_to_QIODevice.h"
 //-----------------------------------------------------------------------------
@@ -64,7 +65,7 @@ bool GraphMLImporter::import (
 		Data::Type *nodeType = NULL;
 		(void)graphOp.addDefaultTypes (edgeType, nodeType);
 
-		std::auto_ptr<QMap<QString, osg::ref_ptr<Data::Node> > > readNodes (new QMap<QString, osg::ref_ptr<Data::Node> >());
+		ReadNodesStore readNodes;
 
 		// skusal som aj cez QList, ale vobec mi to neslo, tak som to spravil len takto jednoducho cez pole
 		int colors = 6;
@@ -162,7 +163,7 @@ bool GraphMLImporter::import (
 								node = context.getGraph().addNode(name, nodeType);
 							else
 								node = context.getGraph().addNode(name, newNodeType);
-							readNodes->insert(nameId, node);
+							readNodes.addNode (nameId, node);
 					}
 			}
 		}
@@ -263,7 +264,7 @@ bool GraphMLImporter::import (
 								if(newEdgeType == NULL)
 									newEdgeType = edgeType;
 
-								context.getGraph().addEdge(sourceId+targetId, readNodes->value(sourceId), readNodes->value(targetId), newEdgeType, directed);
+								context.getGraph().addEdge(sourceId+targetId, readNodes.get(sourceId), readNodes.get(targetId), newEdgeType, directed);
 						}
 				}
 		}
