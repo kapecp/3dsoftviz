@@ -8,7 +8,7 @@ namespace Importer {
 
 /**
  * \brief Handles messages from importer.
- * [interface]
+ * [abstract]
  * Implementations should define reactions to importer status:
  * - messages
  * - errors
@@ -26,7 +26,7 @@ public:
 	 * \param[in] text Message text.
 	 */
 	virtual void addMessage (
-		const std::wstring text
+		const std::wstring &text
 	) = 0;
 
 	/**
@@ -34,8 +34,18 @@ public:
 	 * \param[in] text Error text.
 	 */
 	virtual void reportError (
-		const std::wstring text
+		const std::wstring &text
 	) = 0;
+
+	/**
+	 * \brief Handles error if the condition is not true.
+	 * \param[in] cond Condition.
+	 * \param[in] text Error text.
+	 */
+	void reportError (
+		const bool cond,
+		const std::wstring &text
+	);
 
 	/**
 	 * \brief Handles progress change.

@@ -5,13 +5,13 @@
 namespace Manager {
 
 void ImportInfoHandlerImpl::addMessage (
-	const std::wstring text
+	const std::wstring &text
 ) {
 	throw "not implemented";
 }
 
 void ImportInfoHandlerImpl::reportError (
-	const std::wstring text
+	const std::wstring &text
 ) {
 	/*AppCore::Core::getInstance()->messageWindows->showMessageBox (
 		"Chyba",
