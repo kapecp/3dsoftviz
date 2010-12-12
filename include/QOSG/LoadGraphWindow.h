@@ -29,23 +29,69 @@ class QTableWidgetItem;
 
 namespace QOSG
 {
+	/**
+	*  \class LoadGraphWindow
+	*
+	*  \brief Window for loading grapgs saved in database
+	*/
 	class LoadGraphWindow : public QDialog
 	{
 		Q_OBJECT
 
 	public:
+		/**
+		*  \fn LoadGraphWindow(QWidget *parent)
+		*  \brief Constructor
+		*
+		*  \param  parent	Parent window
+		*/
 		LoadGraphWindow(QWidget *parent);
 
 	private:
+		/**
+		*  \fn *createButton(const QString &text, const char *member)
+		*  \brief	Create button with defined parameters
+		*
+		*  \param   text     Button name 
+		*  \param   member   Member
+		*/
 		QPushButton *createButton(const QString &text, const char *member);
+
+		/**
+		*  \fn		createGraphTable()
+		*  \brief	Create and fill table with data about number of graphs, nodes and edges stored in database
+		*/
 		void createGraphTable();
 
+		/**
+		*  QPushButton *loadButton
+		*  \brief Load button
+		*/
 		QPushButton *loadButton;
+
+		/**
+		*  QLabel *numberOfGraphs
+		*  \brief Label which show number of graphs stored in database
+		*/
 		QLabel *numberOfGraphs;
+
+		/**
+		*  QStringList graphList
+		*  \brief List of graphs stored in database
+		*/
 		QStringList graphList;
+
+		/**
+		*  QTableWidget *graphsTable
+		*  \brief Table where are shown data about graphs stored in database
+		*/
 		QTableWidget *graphsTable;
 
 		private slots:
+			/**
+			*  \fn loadGraph()
+			*  \brief	Slot which is called when user click on load button
+			*/
 			void loadGraph();
 				
 	};
