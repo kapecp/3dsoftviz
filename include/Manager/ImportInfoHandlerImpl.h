@@ -19,7 +19,7 @@ public:
 
 	/***/
 	virtual void addMessage (
-		const std::wstring text
+		const std::wstring &text
 	);
 
 	/**
@@ -27,7 +27,7 @@ public:
 	 * \param[] text Error text.
 	 */
 	virtual void reportError (
-		const std::wstring text
+		const std::wstring &text
 	);
 
 	/**

@@ -8,7 +8,7 @@ Model::TypeDAO::TypeDAO(void)
 {
 }
 
-Model::TypeDAO::~TypeDAO(void) 
+Model::TypeDAO::~TypeDAO(void)
 {
 }
 

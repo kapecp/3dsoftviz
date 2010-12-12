@@ -2,12 +2,14 @@
  * Manager.cpp
  * Projekt 3DVisual
  */
+
 #include "Manager/Manager.h"
 #include "Model/GraphDAO.h"
 #include "Util/ApplicationConfig.h"
 
 #include "Importer/ImporterContext.h"
-#include "Importer/GraphMLImporter.h"
+#include "Importer/ImporterFactory.h"
+#include "Importer/StreamImporter.h"
 
 #include "Manager/ImportInfoHandlerImpl.h"
 
@@ -40,6 +42,40 @@ Data::Graph* Manager::GraphManager::loadGraph(QString filepath)
     AppCore::Core::getInstance()->thr->pause();
     AppCore::Core::getInstance()->messageWindows->showProgressBar();
 
+    // TODO: [ML] better extension getting
+
+	// get extension
+	QString extension;
+	int dotIndex = -1;
+
+	if (ok) {
+		dotIndex = filepath.lastIndexOf (QChar ('.'));
+		ok = (dotIndex > 0);
+	}
+
+
+	if (ok) {
+		extension = filepath.mid (dotIndex + 1);
+	}
+
+	// TODO: [ML] error messages (if no suitable importer has been found)
+
+	// get importer
+	std::auto_ptr<Importer::StreamImporter> importer (NULL);
+	if (ok) {
+		bool importerFound;
+
+		ok =
+			Importer::ImporterFactory::createByFileExtension (
+				importer,
+				importerFound,
+				extension.toStdString ()
+			)
+			&&
+			importerFound
+		;
+	}
+
     // create stream
     std::string filepathStr = filepath.toStdString ();
     fstream file (filepathStr.c_str (), ios::in | ios::binary);
@@ -68,12 +104,6 @@ Data::Graph* Manager::GraphManager::loadGraph(QString filepath)
 				*infoHandler
 			)
     	);
-    }
-
-    // create importer
-    std::auto_ptr<Importer::GraphMLImporter> importer (NULL);
-    if (ok) {
-    	importer.reset (new Importer::GraphMLImporter);
     }
 
     // perform import

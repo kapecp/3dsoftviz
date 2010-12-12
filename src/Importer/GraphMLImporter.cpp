@@ -1,5 +1,8 @@
 #include "Importer/GraphMLImporter.h"
 //-----------------------------------------------------------------------------
+#include "Importer/GraphOperations.h"
+#include "Importer/ReadNodesStore.h"
+//-----------------------------------------------------------------------------
 #include "Util/Adapter_iostream_to_QIODevice.h"
 //-----------------------------------------------------------------------------
 #include <QtXml/QDomElement>
@@ -12,6 +15,8 @@ bool GraphMLImporter::import (
 	ImporterContext &context
 ) {
 	Util::Adapter_iostream_to_QIODevice dev (context.getStream());
+
+	GraphOperations graphOp (context.getGraph ());
 
 	// ziskame graph element
 	QDomElement rootElement;
@@ -56,10 +61,12 @@ bool GraphMLImporter::import (
 		QString nodeTypeAttribute = appConf->getValue("GraphMLParser.nodeTypeAttribute");
 
 		// pridavame default typy
-		Data::Type *edgeType = context.getGraph().addType("edge");
-		Data::Type *nodeType = context.getGraph().addType("node");
+		Data::Type *edgeType = NULL;
+		Data::Type *nodeType = NULL;
+		(void)graphOp.addDefaultTypes (edgeType, nodeType);
 
-		QMap<QString, osg::ref_ptr<Data::Node> >* readNodes = new QMap<QString, osg::ref_ptr<Data::Node> >();
+		ReadNodesStore readNodes;
+
 		// skusal som aj cez QList, ale vobec mi to neslo, tak som to spravil len takto jednoducho cez pole
 		int colors = 6;
 		// pole farieb FIXME prerobit cez nejaky QList alebo nieco take, oddelit farby hran od farieb uzlov
@@ -156,7 +163,7 @@ bool GraphMLImporter::import (
 								node = context.getGraph().addNode(name, nodeType);
 							else
 								node = context.getGraph().addNode(name, newNodeType);
-							readNodes->insert(nameId, node);
+							readNodes.addNode (nameId, node);
 					}
 			}
 		}
@@ -257,7 +264,7 @@ bool GraphMLImporter::import (
 								if(newEdgeType == NULL)
 									newEdgeType = edgeType;
 
-								context.getGraph().addEdge(sourceId+targetId, readNodes->value(sourceId), readNodes->value(targetId), newEdgeType, directed);
+								context.getGraph().addEdge(sourceId+targetId, readNodes.get(sourceId), readNodes.get(targetId), newEdgeType, directed);
 						}
 				}
 		}

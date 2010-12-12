@@ -70,7 +70,7 @@ namespace Model
 		*  \return bool true, if the GraphLayout was successfully removed from the database
 		*/
 		static bool removeLayout(Data::GraphLayout* graphLayout, QSqlDatabase* conn);
-   
+        
 
 		/**
 		*  \fn public static  getName(QSqlDatabase* conn, bool* error, qlonglong graphID, qlonglong layoutID)

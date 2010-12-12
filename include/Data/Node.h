@@ -366,8 +366,9 @@ namespace Data
 		void reloadConfig();
 
 		/**
-		*  \fn public  getName
+		*  \fn inline public  getName
 		*  \brief Return node name
+	        *  \return QString name of the Node
 		*/
 		QString getName() { return name; }
 

@@ -44,7 +44,7 @@ QMap<qlonglong, Data::Graph*> Model::GraphDAO::getGraphs(QSqlDatabase* conn, boo
         qDebug() << "[Model::GraphDAO::getGraphs] Could not perform query on DB: " << query->lastError().databaseText();
         *error = TRUE;
         return qgraphs;
-	}
+    }
     
     while(query->next()) {
         qgraphs.insert(query->value(0).toLongLong(), new Data::Graph(query->value(0).toLongLong(),query->value(1).toString(),query->value(2).toLongLong(),query->value(3).toLongLong(),conn));
@@ -176,6 +176,7 @@ bool Model::GraphDAO::addGraph( Data::Graph* graph, QSqlDatabase* conn )
         return false;
     }
 }
+
 
 bool Model::GraphDAO::removeGraph(Data::Graph* graph, QSqlDatabase* conn)
 {

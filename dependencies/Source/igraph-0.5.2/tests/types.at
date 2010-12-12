@@ -1,0 +1,108 @@
+# Check the utility types (vector_t, etc.)
+
+# Test suite for the IGraph library.
+# Copyright (C) 2005  Gabor Csardi <csardi@rmki.kfki.hu>
+# MTA RMKI, Konkoly-Thege Miklos st. 29-33, Budapest 1121, Hungary
+# 
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+# 
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc.,  51 Franklin Street, Fifth Floor, Boston, MA 
+# 02110-1301 USA
+
+AT_BANNER([[Utility types (vector_t, etc.)]])
+
+AT_SETUP([Vector (vector_t): ])
+AT_KEYWORDS([vector vector_t])
+AT_COMPILE_CHECK([simple/vector.c], [simple/vector.out])
+AT_CLEANUP
+
+AT_SETUP([Vector (more) (vector_t): ])
+AT_KEYWORDS([vector vector_t])
+AT_COMPILE_CHECK([simple/vector2.c], [simple/vector2.out])
+AT_CLEANUP
+
+AT_SETUP([Matrix (matrix_t): ])
+AT_KEYWORDS([matrix matrix_t])
+AT_COMPILE_CHECK([simple/matrix.c], [simple/matrix.out])
+AT_CLEANUP
+
+AT_SETUP([Matrix (more) (matrix_t): ])
+AT_KEYWORDS([matrix matrix_t])
+AT_COMPILE_CHECK([simple/matrix2.c], [simple/matrix2.out])
+AT_CLEANUP
+
+AT_SETUP([Double ended queue (dqueue_t): ])
+AT_KEYWORDS([dqueue double queue dqueue_t])
+AT_COMPILE_CHECK([simple/dqueue.c])
+AT_CLEANUP
+
+AT_SETUP([Vector of pointers (vector_ptr_t): ])
+AT_KEYWORDS([vector pointers vector_ptr_t])
+AT_COMPILE_CHECK([simple/vector_ptr.c])
+AT_CLEANUP
+
+AT_SETUP([Stack (stack_t): ])
+AT_KEYWORDS([stack stack_t])
+AT_COMPILE_CHECK([simple/stack.c])
+AT_CLEANUP
+
+AT_SETUP([Heap (heap_t): ])
+AT_KEYWORDS([heap heap_t])
+AT_COMPILE_CHECK([simple/heap.c])
+AT_CLEANUP
+
+AT_SETUP([Indexed heap (indheap_t): ])
+AT_KEYWORDS([indexed heap indheap_t])
+AT_COMPILE_CHECK([simple/indheap.c])
+AT_CLEANUP
+
+AT_SETUP([Doubly indexed heap (d_indheap_t): ])
+AT_KEYWORDS([doubly indexed heap d_indheap_t])
+AT_COMPILE_CHECK([simple/d_indheap.c], [simple/d_indheap.out])
+AT_CLEANUP
+
+AT_SETUP([String vector (igraph_strvector_t): ])
+AT_KEYWORDS([string vector igraph_strvector_t])
+AT_COMPILE_CHECK([simple/igraph_strvector.c], [simple/igraph_strvector.out])
+AT_CLEANUP
+
+AT_SETUP([Trie (igraph_trie_t): ])
+AT_KEYWORDS([trie igraph_trie_t])
+AT_COMPILE_CHECK([simple/igraph_trie.c], [simple/igraph_trie.out])
+AT_CLEANUP
+
+AT_SETUP([Partial Sum-Tree (igraph_psumtree_t): ])
+AT_KEYWORDS([partial sumtree igraph_psumtree_t])
+AT_COMPILE_CHECK([simple/igraph_psumtree.c])
+AT_CLEANUP
+
+AT_SETUP([Three dimensional array (igraph_array3_t): ])
+AT_KEYWORDS([array array3 three dimensional array])
+AT_COMPILE_CHECK([simple/igraph_array.c], [simple/igraph_array.out])
+AT_CLEANUP
+
+AT_SETUP([Hash table (string->string) (igraph_hashtable_t): ])
+AT_KEYWORDS([igraph_hashtable_t hash table])
+AT_COMPILE_CHECK([simple/igraph_hashtable.c], [simple/igraph_hashtable.out])
+AT_CLEANUP
+
+AT_SETUP([Special heap for minimum cuts (igraph_i_cutheap_t): ])
+AT_KEYWORDS([heap minimum cut])
+AT_COMPILE_CHECK([simple/igraph_i_cutheap.c], [simple/igraph_i_cutheap.out])
+AT_CLEANUP
+
+AT_SETUP([Set (igraph_set_t): ])
+AT_KEYWORDS([set igraph_set_t])
+AT_COMPILE_CHECK([simple/igraph_set.c], [simple/igraph_set.out])
+AT_CLEANUP
+

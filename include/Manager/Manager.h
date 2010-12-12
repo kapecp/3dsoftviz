@@ -37,7 +37,7 @@ namespace Manager
             ~GraphManager();
 
             /**
-             * \fn getDB
+             * \fn inline getDB
              * \brief Return db
              */
 	    Model::DB *getDB() { return db; }
@@ -54,7 +54,7 @@ namespace Manager
              */
             Data::Graph* loadGraph(QString filepath);
 
-		    /**
+	    /**
              * \fn loadGraphFromDB
              * \brief Loads selected graph from database.
              */

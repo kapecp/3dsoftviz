@@ -128,7 +128,7 @@ osg::ref_ptr<osg::Node> CoreGraph::createSkyBox()
 	stateset->setTextureAttributeAndModes(0, skymap, osg::StateAttribute::ON);
 	stateset->setMode( GL_LIGHTING, osg::StateAttribute::OFF );
 	stateset->setMode( GL_CULL_FACE, osg::StateAttribute::OFF );
-	stateset->setRenderBinDetails(-1,"RenderBin");	//stateset->setRenderBinDetails(-1,"RenderBin", osg::StateSet::RenderBinMode::USE_RENDERBIN_DETAILS);	//stateset->setRenderBinDetails(-1,"RenderBin");
+	stateset->setRenderBinDetails(-1,"RenderBin");
 
 	osg::ref_ptr<osg::Depth> depth = new osg::Depth;
 	depth->setFunction(osg::Depth::ALWAYS);
