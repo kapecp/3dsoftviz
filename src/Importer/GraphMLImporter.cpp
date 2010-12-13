@@ -273,9 +273,7 @@ bool GraphMLImporter::import (
 		Data::GraphLayout* gLay = context.getGraph().addLayout("new Layout");
 		context.getGraph().selectLayout(gLay);
 	} else {
-		context.getInfoHandler ().reportError (
-			std::wstring (L"Zvoleny subor nie je validny GraphML subor.")
-		);
+		context.getInfoHandler ().reportError ("Zvoleny subor nie je validny GraphML subor.");
 	}
 
 	return true;

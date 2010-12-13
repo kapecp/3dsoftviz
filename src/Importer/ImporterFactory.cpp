@@ -10,25 +10,23 @@ namespace Importer {
 bool ImporterFactory::createByFileExtension (
 	std::auto_ptr<StreamImporter> &importer,
 	bool &importerFound,
-	const std::string &fileExtension
+	const QString &fileExtension
 ) {
 	bool ok = true;
 
 	importerFound = false;
 
-	// TODO: [ML] case insensitive compare
-
-	if (fileExtension == "graphml") {
+	if (0 == fileExtension.compare ("graphml", Qt::CaseInsensitive)) {
 		importer.reset (new GraphMLImporter);
 		importerFound = true;
 	}
 
-	if (fileExtension == "gxl") {
+	if (0 == fileExtension.compare ("gxl", Qt::CaseInsensitive)) {
 		importer.reset (new GXLImporter);
 		importerFound = true;
 	}
 
-	if (fileExtension == "rsf") {
+	if (0 == fileExtension.compare ("rsf", Qt::CaseInsensitive)) {
 		importer.reset (new RSFImporter);
 		importerFound = true;
 	}

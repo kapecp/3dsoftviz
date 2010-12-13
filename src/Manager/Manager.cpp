@@ -42,6 +42,12 @@ Data::Graph* Manager::GraphManager::loadGraph(QString filepath)
     AppCore::Core::getInstance()->thr->pause();
     AppCore::Core::getInstance()->messageWindows->showProgressBar();
 
+    // create info handler
+	std::auto_ptr<Importer::ImportInfoHandler> infoHandler (NULL);
+	if (ok) {
+		infoHandler.reset (new ImportInfoHandlerImpl);
+	}
+
     // TODO: [ML] better extension getting
 
 	// get extension
@@ -58,8 +64,6 @@ Data::Graph* Manager::GraphManager::loadGraph(QString filepath)
 		extension = filepath.mid (dotIndex + 1);
 	}
 
-	// TODO: [ML] error messages (if no suitable importer has been found)
-
 	// get importer
 	std::auto_ptr<Importer::StreamImporter> importer (NULL);
 	if (ok) {
@@ -69,11 +73,13 @@ Data::Graph* Manager::GraphManager::loadGraph(QString filepath)
 			Importer::ImporterFactory::createByFileExtension (
 				importer,
 				importerFound,
-				extension.toStdString ()
+				extension
 			)
 			&&
 			importerFound
 		;
+
+		infoHandler->reportError(ok, "No suitable importer has been found for the file extension.");
 	}
 
     // create stream
@@ -88,11 +94,7 @@ Data::Graph* Manager::GraphManager::loadGraph(QString filepath)
 		ok = (newGraph.get () != NULL);
     }
 
-    // create info handler
-    std::auto_ptr<Importer::ImportInfoHandler> infoHandler (NULL);
-    if (ok) {
-    	infoHandler.reset (new ImportInfoHandlerImpl);
-    }
+
 
     // create context
     std::auto_ptr<Importer::ImporterContext> context (NULL);

@@ -1,7 +1,7 @@
 #ifndef Importer_ImportInfoHandler_H
 #define Importer_ImportInfoHandler_H
 //-----------------------------------------------------------------------------
-#include <string>
+#include <QString>
 //-----------------------------------------------------------------------------
 
 namespace Importer {
@@ -26,7 +26,7 @@ public:
 	 * \param[in] text Message text.
 	 */
 	virtual void addMessage (
-		const std::wstring &text
+		const QString &text
 	) = 0;
 
 	/**
@@ -34,7 +34,7 @@ public:
 	 * \param[in] text Error text.
 	 */
 	virtual void reportError (
-		const std::wstring &text
+		const QString &text
 	) = 0;
 
 	/**
@@ -44,7 +44,7 @@ public:
 	 */
 	void reportError (
 		const bool cond,
-		const std::wstring &text
+		const QString &text
 	);
 
 	/**

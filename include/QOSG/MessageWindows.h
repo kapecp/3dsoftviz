@@ -58,7 +58,7 @@ namespace QOSG
 		*  \param  message message of the dialog
 		*  \param  isError flag if the dialog is message or error
 		*/
-		void showMessageBox(QString title, QString message, bool isError);
+		void showMessageBox(QString title, const QString &message, bool isError);
 
 		/**
 		*  \fn public  showLoadingDialog(QString message)

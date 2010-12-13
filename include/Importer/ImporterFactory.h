@@ -3,6 +3,8 @@
 //-----------------------------------------------------------------------------
 #include "Importer/StreamImporter.h"
 //-----------------------------------------------------------------------------
+#include <QString>
+//-----------------------------------------------------------------------------
 
 namespace Importer {
 
@@ -23,7 +25,7 @@ public:
 	static bool createByFileExtension (
 		std::auto_ptr<StreamImporter> &importer,
 		bool &importerFound,
-		const std::string &fileExtension
+		const QString &fileExtension
 	);
 
 private:

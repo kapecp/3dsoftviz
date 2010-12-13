@@ -4,7 +4,7 @@ namespace Importer {
 
 void ImportInfoHandler::reportError (
 	const bool cond,
-	const std::wstring &text
+	const QString &text
 ) {
 	if (!cond) {
 		reportError (text);
