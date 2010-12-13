@@ -34,7 +34,7 @@ namespace Model
 		*  \param   isMeta  if edges from actual graph are meta
 		*  \return	bool true, if edges were successfully added to DB
 		*/
-		static bool Model::EdgeDAO::addEdgesToDB(QSqlDatabase* conn, QMap<qlonglong, osg::ref_ptr<Data::Edge> >* edges, bool isMeta);
+		static bool addEdgesToDB(QSqlDatabase* conn, QMap<qlonglong, osg::ref_ptr<Data::Edge> >* edges, bool isMeta);
 
 		/**
 		*  \fn public static  getEdgesQuery(QSqlDatabase* conn, bool* error, qlonglong graphID)

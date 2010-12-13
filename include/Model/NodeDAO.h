@@ -37,7 +37,7 @@ namespace Model
 		*  \param   layout  layout from actual graph
 		*  \return	bool true, if nodes were successfully added to DB
 		*/
-		static bool Model::NodeDAO::addNodesToDB(QSqlDatabase* conn, QMap<qlonglong, osg::ref_ptr<Data::Node> >* nodes, bool isMeta, Data::GraphLayout* layout);
+		static bool addNodesToDB(QSqlDatabase* conn, QMap<qlonglong, osg::ref_ptr<Data::Node> >* nodes, bool isMeta, Data::GraphLayout* layout);
 
 		/**
 		*  \fn public static  getNodesQuery(QSqlDatabase* conn, bool* error, qlonglong graphID)

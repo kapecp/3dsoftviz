@@ -87,7 +87,7 @@ namespace Model
 		*  \param   conn     connection to the database
 		*  \return QString name of the graph
 		*/
-		static QString Model::GraphDAO::getName(qlonglong graphID, bool* error, QSqlDatabase* conn);
+		static QString getName(qlonglong graphID, bool* error, QSqlDatabase* conn);
 
 		/**
 		*  \fn public static  setName(QString name, Data::Graph* graph, QSqlDatabase* conn)
