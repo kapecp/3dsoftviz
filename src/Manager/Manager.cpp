@@ -82,6 +82,12 @@ Data::Graph* Manager::GraphManager::loadGraph(QString filepath)
     	stream.reset (new QFile (filepath));
     }
 
+    if (ok) {
+    	ok = (stream->open (QIODevice::ReadOnly));
+
+    	infoHandler->reportError(ok, "Unable to open the input file.");
+    }
+
     // create graph
     std::auto_ptr<Data::Graph> newGraph (NULL);
     if (ok) {
@@ -106,6 +112,11 @@ Data::Graph* Manager::GraphManager::loadGraph(QString filepath)
     // perform import
     if (ok) {
     	ok = importer->import (*context);
+    }
+
+    // close stream
+    if (stream.get() != NULL) {
+    	stream->close ();
     }
 
     // set as active graph
