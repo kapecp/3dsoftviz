@@ -3,8 +3,6 @@
 #include "Importer/GraphOperations.h"
 #include "Importer/ReadNodesStore.h"
 //-----------------------------------------------------------------------------
-#include "Util/Adapter_iostream_to_QIODevice.h"
-//-----------------------------------------------------------------------------
 #include <QtXml/QXmlStreamReader>
 //-----------------------------------------------------------------------------
 #include <memory>
@@ -14,8 +12,7 @@ namespace Importer {
 bool GXLImporter::import (
 	ImporterContext &context
 ) {
-	Util::Adapter_iostream_to_QIODevice dev (context.getStream());
-	QXmlStreamReader xml (&dev);
+	QXmlStreamReader xml (&(context.getStream ()));
 
 	GraphOperations graphOp (context.getGraph ());
 

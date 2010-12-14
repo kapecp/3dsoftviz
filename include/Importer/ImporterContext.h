@@ -4,7 +4,7 @@
 #include "Data/Graph.h"
 #include "Importer/ImportInfoHandler.h"
 //-----------------------------------------------------------------------------
-#include <istream>
+#include <QIODevice>
 //-----------------------------------------------------------------------------
 
 namespace Importer {
@@ -26,7 +26,7 @@ public:
 	 * \param[in] importInfoHandler Import progress info handler.
 	 */
 	ImporterContext (
-		std::iostream &stream,
+		QIODevice &stream,
 		Data::Graph &graph,
 		ImportInfoHandler &importInfoHandler
 	);
@@ -37,7 +37,7 @@ public:
 	/**
 	 * \brief \link ImporterContext::stream_ [getter] \endlink
 	 */
-	std::iostream &getStream (void);
+	QIODevice &getStream (void);
 
 	/**
 	 * \brief \link ImporterContext::graph_ [getter] \endlink
@@ -54,7 +54,7 @@ private:
 	/**
 	 * \brief Stream to read data from.
 	 */
-	std::iostream &stream_;
+	QIODevice &stream_;
 
 	/**
 	 * \brief Graph to fill according to data read from the stream.

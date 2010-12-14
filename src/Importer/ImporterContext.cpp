@@ -3,7 +3,7 @@
 namespace Importer {
 
 ImporterContext::ImporterContext (
-	std::iostream &stream,
+	QIODevice &stream,
 	Data::Graph &graph,
 	ImportInfoHandler &infoHandler
 ) : stream_ (stream),
@@ -12,7 +12,7 @@ ImporterContext::ImporterContext (
 {
 }
 
-std::iostream &ImporterContext::getStream (void) {
+QIODevice &ImporterContext::getStream (void) {
 	return stream_;
 }
 

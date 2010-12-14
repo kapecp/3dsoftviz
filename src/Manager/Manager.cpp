@@ -48,20 +48,14 @@ Data::Graph* Manager::GraphManager::loadGraph(QString filepath)
 		infoHandler.reset (new ImportInfoHandlerImpl);
 	}
 
-    // TODO: [ML] better extension getting
-
-	// get extension
+	// get name and extension
+	QString name;
 	QString extension;
-	int dotIndex = -1;
 
 	if (ok) {
-		dotIndex = filepath.lastIndexOf (QChar ('.'));
-		ok = (dotIndex > 0);
-	}
-
-
-	if (ok) {
-		extension = filepath.mid (dotIndex + 1);
+		QFileInfo fileInfo (filepath);
+		name = fileInfo.fileName ();
+		extension = fileInfo.suffix ();
 	}
 
 	// get importer
@@ -83,14 +77,15 @@ Data::Graph* Manager::GraphManager::loadGraph(QString filepath)
 	}
 
     // create stream
-    std::string filepathStr = filepath.toStdString ();
-    fstream file (filepathStr.c_str (), ios::in | ios::binary);
+    std::auto_ptr<QIODevice> stream (NULL);
+    if (ok) {
+    	stream.reset (new QFile (filepath));
+    }
 
     // create graph
     std::auto_ptr<Data::Graph> newGraph (NULL);
     if (ok) {
-		QFileInfo filename(filepath);
-		newGraph.reset (this->createGraph(filename.fileName()));
+		newGraph.reset (this->createGraph (name));
 		ok = (newGraph.get () != NULL);
     }
 
@@ -101,7 +96,7 @@ Data::Graph* Manager::GraphManager::loadGraph(QString filepath)
     if (ok) {
     	context.reset (
     		new Importer::ImporterContext (
-				file,
+				*stream,
 				*newGraph,
 				*infoHandler
 			)
