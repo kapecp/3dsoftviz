@@ -74,6 +74,10 @@ void FRAlgorithm::SetParameters(float sizeFactor,float flexibility,int animation
 	}
 }
 
+void FRAlgorithm::SetRestrictionApplier(std::auto_ptr<RestrictionApplier> restrictionApplier) {
+	restrictionApplier_ = restrictionApplier;
+}
+
 /* Urci pokojovu dlzku strun */
 double FRAlgorithm::computeCalm() {
 	double R = 300;
@@ -315,6 +319,9 @@ bool FRAlgorithm::applyForces(Data::Node* node)
 		fv += node->getVelocity();
 		// ulozime novu polohu
 		node->setTargetPosition(node->getTargetPosition() + fv);
+		if (restrictionApplier_.get() != NULL) {
+			node->setTargetPosition (restrictionApplier_->applyRestriction(node->getTargetPosition()));
+		}
 		
 		// energeticka strata = 1-flexibilita
 		fv *= flexibility;

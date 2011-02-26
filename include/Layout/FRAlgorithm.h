@@ -23,6 +23,8 @@
 #include "Data/Graph.h"
 #include "Util/ApplicationConfig.h"
 
+#include "Layout/RestrictionApplier.h"
+
 namespace Layout
 {
 	/**
@@ -60,6 +62,8 @@ namespace Layout
 		*  \param       useMaxDistance     
 		*/
 		void SetParameters(float sizeFactor,float flexibility,int animationSpeed,bool useMaxDistance);
+
+		void SetRestrictionApplier(std::auto_ptr<RestrictionApplier> restrictionApplier);
 
 		/**
 		*  \fn public  Randomize
@@ -120,6 +124,8 @@ namespace Layout
 		*  \brief data structure containing nodes, edges and types
 		*/
 		Data::Graph *graph;		
+
+		std::auto_ptr<RestrictionApplier> restrictionApplier_;
 
 		/**
 		*  double PI

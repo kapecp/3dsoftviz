@@ -6,6 +6,8 @@
 
 #include "Core/Core.h"
 #include "Util/ApplicationConfig.h"
+#include "Layout/RestrictionApplier.h"
+#include "Layout/RestrictionApplier_Sphere.h"
 
 AppCore::Core * AppCore::Core::core;
 
@@ -16,7 +18,11 @@ AppCore::Core::Core(QApplication * app)
     Util::ApplicationConfig *appConf = Util::ApplicationConfig::get();
 
     messageWindows = new QOSG::MessageWindows();
+
     this->alg = new Layout::FRAlgorithm();
+    std::auto_ptr<Layout::RestrictionApplier> restrictionApplier (new Layout::RestrictionApplier_Sphere(osg::Vec3f (0, 0, 0), 200));
+    this->alg->SetRestrictionApplier(restrictionApplier);
+
     this->thr = new Layout::LayoutThread(this->alg);
     this->cg = new Vwr::CoreGraph();
     this->cw = new QOSG::CoreWindow(0, this->cg, app, this->thr);
