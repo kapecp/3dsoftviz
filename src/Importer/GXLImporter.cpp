@@ -3,6 +3,78 @@
 
 namespace Importer {
 
+bool GXLImporter::import (
+	ImporterContext &context
+) {
+	// context
+	context_ = &context;
+
+	// helpers
+	xml_.reset (new QXmlStreamReader (&(context_->getStream ())));
+	graphOp_.reset (new GraphOperations (context_->getGraph ()));
+	readNodes_.reset (new ReadNodesStore());
+
+	bool ok = true;
+
+	// check XML
+	if (ok) {
+		ok = !xml_->hasError ();
+
+		context_->getInfoHandler ().reportError (ok, "XML format error.");
+	}
+
+	// default types
+	edgeType = NULL;
+	nodeType = NULL;
+	(void)graphOp_->addDefaultTypes (edgeType, nodeType);
+
+	while (ok && !xml_->atEnd ()) {
+		QXmlStreamReader::TokenType token;
+		if (ok) {
+			token = xml_->readNext();
+		}
+
+		if (ok) {
+			if (
+				(token == QXmlStreamReader::StartElement)
+				&&
+				(xml_->name () == "graph")
+			) {
+				QXmlStreamAttributes attrs = xml_->attributes();
+
+				QString graphName;
+				if (ok) {
+					graphName = attrs.value ("id").toString ();
+
+					ok = ("" != graphName);
+
+					context_->getInfoHandler ().reportError (ok, "Graph name can not be empty.");
+				}
+
+				if (ok) {
+					// ok = (graphName == context_->getGraph ().setName (graphName));
+
+					context_->getInfoHandler ().reportError (ok, "Unable to set graph name.");
+				}
+
+				if (ok) {
+					ok = parseGraph ();
+				}
+			}
+		}
+
+		if (ok) {
+			ok = !xml_->hasError ();
+
+			context_->getInfoHandler ().reportError (ok, "XML format error.");
+		}
+	}
+
+	xml_->clear ();
+
+	return ok;
+}
+
 bool GXLImporter::parseGraph (void) {
 	bool ok = true;
 
@@ -370,78 +442,6 @@ bool GXLImporter::parseGraph (void) {
 	}
 
 	// TODO: graph in hyperedge
-
-	return ok;
-}
-
-bool GXLImporter::import (
-	ImporterContext &context
-) {
-	// context
-	context_ = &context;
-
-	// helpers
-	xml_.reset (new QXmlStreamReader (&(context_->getStream ())));
-	graphOp_.reset (new GraphOperations (context_->getGraph ()));
-	readNodes_.reset (new ReadNodesStore());
-
-	bool ok = true;
-
-	// check XML
-	if (ok) {
-		ok = !xml_->hasError ();
-
-		context_->getInfoHandler ().reportError (ok, "XML format error.");
-	}
-
-	// default types
-	edgeType = NULL;
-	nodeType = NULL;
-	(void)graphOp_->addDefaultTypes (edgeType, nodeType);
-
-	while (ok && !xml_->atEnd ()) {
-		QXmlStreamReader::TokenType token;
-		if (ok) {
-			token = xml_->readNext();
-		}
-
-		if (ok) {
-			if (
-				(token == QXmlStreamReader::StartElement)
-				&&
-				(xml_->name () == "graph")
-			) {
-				QXmlStreamAttributes attrs = xml_->attributes();
-
-				QString graphName;
-				if (ok) {
-					graphName = attrs.value ("id").toString ();
-
-					ok = ("" != graphName);
-
-					context_->getInfoHandler ().reportError (ok, "Graph name can not be empty.");
-				}
-
-				if (ok) {
-					// ok = (graphName == context_->getGraph ().setName (graphName));
-
-					context_->getInfoHandler ().reportError (ok, "Unable to set graph name.");
-				}
-
-				if (ok) {
-					ok = parseGraph ();
-				}
-			}
-		}
-
-		if (ok) {
-			ok = !xml_->hasError ();
-
-			context_->getInfoHandler ().reportError (ok, "XML format error.");
-		}
-	}
-
-	xml_->clear ();
 
 	return ok;
 }
