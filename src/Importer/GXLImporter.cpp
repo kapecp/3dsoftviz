@@ -37,6 +37,7 @@ bool GXLImporter::parseGraph (void) {
 
 	osg::ref_ptr<Data::Node> currentNode (NULL);
 	osg::ref_ptr<Data::Edge> currentEdge (NULL);
+	bool inHyperedge = false;
 
 	while (ok && !xml_->atEnd ()) {
 		QXmlStreamReader::TokenType token;
@@ -72,11 +73,9 @@ bool GXLImporter::parseGraph (void) {
 				(xml_->name () == "node")
 			) {
 				if (ok) {
-					if ((bool)currentNode || (bool)currentEdge) {
-						ok = false;
+					ok = (!currentNode) && (!currentEdge) && (!inHyperedge);
 
-						context_->getInfoHandler ().reportError ("Node in node/edge found.");
-					}
+					context_->getInfoHandler ().reportError (ok, "Node in node/edge/hyperedge found.");
 				}
 
 				QXmlStreamAttributes attrs = xml_->attributes();
@@ -113,7 +112,15 @@ bool GXLImporter::parseGraph (void) {
 				&&
 				(xml_->name () == "node")
 			) {
-				(void)currentNode.release();
+				if (ok) {
+					ok = currentNode;
+
+					context_->getInfoHandler ().reportError (ok, "Node end without matched node begin.");
+				}
+
+				if (ok) {
+					(void)currentNode.release();
+				}
 			}
 
 			// edge
@@ -123,11 +130,9 @@ bool GXLImporter::parseGraph (void) {
 				(xml_->name () == "edge")
 			) {
 				if (ok) {
-					if ((bool)currentNode || (bool)currentEdge) {
-						ok = false;
+					ok = (!currentNode) && (!currentEdge) && (!inHyperedge);
 
-						context_->getInfoHandler ().reportError ("Edge in node/edge found.");
-					}
+					context_->getInfoHandler ().reportError (ok, "Edge in node/edge/hyperedge found.");
 				}
 
 				QXmlStreamAttributes attrs = xml_->attributes();
@@ -223,7 +228,81 @@ bool GXLImporter::parseGraph (void) {
 				&&
 				(xml_->name () == "edge")
 			) {
-				(void)currentEdge.release();
+				if (ok) {
+					ok = currentEdge;
+
+					context_->getInfoHandler ().reportError (ok, "Edge end without matched edge begin.");
+				}
+
+				if (ok) {
+					(void)currentEdge.release();
+				}
+			}
+
+			// hyperedge
+			if (
+				(token == QXmlStreamReader::StartElement)
+				&&
+				(xml_->name () == "hyperedge")
+			) {
+				if (ok) {
+					ok = (!currentNode) && (!currentEdge) && (!inHyperedge);
+
+					context_->getInfoHandler ().reportError (ok, "Hyperedge in node/edge/hyperedge found.");
+				}
+
+				if (ok) {
+					// TODO: begin hyperedge
+				}
+
+				if (ok) {
+					inHyperedge = true;
+				}
+			}
+
+			if (
+				(token == QXmlStreamReader::EndElement)
+				&&
+				(xml_->name () == "hyperedge")
+			) {
+				if (ok) {
+					ok = inHyperedge;
+
+					context_->getInfoHandler ().reportError (ok, "Hyperedge end without matched hyperedge begin.");
+				}
+
+				if (ok) {
+					inHyperedge = false;
+				}
+			}
+
+			// hyperedge endpoint
+			if (
+				(token == QXmlStreamReader::StartElement)
+				&&
+				(xml_->name () == "endpoint")
+			) {
+				if (ok) {
+					ok = inHyperedge;
+
+					context_->getInfoHandler ().reportError (ok, "Hyperedge endpoint without hyperedge.");
+				}
+
+				if (ok) {
+					// TODO: get endpoint attributes
+				}
+
+				if (ok) {
+					// TODO: add endpoint
+				}
+			}
+
+			if (
+				(token == QXmlStreamReader::EndElement)
+				&&
+				(xml_->name () == "endpoint")
+			) {
+				// TODO:
 			}
 
 			// this graph end
