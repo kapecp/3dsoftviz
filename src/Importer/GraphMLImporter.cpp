@@ -66,11 +66,13 @@ bool GraphMLImporter::import (
 		context_->getInfoHandler ().reportError (ok, "Zvoleny subor nie je validny GraphML subor.");
 	}
 
-	if(ok) {
+	if (ok) {
 		// graph name
 		QString graphname = "Graph "+graphElement.attribute("id");
 		context_->getGraph ().setName (graphname);
+	}
 
+	if (ok) {
 		// for progress reporting
 		entitiesProcessed_ = 0;
 		entitiesCount_ = graphElement.elementsByTagName("node").size() + graphElement.elementsByTagName("edge").count();
@@ -98,6 +100,8 @@ bool GraphMLImporter::processGraph (
 		processGraph_Nodes (graphElement)
 		&&
 		processGraph_Edges (graphElement)
+		&&
+		processGraph_Hyperedges (graphElement)
 	;
 
 	return ok;
@@ -111,7 +115,7 @@ bool GraphMLImporter::processGraph_Nodes (
 	iColor_ = 0;
 
 	// nodes
-	for (QDomElement nodeElement = graphElement.firstChildElement("node"); !nodeElement.isNull(); nodeElement = nodeElement.nextSiblingElement("node"))
+	for (QDomElement nodeElement = graphElement.firstChildElement("node"); ok && !nodeElement.isNull(); nodeElement = nodeElement.nextSiblingElement("node"))
 	{
 		QString nameId = nodeElement.attribute("id");
 		QString name = NULL;
@@ -163,6 +167,21 @@ bool GraphMLImporter::processGraph_Nodes (
 			}
 		}
 
+		// subgraphs
+		for (QDomElement subgraphElement = nodeElement.firstChildElement("graph"); ok && !subgraphElement.isNull(); subgraphElement = subgraphElement.nextSiblingElement("graph")) {
+			if (ok) {
+				// TODO: begin subgraph in node
+			}
+
+			if (ok) {
+				ok = processGraph(subgraphElement);
+			}
+
+			if (ok) {
+				// TODO: end subgraph in node
+			}
+		}
+
 		// ak sme nenasli name, tak ako name pouzijeme aspon ID
 		if(name == NULL){
 			name = nameId;
@@ -199,7 +218,7 @@ bool GraphMLImporter::processGraph_Edges (
 	}
 
 	// edges
-	for (QDomElement edgeElement = graphElement.firstChildElement("edge"); !edgeElement.isNull(); edgeElement = edgeElement.nextSiblingElement("edge"))
+	for (QDomElement edgeElement = graphElement.firstChildElement("edge"); ok && !edgeElement.isNull(); edgeElement = edgeElement.nextSiblingElement("edge"))
 	{
 		QString sourceId = edgeElement.attribute("source");
 		QString targetId = edgeElement.attribute("target");
@@ -274,6 +293,21 @@ bool GraphMLImporter::processGraph_Edges (
 			}
 		}
 
+		// subgraphs
+		for (QDomElement subgraphElement = edgeElement.firstChildElement("graph"); ok && !subgraphElement.isNull(); subgraphElement = subgraphElement.nextSiblingElement("graph")) {
+			if (ok) {
+				// TODO: begin subgraph in edge
+			}
+
+			if (ok) {
+				ok = processGraph(subgraphElement);
+			}
+
+			if (ok) {
+				// TODO: end subgraph in edge
+			}
+		}
+
 		// ak nebol najdeny typ, tak pouzijeme defaulty
 		if(newEdgeType == NULL)
 			newEdgeType = edgeType_;
@@ -287,5 +321,74 @@ bool GraphMLImporter::processGraph_Edges (
 	return ok;
 }
 
+bool GraphMLImporter::processGraph_Hyperedges (
+	QDomElement &graphElement
+) {
+	bool ok = true;
+
+	iColor_ = 0;
+
+	// nodes
+	for (QDomElement hyperedgeElement = graphElement.firstChildElement("hyperedge"); ok && !hyperedgeElement.isNull(); hyperedgeElement = hyperedgeElement.nextSiblingElement("hyperedge")) {
+		if (ok) {
+			// TODO: add hyperedge
+		}
+
+		if (ok) {
+			for (QDomElement endpointElement = hyperedgeElement.firstChildElement("endpoint"); ok && !endpointElement.isNull(); endpointElement = endpointElement.nextSiblingElement("endpoint")) {
+				QString targetName;
+				if (ok) {
+					targetName = endpointElement.attribute("node");
+
+					ok = !(targetName.isEmpty ());
+
+					context_->getInfoHandler ().reportError (ok, "Hyperedge endpoint \"node\" attribute can not be empty.");
+				}
+
+				if (ok) {
+					ok = readNodes_->contains (targetName);
+
+					context_->getInfoHandler ().reportError (ok, "Hyperedge endpoint references invalid target node.");
+				}
+
+				osg::ref_ptr<Data::Node> target (NULL);
+				if (ok) {
+					target = readNodes_->get(targetName);
+				}
+
+				QString direction;
+				if (ok) {
+					direction = endpointElement.attribute("type");
+
+					if (direction == QString("undir")) {
+						direction = QString();
+					}
+
+					ok =
+						direction.isEmpty()
+						||
+						(direction == QString("in"))
+						||
+						(direction == QString("out"))
+					;
+
+					context_->getInfoHandler ().reportError (ok, "Hyperedge endpoint - invalid direction.");
+				}
+
+				if (ok) {
+					if (direction.isEmpty()) {
+						direction = "none";
+					}
+				}
+
+				if (ok) {
+					// TODO: add endpoint
+				}
+			}
+		}
+	}
+
+	return ok;
+}
 
 } // namespace

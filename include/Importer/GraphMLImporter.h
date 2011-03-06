@@ -43,6 +43,10 @@ private:
 		QDomElement &graphElement
 	);
 
+	bool processGraph_Hyperedges (
+		QDomElement &graphElement
+	);
+
 private:
 
 	// context
