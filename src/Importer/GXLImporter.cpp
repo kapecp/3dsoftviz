@@ -63,6 +63,10 @@ bool GXLImporter::parseGraph (void) {
 						context_->getInfoHandler ().reportError ("Subgraph found, but it is not placed in node/edge.");
 					}
 				}
+
+				if (ok) {
+					ok = parseGraph ();
+				}
 				// TODO: end subgraph somewhere
 			}
 
@@ -288,8 +292,51 @@ bool GXLImporter::parseGraph (void) {
 					context_->getInfoHandler ().reportError (ok, "Hyperedge endpoint without hyperedge.");
 				}
 
+				QXmlStreamAttributes attrs = xml_->attributes();
+
+				QString targetName;
 				if (ok) {
-					// TODO: get endpoint attributes
+					targetName = attrs.value ("target").toString ();
+
+					ok = !(targetName.isEmpty ());
+
+					context_->getInfoHandler ().reportError (ok, "Hyperedge endpoint \"target\" attribute can not be empty.");
+				}
+
+				if (ok) {
+					ok = readNodes_->contains (targetName);
+
+					context_->getInfoHandler ().reportError (ok, "Hyperedge endpoint references invalid target node.");
+				}
+
+				osg::ref_ptr<Data::Node> target (NULL);
+				if (ok) {
+					target = readNodes_->get(targetName);
+				}
+
+				QString direction;
+				if (ok) {
+					direction = attrs.value ("direction").toString ();
+
+					if (direction == QString("none")) {
+						direction = QString();
+					}
+
+					ok =
+						direction.isEmpty()
+						||
+						(direction == QString("in"))
+						||
+						(direction == QString("out"))
+					;
+
+					context_->getInfoHandler ().reportError (ok, "Hyperedge endpoint - invalid direction.");
+				}
+
+				if (ok) {
+					if (direction.isEmpty()) {
+						direction = "none";
+					}
 				}
 
 				if (ok) {
@@ -321,6 +368,8 @@ bool GXLImporter::parseGraph (void) {
 			context_->getInfoHandler ().reportError (ok, "XML format error.");
 		}
 	}
+
+	// TODO: graph in hyperedge
 
 	return ok;
 }
@@ -381,8 +430,6 @@ bool GXLImporter::import (
 
 				if (ok) {
 					ok = parseGraph ();
-
-					context_->getInfoHandler ().reportError (ok, "Unable to parse graph.");
 				}
 			}
 		}
