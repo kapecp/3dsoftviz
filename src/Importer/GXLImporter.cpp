@@ -3,7 +3,7 @@
 
 namespace Importer {
 
-bool GXLImporter::parseSubGraph (void) {
+bool GXLImporter::parseGraph (void) {
 	bool ok = true;
 
 	bool edgeOrientedDefault = false;
@@ -35,6 +35,9 @@ bool GXLImporter::parseSubGraph (void) {
 		}
 	}
 
+	osg::ref_ptr<Data::Node> currentNode (NULL);
+	osg::ref_ptr<Data::Edge> currentEdge (NULL);
+
 	while (ok && !xml_->atEnd ()) {
 		QXmlStreamReader::TokenType token;
 		if (ok) {
@@ -42,11 +45,40 @@ bool GXLImporter::parseSubGraph (void) {
 		}
 
 		if (ok) {
+			// subgraph
+			if (
+				(token == QXmlStreamReader::StartElement)
+				&&
+				(xml_->name () == "graph")
+			) {
+				if (ok) {
+					if ((bool)currentNode) {
+						// TODO: begin subgraph in node
+					} else if ((bool)currentEdge) {
+						// TODO: begin subgraph in edge
+					} else {
+						ok = false;
+
+						context_->getInfoHandler ().reportError ("Subgraph found, but it is not placed in node/edge.");
+					}
+				}
+				// TODO: end subgraph somewhere
+			}
+
+			// node
 			if (
 				(token == QXmlStreamReader::StartElement)
 				&&
 				(xml_->name () == "node")
 			) {
+				if (ok) {
+					if ((bool)currentNode || (bool)currentEdge) {
+						ok = false;
+
+						context_->getInfoHandler ().reportError ("Node in node/edge found.");
+					}
+				}
+
 				QXmlStreamAttributes attrs = xml_->attributes();
 
 				QString nodeName;
@@ -70,13 +102,34 @@ bool GXLImporter::parseSubGraph (void) {
 				if (ok) {
 					readNodes_->addNode (nodeName, node);
 				}
+
+				if (ok) {
+					currentNode = node;
+				}
 			}
 
+			if (
+				(token == QXmlStreamReader::EndElement)
+				&&
+				(xml_->name () == "node")
+			) {
+				(void)currentNode.release();
+			}
+
+			// edge
 			if (
 				(token == QXmlStreamReader::StartElement)
 				&&
 				(xml_->name () == "edge")
 			) {
+				if (ok) {
+					if ((bool)currentNode || (bool)currentEdge) {
+						ok = false;
+
+						context_->getInfoHandler ().reportError ("Edge in node/edge found.");
+					}
+				}
+
 				QXmlStreamAttributes attrs = xml_->attributes();
 
 				bool oriented = edgeOrientedDefault;
@@ -144,8 +197,9 @@ bool GXLImporter::parseSubGraph (void) {
 					context_->getInfoHandler ().reportError (ok, "Edge references invalid destination node.");
 				}
 
+				osg::ref_ptr<Data::Edge> edge (NULL);
 				if (ok) {
-					osg::ref_ptr<Data::Edge> edge = context_->getGraph().addEdge(
+					edge = context_->getGraph().addEdge(
 						edgeName,
 						readNodes_->get (nodeFromName),
 						readNodes_->get (nodeToName),
@@ -158,7 +212,21 @@ bool GXLImporter::parseSubGraph (void) {
 					// context_->getInfoHandler ().reportError (ok, "Unable to add new edge.");
 					// can not be checked because addEdge returns null when a multiedge is added
 				}
+
+				if (ok) {
+					currentEdge = edge;
+				}
 			}
+
+			if (
+				(token == QXmlStreamReader::EndElement)
+				&&
+				(xml_->name () == "edge")
+			) {
+				(void)currentEdge.release();
+			}
+
+			// this graph end
 			if (
 				(token == QXmlStreamReader::EndElement)
 				&&
@@ -233,9 +301,9 @@ bool GXLImporter::import (
 				}
 
 				if (ok) {
-					ok = parseSubGraph ();
+					ok = parseGraph ();
 
-					context_->getInfoHandler ().reportError (ok, "Unable to parse subgraph.");
+					context_->getInfoHandler ().reportError (ok, "Unable to parse graph.");
 				}
 			}
 		}

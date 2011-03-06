@@ -30,7 +30,10 @@ public:
 
 private:
 
-	bool parseSubGraph (void);
+	/**
+	 * [recursive]
+	 */
+	bool parseGraph (void);
 
 private:
 
