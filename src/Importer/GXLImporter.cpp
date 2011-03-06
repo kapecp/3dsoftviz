@@ -74,12 +74,18 @@ bool GXLImporter::import (
 
 	if (ok) {
 		// ok = (graphName == context_->getGraph ().setName (graphName));
+		context_->getGraph ().setName (graphName);
 
 		context_->getInfoHandler ().reportError (ok, "Unable to set graph name.");
 	}
 
 	if (ok) {
 		ok = parseGraph ();
+	}
+
+	if (ok) {
+		Data::GraphLayout* gLay = context_->getGraph().addLayout("new Layout");
+		context_->getGraph().selectLayout(gLay);
 	}
 
 	xml_->clear ();

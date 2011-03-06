@@ -5,6 +5,8 @@
 #include "Importer/GraphOperations.h"
 #include "Importer/ReadNodesStore.h"
 //-----------------------------------------------------------------------------
+#include <QtXml/QDomElement>
+//-----------------------------------------------------------------------------
 
 namespace Importer {
 
@@ -22,6 +24,23 @@ public:
 	/***/
 	virtual bool import (
 		ImporterContext &context
+	);
+
+private:
+
+	/**
+	 * [recursive]
+	 */
+	bool processGraph (
+		QDomElement &graphElement
+	);
+
+	bool processGraph_Nodes (
+		QDomElement &graphElement
+	);
+
+	bool processGraph_Edges (
+		QDomElement &graphElement
 	);
 
 private:

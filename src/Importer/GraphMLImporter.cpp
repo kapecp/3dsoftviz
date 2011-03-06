@@ -1,8 +1,5 @@
 #include "Importer/GraphMLImporter.h"
 //-----------------------------------------------------------------------------
-#include <QtXml/QDomElement>
-//-----------------------------------------------------------------------------
-#include <memory>
 
 namespace Importer {
 
@@ -74,178 +71,16 @@ bool GraphMLImporter::import (
 		QString graphname = "Graph "+graphElement.attribute("id");
 		context_->getGraph ().setName (graphname);
 
-		// default direction
-		bool defaultDirection;
-		if(graphElement.attribute("edgedefault") == "directed"){
-			defaultDirection = true;
-		} else {
-			defaultDirection = false;
-		}
-
 		// for progress reporting
 		entitiesProcessed_ = 0;
 		entitiesCount_ = graphElement.elementsByTagName("node").size() + graphElement.elementsByTagName("edge").count();
+	}
 
-		// nodes
-		for (QDomElement nodeElement = graphElement.firstChildElement("node"); !nodeElement.isNull(); nodeElement = nodeElement.nextSiblingElement("node"))
-		{
-				QString nameId = nodeElement.attribute("id");
-				QString name = NULL;
-				// pozerame sa na data ktore nesie
-				Data::Type *newNodeType;
-				newNodeType = NULL;
-				QDomNodeList nodeDataList = nodeElement.elementsByTagName("data");
-				for (unsigned int j = 0; j < nodeDataList.length(); j++){
-					QDomNode nodeData = nodeDataList.item(j);
-					if (!nodeData.isNull() && nodeData.isElement())
-					{
-							QDomElement nodeDataElement = nodeData.toElement();
-							QString dataName = nodeDataElement.attribute("key");
-							QString dataValue = nodeDataElement.text();
-							// rozpoznavame typy
-							if(dataName == nodeTypeAttribute_){
-								// overime ci uz dany typ existuje v grafe
-								QList<Data::Type*> types = context_->getGraph().getTypesByName(dataValue);
-								if(types.isEmpty()){
-									QMap<QString, QString> *settings = new QMap<QString, QString>;
+	if (ok) {
+		ok = processGraph (graphElement);
+	}
 
-									settings->insert("color.R", QString::number(nodeTypeSettings_[iColor_][0]));
-									settings->insert("color.G", QString::number(nodeTypeSettings_[iColor_][1]));
-									settings->insert("color.B", QString::number(nodeTypeSettings_[iColor_][2]));
-									settings->insert("color.A", QString::number(nodeTypeSettings_[iColor_][3]));
-									settings->insert("scale",		Util::ApplicationConfig::get()->getValue("Viewer.Textures.DefaultNodeScale"));
-									settings->insert("textureFile", Util::ApplicationConfig::get()->getValue("Viewer.Textures.Node"));
-
-									newNodeType = context_->getGraph().addType(dataValue, settings);
-
-									if(iColor_ == colors_){
-										iColor_ = 0;
-									} else {
-										iColor_++;
-									}
-								} else {
-									newNodeType = types.first();
-								}
-
-							} else {
-								// kazde dalsie data nacitame do nosica dat - Node.name
-								// FIXME potom prerobit cez Adamove Node.settings
-								if(name == NULL){
-									name = dataName+":"+dataValue;
-								} else {
-									name += " | "+dataName+":"+dataValue;
-								}
-							}
-					}
-				}
-
-				// ak sme nenasli name, tak ako name pouzijeme aspon ID
-				if(name == NULL){
-					name = nameId;
-				}
-
-				// ak nebol najdeny ziaden typ, tak pouzijeme defaultny typ
-				osg::ref_ptr<Data::Node> node;
-				if(newNodeType == NULL)
-					node = context_->getGraph().addNode(name, nodeType_);
-				else
-					node = context_->getGraph().addNode(name, newNodeType);
-				readNodes_->addNode (nameId, node);
-
-			entitiesProcessed_++;
-			context_->getInfoHandler ().setProgress (entitiesProcessed_ * 100 / entitiesCount_);
-		}
-
-		iColor_ = 0;
-
-		// edges
-		for (QDomElement edgeElement = graphElement.firstChildElement("edge"); !edgeElement.isNull(); edgeElement = edgeElement.nextSiblingElement("edge"))
-		{
-			QString sourceId = edgeElement.attribute("source");
-			QString targetId = edgeElement.attribute("target");
-
-			QString direction = NULL;
-			bool directed = false;
-			direction = edgeElement.attribute("directed");
-			if(direction == NULL) {
-				directed = defaultDirection;
-				if(directed)
-					direction = "_directed";
-				else
-					direction = "";
-			} else {
-				if(direction == "true"){
-					direction = "_directed";
-					directed = true;
-				} else {
-					direction = "";
-					directed = false;
-				}
-			}
-
-
-
-			// pozerame sa na data ktore hrana nesie
-			Data::Type *newEdgeType;
-			newEdgeType = NULL;
-			QDomNodeList edgeDataList = edgeElement.elementsByTagName("data");
-			for (unsigned int j = 0; j < edgeDataList.length(); j++){
-				QDomNode edgeData = edgeDataList.item(j);
-				if (!edgeData.isNull() && edgeData.isElement())
-				{
-						QDomElement edgeDataElement = edgeData.toElement();
-						QString dataName = edgeDataElement.attribute("key");
-						QString dataValue = edgeDataElement.text();
-						// rozpoznavame typy deklarovane atributom relation
-						if(dataName == edgeTypeAttribute_){
-							// overime ci uz dany typ existuje v grafe
-							QList<Data::Type*> types = context_->getGraph().getTypesByName(dataValue+direction);
-							if(types.isEmpty()){
-								QMap<QString, QString> *settings = new QMap<QString, QString>;
-
-								// FIXME spravit tak, aby to rotovalo po tom poli - palo az to budes prerabat tak pre hrany pouzi ine pole, take co ma alfu na 0.5.. a to sa tyka aj uzlov s defaultnym typom
-							   settings->insert("color.R", QString::number(nodeTypeSettings_[iColor_][0]));
-							   settings->insert("color.G", QString::number(nodeTypeSettings_[iColor_][1]));
-							   settings->insert("color.B", QString::number(nodeTypeSettings_[iColor_][2]));
-							   settings->insert("color.A", QString::number(nodeTypeSettings_[iColor_][3]));
-							   settings->insert("scale",		Util::ApplicationConfig::get()->getValue("Viewer.Textures.DefaultNodeScale"));
-
-							   if (!directed)
-									settings->insert("textureFile", Util::ApplicationConfig::get()->getValue("Viewer.Textures.Edge"));
-							   else
-							   {
-								   settings->insert("textureFile", Util::ApplicationConfig::get()->getValue("Viewer.Textures.OrientedEdgePrefix"));
-								   settings->insert("textureFile", Util::ApplicationConfig::get()->getValue("Viewer.Textures.OrientedEdgeSuffix"));
-							   }
-
-								newEdgeType = context_->getGraph().addType(dataValue+direction, settings);
-
-								if(iColor_ == colors_){
-									iColor_ = 0;
-								} else {
-									iColor_++;
-								}
-							} else {
-								newEdgeType = types.first();
-							}
-
-						} else {
-							// kazde dalsie data nacitame do nosica dat - Edge.name
-							// FIXME potom prerobit cez Adamove Node.settings
-						}
-				}
-			}
-
-			// ak nebol najdeny typ, tak pouzijeme defaulty
-			if(newEdgeType == NULL)
-				newEdgeType = edgeType_;
-
-			context_->getGraph().addEdge(sourceId+targetId, readNodes_->get(sourceId), readNodes_->get(targetId), newEdgeType, directed);
-
-			entitiesProcessed_++;
-			context_->getInfoHandler ().setProgress (entitiesProcessed_ * 100 / entitiesCount_);
-		}
-
+	if (ok) {
 		// pridame layout grafu
 		Data::GraphLayout* gLay = context_->getGraph().addLayout("new Layout");
 		context_->getGraph().selectLayout(gLay);
@@ -253,5 +88,204 @@ bool GraphMLImporter::import (
 
 	return ok;
 }
+
+bool GraphMLImporter::processGraph (
+	QDomElement &graphElement
+) {
+	bool ok = true;
+
+	ok =
+		processGraph_Nodes (graphElement)
+		&&
+		processGraph_Edges (graphElement)
+	;
+
+	return ok;
+}
+
+bool GraphMLImporter::processGraph_Nodes (
+	QDomElement &graphElement
+) {
+	bool ok = true;
+
+	iColor_ = 0;
+
+	// nodes
+	for (QDomElement nodeElement = graphElement.firstChildElement("node"); !nodeElement.isNull(); nodeElement = nodeElement.nextSiblingElement("node"))
+	{
+		QString nameId = nodeElement.attribute("id");
+		QString name = NULL;
+		// pozerame sa na data ktore nesie
+		Data::Type *newNodeType;
+		newNodeType = NULL;
+		QDomNodeList nodeDataList = nodeElement.elementsByTagName("data");
+		for (unsigned int j = 0; j < nodeDataList.length(); j++){
+			QDomNode nodeData = nodeDataList.item(j);
+			if (!nodeData.isNull() && nodeData.isElement())
+			{
+					QDomElement nodeDataElement = nodeData.toElement();
+					QString dataName = nodeDataElement.attribute("key");
+					QString dataValue = nodeDataElement.text();
+					// rozpoznavame typy
+					if(dataName == nodeTypeAttribute_){
+						// overime ci uz dany typ existuje v grafe
+						QList<Data::Type*> types = context_->getGraph().getTypesByName(dataValue);
+						if(types.isEmpty()){
+							QMap<QString, QString> *settings = new QMap<QString, QString>;
+
+							settings->insert("color.R", QString::number(nodeTypeSettings_[iColor_][0]));
+							settings->insert("color.G", QString::number(nodeTypeSettings_[iColor_][1]));
+							settings->insert("color.B", QString::number(nodeTypeSettings_[iColor_][2]));
+							settings->insert("color.A", QString::number(nodeTypeSettings_[iColor_][3]));
+							settings->insert("scale",		Util::ApplicationConfig::get()->getValue("Viewer.Textures.DefaultNodeScale"));
+							settings->insert("textureFile", Util::ApplicationConfig::get()->getValue("Viewer.Textures.Node"));
+
+							newNodeType = context_->getGraph().addType(dataValue, settings);
+
+							if(iColor_ == colors_){
+								iColor_ = 0;
+							} else {
+								iColor_++;
+							}
+						} else {
+							newNodeType = types.first();
+						}
+
+					} else {
+						// kazde dalsie data nacitame do nosica dat - Node.name
+						// FIXME potom prerobit cez Adamove Node.settings
+						if(name == NULL){
+							name = dataName+":"+dataValue;
+						} else {
+							name += " | "+dataName+":"+dataValue;
+						}
+					}
+			}
+		}
+
+		// ak sme nenasli name, tak ako name pouzijeme aspon ID
+		if(name == NULL){
+			name = nameId;
+		}
+
+		// ak nebol najdeny ziaden typ, tak pouzijeme defaultny typ
+		osg::ref_ptr<Data::Node> node;
+		if(newNodeType == NULL)
+			node = context_->getGraph().addNode(name, nodeType_);
+		else
+			node = context_->getGraph().addNode(name, newNodeType);
+		readNodes_->addNode (nameId, node);
+
+		entitiesProcessed_++;
+		context_->getInfoHandler ().setProgress (entitiesProcessed_ * 100 / entitiesCount_);
+	}
+
+	return ok;
+}
+
+bool GraphMLImporter::processGraph_Edges (
+	QDomElement &graphElement
+) {
+	bool ok = true;
+
+	iColor_ = 0;
+
+	// default direction
+	bool defaultDirection;
+	if(graphElement.attribute("edgedefault") == "directed"){
+		defaultDirection = true;
+	} else {
+		defaultDirection = false;
+	}
+
+	// edges
+	for (QDomElement edgeElement = graphElement.firstChildElement("edge"); !edgeElement.isNull(); edgeElement = edgeElement.nextSiblingElement("edge"))
+	{
+		QString sourceId = edgeElement.attribute("source");
+		QString targetId = edgeElement.attribute("target");
+
+		QString direction = NULL;
+		bool directed = false;
+		direction = edgeElement.attribute("directed");
+		if(direction == NULL) {
+			directed = defaultDirection;
+			if(directed)
+				direction = "_directed";
+			else
+				direction = "";
+		} else {
+			if(direction == "true"){
+				direction = "_directed";
+				directed = true;
+			} else {
+				direction = "";
+				directed = false;
+			}
+		}
+
+		// pozerame sa na data ktore hrana nesie
+		Data::Type *newEdgeType;
+		newEdgeType = NULL;
+		QDomNodeList edgeDataList = edgeElement.elementsByTagName("data");
+		for (unsigned int j = 0; j < edgeDataList.length(); j++){
+			QDomNode edgeData = edgeDataList.item(j);
+			if (!edgeData.isNull() && edgeData.isElement())
+			{
+					QDomElement edgeDataElement = edgeData.toElement();
+					QString dataName = edgeDataElement.attribute("key");
+					QString dataValue = edgeDataElement.text();
+					// rozpoznavame typy deklarovane atributom relation
+					if(dataName == edgeTypeAttribute_){
+						// overime ci uz dany typ existuje v grafe
+						QList<Data::Type*> types = context_->getGraph().getTypesByName(dataValue+direction);
+						if(types.isEmpty()){
+							QMap<QString, QString> *settings = new QMap<QString, QString>;
+
+							// FIXME spravit tak, aby to rotovalo po tom poli - palo az to budes prerabat tak pre hrany pouzi ine pole, take co ma alfu na 0.5.. a to sa tyka aj uzlov s defaultnym typom
+						   settings->insert("color.R", QString::number(nodeTypeSettings_[iColor_][0]));
+						   settings->insert("color.G", QString::number(nodeTypeSettings_[iColor_][1]));
+						   settings->insert("color.B", QString::number(nodeTypeSettings_[iColor_][2]));
+						   settings->insert("color.A", QString::number(nodeTypeSettings_[iColor_][3]));
+						   settings->insert("scale",		Util::ApplicationConfig::get()->getValue("Viewer.Textures.DefaultNodeScale"));
+
+						   if (!directed)
+								settings->insert("textureFile", Util::ApplicationConfig::get()->getValue("Viewer.Textures.Edge"));
+						   else
+						   {
+							   settings->insert("textureFile", Util::ApplicationConfig::get()->getValue("Viewer.Textures.OrientedEdgePrefix"));
+							   settings->insert("textureFile", Util::ApplicationConfig::get()->getValue("Viewer.Textures.OrientedEdgeSuffix"));
+						   }
+
+							newEdgeType = context_->getGraph().addType(dataValue+direction, settings);
+
+							if(iColor_ == colors_){
+								iColor_ = 0;
+							} else {
+								iColor_++;
+							}
+						} else {
+							newEdgeType = types.first();
+						}
+
+					} else {
+						// kazde dalsie data nacitame do nosica dat - Edge.name
+						// FIXME potom prerobit cez Adamove Node.settings
+					}
+			}
+		}
+
+		// ak nebol najdeny typ, tak pouzijeme defaulty
+		if(newEdgeType == NULL)
+			newEdgeType = edgeType_;
+
+		context_->getGraph().addEdge(sourceId+targetId, readNodes_->get(sourceId), readNodes_->get(targetId), newEdgeType, directed);
+
+		entitiesProcessed_++;
+		context_->getInfoHandler ().setProgress (entitiesProcessed_ * 100 / entitiesCount_);
+	}
+
+	return ok;
+}
+
 
 } // namespace

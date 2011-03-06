@@ -7,8 +7,6 @@
 //-----------------------------------------------------------------------------
 #include <QtXml/QXmlStreamReader>
 //-----------------------------------------------------------------------------
-#include <memory>
-//-----------------------------------------------------------------------------
 
 namespace Importer {
 
@@ -31,6 +29,8 @@ public:
 private:
 
 	/**
+	 * <graph> XML node must already have been processed
+	 * </graph> XML node is processed by this function
 	 * [recursive]
 	 */
 	bool parseGraph (void);
