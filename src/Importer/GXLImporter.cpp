@@ -14,6 +14,11 @@ bool GXLImporter::import (
 	graphOp_.reset (new GraphOperations (context_->getGraph ()));
 	readNodes_.reset (new ReadNodesStore());
 
+	// default types
+	edgeType = NULL;
+	nodeType = NULL;
+	(void)graphOp_->addDefaultTypes (edgeType, nodeType);
+
 	bool ok = true;
 
 	// check XML
@@ -22,11 +27,6 @@ bool GXLImporter::import (
 
 		context_->getInfoHandler ().reportError (ok, "XML format error.");
 	}
-
-	// default types
-	edgeType = NULL;
-	nodeType = NULL;
-	(void)graphOp_->addDefaultTypes (edgeType, nodeType);
 
 	while (ok && !xml_->atEnd ()) {
 		QXmlStreamReader::TokenType token;
@@ -319,7 +319,7 @@ bool GXLImporter::parseGraph (void) {
 			if (
 				(token == QXmlStreamReader::StartElement)
 				&&
-				(xml_->name () == "hyperedge")
+				(xml_->name () == "rel")
 			) {
 				if (ok) {
 					ok = (!currentNode) && (!currentEdge) && (!inHyperedge);
@@ -339,7 +339,7 @@ bool GXLImporter::parseGraph (void) {
 			if (
 				(token == QXmlStreamReader::EndElement)
 				&&
-				(xml_->name () == "hyperedge")
+				(xml_->name () == "rel")
 			) {
 				if (ok) {
 					ok = inHyperedge;
@@ -356,7 +356,7 @@ bool GXLImporter::parseGraph (void) {
 			if (
 				(token == QXmlStreamReader::StartElement)
 				&&
-				(xml_->name () == "endpoint")
+				(xml_->name () == "relend")
 			) {
 				if (ok) {
 					ok = inHyperedge;
@@ -419,7 +419,7 @@ bool GXLImporter::parseGraph (void) {
 			if (
 				(token == QXmlStreamReader::EndElement)
 				&&
-				(xml_->name () == "endpoint")
+				(xml_->name () == "relend")
 			) {
 				// TODO:
 			}
