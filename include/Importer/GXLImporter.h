@@ -2,6 +2,12 @@
 #define Importer_GXLImporter_H
 //-----------------------------------------------------------------------------
 #include "Importer/StreamImporter.h"
+#include "Importer/GraphOperations.h"
+#include "Importer/ReadNodesStore.h"
+//-----------------------------------------------------------------------------
+#include <QtXml/QXmlStreamReader>
+//-----------------------------------------------------------------------------
+#include <memory>
 //-----------------------------------------------------------------------------
 
 namespace Importer {
@@ -21,6 +27,24 @@ public:
 	virtual bool import (
 		ImporterContext &context
 	);
+
+private:
+
+	bool parseSubGraph (void);
+
+private:
+
+	// context
+	ImporterContext *context_;
+
+	// helpers
+	std::auto_ptr<QXmlStreamReader> xml_;
+	std::auto_ptr<GraphOperations> graphOp_;
+	std::auto_ptr<ReadNodesStore> readNodes_;
+
+	//default types
+	Data::Type *edgeType;
+	Data::Type *nodeType;
 
 }; // class
 
