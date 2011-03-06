@@ -42,9 +42,9 @@ bool GraphMLImporter::import (
 	bool ok = true;
 
 	// ziskame graph element
-	QDomElement rootElement;
+	QDomElement graphElement;
 	if (ok) {
-		QDomNode graphElement;
+		QDomNode graphNode;
 
 		QDomDocument doc("graphMLDocument");
 		if (doc.setContent(&(context_->getStream())))
@@ -55,28 +55,28 @@ bool GraphMLImporter::import (
 						QDomNodeList graphNodes = docElem.elementsByTagName("graph");
 						if (graphNodes.length() > 0)
 						{
-								graphElement = graphNodes.item(0);
-								if (!graphElement.isNull() && graphElement.parentNode() == docElem && graphElement.isElement())
+								graphNode = graphNodes.item(0);
+								if (!graphNode.isNull() && graphNode.parentNode() == docElem && graphNode.isElement())
 								{
-										rootElement = graphElement.toElement();
+										graphElement = graphNode.toElement();
 								}
 						}
 				}
 		}
 
-		ok = !rootElement.isNull();
+		ok = !graphElement.isNull();
 
 		context_->getInfoHandler ().reportError (ok, "Zvoleny subor nie je validny GraphML subor.");
 	}
 
 	if(ok) {
 		// graph name
-		QString graphname = "Graph "+rootElement.attribute("id");
+		QString graphname = "Graph "+graphElement.attribute("id");
 		context_->getGraph ().setName (graphname);
 
 		// default direction
 		bool defaultDirection;
-		if(rootElement.attribute("edgedefault") == "directed"){
+		if(graphElement.attribute("edgedefault") == "directed"){
 			defaultDirection = true;
 		} else {
 			defaultDirection = false;
@@ -84,10 +84,10 @@ bool GraphMLImporter::import (
 
 		// for progress reporting
 		entitiesProcessed_ = 0;
-		entitiesCount_ = rootElement.elementsByTagName("node").size() + rootElement.elementsByTagName("edge").count();
+		entitiesCount_ = graphElement.elementsByTagName("node").size() + graphElement.elementsByTagName("edge").count();
 
 		// nodes
-		for (QDomElement nodeElement = rootElement.firstChildElement("node"); !nodeElement.isNull(); nodeElement = nodeElement.nextSiblingElement("node"))
+		for (QDomElement nodeElement = graphElement.firstChildElement("node"); !nodeElement.isNull(); nodeElement = nodeElement.nextSiblingElement("node"))
 		{
 				QString nameId = nodeElement.attribute("id");
 				QString name = NULL;
@@ -159,7 +159,7 @@ bool GraphMLImporter::import (
 		iColor_ = 0;
 
 		// edges
-		for (QDomElement edgeElement = rootElement.firstChildElement("edge"); !edgeElement.isNull(); edgeElement = edgeElement.nextSiblingElement("edge"))
+		for (QDomElement edgeElement = graphElement.firstChildElement("edge"); !edgeElement.isNull(); edgeElement = edgeElement.nextSiblingElement("edge"))
 		{
 			QString sourceId = edgeElement.attribute("source");
 			QString targetId = edgeElement.attribute("target");

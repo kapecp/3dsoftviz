@@ -46,8 +46,8 @@ private:
 	std::auto_ptr<ReadNodesStore> readNodes_;
 
 	//default types
-	Data::Type *edgeType;
-	Data::Type *nodeType;
+	Data::Type *edgeType_;
+	Data::Type *nodeType_;
 
 }; // class
 

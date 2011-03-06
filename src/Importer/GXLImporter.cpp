@@ -15,9 +15,9 @@ bool GXLImporter::import (
 	readNodes_.reset (new ReadNodesStore());
 
 	// default types
-	edgeType = NULL;
-	nodeType = NULL;
-	(void)graphOp_->addDefaultTypes (edgeType, nodeType);
+	edgeType_ = NULL;
+	nodeType_ = NULL;
+	(void)graphOp_->addDefaultTypes (edgeType_, nodeType_);
 
 	bool ok = true;
 
@@ -28,7 +28,8 @@ bool GXLImporter::import (
 		context_->getInfoHandler ().reportError (ok, "XML format error.");
 	}
 
-	while (ok && !xml_->atEnd ()) {
+	bool graphElementFound = false;
+	while (ok && !xml_->atEnd () && !graphElementFound) {
 		QXmlStreamReader::TokenType token;
 		if (ok) {
 			token = xml_->readNext();
@@ -40,26 +41,7 @@ bool GXLImporter::import (
 				&&
 				(xml_->name () == "graph")
 			) {
-				QXmlStreamAttributes attrs = xml_->attributes();
-
-				QString graphName;
-				if (ok) {
-					graphName = attrs.value ("id").toString ();
-
-					ok = ("" != graphName);
-
-					context_->getInfoHandler ().reportError (ok, "Graph name can not be empty.");
-				}
-
-				if (ok) {
-					// ok = (graphName == context_->getGraph ().setName (graphName));
-
-					context_->getInfoHandler ().reportError (ok, "Unable to set graph name.");
-				}
-
-				if (ok) {
-					ok = parseGraph ();
-				}
+				graphElementFound = true;
 			}
 		}
 
@@ -68,6 +50,36 @@ bool GXLImporter::import (
 
 			context_->getInfoHandler ().reportError (ok, "XML format error.");
 		}
+	}
+
+	if (ok) {
+		ok = graphElementFound;
+
+		context_->getInfoHandler ().reportError (ok, "Unable to find graph element.");
+	}
+
+	QXmlStreamAttributes attrs;
+	if (ok) {
+		attrs = xml_->attributes();
+	}
+
+	QString graphName;
+	if (ok) {
+		graphName = attrs.value ("id").toString ();
+
+		ok = ("" != graphName);
+
+		context_->getInfoHandler ().reportError (ok, "Graph name can not be empty.");
+	}
+
+	if (ok) {
+		// ok = (graphName == context_->getGraph ().setName (graphName));
+
+		context_->getInfoHandler ().reportError (ok, "Unable to set graph name.");
+	}
+
+	if (ok) {
+		ok = parseGraph ();
 	}
 
 	xml_->clear ();
@@ -167,7 +179,7 @@ bool GXLImporter::parseGraph (void) {
 
 				osg::ref_ptr<Data::Node> node (NULL);
 				if (ok) {
-					node = context_->getGraph ().addNode (nodeName, nodeType);
+					node = context_->getGraph ().addNode (nodeName, nodeType_);
 
 					ok = node.valid ();
 
@@ -284,7 +296,7 @@ bool GXLImporter::parseGraph (void) {
 						edgeName,
 						readNodes_->get (nodeFromName),
 						readNodes_->get (nodeToName),
-						edgeType,
+						edgeType_,
 						oriented
 					);
 
