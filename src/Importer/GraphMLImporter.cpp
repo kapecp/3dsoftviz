@@ -167,21 +167,6 @@ bool GraphMLImporter::processGraph_Nodes (
 			}
 		}
 
-		// subgraphs
-		for (QDomElement subgraphElement = nodeElement.firstChildElement("graph"); ok && !subgraphElement.isNull(); subgraphElement = subgraphElement.nextSiblingElement("graph")) {
-			if (ok) {
-				// TODO: begin subgraph in node
-			}
-
-			if (ok) {
-				ok = processGraph(subgraphElement);
-			}
-
-			if (ok) {
-				// TODO: end subgraph in node
-			}
-		}
-
 		// ak sme nenasli name, tak ako name pouzijeme aspon ID
 		if(name == NULL){
 			name = nameId;
@@ -194,6 +179,21 @@ bool GraphMLImporter::processGraph_Nodes (
 		else
 			node = context_->getGraph().addNode(name, newNodeType);
 		readNodes_->addNode (nameId, node);
+
+		// subgraphs
+		for (QDomElement subgraphElement = nodeElement.firstChildElement("graph"); ok && !subgraphElement.isNull(); subgraphElement = subgraphElement.nextSiblingElement("graph")) {
+			if (ok) {
+				context_->getGraph().createNestedGraph (node);
+			}
+
+			if (ok) {
+				ok = processGraph(subgraphElement);
+			}
+
+			if (ok) {
+				context_->getGraph().closeNestedGraph ();
+			}
+		}
 
 		entitiesProcessed_++;
 		context_->getInfoHandler ().setProgress (entitiesProcessed_ * 100 / entitiesCount_);
@@ -293,6 +293,12 @@ bool GraphMLImporter::processGraph_Edges (
 			}
 		}
 
+		// ak nebol najdeny typ, tak pouzijeme defaulty
+		if(newEdgeType == NULL)
+			newEdgeType = edgeType_;
+
+		context_->getGraph().addEdge(sourceId+targetId, readNodes_->get(sourceId), readNodes_->get(targetId), newEdgeType, directed);
+
 		// subgraphs
 		for (QDomElement subgraphElement = edgeElement.firstChildElement("graph"); ok && !subgraphElement.isNull(); subgraphElement = subgraphElement.nextSiblingElement("graph")) {
 			if (ok) {
@@ -307,12 +313,6 @@ bool GraphMLImporter::processGraph_Edges (
 				// TODO: end subgraph in edge
 			}
 		}
-
-		// ak nebol najdeny typ, tak pouzijeme defaulty
-		if(newEdgeType == NULL)
-			newEdgeType = edgeType_;
-
-		context_->getGraph().addEdge(sourceId+targetId, readNodes_->get(sourceId), readNodes_->get(targetId), newEdgeType, directed);
 
 		entitiesProcessed_++;
 		context_->getInfoHandler ().setProgress (entitiesProcessed_ * 100 / entitiesCount_);
