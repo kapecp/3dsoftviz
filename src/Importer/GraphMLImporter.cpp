@@ -82,12 +82,6 @@ bool GraphMLImporter::import (
 		ok = processGraph (graphElement);
 	}
 
-	if (ok) {
-		// pridame layout grafu
-		Data::GraphLayout* gLay = context_->getGraph().addLayout("new Layout");
-		context_->getGraph().selectLayout(gLay);
-	}
-
 	return ok;
 }
 
@@ -328,7 +322,7 @@ bool GraphMLImporter::processGraph_Hyperedges (
 
 	iColor_ = 0;
 
-	// nodes
+	// hyperedges
 	for (QDomElement hyperedgeElement = graphElement.firstChildElement("hyperedge"); ok && !hyperedgeElement.isNull(); hyperedgeElement = hyperedgeElement.nextSiblingElement("hyperedge")) {
 		if (ok) {
 			// TODO: add hyperedge

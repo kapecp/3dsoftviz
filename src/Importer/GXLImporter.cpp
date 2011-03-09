@@ -83,11 +83,6 @@ bool GXLImporter::import (
 		ok = parseGraph ();
 	}
 
-	if (ok) {
-		Data::GraphLayout* gLay = context_->getGraph().addLayout("new Layout");
-		context_->getGraph().selectLayout(gLay);
-	}
-
 	xml_->clear ();
 
 	return ok;
