@@ -6,6 +6,8 @@
 #include "Importer/ReadNodesStore.h"
 //-----------------------------------------------------------------------------
 #include <QtXml/QDomElement>
+#include <QList>
+#include <osg/Vec4b>
 //-----------------------------------------------------------------------------
 
 namespace Importer {
@@ -63,13 +65,16 @@ private:
 	QString edgeTypeAttribute_;
 	QString nodeTypeAttribute_;
 
-	int colors_;
-	qint8 nodeTypeSettings_[6][4];
+	// maybe Vec4f for colors (but qint8 array has been here before, so we are not changing the type now)
+	typedef osg::Vec4b ColorType;
+	typedef QList<ColorType> ColorsListType;
+
+	ColorsListType colors_;
 	int iColor_;
 
 	// for progress reporting
-	uint32_t entitiesProcessed_;
-	uint32_t entitiesCount_;
+	int entitiesProcessed_;
+	int entitiesCount_;
 
 }; // class
 
