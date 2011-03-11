@@ -17,49 +17,46 @@ osg::Vec3f RestrictionApplier_SphereSurface::applyRestriction (
 	// normalize (change the point as if the sphere center_ was [0, 0, 0])
 	osg::Vec3f pointNormalized = osg::Vec3f (point - center_);
 
-	// get base coordinate (some of the coordinates that != 0) and multipliers
-	int baseCoord = -1;
-	int xMultiplier, yMultiplier, zMultiplier;
-	if (pointNormalized.x () != 0) {
-		baseCoord = 1;
-		xMultiplier = pointNormalized.x () / pointNormalized.x ();
-		yMultiplier = pointNormalized.y () / pointNormalized.x ();
-		zMultiplier = pointNormalized.z () / pointNormalized.x ();
-	} else if (pointNormalized.y () != 0) {
-		baseCoord = 2;
-		xMultiplier = pointNormalized.x () / pointNormalized.y ();
-		yMultiplier = pointNormalized.y () / pointNormalized.y ();
-		zMultiplier = pointNormalized.z () / pointNormalized.y ();
-	} else if (pointNormalized.z () != 0) {
-		baseCoord = 3;
-		xMultiplier = pointNormalized.x () / pointNormalized.z ();
-		yMultiplier = pointNormalized.y () / pointNormalized.z ();
-		zMultiplier = pointNormalized.z () / pointNormalized.z ();
+	int baseCoordIndex = -1;
+	bool baseCoordNegative;
+	for (int i = 0; i < 3; ++i) {
+		if (pointNormalized[i] != 0) {
+			baseCoordIndex = i;
+			baseCoordNegative = (pointNormalized[i] < 0);
+		}
 	}
 
-	// get changed point
 	osg::Vec3f changedPointNormalized;
-	if (baseCoord == -1) {
+	if (baseCoordIndex == -1) {
 		changedPointNormalized = pointNormalized;
 	} else {
-		float baseCoordValue = pow(radius_, 2) / (pow(xMultiplier, 2) + pow(yMultiplier, 2) + pow(zMultiplier, 2));
-		float changedXValue;
-		float changedYValue;
-		float changedZValue;
-		if (baseCoord == 1) {
-			changedXValue = baseCoordValue;
-			changedYValue = baseCoordValue * yMultiplier;
-			changedZValue = baseCoordValue * zMultiplier;
-		} else if (baseCoord == 2) {
-			changedYValue = baseCoordValue;
-			changedXValue = baseCoordValue * xMultiplier;
-			changedZValue = baseCoordValue * zMultiplier;
-		} else if (baseCoord == 3) {
-			changedZValue = baseCoordValue;
-			changedXValue = baseCoordValue * xMultiplier;
-			changedYValue = baseCoordValue * yMultiplier;
+		osg::Vec3f multipliers;
+		for (int i = 0; i < 3; ++i) {
+			multipliers[i] = pointNormalized[i] / pointNormalized[baseCoordIndex];
 		}
-		changedPointNormalized = osg::Vec3f (changedXValue, changedYValue, changedZValue);
+
+		float multipliersPowSum = 0;
+		for (int i = 0; i < 3; ++i) {
+			if (i != baseCoordIndex) {
+				multipliersPowSum += pow(multipliers[i], 2);
+			}
+		}
+
+		if (multipliersPowSum == 0) {
+			changedPointNormalized[baseCoordIndex] = radius_;
+		} else {
+			changedPointNormalized[baseCoordIndex] = sqrt(pow(radius_, 2) / multipliersPowSum);
+		}
+
+		if (baseCoordNegative) {
+			changedPointNormalized[baseCoordIndex] = -changedPointNormalized[baseCoordIndex];
+		}
+
+		for (int i = 0; i < 3; ++i) {
+			if (i != baseCoordIndex) {
+				changedPointNormalized[i] = changedPointNormalized[baseCoordIndex] * multipliers[i];
+			}
+		}
 	}
 
 	// de-normalize

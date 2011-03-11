@@ -21,7 +21,7 @@ AppCore::Core::Core(QApplication * app)
     messageWindows = new QOSG::MessageWindows();
 
     this->alg = new Layout::FRAlgorithm();
-    std::auto_ptr<Layout::RestrictionApplier> restrictionApplier (new Layout::RestrictionApplier_SphereSurface(osg::Vec3f (0, 0, 0), 20));
+    std::auto_ptr<Layout::RestrictionApplier> restrictionApplier (new Layout::RestrictionApplier_SphereSurface(osg::Vec3f (0, 0, 0), 50));
     this->alg->SetRestrictionApplier(restrictionApplier);
 
     this->thr = new Layout::LayoutThread(this->alg);

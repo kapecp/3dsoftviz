@@ -29,6 +29,15 @@ Vwr::CoreGraph::CoreGraph(Data::Graph * graph, osg::ref_ptr<osg::Camera> camera)
 	root->addChild(createSkyBox());
 	backgroundPosition = 0;
 
+	osg::ShapeDrawable *shape = new osg::ShapeDrawable;
+	osg::Sphere* sphere = new osg::Sphere;
+	sphere->setRadius(20);
+	shape->setShape(sphere);
+	shape->setColor(osg::Vec4(0, 0, 1.0, 0.2));
+	osg::Geode* geode = new osg::Geode;
+	geode->addDrawable(shape);
+	root->addChild(geode);
+
 	reload(graph);
 }
 
@@ -36,11 +45,11 @@ void CoreGraph::reload(Data::Graph * graph)
 {
 	cleanUp();
 
-	int currentPos = 1;
+	int currentPos = 2;
 
-	if (root->getNumChildren() > 1)
+	if (root->getNumChildren() > 2)
 	{
-		for (int x = 6; x > 0; x--)
+		for (int x = 7; x > 1; x--)
 			root->removeChildren(x,1);
 	}
 
