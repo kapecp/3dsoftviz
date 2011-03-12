@@ -23,17 +23,14 @@ bool GraphMLImporter::import (
 	edgeTypeAttribute_ = appConf->getValue("GraphMLParser.edgeTypeAttribute_");
 	nodeTypeAttribute_ = appConf->getValue("GraphMLParser.nodeTypeAttribute_");
 
-	// skusal som aj cez QList, ale vobec mi to neslo, tak som to spravil len takto jednoducho cez pole
-	colors_ = 6;
-	// pole farieb FIXME prerobit cez nejaky QList alebo nieco take, oddelit farby hran od farieb uzlov
-	nodeTypeSettings_ = {
-		{0, 1, 0, 1},
-		{0, 1, 1, 1},
-		{1, 0, 0, 1},
-		{1, 0, 1, 1},
-		{1, 1, 0, 1},
-		{1, 1, 1, 1},
-	};
+	// pole farieb FIXME oddelit farby hran od farieb uzlov
+	colors_.push_back (ColorType (0, 1, 0, 1));
+	colors_.push_back (ColorType (0, 1, 1, 1));
+	colors_.push_back (ColorType (1, 0, 0, 1));
+	colors_.push_back (ColorType (1, 0, 1, 1));
+	colors_.push_back (ColorType (1, 1, 0, 1));
+	colors_.push_back (ColorType (1, 1, 1, 1));
+
 	iColor_ = 0;
 
 	bool ok = true;
@@ -80,12 +77,6 @@ bool GraphMLImporter::import (
 
 	if (ok) {
 		ok = processGraph (graphElement);
-	}
-
-	if (ok) {
-		// pridame layout grafu
-		Data::GraphLayout* gLay = context_->getGraph().addLayout("new Layout");
-		context_->getGraph().selectLayout(gLay);
 	}
 
 	return ok;
@@ -137,20 +128,19 @@ bool GraphMLImporter::processGraph_Nodes (
 						if(types.isEmpty()){
 							QMap<QString, QString> *settings = new QMap<QString, QString>;
 
-							settings->insert("color.R", QString::number(nodeTypeSettings_[iColor_][0]));
-							settings->insert("color.G", QString::number(nodeTypeSettings_[iColor_][1]));
-							settings->insert("color.B", QString::number(nodeTypeSettings_[iColor_][2]));
-							settings->insert("color.A", QString::number(nodeTypeSettings_[iColor_][3]));
+							settings->insert("color.R", QString::number(colors_[iColor_][0]));
+							settings->insert("color.G", QString::number(colors_[iColor_][1]));
+							settings->insert("color.B", QString::number(colors_[iColor_][2]));
+							settings->insert("color.A", QString::number(colors_[iColor_][3]));
 							settings->insert("scale",		Util::ApplicationConfig::get()->getValue("Viewer.Textures.DefaultNodeScale"));
 							settings->insert("textureFile", Util::ApplicationConfig::get()->getValue("Viewer.Textures.Node"));
 
 							newNodeType = context_->getGraph().addType(dataValue, settings);
 
-							if(iColor_ == colors_){
+							iColor_++;
+							if(iColor_ == colors_.size ()){
 								iColor_ = 0;
-							} else {
-								iColor_++;
-							}
+							};
 						} else {
 							newNodeType = types.first();
 						}
@@ -167,21 +157,6 @@ bool GraphMLImporter::processGraph_Nodes (
 			}
 		}
 
-		// subgraphs
-		for (QDomElement subgraphElement = nodeElement.firstChildElement("graph"); ok && !subgraphElement.isNull(); subgraphElement = subgraphElement.nextSiblingElement("graph")) {
-			if (ok) {
-				// TODO: begin subgraph in node
-			}
-
-			if (ok) {
-				ok = processGraph(subgraphElement);
-			}
-
-			if (ok) {
-				// TODO: end subgraph in node
-			}
-		}
-
 		// ak sme nenasli name, tak ako name pouzijeme aspon ID
 		if(name == NULL){
 			name = nameId;
@@ -194,6 +169,21 @@ bool GraphMLImporter::processGraph_Nodes (
 		else
 			node = context_->getGraph().addNode(name, newNodeType);
 		readNodes_->addNode (nameId, node);
+
+		// subgraphs
+		for (QDomElement subgraphElement = nodeElement.firstChildElement("graph"); ok && !subgraphElement.isNull(); subgraphElement = subgraphElement.nextSiblingElement("graph")) {
+			if (ok) {
+				context_->getGraph().createNestedGraph (node);
+			}
+
+			if (ok) {
+				ok = processGraph(subgraphElement);
+			}
+
+			if (ok) {
+				context_->getGraph().closeNestedGraph ();
+			}
+		}
 
 		entitiesProcessed_++;
 		context_->getInfoHandler ().setProgress (entitiesProcessed_ * 100 / entitiesCount_);
@@ -261,10 +251,10 @@ bool GraphMLImporter::processGraph_Edges (
 							QMap<QString, QString> *settings = new QMap<QString, QString>;
 
 							// FIXME spravit tak, aby to rotovalo po tom poli - palo az to budes prerabat tak pre hrany pouzi ine pole, take co ma alfu na 0.5.. a to sa tyka aj uzlov s defaultnym typom
-						   settings->insert("color.R", QString::number(nodeTypeSettings_[iColor_][0]));
-						   settings->insert("color.G", QString::number(nodeTypeSettings_[iColor_][1]));
-						   settings->insert("color.B", QString::number(nodeTypeSettings_[iColor_][2]));
-						   settings->insert("color.A", QString::number(nodeTypeSettings_[iColor_][3]));
+						   settings->insert("color.R", QString::number(colors_[iColor_][0]));
+						   settings->insert("color.G", QString::number(colors_[iColor_][1]));
+						   settings->insert("color.B", QString::number(colors_[iColor_][2]));
+						   settings->insert("color.A", QString::number(colors_[iColor_][3]));
 						   settings->insert("scale",		Util::ApplicationConfig::get()->getValue("Viewer.Textures.DefaultNodeScale"));
 
 						   if (!directed)
@@ -277,11 +267,10 @@ bool GraphMLImporter::processGraph_Edges (
 
 							newEdgeType = context_->getGraph().addType(dataValue+direction, settings);
 
-							if(iColor_ == colors_){
+							iColor_++;
+							if(iColor_ == colors_.size ()){
 								iColor_ = 0;
-							} else {
-								iColor_++;
-							}
+							};
 						} else {
 							newEdgeType = types.first();
 						}
@@ -292,6 +281,12 @@ bool GraphMLImporter::processGraph_Edges (
 					}
 			}
 		}
+
+		// ak nebol najdeny typ, tak pouzijeme defaulty
+		if(newEdgeType == NULL)
+			newEdgeType = edgeType_;
+
+		context_->getGraph().addEdge(sourceId+targetId, readNodes_->get(sourceId), readNodes_->get(targetId), newEdgeType, directed);
 
 		// subgraphs
 		for (QDomElement subgraphElement = edgeElement.firstChildElement("graph"); ok && !subgraphElement.isNull(); subgraphElement = subgraphElement.nextSiblingElement("graph")) {
@@ -308,12 +303,6 @@ bool GraphMLImporter::processGraph_Edges (
 			}
 		}
 
-		// ak nebol najdeny typ, tak pouzijeme defaulty
-		if(newEdgeType == NULL)
-			newEdgeType = edgeType_;
-
-		context_->getGraph().addEdge(sourceId+targetId, readNodes_->get(sourceId), readNodes_->get(targetId), newEdgeType, directed);
-
 		entitiesProcessed_++;
 		context_->getInfoHandler ().setProgress (entitiesProcessed_ * 100 / entitiesCount_);
 	}
@@ -328,7 +317,7 @@ bool GraphMLImporter::processGraph_Hyperedges (
 
 	iColor_ = 0;
 
-	// nodes
+	// hyperedges
 	for (QDomElement hyperedgeElement = graphElement.firstChildElement("hyperedge"); ok && !hyperedgeElement.isNull(); hyperedgeElement = hyperedgeElement.nextSiblingElement("hyperedge")) {
 		if (ok) {
 			// TODO: add hyperedge

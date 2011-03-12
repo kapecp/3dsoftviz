@@ -490,6 +490,12 @@ namespace Data
 		*  \brief flag if the Graph is frozen or not (used by layout algorithm)
 		*/
         bool inDB;
+
+		/**
+		*  osg::ref_ptr<Data::Node> lastNode
+		*  \brief stores last node added into graph
+		*/
+		osg::ref_ptr<Data::Node> lastNode;
         
 
 		/**
