@@ -20,8 +20,8 @@ bool GraphMLImporter::import (
 
 	// ziskame pristup ku nastaveniam
 	Util::ApplicationConfig * appConf = Util::ApplicationConfig::get();
-	edgeTypeAttribute_ = appConf->getValue("GraphMLParser.edgeTypeAttribute_");
-	nodeTypeAttribute_ = appConf->getValue("GraphMLParser.nodeTypeAttribute_");
+	edgeTypeAttribute_ = appConf->getValue("GraphMLParser.edgeTypeAttribute");
+	nodeTypeAttribute_ = appConf->getValue("GraphMLParser.nodeTypeAttribute");
 
 	// pole farieb FIXME oddelit farby hran od farieb uzlov
 	colors_.push_back (ColorType (0, 1, 0, 1));
