@@ -227,7 +227,45 @@ QString Data::Graph::setName(QString name)
 
 osg::ref_ptr<Data::Node> Data::Graph::addNode(QString name, Data::Type* type, osg::Vec3f position)
 {
+	Data::Type* metype;
+
+	QList<Data::Type*> mtypes = getTypesByName(Data::GraphLayout::NESTED_NODE_TYPE);
+
+	if(this->parent_id.count()>0)
+	{
+
+		if(mtypes.isEmpty())
+		{
+			//adding META_EDGE_TYPE settings if necessary
+			QMap<QString, QString> *settings = new QMap<QString, QString>;
+
+				settings->insert("scale", "5");
+				settings->insert("textureFile", Util::ApplicationConfig::get()->getValue("Viewer.Textures.Node"));
+				settings->insert("color.R", "1");
+				settings->insert("color.G", "0");
+				settings->insert("color.B", "0");
+				settings->insert("color.A", "1");
+
+			metype = this->addType(Data::GraphLayout::NESTED_NODE_TYPE, settings);
+		}
+		else
+		{
+			metype = mtypes[0];
+		}
+
+		type = metype;
+	}
+
     osg::ref_ptr<Data::Node> node = new Data::Node(this->incEleIdCounter(), name, type, this, position);
+
+	//Napojenie na pomocnu hranu pre vnoreny graf
+	if(this->parent_id.count()>0)
+	{
+		osg::ref_ptr<Data::Edge> edge1 = new Data::Edge(this->incEleIdCounter(), "Nested Edge", this, this->parent_id.last(), node, this->getNestedMetaEdgeType(), false);
+		edge1->linkNodes(this->edges);
+
+		this->edgesByType.insert(type->getId(),edge1);
+	}
 
     this->newNodes.insert(node->getId(),node);
     if(type!=NULL && type->isMeta()) {
@@ -237,13 +275,17 @@ osg::ref_ptr<Data::Node> Data::Graph::addNode(QString name, Data::Type* type, os
         this->nodes->insert(node->getId(),node);
         this->nodesByType.insert(type->getId(),node);
     }
+
+	if(this->parent_id.count()>0)
+	{
+		QList<Data::Type*> metypes = getTypesByName(Data::GraphLayout::MULTI_EDGE_TYPE);
+	}
     
     return node;
 }
 
 void Data::Graph::createNestedGraph(osg::ref_ptr<Data::Node> srcNode)
 {
-	//this->parent_id.insert(srcNode, this->parent_id.size()+1);
 	this->parent_id.append(srcNode);
 }
 
@@ -272,6 +314,11 @@ osg::ref_ptr<Data::Edge> Data::Graph::addEdge(QString name, osg::ref_ptr<Data::N
 	{
 		//adding single edge to graph
 
+		if(this->parent_id.count()>0)
+		{
+			type = getNestedEdgeType();
+		}
+
 		osg::ref_ptr<Data::Edge> edge = new Data::Edge(this->incEleIdCounter(), name, this, srcNode, dstNode, type, isOriented);
 
 		edge->linkNodes(&this->newEdges);
@@ -284,10 +331,65 @@ osg::ref_ptr<Data::Edge> Data::Graph::addEdge(QString name, osg::ref_ptr<Data::N
 		{
 			edge->linkNodes(this->edges);
 		}
+
 		return edge;
 	}
 
     return NULL;
+}
+
+Data::Type* Data::Graph::getNestedEdgeType()
+{
+	Data::Type* metype;
+
+	QList<Data::Type*> metypes = getTypesByName(Data::GraphLayout::NESTED_EDGE_TYPE);
+
+			if(metypes.isEmpty())
+			{
+				//adding NESTED_EDGE_TYPE settings if necessary
+				QMap<QString, QString> *settings = new QMap<QString, QString>;
+
+				settings->insert("scale", "Viewer.Textures.EdgeScale");
+				settings->insert("textureFile", Util::ApplicationConfig::get()->getValue("Viewer.Textures.Edge"));
+				settings->insert("color.R", "1");
+				settings->insert("color.G", "0");
+				settings->insert("color.B", "0");
+				settings->insert("color.A", "1");
+
+				metype = this->addType(Data::GraphLayout::NESTED_EDGE_TYPE, settings);
+			}
+			else
+			{
+				metype = metypes[0];
+			}
+			return metype;
+}
+
+Data::Type* Data::Graph::getNestedMetaEdgeType()
+{
+	Data::Type* metype;
+
+	QList<Data::Type*> metypes = getTypesByName(Data::GraphLayout::NESTED_META_EDGE_TYPE);
+
+			if(metypes.isEmpty())
+			{
+				//adding NESTED_EDGE_TYPE settings if necessary
+				QMap<QString, QString> *settings = new QMap<QString, QString>;
+
+				settings->insert("scale", "Viewer.Textures.EdgeScale");
+				settings->insert("textureFile", Util::ApplicationConfig::get()->getValue("Viewer.Textures.Edge"));
+				settings->insert("color.R", "0");
+				settings->insert("color.G", "1");
+				settings->insert("color.B", "0");
+				settings->insert("color.A", "0");
+
+				metype = this->addType(Data::GraphLayout::NESTED_META_EDGE_TYPE, settings);
+			}
+			else
+			{
+				metype = metypes[0];
+			}
+			return metype;
 }
 
 void Data::Graph::addMultiEdge(QString name, osg::ref_ptr<Data::Node> srcNode, osg::ref_ptr<Data::Node> dstNode, Data::Type* type, bool isOriented, osg::ref_ptr<Data::Edge> replacedSingleEdge)
@@ -302,7 +404,7 @@ void Data::Graph::addMultiEdge(QString name, osg::ref_ptr<Data::Node> srcNode, o
 				//adding META_NODE_TYPE settings if necessary
 				QMap<QString, QString> *settings = new QMap<QString, QString>;
 
-				settings->insert("scale", "5");
+				settings->insert("scale", "20");
 				settings->insert("textureFile", Util::ApplicationConfig::get()->getValue("Viewer.Textures.Node"));
 				settings->insert("color.R", "1");
 				settings->insert("color.G", "1");
@@ -339,6 +441,11 @@ void Data::Graph::addMultiEdge(QString name, osg::ref_ptr<Data::Node> srcNode, o
 
 			//adding MULTI edges w/ MULTI node
 			osg::ref_ptr<Data::Node> parallelNode = addNode("PNode", mtype);
+
+			if(this->parent_id.count()>0)
+			{
+				metype = getNestedEdgeType();
+			}
 
 			osg::ref_ptr<Data::Edge> edge1 = new Data::Edge(this->incEleIdCounter(), name, this, srcNode, parallelNode, metype, isOriented);
 			edge1->linkNodes(this->edges);

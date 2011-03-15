@@ -9,6 +9,9 @@ const QString Data::GraphLayout::META_NODE_TYPE = QString("META_NODE_TYPE");
 const QString Data::GraphLayout::MULTI_NODE_TYPE = QString("MULTI_NODE_TYPE");
 const QString Data::GraphLayout::META_EDGE_TYPE = QString("META_EDGE_TYPE");
 const QString Data::GraphLayout::MULTI_EDGE_TYPE = QString("MULTI_EDGE_TYPE");
+const QString Data::GraphLayout::NESTED_NODE_TYPE = QString("NESTED_NODE_TYPE");
+const QString Data::GraphLayout::NESTED_EDGE_TYPE = QString("NESTED_EDGE_TYPE");
+const QString Data::GraphLayout::NESTED_META_EDGE_TYPE= QString("NESTED_META_EDGE_TYPE");
 
 Data::GraphLayout::GraphLayout(qlonglong layout_id, Data::Graph* graph, QString name, QSqlDatabase* conn)
 {

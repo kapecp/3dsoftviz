@@ -228,6 +228,17 @@ namespace Data
 		*/
 		osg::ref_ptr<Data::Edge> addEdge(QString name, osg::ref_ptr<Data::Node> srcNode, osg::ref_ptr<Data::Node> dstNode, Data::Type* type, bool isOriented); 
         
+		/**
+		*  \fn public getNestedEdgeType()
+		*  \return nested edge type
+		*/
+		Data::Type* Data::Graph::getNestedEdgeType();
+
+		/**
+		*  \fn public getNestedEdgeType()
+		*  \return meta-nested edge type
+		*/
+		Data::Type* Data::Graph::getNestedMetaEdgeType();
 
 		/**
 		*  \fn public  addType(QString name, QMap <QString, QString> *settings = 0)

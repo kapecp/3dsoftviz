@@ -90,6 +90,25 @@ namespace Data
 		*  \brief Constant identifier of MultiType name used for multi-Edges as identified by MetaSettings of the GraphLayout
 		*/
 		static const QString MULTI_EDGE_TYPE;
+
+		/**
+		*  const QString NESTED_NODE_TYPE
+		*  \brief Constant identifier of MultiType name used for nested-nodes as identified by MetaSettings of the GraphLayout
+		*/
+		static const QString NESTED_NODE_TYPE;
+
+		/**
+		*  const QString NESTED_EDGE_TYPE
+		*  \brief Constant identifier of MultiType name used for nested-edges as identified by MetaSettings of the GraphLayout
+		*/
+		static const QString NESTED_EDGE_TYPE;
+
+		/**
+		*  const QString NESTED_META_EDGE_TYPE
+		*  \brief Constant identifier of MultiType name used for meta-nested-edges as identified by MetaSettings of the GraphLayout
+		*/
+		static const QString NESTED_META_EDGE_TYPE;
+
 		/**
 		*  \fn public constructor  GraphLayout(qlonglong layout_id, Data::Graph* graph, QString name, QSqlDatabase* conn)
 		*  \brief Creates new GraphLayout object
