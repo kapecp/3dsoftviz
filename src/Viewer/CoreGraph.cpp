@@ -40,7 +40,7 @@ void CoreGraph::reload(Data::Graph * graph)
 
 	if (root->getNumChildren() > 1)
 	{
-		for (int x = 7; x > 1; x--)
+		for (int x = 6; x > 0; x--)
 			root->removeChildren(x,1);
 	}
 
