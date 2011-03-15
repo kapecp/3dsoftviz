@@ -1,4 +1,7 @@
 #include "Layout/RestrictionApplier_Sphere.h"
+//-----------------------------------------------------------------------------
+#include "Layout/RestrictionUtils.h"
+//-----------------------------------------------------------------------------
 
 namespace Layout {
 
@@ -14,8 +17,11 @@ RestrictionApplier_Sphere::RestrictionApplier_Sphere (
 osg::Vec3f RestrictionApplier_Sphere::applyRestriction (
 	const osg::Vec3f &point
 ) {
-	// TODO: implement this
-	return point;
+	if ((point - center_).length() > radius_) {
+		return RestrictionUtils::toSphere (center_, radius_, point);
+	} else {
+		return point;
+	}
 }
 
 } // namespace

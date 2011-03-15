@@ -95,10 +95,6 @@ void FRAlgorithm::Randomize()
 		if(!j.value()->isFixed())
 		{
 			osg::Vec3f randPos = getRandomLocation();
-			/*
-			if (restrictionApplier_.get() != NULL) {
-				randPos = restrictionApplier_->applyRestriction (randPos);
-			}*/
 			j.value()->setTargetPosition(randPos);
 		}
 	}	
@@ -319,41 +315,6 @@ bool FRAlgorithm::applyForces(Data::Node* node)
 			fv.normalize();
 			fv *= 5;
 		}
-		/*
-		// pricitame aktualnu rychlost
-		fv += node->getVelocity();
-
-		// ulozime novu polohu
-		node->setTargetPosition(node->getTargetPosition() + fv);
-
-		// energeticka strata = 1-flexibilita
-		fv *= flexibility;
-		node->setVelocity(fv); // ulozime novu rychlost
-		//node->setForce(*fv);
-		*/
-
-
-		/*
-		osg::Vec3f computedVelocity = fv;
-
-		osg::Vec3f computedTargetPosition = node->getTargetPosition () + computedVelocity;
-		osg::Vec3f restrictedTargetPosition;
-		if (restrictionApplier_.get () != NULL) {
-			restrictedTargetPosition = restrictionApplier_->applyRestriction (computedTargetPosition);
-		} else {
-			restrictedTargetPosition = computedTargetPosition;
-		}
-
-		osg::Vec3f restrictedVelocity = restrictedTargetPosition - node->getTargetPosition ();
-
-		restrictedVelocity.normalize ();
-		restrictedVelocity *= computedVelocity.length ();
-
-
-		restrictedVelocity *= flexibility;
-		node->setVelocity(restrictedVelocity);
-		node->setTargetPosition(restrictedTargetPosition);
-		*/
 
 		// pricitame aktualnu rychlost
 		fv += node->getVelocity();
@@ -366,15 +327,11 @@ bool FRAlgorithm::applyForces(Data::Node* node)
 			restrictedTargetPosition = computedTargetPosition;
 		}
 
-		if (computedTargetPosition != restrictedTargetPosition) {
-			node->resetVelocity();
-		} else {
-			// energeticka strata = 1-flexibilita
-			fv *= flexibility;
-			node->setVelocity(fv); // ulozime novu rychlost
-		}
-
 		node->setTargetPosition(restrictedTargetPosition);
+
+		// energeticka strata = 1-flexibilita
+		fv *= flexibility;
+		node->setVelocity(fv); // ulozime novu rychlost
 
 		return true;
 	} else {
