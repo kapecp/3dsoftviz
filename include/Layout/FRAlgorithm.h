@@ -15,6 +15,7 @@
 #include <ctime>
 #include <QMutex>
 #include <QThread>
+#include <QSharedPointer>
 
 #include "Viewer/DataHelper.h"
 #include "Data/Edge.h"
@@ -23,7 +24,7 @@
 #include "Data/Graph.h"
 #include "Util/ApplicationConfig.h"
 
-#include "Layout/RestrictionApplier.h"
+#include "Layout/RestrictionsDefinition.h"
 
 namespace Layout
 {
@@ -63,7 +64,7 @@ namespace Layout
 		*/
 		void SetParameters(float sizeFactor,float flexibility,int animationSpeed,bool useMaxDistance);
 
-		void SetRestrictionApplier(std::auto_ptr<RestrictionApplier> restrictionApplier);
+		void SetRestrictionsDefinition(QSharedPointer<RestrictionsDefinition> restrictionsDefinition);
 
 		/**
 		*  \fn public  Randomize
@@ -125,7 +126,7 @@ namespace Layout
 		*/
 		Data::Graph *graph;		
 
-		std::auto_ptr<RestrictionApplier> restrictionApplier_;
+		QSharedPointer<RestrictionsDefinition> restrictionsDefinition_;
 
 		/**
 		*  double PI

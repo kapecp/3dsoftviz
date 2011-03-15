@@ -1,5 +1,7 @@
 #include "Layout/FRAlgorithm.h"
 
+#include "Layout/RestrictionApplier.h"
+
 using namespace Layout;
 using namespace Vwr;	
 
@@ -74,8 +76,8 @@ void FRAlgorithm::SetParameters(float sizeFactor,float flexibility,int animation
 	}
 }
 
-void FRAlgorithm::SetRestrictionApplier(std::auto_ptr<RestrictionApplier> restrictionApplier) {
-	restrictionApplier_ = restrictionApplier;
+void FRAlgorithm::SetRestrictionsDefinition(QSharedPointer<RestrictionsDefinition> restrictionsDefinition) {
+	restrictionsDefinition_ = restrictionsDefinition;
 }
 
 /* Urci pokojovu dlzku strun */
@@ -321,8 +323,13 @@ bool FRAlgorithm::applyForces(Data::Node* node)
 
 		osg::Vec3f computedTargetPosition = node->getTargetPosition () + fv;
 		osg::Vec3f restrictedTargetPosition;
-		if (restrictionApplier_.get () != NULL) {
-			restrictedTargetPosition = restrictionApplier_->applyRestriction (computedTargetPosition);
+
+		QSharedPointer<Layout::RestrictionApplier> restrictionApplier;
+		if (!restrictionsDefinition_.isNull ()) {
+			restrictionApplier = restrictionsDefinition_->getRestrictionApplier (*node);
+		}
+		if (!restrictionApplier.isNull ()) {
+			restrictedTargetPosition = restrictionApplier->applyRestriction (computedTargetPosition);
 		} else {
 			restrictedTargetPosition = computedTargetPosition;
 		}

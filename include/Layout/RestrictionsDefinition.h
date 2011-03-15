@@ -5,6 +5,8 @@
 #include "Layout/RestrictionApplier.h"
 //-----------------------------------------------------------------------------
 #include <QMap>
+#include <QSet>
+#include <QSharedPointer>
 //-----------------------------------------------------------------------------
 
 namespace Layout {
@@ -14,12 +16,12 @@ class RestrictionsDefinition {
 public:
 
 	void setRestrictions (
-		QSet<osg::ref_ptr<Data::Node> > nodes,
+		QSet<Data::Node *> nodes,
 		QSharedPointer<RestrictionApplier> restrictionApplier
 	);
 
 	QSharedPointer<RestrictionApplier> getRestrictionApplier (
-		const osg::ref_ptr<Data::Node> node
+		Data::Node &node
 	);
 
 	/***/
@@ -27,7 +29,7 @@ public:
 
 private:
 
-	typedef QMap<osg::ref_ptr<Data::Node>, QSharedPointer<RestrictionApplier> > RestrictionsMapType;
+	typedef QMap<Data::Node *, QSharedPointer<RestrictionApplier> > RestrictionsMapType;
 
 	RestrictionsMapType restrictions_;
 

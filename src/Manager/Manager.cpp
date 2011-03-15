@@ -13,6 +13,9 @@
 
 #include "Manager/ImportInfoHandlerImpl.h"
 
+#include "Layout/RestrictionApplier_SphereSurface.h"
+#include "Layout/RestrictionsDefinition.h"
+
 #include <memory>
 
 Manager::GraphManager * Manager::GraphManager::manager;
@@ -118,6 +121,22 @@ Data::Graph* Manager::GraphManager::loadGraph(QString filepath)
     if (stream.get() != NULL) {
     	stream->close ();
     }
+
+    // restriction applier
+	if (ok) {
+		QList<osg::ref_ptr<Data::Node> > graphNodes = newGraph->getNodes()->values();
+
+		QSet<Data::Node *> nodes;
+		for (QList<osg::ref_ptr<Data::Node> >::iterator it = graphNodes.begin (); it != graphNodes.end (); ++it) {
+			nodes.insert (*it);
+		}
+
+		QSharedPointer<Layout::RestrictionApplier> restrictionApplier (new Layout::RestrictionApplier_SphereSurface (osg::Vec3f(0, 0, 30), 50));
+
+		QSharedPointer<Layout::RestrictionsDefinition> restrictionsDefinition (new Layout::RestrictionsDefinition);
+		restrictionsDefinition->setRestrictions (nodes, restrictionApplier);
+		AppCore::Core::getInstance()->getLayoutAlgorithm()->SetRestrictionsDefinition (restrictionsDefinition);
+	}
 
     // set as active graph
     if (ok) {
