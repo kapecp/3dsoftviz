@@ -259,6 +259,15 @@ namespace Data
 		*/
         Data::MetaType* addMetaType(QString name, QMap <QString, QString> *settings = 0); //implemented
         
+		/**
+		*  \return scale of nested node
+		*/
+		QString Data::Graph::getNodeScale();
+
+		/**
+		*  \return scale of nested edge
+		*/
+		QString Data::Graph::getEdgeScale();
 
 		/**
 		*  \fn public  removeNode(osg::ref_ptr<Data::Node> node)

@@ -239,7 +239,7 @@ osg::ref_ptr<Data::Node> Data::Graph::addNode(QString name, Data::Type* type, os
 			//adding META_EDGE_TYPE settings if necessary
 			QMap<QString, QString> *settings = new QMap<QString, QString>;
 
-				settings->insert("scale", "5");
+				settings->insert("scale", this->getNodeScale());
 				settings->insert("textureFile", Util::ApplicationConfig::get()->getValue("Viewer.Textures.Node"));
 				settings->insert("color.R", "1");
 				settings->insert("color.G", "0");
@@ -349,7 +349,7 @@ Data::Type* Data::Graph::getNestedEdgeType()
 				//adding NESTED_EDGE_TYPE settings if necessary
 				QMap<QString, QString> *settings = new QMap<QString, QString>;
 
-				settings->insert("scale", "Viewer.Textures.EdgeScale");
+				settings->insert("scale", this->getEdgeScale());
 				settings->insert("textureFile", Util::ApplicationConfig::get()->getValue("Viewer.Textures.Edge"));
 				settings->insert("color.R", "1");
 				settings->insert("color.G", "0");
@@ -668,6 +668,32 @@ Data::Type* Data::Graph::getNodeMultiType()
         Data::MetaType* type = this->addMetaType(Data::GraphLayout::MULTI_NODE_TYPE, settings);
         //this->selectedLayout->setMetaSetting(Data::GraphLayout::META_NODE_TYPE,QString::number(type->getId()));
         return type;
+}
+
+QString Data::Graph::getNodeScale()
+{
+	int level;
+	level = this->parent_id.size();
+	double offset = 8;
+
+	for(int i=0; i<level; i++)
+	{
+		offset = offset/3;
+	}
+	return QString::number(offset);
+}
+
+QString Data::Graph::getEdgeScale()
+{
+	int level;
+	level = this->parent_id.size();
+	double offset = 2;
+
+	for(int i=0; i<level; i++)
+	{
+		offset = offset/3;
+	}
+	return QString::number(offset);
 }
 
 Data::Type* Data::Graph::getEdgeMetaType()
