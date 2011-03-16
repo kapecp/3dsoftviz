@@ -3,8 +3,6 @@
 #include "Importer/GraphOperations.h"
 #include "Importer/ReadNodesStore.h"
 //-----------------------------------------------------------------------------
-#include "Util/Adapter_iostream_to_QIODevice.h"
-//-----------------------------------------------------------------------------
 #include <QtXml/QXmlStreamReader>
 //-----------------------------------------------------------------------------
 #include <memory>
@@ -14,8 +12,7 @@ namespace Importer {
 bool GXLImporter::import (
 	ImporterContext &context
 ) {
-	Util::Adapter_iostream_to_QIODevice dev (context.getStream());
-	QXmlStreamReader xml (&dev);
+	QXmlStreamReader xml (&(context.getStream ()));
 
 	GraphOperations graphOp (context.getGraph ());
 
@@ -26,7 +23,7 @@ bool GXLImporter::import (
 	if (ok) {
 		ok = !xml.hasError ();
 
-		context.getInfoHandler ().reportError (ok, std::wstring (L"XML format error."));
+		context.getInfoHandler ().reportError (ok, "XML format error.");
 	}
 
 	bool edgeOrientedDefault = false;
@@ -56,13 +53,13 @@ bool GXLImporter::import (
 
 					ok = ("" != graphName);
 
-					context.getInfoHandler ().reportError (ok, std::wstring (L"Graph name can not be empty."));
+					context.getInfoHandler ().reportError (ok, "Graph name can not be empty.");
 				}
 
 				if (ok) {
 					// ok = (graphName == context.getGraph ().setName (graphName));
 
-					context.getInfoHandler ().reportError (ok, std::wstring (L"Unable to set graph name."));
+					context.getInfoHandler ().reportError (ok, "Unable to set graph name.");
 				}
 
 				if (ok) {
@@ -83,7 +80,7 @@ bool GXLImporter::import (
 						} else {
 							ok = false;
 
-							context.getInfoHandler ().reportError (std::wstring (L"Invalid edgemode value."));
+							context.getInfoHandler ().reportError ("Invalid edgemode value.");
 						}
 					}
 				}
@@ -102,7 +99,7 @@ bool GXLImporter::import (
 
 					ok = !(nodeName.isEmpty ());
 
-					context.getInfoHandler ().reportError (ok, std::wstring (L"Node ID can not be empty."));
+					context.getInfoHandler ().reportError (ok, "Node ID can not be empty.");
 				}
 
 				osg::ref_ptr<Data::Node> node (NULL);
@@ -111,7 +108,7 @@ bool GXLImporter::import (
 
 					ok = node.valid ();
 
-					context.getInfoHandler ().reportError (ok, std::wstring (L"Unable to add new node."));
+					context.getInfoHandler ().reportError (ok, "Unable to add new node.");
 				}
 
 				if (ok) {
@@ -140,7 +137,7 @@ bool GXLImporter::import (
 								oriented = true;
 							} else {
 								ok = false;
-								context.getInfoHandler ().reportError (std::wstring (L"Can not replace global edge mode with edgeIsDirected=\"true\"."));
+								context.getInfoHandler ().reportError ("Can not replace global edge mode with edgeIsDirected=\"true\".");
 							}
 						} else if (edgeIsDirected == "false") {
 							if (
@@ -151,10 +148,10 @@ bool GXLImporter::import (
 								oriented = false;
 							} else {
 								ok = false;
-								context.getInfoHandler ().reportError (std::wstring (L"Can not replace global edge mode with edgeIsDirected=\"false\"."));
+								context.getInfoHandler ().reportError ("Can not replace global edge mode with edgeIsDirected=\"false\".");
 							}
 						} else {
-							context.getInfoHandler ().reportError (ok, std::wstring (L"Invalid edgeIsDirected value."));
+							context.getInfoHandler ().reportError (ok, "Invalid edgeIsDirected value.");
 						}
 					}
 				}
@@ -165,7 +162,7 @@ bool GXLImporter::import (
 
 					ok = !(nodeFromName.isEmpty ());
 
-					context.getInfoHandler ().reportError (ok, std::wstring (L"Edge \"from\" attribute can not be empty."));
+					context.getInfoHandler ().reportError (ok, "Edge \"from\" attribute can not be empty.");
 				}
 
 				QString nodeToName;
@@ -174,7 +171,7 @@ bool GXLImporter::import (
 
 					ok = !(nodeToName.isEmpty ());
 
-					context.getInfoHandler ().reportError (ok, std::wstring (L"Edge \"to\" attribute can not be empty."));
+					context.getInfoHandler ().reportError (ok, "Edge \"to\" attribute can not be empty.");
 				}
 
 				QString edgeName = nodeFromName + nodeToName;
@@ -182,13 +179,13 @@ bool GXLImporter::import (
 				if (ok) {
 					ok = readNodes.contains (nodeFromName);
 
-					context.getInfoHandler ().reportError (ok, std::wstring (L"Edge references invalid source node."));
+					context.getInfoHandler ().reportError (ok, "Edge references invalid source node.");
 				}
 
 				if (ok) {
 					ok = readNodes.contains (nodeToName);
 
-					context.getInfoHandler ().reportError (ok, std::wstring (L"Edge references invalid destination node."));
+					context.getInfoHandler ().reportError (ok, "Edge references invalid destination node.");
 				}
 
 				if (ok) {
@@ -200,9 +197,10 @@ bool GXLImporter::import (
 						oriented
 					);
 
-					ok = edge.valid ();
+					// ok = edge.valid ();
 
-					context.getInfoHandler ().reportError (ok, std::wstring (L"Unable to add new edge."));
+					// context.getInfoHandler ().reportError (ok, "Unable to add new edge.");
+					// can not be checked because addEdge returns null when a multiedge is added
 				}
 			}
 		}
@@ -210,7 +208,7 @@ bool GXLImporter::import (
 		if (ok) {
 			ok = !xml.hasError ();
 
-			context.getInfoHandler ().reportError (ok, std::wstring (L"XML format error."));
+			context.getInfoHandler ().reportError (ok, "XML format error.");
 		}
 	}
 

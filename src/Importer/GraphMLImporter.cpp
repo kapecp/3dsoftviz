@@ -3,8 +3,6 @@
 #include "Importer/GraphOperations.h"
 #include "Importer/ReadNodesStore.h"
 //-----------------------------------------------------------------------------
-#include "Util/Adapter_iostream_to_QIODevice.h"
-//-----------------------------------------------------------------------------
 #include <QtXml/QDomElement>
 //-----------------------------------------------------------------------------
 #include <memory>
@@ -14,8 +12,6 @@ namespace Importer {
 bool GraphMLImporter::import (
 	ImporterContext &context
 ) {
-	Util::Adapter_iostream_to_QIODevice dev (context.getStream());
-
 	GraphOperations graphOp (context.getGraph ());
 
 	// ziskame graph element
@@ -23,7 +19,7 @@ bool GraphMLImporter::import (
 	QDomNode graphElement;
 
 	QDomDocument doc("graphMLDocument");
-	if (doc.setContent(&dev))
+	if (doc.setContent(&(context.getStream())))
 	{
 			QDomElement docElem = doc.documentElement();
 			if (!docElem.isNull() && docElem.nodeName() == "graphml")
@@ -273,9 +269,7 @@ bool GraphMLImporter::import (
 		Data::GraphLayout* gLay = context.getGraph().addLayout("new Layout");
 		context.getGraph().selectLayout(gLay);
 	} else {
-		context.getInfoHandler ().reportError (
-			std::wstring (L"Zvoleny subor nie je validny GraphML subor.")
-		);
+		context.getInfoHandler ().reportError ("Zvoleny subor nie je validny GraphML subor.");
 	}
 
 	return true;

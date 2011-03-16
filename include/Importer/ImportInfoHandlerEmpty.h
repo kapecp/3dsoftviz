@@ -20,13 +20,13 @@ public:
 
 	/***/
 	virtual void addMessage (
-		const std::wstring text
+		const QString &text
 	) {
 	};
 
 	/***/
 	virtual void reportError (
-		const std::wstring text
+		const QString &text
 	) {
 	};
 

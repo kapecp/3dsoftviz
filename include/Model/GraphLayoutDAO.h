@@ -31,6 +31,25 @@ namespace Model
     public:
 
 		/**
+		*  \fn public static  getLayoutsNames(qlonglong graph_id, QSqlDatabase* conn, bool* error)
+		*  \brief Returns QMap of layouts names assigned to the Graph in the database
+		*  \param  graph_id    Graph ID
+		*  \param  conn    connection to the database
+		*  \param  error  error flag, will be set to true, if the method encounters an error
+		*  \return QMap<qlonglong,QString> layouts names of the Graph
+		*/
+		static QMap<qlonglong, QString> getLayoutsNames(qlonglong graph_id, QSqlDatabase* conn, bool* error);
+
+		/**
+		*  \fn public static  getListOfLayouts(QSqlDatabase* conn, bool* error)
+		*  \brief	Return list of layouts - graph ID
+		*  \param   conn   connection to the database 
+		*  \param   error  error flag, will be set to true, if the method encounters an error
+		*  \return	qlonglong number of layouts in DB for graph
+		*/
+		static QList<qlonglong> getListOfLayouts(QSqlDatabase* conn, bool* error);
+
+		/**
 		*  \fn public static  getLayouts(Data::Graph* graph, QSqlDatabase* conn, bool* error)
 		*  \brief Returns QMap of GraphLayotus assigned to the Graph in the database
 		*  \param  graph    Graph
@@ -39,7 +58,6 @@ namespace Model
 		*  \return QMap<qlonglong,Data::GraphLayout*> GraphLayouts of the Graph
 		*/
 		static QMap<qlonglong, Data::GraphLayout*> getLayouts(Data::Graph* graph, QSqlDatabase* conn, bool* error);
-
 
 		/**
 		*  \fn public static overloaded  addLayout(QString layout_name, Data::Graph* graph, QSqlDatabase* conn)

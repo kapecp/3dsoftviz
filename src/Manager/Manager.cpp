@@ -42,23 +42,21 @@ Data::Graph* Manager::GraphManager::loadGraph(QString filepath)
     AppCore::Core::getInstance()->thr->pause();
     AppCore::Core::getInstance()->messageWindows->showProgressBar();
 
-    // TODO: [ML] better extension getting
+    // create info handler
+	std::auto_ptr<Importer::ImportInfoHandler> infoHandler (NULL);
+	if (ok) {
+		infoHandler.reset (new ImportInfoHandlerImpl);
+	}
 
-	// get extension
+	// get name and extension
+	QString name;
 	QString extension;
-	int dotIndex = -1;
 
 	if (ok) {
-		dotIndex = filepath.lastIndexOf (QChar ('.'));
-		ok = (dotIndex > 0);
+		QFileInfo fileInfo (filepath);
+		name = fileInfo.fileName ();
+		extension = fileInfo.suffix ();
 	}
-
-
-	if (ok) {
-		extension = filepath.mid (dotIndex + 1);
-	}
-
-	// TODO: [ML] error messages (if no suitable importer has been found)
 
 	// get importer
 	std::auto_ptr<Importer::StreamImporter> importer (NULL);
@@ -69,37 +67,42 @@ Data::Graph* Manager::GraphManager::loadGraph(QString filepath)
 			Importer::ImporterFactory::createByFileExtension (
 				importer,
 				importerFound,
-				extension.toStdString ()
+				extension
 			)
 			&&
 			importerFound
 		;
+
+		infoHandler->reportError(ok, "No suitable importer has been found for the file extension.");
 	}
 
     // create stream
-    std::string filepathStr = filepath.toStdString ();
-    fstream file (filepathStr.c_str (), ios::in | ios::binary);
+    std::auto_ptr<QIODevice> stream (NULL);
+    if (ok) {
+    	stream.reset (new QFile (filepath));
+    }
+
+    if (ok) {
+    	ok = (stream->open (QIODevice::ReadOnly));
+
+    	infoHandler->reportError(ok, "Unable to open the input file.");
+    }
 
     // create graph
     std::auto_ptr<Data::Graph> newGraph (NULL);
     if (ok) {
-		QFileInfo filename(filepath);
-		newGraph.reset (this->createGraph(filename.fileName()));
+		newGraph.reset (this->createGraph (name));
 		ok = (newGraph.get () != NULL);
     }
 
-    // create info handler
-    std::auto_ptr<Importer::ImportInfoHandler> infoHandler (NULL);
-    if (ok) {
-    	infoHandler.reset (new ImportInfoHandlerImpl);
-    }
+
 
     // create context
     std::auto_ptr<Importer::ImporterContext> context (NULL);
     if (ok) {
     	context.reset (
     		new Importer::ImporterContext (
-				file,
+				*stream,
 				*newGraph,
 				*infoHandler
 			)
@@ -111,6 +114,11 @@ Data::Graph* Manager::GraphManager::loadGraph(QString filepath)
     	ok = importer->import (*context);
     }
 
+    // close stream
+    if (stream.get() != NULL) {
+    	stream->close ();
+    }
+
     // set as active graph
     if (ok) {
     	// ak uz nejaky graf mame, tak ho najprv sejvneme a zavrieme
@@ -120,6 +128,15 @@ Data::Graph* Manager::GraphManager::loadGraph(QString filepath)
 		}
 		this->activeGraph = newGraph.release ();
     }
+
+	//ked uz mame graf nacitany zo suboru, ulozime ho aj do databazy
+	//ulozime obycajne uzly a hrany
+	this->activeGraph->saveGraphToDB(db->tmpGetConn());
+	//ulozime a nastavime default layout
+	Data::GraphLayout* layout = Model::GraphLayoutDAO::addLayout("original layout", this->activeGraph, db->tmpGetConn());
+	this->activeGraph->selectLayout(layout);
+	//este ulozit meta uzly, hrany a pozicie vsetkych uzlov
+	this->activeGraph->saveLayoutToDB(db->tmpGetConn());
 
     if (ok) {
     	// robime zakladnu proceduru pre restartovanie layoutu
@@ -135,9 +152,9 @@ Data::Graph* Manager::GraphManager::loadGraphFromDB(qlonglong graphID, qlonglong
 {
 	Data::Graph* newGraph;
 	bool error;
-
-	newGraph = Model::GraphDAO::getGraph(db->tmpGetConn(), &error, graphID, layoutID);
 	
+	newGraph = Model::GraphDAO::getGraph(db->tmpGetConn(), &error, graphID, layoutID);
+
 	if(!error)
 	{
 		qDebug() << "[Manager::GraphManager::loadGraphFromDB] Graph loaded from database successfully";
@@ -161,10 +178,10 @@ Data::Graph* Manager::GraphManager::loadGraphFromDB(qlonglong graphID, qlonglong
 	return this->activeGraph;
 }
 
-void Manager::GraphManager::saveGraph(Data::Graph* graph)
+/*void Manager::GraphManager::saveGraph(Data::Graph* graph)
 {
     graph->saveGraphToDB();
-}
+}*/
 
 void Manager::GraphManager::exportGraph(Data::Graph* graph, QString filepath)
 {

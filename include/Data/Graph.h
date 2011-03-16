@@ -286,9 +286,18 @@ namespace Data
 		/**
 		*  \fn public  saveGraphToDB
 		*  \brief Saves Graph to the database
+		*  \param  conn connection to database   
 		*  \return bool true, if the Graph was successfully saved
 		*/
-		bool saveGraphToDB(); 
+		bool saveGraphToDB(QSqlDatabase* conn); 
+
+		/**
+		*  \fn public  saveLayoutToDB
+		*  \brief Saves graph layout to the database
+		*  \param  conn connection to database   
+		*  \return bool true, if the graph layout was successfully saved
+		*/
+		bool saveLayoutToDB(QSqlDatabase* conn); 
 
 		/**
 		*  \fn inline public constant  getNodes

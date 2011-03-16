@@ -20,6 +20,7 @@
 #include "Manager/Manager.h"
 #include "Model/DB.h"
 #include "Model/GraphDAO.h"
+#include "QOSG/SelectLayoutWindow.h"
 
 class QComboBox;
 class QLabel;
@@ -32,7 +33,7 @@ namespace QOSG
 	/**
 	*  \class LoadGraphWindow
 	*
-	*  \brief Window for loading grapgs saved in database
+	*  \brief Window for loading graphs saved in database
 	*/
 	class LoadGraphWindow : public QDialog
 	{

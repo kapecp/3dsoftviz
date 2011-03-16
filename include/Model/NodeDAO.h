@@ -33,11 +33,39 @@ namespace Model
 		*  \brief	Add nodes to DB
 		*  \param   conn   connection to the database 
 		*  \param   nodes  nodes from actual graph
-		*  \param   isMeta  if nodes are meta or not
+		*  \return	bool true, if nodes were successfully added to DB
+		*/
+		static bool addNodesToDB(QSqlDatabase* conn, QMap<qlonglong, osg::ref_ptr<Data::Node> >* nodes);
+
+		/**
+		*  \fn public static  addMetaNodesToDB(QSqlDatabase* conn, QMap<qlonglong, osg::ref_ptr<Data::Node> >* nodes, Data::GraphLayout* layout)
+		*  \brief	Add nodes to DB
+		*  \param   conn   connection to the database 
+		*  \param   nodes  nodes from actual graph
 		*  \param   layout  layout from actual graph
 		*  \return	bool true, if nodes were successfully added to DB
 		*/
-		static bool addNodesToDB(QSqlDatabase* conn, QMap<qlonglong, osg::ref_ptr<Data::Node> >* nodes, bool isMeta, Data::GraphLayout* layout);
+		static bool addMetaNodesToDB(QSqlDatabase* conn, QMap<qlonglong, osg::ref_ptr<Data::Node> >* nodes, Data::GraphLayout* layout);
+
+		/**
+		*  \fn public static  addNodesPositionsToDB(QSqlDatabase* conn, QMap<qlonglong, osg::ref_ptr<Data::Node> >* nodes, Data::GraphLayout* layout)
+		*  \brief	Add nodes positions to DB
+		*  \param   conn   connection to the database 
+		*  \param   nodes  nodes from actual graph
+		*  \param   layout  layout from actual graph
+		*  \return	bool true, if nodes were successfully added to DB
+		*/
+		static bool addNodesPositionsToDB(QSqlDatabase* conn, QMap<qlonglong, osg::ref_ptr<Data::Node> >* nodes, Data::GraphLayout* layout);
+		
+		/**
+		*  \fn public static  addNodesColorToDB(QSqlDatabase* conn, QMap<qlonglong, osg::ref_ptr<Data::Node> >* nodes)
+		*  \brief	Add color of nodes to DB
+		*  \param   conn   connection to the database 
+		*  \param   nodes  nodes from actual graph
+		*  \param   layout  layout from actual graph
+		*  \return	bool true, if color of nodes was successfully added to DB
+		*/
+		static bool addNodesColorToDB(QSqlDatabase* conn, QMap<qlonglong, osg::ref_ptr<Data::Node> >* nodes, Data::GraphLayout* layout);
 
 		/**
 		*  \fn public static  getNodesQuery(QSqlDatabase* conn, bool* error, qlonglong graphID)
@@ -45,9 +73,10 @@ namespace Model
 		*  \param   conn   connection to the database 
 		*  \param   error  error flag, will be set to true, if the method encounters an error
 		*  \param   graphID  graph ID
+		*  \param   layoutID  layout ID
 		*  \return	QSqlQuery* nodes query from DB
 		*/
-		static QSqlQuery* getNodesQuery(QSqlDatabase* conn, bool* error, qlonglong graphID);
+		static QSqlQuery* getNodesQuery(QSqlDatabase* conn, bool* error, qlonglong graphID, qlonglong layoutID);
 
 		/**
 		*  \fn public static  getNodesPositionsQuery(QSqlDatabase* conn, bool* error, qlonglong graphID)
@@ -55,16 +84,17 @@ namespace Model
 		*  \param   conn   connection to the database 
 		*  \param   error  error flag, will be set to true, if the method encounters an error
 		*  \param   graphID  graph ID
+		*  \param   layoutID  layout ID
 		*  \return	QSqlQuery* nodes positions query from DB
 		*/
-		static QSqlQuery* getNodesPositionsQuery(QSqlDatabase* conn, bool* error, qlonglong graphID);
+		static QSqlQuery* getNodesPositionsQuery(QSqlDatabase* conn, bool* error, qlonglong graphID, qlonglong layoutID);
 
 		/**
 		*  \fn public static  getNumberOfNodes(QSqlDatabase* conn, bool* error)
 		*  \brief	Return list of nodes - graph ID
 		*  \param   conn   connection to the database 
 		*  \param   error  error flag, will be set to true, if the method encounters an error
-		*  \return	qlonglong number of nodes in DB in graph
+		*  \return	QList<qlonglong> list of nodes in DB in graph
 		*/
 		static QList<qlonglong> getListOfNodes(QSqlDatabase* conn, bool* error);
 
@@ -96,6 +126,18 @@ namespace Model
         * \return QMap<QString,QString> settings of the Node
         */
         static QMap<QString,QString> getSettings(Data::Node* node, QSqlDatabase* conn, bool* error);
+
+		/**
+		*  \fn public static  getSettings(QSqlDatabase* conn, bool* error, qlonglong graphID, qlonglong layoutID, QString attributeName)
+		*  \brief	Return nodes settings map from DB
+		*  \param   conn   connection to the database 
+		*  \param   error  error flag, will be set to true, if the method encounters an error
+		*  \param   graphID  graph ID
+		*  \param   layoutID  layout ID
+		*  \param   attributeName  name of node attribute
+		*  \return	QMap<qlonglong, QString> settings of the Node
+		*/
+		static QMap<qlonglong, QString> getSettings(QSqlDatabase* conn, bool* error, qlonglong graphID, qlonglong layoutID, QString attributeName);
     private:
 
 		/**

@@ -12,7 +12,47 @@ Model::EdgeDAO::~EdgeDAO(void)
 {
 }
 
-bool Model::EdgeDAO::addEdgesToDB(QSqlDatabase* conn, QMap<qlonglong, osg::ref_ptr<Data::Edge> >* edges, bool isMeta)
+/*bool Model::EdgeDAO::addEdgesToDB(QSqlDatabase* conn, QMap<qlonglong, osg::ref_ptr<Data::Edge> >* edges, bool isMeta)
+{
+	//check if we have connection
+	if(conn==NULL || !conn->isOpen()) 
+	{ 
+        qDebug() << "[Model::EdgeDAO::addEdgesToDB] Connection to DB not opened.";
+        return false;
+    }
+
+	QMap< qlonglong,osg::ref_ptr<Data::Edge> >::const_iterator iEdges =	edges->constBegin();
+
+	QSqlQuery* query = new QSqlQuery(*conn);
+ 
+	while(iEdges != edges->constEnd()) 
+	{
+		query->prepare("INSERT INTO edges (edge_id, name, type_id, n1, n2, oriented, meta, graph_id, layout_id) VALUES (:edge_id, :name, :type_id, :n1, :n2, :oriented, :meta, :graph_id, :layout_id) RETURNING  edge_id");
+		query->bindValue(":edge_id", iEdges.value()->getId());
+		query->bindValue(":name", iEdges.value()->getName());
+		query->bindValue(":type_id", iEdges.value()->getType()->getId());
+		query->bindValue(":n1", iEdges.value()->getSrcNode()->getId()); 
+		query->bindValue(":n2", iEdges.value()->getDstNode()->getId());
+		query->bindValue(":oriented", iEdges.value()->isOriented());
+		query->bindValue(":meta", isMeta);
+		query->bindValue(":graph_id", iEdges.value()->getGraph()->getId());
+		query->bindValue(":layout_id", iEdges.value()->getGraph()->getId());
+
+		if(!query->exec()) {
+			qDebug() << "[Model::EdgeDAO::addEdgesToDB] Could not perform query on DB: " << query->lastError().databaseText();
+			return false;
+		}
+		++iEdges;
+	}
+	if(isMeta)
+		qDebug() << "[Model::EdgeDAO::addEdgesToDB] " << edges->count() << " meta edges were saved to DB.";
+	else
+		qDebug() << "[Model::EdgeDAO::addEdgesToDB] " << edges->count() << " edges were saved to DB.";
+
+	return true;
+}*/
+
+bool Model::EdgeDAO::addEdgesToDB(QSqlDatabase* conn, QMap<qlonglong, osg::ref_ptr<Data::Edge> >* edges)
 {
 	//check if we have connection
 	if(conn==NULL || !conn->isOpen()) 
@@ -34,7 +74,7 @@ bool Model::EdgeDAO::addEdgesToDB(QSqlDatabase* conn, QMap<qlonglong, osg::ref_p
 		query->bindValue(":n1", iEdges.value()->getSrcNode()->getId()); 
 		query->bindValue(":n2", iEdges.value()->getDstNode()->getId());
 		query->bindValue(":oriented", iEdges.value()->isOriented());
-		query->bindValue(":meta", isMeta);
+		query->bindValue(":meta", false);
 		query->bindValue(":graph_id", iEdges.value()->getGraph()->getId());
 
 		if(!query->exec()) {
@@ -43,15 +83,51 @@ bool Model::EdgeDAO::addEdgesToDB(QSqlDatabase* conn, QMap<qlonglong, osg::ref_p
 		}
 		++iEdges;
 	}
-	if(isMeta)
-		qDebug() << "[Model::EdgeDAO::addEdgesToDB] " << edges->count() << " meta edges were saved to DB.";
-	else
-		qDebug() << "[Model::EdgeDAO::addEdgesToDB] " << edges->count() << " edges were saved to DB.";
+
+	qDebug() << "[Model::EdgeDAO::addEdgesToDB] " << edges->count() << " edges were saved to DB.";
 
 	return true;
 }
 
-QSqlQuery* Model::EdgeDAO::getEdgesQuery(QSqlDatabase* conn, bool* error, qlonglong graphID)
+bool Model::EdgeDAO::addMetaEdgesToDB(QSqlDatabase* conn, QMap<qlonglong, osg::ref_ptr<Data::Edge> >* edges, Data::GraphLayout* layout)
+{
+	//check if we have connection
+	if(conn==NULL || !conn->isOpen()) 
+	{ 
+        qDebug() << "[Model::EdgeDAO::addMetaEdgesToDB] Connection to DB not opened.";
+        return false;
+    }
+
+	QMap< qlonglong,osg::ref_ptr<Data::Edge> >::const_iterator iEdges =	edges->constBegin();
+
+	QSqlQuery* query = new QSqlQuery(*conn);
+ 
+	while(iEdges != edges->constEnd()) 
+	{
+		query->prepare("INSERT INTO edges (edge_id, name, type_id, n1, n2, oriented, meta, graph_id, layout_id) VALUES (:edge_id, :name, :type_id, :n1, :n2, :oriented, :meta, :graph_id, :layout_id) RETURNING  edge_id");
+		query->bindValue(":edge_id", iEdges.value()->getId());
+		query->bindValue(":name", iEdges.value()->getName());
+		query->bindValue(":type_id", iEdges.value()->getType()->getId());
+		query->bindValue(":n1", iEdges.value()->getSrcNode()->getId()); 
+		query->bindValue(":n2", iEdges.value()->getDstNode()->getId());
+		query->bindValue(":oriented", iEdges.value()->isOriented());
+		query->bindValue(":meta", true);
+		query->bindValue(":graph_id", iEdges.value()->getGraph()->getId());
+		query->bindValue(":layout_id", layout->getId());
+
+		if(!query->exec()) {
+			qDebug() << "[Model::EdgeDAO::addMetaEdgesToDB] Could not perform query on DB: " << query->lastError().databaseText();
+			return false;
+		}
+		++iEdges;
+	}
+
+	qDebug() << "[Model::EdgeDAO::addMetaEdgesToDB] " << edges->count() << " meta edges were saved to DB.";
+
+	return true;
+}
+
+QSqlQuery* Model::EdgeDAO::getEdgesQuery(QSqlDatabase* conn, bool* error, qlonglong graphID, qlonglong layoutID)
 {
 	QSqlQuery* query;
     *error = FALSE;
@@ -59,7 +135,7 @@ QSqlQuery* Model::EdgeDAO::getEdgesQuery(QSqlDatabase* conn, bool* error, qlongl
 	//check if we have connection
     if(conn==NULL || !conn->isOpen()) 
 	{ 
-        qDebug() << "[Model::EdgeDAO::getEdges] Connection to DB not opened.";
+        qDebug() << "[Model::EdgeDAO::getEdgesQuery] Connection to DB not opened.";
         *error = TRUE;
         return query;
     }
@@ -68,11 +144,13 @@ QSqlQuery* Model::EdgeDAO::getEdgesQuery(QSqlDatabase* conn, bool* error, qlongl
     query = new QSqlQuery(*conn);
     query->prepare("SELECT * "
 		"FROM edges "
-		"WHERE graph_id = :graph_id");
+		"WHERE graph_id = :graph_id "
+		"AND (layout_id IS NULL OR layout_id = :layout_id)");
 	query->bindValue(":graph_id", graphID);
+	query->bindValue(":layout_id", layoutID);
 
     if(!query->exec()) {
-        qDebug() << "[Model::EdgeDAO::getEdges] Could not perform query on DB: " << query->lastError().databaseText();
+        qDebug() << "[Model::EdgeDAO::getEdgesQuery] Could not perform query on DB: " << query->lastError().databaseText();
         *error = TRUE;
         return query;
     }

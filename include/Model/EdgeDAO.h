@@ -34,7 +34,26 @@ namespace Model
 		*  \param   isMeta  if edges from actual graph are meta
 		*  \return	bool true, if edges were successfully added to DB
 		*/
-		static bool addEdgesToDB(QSqlDatabase* conn, QMap<qlonglong, osg::ref_ptr<Data::Edge> >* edges, bool isMeta);
+		//static bool addEdgesToDB(QSqlDatabase* conn, QMap<qlonglong, osg::ref_ptr<Data::Edge> >* edges, bool isMeta);
+
+		/**
+		*  \fn public static  addEdgesToDB(QSqlDatabase* conn, QMap<qlonglong, osg::ref_ptr<Data::Edge> >* edgess)
+		*  \brief	Add edges to DB
+		*  \param   conn   connection to the database 
+		*  \param   edges  edges from actual graph
+		*  \return	bool true, if edges were successfully added to DB
+		*/
+		static bool addEdgesToDB(QSqlDatabase* conn, QMap<qlonglong, osg::ref_ptr<Data::Edge> >* edges);
+
+		/**
+		*  \fn public static  addEdgesToDB(QSqlDatabase* conn, QMap<qlonglong, osg::ref_ptr<Data::Edge> >* edgess)
+		*  \brief	Add edges to DB
+		*  \param   conn   connection to the database 
+		*  \param   edges  edges from actual graph
+		*  \param   layout  layout from actual graph
+		*  \return	bool true, if edges were successfully added to DB
+		*/
+		static bool addMetaEdgesToDB(QSqlDatabase* conn, QMap<qlonglong, osg::ref_ptr<Data::Edge> >* edges, Data::GraphLayout* layout);
 
 		/**
 		*  \fn public static  getEdgesQuery(QSqlDatabase* conn, bool* error, qlonglong graphID)
@@ -44,7 +63,7 @@ namespace Model
 		*  \param   graphID  graph ID
 		*  \return	QSqlQuery* edges query from DB
 		*/
-		static QSqlQuery* getEdgesQuery(QSqlDatabase* conn, bool* error, qlonglong graphID);
+		static QSqlQuery* getEdgesQuery(QSqlDatabase* conn, bool* error, qlonglong graphID, qlonglong layoutID);
 
 		/**
 		*  \fn public static  getNumberOfEdges(QSqlDatabase* conn, bool* error)

@@ -142,6 +142,45 @@ Data::Graph::~Graph(void)
     this->conn = NULL;
 }
 
+bool Data::Graph::saveGraphToDB(QSqlDatabase* conn, Data::Graph * graph)
+{
+	if(Model::NodeDAO::addNodesToDB(conn, this->nodes) //namiesto this->conn  -  conn
+		&& Model::EdgeDAO::addEdgesToDB(conn, this->edges))
+	{
+		qDebug() << "[Data::Graph::saveGraphToDB] Graph was saved to DB.";
+		return true;
+	}
+	else
+	{
+		qDebug() << "[Data::Graph::saveGraphToDB] Graph wasn't saved to DB.";
+		return false;
+	}
+		
+	return false;
+}
+
+bool Data::Graph::saveLayoutToDB(QSqlDatabase* conn, Data::Graph * graph)//aj graph, nie len conn!!!
+{
+	if(Model::NodeDAO::addMetaNodesToDB(conn, this->metaNodes, this->selectedLayout)//namiesto this->conn treba conn 
+		&& Model::NodeDAO::addNodesPositionsToDB(conn, this->metaNodes, this->selectedLayout)
+		&& Model::NodeDAO::addNodesColorToDB(conn, this->metaNodes, this->selectedLayout)
+		&& Model::NodeDAO::addNodesPositionsToDB(conn, this->nodes, this->selectedLayout)
+		&& Model::NodeDAO::addNodesColorToDB(conn, this->nodes, this->selectedLayout)
+		&& Model::EdgeDAO::addMetaEdgesToDB(conn, this->metaEdges, this->selectedLayout))
+	{
+		qDebug() << "[Data::Graph::saveLayoutToDB] Layout was saved to DB.";
+		return true;
+	}
+	else
+	{
+		qDebug() << "[Data::Graph::saveLayoutToDB] Layout wasn't saved to DB.";
+		return false;
+	}
+		
+	return false;
+}
+
+/*
 bool Data::Graph::saveGraphToDB()
 {
 	if(Model::NodeDAO::addNodesToDB(this->conn, this->nodes, false, this->selectedLayout) 
@@ -160,6 +199,7 @@ bool Data::Graph::saveGraphToDB()
 		
 	return false;
 }
+*/
 
 Data::GraphLayout* Data::Graph::addLayout(QString layout_name)
 {
@@ -168,7 +208,10 @@ Data::GraphLayout* Data::Graph::addLayout(QString layout_name)
         this->layouts = this->getLayouts(&error);
     }
 
-    Data::GraphLayout* layout = Model::GraphLayoutDAO::addLayout(layout_name, this, this->conn);
+	//layouty bude do DB pridavat user, nebudu sa pridavat automaticky
+	//layout_id nebudeme brat z DB, lebo layout tam nemusi byt, preto vzdy nastavime na 1
+    //Data::GraphLayout* layout = Model::GraphLayoutDAO::addLayout(layout_name, this, this->conn);
+    Data::GraphLayout* layout = new Data::GraphLayout(1,this,layout_name,this->conn);
     
     if(layout==NULL && (this->conn==NULL || !this->conn->isOpen())) { //nepodarilo sa vytvorit GraphLayout - nejaky problem s pripojenim na DB;
         //vytvorime si nahradny layout aby sme mohli bezat aj bez pripojenia k DB

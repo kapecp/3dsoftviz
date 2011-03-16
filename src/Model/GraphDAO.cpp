@@ -67,12 +67,16 @@ Data::Graph* Model::GraphDAO::getGraph(QSqlDatabase* conn, bool* error2, qlonglo
 	QMap<qlonglong, Data::Node*>::iterator iNodes2;
 	Data::Node* newNode;
 	osg::Vec3f position;
+	QMap< qlonglong, QList<double> > positions;
+	QList<double> coordinates;
+	QMap<qlonglong, QString> nodeSettings;
 
 	graphName = Model::GraphDAO::getName(graphID, &error, conn);
 	layoutName = Model::GraphLayoutDAO::getName(conn, &error, graphID, layoutID);
-	queryNodes = Model::NodeDAO::getNodesQuery(conn, &error, graphID);
-	queryNodesPositions = Model::NodeDAO::getNodesPositionsQuery(conn, &error, graphID);
-	queryEdges = Model::EdgeDAO::getEdgesQuery(conn, &error, graphID);
+	queryNodes = Model::NodeDAO::getNodesQuery(conn, &error, graphID, layoutID);
+	queryNodesPositions = Model::NodeDAO::getNodesPositionsQuery(conn, &error, graphID, layoutID);
+	queryEdges = Model::EdgeDAO::getEdgesQuery(conn, &error, graphID, layoutID);
+	nodeSettings = Model::NodeDAO::getSettings(conn, &error, graphID, layoutID, "color");
 		
 	if(!error)
 	{
@@ -84,14 +88,28 @@ Data::Graph* Model::GraphDAO::getGraph(QSqlDatabase* conn, bool* error2, qlonglo
   		Data::Type *typeMetaNode = newGraph->addType("metanode");
 		Data::Type *typeMetaEdge = newGraph->addType("metaedge");
 
-		//nodes sa ukladaju do DB v takom poradi ako ich positions, ale treba to este upravit,
-		//aby sa kontrolovalo ci node a jeho position sedia
-		while(queryNodes->next() && queryNodesPositions->next()) 
+		while(queryNodesPositions->next())
 		{
-			position = osg::Vec3f(queryNodesPositions->value(2).toDouble(), queryNodesPositions->value(3).toDouble(), queryNodesPositions->value(4).toDouble());
+			coordinates.clear();
+			coordinates << queryNodesPositions->value(2).toDouble() << queryNodesPositions->value(3).toDouble() << queryNodesPositions->value(4).toDouble();
+			positions.insert(queryNodesPositions->value(1).toLongLong(), coordinates);
+		}
+
+		while(queryNodes->next()) 
+		{
+			coordinates.clear();
+			coordinates = positions[queryNodes->value(0).toLongLong()];
+			position = osg::Vec3f(coordinates[0], coordinates[1], coordinates[2]);
 			//taktiez chyba pridavanie zvlast meta node a klasickych nodes
 			//vsetky sa teraz ukladaju do nodes
 			newNode = newGraph->addNode(queryNodes->value(1).toString(), (queryNodes->value(4).toBool() ? typeMetaNode : typeNode), position);
+			//vsetky uzly nastavime fixed, aby sme zachovali layout
+			//hodnota, ktora je ulozena v DB: newNode->setFixed(queryNodes->value(5).toBool()); 
+			newNode->setFixed(true);
+			//newNode->setColor(osg::Vec4(queryNodes->value(7).toDouble(), queryNodes->value(8).toDouble(), queryNodes->value(9).toDouble(), queryNodes->value(10).toDouble()));
+			//TODO
+			
+
 			nodes.insert(queryNodes->value(0).toLongLong(), newNode);
 		}
 		
@@ -125,7 +143,7 @@ Data::Graph* Model::GraphDAO::addGraph(QString graph_name, QSqlDatabase* conn)
         return NULL;
     }
 
-    QSqlQuery* query = new QSqlQuery(*conn);
+	QSqlQuery* query = new QSqlQuery(*conn);
     query->prepare("INSERT INTO graphs (graph_name) VALUES (:graph_name) RETURNING graph_id");
     query->bindValue(":graph_name",graph_name);
     if(!query->exec()) {
@@ -144,6 +162,7 @@ Data::Graph* Model::GraphDAO::addGraph(QString graph_name, QSqlDatabase* conn)
     }
 }
 
+//???
 bool Model::GraphDAO::addGraph( Data::Graph* graph, QSqlDatabase* conn )
 {
     if(conn==NULL || !conn->isOpen()) { //check if we have connection
@@ -169,10 +188,10 @@ bool Model::GraphDAO::addGraph( Data::Graph* graph, QSqlDatabase* conn )
     if(query->next()) {
         graph->setId(query->value(0).toLongLong());
         graph->setIsInDB();
-        qDebug() << "[Model::GraphDAO::addGraph] Graph was added to DB and it's ID was set to: " << graph->getId();
+        qDebug() << "[Model::GraphDAO::addGraph2] Graph was added to DB and it's ID was set to: " << graph->getId();
         return true;
     } else {
-        qDebug() << "[Model::GraphDAO::addGraph] Graph was not added to DB: " << query->lastQuery();
+        qDebug() << "[Model::GraphDAO::addGraph2] Graph was not added to DB: " << query->lastQuery();
         return false;
     }
 }
@@ -253,12 +272,12 @@ QString Model::GraphDAO::setName(QString name,Data::Graph* graph, QSqlDatabase* 
         return NULL;
     }
     
-    if(!graph->isInDB()) {
+    /*if(!graph->isInDB()) {
         if(!Model::GraphDAO::addGraph(graph, conn)) { //could not insert graph into DB
             qDebug() << "[Model::GraphDAO::setName] Could not update graph name in DB. Graph is not in DB.";
             return NULL;
         }
-    }
+    }*/
 
     QSqlQuery* query = new QSqlQuery(*conn);
     query->prepare("UPDATE graphs SET graph_name = :graph_name WHERE graph_id = :graph_id");

@@ -70,7 +70,7 @@ namespace Manager
              * \fn saveGraph
              * \brief Saves graph.
              */
-            void saveGraph(Data::Graph* graph);
+            //void saveGraph(Data::Graph* graph);
 
             /**
              * \fn exportGraph

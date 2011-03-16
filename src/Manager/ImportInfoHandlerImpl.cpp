@@ -5,19 +5,19 @@
 namespace Manager {
 
 void ImportInfoHandlerImpl::addMessage (
-	const std::wstring &text
+	const QString &text
 ) {
 	throw "not implemented";
 }
 
 void ImportInfoHandlerImpl::reportError (
-	const std::wstring &text
+	const QString &text
 ) {
-	/*AppCore::Core::getInstance()->messageWindows->showMessageBox (
+	AppCore::Core::getInstance()->messageWindows->showMessageBox (
 		"Chyba",
-		QString::fromStdWString (text),
+		text,
 		true
-	);*/
+	);
 }
 
 void ImportInfoHandlerImpl::setProgress (

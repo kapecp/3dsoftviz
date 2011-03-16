@@ -53,10 +53,10 @@ namespace QOSG
 				void showLoadGraph();
 
 				/**
-				*  \fn public  saveGraph
-				*  \brief Save loaded graph to database
+				*  \fn public  saveLayoutToDB
+				*  \brief Save layout of current graph to database
 				*/
-				void saveGraphToDB();
+				void saveLayoutToDB();
 
 				/**
 				*  \fn public  sqlQuery
