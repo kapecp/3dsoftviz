@@ -252,6 +252,58 @@ bool Model::EdgeDAO::removeEdge( Data::Edge* edge, QSqlDatabase* conn )
     return true;
 }
 
+bool Model::EdgeDAO::removeEdges(qlonglong graphID, QSqlDatabase* conn)
+{
+    if(conn==NULL || !conn->isOpen()) { 
+        qDebug() << "[Model::EdgeDAO::removeEdges] Connection to DB not opened.";
+        return NULL;
+    } 
+
+    QSqlQuery* query = new QSqlQuery(*conn);
+    query->prepare("DELETE FROM edge_settings WHERE graph_id = :graph_id");
+    query->bindValue(":graph_id", graphID);
+    if(!query->exec()) {
+        qDebug() << "[Model::EdgeDAO::removeEdges] Could not perform query on DB: " << query->lastError().databaseText();
+        return false;
+    }
+
+    query->prepare("DELETE FROM edges WHERE graph_id = :graph_id");
+    query->bindValue(":graph_id", graphID);
+    if(!query->exec()) {
+        qDebug() << "[Model::EdgeDAO::removeEdges] Could not perform query on DB: " << query->lastError().databaseText();
+        return false;
+    }
+
+    return true;
+}
+
+bool Model::EdgeDAO::removeEdges(qlonglong graphID, qlonglong layoutID, QSqlDatabase* conn)
+{
+    if(conn==NULL || !conn->isOpen()) { 
+        qDebug() << "[Model::EdgeDAO::removeEdges] Connection to DB not opened.";
+        return NULL;
+    } 
+
+    QSqlQuery* query = new QSqlQuery(*conn);
+    query->prepare("DELETE FROM edge_settings WHERE graph_id = :graph_id AND layout_id = :layout_id");
+    query->bindValue(":graph_id", graphID);
+	query->bindValue(":layout_id", layoutID);
+    if(!query->exec()) {
+        qDebug() << "[Model::EdgeDAO::removeEdges] Could not perform query on DB: " << query->lastError().databaseText();
+        return false;
+    }
+
+    query->prepare("DELETE FROM edges WHERE graph_id = :graph_id AND layout_id = :layout_id");
+    query->bindValue(":graph_id", graphID);
+	query->bindValue(":layout_id", layoutID);
+    if(!query->exec()) {
+        qDebug() << "[Model::EdgeDAO::removeEdges] Could not perform query on DB: " << query->lastError().databaseText();
+        return false;
+    }
+
+    return true;
+}
+
 QMap<QString,QString> Model::EdgeDAO::getSettings( Data::Edge* edge, QSqlDatabase* conn, bool* error )
 {
     QMap<QString,QString> settings;

@@ -118,6 +118,25 @@ namespace Model
 		static bool removeNode(Data::Node* node, QSqlDatabase* conn);
 
 		/**
+		*  \fn public static  removeNodes(qlonglong graphID, QSqlDatabase* conn)
+		*  \brief Removes Nodes from the database
+		*  \param  graphID   ID of graph
+		*  \param  conn   connection to the database
+		*  \return bool true, if the Nodes ware successfully removed from the database
+		*/
+		static bool removeNodes(qlonglong graphID, QSqlDatabase* conn);
+
+		/**
+		*  \fn public static  removeNodes(qlonglong graphID, qlonglong layoutID, QSqlDatabase* conn)
+		*  \brief Removes Nodes from the database
+		*  \param  graphID   ID of graph
+		*  \param  layoutID   ID of layout
+		*  \param  conn   connection to the database
+		*  \return bool true, if the Nodes ware successfully removed from the database
+		*/
+		static bool removeNodes(qlonglong graphID, qlonglong layoutID, QSqlDatabase* conn);
+
+		/**
         * \fn public static getSettings(Data::Node* node, QSqlDatabase* conn, bool* error)
         * \brief Returns setting of the Node
         * \param  graph	Node

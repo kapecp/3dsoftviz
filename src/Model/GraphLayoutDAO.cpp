@@ -217,6 +217,46 @@ bool Model::GraphLayoutDAO::removeLayout(Data::GraphLayout* graphLayout, QSqlDat
     return true;
 }
 
+bool Model::GraphLayoutDAO::removeLayouts(qlonglong graphID, QSqlDatabase* conn)
+{
+    if(conn==NULL || !conn->isOpen()) { 
+        qDebug() << "[Model::GraphLayoutDAO::removeLayouts] Connection to DB not opened.";
+        return false;
+    } 
+    
+    QSqlQuery* query = new QSqlQuery(*conn);
+    query->prepare("DELETE FROM layouts WHERE graph_id = :graph_id");
+    query->bindValue(":graph_id", graphID);
+    if(!query->exec()) {
+        qDebug() << "[Model::GraphLayoutDAO::removeLayouts] Could not perform query on DB: " << query->lastError().databaseText();
+        return false;
+    }
+
+    return true;
+}
+
+bool Model::GraphLayoutDAO::removeLayout(qlonglong graphID, qlonglong layoutID, QSqlDatabase* conn)
+{
+    if(conn==NULL || !conn->isOpen()) { 
+        qDebug() << "[Model::GraphLayoutDAO::removeLayout] Connection to DB not opened.";
+        return false;
+    } 
+    
+	Model::EdgeDAO::removeEdges(graphID, layoutID, conn);
+	Model::NodeDAO::removeNodes(graphID, layoutID, conn);
+
+    QSqlQuery* query = new QSqlQuery(*conn);
+	query->prepare("DELETE FROM layouts WHERE graph_id = :graph_id AND layout_id = :layout_id");
+    query->bindValue(":graph_id", graphID);
+	query->bindValue(":layout_id", layoutID);
+    if(!query->exec()) {
+        qDebug() << "[Model::GraphLayoutDAO::removeLayout] Could not perform query on DB: " << query->lastError().databaseText();
+        return false;
+    }
+
+    return true;
+}
+
 QString Model::GraphLayoutDAO::getName(QSqlDatabase* conn, bool* error, qlonglong graphID, qlonglong layoutID)
 {
 	QSqlQuery* query;

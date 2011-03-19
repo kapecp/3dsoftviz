@@ -94,6 +94,25 @@ namespace Model
 		static bool removeEdge(Data::Edge* edge, QSqlDatabase* conn);
         
 		/**
+		*  \fn public static  removeEdges(qlonglong graphID, QSqlDatabase* conn)
+		*  \brief Removes the Edges from database
+		*  \param   graphID    ID of graph
+		*  \param   conn     connection to the database
+		*  \return bool true, if the Edges was successfully removed from database
+		*/
+		static bool removeEdges(qlonglong graphID, QSqlDatabase* conn);
+
+		/**
+		*  \fn public static  removeEdges(qlonglong graphID, qlonglong layoutID, QSqlDatabase* conn)
+		*  \brief Removes the Edges from database
+		*  \param   graphID    ID of graph
+		*  \param   layoutID    ID of layout
+		*  \param   conn     connection to the database
+		*  \return bool true, if the Edges was successfully removed from database
+		*/
+		static bool removeEdges(qlonglong graphID, qlonglong layoutID, QSqlDatabase* conn);
+
+		/**
         * \fn public static getSettings(Data::Edge* edge, QSqlDatabase* conn, bool* error)
         * \brief Returns setting of the Edge
         * \param  graph 		edge

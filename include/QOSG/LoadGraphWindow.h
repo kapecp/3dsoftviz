@@ -71,6 +71,12 @@ namespace QOSG
 		QPushButton *loadButton;
 
 		/**
+		*  QPushButton *loadButton
+		*  \brief Load button
+		*/
+		QPushButton *removeButton;
+
+		/**
 		*  QLabel *numberOfGraphs
 		*  \brief Label which show number of graphs stored in database
 		*/
@@ -94,7 +100,13 @@ namespace QOSG
 			*  \brief	Slot which is called when user click on load button
 			*/
 			void loadGraph();
-				
+
+			/**
+			*  \fn removeGraph()
+			*  \brief	Slot which is called when user click on remove button
+			*/
+			void removeGraph();
+
 	};
 }
 

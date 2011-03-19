@@ -314,6 +314,58 @@ bool Model::NodeDAO::removeNode( Data::Node* node, QSqlDatabase* conn )
     return true;
 }
 
+bool Model::NodeDAO::removeNodes(qlonglong graphID, QSqlDatabase* conn)
+{
+    if(conn==NULL || !conn->isOpen()) { 
+        qDebug() << "[Model::NodeDAO::removeNodes] Connection to DB not opened.";
+        return NULL;
+    } 
+    
+    QSqlQuery* query = new QSqlQuery(*conn);
+    query->prepare("DELETE FROM node_settings WHERE graph_id = :graph_id");
+    query->bindValue(":graph_id", graphID);
+    if(!query->exec()) {
+        qDebug() << "[Model::NodeDAO::removeNodes] Could not perform query on DB: " << query->lastError().databaseText();
+        return false;
+    }
+
+	query->prepare("DELETE FROM nodes WHERE graph_id = :graph_id");
+    query->bindValue(":graph_id", graphID);
+    if(!query->exec()) {
+        qDebug() << "[Model::NodeDAO::removeNodes] Could not perform query on DB: " << query->lastError().databaseText();
+        return false;
+    }
+
+    return true;
+}
+
+bool Model::NodeDAO::removeNodes(qlonglong graphID, qlonglong layoutID, QSqlDatabase* conn)
+{
+    if(conn==NULL || !conn->isOpen()) { 
+        qDebug() << "[Model::NodeDAO::removeNodes] Connection to DB not opened.";
+        return NULL;
+    } 
+    
+    QSqlQuery* query = new QSqlQuery(*conn);
+    query->prepare("DELETE FROM node_settings WHERE graph_id = :graph_id AND layout_id = :layout_id");
+    query->bindValue(":graph_id", graphID);
+	query->bindValue(":layout_id", layoutID);
+    if(!query->exec()) {
+        qDebug() << "[Model::NodeDAO::removeNodes] Could not perform query on DB: " << query->lastError().databaseText();
+        return false;
+    }
+
+	query->prepare("DELETE FROM nodes WHERE graph_id = :graph_id AND layout_id = :layout_id");
+    query->bindValue(":graph_id", graphID);
+	query->bindValue(":layout_id", layoutID);
+    if(!query->exec()) {
+        qDebug() << "[Model::NodeDAO::removeNodes] Could not perform query on DB: " << query->lastError().databaseText();
+        return false;
+    }
+
+    return true;
+}
+
 QMap<QString,QString> Model::NodeDAO::getSettings( Data::Node* node, QSqlDatabase* conn, bool* error )
 {
     QMap<QString,QString> settings;

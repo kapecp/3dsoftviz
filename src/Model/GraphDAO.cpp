@@ -244,6 +244,30 @@ bool Model::GraphDAO::removeGraph(Data::Graph* graph, QSqlDatabase* conn)
     return true;
 }
 
+bool Model::GraphDAO::removeGraph(qlonglong graphID, QSqlDatabase* conn)
+{
+    if(conn==NULL || !conn->isOpen()) { 
+        qDebug() << "[Model::GraphDAO::removeGraph] Connection to DB not opened.";
+        return false;
+    }
+    
+	Model::EdgeDAO::removeEdges(graphID, conn);
+	Model::NodeDAO::removeNodes(graphID, conn);
+	Model::GraphLayoutDAO::removeLayouts(graphID, conn);
+
+    QSqlQuery* query = new QSqlQuery(*conn);
+    query->prepare("DELETE FROM graphs WHERE graph_id = :graph_id");
+    query->bindValue(":graph_id", graphID);
+    if(!query->exec()) {
+        qDebug() << "[Model::GraphDAO::removeGraph] Could not perform query on DB: " << query->lastError().databaseText();
+        return false;
+    }
+
+	qDebug() << "[Model::GraphDAO::removeGraph] Graph no. " << graphID << " was removed from database";
+
+    return true;
+}
+
 QString Model::GraphDAO::getName(qlonglong graphID, bool* error, QSqlDatabase* conn)
 {
     *error = FALSE;

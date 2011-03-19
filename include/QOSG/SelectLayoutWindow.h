@@ -63,6 +63,12 @@ namespace QOSG
 		QPushButton *loadButton;
 
 		/**
+		*  QPushButton *removeButton
+		*  \brief Remove button
+		*/
+		QPushButton *removeButton;
+
+		/**
 		*  QLabel *numberOfLayouts
 		*  \brief Label which show number of graph layouts stored in database
 		*/
@@ -92,6 +98,12 @@ namespace QOSG
 			*  \brief	Slot which is called when user click on load button
 			*/
 			void loadLayout();
+
+			/**
+			*  \fn removeLayout()
+			*  \brief	Slot which is called when user click on remove button
+			*/
+			void removeLayout();
 	};
 }
 

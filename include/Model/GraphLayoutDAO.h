@@ -89,6 +89,24 @@ namespace Model
 		*/
 		static bool removeLayout(Data::GraphLayout* graphLayout, QSqlDatabase* conn);
         
+		/**
+		*  \fn public static  removeLayout(qlonglong graphID, QSqlDatabase* conn)
+		*  \brief Removes Graphlayout from the databse
+		*  \param  graphID    ID of graph
+		*  \param  conn   connection to the database
+		*  \return bool true, if the GraphLayout was successfully removed from the database
+		*/
+		static bool removeLayouts(qlonglong graphID, QSqlDatabase* conn);
+ 
+		/**
+		*  \fn public static  removeLayout(qlonglong graphID, qlonglong layoutID, QSqlDatabase* conn)
+		*  \brief Removes Graphlayout from the databse
+		*  \param  graphID    ID of graph
+		*  \param  layoutID    ID of layout
+		*  \param  conn   connection to the database
+		*  \return bool true, if the GraphLayout was successfully removed from the database
+		*/
+		static bool removeLayout(qlonglong graphID, qlonglong layoutID, QSqlDatabase* conn);
 
 		/**
 		*  \fn public static  getName(QSqlDatabase* conn, bool* error, qlonglong graphID, qlonglong layoutID)

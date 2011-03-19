@@ -13,6 +13,7 @@ SelectLayoutWindow::SelectLayoutWindow(QWidget *parent, qlonglong graphID)
     setWindowTitle(tr("Select layout for graph no. %1").arg(graphID));
 
 	loadButton = createButton(tr("Load"), SLOT(loadLayout()));
+	removeButton = createButton(tr("Remove"), SLOT(removeLayout()));
 
 	QPushButton *cancelButton = new QPushButton(tr("Cancel"));
 	cancelButton->setFocusPolicy(Qt::NoFocus);
@@ -36,6 +37,7 @@ SelectLayoutWindow::SelectLayoutWindow(QWidget *parent, qlonglong graphID)
 	QHBoxLayout *buttonsLayout = new QHBoxLayout;
     buttonsLayout->addStretch();
     buttonsLayout->addWidget(loadButton);
+	buttonsLayout->addWidget(removeButton);
 	buttonsLayout->addWidget(cancelButton);
 
     QGridLayout *mainLayout = new QGridLayout;
@@ -97,6 +99,58 @@ void SelectLayoutWindow::loadLayout()
 	else 
 	{
 		qDebug() << "[QOSG::SelectLayoutWindow::loadLayout] There are no layouts for graph saved in DB.";
+	}
+}
+
+void SelectLayoutWindow::removeLayout()
+{
+	qlonglong layoutID;
+	Manager::GraphManager * manager = Manager::GraphManager::getInstance();
+	Model::DB * db = manager->getDB();
+
+	if(layoutsTable->rowCount() > 0) 
+	{
+		layoutID = layoutsTable->item(layoutsTable->currentRow(), 0)->text().toLongLong(); 
+
+		qDebug() << "[QOSG::SelectLayoutWindow::removeLayout] Selected layout ID: " << layoutID;
+
+		QMessageBox msgBox;
+		msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
+		msgBox.setDefaultButton(QMessageBox::Ok);
+
+		if(layoutsTable->rowCount() == 1)
+		{
+			msgBox.setText("There is only one layout in this graph!");
+			msgBox.setInformativeText("Do you really want to remove this layout? (It will also remove the graph)");
+			int ret = msgBox.exec();
+
+			if(ret == QMessageBox::Ok)
+			{
+				Model::GraphDAO::removeGraph(graphID, db->tmpGetConn());
+
+				createLayoutTable();
+				this->repaint();
+				this->update();
+			}
+		}
+		else
+		{
+			msgBox.setText("Do you want to remove selected layout from database?");
+			int ret = msgBox.exec();
+
+			if(ret == QMessageBox::Ok)
+			{
+				Model::GraphLayoutDAO::removeLayout(graphID, layoutID, db->tmpGetConn());
+
+				createLayoutTable();
+				this->repaint();
+				this->update();
+			}
+		}
+	}
+	else 
+	{
+		qDebug() << "[QOSG::SelectLayoutWindow::removeLayout] There are no layouts for graph saved in DB.";
 	}
 }
 

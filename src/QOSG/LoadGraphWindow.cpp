@@ -9,6 +9,7 @@ LoadGraphWindow::LoadGraphWindow(QWidget *parent)
     setWindowTitle(tr("Load graph from database"));
 
 	loadButton = createButton(tr("Load"), SLOT(loadGraph()));
+	removeButton = createButton(tr("Remove"), SLOT(removeGraph()));
 
 	QPushButton *cancelButton = new QPushButton(tr("Cancel"));
 	cancelButton->setFocusPolicy(Qt::NoFocus);
@@ -35,6 +36,7 @@ LoadGraphWindow::LoadGraphWindow(QWidget *parent)
 	QHBoxLayout *buttonsLayout = new QHBoxLayout;
     buttonsLayout->addStretch();
     buttonsLayout->addWidget(loadButton);
+    buttonsLayout->addWidget(removeButton);
 	buttonsLayout->addWidget(cancelButton);
 
     QGridLayout *mainLayout = new QGridLayout;
@@ -108,6 +110,39 @@ void LoadGraphWindow::loadGraph()
 	else 
 	{
 		qDebug() << "[QOSG::LoadGraphWindow::loadGraph] There are no graphs saved in DB.";
+	}
+}
+
+void LoadGraphWindow::removeGraph()
+{
+	qlonglong graphID;
+	Manager::GraphManager * manager = Manager::GraphManager::getInstance();
+	Model::DB * db = manager->getDB();
+
+	if(graphsTable->rowCount() > 0) 
+	{
+		graphID = graphsTable->item(graphsTable->currentRow(), 0)->text().toLongLong(); 
+
+		qDebug() << "[QOSG::LoadGraphWindow::removeGraph] Selected graph ID: " << graphID;
+
+		QMessageBox msgBox;
+		msgBox.setText("Do you want to remove selected graph and all its parts from database?");
+		msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
+		msgBox.setDefaultButton(QMessageBox::Ok);
+		int ret = msgBox.exec();
+
+		if(ret == QMessageBox::Ok)
+		{
+			Model::GraphDAO::removeGraph(graphID, db->tmpGetConn());
+
+			createGraphTable();
+			this->repaint();
+			this->update();
+		}
+	}
+	else 
+	{
+		qDebug() << "[QOSG::LoadGraphWindow::lremoveGraph] There are no graphs saved in DB.";
 	}
 }
 
