@@ -138,7 +138,19 @@ namespace Model
 		*  \return	QMap<qlonglong, QString> settings of the Node
 		*/
 		static QMap<qlonglong, QString> getSettings(QSqlDatabase* conn, bool* error, qlonglong graphID, qlonglong layoutID, QString attributeName);
-    private:
+
+		/**
+		*  \fn public static  getColors(QSqlDatabase* conn, bool* error, qlonglong graphID, qlonglong layoutID, QString attributeName)
+		*  \brief	Return nodes colors map from DB
+		*  \param   conn   connection to the database 
+		*  \param   error  error flag, will be set to true, if the method encounters an error
+		*  \param   graphID  graph ID
+		*  \param   layoutID  layout ID
+		*  \return	QMap<qlonglong, osg::Vec4f> colors of the Nodes
+		*/
+		static QMap<qlonglong, osg::Vec4f> getColors(QSqlDatabase* conn, bool* error, qlonglong graphID, qlonglong layoutID);
+
+	private:
 
 		/**
 		*  \fn private constructor  NodeDAO
@@ -153,6 +165,19 @@ namespace Model
 		*  \brief Destroys NodeDAO object
 		*/
 		~NodeDAO(void);
+
+		/**
+		*  \fn public  static addColorToDB(QSqlDatabase* conn, qlonglong graphID, qlonglong layoutID, qlonglong nodeID, QString valName, QString val)
+		*  \brief	Add color to DB
+		*  \param   conn   connection to the database 
+		*  \param   graphID  ID of graph
+		*  \param   layoutID  ID of layout
+		*  \param   nodeID  ID of node
+		*  \param   valName  name of value
+		*  \param   val  value
+		*  \return	bool true, if color was successfully added to DB
+		*/
+		static bool addColorToDB(QSqlDatabase* conn, qlonglong graphID, qlonglong layoutID, qlonglong nodeID, QString valName, double val);
     };
 }
 #endif

@@ -264,7 +264,7 @@ void CoreWindow::saveLayoutToDB()
 			Data::GraphLayout* layout = Model::GraphLayoutDAO::addLayout(layout_name, currentGraph, conn);
 			currentGraph->selectLayout(layout);
 
-			currentGraph->saveLayoutToDB(conn);//TODO nema graph
+			currentGraph->saveLayoutToDB(conn, currentGraph);
 		}
 		else
 		{

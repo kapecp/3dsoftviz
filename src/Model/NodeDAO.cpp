@@ -12,69 +12,6 @@ Model::NodeDAO::~NodeDAO(void)
 {
 }
 
-/*bool Model::NodeDAO::addNodesToDB(QSqlDatabase* conn, QMap<qlonglong, osg::ref_ptr<Data::Node> >* nodes, bool isMeta, Data::GraphLayout* layout)
-{
-	//check if we have connection
-	if(conn==NULL || !conn->isOpen()) 
-	{ 
-        qDebug() << "[Model::NodeDAO::addNodesToDB] Connection to DB not opened.";
-        return false;
-    }
-
-	QMap< qlonglong,osg::ref_ptr<Data::Node> >::const_iterator iNodes = nodes->constBegin();
-
-	QSqlQuery* query = new QSqlQuery(*conn);
-	
-	while(iNodes != nodes->constEnd()) 
-	{
-		query->prepare("INSERT INTO nodes (node_id, name, type_id, graph_id, meta, fixed, layout_id) VALUES (:node_id, :name, :type_id, :graph_id, :meta, :fixed, :layout_id)");
-		query->bindValue(":node_id", iNodes.value()->getId());
-		query->bindValue(":name", iNodes.value()->getName());
-		query->bindValue(":type_id", iNodes.value()->getType()->getId()); 
-		query->bindValue(":graph_id", iNodes.value()->getGraph()->getId());
-		query->bindValue(":meta", isMeta);
-		query->bindValue(":fixed", iNodes.value()->isFixed());
-		query->bindValue(":layout_id", layout->getId());
-
-		if(!query->exec()) {
-			qDebug() << "[Model::NodeDAO::addNodesToDB] Could not perform query on DB: " << query->lastError().databaseText();
-			return false;
-		}
-
-		query->prepare("INSERT INTO positions (layout_id, node_id, pos_x, pos_y, pos_z, graph_id) VALUES (:layout_id, :node_id, :pos_x, :pos_y, :pos_z, :graph_id) RETURNING  node_id");
-		query->bindValue(":layout_id", layout->getId()); 
-		query->bindValue(":node_id", iNodes.value()->getId());
-		query->bindValue(":pos_x", iNodes.value()->getCurrentPosition().x());
-		query->bindValue(":pos_y", iNodes.value()->getCurrentPosition().y());
-		query->bindValue(":pos_z", iNodes.value()->getCurrentPosition().z());
-		query->bindValue(":graph_id", iNodes.value()->getGraph()->getId());
-
-		if(!query->exec()) {
-			qDebug() << "[Model::NodeDAO::addNodesToDB] Could not perform query on DB: " << query->lastError().databaseText();
-			return false;
-		}
-
-		query->prepare("INSERT INTO node_settings (graph_id, node_id, val_name, val) VALUES (:graph_id, :node_id, :val_name, :val)");
-		query->bindValue(":graph_id", iNodes.value()->getGraph()->getId()); 
-		query->bindValue(":node_id", iNodes.value()->getId());
-		query->bindValue(":val_name", "color");
-		query->bindValue(":val", iNodes.value()->getColor().asABGR());
-
-		if(!query->exec()) {
-			qDebug() << "[Model::NodeDAO::addNodesToDB] Could not perform query on DB: " << query->lastError().databaseText();
-			return false;
-		}
-
-		++iNodes;
-	}
-	if(isMeta)
-		qDebug() << "[Model::NodeDAO::addNodesToDB] " << nodes->count() << " meta nodes were saved to DB.";
-	else
-		qDebug() << "[Model::NodeDAO::addNodesToDB] " << nodes->count() << " nodes were saved to DB.";
-
-	return true;
-}*/
-
 bool Model::NodeDAO::addNodesToDB(QSqlDatabase* conn, QMap<qlonglong, osg::ref_ptr<Data::Node> >* nodes)
 {
 	//check if we have connection
@@ -103,21 +40,8 @@ bool Model::NodeDAO::addNodesToDB(QSqlDatabase* conn, QMap<qlonglong, osg::ref_p
 			return false;
 		}
 
-		/*query->prepare("INSERT INTO node_settings (graph_id, node_id, val_name, val) VALUES (:graph_id, :node_id, :val_name, :val)");
-		query->bindValue(":graph_id", iNodes.value()->getGraph()->getId()); 
-		query->bindValue(":node_id", iNodes.value()->getId());
-		query->bindValue(":val_name", "color");
-		query->bindValue(":val", iNodes.value()->getColor().asABGR());
-
-		if(!query->exec()) {
-			qDebug() << "[Model::NodeDAO::addNodesToDB] Could not perform query on DB: " << query->lastError().databaseText();
-			return false;
-		}*/
-
 		++iNodes;
 	}
-
-	//addNodesColorToDB(conn, nodes);
 
 	qDebug() << "[Model::NodeDAO::addNodesToDB] " << nodes->count() << " nodes were saved to DB.";
 
@@ -152,17 +76,6 @@ bool Model::NodeDAO::addMetaNodesToDB(QSqlDatabase* conn, QMap<qlonglong, osg::r
 			qDebug() << "[Model::NodeDAO::addMetaNodesToDB] Could not perform query on DB: " << query->lastError().databaseText();
 			return false;
 		}
-
-		/*query->prepare("INSERT INTO node_settings (graph_id, node_id, val_name, val) VALUES (:graph_id, :node_id, :val_name, :val)");
-		query->bindValue(":graph_id", iNodes.value()->getGraph()->getId()); 
-		query->bindValue(":node_id", iNodes.value()->getId());
-		query->bindValue(":val_name", "color");
-		query->bindValue(":val", iNodes.value()->getColor().asABGR());
-
-		if(!query->exec()) {
-			qDebug() << "[Model::NodeDAO::addMetaNodesToDB] Could not perform query on DB: " << query->lastError().databaseText();
-			return false;
-		}*/
 
 		++iNodes;
 	}
@@ -208,28 +121,17 @@ bool Model::NodeDAO::addNodesPositionsToDB(QSqlDatabase* conn, QMap<qlonglong, o
 
 bool Model::NodeDAO::addNodesColorToDB(QSqlDatabase* conn, QMap<qlonglong, osg::ref_ptr<Data::Node> >* nodes, Data::GraphLayout* layout)
 {
-	//check if we have connection
-	if(conn==NULL || !conn->isOpen()) 
-	{ 
-        qDebug() << "[Model::NodeDAO::addNodesColorToDB] Connection to DB not opened.";
-        return false;
-    }
-
 	QMap< qlonglong,osg::ref_ptr<Data::Node> >::const_iterator iNodes = nodes->constBegin();
-	QSqlQuery* query = new QSqlQuery(*conn);
 	
 	while(iNodes != nodes->constEnd()) 
 	{
-		query->prepare("INSERT INTO node_settings (graph_id, node_id, val_name, val, layout_id) VALUES (:graph_id, :node_id, :val_name, :val, :layout_id)");
-		query->bindValue(":graph_id", iNodes.value()->getGraph()->getId()); 
-		query->bindValue(":node_id", iNodes.value()->getId());
-		query->bindValue(":val_name", "color");
-		query->bindValue(":val", iNodes.value()->getColor().asABGR());
-		query->bindValue(":layout_id", layout->getId());
-
-		if(!query->exec()) {
-			qDebug() << "[Model::NodeDAO::addNodesColorToDB] Could not perform query on DB: " << query->lastError().databaseText();
-			return false;
+		//ulozime farbu len nodom, ktore maju farbu inu nez default
+		if(iNodes.value()->getColor().r() != 1 || iNodes.value()->getColor().g() != 1 ||iNodes.value()->getColor().b() != 1 ||iNodes.value()->getColor().a() != 1)
+		{
+			addColorToDB(conn, iNodes.value()->getGraph()->getId(), layout->getId(), iNodes.value()->getId(), "color_r", iNodes.value()->getColor().r());
+			addColorToDB(conn, iNodes.value()->getGraph()->getId(), layout->getId(), iNodes.value()->getId(), "color_g", iNodes.value()->getColor().g());
+			addColorToDB(conn, iNodes.value()->getGraph()->getId(), layout->getId(), iNodes.value()->getId(), "color_b", iNodes.value()->getColor().b());
+			addColorToDB(conn, iNodes.value()->getGraph()->getId(), layout->getId(), iNodes.value()->getId(), "color_a", iNodes.value()->getColor().a());
 		}
 
 		++iNodes;
@@ -237,6 +139,32 @@ bool Model::NodeDAO::addNodesColorToDB(QSqlDatabase* conn, QMap<qlonglong, osg::
 	
 	return true;
 }
+
+bool Model::NodeDAO::addColorToDB(QSqlDatabase* conn, qlonglong graphID, qlonglong layoutID, qlonglong nodeID, QString valName, double val)
+{
+	if(conn==NULL || !conn->isOpen()) 
+	{ 
+        qDebug() << "[Model::NodeDAO::addColorToDB] Connection to DB not opened.";
+        return false;
+    }
+
+	QSqlQuery* query = new QSqlQuery(*conn);
+	
+	query->prepare("INSERT INTO node_settings (graph_id, node_id, val_name, val, layout_id) VALUES (:graph_id, :node_id, :val_name, :val, :layout_id)");
+	query->bindValue(":graph_id", graphID); 
+	query->bindValue(":node_id", nodeID);
+	query->bindValue(":val_name", valName);
+	query->bindValue(":val", val);
+	query->bindValue(":layout_id", layoutID);
+
+	if(!query->exec()) {
+		qDebug() << "[Model::NodeDAO::addColorToDB] Could not perform query on DB: " << query->lastError().databaseText();
+		return false;
+	}
+
+	return true;
+}
+
 QSqlQuery* Model::NodeDAO::getNodesQuery(QSqlDatabase* conn, bool* error, qlonglong graphID, qlonglong layoutID)
 {
     *error = FALSE;
@@ -435,7 +363,7 @@ QMap<qlonglong, QString> Model::NodeDAO::getSettings(QSqlDatabase* conn, bool* e
 	//check if we have connection
     if(conn==NULL || !conn->isOpen()) 
 	{ 
-        qDebug() << "[Model::NodeDAO::getNodesPositions] Connection to DB not opened.";
+        qDebug() << "[Model::NodeDAO::getSettings] Connection to DB not opened.";
         *error = TRUE;
         return settings;
     }
@@ -450,9 +378,53 @@ QMap<qlonglong, QString> Model::NodeDAO::getSettings(QSqlDatabase* conn, bool* e
 	query->bindValue(":attribute_name", attributeName);
 	query->bindValue(":layout_id", layoutID);
 
+	if(!query->exec()) {
+        qDebug() << "[Model::NodeDAO::getSettings] Could not perform query on DB: " << query->lastError().databaseText();
+        *error = TRUE;
+        return settings;
+    }
+
     while(query->next()) {
 		settings.insert(query->value(0).toLongLong(), query->value(1).toString());
     }
     
     return settings;
+}
+
+QMap<qlonglong, osg::Vec4f> Model::NodeDAO::getColors(QSqlDatabase* conn, bool* error, qlonglong graphID, qlonglong layoutID)
+{
+    *error = FALSE;
+	bool error2 = false;
+	osg::Vec4f color;
+	qlonglong id;
+	QMap<qlonglong, osg::Vec4f> colors;
+
+	QMap<qlonglong, QString> nodeColorR;
+	QMap<qlonglong, QString> nodeColorG;
+	QMap<qlonglong, QString> nodeColorB;
+	QMap<qlonglong, QString> nodeColorA;
+	QMap<qlonglong, QString>::iterator iter_r;
+	QMap<qlonglong, QString>::iterator iter_g;
+	QMap<qlonglong, QString>::iterator iter_b;
+	QMap<qlonglong, QString>::iterator iter_a;
+
+	nodeColorR = getSettings(conn, &error2, graphID, layoutID, "color_r");
+	nodeColorG = getSettings(conn, &error2, graphID, layoutID, "color_g");
+	nodeColorB = getSettings(conn, &error2, graphID, layoutID, "color_b");
+	nodeColorA = getSettings(conn, &error2, graphID, layoutID, "color_a");
+
+	for(iter_r = nodeColorR.begin(); iter_r != nodeColorR.end(); iter_r++) 
+	{
+		id = iter_r.key();
+		iter_g = nodeColorG.find(id);
+		iter_b = nodeColorB.find(id);
+		iter_a = nodeColorA.find(id);
+
+		color = osg::Vec4f(iter_r.value().toFloat(), iter_g.value().toFloat(), iter_b.value().toFloat(), iter_a.value().toFloat());
+		colors.insert(id, color);
+	}
+
+	*error = error2;
+
+	return colors;
 }

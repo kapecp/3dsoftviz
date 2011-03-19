@@ -61,32 +61,37 @@ Data::Graph* Model::GraphDAO::getGraph(QSqlDatabase* conn, bool* error2, qlonglo
 	QSqlQuery* queryNodesPositions;
 	QString graphName, layoutName;
 	bool error = false;
-	qlonglong nodeID1, nodeID2;
+	qlonglong nodeID1, nodeID2, nodeID, edgeID, maxIdEleUsed = 0;
 	QMap<qlonglong, Data::Node*> nodes;
 	QMap<qlonglong, Data::Node*>::iterator iNodes1;
 	QMap<qlonglong, Data::Node*>::iterator iNodes2;
-	Data::Node* newNode;
+	Data::Node* newNode; 
 	osg::Vec3f position;
 	QMap< qlonglong, QList<double> > positions;
 	QList<double> coordinates;
-	QMap<qlonglong, QString> nodeSettings;
+	QMap<qlonglong, osg::Vec4> nodeColors;
+	QMap<qlonglong, osg::Vec4f> edgeColors;
 
 	graphName = Model::GraphDAO::getName(graphID, &error, conn);
 	layoutName = Model::GraphLayoutDAO::getName(conn, &error, graphID, layoutID);
 	queryNodes = Model::NodeDAO::getNodesQuery(conn, &error, graphID, layoutID);
 	queryNodesPositions = Model::NodeDAO::getNodesPositionsQuery(conn, &error, graphID, layoutID);
 	queryEdges = Model::EdgeDAO::getEdgesQuery(conn, &error, graphID, layoutID);
-	nodeSettings = Model::NodeDAO::getSettings(conn, &error, graphID, layoutID, "color");
+	nodeColors = Model::NodeDAO::getColors(conn, &error, graphID, layoutID);
+	edgeColors = Model::EdgeDAO::getColors(conn, &error, graphID, layoutID);
 		
 	if(!error)
 	{
 		qDebug() << "[Model::GraphDAO::getGraph] Data loaded from database successfully";
 
 		newGraph = new Data::Graph(graphID, graphName, 0, 0, NULL);
+		newLayout = new Data::GraphLayout(layoutID, newGraph, layoutName, conn);
+		newGraph->selectLayout(newLayout);
+
  		Data::Type *typeNode = newGraph->addType("node");
 		Data::Type *typeEdge = newGraph->addType("edge");
-  		Data::Type *typeMetaNode = newGraph->addType("metanode");
-		Data::Type *typeMetaEdge = newGraph->addType("metaedge");
+		Data::Type *typeMetaNode = newGraph->getNodeMetaType();
+		Data::Type *typeMetaEdge = newGraph->getEdgeMetaType();
 
 		while(queryNodesPositions->next())
 		{
@@ -98,40 +103,55 @@ Data::Graph* Model::GraphDAO::getGraph(QSqlDatabase* conn, bool* error2, qlonglo
 		while(queryNodes->next()) 
 		{
 			coordinates.clear();
+
+			nodeID = queryNodes->value(0).toLongLong();
+			if(maxIdEleUsed < nodeID)
+				maxIdEleUsed = nodeID + 1;
+
 			coordinates = positions[queryNodes->value(0).toLongLong()];
 			position = osg::Vec3f(coordinates[0], coordinates[1], coordinates[2]);
-			//taktiez chyba pridavanie zvlast meta node a klasickych nodes
-			//vsetky sa teraz ukladaju do nodes
-			newNode = newGraph->addNode(queryNodes->value(1).toString(), (queryNodes->value(4).toBool() ? typeMetaNode : typeNode), position);
+			newNode = newGraph->addNode(nodeID, queryNodes->value(1).toString(), (queryNodes->value(4).toBool() ? typeMetaNode : typeNode), position);
+
 			//vsetky uzly nastavime fixed, aby sme zachovali layout
 			//hodnota, ktora je ulozena v DB: newNode->setFixed(queryNodes->value(5).toBool()); 
 			newNode->setFixed(true);
-			//newNode->setColor(osg::Vec4(queryNodes->value(7).toDouble(), queryNodes->value(8).toDouble(), queryNodes->value(9).toDouble(), queryNodes->value(10).toDouble()));
-			//TODO
 			
+			if(nodeColors.contains(nodeID))
+			{
+				newNode->setColor(nodeColors.value(nodeID));
+			}
 
-			nodes.insert(queryNodes->value(0).toLongLong(), newNode);
+			nodes.insert(nodeID, newNode);
 		}
 		
 		while(queryEdges->next()) 
 		{
-			//type pridavat z query - opravit
+			edgeID = queryEdges->value(0).toLongLong();
+			if(maxIdEleUsed < edgeID)
+				maxIdEleUsed = edgeID + 1;
+
 			nodeID1 = queryEdges->value(3).toLongLong();
 			nodeID2 = queryEdges->value(4).toLongLong();
 			iNodes1 = nodes.find(nodeID1);
 			iNodes2 = nodes.find(nodeID2);
-			newGraph->addEdge(queryEdges->value(1).toString(), iNodes1.value(), iNodes2.value(), (queryEdges->value(6).toBool() ? typeMetaEdge : typeEdge), queryEdges->value(5).toBool());
-		}
+			newGraph->addEdge(edgeID, queryEdges->value(1).toString(), iNodes1.value(), iNodes2.value(), (queryEdges->value(6).toBool() ? typeMetaEdge : typeEdge), queryEdges->value(5).toBool());
 
-		newLayout = new Data::GraphLayout(layoutID, newGraph, layoutName, conn);
+			if(edgeColors.contains(edgeID))
+			{
+				if(newGraph->getEdges()->contains(edgeID))
+					newGraph->getEdges()->find(edgeID).value()->setEdgeColor(edgeColors.value(edgeID));
+				else
+					newGraph->getMetaEdges()->find(edgeID).value()->setEdgeColor(edgeColors.value(edgeID));
+			}
+		}
 	}
 	else 
 	{
 		qDebug() << "[Model::GraphDAO::getGraph] Error while loading data from database";
 	}
 
-	newGraph->selectLayout(newLayout);
-
+	newGraph->setEleIdCounter(maxIdEleUsed);
+	 
 	*error2 = error;
 	return newGraph;
 }
@@ -162,7 +182,7 @@ Data::Graph* Model::GraphDAO::addGraph(QString graph_name, QSqlDatabase* conn)
     }
 }
 
-//???
+
 bool Model::GraphDAO::addGraph( Data::Graph* graph, QSqlDatabase* conn )
 {
     if(conn==NULL || !conn->isOpen()) { //check if we have connection

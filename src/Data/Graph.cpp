@@ -144,8 +144,8 @@ Data::Graph::~Graph(void)
 
 bool Data::Graph::saveGraphToDB(QSqlDatabase* conn, Data::Graph * graph)
 {
-	if(Model::NodeDAO::addNodesToDB(conn, this->nodes) //namiesto this->conn  -  conn
-		&& Model::EdgeDAO::addEdgesToDB(conn, this->edges))
+	if(Model::NodeDAO::addNodesToDB(conn, graph->nodes) 
+		&& Model::EdgeDAO::addEdgesToDB(conn, graph->edges))
 	{
 		qDebug() << "[Data::Graph::saveGraphToDB] Graph was saved to DB.";
 		return true;
@@ -159,14 +159,16 @@ bool Data::Graph::saveGraphToDB(QSqlDatabase* conn, Data::Graph * graph)
 	return false;
 }
 
-bool Data::Graph::saveLayoutToDB(QSqlDatabase* conn, Data::Graph * graph)//aj graph, nie len conn!!!
+bool Data::Graph::saveLayoutToDB(QSqlDatabase* conn, Data::Graph * graph)
 {
-	if(Model::NodeDAO::addMetaNodesToDB(conn, this->metaNodes, this->selectedLayout)//namiesto this->conn treba conn 
-		&& Model::NodeDAO::addNodesPositionsToDB(conn, this->metaNodes, this->selectedLayout)
-		&& Model::NodeDAO::addNodesColorToDB(conn, this->metaNodes, this->selectedLayout)
-		&& Model::NodeDAO::addNodesPositionsToDB(conn, this->nodes, this->selectedLayout)
-		&& Model::NodeDAO::addNodesColorToDB(conn, this->nodes, this->selectedLayout)
-		&& Model::EdgeDAO::addMetaEdgesToDB(conn, this->metaEdges, this->selectedLayout))
+	if(Model::NodeDAO::addMetaNodesToDB(conn, graph->metaNodes, graph->selectedLayout) 
+		&& Model::NodeDAO::addNodesPositionsToDB(conn, graph->metaNodes, graph->selectedLayout)
+		&& Model::NodeDAO::addNodesColorToDB(conn, graph->metaNodes, graph->selectedLayout)
+		&& Model::NodeDAO::addNodesPositionsToDB(conn, graph->nodes, graph->selectedLayout)
+		&& Model::NodeDAO::addNodesColorToDB(conn, graph->nodes, graph->selectedLayout)
+		&& Model::EdgeDAO::addMetaEdgesToDB(conn, graph->metaEdges, graph->selectedLayout)
+		&& Model::EdgeDAO::addEdgesColorToDB(conn, graph->edges, graph->selectedLayout)
+		&& Model::EdgeDAO::addEdgesColorToDB(conn, graph->metaEdges, graph->selectedLayout))
 	{
 		qDebug() << "[Data::Graph::saveLayoutToDB] Layout was saved to DB.";
 		return true;
@@ -180,26 +182,6 @@ bool Data::Graph::saveLayoutToDB(QSqlDatabase* conn, Data::Graph * graph)//aj gr
 	return false;
 }
 
-/*
-bool Data::Graph::saveGraphToDB()
-{
-	if(Model::NodeDAO::addNodesToDB(this->conn, this->nodes, false, this->selectedLayout) 
-		&& Model::NodeDAO::addNodesToDB(this->conn, this->metaNodes, true, this->selectedLayout)
-		&& Model::EdgeDAO::addEdgesToDB(this->conn, this->edges, false)
-		&& Model::EdgeDAO::addEdgesToDB(this->conn, this->metaEdges, true))
-	{
-		qDebug() << "[Data::Graph::saveGraphToDB] Graph was saved to DB.";
-		return true;
-	}
-	else
-	{
-		qDebug() << "[Data::Graph::saveGraphToDB] Graph wasn't saved to DB.";
-		return false;
-	}
-		
-	return false;
-}
-*/
 
 Data::GraphLayout* Data::Graph::addLayout(QString layout_name)
 {
@@ -210,7 +192,6 @@ Data::GraphLayout* Data::Graph::addLayout(QString layout_name)
 
 	//layouty bude do DB pridavat user, nebudu sa pridavat automaticky
 	//layout_id nebudeme brat z DB, lebo layout tam nemusi byt, preto vzdy nastavime na 1
-    //Data::GraphLayout* layout = Model::GraphLayoutDAO::addLayout(layout_name, this, this->conn);
     Data::GraphLayout* layout = new Data::GraphLayout(1,this,layout_name,this->conn);
     
     if(layout==NULL && (this->conn==NULL || !this->conn->isOpen())) { //nepodarilo sa vytvorit GraphLayout - nejaky problem s pripojenim na DB;
@@ -284,6 +265,22 @@ osg::ref_ptr<Data::Node> Data::Graph::addNode(QString name, Data::Type* type, os
     return node;
 }
 
+osg::ref_ptr<Data::Node> Data::Graph::addNode(qlonglong id, QString name, Data::Type* type, osg::Vec3f position)
+{
+    osg::ref_ptr<Data::Node> node = new Data::Node(id, name, type, this, position);
+
+    this->newNodes.insert(node->getId(),node);
+    if(type!=NULL && type->isMeta()) {
+        this->metaNodes->insert(node->getId(),node);
+        this->metaNodesByType.insert(type->getId(),node);
+    } else { 
+        this->nodes->insert(node->getId(),node);
+        this->nodesByType.insert(type->getId(),node);
+    }
+    
+    return node;
+}
+
 osg::ref_ptr<Data::Edge> Data::Graph::addEdge(QString name, osg::ref_ptr<Data::Node> srcNode, osg::ref_ptr<Data::Node> dstNode, Data::Type* type, bool isOriented) 
 {
 	if(isParralel(srcNode, dstNode))
@@ -296,6 +293,35 @@ osg::ref_ptr<Data::Edge> Data::Graph::addEdge(QString name, osg::ref_ptr<Data::N
 		//adding single edge to graph
 
 		osg::ref_ptr<Data::Edge> edge = new Data::Edge(this->incEleIdCounter(), name, this, srcNode, dstNode, type, isOriented);
+
+		edge->linkNodes(&this->newEdges);
+		if((type!=NULL && type->isMeta()) || ((srcNode->getType()!=NULL && srcNode->getType()->isMeta()) || (dstNode->getType()!=NULL && dstNode->getType()->isMeta())))
+		{
+			//ak je type meta, alebo je meta jeden z uzlov (ma type meta)
+			edge->linkNodes(this->metaEdges);
+			this->metaEdgesByType.insert(type->getId(),edge);
+		} else
+		{
+			edge->linkNodes(this->edges);
+		}
+		return edge;
+	}
+
+    return NULL;
+}
+
+osg::ref_ptr<Data::Edge> Data::Graph::addEdge(qlonglong id, QString name, osg::ref_ptr<Data::Node> srcNode, osg::ref_ptr<Data::Node> dstNode, Data::Type* type, bool isOriented) 
+{
+	if(isParralel(srcNode, dstNode))
+	{
+		//adding multi edge to graph
+		addMultiEdge(name, srcNode, dstNode, type, isOriented, NULL);
+	}
+	else
+	{
+		//adding single edge to graph
+
+		osg::ref_ptr<Data::Edge> edge = new Data::Edge(id, name, this, srcNode, dstNode, type, isOriented);
 
 		edge->linkNodes(&this->newEdges);
 		if((type!=NULL && type->isMeta()) || ((srcNode->getType()!=NULL && srcNode->getType()->isMeta()) || (dstNode->getType()!=NULL && dstNode->getType()->isMeta())))
