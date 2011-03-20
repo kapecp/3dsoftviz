@@ -83,11 +83,6 @@ bool GXLImporter::import (
 		ok = parseGraph ();
 	}
 
-	if (ok) {
-		Data::GraphLayout* gLay = context_->getGraph().addLayout("new Layout");
-		context_->getGraph().selectLayout(gLay);
-	}
-
 	xml_->clear ();
 
 	return ok;
@@ -144,7 +139,7 @@ bool GXLImporter::parseGraph (void) {
 			) {
 				if (ok) {
 					if ((bool)currentNode) {
-						// TODO: begin subgraph in node
+						context_->getGraph().createNestedGraph (currentNode);
 					} else if ((bool)currentEdge) {
 						// TODO: begin subgraph in edge
 					} else {
@@ -157,7 +152,10 @@ bool GXLImporter::parseGraph (void) {
 				if (ok) {
 					ok = parseGraph ();
 				}
-				// TODO: end subgraph somewhere
+
+				if (ok) {
+					context_->getGraph().closeNestedGraph ();
+				}
 			}
 
 			// node

@@ -119,6 +119,12 @@ Data::Graph* Manager::GraphManager::loadGraph(QString filepath)
     	stream->close ();
     }
 
+    // add layout
+    if (ok) {
+		Data::GraphLayout* gLay = newGraph->addLayout ("new Layout");
+		newGraph->selectLayout (gLay);
+	}
+
     // set as active graph
     if (ok) {
     	// ak uz nejaky graf mame, tak ho najprv sejvneme a zavrieme

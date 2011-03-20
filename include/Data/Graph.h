@@ -201,13 +201,13 @@ namespace Data
 		*  \fn public  createNestedGraph(osg::ref_ptr<Data::Node> srcNode)
 		*  \brief creates nested graph where can be added nested nodes and edges
 		*/
-		void Data::Graph::createNestedGraph(osg::ref_ptr<Data::Node> srcNode);
+		void createNestedGraph(osg::ref_ptr<Data::Node> srcNode);
 
 		/**
 		*  \fn public  closeNestedGraph()
 		*  \brief close nested graph after creation
 		*/
-		void Data::Graph::closeNestedGraph();
+		void closeNestedGraph();
 
 		/**
 		*  \fn public isNestedGraph()
