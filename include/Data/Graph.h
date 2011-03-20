@@ -210,6 +210,13 @@ namespace Data
 		void closeNestedGraph();
 
 		/**
+		*  \fn public isNestedGraph()
+		*  \brief recognize if current graph is nested or not
+		*  \return bool value if current graph is nested
+		*/
+		bool Data::Graph::isNestedGraph();
+
+		/**
 		*  \fn public  addEdge(QString name, osg::ref_ptr<Data::Node> srcNode, osg::ref_ptr<Data::Node> dstNode, Data::Type* type, bool isOriented)
 		*  \brief Creates new Edge and adds it to the Graph
 		*  \param   name     name of the Edge
@@ -453,6 +460,12 @@ namespace Data
 		*  \brief ID of the Graph
 		*/
         qlonglong graph_id;
+
+		/**
+		*	qlonglong parent_id
+		*	\brief ID of the parent Node
+		*/
+		QList<osg::ref_ptr<Data::Node>> parent_id;
         
 		/**
 		*  QString name
@@ -477,6 +490,12 @@ namespace Data
 		*  \brief flag if the Graph is frozen or not (used by layout algorithm)
 		*/
         bool inDB;
+
+		/**
+		*  osg::ref_ptr<Data::Node> lastNode
+		*  \brief stores last node added into graph
+		*/
+		osg::ref_ptr<Data::Node> lastNode;
         
 
 		/**

@@ -145,6 +145,22 @@ namespace Data
 		void removeAllEdges();
 
 		/**
+		*	\fn public getParentNode
+		*	\brief Return parent node, else null
+		*
+		*	
+		*/
+		Data::Node* getParentNode();
+
+		/**
+		*	\fn public setParentNode
+		*	\brief set parent's node
+		*
+		*
+		*/
+		void setParentNode(Node* parent);
+
+		/**
 		*  \fn inline public constant  getEdges
 		*  \brief Returns all Edges connected to the Node
 		*  \return QMap<qlonglong,osg::ref_ptr<Data::Edge> > * Edges connected to the Node
@@ -218,7 +234,6 @@ namespace Data
 		*/
 		bool isFixed() const { return fixed; }
 		
-
 		/**
 		*  \fn inline public  setSelected(bool selected) 
 		*  \brief Sets node picked state
@@ -399,6 +414,12 @@ namespace Data
 		*	\brief ID of the Node
 		*/
 		qlonglong id;
+
+		/**
+		*	Node parent
+		*	\brief parent node of current node in nested graphs, in top level graph is null
+		*/
+		Node* nested_parent;
 
 		/**
 		*  QString name
