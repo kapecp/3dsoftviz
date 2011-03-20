@@ -284,6 +284,8 @@ namespace Data
 		*  \return osg::ref_ptr the found non Multi Node neigbour
 		*/
 		osg::ref_ptr<Data::Node> getMultiEdgeNeighbour(osg::ref_ptr<Data::Edge> multiEdge);
+		
+		osg::ref_ptr<Data::Node> addHyperEdge(QString name, osg::Vec3f position = osg::Vec3f(0,0,0)); 
 
 		/**
 		*  \fn public  removeEdge(osg::ref_ptr<Data::Edge> edge)

@@ -388,6 +388,33 @@ osg::ref_ptr<Data::Node> Data::Graph::getMultiEdgeNeighbour(osg::ref_ptr<Data::E
 	return NULL;
 }
 
+osg::ref_ptr<Data::Node> Data::Graph::addHyperEdge(QString name, osg::Vec3f position) {
+	Data::Type* mtype;
+
+	QList<Data::Type*> mtypes = getTypesByName(Data::GraphLayout::HYPER_NODE_TYPE);
+
+	if(mtypes.isEmpty())
+	{
+		//adding META_NODE_TYPE settings if necessary
+		QMap<QString, QString> *settings = new QMap<QString, QString>;
+
+		settings->insert("scale", "5");
+		settings->insert("textureFile", Util::ApplicationConfig::get()->getValue("Viewer.Textures.Node"));
+		settings->insert("color.R", "1");
+		settings->insert("color.G", "1");
+		settings->insert("color.B", "1");
+		settings->insert("color.A", "1");
+
+		mtype = this->addType(Data::GraphLayout::HYPER_NODE_TYPE, settings);
+	}
+	else
+	{
+		mtype = mtypes[0];
+	}
+
+	return addNode (name, mtype, position);
+}
+
 bool Data::Graph::isParralel(osg::ref_ptr<Data::Node> srcNode, osg::ref_ptr<Data::Node> dstNode)
 {
 	QMap<qlonglong, osg::ref_ptr<Data::Edge> >::iterator i = srcNode->getEdges()->begin();
