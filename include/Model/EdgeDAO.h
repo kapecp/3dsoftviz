@@ -41,9 +41,11 @@ namespace Model
 		*  \param   conn   connection to the database 
 		*  \param   edges  edges from actual graph
 		*  \param   layout  layout from actual graph
+		*  \param	newMetaNodeID	new ID of meta nodes (because of unique ID in DB)
+		*  \param	newMetaEdgeID	new ID of meta edges (because of unique ID in DB)
 		*  \return	bool true, if edges were successfully added to DB
 		*/
-		static bool addMetaEdgesToDB(QSqlDatabase* conn, QMap<qlonglong, osg::ref_ptr<Data::Edge> >* edges, Data::GraphLayout* layout);
+		static bool addMetaEdgesToDB(QSqlDatabase* conn, QMap<qlonglong, osg::ref_ptr<Data::Edge> >* edges, Data::GraphLayout* layout, QMap<qlonglong, qlonglong> newMetaNodeID, QMap<qlonglong, qlonglong> newMetaEdgeID);
 
 		/**
 		*  \fn public static  addEdgesColorToDB(QSqlDatabase* conn, QMap<qlonglong, osg::ref_ptr<Data::Edge> >* edges)
@@ -51,9 +53,12 @@ namespace Model
 		*  \param   conn   connection to the database 
 		*  \param   edges  edges from actual graph
 		*  \param   layout  layout from actual graph
+		*  \param	newMetaNodeID	new ID of meta nodes (because of unique ID in DB)
+		*  \param	newMetaEdgeID	new ID of meta edges (because of unique ID in DB)
+		*  \param	meta true, if edges are meta type
 		*  \return	bool true, if color of edges was successfully added to DB
 		*/
-		static bool addEdgesColorToDB(QSqlDatabase* conn, QMap<qlonglong, osg::ref_ptr<Data::Edge> >* edges, Data::GraphLayout* layout);
+		static bool addEdgesColorToDB(QSqlDatabase* conn, QMap<qlonglong, osg::ref_ptr<Data::Edge> >* edges, Data::GraphLayout* layout, QMap<qlonglong, qlonglong> newMetaNodeID, QMap<qlonglong, qlonglong> newMetaEdgeID, bool meta);
 
 		/**
 		*  \fn public static  getEdgesQuery(QSqlDatabase* conn, bool* error, qlonglong graphID)
@@ -144,6 +149,16 @@ namespace Model
 		*  \return	QMap<qlonglong, osg::Vec4f> colors of the Edges
 		*/
 		static QMap<qlonglong, osg::Vec4f> getColors(QSqlDatabase* conn, bool* error, qlonglong graphID, qlonglong layoutID);
+		
+		/**
+		*  \fn public static  getNewMetaEdgesId(QSqlDatabase* conn, qlonglong graphID, QMap<qlonglong, osg::ref_ptr<Data::Edge> >* edges)
+		*  \brief	Return map of new edges ID
+		*  \param   conn   connection to the database 
+		*  \param   graphID  graph ID
+		*  \param	edges edges of graph
+		*  \return	QMap<qlonglong, qlonglong> new edges ID
+		*/
+		static QMap<qlonglong, qlonglong> getNewMetaEdgesId(QSqlDatabase* conn, qlonglong graphID, QMap<qlonglong, osg::ref_ptr<Data::Edge> >* edges);
 
 	private:
 

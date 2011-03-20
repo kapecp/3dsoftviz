@@ -161,14 +161,20 @@ bool Data::Graph::saveGraphToDB(QSqlDatabase* conn, Data::Graph * graph)
 
 bool Data::Graph::saveLayoutToDB(QSqlDatabase* conn, Data::Graph * graph)
 {
-	if(Model::NodeDAO::addMetaNodesToDB(conn, graph->metaNodes, graph->selectedLayout) 
-		&& Model::NodeDAO::addNodesPositionsToDB(conn, graph->metaNodes, graph->selectedLayout)
-		&& Model::NodeDAO::addNodesColorToDB(conn, graph->metaNodes, graph->selectedLayout)
-		&& Model::NodeDAO::addNodesPositionsToDB(conn, graph->nodes, graph->selectedLayout)
-		&& Model::NodeDAO::addNodesColorToDB(conn, graph->nodes, graph->selectedLayout)
-		&& Model::EdgeDAO::addMetaEdgesToDB(conn, graph->metaEdges, graph->selectedLayout)
-		&& Model::EdgeDAO::addEdgesColorToDB(conn, graph->edges, graph->selectedLayout)
-		&& Model::EdgeDAO::addEdgesColorToDB(conn, graph->metaEdges, graph->selectedLayout))
+	QMap<qlonglong, qlonglong> newMetaNodeID;
+	QMap<qlonglong, qlonglong> newMetaEdgeID;
+
+	newMetaNodeID = Model::NodeDAO::getNewMetaNodesId(conn, graph->getId(), graph->metaNodes);
+	newMetaEdgeID = Model::EdgeDAO::getNewMetaEdgesId(conn, graph->getId(), graph->metaEdges);
+
+	if(Model::NodeDAO::addMetaNodesToDB(conn, graph->metaNodes, graph->selectedLayout, newMetaNodeID) 
+		&& Model::NodeDAO::addNodesPositionsToDB(conn, graph->metaNodes, graph->selectedLayout, newMetaNodeID, true)
+		&& Model::NodeDAO::addNodesColorToDB(conn, graph->metaNodes, graph->selectedLayout, newMetaNodeID, true)
+		&& Model::NodeDAO::addNodesPositionsToDB(conn, graph->nodes, graph->selectedLayout, newMetaNodeID, false)
+		&& Model::NodeDAO::addNodesColorToDB(conn, graph->nodes, graph->selectedLayout, newMetaNodeID, false)
+		&& Model::EdgeDAO::addMetaEdgesToDB(conn, graph->metaEdges, graph->selectedLayout, newMetaNodeID, newMetaEdgeID)
+		&& Model::EdgeDAO::addEdgesColorToDB(conn, graph->edges, graph->selectedLayout, newMetaNodeID, newMetaEdgeID, false)
+		&& Model::EdgeDAO::addEdgesColorToDB(conn, graph->metaEdges, graph->selectedLayout, newMetaNodeID, newMetaEdgeID, true))
 	{
 		qDebug() << "[Data::Graph::saveLayoutToDB] Layout was saved to DB.";
 		return true;

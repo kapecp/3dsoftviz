@@ -43,9 +43,10 @@ namespace Model
 		*  \param   conn   connection to the database 
 		*  \param   nodes  nodes from actual graph
 		*  \param   layout  layout from actual graph
+		*  \param	newMetaNodeID	new ID of meta nodes (because of unique ID in DB)
 		*  \return	bool true, if nodes were successfully added to DB
 		*/
-		static bool addMetaNodesToDB(QSqlDatabase* conn, QMap<qlonglong, osg::ref_ptr<Data::Node> >* nodes, Data::GraphLayout* layout);
+		static bool addMetaNodesToDB(QSqlDatabase* conn, QMap<qlonglong, osg::ref_ptr<Data::Node> >* nodes, Data::GraphLayout* layout, QMap<qlonglong, qlonglong> newMetaNodeID);
 
 		/**
 		*  \fn public static  addNodesPositionsToDB(QSqlDatabase* conn, QMap<qlonglong, osg::ref_ptr<Data::Node> >* nodes, Data::GraphLayout* layout)
@@ -53,9 +54,11 @@ namespace Model
 		*  \param   conn   connection to the database 
 		*  \param   nodes  nodes from actual graph
 		*  \param   layout  layout from actual graph
+		*  \param	newMetaNodeID	new ID of meta nodes (because of unique ID in DB)
+		*  \param	meta	true, if nodes are meta type
 		*  \return	bool true, if nodes were successfully added to DB
 		*/
-		static bool addNodesPositionsToDB(QSqlDatabase* conn, QMap<qlonglong, osg::ref_ptr<Data::Node> >* nodes, Data::GraphLayout* layout);
+		static bool addNodesPositionsToDB(QSqlDatabase* conn, QMap<qlonglong, osg::ref_ptr<Data::Node> >* nodes, Data::GraphLayout* layout, QMap<qlonglong, qlonglong> newMetaNodeID, bool meta);
 		
 		/**
 		*  \fn public static  addNodesColorToDB(QSqlDatabase* conn, QMap<qlonglong, osg::ref_ptr<Data::Node> >* nodes)
@@ -63,9 +66,11 @@ namespace Model
 		*  \param   conn   connection to the database 
 		*  \param   nodes  nodes from actual graph
 		*  \param   layout  layout from actual graph
+		*  \param	newMetaNodeID	new ID of meta nodes (because of unique ID in DB)
+		*  \param	meta	true, if nodes are meta type
 		*  \return	bool true, if color of nodes was successfully added to DB
 		*/
-		static bool addNodesColorToDB(QSqlDatabase* conn, QMap<qlonglong, osg::ref_ptr<Data::Node> >* nodes, Data::GraphLayout* layout);
+		static bool addNodesColorToDB(QSqlDatabase* conn, QMap<qlonglong, osg::ref_ptr<Data::Node> >* nodes, Data::GraphLayout* layout, QMap<qlonglong, qlonglong> newMetaNodeID, bool meta);
 
 		/**
 		*  \fn public static  getNodesQuery(QSqlDatabase* conn, bool* error, qlonglong graphID)
@@ -168,6 +173,17 @@ namespace Model
 		*  \return	QMap<qlonglong, osg::Vec4f> colors of the Nodes
 		*/
 		static QMap<qlonglong, osg::Vec4f> getColors(QSqlDatabase* conn, bool* error, qlonglong graphID, qlonglong layoutID);
+
+		/**
+		*  \fn public static  getNewMetaNodeId(QSqlDatabase* conn, qlonglong graphID, QMap<qlonglong, osg::ref_ptr<Data::Node> >* nodes)
+		*  \brief	Return map of new nodes ID
+		*  \param   conn   connection to the database 
+		*  \param   graphID  graph ID
+		*  \param	nodes nodes of graph
+		*  \return	QMap<qlonglong, qlonglong> new nodes ID
+		*/
+		static QMap<qlonglong, qlonglong> getNewMetaNodesId(QSqlDatabase* conn, qlonglong graphID, QMap<qlonglong, osg::ref_ptr<Data::Node> >* nodes);
+
 
 	private:
 

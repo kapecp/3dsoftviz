@@ -131,6 +131,7 @@ void SelectLayoutWindow::removeLayout()
 				createLayoutTable();
 				this->repaint();
 				this->update();
+				qDebug() << "[QOSG::SelectLayoutWindow::removeLayout] Graph no. " << graphID << " was removed from database";
 			}
 		}
 		else
@@ -145,6 +146,7 @@ void SelectLayoutWindow::removeLayout()
 				createLayoutTable();
 				this->repaint();
 				this->update();
+				qDebug() << "[QOSG::SelectLayoutWindow::removeLayout] Layout no. " << layoutID << " was removed from database";
 			}
 		}
 	}

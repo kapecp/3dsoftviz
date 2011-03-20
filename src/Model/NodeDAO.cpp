@@ -48,7 +48,7 @@ bool Model::NodeDAO::addNodesToDB(QSqlDatabase* conn, QMap<qlonglong, osg::ref_p
 	return true;
 }
 
-bool Model::NodeDAO::addMetaNodesToDB(QSqlDatabase* conn, QMap<qlonglong, osg::ref_ptr<Data::Node> >* nodes, Data::GraphLayout* layout)
+bool Model::NodeDAO::addMetaNodesToDB(QSqlDatabase* conn, QMap<qlonglong, osg::ref_ptr<Data::Node> >* nodes, Data::GraphLayout* layout, QMap<qlonglong, qlonglong> newMetaNodeID)
 {
 	//check if we have connection
 	if(conn==NULL || !conn->isOpen()) 
@@ -60,11 +60,23 @@ bool Model::NodeDAO::addMetaNodesToDB(QSqlDatabase* conn, QMap<qlonglong, osg::r
 	QMap< qlonglong,osg::ref_ptr<Data::Node> >::const_iterator iNodes = nodes->constBegin();
 
 	QSqlQuery* query = new QSqlQuery(*conn);
+	qlonglong nodeID;
+	QMap<qlonglong, qlonglong>::iterator nodeIdIter;
 	
 	while(iNodes != nodes->constEnd()) 
 	{
+		if(newMetaNodeID.contains(iNodes.value()->getId()))
+		{
+			nodeIdIter = newMetaNodeID.find(iNodes.value()->getId());
+			nodeID = nodeIdIter.value();
+		}
+		else
+		{
+			qDebug() << "[Model::NodeDAO::addMetaNodesToDB] Node ID: " << iNodes.value()->getId() <<  " mismatch";
+		}
+		
 		query->prepare("INSERT INTO nodes (node_id, name, type_id, graph_id, meta, fixed, layout_id) VALUES (:node_id, :name, :type_id, :graph_id, :meta, :fixed, :layout_id)");
-		query->bindValue(":node_id", iNodes.value()->getId());
+		query->bindValue(":node_id", nodeID);
 		query->bindValue(":name", iNodes.value()->getName());
 		query->bindValue(":type_id", iNodes.value()->getType()->getId()); 
 		query->bindValue(":graph_id", iNodes.value()->getGraph()->getId());
@@ -85,7 +97,7 @@ bool Model::NodeDAO::addMetaNodesToDB(QSqlDatabase* conn, QMap<qlonglong, osg::r
 	return true;
 }
 
-bool Model::NodeDAO::addNodesPositionsToDB(QSqlDatabase* conn, QMap<qlonglong, osg::ref_ptr<Data::Node> >* nodes, Data::GraphLayout* layout)
+bool Model::NodeDAO::addNodesPositionsToDB(QSqlDatabase* conn, QMap<qlonglong, osg::ref_ptr<Data::Node> >* nodes, Data::GraphLayout* layout, QMap<qlonglong, qlonglong> newMetaNodeID, bool meta)
 {
 	//check if we have connection
 	if(conn==NULL || !conn->isOpen()) 
@@ -97,12 +109,31 @@ bool Model::NodeDAO::addNodesPositionsToDB(QSqlDatabase* conn, QMap<qlonglong, o
 	QMap< qlonglong,osg::ref_ptr<Data::Node> >::const_iterator iNodes = nodes->constBegin();
 
 	QSqlQuery* query = new QSqlQuery(*conn);
+	qlonglong nodeID;
+	QMap<qlonglong, qlonglong>::iterator nodeIdIter;
 	
 	while(iNodes != nodes->constEnd()) 
 	{
+		if(meta)	
+		{
+			if(newMetaNodeID.contains(iNodes.value()->getId()))
+			{
+				nodeIdIter = newMetaNodeID.find(iNodes.value()->getId());
+				nodeID = nodeIdIter.value();
+			}
+			else
+			{
+				qDebug() << "[Model::NodeDAO::addNodesPositionsToDB] Node ID: " << iNodes.value()->getId() <<  " mismatch";
+			}
+		}
+		else
+		{
+			nodeID = iNodes.value()->getId();
+		}
+
 		query->prepare("INSERT INTO positions (layout_id, node_id, pos_x, pos_y, pos_z, graph_id) VALUES (:layout_id, :node_id, :pos_x, :pos_y, :pos_z, :graph_id) RETURNING  node_id");
 		query->bindValue(":layout_id", layout->getId()); 
-		query->bindValue(":node_id", iNodes.value()->getId());
+		query->bindValue(":node_id", nodeID);
 		query->bindValue(":pos_x", iNodes.value()->getCurrentPosition().x());
 		query->bindValue(":pos_y", iNodes.value()->getCurrentPosition().y());
 		query->bindValue(":pos_z", iNodes.value()->getCurrentPosition().z());
@@ -119,19 +150,38 @@ bool Model::NodeDAO::addNodesPositionsToDB(QSqlDatabase* conn, QMap<qlonglong, o
 	return true;
 }
 
-bool Model::NodeDAO::addNodesColorToDB(QSqlDatabase* conn, QMap<qlonglong, osg::ref_ptr<Data::Node> >* nodes, Data::GraphLayout* layout)
+bool Model::NodeDAO::addNodesColorToDB(QSqlDatabase* conn, QMap<qlonglong, osg::ref_ptr<Data::Node> >* nodes, Data::GraphLayout* layout, QMap<qlonglong, qlonglong> newMetaNodeID, bool meta)
 {
 	QMap< qlonglong,osg::ref_ptr<Data::Node> >::const_iterator iNodes = nodes->constBegin();
+	qlonglong nodeID;
+	QMap<qlonglong, qlonglong>::iterator nodeIdIter;
 	
 	while(iNodes != nodes->constEnd()) 
 	{
 		//ulozime farbu len nodom, ktore maju farbu inu nez default
 		if(iNodes.value()->getColor().r() != 1 || iNodes.value()->getColor().g() != 1 ||iNodes.value()->getColor().b() != 1 ||iNodes.value()->getColor().a() != 1)
 		{
-			addColorToDB(conn, iNodes.value()->getGraph()->getId(), layout->getId(), iNodes.value()->getId(), "color_r", iNodes.value()->getColor().r());
-			addColorToDB(conn, iNodes.value()->getGraph()->getId(), layout->getId(), iNodes.value()->getId(), "color_g", iNodes.value()->getColor().g());
-			addColorToDB(conn, iNodes.value()->getGraph()->getId(), layout->getId(), iNodes.value()->getId(), "color_b", iNodes.value()->getColor().b());
-			addColorToDB(conn, iNodes.value()->getGraph()->getId(), layout->getId(), iNodes.value()->getId(), "color_a", iNodes.value()->getColor().a());
+			if(meta)	
+			{
+				if(newMetaNodeID.contains(iNodes.value()->getId()))
+				{
+					nodeIdIter = newMetaNodeID.find(iNodes.value()->getId());
+					nodeID = nodeIdIter.value();
+				}
+				else
+				{
+					qDebug() << "[Model::NodeDAO::addNodesColorToDB] Node ID: " << iNodes.value()->getId() <<  " mismatch";
+				}
+			}
+			else
+			{
+				nodeID = iNodes.value()->getId();
+			}
+
+			addColorToDB(conn, iNodes.value()->getGraph()->getId(), layout->getId(), nodeID, "color_r", iNodes.value()->getColor().r());
+			addColorToDB(conn, iNodes.value()->getGraph()->getId(), layout->getId(), nodeID, "color_g", iNodes.value()->getColor().g());
+			addColorToDB(conn, iNodes.value()->getGraph()->getId(), layout->getId(), nodeID, "color_b", iNodes.value()->getColor().b());
+			addColorToDB(conn, iNodes.value()->getGraph()->getId(), layout->getId(), nodeID, "color_a", iNodes.value()->getColor().a());
 		}
 
 		++iNodes;
@@ -479,4 +529,42 @@ QMap<qlonglong, osg::Vec4f> Model::NodeDAO::getColors(QSqlDatabase* conn, bool* 
 	*error = error2;
 
 	return colors;
+}
+
+QMap<qlonglong, qlonglong> Model::NodeDAO::getNewMetaNodesId(QSqlDatabase* conn, qlonglong graphID, QMap<qlonglong, osg::ref_ptr<Data::Node> >* nodes)
+{
+	QMap<qlonglong, qlonglong> newId;
+	qlonglong maxId = 0;
+	QSqlQuery* query;
+
+	QMap< qlonglong, osg::ref_ptr<Data::Node> >::const_iterator iNodes = nodes->constBegin();
+
+	if(conn==NULL || !conn->isOpen()) { 
+        qDebug() << "[Model::NodeDAO::getNewMetaNodesId] Connection to DB not opened.";
+        return newId;
+    } 
+    
+    query = new QSqlQuery(*conn);
+    query->prepare("SELECT MAX(node_id) "
+		"FROM nodes "
+		"WHERE graph_id = :graph_id ");
+	query->bindValue(":graph_id", graphID);
+
+    if(!query->exec()) {
+        qDebug() << "[Model::NodeDAO::getNewMetaNodesId] Could not perform query on DB: " << query->lastError().databaseText();
+        return newId;
+    }
+
+	while(query->next()) {
+		maxId = query->value(0).toLongLong();
+    }
+
+	while(iNodes != nodes->constEnd()) 
+	{
+		maxId++;
+		newId.insert(iNodes.value()->getId(), maxId);
+		++iNodes;
+	}
+
+	return newId;
 }
