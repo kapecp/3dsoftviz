@@ -27,6 +27,8 @@
 #include <QtSql>
 #include <QMutableMapIterator>
 
+#include "Layout/RestrictionsManager.h"
+
 #define METASTRENGTH 1
 
 namespace Data
@@ -436,7 +438,10 @@ namespace Data
 		*  \brief Returns MetaType for meta-Edges
 		*  \return Data::Type * MetaType for the Edges
 		*/
-		Data::Type* getEdgeMetaType(); 
+		Data::Type* getEdgeMetaType();
+
+		Layout::RestrictionsManager & getRestrictionsManager (void);
+
     private:
 
 		/**
@@ -624,6 +629,9 @@ namespace Data
 		*  \brief Meta-Nodes in the Graph sorted by their Type
 		*/
         QMultiMap<qlonglong, osg::ref_ptr<Data::Node> > metaNodesByType;
+
+        Layout::RestrictionsManager restrictionsManager_;
+
 	};
 }
 

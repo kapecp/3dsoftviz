@@ -15,6 +15,7 @@
 #include <ctime>
 #include <QMutex>
 #include <QThread>
+#include <QSharedPointer>
 
 #include "Viewer/DataHelper.h"
 #include "Data/Edge.h"
@@ -119,7 +120,7 @@ namespace Layout
 		*  Data::Graph * graph
 		*  \brief data structure containing nodes, edges and types
 		*/
-		Data::Graph *graph;		
+		Data::Graph *graph;
 
 		/**
 		*  double PI

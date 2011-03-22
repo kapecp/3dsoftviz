@@ -311,15 +311,19 @@ bool FRAlgorithm::applyForces(Data::Node* node)
 			fv.normalize();
 			fv *= 5;
 		}
+
 		// pricitame aktualnu rychlost
 		fv += node->getVelocity();
-		// ulozime novu polohu
-		node->setTargetPosition(node->getTargetPosition() + fv);
-		
+
+		osg::Vec3f computedTargetPosition = node->getTargetPosition () + fv;
+		osg::Vec3f restrictedTargetPosition = graph->getRestrictionsManager ().applyRestriction (*node, computedTargetPosition);
+
+		node->setTargetPosition(restrictedTargetPosition);
+
 		// energeticka strata = 1-flexibilita
 		fv *= flexibility;
 		node->setVelocity(fv); // ulozime novu rychlost
-		//node->setForce(*fv);
+
 		return true;
 	} else {
 		node->resetVelocity(); // vynulovanie rychlosti

@@ -800,3 +800,7 @@ void Data::Graph::removeNode( osg::ref_ptr<Data::Node> node )
 		}
 	}
 }
+
+Layout::RestrictionsManager & Data::Graph::getRestrictionsManager (void) {
+	return restrictionsManager_;
+}

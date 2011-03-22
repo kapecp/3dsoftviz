@@ -16,7 +16,9 @@ AppCore::Core::Core(QApplication * app)
     Util::ApplicationConfig *appConf = Util::ApplicationConfig::get();
 
     messageWindows = new QOSG::MessageWindows();
+
     this->alg = new Layout::FRAlgorithm();
+
     this->thr = new Layout::LayoutThread(this->alg);
     this->cg = new Vwr::CoreGraph();
     this->cw = new QOSG::CoreWindow(0, this->cg, app, this->thr);
