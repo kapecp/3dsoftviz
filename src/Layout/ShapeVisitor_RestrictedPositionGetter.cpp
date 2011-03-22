@@ -78,7 +78,7 @@ osg::Vec3f ShapeVisitor_RestrictedPositionGetter::toSphere (
 	if (changedPointMoved.length() == 0.0) {
 		// create random point
 		for (int i = 0; i < 3; ++i) {
-			changedPointMoved[i] = (random() % 100) + 1;
+			changedPointMoved[i] = (rand() % 100) + 1;
 		}
 	}
 	changedPointMoved.normalize();
