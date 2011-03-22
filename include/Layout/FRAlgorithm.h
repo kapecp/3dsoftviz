@@ -24,7 +24,7 @@
 #include "Data/Graph.h"
 #include "Util/ApplicationConfig.h"
 
-#include "Layout/RestrictionsDefinition.h"
+#include "Layout/RestrictionsManager.h"
 
 namespace Layout
 {
@@ -64,7 +64,7 @@ namespace Layout
 		*/
 		void SetParameters(float sizeFactor,float flexibility,int animationSpeed,bool useMaxDistance);
 
-		void SetRestrictionsDefinition(QSharedPointer<RestrictionsDefinition> restrictionsDefinition);
+		void SetRestrictionsManager(QSharedPointer<RestrictionsManager> restrictionsManager);
 
 		/**
 		*  \fn public  Randomize
@@ -126,7 +126,7 @@ namespace Layout
 		*/
 		Data::Graph *graph;		
 
-		QSharedPointer<RestrictionsDefinition> restrictionsDefinition_;
+		QSharedPointer<RestrictionsManager> restrictionsManager_;
 
 		/**
 		*  double PI

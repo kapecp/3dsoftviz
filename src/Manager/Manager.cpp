@@ -13,8 +13,10 @@
 
 #include "Manager/ImportInfoHandlerImpl.h"
 
-#include "Layout/RestrictionApplier_SphereSurface.h"
-#include "Layout/RestrictionsDefinition.h"
+#include "Layout/ShapeGetter.h"
+#include "Layout/ShapeGetter_Const.h"
+#include "Layout/Shape_Sphere.h"
+#include "Layout/RestrictionsManager.h"
 
 #include <memory>
 
@@ -122,7 +124,7 @@ Data::Graph* Manager::GraphManager::loadGraph(QString filepath)
     	stream->close ();
     }
 
-    // restriction applier
+    // restrictions manager
 	if (ok) {
 		QList<osg::ref_ptr<Data::Node> > graphNodes = newGraph->getNodes()->values();
 
@@ -131,11 +133,15 @@ Data::Graph* Manager::GraphManager::loadGraph(QString filepath)
 			nodes.insert (*it);
 		}
 
-		QSharedPointer<Layout::RestrictionApplier> restrictionApplier (new Layout::RestrictionApplier_SphereSurface (osg::Vec3f(0, 0, 30), 50));
+		QSharedPointer<Layout::ShapeGetter> shapeGetter (
+			new Layout::ShapeGetter_Const (
+				QSharedPointer<Layout::Shape_Sphere> (new Layout::Shape_Sphere (osg::Vec3f(0, 0, 30), 50))
+			)
+		);
 
-		QSharedPointer<Layout::RestrictionsDefinition> restrictionsDefinition (new Layout::RestrictionsDefinition);
-		restrictionsDefinition->setRestrictions (nodes, restrictionApplier);
-		AppCore::Core::getInstance()->getLayoutAlgorithm()->SetRestrictionsDefinition (restrictionsDefinition);
+		QSharedPointer<Layout::RestrictionsManager> restrictionsManager (new Layout::RestrictionsManager);
+		restrictionsManager->setRestrictions (nodes, shapeGetter);
+		AppCore::Core::getInstance()->getLayoutAlgorithm()->SetRestrictionsManager (restrictionsManager);
 	}
 
     // set as active graph
