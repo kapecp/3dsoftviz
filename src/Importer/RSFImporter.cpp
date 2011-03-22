@@ -6,6 +6,26 @@
 #include <memory>
 namespace Importer {
 
+	osg::ref_ptr<Data::Node> RSFImporter::getHyperEdge(
+		QString srcNodeName,
+		QString edgeName,QMap<qlonglong, 
+		osg::ref_ptr<Data::Edge>> *mapa)
+	{
+		osg::ref_ptr<Data::Node> hyperEdgeNode1;
+		for (QMap<qlonglong, osg::ref_ptr<Data::Edge>>::iterator it = mapa->begin (); it != mapa->end (); ++it) {
+			osg::ref_ptr<Data::Edge> existingEdge = it.value ();
+			if (
+				existingEdge->getSrcNode ()->getName () == srcNodeName && 
+				existingEdge->getDstNode ()->getName () == edgeName //&& 
+				//existingEdge->getDstNode ()->getType ()->getName () == QString ("hyperNode")
+			) {
+				hyperEdgeNode1 = existingEdge->getDstNode ();
+				break;
+			}
+		}
+		return hyperEdgeNode1;
+}
+
 bool RSFImporter::import (
 	ImporterContext &context
 ) {
@@ -38,7 +58,7 @@ bool RSFImporter::import (
 		else{
 			if (words[0]=="tagged")
 			{
-				printf("%s %s\n",words[1], words[2]);
+				//printf("%s %s\n",words[1], words[2]);
 			}else
 			{
 				QString edgeName = words[0];
@@ -47,45 +67,32 @@ bool RSFImporter::import (
 
 				// create nodes if not exist
 
-				if (!readNodes.contains(words[1]))
+				if (!readNodes.contains(srcNodeName))
 				{
-					node1 = context.getGraph().addNode(words[1], nodeType);
-					readNodes.addNode(words[1], node1);
+					node1 = context.getGraph().addNode(srcNodeName, nodeType);
+					readNodes.addNode(srcNodeName, node1);
 				} else {
-					node1=readNodes.get(words[1]);
+					node1=readNodes.get(srcNodeName);
 				}
 
-				if (!readNodes.contains(words[2]))
+				if (!readNodes.contains(dstNodeName))
 				{
-					node2 = context.getGraph ().addNode(words[2], nodeType);
-					readNodes.addNode(words[2], node2);
+					node2 = context.getGraph ().addNode(dstNodeName, nodeType);
+					readNodes.addNode(dstNodeName, node2);
 				} else {
-					node2=readNodes.get(words[2]);
+					node2=readNodes.get(dstNodeName);
 				}
-				
+				//create hyperedge
 				osg::ref_ptr<Data::Node> hyperEdgeNode;
 				QMap<qlonglong, osg::ref_ptr<Data::Edge>> *mapa = context.getGraph().getEdges();
-				for (QMap<qlonglong, osg::ref_ptr<Data::Edge>>::iterator it = mapa->begin (); it != mapa->end (); ++it) {
-					osg::ref_ptr<Data::Edge> existingEdge = it.value ();
-					if (
-						existingEdge->getSrcNode ()->getName () == srcNodeName && 
-						existingEdge->getDstNode ()->getName () == edgeName && 
-						existingEdge->getDstNode ()->getType ()->getName () == QString ("hyperNode")
-					) {
-						hyperEdgeNode = existingEdge->getDstNode ();
-						break;
-					}
-				}
-				
+
+				hyperEdgeNode=RSFImporter().getHyperEdge(srcNodeName,edgeName,mapa);
 				if (!hyperEdgeNode.valid ()) {
 					hyperEdgeNode = context.getGraph ().addHyperEdge (edgeName);
 					context.getGraph ().addEdge (QString (""), node1, hyperEdgeNode, edgeType, true);
 				}
 				
 				context.getGraph ().addEdge (QString (""), hyperEdgeNode, node2, edgeType, true);
-
-				////edge=context.getGraph().addEdge(words[0], node1, node2, edgeType, true);
-				////mapa.value(1);
 			}
 		}
 
