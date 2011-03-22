@@ -18,6 +18,7 @@ public:
 	void setOriginalPosition (osg::Vec3f originalPosition);
 	osg::Vec3f getRestrictedPosition (void);
 
+	virtual void visit (Shape_Composite & shape);
 	virtual void visit (Shape_Plane & shape);
 	virtual void visit (Shape_Sphere & shape);
 	virtual void visit (Shape_SphereSurface & shape);

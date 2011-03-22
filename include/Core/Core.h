@@ -51,8 +51,6 @@ namespace AppCore
          */
         Layout::LayoutThread* getLayoutThread(){return this->thr;}
 
-        Layout::FRAlgorithm* getLayoutAlgorithm(){return this->alg;}
-
         /**
          * \fn getInstance
          * \brief Returns instance.

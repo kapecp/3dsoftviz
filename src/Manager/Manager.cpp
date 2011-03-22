@@ -13,10 +13,16 @@
 
 #include "Manager/ImportInfoHandlerImpl.h"
 
+// layout restrictions tests
+/*
 #include "Layout/ShapeGetter.h"
 #include "Layout/ShapeGetter_Const.h"
+#include "Layout/Shape_Composite.h"
+#include "Layout/Shape_Plane.h"
 #include "Layout/Shape_Sphere.h"
+#include "Layout/Shape_SphereSurface.h"
 #include "Layout/RestrictionsManager.h"
+*/
 
 #include <memory>
 
@@ -124,8 +130,9 @@ Data::Graph* Manager::GraphManager::loadGraph(QString filepath)
     	stream->close ();
     }
 
-    // restrictions manager
-	if (ok) {
+    // layout restrictions tests
+    /*
+    if (ok) {
 		QList<osg::ref_ptr<Data::Node> > graphNodes = newGraph->getNodes()->values();
 
 		QSet<Data::Node *> nodes;
@@ -133,16 +140,22 @@ Data::Graph* Manager::GraphManager::loadGraph(QString filepath)
 			nodes.insert (*it);
 		}
 
-		QSharedPointer<Layout::ShapeGetter> shapeGetter (
-			new Layout::ShapeGetter_Const (
-				QSharedPointer<Layout::Shape_Sphere> (new Layout::Shape_Sphere (osg::Vec3f(0, 0, 30), 50))
-			)
-		);
+		QSharedPointer<Layout::Shape> shape;
+		// shape = QSharedPointer<Layout::Shape> (new Layout::Shape_SphereSurface (osg::Vec3f(0, 0, 30), 50));
+		// shape = QSharedPointer<Layout::Shape> (new Layout::Shape_Plane (osg::Vec3f(0, 0, 30), 50));
 
-		QSharedPointer<Layout::RestrictionsManager> restrictionsManager (new Layout::RestrictionsManager);
-		restrictionsManager->setRestrictions (nodes, shapeGetter);
-		AppCore::Core::getInstance()->getLayoutAlgorithm()->SetRestrictionsManager (restrictionsManager);
-	}
+		Layout::Shape_Composite *shapeComposite = new Layout::Shape_Composite ();
+		for (int i = 0; i < 10; i++) {
+			shapeComposite->addShape (QSharedPointer<Layout::Shape> (new Layout::Shape_Plane (osg::Vec3f(0, 0, 30), i * 10)));
+		}
+		shape = QSharedPointer<Layout::Shape> (shapeComposite);
+
+
+		QSharedPointer<Layout::ShapeGetter> shapeGetter (new Layout::ShapeGetter_Const (shape));
+
+		newGraph->getRestrictionsManager ().setRestrictions (nodes, shapeGetter);
+    }
+    */
 
     // set as active graph
     if (ok) {

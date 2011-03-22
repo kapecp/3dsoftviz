@@ -74,10 +74,6 @@ void FRAlgorithm::SetParameters(float sizeFactor,float flexibility,int animation
 	}
 }
 
-void FRAlgorithm::SetRestrictionsManager(QSharedPointer<RestrictionsManager> restrictionsManager) {
-	restrictionsManager_ = restrictionsManager;
-}
-
 /* Urci pokojovu dlzku strun */
 double FRAlgorithm::computeCalm() {
 	double R = 300;
@@ -320,13 +316,7 @@ bool FRAlgorithm::applyForces(Data::Node* node)
 		fv += node->getVelocity();
 
 		osg::Vec3f computedTargetPosition = node->getTargetPosition () + fv;
-		osg::Vec3f restrictedTargetPosition;
-
-		if (!restrictionsManager_.isNull ()) {
-			restrictedTargetPosition = restrictionsManager_->applyRestriction (*node, computedTargetPosition);
-		} else {
-			restrictedTargetPosition = computedTargetPosition;
-		}
+		osg::Vec3f restrictedTargetPosition = graph->getRestrictionsManager ().applyRestriction (*node, computedTargetPosition);
 
 		node->setTargetPosition(restrictedTargetPosition);
 

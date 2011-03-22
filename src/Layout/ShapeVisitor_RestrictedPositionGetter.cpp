@@ -13,6 +13,29 @@ osg::Vec3f ShapeVisitor_RestrictedPositionGetter::getRestrictedPosition (void) {
 	return restrictedPosition_;
 }
 
+void ShapeVisitor_RestrictedPositionGetter::visit (Shape_Composite & shape) {
+	Shape_Composite::ShapesListType & shapes = shape.getShapes ();
+
+	if (shapes.size () > 0) {
+		osg::Vec3f restrictedPositionWithMinDistance;
+		float minDistanceFound;
+		for (Shape_Composite::ShapesListType::const_iterator it = shapes.begin (); it != shapes.end (); ++it) {
+			(*it)->accept (*this); // restrictedPosition_ changes here
+
+			float currentDistance = (originalPosition_ - restrictedPosition_).length ();
+
+			if ((currentDistance < minDistanceFound) || (it == shapes.begin ())) {
+				restrictedPositionWithMinDistance = restrictedPosition_;
+				minDistanceFound = currentDistance;
+			}
+		}
+
+		restrictedPosition_ = restrictedPositionWithMinDistance;
+	} else {
+		restrictedPosition_ = originalPosition_;
+	}
+}
+
 void ShapeVisitor_RestrictedPositionGetter::visit (Shape_Plane & shape) {
 	float t;
 	float m = shape.getD () - shape.getNormalVector ().x () * originalPosition_.x () - shape.getNormalVector ().y () * originalPosition_.y () - shape.getNormalVector ().z () * originalPosition_.z ();
@@ -23,7 +46,7 @@ void ShapeVisitor_RestrictedPositionGetter::visit (Shape_Plane & shape) {
 		t = 0;
 	}
 
-	restrictedPosition_ = osg::Vec3f(
+	restrictedPosition_ = osg::Vec3f (
 		originalPosition_.x () + t * shape.getNormalVector ().x (),
 		originalPosition_.y () + t * shape.getNormalVector ().y (),
 		originalPosition_.z () + t * shape.getNormalVector ().z ()
@@ -63,7 +86,7 @@ osg::Vec3f ShapeVisitor_RestrictedPositionGetter::toSphere (
 
 	osg::Vec3f changedPoint = changedPointMoved + center;
 
-	return (changedPoint);
+	return changedPoint;
 }
 
 } // namespace

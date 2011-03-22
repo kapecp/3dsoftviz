@@ -1,7 +1,6 @@
 #ifndef Layout_RestrictionsManager_H
 #define Layout_RestrictionsManager_H
 //-----------------------------------------------------------------------------
-#include "Data/Node.h"
 #include "Layout/ShapeGetter.h"
 #include "Layout/ShapeVisitor_RestrictedPositionGetter.h"
 //-----------------------------------------------------------------------------
@@ -9,6 +8,10 @@
 #include <QSet>
 #include <QSharedPointer>
 //-----------------------------------------------------------------------------
+
+namespace Data {
+	class Node;
+}
 
 namespace Layout {
 

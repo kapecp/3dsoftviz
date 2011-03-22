@@ -2,7 +2,6 @@
 #define Layout_ShapeGetter_Const_H
 //-----------------------------------------------------------------------------
 #include "Layout/ShapeGetter.h"
-#include "Layout/Shape.h"
 //-----------------------------------------------------------------------------
 
 namespace Layout {

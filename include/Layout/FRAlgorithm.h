@@ -24,8 +24,6 @@
 #include "Data/Graph.h"
 #include "Util/ApplicationConfig.h"
 
-#include "Layout/RestrictionsManager.h"
-
 namespace Layout
 {
 	/**
@@ -63,8 +61,6 @@ namespace Layout
 		*  \param       useMaxDistance     
 		*/
 		void SetParameters(float sizeFactor,float flexibility,int animationSpeed,bool useMaxDistance);
-
-		void SetRestrictionsManager(QSharedPointer<RestrictionsManager> restrictionsManager);
 
 		/**
 		*  \fn public  Randomize
@@ -124,9 +120,7 @@ namespace Layout
 		*  Data::Graph * graph
 		*  \brief data structure containing nodes, edges and types
 		*/
-		Data::Graph *graph;		
-
-		QSharedPointer<RestrictionsManager> restrictionsManager_;
+		Data::Graph *graph;
 
 		/**
 		*  double PI
