@@ -243,11 +243,22 @@ osg::ref_ptr<Data::Node> Data::Graph::addNode(QString name, Data::Type* type, os
 
 void Data::Graph::createNestedGraph(osg::ref_ptr<Data::Node> srcNode)
 {
-
+	//this->parent_id.insert(srcNode, this->parent_id.size()+1);
+	this->parent_id.append(srcNode);
 }
+
 void Data::Graph::closeNestedGraph()
 {
+	this->parent_id.removeLast();
+}
 
+bool Data::Graph::isNestedGraph()
+{
+	if (this->parent_id.size()==0)
+	{
+		return false;
+	}
+	return true;
 }
 
 osg::ref_ptr<Data::Edge> Data::Graph::addEdge(QString name, osg::ref_ptr<Data::Node> srcNode, osg::ref_ptr<Data::Node> dstNode, Data::Type* type, bool isOriented) 
@@ -286,7 +297,6 @@ void Data::Graph::addMultiEdge(QString name, osg::ref_ptr<Data::Node> srcNode, o
 	Data::Type* metype;
 
 			QList<Data::Type*> mtypes = getTypesByName(Data::GraphLayout::MULTI_NODE_TYPE);
-
 			if(mtypes.isEmpty())
 			{
 				//adding META_NODE_TYPE settings if necessary
@@ -376,6 +386,33 @@ osg::ref_ptr<Data::Node> Data::Graph::getMultiEdgeNeighbour(osg::ref_ptr<Data::E
 		}
 
 	return NULL;
+}
+
+osg::ref_ptr<Data::Node> Data::Graph::addHyperEdge(QString name, osg::Vec3f position) {
+	Data::Type* mtype;
+
+	QList<Data::Type*> mtypes = getTypesByName(Data::GraphLayout::HYPER_NODE_TYPE);
+
+	if(mtypes.isEmpty())
+	{
+		//adding META_NODE_TYPE settings if necessary
+		QMap<QString, QString> *settings = new QMap<QString, QString>;
+
+		settings->insert("scale", "5");
+		settings->insert("textureFile", Util::ApplicationConfig::get()->getValue("Viewer.Textures.Node"));
+		settings->insert("color.R", "1");
+		settings->insert("color.G", "1");
+		settings->insert("color.B", "1");
+		settings->insert("color.A", "1");
+
+		mtype = this->addType(Data::GraphLayout::HYPER_NODE_TYPE, settings);
+	}
+	else
+	{
+		mtype = mtypes[0];
+	}
+
+	return addNode (name, mtype, position);
 }
 
 bool Data::Graph::isParralel(osg::ref_ptr<Data::Node> srcNode, osg::ref_ptr<Data::Node> dstNode)

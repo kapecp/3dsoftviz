@@ -18,6 +18,12 @@ public:
 	virtual ~RSFImporter (void) {};
 
 	/***/
+	virtual osg::ref_ptr<Data::Node> getHyperEdge (
+		QString srcNodeName,
+		QString edgeName,QMap<qlonglong, 
+		osg::ref_ptr<Data::Edge>> *mapa
+	);
+
 	virtual bool import (
 		ImporterContext &context
 	);

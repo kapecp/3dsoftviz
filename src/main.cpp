@@ -10,6 +10,7 @@ int main(int argc, char *argv[])
 	new Cleaner(&app);
         AppCore::Core::getInstance(&app);
         Manager::GraphManager::getInstance();
+
 }
 
 

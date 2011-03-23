@@ -24,6 +24,7 @@ Data::Node::Node(qlonglong id, QString name, Data::Type* type, Data::Graph* grap
 	this->inDB = false;
 	this->edges = new QMap<qlonglong, osg::ref_ptr<Data::Edge> >;
 
+
 	settings = new QMap<QString, QString>();
 	//APA
 
@@ -81,6 +82,16 @@ void Data::Node::addEdge(osg::ref_ptr<Data::Edge> edge) {
 void Data::Node::removeEdge( osg::ref_ptr<Data::Edge> edge )
 {
 	edges->remove(edge->getId());
+}
+
+Data::Node* Data::Node::getParentNode()
+{
+	return this->nested_parent;
+}
+
+void Data::Node::setParentNode(Node* parent)
+{
+	this->nested_parent = parent;
 }
 
 void Data::Node::removeAllEdges()
