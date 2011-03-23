@@ -199,6 +199,17 @@ namespace Data
 		*/
 		osg::ref_ptr<Data::Node> addNode(QString name, Data::Type* type, osg::Vec3f position = osg::Vec3f(0,0,0)); 
         
+		/**
+		*  \fn public  createNestedGraph(osg::ref_ptr<Data::Node> srcNode)
+		*  \brief creates nested graph where can be added nested nodes and edges
+		*/
+		void createNestedGraph(osg::ref_ptr<Data::Node> srcNode);
+
+		/**
+		*  \fn public  closeNestedGraph()
+		*  \brief close nested graph after creation
+		*/
+		void closeNestedGraph();
 
 		/**
 		*  \fn public  addEdge(QString name, osg::ref_ptr<Data::Node> srcNode, osg::ref_ptr<Data::Node> dstNode, Data::Type* type, bool isOriented)
