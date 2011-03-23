@@ -241,6 +241,15 @@ osg::ref_ptr<Data::Node> Data::Graph::addNode(QString name, Data::Type* type, os
     return node;
 }
 
+void Data::Graph::createNestedGraph(osg::ref_ptr<Data::Node> srcNode)
+{
+
+}
+void Data::Graph::closeNestedGraph()
+{
+
+}
+
 osg::ref_ptr<Data::Edge> Data::Graph::addEdge(QString name, osg::ref_ptr<Data::Node> srcNode, osg::ref_ptr<Data::Node> dstNode, Data::Type* type, bool isOriented) 
 {
 	if(isParralel(srcNode, dstNode))
@@ -647,4 +656,8 @@ void Data::Graph::removeNode( osg::ref_ptr<Data::Node> node )
 			}
 		}
 	}
+}
+
+Layout::RestrictionsManager & Data::Graph::getRestrictionsManager (void) {
+	return restrictionsManager_;
 }
