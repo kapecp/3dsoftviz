@@ -216,7 +216,7 @@ namespace Data
 		*  \brief recognize if current graph is nested or not
 		*  \return bool value if current graph is nested
 		*/
-		bool Data::Graph::isNestedGraph();
+		bool isNestedGraph();
 
 		/**
 		*  \fn public  addEdge(QString name, osg::ref_ptr<Data::Node> srcNode, osg::ref_ptr<Data::Node> dstNode, Data::Type* type, bool isOriented)
@@ -234,13 +234,13 @@ namespace Data
 		*  \fn public getNestedEdgeType()
 		*  \return nested edge type
 		*/
-		Data::Type* Data::Graph::getNestedEdgeType();
+		Data::Type* getNestedEdgeType();
 
 		/**
 		*  \fn public getNestedEdgeType()
 		*  \return meta-nested edge type
 		*/
-		Data::Type* Data::Graph::getNestedMetaEdgeType();
+		Data::Type* getNestedMetaEdgeType();
 
 		/**
 		*  \fn public  addType(QString name, QMap <QString, QString> *settings = 0)
@@ -264,12 +264,12 @@ namespace Data
 		/**
 		*  \return scale of nested node
 		*/
-		QString Data::Graph::getNodeScale();
+		QString getNodeScale();
 
 		/**
 		*  \return scale of nested edge
 		*/
-		QString Data::Graph::getEdgeScale();
+		QString getEdgeScale();
 
 		/**
 		*  \fn public  removeNode(osg::ref_ptr<Data::Node> node)
@@ -490,7 +490,7 @@ namespace Data
 		*	qlonglong parent_id
 		*	\brief ID of the parent Node
 		*/
-		QList<osg::ref_ptr<Data::Node>> parent_id;
+		QList<osg::ref_ptr<Data::Node> > parent_id;
         
 		/**
 		*  QString name
