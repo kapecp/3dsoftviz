@@ -4,6 +4,8 @@
  */
 #include "Data/Graph.h"
 #include "Data/GraphLayout.h"
+#include "Layout/ShapeGetter_Sphere_AroundNode.h"
+#include <QSharedPointer>
 
 Data::Graph::Graph(qlonglong graph_id, QString name, QSqlDatabase* conn, QMap<qlonglong,osg::ref_ptr<Data::Node> > *nodes, QMap<qlonglong,osg::ref_ptr<Data::Edge> > *edges,QMap<qlonglong,osg::ref_ptr<Data::Node> > *metaNodes, QMap<qlonglong,osg::ref_ptr<Data::Edge> > *metaEdges, QMap<qlonglong,Data::Type*> *types)
 {
@@ -105,7 +107,7 @@ Data::Graph::~Graph(void)
     this->metaNodesByType.clear();
     this->nodesByType.clear();
     this->edgesByType.clear();
-    
+    this->nestedNodes.clear();
     this->typesByName->clear(); 
     delete this->typesByName;
     this->typesByName = NULL;
@@ -261,6 +263,8 @@ osg::ref_ptr<Data::Node> Data::Graph::addNode(QString name, Data::Type* type, os
 	//Napojenie na pomocnu hranu pre vnoreny graf
 	if(this->parent_id.count()>0)
 	{
+		this->nestedNodes.insert(node.get());
+
 		osg::ref_ptr<Data::Edge> edge1 = new Data::Edge(this->incEleIdCounter(), "Nested Edge", this, this->parent_id.last(), node, this->getNestedMetaEdgeType(), false);
 		edge1->linkNodes(this->edges);
 
@@ -291,6 +295,11 @@ void Data::Graph::createNestedGraph(osg::ref_ptr<Data::Node> srcNode)
 
 void Data::Graph::closeNestedGraph()
 {
+	QSharedPointer<Layout::ShapeGetter> shapeGetter (new Layout::ShapeGetter_Sphere_AroundNode (this->parent_id.last(), 20));
+	restrictionsManager_.setRestrictions (this->nestedNodes, shapeGetter);
+
+	//this->getRestrictionsManager().setRestrictions(
+	this->nestedNodes.clear();
 	this->parent_id.removeLast();
 }
 

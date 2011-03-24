@@ -569,6 +569,7 @@ namespace Data
 		*/
 		QMap<qlonglong, osg::ref_ptr<Data::Edge> > newEdges;
 
+		QSet<Data::Node *> nestedNodes;
 
 		/**
 		*  QMap<qlonglong,osg::ref_ptr<Data::Node> > * nodes
