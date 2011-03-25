@@ -265,10 +265,10 @@ osg::ref_ptr<Data::Node> Data::Graph::addNode(QString name, Data::Type* type, os
 	{
 		this->nestedNodes.insert(node.get());
 
-		/*osg::ref_ptr<Data::Edge> edge1 = new Data::Edge(this->incEleIdCounter(), "Nested Edge", this, this->parent_id.last(), node, this->getNestedMetaEdgeType(), false);
+		osg::ref_ptr<Data::Edge> edge1 = new Data::Edge(this->incEleIdCounter(), "Nested Edge", this, this->parent_id.last(), node, this->getNestedMetaEdgeType(), false);
 		edge1->linkNodes(this->edges);
 
-		this->edgesByType.insert(type->getId(),edge1);*/
+		this->edgesByType.insert(type->getId(),edge1);
 	}
 
     this->newNodes.insert(node->getId(),node);
