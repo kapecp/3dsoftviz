@@ -49,7 +49,7 @@ namespace Data
 		*  \param  graph   Graph to which the Node belongs
 		*  \param  position    Node position in space
 		*/
-		Node(qlonglong id, QString name, Data::Type* type, Data::Graph* graph, osg::Vec3f position);
+		Node(qlonglong id, QString name, Data::Type* type, float scaling, Data::Graph* graph, osg::Vec3f position);
 
 		/**
 		*  \fn public virtual destructor  ~Node
@@ -299,7 +299,7 @@ namespace Data
 		*  \param   node     Node to compare
 		*  \return bool true, if this object and node are the same object
 		*/
-		bool equals(Node* node);        
+		bool equals(Node* node);   
 
 
 		/**
@@ -414,6 +414,12 @@ namespace Data
 		*	\brief ID of the Node
 		*/
 		qlonglong id;
+
+		/**
+		*	float scale
+		*	\brief scaling of the Node
+		*/
+		float scale;
 
 		/**
 		*	Node parent

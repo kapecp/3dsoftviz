@@ -264,12 +264,12 @@ namespace Data
 		/**
 		*  \return scale of nested node
 		*/
-		QString getNodeScale();
+		float getNodeScale();
 
 		/**
 		*  \return scale of nested edge
 		*/
-		QString getEdgeScale();
+		float getEdgeScale();
 
 		/**
 		*  \fn public  removeNode(osg::ref_ptr<Data::Node> node)

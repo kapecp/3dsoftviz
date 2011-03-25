@@ -4,7 +4,7 @@
  */
 #include "Data/Edge.h"
 
-Data::Edge::Edge(qlonglong id, QString name, Data::Graph* graph, osg::ref_ptr<Data::Node> srcNode, osg::ref_ptr<Data::Node> dstNode, Data::Type* type, bool isOriented, int pos, osg::ref_ptr<osg::Camera> camera) : osg::DrawArrays(osg::PrimitiveSet::QUADS, pos, 4)
+Data::Edge::Edge(qlonglong id, QString name, Data::Graph* graph, osg::ref_ptr<Data::Node> srcNode, osg::ref_ptr<Data::Node> dstNode, Data::Type* type, bool isOriented, float scaling, int pos, osg::ref_ptr<osg::Camera> camera) : osg::DrawArrays(osg::PrimitiveSet::QUADS, pos, 4)
 {
     this->id = id;
     this->name = name;
@@ -16,7 +16,7 @@ Data::Edge::Edge(qlonglong id, QString name, Data::Graph* graph, osg::ref_ptr<Da
     this->camera = camera;
     this->selected = false;
 	this->inDB = false;
-
+	this->scale = scaling;
     float r = type->getSettings()->value("color.R").toFloat();
     float g = type->getSettings()->value("color.G").toFloat();
     float b = type->getSettings()->value("color.B").toFloat();
@@ -104,7 +104,8 @@ void Data::Edge::updateCoordinates(osg::Vec3 srcPos, osg::Vec3 dstPos)
 	up = edgeDir ^ viewVec;
 	up.normalize();
 
-	up *= appConf->getValue("Viewer.Textures.EdgeScale").toFloat();
+	//up *= appConf->getValue("Viewer.Textures.EdgeScale").toFloat();
+	up *= this->scale;
 
 	coordinates->push_back(osg::Vec3(x.x() + up.x(), x.y() + up.y(), x.z() + up.z()));
 	coordinates->push_back(osg::Vec3(x.x() - up.x(), x.y() - up.y(), x.z() - up.z()));
@@ -116,7 +117,8 @@ void Data::Edge::updateCoordinates(osg::Vec3 srcPos, osg::Vec3 dstPos)
 	std::cout << "Edge coord 3: " << y.x() - up.x() << " " << y.y() - up.y() << " " << y.z() - up.z() << "\n";
 	std::cout << "Edge coord 4: " << y.x() + up.x() << " " << y.y() + up.y() << " " << y.z() + up.z() << "\n";*/
 
-	int repeatCnt = length / (2 * appConf->getValue("Viewer.Textures.EdgeScale").toFloat());
+	//int repeatCnt = length / (2 * appConf->getValue("Viewer.Textures.EdgeScale").toFloat());
+	int repeatCnt = length / (2 * this->scale);
 
 	edgeTexCoords->push_back(osg::Vec2(0,1.0f));
 	edgeTexCoords->push_back(osg::Vec2(0,0.0f));

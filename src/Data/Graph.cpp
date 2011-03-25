@@ -241,7 +241,7 @@ osg::ref_ptr<Data::Node> Data::Graph::addNode(QString name, Data::Type* type, os
 			//adding META_EDGE_TYPE settings if necessary
 			QMap<QString, QString> *settings = new QMap<QString, QString>;
 
-				settings->insert("scale", this->getNodeScale());
+				settings->insert("scale", Util::ApplicationConfig::get()->getValue("Viewer.Textures.DefaultNodeScale"));
 				settings->insert("textureFile", Util::ApplicationConfig::get()->getValue("Viewer.Textures.Node"));
 				settings->insert("color.R", "1");
 				settings->insert("color.G", "0");
@@ -258,14 +258,14 @@ osg::ref_ptr<Data::Node> Data::Graph::addNode(QString name, Data::Type* type, os
 		type = metype;
 	}
 
-    osg::ref_ptr<Data::Node> node = new Data::Node(this->incEleIdCounter(), name, type, this, position);
+    osg::ref_ptr<Data::Node> node = new Data::Node(this->incEleIdCounter(), name, type, this->getNodeScale(), this, position);
 
 	//Napojenie na pomocnu hranu pre vnoreny graf
 	if(this->parent_id.count()>0)
 	{
 		this->nestedNodes.insert(node.get());
 
-		osg::ref_ptr<Data::Edge> edge1 = new Data::Edge(this->incEleIdCounter(), "Nested Edge", this, this->parent_id.last(), node, this->getNestedMetaEdgeType(), false);
+		osg::ref_ptr<Data::Edge> edge1 = new Data::Edge(this->incEleIdCounter(), "Nested Edge", this, this->parent_id.last(), node, this->getNestedMetaEdgeType(), false, this->getEdgeScale());
 		edge1->linkNodes(this->edges);
 
 		this->edgesByType.insert(type->getId(),edge1);
@@ -327,8 +327,8 @@ osg::ref_ptr<Data::Edge> Data::Graph::addEdge(QString name, osg::ref_ptr<Data::N
 		{
 			type = getNestedEdgeType();
 		}
-
-		osg::ref_ptr<Data::Edge> edge = new Data::Edge(this->incEleIdCounter(), name, this, srcNode, dstNode, type, isOriented);
+		float scale = this->getEdgeScale();
+		osg::ref_ptr<Data::Edge> edge = new Data::Edge(this->incEleIdCounter(), name, this, srcNode, dstNode, type, isOriented, getEdgeScale());
 
 		edge->linkNodes(&this->newEdges);
 		if((type!=NULL && type->isMeta()) || ((srcNode->getType()!=NULL && srcNode->getType()->isMeta()) || (dstNode->getType()!=NULL && dstNode->getType()->isMeta())))
@@ -358,7 +358,7 @@ Data::Type* Data::Graph::getNestedEdgeType()
 				//adding NESTED_EDGE_TYPE settings if necessary
 				QMap<QString, QString> *settings = new QMap<QString, QString>;
 
-				settings->insert("scale", this->getEdgeScale());
+				settings->insert("scale", "50");//this->getEdgeScale());
 				settings->insert("textureFile", Util::ApplicationConfig::get()->getValue("Viewer.Textures.Edge"));
 				settings->insert("color.R", "1");
 				settings->insert("color.G", "0");
@@ -456,12 +456,12 @@ void Data::Graph::addMultiEdge(QString name, osg::ref_ptr<Data::Node> srcNode, o
 				metype = getNestedEdgeType();
 			}
 
-			osg::ref_ptr<Data::Edge> edge1 = new Data::Edge(this->incEleIdCounter(), name, this, srcNode, parallelNode, metype, isOriented);
+			osg::ref_ptr<Data::Edge> edge1 = new Data::Edge(this->incEleIdCounter(), name, this, srcNode, parallelNode, metype, isOriented, this->getEdgeScale());
 			edge1->linkNodes(this->edges);
 
 			this->edgesByType.insert(type->getId(),edge1);
 
-			osg::ref_ptr<Data::Edge> edge2 = new Data::Edge(this->incEleIdCounter(), name, this, parallelNode, dstNode, metype, isOriented);
+			osg::ref_ptr<Data::Edge> edge2 = new Data::Edge(this->incEleIdCounter(), name, this, parallelNode, dstNode, metype, isOriented, this->getEdgeScale());
 			edge2->linkNodes(this->edges);
 
 			this->edgesByType.insert(type->getId(),edge2);
@@ -679,30 +679,30 @@ Data::Type* Data::Graph::getNodeMultiType()
         return type;
 }
 
-QString Data::Graph::getNodeScale()
+float Data::Graph::getNodeScale()
 {
 	int level;
 	level = this->parent_id.size();
-	double offset = 8;
+	float offset = Util::ApplicationConfig::get()->getValue("Viewer.Textures.DefaultNodeScale").toFloat();
 
 	for(int i=0; i<level; i++)
 	{
 		offset = offset/3;
 	}
-	return QString::number(offset);
+	return offset;
 }
 
-QString Data::Graph::getEdgeScale()
+float Data::Graph::getEdgeScale()
 {
 	int level;
 	level = this->parent_id.size();
-	double offset = 2;
+	float offset = Util::ApplicationConfig::get()->getValue("Viewer.Textures.EdgeScale").toFloat();
 
 	for(int i=0; i<level; i++)
 	{
 		offset = offset/3;
 	}
-	return QString::number(offset);
+	return offset;
 }
 
 Data::Type* Data::Graph::getEdgeMetaType()
