@@ -216,7 +216,7 @@ namespace Data
 		*  \brief recognize if current graph is nested or not
 		*  \return bool value if current graph is nested
 		*/
-		bool Data::Graph::isNestedGraph();
+		bool isNestedGraph();
 
 		/**
 		*  \fn public  addEdge(QString name, osg::ref_ptr<Data::Node> srcNode, osg::ref_ptr<Data::Node> dstNode, Data::Type* type, bool isOriented)
@@ -472,7 +472,7 @@ namespace Data
 		*	qlonglong parent_id
 		*	\brief ID of the parent Node
 		*/
-		QList<osg::ref_ptr<Data::Node>> parent_id;
+		QList<osg::ref_ptr<Data::Node> > parent_id;
         
 		/**
 		*  QString name
