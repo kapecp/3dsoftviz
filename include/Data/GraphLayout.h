@@ -110,6 +110,12 @@ namespace Data
 		static const QString NESTED_META_EDGE_TYPE;
 
 		/**
+		*  const QString HYPER_NODE_TYPE
+		*  \brief Constant identifier of HyperType name used for hyper nodes as identified by MetaSettings of the GraphLayout
+		*/
+		static const QString HYPER_NODE_TYPE;
+
+		/**
 		*  \fn public constructor  GraphLayout(qlonglong layout_id, Data::Graph* graph, QString name, QSqlDatabase* conn)
 		*  \brief Creates new GraphLayout object
 		*  \param   layout_id 		ID of the GraphLayout
