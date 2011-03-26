@@ -230,6 +230,17 @@ namespace Data
 		*/
 		osg::ref_ptr<Data::Edge> addEdge(QString name, osg::ref_ptr<Data::Node> srcNode, osg::ref_ptr<Data::Node> dstNode, Data::Type* type, bool isOriented); 
         
+		/**
+		*  \fn public getNestedEdgeType()
+		*  \return nested edge type
+		*/
+		Data::Type* getNestedEdgeType();
+
+		/**
+		*  \fn public getNestedEdgeType()
+		*  \return meta-nested edge type
+		*/
+		Data::Type* getNestedMetaEdgeType();
 
 		/**
 		*  \fn public  addType(QString name, QMap <QString, QString> *settings = 0)
@@ -250,6 +261,15 @@ namespace Data
 		*/
         Data::MetaType* addMetaType(QString name, QMap <QString, QString> *settings = 0); //implemented
         
+		/**
+		*  \return scale of nested node
+		*/
+		float getNodeScale();
+
+		/**
+		*  \return scale of nested edge
+		*/
+		float getEdgeScale();
 
 		/**
 		*  \fn public  removeNode(osg::ref_ptr<Data::Node> node)
@@ -551,6 +571,7 @@ namespace Data
 		*/
 		QMap<qlonglong, osg::ref_ptr<Data::Edge> > newEdges;
 
+		QSet<Data::Node *> nestedNodes;
 
 		/**
 		*  QMap<qlonglong,osg::ref_ptr<Data::Node> > * nodes
