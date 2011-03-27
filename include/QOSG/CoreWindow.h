@@ -162,6 +162,8 @@ namespace QOSG
 				*/
 				void applyColorClick();
 
+				void addRestriction_SphereSurface();
+
 	private:
 
 		/**
@@ -271,6 +273,8 @@ namespace QOSG
 		*  \brief Action for applying color to selected nodes
 		*/
 		QPushButton * applyColor;
+
+		QPushButton * b_AddRestriction_SphereSurface;
 
 		/**
 		*  QAction * load

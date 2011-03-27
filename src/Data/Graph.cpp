@@ -698,3 +698,25 @@ void Data::Graph::removeNode( osg::ref_ptr<Data::Node> node )
 Layout::RestrictionsManager & Data::Graph::getRestrictionsManager (void) {
 	return restrictionsManager_;
 }
+
+void Data::Graph::addRestrictionNodeType (void) {
+	//adding type settings if necessary
+	QMap<QString, QString> *settings = new QMap<QString, QString>;
+
+	settings->insert("scale", "5");
+	settings->insert("textureFile", Util::ApplicationConfig::get()->getValue("Viewer.Textures.Node"));
+	settings->insert("color.R", "0");
+	settings->insert("color.G", "1");
+	settings->insert("color.B", "1");
+	settings->insert("color.A", "1");
+
+	this->addType(Data::GraphLayout::RESTRICTION_NODE_TYPE, settings);
+}
+
+osg::ref_ptr<Data::Node> Data::Graph::addRestrictionNode(QString name, osg::Vec3f position) {
+	osg::ref_ptr<Data::Node> node = addNode (name, getTypesByName(Data::GraphLayout::RESTRICTION_NODE_TYPE)[0], position);
+	node->setIgnored (true);
+
+	return node;
+}
+

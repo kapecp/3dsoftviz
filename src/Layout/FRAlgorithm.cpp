@@ -222,8 +222,10 @@ bool FRAlgorithm::iterate()
 			Data::Node *u = j.value()->getSrcNode();
 			Data::Node *v = j.value()->getDstNode();
 			// uzly nikdy nebudu ignorovane
+			/*
 			u->setIgnored(false);
 			v->setIgnored(false);
+			*/ // ignored value has not been used, so setting it here did not have any effect
 			if (graph->getMetaNodes()->contains(u->getId())) {
 				// pritazliva sila, posobi na v
 				addMetaAttractive(v, u, Data::Graph::getMetaStrength());
@@ -333,6 +335,9 @@ bool FRAlgorithm::applyForces(Data::Node* node)
 
 /* Pricitanie pritazlivych sil */
 void FRAlgorithm::addAttractive(Data::Edge* edge, float factor) {
+	if (edge->getSrcNode()->isIgnored () || edge->getDstNode()->isIgnored ()) {
+		return;
+	}
 	up = edge->getSrcNode()->getTargetPosition();
 	vp = edge->getDstNode()->getTargetPosition();
 	dist = distance(up,vp);
@@ -348,6 +353,9 @@ void FRAlgorithm::addAttractive(Data::Edge* edge, float factor) {
 
 /* Pricitanie pritazlivych sil od metazla */
 void FRAlgorithm::addMetaAttractive(Data::Node* u, Data::Node* meta, float factor) {
+	if (u->isIgnored () || meta->isIgnored ()) {
+		return;
+	}
 	up = u->getTargetPosition();
 	vp = meta->getTargetPosition();
 	dist = distance(up,vp);
@@ -361,6 +369,9 @@ void FRAlgorithm::addMetaAttractive(Data::Node* u, Data::Node* meta, float facto
 
 /* Pricitanie odpudivych sil */
 void FRAlgorithm::addRepulsive(Data::Node* u, Data::Node* v, float factor) {
+	if (u->isIgnored () || v->isIgnored ()) {
+		return;
+	}
 	up = u->getTargetPosition();
 	vp = v->getTargetPosition();
 	dist = distance(up,vp);

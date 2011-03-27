@@ -93,6 +93,8 @@ namespace Data
 
 		static const QString HYPER_NODE_TYPE;
 
+		static const QString RESTRICTION_NODE_TYPE;
+
 		/**
 		*  \fn public constructor  GraphLayout(qlonglong layout_id, Data::Graph* graph, QString name, QSqlDatabase* conn)
 		*  \brief Creates new GraphLayout object

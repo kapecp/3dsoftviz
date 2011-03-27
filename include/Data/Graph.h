@@ -424,6 +424,10 @@ namespace Data
 
 		Layout::RestrictionsManager & getRestrictionsManager (void);
 
+		void addRestrictionNodeType (void);
+
+		osg::ref_ptr<Data::Node> addRestrictionNode(QString name, osg::Vec3f position);
+
     private:
 
 		/**
