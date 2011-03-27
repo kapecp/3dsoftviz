@@ -2,9 +2,6 @@
 #include "Util/Cleaner.h"
 
 #include "Layout/ShapeGetter_Sphere_AroundNode.h"
-#include "Layout/Shape_SphereSurface.h"
-#include "Layout/ShapeGetter_Const.h"
-
 
 using namespace QOSG;
 
@@ -500,11 +497,7 @@ void CoreWindow::addRestriction_SphereSurface()
 			nodes.insert (it->get ());
 		}
 
-		//QSharedPointer<Layout::Shape> shape;
-		//shape = QSharedPointer<Layout::Shape> (new Layout::Shape_SphereSurface (osg::Vec3f(0, 0, 30), 50));
-
 		QSharedPointer<Layout::ShapeGetter> shapeGetter (new Layout::ShapeGetter_Sphere_AroundNode (centerNode, 10));
-		// QSharedPointer<Layout::ShapeGetter> shapeGetter (new Layout::ShapeGetter_Const (shape));
 
 		currentGraph->getRestrictionsManager ().setRestrictions (nodes, shapeGetter);
 

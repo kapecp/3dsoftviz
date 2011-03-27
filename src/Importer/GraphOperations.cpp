@@ -26,10 +26,6 @@ bool GraphOperations::addDefaultTypes (
 		ok = (NULL != nodeType);
 	}
 
-	if (ok) {
-		graph_.addRestrictionNodeType ();
-	}
-
 	return ok;
 }
 
