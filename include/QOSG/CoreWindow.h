@@ -162,7 +162,9 @@ namespace QOSG
 				*/
 				void applyColorClick();
 
-				void addRestriction_SphereSurface();
+				void addRestriction_SphereSurface ();
+				void addRestriction_Sphere ();
+				void addRestriction_Plane ();
 
 	private:
 
@@ -275,6 +277,8 @@ namespace QOSG
 		QPushButton * applyColor;
 
 		QPushButton * b_AddRestriction_SphereSurface;
+		QPushButton * b_AddRestriction_Sphere;
+		QPushButton * b_AddRestriction_Plane;
 
 		/**
 		*  QAction * load
