@@ -277,6 +277,14 @@ namespace Data
 		*  \param      node   the Node to be removed from the Graph
 		*/
 		void removeNode(osg::ref_ptr<Data::Node> node);
+
+		/**
+		*  \fn public  isInSameGraph(osg::ref_ptr<Data::Node> nodeA, osg::ref_ptr<Data::Node> nodeB)
+		*  \brief recognize if nodes are in same graph
+		*  \param Nodes: nodeA, nodeB
+		*/
+		bool isInSameGraph(osg::ref_ptr<Data::Node> nodeA, osg::ref_ptr<Data::Node> nodeB);
+
         
 		/**
 		*  \fn public  addMultiEdge(QString name, osg::ref_ptr<Data::Node> srcNode, osg::ref_ptr<Data::Node> dstNode, Data::Type* type, bool isOriented, osg::ref_ptr<Data::Edge> replacedSingleEdge)

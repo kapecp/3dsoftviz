@@ -227,6 +227,15 @@ QString Data::Graph::setName(QString name)
     return this->name;
 }
 
+bool Data::Graph::isInSameGraph(osg::ref_ptr<Data::Node> nodeA, osg::ref_ptr<Data::Node> nodeB)
+{
+	if(nodeA->getNestedParent()==nodeB->getNestedParent())
+	{
+		return true;
+	}
+	return false;
+}
+
 osg::ref_ptr<Data::Node> Data::Graph::addNode(QString name, Data::Type* type, osg::Vec3f position)
 {
 	Data::Type* metype;
@@ -260,10 +269,14 @@ osg::ref_ptr<Data::Node> Data::Graph::addNode(QString name, Data::Type* type, os
 
     osg::ref_ptr<Data::Node> node = new Data::Node(this->incEleIdCounter(), name, type, this->getNodeScale(), this, position);
 
+	node->setNestedParent(NULL);
+
 	//Napojenie na pomocnu hranu pre vnoreny graf
 	if(this->parent_id.count()>0)
 	{
 		this->nestedNodes.insert(node.get());
+
+		node->setNestedParent(parent_id.last());
 
 		osg::ref_ptr<Data::Edge> edge1 = new Data::Edge(this->incEleIdCounter(), "Nested Edge", this, this->parent_id.last(), node, this->getNestedMetaEdgeType(), false, this->getEdgeScale());
 		edge1->linkNodes(this->edges);
