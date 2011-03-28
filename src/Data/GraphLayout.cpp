@@ -13,6 +13,7 @@ const QString Data::GraphLayout::HYPER_NODE_TYPE = QString("HYPER_NODE_TYPE");
 const QString Data::GraphLayout::NESTED_NODE_TYPE = QString("NESTED_NODE_TYPE");
 const QString Data::GraphLayout::NESTED_EDGE_TYPE = QString("NESTED_EDGE_TYPE");
 const QString Data::GraphLayout::NESTED_META_EDGE_TYPE= QString("NESTED_META_EDGE_TYPE");
+const QString Data::GraphLayout::RESTRICTION_NODE_TYPE = QString("RESTRICTION_NODE_TYPE");
 
 Data::GraphLayout::GraphLayout(qlonglong layout_id, Data::Graph* graph, QString name, QSqlDatabase* conn)
 {

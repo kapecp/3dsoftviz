@@ -450,7 +450,11 @@ namespace Data
 		*/
 		Data::Type* getEdgeMetaType();
 
+		Data::Type* getRestrictionNodeMetaType();
+
 		Layout::RestrictionsManager & getRestrictionsManager (void);
+
+		osg::ref_ptr<Data::Node> addRestrictionNode(QString name, osg::Vec3f position);
 
     private:
 

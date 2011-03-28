@@ -760,6 +760,31 @@ Data::Type* Data::Graph::getEdgeMetaType()
     }
 }
 
+Data::Type* Data::Graph::getRestrictionNodeMetaType()
+{
+    if(this->selectedLayout==NULL) return NULL;
+
+    if(this->selectedLayout->getMetaSetting(Data::GraphLayout::RESTRICTION_NODE_TYPE) == NULL)
+	{
+		QMap<QString, QString> *settings = new QMap<QString, QString>;
+
+		settings->insert("scale", Util::ApplicationConfig::get()->getValue("Viewer.Textures.DefaultNodeScale"));
+		settings->insert("textureFile", Util::ApplicationConfig::get()->getValue("Viewer.Textures.MetaNode"));
+		settings->insert("color.R", "0");
+		settings->insert("color.G", "1");
+		settings->insert("color.B", "1");
+		settings->insert("color.A", "0.8");
+
+        Data::MetaType* type = this->addMetaType(Data::GraphLayout::RESTRICTION_NODE_TYPE, settings);
+        this->selectedLayout->setMetaSetting(Data::GraphLayout::RESTRICTION_NODE_TYPE,QString::number(type->getId()));
+        return type;
+    } else {
+        qlonglong typeId = this->selectedLayout->getMetaSetting(Data::GraphLayout::RESTRICTION_NODE_TYPE).toLongLong();
+        if(this->types->contains(typeId)) return this->types->value(typeId);
+        return NULL;
+    }
+}
+
 void Data::Graph::removeType( Data::Type* type )
 {
     if(type!=NULL && type->getGraph()==this) {
@@ -853,3 +878,11 @@ void Data::Graph::removeNode( osg::ref_ptr<Data::Node> node )
 Layout::RestrictionsManager & Data::Graph::getRestrictionsManager (void) {
 	return restrictionsManager_;
 }
+
+osg::ref_ptr<Data::Node> Data::Graph::addRestrictionNode(QString name, osg::Vec3f position) {
+	osg::ref_ptr<Data::Node> node = addNode (name, getRestrictionNodeMetaType (), position);
+	node->setIgnored (true);
+
+	return node;
+}
+

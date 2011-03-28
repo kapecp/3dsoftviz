@@ -26,6 +26,8 @@
 #include "Manager/Manager.h"
 #include "QOSG/qtcolorpicker.h"
 
+#include "Layout/ShapeGetter.h"
+
 namespace QOSG
 {
 	/**
@@ -162,6 +164,10 @@ namespace QOSG
 				*/
 				void applyColorClick();
 
+				void addRestriction_SphereSurface ();
+				void addRestriction_Sphere ();
+				void addRestriction_Plane ();
+
 	private:
 
 		/**
@@ -271,6 +277,10 @@ namespace QOSG
 		*  \brief Action for applying color to selected nodes
 		*/
 		QPushButton * applyColor;
+
+		QPushButton * b_AddRestriction_SphereSurface;
+		QPushButton * b_AddRestriction_Sphere;
+		QPushButton * b_AddRestriction_Plane;
 
 		/**
 		*  QAction * load
@@ -413,6 +423,13 @@ namespace QOSG
 		*  \param  val layout thread
 		*/
 		void setLayoutThread(Layout::LayoutThread * val) { layout = val; }
+
+	private:
+
+		void setRestrictionToSelectedNodes (
+			QSharedPointer<Layout::ShapeGetter> shapeGetter,
+			Data::Graph * currentGraph
+		);
 
 	};
 }
