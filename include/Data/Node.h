@@ -49,7 +49,7 @@ namespace Data
 		*  \param  graph   Graph to which the Node belongs
 		*  \param  position    Node position in space
 		*/
-		Node(qlonglong id, QString name, Data::Type* type, Data::Graph* graph, osg::Vec3f position);
+		Node(qlonglong id, QString name, Data::Type* type, float scaling, Data::Graph* graph, osg::Vec3f position);
 
 		/**
 		*  \fn public virtual destructor  ~Node
@@ -299,7 +299,7 @@ namespace Data
 		*  \param   node     Node to compare
 		*  \return bool true, if this object and node are the same object
 		*/
-		bool equals(Node* node);        
+		bool equals(Node* node);   
 
 
 		/**
@@ -381,6 +381,20 @@ namespace Data
 		void reloadConfig();
 
 		/**
+		*  \fn inline public  setNestedParent(Data::Node val)
+		*  \brief Sets parent of note, if null, node has no parent
+		*  \param      val     
+		*/
+		void setNestedParent(osg::ref_ptr<Data::Node> val) { nested_parent = val; }
+
+		/**
+		*  \fn inline public  getNestedParent
+		*  \brief Return node parent, if no parent then return NULL
+	        *  \return QString name of the Node
+		*/
+		osg::ref_ptr<Data::Node> getNestedParent() { return nested_parent; }
+
+		/**
 		*  \fn inline public  getName
 		*  \brief Return node name
 	        *  \return QString name of the Node
@@ -416,10 +430,16 @@ namespace Data
 		qlonglong id;
 
 		/**
+		*	float scale
+		*	\brief scaling of the Node
+		*/
+		float scale;
+
+		/**
 		*	Node parent
 		*	\brief parent node of current node in nested graphs, in top level graph is null
 		*/
-		Node* nested_parent;
+		osg::ref_ptr<Data::Node> nested_parent;
 
 		/**
 		*  QString name

@@ -13,7 +13,7 @@
 
 typedef osg::TemplateIndexArray<unsigned int, osg::Array::UIntArrayType,4,1> ColorIndexArray;
 
-Data::Node::Node(qlonglong id, QString name, Data::Type* type, Data::Graph* graph, osg::Vec3f position) 
+Data::Node::Node(qlonglong id, QString name, Data::Type* type, float scaling, Data::Graph* graph, osg::Vec3f position) 
 {
     this->id = id;
 	this->name = name;
@@ -23,6 +23,8 @@ Data::Node::Node(qlonglong id, QString name, Data::Type* type, Data::Graph* grap
 	this->graph = graph;
 	this->inDB = false;
 	this->edges = new QMap<qlonglong, osg::ref_ptr<Data::Edge> >;
+	this->scale = scaling;
+
 
 
 	settings = new QMap<QString, QString>();
@@ -43,7 +45,7 @@ Data::Node::Node(qlonglong id, QString name, Data::Type* type, Data::Graph* grap
 			labelText = labelText.replace(pos, 1, "\n");
 	}
 
-	this->addDrawable(createNode(this->type->getScale(), Node::createStateSet(this->type)));
+	this->addDrawable(createNode(this->scale, Node::createStateSet(this->type)));
 	
 	this->square = createSquare(this->type->getScale(), Node::createStateSet());
 	this->label = createLabel(this->type->getScale(), labelText);
@@ -117,13 +119,13 @@ void Data::Node::removeAllEdges()
  * Vytvori konkretny uzol a priradi mu stav.
  * 
  */
-osg::ref_ptr<osg::Drawable> Data::Node::createNode(const float & scale, osg::StateSet* bbState) 
+osg::ref_ptr<osg::Drawable> Data::Node::createNode(const float & scaling, osg::StateSet* bbState) 
 {
-	float width = 2.0f;
-	float height = 2.0f;
+	float width = scaling;//2.0f;
+	float height = scaling;//2.0f;
 
-	width *= scale;
-	height *= scale;
+	//width *= scaling;
+	//height *= scaling;
 
 	osg::ref_ptr<osg::Geometry> nodeQuad = new osg::Geometry;
 	osg::ref_ptr<osg::Vec3Array> nodeVerts = new osg::Vec3Array(4);
@@ -297,7 +299,7 @@ void Data::Node::showLabel(bool visible)
 
 void Data::Node::reloadConfig()
 {
-	this->setDrawable(0, createNode(this->type->getScale(), Node::createStateSet(this->type)));
+	this->setDrawable(0, createNode(this->scale, Node::createStateSet(this->type)));
 	setSelected(selected);
 
 	osg::ref_ptr<osg::Drawable> newRect = createSquare(this->type->getScale(), Node::createStateSet());

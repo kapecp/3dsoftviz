@@ -74,6 +74,7 @@ void CoreGraph::reload(Data::Graph * graph)
 	nodesPosition = currentPos++;
 
 	this->edgesGroup = new Vwr::EdgeGroup(in_edges, appConf->getValue("Viewer.Textures.EdgeScale").toFloat());
+	//this->edgesGroup = new Vwr::EdgeGroup(in_edges, 10);
 	root->addChild(edgesGroup->getGroup());
 	edgesPosition = currentPos++;
 
@@ -82,6 +83,7 @@ void CoreGraph::reload(Data::Graph * graph)
 	qmetaNodesPosition = currentPos++;
 
 	this->qmetaEdgesGroup = new Vwr::EdgeGroup(qmetaEdges, appConf->getValue("Viewer.Textures.EdgeScale").toFloat());
+	//this->qmetaEdgesGroup = new Vwr::EdgeGroup(qmetaEdges, 10);
 	root->addChild(qmetaEdgesGroup->getGroup());
 	qmetaEdgesPosition = currentPos++;
 

@@ -9,10 +9,10 @@ namespace Importer {
 	osg::ref_ptr<Data::Node> RSFImporter::getHyperEdge(
 		QString srcNodeName,
 		QString edgeName,QMap<qlonglong, 
-		osg::ref_ptr<Data::Edge>> *mapa)
+		osg::ref_ptr<Data::Edge> > *mapa)
 	{
 		osg::ref_ptr<Data::Node> hyperEdgeNode1;
-		for (QMap<qlonglong, osg::ref_ptr<Data::Edge>>::iterator it = mapa->begin (); it != mapa->end (); ++it) {
+		for (QMap<qlonglong, osg::ref_ptr<Data::Edge> >::iterator it = mapa->begin (); it != mapa->end (); ++it) {
 			osg::ref_ptr<Data::Edge> existingEdge = it.value ();
 			if (
 				existingEdge->getSrcNode ()->getName () == srcNodeName && 
@@ -84,7 +84,7 @@ bool RSFImporter::import (
 				}
 				//create hyperedge
 				osg::ref_ptr<Data::Node> hyperEdgeNode;
-				QMap<qlonglong, osg::ref_ptr<Data::Edge>> *mapa = context.getGraph().getEdges();
+				QMap<qlonglong, osg::ref_ptr<Data::Edge> > *mapa = context.getGraph().getEdges();
 
 				hyperEdgeNode=RSFImporter().getHyperEdge(srcNodeName,edgeName,mapa);
 				if (!hyperEdgeNode.valid ()) {
