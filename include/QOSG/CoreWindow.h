@@ -26,6 +26,8 @@
 #include "Manager/Manager.h"
 #include "QOSG/qtcolorpicker.h"
 
+#include "Layout/ShapeGetter.h"
+
 namespace QOSG
 {
 	/**
@@ -421,6 +423,13 @@ namespace QOSG
 		*  \param  val layout thread
 		*/
 		void setLayoutThread(Layout::LayoutThread * val) { layout = val; }
+
+	private:
+
+		void setRestrictionToSelectedNodes (
+			QSharedPointer<Layout::ShapeGetter> shapeGetter,
+			Data::Graph * currentGraph
+		);
 
 	};
 }
