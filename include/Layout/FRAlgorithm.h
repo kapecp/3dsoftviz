@@ -354,6 +354,9 @@ namespace Layout
 		*  \return double distance between two vectors
 		*/
 		double distance(osg::Vec3f u,osg::Vec3f v);
+
+		bool areForcesBetween (Data::Node * u, Data::Node * v);
+
 	};
 }
 

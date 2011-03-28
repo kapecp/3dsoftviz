@@ -227,7 +227,7 @@ QString Data::Graph::setName(QString name)
     return this->name;
 }
 
-bool Data::Graph::isInSameGraph(osg::ref_ptr<Data::Node> nodeA, osg::ref_ptr<Data::Node> nodeB)
+bool Data::Graph::isInSameGraph(Data::Node * nodeA, Data::Node * nodeB)
 {
 	if(nodeA->getNestedParent()==nodeB->getNestedParent())
 	{

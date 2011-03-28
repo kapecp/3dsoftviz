@@ -335,7 +335,7 @@ bool FRAlgorithm::applyForces(Data::Node* node)
 
 /* Pricitanie pritazlivych sil */
 void FRAlgorithm::addAttractive(Data::Edge* edge, float factor) {
-	if (edge->getSrcNode()->isIgnored () || edge->getDstNode()->isIgnored ()) {
+	if (!areForcesBetween (edge->getSrcNode(), edge->getDstNode())) {
 		return;
 	}
 	up = edge->getSrcNode()->getTargetPosition();
@@ -353,7 +353,7 @@ void FRAlgorithm::addAttractive(Data::Edge* edge, float factor) {
 
 /* Pricitanie pritazlivych sil od metazla */
 void FRAlgorithm::addMetaAttractive(Data::Node* u, Data::Node* meta, float factor) {
-	if (u->isIgnored () || meta->isIgnored ()) {
+	if (!areForcesBetween (u, meta)) {
 		return;
 	}
 	up = u->getTargetPosition();
@@ -369,7 +369,7 @@ void FRAlgorithm::addMetaAttractive(Data::Node* u, Data::Node* meta, float facto
 
 /* Pricitanie odpudivych sil */
 void FRAlgorithm::addRepulsive(Data::Node* u, Data::Node* v, float factor) {
-	if (u->isIgnored () || v->isIgnored ()) {
+	if (!areForcesBetween (u, v)) {
 		return;
 	}
 	up = u->getTargetPosition();
@@ -407,4 +407,20 @@ double FRAlgorithm::distance(osg::Vec3f u,osg::Vec3f v)
 {
 	osg::Vec3f x = u - v;
 	return (double) x.length();
+}
+
+bool FRAlgorithm::areForcesBetween (Data::Node * u, Data::Node * v) {
+	return
+		!(u->isIgnored ())
+		&&
+		!(v->isIgnored ())
+		&&
+		(
+			graph->isInSameGraph (u, v)
+			||
+			u->getType ()->isMeta ()
+			||
+			v->getType ()->isMeta ()
+		)
+	;
 }

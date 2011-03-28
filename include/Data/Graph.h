@@ -283,7 +283,7 @@ namespace Data
 		*  \brief recognize if nodes are in same graph
 		*  \param Nodes: nodeA, nodeB
 		*/
-		bool isInSameGraph(osg::ref_ptr<Data::Node> nodeA, osg::ref_ptr<Data::Node> nodeB);
+		bool isInSameGraph(Data::Node * nodeA, Data::Node * nodeB);
 
         
 		/**
