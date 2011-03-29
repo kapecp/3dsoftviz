@@ -161,7 +161,12 @@ namespace QOSG
 				*  \brief Apply selected color in colorpicker to selected node
 				*/
 				void applyColorClick();
-
+				
+				/**
+				*  \fn public  add_EdgeClick
+				*  \brief create edge between selected node
+				*/
+				bool add_EdgeClick();
 	private:
 
 		/**
@@ -271,6 +276,12 @@ namespace QOSG
 		*  \brief Action for applying color to selected nodes
 		*/
 		QPushButton * applyColor;
+
+		/**
+		*  QAction * load
+		*  \brief Action for loading file
+		*/
+		QPushButton * add_Edge;
 
 		/**
 		*  QAction * load

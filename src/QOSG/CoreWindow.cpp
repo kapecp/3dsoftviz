@@ -102,6 +102,13 @@ void CoreWindow::createActions()
 	applyColor->setFocusPolicy(Qt::NoFocus);
 	connect(applyColor,SIGNAL(clicked()),this,SLOT(applyColorClick()));
 
+	//add edge
+	add_Edge = new QPushButton();
+	add_Edge->setText("Add Edge");
+	add_Edge->setToolTip("Create new edge between two selected Nodes");
+	add_Edge->setFocusPolicy(Qt::NoFocus);
+	connect(add_Edge,SIGNAL(clicked()),this,SLOT(add_EdgeClick()));
+
 	//mody - ziadny vyber, vyber jedneho, multi vyber centrovanie
 	noSelect = new QPushButton();
 	noSelect->setIcon(QIcon("img/gui/noselect.png"));
@@ -186,7 +193,7 @@ void CoreWindow::createToolBar()
 	toolBar->addWidget(play);
 	toolBar->addSeparator();
 	toolBar->addWidget(applyColor);
-
+	toolBar->addWidget(add_Edge);
 	//inicializacia colorpickera
 	QtColorPicker * colorPicker = new QtColorPicker();
 	colorPicker->setStandardColors();
@@ -464,4 +471,70 @@ void CoreWindow::applyColorClick()
 		(*ei)->setEdgeColor(osg::Vec4(red, green, blue, alpha));
 		++ei;
 	}
+}
+
+bool CoreWindow::add_EdgeClick()
+{
+	Data::Type *edgeType = NULL;
+	Data::Type *nodeType = NULL;
+	Data::Graph * currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
+	
+	//GraphOperations graphOp (Manager::GraphManager::getInstance()->getActiveGraph());
+	
+	QLinkedList<osg::ref_ptr<Data::Node> > * selectedNodes = viewerWidget->getPickHandler()->getSelectedNodes();
+	QLinkedList<osg::ref_ptr<Data::Node> >::const_iterator ni = selectedNodes->constBegin();
+	
+	if (
+		selectedNodes==NULL
+			) {
+				AppCore::Core::getInstance()->messageWindows->showMessageBox("Upozornenie","Žiadny uzol oznaèený",false);
+				return false;
+			}
+
+	osg::ref_ptr<Data::Node> node1, node2;
+	int i=0;
+	
+	while (ni != selectedNodes->constEnd()) 
+	{
+		osg::ref_ptr<Data::Node> existingNode = (* ni);
+		++ni;i++;
+	}
+		if (	
+			i!=2
+			) {
+				AppCore::Core::getInstance()->messageWindows->showMessageBox("Upozornenie","Musite vybrat práve 2 vrcholy",false);
+				return false;
+			}
+	ni = selectedNodes->constBegin();
+	node2=(* ni);
+	++ni;
+	node1=(* ni);
+	++ni;
+	QMap<qlonglong, osg::ref_ptr<Data::Edge> > *mapa = currentGraph->getEdges();
+	Data::MetaType* type = currentGraph->addMetaType(Data::GraphLayout::META_EDGE_TYPE);
+	for (QMap<qlonglong, osg::ref_ptr<Data::Edge> >::iterator it = mapa->begin (); it != mapa->end (); ++it) {
+			osg::ref_ptr<Data::Edge> existingEdge = it.value ();
+			if (
+				existingEdge->getSrcNode () ->getName () == node1 ->getName () && 
+				existingEdge->getDstNode () ->getName () == node2 ->getName ()
+			) {
+				AppCore::Core::getInstance()->messageWindows->showMessageBox("Hrana najdená","Medzi vrcholmi nesmie byt hrana",false);
+				return false;
+			}
+			if (
+				existingEdge->getSrcNode () ->getName () == node2 ->getName () && 
+				existingEdge->getDstNode () ->getName () == node1 ->getName ()
+			) {
+				AppCore::Core::getInstance()->messageWindows->showMessageBox("Hrana najdená","Medzi vrcholmi nesmie byt hrana",false);
+				return false;
+			}
+		}
+
+	
+	currentGraph->addEdge("GUI_edge", node1, node2, type, false);
+	QString nodename1 = QString(node1->getName());
+	QString nodename2 = QString(node2->getName());
+	return true;
+	//context.getGraph ().addEdge (QString (""), node1[1], node1[2], edgeType, true);
+
 }
