@@ -234,6 +234,7 @@ bool Data::Graph::isInSameGraph(Data::Node * nodeA, Data::Node * nodeB)
 		return true;
 	}
 	return false;
+	//return true;
 }
 
 osg::ref_ptr<Data::Node> Data::Graph::addNode(QString name, Data::Type* type, osg::Vec3f position)
@@ -276,12 +277,12 @@ osg::ref_ptr<Data::Node> Data::Graph::addNode(QString name, Data::Type* type, os
 	{
 		this->nestedNodes.insert(node.get());
 
-		node->setNestedParent(parent_id.last());
+		/*node->setNestedParent(parent_id.last());
 
 		osg::ref_ptr<Data::Edge> edge1 = new Data::Edge(this->incEleIdCounter(), "Nested Edge", this, this->parent_id.last(), node, this->getNestedMetaEdgeType(), false, this->getEdgeScale());
 		edge1->linkNodes(this->edges);
 
-		this->edgesByType.insert(type->getId(),edge1);
+		this->edgesByType.insert(type->getId(),edge1);*/
 	}
 
     this->newNodes.insert(node->getId(),node);
@@ -308,7 +309,7 @@ void Data::Graph::createNestedGraph(osg::ref_ptr<Data::Node> srcNode)
 
 void Data::Graph::closeNestedGraph()
 {
-	QSharedPointer<Layout::ShapeGetter> shapeGetter (new Layout::ShapeGetter_Sphere_AroundNode (this->parent_id.last(), 100));
+	QSharedPointer<Layout::ShapeGetter> shapeGetter (new Layout::ShapeGetter_Sphere_AroundNode (this->parent_id.last(), 10));
 	restrictionsManager_.setRestrictions (this->nestedNodes, shapeGetter);
 
 	//this->getRestrictionsManager().setRestrictions(
