@@ -12,6 +12,74 @@ Model::GraphLayoutDAO::~GraphLayoutDAO(void)
 {
 }
 
+QMap<qlonglong, QString> Model::GraphLayoutDAO::getLayoutsNames(qlonglong graph_id, QSqlDatabase* conn, bool* error)
+{
+    QMap<qlonglong, QString> layoutNames;
+	//QString layoutName;
+    *error = FALSE;
+    
+    if(conn==NULL || !conn->open()) { //check if we have connection
+        qDebug() << "[Model::GraphLayoutDAO::getLayoutsNames] Connection to DB not opened.";
+        *error = TRUE;
+        return layoutNames;
+    }
+    
+  /*  if(graph==NULL) {
+        qDebug() << "[Model::GraphLayoutDAO::getLayouts] Invalid parameter - graph is NULL";
+        *error = TRUE;
+        return qgraphslayouts;
+    }*/
+    
+    //if(!graph->isInDB()) return qgraphslayouts;
+
+    QSqlQuery* query = new QSqlQuery(*conn);
+    query->prepare("SELECT layout_id, layout_name FROM layouts WHERE graph_id = :graph_id");
+    query->bindValue(":graph_id", graph_id);
+    if(!query->exec()) {
+        qDebug() << "[Model::GraphLayoutDAO::getLayoutsNames] Could not perform query on DB: " << query->lastError().databaseText();
+        *error = TRUE;
+        return layoutNames;
+    }
+
+    while(query->next()) {
+		layoutNames.insert(query->value(0).toLongLong(), query->value(1).toString());
+    }
+    
+    return layoutNames;
+}
+
+QList<qlonglong> Model::GraphLayoutDAO::getListOfLayouts(QSqlDatabase* conn, bool* error)
+{
+	QList<qlonglong> layouts;
+    *error = FALSE;
+
+	//check if we have connection
+    if(conn==NULL || !conn->isOpen()) 
+	{ 
+        qDebug() << "[Model::GraphLayoutDAO::getListOfLayouts] Connection to DB not opened.";
+        *error = TRUE;
+        return layouts;
+    }
+
+    //get layouts from DB
+    QSqlQuery* query = new QSqlQuery(*conn);
+    query->prepare("SELECT graph_id " 
+		"FROM layouts ");
+
+    if(!query->exec()) 
+	{
+        qDebug() << "[Model::GraphLayoutDAO::getListOfLayouts] Could not perform query on DB: " << query->lastError().databaseText();
+        *error = TRUE;
+        return layouts;
+    }
+    
+    while(query->next()) {
+		layouts << query->value(0).toLongLong();
+    }
+
+    return layouts;
+}
+
 QMap<qlonglong, Data::GraphLayout*> Model::GraphLayoutDAO::getLayouts(Data::Graph* graph, QSqlDatabase* conn, bool* error)
 {
     QMap<qlonglong, Data::GraphLayout*> qgraphslayouts;
@@ -57,12 +125,12 @@ Data::GraphLayout* Model::GraphLayoutDAO::addLayout(QString layout_name, Data::G
         return NULL;
     }
     
-    if(!graph->isInDB()) {
+    /*if(!graph->isInDB()) {
         if(!Model::GraphDAO::addGraph(graph, conn)) { //could not insert graph into DB
             qDebug() << "[Model::GraphLayoutDAO::addType] Could not insert GraphLayout in DB. Graph is not in DB.";
             return NULL;
         }
-    }
+    }*/
 
     QSqlQuery* query = new QSqlQuery(*conn);
     query->prepare("INSERT INTO layouts (layout_name, graph_id) VALUES (:layout_name,:graph_id) RETURNING layout_id");
@@ -141,6 +209,46 @@ bool Model::GraphLayoutDAO::removeLayout(Data::GraphLayout* graphLayout, QSqlDat
     query->prepare("DELETE FROM layouts WHERE graph_id = :graph_id AND layout_id = :layout_id");
     query->bindValue(":graph_id", graphLayout->getGraph()->getId());
     query->bindValue(":layout_id", graphLayout->getId());
+    if(!query->exec()) {
+        qDebug() << "[Model::GraphLayoutDAO::removeLayout] Could not perform query on DB: " << query->lastError().databaseText();
+        return false;
+    }
+
+    return true;
+}
+
+bool Model::GraphLayoutDAO::removeLayouts(qlonglong graphID, QSqlDatabase* conn)
+{
+    if(conn==NULL || !conn->isOpen()) { 
+        qDebug() << "[Model::GraphLayoutDAO::removeLayouts] Connection to DB not opened.";
+        return false;
+    } 
+    
+    QSqlQuery* query = new QSqlQuery(*conn);
+    query->prepare("DELETE FROM layouts WHERE graph_id = :graph_id");
+    query->bindValue(":graph_id", graphID);
+    if(!query->exec()) {
+        qDebug() << "[Model::GraphLayoutDAO::removeLayouts] Could not perform query on DB: " << query->lastError().databaseText();
+        return false;
+    }
+
+    return true;
+}
+
+bool Model::GraphLayoutDAO::removeLayout(qlonglong graphID, qlonglong layoutID, QSqlDatabase* conn)
+{
+    if(conn==NULL || !conn->isOpen()) { 
+        qDebug() << "[Model::GraphLayoutDAO::removeLayout] Connection to DB not opened.";
+        return false;
+    } 
+    
+	Model::EdgeDAO::removeEdges(graphID, layoutID, conn);
+	Model::NodeDAO::removeNodes(graphID, layoutID, conn);
+
+    QSqlQuery* query = new QSqlQuery(*conn);
+	query->prepare("DELETE FROM layouts WHERE graph_id = :graph_id AND layout_id = :layout_id");
+    query->bindValue(":graph_id", graphID);
+	query->bindValue(":layout_id", layoutID);
     if(!query->exec()) {
         qDebug() << "[Model::GraphLayoutDAO::removeLayout] Could not perform query on DB: " << query->lastError().databaseText();
         return false;

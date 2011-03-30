@@ -60,8 +60,8 @@ void CoreWindow::createActions()
 	loadGraph = new QAction(QIcon("img/gui/loadFromDB.png"),"&Load graph from database", this);
 	connect(loadGraph, SIGNAL(triggered()), this, SLOT(showLoadGraph()));
 
-	saveGraph = new QAction(QIcon("img/gui/saveToDB.png"),"&Save graph to database", this);
-	connect(saveGraph, SIGNAL(triggered()), this, SLOT(saveGraphToDB()));
+	saveGraph = new QAction(QIcon("img/gui/saveToDB.png"),"&Save graph layout", this);
+	connect(saveGraph, SIGNAL(triggered()), this, SLOT(saveLayoutToDB()));
 
 	play = new QPushButton();
 	play->setIcon(QIcon("img/gui/pause.png"));
@@ -278,7 +278,36 @@ void CoreWindow::showLoadGraph()
 	loadGraph->show();
 }
 
-void CoreWindow::saveGraphToDB()
+void CoreWindow::saveLayoutToDB()
+{
+	Data::Graph * currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
+
+	if(currentGraph != NULL)
+	{
+		QSqlDatabase * conn = Manager::GraphManager::getInstance()->getDB()->tmpGetConn();
+		bool ok;
+	
+		QString layout_name = QInputDialog::getText(this, tr("New layout name"), tr("Layout name:"), QLineEdit::Normal, "", &ok);
+		
+		if (ok && !layout_name.isEmpty())
+		{
+			Data::GraphLayout* layout = Model::GraphLayoutDAO::addLayout(layout_name, currentGraph, conn);
+			currentGraph->selectLayout(layout);
+
+			currentGraph->saveLayoutToDB(conn, currentGraph);
+		}
+		else
+		{
+			qDebug() << "[QOSG::CoreWindow::saveLayoutToDB] Input dialog canceled";
+		}
+	}
+	else
+	{
+		qDebug() << "[QOSG::CoreWindow::saveLayoutToDB] There is no active graph loaded";
+	}
+}
+
+/*void CoreWindow::saveGraphToDB()
 {
 	Data::Graph * currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
 
@@ -290,7 +319,7 @@ void CoreWindow::saveGraphToDB()
 	{
 		qDebug() << "[QOSG::CoreWindow::saveGraphToDB] There is no active graph loaded";
 	}
-}
+}*/
 
 void CoreWindow::sqlQuery()
 {

@@ -90,6 +90,24 @@ namespace Data
 
 
 		/**
+		*  \fn public  saveGraphToDB
+		*  \brief Saves Graph to the database
+		*  \param  conn connection to database   
+		*  \param  graph active graph   
+		*  \return bool true, if the Graph was successfully saved
+		*/
+		bool saveGraphToDB(QSqlDatabase* conn, Data::Graph * graph); 
+
+		/**
+		*  \fn public  saveLayoutToDB
+		*  \brief Saves graph layout to the database
+		*  \param  conn connection to database   
+		*  \param  graph active graph   
+		*  \return bool true, if the graph layout was successfully saved
+		*/
+		bool saveLayoutToDB(QSqlDatabase* conn, Data::Graph * graph); 
+
+		/**
 		*  \fn inline public static  getMetaStrength
 		*  \brief Returns the strength of meta-element for layout algorithm
 		*  \return float strength of the meta-element
@@ -200,6 +218,17 @@ namespace Data
 		osg::ref_ptr<Data::Node> addNode(QString name, Data::Type* type, osg::Vec3f position = osg::Vec3f(0,0,0)); 
         
 		/**
+		*  \fn public  addNode(QString name, Data::Type* type, osg::Vec3f position = osg::Vec3f(0,0,0))
+		*  \brief Creates new Node and adds it to the Graph
+		*  \param   id    id of the Node 
+		*  \param   name    name of the Node 
+		*  \param   type   Type of the Node
+		*  \param   position     position of the Node
+		*  \return osg::ref_ptr the added Node
+		*/
+		osg::ref_ptr<Data::Node> addNode(qlonglong id, QString name, Data::Type* type, osg::Vec3f position = osg::Vec3f(0,0,0)); 
+
+		/**
 		*  \fn public  createNestedGraph(osg::ref_ptr<Data::Node> srcNode)
 		*  \brief creates nested graph where can be added nested nodes and edges
 		*/
@@ -231,6 +260,18 @@ namespace Data
 		osg::ref_ptr<Data::Edge> addEdge(QString name, osg::ref_ptr<Data::Node> srcNode, osg::ref_ptr<Data::Node> dstNode, Data::Type* type, bool isOriented); 
         
 		/**
+		*  \fn public  addEdge(qlonglong id, QString name, osg::ref_ptr<Data::Node> srcNode, osg::ref_ptr<Data::Node> dstNode, Data::Type* type, bool isOriented)
+		*  \brief Creates new Edge and adds it to the Graph
+		*  \param   is     is of the Edge
+		*  \param   name     name of the Edge
+		*  \param   srcNode    starting Node of the Edge
+		*  \param   dstNode     ending Node of the Edge
+		*  \param   type    Type of the Edge
+		*  \param   isOriented   true, if the Edge is oriented  
+		*  \return osg::ref_ptr the added Edge
+		*/
+		osg::ref_ptr<Data::Edge> addEdge(qlonglong id, QString name, osg::ref_ptr<Data::Node> srcNode, osg::ref_ptr<Data::Node> dstNode, Data::Type* type, bool isOriented); 
+		/**
 		*  \fn public getNestedEdgeType()
 		*  \return nested edge type
 		*/
@@ -249,7 +290,6 @@ namespace Data
 		*  \param   settings     settings of the Type
 		*  \return Data::Type * the added Type
 		*/
-
 		Data::Type* addType(QString name, QMap <QString, QString> *settings = 0); //implemented
 
 		/**
@@ -332,13 +372,6 @@ namespace Data
 		*/
 		void removeType(Data::Type* type);
         
-
-		/**
-		*  \fn public  saveGraphToDB
-		*  \brief Saves Graph to the database
-		*  \return bool true, if the Graph was successfully saved
-		*/
-		bool saveGraphToDB(); 
 
 		/**
 		*  \fn inline public constant  getNodes
@@ -455,6 +488,12 @@ namespace Data
 		Layout::RestrictionsManager & getRestrictionsManager (void);
 
 		osg::ref_ptr<Data::Node> addRestrictionNode(QString name, osg::Vec3f position);
+		
+		/**
+		*  \fn inline public  setEleIdCounter
+		*  \brief Set element ID counter
+		*/
+		void setEleIdCounter(qlonglong number) { ele_id_counter = number; } 
 
     private:
 

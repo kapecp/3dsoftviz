@@ -1,13 +1,5 @@
-/**
-*  LoadGraphWindow.h
-*  Projekt 3DVisual
-*
-*  \author Tomas Hurban 
-*
-*  \date 19. 11. 2010
-*/
-#ifndef QOSG_LOAD_GRAPH_WINDOW_H
-#define QOSG_LOAD_GRAPH_WINDOW_H 1
+#ifndef QOSG_SELECT_LAYOUT_WINDOW_H
+#define QOSG_SELECT_LAYOUT_WINDOW_H 1
 
 #include <QDialog>
 #include <QDir>
@@ -20,7 +12,6 @@
 #include "Manager/Manager.h"
 #include "Model/DB.h"
 #include "Model/GraphDAO.h"
-#include "QOSG/SelectLayoutWindow.h"
 
 class QComboBox;
 class QLabel;
@@ -31,22 +22,23 @@ class QTableWidgetItem;
 namespace QOSG
 {
 	/**
-	*  \class LoadGraphWindow
+	*  \class SelectLayoutWindow
 	*
-	*  \brief Window for loading graphs saved in database
+	*  \brief Window for selecting graph layout saved in database
 	*/
-	class LoadGraphWindow : public QDialog
+	class SelectLayoutWindow : public QDialog
 	{
 		Q_OBJECT
 
 	public:
 		/**
-		*  \fn LoadGraphWindow(QWidget *parent)
+		*  \fn SelectLayoutWindow(QWidget *parent)
 		*  \brief Constructor
 		*
 		*  \param  parent	Parent window
+		*  \param  graphID	graph ID
 		*/
-		LoadGraphWindow(QWidget *parent);
+		SelectLayoutWindow(QWidget *parent, qlonglong graphID);
 
 	private:
 		/**
@@ -59,10 +51,10 @@ namespace QOSG
 		QPushButton *createButton(const QString &text, const char *member);
 
 		/**
-		*  \fn		createGraphTable()
-		*  \brief	Create and fill table with data about number of graphs, nodes and edges stored in database
+		*  \fn		createLayoutTable()
+		*  \brief	Create and fill table with data about layouts in database
 		*/
-		void createGraphTable();
+		void createLayoutTable();
 
 		/**
 		*  QPushButton *loadButton
@@ -71,42 +63,47 @@ namespace QOSG
 		QPushButton *loadButton;
 
 		/**
-		*  QPushButton *loadButton
-		*  \brief Load button
+		*  QPushButton *removeButton
+		*  \brief Remove button
 		*/
 		QPushButton *removeButton;
 
 		/**
-		*  QLabel *numberOfGraphs
-		*  \brief Label which show number of graphs stored in database
+		*  QLabel *numberOfLayouts
+		*  \brief Label which show number of graph layouts stored in database
 		*/
-		QLabel *numberOfGraphs;
+		QLabel *numberOfLayouts;
 
 		/**
-		*  QStringList graphList
-		*  \brief List of graphs stored in database
+		*  QStringList layoutList
+		*  \brief List of graph layouts stored in database
 		*/
-		QStringList graphList;
+		QStringList layoutList;
 
 		/**
-		*  QTableWidget *graphsTable
-		*  \brief Table where are shown data about graphs stored in database
+		*  QTableWidget *layoutsTable
+		*  \brief Table where are shown data about graph layouts stored in database
 		*/
-		QTableWidget *graphsTable;
+		QTableWidget *layoutsTable;
+
+		/**
+		*  qlonglong graphID
+		*  \brief Graph ID
+		*/
+		qlonglong graphID;
 
 		private slots:
 			/**
-			*  \fn loadGraph()
+			*  \fn loadLayout()
 			*  \brief	Slot which is called when user click on load button
 			*/
-			void loadGraph();
+			void loadLayout();
 
 			/**
-			*  \fn removeGraph()
+			*  \fn removeLayout()
 			*  \brief	Slot which is called when user click on remove button
 			*/
-			void removeGraph();
-
+			void removeLayout();
 	};
 }
 
