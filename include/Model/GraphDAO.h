@@ -80,6 +80,15 @@ namespace Model
 		static bool removeGraph(Data::Graph* graph, QSqlDatabase* conn);
         
 		/**
+		*  \fn public static  removeGraph(qlonglong graphID, QSqlDatabase* conn)
+		*  \brief Removes graph from the database
+		*  \param   graphID     ID of graph to be removed from database
+		*  \param   conn   connection to the database
+		*  \return bool true, if the Graph was successfully removed
+		*/
+		static bool removeGraph(qlonglong graphID, QSqlDatabase* conn);
+
+		/**
 		*  \fn public static  getName(qlonglong graphID, bool* error, QSqlDatabase* conn)
 		*  \brief Get name of graph from database
 		*  \param   graphID     graph ID

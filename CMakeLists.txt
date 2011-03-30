@@ -113,6 +113,7 @@ SET(SOURCES_H
 	./include/Util/Cleaner.h
 	./include/QOSG/OptionsWindow.h
 	./include/QOSG/LoadGraphWindow.h
+	./include/QOSG/SelectLayoutWindow.h
 	./include/QOSG/CheckBoxList.h
 	./include/QOSG/qtcolorpicker.h
 	./include/Viewer/PickHandler.h
