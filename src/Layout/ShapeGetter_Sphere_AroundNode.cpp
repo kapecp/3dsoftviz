@@ -17,7 +17,7 @@ ShapeGetter_Sphere_AroundNode::ShapeGetter_Sphere_AroundNode (
 QSharedPointer<Shape> ShapeGetter_Sphere_AroundNode::getShape (void) {
 	return QSharedPointer<Shape> (
 		new Shape_Sphere (
-			node_->getCurrentPosition (false),
+			node_->getTargetPosition (),
 			radius_
 		)
 	);
