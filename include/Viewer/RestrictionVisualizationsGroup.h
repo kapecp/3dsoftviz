@@ -2,9 +2,13 @@
 #define Viewer_RestrictionVisualizationsGroup_H
 //-----------------------------------------------------------------------------
 #include "Layout/RestrictionsObserver.h"
+#include "Layout/ShapeGetter.h"
+#include "Viewer/ShapeVisitor_VisualizerCreator.h"
 //-----------------------------------------------------------------------------
 #include <osg/ref_ptr>
 #include <osg/Group>
+#include <QMap>
+#include <QSharedPointer>
 //-----------------------------------------------------------------------------
 
 namespace Vwr {
@@ -38,6 +42,12 @@ public:
 private:
 
 	osg::ref_ptr<osg::Group> group_;
+
+	typedef QMap<QSharedPointer<Layout::ShapeGetter>, osg::Group *> RestrictionsToVisualizersMapType;
+
+	RestrictionsToVisualizersMapType restrictionsToVisualizers_;
+
+	ShapeVisitor_VisualizerCreator visualizerCreator_;
 
 }; // class
 
