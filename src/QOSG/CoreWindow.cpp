@@ -109,6 +109,20 @@ void CoreWindow::createActions()
 	add_Edge->setFocusPolicy(Qt::NoFocus);
 	connect(add_Edge,SIGNAL(clicked()),this,SLOT(add_EdgeClick()));
 
+	//add Node
+	add_Node = new QPushButton();
+	add_Node->setText("Add Node");
+	add_Node->setToolTip("Create node");
+	add_Node->setFocusPolicy(Qt::NoFocus);
+	connect(add_Node, SIGNAL(clicked()), this, SLOT(add_NodeClick()));
+	
+	//remove
+	remove_all = new QPushButton();
+	remove_all->setText("Remove");
+	remove_all->setToolTip("Remove nodes and edges");
+	remove_all->setFocusPolicy(Qt::NoFocus);
+	connect(remove_all, SIGNAL(clicked()), this, SLOT(removeClick()));
+
 	//mody - ziadny vyber, vyber jedneho, multi vyber centrovanie
 	noSelect = new QPushButton();
 	noSelect->setIcon(QIcon("img/gui/noselect.png"));
@@ -192,8 +206,11 @@ void CoreWindow::createToolBar()
 	toolBar->addSeparator();
 	toolBar->addWidget(play);
 	toolBar->addSeparator();
-	toolBar->addWidget(applyColor);
 	toolBar->addWidget(add_Edge);
+	toolBar->addWidget(add_Node);
+	toolBar->addWidget(remove_all);
+	toolBar->addWidget(applyColor);
+	
 	//inicializacia colorpickera
 	QtColorPicker * colorPicker = new QtColorPicker();
 	colorPicker->setStandardColors();
@@ -532,9 +549,63 @@ bool CoreWindow::add_EdgeClick()
 
 	
 	currentGraph->addEdge("GUI_edge", node1, node2, type, false);
+	if (isPlaying)
+			layout->play();
 	QString nodename1 = QString(node1->getName());
 	QString nodename2 = QString(node2->getName());
 	return true;
 	//context.getGraph ().addEdge (QString (""), node1[1], node1[2], edgeType, true);
 
+}
+
+bool CoreWindow::add_NodeClick()
+{	
+	Data::Graph * currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
+	
+	
+	if (currentGraph != NULL)
+	{
+		osg::Vec3 position = viewerWidget->getPickHandler()->getSelectionCenter(true); 
+
+		osg::ref_ptr<Data::Node> node1 = currentGraph->addNode("newNode", currentGraph->getNodeMetaType(), position);	
+		//QLinkedList<osg::ref_ptr<Data::Node> > * selectedNodes = viewerWidget->getPickHandler()->getSelectedNodes();
+
+		if (isPlaying)
+			layout->play();
+	}
+	else
+	{
+		Data::Graph * currentGraph1= Manager::GraphManager::getInstance()->createGraph("NewGraph");
+		osg::Vec3 position = viewerWidget->getPickHandler()->getSelectionCenter(true); 
+		Data::MetaType* type = currentGraph1->addMetaType(Data::GraphLayout::META_NODE_TYPE);
+		osg::ref_ptr<Data::Node> node1 = currentGraph1->addNode("newNode", type, position);	
+		//QLinkedList<osg::ref_ptr<Data::Node> > * selectedNodes = viewerWidget->getPickHandler()->getSelectedNodes();
+
+		if (isPlaying)
+			layout->play();
+	}
+	return true;
+}
+
+bool CoreWindow::removeClick()
+{	
+	Data::Graph * currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
+	QLinkedList<osg::ref_ptr<Data::Edge> > * selectedEdges = viewerWidget->getPickHandler()->getSelectedEdges();
+	QLinkedList<osg::ref_ptr<Data::Node> > * selectedNodes = viewerWidget->getPickHandler()->getSelectedNodes();
+
+		while (selectedEdges->size () > 0) {
+			osg::ref_ptr<Data::Edge> existingEdge1 = (* (selectedEdges->constBegin()));
+			currentGraph->removeEdge(existingEdge1);
+			selectedEdges->removeFirst ();
+		}
+		while (selectedNodes->size () > 0) {
+			osg::ref_ptr<Data::Node> existingNode1 = (* (selectedNodes->constBegin()));
+			currentGraph->removeNode(existingNode1);
+			selectedNodes->removeFirst ();
+		}
+	
+		if (isPlaying)
+			layout->play();
+
+	return true;
 }

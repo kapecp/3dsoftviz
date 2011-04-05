@@ -221,6 +221,8 @@ void CoreGraph::update()
 
 void CoreGraph::synchronize()
 {
+	nodesGroup->synchronizeNodes();
+	edgesGroup->synchronizeEdges();
 	qmetaNodesGroup->synchronizeNodes();
 	qmetaEdgesGroup->synchronizeEdges();
 }

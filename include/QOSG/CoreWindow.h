@@ -167,6 +167,18 @@ namespace QOSG
 				*  \brief create edge between selected node
 				*/
 				bool add_EdgeClick();
+
+				/**
+				*  \fn public  add_NodeClick
+				*  \brief create new Node
+				*/
+				bool add_NodeClick();
+
+				/**
+				*  \fn public  removeClick
+				*  \brief remove all selected nodes and edges
+				*/
+				bool removeClick();
 	private:
 
 		/**
@@ -278,11 +290,23 @@ namespace QOSG
 		QPushButton * applyColor;
 
 		/**
-		*  QAction * load
-		*  \brief Action for loading file
+		*  QAction * create new Edge
+		*  \brief Action for adding Edge
 		*/
 		QPushButton * add_Edge;
 
+		/**
+		*  QAction * create new Node
+		*  \brief Action for adding Node
+		*/
+		QPushButton * add_Node;
+
+		/**
+		*  QAction * remove
+		*  \brief Action for removing Nodes and Edges
+		*/
+		QPushButton * remove_all;
+		
 		/**
 		*  QAction * load
 		*  \brief Action for loading file
