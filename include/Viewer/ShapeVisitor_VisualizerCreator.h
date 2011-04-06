@@ -5,6 +5,7 @@
 #include "Layout/Shape.h"
 //-----------------------------------------------------------------------------
 #include <osg/Node>
+#include <osg/Vec3f>
 //-----------------------------------------------------------------------------
 
 namespace Vwr {
@@ -26,6 +27,23 @@ public:
 private: // visitor context
 
 	osg::Node * createdVisualizer_;
+
+private:
+
+	osg::Node * wrapByAutoTransform (
+		osg::Node * node,
+		const osg::Vec3f & position
+	);
+
+	float getScaledDistance (
+		const float & distance
+	);
+
+	osg::Vec3f getScaledPosition (
+		const osg::Vec3f & position
+	);
+
+	float getScale ();
 
 }; // class
 
