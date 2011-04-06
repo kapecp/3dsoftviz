@@ -23,6 +23,8 @@
 #include <osg/CullFace>
 #include <osgText/Text>
 
+#include <osg/AutoTransform>
+
 namespace Data
 {
 	class Edge;
@@ -143,6 +145,8 @@ namespace Data
 		*	It unlinks all edges connected to the Node and removes them from the Graph (an Edge can't exist without both it's Nodes)
 		*/
 		void removeAllEdges();
+
+		
 
 		/**
 		*	\fn public getParentNode
@@ -373,6 +377,18 @@ namespace Data
 		*/
 		void setUsingInterpolation(bool val) { usingInterpolation = val; }
 
+		void setParentBall(osg::Sphere * val) { parentBall = val; }
+
+		osg::Sphere * getParentBall() { return parentBall; }
+
+		void setBall(osg::Geode * val) { ball = val; }
+
+		osg::Geode * getBall() { return ball; }
+
+		osg::ref_ptr<osg::AutoTransform> getOutBall() { return outBall; }
+
+		void setOutBall(osg::ref_ptr<osg::AutoTransform> val) { outBall = val; }
+
 
 		/**
 		*  \fn public  reloadConfig
@@ -470,6 +486,16 @@ namespace Data
 		*  \brief node current position
 		*/
 		osg::Vec3f currentPosition;
+
+		/**
+		*  osg::Sphere nested ball
+		*  \brief
+		*/
+		osg::Sphere * parentBall;
+
+		osg::Geode * ball;
+
+		osg::ref_ptr<osg::AutoTransform> outBall;
 
 		/**
 		*  QMap<qlonglong, osg::ref_ptr<Data::Edge> > * edges
