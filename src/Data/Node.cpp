@@ -329,7 +329,7 @@ osg::Vec3f Data::Node::getCurrentPosition(bool calculateNew, float interpolation
 
 		osg::Vec3 directionVector = osg::Vec3(targetPosition.x(), targetPosition.y(), targetPosition.z()) * graphScale - currentPosition;
 		this->currentPosition = osg::Vec3(directionVector * (usingInterpolation ? interpolationSpeed : 1) + this->currentPosition);
-		this->parentBall->setCenter(osg::Vec3(directionVector * (usingInterpolation ? interpolationSpeed : 1) + this->currentPosition));
+		//this->parentBall->setCenter(osg::Vec3(directionVector * (usingInterpolation ? interpolationSpeed : 1) + this->currentPosition));
 	}
 
 	return osg::Vec3(this->currentPosition); 

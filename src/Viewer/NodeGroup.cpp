@@ -55,21 +55,6 @@ void NodeGroup::initNodes()
 
 		if (g != NULL)
 			nodeGroup->addChild(g);
-
-		osg::ShapeDrawable * shape = new osg::ShapeDrawable;
-			osg::Sphere * sphere = new osg::Sphere;
-			sphere->setRadius(20);
-			shape->setShape(sphere);
-			shape->setColor(osg::Vec4(0, 0, 1.0, 0.9));
-			osg::Geode * geode = new osg::Geode;
-			geode->addDrawable(shape);
-			//sphere->setCenter();
-			nodeGroup->addChild(geode);
-			//at->addChild(geode);
-			//nodeTransforms->insert(px++, at);
-			i.value()->setBall(geode);
-			i.value()->setParentBall(sphere);
-			//i.value()->
 	}
 
 	this->group = nodeGroup;
@@ -85,15 +70,24 @@ osg::ref_ptr<osg::Group> NodeGroup::getNodeGroup(osg::ref_ptr<Data::Node> node, 
 
 		group->addChild(wrapChild(node, graphScale));
 
-			/*osg::ShapeDrawable * shape = new osg::ShapeDrawable;
-			osg::Sphere * sphere = new osg::Sphere;
-			sphere->setRadius(20);
-			shape->setShape(sphere);
-			shape->setColor(osg::Vec4(0, 0, 1.0, 0.2));
-			osg::Geode * geode = new osg::Geode;
-			geode->addDrawable(shape);
-			sphere->setCenter(osg::Vec3(500,1000,1500));
-			group->addChild(geode);*/
+				osg::ref_ptr<osg::AutoTransform> at = new osg::AutoTransform;
+				at->setPosition(node->getTargetPosition() * graphScale);
+				at->setAutoRotateMode(osg::AutoTransform::ROTATE_TO_SCREEN);
+
+				osg::ShapeDrawable * shape = new osg::ShapeDrawable;
+				osg::Sphere * sphere = new osg::Sphere;
+				sphere->setRadius(10);
+				shape->setShape(sphere);
+				shape->setColor(osg::Vec4(0.5, 0.5, 0.5, 0.5));
+				shape->getOrCreateStateSet()->setMode(GL_BLEND, osg::StateAttribute::ON);
+				osg::Geode * geode = new osg::Geode;
+				geode->addDrawable(shape);
+
+				at->addChild(geode);
+
+				node->setOutBall(at);
+
+				group->addChild(at);
 
 		QMap<qlonglong, osg::ref_ptr<Data::Edge> >::iterator i = node->getEdges()->begin();
 
@@ -113,7 +107,7 @@ osg::ref_ptr<osg::Group> NodeGroup::getNodeGroup(osg::ref_ptr<Data::Node> node, 
 				if (nodeGroup != NULL)
 					group->addChild(nodeGroup);
 
-				osg::ref_ptr<osg::AutoTransform> at = new osg::AutoTransform;
+				/*osg::ref_ptr<osg::AutoTransform> at = new osg::AutoTransform;
 				at->setPosition(node->getTargetPosition() * graphScale);
 				at->setAutoRotateMode(osg::AutoTransform::ROTATE_TO_SCREEN);
 
@@ -121,17 +115,16 @@ osg::ref_ptr<osg::Group> NodeGroup::getNodeGroup(osg::ref_ptr<Data::Node> node, 
 				osg::Sphere * sphere = new osg::Sphere;
 				sphere->setRadius(20);
 				shape->setShape(sphere);
-				shape->setColor(osg::Vec4(0, 0, 1.0, 0.2));
+				shape->setColor(osg::Vec4(0.5, 0.5, 0.5, 0.5));
+				shape->getOrCreateStateSet()->setMode(GL_BLEND, osg::StateAttribute::ON);
 				osg::Geode * geode = new osg::Geode;
 				geode->addDrawable(shape);
-				//sphere->setCenter(osg::Vec3(500,1000,1500));
-				//group->addChild(geode);
 
 				at->addChild(geode);
 
 				n->setOutBall(at);
 
-				group->addChild(at);
+				group->addChild(at);*/
 			}
 
 			i++;
@@ -221,54 +214,6 @@ void NodeGroup::updateNodeCoordinates(float interpolationSpeed)
 		{
 			i.value()->getOutBall()->setPosition((*i)->getCurrentPosition(true, interpolationSpeed));
 		}
-
-		//i.value()->getBall()->setPosition((*i)->getCurrentPosition(true, interpolationSpeed));
-
-		//osg::ref_ptr<osg::AutoTransform> at = new osg::AutoTransform;
-		//at->setPosition(i.value()->getTargetPosition() * graphScale);
-		/*at->setAutoRotateMode(osg::AutoTransform::ROTATE_TO_SCREEN);
-		at->setPosition((*i)->getCurrentPosition(true, interpolationSpeed));
-		at->addChild(i.value()->getBall());*/
-
-		
-
-		/*osg::Sphere * n = i.value()->getParentBall();
-
-		i.value()->getParentBall()->setCenter(i.value()->getCurrentPosition(true, interpolationSpeed));
-		////i.value()->getParentBall()->setCenter(osg::Vec3(500,1000,1500));
-
-		//this->group->removeChild(0, 1);
-
-		//osg::ShapeDrawable * shape = new osg::ShapeDrawable;
-		//shape->setShape(i.value()->getParentBall());
-
-		////i.value()->setBall(new osg::Geode);
-		//i.value()->getBall()->addDrawable(shape);
-
-		osg::Drawable * shape = i.value()->getBall()->getDrawable(0);
-
-		i.value()->getBall()->removeDrawable(shape);
-
-		i.value()->getBall()->addDrawable(shape);
-
-		shape->dr
-
-		this->group->replaceChild(i.value()->getBall(), i.value()->getBall());
-		//nodeTransforms->value(i.value()->getParentBall());*/
-
-		
-
-		/*osg::ShapeDrawable * shape = new osg::ShapeDrawable;
-			osg::Sphere * sphere = new osg::Sphere;
-			sphere->setRadius(20);
-			shape->setShape(sphere);
-			shape->setColor(osg::Vec4(0, 0, 1.0, 0.9));
-			osg::Geode * geode = new osg::Geode;
-			geode->addDrawable(shape);
-			sphere->setCenter(i.value()->getCurrentPosition(true, interpolationSpeed));
-			
-			group->addChild(geode);
-			i.value()->setParentBall(sphere);*/
 
 		++i;
 	}
