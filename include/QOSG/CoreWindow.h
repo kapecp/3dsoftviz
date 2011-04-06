@@ -119,6 +119,18 @@ namespace QOSG
 				void unFixNodes();
 
 				/**
+				*  \fn public  mergeNodes
+				*  \brief Merge selected nodes together
+				*/
+				void mergeNodes();
+
+				/**
+				*  \fn public  separateNodes
+				*  \brief separate selected merged nodes
+				*/
+				void separateNodes();
+
+				/**
 				*  \fn public  removeMetaNodes
 				*  \brief Remove all meta nodes
 				*/
@@ -241,6 +253,18 @@ namespace QOSG
 		*  \brief Action for unfix nodes
 		*/
 		QPushButton * unFix;
+
+		/**
+		*  QPushButton * merge
+		*  \brief Action for merge selected nodes
+		*/
+		QPushButton * merge;
+
+		/**
+		*  QPushButton * separate
+		*  \brief Action for separate nodes
+		*/
+		QPushButton * separate;
 
 		/**
 		*  QPushButton * noSelect

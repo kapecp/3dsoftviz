@@ -229,6 +229,22 @@ namespace Data
 		osg::ref_ptr<Data::Node> addNode(qlonglong id, QString name, Data::Type* type, osg::Vec3f position = osg::Vec3f(0,0,0)); 
 
 		/**
+		*  \fn public  mergeNodes(QLinkedList<osg::ref_ptr<Data::Node> > * selectedNodes, osg::Vec3f position)
+		*  \brief Merge selected nodes to one (meta) node
+		*  \param   selectedNodes   selected nodes
+		*  \param   position     new position of the Nodes
+		*  \return osg::ref_ptr the created merged Node
+		*/
+		osg::ref_ptr<Data::Node> mergeNodes(QLinkedList<osg::ref_ptr<Data::Node> > * selectedNodes, osg::Vec3f position);
+
+		/**
+		*  \fn public  separateNodes(QLinkedList<osg::ref_ptr<Data::Node> > * selectedNodes)
+		*  \brief Separate selected nodes from merged nodes
+		*  \param   selectedNodes   selected merged nodes
+		*/
+		void separateNodes(QLinkedList<osg::ref_ptr<Data::Node> > * selectedNodes);
+
+		/**
 		*  \fn public  createNestedGraph(osg::ref_ptr<Data::Node> srcNode)
 		*  \brief creates nested graph where can be added nested nodes and edges
 		*/
