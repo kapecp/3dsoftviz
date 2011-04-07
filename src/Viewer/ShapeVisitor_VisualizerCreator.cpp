@@ -52,7 +52,9 @@ void ShapeVisitor_VisualizerCreator::visualizeSphere (Layout::Shape_AbstractSphe
 
 	osg::ShapeDrawable * sd = new osg::ShapeDrawable;
 	sd->setShape (sphere);
-	sd->setColor (osg::Vec4 (0, 0, 1.0, 0.2));
+	sd->setColor (osg::Vec4 (0, 0, 1.0, 0.06));
+	sd->getOrCreateStateSet()->setMode (GL_BLEND, osg::StateAttribute::ON);
+	sd->getStateSet()->setRenderingHint (osg::StateSet::TRANSPARENT_BIN);
 
 	osg::Geode * geode = new osg::Geode;
 	geode->addDrawable (sd);
