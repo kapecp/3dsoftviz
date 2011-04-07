@@ -28,7 +28,11 @@ private: // visitor context
 
 	osg::Node * createdVisualizer_;
 
-private:
+private: // common visualizers
+
+	void visualizeSphere (Layout::Shape_AbstractSphere & abstractSphere);
+
+private: // positions and distances
 
 	osg::Node * wrapByAutoTransform (
 		osg::Node * node,

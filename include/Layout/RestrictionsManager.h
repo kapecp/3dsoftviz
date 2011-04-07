@@ -46,9 +46,8 @@ private:
 		Data::Node &node
 	);
 
-	void compareAndNotifyShapeChanged (
-		QSharedPointer<ShapeGetter> shapeGetter,
-		QSharedPointer<Shape> shape
+	void refreshShape (
+		QSharedPointer<ShapeGetter> shapeGetter
 	);
 
 private: // observer notification

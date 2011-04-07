@@ -1,8 +1,5 @@
 #include "Viewer/RestrictionVisualizationsGroup.h"
 //-----------------------------------------------------------------------------
-#include <iostream>
-//-----------------------------------------------------------------------------
-
 
 namespace Vwr {
 
@@ -18,8 +15,6 @@ osg::ref_ptr<osg::Group> RestrictionVisualizationsGroup::getGroup() {
 void RestrictionVisualizationsGroup::restrictionAdded (
 	QSharedPointer<Layout::ShapeGetter> shapeGetter
 ) {
-	std::cout << "restriction added" << std::endl;
-
 	osg::Group * visualizerWrapper = new osg::Group;
 	group_->addChild (visualizerWrapper);
 	restrictionsToVisualizers_[shapeGetter] = visualizerWrapper;
@@ -29,8 +24,6 @@ void RestrictionVisualizationsGroup::shapeChanged (
 	QSharedPointer<Layout::ShapeGetter> shapeGetter,
 	QSharedPointer<Layout::Shape> shape
 ) {
-	std::cout << "shape changed" << std::endl;
-
 	shape->accept (visualizerCreator_);
 	osg::Node * visualizer = visualizerCreator_.getCreatedVisualizer ();
 
@@ -45,8 +38,6 @@ void RestrictionVisualizationsGroup::shapeChanged (
 void RestrictionVisualizationsGroup::restrictionRemoved (
 	QSharedPointer<Layout::ShapeGetter> shapeGetter
 ) {
-	std::cout << "restriction removed" << std::endl;
-
 	group_->removeChild (restrictionsToVisualizers_[shapeGetter]);
 	restrictionsToVisualizers_.remove (shapeGetter);
 }

@@ -14,7 +14,14 @@ osg::Node * ShapeVisitor_VisualizerCreator::getCreatedVisualizer (void) {
 }
 
 void ShapeVisitor_VisualizerCreator::visit (Layout::Shape_Composite & shape) {
+	osg::Group * group = new osg::Group;
+	Layout::Shape_Composite::ShapesListType & shapes = shape.getShapes ();
+	for (Layout::Shape_Composite::ShapesListType::iterator it = shapes.begin (); it != shapes.end (); ++it) {
+		(*it)->accept (*this);
+		group->addChild (createdVisualizer_);
+	}
 
+	createdVisualizer_ = group;
 }
 
 void ShapeVisitor_VisualizerCreator::visit (Layout::Shape_Plane & shape) {
@@ -32,12 +39,16 @@ void ShapeVisitor_VisualizerCreator::visit (Layout::Shape_Plane & shape) {
 }
 
 void ShapeVisitor_VisualizerCreator::visit (Layout::Shape_Sphere & shape) {
-
+	visualizeSphere (shape);
 }
 
 void ShapeVisitor_VisualizerCreator::visit (Layout::Shape_SphereSurface & shape) {
+	visualizeSphere (shape);
+}
+
+void ShapeVisitor_VisualizerCreator::visualizeSphere (Layout::Shape_AbstractSphere & abstractSphere) {
 	osg::Sphere * sphere = new osg::Sphere;
-	sphere->setRadius (getScaledDistance (shape.getRadius ()));
+	sphere->setRadius (getScaledDistance (abstractSphere.getRadius ()));
 
 	osg::ShapeDrawable * sd = new osg::ShapeDrawable;
 	sd->setShape (sphere);
@@ -46,7 +57,7 @@ void ShapeVisitor_VisualizerCreator::visit (Layout::Shape_SphereSurface & shape)
 	osg::Geode * geode = new osg::Geode;
 	geode->addDrawable (sd);
 
-	createdVisualizer_ = wrapByAutoTransform (geode, getScaledPosition (shape.getCenter ()));
+	createdVisualizer_ = wrapByAutoTransform (geode, getScaledPosition (abstractSphere.getCenter ()));
 }
 
 osg::Node * ShapeVisitor_VisualizerCreator::wrapByAutoTransform (

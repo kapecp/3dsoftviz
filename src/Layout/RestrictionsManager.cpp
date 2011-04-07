@@ -23,13 +23,16 @@ void RestrictionsManager::setRestrictions (
 			restrictions_.remove (*it);
 		}
 
-		// add shape getter
-		restrictions_[*it] = shapeGetter;
-		shapeGetterUsages_[shapeGetter]++;
-		lastShapes_[shapeGetter];
-		if (shapeGetterUsages_[shapeGetter] == 1) {
-			// first shape getter usage added
-			notifyRestrictionAdded (shapeGetter);
+		if (!shapeGetter.isNull ()) {
+			// add shape getter
+			restrictions_[*it] = shapeGetter;
+			shapeGetterUsages_[shapeGetter]++;
+			lastShapes_[shapeGetter];
+			if (shapeGetterUsages_[shapeGetter] == 1) {
+				// first shape getter usage added
+				notifyRestrictionAdded (shapeGetter);
+				refreshShape (shapeGetter);
+			}
 		}
 	}
 }
@@ -40,8 +43,9 @@ osg::Vec3f RestrictionsManager::applyRestriction (
 ) {
 	QSharedPointer<ShapeGetter> shapeGetter = getShapeGetter (node);
 	if (!shapeGetter.isNull ()) {
-		QSharedPointer<Shape> shape = shapeGetter->getShape ();
-		compareAndNotifyShapeChanged (shapeGetter, shape);
+		refreshShape (shapeGetter);
+
+		QSharedPointer<Shape> shape = lastShapes_[shapeGetter];
 		if (!shape.isNull ()) {
 			restrictedPositionGetter_.setOriginalPosition (originalPosition);
 			shape->accept (restrictedPositionGetter_);
@@ -75,10 +79,11 @@ QSharedPointer<ShapeGetter> RestrictionsManager::getShapeGetter (
 	}
 }
 
-void RestrictionsManager::compareAndNotifyShapeChanged (
-	QSharedPointer<ShapeGetter> shapeGetter,
-	QSharedPointer<Shape> shape
+void RestrictionsManager::refreshShape (
+	QSharedPointer<ShapeGetter> shapeGetter
 ) {
+	QSharedPointer<Shape> shape = shapeGetter->getShape ();
+
 	if (shape.isNull ()) {
 		// handle special case, because we can not visit null shape
 		// maybe use null object pattern
