@@ -17,8 +17,8 @@ ShapeGetter_SphereSurface_ByTwoNodes::ShapeGetter_SphereSurface_ByTwoNodes (
 QSharedPointer<Shape> ShapeGetter_SphereSurface_ByTwoNodes::getShape (void) {
 	return QSharedPointer<Shape> (
 		new Shape_SphereSurface (
-			centerNode_->getCurrentPosition (false),
-			(centerNode_->getCurrentPosition (false) - surfaceNode_->getCurrentPosition (false)).length ()
+			centerNode_->getTargetPosition (),
+			(centerNode_->getTargetPosition () - surfaceNode_->getTargetPosition ()).length ()
 		)
 	);
 }

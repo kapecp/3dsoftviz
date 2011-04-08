@@ -40,4 +40,4 @@ private: // visitor context
 
 } // namespace
 
-#endif // Layout_ShapeVisitor_H
+#endif // Layout_ShapeVisitor_RestrictedPositionGetter_H

@@ -6,6 +6,9 @@ namespace Layout {
 
 class ShapeVisitor;
 
+/**
+ * [immutable]
+ */
 class Shape {
 
 public:
