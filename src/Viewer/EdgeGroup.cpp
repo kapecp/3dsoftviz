@@ -60,13 +60,19 @@ void EdgeGroup::initEdges()
 	geometry->setVertexArray(coordinates);
 	geometry->setColorArray(colors);
 	geometry->setColorBinding(osg::Geometry::BIND_PER_PRIMITIVE);
+	geometry->getOrCreateStateSet()->setMode(GL_BLEND, osg::StateAttribute::ON);
+	//geometry->getStateSet()->setRenderingHint(osg::StateSet::OPAQUE_BIN);
 
 	orientedGeometry->setTexCoordArray(0, edgeTexCoords);
 	orientedGeometry->setVertexArray(coordinates);
 	orientedGeometry->setColorArray(orientedEdgeColors);
 	orientedGeometry->setColorBinding(osg::Geometry::BIND_PER_PRIMITIVE);
 
+	orientedGeometry->getOrCreateStateSet()->setMode(GL_BLEND, osg::StateAttribute::ON);
+	//orientedGeometry->getStateSet()->setRenderingHint(osg::StateSet::OPAQUE_BIN);
+
 	osg::ref_ptr<osg::Geode> g1 = new osg::Geode;
+
 	g1->addDrawable(geometry);
 	g1->setStateSet(edgeStateSet);
 

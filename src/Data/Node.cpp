@@ -26,6 +26,7 @@ Data::Node::Node(qlonglong id, QString name, Data::Type* type, float scaling, Da
 	this->scale = scaling;
 	this->setBall(NULL);
 	this->setParentBall(NULL);
+	this->hasNestedNodes = false;
 
 
 

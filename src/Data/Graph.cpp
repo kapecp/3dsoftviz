@@ -302,18 +302,13 @@ osg::ref_ptr<Data::Node> Data::Graph::addNode(QString name, Data::Type* type, os
 
 	node->setNestedParent(NULL);
 
-	//Napojenie na pomocnu hranu pre vnoreny graf
+	//pridanie do zoznamu vnorenych uzlov
 	if(this->parent_id.count()>0)
 	{
 		this->nestedNodes.insert(node.get());
-
-		/*node->setNestedParent(parent_id.last());
-
-		osg::ref_ptr<Data::Edge> edge1 = new Data::Edge(this->incEleIdCounter(), "Nested Edge", this, this->parent_id.last(), node, this->getNestedMetaEdgeType(), false, this->getEdgeScale());
-		edge1->linkNodes(this->edges);
-
-		this->edgesByType.insert(type->getId(),edge1);*/
 	}
+
+	this->addNestedNode(node);
 
     this->newNodes.insert(node->getId(),node);
     if(type!=NULL && type->isMeta()) {
@@ -344,13 +339,31 @@ osg::ref_ptr<Data::Node> Data::Graph::addNode(qlonglong id, QString name, Data::
         this->nodes->insert(node->getId(),node);
         this->nodesByType.insert(type->getId(),node);
     }
+
+	this->addNestedNode(node);
+
+	if(this->parent_id.count()>0)
+	{
+		this->nestedNodes.insert(node.get());
+	}
     
     return node;
+}
+
+void Data::Graph::addNestedNode(Data::Node * node)
+{
+	if(this->parent_id.count()>0)
+	{
+		node->setParentNode(this->parent_id.last());
+
+		//this->nestedNodes.insert(node.get());
+	}
 }
 
 void Data::Graph::createNestedGraph(osg::ref_ptr<Data::Node> srcNode)
 {
 	this->parent_id.append(srcNode);
+	srcNode->setAsParentNode();
 }
 
 void Data::Graph::closeNestedGraph()

@@ -104,6 +104,10 @@ namespace Data
 		*/
 		void setType(Data::Type* val) { type = val; }
 
+		bool isParentNode() { return hasNestedNodes; }
+
+		void setAsParentNode() { hasNestedNodes = true; }
+
 
 		/**
 		*  \fn inline public constant  getTargetPosition
@@ -163,6 +167,7 @@ namespace Data
 		*
 		*/
 		void setParentNode(Node* parent);
+
 
 		/**
 		*  \fn inline public constant  getEdges
@@ -522,6 +527,8 @@ namespace Data
 		*  \brief node fixed state
 		*/
 		bool fixed;
+
+		bool hasNestedNodes;
 
 		/**
 		*  bool ignore

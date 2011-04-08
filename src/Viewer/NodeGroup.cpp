@@ -70,6 +70,8 @@ osg::ref_ptr<osg::Group> NodeGroup::getNodeGroup(osg::ref_ptr<Data::Node> node, 
 
 		group->addChild(wrapChild(node, graphScale));
 
+		if(node->isParentNode()==true)
+		{
 				osg::ref_ptr<osg::AutoTransform> at = new osg::AutoTransform;
 				at->setPosition(node->getTargetPosition() * graphScale);
 				at->setAutoRotateMode(osg::AutoTransform::ROTATE_TO_SCREEN);
@@ -78,8 +80,9 @@ osg::ref_ptr<osg::Group> NodeGroup::getNodeGroup(osg::ref_ptr<Data::Node> node, 
 				osg::Sphere * sphere = new osg::Sphere;
 				sphere->setRadius(10);
 				shape->setShape(sphere);
-				shape->setColor(osg::Vec4(0.5, 0.5, 0.5, 0.5));
+				shape->setColor(osg::Vec4(0.5, 0.5, 0.5, 0.1));
 				shape->getOrCreateStateSet()->setMode(GL_BLEND, osg::StateAttribute::ON);
+				shape->getStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
 				osg::Geode * geode = new osg::Geode;
 				geode->addDrawable(shape);
 
@@ -88,6 +91,7 @@ osg::ref_ptr<osg::Group> NodeGroup::getNodeGroup(osg::ref_ptr<Data::Node> node, 
 				node->setOutBall(at);
 
 				group->addChild(at);
+		}
 
 		QMap<qlonglong, osg::ref_ptr<Data::Edge> >::iterator i = node->getEdges()->begin();
 
@@ -106,25 +110,6 @@ osg::ref_ptr<osg::Group> NodeGroup::getNodeGroup(osg::ref_ptr<Data::Node> node, 
 
 				if (nodeGroup != NULL)
 					group->addChild(nodeGroup);
-
-				/*osg::ref_ptr<osg::AutoTransform> at = new osg::AutoTransform;
-				at->setPosition(node->getTargetPosition() * graphScale);
-				at->setAutoRotateMode(osg::AutoTransform::ROTATE_TO_SCREEN);
-
-				osg::ShapeDrawable * shape = new osg::ShapeDrawable;
-				osg::Sphere * sphere = new osg::Sphere;
-				sphere->setRadius(20);
-				shape->setShape(sphere);
-				shape->setColor(osg::Vec4(0.5, 0.5, 0.5, 0.5));
-				shape->getOrCreateStateSet()->setMode(GL_BLEND, osg::StateAttribute::ON);
-				osg::Geode * geode = new osg::Geode;
-				geode->addDrawable(shape);
-
-				at->addChild(geode);
-
-				n->setOutBall(at);
-
-				group->addChild(at);*/
 			}
 
 			i++;

@@ -240,6 +240,8 @@ namespace Data
 		*/
 		void closeNestedGraph();
 
+		void addNestedNode(Data::Node * node);
+
 		/**
 		*  \fn public isNestedGraph()
 		*  \brief recognize if current graph is nested or not
