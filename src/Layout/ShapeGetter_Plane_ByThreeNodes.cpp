@@ -22,7 +22,7 @@ QSharedPointer<Shape> ShapeGetter_Plane_ByThreeNodes::getShape (void) {
 	osg::Vec3f pointC = node3_->getTargetPosition ();
 
 	osg::Vec3f n = (pointB - pointA) ^ (pointC - pointA);
-	float d = n.x () * pointA.x () + n.y () * pointA.y () + n.z () * pointA.z ();
+	float d = - (n.x () * pointA.x () + n.y () * pointA.y () + n.z () * pointA.z ());
 
 	return QSharedPointer<Shape> (
 		new Shape_Plane (
