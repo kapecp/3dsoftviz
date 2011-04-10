@@ -1,5 +1,3 @@
-#include <osgUtil/Optimizer>
-
 #include "QOSG/CoreWindow.h"
 #include "Util/Cleaner.h"
 
@@ -332,20 +330,6 @@ void CoreWindow::saveLayoutToDB()
 	}
 }
 
-/*void CoreWindow::saveGraphToDB()
-{
-	Data::Graph * currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
-
-	if(currentGraph != NULL)
-	{
-		currentGraph->saveGraphToDB();
-	}
-	else
-	{
-		qDebug() << "[QOSG::CoreWindow::saveGraphToDB] There is no active graph loaded";
-	}
-}*/
-
 void CoreWindow::sqlQuery()
 {
 	cout << lineEdit->text().toStdString() << endl;
@@ -459,9 +443,6 @@ void CoreWindow::mergeNodes()
 		
 		viewerWidget->getPickHandler()->unselectPickedEdges(0);
 		viewerWidget->getPickHandler()->unselectPickedNodes(0);
-
-		//osgUtil::Optimizer optimizer;
-		//optimizer.optimize( root.get() );
 
 		if (isPlaying)
 			layout->play();

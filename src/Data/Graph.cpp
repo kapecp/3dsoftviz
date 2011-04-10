@@ -176,7 +176,13 @@ bool Data::Graph::saveLayoutToDB(QSqlDatabase* conn, Data::Graph * graph)
 		&& Model::NodeDAO::addNodesColorToDB(conn, graph->nodes, graph->selectedLayout, newMetaNodeID, false)
 		&& Model::EdgeDAO::addMetaEdgesToDB(conn, graph->metaEdges, graph->selectedLayout, newMetaNodeID, newMetaEdgeID)
 		&& Model::EdgeDAO::addEdgesColorToDB(conn, graph->edges, graph->selectedLayout, newMetaNodeID, newMetaEdgeID, false)
-		&& Model::EdgeDAO::addEdgesColorToDB(conn, graph->metaEdges, graph->selectedLayout, newMetaNodeID, newMetaEdgeID, true))
+		&& Model::EdgeDAO::addEdgesColorToDB(conn, graph->metaEdges, graph->selectedLayout, newMetaNodeID, newMetaEdgeID, true)
+		&& Model::NodeDAO::addNodesScaleToDB(conn, graph->nodes, graph->selectedLayout, newMetaNodeID, false, graph->getNodeScale())
+		&& Model::NodeDAO::addNodesScaleToDB(conn, graph->metaNodes, graph->selectedLayout, newMetaNodeID, true, graph->getNodeScale())
+		&& Model::EdgeDAO::addEdgesScaleToDB(conn, graph->edges, graph->selectedLayout, newMetaNodeID, newMetaEdgeID, false, graph->getEdgeScale())
+		&& Model::EdgeDAO::addEdgesScaleToDB(conn, graph->metaEdges, graph->selectedLayout, newMetaNodeID, newMetaEdgeID, true, graph->getEdgeScale())
+		&& Model::NodeDAO::addNodesMaskToDB(conn, graph->nodes, graph->selectedLayout, newMetaNodeID, false)
+		&& Model::NodeDAO::addNodesMaskToDB(conn, graph->metaNodes, graph->selectedLayout, newMetaNodeID, true))
 	{
 		qDebug() << "[Data::Graph::saveLayoutToDB] Layout was saved to DB.";
 		return true;
@@ -350,11 +356,8 @@ osg::ref_ptr<Data::Node> Data::Graph::addNode(qlonglong id, QString name, Data::
 
 osg::ref_ptr<Data::Node> Data::Graph::mergeNodes(QLinkedList<osg::ref_ptr<Data::Node> > * selectedNodes, osg::Vec3f position)
 {
-	//TODO pridat type podla addnode
-	//Data::Type* mergedType;
-	//QList<Data::Type*> mergedTypes = getTypesByName(Data::GraphLayout::MERGED_NODE_TYPE);
-
 	float scale = this->getNodeScale() + (selectedNodes->count() / 2);
+
 	osg::ref_ptr<Data::Node> mergedNode = new Data::Node(this->incEleIdCounter(), "mergedNode", this->getNodeMetaType(), scale, this, position);
 	mergedNode->setColor(osg::Vec4(0, 0, 1, 1));
 

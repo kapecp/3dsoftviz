@@ -149,10 +149,10 @@ bool Model::EdgeDAO::addEdgesColorToDB(QSqlDatabase* conn, QMap<qlonglong, osg::
 				edgeID = iEdges.value()->getId();
 			}
 
-			addColorToDB(conn, iEdges.value()->getGraph()->getId(), layout->getId(), edgeID, "color_r", iEdges.value()->getEdgeColor().r());
-			addColorToDB(conn, iEdges.value()->getGraph()->getId(), layout->getId(), edgeID, "color_g", iEdges.value()->getEdgeColor().g());
-			addColorToDB(conn, iEdges.value()->getGraph()->getId(), layout->getId(), edgeID, "color_b", iEdges.value()->getEdgeColor().b());
-			addColorToDB(conn, iEdges.value()->getGraph()->getId(), layout->getId(), edgeID, "color_a", iEdges.value()->getEdgeColor().a());
+			addSetings(conn, iEdges.value()->getGraph()->getId(), layout->getId(), edgeID, "color_r", iEdges.value()->getEdgeColor().r());
+			addSetings(conn, iEdges.value()->getGraph()->getId(), layout->getId(), edgeID, "color_g", iEdges.value()->getEdgeColor().g());
+			addSetings(conn, iEdges.value()->getGraph()->getId(), layout->getId(), edgeID, "color_b", iEdges.value()->getEdgeColor().b());
+			addSetings(conn, iEdges.value()->getGraph()->getId(), layout->getId(), edgeID, "color_a", iEdges.value()->getEdgeColor().a());
 		}
 
 		++iEdges;
@@ -161,28 +161,40 @@ bool Model::EdgeDAO::addEdgesColorToDB(QSqlDatabase* conn, QMap<qlonglong, osg::
 	return true;
 }
 
-bool Model::EdgeDAO::addColorToDB(QSqlDatabase* conn, qlonglong graphID, qlonglong layoutID, qlonglong edgeID, QString valName, double val)
+bool Model::EdgeDAO::addEdgesScaleToDB(QSqlDatabase* conn, QMap<qlonglong, osg::ref_ptr<Data::Edge> >* edges, Data::GraphLayout* layout, QMap<qlonglong, qlonglong> newMetaNodeID, QMap<qlonglong, qlonglong> newMetaEdgeID, bool meta, float defaultScale)
 {
-	if(conn==NULL || !conn->isOpen()) 
-	{ 
-        qDebug() << "[Model::EdgeDAO::addColorToDB] Connection to DB not opened.";
-        return false;
-    }
-
-	QSqlQuery* query = new QSqlQuery(*conn);
+	QMap< qlonglong,osg::ref_ptr<Data::Edge> >::const_iterator iEdges = edges->constBegin();
+	qlonglong edgeID;
+	QMap<qlonglong, qlonglong>::iterator edgeIdIter;
 	
-	query->prepare("INSERT INTO edge_settings (graph_id, edge_id, val_name, val, layout_id) VALUES (:graph_id, :edge_id, :val_name, :val, :layout_id)");
-	query->bindValue(":graph_id", graphID); 
-	query->bindValue(":edge_id", edgeID);
-	query->bindValue(":val_name", valName);
-	query->bindValue(":val", val);
-	query->bindValue(":layout_id", layoutID);
+	while(iEdges != edges->constEnd()) 
+	{
+		//ulozime scale len hranam, ktore maju scale ine nez default
+		if(iEdges.value()->getScale() != defaultScale)
+		{
+			if(meta)	
+			{
+				if(newMetaEdgeID.contains(iEdges.value()->getId()))
+				{
+					edgeIdIter = newMetaEdgeID.find(iEdges.value()->getId());
+					edgeID = edgeIdIter.value();
+				}
+				else
+				{
+					qDebug() << "[Model::NodeDAO::addEdgesScaleToDB] Edge ID: " << iEdges.value()->getId() <<  " mismatch";
+				}
+			}
+			else
+			{
+				edgeID = iEdges.value()->getId();
+			}
 
-	if(!query->exec()) {
-		qDebug() << "[Model::EdgeDAO::addColorToDB] Could not perform query on DB: " << query->lastError().databaseText();
-		return false;
+			addSetings(conn, iEdges.value()->getGraph()->getId(), layout->getId(), edgeID, "scale", iEdges.value()->getScale());
+		}
+
+		++iEdges;
 	}
-
+	
 	return true;
 }
 
@@ -470,6 +482,30 @@ QMap<qlonglong, osg::Vec4f> Model::EdgeDAO::getColors(QSqlDatabase* conn, bool* 
 	return colors;
 }
 
+QMap<qlonglong, float> Model::EdgeDAO::getScales(QSqlDatabase* conn, bool* error, qlonglong graphID, qlonglong layoutID)
+{
+    *error = FALSE;
+	bool error2 = false;
+	float scale;
+	qlonglong id;
+	QMap<qlonglong, float> scales;
+
+	QMap<qlonglong, QString> edgeScale;
+	QMap<qlonglong, QString>::iterator iter;
+
+	edgeScale = getSettings(conn, &error2, graphID, layoutID, "scale");
+
+	for(iter = edgeScale.begin(); iter != edgeScale.end(); iter++) 
+	{
+		id = iter.key();
+
+		scale = iter.value().toFloat();
+		scales.insert(id, scale);
+	}
+
+	return scales;
+}
+
 QMap<qlonglong, qlonglong> Model::EdgeDAO::getNewMetaEdgesId(QSqlDatabase* conn, qlonglong graphID, QMap<qlonglong, osg::ref_ptr<Data::Edge> >* edges)
 {
 	QMap<qlonglong, qlonglong> newId;
@@ -506,4 +542,54 @@ QMap<qlonglong, qlonglong> Model::EdgeDAO::getNewMetaEdgesId(QSqlDatabase* conn,
 	}
 
 	return newId;
+}
+
+bool Model::EdgeDAO::addSetings(QSqlDatabase* conn, qlonglong graphID, qlonglong layoutID, qlonglong edgeID, QString valName, double val)
+{
+	if(conn==NULL || !conn->isOpen()) 
+	{ 
+        qDebug() << "[Model::EdgeDAO::addSettings] Connection to DB not opened.";
+        return false;
+    }
+
+	QSqlQuery* query = new QSqlQuery(*conn);
+	
+	query->prepare("INSERT INTO edge_settings (graph_id, edge_id, val_name, val, layout_id) VALUES (:graph_id, :edge_id, :val_name, :val, :layout_id)");
+	query->bindValue(":graph_id", graphID); 
+	query->bindValue(":edge_id", edgeID);
+	query->bindValue(":val_name", valName);
+	query->bindValue(":val", val);
+	query->bindValue(":layout_id", layoutID);
+
+	if(!query->exec()) {
+		qDebug() << "[Model::EdgeDAO::addSettings] Could not perform query on DB: " << query->lastError().databaseText();
+		return false;
+	}
+
+	return true;
+}
+
+bool Model::EdgeDAO::addSetings(QSqlDatabase* conn, qlonglong graphID, qlonglong layoutID, qlonglong edgeID, QString valName, float val)
+{
+	if(conn==NULL || !conn->isOpen()) 
+	{ 
+        qDebug() << "[Model::EdgeDAO::addSettings] Connection to DB not opened.";
+        return false;
+    }
+
+	QSqlQuery* query = new QSqlQuery(*conn);
+	
+	query->prepare("INSERT INTO edge_settings (graph_id, edge_id, val_name, val, layout_id) VALUES (:graph_id, :edge_id, :val_name, :val, :layout_id)");
+	query->bindValue(":graph_id", graphID); 
+	query->bindValue(":edge_id", edgeID);
+	query->bindValue(":val_name", valName);
+	query->bindValue(":val", val);
+	query->bindValue(":layout_id", layoutID);
+
+	if(!query->exec()) {
+		qDebug() << "[Model::EdgeDAO::addSettings] Could not perform query on DB: " << query->lastError().databaseText();
+		return false;
+	}
+
+	return true;
 }
