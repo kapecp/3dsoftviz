@@ -45,7 +45,6 @@ CoreWindow::CoreWindow(QWidget *parent, Vwr::CoreGraph* coreGraph, QApplication*
 
 	connect(lineEdit,SIGNAL(returnPressed()),this,SLOT(sqlQuery()));	
 }
- 
 void CoreWindow::createActions()
 {	
 	quit = new QAction("Quit", this);
@@ -54,7 +53,7 @@ void CoreWindow::createActions()
 	options = new QAction("Options", this);
 	connect(options,SIGNAL(triggered()),this,SLOT(showOptions()));
 
-	load = new QAction(QIcon("img/gui/load.png"),"&Load graph from file", this);
+	load = new QAction(QIcon("img/gui/open.png"),"&Load graph from file", this);
 	connect(load, SIGNAL(triggered()), this, SLOT(loadFile()));
 
 	loadGraph = new QAction(QIcon("img/gui/loadFromDB.png"),"&Load graph from database", this);
@@ -92,6 +91,18 @@ void CoreWindow::createActions()
 	unFix->setToolTip("&Unfix nodes");
 	unFix->setFocusPolicy(Qt::NoFocus);
 	connect(unFix, SIGNAL(clicked()), this, SLOT(unFixNodes()));
+
+	merge = new QPushButton();
+	merge->setIcon(QIcon("img/gui/merge.png"));
+	merge->setToolTip("&Merge nodes together");
+	merge->setFocusPolicy(Qt::NoFocus);
+	connect(merge, SIGNAL(clicked()), this, SLOT(mergeNodes()));
+
+	separate = new QPushButton();
+	separate->setIcon(QIcon("img/gui/separate.png"));
+	separate->setToolTip("&Separate merged nodes");
+	separate->setFocusPolicy(Qt::NoFocus);
+	connect(separate, SIGNAL(clicked()), this, SLOT(separateNodes()));
 
 	label = new QPushButton();
 	label->setIcon(QIcon("img/gui/label.png"));
@@ -204,6 +215,12 @@ void CoreWindow::createToolBar()
 	frame->layout()->addWidget(fix);
 	frame->layout()->addWidget(unFix);
 
+	frame = createHorizontalFrame();
+
+	toolBar->addWidget(frame);
+	frame->layout()->addWidget(merge);
+	frame->layout()->addWidget(separate);
+
 	toolBar->addWidget(label);
 	toolBar->addSeparator();
 	toolBar->addWidget(play);
@@ -287,18 +304,24 @@ void CoreWindow::saveLayoutToDB()
 		QSqlDatabase * conn = Manager::GraphManager::getInstance()->getDB()->tmpGetConn();
 		bool ok;
 	
-		QString layout_name = QInputDialog::getText(this, tr("New layout name"), tr("Layout name:"), QLineEdit::Normal, "", &ok);
+		if(conn != NULL && conn->open()) { 
+			QString layout_name = QInputDialog::getText(this, tr("New layout name"), tr("Layout name:"), QLineEdit::Normal, "", &ok);
 		
-		if (ok && !layout_name.isEmpty())
-		{
-			Data::GraphLayout* layout = Model::GraphLayoutDAO::addLayout(layout_name, currentGraph, conn);
-			currentGraph->selectLayout(layout);
+			if (ok && !layout_name.isEmpty())
+			{
+				Data::GraphLayout* layout = Model::GraphLayoutDAO::addLayout(layout_name, currentGraph, conn);
+				currentGraph->selectLayout(layout);
 
-			currentGraph->saveLayoutToDB(conn, currentGraph);
+				currentGraph->saveLayoutToDB(conn, currentGraph);
+			}
+			else
+			{
+				qDebug() << "[QOSG::CoreWindow::saveLayoutToDB] Input dialog canceled";
+			}
 		}
 		else
 		{
-			qDebug() << "[QOSG::CoreWindow::saveLayoutToDB] Input dialog canceled";
+			qDebug() << "[QOSG::CoreWindow::saveLayoutToDB] Connection to DB not opened";
 		}
 	}
 	else
@@ -306,20 +329,6 @@ void CoreWindow::saveLayoutToDB()
 		qDebug() << "[QOSG::CoreWindow::saveLayoutToDB] There is no active graph loaded";
 	}
 }
-
-/*void CoreWindow::saveGraphToDB()
-{
-	Data::Graph * currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
-
-	if(currentGraph != NULL)
-	{
-		currentGraph->saveGraphToDB();
-	}
-	else
-	{
-		qDebug() << "[QOSG::CoreWindow::saveGraphToDB] There is no active graph loaded";
-	}
-}*/
 
 void CoreWindow::sqlQuery()
 {
@@ -416,6 +425,50 @@ void CoreWindow::unFixNodes()
 		layout->play();
 }
 
+void CoreWindow::mergeNodes()
+{	
+	Data::Graph * currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
+
+	if (currentGraph != NULL)
+	{
+		osg::Vec3 position = viewerWidget->getPickHandler()->getSelectionCenter(true); 
+		QLinkedList<osg::ref_ptr<Data::Node> > * selectedNodes = viewerWidget->getPickHandler()->getSelectedNodes();
+
+		if(selectedNodes->count() > 0) {
+			currentGraph->mergeNodes(selectedNodes, position);
+		}
+		else {
+			qDebug() << "[QOSG::CoreWindow::mergeNodes] There are no nodes selected";
+		}
+		
+		viewerWidget->getPickHandler()->unselectPickedEdges(0);
+		viewerWidget->getPickHandler()->unselectPickedNodes(0);
+
+		if (isPlaying)
+			layout->play();
+	}
+}
+
+void CoreWindow::separateNodes()
+{
+	Data::Graph * currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
+	
+	if (currentGraph != NULL)
+	{
+		QLinkedList<osg::ref_ptr<Data::Node> > * selectedNodes = viewerWidget->getPickHandler()->getSelectedNodes();
+
+		if(selectedNodes->count() > 0) {
+			currentGraph->separateNodes(selectedNodes);
+		}
+		else {
+			qDebug() << "[QOSG::CoreWindow::separateNodes] There are no nodes selected";
+		}
+
+		if (isPlaying)
+			layout->play();
+	}
+}
+
 void CoreWindow::removeMetaNodes()
 {
 	QLinkedList<osg::ref_ptr<Data::Node> > * selectedNodes = viewerWidget->getPickHandler()->getSelectedNodes();
@@ -425,7 +478,8 @@ void CoreWindow::removeMetaNodes()
 
 	while (i != selectedNodes->constEnd()) 
 	{
-		if ((*i)->getType()->isMeta())
+		//treba este opravit - zatial kontrolujeme ci to nie je mergedNode len podla mena
+		if ((*i)->getType()->isMeta() && (*i)->getName() != "mergedNode")
 			currentGraph->removeNode((*i));
 		++i;
 	}

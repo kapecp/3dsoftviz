@@ -71,6 +71,9 @@ Data::Graph* Model::GraphDAO::getGraph(QSqlDatabase* conn, bool* error2, qlonglo
 	QList<double> coordinates;
 	QMap<qlonglong, osg::Vec4> nodeColors;
 	QMap<qlonglong, osg::Vec4f> edgeColors;
+	QMap<qlonglong, float> nodeScales;
+	QMap<qlonglong, float> edgeScales;
+	QMap<qlonglong, int> nodeMasks;
 
 	graphName = Model::GraphDAO::getName(graphID, &error, conn);
 	layoutName = Model::GraphLayoutDAO::getName(conn, &error, graphID, layoutID);
@@ -79,6 +82,9 @@ Data::Graph* Model::GraphDAO::getGraph(QSqlDatabase* conn, bool* error2, qlonglo
 	queryEdges = Model::EdgeDAO::getEdgesQuery(conn, &error, graphID, layoutID);
 	nodeColors = Model::NodeDAO::getColors(conn, &error, graphID, layoutID);
 	edgeColors = Model::EdgeDAO::getColors(conn, &error, graphID, layoutID);
+	nodeScales = Model::NodeDAO::getScales(conn, &error, graphID, layoutID);
+	edgeScales = Model::EdgeDAO::getScales(conn, &error, graphID, layoutID);
+	nodeMasks = Model::NodeDAO::getMasks(conn, &error, graphID, layoutID);
 		
 	if(!error)
 	{
@@ -121,6 +127,16 @@ Data::Graph* Model::GraphDAO::getGraph(QSqlDatabase* conn, bool* error2, qlonglo
 				newNode->setColor(nodeColors.value(nodeID));
 			}
 
+			if(nodeScales.contains(nodeID))
+			{
+				newNode->setScale(nodeScales.value(nodeID));
+			}
+
+			if(nodeMasks.contains(nodeID))
+			{
+				newNode->setNodeMask(0);
+			}
+
 			nodes.insert(nodeID, newNode);
 		}
 		
@@ -142,6 +158,14 @@ Data::Graph* Model::GraphDAO::getGraph(QSqlDatabase* conn, bool* error2, qlonglo
 					newGraph->getEdges()->find(edgeID).value()->setEdgeColor(edgeColors.value(edgeID));
 				else
 					newGraph->getMetaEdges()->find(edgeID).value()->setEdgeColor(edgeColors.value(edgeID));
+			}
+
+			if(edgeScales.contains(edgeID))
+			{
+				if(newGraph->getEdges()->contains(edgeID))
+					newGraph->getEdges()->find(edgeID).value()->setScale(edgeScales.value(edgeID));
+				else
+					newGraph->getMetaEdges()->find(edgeID).value()->setScale(edgeScales.value(edgeID));
 			}
 		}
 	}

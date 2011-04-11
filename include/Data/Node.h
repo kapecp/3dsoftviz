@@ -87,6 +87,19 @@ namespace Data
 		*/
 		void setName(QString val) { name = val; }
 
+		/**
+		*  \fn inline public  getScale() 
+		*  \brief Gets node scale
+		*  \return float size of the scale
+		*/
+		float getScale() { return scale; }
+
+		/**
+		*  \fn inline public  setScale(float val) 
+		*  \brief Sets new scale
+		*  \param   val   new scale for the Node
+		*/
+		void setScale(float val) { scale = val; }
 
 		/**
 		*  \fn inline public constant  getType
