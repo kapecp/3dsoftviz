@@ -34,11 +34,6 @@ private: // common visualizers
 
 private: // positions and distances
 
-	osg::Node * wrapByAutoTransform (
-		osg::Node * node,
-		const osg::Vec3f & position
-	);
-
 	float getScaledDistance (
 		const float & distance
 	);

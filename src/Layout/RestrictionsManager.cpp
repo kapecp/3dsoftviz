@@ -62,6 +62,12 @@ void RestrictionsManager::setObserver (
 	QSharedPointer<RestrictionsObserver> observer
 ) {
 	observer_ = observer;
+
+	// send notifications reflecting the current state to the new observer
+	for (LastShapesMapType::iterator it = lastShapes_.begin (); it != lastShapes_.end (); ++it) {
+		notifyRestrictionAdded (it.key ());
+		notifyShapeChanged (it.key (), it.value ());
+	}
 }
 
 void RestrictionsManager::resetObserver () {
@@ -107,20 +113,26 @@ void RestrictionsManager::refreshShape (
 void RestrictionsManager::notifyRestrictionAdded (
 	QSharedPointer<ShapeGetter> shapeGetter
 ) {
-	observer_->restrictionAdded (shapeGetter);
+	if (!observer_.isNull ()) {
+		observer_->restrictionAdded (shapeGetter);
+	}
 }
 
 void RestrictionsManager::notifyShapeChanged (
 	QSharedPointer<ShapeGetter> shapeGetter,
 	QSharedPointer<Shape> shape
 ) {
-	observer_->shapeChanged (shapeGetter, shape);
+	if (!observer_.isNull ()) {
+		observer_->shapeChanged (shapeGetter, shape);
+	}
 }
 
 void RestrictionsManager::notifyRestrictionRemoved (
 	QSharedPointer<ShapeGetter> shapeGetter
 ) {
-	observer_->restrictionRemoved (shapeGetter);
+	if (!observer_.isNull ()) {
+		observer_->restrictionRemoved (shapeGetter);
+	}
 }
 
 } // namespace

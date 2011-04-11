@@ -13,7 +13,7 @@ class Shape_Plane : public Shape {
 public:
 
 	// normal vector = [a, b, c]
-	// ax + by + cz = d
+	// ax + by + cz + d = 0
 	Shape_Plane (
 		const osg::Vec3f normalVector,
 		const float d

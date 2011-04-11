@@ -38,7 +38,7 @@ void ShapeVisitor_RestrictedPositionGetter::visit (Shape_Composite & shape) {
 
 void ShapeVisitor_RestrictedPositionGetter::visit (Shape_Plane & shape) {
 	float t;
-	float m = shape.getD () - shape.getNormalVector ().x () * originalPosition_.x () - shape.getNormalVector ().y () * originalPosition_.y () - shape.getNormalVector ().z () * originalPosition_.z ();
+	float m = - shape.getD () - shape.getNormalVector ().x () * originalPosition_.x () - shape.getNormalVector ().y () * originalPosition_.y () - shape.getNormalVector ().z () * originalPosition_.z ();
 	float n = pow (shape.getNormalVector ().x (), 2) + pow (shape.getNormalVector ().y (), 2) + pow (shape.getNormalVector ().z (), 2);
 	if (n != 0.0) {
 		t = m / n;
