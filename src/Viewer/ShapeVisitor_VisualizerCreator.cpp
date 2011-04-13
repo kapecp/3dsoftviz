@@ -35,24 +35,19 @@ void ShapeVisitor_VisualizerCreator::visit (Layout::Shape_Plane & shape) {
 	sd->setColor (osg::Vec4 (0, 0.5, 0.0, 0.5));
 	*/
 
-	// we use drawing a plane using box now:
+	// now we use a temporary code instead - drawing a plane using box:
 
-	// get two plane points
-	osg::Vec3 point1 (0, 0, (- shape.getD ()) / shape.getNormalVector ().z () );
-	osg::Vec3 point2 (1, 0, (- shape.getD () - shape.getNormalVector ().x ()) / shape.getNormalVector ().z () );
-	osg::Vec3 point3 (0, 1, (- shape.getD () - shape.getNormalVector ().y ()) / shape.getNormalVector ().z () );
+	// center
+	osg::Vec3 center (0, 0, (- shape.getD ()) / shape.getNormalVector ().z () ); // some point on the plane
 
 	// rotation
 	osg::Quat quat;
-	quat.makeRotate (point2 - point1, point3 - point1);
-
-	// center
-	osg::Vec3 center = point1;
+	quat.makeRotate (osg::Z_AXIS, shape.getNormalVector ());
 
 	osg::Box * box = new osg::Box;
 	box->setCenter (getScaledPosition (center));
 	box->setRotation (quat);
-	box->setHalfLengths (osg::Vec3 (1000, 1000, 2));
+	box->setHalfLengths (osg::Vec3 (1000, 1000, 1));
 
 	osg::ShapeDrawable * sd = new osg::ShapeDrawable;
 	sd->setShape (box);
@@ -88,7 +83,6 @@ void ShapeVisitor_VisualizerCreator::visualizeSphere (Layout::Shape_AbstractSphe
 	osg::Geode * geode = new osg::Geode;
 	geode->addDrawable (sd);
 
-	// createdVisualizer_ = wrapByAutoTransform (geode, getScaledPosition (abstractSphere.getCenter ()));
 	createdVisualizer_ = geode;
 }
 
