@@ -135,23 +135,29 @@ void CoreWindow::createActions()
 	connect(center, SIGNAL(clicked(bool)), this, SLOT(centerView(bool)));
 
 	// layout restrictions
-	b_AddRestriction_SphereSurface = new QPushButton();
-	b_AddRestriction_SphereSurface->setIcon(QIcon("img/gui/restriction_sphere_surface.png"));
-	b_AddRestriction_SphereSurface->setToolTip("&Add restriction - sphere surface");
-	b_AddRestriction_SphereSurface->setFocusPolicy(Qt::NoFocus);
-	connect(b_AddRestriction_SphereSurface, SIGNAL(clicked()), this, SLOT(addRestriction_SphereSurface ()));
+	b_SetRestriction_SphereSurface = new QPushButton();
+	b_SetRestriction_SphereSurface->setIcon(QIcon("img/gui/restriction_sphere_surface.png"));
+	b_SetRestriction_SphereSurface->setToolTip("&Set restriction - sphere surface");
+	b_SetRestriction_SphereSurface->setFocusPolicy(Qt::NoFocus);
+	connect(b_SetRestriction_SphereSurface, SIGNAL(clicked()), this, SLOT(setRestriction_SphereSurface ()));
 
-	b_AddRestriction_Sphere = new QPushButton();
-	b_AddRestriction_Sphere->setIcon(QIcon("img/gui/restriction_sphere.png"));
-	b_AddRestriction_Sphere->setToolTip("&Add restriction - sphere");
-	b_AddRestriction_Sphere->setFocusPolicy(Qt::NoFocus);
-	connect(b_AddRestriction_Sphere, SIGNAL(clicked()), this, SLOT(addRestriction_Sphere ()));
+	b_SetRestriction_Sphere = new QPushButton();
+	b_SetRestriction_Sphere->setIcon(QIcon("img/gui/restriction_sphere.png"));
+	b_SetRestriction_Sphere->setToolTip("&Set restriction - sphere");
+	b_SetRestriction_Sphere->setFocusPolicy(Qt::NoFocus);
+	connect(b_SetRestriction_Sphere, SIGNAL(clicked()), this, SLOT(setRestriction_Sphere ()));
 
-	b_AddRestriction_Plane = new QPushButton();
-	b_AddRestriction_Plane->setIcon(QIcon("img/gui/restriction_plane.png"));
-	b_AddRestriction_Plane->setToolTip("&Add restriction - plane");
-	b_AddRestriction_Plane->setFocusPolicy(Qt::NoFocus);
-	connect(b_AddRestriction_Plane, SIGNAL(clicked()), this, SLOT(addRestriction_Plane ()));
+	b_SetRestriction_Plane = new QPushButton();
+	b_SetRestriction_Plane->setIcon(QIcon("img/gui/restriction_plane.png"));
+	b_SetRestriction_Plane->setToolTip("&Set restriction - plane");
+	b_SetRestriction_Plane->setFocusPolicy(Qt::NoFocus);
+	connect(b_SetRestriction_Plane, SIGNAL(clicked()), this, SLOT(setRestriction_Plane ()));
+
+	b_UnsetRestriction = new QPushButton();
+	b_UnsetRestriction->setIcon(QIcon("img/gui/restriction_unset.png"));
+	b_UnsetRestriction->setToolTip("&Unset restriction");
+	b_UnsetRestriction->setFocusPolicy(Qt::NoFocus);
+	connect(b_UnsetRestriction, SIGNAL(clicked()), this, SLOT(unsetRestriction ()));
 }
 
 void CoreWindow::createMenus()
@@ -217,11 +223,17 @@ void CoreWindow::createToolBar()
 	toolBar->addWidget(colorPicker);	
 	toolBar->addSeparator();
 	
+	// layout restrictions
 	frame = createHorizontalFrame();
 	toolBar->addWidget(frame);
-	frame->layout()->addWidget(b_AddRestriction_SphereSurface);
-	frame->layout()->addWidget(b_AddRestriction_Sphere);
-	frame->layout()->addWidget(b_AddRestriction_Plane);
+	frame->layout()->addWidget(b_SetRestriction_SphereSurface);
+	frame->layout()->addWidget(b_SetRestriction_Sphere);
+
+	frame = createHorizontalFrame();
+	toolBar->addWidget(frame);
+	frame->layout()->addWidget(b_SetRestriction_Plane);
+	frame->layout()->addWidget(b_UnsetRestriction);
+
 	toolBar->addSeparator();
 
 	//inicializacia slideru
@@ -525,7 +537,7 @@ void CoreWindow::applyColorClick()
 	}
 }
 
-void CoreWindow::addRestriction_SphereSurface ()
+void CoreWindow::setRestriction_SphereSurface ()
 {
 	Data::Graph * currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
 
@@ -542,7 +554,7 @@ void CoreWindow::addRestriction_SphereSurface ()
 	}
 }
 
-void CoreWindow::addRestriction_Sphere ()
+void CoreWindow::setRestriction_Sphere ()
 {
 	Data::Graph * currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
 
@@ -559,7 +571,7 @@ void CoreWindow::addRestriction_Sphere ()
 	}
 }
 
-void CoreWindow::addRestriction_Plane ()
+void CoreWindow::setRestriction_Plane ()
 {
 	Data::Graph * currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
 
@@ -573,6 +585,14 @@ void CoreWindow::addRestriction_Plane ()
 		QSharedPointer<Layout::ShapeGetter> shapeGetter (new Layout::ShapeGetter_Plane_ByThreeNodes (node1, node2, node3));
 
 		setRestrictionToSelectedNodes (shapeGetter, currentGraph);
+	}
+}
+
+void CoreWindow::unsetRestriction () {
+	Data::Graph * currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
+
+	if (currentGraph != NULL) {
+		setRestrictionToSelectedNodes (QSharedPointer<Layout::ShapeGetter> (NULL), currentGraph);
 	}
 }
 
