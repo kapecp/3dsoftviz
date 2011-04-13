@@ -32,13 +32,14 @@ public:
 		osg::Vec3f originalPosition
 	);
 
-	void setRestrictionRemovalHandler (
+	bool trySetRestrictionRemovalHandler (
 		QSharedPointer<ShapeGetter> shapeGetter,
 		QSharedPointer<RestrictionRemovalHandler> handler
 	);
 
-	bool isRestrictionUsed (
-		QSharedPointer<ShapeGetter> shapeGetter
+	void setOrRunRestrictionRemovalHandler (
+		QSharedPointer<ShapeGetter> shapeGetter,
+		QSharedPointer<RestrictionRemovalHandler> handler
 	);
 
 	void setObserver (

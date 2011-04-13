@@ -73,18 +73,27 @@ osg::Vec3f RestrictionsManager::applyRestriction (
 	}
 }
 
-// TODO: maybe create setOrRunRestrictionRemovalHandler method
-void RestrictionsManager::setRestrictionRemovalHandler (
+bool RestrictionsManager::trySetRestrictionRemovalHandler (
 	QSharedPointer<ShapeGetter> shapeGetter,
 	QSharedPointer<RestrictionRemovalHandler> handler
 ) {
-	removalHandlers_[shapeGetter] = handler;
+	if (shapeGetterUsages_.find (shapeGetter) != shapeGetterUsages_.end ()) {
+		removalHandlers_[shapeGetter] = handler;
+		return true;
+	} else {
+		return false;
+	}
 }
 
-bool RestrictionsManager::isRestrictionUsed (
-	QSharedPointer<ShapeGetter> shapeGetter
+void RestrictionsManager::setOrRunRestrictionRemovalHandler (
+	QSharedPointer<ShapeGetter> shapeGetter,
+	QSharedPointer<RestrictionRemovalHandler> handler
 ) {
-	return (shapeGetterUsages_.find (shapeGetter) != shapeGetterUsages_.end ());
+	if (shapeGetterUsages_.find (shapeGetter) != shapeGetterUsages_.end ()) {
+		removalHandlers_[shapeGetter] = handler;
+	} else {
+		handler->afterRestrictionRemoved ();
+	}
 }
 
 void RestrictionsManager::setObserver (
