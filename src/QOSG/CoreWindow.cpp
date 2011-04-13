@@ -106,25 +106,6 @@ void CoreWindow::createActions()
 	applyColor->setFocusPolicy(Qt::NoFocus);
 	connect(applyColor,SIGNAL(clicked()),this,SLOT(applyColorClick()));
 
-	// layout restrictions
-	b_AddRestriction_SphereSurface = new QPushButton();
-	b_AddRestriction_SphereSurface->setIcon(QIcon("img/gui/restriction_sphere_surface.png"));
-	b_AddRestriction_SphereSurface->setToolTip("&Add restriction - sphere surface");
-	b_AddRestriction_SphereSurface->setFocusPolicy(Qt::NoFocus);
-	connect(b_AddRestriction_SphereSurface, SIGNAL(clicked()), this, SLOT(addRestriction_SphereSurface ()));
-
-	b_AddRestriction_Sphere = new QPushButton();
-	b_AddRestriction_Sphere->setIcon(QIcon("img/gui/restriction_sphere.png"));
-	b_AddRestriction_Sphere->setToolTip("&Add restriction - sphere");
-	b_AddRestriction_Sphere->setFocusPolicy(Qt::NoFocus);
-	connect(b_AddRestriction_Sphere, SIGNAL(clicked()), this, SLOT(addRestriction_Sphere ()));
-
-	b_AddRestriction_Plane = new QPushButton();
-	b_AddRestriction_Plane->setIcon(QIcon("img/gui/restriction_plane.png"));
-	b_AddRestriction_Plane->setToolTip("&Add restriction - plane");
-	b_AddRestriction_Plane->setFocusPolicy(Qt::NoFocus);
-	connect(b_AddRestriction_Plane, SIGNAL(clicked()), this, SLOT(addRestriction_Plane ()));
-
 	//mody - ziadny vyber, vyber jedneho, multi vyber centrovanie
 	noSelect = new QPushButton();
 	noSelect->setIcon(QIcon("img/gui/noselect.png"));
@@ -152,6 +133,25 @@ void CoreWindow::createActions()
 	center->setToolTip("&Center view");
 	center->setFocusPolicy(Qt::NoFocus);
 	connect(center, SIGNAL(clicked(bool)), this, SLOT(centerView(bool)));
+
+	// layout restrictions
+	b_AddRestriction_SphereSurface = new QPushButton();
+	b_AddRestriction_SphereSurface->setIcon(QIcon("img/gui/restriction_sphere_surface.png"));
+	b_AddRestriction_SphereSurface->setToolTip("&Add restriction - sphere surface");
+	b_AddRestriction_SphereSurface->setFocusPolicy(Qt::NoFocus);
+	connect(b_AddRestriction_SphereSurface, SIGNAL(clicked()), this, SLOT(addRestriction_SphereSurface ()));
+
+	b_AddRestriction_Sphere = new QPushButton();
+	b_AddRestriction_Sphere->setIcon(QIcon("img/gui/restriction_sphere.png"));
+	b_AddRestriction_Sphere->setToolTip("&Add restriction - sphere");
+	b_AddRestriction_Sphere->setFocusPolicy(Qt::NoFocus);
+	connect(b_AddRestriction_Sphere, SIGNAL(clicked()), this, SLOT(addRestriction_Sphere ()));
+
+	b_AddRestriction_Plane = new QPushButton();
+	b_AddRestriction_Plane->setIcon(QIcon("img/gui/restriction_plane.png"));
+	b_AddRestriction_Plane->setToolTip("&Add restriction - plane");
+	b_AddRestriction_Plane->setFocusPolicy(Qt::NoFocus);
+	connect(b_AddRestriction_Plane, SIGNAL(clicked()), this, SLOT(addRestriction_Plane ()));
 }
 
 void CoreWindow::createMenus()
@@ -210,13 +210,6 @@ void CoreWindow::createToolBar()
 	toolBar->addSeparator();
 	toolBar->addWidget(applyColor);
 
-	frame = createHorizontalFrame();
-
-	toolBar->addWidget(frame);
-	frame->layout()->addWidget(b_AddRestriction_SphereSurface);
-	frame->layout()->addWidget(b_AddRestriction_Sphere);
-	frame->layout()->addWidget(b_AddRestriction_Plane);
-
 	//inicializacia colorpickera
 	QtColorPicker * colorPicker = new QtColorPicker();
 	colorPicker->setStandardColors();
@@ -224,6 +217,13 @@ void CoreWindow::createToolBar()
 	toolBar->addWidget(colorPicker);	
 	toolBar->addSeparator();
 	
+	frame = createHorizontalFrame();
+	toolBar->addWidget(frame);
+	frame->layout()->addWidget(b_AddRestriction_SphereSurface);
+	frame->layout()->addWidget(b_AddRestriction_Sphere);
+	frame->layout()->addWidget(b_AddRestriction_Plane);
+	toolBar->addSeparator();
+
 	//inicializacia slideru
 	slider = new QSlider(Qt::Vertical,this);
 	slider->setTickPosition(QSlider::TicksAbove);
