@@ -656,7 +656,11 @@ void CoreWindow::setRestrictionToSelectedNodes (
 	currentGraph->getRestrictionsManager ().setRestrictions (nodes, shapeGetter);
 
 	if ((! shapeGetter.isNull ()) && (! removalHandler.isNull ())) {
-		currentGraph->getRestrictionsManager ().setRestrictionRemovalHandler (shapeGetter, removalHandler);
+		if (currentGraph->getRestrictionsManager ().isRestrictionUsed (shapeGetter)) {
+			currentGraph->getRestrictionsManager ().setRestrictionRemovalHandler (shapeGetter, removalHandler);
+		} else {
+			removalHandler->afterRestrictionRemoved ();
+		}
 	}
 
 	if (isPlaying)

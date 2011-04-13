@@ -958,6 +958,7 @@ Layout::RestrictionsManager & Data::Graph::getRestrictionsManager (void) {
 osg::ref_ptr<Data::Node> Data::Graph::addRestrictionNode(QString name, osg::Vec3f position) {
 	osg::ref_ptr<Data::Node> node = addNode (name, getRestrictionNodeMetaType (), position);
 	node->setIgnored (true);
+	node->setPositionCanBeRestricted (false);
 
 	return node;
 }

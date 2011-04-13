@@ -54,6 +54,7 @@ Data::Node::Node(qlonglong id, QString name, Data::Type* type, float scaling, Da
 	this->velocity = osg::Vec3f(0,0,0);
 	this->fixed = false;
 	this->ignore = false;
+	this->positionCanBeRestricted = true;
 	this->selected = false;
 	this->usingInterpolation = true;
 

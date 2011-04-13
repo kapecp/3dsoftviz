@@ -31,7 +31,11 @@ void RestrictionsManager::setRestrictions (
 			restrictions_.remove (*it);
 		}
 
-		if (!shapeGetter.isNull ()) {
+		if (
+			(! shapeGetter.isNull ())
+			&&
+			((*it)->getPositionCanBeRestricted ())
+		) {
 			// add shape getter
 			restrictions_[*it] = shapeGetter;
 			shapeGetterUsages_[shapeGetter]++;
@@ -69,11 +73,18 @@ osg::Vec3f RestrictionsManager::applyRestriction (
 	}
 }
 
+// TODO: maybe create setOrRunRestrictionRemovalHandler method
 void RestrictionsManager::setRestrictionRemovalHandler (
 	QSharedPointer<ShapeGetter> shapeGetter,
 	QSharedPointer<RestrictionRemovalHandler> handler
 ) {
 	removalHandlers_[shapeGetter] = handler;
+}
+
+bool RestrictionsManager::isRestrictionUsed (
+	QSharedPointer<ShapeGetter> shapeGetter
+) {
+	return (shapeGetterUsages_.find (shapeGetter) != shapeGetterUsages_.end ());
 }
 
 void RestrictionsManager::setObserver (

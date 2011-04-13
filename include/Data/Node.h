@@ -271,6 +271,9 @@ namespace Data
 		*/
 		bool isIgnored() const { return ignore; }
 
+		bool setPositionCanBeRestricted (bool b) {positionCanBeRestricted = b; }
+
+		bool getPositionCanBeRestricted () {return positionCanBeRestricted; }
 
 		/**
 		*  \fn inline public  setVelocity(osg::Vec3f v)
@@ -502,6 +505,8 @@ namespace Data
 		*  \brief node ignoring flag
 		*/
 		bool ignore;
+
+		bool positionCanBeRestricted;
 
 		/**
 		*  bool selected

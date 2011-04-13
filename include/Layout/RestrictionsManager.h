@@ -37,6 +37,10 @@ public:
 		QSharedPointer<RestrictionRemovalHandler> handler
 	);
 
+	bool isRestrictionUsed (
+		QSharedPointer<ShapeGetter> shapeGetter
+	);
+
 	void setObserver (
 		QSharedPointer<RestrictionsObserver> observer
 	);
