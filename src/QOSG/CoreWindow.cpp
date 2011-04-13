@@ -4,6 +4,7 @@
 #include "Layout/ShapeGetter_SphereSurface_ByTwoNodes.h"
 #include "Layout/ShapeGetter_Sphere_ByTwoNodes.h"
 #include "Layout/ShapeGetter_Plane_ByThreeNodes.h"
+#include "Layout/RestrictionRemovalHandler_RestrictionNodesRemover.h"
 
 using namespace QOSG;
 
@@ -548,9 +549,22 @@ void CoreWindow::setRestriction_SphereSurface ()
 		osg::ref_ptr<Data::Node> centerNode = currentGraph->addRestrictionNode (QString ("center"), position);
 		osg::ref_ptr<Data::Node> surfaceNode = currentGraph->addRestrictionNode (QString ("surface"), position + osg::Vec3f (10, 0, 0));
 
-		QSharedPointer<Layout::ShapeGetter> shapeGetter (new Layout::ShapeGetter_SphereSurface_ByTwoNodes (centerNode, surfaceNode));
+		Layout::RestrictionRemovalHandler_RestrictionNodesRemover::NodesListType restrictionNodes;
+		restrictionNodes.push_back (centerNode);
+		restrictionNodes.push_back (surfaceNode);
 
-		setRestrictionToSelectedNodes (shapeGetter, currentGraph);
+		setRestrictionToSelectedNodes (
+			QSharedPointer<Layout::ShapeGetter> (
+				new Layout::ShapeGetter_SphereSurface_ByTwoNodes (centerNode, surfaceNode)
+			),
+			currentGraph,
+			QSharedPointer<Layout::RestrictionRemovalHandler_RestrictionNodesRemover> (
+				new Layout::RestrictionRemovalHandler_RestrictionNodesRemover (
+					*currentGraph,
+					restrictionNodes
+				)
+			)
+		);
 	}
 }
 
@@ -565,9 +579,22 @@ void CoreWindow::setRestriction_Sphere ()
 		osg::ref_ptr<Data::Node> centerNode = currentGraph->addRestrictionNode (QString ("center"), position);
 		osg::ref_ptr<Data::Node> surfaceNode = currentGraph->addRestrictionNode (QString ("surface"), position + osg::Vec3f (10, 0, 0));
 
-		QSharedPointer<Layout::ShapeGetter> shapeGetter (new Layout::ShapeGetter_Sphere_ByTwoNodes (centerNode, surfaceNode));
+		Layout::RestrictionRemovalHandler_RestrictionNodesRemover::NodesListType restrictionNodes;
+		restrictionNodes.push_back (centerNode);
+		restrictionNodes.push_back (surfaceNode);
 
-		setRestrictionToSelectedNodes (shapeGetter, currentGraph);
+		setRestrictionToSelectedNodes (
+			QSharedPointer<Layout::ShapeGetter> (
+				new Layout::ShapeGetter_Sphere_ByTwoNodes (centerNode, surfaceNode)
+			),
+			currentGraph,
+			QSharedPointer<Layout::RestrictionRemovalHandler_RestrictionNodesRemover> (
+				new Layout::RestrictionRemovalHandler_RestrictionNodesRemover (
+					*currentGraph,
+					restrictionNodes
+				)
+			)
+		);
 	}
 }
 
@@ -582,9 +609,23 @@ void CoreWindow::setRestriction_Plane ()
 		osg::ref_ptr<Data::Node> node2 = currentGraph->addRestrictionNode (QString ("plane_node_2"), position + osg::Vec3f (10, 0, 0));
 		osg::ref_ptr<Data::Node> node3 = currentGraph->addRestrictionNode (QString ("plane_node_3"), position + osg::Vec3f (0, 10, 0));
 
-		QSharedPointer<Layout::ShapeGetter> shapeGetter (new Layout::ShapeGetter_Plane_ByThreeNodes (node1, node2, node3));
+		Layout::RestrictionRemovalHandler_RestrictionNodesRemover::NodesListType restrictionNodes;
+		restrictionNodes.push_back (node1);
+		restrictionNodes.push_back (node2);
+		restrictionNodes.push_back (node3);
 
-		setRestrictionToSelectedNodes (shapeGetter, currentGraph);
+		setRestrictionToSelectedNodes (
+			QSharedPointer<Layout::ShapeGetter> (
+				new Layout::ShapeGetter_Plane_ByThreeNodes (node1, node2, node3)
+			),
+			currentGraph,
+			QSharedPointer<Layout::RestrictionRemovalHandler_RestrictionNodesRemover> (
+				new Layout::RestrictionRemovalHandler_RestrictionNodesRemover (
+					*currentGraph,
+					restrictionNodes
+				)
+			)
+		);
 	}
 }
 
@@ -592,13 +633,18 @@ void CoreWindow::unsetRestriction () {
 	Data::Graph * currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
 
 	if (currentGraph != NULL) {
-		setRestrictionToSelectedNodes (QSharedPointer<Layout::ShapeGetter> (NULL), currentGraph);
+		setRestrictionToSelectedNodes (
+			QSharedPointer<Layout::ShapeGetter> (NULL),
+			currentGraph,
+			QSharedPointer<Layout::RestrictionRemovalHandler> (NULL)
+		);
 	}
 }
 
 void CoreWindow::setRestrictionToSelectedNodes (
 	QSharedPointer<Layout::ShapeGetter> shapeGetter,
-	Data::Graph * currentGraph
+	Data::Graph * currentGraph,
+	QSharedPointer<Layout::RestrictionRemovalHandler> removalHandler
 ) {
 	QLinkedList<osg::ref_ptr<Data::Node> > * selectedNodes = viewerWidget->getPickHandler()->getSelectedNodes();
 
@@ -608,6 +654,10 @@ void CoreWindow::setRestrictionToSelectedNodes (
 	}
 
 	currentGraph->getRestrictionsManager ().setRestrictions (nodes, shapeGetter);
+
+	if ((! shapeGetter.isNull ()) && (! removalHandler.isNull ())) {
+		currentGraph->getRestrictionsManager ().setRestrictionRemovalHandler (shapeGetter, removalHandler);
+	}
 
 	if (isPlaying)
 		layout->play();

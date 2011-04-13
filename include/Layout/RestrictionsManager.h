@@ -5,6 +5,7 @@
 #include "Layout/ShapeVisitor_RestrictedPositionGetter.h"
 #include "Layout/ShapeVisitor_Comparator.h"
 #include "Layout/RestrictionsObserver.h"
+#include "Layout/RestrictionRemovalHandler.h"
 //-----------------------------------------------------------------------------
 #include <QMap>
 #include <QSet>
@@ -29,6 +30,11 @@ public:
 	osg::Vec3f applyRestriction (
 		Data::Node &node,
 		osg::Vec3f originalPosition
+	);
+
+	void setRestrictionRemovalHandler (
+		QSharedPointer<ShapeGetter> shapeGetter,
+		QSharedPointer<RestrictionRemovalHandler> handler
 	);
 
 	void setObserver (
@@ -70,10 +76,12 @@ private:
 	typedef QMap<Data::Node *, QSharedPointer<ShapeGetter> > RestrictionsMapType;
 	typedef QMap<QSharedPointer<ShapeGetter>, long> ShapeGetterUsagesMapType;
 	typedef QMap<QSharedPointer<ShapeGetter>, QSharedPointer<Shape> > LastShapesMapType;
+	typedef QMap<QSharedPointer<ShapeGetter>, QSharedPointer<RestrictionRemovalHandler> > RemovalHandlersMapType;
 
 	RestrictionsMapType restrictions_;
 	ShapeGetterUsagesMapType shapeGetterUsages_;
 	LastShapesMapType lastShapes_;
+	RemovalHandlersMapType removalHandlers_;
 
 	ShapeVisitor_RestrictedPositionGetter restrictedPositionGetter_;
 	ShapeVisitor_Comparator shapeComparator_;

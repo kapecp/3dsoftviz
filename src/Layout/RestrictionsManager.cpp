@@ -15,10 +15,18 @@ void RestrictionsManager::setRestrictions (
 		if (it2 != restrictions_.end ()) {
 			shapeGetterUsages_[it2.value ()]--;
 			if (shapeGetterUsages_[it2.value ()] == 0) {
+				// last shape getter usage removed
+
 				notifyRestrictionRemoved (it2.value ());
 
 				shapeGetterUsages_.remove (it2.value ());
 				lastShapes_.remove(it2.value ());
+
+				RemovalHandlersMapType::iterator removalHandlerIt = removalHandlers_.find (it2.value ());
+				if (! removalHandlerIt->isNull ()) {
+					(*removalHandlerIt)->afterRestrictionRemoved ();
+				}
+				removalHandlers_.erase (removalHandlerIt);
 			}
 			restrictions_.remove (*it);
 		}
@@ -27,9 +35,12 @@ void RestrictionsManager::setRestrictions (
 			// add shape getter
 			restrictions_[*it] = shapeGetter;
 			shapeGetterUsages_[shapeGetter]++;
-			lastShapes_[shapeGetter];
 			if (shapeGetterUsages_[shapeGetter] == 1) {
 				// first shape getter usage added
+
+				lastShapes_[shapeGetter];
+				removalHandlers_[shapeGetter];
+
 				notifyRestrictionAdded (shapeGetter);
 				refreshShape (shapeGetter);
 			}
@@ -56,6 +67,13 @@ osg::Vec3f RestrictionsManager::applyRestriction (
 	} else {
 		return originalPosition;
 	}
+}
+
+void RestrictionsManager::setRestrictionRemovalHandler (
+	QSharedPointer<ShapeGetter> shapeGetter,
+	QSharedPointer<RestrictionRemovalHandler> handler
+) {
+	removalHandlers_[shapeGetter] = handler;
 }
 
 void RestrictionsManager::setObserver (

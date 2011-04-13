@@ -27,6 +27,7 @@
 #include "QOSG/qtcolorpicker.h"
 
 #include "Layout/ShapeGetter.h"
+#include "Layout/RestrictionRemovalHandler.h"
 
 namespace QOSG
 {
@@ -430,7 +431,8 @@ namespace QOSG
 
 		void setRestrictionToSelectedNodes (
 			QSharedPointer<Layout::ShapeGetter> shapeGetter,
-			Data::Graph * currentGraph
+			Data::Graph * currentGraph,
+			QSharedPointer<Layout::RestrictionRemovalHandler> removalHandler
 		);
 
 	};
