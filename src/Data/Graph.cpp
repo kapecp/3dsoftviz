@@ -935,6 +935,17 @@ void Data::Graph::removeNode( osg::ref_ptr<Data::Node> node )
 {
 	if(node!=NULL && node->getGraph()==this) {
 		if(!node->isInDB() || Model::NodeDAO::removeNode(node, this->conn)) {
+
+			// remove restrictions:
+			{
+				QSet<Data::Node *> nodes;
+				nodes.insert (node.get ());
+				restrictionsManager_.setRestrictions (
+					nodes,
+					QSharedPointer<Layout::ShapeGetter> (NULL)
+				);
+			}
+
 			this->nodes->remove(node->getId());
 			this->metaNodes->remove(node->getId());
 			this->newNodes.remove(node->getId());
