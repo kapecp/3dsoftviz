@@ -12,9 +12,15 @@ class Shape_Sphere : public Shape_AbstractSphere {
 
 public:
 
+	enum RestrictionPolicy {
+		RANDOM_DISTANCE_FROM_CENTER,
+		SURFACE
+	};
+
 	Shape_Sphere (
-		const osg::Vec3f center_,
-		const float radius_
+		const osg::Vec3f center,
+		const float radius,
+		RestrictionPolicy restrictionPolicy
 	);
 
 	/***/
@@ -23,6 +29,12 @@ public:
 	virtual void accept (
 		ShapeVisitor & visitor
 	);
+
+	RestrictionPolicy getRestrictionPolicy ();
+
+private:
+
+	RestrictionPolicy restrictionPolicy_;
 
 }; // class
 

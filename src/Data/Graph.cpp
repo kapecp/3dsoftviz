@@ -355,7 +355,14 @@ void Data::Graph::createNestedGraph(osg::ref_ptr<Data::Node> srcNode)
 
 void Data::Graph::closeNestedGraph()
 {
-	QSharedPointer<Layout::ShapeGetter> shapeGetter (new Layout::ShapeGetter_Sphere_AroundNode (this->parent_id.last(), 10));
+	QSharedPointer<Layout::ShapeGetter> shapeGetter (
+		new Layout::ShapeGetter_Sphere_AroundNode (
+			this->parent_id.last(),
+			10,
+			Layout::Shape_Sphere::RANDOM_DISTANCE_FROM_CENTER,
+			Layout::ShapeGetter_Sphere_AroundNode::NODE_TARGET_POSITION
+		)
+	);
 	restrictionsManager_.setRestrictions (this->nestedNodes, shapeGetter);
 
 	//this->getRestrictionsManager().setRestrictions(

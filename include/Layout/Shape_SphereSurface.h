@@ -13,8 +13,8 @@ class Shape_SphereSurface : public Shape_AbstractSphere {
 public:
 
 	Shape_SphereSurface (
-		const osg::Vec3f center_,
-		const float radius_
+		const osg::Vec3f center,
+		const float radius
 	);
 
 	/***/
