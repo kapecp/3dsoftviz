@@ -171,7 +171,8 @@ void FRAlgorithm::Run()
 				isIterating = true;
 			}
 			if (!iterate()) {
-				graph->setFrozen(true);	
+				// [modified] layout restriction added to frozen graph does not work; maybe add calls to wakeUpAlg when a restriction is changed
+				// graph->setFrozen(true);
 			}			
 		}
 	}

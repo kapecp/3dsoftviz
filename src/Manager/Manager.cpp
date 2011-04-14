@@ -13,17 +13,6 @@
 
 #include "Manager/ImportInfoHandlerImpl.h"
 
-// layout restrictions tests
-/*
-#include "Layout/ShapeGetter.h"
-#include "Layout/ShapeGetter_Const.h"
-#include "Layout/Shape_Composite.h"
-#include "Layout/Shape_Plane.h"
-#include "Layout/Shape_Sphere.h"
-#include "Layout/Shape_SphereSurface.h"
-#include "Layout/RestrictionsManager.h"
-*/
-
 #include <memory>
 
 Manager::GraphManager * Manager::GraphManager::manager;
@@ -129,33 +118,6 @@ Data::Graph* Manager::GraphManager::loadGraph(QString filepath)
     if (stream.get() != NULL) {
     	stream->close ();
     }
-
-    // layout restrictions tests
-    /*
-    if (ok) {
-		QList<osg::ref_ptr<Data::Node> > graphNodes = newGraph->getNodes()->values();
-
-		QSet<Data::Node *> nodes;
-		for (QList<osg::ref_ptr<Data::Node> >::iterator it = graphNodes.begin (); it != graphNodes.end (); ++it) {
-			nodes.insert (*it);
-		}
-
-		QSharedPointer<Layout::Shape> shape;
-		// shape = QSharedPointer<Layout::Shape> (new Layout::Shape_SphereSurface (osg::Vec3f(0, 0, 30), 50));
-		// shape = QSharedPointer<Layout::Shape> (new Layout::Shape_Plane (osg::Vec3f(0, 0, 30), 50));
-
-		Layout::Shape_Composite *shapeComposite = new Layout::Shape_Composite ();
-		for (int i = 0; i < 10; i++) {
-			shapeComposite->addShape (QSharedPointer<Layout::Shape> (new Layout::Shape_Plane (osg::Vec3f(0, 0, 30), i * 10)));
-		}
-		shape = QSharedPointer<Layout::Shape> (shapeComposite);
-
-
-		QSharedPointer<Layout::ShapeGetter> shapeGetter (new Layout::ShapeGetter_Const (shape));
-
-		newGraph->getRestrictionsManager ().setRestrictions (nodes, shapeGetter);
-    }
-    */
 
     // add layout
     if (ok) {
