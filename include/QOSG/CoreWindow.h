@@ -27,6 +27,7 @@
 #include "QOSG/qtcolorpicker.h"
 
 #include "Layout/ShapeGetter.h"
+#include "Layout/RestrictionRemovalHandler.h"
 
 namespace QOSG
 {
@@ -176,9 +177,10 @@ namespace QOSG
 				*/
 				void applyColorClick();
 
-				void addRestriction_SphereSurface ();
-				void addRestriction_Sphere ();
-				void addRestriction_Plane ();
+				void setRestriction_SphereSurface ();
+				void setRestriction_Sphere ();
+				void setRestriction_Plane ();
+				void unsetRestriction ();
 
 	private:
 
@@ -302,9 +304,10 @@ namespace QOSG
 		*/
 		QPushButton * applyColor;
 
-		QPushButton * b_AddRestriction_SphereSurface;
-		QPushButton * b_AddRestriction_Sphere;
-		QPushButton * b_AddRestriction_Plane;
+		QPushButton * b_SetRestriction_SphereSurface;
+		QPushButton * b_SetRestriction_Sphere;
+		QPushButton * b_SetRestriction_Plane;
+		QPushButton * b_UnsetRestriction;
 
 		/**
 		*  QAction * load
@@ -452,7 +455,8 @@ namespace QOSG
 
 		void setRestrictionToSelectedNodes (
 			QSharedPointer<Layout::ShapeGetter> shapeGetter,
-			Data::Graph * currentGraph
+			Data::Graph * currentGraph,
+			QSharedPointer<Layout::RestrictionRemovalHandler> removalHandler
 		);
 
 	};

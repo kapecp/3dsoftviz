@@ -313,12 +313,7 @@ osg::ref_ptr<Data::Node> Data::Graph::addNode(QString name, Data::Type* type, os
 	{
 		this->nestedNodes.insert(node.get());
 
-		/*node->setNestedParent(parent_id.last());
-
-		osg::ref_ptr<Data::Edge> edge1 = new Data::Edge(this->incEleIdCounter(), "Nested Edge", this, this->parent_id.last(), node, this->getNestedMetaEdgeType(), false, this->getEdgeScale());
-		edge1->linkNodes(this->edges);
-
-		this->edgesByType.insert(type->getId(),edge1);*/
+		node->setNestedParent(parent_id.last());
 	}
 
     this->newNodes.insert(node->getId(),node);
@@ -484,7 +479,14 @@ void Data::Graph::createNestedGraph(osg::ref_ptr<Data::Node> srcNode)
 
 void Data::Graph::closeNestedGraph()
 {
-	QSharedPointer<Layout::ShapeGetter> shapeGetter (new Layout::ShapeGetter_Sphere_AroundNode (this->parent_id.last(), 10));
+	QSharedPointer<Layout::ShapeGetter> shapeGetter (
+		new Layout::ShapeGetter_Sphere_AroundNode (
+			this->parent_id.last(),
+			10,
+			Layout::Shape_Sphere::RANDOM_DISTANCE_FROM_CENTER,
+			Layout::ShapeGetter_Sphere_AroundNode::NODE_TARGET_POSITION
+		)
+	);
 	restrictionsManager_.setRestrictions (this->nestedNodes, shapeGetter);
 
 	//this->getRestrictionsManager().setRestrictions(
@@ -1064,6 +1066,17 @@ void Data::Graph::removeNode( osg::ref_ptr<Data::Node> node )
 {
 	if(node!=NULL && node->getGraph()==this) {
 		if(!node->isInDB() || Model::NodeDAO::removeNode(node, this->conn)) {
+
+			// remove restrictions:
+			{
+				QSet<Data::Node *> nodes;
+				nodes.insert (node.get ());
+				restrictionsManager_.setRestrictions (
+					nodes,
+					QSharedPointer<Layout::ShapeGetter> (NULL)
+				);
+			}
+
 			this->nodes->remove(node->getId());
 			this->metaNodes->remove(node->getId());
 			this->newNodes.remove(node->getId());
@@ -1087,6 +1100,7 @@ Layout::RestrictionsManager & Data::Graph::getRestrictionsManager (void) {
 osg::ref_ptr<Data::Node> Data::Graph::addRestrictionNode(QString name, osg::Vec3f position) {
 	osg::ref_ptr<Data::Node> node = addNode (name, getRestrictionNodeMetaType (), position);
 	node->setIgnored (true);
+	node->setPositionCanBeRestricted (false);
 
 	return node;
 }

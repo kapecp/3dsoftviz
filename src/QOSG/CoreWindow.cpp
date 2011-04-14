@@ -4,6 +4,7 @@
 #include "Layout/ShapeGetter_SphereSurface_ByTwoNodes.h"
 #include "Layout/ShapeGetter_Sphere_ByTwoNodes.h"
 #include "Layout/ShapeGetter_Plane_ByThreeNodes.h"
+#include "Layout/RestrictionRemovalHandler_RestrictionNodesRemover.h"
 
 using namespace QOSG;
 
@@ -117,25 +118,6 @@ void CoreWindow::createActions()
 	applyColor->setFocusPolicy(Qt::NoFocus);
 	connect(applyColor,SIGNAL(clicked()),this,SLOT(applyColorClick()));
 
-	// layout restrictions
-	b_AddRestriction_SphereSurface = new QPushButton();
-	b_AddRestriction_SphereSurface->setIcon(QIcon("img/gui/restriction_sphere_surface.png"));
-	b_AddRestriction_SphereSurface->setToolTip("&Add restriction - sphere surface");
-	b_AddRestriction_SphereSurface->setFocusPolicy(Qt::NoFocus);
-	connect(b_AddRestriction_SphereSurface, SIGNAL(clicked()), this, SLOT(addRestriction_SphereSurface ()));
-
-	b_AddRestriction_Sphere = new QPushButton();
-	b_AddRestriction_Sphere->setIcon(QIcon("img/gui/restriction_sphere.png"));
-	b_AddRestriction_Sphere->setToolTip("&Add restriction - sphere");
-	b_AddRestriction_Sphere->setFocusPolicy(Qt::NoFocus);
-	connect(b_AddRestriction_Sphere, SIGNAL(clicked()), this, SLOT(addRestriction_Sphere ()));
-
-	b_AddRestriction_Plane = new QPushButton();
-	b_AddRestriction_Plane->setIcon(QIcon("img/gui/restriction_plane.png"));
-	b_AddRestriction_Plane->setToolTip("&Add restriction - plane");
-	b_AddRestriction_Plane->setFocusPolicy(Qt::NoFocus);
-	connect(b_AddRestriction_Plane, SIGNAL(clicked()), this, SLOT(addRestriction_Plane ()));
-
 	//mody - ziadny vyber, vyber jedneho, multi vyber centrovanie
 	noSelect = new QPushButton();
 	noSelect->setIcon(QIcon("img/gui/noselect.png"));
@@ -163,6 +145,31 @@ void CoreWindow::createActions()
 	center->setToolTip("&Center view");
 	center->setFocusPolicy(Qt::NoFocus);
 	connect(center, SIGNAL(clicked(bool)), this, SLOT(centerView(bool)));
+
+	// layout restrictions
+	b_SetRestriction_SphereSurface = new QPushButton();
+	b_SetRestriction_SphereSurface->setIcon(QIcon("img/gui/restriction_sphere_surface.png"));
+	b_SetRestriction_SphereSurface->setToolTip("&Set restriction - sphere surface");
+	b_SetRestriction_SphereSurface->setFocusPolicy(Qt::NoFocus);
+	connect(b_SetRestriction_SphereSurface, SIGNAL(clicked()), this, SLOT(setRestriction_SphereSurface ()));
+
+	b_SetRestriction_Sphere = new QPushButton();
+	b_SetRestriction_Sphere->setIcon(QIcon("img/gui/restriction_sphere.png"));
+	b_SetRestriction_Sphere->setToolTip("&Set restriction - sphere");
+	b_SetRestriction_Sphere->setFocusPolicy(Qt::NoFocus);
+	connect(b_SetRestriction_Sphere, SIGNAL(clicked()), this, SLOT(setRestriction_Sphere ()));
+
+	b_SetRestriction_Plane = new QPushButton();
+	b_SetRestriction_Plane->setIcon(QIcon("img/gui/restriction_plane.png"));
+	b_SetRestriction_Plane->setToolTip("&Set restriction - plane");
+	b_SetRestriction_Plane->setFocusPolicy(Qt::NoFocus);
+	connect(b_SetRestriction_Plane, SIGNAL(clicked()), this, SLOT(setRestriction_Plane ()));
+
+	b_UnsetRestriction = new QPushButton();
+	b_UnsetRestriction->setIcon(QIcon("img/gui/restriction_unset.png"));
+	b_UnsetRestriction->setToolTip("&Unset restriction");
+	b_UnsetRestriction->setFocusPolicy(Qt::NoFocus);
+	connect(b_UnsetRestriction, SIGNAL(clicked()), this, SLOT(unsetRestriction ()));
 }
 
 void CoreWindow::createMenus()
@@ -227,13 +234,6 @@ void CoreWindow::createToolBar()
 	toolBar->addSeparator();
 	toolBar->addWidget(applyColor);
 
-	frame = createHorizontalFrame();
-
-	toolBar->addWidget(frame);
-	frame->layout()->addWidget(b_AddRestriction_SphereSurface);
-	frame->layout()->addWidget(b_AddRestriction_Sphere);
-	frame->layout()->addWidget(b_AddRestriction_Plane);
-
 	//inicializacia colorpickera
 	QtColorPicker * colorPicker = new QtColorPicker();
 	colorPicker->setStandardColors();
@@ -241,6 +241,19 @@ void CoreWindow::createToolBar()
 	toolBar->addWidget(colorPicker);	
 	toolBar->addSeparator();
 	
+	// layout restrictions
+	frame = createHorizontalFrame();
+	toolBar->addWidget(frame);
+	frame->layout()->addWidget(b_SetRestriction_SphereSurface);
+	frame->layout()->addWidget(b_SetRestriction_Sphere);
+
+	frame = createHorizontalFrame();
+	toolBar->addWidget(frame);
+	frame->layout()->addWidget(b_SetRestriction_Plane);
+	frame->layout()->addWidget(b_UnsetRestriction);
+
+	toolBar->addSeparator();
+
 	//inicializacia slideru
 	slider = new QSlider(Qt::Vertical,this);
 	slider->setTickPosition(QSlider::TicksAbove);
@@ -579,7 +592,7 @@ void CoreWindow::applyColorClick()
 	}
 }
 
-void CoreWindow::addRestriction_SphereSurface ()
+void CoreWindow::setRestriction_SphereSurface ()
 {
 	Data::Graph * currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
 
@@ -590,13 +603,26 @@ void CoreWindow::addRestriction_SphereSurface ()
 		osg::ref_ptr<Data::Node> centerNode = currentGraph->addRestrictionNode (QString ("center"), position);
 		osg::ref_ptr<Data::Node> surfaceNode = currentGraph->addRestrictionNode (QString ("surface"), position + osg::Vec3f (10, 0, 0));
 
-		QSharedPointer<Layout::ShapeGetter> shapeGetter (new Layout::ShapeGetter_SphereSurface_ByTwoNodes (centerNode, surfaceNode));
+		Layout::RestrictionRemovalHandler_RestrictionNodesRemover::NodesListType restrictionNodes;
+		restrictionNodes.push_back (centerNode);
+		restrictionNodes.push_back (surfaceNode);
 
-		setRestrictionToSelectedNodes (shapeGetter, currentGraph);
+		setRestrictionToSelectedNodes (
+			QSharedPointer<Layout::ShapeGetter> (
+				new Layout::ShapeGetter_SphereSurface_ByTwoNodes (centerNode, surfaceNode)
+			),
+			currentGraph,
+			QSharedPointer<Layout::RestrictionRemovalHandler_RestrictionNodesRemover> (
+				new Layout::RestrictionRemovalHandler_RestrictionNodesRemover (
+					*currentGraph,
+					restrictionNodes
+				)
+			)
+		);
 	}
 }
 
-void CoreWindow::addRestriction_Sphere ()
+void CoreWindow::setRestriction_Sphere ()
 {
 	Data::Graph * currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
 
@@ -607,13 +633,26 @@ void CoreWindow::addRestriction_Sphere ()
 		osg::ref_ptr<Data::Node> centerNode = currentGraph->addRestrictionNode (QString ("center"), position);
 		osg::ref_ptr<Data::Node> surfaceNode = currentGraph->addRestrictionNode (QString ("surface"), position + osg::Vec3f (10, 0, 0));
 
-		QSharedPointer<Layout::ShapeGetter> shapeGetter (new Layout::ShapeGetter_Sphere_ByTwoNodes (centerNode, surfaceNode));
+		Layout::RestrictionRemovalHandler_RestrictionNodesRemover::NodesListType restrictionNodes;
+		restrictionNodes.push_back (centerNode);
+		restrictionNodes.push_back (surfaceNode);
 
-		setRestrictionToSelectedNodes (shapeGetter, currentGraph);
+		setRestrictionToSelectedNodes (
+			QSharedPointer<Layout::ShapeGetter> (
+				new Layout::ShapeGetter_Sphere_ByTwoNodes (centerNode, surfaceNode)
+			),
+			currentGraph,
+			QSharedPointer<Layout::RestrictionRemovalHandler_RestrictionNodesRemover> (
+				new Layout::RestrictionRemovalHandler_RestrictionNodesRemover (
+					*currentGraph,
+					restrictionNodes
+				)
+			)
+		);
 	}
 }
 
-void CoreWindow::addRestriction_Plane ()
+void CoreWindow::setRestriction_Plane ()
 {
 	Data::Graph * currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
 
@@ -624,15 +663,42 @@ void CoreWindow::addRestriction_Plane ()
 		osg::ref_ptr<Data::Node> node2 = currentGraph->addRestrictionNode (QString ("plane_node_2"), position + osg::Vec3f (10, 0, 0));
 		osg::ref_ptr<Data::Node> node3 = currentGraph->addRestrictionNode (QString ("plane_node_3"), position + osg::Vec3f (0, 10, 0));
 
-		QSharedPointer<Layout::ShapeGetter> shapeGetter (new Layout::ShapeGetter_Plane_ByThreeNodes (node1, node2, node3));
+		Layout::RestrictionRemovalHandler_RestrictionNodesRemover::NodesListType restrictionNodes;
+		restrictionNodes.push_back (node1);
+		restrictionNodes.push_back (node2);
+		restrictionNodes.push_back (node3);
 
-		setRestrictionToSelectedNodes (shapeGetter, currentGraph);
+		setRestrictionToSelectedNodes (
+			QSharedPointer<Layout::ShapeGetter> (
+				new Layout::ShapeGetter_Plane_ByThreeNodes (node1, node2, node3)
+			),
+			currentGraph,
+			QSharedPointer<Layout::RestrictionRemovalHandler_RestrictionNodesRemover> (
+				new Layout::RestrictionRemovalHandler_RestrictionNodesRemover (
+					*currentGraph,
+					restrictionNodes
+				)
+			)
+		);
+	}
+}
+
+void CoreWindow::unsetRestriction () {
+	Data::Graph * currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
+
+	if (currentGraph != NULL) {
+		setRestrictionToSelectedNodes (
+			QSharedPointer<Layout::ShapeGetter> (NULL),
+			currentGraph,
+			QSharedPointer<Layout::RestrictionRemovalHandler> (NULL)
+		);
 	}
 }
 
 void CoreWindow::setRestrictionToSelectedNodes (
 	QSharedPointer<Layout::ShapeGetter> shapeGetter,
-	Data::Graph * currentGraph
+	Data::Graph * currentGraph,
+	QSharedPointer<Layout::RestrictionRemovalHandler> removalHandler
 ) {
 	QLinkedList<osg::ref_ptr<Data::Node> > * selectedNodes = viewerWidget->getPickHandler()->getSelectedNodes();
 
@@ -642,6 +708,10 @@ void CoreWindow::setRestrictionToSelectedNodes (
 	}
 
 	currentGraph->getRestrictionsManager ().setRestrictions (nodes, shapeGetter);
+
+	if ((! shapeGetter.isNull ()) && (! removalHandler.isNull ())) {
+		currentGraph->getRestrictionsManager ().setOrRunRestrictionRemovalHandler (shapeGetter, removalHandler);
+	}
 
 	if (isPlaying)
 		layout->play();

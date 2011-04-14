@@ -40,7 +40,7 @@ void CoreGraph::reload(Data::Graph * graph)
 
 	if (root->getNumChildren() > 1)
 	{
-		for (int x = 6; x > 0; x--)
+		for (int x = 7; x > 0; x--)
 			root->removeChildren(x,1);
 	}
 
@@ -90,6 +90,13 @@ void CoreGraph::reload(Data::Graph * graph)
 	root->addChild(initEdgeLabels());
 	labelsPosition = currentPos++;
 
+	this->restrictionVisualizationsGroup = QSharedPointer<Vwr::RestrictionVisualizationsGroup> (new Vwr::RestrictionVisualizationsGroup);
+	root->addChild (restrictionVisualizationsGroup->getGroup ());
+	restrictionVisualizationsPosition = currentPos++;
+	if (this->graph != NULL) {
+		graph->getRestrictionsManager ().setObserver (restrictionVisualizationsGroup);
+	}
+
 	customNodesPosition = currentPos;
 
 	osgUtil::Optimizer opt;
@@ -104,6 +111,8 @@ void CoreGraph::cleanUp()
 		delete in_edges;
 		delete qmetaNodes;
 		delete qmetaEdges;
+	} else {
+		graph->getRestrictionsManager ().resetObserver ();
 	}
 
 	delete qmetaEdgesGroup;
