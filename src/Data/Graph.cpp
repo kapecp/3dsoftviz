@@ -1101,6 +1101,7 @@ osg::ref_ptr<Data::Node> Data::Graph::addRestrictionNode(QString name, osg::Vec3
 	osg::ref_ptr<Data::Node> node = addNode (name, getRestrictionNodeMetaType (), position);
 	node->setIgnored (true);
 	node->setPositionCanBeRestricted (false);
+	node->setRemovableByUser (false);
 
 	return node;
 }

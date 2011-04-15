@@ -290,6 +290,10 @@ namespace Data
 
 		bool getPositionCanBeRestricted () {return positionCanBeRestricted; }
 
+		bool setRemovableByUser (bool b) {removableByUser = b; }
+
+		bool isRemovableByUser () {return removableByUser; }
+
 		/**
 		*  \fn inline public  setVelocity(osg::Vec3f v)
 		*  \brief Sets node force for next iteration
@@ -522,6 +526,8 @@ namespace Data
 		bool ignore;
 
 		bool positionCanBeRestricted;
+
+		bool removableByUser;
 
 		/**
 		*  bool selected
