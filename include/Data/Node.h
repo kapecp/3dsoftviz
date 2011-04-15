@@ -120,6 +120,7 @@ namespace Data
 		*  \fn inline public constant  getTargetPosition
 		*  \brief Returns node target position in space
 		*  \return osg::Vec3f node position
+		*  returned targetPosition IS NOT multiplied by the graph scale
 		*/
 		osg::Vec3f getTargetPosition() const { return osg::Vec3(targetPosition); }
 
@@ -127,6 +128,7 @@ namespace Data
 		*  \fn inline public  setTargetPosition(osg::Vec3f val)
 		*  \brief Sets node target position in space
 		*  \param      val   new position
+		*  targetPosition being set MUST NOT BE multiplied by the graph scale
 		*/
 		void setTargetPosition(osg::Vec3f val) { targetPosition.set(val); }
 
@@ -137,8 +139,7 @@ namespace Data
 		*  \param      calculateNew    If true, new position will be calculated through interpolation
 		*  \param      float   interpolation speed
 		*  \return osg::Vec3f actual position
-		*
-		*	
+		*  returned currentPosition IS already multiplied by the graph scale
 		*/
 		osg::Vec3f getCurrentPosition(bool calculateNew = false, float interpolationSpeed = 1.0f);
 
@@ -146,6 +147,7 @@ namespace Data
 		*  \fn inline public  setCurrentPosition(osg::Vec3f val) 
 		*  \brief Sets current node position
 		*  \param   val  current node position
+		*  currentPosition being set MUST BE multiplied by the graph scale
 		*/
 		void setCurrentPosition(osg::Vec3f val) { currentPosition.set(val); }
 
