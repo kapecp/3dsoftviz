@@ -484,7 +484,7 @@ void Data::Graph::closeNestedGraph()
 			this->parent_id.last(),
 			10,
 			Layout::Shape_Sphere::RANDOM_DISTANCE_FROM_CENTER,
-			Layout::ShapeGetter_Sphere_AroundNode::NODE_TARGET_POSITION
+			Layout::ShapeGetter_Sphere_AroundNode::NODE_CURRENT_POSITION
 		)
 	);
 	restrictionsManager_.setRestrictions (this->nestedNodes, shapeGetter);
