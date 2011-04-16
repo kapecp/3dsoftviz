@@ -171,8 +171,7 @@ void FRAlgorithm::Run()
 				isIterating = true;
 			}
 			if (!iterate()) {
-				// [modified] layout restriction added to frozen graph does not work; maybe add calls to wakeUpAlg when a restriction is changed
-				// graph->setFrozen(true);
+				graph->setFrozen(true);
 			}			
 		}
 	}
@@ -222,11 +221,13 @@ bool FRAlgorithm::iterate()
 		{ // pre vsetky metahrany..
 			Data::Node *u = j.value()->getSrcNode();
 			Data::Node *v = j.value()->getDstNode();
+			// [GrafIT][-] ignored value has not been used, so setting it here did not have any effect
 			// uzly nikdy nebudu ignorovane
 			/*
 			u->setIgnored(false);
 			v->setIgnored(false);
-			*/ // ignored value has not been used, so setting it here did not have any effect
+			*/
+			// [GrafIT]
 			if (graph->getMetaNodes()->contains(u->getId())) {
 				// pritazliva sila, posobi na v
 				addMetaAttractive(v, u, Data::Graph::getMetaStrength());
@@ -318,28 +319,38 @@ bool FRAlgorithm::applyForces(Data::Node* node)
 		// pricitame aktualnu rychlost
 		fv += node->getVelocity();
 	} else {
+		// [GrafIT][.] this has been a separate case when resetVelocity() has been called and nothing with the target position has been done;
+		//             we needed to compute and maybe restrict the target position even if this case; setting the velocity to null vector
+		//             and setting it as a velocity has the same effect as resetVelocity()
 		// reset velocity
 		fv = osg::Vec3(0,0,0);
+		// [GrafIT]
 	}
 
+	// [GrafIT][.] using restrictions
 	osg::Vec3f originalTargetPosition = node->getTargetPosition ();
 
 	osg::Vec3f computedTargetPosition = originalTargetPosition + fv;
 	osg::Vec3f restrictedTargetPosition = graph->getRestrictionsManager ().applyRestriction (*node, computedTargetPosition);
 	node->setTargetPosition(restrictedTargetPosition);
+	// [GrafIT]
 
 	// energeticka strata = 1-flexibilita
 	fv *= flexibility;
 	node->setVelocity(fv); // ulozime novu rychlost
 
+	// [GrafIT][.] if something has been changed is now determined  by the change of target position
 	return (restrictedTargetPosition != originalTargetPosition);
+	// [GrafIT]
 }
 
 /* Pricitanie pritazlivych sil */
 void FRAlgorithm::addAttractive(Data::Edge* edge, float factor) {
+	// [GrafIT][+] forces are only between nodes which are in the same graph (or some of them is meta) AND are not ignored
 	if (!areForcesBetween (edge->getSrcNode(), edge->getDstNode())) {
 		return;
 	}
+	// [GrafIT]
 	up = edge->getSrcNode()->getTargetPosition();
 	vp = edge->getDstNode()->getTargetPosition();
 	dist = distance(up,vp);
@@ -355,9 +366,11 @@ void FRAlgorithm::addAttractive(Data::Edge* edge, float factor) {
 
 /* Pricitanie pritazlivych sil od metazla */
 void FRAlgorithm::addMetaAttractive(Data::Node* u, Data::Node* meta, float factor) {
+	// [GrafIT][+] forces are only between nodes which are in the same graph (or some of them is meta) AND are not ignored
 	if (!areForcesBetween (u, meta)) {
 		return;
 	}
+	// [GrafIT]
 	up = u->getTargetPosition();
 	vp = meta->getTargetPosition();
 	dist = distance(up,vp);
@@ -371,9 +384,11 @@ void FRAlgorithm::addMetaAttractive(Data::Node* u, Data::Node* meta, float facto
 
 /* Pricitanie odpudivych sil */
 void FRAlgorithm::addRepulsive(Data::Node* u, Data::Node* v, float factor) {
+	// [GrafIT][+] forces are only between nodes which are in the same graph (or some of them is meta) AND are not ignored
 	if (!areForcesBetween (u, v)) {
 		return;
 	}
+	// [GrafIT]
 	up = u->getTargetPosition();
 	vp = v->getTargetPosition();
 	dist = distance(up,vp);
