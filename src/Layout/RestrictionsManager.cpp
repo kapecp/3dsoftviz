@@ -1,6 +1,7 @@
 #include "Layout/RestrictionsManager.h"
 //-----------------------------------------------------------------------------
 #include "Data/Node.h"
+#include "Layout/Shape_Null.h"
 //-----------------------------------------------------------------------------
 
 namespace Layout {
@@ -42,7 +43,7 @@ void RestrictionsManager::setRestrictions (
 			if (shapeGetterUsages_[shapeGetter] == 1) {
 				// first shape getter usage added
 
-				lastShapes_[shapeGetter];
+				lastShapes_[shapeGetter] = QSharedPointer<Shape> (new Shape_Null);
 				removalHandlers_[shapeGetter];
 
 				notifyRestrictionAdded (shapeGetter);
