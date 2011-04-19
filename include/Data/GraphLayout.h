@@ -80,6 +80,12 @@ namespace Data
 		static const QString MULTI_NODE_TYPE;
 
 		/**
+		*  const QString EDGE_TYPE
+		*  \brief Constant identifier of Type name used for Edges as identified by Settings of the GraphLayout
+		*/
+		static const QString EDGE_TYPE;
+		
+		/**
 		*  const QString META_EDGE_TYPE
 		*  \brief Constant identifier of MetaType name used for meta-Edges as identified by MetaSettings of the GraphLayout
 		*/

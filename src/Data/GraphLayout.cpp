@@ -8,6 +8,7 @@
 const QString Data::GraphLayout::META_NODE_TYPE = QString("META_NODE_TYPE");
 const QString Data::GraphLayout::MULTI_NODE_TYPE = QString("MULTI_NODE_TYPE");
 const QString Data::GraphLayout::META_EDGE_TYPE = QString("META_EDGE_TYPE");
+const QString Data::GraphLayout::EDGE_TYPE = QString("EDGE_TYPE");
 const QString Data::GraphLayout::MULTI_EDGE_TYPE = QString("MULTI_EDGE_TYPE");
 const QString Data::GraphLayout::HYPER_NODE_TYPE = QString("HYPER_NODE_TYPE");
 const QString Data::GraphLayout::NESTED_NODE_TYPE = QString("NESTED_NODE_TYPE");

@@ -41,11 +41,15 @@ void NodeGroup::initNodes()
 	while (i.hasNext()) 
 	{
 		i.next();
-			
+		
+		nodeGroup->addChild(wrapChild(i.value(), graphScale));
+
+		/*
 		osg::ref_ptr<osg::Group> g = getNodeGroup(i.value(), NULL, graphScale);
 
 		if (g != NULL)
 			nodeGroup->addChild(g);
+		*/
 	}
 
 	this->group = nodeGroup;
@@ -100,7 +104,9 @@ osg::ref_ptr<osg::AutoTransform> NodeGroup::wrapChild(osg::ref_ptr<Data::Node> n
 }
 
 void NodeGroup::synchronizeNodes()
-{
+{	//navyse
+	int count = nodes->size ();
+
 	QList<qlonglong> nodeKeys = nodes->keys();
 
 	QList<qlonglong> nodeTransformsKeys = nodeTransforms->keys();
@@ -109,8 +115,8 @@ void NodeGroup::synchronizeNodes()
 	QSet<qlonglong>::const_iterator i = result.constBegin();
 
 	while (i != result.constEnd()) 
-	{
-		group->removeChild(nodeTransforms->value(*i));
+	{	
+		bool res = group->removeChild(nodeTransforms->value(*i));
 
 		nodeTransforms->remove(*i);
 		++i;

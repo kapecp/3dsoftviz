@@ -496,7 +496,6 @@ bool CoreWindow::add_EdgeClick()
 	Data::Type *nodeType = NULL;
 	Data::Graph * currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
 	
-	//GraphOperations graphOp (Manager::GraphManager::getInstance()->getActiveGraph());
 	
 	QLinkedList<osg::ref_ptr<Data::Node> > * selectedNodes = viewerWidget->getPickHandler()->getSelectedNodes();
 	QLinkedList<osg::ref_ptr<Data::Node> >::const_iterator ni = selectedNodes->constBegin();
@@ -528,7 +527,7 @@ bool CoreWindow::add_EdgeClick()
 	node1=(* ni);
 	++ni;
 	QMap<qlonglong, osg::ref_ptr<Data::Edge> > *mapa = currentGraph->getEdges();
-	Data::MetaType* type = currentGraph->addMetaType(Data::GraphLayout::META_EDGE_TYPE);
+	Data::Type* type = currentGraph->addType(Data::GraphLayout::EDGE_TYPE);
 	for (QMap<qlonglong, osg::ref_ptr<Data::Edge> >::iterator it = mapa->begin (); it != mapa->end (); ++it) {
 			osg::ref_ptr<Data::Edge> existingEdge = it.value ();
 			if (
@@ -561,14 +560,14 @@ bool CoreWindow::add_EdgeClick()
 bool CoreWindow::add_NodeClick()
 {	
 	Data::Graph * currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
-	
-	
+	Data::Type *edgeType = NULL;
+	Data::Type *nodeType = NULL;
+
 	if (currentGraph != NULL)
 	{
 		osg::Vec3 position = viewerWidget->getPickHandler()->getSelectionCenter(true); 
 
 		osg::ref_ptr<Data::Node> node1 = currentGraph->addNode("newNode", currentGraph->getNodeMetaType(), position);	
-		//QLinkedList<osg::ref_ptr<Data::Node> > * selectedNodes = viewerWidget->getPickHandler()->getSelectedNodes();
 
 		if (isPlaying)
 			layout->play();
@@ -578,7 +577,7 @@ bool CoreWindow::add_NodeClick()
 		Data::Graph * currentGraph1= Manager::GraphManager::getInstance()->createGraph("NewGraph");
 		osg::Vec3 position = viewerWidget->getPickHandler()->getSelectionCenter(true); 
 		Data::MetaType* type = currentGraph1->addMetaType(Data::GraphLayout::META_NODE_TYPE);
-		osg::ref_ptr<Data::Node> node1 = currentGraph1->addNode("newNode", type, position);	
+		osg::ref_ptr<Data::Node> node1 = currentGraph1->addNode("newNode", type);	
 		//QLinkedList<osg::ref_ptr<Data::Node> > * selectedNodes = viewerWidget->getPickHandler()->getSelectedNodes();
 
 		if (isPlaying)
@@ -591,21 +590,33 @@ bool CoreWindow::removeClick()
 {	
 	Data::Graph * currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
 	QLinkedList<osg::ref_ptr<Data::Edge> > * selectedEdges = viewerWidget->getPickHandler()->getSelectedEdges();
+	
+	while (selectedEdges->size () > 0) {
+		osg::ref_ptr<Data::Edge> existingEdge1 = (* (selectedEdges->constBegin()));
+		currentGraph->removeEdge(existingEdge1);
+		selectedEdges->removeFirst ();
+	}
+	currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
 	QLinkedList<osg::ref_ptr<Data::Node> > * selectedNodes = viewerWidget->getPickHandler()->getSelectedNodes();
 
-		while (selectedEdges->size () > 0) {
-			osg::ref_ptr<Data::Edge> existingEdge1 = (* (selectedEdges->constBegin()));
-			currentGraph->removeEdge(existingEdge1);
-			selectedEdges->removeFirst ();
-		}
-		while (selectedNodes->size () > 0) {
-			osg::ref_ptr<Data::Node> existingNode1 = (* (selectedNodes->constBegin()));
-			currentGraph->removeNode(existingNode1);
-			selectedNodes->removeFirst ();
-		}
+	while (selectedNodes->size () > 0) {
+		osg::ref_ptr<Data::Node> existingNode1 = (* (selectedNodes->constBegin()));
+		currentGraph->removeNode(existingNode1);
+		selectedNodes->removeFirst ();
+	}
+
 	
-		if (isPlaying)
-			layout->play();
+/*
+	while (i != selectedNodes->constEnd()) 
+	{
+		currentGraph->removeNode((*i));
+		++i;
+	}
+	*/
+	int NodesCount=currentGraph->getNodes()->size();
+	cout<<NodesCount;
+	if (isPlaying)
+		layout->play();
 
 	return true;
 }
