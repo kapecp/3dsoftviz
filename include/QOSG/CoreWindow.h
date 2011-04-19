@@ -26,6 +26,9 @@
 #include "Manager/Manager.h"
 #include "QOSG/qtcolorpicker.h"
 
+#include "Layout/ShapeGetter.h"
+#include "Layout/RestrictionRemovalHandler.h"
+
 namespace QOSG
 {
 	/**
@@ -53,10 +56,10 @@ namespace QOSG
 				void showLoadGraph();
 
 				/**
-				*  \fn public  saveGraph
-				*  \brief Save loaded graph to database
+				*  \fn public  saveLayoutToDB
+				*  \brief Save layout of current graph to database
 				*/
-				void saveGraphToDB();
+				void saveLayoutToDB();
 
 				/**
 				*  \fn public  sqlQuery
@@ -117,6 +120,18 @@ namespace QOSG
 				void unFixNodes();
 
 				/**
+				*  \fn public  mergeNodes
+				*  \brief Merge selected nodes together
+				*/
+				void mergeNodes();
+
+				/**
+				*  \fn public  separateNodes
+				*  \brief separate selected merged nodes
+				*/
+				void separateNodes();
+
+				/**
 				*  \fn public  removeMetaNodes
 				*  \brief Remove all meta nodes
 				*/
@@ -162,11 +177,18 @@ namespace QOSG
 				*/
 				void applyColorClick();
 				
+				void setRestriction_SphereSurface ();
+				void setRestriction_Sphere ();
+				void setRestriction_Plane ();
+				void unsetRestriction ();
+
+								
 				/**
 				*  \fn public  add_EdgeClick
 				*  \brief create edge between selected node
 				*/
 				bool add_EdgeClick();
+				
 
 				/**
 				*  \fn public  add_NodeClick
@@ -254,6 +276,18 @@ namespace QOSG
 		QPushButton * unFix;
 
 		/**
+		*  QPushButton * merge
+		*  \brief Action for merge selected nodes
+		*/
+		QPushButton * merge;
+
+		/**
+		*  QPushButton * separate
+		*  \brief Action for separate nodes
+		*/
+		QPushButton * separate;
+
+		/**
 		*  QPushButton * noSelect
 		*  \brief Action for no-select mode
 		*/
@@ -289,11 +323,19 @@ namespace QOSG
 		*/
 		QPushButton * applyColor;
 
+		QPushButton * b_SetRestriction_SphereSurface;
+		QPushButton * b_SetRestriction_Sphere;
+		QPushButton * b_SetRestriction_Plane;
+		QPushButton * b_UnsetRestriction;
+
 		/**
 		*  QAction * create new Edge
 		*  \brief Action for adding Edge
 		*/
 		QPushButton * add_Edge;
+
+		
+				
 
 		/**
 		*  QAction * create new Node
@@ -448,6 +490,14 @@ namespace QOSG
 		*  \param  val layout thread
 		*/
 		void setLayoutThread(Layout::LayoutThread * val) { layout = val; }
+
+	private:
+
+		void setRestrictionToSelectedNodes (
+			QSharedPointer<Layout::ShapeGetter> shapeGetter,
+			Data::Graph * currentGraph,
+			QSharedPointer<Layout::RestrictionRemovalHandler> removalHandler
+		);
 
 	};
 }

@@ -13,17 +13,6 @@
 
 #include "Manager/ImportInfoHandlerImpl.h"
 
-// layout restrictions tests
-/*
-#include "Layout/ShapeGetter.h"
-#include "Layout/ShapeGetter_Const.h"
-#include "Layout/Shape_Composite.h"
-#include "Layout/Shape_Plane.h"
-#include "Layout/Shape_Sphere.h"
-#include "Layout/Shape_SphereSurface.h"
-#include "Layout/RestrictionsManager.h"
-*/
-
 #include <memory>
 
 Manager::GraphManager * Manager::GraphManager::manager;
@@ -130,38 +119,16 @@ Data::Graph* Manager::GraphManager::loadGraph(QString filepath)
     	stream->close ();
     }
 
-    // layout restrictions tests
-    /*
-    if (ok) {
-		QList<osg::ref_ptr<Data::Node> > graphNodes = newGraph->getNodes()->values();
-
-		QSet<Data::Node *> nodes;
-		for (QList<osg::ref_ptr<Data::Node> >::iterator it = graphNodes.begin (); it != graphNodes.end (); ++it) {
-			nodes.insert (*it);
-		}
-
-		QSharedPointer<Layout::Shape> shape;
-		// shape = QSharedPointer<Layout::Shape> (new Layout::Shape_SphereSurface (osg::Vec3f(0, 0, 30), 50));
-		// shape = QSharedPointer<Layout::Shape> (new Layout::Shape_Plane (osg::Vec3f(0, 0, 30), 50));
-
-		Layout::Shape_Composite *shapeComposite = new Layout::Shape_Composite ();
-		for (int i = 0; i < 10; i++) {
-			shapeComposite->addShape (QSharedPointer<Layout::Shape> (new Layout::Shape_Plane (osg::Vec3f(0, 0, 30), i * 10)));
-		}
-		shape = QSharedPointer<Layout::Shape> (shapeComposite);
-
-
-		QSharedPointer<Layout::ShapeGetter> shapeGetter (new Layout::ShapeGetter_Const (shape));
-
-		newGraph->getRestrictionsManager ().setRestrictions (nodes, shapeGetter);
-    }
-    */
-
     // add layout
     if (ok) {
 		Data::GraphLayout* gLay = newGraph->addLayout ("new Layout");
 		newGraph->selectLayout (gLay);
 	}
+
+    // close stream
+    if (stream.get() != NULL) {
+    	stream->close ();
+    }
 
     // set as active graph
     if (ok) {
@@ -171,6 +138,17 @@ Data::Graph* Manager::GraphManager::loadGraph(QString filepath)
 			this->closeGraph(this->activeGraph);
 		}
 		this->activeGraph = newGraph.release ();
+    }
+
+	//ked uz mame graf nacitany zo suboru, ulozime ho aj do databazy
+	if(db->tmpGetConn() != NULL && db->tmpGetConn()->open()) { 
+		//ulozime obycajne uzly a hrany
+		this->activeGraph->saveGraphToDB(db->tmpGetConn(), this->activeGraph);
+		//ulozime a nastavime default layout
+		Data::GraphLayout* layout = Model::GraphLayoutDAO::addLayout("original layout", this->activeGraph, db->tmpGetConn());
+		this->activeGraph->selectLayout(layout);
+		//este ulozit meta uzly, hrany a pozicie vsetkych uzlov
+		this->activeGraph->saveLayoutToDB(db->tmpGetConn(), this->activeGraph);
     }
 
     if (ok) {
@@ -187,9 +165,9 @@ Data::Graph* Manager::GraphManager::loadGraphFromDB(qlonglong graphID, qlonglong
 {
 	Data::Graph* newGraph;
 	bool error;
-
-	newGraph = Model::GraphDAO::getGraph(db->tmpGetConn(), &error, graphID, layoutID);
 	
+	newGraph = Model::GraphDAO::getGraph(db->tmpGetConn(), &error, graphID, layoutID);
+
 	if(!error)
 	{
 		qDebug() << "[Manager::GraphManager::loadGraphFromDB] Graph loaded from database successfully";
@@ -211,11 +189,6 @@ Data::Graph* Manager::GraphManager::loadGraphFromDB(qlonglong graphID, qlonglong
 	}
 
 	return this->activeGraph;
-}
-
-void Manager::GraphManager::saveGraph(Data::Graph* graph)
-{
-    graph->saveGraphToDB();
 }
 
 void Manager::GraphManager::exportGraph(Data::Graph* graph, QString filepath)

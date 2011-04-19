@@ -8,7 +8,8 @@ LoadGraphWindow::LoadGraphWindow(QWidget *parent)
 	resize(600,250);	 
     setWindowTitle(tr("Load graph from database"));
 
-	loadButton = createButton(tr("&Load"), SLOT(loadGraph()));
+	loadButton = createButton(tr("Load"), SLOT(loadGraph()));
+	removeButton = createButton(tr("Remove"), SLOT(removeGraph()));
 
 	QPushButton *cancelButton = new QPushButton(tr("Cancel"));
 	cancelButton->setFocusPolicy(Qt::NoFocus);
@@ -16,16 +17,17 @@ LoadGraphWindow::LoadGraphWindow(QWidget *parent)
 
 	numberOfGraphs = new QLabel;
 
-	graphList<<tr("ID")<<tr("Name")<<tr("Number of nodes")<<tr("Number of edges");
-	graphsTable=new QTableWidget(this);
+	graphList << tr("ID") << tr("Name") << tr("No. of layouts") << tr("No. of nodes") << tr("No. of edges");
+	graphsTable = new QTableWidget(this);
 	graphsTable->setSelectionBehavior(QAbstractItemView::SelectRows);
 	graphsTable->setRowCount(0);
-	graphsTable->setColumnCount(4);
+	graphsTable->setColumnCount(5);
 	graphsTable->setHorizontalHeaderLabels(graphList);
-	graphsTable->horizontalHeader()->setResizeMode(0, QHeaderView::ResizeToContents);
+	graphsTable->horizontalHeader()->setResizeMode(0, QHeaderView::Interactive);
 	graphsTable->horizontalHeader()->setResizeMode(1, QHeaderView::Stretch);
 	graphsTable->horizontalHeader()->setResizeMode(2, QHeaderView::ResizeToContents);
 	graphsTable->horizontalHeader()->setResizeMode(3, QHeaderView::ResizeToContents);
+	graphsTable->horizontalHeader()->setResizeMode(4, QHeaderView::ResizeToContents);
 	graphsTable->verticalHeader()->hide();
     graphsTable->setShowGrid(true);
 
@@ -34,6 +36,7 @@ LoadGraphWindow::LoadGraphWindow(QWidget *parent)
 	QHBoxLayout *buttonsLayout = new QHBoxLayout;
     buttonsLayout->addStretch();
     buttonsLayout->addWidget(loadButton);
+    buttonsLayout->addWidget(removeButton);
 	buttonsLayout->addWidget(cancelButton);
 
     QGridLayout *mainLayout = new QGridLayout;
@@ -51,6 +54,7 @@ void LoadGraphWindow::createGraphTable()
 	qlonglong id, graphsCount, row;
 	QList<qlonglong> nodes;
 	QList<qlonglong> edges;
+	QList<qlonglong> layouts;
 	QString name;
 	QMap<qlonglong, Data::Graph*>::iterator iterGraph;
 	
@@ -61,9 +65,11 @@ void LoadGraphWindow::createGraphTable()
 	graphsTable->setRowCount(graphsCount);
 	nodes = Model::NodeDAO::getListOfNodes(db->tmpGetConn(), &error);
 	edges = Model::EdgeDAO::getListOfEdges(db->tmpGetConn(), &error);
+	layouts = Model::GraphLayoutDAO::getListOfLayouts(db->tmpGetConn(), &error);
 
 	qDebug() << "[QOSG::LoadGraphWindow::createGraphTable] total number of nodes in DB: " << nodes.count();
 	qDebug() << "[QOSG::LoadGraphWindow::createGraphTable] total number of edges in DB: " << edges.count();
+	qDebug() << "[QOSG::LoadGraphWindow::createGraphTable] total number of layouts in DB: " << layouts.count();
 	
 	for(iterGraph = graphs.begin(), row=0; iterGraph != graphs.end(); ++iterGraph, row++)
 	{
@@ -73,12 +79,14 @@ void LoadGraphWindow::createGraphTable()
 
 		QTableWidgetItem *itemID = new QTableWidgetItem(tr("%1").arg(id));
 		QTableWidgetItem *itemName = new QTableWidgetItem(name);
+		QTableWidgetItem *itemNumberOfLayouts = new QTableWidgetItem(tr("%1").arg(layouts.count(id)));
 		QTableWidgetItem *itemNumberOfNodes = new QTableWidgetItem(tr("%1").arg(nodes.count(id)));
 		QTableWidgetItem *itemNumberOfEdges = new QTableWidgetItem(tr("%1").arg(edges.count(id)));
 		graphsTable->setItem(row, 0, itemID);
 		graphsTable->setItem(row, 1, itemName);
-		graphsTable->setItem(row, 2, itemNumberOfNodes);
-		graphsTable->setItem(row, 3, itemNumberOfEdges);
+		graphsTable->setItem(row, 2, itemNumberOfLayouts);
+		graphsTable->setItem(row, 3, itemNumberOfNodes);
+		graphsTable->setItem(row, 4, itemNumberOfEdges);
 	}
 	if(graphsTable->rowCount() > 0)
 		graphsTable->selectRow(0);
@@ -87,28 +95,54 @@ void LoadGraphWindow::createGraphTable()
 void LoadGraphWindow::loadGraph()
 {
 	qlonglong graphID;
-	qlonglong layoutID;
-
-	//plati len ak sa grafy cisluju postupne od 2 - treba to este opravit
-	graphID = graphsTable->currentRow() + 2;
-
-	//plati ak pracujeme len s jednym layoutom - tiez treba este opravit ked budeme chciet pracovat s viac layoutmi
-	layoutID = graphID;
-
-	qDebug() << "[QOSG::LoadGraphWindow::loadGraph] Selected graph ID: " << graphID;
 
 	if(graphsTable->rowCount() > 0) 
 	{
-		Manager::GraphManager * manager = Manager::GraphManager::getInstance();
-		Model::DB * db = manager->getDB();
-		bool error = false;
+		graphID = graphsTable->item(graphsTable->currentRow(), 0)->text().toLongLong(); 
 
-		manager->loadGraphFromDB(graphID, layoutID);
+		qDebug() << "[QOSG::LoadGraphWindow::loadGraph] Selected graph ID: " << graphID;
+
+		SelectLayoutWindow *selectLayout = new SelectLayoutWindow(this, graphID);
+		selectLayout->show();
+
 		this->close();
 	}
 	else 
 	{
 		qDebug() << "[QOSG::LoadGraphWindow::loadGraph] There are no graphs saved in DB.";
+	}
+}
+
+void LoadGraphWindow::removeGraph()
+{
+	qlonglong graphID;
+	Manager::GraphManager * manager = Manager::GraphManager::getInstance();
+	Model::DB * db = manager->getDB();
+
+	if(graphsTable->rowCount() > 0) 
+	{
+		graphID = graphsTable->item(graphsTable->currentRow(), 0)->text().toLongLong(); 
+
+		qDebug() << "[QOSG::LoadGraphWindow::removeGraph] Selected graph ID: " << graphID;
+
+		QMessageBox msgBox;
+		msgBox.setText("Do you want to remove selected graph and all its parts from database?");
+		msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
+		msgBox.setDefaultButton(QMessageBox::Ok);
+		int ret = msgBox.exec();
+
+		if(ret == QMessageBox::Ok)
+		{
+			Model::GraphDAO::removeGraph(graphID, db->tmpGetConn());
+
+			createGraphTable();
+			this->repaint();
+			this->update();
+		}
+	}
+	else 
+	{
+		qDebug() << "[QOSG::LoadGraphWindow::lremoveGraph] There are no graphs saved in DB.";
 	}
 }
 

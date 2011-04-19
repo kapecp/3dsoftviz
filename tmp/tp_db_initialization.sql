@@ -1,4 +1,4 @@
---
+﻿--
 -- PostgreSQL database dump
 --
 
@@ -187,7 +187,8 @@ CREATE TABLE edge_settings (
     graph_id bigint NOT NULL,
     edge_id bigint NOT NULL,
     val_name character varying NOT NULL,
-    val character varying
+    val character varying,
+    layout_id bigint NOT NULL
 );
 
 --
@@ -204,7 +205,8 @@ CREATE TABLE edges (
     n2 bigint NOT NULL,
     oriented boolean DEFAULT true NOT NULL,
     meta boolean DEFAULT false NOT NULL,
-    graph_id integer NOT NULL
+    graph_id integer NOT NULL,
+    layout_id bigint
 );
 
 
@@ -319,7 +321,8 @@ CREATE TABLE node_settings (
     graph_id bigint NOT NULL,
     node_id bigint NOT NULL,
     val_name character varying NOT NULL,
-    val character varying
+    val character varying,
+    layout_id bigint NOT NULL
 );
 
 --
@@ -335,7 +338,7 @@ CREATE TABLE nodes (
     graph_id integer NOT NULL,
     meta boolean DEFAULT false NOT NULL,
     fixed boolean DEFAULT false NOT NULL,
-    layout_id bigint
+    layout_id bigint 
 );
 
 
@@ -362,7 +365,7 @@ CREATE TABLE positions (
 --
 
 ALTER TABLE ONLY edge_settings
-    ADD CONSTRAINT edge_settings_primary_key PRIMARY KEY (graph_id, edge_id, val_name);
+    ADD CONSTRAINT edge_settings_primary_key PRIMARY KEY (graph_id, edge_id, val_name, layout_id);
 
 
 --
@@ -422,7 +425,7 @@ ALTER TABLE ONLY layouts
 --
 
 ALTER TABLE ONLY node_settings
-    ADD CONSTRAINT node_settings_primary_key PRIMARY KEY (graph_id, node_id, val_name);
+    ADD CONSTRAINT node_settings_primary_key PRIMARY KEY (graph_id, node_id, val_name, layout_id);
 
 
 --

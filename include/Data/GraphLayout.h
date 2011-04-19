@@ -121,6 +121,21 @@ namespace Data
 		*/
 		static const QString HYPER_NODE_TYPE;
 
+		static const QString RESTRICTION_NODE_TYPE;
+
+
+		/**
+		*  const QString MERGED_NODE_TYPE
+		*  \brief Constant identifier of MergedType name used for merged-Nodes as identified by MetaSettings of the GraphLayout
+		*/
+		static const QString MERGED_NODE_TYPE;
+
+		/**
+		*  const QString MERGED_EDGE_TYPE
+		*  \brief Constant identifier of MergedType name used for merged-Edges as identified by MetaSettings of the GraphLayout
+		*/
+		static const QString MERGED_EDGE_TYPE;
+
 		/**
 		*  \fn public constructor  GraphLayout(qlonglong layout_id, Data::Graph* graph, QString name, QSqlDatabase* conn)
 		*  \brief Creates new GraphLayout object

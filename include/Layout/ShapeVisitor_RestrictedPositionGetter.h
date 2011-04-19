@@ -27,7 +27,8 @@ private: // private methods
 
 	osg::Vec3f toSphere (
 		const osg::Vec3f center,
-		const float radius,
+		const float radiusMin,
+		const float radiusMax,
 		const osg::Vec3f &point
 	);
 
@@ -40,4 +41,4 @@ private: // visitor context
 
 } // namespace
 
-#endif // Layout_ShapeVisitor_H
+#endif // Layout_ShapeVisitor_RestrictedPositionGetter_H

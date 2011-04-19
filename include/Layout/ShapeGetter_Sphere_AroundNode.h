@@ -12,9 +12,16 @@ class ShapeGetter_Sphere_AroundNode : public ShapeGetter {
 
 public:
 
+	enum SphereCenterSource {
+		NODE_CURRENT_POSITION,
+		NODE_TARGET_POSITION,
+	};
+
 	ShapeGetter_Sphere_AroundNode (
 		osg::ref_ptr<Data::Node> node,
-		float radius
+		float radius,
+		Shape_Sphere::RestrictionPolicy restrictionPolicy,
+		SphereCenterSource centerSource
 	);
 
 	/***/
@@ -26,6 +33,9 @@ private:
 
 	osg::ref_ptr<Data::Node> node_;
 	float radius_;
+
+	Shape_Sphere::RestrictionPolicy restrictionPolicy_;
+	SphereCenterSource centerSource_;
 
 }; // class
 

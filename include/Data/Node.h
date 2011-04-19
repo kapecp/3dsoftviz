@@ -87,6 +87,19 @@ namespace Data
 		*/
 		void setName(QString val) { name = val; }
 
+		/**
+		*  \fn inline public  getScale() 
+		*  \brief Gets node scale
+		*  \return float size of the scale
+		*/
+		float getScale() { return scale; }
+
+		/**
+		*  \fn inline public  setScale(float val) 
+		*  \brief Sets new scale
+		*  \param   val   new scale for the Node
+		*/
+		void setScale(float val) { scale = val; }
 
 		/**
 		*  \fn inline public constant  getType
@@ -107,6 +120,7 @@ namespace Data
 		*  \fn inline public constant  getTargetPosition
 		*  \brief Returns node target position in space
 		*  \return osg::Vec3f node position
+		*  returned targetPosition IS NOT multiplied by the graph scale
 		*/
 		osg::Vec3f getTargetPosition() const { return osg::Vec3(targetPosition); }
 
@@ -114,6 +128,7 @@ namespace Data
 		*  \fn inline public  setTargetPosition(osg::Vec3f val)
 		*  \brief Sets node target position in space
 		*  \param      val   new position
+		*  targetPosition being set MUST NOT BE multiplied by the graph scale
 		*/
 		void setTargetPosition(osg::Vec3f val) { targetPosition.set(val); }
 
@@ -124,8 +139,7 @@ namespace Data
 		*  \param      calculateNew    If true, new position will be calculated through interpolation
 		*  \param      float   interpolation speed
 		*  \return osg::Vec3f actual position
-		*
-		*	
+		*  returned currentPosition IS already multiplied by the graph scale
 		*/
 		osg::Vec3f getCurrentPosition(bool calculateNew = false, float interpolationSpeed = 1.0f);
 
@@ -133,6 +147,7 @@ namespace Data
 		*  \fn inline public  setCurrentPosition(osg::Vec3f val) 
 		*  \brief Sets current node position
 		*  \param   val  current node position
+		*  currentPosition being set MUST BE multiplied by the graph scale
 		*/
 		void setCurrentPosition(osg::Vec3f val) { currentPosition.set(val); }
 
@@ -271,6 +286,13 @@ namespace Data
 		*/
 		bool isIgnored() const { return ignore; }
 
+		bool setPositionCanBeRestricted (bool b) {positionCanBeRestricted = b; }
+
+		bool getPositionCanBeRestricted () {return positionCanBeRestricted; }
+
+		bool setRemovableByUser (bool b) {removableByUser = b; }
+
+		bool isRemovableByUser () {return removableByUser; }
 
 		/**
 		*  \fn inline public  setVelocity(osg::Vec3f v)
@@ -502,6 +524,10 @@ namespace Data
 		*  \brief node ignoring flag
 		*/
 		bool ignore;
+
+		bool positionCanBeRestricted;
+
+		bool removableByUser;
 
 		/**
 		*  bool selected

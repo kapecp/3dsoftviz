@@ -40,7 +40,7 @@ namespace Manager
              * \fn inline getDB
              * \brief Return db
              */
-	    Model::DB *getDB() { return db; }
+			Model::DB *getDB() { return db; }
 
             /**
              * \fn getAvaliableGraphs
@@ -54,7 +54,7 @@ namespace Manager
              */
             Data::Graph* loadGraph(QString filepath);
 
-	    /**
+			/**
              * \fn loadGraphFromDB
              * \brief Loads selected graph from database.
              */
@@ -65,12 +65,6 @@ namespace Manager
              * \brief Creates simple triangle graph. Method was created as example of using API for creating graphs.
              */
             Data::Graph* simpleGraph();
-
-            /**
-             * \fn saveGraph
-             * \brief Saves graph.
-             */
-            void saveGraph(Data::Graph* graph);
 
             /**
              * \fn exportGraph

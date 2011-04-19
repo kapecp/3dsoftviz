@@ -8,7 +8,6 @@ bool GraphMLImporter::import (
 ) {
 	// context
 	context_ = &context;
-
 	// helpers
 	graphOp_.reset (new GraphOperations (context_->getGraph ()));
 	readNodes_.reset (new ReadNodesStore());
