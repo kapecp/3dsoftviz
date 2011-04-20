@@ -47,8 +47,6 @@ AppCore::Core::~Core()
 
 void AppCore::Core::restartLayout()
 {
-	bool running = this->thr->isRunning();
-	this->thr->pause();
 	this->thr->requestEnd();
 	this->thr->wait();
     delete this->thr;
@@ -59,9 +57,7 @@ void AppCore::Core::restartLayout()
     this->cw->setLayoutThread(thr);
     this->cg->reload(Manager::GraphManager::getInstance()->getActiveGraph());
     this->thr->start();
-    if (running) {
-    	this->thr->play();
-    }
+    this->thr->play();
     this->messageWindows->closeLoadingDialog();
 }
 

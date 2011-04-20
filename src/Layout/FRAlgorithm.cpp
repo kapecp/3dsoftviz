@@ -23,6 +23,7 @@ FRAlgorithm::FRAlgorithm()
 	
 	/* moznost odpudiveho posobenia limitovaneho vzdialenostou*/
 	useMaxDistance = false;
+	isIterating = false;
 	this->graph = NULL;
 }
 FRAlgorithm::FRAlgorithm(Data::Graph *graph) 
@@ -43,6 +44,7 @@ FRAlgorithm::FRAlgorithm(Data::Graph *graph)
 	
 	/* moznost odpudiveho posobenia limitovaneho vzdialenostou*/
 	useMaxDistance = false;
+	isIterating = false;
 	this->graph = graph;
 	this->Randomize();
 }
@@ -132,7 +134,7 @@ void FRAlgorithm::RunAlg()
 
 bool FRAlgorithm::IsRunning() 
 {
-	return (state == RUNNING);
+	return isIterating;
 }
 
 void FRAlgorithm::RequestEnd()
@@ -146,6 +148,7 @@ void FRAlgorithm::Run()
 
 	if(this->graph != NULL)
 	{
+		isIterating = true;
 		while (notEnd) 
 		{			
 			// slucka pozastavenia - ak je pauza
@@ -153,6 +156,17 @@ void FRAlgorithm::Run()
 			while (notEnd && (state != RUNNING || graph->isFrozen()))
 			{				
 				QThread::msleep(100);				
+				if(state == PAUSED)
+				{
+					if(isIterating)
+					{
+						isIterating = false;
+					}
+				}
+			}
+			if(!isIterating)
+			{
+				isIterating = true;
 			}
 			if (!iterate()) {
 				graph->setFrozen(true);
@@ -248,7 +262,7 @@ bool FRAlgorithm::iterate()
 	}	
 	if(state == PAUSED) 
 	{
-		// return true;
+		return true;
 	}
 	
 	// aplikuj sily na uzly

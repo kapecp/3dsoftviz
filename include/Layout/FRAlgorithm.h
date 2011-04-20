@@ -205,6 +205,12 @@ namespace Layout
 		bool notEnd;
 
 		/**
+		*  volatile bool isIterating
+		*  \brief algorithm iterating flag
+		*/
+		volatile bool isIterating;
+
+		/**
 		*  \fn private  computeCalm
 		*  \brief computes rest mass chord
 		*  \return double normal length of edge
