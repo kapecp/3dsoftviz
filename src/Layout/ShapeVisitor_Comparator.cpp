@@ -11,9 +11,15 @@ bool ShapeVisitor_Comparator::getComparisonResult (void) {
 	return comparisonResult_;
 }
 
+void ShapeVisitor_Comparator::visit (Shape_Null & shape) {
+	QSharedPointer<Shape_Null> otherShape = otherShape_.dynamicCast<Shape_Null> ();
+
+	comparisonResult_ = (! otherShape.isNull ());
+}
+
 void ShapeVisitor_Comparator::visit (Shape_Composite & shape) {
-	QSharedPointer<Shape_Composite> otherShape;
-	if ((!otherShape_.isNull ()) && (!(otherShape = otherShape_.dynamicCast<Shape_Composite> ()).isNull ())) {
+	QSharedPointer<Shape_Composite> otherShape = otherShape_.dynamicCast<Shape_Composite> ();
+	if (! otherShape.isNull ()) {
 		Shape_Composite::ShapesListType & list1 = shape.getShapes ();
 		Shape_Composite::ShapesListType & list2 = otherShape->getShapes ();
 		if (list1.size () == list2.size()) {
@@ -35,8 +41,8 @@ void ShapeVisitor_Comparator::visit (Shape_Composite & shape) {
 }
 
 void ShapeVisitor_Comparator::visit (Shape_Plane & shape) {
-	QSharedPointer<Shape_Plane> otherShape;
-	if ((!otherShape_.isNull ()) && (!(otherShape = otherShape_.dynamicCast<Shape_Plane> ()).isNull ())) {
+	QSharedPointer<Shape_Plane> otherShape = otherShape_.dynamicCast<Shape_Plane> ();
+	if (! otherShape.isNull ()) {
 		comparisonResult_ =
 			(shape.getNormalVector () == otherShape->getNormalVector ())
 			&&
@@ -48,8 +54,8 @@ void ShapeVisitor_Comparator::visit (Shape_Plane & shape) {
 }
 
 void ShapeVisitor_Comparator::visit (Shape_Sphere & shape) {
-	QSharedPointer<Shape_Sphere> otherShape;
-	if ((!otherShape_.isNull ()) && (!(otherShape = otherShape_.dynamicCast<Shape_Sphere> ()).isNull ())) {
+	QSharedPointer<Shape_Sphere> otherShape = otherShape_.dynamicCast<Shape_Sphere> ();
+	if (! otherShape.isNull ()) {
 		compareSpheres (shape, *otherShape);
 	} else {
 		comparisonResult_ = false;
@@ -57,8 +63,8 @@ void ShapeVisitor_Comparator::visit (Shape_Sphere & shape) {
 }
 
 void ShapeVisitor_Comparator::visit (Shape_SphereSurface & shape) {
-	QSharedPointer<Shape_SphereSurface> otherShape;
-	if ((!otherShape_.isNull ()) && (!(otherShape = otherShape_.dynamicCast<Shape_SphereSurface> ()).isNull ())) {
+	QSharedPointer<Shape_SphereSurface> otherShape = otherShape_.dynamicCast<Shape_SphereSurface> ();
+	if (! otherShape.isNull ()) {
 		compareSpheres (shape, *otherShape);
 	} else {
 		comparisonResult_ = false;

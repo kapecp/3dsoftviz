@@ -19,6 +19,7 @@ public:
 
 	osg::Node * getCreatedVisualizer (void);
 
+	virtual void visit (Layout::Shape_Null & shape);
 	virtual void visit (Layout::Shape_Composite & shape);
 	virtual void visit (Layout::Shape_Plane & shape);
 	virtual void visit (Layout::Shape_Sphere & shape);

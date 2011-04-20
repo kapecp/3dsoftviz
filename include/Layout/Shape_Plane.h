@@ -39,4 +39,4 @@ private:
 
 } // namespace
 
-#endif // Layout_Shape_AbstractSphere_H
+#endif // Layout_Shape_Plane_H
