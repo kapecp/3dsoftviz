@@ -24,6 +24,9 @@ Data::Node::Node(qlonglong id, QString name, Data::Type* type, float scaling, Da
 	this->inDB = false;
 	this->edges = new QMap<qlonglong, osg::ref_ptr<Data::Edge> >;
 	this->scale = scaling;
+	this->setBall(NULL);
+	this->setParentBall(NULL);
+	this->hasNestedNodes = false;
 
 
 
@@ -329,6 +332,7 @@ osg::Vec3f Data::Node::getCurrentPosition(bool calculateNew, float interpolation
 
 		osg::Vec3 directionVector = osg::Vec3(targetPosition.x(), targetPosition.y(), targetPosition.z()) * graphScale - currentPosition;
 		this->currentPosition = osg::Vec3(directionVector * (usingInterpolation ? interpolationSpeed : 1) + this->currentPosition);
+		//this->parentBall->setCenter(osg::Vec3(directionVector * (usingInterpolation ? interpolationSpeed : 1) + this->currentPosition));
 	}
 
 	return osg::Vec3(this->currentPosition); 

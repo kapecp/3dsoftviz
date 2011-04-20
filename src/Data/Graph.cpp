@@ -308,13 +308,13 @@ osg::ref_ptr<Data::Node> Data::Graph::addNode(QString name, Data::Type* type, os
 
 	node->setNestedParent(NULL);
 
-	//Napojenie na pomocnu hranu pre vnoreny graf
+	//pridanie do zoznamu vnorenych uzlov
 	if(this->parent_id.count()>0)
 	{
 		this->nestedNodes.insert(node.get());
-
-		node->setNestedParent(parent_id.last());
 	}
+
+	this->addNestedNode(node);
 
     this->newNodes.insert(node->getId(),node);
     if(type!=NULL && type->isMeta()) {
@@ -345,136 +345,33 @@ osg::ref_ptr<Data::Node> Data::Graph::addNode(qlonglong id, QString name, Data::
         this->nodes->insert(node->getId(),node);
         this->nodesByType.insert(type->getId(),node);
     }
+
+	this->addNestedNode(node);
+
+	if(this->parent_id.count()>0)
+	{
+		this->nestedNodes.insert(node.get());
+	}
     
     return node;
 }
 
-osg::ref_ptr<Data::Node> Data::Graph::mergeNodes(QLinkedList<osg::ref_ptr<Data::Node> > * selectedNodes, osg::Vec3f position)
+
+void Data::Graph::addNestedNode(Data::Node * node)
 {
-	float scale = this->getNodeScale() + (selectedNodes->count() / 2);
-
-	osg::ref_ptr<Data::Node> mergedNode = new Data::Node(this->incEleIdCounter(), "mergedNode", this->getNodeMetaType(), scale, this, position);
-	mergedNode->setColor(osg::Vec4(0, 0, 1, 1));
-
-	QList<qlonglong> connectedNodes;
-
-	QLinkedList<osg::ref_ptr<Data::Node> >::const_iterator iAdd = selectedNodes->constBegin();
-	while (iAdd != selectedNodes->constEnd()) 
+	if(this->parent_id.count()>0)
 	{
-		(*iAdd)->setCurrentPosition(mergedNode->getCurrentPosition());
-		(*iAdd)->setFixed(false);
-		(*iAdd)->setNodeMask(0);
+		node->setParentNode(this->parent_id.last());
 
-		Data::Edge * e = this->addEdge("mergedEdge", (*iAdd), mergedNode, this->getEdgeMetaType(), true);
-		e->setScale(0);
-		
-		connectedNodes << (*iAdd)->getId();
-
-		++iAdd;
+		//this->nestedNodes.insert(node.get());
 	}
-
-	QLinkedList<osg::ref_ptr<Data::Node> >::const_iterator i = selectedNodes->constBegin();
-	while (i != selectedNodes->constEnd()) 
-	{
-		QMap< qlonglong,osg::ref_ptr<Data::Edge> >::const_iterator iedge = (*i)->getEdges()->constBegin();
-		while (iedge != (*i)->getEdges()->constEnd()) 
-		{
-			iedge.value().get()->setScale(0);
-
-			//QString edgeName = iedge.value().get()->getName();
-			//Data::Type* edgeType = iedge.value().get()->getType();
-			//bool isEdgeOriented = iedge.value().get()->isOriented();
-			osg::ref_ptr<Data::Node> srcNode = iedge.value().get()->getSrcNode();
-			osg::ref_ptr<Data::Node> dstNode = iedge.value().get()->getDstNode();
-			osg::ref_ptr<Data::Node> connectNode;
-			
-			if (dstNode->getId() == (*i)->getId()) {
-				connectNode = srcNode;
-			}
-			else {
-				connectNode = dstNode;
-			}
-
-			if(!connectedNodes.contains(connectNode->getId()) && connectNode->getNodeMask() != 0)
-			{
-				Data::Edge * newEdgeSrc = this->addEdge("mergedEdge", connectNode, mergedNode, this->getEdgeMetaType(), true);
-				connectedNodes << connectNode->getId();
-			}
-
-			++iedge;
-		}
-
-		++i;
-	}
-
-	this->metaNodes->insert(mergedNode->getId(), mergedNode);
-	this->metaNodesByType.insert(mergedNode->getId(), mergedNode);
-
-	return mergedNode;
 }
 
-void Data::Graph::separateNodes(QLinkedList<osg::ref_ptr<Data::Node> > * selectedNodes)
-{
-	QLinkedList<osg::ref_ptr<Data::Node> >::const_iterator i = selectedNodes->constBegin();
-
-	while (i != selectedNodes->constEnd()) 
-	{
-		//TODO zatial merged node identifikujeme len podla nazvu nodu - "mergedNode" - treba dokoncit
-		if ((*i)->getType()->isMeta() && (*i)->getName() == "mergedNode") 
-		{
-			//najdeme vsetky uzly a zrusime mask
-			//najdeme vsetky hrany spojene s tymto uzlom a nastavime im scale
-			//nastavime poziciu na mergeNode a zrusime tento uzol
-			osg::Vec3f position = (*i)->getCurrentPosition();
-
-			QMap< qlonglong,osg::ref_ptr<Data::Edge> >::const_iterator iedge = (*i)->getEdges()->constBegin();
-			while (iedge != (*i)->getEdges()->constEnd()) 
-			{
-				osg::ref_ptr<Data::Node> connectedNode;
-				float scale = this->getEdgeScale();
-
-				//mergedEdge ide vzdy z povodneho nodu do mergedNodu
-				connectedNode = iedge.value().get()->getSrcNode();
-
-				//ak je node zamaskovany, tak ho odmaskujeme
-				if(connectedNode->getNodeMask() == 0)
-				{
-					connectedNode->setCurrentPosition(position);
-					connectedNode->setFixed(false);
-					connectedNode->setNodeMask(~0);
-
-					QMap< qlonglong,osg::ref_ptr<Data::Edge> >::const_iterator iedgeIn = connectedNode->getEdges()->constBegin();
-					while (iedgeIn != connectedNode->getEdges()->constEnd()) 
-					{
-						osg::ref_ptr<Data::Node> srcNode = iedgeIn.value().get()->getSrcNode();
-						osg::ref_ptr<Data::Node> dstNode = iedgeIn.value().get()->getDstNode();
-
-						if(iedgeIn.value().get()->getScale() == 0 && (srcNode->getNodeMask() != 0 && dstNode->getNodeMask() != 0))
-						{
-							//TODO - nastavime velkost hranam - vsetkym default - treba prerobit ak budu mat hrany inu velkost
-							iedgeIn.value().get()->setScale(scale);
-						}
-
-						++iedgeIn;
-					}
-				}
-		
-				//TODO - nastavime velkost hranam - vsetkym default - treba prerobit ak budu mat hrany inu velkost
-				iedge.value().get()->setScale(scale);
-
-				++iedge;
-			}
-
-			this->removeNode((*i)); //zmaze uzol aj jeho hrany
-		}
-		++i;
-	}
-
-}
 
 void Data::Graph::createNestedGraph(osg::ref_ptr<Data::Node> srcNode)
 {
 	this->parent_id.append(srcNode);
+	srcNode->setAsParentNode();
 }
 
 void Data::Graph::closeNestedGraph()

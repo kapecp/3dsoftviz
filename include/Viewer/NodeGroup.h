@@ -13,6 +13,7 @@
 
 #include "Util/ApplicationConfig.h"
 #include "Data/Node.h"
+#include <osg/ShapeDrawable>
 
 namespace Vwr
 {

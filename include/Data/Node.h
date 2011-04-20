@@ -23,6 +23,8 @@
 #include <osg/CullFace>
 #include <osgText/Text>
 
+#include <osg/AutoTransform>
+
 namespace Data
 {
 	class Edge;
@@ -115,6 +117,10 @@ namespace Data
 		*/
 		void setType(Data::Type* val) { type = val; }
 
+		bool isParentNode() { return hasNestedNodes; }
+
+		void setAsParentNode() { hasNestedNodes = true; }
+
 
 		/**
 		*  \fn inline public constant  getTargetPosition
@@ -159,6 +165,8 @@ namespace Data
 		*/
 		void removeAllEdges();
 
+		
+
 		/**
 		*	\fn public getParentNode
 		*	\brief Return parent node, else null
@@ -174,6 +182,7 @@ namespace Data
 		*
 		*/
 		void setParentNode(Node* parent);
+
 
 		/**
 		*  \fn inline public constant  getEdges
@@ -395,6 +404,18 @@ namespace Data
 		*/
 		void setUsingInterpolation(bool val) { usingInterpolation = val; }
 
+		void setParentBall(osg::Sphere * val) { parentBall = val; }
+
+		osg::Sphere * getParentBall() { return parentBall; }
+
+		void setBall(osg::Geode * val) { ball = val; }
+
+		osg::Geode * getBall() { return ball; }
+
+		osg::ref_ptr<osg::AutoTransform> getOutBall() { return outBall; }
+
+		void setOutBall(osg::ref_ptr<osg::AutoTransform> val) { outBall = val; }
+
 
 		/**
 		*  \fn public  reloadConfig
@@ -494,6 +515,16 @@ namespace Data
 		osg::Vec3f currentPosition;
 
 		/**
+		*  osg::Sphere nested ball
+		*  \brief
+		*/
+		osg::Sphere * parentBall;
+
+		osg::Geode * ball;
+
+		osg::ref_ptr<osg::AutoTransform> outBall;
+
+		/**
 		*  QMap<qlonglong, osg::ref_ptr<Data::Edge> > * edges
 		*  \brief Edges connected to the Node
 		*/
@@ -518,6 +549,8 @@ namespace Data
 		*  \brief node fixed state
 		*/
 		bool fixed;
+
+		bool hasNestedNodes;
 
 		/**
 		*  bool ignore
