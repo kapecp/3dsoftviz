@@ -80,7 +80,7 @@ osg::ref_ptr<osg::Group> NodeGroup::getNodeGroup(osg::ref_ptr<Data::Node> node, 
 				osg::Sphere * sphere = new osg::Sphere;
 				sphere->setRadius(10);
 				shape->setShape(sphere);
-				shape->setColor(osg::Vec4(0.5, 0.5, 0.5, 0.1));
+				shape->setColor(osg::Vec4(0.9, 0.1, 0.3, 0.5));
 				shape->getOrCreateStateSet()->setMode(GL_BLEND, osg::StateAttribute::ON);
 				shape->getStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
 				osg::Geode * geode = new osg::Geode;
@@ -127,23 +127,6 @@ osg::ref_ptr<osg::AutoTransform> NodeGroup::wrapChild(osg::ref_ptr<Data::Node> n
 	at->addChild(node);
 
 	nodeTransforms->insert(node->getId(), at);
-
-	/*if(node->getBall()!=NULL)
-	{
-		try
-		{
-		at->setPosition(node->getTargetPosition() * graphScale);
-		at->setAutoRotateMode(osg::AutoTransform::ROTATE_TO_SCREEN);
-		osg::Geode * geode =node->getBall();
-
-		at->addChild(geode);
-
-		nodeTransforms->insert(node->getId(), at);
-		}
-		catch(int i)
-		{
-		}
-	}*/
 
 	return at;
 }
