@@ -68,6 +68,8 @@ namespace Layout
 		*/
 		bool isRunning();
 
+		void requestEnd();
+
 	protected:
 
 		/**

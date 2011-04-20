@@ -37,3 +37,7 @@ bool LayoutThread::isRunning()
 {
 	return alg->IsRunning();
 }
+void LayoutThread::requestEnd()
+{
+	alg->RequestEnd();
+}

@@ -113,6 +113,10 @@ namespace Layout
 		*/
 		void SetGraph(Data::Graph *graph);
 		
+		/**
+		*  \brief Sets the end status (causing the loops in run method to end)
+		*/
+		void RequestEnd();
 	
 	private:	
 
@@ -201,12 +205,6 @@ namespace Layout
 		bool notEnd;
 
 		/**
-		*  volatile bool isIterating
-		*  \brief algorithm iterating flag
-		*/
-		volatile bool isIterating;
-
-		/**
 		*  \fn private  computeCalm
 		*  \brief computes rest mass chord
 		*  \return double normal length of edge
@@ -226,12 +224,6 @@ namespace Layout
 		*  \return osg::Vec3f random vector
 		*/
 		osg::Vec3f getRandomLocation();
-
-		/**
-		*  \fn private  terminate
-		*  \brief Terminates algorithm
-		*/
-		void terminate();
 				
 		/**
 		*  osg::Vec3f fv
