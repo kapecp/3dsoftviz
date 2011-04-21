@@ -113,6 +113,10 @@ namespace Layout
 		*/
 		void SetGraph(Data::Graph *graph);
 		
+		/**
+		*  \brief Sets the end status (causing the loops in run method to end)
+		*/
+		void RequestEnd();
 	
 	private:	
 
@@ -226,12 +230,6 @@ namespace Layout
 		*  \return osg::Vec3f random vector
 		*/
 		osg::Vec3f getRandomLocation();
-
-		/**
-		*  \fn private  terminate
-		*  \brief Terminates algorithm
-		*/
-		void terminate();
 				
 		/**
 		*  osg::Vec3f fv

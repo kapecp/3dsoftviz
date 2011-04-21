@@ -14,7 +14,6 @@ FRAlgorithm::FRAlgorithm()
 	MAX_MOVEMENT = 30;
 	MAX_DISTANCE = 400;	
 	state = RUNNING;
-	notEnd = true;	
 	center = osg::Vec3f (0,0,0);
 	fv = osg::Vec3f();
 	last = osg::Vec3f();
@@ -35,7 +34,6 @@ FRAlgorithm::FRAlgorithm(Data::Graph *graph)
 	MAX_MOVEMENT = 30;
 	MAX_DISTANCE = 400;	
 	state = RUNNING;
-	notEnd = true;
 	osg::Vec3f p(0,0,0);	
 	center = p;	
 	fv = osg::Vec3f();
@@ -53,7 +51,6 @@ FRAlgorithm::FRAlgorithm(Data::Graph *graph)
 
 void FRAlgorithm::SetGraph(Data::Graph *graph)
 {	
-	notEnd = true;
 	this->graph = graph;
 	this->Randomize();
 }
@@ -125,14 +122,13 @@ void FRAlgorithm::WakeUpAlg()
 	}
 }
 
-void FRAlgorithm::RunAlg() 
+void FRAlgorithm::RunAlg()
 {
 	if(graph != NULL)
 	{
 		K = computeCalm();
 		graph->setFrozen(false);
 		state = RUNNING;
-		notEnd = true;
 	}
 }
 
@@ -141,13 +137,15 @@ bool FRAlgorithm::IsRunning()
 	return isIterating;
 }
 
-void FRAlgorithm::terminate() 
+void FRAlgorithm::RequestEnd()
 {
 	notEnd = false;
 }
 
 void FRAlgorithm::Run() 
 {
+	notEnd = true;
+
 	if(this->graph != NULL)
 	{
 		isIterating = true;
@@ -155,7 +153,7 @@ void FRAlgorithm::Run()
 		{			
 			// slucka pozastavenia - ak je pauza
 			// alebo je graf zmrazeny (spravidla pocas editacie)
-			while (state != RUNNING || graph->isFrozen()) 
+			while (notEnd && (state != RUNNING || graph->isFrozen()))
 			{				
 				QThread::msleep(100);				
 				if(state == PAUSED)
@@ -163,8 +161,8 @@ void FRAlgorithm::Run()
 					if(isIterating)
 					{
 						isIterating = false;
-					}					
-				}							
+					}
+				}
 			}
 			if(!isIterating)
 			{

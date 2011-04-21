@@ -13,6 +13,10 @@ osg::Node * ShapeVisitor_VisualizerCreator::getCreatedVisualizer (void) {
 	return createdVisualizer_;
 }
 
+void ShapeVisitor_VisualizerCreator::visit (Layout::Shape_Null & shape) {
+	createdVisualizer_ = new osg::Group;
+}
+
 void ShapeVisitor_VisualizerCreator::visit (Layout::Shape_Composite & shape) {
 	osg::Group * group = new osg::Group;
 	Layout::Shape_Composite::ShapesListType & shapes = shape.getShapes ();
