@@ -5,6 +5,7 @@
 #include <osg/Geode>
 #include <osg/ShapeDrawable>
 #include <osg/AutoTransform>
+#include <osg/BlendFunc>
 //-----------------------------------------------------------------------------
 
 namespace Vwr {
@@ -81,8 +82,16 @@ void ShapeVisitor_VisualizerCreator::visualizeSphere (Layout::Shape_AbstractSphe
 	osg::ShapeDrawable * sd = new osg::ShapeDrawable;
 	sd->setShape (sphere);
 	sd->setColor (osg::Vec4 (0, 0, 1.0, 0.06));
+
+	//transparency of sphere
 	sd->getOrCreateStateSet()->setMode (GL_BLEND, osg::StateAttribute::ON);
 	sd->getStateSet()->setRenderingHint (osg::StateSet::TRANSPARENT_BIN);
+	sd->getStateSet()->setMode(GL_DEPTH_TEST,osg::StateAttribute::OFF);
+	sd->getStateSet()->setMode(GL_LIGHTING, osg::StateAttribute::OFF);
+	sd->getStateSet()->setAttributeAndModes(new osg::BlendFunc, osg::StateAttribute::ON);
+	sd->getStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
+	sd->getStateSet()->setRenderBinDetails( 11, "RenderBin");
+	//
 
 	osg::Geode * geode = new osg::Geode;
 	geode->addDrawable (sd);

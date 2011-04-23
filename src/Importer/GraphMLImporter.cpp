@@ -320,6 +320,7 @@ bool GraphMLImporter::processGraph_Hyperedges (
 	for (QDomElement hyperedgeElement = graphElement.firstChildElement("hyperedge"); ok && !hyperedgeElement.isNull(); hyperedgeElement = hyperedgeElement.nextSiblingElement("hyperedge")) {
 		if (ok) {
 			// TODO: add hyperedge
+
 		}
 
 		if (ok) {
