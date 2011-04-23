@@ -109,15 +109,15 @@ namespace Model
 		static QSqlQuery* getNodesQuery(QSqlDatabase* conn, bool* error, qlonglong graphID, qlonglong layoutID);
 
 		/**
-		*  \fn public static  getNodesPositionsQuery(QSqlDatabase* conn, bool* error, qlonglong graphID)
-		*  \brief	Return nodes positions query from DB
+		*  \fn public static  getNodesPositions(QSqlDatabase* conn, bool* error, qlonglong graphID)
+		*  \brief	Return nodes positions map from DB
 		*  \param   conn   connection to the database 
 		*  \param   error  error flag, will be set to true, if the method encounters an error
 		*  \param   graphID  graph ID
 		*  \param   layoutID  layout ID
-		*  \return	QSqlQuery* nodes positions query from DB
+		*  \return	QMap<qlonglong, osg::Vec3f> nodes positions map from DB
 		*/
-		static QSqlQuery* getNodesPositionsQuery(QSqlDatabase* conn, bool* error, qlonglong graphID, qlonglong layoutID);
+		static QMap<qlonglong, osg::Vec3f> getNodesPositions(QSqlDatabase* conn, bool* error, qlonglong graphID, qlonglong layoutID);
 
 		/**
 		*  \fn public static  getNumberOfNodes(QSqlDatabase* conn, bool* error)

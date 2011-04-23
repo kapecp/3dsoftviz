@@ -319,18 +319,21 @@ QSqlQuery* Model::NodeDAO::getNodesQuery(QSqlDatabase* conn, bool* error, qlongl
     return query;
 }
 
-QSqlQuery* Model::NodeDAO::getNodesPositionsQuery(QSqlDatabase* conn, bool* error, qlonglong graphID, qlonglong layoutID)
+QMap<qlonglong, osg::Vec3f> Model::NodeDAO::getNodesPositions(QSqlDatabase* conn, bool* error, qlonglong graphID, qlonglong layoutID)
 {
-    *error = FALSE;
+	QMap<qlonglong, osg::Vec3f> positions;
+	*error = FALSE;
 	QSqlQuery* query;
     query = new QSqlQuery(*conn);
+	osg::Vec3f position;
+	qlonglong nodeId;
 
 	//check if we have connection
     if(conn==NULL || !conn->isOpen()) 
 	{ 
         qDebug() << "[Model::NodeDAO::getNodesPositions] Connection to DB not opened.";
         *error = TRUE;
-        return query;
+        return positions;
     }
 
     query->prepare("SELECT * "
@@ -343,10 +346,18 @@ QSqlQuery* Model::NodeDAO::getNodesPositionsQuery(QSqlDatabase* conn, bool* erro
     if(!query->exec()) {
         qDebug() << "[Model::NodeDAO::getNodesPositions] Could not perform query on DB: " << query->lastError().databaseText();
         *error = TRUE;
-        return query;
+        return positions;
     }
+
+	while(query->next())
+	{
+		nodeId = query->value(1).toLongLong();
+		position = osg::Vec3f(query->value(2).toDouble(), query->value(3).toDouble(), query->value(4).toDouble());
+
+		positions.insert(nodeId, position);
+	}
     
-    return query;
+    return positions;
 }
 
 QList<qlonglong> Model::NodeDAO::getListOfNodes(QSqlDatabase* conn, bool* error)

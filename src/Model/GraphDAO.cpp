@@ -58,7 +58,6 @@ Data::Graph* Model::GraphDAO::getGraph(QSqlDatabase* conn, bool* error2, qlonglo
 	Data::GraphLayout* newLayout;
 	QSqlQuery* queryNodes;
 	QSqlQuery* queryEdges;
-	QSqlQuery* queryNodesPositions;
 	QString graphName, layoutName;
 	bool error = false;
 	qlonglong nodeID1, nodeID2, nodeID, edgeID, maxIdEleUsed = 0;
@@ -67,8 +66,7 @@ Data::Graph* Model::GraphDAO::getGraph(QSqlDatabase* conn, bool* error2, qlonglo
 	QMap<qlonglong, Data::Node*>::iterator iNodes2;
 	Data::Node* newNode; 
 	osg::Vec3f position;
-	QMap< qlonglong, QList<double> > positions;
-	QList<double> coordinates;
+	QMap<qlonglong, osg::Vec3f> positions;
 	QMap<qlonglong, osg::Vec4> nodeColors;
 	QMap<qlonglong, osg::Vec4f> edgeColors;
 	QMap<qlonglong, float> nodeScales;
@@ -78,8 +76,8 @@ Data::Graph* Model::GraphDAO::getGraph(QSqlDatabase* conn, bool* error2, qlonglo
 	graphName = Model::GraphDAO::getName(graphID, &error, conn);
 	layoutName = Model::GraphLayoutDAO::getName(conn, &error, graphID, layoutID);
 	queryNodes = Model::NodeDAO::getNodesQuery(conn, &error, graphID, layoutID);
-	queryNodesPositions = Model::NodeDAO::getNodesPositionsQuery(conn, &error, graphID, layoutID);
 	queryEdges = Model::EdgeDAO::getEdgesQuery(conn, &error, graphID, layoutID);
+	positions = Model::NodeDAO::getNodesPositions(conn, &error, graphID, layoutID);
 	nodeColors = Model::NodeDAO::getColors(conn, &error, graphID, layoutID);
 	edgeColors = Model::EdgeDAO::getColors(conn, &error, graphID, layoutID);
 	nodeScales = Model::NodeDAO::getScales(conn, &error, graphID, layoutID);
@@ -99,23 +97,17 @@ Data::Graph* Model::GraphDAO::getGraph(QSqlDatabase* conn, bool* error2, qlonglo
 		Data::Type *typeMetaNode = newGraph->getNodeMetaType();
 		Data::Type *typeMetaEdge = newGraph->getEdgeMetaType();
 
-		while(queryNodesPositions->next())
-		{
-			coordinates.clear();
-			coordinates << queryNodesPositions->value(2).toDouble() << queryNodesPositions->value(3).toDouble() << queryNodesPositions->value(4).toDouble();
-			positions.insert(queryNodesPositions->value(1).toLongLong(), coordinates);
-		}
-
 		while(queryNodes->next()) 
 		{
-			coordinates.clear();
-
 			nodeID = queryNodes->value(0).toLongLong();
 			if(maxIdEleUsed < nodeID)
 				maxIdEleUsed = nodeID + 1;
 
-			coordinates = positions[queryNodes->value(0).toLongLong()];
-			position = osg::Vec3f(coordinates[0], coordinates[1], coordinates[2]);
+			if(positions.contains(nodeID))
+			{
+				position = positions.value(nodeID);
+			}
+
 			newNode = newGraph->addNode(nodeID, queryNodes->value(1).toString(), (queryNodes->value(4).toBool() ? typeMetaNode : typeNode), position);
 
 			//vsetky uzly nastavime fixed, aby sme zachovali layout
