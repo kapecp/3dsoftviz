@@ -58,9 +58,10 @@ Data::Graph* Model::GraphDAO::getGraph(QSqlDatabase* conn, bool* error2, qlonglo
 	Data::GraphLayout* newLayout;
 	QSqlQuery* queryNodes;
 	QSqlQuery* queryEdges;
-	QString graphName, layoutName;
-	bool error = false;
+	QString graphName, layoutName, nodeName, edgeName;
+	bool error = false, isFixed, isOriented;
 	qlonglong nodeID1, nodeID2, nodeID, edgeID, maxIdEleUsed = 0;
+	Data::Type *type;
 	QMap<qlonglong, Data::Node*> nodes;
 	QMap<qlonglong, Data::Node*>::iterator iNodes1;
 	QMap<qlonglong, Data::Node*>::iterator iNodes2;
@@ -100,6 +101,10 @@ Data::Graph* Model::GraphDAO::getGraph(QSqlDatabase* conn, bool* error2, qlonglo
 		while(queryNodes->next()) 
 		{
 			nodeID = queryNodes->value(0).toLongLong();
+			nodeName = queryNodes->value(1).toString();
+			type = queryNodes->value(4).toBool() ? typeMetaNode : typeNode;
+			isFixed = queryNodes->value(5).toBool();
+
 			if(maxIdEleUsed < nodeID)
 				maxIdEleUsed = nodeID + 1;
 
@@ -108,10 +113,10 @@ Data::Graph* Model::GraphDAO::getGraph(QSqlDatabase* conn, bool* error2, qlonglo
 				position = positions.value(nodeID);
 			}
 
-			newNode = newGraph->addNode(nodeID, queryNodes->value(1).toString(), (queryNodes->value(4).toBool() ? typeMetaNode : typeNode), position);
+			newNode = newGraph->addNode(nodeID, nodeName, type, position);
 
 			//vsetky uzly nastavime fixed, aby sme zachovali layout
-			//hodnota, ktora je ulozena v DB: newNode->setFixed(queryNodes->value(5).toBool()); 
+			//hodnota, ktora je ulozena v DB - premenna isFixed 
 			newNode->setFixed(true);
 			
 			if(nodeColors.contains(nodeID))
@@ -135,14 +140,19 @@ Data::Graph* Model::GraphDAO::getGraph(QSqlDatabase* conn, bool* error2, qlonglo
 		while(queryEdges->next()) 
 		{
 			edgeID = queryEdges->value(0).toLongLong();
+			edgeName = queryEdges->value(1).toString();
+			nodeID1 = queryEdges->value(3).toLongLong();
+			nodeID2 = queryEdges->value(4).toLongLong();
+			type = queryEdges->value(6).toBool() ? typeMetaEdge : typeEdge;
+			isOriented = queryEdges->value(5).toBool();
+
 			if(maxIdEleUsed < edgeID)
 				maxIdEleUsed = edgeID + 1;
 
-			nodeID1 = queryEdges->value(3).toLongLong();
-			nodeID2 = queryEdges->value(4).toLongLong();
 			iNodes1 = nodes.find(nodeID1);
 			iNodes2 = nodes.find(nodeID2);
-			newGraph->addEdge(edgeID, queryEdges->value(1).toString(), iNodes1.value(), iNodes2.value(), (queryEdges->value(6).toBool() ? typeMetaEdge : typeEdge), queryEdges->value(5).toBool());
+
+			newGraph->addEdge(edgeID, edgeName, iNodes1.value(), iNodes2.value(), type, isOriented);
 
 			if(edgeColors.contains(edgeID))
 			{
