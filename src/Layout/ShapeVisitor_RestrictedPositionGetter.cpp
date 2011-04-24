@@ -13,6 +13,10 @@ osg::Vec3f ShapeVisitor_RestrictedPositionGetter::getRestrictedPosition (void) {
 	return restrictedPosition_;
 }
 
+void ShapeVisitor_RestrictedPositionGetter::visit (Shape_Null & shape) {
+	restrictedPosition_ = originalPosition_;
+}
+
 void ShapeVisitor_RestrictedPositionGetter::visit (Shape_Composite & shape) {
 	Shape_Composite::ShapesListType & shapes = shape.getShapes ();
 

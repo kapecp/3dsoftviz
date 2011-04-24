@@ -47,12 +47,8 @@ AppCore::Core::~Core()
 
 void AppCore::Core::restartLayout()
 {
-    // neviem preco sa tuto nejak dlho zastavi
-    if(this->thr->isRunning())
-    {
-        this->thr->terminate();
-        this->thr->wait();
-    }
+	this->thr->requestEnd();
+	this->thr->wait();
     delete this->thr;
 
     this->alg->SetGraph(Manager::GraphManager::getInstance()->getActiveGraph());
@@ -61,7 +57,7 @@ void AppCore::Core::restartLayout()
     this->cw->setLayoutThread(thr);
     this->cg->reload(Manager::GraphManager::getInstance()->getActiveGraph());
     this->thr->start();
-	this->thr->play();
+    this->thr->play();
     this->messageWindows->closeLoadingDialog();
 }
 

@@ -308,13 +308,13 @@ osg::ref_ptr<Data::Node> Data::Graph::addNode(QString name, Data::Type* type, os
 
 	node->setNestedParent(NULL);
 
-	//Napojenie na pomocnu hranu pre vnoreny graf
+	//pridanie do zoznamu vnorenych uzlov
 	if(this->parent_id.count()>0)
 	{
 		this->nestedNodes.insert(node.get());
-
-		node->setNestedParent(parent_id.last());
 	}
+
+	this->addNestedNode(node);
 
     this->newNodes.insert(node->getId(),node);
     if(type!=NULL && type->isMeta()) {
@@ -345,6 +345,13 @@ osg::ref_ptr<Data::Node> Data::Graph::addNode(qlonglong id, QString name, Data::
         this->nodes->insert(node->getId(),node);
         this->nodesByType.insert(type->getId(),node);
     }
+
+	this->addNestedNode(node);
+
+	if(this->parent_id.count()>0)
+	{
+		this->nestedNodes.insert(node.get());
+	}
     
     return node;
 }
@@ -367,7 +374,7 @@ osg::ref_ptr<Data::Node> Data::Graph::mergeNodes(QLinkedList<osg::ref_ptr<Data::
 
 		Data::Edge * e = this->addEdge("mergedEdge", (*iAdd), mergedNode, this->getEdgeMetaType(), true);
 		e->setScale(0);
-		
+
 		connectedNodes << (*iAdd)->getId();
 
 		++iAdd;
@@ -387,7 +394,7 @@ osg::ref_ptr<Data::Node> Data::Graph::mergeNodes(QLinkedList<osg::ref_ptr<Data::
 			osg::ref_ptr<Data::Node> srcNode = iedge.value().get()->getSrcNode();
 			osg::ref_ptr<Data::Node> dstNode = iedge.value().get()->getDstNode();
 			osg::ref_ptr<Data::Node> connectNode;
-			
+
 			if (dstNode->getId() == (*i)->getId()) {
 				connectNode = srcNode;
 			}
@@ -458,7 +465,7 @@ void Data::Graph::separateNodes(QLinkedList<osg::ref_ptr<Data::Node> > * selecte
 						++iedgeIn;
 					}
 				}
-		
+
 				//TODO - nastavime velkost hranam - vsetkym default - treba prerobit ak budu mat hrany inu velkost
 				iedge.value().get()->setScale(scale);
 
@@ -472,9 +479,22 @@ void Data::Graph::separateNodes(QLinkedList<osg::ref_ptr<Data::Node> > * selecte
 
 }
 
+
+void Data::Graph::addNestedNode(Data::Node * node)
+{
+	if(this->parent_id.count()>0)
+	{
+		node->setParentNode(this->parent_id.last());
+
+		//this->nestedNodes.insert(node.get());
+	}
+}
+
+
 void Data::Graph::createNestedGraph(osg::ref_ptr<Data::Node> srcNode)
 {
 	this->parent_id.append(srcNode);
+	srcNode->setAsParentNode();
 }
 
 void Data::Graph::closeNestedGraph()

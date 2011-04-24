@@ -184,7 +184,6 @@ osg::ref_ptr<osg::Group> CoreGraph::initCustomNodes()
 		customNodes->addChild(*i);
 		++i;
 	}
-
 	return customNodes;
 }
 

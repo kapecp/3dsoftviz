@@ -1,6 +1,7 @@
 #include "Layout/RestrictionsManager.h"
 //-----------------------------------------------------------------------------
 #include "Data/Node.h"
+#include "Layout/Shape_Null.h"
 //-----------------------------------------------------------------------------
 
 namespace Layout {
@@ -42,7 +43,7 @@ void RestrictionsManager::setRestrictions (
 			if (shapeGetterUsages_[shapeGetter] == 1) {
 				// first shape getter usage added
 
-				lastShapes_[shapeGetter];
+				lastShapes_[shapeGetter] = QSharedPointer<Shape> (new Shape_Null);
 				removalHandlers_[shapeGetter];
 
 				notifyRestrictionAdded (shapeGetter);
@@ -61,13 +62,9 @@ osg::Vec3f RestrictionsManager::applyRestriction (
 		refreshShape (shapeGetter);
 
 		QSharedPointer<Shape> shape = lastShapes_[shapeGetter];
-		if (!shape.isNull ()) {
-			restrictedPositionGetter_.setOriginalPosition (originalPosition);
-			shape->accept (restrictedPositionGetter_);
-			return restrictedPositionGetter_.getRestrictedPosition ();
-		} else {
-			return originalPosition;
-		}
+		restrictedPositionGetter_.setOriginalPosition (originalPosition);
+		shape->accept (restrictedPositionGetter_);
+		return restrictedPositionGetter_.getRestrictedPosition ();
 	} else {
 		return originalPosition;
 	}
@@ -128,23 +125,11 @@ void RestrictionsManager::refreshShape (
 ) {
 	QSharedPointer<Shape> shape = shapeGetter->getShape ();
 
-	if (shape.isNull ()) {
-		// handle special case, because we can not visit null shape
-		// maybe use null object pattern
-
-		if (!lastShapes_[shapeGetter].isNull ()) {
-			lastShapes_[shapeGetter] = shape;
-			notifyShapeChanged (shapeGetter, shape);
-		} else {
-			return;
-		}
-	} else {
-		shapeComparator_.setOtherShape (lastShapes_[shapeGetter]);
-		shape->accept (shapeComparator_);
-		if (!shapeComparator_.getComparisonResult ()) {
-			lastShapes_[shapeGetter] = shape;
-			notifyShapeChanged (shapeGetter, shape);
-		}
+	shapeComparator_.setOtherShape (lastShapes_[shapeGetter]);
+	shape->accept (shapeComparator_);
+	if (!shapeComparator_.getComparisonResult ()) {
+		lastShapes_[shapeGetter] = shape;
+		notifyShapeChanged (shapeGetter, shape);
 	}
 }
 
