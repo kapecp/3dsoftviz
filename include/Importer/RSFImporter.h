@@ -17,13 +17,18 @@ public:
 	/***/
 	virtual ~RSFImporter (void) {};
 
-	/***/
+	/**
+	*\brief If exists return special node representing HyperEdge
+	*/
 	virtual osg::ref_ptr<Data::Node> getHyperEdge (
 		QString srcNodeName,
 		QString edgeName,QMap<qlonglong, 
 		osg::ref_ptr<Data::Edge> > *mapa
 	);
-
+	
+	/**
+	*\brief Read rsf file and create graph
+	*/
 	virtual bool import (
 		ImporterContext &context
 	);

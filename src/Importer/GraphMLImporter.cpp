@@ -313,13 +313,14 @@ bool GraphMLImporter::processGraph_Hyperedges (
 	QDomElement &graphElement
 ) {
 	bool ok = true;
-
+	osg::ref_ptr<Data::Node> hyperEdgeNode;
 	iColor_ = 0;
-
+	int count=0;
 	// hyperedges
 	for (QDomElement hyperedgeElement = graphElement.firstChildElement("hyperedge"); ok && !hyperedgeElement.isNull(); hyperedgeElement = hyperedgeElement.nextSiblingElement("hyperedge")) {
 		if (ok) {
 			// TODO: add hyperedge
+			hyperEdgeNode = context_->getGraph ().addHyperEdge(QString::number(count));
 		}
 
 		if (ok) {
@@ -327,7 +328,6 @@ bool GraphMLImporter::processGraph_Hyperedges (
 				QString targetName;
 				if (ok) {
 					targetName = endpointElement.attribute("node");
-
 					ok = !(targetName.isEmpty ());
 
 					context_->getInfoHandler ().reportError (ok, "Hyperedge endpoint \"node\" attribute can not be empty.");
@@ -370,10 +370,11 @@ bool GraphMLImporter::processGraph_Hyperedges (
 				}
 
 				if (ok) {
-					// TODO: add endpoint
+					context_->getGraph().addEdge("", readNodes_->get(targetName), hyperEdgeNode, edgeType_, false);
 				}
 			}
 		}
+		count++;
 	}
 
 	return ok;

@@ -286,11 +286,11 @@ namespace Data
 		*/
 		bool isIgnored() const { return ignore; }
 
-		bool setPositionCanBeRestricted (bool b) {positionCanBeRestricted = b; }
+		void setPositionCanBeRestricted (bool b) {positionCanBeRestricted = b; }
 
 		bool getPositionCanBeRestricted () {return positionCanBeRestricted; }
 
-		bool setRemovableByUser (bool b) {removableByUser = b; }
+		void setRemovableByUser (bool b) {removableByUser = b; }
 
 		bool isRemovableByUser () {return removableByUser; }
 

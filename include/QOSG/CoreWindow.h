@@ -192,7 +192,7 @@ namespace QOSG
 
 				/**
 				*  \fn public  add_NodeClick
-				*  \brief create new Node
+				*  \brief create new Node in GUI
 				*/
 				bool add_NodeClick();
 
