@@ -442,7 +442,12 @@ bool GXLImporter::parseGraph (void) {
 
 				if (ok) {
 					// TODO: add endpoint
-					context_->getGraph ().addEdge("", hyperEdgeNode, target, nodeType_, false);
+					if (direction==QString("in"))
+						context_->getGraph ().addEdge("", target, hyperEdgeNode, nodeType_, true);
+					else if (direction==QString("out"))
+						context_->getGraph ().addEdge("", hyperEdgeNode, target, nodeType_, true);
+					else
+						context_->getGraph ().addEdge("", hyperEdgeNode, target, nodeType_, false);
 				}
 			}
 

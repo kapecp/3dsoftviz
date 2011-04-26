@@ -370,7 +370,13 @@ bool GraphMLImporter::processGraph_Hyperedges (
 				}
 
 				if (ok) {
-					context_->getGraph().addEdge("", readNodes_->get(targetName), hyperEdgeNode, edgeType_, false);
+					//context_->getGraph().addEdge("", readNodes_->get(targetName), hyperEdgeNode, edgeType_, false);
+					if (direction==QString("in"))
+						context_->getGraph ().addEdge("", readNodes_->get(targetName), hyperEdgeNode, nodeType_, true);
+					else if (direction==QString("out"))
+						context_->getGraph ().addEdge("", hyperEdgeNode, readNodes_->get(targetName), nodeType_, true);
+					else
+						context_->getGraph ().addEdge("", hyperEdgeNode, target, nodeType_, false);
 				}
 			}
 		}

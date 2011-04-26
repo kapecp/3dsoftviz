@@ -836,6 +836,9 @@ bool CoreWindow::add_NodeClick()
 	else
 	{
 		Data::Graph * currentGraph1= Manager::GraphManager::getInstance()->createGraph("NewGraph");
+		Data::GraphLayout * newLayout= currentGraph1->addLayout("new_Layout");
+		currentGraph1->selectLayout(newLayout);
+
 		osg::Vec3 position = viewerWidget->getPickHandler()->getSelectionCenter(true); 
 		Data::MetaType* type = currentGraph1->addMetaType(Data::GraphLayout::META_NODE_TYPE);
 		osg::ref_ptr<Data::Node> node1 = currentGraph1->addNode("newNode", currentGraph->getNodeMetaType(), position);	
@@ -862,18 +865,11 @@ bool CoreWindow::removeClick()
 
 	while (selectedNodes->size () > 0) {
 		osg::ref_ptr<Data::Node> existingNode1 = (* (selectedNodes->constBegin()));
-		currentGraph->removeNode(existingNode1);
+		if (existingNode1->isRemovableByUser())
+			currentGraph->removeNode(existingNode1);
 		selectedNodes->removeFirst ();
 	}
 
-	
-/*
-	while (i != selectedNodes->constEnd()) 
-	{
-		currentGraph->removeNode((*i));
-		++i;
-	}
-	*/
 	int NodesCount=currentGraph->getNodes()->size();
 	cout<<NodesCount;
 	if (isPlaying)
