@@ -182,7 +182,9 @@ bool Data::Graph::saveLayoutToDB(QSqlDatabase* conn, Data::Graph * graph)
 		&& Model::EdgeDAO::addEdgesScaleToDB(conn, graph->edges, graph->selectedLayout, newMetaNodeID, newMetaEdgeID, false, graph->getEdgeScale())
 		&& Model::EdgeDAO::addEdgesScaleToDB(conn, graph->metaEdges, graph->selectedLayout, newMetaNodeID, newMetaEdgeID, true, graph->getEdgeScale())
 		&& Model::NodeDAO::addNodesMaskToDB(conn, graph->nodes, graph->selectedLayout, newMetaNodeID, false)
-		&& Model::NodeDAO::addNodesMaskToDB(conn, graph->metaNodes, graph->selectedLayout, newMetaNodeID, true))
+		&& Model::NodeDAO::addNodesMaskToDB(conn, graph->metaNodes, graph->selectedLayout, newMetaNodeID, true)
+		&& Model::NodeDAO::addNodesParentToDB(conn, graph->nodes, graph->selectedLayout, newMetaNodeID, false)
+		&& Model::NodeDAO::addNodesParentToDB(conn, graph->metaNodes, graph->selectedLayout, newMetaNodeID, true))
 	{
 		qDebug() << "[Data::Graph::saveLayoutToDB] Layout was saved to DB.";
 		return true;

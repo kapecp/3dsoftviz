@@ -60,7 +60,7 @@ Data::Graph* Model::GraphDAO::getGraph(QSqlDatabase* conn, bool* error2, qlonglo
 	QSqlQuery* queryEdges;
 	QString graphName, layoutName, nodeName, edgeName;
 	bool error = false, isFixed, isOriented;
-	qlonglong nodeID1, nodeID2, nodeID, edgeID, maxIdEleUsed = 0;
+	qlonglong nodeID1, nodeID2, nodeID, edgeID, maxIdEleUsed = 0, parentId;
 	Data::Type *type;
 	QMap<qlonglong, Data::Node*> nodes;
 	QMap<qlonglong, Data::Node*>::iterator iNodes1;
@@ -76,7 +76,7 @@ Data::Graph* Model::GraphDAO::getGraph(QSqlDatabase* conn, bool* error2, qlonglo
 
 	graphName = Model::GraphDAO::getName(graphID, &error, conn);
 	layoutName = Model::GraphLayoutDAO::getName(conn, &error, graphID, layoutID);
-	queryNodes = Model::NodeDAO::getNodesQuery(conn, &error, graphID, layoutID);
+	queryNodes = Model::NodeDAO::getNodesQuery(conn, &error, graphID, layoutID, -1);
 	queryEdges = Model::EdgeDAO::getEdgesQuery(conn, &error, graphID, layoutID);
 	positions = Model::NodeDAO::getNodesPositions(conn, &error, graphID, layoutID);
 	nodeColors = Model::NodeDAO::getColors(conn, &error, graphID, layoutID);
