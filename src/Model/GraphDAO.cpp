@@ -247,7 +247,7 @@ Data::Graph* Model::GraphDAO::addGraph(QString graph_name, QSqlDatabase* conn)
         qDebug() << "[Model::GraphDAO::addGraph] Could not perform query on DB: " << query->lastError().databaseText();
         return NULL;
     }
-
+	
     if(query->next()) {
         Data::Graph* graph = new Data::Graph(query->value(0).toLongLong(),graph_name,0,0,conn);
         graph->setIsInDB();
@@ -259,6 +259,27 @@ Data::Graph* Model::GraphDAO::addGraph(QString graph_name, QSqlDatabase* conn)
     }
 }
 
+bool Model::GraphDAO::setGraphName(qlonglong graphID, QString graphName, QSqlDatabase* conn)
+{
+    if(conn==NULL || !conn->isOpen()) { //check if we have connection
+        qDebug() << "[Model::GraphDAO::setGraphName] Connection to DB not opened.";
+        return false;
+    }
+
+	QSqlQuery* query = new QSqlQuery(*conn);
+    query->prepare("UPDATE graphs "
+		"SET graph_name = :graph_name "
+		"WHERE graph_id = :graph_id");
+    query->bindValue(":graph_name", graphName);
+	query->bindValue(":graph_id", graphID);
+
+    if(!query->exec()) {
+        qDebug() << "[Model::GraphDAO::setGraphName] Could not perform query on DB: " << query->lastError().databaseText();
+        return false;
+    }
+	
+	return true;
+}
 
 bool Model::GraphDAO::addGraph( Data::Graph* graph, QSqlDatabase* conn )
 {
