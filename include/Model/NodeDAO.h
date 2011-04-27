@@ -235,6 +235,17 @@ namespace Model
 		static QMap<qlonglong, int> getMasks(QSqlDatabase* conn, bool* error, qlonglong graphID, qlonglong layoutID);
 
 		/**
+		*  \fn public static  getParents(QSqlDatabase* conn, bool* error, qlonglong graphID, qlonglong layoutID)
+		*  \brief	Return list of parent nodes ID
+		*  \param   conn   connection to the database 
+		*  \param   error  error flag, will be set to true, if the method encounters an error
+		*  \param   graphID  graph ID
+		*  \param   layoutID  layout ID
+		*  \return	QList<qlonglong> list of parent nodes
+		*/
+		static QList<qlonglong> getParents(QSqlDatabase* conn, bool* error, qlonglong graphID, qlonglong layoutID);
+
+		/**
 		*  \fn public static  getNewMetaNodeId(QSqlDatabase* conn, qlonglong graphID, QMap<qlonglong, osg::ref_ptr<Data::Node> >* nodes)
 		*  \brief	Return map of new nodes ID
 		*  \param   conn   connection to the database 

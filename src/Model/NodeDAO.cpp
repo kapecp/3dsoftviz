@@ -705,6 +705,33 @@ QMap<qlonglong, int> Model::NodeDAO::getMasks(QSqlDatabase* conn, bool* error, q
 	return masks;
 }
 
+QList<qlonglong> Model::NodeDAO::getParents(QSqlDatabase* conn, bool* error, qlonglong graphID, qlonglong layoutID)
+{
+    *error = FALSE;
+	bool error2 = false;
+	//bool isParent;
+	qlonglong id;
+	QList<qlonglong> parents;
+
+	QMap<qlonglong, QString> nodeParents;
+	QMap<qlonglong, QString>::iterator iter;
+
+	nodeParents = getSettings(conn, &error2, graphID, layoutID, "is_parent");
+
+	for(iter = nodeParents.begin(); iter != nodeParents.end(); iter++) 
+	{
+		id = iter.key();
+
+		//isParent = iter.value().to.toInt();
+		//masks.insert(id, mask);
+		parents << id;
+	}
+
+	*error = error2;
+
+	return parents;
+}
+
 QMap<qlonglong, qlonglong> Model::NodeDAO::getNewMetaNodesId(QSqlDatabase* conn, qlonglong graphID, QMap<qlonglong, osg::ref_ptr<Data::Node> >* nodes)
 {
 	QMap<qlonglong, qlonglong> newId;

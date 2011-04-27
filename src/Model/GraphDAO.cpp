@@ -52,6 +52,46 @@ QMap<qlonglong, Data::Graph*> Model::GraphDAO::getGraphs(QSqlDatabase* conn, boo
     return qgraphs;
 }
 
+
+void getNestedGraph(qlonglong parentID, Data::Graph** graph, QSqlDatabase* conn, bool* error2, qlonglong graphID, qlonglong layoutID, qlonglong* maxIdEleUsed, QMap<qlonglong, osg::Vec3f>* positions, QMap<qlonglong, Data::Node*>* nodes, Data::Type* typeNode, Data::Type* typeMetaNode, QList<qlonglong>* parentNodes)
+{
+	bool error;
+	qlonglong nodeID;
+	QString nodeName;
+	Data::Type* type;
+	osg::Vec3f position;
+	QSqlQuery* queryNestedNodes;
+	Data::Node* newNestedNode;
+
+	queryNestedNodes = Model::NodeDAO::getNodesQuery(conn, &error, graphID, layoutID, parentID);
+
+	//TODO pridat vnorenym nodom atributy - scale, farbu, ...
+	while(queryNestedNodes->next()) 
+	{
+		nodeID = queryNestedNodes->value(0).toLongLong();
+		nodeName = queryNestedNodes->value(1).toString();
+		type = queryNestedNodes->value(4).toBool() ? typeMetaNode : typeNode;
+		if(*maxIdEleUsed < nodeID)
+			*maxIdEleUsed = nodeID + 1;
+			
+		if((*positions).contains(nodeID))
+			position = (*positions).value(nodeID);
+
+		newNestedNode = (*graph)->addNode(nodeID, nodeName, type, position);
+		(*nodes).insert(nodeID, newNestedNode);
+		(*graph)->addNestedNode(newNestedNode);
+
+		if ((*parentNodes).contains(nodeID))
+		{
+			(*graph)->createNestedGraph(newNestedNode);
+
+			getNestedGraph(nodeID, graph, conn, &error, graphID, layoutID, maxIdEleUsed, positions, nodes, typeNode, typeMetaNode, parentNodes);
+
+			(*graph)->closeNestedGraph();
+		}
+	}
+}
+
 Data::Graph* Model::GraphDAO::getGraph(QSqlDatabase* conn, bool* error2, qlonglong graphID, qlonglong layoutID)
 {
 	Data::Graph* newGraph;
@@ -60,7 +100,7 @@ Data::Graph* Model::GraphDAO::getGraph(QSqlDatabase* conn, bool* error2, qlonglo
 	QSqlQuery* queryEdges;
 	QString graphName, layoutName, nodeName, edgeName;
 	bool error = false, isFixed, isOriented;
-	qlonglong nodeID1, nodeID2, nodeID, edgeID, maxIdEleUsed = 0, parentId;
+	qlonglong nodeID1, nodeID2, nodeID, edgeID, maxIdEleUsed = 0;
 	Data::Type *type;
 	QMap<qlonglong, Data::Node*> nodes;
 	QMap<qlonglong, Data::Node*>::iterator iNodes1;
@@ -73,6 +113,7 @@ Data::Graph* Model::GraphDAO::getGraph(QSqlDatabase* conn, bool* error2, qlonglo
 	QMap<qlonglong, float> nodeScales;
 	QMap<qlonglong, float> edgeScales;
 	QMap<qlonglong, int> nodeMasks;
+	QList<qlonglong> parentNodes;
 
 	graphName = Model::GraphDAO::getName(graphID, &error, conn);
 	layoutName = Model::GraphLayoutDAO::getName(conn, &error, graphID, layoutID);
@@ -84,6 +125,7 @@ Data::Graph* Model::GraphDAO::getGraph(QSqlDatabase* conn, bool* error2, qlonglo
 	nodeScales = Model::NodeDAO::getScales(conn, &error, graphID, layoutID);
 	edgeScales = Model::EdgeDAO::getScales(conn, &error, graphID, layoutID);
 	nodeMasks = Model::NodeDAO::getMasks(conn, &error, graphID, layoutID);
+	parentNodes = Model::NodeDAO::getParents(conn, &error, graphID, layoutID);
 		
 	if(!error)
 	{
@@ -135,6 +177,15 @@ Data::Graph* Model::GraphDAO::getGraph(QSqlDatabase* conn, bool* error2, qlonglo
 			}
 
 			nodes.insert(nodeID, newNode);
+
+			if (parentNodes.contains(nodeID))
+			{
+				newGraph->createNestedGraph(newNode);
+
+				getNestedGraph(nodeID, &newGraph, conn, &error, graphID, layoutID, &maxIdEleUsed, &positions, &nodes, typeNode, typeMetaNode, &parentNodes);
+
+				newGraph->closeNestedGraph();
+			}
 		}
 		
 		while(queryEdges->next()) 

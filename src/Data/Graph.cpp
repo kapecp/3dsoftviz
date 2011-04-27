@@ -198,7 +198,6 @@ bool Data::Graph::saveLayoutToDB(QSqlDatabase* conn, Data::Graph * graph)
 	return false;
 }
 
-
 Data::GraphLayout* Data::Graph::addLayout(QString layout_name)
 {
     bool error;
