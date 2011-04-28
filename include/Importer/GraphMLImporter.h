@@ -31,27 +31,39 @@ public:
 private:
 
 	/**
+	 * \brief Imports one graph (or subgraph).
 	 * [recursive]
 	 */
 	bool processGraph (
 		QDomElement &graphElement
 	);
 
+	/**
+	 * \brief Imports nodes from a graph (or subgraph).
+	 */
 	bool processGraph_Nodes (
 		QDomElement &graphElement
 	);
 
+	/**
+	 * \brief Imports edges from a graph (or subgraph).
+	 */
 	bool processGraph_Edges (
 		QDomElement &graphElement
 	);
 
+	/**
+	 * \brief Imports hyperedges from a graph (or subgraph).
+	 */
 	bool processGraph_Hyperedges (
 		QDomElement &graphElement
 	);
 
 private:
 
-	// context
+	/**
+	 * \brief Holds input (file stream) and output (graph structure and objects used for import process information reporting).
+	 */
 	ImporterContext *context_;
 
 	// helpers

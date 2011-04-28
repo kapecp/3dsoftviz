@@ -7,7 +7,7 @@ namespace Layout {
 class ShapeVisitor;
 
 /**
- * [immutable]
+ * Base class of all shapes.
  */
 class Shape {
 
@@ -16,6 +16,9 @@ public:
 	/***/
 	virtual ~Shape (void) {};
 
+	/**
+	 * [visitor pattern]
+	 */
 	virtual void accept (
 		ShapeVisitor & visitor
 	) = 0;

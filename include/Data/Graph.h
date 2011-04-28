@@ -501,10 +501,20 @@ namespace Data
 		*/
 		Data::Type* getEdgeMetaType();
 
+		/**
+		 * \brief Gets type of nodes used to manipulate the restrictions.
+		 * Creates if not exists.
+		 */
 		Data::Type* getRestrictionNodeMetaType();
 
+		/**
+		 * \brief Gets reference to the restrictions manager associated with this graph.
+		 */
 		Layout::RestrictionsManager & getRestrictionsManager (void);
 
+		/**
+		 * \brief Adds node used to manipulate the restrictions.
+		 */
 		osg::ref_ptr<Data::Node> addRestrictionNode(QString name, osg::Vec3f position);
 		
 		/**
@@ -702,6 +712,10 @@ namespace Data
 		*/
         QMultiMap<qlonglong, osg::ref_ptr<Data::Node> > metaNodesByType;
 
+        /**
+		 * \brief Restrictions manager of this graph (object storing restrictions and providing
+		 * interface for setting restrictions and getting restricted positions).
+		 */
         Layout::RestrictionsManager restrictionsManager_;
 
 	};

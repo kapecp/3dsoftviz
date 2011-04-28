@@ -9,6 +9,10 @@
 
 namespace Layout {
 
+/**
+ * \brief Notified by the RestrictionsManager.
+ * [observer pattern]
+ */
 class RestrictionsObserver {
 
 public:

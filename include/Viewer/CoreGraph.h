@@ -196,6 +196,9 @@ namespace Vwr
 		*/
 		Vwr::NodeGroup * qmetaNodesGroup;
 
+		/**
+		 * \brief Contains part of OSG visualizing current restrictions.
+		 */
 		QSharedPointer<Vwr::RestrictionVisualizationsGroup> restrictionVisualizationsGroup;
 
 		/**
@@ -335,6 +338,9 @@ namespace Vwr
 		*/
 		int labelsPosition;
 
+		/**
+		 * \brief Index of restrictionVisualisationsGroup in the root group.
+		 */
 		int restrictionVisualizationsPosition;
 
 		/**

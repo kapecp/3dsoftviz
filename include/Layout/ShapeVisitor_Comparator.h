@@ -8,6 +8,14 @@
 
 namespace Layout {
 
+/**
+ * \brief Can compare two shapes.
+ * [visitor pattern]
+ * Usage:
+ * 1. Call setOtherShape to set first shape.
+ * 2. Call visit with the second shape as an argument.
+ * 3. Call getComparison result to get TRUE if the shapes have the same type and properties.
+ */
 class ShapeVisitor_Comparator : public ShapeVisitor {
 
 public:

@@ -10,6 +10,10 @@
 
 namespace Layout {
 
+/**
+ * \brief Visits shape objects.
+ * [visitor pattern]
+ */
 class ShapeVisitor {
 
 public:

@@ -8,12 +8,19 @@
 
 namespace Layout {
 
+/**
+ * [immutable]
+ * Defined by:
+ * - normal vector = [a, b, c]
+ * - d
+ *
+ * ax + by + cz + d = 0
+ */
 class Shape_Plane : public Shape {
 
 public:
 
-	// normal vector = [a, b, c]
-	// ax + by + cz + d = 0
+	/***/
 	Shape_Plane (
 		const osg::Vec3f normalVector,
 		const float d
@@ -26,6 +33,9 @@ public:
 
 	float getD (void);
 
+	/**
+	 * [visitor pattern]
+	 */
 	virtual void accept (
 		ShapeVisitor & visitor
 	);

@@ -295,12 +295,24 @@ namespace Data
 		*/
 		bool isIgnored() const { return ignore; }
 
+		/**
+		 * \brief \link Node::positionCanBeRestricted [setter] \endlink
+		 */
 		void setPositionCanBeRestricted (bool b) {positionCanBeRestricted = b; }
 
+		/**
+		 * \brief \link Node::positionCanBeRestricted [getter] \endlink
+		 */
 		bool getPositionCanBeRestricted () {return positionCanBeRestricted; }
 
+		/**
+		 * \brief \link Node::removableByUser [setter] \endlink
+		 */
 		void setRemovableByUser (bool b) {removableByUser = b; }
 
+		/**
+		 * \brief \link Node::removableByUser [getter] \endlink
+		 */
 		bool isRemovableByUser () {return removableByUser; }
 
 		/**
@@ -558,8 +570,18 @@ namespace Data
 		*/
 		bool ignore;
 
+		/**
+		 * \brief If the node position can be restricted by layout restrictions.
+		 * RestrictionsManager uses this to determine if the restriction can be attached to this node.
+		 */
 		bool positionCanBeRestricted;
 
+		/**
+		 * \brief If the node is removable by the user (using GUI).
+		 * Used to make some nodes not removable (e.g. nodes used for manipulating layout restrictions - their
+		 * existence is bound to the existence of the layout restriction and their removal is managed
+		 * elsewhere, so they can not be removed by user).
+		 */
 		bool removableByUser;
 
 		/**

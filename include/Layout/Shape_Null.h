@@ -6,6 +6,10 @@
 
 namespace Layout {
 
+/**
+ * \brief Shape representing "no shape".
+ * [null object pattern][immutable]
+ */
 class Shape_Null : public Shape {
 
 public:
@@ -15,6 +19,9 @@ public:
 	/***/
 	virtual ~Shape_Null (void) {};
 
+	/**
+	 * [visitor pattern]
+	 */
 	virtual void accept (
 		ShapeVisitor & visitor
 	);

@@ -352,6 +352,11 @@ namespace Layout
 		*/
 		double distance(osg::Vec3f u,osg::Vec3f v);
 
+		/**
+		 * \brief If the nodes are not ignored and are from the same graph.
+		 * If one of the nodes (or both) is a meta node, there are forces between these
+		 * nodes even if they are from different graphs.
+		 */
 		bool areForcesBetween (Data::Node * u, Data::Node * v);
 
 	};
