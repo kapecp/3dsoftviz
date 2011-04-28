@@ -208,7 +208,9 @@ namespace Layout
 		*  volatile bool isIterating
 		*  \brief algorithm iterating flag
 		*/
-		volatile bool isIterating;
+		bool isIterating;
+		QMutex isIterating_mutex;
+		QWaitCondition isIterating_cond;
 
 		/**
 		*  \fn private  computeCalm

@@ -112,6 +112,11 @@ double FRAlgorithm::getRandomDouble()
 void FRAlgorithm::PauseAlg() 
 {	
 	state = PAUSED;
+	isIterating_mutex.lock();
+	while (isIterating) {
+		isIterating_cond.wait(&isIterating_mutex);
+	}
+	isIterating_mutex.unlock();
 }
 
 void FRAlgorithm::WakeUpAlg() 
@@ -134,7 +139,7 @@ void FRAlgorithm::RunAlg()
 
 bool FRAlgorithm::IsRunning() 
 {
-	return isIterating;
+	return (state == RUNNING);
 }
 
 void FRAlgorithm::RequestEnd()
@@ -144,34 +149,35 @@ void FRAlgorithm::RequestEnd()
 
 void FRAlgorithm::Run() 
 {
-	notEnd = true;
-
 	if(this->graph != NULL)
 	{
+		isIterating_mutex.lock();
 		isIterating = true;
+		notEnd = true;
 		while (notEnd) 
 		{			
 			// slucka pozastavenia - ak je pauza
 			// alebo je graf zmrazeny (spravidla pocas editacie)
 			while (notEnd && (state != RUNNING || graph->isFrozen()))
-			{				
-				QThread::msleep(100);				
+			{
 				if(state == PAUSED)
 				{
-					if(isIterating)
-					{
-						isIterating = false;
-					}
+					isIterating = false;
+					isIterating_cond.wakeAll();
 				}
+				isIterating_mutex.unlock();
+				QThread::msleep(100);
+				isIterating_mutex.lock();
 			}
-			if(!isIterating)
-			{
-				isIterating = true;
-			}
+			isIterating = true;
 			if (!iterate()) {
 				graph->setFrozen(true);
 			}			
 		}
+
+		isIterating = false;
+		isIterating_cond.wakeAll();
+		isIterating_mutex.unlock();
 	}
 	else
 	{
