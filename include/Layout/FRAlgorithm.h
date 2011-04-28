@@ -77,7 +77,7 @@ namespace Layout
 
 		/**
 		*  \fn public  PauseAlg
-		*  \brief Pause layout algorithm
+		*  \brief Sets PAUSED state and waits until the current iteration ends.
 		*/
 		void PauseAlg();
 
@@ -205,12 +205,9 @@ namespace Layout
 		bool notEnd;
 
 		/**
-		*  volatile bool isIterating
-		*  \brief algorithm iterating flag
+		*  \brief usage: waiting for current iteration end after pausing the algorithm
 		*/
-		bool isIterating;
 		QMutex isIterating_mutex;
-		QWaitCondition isIterating_cond;
 
 		/**
 		*  \fn private  computeCalm

@@ -23,7 +23,6 @@ FRAlgorithm::FRAlgorithm()
 	
 	/* moznost odpudiveho posobenia limitovaneho vzdialenostou*/
 	useMaxDistance = false;
-	isIterating = false;
 	this->graph = NULL;
 }
 FRAlgorithm::FRAlgorithm(Data::Graph *graph) 
@@ -44,7 +43,6 @@ FRAlgorithm::FRAlgorithm(Data::Graph *graph)
 	
 	/* moznost odpudiveho posobenia limitovaneho vzdialenostou*/
 	useMaxDistance = false;
-	isIterating = false;
 	this->graph = graph;
 	this->Randomize();
 }
@@ -113,9 +111,6 @@ void FRAlgorithm::PauseAlg()
 {	
 	state = PAUSED;
 	isIterating_mutex.lock();
-	while (isIterating) {
-		isIterating_cond.wait(&isIterating_mutex);
-	}
 	isIterating_mutex.unlock();
 }
 
@@ -152,7 +147,6 @@ void FRAlgorithm::Run()
 	if(this->graph != NULL)
 	{
 		isIterating_mutex.lock();
-		isIterating = true;
 		notEnd = true;
 		while (notEnd) 
 		{			
@@ -160,23 +154,15 @@ void FRAlgorithm::Run()
 			// alebo je graf zmrazeny (spravidla pocas editacie)
 			while (notEnd && (state != RUNNING || graph->isFrozen()))
 			{
-				if(state == PAUSED)
-				{
-					isIterating = false;
-					isIterating_cond.wakeAll();
-				}
 				isIterating_mutex.unlock();
 				QThread::msleep(100);
 				isIterating_mutex.lock();
 			}
-			isIterating = true;
 			if (!iterate()) {
 				graph->setFrozen(true);
 			}			
 		}
 
-		isIterating = false;
-		isIterating_cond.wakeAll();
 		isIterating_mutex.unlock();
 	}
 	else
