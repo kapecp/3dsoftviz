@@ -676,6 +676,8 @@ namespace Data
 		*/
 		QMap<qlonglong, osg::ref_ptr<Data::Edge> >* metaEdges;
 
+		QList<QSet<Data::Node *>> nestetSubGraphs;
+
 		/**
 		*  QMap<qlonglong,Data::Type*> * types
 		*  \brief Types in the Graph
