@@ -15,7 +15,7 @@ namespace Layout {
  * 1. Call setOriginalPosition to set the original position (the restricted position will be computed
  * using this position - e.g. restricting using some shape definitions will result in finding of the nearest
  * point to the original point which conform the restriction).
- * 2. Call visit with the restriction shape (get from shape getter) as an argument.
+ * 2. Accept the visitor by the restriction shape (get from shape getter).
  * 3. Call getRestrictedPosition to get the result.
  */
 class ShapeVisitor_RestrictedPositionGetter : public ShapeVisitor {

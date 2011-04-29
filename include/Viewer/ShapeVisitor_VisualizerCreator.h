@@ -13,7 +13,7 @@ namespace Vwr {
 /**
  * \brief Creates visualizations of provided shapes.
  * Usage:
- * 1. Call visit method with the shape definition to visualize.
+ * 1. Accept the visitor by the shape definition to visualize.
  * 2. Call getCreatedVisualizer to get created OSG objects which visualize the restriction.
  * [visitor pattern]
  */
