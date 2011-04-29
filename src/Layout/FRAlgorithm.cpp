@@ -14,6 +14,7 @@ FRAlgorithm::FRAlgorithm()
 	MAX_MOVEMENT = 30;
 	MAX_DISTANCE = 400;	
 	state = RUNNING;
+	notEnd = true;
 	center = osg::Vec3f (0,0,0);
 	fv = osg::Vec3f();
 	last = osg::Vec3f();
@@ -33,6 +34,7 @@ FRAlgorithm::FRAlgorithm(Data::Graph *graph)
 	MAX_MOVEMENT = 30;
 	MAX_DISTANCE = 400;	
 	state = RUNNING;
+	notEnd = true;
 	osg::Vec3f p(0,0,0);	
 	center = p;	
 	fv = osg::Vec3f();
@@ -48,7 +50,8 @@ FRAlgorithm::FRAlgorithm(Data::Graph *graph)
 }
 
 void FRAlgorithm::SetGraph(Data::Graph *graph)
-{	
+{
+	notEnd = true;
 	this->graph = graph;
 	this->Randomize();
 }
@@ -147,7 +150,6 @@ void FRAlgorithm::Run()
 	if(this->graph != NULL)
 	{
 		isIterating_mutex.lock();
-		notEnd = true;
 		while (notEnd) 
 		{			
 			// slucka pozastavenia - ak je pauza
