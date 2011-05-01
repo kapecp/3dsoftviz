@@ -53,7 +53,12 @@ namespace Manager
              * \brief Loads graph from GraphML file.
              */
             Data::Graph* loadGraph(QString filepath);
-
+			
+			/**
+             * \fn loadGraph
+             * \brief Loads graph from GraphML file.
+             */
+			Data::Graph* createNewGraph(QString name);
 			/**
              * \fn loadGraphFromDB
              * \brief Loads selected graph from database.

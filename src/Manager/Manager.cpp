@@ -161,6 +161,56 @@ Data::Graph* Manager::GraphManager::loadGraph(QString filepath)
     return (ok ? this->activeGraph : NULL);
 }
 
+Data::Graph* Manager::GraphManager::createNewGraph(QString name)
+{
+	bool ok = true;
+
+    AppCore::Core::getInstance()->thr->pause();
+
+    // create info handler
+	std::auto_ptr<Importer::ImportInfoHandler> infoHandler (NULL);
+	if (ok) {
+		infoHandler.reset (new ImportInfoHandlerImpl);
+	}
+
+	// get name and extension
+	//QString name;
+	QString extension;
+
+
+    // create graph
+    std::auto_ptr<Data::Graph> newGraph (NULL);
+    if (ok) {
+		newGraph.reset (this->createGraph (name));
+		ok = (newGraph.get () != NULL);
+    }
+
+    // add layout
+    if (ok) {
+		Data::GraphLayout* gLay = newGraph->addLayout ("new Layout");
+		newGraph->selectLayout (gLay);
+	}
+
+    // set as active graph
+    if (ok) {
+    	// ak uz nejaky graf mame, tak ho najprv sejvneme a zavrieme
+		if(this->activeGraph != NULL){
+			//this->saveGraph(this->activeGraph);
+			this->closeGraph(this->activeGraph);
+		}
+		this->activeGraph = newGraph.release ();
+    }
+
+    if (ok) {
+    	// robime zakladnu proceduru pre restartovanie layoutu
+    	AppCore::Core::getInstance()->restartLayout();
+    }
+
+    return (ok ? this->activeGraph : NULL);
+}
+
+
+
 Data::Graph* Manager::GraphManager::loadGraphFromDB(qlonglong graphID, qlonglong layoutID)
 {
 	Data::Graph* newGraph;

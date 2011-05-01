@@ -835,15 +835,10 @@ bool CoreWindow::add_NodeClick()
 	}
 	else
 	{
-		Data::Graph * currentGraph1= Manager::GraphManager::getInstance()->createGraph("NewGraph");
-		Data::GraphLayout * newLayout= currentGraph1->addLayout("new_Layout");
-		currentGraph1->selectLayout(newLayout);
-
+		currentGraph= Manager::GraphManager::getInstance()->createNewGraph("NewGraph");
 		osg::Vec3 position = viewerWidget->getPickHandler()->getSelectionCenter(true); 
-		Data::MetaType* type = currentGraph1->addMetaType(Data::GraphLayout::META_NODE_TYPE);
-		osg::ref_ptr<Data::Node> node1 = currentGraph1->addNode("newNode", currentGraph->getNodeMetaType(), position);	
-		//QLinkedList<osg::ref_ptr<Data::Node> > * selectedNodes = viewerWidget->getPickHandler()->getSelectedNodes();
-
+		Data::MetaType* type = currentGraph->addMetaType(Data::GraphLayout::META_NODE_TYPE);
+		osg::ref_ptr<Data::Node> node1 = currentGraph->addNode("newNode", type);	
 		if (isPlaying)
 			layout->play();
 	}
