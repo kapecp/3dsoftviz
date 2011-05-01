@@ -48,6 +48,8 @@ public:
 	 * \param[in] originalPosition Original position of the node as computed by the layout algorithm.
 	 * The returned restricted position is mostly the nearest point to the originalPosition which conforms
 	 * the restriction.
+	 * The process of getting the restricted position includes getting the latest shape from the shape getter and
+	 * notifying the observer if the shape has been changed.
 	 */
 	osg::Vec3f applyRestriction (
 		Data::Node &node,
