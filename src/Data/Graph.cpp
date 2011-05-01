@@ -312,6 +312,7 @@ osg::ref_ptr<Data::Node> Data::Graph::addNode(QString name, Data::Type* type, os
 	if(this->parent_id.count()>0)
 	{
 		this->nestedNodes.insert(node.get());
+		this->nestetSubGraphs.last().insert(node.get());
 	}
 
 	this->addNestedNode(node);
@@ -495,6 +496,8 @@ void Data::Graph::createNestedGraph(osg::ref_ptr<Data::Node> srcNode)
 {
 	this->parent_id.append(srcNode);
 	srcNode->setAsParentNode();
+	QSet<Data::Node *> nn;
+	nestetSubGraphs.append(nn);
 }
 
 void Data::Graph::closeNestedGraph()
@@ -502,15 +505,17 @@ void Data::Graph::closeNestedGraph()
 	QSharedPointer<Layout::ShapeGetter> shapeGetter (
 		new Layout::ShapeGetter_Sphere_AroundNode (
 			this->parent_id.last(),
-			10,
+			getNodeScale()*4,
 			Layout::Shape_Sphere::RANDOM_DISTANCE_FROM_CENTER,
 			Layout::ShapeGetter_Sphere_AroundNode::NODE_CURRENT_POSITION
 		)
 	);
-	restrictionsManager_.setRestrictions (this->nestedNodes, shapeGetter);
+	restrictionsManager_.setRestrictions (this->nestetSubGraphs.last(), shapeGetter);
+	//restrictionsManager_.setRestrictions (this->nestedNodes, shapeGetter);
 
 	//this->getRestrictionsManager().setRestrictions(
 	this->nestedNodes.clear();
+	this->nestetSubGraphs.removeLast();
 	this->parent_id.removeLast();
 }
 
@@ -534,7 +539,7 @@ osg::ref_ptr<Data::Edge> Data::Graph::addEdge(QString name, osg::ref_ptr<Data::N
 	{
 		//adding single edge to graph
 
-		if(this->parent_id.count()>0)
+		if(this->nestetSubGraphs.count()>0) //parent_id.count()>0)
 		{
 			type = getNestedEdgeType();
 		}

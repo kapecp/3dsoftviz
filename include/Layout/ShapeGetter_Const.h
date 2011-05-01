@@ -6,6 +6,9 @@
 
 namespace Layout {
 
+/**
+ * \brief Returning a constant shape (specified in the constructor).
+ */
 class ShapeGetter_Const : public ShapeGetter {
 
 public:

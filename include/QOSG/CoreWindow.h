@@ -177,11 +177,29 @@ namespace QOSG
 				*/
 				void applyColorClick();
 				
+				/**
+				 * \brief Creates a new SphereSurface restriction (defined by positions of 2 nodes) and sets
+				 * if to all selected nodes (replacing any previously attached restrictions to these nodes).
+				 */
 				void setRestriction_SphereSurface ();
-				void setRestriction_Sphere ();
-				void setRestriction_Plane ();
-				void unsetRestriction ();
 
+				/**
+				 * \brief Creates a new Sphere restriction (defined by positions of 2 nodes) and sets
+				 * if to all selected nodes (replacing any previously attached restrictions to these nodes).
+				 */
+				void setRestriction_Sphere ();
+
+				/**
+				 * \brief Creates a new Plane restriction (defined by positions of 3 nodes) and sets
+				 * if to all selected nodes (replacing any previously attached restrictions to these nodes).
+				 */
+				void setRestriction_Plane ();
+
+				/**
+				 * \brief Removes restrictions from all selected nodes (if any has been set). Destroys a
+				 * restriction (including manipulation nodes) if the last usage has been removed.
+				 */
+				void unsetRestriction ();
 								
 				/**
 				*  \fn public  add_EdgeClick
@@ -323,9 +341,24 @@ namespace QOSG
 		*/
 		QPushButton * applyColor;
 
+		/**
+		 * \brief Button for adding SphereSurface restriction.
+		 */
 		QPushButton * b_SetRestriction_SphereSurface;
+
+		/**
+		 * \brief Button for adding Sphere restriction.
+		 */
 		QPushButton * b_SetRestriction_Sphere;
+
+		/**
+		 * \brief Button for adding Plane restriction.
+		 */
 		QPushButton * b_SetRestriction_Plane;
+
+		/**
+		 * \brief Button for removing restrictions.
+		 */
 		QPushButton * b_UnsetRestriction;
 
 		/**
@@ -493,6 +526,9 @@ namespace QOSG
 
 	private:
 
+		/**
+		 * \brief Gets selected nodes and sets the restriction defined by shapeGetter to these nodes.
+		 */
 		void setRestrictionToSelectedNodes (
 			QSharedPointer<Layout::ShapeGetter> shapeGetter,
 			Data::Graph * currentGraph,

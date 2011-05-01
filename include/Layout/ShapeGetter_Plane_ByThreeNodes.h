@@ -8,6 +8,10 @@
 
 namespace Layout {
 
+/**
+ * \brief Returning a plane defined by three points (specified by current positions of three nodes
+ * provided in the constructor).
+ */
 class ShapeGetter_Plane_ByThreeNodes : public ShapeGetter {
 
 public:

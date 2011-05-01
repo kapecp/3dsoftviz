@@ -8,6 +8,12 @@
 
 namespace Layout {
 
+/**
+ * \brief Returning a sphere surface.
+ * Center is defined by the centerNode position.
+ * Radius is defined by the surfaceNode position (the radius is computed in a way that
+ * surfaceNode will be placed on the surface of the resulting sphere surface).
+ */
 class ShapeGetter_SphereSurface_ByTwoNodes : public ShapeGetter {
 
 public:

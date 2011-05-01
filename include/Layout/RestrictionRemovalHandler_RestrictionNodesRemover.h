@@ -11,17 +11,24 @@
 
 namespace Layout {
 
+/**
+ * \brief Removes nodes from a graph when notified. Nodes and graph are specified in constructor parameters.
+ * Used to remove nodes which are used to change the restriction (e.g. by defining the sphere center and radius)
+ * which has been added by the user using GUI.
+ */
 class RestrictionRemovalHandler_RestrictionNodesRemover : public RestrictionRemovalHandler {
 
 public:
 
 	typedef QList<osg::ref_ptr<Data::Node> > NodesListType;
 
+	/***/
 	RestrictionRemovalHandler_RestrictionNodesRemover (
 		Data::Graph & graph,
 		NodesListType nodesToRemove
 	);
 
+	/***/
 	virtual void afterRestrictionRemoved (void);
 
 	/***/

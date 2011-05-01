@@ -8,6 +8,14 @@
 
 namespace Layout {
 
+/**
+ * [immutable]
+ * Restriction policy defines the way of computing restricted position,
+ * if the original position does not conform the restriction defined by the
+ * shape.
+ * RANDOM_DISTANCE_FROM_CENTER - distance of the new position from the sphere center is random
+ * SURFACE - the new position is a point on the sphere surface
+ */
 class Shape_Sphere : public Shape_AbstractSphere {
 
 public:
@@ -26,6 +34,9 @@ public:
 	/***/
 	virtual ~Shape_Sphere (void) {};
 
+	/**
+	 * [visitor pattern]
+	 */
 	virtual void accept (
 		ShapeVisitor & visitor
 	);

@@ -47,6 +47,8 @@ AppCore::Core::~Core()
 
 void AppCore::Core::restartLayout()
 {
+	// [GrafIT][!] the layout algorithm did not end correctly, what caused more instances
+	// to be running, fixed it here + made modifications in FRAlgorithm to make correct ending possible
 	this->thr->requestEnd();
 	this->thr->wait();
     delete this->thr;

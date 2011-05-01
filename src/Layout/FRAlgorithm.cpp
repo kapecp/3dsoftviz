@@ -14,6 +14,7 @@ FRAlgorithm::FRAlgorithm()
 	MAX_MOVEMENT = 30;
 	MAX_DISTANCE = 400;	
 	state = RUNNING;
+	notEnd = true;
 	center = osg::Vec3f (0,0,0);
 	fv = osg::Vec3f();
 	last = osg::Vec3f();
@@ -23,7 +24,6 @@ FRAlgorithm::FRAlgorithm()
 	
 	/* moznost odpudiveho posobenia limitovaneho vzdialenostou*/
 	useMaxDistance = false;
-	isIterating = false;
 	this->graph = NULL;
 }
 FRAlgorithm::FRAlgorithm(Data::Graph *graph) 
@@ -34,6 +34,7 @@ FRAlgorithm::FRAlgorithm(Data::Graph *graph)
 	MAX_MOVEMENT = 30;
 	MAX_DISTANCE = 400;	
 	state = RUNNING;
+	notEnd = true;
 	osg::Vec3f p(0,0,0);	
 	center = p;	
 	fv = osg::Vec3f();
@@ -44,13 +45,13 @@ FRAlgorithm::FRAlgorithm(Data::Graph *graph)
 	
 	/* moznost odpudiveho posobenia limitovaneho vzdialenostou*/
 	useMaxDistance = false;
-	isIterating = false;
 	this->graph = graph;
 	this->Randomize();
 }
 
 void FRAlgorithm::SetGraph(Data::Graph *graph)
-{	
+{
+	notEnd = true;
 	this->graph = graph;
 	this->Randomize();
 }
@@ -112,6 +113,8 @@ double FRAlgorithm::getRandomDouble()
 void FRAlgorithm::PauseAlg() 
 {	
 	state = PAUSED;
+	isIterating_mutex.lock();
+	isIterating_mutex.unlock();
 }
 
 void FRAlgorithm::WakeUpAlg() 
@@ -134,7 +137,7 @@ void FRAlgorithm::RunAlg()
 
 bool FRAlgorithm::IsRunning() 
 {
-	return isIterating;
+	return (state == RUNNING);
 }
 
 void FRAlgorithm::RequestEnd()
@@ -144,34 +147,26 @@ void FRAlgorithm::RequestEnd()
 
 void FRAlgorithm::Run() 
 {
-	notEnd = true;
-
 	if(this->graph != NULL)
 	{
-		isIterating = true;
+		isIterating_mutex.lock();
 		while (notEnd) 
 		{			
 			// slucka pozastavenia - ak je pauza
 			// alebo je graf zmrazeny (spravidla pocas editacie)
 			while (notEnd && (state != RUNNING || graph->isFrozen()))
-			{				
-				QThread::msleep(100);				
-				if(state == PAUSED)
-				{
-					if(isIterating)
-					{
-						isIterating = false;
-					}
-				}
-			}
-			if(!isIterating)
 			{
-				isIterating = true;
+				// [GrafIT][!] not 100% OK (e.g. msleep(100) remains here), but we have fixed the most obvious multithreading issues of the original code
+				isIterating_mutex.unlock();
+				QThread::msleep(100);
+				isIterating_mutex.lock();
 			}
 			if (!iterate()) {
 				graph->setFrozen(true);
 			}			
 		}
+
+		isIterating_mutex.unlock();
 	}
 	else
 	{

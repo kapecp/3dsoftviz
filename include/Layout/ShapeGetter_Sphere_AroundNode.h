@@ -8,6 +8,16 @@
 
 namespace Layout {
 
+/**
+ * \brief Returning a sphere.
+ * Center is defined by the center of the node provided in the constructor. The radius
+ * and restriction policy are constant and specified in the constructor.
+ * Center source specifies the way of getting the sphere center from the node center:
+ * - NODE_CURRENT_POSITION - the current node position is captured (where the node is placed
+ * in the scene and where it is currently visible)
+ * - NODE_TARGET_POSITION - the latest position computed by the layout algorithm (the node
+ * is moving to this position)
+ */
 class ShapeGetter_Sphere_AroundNode : public ShapeGetter {
 
 public:

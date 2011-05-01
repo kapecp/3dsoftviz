@@ -9,6 +9,9 @@
 
 namespace Layout {
 
+/**
+ * Shape which can be composed using more shapes of various types.
+ */
 class Shape_Composite : public Shape {
 
 public:
@@ -24,6 +27,9 @@ public:
 
 	ShapesListType & getShapes (void);
 
+	/**
+	 * [visitor pattern]
+	 */
 	virtual void accept (
 		ShapeVisitor & visitor
 	);

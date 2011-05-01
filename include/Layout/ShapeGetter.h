@@ -8,6 +8,12 @@
 
 namespace Layout {
 
+/**
+ * \brief Implementations return current restriction shape.
+ * [interface]
+ * The purpose was to create the possibility to define dynamic shapes - the implementation
+ * can return different shape after each call of getShape.
+ */
 class ShapeGetter {
 
 public:

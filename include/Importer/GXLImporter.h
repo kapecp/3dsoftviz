@@ -29,20 +29,27 @@ public:
 private:
 
 	/**
+	 * \brief Parses one graph (or subgraph).
+	 * [recursive]
 	 * <graph> XML node must already have been processed
 	 * </graph> XML node is processed by this function
-	 * [recursive]
 	 */
 	bool parseGraph (void);
 
 private:
 
-	// context
+	/**
+	 * \brief Holds input (file stream) and output (graph structure and objects used for import process information reporting).
+	 */
 	ImporterContext *context_;
 
 	// helpers
 	std::auto_ptr<QXmlStreamReader> xml_;
 	std::auto_ptr<GraphOperations> graphOp_;
+
+	/**
+	 * \brief Used for searching for a node when an edge references it.
+	 */
 	std::auto_ptr<ReadNodesStore> readNodes_;
 
 	//default types

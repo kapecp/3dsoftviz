@@ -8,6 +8,9 @@
 
 namespace Layout {
 
+/**
+ * [immutable]
+ */
 class Shape_SphereSurface : public Shape_AbstractSphere {
 
 public:
@@ -20,6 +23,9 @@ public:
 	/***/
 	virtual ~Shape_SphereSurface (void) {};
 
+	/**
+	 * [visitor pattern]
+	 */
 	virtual void accept (
 		ShapeVisitor & visitor
 	);

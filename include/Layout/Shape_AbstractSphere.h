@@ -8,6 +8,11 @@
 
 namespace Layout {
 
+/**
+ * \brief Base class for Sphere and SphereSurface (shapes which need to have
+ * center and radius defined).
+ * [immutable]
+ */
 class Shape_AbstractSphere : public Shape {
 
 public:
@@ -21,6 +26,9 @@ public:
 
 	float getRadius ();
 
+	/**
+	 * [visitor pattern]
+	 */
 	virtual void accept (
 		ShapeVisitor & visitor
 	) = 0;
