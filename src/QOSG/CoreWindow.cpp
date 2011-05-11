@@ -527,6 +527,9 @@ void CoreWindow::removeMetaNodes()
 
 void CoreWindow::loadFile()
 {
+	//treba overit
+	layout->pause();
+	coreGraph->setNodesFreezed(true);
 	QString fileName = QFileDialog::getOpenFileName(this,
 		tr("Open file"), ".", tr("GraphML files (*.graphml);;GXL files (*.gxl);;RSF files (*.rsf)"));
 
@@ -534,6 +537,13 @@ void CoreWindow::loadFile()
 		Manager::GraphManager::getInstance()->loadGraph(fileName);
 
 		viewerWidget->getCameraManipulator()->home();
+	}
+
+	//treba overit ci funguje
+	if (isPlaying)
+	{
+		layout->play();
+		coreGraph->setNodesFreezed(false);
 	}
 }
 
@@ -782,7 +792,7 @@ bool CoreWindow::add_EdgeClick()
 	node1=(* ni);
 	++ni;
 	QMap<qlonglong, osg::ref_ptr<Data::Edge> > *mapa = currentGraph->getEdges();
-	Data::Type* type = currentGraph->addType(Data::GraphLayout::EDGE_TYPE);
+	Data::Type* type = currentGraph->addType(Data::GraphLayout::META_EDGE_TYPE);
 	for (QMap<qlonglong, osg::ref_ptr<Data::Edge> >::iterator it = mapa->begin (); it != mapa->end (); ++it) {
 			osg::ref_ptr<Data::Edge> existingEdge = it.value ();
 			if (
@@ -829,12 +839,10 @@ bool CoreWindow::add_NodeClick()
 	}
 	else
 	{
-		Data::Graph * currentGraph1= Manager::GraphManager::getInstance()->createGraph("NewGraph");
+		currentGraph= Manager::GraphManager::getInstance()->createNewGraph("NewGraph");
 		osg::Vec3 position = viewerWidget->getPickHandler()->getSelectionCenter(true); 
-		Data::MetaType* type = currentGraph1->addMetaType(Data::GraphLayout::META_NODE_TYPE);
-		osg::ref_ptr<Data::Node> node1 = currentGraph1->addNode("newNode", type);	
-		//QLinkedList<osg::ref_ptr<Data::Node> > * selectedNodes = viewerWidget->getPickHandler()->getSelectedNodes();
-
+		Data::MetaType* type = currentGraph->addMetaType(Data::GraphLayout::META_NODE_TYPE);
+		osg::ref_ptr<Data::Node> node1 = currentGraph->addNode("newNode", type);	
 		if (isPlaying)
 			layout->play();
 	}
@@ -856,18 +864,11 @@ bool CoreWindow::removeClick()
 
 	while (selectedNodes->size () > 0) {
 		osg::ref_ptr<Data::Node> existingNode1 = (* (selectedNodes->constBegin()));
-		currentGraph->removeNode(existingNode1);
+		if (existingNode1->isRemovableByUser())
+			currentGraph->removeNode(existingNode1);
 		selectedNodes->removeFirst ();
 	}
 
-	
-/*
-	while (i != selectedNodes->constEnd()) 
-	{
-		currentGraph->removeNode((*i));
-		++i;
-	}
-	*/
 	int NodesCount=currentGraph->getNodes()->size();
 	cout<<NodesCount;
 	if (isPlaying)

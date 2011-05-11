@@ -122,6 +122,7 @@ bool GXLImporter::parseGraph (void) {
 
 	osg::ref_ptr<Data::Node> currentNode (NULL);
 	osg::ref_ptr<Data::Edge> currentEdge (NULL);
+	osg::ref_ptr<Data::Node> hyperEdgeNode (NULL);
 	bool inHyperedge = false;
 
 	while (ok && !xml_->atEnd ()) {
@@ -332,19 +333,31 @@ bool GXLImporter::parseGraph (void) {
 			}
 
 			// hyperedge
+			
 			if (
 				(token == QXmlStreamReader::StartElement)
 				&&
 				(xml_->name () == "rel")
 			) {
+				
 				if (ok) {
 					ok = (!currentNode) && (!currentEdge) && (!inHyperedge);
 
 					context_->getInfoHandler ().reportError (ok, "Hyperedge in node/edge/hyperedge found.");
 				}
+				QXmlStreamAttributes attrs = xml_->attributes();
+				QString hyperEdgeName;
+				if (ok) {
+					hyperEdgeName = attrs.value ("id").toString ();
 
+					ok = !(hyperEdgeName.isEmpty ());
+
+					context_->getInfoHandler ().reportError (ok, "Node ID can not be empty.");
+				}
+				
 				if (ok) {
 					// TODO: begin hyperedge
+					hyperEdgeNode = context_->getGraph ().addHyperEdge(hyperEdgeName);
 				}
 
 				if (ok) {
@@ -429,6 +442,12 @@ bool GXLImporter::parseGraph (void) {
 
 				if (ok) {
 					// TODO: add endpoint
+					if (direction==QString("in"))
+						context_->getGraph ().addEdge("", target, hyperEdgeNode, nodeType_, true);
+					else if (direction==QString("out"))
+						context_->getGraph ().addEdge("", hyperEdgeNode, target, nodeType_, true);
+					else
+						context_->getGraph ().addEdge("", hyperEdgeNode, target, nodeType_, false);
 				}
 			}
 
