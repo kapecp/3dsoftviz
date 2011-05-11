@@ -14,6 +14,8 @@ Model::EdgeDAO::~EdgeDAO(void)
 
 bool Model::EdgeDAO::addEdgesToDB(QSqlDatabase* conn, QMap<qlonglong, osg::ref_ptr<Data::Edge> >* edges)
 {
+	bool isNested;
+
 	//check if we have connection
 	if(conn==NULL || !conn->isOpen()) 
 	{ 
@@ -27,7 +29,11 @@ bool Model::EdgeDAO::addEdgesToDB(QSqlDatabase* conn, QMap<qlonglong, osg::ref_p
  
 	while(iEdges != edges->constEnd()) 
 	{
-		query->prepare("INSERT INTO edges (edge_id, name, type_id, n1, n2, oriented, meta, graph_id) VALUES (:edge_id, :name, :type_id, :n1, :n2, :oriented, :meta, :graph_id) RETURNING  edge_id");
+		isNested = false;
+		if(iEdges.value()->getType() == iEdges.value()->getGraph()->getNestedEdgeType())
+			isNested = true;
+
+		query->prepare("INSERT INTO edges (edge_id, name, type_id, n1, n2, oriented, meta, graph_id, nested) VALUES (:edge_id, :name, :type_id, :n1, :n2, :oriented, :meta, :graph_id, :nested) RETURNING  edge_id");
 		query->bindValue(":edge_id", iEdges.value()->getId());
 		query->bindValue(":name", iEdges.value()->getName());
 		query->bindValue(":type_id", iEdges.value()->getType()->getId());
@@ -36,6 +42,7 @@ bool Model::EdgeDAO::addEdgesToDB(QSqlDatabase* conn, QMap<qlonglong, osg::ref_p
 		query->bindValue(":oriented", iEdges.value()->isOriented());
 		query->bindValue(":meta", false);
 		query->bindValue(":graph_id", iEdges.value()->getGraph()->getId());
+		query->bindValue(":nested", isNested);
 
 		if(!query->exec()) {
 			qDebug() << "[Model::EdgeDAO::addEdgesToDB] Could not perform query on DB: " << query->lastError().databaseText();
@@ -51,6 +58,8 @@ bool Model::EdgeDAO::addEdgesToDB(QSqlDatabase* conn, QMap<qlonglong, osg::ref_p
 
 bool Model::EdgeDAO::addMetaEdgesToDB(QSqlDatabase* conn, QMap<qlonglong, osg::ref_ptr<Data::Edge> >* edges, Data::GraphLayout* layout, QMap<qlonglong, qlonglong> newMetaNodeID, QMap<qlonglong, qlonglong> newMetaEdgeID)
 {
+	bool isNested;
+
 	//check if we have connection
 	if(conn==NULL || !conn->isOpen()) 
 	{ 
@@ -97,8 +106,11 @@ bool Model::EdgeDAO::addMetaEdgesToDB(QSqlDatabase* conn, QMap<qlonglong, osg::r
 			qDebug() << "[Model::NodeDAO::addMetaEdgesToDB] Edge ID: " << iEdges.value()->getId() <<  " mismatch";
 		}
 
+		isNested = false;
+		if(iEdges.value()->getType() == iEdges.value()->getGraph()->getNestedEdgeType())
+			isNested = true;
 
-		query->prepare("INSERT INTO edges (edge_id, name, type_id, n1, n2, oriented, meta, graph_id, layout_id) VALUES (:edge_id, :name, :type_id, :n1, :n2, :oriented, :meta, :graph_id, :layout_id) RETURNING  edge_id");
+		query->prepare("INSERT INTO edges (edge_id, name, type_id, n1, n2, oriented, meta, graph_id, layout_id, nested) VALUES (:edge_id, :name, :type_id, :n1, :n2, :oriented, :meta, :graph_id, :layout_id, :nested) RETURNING  edge_id");
 		query->bindValue(":edge_id", edgeID);
 		query->bindValue(":name", iEdges.value()->getName());
 		query->bindValue(":type_id", iEdges.value()->getType()->getId());
@@ -108,6 +120,7 @@ bool Model::EdgeDAO::addMetaEdgesToDB(QSqlDatabase* conn, QMap<qlonglong, osg::r
 		query->bindValue(":meta", true);
 		query->bindValue(":graph_id", iEdges.value()->getGraph()->getId());
 		query->bindValue(":layout_id", layout->getId());
+		query->bindValue(":nested", isNested);
 
 		if(!query->exec()) {
 			qDebug() << "[Model::EdgeDAO::addMetaEdgesToDB] Could not perform query on DB: " << query->lastError().databaseText();

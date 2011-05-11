@@ -206,7 +206,8 @@ CREATE TABLE edges (
     oriented boolean DEFAULT true NOT NULL,
     meta boolean DEFAULT false NOT NULL,
     graph_id integer NOT NULL,
-    layout_id bigint
+    layout_id bigint,
+	nested boolean DEFAULT false NOT NULL
 );
 
 
@@ -338,7 +339,8 @@ CREATE TABLE nodes (
     graph_id integer NOT NULL,
     meta boolean DEFAULT false NOT NULL,
     fixed boolean DEFAULT false NOT NULL,
-    layout_id bigint 
+    layout_id bigint,
+	parent_id bigint
 );
 
 

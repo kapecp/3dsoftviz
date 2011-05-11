@@ -71,10 +71,16 @@ namespace QOSG
 		QPushButton *loadButton;
 
 		/**
-		*  QPushButton *loadButton
-		*  \brief Load button
+		*  QPushButton *removeButton
+		*  \brief Remove button
 		*/
 		QPushButton *removeButton;
+		
+		/**
+		*  QPushButton *renameButton
+		*  \brief Rename button
+		*/
+		QPushButton *renameButton;
 
 		/**
 		*  QLabel *numberOfGraphs
@@ -107,6 +113,11 @@ namespace QOSG
 			*/
 			void removeGraph();
 
+			/**
+			*  \fn renameGraph()
+			*  \brief	Slot which is called when user click on rename button
+			*/
+			void renameGraph();
 	};
 }
 

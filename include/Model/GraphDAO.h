@@ -69,6 +69,15 @@ namespace Model
 		*/
 		static bool addGraph(Data::Graph* graph, QSqlDatabase* conn);
         
+		/**
+		*  \fn public static setGraphName(qlonglong graphID, QString graphName, QSqlDatabase* conn)
+		*  \brief Rename Graph in the database
+		*  \param  graphID     Graph ID
+		*  \param  graphName     Graph name
+		*  \param  conn    connection to the database
+		*  \return bool true, if the Graph was successfully renamed in the database
+		*/
+		static bool setGraphName(qlonglong graphID, QString graphName, QSqlDatabase* conn);
 
 		/**
 		*  \fn public static  removeGraph(Data::Graph* graph, QSqlDatabase* conn)

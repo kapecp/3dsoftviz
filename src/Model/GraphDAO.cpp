@@ -52,39 +52,80 @@ QMap<qlonglong, Data::Graph*> Model::GraphDAO::getGraphs(QSqlDatabase* conn, boo
     return qgraphs;
 }
 
+
+void getNestedGraph(qlonglong parentID, Data::Graph** graph, QSqlDatabase* conn, bool* error2, qlonglong graphID, qlonglong layoutID, qlonglong* maxIdEleUsed, QMap<qlonglong, osg::Vec3f>* positions, QMap<qlonglong, Data::Node*>* nodes, Data::Type* typeNode, Data::Type* typeMetaNode, QList<qlonglong>* parentNodes)
+{
+	bool error;
+	qlonglong nodeID;
+	QString nodeName;
+	Data::Type* type;
+	osg::Vec3f position;
+	QSqlQuery* queryNestedNodes;
+	Data::Node* newNestedNode;
+
+	queryNestedNodes = Model::NodeDAO::getNodesQuery(conn, &error, graphID, layoutID, parentID);
+
+	//TODO pridat vnorenym nodom atributy - scale, farbu, ...
+	while(queryNestedNodes->next()) 
+	{
+		nodeID = queryNestedNodes->value(0).toLongLong();
+		nodeName = queryNestedNodes->value(1).toString();
+		type = queryNestedNodes->value(4).toBool() ? typeMetaNode : typeNode;
+		if(*maxIdEleUsed < nodeID)
+			*maxIdEleUsed = nodeID + 1;
+			
+		if((*positions).contains(nodeID))
+			position = (*positions).value(nodeID);
+
+		newNestedNode = (*graph)->addNode(nodeID, nodeName, type, position);
+		(*nodes).insert(nodeID, newNestedNode);
+		(*graph)->addNestedNode(newNestedNode);
+
+		if ((*parentNodes).contains(nodeID))
+		{
+			(*graph)->createNestedGraph(newNestedNode);
+
+			getNestedGraph(nodeID, graph, conn, &error, graphID, layoutID, maxIdEleUsed, positions, nodes, typeNode, typeMetaNode, parentNodes);
+
+			(*graph)->closeNestedGraph();
+		}
+	}
+}
+
 Data::Graph* Model::GraphDAO::getGraph(QSqlDatabase* conn, bool* error2, qlonglong graphID, qlonglong layoutID)
 {
 	Data::Graph* newGraph;
 	Data::GraphLayout* newLayout;
 	QSqlQuery* queryNodes;
 	QSqlQuery* queryEdges;
-	QSqlQuery* queryNodesPositions;
-	QString graphName, layoutName;
-	bool error = false;
+	QString graphName, layoutName, nodeName, edgeName;
+	bool error = false, isFixed, isOriented;
 	qlonglong nodeID1, nodeID2, nodeID, edgeID, maxIdEleUsed = 0;
+	Data::Type *type;
 	QMap<qlonglong, Data::Node*> nodes;
 	QMap<qlonglong, Data::Node*>::iterator iNodes1;
 	QMap<qlonglong, Data::Node*>::iterator iNodes2;
 	Data::Node* newNode; 
 	osg::Vec3f position;
-	QMap< qlonglong, QList<double> > positions;
-	QList<double> coordinates;
+	QMap<qlonglong, osg::Vec3f> positions;
 	QMap<qlonglong, osg::Vec4> nodeColors;
 	QMap<qlonglong, osg::Vec4f> edgeColors;
 	QMap<qlonglong, float> nodeScales;
 	QMap<qlonglong, float> edgeScales;
 	QMap<qlonglong, int> nodeMasks;
+	QList<qlonglong> parentNodes;
 
 	graphName = Model::GraphDAO::getName(graphID, &error, conn);
 	layoutName = Model::GraphLayoutDAO::getName(conn, &error, graphID, layoutID);
-	queryNodes = Model::NodeDAO::getNodesQuery(conn, &error, graphID, layoutID);
-	queryNodesPositions = Model::NodeDAO::getNodesPositionsQuery(conn, &error, graphID, layoutID);
+	queryNodes = Model::NodeDAO::getNodesQuery(conn, &error, graphID, layoutID, -1);
 	queryEdges = Model::EdgeDAO::getEdgesQuery(conn, &error, graphID, layoutID);
+	positions = Model::NodeDAO::getNodesPositions(conn, &error, graphID, layoutID);
 	nodeColors = Model::NodeDAO::getColors(conn, &error, graphID, layoutID);
 	edgeColors = Model::EdgeDAO::getColors(conn, &error, graphID, layoutID);
 	nodeScales = Model::NodeDAO::getScales(conn, &error, graphID, layoutID);
 	edgeScales = Model::EdgeDAO::getScales(conn, &error, graphID, layoutID);
 	nodeMasks = Model::NodeDAO::getMasks(conn, &error, graphID, layoutID);
+	parentNodes = Model::NodeDAO::getParents(conn, &error, graphID, layoutID);
 		
 	if(!error)
 	{
@@ -99,27 +140,25 @@ Data::Graph* Model::GraphDAO::getGraph(QSqlDatabase* conn, bool* error2, qlonglo
 		Data::Type *typeMetaNode = newGraph->getNodeMetaType();
 		Data::Type *typeMetaEdge = newGraph->getEdgeMetaType();
 
-		while(queryNodesPositions->next())
-		{
-			coordinates.clear();
-			coordinates << queryNodesPositions->value(2).toDouble() << queryNodesPositions->value(3).toDouble() << queryNodesPositions->value(4).toDouble();
-			positions.insert(queryNodesPositions->value(1).toLongLong(), coordinates);
-		}
-
 		while(queryNodes->next()) 
 		{
-			coordinates.clear();
-
 			nodeID = queryNodes->value(0).toLongLong();
+			nodeName = queryNodes->value(1).toString();
+			type = queryNodes->value(4).toBool() ? typeMetaNode : typeNode;
+			isFixed = queryNodes->value(5).toBool();
+
 			if(maxIdEleUsed < nodeID)
 				maxIdEleUsed = nodeID + 1;
 
-			coordinates = positions[queryNodes->value(0).toLongLong()];
-			position = osg::Vec3f(coordinates[0], coordinates[1], coordinates[2]);
-			newNode = newGraph->addNode(nodeID, queryNodes->value(1).toString(), (queryNodes->value(4).toBool() ? typeMetaNode : typeNode), position);
+			if(positions.contains(nodeID))
+			{
+				position = positions.value(nodeID);
+			}
+
+			newNode = newGraph->addNode(nodeID, nodeName, type, position);
 
 			//vsetky uzly nastavime fixed, aby sme zachovali layout
-			//hodnota, ktora je ulozena v DB: newNode->setFixed(queryNodes->value(5).toBool()); 
+			//hodnota, ktora je ulozena v DB - premenna isFixed 
 			newNode->setFixed(true);
 			
 			if(nodeColors.contains(nodeID))
@@ -138,19 +177,33 @@ Data::Graph* Model::GraphDAO::getGraph(QSqlDatabase* conn, bool* error2, qlonglo
 			}
 
 			nodes.insert(nodeID, newNode);
+
+			if (parentNodes.contains(nodeID))
+			{
+				newGraph->createNestedGraph(newNode);
+
+				getNestedGraph(nodeID, &newGraph, conn, &error, graphID, layoutID, &maxIdEleUsed, &positions, &nodes, typeNode, typeMetaNode, &parentNodes);
+
+				newGraph->closeNestedGraph();
+			}
 		}
 		
 		while(queryEdges->next()) 
 		{
 			edgeID = queryEdges->value(0).toLongLong();
+			edgeName = queryEdges->value(1).toString();
+			nodeID1 = queryEdges->value(3).toLongLong();
+			nodeID2 = queryEdges->value(4).toLongLong();
+			type = queryEdges->value(6).toBool() ? typeMetaEdge : typeEdge;
+			isOriented = queryEdges->value(5).toBool();
+
 			if(maxIdEleUsed < edgeID)
 				maxIdEleUsed = edgeID + 1;
 
-			nodeID1 = queryEdges->value(3).toLongLong();
-			nodeID2 = queryEdges->value(4).toLongLong();
 			iNodes1 = nodes.find(nodeID1);
 			iNodes2 = nodes.find(nodeID2);
-			newGraph->addEdge(edgeID, queryEdges->value(1).toString(), iNodes1.value(), iNodes2.value(), (queryEdges->value(6).toBool() ? typeMetaEdge : typeEdge), queryEdges->value(5).toBool());
+
+			newGraph->addEdge(edgeID, edgeName, iNodes1.value(), iNodes2.value(), type, isOriented);
 
 			if(edgeColors.contains(edgeID))
 			{
@@ -194,7 +247,7 @@ Data::Graph* Model::GraphDAO::addGraph(QString graph_name, QSqlDatabase* conn)
         qDebug() << "[Model::GraphDAO::addGraph] Could not perform query on DB: " << query->lastError().databaseText();
         return NULL;
     }
-
+	
     if(query->next()) {
         Data::Graph* graph = new Data::Graph(query->value(0).toLongLong(),graph_name,0,0,conn);
         graph->setIsInDB();
@@ -206,6 +259,27 @@ Data::Graph* Model::GraphDAO::addGraph(QString graph_name, QSqlDatabase* conn)
     }
 }
 
+bool Model::GraphDAO::setGraphName(qlonglong graphID, QString graphName, QSqlDatabase* conn)
+{
+    if(conn==NULL || !conn->isOpen()) { //check if we have connection
+        qDebug() << "[Model::GraphDAO::setGraphName] Connection to DB not opened.";
+        return false;
+    }
+
+	QSqlQuery* query = new QSqlQuery(*conn);
+    query->prepare("UPDATE graphs "
+		"SET graph_name = :graph_name "
+		"WHERE graph_id = :graph_id");
+    query->bindValue(":graph_name", graphName);
+	query->bindValue(":graph_id", graphID);
+
+    if(!query->exec()) {
+        qDebug() << "[Model::GraphDAO::setGraphName] Could not perform query on DB: " << query->lastError().databaseText();
+        return false;
+    }
+	
+	return true;
+}
 
 bool Model::GraphDAO::addGraph( Data::Graph* graph, QSqlDatabase* conn )
 {
