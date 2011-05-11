@@ -144,6 +144,8 @@ Data::Graph* Manager::GraphManager::loadGraph(QString filepath)
 	if(db->tmpGetConn() != NULL && db->tmpGetConn()->open()) { 
 		//ulozime obycajne uzly a hrany
 		this->activeGraph->saveGraphToDB(db->tmpGetConn(), this->activeGraph);
+		//nastavime meno grafu podla nazvu suboru
+		Model::GraphDAO::setGraphName(this->activeGraph->getId(), name, db->tmpGetConn());
 		//ulozime a nastavime default layout
 		Data::GraphLayout* layout = Model::GraphLayoutDAO::addLayout("original layout", this->activeGraph, db->tmpGetConn());
 		this->activeGraph->selectLayout(layout);

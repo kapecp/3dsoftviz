@@ -14,6 +14,8 @@ Model::NodeDAO::~NodeDAO(void)
 
 bool Model::NodeDAO::addNodesToDB(QSqlDatabase* conn, QMap<qlonglong, osg::ref_ptr<Data::Node> >* nodes)
 {
+	qlonglong parentId;
+
 	//check if we have connection
 	if(conn==NULL || !conn->isOpen()) 
 	{ 
@@ -27,13 +29,18 @@ bool Model::NodeDAO::addNodesToDB(QSqlDatabase* conn, QMap<qlonglong, osg::ref_p
 	
 	while(iNodes != nodes->constEnd()) 
 	{
-		query->prepare("INSERT INTO nodes (node_id, name, type_id, graph_id, meta, fixed) VALUES (:node_id, :name, :type_id, :graph_id, :meta, :fixed)");
+		parentId = -1;
+		if(iNodes.value()->getParentNode() != NULL)
+			parentId = iNodes.value()->getParentNode()->getId();
+
+		query->prepare("INSERT INTO nodes (node_id, name, type_id, graph_id, meta, fixed, parent_id) VALUES (:node_id, :name, :type_id, :graph_id, :meta, :fixed, :parent_id)");
 		query->bindValue(":node_id", iNodes.value()->getId());
 		query->bindValue(":name", iNodes.value()->getName());
 		query->bindValue(":type_id", iNodes.value()->getType()->getId()); 
 		query->bindValue(":graph_id", iNodes.value()->getGraph()->getId());
 		query->bindValue(":meta", false);
 		query->bindValue(":fixed", iNodes.value()->isFixed());
+		query->bindValue(":parent_id", parentId);
 
 		if(!query->exec()) {
 			qDebug() << "[Model::NodeDAO::addNodesToDB] Could not perform query on DB: " << query->lastError().databaseText();
@@ -50,6 +57,8 @@ bool Model::NodeDAO::addNodesToDB(QSqlDatabase* conn, QMap<qlonglong, osg::ref_p
 
 bool Model::NodeDAO::addMetaNodesToDB(QSqlDatabase* conn, QMap<qlonglong, osg::ref_ptr<Data::Node> >* nodes, Data::GraphLayout* layout, QMap<qlonglong, qlonglong> newMetaNodeID)
 {
+	qlonglong parentId;
+
 	//check if we have connection
 	if(conn==NULL || !conn->isOpen()) 
 	{ 
@@ -75,7 +84,21 @@ bool Model::NodeDAO::addMetaNodesToDB(QSqlDatabase* conn, QMap<qlonglong, osg::r
 			qDebug() << "[Model::NodeDAO::addMetaNodesToDB] Node ID: " << iNodes.value()->getId() <<  " mismatch";
 		}
 		
-		query->prepare("INSERT INTO nodes (node_id, name, type_id, graph_id, meta, fixed, layout_id) VALUES (:node_id, :name, :type_id, :graph_id, :meta, :fixed, :layout_id)");
+		parentId = -1;
+		if(iNodes.value()->getParentNode() != NULL)
+		{
+			if(newMetaNodeID.contains(iNodes.value()->getParentNode()->getId()))
+			{
+				nodeIdIter = newMetaNodeID.find(iNodes.value()->getParentNode()->getId());
+				parentId = nodeIdIter.value();
+			}
+			else
+			{
+				qDebug() << "[Model::NodeDAO::addMetaNodesToDB] Node ID: " << iNodes.value()->getId() <<  " mismatch";
+			}
+		}
+
+		query->prepare("INSERT INTO nodes (node_id, name, type_id, graph_id, meta, fixed, layout_id, parent_id) VALUES (:node_id, :name, :type_id, :graph_id, :meta, :fixed, :layout_id, :parent_id)");
 		query->bindValue(":node_id", nodeID);
 		query->bindValue(":name", iNodes.value()->getName());
 		query->bindValue(":type_id", iNodes.value()->getType()->getId()); 
@@ -83,6 +106,7 @@ bool Model::NodeDAO::addMetaNodesToDB(QSqlDatabase* conn, QMap<qlonglong, osg::r
 		query->bindValue(":meta", true);
 		query->bindValue(":fixed", iNodes.value()->isFixed());
 		query->bindValue(":layout_id", layout->getId());
+		query->bindValue(":parent_id", parentId);
 
 		if(!query->exec()) {
 			qDebug() << "[Model::NodeDAO::addMetaNodesToDB] Could not perform query on DB: " << query->lastError().databaseText();
@@ -265,7 +289,43 @@ bool Model::NodeDAO::addNodesMaskToDB(QSqlDatabase* conn, QMap<qlonglong, osg::r
 	return true;
 }
 
-QSqlQuery* Model::NodeDAO::getNodesQuery(QSqlDatabase* conn, bool* error, qlonglong graphID, qlonglong layoutID)
+bool Model::NodeDAO::addNodesParentToDB(QSqlDatabase* conn, QMap<qlonglong, osg::ref_ptr<Data::Node> >* nodes, Data::GraphLayout* layout, QMap<qlonglong, qlonglong> newMetaNodeID, bool meta)
+{
+	QMap< qlonglong,osg::ref_ptr<Data::Node> >::const_iterator iNodes = nodes->constBegin();
+	qlonglong nodeID;
+	QMap<qlonglong, qlonglong>::iterator nodeIdIter;
+	
+	while(iNodes != nodes->constEnd()) 
+	{
+		if(iNodes.value()->isParentNode())
+		{
+			if(meta)	
+			{
+				if(newMetaNodeID.contains(iNodes.value()->getId()))
+				{
+					nodeIdIter = newMetaNodeID.find(iNodes.value()->getId());
+					nodeID = nodeIdIter.value();
+				}
+				else
+				{
+					qDebug() << "[Model::NodeDAO::addNodesScaleToDB] Node ID: " << iNodes.value()->getId() <<  " mismatch";
+				}
+			}
+			else
+			{
+				nodeID = iNodes.value()->getId();
+			}
+
+			addSettings(conn, iNodes.value()->getGraph()->getId(), layout->getId(), nodeID, "is_parent", true);
+		}
+
+		++iNodes;
+	}
+	
+	return true;
+}
+
+QSqlQuery* Model::NodeDAO::getNodesQuery(QSqlDatabase* conn, bool* error, qlonglong graphID, qlonglong layoutID, qlonglong parentID)
 {
     *error = FALSE;
 	QSqlQuery* query;
@@ -282,9 +342,11 @@ QSqlQuery* Model::NodeDAO::getNodesQuery(QSqlDatabase* conn, bool* error, qlongl
     query->prepare("SELECT * "
 		"FROM nodes "
 		"WHERE graph_id = :graph_id "
-		"AND (layout_id IS NULL OR layout_id = :layout_id)");
+		"AND (layout_id IS NULL OR layout_id = :layout_id) "
+		"AND parent_id = :parent_id");
 	query->bindValue(":graph_id", graphID);
 	query->bindValue(":layout_id", layoutID);
+	query->bindValue(":parent_id", parentID);
 
     if(!query->exec()) {
         qDebug() << "[Model::NodeDAO::getNodes] Could not perform query on DB: " << query->lastError().databaseText();
@@ -295,18 +357,21 @@ QSqlQuery* Model::NodeDAO::getNodesQuery(QSqlDatabase* conn, bool* error, qlongl
     return query;
 }
 
-QSqlQuery* Model::NodeDAO::getNodesPositionsQuery(QSqlDatabase* conn, bool* error, qlonglong graphID, qlonglong layoutID)
+QMap<qlonglong, osg::Vec3f> Model::NodeDAO::getNodesPositions(QSqlDatabase* conn, bool* error, qlonglong graphID, qlonglong layoutID)
 {
-    *error = FALSE;
+	QMap<qlonglong, osg::Vec3f> positions;
+	*error = FALSE;
 	QSqlQuery* query;
     query = new QSqlQuery(*conn);
+	osg::Vec3f position;
+	qlonglong nodeId;
 
 	//check if we have connection
     if(conn==NULL || !conn->isOpen()) 
 	{ 
         qDebug() << "[Model::NodeDAO::getNodesPositions] Connection to DB not opened.";
         *error = TRUE;
-        return query;
+        return positions;
     }
 
     query->prepare("SELECT * "
@@ -319,10 +384,18 @@ QSqlQuery* Model::NodeDAO::getNodesPositionsQuery(QSqlDatabase* conn, bool* erro
     if(!query->exec()) {
         qDebug() << "[Model::NodeDAO::getNodesPositions] Could not perform query on DB: " << query->lastError().databaseText();
         *error = TRUE;
-        return query;
+        return positions;
     }
+
+	while(query->next())
+	{
+		nodeId = query->value(1).toLongLong();
+		position = osg::Vec3f(query->value(2).toDouble(), query->value(3).toDouble(), query->value(4).toDouble());
+
+		positions.insert(nodeId, position);
+	}
     
-    return query;
+    return positions;
 }
 
 QList<qlonglong> Model::NodeDAO::getListOfNodes(QSqlDatabase* conn, bool* error)
@@ -632,6 +705,33 @@ QMap<qlonglong, int> Model::NodeDAO::getMasks(QSqlDatabase* conn, bool* error, q
 	return masks;
 }
 
+QList<qlonglong> Model::NodeDAO::getParents(QSqlDatabase* conn, bool* error, qlonglong graphID, qlonglong layoutID)
+{
+    *error = FALSE;
+	bool error2 = false;
+	//bool isParent;
+	qlonglong id;
+	QList<qlonglong> parents;
+
+	QMap<qlonglong, QString> nodeParents;
+	QMap<qlonglong, QString>::iterator iter;
+
+	nodeParents = getSettings(conn, &error2, graphID, layoutID, "is_parent");
+
+	for(iter = nodeParents.begin(); iter != nodeParents.end(); iter++) 
+	{
+		id = iter.key();
+
+		//isParent = iter.value().to.toInt();
+		//masks.insert(id, mask);
+		parents << id;
+	}
+
+	*error = error2;
+
+	return parents;
+}
+
 QMap<qlonglong, qlonglong> Model::NodeDAO::getNewMetaNodesId(QSqlDatabase* conn, qlonglong graphID, QMap<qlonglong, osg::ref_ptr<Data::Node> >* nodes)
 {
 	QMap<qlonglong, qlonglong> newId;
@@ -696,6 +796,31 @@ bool Model::NodeDAO::addSettings(QSqlDatabase* conn, qlonglong graphID, qlonglon
 }
 
 bool Model::NodeDAO::addSettings(QSqlDatabase* conn, qlonglong graphID, qlonglong layoutID, qlonglong nodeID, QString valName, float val)
+{
+	if(conn==NULL || !conn->isOpen()) 
+	{ 
+        qDebug() << "[Model::NodeDAO::addSettings] Connection to DB not opened.";
+        return false;
+    }
+
+	QSqlQuery* query = new QSqlQuery(*conn);
+	
+	query->prepare("INSERT INTO node_settings (graph_id, node_id, val_name, val, layout_id) VALUES (:graph_id, :node_id, :val_name, :val, :layout_id)");
+	query->bindValue(":graph_id", graphID); 
+	query->bindValue(":node_id", nodeID);
+	query->bindValue(":val_name", valName);
+	query->bindValue(":val", val);
+	query->bindValue(":layout_id", layoutID);
+
+	if(!query->exec()) {
+		qDebug() << "[Model::NodeDAO::addSettings] Could not perform query on DB: " << query->lastError().databaseText();
+		return false;
+	}
+
+	return true;
+}
+
+bool Model::NodeDAO::addSettings(QSqlDatabase* conn, qlonglong graphID, qlonglong layoutID, qlonglong nodeID, QString valName, bool val)
 {
 	if(conn==NULL || !conn->isOpen()) 
 	{ 

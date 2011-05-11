@@ -10,6 +10,7 @@ LoadGraphWindow::LoadGraphWindow(QWidget *parent)
 
 	loadButton = createButton(tr("Load"), SLOT(loadGraph()));
 	removeButton = createButton(tr("Remove"), SLOT(removeGraph()));
+	renameButton = createButton(tr("Rename"), SLOT(renameGraph()));
 
 	QPushButton *cancelButton = new QPushButton(tr("Cancel"));
 	cancelButton->setFocusPolicy(Qt::NoFocus);
@@ -36,6 +37,7 @@ LoadGraphWindow::LoadGraphWindow(QWidget *parent)
 	QHBoxLayout *buttonsLayout = new QHBoxLayout;
     buttonsLayout->addStretch();
     buttonsLayout->addWidget(loadButton);
+    buttonsLayout->addWidget(renameButton);
     buttonsLayout->addWidget(removeButton);
 	buttonsLayout->addWidget(cancelButton);
 
@@ -110,6 +112,39 @@ void LoadGraphWindow::loadGraph()
 	else 
 	{
 		qDebug() << "[QOSG::LoadGraphWindow::loadGraph] There are no graphs saved in DB.";
+	}
+}
+
+void LoadGraphWindow::renameGraph()
+{
+	qlonglong graphID;
+	Manager::GraphManager * manager = Manager::GraphManager::getInstance();
+	Model::DB * db = manager->getDB();
+	bool ok;
+
+	if(graphsTable->rowCount() > 0) 
+	{
+		graphID = graphsTable->item(graphsTable->currentRow(), 0)->text().toLongLong(); 
+
+		qDebug() << "[QOSG::LoadGraphWindow::renameGraph] Selected graph ID: " << graphID;
+
+		QString newGraphName = QInputDialog::getText(this, tr("New graph name"), tr("Enter new graph name:"), QLineEdit::Normal, "", &ok);
+		if (ok && !newGraphName.isEmpty())
+		{
+			Model::GraphDAO::setGraphName(graphID, newGraphName, db->tmpGetConn());
+			
+			createGraphTable();
+			this->repaint();
+			this->update();
+		}
+		else
+		{
+			qDebug() << "[QOSG::LoadGraphWindow::renameGraph] Input dialog canceled";
+		}
+	}
+	else 
+	{
+		qDebug() << "[QOSG::LoadGraphWindow::removeGraph] There are no graphs saved in DB.";
 	}
 }
 

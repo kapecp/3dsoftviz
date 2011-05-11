@@ -98,26 +98,39 @@ namespace Model
 		static bool addNodesMaskToDB(QSqlDatabase* conn, QMap<qlonglong, osg::ref_ptr<Data::Node> >* nodes, Data::GraphLayout* layout, QMap<qlonglong, qlonglong> newMetaNodeID, bool meta);
 
 		/**
-		*  \fn public static  getNodesQuery(QSqlDatabase* conn, bool* error, qlonglong graphID)
+		*  \fn public static  addNodesParentToDB(QSqlDatabase* conn, QMap<qlonglong, osg::ref_ptr<Data::Node> >* nodes, Data::GraphLayout* layout, QMap<qlonglong, qlonglong> newMetaNodeID, bool meta)
+		*  \brief	Add parent attribute of nodes to DB
+		*  \param   conn   connection to the database 
+		*  \param   nodes  nodes from actual graph
+		*  \param   layout  layout from actual graph
+		*  \param	newMetaNodeID	new ID of meta nodes (because of unique ID in DB)
+		*  \param	meta	true, if nodes are meta type
+		*  \return	bool true, if attribute of nodes was successfully added to DB
+		*/
+		static bool addNodesParentToDB(QSqlDatabase* conn, QMap<qlonglong, osg::ref_ptr<Data::Node> >* nodes, Data::GraphLayout* layout, QMap<qlonglong, qlonglong> newMetaNodeID, bool meta);
+
+		/**
+		*  \fn public static  getNodesQuery(QSqlDatabase* conn, bool* error, qlonglong graphID, qlonglong layoutID, qlonglong parentID)
 		*  \brief	Return nodes query from DB
 		*  \param   conn   connection to the database 
 		*  \param   error  error flag, will be set to true, if the method encounters an error
 		*  \param   graphID  graph ID
 		*  \param   layoutID  layout ID
+		*  \param   parentID  parent ID
 		*  \return	QSqlQuery* nodes query from DB
 		*/
-		static QSqlQuery* getNodesQuery(QSqlDatabase* conn, bool* error, qlonglong graphID, qlonglong layoutID);
+		static QSqlQuery* getNodesQuery(QSqlDatabase* conn, bool* error, qlonglong graphID, qlonglong layoutID, qlonglong parentID);
 
 		/**
-		*  \fn public static  getNodesPositionsQuery(QSqlDatabase* conn, bool* error, qlonglong graphID)
-		*  \brief	Return nodes positions query from DB
+		*  \fn public static  getNodesPositions(QSqlDatabase* conn, bool* error, qlonglong graphID)
+		*  \brief	Return nodes positions map from DB
 		*  \param   conn   connection to the database 
 		*  \param   error  error flag, will be set to true, if the method encounters an error
 		*  \param   graphID  graph ID
 		*  \param   layoutID  layout ID
-		*  \return	QSqlQuery* nodes positions query from DB
+		*  \return	QMap<qlonglong, osg::Vec3f> nodes positions map from DB
 		*/
-		static QSqlQuery* getNodesPositionsQuery(QSqlDatabase* conn, bool* error, qlonglong graphID, qlonglong layoutID);
+		static QMap<qlonglong, osg::Vec3f> getNodesPositions(QSqlDatabase* conn, bool* error, qlonglong graphID, qlonglong layoutID);
 
 		/**
 		*  \fn public static  getNumberOfNodes(QSqlDatabase* conn, bool* error)
@@ -222,6 +235,17 @@ namespace Model
 		static QMap<qlonglong, int> getMasks(QSqlDatabase* conn, bool* error, qlonglong graphID, qlonglong layoutID);
 
 		/**
+		*  \fn public static  getParents(QSqlDatabase* conn, bool* error, qlonglong graphID, qlonglong layoutID)
+		*  \brief	Return list of parent nodes ID
+		*  \param   conn   connection to the database 
+		*  \param   error  error flag, will be set to true, if the method encounters an error
+		*  \param   graphID  graph ID
+		*  \param   layoutID  layout ID
+		*  \return	QList<qlonglong> list of parent nodes
+		*/
+		static QList<qlonglong> getParents(QSqlDatabase* conn, bool* error, qlonglong graphID, qlonglong layoutID);
+
+		/**
 		*  \fn public static  getNewMetaNodeId(QSqlDatabase* conn, qlonglong graphID, QMap<qlonglong, osg::ref_ptr<Data::Node> >* nodes)
 		*  \brief	Return map of new nodes ID
 		*  \param   conn   connection to the database 
@@ -256,6 +280,19 @@ namespace Model
 		*  \return	bool true, if node setting was successfully added to DB
 		*/
 		static bool addSettings(QSqlDatabase* conn, qlonglong graphID, qlonglong layoutID, qlonglong nodeID, QString valName, float val);
+
+		/**
+		*  \fn public  static addSetings(QSqlDatabase* conn, qlonglong graphID, qlonglong layoutID, qlonglong nodeID, QString valName, bool val)
+		*  \brief	Add node setting to DB
+		*  \param   conn   connection to the database 
+		*  \param   graphID  ID of graph
+		*  \param   layoutID  ID of layout
+		*  \param   nodeID  ID of node
+		*  \param   valName  name of value
+		*  \param   val  value
+		*  \return	bool true, if node setting was successfully added to DB
+		*/
+		static bool addSettings(QSqlDatabase* conn, qlonglong graphID, qlonglong layoutID, qlonglong nodeID, QString valName, bool val);
 
 	private:
 

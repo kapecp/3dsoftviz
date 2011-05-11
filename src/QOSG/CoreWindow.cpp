@@ -621,7 +621,11 @@ void CoreWindow::applyColorClick()
 
 	while (ei != selectedEdges->constEnd()) 
 	{
-		(*ei)->setEdgeColor(osg::Vec4(red, green, blue, alpha));
+		//ak je edge skryta, nebudeme jej menit farbu
+		if((*ei)->getScale() != 0)
+		{
+			(*ei)->setEdgeColor(osg::Vec4(red, green, blue, alpha));
+		}
 		++ei;
 	}
 }
