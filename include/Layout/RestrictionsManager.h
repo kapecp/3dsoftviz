@@ -10,6 +10,7 @@
 #include <QMap>
 #include <QSet>
 #include <QSharedPointer>
+#include <QMutex>
 //-----------------------------------------------------------------------------
 
 namespace Data {
@@ -181,6 +182,11 @@ private:
 	 * NULL if no observer is set.
 	 */
 	QSharedPointer<RestrictionsObserver> observer_;
+
+	/**
+	 * \brief usage: to synchronize public method calls (they change/get internal state and can be called from 2 threads: layout and gui)
+	 */
+	QMutex mutex_;
 
 }; // class
 

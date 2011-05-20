@@ -10,6 +10,9 @@ void RestrictionsManager::setRestrictions (
 	QSet<Data::Node *> nodes,
 	QSharedPointer<ShapeGetter> shapeGetter
 ) {
+	QList<QSharedPointer<RestrictionRemovalHandler> > removalHandlersToRun;
+
+	mutex_.lock ();
 	for (QSet<Data::Node *>::iterator it = nodes.begin (); it != nodes.end (); ++it) {
 		// remove current shape getter if exists
 		RestrictionsMapType::iterator it2 = restrictions_.find (*it);
@@ -25,7 +28,7 @@ void RestrictionsManager::setRestrictions (
 
 				RemovalHandlersMapType::iterator removalHandlerIt = removalHandlers_.find (it2.value ());
 				if (! removalHandlerIt->isNull ()) {
-					(*removalHandlerIt)->afterRestrictionRemoved ();
+					removalHandlersToRun.push_back (*removalHandlerIt);
 				}
 				removalHandlers_.erase (removalHandlerIt);
 			}
@@ -51,12 +54,20 @@ void RestrictionsManager::setRestrictions (
 			}
 		}
 	}
+	mutex_.unlock ();
+
+	for (QList<QSharedPointer<RestrictionRemovalHandler> >::iterator it = removalHandlersToRun.begin (); it != removalHandlersToRun.end (); ++it) {
+		(*it)->afterRestrictionRemoved ();
+	}
 }
 
 osg::Vec3f RestrictionsManager::applyRestriction (
 	Data::Node &node,
 	osg::Vec3f originalPosition
 ) {
+	osg::Vec3f position;
+
+	mutex_.lock ();
 	QSharedPointer<ShapeGetter> shapeGetter = getShapeGetter (node);
 	if (!shapeGetter.isNull ()) {
 		refreshShape (shapeGetter);
@@ -64,38 +75,50 @@ osg::Vec3f RestrictionsManager::applyRestriction (
 		QSharedPointer<Shape> shape = lastShapes_[shapeGetter];
 		restrictedPositionGetter_.setOriginalPosition (originalPosition);
 		shape->accept (restrictedPositionGetter_);
-		return restrictedPositionGetter_.getRestrictedPosition ();
+		position = restrictedPositionGetter_.getRestrictedPosition ();
 	} else {
-		return originalPosition;
+		position = originalPosition;
 	}
+	mutex_.unlock ();
+
+	return position;
 }
 
 bool RestrictionsManager::trySetRestrictionRemovalHandler (
 	QSharedPointer<ShapeGetter> shapeGetter,
 	QSharedPointer<RestrictionRemovalHandler> handler
 ) {
+	bool result;
+
+	mutex_.lock ();
 	if (shapeGetterUsages_.find (shapeGetter) != shapeGetterUsages_.end ()) {
 		removalHandlers_[shapeGetter] = handler;
-		return true;
+		result = true;
 	} else {
-		return false;
+		result = false;
 	}
+	mutex_.unlock ();
+
+	return result;
 }
 
 void RestrictionsManager::setOrRunRestrictionRemovalHandler (
 	QSharedPointer<ShapeGetter> shapeGetter,
 	QSharedPointer<RestrictionRemovalHandler> handler
 ) {
+	mutex_.lock ();
 	if (shapeGetterUsages_.find (shapeGetter) != shapeGetterUsages_.end ()) {
 		removalHandlers_[shapeGetter] = handler;
 	} else {
 		handler->afterRestrictionRemoved ();
 	}
+	mutex_.unlock ();
 }
 
 void RestrictionsManager::setObserver (
 	QSharedPointer<RestrictionsObserver> observer
 ) {
+	mutex_.lock ();
 	observer_ = observer;
 
 	// send notifications reflecting the current state to the new observer
@@ -103,10 +126,13 @@ void RestrictionsManager::setObserver (
 		notifyRestrictionAdded (it.key ());
 		notifyShapeChanged (it.key (), it.value ());
 	}
+	mutex_.unlock ();
 }
 
 void RestrictionsManager::resetObserver () {
-	observer_.clear();
+	mutex_.lock ();
+	observer_.clear ();
+	mutex_.unlock ();
 }
 
 QSharedPointer<ShapeGetter> RestrictionsManager::getShapeGetter (
