@@ -19,6 +19,7 @@ void Server::incomingConnection(int socketfd)
 
     connect(client, SIGNAL(readyRead()), this, SLOT(readyRead()));
     connect(client, SIGNAL(disconnected()), this, SLOT(disconnected()));
+    connect(client, SIGNAL(disconnected()), client, SLOT(deleteLater()));
 }
 
 void Server::readyRead()
