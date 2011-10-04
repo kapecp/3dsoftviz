@@ -1,3 +1,7 @@
+/**
+ Client - server communication implementation inspired by http://thesmithfam.org/blog/2009/07/09/example-qt-chat-program/
+ */
+
 #ifndef __3DVisualServer_H__
 #define __3DVisualServer_H__
 
