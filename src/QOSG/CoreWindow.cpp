@@ -207,6 +207,7 @@ void CoreWindow::createActions()
         connect(b_send_message, SIGNAL(clicked()), this, SLOT(send_message()));
 
         le_client_name = new QLineEdit("Nick");
+        le_message= new QLineEdit("Message");
 }
 
 void CoreWindow::createMenus()
@@ -314,6 +315,7 @@ void CoreWindow::createToolBar()
         toolBar->addWidget(le_client_name);
         toolBar->addWidget(b_start_client);
         toolBar->addSeparator();
+        toolBar->addWidget(le_message);
         toolBar->addWidget(b_send_message);
 
 	addToolBar(Qt::LeftToolBarArea,toolBar);
@@ -926,6 +928,6 @@ void CoreWindow::start_client()
 void CoreWindow::send_message()
 {
     if (client != NULL) {
-        client -> send_message("Slon");
+        client -> send_message(le_message->text());
     }
 }

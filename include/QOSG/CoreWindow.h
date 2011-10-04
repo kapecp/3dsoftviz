@@ -494,6 +494,7 @@ namespace QOSG
                 QPushButton * b_start_client;
                 QPushButton * b_send_message;
                 QLineEdit * le_client_name;
+                QLineEdit * le_message;
 
                 Network::Client * client;
 
