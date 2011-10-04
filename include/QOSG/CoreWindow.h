@@ -15,6 +15,7 @@
 #include <QStatusBar>
 #include <QTextEdit>
 #include <QtGui>
+#include <QLineEdit>
 #include <Qt/qstringlist.h>
 
 #include "QOSG/OptionsWindow.h"
@@ -219,6 +220,10 @@ namespace QOSG
 				*  \brief remove all selected nodes and edges
 				*/
 				bool removeClick();
+
+                                void start_server();
+                                void start_client();
+                                void send_message();
 	private:
 
 		/**
@@ -485,6 +490,13 @@ namespace QOSG
 		*/
 		QColor color;
 
+                QPushButton * b_start_server;
+                QPushButton * b_start_client;
+                QPushButton * b_send_message;
+                QLineEdit * le_client_name;
+
+                Network::Client * client;
+
 	public:
 
 		/*!
@@ -522,7 +534,7 @@ namespace QOSG
 		*  \brief	Set the layout thread 
 		*  \param  val layout thread
 		*/
-		void setLayoutThread(Layout::LayoutThread * val) { layout = val; }
+                void setLayoutThread(Layout::LayoutThread * val) { layout = val; }
 
 	private:
 

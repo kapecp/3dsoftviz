@@ -14,7 +14,7 @@
 #ifndef Viewer_CameraManipulator
 #define Viewer_CameraManipulator 1
 
-#include <osgGA/CameraManipulator>
+#include <osgGA/KeySwitchMatrixManipulator>
 #include <osgGA/GUIEventAdapter>
 #include <osgGA/GUIActionAdapter>
 #include <osg/Quat>
@@ -31,7 +31,7 @@ namespace Vwr{
 	*
 	*	This class is basically extended TrackballManipulator class with new functionality.
 	*/
-	class CameraManipulator : public osgGA::CameraManipulator
+        class CameraManipulator : public osgGA::KeySwitchMatrixManipulator
 {
     public:
 		CameraManipulator();

@@ -115,8 +115,10 @@ SET(SOURCES_H
 	./include/QOSG/LoadGraphWindow.h
 	./include/QOSG/SelectLayoutWindow.h
 	./include/QOSG/CheckBoxList.h
-	./include/QOSG/qtcolorpicker.h
-	./include/Viewer/PickHandler.h
+        ./include/QOSG/qtcolorpicker.h
+        ./include/Viewer/PickHandler.h
+        ./include/Network/Server.h
+        ./include/Network/Client.h
 )
 
 # toto makro spracuje Q_OBJECT a vygeneruje novy cpp subor, ktory bude dostupny v ${SOURCES_H_MOC} premennej
@@ -125,6 +127,7 @@ QT4_WRAP_CPP( SOURCES_H_MOC ${SOURCES_H} )
 ADD_EXECUTABLE(3DVisual ${INCL} ${SOURCES_H_MOC} ${SRC})
 
 SOURCE_GROUP(\\src main.cpp)
+SOURCE_GROUP(\\src\\Network "^.*Network/.*$")
 SOURCE_GROUP(\\src\\Viewer "^.*Viewer/.*$")
 SOURCE_GROUP(\\src\\Core "^.*Core/.*$")
 SOURCE_GROUP(\\src\\Data "^.*Data/.*$")
@@ -137,6 +140,8 @@ SOURCE_GROUP(\\src\\QOSG "^.*QOSG/.*$")
 SOURCE_GROUP(\\src\\OsgQtBrowser "^.*OsgQtBrowser/.*$")
 SOURCE_GROUP(\\src\\Noise "^.*Noise/.*$")
 
+
+SOURCE_GROUP(\\headers\\Network "^.*Network/.*h$")
 SOURCE_GROUP(\\headers\\Viewer "^.*Viewer/.*h$")
 SOURCE_GROUP(\\headers\\Core "^.*Core/.*h$")
 SOURCE_GROUP(\\headers\\Data "^.*Data/.*h$")

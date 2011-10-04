@@ -14,6 +14,8 @@ CoreWindow::CoreWindow(QWidget *parent, Vwr::CoreGraph* coreGraph, QApplication*
     isPlaying = true;
 	application = app;
 	layout = thread;
+
+        client = NULL;
 	
 	//vytvorenie menu a toolbar-ov
 	createActions();
@@ -191,6 +193,20 @@ void CoreWindow::createActions()
 	b_UnsetRestriction->setToolTip("&Unset restriction");
 	b_UnsetRestriction->setFocusPolicy(Qt::NoFocus);
 	connect(b_UnsetRestriction, SIGNAL(clicked()), this, SLOT(unsetRestriction ()));
+
+        b_start_server = new QPushButton();
+        b_start_server->setText("Start server");
+        connect(b_start_server, SIGNAL(clicked()), this, SLOT(start_server()));
+
+        b_start_client = new QPushButton();
+        b_start_client->setText("Start client");
+        connect(b_start_client, SIGNAL(clicked()), this, SLOT(start_client()));
+
+        b_send_message = new QPushButton();
+        b_send_message->setText("Send");
+        connect(b_send_message, SIGNAL(clicked()), this, SLOT(send_message()));
+
+        le_client_name = new QLineEdit("Nick");
 }
 
 void CoreWindow::createMenus()
@@ -290,8 +306,15 @@ void CoreWindow::createToolBar()
 	frame->setMaximumHeight(100);
 	frame->layout()->setAlignment(Qt::AlignHCenter);
 	toolBar->addWidget(frame);
-	frame->layout()->addWidget(slider);
+        frame->layout()->addWidget(slider);
 
+        toolBar->addSeparator();
+        toolBar->addWidget(b_start_server);
+        toolBar->addSeparator();
+        toolBar->addWidget(le_client_name);
+        toolBar->addWidget(b_start_client);
+        toolBar->addSeparator();
+        toolBar->addWidget(b_send_message);
 
 	addToolBar(Qt::LeftToolBarArea,toolBar);
 	toolBar->setMovable(false);
@@ -875,4 +898,34 @@ bool CoreWindow::removeClick()
 		layout->play();
 
 	return true;
+}
+
+void CoreWindow::start_server()
+{
+    Network::Server *server = new Network::Server();
+    bool success = server->listen(QHostAddress::Any, 4200);
+    if(!success)
+    {
+        qFatal("Could not listen on port 4200.");
+    }
+
+    qDebug() << "Server started";
+}
+
+void CoreWindow::start_client()
+{
+    if (client == NULL) {
+        client = new Network::Client(this);
+        client -> ServerConnect(le_client_name->text());
+    } else {
+        qDebug() << "Client already running";
+    }
+}
+
+
+void CoreWindow::send_message()
+{
+    if (client != NULL) {
+        client -> send_message("Slon");
+    }
 }
