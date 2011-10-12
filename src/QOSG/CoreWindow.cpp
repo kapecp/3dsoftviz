@@ -559,7 +559,7 @@ void CoreWindow::loadFile()
 		tr("Open file"), ".", tr("GraphML files (*.graphml);;GXL files (*.gxl);;RSF files (*.rsf)"));
 
 	if (fileName != "") {
-		Manager::GraphManager::getInstance()->loadGraph(fileName);
+                Manager::GraphManager::getInstance()->loadGraph(fileName);
 
 		viewerWidget->getCameraManipulator()->home();
 	}
@@ -928,6 +928,30 @@ void CoreWindow::start_client()
 void CoreWindow::send_message()
 {
     if (client != NULL) {
-        client -> send_message(le_message->text());
+        layout -> pause();
+        QString message;
+
+        Data::Graph * currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
+        QMap<qlonglong, osg::ref_ptr<Data::Node> >* nodes = currentGraph -> getNodes();
+        QMap< qlonglong,osg::ref_ptr<Data::Node> >::const_iterator iNodes =  nodes->constBegin();
+        int i = 0;
+        while(iNodes != nodes->constEnd()) {
+
+            //message += "node_id:" + QString(iNodes.value()->getId());
+            message += ";i:" + QString::number(i);
+            message += ";x:" + QString::number(iNodes.value()->getCurrentPosition().x());
+            message += ";y:" + QString::number(iNodes.value()->getCurrentPosition().y());
+            message += ";z:" + QString::number(iNodes.value()->getCurrentPosition().z());
+            message += "\n\r";
+
+            ++iNodes;
+            i++;
+        }
+        //qDebug() << message;
+        client -> send_message(message);
+
+        if (isPlaying)
+            layout -> play();
+
     }
 }
