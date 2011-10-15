@@ -928,28 +928,7 @@ void CoreWindow::start_client()
 void CoreWindow::send_message()
 {
     if (client != NULL) {
-        layout -> pause();
-        QString message;
-
-        Data::Graph * currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
-        QMap<qlonglong, osg::ref_ptr<Data::Node> >* nodes = currentGraph -> getNodes();
-        QMap< qlonglong,osg::ref_ptr<Data::Node> >::const_iterator iNodes =  nodes->constBegin();
-        int i = 0;
-        while(iNodes != nodes->constEnd()) {
-
-            message = "id:" + QString::number(iNodes.value()->getId());
-            message += ";x:" + QString::number(iNodes.value()->getCurrentPosition().x());
-            message += ";y:" + QString::number(iNodes.value()->getCurrentPosition().y());
-            message += ";z:" + QString::number(iNodes.value()->getCurrentPosition().z());
-
-            client -> send_message(message);
-
-            iNodes++;
-            i++;
-        }
-
-        if (isPlaying)
-            layout -> play();
-
+        client->send_message(le_message->text());
+        //client->send_message("GET_GRAPH");
     }
 }

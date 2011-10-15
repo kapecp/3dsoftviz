@@ -3,6 +3,8 @@
  */
 
 #include "Network/Server.h"
+#include "Data/Graph.h"
+#include "Manager/Manager.h"
 
 #include <QTcpSocket>
 #include <QRegExp>
@@ -20,7 +22,6 @@ void Server::incomingConnection(int socketfd)
     clients.insert(client);
 
     qDebug() << "New client from:" << client->peerAddress().toString();
-
     connect(client, SIGNAL(readyRead()), this, SLOT(readyRead()));
     connect(client, SIGNAL(disconnected()), this, SLOT(disconnected()));
     connect(client, SIGNAL(disconnected()), client, SLOT(deleteLater()));
@@ -51,8 +52,12 @@ void Server::readyRead()
             qDebug() << "User:" << user;
             qDebug() << "Message:" << message;
 
-            foreach(QTcpSocket *otherClient, clients)
-                otherClient->write(QString(user + ":" + message + "\n").toUtf8());
+            if (message == "GET_GRAPH") {
+                sendGraph(client);
+            } else {
+                foreach(QTcpSocket *otherClient, clients)
+                    otherClient->write(QString(user + ":" + message + "\n").toUtf8());
+            }
         }
         else
         {
@@ -85,3 +90,28 @@ void Server::sendUserList()
     foreach(QTcpSocket *client, clients)
         client->write(QString("/clients:" + userList.join(",") + "\n").toUtf8());
 }
+
+void Server::sendGraph(QTcpSocket *client){
+
+    QString message;
+
+    Data::Graph * currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
+    QMap<qlonglong, osg::ref_ptr<Data::Node> >* nodes = currentGraph -> getNodes();
+    QMap< qlonglong,osg::ref_ptr<Data::Node> >::const_iterator iNodes =  nodes->constBegin();
+    int i = 0;
+    while(iNodes != nodes->constEnd()) {
+
+        message = "id:" + QString::number(iNodes.value()->getId());
+        message += ";x:" + QString::number(iNodes.value()->getCurrentPosition().x());
+        message += ";y:" + QString::number(iNodes.value()->getCurrentPosition().y());
+        message += ";z:" + QString::number(iNodes.value()->getCurrentPosition().z());
+
+        client -> write(("/graphData:"+message+"\n").toUtf8());
+        qDebug() << "Posielam graf: " << message;
+
+        iNodes++;
+        i++;
+    }
+
+}
+

@@ -38,10 +38,15 @@ void Client::readyRead()
     while(socket->canReadLine())
     {
         QString line = QString::fromUtf8(socket->readLine()).trimmed();
+        qDebug() << "Client got line: " << line;
 
         QRegExp messageRegex("^([^:]+):(.*)$");
 
         QRegExp usersRegex("^/clients:(.*)$");
+
+        QRegExp dataRegexp("^/graphData:id:([0-9]+);x:([0-9-\\.]+);y:([0-9-\\.]+);z:([0-9-\\.]+)$");
+
+        Data::MetaType* type;
 
         if(usersRegex.indexIn(line) != -1)
         {
@@ -49,6 +54,23 @@ void Client::readyRead()
             qDebug() << "Clients:";
             foreach(QString user, users)
                 qDebug() << user;
+        } else if (dataRegexp.indexIn(line) != -1){
+            int id = dataRegexp.cap(1).toInt();
+            float x = dataRegexp.cap(2).toFloat();
+            float y = dataRegexp.cap(3).toFloat();
+            float z = dataRegexp.cap(4).toFloat();
+
+            qDebug()<< "[NEW NODE] id: " << id << " [" << x << "," << y << "," << z << "]";
+
+            Data::Graph * currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
+
+            if (currentGraph == NULL) {
+                currentGraph= Manager::GraphManager::getInstance()->createNewGraph("NewGraph");
+                type = currentGraph->addMetaType(Data::GraphLayout::META_NODE_TYPE);
+            }
+
+            osg::Vec3 position(x,y,z);
+            currentGraph->addNode(id,"newNode", type, position);
         }
         else if(messageRegex.indexIn(line) != -1)
         {
@@ -56,42 +78,6 @@ void Client::readyRead()
             QString message = messageRegex.cap(2);
 
             qDebug() << user + ": " + message;
-
-
-            /*Data::Graph * currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
-            Data::Type *edgeType = NULL;
-            Data::Type *nodeType = NULL;*/
-
-            QRegExp dataRegexp("^id:([0-9]+);x:([0-9-\\.]+);y:([0-9-\\.]+);z:([0-9-\\.]+)$");
-            if (dataRegexp.indexIn(message) != -1){
-                int id = dataRegexp.cap(1).toInt();
-                float x = dataRegexp.cap(2).toFloat();
-                float y = dataRegexp.cap(3).toFloat();
-                float z = dataRegexp.cap(4).toFloat();
-
-                qDebug()<< "[NEW NODE] id: " << id << " [" << x << "," << y << "," << z << "]";
-
-                Data::Graph * currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
-
-                if (currentGraph == NULL) {
-                    currentGraph= Manager::GraphManager::getInstance()->createNewGraph("NewGraph");
-                }
-
-                osg::Vec3 position(x,y,z);
-                currentGraph->addNode("newNode", currentGraph->getNodeMetaType(), position);
-
-                /*if (currentGraph != NULL)
-                {
-
-                }
-                else
-                {
-
-                    osg::Vec3 position = viewerWidget->getPickHandler()->getSelectionCenter(true);
-                    Data::MetaType* type = currentGraph->addMetaType(Data::GraphLayout::META_NODE_TYPE);
-                    osg::ref_ptr<Data::Node> node1 = currentGraph->addNode("newNode", type);
-                }*/
-            }
 
         }
     }

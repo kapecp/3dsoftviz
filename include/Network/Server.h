@@ -11,6 +11,8 @@
 #include <QMap>
 #include <QSet>
 
+//#include "Layout/LayoutThread.h"
+
 namespace Network {
 
 class Server : public QTcpServer {
@@ -31,6 +33,8 @@ class Server : public QTcpServer {
     private:
         QSet<QTcpSocket*> clients;
         QMap<QTcpSocket*,QString> users;
+
+        void sendGraph(QTcpSocket *client);
     };
 }
 
