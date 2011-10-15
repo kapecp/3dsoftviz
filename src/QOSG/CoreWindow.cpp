@@ -457,7 +457,7 @@ void CoreWindow::addMetaNode()
 	{
 		osg::Vec3 position = viewerWidget->getPickHandler()->getSelectionCenter(true); 
 
-		osg::ref_ptr<Data::Node> metaNode = currentGraph->addNode("metaNode", currentGraph->getNodeMetaType(), position);	
+                osg::ref_ptr<Data::Node> metaNode = currentGraph->addNode("metaNode", currentGraph->getNodeMetaType(), position);
 		QLinkedList<osg::ref_ptr<Data::Node> > * selectedNodes = viewerWidget->getPickHandler()->getSelectedNodes();
 
 		QLinkedList<osg::ref_ptr<Data::Node> >::const_iterator i = selectedNodes->constBegin();
@@ -937,18 +937,16 @@ void CoreWindow::send_message()
         int i = 0;
         while(iNodes != nodes->constEnd()) {
 
-            //message += "node_id:" + QString(iNodes.value()->getId());
-            message += ";i:" + QString::number(i);
+            message = "id:" + QString::number(iNodes.value()->getId());
             message += ";x:" + QString::number(iNodes.value()->getCurrentPosition().x());
             message += ";y:" + QString::number(iNodes.value()->getCurrentPosition().y());
             message += ";z:" + QString::number(iNodes.value()->getCurrentPosition().z());
-            message += "\n\r";
 
-            ++iNodes;
+            client -> send_message(message);
+
+            iNodes++;
             i++;
         }
-        //qDebug() << message;
-        client -> send_message(message);
 
         if (isPlaying)
             layout -> play();

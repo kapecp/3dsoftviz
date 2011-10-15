@@ -1,3 +1,7 @@
+/**
+ Client - server communication implementation inspired by http://thesmithfam.org/blog/2009/07/09/example-qt-chat-program/
+ */
+
 #include "Network/Server.h"
 
 #include <QTcpSocket>
