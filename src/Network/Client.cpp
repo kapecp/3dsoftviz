@@ -4,7 +4,6 @@
 
 #include "Network/Client.h"
 #include <QRegExp>
-#include "Data/Graph.h"
 #include "Manager/Manager.h"
 
 using namespace Network;
@@ -44,9 +43,14 @@ void Client::readyRead()
 
         QRegExp usersRegex("^/clients:(.*)$");
 
-        QRegExp dataRegexp("^/graphData:id:([0-9]+);x:([0-9-\\.]+);y:([0-9-\\.]+);z:([0-9-\\.]+)$");
+        QRegExp nodeRegexp("^/nodeData:id:([0-9]+);x:([0-9-\\.]+);y:([0-9-\\.]+);z:([0-9-\\.]+)$");
 
-        Data::MetaType* type;
+        QRegExp edgeRegexp("^/edgeData:id:([0-9]+);from:([0-9]+);to:([0-9]+)$");
+
+        Data::MetaType* type = NULL;
+        //QMap<qlonglong, osg::ref_ptr<Data::Node> > *nodes = NULL;
+
+        Data::Graph * currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
 
         if(usersRegex.indexIn(line) != -1)
         {
@@ -54,23 +58,34 @@ void Client::readyRead()
             qDebug() << "Clients:";
             foreach(QString user, users)
                 qDebug() << user;
-        } else if (dataRegexp.indexIn(line) != -1){
-            int id = dataRegexp.cap(1).toInt();
-            float x = dataRegexp.cap(2).toFloat();
-            float y = dataRegexp.cap(3).toFloat();
-            float z = dataRegexp.cap(4).toFloat();
+        } else if (nodeRegexp.indexIn(line) != -1){
+            int id = nodeRegexp.cap(1).toInt();
+            float x = nodeRegexp.cap(2).toFloat();
+            float y = nodeRegexp.cap(3).toFloat();
+            float z = nodeRegexp.cap(4).toFloat();
 
             qDebug()<< "[NEW NODE] id: " << id << " [" << x << "," << y << "," << z << "]";
 
-            Data::Graph * currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
 
             if (currentGraph == NULL) {
                 currentGraph= Manager::GraphManager::getInstance()->createNewGraph("NewGraph");
-                type = currentGraph->addMetaType(Data::GraphLayout::META_NODE_TYPE);
             }
 
+            type = currentGraph->addMetaType(Data::GraphLayout::META_NODE_TYPE);
             osg::Vec3 position(x,y,z);
-            currentGraph->addNode(id,"newNode", type, position);
+            osg::ref_ptr<Data::Node> node = currentGraph->addNode(id,"newNode", type, position);
+            nodes[id] = node;
+
+        } else if (edgeRegexp.indexIn(line) != -1) {
+            int id = edgeRegexp.cap(1).toInt();
+            int from = edgeRegexp.cap(2).toInt();
+            int to = edgeRegexp.cap(3).toInt();
+
+            Data::Type* type = currentGraph->addType(Data::GraphLayout::META_EDGE_TYPE);
+
+            qDebug()<< "[NEW EDGE] id: " << id << " from: " << from << ", to:" << to;
+
+            currentGraph->addEdge(id,"NewEdge",nodes[from],nodes[to],type,false);
         }
         else if(messageRegex.indexIn(line) != -1)
         {

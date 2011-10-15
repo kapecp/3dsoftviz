@@ -8,6 +8,8 @@
 #include <QTcpSocket>
 #include <QStringList>
 
+#include "Data/Graph.h"
+
 namespace Network{
 
 class Client : public QObject
@@ -32,6 +34,8 @@ class Client : public QObject
 
     private:
         QString clientNick;
+
+        std::map<qlonglong, osg::ref_ptr<Data::Node> > nodes;
 
         // This is the socket that will let us communitate with the server.
         QTcpSocket *socket;

@@ -97,8 +97,8 @@ void Server::sendGraph(QTcpSocket *client){
 
     Data::Graph * currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
     QMap<qlonglong, osg::ref_ptr<Data::Node> >* nodes = currentGraph -> getNodes();
-    QMap< qlonglong,osg::ref_ptr<Data::Node> >::const_iterator iNodes =  nodes->constBegin();
-    int i = 0;
+    QMap<qlonglong, osg::ref_ptr<Data::Node> >::const_iterator iNodes =  nodes->constBegin();
+
     while(iNodes != nodes->constEnd()) {
 
         message = "id:" + QString::number(iNodes.value()->getId());
@@ -106,11 +106,25 @@ void Server::sendGraph(QTcpSocket *client){
         message += ";y:" + QString::number(iNodes.value()->getCurrentPosition().y());
         message += ";z:" + QString::number(iNodes.value()->getCurrentPosition().z());
 
-        client -> write(("/graphData:"+message+"\n").toUtf8());
-        qDebug() << "Posielam graf: " << message;
+        client -> write(("/nodeData:"+message+"\n").toUtf8());
+        qDebug() << "[SERVER] Sending node: " << message;
 
-        iNodes++;
-        i++;
+        ++iNodes;
+    }
+
+    QMap<qlonglong, osg::ref_ptr<Data::Edge> >* edges = currentGraph -> getEdges();
+    QMap<qlonglong, osg::ref_ptr<Data::Edge> >::const_iterator iEdges =  edges->constBegin();
+
+    while (iEdges != edges -> constEnd()) {
+        message = "id:" + QString::number(iEdges.value()->getId());
+        //message += ";name:" + iEdges.value()->getName();
+        message += ";from:" + QString::number(iEdges.value()->getSrcNode()->getId());
+        message += ";to:" + QString::number(iEdges.value()->getDstNode()->getId());
+
+        client -> write(("/edgeData:"+message+"\n").toUtf8());
+        qDebug() << "[SERVER] Sending edge: " << message;
+
+        ++iEdges;
     }
 
 }
