@@ -99,6 +99,13 @@ void Server::sendGraph(QTcpSocket *client){
     QMap<qlonglong, osg::ref_ptr<Data::Node> >* nodes = currentGraph -> getNodes();
     QMap<qlonglong, osg::ref_ptr<Data::Node> >::const_iterator iNodes =  nodes->constBegin();
 
+
+    bool isRunning = thread->isRunning();
+
+    if (isRunning) {
+        thread->pause();
+    }
+
     while(iNodes != nodes->constEnd()) {
 
         message = "id:" + QString::number(iNodes.value()->getId());
@@ -126,6 +133,13 @@ void Server::sendGraph(QTcpSocket *client){
 
         ++iEdges;
     }
+    if (isRunning) {
+        thread->play();
+    }
 
 }
 
+
+void Server::setLayoutThread(Layout::LayoutThread *layoutThread){
+    thread = layoutThread;
+}

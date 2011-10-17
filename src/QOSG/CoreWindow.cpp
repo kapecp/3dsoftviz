@@ -905,6 +905,7 @@ bool CoreWindow::removeClick()
 void CoreWindow::start_server()
 {
     Network::Server *server = new Network::Server();
+    server->setLayoutThread(layout);
     bool success = server->listen(QHostAddress::Any, 4200);
     if(!success)
     {

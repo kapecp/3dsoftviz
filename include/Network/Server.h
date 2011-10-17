@@ -11,7 +11,7 @@
 #include <QMap>
 #include <QSet>
 
-//#include "Layout/LayoutThread.h"
+#include "Layout/LayoutThread.h"
 
 namespace Network {
 
@@ -21,6 +21,7 @@ class Server : public QTcpServer {
 
     public:
         Server(QObject *parent=0);
+        void setLayoutThread(Layout::LayoutThread * layoutThread);
 
     private slots:
         void readyRead();
@@ -33,7 +34,7 @@ class Server : public QTcpServer {
     private:
         QSet<QTcpSocket*> clients;
         QMap<QTcpSocket*,QString> users;
-
+        Layout::LayoutThread * thread;
         void sendGraph(QTcpSocket *client);
     };
 }
