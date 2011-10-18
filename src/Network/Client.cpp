@@ -3,6 +3,7 @@
  */
 
 #include "Network/Client.h"
+#include "Importer/GraphOperations.h"
 #include <QRegExp>
 #include "Manager/Manager.h"
 
@@ -14,6 +15,9 @@ Client::Client(QObject *parent) : QObject(parent)
 
     connect(socket, SIGNAL(readyRead()), this, SLOT(readyRead()));
     connect(socket, SIGNAL(connected()), this, SLOT(connected()));
+
+    edgeType = NULL;
+    nodeType = NULL;
 }
 
 void Client::ServerConnect(QString nick)
@@ -45,10 +49,7 @@ void Client::readyRead()
 
         QRegExp nodeRegexp("^/nodeData:id:([0-9]+);x:([0-9-\\.]+);y:([0-9-\\.]+);z:([0-9-\\.]+)$");
 
-        QRegExp edgeRegexp("^/edgeData:id:([0-9]+);from:([0-9]+);to:([0-9]+)$");
-
-        Data::MetaType* type = NULL;
-        //QMap<qlonglong, osg::ref_ptr<Data::Node> > *nodes = NULL;
+        QRegExp edgeRegexp("^/edgeData:id:([0-9]+);from:([0-9]+);to:([0-9]+);or:([01])$");
 
         Data::Graph * currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
 
@@ -58,6 +59,12 @@ void Client::readyRead()
             qDebug() << "Clients:";
             foreach(QString user, users)
                 qDebug() << user;
+        } else if (line == "GRAPH_START") {
+            thread->pause();
+            coreGraph->setNodesFreezed(true);
+        } else if (line == "GRAPH_END") {
+            thread->play();
+            coreGraph->setNodesFreezed(false);
         } else if (nodeRegexp.indexIn(line) != -1){
             int id = nodeRegexp.cap(1).toInt();
             float x = nodeRegexp.cap(2).toFloat();
@@ -71,21 +78,24 @@ void Client::readyRead()
                 currentGraph= Manager::GraphManager::getInstance()->createNewGraph("NewGraph");
             }
 
-            type = currentGraph->addMetaType(Data::GraphLayout::META_NODE_TYPE);
+            if (nodeType == NULL || edgeType == NULL) {
+                Importer::GraphOperations * operations = new Importer::GraphOperations(*currentGraph);
+                operations->addDefaultTypes(edgeType, nodeType);
+            }
+
             osg::Vec3 position(x,y,z);
-            osg::ref_ptr<Data::Node> node = currentGraph->addNode(id,"newNode", type, position);
+            osg::ref_ptr<Data::Node> node = currentGraph->addNode(id,"newNode", nodeType, position);
             nodes[id] = node;
 
         } else if (edgeRegexp.indexIn(line) != -1) {
             int id = edgeRegexp.cap(1).toInt();
             int from = edgeRegexp.cap(2).toInt();
             int to = edgeRegexp.cap(3).toInt();
-
-            Data::Type* type = currentGraph->addType(Data::GraphLayout::META_EDGE_TYPE);
+            bool oriented = edgeRegexp.cap(4).toInt();
 
             qDebug()<< "[NEW EDGE] id: " << id << " from: " << from << ", to:" << to;
 
-            currentGraph->addEdge(id,"NewEdge",nodes[from],nodes[to],type,false);
+            currentGraph->addEdge(id,"NewEdge",nodes[from],nodes[to],edgeType,oriented);
         }
         else if(messageRegex.indexIn(line) != -1)
         {
@@ -102,4 +112,8 @@ void Client::connected()
 {
     // And send our username to the chat server.
     socket->write(QString("/me:" + clientNick + "\n").toUtf8());
+}
+
+void Client::setLayoutThread(Layout::LayoutThread *layoutThread){
+    thread = layoutThread;
 }

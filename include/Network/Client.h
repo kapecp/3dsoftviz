@@ -9,6 +9,8 @@
 #include <QStringList>
 
 #include "Data/Graph.h"
+#include "Viewer/CoreGraph.h"
+#include "Layout/LayoutThread.h"
 
 namespace Network{
 
@@ -24,6 +26,9 @@ class Client : public QObject
 
         void send_message(QString message);
 
+        void setLayoutThread(Layout::LayoutThread * layoutThread);
+        void setCoreGraph(Vwr::CoreGraph * cg) { coreGraph = cg; }
+
     private slots:
         // This is a function we'll connect to a socket's readyRead()
         // signal, which tells us there's something to be read from the server.
@@ -36,6 +41,11 @@ class Client : public QObject
         QString clientNick;
 
         std::map<qlonglong, osg::ref_ptr<Data::Node> > nodes;
+        Data::Type *nodeType;
+        Data::Type *edgeType;
+
+        Layout::LayoutThread * thread;
+        Vwr::CoreGraph * coreGraph;
 
         // This is the socket that will let us communitate with the server.
         QTcpSocket *socket;

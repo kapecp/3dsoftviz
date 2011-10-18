@@ -104,7 +104,10 @@ void Server::sendGraph(QTcpSocket *client){
 
     if (isRunning) {
         thread->pause();
+        coreGraph->setNodesFreezed(true);
     }
+
+    client -> write("GRAPH_START\n");
 
     while(iNodes != nodes->constEnd()) {
 
@@ -127,14 +130,19 @@ void Server::sendGraph(QTcpSocket *client){
         //message += ";name:" + iEdges.value()->getName();
         message += ";from:" + QString::number(iEdges.value()->getSrcNode()->getId());
         message += ";to:" + QString::number(iEdges.value()->getDstNode()->getId());
+        message += ";or:" + QString::number(iEdges.value()->isOriented() ? 1 : 0);
 
         client -> write(("/edgeData:"+message+"\n").toUtf8());
         qDebug() << "[SERVER] Sending edge: " << message;
 
         ++iEdges;
     }
+
+    client -> write("GRAPH_END\n");
+
     if (isRunning) {
         thread->play();
+        coreGraph->setNodesFreezed(false);
     }
 
 }

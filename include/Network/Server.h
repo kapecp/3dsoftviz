@@ -12,6 +12,7 @@
 #include <QSet>
 
 #include "Layout/LayoutThread.h"
+#include "Viewer/CoreGraph.h"
 
 namespace Network {
 
@@ -22,6 +23,7 @@ class Server : public QTcpServer {
     public:
         Server(QObject *parent=0);
         void setLayoutThread(Layout::LayoutThread * layoutThread);
+        void setCoreGraph(Vwr::CoreGraph * cg) { coreGraph = cg; }
 
     private slots:
         void readyRead();
@@ -35,6 +37,7 @@ class Server : public QTcpServer {
         QSet<QTcpSocket*> clients;
         QMap<QTcpSocket*,QString> users;
         Layout::LayoutThread * thread;
+        Vwr::CoreGraph * coreGraph;
         void sendGraph(QTcpSocket *client);
     };
 }

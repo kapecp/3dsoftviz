@@ -906,6 +906,7 @@ void CoreWindow::start_server()
 {
     Network::Server *server = new Network::Server();
     server->setLayoutThread(layout);
+    server->setCoreGraph(coreGraph);
     bool success = server->listen(QHostAddress::Any, 4200);
     if(!success)
     {
@@ -919,6 +920,8 @@ void CoreWindow::start_client()
 {
     if (client == NULL) {
         client = new Network::Client(this);
+        client -> setLayoutThread(layout);
+        client -> setCoreGraph(coreGraph);
         client -> ServerConnect(le_client_name->text());
     } else {
         qDebug() << "Client already running";
