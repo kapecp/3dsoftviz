@@ -66,14 +66,16 @@ void Client::readyRead()
 
             thread->pause();
             coreGraph->setNodesFreezed(true);
+            currentGraph->setFrozen(true);
         } else if (line == "GRAPH_END") {
             thread->play();
             coreGraph->setNodesFreezed(false);
+            currentGraph->setFrozen(false);
         } else if (nodeRegexp.indexIn(line) != -1){
             int id = nodeRegexp.cap(1).toInt();
-            float x = nodeRegexp.cap(2).toFloat();
-            float y = nodeRegexp.cap(3).toFloat();
-            float z = nodeRegexp.cap(4).toFloat();
+            float x = nodeRegexp.cap(2).toFloat()/2;
+            float y = nodeRegexp.cap(3).toFloat()/2;
+            float z = nodeRegexp.cap(4).toFloat()/2;
 
             qDebug()<< "[NEW NODE] id: " << id << " [" << x << "," << y << "," << z << "]";
 
