@@ -35,6 +35,7 @@ class Server : public QTcpServer {
 
     private:
         QSet<QTcpSocket*> clients;
+        float graphScale;
         QMap<QTcpSocket*,QString> users;
         Layout::LayoutThread * thread;
         Vwr::CoreGraph * coreGraph;

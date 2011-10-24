@@ -13,6 +13,8 @@ using namespace Network;
 
 Server::Server(QObject *parent) : QTcpServer(parent)
 {
+    Util::ApplicationConfig *conf = Util::ApplicationConfig::get();
+    graphScale = conf->getValue("Viewer.Display.NodeDistanceScale").toFloat();
 }
 
 void Server::incomingConnection(int socketfd)
@@ -112,9 +114,9 @@ void Server::sendGraph(QTcpSocket *client){
     while(iNodes != nodes->constEnd()) {
 
         message = "id:" + QString::number(iNodes.value()->getId());
-        message += ";x:" + QString::number(iNodes.value()->getCurrentPosition().x());
-        message += ";y:" + QString::number(iNodes.value()->getCurrentPosition().y());
-        message += ";z:" + QString::number(iNodes.value()->getCurrentPosition().z());
+        message += ";x:" + QString::number(iNodes.value()->getCurrentPosition().x()/graphScale);
+        message += ";y:" + QString::number(iNodes.value()->getCurrentPosition().y()/graphScale);
+        message += ";z:" + QString::number(iNodes.value()->getCurrentPosition().z()/graphScale);
 
         client -> write(("/nodeData:"+message+"\n").toUtf8());
         qDebug() << "[SERVER] Sending node: " << message;
