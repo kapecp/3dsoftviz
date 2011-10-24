@@ -41,7 +41,7 @@ void Client::readyRead()
     while(socket->canReadLine())
     {
         QString line = QString::fromUtf8(socket->readLine()).trimmed();
-        qDebug() << "Client got line: " << line;
+        //qDebug() << "Client got line: " << line;
 
         QRegExp messageRegex("^([^:]+):(.*)$");
 
@@ -60,6 +60,10 @@ void Client::readyRead()
             foreach(QString user, users)
                 qDebug() << user;
         } else if (line == "GRAPH_START") {
+            currentGraph= Manager::GraphManager::getInstance()->createNewGraph("NewGraph");
+            Importer::GraphOperations * operations = new Importer::GraphOperations(*currentGraph);
+            operations->addDefaultTypes(edgeType, nodeType);
+
             thread->pause();
             coreGraph->setNodesFreezed(true);
         } else if (line == "GRAPH_END") {
@@ -72,16 +76,6 @@ void Client::readyRead()
             float z = nodeRegexp.cap(4).toFloat();
 
             qDebug()<< "[NEW NODE] id: " << id << " [" << x << "," << y << "," << z << "]";
-
-
-            if (currentGraph == NULL) {
-                currentGraph= Manager::GraphManager::getInstance()->createNewGraph("NewGraph");
-            }
-
-            if (nodeType == NULL || edgeType == NULL) {
-                Importer::GraphOperations * operations = new Importer::GraphOperations(*currentGraph);
-                operations->addDefaultTypes(edgeType, nodeType);
-            }
 
             osg::Vec3 position(x,y,z);
             osg::ref_ptr<Data::Node> node = currentGraph->addNode(id,"newNode", nodeType, position);
