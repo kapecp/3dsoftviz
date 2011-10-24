@@ -6,6 +6,8 @@
 #include "Layout/ShapeGetter_Plane_ByThreeNodes.h"
 #include "Layout/RestrictionRemovalHandler_RestrictionNodesRemover.h"
 
+#include "Importer/GraphOperations.h"
+
 using namespace QOSG;
 
 CoreWindow::CoreWindow(QWidget *parent, Vwr::CoreGraph* coreGraph, QApplication* app, Layout::LayoutThread * thread ) : QMainWindow(parent)
@@ -850,14 +852,17 @@ bool CoreWindow::add_EdgeClick()
 bool CoreWindow::add_NodeClick()
 {	
 	Data::Graph * currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
-	Data::Type *edgeType = NULL;
-	Data::Type *nodeType = NULL;
+        Data::Type *edgeType = NULL;
+        Data::Type *nodeType = NULL;
+
+        Importer::GraphOperations * operations = new Importer::GraphOperations(*currentGraph);
+        operations->addDefaultTypes(edgeType, nodeType);
 
 	if (currentGraph != NULL)
 	{
 		osg::Vec3 position = viewerWidget->getPickHandler()->getSelectionCenter(true); 
 
-		osg::ref_ptr<Data::Node> node1 = currentGraph->addNode("newNode", currentGraph->getNodeMetaType(), position);	
+                osg::ref_ptr<Data::Node> node1 = currentGraph->addNode("newNode", nodeType , position);
 
 		if (isPlaying)
 			layout->play();
@@ -865,9 +870,8 @@ bool CoreWindow::add_NodeClick()
 	else
 	{
 		currentGraph= Manager::GraphManager::getInstance()->createNewGraph("NewGraph");
-		osg::Vec3 position = viewerWidget->getPickHandler()->getSelectionCenter(true); 
-		Data::MetaType* type = currentGraph->addMetaType(Data::GraphLayout::META_NODE_TYPE);
-		osg::ref_ptr<Data::Node> node1 = currentGraph->addNode("newNode", type);	
+                osg::Vec3 position = viewerWidget->getPickHandler()->getSelectionCenter(true);
+                osg::ref_ptr<Data::Node> node1 = currentGraph->addNode("newNode", nodeType, position);
 		if (isPlaying)
 			layout->play();
 	}
