@@ -73,6 +73,8 @@ void Client::readyRead()
             currentGraph->setFrozen(false);
         } else if (nodeRegexp.indexIn(line) != -1){
             int id = nodeRegexp.cap(1).toInt();
+
+            //[Ivan Plesko] I don't know why, but the "Bulgarian constant" 2 has to be there..
             float x = nodeRegexp.cap(2).toFloat()/2;
             float y = nodeRegexp.cap(3).toFloat()/2;
             float z = nodeRegexp.cap(4).toFloat()/2;
