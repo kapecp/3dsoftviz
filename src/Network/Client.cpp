@@ -40,6 +40,7 @@ void Client::readyRead()
     // We'll loop over every (complete) line of text that the server has sent us:
     while(socket->canReadLine())
     {
+        QTime t;
         QString line = QString::fromUtf8(socket->readLine()).trimmed();
         //qDebug() << "Client got line: " << line;
 
@@ -60,6 +61,7 @@ void Client::readyRead()
             foreach(QString user, users)
                 qDebug() << user;
         } else if (line == "GRAPH_START") {
+            t.start();
             currentGraph= Manager::GraphManager::getInstance()->createNewGraph("NewGraph");
             Importer::GraphOperations * operations = new Importer::GraphOperations(*currentGraph);
             operations->addDefaultTypes(edgeType, nodeType);
@@ -68,6 +70,7 @@ void Client::readyRead()
             coreGraph->setNodesFreezed(true);
             currentGraph->setFrozen(true);
         } else if (line == "GRAPH_END") {
+            qDebug() << "Building took" << QString::number(t.elapsed()) << "ms";
             thread->play();
             coreGraph->setNodesFreezed(false);
             currentGraph->setFrozen(false);
