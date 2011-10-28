@@ -2,8 +2,10 @@
 
 using namespace Data;
 
+//Nepouziva sa
 osg::Vec3f GraphSerializer::getRandomPosition()
 {
+	//nastavime nahodne inicializnacne suradnice v 3D
 	int x, y, z;
 	int lowest = 1;
 	int highest = 100;
@@ -71,14 +73,12 @@ void GraphSerializer::addEntry(QString edgeId, QString edgeData, QString incId, 
 	Data::Edge* edge1 = new Data::Edge(edgeIdSeq, "edge data", NULL, nodes->at(nodeIdMap.value(edgeId)), nodes->at(nodeIdMap.value(incId)), types->at(1), true, 2);
 	if (!edgeExists(edge1))
 	{
-		//edge1->linkNodes(edges);
 		edgeIdSeq++;
 	}
 
 	Data::Edge* edge2 = new Data::Edge(edgeIdSeq, "edge data", NULL, nodes->at(nodeIdMap.value(incId)), nodes->at(nodeIdMap.value(nodeId)), types->at(1), true, 2);
 	if (!edgeExists(edge2))
 	{
-		//edge2->linkNodes(edges);
 		edgeIdSeq++;
 	}
 }

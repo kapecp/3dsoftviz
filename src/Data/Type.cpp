@@ -7,6 +7,7 @@
 
 Data::Type::Type(qlonglong id, QString name,Data::Graph* graph, QMap<QString, QString> * settings) 
 {
+	//konstruktor
     this->id = id;
     this->name = name;
 	this->inDB = false;
@@ -34,6 +35,7 @@ Data::Type::Type(qlonglong id, QString name,Data::Graph* graph, QMap<QString, QS
 
 void Data::Type::loadConfig()
 {
+	//nacitame nastavenia zo suboru
 	typeTexture = Vwr::DataHelper::readTextureFromFile(settings->value("textureFile"));
 	scale = settings->value("scale").toFloat();
 }
