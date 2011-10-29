@@ -29,6 +29,7 @@ bool GXLImporter::import (
 	}
 
 	bool graphElementFound = false;
+	//parsovanie grafu
 	while (ok && !xml_->atEnd () && !graphElementFound) {
 		QXmlStreamReader::TokenType token;
 		if (ok) {
@@ -63,6 +64,7 @@ bool GXLImporter::import (
 		attrs = xml_->attributes();
 	}
 
+	//nazov grafu
 	QString graphName;
 	if (ok) {
 		graphName = attrs.value ("id").toString ();
@@ -73,7 +75,6 @@ bool GXLImporter::import (
 	}
 
 	if (ok) {
-		// ok = (graphName == context_->getGraph ().setName (graphName));
 		context_->getGraph ().setName (graphName);
 
 		context_->getInfoHandler ().reportError (ok, "Unable to set graph name.");
@@ -132,7 +133,7 @@ bool GXLImporter::parseGraph (void) {
 		}
 
 		if (ok) {
-			// subgraph
+			// vnoreny graf
 			if (
 				(token == QXmlStreamReader::StartElement)
 				&&
@@ -142,7 +143,7 @@ bool GXLImporter::parseGraph (void) {
 					if ((bool)currentNode) {
 						context_->getGraph().createNestedGraph (currentNode);
 					} else if ((bool)currentEdge) {
-						// TODO: begin subgraph in edge
+						// moznost pridania vnoreneho grafu do hrany
 					} else {
 						ok = false;
 
@@ -159,7 +160,7 @@ bool GXLImporter::parseGraph (void) {
 				}
 			}
 
-			// node
+			// parsovanie uzla
 			if (
 				(token == QXmlStreamReader::StartElement)
 				&&
@@ -216,7 +217,7 @@ bool GXLImporter::parseGraph (void) {
 				}
 			}
 
-			// edge
+			// parsovanie hrany
 			if (
 				(token == QXmlStreamReader::StartElement)
 				&&
@@ -263,6 +264,7 @@ bool GXLImporter::parseGraph (void) {
 					}
 				}
 
+				//cielovy a zdrojovy uzol hrany
 				QString nodeFromName;
 				if (ok) {
 					nodeFromName = attrs.value ("from").toString ();
@@ -304,11 +306,6 @@ bool GXLImporter::parseGraph (void) {
 						edgeType_,
 						oriented
 					);
-
-					// ok = edge.valid ();
-
-					// context_->getInfoHandler ().reportError (ok, "Unable to add new edge.");
-					// can not be checked because addEdge returns null when a multiedge is added
 				}
 
 				if (ok) {
@@ -332,7 +329,7 @@ bool GXLImporter::parseGraph (void) {
 				}
 			}
 
-			// hyperedge
+			// hyperhrana
 			
 			if (
 				(token == QXmlStreamReader::StartElement)
@@ -356,7 +353,7 @@ bool GXLImporter::parseGraph (void) {
 				}
 				
 				if (ok) {
-					// TODO: begin hyperedge
+					// zaciatok hyperhrany
 					hyperEdgeNode = context_->getGraph ().addHyperEdge(hyperEdgeName);
 				}
 
@@ -381,7 +378,7 @@ bool GXLImporter::parseGraph (void) {
 				}
 			}
 
-			// hyperedge endpoint
+			// ukoncenie hyperhrany
 			if (
 				(token == QXmlStreamReader::StartElement)
 				&&
@@ -456,7 +453,7 @@ bool GXLImporter::parseGraph (void) {
 				&&
 				(xml_->name () == "relend")
 			) {
-				// TODO:
+
 			}
 
 			// this graph end
@@ -476,7 +473,7 @@ bool GXLImporter::parseGraph (void) {
 		}
 	}
 
-	// TODO: graph in hyperedge
+	// TODO: graf vnoreny v hyperhrane
 
 	return ok;
 }

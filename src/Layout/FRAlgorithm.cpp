@@ -8,6 +8,7 @@ using namespace Vwr;
  //Konstruktor pre vlakno s algoritmom 
 FRAlgorithm::FRAlgorithm() 
 {
+	//nastavenie konstant parametrov
 	PI = acos((double) - 1);
 	ALPHA = 0.005;
 	MIN_MOVEMENT = 0.05;
@@ -51,6 +52,7 @@ FRAlgorithm::FRAlgorithm(Data::Graph *graph)
 
 void FRAlgorithm::SetGraph(Data::Graph *graph)
 {
+	//pociatocne nahodne rozdelenie pozicii uzlov
 	notEnd = true;
 	this->graph = graph;
 	this->Randomize();

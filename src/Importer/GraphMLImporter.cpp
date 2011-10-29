@@ -198,7 +198,7 @@ bool GraphMLImporter::processGraph_Edges (
 
 	iColor_ = 0;
 
-	// default direction
+	// zakladna orientacia hran
 	bool defaultDirection;
 	if(graphElement.attribute("edgedefault") == "directed"){
 		defaultDirection = true;
@@ -206,7 +206,7 @@ bool GraphMLImporter::processGraph_Edges (
 		defaultDirection = false;
 	}
 
-	// edges
+	// hrany
 	for (QDomElement edgeElement = graphElement.firstChildElement("edge"); ok && !edgeElement.isNull(); edgeElement = edgeElement.nextSiblingElement("edge"))
 	{
 		QString sourceId = edgeElement.attribute("source");
@@ -287,7 +287,7 @@ bool GraphMLImporter::processGraph_Edges (
 
 		context_->getGraph().addEdge(sourceId+targetId, readNodes_->get(sourceId), readNodes_->get(targetId), newEdgeType, directed);
 
-		// subgraphs
+		// vnorene grafy
 		for (QDomElement subgraphElement = edgeElement.firstChildElement("graph"); ok && !subgraphElement.isNull(); subgraphElement = subgraphElement.nextSiblingElement("graph")) {
 			if (ok) {
 				// TODO: begin subgraph in edge
@@ -319,7 +319,7 @@ bool GraphMLImporter::processGraph_Hyperedges (
 	// hyperedges
 	for (QDomElement hyperedgeElement = graphElement.firstChildElement("hyperedge"); ok && !hyperedgeElement.isNull(); hyperedgeElement = hyperedgeElement.nextSiblingElement("hyperedge")) {
 		if (ok) {
-			// TODO: add hyperedge
+			// pridanie hyperhrany
 			hyperEdgeNode = context_->getGraph ().addHyperEdge(QString::number(count));
 		}
 
@@ -370,7 +370,7 @@ bool GraphMLImporter::processGraph_Hyperedges (
 				}
 
 				if (ok) {
-					//context_->getGraph().addEdge("", readNodes_->get(targetName), hyperEdgeNode, edgeType_, false);
+					//orientovana hrana
 					if (direction==QString("in"))
 						context_->getGraph ().addEdge("", readNodes_->get(targetName), hyperEdgeNode, nodeType_, true);
 					else if (direction==QString("out"))
@@ -386,4 +386,4 @@ bool GraphMLImporter::processGraph_Hyperedges (
 	return ok;
 }
 
-} // namespace
+}

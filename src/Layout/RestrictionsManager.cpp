@@ -69,6 +69,8 @@ osg::Vec3f RestrictionsManager::applyRestriction (
 
 	mutex_.lock ();
 	QSharedPointer<ShapeGetter> shapeGetter = getShapeGetter (node);
+	
+	//nastavenie obmedzovaca podla zvoleneho tvaru
 	if (!shapeGetter.isNull ()) {
 		refreshShape (shapeGetter);
 
@@ -90,6 +92,7 @@ bool RestrictionsManager::trySetRestrictionRemovalHandler (
 ) {
 	bool result;
 
+	//odstranenie obmedzovaca
 	mutex_.lock ();
 	if (shapeGetterUsages_.find (shapeGetter) != shapeGetterUsages_.end ()) {
 		removalHandlers_[shapeGetter] = handler;
@@ -106,6 +109,7 @@ void RestrictionsManager::setOrRunRestrictionRemovalHandler (
 	QSharedPointer<ShapeGetter> shapeGetter,
 	QSharedPointer<RestrictionRemovalHandler> handler
 ) {
+	//odstranenie obmedzovaca
 	mutex_.lock ();
 	if (shapeGetterUsages_.find (shapeGetter) != shapeGetterUsages_.end ()) {
 		removalHandlers_[shapeGetter] = handler;
