@@ -40,6 +40,7 @@ class Server : public QTcpServer {
         Layout::LayoutThread * thread;
         Vwr::CoreGraph * coreGraph;
         void sendGraph(QTcpSocket *client);
+        void sendLayout(QTcpSocket *client);
     };
 }
 

@@ -50,6 +50,8 @@ void Client::readyRead()
 
         QRegExp nodeRegexp("^/nodeData:id:([0-9]+);x:([0-9-\\.]+);y:([0-9-\\.]+);z:([0-9-\\.]+)$");
 
+        QRegExp layRegexp("^/layData:id:([0-9]+);x:([0-9-\\.]+);y:([0-9-\\.]+);z:([0-9-\\.]+)$");
+
         QRegExp edgeRegexp("^/edgeData:id:([0-9]+);from:([0-9]+);to:([0-9]+);or:([01])$");
 
         Data::Graph * currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
@@ -96,9 +98,16 @@ void Client::readyRead()
             qDebug()<< "[NEW EDGE] id: " << id << " from: " << from << ", to:" << to;
 
             currentGraph->addEdge(id,"NewEdge",nodes[from],nodes[to],edgeType,oriented);
-        }
-        else if(messageRegex.indexIn(line) != -1)
-        {
+        } else if (layRegexp.indexIn(line) != -1) {
+            int id = layRegexp.cap(1).toInt();
+
+            float x = layRegexp.cap(2).toFloat();
+            float y = layRegexp.cap(3).toFloat();
+            float z = layRegexp.cap(4).toFloat();
+
+            qDebug()<< "[NEW NODE POS] id: " << id << " [" << x << "," << y << "," << z << "]";
+
+        } else if(messageRegex.indexIn(line) != -1) {
             QString user = messageRegex.cap(1);
             QString message = messageRegex.cap(2);
 
