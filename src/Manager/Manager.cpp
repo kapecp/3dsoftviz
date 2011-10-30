@@ -21,6 +21,7 @@ Manager::GraphManager::GraphManager()
 {
     manager = this;
 
+	//konfiguracia/vytvorenie DB
     this->activeGraph = NULL;
     this->db = new Model::DB();
     bool error;
@@ -37,18 +38,19 @@ Manager::GraphManager::~GraphManager()
 
 Data::Graph* Manager::GraphManager::loadGraph(QString filepath)
 {
+	//otvaranie suboru
 	bool ok = true;
 
     AppCore::Core::getInstance()->thr->pause();
     AppCore::Core::getInstance()->messageWindows->showProgressBar();
 
-    // create info handler
+    // vytvorenie infoHandler
 	std::auto_ptr<Importer::ImportInfoHandler> infoHandler (NULL);
 	if (ok) {
 		infoHandler.reset (new ImportInfoHandlerImpl);
 	}
 
-	// get name and extension
+	// meno a pripona
 	QString name;
 	QString extension;
 
@@ -58,7 +60,7 @@ Data::Graph* Manager::GraphManager::loadGraph(QString filepath)
 		extension = fileInfo.suffix ();
 	}
 
-	// get importer
+	// nastavenie importera
 	std::auto_ptr<Importer::StreamImporter> importer (NULL);
 	if (ok) {
 		bool importerFound;
@@ -76,7 +78,7 @@ Data::Graph* Manager::GraphManager::loadGraph(QString filepath)
 		infoHandler->reportError(ok, "No suitable importer has been found for the file extension.");
 	}
 
-    // create stream
+    // vytvorenie nacitavaneho streamu
     std::auto_ptr<QIODevice> stream (NULL);
     if (ok) {
     	stream.reset (new QFile (filepath));
@@ -88,7 +90,7 @@ Data::Graph* Manager::GraphManager::loadGraph(QString filepath)
     	infoHandler->reportError(ok, "Unable to open the input file.");
     }
 
-    // create graph
+    // vytvorenie noveho grafu
     std::auto_ptr<Data::Graph> newGraph (NULL);
     if (ok) {
 		newGraph.reset (this->createGraph (name));
@@ -97,7 +99,7 @@ Data::Graph* Manager::GraphManager::loadGraph(QString filepath)
 
 
 
-    // create context
+    // vytvorenie kontextu
     std::auto_ptr<Importer::ImporterContext> context (NULL);
     if (ok) {
     	context.reset (
@@ -109,28 +111,28 @@ Data::Graph* Manager::GraphManager::loadGraph(QString filepath)
     	);
     }
 
-    // perform import
+    // spustenie importera
     if (ok) {
     	ok = importer->import (*context);
     }
 
-    // close stream
+    // ukoncenie stramu
     if (stream.get() != NULL) {
     	stream->close ();
     }
 
-    // add layout
+    // pridanie obmedzovaca
     if (ok) {
 		Data::GraphLayout* gLay = newGraph->addLayout ("new Layout");
 		newGraph->selectLayout (gLay);
 	}
 
-    // close stream
+    // ukoncenie stramu
     if (stream.get() != NULL) {
     	stream->close ();
     }
 
-    // set as active graph
+    // nastavenie aktivneho grafu
     if (ok) {
     	// ak uz nejaky graf mame, tak ho najprv sejvneme a zavrieme
 		if(this->activeGraph != NULL){
@@ -169,31 +171,30 @@ Data::Graph* Manager::GraphManager::createNewGraph(QString name)
 
     AppCore::Core::getInstance()->thr->pause();
 
-    // create info handler
+    // vytvorenie infoHandler
 	std::auto_ptr<Importer::ImportInfoHandler> infoHandler (NULL);
 	if (ok) {
 		infoHandler.reset (new ImportInfoHandlerImpl);
 	}
 
-	// get name and extension
-	//QString name;
+	// meno a pripona
 	QString extension;
 
 
-    // create graph
+    // vytvor graf
     std::auto_ptr<Data::Graph> newGraph (NULL);
     if (ok) {
 		newGraph.reset (this->createGraph (name));
 		ok = (newGraph.get () != NULL);
     }
 
-    // add layout
+    // pridaj rozlozenie
     if (ok) {
 		Data::GraphLayout* gLay = newGraph->addLayout ("new Layout");
 		newGraph->selectLayout (gLay);
 	}
 
-    // set as active graph
+    // nastav aktivny graf
     if (ok) {
     	// ak uz nejaky graf mame, tak ho najprv sejvneme a zavrieme
 		if(this->activeGraph != NULL){
@@ -286,6 +287,7 @@ Data::Graph* Manager::GraphManager::emptyGraph()
 
 Data::Graph* Manager::GraphManager::simpleGraph()
 {
+	//default vytvorenie jednoducheho grafu - pre ucely testovania
 	Data::Graph *newGraph = new Data::Graph(1, "simple", 0, 0, NULL);
 	Data::Type *type = newGraph->addType("default");
 	Data::Type *type2 = newGraph->addType("default2");
@@ -303,6 +305,7 @@ Data::Graph* Manager::GraphManager::simpleGraph()
 
 Manager::GraphManager* Manager::GraphManager::getInstance()
 {
+	//instancia GraphManager
 	if(manager == NULL)
 	{
 
@@ -315,6 +318,7 @@ Manager::GraphManager* Manager::GraphManager::getInstance()
 
 void Manager::GraphManager::runTestCase( qint32 action )
 {
+	//testovaci pripad, vytvorenie grafu, inicializacia Debug, 7 testovacich vstupov grafu
 	switch(action) {
 		case 1:
 		case 2: {
