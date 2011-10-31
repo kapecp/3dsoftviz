@@ -171,7 +171,7 @@ void Server::sendLayout(QTcpSocket *client){
     }
     QTime t;
     t.start();
-    client -> write("GRAPH_START\n");
+    client -> write("LAYOUT_START\n");
 
     while(iNodes != nodes->constEnd()) {
 
@@ -185,6 +185,9 @@ void Server::sendLayout(QTcpSocket *client){
 
         ++iNodes;
     }
+
+    client -> write("LAYOUT_END\n");
+
     qDebug() << "Sending layout took" << t.elapsed() << "ms";
 
     if (isRunning) {

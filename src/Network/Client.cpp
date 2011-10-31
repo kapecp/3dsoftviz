@@ -105,6 +105,10 @@ void Client::readyRead()
             float y = layRegexp.cap(3).toFloat();
             float z = layRegexp.cap(4).toFloat();
 
+            thread->pause();
+
+            nodes[id]->setTargetPosition(osg::Vec3(x,y,z));
+
             qDebug()<< "[NEW NODE POS] id: " << id << " [" << x << "," << y << "," << z << "]";
 
         } else if(messageRegex.indexIn(line) != -1) {
