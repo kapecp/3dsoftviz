@@ -13,6 +13,8 @@
 
 #include "Manager/ImportInfoHandlerImpl.h"
 
+#include "Network/Server.h"
+
 #include <memory>
 
 Manager::GraphManager * Manager::GraphManager::manager;
@@ -158,7 +160,10 @@ Data::Graph* Manager::GraphManager::loadGraph(QString filepath)
     	AppCore::Core::getInstance()->restartLayout();
     }
 
-	AppCore::Core::getInstance()->messageWindows->closeProgressBar();
+    AppCore::Core::getInstance()->messageWindows->closeProgressBar();
+
+    Network::Server *server = Network::Server::getInstance();
+    server -> sendGraph();
 
     return (ok ? this->activeGraph : NULL);
 }

@@ -1,5 +1,7 @@
 #include "Layout/FRAlgorithm.h"
 
+#include "Network/Server.h"
+
 using namespace Layout;
 using namespace Vwr;	
 
@@ -289,8 +291,12 @@ bool FRAlgorithm::iterate()
 			}
 		}
 	}
-	// vracia true ak sa ma pokracovat dalsou iteraciou
 
+        //posli layout ostatnym klientom (ak nejaki su)
+        Network::Server *server = Network::Server::getInstance();
+        server -> sendLayout();
+
+	// vracia true ak sa ma pokracovat dalsou iteraciou
 	return changed;
 }
 
