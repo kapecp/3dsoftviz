@@ -248,7 +248,7 @@ void Server::sendLayout(QTcpSocket *client){
         client -> write("LAYOUT_END\n");
     }
 
-    qDebug() << "Sending layout took" << t.elapsed() << "ms";
+    //qDebug() << "Sending layout took" << t.elapsed() << "ms";
 
 }
 

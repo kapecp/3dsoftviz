@@ -152,6 +152,7 @@ void FRAlgorithm::Run()
 	if(this->graph != NULL)
 	{
 		isIterating_mutex.lock();
+                int i = 0;
 		while (notEnd) 
 		{			
 			// slucka pozastavenia - ak je pauza
@@ -165,7 +166,16 @@ void FRAlgorithm::Run()
 			}
 			if (!iterate()) {
 				graph->setFrozen(true);
-			}			
+                        }
+
+                        if (i % 5 == 0){
+                            qDebug() << "SENDING!";
+                            //posli layout ostatnym klientom (ak nejaki su)
+                            Network::Server *server = Network::Server::getInstance();
+                            server -> sendLayout();
+                        }
+                        qDebug() << i;
+                        i++;
 		}
 
 		isIterating_mutex.unlock();
@@ -290,11 +300,7 @@ bool FRAlgorithm::iterate()
 				changed = changed || fo;
 			}
 		}
-	}
-
-        //posli layout ostatnym klientom (ak nejaki su)
-        Network::Server *server = Network::Server::getInstance();
-        server -> sendLayout();
+        }
 
 	// vracia true ak sa ma pokracovat dalsou iteraciou
 	return changed;
