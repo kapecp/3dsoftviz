@@ -18,6 +18,9 @@
 #include <QLineEdit>
 #include <Qt/qstringlist.h>
 
+#include "Network/Server.h"
+#include "Network/Client.h"
+
 #include "QOSG/OptionsWindow.h"
 #include "QOSG/LoadGraphWindow.h"
 #include "Viewer/CoreGraph.h"

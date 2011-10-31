@@ -11,9 +11,6 @@
 #include <QFile>
 #include <qfileinfo.h>
 
-#include "Network/Server.h"
-#include "Network/Client.h"
-
 #include "Core/Core.h"
 #include "Model/DB.h"
 #include "Data/Graph.h"

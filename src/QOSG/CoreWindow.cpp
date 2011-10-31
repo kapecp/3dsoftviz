@@ -908,7 +908,8 @@ bool CoreWindow::removeClick()
 
 void CoreWindow::start_server()
 {
-    Network::Server *server = new Network::Server();
+    Network::Server *server = Network::Server::getInstance();
+
     server->setLayoutThread(layout);
     server->setCoreGraph(coreGraph);
     bool success = server->listen(QHostAddress::Any, 4200);

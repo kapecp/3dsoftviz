@@ -22,6 +22,9 @@ class Server : public QTcpServer {
 
     public:
         Server(QObject *parent=0);
+
+        static Server* getInstance();
+
         void setLayoutThread(Layout::LayoutThread * layoutThread);
         void setCoreGraph(Vwr::CoreGraph * cg) { coreGraph = cg; }
 
@@ -37,6 +40,8 @@ class Server : public QTcpServer {
         void incomingConnection(int socketfd);
 
     private:
+        static Server *instance;
+
         QSet<QTcpSocket*> clients;
         float graphScale;
         QMap<QTcpSocket*,QString> users;

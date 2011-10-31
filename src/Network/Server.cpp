@@ -11,10 +11,21 @@
 
 using namespace Network;
 
+Server * Server::instance;
+
 Server::Server(QObject *parent) : QTcpServer(parent)
 {
+    instance = this;
     Util::ApplicationConfig *conf = Util::ApplicationConfig::get();
     graphScale = conf->getValue("Viewer.Display.NodeDistanceScale").toFloat();
+}
+
+Server* Server::getInstance() {
+    if (instance == NULL) {
+        return new Server();
+    } else {
+        return instance;
+    }
 }
 
 void Server::incomingConnection(int socketfd)
