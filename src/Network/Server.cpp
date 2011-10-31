@@ -97,6 +97,10 @@ void Server::sendUserList()
 
 void Server::sendGraph(QTcpSocket *client){
 
+    if (client == NULL && clients.size() == 0) {
+        return;
+    }
+
     QString message;
 
     Data::Graph * currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
@@ -104,15 +108,22 @@ void Server::sendGraph(QTcpSocket *client){
     QMap<qlonglong, osg::ref_ptr<Data::Node> >::const_iterator iNodes =  nodes->constBegin();
 
 
-    bool isRunning = thread->isRunning();
+    /*bool isRunning = thread->isRunning();
 
     if (isRunning) {
         thread->pause();
         coreGraph->setNodesFreezed(true);
-    }
+    }*/
     QTime t;
     t.start();
-    client -> write("GRAPH_START\n");
+
+    if (client == NULL){
+        foreach(QTcpSocket *otherClient, clients){
+            otherClient->write("GRAPH_START\n");
+        }
+    } else {
+        client -> write("GRAPH_START\n");
+    }
 
     while(iNodes != nodes->constEnd()) {
 
@@ -121,7 +132,14 @@ void Server::sendGraph(QTcpSocket *client){
         message += ";y:" + QString::number(iNodes.value()->getCurrentPosition().y()/graphScale);
         message += ";z:" + QString::number(iNodes.value()->getCurrentPosition().z()/graphScale);
 
-        client -> write(("/nodeData:"+message+"\n").toUtf8());
+        if (client == NULL){
+            foreach(QTcpSocket *otherClient, clients){
+                otherClient->write(("/nodeData:"+message+"\n").toUtf8());
+            }
+        } else {
+            client -> write(("/nodeData:"+message+"\n").toUtf8());
+        }
+
         //qDebug() << "[SERVER] Sending node: " << message;
 
         ++iNodes;
@@ -137,24 +155,41 @@ void Server::sendGraph(QTcpSocket *client){
         message += ";to:" + QString::number(iEdges.value()->getDstNode()->getId());
         message += ";or:" + QString::number(iEdges.value()->isOriented() ? 1 : 0);
 
-        client -> write(("/edgeData:"+message+"\n").toUtf8());
+        if (client == NULL){
+            foreach(QTcpSocket *otherClient, clients){
+                otherClient->write(("/edgeData:"+message+"\n").toUtf8());
+            }
+        } else {
+            client -> write(("/edgeData:"+message+"\n").toUtf8());
+        }
+
         //qDebug() << "[SERVER] Sending edge: " << message;
 
         ++iEdges;
     }
 
-    client -> write("GRAPH_END\n");
+    if (client == NULL){
+        foreach(QTcpSocket *otherClient, clients){
+            otherClient->write("GRAPH_END\n");
+        }
+    } else {
+        client -> write("GRAPH_END\n");
+    }
 
     qDebug() << "Sending took" << t.elapsed() << "ms";
 
-    if (isRunning) {
+    /*if (isRunning) {
         thread->play();
         coreGraph->setNodesFreezed(false);
-    }
+    }*/
 
 }
 
 void Server::sendLayout(QTcpSocket *client){
+
+    if (client == NULL && clients.size() == 0) {
+        return;
+    }
 
     QString message;
 
@@ -163,15 +198,16 @@ void Server::sendLayout(QTcpSocket *client){
     QMap<qlonglong, osg::ref_ptr<Data::Node> >::const_iterator iNodes =  nodes->constBegin();
 
 
-    bool isRunning = thread->isRunning();
-
-    if (isRunning) {
-        thread->pause();
-        coreGraph->setNodesFreezed(true);
-    }
     QTime t;
     t.start();
-    client -> write("LAYOUT_START\n");
+
+    if (client == NULL){
+        foreach(QTcpSocket *otherClient, clients){
+            otherClient->write("LAYOUT_START\n");
+        }
+    } else {
+        client -> write("LAYOUT_START\n");
+    }
 
     while(iNodes != nodes->constEnd()) {
 
@@ -180,20 +216,29 @@ void Server::sendLayout(QTcpSocket *client){
         message += ";y:" + QString::number(iNodes.value()->getCurrentPosition().y()/graphScale);
         message += ";z:" + QString::number(iNodes.value()->getCurrentPosition().z()/graphScale);
 
-        client -> write(("/layData:"+message+"\n").toUtf8());
+        if (client == NULL){
+            foreach(QTcpSocket *otherClient, clients){
+                otherClient->write(("/layData:"+message+"\n").toUtf8());
+            }
+        } else {
+            client -> write(("/layData:"+message+"\n").toUtf8());
+        }
+
         //qDebug() << "[SERVER] Sending node: " << message;
 
         ++iNodes;
     }
 
-    client -> write("LAYOUT_END\n");
+    if (client == NULL){
+        foreach(QTcpSocket *otherClient, clients){
+            otherClient->write("LAYOUT_END\n");
+        }
+    } else {
+        client -> write("LAYOUT_END\n");
+    }
 
     qDebug() << "Sending layout took" << t.elapsed() << "ms";
 
-    if (isRunning) {
-        thread->play();
-        coreGraph->setNodesFreezed(false);
-    }
 }
 
 void Server::setLayoutThread(Layout::LayoutThread *layoutThread){

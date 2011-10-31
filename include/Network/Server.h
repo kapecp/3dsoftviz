@@ -25,6 +25,9 @@ class Server : public QTcpServer {
         void setLayoutThread(Layout::LayoutThread * layoutThread);
         void setCoreGraph(Vwr::CoreGraph * cg) { coreGraph = cg; }
 
+        void sendGraph(QTcpSocket *client = NULL);
+        void sendLayout(QTcpSocket *client = NULL);
+
     private slots:
         void readyRead();
         void disconnected();
@@ -39,8 +42,6 @@ class Server : public QTcpServer {
         QMap<QTcpSocket*,QString> users;
         Layout::LayoutThread * thread;
         Vwr::CoreGraph * coreGraph;
-        void sendGraph(QTcpSocket *client);
-        void sendLayout(QTcpSocket *client);
     };
 }
 
