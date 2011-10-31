@@ -83,7 +83,7 @@ void Client::readyRead()
             float y = nodeRegexp.cap(3).toFloat();
             float z = nodeRegexp.cap(4).toFloat();
 
-            qDebug()<< "[NEW NODE] id: " << id << " [" << x << "," << y << "," << z << "]";
+            //qDebug()<< "[NEW NODE] id: " << id << " [" << x << "," << y << "," << z << "]";
 
             osg::Vec3 position(x,y,z);
             osg::ref_ptr<Data::Node> node = currentGraph->addNode(id,"newNode", nodeType, position);
@@ -95,7 +95,7 @@ void Client::readyRead()
             int to = edgeRegexp.cap(3).toInt();
             bool oriented = edgeRegexp.cap(4).toInt();
 
-            qDebug()<< "[NEW EDGE] id: " << id << " from: " << from << ", to:" << to;
+            //qDebug()<< "[NEW EDGE] id: " << id << " from: " << from << ", to:" << to;
 
             currentGraph->addEdge(id,"NewEdge",nodes[from],nodes[to],edgeType,oriented);
         } else if (layRegexp.indexIn(line) != -1) {
@@ -109,7 +109,7 @@ void Client::readyRead()
 
             nodes[id]->setTargetPosition(osg::Vec3(x,y,z));
 
-            qDebug()<< "[NEW NODE POS] id: " << id << " [" << x << "," << y << "," << z << "]";
+            //qDebug()<< "[NEW NODE POS] id: " << id << " [" << x << "," << y << "," << z << "]";
 
         } else if(messageRegex.indexIn(line) != -1) {
             QString user = messageRegex.cap(1);
