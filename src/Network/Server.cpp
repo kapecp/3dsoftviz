@@ -108,7 +108,7 @@ void Server::sendUserList()
 
 void Server::sendGraph(QTcpSocket *client){
 
-    if (client == NULL && clients.size() == 0) {
+    if (!this -> isListening() || (client == NULL && clients.size() == 0)) {
         return;
     }
 
@@ -198,13 +198,18 @@ void Server::sendGraph(QTcpSocket *client){
 
 void Server::sendLayout(QTcpSocket *client){
 
-    if (client == NULL && clients.size() == 0) {
+    if (!this -> isListening() || (client == NULL && clients.size() == 0)) {
         return;
     }
 
     QString message;
 
     Data::Graph * currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
+
+    if (currentGraph == NULL) {
+        return;
+    }
+
     QMap<qlonglong, osg::ref_ptr<Data::Node> >* nodes = currentGraph -> getNodes();
     QMap<qlonglong, osg::ref_ptr<Data::Node> >::const_iterator iNodes =  nodes->constBegin();
 
