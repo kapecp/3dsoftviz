@@ -29,7 +29,7 @@ Vwr::CoreGraph::CoreGraph(Data::Graph * graph, osg::ref_ptr<osg::Camera> camera)
 
 	root = new osg::Group();
 	root->addChild(createSkyBox());
-	backgroundPosition = 0;
+        backgroundPosition = 0;
 
 	reload(graph);
 }
@@ -230,7 +230,11 @@ void CoreGraph::update()
 
         //posli layout ostatnym klientom (ak nejaki su)
         Network::Server *server = Network::Server::getInstance();
-        server -> sendLayout();
+        int time = QTime::currentTime().msec();
+        if (abs(time - prevTime) > 100) {
+            server -> sendLayout();
+            prevTime = time;
+        }
 }
 
 void CoreGraph::synchronize()

@@ -348,6 +348,8 @@ namespace Vwr
 		*  \brief custom nodes group position
 		*/
 		int customNodesPosition;
+
+                int prevTime;
 	};
 }
 
