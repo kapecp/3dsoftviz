@@ -1,6 +1,8 @@
 #include "Viewer/CoreGraph.h"
 #include <osgUtil/Optimizer>
 
+#include "Network/Server.h"
+
 using namespace Vwr;
 
 /*
@@ -225,6 +227,10 @@ void CoreGraph::update()
 	edgesGroup->updateEdgeCoords();	
 	qmetaEdgesGroup->updateEdgeCoords();
 	root->addChild(initCustomNodes());
+
+        //posli layout ostatnym klientom (ak nejaki su)
+        Network::Server *server = Network::Server::getInstance();
+        server -> sendLayout();
 }
 
 void CoreGraph::synchronize()
