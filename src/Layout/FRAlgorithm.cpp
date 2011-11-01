@@ -1,7 +1,5 @@
 #include "Layout/FRAlgorithm.h"
 
-#include "Network/Server.h"
-
 using namespace Layout;
 using namespace Vwr;	
 
@@ -151,8 +149,7 @@ void FRAlgorithm::Run()
 {
 	if(this->graph != NULL)
 	{
-		isIterating_mutex.lock();
-                int i = 0;
+                isIterating_mutex.lock();
 		while (notEnd) 
 		{			
 			// slucka pozastavenia - ak je pauza
@@ -161,21 +158,12 @@ void FRAlgorithm::Run()
 			{
 				// [GrafIT][!] not 100% OK (e.g. msleep(100) remains here), but we have fixed the most obvious multithreading issues of the original code
 				isIterating_mutex.unlock();
-				QThread::msleep(100);
+                                QThread::msleep(100);
 				isIterating_mutex.lock();
 			}
 			if (!iterate()) {
 				graph->setFrozen(true);
                         }
-
-                        if (i % 5 == 0){
-                            qDebug() << "SENDING!";
-                            //posli layout ostatnym klientom (ak nejaki su)
-                            Network::Server *server = Network::Server::getInstance();
-                            server -> sendLayout();
-                        }
-                        qDebug() << i;
-                        i++;
 		}
 
 		isIterating_mutex.unlock();
