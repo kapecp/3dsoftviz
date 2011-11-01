@@ -910,15 +910,20 @@ void CoreWindow::start_server()
 {
     Network::Server *server = Network::Server::getInstance();
 
-    server->setLayoutThread(layout);
-    server->setCoreGraph(coreGraph);
-    bool success = server->listen(QHostAddress::Any, 4200);
-    if(!success)
-    {
-        qFatal("Could not listen on port 4200.");
-    }
+    if (!server -> isListening()) {
 
-    qDebug() << "Server started";
+        server->setLayoutThread(layout);
+        server->setCoreGraph(coreGraph);
+        bool success = server->listen(QHostAddress::Any, 4200);
+        if(!success)
+        {
+            qFatal("Could not listen on port 4200.");
+        }
+
+        qDebug() << "Server started";
+    } else {
+        qDebug() << "Server already listening";
+    }
 }
 
 void CoreWindow::start_client()
