@@ -456,11 +456,17 @@ namespace QOSG
 		*/
 		void createMenus();
 
-		/**
-		*  \fn private  createToolBar
-		*  \brief Create toolBar
-		*/
-		void createToolBar();	
+                /**
+                *  \fn private  createLeftToolBar
+                *  \brief Create left toolBar
+                */
+                void createLeftToolBar();
+
+                /**
+                *  \fn private  createRightToolBar
+                *  \brief Create right toolBar
+                */
+                void createRightToolBar();
 
 		/**
 		*  \fn private  createHorizontalFrame
@@ -494,9 +500,7 @@ namespace QOSG
 		QColor color;
 
                 QPushButton * b_start_server;
-                QPushButton * b_start_client;
                 QPushButton * b_send_message;
-                QLineEdit * le_client_name;
                 QLineEdit * le_message;
 
                 Network::Client * client;
@@ -539,6 +543,10 @@ namespace QOSG
 		*  \param  val layout thread
 		*/
                 void setLayoutThread(Layout::LayoutThread * val) { layout = val; }
+
+                QLineEdit * le_client_name;
+                QLineEdit * le_server_addr;
+                QPushButton * b_start_client;
 
 	private:
 

@@ -17,12 +17,13 @@ CoreWindow::CoreWindow(QWidget *parent, Vwr::CoreGraph* coreGraph, QApplication*
 	application = app;
 	layout = thread;
 
-        client = NULL;
+        client = new Network::Client(this);
 	
 	//vytvorenie menu a toolbar-ov
 	createActions();
 	createMenus();
-	createToolBar();		
+        createLeftToolBar();
+        createRightToolBar();
 	
 	viewerWidget = new ViewerQT(this, 0, 0, 0, coreGraph);  
 	viewerWidget->setSceneData(coreGraph->getScene());
@@ -197,11 +198,11 @@ void CoreWindow::createActions()
 	connect(b_UnsetRestriction, SIGNAL(clicked()), this, SLOT(unsetRestriction ()));
 
         b_start_server = new QPushButton();
-        b_start_server->setText("Start server");
+        b_start_server->setText("Host session");
         connect(b_start_server, SIGNAL(clicked()), this, SLOT(start_server()));
 
         b_start_client = new QPushButton();
-        b_start_client->setText("Start client");
+        b_start_client->setText("Connect to session");
         connect(b_start_client, SIGNAL(clicked()), this, SLOT(start_client()));
 
         b_send_message = new QPushButton();
@@ -209,6 +210,7 @@ void CoreWindow::createActions()
         connect(b_send_message, SIGNAL(clicked()), this, SLOT(send_message()));
 
         le_client_name = new QLineEdit("Nick");
+        le_server_addr = new QLineEdit("localhost");
         le_message= new QLineEdit("Message");
 }
 
@@ -226,7 +228,7 @@ void CoreWindow::createMenus()
 	edit->addAction(options);	
 }
 
-void CoreWindow::createToolBar()
+void CoreWindow::createLeftToolBar()
 { 
 	//inicializacia comboboxu typov vyberu
 	nodeTypeComboBox = new QComboBox();
@@ -311,17 +313,37 @@ void CoreWindow::createToolBar()
 	toolBar->addWidget(frame);
         frame->layout()->addWidget(slider);
 
-        toolBar->addSeparator();
-        toolBar->addWidget(b_start_server);
-        toolBar->addSeparator();
-        toolBar->addWidget(le_client_name);
-        toolBar->addWidget(b_start_client);
-        toolBar->addSeparator();
-        toolBar->addWidget(le_message);
-        toolBar->addWidget(b_send_message);
-
 	addToolBar(Qt::LeftToolBarArea,toolBar);
-	toolBar->setMovable(false);
+        toolBar->setMovable(false);
+}
+
+void CoreWindow::createRightToolBar() {
+    toolBar = new QToolBar("Network",this);
+
+    toolBar->addWidget(b_start_server);
+    toolBar->addSeparator();
+
+    QFrame * frame = createHorizontalFrame();
+    QLabel *label = new QLabel("Host:");
+    frame->layout()->addWidget(label);
+    frame->layout()->addWidget(le_server_addr);
+
+    toolBar->addWidget(frame);
+
+    frame = createHorizontalFrame();
+    label = new QLabel("Nick:");
+    frame->layout()->addWidget(label);
+    frame->layout()->addWidget(le_client_name);
+
+    toolBar->addWidget(frame);
+
+    toolBar->addWidget(b_start_client);
+    toolBar->addSeparator();
+    toolBar->addWidget(le_message);
+    toolBar->addWidget(b_send_message);
+
+    addToolBar(Qt::RightToolBarArea,toolBar);
+    toolBar->setMovable(false);
 }
 
 QFrame* CoreWindow::createHorizontalFrame()
@@ -928,11 +950,10 @@ void CoreWindow::start_server()
 
 void CoreWindow::start_client()
 {
-    if (client == NULL) {
-        client = new Network::Client(this);
+    if (!client -> isConnected()) {
         client -> setLayoutThread(layout);
         client -> setCoreGraph(coreGraph);
-        client -> ServerConnect(le_client_name->text());
+        client -> ServerConnect(le_client_name->text(), le_server_addr->text());
     } else {
         qDebug() << "Client already running";
     }

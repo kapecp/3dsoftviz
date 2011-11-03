@@ -6,28 +6,32 @@
 #include "Importer/GraphOperations.h"
 #include <QRegExp>
 #include "Manager/Manager.h"
+#include "QOSG/CoreWindow.h"
 
 using namespace Network;
 
-Client::Client(QObject *parent) : QObject(parent)
-{
+Client::Client(QObject *parent) : QObject(parent) {
     socket = new QTcpSocket(this);
+
+    cw = parent;
 
     connect(socket, SIGNAL(readyRead()), this, SLOT(readyRead()));
     connect(socket, SIGNAL(connected()), this, SLOT(connected()));
+    connect(socket, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(error()));
 
     edgeType = NULL;
     nodeType = NULL;
+
+    conn = false;
+
 }
 
-void Client::ServerConnect(QString nick)
-{
+void Client::ServerConnect(QString nick, QString address) {
     clientNick = nick;
-    socket->connectToHost("localhost", 4200);
+    socket->connectToHost(address, 4200);
 }
 
-void Client::send_message(QString message)
-{
+void Client::send_message(QString message) {
     if(!message.isEmpty())
     {
         socket->write(QString(message + "\n").toUtf8());
@@ -35,8 +39,7 @@ void Client::send_message(QString message)
 }
 
 // This function gets called whenever the chat server has sent us some text:
-void Client::readyRead()
-{
+void Client::readyRead() {
     // We'll loop over every (complete) line of text that the server has sent us:
     while(socket->canReadLine())
     {
@@ -123,8 +126,18 @@ void Client::readyRead()
 
 void Client::connected()
 {
-    // And send our username to the chat server.
     socket->write(QString("/me:" + clientNick + "\n").toUtf8());
+    ((QOSG::CoreWindow *) cw) -> le_client_name -> setEnabled(false);
+    ((QOSG::CoreWindow *) cw) -> le_server_addr -> setEnabled(false);
+    ((QOSG::CoreWindow *) cw) -> b_start_client -> setText("Disconnect");
+    conn = true;
+}
+
+void Client::error(){
+    ((QOSG::CoreWindow *) cw) -> le_client_name -> setEnabled(true);
+    ((QOSG::CoreWindow *) cw) -> le_server_addr -> setEnabled(true);
+    ((QOSG::CoreWindow *) cw) -> b_start_client -> setText("Connect to session");
+    conn = false;
 }
 
 void Client::setLayoutThread(Layout::LayoutThread *layoutThread){

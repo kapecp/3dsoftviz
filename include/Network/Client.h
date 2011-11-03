@@ -22,12 +22,14 @@ class Client : public QObject
 
         Client(QObject *parent=0);
 
-        void ServerConnect(QString nick);
+        void ServerConnect(QString nick, QString address);
 
         void send_message(QString message);
 
         void setLayoutThread(Layout::LayoutThread * layoutThread);
         void setCoreGraph(Vwr::CoreGraph * cg) { coreGraph = cg; }
+
+        bool isConnected(){ return conn; }
 
     private slots:
         // This is a function we'll connect to a socket's readyRead()
@@ -37,8 +39,12 @@ class Client : public QObject
         // This function gets called when the socket tells us it's connected.
         void connected();
 
+        void error();
+
     private:
         QString clientNick;
+
+        bool conn;
 
         std::map<qlonglong, osg::ref_ptr<Data::Node> > nodes;
         Data::Type *nodeType;
@@ -46,6 +52,7 @@ class Client : public QObject
 
         Layout::LayoutThread * thread;
         Vwr::CoreGraph * coreGraph;
+        QObject * cw;
 
         // This is the socket that will let us communitate with the server.
         QTcpSocket *socket;

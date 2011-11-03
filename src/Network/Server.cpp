@@ -52,6 +52,7 @@ void Server::readyRead()
 
         if(meRegex.indexIn(line) != -1)
         {
+            client -> write("WELCOME\n");
             QString user = meRegex.cap(1);
             users[client] = user;
             foreach(QTcpSocket *client, clients)
