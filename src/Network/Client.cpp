@@ -122,7 +122,9 @@ void Client::readyRead() {
 
             thread->pause();
 
-            nodes[id]->setTargetPosition(osg::Vec3(x,y,z));
+            if (!excluded_nodes.contains(nodes[id])){
+                nodes[id]->setTargetPosition(osg::Vec3(x,y,z));
+            }
 
             //qDebug()<< "[NEW NODE POS] id: " << id << " [" << x << "," << y << "," << z << "]";
 
@@ -173,4 +175,8 @@ void Client::setLayoutThread(Layout::LayoutThread *layoutThread){
 
 bool Client::isConnected() {
     return socket -> state() == QAbstractSocket::ConnectedState;
+}
+
+void Client::clearNodesExcludedFromUpdate() {
+    excluded_nodes.clear();
 }

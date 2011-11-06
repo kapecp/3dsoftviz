@@ -35,6 +35,9 @@ class Client : public QObject
 
         void disconnect();
 
+        void setNodesExcludedFromUpdate(QLinkedList<osg::ref_ptr<Data::Node> > nodes) { excluded_nodes = nodes; }
+        void clearNodesExcludedFromUpdate();
+
     private slots:
         // This is a function we'll connect to a socket's readyRead()
         // signal, which tells us there's something to be read from the server.
@@ -53,6 +56,7 @@ class Client : public QObject
         QString clientNick;
 
         std::map<qlonglong, osg::ref_ptr<Data::Node> > nodes;
+        QLinkedList<osg::ref_ptr<Data::Node> > excluded_nodes;
         Data::Type *nodeType;
         Data::Type *edgeType;
 

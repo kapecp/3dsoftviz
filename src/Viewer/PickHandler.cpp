@@ -32,7 +32,7 @@ PickHandler::PickHandler(Vwr::CameraManipulator * cameraManipulator, Vwr::CoreGr
 	isManipulatingNodes = false;
 	pickMode = PickMode::NONE;
 	selectionType = SelectionType::ALL;
-};
+}
 
 bool PickHandler::handle( const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& aa )
 {
@@ -77,7 +77,10 @@ bool PickHandler::handle( const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdap
 			return handleDrag(ea, aa);
 		}
 	case osgGA::GUIEventAdapter::RELEASE:
-		{			
+                {
+                        Network::Client * client = Network::Client::getInstance();
+                        client -> clearNodesExcludedFromUpdate();
+
 			//ak je release a je timer aktivny tak sa ulozi event a nevyvola sa
 			if (timer->isActive())
 			{
@@ -246,6 +249,7 @@ bool PickHandler::handleDrag( const osgGA::GUIEventAdapter& ea, osgGA::GUIAction
 	{
 
                 Network::Client * client = Network::Client::getInstance();
+                client -> setNodesExcludedFromUpdate(pickedNodes);
 
 		if(!isManipulatingNodes)
 		{
