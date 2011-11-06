@@ -69,6 +69,8 @@ void Client::readyRead() {
 
         QRegExp edgeRegexp("^/edgeData:id:([0-9]+);from:([0-9]+);to:([0-9]+);or:([01])$");
 
+        QRegExp moveNodeRegexp("^/moveNode:id:([0-9]+);x:([0-9-\\.]+);y:([0-9-\\.]+);z:([0-9-\\.]+)$");
+
         Data::Graph * currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
 
         if(usersRegex.indexIn(line) != -1)
@@ -77,6 +79,20 @@ void Client::readyRead() {
             qDebug() << "Clients:";
             foreach(QString user, users)
                 qDebug() << user;
+        } else if (moveNodeRegexp.indexIn(line) != -1) {
+            int id = moveNodeRegexp.cap(1).toInt();
+
+            float x = moveNodeRegexp.cap(2).toFloat();
+            float y = moveNodeRegexp.cap(3).toFloat();
+            float z = moveNodeRegexp.cap(4).toFloat();
+            Data::Graph * currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
+            QMap<qlonglong, osg::ref_ptr<Data::Node> >* nodes = currentGraph -> getNodes();
+            //qDebug() << "Moving" << id << "to" << x << y << z;
+            Data::Node *node = (*((*nodes).find(id)));
+
+            node -> setUsingInterpolation(false);
+            node -> setFixed(true);
+            node -> setTargetPosition(osg::Vec3(x,y,z));
         } else if (line == "GRAPH_START") {
             t.start();
             currentGraph= Manager::GraphManager::getInstance()->createNewGraph("NewGraph");
@@ -122,7 +138,7 @@ void Client::readyRead() {
 
             thread->pause();
 
-            if (!excluded_nodes.contains(nodes[id])){
+            if (!selected_nodes.contains(nodes[id])){
                 nodes[id]->setTargetPosition(osg::Vec3(x,y,z));
             }
 
@@ -177,11 +193,11 @@ bool Client::isConnected() {
     return socket -> state() == QAbstractSocket::ConnectedState;
 }
 
-void Client::sendExcludedNodesPosition() {
-    QLinkedList<osg::ref_ptr<Data::Node> >::const_iterator i = excluded_nodes.constBegin();
+void Client::sendMovedNodesPosition() {
+    QLinkedList<osg::ref_ptr<Data::Node> >::const_iterator i = selected_nodes.constBegin();
     QString message;
 
-    while (i != excluded_nodes.constEnd())
+    while (i != selected_nodes.constEnd())
     {
 
         message = "id:" + QString::number((*i)->getId());
@@ -192,8 +208,6 @@ void Client::sendExcludedNodesPosition() {
 
         socket->write(QString("/moveNode:" + message + "\n").toUtf8());
     }
-}
 
-void Client::clearNodesExcludedFromUpdate() {
-    excluded_nodes.clear();
+    selected_nodes.clear();
 }

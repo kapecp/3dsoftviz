@@ -30,8 +30,11 @@ class Server : public QTcpServer {
 
         void sendGraph(QTcpSocket *client = NULL);
         void sendLayout(QTcpSocket *client = NULL);
+        void sendMoveNodes();
 
         void stopServer();
+
+        void setSelectedNodes(QLinkedList<osg::ref_ptr<Data::Node> > nodes) { selected_nodes = nodes; }
 
     private slots:
         void readyRead();
@@ -43,6 +46,9 @@ class Server : public QTcpServer {
 
     private:
         static Server *instance;
+
+        QLinkedList<osg::ref_ptr<Data::Node> > selected_nodes;
+        QLinkedList<osg::ref_ptr<Data::Node> > moving_nodes;
 
         QSet<QTcpSocket*> clients;
         float graphScale;

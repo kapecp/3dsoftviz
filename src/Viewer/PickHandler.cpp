@@ -5,6 +5,7 @@
 
 #include "Manager/Manager.h"
 #include "Network/Client.h"
+#include "Network/Server.h"
 
 using namespace Vwr;
 
@@ -79,8 +80,12 @@ bool PickHandler::handle( const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdap
 	case osgGA::GUIEventAdapter::RELEASE:
                 {
                         Network::Client * client = Network::Client::getInstance();
-                        client -> sendExcludedNodesPosition();
-                        client -> clearNodesExcludedFromUpdate();
+                        if (client->isConnected()){
+                            client -> sendMovedNodesPosition();
+                        } else {
+                            Network::Server * server = Network::Server::getInstance();
+                            server -> sendMoveNodes();
+                        }
 
 			//ak je release a je timer aktivny tak sa ulozi event a nevyvola sa
 			if (timer->isActive())
@@ -247,10 +252,14 @@ bool PickHandler::handleDrag( const osgGA::GUIEventAdapter& ea, osgGA::GUIAction
 		selectionQuad->getDrawable(0)->asGeometry()->setVertexArray(coordinates);
 	}
 	else if (pickMode == PickMode::NONE && leftButtonPressed)
-	{
-
+        {
                 Network::Client * client = Network::Client::getInstance();
-                client -> setNodesExcludedFromUpdate(pickedNodes);
+                if (client->isConnected()){
+                    client -> setNodesExcludedFromUpdate(pickedNodes);
+                } else {
+                    Network::Server * server = Network::Server::getInstance();
+                    server -> setSelectedNodes(pickedNodes);
+                }
 
 		if(!isManipulatingNodes)
 		{

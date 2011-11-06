@@ -61,15 +61,24 @@ void Server::readyRead()
             sendUserList();
         }
         else if (moveNodeRegexp.indexIn(line) != -1) {
+
             int id = moveNodeRegexp.cap(1).toInt();
 
             float x = moveNodeRegexp.cap(2).toFloat()/graphScale;
             float y = moveNodeRegexp.cap(3).toFloat()/graphScale;
             float z = moveNodeRegexp.cap(4).toFloat()/graphScale;
+
+            QString message = "/moveNode:id:"+ QString::number(id) + ";x:" + QString::number(x) + ";y:" + QString::number(y) + ";z:" + QString::number(z) + "\n";
+            foreach(QTcpSocket *otherClient, clients) {
+                otherClient->write(message.toUtf8());
+            }
+
             Data::Graph * currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
             QMap<qlonglong, osg::ref_ptr<Data::Node> >* nodes = currentGraph -> getNodes();
-            qDebug() << "Moving" << id << "to" << x << y << z;
+            //qDebug() << "Moving" << id << "to" << x << y << z;
             Data::Node *node = (*((*nodes).find(id)));
+
+            moving_nodes.append(node);
 
             node -> setUsingInterpolation(false);
             node -> setFixed(true);
@@ -289,4 +298,25 @@ void Server::stopServer(){
 
     this->close();
 
+}
+
+void Server::sendMoveNodes() {
+    QLinkedList<osg::ref_ptr<Data::Node> >::const_iterator i = selected_nodes.constBegin();
+    QString message;
+
+    while (i != selected_nodes.constEnd())
+    {
+
+        message = "id:" + QString::number((*i)->getId());
+        message += ";x:" + QString::number((*i)->getCurrentPosition().x()/graphScale);
+        message += ";y:" + QString::number((*i)->getCurrentPosition().y()/graphScale);
+        message += ";z:" + QString::number((*i)->getCurrentPosition().z()/graphScale);
+        ++i;
+
+        foreach(QTcpSocket *otherClient, clients){
+            otherClient->write(QString("/moveNode:" + message + "\n").toUtf8());
+        }
+    }
+
+    selected_nodes.clear();
 }
