@@ -18,11 +18,10 @@ Client::Client(QObject *parent) : QObject(parent) {
     connect(socket, SIGNAL(readyRead()), this, SLOT(readyRead()));
     connect(socket, SIGNAL(connected()), this, SLOT(connected()));
     connect(socket, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(error()));
+    //connect(socket, SIGNAL(disconnected()), this, SLOT(disconnected()));
 
     edgeType = NULL;
     nodeType = NULL;
-
-    conn = false;
 
 }
 
@@ -120,6 +119,8 @@ void Client::readyRead() {
 
             qDebug() << user + ": " + message;
 
+        } else if (line == "SERVER_STOP") {
+            this->disconnect();
         }
     }
 }
@@ -129,17 +130,33 @@ void Client::connected()
     socket->write(QString("/me:" + clientNick + "\n").toUtf8());
     ((QOSG::CoreWindow *) cw) -> le_client_name -> setEnabled(false);
     ((QOSG::CoreWindow *) cw) -> le_server_addr -> setEnabled(false);
+    ((QOSG::CoreWindow *) cw) -> b_start_client -> setEnabled(true);
     ((QOSG::CoreWindow *) cw) -> b_start_client -> setText("Disconnect");
-    conn = true;
 }
 
 void Client::error(){
+    this->disconnect();
+}
+
+void Client::disconnected(){
+    this->disconnect();
+}
+
+void Client::disconnect() {
+    if (socket -> isOpen()){
+        socket -> disconnectFromHost();
+        socket -> close();
+    }
     ((QOSG::CoreWindow *) cw) -> le_client_name -> setEnabled(true);
     ((QOSG::CoreWindow *) cw) -> le_server_addr -> setEnabled(true);
+    ((QOSG::CoreWindow *) cw) -> b_start_client -> setEnabled(true);
     ((QOSG::CoreWindow *) cw) -> b_start_client -> setText("Connect to session");
-    conn = false;
 }
 
 void Client::setLayoutThread(Layout::LayoutThread *layoutThread){
     thread = layoutThread;
+}
+
+bool Client::isConnected() {
+    return socket -> state() == QAbstractSocket::ConnectedState;
 }

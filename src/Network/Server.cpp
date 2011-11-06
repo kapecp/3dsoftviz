@@ -261,3 +261,16 @@ void Server::sendLayout(QTcpSocket *client){
 void Server::setLayoutThread(Layout::LayoutThread *layoutThread){
     thread = layoutThread;
 }
+
+void Server::stopServer(){
+
+    foreach(QTcpSocket *otherClient, clients){
+        otherClient->write("SERVER_STOP\n");
+    }
+
+    clients.clear();
+    users.clear();
+
+    this->close();
+
+}

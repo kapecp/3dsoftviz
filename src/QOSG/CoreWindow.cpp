@@ -320,20 +320,21 @@ void CoreWindow::createLeftToolBar()
 void CoreWindow::createRightToolBar() {
     toolBar = new QToolBar("Network",this);
 
-    toolBar->addWidget(b_start_server);
-    toolBar->addSeparator();
-
-    QFrame * frame = createHorizontalFrame();
-    QLabel *label = new QLabel("Host:");
+    QFrame *frame = createHorizontalFrame();
+    QLabel *label = new QLabel("Nick:");
     frame->layout()->addWidget(label);
-    frame->layout()->addWidget(le_server_addr);
+    frame->layout()->addWidget(le_client_name);
 
     toolBar->addWidget(frame);
 
+    toolBar->addSeparator();
+    toolBar->addWidget(b_start_server);
+    toolBar->addSeparator();
+
     frame = createHorizontalFrame();
-    label = new QLabel("Nick:");
+    label = new QLabel("Host:");
     frame->layout()->addWidget(label);
-    frame->layout()->addWidget(le_client_name);
+    frame->layout()->addWidget(le_server_addr);
 
     toolBar->addWidget(frame);
 
@@ -937,14 +938,23 @@ void CoreWindow::start_server()
         server->setLayoutThread(layout);
         server->setCoreGraph(coreGraph);
         bool success = server->listen(QHostAddress::Any, 4200);
-        if(!success)
-        {
-            qFatal("Could not listen on port 4200.");
+        if(!success) {
+            qDebug() << "Could not listen on port 4200.";
+        } else {
+            le_client_name->setEnabled(false);
+            le_server_addr->setEnabled(false);
+            b_start_client->setEnabled(false);
+            b_start_server->setText("End session");
         }
 
         qDebug() << "Server started";
     } else {
-        qDebug() << "Server already listening";
+        server->stopServer();
+        le_client_name->setEnabled(true);
+        le_server_addr->setEnabled(true);
+        b_start_client->setEnabled(true);
+        b_start_server->setText("Host session");
+        qDebug() << "Server stopped";
     }
 }
 
@@ -953,8 +963,11 @@ void CoreWindow::start_client()
     if (!client -> isConnected()) {
         client -> setLayoutThread(layout);
         client -> setCoreGraph(coreGraph);
+        b_start_client -> setText("Connecting...");
+        b_start_client -> setEnabled(false);
         client -> ServerConnect(le_client_name->text(), le_server_addr->text());
     } else {
+        client -> disconnect();
         qDebug() << "Client already running";
     }
 }

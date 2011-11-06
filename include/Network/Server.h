@@ -31,6 +31,8 @@ class Server : public QTcpServer {
         void sendGraph(QTcpSocket *client = NULL);
         void sendLayout(QTcpSocket *client = NULL);
 
+        void stopServer();
+
     private slots:
         void readyRead();
         void disconnected();
