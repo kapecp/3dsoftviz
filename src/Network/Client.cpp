@@ -151,6 +151,7 @@ void Client::disconnect() {
     ((QOSG::CoreWindow *) cw) -> le_server_addr -> setEnabled(true);
     ((QOSG::CoreWindow *) cw) -> b_start_client -> setEnabled(true);
     ((QOSG::CoreWindow *) cw) -> b_start_client -> setText("Connect to session");
+    ((QOSG::CoreWindow *) cw) -> b_start_server -> setEnabled(true);
 }
 
 void Client::setLayoutThread(Layout::LayoutThread *layoutThread){

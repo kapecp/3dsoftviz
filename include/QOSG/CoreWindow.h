@@ -499,7 +499,6 @@ namespace QOSG
 		*/
 		QColor color;
 
-                QPushButton * b_start_server;
                 QPushButton * b_send_message;
                 QLineEdit * le_message;
 
@@ -547,6 +546,7 @@ namespace QOSG
                 QLineEdit * le_client_name;
                 QLineEdit * le_server_addr;
                 QPushButton * b_start_client;
+                QPushButton * b_start_server;
 
 	private:
 

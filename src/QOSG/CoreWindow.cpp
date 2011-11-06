@@ -965,10 +965,10 @@ void CoreWindow::start_client()
         client -> setCoreGraph(coreGraph);
         b_start_client -> setText("Connecting...");
         b_start_client -> setEnabled(false);
+        b_start_server -> setEnabled(false);
         client -> ServerConnect(le_client_name->text(), le_server_addr->text());
     } else {
         client -> disconnect();
-        qDebug() << "Client already running";
     }
 }
 
