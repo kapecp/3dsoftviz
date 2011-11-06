@@ -4,6 +4,7 @@
 #include <osg/Projection>
 
 #include "Manager/Manager.h"
+#include "Network/Client.h"
 
 using namespace Vwr;
 
@@ -243,6 +244,9 @@ bool PickHandler::handleDrag( const osgGA::GUIEventAdapter& ea, osgGA::GUIAction
 	}
 	else if (pickMode == PickMode::NONE && leftButtonPressed)
 	{
+
+                Network::Client * client = Network::Client::getInstance();
+
 		if(!isManipulatingNodes)
 		{
 			isManipulatingNodes = true;

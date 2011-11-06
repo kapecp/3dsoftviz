@@ -22,6 +22,8 @@ class Client : public QObject
 
         Client(QObject *parent=0);
 
+        static Client* getInstance();
+
         void ServerConnect(QString nick, QString address);
 
         void send_message(QString message);
@@ -46,6 +48,8 @@ class Client : public QObject
         void disconnected();
 
     private:
+        static Client *instance;
+
         QString clientNick;
 
         std::map<qlonglong, osg::ref_ptr<Data::Node> > nodes;

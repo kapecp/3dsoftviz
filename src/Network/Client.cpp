@@ -10,7 +10,12 @@
 
 using namespace Network;
 
+Client * Client::instance;
+
 Client::Client(QObject *parent) : QObject(parent) {
+
+    instance = this;
+
     socket = new QTcpSocket(this);
 
     cw = parent;
@@ -23,6 +28,14 @@ Client::Client(QObject *parent) : QObject(parent) {
     edgeType = NULL;
     nodeType = NULL;
 
+}
+
+Client* Client::getInstance() {
+    if (instance == NULL) {
+        return new Client();
+    } else {
+        return instance;
+    }
 }
 
 void Client::ServerConnect(QString nick, QString address) {

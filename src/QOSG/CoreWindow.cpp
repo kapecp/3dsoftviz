@@ -975,8 +975,5 @@ void CoreWindow::start_client()
 
 void CoreWindow::send_message()
 {
-    if (client != NULL) {
-        client->send_message(le_message->text());
-        //client->send_message("GET_GRAPH");
-    }
+    client->send_message(le_message->text());
 }
