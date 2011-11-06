@@ -46,6 +46,7 @@ void Server::readyRead()
     while(client->canReadLine())
     {
         QString line = QString::fromUtf8(client->readLine()).trimmed();
+        QRegExp moveNodeRegexp("^/moveNode:id:([0-9]+);x:([0-9-\\.]+);y:([0-9-\\.]+);z:([0-9-\\.]+)$");
         qDebug() << "Read line:" << line;
 
         QRegExp meRegex("^/me:(.*)$");
@@ -58,6 +59,17 @@ void Server::readyRead()
             foreach(QTcpSocket *client, clients)
                 client->write(QString("Server:" + user + " has joined.\n").toUtf8());
             sendUserList();
+        }
+        else if (moveNodeRegexp.indexIn(line) != -1) {
+            int id = moveNodeRegexp.cap(1).toInt();
+
+            float x = moveNodeRegexp.cap(2).toFloat()/graphScale;
+            float y = moveNodeRegexp.cap(3).toFloat()/graphScale;
+            float z = moveNodeRegexp.cap(4).toFloat()/graphScale;
+            Data::Graph * currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
+            QMap<qlonglong, osg::ref_ptr<Data::Node> >* nodes = currentGraph -> getNodes();
+            qDebug() << "Moving" << id << "to" << x << y << z;
+            (*((*nodes).find(id))) -> setCurrentPosition(osg::Vec3(x,y,z));
         }
         else if(users.contains(client))
         {

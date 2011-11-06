@@ -177,6 +177,23 @@ bool Client::isConnected() {
     return socket -> state() == QAbstractSocket::ConnectedState;
 }
 
+void Client::sendExcludedNodesPosition() {
+    QLinkedList<osg::ref_ptr<Data::Node> >::const_iterator i = excluded_nodes.constBegin();
+    QString message;
+
+    while (i != excluded_nodes.constEnd())
+    {
+
+        message = "id:" + QString::number((*i)->getId());
+        message += ";x:" + QString::number((*i)->getCurrentPosition().x());
+        message += ";y:" + QString::number((*i)->getCurrentPosition().y());
+        message += ";z:" + QString::number((*i)->getCurrentPosition().z());
+        ++i;
+
+        socket->write(QString("/moveNode:" + message + "\n").toUtf8());
+    }
+}
+
 void Client::clearNodesExcludedFromUpdate() {
     excluded_nodes.clear();
 }

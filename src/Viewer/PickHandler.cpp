@@ -79,6 +79,7 @@ bool PickHandler::handle( const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdap
 	case osgGA::GUIEventAdapter::RELEASE:
                 {
                         Network::Client * client = Network::Client::getInstance();
+                        client -> sendExcludedNodesPosition();
                         client -> clearNodesExcludedFromUpdate();
 
 			//ak je release a je timer aktivny tak sa ulozi event a nevyvola sa

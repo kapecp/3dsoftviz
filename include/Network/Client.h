@@ -37,6 +37,7 @@ class Client : public QObject
 
         void setNodesExcludedFromUpdate(QLinkedList<osg::ref_ptr<Data::Node> > nodes) { excluded_nodes = nodes; }
         void clearNodesExcludedFromUpdate();
+        void sendExcludedNodesPosition();
 
     private slots:
         // This is a function we'll connect to a socket's readyRead()
