@@ -83,6 +83,7 @@ void Server::readyRead()
             node -> setUsingInterpolation(false);
             node -> setFixed(true);
             node -> setTargetPosition(osg::Vec3(x,y,z));
+            thread->play();
         }
         else if(users.contains(client))
         {
