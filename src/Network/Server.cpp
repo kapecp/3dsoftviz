@@ -42,24 +42,28 @@ void Server::incomingConnection(int socketfd)
 
 void Server::readyRead()
 {
-    QTcpSocket *client = (QTcpSocket*)sender();
-    while(client->canReadLine())
+    QTcpSocket *senderClient = (QTcpSocket*)sender();
+    while(senderClient->canReadLine())
     {
-        QString line = QString::fromUtf8(client->readLine()).trimmed();
+        QString line = QString::fromUtf8(senderClient->readLine()).trimmed();
         QRegExp moveNodeRegexp("^/moveNode:id:([0-9]+);x:([0-9-\\.]+);y:([0-9-\\.]+);z:([0-9-\\.]+)$");
+        QRegExp viewRegexp("^/view:center:([0-9-\\.e]+),([0-9-\\.e]+),([0-9-\\.e]+);rotation:([0-9-\\.e]+),([0-9-\\.e]+),([0-9-\\.e]+),([0-9-\\.e]+)$");
         qDebug() << "Read line:" << line;
 
         QRegExp meRegex("^/me:(.*)$");
 
         if(meRegex.indexIn(line) != -1)
         {
-            client -> write("WELCOME\n");
             QString user = meRegex.cap(1);
-            users[client] = user;
-            QList<int> IDs = usersID.values();
-            usersID[client] = (*(std::max_element(IDs.begin(),IDs.end())))+1;
-            foreach(QTcpSocket *client, clients)
-                client->write(QString("Server:" + user + " has joined.\n").toUtf8());
+            users[senderClient] = user;
+            int newID = 1;
+            if (usersID.count() > 0) {
+                QList<int> IDs = usersID.values();
+                newID = (*(std::max_element(IDs.begin(),IDs.end())))+1;
+            }
+            usersID[senderClient] = newID;
+
+            senderClient->write("WELCOME\n");
             sendUserList();
         }
         else if (moveNodeRegexp.indexIn(line) != -1) {
@@ -87,17 +91,23 @@ void Server::readyRead()
             node -> setTargetPosition(osg::Vec3(x,y,z));
             thread->play();
         }
-        else if(users.contains(client))
+        else if (viewRegexp.indexIn(line) != -1) {
+            foreach(QTcpSocket *client, clients) { // append sender ID and resend to all other clients except sender
+                if (client == senderClient) continue;
+                client->write((line+";id:"+QString::number(usersID[senderClient])+"\n").toUtf8());
+            }
+        }
+        else if(users.contains(senderClient))
         {
             QString message = line;
-            QString user = users[client];
+            QString user = users[senderClient];
             qDebug() << "User:" << user;
             qDebug() << "Message:" << message;
 
             if (message == "GET_GRAPH") {
-                sendGraph(client);
+                sendGraph(senderClient);
             } else if (message == "GET_LAYOUT") {
-                sendLayout(client);
+                sendLayout(senderClient);
             } else {
                 foreach(QTcpSocket *otherClient, clients)
                     otherClient->write(QString(user + ":" + message + "\n").toUtf8());
@@ -105,7 +115,7 @@ void Server::readyRead()
         }
         else
         {
-            qWarning() << "Got bad message from client:" << client->peerAddress().toString() << line;
+            qWarning() << "Got bad message from client:" << senderClient->peerAddress().toString() << line;
         }
     }
 }
@@ -116,13 +126,9 @@ void Server::disconnected()
     qDebug() << "Client disconnected:" << client->peerAddress().toString();
 
     clients.remove(client);
-
-    QString user = users[client];
     users.remove(client);
 
     sendUserList();
-    foreach(QTcpSocket *client, clients)
-        client->write(QString("Server:" + user + " has left.\n").toUtf8());
 }
 
 void Server::sendUserList()
@@ -130,11 +136,13 @@ void Server::sendUserList()
     QStringList userList;
 
     QMap<QTcpSocket*,QString>::const_iterator i;
-    for (i = users.constBegin(); i != users.constEnd(); ++i){
-        userList << QString::number(usersID[i.key()]) + "=" + i.value();
-    }
 
     foreach(QTcpSocket *client, clients){
+        userList.clear();
+        for (i = users.constBegin(); i != users.constEnd(); ++i){
+            if (client == i.key()) continue;
+            userList << QString::number(usersID[i.key()]) + "=" + i.value();
+        }
         client->write(QString("/clients:" + userList.join(",") + "\n").toUtf8());
     }
 }
@@ -333,7 +341,7 @@ void Server::sendMyView(osg::Vec3d center, osg::Quat rotation) {
 
     QString message = "/view:";
     message += "center:" + QString::number(center.x()) + "," + QString::number(center.y()) + "," + QString::number(center.z()) + ";";
-    message += "rotation:" + QString::number(rotation.x()) + "," + QString::number(rotation.y()) + "," + QString::number(rotation.z()) + "," + QString::number(rotation.w()) +  "\n";
+    message += "rotation:" + QString::number(rotation.x()) + "," + QString::number(rotation.y()) + "," + QString::number(rotation.z()) + "," + QString::number(rotation.w()) +  ";id:0\n";
 
     foreach(QTcpSocket *otherClient, clients){
         otherClient->write(message.toUtf8());

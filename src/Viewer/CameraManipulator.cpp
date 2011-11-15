@@ -5,6 +5,7 @@
 #include <osgViewer/Viewer>
 
 #include "Network/Server.h"
+#include "Network/Client.h"
 
 namespace Vwr {
 
@@ -714,11 +715,13 @@ void CameraManipulator::notifyClients() {
     if (server->isListening()) {
         server->sendMyView(_center,_rotation);
     }
-    qDebug("AAAAAAAAAA");
 }
 
 void CameraManipulator::notifyServer() {
-
+    Network::Client * client = Network::Client::getInstance();
+    if (client->isConnected()) {
+        client->sendMyView(_center,_rotation);
+    }
 }
 
 } // namespace

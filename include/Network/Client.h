@@ -40,6 +40,8 @@ class Client : public QObject
         void setNodesExcludedFromUpdate(QLinkedList<osg::ref_ptr<Data::Node> > nodes) { selected_nodes = nodes; }
         void sendMovedNodesPosition();
 
+        void sendMyView(osg::Vec3d center, osg::Quat rotation);
+
     private slots:
         // This is a function we'll connect to a socket's readyRead()
         // signal, which tells us there's something to be read from the server.

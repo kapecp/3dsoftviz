@@ -56,11 +56,11 @@ void Client::readyRead() {
     {
         QTime t;
         QString line = QString::fromUtf8(socket->readLine()).trimmed();
-        //qDebug() << "Client got line: " << line;
+        qDebug() << "Client got line: " << line;
 
         QRegExp messageRegex("^([^:]+):(.*)$");
 
-        QRegExp usersRegex("^/clients:(.*)$");
+        QRegExp usersRegex("^/clients:(.+)$");
 
         QRegExp nodeRegexp("^/nodeData:id:([0-9]+);x:([0-9-\\.e]+);y:([0-9-\\.e]+);z:([0-9-\\.e]+)$");
 
@@ -70,7 +70,7 @@ void Client::readyRead() {
 
         QRegExp moveNodeRegexp("^/moveNode:id:([0-9]+);x:([0-9-\\.e]+);y:([0-9-\\.e]+);z:([0-9-\\.e]+)$");
 
-        QRegExp viewRegexp("^/view:center:([0-9-\\.e]+),([0-9-\\.e]+),([0-9-\\.e]+);rotation:([0-9-\\.e]+),([0-9-\\.e]+),([0-9-\\.e]+),([0-9-\\.e]+)$");
+        QRegExp viewRegexp("^/view:center:([0-9-\\.e]+),([0-9-\\.e]+),([0-9-\\.e]+);rotation:([0-9-\\.e]+),([0-9-\\.e]+),([0-9-\\.e]+),([0-9-\\.e]+);id:([0-9]+)$");
 
         Data::Graph * currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
 
@@ -174,10 +174,14 @@ void Client::readyRead() {
         } else if (viewRegexp.indexIn(line) != -1) {
             osg::Vec3d center = osg::Vec3d(viewRegexp.cap(1).toFloat()-5,viewRegexp.cap(2).toFloat(),viewRegexp.cap(3).toFloat());
             osg::Quat rotation = osg::Quat(viewRegexp.cap(4).toFloat(),viewRegexp.cap(5).toFloat(),viewRegexp.cap(6).toFloat(),viewRegexp.cap(7).toFloat());
-            /*if (PAtransform != NULL) {
+            int id = viewRegexp.cap(8).toInt();
+            osg::PositionAttitudeTransform * PAtransform = avatarList[id];
+            if (PAtransform != NULL) {
                 PAtransform->setAttitude(rotation);
                 PAtransform->setPosition(center);
-            }*/
+            } else {
+                qDebug() << "Nepoznam avatar" << id;
+            }
         } else if(messageRegex.indexIn(line) != -1) {
             QString user = messageRegex.cap(1);
             QString message = messageRegex.cap(2);
@@ -265,4 +269,13 @@ void Client::sendMovedNodesPosition() {
     }
 
     selected_nodes.clear();
+}
+
+void Client::sendMyView(osg::Vec3d center, osg::Quat rotation) {
+
+    QString message = "/view:";
+    message += "center:" + QString::number(center.x()) + "," + QString::number(center.y()) + "," + QString::number(center.z()) + ";";
+    message += "rotation:" + QString::number(rotation.x()) + "," + QString::number(rotation.y()) + "," + QString::number(rotation.z()) + "," + QString::number(rotation.w()) +  "\n";
+
+    socket->write(message.toUtf8());
 }
