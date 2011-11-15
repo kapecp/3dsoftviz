@@ -63,7 +63,7 @@ void Server::readyRead()
             }
             usersID[senderClient] = newID;
 
-            osg::ref_ptr<osg::Node> modelNode = osgDB::readNodeFile("kocka.osg");
+            osg::ref_ptr<osg::Node> modelNode = osgDB::readNodeFile("avatar.osg");
             if (!modelNode) {
                 qDebug() << "could not find model";
                 return;

@@ -88,7 +88,7 @@ void Client::readyRead() {
                 if (!userList.contains(id)){
                     userList.insert(id,nick);
 
-                    osg::ref_ptr<osg::Node> modelNode = osgDB::readNodeFile("kocka.osg");
+                    osg::ref_ptr<osg::Node> modelNode = osgDB::readNodeFile("avatar.osg");
                     if (!modelNode) {
                         qDebug() << "could not find model";
                         return;
@@ -196,7 +196,7 @@ void Client::readyRead() {
 
             userList.insert(id,nick);
 
-            osg::ref_ptr<osg::Node> modelNode = osgDB::readNodeFile("kocka.osg");
+            osg::ref_ptr<osg::Node> modelNode = osgDB::readNodeFile("avatar.osg");
             if (!modelNode) {
                 qDebug() << "could not find model";
                 return;
