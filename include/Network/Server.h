@@ -11,6 +11,8 @@
 #include <QMap>
 #include <QSet>
 
+#include "osg/PositionAttitudeTransform"
+
 #include "Layout/LayoutThread.h"
 #include "Viewer/CoreGraph.h"
 
@@ -56,6 +58,7 @@ class Server : public QTcpServer {
         float graphScale;
         QMap<QTcpSocket*,QString> users;
         QMap<QTcpSocket*,int> usersID;
+        QMap<QTcpSocket*,osg::PositionAttitudeTransform *> avatars;
         Layout::LayoutThread * thread;
         Vwr::CoreGraph * coreGraph;
     };

@@ -63,6 +63,22 @@ void Server::readyRead()
             }
             usersID[senderClient] = newID;
 
+            osg::ref_ptr<osg::Node> modelNode = osgDB::readNodeFile("kocka.osg");
+            if (!modelNode) {
+                qDebug() << "could not find model";
+                return;
+            }
+
+            osg::PositionAttitudeTransform* PAtransform = new osg::PositionAttitudeTransform();
+            PAtransform->addChild(modelNode);
+
+            QLinkedList<osg::ref_ptr<osg::Node> > * nodes = coreGraph->getCustomNodeList();
+
+            nodes->append(PAtransform);
+
+            PAtransform->setScale(osg::Vec3d(10,10,10));
+            avatars.insert(senderClient,PAtransform);
+
             senderClient->write("WELCOME\n");
             sendUserList();
         }
@@ -95,6 +111,15 @@ void Server::readyRead()
             foreach(QTcpSocket *client, clients) { // append sender ID and resend to all other clients except sender
                 if (client == senderClient) continue;
                 client->write((line+";id:"+QString::number(usersID[senderClient])+"\n").toUtf8());
+            }
+
+            osg::Vec3d center = osg::Vec3d(viewRegexp.cap(1).toFloat()-5,viewRegexp.cap(2).toFloat(),viewRegexp.cap(3).toFloat());
+            osg::Quat rotation = osg::Quat(viewRegexp.cap(4).toFloat(),viewRegexp.cap(5).toFloat(),viewRegexp.cap(6).toFloat(),viewRegexp.cap(7).toFloat());
+
+            osg::PositionAttitudeTransform * PAtransform = avatars[senderClient];
+            if (PAtransform != NULL) {
+                PAtransform->setAttitude(rotation);
+                PAtransform->setPosition(center);
             }
         }
         else if(users.contains(senderClient))
