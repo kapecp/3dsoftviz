@@ -56,6 +56,8 @@ void Server::readyRead()
             client -> write("WELCOME\n");
             QString user = meRegex.cap(1);
             users[client] = user;
+            QList<int> IDs = usersID.values();
+            usersID[client] = (*(std::max_element(IDs.begin(),IDs.end())))+1;
             foreach(QTcpSocket *client, clients)
                 client->write(QString("Server:" + user + " has joined.\n").toUtf8());
             sendUserList();
@@ -126,11 +128,15 @@ void Server::disconnected()
 void Server::sendUserList()
 {
     QStringList userList;
-    foreach(QString user, users.values())
-        userList << user;
 
-    foreach(QTcpSocket *client, clients)
+    QMap<QTcpSocket*,QString>::const_iterator i;
+    for (i = users.constBegin(); i != users.constEnd(); ++i){
+        userList << QString::number(usersID[i.key()]) + "=" + i.value();
+    }
+
+    foreach(QTcpSocket *client, clients){
         client->write(QString("/clients:" + userList.join(",") + "\n").toUtf8());
+    }
 }
 
 void Server::sendGraph(QTcpSocket *client){
@@ -320,4 +326,17 @@ void Server::sendMoveNodes() {
     }
 
     selected_nodes.clear();
+}
+
+
+void Server::sendMyView(osg::Vec3d center, osg::Quat rotation) {
+
+    QString message = "/view:";
+    message += "center:" + QString::number(center.x()) + "," + QString::number(center.y()) + "," + QString::number(center.z()) + ";";
+    message += "rotation:" + QString::number(rotation.x()) + "," + QString::number(rotation.y()) + "," + QString::number(rotation.z()) + "," + QString::number(rotation.w()) +  "\n";
+
+    foreach(QTcpSocket *otherClient, clients){
+        otherClient->write(message.toUtf8());
+    }
+
 }

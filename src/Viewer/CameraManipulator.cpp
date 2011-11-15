@@ -4,6 +4,8 @@
 #include <osg/BoundsChecking>
 #include <osgViewer/Viewer>
 
+#include "Network/Server.h"
+
 namespace Vwr {
 
 CameraManipulator::CameraManipulator()
@@ -23,7 +25,7 @@ CameraManipulator::CameraManipulator()
 	maxSpeed = appConf->getValue("Viewer.CameraManipulator.MaxSpeed").toFloat();
 	speedEpsilon = 0.02f;
 
-	stop();
+        stop();
 }
 
 CameraManipulator::~CameraManipulator()
@@ -180,7 +182,11 @@ bool CameraManipulator::handleRelease(const osgGA::GUIEventAdapter& ea, osgGA::G
 		if (calcMovement()) us.requestRedraw();
 		us.requestContinuousUpdate(false);
 		_thrown = false;
-	}
+        }
+
+        notifyServer();
+        notifyClients();
+
 	return true;
 }
 
@@ -201,7 +207,10 @@ bool CameraManipulator::handlePush(const osgGA::GUIEventAdapter& ea, osgGA::GUIA
 			_distance = 0;
 		}
 		else
-			_distance = lastDistance;
+                        _distance = lastDistance;
+
+                notifyServer();
+                notifyClients();
 
 		return true;
 	}
@@ -228,8 +237,7 @@ bool CameraManipulator::handleFrame(const osgGA::GUIEventAdapter& ea, osgGA::GUI
 		if (calcMovement()) us.requestRedraw();
 	}
 
-	frame(ea,us);
-
+        frame(ea,us);
 	return false;
 }
 
@@ -265,6 +273,7 @@ void CameraManipulator::setByMatrix(const osg::Matrixd& matrix)
 {
     _center = osg::Vec3(0.0f,0.0f,-_distance)*matrix;
     _rotation = matrix.getRotate();
+
 }
 
 osg::Matrixd CameraManipulator::getMatrix() const
@@ -297,6 +306,10 @@ void CameraManipulator::computePosition(const osg::Vec3& eye,const osg::Vec3& ce
     _center = center;
     _distance = lv.length();
     _rotation = rotation_matrix.getRotate().inverse();
+
+    notifyServer();
+    notifyClients();
+
 }
 
 
@@ -386,6 +399,10 @@ bool CameraManipulator::calcMovement()
 
         _rotation = _rotation*new_rotate;
 
+
+        notifyServer();
+        notifyClients();
+
         return true;
 
     }
@@ -402,8 +419,9 @@ bool CameraManipulator::calcMovement()
         osg::Vec3 dv(dx*scale,dy*scale,0.0f);
 
         _center += dv*rotation_matrix;
-        
-        return true;
+
+        notifyServer();
+        notifyClients();
 
     }
     else if (buttonMask==osgGA::GUIEventAdapter::SCROLL)
@@ -539,7 +557,8 @@ bool CameraManipulator::handleKeyUp( const osgGA::GUIEventAdapter& ea, osgGA::GU
 		us.requestRedraw();
 		us.requestContinuousUpdate(false);
 
-		stop();
+                stop();
+
 		break;
 	}
 	case osgGA::GUIEventAdapter::KEY_Up:
@@ -556,7 +575,10 @@ bool CameraManipulator::handleKeyUp( const osgGA::GUIEventAdapter& ea, osgGA::GU
 	case osgGA::GUIEventAdapter::KEY_Page_Down:
 		decelerateVerticalRate = true;
 		break;
-	}
+        }
+
+        notifyServer();
+        notifyClients();
 
 	return true;
 }
@@ -615,6 +637,9 @@ bool CameraManipulator::handleKeyDown( const osgGA::GUIEventAdapter &ea, osgGA::
 		}
 	}
 
+        notifyServer();
+        notifyClients();
+
 	return true;
 }
 
@@ -652,7 +677,7 @@ void CameraManipulator::frame( const osgGA::GUIEventAdapter &ea, osgGA::GUIActio
 	osg::Vec3d directionVec = center - eye;
 	osg::Vec3d sideVec = getSideVector(osg::Matrixd(_rotation)); /* direction * osg::Matrix::rotate(-M_PI * 0.5, upVector);*/
 	
-	_center += ((directionVec * forwardSpeed) + (sideVec * sideSpeed) + (up * verticalSpeed)) * dt;
+        _center += ((directionVec * forwardSpeed) + (sideVec * sideSpeed) + (up * verticalSpeed)) * dt;
 
 	if( decelerateSideRate )
 	{
@@ -669,7 +694,7 @@ void CameraManipulator::frame( const osgGA::GUIEventAdapter &ea, osgGA::GUIActio
 	if (deceleratePitchRate)
 	{
 		pitchSpeed *= speedDecelerationFactor;
-	}
+        }
 }
 
 /*!
@@ -684,5 +709,16 @@ void CameraManipulator::stop()
 	pitchSpeed = 0.0;
 }
 
-} // namespace
+void CameraManipulator::notifyClients() {
+    Network::Server * server = Network::Server::getInstance();
+    if (server->isListening()) {
+        server->sendMyView(_center,_rotation);
+    }
+    qDebug("AAAAAAAAAA");
+}
 
+void CameraManipulator::notifyServer() {
+
+}
+
+} // namespace

@@ -23,7 +23,6 @@ Client::Client(QObject *parent) : QObject(parent) {
     connect(socket, SIGNAL(readyRead()), this, SLOT(readyRead()));
     connect(socket, SIGNAL(connected()), this, SLOT(connected()));
     connect(socket, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(error()));
-    //connect(socket, SIGNAL(disconnected()), this, SLOT(disconnected()));
 
     edgeType = NULL;
     nodeType = NULL;
@@ -50,7 +49,7 @@ void Client::send_message(QString message) {
     }
 }
 
-// This function gets called whenever the chat server has sent us some text:
+// This function gets called whenever the server has sent us some text:
 void Client::readyRead() {
     // We'll loop over every (complete) line of text that the server has sent us:
     while(socket->canReadLine())
@@ -63,13 +62,15 @@ void Client::readyRead() {
 
         QRegExp usersRegex("^/clients:(.*)$");
 
-        QRegExp nodeRegexp("^/nodeData:id:([0-9]+);x:([0-9-\\.]+);y:([0-9-\\.]+);z:([0-9-\\.]+)$");
+        QRegExp nodeRegexp("^/nodeData:id:([0-9]+);x:([0-9-\\.e]+);y:([0-9-\\.e]+);z:([0-9-\\.e]+)$");
 
-        QRegExp layRegexp("^/layData:id:([0-9]+);x:([0-9-\\.]+);y:([0-9-\\.]+);z:([0-9-\\.]+)$");
+        QRegExp layRegexp("^/layData:id:([0-9]+);x:([0-9-\\.e]+);y:([0-9-\\.e]+);z:([0-9-\\.e]+)$");
 
         QRegExp edgeRegexp("^/edgeData:id:([0-9]+);from:([0-9]+);to:([0-9]+);or:([01])$");
 
-        QRegExp moveNodeRegexp("^/moveNode:id:([0-9]+);x:([0-9-\\.]+);y:([0-9-\\.]+);z:([0-9-\\.]+)$");
+        QRegExp moveNodeRegexp("^/moveNode:id:([0-9]+);x:([0-9-\\.e]+);y:([0-9-\\.e]+);z:([0-9-\\.e]+)$");
+
+        QRegExp viewRegexp("^/view:center:([0-9-\\.e]+),([0-9-\\.e]+),([0-9-\\.e]+);rotation:([0-9-\\.e]+),([0-9-\\.e]+),([0-9-\\.e]+),([0-9-\\.e]+)$");
 
         Data::Graph * currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
 
@@ -77,8 +78,34 @@ void Client::readyRead() {
         {
             QStringList users = usersRegex.cap(1).split(",");
             qDebug() << "Clients:";
-            foreach(QString user, users)
-                qDebug() << user;
+            foreach(QString user, users){
+                QStringList args = user.split("=");
+                int id = args[0].toInt();
+                QString nick = args[1];
+
+                qDebug() << id << nick;
+
+                if (!userList.contains(id)){
+                    userList.insert(id,nick);
+
+                    osg::ref_ptr<osg::Node> modelNode = osgDB::readNodeFile("kocka.osg");
+                    if (!modelNode) {
+                        qDebug() << "could not find model";
+                        return;
+                    }
+
+                    osg::PositionAttitudeTransform* PAtransform = new osg::PositionAttitudeTransform();
+                    PAtransform->addChild(modelNode);
+
+                    QLinkedList<osg::ref_ptr<osg::Node> > * nodes = coreGraph->getCustomNodeList();
+
+                    nodes->append(PAtransform);
+
+                    PAtransform->setScale(osg::Vec3d(10,10,10));
+                    avatarList.insert(id,PAtransform);
+                }
+            }
+
         } else if (moveNodeRegexp.indexIn(line) != -1) {
             int id = moveNodeRegexp.cap(1).toInt();
 
@@ -144,6 +171,13 @@ void Client::readyRead() {
 
             //qDebug()<< "[NEW NODE POS] id: " << id << " [" << x << "," << y << "," << z << "]";
 
+        } else if (viewRegexp.indexIn(line) != -1) {
+            osg::Vec3d center = osg::Vec3d(viewRegexp.cap(1).toFloat()-5,viewRegexp.cap(2).toFloat(),viewRegexp.cap(3).toFloat());
+            osg::Quat rotation = osg::Quat(viewRegexp.cap(4).toFloat(),viewRegexp.cap(5).toFloat(),viewRegexp.cap(6).toFloat(),viewRegexp.cap(7).toFloat());
+            /*if (PAtransform != NULL) {
+                PAtransform->setAttitude(rotation);
+                PAtransform->setPosition(center);
+            }*/
         } else if(messageRegex.indexIn(line) != -1) {
             QString user = messageRegex.cap(1);
             QString message = messageRegex.cap(2);
@@ -152,6 +186,27 @@ void Client::readyRead() {
 
         } else if (line == "SERVER_STOP") {
             this->disconnect();
+        } else if (line == "WELCOME") {
+            int id = 0;
+            QString nick = "server";
+
+            userList.insert(id,nick);
+
+            osg::ref_ptr<osg::Node> modelNode = osgDB::readNodeFile("kocka.osg");
+            if (!modelNode) {
+                qDebug() << "could not find model";
+                return;
+            }
+
+            osg::PositionAttitudeTransform* PAtransform = new osg::PositionAttitudeTransform();
+            PAtransform->addChild(modelNode);
+
+            QLinkedList<osg::ref_ptr<osg::Node> > * nodes = coreGraph->getCustomNodeList();
+
+            nodes->append(PAtransform);
+
+            PAtransform->setScale(osg::Vec3d(10,10,10));
+            avatarList.insert(id,PAtransform);
         }
     }
 }

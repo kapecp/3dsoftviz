@@ -36,6 +36,8 @@ class Server : public QTcpServer {
 
         void setSelectedNodes(QLinkedList<osg::ref_ptr<Data::Node> > nodes) { selected_nodes = nodes; }
 
+        void sendMyView(osg::Vec3d center, osg::Quat rotation);
+
     private slots:
         void readyRead();
         void disconnected();
@@ -53,6 +55,7 @@ class Server : public QTcpServer {
         QSet<QTcpSocket*> clients;
         float graphScale;
         QMap<QTcpSocket*,QString> users;
+        QMap<QTcpSocket*,int> usersID;
         Layout::LayoutThread * thread;
         Vwr::CoreGraph * coreGraph;
     };

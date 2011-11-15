@@ -426,6 +426,9 @@ namespace Vwr{
 		*  \return bool true, if handled
 		*/
 		bool handleKeyUp( const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& us);
+
+                void notifyClients();
+                void notifyServer();
 	};
 
 }

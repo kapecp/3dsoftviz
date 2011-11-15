@@ -12,6 +12,8 @@
 #include "Viewer/CoreGraph.h"
 #include "Layout/LayoutThread.h"
 
+#include "osg/PositionAttitudeTransform"
+
 namespace Network{
 
 class Client : public QObject
@@ -52,6 +54,9 @@ class Client : public QObject
 
     private:
         static Client *instance;
+
+        QMap<int,QString> userList;
+        QMap<int,osg::PositionAttitudeTransform*> avatarList;
 
         QString clientNick;
 
