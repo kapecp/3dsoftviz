@@ -48,7 +48,7 @@ void Server::readyRead()
         QString line = QString::fromUtf8(senderClient->readLine()).trimmed();
         QRegExp moveNodeRegexp("^/moveNode:id:([0-9]+);x:([0-9-\\.]+);y:([0-9-\\.]+);z:([0-9-\\.]+)$");
         QRegExp viewRegexp("^/view:center:([0-9-\\.e]+),([0-9-\\.e]+),([0-9-\\.e]+);rotation:([0-9-\\.e]+),([0-9-\\.e]+),([0-9-\\.e]+),([0-9-\\.e]+)$");
-        qDebug() << "Read line:" << line;
+        //qDebug() << "Read line:" << line;
 
         QRegExp meRegex("^/me:(.*)$");
 
@@ -76,7 +76,7 @@ void Server::readyRead()
 
             nodes->append(PAtransform);
 
-            PAtransform->setScale(osg::Vec3d(10,10,10));
+            //PAtransform->setScale(osg::Vec3d(10,10,10));
             avatars.insert(senderClient,PAtransform);
 
             senderClient->write("WELCOME\n");
@@ -152,6 +152,8 @@ void Server::disconnected()
 
     clients.remove(client);
     users.remove(client);
+    avatars[client]->removeChild(0,1);
+    avatars.remove(client);
 
     sendUserList();
 }
@@ -164,6 +166,7 @@ void Server::sendUserList()
 
     foreach(QTcpSocket *client, clients){
         userList.clear();
+        userList << "0=server";
         for (i = users.constBegin(); i != users.constEnd(); ++i){
             if (client == i.key()) continue;
             userList << QString::number(usersID[i.key()]) + "=" + i.value();
