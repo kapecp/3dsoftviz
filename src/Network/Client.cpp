@@ -4,9 +4,10 @@
 
 #include "Network/Client.h"
 #include "Importer/GraphOperations.h"
-#include <QRegExp>
 #include "Manager/Manager.h"
 #include "QOSG/CoreWindow.h"
+
+#include "Network/ExecutorFactory.h"
 
 using namespace Network;
 
@@ -56,11 +57,23 @@ void Client::readyRead() {
     {
         QTime t;
         QString line = QString::fromUtf8(socket->readLine()).trimmed();
-        //qDebug() << "Client got line: " << line;
+        qDebug() << "Client got line: " << line;
+
+
+        Data::Graph * currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
+
+        ExecutorFactory *executorFactory = new ExecutorFactory();
+        Executor *executor = executorFactory->getExecutor(line);
+
+        if (executor != NULL) {
+            executor->execute();
+        } else {
+            qDebug() << "EXECUTOR: neznama instrukcia";
+        }
+
+
 
         QRegExp messageRegex("^([^:]+):(.*)$");
-
-        QRegExp usersRegex("^/clients:(.+)$");
 
         QRegExp nodeRegexp("^/nodeData:id:([0-9]+);x:([0-9-\\.e]+);y:([0-9-\\.e]+);z:([0-9-\\.e]+)$");
 
@@ -72,56 +85,7 @@ void Client::readyRead() {
 
         QRegExp viewRegexp("^/view:center:([0-9-\\.e]+),([0-9-\\.e]+),([0-9-\\.e]+);rotation:([0-9-\\.e]+),([0-9-\\.e]+),([0-9-\\.e]+),([0-9-\\.e]+);id:([0-9]+)$");
 
-        Data::Graph * currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
-
-        if(usersRegex.indexIn(line) != -1)
-        {
-            QStringList users = usersRegex.cap(1).split(",");
-            qDebug() << "Clients:";
-
-            QList<int> newClients;
-
-            foreach(QString user, users){
-                QStringList args = user.split("=");
-                int id = args[0].toInt();
-                QString nick = args[1];
-                qDebug() << id << nick;
-                newClients << id;
-
-                if (!userList.contains(id)){
-                    userList.insert(id,nick);
-
-                    osg::ref_ptr<osg::Node> modelNode = osgDB::readNodeFile("avatar.osg");
-                    if (!modelNode) {
-                        qDebug() << "could not find model";
-                        return;
-                    }
-
-                    osg::PositionAttitudeTransform* PAtransform = new osg::PositionAttitudeTransform();
-                    PAtransform->addChild(modelNode);
-
-                    QLinkedList<osg::ref_ptr<osg::Node> > * nodes = coreGraph->getCustomNodeList();
-
-                    nodes->append(PAtransform);
-
-                    //PAtransform->setScale(osg::Vec3d(10,10,10));
-                    avatarList.insert(id,PAtransform);
-                }
-            }
-
-            //delete disconnected users
-            QMap<int, QString>::iterator i = userList.begin();
-             while (i != userList.end()) {
-                 if ( (!newClients.contains(i.key()) && i.key() != 0)){
-                     avatarList[i.key()]->removeChild(0,1);
-                     avatarList.remove(i.key());
-                     i = userList.erase(i);
-                 } else {
-                     ++i;
-                 }
-             }
-
-        } else if (moveNodeRegexp.indexIn(line) != -1) {
+        if (moveNodeRegexp.indexIn(line) != -1) {
             int id = moveNodeRegexp.cap(1).toInt();
 
             float x = moveNodeRegexp.cap(2).toFloat();
