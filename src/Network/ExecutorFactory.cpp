@@ -7,6 +7,11 @@
 #include "Network/executors/GraphEndExecutor.h"
 #include "Network/executors/NewNodeExecutor.h"
 #include "Network/executors/NewEdgeExecutor.h"
+#include "Network/executors/LayoutExecutor.h"
+#include "Network/executors/MoveAvatarExecutor.h"
+#include "Network/executors/MessageExecutor.h"
+#include "Network/executors/ServerStopExecutor.h"
+#include "Network/executors/WelcomeExecutor.h"
 
 using namespace Network;
 
@@ -38,9 +43,20 @@ AbstractExecutor* ExecutorFactory::getExecutor(QString line) {
         return new NewNodeExecutor(nodeRegexp);
     } else if (edgeRegexp.indexIn(line) != -1) {
         return new NewEdgeExecutor(edgeRegexp);
+    } else if (layRegexp.indexIn(line) != -1) {
+        return new LayoutExecutor(layRegexp);
+    } else if (viewRegexp.indexIn(line) != -1) {
+        return new MoveAvatarExecutor(viewRegexp);
+    } else if (messageRegex.indexIn(line) != -1 ) {
+        return new MessageExecutor(messageRegex);
+    } else if (line == "SERVER_STOP") {
+        return new ServerStopExecutor();
+    } else if (line == "WELCOME") {
+        return new WelcomeExecutor();
     } else {
         return NULL;
     }
+
 
 
 

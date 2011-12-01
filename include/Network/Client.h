@@ -51,6 +51,7 @@ class Client : public QObject
         Data::Type *nodeType;
         Data::Type *edgeType;
         std::map<qlonglong, osg::ref_ptr<Data::Node> > nodes;
+        QLinkedList<osg::ref_ptr<Data::Node> > selected_nodes;
 
     private slots:
         // This is a function we'll connect to a socket's readyRead()
@@ -69,7 +70,6 @@ class Client : public QObject
 
         QString clientNick;
 
-        QLinkedList<osg::ref_ptr<Data::Node> > selected_nodes;
 
         QObject * cw;
 

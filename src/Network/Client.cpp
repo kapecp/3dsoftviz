@@ -50,16 +50,11 @@ void Client::send_message(QString message) {
     }
 }
 
-// This function gets called whenever the server has sent us some text:
 void Client::readyRead() {
-    // We'll loop over every (complete) line of text that the server has sent us:
     while(socket->canReadLine())
     {
         QString line = QString::fromUtf8(socket->readLine()).trimmed();
         //qDebug() << "Client got line: " << line;
-
-
-        //currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
 
         ExecutorFactory *executorFactory = new ExecutorFactory();
         AbstractExecutor *executor = executorFactory->getExecutor(line);
@@ -70,56 +65,10 @@ void Client::readyRead() {
             qDebug() << "EXECUTOR: neznama instrukcia";
         }
 
-
-
-        QRegExp messageRegex("^([^:]+):(.*)$");
-
-        QRegExp layRegexp("^/layData:id:([0-9]+);x:([0-9-\\.e]+);y:([0-9-\\.e]+);z:([0-9-\\.e]+)$");
-
-        QRegExp viewRegexp("^/view:center:([0-9-\\.e]+),([0-9-\\.e]+),([0-9-\\.e]+);rotation:([0-9-\\.e]+),([0-9-\\.e]+),([0-9-\\.e]+),([0-9-\\.e]+);id:([0-9]+)$");
-
-        if (layRegexp.indexIn(line) != -1) {
-            int id = layRegexp.cap(1).toInt();
-
-            float x = layRegexp.cap(2).toFloat();
-            float y = layRegexp.cap(3).toFloat();
-            float z = layRegexp.cap(4).toFloat();
-
-            thread->pause();
-
-            if (!selected_nodes.contains(nodes[id])){
-                nodes[id]->setTargetPosition(osg::Vec3(x,y,z));
-            }
-
-            //qDebug()<< "[NEW NODE POS] id: " << id << " [" << x << "," << y << "," << z << "]";
-
-        } else if (viewRegexp.indexIn(line) != -1) {
-            osg::Vec3d center = osg::Vec3d(viewRegexp.cap(1).toFloat()-5,viewRegexp.cap(2).toFloat(),viewRegexp.cap(3).toFloat());
-            osg::Quat rotation = osg::Quat(viewRegexp.cap(4).toFloat(),viewRegexp.cap(5).toFloat(),viewRegexp.cap(6).toFloat(),viewRegexp.cap(7).toFloat());
-            int id = viewRegexp.cap(8).toInt();
-            osg::PositionAttitudeTransform * PAtransform = avatarList[id];
-            if (PAtransform != NULL) {
-                PAtransform->setAttitude(rotation);
-                PAtransform->setPosition(center);
-            } else {
-                qDebug() << "Nepoznam avatar" << id;
-            }
-        } else if(messageRegex.indexIn(line) != -1) {
-            QString user = messageRegex.cap(1);
-            QString message = messageRegex.cap(2);
-
-            qDebug() << user + ": " + message;
-
-        } else if (line == "SERVER_STOP") {
-            this->disconnect();
-        } else if (line == "WELCOME") {
-
-        }
     }
 }
 
-void Client::connected()
-{
+void Client::connected() {
     socket->write(QString("/me:" + clientNick + "\n").toUtf8());
     ((QOSG::CoreWindow *) cw) -> le_client_name -> setEnabled(false);
     ((QOSG::CoreWindow *) cw) -> le_server_addr -> setEnabled(false);
