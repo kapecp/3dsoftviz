@@ -46,7 +46,7 @@ void Server::readyRead()
     while(senderClient->canReadLine())
     {
         QString line = QString::fromUtf8(senderClient->readLine()).trimmed();
-        QRegExp moveNodeRegexp("^/moveNode:id:([0-9]+);x:([0-9-\\.]+);y:([0-9-\\.]+);z:([0-9-\\.]+)$");
+        QRegExp moveNodeRegexp("^/moveNode:id:([0-9]+);x:([0-9-\\.e]+);y:([0-9-\\.e]+);z:([0-9-\\.e]+)$");
         QRegExp viewRegexp("^/view:center:([0-9-\\.e]+),([0-9-\\.e]+),([0-9-\\.e]+);rotation:([0-9-\\.e]+),([0-9-\\.e]+),([0-9-\\.e]+),([0-9-\\.e]+)$");
         //qDebug() << "Read line:" << line;
 
