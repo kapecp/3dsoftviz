@@ -1,3 +1,6 @@
+#ifndef __3DVisualWelcomeExecutor_H__
+#define __3DVisualWelcomeExecutor_H__
+
 #include "Network/executors/AbstractExecutor.h"
 
 namespace Network {
@@ -10,3 +13,5 @@ namespace Network {
     };
 
 }
+
+#endif
