@@ -7,8 +7,6 @@
 #include "Manager/Manager.h"
 #include "QOSG/CoreWindow.h"
 
-#include "Network/ExecutorFactory.h"
-
 using namespace Network;
 
 Client * Client::instance;
@@ -27,6 +25,8 @@ Client::Client(QObject *parent) : QObject(parent) {
 
     edgeType = NULL;
     nodeType = NULL;
+
+    executorFactory = new ExecutorFactory();
 
 }
 
@@ -56,14 +56,15 @@ void Client::readyRead() {
         QString line = QString::fromUtf8(socket->readLine()).trimmed();
         //qDebug() << "Client got line: " << line;
 
-        ExecutorFactory *executorFactory = new ExecutorFactory();
         AbstractExecutor *executor = executorFactory->getExecutor(line);
 
         if (executor != NULL) {
             executor->execute();
         } else {
-            qDebug() << "EXECUTOR: neznama instrukcia";
+            qDebug() << "EXECUTOR: neznama instrukcia:" << line;
         }
+
+        delete executor;
 
     }
 }

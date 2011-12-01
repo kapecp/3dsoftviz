@@ -11,6 +11,7 @@
 #include "Data/Graph.h"
 #include "Viewer/CoreGraph.h"
 #include "Layout/LayoutThread.h"
+#include "Network/ExecutorFactory.h"
 
 #include "osg/PositionAttitudeTransform"
 
@@ -70,6 +71,7 @@ class Client : public QObject
 
         QString clientNick;
 
+        ExecutorFactory *executorFactory;
 
         QObject * cw;
 
