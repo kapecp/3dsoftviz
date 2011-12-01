@@ -51,7 +51,6 @@ class Client : public QObject
         Data::Graph * currentGraph;
         Data::Type *nodeType;
         Data::Type *edgeType;
-        std::map<qlonglong, osg::ref_ptr<Data::Node> > nodes;
         QLinkedList<osg::ref_ptr<Data::Node> > selected_nodes;
 
     private slots:

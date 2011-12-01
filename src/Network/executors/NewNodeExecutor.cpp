@@ -23,6 +23,5 @@ void NewNodeExecutor::execute() {
     //qDebug()<< "[NEW NODE] id: " << id << " [" << x << "," << y << "," << z << "]";
 
     osg::Vec3 position(x,y,z);
-    osg::ref_ptr<Data::Node> node = client->currentGraph->addNode(id,"newNode", client->nodeType, position);
-    client->nodes[id] = node;
+    client->currentGraph->addNode(id,"newNode", client->nodeType, position);
 }
