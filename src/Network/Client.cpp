@@ -55,15 +55,14 @@ void Client::readyRead() {
     // We'll loop over every (complete) line of text that the server has sent us:
     while(socket->canReadLine())
     {
-        QTime t;
         QString line = QString::fromUtf8(socket->readLine()).trimmed();
-        qDebug() << "Client got line: " << line;
+        //qDebug() << "Client got line: " << line;
 
 
-        Data::Graph * currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
+        //currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
 
         ExecutorFactory *executorFactory = new ExecutorFactory();
-        Executor *executor = executorFactory->getExecutor(line);
+        AbstractExecutor *executor = executorFactory->getExecutor(line);
 
         if (executor != NULL) {
             executor->execute();
@@ -75,67 +74,11 @@ void Client::readyRead() {
 
         QRegExp messageRegex("^([^:]+):(.*)$");
 
-        QRegExp nodeRegexp("^/nodeData:id:([0-9]+);x:([0-9-\\.e]+);y:([0-9-\\.e]+);z:([0-9-\\.e]+)$");
-
         QRegExp layRegexp("^/layData:id:([0-9]+);x:([0-9-\\.e]+);y:([0-9-\\.e]+);z:([0-9-\\.e]+)$");
-
-        QRegExp edgeRegexp("^/edgeData:id:([0-9]+);from:([0-9]+);to:([0-9]+);or:([01])$");
-
-        QRegExp moveNodeRegexp("^/moveNode:id:([0-9]+);x:([0-9-\\.e]+);y:([0-9-\\.e]+);z:([0-9-\\.e]+)$");
 
         QRegExp viewRegexp("^/view:center:([0-9-\\.e]+),([0-9-\\.e]+),([0-9-\\.e]+);rotation:([0-9-\\.e]+),([0-9-\\.e]+),([0-9-\\.e]+),([0-9-\\.e]+);id:([0-9]+)$");
 
-        if (moveNodeRegexp.indexIn(line) != -1) {
-            int id = moveNodeRegexp.cap(1).toInt();
-
-            float x = moveNodeRegexp.cap(2).toFloat();
-            float y = moveNodeRegexp.cap(3).toFloat();
-            float z = moveNodeRegexp.cap(4).toFloat();
-            Data::Graph * currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
-            QMap<qlonglong, osg::ref_ptr<Data::Node> >* nodes = currentGraph -> getNodes();
-            //qDebug() << "Moving" << id << "to" << x << y << z;
-            Data::Node *node = (*((*nodes).find(id)));
-
-            node -> setUsingInterpolation(false);
-            node -> setFixed(true);
-            node -> setTargetPosition(osg::Vec3(x,y,z));
-        } else if (line == "GRAPH_START") {
-            t.start();
-            currentGraph= Manager::GraphManager::getInstance()->createNewGraph("NewGraph");
-            Importer::GraphOperations * operations = new Importer::GraphOperations(*currentGraph);
-            operations->addDefaultTypes(edgeType, nodeType);
-
-            thread->pause();
-            coreGraph->setNodesFreezed(true);
-            currentGraph->setFrozen(true);
-        } else if (line == "GRAPH_END") {
-            qDebug() << "Building took" << QString::number(t.elapsed()) << "ms";
-            thread->play();
-            coreGraph->setNodesFreezed(false);
-            currentGraph->setFrozen(false);
-        } else if (nodeRegexp.indexIn(line) != -1){
-            int id = nodeRegexp.cap(1).toInt();
-
-            float x = nodeRegexp.cap(2).toFloat();
-            float y = nodeRegexp.cap(3).toFloat();
-            float z = nodeRegexp.cap(4).toFloat();
-
-            //qDebug()<< "[NEW NODE] id: " << id << " [" << x << "," << y << "," << z << "]";
-
-            osg::Vec3 position(x,y,z);
-            osg::ref_ptr<Data::Node> node = currentGraph->addNode(id,"newNode", nodeType, position);
-            nodes[id] = node;
-
-        } else if (edgeRegexp.indexIn(line) != -1) {
-            int id = edgeRegexp.cap(1).toInt();
-            int from = edgeRegexp.cap(2).toInt();
-            int to = edgeRegexp.cap(3).toInt();
-            bool oriented = edgeRegexp.cap(4).toInt();
-
-            //qDebug()<< "[NEW EDGE] id: " << id << " from: " << from << ", to:" << to;
-
-            currentGraph->addEdge(id,"NewEdge",nodes[from],nodes[to],edgeType,oriented);
-        } else if (layRegexp.indexIn(line) != -1) {
+        if (layRegexp.indexIn(line) != -1) {
             int id = layRegexp.cap(1).toInt();
 
             float x = layRegexp.cap(2).toFloat();

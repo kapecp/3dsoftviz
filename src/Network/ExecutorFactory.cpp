@@ -2,6 +2,11 @@
 
 #include "Network/executors/AbstractExecutor.h"
 #include "Network/executors/UsersExecutor.h"
+#include "Network/executors/MoveNodeExecutor.h"
+#include "Network/executors/GraphStartExecutor.h"
+#include "Network/executors/GraphEndExecutor.h"
+#include "Network/executors/NewNodeExecutor.h"
+#include "Network/executors/NewEdgeExecutor.h"
 
 using namespace Network;
 
@@ -23,6 +28,16 @@ AbstractExecutor* ExecutorFactory::getExecutor(QString line) {
 
     if (usersRegex.indexIn(line) != -1) {
         return new UsersExecutor(usersRegex);
+    } else if (moveNodeRegexp.indexIn(line) != -1) {
+        return new MoveNodeExecutor(moveNodeRegexp);
+    } else if (line == "GRAPH_START") {
+        return new GraphStartExecutor();
+    } else if (line == "GRAPH_END") {
+        return new GraphEndExecutor();
+    } else if (nodeRegexp.indexIn(line) != -1) {
+        return new NewNodeExecutor(nodeRegexp);
+    } else if (edgeRegexp.indexIn(line) != -1) {
+        return new NewEdgeExecutor(edgeRegexp);
     } else {
         return NULL;
     }

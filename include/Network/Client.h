@@ -42,9 +42,15 @@ class Client : public QObject
 
         void sendMyView(osg::Vec3d center, osg::Quat rotation);
 
+        //todo: encapsulate!
         QMap<int,QString> userList;
         QMap<int,osg::PositionAttitudeTransform*> avatarList;
         Vwr::CoreGraph * coreGraph;
+        Layout::LayoutThread * thread;
+        Data::Graph * currentGraph;
+        Data::Type *nodeType;
+        Data::Type *edgeType;
+        std::map<qlonglong, osg::ref_ptr<Data::Node> > nodes;
 
     private slots:
         // This is a function we'll connect to a socket's readyRead()
@@ -63,12 +69,8 @@ class Client : public QObject
 
         QString clientNick;
 
-        std::map<qlonglong, osg::ref_ptr<Data::Node> > nodes;
         QLinkedList<osg::ref_ptr<Data::Node> > selected_nodes;
-        Data::Type *nodeType;
-        Data::Type *edgeType;
 
-        Layout::LayoutThread * thread;
         QObject * cw;
 
         // This is the socket that will let us communitate with the server.
