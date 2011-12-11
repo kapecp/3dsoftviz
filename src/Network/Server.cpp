@@ -18,6 +18,7 @@ Server::Server(QObject *parent) : QTcpServer(parent)
     instance = this;
     Util::ApplicationConfig *conf = Util::ApplicationConfig::get();
     graphScale = conf->getValue("Viewer.Display.NodeDistanceScale").toFloat();
+    executorFactory = new ExecutorFactory(this);
 }
 
 Server* Server::getInstance() {
@@ -46,102 +47,28 @@ void Server::readyRead()
     while(senderClient->canReadLine())
     {
         QString line = QString::fromUtf8(senderClient->readLine()).trimmed();
-        QRegExp moveNodeRegexp("^/moveNode:id:([0-9]+);x:([0-9-\\.e]+);y:([0-9-\\.e]+);z:([0-9-\\.e]+)$");
-        QRegExp viewRegexp("^/view:center:([0-9-\\.e]+),([0-9-\\.e]+),([0-9-\\.e]+);rotation:([0-9-\\.e]+),([0-9-\\.e]+),([0-9-\\.e]+),([0-9-\\.e]+)$");
-        //qDebug() << "Read line:" << line;
 
-        QRegExp meRegex("^/me:(.*)$");
+        executorFactory->setSenderClient(senderClient);
+        AbstractExecutor *executor = executorFactory->getExecutor(line);
 
-        if(meRegex.indexIn(line) != -1)
-        {
-            QString user = meRegex.cap(1);
-            users[senderClient] = user;
-            int newID = 1;
-            if (usersID.count() > 0) {
-                QList<int> IDs = usersID.values();
-                newID = (*(std::max_element(IDs.begin(),IDs.end())))+1;
-            }
-            usersID[senderClient] = newID;
-
-            osg::ref_ptr<osg::Node> modelNode = osgDB::readNodeFile("avatar.osg");
-            if (!modelNode) {
-                qDebug() << "could not find model";
-                return;
-            }
-
-            osg::PositionAttitudeTransform* PAtransform = new osg::PositionAttitudeTransform();
-            PAtransform->addChild(modelNode);
-
-            QLinkedList<osg::ref_ptr<osg::Node> > * nodes = coreGraph->getCustomNodeList();
-
-            nodes->append(PAtransform);
-
-            //PAtransform->setScale(osg::Vec3d(10,10,10));
-            avatars.insert(senderClient,PAtransform);
-
-            senderClient->write("WELCOME\n");
-            sendUserList();
+        if (executor != NULL) {
+            executor->execute();
+        } else {
+            qDebug() << "Server: neznama instrukcia:" << line;
         }
-        else if (moveNodeRegexp.indexIn(line) != -1) {
 
-            int id = moveNodeRegexp.cap(1).toInt();
+        delete executor;
 
-            float x = moveNodeRegexp.cap(2).toFloat()/graphScale;
-            float y = moveNodeRegexp.cap(3).toFloat()/graphScale;
-            float z = moveNodeRegexp.cap(4).toFloat()/graphScale;
+        /*
+                tento kod sa da vyuzit pre implementaciu chatu
 
-            QString message = "/moveNode:id:"+ QString::number(id) + ";x:" + QString::number(x) + ";y:" + QString::number(y) + ";z:" + QString::number(z) + "\n";
-            foreach(QTcpSocket *otherClient, clients) {
-                otherClient->write(message.toUtf8());
-            }
+        QString message = line;
+        QString user = users[senderClient];
+        foreach(QTcpSocket *otherClient, clients)
+            otherClient->write(QString(user + ":" + message + "\n").toUtf8());
 
-            Data::Graph * currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
-            QMap<qlonglong, osg::ref_ptr<Data::Node> >* nodes = currentGraph -> getNodes();
-            //qDebug() << "Moving" << id << "to" << x << y << z;
-            Data::Node *node = (*((*nodes).find(id)));
+        */
 
-            moving_nodes.append(node);
-
-            node -> setUsingInterpolation(false);
-            node -> setFixed(true);
-            node -> setTargetPosition(osg::Vec3(x,y,z));
-            thread->play();
-        }
-        else if (viewRegexp.indexIn(line) != -1) {
-            foreach(QTcpSocket *client, clients) { // append sender ID and resend to all other clients except sender
-                if (client == senderClient) continue;
-                client->write((line+";id:"+QString::number(usersID[senderClient])+"\n").toUtf8());
-            }
-
-            osg::Vec3d center = osg::Vec3d(viewRegexp.cap(1).toFloat()-5,viewRegexp.cap(2).toFloat(),viewRegexp.cap(3).toFloat());
-            osg::Quat rotation = osg::Quat(viewRegexp.cap(4).toFloat(),viewRegexp.cap(5).toFloat(),viewRegexp.cap(6).toFloat(),viewRegexp.cap(7).toFloat());
-
-            osg::PositionAttitudeTransform * PAtransform = avatars[senderClient];
-            if (PAtransform != NULL) {
-                PAtransform->setAttitude(rotation);
-                PAtransform->setPosition(center);
-            }
-        }
-        else if(users.contains(senderClient))
-        {
-            QString message = line;
-            QString user = users[senderClient];
-            qDebug() << "User:" << user;
-            qDebug() << "Message:" << message;
-
-            if (message == "GET_GRAPH") {
-                sendGraph(senderClient);
-            } else if (message == "GET_LAYOUT") {
-                sendLayout(senderClient);
-            } else {
-                foreach(QTcpSocket *otherClient, clients)
-                    otherClient->write(QString(user + ":" + message + "\n").toUtf8());
-            }
-        }
-        else
-        {
-            qWarning() << "Got bad message from client:" << senderClient->peerAddress().toString() << line;
-        }
     }
 }
 
@@ -187,15 +114,8 @@ void Server::sendGraph(QTcpSocket *client){
     QMap<qlonglong, osg::ref_ptr<Data::Node> >* nodes = currentGraph -> getNodes();
     QMap<qlonglong, osg::ref_ptr<Data::Node> >::const_iterator iNodes =  nodes->constBegin();
 
-
-    /*bool isRunning = thread->isRunning();
-
-    if (isRunning) {
-        thread->pause();
-        coreGraph->setNodesFreezed(true);
-    }*/
-    QTime t;
-    t.start();
+    /*QTime t;
+    t.start();*/
 
     if (client == NULL){
         foreach(QTcpSocket *otherClient, clients){
@@ -256,12 +176,7 @@ void Server::sendGraph(QTcpSocket *client){
         client -> write("GRAPH_END\n");
     }
 
-    qDebug() << "Sending took" << t.elapsed() << "ms";
-
-    /*if (isRunning) {
-        thread->play();
-        coreGraph->setNodesFreezed(false);
-    }*/
+    //qDebug() << "Sending took" << t.elapsed() << "ms";
 
 }
 
@@ -283,8 +198,8 @@ void Server::sendLayout(QTcpSocket *client){
     QMap<qlonglong, osg::ref_ptr<Data::Node> >::const_iterator iNodes =  nodes->constBegin();
 
 
-    QTime t;
-    t.start();
+    /*QTime t;
+    t.start();*/
 
     if (client == NULL){
         foreach(QTcpSocket *otherClient, clients){
@@ -308,8 +223,6 @@ void Server::sendLayout(QTcpSocket *client){
         } else {
             client -> write(("/layData:"+message+"\n").toUtf8());
         }
-
-        //qDebug() << "[SERVER] Sending node: " << message;
 
         ++iNodes;
     }
@@ -375,4 +288,13 @@ void Server::sendMyView(osg::Vec3d center, osg::Quat rotation) {
         otherClient->write(message.toUtf8());
     }
 
+}
+
+void Server::appendMovingNode(osg::ref_ptr<Data::Node> node) {
+    moving_nodes.append(node);
+}
+
+int Server::getMaxUserId() {
+    QList<int> IDs = usersID.values();
+    return *(std::max_element(IDs.begin(),IDs.end()));
 }

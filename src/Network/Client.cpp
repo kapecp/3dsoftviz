@@ -26,7 +26,7 @@ Client::Client(QObject *parent) : QObject(parent) {
     edgeType = NULL;
     nodeType = NULL;
 
-    executorFactory = new ExecutorFactory();
+    executorFactory = new ExecutorFactory(this);
 
 }
 
@@ -61,7 +61,7 @@ void Client::readyRead() {
         if (executor != NULL) {
             executor->execute();
         } else {
-            qDebug() << "EXECUTOR: neznama instrukcia:" << line;
+            qDebug() << "Client: neznama instrukcia:" << line;
         }
 
         delete executor;
@@ -118,7 +118,7 @@ void Client::sendMovedNodesPosition() {
         message += ";z:" + QString::number((*i)->getCurrentPosition().z());
         ++i;
 
-        socket->write(QString("/moveNode:" + message + "\n").toUtf8());
+        socket->write(QString("/SMoveNode:" + message + "\n").toUtf8());
     }
 
     selected_nodes.clear();

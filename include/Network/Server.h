@@ -15,6 +15,7 @@
 
 #include "Layout/LayoutThread.h"
 #include "Viewer/CoreGraph.h"
+#include "Network/ExecutorFactory.h"
 
 namespace Network {
 
@@ -40,10 +41,23 @@ class Server : public QTcpServer {
 
         void sendMyView(osg::Vec3d center, osg::Quat rotation);
 
+        //todo: encapsulate!
+        float getGraphScale() { return graphScale; }
+        QSet<QTcpSocket*> getClients() { return clients; }
+        void appendMovingNode(osg::ref_ptr<Data::Node> node);
+        Layout::LayoutThread * getLayoutThread() { return thread; }
+        int getUserId(QTcpSocket * Client) { return usersID[Client]; }
+        osg::PositionAttitudeTransform * getAvatarTransform(QTcpSocket* client) { return avatars[client]; }
+        void addUser(QTcpSocket * socket,QString name,int id) { users[socket] = name; usersID[socket] = id; }
+        int getUserCount() {return usersID.count(); }
+        int getMaxUserId();
+        Vwr::CoreGraph * getCoreGraph() { return coreGraph; }
+        void addAvatar(QTcpSocket* socket,osg::PositionAttitudeTransform * avatarTransform) { avatars[socket] = avatarTransform; }
+        void sendUserList();
+
     private slots:
         void readyRead();
         void disconnected();
-        void sendUserList();
 
     protected:
         void incomingConnection(int socketfd);
@@ -55,12 +69,13 @@ class Server : public QTcpServer {
         QLinkedList<osg::ref_ptr<Data::Node> > moving_nodes;
 
         QSet<QTcpSocket*> clients;
-        float graphScale;
         QMap<QTcpSocket*,QString> users;
         QMap<QTcpSocket*,int> usersID;
         QMap<QTcpSocket*,osg::PositionAttitudeTransform *> avatars;
         Layout::LayoutThread * thread;
         Vwr::CoreGraph * coreGraph;
+        ExecutorFactory *executorFactory;
+        float graphScale;
     };
 }
 
