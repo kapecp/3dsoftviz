@@ -28,9 +28,6 @@ class Server : public QTcpServer {
 
         static Server* getInstance();
 
-        void setLayoutThread(Layout::LayoutThread * layoutThread);
-        void setCoreGraph(Vwr::CoreGraph * cg) { coreGraph = cg; }
-
         void sendGraph(QTcpSocket *client = NULL);
         void sendLayout(QTcpSocket *client = NULL);
         void sendMoveNodes();
@@ -41,19 +38,24 @@ class Server : public QTcpServer {
 
         void sendMyView(osg::Vec3d center, osg::Quat rotation);
 
-        //todo: encapsulate!
+        void sendUserList();
+
+        //some getters
         float getGraphScale() { return graphScale; }
         QSet<QTcpSocket*> getClients() { return clients; }
-        void appendMovingNode(osg::ref_ptr<Data::Node> node);
         Layout::LayoutThread * getLayoutThread() { return thread; }
         int getUserId(QTcpSocket * Client) { return usersID[Client]; }
         osg::PositionAttitudeTransform * getAvatarTransform(QTcpSocket* client) { return avatars[client]; }
-        void addUser(QTcpSocket * socket,QString name,int id) { users[socket] = name; usersID[socket] = id; }
         int getUserCount() {return usersID.count(); }
         int getMaxUserId();
         Vwr::CoreGraph * getCoreGraph() { return coreGraph; }
+
+        //some setters
+        void appendMovingNode(osg::ref_ptr<Data::Node> node);
+        void addUser(QTcpSocket * socket,QString name,int id) { users[socket] = name; usersID[socket] = id; }
         void addAvatar(QTcpSocket* socket,osg::PositionAttitudeTransform * avatarTransform) { avatars[socket] = avatarTransform; }
-        void sendUserList();
+        void setLayoutThread(Layout::LayoutThread * layoutThread);
+        void setCoreGraph(Vwr::CoreGraph * cg) { coreGraph = cg; }
 
     private slots:
         void readyRead();
