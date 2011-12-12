@@ -340,11 +340,11 @@ void CoreWindow::createRightToolBar() {
 
     toolBar->addWidget(b_start_client);
     toolBar->addSeparator();
-    toolBar->addWidget(le_message);
-    toolBar->addWidget(b_send_message);
+    /*toolBar->addWidget(le_message);
+    toolBar->addWidget(b_send_message);*/
 
-    addToolBar(Qt::RightToolBarArea,toolBar);
-    toolBar->setMovable(false);
+    addToolBar(Qt::TopToolBarArea,toolBar);
+    toolBar->setMovable(true);
 }
 
 QFrame* CoreWindow::createHorizontalFrame()
