@@ -227,6 +227,8 @@ namespace QOSG
                                 void start_server();
                                 void start_client();
                                 void send_message();
+
+                                void toggleSpyWatch();
 	private:
 
 		/**
@@ -468,6 +470,12 @@ namespace QOSG
                 */
                 void createRightToolBar();
 
+                /**
+                *  \fn private  createCollaborationToolBar
+                *  \brief Create collaboration toolBar
+                */
+                void createCollaborationToolBar();
+
 		/**
 		*  \fn private  createHorizontalFrame
 		*  \brief Crate frame with horizontal label
@@ -501,6 +509,9 @@ namespace QOSG
 
                 QPushButton * b_send_message;
                 QLineEdit * le_message;
+
+                QCheckBox *chb_spy;
+                QCheckBox *chb_center;
 
                 Network::Client * client;
 

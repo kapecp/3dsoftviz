@@ -24,6 +24,7 @@ CoreWindow::CoreWindow(QWidget *parent, Vwr::CoreGraph* coreGraph, QApplication*
 	createMenus();
         createLeftToolBar();
         createRightToolBar();
+        createCollaborationToolBar();
 	
 	viewerWidget = new ViewerQT(this, 0, 0, 0, coreGraph);  
 	viewerWidget->setSceneData(coreGraph->getScene());
@@ -209,6 +210,13 @@ void CoreWindow::createActions()
         b_send_message->setText("Send");
         connect(b_send_message, SIGNAL(clicked()), this, SLOT(send_message()));
 
+
+        chb_center = new QCheckBox("&Center");
+        connect(chb_center, SIGNAL(clicked()), this, SLOT(toggleSpyWatch()));
+
+        chb_spy = new QCheckBox("&Spy");
+        connect(chb_spy, SIGNAL(clicked()), this, SLOT(toggleSpyWatch()));
+
         le_client_name = new QLineEdit("Nick");
         le_server_addr = new QLineEdit("localhost");
         le_message= new QLineEdit("Message");
@@ -344,6 +352,32 @@ void CoreWindow::createRightToolBar() {
     toolBar->addWidget(b_send_message);*/
 
     addToolBar(Qt::TopToolBarArea,toolBar);
+    toolBar->setMovable(true);
+}
+
+void CoreWindow::createCollaborationToolBar() {
+    toolBar = new QToolBar("Collaboration",this);
+
+    QFrame *frame = createHorizontalFrame();
+    QLabel *label = new QLabel("Collaborators: ");
+    frame->layout()->addWidget(label);
+    toolBar->addWidget(frame);
+
+    frame = createHorizontalFrame();
+    QListWidget *listWidget = new QListWidget();
+    listWidget->setSortingEnabled(true);
+    listWidget->setMaximumHeight(200);
+
+    frame->layout()->addWidget(listWidget);
+    toolBar->addWidget(frame);
+
+    frame = createHorizontalFrame();
+    frame->layout()->addWidget(chb_spy);
+    frame->layout()->addWidget(chb_center);
+    toolBar->addWidget(frame);
+
+    addToolBar(Qt::RightToolBarArea,toolBar);
+    toolBar->setMaximumHeight(300);
     toolBar->setMovable(true);
 }
 
@@ -976,4 +1010,15 @@ void CoreWindow::start_client()
 void CoreWindow::send_message()
 {
     client->send_message(le_message->text());
+}
+
+void CoreWindow::toggleSpyWatch()
+{
+    QCheckBox *sender_chb = (QCheckBox*)sender();
+    if (sender_chb == chb_spy && chb_spy->isChecked()) {
+        chb_center->setChecked(false);
+    }
+    if (sender_chb == chb_center && chb_center->isChecked()) {
+        chb_spy->setChecked(false);
+    }
 }
