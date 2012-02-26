@@ -57,8 +57,6 @@ void Server::readyRead()
             qDebug() << "Server: neznama instrukcia:" << line;
         }
 
-        delete executor;
-
         /*
                 tento kod sa da vyuzit pre implementaciu chatu
 

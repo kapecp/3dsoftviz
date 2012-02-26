@@ -17,7 +17,8 @@ namespace Network {
     public:
         ServerIncommingUserExecutor(QRegExp regexp, QTcpSocket * senderClient);
         void execute();
-
+        void setVariables(QRegExp new_regexp, QTcpSocket *new_senderClient)
+                            {regexp=new_regexp; senderClient=new_senderClient;}
     };
 
 }

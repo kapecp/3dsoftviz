@@ -15,7 +15,7 @@ namespace Network {
     public:
         ServerSendGraphExecutor(QTcpSocket * senderClient);
         void execute();
-
+        void setVariables(QTcpSocket * new_senderClient) {senderClient=new_senderClient;}
     };
 
 }

@@ -18,7 +18,8 @@ namespace Network {
     public:
         ServerMoveAvatarExecutor(QRegExp regex, QTcpSocket *senderClient, QString line);
         void execute();
-
+        void setVariables(QRegExp new_regexp, QTcpSocket *new_senderClient, QString new_line)
+                            {regexp=new_regexp; senderClient=new_senderClient;line=new_line;}
     };
 
 }

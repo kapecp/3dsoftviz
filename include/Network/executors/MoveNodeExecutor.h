@@ -15,7 +15,7 @@ namespace Network {
     public:
         MoveNodeExecutor(QRegExp regex);
         void execute();
-
+        void setVariables(QRegExp new_regexp) {regexp=new_regexp;}
     };
 
 }

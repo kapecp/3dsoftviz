@@ -64,8 +64,6 @@ void Client::readyRead() {
             qDebug() << "Client: neznama instrukcia:" << line;
         }
 
-        delete executor;
-
     }
 }
 

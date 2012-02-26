@@ -6,6 +6,24 @@
 #include <QTcpSocket>
 #include "Network/executors/AbstractExecutor.h"
 
+#include "Network/executors/AbstractExecutor.h"
+#include "Network/executors/UsersExecutor.h"
+#include "Network/executors/MoveNodeExecutor.h"
+#include "Network/executors/GraphStartExecutor.h"
+#include "Network/executors/GraphEndExecutor.h"
+#include "Network/executors/NewNodeExecutor.h"
+#include "Network/executors/NewEdgeExecutor.h"
+#include "Network/executors/LayoutExecutor.h"
+#include "Network/executors/MoveAvatarExecutor.h"
+#include "Network/executors/MessageExecutor.h"
+#include "Network/executors/ServerStopExecutor.h"
+#include "Network/executors/WelcomeExecutor.h"
+#include "Network/executors/ServerMoveNodeExecutor.h"
+#include "Network/executors/ServerMoveAvatarExecutor.h"
+#include "Network/executors/ServerIncommingUserExecutor.h"
+#include "Network/executors/ServerSendGraphExecutor.h"
+#include "Network/executors/ServerSendLayoutExecutor.h"
+
 namespace Network {
 
     class ExecutorFactory {
@@ -26,6 +44,23 @@ namespace Network {
         QRegExp viewRegexp;
         QRegExp serverViewRegexp;
         QRegExp incommingUserRegex;
+
+        UsersExecutor *usersExecutor;
+        MoveNodeExecutor *moveNodeExecutor;
+        ServerMoveNodeExecutor *serverMoveNodeExecutor;
+        GraphStartExecutor *graphStartExecutor;
+        GraphEndExecutor *graphEndExecutor;
+        NewNodeExecutor *newNodeExecutor;
+        NewEdgeExecutor *newEdgeExecutor;
+        LayoutExecutor *layoutExecutor;
+        MoveAvatarExecutor *moveAvatarExecutor;
+        ServerMoveAvatarExecutor *serverMoveAvatarExecutor;
+        ServerIncommingUserExecutor *serverIncommingUserExecutor;
+        MessageExecutor *messageExecutor;
+        ServerStopExecutor *serverStopExecutor;
+        WelcomeExecutor *welcomeExecutor;
+        ServerSendGraphExecutor *serverSendGraphExecutor;
+        ServerSendLayoutExecutor *serverSendLayoutExecutor;
 
         QObject * client;
 

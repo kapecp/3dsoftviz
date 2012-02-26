@@ -3,24 +3,6 @@
 
 #include "Network/ExecutorFactory.h"
 
-#include "Network/executors/AbstractExecutor.h"
-#include "Network/executors/UsersExecutor.h"
-#include "Network/executors/MoveNodeExecutor.h"
-#include "Network/executors/GraphStartExecutor.h"
-#include "Network/executors/GraphEndExecutor.h"
-#include "Network/executors/NewNodeExecutor.h"
-#include "Network/executors/NewEdgeExecutor.h"
-#include "Network/executors/LayoutExecutor.h"
-#include "Network/executors/MoveAvatarExecutor.h"
-#include "Network/executors/MessageExecutor.h"
-#include "Network/executors/ServerStopExecutor.h"
-#include "Network/executors/WelcomeExecutor.h"
-#include "Network/executors/ServerMoveNodeExecutor.h"
-#include "Network/executors/ServerMoveAvatarExecutor.h"
-#include "Network/executors/ServerIncommingUserExecutor.h"
-#include "Network/executors/ServerSendGraphExecutor.h"
-#include "Network/executors/ServerSendLayoutExecutor.h"
-
 using namespace Network;
 
 ExecutorFactory::ExecutorFactory(QObject * client) {
@@ -46,42 +28,132 @@ ExecutorFactory::ExecutorFactory(QObject * client) {
 
     this->client = client;
     this->senderClient = NULL;
+
+    usersExecutor = NULL;
+    moveNodeExecutor = NULL;
+    serverMoveNodeExecutor = NULL;
+    graphStartExecutor = NULL;
+    graphEndExecutor = NULL;
+    newNodeExecutor = NULL;
+    newEdgeExecutor = NULL;
+    layoutExecutor = NULL;
+    moveAvatarExecutor = NULL;
+    serverMoveAvatarExecutor = NULL;
+    serverIncommingUserExecutor = NULL;
+    messageExecutor = NULL;
+    serverStopExecutor = NULL;
+    welcomeExecutor = NULL;
+    serverSendGraphExecutor = NULL;
+    serverSendLayoutExecutor = NULL;
 }
 
 AbstractExecutor* ExecutorFactory::getExecutor(QString line) {
 
     if (usersRegex.indexIn(line) != -1) {
-        return new UsersExecutor(usersRegex);
+        if (usersExecutor == NULL) {
+            usersExecutor = new UsersExecutor(usersRegex);
+        } else {
+            usersExecutor->setVariables(usersRegex);
+        }
+        return usersExecutor;
     } else if (moveNodeRegexp.indexIn(line) != -1) {
-        return new MoveNodeExecutor(moveNodeRegexp);
+        if (moveNodeExecutor == NULL) {
+            moveNodeExecutor = new MoveNodeExecutor(moveNodeRegexp);
+        } else {
+            qDebug()<<"MoveNode exists";
+            moveNodeExecutor->setVariables(moveNodeRegexp);
+        }
+        return moveNodeExecutor;
     } else if (serverMoveNodeRegexp.indexIn(line) != -1){
-        return new ServerMoveNodeExecutor(serverMoveNodeRegexp);
+        if (serverMoveNodeExecutor == NULL) {
+            serverMoveNodeExecutor = new ServerMoveNodeExecutor(serverMoveNodeRegexp);
+        } else {
+            serverMoveNodeExecutor->setVariables(serverMoveNodeRegexp);
+        }
+        return serverMoveNodeExecutor;
     }else if (line == "GRAPH_START") {
-        return new GraphStartExecutor();
+        if (graphStartExecutor == NULL) {
+            graphStartExecutor = new GraphStartExecutor();
+        }
+        return graphStartExecutor;
     } else if (line == "GRAPH_END") {
-        return new GraphEndExecutor();
+        if (graphEndExecutor == NULL) {
+            graphEndExecutor = new GraphEndExecutor();
+        }
+        return graphEndExecutor;
     } else if (nodeRegexp.indexIn(line) != -1) {
-        return new NewNodeExecutor(nodeRegexp);
+        if (newNodeExecutor == NULL) {
+            newNodeExecutor = new NewNodeExecutor(nodeRegexp);
+        } else {
+            newNodeExecutor->setVariables(nodeRegexp);
+        }
+        return newNodeExecutor;
     } else if (edgeRegexp.indexIn(line) != -1) {
-        return new NewEdgeExecutor(edgeRegexp);
+        if (newEdgeExecutor == NULL) {
+            newEdgeExecutor = new NewEdgeExecutor(edgeRegexp);
+        } else {
+            newEdgeExecutor->setVariables(edgeRegexp);
+        }
+        return newEdgeExecutor;
     } else if (layRegexp.indexIn(line) != -1) {
-        return new LayoutExecutor(layRegexp);
+        if (layoutExecutor == NULL) {
+            layoutExecutor = new LayoutExecutor(layRegexp);
+        } else {
+            layoutExecutor->setVariables(layRegexp);
+        }
+        return layoutExecutor;
     } else if (viewRegexp.indexIn(line) != -1) {
-        return new MoveAvatarExecutor(viewRegexp);
+        if (moveAvatarExecutor == NULL) {
+            moveAvatarExecutor = new MoveAvatarExecutor(viewRegexp);
+        } else {
+            moveAvatarExecutor->setVariables(viewRegexp);
+        }
+        return moveAvatarExecutor;
     } else if (serverViewRegexp.indexIn(line) != -1 && senderClient != NULL) {
-        return new ServerMoveAvatarExecutor(serverViewRegexp, senderClient, line);
+        if (serverMoveAvatarExecutor == NULL) {
+            serverMoveAvatarExecutor = new ServerMoveAvatarExecutor(serverViewRegexp, senderClient, line);
+        } else {
+            serverMoveAvatarExecutor->setVariables(serverViewRegexp, senderClient, line);
+        }
+        return serverMoveAvatarExecutor;
     } else if (incommingUserRegex.indexIn(line) != -1 && senderClient != NULL) {
-        return new ServerIncommingUserExecutor(incommingUserRegex, senderClient);
+        if (serverIncommingUserExecutor == NULL) {
+            serverIncommingUserExecutor = new ServerIncommingUserExecutor(incommingUserRegex, senderClient);
+        } else {
+            serverIncommingUserExecutor->setVariables(incommingUserRegex, senderClient);
+        }
+        return serverIncommingUserExecutor;
     } else if (messageRegex.indexIn(line) != -1 ) {
-        return new MessageExecutor(messageRegex);
+        if (messageExecutor == NULL) {
+            messageExecutor = new MessageExecutor(messageRegex);
+        } else {
+            messageExecutor->setVariables(messageRegex);
+        }
+        return messageExecutor;
     } else if (line == "SERVER_STOP") {
-        return new ServerStopExecutor();
+        if (serverStopExecutor == NULL) {
+            serverStopExecutor = new ServerStopExecutor();
+        }
+        return serverStopExecutor;
     } else if (line == "WELCOME") {
-        return new WelcomeExecutor();
+        if (welcomeExecutor == NULL) {
+            welcomeExecutor = new WelcomeExecutor();
+        }
+        return welcomeExecutor;
     } else if (line == "GET_GRAPH" && senderClient != NULL){
-        return new ServerSendGraphExecutor(senderClient);
+        if (serverSendGraphExecutor == NULL) {
+            serverSendGraphExecutor = new ServerSendGraphExecutor(senderClient);
+        } else {
+            serverSendGraphExecutor->setVariables(senderClient);
+        }
+        return serverSendGraphExecutor;
     } else if (line == "GET_LAYOUT" && senderClient != NULL){
-        return new ServerSendLayoutExecutor(senderClient);
+        if (serverSendLayoutExecutor == NULL) {
+            serverSendLayoutExecutor = new ServerSendLayoutExecutor(senderClient);
+        } else {
+            serverSendLayoutExecutor->setVariables(senderClient);
+        }
+        return serverSendLayoutExecutor;
     } else {
         return NULL;
     }
