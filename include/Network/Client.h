@@ -42,7 +42,12 @@ class Client : public QObject
         void sendMovedNodesPosition();
         void updateUserList();
 
+        void spyUser(int user) { user_to_spy = user; }
+        int userToSpy() { return user_to_spy; }
+        void unSpyUser() { user_to_spy = -1; }
+
         void sendMyView(osg::Vec3d center, osg::Quat rotation);
+        void setMyView(osg::Vec3d center, osg::Quat rotation);
 
         //todo: encapsulate!
         QMap<int,QString> userList;
@@ -70,6 +75,7 @@ class Client : public QObject
         static Client *instance;
 
         QString clientNick;
+        int user_to_spy;
 
         ExecutorFactory *executorFactory;
 

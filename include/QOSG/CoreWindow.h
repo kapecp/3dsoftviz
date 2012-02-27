@@ -547,6 +547,8 @@ namespace QOSG
 		*/
 		Layout::LayoutThread * getLayoutThread() const { return layout; }
 
+                Vwr::CameraManipulator * getCameraManipulator() { return viewerWidget->getCameraManipulator(); }
+
 		/**
 		*  \fn inline public  setLayoutThread
 		*  \brief	Set the layout thread 

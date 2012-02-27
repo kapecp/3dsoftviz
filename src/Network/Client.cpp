@@ -25,6 +25,7 @@ Client::Client(QObject *parent) : QObject(parent) {
 
     edgeType = NULL;
     nodeType = NULL;
+    user_to_spy = -1;
 
     executorFactory = new ExecutorFactory(this);
 
@@ -143,4 +144,10 @@ void Client::updateUserList() {
         lw->addItem(item);
         i++;
     }
+}
+
+void Client::setMyView(osg::Vec3d center, osg::Quat rotation) {
+    Vwr::CameraManipulator * cameraManipulator = ((QOSG::CoreWindow *) cw)->getCameraManipulator();
+    cameraManipulator->setCenter(center);
+    cameraManipulator->setRotation(rotation);
 }

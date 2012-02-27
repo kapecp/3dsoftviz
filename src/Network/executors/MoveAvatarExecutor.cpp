@@ -21,4 +21,9 @@ void MoveAvatarExecutor::execute() {
     } else {
         qDebug() << "Nepoznam avatar" << id;
     }
+
+    if (client->userToSpy() == id) {
+        client->setMyView(center,rotation);
+    }
+
 }
