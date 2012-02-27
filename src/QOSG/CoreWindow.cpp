@@ -220,6 +220,11 @@ void CoreWindow::createActions()
         le_client_name = new QLineEdit("Nick");
         le_server_addr = new QLineEdit("localhost");
         le_message= new QLineEdit("Message");
+
+        lw_users = new QListWidget();
+        lw_users->setSelectionMode(QListWidget::SingleSelection);
+        lw_users->setSortingEnabled(true);
+        lw_users->setMaximumHeight(200);
 }
 
 void CoreWindow::createMenus()
@@ -364,11 +369,7 @@ void CoreWindow::createCollaborationToolBar() {
     toolBar->addWidget(frame);
 
     frame = createHorizontalFrame();
-    QListWidget *listWidget = new QListWidget();
-    listWidget->setSortingEnabled(true);
-    listWidget->setMaximumHeight(200);
-
-    frame->layout()->addWidget(listWidget);
+    frame->layout()->addWidget(lw_users);
     toolBar->addWidget(frame);
 
     frame = createHorizontalFrame();

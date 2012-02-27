@@ -58,4 +58,6 @@ void UsersExecutor::execute() {
              ++i;
          }
      }
+
+     client->updateUserList();
 }

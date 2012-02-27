@@ -558,6 +558,7 @@ namespace QOSG
                 QLineEdit * le_server_addr;
                 QPushButton * b_start_client;
                 QPushButton * b_start_server;
+                QListWidget * lw_users;
 
 	private:
 

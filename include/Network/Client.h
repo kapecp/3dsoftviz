@@ -40,6 +40,7 @@ class Client : public QObject
 
         void setNodesExcludedFromUpdate(QLinkedList<osg::ref_ptr<Data::Node> > nodes) { selected_nodes = nodes; }
         void sendMovedNodesPosition();
+        void updateUserList();
 
         void sendMyView(osg::Vec3d center, osg::Quat rotation);
 

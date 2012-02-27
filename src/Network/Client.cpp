@@ -130,3 +130,17 @@ void Client::sendMyView(osg::Vec3d center, osg::Quat rotation) {
 
     socket->write(message.toUtf8());
 }
+
+void Client::updateUserList() {
+    QListWidgetItem * item;
+    QListWidget * lw = ((QOSG::CoreWindow *) cw)->lw_users;
+    lw->clear();
+    QMap<int,QString>::iterator i = userList.begin();
+    while (i != userList.end()) {
+        item = new QListWidgetItem();
+        item->setData(6,i.key());
+        item->setText(i.value());
+        lw->addItem(item);
+        i++;
+    }
+}
