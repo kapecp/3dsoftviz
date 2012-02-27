@@ -38,7 +38,8 @@ void ServerIncommingUserExecutor::execute() {
 
     server->addAvatar(senderClient, PAtransform);
 
-    senderClient->write("WELCOME\n");
+    qDebug() << "posielam" << ("/yourid:"+QString::number(newID)+"\n").toUtf8();
+    senderClient->write(("/yourid:"+QString::number(newID)+"\n").toUtf8());
     server->sendUserList();
 
 }

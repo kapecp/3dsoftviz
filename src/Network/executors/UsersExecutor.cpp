@@ -26,25 +26,7 @@ void UsersExecutor::execute() {
         qDebug() << id << nick;
         newClients << id;
 
-        if (!client->userList.contains(id)){
-            client->userList.insert(id,nick);
-
-            osg::ref_ptr<osg::Node> modelNode = osgDB::readNodeFile("avatar.osg");
-            if (!modelNode) {
-                qDebug() << "could not find model";
-                return;
-            }
-
-            osg::PositionAttitudeTransform* PAtransform = new osg::PositionAttitudeTransform();
-            PAtransform->addChild(modelNode);
-
-            QLinkedList<osg::ref_ptr<osg::Node> > * nodes = client->coreGraph->getCustomNodeList();
-
-            nodes->append(PAtransform);
-
-            //PAtransform->setScale(osg::Vec3d(10,10,10));
-            client->avatarList.insert(id,PAtransform);
-        }
+        client->addClient(id,nick);
     }
 
     //delete disconnected users

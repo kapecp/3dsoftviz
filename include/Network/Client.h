@@ -42,12 +42,19 @@ class Client : public QObject
         void sendMovedNodesPosition();
         void updateUserList();
 
-        void spyUser(int user) { user_to_spy = user; }
+        void addClient(int id, QString nick);
+        void hideClientAvatar(int id);
+        void showClientAvatar(int id);
+
+        void spyUser(int user);
         int userToSpy() { return user_to_spy; }
-        void unSpyUser() { user_to_spy = -1; }
+        void unSpyUser();
 
         void sendMyView(osg::Vec3d center, osg::Quat rotation);
         void setMyView(osg::Vec3d center, osg::Quat rotation);
+
+        void setMyId(int id) { my_id = id; }
+        int getMyId() { return my_id; }
 
         //todo: encapsulate!
         QMap<int,QString> userList;
@@ -76,6 +83,7 @@ class Client : public QObject
 
         QString clientNick;
         int user_to_spy;
+        int my_id;
 
         ExecutorFactory *executorFactory;
 
@@ -83,6 +91,8 @@ class Client : public QObject
 
         // This is the socket that will let us communitate with the server.
         QTcpSocket *socket;
+
+        void addAvatar(int id);
 
     };
 

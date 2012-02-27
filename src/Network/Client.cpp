@@ -151,3 +151,54 @@ void Client::setMyView(osg::Vec3d center, osg::Quat rotation) {
     cameraManipulator->setCenter(center);
     cameraManipulator->setRotation(rotation);
 }
+
+void Client::addClient(int id, QString nick) {
+    if (!userList.contains(id)){
+        userList.insert(id,nick);
+        addAvatar(id);
+    }
+}
+
+void Client::addAvatar(int id) {
+    osg::ref_ptr<osg::Node> modelNode = osgDB::readNodeFile("avatar.osg");
+    if (!modelNode) {
+        qDebug() << "could not find model";
+        return;
+    }
+
+    osg::PositionAttitudeTransform* PAtransform = new osg::PositionAttitudeTransform();
+    PAtransform->addChild(modelNode);
+
+    QLinkedList<osg::ref_ptr<osg::Node> > * nodes = coreGraph->getCustomNodeList();
+
+    nodes->append(PAtransform);
+
+    //PAtransform->setScale(osg::Vec3d(10,10,10));
+    avatarList.insert(id,PAtransform);
+}
+
+void Client::hideClientAvatar(int id) {
+    osg::PositionAttitudeTransform *pat = avatarList.take(id);
+    if (pat != NULL) {
+        pat->removeChild(0,1);
+    }
+}
+
+void Client::showClientAvatar(int id) {
+    addAvatar(id);
+}
+
+void Client::unSpyUser() {
+    /*showClientAvatar(user_to_spy);
+    QString message = "/unspy\n";
+    socket->write(message.toUtf8());
+    user_to_spy = -1;*/
+}
+
+void Client::spyUser(int user) {
+    QString message = "/spying:"+QString::number(user)+"\n";
+    qDebug() << "posielam" << message;
+    socket->write(message.toUtf8());
+    user_to_spy = user;
+    hideClientAvatar(user);
+}

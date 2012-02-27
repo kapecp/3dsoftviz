@@ -23,6 +23,8 @@
 #include "Network/executors/ServerIncommingUserExecutor.h"
 #include "Network/executors/ServerSendGraphExecutor.h"
 #include "Network/executors/ServerSendLayoutExecutor.h"
+#include "Network/executors/ServerSpyUserExecutor.h"
+#include "Network/executors/SpyUserExecutor.h"
 
 namespace Network {
 
@@ -44,6 +46,9 @@ namespace Network {
         QRegExp viewRegexp;
         QRegExp serverViewRegexp;
         QRegExp incommingUserRegex;
+        QRegExp welcomeRegex;
+        QRegExp serverSpyRegex;
+        QRegExp spyRegex;
 
         UsersExecutor *usersExecutor;
         MoveNodeExecutor *moveNodeExecutor;
@@ -61,6 +66,8 @@ namespace Network {
         WelcomeExecutor *welcomeExecutor;
         ServerSendGraphExecutor *serverSendGraphExecutor;
         ServerSendLayoutExecutor *serverSendLayoutExecutor;
+        ServerSpyUserExecutor *serverSpUseryExecutor;
+        SpyUserExecutor *spyUserExecutor;
 
         QObject * client;
 

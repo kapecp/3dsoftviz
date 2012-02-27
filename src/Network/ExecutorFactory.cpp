@@ -26,6 +26,12 @@ ExecutorFactory::ExecutorFactory(QObject * client) {
 
     incommingUserRegex = QRegExp("^/me:(.*)$");
 
+    welcomeRegex = QRegExp("^/yourid:([0-9]+)$");
+
+    serverSpyRegex = QRegExp("^/spying:([0-9]+)$");
+
+    spyRegex = QRegExp("^/spying:([0-9]+);spy:([0-9]+)$");
+
     this->client = client;
     this->senderClient = NULL;
 
@@ -45,6 +51,8 @@ ExecutorFactory::ExecutorFactory(QObject * client) {
     welcomeExecutor = NULL;
     serverSendGraphExecutor = NULL;
     serverSendLayoutExecutor = NULL;
+    serverSpUseryExecutor = NULL;
+    spyUserExecutor = NULL;
 }
 
 AbstractExecutor* ExecutorFactory::getExecutor(QString line) {
@@ -56,6 +64,13 @@ AbstractExecutor* ExecutorFactory::getExecutor(QString line) {
             usersExecutor->setVariables(usersRegex);
         }
         return usersExecutor;
+    } else if (welcomeRegex.indexIn(line) != -1) {
+        if (welcomeExecutor == NULL) {
+            welcomeExecutor = new WelcomeExecutor(welcomeRegex);
+        } else {
+            welcomeExecutor->setVariables(welcomeRegex);
+        }
+        return welcomeExecutor;
     } else if (moveNodeRegexp.indexIn(line) != -1) {
         if (moveNodeExecutor == NULL) {
             moveNodeExecutor = new MoveNodeExecutor(moveNodeRegexp);
@@ -109,6 +124,13 @@ AbstractExecutor* ExecutorFactory::getExecutor(QString line) {
             moveAvatarExecutor->setVariables(viewRegexp);
         }
         return moveAvatarExecutor;
+    } else if (spyRegex.indexIn(line) != -1) {
+        if (spyUserExecutor == NULL) {
+            spyUserExecutor = new SpyUserExecutor(spyRegex);
+        } else {
+            spyUserExecutor->setVariables(spyRegex);
+        }
+        return spyUserExecutor;
     } else if (serverViewRegexp.indexIn(line) != -1 && senderClient != NULL) {
         if (serverMoveAvatarExecutor == NULL) {
             serverMoveAvatarExecutor = new ServerMoveAvatarExecutor(serverViewRegexp, senderClient, line);
@@ -123,6 +145,13 @@ AbstractExecutor* ExecutorFactory::getExecutor(QString line) {
             serverIncommingUserExecutor->setVariables(incommingUserRegex, senderClient);
         }
         return serverIncommingUserExecutor;
+    } else if (serverSpyRegex.indexIn(line) != -1 ) {
+        if (serverSpUseryExecutor == NULL) {
+            serverSpUseryExecutor = new ServerSpyUserExecutor(serverSpyRegex, senderClient, line);
+        } else {
+            serverSpUseryExecutor->setVariables(serverSpyRegex, senderClient, line);
+        }
+        return serverSpUseryExecutor;
     } else if (messageRegex.indexIn(line) != -1 ) {
         if (messageExecutor == NULL) {
             messageExecutor = new MessageExecutor(messageRegex);
@@ -135,11 +164,6 @@ AbstractExecutor* ExecutorFactory::getExecutor(QString line) {
             serverStopExecutor = new ServerStopExecutor();
         }
         return serverStopExecutor;
-    } else if (line == "WELCOME") {
-        if (welcomeExecutor == NULL) {
-            welcomeExecutor = new WelcomeExecutor();
-        }
-        return welcomeExecutor;
     } else if (line == "GET_GRAPH" && senderClient != NULL){
         if (serverSendGraphExecutor == NULL) {
             serverSendGraphExecutor = new ServerSendGraphExecutor(senderClient);
