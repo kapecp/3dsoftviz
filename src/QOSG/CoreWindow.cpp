@@ -374,11 +374,14 @@ void CoreWindow::createCollaborationToolBar() {
 
     frame = createHorizontalFrame();
     frame->layout()->addWidget(chb_spy);
+    toolBar->addWidget(frame);
+    frame = createHorizontalFrame();
     frame->layout()->addWidget(chb_center);
     toolBar->addWidget(frame);
 
     addToolBar(Qt::RightToolBarArea,toolBar);
     toolBar->setMaximumHeight(300);
+    toolBar->setMaximumWidth(120);
     toolBar->setMovable(true);
 }
 
