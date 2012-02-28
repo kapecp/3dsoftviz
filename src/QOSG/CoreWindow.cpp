@@ -1018,14 +1018,19 @@ void CoreWindow::send_message()
 
 void CoreWindow::toggleSpyWatch()
 {
-    client->unSpyUser();
+    //client->unSpyUser();
 
     QCheckBox *sender_chb = (QCheckBox*)sender();
-    if (sender_chb == chb_spy && chb_spy->isChecked()) {
-        client->spyUser(lw_users->currentItem()->data(6).toInt());
-        chb_center->setChecked(false);
+    if (sender_chb == chb_spy) {
+        if (chb_spy->isChecked()) {
+            client->spyUser(lw_users->currentItem()->data(6).toInt());
+            chb_center->setChecked(false);
+        } else {
+            client->unSpyUser();
+        }
     }
     if (sender_chb == chb_center && chb_center->isChecked()) {
+        client->unSpyUser();
         chb_spy->setChecked(false);
     }
 }

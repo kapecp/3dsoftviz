@@ -189,10 +189,10 @@ void Client::showClientAvatar(int id) {
 }
 
 void Client::unSpyUser() {
-    /*showClientAvatar(user_to_spy);
-    QString message = "/unspy\n";
+    showClientAvatar(user_to_spy);
+    QString message = "/unspy:"+QString::number(user_to_spy)+"\n";
     socket->write(message.toUtf8());
-    user_to_spy = -1;*/
+    user_to_spy = -1;
 }
 
 void Client::spyUser(int user) {

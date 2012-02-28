@@ -48,6 +48,7 @@ class Client : public QObject
 
         void spyUser(int user);
         int userToSpy() { return user_to_spy; }
+        bool isSpying() { return user_to_spy > -1; }
         void unSpyUser();
 
         void sendMyView(osg::Vec3d center, osg::Quat rotation);
