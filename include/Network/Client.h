@@ -87,6 +87,9 @@ class Client : public QObject
         int user_to_spy;
         int my_id;
 
+        osg::Vec3d original_center;
+        osg::Quat original_rotation;
+
         ExecutorFactory *executorFactory;
 
         QObject * cw;

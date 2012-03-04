@@ -197,6 +197,11 @@ void Client::unSpyUser() {
     showClientAvatar(user_to_spy);
     QString message = "/unspy:"+QString::number(user_to_spy)+"\n";
     socket->write(message.toUtf8());
+
+    // restore original view
+    setMyView(original_center,original_rotation);
+
+    sendMyView();
     user_to_spy = -1;
 }
 
@@ -204,5 +209,12 @@ void Client::spyUser(int user) {
     QString message = "/spying:"+QString::number(user)+"\n";
     socket->write(message.toUtf8());
     user_to_spy = user;
+
+    // store original view
+    Vwr::CameraManipulator * cameraManipulator = ((QOSG::CoreWindow *) cw)->getCameraManipulator();
+    original_center = cameraManipulator->getCenter();
+    original_rotation = cameraManipulator->getRotation();
+
+    setMyView(avatarList[user]->getPosition(),avatarList[user]->getAttitude());
     hideClientAvatar(user);
 }
