@@ -3,6 +3,7 @@
  */
 
 #include "Network/Client.h"
+#include "Network/Helper.h"
 #include "Importer/GraphOperations.h"
 #include "Manager/Manager.h"
 #include "QOSG/CoreWindow.h"
@@ -26,6 +27,7 @@ Client::Client(QObject *parent) : QObject(parent) {
     edgeType = NULL;
     nodeType = NULL;
     user_to_spy = -1;
+    user_to_center = -1;
 
     executorFactory = new ExecutorFactory(this);
 
@@ -217,4 +219,16 @@ void Client::spyUser(int user) {
 
     setMyView(avatarList[user]->getPosition(),avatarList[user]->getAttitude());
     hideClientAvatar(user);
+}
+
+void Client::setMyRotation(osg::Quat rotation) {
+    Vwr::CameraManipulator * cameraManipulator = ((QOSG::CoreWindow *) cw)->getCameraManipulator();
+    cameraManipulator->setRotation(rotation);
+
+}
+
+void Client::lookAt(osg::Vec3d coord) {
+    Vwr::CameraManipulator * cameraManipulator = ((QOSG::CoreWindow *) cw)->getCameraManipulator();
+    osg::Quat rotation = Helper::lookAt(cameraManipulator->getCenter(), coord);
+    setMyRotation(rotation);
 }

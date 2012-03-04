@@ -51,9 +51,16 @@ class Client : public QObject
         bool isSpying() { return user_to_spy > -1; }
         void unSpyUser();
 
+        void centerUser(int id_user) { user_to_center = id_user; }
+        void unSetUserToCenter() { user_to_center = -1; }
+        int getCenterUser() { return user_to_center; }
+        bool isCenteringUser() { return user_to_center > -1; }
+
         void sendMyView(osg::Vec3d center, osg::Quat rotation);
         void sendMyView();
         void setMyView(osg::Vec3d center, osg::Quat rotation);
+        void lookAt(osg::Vec3d coord);
+
 
         void setMyId(int id) { my_id = id; }
         int getMyId() { return my_id; }
@@ -85,6 +92,7 @@ class Client : public QObject
 
         QString clientNick;
         int user_to_spy;
+        int user_to_center;
         int my_id;
 
         osg::Vec3d original_center;
@@ -98,6 +106,7 @@ class Client : public QObject
         QTcpSocket *socket;
 
         void addAvatar(int id);
+        void setMyRotation(osg::Quat rotation);
 
     };
 

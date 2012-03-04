@@ -1024,9 +1024,10 @@ void CoreWindow::toggleSpyWatch()
 
     QCheckBox *sender_chb = (QCheckBox*)sender();
 
+    int id_user = lw_users->currentItem()->data(6).toInt();
+
     if (sender_chb == chb_spy) {
         if (chb_spy->isChecked()) {
-            int id_user = lw_users->currentItem()->data(6).toInt();
             if (is_server) {
                 server->spyUser(id_user);
             } else {
@@ -1034,19 +1035,28 @@ void CoreWindow::toggleSpyWatch()
             }
             chb_center->setChecked(false);
         } else {
-            if (is_server) {
-                server->unSpyUser();
-            } else {
-                client->unSpyUser();
+            if (client->isSpying() || server->isSpying()) {
+                if (is_server) {
+                    server->unSpyUser();
+                } else {
+                    client->unSpyUser();
+                }
             }
         }
     }
-    if (sender_chb == chb_center && chb_center->isChecked()) {
-        if (is_server) {
-            server->unSpyUser();
+    if (sender_chb == chb_center) {
+        if (chb_center->isChecked()) {
+            if (client->isSpying() || server->isSpying()) {
+                if (is_server) {
+                    server->unSpyUser();
+                } else {
+                    client->unSpyUser();
+                }
+            }
+            client->centerUser(id_user);
+            chb_spy->setChecked(false);
         } else {
-            client->unSpyUser();
+
         }
-        chb_spy->setChecked(false);
     }
 }

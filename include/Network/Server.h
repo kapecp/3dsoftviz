@@ -46,6 +46,7 @@ class Server : public QTcpServer {
         void removeAvatar(QTcpSocket * client);
         osg::PositionAttitudeTransform * generateAvatar();
         void spyUser(int id);
+        bool isSpying() { return user_to_spy != NULL; }
         void unSpyUser();
 
         void setMyView(osg::Vec3d center, osg::Quat rotation);

@@ -29,4 +29,8 @@ void MoveAvatarExecutor::execute() {
         client->setMyView(center,rotation);
     }
 
+    if (client->getCenterUser() == id) {
+        client->lookAt(center);
+    }
+
 }
