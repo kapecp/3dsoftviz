@@ -3,6 +3,7 @@
  */
 
 #include "Network/Server.h"
+#include "Network/Helper.h"
 #include "Data/Graph.h"
 #include "Manager/Manager.h"
 
@@ -21,6 +22,7 @@ Server::Server(QObject *parent) : QTcpServer(parent)
     graphScale = conf->getValue("Viewer.Display.NodeDistanceScale").toFloat();
     executorFactory = new ExecutorFactory(this);
     user_to_spy = NULL;
+    user_to_center = NULL;
 }
 
 Server* Server::getInstance() {
@@ -405,4 +407,11 @@ void Server::setMyView(osg::Vec3d center, osg::Quat rotation) {
     Vwr::CameraManipulator * cameraManipulator = ((QOSG::CoreWindow *) cw)->getCameraManipulator();
     cameraManipulator->setCenter(center);
     cameraManipulator->setRotation(rotation);
+}
+
+void Server::lookAt(osg::Vec3d coord) {
+    Vwr::CameraManipulator * cameraManipulator = ((QOSG::CoreWindow *) cw)->getCameraManipulator();
+    osg::Quat rotation = Helper::lookAt(cameraManipulator->getCenter(), coord);
+    cameraManipulator->setRotation(rotation);
+    sendMyView();
 }

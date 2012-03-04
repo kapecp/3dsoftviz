@@ -221,14 +221,9 @@ void Client::spyUser(int user) {
     hideClientAvatar(user);
 }
 
-void Client::setMyRotation(osg::Quat rotation) {
-    Vwr::CameraManipulator * cameraManipulator = ((QOSG::CoreWindow *) cw)->getCameraManipulator();
-    cameraManipulator->setRotation(rotation);
-
-}
-
 void Client::lookAt(osg::Vec3d coord) {
     Vwr::CameraManipulator * cameraManipulator = ((QOSG::CoreWindow *) cw)->getCameraManipulator();
     osg::Quat rotation = Helper::lookAt(cameraManipulator->getCenter(), coord);
-    setMyRotation(rotation);
+    cameraManipulator->setRotation(rotation);
+    sendMyView();
 }

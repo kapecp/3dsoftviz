@@ -52,7 +52,7 @@ class Client : public QObject
         void unSpyUser();
 
         void centerUser(int id_user) { user_to_center = id_user; }
-        void unSetUserToCenter() { user_to_center = -1; }
+        void unCenterUser() { user_to_center = -1; }
         int getCenterUser() { return user_to_center; }
         bool isCenteringUser() { return user_to_center > -1; }
 
@@ -106,7 +106,6 @@ class Client : public QObject
         QTcpSocket *socket;
 
         void addAvatar(int id);
-        void setMyRotation(osg::Quat rotation);
 
     };
 

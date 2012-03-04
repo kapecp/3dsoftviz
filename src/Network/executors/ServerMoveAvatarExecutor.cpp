@@ -33,4 +33,8 @@ void ServerMoveAvatarExecutor::execute() {
         server->setMyView(center,rotation);
     }
 
+    if (server->getCenterUser() == senderClient) {
+        server->lookAt(center);
+    }
+
 }

@@ -1026,15 +1026,33 @@ void CoreWindow::toggleSpyWatch()
 
     int id_user = lw_users->currentItem()->data(6).toInt();
 
+    // ak bolo kliknute na "spy"
     if (sender_chb == chb_spy) {
+
+        // ak je "spy" zakliknute
         if (chb_spy->isChecked()) {
+
+            // ak je centrovanie aktivne, deaktivujem
+            if (client->isCenteringUser() || server->isCenteringUser()) {
+                if (is_server) {
+                    server->unCenterUser();
+                } else {
+                    client->unCenterUser();
+                }
+            }
+
+            // aktivujem spehovanie
             if (is_server) {
                 server->spyUser(id_user);
             } else {
                 client->spyUser(id_user);
             }
             chb_center->setChecked(false);
-        } else {
+        }
+        // ak je "spy" odkliknute
+        else {
+
+            // ak je spehovanie aktivne, deaktivujem
             if (client->isSpying() || server->isSpying()) {
                 if (is_server) {
                     server->unSpyUser();
@@ -1044,8 +1062,14 @@ void CoreWindow::toggleSpyWatch()
             }
         }
     }
+
+    // ak bolo kliknute "center"
     if (sender_chb == chb_center) {
+
+        // ak je "center" zakliknute
         if (chb_center->isChecked()) {
+
+            // ak je spehovanie aktivne, deaktivujem
             if (client->isSpying() || server->isSpying()) {
                 if (is_server) {
                     server->unSpyUser();
@@ -1053,10 +1077,27 @@ void CoreWindow::toggleSpyWatch()
                     client->unSpyUser();
                 }
             }
-            client->centerUser(id_user);
-            chb_spy->setChecked(false);
-        } else {
 
+            // aktivujem centrovanie
+            if (is_server) {
+                server->centerUser(id_user);
+            } else {
+                client->centerUser(id_user);
+            }
+            chb_spy->setChecked(false);
+        }
+
+        // ak je "center" odkliknute
+        else {
+
+            // ak je centrovanie aktivne, deaktivujem
+            if (client->isCenteringUser() || server->isCenteringUser()) {
+                if (is_server) {
+                    server->unCenterUser();
+                } else {
+                    client->unCenterUser();
+                }
+            }
         }
     }
 }
