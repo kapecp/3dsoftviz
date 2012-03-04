@@ -36,7 +36,8 @@ class Server : public QTcpServer {
 
         void setSelectedNodes(QLinkedList<osg::ref_ptr<Data::Node> > nodes) { selected_nodes = nodes; }
 
-        void sendMyView(osg::Vec3d center, osg::Quat rotation);
+        void sendMyView(osg::Vec3d center, osg::Quat rotation, QTcpSocket * client = NULL);
+        void sendMyView(QTcpSocket * client);
 
         void sendUserList();
 
@@ -66,6 +67,7 @@ class Server : public QTcpServer {
 
     private:
         static Server *instance;
+        QObject * cw;
 
         QLinkedList<osg::ref_ptr<Data::Node> > selected_nodes;
         QLinkedList<osg::ref_ptr<Data::Node> > moving_nodes;

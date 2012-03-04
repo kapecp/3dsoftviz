@@ -132,6 +132,11 @@ void Client::sendMyView(osg::Vec3d center, osg::Quat rotation) {
     socket->write(message.toUtf8());
 }
 
+void Client::sendMyView() {
+    Vwr::CameraManipulator * cameraManipulator = ((QOSG::CoreWindow *) cw)->getCameraManipulator();
+    this->sendMyView(cameraManipulator->getCenter(), cameraManipulator->getRotation());
+}
+
 void Client::updateUserList() {
     QListWidgetItem * item;
     QListWidget * lw = ((QOSG::CoreWindow *) cw)->lw_users;

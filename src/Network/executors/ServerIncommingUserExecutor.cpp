@@ -40,6 +40,8 @@ void ServerIncommingUserExecutor::execute() {
 
     qDebug() << "posielam" << ("/yourid:"+QString::number(newID)+"\n").toUtf8();
     senderClient->write(("/yourid:"+QString::number(newID)+"\n").toUtf8());
+
     server->sendUserList();
+    server->sendMyView(senderClient);
 
 }

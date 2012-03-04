@@ -18,6 +18,7 @@ CoreWindow::CoreWindow(QWidget *parent, Vwr::CoreGraph* coreGraph, QApplication*
 	layout = thread;
 
         client = new Network::Client(this);
+        new Network::Server(this);
 	
 	//vytvorenie menu a toolbar-ov
 	createActions();

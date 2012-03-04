@@ -52,6 +52,7 @@ class Client : public QObject
         void unSpyUser();
 
         void sendMyView(osg::Vec3d center, osg::Quat rotation);
+        void sendMyView();
         void setMyView(osg::Vec3d center, osg::Quat rotation);
 
         void setMyId(int id) { my_id = id; }

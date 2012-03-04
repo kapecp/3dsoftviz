@@ -42,4 +42,5 @@ void UsersExecutor::execute() {
      }
 
      client->updateUserList();
+     client->sendMyView();
 }

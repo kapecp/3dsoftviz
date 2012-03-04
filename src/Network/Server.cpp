@@ -16,6 +16,7 @@ Server * Server::instance;
 Server::Server(QObject *parent) : QTcpServer(parent)
 {
     instance = this;
+    cw = parent;
     Util::ApplicationConfig *conf = Util::ApplicationConfig::get();
     graphScale = conf->getValue("Viewer.Display.NodeDistanceScale").toFloat();
     executorFactory = new ExecutorFactory(this);
@@ -276,16 +277,25 @@ void Server::sendMoveNodes() {
 }
 
 
-void Server::sendMyView(osg::Vec3d center, osg::Quat rotation) {
+void Server::sendMyView(osg::Vec3d center, osg::Quat rotation, QTcpSocket * client) {
 
     QString message = "/view:";
     message += "center:" + QString::number(center.x()) + "," + QString::number(center.y()) + "," + QString::number(center.z()) + ";";
     message += "rotation:" + QString::number(rotation.x()) + "," + QString::number(rotation.y()) + "," + QString::number(rotation.z()) + "," + QString::number(rotation.w()) +  ";id:0\n";
 
-    foreach(QTcpSocket *otherClient, clients){
-        otherClient->write(message.toUtf8());
+    if (client == NULL) {
+        foreach(QTcpSocket *otherClient, clients){
+            otherClient->write(message.toUtf8());
+        }
+    } else {
+        client->write(message.toUtf8());
     }
 
+}
+
+void Server::sendMyView(QTcpSocket *client) {
+    Vwr::CameraManipulator * cameraManipulator = ((QOSG::CoreWindow *) cw)->getCameraManipulator();
+    this->sendMyView(cameraManipulator->getCenter(), cameraManipulator->getRotation(), client);
 }
 
 void Server::appendMovingNode(osg::ref_ptr<Data::Node> node) {
