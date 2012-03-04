@@ -49,7 +49,7 @@ class Server : public QTcpServer {
         bool isSpying() { return user_to_spy != NULL; }
         void unSpyUser();
 
-        void centerUser(int id_user) { user_to_center = getClientById(id_user); }
+        void centerUser(int id_user);
         void unCenterUser() { user_to_center = NULL; }
         QTcpSocket * getCenterUser() { return user_to_center; }
         bool isCenteringUser() { return user_to_center != NULL; }

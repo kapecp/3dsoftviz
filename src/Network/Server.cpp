@@ -415,3 +415,9 @@ void Server::lookAt(osg::Vec3d coord) {
     cameraManipulator->setRotation(rotation);
     sendMyView();
 }
+
+void Server::centerUser(int id_user) {
+    user_to_center = getClientById(id_user);
+    osg::PositionAttitudeTransform * userAvatar = avatars[user_to_center];
+    lookAt(userAvatar->getPosition());
+}
