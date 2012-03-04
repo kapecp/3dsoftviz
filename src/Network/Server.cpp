@@ -81,6 +81,7 @@ void Server::disconnected()
     avatars[client]->removeChild(0,1);
     avatars.remove(client);
 
+    updateUserList();
     sendUserList();
 }
 
@@ -305,4 +306,18 @@ void Server::appendMovingNode(osg::ref_ptr<Data::Node> node) {
 int Server::getMaxUserId() {
     QList<int> IDs = usersID.values();
     return *(std::max_element(IDs.begin(),IDs.end()));
+}
+
+void Server::updateUserList() {
+    QListWidgetItem * item;
+    QListWidget * lw = ((QOSG::CoreWindow *) cw)->lw_users;
+    lw->clear();
+    QMap<QTcpSocket*,QString>::iterator i = users.begin();
+    while (i != users.end()) {
+        item = new QListWidgetItem();
+        item->setData(6,usersID[i.key()]);
+        item->setText(i.value());
+        lw->addItem(item);
+        i++;
+    }
 }

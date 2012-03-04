@@ -40,6 +40,7 @@ class Server : public QTcpServer {
         void sendMyView(QTcpSocket * client);
 
         void sendUserList();
+        void updateUserList();
 
         //some getters
         float getGraphScale() { return graphScale; }
