@@ -23,6 +23,11 @@ void ServerUnspyUserExecutor::execute() {
         client->write(message.toUtf8());
     }
 
+    int spied = regexp.cap(1).toInt();
+    if (spied == 0) {
+        server->sendMyView();
+    }
+
     server->addAvatar(senderClient, server->generateAvatar());
 
 }

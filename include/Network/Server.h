@@ -38,6 +38,7 @@ class Server : public QTcpServer {
 
         void sendMyView(osg::Vec3d center, osg::Quat rotation, QTcpSocket * client = NULL);
         void sendMyView(QTcpSocket * client);
+        void sendMyView();
 
         void sendUserList();
         void updateUserList();
@@ -91,6 +92,9 @@ class Server : public QTcpServer {
         float graphScale;
 
         QTcpSocket * user_to_spy;
+
+        osg::Vec3d original_center;
+        osg::Quat original_rotation;
 
         QTcpSocket * getClientById(int id);
     };

@@ -300,6 +300,10 @@ void Server::sendMyView(QTcpSocket *client) {
     this->sendMyView(cameraManipulator->getCenter(), cameraManipulator->getRotation(), client);
 }
 
+void Server::sendMyView() {
+    this->sendMyView(NULL);
+}
+
 void Server::appendMovingNode(osg::ref_ptr<Data::Node> node) {
     moving_nodes.append(node);
 }
@@ -363,13 +367,21 @@ QTcpSocket * Server::getClientById(int id) {
 
 void Server::spyUser(int id) {
     user_to_spy = getClientById(id);
-    removeAvatar(user_to_spy);
 
     QString message = ("/spying:"+QString::number(id)+";spy:0\n");
 
     foreach(QTcpSocket *client, clients) {
         client->write(message.toUtf8());
     }
+
+    // store original view
+    Vwr::CameraManipulator * cameraManipulator = ((QOSG::CoreWindow *) cw)->getCameraManipulator();
+    original_center = cameraManipulator->getCenter();
+    original_rotation = cameraManipulator->getRotation();
+
+    setMyView(avatars[user_to_spy]->getPosition(),avatars[user_to_spy]->getAttitude());
+
+    removeAvatar(user_to_spy);
 }
 
 void Server::unSpyUser() {
@@ -380,6 +392,11 @@ void Server::unSpyUser() {
     foreach(QTcpSocket *client, clients) {
         client->write(message.toUtf8());
     }
+
+    // restore original view
+    setMyView(original_center,original_rotation);
+
+    sendMyView();
 
     user_to_spy = NULL;
 }
