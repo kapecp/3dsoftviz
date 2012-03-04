@@ -29,4 +29,8 @@ void ServerMoveAvatarExecutor::execute() {
         PAtransform->setPosition(center);
     }
 
+    if (server->userToSpy() == senderClient) {
+        server->setMyView(center,rotation);
+    }
+
 }

@@ -23,4 +23,6 @@ void ServerUnspyUserExecutor::execute() {
         client->write(message.toUtf8());
     }
 
+    server->addAvatar(senderClient, server->generateAvatar());
+
 }

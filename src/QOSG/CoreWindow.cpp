@@ -1019,19 +1019,34 @@ void CoreWindow::send_message()
 
 void CoreWindow::toggleSpyWatch()
 {
-    //client->unSpyUser();
+    Network::Server * server = Network::Server::getInstance();
+    bool is_server = server->isListening();
 
     QCheckBox *sender_chb = (QCheckBox*)sender();
+
     if (sender_chb == chb_spy) {
         if (chb_spy->isChecked()) {
-            client->spyUser(lw_users->currentItem()->data(6).toInt());
+            int id_user = lw_users->currentItem()->data(6).toInt();
+            if (is_server) {
+                server->spyUser(id_user);
+            } else {
+                client->spyUser(id_user);
+            }
             chb_center->setChecked(false);
         } else {
-            client->unSpyUser();
+            if (is_server) {
+                server->unSpyUser();
+            } else {
+                client->unSpyUser();
+            }
         }
     }
     if (sender_chb == chb_center && chb_center->isChecked()) {
-        client->unSpyUser();
+        if (is_server) {
+            server->unSpyUser();
+        } else {
+            client->unSpyUser();
+        }
         chb_spy->setChecked(false);
     }
 }

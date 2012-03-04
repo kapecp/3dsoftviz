@@ -20,25 +20,10 @@ void ServerIncommingUserExecutor::execute() {
     }
     server->addUser(senderClient, user, newID);
 
-    osg::ref_ptr<osg::Node> modelNode = osgDB::readNodeFile("avatar.osg");
-    if (!modelNode) {
-        qDebug() << "could not find model";
-        return;
-    }
-
-    osg::PositionAttitudeTransform* PAtransform = new osg::PositionAttitudeTransform();
-    PAtransform->addChild(modelNode);
-
-    Vwr::CoreGraph * coreGraph = server->getCoreGraph();
-    QLinkedList<osg::ref_ptr<osg::Node> > * nodes = coreGraph->getCustomNodeList();
-
-    nodes->append(PAtransform);
-
-    //PAtransform->setScale(osg::Vec3d(10,10,10));
+    osg::PositionAttitudeTransform* PAtransform = server->generateAvatar();
 
     server->addAvatar(senderClient, PAtransform);
 
-    qDebug() << "posielam" << ("/yourid:"+QString::number(newID)+"\n").toUtf8();
     senderClient->write(("/yourid:"+QString::number(newID)+"\n").toUtf8());
 
     server->updateUserList();

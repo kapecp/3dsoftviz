@@ -23,4 +23,6 @@ void ServerSpyUserExecutor::execute() {
         client->write(message.toUtf8());
     }
 
+    server->removeAvatar(senderClient);
+
 }

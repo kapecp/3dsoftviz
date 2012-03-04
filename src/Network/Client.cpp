@@ -202,7 +202,6 @@ void Client::unSpyUser() {
 
 void Client::spyUser(int user) {
     QString message = "/spying:"+QString::number(user)+"\n";
-    qDebug() << "posielam" << message;
     socket->write(message.toUtf8());
     user_to_spy = user;
     hideClientAvatar(user);

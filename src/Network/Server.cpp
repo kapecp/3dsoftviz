@@ -20,6 +20,7 @@ Server::Server(QObject *parent) : QTcpServer(parent)
     Util::ApplicationConfig *conf = Util::ApplicationConfig::get();
     graphScale = conf->getValue("Viewer.Display.NodeDistanceScale").toFloat();
     executorFactory = new ExecutorFactory(this);
+    user_to_spy = NULL;
 }
 
 Server* Server::getInstance() {
@@ -320,4 +321,71 @@ void Server::updateUserList() {
         lw->addItem(item);
         i++;
     }
+}
+
+osg::PositionAttitudeTransform * Server::generateAvatar() {
+    osg::ref_ptr<osg::Node> modelNode = osgDB::readNodeFile("avatar.osg");
+    if (!modelNode) {
+        qDebug() << "could not find model";
+        return NULL;
+    }
+
+    osg::PositionAttitudeTransform* PAtransform = new osg::PositionAttitudeTransform();
+    PAtransform->addChild(modelNode);
+
+    QLinkedList<osg::ref_ptr<osg::Node> > * nodes = coreGraph->getCustomNodeList();
+
+    nodes->append(PAtransform);
+
+    //PAtransform->setScale(osg::Vec3d(10,10,10));
+
+    return PAtransform;
+}
+
+void Server::removeAvatar(QTcpSocket *client) {
+
+    osg::PositionAttitudeTransform *pat = avatars.take(client);
+    if (pat != NULL) {
+        pat->removeChild(0,1);
+    }
+}
+
+QTcpSocket * Server::getClientById(int id) {
+    QMap<QTcpSocket*,int>::iterator i = usersID.begin();
+    while (i != usersID.end()) {
+        if (i.value() == id) {
+            return i.key();
+        }
+        i++;
+    }
+    return NULL;
+}
+
+void Server::spyUser(int id) {
+    user_to_spy = getClientById(id);
+    removeAvatar(user_to_spy);
+
+    QString message = ("/spying:"+QString::number(id)+";spy:0\n");
+
+    foreach(QTcpSocket *client, clients) {
+        client->write(message.toUtf8());
+    }
+}
+
+void Server::unSpyUser() {
+
+    addAvatar(user_to_spy,generateAvatar());
+    QString message = "/unspy:"+QString::number(getUserId(user_to_spy))+";spy:0\n";
+
+    foreach(QTcpSocket *client, clients) {
+        client->write(message.toUtf8());
+    }
+
+    user_to_spy = NULL;
+}
+
+void Server::setMyView(osg::Vec3d center, osg::Quat rotation) {
+    Vwr::CameraManipulator * cameraManipulator = ((QOSG::CoreWindow *) cw)->getCameraManipulator();
+    cameraManipulator->setCenter(center);
+    cameraManipulator->setRotation(rotation);
 }

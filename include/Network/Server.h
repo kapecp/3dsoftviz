@@ -42,6 +42,13 @@ class Server : public QTcpServer {
         void sendUserList();
         void updateUserList();
 
+        void removeAvatar(QTcpSocket * client);
+        osg::PositionAttitudeTransform * generateAvatar();
+        void spyUser(int id);
+        void unSpyUser();
+
+        void setMyView(osg::Vec3d center, osg::Quat rotation);
+
         //some getters
         float getGraphScale() { return graphScale; }
         QSet<QTcpSocket*> getClients() { return clients; }
@@ -51,6 +58,7 @@ class Server : public QTcpServer {
         int getUserCount() {return usersID.count(); }
         int getMaxUserId();
         Vwr::CoreGraph * getCoreGraph() { return coreGraph; }
+        QTcpSocket * userToSpy() { return user_to_spy; }
 
         //some setters
         void appendMovingNode(osg::ref_ptr<Data::Node> node);
@@ -81,6 +89,10 @@ class Server : public QTcpServer {
         Vwr::CoreGraph * coreGraph;
         ExecutorFactory *executorFactory;
         float graphScale;
+
+        QTcpSocket * user_to_spy;
+
+        QTcpSocket * getClientById(int id);
     };
 }
 
