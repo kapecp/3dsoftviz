@@ -15,6 +15,10 @@ void UnspyUserExecutor::execute() {
     int spied = regexp.cap(1).toInt();
     int spy = regexp.cap(2).toInt();
 
+    if (spied == client->getMyId()) {
+        client->sendMyView();
+    }
+
     client->showClientAvatar(spy);
 
 }
