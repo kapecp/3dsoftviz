@@ -8,6 +8,8 @@ void ServerMoveAvatarExecutor::execute() {
 
     Server * server = Server::getInstance();
 
+    QTcpSocket * out_socket = (QTcpSocket*) stream->device();
+
     float x,y,z,a,b,c,d;
     *stream >> x >> y >> z >> a >> b >> c >> d;
 

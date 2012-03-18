@@ -4,19 +4,15 @@
 
 using namespace Network;
 
-LayoutExecutor::LayoutExecutor(QRegExp regex){
-    this->regexp = regex;
-}
-
 void LayoutExecutor::execute() {
 
     Client *client = Client::getInstance();
 
-    int id = regexp.cap(1).toInt();
+    int id;
 
-    float x = regexp.cap(2).toFloat();
-    float y = regexp.cap(3).toFloat();
-    float z = regexp.cap(4).toFloat();
+    float x,y,z;
+
+    *stream >> id >> x >> y >> z;
 
     client->thread->pause();
 

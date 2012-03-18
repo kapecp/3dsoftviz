@@ -4,26 +4,29 @@
 
 using namespace Network;
 
-ServerUnspyUserExecutor::ServerUnspyUserExecutor(QRegExp regex, QTcpSocket *senderClient, QString line){
-    this->regexp = regex;
-    this->senderClient = senderClient;
-    this->line = line;
-}
-
 void ServerUnspyUserExecutor::execute() {
 
     Server * server = Server::getInstance();
+    QTcpSocket * senderClient = (QTcpSocket*)stream->device();
 
     QSet<QTcpSocket*> clients = server->getClients();
 
-    QString message = (line+";spy:"+QString::number(server->getUserId(senderClient))+"\n");
+    int spied;
+    *stream >> spied;
+
+    QByteArray block;
+    QDataStream out(&block,QIODevice::WriteOnly);
+
+    out << (quint16)0 << UnspyUserExecutor::INSTRUCTION_NUMBER << spied << (int) server->getUserId(senderClient);
+
+    out.device()->seek(0);
+    out << (quint16)(block.size() - sizeof(quint16));
 
     foreach(QTcpSocket *client, clients) { // append sender ID and resend to all other clients except sender
         if (client == senderClient) continue;
-        client->write(message.toUtf8());
+        client->write(block);
     }
 
-    int spied = regexp.cap(1).toInt();
     if (spied == 0) {
         server->sendMyView();
     }

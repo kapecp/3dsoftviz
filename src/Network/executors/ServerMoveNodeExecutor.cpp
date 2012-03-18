@@ -4,25 +4,32 @@
 
 using namespace Network;
 
-ServerMoveNodeExecutor::ServerMoveNodeExecutor(QRegExp regex){
-    this->regexp = regex;
-}
-
 void ServerMoveNodeExecutor::execute() {
 
-    int id = regexp.cap(1).toInt();
+    int id;
+    float x,y,z;
 
     Server * server = Server::getInstance();
     float graphScale = server->getGraphScale();
     QSet<QTcpSocket*> clients = server->getClients();
 
-    float x = regexp.cap(2).toFloat()/graphScale;
-    float y = regexp.cap(3).toFloat()/graphScale;
-    float z = regexp.cap(4).toFloat()/graphScale;
+    *stream >> id >> x >> y >> z;
 
-    QString message = "/moveNode:id:"+ QString::number(id) + ";x:" + QString::number(x) + ";y:" + QString::number(y) + ";z:" + QString::number(z) + "\n";
+    x/=graphScale;
+    y/=graphScale;
+    z/=graphScale;
+
+    QByteArray block;
+    QDataStream out(&block,QIODevice::WriteOnly);
+    out.setFloatingPointPrecision(QDataStream::SinglePrecision);
+
+    out << (quint16)0 << MoveNodeExecutor::INSTRUCTION_NUMBER << id << x << y << z;
+
+    out.device()->seek(0);
+    out << (quint16)(block.size() - sizeof(quint16));
+
     foreach(QTcpSocket *otherClient, clients) {
-        otherClient->write(message.toUtf8());
+        otherClient->write(block);
     }
 
     Data::Graph * currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();

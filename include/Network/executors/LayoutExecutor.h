@@ -3,19 +3,17 @@
 
 #include "Network/executors/AbstractExecutor.h"
 
-#include <QRegExp>
-
 namespace Network {
 
     class LayoutExecutor : public AbstractExecutor {
 
     private:
-        QRegExp regexp;
+        QDataStream *stream;
 
     public:
-        LayoutExecutor(QRegExp regex);
         void execute();
-        void setVariables(QRegExp new_regexp) {regexp=new_regexp;}
+        void setDataStream(QDataStream *ds) {stream=ds;}
+        static const quint8 INSTRUCTION_NUMBER = 10;
     };
 
 }

@@ -3,16 +3,13 @@
 
 using namespace Network;
 
-MoveNodeExecutor::MoveNodeExecutor(QRegExp regex){
-    this->regexp = regex;
-}
-
 void MoveNodeExecutor::execute() {
-    int id = regexp.cap(1).toInt();
 
-    float x = regexp.cap(2).toFloat();
-    float y = regexp.cap(3).toFloat();
-    float z = regexp.cap(4).toFloat();
+    int id;
+    float x,y,z;
+
+    *stream >> id >> x >> y >> z;
+
     Data::Graph * currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
     QMap<qlonglong, osg::ref_ptr<Data::Node> >* nodes = currentGraph -> getNodes();
     //qDebug() << "Moving" << id << "to" << x << y << z;

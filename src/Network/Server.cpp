@@ -108,6 +108,9 @@ void Server::sendUserList()
         }
         QString userListJoined = userList.join(",");
 
+        block.clear();
+        out.device()->reset();
+
         out << (quint16)0 << UsersExecutor::INSTRUCTION_NUMBER << userListJoined;
         out.device()->seek(0);
         out << (quint16)(block.size() - sizeof(quint16));
@@ -224,8 +227,6 @@ void Server::sendLayout(QTcpSocket *client){
         return;
     }
 
-    QString message;
-
     Data::Graph * currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
 
     if (currentGraph == NULL) {
@@ -239,40 +240,34 @@ void Server::sendLayout(QTcpSocket *client){
     /*QTime t;
     t.start();*/
 
-    if (client == NULL){
-        foreach(QTcpSocket *otherClient, clients){
-            otherClient->write("LAYOUT_START\n");
-        }
-    } else {
-        client -> write("LAYOUT_START\n");
-    }
+    QByteArray block;
+    QDataStream out(&block,QIODevice::WriteOnly);
+    out.setFloatingPointPrecision(QDataStream::SinglePrecision);
 
     while(iNodes != nodes->constEnd()) {
 
-        message = "id:" + QString::number(iNodes.value()->getId());
-        message += ";x:" + QString::number(iNodes.value()->getCurrentPosition().x()/graphScale);
-        message += ";y:" + QString::number(iNodes.value()->getCurrentPosition().y()/graphScale);
-        message += ";z:" + QString::number(iNodes.value()->getCurrentPosition().z()/graphScale);
+        block.clear();
+        out.device()->reset();
+
+        out << (quint16)0 << LayoutExecutor::INSTRUCTION_NUMBER
+            << (int) iNodes.value()->getId()
+            << (float) (iNodes.value()->getCurrentPosition().x()/graphScale)
+            << (float) (iNodes.value()->getCurrentPosition().y()/graphScale)
+            << (float) (iNodes.value()->getCurrentPosition().z()/graphScale);
+
+        out.device()->seek(0);
+        out << (quint16)(block.size() - sizeof(quint16));
 
         if (client == NULL){
             foreach(QTcpSocket *otherClient, clients){
-                otherClient->write(("/layData:"+message+"\n").toUtf8());
+                otherClient->write(block);
             }
         } else {
-            client -> write(("/layData:"+message+"\n").toUtf8());
+            client -> write(block);
         }
 
         ++iNodes;
     }
-
-    if (client == NULL){
-        foreach(QTcpSocket *otherClient, clients){
-            otherClient->write("LAYOUT_END\n");
-        }
-    } else {
-        client -> write("LAYOUT_END\n");
-    }
-
     //qDebug() << "Sending layout took" << t.elapsed() << "ms";
 
 }
@@ -283,8 +278,16 @@ void Server::setLayoutThread(Layout::LayoutThread *layoutThread){
 
 void Server::stopServer(){
 
+    QByteArray block;
+    QDataStream out(&block,QIODevice::WriteOnly);
+
+    out << (quint16)0 << ServerStopExecutor::INSTRUCTION_NUMBER;
+
+    out.device()->seek(0);
+    out << (quint16)(block.size() - sizeof(quint16));
+
     foreach(QTcpSocket *otherClient, clients){
-        otherClient->write("SERVER_STOP\n");
+        otherClient->write(block);
     }
 
     clients.clear();
@@ -296,19 +299,29 @@ void Server::stopServer(){
 
 void Server::sendMoveNodes() {
     QLinkedList<osg::ref_ptr<Data::Node> >::const_iterator i = selected_nodes.constBegin();
-    QString message;
+
+    QByteArray block;
+    QDataStream out(&block,QIODevice::WriteOnly);
+    out.setFloatingPointPrecision(QDataStream::SinglePrecision);
 
     while (i != selected_nodes.constEnd())
     {
 
-        message = "id:" + QString::number((*i)->getId());
-        message += ";x:" + QString::number((*i)->getCurrentPosition().x()/graphScale);
-        message += ";y:" + QString::number((*i)->getCurrentPosition().y()/graphScale);
-        message += ";z:" + QString::number((*i)->getCurrentPosition().z()/graphScale);
+        block.clear();
+        out.device()->reset();
+
+        out << (quint16)0 << MoveNodeExecutor::INSTRUCTION_NUMBER
+            << (int) ((*i)->getId())
+            << (float) ((*i)->getCurrentPosition().x())
+            << (float) ((*i)->getCurrentPosition().y())
+            << (float) ((*i)->getCurrentPosition().z());
+        out.device()->seek(0);
+        out << (quint16)(block.size() - sizeof(quint16));
+
         ++i;
 
         foreach(QTcpSocket *otherClient, clients){
-            otherClient->write(QString("/moveNode:" + message + "\n").toUtf8());
+            otherClient->write(block);
         }
     }
 
@@ -411,10 +424,16 @@ QTcpSocket * Server::getClientById(int id) {
 void Server::spyUser(int id) {
     user_to_spy = getClientById(id);
 
-    QString message = ("/spying:"+QString::number(id)+";spy:0\n");
+    QByteArray block;
+    QDataStream out(&block,QIODevice::WriteOnly);
+
+    out << (quint16)0 << SpyUserExecutor::INSTRUCTION_NUMBER << id << (int)0;
+
+    out.device()->seek(0);
+    out << (quint16)(block.size() - sizeof(quint16));
 
     foreach(QTcpSocket *client, clients) {
-        client->write(message.toUtf8());
+        client->write(block);
     }
 
     // store original view
@@ -430,10 +449,17 @@ void Server::spyUser(int id) {
 void Server::unSpyUser() {
 
     addAvatar(user_to_spy,generateAvatar());
-    QString message = "/unspy:"+QString::number(getUserId(user_to_spy))+";spy:0\n";
+
+    QByteArray block;
+    QDataStream out(&block,QIODevice::WriteOnly);
+
+    out << (quint16)0 << UnspyUserExecutor::INSTRUCTION_NUMBER << user_to_spy << (int)0;
+
+    out.device()->seek(0);
+    out << (quint16)(block.size() - sizeof(quint16));
 
     foreach(QTcpSocket *client, clients) {
-        client->write(message.toUtf8());
+        client->write(block);
     }
 
     // restore original view

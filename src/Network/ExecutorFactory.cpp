@@ -6,46 +6,30 @@
 using namespace Network;
 
 ExecutorFactory::ExecutorFactory() {
-    messageRegex = QRegExp("^([^:]+):(.*)$");
-    usersRegex = QRegExp("^/clients:(.+)$");
-    nodeRegexp = QRegExp("^/nodeData:id:([0-9]+);x:([0-9-\\.e]+);y:([0-9-\\.e]+);z:([0-9-\\.e]+)$");
-    layRegexp = QRegExp("^/layData:id:([0-9]+);x:([0-9-\\.e]+);y:([0-9-\\.e]+);z:([0-9-\\.e]+)$");
-    edgeRegexp = QRegExp("^/edgeData:id:([0-9]+);from:([0-9]+);to:([0-9]+);or:([01])$");
-    moveNodeRegexp = QRegExp("^/moveNode:id:([0-9]+);x:([0-9-\\.e]+);y:([0-9-\\.e]+);z:([0-9-\\.e]+)$");
-    serverMoveNodeRegexp = QRegExp("^/SMoveNode:id:([0-9]+);x:([0-9-\\.e]+);y:([0-9-\\.e]+);z:([0-9-\\.e]+)$");
-    viewRegexp = QRegExp("^/view:center:([0-9-\\.e]+),([0-9-\\.e]+),([0-9-\\.e]+);rotation:([0-9-\\.e]+),([0-9-\\.e]+),([0-9-\\.e]+),([0-9-\\.e]+);id:([0-9]+)$");
-    serverViewRegexp = QRegExp("^/view:center:([0-9-\\.e]+),([0-9-\\.e]+),([0-9-\\.e]+);rotation:([0-9-\\.e]+),([0-9-\\.e]+),([0-9-\\.e]+),([0-9-\\.e]+)$");
-    incommingUserRegex = QRegExp("^/me:(.*)$");
-    welcomeRegex = QRegExp("^/yourid:([0-9]+)$");
-    serverSpyRegex = QRegExp("^/spying:([0-9]+)$");
-    serverUnspyRegex = QRegExp("^/unspy:([0-9]+)$");
-    spyRegex = QRegExp("^/spying:([0-9]+);spy:([0-9]+)$");
-    unspyRegex = QRegExp("^/unspy:([0-9]+);spy:([0-9]+)$");
-
 
     this->client = client;
     this->senderClient = NULL;
 
     usersExecutor = new UsersExecutor;
-    moveNodeExecutor = NULL;
-    serverMoveNodeExecutor = NULL;
+    moveNodeExecutor = new MoveNodeExecutor;
+    serverMoveNodeExecutor = new ServerMoveNodeExecutor;
     graphStartExecutor = new GraphStartExecutor;
     graphEndExecutor = new GraphEndExecutor;
     newNodeExecutor = new NewNodeExecutor;
     newEdgeExecutor = new NewEdgeExecutor;
-    layoutExecutor = NULL;
+    layoutExecutor = new LayoutExecutor;
     moveAvatarExecutor = new MoveAvatarExecutor;
     serverMoveAvatarExecutor = new ServerMoveAvatarExecutor;
     serverIncommingUserExecutor = new ServerIncommingUserExecutor;
-    messageExecutor = NULL;
-    serverStopExecutor = NULL;
+    messageExecutor = new MessageExecutor;
+    serverStopExecutor = new ServerStopExecutor;
     welcomeExecutor = new WelcomeExecutor;
     serverSendGraphExecutor = NULL;
     serverSendLayoutExecutor = NULL;
-    serverSpyUserExecutor = NULL;
-    spyUserExecutor = NULL;
-    serverUnspyUserExecutor = NULL;
-    unspyUserExecutor = NULL;
+    serverSpyUserExecutor = new ServerSpyUserExecutor;
+    spyUserExecutor = new SpyUserExecutor;
+    serverUnspyUserExecutor = new ServerUnspyUserExecutor;
+    unspyUserExecutor = new UnspyUserExecutor;
 
 }
 
@@ -57,7 +41,6 @@ AbstractExecutor* ExecutorFactory::getExecutor(QDataStream * stream) {
     switch (instruction) {
     case ServerIncommingUserExecutor::INSTRUCTION_NUMBER:
         serverIncommingUserExecutor->setDataStream(stream);
-        serverIncommingUserExecutor->setOutputSocket((QTcpSocket*)stream->device());
         return serverIncommingUserExecutor;
         break;
     case WelcomeExecutor::INSTRUCTION_NUMBER :
@@ -84,158 +67,50 @@ AbstractExecutor* ExecutorFactory::getExecutor(QDataStream * stream) {
         break;
     case ServerMoveAvatarExecutor::INSTRUCTION_NUMBER :
         serverMoveAvatarExecutor->setDataStream(stream);
-        serverMoveAvatarExecutor->setOutputSocket((QTcpSocket*)stream->device());
         return serverMoveAvatarExecutor;
         break;
     case MoveAvatarExecutor::INSTRUCTION_NUMBER :
         moveAvatarExecutor->setDataStream(stream);
         return moveAvatarExecutor;
         break;
+    case LayoutExecutor::INSTRUCTION_NUMBER :
+        layoutExecutor->setDataStream(stream);
+        return layoutExecutor;
+        break;
+    case MoveNodeExecutor::INSTRUCTION_NUMBER :
+        moveNodeExecutor->setDataStream(stream);
+        return moveNodeExecutor;
+        break;
+    case ServerMoveNodeExecutor::INSTRUCTION_NUMBER :
+        serverMoveNodeExecutor->setDataStream(stream);
+        return serverMoveNodeExecutor;
+        break;
+    case MessageExecutor::INSTRUCTION_NUMBER :
+        messageExecutor->setDataStream(stream);
+        return messageExecutor;
+        break;
+    case ServerStopExecutor::INSTRUCTION_NUMBER :
+        return serverStopExecutor;
+        break;
+    case SpyUserExecutor::INSTRUCTION_NUMBER :
+        spyUserExecutor->setDataStream(stream);
+        return spyUserExecutor;
+        break;
+    case ServerSpyUserExecutor::INSTRUCTION_NUMBER :
+        serverSpyUserExecutor->setDataStream(stream);
+        return serverSpyUserExecutor;
+        break;
+    case UnspyUserExecutor::INSTRUCTION_NUMBER :
+        unspyUserExecutor->setDataStream(stream);
+        return unspyUserExecutor;
+        break;
+    case ServerUnspyUserExecutor::INSTRUCTION_NUMBER :
+        serverUnspyUserExecutor->setDataStream(stream);
+        return serverUnspyUserExecutor;
+        break;
     default:
         return NULL;
         break;
     }
-
-    /*if (usersRegex.indexIn(line) != -1) {
-        if (usersExecutor == NULL) {
-            usersExecutor = new UsersExecutor(usersRegex);
-        } else {
-            usersExecutor->setVariables(usersRegex);
-        }
-        return usersExecutor;
-    } else if (welcomeRegex.indexIn(line) != -1) {
-        if (welcomeExecutor == NULL) {
-            welcomeExecutor = new WelcomeExecutor(welcomeRegex);
-        } else {
-            welcomeExecutor->setVariables(welcomeRegex);
-        }
-        return welcomeExecutor;
-    } else if (moveNodeRegexp.indexIn(line) != -1) {
-        if (moveNodeExecutor == NULL) {
-            moveNodeExecutor = new MoveNodeExecutor(moveNodeRegexp);
-        } else {
-            qDebug()<<"MoveNode exists";
-            moveNodeExecutor->setVariables(moveNodeRegexp);
-        }
-        return moveNodeExecutor;
-    } else if (serverMoveNodeRegexp.indexIn(line) != -1){
-        if (serverMoveNodeExecutor == NULL) {
-            serverMoveNodeExecutor = new ServerMoveNodeExecutor(serverMoveNodeRegexp);
-        } else {
-            serverMoveNodeExecutor->setVariables(serverMoveNodeRegexp);
-        }
-        return serverMoveNodeExecutor;
-    }else if (line == "GRAPH_START") {
-        if (graphStartExecutor == NULL) {
-            graphStartExecutor = new GraphStartExecutor();
-        }
-        return graphStartExecutor;
-    } else if (line == "GRAPH_END") {
-        if (graphEndExecutor == NULL) {
-            graphEndExecutor = new GraphEndExecutor();
-        }
-        return graphEndExecutor;
-    } else if (nodeRegexp.indexIn(line) != -1) {
-        if (newNodeExecutor == NULL) {
-            newNodeExecutor = new NewNodeExecutor(nodeRegexp);
-        } else {
-            newNodeExecutor->setVariables(nodeRegexp);
-        }
-        return newNodeExecutor;
-    } else if (edgeRegexp.indexIn(line) != -1) {
-        if (newEdgeExecutor == NULL) {
-            newEdgeExecutor = new NewEdgeExecutor(edgeRegexp);
-        } else {
-            newEdgeExecutor->setVariables(edgeRegexp);
-        }
-        return newEdgeExecutor;
-    } else if (layRegexp.indexIn(line) != -1) {
-        if (layoutExecutor == NULL) {
-            layoutExecutor = new LayoutExecutor(layRegexp);
-        } else {
-            layoutExecutor->setVariables(layRegexp);
-        }
-        return layoutExecutor;
-    } else if (viewRegexp.indexIn(line) != -1) {
-        if (moveAvatarExecutor == NULL) {
-            moveAvatarExecutor = new MoveAvatarExecutor(viewRegexp);
-        } else {
-            moveAvatarExecutor->setVariables(viewRegexp);
-        }
-        return moveAvatarExecutor;
-    } else if (spyRegex.indexIn(line) != -1) {
-        if (spyUserExecutor == NULL) {
-            spyUserExecutor = new SpyUserExecutor(spyRegex);
-        } else {
-            spyUserExecutor->setVariables(spyRegex);
-        }
-        return spyUserExecutor;
-    } else if (unspyRegex.indexIn(line) != -1) {
-        if (unspyUserExecutor == NULL) {
-            unspyUserExecutor = new UnspyUserExecutor(unspyRegex);
-        } else {
-            unspyUserExecutor->setVariables(unspyRegex);
-        }
-        return unspyUserExecutor;
-    } else if (serverViewRegexp.indexIn(line) != -1 && senderClient != NULL) {
-        if (serverMoveAvatarExecutor == NULL) {
-            serverMoveAvatarExecutor = new ServerMoveAvatarExecutor(serverViewRegexp, senderClient, line);
-        } else {
-            serverMoveAvatarExecutor->setVariables(serverViewRegexp, senderClient, line);
-        }
-        return serverMoveAvatarExecutor;
-    } else if (incommingUserRegex.indexIn(line) != -1 && senderClient != NULL) {
-        if (serverIncommingUserExecutor == NULL) {
-            serverIncommingUserExecutor = new ServerIncommingUserExecutor(incommingUserRegex, senderClient);
-        } else {
-            serverIncommingUserExecutor->setVariables(incommingUserRegex, senderClient);
-        }
-        return serverIncommingUserExecutor;
-    } else if (serverSpyRegex.indexIn(line) != -1 ) {
-        if (serverSpyUserExecutor == NULL) {
-            serverSpyUserExecutor = new ServerSpyUserExecutor(serverSpyRegex, senderClient, line);
-        } else {
-            serverSpyUserExecutor->setVariables(serverSpyRegex, senderClient, line);
-        }
-        return serverSpyUserExecutor;
-    } else if (serverUnspyRegex.indexIn(line) != -1 ) {
-        if (serverUnspyUserExecutor == NULL) {
-            serverUnspyUserExecutor = new ServerUnspyUserExecutor(serverUnspyRegex, senderClient, line);
-        } else {
-            serverUnspyUserExecutor->setVariables(serverUnspyRegex, senderClient, line);
-        }
-        return serverUnspyUserExecutor;
-    } else if (messageRegex.indexIn(line) != -1 ) {
-        if (messageExecutor == NULL) {
-            messageExecutor = new MessageExecutor(messageRegex);
-        } else {
-            messageExecutor->setVariables(messageRegex);
-        }
-        return messageExecutor;
-    } else if (line == "SERVER_STOP") {
-        if (serverStopExecutor == NULL) {
-            serverStopExecutor = new ServerStopExecutor();
-        }
-        return serverStopExecutor;
-    } else if (line == "GET_GRAPH" && senderClient != NULL){
-        if (serverSendGraphExecutor == NULL) {
-            serverSendGraphExecutor = new ServerSendGraphExecutor(senderClient);
-        } else {
-            serverSendGraphExecutor->setVariables(senderClient);
-        }
-        return serverSendGraphExecutor;
-    } else if (line == "GET_LAYOUT" && senderClient != NULL){
-        if (serverSendLayoutExecutor == NULL) {
-            serverSendLayoutExecutor = new ServerSendLayoutExecutor(senderClient);
-        } else {
-            serverSendLayoutExecutor->setVariables(senderClient);
-        }
-        return serverSendLayoutExecutor;
-    } else {
-        return NULL;
-    }*/
-
-
-
 
 }

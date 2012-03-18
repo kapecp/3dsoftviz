@@ -136,18 +136,28 @@ bool Client::isConnected() {
 
 void Client::sendMovedNodesPosition() {
     QLinkedList<osg::ref_ptr<Data::Node> >::const_iterator i = selected_nodes.constBegin();
-    QString message;
+
+    QByteArray block;
+    QDataStream out(&block,QIODevice::WriteOnly);
+    out.setFloatingPointPrecision(QDataStream::SinglePrecision);
 
     while (i != selected_nodes.constEnd())
     {
 
-        message = "id:" + QString::number((*i)->getId());
-        message += ";x:" + QString::number((*i)->getCurrentPosition().x());
-        message += ";y:" + QString::number((*i)->getCurrentPosition().y());
-        message += ";z:" + QString::number((*i)->getCurrentPosition().z());
+        block.clear();
+        out.device()->reset();
+
+        out << (quint16)0 << ServerMoveNodeExecutor::INSTRUCTION_NUMBER
+            << (int) ((*i)->getId())
+            << (float) ((*i)->getCurrentPosition().x())
+            << (float) ((*i)->getCurrentPosition().y())
+            << (float) ((*i)->getCurrentPosition().z());
+        out.device()->seek(0);
+        out << (quint16)(block.size() - sizeof(quint16));
+
         ++i;
 
-        socket->write(QString("/SMoveNode:" + message + "\n").toUtf8());
+        socket->write(block);
     }
 
     selected_nodes.clear();
@@ -231,8 +241,16 @@ void Client::showClientAvatar(int id) {
 
 void Client::unSpyUser() {
     showClientAvatar(user_to_spy);
-    QString message = "/unspy:"+QString::number(user_to_spy)+"\n";
-    socket->write(message.toUtf8());
+
+    QByteArray block;
+    QDataStream out(&block,QIODevice::WriteOnly);
+
+    out << (quint16)0 << ServerUnspyUserExecutor::INSTRUCTION_NUMBER << user_to_spy;
+
+    out.device()->seek(0);
+    out << (quint16)(block.size() - sizeof(quint16));
+
+    socket->write(block);
 
     // restore original view
     setMyView(original_center,original_rotation);
@@ -242,8 +260,16 @@ void Client::unSpyUser() {
 }
 
 void Client::spyUser(int user) {
-    QString message = "/spying:"+QString::number(user)+"\n";
-    socket->write(message.toUtf8());
+
+    QByteArray block;
+    QDataStream out(&block,QIODevice::WriteOnly);
+
+    out << (quint16)0 << ServerSpyUserExecutor::INSTRUCTION_NUMBER << user;
+
+    out.device()->seek(0);
+    out << (quint16)(block.size() - sizeof(quint16));
+
+    socket->write(block);
     user_to_spy = user;
 
     // store original view

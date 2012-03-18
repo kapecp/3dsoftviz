@@ -10,6 +10,8 @@ void ServerIncommingUserExecutor::execute() {
     QString user;
     *stream >> user;
 
+    QTcpSocket * out_socket = (QTcpSocket*) stream->device();
+
     Server * server = Server::getInstance();
 
     int newID = 1;

@@ -4,16 +4,12 @@
 
 using namespace Network;
 
-UnspyUserExecutor::UnspyUserExecutor(QRegExp regex){
-    this->regexp = regex;
-}
-
 void UnspyUserExecutor::execute() {
 
     Client *client = Client::getInstance();
 
-    int spied = regexp.cap(1).toInt();
-    int spy = regexp.cap(2).toInt();
+    int spied,spy;
+    *stream >> spied >> spy;
 
     if (spied == client->getMyId()) {
         client->sendMyView();
