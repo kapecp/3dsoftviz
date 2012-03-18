@@ -4,18 +4,16 @@
 
 using namespace Network;
 
-NewEdgeExecutor::NewEdgeExecutor(QRegExp regex){
-    this->regexp = regex;
-}
-
 void NewEdgeExecutor::execute() {
 
     Client * client = Client::getInstance();
 
-    int id = regexp.cap(1).toInt();
-    int from = regexp.cap(2).toInt();
-    int to = regexp.cap(3).toInt();
-    bool oriented = regexp.cap(4).toInt();
+    int id;
+    int from;
+    int to;
+    bool oriented;
+
+    *stream >> id >> from >> to >> oriented;
 
     //qDebug()<< "[NEW EDGE] id: " << id << " from: " << from << ", to:" << to;
 

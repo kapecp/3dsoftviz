@@ -2,7 +2,6 @@
 #define __3DVisualServerIncommingUserExecutor_H__
 
 #include <QTcpSocket>
-#include <QRegExp>
 
 #include "Network/executors/AbstractExecutor.h"
 
@@ -11,14 +10,15 @@ namespace Network {
     class ServerIncommingUserExecutor : public AbstractExecutor {
 
     private:
-        QRegExp regexp;
-        QTcpSocket * senderClient;
+        QDataStream * stream;
+        QTcpSocket * out_socket;
 
     public:
-        ServerIncommingUserExecutor(QRegExp regexp, QTcpSocket * senderClient);
         void execute();
-        void setVariables(QRegExp new_regexp, QTcpSocket *new_senderClient)
-                            {regexp=new_regexp; senderClient=new_senderClient;}
+        void setDataStream(QDataStream *ds) {stream=ds;}
+        void setOutputSocket(QTcpSocket *output_socket) { out_socket = output_socket; }
+
+        static const quint8 INSTRUCTION_NUMBER = 1;
     };
 
 }

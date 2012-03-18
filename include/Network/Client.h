@@ -107,6 +107,8 @@ class Client : public QObject
 
         void addAvatar(int id);
 
+        quint16 blockSize;
+
     };
 
 }

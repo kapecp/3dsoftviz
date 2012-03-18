@@ -1,16 +1,14 @@
 #include "Network/executors/ServerIncommingUserExecutor.h"
+#include "Network/executors/WelcomeExecutor.h"
+#include "Network/Helper.h"
 #include "Network/Server.h"
 
 using namespace Network;
 
-ServerIncommingUserExecutor::ServerIncommingUserExecutor(QRegExp regexp, QTcpSocket * senderClient){
-    this->regexp = regexp;
-    this->senderClient = senderClient;
-}
-
 void ServerIncommingUserExecutor::execute() {
 
-    QString user = regexp.cap(1);
+    QString user;
+    *stream >> user;
 
     Server * server = Server::getInstance();
 
@@ -18,16 +16,25 @@ void ServerIncommingUserExecutor::execute() {
     if (server->getUserCount() > 0) {
         newID = server->getMaxUserId() + 1;
     }
-    server->addUser(senderClient, user, newID);
+    server->addUser(out_socket, user, newID);
 
     osg::PositionAttitudeTransform* PAtransform = server->generateAvatar();
 
-    server->addAvatar(senderClient, PAtransform);
+    server->addAvatar(out_socket, PAtransform);
 
-    senderClient->write(("/yourid:"+QString::number(newID)+"\n").toUtf8());
+    QByteArray block;
+    QDataStream out(&block, QIODevice::WriteOnly);
+
+    out << (quint16)0;
+    out << WelcomeExecutor::INSTRUCTION_NUMBER;
+    out << newID;
+    out.device()->seek(0);
+    out << (quint16)(block.size() - sizeof(quint16));
+
+    out_socket->write(block);
 
     server->updateUserList();
     server->sendUserList();
-    server->sendMyView(senderClient);
+    server->sendMyView(out_socket);
 
 }

@@ -1,39 +1,48 @@
 #include "Network/executors/ServerMoveAvatarExecutor.h"
+#include "Network/executors/MoveAvatarExecutor.h"
 #include "Network/Server.h"
 
 using namespace Network;
-
-ServerMoveAvatarExecutor::ServerMoveAvatarExecutor(QRegExp regex, QTcpSocket *senderClient, QString line){
-    this->regexp = regex;
-    this->senderClient = senderClient;
-    this->line = line;
-}
 
 void ServerMoveAvatarExecutor::execute() {
 
     Server * server = Server::getInstance();
 
+    float x,y,z,a,b,c,d;
+    *stream >> x >> y >> z >> a >> b >> c >> d;
+
     QSet<QTcpSocket*> clients = server->getClients();
 
+    QByteArray block;
+    QDataStream out(&block,QIODevice::WriteOnly);
+    out.setFloatingPointPrecision(QDataStream::SinglePrecision);
+
+    int sender_id = server->getUserId(out_socket);
+
+    out << (quint16)0 << MoveAvatarExecutor::INSTRUCTION_NUMBER << x << y << z << a << b << c << d << sender_id;
+
+    out.device()->seek(0);
+    out << (quint16)(block.size() - sizeof(quint16));
+
     foreach(QTcpSocket *client, clients) { // append sender ID and resend to all other clients except sender
-        if (client == senderClient) continue;
-        client->write((line+";id:"+QString::number(server->getUserId(senderClient))+"\n").toUtf8());
+        if (client == out_socket) continue;
+        client->write(block);
     }
 
-    osg::Vec3d center = osg::Vec3d(regexp.cap(1).toFloat()-5,regexp.cap(2).toFloat(),regexp.cap(3).toFloat());
-    osg::Quat rotation = osg::Quat(regexp.cap(4).toFloat(),regexp.cap(5).toFloat(),regexp.cap(6).toFloat(),regexp.cap(7).toFloat());
+    osg::Vec3d center = osg::Vec3d(x-5,y,z);
+    osg::Quat rotation = osg::Quat(a,b,c,d);
 
-    osg::PositionAttitudeTransform * PAtransform = server->getAvatarTransform(senderClient);
+    osg::PositionAttitudeTransform * PAtransform = server->getAvatarTransform(out_socket);
     if (PAtransform != NULL) {
         PAtransform->setAttitude(rotation);
         PAtransform->setPosition(center);
     }
 
-    if (server->userToSpy() == senderClient) {
+    if (server->userToSpy() == out_socket) {
         server->setMyView(center,rotation);
     }
 
-    if (server->getCenterUser() == senderClient) {
+    if (server->getCenterUser() == out_socket) {
         server->lookAt(center);
     }
 

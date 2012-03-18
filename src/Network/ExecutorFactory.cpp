@@ -5,7 +5,7 @@
 
 using namespace Network;
 
-ExecutorFactory::ExecutorFactory(QObject * client) {
+ExecutorFactory::ExecutorFactory() {
     messageRegex = QRegExp("^([^:]+):(.*)$");
     usersRegex = QRegExp("^/clients:(.+)$");
     nodeRegexp = QRegExp("^/nodeData:id:([0-9]+);x:([0-9-\\.e]+);y:([0-9-\\.e]+);z:([0-9-\\.e]+)$");
@@ -26,20 +26,20 @@ ExecutorFactory::ExecutorFactory(QObject * client) {
     this->client = client;
     this->senderClient = NULL;
 
-    usersExecutor = NULL;
+    usersExecutor = new UsersExecutor;
     moveNodeExecutor = NULL;
     serverMoveNodeExecutor = NULL;
-    graphStartExecutor = NULL;
-    graphEndExecutor = NULL;
-    newNodeExecutor = NULL;
-    newEdgeExecutor = NULL;
+    graphStartExecutor = new GraphStartExecutor;
+    graphEndExecutor = new GraphEndExecutor;
+    newNodeExecutor = new NewNodeExecutor;
+    newEdgeExecutor = new NewEdgeExecutor;
     layoutExecutor = NULL;
-    moveAvatarExecutor = NULL;
-    serverMoveAvatarExecutor = NULL;
-    serverIncommingUserExecutor = NULL;
+    moveAvatarExecutor = new MoveAvatarExecutor;
+    serverMoveAvatarExecutor = new ServerMoveAvatarExecutor;
+    serverIncommingUserExecutor = new ServerIncommingUserExecutor;
     messageExecutor = NULL;
     serverStopExecutor = NULL;
-    welcomeExecutor = NULL;
+    welcomeExecutor = new WelcomeExecutor;
     serverSendGraphExecutor = NULL;
     serverSendLayoutExecutor = NULL;
     serverSpyUserExecutor = NULL;
@@ -49,9 +49,54 @@ ExecutorFactory::ExecutorFactory(QObject * client) {
 
 }
 
-AbstractExecutor* ExecutorFactory::getExecutor(QString line) {
+AbstractExecutor* ExecutorFactory::getExecutor(QDataStream * stream) {
 
-    if (usersRegex.indexIn(line) != -1) {
+    quint8 instruction;
+    *stream >> instruction;
+
+    switch (instruction) {
+    case ServerIncommingUserExecutor::INSTRUCTION_NUMBER:
+        serverIncommingUserExecutor->setDataStream(stream);
+        serverIncommingUserExecutor->setOutputSocket((QTcpSocket*)stream->device());
+        return serverIncommingUserExecutor;
+        break;
+    case WelcomeExecutor::INSTRUCTION_NUMBER :
+        welcomeExecutor->setDataStream(stream);
+        return welcomeExecutor;
+        break;
+    case UsersExecutor::INSTRUCTION_NUMBER :
+        usersExecutor->setDataStream(stream);
+        return usersExecutor;
+        break;
+    case GraphStartExecutor::INSTRUCTION_NUMBER :
+        return graphStartExecutor;
+        break;
+    case NewNodeExecutor::INSTRUCTION_NUMBER :
+        newNodeExecutor->setDataStream(stream);
+        return newNodeExecutor;
+        break;
+    case NewEdgeExecutor::INSTRUCTION_NUMBER :
+        newEdgeExecutor->setDataStream(stream);
+        return newEdgeExecutor;
+        break;
+    case GraphEndExecutor::INSTRUCTION_NUMBER :
+        return graphEndExecutor;
+        break;
+    case ServerMoveAvatarExecutor::INSTRUCTION_NUMBER :
+        serverMoveAvatarExecutor->setDataStream(stream);
+        serverMoveAvatarExecutor->setOutputSocket((QTcpSocket*)stream->device());
+        return serverMoveAvatarExecutor;
+        break;
+    case MoveAvatarExecutor::INSTRUCTION_NUMBER :
+        moveAvatarExecutor->setDataStream(stream);
+        return moveAvatarExecutor;
+        break;
+    default:
+        return NULL;
+        break;
+    }
+
+    /*if (usersRegex.indexIn(line) != -1) {
         if (usersExecutor == NULL) {
             usersExecutor = new UsersExecutor(usersRegex);
         } else {
@@ -188,7 +233,7 @@ AbstractExecutor* ExecutorFactory::getExecutor(QString line) {
         return serverSendLayoutExecutor;
     } else {
         return NULL;
-    }
+    }*/
 
 
 

@@ -29,7 +29,9 @@ Client::Client(QObject *parent) : QObject(parent) {
     user_to_spy = -1;
     user_to_center = -1;
 
-    executorFactory = new ExecutorFactory(this);
+    executorFactory = new ExecutorFactory();
+
+    blockSize = 0;
 
 }
 
@@ -54,24 +56,50 @@ void Client::send_message(QString message) {
 }
 
 void Client::readyRead() {
-    while(socket->canReadLine())
-    {
-        QString line = QString::fromUtf8(socket->readLine()).trimmed();
-        //qDebug() << "Client got line: " << line;
 
-        AbstractExecutor *executor = executorFactory->getExecutor(line);
+
+    QTcpSocket *senderClient = (QTcpSocket*)sender();
+
+    while(senderClient->bytesAvailable()) {
+
+        QDataStream in(senderClient);
+        in.setFloatingPointPrecision(QDataStream::SinglePrecision);
+
+        if (blockSize == 0) {
+            if (senderClient->bytesAvailable() < (int)sizeof(quint16))
+                return;
+
+            in >> blockSize;
+        }
+
+        if (senderClient->bytesAvailable() < blockSize)
+            return;
+
+        AbstractExecutor *executor = executorFactory->getExecutor(&in);
 
         if (executor != NULL) {
             executor->execute();
         } else {
-            qDebug() << "Client: neznama instrukcia:" << line;
+            qDebug() << "Klient: neznama instrukcia";
         }
-
+        blockSize = 0;
     }
 }
 
 void Client::connected() {
-    socket->write(QString("/me:" + clientNick + "\n").toUtf8());
+
+    QByteArray block;
+    QDataStream out(&block, QIODevice::WriteOnly);
+
+    out << (quint16)0;
+    out << ServerIncommingUserExecutor::INSTRUCTION_NUMBER;
+    out << clientNick;
+
+    out.device()->seek(0);
+    out << (quint16)(block.size() - sizeof(quint16));
+
+    socket->write(block);
+
     ((QOSG::CoreWindow *) cw) -> le_client_name -> setEnabled(false);
     ((QOSG::CoreWindow *) cw) -> le_server_addr -> setEnabled(false);
     ((QOSG::CoreWindow *) cw) -> b_start_client -> setEnabled(true);
@@ -127,11 +155,17 @@ void Client::sendMovedNodesPosition() {
 
 void Client::sendMyView(osg::Vec3d center, osg::Quat rotation) {
 
-    QString message = "/view:";
-    message += "center:" + QString::number(center.x()) + "," + QString::number(center.y()) + "," + QString::number(center.z()) + ";";
-    message += "rotation:" + QString::number(rotation.x()) + "," + QString::number(rotation.y()) + "," + QString::number(rotation.z()) + "," + QString::number(rotation.w()) +  "\n";
+    QByteArray block;
+    QDataStream out(&block, QIODevice::WriteOnly);
+    out.setFloatingPointPrecision(QDataStream::SinglePrecision);
 
-    socket->write(message.toUtf8());
+    out << (quint16)0 << ServerMoveAvatarExecutor::INSTRUCTION_NUMBER << (float)center.x() << (float)center.y() << (float)center.z()
+        << (float)rotation.x() << (float)rotation.y() << (float)rotation.z() << (float)rotation.w();
+
+    out.device()->seek(0);
+    out << (quint16)(block.size() - sizeof(quint16));
+
+    socket->write(block);
 }
 
 void Client::sendMyView() {

@@ -9,6 +9,7 @@ namespace Network {
 
     public:
         void execute();
+        static const quint8 INSTRUCTION_NUMBER = 7;
 
     };
 

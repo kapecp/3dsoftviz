@@ -33,8 +33,8 @@ namespace Network {
     class ExecutorFactory {
 
     public:
-        ExecutorFactory(QObject * client);
-        AbstractExecutor* getExecutor(QString line);
+        ExecutorFactory();
+        AbstractExecutor* getExecutor(QDataStream * stream);
         void setSenderClient(QTcpSocket *senderClient) {this->senderClient = senderClient;}
 
     private:

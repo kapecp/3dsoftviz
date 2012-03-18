@@ -6,16 +6,14 @@
 
 using namespace Network;
 
-UsersExecutor::UsersExecutor(QRegExp regex){
-    this->regexp = regex;
-}
-
 void UsersExecutor::execute() {
 
     Client *client = Client::getInstance();
 
-    QStringList users = regexp.cap(1).split(",");
-    qDebug() << "Clients:";
+    QString users_string;
+    *stream >> users_string;
+
+    QStringList users = users_string.split(",");
 
     QList<int> newClients;
 
@@ -23,7 +21,6 @@ void UsersExecutor::execute() {
         QStringList args = user.split("=");
         int id = args[0].toInt();
         QString nick = args[1];
-        qDebug() << id << nick;
         newClients << id;
 
         client->addClient(id,nick);

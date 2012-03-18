@@ -105,6 +105,8 @@ class Server : public QTcpServer {
         osg::Quat original_rotation;
 
         QTcpSocket * getClientById(int id);
+
+        quint16 blockSize;
     };
 }
 

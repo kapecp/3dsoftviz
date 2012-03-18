@@ -2,19 +2,18 @@
 #define __3DVisualWelcomeExecutor_H__
 
 #include "Network/executors/AbstractExecutor.h"
-#include <QRegExp>
 
 namespace Network {
 
     class WelcomeExecutor : public AbstractExecutor {
 
     private:
-        QRegExp regexp;
+        QDataStream *stream;
 
     public:
-        WelcomeExecutor(QRegExp regex);
         void execute();
-        void setVariables(QRegExp new_regexp) {regexp=new_regexp;}
+        void setDataStream(QDataStream *ds) {stream=ds;}
+        static const quint8 INSTRUCTION_NUMBER = 2;
 
     };
 

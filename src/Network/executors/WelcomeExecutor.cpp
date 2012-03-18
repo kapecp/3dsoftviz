@@ -3,15 +3,11 @@
 
 using namespace Network;
 
-WelcomeExecutor::WelcomeExecutor(QRegExp regex) {
-    this->regexp = regex;
-}
-
 void WelcomeExecutor::execute() {
-    Client * client = Client::getInstance();
-    int id = regexp.cap(1).toInt();
-    client->setMyId(id);
 
-    qDebug() << "Som " << id;
+    Client * client = Client::getInstance();
+    int id;
+    *stream >> id;
+    client->setMyId(id);
 
 }

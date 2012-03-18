@@ -3,17 +3,17 @@
 
 using namespace Network;
 
-MoveAvatarExecutor::MoveAvatarExecutor(QRegExp regex){
-    this->regexp = regex;
-}
-
 void MoveAvatarExecutor::execute() {
 
     Client *client = Client::getInstance();
 
-    osg::Vec3d center = osg::Vec3d(regexp.cap(1).toFloat()-5,regexp.cap(2).toFloat(),regexp.cap(3).toFloat());
-    osg::Quat rotation = osg::Quat(regexp.cap(4).toFloat(),regexp.cap(5).toFloat(),regexp.cap(6).toFloat(),regexp.cap(7).toFloat());
-    int id = regexp.cap(8).toInt();
+    float x,y,z,a,b,c,d;
+    int id;
+
+    *stream >> x >> y >> z >> a >> b >> c >> d >> id;
+
+    osg::Vec3d center = osg::Vec3d(x-5,y,z);
+    osg::Quat rotation = osg::Quat(a,b,c,d);
 
     if (client->userToSpy() != id) {
         osg::PositionAttitudeTransform * PAtransform = client->avatarList[id];

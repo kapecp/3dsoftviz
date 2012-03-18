@@ -20,9 +20,11 @@ Server::Server(QObject *parent) : QTcpServer(parent)
     cw = parent;
     Util::ApplicationConfig *conf = Util::ApplicationConfig::get();
     graphScale = conf->getValue("Viewer.Display.NodeDistanceScale").toFloat();
-    executorFactory = new ExecutorFactory(this);
+    executorFactory = new ExecutorFactory();
     user_to_spy = NULL;
     user_to_center = NULL;
+
+    blockSize = 0;
 }
 
 Server* Server::getInstance() {
@@ -48,29 +50,29 @@ void Server::incomingConnection(int socketfd)
 void Server::readyRead()
 {
     QTcpSocket *senderClient = (QTcpSocket*)sender();
-    while(senderClient->canReadLine())
-    {
-        QString line = QString::fromUtf8(senderClient->readLine()).trimmed();
+    while(senderClient->bytesAvailable()) {
+        QDataStream in(senderClient);
+        in.setFloatingPointPrecision(QDataStream::SinglePrecision);
 
-        executorFactory->setSenderClient(senderClient);
-        AbstractExecutor *executor = executorFactory->getExecutor(line);
+        if (blockSize == 0) {
+            if (senderClient->bytesAvailable() < (int)sizeof(quint16))
+                return;
+
+            in >> blockSize;
+        }
+
+        if (senderClient->bytesAvailable() < blockSize)
+            return;
+
+        AbstractExecutor *executor = executorFactory->getExecutor(&in);
 
         if (executor != NULL) {
             executor->execute();
         } else {
-            qDebug() << "Server: neznama instrukcia:" << line;
+            qDebug() << "Klient: neznama instrukcia";
         }
 
-        /*
-                tento kod sa da vyuzit pre implementaciu chatu
-
-        QString message = line;
-        QString user = users[senderClient];
-        foreach(QTcpSocket *otherClient, clients)
-            otherClient->write(QString(user + ":" + message + "\n").toUtf8());
-
-        */
-
+        blockSize = 0;
     }
 }
 
@@ -94,6 +96,9 @@ void Server::sendUserList()
 
     QMap<QTcpSocket*,QString>::const_iterator i;
 
+    QByteArray block;
+    QDataStream out(&block,QIODevice::WriteOnly);
+
     foreach(QTcpSocket *client, clients){
         userList.clear();
         userList << "0=server";
@@ -101,7 +106,13 @@ void Server::sendUserList()
             if (client == i.key()) continue;
             userList << QString::number(usersID[i.key()]) + "=" + i.value();
         }
-        client->write(QString("/clients:" + userList.join(",") + "\n").toUtf8());
+        QString userListJoined = userList.join(",");
+
+        out << (quint16)0 << UsersExecutor::INSTRUCTION_NUMBER << userListJoined;
+        out.device()->seek(0);
+        out << (quint16)(block.size() - sizeof(quint16));
+
+        client->write(block);
     }
 }
 
@@ -111,8 +122,6 @@ void Server::sendGraph(QTcpSocket *client){
         return;
     }
 
-    QString message;
-
     Data::Graph * currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
     QMap<qlonglong, osg::ref_ptr<Data::Node> >* nodes = currentGraph -> getNodes();
     QMap<qlonglong, osg::ref_ptr<Data::Node> >::const_iterator iNodes =  nodes->constBegin();
@@ -120,30 +129,43 @@ void Server::sendGraph(QTcpSocket *client){
     /*QTime t;
     t.start();*/
 
+    QByteArray block;
+    QDataStream out(&block,QIODevice::WriteOnly);
+    out.setFloatingPointPrecision(QDataStream::SinglePrecision);
+
+    out << (quint16)0 << GraphStartExecutor::INSTRUCTION_NUMBER;
+    out.device()->seek(0);
+    out << (quint16)(block.size() - sizeof(quint16));
+
     if (client == NULL){
         foreach(QTcpSocket *otherClient, clients){
-            otherClient->write("GRAPH_START\n");
+            otherClient->write(block);
         }
     } else {
-        client -> write("GRAPH_START\n");
+        client -> write(block);
     }
 
     while(iNodes != nodes->constEnd()) {
 
-        message = "id:" + QString::number(iNodes.value()->getId());
-        message += ";x:" + QString::number(iNodes.value()->getCurrentPosition().x()/graphScale);
-        message += ";y:" + QString::number(iNodes.value()->getCurrentPosition().y()/graphScale);
-        message += ";z:" + QString::number(iNodes.value()->getCurrentPosition().z()/graphScale);
+        block.clear();
+        out.device()->reset();
+
+        out     << (quint16)0 << NewNodeExecutor::INSTRUCTION_NUMBER
+                << (int) iNodes.value()->getId()
+                << (float) (iNodes.value()->getCurrentPosition().x()/graphScale)
+                << (float) (iNodes.value()->getCurrentPosition().y()/graphScale)
+                << (float) (iNodes.value()->getCurrentPosition().z()/graphScale);
+
+        out.device()->seek(0);
+        out << (quint16)(block.size() - sizeof(quint16));
 
         if (client == NULL){
             foreach(QTcpSocket *otherClient, clients){
-                otherClient->write(("/nodeData:"+message+"\n").toUtf8());
+                otherClient->write(block);
             }
         } else {
-            client -> write(("/nodeData:"+message+"\n").toUtf8());
+            client->write(block);
         }
-
-        //qDebug() << "[SERVER] Sending node: " << message;
 
         ++iNodes;
     }
@@ -152,31 +174,44 @@ void Server::sendGraph(QTcpSocket *client){
     QMap<qlonglong, osg::ref_ptr<Data::Edge> >::const_iterator iEdges =  edges->constBegin();
 
     while (iEdges != edges -> constEnd()) {
-        message = "id:" + QString::number(iEdges.value()->getId());
-        //message += ";name:" + iEdges.value()->getName();
-        message += ";from:" + QString::number(iEdges.value()->getSrcNode()->getId());
-        message += ";to:" + QString::number(iEdges.value()->getDstNode()->getId());
-        message += ";or:" + QString::number(iEdges.value()->isOriented() ? 1 : 0);
+
+        block.clear();
+        out.device()->reset();
+
+        out    << (quint16)0 << NewEdgeExecutor::INSTRUCTION_NUMBER
+               << (int) iEdges.value()->getId()
+               << (int) (iEdges.value()->getSrcNode()->getId())
+               << (int) (iEdges.value()->getDstNode()->getId())
+               << (bool) iEdges.value()->isOriented();
+
+        out.device()->seek(0);
+        out << (quint16)(block.size() - sizeof(quint16));
 
         if (client == NULL){
             foreach(QTcpSocket *otherClient, clients){
-                otherClient->write(("/edgeData:"+message+"\n").toUtf8());
+                otherClient->write(block);
             }
         } else {
-            client -> write(("/edgeData:"+message+"\n").toUtf8());
+            client -> write(block);
         }
-
-        //qDebug() << "[SERVER] Sending edge: " << message;
 
         ++iEdges;
     }
 
+    block.clear();
+    out.device()->reset();
+
+    out << (quint16)0 << GraphEndExecutor::INSTRUCTION_NUMBER;
+
+    out.device()->seek(0);
+    out << (quint16)(block.size() - sizeof(quint16));
+
     if (client == NULL){
         foreach(QTcpSocket *otherClient, clients){
-            otherClient->write("GRAPH_END\n");
+            otherClient->write(block);
         }
     } else {
-        client -> write("GRAPH_END\n");
+        client -> write(block);
     }
 
     //qDebug() << "Sending took" << t.elapsed() << "ms";
@@ -283,16 +318,22 @@ void Server::sendMoveNodes() {
 
 void Server::sendMyView(osg::Vec3d center, osg::Quat rotation, QTcpSocket * client) {
 
-    QString message = "/view:";
-    message += "center:" + QString::number(center.x()) + "," + QString::number(center.y()) + "," + QString::number(center.z()) + ";";
-    message += "rotation:" + QString::number(rotation.x()) + "," + QString::number(rotation.y()) + "," + QString::number(rotation.z()) + "," + QString::number(rotation.w()) +  ";id:0\n";
+    QByteArray block;
+    QDataStream out(&block, QIODevice::WriteOnly);
+    out.setFloatingPointPrecision(QDataStream::SinglePrecision);
+
+    out << (quint16)0 << MoveAvatarExecutor::INSTRUCTION_NUMBER << (float)center.x() << (float)center.y() << (float)center.z()
+        << (float)rotation.x() << (float)rotation.y() << (float)rotation.z() << (float)rotation.w() << (int)0;
+
+    out.device()->seek(0);
+    out << (quint16)(block.size() - sizeof(quint16));
 
     if (client == NULL) {
         foreach(QTcpSocket *otherClient, clients){
-            otherClient->write(message.toUtf8());
+            otherClient->write(block);
         }
     } else {
-        client->write(message.toUtf8());
+        client->write(block);
     }
 
 }
