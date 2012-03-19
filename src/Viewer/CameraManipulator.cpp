@@ -713,14 +713,14 @@ void CameraManipulator::stop()
 void CameraManipulator::notifyClients() {
     Network::Server * server = Network::Server::getInstance();
     if (server->isListening()) {
-        server->sendMyView(_center,_rotation);
+        server->sendMyView(_center,_rotation, _distance);
     }
 }
 
 void CameraManipulator::notifyServer() {
     Network::Client * client = Network::Client::getInstance();
     if (client->isConnected()) {
-        client->sendMyView(_center,_rotation);
+        client->sendMyView(_center,_rotation, _distance);
     }
 }
 

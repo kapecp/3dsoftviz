@@ -329,14 +329,14 @@ void Server::sendMoveNodes() {
 }
 
 
-void Server::sendMyView(osg::Vec3d center, osg::Quat rotation, QTcpSocket * client) {
+void Server::sendMyView(osg::Vec3d center, osg::Quat rotation, float distance, QTcpSocket * client) {
 
     QByteArray block;
     QDataStream out(&block, QIODevice::WriteOnly);
     out.setFloatingPointPrecision(QDataStream::SinglePrecision);
 
     out << (quint16)0 << MoveAvatarExecutor::INSTRUCTION_NUMBER << (float)center.x() << (float)center.y() << (float)center.z()
-        << (float)rotation.x() << (float)rotation.y() << (float)rotation.z() << (float)rotation.w() << (int)0;
+        << (float)rotation.x() << (float)rotation.y() << (float)rotation.z() << (float)rotation.w() << (float)distance << (int)0;
 
     out.device()->seek(0);
     out << (quint16)(block.size() - sizeof(quint16));
@@ -353,7 +353,7 @@ void Server::sendMyView(osg::Vec3d center, osg::Quat rotation, QTcpSocket * clie
 
 void Server::sendMyView(QTcpSocket *client) {
     Vwr::CameraManipulator * cameraManipulator = ((QOSG::CoreWindow *) cw)->getCameraManipulator();
-    this->sendMyView(cameraManipulator->getCenter(), cameraManipulator->getRotation(), client);
+    this->sendMyView(cameraManipulator->getCenter(), cameraManipulator->getRotation(), cameraManipulator->getDistance(), client);
 }
 
 void Server::sendMyView() {

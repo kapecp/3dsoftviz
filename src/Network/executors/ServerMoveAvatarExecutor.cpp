@@ -10,8 +10,8 @@ void ServerMoveAvatarExecutor::execute() {
 
     QTcpSocket * out_socket = (QTcpSocket*) stream->device();
 
-    float x,y,z,a,b,c,d;
-    *stream >> x >> y >> z >> a >> b >> c >> d;
+    float x,y,z,a,b,c,d,distance;
+    *stream >> x >> y >> z >> a >> b >> c >> d >> distance;
 
     QSet<QTcpSocket*> clients = server->getClients();
 
@@ -21,7 +21,7 @@ void ServerMoveAvatarExecutor::execute() {
 
     int sender_id = server->getUserId(out_socket);
 
-    out << (quint16)0 << MoveAvatarExecutor::INSTRUCTION_NUMBER << x << y << z << a << b << c << d << sender_id;
+    out << (quint16)0 << MoveAvatarExecutor::INSTRUCTION_NUMBER << x << y << z << a << b << c << d << distance << sender_id;
 
     out.device()->seek(0);
     out << (quint16)(block.size() - sizeof(quint16));
@@ -34,10 +34,14 @@ void ServerMoveAvatarExecutor::execute() {
     osg::Vec3d center = osg::Vec3d(x-5,y,z);
     osg::Quat rotation = osg::Quat(a,b,c,d);
 
+    osg::Vec3 direction = rotation * osg::Vec3(0, 0, 1);
+    direction *= distance;
+
     osg::PositionAttitudeTransform * PAtransform = server->getAvatarTransform(out_socket);
+
     if (PAtransform != NULL) {
         PAtransform->setAttitude(rotation);
-        PAtransform->setPosition(center);
+        PAtransform->setPosition(center+direction);
     }
 
     if (server->userToSpy() == out_socket) {

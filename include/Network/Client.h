@@ -56,7 +56,7 @@ class Client : public QObject
         int getCenterUser() { return user_to_center; }
         bool isCenteringUser() { return user_to_center > -1; }
 
-        void sendMyView(osg::Vec3d center, osg::Quat rotation);
+        void sendMyView(osg::Vec3d center, osg::Quat rotation, float distance);
         void sendMyView();
         void setMyView(osg::Vec3d center, osg::Quat rotation);
         void lookAt(osg::Vec3d coord);
