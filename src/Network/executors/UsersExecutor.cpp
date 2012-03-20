@@ -30,8 +30,7 @@ void UsersExecutor::execute() {
     QMap<int, QString>::iterator i = client->userList.begin();
      while (i != client->userList.end()) {
          if ( (!newClients.contains(i.key()) && i.key() != 0)){
-             client->avatarList[i.key()]->removeChild(0,1);
-             client->avatarList.remove(i.key());
+             client->removeAvatar(i.key());
              i = client->userList.erase(i);
          } else {
              ++i;

@@ -83,8 +83,7 @@ void Server::disconnected()
 
     clients.remove(client);
     users.remove(client);
-    avatars[client]->removeChild(0,1);
-    avatars.remove(client);
+    removeAvatar(client);
 
     updateUserList();
     sendUserList();
@@ -383,30 +382,11 @@ void Server::updateUserList() {
     }
 }
 
-osg::PositionAttitudeTransform * Server::generateAvatar() {
-    osg::ref_ptr<osg::Node> modelNode = osgDB::readNodeFile("avatar.osg");
-    if (!modelNode) {
-        qDebug() << "could not find model";
-        return NULL;
-    }
-
-    osg::PositionAttitudeTransform* PAtransform = new osg::PositionAttitudeTransform();
-    PAtransform->addChild(modelNode);
-
-    QLinkedList<osg::ref_ptr<osg::Node> > * nodes = coreGraph->getCustomNodeList();
-
-    nodes->append(PAtransform);
-
-    //PAtransform->setScale(osg::Vec3d(10,10,10));
-
-    return PAtransform;
-}
-
 void Server::removeAvatar(QTcpSocket *client) {
 
     osg::PositionAttitudeTransform *pat = avatars.take(client);
     if (pat != NULL) {
-        pat->removeChild(0,1);
+        pat->removeChildren(0,2);
     }
 }
 
@@ -448,7 +428,7 @@ void Server::spyUser(int id) {
 
 void Server::unSpyUser() {
 
-    addAvatar(user_to_spy,generateAvatar());
+    addAvatar(user_to_spy, getUserName(user_to_spy));
 
     QByteArray block;
     QDataStream out(&block,QIODevice::WriteOnly);
@@ -468,6 +448,15 @@ void Server::unSpyUser() {
     sendMyView();
 
     user_to_spy = NULL;
+}
+
+void Server::addAvatar(QTcpSocket *socket, QString nick) {
+    osg::PositionAttitudeTransform * avatar = Helper::generateAvatar(nick);
+
+    QLinkedList<osg::ref_ptr<osg::Node> > * nodes = coreGraph->getCustomNodeList();
+    nodes->append(avatar);
+
+    avatars[socket] = avatar;
 }
 
 void Server::setMyView(osg::Vec3d center, osg::Quat rotation) {

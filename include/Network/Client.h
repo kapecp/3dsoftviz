@@ -43,7 +43,7 @@ class Client : public QObject
         void updateUserList();
 
         void addClient(int id, QString nick);
-        void hideClientAvatar(int id);
+        void removeAvatar(int id);
         void showClientAvatar(int id);
 
         void spyUser(int user);
@@ -105,7 +105,7 @@ class Client : public QObject
         // This is the socket that will let us communitate with the server.
         QTcpSocket *socket;
 
-        void addAvatar(int id);
+        void addAvatar(int id, QString nick);
 
         quint16 blockSize;
 

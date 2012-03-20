@@ -212,7 +212,7 @@ osg::ref_ptr<osg::Drawable> Data::Node::createLabel(const float & scale, QString
 	QString fontPath = Util::ApplicationConfig::get()->getValue("Viewer.Labels.Font");
 	
 	// experimental value
-	float newScale = 1.375f * scale;
+        float newScale = 1.375f * scale;
 
 	if(fontPath != NULL && !fontPath.isEmpty())
 		label->setFont(fontPath.toStdString());

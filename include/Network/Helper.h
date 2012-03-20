@@ -3,11 +3,14 @@
 
 #include <osg/Quat>
 #include <osg/Vec3>
+#include <osg/PositionAttitudeTransform>
+#include <QString>
 
 namespace Network {
-    class Helper {
+    class Helper{
     public:
         static osg::Quat lookAt(osg::Vec3 from, osg::Vec3 to);
+        static osg::PositionAttitudeTransform * generateAvatar(QString label);
     };
 }
 

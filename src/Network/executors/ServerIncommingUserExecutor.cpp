@@ -20,9 +20,7 @@ void ServerIncommingUserExecutor::execute() {
     }
     server->addUser(out_socket, user, newID);
 
-    osg::PositionAttitudeTransform* PAtransform = server->generateAvatar();
-
-    server->addAvatar(out_socket, PAtransform);
+    server->addAvatar(out_socket, user);
 
     QByteArray block;
     QDataStream out(&block, QIODevice::WriteOnly);

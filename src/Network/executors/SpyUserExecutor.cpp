@@ -12,6 +12,6 @@ void SpyUserExecutor::execute() {
 
     *stream >> spied >> spy;
 
-    client->hideClientAvatar(spy);
+    client->removeAvatar(spy);
 
 }

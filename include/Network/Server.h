@@ -44,7 +44,6 @@ class Server : public QTcpServer {
         void updateUserList();
 
         void removeAvatar(QTcpSocket * client);
-        osg::PositionAttitudeTransform * generateAvatar();
         void spyUser(int id);
         bool isSpying() { return user_to_spy != NULL; }
         void unSpyUser();
@@ -67,11 +66,12 @@ class Server : public QTcpServer {
         int getMaxUserId();
         Vwr::CoreGraph * getCoreGraph() { return coreGraph; }
         QTcpSocket * userToSpy() { return user_to_spy; }
+        QString getUserName(QTcpSocket * user) { return users[user]; }
 
         //some setters
         void appendMovingNode(osg::ref_ptr<Data::Node> node);
         void addUser(QTcpSocket * socket,QString name,int id) { users[socket] = name; usersID[socket] = id; }
-        void addAvatar(QTcpSocket* socket,osg::PositionAttitudeTransform * avatarTransform) { avatars[socket] = avatarTransform; }
+        void addAvatar(QTcpSocket* socket, QString nick);
         void setLayoutThread(Layout::LayoutThread * layoutThread);
         void setCoreGraph(Vwr::CoreGraph * cg) { coreGraph = cg; }
 

@@ -31,6 +31,6 @@ void ServerUnspyUserExecutor::execute() {
         server->sendMyView();
     }
 
-    server->addAvatar(senderClient, server->generateAvatar());
+    server->addAvatar(senderClient, server->getUserName(senderClient));
 
 }

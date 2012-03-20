@@ -206,19 +206,13 @@ void Client::setMyView(osg::Vec3d center, osg::Quat rotation) {
 void Client::addClient(int id, QString nick) {
     if (!userList.contains(id)){
         userList.insert(id,nick);
-        addAvatar(id);
+        addAvatar(id,nick);
     }
 }
 
-void Client::addAvatar(int id) {
-    osg::ref_ptr<osg::Node> modelNode = osgDB::readNodeFile("avatar.osg");
-    if (!modelNode) {
-        qDebug() << "could not find model";
-        return;
-    }
+void Client::addAvatar(int id, QString nick) {
 
-    osg::PositionAttitudeTransform* PAtransform = new osg::PositionAttitudeTransform();
-    PAtransform->addChild(modelNode);
+    osg::PositionAttitudeTransform* PAtransform = Helper::generateAvatar(nick);
 
     QLinkedList<osg::ref_ptr<osg::Node> > * nodes = coreGraph->getCustomNodeList();
 
@@ -228,15 +222,15 @@ void Client::addAvatar(int id) {
     avatarList.insert(id,PAtransform);
 }
 
-void Client::hideClientAvatar(int id) {
+void Client::removeAvatar(int id) {
     osg::PositionAttitudeTransform *pat = avatarList.take(id);
     if (pat != NULL) {
-        pat->removeChild(0,1);
+        pat->removeChild(0,2);
     }
 }
 
 void Client::showClientAvatar(int id) {
-    addAvatar(id);
+    addAvatar(id, userList[id]);
 }
 
 void Client::unSpyUser() {
@@ -278,7 +272,7 @@ void Client::spyUser(int user) {
     original_rotation = cameraManipulator->getRotation();
 
     setMyView(avatarList[user]->getPosition(),avatarList[user]->getAttitude());
-    hideClientAvatar(user);
+    removeAvatar(user);
 }
 
 void Client::lookAt(osg::Vec3d coord) {
