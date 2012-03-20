@@ -430,14 +430,17 @@ bool CameraManipulator::calcMovement()
 
         // zoom model.
 
-		float fd = _distance;
-		float scale = 1.0f+ dy * throwScale;
-		if (fd*scale>_modelScale*_minimumZoomScale)
-		{
-			if (_distance * scale < 10000)
-				_distance *= scale;
-		}
-       
+        float fd = _distance;
+        float scale = 1.0f+ dy * throwScale;
+        if (fd*scale>_modelScale*_minimumZoomScale)
+        {
+            if (_distance * scale < 10000)
+                _distance *= scale;
+        }
+
+        notifyServer();
+        notifyClients();
+
         return true;
     }
 
