@@ -50,10 +50,19 @@ void Client::ServerConnect(QString nick, QString address) {
 }
 
 void Client::send_message(QString message) {
-    if(!message.isEmpty())
-    {
-        socket->write(QString(message + "\n").toUtf8());
-    }
+    // todo: implement
+}
+
+void Client::requestGraph() {
+    QByteArray block;
+    QDataStream out(&block,QIODevice::WriteOnly);
+    out.setFloatingPointPrecision(QDataStream::SinglePrecision);
+
+    out << (quint16)0 << ServerSendGraphExecutor::INSTRUCTION_NUMBER;
+    out.device()->seek(0);
+    out << (quint16)(block.size() - sizeof(quint16));
+
+    socket->write(block);
 }
 
 void Client::readyRead() {

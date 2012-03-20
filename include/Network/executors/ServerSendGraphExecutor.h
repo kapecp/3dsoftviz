@@ -10,12 +10,12 @@ namespace Network {
     class ServerSendGraphExecutor : public AbstractExecutor {
 
     private:
-        QTcpSocket * senderClient;
+        QDataStream *stream;
 
     public:
-        ServerSendGraphExecutor(QTcpSocket * senderClient);
         void execute();
-        void setVariables(QTcpSocket * new_senderClient) {senderClient=new_senderClient;}
+        void setDataStream(QDataStream *ds) {stream=ds;}
+        static const quint8 INSTRUCTION_NUMBER = 19;
     };
 
 }

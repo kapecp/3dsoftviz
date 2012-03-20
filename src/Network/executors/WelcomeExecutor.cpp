@@ -9,5 +9,6 @@ void WelcomeExecutor::execute() {
     int id;
     *stream >> id;
     client->setMyId(id);
+    client->requestGraph();
 
 }

@@ -30,6 +30,7 @@ class Client : public QObject
         void ServerConnect(QString nick, QString address);
 
         void send_message(QString message);
+        void requestGraph();
 
         void setLayoutThread(Layout::LayoutThread * layoutThread);
         void setCoreGraph(Vwr::CoreGraph * cg) { coreGraph = cg; }

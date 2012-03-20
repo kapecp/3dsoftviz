@@ -24,7 +24,7 @@ ExecutorFactory::ExecutorFactory() {
     messageExecutor = new MessageExecutor;
     serverStopExecutor = new ServerStopExecutor;
     welcomeExecutor = new WelcomeExecutor;
-    serverSendGraphExecutor = NULL;
+    serverSendGraphExecutor = new ServerSendGraphExecutor;
     serverSendLayoutExecutor = NULL;
     serverSpyUserExecutor = new ServerSpyUserExecutor;
     spyUserExecutor = new SpyUserExecutor;
@@ -107,6 +107,10 @@ AbstractExecutor* ExecutorFactory::getExecutor(QDataStream * stream) {
     case ServerUnspyUserExecutor::INSTRUCTION_NUMBER :
         serverUnspyUserExecutor->setDataStream(stream);
         return serverUnspyUserExecutor;
+        break;
+    case ServerSendGraphExecutor::INSTRUCTION_NUMBER :
+        serverSendGraphExecutor->setDataStream(stream);
+        return serverSendGraphExecutor;
         break;
     default:
         return NULL;

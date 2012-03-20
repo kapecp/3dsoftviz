@@ -3,13 +3,11 @@
 
 using namespace Network;
 
-ServerSendGraphExecutor::ServerSendGraphExecutor(QTcpSocket * senderClient){
-    this->senderClient = senderClient;
-}
 
 void ServerSendGraphExecutor::execute() {
 
     Server *server = Server::getInstance();
+    QTcpSocket * senderClient = (QTcpSocket *) stream->device();
     server->sendGraph(senderClient);
 
 }
