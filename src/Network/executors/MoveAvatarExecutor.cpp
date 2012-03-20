@@ -29,11 +29,11 @@ void MoveAvatarExecutor::execute() {
     }
 
     if (client->userToSpy() == id) {
-        client->setMyView(center,rotation);
+        client->setMyView(center,rotation,distance);
     }
 
     if (client->getCenterUser() == id) {
-        client->lookAt(center);
+        client->lookAt(center+direction);
     }
 
 }

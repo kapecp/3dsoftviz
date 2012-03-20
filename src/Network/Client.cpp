@@ -28,6 +28,7 @@ Client::Client(QObject *parent) : QObject(parent) {
     nodeType = NULL;
     user_to_spy = -1;
     user_to_center = -1;
+    layoutIgnore = true;
 
     executorFactory = new ExecutorFactory();
 
@@ -197,10 +198,11 @@ void Client::updateUserList() {
     }
 }
 
-void Client::setMyView(osg::Vec3d center, osg::Quat rotation) {
+void Client::setMyView(osg::Vec3d center, osg::Quat rotation, float distance) {
     Vwr::CameraManipulator * cameraManipulator = ((QOSG::CoreWindow *) cw)->getCameraManipulator();
     cameraManipulator->setCenter(center);
     cameraManipulator->setRotation(rotation);
+    cameraManipulator->setDistance(distance);
 }
 
 void Client::addClient(int id, QString nick) {
@@ -239,7 +241,7 @@ void Client::unSpyUser() {
     QByteArray block;
     QDataStream out(&block,QIODevice::WriteOnly);
 
-    out << (quint16)0 << ServerUnspyUserExecutor::INSTRUCTION_NUMBER << user_to_spy;
+    out << (quint16)0 << ServerUnspyUserExecutor::INSTRUCTION_NUMBER << (int)user_to_spy;
 
     out.device()->seek(0);
     out << (quint16)(block.size() - sizeof(quint16));
@@ -247,7 +249,7 @@ void Client::unSpyUser() {
     socket->write(block);
 
     // restore original view
-    setMyView(original_center,original_rotation);
+    setMyView(original_center,original_rotation,original_distance);
 
     sendMyView();
     user_to_spy = -1;
@@ -270,8 +272,9 @@ void Client::spyUser(int user) {
     Vwr::CameraManipulator * cameraManipulator = ((QOSG::CoreWindow *) cw)->getCameraManipulator();
     original_center = cameraManipulator->getCenter();
     original_rotation = cameraManipulator->getRotation();
+    original_distance = cameraManipulator->getDistance();
 
-    setMyView(avatarList[user]->getPosition(),avatarList[user]->getAttitude());
+    setMyView(avatarList[user]->getPosition(),avatarList[user]->getAttitude(),original_distance);
     removeAvatar(user);
 }
 

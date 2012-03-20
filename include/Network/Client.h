@@ -58,12 +58,14 @@ class Client : public QObject
 
         void sendMyView(osg::Vec3d center, osg::Quat rotation, float distance);
         void sendMyView();
-        void setMyView(osg::Vec3d center, osg::Quat rotation);
+        void setMyView(osg::Vec3d center, osg::Quat rotation, float distance);
         void lookAt(osg::Vec3d coord);
 
 
         void setMyId(int id) { my_id = id; }
         int getMyId() { return my_id; }
+        void ignoreLayout(bool ignore) { layoutIgnore = ignore; }
+        bool ignoreLayout() { return layoutIgnore; }
 
         //todo: encapsulate!
         QMap<int,QString> userList;
@@ -94,9 +96,11 @@ class Client : public QObject
         int user_to_spy;
         int user_to_center;
         int my_id;
+        bool layoutIgnore;
 
         osg::Vec3d original_center;
         osg::Quat original_rotation;
+        float original_distance;
 
         ExecutorFactory *executorFactory;
 

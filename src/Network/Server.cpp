@@ -420,8 +420,9 @@ void Server::spyUser(int id) {
     Vwr::CameraManipulator * cameraManipulator = ((QOSG::CoreWindow *) cw)->getCameraManipulator();
     original_center = cameraManipulator->getCenter();
     original_rotation = cameraManipulator->getRotation();
+    original_distance = cameraManipulator->getDistance();
 
-    setMyView(avatars[user_to_spy]->getPosition(),avatars[user_to_spy]->getAttitude());
+    setMyView(avatars[user_to_spy]->getPosition(),avatars[user_to_spy]->getAttitude(),original_distance);
 
     removeAvatar(user_to_spy);
 }
@@ -433,7 +434,7 @@ void Server::unSpyUser() {
     QByteArray block;
     QDataStream out(&block,QIODevice::WriteOnly);
 
-    out << (quint16)0 << UnspyUserExecutor::INSTRUCTION_NUMBER << user_to_spy << (int)0;
+    out << (quint16)0 << UnspyUserExecutor::INSTRUCTION_NUMBER << (int)getUserId(user_to_spy) << (int)0;
 
     out.device()->seek(0);
     out << (quint16)(block.size() - sizeof(quint16));
@@ -443,7 +444,7 @@ void Server::unSpyUser() {
     }
 
     // restore original view
-    setMyView(original_center,original_rotation);
+    setMyView(original_center,original_rotation,original_distance);
 
     sendMyView();
 
@@ -459,10 +460,11 @@ void Server::addAvatar(QTcpSocket *socket, QString nick) {
     avatars[socket] = avatar;
 }
 
-void Server::setMyView(osg::Vec3d center, osg::Quat rotation) {
+void Server::setMyView(osg::Vec3d center, osg::Quat rotation, float distance) {
     Vwr::CameraManipulator * cameraManipulator = ((QOSG::CoreWindow *) cw)->getCameraManipulator();
     cameraManipulator->setCenter(center);
     cameraManipulator->setRotation(rotation);
+    cameraManipulator->setDistance(distance);
 }
 
 void Server::lookAt(osg::Vec3d coord) {

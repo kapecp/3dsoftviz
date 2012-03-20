@@ -8,6 +8,7 @@ using namespace Network;
 void GraphStartExecutor::execute() {
 
     Client * client = Client::getInstance();
+    client->ignoreLayout(true);
 
     client->currentGraph = Manager::GraphManager::getInstance()->createNewGraph("NewGraph");
     Importer::GraphOperations * operations = new Importer::GraphOperations(*client->currentGraph);

@@ -53,7 +53,7 @@ class Server : public QTcpServer {
         QTcpSocket * getCenterUser() { return user_to_center; }
         bool isCenteringUser() { return user_to_center != NULL; }
 
-        void setMyView(osg::Vec3d center, osg::Quat rotation);
+        void setMyView(osg::Vec3d center, osg::Quat rotation, float distance);
         void lookAt(osg::Vec3d coord);
 
         //some getters
@@ -103,6 +103,7 @@ class Server : public QTcpServer {
 
         osg::Vec3d original_center;
         osg::Quat original_rotation;
+        float original_distance;
 
         QTcpSocket * getClientById(int id);
 

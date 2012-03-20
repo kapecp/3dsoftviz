@@ -45,11 +45,11 @@ void ServerMoveAvatarExecutor::execute() {
     }
 
     if (server->userToSpy() == out_socket) {
-        server->setMyView(center,rotation);
+        server->setMyView(center,rotation,distance);
     }
 
     if (server->getCenterUser() == out_socket) {
-        server->lookAt(center);
+        server->lookAt(center+direction);
     }
 
 }

@@ -11,5 +11,6 @@ void GraphEndExecutor::execute() {
     client->thread->play();
     client->coreGraph->setNodesFreezed(false);
     client->currentGraph->setFrozen(false);
+    client->ignoreLayout(false);
 
 }
