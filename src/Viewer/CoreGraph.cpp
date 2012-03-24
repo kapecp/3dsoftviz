@@ -123,25 +123,23 @@ void CoreGraph::cleanUp()
 
 
 
-osg::ref_ptr<osg::Node> CoreGraph::createSkyBox()
-{
-	osg::ref_ptr<osg::Texture2D> skymap = PerlinNoiseTextureGenerator::getCoudTexture(2048, 1024, 
-		appConf->getValue("Viewer.Display.BackGround.R").toInt(),
-		appConf->getValue("Viewer.Display.BackGround.G").toInt(),
-		appConf->getValue("Viewer.Display.BackGround.B").toInt(),
-		255);
+osg::ref_ptr<osg::Node> CoreGraph::createSkyBox(){
 
-	skymap->setDataVariance(osg::Object::DYNAMIC);
-	skymap->setFilter(osg::Texture::MIN_FILTER, osg::Texture::LINEAR_MIPMAP_LINEAR);
-	skymap->setFilter(osg::Texture::MAG_FILTER, osg::Texture::LINEAR);
-	skymap->setWrap(osg::Texture::WRAP_S, osg::Texture::CLAMP_TO_EDGE);
-	skymap->setWrap(osg::Texture::WRAP_T, osg::Texture::CLAMP_TO_EDGE);
+        osg::ref_ptr<osg::Texture2D> skymap = DataHelper::readTextureFromFile("img/skybox/skybox.png");
 
-	osg::ref_ptr<osg::StateSet> stateset = new osg::StateSet();
-	stateset->setTextureAttributeAndModes(0, skymap, osg::StateAttribute::ON);
+        skymap->setDataVariance(osg::Object::DYNAMIC);
+        skymap->setFilter(osg::Texture::MIN_FILTER, osg::Texture::LINEAR_MIPMAP_LINEAR);
+        skymap->setFilter(osg::Texture::MAG_FILTER, osg::Texture::LINEAR);
+        skymap->setWrap(osg::Texture::WRAP_S, osg::Texture::CLAMP_TO_EDGE);
+        skymap->setWrap(osg::Texture::WRAP_T, osg::Texture::CLAMP_TO_EDGE);
+        skymap->setWrap(osg::Texture::WRAP_S, osg::Texture::CLAMP_TO_EDGE);
+
+        osg::ref_ptr<osg::StateSet> stateset = new osg::StateSet();
+
+        stateset->setTextureAttributeAndModes(0, skymap, osg::StateAttribute::ON);
 	stateset->setMode( GL_LIGHTING, osg::StateAttribute::OFF );
 	stateset->setMode( GL_CULL_FACE, osg::StateAttribute::OFF );
-	stateset->setRenderBinDetails(-1,"RenderBin");
+        stateset->setRenderBinDetails(-1,"RenderBin");
 
 	osg::ref_ptr<osg::Depth> depth = new osg::Depth;
 	depth->setFunction(osg::Depth::ALWAYS);
