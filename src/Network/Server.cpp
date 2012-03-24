@@ -125,6 +125,10 @@ void Server::sendGraph(QTcpSocket *client){
     }
 
     Data::Graph * currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
+    if (currentGraph == NULL) {
+        return;
+    }
+
     QMap<qlonglong, osg::ref_ptr<Data::Node> >* nodes = currentGraph -> getNodes();
     QMap<qlonglong, osg::ref_ptr<Data::Node> >::const_iterator iNodes =  nodes->constBegin();
 
