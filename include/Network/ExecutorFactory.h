@@ -12,6 +12,7 @@
 #include "Network/executors/GraphStartExecutor.h"
 #include "Network/executors/GraphEndExecutor.h"
 #include "Network/executors/NewNodeExecutor.h"
+#include "Network/executors/ServerNewNodeExecutor.h"
 #include "Network/executors/NewEdgeExecutor.h"
 #include "Network/executors/LayoutExecutor.h"
 #include "Network/executors/MoveAvatarExecutor.h"
@@ -35,25 +36,8 @@ namespace Network {
     public:
         ExecutorFactory();
         AbstractExecutor* getExecutor(QDataStream * stream);
-        void setSenderClient(QTcpSocket *senderClient) {this->senderClient = senderClient;}
 
     private:
-        QRegExp messageRegex;
-        QRegExp usersRegex;
-        QRegExp nodeRegexp;
-        QRegExp layRegexp;
-        QRegExp edgeRegexp;
-        QRegExp moveNodeRegexp;
-        QRegExp serverMoveNodeRegexp;
-        QRegExp viewRegexp;
-        QRegExp serverViewRegexp;
-        QRegExp incommingUserRegex;
-        QRegExp welcomeRegex;
-        QRegExp serverSpyRegex;
-        QRegExp spyRegex;
-        QRegExp serverUnspyRegex;
-        QRegExp unspyRegex;
-
         UsersExecutor *usersExecutor;
         MoveNodeExecutor *moveNodeExecutor;
         ServerMoveNodeExecutor *serverMoveNodeExecutor;
@@ -74,10 +58,7 @@ namespace Network {
         SpyUserExecutor *spyUserExecutor;
         ServerUnspyUserExecutor * serverUnspyUserExecutor;
         UnspyUserExecutor * unspyUserExecutor;
-
-        QObject * client;
-
-        QTcpSocket *senderClient;
+        ServerNewNodeExecutor *serverNewNodeExecutor;
     };
 
 }

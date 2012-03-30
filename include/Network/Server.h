@@ -30,6 +30,7 @@ class Server : public QTcpServer {
 
         void sendGraph(QTcpSocket *client = NULL);
         void sendLayout(QTcpSocket *client = NULL);
+        void sendNewNode(osg::ref_ptr<Data::Node> node, QTcpSocket *client = NULL);
         void sendMoveNodes();
 
         void stopServer();

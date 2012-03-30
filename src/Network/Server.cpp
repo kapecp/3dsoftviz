@@ -490,3 +490,38 @@ void Server::centerUser(int id_user) {
     osg::PositionAttitudeTransform * userAvatar = avatars[user_to_center];
     lookAt(userAvatar->getPosition());
 }
+
+void Server::sendNewNode(osg::ref_ptr<Data::Node> node, QTcpSocket *client) {
+
+    if (!this -> isListening() || (client == NULL && clients.size() == 0)) {
+        return;
+    }
+
+    QByteArray block;
+    QDataStream out(&block,QIODevice::WriteOnly);
+    out.setFloatingPointPrecision(QDataStream::SinglePrecision);
+
+    osg::Vec4 color = node->getColor();
+
+    out     << (quint16)0 << NewNodeExecutor::INSTRUCTION_NUMBER
+            << (int) node->getId()
+            << (float) (node->getCurrentPosition().x()/graphScale)
+            << (float) (node->getCurrentPosition().y()/graphScale)
+            << (float) (node->getCurrentPosition().z()/graphScale)
+            << (QString) (node->getName())
+            << (float) color.x()
+            << (float) color.y()
+            << (float) color.z()
+            << (float) color.w();
+
+    out.device()->seek(0);
+    out << (quint16)(block.size() - sizeof(quint16));
+
+    if (client == NULL){
+        foreach(QTcpSocket *otherClient, clients){
+            otherClient->write(block);
+        }
+    } else {
+        client->write(block);
+    }
+}

@@ -7,9 +7,6 @@ using namespace Network;
 
 ExecutorFactory::ExecutorFactory() {
 
-    this->client = client;
-    this->senderClient = NULL;
-
     usersExecutor = new UsersExecutor;
     moveNodeExecutor = new MoveNodeExecutor;
     serverMoveNodeExecutor = new ServerMoveNodeExecutor;
@@ -30,6 +27,7 @@ ExecutorFactory::ExecutorFactory() {
     spyUserExecutor = new SpyUserExecutor;
     serverUnspyUserExecutor = new ServerUnspyUserExecutor;
     unspyUserExecutor = new UnspyUserExecutor;
+    serverNewNodeExecutor = new ServerNewNodeExecutor;
 
 }
 
@@ -111,6 +109,10 @@ AbstractExecutor* ExecutorFactory::getExecutor(QDataStream * stream) {
     case ServerSendGraphExecutor::INSTRUCTION_NUMBER :
         serverSendGraphExecutor->setDataStream(stream);
         return serverSendGraphExecutor;
+        break;
+    case ServerNewNodeExecutor::INSTRUCTION_NUMBER :
+        serverNewNodeExecutor->setDataStream(stream);
+        return serverNewNodeExecutor;
         break;
     default:
         return NULL;

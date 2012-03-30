@@ -917,26 +917,23 @@ bool CoreWindow::add_NodeClick()
         Data::Type *edgeType = NULL;
         Data::Type *nodeType = NULL;
 
+        if (currentGraph == NULL) {
+            currentGraph= Manager::GraphManager::getInstance()->createNewGraph("NewGraph");
+        }
         Importer::GraphOperations * operations = new Importer::GraphOperations(*currentGraph);
         operations->addDefaultTypes(edgeType, nodeType);
 
-	if (currentGraph != NULL)
-	{
-		osg::Vec3 position = viewerWidget->getPickHandler()->getSelectionCenter(true); 
+        osg::Vec3 position = viewerWidget->getPickHandler()->getSelectionCenter(true);
 
-                osg::ref_ptr<Data::Node> node1 = currentGraph->addNode("newNode", nodeType , position);
+        osg::ref_ptr<Data::Node> newNode = currentGraph->addNode("newNode", nodeType , position);
 
-		if (isPlaying)
-			layout->play();
-	}
-	else
-	{
-		currentGraph= Manager::GraphManager::getInstance()->createNewGraph("NewGraph");
-                osg::Vec3 position = viewerWidget->getPickHandler()->getSelectionCenter(true);
-                osg::ref_ptr<Data::Node> node1 = currentGraph->addNode("newNode", nodeType, position);
-		if (isPlaying)
-			layout->play();
-	}
+        if (isPlaying)
+                layout->play();
+
+        Network::Server * server = Network::Server::getInstance();
+        server->sendNewNode(newNode);
+        client->sendNewNode(newNode);
+
 	return true;
 }
 

@@ -62,6 +62,7 @@ class Client : public QObject
         void setMyView(osg::Vec3d center, osg::Quat rotation, float distance);
         void lookAt(osg::Vec3d coord);
 
+        void sendNewNode(osg::ref_ptr<Data::Node> node);
 
         void setMyId(int id) { my_id = id; }
         int getMyId() { return my_id; }
