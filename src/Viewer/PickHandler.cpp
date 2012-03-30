@@ -67,6 +67,13 @@ bool PickHandler::handle( const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdap
 		}
 	case osgGA::GUIEventAdapter::DRAG:
 		{		
+            Network::Client * client = Network::Client::getInstance();
+            if (client->isConnected()){
+                client -> sendMovedNodesPosition();
+            } else {
+                Network::Server * server = Network::Server::getInstance();
+                server -> sendMoveNodes();
+            }
 			//ak je drag a ide timer tak vypnut timer a vyvolat push
 			//zaruci sa tak spravne spracovany drag
 			if (timer->isActive())
@@ -79,13 +86,6 @@ bool PickHandler::handle( const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdap
 		}
 	case osgGA::GUIEventAdapter::RELEASE:
                 {
-                        Network::Client * client = Network::Client::getInstance();
-                        if (client->isConnected()){
-                            client -> sendMovedNodesPosition();
-                        } else {
-                            Network::Server * server = Network::Server::getInstance();
-                            server -> sendMoveNodes();
-                        }
 
 			//ak je release a je timer aktivny tak sa ulozi event a nevyvola sa
 			if (timer->isActive())

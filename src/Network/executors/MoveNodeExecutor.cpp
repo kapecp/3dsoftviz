@@ -14,6 +14,9 @@ void MoveNodeExecutor::execute() {
     QMap<qlonglong, osg::ref_ptr<Data::Node> >* nodes = currentGraph -> getNodes();
     //qDebug() << "Moving" << id << "to" << x << y << z;
     Data::Node *node = (*((*nodes).find(id)));
+    if (Client::getInstance()->selected_nodes.contains(node)) {
+        return;
+    }
 
     node -> setUsingInterpolation(false);
     node -> setFixed(true);
