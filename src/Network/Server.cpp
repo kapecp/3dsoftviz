@@ -156,12 +156,18 @@ void Server::sendGraph(QTcpSocket *client){
         block.clear();
         out.device()->reset();
 
+        osg::Vec4 color = iNodes.value()->getColor();
+
         out     << (quint16)0 << NewNodeExecutor::INSTRUCTION_NUMBER
                 << (int) iNodes.value()->getId()
                 << (float) (iNodes.value()->getCurrentPosition().x()/graphScale)
                 << (float) (iNodes.value()->getCurrentPosition().y()/graphScale)
                 << (float) (iNodes.value()->getCurrentPosition().z()/graphScale)
-                << (QString) (iNodes.value()->getName());
+                << (QString) (iNodes.value()->getName())
+                << (float) color.x()
+                << (float) color.y()
+                << (float) color.z()
+                << (float) color.w();
 
         out.device()->seek(0);
         out << (quint16)(block.size() - sizeof(quint16));
