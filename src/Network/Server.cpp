@@ -160,7 +160,8 @@ void Server::sendGraph(QTcpSocket *client){
                 << (int) iNodes.value()->getId()
                 << (float) (iNodes.value()->getCurrentPosition().x()/graphScale)
                 << (float) (iNodes.value()->getCurrentPosition().y()/graphScale)
-                << (float) (iNodes.value()->getCurrentPosition().z()/graphScale);
+                << (float) (iNodes.value()->getCurrentPosition().z()/graphScale)
+                << (QString) (iNodes.value()->getName());
 
         out.device()->seek(0);
         out << (quint16)(block.size() - sizeof(quint16));

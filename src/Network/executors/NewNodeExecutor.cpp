@@ -16,9 +16,11 @@ void NewNodeExecutor::execute() {
     float y;
     float z;
 
-    *stream >> id >> x >> y >> z;
+    QString name;
+
+    *stream >> id >> x >> y >> z >> name;
     //qDebug()<< "[NEW NODE] id: " << id << " [" << x << "," << y << "," << z << "]";
 
     osg::Vec3 position(x,y,z);
-    client->currentGraph->addNode(id,"newNode", client->nodeType, position);
+    client->currentGraph->addNode(id,name, client->nodeType, position);
 }
