@@ -43,6 +43,6 @@ void ServerMoveNodeExecutor::execute() {
     node -> setFixed(true);
     node -> setTargetPosition(osg::Vec3(x,y,z));
     Layout::LayoutThread * thread = server->getLayoutThread();
-    thread->play();
+    thread->wakeUp();
 
 }

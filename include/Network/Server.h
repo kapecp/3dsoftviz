@@ -16,6 +16,7 @@
 #include "Layout/LayoutThread.h"
 #include "Viewer/CoreGraph.h"
 #include "Network/ExecutorFactory.h"
+#include "QOSG/CoreWindow.h"
 
 namespace Network {
 
@@ -75,6 +76,8 @@ class Server : public QTcpServer {
         void addAvatar(QTcpSocket* socket, QString nick);
         void setLayoutThread(Layout::LayoutThread * layoutThread);
         void setCoreGraph(Vwr::CoreGraph * cg) { coreGraph = cg; }
+
+        QObject* getCoreWindowReference() { return cw; }
 
     private slots:
         void readyRead();

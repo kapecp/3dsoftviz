@@ -39,6 +39,10 @@ void ServerNewNodeExecutor::execute() {
     osg::ref_ptr<Data::Node> newNode  = currentGraph->addNode(id,name, nodeType, position);
     newNode->setColor(osg::Vec4(color_x, color_y, color_z, color_w));
 
+    if (((QOSG::CoreWindow *)server->getCoreWindowReference())->playing()) {
+        server->getLayoutThread()->play();
+    }
+
     QSet<QTcpSocket*> clients = server->getClients();
     foreach(QTcpSocket *client, clients) { // send new node to others
         if (client == sender) continue;

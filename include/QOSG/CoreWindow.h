@@ -546,7 +546,7 @@ namespace QOSG
 		*  \return Layout::LayoutThread * 
 		*/
 		Layout::LayoutThread * getLayoutThread() const { return layout; }
-
+                bool playing() { return isPlaying; }
                 Vwr::CameraManipulator * getCameraManipulator() { return viewerWidget->getCameraManipulator(); }
 
 		/**
