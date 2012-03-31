@@ -123,33 +123,24 @@ void Server::sendGraph(QTcpSocket *client){
     if (!this -> isListening() || (client == NULL && clients.size() == 0)) {
         return;
     }
+    /*QTime t;
+    t.start();*/
+
+    this->sendPlainInstruction(GraphStartExecutor::INSTRUCTION_NUMBER, client);
 
     Data::Graph * currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
     if (currentGraph == NULL) {
+        this->sendPlainInstruction(GraphEndExecutor::INSTRUCTION_NUMBER, client);
         return;
     }
 
-    QMap<qlonglong, osg::ref_ptr<Data::Node> >* nodes = currentGraph -> getNodes();
-    QMap<qlonglong, osg::ref_ptr<Data::Node> >::const_iterator iNodes =  nodes->constBegin();
-
-    /*QTime t;
-    t.start();*/
 
     QByteArray block;
     QDataStream out(&block,QIODevice::WriteOnly);
     out.setFloatingPointPrecision(QDataStream::SinglePrecision);
 
-    out << (quint16)0 << GraphStartExecutor::INSTRUCTION_NUMBER;
-    out.device()->seek(0);
-    out << (quint16)(block.size() - sizeof(quint16));
-
-    if (client == NULL){
-        foreach(QTcpSocket *otherClient, clients){
-            otherClient->write(block);
-        }
-    } else {
-        client -> write(block);
-    }
+    QMap<qlonglong, osg::ref_ptr<Data::Node> >* nodes = currentGraph -> getNodes();
+    QMap<qlonglong, osg::ref_ptr<Data::Node> >::const_iterator iNodes =  nodes->constBegin();
 
     while(iNodes != nodes->constEnd()) {
 
@@ -211,21 +202,7 @@ void Server::sendGraph(QTcpSocket *client){
         ++iEdges;
     }
 
-    block.clear();
-    out.device()->reset();
-
-    out << (quint16)0 << GraphEndExecutor::INSTRUCTION_NUMBER;
-
-    out.device()->seek(0);
-    out << (quint16)(block.size() - sizeof(quint16));
-
-    if (client == NULL){
-        foreach(QTcpSocket *otherClient, clients){
-            otherClient->write(block);
-        }
-    } else {
-        client -> write(block);
-    }
+    this->sendPlainInstruction(GraphEndExecutor::INSTRUCTION_NUMBER, client);
 
     //qDebug() << "Sending took" << t.elapsed() << "ms";
 
@@ -523,5 +500,23 @@ void Server::sendNewNode(osg::ref_ptr<Data::Node> node, QTcpSocket *client) {
         }
     } else {
         client->write(block);
+    }
+}
+
+void Server::sendPlainInstruction(quint8 instruction_number, QTcpSocket *client) {
+
+    QByteArray block;
+    QDataStream out(&block,QIODevice::WriteOnly);
+
+    out << (quint16)0 << (quint8)instruction_number;
+    out.device()->seek(0);
+    out << (quint16)(block.size() - sizeof(quint16));
+
+    if (client == NULL){
+        foreach(QTcpSocket *otherClient, clients){
+            otherClient->write(block);
+        }
+    } else {
+        client -> write(block);
     }
 }

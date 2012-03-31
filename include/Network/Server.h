@@ -112,6 +112,8 @@ class Server : public QTcpServer {
         QTcpSocket * getClientById(int id);
 
         quint16 blockSize;
+
+        void sendPlainInstruction(quint8 instruction_number, QTcpSocket * client = NULL);
     };
 }
 

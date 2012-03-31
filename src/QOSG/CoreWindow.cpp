@@ -925,14 +925,17 @@ bool CoreWindow::add_NodeClick()
 
         osg::Vec3 position = viewerWidget->getPickHandler()->getSelectionCenter(true);
 
-        osg::ref_ptr<Data::Node> newNode = currentGraph->addNode("newNode", nodeType , position);
+        osg::ref_ptr<Data::Node> newNode;
+        if (!client->isConnected()) {
+            newNode = currentGraph->addNode("newNode", nodeType , position);
+            Network::Server * server = Network::Server::getInstance();
+            server->sendNewNode(newNode);
+        } else {
+            client->sendNewNode("newNode", position);
+        }
 
         if (isPlaying)
                 layout->play();
-
-        Network::Server * server = Network::Server::getInstance();
-        server->sendNewNode(newNode);
-        client->sendNewNode(newNode);
 
 	return true;
 }
