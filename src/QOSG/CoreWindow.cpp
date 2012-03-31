@@ -885,15 +885,15 @@ bool CoreWindow::add_EdgeClick()
 	for (QMap<qlonglong, osg::ref_ptr<Data::Edge> >::iterator it = mapa->begin (); it != mapa->end (); ++it) {
 			osg::ref_ptr<Data::Edge> existingEdge = it.value ();
 			if (
-				existingEdge->getSrcNode () ->getName () == node1 ->getName () && 
-				existingEdge->getDstNode () ->getName () == node2 ->getName ()
+                                existingEdge->getSrcNode () ->getId () == node1 ->getId () &&
+                                existingEdge->getDstNode () ->getId () == node2 ->getId ()
 			) {
 				AppCore::Core::getInstance()->messageWindows->showMessageBox("Hrana najdená","Medzi vrcholmi nesmie byt hrana",false);
 				return false;
 			}
 			if (
-				existingEdge->getSrcNode () ->getName () == node2 ->getName () && 
-				existingEdge->getDstNode () ->getName () == node1 ->getName ()
+                                existingEdge->getSrcNode () ->getId () == node2 ->getId () &&
+                                existingEdge->getDstNode () ->getId () == node1 ->getId ()
 			) {
 				AppCore::Core::getInstance()->messageWindows->showMessageBox("Hrana najdená","Medzi vrcholmi nesmie byt hrana",false);
 				return false;
