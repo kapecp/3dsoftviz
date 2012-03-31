@@ -2,9 +2,6 @@
 #include "Manager/Manager.h"
 #include "Importer/GraphOperations.h"
 #include "Network/Server.h"
-#include "osg/Vec3"
-#include "osg/ref_ptr"
-#include "Data/Node.h"
 
 using namespace Network;
 
@@ -38,8 +35,5 @@ void ServerNewNodeExecutor::execute() {
         server->getLayoutThread()->play();
     }
 
-    QSet<QTcpSocket*> clients = server->getClients();
-    foreach(QTcpSocket *client, clients) { // send new node to others
-        server->sendNewNode(newNode, client);
-    }
+    server->sendNewNode(newNode);
 }

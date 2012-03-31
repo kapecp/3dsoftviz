@@ -14,6 +14,7 @@
 #include "Network/executors/NewNodeExecutor.h"
 #include "Network/executors/ServerNewNodeExecutor.h"
 #include "Network/executors/NewEdgeExecutor.h"
+#include "Network/executors/ServerNewEdgeExecutor.h"
 #include "Network/executors/LayoutExecutor.h"
 #include "Network/executors/MoveAvatarExecutor.h"
 #include "Network/executors/MessageExecutor.h"
@@ -59,6 +60,7 @@ namespace Network {
         ServerUnspyUserExecutor * serverUnspyUserExecutor;
         UnspyUserExecutor * unspyUserExecutor;
         ServerNewNodeExecutor *serverNewNodeExecutor;
+        ServerNewEdgeExecutor *serverNewEdgeExecutor;
     };
 
 }

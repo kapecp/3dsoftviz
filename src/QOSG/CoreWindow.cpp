@@ -881,7 +881,7 @@ bool CoreWindow::add_EdgeClick()
 	node1=(* ni);
 	++ni;
 	QMap<qlonglong, osg::ref_ptr<Data::Edge> > *mapa = currentGraph->getEdges();
-	Data::Type* type = currentGraph->addType(Data::GraphLayout::META_EDGE_TYPE);
+        Data::Type* type = currentGraph->addType(Data::GraphLayout::META_EDGE_TYPE);
 	for (QMap<qlonglong, osg::ref_ptr<Data::Edge> >::iterator it = mapa->begin (); it != mapa->end (); ++it) {
 			osg::ref_ptr<Data::Edge> existingEdge = it.value ();
 			if (
@@ -900,8 +900,14 @@ bool CoreWindow::add_EdgeClick()
 			}
 		}
 
-	
-	currentGraph->addEdge("GUI_edge", node1, node2, type, false);
+        osg::ref_ptr<Data::Edge> newEdge;
+        if (!client->isConnected()) {
+            newEdge = currentGraph->addEdge("GUI_edge", node1, node2, type, false);
+            Network::Server * server = Network::Server::getInstance();
+            server->sendNewEdge(newEdge);
+        } else {
+            client->sendNewEdge("GUI_edge", node1->getId(), node2->getId(), false);
+        }
 	if (isPlaying)
 			layout->play();
 	QString nodename1 = QString(node1->getName());

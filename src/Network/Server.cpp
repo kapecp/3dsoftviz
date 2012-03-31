@@ -134,42 +134,12 @@ void Server::sendGraph(QTcpSocket *client){
         return;
     }
 
-
-    QByteArray block;
-    QDataStream out(&block,QIODevice::WriteOnly);
-    out.setFloatingPointPrecision(QDataStream::SinglePrecision);
-
     QMap<qlonglong, osg::ref_ptr<Data::Node> >* nodes = currentGraph -> getNodes();
     QMap<qlonglong, osg::ref_ptr<Data::Node> >::const_iterator iNodes =  nodes->constBegin();
 
     while(iNodes != nodes->constEnd()) {
 
-        block.clear();
-        out.device()->reset();
-
-        osg::Vec4 color = iNodes.value()->getColor();
-
-        out     << (quint16)0 << NewNodeExecutor::INSTRUCTION_NUMBER
-                << (int) iNodes.value()->getId()
-                << (float) (iNodes.value()->getCurrentPosition().x()/graphScale)
-                << (float) (iNodes.value()->getCurrentPosition().y()/graphScale)
-                << (float) (iNodes.value()->getCurrentPosition().z()/graphScale)
-                << (QString) (iNodes.value()->getName())
-                << (float) color.x()
-                << (float) color.y()
-                << (float) color.z()
-                << (float) color.w();
-
-        out.device()->seek(0);
-        out << (quint16)(block.size() - sizeof(quint16));
-
-        if (client == NULL){
-            foreach(QTcpSocket *otherClient, clients){
-                otherClient->write(block);
-            }
-        } else {
-            client->write(block);
-        }
+        this->sendNewNode(iNodes.value(),client);
 
         ++iNodes;
     }
@@ -179,25 +149,7 @@ void Server::sendGraph(QTcpSocket *client){
 
     while (iEdges != edges -> constEnd()) {
 
-        block.clear();
-        out.device()->reset();
-
-        out    << (quint16)0 << NewEdgeExecutor::INSTRUCTION_NUMBER
-               << (int) iEdges.value()->getId()
-               << (int) (iEdges.value()->getSrcNode()->getId())
-               << (int) (iEdges.value()->getDstNode()->getId())
-               << (bool) iEdges.value()->isOriented();
-
-        out.device()->seek(0);
-        out << (quint16)(block.size() - sizeof(quint16));
-
-        if (client == NULL){
-            foreach(QTcpSocket *otherClient, clients){
-                otherClient->write(block);
-            }
-        } else {
-            client -> write(block);
-        }
+        this->sendNewEdge(iEdges.value());
 
         ++iEdges;
     }
@@ -500,6 +452,36 @@ void Server::sendNewNode(osg::ref_ptr<Data::Node> node, QTcpSocket *client) {
         }
     } else {
         client->write(block);
+    }
+}
+
+void Server::sendNewEdge(osg::ref_ptr<Data::Edge> edge, QTcpSocket *client) {
+
+    if (!this -> isListening() || (client == NULL && clients.size() == 0)) {
+        return;
+    }
+
+    QByteArray block;
+    QDataStream out(&block,QIODevice::WriteOnly);
+    out.setFloatingPointPrecision(QDataStream::SinglePrecision);
+
+    out    << (quint16)0 << NewEdgeExecutor::INSTRUCTION_NUMBER
+           << (int) edge->getId()
+           << (int) (edge->getSrcNode()->getId())
+           << (int) (edge->getDstNode()->getId())
+           << (bool) edge->isOriented();
+
+    qDebug() << "posielam hranu" << edge->getId();
+
+    out.device()->seek(0);
+    out << (quint16)(block.size() - sizeof(quint16));
+
+    if (client == NULL){
+        foreach(QTcpSocket *otherClient, clients){
+            otherClient->write(block);
+        }
+    } else {
+        client -> write(block);
     }
 }
 

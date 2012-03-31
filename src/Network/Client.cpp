@@ -322,3 +322,26 @@ void Client::sendNewNode(QString name, osg::Vec3f position) {
 
     socket->write(block);
 }
+
+void Client::sendNewEdge(QString name, int id_from, int id_to, bool oriented) {
+
+    if (!this -> isConnected() ) {
+        return;
+    }
+
+    QByteArray block;
+    QDataStream out(&block,QIODevice::WriteOnly);
+    out.setFloatingPointPrecision(QDataStream::SinglePrecision);
+
+    out     << (quint16)0 << ServerNewEdgeExecutor::INSTRUCTION_NUMBER
+            << (QString) (name)
+            << (int) (id_from)
+            << (int) (id_to)
+            << (bool) (oriented);
+
+    out.device()->seek(0);
+    out << (quint16)(block.size() - sizeof(quint16));
+
+    socket->write(block);
+
+}

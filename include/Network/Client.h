@@ -63,6 +63,7 @@ class Client : public QObject
         void lookAt(osg::Vec3d coord);
 
         void sendNewNode(QString name, osg::Vec3f position);
+        void sendNewEdge(QString name, int id_from, int id_to, bool oriented = false);
 
         void setMyId(int id) { my_id = id; }
         int getMyId() { return my_id; }
