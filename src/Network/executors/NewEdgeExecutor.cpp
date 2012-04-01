@@ -19,8 +19,8 @@ void NewEdgeExecutor::execute_client() {
     Data::Graph * currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
     QMap<qlonglong, osg::ref_ptr<Data::Node> >* nodes = currentGraph -> getNodes();
 
-    osg::ref_ptr<Data::Node> node_from = (*((*nodes).find(from)));
-    osg::ref_ptr<Data::Node> node_to = (*((*nodes).find(to)));
+    osg::ref_ptr<Data::Node> node_from = *nodes->find(from);
+    osg::ref_ptr<Data::Node> node_to = *nodes->find(to);
 
     client->currentGraph->addEdge(id,"NewEdge",node_from,node_to,client->edgeType,oriented);
 }
@@ -40,8 +40,8 @@ void NewEdgeExecutor::execute_server() {
     Data::Graph * currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
     QMap<qlonglong, osg::ref_ptr<Data::Node> >* nodes = currentGraph -> getNodes();
 
-    osg::ref_ptr<Data::Node> node_from = (*((*nodes).find(from)));
-    osg::ref_ptr<Data::Node> node_to = (*((*nodes).find(to)));
+    osg::ref_ptr<Data::Node> node_from = *nodes->find(from);
+    osg::ref_ptr<Data::Node> node_to = *nodes->find(to);
 
     Data::Type* type = currentGraph->addType(Data::GraphLayout::META_EDGE_TYPE);
 

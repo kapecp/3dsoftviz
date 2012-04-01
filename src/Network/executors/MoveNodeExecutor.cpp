@@ -13,7 +13,7 @@ void MoveNodeExecutor::execute_client() {
     Data::Graph * currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
     QMap<qlonglong, osg::ref_ptr<Data::Node> >* nodes = currentGraph -> getNodes();
     //qDebug() << "Moving" << id << "to" << x << y << z;
-    Data::Node *node = (*((*nodes).find(id)));
+    Data::Node *node = *nodes->find(id);
     if (Client::getInstance()->selected_nodes.contains(node)) {
         return;
     }
@@ -54,7 +54,7 @@ void MoveNodeExecutor::execute_server() {
     Data::Graph * currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
     QMap<qlonglong, osg::ref_ptr<Data::Node> >* nodes = currentGraph -> getNodes();
     //qDebug() << "Moving" << id << "to" << x << y << z;
-    Data::Node *node = (*((*nodes).find(id)));
+    Data::Node *node = *nodes->find(id);
 
     server->appendMovingNode(node);
 
