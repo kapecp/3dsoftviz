@@ -3,7 +3,7 @@
 
 using namespace Network;
 
-void WelcomeExecutor::execute() {
+void WelcomeExecutor::execute_client() {
 
     Client * client = Client::getInstance();
     int id;
@@ -11,4 +11,8 @@ void WelcomeExecutor::execute() {
     client->setMyId(id);
     client->requestGraph();
 
+}
+
+void WelcomeExecutor::execute_server() {
+    return;
 }

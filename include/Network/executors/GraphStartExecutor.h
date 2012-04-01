@@ -8,7 +8,8 @@ namespace Network {
     class GraphStartExecutor : public AbstractExecutor {
 
     public:
-        void execute();
+        void execute_client();
+        void execute_server();
         static const quint8 INSTRUCTION_NUMBER = 4;
 
     };

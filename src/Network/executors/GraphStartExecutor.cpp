@@ -5,7 +5,7 @@
 
 using namespace Network;
 
-void GraphStartExecutor::execute() {
+void GraphStartExecutor::execute_client() {
 
     Client * client = Client::getInstance();
     client->ignoreLayout(true);
@@ -18,4 +18,8 @@ void GraphStartExecutor::execute() {
     client->coreGraph->setNodesFreezed(true);
     client->currentGraph->setFrozen(true);
 
+}
+
+void GraphStartExecutor::execute_server() {
+    return;
 }

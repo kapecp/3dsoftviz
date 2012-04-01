@@ -6,7 +6,7 @@
 
 using namespace Network;
 
-void UsersExecutor::execute() {
+void UsersExecutor::execute_client() {
 
     Client *client = Client::getInstance();
 
@@ -39,4 +39,8 @@ void UsersExecutor::execute() {
 
      client->updateUserList();
      client->sendMyView();
+}
+
+void UsersExecutor::execute_server() {
+    return;
 }

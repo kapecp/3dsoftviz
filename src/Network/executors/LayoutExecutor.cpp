@@ -4,7 +4,7 @@
 
 using namespace Network;
 
-void LayoutExecutor::execute() {
+void LayoutExecutor::execute_client() {
 
     int id;
 
@@ -30,4 +30,8 @@ void LayoutExecutor::execute() {
             }
         }
     }
+}
+
+void LayoutExecutor::execute_server() {
+    return;
 }

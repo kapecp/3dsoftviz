@@ -58,7 +58,7 @@ void Client::requestGraph() {
     QDataStream out(&block,QIODevice::WriteOnly);
     out.setFloatingPointPrecision(QDataStream::SinglePrecision);
 
-    out << (quint16)0 << ServerSendGraphExecutor::INSTRUCTION_NUMBER;
+    out << (quint16)0 << SendGraphExecutor::INSTRUCTION_NUMBER;
     out.device()->seek(0);
     out << (quint16)(block.size() - sizeof(quint16));
 
@@ -87,8 +87,8 @@ void Client::readyRead() {
 
         AbstractExecutor *executor = executorFactory->getExecutor(&in);
 
-        if (executor != NULL) {
-            executor->execute();
+        if (executor != NULL && this->isConnected()) {
+            executor->execute_client();
         } else {
             qDebug() << "Klient: neznama instrukcia";
         }
@@ -102,7 +102,7 @@ void Client::connected() {
     QDataStream out(&block, QIODevice::WriteOnly);
 
     out << (quint16)0;
-    out << ServerIncommingUserExecutor::INSTRUCTION_NUMBER;
+    out << IncommingUserExecutor::INSTRUCTION_NUMBER;
     out << clientNick;
 
     out.device()->seek(0);
@@ -157,7 +157,7 @@ void Client::sendMovedNodesPosition() {
         block.clear();
         out.device()->reset();
 
-        out << (quint16)0 << ServerMoveNodeExecutor::INSTRUCTION_NUMBER
+        out << (quint16)0 << MoveNodeExecutor::INSTRUCTION_NUMBER
             << (int) ((*i)->getId())
             << (float) ((*i)->getCurrentPosition().x())
             << (float) ((*i)->getCurrentPosition().y())
@@ -179,7 +179,7 @@ void Client::sendMyView(osg::Vec3d center, osg::Quat rotation, float distance) {
     QDataStream out(&block, QIODevice::WriteOnly);
     out.setFloatingPointPrecision(QDataStream::SinglePrecision);
 
-    out << (quint16)0 << ServerMoveAvatarExecutor::INSTRUCTION_NUMBER << (float)center.x() << (float)center.y() << (float)center.z()
+    out << (quint16)0 << MoveAvatarExecutor::INSTRUCTION_NUMBER << (float)center.x() << (float)center.y() << (float)center.z()
         << (float)rotation.x() << (float)rotation.y() << (float)rotation.z() << (float)rotation.w() << (float) distance;
 
     out.device()->seek(0);
@@ -250,7 +250,7 @@ void Client::unSpyUser() {
     QByteArray block;
     QDataStream out(&block,QIODevice::WriteOnly);
 
-    out << (quint16)0 << ServerUnspyUserExecutor::INSTRUCTION_NUMBER << (int)user_to_spy;
+    out << (quint16)0 << UnspyUserExecutor::INSTRUCTION_NUMBER << (int)user_to_spy;
 
     out.device()->seek(0);
     out << (quint16)(block.size() - sizeof(quint16));
@@ -269,7 +269,7 @@ void Client::spyUser(int user) {
     QByteArray block;
     QDataStream out(&block,QIODevice::WriteOnly);
 
-    out << (quint16)0 << ServerSpyUserExecutor::INSTRUCTION_NUMBER << user;
+    out << (quint16)0 << SpyUserExecutor::INSTRUCTION_NUMBER << user;
 
     out.device()->seek(0);
     out << (quint16)(block.size() - sizeof(quint16));
@@ -311,7 +311,7 @@ void Client::sendNewNode(QString name, osg::Vec3f position) {
     QDataStream out(&block,QIODevice::WriteOnly);
     out.setFloatingPointPrecision(QDataStream::SinglePrecision);
 
-    out     << (quint16)0 << ServerNewNodeExecutor::INSTRUCTION_NUMBER
+    out     << (quint16)0 << NewNodeExecutor::INSTRUCTION_NUMBER
             << (float) (position.x())
             << (float) (position.y())
             << (float) (position.z())
@@ -333,7 +333,7 @@ void Client::sendNewEdge(QString name, int id_from, int id_to, bool oriented) {
     QDataStream out(&block,QIODevice::WriteOnly);
     out.setFloatingPointPrecision(QDataStream::SinglePrecision);
 
-    out     << (quint16)0 << ServerNewEdgeExecutor::INSTRUCTION_NUMBER
+    out     << (quint16)0 << NewEdgeExecutor::INSTRUCTION_NUMBER
             << (QString) (name)
             << (int) (id_from)
             << (int) (id_to)
@@ -355,7 +355,7 @@ void Client::sendRemoveNode(int id) {
     QByteArray block;
     QDataStream out(&block,QIODevice::WriteOnly);
 
-    out     << (quint16)0 << ServerRemoveNodeExecutor::INSTRUCTION_NUMBER
+    out     << (quint16)0 << RemoveNodeExecutor::INSTRUCTION_NUMBER
             << (int) (id);
 
     out.device()->seek(0);

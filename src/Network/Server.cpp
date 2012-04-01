@@ -66,8 +66,8 @@ void Server::readyRead()
 
         AbstractExecutor *executor = executorFactory->getExecutor(&in);
 
-        if (executor != NULL) {
-            executor->execute();
+        if (executor != NULL && this->isListening()) {
+            executor->execute_server();
         } else {
             qDebug() << "Klient: neznama instrukcia";
         }
@@ -149,7 +149,7 @@ void Server::sendGraph(QTcpSocket *client){
 
     while (iEdges != edges -> constEnd()) {
 
-        this->sendNewEdge(iEdges.value());
+        this->sendNewEdge(iEdges.value(),client);
 
         ++iEdges;
     }
@@ -443,8 +443,6 @@ void Server::sendNewEdge(osg::ref_ptr<Data::Edge> edge, QTcpSocket *client) {
            << (int) (edge->getSrcNode()->getId())
            << (int) (edge->getDstNode()->getId())
            << (bool) edge->isOriented();
-
-    qDebug() << "posielam hranu" << edge->getId();
 
     out.device()->seek(0);
     out << (quint16)(block.size() - sizeof(quint16));

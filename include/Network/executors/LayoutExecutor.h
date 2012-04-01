@@ -7,12 +7,9 @@ namespace Network {
 
     class LayoutExecutor : public AbstractExecutor {
 
-    private:
-        QDataStream *stream;
-
     public:
-        void execute();
-        void setDataStream(QDataStream *ds) {stream=ds;}
+        void execute_client();
+        void execute_server();
         static const quint8 INSTRUCTION_NUMBER = 10;
     };
 

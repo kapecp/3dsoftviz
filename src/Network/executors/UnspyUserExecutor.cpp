@@ -1,36 +1,37 @@
-#include "Network/executors/SpyUserExecutor.h"
+#include "Network/executors/UnspyUserExecutor.h"
 #include "Manager/Manager.h"
-#include "Network/Client.h"
-#include "Network/Server.h"
 
 using namespace Network;
 
-void SpyUserExecutor::execute_client() {
+void UnspyUserExecutor::execute_client() {
 
     Client *client = Client::getInstance();
 
     int spied,spy;
-
     *stream >> spied >> spy;
 
-    client->removeAvatar(spy);
+    if (spied == client->getMyId()) {
+        client->sendMyView();
+    }
+
+    client->showClientAvatar(spy);
 
 }
 
-void SpyUserExecutor::execute_server() {
+void UnspyUserExecutor::execute_server() {
 
     Server * server = Server::getInstance();
     QTcpSocket * senderClient = (QTcpSocket*)stream->device();
 
     QSet<QTcpSocket*> clients = server->getClients();
 
-    int spying;
-    *stream >> spying;
+    int spied;
+    *stream >> spied;
 
     QByteArray block;
     QDataStream out(&block,QIODevice::WriteOnly);
 
-    out << (quint16)0 << SpyUserExecutor::INSTRUCTION_NUMBER << spying << (int) server->getUserId(senderClient);
+    out << (quint16)0 << UnspyUserExecutor::INSTRUCTION_NUMBER << spied << (int) server->getUserId(senderClient);
 
     out.device()->seek(0);
     out << (quint16)(block.size() - sizeof(quint16));
@@ -40,6 +41,10 @@ void SpyUserExecutor::execute_server() {
         client->write(block);
     }
 
-    server->removeAvatar(senderClient);
+    if (spied == 0) {
+        server->sendMyView();
+    }
+
+    server->addAvatar(senderClient, server->getUserName(senderClient));
 
 }

@@ -7,9 +7,15 @@ namespace Network {
 
     class AbstractExecutor {
 
+    protected:
+        QDataStream *stream;
+
     public:
 
-        virtual void execute() = 0;
+        virtual void execute_client() = 0;
+        virtual void execute_server() = 0;
+        void setDataStream(QDataStream *ds) {stream=ds;}
+        static const quint8 INSTRUCTION_NUMBER;
 
     };
 

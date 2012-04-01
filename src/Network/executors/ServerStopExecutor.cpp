@@ -3,9 +3,13 @@
 
 using namespace Network;
 
-void ServerStopExecutor::execute() {
+void ServerStopExecutor::execute_client() {
 
     Client *client = Client::getInstance();
     client->disconnect();
 
+}
+
+void ServerStopExecutor::execute_server() {
+    return;
 }

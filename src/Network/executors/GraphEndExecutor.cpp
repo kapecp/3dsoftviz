@@ -4,7 +4,7 @@
 
 using namespace Network;
 
-void GraphEndExecutor::execute() {
+void GraphEndExecutor::execute_client() {
 
     Client * client = Client::getInstance();
 
@@ -13,4 +13,8 @@ void GraphEndExecutor::execute() {
     client->currentGraph->setFrozen(false);
     client->ignoreLayout(false);
 
+}
+
+void GraphEndExecutor::execute_server() {
+    return;
 }
