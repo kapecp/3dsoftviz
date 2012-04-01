@@ -453,6 +453,17 @@ void Server::sendNewEdge(osg::ref_ptr<Data::Edge> edge, QTcpSocket *client) {
 
 }
 
+void Server::sendRemoveNode(int id, QTcpSocket *client) {
+    QByteArray block;
+    QDataStream out(&block,QIODevice::WriteOnly);
+
+    out << (quint16)0 << (quint8) RemoveNodeExecutor::INSTRUCTION_NUMBER << (int)id;
+    out.device()->seek(0);
+    out << (quint16)(block.size() - sizeof(quint16));
+
+    this->sendBlock(block, client);
+}
+
 void Server::sendPlainInstruction(quint8 instruction_number, QTcpSocket *client) {
 
     QByteArray block;

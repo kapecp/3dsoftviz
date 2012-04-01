@@ -29,6 +29,7 @@ ExecutorFactory::ExecutorFactory() {
     unspyUserExecutor = new UnspyUserExecutor;
     serverNewNodeExecutor = new ServerNewNodeExecutor;
     serverNewEdgeExecutor = new ServerNewEdgeExecutor;
+    removeNodeExecutor = new RemoveNodeExecutor;
 
 }
 
@@ -118,6 +119,10 @@ AbstractExecutor* ExecutorFactory::getExecutor(QDataStream * stream) {
     case ServerNewEdgeExecutor::INSTRUCTION_NUMBER :
         serverNewEdgeExecutor->setDataStream(stream);
         return serverNewEdgeExecutor;
+        break;
+    case RemoveNodeExecutor::INSTRUCTION_NUMBER :
+        removeNodeExecutor->setDataStream(stream);
+        return removeNodeExecutor;
         break;
     default:
         return NULL;

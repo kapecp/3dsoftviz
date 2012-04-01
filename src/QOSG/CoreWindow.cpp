@@ -948,6 +948,8 @@ bool CoreWindow::add_NodeClick()
 
 bool CoreWindow::removeClick()
 {	
+        Network::Server * server = Network::Server::getInstance();
+
 	Data::Graph * currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
 	QLinkedList<osg::ref_ptr<Data::Edge> > * selectedEdges = viewerWidget->getPickHandler()->getSelectedEdges();
 	
@@ -961,8 +963,10 @@ bool CoreWindow::removeClick()
 
 	while (selectedNodes->size () > 0) {
 		osg::ref_ptr<Data::Node> existingNode1 = (* (selectedNodes->constBegin()));
-		if (existingNode1->isRemovableByUser())
+                if (existingNode1->isRemovableByUser()) {
 			currentGraph->removeNode(existingNode1);
+                        server->sendRemoveNode(existingNode1->getId());
+                }
 		selectedNodes->removeFirst ();
 	}
 

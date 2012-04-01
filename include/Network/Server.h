@@ -33,6 +33,7 @@ class Server : public QTcpServer {
         void sendLayout(QTcpSocket *client = NULL);
         void sendNewNode(osg::ref_ptr<Data::Node> node, QTcpSocket *client = NULL);
         void sendNewEdge(osg::ref_ptr<Data::Edge> edge, QTcpSocket *client = NULL);
+        void sendRemoveNode(int id, QTcpSocket *client = NULL);
         void sendMoveNodes();
 
         void stopServer();
