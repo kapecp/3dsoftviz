@@ -1,10 +1,6 @@
 #include "Network/executors/NewNodeExecutor.h"
 #include "Manager/Manager.h"
-#include "Importer/GraphOperations.h"
 #include "Network/Client.h"
-#include "osg/Vec3"
-#include "osg/ref_ptr"
-#include "Data/Node.h"
 
 using namespace Network;
 
