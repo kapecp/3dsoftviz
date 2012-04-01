@@ -15,7 +15,6 @@ void SetNodeColorExecutor::execute_client() {
     if (nodes->contains(id)) {
         Data::Node *node = *nodes->find(id);
         node->setColor(osg::Vec4(r,g,b,alpha));
-        qDebug() << "Klient: nastavujem si farbu" << r << g << b << alpha;
     }
 
 }
@@ -31,7 +30,6 @@ void SetNodeColorExecutor::execute_server() {
     if (nodes->contains(id)) {
         Data::Node *node = *nodes->find(id);
         node->setColor(osg::Vec4(r,g,b,alpha));
-        qDebug() << "Server: nastavujem si farbu" << r << g << b << alpha;
     }
 
     Server * server = Server::getInstance();
