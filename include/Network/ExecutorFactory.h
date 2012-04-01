@@ -23,7 +23,7 @@
 
 namespace Network {
 
-    class ExecutorFactory : public QObject {
+    class ExecutorFactory {
 
     public:
         ExecutorFactory();
