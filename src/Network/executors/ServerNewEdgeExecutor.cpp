@@ -1,6 +1,5 @@
 #include "Network/executors/ServerNewEdgeExecutor.h"
 #include "Manager/Manager.h"
-#include "Importer/GraphOperations.h"
 #include "Network/Server.h"
 
 using namespace Network;
@@ -26,6 +25,10 @@ void ServerNewEdgeExecutor::execute() {
     Data::Type* type = currentGraph->addType(Data::GraphLayout::META_EDGE_TYPE);
 
     osg::ref_ptr<Data::Edge> newEdge = currentGraph->addEdge("NewEdge",node_from,node_to,type,oriented);
+
+    if (((QOSG::CoreWindow *)server->getCoreWindowReference())->playing()) {
+        server->getLayoutThread()->play();
+    }
 
     server->sendNewEdge(newEdge);
 }
