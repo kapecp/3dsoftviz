@@ -699,9 +699,15 @@ void CoreWindow::applyColorClick()
 	QLinkedList<osg::ref_ptr<Data::Node> > * selectedNodes = viewerWidget->getPickHandler()->getSelectedNodes();
 	QLinkedList<osg::ref_ptr<Data::Node> >::const_iterator ni = selectedNodes->constBegin();
 
+        Network::Server * server = Network::Server::getInstance();
 	while (ni != selectedNodes->constEnd()) 
 	{
+            if (client->isConnected()) {
+                client->sendNodeColor((*ni)->getId(), red, green, blue, alpha);
+            } else {
 		(*ni)->setColor(osg::Vec4(red, green, blue, alpha));
+                server->sendNodeColor((*ni)->getId(), red, green, blue, alpha);
+            }
 		++ni;
 	}
 

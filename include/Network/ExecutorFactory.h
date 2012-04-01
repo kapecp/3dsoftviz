@@ -21,6 +21,7 @@
 #include "Network/executors/UnspyUserExecutor.h"
 #include "Network/executors/RemoveNodeExecutor.h"
 #include "Network/executors/RemoveEdgeExecutor.h"
+#include "Network/executors/SetNodeColorExecutor.h"
 
 namespace Network {
 

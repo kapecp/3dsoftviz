@@ -66,6 +66,7 @@ class Client : public QObject
         void sendNewEdge(QString name, int id_from, int id_to, bool oriented = false);
         void sendRemoveNode(int id);
         void sendRemoveEdge(int id);
+        void sendNodeColor(int id, float r, float g, float b, float alpha);
 
         void setMyId(int id) { my_id = id; }
         int getMyId() { return my_id; }

@@ -436,7 +436,6 @@ void Server::sendNewEdge(osg::ref_ptr<Data::Edge> edge, QTcpSocket *client) {
 
     QByteArray block;
     QDataStream out(&block,QIODevice::WriteOnly);
-    out.setFloatingPointPrecision(QDataStream::SinglePrecision);
 
     out    << (quint16)0 << NewEdgeExecutor::INSTRUCTION_NUMBER
            << (int) edge->getId()
@@ -477,6 +476,24 @@ void Server::sendRemoveEdge(int id, QTcpSocket *client) {
     QDataStream out(&block,QIODevice::WriteOnly);
 
     out << (quint16)0 << (quint8) RemoveEdgeExecutor::INSTRUCTION_NUMBER << (int)id;
+    out.device()->seek(0);
+    out << (quint16)(block.size() - sizeof(quint16));
+
+    this->sendBlock(block, client);
+}
+
+void Server::sendNodeColor(int id, float r, float g, float b, float alpha, QTcpSocket * client) {
+
+    if (!this -> isListening() || (client == NULL && clients.size() == 0)) {
+        return;
+    }
+
+    QByteArray block;
+    QDataStream out(&block,QIODevice::WriteOnly);
+    out.setFloatingPointPrecision(QDataStream::SinglePrecision);
+
+    out << (quint16)0 << (quint8) SetNodeColorExecutor::INSTRUCTION_NUMBER
+        << (int) id << (float) r << (float) g << (float) b << (float) alpha;
     out.device()->seek(0);
     out << (quint16)(block.size() - sizeof(quint16));
 
