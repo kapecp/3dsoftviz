@@ -22,6 +22,7 @@
 #include "Network/executors/RemoveNodeExecutor.h"
 #include "Network/executors/RemoveEdgeExecutor.h"
 #include "Network/executors/SetNodeColorExecutor.h"
+#include "Network/executors/SetEdgeColorExecutor.h"
 
 namespace Network {
 

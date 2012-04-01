@@ -719,7 +719,14 @@ void CoreWindow::applyColorClick()
 		//ak je edge skryta, nebudeme jej menit farbu
 		if((*ei)->getScale() != 0)
 		{
-			(*ei)->setEdgeColor(osg::Vec4(red, green, blue, alpha));
+
+                    if (client->isConnected()) {
+                        client->sendNodeColor((*ei)->getId(), red, green, blue, alpha);
+                    } else {
+                        (*ei)->setEdgeColor(osg::Vec4(red, green, blue, alpha));
+                        server->sendNodeColor((*ei)->getId(), red, green, blue, alpha);
+                    }
+
 		}
 		++ei;
 	}

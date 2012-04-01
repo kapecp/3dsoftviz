@@ -483,6 +483,14 @@ void Server::sendRemoveEdge(int id, QTcpSocket *client) {
 }
 
 void Server::sendNodeColor(int id, float r, float g, float b, float alpha, QTcpSocket * client) {
+    this->sendColor(SetNodeColorExecutor::INSTRUCTION_NUMBER, id, r, g, b, alpha, client);
+}
+
+void Server::sendEdgeColor(int id, float r, float g, float b, float alpha, QTcpSocket * client) {
+    this->sendColor(SetEdgeColorExecutor::INSTRUCTION_NUMBER, id, r, g, b, alpha, client);
+}
+
+void Server::sendColor(quint8 instruction, int id, float r, float g, float b, float alpha, QTcpSocket * client) {
 
     if (!this -> isListening() || (client == NULL && clients.size() == 0)) {
         return;
@@ -492,7 +500,7 @@ void Server::sendNodeColor(int id, float r, float g, float b, float alpha, QTcpS
     QDataStream out(&block,QIODevice::WriteOnly);
     out.setFloatingPointPrecision(QDataStream::SinglePrecision);
 
-    out << (quint16)0 << (quint8) SetNodeColorExecutor::INSTRUCTION_NUMBER
+    out << (quint16)0 << (quint8) instruction
         << (int) id << (float) r << (float) g << (float) b << (float) alpha;
     out.device()->seek(0);
     out << (quint16)(block.size() - sizeof(quint16));

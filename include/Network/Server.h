@@ -37,6 +37,7 @@ class Server : public QTcpServer {
         void sendRemoveEdge(int id, QTcpSocket *client = NULL);
         void sendMoveNodes();
         void sendNodeColor(int id, float r, float g, float b, float alpha, QTcpSocket *client = NULL);
+        void sendEdgeColor(int id, float r, float g, float b, float alpha, QTcpSocket *client = NULL);
 
         void stopServer();
 
@@ -119,6 +120,7 @@ class Server : public QTcpServer {
 
         void sendPlainInstruction(quint8 instruction_number, QTcpSocket * client = NULL);
         void sendBlock(QByteArray block, QTcpSocket * client = NULL);
+        void sendColor(quint8 instruction, int id, float r, float g, float b, float alpha, QTcpSocket *client = NULL);
     };
 }
 

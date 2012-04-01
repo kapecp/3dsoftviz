@@ -67,6 +67,7 @@ class Client : public QObject
         void sendRemoveNode(int id);
         void sendRemoveEdge(int id);
         void sendNodeColor(int id, float r, float g, float b, float alpha);
+        void sendEdgeColor(int id, float r, float g, float b, float alpha);
 
         void setMyId(int id) { my_id = id; }
         int getMyId() { return my_id; }
@@ -116,6 +117,7 @@ class Client : public QObject
         QTcpSocket *socket;
 
         void addAvatar(int id, QString nick);
+        void sendColor(quint8 instruction, int id, float r, float g, float b, float alpha);
 
         quint16 blockSize;
 

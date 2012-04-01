@@ -384,6 +384,14 @@ void Client::sendRemoveEdge(int id) {
 }
 
 void Client::sendNodeColor(int id, float r, float g, float b, float alpha) {
+    this->sendColor(SetNodeColorExecutor::INSTRUCTION_NUMBER, id, r, g, b, alpha);
+}
+
+void Client::sendEdgeColor(int id, float r, float g, float b, float alpha) {
+    this->sendColor(SetEdgeColorExecutor::INSTRUCTION_NUMBER, id, r, g, b, alpha);
+}
+
+void Client::sendColor(quint8 instruction, int id, float r, float g, float b, float alpha) {
 
     if (!this -> isConnected() ) {
         return;
@@ -393,7 +401,7 @@ void Client::sendNodeColor(int id, float r, float g, float b, float alpha) {
     QDataStream out(&block,QIODevice::WriteOnly);
     out.setFloatingPointPrecision(QDataStream::SinglePrecision);
 
-    out     << (quint16)0 << SetNodeColorExecutor::INSTRUCTION_NUMBER
+    out     << (quint16)0 << instruction
             << (int) (id) << (float) r << (float) g << (float) b << (float) alpha;
 
     out.device()->seek(0);
