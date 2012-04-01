@@ -22,10 +22,12 @@ void LayoutExecutor::execute_client() {
     if (currentGraph != NULL) {
         QMap<qlonglong, osg::ref_ptr<Data::Node> >* nodes = currentGraph -> getNodes();
         if (nodes != NULL) {
-            osg::ref_ptr<Data::Node> node = (*((*nodes).find(id)));
-            if (node != NULL && !client->selected_nodes.contains(node)) {
-                node->setTargetPosition(osg::Vec3(x,y,z));
-                //qDebug()<< "[NEW NODE POS] id: " << id << " [" << x << "," << y << "," << z << "]";
+            if (nodes->contains(id)) {
+                osg::ref_ptr<Data::Node> node = *nodes->find(id);
+                if (!client->selected_nodes.contains(node)) {
+                    node->setTargetPosition(osg::Vec3(x,y,z));
+                    //qDebug()<< "[NEW NODE POS] id: " << id << " [" << x << "," << y << "," << z << "]";
+                }
             }
         }
     }
