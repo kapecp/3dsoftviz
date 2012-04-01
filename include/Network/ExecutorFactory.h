@@ -20,6 +20,7 @@
 #include "Network/executors/SpyUserExecutor.h"
 #include "Network/executors/UnspyUserExecutor.h"
 #include "Network/executors/RemoveNodeExecutor.h"
+#include "Network/executors/RemoveEdgeExecutor.h"
 
 namespace Network {
 

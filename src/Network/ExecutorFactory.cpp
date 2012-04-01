@@ -21,6 +21,7 @@ ExecutorFactory::ExecutorFactory() {
     executorList.insert(quint8(SpyUserExecutor::INSTRUCTION_NUMBER), new SpyUserExecutor);
     executorList.insert(quint8(UnspyUserExecutor::INSTRUCTION_NUMBER), new UnspyUserExecutor);
     executorList.insert(quint8(RemoveNodeExecutor::INSTRUCTION_NUMBER), new RemoveNodeExecutor);
+    executorList.insert(quint8(RemoveEdgeExecutor::INSTRUCTION_NUMBER), new RemoveEdgeExecutor);
 
 }
 

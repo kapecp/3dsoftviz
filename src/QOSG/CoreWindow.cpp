@@ -955,7 +955,12 @@ bool CoreWindow::removeClick()
 	
 	while (selectedEdges->size () > 0) {
 		osg::ref_ptr<Data::Edge> existingEdge1 = (* (selectedEdges->constBegin()));
-		currentGraph->removeEdge(existingEdge1);
+                if (!client->isConnected()) {
+                    currentGraph->removeEdge(existingEdge1);
+                    server->sendRemoveEdge(existingEdge1->getId());
+                } else {
+                    client->sendRemoveEdge(existingEdge1->getId());
+                }
 		selectedEdges->removeFirst ();
 	}
 	currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();

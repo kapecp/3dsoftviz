@@ -364,3 +364,22 @@ void Client::sendRemoveNode(int id) {
     socket->write(block);
 
 }
+
+void Client::sendRemoveEdge(int id) {
+
+    if (!this -> isConnected() ) {
+        return;
+    }
+
+    QByteArray block;
+    QDataStream out(&block,QIODevice::WriteOnly);
+
+    out     << (quint16)0 << RemoveEdgeExecutor::INSTRUCTION_NUMBER
+            << (int) (id);
+
+    out.device()->seek(0);
+    out << (quint16)(block.size() - sizeof(quint16));
+
+    socket->write(block);
+
+}

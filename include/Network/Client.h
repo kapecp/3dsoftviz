@@ -65,6 +65,7 @@ class Client : public QObject
         void sendNewNode(QString name, osg::Vec3f position);
         void sendNewEdge(QString name, int id_from, int id_to, bool oriented = false);
         void sendRemoveNode(int id);
+        void sendRemoveEdge(int id);
 
         void setMyId(int id) { my_id = id; }
         int getMyId() { return my_id; }
