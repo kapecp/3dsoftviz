@@ -30,6 +30,7 @@
 #include "Network/executors/ServerUnspyUserExecutor.h"
 #include "Network/executors/UnspyUserExecutor.h"
 #include "Network/executors/RemoveNodeExecutor.h"
+#include "Network/executors/ServerRemoveNodeExecutor.h"
 
 namespace Network {
 
@@ -63,6 +64,7 @@ namespace Network {
         ServerNewNodeExecutor *serverNewNodeExecutor;
         ServerNewEdgeExecutor *serverNewEdgeExecutor;
         RemoveNodeExecutor *removeNodeExecutor;
+        ServerRemoveNodeExecutor *serverRemoveNodeExecutor;
     };
 
 }

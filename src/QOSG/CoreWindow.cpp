@@ -964,8 +964,12 @@ bool CoreWindow::removeClick()
 	while (selectedNodes->size () > 0) {
 		osg::ref_ptr<Data::Node> existingNode1 = (* (selectedNodes->constBegin()));
                 if (existingNode1->isRemovableByUser()) {
-			currentGraph->removeNode(existingNode1);
+                    if (!client->isConnected()) {
+                        currentGraph->removeNode(existingNode1);
                         server->sendRemoveNode(existingNode1->getId());
+                    } else {
+                        client->sendRemoveNode(existingNode1->getId());
+                    }
                 }
 		selectedNodes->removeFirst ();
 	}

@@ -345,3 +345,22 @@ void Client::sendNewEdge(QString name, int id_from, int id_to, bool oriented) {
     socket->write(block);
 
 }
+
+void Client::sendRemoveNode(int id) {
+
+    if (!this -> isConnected() ) {
+        return;
+    }
+
+    QByteArray block;
+    QDataStream out(&block,QIODevice::WriteOnly);
+
+    out     << (quint16)0 << ServerRemoveNodeExecutor::INSTRUCTION_NUMBER
+            << (int) (id);
+
+    out.device()->seek(0);
+    out << (quint16)(block.size() - sizeof(quint16));
+
+    socket->write(block);
+
+}

@@ -454,6 +454,11 @@ void Server::sendNewEdge(osg::ref_ptr<Data::Edge> edge, QTcpSocket *client) {
 }
 
 void Server::sendRemoveNode(int id, QTcpSocket *client) {
+
+    if (!this -> isListening() || (client == NULL && clients.size() == 0)) {
+        return;
+    }
+
     QByteArray block;
     QDataStream out(&block,QIODevice::WriteOnly);
 

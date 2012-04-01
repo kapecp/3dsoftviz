@@ -30,6 +30,7 @@ ExecutorFactory::ExecutorFactory() {
     serverNewNodeExecutor = new ServerNewNodeExecutor;
     serverNewEdgeExecutor = new ServerNewEdgeExecutor;
     removeNodeExecutor = new RemoveNodeExecutor;
+    serverRemoveNodeExecutor = new ServerRemoveNodeExecutor;
 
 }
 
@@ -123,6 +124,10 @@ AbstractExecutor* ExecutorFactory::getExecutor(QDataStream * stream) {
     case RemoveNodeExecutor::INSTRUCTION_NUMBER :
         removeNodeExecutor->setDataStream(stream);
         return removeNodeExecutor;
+        break;
+    case ServerRemoveNodeExecutor::INSTRUCTION_NUMBER :
+        serverRemoveNodeExecutor->setDataStream(stream);
+        return serverRemoveNodeExecutor;
         break;
     default:
         return NULL;
