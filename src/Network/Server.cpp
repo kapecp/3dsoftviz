@@ -114,7 +114,7 @@ void Server::sendUserList()
         out.device()->seek(0);
         out << (quint16)(block.size() - sizeof(quint16));
 
-        client->write(block);
+        this->sendBlock(block, client);
     }
 }
 
@@ -197,13 +197,7 @@ void Server::sendLayout(QTcpSocket *client){
         out.device()->seek(0);
         out << (quint16)(block.size() - sizeof(quint16));
 
-        if (client == NULL){
-            foreach(QTcpSocket *otherClient, clients){
-                otherClient->write(block);
-            }
-        } else {
-            client -> write(block);
-        }
+        this->sendBlock(block, client);
 
         ++iNodes;
     }
@@ -225,9 +219,7 @@ void Server::stopServer(){
     out.device()->seek(0);
     out << (quint16)(block.size() - sizeof(quint16));
 
-    foreach(QTcpSocket *otherClient, clients){
-        otherClient->write(block);
-    }
+    this->sendBlock(block);
 
     clients.clear();
     users.clear();
@@ -259,9 +251,7 @@ void Server::sendMoveNodes() {
 
         ++i;
 
-        foreach(QTcpSocket *otherClient, clients){
-            otherClient->write(block);
-        }
+        this->sendBlock(block);
     }
 
     selected_nodes.clear();
@@ -280,14 +270,7 @@ void Server::sendMyView(osg::Vec3d center, osg::Quat rotation, float distance, Q
     out.device()->seek(0);
     out << (quint16)(block.size() - sizeof(quint16));
 
-    if (client == NULL) {
-        foreach(QTcpSocket *otherClient, clients){
-            otherClient->write(block);
-        }
-    } else {
-        client->write(block);
-    }
-
+    this->sendBlock(block, client);
 }
 
 void Server::sendMyView(QTcpSocket *client) {
@@ -352,9 +335,7 @@ void Server::spyUser(int id) {
     out.device()->seek(0);
     out << (quint16)(block.size() - sizeof(quint16));
 
-    foreach(QTcpSocket *client, clients) {
-        client->write(block);
-    }
+    this->sendBlock(block);
 
     // store original view
     Vwr::CameraManipulator * cameraManipulator = ((QOSG::CoreWindow *) cw)->getCameraManipulator();
@@ -379,9 +360,7 @@ void Server::unSpyUser() {
     out.device()->seek(0);
     out << (quint16)(block.size() - sizeof(quint16));
 
-    foreach(QTcpSocket *client, clients) {
-        client->write(block);
-    }
+    this->sendBlock(block);
 
     // restore original view
     setMyView(original_center,original_rotation,original_distance);
@@ -446,13 +425,7 @@ void Server::sendNewNode(osg::ref_ptr<Data::Node> node, QTcpSocket *client) {
     out.device()->seek(0);
     out << (quint16)(block.size() - sizeof(quint16));
 
-    if (client == NULL){
-        foreach(QTcpSocket *otherClient, clients){
-            otherClient->write(block);
-        }
-    } else {
-        client->write(block);
-    }
+    this->sendBlock(block, client);
 }
 
 void Server::sendNewEdge(osg::ref_ptr<Data::Edge> edge, QTcpSocket *client) {
@@ -476,13 +449,8 @@ void Server::sendNewEdge(osg::ref_ptr<Data::Edge> edge, QTcpSocket *client) {
     out.device()->seek(0);
     out << (quint16)(block.size() - sizeof(quint16));
 
-    if (client == NULL){
-        foreach(QTcpSocket *otherClient, clients){
-            otherClient->write(block);
-        }
-    } else {
-        client -> write(block);
-    }
+    this->sendBlock(block, client);
+
 }
 
 void Server::sendPlainInstruction(quint8 instruction_number, QTcpSocket *client) {
@@ -494,6 +462,12 @@ void Server::sendPlainInstruction(quint8 instruction_number, QTcpSocket *client)
     out.device()->seek(0);
     out << (quint16)(block.size() - sizeof(quint16));
 
+    this->sendBlock(block, client);
+
+}
+
+void Server::sendBlock(QByteArray block, QTcpSocket *client) {
+
     if (client == NULL){
         foreach(QTcpSocket *otherClient, clients){
             otherClient->write(block);
@@ -501,4 +475,5 @@ void Server::sendPlainInstruction(quint8 instruction_number, QTcpSocket *client)
     } else {
         client -> write(block);
     }
+
 }
