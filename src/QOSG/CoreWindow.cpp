@@ -751,12 +751,9 @@ void CoreWindow::applyLabelClick() {
     QLinkedList<osg::ref_ptr<Data::Node> >::const_iterator ni = selectedNodes->constBegin();
     while (ni != selectedNodes->constEnd()) {
         QString newLabel = le_applyLabel->text();
-        qDebug() << "ZNACKUJEM" << (*ni)->getId() << newLabel;
-        qDebug() << "PRED" << (*ni)->getId() << (*ni)->getName();
         (*ni)->setName(newLabel);
         (*ni)->setLabelText(newLabel);
         (*ni)->reloadConfig();
-        qDebug() << "PO" << (*ni)->getId() << (*ni)->getName();
         ++ni;
     }
 }
