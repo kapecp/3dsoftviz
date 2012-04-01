@@ -747,13 +747,21 @@ void CoreWindow::applyColorClick()
 
 void CoreWindow::applyLabelClick() {
 
+    Network::Server * server = Network::Server::getInstance();
+
     QLinkedList<osg::ref_ptr<Data::Node> > * selectedNodes = viewerWidget->getPickHandler()->getSelectedNodes();
     QLinkedList<osg::ref_ptr<Data::Node> >::const_iterator ni = selectedNodes->constBegin();
+    QString newLabel = le_applyLabel->text();
+
     while (ni != selectedNodes->constEnd()) {
-        QString newLabel = le_applyLabel->text();
-        (*ni)->setName(newLabel);
-        (*ni)->setLabelText(newLabel);
-        (*ni)->reloadConfig();
+        if (client->isConnected()) {
+            client->sendNodeLabel((*ni)->getId(), newLabel);
+        } else {
+            (*ni)->setName(newLabel);
+            (*ni)->setLabelText(newLabel);
+            (*ni)->reloadConfig();
+            server->sendNodeLabel((*ni)->getId(), newLabel);
+        }
         ++ni;
     }
 }

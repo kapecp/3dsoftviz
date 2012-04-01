@@ -24,6 +24,7 @@ ExecutorFactory::ExecutorFactory() {
     executorList.insert(quint8(RemoveEdgeExecutor::INSTRUCTION_NUMBER), new RemoveEdgeExecutor);
     executorList.insert(quint8(SetNodeColorExecutor::INSTRUCTION_NUMBER), new SetNodeColorExecutor);
     executorList.insert(quint8(SetEdgeColorExecutor::INSTRUCTION_NUMBER), new SetEdgeColorExecutor);
+    executorList.insert(quint8(SetNodeLabelExecutor::INSTRUCTION_NUMBER), new SetNodeLabelExecutor);
 
 }
 

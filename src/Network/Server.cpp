@@ -508,6 +508,23 @@ void Server::sendColor(quint8 instruction, int id, float r, float g, float b, fl
     this->sendBlock(block, client);
 }
 
+void Server::sendNodeLabel(int id, QString label, QTcpSocket *client) {
+
+    if (!this -> isListening() || (client == NULL && clients.size() == 0)) {
+        return;
+    }
+
+    QByteArray block;
+    QDataStream out(&block,QIODevice::WriteOnly);
+    out.setFloatingPointPrecision(QDataStream::SinglePrecision);
+
+    out << (quint16)0 << (quint8) SetNodeLabelExecutor::INSTRUCTION_NUMBER << (int) id << (QString) label;
+    out.device()->seek(0);
+    out << (quint16)(block.size() - sizeof(quint16));
+
+    this->sendBlock(block, client);
+}
+
 void Server::sendPlainInstruction(quint8 instruction_number, QTcpSocket *client) {
 
     QByteArray block;

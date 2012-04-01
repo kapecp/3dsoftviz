@@ -38,6 +38,7 @@ class Server : public QTcpServer {
         void sendMoveNodes();
         void sendNodeColor(int id, float r, float g, float b, float alpha, QTcpSocket *client = NULL);
         void sendEdgeColor(int id, float r, float g, float b, float alpha, QTcpSocket *client = NULL);
+        void sendNodeLabel(int id, QString label, QTcpSocket *client = NULL);
 
         void stopServer();
 
