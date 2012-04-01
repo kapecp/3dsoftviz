@@ -1,9 +1,6 @@
 #ifndef __3DVisualExecutorBuilder_H__
 #define __3DVisualExecutorBuilder_H__
 
-#include <QObject>
-#include <QRegExp>
-#include <QTcpSocket>
 #include "Network/executors/AbstractExecutor.h"
 
 #include "Network/executors/AbstractExecutor.h"
@@ -26,29 +23,15 @@
 
 namespace Network {
 
-    class ExecutorFactory {
+    class ExecutorFactory : public QObject {
 
     public:
         ExecutorFactory();
         AbstractExecutor* getExecutor(QDataStream * stream);
 
     private:
-        UsersExecutor *usersExecutor;
-        MoveNodeExecutor *moveNodeExecutor;
-        GraphStartExecutor *graphStartExecutor;
-        GraphEndExecutor *graphEndExecutor;
-        NewNodeExecutor *newNodeExecutor;
-        NewEdgeExecutor *newEdgeExecutor;
-        LayoutExecutor *layoutExecutor;
-        MoveAvatarExecutor *moveAvatarExecutor;
-        IncommingUserExecutor *incommingUserExecutor;
-        MessageExecutor *messageExecutor;
-        ServerStopExecutor *serverStopExecutor;
-        WelcomeExecutor *welcomeExecutor;
-        SendGraphExecutor *sendGraphExecutor;
-        SpyUserExecutor *spyUserExecutor;
-        UnspyUserExecutor * unspyUserExecutor;
-        RemoveNodeExecutor *removeNodeExecutor;
+
+        QMap<quint8, AbstractExecutor *> executorList;
     };
 
 }
