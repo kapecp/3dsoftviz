@@ -10,7 +10,7 @@ namespace Network {
     public:
         void execute_client();
         void execute_server();
-        static const quint8 INSTRUCTION_NUMBER = 23;
+        static const quint8 INSTRUCTION_NUMBER = 15;
     };
 
 }
