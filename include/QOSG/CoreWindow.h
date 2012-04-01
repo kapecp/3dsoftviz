@@ -173,13 +173,19 @@ namespace QOSG
 				*  \brief Type in combobox changed
 				*  \param  index    
 				*/
-				void nodeTypeComboBoxChanged(int index); 
+                                void nodeTypeComboBoxChanged(int index);
 
-				/**
-				*  \fn public  applyColorClick
-				*  \brief Apply selected color in colorpicker to selected node
-				*/
-				void applyColorClick();
+                                /**
+                                *  \fn public  applyColorClick
+                                *  \brief Apply selected color in colorpicker to selected node
+                                */
+                                void applyColorClick();
+
+                                /**
+                                *  \fn public  applyLabelClick
+                                *  \brief Apply selected label to selected node
+                                */
+                                void applyLabelClick();
 				
 				/**
 				 * \brief Creates a new SphereSurface restriction (defined by positions of 2 nodes) and sets
@@ -343,13 +349,21 @@ namespace QOSG
 		*  QPushButton * removeMeta
 		*  \brief Action for removing meta nodes
 		*/
-		QPushButton * removeMeta;
+                QPushButton * removeMeta;
 
-		/**
-		*  QPushButton * applyColor
-		*  \brief Action for applying color to selected nodes
-		*/
-		QPushButton * applyColor;
+                /**
+                *  QPushButton * applyColor
+                *  \brief Action for applying color to selected nodes
+                */
+                QPushButton * applyColor;
+
+                /**
+                *  QPushButton * applyLabel
+                *  \brief Action for applying label to selected nodes
+                */
+                QPushButton * applyLabel;
+
+                QLineEdit * le_applyLabel;
 
 		/**
 		 * \brief Button for adding SphereSurface restriction.

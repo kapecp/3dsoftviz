@@ -117,13 +117,21 @@ void CoreWindow::createActions()
 	label->setToolTip("&Turn on/off labels");
 	label->setCheckable(true);
 	label->setFocusPolicy(Qt::NoFocus);
-	connect(label, SIGNAL(clicked(bool)), this, SLOT(labelOnOff(bool)));
+        connect(label, SIGNAL(clicked(bool)), this, SLOT(labelOnOff(bool)));
 
-	applyColor = new QPushButton();
-	applyColor->setText("Apply color");
-	applyColor->setToolTip("Apply selected color");
-	applyColor->setFocusPolicy(Qt::NoFocus);
-	connect(applyColor,SIGNAL(clicked()),this,SLOT(applyColorClick()));
+        applyColor = new QPushButton();
+        applyColor->setText("Apply color");
+        applyColor->setToolTip("Apply selected color");
+        applyColor->setFocusPolicy(Qt::NoFocus);
+        connect(applyColor,SIGNAL(clicked()),this,SLOT(applyColorClick()));
+
+        applyLabel = new QPushButton();
+        applyLabel->setText("Apply label");
+        applyLabel->setToolTip("Apply selected label");
+        applyLabel->setFocusPolicy(Qt::NoFocus);
+        connect(applyLabel,SIGNAL(clicked()),this,SLOT(applyLabelClick()));
+
+        le_applyLabel = new QLineEdit;
 
 	//add edge
 	add_Edge = new QPushButton();
@@ -297,7 +305,11 @@ void CoreWindow::createLeftToolBar()
 	QtColorPicker * colorPicker = new QtColorPicker();
 	colorPicker->setStandardColors();
 	connect(colorPicker,SIGNAL(colorChanged(const QColor &)),this,SLOT(colorPickerChanged(const QColor &)));
-	toolBar->addWidget(colorPicker);	
+        toolBar->addWidget(colorPicker);
+
+        toolBar->addWidget(applyLabel);
+        toolBar->addWidget(le_applyLabel);
+
 	toolBar->addSeparator();
 	
 	// layout restrictions
@@ -328,6 +340,7 @@ void CoreWindow::createLeftToolBar()
         frame->layout()->addWidget(slider);
 
 	addToolBar(Qt::LeftToolBarArea,toolBar);
+        toolBar->setMaximumWidth(120);
         toolBar->setMovable(false);
 }
 
@@ -730,6 +743,22 @@ void CoreWindow::applyColorClick()
 		}
 		++ei;
 	}
+}
+
+void CoreWindow::applyLabelClick() {
+
+    QLinkedList<osg::ref_ptr<Data::Node> > * selectedNodes = viewerWidget->getPickHandler()->getSelectedNodes();
+    QLinkedList<osg::ref_ptr<Data::Node> >::const_iterator ni = selectedNodes->constBegin();
+    while (ni != selectedNodes->constEnd()) {
+        QString newLabel = le_applyLabel->text();
+        qDebug() << "ZNACKUJEM" << (*ni)->getId() << newLabel;
+        qDebug() << "PRED" << (*ni)->getId() << (*ni)->getName();
+        (*ni)->setName(newLabel);
+        (*ni)->setLabelText(newLabel);
+        (*ni)->reloadConfig();
+        qDebug() << "PO" << (*ni)->getId() << (*ni)->getName();
+        ++ni;
+    }
 }
 
 void CoreWindow::setRestriction_SphereSurface ()
