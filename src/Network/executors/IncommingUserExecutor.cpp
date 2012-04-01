@@ -1,6 +1,5 @@
 #include "Network/executors/IncommingUserExecutor.h"
 #include "Network/executors/WelcomeExecutor.h"
-#include "Network/Helper.h"
 #include "Network/Server.h"
 
 using namespace Network;
