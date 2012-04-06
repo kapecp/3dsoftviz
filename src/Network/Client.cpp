@@ -419,9 +419,27 @@ void Client::sendNodeLabel(int id, QString label) {
 
     QByteArray block;
     QDataStream out(&block,QIODevice::WriteOnly);
-    out.setFloatingPointPrecision(QDataStream::SinglePrecision);
 
     out << (quint16)0 << (quint8) SetNodeLabelExecutor::INSTRUCTION_NUMBER << (int) (id) << (QString) label;
+
+    out.device()->seek(0);
+    out << (quint16)(block.size() - sizeof(quint16));
+
+    socket->write(block);
+
+}
+
+
+void Client::sendFixNodeState(int id, bool state) {
+
+    if (!this -> isConnected() ) {
+        return;
+    }
+
+    QByteArray block;
+    QDataStream out(&block,QIODevice::WriteOnly);
+
+    out << (quint16)0 << (quint8) SetFixNodeStateExecutor::INSTRUCTION_NUMBER << (int) (id) << (bool) state;
 
     out.device()->seek(0);
     out << (quint16)(block.size() - sizeof(quint16));

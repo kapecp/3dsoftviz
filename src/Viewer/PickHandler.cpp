@@ -537,13 +537,21 @@ void PickHandler::drawSelectionQuad(float origin_mX, float origin_mY, osgViewer:
 
 void PickHandler::toggleSelectedNodesFixedState(bool isFixed)
 {
-	QLinkedList<osg::ref_ptr<Data::Node> >::const_iterator i = pickedNodes.constBegin();
+    QLinkedList<osg::ref_ptr<Data::Node> >::const_iterator i = pickedNodes.constBegin();
 
-	while (i != pickedNodes.constEnd()) 
-	{
-		(*i)->setFixed(isFixed);
-		++i;
-	}
+    Network::Client * client = Network::Client::getInstance();
+    Network::Server * server = Network::Server::getInstance();
+
+    while (i != pickedNodes.constEnd())
+    {
+        if (client->isConnected()) {
+            client->sendFixNodeState((*i)->getId(), isFixed);
+        } else {
+            (*i)->setFixed(isFixed);
+            server->sendFixNodeState((*i)->getId(), isFixed);
+        }
+        ++i;
+    }
 }
 
 void PickHandler::unselectPickedNodes(osg::ref_ptr<Data::Node> node)
