@@ -41,6 +41,7 @@ class Server : public QTcpServer {
         void sendNodeLabel(int id, QString label, QTcpSocket *client = NULL);
         void sendFixNodeState(int id, bool state, QTcpSocket *client = NULL);
         void sendMergeNodes(QLinkedList<osg::ref_ptr<Data::Node> > * selectedNodes, osg::Vec3f position, int mergeNodeId, QTcpSocket *client = NULL);
+        void sendSeparateNodes(QLinkedList<osg::ref_ptr<Data::Node> > * selectedNodes, QTcpSocket *client = NULL);
 
         void stopServer();
 

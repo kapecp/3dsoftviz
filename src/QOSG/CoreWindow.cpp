@@ -575,8 +575,12 @@ void CoreWindow::mergeNodes()
 
                 if(selectedNodes->count() > 0) {
                         Network::Server * server = Network::Server::getInstance();
-                        if (server->isListening()) {
-                            osg::ref_ptr<Data::Node> mergeNode = currentGraph->mergeNodes(selectedNodes, position);
+                        Network::Client * client = Network::Client::getInstance();
+                        osg::ref_ptr<Data::Node> mergeNode = NULL;
+                        if (!client->isConnected()) {
+                            mergeNode = currentGraph->mergeNodes(selectedNodes, position);
+                        }
+                        if (server->isListening() && mergeNode != NULL) {
                             server->sendMergeNodes(selectedNodes, position, mergeNode->getId());
                         } else {
                             client->sendMergeNodes(selectedNodes, position);
@@ -602,8 +606,18 @@ void CoreWindow::separateNodes()
 	{
 		QLinkedList<osg::ref_ptr<Data::Node> > * selectedNodes = viewerWidget->getPickHandler()->getSelectedNodes();
 
-		if(selectedNodes->count() > 0) {
-			currentGraph->separateNodes(selectedNodes);
+                if(selectedNodes->count() > 0) {
+                    Network::Server * server = Network::Server::getInstance();
+                    Network::Client * client = Network::Client::getInstance();
+                    if (!client->isConnected()) {
+                        currentGraph->separateNodes(selectedNodes);
+                    }
+
+                    if (server->isListening()) {
+                        server->sendSeparateNodes(selectedNodes);
+                    } else if (client->isConnected()) {
+                        client->sendSeparateNodes(selectedNodes);
+                    }
 		}
 		else {
 			qDebug() << "[QOSG::CoreWindow::separateNodes] There are no nodes selected";

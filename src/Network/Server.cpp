@@ -585,6 +585,30 @@ void Server::sendMergeNodes(QLinkedList<osg::ref_ptr<Data::Node> > *selectedNode
     this->sendBlock(block, client);
 }
 
+void Server::sendSeparateNodes(QLinkedList<osg::ref_ptr<Data::Node> > *selectedNodes, QTcpSocket *client) {
+
+    if (!this -> isListening() || (client == NULL && clients.size() == 0)) {
+        return;
+    }
+
+    QByteArray block;
+    QDataStream out(&block,QIODevice::WriteOnly);
+    out.setFloatingPointPrecision(QDataStream::SinglePrecision);
+
+    out << (quint16)0 << (quint8) SeparateNodesExecutor::INSTRUCTION_NUMBER << (int) selectedNodes->count();
+
+    QLinkedList<osg::ref_ptr<Data::Node> >::const_iterator iAdd = selectedNodes->constBegin();
+    while (iAdd != selectedNodes->constEnd()) {
+        out << (int) (*iAdd)->getId();
+        ++iAdd;
+    }
+
+    out.device()->seek(0);
+    out << (quint16)(block.size() - sizeof(quint16));
+
+    this->sendBlock(block, client);
+}
+
 void Server::sendPlainInstruction(quint8 instruction_number, QTcpSocket *client) {
 
     QByteArray block;

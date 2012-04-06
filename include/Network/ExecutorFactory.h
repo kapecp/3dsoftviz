@@ -26,6 +26,7 @@
 #include "Network/executors/SetNodeLabelExecutor.h"
 #include "Network/executors/SetFixNodeStateExecutor.h"
 #include "Network/executors/MergeNodesExecutor.h"
+#include "Network/executors/SeparateNodesExecutor.h"
 
 namespace Network {
 
