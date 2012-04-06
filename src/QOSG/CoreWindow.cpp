@@ -644,21 +644,32 @@ void CoreWindow::separateNodes()
 
 void CoreWindow::removeMetaNodes()
 {
-	QLinkedList<osg::ref_ptr<Data::Node> > * selectedNodes = viewerWidget->getPickHandler()->getSelectedNodes();
-	Data::Graph * currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
+    QLinkedList<osg::ref_ptr<Data::Node> > * selectedNodes = viewerWidget->getPickHandler()->getSelectedNodes();
+    Data::Graph * currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
 
-	QLinkedList<osg::ref_ptr<Data::Node> >::const_iterator i = selectedNodes->constBegin();
+    QLinkedList<osg::ref_ptr<Data::Node> >::const_iterator i = selectedNodes->constBegin();
 
-	while (i != selectedNodes->constEnd()) 
-	{
-		//treba este opravit - zatial kontrolujeme ci to nie je mergedNode len podla mena
-		if ((*i)->getType()->isMeta() && (*i)->getName() != "mergedNode")
-			currentGraph->removeNode((*i));
-		++i;
-	}
+    while (i != selectedNodes->constEnd())
+    {
+        //treba este opravit - zatial kontrolujeme ci to nie je mergedNode len podla mena
+        if ((*i)->getType()->isMeta() && (*i)->getName() != "mergedNode") {
+            Network::Server * server = Network::Server::getInstance();
+            Network::Client * client = Network::Client::getInstance();
+            if (!client->isConnected()) {
+                currentGraph->removeNode((*i));
+            } else {
+                client->sendRemoveNode((*i)->getId());
+            }
+            if (server->isListening()) {
+                server->sendRemoveNode((*i)->getId());
+            }
 
-	if (isPlaying)
-		layout->play();
+        }
+        ++i;
+    }
+
+    if (isPlaying)
+        layout->play();
 }
 
 void CoreWindow::loadFile()
