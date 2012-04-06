@@ -25,6 +25,7 @@
 #include "Network/executors/SetEdgeColorExecutor.h"
 #include "Network/executors/SetNodeLabelExecutor.h"
 #include "Network/executors/SetFixNodeStateExecutor.h"
+#include "Network/executors/MergeNodesExecutor.h"
 
 namespace Network {
 

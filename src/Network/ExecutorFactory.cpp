@@ -26,6 +26,7 @@ ExecutorFactory::ExecutorFactory() {
     executorList.insert(quint8(MessageExecutor::INSTRUCTION_NUMBER), new MessageExecutor);
     executorList.insert(quint8(ServerStopExecutor::INSTRUCTION_NUMBER), new ServerStopExecutor);
     executorList.insert(quint8(SetFixNodeStateExecutor::INSTRUCTION_NUMBER), new SetFixNodeStateExecutor);
+    executorList.insert(quint8(MergeNodesExecutor::INSTRUCTION_NUMBER), new MergeNodesExecutor);
 
 }
 

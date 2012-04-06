@@ -358,11 +358,11 @@ osg::ref_ptr<Data::Node> Data::Graph::addNode(qlonglong id, QString name, Data::
     return node;
 }
 
-osg::ref_ptr<Data::Node> Data::Graph::mergeNodes(QLinkedList<osg::ref_ptr<Data::Node> > * selectedNodes, osg::Vec3f position)
+osg::ref_ptr<Data::Node> Data::Graph::mergeNodes(QLinkedList<osg::ref_ptr<Data::Node> > * selectedNodes, osg::Vec3f position, qlonglong mergeNodeId)
 {
 	float scale = this->getNodeScale() + (selectedNodes->count() / 2);
 
-	osg::ref_ptr<Data::Node> mergedNode = new Data::Node(this->incEleIdCounter(), "mergedNode", this->getNodeMetaType(), scale, this, position);
+        osg::ref_ptr<Data::Node> mergedNode = new Data::Node((mergeNodeId != -1) ? mergeNodeId : this->incEleIdCounter(), "mergedNode", this->getNodeMetaType(), scale, this, position);
 	mergedNode->setColor(osg::Vec4(0, 0, 1, 1));
 
 	QList<qlonglong> connectedNodes;

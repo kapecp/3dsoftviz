@@ -235,17 +235,34 @@ void Server::sendMoveNodes() {
     QDataStream out(&block,QIODevice::WriteOnly);
     out.setFloatingPointPrecision(QDataStream::SinglePrecision);
 
+    QMap<qlonglong, osg::ref_ptr<Data::Node> >* mergeNodes = NULL;
+    Data::Graph * currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
+    if (currentGraph != NULL) {
+        mergeNodes = currentGraph->getMetaNodes();
+    }
+
+
     while (i != selected_nodes.constEnd())
     {
 
         block.clear();
         out.device()->reset();
 
+        float x = (*i)->getCurrentPosition().x();
+        float y = (*i)->getCurrentPosition().y();
+        float z = (*i)->getCurrentPosition().z();
+
+        if (mergeNodes != NULL && mergeNodes->contains((*i)->getId())) {
+            x/=graphScale;
+            y/=graphScale;
+            z/=graphScale;
+        }
+
         out << (quint16)0 << MoveNodeExecutor::INSTRUCTION_NUMBER
             << (int) ((*i)->getId())
-            << (float) ((*i)->getCurrentPosition().x())
-            << (float) ((*i)->getCurrentPosition().y())
-            << (float) ((*i)->getCurrentPosition().z());
+            << (float) x
+            << (float) y
+            << (float) z;
         out.device()->seek(0);
         out << (quint16)(block.size() - sizeof(quint16));
 
@@ -534,6 +551,34 @@ void Server::sendFixNodeState(int id, bool state, QTcpSocket *client) {
     QDataStream out(&block,QIODevice::WriteOnly);
 
     out << (quint16)0 << (quint8) SetFixNodeStateExecutor::INSTRUCTION_NUMBER << (int) id << (bool) state;
+    out.device()->seek(0);
+    out << (quint16)(block.size() - sizeof(quint16));
+
+    this->sendBlock(block, client);
+}
+
+void Server::sendMergeNodes(QLinkedList<osg::ref_ptr<Data::Node> > *selectedNodes, osg::Vec3f position, int mergeNodeId, QTcpSocket *client) {
+
+    if (!this -> isListening() || (client == NULL && clients.size() == 0)) {
+        return;
+    }
+
+    QByteArray block;
+    QDataStream out(&block,QIODevice::WriteOnly);
+    out.setFloatingPointPrecision(QDataStream::SinglePrecision);
+
+    out << (quint16)0 << (quint8) MergeNodesExecutor::INSTRUCTION_NUMBER << (int) selectedNodes->count();
+
+    QLinkedList<osg::ref_ptr<Data::Node> >::const_iterator iAdd = selectedNodes->constBegin();
+    while (iAdd != selectedNodes->constEnd()) {
+        out << (int) (*iAdd)->getId();
+        ++iAdd;
+    }
+
+    out << (int) mergeNodeId;
+
+    out << (float) position.x() << (float) position.y() << (float) position.z();
+
     out.device()->seek(0);
     out << (quint16)(block.size() - sizeof(quint16));
 

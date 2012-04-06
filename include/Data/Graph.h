@@ -235,7 +235,7 @@ namespace Data
 		*  \param   position     new position of the Nodes
 		*  \return osg::ref_ptr the created merged Node
 		*/
-		osg::ref_ptr<Data::Node> mergeNodes(QLinkedList<osg::ref_ptr<Data::Node> > * selectedNodes, osg::Vec3f position);
+                osg::ref_ptr<Data::Node> mergeNodes(QLinkedList<osg::ref_ptr<Data::Node> > * selectedNodes, osg::Vec3f position, qlonglong mergeNodeId = -1);
 
 		/**
 		*  \fn public  separateNodes(QLinkedList<osg::ref_ptr<Data::Node> > * selectedNodes)

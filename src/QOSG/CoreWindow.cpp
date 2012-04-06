@@ -573,8 +573,14 @@ void CoreWindow::mergeNodes()
 		osg::Vec3 position = viewerWidget->getPickHandler()->getSelectionCenter(true); 
 		QLinkedList<osg::ref_ptr<Data::Node> > * selectedNodes = viewerWidget->getPickHandler()->getSelectedNodes();
 
-		if(selectedNodes->count() > 0) {
-			currentGraph->mergeNodes(selectedNodes, position);
+                if(selectedNodes->count() > 0) {
+                        Network::Server * server = Network::Server::getInstance();
+                        if (server->isListening()) {
+                            osg::ref_ptr<Data::Node> mergeNode = currentGraph->mergeNodes(selectedNodes, position);
+                            server->sendMergeNodes(selectedNodes, position, mergeNode->getId());
+                        } else {
+                            client->sendMergeNodes(selectedNodes, position);
+                        }
 		}
 		else {
 			qDebug() << "[QOSG::CoreWindow::mergeNodes] There are no nodes selected";

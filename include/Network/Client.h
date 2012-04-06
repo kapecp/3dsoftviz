@@ -70,6 +70,7 @@ class Client : public QObject
         void sendEdgeColor(int id, float r, float g, float b, float alpha);
         void sendNodeLabel(int id, QString label);
         void sendFixNodeState(int id, bool state);
+        void sendMergeNodes(QLinkedList<osg::ref_ptr<Data::Node> > * selectedNodes, osg::Vec3f position);
 
         void setMyId(int id) { my_id = id; }
         int getMyId() { return my_id; }
