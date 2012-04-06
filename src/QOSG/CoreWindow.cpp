@@ -528,27 +528,41 @@ void CoreWindow::centerView(bool checked)
 
 void CoreWindow::addMetaNode()
 {	
-	Data::Graph * currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
+    Data::Graph * currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
+    
+    if (currentGraph != NULL)
+    {
+        osg::Vec3 position = viewerWidget->getPickHandler()->getSelectionCenter(true);
 
-	if (currentGraph != NULL)
-	{
-		osg::Vec3 position = viewerWidget->getPickHandler()->getSelectionCenter(true); 
+        QString metaNodeName = "metaNode";
+        QString metaEdgeName = "metaEdge";
 
-                osg::ref_ptr<Data::Node> metaNode = currentGraph->addNode("metaNode", currentGraph->getNodeMetaType(), position);
-		QLinkedList<osg::ref_ptr<Data::Node> > * selectedNodes = viewerWidget->getPickHandler()->getSelectedNodes();
+        osg::ref_ptr<Data::Node> metaNode = NULL;
+        QLinkedList<osg::ref_ptr<Data::Node> > * selectedNodes = viewerWidget->getPickHandler()->getSelectedNodes();
 
-		QLinkedList<osg::ref_ptr<Data::Node> >::const_iterator i = selectedNodes->constBegin();
+        Network::Client * client = Network::Client::getInstance();
+        if (!client->isConnected()) {
 
-		while (i != selectedNodes->constEnd()) 
-		{
-			Data::Edge * e = currentGraph->addEdge("metaEdge", (*i), metaNode, currentGraph->getEdgeMetaType(), true);
-			e->setCamera(viewerWidget->getCamera());
-			++i;
-		}
+            QLinkedList<osg::ref_ptr<Data::Node> >::const_iterator i = selectedNodes->constBegin();
+            metaNode = currentGraph->addNode(metaNodeName, currentGraph->getNodeMetaType(), position);
+            while (i != selectedNodes->constEnd())
+            {
+                Data::Edge * e = currentGraph->addEdge(metaEdgeName, (*i), metaNode, currentGraph->getEdgeMetaType(), true);
+                e->setCamera(viewerWidget->getCamera());
+                ++i;
+            }
+        } else {
+            client->sendAddMetaNode(metaNodeName,selectedNodes,metaEdgeName,position);
+        }
 
-		if (isPlaying)
-			layout->play();
-	}
+        Network::Server *server = Network::Server::getInstance();
+        if (server->isListening() && metaNode != NULL) {
+            server->sendAddMetaNode(metaNode->getId(),metaNodeName,selectedNodes, metaEdgeName,position);
+        }
+        
+        if (isPlaying)
+            layout->play();
+    }
 }
 
 void CoreWindow::fixNodes()

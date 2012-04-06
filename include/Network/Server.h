@@ -42,6 +42,7 @@ class Server : public QTcpServer {
         void sendFixNodeState(int id, bool state, QTcpSocket *client = NULL);
         void sendMergeNodes(QLinkedList<osg::ref_ptr<Data::Node> > * selectedNodes, osg::Vec3f position, int mergeNodeId, QTcpSocket *client = NULL);
         void sendSeparateNodes(QLinkedList<osg::ref_ptr<Data::Node> > * selectedNodes, QTcpSocket *client = NULL);
+        void sendAddMetaNode(int id, QString name, QLinkedList<osg::ref_ptr<Data::Node> > * selectedNodes, QString edgeName, osg::Vec3f position, QTcpSocket *client = NULL);
 
         void stopServer();
 

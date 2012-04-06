@@ -72,6 +72,7 @@ class Client : public QObject
         void sendFixNodeState(int id, bool state);
         void sendMergeNodes(QLinkedList<osg::ref_ptr<Data::Node> > * selectedNodes, osg::Vec3f position);
         void sendSeparateNodes(QLinkedList<osg::ref_ptr<Data::Node> > * selectedNodes);
+        void sendAddMetaNode(QString name, QLinkedList<osg::ref_ptr<Data::Node> > * selectedNodes, QString edgeName, osg::Vec3f position);
 
         void setMyId(int id) { my_id = id; }
         int getMyId() { return my_id; }
