@@ -13,14 +13,18 @@ void MoveNodeExecutor::execute_client() {
     Data::Graph * currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
     QMap<qlonglong, osg::ref_ptr<Data::Node> >* nodes = currentGraph -> getNodes();
     //qDebug() << "Moving" << id << "to" << x << y << z;
-    Data::Node *node = *nodes->find(id);
-    if (Client::getInstance()->selected_nodes.contains(node)) {
-        return;
-    }
+    if (nodes->contains(id)) {
+        Data::Node *node = *nodes->find(id);
+        if (Client::getInstance()->selected_nodes.contains(node)) {
+            return;
+        }
 
-    node -> setUsingInterpolation(false);
-    node -> setFixed(true);
-    node -> setTargetPosition(osg::Vec3(x,y,z));
+        node -> setUsingInterpolation(false);
+        node -> setFixed(true);
+        node -> setTargetPosition(osg::Vec3(x,y,z));
+    } else {
+        qDebug() << "Nepoznam uzol" << id;
+    }
 }
 
 void MoveNodeExecutor::execute_server() {
@@ -54,14 +58,19 @@ void MoveNodeExecutor::execute_server() {
     Data::Graph * currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
     QMap<qlonglong, osg::ref_ptr<Data::Node> >* nodes = currentGraph -> getNodes();
     //qDebug() << "Moving" << id << "to" << x << y << z;
-    Data::Node *node = *nodes->find(id);
 
-    server->appendMovingNode(node);
+    if (nodes->contains(id)) {
+        Data::Node *node = *nodes->find(id);
 
-    node -> setUsingInterpolation(false);
-    node -> setFixed(true);
-    node -> setTargetPosition(osg::Vec3(x,y,z));
-    Layout::LayoutThread * thread = server->getLayoutThread();
-    thread->wakeUp();
+        server->appendMovingNode(node);
+
+        node -> setUsingInterpolation(false);
+        node -> setFixed(true);
+        node -> setTargetPosition(osg::Vec3(x,y,z));
+        Layout::LayoutThread * thread = server->getLayoutThread();
+        thread->wakeUp();
+    } else {
+        qDebug() << "Nepoznam uzol" << id;
+    }
 
 }
