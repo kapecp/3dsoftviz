@@ -14,6 +14,14 @@ void RemoveNodeExecutor::execute_client() {
     if (nodes->contains(id)) {
         Data::Node *node = *nodes->find(id);
         currentGraph->removeNode(node);
+    } else {
+        QMap<qlonglong, osg::ref_ptr<Data::Node> >* nodes = currentGraph -> getMetaNodes();
+        if (nodes->contains(id)) {
+            Data::Node *node = *nodes->find(id);
+            currentGraph->removeNode(node);
+        } else {
+            qDebug() << "Client: delete node: unknown node" << id;
+        }
     }
 
 }
@@ -29,6 +37,14 @@ void RemoveNodeExecutor::execute_server() {
     if (nodes->contains(id)) {
         Data::Node *node = *nodes->find(id);
         currentGraph->removeNode(node);
+    } else {
+        QMap<qlonglong, osg::ref_ptr<Data::Node> >* nodes = currentGraph -> getMetaNodes();
+        if (nodes->contains(id)) {
+            Data::Node *node = *nodes->find(id);
+            currentGraph->removeNode(node);
+        } else {
+            qDebug() << "Server: delete node: unknown node" << id;
+        }
     }
 
     Server * server = Server::getInstance();
