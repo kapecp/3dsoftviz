@@ -289,17 +289,35 @@ void Client::spyUser(int user) {
 
 void Client::lookAt(osg::Vec3d coord) {
     Vwr::CameraManipulator * cameraManipulator = ((QOSG::CoreWindow *) cw)->getCameraManipulator();
+
     osg::Quat rotation = Helper::lookAt(cameraManipulator->getCenter(), coord);
     cameraManipulator->setRotation(rotation);
     sendMyView();
 }
 
 void Client::centerUser(int id_user) {
+
+    Vwr::CameraManipulator * cameraManipulator = ((QOSG::CoreWindow *) cw)->getCameraManipulator();
+
+    original_distance = cameraManipulator->getDistance();
+    original_center = cameraManipulator->getCenter();
+    original_rotation = cameraManipulator->getRotation();
+
+    osg::Vec3 direction = original_rotation * osg::Vec3(0, 0, 1);
+    direction *= original_distance;
+    cameraManipulator->setCenter(cameraManipulator->getCenter()+direction);
+    cameraManipulator->setDistance(0);
+
     user_to_center = id_user;
     osg::PositionAttitudeTransform * userAvatar = avatarList[id_user];
     lookAt(userAvatar->getPosition());
 }
 
+void Client::unCenterUser() {
+    user_to_center = -1;
+    setMyView(original_center,original_rotation,original_distance);
+    sendMyView();
+}
 
 void Client::sendNewNode(QString name, osg::Vec3f position) {
 

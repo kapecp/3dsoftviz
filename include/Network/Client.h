@@ -53,7 +53,7 @@ class Client : public QObject
         void unSpyUser();
 
         void centerUser(int id_user);
-        void unCenterUser() { user_to_center = -1; }
+        void unCenterUser();
         int getCenterUser() { return user_to_center; }
         bool isCenteringUser() { return user_to_center > -1; }
 
