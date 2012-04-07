@@ -557,7 +557,7 @@ void CoreWindow::addMetaNode()
 
         Network::Server *server = Network::Server::getInstance();
         if (server->isListening() && metaNode != NULL) {
-            server->sendAddMetaNode(metaNode->getId(),metaNodeName,selectedNodes, metaEdgeName,position);
+            server->sendAddMetaNode(metaNode,selectedNodes,metaEdgeName,position);
         }
         
         if (isPlaying)

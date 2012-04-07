@@ -6,7 +6,7 @@ using namespace Network;
 
 void AddMetaNodeExecutor::execute_client() {
 
-    int count, metaNodeId, id;
+    int count, metaNodeId, id_edge, id_node;
     QString name, edgeName;
     float x, y, z;
 
@@ -22,9 +22,9 @@ void AddMetaNodeExecutor::execute_client() {
     *stream >> edgeName;
     *stream >> count;
     for (int i = 0; i < count; i++) {
-        *stream >> id;
-        if (nodes->contains(id)) {
-            currentGraph->addEdge(edgeName, *nodes->find(id), metaNode, currentGraph->getEdgeMetaType(), true);
+        *stream >> id_edge >> id_node;
+        if (nodes->contains(id_node)) {
+            currentGraph->addEdge(id_edge, edgeName, *nodes->find(id_node), metaNode, currentGraph->getEdgeMetaType(), true);
         }
     }
 
@@ -58,7 +58,7 @@ void AddMetaNodeExecutor::execute_server() {
     }
 
     Server * server = Server::getInstance();
-    server->sendAddMetaNode(metaNode->getId(),name,selectedNodes,edgeName,osg::Vec3(x,y,z));
+    server->sendAddMetaNode(metaNode,selectedNodes,edgeName,osg::Vec3(x,y,z));
 
     if (((QOSG::CoreWindow *)server->getCoreWindowReference())->playing()) {
         server->getLayoutThread()->play();

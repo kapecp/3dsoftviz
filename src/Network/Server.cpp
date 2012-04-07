@@ -608,7 +608,7 @@ void Server::sendSeparateNodes(QLinkedList<osg::ref_ptr<Data::Node> > *selectedN
     this->sendBlock(block, client);
 }
 
-void Server::sendAddMetaNode(int id, QString name, QLinkedList<osg::ref_ptr<Data::Node> > *selectedNodes, QString edgeName, osg::Vec3f position, QTcpSocket *client) {
+void Server::sendAddMetaNode(osg::ref_ptr<Data::Node> metaNode, QLinkedList<osg::ref_ptr<Data::Node> > *selectedNodes, QString edgeName, osg::Vec3f position, QTcpSocket *client) {
 
     if (!this -> isListening() || (client == NULL && clients.size() == 0)) {
         return;
@@ -618,15 +618,16 @@ void Server::sendAddMetaNode(int id, QString name, QLinkedList<osg::ref_ptr<Data
     QDataStream out(&block,QIODevice::WriteOnly);
     out.setFloatingPointPrecision(QDataStream::SinglePrecision);
 
-    out << (quint16)0 << (quint8) AddMetaNodeExecutor::INSTRUCTION_NUMBER << (int) id << (QString) name;
+    out << (quint16)0 << (quint8) AddMetaNodeExecutor::INSTRUCTION_NUMBER << (int) metaNode->getId() << (QString) metaNode->getName();
     out << (float) position.x() << (float) position.y() << (float) position.z();
     out << (QString) edgeName;
     out << (int) selectedNodes->count();
 
-    QLinkedList<osg::ref_ptr<Data::Node> >::const_iterator iAdd = selectedNodes->constBegin();
-    while (iAdd != selectedNodes->constEnd()) {
-        out << (int) (*iAdd)->getId();
-        ++iAdd;
+    QMap<qlonglong, osg::ref_ptr<Data::Edge> > * edges = metaNode->getEdges();
+    QMap<qlonglong, osg::ref_ptr<Data::Edge> >::const_iterator i = edges->constBegin();
+    while (i != edges->constEnd()) {
+        out << (int) (*i)->getId() << (int) (*i)->getSrcNode()->getId();
+        ++i;
     }
 
 
