@@ -576,16 +576,18 @@ namespace QOSG
                 QPushButton * b_start_server;
                 QListWidget * lw_users;
 
-	private:
 
-		/**
-		 * \brief Gets selected nodes and sets the restriction defined by shapeGetter to these nodes.
-		 */
-		void setRestrictionToSelectedNodes (
-			QSharedPointer<Layout::ShapeGetter> shapeGetter,
-			Data::Graph * currentGraph,
-			QSharedPointer<Layout::RestrictionRemovalHandler> removalHandler
-		);
+                /**
+                 * \brief Gets selected nodes and sets the restriction defined by shapeGetter to these nodes.
+                 */
+                void setRestrictionToSelectedNodes (
+                        QSharedPointer<Layout::ShapeGetter> shapeGetter,
+                        Data::Graph * currentGraph,
+                        QSharedPointer<Layout::RestrictionRemovalHandler> removalHandler,
+                        QLinkedList<osg::ref_ptr<Data::Node> > * nodesToRestrict = NULL
+                );
+
+        private:
 
 	};
 }

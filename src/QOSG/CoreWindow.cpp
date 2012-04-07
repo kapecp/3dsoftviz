@@ -838,6 +838,9 @@ void CoreWindow::setRestriction_SphereSurface ()
 				)
 			)
 		);
+
+                Network::Server * server = Network::Server::getInstance();
+                server->sendSetRestriction(centerNode, position, surfaceNode, position + osg::Vec3f (10, 0, 0), viewerWidget->getPickHandler()->getSelectedNodes());
 	}
 }
 
@@ -917,9 +920,10 @@ void CoreWindow::unsetRestriction () {
 void CoreWindow::setRestrictionToSelectedNodes (
 	QSharedPointer<Layout::ShapeGetter> shapeGetter,
 	Data::Graph * currentGraph,
-	QSharedPointer<Layout::RestrictionRemovalHandler> removalHandler
+        QSharedPointer<Layout::RestrictionRemovalHandler> removalHandler,
+        QLinkedList<osg::ref_ptr<Data::Node> > * nodesToRestrict
 ) {
-	QLinkedList<osg::ref_ptr<Data::Node> > * selectedNodes = viewerWidget->getPickHandler()->getSelectedNodes();
+        QLinkedList<osg::ref_ptr<Data::Node> > * selectedNodes = (nodesToRestrict == NULL) ? viewerWidget->getPickHandler()->getSelectedNodes() : nodesToRestrict;
 
 	QSet<Data::Node *> nodes;
 	for (QLinkedList<osg::ref_ptr<Data::Node> >::const_iterator it = selectedNodes->constBegin (); it != selectedNodes->constEnd (); ++it) {

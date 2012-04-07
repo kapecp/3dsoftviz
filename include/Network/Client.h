@@ -79,6 +79,8 @@ class Client : public QObject
         void ignoreLayout(bool ignore) { layoutIgnore = ignore; }
         bool ignoreLayout() { return layoutIgnore; }
 
+        QObject* getCoreWindowReference() { return cw; }
+
         //todo: encapsulate!
         QMap<int,QString> userList;
         QMap<int,osg::PositionAttitudeTransform*> avatarList;

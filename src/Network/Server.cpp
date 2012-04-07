@@ -637,6 +637,35 @@ void Server::sendAddMetaNode(osg::ref_ptr<Data::Node> metaNode, QLinkedList<osg:
     this->sendBlock(block, client);
 }
 
+void Server::sendSetRestriction(osg::ref_ptr<Data::Node> centerNode, osg::Vec3 position_centerNode,  osg::ref_ptr<Data::Node> surfaceNode, osg::Vec3 position_surfaceNode, QLinkedList<osg::ref_ptr<Data::Node> > * nodes, QTcpSocket *client) {
+
+    if (!this -> isListening() || (client == NULL && clients.size() == 0)) {
+        return;
+    }
+
+    QByteArray block;
+    QDataStream out(&block,QIODevice::WriteOnly);
+    out.setFloatingPointPrecision(QDataStream::SinglePrecision);
+
+    out << (quint16)0 << (quint8) SetRestrictionExecutor::INSTRUCTION_NUMBER;
+    out << (int) centerNode->getId() << (QString) centerNode->getName();
+    out << (float) position_centerNode.x() << (float) position_centerNode.y() << (float) position_centerNode.z();
+    out << (int) surfaceNode->getId() << (QString) surfaceNode->getName();
+    out << (float) position_surfaceNode.x() << (float) position_surfaceNode.y() << (float) position_surfaceNode.z();
+
+    QLinkedList<osg::ref_ptr<Data::Node> >::const_iterator i = nodes->constBegin();
+    while (i != nodes->constEnd()) {
+        out << (int) (*i)->getId();
+        ++i;
+    }
+
+
+    out.device()->seek(0);
+    out << (quint16)(block.size() - sizeof(quint16));
+
+    this->sendBlock(block, client);
+}
+
 void Server::sendPlainInstruction(quint8 instruction_number, QTcpSocket *client) {
 
     QByteArray block;

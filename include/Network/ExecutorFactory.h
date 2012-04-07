@@ -28,6 +28,7 @@
 #include "Network/executors/MergeNodesExecutor.h"
 #include "Network/executors/SeparateNodesExecutor.h"
 #include "Network/executors/AddMetaNodeExecutor.h"
+#include "Network/executors/SetRestrictionExecutor.h"
 
 namespace Network {
 
