@@ -637,7 +637,7 @@ void Server::sendAddMetaNode(osg::ref_ptr<Data::Node> metaNode, QLinkedList<osg:
     this->sendBlock(block, client);
 }
 
-void Server::sendSetRestriction(osg::ref_ptr<Data::Node> centerNode, osg::Vec3 position_centerNode,  osg::ref_ptr<Data::Node> surfaceNode, osg::Vec3 position_surfaceNode, QLinkedList<osg::ref_ptr<Data::Node> > * nodes, QTcpSocket *client) {
+void Server::sendSetRestriction(quint8 type, osg::ref_ptr<Data::Node> node1, osg::Vec3 position_node1,  osg::ref_ptr<Data::Node> node2, osg::Vec3 position_node2, QLinkedList<osg::ref_ptr<Data::Node> > * nodes, osg::ref_ptr<Data::Node> node3, osg::Vec3 * position_node3, QTcpSocket *client) {
 
     if (!this -> isListening() || (client == NULL && clients.size() == 0)) {
         return;
@@ -647,11 +647,16 @@ void Server::sendSetRestriction(osg::ref_ptr<Data::Node> centerNode, osg::Vec3 p
     QDataStream out(&block,QIODevice::WriteOnly);
     out.setFloatingPointPrecision(QDataStream::SinglePrecision);
 
-    out << (quint16)0 << (quint8) SetRestrictionExecutor::INSTRUCTION_NUMBER;
-    out << (int) centerNode->getId() << (QString) centerNode->getName();
-    out << (float) position_centerNode.x() << (float) position_centerNode.y() << (float) position_centerNode.z();
-    out << (int) surfaceNode->getId() << (QString) surfaceNode->getName();
-    out << (float) position_surfaceNode.x() << (float) position_surfaceNode.y() << (float) position_surfaceNode.z();
+    out << (quint16)0 << (quint8) SetRestrictionExecutor::INSTRUCTION_NUMBER << (quint8) type;
+    out << (int) node1->getId() << (QString) node1->getName();
+    out << (float) position_node1.x() << (float) position_node1.y() << (float) position_node1.z();
+    out << (int) node2->getId() << (QString) node2->getName();
+    out << (float) position_node2.x() << (float) position_node2.y() << (float) position_node2.z();
+
+    if (type == 3 && node3 != NULL && position_node3 != NULL) {
+        out << (int) node3->getId() << (QString) node3->getName();
+        out << (float) position_node3->x() << (float) position_node3->y() << (float) position_node3->z();
+    }
 
     QLinkedList<osg::ref_ptr<Data::Node> >::const_iterator i = nodes->constBegin();
     while (i != nodes->constEnd()) {

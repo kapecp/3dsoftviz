@@ -840,7 +840,7 @@ void CoreWindow::setRestriction_SphereSurface ()
 		);
 
                 Network::Server * server = Network::Server::getInstance();
-                server->sendSetRestriction(centerNode, position, surfaceNode, position + osg::Vec3f (10, 0, 0), viewerWidget->getPickHandler()->getSelectedNodes());
+                server->sendSetRestriction(1, centerNode, position, surfaceNode, position + osg::Vec3f (10, 0, 0), viewerWidget->getPickHandler()->getSelectedNodes());
 	}
 }
 
@@ -871,6 +871,8 @@ void CoreWindow::setRestriction_Sphere ()
 				)
 			)
 		);
+                Network::Server * server = Network::Server::getInstance();
+                server->sendSetRestriction(2, centerNode, position, surfaceNode, position + osg::Vec3f (10, 0, 0), viewerWidget->getPickHandler()->getSelectedNodes());
 	}
 }
 
@@ -902,6 +904,9 @@ void CoreWindow::setRestriction_Plane ()
 				)
 			)
 		);
+                Network::Server * server = Network::Server::getInstance();
+                osg::Vec3 positionNode3 = position + osg::Vec3f (0, 10, 0);
+                server->sendSetRestriction(3, node1, position, node2, position + osg::Vec3f (10, 0, 0), viewerWidget->getPickHandler()->getSelectedNodes(), node3, &positionNode3);
 	}
 }
 
