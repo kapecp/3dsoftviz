@@ -818,29 +818,43 @@ void CoreWindow::setRestriction_SphereSurface ()
 	if (currentGraph != NULL)
 	{
 		osg::Vec3 position = viewerWidget->getPickHandler()->getSelectionCenter(true);
+		osg::ref_ptr<Data::Node> centerNode;
+		osg::ref_ptr<Data::Node> surfaceNode;
 
-		osg::ref_ptr<Data::Node> centerNode = currentGraph->addRestrictionNode (QString ("center"), position);
-		osg::ref_ptr<Data::Node> surfaceNode = currentGraph->addRestrictionNode (QString ("surface"), position + osg::Vec3f (10, 0, 0));
+		QString name_centerNode = "center";
+		QString name_sufraceNode = "surface";
+		osg::Vec3 positionNode1 = position;
+		osg::Vec3 positionNode2 = position + osg::Vec3f (10, 0, 0);
 
 		Layout::RestrictionRemovalHandler_RestrictionNodesRemover::NodesListType restrictionNodes;
-		restrictionNodes.push_back (centerNode);
-		restrictionNodes.push_back (surfaceNode);
+		Network::Client * client = Network::Client::getInstance();
 
-		setRestrictionToSelectedNodes (
-			QSharedPointer<Layout::ShapeGetter> (
-				new Layout::ShapeGetter_SphereSurface_ByTwoNodes (centerNode, surfaceNode)
-			),
-			currentGraph,
-			QSharedPointer<Layout::RestrictionRemovalHandler_RestrictionNodesRemover> (
-				new Layout::RestrictionRemovalHandler_RestrictionNodesRemover (
-					*currentGraph,
-					restrictionNodes
-				)
-			)
-		);
+		if (!client->isConnected()) {
 
-                Network::Server * server = Network::Server::getInstance();
-                server->sendSetRestriction(1, centerNode, position, surfaceNode, position + osg::Vec3f (10, 0, 0), viewerWidget->getPickHandler()->getSelectedNodes());
+			centerNode = currentGraph->addRestrictionNode (name_centerNode, positionNode1);
+			surfaceNode = currentGraph->addRestrictionNode (name_sufraceNode, positionNode2);
+
+			restrictionNodes.push_back (centerNode);
+			restrictionNodes.push_back (surfaceNode);
+
+			setRestrictionToSelectedNodes (
+						QSharedPointer<Layout::ShapeGetter> (
+							new Layout::ShapeGetter_SphereSurface_ByTwoNodes (centerNode, surfaceNode)
+							),
+						currentGraph,
+						QSharedPointer<Layout::RestrictionRemovalHandler_RestrictionNodesRemover> (
+							new Layout::RestrictionRemovalHandler_RestrictionNodesRemover (
+								*currentGraph,
+								restrictionNodes
+								)
+							)
+						);
+		} else {
+			client->sendSetRestriction(1,name_centerNode,positionNode1,name_sufraceNode,positionNode2, viewerWidget->getPickHandler()->getSelectedNodes());
+		}
+
+		Network::Server * server = Network::Server::getInstance();
+		server->sendSetRestriction(1, centerNode, positionNode1, surfaceNode, positionNode2, viewerWidget->getPickHandler()->getSelectedNodes());
 	}
 }
 
@@ -851,28 +865,43 @@ void CoreWindow::setRestriction_Sphere ()
 	if (currentGraph != NULL)
 	{
 		osg::Vec3 position = viewerWidget->getPickHandler()->getSelectionCenter(true);
+		osg::ref_ptr<Data::Node> centerNode;
+		osg::ref_ptr<Data::Node> surfaceNode;
 
-		osg::ref_ptr<Data::Node> centerNode = currentGraph->addRestrictionNode (QString ("center"), position);
-		osg::ref_ptr<Data::Node> surfaceNode = currentGraph->addRestrictionNode (QString ("surface"), position + osg::Vec3f (10, 0, 0));
+		QString name_centerNode = "center";
+		QString name_sufraceNode = "surface";
+		osg::Vec3 positionNode1 = position;
+		osg::Vec3 positionNode2 = position + osg::Vec3f (10, 0, 0);
 
 		Layout::RestrictionRemovalHandler_RestrictionNodesRemover::NodesListType restrictionNodes;
-		restrictionNodes.push_back (centerNode);
-		restrictionNodes.push_back (surfaceNode);
 
-		setRestrictionToSelectedNodes (
-			QSharedPointer<Layout::ShapeGetter> (
-				new Layout::ShapeGetter_Sphere_ByTwoNodes (centerNode, surfaceNode)
-			),
-			currentGraph,
-			QSharedPointer<Layout::RestrictionRemovalHandler_RestrictionNodesRemover> (
-				new Layout::RestrictionRemovalHandler_RestrictionNodesRemover (
-					*currentGraph,
-					restrictionNodes
-				)
-			)
-		);
-                Network::Server * server = Network::Server::getInstance();
-                server->sendSetRestriction(2, centerNode, position, surfaceNode, position + osg::Vec3f (10, 0, 0), viewerWidget->getPickHandler()->getSelectedNodes());
+		Network::Client * client = Network::Client::getInstance();
+
+		if (!client->isConnected()) {
+
+			centerNode = currentGraph->addRestrictionNode (name_centerNode, positionNode1);
+			surfaceNode = currentGraph->addRestrictionNode (name_sufraceNode, positionNode2);
+
+			restrictionNodes.push_back (centerNode);
+			restrictionNodes.push_back (surfaceNode);
+
+			setRestrictionToSelectedNodes (
+						QSharedPointer<Layout::ShapeGetter> (
+							new Layout::ShapeGetter_Sphere_ByTwoNodes (centerNode, surfaceNode)
+							),
+						currentGraph,
+						QSharedPointer<Layout::RestrictionRemovalHandler_RestrictionNodesRemover> (
+							new Layout::RestrictionRemovalHandler_RestrictionNodesRemover (
+								*currentGraph,
+								restrictionNodes
+								)
+							)
+						);
+		} else {
+			client->sendSetRestriction(2,name_centerNode,positionNode1,name_sufraceNode, positionNode2, viewerWidget->getPickHandler()->getSelectedNodes());
+		}
+		Network::Server * server = Network::Server::getInstance();
+		server->sendSetRestriction(2, centerNode, positionNode1, surfaceNode, positionNode2, viewerWidget->getPickHandler()->getSelectedNodes());
 	}
 }
 
@@ -882,31 +911,48 @@ void CoreWindow::setRestriction_Plane ()
 
 	if (currentGraph != NULL) {
 		osg::Vec3 position = viewerWidget->getPickHandler()->getSelectionCenter(true);
+		osg::ref_ptr<Data::Node> node1;
+		osg::ref_ptr<Data::Node> node2;
+		osg::ref_ptr<Data::Node> node3;
 
-		osg::ref_ptr<Data::Node> node1 = currentGraph->addRestrictionNode (QString ("plane_node_1"), position);
-		osg::ref_ptr<Data::Node> node2 = currentGraph->addRestrictionNode (QString ("plane_node_2"), position + osg::Vec3f (10, 0, 0));
-		osg::ref_ptr<Data::Node> node3 = currentGraph->addRestrictionNode (QString ("plane_node_3"), position + osg::Vec3f (0, 10, 0));
+		QString name_node1 = "plane_node_1";
+		QString name_node2 = "plane_node_2";
+		QString name_node3 = "plane_node_3";
+
+		osg::Vec3 positionNode1 = position;
+		osg::Vec3 positionNode2 = position + osg::Vec3f (10, 0, 0);
+		osg::Vec3 positionNode3 = position + osg::Vec3f (0, 10, 0);
 
 		Layout::RestrictionRemovalHandler_RestrictionNodesRemover::NodesListType restrictionNodes;
-		restrictionNodes.push_back (node1);
-		restrictionNodes.push_back (node2);
-		restrictionNodes.push_back (node3);
 
-		setRestrictionToSelectedNodes (
-			QSharedPointer<Layout::ShapeGetter> (
-				new Layout::ShapeGetter_Plane_ByThreeNodes (node1, node2, node3)
-			),
-			currentGraph,
-			QSharedPointer<Layout::RestrictionRemovalHandler_RestrictionNodesRemover> (
-				new Layout::RestrictionRemovalHandler_RestrictionNodesRemover (
-					*currentGraph,
-					restrictionNodes
-				)
-			)
-		);
-                Network::Server * server = Network::Server::getInstance();
-                osg::Vec3 positionNode3 = position + osg::Vec3f (0, 10, 0);
-                server->sendSetRestriction(3, node1, position, node2, position + osg::Vec3f (10, 0, 0), viewerWidget->getPickHandler()->getSelectedNodes(), node3, &positionNode3);
+		Network::Client * client = Network::Client::getInstance();
+
+		if (!client->isConnected()) {
+
+			node1 = currentGraph->addRestrictionNode (name_node1, positionNode1);
+			node2 = currentGraph->addRestrictionNode (name_node2, positionNode2);
+			node3 = currentGraph->addRestrictionNode (name_node3, positionNode3);
+			restrictionNodes.push_back (node1);
+			restrictionNodes.push_back (node2);
+			restrictionNodes.push_back (node3);
+
+			setRestrictionToSelectedNodes (
+						QSharedPointer<Layout::ShapeGetter> (
+							new Layout::ShapeGetter_Plane_ByThreeNodes (node1, node2, node3)
+							),
+						currentGraph,
+						QSharedPointer<Layout::RestrictionRemovalHandler_RestrictionNodesRemover> (
+							new Layout::RestrictionRemovalHandler_RestrictionNodesRemover (
+								*currentGraph,
+								restrictionNodes
+								)
+							)
+						);
+		} else {
+			client->sendSetRestriction(3,name_node1,positionNode1,name_node2, positionNode2, viewerWidget->getPickHandler()->getSelectedNodes(),name_node3,&positionNode3);
+		}
+		Network::Server * server = Network::Server::getInstance();
+		server->sendSetRestriction(3, node1, positionNode1, node2, positionNode2, viewerWidget->getPickHandler()->getSelectedNodes(), node3, &positionNode3);
 	}
 }
 

@@ -658,6 +658,8 @@ void Server::sendSetRestriction(quint8 type, osg::ref_ptr<Data::Node> node1, osg
         out << (float) position_node3->x() << (float) position_node3->y() << (float) position_node3->z();
     }
 
+	out << (int) nodes->count();
+
     QLinkedList<osg::ref_ptr<Data::Node> >::const_iterator i = nodes->constBegin();
     while (i != nodes->constEnd()) {
         out << (int) (*i)->getId();

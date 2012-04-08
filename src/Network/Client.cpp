@@ -545,3 +545,33 @@ void Client::sendAddMetaNode(QString name, QLinkedList<osg::ref_ptr<Data::Node> 
 
 }
 
+void Client::sendSetRestriction(quint8 type, QString name_node1, osg::Vec3 position_node1, QString name_node2, osg::Vec3 position_node2, QLinkedList<osg::ref_ptr<Data::Node> > * nodes, QString name_node3, osg::Vec3 * position_node3) {
+	if (!this -> isConnected() ) {
+		return;
+	}
+	QByteArray block;
+	QDataStream out(&block,QIODevice::WriteOnly);
+	out.setFloatingPointPrecision(QDataStream::SinglePrecision);
+
+	out << (quint16)0 << (quint8) SetRestrictionExecutor::INSTRUCTION_NUMBER << (quint8) type;
+	out << (QString) name_node1 << (float) position_node1.x() << (float) position_node1.y() << (float) position_node1.z();
+	out << (QString) name_node2 << (float) position_node2.x() << (float) position_node2.y() << (float) position_node2.z();
+
+	if (type == 3 && position_node3 != NULL) {
+		out << (QString) name_node3 << (float) position_node3->x() << (float) position_node3->y() << (float) position_node3->z();
+	}
+
+	out << (int) nodes->count();
+
+	QLinkedList<osg::ref_ptr<Data::Node> >::const_iterator i = nodes->constBegin();
+	while (i != nodes->constEnd()) {
+		out << (int) (*i)->getId();
+		++i;
+	}
+
+	out.device()->seek(0);
+	out << (quint16)(block.size() - sizeof(quint16));
+
+	socket->write(block);
+
+}
