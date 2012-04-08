@@ -575,3 +575,25 @@ void Client::sendSetRestriction(quint8 type, QString name_node1, osg::Vec3 posit
 	socket->write(block);
 
 }
+
+void Client::sendUnSetRestriction(QLinkedList<osg::ref_ptr<Data::Node> > *nodes) {
+	if (!this -> isConnected() ) {
+		return;
+	}
+	QByteArray block;
+	QDataStream out(&block,QIODevice::WriteOnly);
+	out << (quint16)0 << (quint8) UnSetRestrictionExecutor::INSTRUCTION_NUMBER;
+
+	out << (int) nodes->count();
+
+	QLinkedList<osg::ref_ptr<Data::Node> >::const_iterator i = nodes->constBegin();
+	while (i != nodes->constEnd()) {
+		out << (int) (*i)->getId();
+		++i;
+	}
+
+	out.device()->seek(0);
+	out << (quint16)(block.size() - sizeof(quint16));
+
+	socket->write(block);
+}

@@ -959,13 +959,21 @@ void CoreWindow::setRestriction_Plane ()
 void CoreWindow::unsetRestriction () {
 	Data::Graph * currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
 
-	if (currentGraph != NULL) {
-		setRestrictionToSelectedNodes (
-			QSharedPointer<Layout::ShapeGetter> (NULL),
-			currentGraph,
-			QSharedPointer<Layout::RestrictionRemovalHandler> (NULL)
-		);
+	Network::Client * client = Network::Client::getInstance();
+	if (!client->isConnected()) {
+		if (currentGraph != NULL) {
+			setRestrictionToSelectedNodes (
+						QSharedPointer<Layout::ShapeGetter> (NULL),
+						currentGraph,
+						QSharedPointer<Layout::RestrictionRemovalHandler> (NULL)
+						);
+		}
+	} else {
+		client->sendUnSetRestriction(viewerWidget->getPickHandler()->getSelectedNodes());
 	}
+
+	Network::Server * server = Network::Server::getInstance();
+	server->sendUnSetRestriction(viewerWidget->getPickHandler()->getSelectedNodes());
 }
 
 void CoreWindow::setRestrictionToSelectedNodes (

@@ -673,6 +673,31 @@ void Server::sendSetRestriction(quint8 type, osg::ref_ptr<Data::Node> node1, osg
     this->sendBlock(block, client);
 }
 
+void Server::sendUnSetRestriction(QLinkedList<osg::ref_ptr<Data::Node> > *nodes, QTcpSocket *client) {
+
+	if (!this -> isListening() || (client == NULL && clients.size() == 0)) {
+		return;
+	}
+
+	QByteArray block;
+	QDataStream out(&block,QIODevice::WriteOnly);
+	out << (quint16)0 << (quint8) UnSetRestrictionExecutor::INSTRUCTION_NUMBER;
+
+	out << (int) nodes->count();
+
+	QLinkedList<osg::ref_ptr<Data::Node> >::const_iterator i = nodes->constBegin();
+	while (i != nodes->constEnd()) {
+		out << (int) (*i)->getId();
+		++i;
+	}
+
+
+	out.device()->seek(0);
+	out << (quint16)(block.size() - sizeof(quint16));
+
+	this->sendBlock(block, client);
+}
+
 void Server::sendPlainInstruction(quint8 instruction_number, QTcpSocket *client) {
 
     QByteArray block;

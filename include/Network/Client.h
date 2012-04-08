@@ -74,6 +74,7 @@ class Client : public QObject
         void sendSeparateNodes(QLinkedList<osg::ref_ptr<Data::Node> > * selectedNodes);
         void sendAddMetaNode(QString name, QLinkedList<osg::ref_ptr<Data::Node> > * selectedNodes, QString edgeName, osg::Vec3f position);
 		void sendSetRestriction(quint8 type, QString name_node1, osg::Vec3 position_node1, QString name_node2, osg::Vec3 position_node2, QLinkedList<osg::ref_ptr<Data::Node> > * nodes, QString name_node3 = "", osg::Vec3 * position_node3 = NULL);
+		void sendUnSetRestriction(QLinkedList<osg::ref_ptr<Data::Node> > * nodes);
 
         void setMyId(int id) { my_id = id; }
         int getMyId() { return my_id; }

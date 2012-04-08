@@ -28,8 +28,9 @@ ExecutorFactory::ExecutorFactory() {
     executorList.insert(quint8(SetFixNodeStateExecutor::INSTRUCTION_NUMBER), new SetFixNodeStateExecutor);
     executorList.insert(quint8(MergeNodesExecutor::INSTRUCTION_NUMBER), new MergeNodesExecutor);
     executorList.insert(quint8(SeparateNodesExecutor::INSTRUCTION_NUMBER), new SeparateNodesExecutor);
-    executorList.insert(quint8(AddMetaNodeExecutor::INSTRUCTION_NUMBER), new AddMetaNodeExecutor);
-    executorList.insert(quint8(SetRestrictionExecutor::INSTRUCTION_NUMBER), new SetRestrictionExecutor);
+	executorList.insert(quint8(AddMetaNodeExecutor::INSTRUCTION_NUMBER), new AddMetaNodeExecutor);
+	executorList.insert(quint8(SetRestrictionExecutor::INSTRUCTION_NUMBER), new SetRestrictionExecutor);
+	executorList.insert(quint8(UnSetRestrictionExecutor::INSTRUCTION_NUMBER), new UnSetRestrictionExecutor);
 
 }
 
