@@ -1123,8 +1123,13 @@ Layout::RestrictionsManager & Data::Graph::getRestrictionsManager (void) {
 	return restrictionsManager_;
 }
 
-osg::ref_ptr<Data::Node> Data::Graph::addRestrictionNode(QString name, osg::Vec3f position) {
-	osg::ref_ptr<Data::Node> node = addNode (name, getRestrictionNodeMetaType (), position);
+osg::ref_ptr<Data::Node> Data::Graph::addRestrictionNode(QString name, osg::Vec3f position, int nodeId) {
+        osg::ref_ptr<Data::Node> node;
+        if (nodeId > -1) {
+            node = addNode (nodeId, name, getRestrictionNodeMetaType (), position);
+        } else {
+            node = addNode (name, getRestrictionNodeMetaType (), position);
+        }
 	node->setIgnored (true);
 	node->setPositionCanBeRestricted (false);
 	node->setRemovableByUser (false);

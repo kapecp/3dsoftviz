@@ -515,7 +515,7 @@ namespace Data
 		/**
 		 * \brief Adds node used to manipulate the restrictions.
 		 */
-		osg::ref_ptr<Data::Node> addRestrictionNode(QString name, osg::Vec3f position);
+                osg::ref_ptr<Data::Node> addRestrictionNode(QString name, osg::Vec3f position, int nodeId = -1);
 		
 		/**
 		*  \fn inline public  setEleIdCounter

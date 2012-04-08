@@ -23,14 +23,14 @@ void SetRestrictionExecutor::execute_client() {
     *stream >> id >> name >> x >> y >> z;
 
     Data::Graph * currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
-    node1 = currentGraph->addRestrictionNode (name, osg::Vec3f(x,y,z));
+    node1 = currentGraph->addRestrictionNode (name, osg::Vec3f(x,y,z), id);
 
     *stream >> id >> name >> x >> y >> z;
-    node2 = currentGraph->addRestrictionNode (name, osg::Vec3f(x,y,z));
+    node2 = currentGraph->addRestrictionNode (name, osg::Vec3f(x,y,z), id);
 
     if (type > 2) {
         *stream >> id >> name >> x >> y >> z;
-        node3 = currentGraph->addRestrictionNode (name, osg::Vec3f(x,y,z));
+        node3 = currentGraph->addRestrictionNode (name, osg::Vec3f(x,y,z), id);
     }
 
     Layout::RestrictionRemovalHandler_RestrictionNodesRemover::NodesListType restrictionNodes;
