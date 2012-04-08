@@ -22,7 +22,12 @@ void MoveNodeExecutor::execute_client() {
         } else {
             qDebug() << "Nepoznam uzol" << id;
         }
-    }
+	}
+
+	//TODO: refactor
+	// Stupid way to fix restriction shape refreshing
+	((QOSG::CoreWindow *)Client::getInstance()->getCoreWindowReference())->getLayoutThread()->pause();
+	((QOSG::CoreWindow *)Client::getInstance()->getCoreWindowReference())->getLayoutThread()->play();
 }
 
 void MoveNodeExecutor::execute_server() {
