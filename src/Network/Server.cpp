@@ -411,9 +411,27 @@ void Server::lookAt(osg::Vec3d coord) {
 }
 
 void Server::centerUser(int id_user) {
+
+	Vwr::CameraManipulator * cameraManipulator = ((QOSG::CoreWindow *) cw)->getCameraManipulator();
+
+	original_distance = cameraManipulator->getDistance();
+	original_center = cameraManipulator->getCenter();
+	original_rotation = cameraManipulator->getRotation();
+
+	osg::Vec3 direction = original_rotation * osg::Vec3(0, 0, 1);
+	direction *= original_distance;
+	cameraManipulator->setCenter(cameraManipulator->getCenter()+direction);
+	cameraManipulator->setDistance(0);
+
     user_to_center = getClientById(id_user);
     osg::PositionAttitudeTransform * userAvatar = avatars[user_to_center];
     lookAt(userAvatar->getPosition());
+}
+
+void Server::unCenterUser() {
+	user_to_center = NULL;
+	setMyView(original_center,original_rotation,original_distance);
+	sendMyView();
 }
 
 void Server::sendNewNode(osg::ref_ptr<Data::Node> node, QTcpSocket *client) {

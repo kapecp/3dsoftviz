@@ -63,7 +63,7 @@ class Server : public QTcpServer {
         void unSpyUser();
 
         void centerUser(int id_user);
-        void unCenterUser() { user_to_center = NULL; }
+		void unCenterUser();
         QTcpSocket * getCenterUser() { return user_to_center; }
         bool isCenteringUser() { return user_to_center != NULL; }
 
