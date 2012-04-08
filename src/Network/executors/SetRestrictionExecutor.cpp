@@ -119,8 +119,8 @@ void SetRestrictionExecutor::execute_server() {
 	restrictionNodes.push_back (node1);
 	restrictionNodes.push_back (node2);
 
-	Client * client = Client::getInstance();
-	QOSG::CoreWindow * cw = (QOSG::CoreWindow *) client->getCoreWindowReference();
+	Server * server = Server::getInstance();
+	QOSG::CoreWindow * cw = (QOSG::CoreWindow *) server->getCoreWindowReference();
 
 	QLinkedList<osg::ref_ptr<Data::Node> > * nodesToRestrict = new QLinkedList<osg::ref_ptr<Data::Node> >();
 
@@ -164,6 +164,5 @@ void SetRestrictionExecutor::execute_server() {
 				nodesToRestrict
 				);
 
-	Server * server = Server::getInstance();
 	server->sendSetRestriction(type, node1, position_node1, node2, position_node2, nodesToRestrict, node3, position_node3);
 }
