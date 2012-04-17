@@ -92,6 +92,7 @@ void Data::Edge::updateCoordinates(osg::Vec3 srcPos, osg::Vec3 dstPos)
 	
 	viewVec.normalize();
 
+	//getting setting for edge scale
 	float graphScale = appConf->getValue("Viewer.Display.NodeDistanceScale").toFloat();
 
 	osg::Vec3 x, y;
@@ -104,22 +105,17 @@ void Data::Edge::updateCoordinates(osg::Vec3 srcPos, osg::Vec3 dstPos)
 	up = edgeDir ^ viewVec;
 	up.normalize();
 
-	//up *= appConf->getValue("Viewer.Textures.EdgeScale").toFloat();
 	up *= this->scale;
 
+	//updating edge coordinates due to scale
 	coordinates->push_back(osg::Vec3(x.x() + up.x(), x.y() + up.y(), x.z() + up.z()));
 	coordinates->push_back(osg::Vec3(x.x() - up.x(), x.y() - up.y(), x.z() - up.z()));
 	coordinates->push_back(osg::Vec3(y.x() - up.x(), y.y() - up.y(), y.z() - up.z()));
 	coordinates->push_back(osg::Vec3(y.x() + up.x(), y.y() + up.y(), y.z() + up.z()));
 
-	/*std::cout << "Edge coord 1: " << x.x() + up.x() << " " << x.y() + up.y() << " " << x.z() + up.z() << "\n";
-	std::cout << "Edge coord 2: " << x.x() - up.x() << " " << x.y() - up.y() << " " << x.z() - up.z() << "\n";
-	std::cout << "Edge coord 3: " << y.x() - up.x() << " " << y.y() - up.y() << " " << y.z() - up.z() << "\n";
-	std::cout << "Edge coord 4: " << y.x() + up.x() << " " << y.y() + up.y() << " " << y.z() + up.z() << "\n";*/
-
-	//int repeatCnt = length / (2 * appConf->getValue("Viewer.Textures.EdgeScale").toFloat());
 	int repeatCnt = length / (2 * this->scale);
 
+	//init edge-text (label) coordinates
 	edgeTexCoords->push_back(osg::Vec2(0,1.0f));
 	edgeTexCoords->push_back(osg::Vec2(0,0.0f));
 	edgeTexCoords->push_back(osg::Vec2(repeatCnt,0.0f));

@@ -11,12 +11,14 @@ AppCore::Core * AppCore::Core::core;
 
 AppCore::Core::Core(QApplication * app)
 {
+	//Application initialization
     core = this;
 
     Util::ApplicationConfig *appConf = Util::ApplicationConfig::get();
 
     messageWindows = new QOSG::MessageWindows();
 
+	//Counting forces for layout algorithm, init layout, viewer and window
     this->alg = new Layout::FRAlgorithm();
 
     this->thr = new Layout::LayoutThread(this->alg);
