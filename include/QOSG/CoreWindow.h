@@ -524,9 +524,6 @@ namespace QOSG
                 QPushButton * b_send_message;
                 QLineEdit * le_message;
 
-                QCheckBox *chb_spy;
-                QCheckBox *chb_center;
-
                 Network::Client * client;
 
 	public:
@@ -575,6 +572,8 @@ namespace QOSG
                 QPushButton * b_start_client;
                 QPushButton * b_start_server;
                 QListWidget * lw_users;
+                QCheckBox *chb_spy;
+                QCheckBox *chb_center;
 
 
                 /**

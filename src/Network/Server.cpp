@@ -81,6 +81,15 @@ void Server::disconnected()
     QTcpSocket *client = (QTcpSocket*)sender();
     qDebug() << "Client disconnected:" << client->peerAddress().toString();
 
+    if (client == user_to_spy) {
+        unSpyUser();
+        ((QOSG::CoreWindow *) cw)->chb_spy->setChecked(false);
+    }
+    if (client == user_to_center) {
+        unCenterUser();
+        ((QOSG::CoreWindow *) cw)->chb_center->setChecked(false);
+    }
+
     clients.remove(client);
     users.remove(client);
     removeAvatar(client);
@@ -342,7 +351,22 @@ QTcpSocket * Server::getClientById(int id) {
 }
 
 void Server::spyUser(int id) {
-    user_to_spy = getClientById(id);
+
+    QTcpSocket * clientToSpy = getClientById(id);
+
+    if (avatars[clientToSpy] == NULL) {
+        QMessageBox msgBox;
+        msgBox.setText("Can't spy user, which is already spying someone else");
+        msgBox.setIcon(QMessageBox::Information);
+        msgBox.setStandardButtons(QMessageBox::Ok);
+        msgBox.setDefaultButton(QMessageBox::Ok);
+        msgBox.exec();
+
+        ((QOSG::CoreWindow*) cw)->chb_spy->setChecked(false);
+        return;
+    }
+
+    user_to_spy = clientToSpy;
 
     QByteArray block;
     QDataStream out(&block,QIODevice::WriteOnly);
@@ -367,7 +391,9 @@ void Server::spyUser(int id) {
 
 void Server::unSpyUser() {
 
-    addAvatar(user_to_spy, getUserName(user_to_spy));
+    if (users.contains(user_to_spy)) {
+        addAvatar(user_to_spy, getUserName(user_to_spy));
+    }
 
     QByteArray block;
     QDataStream out(&block,QIODevice::WriteOnly);
@@ -412,18 +438,32 @@ void Server::lookAt(osg::Vec3d coord) {
 
 void Server::centerUser(int id_user) {
 
-	Vwr::CameraManipulator * cameraManipulator = ((QOSG::CoreWindow *) cw)->getCameraManipulator();
+    QTcpSocket * clientToCenter = getClientById(id_user);
 
-	original_distance = cameraManipulator->getDistance();
-	original_center = cameraManipulator->getCenter();
-	original_rotation = cameraManipulator->getRotation();
+    if (avatars[clientToCenter] == NULL) {
+        QMessageBox msgBox;
+        msgBox.setText("Can't center user, which is spying someone else");
+        msgBox.setIcon(QMessageBox::Information);
+        msgBox.setStandardButtons(QMessageBox::Ok);
+        msgBox.setDefaultButton(QMessageBox::Ok);
+        msgBox.exec();
 
-	osg::Vec3 direction = original_rotation * osg::Vec3(0, 0, 1);
-	direction *= original_distance;
-	cameraManipulator->setCenter(cameraManipulator->getCenter()+direction);
-	cameraManipulator->setDistance(0);
+        ((QOSG::CoreWindow*) cw)->chb_center->setChecked(false);
+        return;
+    }
 
-    user_to_center = getClientById(id_user);
+    Vwr::CameraManipulator * cameraManipulator = ((QOSG::CoreWindow *) cw)->getCameraManipulator();
+
+    original_distance = cameraManipulator->getDistance();
+    original_center = cameraManipulator->getCenter();
+    original_rotation = cameraManipulator->getRotation();
+
+    osg::Vec3 direction = original_rotation * osg::Vec3(0, 0, 1);
+    direction *= original_distance;
+    cameraManipulator->setCenter(cameraManipulator->getCenter()+direction);
+    cameraManipulator->setDistance(0);
+
+    user_to_center = clientToCenter;
     osg::PositionAttitudeTransform * userAvatar = avatars[user_to_center];
     lookAt(userAvatar->getPosition());
 }

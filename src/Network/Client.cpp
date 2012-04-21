@@ -129,6 +129,16 @@ void Client::disconnect() {
         socket -> disconnectFromHost();
         socket -> close();
     }
+
+    if (user_to_spy != -1) {
+        unSpyUser();
+        ((QOSG::CoreWindow *) cw)->chb_spy->setChecked(false);
+    }
+    if (user_to_center != -1) {
+        unCenterUser();
+        ((QOSG::CoreWindow *) cw)->chb_center->setChecked(false);
+    }
+
     QMap<int, QString>::iterator i = userList.begin();
     while (i != userList.end()) {
         removeAvatar(i.key());
@@ -253,7 +263,9 @@ void Client::showClientAvatar(int id) {
 }
 
 void Client::unSpyUser() {
-    showClientAvatar(user_to_spy);
+    if (userList.contains(user_to_spy)) {
+        showClientAvatar(user_to_spy);
+    }
 
     QByteArray block;
     QDataStream out(&block,QIODevice::WriteOnly);
@@ -273,6 +285,18 @@ void Client::unSpyUser() {
 }
 
 void Client::spyUser(int user) {
+
+    if (avatarList[user] == NULL) {
+        QMessageBox msgBox;
+        msgBox.setText("Can't spy user, which is already spying someone else");
+        msgBox.setIcon(QMessageBox::Information);
+        msgBox.setStandardButtons(QMessageBox::Ok);
+        msgBox.setDefaultButton(QMessageBox::Ok);
+        msgBox.exec();
+
+        ((QOSG::CoreWindow*) cw)->chb_spy->setChecked(false);
+        return;
+    }
 
     QByteArray block;
     QDataStream out(&block,QIODevice::WriteOnly);
@@ -304,6 +328,18 @@ void Client::lookAt(osg::Vec3d coord) {
 }
 
 void Client::centerUser(int id_user) {
+
+    if (avatarList[id_user] == NULL) {
+        QMessageBox msgBox;
+        msgBox.setText("Can't center user, which is already spying someone else");
+        msgBox.setIcon(QMessageBox::Information);
+        msgBox.setStandardButtons(QMessageBox::Ok);
+        msgBox.setDefaultButton(QMessageBox::Ok);
+        msgBox.exec();
+
+        ((QOSG::CoreWindow*) cw)->chb_center->setChecked(false);
+        return;
+    }
 
     Vwr::CameraManipulator * cameraManipulator = ((QOSG::CoreWindow *) cw)->getCameraManipulator();
 

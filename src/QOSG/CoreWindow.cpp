@@ -1193,6 +1193,19 @@ void CoreWindow::send_message()
 
 void CoreWindow::toggleSpyWatch()
 {
+    if (lw_users->count() == 0 || lw_users->currentItem() == NULL) {
+        QMessageBox msgBox;
+        QString message = lw_users->count() == 0 ? "No client connected" : "No client selected";
+        msgBox.setText(message);
+        msgBox.setIcon(QMessageBox::Information);
+        msgBox.setStandardButtons(QMessageBox::Ok);
+        msgBox.setDefaultButton(QMessageBox::Ok);
+        msgBox.exec();
+        chb_spy->setChecked(false);
+        chb_center->setChecked(false);
+        return;
+    }
+
     Network::Server * server = Network::Server::getInstance();
     bool is_server = server->isListening();
 
