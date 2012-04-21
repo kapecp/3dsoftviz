@@ -24,7 +24,7 @@ void MoveAvatarExecutor::execute_client() {
             PAtransform->setAttitude(rotation);
             PAtransform->setPosition(center+direction);
         } else {
-            qDebug() << "Nepoznam avatar" << id;
+            //qDebug() << "Nepoznam avatar" << id;
         }
     }
 
