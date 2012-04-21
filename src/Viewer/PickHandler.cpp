@@ -419,7 +419,15 @@ bool PickHandler::doEdgePick(osg::NodePath nodePath, unsigned int primitiveIndex
 
 		if (geometry != NULL)
 		{
-			Data::Edge * e = dynamic_cast<Data::Edge *>(geometry->getPrimitiveSet(primitiveIndex));
+                        // zmena (plesko): ak vyber zachytil avatara, nastal segmentation fault,
+                        // lebo sa vyberal neexistujuci primitiveSet
+                        Data::Edge * e;
+                        if (geometry->getNumPrimitiveSets() > primitiveIndex) {
+                                e = dynamic_cast<Data::Edge *>(geometry->getPrimitiveSet(primitiveIndex));
+                        } else {
+                                return false;
+                        }
+                        // koniec zmeny
 
 			if (e != NULL)
 			{
