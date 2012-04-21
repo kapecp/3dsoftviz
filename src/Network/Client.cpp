@@ -129,6 +129,14 @@ void Client::disconnect() {
         socket -> disconnectFromHost();
         socket -> close();
     }
+    QMap<int, QString>::iterator i = userList.begin();
+    while (i != userList.end()) {
+        removeAvatar(i.key());
+        ++i;
+    }
+    userList.clear();
+    updateUserList();
+
     ((QOSG::CoreWindow *) cw) -> le_client_name -> setEnabled(true);
     ((QOSG::CoreWindow *) cw) -> le_server_addr -> setEnabled(true);
     ((QOSG::CoreWindow *) cw) -> b_start_client -> setEnabled(true);
