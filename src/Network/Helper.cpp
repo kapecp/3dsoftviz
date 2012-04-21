@@ -6,6 +6,7 @@
 #include <osg/Matrix>
 #include <osgDB/ReadFile>
 #include <osgText/FadeText>
+#include <osg/AutoTransform>
 
 namespace Network {
 
@@ -30,7 +31,12 @@ osg::PositionAttitudeTransform * Helper::generateAvatar(QString label) {
 
     osg::PositionAttitudeTransform* PAtransform = new osg::PositionAttitudeTransform();
     PAtransform->addChild(modelNode);
-    PAtransform->addChild(textGeode);
+
+    osg::AutoTransform* autoTransformText = new osg::AutoTransform;
+    autoTransformText->setAutoRotateMode(osg::AutoTransform::ROTATE_TO_SCREEN);
+    autoTransformText->addChild(textGeode);
+
+    PAtransform->addChild(autoTransformText);
 
     QString fontPath = Util::ApplicationConfig::get()->getValue("Viewer.Labels.Font");
 
@@ -41,7 +47,7 @@ osg::PositionAttitudeTransform * Helper::generateAvatar(QString label) {
 
     labelNode->setText(label.toStdString());
     labelNode->setLineSpacing(0);
-    labelNode->setAxisAlignment(osgText::Text::REVERSED_XY_PLANE);
+    labelNode->setAxisAlignment(osgText::Text::XY_PLANE);
     labelNode->setCharacterSize(10);
     labelNode->setDrawMode(osgText::Text::TEXT);
     labelNode->setAlignment(osgText::Text::CENTER_BOTTOM_BASE_LINE);
