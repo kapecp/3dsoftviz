@@ -235,6 +235,7 @@ namespace QOSG
                                 void send_message();
 
                                 void toggleSpyWatch();
+                                void toggleAttention();
 	private:
 
 		/**
@@ -574,6 +575,7 @@ namespace QOSG
                 QListWidget * lw_users;
                 QCheckBox *chb_spy;
                 QCheckBox *chb_center;
+                QCheckBox *chb_attention;
 
 
                 /**

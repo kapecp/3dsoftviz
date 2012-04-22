@@ -780,3 +780,41 @@ void Server::sendBlock(QByteArray block, QTcpSocket *client) {
     }
 
 }
+
+void Server::setAttention(int user) {
+    QListWidgetItem *item = this->getItemById(user);
+    if (item != NULL) {
+        item->setIcon(QIcon("img/gui/attention.png"));
+    }
+}
+
+void Server::unSetAttention(int user) {
+    QListWidgetItem *item = this->getItemById(user);
+    if (item != NULL) {
+        item->setIcon(QIcon());
+    }
+}
+
+QListWidgetItem * Server::getItemById(int id) {
+    QOSG::CoreWindow* coreWindow = (QOSG::CoreWindow*) cw;
+    int count = coreWindow->lw_users->count();
+
+    for (int i = 0; i < count; i++) {
+        QListWidgetItem *item = coreWindow->lw_users->item(i);
+        if (item->data(6) == id) {
+            return item;
+        }
+    }
+    return NULL;
+}
+
+void Server::sendAttractAttention(bool attention, int idUser, QTcpSocket *client) {
+    QByteArray block;
+    QDataStream out(&block,QIODevice::WriteOnly);
+
+    out << (quint16)0 << (quint8)AttractAttentionExecutor::INSTRUCTION_NUMBER << (bool) attention << (int)idUser;
+    out.device()->seek(0);
+    out << (quint16)(block.size() - sizeof(quint16));
+
+    this->sendBlock(block, client);
+}

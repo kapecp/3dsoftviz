@@ -14,6 +14,7 @@
 #include "Network/ExecutorFactory.h"
 
 #include "osg/PositionAttitudeTransform"
+#include "QtGui/QListWidgetItem"
 
 namespace Network{
 
@@ -73,8 +74,12 @@ class Client : public QObject
         void sendMergeNodes(QLinkedList<osg::ref_ptr<Data::Node> > * selectedNodes, osg::Vec3f position);
         void sendSeparateNodes(QLinkedList<osg::ref_ptr<Data::Node> > * selectedNodes);
         void sendAddMetaNode(QString name, QLinkedList<osg::ref_ptr<Data::Node> > * selectedNodes, QString edgeName, osg::Vec3f position);
-		void sendSetRestriction(quint8 type, QString name_node1, osg::Vec3 position_node1, QString name_node2, osg::Vec3 position_node2, QLinkedList<osg::ref_ptr<Data::Node> > * nodes, QString name_node3 = "", osg::Vec3 * position_node3 = NULL);
-		void sendUnSetRestriction(QLinkedList<osg::ref_ptr<Data::Node> > * nodes);
+        void sendSetRestriction(quint8 type, QString name_node1, osg::Vec3 position_node1, QString name_node2, osg::Vec3 position_node2, QLinkedList<osg::ref_ptr<Data::Node> > * nodes, QString name_node3 = "", osg::Vec3 * position_node3 = NULL);
+        void sendUnSetRestriction(QLinkedList<osg::ref_ptr<Data::Node> > * nodes);
+        void sendAttractAttention(bool attention);
+
+        void setAttention(int user);
+        void unSetAttention(int user);
 
         void setMyId(int id) { my_id = id; }
         int getMyId() { return my_id; }
@@ -127,6 +132,7 @@ class Client : public QObject
 
         void addAvatar(int id, QString nick);
         void sendColor(quint8 instruction, int id, float r, float g, float b, float alpha);
+        QListWidgetItem * getItemById(int id);
 
         quint16 blockSize;
 

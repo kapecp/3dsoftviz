@@ -641,3 +641,44 @@ void Client::sendUnSetRestriction(QLinkedList<osg::ref_ptr<Data::Node> > *nodes)
 
 	socket->write(block);
 }
+
+void Client::setAttention(int user) {
+    QListWidgetItem *item = this->getItemById(user);
+    if (item != NULL) {
+        item->setIcon(QIcon("img/gui/attention.png"));
+    }
+}
+
+void Client::unSetAttention(int user) {
+    QListWidgetItem *item = this->getItemById(user);
+    if (item != NULL) {
+        item->setIcon(QIcon());
+    }
+}
+
+QListWidgetItem * Client::getItemById(int id) {
+    QOSG::CoreWindow* coreWindow = (QOSG::CoreWindow*) cw;
+    int count = coreWindow->lw_users->count();
+
+    for (int i = 0; i < count; i++) {
+        QListWidgetItem *item = coreWindow->lw_users->item(i);
+        if (item->data(6) == id) {
+            return item;
+        }
+    }
+    return NULL;
+}
+
+void Client::sendAttractAttention(bool attention) {
+    if (!this -> isConnected() ) {
+        return;
+    }
+    QByteArray block;
+    QDataStream out(&block,QIODevice::WriteOnly);
+    out << (quint16)0 << (quint8) AttractAttentionExecutor::INSTRUCTION_NUMBER << (bool) attention;
+
+    out.device()->seek(0);
+    out << (quint16)(block.size() - sizeof(quint16));
+
+    socket->write(block);
+}

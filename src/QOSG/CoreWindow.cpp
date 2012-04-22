@@ -226,6 +226,9 @@ void CoreWindow::createActions()
         chb_spy = new QCheckBox("&Spy");
         connect(chb_spy, SIGNAL(clicked()), this, SLOT(toggleSpyWatch()));
 
+        chb_attention = new QCheckBox("S&hout");
+        connect(chb_attention, SIGNAL(clicked()), this, SLOT(toggleAttention()));
+
         le_client_name = new QLineEdit("Nick");
         le_server_addr = new QLineEdit("localhost");
         le_message= new QLineEdit("Message");
@@ -392,6 +395,13 @@ void CoreWindow::createCollaborationToolBar() {
     frame = createHorizontalFrame();
     frame->layout()->addWidget(chb_center);
     toolBar->addWidget(frame);
+
+    toolBar->addSeparator();
+
+    frame = createHorizontalFrame();
+    frame->layout()->addWidget(chb_attention);
+    toolBar->addWidget(frame);
+
 
     addToolBar(Qt::RightToolBarArea,toolBar);
     toolBar->setMaximumHeight(300);
@@ -1285,6 +1295,24 @@ void CoreWindow::toggleSpyWatch()
                     client->unCenterUser();
                 }
             }
+        }
+    }
+}
+
+void CoreWindow::toggleAttention() {
+    if (chb_attention->isChecked()) {
+        Network::Server * server = Network::Server::getInstance();
+        if (server->isListening()) {
+            server->sendAttractAttention(true);
+        } else {
+            client->sendAttractAttention(true);
+        }
+    } else {
+        Network::Server * server = Network::Server::getInstance();
+        if (server->isListening()) {
+            server->sendAttractAttention(false);
+        } else {
+            client->sendAttractAttention(false);
         }
     }
 }
