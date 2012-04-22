@@ -22,17 +22,16 @@ osg::Quat Helper::lookAt(osg::Vec3 from, osg::Vec3 to){
 osg::PositionAttitudeTransform * Helper::generateAvatar(QString label) {
 
     osg::Cone* cone = new osg::Cone( osg::Vec3(0,0,0), 4.0f, 6.0f);
-    osg::ShapeDrawable* unitSphereDrawable = new osg::ShapeDrawable(cone);
-    osg::Geode* basicShapesGeode = new osg::Geode();
-    basicShapesGeode->addDrawable(unitSphereDrawable);
-    basicShapesGeode->setName("Cone");
+    osg::ShapeDrawable* coneDrawable = new osg::ShapeDrawable(cone);
+    osg::Geode* coneGeode = new osg::Geode();
+    coneGeode->addDrawable(coneDrawable);
 
     osg::ref_ptr<osgText::FadeText> labelNode = new osgText::FadeText;
     osg::Geode* textGeode = new osg::Geode();
     textGeode->addDrawable(labelNode);
 
     osg::PositionAttitudeTransform* PAtransform = new osg::PositionAttitudeTransform();
-    PAtransform->addChild(basicShapesGeode);
+    PAtransform->addChild(coneGeode);
 
     osg::AutoTransform* autoTransformText = new osg::AutoTransform;
     autoTransformText->setAutoRotateMode(osg::AutoTransform::ROTATE_TO_SCREEN);
