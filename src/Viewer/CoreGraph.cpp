@@ -125,8 +125,51 @@ void CoreGraph::cleanUp()
 
 
 osg::ref_ptr<osg::Node> CoreGraph::createSkyBox(){
+    if (appConf->getValue("Viewer.SkyBox.Noise").toInt() == 0) {
         SkyBox * skyBox = new SkyBox;
         return skyBox->createSkyBox();
+    } else {
+        osg::ref_ptr<osg::Texture2D> skymap =
+                PerlinNoiseTextureGenerator::getCoudTexture(2048, 1024,
+                                                            appConf->getValue("Viewer.Display.BackGround.R").toInt(),
+                                                            appConf->getValue("Viewer.Display.BackGround.G").toInt(),
+                                                            appConf->getValue("Viewer.Display.BackGround.B").toInt(),
+                                                            255);
+
+        skymap->setDataVariance(osg::Object::DYNAMIC);
+        skymap->setFilter(osg::Texture::MIN_FILTER, osg::Texture::LINEAR_MIPMAP_LINEAR);
+        skymap->setFilter(osg::Texture::MAG_FILTER, osg::Texture::LINEAR);
+        skymap->setWrap(osg::Texture::WRAP_S, osg::Texture::CLAMP_TO_EDGE);
+        skymap->setWrap(osg::Texture::WRAP_T, osg::Texture::CLAMP_TO_EDGE);
+
+        osg::ref_ptr<osg::StateSet> stateset = new osg::StateSet();
+        stateset->setTextureAttributeAndModes(0, skymap, osg::StateAttribute::ON);
+        stateset->setMode( GL_LIGHTING, osg::StateAttribute::OFF );
+        stateset->setMode( GL_CULL_FACE, osg::StateAttribute::OFF );
+        stateset->setRenderBinDetails(-1,"RenderBin");
+
+        osg::ref_ptr<osg::Depth> depth = new osg::Depth;
+        depth->setFunction(osg::Depth::ALWAYS);
+        depth->setRange(1, 1);
+        stateset->setAttributeAndModes(depth, osg::StateAttribute::ON );
+
+        osg::ref_ptr<osg::Drawable> drawable = new osg::ShapeDrawable(new osg::Sphere(osg::Vec3(0.0f,0.0f,0.0f), 1));
+        osg::ref_ptr<osg::Geode> geode = new osg::Geode;
+
+        geode->setCullingActive(false);
+        geode->setStateSet(stateset);
+        geode->addDrawable(drawable);
+
+        osg::ref_ptr<osg::Transform> transform = new SkyTransform;
+        transform->setCullingActive(false);
+        transform->addChild(geode);
+
+        osg::ref_ptr<osg::ClearNode> clearNode = new osg::ClearNode;
+        clearNode->setRequiresClear(false);
+        clearNode->addChild(transform);
+
+        return clearNode;
+    }
 }
 
 osg::ref_ptr<osg::Group> CoreGraph::initEdgeLabels()

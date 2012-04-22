@@ -25,10 +25,13 @@ Viewer.Textures.Node=img/node.png
 Viewer.Textures.OrientedEdgePrefix=img/arrows/arrow
 Viewer.Textures.OrientedEdgeSuffix=.png
 Viewer.Textures.MetaNode=img/MetaNode.png
+
+Viewer.SkyBox.Noise=0
 Viewer.SkyBox.North=img/skybox/rays_north.bmp
 Viewer.SkyBox.East=img/skybox/rays_east.bmp
 Viewer.SkyBox.South=img/skybox/rays_south.bmp
 Viewer.SkyBox.West=img/skybox/rays_west.bmp
 Viewer.SkyBox.Up=img/skybox/rays_up.bmp
 Viewer.SkyBox.Down=img/skybox/rays_down.bmp
+
 Mouse.DoubleClickTime=250
