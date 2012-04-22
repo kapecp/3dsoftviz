@@ -55,6 +55,10 @@ osg::PositionAttitudeTransform * Helper::generateAvatar(QString label) {
     labelNode->setPosition( osg::Vec3(0, 7, -7) );
     labelNode->setColor( osg::Vec4(1.0f, 1.0f, 1.0f, 1.0f) );
 
+    osg::StateSet * stateset = new osg::StateSet;
+    stateset->setMode(GL_NORMALIZE, osg::StateAttribute::ON);
+    PAtransform->setStateSet(stateset);
+
     return PAtransform;
 }
 
