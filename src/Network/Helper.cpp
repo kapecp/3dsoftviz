@@ -7,6 +7,7 @@
 #include <osgDB/ReadFile>
 #include <osgText/FadeText>
 #include <osg/AutoTransform>
+#include <osg/ShapeDrawable>
 
 namespace Network {
 
@@ -19,18 +20,19 @@ osg::Quat Helper::lookAt(osg::Vec3 from, osg::Vec3 to){
 }
 
 osg::PositionAttitudeTransform * Helper::generateAvatar(QString label) {
-    osg::ref_ptr<osg::Node> modelNode = osgDB::readNodeFile("avatar.osg");
-    if (!modelNode) {
-        qDebug() << "could not find model";
-        return NULL;
-    }
+
+    osg::Cone* cone = new osg::Cone( osg::Vec3(0,0,0), 4.0f, 6.0f);
+    osg::ShapeDrawable* unitSphereDrawable = new osg::ShapeDrawable(cone);
+    osg::Geode* basicShapesGeode = new osg::Geode();
+    basicShapesGeode->addDrawable(unitSphereDrawable);
+    basicShapesGeode->setName("Cone");
 
     osg::ref_ptr<osgText::FadeText> labelNode = new osgText::FadeText;
     osg::Geode* textGeode = new osg::Geode();
     textGeode->addDrawable(labelNode);
 
     osg::PositionAttitudeTransform* PAtransform = new osg::PositionAttitudeTransform();
-    PAtransform->addChild(modelNode);
+    PAtransform->addChild(basicShapesGeode);
 
     osg::AutoTransform* autoTransformText = new osg::AutoTransform;
     autoTransformText->setAutoRotateMode(osg::AutoTransform::ROTATE_TO_SCREEN);
