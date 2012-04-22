@@ -23,7 +23,9 @@
 *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
 ***************************************************************************/
 
+#include <QDebug>
 #include "Viewer/SkyBox.h"
+#include "Util/ApplicationConfig.h"
 
 using namespace Vwr;
 
@@ -41,23 +43,22 @@ osg::TextureCubeMap* SkyBox::readCubeMap()
 {
     osg::TextureCubeMap* cubemap = new osg::TextureCubeMap;
     try{
-        QString path = "img/skybox/rays_";
-        QString ext = ".bmp";
-        osg::Image* imageNegX = osgDB::readImageFile(QString(path+"east"+ext).toStdString());
-        osg::Image* imagePosZ = osgDB::readImageFile(QString(path+"south"+ext).toStdString());
-        osg::Image* imagePosX = osgDB::readImageFile(QString(path+"west"+ext).toStdString());
-        osg::Image* imageNegZ = osgDB::readImageFile(QString(path+"north"+ext).toStdString());
-        osg::Image* imagePosY = osgDB::readImageFile(QString(path+"down"+ext).toStdString());//OK!
-        osg::Image* imageNegY = osgDB::readImageFile(QString(path+"up"+ext).toStdString()); //OK!
+        Util::ApplicationConfig* appConf = Util::ApplicationConfig::get();
+        osg::Image* imageEast = osgDB::readImageFile(appConf->getValue("Viewer.SkyBox.East").toStdString());
+        osg::Image* imageWest = osgDB::readImageFile(appConf->getValue("Viewer.SkyBox.West").toStdString());
+        osg::Image* imageNorth = osgDB::readImageFile(appConf->getValue("Viewer.SkyBox.North").toStdString());
+        osg::Image* imageSouth = osgDB::readImageFile(appConf->getValue("Viewer.SkyBox.South").toStdString());
+        osg::Image* imageUp = osgDB::readImageFile(appConf->getValue("Viewer.SkyBox.Up").toStdString());
+        osg::Image* imageDown = osgDB::readImageFile(appConf->getValue("Viewer.SkyBox.Down").toStdString());
 
-        if (imagePosX && imageNegX && imagePosY && imageNegY && imagePosZ && imageNegZ)
+        if (imageWest && imageEast && imageDown && imageUp && imageSouth && imageNorth)
         {
-            cubemap->setImage(osg::TextureCubeMap::POSITIVE_X, imagePosX);
-            cubemap->setImage(osg::TextureCubeMap::NEGATIVE_X, imageNegX);
-            cubemap->setImage(osg::TextureCubeMap::POSITIVE_Y, imagePosY);
-            cubemap->setImage(osg::TextureCubeMap::NEGATIVE_Y, imageNegY);
-            cubemap->setImage(osg::TextureCubeMap::POSITIVE_Z, imagePosZ);
-            cubemap->setImage(osg::TextureCubeMap::NEGATIVE_Z, imageNegZ);
+            cubemap->setImage(osg::TextureCubeMap::POSITIVE_X, imageWest);
+            cubemap->setImage(osg::TextureCubeMap::NEGATIVE_X, imageEast);
+            cubemap->setImage(osg::TextureCubeMap::POSITIVE_Y, imageDown);
+            cubemap->setImage(osg::TextureCubeMap::NEGATIVE_Y, imageUp);
+            cubemap->setImage(osg::TextureCubeMap::POSITIVE_Z, imageSouth);
+            cubemap->setImage(osg::TextureCubeMap::NEGATIVE_Z, imageNorth);
 
             cubemap->setWrap(osg::Texture::WRAP_S, osg::Texture::CLAMP_TO_EDGE);
             cubemap->setWrap(osg::Texture::WRAP_T, osg::Texture::CLAMP_TO_EDGE);
@@ -66,12 +67,11 @@ osg::TextureCubeMap* SkyBox::readCubeMap()
             cubemap->setFilter(osg::Texture::MIN_FILTER, osg::Texture::LINEAR_MIPMAP_LINEAR);
             cubemap->setFilter(osg::Texture::MAG_FILTER, osg::Texture::LINEAR);
         }
-        //std::cout << "CubeMap ok." << std::endl;
-        printf("Cube map ok\n");
+
     }
     catch(std::exception & e)
     {
-        printf("%s",e.what());//std::cout << "Erreur cubeMap.(" << e.what() << ")" << std::endl;
+        qDebug() << "Skybox error" << e.what();
     }
     return cubemap;
 }
