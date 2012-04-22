@@ -25,6 +25,7 @@ Server::Server(QObject *parent) : QTcpServer(parent)
     user_to_center = NULL;
 
     blockSize = 0;
+    avatarScale = 1;
 }
 
 Server* Server::getInstance() {
@@ -415,6 +416,7 @@ void Server::unSpyUser() {
 
 void Server::addAvatar(QTcpSocket *socket, QString nick) {
     osg::PositionAttitudeTransform * avatar = Helper::generateAvatar(nick);
+    avatar->setScale(osg::Vec3d(avatarScale,avatarScale,avatarScale));
 
     QLinkedList<osg::ref_ptr<osg::Node> > * nodes = coreGraph->getCustomNodeList();
     nodes->append(avatar);
@@ -817,4 +819,11 @@ void Server::sendAttractAttention(bool attention, int idUser, QTcpSocket *client
     out << (quint16)(block.size() - sizeof(quint16));
 
     this->sendBlock(block, client);
+}
+
+void Server::setAvatarScale(int scale) {
+    avatarScale = scale;
+    foreach (osg::PositionAttitudeTransform * avatar, avatars) {
+        avatar->setScale(osg::Vec3d(avatarScale,avatarScale,avatarScale));
+    }
 }

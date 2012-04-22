@@ -237,6 +237,14 @@ void CoreWindow::createActions()
         lw_users->setSelectionMode(QListWidget::SingleSelection);
         lw_users->setSortingEnabled(true);
         lw_users->setMaximumHeight(200);
+
+        sl_avatarScale = new QSlider(Qt::Vertical,this);
+        sl_avatarScale->setTickPosition(QSlider::TicksAbove);
+        sl_avatarScale->setRange(1,20);
+        sl_avatarScale->setPageStep(1);
+        sl_avatarScale->setValue(1);
+        sl_avatarScale->setFocusPolicy(Qt::NoFocus);
+        connect(sl_avatarScale,SIGNAL(valueChanged(int)),this,SLOT(setAvatarScale(int)));
 }
 
 void CoreWindow::createMenus()
@@ -402,9 +410,21 @@ void CoreWindow::createCollaborationToolBar() {
     frame->layout()->addWidget(chb_attention);
     toolBar->addWidget(frame);
 
+    toolBar->addSeparator();
+
+    frame = createHorizontalFrame();
+    frame->layout()->addWidget(new QLabel("Avatar scale"));
+    toolBar->addWidget(frame);
+
+    frame = createHorizontalFrame();
+    frame->setMaximumHeight(100);
+    frame->layout()->setAlignment(Qt::AlignHCenter);
+    frame->layout()->addWidget(sl_avatarScale);
+    toolBar->addWidget(frame);
+
 
     addToolBar(Qt::RightToolBarArea,toolBar);
-    toolBar->setMaximumHeight(300);
+    toolBar->setMaximumHeight(400);
     toolBar->setMaximumWidth(120);
     toolBar->setMovable(true);
 }
@@ -1315,4 +1335,9 @@ void CoreWindow::toggleAttention() {
             client->sendAttractAttention(false);
         }
     }
+}
+
+void CoreWindow::setAvatarScale(int scale) {
+    client->setAvatarScale(scale);
+    Network::Server::getInstance()->setAvatarScale(scale);
 }

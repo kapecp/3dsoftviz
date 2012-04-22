@@ -50,6 +50,8 @@ class Server : public QTcpServer {
         void setAttention(int user);
         void unSetAttention(int user);
 
+        void setAvatarScale(int scale);
+
         void stopServer();
 
         void setSelectedNodes(QLinkedList<osg::ref_ptr<Data::Node> > nodes) { selected_nodes = nodes; }
@@ -128,6 +130,7 @@ class Server : public QTcpServer {
         QTcpSocket * getClientById(int id);
 
         quint16 blockSize;
+        int avatarScale;
 
         void sendPlainInstruction(quint8 instruction_number, QTcpSocket * client = NULL);
         void sendBlock(QByteArray block, QTcpSocket * client = NULL);

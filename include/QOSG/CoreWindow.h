@@ -236,6 +236,8 @@ namespace QOSG
 
                                 void toggleSpyWatch();
                                 void toggleAttention();
+
+                                void setAvatarScale(int scale);
 	private:
 
 		/**
@@ -524,6 +526,7 @@ namespace QOSG
 
                 QPushButton * b_send_message;
                 QLineEdit * le_message;
+                QSlider * sl_avatarScale;
 
                 Network::Client * client;
 

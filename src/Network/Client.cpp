@@ -33,6 +33,7 @@ Client::Client(QObject *parent) : QObject(parent) {
     executorFactory = new ExecutorFactory();
 
     blockSize = 0;
+    avatarScale = 1;
 
 }
 
@@ -242,6 +243,7 @@ void Client::addClient(int id, QString nick) {
 void Client::addAvatar(int id, QString nick) {
 
     osg::PositionAttitudeTransform* PAtransform = Helper::generateAvatar(nick);
+    PAtransform->setScale(osg::Vec3d(avatarScale,avatarScale,avatarScale));
 
     QLinkedList<osg::ref_ptr<osg::Node> > * nodes = coreGraph->getCustomNodeList();
 
@@ -681,4 +683,11 @@ void Client::sendAttractAttention(bool attention) {
     out << (quint16)(block.size() - sizeof(quint16));
 
     socket->write(block);
+}
+
+void Client::setAvatarScale(int scale) {
+    avatarScale = scale;
+    foreach (osg::PositionAttitudeTransform * avatar, avatarList) {
+        avatar->setScale(osg::Vec3d(avatarScale,avatarScale,avatarScale));
+    }
 }

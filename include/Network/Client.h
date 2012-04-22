@@ -86,6 +86,8 @@ class Client : public QObject
         void ignoreLayout(bool ignore) { layoutIgnore = ignore; }
         bool ignoreLayout() { return layoutIgnore; }
 
+        void setAvatarScale(int scale);
+
         QObject* getCoreWindowReference() { return cw; }
 
         //todo: encapsulate!
@@ -135,6 +137,7 @@ class Client : public QObject
         QListWidgetItem * getItemById(int id);
 
         quint16 blockSize;
+        int avatarScale;
 
     };
 
