@@ -72,10 +72,12 @@ void Client::readyRead() {
     QTcpSocket *senderClient = (QTcpSocket*)sender();
 
     while(senderClient->bytesAvailable()) {
-
+	
+		// vytvorime vstupny stream
         QDataStream in(senderClient);
         in.setFloatingPointPrecision(QDataStream::SinglePrecision);
 
+		// cakame na prichod informacie o velkosti instrukcie
         if (blockSize == 0) {
             if (senderClient->bytesAvailable() < (int)sizeof(quint16))
                 return;
@@ -83,16 +85,21 @@ void Client::readyRead() {
             in >> blockSize;
         }
 
+		// cakame na prichod vsetkych ocakavanych dat
         if (senderClient->bytesAvailable() < blockSize)
             return;
 
+		// poziadame executorFactory o prislusny executor
         AbstractExecutor *executor = executorFactory->getExecutor(&in);
 
+		// a vykoname instrukciu
         if (executor != NULL && this->isConnected()) {
             executor->execute_client();
         } else {
             qDebug() << "Klient: neznama instrukcia";
         }
+		
+		// velkost bloku vynulujeme
         blockSize = 0;
     }
 }
