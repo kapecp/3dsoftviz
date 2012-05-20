@@ -88,7 +88,7 @@ void EdgeGroup::initEdges()
 
 void EdgeGroup::updateEdgeCoords()
 {
-	osg::ref_ptr<osg::Vec2Array> edgeTexCoords = new osg::Vec2Array;
+    osg::ref_ptr<osg::Vec2Array> edgeTexCoords = new osg::Vec2Array;
 	osg::ref_ptr<osg::Vec3Array> coordinates = new osg::Vec3Array;
 	osg::ref_ptr<osg::Vec4Array> colors = new osg::Vec4Array;
 	osg::ref_ptr<osg::Vec4Array> orientedEdgeColors = new osg::Vec4Array;
@@ -110,7 +110,7 @@ void EdgeGroup::updateEdgeCoords()
 		
 	orientedGeometry->setVertexArray(coordinates);
 	orientedGeometry->setTexCoordArray(0, edgeTexCoords);
-	orientedGeometry->setColorArray(orientedEdgeColors);
+    orientedGeometry->setColorArray(orientedEdgeColors);
 }
 
 void EdgeGroup::getEdgeCoordinatesAndColors(osg::ref_ptr<Data::Edge> edge, int first, 

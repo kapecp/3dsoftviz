@@ -370,7 +370,7 @@ bool PickHandler::doNodePick(osg::NodePath nodePath)
 	{
 		if (isAltPressed && pickMode == PickMode::NONE)
 		{
-			cameraManipulator->setCenter(n->getTargetPosition());
+            cameraManipulator->setCenter(n->targetPosition());
 		}
 		else if (pickMode != PickMode::NONE)
 		{
@@ -449,7 +449,7 @@ bool PickHandler::dragNode(osgViewer::Viewer * viewer)
 
 	while (i != pickedNodes.constEnd()) 
 	{
-		osg::Vec3f screenPoint = (*i)->getTargetPosition() * compositeM; 
+        osg::Vec3f screenPoint = (*i)->targetPositionConstRef() * compositeM;
 		osg::Vec3f newPosition = osg::Vec3f(screenPoint.x() - (origin_mX - _mX) / scale, screenPoint.y() - (origin_mY - _mY) / scale, screenPoint.z());
 
 		(*i)->setTargetPosition(newPosition * compositeMi);
@@ -590,7 +590,7 @@ osg::Vec3 PickHandler::getSelectionCenter(bool nodesOnly)
 
 	while (ni != pickedNodes.constEnd()) 
 	{
-		coordinates->push_back((*ni)->getTargetPosition());
+        coordinates->push_back((*ni)->targetPositionConstRef());
 		++ni;
 	}
 

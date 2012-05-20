@@ -176,6 +176,12 @@ namespace QOSG
 				*  \brief Apply selected color in colorpicker to selected node
 				*/
 				void applyColorClick();
+
+                /**
+                 * \brief Creates a new CylinderSurface restriction (defined by positions of 2 nodes) and sets
+                 * if to all selected nodes (replacing any previously attached restrictions to these nodes).
+                 */
+                void setRestriction_CylinderSurface();
 				
 				/**
 				 * \brief Creates a new SphereSurface restriction (defined by positions of 2 nodes) and sets
@@ -189,6 +195,12 @@ namespace QOSG
 				 */
 				void setRestriction_Sphere ();
 
+                /**
+                 * \brief Creates a new ConeSurface restriction (defined by positions of 2 nodes) and sets
+                 * if to all selected nodes (replacing any previously attached restrictions to these nodes).
+                 */
+                void setRestriction_ConeSurface();
+
 				/**
 				 * \brief Creates a new Plane restriction (defined by positions of 3 nodes) and sets
 				 * if to all selected nodes (replacing any previously attached restrictions to these nodes).
@@ -200,6 +212,12 @@ namespace QOSG
 				 * restriction (including manipulation nodes) if the last usage has been removed.
 				 */
 				void unsetRestriction ();
+
+                /**
+                 * \brief Removes restrictions from all nodes (if any has been set). Destroys a
+                 * restriction (including manipulation nodes) if the last usage has been removed.
+                 */
+                void unsetRestrictionFromAll();
 								
 				/**
 				*  \fn public  add_EdgeClick
@@ -360,6 +378,31 @@ namespace QOSG
 		 * \brief Button for removing restrictions.
 		 */
 		QPushButton * b_UnsetRestriction;
+
+        /**
+         * \brief Button for adding CylinderSurface restriction.
+         */
+        QPushButton * b_SetRestriction_CylinderSurface;
+
+        /**
+         * \brief Spinbox for modifying CylinderSurface restriction.
+         */
+        QSlider *b_SetRestriction_CylinderSurface_Slider;
+
+        /**
+         * \brief Button for adding ConeSurface restriction.
+         */
+        QPushButton * b_SetRestriction_ConeSurface;
+
+        /**
+         * \brief Spinbox for modifying ConeSurface restriction.
+         */
+        QSlider *b_SetRestriction_ConeSurface_Slider;
+
+        /**
+         * \brief Button for removing restrictions from all nodes.
+         */
+        QPushButton *b_UnsetRestrictionFromAll;
 
 		/**
 		*  QAction * create new Edge
@@ -534,6 +577,15 @@ namespace QOSG
 			Data::Graph * currentGraph,
 			QSharedPointer<Layout::RestrictionRemovalHandler> removalHandler
 		);
+
+        /**
+         * \brief Gets all nodes and sets the restriction defined by shapeGetter to these nodes.
+         */
+        void setRestrictionToAllNodes (
+            QSharedPointer<Layout::ShapeGetter> shapeGetter,
+            Data::Graph * currentGraph,
+            QSharedPointer<Layout::RestrictionRemovalHandler> removalHandler
+        );
 
 	};
 }

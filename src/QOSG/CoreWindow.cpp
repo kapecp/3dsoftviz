@@ -1,8 +1,10 @@
 #include "QOSG/CoreWindow.h"
 #include "Util/Cleaner.h"
 
+#include "Layout/ShapeGetter_CylinderSurface_ByCamera.h"
 #include "Layout/ShapeGetter_SphereSurface_ByTwoNodes.h"
 #include "Layout/ShapeGetter_Sphere_ByTwoNodes.h"
+#include "Layout/ShapeGetter_ConeSurface_ByCamera.h"
 #include "Layout/ShapeGetter_Plane_ByThreeNodes.h"
 #include "Layout/RestrictionRemovalHandler_RestrictionNodesRemover.h"
 
@@ -167,7 +169,6 @@ void CoreWindow::createActions()
 	center->setFocusPolicy(Qt::NoFocus);
 	connect(center, SIGNAL(clicked(bool)), this, SLOT(centerView(bool)));
 
-	// layout restrictions
 	b_SetRestriction_SphereSurface = new QPushButton();
 	b_SetRestriction_SphereSurface->setIcon(QIcon("img/gui/restriction_sphere_surface.png"));
 	b_SetRestriction_SphereSurface->setToolTip("&Set restriction - sphere surface");
@@ -186,11 +187,40 @@ void CoreWindow::createActions()
 	b_SetRestriction_Plane->setFocusPolicy(Qt::NoFocus);
 	connect(b_SetRestriction_Plane, SIGNAL(clicked()), this, SLOT(setRestriction_Plane ()));
 
-	b_UnsetRestriction = new QPushButton();
-	b_UnsetRestriction->setIcon(QIcon("img/gui/restriction_unset.png"));
-	b_UnsetRestriction->setToolTip("&Unset restriction");
-	b_UnsetRestriction->setFocusPolicy(Qt::NoFocus);
-	connect(b_UnsetRestriction, SIGNAL(clicked()), this, SLOT(unsetRestriction ()));
+    b_UnsetRestriction = new QPushButton();
+    b_UnsetRestriction->setIcon(QIcon("img/gui/restriction_unset.png"));
+    b_UnsetRestriction->setToolTip("&Unset restriction");
+    b_UnsetRestriction->setFocusPolicy(Qt::NoFocus);
+    connect(b_UnsetRestriction, SIGNAL(clicked()), this, SLOT(unsetRestriction()));
+
+    // layout restrictions
+    b_SetRestriction_CylinderSurface = new QPushButton();
+    b_SetRestriction_CylinderSurface->setIcon(QIcon("img/gui/restriction_cylinder_surface.png"));
+    b_SetRestriction_CylinderSurface->setToolTip("&Set restriction - cylinder surface");
+    b_SetRestriction_CylinderSurface->setFocusPolicy(Qt::NoFocus);
+    connect(b_SetRestriction_CylinderSurface, SIGNAL(clicked()), this, SLOT(setRestriction_CylinderSurface()));
+
+    b_SetRestriction_CylinderSurface_Slider = new QSlider(Qt::Horizontal);
+    b_SetRestriction_CylinderSurface_Slider->setToolTip("&Modify base radius of the restriction");
+    b_SetRestriction_CylinderSurface_Slider->setFocusPolicy(Qt::NoFocus);
+    b_SetRestriction_CylinderSurface_Slider->setValue(25);
+
+    b_SetRestriction_ConeSurface = new QPushButton();
+    b_SetRestriction_ConeSurface->setIcon(QIcon("img/gui/restriction_cone_surface.png"));
+    b_SetRestriction_ConeSurface->setToolTip("&Set restriction - cone surface");
+    b_SetRestriction_ConeSurface->setFocusPolicy(Qt::NoFocus);
+    connect(b_SetRestriction_ConeSurface, SIGNAL(clicked()), this, SLOT(setRestriction_ConeSurface()));
+
+    b_SetRestriction_ConeSurface_Slider = new QSlider(Qt::Horizontal);
+    b_SetRestriction_ConeSurface_Slider->setToolTip("&Modify base radius of the restriction");
+    b_SetRestriction_ConeSurface_Slider->setFocusPolicy(Qt::NoFocus);
+    b_SetRestriction_ConeSurface_Slider->setValue(25);
+
+    b_UnsetRestrictionFromAll = new QPushButton();
+    b_UnsetRestrictionFromAll->setIcon(QIcon("img/gui/restriction_unset.png"));
+    b_UnsetRestrictionFromAll->setToolTip("&Unset restriction from all nodes");
+    b_UnsetRestrictionFromAll->setFocusPolicy(Qt::NoFocus);
+    connect(b_UnsetRestrictionFromAll, SIGNAL(clicked()), this, SLOT(unsetRestrictionFromAll()));
 }
 
 void CoreWindow::createMenus()
@@ -274,9 +304,25 @@ void CoreWindow::createToolBar()
 	frame = createHorizontalFrame();
 	toolBar->addWidget(frame);
 	frame->layout()->addWidget(b_SetRestriction_Plane);
-	frame->layout()->addWidget(b_UnsetRestriction);
+    frame->layout()->addWidget(b_UnsetRestriction);
 
-	toolBar->addSeparator();
+    toolBar->addSeparator();
+
+    frame = createHorizontalFrame();
+    toolBar->addWidget(frame);
+    frame->layout()->addWidget(b_SetRestriction_CylinderSurface);
+    frame->layout()->addWidget(b_SetRestriction_CylinderSurface_Slider);
+
+    frame = createHorizontalFrame();
+    toolBar->addWidget(frame);
+    frame->layout()->addWidget(b_SetRestriction_ConeSurface);
+    frame->layout()->addWidget(b_SetRestriction_ConeSurface_Slider);
+
+    frame = createHorizontalFrame();
+    toolBar->addWidget(frame);
+    frame->layout()->addWidget(b_UnsetRestrictionFromAll);
+
+    toolBar->addSeparator();
 
 	//inicializacia slideru
 	slider = new QSlider(Qt::Vertical,this);
@@ -630,6 +676,35 @@ void CoreWindow::applyColorClick()
 	}
 }
 
+void CoreWindow::setRestriction_CylinderSurface()
+{
+    Data::Graph *currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
+
+    if (currentGraph != NULL)
+    {
+        //osg::Vec3 position = viewerWidget->getPickHandler()->getSelectionCenter(true);
+
+        //osg::ref_ptr<Data::Node> centerNode = currentGraph->addRestrictionNode (QString ("center"), position);
+        //osg::ref_ptr<Data::Node> surfaceNode = currentGraph->addRestrictionNode (QString ("surface"), position + osg::Vec3f (10, 0, 0));
+
+        Layout::RestrictionRemovalHandler_RestrictionNodesRemover::NodesListType restrictionNodes;
+        //restrictionNodes.push_back (centerNode);
+        //restrictionNodes.push_back (surfaceNode);
+
+        setRestrictionToAllNodes (
+                    QSharedPointer<Layout::ShapeGetter> (
+                        new Layout::ShapeGetter_CylinderSurface_ByCamera(viewerWidget, *b_SetRestriction_CylinderSurface_Slider)),
+                    currentGraph,
+                    QSharedPointer<Layout::RestrictionRemovalHandler_RestrictionNodesRemover> (
+                        new Layout::RestrictionRemovalHandler_RestrictionNodesRemover (
+                            *currentGraph,
+                            restrictionNodes
+                            )
+                        )
+                    );
+    }
+}
+
 void CoreWindow::setRestriction_SphereSurface ()
 {
 	Data::Graph * currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
@@ -690,6 +765,35 @@ void CoreWindow::setRestriction_Sphere ()
 	}
 }
 
+void CoreWindow::setRestriction_ConeSurface()
+{
+    Data::Graph *currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
+
+    if (currentGraph != NULL)
+    {
+        //osg::Vec3 position = viewerWidget->getPickHandler()->getSelectionCenter(true);
+
+        //osg::ref_ptr<Data::Node> centerNode = currentGraph->addRestrictionNode (QString ("center"), position);
+        //osg::ref_ptr<Data::Node> surfaceNode = currentGraph->addRestrictionNode (QString ("surface"), position + osg::Vec3f (10, 0, 0));
+
+        Layout::RestrictionRemovalHandler_RestrictionNodesRemover::NodesListType restrictionNodes;
+        //restrictionNodes.push_back (centerNode);
+        //restrictionNodes.push_back (surfaceNode);
+
+        setRestrictionToAllNodes (
+                    QSharedPointer<Layout::ShapeGetter> (
+                        new Layout::ShapeGetter_ConeSurface_ByCamera(viewerWidget, *b_SetRestriction_ConeSurface_Slider)),
+                    currentGraph,
+                    QSharedPointer<Layout::RestrictionRemovalHandler_RestrictionNodesRemover> (
+                        new Layout::RestrictionRemovalHandler_RestrictionNodesRemover (
+                            *currentGraph,
+                            restrictionNodes
+                            )
+                        )
+                    );
+    }
+}
+
 void CoreWindow::setRestriction_Plane ()
 {
 	Data::Graph * currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
@@ -733,12 +837,24 @@ void CoreWindow::unsetRestriction () {
 	}
 }
 
+void CoreWindow::unsetRestrictionFromAll() {
+    Data::Graph * currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
+
+    if (currentGraph != NULL) {
+        setRestrictionToAllNodes (
+            QSharedPointer<Layout::ShapeGetter> (NULL),
+            currentGraph,
+            QSharedPointer<Layout::RestrictionRemovalHandler> (NULL)
+        );
+    }
+}
+
 void CoreWindow::setRestrictionToSelectedNodes (
 	QSharedPointer<Layout::ShapeGetter> shapeGetter,
 	Data::Graph * currentGraph,
 	QSharedPointer<Layout::RestrictionRemovalHandler> removalHandler
 ) {
-	QLinkedList<osg::ref_ptr<Data::Node> > * selectedNodes = viewerWidget->getPickHandler()->getSelectedNodes();
+    QLinkedList<osg::ref_ptr<Data::Node> > * selectedNodes = viewerWidget->getPickHandler()->getSelectedNodes();
 
 	QSet<Data::Node *> nodes;
 	for (QLinkedList<osg::ref_ptr<Data::Node> >::const_iterator it = selectedNodes->constBegin (); it != selectedNodes->constEnd (); ++it) {
@@ -755,6 +871,30 @@ void CoreWindow::setRestrictionToSelectedNodes (
 		layout->play();
 }
 
+void CoreWindow::setRestrictionToAllNodes (
+    QSharedPointer<Layout::ShapeGetter> shapeGetter,
+    Data::Graph * currentGraph,
+    QSharedPointer<Layout::RestrictionRemovalHandler> removalHandler
+) {
+    QSet<Data::Node *> nodes;
+
+    QMap<qlonglong, osg::ref_ptr<Data::Node> >::iterator j;
+    j = Manager::GraphManager::getInstance()->getActiveGraph()->getNodes()->begin();
+    for (int i = 0; i < Manager::GraphManager::getInstance()->getActiveGraph()->getNodes()->count(); ++i,++j)
+    {
+        nodes.insert(j.value());
+    }
+
+    currentGraph->getRestrictionsManager ().setRestrictions (nodes, shapeGetter);
+
+    if ((! shapeGetter.isNull ()) && (! removalHandler.isNull ())) {
+        currentGraph->getRestrictionsManager ().setOrRunRestrictionRemovalHandler (shapeGetter, removalHandler);
+    }
+
+    if (isPlaying)
+        layout->play();
+}
+
 bool CoreWindow::add_EdgeClick()
 {
 	Data::Type *edgeType = NULL;
@@ -768,7 +908,7 @@ bool CoreWindow::add_EdgeClick()
 	if (
 		selectedNodes==NULL
 			) {
-				AppCore::Core::getInstance()->messageWindows->showMessageBox("Upozornenie","Žiadny uzol oznaèený",false);
+				AppCore::Core::getInstance()->messageWindows->showMessageBox("Upozornenie","Ziadny uzol oznaceny",false);
 				return false;
 			}
 
@@ -783,7 +923,7 @@ bool CoreWindow::add_EdgeClick()
 		if (	
 			i!=2
 			) {
-				AppCore::Core::getInstance()->messageWindows->showMessageBox("Upozornenie","Musite vybrat práve 2 vrcholy",false);
+				AppCore::Core::getInstance()->messageWindows->showMessageBox("Upozornenie","Musite vybrat prave 2 vrcholy",false);
 				return false;
 			}
 	ni = selectedNodes->constBegin();
@@ -799,14 +939,14 @@ bool CoreWindow::add_EdgeClick()
 				existingEdge->getSrcNode () ->getName () == node1 ->getName () && 
 				existingEdge->getDstNode () ->getName () == node2 ->getName ()
 			) {
-				AppCore::Core::getInstance()->messageWindows->showMessageBox("Hrana najdená","Medzi vrcholmi nesmie byt hrana",false);
+				AppCore::Core::getInstance()->messageWindows->showMessageBox("Hrana najdena","Medzi vrcholmi nesmie byt hrana",false);
 				return false;
 			}
 			if (
 				existingEdge->getSrcNode () ->getName () == node2 ->getName () && 
 				existingEdge->getDstNode () ->getName () == node1 ->getName ()
 			) {
-				AppCore::Core::getInstance()->messageWindows->showMessageBox("Hrana najdená","Medzi vrcholmi nesmie byt hrana",false);
+				AppCore::Core::getInstance()->messageWindows->showMessageBox("Hrana najdena","Medzi vrcholmi nesmie byt hrana",false);
 				return false;
 			}
 		}

@@ -51,6 +51,16 @@ public:
 	 */
 	virtual void visit (Layout::Shape_SphereSurface & shape);
 
+    /**
+     * \brief Creates OSG geode visualizing the cylinder which conforms the cylinder surface center and radius.
+     */
+    virtual void visit(Layout::Shape_CylinderSurface &shape);
+
+    /**
+     * \brief Creates OSG geode visualizing the cone which conforms the cone surface center and radius.
+     */
+    virtual void visit(Layout::Shape_ConeSurface &shape);
+
 private: // visitor context
 
 	osg::Node * createdVisualizer_;
@@ -61,6 +71,16 @@ private: // common visualizers
 	 * \brief Creates sphere visualizer (used to visualize Sphere and SphereSurface).
 	 */
 	void visualizeSphere (Layout::Shape_AbstractSphere & abstractSphere);
+
+    /**
+     * \brief Creates cylinder visualizer (used to visualize CylinderSurface).
+     */
+    void visualizeCylinder(Layout::Shape_CylinderSurface &cylinder);
+
+    /**
+     * \brief Creates cone visualizer (used to visualize ConeSurface).
+     */
+    void visualizeCone(Layout::Shape_ConeSurface &cone);
 
 private: // positions and distances
 
