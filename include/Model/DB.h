@@ -63,9 +63,10 @@ namespace Model
         * \param  db_name 	database name
         * \param  user_name user name
         * \param  pass 		password
+        * \param  requireSSL 		force ssl
         * \return bool true ak sa podarilo otvorit spojenie, false ak nie. 
         */
-        bool openConnection(QString host_name, QString db_name, QString user_name, QString pass);
+        bool openConnection(QString host_name, QString db_name, QString user_name, QString pass, bool requireSSL);
         
         /**
         * \fn public closeConnection

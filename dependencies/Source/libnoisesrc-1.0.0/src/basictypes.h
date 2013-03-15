@@ -33,7 +33,7 @@ namespace noise
   /// @{
 
   /// Unsigned integer type.
-  typedef unsigned int uint;
+  //typedef unsigned int uint;
 
   /// 32-bit unsigned integer type.
   typedef unsigned int uint32;

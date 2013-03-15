@@ -1,4 +1,4 @@
---
+﻿--
 -- PostgreSQL database dump
 --
 
@@ -165,6 +165,19 @@ SET default_tablespace = '';
 SET default_with_oids = false;
 
 --
+-- TOC entry 1538 (class 1259 OID 25396)
+-- Dependencies: 6
+-- Name: element_id_seq; Type: SEQUENCE; Schema: public;
+--
+
+CREATE SEQUENCE element_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MAXVALUE
+    NO MINVALUE
+    CACHE 1;
+
+--
 -- TOC entry 1548 (class 1259 OID 25625)
 -- Dependencies: 6
 -- Name: edge_settings; Type: TABLE; Schema: public; Tablespace: 
@@ -174,7 +187,8 @@ CREATE TABLE edge_settings (
     graph_id bigint NOT NULL,
     edge_id bigint NOT NULL,
     val_name character varying NOT NULL,
-    val character varying
+    val character varying,
+    layout_id bigint NOT NULL
 );
 
 --
@@ -190,21 +204,12 @@ CREATE TABLE edges (
     n1 bigint NOT NULL,
     n2 bigint NOT NULL,
     oriented boolean DEFAULT true NOT NULL,
-    graph_id integer NOT NULL
+    meta boolean DEFAULT false NOT NULL,
+    graph_id integer NOT NULL,
+    layout_id bigint,
+	nested boolean DEFAULT false NOT NULL
 );
 
---
--- TOC entry 1538 (class 1259 OID 25396)
--- Dependencies: 6
--- Name: element_id_seq; Type: SEQUENCE; Schema: public;
---
-
-CREATE SEQUENCE element_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MAXVALUE
-    NO MINVALUE
-    CACHE 1;
 
 --
 -- TOC entry 1892 (class 0 OID 0)
@@ -317,7 +322,8 @@ CREATE TABLE node_settings (
     graph_id bigint NOT NULL,
     node_id bigint NOT NULL,
     val_name character varying NOT NULL,
-    val character varying
+    val character varying,
+    layout_id bigint NOT NULL
 );
 
 --
@@ -327,22 +333,15 @@ CREATE TABLE node_settings (
 --
 
 CREATE TABLE nodes (
-    node_id bigint DEFAULT nextval('element_id_seq'::regclass) NOT NULL,
+    node_id bigint NOT NULL,
     name character varying,
-    type_id bigint DEFAULT currval('element_id_seq'::regclass) NOT NULL,
+    type_id bigint NOT NULL,
     graph_id integer NOT NULL,
     meta boolean DEFAULT false NOT NULL,
+    fixed boolean DEFAULT false NOT NULL,
     layout_id bigint,
-    CONSTRAINT nodes_only_meta_has_layout_check CHECK ((((meta = true) AND (layout_id IS NOT NULL)) OR ((meta = false) AND (layout_id IS NULL))))
+	parent_id bigint
 );
-
---
--- TOC entry 1903 (class 0 OID 0)
--- Dependencies: 1543
--- Name: CONSTRAINT nodes_only_meta_has_layout_check ON nodes; Type: COMMENT; Schema: public;
---
-
-COMMENT ON CONSTRAINT nodes_only_meta_has_layout_check ON nodes IS 'only meta types can have layout_id';
 
 
 --
@@ -368,7 +367,7 @@ CREATE TABLE positions (
 --
 
 ALTER TABLE ONLY edge_settings
-    ADD CONSTRAINT edge_settings_primary_key PRIMARY KEY (graph_id, edge_id, val_name);
+    ADD CONSTRAINT edge_settings_primary_key PRIMARY KEY (graph_id, edge_id, val_name, layout_id);
 
 
 --
@@ -428,7 +427,7 @@ ALTER TABLE ONLY layouts
 --
 
 ALTER TABLE ONLY node_settings
-    ADD CONSTRAINT node_settings_primary_key PRIMARY KEY (graph_id, node_id, val_name);
+    ADD CONSTRAINT node_settings_primary_key PRIMARY KEY (graph_id, node_id, val_name, layout_id);
 
 
 --
@@ -488,15 +487,6 @@ CREATE INDEX fki_edges_n2_fk ON edges USING btree (n2, graph_id);
 
 
 --
--- TOC entry 1838 (class 1259 OID 25571)
--- Dependencies: 1537 1537
--- Name: fki_edges_type_id_fk; Type: INDEX; Schema: public;Tablespace: 
---
-
-CREATE INDEX fki_edges_type_id_fk ON edges USING btree (graph_id, type_id);
-
-
---
 -- TOC entry 1843 (class 1259 OID 25447)
 -- Dependencies: 1543
 -- Name: fki_nodes_graph_id_fk; Type: INDEX; Schema: public; Tablespace: 
@@ -512,15 +502,6 @@ CREATE INDEX fki_nodes_graph_id_fk ON nodes USING btree (graph_id);
 --
 
 CREATE INDEX fki_nodes_layout_id_fk ON nodes USING btree (graph_id, layout_id);
-
-
---
--- TOC entry 1845 (class 1259 OID 25523)
--- Dependencies: 1543 1543
--- Name: fki_nodes_type_id_fk; Type: INDEX; Schema: public; Tablespace:
---
-
-CREATE INDEX fki_nodes_type_id_fk ON nodes USING btree (graph_id, type_id);
 
 
 --
@@ -582,16 +563,6 @@ ALTER TABLE ONLY edges
 
 
 --
--- TOC entry 1864 (class 2606 OID 25566)
--- Dependencies: 1537 1543 1543 1537 1847
--- Name: edges_type_id_fk; Type: FK CONSTRAINT; Schema: public;
---
-
-ALTER TABLE ONLY edges
-    ADD CONSTRAINT edges_type_id_fk FOREIGN KEY (graph_id, type_id) REFERENCES nodes(graph_id, node_id) ON UPDATE CASCADE ON DELETE CASCADE;
-
-
---
 -- TOC entry 1872 (class 2606 OID 25653)
 -- Dependencies: 1540 1545 1839
 -- Name: graph_settings_graph_fk; Type: FK CONSTRAINT; Schema: public;
@@ -649,16 +620,6 @@ ALTER TABLE ONLY nodes
 
 ALTER TABLE ONLY nodes
     ADD CONSTRAINT nodes_layout_id_fk FOREIGN KEY (graph_id, layout_id) REFERENCES layouts(graph_id, layout_id) ON UPDATE CASCADE ON DELETE CASCADE;
-
-
---
--- TOC entry 1867 (class 2606 OID 25518)
--- Dependencies: 1543 1543 1543 1543 1847
--- Name: nodes_type_id_fk; Type: FK CONSTRAINT; Schema: public;
---
-
-ALTER TABLE ONLY nodes
-    ADD CONSTRAINT nodes_type_id_fk FOREIGN KEY (graph_id, type_id) REFERENCES nodes(graph_id, node_id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --

@@ -8,8 +8,8 @@
 #include <vector>
 #include <QMap>
 #include <QString>
-#include <QtXml/QDomElement>
 #include <QFile>
+#include <qfileinfo.h>
 
 #include "Core/Core.h"
 #include "Model/DB.h"
@@ -37,6 +37,12 @@ namespace Manager
             ~GraphManager();
 
             /**
+             * \fn inline getDB
+             * \brief Return db
+             */
+			Model::DB *getDB() { return db; }
+
+            /**
              * \fn getAvaliableGraphs
              * \brief Returns map of availiable graphs (partialy implemented, nowadays, it returns only one graph - active graph).
              */
@@ -47,18 +53,23 @@ namespace Manager
              * \brief Loads graph from GraphML file.
              */
             Data::Graph* loadGraph(QString filepath);
+			
+			/**
+             * \fn loadGraph
+             * \brief Loads graph from GraphML file.
+             */
+			Data::Graph* createNewGraph(QString name);
+			/**
+             * \fn loadGraphFromDB
+             * \brief Loads selected graph from database.
+             */
+            Data::Graph* loadGraphFromDB(qlonglong graphID, qlonglong layoutID);
 
             /**
              * \fn simpleGraph
              * \brief Creates simple triangle graph. Method was created as example of using API for creating graphs.
              */
             Data::Graph* simpleGraph();
-
-            /**
-             * \fn saveGraph
-             * \brief Saves graph.
-             */
-            void saveGraph(Data::Graph* graph);
 
             /**
              * \fn exportGraph

@@ -154,8 +154,6 @@ OptionsWindow::OptionsWindow(Vwr::CoreGraph *cg, QOSG::ViewerQT * viewer)
 	if (running)
 		thr->pause();
 
-	while(thr->isRunning());
-
 	viewer->reloadConfig();
 	cg->reloadConfig();
 	

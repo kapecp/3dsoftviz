@@ -4,6 +4,8 @@
 #include <osg/Projection>
 
 #include "Manager/Manager.h"
+#include "Network/Client.h"
+#include "Network/Server.h"
 
 using namespace Vwr;
 
@@ -31,7 +33,7 @@ PickHandler::PickHandler(Vwr::CameraManipulator * cameraManipulator, Vwr::CoreGr
 	isManipulatingNodes = false;
 	pickMode = PickMode::NONE;
 	selectionType = SelectionType::ALL;
-};
+}
 
 bool PickHandler::handle( const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& aa )
 {
@@ -65,6 +67,10 @@ bool PickHandler::handle( const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdap
 		}
 	case osgGA::GUIEventAdapter::DRAG:
 		{		
+                        Network::Client * client = Network::Client::getInstance();
+                        if (client->isConnected()){
+                            client -> sendMovedNodesPosition();
+                        }
 			//ak je drag a ide timer tak vypnut timer a vyvolat push
 			//zaruci sa tak spravne spracovany drag
 			if (timer->isActive())
@@ -76,7 +82,11 @@ bool PickHandler::handle( const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdap
 			return handleDrag(ea, aa);
 		}
 	case osgGA::GUIEventAdapter::RELEASE:
-		{			
+                {
+                        Network::Server * server = Network::Server::getInstance();
+                        if (server->isListening()) {
+                            server -> sendMoveNodes();
+                        }
 			//ak je release a je timer aktivny tak sa ulozi event a nevyvola sa
 			if (timer->isActive())
 			{
@@ -242,7 +252,15 @@ bool PickHandler::handleDrag( const osgGA::GUIEventAdapter& ea, osgGA::GUIAction
 		selectionQuad->getDrawable(0)->asGeometry()->setVertexArray(coordinates);
 	}
 	else if (pickMode == PickMode::NONE && leftButtonPressed)
-	{
+        {
+                Network::Client * client = Network::Client::getInstance();
+                if (client->isConnected()){
+                    client -> setNodesExcludedFromUpdate(pickedNodes);
+                } else {
+                    Network::Server * server = Network::Server::getInstance();
+                    server -> setSelectedNodes(pickedNodes);
+                }
+
 		if(!isManipulatingNodes)
 		{
 			isManipulatingNodes = true;
@@ -401,7 +419,15 @@ bool PickHandler::doEdgePick(osg::NodePath nodePath, unsigned int primitiveIndex
 
 		if (geometry != NULL)
 		{
-			Data::Edge * e = dynamic_cast<Data::Edge *>(geometry->getPrimitiveSet(primitiveIndex));
+                        // zmena (plesko): ak vyber zachytil avatara, nastal segmentation fault,
+                        // lebo sa vyberal neexistujuci primitiveSet
+                        Data::Edge * e;
+                        if (geometry->getNumPrimitiveSets() > primitiveIndex) {
+                                e = dynamic_cast<Data::Edge *>(geometry->getPrimitiveSet(primitiveIndex));
+                        } else {
+                                return false;
+                        }
+                        // koniec zmeny
 
 			if (e != NULL)
 			{
@@ -519,13 +545,21 @@ void PickHandler::drawSelectionQuad(float origin_mX, float origin_mY, osgViewer:
 
 void PickHandler::toggleSelectedNodesFixedState(bool isFixed)
 {
-	QLinkedList<osg::ref_ptr<Data::Node> >::const_iterator i = pickedNodes.constBegin();
+    QLinkedList<osg::ref_ptr<Data::Node> >::const_iterator i = pickedNodes.constBegin();
 
-	while (i != pickedNodes.constEnd()) 
-	{
-		(*i)->setFixed(isFixed);
-		++i;
-	}
+    Network::Client * client = Network::Client::getInstance();
+    Network::Server * server = Network::Server::getInstance();
+
+    while (i != pickedNodes.constEnd())
+    {
+        if (client->isConnected()) {
+            client->sendFixNodeState((*i)->getId(), isFixed);
+        } else {
+            (*i)->setFixed(isFixed);
+            server->sendFixNodeState((*i)->getId(), isFixed);
+        }
+        ++i;
+    }
 }
 
 void PickHandler::unselectPickedNodes(osg::ref_ptr<Data::Node> node)

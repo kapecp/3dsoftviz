@@ -1,4 +1,5 @@
 #include "Viewer/NodeGroup.h"
+#include "typeinfo"
 
 using namespace Vwr;
 
@@ -29,6 +30,12 @@ NodeGroup::~NodeGroup(void)
  */
 void NodeGroup::initNodes()
 {
+	osg::ref_ptr<osg::AutoTransform> at = new osg::AutoTransform;
+	//at->setPosition(node->getTargetPosition() * graphScale);
+	//at->setAutoRotateMode(osg::AutoTransform::ROTATE_TO_SCREEN);
+	//at->addChild(node);
+
+
 	osg::ref_ptr<osg::Group> nodeGroup = new osg::Group();
 
 	if (appConf->getValue("Viewer.Display.NodesAlwaysOnTop").toInt())
@@ -38,14 +45,20 @@ void NodeGroup::initNodes()
 	
 	QMapIterator<qlonglong, osg::ref_ptr<Data::Node> > i(*nodes);
 	
+	int px = 1000000, py = 1000, pz = 1000; 
+
 	while (i.hasNext()) 
 	{
 		i.next();
-			
+		
+		nodeGroup->addChild(wrapChild(i.value(), graphScale));
+
+		
 		osg::ref_ptr<osg::Group> g = getNodeGroup(i.value(), NULL, graphScale);
 
 		if (g != NULL)
 			nodeGroup->addChild(g);
+		
 	}
 
 	this->group = nodeGroup;
@@ -60,6 +73,29 @@ osg::ref_ptr<osg::Group> NodeGroup::getNodeGroup(osg::ref_ptr<Data::Node> node, 
 		group = new osg::Group;
 
 		group->addChild(wrapChild(node, graphScale));
+
+		if(node->isParentNode()==true)
+		{
+				osg::ref_ptr<osg::AutoTransform> at = new osg::AutoTransform;
+				at->setPosition(node->getTargetPosition() * graphScale);
+				at->setAutoRotateMode(osg::AutoTransform::ROTATE_TO_SCREEN);
+
+				osg::ShapeDrawable * shape = new osg::ShapeDrawable;
+				osg::Sphere * sphere = new osg::Sphere;
+				sphere->setRadius(10);
+				shape->setShape(sphere);
+				shape->setColor(osg::Vec4(0.9, 0.1, 0.3, 0.5));
+				shape->getOrCreateStateSet()->setMode(GL_BLEND, osg::StateAttribute::ON);
+				shape->getStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
+				osg::Geode * geode = new osg::Geode;
+				geode->addDrawable(shape);
+
+				at->addChild(geode);
+
+				node->setOutBall(at);
+
+				group->addChild(at);
+		}
 
 		QMap<qlonglong, osg::ref_ptr<Data::Edge> >::iterator i = node->getEdges()->begin();
 
@@ -100,7 +136,9 @@ osg::ref_ptr<osg::AutoTransform> NodeGroup::wrapChild(osg::ref_ptr<Data::Node> n
 }
 
 void NodeGroup::synchronizeNodes()
-{
+{	//navyse
+	int count = nodes->size ();
+
 	QList<qlonglong> nodeKeys = nodes->keys();
 
 	QList<qlonglong> nodeTransformsKeys = nodeTransforms->keys();
@@ -109,8 +147,8 @@ void NodeGroup::synchronizeNodes()
 	QSet<qlonglong>::const_iterator i = result.constBegin();
 
 	while (i != result.constEnd()) 
-	{
-		group->removeChild(nodeTransforms->value(*i));
+	{	
+		bool res = group->removeChild(nodeTransforms->value(*i));
 
 		nodeTransforms->remove(*i);
 		++i;
@@ -126,6 +164,8 @@ void NodeGroup::synchronizeNodes()
 		group->addChild(wrapChild(nodes->value(*i), graphScale));
 		++i;
 	}
+
+
 }
 
 void NodeGroup::updateNodeCoordinates(float interpolationSpeed)
@@ -134,7 +174,21 @@ void NodeGroup::updateNodeCoordinates(float interpolationSpeed)
 
 	while (i != nodes->constEnd()) 
 	{
+
+		string a = typeid (i.value()).name();
+		string b = typeid (Data::Node).name();
+		if(typeid (i.value()).name() == "aa")
+			;
 		nodeTransforms->value(i.key())->setPosition((*i)->getCurrentPosition(true, interpolationSpeed));
+
+		osg::ref_ptr<osg::AutoTransform> at = NULL;
+		at = i.value()->getOutBall();
+
+		if(at!=NULL)
+		{
+			i.value()->getOutBall()->setPosition((*i)->getCurrentPosition(true, interpolationSpeed));
+		}
+
 		++i;
 	}
 }

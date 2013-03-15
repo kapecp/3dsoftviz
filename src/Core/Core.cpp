@@ -5,19 +5,39 @@
  */
 
 #include "Core/Core.h"
+#include "Util/ApplicationConfig.h"
 
 AppCore::Core * AppCore::Core::core;
 
 AppCore::Core::Core(QApplication * app)
 {
+	//Application initialization
     core = this;
 
+    Util::ApplicationConfig *appConf = Util::ApplicationConfig::get();
+
     messageWindows = new QOSG::MessageWindows();
+
+	//Counting forces for layout algorithm, init layout, viewer and window
     this->alg = new Layout::FRAlgorithm();
+
     this->thr = new Layout::LayoutThread(this->alg);
     this->cg = new Vwr::CoreGraph();
     this->cw = new QOSG::CoreWindow(0, this->cg, app, this->thr);
-    this->cw->resize(1024, 768);
+    this->cw->resize(
+    	appConf->getNumericValue (
+    		"UI.MainWindow.DefaultWidth",
+    		std::auto_ptr<long> (new long(200)),
+    		std::auto_ptr<long> (NULL),
+    		1024
+    	),
+    	appConf->getNumericValue (
+			"UI.MainWindow.DefaultHeight",
+			std::auto_ptr<long> (new long(200)),
+			std::auto_ptr<long> (NULL),
+			768
+		)
+    );
     this->cw->show();
 
     app->exec();
@@ -29,12 +49,10 @@ AppCore::Core::~Core()
 
 void AppCore::Core::restartLayout()
 {
-    // neviem preco sa tuto nejak dlho zastavi
-    if(this->thr->isRunning())
-    {
-        this->thr->terminate();
-        this->thr->wait();
-    }
+	// [GrafIT][!] the layout algorithm did not end correctly, what caused more instances
+	// to be running, fixed it here + made modifications in FRAlgorithm to make correct ending possible
+	this->thr->requestEnd();
+	this->thr->wait();
     delete this->thr;
 
     this->alg->SetGraph(Manager::GraphManager::getInstance()->getActiveGraph());
@@ -43,7 +61,7 @@ void AppCore::Core::restartLayout()
     this->cw->setLayoutThread(thr);
     this->cg->reload(Manager::GraphManager::getInstance()->getActiveGraph());
     this->thr->start();
-	this->thr->play();
+    this->thr->play();
     this->messageWindows->closeLoadingDialog();
 }
 
