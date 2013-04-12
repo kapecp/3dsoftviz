@@ -74,11 +74,67 @@ namespace Data
 		static const QString META_NODE_TYPE;
 
 		/**
+		*  const QString MULTI_NODE_TYPE
+		*  \brief Constant identifier of MultiType name used for multi-Nodes as identified by MetaSettings of the GraphLayout
+		*/
+		static const QString MULTI_NODE_TYPE;
+
+		/**
+		*  const QString EDGE_TYPE
+		*  \brief Constant identifier of Type name used for Edges as identified by Settings of the GraphLayout
+		*/
+		static const QString EDGE_TYPE;
+		
+		/**
 		*  const QString META_EDGE_TYPE
 		*  \brief Constant identifier of MetaType name used for meta-Edges as identified by MetaSettings of the GraphLayout
 		*/
 		static const QString META_EDGE_TYPE;
     
+		/**
+		*  const QString MULTI_EDGE_TYPE
+		*  \brief Constant identifier of MultiType name used for multi-Edges as identified by MetaSettings of the GraphLayout
+		*/
+		static const QString MULTI_EDGE_TYPE;
+
+		/**
+		*  const QString NESTED_NODE_TYPE
+		*  \brief Constant identifier of MultiType name used for nested-nodes as identified by MetaSettings of the GraphLayout
+		*/
+		static const QString NESTED_NODE_TYPE;
+
+		/**
+		*  const QString NESTED_EDGE_TYPE
+		*  \brief Constant identifier of MultiType name used for nested-edges as identified by MetaSettings of the GraphLayout
+		*/
+		static const QString NESTED_EDGE_TYPE;
+
+		/**
+		*  const QString NESTED_META_EDGE_TYPE
+		*  \brief Constant identifier of MultiType name used for meta-nested-edges as identified by MetaSettings of the GraphLayout
+		*/
+		static const QString NESTED_META_EDGE_TYPE;
+
+		/**
+		*  const QString HYPER_NODE_TYPE
+		*  \brief Constant identifier of HyperType name used for hyper nodes as identified by MetaSettings of the GraphLayout
+		*/
+		static const QString HYPER_NODE_TYPE;
+
+		static const QString RESTRICTION_NODE_TYPE;
+
+
+		/**
+		*  const QString MERGED_NODE_TYPE
+		*  \brief Constant identifier of MergedType name used for merged-Nodes as identified by MetaSettings of the GraphLayout
+		*/
+		static const QString MERGED_NODE_TYPE;
+
+		/**
+		*  const QString MERGED_EDGE_TYPE
+		*  \brief Constant identifier of MergedType name used for merged-Edges as identified by MetaSettings of the GraphLayout
+		*/
+		static const QString MERGED_EDGE_TYPE;
 
 		/**
 		*  \fn public constructor  GraphLayout(qlonglong layout_id, Data::Graph* graph, QString name, QSqlDatabase* conn)

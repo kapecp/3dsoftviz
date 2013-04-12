@@ -50,7 +50,7 @@ namespace Data
 		* \param pos int		first coordinate in Drawable coordinates array 
 		* \param camera 	current camera used in viewer
 		*/
-		Edge(qlonglong id, QString name, Data::Graph* graph, osg::ref_ptr<Data::Node> srcNode, osg::ref_ptr<Data::Node> dstNode, Data::Type* type, bool isOriented, int pos = 0, osg::ref_ptr<osg::Camera> camera = 0);
+		Edge(qlonglong id, QString name, Data::Graph* graph, osg::ref_ptr<Data::Node> srcNode, osg::ref_ptr<Data::Node> dstNode, Data::Type* type, bool isOriented, float scaling, int pos = 0, osg::ref_ptr<osg::Camera> camera = 0);
 
 		/**
 		*  \fn public destructor  ~Edge
@@ -79,6 +79,20 @@ namespace Data
 		*  \return QString resultant name of the Edge
 		*/
 		void setName(QString val) { name = val; }
+
+		/**
+		*  \fn inline public  getScale() 
+		*  \brief Gets edge scale
+		*  \return float size of the scale
+		*/
+		float getScale() { return scale; }
+
+		/**
+		*  \fn inline public  setScale(float val) 
+		*  \brief Sets new scale
+		*  \param   val   new scale for the Edge
+		*/
+		void setScale(float val) { scale = val; }
 
 		/**
 		* \fn inline public constant getSrcNode
@@ -372,6 +386,12 @@ namespace Data
 		*  \brief True, if edge is picked
 		*/
 		bool selected;
+
+		/**
+		*  bool scale
+		*  \brief scale of edge
+		*/
+		float scale;
 
 
 		/**

@@ -39,6 +39,54 @@ QString Util::ApplicationConfig::getValue(QString key)
 	return _map.value(key);
 }
 
+long Util::ApplicationConfig::getNumericValue (
+	QString key,
+	std::auto_ptr<long> minValue,
+	std::auto_ptr<long> maxValue,
+	const long defaultValue
+) {
+	if (!_map.contains (key)) {
+		return defaultValue;
+	}
+
+	QString value = getValue (key);
+	bool ok = true;
+	long result = value.toLong (&ok);
+
+	if (!ok) {
+		return defaultValue;
+	}
+
+	if ((minValue.get () != NULL) && (result < (*minValue))) {
+		result = *minValue;
+	}
+
+	if ((maxValue.get () != NULL) && (result > (*maxValue))) {
+		result = *maxValue;
+	}
+
+	return result;
+}
+
+bool Util::ApplicationConfig::getBoolValue (
+	QString key,
+	const bool defaultValue
+) {
+	if (!_map.contains (key)) {
+		return defaultValue;
+	}
+
+	QString value = getValue (key);
+
+	if (value == "1") {
+		return true;
+	} else if (value == "0") {
+		return false;
+	} else {
+		return defaultValue;
+	}
+}
+
 Util::ApplicationConfig * Util::ApplicationConfig::get()
 {	
 	_mutex.lock();

@@ -5,8 +5,19 @@
 
 #include "Data/GraphLayout.h"
 
+//nastavenie konstantnych typov jednotlivych prvkov grafu
 const QString Data::GraphLayout::META_NODE_TYPE = QString("META_NODE_TYPE");
+const QString Data::GraphLayout::MULTI_NODE_TYPE = QString("MULTI_NODE_TYPE");
 const QString Data::GraphLayout::META_EDGE_TYPE = QString("META_EDGE_TYPE");
+const QString Data::GraphLayout::EDGE_TYPE = QString("EDGE_TYPE");
+const QString Data::GraphLayout::MULTI_EDGE_TYPE = QString("MULTI_EDGE_TYPE");
+const QString Data::GraphLayout::HYPER_NODE_TYPE = QString("HYPER_NODE_TYPE");
+const QString Data::GraphLayout::NESTED_NODE_TYPE = QString("NESTED_NODE_TYPE");
+const QString Data::GraphLayout::NESTED_EDGE_TYPE = QString("NESTED_EDGE_TYPE");
+const QString Data::GraphLayout::NESTED_META_EDGE_TYPE= QString("NESTED_META_EDGE_TYPE");
+const QString Data::GraphLayout::RESTRICTION_NODE_TYPE = QString("RESTRICTION_NODE_TYPE");
+const QString Data::GraphLayout::MERGED_NODE_TYPE = QString("MERGED_NODE_TYPE");
+const QString Data::GraphLayout::MERGED_EDGE_TYPE = QString("MERGED_EDGE_TYPE");
 
 Data::GraphLayout::GraphLayout(qlonglong layout_id, Data::Graph* graph, QString name, QSqlDatabase* conn)
 {
@@ -27,6 +38,7 @@ Data::GraphLayout::~GraphLayout(void)
 
 QString Data::GraphLayout::setName(QString name)
 {
+	//nastavenie nazvu layoutu
     QString newName = Model::GraphLayoutDAO::setName(name,this,this->conn);
 
     if(newName!=NULL) {
@@ -38,6 +50,7 @@ QString Data::GraphLayout::setName(QString name)
 
 qlonglong Data::GraphLayout::getGraphId()
 {
+	//vraciame ID prisluchajuceho grafu
     return this->graph->getId();
 }
 
@@ -50,7 +63,7 @@ QString Data::GraphLayout::toString() const
 
 bool Data::GraphLayout::loadMetaSettings()
 {
-    //loadnutie z DB
+    //nacitanie z Databazy
     return true;
 }
 

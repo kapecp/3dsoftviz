@@ -41,7 +41,7 @@ void MessageWindows::setProgressBarValue(int value)
 	}
 }
 
-void MessageWindows::showMessageBox(QString title, QString message, bool isError)
+void MessageWindows::showMessageBox(QString title, const QString &message, bool isError)
 {
 	QMessageBox msgBox;
 	msgBox.setText(message);

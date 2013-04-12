@@ -15,15 +15,23 @@
 #include <QStatusBar>
 #include <QTextEdit>
 #include <QtGui>
+#include <QLineEdit>
 #include <Qt/qstringlist.h>
 
+#include "Network/Server.h"
+#include "Network/Client.h"
+
 #include "QOSG/OptionsWindow.h"
+#include "QOSG/LoadGraphWindow.h"
 #include "Viewer/CoreGraph.h"
 #include "QOSG/CheckBoxList.h"
 #include "QOSG/ViewerQT.h"
 #include "Layout/LayoutThread.h"
 #include "Manager/Manager.h"
 #include "QOSG/qtcolorpicker.h"
+
+#include "Layout/ShapeGetter.h"
+#include "Layout/RestrictionRemovalHandler.h"
 
 namespace QOSG
 {
@@ -44,6 +52,18 @@ namespace QOSG
 				*  \brief Show the options of aplication
 				*/
 				void showOptions();
+
+				/**
+				*  \fn public  showLoadGraph
+				*  \brief Show the dialog to load graph from database
+				*/
+				void showLoadGraph();
+
+				/**
+				*  \fn public  saveLayoutToDB
+				*  \brief Save layout of current graph to database
+				*/
+				void saveLayoutToDB();
 
 				/**
 				*  \fn public  sqlQuery
@@ -104,6 +124,18 @@ namespace QOSG
 				void unFixNodes();
 
 				/**
+				*  \fn public  mergeNodes
+				*  \brief Merge selected nodes together
+				*/
+				void mergeNodes();
+
+				/**
+				*  \fn public  separateNodes
+				*  \brief separate selected merged nodes
+				*/
+				void separateNodes();
+
+				/**
 				*  \fn public  removeMetaNodes
 				*  \brief Remove all meta nodes
 				*/
@@ -141,19 +173,76 @@ namespace QOSG
 				*  \brief Type in combobox changed
 				*  \param  index    
 				*/
-				void nodeTypeComboBoxChanged(int index); 
+                                void nodeTypeComboBoxChanged(int index);
+
+                                /**
+                                *  \fn public  applyColorClick
+                                *  \brief Apply selected color in colorpicker to selected node
+                                */
+                                void applyColorClick();
+
+                                /**
+                                *  \fn public  applyLabelClick
+                                *  \brief Apply selected label to selected node
+                                */
+                                void applyLabelClick();
+				
+				/**
+				 * \brief Creates a new SphereSurface restriction (defined by positions of 2 nodes) and sets
+				 * if to all selected nodes (replacing any previously attached restrictions to these nodes).
+				 */
+				void setRestriction_SphereSurface ();
 
 				/**
-				*  \fn public  applyColorClick
-				*  \brief Apply selected color in colorpicker to selected node
-				*/
-				void applyColorClick();
+				 * \brief Creates a new Sphere restriction (defined by positions of 2 nodes) and sets
+				 * if to all selected nodes (replacing any previously attached restrictions to these nodes).
+				 */
+				void setRestriction_Sphere ();
 
+				/**
+				 * \brief Creates a new Plane restriction (defined by positions of 3 nodes) and sets
+				 * if to all selected nodes (replacing any previously attached restrictions to these nodes).
+				 */
+				void setRestriction_Plane ();
+
+				/**
+				 * \brief Removes restrictions from all selected nodes (if any has been set). Destroys a
+				 * restriction (including manipulation nodes) if the last usage has been removed.
+				 */
+				void unsetRestriction ();
+								
+				/**
+				*  \fn public  add_EdgeClick
+				*  \brief create edge between selected node
+				*/
+				bool add_EdgeClick();
+				
+
+				/**
+				*  \fn public  add_NodeClick
+				*  \brief create new Node in GUI
+				*/
+				bool add_NodeClick();
+
+				/**
+				*  \fn public  removeClick
+				*  \brief remove all selected nodes and edges
+				*/
+				bool removeClick();
+
+                                void start_server();
+                                void start_client();
+                                void send_message();
+
+                                void toggleSpyWatch();
+                                void toggleAttention();
+
+                                void setAvatarScale(int scale);
 	private:
 
 		/**
 		*  QApplication * application
-		*  \brief Pointer ro aplication
+		*  \brief Pointer to aplication
 		*/
 		QApplication * application;
 
@@ -188,6 +277,18 @@ namespace QOSG
 		QAction * options;
 
 		/**
+		*  QAction * loadGraph
+		*  \brief Pointer to dialog to load graph from database
+		*/
+		QAction * loadGraph;
+
+		/**
+		*  QAction * saveGraph
+		*  \brief Pointer to save graph to database
+		*/
+		QAction * saveGraph;
+
+		/**
 		*  QPushButton * play
 		*  \brief Action for play/pause layout
 		*/
@@ -210,6 +311,18 @@ namespace QOSG
 		*  \brief Action for unfix nodes
 		*/
 		QPushButton * unFix;
+
+		/**
+		*  QPushButton * merge
+		*  \brief Action for merge selected nodes
+		*/
+		QPushButton * merge;
+
+		/**
+		*  QPushButton * separate
+		*  \brief Action for separate nodes
+		*/
+		QPushButton * separate;
 
 		/**
 		*  QPushButton * noSelect
@@ -239,14 +352,63 @@ namespace QOSG
 		*  QPushButton * removeMeta
 		*  \brief Action for removing meta nodes
 		*/
-		QPushButton * removeMeta;
+                QPushButton * removeMeta;
+
+                /**
+                *  QPushButton * applyColor
+                *  \brief Action for applying color to selected nodes
+                */
+                QPushButton * applyColor;
+
+                /**
+                *  QPushButton * applyLabel
+                *  \brief Action for applying label to selected nodes
+                */
+                QPushButton * applyLabel;
+
+                QLineEdit * le_applyLabel;
 
 		/**
-		*  QPushButton * applyColor
-		*  \brief Action for applying color to selected nodes
-		*/
-		QPushButton * applyColor;
+		 * \brief Button for adding SphereSurface restriction.
+		 */
+		QPushButton * b_SetRestriction_SphereSurface;
 
+		/**
+		 * \brief Button for adding Sphere restriction.
+		 */
+		QPushButton * b_SetRestriction_Sphere;
+
+		/**
+		 * \brief Button for adding Plane restriction.
+		 */
+		QPushButton * b_SetRestriction_Plane;
+
+		/**
+		 * \brief Button for removing restrictions.
+		 */
+		QPushButton * b_UnsetRestriction;
+
+		/**
+		*  QAction * create new Edge
+		*  \brief Action for adding Edge
+		*/
+		QPushButton * add_Edge;
+
+		
+				
+
+		/**
+		*  QAction * create new Node
+		*  \brief Action for adding Node
+		*/
+		QPushButton * add_Node;
+
+		/**
+		*  QAction * remove
+		*  \brief Action for removing Nodes and Edges
+		*/
+		QPushButton * remove_all;
+		
 		/**
 		*  QAction * load
 		*  \brief Action for loading file
@@ -313,11 +475,23 @@ namespace QOSG
 		*/
 		void createMenus();
 
-		/**
-		*  \fn private  createToolBar
-		*  \brief Create toolBar
-		*/
-		void createToolBar();	
+                /**
+                *  \fn private  createLeftToolBar
+                *  \brief Create left toolBar
+                */
+                void createLeftToolBar();
+
+                /**
+                *  \fn private  createRightToolBar
+                *  \brief Create right toolBar
+                */
+                void createRightToolBar();
+
+                /**
+                *  \fn private  createCollaborationToolBar
+                *  \brief Create collaboration toolBar
+                */
+                void createCollaborationToolBar();
 
 		/**
 		*  \fn private  createHorizontalFrame
@@ -350,6 +524,12 @@ namespace QOSG
 		*/
 		QColor color;
 
+                QPushButton * b_send_message;
+                QLineEdit * le_message;
+                QSlider * sl_avatarScale;
+
+                Network::Client * client;
+
 	public:
 
 		/*!
@@ -381,13 +561,37 @@ namespace QOSG
 		*  \return Layout::LayoutThread * 
 		*/
 		Layout::LayoutThread * getLayoutThread() const { return layout; }
+                bool playing() { return isPlaying; }
+                Vwr::CameraManipulator * getCameraManipulator() { return viewerWidget->getCameraManipulator(); }
 
 		/**
 		*  \fn inline public  setLayoutThread
 		*  \brief	Set the layout thread 
 		*  \param  val layout thread
 		*/
-		void setLayoutThread(Layout::LayoutThread * val) { layout = val; }
+                void setLayoutThread(Layout::LayoutThread * val) { layout = val; }
+
+                QLineEdit * le_client_name;
+                QLineEdit * le_server_addr;
+                QPushButton * b_start_client;
+                QPushButton * b_start_server;
+                QListWidget * lw_users;
+                QCheckBox *chb_spy;
+                QCheckBox *chb_center;
+                QCheckBox *chb_attention;
+
+
+                /**
+                 * \brief Gets selected nodes and sets the restriction defined by shapeGetter to these nodes.
+                 */
+                void setRestrictionToSelectedNodes (
+                        QSharedPointer<Layout::ShapeGetter> shapeGetter,
+                        Data::Graph * currentGraph,
+                        QSharedPointer<Layout::RestrictionRemovalHandler> removalHandler,
+                        QLinkedList<osg::ref_ptr<Data::Node> > * nodesToRestrict = NULL
+                );
+
+        private:
 
 	};
 }

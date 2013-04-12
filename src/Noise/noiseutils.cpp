@@ -1027,10 +1027,11 @@ Color RendererImage::CalcDestColor (const Color& sourceColor,
 
   // Rescale the color channels to the noise::uint8 (0..255) range and return
   // the new color.
+  typedef unsigned int xuint;
   Color newColor (
-    (noise::uint8)((noise::uint)(red   * 255.0) & 0xff),
-    (noise::uint8)((noise::uint)(green * 255.0) & 0xff),
-    (noise::uint8)((noise::uint)(blue  * 255.0) & 0xff),
+    (noise::uint8)((xuint)(red   * 255.0) & 0xff),
+    (noise::uint8)((xuint)(green * 255.0) & 0xff),
+    (noise::uint8)((xuint)(blue  * 255.0) & 0xff),
     GetMax (sourceColor.alpha, backgroundColor.alpha));
   return newColor;
 }
@@ -1230,9 +1231,10 @@ Color RendererNormalMap::CalcNormalColor (double nc, double nr, double nu,
   // Map the normal range from the (-1.0 .. +1.0) range to the (0 .. 255)
   // range.
   noise::uint8 xc, yc, zc;
-  xc = (noise::uint8)((noise::uint)((floor)((vxc + 1.0) * 127.5)) & 0xff);
-  yc = (noise::uint8)((noise::uint)((floor)((vyc + 1.0) * 127.5)) & 0xff);
-  zc = (noise::uint8)((noise::uint)((floor)((vzc + 1.0) * 127.5)) & 0xff);
+  typedef unsigned int xuint;
+  xc = (noise::uint8)((xuint)((floor)((vxc + 1.0) * 127.5)) & 0xff);
+  yc = (noise::uint8)((xuint)((floor)((vyc + 1.0) * 127.5)) & 0xff);
+  zc = (noise::uint8)((xuint)((floor)((vzc + 1.0) * 127.5)) & 0xff);
 
   return Color (xc, yc, zc, 0);
 }

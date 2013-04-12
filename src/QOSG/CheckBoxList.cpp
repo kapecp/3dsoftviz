@@ -86,7 +86,7 @@ public:
 
 
 CheckBoxList::CheckBoxList(QWidget *widget )
-:QComboBox(widget),m_DisplayText(0)
+:QComboBox(widget),m_DisplayText()
 {
 	// set delegate items view 
 	view()->setItemDelegate(new CheckBoxListDelegate(this));

@@ -15,6 +15,7 @@
 #include <ctime>
 #include <QMutex>
 #include <QThread>
+#include <QSharedPointer>
 
 #include "Viewer/DataHelper.h"
 #include "Data/Edge.h"
@@ -76,7 +77,7 @@ namespace Layout
 
 		/**
 		*  \fn public  PauseAlg
-		*  \brief Pause layout algorithm
+		*  \brief Sets PAUSED state and waits until the current iteration ends.
 		*/
 		void PauseAlg();
 
@@ -112,6 +113,10 @@ namespace Layout
 		*/
 		void SetGraph(Data::Graph *graph);
 		
+		/**
+		*  \brief Sets the end status (causing the loops in run method to end)
+		*/
+		void RequestEnd();
 	
 	private:	
 
@@ -119,7 +124,7 @@ namespace Layout
 		*  Data::Graph * graph
 		*  \brief data structure containing nodes, edges and types
 		*/
-		Data::Graph *graph;		
+		Data::Graph *graph;
 
 		/**
 		*  double PI
@@ -200,10 +205,9 @@ namespace Layout
 		bool notEnd;
 
 		/**
-		*  volatile bool isIterating
-		*  \brief algorithm iterating flag
+		*  \brief usage: waiting for current iteration end after pausing the algorithm
 		*/
-		volatile bool isIterating;
+		QMutex isIterating_mutex;
 
 		/**
 		*  \fn private  computeCalm
@@ -225,12 +229,6 @@ namespace Layout
 		*  \return osg::Vec3f random vector
 		*/
 		osg::Vec3f getRandomLocation();
-
-		/**
-		*  \fn private  terminate
-		*  \brief Terminates algorithm
-		*/
-		void terminate();
 				
 		/**
 		*  osg::Vec3f fv
@@ -353,6 +351,14 @@ namespace Layout
 		*  \return double distance between two vectors
 		*/
 		double distance(osg::Vec3f u,osg::Vec3f v);
+
+		/**
+		 * \brief If the nodes are not ignored and are from the same graph.
+		 * If one of the nodes (or both) is a meta node, there are forces between these
+		 * nodes even if they are from different graphs.
+		 */
+		bool areForcesBetween (Data::Node * u, Data::Node * v);
+
 	};
 }
 

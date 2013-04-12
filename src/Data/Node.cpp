@@ -13,8 +13,10 @@
 
 typedef osg::TemplateIndexArray<unsigned int, osg::Array::UIntArrayType,4,1> ColorIndexArray;
 
-Data::Node::Node(qlonglong id, QString name, Data::Type* type, Data::Graph* graph, osg::Vec3f position) 
+Data::Node::Node(qlonglong id, QString name, Data::Type* type, float scaling, Data::Graph* graph, osg::Vec3f position) 
 {
+	//konstruktor
+	//scaling je potrebne na zmensenie uzla ak je vnoreny
     this->id = id;
 	this->name = name;
 	this->type = type;
@@ -23,6 +25,12 @@ Data::Node::Node(qlonglong id, QString name, Data::Type* type, Data::Graph* grap
 	this->graph = graph;
 	this->inDB = false;
 	this->edges = new QMap<qlonglong, osg::ref_ptr<Data::Edge> >;
+	this->scale = scaling;
+	this->setBall(NULL);
+	this->setParentBall(NULL);
+	this->hasNestedNodes = false;
+
+
 
 	settings = new QMap<QString, QString>();
 	//APA
@@ -42,8 +50,9 @@ Data::Node::Node(qlonglong id, QString name, Data::Type* type, Data::Graph* grap
 			labelText = labelText.replace(pos, 1, "\n");
 	}
 
-	this->addDrawable(createNode(this->type->getScale(), Node::createStateSet(this->type)));
+	this->addDrawable(createNode(this->scale, Node::createStateSet(this->type)));
 	
+	//vytvorenie grafickeho zobrazenia ako label
 	this->square = createSquare(this->type->getScale(), Node::createStateSet());
 	this->label = createLabel(this->type->getScale(), labelText);
 
@@ -51,9 +60,12 @@ Data::Node::Node(qlonglong id, QString name, Data::Type* type, Data::Graph* grap
 	this->velocity = osg::Vec3f(0,0,0);
 	this->fixed = false;
 	this->ignore = false;
+	this->positionCanBeRestricted = true;
+	this->removableByUser = true;
 	this->selected = false;
 	this->usingInterpolation = true;
 
+	//nastavenie farebneho typu
 	float r = type->getSettings()->value("color.R").toFloat();
 	float g = type->getSettings()->value("color.G").toFloat();
 	float b = type->getSettings()->value("color.B").toFloat();
@@ -73,6 +85,7 @@ Data::Node::~Node(void)
 }
 
 void Data::Node::addEdge(osg::ref_ptr<Data::Edge> edge) { 
+	//pridanie napojenej hrany na uzol
 	edges->insert(edge->getId(), edge);
 }
 
@@ -80,43 +93,41 @@ void Data::Node::addEdge(osg::ref_ptr<Data::Edge> edge) {
 
 void Data::Node::removeEdge( osg::ref_ptr<Data::Edge> edge )
 {
+	//odobranie napojenej hrany zo zoznamu
 	edges->remove(edge->getId());
+}
+
+Data::Node* Data::Node::getParentNode()
+{
+	//nadradeny uzol
+	return this->nested_parent;
+}
+
+void Data::Node::setParentNode(Node* parent)
+{
+	//nastavenie nadradeneho uzla ktoremu je tento vnoreny
+	this->nested_parent = parent;
 }
 
 void Data::Node::removeAllEdges()
 {
+	//odpojenie od vsetkych hran
 	foreach(qlonglong i, edges->keys()) {
 		edges->value(i)->unlinkNodesAndRemoveFromGraph();
 	}
 	edges->clear();
 }
 
-/*!
- * 
- * \param scale
- * Koeficient velkosti uzlov.
- * 
- * \param bbState
- * Zoznam stavov pre dany uzol. 
- * 
- * \returns
- * Uzol.
- * 
- * 
- * Vytvori konkretny uzol a priradi mu stav.
- * 
- */
-osg::ref_ptr<osg::Drawable> Data::Node::createNode(const float & scale, osg::StateSet* bbState) 
+osg::ref_ptr<osg::Drawable> Data::Node::createNode(const float & scaling, osg::StateSet* bbState) 
 {
-	float width = 2.0f;
-	float height = 2.0f;
-
-	width *= scale;
-	height *= scale;
+	//vytvorenie uzla, scaling urcuje jeho velkost
+	float width = scaling;
+	float height = scaling;
 
 	osg::ref_ptr<osg::Geometry> nodeQuad = new osg::Geometry;
 	osg::ref_ptr<osg::Vec3Array> nodeVerts = new osg::Vec3Array(4);
 
+	//velkost uzla
 	(*nodeVerts)[0] = osg::Vec3(-width / 2.0f, -height / 2.0f, 0);
 	(*nodeVerts)[1] = osg::Vec3( width / 2.0f, -height / 2.0f, 0);
 	(*nodeVerts)[2] = osg::Vec3( width / 2.0f,	height / 2.0f, 0);
@@ -128,6 +139,7 @@ osg::ref_ptr<osg::Drawable> Data::Node::createNode(const float & scale, osg::Sta
 	nodeQuad->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::QUADS,0,4));
 
 	osg::ref_ptr<osg::Vec2Array> nodeTexCoords = new osg::Vec2Array(4);
+	//umiestnenie popisu uzla
 	(*nodeTexCoords)[0].set(0.0f,0.0f);
 	(*nodeTexCoords)[1].set(1.0f,0.0f);
 	(*nodeTexCoords)[2].set(1.0f,1.0f);
@@ -151,6 +163,7 @@ osg::ref_ptr<osg::Drawable> Data::Node::createNode(const float & scale, osg::Sta
 
 osg::ref_ptr<osg::Drawable> Data::Node::createSquare(const float & scale, osg::StateSet* bbState)
 {
+	//vytvorenie textury uzla
 	float width = 2.0f;
 	float height = 2.0f;
 
@@ -188,13 +201,14 @@ osg::ref_ptr<osg::Drawable> Data::Node::createSquare(const float & scale, osg::S
 
 osg::ref_ptr<osg::Drawable> Data::Node::createLabel(const float & scale, QString name)
 {
+	//vytvorenie popisu uzla
 	osg::ref_ptr<osgText::FadeText> label = new osgText::FadeText;
 	label->setFadeSpeed(0.03);
 
 	QString fontPath = Util::ApplicationConfig::get()->getValue("Viewer.Labels.Font");
 	
 	// experimental value
-	float newScale = 1.375f * scale;
+        float newScale = 1.375f * scale;
 
 	if(fontPath != NULL && !fontPath.isEmpty())
 		label->setFont(fontPath.toStdString());
@@ -239,6 +253,7 @@ osg::ref_ptr<osg::StateSet> Data::Node::createStateSet(Data::Type * type)
 
 bool Data::Node::equals(Node* node) 
 {
+	//porovnanie s inym uzlom
 	if (this == node)
 	{
 		return true;
@@ -265,6 +280,7 @@ bool Data::Node::equals(Node* node)
 
 void Data::Node::setDrawableColor(int pos, osg::Vec4 color)
 {
+	//nastavenie farby uzla
 	osg::Geometry * geometry  = dynamic_cast<osg::Geometry *>(this->getDrawable(pos)); 
 
 	if (geometry != NULL)
@@ -278,6 +294,7 @@ void Data::Node::setDrawableColor(int pos, osg::Vec4 color)
 
 void Data::Node::showLabel(bool visible)
 {
+	//nastavenie zobrazenia popisku uzla
 	if (visible && !this->containsDrawable(label))
 		this->addDrawable(label);
 	else if (!visible)
@@ -286,7 +303,7 @@ void Data::Node::showLabel(bool visible)
 
 void Data::Node::reloadConfig()
 {
-	this->setDrawable(0, createNode(this->type->getScale(), Node::createStateSet(this->type)));
+	this->setDrawable(0, createNode(this->scale, Node::createStateSet(this->type)));
 	setSelected(selected);
 
 	osg::ref_ptr<osg::Drawable> newRect = createSquare(this->type->getScale(), Node::createStateSet());
@@ -308,6 +325,7 @@ void Data::Node::reloadConfig()
 
 osg::Vec3f Data::Node::getCurrentPosition(bool calculateNew, float interpolationSpeed)  
 { 
+	//zisime aktualnu poziciu uzla v danom okamihu
 	if (calculateNew)
 	{
 		float graphScale = Util::ApplicationConfig::get()->getValue("Viewer.Display.NodeDistanceScale").toFloat(); 

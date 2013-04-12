@@ -33,11 +33,12 @@ ENDIF()
 
 
 SET (CMAKE_INCLUDE_PATH 
-	${CMAKE_CURRENT_SOURCE_DIR}/dependencies/Source/igraph-0.5.2/_install/include
+	#${CMAKE_CURRENT_SOURCE_DIR}/dependencies/Source/igraph-0.5.2/_install/include
 	${CMAKE_CURRENT_SOURCE_DIR}/dependencies/Windows/include
 	${CMAKE_CURRENT_SOURCE_DIR}/dependencies/Source/libnoisesrc-1.0.0/src
 	${CMAKE_INCLUDE_PATH})
-SET (CMAKE_LIBRARY_PATH ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/Source/igraph-0.5.2/_install/lib
+SET (CMAKE_LIBRARY_PATH 
+#${CMAKE_CURRENT_SOURCE_DIR}/dependencies/Source/igraph-0.5.2/_install/lib
 			${CMAKE_LIBRARY_PATH})
 
 
@@ -79,18 +80,18 @@ osgWidget)
 FIND_PACKAGE(osgViewer)
 
 # Find iGraph
-FIND_PATH(IGRAPH_INCLUDE_DIRECTORIES NAMES "igraph/igraph.h")
-FIND_LIBRARY(IGRAPH_LIBRARIES NAMES igraph)
+#FIND_PATH(IGRAPH_INCLUDE_DIRECTORIES NAMES "igraph/igraph.h")
+#FIND_LIBRARY(IGRAPH_LIBRARIES NAMES igraph)
 
 MESSAGE ("osg libraries:: ${OPENSCENEGRAPH_LIBRARIES}")
-MESSAGE ("igraph includes:: ${IGRAPH_INCLUDE_DIRECTORIES}")
-MESSAGE ("igraph libraries:: ${IGRAPH_LIBRARIES}")
+#MESSAGE ("igraph includes:: ${IGRAPH_INCLUDE_DIRECTORIES}")
+#MESSAGE ("igraph libraries:: ${IGRAPH_LIBRARIES}")
 
 # Include headers
 INCLUDE_DIRECTORIES(
 ${PNG_INCLUDE_DIRECTORIES}
 ${ZLIB_INCLUDE_DIRECTORIES}
-${IGRAPH_INCLUDE_DIRECTORIES}
+#${IGRAPH_INCLUDE_DIRECTORIES}
 ${OPENSCENEGRAPH_INCLUDE_DIRS} 
 ${OSGVIEWER_INCLUDE_DIR} 
 ${CMAKE_CURRENT_SOURCE_DIR}/include
@@ -111,9 +112,13 @@ SET(SOURCES_H
 	./include/QOSG/TreeModel.h
 	./include/Util/Cleaner.h
 	./include/QOSG/OptionsWindow.h
+	./include/QOSG/LoadGraphWindow.h
+	./include/QOSG/SelectLayoutWindow.h
 	./include/QOSG/CheckBoxList.h
-	./include/QOSG/qtcolorpicker.h
-	./include/Viewer/PickHandler.h
+        ./include/QOSG/qtcolorpicker.h
+        ./include/Viewer/PickHandler.h
+        ./include/Network/Server.h
+        ./include/Network/Client.h
 )
 
 # toto makro spracuje Q_OBJECT a vygeneruje novy cpp subor, ktory bude dostupny v ${SOURCES_H_MOC} premennej
@@ -122,10 +127,12 @@ QT4_WRAP_CPP( SOURCES_H_MOC ${SOURCES_H} )
 ADD_EXECUTABLE(3DVisual ${INCL} ${SOURCES_H_MOC} ${SRC})
 
 SOURCE_GROUP(\\src main.cpp)
+SOURCE_GROUP(\\src\\Network "^.*Network/.*$")
 SOURCE_GROUP(\\src\\Viewer "^.*Viewer/.*$")
 SOURCE_GROUP(\\src\\Core "^.*Core/.*$")
 SOURCE_GROUP(\\src\\Data "^.*Data/.*$")
 SOURCE_GROUP(\\src\\Manager "^.*Manager/.*$")
+SOURCE_GROUP(\\src\\Importer "^.*Importer/.*$")
 SOURCE_GROUP(\\src\\Model "^.*Model/.*$")
 SOURCE_GROUP(\\src\\Util "^.*Util/.*$")
 SOURCE_GROUP(\\src\\Layout "^.*Layout/.*$")
@@ -133,10 +140,13 @@ SOURCE_GROUP(\\src\\QOSG "^.*QOSG/.*$")
 SOURCE_GROUP(\\src\\OsgQtBrowser "^.*OsgQtBrowser/.*$")
 SOURCE_GROUP(\\src\\Noise "^.*Noise/.*$")
 
+
+SOURCE_GROUP(\\headers\\Network "^.*Network/.*h$")
 SOURCE_GROUP(\\headers\\Viewer "^.*Viewer/.*h$")
 SOURCE_GROUP(\\headers\\Core "^.*Core/.*h$")
 SOURCE_GROUP(\\headers\\Data "^.*Data/.*h$")
 SOURCE_GROUP(\\headers\\Manager "^.*Manager/.*h$")
+SOURCE_GROUP(\\headers\\Importer "^.*Importer/.*h$")
 SOURCE_GROUP(\\headers\\Model "^.*Model/.*h$")
 SOURCE_GROUP(\\headers\\Util "^.*Util/.*h$")
 SOURCE_GROUP(\\headers\\Layout "^.*Layout/.*h$")
@@ -152,7 +162,7 @@ ${OPENSCENEGRAPH_LIBRARIES}
 ${OSGVIEWER_LIBRARIES}
 ${PNG_LIBRARIES}
 ${ZLIB_LIBRARIES}
-${IGRAPH_LIBRARIES}
+#${IGRAPH_LIBRARIES}
 ${ZLIB_LIBRARY}
 ${PNG_LIBRARY}
 noise

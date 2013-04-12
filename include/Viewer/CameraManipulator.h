@@ -14,12 +14,12 @@
 #ifndef Viewer_CameraManipulator
 #define Viewer_CameraManipulator 1
 
-#include <osgGA/MatrixManipulator>
+#include <osgGA/KeySwitchMatrixManipulator>
+#include <osgGA/GUIEventAdapter>
+#include <osgGA/GUIActionAdapter>
 #include <osg/Quat>
 
 #include "Util/ApplicationConfig.h"
-
-using namespace osgGA;
 
 namespace Vwr{
 
@@ -31,10 +31,10 @@ namespace Vwr{
 	*
 	*	This class is basically extended TrackballManipulator class with new functionality.
 	*/
-	class CameraManipulator : public MatrixManipulator
+        class CameraManipulator : public osgGA::KeySwitchMatrixManipulator
 {
     public:
-        CameraManipulator();
+		CameraManipulator();
 
         virtual const char* className() const { return "Trackball"; }
 
@@ -70,14 +70,14 @@ namespace Vwr{
 
         /** Move the camera to the default position. 
             May be ignored by manipulators if home functionality is not appropriate.*/
-        virtual void home(const GUIEventAdapter& ea,GUIActionAdapter& us);
+        virtual void home(const osgGA::GUIEventAdapter& ea,osgGA::GUIActionAdapter& us);
         virtual void home(double time = 0);
         
         /** Start/restart the manipulator.*/
-        virtual void init(const GUIEventAdapter& ea,GUIActionAdapter& us);
+        virtual void init(const osgGA::GUIEventAdapter& ea,osgGA::GUIActionAdapter& us);
 
         /** handle events, return true if handled, false otherwise.*/
-        virtual bool handle(const GUIEventAdapter& ea,GUIActionAdapter& us);
+        virtual bool handle(const osgGA::GUIEventAdapter& ea,osgGA::GUIActionAdapter& us);
 
         /** Get the keyboard and mouse usage of this manipulator.*/
         virtual void getUsage(osg::ApplicationUsage& usage) const;
@@ -149,7 +149,7 @@ namespace Vwr{
         /** Reset the internal GUIEvent stack.*/
         void flushMouseEventStack();
         /** Add the current mouse GUIEvent to internal stack.*/
-        void addMouseEvent(const GUIEventAdapter& ea);
+        void addMouseEvent(const osgGA::GUIEventAdapter& ea);
 
         void computePosition(const osg::Vec3& eye,const osg::Vec3& lv,const osg::Vec3& up);
 
@@ -171,13 +171,13 @@ namespace Vwr{
 		*  osg::ref_ptr _ga_t1
 		*  \brief Last event
 		*/
-		osg::ref_ptr<const GUIEventAdapter> _ga_t1;
+		osg::ref_ptr<const osgGA::GUIEventAdapter> _ga_t1;
 
 		/**
 		*  osg::ref_ptr _ga_t0
 		*  \brief Current event
 		*/
-		osg::ref_ptr<const GUIEventAdapter> _ga_t0;
+		osg::ref_ptr<const osgGA::GUIEventAdapter> _ga_t0;
 
 
 		/**
@@ -426,9 +426,11 @@ namespace Vwr{
 		*  \return bool true, if handled
 		*/
 		bool handleKeyUp( const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& us);
+
+                void notifyClients();
+                void notifyServer();
 	};
 
 }
 
 #endif
-

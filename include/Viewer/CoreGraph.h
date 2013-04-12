@@ -17,6 +17,7 @@
 
 #include <QMap>
 #include <QLinkedList>
+#include <QSharedPointer>
 
 #include "Viewer/PerlinNoiseTextureGenerator.h"
 #include "Viewer/CameraManipulator.h"
@@ -25,8 +26,9 @@
 #include "Viewer/TextureWrapper.h"
 #include "Viewer/EdgeGroup.h"
 #include "Viewer/NodeGroup.h"
+#include "Viewer/RestrictionVisualizationsGroup.h"
 
-#include "Layout/Layout.h"
+//#include "Layout/Layout.h"
 #include "Util/ApplicationConfig.h"
 #include "Data/Edge.h"
 #include "Data/Node.h"
@@ -193,7 +195,11 @@ namespace Vwr
 		*  \brief metanode group
 		*/
 		Vwr::NodeGroup * qmetaNodesGroup;
-	
+
+		/**
+		 * \brief Contains part of OSG visualizing current restrictions.
+		 */
+		QSharedPointer<Vwr::RestrictionVisualizationsGroup> restrictionVisualizationsGroup;
 
 		/**
 		*  Data::Graph * graph
@@ -333,10 +339,17 @@ namespace Vwr
 		int labelsPosition;
 
 		/**
+		 * \brief Index of restrictionVisualisationsGroup in the root group.
+		 */
+		int restrictionVisualizationsPosition;
+
+		/**
 		*  int customNodesPosition
 		*  \brief custom nodes group position
 		*/
 		int customNodesPosition;
+
+                int prevTime;
 	};
 }
 

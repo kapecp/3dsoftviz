@@ -3,7 +3,7 @@
 
 #include <QThread>
 #include "Util/ApplicationConfig.h"
-#include "Layout/Layout.h"
+//#include "Layout/Layout.h"
 #include "Layout/FRAlgorithm.h"
 
 namespace Layout
@@ -67,6 +67,8 @@ namespace Layout
 		*  \return bool true, if algorithm is running
 		*/
 		bool isRunning();
+
+		void requestEnd();
 
 	protected:
 

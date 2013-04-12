@@ -23,6 +23,8 @@
 #include <osg/CullFace>
 #include <osgText/Text>
 
+#include <osg/AutoTransform>
+
 namespace Data
 {
 	class Edge;
@@ -49,7 +51,7 @@ namespace Data
 		*  \param  graph   Graph to which the Node belongs
 		*  \param  position    Node position in space
 		*/
-		Node(qlonglong id, QString name, Data::Type* type, Data::Graph* graph, osg::Vec3f position);
+		Node(qlonglong id, QString name, Data::Type* type, float scaling, Data::Graph* graph, osg::Vec3f position);
 
 		/**
 		*  \fn public virtual destructor  ~Node
@@ -87,6 +89,19 @@ namespace Data
 		*/
 		void setName(QString val) { name = val; }
 
+		/**
+		*  \fn inline public  getScale() 
+		*  \brief Gets node scale
+		*  \return float size of the scale
+		*/
+		float getScale() { return scale; }
+
+		/**
+		*  \fn inline public  setScale(float val) 
+		*  \brief Sets new scale
+		*  \param   val   new scale for the Node
+		*/
+		void setScale(float val) { scale = val; }
 
 		/**
 		*  \fn inline public constant  getType
@@ -102,11 +117,16 @@ namespace Data
 		*/
 		void setType(Data::Type* val) { type = val; }
 
+		bool isParentNode() { return hasNestedNodes; }
+
+		void setAsParentNode() { hasNestedNodes = true; }
+
 
 		/**
 		*  \fn inline public constant  getTargetPosition
 		*  \brief Returns node target position in space
 		*  \return osg::Vec3f node position
+		*  returned targetPosition IS NOT multiplied by the graph scale
 		*/
 		osg::Vec3f getTargetPosition() const { return osg::Vec3(targetPosition); }
 
@@ -114,6 +134,7 @@ namespace Data
 		*  \fn inline public  setTargetPosition(osg::Vec3f val)
 		*  \brief Sets node target position in space
 		*  \param      val   new position
+		*  targetPosition being set MUST NOT BE multiplied by the graph scale
 		*/
 		void setTargetPosition(osg::Vec3f val) { targetPosition.set(val); }
 
@@ -124,8 +145,7 @@ namespace Data
 		*  \param      calculateNew    If true, new position will be calculated through interpolation
 		*  \param      float   interpolation speed
 		*  \return osg::Vec3f actual position
-		*
-		*	
+		*  returned currentPosition IS already multiplied by the graph scale
 		*/
 		osg::Vec3f getCurrentPosition(bool calculateNew = false, float interpolationSpeed = 1.0f);
 
@@ -133,6 +153,7 @@ namespace Data
 		*  \fn inline public  setCurrentPosition(osg::Vec3f val) 
 		*  \brief Sets current node position
 		*  \param   val  current node position
+		*  currentPosition being set MUST BE multiplied by the graph scale
 		*/
 		void setCurrentPosition(osg::Vec3f val) { currentPosition.set(val); }
 
@@ -143,6 +164,25 @@ namespace Data
 		*	It unlinks all edges connected to the Node and removes them from the Graph (an Edge can't exist without both it's Nodes)
 		*/
 		void removeAllEdges();
+
+		
+
+		/**
+		*	\fn public getParentNode
+		*	\brief Return parent node, else null
+		*
+		*	
+		*/
+		Data::Node* getParentNode();
+
+		/**
+		*	\fn public setParentNode
+		*	\brief set parent's node
+		*
+		*
+		*/
+		void setParentNode(Node* parent);
+
 
 		/**
 		*  \fn inline public constant  getEdges
@@ -218,7 +258,6 @@ namespace Data
 		*/
 		bool isFixed() const { return fixed; }
 		
-
 		/**
 		*  \fn inline public  setSelected(bool selected) 
 		*  \brief Sets node picked state
@@ -256,6 +295,25 @@ namespace Data
 		*/
 		bool isIgnored() const { return ignore; }
 
+		/**
+		 * \brief \link Node::positionCanBeRestricted [setter] \endlink
+		 */
+		void setPositionCanBeRestricted (bool b) {positionCanBeRestricted = b; }
+
+		/**
+		 * \brief \link Node::positionCanBeRestricted [getter] \endlink
+		 */
+		bool getPositionCanBeRestricted () {return positionCanBeRestricted; }
+
+		/**
+		 * \brief \link Node::removableByUser [setter] \endlink
+		 */
+		void setRemovableByUser (bool b) {removableByUser = b; }
+
+		/**
+		 * \brief \link Node::removableByUser [getter] \endlink
+		 */
+		bool isRemovableByUser () {return removableByUser; }
 
 		/**
 		*  \fn inline public  setVelocity(osg::Vec3f v)
@@ -284,7 +342,7 @@ namespace Data
 		*  \param   node     Node to compare
 		*  \return bool true, if this object and node are the same object
 		*/
-		bool equals(Node* node);        
+		bool equals(Node* node);   
 
 
 		/**
@@ -358,6 +416,18 @@ namespace Data
 		*/
 		void setUsingInterpolation(bool val) { usingInterpolation = val; }
 
+		void setParentBall(osg::Sphere * val) { parentBall = val; }
+
+		osg::Sphere * getParentBall() { return parentBall; }
+
+		void setBall(osg::Geode * val) { ball = val; }
+
+		osg::Geode * getBall() { return ball; }
+
+		osg::ref_ptr<osg::AutoTransform> getOutBall() { return outBall; }
+
+		void setOutBall(osg::ref_ptr<osg::AutoTransform> val) { outBall = val; }
+
 
 		/**
 		*  \fn public  reloadConfig
@@ -365,6 +435,26 @@ namespace Data
 		*/
 		void reloadConfig();
 
+		/**
+		*  \fn inline public  setNestedParent(Data::Node val)
+		*  \brief Sets parent of note, if null, node has no parent
+		*  \param      val     
+		*/
+		void setNestedParent(osg::ref_ptr<Data::Node> val) { nested_parent = val; }
+
+		/**
+		*  \fn inline public  getNestedParent
+		*  \brief Return node parent, if no parent then return NULL
+	        *  \return QString name of the Node
+		*/
+		osg::ref_ptr<Data::Node> getNestedParent() { return nested_parent; }
+
+		/**
+		*  \fn inline public  getName
+		*  \brief Return node name
+	        *  \return QString name of the Node
+		*/
+		QString getName() { return name; }
 
 		/**
 		*  \fn inline public constant  getSettings
@@ -380,6 +470,8 @@ namespace Data
 		*/
 		void setSettings(QMap<QString, QString> * val) { settings = val; }
 
+                void setLabelText(QString label) { labelText = label; }
+
 	private:
 
         /**
@@ -393,6 +485,18 @@ namespace Data
 		*	\brief ID of the Node
 		*/
 		qlonglong id;
+
+		/**
+		*	float scale
+		*	\brief scaling of the Node
+		*/
+		float scale;
+
+		/**
+		*	Node parent
+		*	\brief parent node of current node in nested graphs, in top level graph is null
+		*/
+		osg::ref_ptr<Data::Node> nested_parent;
 
 		/**
 		*  QString name
@@ -425,6 +529,16 @@ namespace Data
 		osg::Vec3f currentPosition;
 
 		/**
+		*  osg::Sphere nested ball
+		*  \brief
+		*/
+		osg::Sphere * parentBall;
+
+		osg::Geode * ball;
+
+		osg::ref_ptr<osg::AutoTransform> outBall;
+
+		/**
 		*  QMap<qlonglong, osg::ref_ptr<Data::Edge> > * edges
 		*  \brief Edges connected to the Node
 		*/
@@ -450,11 +564,27 @@ namespace Data
 		*/
 		bool fixed;
 
+		bool hasNestedNodes;
+
 		/**
 		*  bool ignore
 		*  \brief node ignoring flag
 		*/
 		bool ignore;
+
+		/**
+		 * \brief If the node position can be restricted by layout restrictions.
+		 * RestrictionsManager uses this to determine if the restriction can be attached to this node.
+		 */
+		bool positionCanBeRestricted;
+
+		/**
+		 * \brief If the node is removable by the user (using GUI).
+		 * Used to make some nodes not removable (e.g. nodes used for manipulating layout restrictions - their
+		 * existence is bound to the existence of the layout restriction and their removal is managed
+		 * elsewhere, so they can not be removed by user).
+		 */
+		bool removableByUser;
 
 		/**
 		*  bool selected

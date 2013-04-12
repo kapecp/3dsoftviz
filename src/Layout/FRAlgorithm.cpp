@@ -14,7 +14,7 @@ FRAlgorithm::FRAlgorithm()
 	MAX_MOVEMENT = 30;
 	MAX_DISTANCE = 400;	
 	state = RUNNING;
-	notEnd = true;	
+	notEnd = true;
 	center = osg::Vec3f (0,0,0);
 	fv = osg::Vec3f();
 	last = osg::Vec3f();
@@ -24,7 +24,6 @@ FRAlgorithm::FRAlgorithm()
 	
 	/* moznost odpudiveho posobenia limitovaneho vzdialenostou*/
 	useMaxDistance = false;
-	isIterating = false;
 	this->graph = NULL;
 }
 FRAlgorithm::FRAlgorithm(Data::Graph *graph) 
@@ -46,13 +45,12 @@ FRAlgorithm::FRAlgorithm(Data::Graph *graph)
 	
 	/* moznost odpudiveho posobenia limitovaneho vzdialenostou*/
 	useMaxDistance = false;
-	isIterating = false;
 	this->graph = graph;
 	this->Randomize();
 }
 
 void FRAlgorithm::SetGraph(Data::Graph *graph)
-{	
+{
 	notEnd = true;
 	this->graph = graph;
 	this->Randomize();
@@ -115,6 +113,8 @@ double FRAlgorithm::getRandomDouble()
 void FRAlgorithm::PauseAlg() 
 {	
 	state = PAUSED;
+	isIterating_mutex.lock();
+	isIterating_mutex.unlock();
 }
 
 void FRAlgorithm::WakeUpAlg() 
@@ -125,23 +125,22 @@ void FRAlgorithm::WakeUpAlg()
 	}
 }
 
-void FRAlgorithm::RunAlg() 
+void FRAlgorithm::RunAlg()
 {
 	if(graph != NULL)
 	{
 		K = computeCalm();
 		graph->setFrozen(false);
 		state = RUNNING;
-		notEnd = true;
 	}
 }
 
 bool FRAlgorithm::IsRunning() 
 {
-	return isIterating;
+	return (state == RUNNING);
 }
 
-void FRAlgorithm::terminate() 
+void FRAlgorithm::RequestEnd()
 {
 	notEnd = false;
 }
@@ -150,30 +149,24 @@ void FRAlgorithm::Run()
 {
 	if(this->graph != NULL)
 	{
-		isIterating = true;
+                isIterating_mutex.lock();
 		while (notEnd) 
 		{			
 			// slucka pozastavenia - ak je pauza
 			// alebo je graf zmrazeny (spravidla pocas editacie)
-			while (state != RUNNING || graph->isFrozen()) 
-			{				
-				QThread::msleep(100);				
-				if(state == PAUSED)
-				{
-					if(isIterating)
-					{
-						isIterating = false;
-					}					
-				}							
-			}
-			if(!isIterating)
+			while (notEnd && (state != RUNNING || graph->isFrozen()))
 			{
-				isIterating = true;
+				// [GrafIT][!] not 100% OK (e.g. msleep(100) remains here), but we have fixed the most obvious multithreading issues of the original code
+				isIterating_mutex.unlock();
+                                QThread::msleep(100);
+				isIterating_mutex.lock();
 			}
 			if (!iterate()) {
-				graph->setFrozen(true);	
-			}			
+				graph->setFrozen(true);
+                        }
 		}
+
+		isIterating_mutex.unlock();
 	}
 	else
 	{
@@ -221,9 +214,13 @@ bool FRAlgorithm::iterate()
 		{ // pre vsetky metahrany..
 			Data::Node *u = j.value()->getSrcNode();
 			Data::Node *v = j.value()->getDstNode();
+			// [GrafIT][-] ignored value has not been used, so setting it here did not have any effect
 			// uzly nikdy nebudu ignorovane
+			/*
 			u->setIgnored(false);
 			v->setIgnored(false);
+			*/
+			// [GrafIT]
 			if (graph->getMetaNodes()->contains(u->getId())) {
 				// pritazliva sila, posobi na v
 				addMetaAttractive(v, u, Data::Graph::getMetaStrength());
@@ -291,9 +288,9 @@ bool FRAlgorithm::iterate()
 				changed = changed || fo;
 			}
 		}
-	}
-	// vracia true ak sa ma pokracovat dalsou iteraciou
+        }
 
+	// vracia true ak sa ma pokracovat dalsou iteraciou
 	return changed;
 }
 
@@ -311,24 +308,42 @@ bool FRAlgorithm::applyForces(Data::Node* node)
 			fv.normalize();
 			fv *= 5;
 		}
+
 		// pricitame aktualnu rychlost
 		fv += node->getVelocity();
-		// ulozime novu polohu
-		node->setTargetPosition(node->getTargetPosition() + fv);
-		
-		// energeticka strata = 1-flexibilita
-		fv *= flexibility;
-		node->setVelocity(fv); // ulozime novu rychlost
-		//node->setForce(*fv);
-		return true;
 	} else {
-		node->resetVelocity(); // vynulovanie rychlosti
-		return false;
+		// [GrafIT][.] this has been a separate case when resetVelocity() has been called and nothing with the target position has been done;
+		//             we needed to compute and maybe restrict the target position even if this case; setting the velocity to null vector
+		//             and setting it as a velocity has the same effect as resetVelocity()
+		// reset velocity
+		fv = osg::Vec3(0,0,0);
+		// [GrafIT]
 	}
+
+	// [GrafIT][.] using restrictions
+	osg::Vec3f originalTargetPosition = node->getTargetPosition ();
+
+	osg::Vec3f computedTargetPosition = originalTargetPosition + fv;
+	osg::Vec3f restrictedTargetPosition = graph->getRestrictionsManager ().applyRestriction (*node, computedTargetPosition);
+	node->setTargetPosition(restrictedTargetPosition);
+	// [GrafIT]
+
+	// energeticka strata = 1-flexibilita
+	fv *= flexibility;
+	node->setVelocity(fv); // ulozime novu rychlost
+
+	// [GrafIT][.] if something has been changed is now determined  by the change of target position
+	return (restrictedTargetPosition != originalTargetPosition);
+	// [GrafIT]
 }
 
 /* Pricitanie pritazlivych sil */
 void FRAlgorithm::addAttractive(Data::Edge* edge, float factor) {
+	// [GrafIT][+] forces are only between nodes which are in the same graph (or some of them is meta) AND are not ignored
+	if (!areForcesBetween (edge->getSrcNode(), edge->getDstNode())) {
+		return;
+	}
+	// [GrafIT]
 	up = edge->getSrcNode()->getTargetPosition();
 	vp = edge->getDstNode()->getTargetPosition();
 	dist = distance(up,vp);
@@ -344,6 +359,11 @@ void FRAlgorithm::addAttractive(Data::Edge* edge, float factor) {
 
 /* Pricitanie pritazlivych sil od metazla */
 void FRAlgorithm::addMetaAttractive(Data::Node* u, Data::Node* meta, float factor) {
+	// [GrafIT][+] forces are only between nodes which are in the same graph (or some of them is meta) AND are not ignored
+	if (!areForcesBetween (u, meta)) {
+		return;
+	}
+	// [GrafIT]
 	up = u->getTargetPosition();
 	vp = meta->getTargetPosition();
 	dist = distance(up,vp);
@@ -357,6 +377,11 @@ void FRAlgorithm::addMetaAttractive(Data::Node* u, Data::Node* meta, float facto
 
 /* Pricitanie odpudivych sil */
 void FRAlgorithm::addRepulsive(Data::Node* u, Data::Node* v, float factor) {
+	// [GrafIT][+] forces are only between nodes which are in the same graph (or some of them is meta) AND are not ignored
+	if (!areForcesBetween (u, v)) {
+		return;
+	}
+	// [GrafIT]
 	up = u->getTargetPosition();
 	vp = v->getTargetPosition();
 	dist = distance(up,vp);
@@ -392,4 +417,20 @@ double FRAlgorithm::distance(osg::Vec3f u,osg::Vec3f v)
 {
 	osg::Vec3f x = u - v;
 	return (double) x.length();
+}
+
+bool FRAlgorithm::areForcesBetween (Data::Node * u, Data::Node * v) {
+	return
+		!(u->isIgnored ())
+		&&
+		!(v->isIgnored ())
+		&&
+		(
+			graph->isInSameGraph (u, v)
+			||
+			u->getType ()->isMeta ()
+			||
+			v->getType ()->isMeta ()
+		)
+	;
 }
