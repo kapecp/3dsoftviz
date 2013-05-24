@@ -28,7 +28,6 @@
 #include "Viewer/NodeGroup.h"
 #include "Viewer/RestrictionVisualizationsGroup.h"
 
-#include "Layout/Layout.h"
 #include "Util/ApplicationConfig.h"
 #include "Data/Edge.h"
 #include "Data/Node.h"

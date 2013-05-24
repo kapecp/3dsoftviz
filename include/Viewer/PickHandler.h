@@ -342,26 +342,11 @@ namespace Vwr
 		void drawSelectionQuad(float origin_mX, float origin_mY, osgViewer::Viewer * viewer);
 
 		/**
-		*  \fn private  unselectPickedNodes(osg::ref_ptr<Data::Node> node = 0)
-		*  \brief unselects picked nodes. If null, all nodes will be unselected.
-		*  \param     node     nodes to unselect
-		*/
-		void unselectPickedNodes(osg::ref_ptr<Data::Node> node = 0);
-
-		/**
-		*  \fn private  unselectPickedEdges(osg::ref_ptr<Data::Edge> edge = 0)
-		*  \brief unselects picked edges. If null, all edges will be unselected.
-		*  \param     edge   edges to unselect
-		*/
-		void unselectPickedEdges(osg::ref_ptr<Data::Edge> edge = 0);
-
-		/**
 		*  \fn private  setSelectedNodesInterpolation(bool state)
 		*  \brief sets interpolation state to selected nodes
 		*  \param      state     interpolation state
 		*/
 		void setSelectedNodesInterpolation(bool state);
-
 
 		/**
 		*  \fn private  handlePush( const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& aa )

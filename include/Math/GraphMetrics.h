@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Data\Graph.h"
+#include "Data/Graph.h"
 
 class GraphMetrics
 {

@@ -8,13 +8,15 @@
 #include "Network/Server.h"
 #include "Network/Client.h"
 
-using namespace osg;
-using namespace osgGA;
-using namespace Vwr;
+//using namespace osg;
+//using namespace osgGA;
+//using namespace Vwr;
 
 double Vwr::CameraManipulator::EYE_MOVEMENT_SPEED;
 double Vwr::CameraManipulator::TARGET_MOVEMENT_SPEED;
 double Vwr::CameraManipulator::SCREEN_MARGIN;
+
+namespace Vwr {
 
 Vwr::CameraManipulator::CameraManipulator(Vwr::CoreGraph * coreGraph)
 {
@@ -529,7 +531,7 @@ axis = p2^p1;
      */
     if (t > 1.0) t = 1.0;
     if (t < -1.0) t = -1.0;
-    angle = inRadians(asin(t));
+    angle = osg::inRadians(asin(t));
 
 }
 
@@ -892,7 +894,7 @@ void Vwr::CameraManipulator::initAutomaticMovement(osgViewer::Viewer* viewer)
 
 float Vwr::CameraManipulator::alterCameraTargetPoint(osgViewer::Viewer* viewer)
 {
-	osg::ref_ptr<osg::Camera> camera = new osg::Camera(*(viewer->getCamera()), CopyOp::DEEP_COPY_ALL);
+    osg::ref_ptr<osg::Camera> camera = new osg::Camera(*(viewer->getCamera()), osg::CopyOp::DEEP_COPY_ALL);
 	//osg::ref_ptr<osg::Camera> camera = viewer->getCamera();
 
 	int width = camera->getViewport()->width();
@@ -943,7 +945,7 @@ float Vwr::CameraManipulator::alterCameraTargetPoint(osgViewer::Viewer* viewer)
 
 void Vwr::CameraManipulator::alterWeights(osgViewer::Viewer* viewer, std::list<osg::ref_ptr<Data::Node> > selectedCluster)
 {
-	osg::ref_ptr<osg::Camera> camera = new osg::Camera(*(viewer->getCamera()), CopyOp::DEEP_COPY_ALL);
+    osg::ref_ptr<osg::Camera> camera = new osg::Camera(*(viewer->getCamera()), osg::CopyOp::DEEP_COPY_ALL);
 
 	int width = camera->getViewport()->width();
 	int height = camera->getViewport()->height();
@@ -965,7 +967,7 @@ void Vwr::CameraManipulator::alterWeights(osgViewer::Viewer* viewer, std::list<o
 		camera->setViewMatrixAsLookAt(eyePosition, targetPosition, up);
 
 		// get cluster nodes in extreme positions in t = 0.5
-		QVector<osg::ref_ptr<Data::Node>> * extremes = CameraMath::getViewExtremes(camera, selectedCluster);
+        QVector<osg::ref_ptr<Data::Node> > * extremes = CameraMath::getViewExtremes(camera, selectedCluster);
 		
 		bool onScreen = true;
 
@@ -1026,3 +1028,5 @@ void Vwr::CameraManipulator::computeViewMetrics(osgViewer::Viewer* viewer, std::
 
 	cout << "Currently visible: " << cnt << " nodes\n";
 }
+
+} // namespace

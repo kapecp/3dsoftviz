@@ -10,7 +10,7 @@ public:
 	DjikstraAlg(Data::Graph * graph);
 	~DjikstraAlg(void);
 
-	QMap<qlonglong, qlonglong > DjikstraAlg::execute(Data::Node * node);
+    QMap<qlonglong, qlonglong > execute(Data::Node * node);
 	QVector<QLinkedList<osg::ref_ptr<Data::Node> > > getAllPaths(Data::Node * target);
 
 private:
