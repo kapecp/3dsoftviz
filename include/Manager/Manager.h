@@ -8,6 +8,7 @@
 #include <vector>
 #include <QMap>
 #include <QString>
+#include <QtXml/QDomElement>
 #include <QFile>
 #include <qfileinfo.h>
 
@@ -72,6 +73,12 @@ namespace Manager
             Data::Graph* simpleGraph();
 
             /**
+             * \fn saveGraph
+             * \brief Saves graph.
+             */
+            void saveGraph(Data::Graph* graph);
+
+            /**
              * \fn exportGraph
              * \brief Exports graph into file (not yet implemented).
              */
@@ -129,7 +136,6 @@ namespace Manager
                 *  \param  app 
                 */
                 GraphManager();
-
 
                 /**
                 *  Manager::GraphManager * manager

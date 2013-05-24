@@ -30,7 +30,6 @@ IF (WIN32)
 	MESSAGE("LIB PATH:"${CMAKE_LIBRARY_PATH})
 ELSEIF(UNIX)
 	SET (CMAKE_INCLUDE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/Linux/include
-				#${CMAKE_CURRENT_BINARY_DIR}/include/QOSG
 				${CMAKE_INCLUDE_PATH})
 
 	SET (CMAKE_LIBRARY_PATH ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/Linux/lib
@@ -78,7 +77,13 @@ osgVolume
 osgWidget)
 FIND_PACKAGE(osgViewer)
 
+# Find iGraph
+FIND_PATH(IGRAPH_INCLUDE_DIRECTORIES NAMES "igraph/igraph.h")
+FIND_LIBRARY(IGRAPH_LIBRARIES NAMES igraph)
+
 MESSAGE ("osg libraries:: ${OPENSCENEGRAPH_LIBRARIES}")
+MESSAGE ("igraph includes:: ${IGRAPH_INCLUDE_DIRECTORIES}")
+MESSAGE ("igraph libraries:: ${IGRAPH_LIBRARIES}")
 
 # Include headers
 INCLUDE_DIRECTORIES(
@@ -107,10 +112,10 @@ SET(SOURCES_H
 	./include/QOSG/LoadGraphWindow.h
 	./include/QOSG/SelectLayoutWindow.h
 	./include/QOSG/CheckBoxList.h
-        ./include/QOSG/qtcolorpicker.h
-        ./include/Viewer/PickHandler.h
-        ./include/Network/Server.h
-        ./include/Network/Client.h
+	./include/QOSG/qtcolorpicker.h
+	./include/Viewer/PickHandler.h
+	./include/Network/Server.h
+	./include/Network/Client.h
 )
 
 # toto makro spracuje Q_OBJECT a vygeneruje novy cpp subor, ktory bude dostupny v ${SOURCES_H_MOC} premennej
@@ -125,6 +130,7 @@ SOURCE_GROUP(\\src\\Core "^.*Core/.*$")
 SOURCE_GROUP(\\src\\Data "^.*Data/.*$")
 SOURCE_GROUP(\\src\\Manager "^.*Manager/.*$")
 SOURCE_GROUP(\\src\\Importer "^.*Importer/.*$")
+SOURCE_GROUP(\\src\\Math "^.*Math/.*$")
 SOURCE_GROUP(\\src\\Model "^.*Model/.*$")
 SOURCE_GROUP(\\src\\Util "^.*Util/.*$")
 SOURCE_GROUP(\\src\\Layout "^.*Layout/.*$")
@@ -132,13 +138,13 @@ SOURCE_GROUP(\\src\\QOSG "^.*QOSG/.*$")
 SOURCE_GROUP(\\src\\OsgQtBrowser "^.*OsgQtBrowser/.*$")
 SOURCE_GROUP(\\src\\Noise "^.*Noise/.*$")
 
-
 SOURCE_GROUP(\\headers\\Network "^.*Network/.*h$")
 SOURCE_GROUP(\\headers\\Viewer "^.*Viewer/.*h$")
 SOURCE_GROUP(\\headers\\Core "^.*Core/.*h$")
 SOURCE_GROUP(\\headers\\Data "^.*Data/.*h$")
 SOURCE_GROUP(\\headers\\Manager "^.*Manager/.*h$")
 SOURCE_GROUP(\\headers\\Importer "^.*Importer/.*h$")
+SOURCE_GROUP(\\headers\\Math "^.*Math/.*h$")
 SOURCE_GROUP(\\headers\\Model "^.*Model/.*h$")
 SOURCE_GROUP(\\headers\\Util "^.*Util/.*h$")
 SOURCE_GROUP(\\headers\\Layout "^.*Layout/.*h$")
@@ -154,6 +160,7 @@ ${OPENSCENEGRAPH_LIBRARIES}
 ${OSGVIEWER_LIBRARIES}
 ${PNG_LIBRARIES}
 ${ZLIB_LIBRARIES}
+${IGRAPH_LIBRARIES}
 ${ZLIB_LIBRARY}
 ${PNG_LIBRARY}
 noise
@@ -163,4 +170,7 @@ noise
 INSTALL(TARGETS 3DVisual RUNTIME DESTINATION ${INSTALL_BIN})
 INSTALL(DIRECTORY resources/ DESTINATION ${INSTALL_DATA} PATTERN ".svn" EXCLUDE)
 
+#~ INSTALL(FILES ${IGRAPH_LIBRARIES} DESTINATION ${INSTALL_DATA})
 
+#~ INSTALL(DIRECTORY img DESTINATION ${INSTALL_DATA} PATTERN ".svn" EXCLUDE)
+INSTALL(DIRECTORY img DESTINATION ${CMAKE_CURRENT_BINARY_DIR} PATTERN ".svn" EXCLUDE)

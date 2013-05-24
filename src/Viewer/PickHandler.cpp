@@ -1,9 +1,11 @@
 #include "Viewer/PickHandler.h"
 #include "Viewer/DataHelper.h"
+#include "Util/ElementSelector.h"
 #include <osg/MatrixTransform>
 #include <osg/Projection>
 
 #include "Manager/Manager.h"
+#include "Math/CameraMath.h"
 #include "Network/Client.h"
 #include "Network/Server.h"
 
@@ -67,10 +69,10 @@ bool PickHandler::handle( const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdap
 		}
 	case osgGA::GUIEventAdapter::DRAG:
 		{		
-                        Network::Client * client = Network::Client::getInstance();
-                        if (client->isConnected()){
-                            client -> sendMovedNodesPosition();
-                        }
+			Network::Client * client = Network::Client::getInstance();
+			if (client->isConnected()){
+				client -> sendMovedNodesPosition();
+			}
 			//ak je drag a ide timer tak vypnut timer a vyvolat push
 			//zaruci sa tak spravne spracovany drag
 			if (timer->isActive())
@@ -82,11 +84,11 @@ bool PickHandler::handle( const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdap
 			return handleDrag(ea, aa);
 		}
 	case osgGA::GUIEventAdapter::RELEASE:
-                {
-                        Network::Server * server = Network::Server::getInstance();
-                        if (server->isListening()) {
-                            server -> sendMoveNodes();
-                        }
+		{
+			Network::Server * server = Network::Server::getInstance();
+			if (server->isListening()) {
+				server -> sendMoveNodes();
+			}
 			//ak je release a je timer aktivny tak sa ulozi event a nevyvola sa
 			if (timer->isActive())
 			{
@@ -169,6 +171,16 @@ bool PickHandler::handleKeyDown( const osgGA::GUIEventAdapter& ea, osgGA::GUIAct
 	else if(ea.getKey() == osgGA::GUIEventAdapter::KEY_Alt_L || ea.getKey() == osgGA::GUIEventAdapter::KEY_Alt_R)
 	{
 		isAltPressed = true;
+	}
+	else if(ea.getKey() == 'q')
+	{
+		Data::Graph * currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
+		Util::ElementSelector::randomElementSelector(currentGraph->getNodes(), currentGraph->getEdges(), appConf->getValue("Viewer.PickHandler.AutopickedNodes").toInt(), this);
+	}
+	else if(ea.getKey() == 'w')
+	{
+		Data::Graph * currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
+		Util::ElementSelector::weightedElementSelector(currentGraph->getNodes(), appConf->getValue("Viewer.PickHandler.AutopickedNodes").toInt(), this);
 	}
 
 	return false;
@@ -253,13 +265,13 @@ bool PickHandler::handleDrag( const osgGA::GUIEventAdapter& ea, osgGA::GUIAction
 	}
 	else if (pickMode == PickMode::NONE && leftButtonPressed)
         {
-                Network::Client * client = Network::Client::getInstance();
-                if (client->isConnected()){
-                    client -> setNodesExcludedFromUpdate(pickedNodes);
-                } else {
-                    Network::Server * server = Network::Server::getInstance();
-                    server -> setSelectedNodes(pickedNodes);
-                }
+		Network::Client * client = Network::Client::getInstance();
+		if (client->isConnected()){
+			client -> setNodesExcludedFromUpdate(pickedNodes);
+		} else {
+			Network::Server * server = Network::Server::getInstance();
+			server -> setSelectedNodes(pickedNodes);
+		}
 
 		if(!isManipulatingNodes)
 		{
@@ -386,9 +398,34 @@ bool PickHandler::doNodePick(osg::NodePath nodePath)
 
 	if (n != NULL)
 	{
-		if (isAltPressed && pickMode == PickMode::NONE)
+		if (isAltPressed && pickMode == PickMode::NONE && !isShiftPressed)
 		{
 			cameraManipulator->setCenter(n->getTargetPosition());
+		}
+		else if (isAltPressed && pickMode == PickMode::NONE && isShiftPressed)
+		{		
+			if (appConf->getValue("Viewer.PickHandler.SelectInterestPoints").toInt() == 1)
+			{
+				Data::Graph * currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
+				Util::ElementSelector::weightedElementSelector(currentGraph->getNodes(), appConf->getValue("Viewer.PickHandler.AutopickedNodes").toInt(), this);
+			}
+
+			bool wasEmpty = false;
+			if (pickedNodes.isEmpty())
+			{
+				pickedNodes.append(n);
+				wasEmpty = true;
+			}
+
+			if (appConf->getValue("Viewer.Display.CameraPositions").toInt() == 1)
+			{
+				n->setColor(osg::Vec4(0, 1, 0, 1));
+			}
+
+			cameraManipulator->setNewPosition(n->getCurrentPosition(), getSelectionCenter(false), getSelectedNodes()->toStdList(), getSelectedEdges()->toStdList());
+
+			if (wasEmpty)
+				pickedNodes.removeFirst();
 		}
 		else if (pickMode != PickMode::NONE)
 		{
@@ -419,24 +456,46 @@ bool PickHandler::doEdgePick(osg::NodePath nodePath, unsigned int primitiveIndex
 
 		if (geometry != NULL)
 		{
-                        // zmena (plesko): ak vyber zachytil avatara, nastal segmentation fault,
-                        // lebo sa vyberal neexistujuci primitiveSet
-                        Data::Edge * e;
-                        if (geometry->getNumPrimitiveSets() > primitiveIndex) {
-                                e = dynamic_cast<Data::Edge *>(geometry->getPrimitiveSet(primitiveIndex));
-                        } else {
-                                return false;
-                        }
-                        // koniec zmeny
+			// zmena (plesko): ak vyber zachytil avatara, nastal segmentation fault,
+			// lebo sa vyberal neexistujuci primitiveSet
+			Data::Edge * e;
+			if (geometry->getNumPrimitiveSets() > primitiveIndex) {
+				e = dynamic_cast<Data::Edge *>(geometry->getPrimitiveSet(primitiveIndex));
+			} else {
+				return false;
+			}
+			// koniec zmeny
 
 			if (e != NULL)
 			{
-				if (isAltPressed && pickMode == PickMode::NONE)
+				if (isAltPressed && pickMode == PickMode::NONE && !isShiftPressed)
 				{
 					osg::ref_ptr<osg::Vec3Array> coords = e->getCooridnates();
 
 					cameraManipulator->setCenter(DataHelper::getMassCenter(coords));
 					cameraManipulator->setDistance(Util::ApplicationConfig::get()->getValue("Viewer.PickHandler.PickedEdgeDistance").toFloat());
+				}
+				else if (isAltPressed && pickMode == PickMode::NONE && isShiftPressed)
+				{		
+					if (appConf->getValue("Viewer.PickHandler.SelectInterestPoints").toInt() == 1)
+					{
+						Data::Graph * currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
+						Util::ElementSelector::weightedElementSelector(currentGraph->getNodes(), appConf->getValue("Viewer.PickHandler.AutopickedNodes").toInt(), this);
+					}
+
+					bool wasEmpty = false;
+					if (pickedEdges.isEmpty())
+					{
+						pickedEdges.append(e);
+						wasEmpty = true;
+					}
+
+					osg::Vec3f edgeCenter = (e->getSrcNode()->getCurrentPosition() + e->getDstNode()->getCurrentPosition()) / 2;
+
+					cameraManipulator->setNewPosition(edgeCenter, getSelectionCenter(false), getSelectedNodes()->toStdList(), getSelectedEdges()->toStdList());
+
+					if (wasEmpty)
+						pickedEdges.removeFirst();
 				}
 				else if (pickMode != PickMode::NONE)
 				{
@@ -545,7 +604,7 @@ void PickHandler::drawSelectionQuad(float origin_mX, float origin_mY, osgViewer:
 
 void PickHandler::toggleSelectedNodesFixedState(bool isFixed)
 {
-    QLinkedList<osg::ref_ptr<Data::Node> >::const_iterator i = pickedNodes.constBegin();
+	QLinkedList<osg::ref_ptr<Data::Node> >::const_iterator i = pickedNodes.constBegin();
 
     Network::Client * client = Network::Client::getInstance();
     Network::Server * server = Network::Server::getInstance();
@@ -624,7 +683,7 @@ osg::Vec3 PickHandler::getSelectionCenter(bool nodesOnly)
 
 	while (ni != pickedNodes.constEnd()) 
 	{
-		coordinates->push_back((*ni)->getTargetPosition());
+		coordinates->push_back((*ni)->getCurrentPosition());
 		++ni;
 	}
 
@@ -633,7 +692,7 @@ osg::Vec3 PickHandler::getSelectionCenter(bool nodesOnly)
 	if (coordinates->size() > 0)
 		center = Vwr::DataHelper::getMassCenter(coordinates);
 
-	return center;
+	return center * scale;
 }
 
 void PickHandler::setSelectedNodesInterpolation(bool state)

@@ -323,6 +323,8 @@ namespace Data
 		*/
 		void setSettings(QMap<QString, QString> * val) { settings = val; }
 
+		int getWeight() { return 1; }
+
 	private:
 		/**
 		*  Data::Graph * graph

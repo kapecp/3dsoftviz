@@ -17,15 +17,15 @@ CoreWindow::CoreWindow(QWidget *parent, Vwr::CoreGraph* coreGraph, QApplication*
 	application = app;
 	layout = thread;
 
-        client = new Network::Client(this);
-        new Network::Server(this);
+	client = new Network::Client(this);
+	new Network::Server(this);
 	
 	//vytvorenie menu a toolbar-ov
 	createActions();
 	createMenus();
-        createLeftToolBar();
-        createRightToolBar();
-        createCollaborationToolBar();
+	createLeftToolBar();
+	createRightToolBar();
+	createCollaborationToolBar();
 	
 	viewerWidget = new ViewerQT(this, 0, 0, 0, coreGraph);  
 	viewerWidget->setSceneData(coreGraph->getScene());
@@ -53,6 +53,7 @@ CoreWindow::CoreWindow(QWidget *parent, Vwr::CoreGraph* coreGraph, QApplication*
 
 	connect(lineEdit,SIGNAL(returnPressed()),this,SLOT(sqlQuery()));	
 }
+ 
 void CoreWindow::createActions()
 {	
 	quit = new QAction("Quit", this);
@@ -117,21 +118,21 @@ void CoreWindow::createActions()
 	label->setToolTip("&Turn on/off labels");
 	label->setCheckable(true);
 	label->setFocusPolicy(Qt::NoFocus);
-        connect(label, SIGNAL(clicked(bool)), this, SLOT(labelOnOff(bool)));
+	connect(label, SIGNAL(clicked(bool)), this, SLOT(labelOnOff(bool)));
 
-        applyColor = new QPushButton();
-        applyColor->setText("Apply color");
-        applyColor->setToolTip("Apply selected color");
-        applyColor->setFocusPolicy(Qt::NoFocus);
-        connect(applyColor,SIGNAL(clicked()),this,SLOT(applyColorClick()));
+	applyColor = new QPushButton();
+	applyColor->setText("Apply color");
+	applyColor->setToolTip("Apply selected color");
+	applyColor->setFocusPolicy(Qt::NoFocus);
+	connect(applyColor,SIGNAL(clicked()),this,SLOT(applyColorClick()));
 
-        applyLabel = new QPushButton();
-        applyLabel->setText("Apply label");
-        applyLabel->setToolTip("Apply selected label");
-        applyLabel->setFocusPolicy(Qt::NoFocus);
-        connect(applyLabel,SIGNAL(clicked()),this,SLOT(applyLabelClick()));
+	applyLabel = new QPushButton();
+	applyLabel->setText("Apply label");
+	applyLabel->setToolTip("Apply selected label");
+	applyLabel->setFocusPolicy(Qt::NoFocus);
+	connect(applyLabel,SIGNAL(clicked()),this,SLOT(applyLabelClick()));
 
-        le_applyLabel = new QLineEdit;
+	le_applyLabel = new QLineEdit;
 
 	//add edge
 	add_Edge = new QPushButton();
@@ -311,15 +312,15 @@ void CoreWindow::createLeftToolBar()
 	toolBar->addWidget(add_Node);
 	toolBar->addWidget(remove_all);
 	toolBar->addWidget(applyColor);
-	
+
 	//inicializacia colorpickera
 	QtColorPicker * colorPicker = new QtColorPicker();
 	colorPicker->setStandardColors();
 	connect(colorPicker,SIGNAL(colorChanged(const QColor &)),this,SLOT(colorPickerChanged(const QColor &)));
-        toolBar->addWidget(colorPicker);
+	toolBar->addWidget(colorPicker);
 
-        toolBar->addWidget(applyLabel);
-        toolBar->addWidget(le_applyLabel);
+	toolBar->addWidget(applyLabel);
+	toolBar->addWidget(le_applyLabel);
 
 	toolBar->addSeparator();
 	
@@ -348,11 +349,12 @@ void CoreWindow::createLeftToolBar()
 	frame->setMaximumHeight(100);
 	frame->layout()->setAlignment(Qt::AlignHCenter);
 	toolBar->addWidget(frame);
-        frame->layout()->addWidget(slider);
+	frame->layout()->addWidget(slider);
+
 
 	addToolBar(Qt::LeftToolBarArea,toolBar);
-        toolBar->setMaximumWidth(120);
-        toolBar->setMovable(false);
+	toolBar->setMaximumWidth(120);
+	toolBar->setMovable(false);
 }
 
 void CoreWindow::createRightToolBar() {
@@ -567,8 +569,19 @@ void CoreWindow::addMetaNode()
         QString metaNodeName = "metaNode";
         QString metaEdgeName = "metaEdge";
 
-        osg::ref_ptr<Data::Node> metaNode = NULL;
-        QLinkedList<osg::ref_ptr<Data::Node> > * selectedNodes = viewerWidget->getPickHandler()->getSelectedNodes();
+		osg::GraphicsContext * gc = viewerWidget->getCamera()->getGraphicsContext();
+		osgViewer::GraphicsWindow * gw = dynamic_cast<osgViewer::GraphicsWindow *>(gc);
+
+		int x, y, width, height;
+
+		gw->getWindowRectangle(x, y, width, height);
+
+		cout << width << " " << height << "\n";
+
+		osg::Vec3 p = CameraMath::projectOnScreen(viewerWidget->getCamera(), position);
+
+		osg::ref_ptr<Data::Node> metaNode = NULL;	
+		QLinkedList<osg::ref_ptr<Data::Node> > * selectedNodes = viewerWidget->getPickHandler()->getSelectedNodes();
 
         Network::Client * client = Network::Client::getInstance();
         if (!client->isConnected()) {
@@ -787,7 +800,7 @@ void CoreWindow::applyColorClick()
 	QLinkedList<osg::ref_ptr<Data::Node> > * selectedNodes = viewerWidget->getPickHandler()->getSelectedNodes();
 	QLinkedList<osg::ref_ptr<Data::Node> >::const_iterator ni = selectedNodes->constBegin();
 
-        Network::Server * server = Network::Server::getInstance();
+	Network::Server * server = Network::Server::getInstance();
 	while (ni != selectedNodes->constEnd()) 
 	{
             if (client->isConnected()) {
@@ -1042,7 +1055,7 @@ bool CoreWindow::add_EdgeClick()
 	if (
 		selectedNodes==NULL
 			) {
-				AppCore::Core::getInstance()->messageWindows->showMessageBox("Upozornenie","éiadny uzol oznaËen˝",false);
+				AppCore::Core::getInstance()->messageWindows->showMessageBox("Upozornenie","¬éiadny uzol ozna√®en√Ω",false);
 				return false;
 			}
 
@@ -1057,7 +1070,7 @@ bool CoreWindow::add_EdgeClick()
 		if (	
 			i!=2
 			) {
-				AppCore::Core::getInstance()->messageWindows->showMessageBox("Upozornenie","Musite vybrat pr·ve 2 vrcholy",false);
+				AppCore::Core::getInstance()->messageWindows->showMessageBox("Upozornenie","Musite vybrat pr√°ve 2 vrcholy",false);
 				return false;
 			}
 	ni = selectedNodes->constBegin();
@@ -1073,14 +1086,14 @@ bool CoreWindow::add_EdgeClick()
                                 existingEdge->getSrcNode () ->getId () == node1 ->getId () &&
                                 existingEdge->getDstNode () ->getId () == node2 ->getId ()
 			) {
-				AppCore::Core::getInstance()->messageWindows->showMessageBox("Hrana najden·","Medzi vrcholmi nesmie byt hrana",false);
+				AppCore::Core::getInstance()->messageWindows->showMessageBox("Hrana najden√°","Medzi vrcholmi nesmie byt hrana",false);
 				return false;
 			}
 			if (
                                 existingEdge->getSrcNode () ->getId () == node2 ->getId () &&
                                 existingEdge->getDstNode () ->getId () == node1 ->getId ()
 			) {
-				AppCore::Core::getInstance()->messageWindows->showMessageBox("Hrana najden·","Medzi vrcholmi nesmie byt hrana",false);
+				AppCore::Core::getInstance()->messageWindows->showMessageBox("Hrana najden√°","Medzi vrcholmi nesmie byt hrana",false);
 				return false;
 			}
 		}

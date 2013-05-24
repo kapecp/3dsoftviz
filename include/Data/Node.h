@@ -470,11 +470,26 @@ namespace Data
 		*/
 		void setSettings(QMap<QString, QString> * val) { settings = val; }
 
-                void setLabelText(QString label) { labelText = label; }
+		void setLabelText(QString label) { labelText = label; }
 
+		float getNodeDegree() { return nodeDegree; }
+		void setNodeDegree(float nodeDegree) { this->nodeDegree = nodeDegree; }
+		
+		float getNodeCloseness() { return nodeCloseness; }
+		void setNodeCloseness(float nodeCloseness) { this->nodeCloseness = nodeCloseness; }
+
+		float getNodeBetweeness() { return nodeBetweeness; }
+		void setNodeBetweeness(float nodeBetweeness) { this->nodeBetweeness = nodeBetweeness; }
+
+		float getOverallWeight() { return overallWeight; }
+		void setOverallWeight(float overallWeight) { this->overallWeight = overallWeight; }
+
+		bool isNodeMatched() { return nodeMatched; }
+		void setNodeMatched(bool nodeMatched) { this->nodeMatched = nodeMatched; }
+		
 	private:
 
-        /**
+		/**
 		*	bool inDB
 		*	\brief Flag if the Type is in database
 		*/
@@ -668,6 +683,13 @@ namespace Data
 		*  \brief Square drawable
 		*/
 		osg::ref_ptr<osg::Drawable> square;
+
+		float nodeDegree;
+		float nodeCloseness;
+		float nodeBetweeness;
+		bool nodeMatched;
+
+		float overallWeight;
 
 	protected:
 
