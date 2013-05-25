@@ -1027,6 +1027,35 @@ void CoreWindow::setRestriction_Sphere ()
 	}
 }
 
+void CoreWindow::setRestriction_ConeSurface()
+{
+    Data::Graph *currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
+
+    if (currentGraph != NULL)
+    {
+        //osg::Vec3 position = viewerWidget->getPickHandler()->getSelectionCenter(true);
+
+        //osg::ref_ptr<Data::Node> centerNode = currentGraph->addRestrictionNode (QString ("center"), position);
+        //osg::ref_ptr<Data::Node> surfaceNode = currentGraph->addRestrictionNode (QString ("surface"), position + osg::Vec3f (10, 0, 0));
+
+        Layout::RestrictionRemovalHandler_RestrictionNodesRemover::NodesListType restrictionNodes;
+        //restrictionNodes.push_back (centerNode);
+        //restrictionNodes.push_back (surfaceNode);
+
+        setRestrictionToAllNodes (
+                    QSharedPointer<Layout::ShapeGetter> (
+                        new Layout::ShapeGetter_ConeSurface_ByCamera(viewerWidget, *b_SetRestriction_ConeSurface_Slider)),
+                    currentGraph,
+                    QSharedPointer<Layout::RestrictionRemovalHandler_RestrictionNodesRemover> (
+                        new Layout::RestrictionRemovalHandler_RestrictionNodesRemover (
+                            *currentGraph,
+                            restrictionNodes
+                            )
+                        )
+                    );
+    }
+}
+
 void CoreWindow::setRestriction_Plane ()
 {
 	Data::Graph * currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();

@@ -687,9 +687,9 @@ osg::Vec3 PickHandler::getSelectionCenter(bool nodesOnly)
   // sivak
         coordinates->push_back((*ni)->targetPositionConstRef());
   // plesko-zeler
-		coordinates->push_back((*ni)->getCurrentPosition());
+        //coordinates->push_back((*ni)->getCurrentPosition());
   // povodne
-		coordinates->push_back((*ni)->getTargetPosition());
+        //coordinates->push_back((*ni)->getTargetPosition());
 // MERGE END
 		++ni;
 	}

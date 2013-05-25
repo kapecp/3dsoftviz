@@ -630,7 +630,7 @@ namespace QOSG
 		void setRestrictionToSelectedNodes (
 			QSharedPointer<Layout::ShapeGetter> shapeGetter,
 			Data::Graph * currentGraph,
-			QSharedPointer<Layout::RestrictionRemovalHandler> removalHandler
+            QSharedPointer<Layout::RestrictionRemovalHandler> removalHandler,
 			QLinkedList<osg::ref_ptr<Data::Node> > * nodesToRestrict = NULL
 		);
 
