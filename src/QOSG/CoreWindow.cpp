@@ -992,11 +992,7 @@ void CoreWindow::setRestriction_Sphere ()
 		osg::Vec3 positionNode2 = position + osg::Vec3f (10, 0, 0);
 
 		Layout::RestrictionRemovalHandler_RestrictionNodesRemover::NodesListType restrictionNodes;
-// MERGE BEGIN
-// toto je v originaly aj u sivaka, ale plesko-zeler to zmazali
-//		restrictionNodes.push_back (centerNode);
-//		restrictionNodes.push_back (surfaceNode);
-// MERGE END
+
 		Network::Client * client = Network::Client::getInstance();
 
 		if (!client->isConnected()) {
@@ -1075,10 +1071,6 @@ void CoreWindow::setRestriction_Plane ()
 		osg::Vec3 positionNode3 = position + osg::Vec3f (0, 10, 0);
 
 		Layout::RestrictionRemovalHandler_RestrictionNodesRemover::NodesListType restrictionNodes;
-// MERGE .. to iste ako predosla metoda
-//		restrictionNodes.push_back (node1);
-//		restrictionNodes.push_back (node2);
-//		restrictionNodes.push_back (node3);
 
 		Network::Client * client = Network::Client::getInstance();
 
