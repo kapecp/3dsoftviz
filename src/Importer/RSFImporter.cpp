@@ -12,12 +12,12 @@ namespace Importer {
 		osg::ref_ptr<Data::Edge> > *mapa)
 	{
 		osg::ref_ptr<Data::Node> hyperEdgeNode1;
+		//zaciatocny bod hyperhrany
 		for (QMap<qlonglong, osg::ref_ptr<Data::Edge> >::iterator it = mapa->begin (); it != mapa->end (); ++it) {
 			osg::ref_ptr<Data::Edge> existingEdge = it.value ();
 			if (
 				existingEdge->getSrcNode ()->getName () == srcNodeName && 
-				existingEdge->getDstNode ()->getName () == edgeName //&& 
-				//existingEdge->getDstNode ()->getType ()->getName () == QString ("hyperNode")
+				existingEdge->getDstNode ()->getName () == edgeName
 			) {
 				hyperEdgeNode1 = existingEdge->getDstNode ();
 				break;
@@ -42,6 +42,8 @@ bool RSFImporter::import (
 	(void)graphOp.addDefaultTypes (edgeType, nodeType);
 	
 	int i = 0;
+	
+	//citanie vstupneho suboru
 	while ( !stream.atEnd() ) {
 		line = stream.readLine();
 		QStringList words;
@@ -58,15 +60,14 @@ bool RSFImporter::import (
 		else{
 			if (words[0]=="tagged")
 			{
-				//printf("%s %s\n",words[1], words[2]);
+
 			}else
 			{
 				QString edgeName = words[0];
 				QString srcNodeName = words[1];
 				QString dstNodeName = words[2];
 
-				// create nodes if not exist
-
+				// vytvorenie pociatocneho uzla
 				if (!readNodes.contains(srcNodeName))
 				{
 					node1 = context.getGraph().addNode(srcNodeName, nodeType);
@@ -75,6 +76,7 @@ bool RSFImporter::import (
 					node1=readNodes.get(srcNodeName);
 				}
 
+				//vytvorenie koncoveho uzla
 				if (!readNodes.contains(dstNodeName))
 				{
 					node2 = context.getGraph ().addNode(dstNodeName, nodeType);
@@ -82,7 +84,7 @@ bool RSFImporter::import (
 				} else {
 					node2=readNodes.get(dstNodeName);
 				}
-				//create hyperedge
+				//vytvorenie celej hyperhrany
 				osg::ref_ptr<Data::Node> hyperEdgeNode;
 				QMap<qlonglong, osg::ref_ptr<Data::Edge> > *mapa = context.getGraph().getEdges();
 
@@ -92,6 +94,7 @@ bool RSFImporter::import (
 					context.getGraph ().addEdge (QString (""), node1, hyperEdgeNode, edgeType, true);
 				}
 				
+				//pridanie hyperhrany do grafu
 				context.getGraph ().addEdge (QString (""), hyperEdgeNode, node2, edgeType, true);
 			}
 		}

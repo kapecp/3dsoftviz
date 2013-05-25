@@ -373,9 +373,9 @@ osg::ref_ptr<Data::Node> Data::Graph::mergeNodes(QLinkedList<osg::ref_ptr<Data::
 {
 	//vyratame velkost zluceneho uzla podla velkosti zlucovanych uzlov
 	float scale = this->getNodeScale() + (selectedNodes->count() / 2);
-	
+
 	//vytvorime novy zluceny uzol
-    osg::ref_ptr<Data::Node> mergedNode = new Data::Node((mergeNodeId != -1) ? mergeNodeId : this->incEleIdCounter(), "mergedNode", this->getNodeMetaType(), scale, this, position);
+	osg::ref_ptr<Data::Node> mergedNode = new Data::Node((mergeNodeId != -1) ? mergeNodeId : this->incEleIdCounter(), "mergedNode", this->getNodeMetaType(), scale, this, position);
 	mergedNode->setColor(osg::Vec4(0, 0, 1, 1));
 
 	QList<qlonglong> connectedNodes;
@@ -1171,14 +1171,14 @@ Layout::RestrictionsManager & Data::Graph::getRestrictionsManager (void) {
 }
 
 osg::ref_ptr<Data::Node> Data::Graph::addRestrictionNode(QString name, osg::Vec3f position, int nodeId) {
-        osg::ref_ptr<Data::Node> node;
+	osg::ref_ptr<Data::Node> node;
 
-        //pridame obmedzovac reprezentovany uzlom
-        if (nodeId > -1) {
-            node = addNode (nodeId, name, getRestrictionNodeMetaType (), position);
-        } else {
-            node = addNode (name, getRestrictionNodeMetaType (), position);
-        }
+	//pridame obmedzovac reprezentovany uzlom
+	if (nodeId > -1) {
+		node = addNode (nodeId, name, getRestrictionNodeMetaType (), position);
+	} else {
+		node = addNode (name, getRestrictionNodeMetaType (), position);
+	}
 	node->setIgnored (true);
 	node->setPositionCanBeRestricted (false);
 	node->setRemovableByUser (false);

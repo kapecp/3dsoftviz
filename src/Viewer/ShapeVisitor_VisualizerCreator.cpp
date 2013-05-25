@@ -71,7 +71,17 @@ void ShapeVisitor_VisualizerCreator::visit (Layout::Shape_Sphere & shape) {
 }
 
 void ShapeVisitor_VisualizerCreator::visit (Layout::Shape_SphereSurface & shape) {
-	visualizeSphere (shape);
+    visualizeSphere (shape);
+}
+
+void ShapeVisitor_VisualizerCreator::visit(Layout::Shape_CylinderSurface &shape)
+{
+    visualizeCylinder(shape);
+}
+
+void ShapeVisitor_VisualizerCreator::visit(Layout::Shape_ConeSurface &shape)
+{
+    visualizeCone(shape);
 }
 
 void ShapeVisitor_VisualizerCreator::visualizeSphere (Layout::Shape_AbstractSphere & abstractSphere) {
@@ -96,7 +106,65 @@ void ShapeVisitor_VisualizerCreator::visualizeSphere (Layout::Shape_AbstractSphe
 	osg::Geode * geode = new osg::Geode;
 	geode->addDrawable (sd);
 
-	createdVisualizer_ = geode;
+    createdVisualizer_ = geode;
+}
+
+void ShapeVisitor_VisualizerCreator::visualizeCylinder(Layout::Shape_CylinderSurface &cylinder)
+{
+    osg::Vec3f eye = cylinder.firstBaseCenter();
+    osg::Vec3f center = cylinder.secondBaseCenter();
+
+    osg::Cylinder *osgCylinder = new osg::Cylinder;
+    osgCylinder->setRadius(getScaledDistance(100));
+    osgCylinder->setCenter(getScaledPosition(center));
+
+    osg::ShapeDrawable *sd = new osg::ShapeDrawable;
+    sd->setShape(osgCylinder);
+    sd->setColor(osg::Vec4 (0, 0, 1.0, /*0.06*/0.0));
+
+    //transparency of cylinder
+    sd->getOrCreateStateSet()->setMode(GL_BLEND, osg::StateAttribute::ON);
+    sd->getStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
+    sd->getStateSet()->setMode(GL_DEPTH_TEST, osg::StateAttribute::OFF);
+    sd->getStateSet()->setMode(GL_LIGHTING, osg::StateAttribute::OFF);
+    sd->getStateSet()->setAttributeAndModes(new osg::BlendFunc, osg::StateAttribute::ON);
+    sd->getStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
+    sd->getStateSet()->setRenderBinDetails(11, "RenderBin");
+    //
+
+    osg::Geode *geode = new osg::Geode;
+    geode->addDrawable(sd);
+
+    createdVisualizer_ = geode;
+}
+
+void ShapeVisitor_VisualizerCreator::visualizeCone(Layout::Shape_ConeSurface &cone)
+{
+    osg::Vec3f eye = cone.baseCenter();
+    osg::Vec3f center = cone.spike();
+
+    osg::Cone *osgCone = new osg::Cone;
+    osgCone->setRadius(getScaledDistance(100));
+    osgCone->setCenter(getScaledPosition(center));
+
+    osg::ShapeDrawable *sd = new osg::ShapeDrawable;
+    sd->setShape(osgCone);
+    sd->setColor(osg::Vec4 (0, 0, 1.0, /*0.06*/0.0));
+
+    //transparency of cone
+    sd->getOrCreateStateSet()->setMode(GL_BLEND, osg::StateAttribute::ON);
+    sd->getStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
+    sd->getStateSet()->setMode(GL_DEPTH_TEST, osg::StateAttribute::OFF);
+    sd->getStateSet()->setMode(GL_LIGHTING, osg::StateAttribute::OFF);
+    sd->getStateSet()->setAttributeAndModes(new osg::BlendFunc, osg::StateAttribute::ON);
+    sd->getStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
+    sd->getStateSet()->setRenderBinDetails(11, "RenderBin");
+    //
+
+    osg::Geode *geode = new osg::Geode;
+    geode->addDrawable(sd);
+
+    createdVisualizer_ = geode;
 }
 
 float ShapeVisitor_VisualizerCreator::getScaledDistance (

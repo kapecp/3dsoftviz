@@ -32,7 +32,7 @@ QSharedPointer<Shape> ShapeGetter_Sphere_AroundNode::getShape (void) {
 			}
 			break;
 		case NODE_TARGET_POSITION:
-			center = node_->getTargetPosition ();
+			center = node_->targetPosition ();
 			break;
 		default:
 			center = osg::Vec3 (0, 0, 0);

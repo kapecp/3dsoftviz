@@ -27,6 +27,7 @@ bool Model::TypeDAO::checkIfExists(Data::Type* type, QSqlDatabase* conn)
         return false;
     }
 
+	//nacitame a porovname, ci v databaze ecistuje dany typ
     QSqlQuery* query = new QSqlQuery(*conn);
     query->prepare("SELECT COUNT(1) FROM nodes "
         "WHERE node_id=:type_id AND graph_id=:graph_id");
@@ -56,6 +57,7 @@ bool Model::TypeDAO::removeType( Data::Type* type, QSqlDatabase* conn )
         return true;
     }
 
+	//odstranime z databazy dany typ
     QSqlQuery* query = new QSqlQuery(*conn);
     query->prepare("DELETE FROM nodes WHERE graph_id = :graph_id AND node_id = :node_id");
     query->bindValue(":graph_id", type->getGraph()->getId());
@@ -83,6 +85,7 @@ Data::Type* Model::TypeDAO::addType( QString type_name, Data::Graph* graph, QSql
         }
     }
     
+	//pridame do databazy typ
     QSqlQuery* query = new QSqlQuery(*conn);
     query->prepare("INSERT INTO nodes (\"name\", graph_id) VALUES (:type_name,:graph_id) RETURNING node_id");
     query->bindValue(":type_name",type_name);
@@ -122,6 +125,7 @@ bool Model::TypeDAO::addType( Data::Type* type, QSqlDatabase* conn )
 
     if(type->isInDB()) return true;
     
+	//pridame do databazy typ
     QSqlQuery* query = new QSqlQuery(*conn);
     if(type->isMeta()) {
         if(!((Data::MetaType* )type)->getLayout()->isInDB()) {
@@ -177,6 +181,7 @@ QMap<QString,QString> Model::TypeDAO::getSettings( Data::Type* type, QSqlDatabas
         return settings;
     }
 
+	//nacitame z databazy nastavenie podla ID typu
     QSqlQuery* query = new QSqlQuery(*conn);
     query->prepare("SELECT val_name, val FROM type_settings WHERE graph_id = :graph_id AND type_id = :type_id");
     query->bindValue(":graph_id",type->getGraph()->getId());

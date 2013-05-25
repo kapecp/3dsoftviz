@@ -264,7 +264,7 @@ bool PickHandler::handleDrag( const osgGA::GUIEventAdapter& ea, osgGA::GUIAction
 		selectionQuad->getDrawable(0)->asGeometry()->setVertexArray(coordinates);
 	}
 	else if (pickMode == PickMode::NONE && leftButtonPressed)
-        {
+	{
 		Network::Client * client = Network::Client::getInstance();
 		if (client->isConnected()){
 			client -> setNodesExcludedFromUpdate(pickedNodes);
@@ -400,7 +400,7 @@ bool PickHandler::doNodePick(osg::NodePath nodePath)
 	{
 		if (isAltPressed && pickMode == PickMode::NONE && !isShiftPressed)
 		{
-			cameraManipulator->setCenter(n->getTargetPosition());
+			cameraManipulator->setCenter(n->targetPosition());
 		}
 		else if (isAltPressed && pickMode == PickMode::NONE && isShiftPressed)
 		{		
@@ -534,7 +534,7 @@ bool PickHandler::dragNode(osgViewer::Viewer * viewer)
 
 	while (i != pickedNodes.constEnd()) 
 	{
-		osg::Vec3f screenPoint = (*i)->getTargetPosition() * compositeM; 
+        osg::Vec3f screenPoint = (*i)->targetPositionConstRef() * compositeM;
 		osg::Vec3f newPosition = osg::Vec3f(screenPoint.x() - (origin_mX - _mX) / scale, screenPoint.y() - (origin_mY - _mY) / scale, screenPoint.z());
 
 		(*i)->setTargetPosition(newPosition * compositeMi);
@@ -683,7 +683,14 @@ osg::Vec3 PickHandler::getSelectionCenter(bool nodesOnly)
 
 	while (ni != pickedNodes.constEnd()) 
 	{
+// MERGE BEGIN
+  // sivak
+        coordinates->push_back((*ni)->targetPositionConstRef());
+  // plesko-zeler
 		coordinates->push_back((*ni)->getCurrentPosition());
+  // povodne
+		coordinates->push_back((*ni)->getTargetPosition());
+// MERGE END
 		++ni;
 	}
 

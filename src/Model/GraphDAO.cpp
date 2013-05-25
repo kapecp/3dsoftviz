@@ -40,6 +40,7 @@ QMap<qlonglong, Data::Graph*> Model::GraphDAO::getGraphs(QSqlDatabase* conn, boo
         "l.graph_id = g.graph_id "
         "GROUP BY g.graph_id, g.graph_name");
 
+	//nacitame grafy z databazy
     if(!query->exec()) {
         qDebug() << "[Model::GraphDAO::getGraphs] Could not perform query on DB: " << query->lastError().databaseText();
         *error = TRUE;
@@ -66,6 +67,7 @@ void getNestedGraph(qlonglong parentID, Data::Graph** graph, QSqlDatabase* conn,
 	queryNestedNodes = Model::NodeDAO::getNodesQuery(conn, &error, graphID, layoutID, parentID);
 
 	//TODO pridat vnorenym nodom atributy - scale, farbu, ...
+	//nacitavame rekurzivne vnorene grafy
 	while(queryNestedNodes->next()) 
 	{
 		nodeID = queryNestedNodes->value(0).toLongLong();
@@ -140,6 +142,7 @@ Data::Graph* Model::GraphDAO::getGraph(QSqlDatabase* conn, bool* error2, qlonglo
 		Data::Type *typeMetaNode = newGraph->getNodeMetaType();
 		Data::Type *typeMetaEdge = newGraph->getEdgeMetaType();
 
+		//nacitavame vrcholy grafu z databazy
 		while(queryNodes->next()) 
 		{
 			nodeID = queryNodes->value(0).toLongLong();
@@ -188,6 +191,7 @@ Data::Graph* Model::GraphDAO::getGraph(QSqlDatabase* conn, bool* error2, qlonglo
 			}
 		}
 		
+		//nacitame hrany z databazy
 		while(queryEdges->next()) 
 		{
 			edgeID = queryEdges->value(0).toLongLong();
@@ -248,6 +252,7 @@ Data::Graph* Model::GraphDAO::addGraph(QString graph_name, QSqlDatabase* conn)
         return NULL;
     }
 	
+	//ulozime graf do databazy
     if(query->next()) {
         Data::Graph* graph = new Data::Graph(query->value(0).toLongLong(),graph_name,0,0,conn);
         graph->setIsInDB();
@@ -273,6 +278,7 @@ bool Model::GraphDAO::setGraphName(qlonglong graphID, QString graphName, QSqlDat
     query->bindValue(":graph_name", graphName);
 	query->bindValue(":graph_id", graphID);
 
+	//ulozime nazov grafu do databazy
     if(!query->exec()) {
         qDebug() << "[Model::GraphDAO::setGraphName] Could not perform query on DB: " << query->lastError().databaseText();
         return false;
@@ -303,6 +309,7 @@ bool Model::GraphDAO::addGraph( Data::Graph* graph, QSqlDatabase* conn )
         return NULL;
     }
 
+	//ulozime graf do databazy podla ID
     if(query->next()) {
         graph->setId(query->value(0).toLongLong());
         graph->setIsInDB();
@@ -332,6 +339,8 @@ bool Model::GraphDAO::removeGraph(Data::Graph* graph, QSqlDatabase* conn)
     QSqlQuery* query = new QSqlQuery(*conn);
     query->prepare("DELETE FROM graphs WHERE graph_id = :graph_id");
     query->bindValue(":graph_id",graph->getId());
+
+	//vymazeme graf z databazy
     if(!query->exec()) {
         qDebug() << "[Model::GraphDAO::removeGraph] Could not perform query on DB: " << query->lastError().databaseText();
         return false;
@@ -356,6 +365,8 @@ bool Model::GraphDAO::removeGraph(qlonglong graphID, QSqlDatabase* conn)
     QSqlQuery* query = new QSqlQuery(*conn);
     query->prepare("DELETE FROM graphs WHERE graph_id = :graph_id");
     query->bindValue(":graph_id", graphID);
+
+	//odstranime graf podla ID z databazy
     if(!query->exec()) {
         qDebug() << "[Model::GraphDAO::removeGraph] Could not perform query on DB: " << query->lastError().databaseText();
         return false;
@@ -380,13 +391,13 @@ QString Model::GraphDAO::getName(qlonglong graphID, bool* error, QSqlDatabase* c
         return name;
     }
 
-    //get name of graph from DB
     query = new QSqlQuery(*conn);
     query->prepare("SELECT graph_name "
 		"FROM graphs "
 		"WHERE graph_id = :graph_id");
 	query->bindValue(":graph_id", graphID);
 
+	//nacitame nazov grafu z databazy
     if(!query->exec()) 
 	{
         qDebug() << "[Model::GraphDAO::getName] Could not perform query on DB: " << query->lastError().databaseText();
@@ -413,18 +424,13 @@ QString Model::GraphDAO::setName(QString name,Data::Graph* graph, QSqlDatabase* 
         qDebug() << "[Model::GraphDAO::setName] Invalid parameter - graph is NULL";
         return NULL;
     }
-    
-    /*if(!graph->isInDB()) {
-        if(!Model::GraphDAO::addGraph(graph, conn)) { //could not insert graph into DB
-            qDebug() << "[Model::GraphDAO::setName] Could not update graph name in DB. Graph is not in DB.";
-            return NULL;
-        }
-    }*/
 
     QSqlQuery* query = new QSqlQuery(*conn);
     query->prepare("UPDATE graphs SET graph_name = :graph_name WHERE graph_id = :graph_id");
     query->bindValue(":graph_id",graph->getId());
     query->bindValue(":graph_name",name);
+
+	//ulozime nazov grafu do databazy
     if(!query->exec()) {
         qDebug() << "[Model::GraphDAO::setName] Could not perform query on DB: " << query->lastError().databaseText();
         return NULL;
@@ -459,6 +465,8 @@ QMap<QString,QString> Model::GraphDAO::getSettings( Data::Graph* graph, QSqlData
     QSqlQuery* query = new QSqlQuery(*conn);
     query->prepare("SELECT val_name, val FROM graph_settings WHERE graph_id = :graph_id");
     query->bindValue(":graph_id",graph->getId());
+
+	//nacitame nazov settings z databazy
     if(!query->exec()) {
         qDebug() << "[Model::GraphDAO::getSettings] Could not perform query on DB: " << query->lastError().databaseText();
         *error = TRUE;
