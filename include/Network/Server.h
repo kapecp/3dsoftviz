@@ -17,6 +17,7 @@
 #include "Viewer/CoreGraph.h"
 #include "Network/ExecutorFactory.h"
 #include "QOSG/CoreWindow.h"
+#include "Layout/RestrictionRemovalHandler_RestrictionNodesRemover.h"
 
 namespace Network {
 
@@ -44,6 +45,7 @@ class Server : public QTcpServer {
         void sendSeparateNodes(QLinkedList<osg::ref_ptr<Data::Node> > * selectedNodes, QTcpSocket *client = NULL);
         void sendAddMetaNode(osg::ref_ptr<Data::Node> metaNode, QLinkedList<osg::ref_ptr<Data::Node> > * selectedNodes, QString edgeName, osg::Vec3f position, QTcpSocket *client = NULL);
         void sendSetRestriction(quint8 type, osg::ref_ptr<Data::Node> node1, osg::Vec3 position_node1,  osg::ref_ptr<Data::Node> node2, osg::Vec3 position_node2, QLinkedList<osg::ref_ptr<Data::Node> > * nodes, osg::ref_ptr<Data::Node> node3 = NULL, osg::Vec3 * position_node3 = NULL, QTcpSocket *client = NULL);
+        void sendSetRestriction(quint8 type, QLinkedList<osg::ref_ptr<Data::Node> > * nodes, Layout::RestrictionRemovalHandler_RestrictionNodesRemover::NodesListType* restrictionNodes, QTcpSocket *client=NULL);
         void sendUnSetRestriction(QLinkedList<osg::ref_ptr<Data::Node> > * nodes, QTcpSocket *client = NULL);
         void sendAttractAttention(bool attention, int idUser = 0, QTcpSocket *client = NULL);
 

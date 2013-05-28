@@ -15,18 +15,18 @@
 
 namespace Data
 {
-	class GraphLayout;
+        class GraphLayout;
 }
 
-namespace Model 
+namespace Model
 {
-	/**
-	*  \class GraphLayoutDAO
-	*  \brief Class represents a database layer for Data::GraphLayout objects
-	*  \author Aurel Paulovic
-	*  \date 29. 4. 2010
-	*/
-	class GraphLayoutDAO
+        /**
+        *  \class GraphLayoutDAO
+        *  \brief Class represents a database layer for Data::GraphLayout objects
+        *  \author Aurel Paulovic
+        *  \date 29. 4. 2010
+        */
+        class GraphLayoutDAO
     {
     public:
 
@@ -43,7 +43,7 @@ namespace Model
 		/**
 		*  \fn public static  getListOfLayouts(QSqlDatabase* conn, bool* error)
 		*  \brief	Return list of layouts - graph ID
-		*  \param   conn   connection to the database 
+		*  \param   conn   connection to the database
 		*  \param   error  error flag, will be set to true, if the method encounters an error
 		*  \return	qlonglong number of layouts in DB for graph
 		*/
@@ -68,7 +68,7 @@ namespace Model
 		*  \return Data::GraphLayout * new GraphLayout
 		*/
 		static Data::GraphLayout* addLayout(QString layout_name, Data::Graph* graph, QSqlDatabase* conn);
-        
+
 
 		/**
 		*  \fn public static overloaded  addLayout(Data::GraphLayout* layout, QSqlDatabase* conn)
@@ -88,7 +88,7 @@ namespace Model
 		*  \return bool true, if the GraphLayout was successfully removed from the database
 		*/
 		static bool removeLayout(Data::GraphLayout* graphLayout, QSqlDatabase* conn);
-        
+
 		/**
 		*  \fn public static  removeLayout(qlonglong graphID, QSqlDatabase* conn)
 		*  \brief Removes Graphlayout from the databse
@@ -97,7 +97,7 @@ namespace Model
 		*  \return bool true, if the GraphLayout was successfully removed from the database
 		*/
 		static bool removeLayouts(qlonglong graphID, QSqlDatabase* conn);
- 
+
 		/**
 		*  \fn public static  removeLayout(qlonglong graphID, qlonglong layoutID, QSqlDatabase* conn)
 		*  \brief Removes Graphlayout from the databse
@@ -129,7 +129,7 @@ namespace Model
 		*  \return QString resultant name of the GraphLayout
 		*/
 		static QString setName(QString name, Data::GraphLayout* graphLayout, QSqlDatabase* conn);
-        
+
 
 		/**
 		*  \fn public static  checkIfExists(Data::GraphLayout* graphLayout, QSqlDatabase* conn)
@@ -144,7 +144,7 @@ namespace Model
         * \fn public static getSettings(Data::GraphLayout* graphLayout, QSqlDatabase* conn, bool* error)
         * \brief Returns setting of the GraphLayout
         * \param  graph 	GraphLayout
-        * \param  conn  	connection to the database	
+        * \param  conn  	connection to the database
         * \param  error  	error flag, will be set to true, if the method encounters an error
         * \return QMap<QString,QString> settings of the GraphLayout
         */

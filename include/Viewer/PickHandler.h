@@ -20,6 +20,7 @@
 #include "Viewer/CoreGraph.h"
 
 #include <QLinkedList>
+#include <QTimer>
 
 namespace Vwr
 {
@@ -91,6 +92,7 @@ namespace Vwr
 			*  \brief picking edges
 			*/
 			static const int EDGE = 2;
+
 		};
 
 
@@ -119,6 +121,13 @@ namespace Vwr
 		*  \param     isFixed     fixed state
 		*/
 		void toggleSelectedNodesFixedState(bool isFixed);
+
+                /**
+                *  \fn public  getPickedNodeWithMaxEdgeCount()
+                *  \brief Find picked node from pickedNodes with max edge count
+                *  \return osg::ref_ptr<Data::Node>
+                */
+                osg::ref_ptr<Data::Node> getPickedNodeWithMaxEdgeCount();
 
 
 		/**
@@ -191,6 +200,7 @@ namespace Vwr
 		*  \brief true, if left mouse button pressed
 		*/
 		bool leftButtonPressed;
+
 		
 		// Perform a pick operation.
 		bool pick(const double xMin, const double yMin, const double xMax, const double yMax, osgViewer::Viewer* viewer);
@@ -228,7 +238,6 @@ namespace Vwr
 		*  \brief picked edges list
 		*/
 		QLinkedList<osg::ref_ptr<Data::Edge> > pickedEdges;
-		
 
 		/**
 		*  osg::ref_ptr group

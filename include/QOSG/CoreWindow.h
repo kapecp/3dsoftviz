@@ -18,7 +18,6 @@
 #include <QLineEdit>
 #include <Qt/qstringlist.h>
 
-#include "Network/Server.h"
 #include "Network/Client.h"
 
 #include "QOSG/OptionsWindow.h"
@@ -32,6 +31,9 @@
 
 #include "Layout/ShapeGetter.h"
 #include "Layout/RestrictionRemovalHandler.h"
+#include "Layout/RestrictionRemovalHandler_RestrictionNodesRemover.h"
+#include "Layout/ShapeGetter_Circle_ByThreeNodes.h"
+#include "Layout/ShapeGetter_SpherePlane_ByThreeNodes.h"
 
 namespace QOSG
 {
@@ -203,7 +205,32 @@ namespace QOSG
 				 * \brief Creates a new Plane restriction (defined by positions of 3 nodes) and sets
 				 * if to all selected nodes (replacing any previously attached restrictions to these nodes).
 				 */
-				void setRestriction_Plane ();
+                                void setRestriction_Plane (QLinkedList<osg::ref_ptr<Data::Node> > * nodesToRestrict = NULL);
+
+                                /**
+                                 * \brief Creates a new restriction - composition sphere and plane (defined by positions of 3 nodes) and sets
+                                 * if to all selected nodes (replacing any previously attached restrictions to these nodes).
+                                 */
+                                void setRestriction_SpherePlane (QLinkedList<osg::ref_ptr<Data::Node> > * nodesToRestrict = NULL);
+
+                                /**
+                                 * \brief Creates a new Circle restriction (defined by positions of 3 nodes) and sets
+                                 * if to all selected nodes (replacing any previously attached restrictions to these nodes).
+                                 */
+                                void setRestriction_Circle(QLinkedList<osg::ref_ptr<Data::Node> > * nodesToRestrict = NULL, osg::ref_ptr<Data::Node> node1 = NULL);
+
+                                /**
+                                 * \brief Creates a new Cone restriction with node with maximum edge count as root and sets
+                                 * if to all selected nodes (replacing any previously attached restrictions to these nodes).
+                                 */
+                                void setRestriction_Cone(QLinkedList<osg::ref_ptr<Data::Node> > * nodesToRestrict = NULL,
+                                                         osg::ref_ptr<Data::Node> parentNode = NULL);
+
+                                /**
+                                 * \brief Creates a new Cone Tree restriction with selected node as root (all previously
+                                 * attached restrictions are removed).
+                                 */
+                                void setRestriction_ConeTree ();
 
 				/**
 				 * \brief Removes restrictions from all selected nodes (if any has been set). Destroys a
@@ -383,10 +410,31 @@ namespace QOSG
 		 */
 		QPushButton * b_SetRestriction_Plane;
 
+                /**
+                 * \brief Button for adding Sphere and Plane restriction.
+                 */
+                QPushButton * b_SetRestriction_SpherePlane;
+
+                /**
+                 * \brief Button for adding Circle restriction.
+                 */
+                QPushButton * b_SetRestriction_Circle;
+
+                /**
+                 * \brief Button for adding Cone restriction.
+                 */
+                QPushButton * b_SetRestriction_Cone;
+
+                /**
+                 * \brief Button for adding Cone Tree restriction.
+                 */
+                QPushButton * b_SetRestriction_ConeTree;
+
 		/**
 		 * \brief Button for removing restrictions.
 		 */
 		QPushButton * b_UnsetRestriction;
+
 
 		/**
 		*  QAction * create new Edge
@@ -590,6 +638,12 @@ namespace QOSG
                         QSharedPointer<Layout::RestrictionRemovalHandler> removalHandler,
                         QLinkedList<osg::ref_ptr<Data::Node> > * nodesToRestrict = NULL
                 );
+
+                void setRestrictionToShape(
+                    QSharedPointer<Layout::ShapeGetter> shapeGetter,
+                    Data::Graph * currentGraph,
+                    QSharedPointer<Layout::RestrictionRemovalHandler> removalHandler,
+                    QLinkedList<osg::ref_ptr<Data::Node> > nodesOfShapeGettersToRestrict);
 
         private:
 

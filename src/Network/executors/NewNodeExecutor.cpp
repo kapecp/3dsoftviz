@@ -1,6 +1,7 @@
 #include "Network/executors/NewNodeExecutor.h"
 #include "Manager/Manager.h"
 #include "Importer/GraphOperations.h"
+#include "Network/Server.h"
 
 using namespace Network;
 

@@ -15,6 +15,7 @@
 
 #include "osg/PositionAttitudeTransform"
 #include "QtGui/QListWidgetItem"
+#include "Layout/RestrictionRemovalHandler_RestrictionNodesRemover.h"
 
 namespace Network{
 
@@ -75,6 +76,7 @@ class Client : public QObject
         void sendSeparateNodes(QLinkedList<osg::ref_ptr<Data::Node> > * selectedNodes);
         void sendAddMetaNode(QString name, QLinkedList<osg::ref_ptr<Data::Node> > * selectedNodes, QString edgeName, osg::Vec3f position);
         void sendSetRestriction(quint8 type, QString name_node1, osg::Vec3 position_node1, QString name_node2, osg::Vec3 position_node2, QLinkedList<osg::ref_ptr<Data::Node> > * nodes, QString name_node3 = "", osg::Vec3 * position_node3 = NULL);
+        void sendSetRestriction(quint8 type, QLinkedList<osg::ref_ptr<Data::Node> > * nodes,Layout::RestrictionRemovalHandler_RestrictionNodesRemover::NodesListType* restrictionNodes);
         void sendUnSetRestriction(QLinkedList<osg::ref_ptr<Data::Node> > * nodes);
         void sendAttractAttention(bool attention);
 

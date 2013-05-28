@@ -18,7 +18,7 @@ void ShapeVisitor_RestrictedPositionGetter::visit (Shape_Null & shape) {
 }
 
 void ShapeVisitor_RestrictedPositionGetter::visit (Shape_Composite & shape) {
-	Shape_Composite::ShapesListType & shapes = shape.getShapes ();
+        Shape_Composite::ShapesListType & shapes = shape.getShapes ();
 
 	if (shapes.size () > 0) {
 		osg::Vec3f restrictedPositionWithMinDistance;
@@ -26,7 +26,7 @@ void ShapeVisitor_RestrictedPositionGetter::visit (Shape_Composite & shape) {
 		for (Shape_Composite::ShapesListType::const_iterator it = shapes.begin (); it != shapes.end (); ++it) {
 			(*it)->accept (*this); // restrictedPosition_ changes here
 
-			float currentDistance = (originalPosition_ - restrictedPosition_).length ();
+                        float currentDistance =(restrictedPosition_ - originalPosition_).length ();
 
 			if ((currentDistance < minDistanceFound) || (it == shapes.begin ())) {
 				restrictedPositionWithMinDistance = restrictedPosition_;
@@ -37,14 +37,34 @@ void ShapeVisitor_RestrictedPositionGetter::visit (Shape_Composite & shape) {
 		restrictedPosition_ = restrictedPositionWithMinDistance;
 	} else {
 		restrictedPosition_ = originalPosition_;
-	}
+        }
+
+
+}
+
+void ShapeVisitor_RestrictedPositionGetter::visit (Shape_Intersection & shape) {
+    Shape_Intersection::ShapesListType & shapes = shape.getShapes ();
+
+    if (shapes.size () > 0) {
+        float currentDistance = 1.0;
+        while (currentDistance > 0.05){
+            Shape_Intersection::ShapesListType::const_iterator it;
+            for (it = shapes.begin (); it != shapes.end (); ++it) {
+                (*it)->accept (*this); // restrictedPosition_ changes here
+                currentDistance = (restrictedPosition_ - originalPosition_).length ();
+                originalPosition_ = restrictedPosition_;
+            }
+        }
+    } else {
+            restrictedPosition_ = originalPosition_;
+    }
 }
 
 void ShapeVisitor_RestrictedPositionGetter::visit (Shape_Plane & shape) {
 	float t;
 	float m = - shape.getD () - shape.getNormalVector ().x () * originalPosition_.x () - shape.getNormalVector ().y () * originalPosition_.y () - shape.getNormalVector ().z () * originalPosition_.z ();
 	float n = pow (shape.getNormalVector ().x (), 2) + pow (shape.getNormalVector ().y (), 2) + pow (shape.getNormalVector ().z (), 2);
-	if (n != 0.0) {
+        if (n != 0.0) {
 		t = m / n;
 	} else {
 		t = 0;
@@ -105,7 +125,8 @@ osg::Vec3f ShapeVisitor_RestrictedPositionGetter::toSphere (
 			changedPointMoved[i] = (rand () % 100) + 1;
 		}
 	}
-	changedPointMoved.normalize();
+
+        changedPointMoved.normalize();   //zmeni velkost vectora na 1
 
 	float multiplier = radiusMin;
 	if (radiusMax > radiusMin) {

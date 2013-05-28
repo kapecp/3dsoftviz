@@ -285,7 +285,7 @@ bool GraphMLImporter::processGraph_Edges (
 		if(newEdgeType == NULL)
 			newEdgeType = edgeType_;
 
-		context_->getGraph().addEdge(sourceId+targetId, readNodes_->get(sourceId), readNodes_->get(targetId), newEdgeType, directed);
+                context_->getGraph().addEdge(sourceId+targetId, readNodes_->get(sourceId), readNodes_->get(targetId), newEdgeType, directed);
 
 		// subgraphs
 		for (QDomElement subgraphElement = edgeElement.firstChildElement("graph"); ok && !subgraphElement.isNull(); subgraphElement = subgraphElement.nextSiblingElement("graph")) {

@@ -1,6 +1,7 @@
 #include "Layout/ShapeGetter_Sphere_ByTwoNodes.h"
 //-----------------------------------------------------------------------------
 #include "Layout/Shape_Sphere.h"
+#include "Data/Node.h"
 //-----------------------------------------------------------------------------
 
 namespace Layout {
@@ -22,6 +23,13 @@ QSharedPointer<Shape> ShapeGetter_Sphere_ByTwoNodes::getShape (void) {
 			Shape_Sphere::RANDOM_DISTANCE_FROM_CENTER
 		)
 	);
+}
+
+ QSet<Data::Node * > ShapeGetter_Sphere_ByTwoNodes::getNodesOfShape(){
+    QSet<Data::Node * > nodes;
+    nodes.insert (centerNode_.get());
+    nodes.insert (surfaceNode_.get());
+    return nodes;
 }
 
 } // namespace

@@ -1,10 +1,8 @@
 #ifndef Layout_ShapeGetter_Sphere_ByTwoNodes_H
 #define Layout_ShapeGetter_Sphere_ByTwoNodes_H
-//-----------------------------------------------------------------------------
+
 #include "Layout/ShapeGetter.h"
-//-----------------------------------------------------------------------------
-#include "Data/Node.h"
-//-----------------------------------------------------------------------------
+
 
 namespace Layout {
 
@@ -24,9 +22,12 @@ public:
 	);
 
 	/***/
-	virtual ~ShapeGetter_Sphere_ByTwoNodes (void) {};
+        virtual ~ShapeGetter_Sphere_ByTwoNodes (void) {}
 
 	virtual QSharedPointer<Shape> getShape (void);
+
+        virtual  QSet<Data::Node *> getNodesOfShape();
+
 
 private:
 

@@ -27,12 +27,11 @@
 #include "Viewer/EdgeGroup.h"
 #include "Viewer/NodeGroup.h"
 #include "Viewer/RestrictionVisualizationsGroup.h"
+#include "Viewer/RestrictionManipulatorsGroup.h"
 
-//#include "Layout/Layout.h"
 #include "Util/ApplicationConfig.h"
 #include "Data/Edge.h"
 #include "Data/Node.h"
-#include "Data/Graph.h"
 
 namespace Vwr
 {
@@ -201,6 +200,11 @@ namespace Vwr
 		 */
 		QSharedPointer<Vwr::RestrictionVisualizationsGroup> restrictionVisualizationsGroup;
 
+                /**
+                 * \brief Encapsulates part of the OSG including restriction manipulations.
+                 */
+                QSharedPointer<Vwr::RestrictionManipulatorsGroup> restrictionManipulatorsGroup;
+
 		/**
 		*  Data::Graph * graph
 		*  \brief current graph
@@ -342,6 +346,11 @@ namespace Vwr
 		 * \brief Index of restrictionVisualisationsGroup in the root group.
 		 */
 		int restrictionVisualizationsPosition;
+
+                /**
+                 * \brief Index of restrictionManipulatorsGroup in the root group.
+                 */
+                int restrictionManipulatorsPosition;
 
 		/**
 		*  int customNodesPosition

@@ -1,5 +1,6 @@
 #include "Network/executors/NewEdgeExecutor.h"
 #include "Manager/Manager.h"
+#include "Network/Server.h"
 
 using namespace Network;
 

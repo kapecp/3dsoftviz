@@ -23,7 +23,7 @@ class ShapeVisitor_RestrictedPositionGetter : public ShapeVisitor {
 public:
 
 	/***/
-	virtual ~ShapeVisitor_RestrictedPositionGetter (void) {};
+        virtual ~ShapeVisitor_RestrictedPositionGetter (void) {}
 
 	void setOriginalPosition (osg::Vec3f originalPosition);
 	osg::Vec3f getRestrictedPosition (void);
@@ -38,6 +38,11 @@ public:
 	 * and uses the nearest restricted position to the original position.
 	 */
 	virtual void visit (Shape_Composite & shape);
+
+        /**
+         * \brief Finds the restricted position using intersection of the shapes contained in the intersection shape.
+         */
+        virtual void visit (Shape_Intersection & shape);
 
 	/**
 	 * \brief Finds the nearest point on the plane.

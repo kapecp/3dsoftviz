@@ -23,6 +23,13 @@ public:
 		ShapeVisitor & visitor
 	) = 0;
 
+    void setInvisible(bool invisible){this->invisible = invisible;}
+
+    bool isInvisible(){return invisible;}
+
+private:
+    bool invisible;
+
 }; // class
 
 } // namespace

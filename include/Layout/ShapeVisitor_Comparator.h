@@ -28,6 +28,7 @@ public:
 
 	virtual void visit (Shape_Null & shape);
 	virtual void visit (Shape_Composite & shape);
+        virtual void visit (Shape_Intersection & shape);
 	virtual void visit (Shape_Plane & shape);
 	virtual void visit (Shape_Sphere & shape);
 	virtual void visit (Shape_SphereSurface & shape);

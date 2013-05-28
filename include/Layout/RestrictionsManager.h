@@ -6,6 +6,8 @@
 #include "Layout/ShapeVisitor_Comparator.h"
 #include "Layout/RestrictionsObserver.h"
 #include "Layout/RestrictionRemovalHandler.h"
+#include "Viewer/RestrictionManipulatorsGroup.h"
+#include "Viewer/RestrictionVisualizationsGroup.h"
 //-----------------------------------------------------------------------------
 #include <QMap>
 #include <QSet>
@@ -13,9 +15,6 @@
 #include <QMutex>
 //-----------------------------------------------------------------------------
 
-namespace Data {
-	class Node;
-}
 
 namespace Layout {
 
@@ -39,9 +38,18 @@ public:
 	 * If the shapeGetter is NULL, restriction (if any attached) is removed from each node in the nodes set.
 	 */
 	void setRestrictions (
-		QSet<Data::Node *> nodes,
-		QSharedPointer<ShapeGetter> shapeGetter
+                QSet<Data::Node *> nodes,
+                QSharedPointer<ShapeGetter> shapeGetter
 	);
+
+        /**
+         * \brief Sets the restriction represented by the shapeGetter to nides that represented shape with
+         *  specific node.
+         */
+       void setRestrictionToShape(
+            QLinkedList<osg::ref_ptr<Data::Node> > * nodesOfShapeGettersToRestrict,
+            QSharedPointer<ShapeGetter> shapeGetter
+       );
 
 	/**
 	 * \brief Computes the restricted position for the node.
@@ -53,9 +61,11 @@ public:
 	 * notifying the observer if the shape has been changed.
 	 */
 	osg::Vec3f applyRestriction (
-		Data::Node &node,
+                osg::ref_ptr<Data::Node> node,
 		osg::Vec3f originalPosition
 	);
+
+        osg::Group* getRestrictedNodes(Shape& shape);
 
 	/**
 	 * \brief Tries to set the removal handler, which defines operations which need to be made when
@@ -83,9 +93,10 @@ public:
 	 * \brief Sets the observer which is notified when a restriction is added, removed or its shape has been changed.
 	 * [observer pattern]
 	 */
-	void setObserver (
-		QSharedPointer<RestrictionsObserver> observer
-	);
+        void setObservers (
+                QSharedPointer<Vwr::RestrictionVisualizationsGroup> v_observer,
+                QSharedPointer<Vwr::RestrictionManipulatorsGroup> m_observer
+        );
 
 	/**
 	 * \brief Removes the observer.
@@ -103,7 +114,7 @@ private:
 	 * Returns NULL if no restriction is associated.
 	 */
 	QSharedPointer<ShapeGetter> getShapeGetter (
-		Data::Node &node
+                osg::ref_ptr<Data::Node> node
 	);
 
 	/**
@@ -113,6 +124,8 @@ private:
 	void refreshShape (
 		QSharedPointer<ShapeGetter> shapeGetter
 	);
+
+        osg::Group* getNodes(QSharedPointer<ShapeGetter> shapeGetter);
 
 private: // observer notification
 
@@ -140,7 +153,7 @@ private: // observer notification
 
 private:
 
-	typedef QMap<Data::Node *, QSharedPointer<ShapeGetter> > RestrictionsMapType;
+        typedef QMap<osg::ref_ptr<Data::Node>, QSharedPointer<ShapeGetter> > RestrictionsMapType;
 	typedef QMap<QSharedPointer<ShapeGetter>, long> ShapeGetterUsagesMapType;
 	typedef QMap<QSharedPointer<ShapeGetter>, QSharedPointer<Shape> > LastShapesMapType;
 	typedef QMap<QSharedPointer<ShapeGetter>, QSharedPointer<RestrictionRemovalHandler> > RemovalHandlersMapType;
@@ -181,12 +194,22 @@ private:
 	 * \brief Observer currently set.
 	 * NULL if no observer is set.
 	 */
-	QSharedPointer<RestrictionsObserver> observer_;
+        QSharedPointer<Vwr::RestrictionVisualizationsGroup> visualizationObserver;
+
+        /**
+         * \brief Observer currently set.
+         * NULL if no observer is set.
+         */
+        QSharedPointer<Vwr::RestrictionManipulatorsGroup> manipulationObserver;
+
 
 	/**
 	 * \brief usage: to synchronize public method calls (they change/get internal state and can be called from 2 threads: layout and gui)
 	 */
 	QMutex mutex_;
+
+
+
 
 }; // class
 

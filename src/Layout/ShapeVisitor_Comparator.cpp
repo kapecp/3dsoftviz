@@ -40,6 +40,10 @@ void ShapeVisitor_Comparator::visit (Shape_Composite & shape) {
 	}
 }
 
+void ShapeVisitor_Comparator::visit (Shape_Intersection & shape) {
+    (static_cast<Layout::Shape_Composite>(shape)).accept(*this);
+}
+
 void ShapeVisitor_Comparator::visit (Shape_Plane & shape) {
 	QSharedPointer<Shape_Plane> otherShape = otherShape_.dynamicCast<Shape_Plane> ();
 	if (! otherShape.isNull ()) {

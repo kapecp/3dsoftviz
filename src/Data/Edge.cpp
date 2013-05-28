@@ -15,6 +15,7 @@ Data::Edge::Edge(qlonglong id, QString name, Data::Graph* graph, osg::ref_ptr<Da
     this->oriented = isOriented;
     this->camera = camera;
     this->selected = false;
+    this->setSharedCoordinates(false, false, false);
 	this->inDB = false;
 	this->scale = scaling;
     float r = type->getSettings()->value("color.R").toFloat();
@@ -148,5 +149,11 @@ osg::ref_ptr<osg::Drawable> Data::Edge::createLabel(QString name)
 	label->setColor( osg::Vec4(1.0f, 1.0f, 1.0f, 1.0f) );
 
 	return label;
+}
+
+osg::ref_ptr<Data::Node> Data::Edge::getSecondNode(osg::ref_ptr<Data::Node> firstNode){
+    if (firstNode->getId() == srcNode->getId())
+        return dstNode;
+    else return srcNode;
 }
 
