@@ -25,8 +25,14 @@ public:
 	/***/
 	RestrictionRemovalHandler_RestrictionNodesRemover (
 		Data::Graph & graph,
-		NodesListType nodesToRemove
-	);
+                NodesListType nodesToRemove
+        );
+
+        RestrictionRemovalHandler_RestrictionNodesRemover (
+                Data::Graph & graph,
+                NodesListType nodesToRemove,
+                NodesListType ignoredNodes
+        );
 
 	/***/
 	virtual void afterRestrictionRemoved (void);
@@ -38,6 +44,7 @@ private:
 
 	Data::Graph & graph_;
 	NodesListType nodesToRemove_;
+        NodesListType ignoredNodes_;
 
 }; // class
 

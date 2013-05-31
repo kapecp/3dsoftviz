@@ -27,10 +27,10 @@
 
 namespace Data
 {
-	class Edge;
-	class Type;
-	class Graph;
-	class GraphLayout;
+        class Edge;
+        class Type;
+        class Graph;
+        class GraphLayout;
 
 	/**
 	*  \class Node
@@ -414,6 +414,10 @@ namespace Data
 			if (!selected)
 				setDrawableColor(0, color);
 		}
+
+                void setInvisible(){
+                    setColor(osg::Vec4 (0,0,0,0));
+                }
 
 
 		/**

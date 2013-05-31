@@ -198,7 +198,7 @@ bool GraphMLImporter::processGraph_Edges (
 
 	iColor_ = 0;
 
-	// zakladna orientacia hran
+	// default direction
 	bool defaultDirection;
 	if(graphElement.attribute("edgedefault") == "directed"){
 		defaultDirection = true;
@@ -206,7 +206,7 @@ bool GraphMLImporter::processGraph_Edges (
 		defaultDirection = false;
 	}
 
-	// hrany
+	// edges
 	for (QDomElement edgeElement = graphElement.firstChildElement("edge"); ok && !edgeElement.isNull(); edgeElement = edgeElement.nextSiblingElement("edge"))
 	{
 		QString sourceId = edgeElement.attribute("source");
@@ -386,4 +386,4 @@ bool GraphMLImporter::processGraph_Hyperedges (
 	return ok;
 }
 
-}
+} // namespace

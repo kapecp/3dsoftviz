@@ -1,4 +1,5 @@
 #include "Layout/ShapeGetter_Const.h"
+#include "Data/Node.h"
 
 namespace Layout {
 
@@ -11,6 +12,11 @@ ShapeGetter_Const::ShapeGetter_Const (
 
 QSharedPointer<Shape> ShapeGetter_Const::getShape (void) {
 	return shape_;
+}
+
+QSet<Data::Node* >  ShapeGetter_Const::getNodesOfShape(){
+    QSet<Data::Node* > nodes;
+    return nodes;
 }
 
 } // namespace

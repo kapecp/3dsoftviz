@@ -2,8 +2,6 @@
 #define LAYOUT_LAYOUT_THREAD_DEF 1
 
 #include <QThread>
-#include "Util/ApplicationConfig.h"
-//#include "Layout/Layout.h"
 #include "Layout/FRAlgorithm.h"
 
 namespace Layout

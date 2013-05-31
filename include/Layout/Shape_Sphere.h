@@ -32,7 +32,7 @@ public:
 	);
 
 	/***/
-	virtual ~Shape_Sphere (void) {};
+        virtual ~Shape_Sphere (void) {}
 
 	/**
 	 * [visitor pattern]

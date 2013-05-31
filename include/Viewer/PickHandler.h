@@ -20,6 +20,7 @@
 #include "Viewer/CoreGraph.h"
 
 #include <QLinkedList>
+#include <QTimer>
 
 namespace Vwr
 {
@@ -120,6 +121,13 @@ namespace Vwr
 		*/
 		void toggleSelectedNodesFixedState(bool isFixed);
 
+                /**
+                *  \fn public  getPickedNodeWithMaxEdgeCount()
+                *  \brief Find picked node from pickedNodes with max edge count
+                *  \return osg::ref_ptr<Data::Node>
+                */
+                osg::ref_ptr<Data::Node> getPickedNodeWithMaxEdgeCount();
+
 
 		/**
 		*  \fn inline public  setPickMode( int pickMode )
@@ -167,7 +175,7 @@ namespace Vwr
 		*/
 		QLinkedList<osg::ref_ptr<Data::Edge> > * getSelectedEdges() { return &pickedEdges; }
 
-				/**
+		/**
 		*  \fn public  unselectPickedNodes(osg::ref_ptr<Data::Node> node = 0)
 		*  \brief unselects picked nodes. If null, all nodes will be unselected.
 		*  \param     node     nodes to unselect
@@ -231,7 +239,6 @@ namespace Vwr
 		*  \brief picked edges list
 		*/
 		QLinkedList<osg::ref_ptr<Data::Edge> > pickedEdges;
-		
 
 		/**
 		*  osg::ref_ptr group

@@ -2,6 +2,7 @@
 //-----------------------------------------------------------------------------
 #include "Layout/Shape_Sphere.h"
 #include "Util/ApplicationConfig.h"
+#include "Data/Node.h"
 //-----------------------------------------------------------------------------
 #include <osg/Vec3>
 //-----------------------------------------------------------------------------
@@ -45,6 +46,12 @@ QSharedPointer<Shape> ShapeGetter_Sphere_AroundNode::getShape (void) {
 			restrictionPolicy_
 		)
 	);
+}
+
+QSet<Data::Node *  > ShapeGetter_Sphere_AroundNode::getNodesOfShape(){
+   QSet<Data::Node * >nodes;
+    nodes.insert (node_.get());
+    return nodes;
 }
 
 } // namespace

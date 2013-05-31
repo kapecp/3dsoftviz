@@ -1,0 +1,10 @@
+#ifndef RESTRICTIONMANIPULATORSGROUP_H
+#define RESTRICTIONMANIPULATORSGROUP_H
+
+class RestrictionManipulatorsGroup
+{
+public:
+    RestrictionManipulatorsGroup();
+};
+
+#endif // RESTRICTIONMANIPULATORSGROUP_H

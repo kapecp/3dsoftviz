@@ -1,5 +1,6 @@
 #include "Network/executors/SetNodeColorExecutor.h"
 #include "Manager/Manager.h"
+#include "Network/Server.h"
 
 using namespace Network;
 

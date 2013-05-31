@@ -44,6 +44,24 @@ void ShapeVisitor_RestrictedPositionGetter::visit (Shape_Composite &shape)
 	}
 }
 
+void ShapeVisitor_RestrictedPositionGetter::visit (Shape_Intersection & shape) {
+    Shape_Intersection::ShapesListType & shapes = shape.getShapes ();
+
+    if (shapes.size () > 0) {
+        float currentDistance = 1.0;
+        while (currentDistance > 0.05){
+            Shape_Intersection::ShapesListType::const_iterator it;
+            for (it = shapes.begin (); it != shapes.end (); ++it) {
+                (*it)->accept (*this); // restrictedPosition_ changes here
+                currentDistance = (restrictedPosition_ - originalPosition_).length ();
+                originalPosition_ = restrictedPosition_;
+            }
+        }
+    } else {
+            restrictedPosition_ = originalPosition_;
+    }
+}
+
 void ShapeVisitor_RestrictedPositionGetter::visit (Shape_Plane & shape) {
 	float t;
     float m = - shape.getD () - shape.getNormalVector ().x () * mOriginalPosition.x () - shape.getNormalVector ().y () * mOriginalPosition.y () - shape.getNormalVector ().z () * mOriginalPosition.z ();
@@ -166,7 +184,8 @@ osg::Vec3f ShapeVisitor_RestrictedPositionGetter::toSphere(const osg::Vec3f &cen
 			changedPointMoved[i] = (rand () % 100) + 1;
 		}
 	}
-	changedPointMoved.normalize();
+
+	changedPointMoved.normalize();   //zmeni velkost vectora na 1
 
 	float multiplier = radiusMin;
 	if (radiusMax > radiusMin) {

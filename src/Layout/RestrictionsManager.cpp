@@ -60,6 +60,20 @@ void RestrictionsManager::setRestrictions(QSet<Data::Node *> &nodes, const QShar
     }
 }
 
+void Layout::RestrictionsManager::setRestrictionToShape(
+    QLinkedList<osg::ref_ptr<Data::Node> > * nodesOfShapeGettersToRestrict,
+    QSharedPointer<Layout::ShapeGetter> shapeGetter
+){
+    QLinkedList<osg::ref_ptr<Data::Node> >::iterator nodeIt;
+    for (nodeIt=nodesOfShapeGettersToRestrict->begin(); nodeIt!=nodesOfShapeGettersToRestrict->end(); nodeIt++){
+        QSharedPointer<Layout::ShapeGetter> shapeGetterToRestrict = getShapeGetter(*nodeIt);
+            shapeGetterToRestrict->allowRestriction();
+            shapeGetter->setInvisible(true);
+            setRestrictions( shapeGetterToRestrict->getNodesOfShape(),shapeGetter);
+
+    }
+}
+
 float RestrictionsManager::distanceFromFocus(Data::Node &node)
 {
     mMutex.lock();
@@ -97,13 +111,12 @@ void RestrictionsManager::applyRestriction(Data::Node &node)
     // Set restriction by chosen shape
     if (!shapeGetter.isNull() && !node.isFocused())
     {
-        refreshShape(shapeGetter);
-
         QSharedPointer<Shape> shape = mLastShapes[shapeGetter];
         mRestrictedPositionGetter.setOriginalPosition( node.targetPositionConstRef() );
         shape->accept(mRestrictedPositionGetter);
         node.setRestrictedTargetPosition( mRestrictedPositionGetter.restrictedPositionConstRef() );
-    }
+    	refreshShape(shapeGetter);
+	}
     else
     {
         node.setRestrictedTargetPosition( node.targetPositionConstRef() );
@@ -149,16 +162,18 @@ void RestrictionsManager::setOrRunRestrictionRemovalHandler(const QSharedPointer
     mMutex.unlock();
 }
 
-void RestrictionsManager::setObserver(const QSharedPointer<RestrictionsObserver> &observer)
-{
-    mMutex.lock();
-    mObserver = observer;
+void Layout::RestrictionsManager::setObservers (
+        QSharedPointer<Vwr::RestrictionVisualizationsGroup> v_observer,
+        QSharedPointer<Vwr::RestrictionManipulatorsGroup> m_observer
+) {
+	mMutex.lock();
+        visualizationObserver = v_observer;
+        manipulationObserver = m_observer;
 
-    // Send notifications reflecting the current state to the new observer
-    for (LastShapesMapType::iterator it = mLastShapes.begin(); it != mLastShapes.end (); ++it)
-    {
-        notifyRestrictionAdded (it.key());
-        notifyShapeChanged (it.key(), it.value());
+	// send notifications reflecting the current state to the new observer
+	for (LastShapesMapType::iterator it = lastShapes_.begin (); it != lastShapes_.end (); ++it) {
+		notifyRestrictionAdded (it.key ());
+		notifyShapeChanged (it.key (), it.value ());
 	}
     mMutex.unlock();
 }
@@ -166,7 +181,8 @@ void RestrictionsManager::setObserver(const QSharedPointer<RestrictionsObserver>
 void RestrictionsManager::resetObserver()
 {
     mMutex.lock();
-    mObserver.clear();
+        visualizationObserver.clear ();
+        manipulationObserver.clear();
     mMutex.unlock();
 }
 
@@ -177,6 +193,16 @@ QSharedPointer<ShapeGetter> RestrictionsManager::getShapeGetter(Data::Node &node
         return it.value();
     else
         return QSharedPointer<ShapeGetter>();
+}
+
+osg::Group* Layout::RestrictionsManager::getNodes(QSharedPointer<ShapeGetter> shapeGetter){
+    osg::Group* result = new osg::Group;
+    RestrictionsMapType::iterator it;
+    for (it = restrictions_.begin(); it != restrictions_.end(); ++it){
+        if (it.value() == shapeGetter)  result->addChild(it.key());
+    }
+    return result;
+
 }
 
 void RestrictionsManager::refreshShape(const QSharedPointer<ShapeGetter> &shapeGetter)
@@ -194,23 +220,34 @@ void RestrictionsManager::refreshShape(const QSharedPointer<ShapeGetter> &shapeG
 
 void RestrictionsManager::notifyRestrictionAdded(const QSharedPointer<ShapeGetter> &shapeGetter)
 {
-    if (!mObserver.isNull())
-    {
-        mObserver->restrictionAdded(shapeGetter);
+        if (!visualizationObserver.isNull ()) {
+                visualizationObserver->restrictionAdded (shapeGetter);
 	}
+        if (!manipulationObserver.isNull ()) {
+                manipulationObserver->restrictionAdded (shapeGetter);
+        }
 }
 
 void RestrictionsManager::notifyShapeChanged(const QSharedPointer<ShapeGetter> &shapeGetter,
                                              const QSharedPointer<Shape> &shape)
 {
-    if (!mObserver.isNull())
-        mObserver->shapeChanged(shapeGetter, shape);
+        if (!visualizationObserver.isNull ()) {
+                visualizationObserver->shapeChanged (shapeGetter, shape);
+	}
+        if (!manipulationObserver.isNull ()) {
+                manipulationObserver->shapeChanged (shapeGetter, shape);
+
+        }
 }
 
 void RestrictionsManager::notifyRestrictionRemoved(const QSharedPointer<ShapeGetter> &shapeGetter)
 {
-    if (!mObserver.isNull())
-        mObserver->restrictionRemoved(shapeGetter);
+        if (!visualizationObserver.isNull ()) {
+                visualizationObserver->restrictionRemoved (shapeGetter);
+	}
+        if (!manipulationObserver.isNull ()) {
+                manipulationObserver->restrictionRemoved (shapeGetter);
+        }
 }
 
-}
+} // namespace

@@ -12,6 +12,8 @@
 #include "Layout/ShapeVisitor_Comparator.h"
 #include "Layout/RestrictionsObserver.h"
 #include "Layout/RestrictionRemovalHandler.h"
+#include "Viewer/RestrictionManipulatorsGroup.h"
+#include "Viewer/RestrictionVisualizationsGroup.h"
 
 namespace Data { class Node; }
 
@@ -44,6 +46,15 @@ public:
 	 */
     void setRestrictions(QSet<Data::Node *> &nodes, const QSharedPointer<ShapeGetter> &shapeGetter);
 
+        /**
+         * \brief Sets the restriction represented by the shapeGetter to nides that represented shape with
+         *  specific node.
+         */
+       void setRestrictionToShape(
+            QLinkedList<osg::ref_ptr<Data::Node> > * nodesOfShapeGettersToRestrict,
+            QSharedPointer<ShapeGetter> shapeGetter
+       );
+
     /**
      * \brief Finds out the distance of a node from the focus point according
      * to currently used restriction. If none restriction is used at the
@@ -64,6 +75,8 @@ public:
      * shape has been changed.
 	 */
     void applyRestriction(Data::Node &node);
+
+        osg::Group* getRestrictedNodes(Shape& shape);
 
 	/**
      * \brief Tries to set the removal handler, which defines operations which
@@ -90,7 +103,10 @@ public:
      * removed or its shape has been changed.
 	 * [observer pattern]
 	 */
-    void setObserver(const QSharedPointer<RestrictionsObserver> &observer);
+        void setObservers (
+                QSharedPointer<Vwr::RestrictionVisualizationsGroup> v_observer,
+                QSharedPointer<Vwr::RestrictionManipulatorsGroup> m_observer
+        );
 
 	/**
 	 * \brief Removes the observer.
@@ -99,6 +115,7 @@ public:
     void resetObserver();
 
 private:
+
 	/**
      * \brief Gets restriction (shape getter) associated with the specified
      * node.
@@ -112,7 +129,10 @@ private:
 	 */
     void refreshShape(const QSharedPointer<ShapeGetter> &shapeGetter);
 
+        osg::Group* getNodes(QSharedPointer<ShapeGetter> shapeGetter);
+
 private: // observer notification
+
 	/**
 	 * [observer pattern]
 	 */
@@ -129,7 +149,9 @@ private: // observer notification
     void notifyRestrictionRemoved(const QSharedPointer<ShapeGetter> &shapeGetter);
 
 private:
-	typedef QMap<Data::Node *, QSharedPointer<ShapeGetter> > RestrictionsMapType;
+
+        typedef QMap<osg::ref_ptr<Data::Node>, QSharedPointer<ShapeGetter> > RestrictionsMapType;
+	//typedef QMap<Data::Node *, QSharedPointer<ShapeGetter> > RestrictionsMapType;
 	typedef QMap<QSharedPointer<ShapeGetter>, long> ShapeGetterUsagesMapType;
 	typedef QMap<QSharedPointer<ShapeGetter>, QSharedPointer<Shape> > LastShapesMapType;
 	typedef QMap<QSharedPointer<ShapeGetter>, QSharedPointer<RestrictionRemovalHandler> > RemovalHandlersMapType;
@@ -177,7 +199,14 @@ private:
 	 * \brief Observer currently set.
 	 * NULL if no observer is set.
 	 */
-    QSharedPointer<RestrictionsObserver> mObserver;
+        QSharedPointer<Vwr::RestrictionVisualizationsGroup> visualizationObserver;
+
+        /**
+         * \brief Observer currently set.
+         * NULL if no observer is set.
+         */
+        QSharedPointer<Vwr::RestrictionManipulatorsGroup> manipulationObserver;
+
 
 	/**
      * \brief usage: to synchronize public method calls (they change/get

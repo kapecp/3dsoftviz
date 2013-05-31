@@ -3,6 +3,7 @@
 
 #include "Layout/Shape_Null.h"
 #include "Layout/Shape_Composite.h"
+#include "Layout/Shape_Intersection.h"
 #include "Layout/Shape_Plane.h"
 #include "Layout/Shape_Sphere.h"
 #include "Layout/Shape_SphereSurface.h"
@@ -23,6 +24,7 @@ protected:
 public:
     virtual void visit(Shape_Null &shape) = 0;
     virtual void visit(Shape_Composite &shape) = 0;
+	virtual void visit (Shape_Intersection & shape) = 0;
     virtual void visit(Shape_Plane &shape) = 0;
     virtual void visit(Shape_Sphere &shape) = 0;
     virtual void visit(Shape_SphereSurface &shape) = 0;

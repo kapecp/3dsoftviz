@@ -334,6 +334,15 @@ bool FRAlgorithm::iterate()
 
 bool FRAlgorithm::applyForces(Data::Node* node) 
 {
+
+    QMap<qlonglong, osg::ref_ptr<Data::Edge> >::iterator edgeIt;
+    for (edgeIt=node->getEdges()->begin();edgeIt!=node->getEdges()->end(); edgeIt++){
+        if ((*edgeIt)->isShared_X() || (*edgeIt)->isShared_Y() || (*edgeIt)->isShared_Z()){
+            osg::ref_ptr<Data::Node> secondNode = (*edgeIt)->getSecondNode(node);
+            if (secondNode->isFixed()) return false;
+        }
+    }
+
 	// nakumulovana sila
 	osg::Vec3f fv = node->getForce();
 	// zmensenie
@@ -361,6 +370,28 @@ bool FRAlgorithm::applyForces(Data::Node* node)
     // [GrafIT][.] using restrictions (modified and optimized for speed by Peter Sivak)
     node->setTargetPosition( node->targetPositionConstRef() + fv );   // Compute target position
     graph->getRestrictionsManager().applyRestriction(*node);          // Compute restricted target position
+	
+        for (edgeIt=node->getEdges()->begin();edgeIt!=node->getEdges()->end(); edgeIt++){
+            if ((*edgeIt)->isShared_X()){
+                osg::ref_ptr<Data::Node> secondNode = (*edgeIt)->getSecondNode(node);
+                osg::Vec3f secondOriginalTargetPosition = secondNode->getTargetPosition();
+                osg::Vec3f x = osg::Vec3f (restrictedTargetPosition.x(), secondOriginalTargetPosition.y(), secondOriginalTargetPosition.z());
+                secondNode->setTargetPosition(x);
+            }
+            if ((*edgeIt)->isShared_Y()){
+                osg::ref_ptr<Data::Node> secondNode = (*edgeIt)->getSecondNode(node);
+                osg::Vec3f secondOriginalTargetPosition = secondNode->getTargetPosition();
+                osg::Vec3f y = osg::Vec3f (secondOriginalTargetPosition.x(), restrictedTargetPosition.y(), secondOriginalTargetPosition.z());
+                secondNode->setTargetPosition(y);
+            }
+            if ((*edgeIt)->isShared_Z()){
+                osg::ref_ptr<Data::Node> secondNode = (*edgeIt)->getSecondNode(node);
+                osg::Vec3f secondOriginalTargetPosition = secondNode->getTargetPosition();
+                osg::Vec3f z = osg::Vec3f (secondOriginalTargetPosition.x(), secondOriginalTargetPosition.y(), restrictedTargetPosition.z());
+                secondNode->setTargetPosition(z);
+            }
+        }
+
 	// [GrafIT]
 
 	// energeticka strata = 1-flexibilita
@@ -390,7 +421,7 @@ void FRAlgorithm::addAttractive(Data::Edge* edge, float factor) {
 	edge->getDstNode()->addForce(fv);
 }
 
-/* Pricitanie pritazlivych sil od metazla */
+/* Pricitanie pritazlivych sil od metauzla */
 void FRAlgorithm::addMetaAttractive(Data::Node* u, Data::Node* meta, float factor) {
 	// [GrafIT][+] forces are only between nodes which are in the same graph (or some of them is meta) AND are not ignored
 	if (!areForcesBetween (u, meta)) {

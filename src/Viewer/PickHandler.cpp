@@ -262,7 +262,7 @@ bool PickHandler::handleDrag( const osgGA::GUIEventAdapter& ea, osgGA::GUIAction
 		coordinates->push_back(osg::Vec3(	   _mX, origin_mY, -1));
 
 		selectionQuad->getDrawable(0)->asGeometry()->setVertexArray(coordinates);
-	}
+        }
 	else if (pickMode == PickMode::NONE && leftButtonPressed)
 	{
 		Network::Client * client = Network::Client::getInstance();
@@ -278,7 +278,7 @@ bool PickHandler::handleDrag( const osgGA::GUIEventAdapter& ea, osgGA::GUIAction
 			isManipulatingNodes = true;
 			setSelectedNodesInterpolation(false);
 			toggleSelectedNodesFixedState(true);
-		}
+                }
 
 		osgViewer::Viewer* viewer = dynamic_cast<osgViewer::Viewer*>( &aa );
 
@@ -320,9 +320,11 @@ bool PickHandler::handlePush( const osgGA::GUIEventAdapter& ea, osgGA::GUIAction
 
 			drawSelectionQuad(origin_mX, origin_mY, viewer);
 		}
+
 		else
 		{
-			return pick(ea.getXnormalized() - 0.00005f, ea.getYnormalized() - 0.00005f, ea.getXnormalized() + 0.00005f, ea.getYnormalized() + 0.00005f, viewer );
+                        return pick(ea.getXnormalized() - 0.00005f, ea.getYnormalized() - 0.00005f, ea.getXnormalized() + 0.00005f, ea.getYnormalized() + 0.00005f, viewer );
+
 		}
 	}
 
@@ -331,8 +333,9 @@ bool PickHandler::handlePush( const osgGA::GUIEventAdapter& ea, osgGA::GUIAction
 	return false;
 }
 
-bool PickHandler::pick( const double xMin, const double yMin, const double xMax, const double yMax, osgViewer::Viewer* viewer )
-{
+
+bool PickHandler::pick( const double xMin, const double yMin, const double xMax, const double yMax, osgViewer::Viewer* viewer ){
+
 	if (!viewer->getSceneData())
 		// Nothing to pick.
 		return false;
@@ -366,13 +369,16 @@ bool PickHandler::pick( const double xMin, const double yMin, const double xMax,
 						bool nodePicked = false;
 						bool edgePicked = false;
 
-						if (selectionType == SelectionType::NODE || selectionType == SelectionType::ALL)
-							nodePicked = doNodePick(nodePath);
 
-						if ((selectionType == SelectionType::EDGE || selectionType == SelectionType::ALL) && !nodePicked)
-							edgePicked = doEdgePick(nodePath, hitr->primitiveIndex);
+                                                if (selectionType == SelectionType::NODE || selectionType == SelectionType::ALL)
+                                                            nodePicked = doNodePick(nodePath);
+                                                if (!nodePicked){
+                                                    if (selectionType == SelectionType::EDGE || selectionType == SelectionType::ALL)
+                                                        edgePicked = doEdgePick(nodePath, hitr->primitiveIndex);
+                                                }
 
-						result = result || nodePicked || edgePicked;
+
+                                                result = result || nodePicked || edgePicked ;
 					}
 				}
 			}
@@ -389,7 +395,7 @@ bool PickHandler::doSinglePick(osg::NodePath nodePath, unsigned int primitiveInd
 	else if (selectionType == SelectionType::EDGE)
 		return doEdgePick(nodePath, primitiveIndex);
 	else
-		return (doNodePick(nodePath) || doEdgePick(nodePath, primitiveIndex));
+                return (doNodePick(nodePath) || doEdgePick(nodePath, primitiveIndex));
 }
 
 bool PickHandler::doNodePick(osg::NodePath nodePath)
@@ -711,4 +717,19 @@ void PickHandler::setSelectedNodesInterpolation(bool state)
 		(*i)->setUsingInterpolation(state);
 		++i;
 	}
+}
+
+osg::ref_ptr<Data::Node> PickHandler::getPickedNodeWithMaxEdgeCount(){
+    int maxEdges=0;
+    osg::ref_ptr<Data::Node> rootNode;
+     QLinkedList<osg::ref_ptr<Data::Node> >::const_iterator itNode;
+     for ( itNode = pickedNodes.constBegin (); itNode != pickedNodes.constEnd (); itNode++) {
+         int actEdges = (*itNode)->getEdges()->size();
+         if ( actEdges>maxEdges){
+             rootNode=(*itNode);
+             maxEdges=actEdges;
+         }
+
+     }
+     return rootNode;
 }

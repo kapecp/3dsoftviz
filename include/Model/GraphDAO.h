@@ -6,6 +6,8 @@
 #define MODEL_GRAPHDAO_DEF 1
 
 #include "Data/Graph.h"
+#include "Model/NodeDAO.h"
+#include "Model/EdgeDAO.h"
 
 #include <QString>
 #include <QMap>

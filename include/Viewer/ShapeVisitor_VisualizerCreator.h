@@ -24,7 +24,7 @@ public:
 	/***/
 	virtual ~ShapeVisitor_VisualizerCreator (void) {};
 
-	osg::Node * getCreatedVisualizer (void);
+        osg::ref_ptr<osg::Node> getCreatedVisualizer (void);
 
 	/**
 	 * \brief Creates empty OSG group.
@@ -35,6 +35,11 @@ public:
 	 * \brief Creates OSG group containing visualizer for each shape contained in the composite shape.
 	 */
 	virtual void visit (Layout::Shape_Composite & shape);
+
+        /**
+         * \brief Creates OSG group containing visualizer for intersection of shapes contained in the composite shape.
+         */
+        virtual void visit (Layout::Shape_Intersection & shape);
 
 	/**
 	 * \brief Creates OSG geode visualizing the plane which conforms the plane position and rotation.
@@ -63,7 +68,7 @@ public:
 
 private: // visitor context
 
-	osg::Node * createdVisualizer_;
+        osg::ref_ptr<osg::Node> createdVisualizer_;
 
 private: // common visualizers
 
