@@ -51,6 +51,10 @@ bool Model::DB::openConnection(QString host_name, QString db_name, QString user_
     	//conn.setConnectOptions("requiressl=1");
     }
 
+	QString timeout;
+	timeout="connect_timeout=5";
+	conn.setConnectOptions(timeout);
+
     if(!conn.open()) {
         qDebug() << "[Model::DB::openConnection] Could not establish database connection: " << conn.lastError().databaseText();
         return false;
