@@ -142,7 +142,7 @@ namespace Data
          * Returned target position IS NOT multiplied by the graph scale.
          */
         osg::Vec3f targetPosition() const;
-
+         osg::Vec3f getTargetPosition() const;
         /**
          * \fn public constant targetPositionConstRef
          * \brief Gets target position of a node.

@@ -375,19 +375,19 @@ bool FRAlgorithm::applyForces(Data::Node* node)
             if ((*edgeIt)->isShared_X()){
                 osg::ref_ptr<Data::Node> secondNode = (*edgeIt)->getSecondNode(node);
                 osg::Vec3f secondOriginalTargetPosition = secondNode->getTargetPosition();
-                osg::Vec3f x = osg::Vec3f (restrictedTargetPosition.x(), secondOriginalTargetPosition.y(), secondOriginalTargetPosition.z());
+                osg::Vec3f x = osg::Vec3f (node->restrictedTargetPosition().x(), secondOriginalTargetPosition.y(), secondOriginalTargetPosition.z());
                 secondNode->setTargetPosition(x);
             }
             if ((*edgeIt)->isShared_Y()){
                 osg::ref_ptr<Data::Node> secondNode = (*edgeIt)->getSecondNode(node);
                 osg::Vec3f secondOriginalTargetPosition = secondNode->getTargetPosition();
-                osg::Vec3f y = osg::Vec3f (secondOriginalTargetPosition.x(), restrictedTargetPosition.y(), secondOriginalTargetPosition.z());
+                osg::Vec3f y = osg::Vec3f (secondOriginalTargetPosition.x(), node->restrictedTargetPosition().y(), secondOriginalTargetPosition.z());
                 secondNode->setTargetPosition(y);
             }
             if ((*edgeIt)->isShared_Z()){
                 osg::ref_ptr<Data::Node> secondNode = (*edgeIt)->getSecondNode(node);
                 osg::Vec3f secondOriginalTargetPosition = secondNode->getTargetPosition();
-                osg::Vec3f z = osg::Vec3f (secondOriginalTargetPosition.x(), secondOriginalTargetPosition.y(), restrictedTargetPosition.z());
+                osg::Vec3f z = osg::Vec3f (secondOriginalTargetPosition.x(), secondOriginalTargetPosition.y(), node->restrictedTargetPosition().z());
                 secondNode->setTargetPosition(z);
             }
         }

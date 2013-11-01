@@ -13,10 +13,7 @@ namespace Layout {
 	}
 #endif
 
-void RestrictionsManager::setRestrictions (
-	QSet<Data::Node *> nodes,
-	QSharedPointer<ShapeGetter> shapeGetter
-) {
+void RestrictionsManager::setRestrictions(QSet<Data::Node *> &nodes, const QSharedPointer<ShapeGetter> &shapeGetter) {
 
 	QList<QSharedPointer<RestrictionRemovalHandler> > removalHandlersToRun;
 
@@ -182,7 +179,7 @@ void Layout::RestrictionsManager::setObservers (
         manipulationObserver = m_observer;
 
 	// send notifications reflecting the current state to the new observer
-	for (LastShapesMapType::iterator it = lastShapes_.begin (); it != lastShapes_.end (); ++it) {
+    for (LastShapesMapType::iterator it = mLastShapes.begin (); it != mLastShapes.end (); ++it) {
 		notifyRestrictionAdded (it.key ());
 		notifyShapeChanged (it.key (), it.value ());
 	}
@@ -209,7 +206,7 @@ QSharedPointer<ShapeGetter> RestrictionsManager::getShapeGetter(Data::Node &node
 osg::Group* Layout::RestrictionsManager::getNodes(QSharedPointer<ShapeGetter> shapeGetter){
     osg::Group* result = new osg::Group;
     RestrictionsMapType::iterator it;
-    for (it = restrictions_.begin(); it != restrictions_.end(); ++it){
+    for (it = mRestrictions.begin(); it != mRestrictions.end(); ++it){
         if (it.value() == shapeGetter)  result->addChild(it.key());
     }
     return result;

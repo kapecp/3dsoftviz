@@ -109,7 +109,7 @@ void Data::Node::setIsFocused(bool value)
         setColor(osg::Vec4(1.0f, 1.0f, 1.0f, 1.0));
     }
 }
-
+osg::Vec3f Data::Node::getTargetPosition() const { return mTargetPosition; }
 osg::Vec3f Data::Node::targetPosition() const { return mTargetPosition; }
 const osg::Vec3f &Data::Node::targetPositionConstRef() const { return mTargetPosition; }
 void Data::Node::setTargetPosition(const osg::Vec3f &position) { mTargetPosition = position; }
