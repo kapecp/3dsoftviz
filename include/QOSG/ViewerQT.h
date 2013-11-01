@@ -75,7 +75,7 @@ namespace QOSG
 			  getCamera()->setGraphicsContext(getGraphicsWindow());
 			  getCamera()->setComputeNearFarMode(osg::CullSettings::DO_NOT_COMPUTE_NEAR_FAR);
 
-			  manipulator = new Vwr::CameraManipulator();
+			  manipulator = new Vwr::CameraManipulator(cg);
 			  pickHandler = new Vwr::PickHandler(manipulator, cg);
 
 			  addEventHandler(new osgViewer::StatsHandler);

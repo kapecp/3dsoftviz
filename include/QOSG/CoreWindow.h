@@ -32,6 +32,9 @@
 
 #include "Layout/ShapeGetter.h"
 #include "Layout/RestrictionRemovalHandler.h"
+#include "Layout/RestrictionRemovalHandler_RestrictionNodesRemover.h"
+#include "Layout/ShapeGetter_Circle_ByThreeNodes.h"
+#include "Layout/ShapeGetter_SpherePlane_ByThreeNodes.h"
 
 namespace QOSG
 {
@@ -173,19 +176,25 @@ namespace QOSG
 				*  \brief Type in combobox changed
 				*  \param  index    
 				*/
-                                void nodeTypeComboBoxChanged(int index);
+				void nodeTypeComboBoxChanged(int index);
 
-                                /**
-                                *  \fn public  applyColorClick
-                                *  \brief Apply selected color in colorpicker to selected node
-                                */
-                                void applyColorClick();
+				/**
+				*  \fn public  applyColorClick
+				*  \brief Apply selected color in colorpicker to selected node
+				*/
+				void applyColorClick();
 
-                                /**
-                                *  \fn public  applyLabelClick
-                                *  \brief Apply selected label to selected node
-                                */
-                                void applyLabelClick();
+				/**
+				*  \fn public  applyLabelClick
+				*  \brief Apply selected label to selected node
+				*/
+				void applyLabelClick();
+
+				/**
+				* \brief Creates a new CylinderSurface restriction (defined by positions of 2 nodes) and sets
+				* if to all selected nodes (replacing any previously attached restrictions to these nodes).
+				*/
+				void setRestriction_CylinderSurface();
 				
 				/**
 				 * \brief Creates a new SphereSurface restriction (defined by positions of 2 nodes) and sets
@@ -199,17 +208,54 @@ namespace QOSG
 				 */
 				void setRestriction_Sphere ();
 
+                /**
+                 * \brief Creates a new ConeSurface restriction (defined by positions of 2 nodes) and sets
+                 * if to all selected nodes (replacing any previously attached restrictions to these nodes).
+                 */
+                void setRestriction_ConeSurface();
+
 				/**
 				 * \brief Creates a new Plane restriction (defined by positions of 3 nodes) and sets
 				 * if to all selected nodes (replacing any previously attached restrictions to these nodes).
 				 */
-				void setRestriction_Plane ();
+                                void setRestriction_Plane (QLinkedList<osg::ref_ptr<Data::Node> > * nodesToRestrict = NULL);
+
+                                /**
+                                 * \brief Creates a new restriction - composition sphere and plane (defined by positions of 3 nodes) and sets
+                                 * if to all selected nodes (replacing any previously attached restrictions to these nodes).
+                                 */
+                                void setRestriction_SpherePlane (QLinkedList<osg::ref_ptr<Data::Node> > * nodesToRestrict = NULL);
+
+                                /**
+                                 * \brief Creates a new Circle restriction (defined by positions of 3 nodes) and sets
+                                 * if to all selected nodes (replacing any previously attached restrictions to these nodes).
+                                 */
+                                void setRestriction_Circle(QLinkedList<osg::ref_ptr<Data::Node> > * nodesToRestrict = NULL, osg::ref_ptr<Data::Node> node1 = NULL);
+
+                                /**
+                                 * \brief Creates a new Cone restriction with node with maximum edge count as root and sets
+                                 * if to all selected nodes (replacing any previously attached restrictions to these nodes).
+                                 */
+                                void setRestriction_Cone(QLinkedList<osg::ref_ptr<Data::Node> > * nodesToRestrict = NULL,
+                                                         osg::ref_ptr<Data::Node> parentNode = NULL);
+
+                                /**
+                                 * \brief Creates a new Cone Tree restriction with selected node as root (all previously
+                                 * attached restrictions are removed).
+                                 */
+                                void setRestriction_ConeTree ();
 
 				/**
 				 * \brief Removes restrictions from all selected nodes (if any has been set). Destroys a
 				 * restriction (including manipulation nodes) if the last usage has been removed.
 				 */
 				void unsetRestriction ();
+
+                /**
+                 * \brief Removes restrictions from all nodes (if any has been set). Destroys a
+                 * restriction (including manipulation nodes) if the last usage has been removed.
+                 */
+                void unsetRestrictionFromAll();
 								
 				/**
 				*  \fn public  add_EdgeClick
@@ -230,14 +276,14 @@ namespace QOSG
 				*/
 				bool removeClick();
 
-                                void start_server();
-                                void start_client();
-                                void send_message();
+				void start_server();
+				void start_client();
+				void send_message();
 
-                                void toggleSpyWatch();
-                                void toggleAttention();
+				void toggleSpyWatch();
+				void toggleAttention();
 
-                                void setAvatarScale(int scale);
+				void setAvatarScale(int scale);
 	private:
 
 		/**
@@ -352,21 +398,21 @@ namespace QOSG
 		*  QPushButton * removeMeta
 		*  \brief Action for removing meta nodes
 		*/
-                QPushButton * removeMeta;
+		QPushButton * removeMeta;
 
-                /**
-                *  QPushButton * applyColor
-                *  \brief Action for applying color to selected nodes
-                */
-                QPushButton * applyColor;
+		/**
+		*  QPushButton * applyColor
+		*  \brief Action for applying color to selected nodes
+		*/
+		QPushButton * applyColor;
 
-                /**
-                *  QPushButton * applyLabel
-                *  \brief Action for applying label to selected nodes
-                */
-                QPushButton * applyLabel;
+		/**
+		*  QPushButton * applyLabel
+		*  \brief Action for applying label to selected nodes
+		*/
+		QPushButton * applyLabel;
 
-                QLineEdit * le_applyLabel;
+		QLineEdit * le_applyLabel;
 
 		/**
 		 * \brief Button for adding SphereSurface restriction.
@@ -383,10 +429,55 @@ namespace QOSG
 		 */
 		QPushButton * b_SetRestriction_Plane;
 
+                /**
+                 * \brief Button for adding Sphere and Plane restriction.
+                 */
+                QPushButton * b_SetRestriction_SpherePlane;
+
+                /**
+                 * \brief Button for adding Circle restriction.
+                 */
+                QPushButton * b_SetRestriction_Circle;
+
+                /**
+                 * \brief Button for adding Cone restriction.
+                 */
+                QPushButton * b_SetRestriction_Cone;
+
+                /**
+                 * \brief Button for adding Cone Tree restriction.
+                 */
+                QPushButton * b_SetRestriction_ConeTree;
+
 		/**
 		 * \brief Button for removing restrictions.
 		 */
 		QPushButton * b_UnsetRestriction;
+
+        /**
+         * \brief Button for adding CylinderSurface restriction.
+         */
+        QPushButton * b_SetRestriction_CylinderSurface;
+
+        /**
+         * \brief Spinbox for modifying CylinderSurface restriction.
+         */
+        QSlider *b_SetRestriction_CylinderSurface_Slider;
+
+        /**
+         * \brief Button for adding ConeSurface restriction.
+         */
+        QPushButton * b_SetRestriction_ConeSurface;
+
+        /**
+         * \brief Spinbox for modifying ConeSurface restriction.
+         */
+        QSlider *b_SetRestriction_ConeSurface_Slider;
+
+        /**
+         * \brief Button for removing restrictions from all nodes.
+         */
+        QPushButton *b_UnsetRestrictionFromAll;
 
 		/**
 		*  QAction * create new Edge
@@ -475,23 +566,23 @@ namespace QOSG
 		*/
 		void createMenus();
 
-                /**
-                *  \fn private  createLeftToolBar
-                *  \brief Create left toolBar
-                */
-                void createLeftToolBar();
+		/**
+		*  \fn private  createLeftToolBar
+		*  \brief Create left toolBar
+		*/
+		void createLeftToolBar();
 
-                /**
-                *  \fn private  createRightToolBar
-                *  \brief Create right toolBar
-                */
-                void createRightToolBar();
+		/**
+		*  \fn private  createRightToolBar
+		*  \brief Create right toolBar
+		*/
+		void createRightToolBar();
 
-                /**
-                *  \fn private  createCollaborationToolBar
-                *  \brief Create collaboration toolBar
-                */
-                void createCollaborationToolBar();
+		/**
+		*  \fn private  createCollaborationToolBar
+		*  \brief Create collaboration toolBar
+		*/
+		void createCollaborationToolBar();
 
 		/**
 		*  \fn private  createHorizontalFrame
@@ -524,11 +615,11 @@ namespace QOSG
 		*/
 		QColor color;
 
-                QPushButton * b_send_message;
-                QLineEdit * le_message;
-                QSlider * sl_avatarScale;
+		QPushButton * b_send_message;
+		QLineEdit * le_message;
+		QSlider * sl_avatarScale;
 
-                Network::Client * client;
+		Network::Client * client;
 
 	public:
 
@@ -561,37 +652,53 @@ namespace QOSG
 		*  \return Layout::LayoutThread * 
 		*/
 		Layout::LayoutThread * getLayoutThread() const { return layout; }
-                bool playing() { return isPlaying; }
-                Vwr::CameraManipulator * getCameraManipulator() { return viewerWidget->getCameraManipulator(); }
+		bool playing() { return isPlaying; }
+		Vwr::CameraManipulator * getCameraManipulator() { return viewerWidget->getCameraManipulator(); }
 
 		/**
 		*  \fn inline public  setLayoutThread
 		*  \brief	Set the layout thread 
 		*  \param  val layout thread
 		*/
-                void setLayoutThread(Layout::LayoutThread * val) { layout = val; }
+		void setLayoutThread(Layout::LayoutThread * val) { layout = val; }
 
-                QLineEdit * le_client_name;
-                QLineEdit * le_server_addr;
-                QPushButton * b_start_client;
-                QPushButton * b_start_server;
-                QListWidget * lw_users;
-                QCheckBox *chb_spy;
-                QCheckBox *chb_center;
-                QCheckBox *chb_attention;
+		QLineEdit * le_client_name;
+		QLineEdit * le_server_addr;
+		QPushButton * b_start_client;
+		QPushButton * b_start_server;
+		QListWidget * lw_users;
+		QCheckBox *chb_spy;
+		QCheckBox *chb_center;
+		QCheckBox *chb_attention;
 
 
-                /**
-                 * \brief Gets selected nodes and sets the restriction defined by shapeGetter to these nodes.
-                 */
-                void setRestrictionToSelectedNodes (
-                        QSharedPointer<Layout::ShapeGetter> shapeGetter,
-                        Data::Graph * currentGraph,
-                        QSharedPointer<Layout::RestrictionRemovalHandler> removalHandler,
-                        QLinkedList<osg::ref_ptr<Data::Node> > * nodesToRestrict = NULL
-                );
+		/**
+		 * \brief Gets selected nodes and sets the restriction defined by shapeGetter to these nodes.
+		 */
+		void setRestrictionToSelectedNodes (
+			QSharedPointer<Layout::ShapeGetter> shapeGetter,
+			Data::Graph * currentGraph,
+            QSharedPointer<Layout::RestrictionRemovalHandler> removalHandler,
+			QLinkedList<osg::ref_ptr<Data::Node> > * nodesToRestrict = NULL
+		);
 
-        private:
+                void setRestrictionToShape(
+                    QSharedPointer<Layout::ShapeGetter> shapeGetter,
+                    Data::Graph * currentGraph,
+                    QSharedPointer<Layout::RestrictionRemovalHandler> removalHandler,
+                    QLinkedList<osg::ref_ptr<Data::Node> > nodesOfShapeGettersToRestrict
+				);
+
+	private:
+
+        /**
+         * \brief Gets all nodes and sets the restriction defined by shapeGetter to these nodes.
+         */
+        void setRestrictionToAllNodes (
+            QSharedPointer<Layout::ShapeGetter> shapeGetter,
+            Data::Graph * currentGraph,
+            QSharedPointer<Layout::RestrictionRemovalHandler> removalHandler
+        );
 
 	};
 }

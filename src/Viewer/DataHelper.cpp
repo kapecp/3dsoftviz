@@ -50,10 +50,10 @@ osg::ref_ptr<osg::Vec3Array> DataHelper::getEdgeVectors(osg::ref_ptr<Data::Node>
 {
 	osg::ref_ptr<osg::Vec3Array> edgeVectors = new osg::Vec3Array;
 
-	edgeVectors->push_back(osg::Vec3(inNode->getTargetPosition()));
-	edgeVectors->push_back(osg::Vec3(inNode->getTargetPosition().x() - 0.5, inNode->getTargetPosition().y(), inNode->getTargetPosition().z()));
-	edgeVectors->push_back(osg::Vec3(outNode->getTargetPosition().x() - 0.5, outNode->getTargetPosition().y(), outNode->getTargetPosition().z()));
-	edgeVectors->push_back(osg::Vec3(outNode->getTargetPosition()));
+    edgeVectors->push_back(osg::Vec3(inNode->restrictedTargetPosition()));
+    edgeVectors->push_back(osg::Vec3(inNode->restrictedTargetPosition().x() - 0.5, inNode->restrictedTargetPosition().y(), inNode->restrictedTargetPosition().z()));
+    edgeVectors->push_back(osg::Vec3(outNode->restrictedTargetPosition().x() - 0.5, outNode->restrictedTargetPosition().y(), outNode->restrictedTargetPosition().z()));
+    edgeVectors->push_back(osg::Vec3(outNode->restrictedTargetPosition()));
 
 	return edgeVectors;
 }

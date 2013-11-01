@@ -77,7 +77,8 @@ osg::ref_ptr<osg::Group> NodeGroup::getNodeGroup(osg::ref_ptr<Data::Node> node, 
 		if(node->isParentNode()==true)
 		{
 				osg::ref_ptr<osg::AutoTransform> at = new osg::AutoTransform;
-				at->setPosition(node->getTargetPosition() * graphScale);
+                //at->setPosition(node->getTargetPosition() * graphScale);
+                at->setPosition(node->restrictedTargetPosition() * graphScale);
 				at->setAutoRotateMode(osg::AutoTransform::ROTATE_TO_SCREEN);
 
 				osg::ShapeDrawable * shape = new osg::ShapeDrawable;
@@ -126,7 +127,8 @@ osg::ref_ptr<osg::Group> NodeGroup::getNodeGroup(osg::ref_ptr<Data::Node> node, 
 osg::ref_ptr<osg::AutoTransform> NodeGroup::wrapChild(osg::ref_ptr<Data::Node> node, float graphScale)
 {
 	osg::ref_ptr<osg::AutoTransform> at = new osg::AutoTransform;
-	at->setPosition(node->getTargetPosition() * graphScale);
+    //at->setPosition(node->getTargetPosition() * graphScale);
+    at->setPosition(node->restrictedTargetPosition() * graphScale);
 	at->setAutoRotateMode(osg::AutoTransform::ROTATE_TO_SCREEN);
 	at->addChild(node);
 

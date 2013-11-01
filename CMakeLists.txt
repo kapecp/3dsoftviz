@@ -7,12 +7,19 @@ SET (INSTALL_BIN . CACHE PATH "Directory for binaries.")
 SET (INSTALL_LIB . CACHE PATH "Directory for external libraries.")
 #~ SET (INSTALL_BIN bin CACHE PATH "Directory for binaries.")
 #~ SET (INSTALL_LIB lib CACHE PATH "Directory for external libraries.")
+
 SET (INSTALL_INC include CACHE PATH "Directory for library headers.")
+
 SET (INSTALL_DATA . CACHE PATH "Directory the package can store documentation, tests or other data in.")
 SET (INSTALL_DOC ${INSTALL_DATA}/doc CACHE PATH "Recommended directory to install documentation into.")
 SET (INSTALL_ETC ${INSTALL_DATA}/etc CACHE PATH "Other files.")
 SET (INSTALL_TEST ${INSTALL_DATA}/test CACHE PATH "Test files.")
 SET (INSTALL_EXAMPLE ${INSTALL_DATA}/example CACHE PATH "Recommended directory to install examples into.")
+
+# Default install prefix
+if ( CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT )
+  set ( CMAKE_INSTALL_PREFIX ${CMAKE_CURRENT_SOURCE_DIR}/_install CACHE PATH "Installation Destination" FORCE )
+endif ()
 
 # Default install prefix
 if ( CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT )
@@ -52,6 +59,7 @@ SET (CMAKE_INCLUDE_PATH
 	${CMAKE_INCLUDE_PATH})
 #SET (CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH})
 
+
 FIND_PACKAGE(ZLIB)
 FIND_PACKAGE(PNG )
 
@@ -64,6 +72,7 @@ SET(QT_USE_QTWEBKIT 1)
 SET(QT_USE_QTXML 1)
 SET(QT_USE_QTNETWORK 1)
 INCLUDE(${QT_USE_FILE})
+
 INCLUDE_DIRECTORIES(${QT_INCLUDE_DIR})
 
 # Find OpenSceneGraph
@@ -73,6 +82,7 @@ osgUtil
 OpenThreads
 osg
 osgAnimation
+
 osgDB
 osgFX
 #~ osgIntrospection
@@ -92,8 +102,10 @@ MESSAGE ("osg libraries:: ${OPENSCENEGRAPH_LIBRARIES}")
 INCLUDE_DIRECTORIES(
 ${PNG_INCLUDE_DIRECTORIES}
 ${ZLIB_INCLUDE_DIRECTORIES}
+
 ${OPENSCENEGRAPH_INCLUDE_DIRS}
 ${OSGVIEWER_INCLUDE_DIR}
+
 ${CMAKE_CURRENT_SOURCE_DIR}/include
 ${CMAKE_INCLUDE_PATH}
 ${CMAKE_CURRENT_BINARY_DIR} "./")
@@ -106,6 +118,7 @@ FILE(GLOB_RECURSE SRC  "src/*.cpp")
 FILE(GLOB_RECURSE INCL "include/*.h")
 
 # .h subor, ktory obsahuje Q_OBJECT
+
 SET(SOURCES_H
 	./include/OsgQtBrowser/QGraphicsViewAdapter.h
 	./include/QOSG/CoreWindow.h
@@ -115,16 +128,18 @@ SET(SOURCES_H
 	./include/QOSG/LoadGraphWindow.h
 	./include/QOSG/SelectLayoutWindow.h
 	./include/QOSG/CheckBoxList.h
-        ./include/QOSG/qtcolorpicker.h
-        ./include/Viewer/PickHandler.h
-        ./include/Network/Server.h
-        ./include/Network/Client.h
+	./include/QOSG/qtcolorpicker.h
+	./include/Viewer/PickHandler.h
+	./include/Network/Server.h
+	./include/Network/Client.h
 )
 
 # toto makro spracuje Q_OBJECT a vygeneruje novy cpp subor, ktory bude dostupny v ${SOURCES_H_MOC} premennej
 QT4_WRAP_CPP( SOURCES_H_MOC ${SOURCES_H} )
 
+
 ADD_EXECUTABLE(3DVisual ${INCL} ${SRC} ${SOURCES_H_MOC} )
+
 
 SOURCE_GROUP(\\src main.cpp)
 SOURCE_GROUP(\\src\\Network "^.*Network/.*$")
@@ -133,6 +148,7 @@ SOURCE_GROUP(\\src\\Core "^.*Core/.*$")
 SOURCE_GROUP(\\src\\Data "^.*Data/.*$")
 SOURCE_GROUP(\\src\\Manager "^.*Manager/.*$")
 SOURCE_GROUP(\\src\\Importer "^.*Importer/.*$")
+SOURCE_GROUP(\\src\\Math "^.*Math/.*$")
 SOURCE_GROUP(\\src\\Model "^.*Model/.*$")
 SOURCE_GROUP(\\src\\Util "^.*Util/.*$")
 SOURCE_GROUP(\\src\\Layout "^.*Layout/.*$")
@@ -140,13 +156,13 @@ SOURCE_GROUP(\\src\\QOSG "^.*QOSG/.*$")
 SOURCE_GROUP(\\src\\OsgQtBrowser "^.*OsgQtBrowser/.*$")
 SOURCE_GROUP(\\src\\Noise "^.*Noise/.*$")
 
-
 SOURCE_GROUP(\\headers\\Network "^.*Network/.*h$")
 SOURCE_GROUP(\\headers\\Viewer "^.*Viewer/.*h$")
 SOURCE_GROUP(\\headers\\Core "^.*Core/.*h$")
 SOURCE_GROUP(\\headers\\Data "^.*Data/.*h$")
 SOURCE_GROUP(\\headers\\Manager "^.*Manager/.*h$")
 SOURCE_GROUP(\\headers\\Importer "^.*Importer/.*h$")
+SOURCE_GROUP(\\headers\\Math "^.*Math/.*h$")
 SOURCE_GROUP(\\headers\\Model "^.*Model/.*h$")
 SOURCE_GROUP(\\headers\\Util "^.*Util/.*h$")
 SOURCE_GROUP(\\headers\\Layout "^.*Layout/.*h$")
@@ -155,6 +171,7 @@ SOURCE_GROUP(\\headers\\Noise "^.*Noise/.*h$")
 SOURCE_GROUP(\\headers\\OsgQtBrowser "^.*OsgQtBrowser/.*h$")
 
 SOURCE_GROUP(\\MOC "^.*moc_.*$")
+
 
 TARGET_LINK_LIBRARIES(3DVisual
 ${QT_LIBRARIES}
@@ -167,10 +184,10 @@ ${PNG_LIBRARY}
 noise
 )
 
+
 cotire(3DVisual)
 
 # Install all stuff
 INSTALL(TARGETS 3DVisual RUNTIME DESTINATION ${INSTALL_BIN})
 INSTALL(DIRECTORY resources/ DESTINATION ${INSTALL_DATA} PATTERN ".svn" EXCLUDE)
-
 

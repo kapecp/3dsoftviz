@@ -20,7 +20,8 @@ Data::Node::Node(qlonglong id, QString name, Data::Type* type, float scaling, Da
     this->id = id;
 	this->name = name;
 	this->type = type;
-	this->targetPosition = position;
+	this->mIsFocused = false;
+	this->mTargetPosition = position;
 	this->currentPosition = position * Util::ApplicationConfig::get()->getValue("Viewer.Display.NodeDistanceScale").toFloat();
 	this->graph = graph;
 	this->inDB = false;
@@ -49,13 +50,20 @@ Data::Node::Node(qlonglong id, QString name, Data::Type* type, float scaling, Da
 		if (++cnt % 3 == 0)
 			labelText = labelText.replace(pos, 1, "\n");
 	}
-
-	this->addDrawable(createNode(this->scale, Node::createStateSet(this->type)));
+// MERGE BEGIN
+// toto bolo u pleska/zelera
+//	this->addDrawable(createNode(this->scale, Node::createStateSet(this->type)));
 	
-	//vytvorenie grafickeho zobrazenia ako label
-	this->square = createSquare(this->type->getScale(), Node::createStateSet());
-	this->label = createLabel(this->type->getScale(), labelText);
+//	//vytvorenie grafickeho zobrazenia ako label
+//	this->square = createSquare(this->type->getScale(), Node::createStateSet());
+//	this->label = createLabel(this->type->getScale(), labelText);
 
+// toto bolo u sivaka
+    this->square = createNode(this->scale * 4, Node::createStateSet(this->type));
+    this->focusedSquare = createNode(this->scale * 16, Node::createStateSet(this->type));
+    this->addDrawable(square);
+    this->label = createLabel(this->type->getScale(), labelText);
+// MERGE END
 	this->force = osg::Vec3f();
 	this->velocity = osg::Vec3f(0,0,0);
 	this->fixed = false;
@@ -84,12 +92,35 @@ Data::Node::~Node(void)
 	delete edges;
 }
 
+bool Data::Node::isFocused() const { return mIsFocused; }
+
+void Data::Node::setIsFocused(bool value)
+{
+    mIsFocused = value;
+
+    if (value == true)
+    {
+        this->setDrawable(0, focusedSquare);
+        setColor(osg::Vec4(0.5f, 1.0f, 0.0f, 1.0));
+    }
+    else
+    {
+        this->setDrawable(0, square);
+        setColor(osg::Vec4(1.0f, 1.0f, 1.0f, 1.0));
+    }
+}
+
+osg::Vec3f Data::Node::targetPosition() const { return mTargetPosition; }
+const osg::Vec3f &Data::Node::targetPositionConstRef() const { return mTargetPosition; }
+void Data::Node::setTargetPosition(const osg::Vec3f &position) { mTargetPosition = position; }
+osg::Vec3f Data::Node::restrictedTargetPosition() const { return mRestrictedTargetPosition; }
+const osg::Vec3f &Data::Node::restrictedTargetPositionConstRef() const { return mRestrictedTargetPosition; }
+void Data::Node::setRestrictedTargetPosition(const osg::Vec3f &position) { mRestrictedTargetPosition = position; }
+
 void Data::Node::addEdge(osg::ref_ptr<Data::Edge> edge) { 
 	//pridanie napojenej hrany na uzol
 	edges->insert(edge->getId(), edge);
 }
-
-
 
 void Data::Node::removeEdge( osg::ref_ptr<Data::Edge> edge )
 {
@@ -208,7 +239,7 @@ osg::ref_ptr<osg::Drawable> Data::Node::createLabel(const float & scale, QString
 	QString fontPath = Util::ApplicationConfig::get()->getValue("Viewer.Labels.Font");
 	
 	// experimental value
-        float newScale = 1.375f * scale;
+	float newScale = 1.375f * scale;
 
 	if(fontPath != NULL && !fontPath.isEmpty())
 		label->setFont(fontPath.toStdString());
@@ -238,7 +269,7 @@ osg::ref_ptr<osg::StateSet> Data::Node::createStateSet(Data::Type * type)
 	stateSet->setMode(GL_BLEND, osg::StateAttribute::ON);
 	stateSet->setMode(GL_DEPTH_TEST, osg::StateAttribute::OFF);
 
-	stateSet->setRenderingHint(osg::StateSet::TRANSPARENT_BIN); 
+	stateSet->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
  
  	osg::ref_ptr<osg::Depth> depth = new osg::Depth;
  	depth->setWriteMask(false);
@@ -330,7 +361,8 @@ osg::Vec3f Data::Node::getCurrentPosition(bool calculateNew, float interpolation
 	{
 		float graphScale = Util::ApplicationConfig::get()->getValue("Viewer.Display.NodeDistanceScale").toFloat(); 
 
-		osg::Vec3 directionVector = osg::Vec3(targetPosition.x(), targetPosition.y(), targetPosition.z()) * graphScale - currentPosition;
+		//osg::Vec3 directionVector = osg::Vec3(targetPosition.x(), targetPosition.y(), targetPosition.z()) * graphScale - currentPosition;
+		osg::Vec3 directionVector = osg::Vec3(mRestrictedTargetPosition.x(), mRestrictedTargetPosition.y(), mRestrictedTargetPosition.z()) * graphScale - currentPosition;
 		this->currentPosition = osg::Vec3(directionVector * (usingInterpolation ? interpolationSpeed : 1) + this->currentPosition);
 	}
 

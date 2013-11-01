@@ -4,15 +4,14 @@
 #include <noise.h>
 #include <Noise/noiseutils.h>
 
-using namespace noise;
 using namespace Vwr;
 
 osg::ref_ptr<osg::Texture2D> PerlinNoiseTextureGenerator::getCoudTexture(int w, int h, int r, int g, int b, int alpha)//w and h speak for themselves, zoom wel zoom in and out on it, I usually  use 75. P stands for persistence, this controls the roughness of the picture, i use 1/2
 {                                                                               
-	module::Perlin perlinModule;
+	noise::module::Perlin perlinModule;
 
-	utils::NoiseMap heightMap;
-	utils::NoiseMapBuilderSphere heightMapBuilder;
+	noise::utils::NoiseMap heightMap;
+	noise::utils::NoiseMapBuilderSphere heightMapBuilder;
 
 	heightMapBuilder.SetSourceModule (perlinModule);
 	heightMapBuilder.SetDestNoiseMap (heightMap);
@@ -21,15 +20,15 @@ osg::ref_ptr<osg::Texture2D> PerlinNoiseTextureGenerator::getCoudTexture(int w, 
 
 	heightMapBuilder.Build ();
 
-	utils::RendererImage renderer;
-	utils::Image image;
+	noise::utils::RendererImage renderer;
+	noise::utils::Image image;
 
 	renderer.SetSourceNoiseMap (heightMap);
 	renderer.SetDestImage (image);
 
 	renderer.ClearGradient ();
-	renderer.AddGradientPoint (-1.0000, utils::Color (r, g, b, alpha));
-	renderer.AddGradientPoint ( 1.0000, utils::Color (0, 0, 0, 255)); 
+	renderer.AddGradientPoint (-1.0000, noise::utils::Color (r, g, b, alpha));
+	renderer.AddGradientPoint ( 1.0000, noise::utils::Color (0, 0, 0, 255)); 
 
 	renderer.Render ();
 

@@ -5,7 +5,6 @@
 #ifndef Model_DB_DEF
 #define Model_DB_DEF 1
 
-#include "Data/Graph.h"
 #include "Data/Node.h"
 #include "Data/Edge.h"
 #include "Data/Type.h"

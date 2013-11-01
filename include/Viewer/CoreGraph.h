@@ -27,8 +27,8 @@
 #include "Viewer/EdgeGroup.h"
 #include "Viewer/NodeGroup.h"
 #include "Viewer/RestrictionVisualizationsGroup.h"
+#include "Viewer/RestrictionManipulatorsGroup.h"
 
-//#include "Layout/Layout.h"
 #include "Util/ApplicationConfig.h"
 #include "Data/Edge.h"
 #include "Data/Node.h"
@@ -134,6 +134,8 @@ namespace Vwr
 			}
 		} 
 
+		osg::ref_ptr<osg::Camera> getCamera() { return camera; }
+
 
 		/**
 		*  \fn public  setEdgeLabelsVisible(bool visible)
@@ -169,6 +171,11 @@ namespace Vwr
 			qmetaNodesGroup->freezeNodePositions();
 		}
 
+		Vwr::NodeGroup * getNodesGroup() { return nodesGroup; }
+		Vwr::NodeGroup * getMetaNodesGroup() { return qmetaNodesGroup; }
+		Vwr::EdgeGroup * getEdgesGroup() { return edgesGroup; }
+		Vwr::EdgeGroup * getMetaEdgesGroup() { return qmetaEdgesGroup; }
+
 	private:
 
 		/**
@@ -201,6 +208,11 @@ namespace Vwr
 		 */
 		QSharedPointer<Vwr::RestrictionVisualizationsGroup> restrictionVisualizationsGroup;
 
+                /**
+                 * \brief Encapsulates part of the OSG including restriction manipulations.
+                 */
+                QSharedPointer<Vwr::RestrictionManipulatorsGroup> restrictionManipulatorsGroup;
+
 		/**
 		*  Data::Graph * graph
 		*  \brief current graph
@@ -230,14 +242,12 @@ namespace Vwr
 		*  \brief graph metaedges map
 		*/
 		QMap<qlonglong, osg::ref_ptr<Data::Edge> > *qmetaEdges;
-		
 
 		/**
 		*  Util::ApplicationConfig * appConf
 		*  \brief application configuration
 		*/
 		Util::ApplicationConfig* appConf;
-
 
 		/**
 		*  \fn private  initEdgeLabels
@@ -253,14 +263,12 @@ namespace Vwr
 		*/
 		osg::ref_ptr<osg::Group> initCustomNodes();
 
-
 		/**
 		*  \fn private  createSkyBox
 		*  \brief creates sky
 		*  \return osg::ref_ptr skybox node
 		*/
 		osg::ref_ptr<osg::Node> createSkyBox();
-
 
 		/**
 		*  osg::ref_ptr camera
@@ -274,20 +282,17 @@ namespace Vwr
 		*/
 		osg::ref_ptr<osg::Group> root;
 
-
 		/**
 		*  bool nodesFreezed
 		*  \brief true, if nodes are freezed
 		*/
 		bool nodesFreezed;
 
-
 		/**
 		*  QLinkedList<osg::ref_ptr<osg::Node> > customNodeList
 		*  \brief list of custom nodes 
 		*/
 		QLinkedList<osg::ref_ptr<osg::Node> > customNodeList;
-
 
 		/**
 		*  \fn private  synchronize
@@ -300,7 +305,6 @@ namespace Vwr
 		*  \brief Cleans up memory
 		*/
 		void cleanUp();
-
 
 		/**
 		*  int backgroundPosition
@@ -343,13 +347,18 @@ namespace Vwr
 		 */
 		int restrictionVisualizationsPosition;
 
+                /**
+                 * \brief Index of restrictionManipulatorsGroup in the root group.
+                 */
+                int restrictionManipulatorsPosition;
+
 		/**
 		*  int customNodesPosition
 		*  \brief custom nodes group position
 		*/
 		int customNodesPosition;
 
-                int prevTime;
+		int prevTime;
 	};
 }
 

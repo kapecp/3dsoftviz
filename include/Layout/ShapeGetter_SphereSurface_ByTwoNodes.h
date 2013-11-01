@@ -3,8 +3,6 @@
 //-----------------------------------------------------------------------------
 #include "Layout/ShapeGetter.h"
 //-----------------------------------------------------------------------------
-#include "Data/Node.h"
-//-----------------------------------------------------------------------------
 
 namespace Layout {
 
@@ -28,6 +26,7 @@ public:
 
 	virtual QSharedPointer<Shape> getShape (void);
 
+        virtual QSet<Data::Node *> getNodesOfShape();
 private:
 
 	osg::ref_ptr<Data::Node> centerNode_;

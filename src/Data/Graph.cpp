@@ -373,9 +373,9 @@ osg::ref_ptr<Data::Node> Data::Graph::mergeNodes(QLinkedList<osg::ref_ptr<Data::
 {
 	//vyratame velkost zluceneho uzla podla velkosti zlucovanych uzlov
 	float scale = this->getNodeScale() + (selectedNodes->count() / 2);
-	
+
 	//vytvorime novy zluceny uzol
-    osg::ref_ptr<Data::Node> mergedNode = new Data::Node((mergeNodeId != -1) ? mergeNodeId : this->incEleIdCounter(), "mergedNode", this->getNodeMetaType(), scale, this, position);
+	osg::ref_ptr<Data::Node> mergedNode = new Data::Node((mergeNodeId != -1) ? mergeNodeId : this->incEleIdCounter(), "mergedNode", this->getNodeMetaType(), scale, this, position);
 	mergedNode->setColor(osg::Vec4(0, 0, 1, 1));
 
 	QList<qlonglong> connectedNodes;
@@ -890,6 +890,61 @@ Data::GraphLayout* Data::Graph::selectLayout( Data::GraphLayout* layout )
     return this->selectedLayout;
 }
 
+Data::GraphSpanningTree* Data::Graph::getSpanningTree(qlonglong rootId){
+    Data::GraphSpanningTree* spanningTree = new Data::GraphSpanningTree();
+    QList<qlonglong> queue;
+    QList<int> depthQueue;
+    QMap<qlonglong, bool> visited;
+    QList<qlonglong> pickedNodes;
+
+    QMap<qlonglong, osg::ref_ptr<Data::Node> >::const_iterator itNode;
+    for(itNode = nodes->constBegin(); itNode != nodes->constEnd(); itNode++)
+        visited[itNode.key()] = false;
+
+    visited[rootId] = true;
+    queue.push_front(rootId);
+    int rootDepth = 0;
+    depthQueue.push_front(rootDepth);
+    pickedNodes.append(rootId);
+    spanningTree->addGroup(pickedNodes,rootDepth, 0);
+
+
+    while (!queue.empty()) {
+        pickedNodes.clear();
+        osg::ref_ptr<Data::Node> parent = *nodes->find(queue.back());
+        int parentDepth = depthQueue.back();
+        queue.pop_back();
+        depthQueue.pop_back();
+
+        QMap< qlonglong,osg::ref_ptr<Data::Edge> >::const_iterator itEdge;
+        for (itEdge = parent->getEdges()->constBegin();  itEdge != parent->getEdges()->constEnd(); itEdge++){
+
+            osg::ref_ptr<Data::Node> srcNode = itEdge.value().get()->getSrcNode();
+            osg::ref_ptr<Data::Node> dstNode = itEdge.value().get()->getDstNode();
+            qlonglong childNodeId;
+            if (dstNode->getId() == parent->getId()) {
+                    childNodeId = srcNode->getId();
+            }
+            else {
+                    childNodeId = dstNode->getId();
+            }
+
+            if (!visited[childNodeId]) {
+                visited[childNodeId] = true;
+                queue.push_front(childNodeId);
+                pickedNodes.append(childNodeId);
+            }
+        }
+        if (! pickedNodes.empty()){
+            int actDepth = parentDepth+1;
+            for (int i = 0; i<pickedNodes.size();i++) depthQueue.push_front(actDepth);
+            spanningTree->addGroup(pickedNodes,actDepth, parent->getId());
+        }
+     }
+
+    return spanningTree;
+}
+
 qlonglong Data::Graph::getMaxEleIdFromElements()
 {
 	//hladame najvacsi element podla kluca
@@ -1171,6 +1226,22 @@ Layout::RestrictionsManager & Data::Graph::getRestrictionsManager (void) {
 }
 
 osg::ref_ptr<Data::Node> Data::Graph::addRestrictionNode(QString name, osg::Vec3f position, int nodeId) {
+	osg::ref_ptr<Data::Node> node;
+
+	//pridame obmedzovac reprezentovany uzlom
+	if (nodeId > -1) {
+		node = addNode (nodeId, name, getRestrictionNodeMetaType (), position);
+	} else {
+		node = addNode (name, getRestrictionNodeMetaType (), position);
+	}
+	node->setIgnored (true);
+	node->setPositionCanBeRestricted (false);
+	node->setRemovableByUser (false);
+
+	return node;
+}
+
+osg::ref_ptr<Data::Node> Data::Graph::addFloatingRestrictionNode(QString name, osg::Vec3f position, int nodeId) {
         osg::ref_ptr<Data::Node> node;
 
         //pridame obmedzovac reprezentovany uzlom
@@ -1179,10 +1250,11 @@ osg::ref_ptr<Data::Node> Data::Graph::addRestrictionNode(QString name, osg::Vec3
         } else {
             node = addNode (name, getRestrictionNodeMetaType (), position);
         }
-	node->setIgnored (true);
-	node->setPositionCanBeRestricted (false);
-	node->setRemovableByUser (false);
+        //node->setIgnored (true);
+        node->setIgnored (false);
+        node->setPositionCanBeRestricted (true);
+        node->setRemovableByUser (false);
 
-	return node;
+        return node;
 }
 

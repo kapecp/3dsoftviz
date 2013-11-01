@@ -3,13 +3,22 @@
 #include <osg/Notify>
 #include <osg/BoundsChecking>
 #include <osgViewer/Viewer>
+#include "Manager/Manager.h"
 
 #include "Network/Server.h"
 #include "Network/Client.h"
 
+//using namespace osg;
+//using namespace osgGA;
+//using namespace Vwr;
+
+double Vwr::CameraManipulator::EYE_MOVEMENT_SPEED;
+double Vwr::CameraManipulator::TARGET_MOVEMENT_SPEED;
+double Vwr::CameraManipulator::SCREEN_MARGIN;
+
 namespace Vwr {
 
-CameraManipulator::CameraManipulator()
+Vwr::CameraManipulator::CameraManipulator(Vwr::CoreGraph * coreGraph)
 {
 	appConf = Util::ApplicationConfig::get();
 
@@ -26,14 +35,21 @@ CameraManipulator::CameraManipulator()
 	maxSpeed = appConf->getValue("Viewer.CameraManipulator.MaxSpeed").toFloat();
 	speedEpsilon = 0.02f;
 
-        stop();
+	movingAutomatically = false;
+
+	EYE_MOVEMENT_SPEED = 0.005;
+	TARGET_MOVEMENT_SPEED = 0.005;
+	SCREEN_MARGIN = 200;
+
+	this->coreGraph = coreGraph;
+	stop();
 }
 
-CameraManipulator::~CameraManipulator()
+Vwr::CameraManipulator::~CameraManipulator()
 {
 }
 
-void CameraManipulator::setNode(osg::Node* node)
+void Vwr::CameraManipulator::setNode(osg::Node* node)
 {
     _node = node;
     if (_node.get())
@@ -45,26 +61,26 @@ void CameraManipulator::setNode(osg::Node* node)
 }
 
 
-const osg::Node* CameraManipulator::getNode() const
+const osg::Node* Vwr::CameraManipulator::getNode() const
 {
     return _node.get();
 }
 
 
-osg::Node* CameraManipulator::getNode()
+osg::Node* Vwr::CameraManipulator::getNode()
 {
     return _node.get();
 }
 
 
-void CameraManipulator::home(double /*currentTime*/)
+void Vwr::CameraManipulator::home(double /*currentTime*/)
 {
     if (getAutoComputeHomePosition()) computeHomePosition();
     computePosition(_homeEye, _homeCenter, _homeUp);
     _thrown = false;
 }
 
-void CameraManipulator::home(const osgGA::GUIEventAdapter& ea ,osgGA::GUIActionAdapter& us)
+void Vwr::CameraManipulator::home(const GUIEventAdapter& ea ,GUIActionAdapter& us)
 {
     home(ea.getTime());
     us.requestRedraw();
@@ -72,24 +88,24 @@ void CameraManipulator::home(const osgGA::GUIEventAdapter& ea ,osgGA::GUIActionA
 }
 
 
-void CameraManipulator::init(const osgGA::GUIEventAdapter& ,osgGA::GUIActionAdapter& )
+void Vwr::CameraManipulator::init(const GUIEventAdapter& ,GUIActionAdapter& )
 {
     flushMouseEventStack();
 }
 
 
-void CameraManipulator::getUsage(osg::ApplicationUsage& usage) const
+void Vwr::CameraManipulator::getUsage(osg::ApplicationUsage& usage) const
 {
     usage.addKeyboardMouseBinding("Trackball: Space","Reset the viewing position to home");
     usage.addKeyboardMouseBinding("Trackball: +","When in stereo, increase the fusion distance");
     usage.addKeyboardMouseBinding("Trackball: -","When in stereo, reduce the fusion distance");
 }
 
-bool CameraManipulator::handle(const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& us)
+bool Vwr::CameraManipulator::handle(const GUIEventAdapter& ea, GUIActionAdapter& us)
 {
     switch(ea.getEventType())
     {
-        case(osgGA::GUIEventAdapter::FRAME):
+        case(GUIEventAdapter::FRAME):
         {
 			return handleFrame(ea, us);
         }
@@ -101,32 +117,32 @@ bool CameraManipulator::handle(const osgGA::GUIEventAdapter& ea, osgGA::GUIActio
 
     switch(ea.getEventType())
     {
-        case(osgGA::GUIEventAdapter::PUSH):
+        case(GUIEventAdapter::PUSH):
         {
 			return handlePush(ea, us);
         }
-        case(osgGA::GUIEventAdapter::RELEASE):
+        case(GUIEventAdapter::RELEASE):
         {
             return handleRelease(ea, us);
         }
-        case(osgGA::GUIEventAdapter::DRAG):
-        case(osgGA::GUIEventAdapter::SCROLL):
+        case(GUIEventAdapter::DRAG):
+        case(GUIEventAdapter::SCROLL):
         {
 			return handleScroll(ea, us);
         }
-        case(osgGA::GUIEventAdapter::MOVE):
+        case(GUIEventAdapter::MOVE):
         {
             return false;
         }
-		case(osgGA::GUIEventAdapter::KEYDOWN):
+		case(GUIEventAdapter::KEYDOWN):
 		{
 			return handleKeyDown(ea, us);
 		}
-		case(osgGA::GUIEventAdapter::KEYUP):
+		case(GUIEventAdapter::KEYUP):
 		{
 			return handleKeyUp( ea, us );
 		}
-        case(osgGA::GUIEventAdapter::FRAME):
+        case(GUIEventAdapter::FRAME):
 		{
             if (_thrown)
             {
@@ -140,7 +156,7 @@ bool CameraManipulator::handle(const osgGA::GUIEventAdapter& ea, osgGA::GUIActio
     }
 }
 
-bool CameraManipulator::handleScroll(const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& us)
+bool Vwr::CameraManipulator::handleScroll(const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& us)
 {
 	addMouseEvent(ea);
 	if (calcMovement()) us.requestRedraw();
@@ -149,7 +165,7 @@ bool CameraManipulator::handleScroll(const osgGA::GUIEventAdapter& ea, osgGA::GU
 	return true;
 }
 
-bool CameraManipulator::handleRelease(const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& us)
+bool Vwr::CameraManipulator::handleRelease(const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& us)
 {
 	if (ea.getButtonMask()==0)
 	{
@@ -183,17 +199,17 @@ bool CameraManipulator::handleRelease(const osgGA::GUIEventAdapter& ea, osgGA::G
 		if (calcMovement()) us.requestRedraw();
 		us.requestContinuousUpdate(false);
 		_thrown = false;
-        }
+	}
 
-        notifyServer();
-        notifyClients();
+	notifyServer();
+	notifyClients();
 
 	return true;
 }
 
-bool CameraManipulator::handlePush(const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& us)
+bool Vwr::CameraManipulator::handlePush(const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& us)
 {
-	if (ea.getButtonMask() == osgGA::GUIEventAdapter::MIDDLE_MOUSE_BUTTON)
+	if (ea.getButtonMask() == GUIEventAdapter::MIDDLE_MOUSE_BUTTON)
 	{
 		if (_distance != 0)
 		{
@@ -207,11 +223,12 @@ bool CameraManipulator::handlePush(const osgGA::GUIEventAdapter& ea, osgGA::GUIA
 			_center = eye;
 			_distance = 0;
 		}
-		else
-                        _distance = lastDistance;
+		else {
+			_distance = lastDistance;
+		}
 
-                notifyServer();
-                notifyClients();
+		notifyServer();
+		notifyClients();
 
 		return true;
 	}
@@ -226,7 +243,7 @@ bool CameraManipulator::handlePush(const osgGA::GUIEventAdapter& ea, osgGA::GUIA
 	}
 }
 
-bool CameraManipulator::handleFrame(const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& us)
+bool Vwr::CameraManipulator::handleFrame(const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& us)
 {
 	double current_frame_time = ea.getTime();
 
@@ -238,11 +255,12 @@ bool CameraManipulator::handleFrame(const osgGA::GUIEventAdapter& ea, osgGA::GUI
 		if (calcMovement()) us.requestRedraw();
 	}
 
-        frame(ea,us);
+	frame(ea,us);
+
 	return false;
 }
 
-bool CameraManipulator::isMouseMoving()
+bool Vwr::CameraManipulator::isMouseMoving()
 {
     if (_ga_t0.get()==NULL || _ga_t1.get()==NULL) return false;
 
@@ -257,37 +275,36 @@ bool CameraManipulator::isMouseMoving()
 }
 
 
-void CameraManipulator::flushMouseEventStack()
+void Vwr::CameraManipulator::flushMouseEventStack()
 {
     _ga_t1 = NULL;
     _ga_t0 = NULL;
 }
 
 
-void CameraManipulator::addMouseEvent(const osgGA::GUIEventAdapter& ea)
+void Vwr::CameraManipulator::addMouseEvent(const GUIEventAdapter& ea)
 {
     _ga_t1 = _ga_t0;
     _ga_t0 = &ea;
 }
 
-void CameraManipulator::setByMatrix(const osg::Matrixd& matrix)
+void Vwr::CameraManipulator::setByMatrix(const osg::Matrixd& matrix)
 {
     _center = osg::Vec3(0.0f,0.0f,-_distance)*matrix;
     _rotation = matrix.getRotate();
-
 }
 
-osg::Matrixd CameraManipulator::getMatrix() const
+osg::Matrixd Vwr::CameraManipulator::getMatrix() const
 {
     return osg::Matrixd::translate(0.0,0.0,_distance)*osg::Matrixd::rotate(_rotation)*osg::Matrixd::translate(_center);
 }
 
-osg::Matrixd CameraManipulator::getInverseMatrix() const
+osg::Matrixd Vwr::CameraManipulator::getInverseMatrix() const
 {
     return osg::Matrixd::translate(-_center)*osg::Matrixd::rotate(_rotation.inverse())*osg::Matrixd::translate(0.0,0.0,-_distance);
 }
 
-void CameraManipulator::computePosition(const osg::Vec3& eye,const osg::Vec3& center,const osg::Vec3& up)
+void Vwr::CameraManipulator::computePosition(const osg::Vec3& eye,const osg::Vec3& center,const osg::Vec3& up)
 {
 
     osg::Vec3 lv(center-eye);
@@ -314,7 +331,7 @@ void CameraManipulator::computePosition(const osg::Vec3& eye,const osg::Vec3& ce
 }
 
 
-bool CameraManipulator::calcMovement()
+bool Vwr::CameraManipulator::calcMovement()
 {
     // mouse scroll is only a single event
     if (_ga_t0.get()==NULL) return false;
@@ -323,7 +340,7 @@ bool CameraManipulator::calcMovement()
     float dy=0.0f;
     unsigned int buttonMask=osgGA::GUIEventAdapter::NONE;
 
-    if (_ga_t0->getEventType()==osgGA::GUIEventAdapter::SCROLL)
+    if (_ga_t0->getEventType()==GUIEventAdapter::SCROLL)
     {
         switch (_ga_t0->getScrollingMotion()) {
         case osgGA::GUIEventAdapter::SCROLL_UP:
@@ -347,7 +364,7 @@ bool CameraManipulator::calcMovement()
         default:
             break;
         }
-        buttonMask=osgGA::GUIEventAdapter::SCROLL;
+        buttonMask=GUIEventAdapter::SCROLL;
     } 
     else 
     {
@@ -377,7 +394,7 @@ bool CameraManipulator::calcMovement()
             _delta_frame_time / (_ga_t0->getTime() - _ga_t1->getTime()) :
             1.0;
 
-    if (buttonMask==osgGA::GUIEventAdapter::RIGHT_MOUSE_BUTTON)
+    if (buttonMask==GUIEventAdapter::RIGHT_MOUSE_BUTTON)
     {
 
         // rotate camera.
@@ -407,7 +424,7 @@ bool CameraManipulator::calcMovement()
         return true;
 
     }
-    else if (buttonMask==(osgGA::GUIEventAdapter::LEFT_MOUSE_BUTTON|osgGA::GUIEventAdapter::RIGHT_MOUSE_BUTTON))
+    else if (buttonMask==(GUIEventAdapter::LEFT_MOUSE_BUTTON|GUIEventAdapter::RIGHT_MOUSE_BUTTON))
     {
 
         // pan model.
@@ -424,22 +441,23 @@ bool CameraManipulator::calcMovement()
         notifyServer();
         notifyClients();
 
+		return true;
     }
-    else if (buttonMask==osgGA::GUIEventAdapter::SCROLL)
+    else if (buttonMask==GUIEventAdapter::SCROLL)
     {
 
         // zoom model.
 
-        float fd = _distance;
-        float scale = 1.0f+ dy * throwScale;
-        if (fd*scale>_modelScale*_minimumZoomScale)
-        {
-            if (_distance * scale < 10000)
-                _distance *= scale;
-        }
+		float fd = _distance;
+		float scale = 1.0f+ dy * throwScale;
+		if (fd*scale>_modelScale*_minimumZoomScale)
+		{
+			if (_distance * scale < 10000)
+				_distance *= scale;
+		}
 
-        notifyServer();
-        notifyClients();
+		notifyServer();
+		notifyClients();
 
         return true;
     }
@@ -455,7 +473,7 @@ bool CameraManipulator::calcMovement()
  * simple example, though, so that is left as an Exercise for the
  * Programmer.
  */
-void CameraManipulator::setTrackballSize(float size)
+void Vwr::CameraManipulator::setTrackballSize(float size)
 {
     _trackballSize = size;
      osg::clampBetweenRange(_trackballSize,0.1f,1.0f,"CameraManipulator::setTrackballSize(float)");
@@ -473,7 +491,7 @@ void CameraManipulator::setTrackballSize(float size)
  * It is assumed that the arguments to this routine are in the range
  * (-1.0 ... 1.0)
  */
-void CameraManipulator::trackball(osg::Vec3& axis,float& angle, float p1x, float p1y, float p2x, float p2y)
+void Vwr::CameraManipulator::trackball(osg::Vec3& axis,float& angle, float p1x, float p1y, float p2x, float p2y)
 {
     /*
      * First, figure out z-coordinates for projection of P1 and P2 to
@@ -522,7 +540,7 @@ axis = p2^p1;
  * Project an x,y pair onto a sphere of radius r OR a hyperbolic sheet
  * if we are away from the center of the sphere.
  */
-float CameraManipulator::tb_project_to_sphere(float r, float x, float y)
+float Vwr::CameraManipulator::tb_project_to_sphere(float r, float x, float y)
 {
     float d, t, z;
 
@@ -548,7 +566,7 @@ float CameraManipulator::tb_project_to_sphere(float r, float x, float y)
  * Metoda spomali pohyb na zaklade zdroja prijatej udalosti. 
  * 
  */
-bool CameraManipulator::handleKeyUp( const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter & us)
+bool Vwr::CameraManipulator::handleKeyUp( const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter & us)
 {
 	switch( ea.getKey() )
 	{
@@ -561,8 +579,7 @@ bool CameraManipulator::handleKeyUp( const osgGA::GUIEventAdapter& ea, osgGA::GU
 		us.requestRedraw();
 		us.requestContinuousUpdate(false);
 
-                stop();
-
+		stop();
 		break;
 	}
 	case osgGA::GUIEventAdapter::KEY_Up:
@@ -579,10 +596,10 @@ bool CameraManipulator::handleKeyUp( const osgGA::GUIEventAdapter& ea, osgGA::GU
 	case osgGA::GUIEventAdapter::KEY_Page_Down:
 		decelerateVerticalRate = true;
 		break;
-        }
+	}
 
-        notifyServer();
-        notifyClients();
+	notifyServer();
+	notifyClients();
 
 	return true;
 }
@@ -595,7 +612,7 @@ bool CameraManipulator::handleKeyUp( const osgGA::GUIEventAdapter& ea, osgGA::GU
  * Metoda zrychli pohyb na zaklade zdroja prijatej udalosti. 
  * 
  */
-bool CameraManipulator::handleKeyDown( const osgGA::GUIEventAdapter &ea, osgGA::GUIActionAdapter & )
+bool Vwr::CameraManipulator::handleKeyDown( const osgGA::GUIEventAdapter &ea, osgGA::GUIActionAdapter & )
 {
 	int i = ea.getKey();
 	switch( ea.getKey() )
@@ -641,8 +658,8 @@ bool CameraManipulator::handleKeyDown( const osgGA::GUIEventAdapter &ea, osgGA::
 		}
 	}
 
-        notifyServer();
-        notifyClients();
+	notifyServer();
+	notifyClients();
 
 	return true;
 }
@@ -655,10 +672,103 @@ bool CameraManipulator::handleKeyDown( const osgGA::GUIEventAdapter &ea, osgGA::
  * Funkcia vypocita poziciu kamery a zmensi rychlost pohybu.
  * 
  */
-void CameraManipulator::frame( const osgGA::GUIEventAdapter &ea, osgGA::GUIActionAdapter &aa )
+void Vwr::CameraManipulator::frame( const osgGA::GUIEventAdapter &ea, osgGA::GUIActionAdapter &aa )
 {
 	osgViewer::Viewer* viewer = dynamic_cast<osgViewer::Viewer*>( &aa );
 
+	// ak sme v rezime automatickeho pohybu
+	if(movingAutomatically)
+	{
+		// inicializujeme premenne
+		if (!automaticMovementInitialized)
+			initAutomaticMovement(viewer);
+
+		// dokym pohlad a pozicia neopisu celu trajektoriu
+		if (t1 <= 1 || t2 <= 1)
+		{
+			// ziskanie novych pozicii na krivke
+			if (t1 <= 1)
+			{
+				cameraPosition = CameraMath::getPointOnNextBezierCurve(t1, cameraPositions, w1);	
+				t1 += EYE_MOVEMENT_SPEED;
+			}
+
+			if (t2 <= 1)
+			{
+				targetPoint = CameraMath::getPointOnNextBezierCurve(t2, targetPositions, w2 );
+				t2 += TARGET_MOVEMENT_SPEED;
+			}
+
+
+			// aktualne pozicie kamery
+			osg::Vec3d eye;
+			osg::Vec3d center;
+			osg::Vec3d up;
+
+			viewer->getCamera()->getViewMatrixAsLookAt(eye, center, up);
+
+			// prepocitanie koordinatov kamerery s novymi hodnotami
+			computePosition(cameraPosition, targetPoint, up);
+
+			// zobrazenie trajektorie kamery
+			if (appConf->getValue("Viewer.Display.CameraPath").toInt() == 1)
+			{
+				QLinkedList<osg::ref_ptr<osg::Node> > * list = coreGraph->getCustomNodeList();
+				osg::ref_ptr<osg::Group> group = new osg::Group;
+				osg::ref_ptr<osg::Geode> g1 = new osg::Geode;
+
+				g1->addDrawable(CameraMath::createAxis(eye, lastPosition));
+				g1->addDrawable(CameraMath::createAxis(targetPoint, lastTargetPoint, osg::Vec4d(1,0,0,1)));
+
+				group->addChild(g1);
+				lastPosition = eye;
+				lastTargetPoint = targetPoint;
+				list->push_back(group);
+			}
+
+			// vypis metriky do konzoly
+			if (appConf->getValue("Graph.Metrics.ViewMetrics").toInt() == 1)
+			{
+				computeViewMetrics(viewer, selectedCluster);
+			}
+
+		}
+
+		// ukoncenie pohybu
+		else
+		{
+			movingAutomatically = false;
+
+			if (appConf->getValue("Viewer.Display.CameraPositions").toInt() == 1)
+			{
+				osg::Vec3d eye;
+				osg::Vec3d center;
+				osg::Vec3d up;
+
+				viewer->getCamera()->getViewMatrixAsLookAt(eye, center, up);
+
+				Data::Graph * g = Manager::GraphManager::getInstance()->getActiveGraph();
+				g->addNode("EndNode", g->getNodeMetaType(), eye);
+			}
+
+	//		osg::Vec3d eye;
+	//		osg::Vec3d center;
+	//		osg::Vec3d up;
+
+	//		viewer->getCamera()->getViewMatrixAsLookAt(eye, center, up);
+	//			cout << eye.x() << " " << eye.y() << " " << eye.z() << "\n";
+		}
+	}
+	// standardny frame
+	else
+	{
+		computeStandardFrame(ea, aa);
+	}
+}
+
+void Vwr::CameraManipulator::computeStandardFrame(const osgGA::GUIEventAdapter &ea, osgGA::GUIActionAdapter &aa)
+{
+	osgViewer::Viewer* viewer = dynamic_cast<osgViewer::Viewer*>( &aa );
 	double t1 = ea.getTime();
 
 	if( t0 == 0.0 )
@@ -680,8 +790,8 @@ void CameraManipulator::frame( const osgGA::GUIEventAdapter &ea, osgGA::GUIActio
 
 	osg::Vec3d directionVec = center - eye;
 	osg::Vec3d sideVec = getSideVector(osg::Matrixd(_rotation)); /* direction * osg::Matrix::rotate(-M_PI * 0.5, upVector);*/
-	
-        _center += ((directionVec * forwardSpeed) + (sideVec * sideSpeed) + (up * verticalSpeed)) * dt;
+
+	_center += ((directionVec * forwardSpeed) + (sideVec * sideSpeed) + (up * verticalSpeed)) * dt;
 
 	if( decelerateSideRate )
 	{
@@ -698,14 +808,189 @@ void CameraManipulator::frame( const osgGA::GUIEventAdapter &ea, osgGA::GUIActio
 	if (deceleratePitchRate)
 	{
 		pitchSpeed *= speedDecelerationFactor;
-        }
+	}
+}
+
+void Vwr::CameraManipulator::setNewPosition(osg::Vec3d cameraTargetPoint, osg::Vec3d cameraInterestPoint, std::list<osg::ref_ptr<Data::Node> > selectedCluster, std::list<osg::ref_ptr<Data::Edge> > selectedEdges)
+{
+	movingAutomatically = true;
+	this->cameraTargetPoint = cameraTargetPoint;
+	this->cameraInterestPoint = cameraInterestPoint;
+
+	//cout << "Camera targetPoint: " << cameraTargetPoint.x() << " " << cameraTargetPoint.y() << " " << cameraTargetPoint.z() << "\n";
+	//cout << "Camera interest targetPoint: " << cameraInterestPoint.x() << " " << cameraInterestPoint.y() << " " << cameraInterestPoint.z() << "\n";
+
+	std::list<osg::ref_ptr<Data::Edge> >::iterator i;
+
+	// prida hrany medzi body zaujmu
+	for (i = selectedEdges.begin(); i != selectedEdges.end(); ++i)
+	{
+		selectedCluster.push_back((*i)->getSrcNode());
+		selectedCluster.push_back((*i)->getDstNode());
+	}
+
+	selectedCluster.unique();
+
+	this->selectedCluster = selectedCluster;
+
+	automaticMovementInitialized = false;	
+}
+
+void Vwr::CameraManipulator::initAutomaticMovement(osgViewer::Viewer* viewer)
+{
+	t1 = t2 = 0;
+
+	osg::Vec3d eye;
+	osg::Vec3d center;
+	osg::Vec3d up;
+
+	viewer->getCamera()->getViewMatrixAsLookAt(eye, center, up);
+	
+	this->lastPosition = originalEyePosition = eye;
+	this->lastTargetPoint = center;
+
+	float scale = appConf->getValue("Viewer.Display.NodeDistanceScale").toFloat();
+
+	weightPoint = (eye + cameraInterestPoint + cameraTargetPoint)/3;
+	targetDistance = alterCameraTargetPoint(viewer);
+
+	cameraPositions = new QVector<osg::Vec3d>();
+	cameraPositions->push_back(originalEyePosition);
+	cameraPositions->push_back(cameraInterestPoint);
+	cameraPositions->push_back(cameraTargetPoint);
+
+	// vahy kontrolnych bodov pre trajektoriu kamery
+	w1[0] = 1;
+	w1[1] = -0.1;
+	w1[2] = 1;
+
+	targetPositions = new QVector<osg::Vec3d>();
+
+	targetPositions->push_back(center);
+	targetPositions->push_back(cameraInterestPoint);
+	targetPositions->push_back(weightPoint);
+
+	// vahy kontrolnych bodov pre trajektriu pohladu
+	w2[0] = 1;
+	w2[1] = 0.5f;
+	w2[2] = 1;
+
+	// uprava vah aby boli viditelne vsetky body zaujmu
+	alterWeights(viewer, selectedCluster);
+
+	// zobrazenie kontornych bodov
+	if (appConf->getValue("Viewer.Display.CameraPositions").toInt() == 1)
+	{
+		Data::Graph * g = Manager::GraphManager::getInstance()->getActiveGraph();
+
+		g->addNode("centerNode", g->getNodeMetaType(), center)->setColor(osg::Vec4(0, 0.5, 1, 0.5));
+		g->addNode("startNode", g->getNodeMetaType(), originalEyePosition / scale);
+		g->addNode("interestPoint", g->getNodeMetaType(), cameraInterestPoint / scale)->setColor(osg::Vec4(0, 1, 1, 1));
+		g->addNode("weigthPoint", g->getNodeMetaType(), weightPoint)->setColor(osg::Vec4(0, 0.5, 1, 1));
+	}
+
+	automaticMovementInitialized = true;
+}
+
+float Vwr::CameraManipulator::alterCameraTargetPoint(osgViewer::Viewer* viewer)
+{
+    osg::ref_ptr<osg::Camera> camera = new osg::Camera(*(viewer->getCamera()), osg::CopyOp::DEEP_COPY_ALL);
+	//osg::ref_ptr<osg::Camera> camera = viewer->getCamera();
+
+	int width = camera->getViewport()->width();
+	int height = camera->getViewport()->height();
+
+	osg::Vec3d basicVec = cameraTargetPoint - weightPoint;
+	float scale = appConf->getValue("Viewer.Display.NodeDistanceScale").toFloat();
+
+	// minimum distance from center
+	float dist = basicVec.length() + 50 * scale;
+	
+	osg::Vec3d eyePosition;
+
+	osg::Vec3d eye;
+	osg::Vec3d center;
+	osg::Vec3d up;
+
+	viewer->getCamera()->getViewMatrixAsLookAt(eye, center, up);
+
+	// move camera target point backwards until all interest points can be seen
+	while(true)
+	{
+		eyePosition = CameraMath::getPointOnVector(weightPoint, cameraTargetPoint, dist);
+		camera->setViewMatrixAsLookAt(eyePosition, weightPoint, up);
+
+		osg::Vec3d eyeScr = CameraMath::projectOnScreen(camera, originalEyePosition);
+		osg::Vec3d cameraInterestPointScr = CameraMath::projectOnScreen(camera, cameraInterestPoint);
+
+		//cout << "eyeScr: " << eyeScr.x() << " " << eyeScr.y() << "\n";
+		//cout << "cameraInterestPointScr: " << cameraInterestPointScr.x() << " " << cameraInterestPointScr.y() << "\n";
+
+		bool onScreen1 = CameraMath::isInRect(eyeScr, width, height, SCREEN_MARGIN);
+		bool onScreen2 = CameraMath::isInRect(cameraInterestPointScr, width, height, SCREEN_MARGIN);
+
+		if (!(onScreen1 && onScreen2))
+		{
+			dist += 10;
+		}
+		else
+			break;
+	}
+	cameraTargetPoint = eyePosition;
+
+	/*cout << "Altered target: " << eyePosition.x() << " " << eyePosition.y() << " " << eyePosition.z() << "\n";*/
+
+	return dist;
+}
+
+void Vwr::CameraManipulator::alterWeights(osgViewer::Viewer* viewer, std::list<osg::ref_ptr<Data::Node> > selectedCluster)
+{
+    osg::ref_ptr<osg::Camera> camera = new osg::Camera(*(viewer->getCamera()), osg::CopyOp::DEEP_COPY_ALL);
+
+	int width = camera->getViewport()->width();
+	int height = camera->getViewport()->height();
+
+	osg::Vec3d eye;
+	osg::Vec3d center;
+	osg::Vec3d up;
+
+	// get initial camera position
+	camera->getViewMatrixAsLookAt(eye, center, up);
+
+	// alter weights until whole cluster is seen
+	while(true)
+	{
+		// get position and orientation in t = 0.5
+		osg::Vec3d eyePosition = CameraMath::getPointOnNextBezierCurve(0.5f, cameraPositions, w1);
+		osg::Vec3d targetPosition = CameraMath::getPointOnNextBezierCurve(0.5f / (EYE_MOVEMENT_SPEED / TARGET_MOVEMENT_SPEED), targetPositions, w2);
+
+		camera->setViewMatrixAsLookAt(eyePosition, targetPosition, up);
+
+		// get cluster nodes in extreme positions in t = 0.5
+        QVector<osg::ref_ptr<Data::Node> > * extremes = CameraMath::getViewExtremes(camera, selectedCluster);
+		
+		bool onScreen = true;
+
+		// check for visibility of extremes
+		for (int x = 0; x < 4; x++) 
+		{
+			onScreen &= CameraMath::isInRect(CameraMath::projectOnScreen(camera, extremes->at(x)->getCurrentPosition()), width, height, SCREEN_MARGIN);
+		}
+
+		if (!onScreen)
+		{
+			w1[1] -= 0.0005f;
+		}
+		else 
+			break;
+	}
 }
 
 /*!
  * 
  * Zastavi pohyb kamery.
  */
-void CameraManipulator::stop()
+void Vwr::CameraManipulator::stop()
 {
 	forwardSpeed = 0.0;
 	sideSpeed = 0.0;
@@ -725,6 +1010,23 @@ void CameraManipulator::notifyServer() {
     if (client->isConnected()) {
         client->sendMyView(_center,_rotation, _distance);
     }
+}
+
+void Vwr::CameraManipulator::computeViewMetrics(osgViewer::Viewer* viewer, std::list<osg::ref_ptr<Data::Node> > selectedCluster)
+{
+	int cnt = 0;
+
+	std::list<osg::ref_ptr<Data::Node> >::iterator i;
+
+	for (i = selectedCluster.begin(); i != selectedCluster.end(); ++i)
+	{
+		if (CameraMath::isInRect(CameraMath::projectOnScreen(viewer->getCamera(), (*i)->getCurrentPosition()), viewer->getCamera()->getViewport()->width(), viewer->getCamera()->getViewport()->height(), 0))
+		{
+			cnt++;
+		}
+	}
+
+	cout << "Currently visible: " << cnt << " nodes\n";
 }
 
 } // namespace

@@ -2,8 +2,9 @@
 #define Layout_ShapeGetter_Sphere_AroundNode_H
 //-----------------------------------------------------------------------------
 #include "Layout/ShapeGetter.h"
+#include "Layout/Shape_Sphere.h"
 //-----------------------------------------------------------------------------
-#include "Data/Node.h"
+
 //-----------------------------------------------------------------------------
 
 namespace Layout {
@@ -38,6 +39,8 @@ public:
 	virtual ~ShapeGetter_Sphere_AroundNode (void) {};
 
 	virtual QSharedPointer<Shape> getShape (void);
+
+        virtual QSet<Data::Node *  > getNodesOfShape();
 
 private:
 

@@ -27,10 +27,10 @@
 
 namespace Data
 {
-	class Edge;
-	class Type;
-	class Graph;
-	class GraphLayout;
+        class Edge;
+        class Type;
+        class Graph;
+        class GraphLayout;
 
 	/**
 	*  \class Node
@@ -121,23 +121,67 @@ namespace Data
 
 		void setAsParentNode() { hasNestedNodes = true; }
 
+        /**
+         * \fn public constant isFocused
+         * \brief Gets whether this node is focused at the moment.
+         * \return whether this node is focused at the moment
+         */
+        bool isFocused() const;
+
+        /**
+         * \fn public setIsFocused(bool value)
+         * \brief Sets whether this node is focused at the moment.
+         * \param value whether this node is focused at the moment
+         */
+        void setIsFocused(bool value);
 
 		/**
-		*  \fn inline public constant  getTargetPosition
-		*  \brief Returns node target position in space
-		*  \return osg::Vec3f node position
-		*  returned targetPosition IS NOT multiplied by the graph scale
-		*/
-		osg::Vec3f getTargetPosition() const { return osg::Vec3(targetPosition); }
+         * \fn public constant targetPosition
+         * \brief Gets target position of a node.
+         * \return target position
+         * Returned target position IS NOT multiplied by the graph scale.
+         */
+        osg::Vec3f targetPosition() const;
+
+        /**
+         * \fn public constant targetPositionConstRef
+         * \brief Gets target position of a node.
+         * \return target position
+         * Returned target position IS NOT multiplied by the graph scale.
+         */
+        const osg::Vec3f &targetPositionConstRef() const;
 
 		/**
-		*  \fn inline public  setTargetPosition(osg::Vec3f val)
-		*  \brief Sets node target position in space
-		*  \param      val   new position
-		*  targetPosition being set MUST NOT BE multiplied by the graph scale
-		*/
-		void setTargetPosition(osg::Vec3f val) { targetPosition.set(val); }
+         * \fn public setTargetPosition(const osg::Vec3f &position)
+         * \brief Sets target position of a node.
+         * \param position target position
+         * Target position being set MUST NOT BE multiplied by the graph scale.
+         */
+        void setTargetPosition(const osg::Vec3f &position);
 
+        /**
+         * \fn public constant restrictedTargetPosition
+         * \brief Gets restricted target position of a node.
+         * \return restricted target position
+         * Returned restricted target position IS NOT multiplied by the graph scale.
+         */
+        osg::Vec3f restrictedTargetPosition() const;
+
+        /**
+         * \fn public constant restrictedTargetPositionConstRef
+         * \brief Gets restricted target position of a node.
+         * \return restricted target position
+         * Returned restricted target position IS NOT multiplied by the graph scale.
+         */
+        const osg::Vec3f &restrictedTargetPositionConstRef() const;
+
+        /**
+         * \fn public setRestrictedTargetPosition(const osg::Vec3f &position)
+         * \brief Sets restricted target position of a node.
+         * \param position restricted target position
+         * Restricted target position being set MUST NOT BE multiplied by the graph scale.
+         */
+        void setRestrictedTargetPosition(const osg::Vec3f &position);
 
 		/**
 		*  \fn public  getCurrentPosition(bool calculateNew = false, float interpolationSpeed = 1.0f)
@@ -353,7 +397,7 @@ namespace Data
 		QString toString() const 
 		{
             QString str;
-            QTextStream(&str) << "node id:" << id << " name:" << name << " pos:[" << targetPosition.x() << "," << targetPosition.y() << "," << targetPosition.z() << "]";
+            QTextStream(&str) << "node id:" << id << " name:" << name << " pos:[" << mTargetPosition.x() << "," << mTargetPosition.y() << "," << mTargetPosition.z() << "]";
             return str;
         }
 
@@ -370,6 +414,10 @@ namespace Data
 			if (!selected)
 				setDrawableColor(0, color);
 		}
+
+                void setInvisible(){
+                    setColor(osg::Vec4 (0,0,0,0));
+                }
 
 
 		/**
@@ -470,11 +518,26 @@ namespace Data
 		*/
 		void setSettings(QMap<QString, QString> * val) { settings = val; }
 
-                void setLabelText(QString label) { labelText = label; }
+		void setLabelText(QString label) { labelText = label; }
 
+		float getNodeDegree() { return nodeDegree; }
+		void setNodeDegree(float nodeDegree) { this->nodeDegree = nodeDegree; }
+		
+		float getNodeCloseness() { return nodeCloseness; }
+		void setNodeCloseness(float nodeCloseness) { this->nodeCloseness = nodeCloseness; }
+
+		float getNodeBetweeness() { return nodeBetweeness; }
+		void setNodeBetweeness(float nodeBetweeness) { this->nodeBetweeness = nodeBetweeness; }
+
+		float getOverallWeight() { return overallWeight; }
+		void setOverallWeight(float overallWeight) { this->overallWeight = overallWeight; }
+
+		bool isNodeMatched() { return nodeMatched; }
+		void setNodeMatched(bool nodeMatched) { this->nodeMatched = nodeMatched; }
+		
 	private:
 
-        /**
+		/**
 		*	bool inDB
 		*	\brief Flag if the Type is in database
 		*/
@@ -516,11 +579,23 @@ namespace Data
 		*/
 		Data::Graph* graph;
 
+        /**
+         * bool mIsFocused
+         * \brief Flag whether this node is focused at the moment.
+         */
+        bool mIsFocused;
+
 		/**
-		*  osg::Vec3f targetPosition
-		*  \brief node target position
-		*/
-		osg::Vec3f targetPosition;
+         * osg::Vec3f mTargetPosition
+         * \brief Target position of a node.
+         */
+        osg::Vec3f mTargetPosition;
+
+        /**
+         * osg::Vec3f mRestrictedTargetPosition
+         * \brief Restricted target position of a node.
+         */
+        osg::Vec3f mRestrictedTargetPosition;
 
 		/**
 		*  osg::Vec3f currentPosition
@@ -668,6 +743,19 @@ namespace Data
 		*  \brief Square drawable
 		*/
 		osg::ref_ptr<osg::Drawable> square;
+
+        /**
+        *  osg::ref_ptr focusedSquare
+        *  \brief Focused square drawable
+        */
+        osg::ref_ptr<osg::Drawable> focusedSquare;
+
+		float nodeDegree;
+		float nodeCloseness;
+		float nodeBetweeness;
+		bool nodeMatched;
+
+		float overallWeight;
 
 	protected:
 

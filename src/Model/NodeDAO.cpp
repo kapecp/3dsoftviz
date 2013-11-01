@@ -27,6 +27,7 @@ bool Model::NodeDAO::addNodesToDB(QSqlDatabase* conn, QMap<qlonglong, osg::ref_p
 
 	QSqlQuery* query = new QSqlQuery(*conn);
 	
+	//ukladame vsetky uzly do databazy
 	while(iNodes != nodes->constEnd()) 
 	{
 		parentId = -1;
@@ -72,6 +73,7 @@ bool Model::NodeDAO::addMetaNodesToDB(QSqlDatabase* conn, QMap<qlonglong, osg::r
 	qlonglong nodeID;
 	QMap<qlonglong, qlonglong>::iterator nodeIdIter;
 	
+	//ukladame vsetky meta-uzly do databazy
 	while(iNodes != nodes->constEnd()) 
 	{
 		if(newMetaNodeID.contains(iNodes.value()->getId()))
@@ -136,6 +138,7 @@ bool Model::NodeDAO::addNodesPositionsToDB(QSqlDatabase* conn, QMap<qlonglong, o
 	qlonglong nodeID;
 	QMap<qlonglong, qlonglong>::iterator nodeIdIter;
 	
+	//ukladame pozicie uzlov pre vsetky uzly
 	while(iNodes != nodes->constEnd()) 
 	{
 		if(meta)	
@@ -180,6 +183,7 @@ bool Model::NodeDAO::addNodesColorToDB(QSqlDatabase* conn, QMap<qlonglong, osg::
 	qlonglong nodeID;
 	QMap<qlonglong, qlonglong>::iterator nodeIdIter;
 	
+	//ukladame vsetky farby uzlov do databazy
 	while(iNodes != nodes->constEnd()) 
 	{
 		//ulozime farbu len nodom, ktore maju farbu inu nez default
@@ -220,6 +224,7 @@ bool Model::NodeDAO::addNodesScaleToDB(QSqlDatabase* conn, QMap<qlonglong, osg::
 	qlonglong nodeID;
 	QMap<qlonglong, qlonglong>::iterator nodeIdIter;
 	
+	//ukladame velkosti jednotlivym uzlom, ktore ju nemaju Default
 	while(iNodes != nodes->constEnd()) 
 	{
 		//ulozime scale len nodom, ktore maju velkost inu nez default
@@ -258,6 +263,7 @@ bool Model::NodeDAO::addNodesMaskToDB(QSqlDatabase* conn, QMap<qlonglong, osg::r
 	QMap<qlonglong, qlonglong>::iterator nodeIdIter;
 	float scale = 0;
 	
+	//ukladame zobrazovanu masku pre uzly, ktore ju nemaju Default
 	while(iNodes != nodes->constEnd()) 
 	{
 		//ulozime masku len nodom, ktore ju maju nastavenu, t. j. je rovna 0
@@ -295,6 +301,7 @@ bool Model::NodeDAO::addNodesParentToDB(QSqlDatabase* conn, QMap<qlonglong, osg:
 	qlonglong nodeID;
 	QMap<qlonglong, qlonglong>::iterator nodeIdIter;
 	
+	//ukladame nadradene uzly k danym uzlom do databazy
 	while(iNodes != nodes->constEnd()) 
 	{
 		if(iNodes.value()->isParentNode())
@@ -339,6 +346,7 @@ QSqlQuery* Model::NodeDAO::getNodesQuery(QSqlDatabase* conn, bool* error, qlongl
         return query;
     }
 
+	//vyberame z databazy vsetky uzly podla ID grafu, layoutu a nadradeneho uzla
     query->prepare("SELECT * "
 		"FROM nodes "
 		"WHERE graph_id = :graph_id "
@@ -374,6 +382,7 @@ QMap<qlonglong, osg::Vec3f> Model::NodeDAO::getNodesPositions(QSqlDatabase* conn
         return positions;
     }
 
+	//vyberame z databazy pozicie uzlov podla ID grafu a layoutu
     query->prepare("SELECT * "
 		"FROM positions "
 		"WHERE graph_id = :graph_id "
@@ -411,7 +420,7 @@ QList<qlonglong> Model::NodeDAO::getListOfNodes(QSqlDatabase* conn, bool* error)
         return nodes;
     }
 
-    //get nodes from DB
+    //vyberame zoznam uzlov z databazy podla ID grafu
     QSqlQuery* query = new QSqlQuery(*conn);
     query->prepare("SELECT graph_id " 
 		"FROM nodes ");
@@ -445,6 +454,7 @@ bool Model::NodeDAO::checkIfExists(Data::Node* node, QSqlDatabase* conn)
         return false;
     }
 
+	//overujeme ci su v databaze uzly podla ID
     QSqlQuery* query = new QSqlQuery(*conn);
     query->prepare("SELECT COUNT(1) FROM nodes "
         "WHERE node_id=:node_id AND graph_id=:graph_id");
@@ -474,6 +484,7 @@ bool Model::NodeDAO::removeNode( Data::Node* node, QSqlDatabase* conn )
         return false;
     }
     
+	//odstranujeme uzol z databazy podla jeho ID
     QSqlQuery* query = new QSqlQuery(*conn);
     query->prepare("DELETE FROM nodes WHERE graph_id = :graph_id AND node_id = :node_id");
     query->bindValue(":graph_id", node->getGraph()->getId());
@@ -501,6 +512,7 @@ bool Model::NodeDAO::removeNodes(qlonglong graphID, QSqlDatabase* conn)
         return false;
     }
 
+	//odstranujeme uzly z databazy podla ID grafu
 	query->prepare("DELETE FROM nodes WHERE graph_id = :graph_id");
     query->bindValue(":graph_id", graphID);
     if(!query->exec()) {
@@ -527,6 +539,7 @@ bool Model::NodeDAO::removeNodes(qlonglong graphID, qlonglong layoutID, QSqlData
         return false;
     }
 
+	//odstranujeme uzly z databazy podla ID grafu a layoutu
 	query->prepare("DELETE FROM nodes WHERE graph_id = :graph_id AND layout_id = :layout_id");
     query->bindValue(":graph_id", graphID);
 	query->bindValue(":layout_id", layoutID);
@@ -561,6 +574,7 @@ QMap<QString,QString> Model::NodeDAO::getSettings( Data::Node* node, QSqlDatabas
         return settings;
     }
 
+	//vyberame nastavenia z databazy podla ID grafu a uzla
     QSqlQuery* query = new QSqlQuery(*conn);
     query->prepare("SELECT val_name, val FROM node_settings WHERE graph_id = :graph_id AND node_id = :node_id");
     query->bindValue(":graph_id",node->getGraph()->getId());
@@ -592,6 +606,7 @@ QMap<qlonglong, QString> Model::NodeDAO::getSettings(QSqlDatabase* conn, bool* e
         return settings;
     }
 
+	//vyberame nastavenia z databazy podla ID grafu, uzla a nazvu nastavenia
     query = new QSqlQuery(*conn);
     query->prepare("SELECT node_id, val "
 		"FROM node_settings "
@@ -637,6 +652,7 @@ QMap<qlonglong, osg::Vec4f> Model::NodeDAO::getColors(QSqlDatabase* conn, bool* 
 	nodeColorB = getSettings(conn, &error2, graphID, layoutID, "color_b");
 	nodeColorA = getSettings(conn, &error2, graphID, layoutID, "color_a");
 
+	//nacitavame z databazy farby podla ID grafu a layoutu
 	for(iter_r = nodeColorR.begin(); iter_r != nodeColorR.end(); iter_r++) 
 	{
 		id = iter_r.key();
@@ -666,6 +682,7 @@ QMap<qlonglong, float> Model::NodeDAO::getScales(QSqlDatabase* conn, bool* error
 
 	nodeScale = getSettings(conn, &error2, graphID, layoutID, "scale");
 
+	//nacitavame z databazy velkost layoutu a rozlozenia grafu
 	for(iter = nodeScale.begin(); iter != nodeScale.end(); iter++) 
 	{
 		id = iter.key();
@@ -692,6 +709,7 @@ QMap<qlonglong, int> Model::NodeDAO::getMasks(QSqlDatabase* conn, bool* error, q
 
 	nodeMask = getSettings(conn, &error2, graphID, layoutID, "mask");
 
+	//nacitavame z databazy masky uzlov
 	for(iter = nodeMask.begin(); iter != nodeMask.end(); iter++) 
 	{
 		id = iter.key();
@@ -718,12 +736,10 @@ QList<qlonglong> Model::NodeDAO::getParents(QSqlDatabase* conn, bool* error, qlo
 
 	nodeParents = getSettings(conn, &error2, graphID, layoutID, "is_parent");
 
+	//nacitavame z databazy rodicovske/nadradene uzly
 	for(iter = nodeParents.begin(); iter != nodeParents.end(); iter++) 
 	{
 		id = iter.key();
-
-		//isParent = iter.value().to.toInt();
-		//masks.insert(id, mask);
 		parents << id;
 	}
 
@@ -760,6 +776,7 @@ QMap<qlonglong, qlonglong> Model::NodeDAO::getNewMetaNodesId(QSqlDatabase* conn,
 		maxId = query->value(0).toLongLong();
     }
 
+	//vytvarame zoznam novych meta uzlov
 	while(iNodes != nodes->constEnd()) 
 	{
 		maxId++;
@@ -780,6 +797,7 @@ bool Model::NodeDAO::addSettings(QSqlDatabase* conn, qlonglong graphID, qlonglon
 
 	QSqlQuery* query = new QSqlQuery(*conn);
 	
+	//ukladame do databazy nazvy nastaveni
 	query->prepare("INSERT INTO node_settings (graph_id, node_id, val_name, val, layout_id) VALUES (:graph_id, :node_id, :val_name, :val, :layout_id)");
 	query->bindValue(":graph_id", graphID); 
 	query->bindValue(":node_id", nodeID);
@@ -805,6 +823,7 @@ bool Model::NodeDAO::addSettings(QSqlDatabase* conn, qlonglong graphID, qlonglon
 
 	QSqlQuery* query = new QSqlQuery(*conn);
 	
+	//ukladame do databazy jednotlive nastavenia
 	query->prepare("INSERT INTO node_settings (graph_id, node_id, val_name, val, layout_id) VALUES (:graph_id, :node_id, :val_name, :val, :layout_id)");
 	query->bindValue(":graph_id", graphID); 
 	query->bindValue(":node_id", nodeID);
@@ -830,6 +849,7 @@ bool Model::NodeDAO::addSettings(QSqlDatabase* conn, qlonglong graphID, qlonglon
 
 	QSqlQuery* query = new QSqlQuery(*conn);
 	
+	//pridavame nastavenie do databazy
 	query->prepare("INSERT INTO node_settings (graph_id, node_id, val_name, val, layout_id) VALUES (:graph_id, :node_id, :val_name, :val, :layout_id)");
 	query->bindValue(":graph_id", graphID); 
 	query->bindValue(":node_id", nodeID);

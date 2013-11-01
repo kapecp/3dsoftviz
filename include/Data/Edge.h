@@ -5,7 +5,6 @@
 #ifndef DATA_EDGE_DEF
 #define DATA_EDGE_DEF 1
 
-
 #include <string>
 #include "Data/Type.h"
 #include "Data/Node.h"
@@ -128,6 +127,13 @@ namespace Data
 		*/
 		void setDstNode(osg::ref_ptr<Data::Node> val) { dstNode = val; }
 
+                /**
+                * \fn public getSecondNode(osg::ref_ptr<Data::Node> firstNode)
+                * \brief  Returns the second ending Node of the Edge
+                * \return osg::ref_ptr<Data::Node> the second ending Node of the Edge
+                */
+                osg::ref_ptr<Data::Node> getSecondNode(osg::ref_ptr<Data::Node> firstNode);
+
 		/**
 		* \fn inline public constant getType
 		* \brief  Returns the Type of the Edge
@@ -224,7 +230,7 @@ namespace Data
 			if (selected)
 				return osg::Vec4(0.0f, 0.0f, 0.0f, 1.0f);
 			else
-				return edgeColor; 
+				return edgeColor;
 		}
 
 
@@ -323,6 +329,48 @@ namespace Data
 		*/
 		void setSettings(QMap<QString, QString> * val) { settings = val; }
 
+		int getWeight() { return 1; }
+
+                /**
+                *  \fn public  setSharedCoordinates (bool x, bool y, bool z)
+                *  \brief sets shared coordinates
+                *  \param x true, if nodes share x coordinate
+                *  \param y true, if nodes share y coordinate
+                *  \param z true, if nodes share z coordinate
+                */
+                void setSharedCoordinates (bool x, bool y, bool z){
+                    this->shared_X = x;
+                    this->shared_Y = y;
+                    this->shared_Z = z;
+                }
+
+                /**
+                *  \fn public   isShared_X()
+                *  \return value of shared_X flag
+                */
+                bool isShared_X(){return this->shared_X;}
+
+                /**
+                *  \fn public   isShared_Y()
+                *  \return value of shared_Y flag
+                */
+                bool isShared_Y(){return this->shared_Y;}
+
+                /**
+                *  \fn public   isShared_Z()
+                *  \return value of shared_Z flag
+                */
+                bool isShared_Z(){return this->shared_Z;}
+
+                /**
+                *  \fn public   setInvisible()
+                */
+                bool setInvisible(bool invisible){
+                    if (invisible) setScale(0);
+                    else setScale(1);
+                }
+
+
 	private:
 		/**
 		*  Data::Graph * graph
@@ -388,11 +436,28 @@ namespace Data
 		bool selected;
 
 		/**
-		*  bool scale
+		*  float scale
 		*  \brief scale of edge
 		*/
 		float scale;
 
+                /**
+                *  bool shared_X
+                *  \brief if true, then nodes of edge have shared X coordinate
+                */
+                bool shared_X;
+
+                /**
+                *  bool shared_Y
+                *  \brief if true, then nodes of edge have shared X coordinate
+                */
+                bool shared_Y;
+
+                /**
+                *  bool shared_Z
+                *  \brief if true, then nodes of edge have shared X coordinate
+                */
+                bool shared_Z;
 
 		/**
 		*  osg::ref_ptr camera

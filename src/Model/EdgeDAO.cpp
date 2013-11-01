@@ -16,7 +16,7 @@ bool Model::EdgeDAO::addEdgesToDB(QSqlDatabase* conn, QMap<qlonglong, osg::ref_p
 {
 	bool isNested;
 
-	//check if we have connection
+	//overime ci mame pripojenie
 	if(conn==NULL || !conn->isOpen()) 
 	{ 
         qDebug() << "[Model::EdgeDAO::addEdgesToDB] Connection to DB not opened.";
@@ -27,6 +27,7 @@ bool Model::EdgeDAO::addEdgesToDB(QSqlDatabase* conn, QMap<qlonglong, osg::ref_p
 
 	QSqlQuery* query = new QSqlQuery(*conn);
  
+	//pridavame hrany do query
 	while(iEdges != edges->constEnd()) 
 	{
 		isNested = false;
@@ -74,6 +75,7 @@ bool Model::EdgeDAO::addMetaEdgesToDB(QSqlDatabase* conn, QMap<qlonglong, osg::r
 	QMap<qlonglong, qlonglong>::iterator nodeIdIter;
 	QMap<qlonglong, qlonglong>::iterator edgeIdIter;
  
+	//pridavame meta-uzly do query DB
 	while(iEdges != edges->constEnd()) 
 	{
 		if(newMetaNodeID.contains(iEdges.value()->getSrcNode()->getId()))
@@ -224,7 +226,7 @@ QSqlQuery* Model::EdgeDAO::getEdgesQuery(QSqlDatabase* conn, bool* error, qlongl
         return query;
     }
 
-    //get nodes from DB
+    //nacitame SELECTom hrany z DB
     query = new QSqlQuery(*conn);
     query->prepare("SELECT * "
 		"FROM edges "
@@ -255,7 +257,7 @@ QList<qlonglong> Model::EdgeDAO::getListOfEdges(QSqlDatabase* conn, bool* error)
         return edges;
     }
 
-    //get edges from DB
+    //nacitame uzly z DB
     QSqlQuery* query = new QSqlQuery(*conn);
     query->prepare("SELECT graph_id " 
 		"FROM edges ");
@@ -276,6 +278,7 @@ QList<qlonglong> Model::EdgeDAO::getListOfEdges(QSqlDatabase* conn, bool* error)
 
 bool Model::EdgeDAO::checkIfExists(Data::Edge* edge, QSqlDatabase* conn)
 {
+	//overime ci je dana hrana ulozena v databaze
     if(conn==NULL || !conn->isOpen()) { //check if we have connection
         qDebug() << "[Model::EdgeDAO::checkIfExists] Connection to DB not opened.";
         return NULL;
@@ -318,6 +321,7 @@ bool Model::EdgeDAO::removeEdge( Data::Edge* edge, QSqlDatabase* conn )
         return false;
     }
 
+	//odoberieme hranu z databazy
     QSqlQuery* query = new QSqlQuery(*conn);
     query->prepare("DELETE FROM edges WHERE graph_id = :graph_id AND edge_id = :edge_id");
     query->bindValue(":graph_id", edge->getGraph()->getId());
@@ -345,6 +349,7 @@ bool Model::EdgeDAO::removeEdges(qlonglong graphID, QSqlDatabase* conn)
         return false;
     }
 
+	//vymazeme vsetky hrany daneho grafu z databazy
     query->prepare("DELETE FROM edges WHERE graph_id = :graph_id");
     query->bindValue(":graph_id", graphID);
     if(!query->exec()) {
@@ -362,6 +367,7 @@ bool Model::EdgeDAO::removeEdges(qlonglong graphID, qlonglong layoutID, QSqlData
         return NULL;
     } 
 
+	//vymazeme layout z databazy
     QSqlQuery* query = new QSqlQuery(*conn);
     query->prepare("DELETE FROM edge_settings WHERE graph_id = :graph_id AND layout_id = :layout_id");
     query->bindValue(":graph_id", graphID);
@@ -371,6 +377,7 @@ bool Model::EdgeDAO::removeEdges(qlonglong graphID, qlonglong layoutID, QSqlData
         return false;
     }
 
+	//vymazeme vsetky uzly z databazy
     query->prepare("DELETE FROM edges WHERE graph_id = :graph_id AND layout_id = :layout_id");
     query->bindValue(":graph_id", graphID);
 	query->bindValue(":layout_id", layoutID);
@@ -405,6 +412,7 @@ QMap<QString,QString> Model::EdgeDAO::getSettings( Data::Edge* edge, QSqlDatabas
         return settings;
     }
 
+	//nacitame zoznam nastaveni pre hrany
     QSqlQuery* query = new QSqlQuery(*conn);
     query->prepare("SELECT val_name, val FROM edge_settings WHERE graph_id = :graph_id AND edge_id = :edge_id");
     query->bindValue(":graph_id",edge->getGraph()->getId());
@@ -446,6 +454,7 @@ QMap<qlonglong, QString> Model::EdgeDAO::getSettings(QSqlDatabase* conn, bool* e
 	query->bindValue(":attribute_name", attributeName);
 	query->bindValue(":layout_id", layoutID);
 
+	//nacitame z databazy zoznam nastaveni
     if(!query->exec()) {
         qDebug() << "[Model::EdgeDAO::getSettings] Could not perform query on DB: " << query->lastError().databaseText();
         *error = TRUE;
@@ -481,6 +490,7 @@ QMap<qlonglong, osg::Vec4f> Model::EdgeDAO::getColors(QSqlDatabase* conn, bool* 
 	edgeColorB = getSettings(conn, &error2, graphID, layoutID, "color_b");
 	edgeColorA = getSettings(conn, &error2, graphID, layoutID, "color_a");
 
+	//nacitavame ulozene farby v databaze
 	for(iter_r = edgeColorR.begin(); iter_r != edgeColorR.end(); iter_r++) 
 	{
 		id = iter_r.key();
@@ -508,6 +518,7 @@ QMap<qlonglong, float> Model::EdgeDAO::getScales(QSqlDatabase* conn, bool* error
 
 	edgeScale = getSettings(conn, &error2, graphID, layoutID, "scale");
 
+	//nacitavame z databazy velkosti jednotlivych prvkov
 	for(iter = edgeScale.begin(); iter != edgeScale.end(); iter++) 
 	{
 		id = iter.key();
@@ -547,6 +558,7 @@ QMap<qlonglong, qlonglong> Model::EdgeDAO::getNewMetaEdgesId(QSqlDatabase* conn,
 		maxId = query->value(0).toLongLong();
     }
 
+	//vytvarame mapu novych hran
 	while(iEdges != edges->constEnd()) 
 	{
 		maxId++;
@@ -574,6 +586,7 @@ bool Model::EdgeDAO::addSetings(QSqlDatabase* conn, qlonglong graphID, qlonglong
 	query->bindValue(":val", val);
 	query->bindValue(":layout_id", layoutID);
 
+	//ukladame jednotlive atributy do databazy
 	if(!query->exec()) {
 		qDebug() << "[Model::EdgeDAO::addSettings] Could not perform query on DB: " << query->lastError().databaseText();
 		return false;
@@ -599,6 +612,7 @@ bool Model::EdgeDAO::addSetings(QSqlDatabase* conn, qlonglong graphID, qlonglong
 	query->bindValue(":val", val);
 	query->bindValue(":layout_id", layoutID);
 
+	//ukladame jednotlive atributy do databazy
 	if(!query->exec()) {
 		qDebug() << "[Model::EdgeDAO::addSettings] Could not perform query on DB: " << query->lastError().databaseText();
 		return false;
