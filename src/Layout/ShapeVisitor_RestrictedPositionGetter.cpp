@@ -53,12 +53,12 @@ void ShapeVisitor_RestrictedPositionGetter::visit (Shape_Intersection & shape) {
             Shape_Intersection::ShapesListType::const_iterator it;
             for (it = shapes.begin (); it != shapes.end (); ++it) {
                 (*it)->accept (*this); // restrictedPosition_ changes here
-                currentDistance = (restrictedPosition_ - originalPosition_).length ();
-                originalPosition_ = restrictedPosition_;
+                currentDistance = (mRestrictedPosition - mOriginalPosition).length ();
+                mOriginalPosition = mRestrictedPosition;
             }
         }
     } else {
-            restrictedPosition_ = originalPosition_;
+            mRestrictedPosition = mOriginalPosition;
     }
 }
 

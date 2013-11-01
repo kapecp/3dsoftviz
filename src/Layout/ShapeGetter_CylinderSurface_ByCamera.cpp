@@ -16,5 +16,8 @@ QSharedPointer<Shape> ShapeGetter_CylinderSurface_ByCamera::getShape()
 {
     return QSharedPointer<Shape>( new Shape_CylinderSurface(mViewerWidget, mBaseRadiusSlider) );
 }
-
+QSet<Data::Node *> ShapeGetter_CylinderSurface_ByCamera::getNodesOfShape()
+{
+    //implement
+}
 }

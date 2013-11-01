@@ -16,5 +16,10 @@ QSharedPointer<Shape> ShapeGetter_ConeSurface_ByCamera::getShape()
 {
     return QSharedPointer<Shape>( new Shape_ConeSurface(mViewerWidget, mBaseRadiusSlider) );
 }
+QSet<Data::Node *> ShapeGetter_ConeSurface_ByCamera::getNodesOfShape()
+{
+    //implement
+}
+
 
 }
