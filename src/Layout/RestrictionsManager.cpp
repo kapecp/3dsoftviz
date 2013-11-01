@@ -6,6 +6,13 @@
 
 namespace Layout {
 
+#if (QT_VERSION < QT_VERSION_CHECK(4, 7, 0))
+	bool operator<( foo const & one, foo const & other )
+	{
+		return one != other;
+	}
+#endif
+
 void RestrictionsManager::setRestrictions (
 	QSet<Data::Node *> nodes,
 	QSharedPointer<ShapeGetter> shapeGetter

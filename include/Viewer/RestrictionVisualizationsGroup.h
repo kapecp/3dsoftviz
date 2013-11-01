@@ -4,6 +4,7 @@
 #include "Layout/RestrictionsObserver.h"
 #include "Layout/ShapeGetter.h"
 #include "Viewer/ShapeVisitor_VisualizerCreator.h"
+#include "Layout/RestrictionsManager.h"
 //-----------------------------------------------------------------------------
 #include <osg/ref_ptr>
 #include <osg/Group>
