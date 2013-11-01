@@ -24,7 +24,7 @@ public:
     virtual ~ShapeGetter_ConeSurface_ByCamera() {}
 
     virtual QSharedPointer<Shape> getShape();
-
+    virtual QSet<Data::Node *> getNodesOfShape();
 private:
     const QOSG::ViewerQT *mViewerWidget;
     const QSlider &mBaseRadiusSlider;

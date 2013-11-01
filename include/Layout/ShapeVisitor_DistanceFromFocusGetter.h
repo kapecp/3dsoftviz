@@ -41,6 +41,9 @@ public:
 	 */
     virtual void visit(Shape_Plane &shape);
 
+
+
+     virtual void visit(Shape_Intersection &shape);
 	/**
      * \brief Finds the nearest point on the sphere (point on the sphere
      * surface - if SURFACE restriction policy is defined by the shape) or a

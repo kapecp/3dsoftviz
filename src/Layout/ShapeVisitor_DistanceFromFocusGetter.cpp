@@ -24,6 +24,11 @@ void ShapeVisitor_DistanceFromFocusGetter::visit(Shape_Composite &shape)
     mDistanceFromFocus = -1;
 }
 
+void ShapeVisitor_DistanceFromFocusGetter::visit(Shape_Intersection &shape)
+{
+    mDistanceFromFocus = -1;
+}
+
 void ShapeVisitor_DistanceFromFocusGetter::visit(Shape_Plane &shape)
 {
     mDistanceFromFocus = -1;

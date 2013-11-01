@@ -33,6 +33,14 @@ void ShapeVisitor_ManipulatorCreator::visit (Layout::Shape_SphereSurface & shape
     executeDefault();
 }
 
+void ShapeVisitor_ManipulatorCreator::visit (Layout::Shape_ConeSurface & shape){
+    executeDefault();
+}
+
+void ShapeVisitor_ManipulatorCreator::visit (Layout::Shape_CylinderSurface & shape){
+    executeDefault();
+}
+
 void ShapeVisitor_ManipulatorCreator::executeDefault(){
     createdDragger = 0;
     createdSelection = 0;

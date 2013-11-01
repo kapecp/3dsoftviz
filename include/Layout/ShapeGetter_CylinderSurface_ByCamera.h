@@ -24,6 +24,7 @@ public:
     virtual ~ShapeGetter_CylinderSurface_ByCamera() {}
 
     virtual QSharedPointer<Shape> getShape();
+    virtual QSet<Data::Node *> getNodesOfShape();
 
 private:
     const QOSG::ViewerQT *mViewerWidget;
