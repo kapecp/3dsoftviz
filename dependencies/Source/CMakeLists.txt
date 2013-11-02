@@ -1,4 +1,0 @@
-
-SET(ZLIB_LIBRARY z)
-
-ADD_SUBDIRECTORY(libnoisesrc-1.0.0)
