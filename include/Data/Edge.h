@@ -368,6 +368,7 @@ namespace Data
                 bool setInvisible(bool invisible){
                     if (invisible) setScale(0);
                     else setScale(1);
+                    return true;
                 }
 
 

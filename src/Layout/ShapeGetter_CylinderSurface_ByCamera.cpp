@@ -19,5 +19,7 @@ QSharedPointer<Shape> ShapeGetter_CylinderSurface_ByCamera::getShape()
 QSet<Data::Node *> ShapeGetter_CylinderSurface_ByCamera::getNodesOfShape()
 {
     //implement
+    QSet<Data::Node *  >  nodes;
+    return nodes;
 }
 }

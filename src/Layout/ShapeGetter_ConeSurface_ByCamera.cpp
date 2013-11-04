@@ -19,6 +19,8 @@ QSharedPointer<Shape> ShapeGetter_ConeSurface_ByCamera::getShape()
 QSet<Data::Node *> ShapeGetter_ConeSurface_ByCamera::getNodesOfShape()
 {
     //implement
+    QSet<Data::Node *  >  nodes;
+    return nodes;
 }
 
 
