@@ -20,6 +20,7 @@
 #include "Viewer/CoreGraph.h"
 
 #include <QLinkedList>
+#include <QTimer>
 
 namespace Vwr
 {
@@ -120,6 +121,13 @@ namespace Vwr
 		*/
 		void toggleSelectedNodesFixedState(bool isFixed);
 
+                /**
+                *  \fn public  getPickedNodeWithMaxEdgeCount()
+                *  \brief Find picked node from pickedNodes with max edge count
+                *  \return osg::ref_ptr<Data::Node>
+                */
+                osg::ref_ptr<Data::Node> getPickedNodeWithMaxEdgeCount();
+
 
 		/**
 		*  \fn inline public  setPickMode( int pickMode )
@@ -166,20 +174,23 @@ namespace Vwr
 		*  \return QLinkedList<osg::ref_ptr<Data::Edge> > * selected edges
 		*/
 		QLinkedList<osg::ref_ptr<Data::Edge> > * getSelectedEdges() { return &pickedEdges; }
-		
+
 		/**
-		*  \fn private  unselectPickedNodes(osg::ref_ptr<Data::Node> node = 0)
+		*  \fn public  unselectPickedNodes(osg::ref_ptr<Data::Node> node = 0)
 		*  \brief unselects picked nodes. If null, all nodes will be unselected.
 		*  \param     node     nodes to unselect
 		*/
 		void unselectPickedNodes(osg::ref_ptr<Data::Node> node = 0);
 
 		/**
-		*  \fn private  unselectPickedEdges(osg::ref_ptr<Data::Edge> edge = 0)
+		*  \fn public  unselectPickedEdges(osg::ref_ptr<Data::Edge> edge = 0)
 		*  \brief unselects picked edges. If null, all edges will be unselected.
 		*  \param     edge   edges to unselect
 		*/
 		void unselectPickedEdges(osg::ref_ptr<Data::Edge> edge = 0);
+
+		void addPickedNode(osg::ref_ptr<Data::Node> node) { pickedNodes.append(node); }
+		void addPickedEdge(osg::ref_ptr<Data::Edge> edge) { pickedEdges.append(edge); }
 
 	protected:
 		// Store mouse xy location for button press & move events.
@@ -228,7 +239,6 @@ namespace Vwr
 		*  \brief picked edges list
 		*/
 		QLinkedList<osg::ref_ptr<Data::Edge> > pickedEdges;
-		
 
 		/**
 		*  osg::ref_ptr group
@@ -344,7 +354,6 @@ namespace Vwr
 		*  \param      state     interpolation state
 		*/
 		void setSelectedNodesInterpolation(bool state);
-
 
 		/**
 		*  \fn private  handlePush( const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& aa )

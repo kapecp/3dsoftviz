@@ -40,6 +40,10 @@ void ShapeVisitor_Comparator::visit (Shape_Composite & shape) {
 	}
 }
 
+void ShapeVisitor_Comparator::visit (Shape_Intersection & shape) {
+    (static_cast<Layout::Shape_Composite>(shape)).accept(*this);
+}
+
 void ShapeVisitor_Comparator::visit (Shape_Plane & shape) {
 	QSharedPointer<Shape_Plane> otherShape = otherShape_.dynamicCast<Shape_Plane> ();
 	if (! otherShape.isNull ()) {
@@ -65,10 +69,30 @@ void ShapeVisitor_Comparator::visit (Shape_Sphere & shape) {
 void ShapeVisitor_Comparator::visit (Shape_SphereSurface & shape) {
 	QSharedPointer<Shape_SphereSurface> otherShape = otherShape_.dynamicCast<Shape_SphereSurface> ();
 	if (! otherShape.isNull ()) {
-		compareSpheres (shape, *otherShape);
+        compareSpheres(shape, *otherShape);
 	} else {
 		comparisonResult_ = false;
-	}
+    }
+}
+
+void ShapeVisitor_Comparator::visit(Shape_CylinderSurface &shape)
+{
+    QSharedPointer<Shape_CylinderSurface> otherShape = otherShape_.dynamicCast<Shape_CylinderSurface>();
+    if (! otherShape.isNull ()) {
+        compareCylinders(shape, *otherShape);
+    } else {
+        comparisonResult_ = false;
+    }
+}
+
+void ShapeVisitor_Comparator::visit(Shape_ConeSurface &shape)
+{
+    QSharedPointer<Shape_ConeSurface> otherShape = otherShape_.dynamicCast<Shape_ConeSurface>();
+    if (! otherShape.isNull ()) {
+        compareCones(shape, *otherShape);
+    } else {
+        comparisonResult_ = false;
+    }
 }
 
 void ShapeVisitor_Comparator::compareSpheres (Shape_AbstractSphere & shape, Shape_AbstractSphere & otherShape) {
@@ -76,7 +100,21 @@ void ShapeVisitor_Comparator::compareSpheres (Shape_AbstractSphere & shape, Shap
 		(shape.getCenter () == otherShape.getCenter ())
 		&&
 		(shape.getRadius () == otherShape.getRadius ())
-	;
+            ;
+}
+
+void ShapeVisitor_Comparator::compareCylinders(Shape_CylinderSurface &shape, Shape_CylinderSurface &otherShape)
+{
+    // TODO: Change made by Peter Sivak, I don't know how does this work for now - so return true for now
+    comparisonResult_ = true;
+    //comparisonResult_ = (shape.getCenter() == otherShape.getCenter()) && (shape.getRadius() == otherShape.getRadius());
+}
+
+void ShapeVisitor_Comparator::compareCones(Shape_ConeSurface &shape, Shape_ConeSurface &otherShape)
+{
+    // TODO: Change made by Peter Sivak, I don't know how does this work for now - so return true for now
+    comparisonResult_ = true;
+    //comparisonResult_ = (shape.getCenter() == otherShape.getCenter()) && (shape.getRadius() == otherShape.getRadius());
 }
 
 } // namespace

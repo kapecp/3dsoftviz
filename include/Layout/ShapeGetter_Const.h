@@ -22,6 +22,8 @@ public:
 
 	virtual QSharedPointer<Shape> getShape (void);
 
+        virtual QSet<Data::Node *  > getNodesOfShape();
+
 private:
 
 	QSharedPointer<Shape> shape_;

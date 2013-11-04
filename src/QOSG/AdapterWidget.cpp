@@ -11,12 +11,14 @@ AdapterWidget::AdapterWidget( QWidget * parent, const char * name, const QGLWidg
 
 void AdapterWidget::resizeGL( int width, int height )
 {
+	//zmena velkosti widgetu
 	_gw->getEventQueue()->windowResize(0, 0, width, height );
 	_gw->resized(0,0,width,height);
 }
 
 void AdapterWidget::keyPressEvent( QKeyEvent* event )
 {
+	//odchytavanie udalosti klavesnice
 	switch(event->key())
 	{
 	case(Qt::Key_Up):
@@ -74,6 +76,7 @@ void AdapterWidget::keyPressEvent( QKeyEvent* event )
 
 void AdapterWidget::keyReleaseEvent( QKeyEvent* event )
 {
+	//odchytavanie udalosti klavesnice
 	switch(event->key())
 	{
 	case(Qt::Key_Up):
@@ -139,6 +142,7 @@ void AdapterWidget::keyReleaseEvent( QKeyEvent* event )
 
 void AdapterWidget::mousePressEvent( QMouseEvent* event )
 {
+	//odchytavanie udalosti mysi
 	int button = 0;
 	switch(event->button())
 	{
@@ -153,6 +157,7 @@ void AdapterWidget::mousePressEvent( QMouseEvent* event )
 
 void AdapterWidget::mouseDoubleClickEvent ( QMouseEvent * event )
 {
+	//odchytavanie udalosti mysi
 	int button = 0;
 	switch(event->button())
 	{
@@ -168,6 +173,7 @@ void AdapterWidget::mouseDoubleClickEvent ( QMouseEvent * event )
 
 void AdapterWidget::mouseReleaseEvent( QMouseEvent* event )
 {
+	//odchytavanie udalosti mysi
 	int button = 0;
 	switch(event->button())
 	{
@@ -182,11 +188,13 @@ void AdapterWidget::mouseReleaseEvent( QMouseEvent* event )
 
 void AdapterWidget::mouseMoveEvent( QMouseEvent* event )
 {
+	//odchytavanie udalosti mysi
 	_gw->getEventQueue()->mouseMotion(event->x(), event->y());
 }
 
 void AdapterWidget::wheelEvent(QWheelEvent *event)
 {    
+	//odchytavanie udalosti mysi
 	_gw->getEventQueue()->mouseScroll((event->delta()>0) ?             
 		osgGA::GUIEventAdapter::SCROLL_UP : osgGA::GUIEventAdapter::SCROLL_DOWN);
 }

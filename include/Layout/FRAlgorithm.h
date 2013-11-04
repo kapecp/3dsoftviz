@@ -359,6 +359,11 @@ namespace Layout
 		 */
 		bool areForcesBetween (Data::Node * u, Data::Node * v);
 
+        /**
+         * \brief Last focused node (if any).
+         */
+        Data::Node *mLastFocusedNode;
+
 	};
 }
 

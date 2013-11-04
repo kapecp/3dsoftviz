@@ -1,4 +1,6 @@
 #include "Util/ApplicationConfig.h"
+#include "Manager/Manager.h"
+#include "Math/GraphMetrics.h"
 
 Util::ApplicationConfig * Util::ApplicationConfig::_instance;
 OpenThreads::Mutex Util::ApplicationConfig::_mutex;
@@ -133,4 +135,6 @@ void Util::ApplicationConfig::saveConfig()
 		file.write(ba.data());
 	}
 	file.close();
+
+	GraphMetrics::computeGraphMetrics(Manager::GraphManager::getInstance()->getActiveGraph());
 }

@@ -6,6 +6,8 @@
 
 Model::DB::DB()
 {
+	//konstruktor
+	//vytvorenie DB connection
     this->appConf = Util::ApplicationConfig::get();
     
     DB::openConnection(
@@ -19,11 +21,13 @@ Model::DB::DB()
 
 Model::DB::~DB()
 {
+	//ukoncenie DB connection v destruktore
     DB::closeConnection();
 }
 
 void Model::DB::closeConnection()
 {
+	//ukoncenie DB connection
     if(conn.open()) {
         conn.close();
         qDebug() << "[Model::DB::closeConnection] Database connection closed.";
@@ -32,6 +36,7 @@ void Model::DB::closeConnection()
 
 bool Model::DB::openConnection(QString host_name, QString db_name, QString user_name, QString pass, bool requireSSL)
 {
+	//otvorenie DB connection PSQL
     if(conn.isOpen()) {
         qDebug() << "[Model::DB::openConnection] Database connection already open.";
         return false;
@@ -48,7 +53,7 @@ bool Model::DB::openConnection(QString host_name, QString db_name, QString user_
     conn.setPassword(pass);
 
     if (requireSSL) {
-    	//conn.setConnectOptions("requiressl=1");
+
     }
 
 	QString timeout;

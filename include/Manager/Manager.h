@@ -8,6 +8,7 @@
 #include <vector>
 #include <QMap>
 #include <QString>
+#include <QtXml/QDomElement>
 #include <QFile>
 #include <qfileinfo.h>
 
@@ -19,6 +20,8 @@
 #include "QOSG/CoreWindow.h"
 #include "Viewer/CoreGraph.h"
 #include "QOSG/MessageWindows.h"
+
+#include "Network/Server.h"
 
 namespace Manager
 {
@@ -72,6 +75,12 @@ namespace Manager
             Data::Graph* simpleGraph();
 
             /**
+             * \fn saveGraph
+             * \brief Saves graph.
+             */
+            void saveGraph(Data::Graph* graph);
+
+            /**
              * \fn exportGraph
              * \brief Exports graph into file (not yet implemented).
              */
@@ -99,7 +108,7 @@ namespace Manager
              * \fn getActiveGraph
              * \brief Returns active graphs. (imeplemnted as workaround for working with only one graph for now).
              */
-            Data::Graph* getActiveGraph() { return activeGraph; };           
+            Data::Graph* getActiveGraph() { return activeGraph; }
 
             /**
              * \fn getInstance
@@ -129,7 +138,6 @@ namespace Manager
                 *  \param  app 
                 */
                 GraphManager();
-
 
                 /**
                 *  Manager::GraphManager * manager

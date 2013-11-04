@@ -6,6 +6,7 @@
 #ifndef DATA_GRAPH_DEF
 #define DATA_GRAPH_DEF 1
 
+
 #include <osg/ref_ptr>
 
 #include "Data/Node.h"
@@ -18,6 +19,7 @@
 #include "Model/TypeDAO.h"
 #include "Model/NodeDAO.h"
 #include "Model/EdgeDAO.h"
+#include "Data/GraphSpanningTree.h"
 
 
 #include <QString>
@@ -36,24 +38,25 @@ namespace Data
     class Node;
     class Type;
     class Edge;
-	class MetaType;
+    class MetaType;
     class GraphLayout;
-    
-	/**
-	*  \class Graph
-	*  \brief Object represents a graph structure.
-	*
-	*	Graph object is a representation of an graph. A graph is a set of Nodes connected via Edges. Each Node and/or Edge has its Type. 
-	*	A graph is layouted and displayed by the application. Each graph can have 1 or more GraphLayouts. A GraphLayout represents single layout of the Nodes and Edges. Each GraphLayout can have it's own meta-Edges and meta-Nodes 
-	* which can be used by the user to influence the layout of the graph.
-	*
-	*  \author Aurel Paulovic
-	*  \date 29. 4. 2010
-	*/
-	class Graph
+
+
+        /**
+        *  \class Graph
+        *  \brief Object represents a graph structure.
+        *
+        *	Graph object is a representation of an graph. A graph is a set of Nodes connected via Edges. Each Node and/or Edge has its Type.
+        *	A graph is layouted and displayed by the application. Each graph can have 1 or more GraphLayouts. A GraphLayout represents single layout of the Nodes and Edges. Each GraphLayout can have it's own meta-Edges and meta-Nodes
+        * which can be used by the user to influence the layout of the graph.
+        *
+        *  \author Aurel Paulovic
+        *  \date 29. 4. 2010
+        */
+        class Graph
     {
     public:
-        
+
 		/**
 		*  \fn public overloaded constructor  Graph(qlonglong graph_id, QString name, QSqlDatabase* conn, QMap<qlonglong,osg::ref_ptr<Data::Node> > *nodes, QMap<qlonglong,osg::ref_ptr<Data::Edge> > *edges,QMap<qlonglong,osg::ref_ptr<Data::Node> > *metaNodes, QMap<qlonglong,osg::ref_ptr<Data::Edge> > *metaEdges, QMap<qlonglong,Data::Type*> *types)
 		*  \brief Creates new Graph Object from provided nodes, edges, types, metaNodes and metaEdges
@@ -70,7 +73,7 @@ namespace Data
 		*  \param   types   provided types
 		*/
 		Graph(qlonglong graph_id, QString name, QSqlDatabase* conn, QMap<qlonglong,osg::ref_ptr<Data::Node> > *nodes, QMap<qlonglong,osg::ref_ptr<Data::Edge> > *edges,QMap<qlonglong,osg::ref_ptr<Data::Node> > *metaNodes, QMap<qlonglong,osg::ref_ptr<Data::Edge> > *metaEdges, QMap<qlonglong,Data::Type*> *types);
-    
+
 		/**
 		*  \fn public overloaded constructor  Graph(qlonglong graph_id, QString name, qlonglong layout_id_counter, qlonglong ele_id_counter, QSqlDatabase* conn)
 		*  \brief Creates new Graph Object
@@ -92,20 +95,20 @@ namespace Data
 		/**
 		*  \fn public  saveGraphToDB
 		*  \brief Saves Graph to the database
-		*  \param  conn connection to database   
-		*  \param  graph active graph   
+		*  \param  conn connection to database
+		*  \param  graph active graph
 		*  \return bool true, if the Graph was successfully saved
 		*/
-		bool saveGraphToDB(QSqlDatabase* conn, Data::Graph * graph); 
+		bool saveGraphToDB(QSqlDatabase* conn, Data::Graph * graph);
 
 		/**
 		*  \fn public  saveLayoutToDB
 		*  \brief Saves graph layout to the database
-		*  \param  conn connection to database   
-		*  \param  graph active graph   
+		*  \param  conn connection to database
+		*  \param  graph active graph
 		*  \return bool true, if the graph layout was successfully saved
 		*/
-		bool saveLayoutToDB(QSqlDatabase* conn, Data::Graph * graph); 
+		bool saveLayoutToDB(QSqlDatabase* conn, Data::Graph * graph);
 
 		/**
 		*  \fn inline public static  getMetaStrength
@@ -113,23 +116,23 @@ namespace Data
 		*  \return float strength of the meta-element
 		*/
 		float static getMetaStrength() { return (float) METASTRENGTH; }
-        
+
 
 		/**
 		*  \fn inline public  getId
 		*  \brief Returns ID of the Graph
 		*  \return qlonglong ID of the Graph
 		*/
-		qlonglong getId() { return graph_id; } 
+		qlonglong getId() { return graph_id; }
 
         /**
         * \fn qlonglong setId(qlonglong graph_id)
         * \brief Sets new ID of Graph unless it is already in DB
-        * \param 		graph_id    new ID of the Graph. 
+        * \param 		graph_id    new ID of the Graph.
         * \return qlonglong resultant ID of Graph
         */
-        qlonglong setId(qlonglong graph_id) { if(!inDB) this->graph_id = graph_id; return this->graph_id; } 
-        
+        qlonglong setId(qlonglong graph_id) { if(!inDB) this->graph_id = graph_id; return this->graph_id; }
+
 
 		/**
 		*  \fn public  setName(QString name)
@@ -137,31 +140,31 @@ namespace Data
 		*  \param   name     new Name for the Graph
 		*  \return QString resultant name of the Graph
 		*/
-		QString setName(QString name);  
+		QString setName(QString name);
 
 		/**
 		*  \fn inline public  getName
 		*  \brief Returns the name of the Graph
 		*  \return QString name of the Graph
 		*/
-		QString getName() { return name; } 
-        
+		QString getName() { return name; }
+
 
 		/**
 		*  \fn inline public  getEleIdCounter
 		*  \brief Returns current value of element ID counter
 		*  \return qlonglong current value of element ID counter
 		*/
-		qlonglong getEleIdCounter() { return ele_id_counter; } 
+		qlonglong getEleIdCounter() { return ele_id_counter; }
 
 		/**
 		*  \fn inline public  getLayoutIdCounter
 		*  \brief Returns current value of graphLayout ID counter
 		*  \return qlonglong current value of graphLayout ID counter
 		*/
-		qlonglong getLayoutIdCounter() { return layout_id_counter; } 
-        
-        
+		qlonglong getLayoutIdCounter() { return layout_id_counter; }
+
+
 
 		/**
 		*  \fn public  getLayouts(bool* error)
@@ -169,15 +172,15 @@ namespace Data
 		*  \param   error  error flag, will be set true, if the method encounters an error
 		*  \return QMap<qlonglong,Data::GraphLayout*> graphLayouts belonging to the Graph
 		*/
-		QMap<qlonglong, Data::GraphLayout*> getLayouts(bool* error); 
+		QMap<qlonglong, Data::GraphLayout*> getLayouts(bool* error);
 
 		/**
 		*  \fn public  addLayout(QString layout_name)
 		*  \brief Creates new GraphLayout and adds it to the Graph
-		*  \param       layout_name    name of the new GraphLayout 
+		*  \param       layout_name    name of the new GraphLayout
 		*  \return Data::GraphLayout * new GraphLayout
 		*/
-		Data::GraphLayout* addLayout(QString layout_name); 
+		Data::GraphLayout* addLayout(QString layout_name);
 
 		/**
 		*  \fn public  removeLayout(Data::GraphLayout* layout)
@@ -189,14 +192,14 @@ namespace Data
 		*  \return bool true, if the GraphLayout was successfully deleted
 		*/
 		bool removeLayout(Data::GraphLayout* layout);
-        
+
 
 		/**
 		*  \fn inline public  getSelectedLayout
 		*  \brief Returns currently selected GraphLayout (used by all MetaTypes)
 		*  \return Data::GraphLayout * currently selected GraphLayout
 		*/
-		Data::GraphLayout* getSelectedLayout() { return selectedLayout; } 
+		Data::GraphLayout* getSelectedLayout() { return selectedLayout; }
 
 		/**
 		*  \fn public  selectLayout(Data::GraphLayout* layout)
@@ -204,29 +207,37 @@ namespace Data
 		*  \param  layout    GraphLayout that should be selected
 		*  \return Data::GraphLayout * resulting selected GraphLayout
 		*/
-		Data::GraphLayout* selectLayout(Data::GraphLayout* layout); 
-        
+		Data::GraphLayout* selectLayout(Data::GraphLayout* layout);
+
+		/**
+		*  \fn public  getSpanningTree(qlonglong rootId)
+		*  \brief get spanning tree of graph
+		*  \param  rootId    ID of root node of spanning tree
+		*  \return Data::GraphSpanningTree* pointer to generated spanning tree
+		*/
+		Data::GraphSpanningTree* getSpanningTree(qlonglong rootId);
+
 
 		/**
 		*  \fn public  addNode(QString name, Data::Type* type, osg::Vec3f position = osg::Vec3f(0,0,0))
 		*  \brief Creates new Node and adds it to the Graph
-		*  \param   name    name of the Node 
+		*  \param   name    name of the Node
 		*  \param   type   Type of the Node
 		*  \param   position     position of the Node
 		*  \return osg::ref_ptr the added Node
 		*/
-		osg::ref_ptr<Data::Node> addNode(QString name, Data::Type* type, osg::Vec3f position = osg::Vec3f(0,0,0)); 
-        
+		osg::ref_ptr<Data::Node> addNode(QString name, Data::Type* type, osg::Vec3f position = osg::Vec3f(0,0,0));
+
 		/**
 		*  \fn public  addNode(QString name, Data::Type* type, osg::Vec3f position = osg::Vec3f(0,0,0))
 		*  \brief Creates new Node and adds it to the Graph
-		*  \param   id    id of the Node 
-		*  \param   name    name of the Node 
+		*  \param   id    id of the Node
+		*  \param   name    name of the Node
 		*  \param   type   Type of the Node
 		*  \param   position     position of the Node
 		*  \return osg::ref_ptr the added Node
 		*/
-		osg::ref_ptr<Data::Node> addNode(qlonglong id, QString name, Data::Type* type, osg::Vec3f position = osg::Vec3f(0,0,0)); 
+		osg::ref_ptr<Data::Node> addNode(qlonglong id, QString name, Data::Type* type, osg::Vec3f position = osg::Vec3f(0,0,0));
 
 		/**
 		*  \fn public  mergeNodes(QLinkedList<osg::ref_ptr<Data::Node> > * selectedNodes, osg::Vec3f position)
@@ -235,7 +246,7 @@ namespace Data
 		*  \param   position     new position of the Nodes
 		*  \return osg::ref_ptr the created merged Node
 		*/
-                osg::ref_ptr<Data::Node> mergeNodes(QLinkedList<osg::ref_ptr<Data::Node> > * selectedNodes, osg::Vec3f position, qlonglong mergeNodeId = -1);
+		osg::ref_ptr<Data::Node> mergeNodes(QLinkedList<osg::ref_ptr<Data::Node> > * selectedNodes, osg::Vec3f position, qlonglong mergeNodeId = -1);
 
 		/**
 		*  \fn public  separateNodes(QLinkedList<osg::ref_ptr<Data::Node> > * selectedNodes)
@@ -272,11 +283,11 @@ namespace Data
 		*  \param   srcNode    starting Node of the Edge
 		*  \param   dstNode     ending Node of the Edge
 		*  \param   type    Type of the Edge
-		*  \param   isOriented   true, if the Edge is oriented  
+		*  \param   isOriented   true, if the Edge is oriented
 		*  \return osg::ref_ptr the added Edge
 		*/
-		osg::ref_ptr<Data::Edge> addEdge(QString name, osg::ref_ptr<Data::Node> srcNode, osg::ref_ptr<Data::Node> dstNode, Data::Type* type, bool isOriented); 
-        
+		osg::ref_ptr<Data::Edge> addEdge(QString name, osg::ref_ptr<Data::Node> srcNode, osg::ref_ptr<Data::Node> dstNode, Data::Type* type, bool isOriented);
+
 		/**
 		*  \fn public  addEdge(qlonglong id, QString name, osg::ref_ptr<Data::Node> srcNode, osg::ref_ptr<Data::Node> dstNode, Data::Type* type, bool isOriented)
 		*  \brief Creates new Edge and adds it to the Graph
@@ -285,10 +296,10 @@ namespace Data
 		*  \param   srcNode    starting Node of the Edge
 		*  \param   dstNode     ending Node of the Edge
 		*  \param   type    Type of the Edge
-		*  \param   isOriented   true, if the Edge is oriented  
+		*  \param   isOriented   true, if the Edge is oriented
 		*  \return osg::ref_ptr the added Edge
 		*/
-		osg::ref_ptr<Data::Edge> addEdge(qlonglong id, QString name, osg::ref_ptr<Data::Node> srcNode, osg::ref_ptr<Data::Node> dstNode, Data::Type* type, bool isOriented); 
+		osg::ref_ptr<Data::Edge> addEdge(qlonglong id, QString name, osg::ref_ptr<Data::Node> srcNode, osg::ref_ptr<Data::Node> dstNode, Data::Type* type, bool isOriented);
 		/**
 		*  \fn public getNestedEdgeType()
 		*  \return nested edge type
@@ -318,7 +329,7 @@ namespace Data
 		*  \return Data::MetaType * the added MetaType
 		*/
         Data::MetaType* addMetaType(QString name, QMap <QString, QString> *settings = 0); //implemented
-        
+
 		/**
 		*  \return scale of nested node
 		*/
@@ -343,7 +354,7 @@ namespace Data
 		*/
 		bool isInSameGraph(Data::Node * nodeA, Data::Node * nodeB);
 
-        
+
 		/**
 		*  \fn public  addMultiEdge(QString name, osg::ref_ptr<Data::Node> srcNode, osg::ref_ptr<Data::Node> dstNode, Data::Type* type, bool isOriented, osg::ref_ptr<Data::Edge> replacedSingleEdge)
 		*  \brief Adds an Edge of MultiEdge type to Graph
@@ -351,7 +362,7 @@ namespace Data
 		*  \param   srcNode    starting Node of the Edge
 		*  \param   dstNode     ending Node of the Edge
 		*  \param   type    Type of the Edge
-		*  \param   isOriented   true, if the Edge is oriented  
+		*  \param   isOriented   true, if the Edge is oriented
 		*  \return osg::ref_ptr the added Edge
 		*/
 		void addMultiEdge(QString name, osg::ref_ptr<Data::Node> srcNode, osg::ref_ptr<Data::Node> dstNode, Data::Type* type, bool isOriented, osg::ref_ptr<Data::Edge> replacedSingleEdge);
@@ -372,31 +383,31 @@ namespace Data
 		*  \return osg::ref_ptr the found non Multi Node neigbour
 		*/
 		osg::ref_ptr<Data::Node> getMultiEdgeNeighbour(osg::ref_ptr<Data::Edge> multiEdge);
-		
-		osg::ref_ptr<Data::Node> addHyperEdge(QString name, osg::Vec3f position = osg::Vec3f(0,0,0)); 
+
+		osg::ref_ptr<Data::Node> addHyperEdge(QString name, osg::Vec3f position = osg::Vec3f(0,0,0));
 
 		/**
 		*  \fn public  removeEdge(osg::ref_ptr<Data::Edge> edge)
 		*  \brief Removes an Edge from the Graph
-		*  \param       edge the Edge to be removed from the Graph  
+		*  \param       edge the Edge to be removed from the Graph
 		*/
 		void removeEdge(osg::ref_ptr<Data::Edge> edge);
-        
+
 
 		/**
 		*  \fn public  removeType(Data::Type* type)
 		*  \brief Removes a Type from the Graph
-		*  \param  type the Type to be removed from the Graph   
+		*  \param  type the Type to be removed from the Graph
 		*/
 		void removeType(Data::Type* type);
-        
+
 
 		/**
 		*  \fn inline public constant  getNodes
 		*  \brief Returns QMap of the Nodes assigned to the Graph
 		*  \return QMap<qlonglong,osg::ref_ptr<Data::Node> > * Nodes assigned to the Graph
 		*/
-		QMap<qlonglong, osg::ref_ptr<Data::Node> >* getNodes() const { return nodes; } 
+		QMap<qlonglong, osg::ref_ptr<Data::Node> >* getNodes() const { return nodes; }
 
 
 		/**
@@ -404,7 +415,7 @@ namespace Data
 		*  \brief Returns QMap of the Edges assigned to the Graph
 		*  \return QMap<qlonglong,osg::ref_ptr<Data::Edge> > * Edges assigned to the Graph
 		*/
-		QMap<qlonglong, osg::ref_ptr<Data::Edge> >* getEdges() const { return edges; } 
+		QMap<qlonglong, osg::ref_ptr<Data::Edge> >* getEdges() const { return edges; }
 
 
 		/**
@@ -412,7 +423,7 @@ namespace Data
 		*  \brief Returns QMap of the meta-Nodes assigned to the Graph
 		*  \return QMap<qlonglong,osg::ref_ptr<Data::Node> > * meta-Nodes assigned to the Graph
 		*/
-		QMap<qlonglong, osg::ref_ptr<Data::Node> >* getMetaNodes() const { return metaNodes; } 
+		QMap<qlonglong, osg::ref_ptr<Data::Node> >* getMetaNodes() const { return metaNodes; }
 
 
 		/**
@@ -420,7 +431,7 @@ namespace Data
 		*  \brief Returns meta-Edges assigned to the Graph
 		*  \return QMap<qlonglong,osg::ref_ptr<Data::Edge> > * meta-Edges assigned to the Graph
 		*/
-		QMap<qlonglong, osg::ref_ptr<Data::Edge> >* getMetaEdges() const { return metaEdges; } 
+		QMap<qlonglong, osg::ref_ptr<Data::Edge> >* getMetaEdges() const { return metaEdges; }
 
 
 		/**
@@ -436,15 +447,15 @@ namespace Data
 		*  \brief Returns true, if the Graph is frozen (for layout algorithm)
 		*  \return bool true, if the Graph is frozen
 		*/
-		bool isFrozen() const { return frozen; } 
+		bool isFrozen() const { return frozen; }
 
 		/**
 		*  \fn inline public  setFrozen(bool val)
 		*  \brief Sets the frozen flag of the Graph to val
 		*  \param      val     true, if the graph shall be frozen
 		*/
-		void setFrozen(bool val) { frozen = val; } 
-        
+		void setFrozen(bool val) { frozen = val; }
+
 
 		/**
 		*  \fn inline public  isInDB
@@ -454,14 +465,14 @@ namespace Data
 		*
 		*  \return bool true, if the Graph is in DB
 		*/
-		bool isInDB() { return inDB; } 
+		bool isInDB() { return inDB; }
 
 		/**
 		*  \fn inline public  setIsInDB
 		*  \brief Sets the inDB flag of the Graph to true
 		*/
-		void setIsInDB() { inDB = true; }; 
-        
+		void setIsInDB() { inDB = true; };
+
 
 		/**
 		*  \fn public  getTypesByName(QString name)
@@ -469,23 +480,23 @@ namespace Data
 		*  \param       name     name of the searched Type
 		*  \return QList<Data::Type*> searched Types
 		*/
-		QList<Data::Type*> getTypesByName(QString name); 
+		QList<Data::Type*> getTypesByName(QString name);
 
 
 		/**
 		*  \fn public constant  toString
 		*  \brief Returns human-readable string representing the Graph
-		*  \return QString 
+		*  \return QString
 		*/
-		QString toString() const; 
-        
+		QString toString() const;
+
 
 		/**
 		*  \fn public  getNodeMetaType
 		*  \brief Returns MetaType for meta-Nodes
 		*  \return Data::Type * MetaType for the Nodes
 		*/
-		Data::Type* getNodeMetaType(); 
+		Data::Type* getNodeMetaType();
 
 		/**
 		*  \fn public  getNodeMultiType
@@ -515,13 +526,18 @@ namespace Data
 		/**
 		 * \brief Adds node used to manipulate the restrictions.
 		 */
-                osg::ref_ptr<Data::Node> addRestrictionNode(QString name, osg::Vec3f position, int nodeId = -1);
-		
+		osg::ref_ptr<Data::Node> addRestrictionNode(QString name, osg::Vec3f position, int nodeId = -1);
+
+		/**
+		 * \brief Adds node used to manipulate the restrictions. Node can be restricted.
+		 */
+		osg::ref_ptr<Data::Node> addFloatingRestrictionNode(QString name, osg::Vec3f position, int nodeId = -1);
+
 		/**
 		*  \fn inline public  setEleIdCounter
 		*  \brief Set element ID counter
 		*/
-		void setEleIdCounter(qlonglong number) { ele_id_counter = number; } 
+		void setEleIdCounter(qlonglong number) { ele_id_counter = number; }
 
     private:
 
@@ -530,29 +546,29 @@ namespace Data
 		*  \brief Increments and returns the incremented value of element ID counter
 		*  \return qlonglong incremented value of element counter
 		*/
-		qlonglong incEleIdCounter() { return ++ele_id_counter; } 
+		qlonglong incEleIdCounter() { return ++ele_id_counter; }
 
 		/**
 		*  \fn inline private  incLayoutIdCounter
 		*  \brief Increments and returns the incremented value of GraphLayout ID counter
-		*  \return qlonglong 
+		*  \return qlonglong
 		*/
-		qlonglong incLayoutIdCounter() { return ++layout_id_counter; } 
+		qlonglong incLayoutIdCounter() { return ++layout_id_counter; }
 
 		/**
 		* \fn	private removeAllEdgesOfType(Data::Type* type)
 		* \brief Removes all Edges that are of type
 		*  \param      type   Type
 		*/
-		void removeAllEdgesOfType(Data::Type* type); 
+		void removeAllEdgesOfType(Data::Type* type);
 
         /**
         * \fn private removeAllNodesOfType(Data::Type* type)
 		* \brief Removes all Nodes that are of type
         *  \param      type     Type
         */
-        void removeAllNodesOfType(Data::Type* type); 
-       
+        void removeAllNodesOfType(Data::Type* type);
+
 
 		/**
 		*  \fn private  getMaxEleIdFromElements
@@ -572,25 +588,25 @@ namespace Data
 		*	\brief ID of the parent Node
 		*/
 		QList<osg::ref_ptr<Data::Node> > parent_id;
-        
+
 		/**
 		*  QString name
 		*  \brief Name of the Graph
 		*/
         QString name;
-        
+
 		/**
 		*  qlonglong ele_id_counter
 		*  \brief Element ID counter
 		*/
         qlonglong ele_id_counter;
-        
+
 		/**
 		*  qlonglong layout_id_counter
 		*  \brief GraphLayout ID counter
 		*/
         qlonglong layout_id_counter;
-        
+
 		/**
 		*  bool inDB
 		*  \brief flag if the Graph is frozen or not (used by layout algorithm)
@@ -602,35 +618,35 @@ namespace Data
 		*  \brief stores last node added into graph
 		*/
 		osg::ref_ptr<Data::Node> lastNode;
-        
+
 
 		/**
 		*  Data::GraphLayout * selectedLayout
 		*  \brief Currently selected GraphLayout
 		*/
 		Data::GraphLayout* selectedLayout;
-        
+
 
 		/**
 		*  QSqlDatabase * conn
 		*  \brief Connection to database
 		*/
 		QSqlDatabase* conn;
-        
+
 
 		/**
 		*  QMap<qlonglong,Data::GraphLayout*> layouts
 		*  \brief GraphLayouts of the Graph
 		*/
 		QMap<qlonglong, Data::GraphLayout*> layouts;
-        
+
 
 		/**
 		*  QMultiMap<QString,Data::Type*> * typesByName
 		*  \brief Types sorted by their name attribute
 		*/
 		QMultiMap<QString, Data::Type*>* typesByName;
-        
+
 
 		/**
 		*  QMap<qlonglong,osg::ref_ptr<Data::Node> > newNodes
@@ -689,7 +705,7 @@ namespace Data
 		*  \brief Flag if the Graph is frozen or not (used by layout algorithm)
 		*/
 		bool frozen;
-		
+
 		/**
 		*  QMap<qlonglong,osg::ref_ptr<Data::Edge> > edgesByType
 		*  \brief Edges in the Graph sorted by their Type
@@ -720,7 +736,7 @@ namespace Data
 		 */
         Layout::RestrictionsManager restrictionsManager_;
 
-	};
+        };
 }
 
 #endif
@@ -730,33 +746,33 @@ namespace Data
 QUERY na vyber stromovej hierarchie uzlov s urcenym ci je uzol meta na zaklade parenta (type_id) ktory je metauzlom
 
 WITH RECURSIVE q AS (
-	SELECT node_id, type_id, "name", meta, CAST("name" As varchar(1000)) As fullname
-	FROM nodes 
-	WHERE node_id = type_id
+        SELECT node_id, type_id, "name", meta, CAST("name" As varchar(1000)) As fullname
+        FROM nodes
+        WHERE node_id = type_id
 UNION ALL
-	SELECT n.node_id, n.type_id, n."name", (CASE WHEN n.meta OR q.meta THEN true ELSE false END) AS meta, 
-	CAST(q.fullname || '->' || n."name" As varchar(1000)) As fullname
-	FROM nodes AS n
-	INNER JOIN q ON
-	n.type_id = q.node_id AND n.type_id != n.node_id
-) 
+        SELECT n.node_id, n.type_id, n."name", (CASE WHEN n.meta OR q.meta THEN true ELSE false END) AS meta,
+        CAST(q.fullname || '->' || n."name" As varchar(1000)) As fullname
+        FROM nodes AS n
+        INNER JOIN q ON
+        n.type_id = q.node_id AND n.type_id != n.node_id
+)
 SELECT node_id, type_id, "name", meta, fullname
 FROM q
 ORDER BY fullname
 
 
 WITH RECURSIVE q AS (
-	SELECT node_id, type_id, "name", meta, layout_id
-	FROM nodes 
-	WHERE node_id = type_id
+        SELECT node_id, type_id, "name", meta, layout_id
+        FROM nodes
+        WHERE node_id = type_id
 UNION ALL
-	SELECT n.node_id, n.type_id, n."name", 
-	(n.meta OR q.meta) AS meta, 
-	COALESCE(n.layout_id, q.layout_id) AS layout_id
-	FROM nodes AS n
-	INNER JOIN q ON
-	n.type_id = q.node_id AND n.type_id != n.node_id
-) 
+        SELECT n.node_id, n.type_id, n."name",
+        (n.meta OR q.meta) AS meta,
+        COALESCE(n.layout_id, q.layout_id) AS layout_id
+        FROM nodes AS n
+        INNER JOIN q ON
+        n.type_id = q.node_id AND n.type_id != n.node_id
+)
 SELECT node_id, type_id, "name", meta, layout_id
 FROM q
 

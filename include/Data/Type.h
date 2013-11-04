@@ -6,8 +6,6 @@
 #ifndef DATA_TYPE_DEF
 #define DATA_TYPE_DEF 1
 
-//#include "Data/Graph.h"
-
 #include <string>
 #include <QString>
 #include <QTextStream>
@@ -20,8 +18,8 @@
 
 namespace Data
 {
-	class Graph;
 
+    class Graph;
     /**
 	*  \class Type
 	*  \brief Type object represents type of an Node or Edge in a Graph
@@ -40,7 +38,7 @@ namespace Data
 		*  \param  name   name of the Type
 		*  \param  settings    settings of the Type
 		*/
-		Type(qlonglong id, QString name, Data::Graph* graph, QMap<QString, QString> * settings = 0);
+                Type(qlonglong id, QString name, Graph* graph, QMap<QString, QString> * settings = 0);
 
         /**
 		*  \fn public destructor  ~MetaType

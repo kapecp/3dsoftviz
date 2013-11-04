@@ -740,6 +740,43 @@ void Server::sendSetRestriction(quint8 type, osg::ref_ptr<Data::Node> node1, osg
     this->sendBlock(block, client);
 }
 
+void Server::sendSetRestriction(quint8 type, QLinkedList<osg::ref_ptr<Data::Node> > * nodes,
+                                Layout::RestrictionRemovalHandler_RestrictionNodesRemover::NodesListType* restrictionNodes,
+                                QTcpSocket *client)
+{
+
+    if (!this -> isListening() || (client == NULL && clients.size() == 0)) {
+        return;
+    }
+
+    QByteArray block;
+    QDataStream out(&block,QIODevice::WriteOnly);
+    out.setFloatingPointPrecision(QDataStream::SinglePrecision);
+
+    out << (quint16)0 << (quint8) SetRestrictionExecutor::INSTRUCTION_NUMBER << (quint8) type;
+
+    Layout::RestrictionRemovalHandler_RestrictionNodesRemover::NodesListType::Iterator itRN;
+
+    for (itRN = restrictionNodes->begin(); itRN!= restrictionNodes->end(); itRN++){
+        out << (int) (*itRN)->getId() <<  (QString) (*itRN)->getName();
+        out<< (float) (*itRN)->getTargetPosition().x()<< (float) (*itRN)->getTargetPosition().y() << (float) (*itRN)->getTargetPosition().z();
+    }
+
+        out << (int) nodes->count();
+
+    QLinkedList<osg::ref_ptr<Data::Node> >::const_iterator i = nodes->constBegin();
+    while (i != nodes->constEnd()) {
+        out << (int) (*i)->getId();
+        ++i;
+    }
+
+
+    out.device()->seek(0);
+    out << (quint16)(block.size() - sizeof(quint16));
+
+    this->sendBlock(block, client);
+}
+
 void Server::sendUnSetRestriction(QLinkedList<osg::ref_ptr<Data::Node> > *nodes, QTcpSocket *client) {
 
 	if (!this -> isListening() || (client == NULL && clients.size() == 0)) {

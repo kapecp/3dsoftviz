@@ -4,6 +4,7 @@
 
 namespace Manager {
 
+	//chybove hlasky
 void ImportInfoHandlerImpl::addMessage (
 	const QString &text
 ) {

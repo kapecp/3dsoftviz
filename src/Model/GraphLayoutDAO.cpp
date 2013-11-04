@@ -15,7 +15,6 @@ Model::GraphLayoutDAO::~GraphLayoutDAO(void)
 QMap<qlonglong, QString> Model::GraphLayoutDAO::getLayoutsNames(qlonglong graph_id, QSqlDatabase* conn, bool* error)
 {
     QMap<qlonglong, QString> layoutNames;
-	//QString layoutName;
     *error = FALSE;
     
     if(conn==NULL || !conn->open()) { //check if we have connection
@@ -23,14 +22,6 @@ QMap<qlonglong, QString> Model::GraphLayoutDAO::getLayoutsNames(qlonglong graph_
         *error = TRUE;
         return layoutNames;
     }
-    
-  /*  if(graph==NULL) {
-        qDebug() << "[Model::GraphLayoutDAO::getLayouts] Invalid parameter - graph is NULL";
-        *error = TRUE;
-        return qgraphslayouts;
-    }*/
-    
-    //if(!graph->isInDB()) return qgraphslayouts;
 
     QSqlQuery* query = new QSqlQuery(*conn);
     query->prepare("SELECT layout_id, layout_name FROM layouts WHERE graph_id = :graph_id");
@@ -41,6 +32,7 @@ QMap<qlonglong, QString> Model::GraphLayoutDAO::getLayoutsNames(qlonglong graph_
         return layoutNames;
     }
 
+	//nacitavame nazvy rozlozeni z databazy
     while(query->next()) {
 		layoutNames.insert(query->value(0).toLongLong(), query->value(1).toString());
     }
@@ -66,6 +58,7 @@ QList<qlonglong> Model::GraphLayoutDAO::getListOfLayouts(QSqlDatabase* conn, boo
     query->prepare("SELECT graph_id " 
 		"FROM layouts ");
 
+	//nacitame zoznam layoutou z databazy
     if(!query->exec()) 
 	{
         qDebug() << "[Model::GraphLayoutDAO::getListOfLayouts] Could not perform query on DB: " << query->lastError().databaseText();
@@ -102,6 +95,8 @@ QMap<qlonglong, Data::GraphLayout*> Model::GraphLayoutDAO::getLayouts(Data::Grap
     QSqlQuery* query = new QSqlQuery(*conn);
     query->prepare("SELECT layout_id, layout_name FROM layouts WHERE graph_id = :graph_id");
     query->bindValue(":graph_id", graph->getId());
+
+	//nacitame jednotlive layouty z databazy do QMapy
     if(!query->exec()) {
         qDebug() << "[Model::GraphLayoutDAO::getLayouts] Could not perform query on DB: " << query->lastError().databaseText();
         *error = TRUE;
@@ -124,18 +119,13 @@ Data::GraphLayout* Model::GraphLayoutDAO::addLayout(QString layout_name, Data::G
         qDebug() << "[Model::GraphLayoutDAO::addLayout] Invalid parameter - graph is NULL";
         return NULL;
     }
-    
-    /*if(!graph->isInDB()) {
-        if(!Model::GraphDAO::addGraph(graph, conn)) { //could not insert graph into DB
-            qDebug() << "[Model::GraphLayoutDAO::addType] Could not insert GraphLayout in DB. Graph is not in DB.";
-            return NULL;
-        }
-    }*/
 
     QSqlQuery* query = new QSqlQuery(*conn);
     query->prepare("INSERT INTO layouts (layout_name, graph_id) VALUES (:layout_name,:graph_id) RETURNING layout_id");
     query->bindValue(":layout_name",layout_name);
     query->bindValue(":graph_id", graph->getId());
+	
+	//ulozime layout do databazy
     if(!query->exec()) {
         qDebug() << "[Model::GraphLayoutDAO::addLayout] Could not perform query on DB: " << query->lastError().databaseText();
         return NULL;
@@ -178,6 +168,8 @@ bool Model::GraphLayoutDAO::addLayout( Data::GraphLayout* layout, QSqlDatabase* 
     query->prepare("INSERT INTO layouts (layout_id, layout_name, graph_id) VALUES (:layout_id,:layout_name,:graph_id) RETURNING layout_id");
     query->bindValue(":layout_name",layout->getName());
     query->bindValue(":graph_id", layout->getGraphId());
+
+	//ulozime layout do databazy
     if(!query->exec()) {
         qDebug() << "[Model::GraphLayoutDAO::addLayout] Could not perform query on DB: " << query->lastError().databaseText();
         return false;
@@ -209,6 +201,8 @@ bool Model::GraphLayoutDAO::removeLayout(Data::GraphLayout* graphLayout, QSqlDat
     query->prepare("DELETE FROM layouts WHERE graph_id = :graph_id AND layout_id = :layout_id");
     query->bindValue(":graph_id", graphLayout->getGraph()->getId());
     query->bindValue(":layout_id", graphLayout->getId());
+
+	//odstranime layout z databazy
     if(!query->exec()) {
         qDebug() << "[Model::GraphLayoutDAO::removeLayout] Could not perform query on DB: " << query->lastError().databaseText();
         return false;
@@ -227,6 +221,8 @@ bool Model::GraphLayoutDAO::removeLayouts(qlonglong graphID, QSqlDatabase* conn)
     QSqlQuery* query = new QSqlQuery(*conn);
     query->prepare("DELETE FROM layouts WHERE graph_id = :graph_id");
     query->bindValue(":graph_id", graphID);
+
+	//odstranime vsetky layouty z databazy
     if(!query->exec()) {
         qDebug() << "[Model::GraphLayoutDAO::removeLayouts] Could not perform query on DB: " << query->lastError().databaseText();
         return false;
@@ -249,6 +245,8 @@ bool Model::GraphLayoutDAO::removeLayout(qlonglong graphID, qlonglong layoutID, 
 	query->prepare("DELETE FROM layouts WHERE graph_id = :graph_id AND layout_id = :layout_id");
     query->bindValue(":graph_id", graphID);
 	query->bindValue(":layout_id", layoutID);
+
+	//odstranime jeden layout z databazy
     if(!query->exec()) {
         qDebug() << "[Model::GraphLayoutDAO::removeLayout] Could not perform query on DB: " << query->lastError().databaseText();
         return false;
@@ -278,6 +276,7 @@ QString Model::GraphLayoutDAO::getName(QSqlDatabase* conn, bool* error, qlonglon
 	query->bindValue(":graph_id", graphID);
 	query->bindValue(":layout_id", layoutID);
 
+	//nacitame nazov layoutu z databazy
     if(!query->exec()) {
         qDebug() << "[Model::GraphLayoutDAO::getName] Could not perform query on DB: " << query->lastError().databaseText();
         *error = TRUE;
@@ -324,6 +323,8 @@ QString Model::GraphLayoutDAO::setName( QString name, Data::GraphLayout* graphLa
     query->bindValue(":layout_id", graphLayout->getId());
     query->bindValue(":graph_id", graphLayout->getGraph()->getId());
     query->bindValue(":layout_name",name);
+
+	//nastavime nazov layoutu do databazy
     if(!query->exec()) {
         qDebug() << "[Model::GraphLayoutDAO::setName] Could not perform query on DB: " << query->lastError().databaseText();
         return name;
@@ -352,6 +353,8 @@ bool Model::GraphLayoutDAO::checkIfExists( Data::GraphLayout* graphLayout, QSqlD
         "WHERE layout_id=:layout_id AND graph_id=:graph_id");
     query->bindValue(":layout_id", graphLayout->getId());
     query->bindValue(":graph_id", graphLayout->getGraph()->getId());
+
+	//overujeme ci existuje layout v databaze podla ID
     if(!query->exec()) {
         qDebug() << "[Model::GraphLayoutDAO::checkIfExists] Could not perform query on DB: " << query->lastError().databaseText();
         return NULL;
@@ -394,6 +397,7 @@ QMap<QString,QString> Model::GraphLayoutDAO::getSettings( Data::GraphLayout* gra
         return settings;
     }
 
+	//nacitame settings pre layout z databazy
     while(query->next()) {
         settings.insert(query->value(0).toString(),query->value(1).toString());
     }

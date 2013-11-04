@@ -16,20 +16,20 @@
 
 namespace Data
 {
-	class Graph;
-	class GraphLayout;
-	class Type;
+        class Graph;
+        class GraphLayout;
+        class Type;
 
-	/**
-	*  \class MetaType
-	*  \brief MetaType is a special Type Object used as a type in meta-Nodes and meta-Edges
-	*  \author Aurel Paulovic 
-	*  \date 29. 4. 2010
-	*/
-	class MetaType : public Type
+        /**
+        *  \class MetaType
+        *  \brief MetaType is a special Type Object used as a type in meta-Nodes and meta-Edges
+        *  \author Aurel Paulovic
+        *  \date 29. 4. 2010
+        */
+        class MetaType : public Type
     {
     public:
-  
+
 
 		/**
 		*  \fn inline public constructor  MetaType(qlonglong id, QString name, Data::Graph* graph, Data::GraphLayout* layout, QMap<QString, QString> * settings = 0):Data::Type(id,name,graph,settings)
@@ -47,14 +47,14 @@ namespace Data
 		*  \brief Destroys MetaType object
 		*/
 		~MetaType(void);
-        
+
 
 		/**
 		*  \fn inline public  getLayout
 		*  \brief Returns GraphLayout to which the MetaType belongs
-		*  \return Data::GraphLayout * 
+		*  \return Data::GraphLayout *
 		*/
-		Data::GraphLayout* getLayout() { return layout; } 
+		Data::GraphLayout* getLayout() { return layout; }
     private:
 
 		/**
