@@ -132,12 +132,6 @@ endif()
 # Dependencies - Searching external dependencies
 # ------------
 
-# Find ZLib
-#find_package(ZLIB)
-
-# Find LibPNG
-#find_package(PNG)
-
 # Find Qt4
 find_package(Qt4 REQUIRED)
 set(QT_USE_QTOPENGL 1)
@@ -236,8 +230,6 @@ endif()
 
 # Include Paths
 include_directories(
-##	${PNG_INCLUDE_DIREctories}
-##	${zlib_include_dirECTORIES}
 	${OPENSCENEGRAPH_INCLUDE_DIRS}
 	${OSGVIEWER_INCLUDE_DIR}
 	${CMAKE_CURRENT_SOURCE_DIR}/include
@@ -307,9 +299,6 @@ target_link_libraries( ${3DSOFTVIZ_NAME}
 	${QT_LIBRARIES}
 	${OPENSCENEGRAPH_LIBRARIES}
 	${OSGVIEWER_LIBRARIES}
-	#${PNG_LIBRARIES}
-	#${ZLIB_LIBRARIES}
-
 	${LIBNOISE_LIBRARY}
 )
 
