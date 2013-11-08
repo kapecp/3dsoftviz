@@ -6,7 +6,7 @@ OpenThreads::Mutex Util::ApplicationConfig::_mutex;
 Util::ApplicationConfig::ApplicationConfig(void)
 { 
 	//otvorenie suboru na nacitanie dat
-	QFile file("config/config");
+	QFile file("../share/3dsoftviz/config/config");
 	file.open(QIODevice::ReadOnly);
 	//rozdelenie dat podla riadkov
 	QList<QString> data = QString(file.readAll()).split("\n");

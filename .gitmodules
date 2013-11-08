@@ -1,0 +1,3 @@
+[submodule "dependencies/libnoise"]
+	path = dependencies/libnoise
+	url = git@github.com:LuaDist/libnoise.git
