@@ -4,3 +4,6 @@
 [submodule "dependencies/luajit"]
 	path = dependencies/luajit
 	url = https://github.com/LuaDist/luajit.git
+[submodule "dependencies/diluculum"]
+	path = dependencies/diluculum
+	url = https://github.com/LuaDist/diluculum.git

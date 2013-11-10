@@ -122,16 +122,27 @@ if( USE_BUILTIN_DEPENDENCIES )
 		-C ${CMAKE_CURRENT_BINARY_DIR}/config.cmake
 	)
 
+	# Build Diluculum
+	ExternalProject_Add ( dep_diluculum
+		PREFIX diluculum
+		SOURCE_DIR ${DEP_SOURCE}/diluculum
+		BINARY_DIR diluculum
+		CMAKE_ARGS
+			-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
+			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
+	)
+
 	# Ensure correct order of build(dependencies between ext. dependencies)
 	# add_dependencies( dep_lpeg dep_luajit )
+	add_dependencies ( dep_diluculum dep_luajit )
 
 	# Define LUA_ variables
 	set( LUA_LIBRARY ${DEP_BIN}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}lua${CMAKE_SHARED_LIBRARY_SUFFIX} )
-	#set( DILUCULUM_LIBRARY ${DEP_BIN}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}diluculum${CMAKE_SHARED_LIBRARY_SUFFIX} )
+	set( DILUCULUM_LIBRARY ${DEP_BIN}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}diluculum${CMAKE_SHARED_LIBRARY_SUFFIX} )
 	set( LIBNOISE_LIBRARY ${DEP_BIN}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}noise${CMAKE_SHARED_LIBRARY_SUFFIX} )
 	if( WIN32 )
 		set( LUA_LIBRARY ${DEP_BIN}/bin/${CMAKE_SHARED_LIBRARY_PREFIX}lua${CMAKE_SHARED_LIBRARY_SUFFIX} )
-		#set( DILUCULUM_LIBRARY ${DEP_BIN}/bin/${CMAKE_SHARED_LIBRARY_PREFIX}diluculum${CMAKE_SHARED_LIBRARY_SUFFIX} )
+		set( DILUCULUM_LIBRARY ${DEP_BIN}/bin/${CMAKE_SHARED_LIBRARY_PREFIX}diluculum${CMAKE_SHARED_LIBRARY_SUFFIX} )
 		set( LIBNOISE_LIBRARY ${DEP_BIN}/bin/${CMAKE_SHARED_LIBRARY_PREFIX}noise${CMAKE_SHARED_LIBRARY_SUFFIX} )
 	endif()
 	set( DEPENDENCIES_INCLUDE_DIR ${DEP_BIN}/include )
@@ -312,6 +323,7 @@ target_link_libraries( ${3DSOFTVIZ_NAME}
 	${OPENSCENEGRAPH_LIBRARIES}
 	${OSGVIEWER_LIBRARIES}
 	${LIBNOISE_LIBRARY}
+	${DILUCULUM_LIBRARY}
 	${LUA_LIBRARY}
 )
 
@@ -319,7 +331,7 @@ target_link_libraries( ${3DSOFTVIZ_NAME}
 cotire( ${3DSOFTVIZ_NAME} )
 
 # ensure correct dependencies
-add_dependencies( ${3DSOFTVIZ_NAME} dep_libnoise )
+add_dependencies( ${3DSOFTVIZ_NAME} dep_libnoise dep_diluculum dep_luajit )
 
 # -------
 # Install
