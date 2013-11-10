@@ -143,6 +143,8 @@ SET(SOURCES_H
 	./include/Viewer/PickHandler.h
         ./include/Network/Server.h
         ./include/Network/Client.h
+        ./include/QOpenCV/FaceRecognitionWindow.h
+        ./include/QOpenCV/FaceRecognitionThread.h
 )
 
 # toto makro spracuje Q_OBJECT a vygeneruje novy cpp subor, ktory bude dostupny v ${SOURCES_H_MOC} premennej
@@ -166,6 +168,7 @@ SOURCE_GROUP(\\src\\Layout "^.*Layout/.*$")
 SOURCE_GROUP(\\src\\QOSG "^.*QOSG/.*$")
 SOURCE_GROUP(\\src\\OsgQtBrowser "^.*OsgQtBrowser/.*$")
 SOURCE_GROUP(\\src\\Noise "^.*Noise/.*$")
+SOURCE_GROUP(\\src\\QOpenCV "^.*QOpenCV/.*$")
 SOURCE_GROUP(\\src\\OpenCV "^.*OpenCV/.*$")
 
 SOURCE_GROUP(\\headers\\Network "^.*Network/.*h$")
@@ -181,6 +184,7 @@ SOURCE_GROUP(\\headers\\Layout "^.*Layout/.*h$")
 SOURCE_GROUP(\\headers\\QOSG "^.*QOSG/.*h$")
 SOURCE_GROUP(\\headers\\Noise "^.*Noise/.*h$")
 SOURCE_GROUP(\\headers\\OsgQtBrowser "^.*OsgQtBrowser/.*h$")
+SOURCE_GROUP(\\headers\\QOpenCV "^.*QOpenCV/.*h$")
 SOURCE_GROUP(\\headers\\OpenCV "^.*OpenCV/.*h$")
 
 SOURCE_GROUP(\\MOC "^.*moc_.*$")
