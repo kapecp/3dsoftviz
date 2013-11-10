@@ -3,6 +3,7 @@
 #include "Manager/Manager.h"
 #include "Core/Core.h"
 #include "Util/Cleaner.h"
+#include "OpenCV/OpenCVCore.h"
 
 int main(int argc, char *argv[])
 {     
@@ -10,6 +11,7 @@ int main(int argc, char *argv[])
 	new Cleaner(&app);
         AppCore::Core::getInstance(&app);
         Manager::GraphManager::getInstance();
+        OpenCV::OpenCVCore::getInstance(&app);
 
 }
 
