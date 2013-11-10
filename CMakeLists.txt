@@ -93,7 +93,7 @@ if( USE_BUILTIN_DEPENDENCIES )
 	set( DEP_SOURCE ${CMAKE_CURRENT_SOURCE_DIR}/dependencies )
 	set( DEP_BIN ${CMAKE_CURRENT_BINARY_DIR}/dependencies )
 	set( CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH} ${DEP_BIN}/lib ${DEP_BIN}/bin )
-	set( CMAKE_INCLUDE_PATH ${CMaKE_INCLUDE_PATH} ${DEP_BIN}/include )
+	set( CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} ${DEP_BIN}/include )
 
 	# Generate cache
 	configure_file( config.cmake.in ${CMAKE_CURRENT_BINARY_DIR}/config.cmake )
@@ -110,22 +110,34 @@ if( USE_BUILTIN_DEPENDENCIES )
 		-C ${CMAKE_CURRENT_BINARY_DIR}/config.cmake
 	)
 
+	 # Build LuaJIT2
+	include ( ExternalProject )
+	ExternalProject_Add ( dep_luajit
+	  PREFIX luajit
+	  SOURCE_DIR ${DEP_SOURCE}/luajit
+	  BINARY_DIR luajit
+	  CMAKE_ARGS
+		-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
+		-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
+		-C ${CMAKE_CURRENT_BINARY_DIR}/config.cmake
+	)
+
 	# Ensure correct order of build(dependencies between ext. dependencies)
 	# add_dependencies( dep_lpeg dep_luajit )
 
 	# Define LUA_ variables
-	#set( LUA_LIBRARY ${DEP_BIN}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}lua${CMAKE_SHARED_LIBRARY_SUFFIX} )
+	set( LUA_LIBRARY ${DEP_BIN}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}lua${CMAKE_SHARED_LIBRARY_SUFFIX} )
 	#set( DILUCULUM_LIBRARY ${DEP_BIN}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}diluculum${CMAKE_SHARED_LIBRARY_SUFFIX} )
 	set( LIBNOISE_LIBRARY ${DEP_BIN}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}noise${CMAKE_SHARED_LIBRARY_SUFFIX} )
 	if( WIN32 )
-		#set( LUA_LIBRARY ${DEP_BIN}/bin/${CMAKE_SHARED_LIBRARY_PREFIX}lua${CMAKE_SHARED_LIBRARY_SUFFIX} )
+		set( LUA_LIBRARY ${DEP_BIN}/bin/${CMAKE_SHARED_LIBRARY_PREFIX}lua${CMAKE_SHARED_LIBRARY_SUFFIX} )
 		#set( DILUCULUM_LIBRARY ${DEP_BIN}/bin/${CMAKE_SHARED_LIBRARY_PREFIX}diluculum${CMAKE_SHARED_LIBRARY_SUFFIX} )
 		set( LIBNOISE_LIBRARY ${DEP_BIN}/bin/${CMAKE_SHARED_LIBRARY_PREFIX}noise${CMAKE_SHARED_LIBRARY_SUFFIX} )
 	endif()
 	set( DEPENDENCIES_INCLUDE_DIR ${DEP_BIN}/include )
 else()
 	# Find Lua implementation, assuming lpeg is installed by other means
-	#find_package( Lua51 REQUIRED )
+	find_package( Lua51 REQUIRED )
 endif()
 
 # ------------
@@ -300,6 +312,7 @@ target_link_libraries( ${3DSOFTVIZ_NAME}
 	${OPENSCENEGRAPH_LIBRARIES}
 	${OSGVIEWER_LIBRARIES}
 	${LIBNOISE_LIBRARY}
+	${LUA_LIBRARY}
 )
 
 # 'cotire' the executable

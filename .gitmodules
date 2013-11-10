@@ -1,3 +1,6 @@
 [submodule "dependencies/libnoise"]
 	path = dependencies/libnoise
 	url = git@github.com:LuaDist/libnoise.git
+[submodule "dependencies/luajit"]
+	path = dependencies/luajit
+	url = https://github.com/LuaDist/luajit.git
