@@ -7,3 +7,6 @@
 [submodule "dependencies/diluculum"]
 	path = dependencies/diluculum
 	url = https://github.com/LuaDist/diluculum.git
+[submodule "dependencies/lpeg"]
+	path = dependencies/lpeg
+	url = https://github.com/LuaDist/lpeg.git

@@ -89,6 +89,8 @@ option( USE_BUILTIN_DEPENDENCIES "Use builtin dependencies." ON )
 # Build dependencies
 if( USE_BUILTIN_DEPENDENCIES )
 
+	include( ExternalProject )
+
 	# set search paths to the dependencies
 	set( DEP_SOURCE ${CMAKE_CURRENT_SOURCE_DIR}/dependencies )
 	set( DEP_BIN ${CMAKE_CURRENT_BINARY_DIR}/dependencies )
@@ -99,27 +101,25 @@ if( USE_BUILTIN_DEPENDENCIES )
 	configure_file( config.cmake.in ${CMAKE_CURRENT_BINARY_DIR}/config.cmake )
 
 	# Build libnoise
-	include( ExternalProject )
 	ExternalProject_Add( dep_libnoise
-	  PREFIX libnoise
-	  SOURCE_DIR ${DEP_SOURCE}/libnoise
-	  BINARY_DIR libnoise
-	  CMAKE_ARGS
-		-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
-		-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-		-C ${CMAKE_CURRENT_BINARY_DIR}/config.cmake
+	  	PREFIX libnoise
+	  	SOURCE_DIR ${DEP_SOURCE}/libnoise
+	  	BINARY_DIR libnoise
+	  	CMAKE_ARGS
+			-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
+			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
+			-C ${CMAKE_CURRENT_BINARY_DIR}/config.cmake
 	)
 
 	 # Build LuaJIT2
-	include ( ExternalProject )
 	ExternalProject_Add ( dep_luajit
-	  PREFIX luajit
-	  SOURCE_DIR ${DEP_SOURCE}/luajit
-	  BINARY_DIR luajit
-	  CMAKE_ARGS
-		-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
-		-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-		-C ${CMAKE_CURRENT_BINARY_DIR}/config.cmake
+		PREFIX luajit
+		SOURCE_DIR ${DEP_SOURCE}/luajit
+		BINARY_DIR luajit
+		CMAKE_ARGS
+			-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
+			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
+			-C ${CMAKE_CURRENT_BINARY_DIR}/config.cmake
 	)
 
 	# Build Diluculum
@@ -132,9 +132,20 @@ if( USE_BUILTIN_DEPENDENCIES )
 			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
 	)
 
+	# Build lpeg
+	ExternalProject_Add ( dep_lpeg
+		PREFIX lpeg
+		SOURCE_DIR ${DEP_SOURCE}/lpeg
+		BINARY_DIR lpeg
+		CMAKE_ARGS
+			-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
+			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
+	)
+
+
 	# Ensure correct order of build(dependencies between ext. dependencies)
-	# add_dependencies( dep_lpeg dep_luajit )
-	add_dependencies ( dep_diluculum dep_luajit )
+	add_dependencies( dep_lpeg dep_luajit )
+	add_dependencies( dep_diluculum dep_luajit )
 
 	# Define LUA_ variables
 	set( LUA_LIBRARY ${DEP_BIN}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}lua${CMAKE_SHARED_LIBRARY_SUFFIX} )
