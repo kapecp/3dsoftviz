@@ -1,8 +1,6 @@
 #ifndef OPENCVCORE_H
 #define OPENCVCORE_H
 
-#endif // OPENCVCORE_H
-
 #include "QOpenCV/FaceRecognitionThread.h"
 #include "QOpenCV/FaceRecognitionWindow.h"
 
@@ -26,3 +24,5 @@ namespace OpenCV
 
     };
 }
+
+#endif // OPENCVCORE_H

@@ -1,12 +1,7 @@
 #ifndef CAPVIDEO_H
 #define CAPVIDEO_H
 
-#endif // CAPVIDEO_H
-
-#include "opencv2/opencv.hpp"
 #include "opencv2/core/core.hpp"
-#include "opencv2/contrib/contrib.hpp"
-#include "opencv2/highgui/highgui.hpp"
 #include "opencv2/imgproc/imgproc.hpp"
 #include "opencv2/objdetect/objdetect.hpp"
 
@@ -35,3 +30,5 @@ namespace OpenCV
 
     };
 }
+
+#endif // CAPVIDEO_H

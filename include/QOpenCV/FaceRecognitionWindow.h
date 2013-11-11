@@ -1,13 +1,5 @@
-/**
-*  FaceRecognitionWindow.h
-*  Projekt 3DVisual
-*
-*  \author Tomas Hurban 
-*
-*  \date 19. 11. 2010
-*/
-#ifndef QOPENCV_LOAD_OPENCV_WINDOW_H
-#define QOPENCV_LOAD_OPENCV_WINDOW_H 1
+#ifndef FACERECOGNITIONWINDOW_H
+#define FACERECOGNITIONWINDOW_H
 
 #include <QDialog>
 
@@ -50,4 +42,4 @@ namespace QOpenCV
 	};
 }
 
-#endif
+#endif //FACERECOGNITIONWINDOW_H

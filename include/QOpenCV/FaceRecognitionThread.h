@@ -1,5 +1,5 @@
-#ifndef QOPENCV_LAYOUT_THREAD_OPENCV_DEF
-#define QOPENCV_LAYOUT_THREAD_OPENCV_DEF 1
+#ifndef FACERECOGNIZERTHREAD_H
+#define FACERECOGNIZERTHREAD_H
 
 #include <QThread>
 
@@ -34,4 +34,4 @@ namespace QOpenCV
 	};
 }
 
-#endif
+#endif //FACERECOGNIZERTHREAD_H

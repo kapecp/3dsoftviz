@@ -1,8 +1,6 @@
 #ifndef FACERECOGNIZER_H
 #define FACERECOGNIZER_H
 
-#endif // FACERECOGNIZER_H
-
 #include <opencv2/opencv.hpp>
 #include "opencv2/core/core.hpp"
 #include "opencv2/contrib/contrib.hpp"
@@ -36,3 +34,5 @@ namespace OpenCV
 		vector< Rect_<int> > faces;
 	};
 }
+
+#endif // FACERECOGNIZER_H
