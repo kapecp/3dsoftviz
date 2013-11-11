@@ -13,3 +13,6 @@
 [submodule "dependencies/leg"]
 	path = dependencies/leg
 	url = https://github.com/LuaDist/leg.git
+[submodule "dependencies/luametrics"]
+	path = dependencies/luametrics
+	url = https://github.com/LuaDist/luametrics.git

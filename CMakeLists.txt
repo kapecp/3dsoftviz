@@ -152,10 +152,21 @@ if( USE_BUILTIN_DEPENDENCIES )
 			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
 	)
 
+	# Build luametrics
+	ExternalProject_Add ( dep_luametrics
+		PREFIX luametrics
+		SOURCE_DIR ${DEP_SOURCE}/luametrics
+		BINARY_DIR luametrics
+		CMAKE_ARGS
+			-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
+			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
+	)
+
 	# Ensure correct order of build(dependencies between ext. dependencies)
 	add_dependencies( dep_lpeg dep_luajit )
 	add_dependencies( dep_diluculum dep_luajit )
 	add_dependencies( dep_leg dep_lpeg )
+	add_dependencies( dep_luametrics dep_leg )
 
 	# Define LUA_ variables
 	set( LUA_LIBRARY ${DEP_BIN}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}lua${CMAKE_SHARED_LIBRARY_SUFFIX} )
