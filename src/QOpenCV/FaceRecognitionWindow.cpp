@@ -47,10 +47,14 @@ void QOpenCV::FaceRecognitionWindow::configureWindow()
 
 void QOpenCV::FaceRecognitionWindow::quitWindow()
 {
-    emit cancelLoop();
-    //this->thr->quit();
-    this->thr->wait();
-    this->close();
+    if(this->thr->isRunning()){
+        emit cancelLoop();
+        this->thr->wait();
+    }
+    if(!this->thr->isRunning())
+        qDebug() << "thread is stopped";
+    delete this->thr;
+    delete this;
 }
 
 void QOpenCV::FaceRecognitionWindow::pauseWindow()

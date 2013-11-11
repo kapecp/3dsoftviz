@@ -35,7 +35,6 @@ void QOpenCV::FaceRecognitionThread::run()
     }
     delete this->mCapVideo;
     delete this->mFaceRecognizer;
-    this->quit();
 }
 
 void QOpenCV::FaceRecognitionThread::pauseWindow()
