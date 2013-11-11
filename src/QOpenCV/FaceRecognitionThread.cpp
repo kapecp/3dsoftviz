@@ -24,22 +24,17 @@ void QOpenCV::FaceRecognitionThread::run()
 {
     connect(this->mFaceRecognitionWindow,SIGNAL(cancelLoop()),this,SLOT(setCancel()));
     cv::Mat image;
-    for(;;) {
+    while(!cancel) {
         image=this->mCapVideo->queryFrame();
         this->mCapVideo->createGray();
 
         this->mFaceRecognizer->detectFaces(this->mCapVideo->getGrayframe());
         this->mFaceRecognizer->annotateFaces(image);
-        emit this->pushImage(image);
-
-        //cv::imshow("test",image);
-        char key = (char) waitKey(20);
-        if(key == 27) break;
-
-        if (cancel) break;
+        Mat im = image.clone();
+        emit this->pushImage(im);
     }
-    this->mCapVideo->CapVideo::~CapVideo();
-    this->mFaceRecognizer->FaceRecognizer::~FaceRecognizer();
+    delete this->mCapVideo;
+    delete this->mFaceRecognizer;
     this->quit();
 }
 
