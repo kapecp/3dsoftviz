@@ -10,3 +10,6 @@
 [submodule "dependencies/lpeg"]
 	path = dependencies/lpeg
 	url = https://github.com/LuaDist/lpeg.git
+[submodule "dependencies/leg"]
+	path = dependencies/leg
+	url = https://github.com/LuaDist/leg.git
