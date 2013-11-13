@@ -29,7 +29,7 @@ namespace OpenCV
 
 	private:
 
-        void OpenCV::FaceRecognizer::startRecognition();
+        void startRecognition();
 		cv::CascadeClassifier haar_cascade;
 		vector< Rect_<int> > faces;
 	};

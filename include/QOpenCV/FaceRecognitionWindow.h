@@ -20,8 +20,8 @@ namespace QOpenCV
 
 	public:
 
-        QOpenCV::FaceRecognitionWindow(QWidget *parent, QApplication *app, QOpenCV::FaceRecognitionThread *thr);
-        QLabel *QOpenCV::FaceRecognitionWindow::getLabel();
+        FaceRecognitionWindow(QWidget *parent, QApplication *app, QOpenCV::FaceRecognitionThread *thr);
+        QLabel *getLabel();
         QLabel *windowLabel;
     signals:
         void cancelLoop();
@@ -32,7 +32,7 @@ namespace QOpenCV
         QImage qimage;
         FaceRecognitionThread *thr;
 
-        QFrame FaceRecognitionWindow::createFrameLayout();
+        QFrame createFrameLayout();
         void configureWindow();
 
 		private slots:

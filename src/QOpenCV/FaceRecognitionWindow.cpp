@@ -15,9 +15,9 @@ void QOpenCV::FaceRecognitionWindow::configureWindow()
     resize(600,250);
     setWindowTitle(tr("Face Recognition"));
 
-    windowLabel = new QLabel("",this,0);
-    windowLabel->setFixedWidth(640);
-    windowLabel->setFixedHeight(480);
+    this->windowLabel = new QLabel("",this,0);
+    this->windowLabel->setFixedWidth(640);
+    this->windowLabel->setFixedHeight(480);
 
     QPushButton * pauseButton = new QPushButton(tr("Pause"));
     connect(pauseButton, SIGNAL(clicked()), this, SLOT(pauseWindow()));
@@ -35,7 +35,7 @@ void QOpenCV::FaceRecognitionWindow::configureWindow()
     buttonsLayout_2->addWidget(pauseButton);
     buttonsLayout_2->addWidget(cancelButton);
     frameLayout->setAlignment(Qt::AlignCenter);
-    frameLayout->addWidget(windowLabel);
+    frameLayout->addWidget(this->windowLabel);
 
     buttonsLayout->addLayout(buttonsLayout_2);
     mainLayout->addLayout(buttonsLayout);

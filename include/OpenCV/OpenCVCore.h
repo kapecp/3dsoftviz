@@ -12,8 +12,8 @@ namespace OpenCV
     public:
         OpenCVCore( QApplication* app);
         static OpenCVCore * mOpenCVCore;
-        static OpenCVCore * OpenCVCore::getInstance( QApplication* app);
-        void OpenCV::OpenCVCore::faceRecognition();
+        static OpenCVCore * getInstance( QApplication* app);
+        void faceRecognition();
         ~OpenCVCore(void);
 
     private:
