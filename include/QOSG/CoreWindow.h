@@ -5,6 +5,12 @@
 #ifndef QOSG_CORE_WINDOW
 #define QOSG_CORE_WINDOW 1
 
+#ifdef __APPLE__
+#include <qstringlist.h>
+#else
+#include <Qt/qstringlist.h>
+#endif
+
 #include <QMainWindow>
 #include <QToolBar>
 #include <QApplication>
@@ -16,7 +22,6 @@
 #include <QTextEdit>
 #include <QtGui>
 #include <QLineEdit>
-#include <Qt/qstringlist.h>
 
 #include "Network/Server.h"
 #include "Network/Client.h"

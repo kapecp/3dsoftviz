@@ -169,7 +169,12 @@ osg::Drawable* CameraMath::createAxis(const osg::Vec3& corner,const osg::Vec3& d
     (*clr)[1] = color;
     
     geom->setColorArray(clr);
+    
+#ifdef BIND_PER_PRIMITIVE
 	geom->setColorBinding(osg::Geometry::BIND_PER_PRIMITIVE);
+#else
+    geom->setColorBinding(osg::Geometry::BIND_PER_PRIMITIVE_SET);
+#endif
     
     geom->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::LINES,0,2));
     

@@ -52,7 +52,6 @@ void RestrictionManipulatorsGroup::restrictionRemoved (
 
 void RestrictionManipulatorsGroup::addNodeToSelection(QSharedPointer<Layout::ShapeGetter> shapeGetter, osg::Node* node){
     osg::MatrixTransform* selection = dynamic_cast<osg::MatrixTransform*>(manipulator[shapeGetter]->getChild(1));
-     int a = selection->getNumChildren();
     if (selection)
            selection->addChild(node);
 

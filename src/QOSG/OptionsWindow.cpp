@@ -66,8 +66,6 @@ OptionsWindow::OptionsWindow(Vwr::CoreGraph *cg, QOSG::ViewerQT * viewer)
 	 if (item->data(1).isValid())
 	 {
 		 QString data = item->data(1).toString();
-
-		 TreeItem * indx = item;
 		 
 		 // pri prekliknuti je treba ulozit zmeny, ktore boli uskutocnene v predchadzajucej polozke
 		 if (selectedItem)
@@ -197,7 +195,6 @@ OptionsWindow::OptionsWindow(Vwr::CoreGraph *cg, QOSG::ViewerQT * viewer)
 			for (int j=0; j< root->childCount();j++)
 			{	
 				TreeItem * item = root->child(j);
-				qlonglong id = item->data(2).toLongLong();
 				Data::Type * type = types->value(item->data(2).toLongLong());
 				QMap<QString, QString> * settings = type->getSettings();
 				QList<QString> atributes = item->data(1).toString().split(";");

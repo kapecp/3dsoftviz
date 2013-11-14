@@ -45,8 +45,6 @@ void NodeGroup::initNodes()
 	
 	QMapIterator<qlonglong, osg::ref_ptr<Data::Node> > i(*nodes);
 	
-	int px = 1000000, py = 1000, pz = 1000; 
-
 	while (i.hasNext()) 
 	{
 		i.next();
@@ -139,7 +137,6 @@ osg::ref_ptr<osg::AutoTransform> NodeGroup::wrapChild(osg::ref_ptr<Data::Node> n
 
 void NodeGroup::synchronizeNodes()
 {	//navyse
-	int count = nodes->size ();
 
 	QList<qlonglong> nodeKeys = nodes->keys();
 
@@ -150,7 +147,6 @@ void NodeGroup::synchronizeNodes()
 
 	while (i != result.constEnd()) 
 	{	
-		bool res = group->removeChild(nodeTransforms->value(*i));
 
 		nodeTransforms->remove(*i);
 		++i;

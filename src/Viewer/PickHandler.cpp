@@ -580,8 +580,11 @@ void PickHandler::drawSelectionQuad(float origin_mX, float origin_mY, osgViewer:
 	geometry->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::QUADS,0,4));
 	geometry->setColorArray(colors);
 	geometry->setStateSet(quadStateSet);
+#ifdef BIND_PER_PRIMITIVE
 	geometry->setColorBinding(osg::Geometry::BIND_PER_PRIMITIVE);
-
+#else
+    geometry->setColorBinding(osg::Geometry::BIND_PER_PRIMITIVE_SET);
+#endif
 	selectionQuad = new osg::Geode;
 	selectionQuad->addDrawable(geometry);
 

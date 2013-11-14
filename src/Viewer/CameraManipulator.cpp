@@ -614,7 +614,6 @@ bool Vwr::CameraManipulator::handleKeyUp( const osgGA::GUIEventAdapter& ea, osgG
  */
 bool Vwr::CameraManipulator::handleKeyDown( const osgGA::GUIEventAdapter &ea, osgGA::GUIActionAdapter & )
 {
-	int i = ea.getKey();
 	switch( ea.getKey() )
 	{
 	case osgGA::GUIEventAdapter::KEY_Up:

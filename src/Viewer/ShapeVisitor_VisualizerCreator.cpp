@@ -163,7 +163,6 @@ void ShapeVisitor_VisualizerCreator::visualizeSphere (Layout::Shape_AbstractSphe
 
 void ShapeVisitor_VisualizerCreator::visualizeCylinder(Layout::Shape_CylinderSurface &cylinder)
 {
-    osg::Vec3f eye = cylinder.firstBaseCenter();
     osg::Vec3f center = cylinder.secondBaseCenter();
 
     osg::Cylinder *osgCylinder = new osg::Cylinder;
@@ -192,7 +191,6 @@ void ShapeVisitor_VisualizerCreator::visualizeCylinder(Layout::Shape_CylinderSur
 
 void ShapeVisitor_VisualizerCreator::visualizeCone(Layout::Shape_ConeSurface &cone)
 {
-    osg::Vec3f eye = cone.baseCenter();
     osg::Vec3f center = cone.spike();
 
     osg::Cone *osgCone = new osg::Cone;

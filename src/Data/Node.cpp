@@ -185,7 +185,9 @@ osg::ref_ptr<osg::Drawable> Data::Node::createNode(const float & scaling, osg::S
 	colorIndexArray->push_back(0);
 
 	nodeQuad->setColorArray( colorArray);
+#ifdef BIND_PER_PRIMITIVE
 	nodeQuad->setColorIndices(colorIndexArray);
+#endif
 	nodeQuad->setColorBinding(osg::Geometry::BIND_OVERALL);	
 	nodeQuad->setStateSet(bbState); 
 
@@ -220,8 +222,9 @@ osg::ref_ptr<osg::Drawable> Data::Node::createSquare(const float & scale, osg::S
 	colorArray->push_back(osg::Vec4(1.0f, 0.0f, 0.0f, 0.5f));
 
 	nodeRect->setColorArray(colorArray);
-	nodeRect->setColorIndices(colorIndexArray);
-
+#ifdef BIND_PER_PRIMITIVE
+    nodeRect->setColorIndices(colorIndexArray);
+#endif
 	nodeRect->setColorArray( colorArray);
 	nodeRect->setColorBinding(osg::Geometry::BIND_OVERALL);	
 

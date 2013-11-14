@@ -34,14 +34,11 @@ bool RSFImporter::import (
 
 	GraphOperations graphOp (context.getGraph ());
 	ReadNodesStore readNodes;
-	bool edgeOrientedDefault = false;
-	bool edgeOrientedDefaultForce = false;
 	Data::Type *edgeType = NULL;
 	Data::Type *nodeType = NULL;
 	context.getGraph ().setName (graphname);
 	(void)graphOp.addDefaultTypes (edgeType, nodeType);
 	
-	int i = 0;
 	
 	//citanie vstupneho suboru
 	while ( !stream.atEnd() ) {
@@ -49,7 +46,6 @@ bool RSFImporter::import (
 		QStringList words;
 		words = line.split (QRegExp (QString ("[ \t]+")));
 		int size = words.size ();
-		Data::Type *newNodeType = NULL;
 		osg::ref_ptr<Data::Node> node1, node2;
 		osg::ref_ptr<Data::Edge> edge;
 		if (size!=3){

@@ -15,7 +15,7 @@ using namespace Vwr;
 Vwr::CoreGraph::CoreGraph(Data::Graph * graph, osg::ref_ptr<osg::Camera> camera)
 {
 	this->graph = graph;
-    this->camera = (camera == 0 ? (osg::ref_ptr<osg::Camera>) new osg::Camera : camera);
+    this->camera = ((camera == 0) ? ((osg::ref_ptr<osg::Camera>) new osg::Camera) : (camera));
 
 	this->in_nodes = NULL;
 	this->in_edges = NULL;
@@ -220,8 +220,6 @@ void CoreGraph::update()
 	root->removeChildren(customNodesPosition,1);
 
 	synchronize();
-
-	float graphScale = appConf->getValue("Viewer.Display.NodeDistanceScale").toFloat();
 	
 	if (!this->nodesFreezed)
 	{
