@@ -112,7 +112,6 @@ osg::Vec3f FRAlgorithm::getRandomLocation()
 }
 double FRAlgorithm::getRandomDouble()
 {
-	int p = rand();
 
 	return (double)rand() / (double)RAND_MAX;
 }

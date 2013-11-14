@@ -657,7 +657,6 @@ void CoreWindow::addMetaNode()
 
 		cout << width << " " << height << "\n";
 
-		osg::Vec3 p = CameraMath::projectOnScreen(viewerWidget->getCamera(), position);
 
 		osg::ref_ptr<Data::Node> metaNode = NULL;	
 		QLinkedList<osg::ref_ptr<Data::Node> > * selectedNodes = viewerWidget->getPickHandler()->getSelectedNodes();
@@ -1472,11 +1471,8 @@ void CoreWindow::setRestrictionToShape(
 
 bool CoreWindow::add_EdgeClick()
 {
-	Data::Type *edgeType = NULL;
-	Data::Type *nodeType = NULL;
 	Data::Graph * currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
-	
-	
+		
 	QLinkedList<osg::ref_ptr<Data::Node> > * selectedNodes = viewerWidget->getPickHandler()->getSelectedNodes();
 	QLinkedList<osg::ref_ptr<Data::Node> >::const_iterator ni = selectedNodes->constBegin();
 	

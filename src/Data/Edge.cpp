@@ -21,7 +21,6 @@ Data::Edge::Edge(qlonglong id, QString name, Data::Graph* graph, osg::ref_ptr<Da
     float r = type->getSettings()->value("color.R").toFloat();
     float g = type->getSettings()->value("color.G").toFloat();
     float b = type->getSettings()->value("color.B").toFloat();
-    float a = type->getSettings()->value("color.A").toFloat();
     
     this->edgeColor = osg::Vec4(r, g, b, /*a*/0.5);
     	
@@ -95,7 +94,6 @@ void Data::Edge::updateCoordinates(osg::Vec3 srcPos, osg::Vec3 dstPos)
 	viewVec.normalize();
 
 	//getting setting for edge scale
-	float graphScale = appConf->getValue("Viewer.Display.NodeDistanceScale").toFloat();
 
 	osg::Vec3 x, y;
 	x.set(srcPos);

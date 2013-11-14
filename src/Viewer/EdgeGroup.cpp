@@ -59,15 +59,22 @@ void EdgeGroup::initEdges()
 	geometry->setTexCoordArray(0, edgeTexCoords);
 	geometry->setVertexArray(coordinates);
 	geometry->setColorArray(colors);
+#ifdef BIND_PER_PRIMITIVE
 	geometry->setColorBinding(osg::Geometry::BIND_PER_PRIMITIVE);
+#else
+    geometry->setColorBinding(osg::Geometry::BIND_PER_PRIMITIVE_SET);
+#endif
 	geometry->getOrCreateStateSet()->setMode(GL_BLEND, osg::StateAttribute::ON);
 	//geometry->getStateSet()->setRenderingHint(osg::StateSet::OPAQUE_BIN);
 
 	orientedGeometry->setTexCoordArray(0, edgeTexCoords);
 	orientedGeometry->setVertexArray(coordinates);
 	orientedGeometry->setColorArray(orientedEdgeColors);
+#ifdef BIND_PER_PRIMITIVE
 	orientedGeometry->setColorBinding(osg::Geometry::BIND_PER_PRIMITIVE);
-
+#else
+    orientedGeometry->setColorBinding(osg::Geometry::BIND_PER_PRIMITIVE_SET);
+#endif
 	orientedGeometry->getOrCreateStateSet()->setMode(GL_BLEND, osg::StateAttribute::ON);
 	//orientedGeometry->getStateSet()->setRenderingHint(osg::StateSet::OPAQUE_BIN);
 

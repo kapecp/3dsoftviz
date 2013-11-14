@@ -347,11 +347,7 @@ void Manager::GraphManager::runTestCase( qint32 action )
 			Data::Type* t4 = g->addType("type4"); //pridanie typu
 			Data::Type* t5 = g->addType("type5"); //pridanie typu
 			Data::Type* t6 = g->addType("type6"); //pridanie typu
-			Data::MetaType* mt1 = g->addMetaType("metaType1"); //pridanie metatypu
-			Data::MetaType* mt2 = g->addMetaType("metaType2"); //pridanie metatypu
-			Data::MetaType* mt3 = g->addMetaType("metaType3"); //pridanie metatypu
-
-			for(qlonglong i=0;i<100;i++) {
+            for(qlonglong i=0;i<100;i++) {
 				if(i%3==1) {
 					g->addNode("node",t2);
 				} else if(i%3==2) {

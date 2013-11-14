@@ -671,7 +671,6 @@ void WriterTER::WriteDestFile ()
   int height = m_pSourceNoiseMap->GetHeight ();
 
   int bufferSize = CalcWidthByteCount (width);
-  int destSize   = bufferSize * height;
 
   // This buffer holds one horizontal line in the destination file.
   noise::uint8* pLineBuffer = NULL;

@@ -418,7 +418,6 @@ osg::ref_ptr<Data::Node> Data::Graph::mergeNodes(QLinkedList<osg::ref_ptr<Data::
 
 			if(!connectedNodes.contains(connectNode->getId()) && connectNode->getNodeMask() != 0)
 			{
-				Data::Edge * newEdgeSrc = this->addEdge("mergedEdge", connectNode, mergedNode, this->getEdgeMetaType(), true);
 				connectedNodes << connectNode->getId();
 			}
 
@@ -561,7 +560,6 @@ osg::ref_ptr<Data::Edge> Data::Graph::addEdge(QString name, osg::ref_ptr<Data::N
 		{
 			type = getNestedEdgeType();
 		}
-		float scale = this->getEdgeScale();
 		osg::ref_ptr<Data::Edge> edge = new Data::Edge(this->incEleIdCounter(), name, this, srcNode, dstNode, type, isOriented, getEdgeScale());
 
 		edge->linkNodes(&this->newEdges);

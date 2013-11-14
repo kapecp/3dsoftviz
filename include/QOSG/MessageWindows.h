@@ -5,8 +5,13 @@
 #ifndef QOSG_MESSAGE_WINDOWS
 #define QOSG_MESSAGE_WINDOWS 1
 
-#include <QtGui>
+#ifdef __APPLE__
+#include <qstring.h>
+#else
 #include <Qt/qstring.h>
+#endif
+
+#include <QtGui>
 
 namespace QOSG
 {

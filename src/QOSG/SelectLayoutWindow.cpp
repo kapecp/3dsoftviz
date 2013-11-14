@@ -87,8 +87,6 @@ void SelectLayoutWindow::loadLayout()
 		layoutID = layoutsTable->item(layoutsTable->currentRow(), 0)->text().toLongLong(); 
 
 		Manager::GraphManager * manager = Manager::GraphManager::getInstance();
-		Model::DB * db = manager->getDB();
-		bool error = false;
 
 		qDebug() << "[QOSG::SelectLayoutWindow::loadLayout] Selected layout ID: " << layoutID;
 
