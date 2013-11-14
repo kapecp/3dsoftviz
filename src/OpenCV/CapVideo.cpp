@@ -13,6 +13,7 @@ OpenCV::CapVideo::CapVideo(int device_id, int width, int height)
 OpenCV::CapVideo::~CapVideo()
 {
     cv::destroyWindow("face");
+    cvReleaseCapture( &this->capture );
 }
 
 void OpenCV::CapVideo::showFrame()
