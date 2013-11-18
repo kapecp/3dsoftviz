@@ -19,7 +19,7 @@ void QOpenCV::FaceRecognitionWindow::configureWindow()
     this->windowLabel->setFixedWidth(640);
     this->windowLabel->setFixedHeight(480);
 
-    QPushButton * pauseButton = new QPushButton(tr("Pause"));
+    QPushButton *pauseButton = new QPushButton(tr("Pause"));
     connect(pauseButton, SIGNAL(clicked()), this, SLOT(pauseWindow()));
 
     QPushButton *cancelButton = new QPushButton(tr("Cancel"));

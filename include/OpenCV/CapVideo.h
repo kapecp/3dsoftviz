@@ -69,7 +69,7 @@ namespace OpenCV
         int device_id;
         cv::Mat frame;
         cv::Mat grayframe;
-        CvCapture* capture;
+        CvCapture *capture;
         cv::Rect face;
 
     };

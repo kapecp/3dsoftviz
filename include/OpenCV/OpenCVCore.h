@@ -24,14 +24,14 @@ namespace OpenCV
          * @param app QApplication
          * @return OpenCVCore instance
          */
-        static OpenCVCore * getInstance( QApplication* app);
+        static OpenCVCore *getInstance( QApplication* app);
         /**
          * @author Autor: Marek Jakab
          * @brief faceRecognition Starts window with face detection in another thread
          */
         void faceRecognition();
 
-        static OpenCVCore * mOpenCVCore;
+        static OpenCVCore *mOpenCVCore;
     private:
         QApplication *app;
     };
