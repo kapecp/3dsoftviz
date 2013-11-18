@@ -508,9 +508,10 @@ void CoreWindow::createCollaborationToolBar() {
     frame->layout()->setAlignment(Qt::AlignHCenter);
     frame->layout()->addWidget(sl_avatarScale);
     toolBar->addWidget(frame);
-
+    #ifdef OPENCV_FOUND
     toolBar->addSeparator();
     toolBar->addWidget(b_start_face);
+    #endif
 
     addToolBar(Qt::RightToolBarArea,toolBar);
     toolBar->setMaximumHeight(400);
