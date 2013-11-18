@@ -3,6 +3,7 @@
 
 #include "QOpenCV/FaceRecognitionThread.h"
 #include "QOpenCV/FaceRecognitionWindow.h"
+#include "Core/Core.h"
 
 namespace OpenCV
 {

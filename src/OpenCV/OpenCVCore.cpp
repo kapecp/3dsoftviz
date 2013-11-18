@@ -15,7 +15,7 @@ void OpenCV::OpenCVCore::faceRecognition()
     OpenCV::FaceRecognizer *mFaceRecognizer = new OpenCV::FaceRecognizer();
 
     QOpenCV::FaceRecognitionThread *thr = new QOpenCV::FaceRecognitionThread(mFaceRecognizer);
-    QOpenCV::FaceRecognitionWindow *cvw = new QOpenCV::FaceRecognitionWindow(0,this->app,thr);
+    QOpenCV::FaceRecognitionWindow *cvw = new QOpenCV::FaceRecognitionWindow(AppCore::Core::getInstance(this->app)->getCoreWindow(),this->app,thr);
     cvw->show();
     thr->setWindow(cvw);
     thr->start();
