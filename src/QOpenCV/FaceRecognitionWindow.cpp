@@ -5,7 +5,7 @@ using namespace QOpenCV;
 QOpenCV::FaceRecognitionWindow::FaceRecognitionWindow(QWidget *parent, QApplication * app, QOpenCV::FaceRecognitionThread *thr)
 {
     this->thr = thr;
-    this->app=app;
+    this->app = app;
     configureWindow();
 }
 
@@ -81,4 +81,16 @@ void QOpenCV::FaceRecognitionWindow::setLabel(cv::Mat image)
     image.~Mat();
     this->windowLabel->setPixmap(QPixmap::fromImage(qimage));
     this->windowLabel->show();
+}
+
+void QOpenCV::FaceRecognitionWindow::closeEvent(QCloseEvent *event)
+{
+    if(this->thr->isRunning()){
+        emit cancelLoop();
+        this->thr->wait();
+    }
+    if(!this->thr->isRunning())
+        qDebug() << "thread is stopped";
+    delete this->thr;
+    delete this;
 }
