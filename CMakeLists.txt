@@ -108,6 +108,13 @@ FIND_PACKAGE( OpenCV )
 IF (OpenCV_FOUND)
 INCLUDE_DIRECTORIES( ${OpenCV_INCLUDE_DIRS} )
 ADD_DEFINITIONS( -DOPENCV_FOUND )
+MESSAGE ("OpenCV FOUND")
+SET(SOURCES_H
+        ./include/QOpenCV/FaceRecognitionWindow.h
+        ./include/QOpenCV/FaceRecognitionThread.h
+)
+ELSE(OpenCV_FOUND)
+MESSAGE ("OpenCV NOT FOUND")
 ENDIF()
 
 # Include headers
@@ -132,6 +139,7 @@ FILE(GLOB_RECURSE INCL "include/*.h")
 # .h subor, ktory obsahuje Q_OBJECT
 
 SET(SOURCES_H
+        ${SOURCES_H}
 	./include/OsgQtBrowser/QGraphicsViewAdapter.h
 	./include/QOSG/CoreWindow.h
 	./include/QOSG/TreeModel.h
@@ -144,8 +152,6 @@ SET(SOURCES_H
 	./include/Viewer/PickHandler.h
         ./include/Network/Server.h
         ./include/Network/Client.h
-        ./include/QOpenCV/FaceRecognitionWindow.h
-        ./include/QOpenCV/FaceRecognitionThread.h
 )
 
 # toto makro spracuje Q_OBJECT a vygeneruje novy cpp subor, ktory bude dostupny v ${SOURCES_H_MOC} premennej
@@ -169,8 +175,6 @@ SOURCE_GROUP(\\src\\Layout "^.*Layout/.*$")
 SOURCE_GROUP(\\src\\QOSG "^.*QOSG/.*$")
 SOURCE_GROUP(\\src\\OsgQtBrowser "^.*OsgQtBrowser/.*$")
 SOURCE_GROUP(\\src\\Noise "^.*Noise/.*$")
-SOURCE_GROUP(\\src\\QOpenCV "^.*QOpenCV/.*$")
-SOURCE_GROUP(\\src\\OpenCV "^.*OpenCV/.*$")
 
 SOURCE_GROUP(\\headers\\Network "^.*Network/.*h$")
 SOURCE_GROUP(\\headers\\Viewer "^.*Viewer/.*h$")
@@ -185,8 +189,7 @@ SOURCE_GROUP(\\headers\\Layout "^.*Layout/.*h$")
 SOURCE_GROUP(\\headers\\QOSG "^.*QOSG/.*h$")
 SOURCE_GROUP(\\headers\\Noise "^.*Noise/.*h$")
 SOURCE_GROUP(\\headers\\OsgQtBrowser "^.*OsgQtBrowser/.*h$")
-SOURCE_GROUP(\\headers\\QOpenCV "^.*QOpenCV/.*h$")
-SOURCE_GROUP(\\headers\\OpenCV "^.*OpenCV/.*h$")
+
 
 SOURCE_GROUP(\\MOC "^.*moc_.*$")
 
@@ -199,9 +202,17 @@ ${PNG_LIBRARIES}
 ${ZLIB_LIBRARIES}
 ${ZLIB_LIBRARY}
 ${PNG_LIBRARY}
-${OpenCV_LIBS}
 noise
 )
+IF (OpenCV_FOUND)
+SOURCE_GROUP(\\src\\QOpenCV "^.*QOpenCV/.*$")
+SOURCE_GROUP(\\src\\OpenCV "^.*OpenCV/.*$")
+SOURCE_GROUP(\\headers\\QOpenCV "^.*QOpenCV/.*h$")
+SOURCE_GROUP(\\headers\\OpenCV "^.*OpenCV/.*h$")
+TARGET_LINK_LIBRARIES(3DVisual
+${OpenCV_LIBS}
+)
+ENDIF()
 
 
 cotire(3DVisual)
