@@ -52,7 +52,7 @@ set( CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH} 
 option( USE_STRICT_COMPILE_WARNINGS "Use strict compilation warnings in debug mode." OFF )
 if( USE_STRICT_COMPILE_WARNINGS )
 	if( CMAKE_COMPILER_IS_GNUCXX )
-  		set( CMAKE_CXX_FLAGS_DEBUG "-Wall -Wextra -Werror" )
+		set( CMAKE_CXX_FLAGS_DEBUG "-Wall -Wextra -Werror" )
 	endif()
 endif()
 
@@ -101,13 +101,13 @@ if( USE_BUILTIN_DEPENDENCIES )
 	# Build libnoise
 	include( ExternalProject )
 	ExternalProject_Add( dep_libnoise
-	  PREFIX libnoise
-	  SOURCE_DIR ${DEP_SOURCE}/libnoise
-	  BINARY_DIR libnoise
-	  CMAKE_ARGS
-		-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
-		-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-		-C ${CMAKE_CURRENT_BINARY_DIR}/config.cmake
+		PREFIX libnoise
+		SOURCE_DIR ${DEP_SOURCE}/libnoise
+		BINARY_DIR libnoise
+		CMAKE_ARGS
+			-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
+			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
+			-C ${CMAKE_CURRENT_BINARY_DIR}/config.cmake
 	)
 
 	# Ensure correct order of build(dependencies between ext. dependencies)
@@ -121,6 +121,11 @@ if( USE_BUILTIN_DEPENDENCIES )
 		#set( LUA_LIBRARY ${DEP_BIN}/bin/${CMAKE_SHARED_LIBRARY_PREFIX}lua${CMAKE_SHARED_LIBRARY_SUFFIX} )
 		#set( DILUCULUM_LIBRARY ${DEP_BIN}/bin/${CMAKE_SHARED_LIBRARY_PREFIX}diluculum${CMAKE_SHARED_LIBRARY_SUFFIX} )
 		set( LIBNOISE_LIBRARY ${DEP_BIN}/bin/${CMAKE_SHARED_LIBRARY_PREFIX}noise${CMAKE_SHARED_LIBRARY_SUFFIX} )
+		if( MSVC )
+			# set "lib" prefix for MSVC, becasue libnoise.def files requires that the library is named "libnoise"
+			set( MISS_MSVC_PREFIX lib )
+			set( LIBNOISE_LIBRARY ${DEP_BIN}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}${MISS_MSVC_PREFIX}noise${CMAKE_STATIC_LIBRARY_SUFFIX} )
+		endif()
 	endif()
 	set( DEPENDENCIES_INCLUDE_DIR ${DEP_BIN}/include )
 else()
@@ -282,10 +287,10 @@ set(SOURCES_H
 	./include/QOSG/LoadGraphWindow.h
 	./include/QOSG/SelectLayoutWindow.h
 	./include/QOSG/CheckBoxList.h
-    ./include/QOSG/qtcolorpicker.h
-    ./include/Viewer/PickHandler.h
-    ./include/Network/Server.h
-    ./include/Network/Client.h
+	./include/QOSG/qtcolorpicker.h
+	./include/Viewer/PickHandler.h
+	./include/Network/Server.h
+	./include/Network/Client.h
 )
 
 # Qt Generators
@@ -304,6 +309,10 @@ target_link_libraries( ${3DSOFTVIZ_NAME}
 
 # 'cotire' the executable
 cotire( ${3DSOFTVIZ_NAME} )
+if( MSVC )
+	### Fix virtual memory range
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Zm200" CACHE STRING "" FORCE)
+endif()
 
 # ensure correct dependencies
 add_dependencies( ${3DSOFTVIZ_NAME} dep_libnoise )
@@ -321,38 +330,37 @@ install(DIRECTORY resources/ DESTINATION ${INSTALL_DATA} COMPONENT Data)
 
 # Install built in dependencies unless we are building an OSX Bundle
 if( USE_BUILTIN_DEPENDENCIES )
-  	# Make sure dependencies are built
-  	add_dependencies( ${3DSOFTVIZ_NAME} dep_libnoise )
+	# Make sure dependencies are built
+	add_dependencies( ${3DSOFTVIZ_NAME} dep_libnoise )
 
-  	# Install all dependencies
-	  install( DIRECTORY ${DEP_BIN}/
+	# Install all dependencies
+	install( DIRECTORY ${DEP_BIN}/
 		DESTINATION ${INSTALL_DEPS}
 		COMPONENT Dependencies
-		USE_SOURCE_PERMISSIONS
-  )
+		USE_SOURCE_PERMISSIONS )
 endif()
 
 # Include QT4 libraries in Apple bundle and on Windows
 if( WIN32 OR APPLE )
-  	# On Apple plugins need to be bundled
-  	if( APPLE )
+	# On Apple plugins need to be bundled
+	if( APPLE )
 		# Install Qt Plugins
 		install( DIRECTORY "${QT_PLUGINS_DIR}/imageformats"
-		  DESTINATION ${INSTALL_PLUGIN}/plugins
-		  COMPONENT Runtime )
+			DESTINATION ${INSTALL_PLUGIN}/plugins
+			COMPONENT Runtime )
 
 		# Install Qt Config
 		install( CODE "
-		  file(WRITE \"\${CMAKE_INSTALL_PREFIX}/${INSTALL_QTCONF}/qt.conf\" \"\")
-		  " COMPONENT Runtime)
-  	endif()
+			file(WRITE \"\${CMAKE_INSTALL_PREFIX}/${INSTALL_QTCONF}/qt.conf\" \"\")
+			" COMPONENT Runtime)
+	endif()
 
-  	# Search Dirs
-  	string( REPLACE "/lib" "/bin" QT_RUNTIME_DIR ${QT_LIBRARY_DIR} )
-  	set( BUNDLE_DIRS ${QT_LIBRARY_DIR} ${QT_RUNTIME_DIR} ${DEP_BIN}/bin ${DEP_BIN}/lib )
+	# Search Dirs
+	string( REPLACE "/lib" "/bin" QT_RUNTIME_DIR ${QT_LIBRARY_DIR} )
+	set( BUNDLE_DIRS ${QT_LIBRARY_DIR} ${QT_RUNTIME_DIR} ${DEP_BIN}/bin ${DEP_BIN}/lib )
 
-  	# Bundle libraries
-  	install( CODE "
+	# Bundle libraries
+	install( CODE "
 		file( GLOB_RECURSE LUA_PLUGINS
 				\"\${CMAKE_INSTALL_PREFIX}/${INSTALL_DEPS}/lib/lua/*${CMAKE_SHARED_MODULE_SUFFIX}\" )
 		file( GLOB_RECURSE BUNDLE_PLUGINS
