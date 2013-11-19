@@ -1,6 +1,4 @@
 #include "Util/ApplicationConfig.h"
-#include "Manager/Manager.h"
-#include "Math/GraphMetrics.h"
 
 Util::ApplicationConfig * Util::ApplicationConfig::_instance;
 OpenThreads::Mutex Util::ApplicationConfig::_mutex;
@@ -8,7 +6,7 @@ OpenThreads::Mutex Util::ApplicationConfig::_mutex;
 Util::ApplicationConfig::ApplicationConfig(void)
 { 
 	//otvorenie suboru na nacitanie dat
-	QFile file("config/config");
+	QFile file("../share/3dsoftviz/config/config");
 	file.open(QIODevice::ReadOnly);
 	//rozdelenie dat podla riadkov
 	QList<QString> data = QString(file.readAll()).split("\n");
@@ -40,6 +38,7 @@ QString Util::ApplicationConfig::getValue(QString key)
 {
 	return _map.value(key);
 }
+
 
 long Util::ApplicationConfig::getNumericValue (
 	QString key,
@@ -136,5 +135,5 @@ void Util::ApplicationConfig::saveConfig()
 	}
 	file.close();
 
-	GraphMetrics::computeGraphMetrics(Manager::GraphManager::getInstance()->getActiveGraph());
+    //GraphMetrics::computeGraphMetrics(Manager::GraphManager::getInstance()->getActiveGraph());
 }

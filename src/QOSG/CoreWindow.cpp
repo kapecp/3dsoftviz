@@ -64,59 +64,59 @@ void CoreWindow::createActions()
 	options = new QAction("Options", this);
 	connect(options,SIGNAL(triggered()),this,SLOT(showOptions()));
 
-	load = new QAction(QIcon("img/gui/open.png"),"&Load graph from file", this);
+	load = new QAction(QIcon("../share/3dsoftviz/img/gui/open.png"),"&Load graph from file", this);
 	connect(load, SIGNAL(triggered()), this, SLOT(loadFile()));
 
-	loadGraph = new QAction(QIcon("img/gui/loadFromDB.png"),"&Load graph from database", this);
+	loadGraph = new QAction(QIcon("../share/3dsoftviz/img/gui/loadFromDB.png"),"&Load graph from database", this);
 	connect(loadGraph, SIGNAL(triggered()), this, SLOT(showLoadGraph()));
 
-	saveGraph = new QAction(QIcon("img/gui/saveToDB.png"),"&Save graph layout", this);
+	saveGraph = new QAction(QIcon("../share/3dsoftviz/img/gui/saveToDB.png"),"&Save graph layout", this);
 	connect(saveGraph, SIGNAL(triggered()), this, SLOT(saveLayoutToDB()));
 
 	play = new QPushButton();
-	play->setIcon(QIcon("img/gui/pause.png"));
+	play->setIcon(QIcon("../share/3dsoftviz/img/gui/pause.png"));
 	play->setToolTip("&Play");
 	play->setFocusPolicy(Qt::NoFocus);
 	connect(play, SIGNAL(clicked()), this, SLOT(playPause()));
 
 	addMeta = new QPushButton();
-	addMeta->setIcon(QIcon("img/gui/meta.png"));
+	addMeta->setIcon(QIcon("../share/3dsoftviz/img/gui/meta.png"));
 	addMeta->setToolTip("&Add meta node");
 	addMeta->setFocusPolicy(Qt::NoFocus);
 	connect(addMeta, SIGNAL(clicked()), this, SLOT(addMetaNode()));
 
 	removeMeta = new QPushButton();
-	removeMeta->setIcon(QIcon("img/gui/removemeta.png"));
+	removeMeta->setIcon(QIcon("../share/3dsoftviz/img/gui/removemeta.png"));
 	removeMeta->setToolTip("&Remove meta nodes");
 	removeMeta->setFocusPolicy(Qt::NoFocus);
 	connect(removeMeta, SIGNAL(clicked()), this, SLOT(removeMetaNodes()));
 
 	fix = new QPushButton();
-	fix->setIcon(QIcon("img/gui/fix.png"));
+	fix->setIcon(QIcon("../share/3dsoftviz/img/gui/fix.png"));
 	fix->setToolTip("&Fix nodes");
 	fix->setFocusPolicy(Qt::NoFocus);
 	connect(fix, SIGNAL(clicked()), this, SLOT(fixNodes()));
 
 	unFix = new QPushButton();
-	unFix->setIcon(QIcon("img/gui/unfix.png"));
+	unFix->setIcon(QIcon("../share/3dsoftviz/img/gui/unfix.png"));
 	unFix->setToolTip("&Unfix nodes");
 	unFix->setFocusPolicy(Qt::NoFocus);
 	connect(unFix, SIGNAL(clicked()), this, SLOT(unFixNodes()));
 
 	merge = new QPushButton();
-	merge->setIcon(QIcon("img/gui/merge.png"));
+	merge->setIcon(QIcon("../share/3dsoftviz/img/gui/merge.png"));
 	merge->setToolTip("&Merge nodes together");
 	merge->setFocusPolicy(Qt::NoFocus);
 	connect(merge, SIGNAL(clicked()), this, SLOT(mergeNodes()));
 
 	separate = new QPushButton();
-	separate->setIcon(QIcon("img/gui/separate.png"));
+	separate->setIcon(QIcon("../share/3dsoftviz/img/gui/separate.png"));
 	separate->setToolTip("&Separate merged nodes");
 	separate->setFocusPolicy(Qt::NoFocus);
 	connect(separate, SIGNAL(clicked()), this, SLOT(separateNodes()));
 
 	label = new QPushButton();
-	label->setIcon(QIcon("img/gui/label.png"));
+	label->setIcon(QIcon("../share/3dsoftviz/img/gui/label.png"));
 	label->setToolTip("&Turn on/off labels");
 	label->setCheckable(true);
 	label->setFocusPolicy(Qt::NoFocus);
@@ -159,83 +159,83 @@ void CoreWindow::createActions()
 
 	//mody - ziadny vyber, vyber jedneho, multi vyber centrovanie
 	noSelect = new QPushButton();
-	noSelect->setIcon(QIcon("img/gui/noselect.png"));
+	noSelect->setIcon(QIcon("../share/3dsoftviz/img/gui/noselect.png"));
 	noSelect->setToolTip("&No-select mode");
 	noSelect->setCheckable(true);
 	noSelect->setFocusPolicy(Qt::NoFocus);
 	connect(noSelect, SIGNAL(clicked(bool)), this, SLOT(noSelectClicked(bool)));
 
 	singleSelect = new QPushButton();
-	singleSelect->setIcon(QIcon("img/gui/singleselect.png"));
+	singleSelect->setIcon(QIcon("../share/3dsoftviz/img/gui/singleselect.png"));
 	singleSelect->setToolTip("&Single-select mode");
 	singleSelect->setCheckable(true);
 	singleSelect->setFocusPolicy(Qt::NoFocus);
 	connect(singleSelect, SIGNAL(clicked(bool)), this, SLOT(singleSelectClicked(bool)));
 
 	multiSelect = new QPushButton();
-	multiSelect->setIcon(QIcon("img/gui/multiselect.png"));
+	multiSelect->setIcon(QIcon("../share/3dsoftviz/img/gui/multiselect.png"));
 	multiSelect->setToolTip("&Multi-select mode");
 	multiSelect->setCheckable(true);
 	multiSelect->setFocusPolicy(Qt::NoFocus);
 	connect(multiSelect, SIGNAL(clicked(bool)), this, SLOT(multiSelectClicked(bool)));
 
 	center = new QPushButton();
-	center->setIcon(QIcon("img/gui/center.png"));
+	center->setIcon(QIcon("../share/3dsoftviz/img/gui/center.png"));
 	center->setToolTip("&Center view");
 	center->setFocusPolicy(Qt::NoFocus);
 	connect(center, SIGNAL(clicked(bool)), this, SLOT(centerView(bool)));
 
 	// layout restrictions
 	b_SetRestriction_SphereSurface = new QPushButton();
-	b_SetRestriction_SphereSurface->setIcon(QIcon("img/gui/restriction_sphere_surface.png"));
+	b_SetRestriction_SphereSurface->setIcon(QIcon("../share/3dsoftviz/img/gui/restriction_sphere_surface.png"));
 	b_SetRestriction_SphereSurface->setToolTip("&Set restriction - sphere surface");
 	b_SetRestriction_SphereSurface->setFocusPolicy(Qt::NoFocus);
 	connect(b_SetRestriction_SphereSurface, SIGNAL(clicked()), this, SLOT(setRestriction_SphereSurface ()));
 
 	b_SetRestriction_Sphere = new QPushButton();
-	b_SetRestriction_Sphere->setIcon(QIcon("img/gui/restriction_sphere.png"));
+	b_SetRestriction_Sphere->setIcon(QIcon("../share/3dsoftviz/img/gui/restriction_sphere.png"));
 	b_SetRestriction_Sphere->setToolTip("&Set restriction - sphere");
 	b_SetRestriction_Sphere->setFocusPolicy(Qt::NoFocus);
 	connect(b_SetRestriction_Sphere, SIGNAL(clicked()), this, SLOT(setRestriction_Sphere ()));
 
 	b_SetRestriction_Plane = new QPushButton();
-	b_SetRestriction_Plane->setIcon(QIcon("img/gui/restriction_plane.png"));
+	b_SetRestriction_Plane->setIcon(QIcon("../share/3dsoftviz/img/gui/restriction_plane.png"));
 	b_SetRestriction_Plane->setToolTip("&Set restriction - plane");
 	b_SetRestriction_Plane->setFocusPolicy(Qt::NoFocus);
 	connect(b_SetRestriction_Plane, SIGNAL(clicked()), this, SLOT(setRestriction_Plane ()));
 
         b_SetRestriction_SpherePlane = new QPushButton();
-        b_SetRestriction_SpherePlane->setIcon(QIcon("img/gui/restriction_sphereplane.png"));
+        b_SetRestriction_SpherePlane->setIcon(QIcon("../share/3dsoftviz/img/gui/restriction_sphereplane.png"));
         b_SetRestriction_SpherePlane->setToolTip("&Set restriction - sphere and plane");
         b_SetRestriction_SpherePlane->setFocusPolicy(Qt::NoFocus);
         connect(b_SetRestriction_SpherePlane, SIGNAL(clicked()), this, SLOT(setRestriction_SpherePlane ()));
 
         b_SetRestriction_Circle = new QPushButton();
-        b_SetRestriction_Circle->setIcon(QIcon("img/gui/restriction_circle.png"));
+        b_SetRestriction_Circle->setIcon(QIcon("../share/3dsoftviz/img/gui/restriction_circle.png"));
         b_SetRestriction_Circle->setToolTip("&Set restriction - circle");
         b_SetRestriction_Circle->setFocusPolicy(Qt::NoFocus);
         connect(b_SetRestriction_Circle, SIGNAL(clicked()), this, SLOT(setRestriction_Circle ()));
 
         b_SetRestriction_Cone = new QPushButton();
-        b_SetRestriction_Cone->setIcon(QIcon("img/gui/restriction_cone.png"));
+        b_SetRestriction_Cone->setIcon(QIcon("../share/3dsoftviz/img/gui/restriction_cone.png"));
         b_SetRestriction_Cone->setToolTip("&Set restriction - cone");
         b_SetRestriction_Cone->setFocusPolicy(Qt::NoFocus);
         connect(b_SetRestriction_Cone, SIGNAL(clicked()), this, SLOT(setRestriction_Cone ()));
 
         b_SetRestriction_ConeTree = new QPushButton();
-        b_SetRestriction_ConeTree->setIcon(QIcon("img/gui/restriction_conetree.png"));
+        b_SetRestriction_ConeTree->setIcon(QIcon("../share/3dsoftviz/img/gui/restriction_conetree.png"));
         b_SetRestriction_ConeTree->setToolTip("&Set restriction - cone tree");
         b_SetRestriction_ConeTree->setFocusPolicy(Qt::NoFocus);
         connect(b_SetRestriction_ConeTree, SIGNAL(clicked()), this, SLOT(setRestriction_ConeTree ()));
 
 	b_UnsetRestriction = new QPushButton();
-	b_UnsetRestriction->setIcon(QIcon("img/gui/restriction_unset.png"));
+	b_UnsetRestriction->setIcon(QIcon("../share/3dsoftviz/img/gui/restriction_unset.png"));
 	b_UnsetRestriction->setToolTip("&Unset restriction");
 	b_UnsetRestriction->setFocusPolicy(Qt::NoFocus);
 	connect(b_UnsetRestriction, SIGNAL(clicked()), this, SLOT(unsetRestriction()));
 
     b_SetRestriction_CylinderSurface = new QPushButton();
-    b_SetRestriction_CylinderSurface->setIcon(QIcon("img/gui/restriction_cylinder_surface.png"));
+    b_SetRestriction_CylinderSurface->setIcon(QIcon("../share/3dsoftviz/img/gui/restriction_cylinder_surface.png"));
     b_SetRestriction_CylinderSurface->setToolTip("&Set restriction - cylinder surface");
     b_SetRestriction_CylinderSurface->setFocusPolicy(Qt::NoFocus);
     connect(b_SetRestriction_CylinderSurface, SIGNAL(clicked()), this, SLOT(setRestriction_CylinderSurface()));
@@ -246,7 +246,7 @@ void CoreWindow::createActions()
     b_SetRestriction_CylinderSurface_Slider->setValue(25);
 
     b_SetRestriction_ConeSurface = new QPushButton();
-    b_SetRestriction_ConeSurface->setIcon(QIcon("img/gui/restriction_cone_surface.png"));
+    b_SetRestriction_ConeSurface->setIcon(QIcon("../share/3dsoftviz/img/gui/restriction_cone_surface.png"));
     b_SetRestriction_ConeSurface->setToolTip("&Set restriction - cone surface");
     b_SetRestriction_ConeSurface->setFocusPolicy(Qt::NoFocus);
     connect(b_SetRestriction_ConeSurface, SIGNAL(clicked()), this, SLOT(setRestriction_ConeSurface()));
@@ -257,7 +257,7 @@ void CoreWindow::createActions()
     b_SetRestriction_ConeSurface_Slider->setValue(25);
 
     b_UnsetRestrictionFromAll = new QPushButton();
-    b_UnsetRestrictionFromAll->setIcon(QIcon("img/gui/restriction_unset.png"));
+    b_UnsetRestrictionFromAll->setIcon(QIcon("../share/3dsoftviz/img/gui/restriction_unset.png"));
     b_UnsetRestrictionFromAll->setToolTip("&Unset restriction from all nodes");
     b_UnsetRestrictionFromAll->setFocusPolicy(Qt::NoFocus);
     connect(b_UnsetRestrictionFromAll, SIGNAL(clicked()), this, SLOT(unsetRestrictionFromAll()));
@@ -589,14 +589,14 @@ void CoreWindow::playPause()
 {
 	if(isPlaying)
 	{
-		play->setIcon(QIcon("img/gui/play.png"));
+		play->setIcon(QIcon("../share/3dsoftviz/img/gui/play.png"));
 		isPlaying = 0;
 		layout->pause();
 		coreGraph->setNodesFreezed(true);
 	}
 	else
 	{
-		play->setIcon(QIcon("img/gui/pause.png"));
+		play->setIcon(QIcon("../share/3dsoftviz/img/gui/pause.png"));
 		isPlaying = 1;
 		coreGraph->setNodesFreezed(false);
 		layout->play();
