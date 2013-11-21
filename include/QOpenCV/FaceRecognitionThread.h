@@ -27,7 +27,7 @@ namespace QOpenCV
         ~FaceRecognitionThread(void);
         OpenCV::FaceRecognizer *mFaceRecognizer;
         OpenCV::CapVideo *mCapVideo;
-        QOpenCV::FaceRecognitionWindow *mFaceRecognitionWindow;
+		FaceRecognitionWindow *mFaceRecognitionWindow;
 
         /**
          * @author Autor: Marek Jakab
@@ -48,6 +48,14 @@ namespace QOpenCV
              * @param Image cv::Mat
              */
             void pushImage(cv::Mat Image);
+
+			/**
+			 * @author Autor: Marek Jakab
+			 * @brief sendEyesCoords
+			 * @param x % distance from middle on X axis
+			 * @param y % distance from middle on Y axis
+			 */
+			void sendEyesCoords(int x, int y);
 	private:
             bool cancel;
     private slots:
@@ -55,7 +63,7 @@ namespace QOpenCV
              * @author Autor: Marek Jakab
              * @brief setCancel Sets cancel=true
              */
-            void setCancel();
+			void setCancel(bool);
             /**
              * @author Autor: Marek Jakab
              * @brief pauseWindow Pauses recognition window

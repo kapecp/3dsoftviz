@@ -2,14 +2,13 @@
 #define FACERECOGNITIONWINDOW_H
 
 #include <QDialog>
+#include <QtGui/QPushButton>
+#include <QtGui/QLabel>
+#include <QtGui/QComboBox>
+#include <QtGui/QTableWidget>
+#include <QtGui/QTableWidgetItem>
 
 #include "QOpenCV/FaceRecognitionThread.h"
-
-class QComboBox;
-class QLabel;
-class QPushButton;
-class QTableWidget;
-class QTableWidgetItem;
 
 namespace QOpenCV
 {
@@ -39,11 +38,12 @@ namespace QOpenCV
          * @author Autor: Marek Jakab
          * @brief cancelLoop Signal to cancel thread
          */
-        void cancelLoop();
+		void cancelLoop(bool set);
 
 	private:
         QApplication * app;
-        QPushButton *pauseButton;
+		QPushButton *pauseButton;
+		QPushButton *cancelButton;
         QImage qimage;
         FaceRecognitionThread *thr;
 
@@ -52,7 +52,7 @@ namespace QOpenCV
          * @brief configureWindow Sets window properties
          */
         void configureWindow();
-        void FaceRecognitionWindow::closeEvent(QCloseEvent *event);
+		void closeEvent(QCloseEvent *event);
 		private slots:
             /**
              * @author Autor: Marek Jakab

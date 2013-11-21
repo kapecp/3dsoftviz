@@ -12,19 +12,18 @@ QOpenCV::FaceRecognitionWindow::FaceRecognitionWindow(QWidget *parent, QApplicat
 void QOpenCV::FaceRecognitionWindow::configureWindow()
 {
     setModal(false);
-    resize(600,250);
+	resize(400,260);
     setWindowTitle(tr("Face Recognition"));
 
     this->windowLabel = new QLabel("",this,0);
-    this->windowLabel->setFixedWidth(640);
-    this->windowLabel->setFixedHeight(480);
+	this->windowLabel->setFixedWidth(320);
+	this->windowLabel->setFixedHeight(240);
 
-    QPushButton *pauseButton = new QPushButton(tr("Pause"));
-    connect(pauseButton, SIGNAL(clicked()), this, SLOT(pauseWindow()));
+	this->pauseButton = new QPushButton(tr("Pause"));
+	connect(this->pauseButton, SIGNAL(clicked()), this, SLOT(pauseWindow()));
 
-    QPushButton *cancelButton = new QPushButton(tr("Cancel"));
-    cancelButton->setFocusPolicy(Qt::NoFocus);
-    connect(cancelButton, SIGNAL(clicked()), this, SLOT(quitWindow()));
+	this->cancelButton = new QPushButton(tr("Cancel"));
+	connect(this->cancelButton, SIGNAL(clicked()), this, SLOT(quitWindow()));
 
     QHBoxLayout *buttonsLayout = new QHBoxLayout;
     QVBoxLayout *buttonsLayout_2 = new QVBoxLayout;
@@ -32,8 +31,8 @@ void QOpenCV::FaceRecognitionWindow::configureWindow()
     QHBoxLayout *mainLayout = new QHBoxLayout;
 
     buttonsLayout->setAlignment(Qt::AlignTop);
-    buttonsLayout_2->addWidget(pauseButton);
-    buttonsLayout_2->addWidget(cancelButton);
+	buttonsLayout_2->addWidget(this->pauseButton);
+	buttonsLayout_2->addWidget(this->cancelButton);
     frameLayout->setAlignment(Qt::AlignCenter);
     frameLayout->addWidget(this->windowLabel);
 
@@ -48,7 +47,7 @@ void QOpenCV::FaceRecognitionWindow::configureWindow()
 void QOpenCV::FaceRecognitionWindow::quitWindow()
 {
     if(this->thr->isRunning()){
-        emit cancelLoop();
+		emit cancelLoop(true);
         this->thr->wait();
     }
     if(!this->thr->isRunning())
@@ -59,7 +58,17 @@ void QOpenCV::FaceRecognitionWindow::quitWindow()
 
 void QOpenCV::FaceRecognitionWindow::pauseWindow()
 {
-    //emit
+	if (this->pauseButton->text().toStdString().compare(tr("Pause").toStdString())==0)
+	{
+		this->pauseButton->setText(tr("Continue"));
+		emit cancelLoop(true);
+	}
+	else
+	{
+		emit cancelLoop(false);
+		this->pauseButton->setText(tr("Pause"));
+		this->thr->start();
+	}
 }
 
 QLabel *QOpenCV::FaceRecognitionWindow::getLabel()
@@ -86,7 +95,7 @@ void QOpenCV::FaceRecognitionWindow::setLabel(cv::Mat image)
 void QOpenCV::FaceRecognitionWindow::closeEvent(QCloseEvent *event)
 {
     if(this->thr->isRunning()){
-        emit cancelLoop();
+		emit cancelLoop(true);
         this->thr->wait();
     }
     if(!this->thr->isRunning())

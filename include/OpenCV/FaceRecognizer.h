@@ -1,14 +1,8 @@
 #ifndef FACERECOGNIZER_H
 #define FACERECOGNIZER_H
 
-#include <opencv2/opencv.hpp>
 #include "opencv2/core/core.hpp"
-#include "opencv2/contrib/contrib.hpp"
-#include "opencv2/highgui/highgui.hpp"
-#include "opencv2/imgproc/imgproc.hpp"
 #include "opencv2/objdetect/objdetect.hpp"
-
-using namespace cv;
 
 namespace OpenCV
 {
@@ -36,34 +30,51 @@ namespace OpenCV
          * @brief getCascadeClassifier Returns Cascade Classifier
          * @return cv::CascadeClassifier
          */
-        cv::CascadeClassifier getCascadeClassifier() { return haar_cascade; }
+		cv::CascadeClassifier getCascadeClassifier();
 
         /**
          * @author Autor: Marek Jakab
          * @brief detectFaces Detect faces on selected image
          * @param gray cv::Mat image to detect on
          */
-		void detectFaces(Mat gray);
+		void detectFaces(cv::Mat gray);
 
         /**
          * @author Autor: Marek Jakab
          * @brief annotateFaces Draws rectangle around detected faces
          * @param frame cv::Mat image to use for face annotation
          */
-		void annotateFaces(Mat frame);
+		void annotateFaces(cv::Mat frame);
+
+		/**
+		 * @author Autor: Marek Jakab
+		 * @brief computeEyesCoordinations Compute eyes position
+		 * @param face Rectangle of detected face
+		 */
+		void computeEyesCoordinations(cv::Rect face, cv::Size size);
+
+		/**
+		 * @author Autor: Marek Jakab
+		 * @brief OpenCV::FaceRecognizer::getEyesCoords
+		 * @return cv::Point2i Eyes coordinations: % distance from middle of the frame
+		 */
+		cv::Point2i getEyesCoords();
+
+		bool detected;
 
 	private:
 
-        cv::Rect rect;
-        bool detected;
+		cv::Rect rect;
 
         /**
          * @author Autor: Marek Jakab
          * @brief startRecognition Function to begin face detection
          */
         void startRecognition();
+
+		cv::Point2i eyesCoord;
 		cv::CascadeClassifier haar_cascade;
-		vector< Rect_<int> > faces;
+		std::vector< cv::Rect_<int> > faces;
 	};
 }
 
