@@ -6,75 +6,75 @@
 
 namespace OpenCV
 {
-     /**
-     * @brief file Path to file with haar like features for face detection
-     */
-	static const std::string file = "haarcascade_frontalface_alt.xml";
+/**
+	 * @brief file Path to file with haar like features for face detection
+	 */
+static const std::string file = "haarcascade_frontalface_alt.xml";
 
-    class FaceRecognizer;
+class FaceRecognizer;
 
-    /**
-    *@brief Class FaceRecognizer
-    *@author Autor: Marek Jakab
-    *@date 18.11.2013
-    */
-    class FaceRecognizer{
+/**
+	*@brief Class FaceRecognizer
+	*@author Autor: Marek Jakab
+	*@date 18.11.2013
+	*/
+class FaceRecognizer{
 
-	public:
+public:
 
-        FaceRecognizer();
-        ~FaceRecognizer();
+	FaceRecognizer();
+	~FaceRecognizer();
 
-        /**
-         * @author Autor: Marek Jakab
-         * @brief getCascadeClassifier Returns Cascade Classifier
-         * @return cv::CascadeClassifier
-         */
-		cv::CascadeClassifier getCascadeClassifier();
+	/**
+		 * @author Autor: Marek Jakab
+		 * @brief getCascadeClassifier Returns Cascade Classifier
+		 * @return cv::CascadeClassifier
+		 */
+	cv::CascadeClassifier getCascadeClassifier();
 
-        /**
-         * @author Autor: Marek Jakab
-         * @brief detectFaces Detect faces on selected image
-         * @param gray cv::Mat image to detect on
-         */
-		void detectFaces(cv::Mat gray);
+	/**
+		 * @author Autor: Marek Jakab
+		 * @brief detectFaces Detect faces on selected image
+		 * @param gray cv::Mat image to detect on
+		 */
+	void detectFaces(cv::Mat gray);
 
-        /**
-         * @author Autor: Marek Jakab
-         * @brief annotateFaces Draws rectangle around detected faces
-         * @param frame cv::Mat image to use for face annotation
-         */
-		void annotateFaces(cv::Mat frame);
+	/**
+		 * @author Autor: Marek Jakab
+		 * @brief annotateFaces Draws rectangle around detected faces
+		 * @param frame cv::Mat image to use for face annotation
+		 */
+	void annotateFaces(cv::Mat frame);
 
-		/**
+	/**
 		 * @author Autor: Marek Jakab
 		 * @brief computeEyesCoordinations Compute eyes position
 		 * @param face Rectangle of detected face
 		 */
-		void computeEyesCoordinations(cv::Rect face, cv::Size size);
+	void computeEyesCoordinations(cv::Rect face, cv::Size size);
 
-		/**
+	/**
 		 * @author Autor: Marek Jakab
 		 * @brief OpenCV::FaceRecognizer::getEyesCoords
-		 * @return cv::Point2i Eyes coordinations: % distance from middle of the frame
+		 * @return cv::Point2i Eyes coordinations: %/100 distance from middle of the frame
 		 */
-		cv::Point2i getEyesCoords();
+	cv::Point2i getEyesCoords();
 
-		bool detected;
+	bool detected;
 
-	private:
+private:
 
-		cv::Rect rect;
+	cv::Rect rect;
 
-        /**
-         * @author Autor: Marek Jakab
-         * @brief startRecognition Function to begin face detection
-         */
-        void startRecognition();
+	/**
+		 * @author Autor: Marek Jakab
+		 * @brief startRecognition Function to begin face detection
+		 */
+	void startRecognition();
 
-		cv::Point2i eyesCoord;
-		cv::CascadeClassifier haar_cascade;
-		std::vector< cv::Rect_<int> > faces;
+	cv::Point2f eyesCoord;
+	cv::CascadeClassifier haar_cascade;
+	std::vector< cv::Rect_<int> > faces;
 	};
 }
 

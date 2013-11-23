@@ -40,8 +40,8 @@ cv::CascadeClassifier OpenCV::FaceRecognizer::getCascadeClassifier()
 
 void OpenCV::FaceRecognizer::computeEyesCoordinations(Rect face, Size size)
 {
-	this->eyesCoord.x=(((float)(face.x+face.width/2)/(float)size.width-0.5)/0.5)*100;
-	this->eyesCoord.y=(((float)(face.y+face.height/3)/(float)size.height-0.5)/0.5)*100;
+	this->eyesCoord.x = (((float)(face.x+face.width/2) / (float)size.width-0.5)/0.5);
+	this->eyesCoord.y = (((float)(face.y+face.height/3) / (float)size.height-0.5)/0.5);
 }
 
 cv::Point2i OpenCV::FaceRecognizer::getEyesCoords()
