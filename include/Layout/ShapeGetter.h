@@ -9,7 +9,7 @@
 //-----------------------------------------------------------------------------
 
 namespace Data{
-    class Node;
+	class Node;
 }
 
 namespace Layout {
@@ -24,24 +24,29 @@ class ShapeGetter {
 
 public:
 
-        virtual QSharedPointer<Shape> getShape (void)=0;
+		virtual QSharedPointer<Shape> getShape (void)=0;
 
-        virtual QSet<Data::Node *> getNodesOfShape(void)=0;
+		virtual QSet<Data::Node *> getNodesOfShape(void)=0;
 
-        /***/
-        virtual ~ShapeGetter (void) {}
+		/***/
+		virtual ~ShapeGetter (void) {}
 
 
-        void allowRestriction();
+		void allowRestriction();
 
-        void setInvisible(bool invisible){this->invisible = invisible;}
+		void setInvisible(bool invisible){this->invisible = invisible;}
 
-        bool isInvisible(){return invisible;}
+		bool isInvisible(){return invisible;}
 
 protected:
-        bool invisible;
+		bool invisible;
 
 }; // class
+
+#if (QT_VERSION < QT_VERSION_CHECK(4, 7, 0))
+	typedef QSharedPointer<Layout::ShapeGetter> foo;
+	bool operator<( foo const & one, foo const & other );
+#endif
 
 } // namespace
 
