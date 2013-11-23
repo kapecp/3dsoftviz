@@ -1,13 +1,13 @@
-/* -*-c++-*- OpenSceneGraph - Copyright (C) 1998-2006 Robert Osfield 
+/* -*-c++-*- OpenSceneGraph - Copyright (C) 1998-2006 Robert Osfield
  *
- * This library is open source and may be redistributed and/or modified under  
- * the terms of the OpenSceneGraph Public License (OSGPL) version 0.0 or 
+ * This library is open source and may be redistributed and/or modified under
+ * the terms of the OpenSceneGraph Public License (OSGPL) version 0.0 or
  * (at your option) any later version.  The full license is in LICENSE file
  * included with this distribution, and on the openscenegraph.org website.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * OpenSceneGraph Public License for more details.
 */
 
@@ -41,105 +41,105 @@ namespace Vwr{
 	*/
 	class CameraManipulator : public KeySwitchMatrixManipulator
 	{
-    public:
-        CameraManipulator(Vwr::CoreGraph * coreGraph);
+	public:
+		CameraManipulator(Vwr::CoreGraph * coreGraph);
 
-        virtual const char* className() const { return "Trackball"; }
+		virtual const char* className() const { return "Trackball"; }
 
-        /** set the position of the matrix manipulator using a 4x4 Matrix.*/
-        virtual void setByMatrix(const osg::Matrixd& matrix);
+		/** set the position of the matrix manipulator using a 4x4 Matrix.*/
+		virtual void setByMatrix(const osg::Matrixd& matrix);
 
-        /** set the position of the matrix manipulator using a 4x4 Matrix.*/
-        virtual void setByInverseMatrix(const osg::Matrixd& matrix) { setByMatrix(osg::Matrixd::inverse(matrix)); }
+		/** set the position of the matrix manipulator using a 4x4 Matrix.*/
+		virtual void setByInverseMatrix(const osg::Matrixd& matrix) { setByMatrix(osg::Matrixd::inverse(matrix)); }
 
-        /** get the position of the manipulator as 4x4 Matrix.*/
-        virtual osg::Matrixd getMatrix() const;
+		/** get the position of the manipulator as 4x4 Matrix.*/
+		virtual osg::Matrixd getMatrix() const;
 
-        /** get the position of the manipulator as a inverse matrix of the manipulator, typically used as a model view matrix.*/
-        virtual osg::Matrixd getInverseMatrix() const;
+		/** get the position of the manipulator as a inverse matrix of the manipulator, typically used as a model view matrix.*/
+		virtual osg::Matrixd getInverseMatrix() const;
 
-        /** Get the FusionDistanceMode. Used by SceneView for setting up stereo convergence.*/
-        virtual osgUtil::SceneView::FusionDistanceMode getFusionDistanceMode() const { return osgUtil::SceneView::USE_FUSION_DISTANCE_VALUE; }
+		/** Get the FusionDistanceMode. Used by SceneView for setting up stereo convergence.*/
+		virtual osgUtil::SceneView::FusionDistanceMode getFusionDistanceMode() const { return osgUtil::SceneView::USE_FUSION_DISTANCE_VALUE; }
 
-        /** Get the FusionDistanceValue. Used by SceneView for setting up stereo convergence.*/
-        virtual float getFusionDistanceValue() const { return _distance; }
+		/** Get the FusionDistanceValue. Used by SceneView for setting up stereo convergence.*/
+		virtual float getFusionDistanceValue() const { return _distance; }
 
-        /** Attach a node to the manipulator. 
-            Automatically detaches previously attached node.
-            setNode(NULL) detaches previously nodes.
-            Is ignored by manipulators which do not require a reference model.*/
-        virtual void setNode(osg::Node*);
+		/** Attach a node to the manipulator.
+			Automatically detaches previously attached node.
+			setNode(NULL) detaches previously nodes.
+			Is ignored by manipulators which do not require a reference model.*/
+		virtual void setNode(osg::Node*);
 
-        /** Return node if attached.*/
-        virtual const osg::Node* getNode() const;
+		/** Return node if attached.*/
+		virtual const osg::Node* getNode() const;
 
-        /** Return node if attached.*/
-        virtual osg::Node* getNode();
+		/** Return node if attached.*/
+		virtual osg::Node* getNode();
 
-        /** Move the camera to the default position. 
-            May be ignored by manipulators if home functionality is not appropriate.*/
-        virtual void home(const GUIEventAdapter& ea,GUIActionAdapter& us);
-        virtual void home(double time = 0);
-        
-        /** Start/restart the manipulator.*/
-        virtual void init(const GUIEventAdapter& ea,GUIActionAdapter& us);
+		/** Move the camera to the default position.
+			May be ignored by manipulators if home functionality is not appropriate.*/
+		virtual void home(const GUIEventAdapter& ea,GUIActionAdapter& us);
+		virtual void home(double time = 0);
 
-        /** handle events, return true if handled, false otherwise.*/
-        virtual bool handle(const GUIEventAdapter& ea,GUIActionAdapter& us);
+		/** Start/restart the manipulator.*/
+		virtual void init(const GUIEventAdapter& ea,GUIActionAdapter& us);
 
-        /** Get the keyboard and mouse usage of this manipulator.*/
-        virtual void getUsage(osg::ApplicationUsage& usage) const;
+		/** handle events, return true if handled, false otherwise.*/
+		virtual bool handle(const GUIEventAdapter& ea,GUIActionAdapter& us);
+
+		/** Get the keyboard and mouse usage of this manipulator.*/
+		virtual void getUsage(osg::ApplicationUsage& usage) const;
 
 
-        /** set the minimum distance (as ratio) the eye point can be zoomed in towards the
-            center before the center is pushed forward.*/        
-        void setMinimumZoomScale(double minimumZoomScale) { _minimumZoomScale=minimumZoomScale; }
+		/** set the minimum distance (as ratio) the eye point can be zoomed in towards the
+			center before the center is pushed forward.*/
+		void setMinimumZoomScale(double minimumZoomScale) { _minimumZoomScale=minimumZoomScale; }
 
-        /** get the minimum distance (as ratio) the eye point can be zoomed in */
-        double getMinimumZoomScale() const { return _minimumZoomScale; }
+		/** get the minimum distance (as ratio) the eye point can be zoomed in */
+		double getMinimumZoomScale() const { return _minimumZoomScale; }
 
-        /** set the mouse scroll wheel zoom delta.
-          * Range -1.0 to +1.0,  -ve value inverts wheel direction and zero switches off scroll wheel. */
-        void setScroolWheelZoomDelta(double zoomDelta) { _zoomDelta = zoomDelta; }
+		/** set the mouse scroll wheel zoom delta.
+		  * Range -1.0 to +1.0,  -ve value inverts wheel direction and zero switches off scroll wheel. */
+		void setScroolWheelZoomDelta(double zoomDelta) { _zoomDelta = zoomDelta; }
 
-        /** get the mouse scroll wheel zoom delta. */
-        double getScroolWheelZoomDelta() const { return _zoomDelta; }
+		/** get the mouse scroll wheel zoom delta. */
+		double getScroolWheelZoomDelta() const { return _zoomDelta; }
 
-        /** Set the center of the trackball. */
-        void setCenter(const osg::Vec3d& center) { _center = center; }
+		/** Set the center of the trackball. */
+		void setCenter(const osg::Vec3d& center) { _center = center; }
 
-        /** Get the center of the trackball. */
-        const osg::Vec3d& getCenter() const { return _center; }
+		/** Get the center of the trackball. */
+		const osg::Vec3d& getCenter() const { return _center; }
 
-        /** Set the rotation of the trackball. */
-        void setRotation(const osg::Quat& rotation) { _rotation = rotation; }
+		/** Set the rotation of the trackball. */
+		void setRotation(const osg::Quat& rotation) { _rotation = rotation; }
 
-        /** Get the rotation of the trackball. */
-        const osg::Quat& getRotation() const { return _rotation; }
+		/** Get the rotation of the trackball. */
+		const osg::Quat& getRotation() const { return _rotation; }
 
-        /** Set the distance of the trackball. */
-        void setDistance(double distance) { _distance = distance; }
+		/** Set the distance of the trackball. */
+		void setDistance(double distance) { _distance = distance; }
 
-        /** Get the distance of the trackball. */
-        double getDistance() const { return _distance; }
+		/** Get the distance of the trackball. */
+		double getDistance() const { return _distance; }
 
-        /** Set the size of the trackball. */
-        void setTrackballSize(float size);
+		/** Set the size of the trackball. */
+		void setTrackballSize(float size);
 
-        /** Get the size of the trackball. */
-        float getTrackballSize() const { return _trackballSize; }
+		/** Get the size of the trackball. */
+		float getTrackballSize() const { return _trackballSize; }
 
-        /** Set the 'allow throw' flag. Releasing the mouse button while moving the camera results in a throw. */
-        void setAllowThrow(bool allowThrow) { _allowThrow = allowThrow; }
+		/** Set the 'allow throw' flag. Releasing the mouse button while moving the camera results in a throw. */
+		void setAllowThrow(bool allowThrow) { _allowThrow = allowThrow; }
 
-        /** Returns true if the camera can be thrown, false otherwise. This defaults to true. */
-        bool getAllowThrow() const { return _allowThrow; }
+		/** Returns true if the camera can be thrown, false otherwise. This defaults to true. */
+		bool getAllowThrow() const { return _allowThrow; }
 
 
 		/**
 		*  \fn inline public  setMaxSpeed(float speed)
 		*  \brief Sets maximum camera speed
-		*  \param     speed    maximum speed 
+		*  \param     speed    maximum speed
 		*/
 		void setMaxSpeed(float speed) { this->maxSpeed = speed; }
 
@@ -152,30 +152,41 @@ namespace Vwr{
 
 		void setNewPosition(osg::Vec3d cameraTargetPoint, osg::Vec3d cameraInterestPoint, std::list<osg::ref_ptr<Data::Node> > selectedCluster, std::list<osg::ref_ptr<Data::Edge> > selectedEdges);
 
-    protected:
+	public slots:
 
-        virtual ~CameraManipulator();
+		/**
+		 * @author Autor: David Durcak
+		 * @brief Set _rotationHead quaternion to rotate camera according head
+		 * ! distance is not implemented yet
+		 * @param x % distance from middle on horizontal axis
+		 * @param y % distance from middle on vertical axis
+		 */
+		void setRotationHead(float x, float y, float distance);
 
-        /** Reset the internal GUIEvent stack.*/
-        void flushMouseEventStack();
-        /** Add the current mouse GUIEvent to internal stack.*/
-        void addMouseEvent(const GUIEventAdapter& ea);
+	protected:
 
-        void computePosition(const osg::Vec3& eye,const osg::Vec3& lv,const osg::Vec3& up);
+		virtual ~CameraManipulator();
 
-        /** For the give mouse movement calculate the movement of the camera.
-            Return true is camera has moved and a redraw is required.*/
-        bool calcMovement();
-        
-        void trackball(osg::Vec3& axis,float& angle, float p1x, float p1y, float p2x, float p2y);
-        float tb_project_to_sphere(float r, float x, float y);
+		/** Reset the internal GUIEvent stack.*/
+		void flushMouseEventStack();
+		/** Add the current mouse GUIEvent to internal stack.*/
+		void addMouseEvent(const GUIEventAdapter& ea);
+
+		void computePosition(const osg::Vec3& eye,const osg::Vec3& lv,const osg::Vec3& up);
+
+		/** For the give mouse movement calculate the movement of the camera.
+			Return true is camera has moved and a redraw is required.*/
+		bool calcMovement();
+
+		void trackball(osg::Vec3& axis,float& angle, float p1x, float p1y, float p2x, float p2y);
+		float tb_project_to_sphere(float r, float x, float y);
 
 
-        /** Check the speed at which the mouse is moving.
-            If speed is below a threshold then return false, otherwise return true.*/
-        bool isMouseMoving();
+		/** Check the speed at which the mouse is moving.
+			If speed is below a threshold then return false, otherwise return true.*/
+		bool isMouseMoving();
 
-        // Internal event stack comprising last two mouse events.
+		// Internal event stack comprising last two mouse events.
 
 		/**
 		*  osg::ref_ptr _ga_t1
@@ -222,16 +233,16 @@ namespace Vwr{
 		*/
 		bool _thrown;
 
-        /** The approximate amount of time it is currently taking to draw a frame.
-          * This is used to compute the delta in translation/rotation during a thrown display update.
-          * It allows us to match an delta in position/rotation independent of the rendering frame rate.
-          */
-        double _delta_frame_time; 
+		/** The approximate amount of time it is currently taking to draw a frame.
+		  * This is used to compute the delta in translation/rotation during a thrown display update.
+		  * It allows us to match an delta in position/rotation independent of the rendering frame rate.
+		  */
+		double _delta_frame_time;
 
-        /** The time the last frame started.
-          * Used when _rate_sensitive is true so that we can match display update rate to rotation/translation rate.
-          */
-        double _last_frame_time;
+		/** The time the last frame started.
+		  * Used when _rate_sensitive is true so that we can match display update rate to rotation/translation rate.
+		  */
+		double _last_frame_time;
 
 
 		/**
@@ -245,6 +256,12 @@ namespace Vwr{
 		*  \brief camera rotation
 		*/
 		osg::Quat    _rotation;
+
+		/**
+		*  osg::Quat _rotationHead
+		*  \brief another camera rotation according user head
+		*/
+		osg::Quat    _rotationHead;
 
 		/**
 		*  double _distance
@@ -331,7 +348,7 @@ namespace Vwr{
 		*  \brief pitch deceleration rate
 		*/
 		bool	  deceleratePitchRate;
-		
+
 
 		/**
 		*  double t0
@@ -471,7 +488,7 @@ namespace Vwr{
 		*  \brief camera interest point
 		*/
 		osg::Vec3d cameraInterestPoint;
-		
+
 		/**
 		*  osg::Vec3d weightPoint
 		*  \brief weigth point
@@ -501,13 +518,13 @@ namespace Vwr{
 		*  \brief target distance of camera from center
 		*/
 		double targetDistance;
-		
+
 		/**
 		*  osg::Vec3d originalEyePosition
 		*  \brief eye position at the beginning of movement
 		*/
 		osg::Vec3d originalEyePosition;
-		
+
 		/**
 		*  osg::Vec3d cameraPosition
 		*  \brief current camera position
@@ -543,13 +560,13 @@ namespace Vwr{
 		*  \brief eye speed
 		*/
 		static double EYE_MOVEMENT_SPEED;
-		
+
 		/**
 		*  static double TARGET_MOVEMENT_SPEED
 		*  \brief target speed
 		*/
 		static double TARGET_MOVEMENT_SPEED;
-		
+
 		/**
 		*  static double SCREEN_MARGIN
 		*  \brief minimum distance of selected cluster from screen in t=0.5
@@ -563,7 +580,7 @@ namespace Vwr{
 		*  \param  selectedCluster     selected nodes
 		*/
 		void alterWeights(osgViewer::Viewer* viewer, std::list<osg::ref_ptr<Data::Node> > selectedCluster);
-		
+
 		/**
 		*  \fn private  alterCameraTargetPoint(osgViewer::Viewer* viewer)
 		*  \brief moves camera target point to see all important nodes
@@ -598,7 +615,7 @@ namespace Vwr{
 		*  \brief last target point position
 		*/
 		osg::Vec3 lastTargetPoint;
-		
+
 		Vwr::CoreGraph * coreGraph;
 	};
 
