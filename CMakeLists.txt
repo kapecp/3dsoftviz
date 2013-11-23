@@ -64,7 +64,7 @@ endif()
 
 # Default install prefix
 if( CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT )
- 	set( CMAKE_INSTALL_PREFIX ${CMAKE_CURRENT_SOURCE_DIR}/_install CACHE PATH "Installation Destination" FORCE )
+	set( CMAKE_INSTALL_PREFIX ${CMAKE_CURRENT_SOURCE_DIR}/_install CACHE PATH "Installation Destination" FORCE )
 endif()
 
 # RPath functionality
@@ -246,9 +246,25 @@ include_directories(
 )
 
 # Source files
-file(GLOB_RECURSE SRC  "src/*.cpp")
-file(GLOB_RECURSE INCL "include/*.h")
+file(GLOB_RECURSE SRC_MAIN "src/main.cpp")
+file(GLOB_RECURSE SRC_CORE  "src/Core/*.cpp")
+file(GLOB_RECURSE SRC_DATA  "src/Data/*.cpp")
+file(GLOB_RECURSE SRC_IMPORTER  "src/Importer/*.cpp")
+file(GLOB_RECURSE SRC_LAYOUT  "src/Layout/*.cpp")
+file(GLOB_RECURSE SRC_MANAGER  "src/Manager/*.cpp")
+file(GLOB_RECURSE SRC_MATH  "src/Math/*.cpp")
+file(GLOB_RECURSE SRC_MODEL  "src/Model/*.cpp")
+file(GLOB_RECURSE SRC_NETWORK  "src/Network/*.cpp")
+file(GLOB_RECURSE SRC_NOISE  "src/Noise/*.cpp")
+file(GLOB_RECURSE SRC_OSGQTBROWSER  "src/OsgQtBrowser/*.cpp")
+file(GLOB_RECURSE SRC_QOSG  "src/QOSG/*.cpp")
+file(GLOB_RECURSE SRC_UTIL  "src/Util/*.cpp")
+file(GLOB_RECURSE SRC_VIEWER  "src/Viewer/*.cpp")
 
+# Source files
+set(SRC ${SRC_MAIN} ${SRC_CORE} ${SRC_DATA} ${SRC_IMPORTER} ${SRC_LAYOUT} ${SRC_MANAGER} ${SRC_MATH} ${SRC_MODEL} ${SRC_NETWORK} ${SRC_NOISE} ${SRC_OSGQTBROWSER} ${SRC_QOSG} ${SRC_UTIL} ${SRC_VIEWER} )
+file(GLOB_RECURSE INCL "include/*.h")
+#add_library(importer ${SRC_IMPORTER})
 
 # Group source files
 source_group(\\src main.cpp)
@@ -302,12 +318,12 @@ QT4_WRAP_CPP( SOURCES_H_MOC ${SOURCES_H} )
 
 # Build and link
 add_executable( ${3DSOFTVIZ_NAME} ${INCL} ${SRC} ${SOURCES_H_MOC} )
-
 target_link_libraries( ${3DSOFTVIZ_NAME}
 	${QT_LIBRARIES}
 	${OPENSCENEGRAPH_LIBRARIES}
 	${OSGVIEWER_LIBRARIES}
 	${LIBNOISE_LIBRARY}
+#	importer
 )
 
 # 'cotire' the executable
@@ -318,7 +334,7 @@ if( MSVC )
 endif()
 
 # ensure correct dependencies
-add_dependencies( ${3DSOFTVIZ_NAME} dep_libnoise )
+add_dependencies( ${3DSOFTVIZ_NAME} dep_libnoise)
 
 # -------
 # Install
