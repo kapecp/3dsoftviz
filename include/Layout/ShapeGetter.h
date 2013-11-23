@@ -43,6 +43,8 @@ protected:
 
 }; // class
 
+//PK: Hack for Qt v4.6.2, because Qt compilation fails on qmap.h `operator <`
+//TODO: test if this operator implementation works...
 #if (QT_VERSION < QT_VERSION_CHECK(4, 7, 0))
 	typedef QSharedPointer<Layout::ShapeGetter> foo;
 	bool operator<( foo const & one, foo const & other );
