@@ -35,9 +35,9 @@ void QOpenCV::FaceRecognitionThread::run()
 		emit this->pushImage(im);
 		if (this->mFaceRecognizer->detected)
 		{
-//			emit this->sendEyesCoords(this->mFaceRecognizer->getEyesCoords().x,
-//									  this->mFaceRecognizer->getEyesCoords().y,
-//									  0.0 );
+			emit this->sendEyesCoords(-this->mFaceRecognizer->getEyesCoords().x,
+									  -this->mFaceRecognizer->getEyesCoords().y,
+									  0.0 );
 		}
 	}
 }

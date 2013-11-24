@@ -296,12 +296,12 @@ void Vwr::CameraManipulator::setByMatrix(const osg::Matrixd& matrix)
 
 osg::Matrixd Vwr::CameraManipulator::getMatrix() const
 {
-	return osg::Matrixd::translate(0.0,0.0,_distance)*osg::Matrixd::rotate(_rotation)*osg::Matrixd::translate(_center);
+	return osg::Matrixd::translate(0.0,0.0,_distance)*osg::Matrixd::rotate(_rotation*_rotationHead)*osg::Matrixd::translate(_center);
 }
 
 osg::Matrixd Vwr::CameraManipulator::getInverseMatrix() const
 {
-	return osg::Matrixd::translate(-_center)*osg::Matrixd::rotate(_rotation.inverse())*osg::Matrixd::translate(0.0,0.0,-_distance);
+	return osg::Matrixd::translate(-_center)*osg::Matrixd::rotate((_rotation*_rotationHead).inverse())*osg::Matrixd::translate(0.0,0.0,-_distance);
 }
 
 void Vwr::CameraManipulator::computePosition(const osg::Vec3& eye,const osg::Vec3& center,const osg::Vec3& up)
