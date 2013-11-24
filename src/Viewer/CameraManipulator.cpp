@@ -1040,7 +1040,7 @@ void Vwr::CameraManipulator::setRotationHead(float x, float y, float /*distance*
 	float	angle;
 	double	throwScale;
 
-	if ( (-1.0 <= x && x <= 1.0) && (-1.0 <= y && y <= 1.0)){
+	if ( (-100.0 <= x && x <= 100.0) && (-100.0 <= y && y <= 100.0)){
 
 		throwScale =  (_thrown && _ga_t0.valid() && _ga_t1.valid()) ?
 					_delta_frame_time / (_ga_t0->getTime() - _ga_t1->getTime()) :
@@ -1048,11 +1048,11 @@ void Vwr::CameraManipulator::setRotationHead(float x, float y, float /*distance*
 
 		// both rotation must be separated
 		// horizontal rotation
-		trackball(axis,angle, x, 0.0, 0.0, 0.0);
+		trackball(axis,angle, x/100, 0.0, 0.0, 0.0);
 		osg::Quat Xnew_rotate(angle * throwScale,axis);
 
 		// vertical rotation
-		trackball(axis,angle,0.0, y, 0.0, 0.0);
+		trackball(axis,angle,0.0, y/100, 0.0, 0.0);
 		osg::Quat Ynew_rotate(angle * throwScale,axis);
 
 		// both rotation
