@@ -28,7 +28,7 @@ endif ()
 
 ### Fix virtual memory range
 IF (WIN32 AND MSVC)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Zm200" CACHE STRING "" FORCE)
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Zm200" CACHE STRING "" FORCE)
 ENDIF()
 
 ### Find libraries ###
@@ -110,8 +110,8 @@ INCLUDE_DIRECTORIES( ${OpenCV_INCLUDE_DIRS} )
 ADD_DEFINITIONS( -DOPENCV_FOUND )
 MESSAGE ("OpenCV FOUND")
 SET(SOURCES_H
-        ./include/QOpenCV/FaceRecognitionWindow.h
-        ./include/QOpenCV/FaceRecognitionThread.h
+		./include/QOpenCV/FaceRecognitionWindow.h
+		./include/QOpenCV/FaceRecognitionThread.h
 )
 ELSE(OpenCV_FOUND)
 MESSAGE ("OpenCV NOT FOUND")
@@ -139,7 +139,7 @@ FILE(GLOB_RECURSE INCL "include/*.h")
 # .h subor, ktory obsahuje Q_OBJECT
 
 SET(SOURCES_H
-        ${SOURCES_H}
+		${SOURCES_H}
 	./include/OsgQtBrowser/QGraphicsViewAdapter.h
 	./include/QOSG/CoreWindow.h
 	./include/QOSG/TreeModel.h
@@ -150,8 +150,9 @@ SET(SOURCES_H
 	./include/QOSG/CheckBoxList.h
 	./include/QOSG/qtcolorpicker.h
 	./include/Viewer/PickHandler.h
-        ./include/Network/Server.h
-        ./include/Network/Client.h
+		./include/Network/Server.h
+		./include/Network/Client.h
+	./include/Viewer/CameraManipulator.h
 )
 
 # toto makro spracuje Q_OBJECT a vygeneruje novy cpp subor, ktory bude dostupny v ${SOURCES_H_MOC} premennej

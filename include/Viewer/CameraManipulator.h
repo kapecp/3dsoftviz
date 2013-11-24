@@ -19,6 +19,7 @@
 #include <osgGA/GUIActionAdapter>
 #include <osg/Quat>
 #include <osgViewer/Viewer>
+#include <QObject>
 
 #include "Util/ApplicationConfig.h"
 #include "Data/Node.h"
@@ -39,8 +40,9 @@ namespace Vwr{
 	*
 	*	This class is basically extended TrackballManipulator class with new functionality.
 	*/
-	class CameraManipulator : public KeySwitchMatrixManipulator
+	class CameraManipulator : public QObject, public KeySwitchMatrixManipulator
 	{
+		Q_OBJECT
 	public:
 		CameraManipulator(Vwr::CoreGraph * coreGraph);
 
