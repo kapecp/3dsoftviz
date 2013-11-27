@@ -7,7 +7,7 @@
 //	Modification History:
 //
 //	Who(SNo)			Date			Description
-//	
+//
 ///////////////////////////////////////////////////////////
 
 #ifndef CHECKBOXLIST_H
@@ -17,21 +17,21 @@
 
 namespace QOSG
 {
-	class CheckBoxList: public QComboBox
-	{
-		Q_OBJECT;
+class CheckBoxList: public QComboBox
+{
+	Q_OBJECT;
 
-	public:
-		CheckBoxList(QWidget *widget = 0);
-		virtual ~CheckBoxList();
-		bool eventFilter(QObject *object, QEvent *event);
-		virtual void paintEvent(QPaintEvent *);
-		void SetDisplayText(QString text);
-		QString GetDisplayText() const;
+public:
+	CheckBoxList(QWidget *widget = 0);
+	virtual ~CheckBoxList();
+	bool eventFilter(QObject *object, QEvent *event);
+	virtual void paintEvent(QPaintEvent *);
+	void SetDisplayText(QString text);
+	QString GetDisplayText() const;
 
-	private:
-		QString m_DisplayText;
-	};
+private:
+	QString m_DisplayText;
+};
 }
 
 #endif // CHECKBOXLIST_H

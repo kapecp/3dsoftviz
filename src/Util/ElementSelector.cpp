@@ -19,7 +19,7 @@ void Util::ElementSelector::randomElementSelector(QMap<qlonglong, osg::ref_ptr<D
 	for (int x = 0; x < numEdges; x++)
 	{
 		osg::ref_ptr<Data::Edge> edge = edges->value(edges->uniqueKeys().at(rand() % edges->size()));
-		
+
 		edge->setSelected(true);
 		pickhandler->addPickedEdge(edge);
 	}

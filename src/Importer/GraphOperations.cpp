@@ -3,15 +3,15 @@
 namespace Importer {
 
 GraphOperations::GraphOperations (
-	Data::Graph &graph
-) : graph_ (graph)
+		Data::Graph &graph
+		) : graph_ (graph)
 {
 }
 
 bool GraphOperations::addDefaultTypes (
-	Data::Type *&edgeType,
-	Data::Type *&nodeType
-) {
+		Data::Type *&edgeType,
+		Data::Type *&nodeType
+		) {
 	bool ok = true;
 
 	if (ok) {

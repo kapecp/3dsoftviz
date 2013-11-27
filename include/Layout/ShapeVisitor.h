@@ -19,17 +19,17 @@ namespace Layout {
 class ShapeVisitor
 {
 protected:
-    virtual ~ShapeVisitor() {}
+	virtual ~ShapeVisitor() {}
 
 public:
-    virtual void visit(Shape_Null &shape) = 0;
-    virtual void visit(Shape_Composite &shape) = 0;
+	virtual void visit(Shape_Null &shape) = 0;
+	virtual void visit(Shape_Composite &shape) = 0;
 	virtual void visit (Shape_Intersection & shape) = 0;
-    virtual void visit(Shape_Plane &shape) = 0;
-    virtual void visit(Shape_Sphere &shape) = 0;
-    virtual void visit(Shape_SphereSurface &shape) = 0;
-    virtual void visit(Shape_CylinderSurface &shape) = 0;
-    virtual void visit(Shape_ConeSurface &shape) = 0;
+	virtual void visit(Shape_Plane &shape) = 0;
+	virtual void visit(Shape_Sphere &shape) = 0;
+	virtual void visit(Shape_SphereSurface &shape) = 0;
+	virtual void visit(Shape_CylinderSurface &shape) = 0;
+	virtual void visit(Shape_ConeSurface &shape) = 0;
 };
 
 } // namespace Layout

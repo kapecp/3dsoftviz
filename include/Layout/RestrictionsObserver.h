@@ -22,17 +22,17 @@ public:
 public:
 
 	virtual void restrictionAdded (
-		QSharedPointer<ShapeGetter> shapeGetter
-	) = 0;
+			QSharedPointer<ShapeGetter> shapeGetter
+			) = 0;
 
 	virtual void shapeChanged (
-		QSharedPointer<ShapeGetter> shapeGetter,
-		QSharedPointer<Shape> shape
-	) = 0;
+			QSharedPointer<ShapeGetter> shapeGetter,
+			QSharedPointer<Shape> shape
+			) = 0;
 
 	virtual void restrictionRemoved (
-		QSharedPointer<ShapeGetter> shapeGetter
-	) = 0;
+			QSharedPointer<ShapeGetter> shapeGetter
+			) = 0;
 
 }; // class
 

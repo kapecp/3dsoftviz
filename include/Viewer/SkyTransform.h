@@ -7,53 +7,53 @@
 
 namespace Vwr
 {
-	/**
+/**
 	*  \class SkyTransform
 	*  \brief Handles sky transformations
 	*  \author Unknown
 	*  \date 29. 4. 2010
 	*/
-	class SkyTransform : public osg::Transform
-	{
-	public:
+class SkyTransform : public osg::Transform
+{
+public:
 
-		/**
+	/**
 		*  \fn inline public virtual constant  computeLocalToWorldMatrix(osg::Matrix& matrix,osg::NodeVisitor* nv)
-		*  \brief computes local to world transformation matrix 
+		*  \brief computes local to world transformation matrix
 		*  \param  matrix local matrix
 		*  \param  nv     node visitor
 		*  \return bool always true
 		*/
-		virtual bool computeLocalToWorldMatrix(osg::Matrix& matrix,osg::NodeVisitor* nv) const 
+	virtual bool computeLocalToWorldMatrix(osg::Matrix& matrix,osg::NodeVisitor* nv) const
+	{
+		osgUtil::CullVisitor* cv = dynamic_cast<osgUtil::CullVisitor*>(nv);
+		if (cv)
 		{
-			osgUtil::CullVisitor* cv = dynamic_cast<osgUtil::CullVisitor*>(nv);
-			if (cv)
-			{
-				osg::Vec3 eyePointLocal = cv->getEyeLocal();
-				matrix.preMultTranslate(eyePointLocal);
-			}
-			return true;
+			osg::Vec3 eyePointLocal = cv->getEyeLocal();
+			matrix.preMultTranslate(eyePointLocal);
 		}
+		return true;
+	}
 
 
-		/**
+	/**
 		*  \fn inline public virtual constant  computeWorldToLocalMatrix(osg::Matrix& matrix,osg::NodeVisitor* nv)
-		*  \brief computes world to local transformation matrix 
+		*  \brief computes world to local transformation matrix
 		*  \param  matrix world matrix
 		*  \param  nv     node visitor
 		*  \return bool always true
 		*/
-		virtual bool computeWorldToLocalMatrix(osg::Matrix& matrix,osg::NodeVisitor* nv) const
+	virtual bool computeWorldToLocalMatrix(osg::Matrix& matrix,osg::NodeVisitor* nv) const
+	{
+		osgUtil::CullVisitor* cv = dynamic_cast<osgUtil::CullVisitor*>(nv);
+		if (cv)
 		{
-			osgUtil::CullVisitor* cv = dynamic_cast<osgUtil::CullVisitor*>(nv);
-			if (cv)
-			{
-				osg::Vec3 eyePointLocal = cv->getEyeLocal();
-				matrix.postMultTranslate(-eyePointLocal);
-			}
-			return true;
+			osg::Vec3 eyePointLocal = cv->getEyeLocal();
+			matrix.postMultTranslate(-eyePointLocal);
 		}
-	};
+		return true;
+	}
+};
 }
 
 #endif

@@ -14,12 +14,12 @@ namespace Layout {
  */
 class Shape_Intersection : public Shape_Composite {
 
-    /**
-     * [visitor pattern]
-     */
-    virtual void accept (
-            ShapeVisitor & visitor
-    );
+	/**
+	 * [visitor pattern]
+	 */
+	virtual void accept (
+			ShapeVisitor & visitor
+			);
 
 }; // class
 

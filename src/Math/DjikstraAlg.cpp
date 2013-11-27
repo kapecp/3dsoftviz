@@ -26,11 +26,11 @@ QMap<qlonglong, qlonglong> DjikstraAlg::execute(Data::Node * source)
 	return distances;
 }
 
-void DjikstraAlg::findMinimalDistances(Data::Node * node) 
+void DjikstraAlg::findMinimalDistances(Data::Node * node)
 {
 	QVector<osg::ref_ptr<Data::Node> > adjacentNodes = getNeighbors(node);
-		
-	for (int x = 0; x < adjacentNodes.size(); x++) 
+
+	for (int x = 0; x < adjacentNodes.size(); x++)
 	{
 		Data::Node * target = adjacentNodes.at(x);
 
@@ -38,7 +38,7 @@ void DjikstraAlg::findMinimalDistances(Data::Node * node)
 		int nSh = getShortestDistance(node);
 		int d = getDistance(node, target);
 
-		if ( tSh > nSh + d) 
+		if ( tSh > nSh + d)
 		{
 			distances.insert(target->getId(), getShortestDistance(node) + getDistance(node, target));
 			predecessors.insert(target->getId(), node->getId());
@@ -52,18 +52,18 @@ void DjikstraAlg::findMinimalDistances(Data::Node * node)
 	}
 }
 
-int DjikstraAlg::getDistance(Data::Node * node, Data::Node * target) 
+int DjikstraAlg::getDistance(Data::Node * node, Data::Node * target)
 {
 	QMapIterator<qlonglong, osg::ref_ptr<Data::Edge> > i(*edges);
-	 
-	while (i.hasNext()) 
+
+	while (i.hasNext())
 	{
 		i.next();
 		Data::Edge * edge = i.value();
 
-		if ((edge->getSrcNode()->getId() == node->getId()) && (edge->getDstNode()->getId() == target->getId())) 
+		if ((edge->getSrcNode()->getId() == node->getId()) && (edge->getDstNode()->getId() == target->getId()))
 		{
-				return edge->getWeight();
+			return edge->getWeight();
 		}
 	}
 
@@ -72,18 +72,18 @@ int DjikstraAlg::getDistance(Data::Node * node, Data::Node * target)
 	return 0;
 }
 
-QVector<osg::ref_ptr<Data::Node> > DjikstraAlg::getNeighbors(Data::Node * node) 
+QVector<osg::ref_ptr<Data::Node> > DjikstraAlg::getNeighbors(Data::Node * node)
 {
 	QVector<osg::ref_ptr<Data::Node> > neighbors;
 
 	QMapIterator<qlonglong, osg::ref_ptr<Data::Edge> > i(*edges);
 
-	while (i.hasNext()) 
+	while (i.hasNext())
 	{
 		i.next();
 		Data::Edge * edge = i.value();
 
-		if (edge->getSrcNode()->getId() == node->getId() && !isSettled(edge->getDstNode())) 
+		if (edge->getSrcNode()->getId() == node->getId() && !isSettled(edge->getDstNode()))
 		{
 			neighbors.push_back(edge->getDstNode());
 		}
@@ -91,23 +91,23 @@ QVector<osg::ref_ptr<Data::Node> > DjikstraAlg::getNeighbors(Data::Node * node)
 	return neighbors;
 }
 
-Data::Node * DjikstraAlg::getMinimum(QSet<qlonglong> vertexes) 
+Data::Node * DjikstraAlg::getMinimum(QSet<qlonglong> vertexes)
 {
 	Data::Node * minimum = NULL;
-	
+
 	QSetIterator<qlonglong> i(vertexes);
 
 	while(i.hasNext())
 	{
 		qlonglong nodeId = i.next();
 
-		if (minimum == NULL) 
+		if (minimum == NULL)
 		{
 			minimum = nodes->value(nodeId);
-		} 
-		else 
+		}
+		else
 		{
-			if (getShortestDistance(nodes->value(nodeId)) < getShortestDistance(minimum)) 
+			if (getShortestDistance(nodes->value(nodeId)) < getShortestDistance(minimum))
 			{
 				minimum = nodes->value(nodeId);
 			}
@@ -117,18 +117,18 @@ Data::Node * DjikstraAlg::getMinimum(QSet<qlonglong> vertexes)
 	return minimum;
 }
 
-bool DjikstraAlg::isSettled(Data::Node * vertex) 
+bool DjikstraAlg::isSettled(Data::Node * vertex)
 {
 	return settledNodes.contains(vertex->getId());
 }
 
-int DjikstraAlg::getShortestDistance(Data::Node * destination) 
+int DjikstraAlg::getShortestDistance(Data::Node * destination)
 {
 	qlonglong d = -1;
 
-	if (distances.contains(destination->getId()))		
+	if (distances.contains(destination->getId()))
 		d = distances.value(destination->getId());
-	
+
 	if (d == -1) {
 		return 999999;
 	} else {
@@ -136,22 +136,22 @@ int DjikstraAlg::getShortestDistance(Data::Node * destination)
 	}
 }
 
-void DjikstraAlg::getPath(Data::Node * target, QLinkedList<osg::ref_ptr<Data::Node> > * path) 
+void DjikstraAlg::getPath(Data::Node * target, QLinkedList<osg::ref_ptr<Data::Node> > * path)
 {
 	Data::Node * step = target;
-	
+
 	// Check if a path exists
-	if (! predecessors.contains(step->getId()) && path == NULL) 
+	if (! predecessors.contains(step->getId()) && path == NULL)
 	{
 		return;
 	}
 
 	if (path == NULL)
 		path = new QLinkedList<osg::ref_ptr<Data::Node> >();
-	
+
 	path->push_front(step);
-	
-	while (predecessors.contains(step->getId())) 
+
+	while (predecessors.contains(step->getId()))
 	{
 		QList<qlonglong> values = predecessors.values(step->getId());
 

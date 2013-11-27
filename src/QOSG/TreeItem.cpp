@@ -42,7 +42,7 @@
 ****************************************************************************/
 
 /*
-    treeitem.cpp
+	treeitem.cpp
 
 	A container for items of data supplied by the simple tree model.
 */
@@ -54,58 +54,58 @@ using namespace QOSG;
 
 TreeItem::TreeItem(const QList<QVariant> &data, TreeItem *parent)
 {
-    parentItem = parent;
-    itemData = data;
+	parentItem = parent;
+	itemData = data;
 }
 
 TreeItem::~TreeItem()
 {
-    qDeleteAll(childItems);
+	qDeleteAll(childItems);
 }
 
 void TreeItem::appendChild(TreeItem *item)
 {
-    childItems.append(item);
+	childItems.append(item);
 }
 
 TreeItem *TreeItem::child(int row)
 {
-    return childItems.value(row);
+	return childItems.value(row);
 }
 
 int TreeItem::childCount() const
 {
-    return childItems.count();
+	return childItems.count();
 }
 
 int TreeItem::columnCount() const
 {
-    return itemData.count();
+	return itemData.count();
 }
 
 QVariant TreeItem::data(int column) const
 {
-    return itemData.value(column);
+	return itemData.value(column);
 }
 
 TreeItem *TreeItem::parent()
 {
-    return parentItem;
+	return parentItem;
 }
 
 int TreeItem::row() const
 {
-    if (parentItem)
+	if (parentItem)
 		return parentItem->childItems.indexOf(const_cast<TreeItem*>(this));
 
-    return 0;
+	return 0;
 }
 
 void TreeItem::addColumnData(QString data)
 {
 	// v pripade ze polozka ma len nazov pridaju sa jej tieto data
 	if (itemData.length() == 1 )
-	{		 
+	{
 		itemData.append(data);
 	}
 	else
@@ -113,7 +113,7 @@ void TreeItem::addColumnData(QString data)
 		// ak ma aj ine data tak sa nahradia novymi
 		QString str = itemData[1].toString();
 		itemData.pop_back();
-	    str.append(";");
+		str.append(";");
 		str.append(data);
 		itemData.append(str);
 	}

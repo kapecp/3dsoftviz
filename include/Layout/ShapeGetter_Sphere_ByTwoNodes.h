@@ -17,16 +17,16 @@ class ShapeGetter_Sphere_ByTwoNodes : public ShapeGetter {
 public:
 
 	ShapeGetter_Sphere_ByTwoNodes (
-		osg::ref_ptr<Data::Node> centerNode,
-		osg::ref_ptr<Data::Node> surfaceNode
-	);
+			osg::ref_ptr<Data::Node> centerNode,
+			osg::ref_ptr<Data::Node> surfaceNode
+			);
 
 	/***/
-        virtual ~ShapeGetter_Sphere_ByTwoNodes (void) {}
+	virtual ~ShapeGetter_Sphere_ByTwoNodes (void) {}
 
 	virtual QSharedPointer<Shape> getShape (void);
 
-        virtual  QSet<Data::Node *> getNodesOfShape();
+	virtual  QSet<Data::Node *> getNodesOfShape();
 
 
 private:
