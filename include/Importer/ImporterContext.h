@@ -26,10 +26,10 @@ public:
 	 * \param[in] importInfoHandler Import progress info handler.
 	 */
 	ImporterContext (
-		QIODevice &stream,
-		Data::Graph &graph,
-		ImportInfoHandler &importInfoHandler
-	);
+			QIODevice &stream,
+			Data::Graph &graph,
+			ImportInfoHandler &importInfoHandler
+			);
 
 	/***/
 	virtual ~ImporterContext (void) {};

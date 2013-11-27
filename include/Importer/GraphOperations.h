@@ -18,8 +18,8 @@ public:
 	 * \param[in] graph Graph to perform the operations on.
 	 */
 	GraphOperations (
-		Data::Graph &graph
-	);
+			Data::Graph &graph
+			);
 
 	/***/
 	virtual ~GraphOperations (void) {};
@@ -31,9 +31,9 @@ public:
 	 * \return ( = success)
 	 */
 	bool addDefaultTypes (
-		Data::Type *&edgeType,
-		Data::Type *&nodeType
-	);
+			Data::Type *&edgeType,
+			Data::Type *&nodeType
+			);
 
 private:
 

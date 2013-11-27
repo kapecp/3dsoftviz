@@ -4,8 +4,8 @@
 namespace Importer {
 
 bool GXLImporter::import (
-	ImporterContext &context
-) {
+		ImporterContext &context
+		) {
 	// context
 	context_ = &context;
 
@@ -38,10 +38,10 @@ bool GXLImporter::import (
 
 		if (ok) {
 			if (
-				(token == QXmlStreamReader::StartElement)
-				&&
-				(xml_->name () == "graph")
-			) {
+					(token == QXmlStreamReader::StartElement)
+					&&
+					(xml_->name () == "graph")
+					) {
 				graphElementFound = true;
 			}
 		}
@@ -135,10 +135,10 @@ bool GXLImporter::parseGraph (void) {
 		if (ok) {
 			// vnoreny graf
 			if (
-				(token == QXmlStreamReader::StartElement)
-				&&
-				(xml_->name () == "graph")
-			) {
+					(token == QXmlStreamReader::StartElement)
+					&&
+					(xml_->name () == "graph")
+					) {
 				if (ok) {
 					if ((bool)currentNode) {
 						context_->getGraph().createNestedGraph (currentNode);
@@ -162,10 +162,10 @@ bool GXLImporter::parseGraph (void) {
 
 			// parsovanie uzla
 			if (
-				(token == QXmlStreamReader::StartElement)
-				&&
-				(xml_->name () == "node")
-			) {
+					(token == QXmlStreamReader::StartElement)
+					&&
+					(xml_->name () == "node")
+					) {
 				if (ok) {
 					ok = (!currentNode) && (!currentEdge) && (!inHyperedge);
 
@@ -202,10 +202,10 @@ bool GXLImporter::parseGraph (void) {
 			}
 
 			if (
-				(token == QXmlStreamReader::EndElement)
-				&&
-				(xml_->name () == "node")
-			) {
+					(token == QXmlStreamReader::EndElement)
+					&&
+					(xml_->name () == "node")
+					) {
 				if (ok) {
 					ok = currentNode;
 
@@ -219,10 +219,10 @@ bool GXLImporter::parseGraph (void) {
 
 			// parsovanie hrany
 			if (
-				(token == QXmlStreamReader::StartElement)
-				&&
-				(xml_->name () == "edge")
-			) {
+					(token == QXmlStreamReader::StartElement)
+					&&
+					(xml_->name () == "edge")
+					) {
 				if (ok) {
 					ok = (!currentNode) && (!currentEdge) && (!inHyperedge);
 
@@ -238,10 +238,10 @@ bool GXLImporter::parseGraph (void) {
 					if (!edgeIsDirected.isEmpty ()) {
 						if (edgeIsDirected == "true") {
 							if (
-								(!edgeOrientedDefaultForce)
-								||
-								(edgeOrientedDefault)
-							) {
+									(!edgeOrientedDefaultForce)
+									||
+									(edgeOrientedDefault)
+									) {
 								oriented = true;
 							} else {
 								ok = false;
@@ -249,10 +249,10 @@ bool GXLImporter::parseGraph (void) {
 							}
 						} else if (edgeIsDirected == "false") {
 							if (
-								(!edgeOrientedDefaultForce)
-								||
-								(!edgeOrientedDefault)
-							) {
+									(!edgeOrientedDefaultForce)
+									||
+									(!edgeOrientedDefault)
+									) {
 								oriented = false;
 							} else {
 								ok = false;
@@ -300,12 +300,12 @@ bool GXLImporter::parseGraph (void) {
 				osg::ref_ptr<Data::Edge> edge (NULL);
 				if (ok) {
 					edge = context_->getGraph().addEdge(
-						edgeName,
-						readNodes_->get (nodeFromName),
-						readNodes_->get (nodeToName),
-						edgeType_,
-						oriented
-					);
+								edgeName,
+								readNodes_->get (nodeFromName),
+								readNodes_->get (nodeToName),
+								edgeType_,
+								oriented
+								);
 				}
 
 				if (ok) {
@@ -314,10 +314,10 @@ bool GXLImporter::parseGraph (void) {
 			}
 
 			if (
-				(token == QXmlStreamReader::EndElement)
-				&&
-				(xml_->name () == "edge")
-			) {
+					(token == QXmlStreamReader::EndElement)
+					&&
+					(xml_->name () == "edge")
+					) {
 				if (ok) {
 					ok = currentEdge;
 
@@ -330,13 +330,13 @@ bool GXLImporter::parseGraph (void) {
 			}
 
 			// hyperhrana
-			
+
 			if (
-				(token == QXmlStreamReader::StartElement)
-				&&
-				(xml_->name () == "rel")
-			) {
-				
+					(token == QXmlStreamReader::StartElement)
+					&&
+					(xml_->name () == "rel")
+					) {
+
 				if (ok) {
 					ok = (!currentNode) && (!currentEdge) && (!inHyperedge);
 
@@ -351,7 +351,7 @@ bool GXLImporter::parseGraph (void) {
 
 					context_->getInfoHandler ().reportError (ok, "Node ID can not be empty.");
 				}
-				
+
 				if (ok) {
 					// zaciatok hyperhrany
 					hyperEdgeNode = context_->getGraph ().addHyperEdge(hyperEdgeName);
@@ -363,10 +363,10 @@ bool GXLImporter::parseGraph (void) {
 			}
 
 			if (
-				(token == QXmlStreamReader::EndElement)
-				&&
-				(xml_->name () == "rel")
-			) {
+					(token == QXmlStreamReader::EndElement)
+					&&
+					(xml_->name () == "rel")
+					) {
 				if (ok) {
 					ok = inHyperedge;
 
@@ -380,10 +380,10 @@ bool GXLImporter::parseGraph (void) {
 
 			// ukoncenie hyperhrany
 			if (
-				(token == QXmlStreamReader::StartElement)
-				&&
-				(xml_->name () == "relend")
-			) {
+					(token == QXmlStreamReader::StartElement)
+					&&
+					(xml_->name () == "relend")
+					) {
 				if (ok) {
 					ok = inHyperedge;
 
@@ -421,12 +421,12 @@ bool GXLImporter::parseGraph (void) {
 					}
 
 					ok =
-						direction.isEmpty()
-						||
-						(direction == QString("in"))
-						||
-						(direction == QString("out"))
-					;
+							direction.isEmpty()
+							||
+							(direction == QString("in"))
+							||
+							(direction == QString("out"))
+							;
 
 					context_->getInfoHandler ().reportError (ok, "Hyperedge endpoint - invalid direction.");
 				}
@@ -449,19 +449,19 @@ bool GXLImporter::parseGraph (void) {
 			}
 
 			if (
-				(token == QXmlStreamReader::EndElement)
-				&&
-				(xml_->name () == "relend")
-			) {
+					(token == QXmlStreamReader::EndElement)
+					&&
+					(xml_->name () == "relend")
+					) {
 
 			}
 
 			// this graph end
 			if (
-				(token == QXmlStreamReader::EndElement)
-				&&
-				(xml_->name () == "graph")
-			) {
+					(token == QXmlStreamReader::EndElement)
+					&&
+					(xml_->name () == "graph")
+					) {
 				break;
 			}
 		}

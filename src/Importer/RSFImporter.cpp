@@ -6,29 +6,29 @@
 #include <memory>
 namespace Importer {
 
-	osg::ref_ptr<Data::Node> RSFImporter::getHyperEdge(
+osg::ref_ptr<Data::Node> RSFImporter::getHyperEdge(
 		QString srcNodeName,
-		QString edgeName,QMap<qlonglong, 
+		QString edgeName,QMap<qlonglong,
 		osg::ref_ptr<Data::Edge> > *mapa)
-	{
-		osg::ref_ptr<Data::Node> hyperEdgeNode1;
-		//zaciatocny bod hyperhrany
-		for (QMap<qlonglong, osg::ref_ptr<Data::Edge> >::iterator it = mapa->begin (); it != mapa->end (); ++it) {
-			osg::ref_ptr<Data::Edge> existingEdge = it.value ();
-			if (
-				existingEdge->getSrcNode ()->getName () == srcNodeName && 
+{
+	osg::ref_ptr<Data::Node> hyperEdgeNode1;
+	//zaciatocny bod hyperhrany
+	for (QMap<qlonglong, osg::ref_ptr<Data::Edge> >::iterator it = mapa->begin (); it != mapa->end (); ++it) {
+		osg::ref_ptr<Data::Edge> existingEdge = it.value ();
+		if (
+				existingEdge->getSrcNode ()->getName () == srcNodeName &&
 				existingEdge->getDstNode ()->getName () == edgeName
-			) {
-				hyperEdgeNode1 = existingEdge->getDstNode ();
-				break;
-			}
+				) {
+			hyperEdgeNode1 = existingEdge->getDstNode ();
+			break;
 		}
-		return hyperEdgeNode1;
+	}
+	return hyperEdgeNode1;
 }
 
 bool RSFImporter::import (
-	ImporterContext &context
-) {
+		ImporterContext &context
+		) {
 	QTextStream stream (&(context.getStream ()));
 	QString line, graphname="Graph";
 
@@ -38,8 +38,8 @@ bool RSFImporter::import (
 	Data::Type *nodeType = NULL;
 	context.getGraph ().setName (graphname);
 	(void)graphOp.addDefaultTypes (edgeType, nodeType);
-	
-	
+
+
 	//citanie vstupneho suboru
 	while ( !stream.atEnd() ) {
 		line = stream.readLine();
@@ -89,7 +89,7 @@ bool RSFImporter::import (
 					hyperEdgeNode = context.getGraph ().addHyperEdge (edgeName);
 					context.getGraph ().addEdge (QString (""), node1, hyperEdgeNode, edgeType, true);
 				}
-				
+
 				//pridanie hyperhrany do grafu
 				context.getGraph ().addEdge (QString (""), hyperEdgeNode, node2, edgeType, true);
 			}

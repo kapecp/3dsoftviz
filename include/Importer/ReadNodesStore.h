@@ -28,9 +28,9 @@ public:
 	 * \param[in] node Node to add.
 	 */
 	void addNode (
-		const QString &name,
-		osg::ref_ptr<Data::Node> node
-	);
+			const QString &name,
+			osg::ref_ptr<Data::Node> node
+			);
 
 	/**
 	 * \brief Checks if this store contains a node with the specified name.
@@ -38,8 +38,8 @@ public:
 	 * \return True if there is a node with the name.
 	 */
 	bool contains (
-		const QString &name
-	);
+			const QString &name
+			);
 
 	/**
 	 * \brief Gets the node with the specified name.
@@ -47,8 +47,8 @@ public:
 	 * \return Node with the name or NULL, if it does not exist.
 	 */
 	osg::ref_ptr<Data::Node> get (
-		const QString &name
-	);
+			const QString &name
+			);
 
 private:
 
