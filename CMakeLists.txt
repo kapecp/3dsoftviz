@@ -1,5 +1,5 @@
 PROJECT(3DVisual)
-CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
+CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
 SET (CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
 
 # Where to install module parts:
@@ -113,6 +113,9 @@ SET(SOURCES_H
 		./include/QOpenCV/FaceRecognitionWindow.h
 		./include/QOpenCV/FaceRecognitionThread.h
 )
+FILE(GLOB_RECURSE SRC_OPENCV  "src/OpenCV/*.cpp")
+FILE(GLOB_RECURSE SRC_QOPENCV  "src/QOpenCV/*.cpp")
+SET(SRC ${SRC} ${SRC_OPENCV} ${SRC_QOPENCV})
 ELSE(OpenCV_FOUND)
 MESSAGE ("OpenCV NOT FOUND")
 ENDIF()
@@ -133,8 +136,23 @@ ${CMAKE_CURRENT_BINARY_DIR} "./")
 ADD_SUBDIRECTORY(dependencies/Source)
 
 # Source files
-FILE(GLOB_RECURSE SRC  "src/*.cpp")
+file(GLOB_RECURSE SRC_MAIN "src/main.cpp")
+file(GLOB_RECURSE SRC_CORE  "src/Core/*.cpp")
+file(GLOB_RECURSE SRC_DATA  "src/Data/*.cpp")
+file(GLOB_RECURSE SRC_IMPORTER  "src/Importer/*.cpp")
+file(GLOB_RECURSE SRC_LAYOUT  "src/Layout/*.cpp")
+file(GLOB_RECURSE SRC_MANAGER  "src/Manager/*.cpp")
+file(GLOB_RECURSE SRC_MATH  "src/Math/*.cpp")
+file(GLOB_RECURSE SRC_MODEL  "src/Model/*.cpp")
+file(GLOB_RECURSE SRC_NETWORK  "src/Network/*.cpp")
+file(GLOB_RECURSE SRC_NOISE  "src/Noise/*.cpp")
+file(GLOB_RECURSE SRC_OSGQTBROWSER  "src/OsgQtBrowser/*.cpp")
+file(GLOB_RECURSE SRC_QOSG  "src/QOSG/*.cpp")
+file(GLOB_RECURSE SRC_UTIL  "src/Util/*.cpp")
+file(GLOB_RECURSE SRC_VIEWER  "src/Viewer/*.cpp")
 FILE(GLOB_RECURSE INCL "include/*.h")
+
+set(SRC ${SRC} ${SRC_MAIN} ${SRC_CORE} ${SRC_DATA} ${SRC_IMPORTER} ${SRC_LAYOUT} ${SRC_MANAGER} ${SRC_MATH} ${SRC_MODEL} ${SRC_NETWORK} ${SRC_NOISE} ${SRC_OSGQTBROWSER} ${SRC_QOSG} ${SRC_UTIL} ${SRC_VIEWER} )
 
 # .h subor, ktory obsahuje Q_OBJECT
 
