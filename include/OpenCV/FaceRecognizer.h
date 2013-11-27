@@ -75,7 +75,7 @@ private:
 	cv::Point2f eyesCoord;
 	cv::CascadeClassifier haar_cascade;
 	std::vector< cv::Rect_<int> > faces;
-	};
+};
 }
 
 #endif // FACERECOGNIZER_H

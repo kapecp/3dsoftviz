@@ -4,18 +4,18 @@ using namespace QOpenCV;
 
 QOpenCV::FaceRecognitionWindow::FaceRecognitionWindow(QWidget *parent, QApplication * app, QOpenCV::FaceRecognitionThread *thr)
 {
-    this->thr = thr;
-    this->app = app;
-    configureWindow();
+	this->thr = thr;
+	this->app = app;
+	configureWindow();
 }
 
 void QOpenCV::FaceRecognitionWindow::configureWindow()
 {
-    setModal(false);
+	setModal(false);
 	resize(400,260);
-    setWindowTitle(tr("Face Recognition"));
+	setWindowTitle(tr("Face Recognition"));
 
-    this->windowLabel = new QLabel("",this,0);
+	this->windowLabel = new QLabel("",this,0);
 	this->windowLabel->setFixedWidth(320);
 	this->windowLabel->setFixedHeight(240);
 
@@ -25,35 +25,35 @@ void QOpenCV::FaceRecognitionWindow::configureWindow()
 	this->cancelButton = new QPushButton(tr("Cancel"));
 	connect(this->cancelButton, SIGNAL(clicked()), this, SLOT(quitWindow()));
 
-    QHBoxLayout *buttonsLayout = new QHBoxLayout;
-    QVBoxLayout *buttonsLayout_2 = new QVBoxLayout;
-    QHBoxLayout *frameLayout = new QHBoxLayout;
-    QHBoxLayout *mainLayout = new QHBoxLayout;
+	QHBoxLayout *buttonsLayout = new QHBoxLayout;
+	QVBoxLayout *buttonsLayout_2 = new QVBoxLayout;
+	QHBoxLayout *frameLayout = new QHBoxLayout;
+	QHBoxLayout *mainLayout = new QHBoxLayout;
 
-    buttonsLayout->setAlignment(Qt::AlignTop);
+	buttonsLayout->setAlignment(Qt::AlignTop);
 	buttonsLayout_2->addWidget(this->pauseButton);
 	buttonsLayout_2->addWidget(this->cancelButton);
-    frameLayout->setAlignment(Qt::AlignCenter);
-    frameLayout->addWidget(this->windowLabel);
+	frameLayout->setAlignment(Qt::AlignCenter);
+	frameLayout->addWidget(this->windowLabel);
 
-    buttonsLayout->addLayout(buttonsLayout_2);
-    mainLayout->addLayout(buttonsLayout);
-    mainLayout->addLayout(frameLayout);
-    setLayout(mainLayout);
+	buttonsLayout->addLayout(buttonsLayout_2);
+	mainLayout->addLayout(buttonsLayout);
+	mainLayout->addLayout(frameLayout);
+	setLayout(mainLayout);
 
-    connect(this->thr,SIGNAL(pushImage(cv::Mat)),this,SLOT(setLabel(cv::Mat)));
+	connect(this->thr,SIGNAL(pushImage(cv::Mat)),this,SLOT(setLabel(cv::Mat)));
 }
 
 void QOpenCV::FaceRecognitionWindow::quitWindow()
 {
-    if(this->thr->isRunning()){
+	if(this->thr->isRunning()){
 		emit cancelLoop(true);
-        this->thr->wait();
-    }
-    if(!this->thr->isRunning())
-        qDebug() << "thread is stopped";
-    delete this->thr;
-    delete this;
+		this->thr->wait();
+	}
+	if(!this->thr->isRunning())
+		qDebug() << "thread is stopped";
+	delete this->thr;
+	delete this;
 }
 
 void QOpenCV::FaceRecognitionWindow::pauseWindow()
@@ -73,33 +73,33 @@ void QOpenCV::FaceRecognitionWindow::pauseWindow()
 
 QLabel *QOpenCV::FaceRecognitionWindow::getLabel()
 {
-    return this->windowLabel;
+	return this->windowLabel;
 }
 
 void QOpenCV::FaceRecognitionWindow::setLabel(cv::Mat image)
 {
-    //cv:: Mat image = this->thr->mCapVideo->getFrame();
-    if (image.empty()==true) {
-        this->windowLabel->setText("nenacitalo");
-        return;
-    }
+	//cv:: Mat image = this->thr->mCapVideo->getFrame();
+	if (image.empty()==true) {
+		this->windowLabel->setText("nenacitalo");
+		return;
+	}
 
-    cv::cvtColor(image,image,CV_BGR2RGB);
-    QImage qimage((uchar*) image.data, image.cols, image.rows, image.step, QImage::Format_RGB888);
+	cv::cvtColor(image,image,CV_BGR2RGB);
+	QImage qimage((uchar*) image.data, image.cols, image.rows, image.step, QImage::Format_RGB888);
 
-    image.~Mat();
-    this->windowLabel->setPixmap(QPixmap::fromImage(qimage));
-    this->windowLabel->show();
+	image.~Mat();
+	this->windowLabel->setPixmap(QPixmap::fromImage(qimage));
+	this->windowLabel->show();
 }
 
 void QOpenCV::FaceRecognitionWindow::closeEvent(QCloseEvent *event)
 {
-    if(this->thr->isRunning()){
+	if(this->thr->isRunning()){
 		emit cancelLoop(true);
-        this->thr->wait();
-    }
-    if(!this->thr->isRunning())
-        qDebug() << "thread is stopped";
-    delete this->thr;
-    delete this;
+		this->thr->wait();
+	}
+	if(!this->thr->isRunning())
+		qDebug() << "thread is stopped";
+	delete this->thr;
+	delete this;
 }
