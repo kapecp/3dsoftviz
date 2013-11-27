@@ -262,9 +262,11 @@ file(GLOB_RECURSE SRC_UTIL  "src/Util/*.cpp")
 file(GLOB_RECURSE SRC_VIEWER  "src/Viewer/*.cpp")
 
 # Source files
-set(SRC ${SRC_MAIN} ${SRC_CORE} ${SRC_DATA} ${SRC_IMPORTER} ${SRC_LAYOUT} ${SRC_MANAGER} ${SRC_MATH} ${SRC_MODEL} ${SRC_NETWORK} ${SRC_NOISE} ${SRC_OSGQTBROWSER} ${SRC_QOSG} ${SRC_UTIL} ${SRC_VIEWER} )
+set(SRC ${SRC_MAIN} ${SRC_CORE} ${SRC_DATA}  ${SRC_LAYOUT} ${SRC_MANAGER} ${SRC_MATH} ${SRC_MODEL} ${SRC_NETWORK} ${SRC_NOISE} ${SRC_OSGQTBROWSER} ${SRC_QOSG} ${SRC_UTIL} ${SRC_VIEWER} )
+set(SRC ${SRC} ${SRC_IMPORTER})
 file(GLOB_RECURSE INCL "include/*.h")
-#add_library(importer ${SRC_IMPORTER})
+#create library
+#add_library(importer SHARED ${SRC_IMPORTER})
 
 # Group source files
 source_group(\\src main.cpp)
@@ -323,7 +325,7 @@ target_link_libraries( ${3DSOFTVIZ_NAME}
 	${OPENSCENEGRAPH_LIBRARIES}
 	${OSGVIEWER_LIBRARIES}
 	${LIBNOISE_LIBRARY}
-#	importer
+#    importer
 )
 
 # 'cotire' the executable
@@ -335,7 +337,7 @@ endif()
 
 # ensure correct dependencies
 add_dependencies( ${3DSOFTVIZ_NAME} dep_libnoise)
-
+#add_dependencies( ${3DSOFTVIZ_NAME} importer)
 # -------
 # Install
 # -------
@@ -344,6 +346,10 @@ add_dependencies( ${3DSOFTVIZ_NAME} dep_libnoise)
 install( TARGETS ${3DSOFTVIZ_NAME}
 	BUNDLE DESTINATION ${INSTALL_BUNDLE} COMPONENT Runtime
 	RUNTIME DESTINATION ${INSTALL_BIN} COMPONENT Runtime )
+#move importer library
+#install( TARGETS importer
+#    BUNDLE DESTINATION ${INSTALL_BUNDLE} COMPONENT Runtime
+#    RUNTIME DESTINATION ${INSTALL_BIN} COMPONENT Runtime )
 
 install(DIRECTORY resources/ DESTINATION ${INSTALL_DATA} COMPONENT Data)
 

@@ -18,109 +18,109 @@
 
 namespace Vwr
 {
-	/**
+/**
 	*  \class NodeGroup
-	*  \brief 
-	*  \author Michal Paprcka 
+	*  \brief
+	*  \author Michal Paprcka
 	*  \date 29. 4. 2010
 	*/
-	class NodeGroup
-	{
-	public:
+class NodeGroup
+{
+public:
 
-		/**
+	/**
 		*  \fn public constructor  NodeGroup(QMap<qlonglong, osg::ref_ptr<Data::Node> > *nodes)
 		*  \brief Creates node group
 		*  \param  nodes    nodes to wrap
 		*/
-		NodeGroup(QMap<qlonglong, osg::ref_ptr<Data::Node> > *nodes);
+	NodeGroup(QMap<qlonglong, osg::ref_ptr<Data::Node> > *nodes);
 
-		/**
+	/**
 		*  \fn public destructor  ~NodeGroup
 		*  \brief destructor
 		*/
-		~NodeGroup(void);
+	~NodeGroup(void);
 
 
-		/**
+	/**
 		*  \fn public  updateNodeCoordinates(float interpolationSpeed)
 		*  \brief Updates nodes current position with given interpolation speed
-		*  \param       interpolationSpeed     
+		*  \param       interpolationSpeed
 		*/
-		void updateNodeCoordinates(float interpolationSpeed);
+	void updateNodeCoordinates(float interpolationSpeed);
 
-		/**
+	/**
 		*  \fn public  synchronizeNodes
 		*  \brief Synchronizes all drawn nodes with given node map
 		*/
-		void synchronizeNodes();
+	void synchronizeNodes();
 
-		/**
+	/**
 		*  \fn public  freezeNodePositions
 		*  \brief Freezes nodes
 		*/
-		void freezeNodePositions();
+	void freezeNodePositions();
 
 
-		/**
+	/**
 		*  \fn inline public  getNodeTransforms
 		*  \brief returns all nodes transformations
 		*  \return QMap<qlonglong,osg::ref_ptr<osg::AutoTransform> > * node transforms
 		*/
-		QMap<qlonglong, osg::ref_ptr<osg::AutoTransform> > * getNodeTransforms() { return nodeTransforms; }
+	QMap<qlonglong, osg::ref_ptr<osg::AutoTransform> > * getNodeTransforms() { return nodeTransforms; }
 
 
-		/**
+	/**
 		*  \fn inline public  getGroup
 		*  \brief Returns wrapped nodes group
 		*  \return osg::ref_ptr nodes group
 		*/
-		osg::ref_ptr<osg::Group> getGroup()	{return group;}
+	osg::ref_ptr<osg::Group> getGroup()	{return group;}
 
-	private:
+private:
 
-		/**
-		*  QMap<qlonglong,osg::ref_ptr<Data::Node> > * nodes 
+	/**
+		*  QMap<qlonglong,osg::ref_ptr<Data::Node> > * nodes
 		*  \brief wrapped nodes
 		*/
-		QMap<qlonglong, osg::ref_ptr<Data::Node> > *nodes;
+	QMap<qlonglong, osg::ref_ptr<Data::Node> > *nodes;
 
-		/**
+	/**
 		*  QMap<qlonglong,osg::ref_ptr<osg::AutoTransform> > * nodeTransforms
 		*  \brief node transforms
 		*/
-		QMap<qlonglong, osg::ref_ptr<osg::AutoTransform> > *nodeTransforms;
+	QMap<qlonglong, osg::ref_ptr<osg::AutoTransform> > *nodeTransforms;
 
-		/**
+	/**
 		*  osg::ref_ptr group
 		*  \brief nodes group
 		*/
-		osg::ref_ptr<osg::Group> group;
+	osg::ref_ptr<osg::Group> group;
 
 
-		/**
+	/**
 		*  Util::ApplicationConfig * appConf
 		*  \brief application configuration
 		*/
-		Util::ApplicationConfig* appConf;
+	Util::ApplicationConfig* appConf;
 
 
-		/**
+	/**
 		*  \fn private  initNodes
 		*  \brief inits nodes
 		*/
-		void initNodes();
+	void initNodes();
 
-		/**
+	/**
 		*  \fn private  wrapChild(osg::ref_ptr<Data::Node> node, float graphScale)
 		*  \brief Wraps node as a transform
 		*  \param      node    node to wrap
 		*  \param      graphScale     graph scale
 		*  \return osg::ref_ptr node transform
 		*/
-		osg::ref_ptr<osg::AutoTransform> wrapChild(osg::ref_ptr<Data::Node> node, float graphScale);
+	osg::ref_ptr<osg::AutoTransform> wrapChild(osg::ref_ptr<Data::Node> node, float graphScale);
 
-		/**
+	/**
 		*  \fn private  getNodeGroup(osg::ref_ptr<Data::Node> node, osg::ref_ptr<Data::Edge> parentEdge, float graphScale)
 		*  \brief Recursively traverses all node and its children and creates a group from them
 		*  \param       node    node to group
@@ -128,8 +128,8 @@ namespace Vwr
 		*  \param       graphScale     graph scale
 		*  \return osg::ref_ptr nodes group
 		*/
-		osg::ref_ptr<osg::Group> getNodeGroup(osg::ref_ptr<Data::Node> node, osg::ref_ptr<Data::Edge> parentEdge, float graphScale);
-	};
+	osg::ref_ptr<osg::Group> getNodeGroup(osg::ref_ptr<Data::Node> node, osg::ref_ptr<Data::Edge> parentEdge, float graphScale);
+};
 }
 
 #endif

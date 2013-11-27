@@ -36,26 +36,26 @@ public:
 	 * [observer pattern]
 	 */
 	virtual void restrictionAdded (
-		QSharedPointer<Layout::ShapeGetter> shapeGetter
-	);
+			QSharedPointer<Layout::ShapeGetter> shapeGetter
+			);
 
 	/**
 	 * [observer pattern]
 	 */
 	virtual void shapeChanged (
-		QSharedPointer<Layout::ShapeGetter> shapeGetter,
-		QSharedPointer<Layout::Shape> shape
-	);
+			QSharedPointer<Layout::ShapeGetter> shapeGetter,
+			QSharedPointer<Layout::Shape> shape
+			);
 
 	/**
 	 * [observer pattern]
 	 */
 	virtual void restrictionRemoved (
-		QSharedPointer<Layout::ShapeGetter> shapeGetter
-	);
+			QSharedPointer<Layout::ShapeGetter> shapeGetter
+			);
 
 
-        osg::Group* getVisualizer(QSharedPointer<Layout::ShapeGetter> shapeGetter);
+	osg::Group* getVisualizer(QSharedPointer<Layout::ShapeGetter> shapeGetter);
 private:
 
 	/**
@@ -63,7 +63,7 @@ private:
 	 */
 	osg::ref_ptr<osg::Group> group_;
 
-        typedef QMap<QSharedPointer<Layout::ShapeGetter>, osg::ref_ptr<osg::Group> > RestrictionsToVisualizersMapType;
+	typedef QMap<QSharedPointer<Layout::ShapeGetter>, osg::ref_ptr<osg::Group> > RestrictionsToVisualizersMapType;
 
 
 	/**

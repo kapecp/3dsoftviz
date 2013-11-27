@@ -15,7 +15,7 @@ osg::Vec3d CameraMath::getPointOnNextBezierCurve(double time, QVector<osg::Vec3d
 	{
 		double x_0 = factorial(n)/(factorial(i) * factorial(n - i));
 		double x_1 = pow(time, i);
-		double x_2 = pow(1 - time, n - i) * weights[i];	
+		double x_2 = pow(1 - time, n - i) * weights[i];
 
 		double numerator = x_0 * x_1 * x_2;
 
@@ -28,7 +28,7 @@ osg::Vec3d CameraMath::getPointOnNextBezierCurve(double time, QVector<osg::Vec3d
 	{
 		double x_0 = factorial(n)/(factorial(i) * factorial(n - i));
 		double x_1 = pow(time, i);
-		double x_2 = pow(1 - time, n - i) * weights[i];	
+		double x_2 = pow(1 - time, n - i) * weights[i];
 
 		denominator += x_0 * x_1 * x_2;
 	}
@@ -50,10 +50,10 @@ int CameraMath::factorial( int n )
 
 QVector<osg::ref_ptr<Data::Node> > * CameraMath::getViewExtremes(osg::ref_ptr<osg::Camera> camera, std::list<osg::ref_ptr<Data::Node> > selectedCluster)
 {
- 	osg::Matrixd mv = camera->getViewMatrix();
+	osg::Matrixd mv = camera->getViewMatrix();
 	osg::Matrixd mp = camera->getProjectionMatrix();
 	osg::Matrixd mw = camera->getViewport()->computeWindowMatrix();
-	
+
 	QVector<osg::ref_ptr<Data::Node> > * extremes = new QVector<osg::ref_ptr<Data::Node> >;
 
 	osg::Vec3d leftPosition, rightPosition, topPosition, bottomPosition;
@@ -120,7 +120,7 @@ osg::Vec3d CameraMath::projectOnScreen(osg::ref_ptr<osg::Camera> camera, osg::Ve
 }
 
 osg::Vec3d CameraMath::getPointOnVector(osg::Vec3d p1, osg::Vec3d p2, float distance)
-{	
+{
 	//x = x1 + (x2-x1)*(d/D) = x1(1-(d/D)) + x2(d/D)
 	osg::Vec3d directionVec =  p1 - p2;
 	float distanceRatio = distance / directionVec.length();
@@ -140,11 +140,11 @@ bool CameraMath::isInFOV(osg::Vec3d point, osg::ref_ptr<osg::Camera> camera)
 {
 	double left, right, bottom, top, zNear, zFar;
 	camera->getProjectionMatrixAsFrustum(left, right, bottom, top, zNear, zFar);
-	
+
 	osg::Matrixd& mv = camera->getViewMatrix();
 	osg::Matrixd& mp = camera->getProjectionMatrix();
 	osg::Vec3d pView = point * mv * mp;
-	
+
 
 	if (pView.z() < 0.0)
 		return false;
@@ -154,38 +154,38 @@ bool CameraMath::isInFOV(osg::Vec3d point, osg::ref_ptr<osg::Camera> camera)
 
 osg::Drawable* CameraMath::createAxis(const osg::Vec3& corner,const osg::Vec3& dir, osg::Vec4 color)
 {
-    // set up the Geometry.
-    osg::Geometry* geom = new osg::Geometry;
+	// set up the Geometry.
+	osg::Geometry* geom = new osg::Geometry;
 
-    osg::Vec3Array* coords = new osg::Vec3Array(2);
-    (*coords)[0] = corner;
-    (*coords)[1] = dir;
+	osg::Vec3Array* coords = new osg::Vec3Array(2);
+	(*coords)[0] = corner;
+	(*coords)[1] = dir;
 
-    geom->setVertexArray(coords);
+	geom->setVertexArray(coords);
 
 	// set colors
-     osg::Vec4Array* clr = new osg::Vec4Array(2);
-    (*clr)[0] = color;
-    (*clr)[1] = color;
-    
-    geom->setColorArray(clr);
-    
+	osg::Vec4Array* clr = new osg::Vec4Array(2);
+	(*clr)[0] = color;
+	(*clr)[1] = color;
+
+	geom->setColorArray(clr);
+
 #ifdef BIND_PER_PRIMITIVE
 	geom->setColorBinding(osg::Geometry::BIND_PER_PRIMITIVE);
 #else
-    geom->setColorBinding(osg::Geometry::BIND_PER_PRIMITIVE_SET);
+	geom->setColorBinding(osg::Geometry::BIND_PER_PRIMITIVE_SET);
 #endif
-    
-    geom->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::LINES,0,2));
-    
+
+	geom->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::LINES,0,2));
+
 	// set line parameters
-    osg::StateSet* stateset = new osg::StateSet;
-    osg::LineWidth* linewidth = new osg::LineWidth();
-    linewidth->setWidth(4.0f);
-    stateset->setAttributeAndModes(linewidth,osg::StateAttribute::ON);
-    stateset->setMode(GL_LIGHTING,osg::StateAttribute::OFF);
-    geom->setStateSet(stateset);
-    
-    return geom;
+	osg::StateSet* stateset = new osg::StateSet;
+	osg::LineWidth* linewidth = new osg::LineWidth();
+	linewidth->setWidth(4.0f);
+	stateset->setAttributeAndModes(linewidth,osg::StateAttribute::ON);
+	stateset->setMode(GL_LIGHTING,osg::StateAttribute::OFF);
+	geom->setStateSet(stateset);
+
+	return geom;
 }
 

@@ -26,20 +26,20 @@ public:
 	};
 
 	Shape_Sphere (
-		const osg::Vec3f center,
-		const float radius,
-		RestrictionPolicy restrictionPolicy
-	);
+			const osg::Vec3f center,
+			const float radius,
+			RestrictionPolicy restrictionPolicy
+			);
 
 	/***/
-        virtual ~Shape_Sphere (void) {}
+	virtual ~Shape_Sphere (void) {}
 
 	/**
 	 * [visitor pattern]
 	 */
 	virtual void accept (
-		ShapeVisitor & visitor
-	);
+			ShapeVisitor & visitor
+			);
 
 	RestrictionPolicy getRestrictionPolicy ();
 

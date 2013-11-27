@@ -17,24 +17,24 @@ class ShapeGetter_Circle_ByThreeNodes : public ShapeGetter {
 
 public:
 
-        ShapeGetter_Circle_ByThreeNodes (
-                osg::ref_ptr<Data::Node> node1,
-                osg::ref_ptr<Data::Node> node2,
-                osg::ref_ptr<Data::Node> node3
-        );
+	ShapeGetter_Circle_ByThreeNodes (
+			osg::ref_ptr<Data::Node> node1,
+			osg::ref_ptr<Data::Node> node2,
+			osg::ref_ptr<Data::Node> node3
+			);
 
-        /***/
-        virtual ~ShapeGetter_Circle_ByThreeNodes (void) {};
+	/***/
+	virtual ~ShapeGetter_Circle_ByThreeNodes (void) {};
 
-        virtual QSharedPointer<Shape> getShape (void);
+	virtual QSharedPointer<Shape> getShape (void);
 
-        virtual  QSet<Data::Node * > getNodesOfShape();
+	virtual  QSet<Data::Node * > getNodesOfShape();
 
 private:
 
-        osg::ref_ptr<Data::Node> node1_;
-        osg::ref_ptr<Data::Node> node2_;
-        osg::ref_ptr<Data::Node> node3_;
+	osg::ref_ptr<Data::Node> node1_;
+	osg::ref_ptr<Data::Node> node2_;
+	osg::ref_ptr<Data::Node> node3_;
 
 }; // class
 

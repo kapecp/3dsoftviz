@@ -18,72 +18,72 @@ namespace Vwr {
 class ShapeVisitor_ManipulatorCreator: public Layout::ShapeVisitor {
 
 public:
-    class ManipulatorType
-    {
-    public:
+	class ManipulatorType
+	{
+	public:
 
-            /**
-            *  const int TRACKBALLDRAGGER
-            *  \brief rotation
-            */
-            static const int TRACKBALLDRAGGER = 0;
-
-
-    };
+		/**
+			*  const int TRACKBALLDRAGGER
+			*  \brief rotation
+			*/
+		static const int TRACKBALLDRAGGER = 0;
 
 
-    /***/
-    virtual ~ShapeVisitor_ManipulatorCreator () {}
+	};
 
-    osgManipulator::Dragger* getCreatedDragger() {return createdDragger;}
-    osgManipulator::Selection* getCreatedSelection() {return createdSelection;}
 
-    /**
-     * \brief Creates empty OSG group.
-     */
-    virtual void visit (Layout::Shape_Null & shape);
+	/***/
+	virtual ~ShapeVisitor_ManipulatorCreator () {}
 
-    /**
-     * \brief Creates OSG group containing  manipulator for each shape contained in the composite shape.
-     */
-    virtual void visit (Layout::Shape_Composite & shape);
+	osgManipulator::Dragger* getCreatedDragger() {return createdDragger;}
+	osgManipulator::Selection* getCreatedSelection() {return createdSelection;}
 
-    /**
-     * \brief Creates OSG group containing  manipulator for intersection of shapes contained in the composite shape.
-     */
-    virtual void visit (Layout::Shape_Intersection & shape);
+	/**
+	 * \brief Creates empty OSG group.
+	 */
+	virtual void visit (Layout::Shape_Null & shape);
 
-    /**
-     * \brief Creates OSG manipulator for the plane.
-     */
-    virtual void visit (Layout::Shape_Plane & shape);
+	/**
+	 * \brief Creates OSG group containing  manipulator for each shape contained in the composite shape.
+	 */
+	virtual void visit (Layout::Shape_Composite & shape);
 
-    /**
-     * \brief Creates OSG manipulator for the sphere.
-     */
-    virtual void visit (Layout::Shape_Sphere & shape);
+	/**
+	 * \brief Creates OSG group containing  manipulator for intersection of shapes contained in the composite shape.
+	 */
+	virtual void visit (Layout::Shape_Intersection & shape);
 
-    /**
-     * \brief Creates OSG manipulator for the sphere.
-     */
-    virtual void visit (Layout::Shape_SphereSurface & shape);
+	/**
+	 * \brief Creates OSG manipulator for the plane.
+	 */
+	virtual void visit (Layout::Shape_Plane & shape);
 
-    virtual void visit (Layout::Shape_CylinderSurface & shape);
-    virtual void visit (Layout::Shape_ConeSurface & shape);
+	/**
+	 * \brief Creates OSG manipulator for the sphere.
+	 */
+	virtual void visit (Layout::Shape_Sphere & shape);
 
-    void setType(int manipulatorType) {this->type = manipulatorType;}
+	/**
+	 * \brief Creates OSG manipulator for the sphere.
+	 */
+	virtual void visit (Layout::Shape_SphereSurface & shape);
+
+	virtual void visit (Layout::Shape_CylinderSurface & shape);
+	virtual void visit (Layout::Shape_ConeSurface & shape);
+
+	void setType(int manipulatorType) {this->type = manipulatorType;}
 
 
 
 private:
 
-    osgManipulator::Dragger* createdDragger;
-    osg::MatrixTransform* createdSelection;
-    int type;
+	osgManipulator::Dragger* createdDragger;
+	osg::MatrixTransform* createdSelection;
+	int type;
 
-    void executeDefault();
+	void executeDefault();
 
-    void createRotationManipulator(osg::Vec3 center,float trackBallRadius, int key);
+	void createRotationManipulator(osg::Vec3 center,float trackBallRadius, int key);
 };
 
 

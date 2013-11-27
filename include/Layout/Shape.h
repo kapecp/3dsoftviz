@@ -11,19 +11,19 @@ class ShapeVisitor;
 class Shape
 {
 public:
-    virtual ~Shape() {}
+	virtual ~Shape() {}
 
 	/**
 	 * [visitor pattern]
 	 */
-    virtual void accept(ShapeVisitor &visitor) = 0;
+	virtual void accept(ShapeVisitor &visitor) = 0;
 
-    void setInvisible(bool invisible){this->invisible = invisible;}
+	void setInvisible(bool invisible){this->invisible = invisible;}
 
-    bool isInvisible(){return invisible;}
+	bool isInvisible(){return invisible;}
 
 private:
-    bool invisible;
+	bool invisible;
 
 }; // class
 

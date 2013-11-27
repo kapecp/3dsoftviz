@@ -5,8 +5,8 @@
 
 #include "Manager/Manager.h"
 #include "Model/GraphDAO.h"
-#include "Util/ApplicationConfig.h"
-#include "Math/GraphMetrics.h"
+//#include "Util/ApplicationConfig.h"
+//#include "Math/GraphMetrics.h"
 #include "Importer/ImporterContext.h"
 #include "Importer/ImporterFactory.h"
 #include "Importer/StreamImporter.h"
@@ -21,21 +21,21 @@ Manager::GraphManager * Manager::GraphManager::manager;
 
 Manager::GraphManager::GraphManager()
 {
-    manager = this;
+	manager = this;
 
 	//konfiguracia/vytvorenie DB
-    this->activeGraph = NULL;
-    this->db = new Model::DB();
-    bool error;
-    this->graphs = Model::GraphDAO::getGraphs(db->tmpGetConn(), &error);
-    
-    //runTestCase(1);
+	this->activeGraph = NULL;
+	this->db = new Model::DB();
+	bool error;
+	this->graphs = Model::GraphDAO::getGraphs(db->tmpGetConn(), &error);
+
+	//runTestCase(1);
 }
 
 Manager::GraphManager::~GraphManager()
 {
-    delete this->db;
-    this->db = NULL;
+	delete this->db;
+	this->db = NULL;
 }
 
 Data::Graph* Manager::GraphManager::loadGraph(QString filepath)
@@ -43,10 +43,10 @@ Data::Graph* Manager::GraphManager::loadGraph(QString filepath)
 	//otvaranie suboru
 	bool ok = true;
 
-    AppCore::Core::getInstance()->thr->pause();
-    AppCore::Core::getInstance()->messageWindows->showProgressBar();
+	AppCore::Core::getInstance()->thr->pause();
+	AppCore::Core::getInstance()->messageWindows->showProgressBar();
 
-    // vytvorenie infoHandler
+	// vytvorenie infoHandler
 	std::auto_ptr<Importer::ImportInfoHandler> infoHandler (NULL);
 	if (ok) {
 		infoHandler.reset (new ImportInfoHandlerImpl);
@@ -68,84 +68,84 @@ Data::Graph* Manager::GraphManager::loadGraph(QString filepath)
 		bool importerFound;
 
 		ok =
-			Importer::ImporterFactory::createByFileExtension (
-				importer,
-				importerFound,
-				extension
-			)
-			&&
-			importerFound
-		;
+				Importer::ImporterFactory::createByFileExtension (
+					importer,
+					importerFound,
+					extension
+					)
+				&&
+				importerFound
+				;
 
 		infoHandler->reportError(ok, "No suitable importer has been found for the file extension.");
 	}
 
-    // vytvorenie nacitavaneho streamu
-    std::auto_ptr<QIODevice> stream (NULL);
-    if (ok) {
-    	stream.reset (new QFile (filepath));
-    }
+	// vytvorenie nacitavaneho streamu
+	std::auto_ptr<QIODevice> stream (NULL);
+	if (ok) {
+		stream.reset (new QFile (filepath));
+	}
 
-    if (ok) {
-    	ok = (stream->open (QIODevice::ReadOnly));
+	if (ok) {
+		ok = (stream->open (QIODevice::ReadOnly));
 
-    	infoHandler->reportError(ok, "Unable to open the input file.");
-    }
+		infoHandler->reportError(ok, "Unable to open the input file.");
+	}
 
-    // vytvorenie noveho grafu
-    std::auto_ptr<Data::Graph> newGraph (NULL);
-    if (ok) {
+	// vytvorenie noveho grafu
+	std::auto_ptr<Data::Graph> newGraph (NULL);
+	if (ok) {
 		newGraph.reset (this->createGraph (name));
 		ok = (newGraph.get () != NULL);
-    }
+	}
 
 
 
-    // vytvorenie kontextu
-    std::auto_ptr<Importer::ImporterContext> context (NULL);
-    if (ok) {
-    	context.reset (
-    		new Importer::ImporterContext (
-				*stream,
-				*newGraph,
-				*infoHandler
-			)
-    	);
-    }
+	// vytvorenie kontextu
+	std::auto_ptr<Importer::ImporterContext> context (NULL);
+	if (ok) {
+		context.reset (
+					new Importer::ImporterContext (
+						*stream,
+						*newGraph,
+						*infoHandler
+						)
+					);
+	}
 
-    // spustenie importera
-    if (ok) {
-    	ok = importer->import (*context);
-    }
+	// spustenie importera
+	if (ok) {
+		ok = importer->import (*context);
+	}
 
-    // ukoncenie streamu
-    if (stream.get() != NULL) {
-    	stream->close ();
-    }
+	// ukoncenie streamu
+	if (stream.get() != NULL) {
+		stream->close ();
+	}
 
-    // pridanie obmedzovaca
-    if (ok) {
+	// pridanie obmedzovaca
+	if (ok) {
 		Data::GraphLayout* gLay = newGraph->addLayout ("new Layout");
 		newGraph->selectLayout (gLay);
 	}
 
-    // ukoncenie streamu
-    if (stream.get() != NULL) {
-    	stream->close ();
-    }
+	// ukoncenie streamu
+	if (stream.get() != NULL) {
+		stream->close ();
+	}
 
-    // nastavenie aktivneho grafu
-    if (ok) {
-    	// ak uz nejaky graf mame, tak ho najprv sejvneme a zavrieme
+	// nastavenie aktivneho grafu
+	if (ok) {
+		// ak uz nejaky graf mame, tak ho najprv sejvneme a zavrieme
 		if(this->activeGraph != NULL){
 			//this->saveGraph(this->activeGraph);
 			this->closeGraph(this->activeGraph);
 		}
 		this->activeGraph = newGraph.release ();
-    }
+	}
 
 	//ked uz mame graf nacitany zo suboru, ulozime ho aj do databazy
-	if(db->tmpGetConn() != NULL && db->tmpGetConn()->open()) { 
+	if(db->tmpGetConn() != NULL && db->tmpGetConn()->open()) {
 		//ulozime obycajne uzly a hrany
 		this->activeGraph->saveGraphToDB(db->tmpGetConn(), this->activeGraph);
 		//nastavime meno grafu podla nazvu suboru
@@ -155,28 +155,28 @@ Data::Graph* Manager::GraphManager::loadGraph(QString filepath)
 		this->activeGraph->selectLayout(layout);
 		//este ulozit meta uzly, hrany a pozicie vsetkych uzlov
 		this->activeGraph->saveLayoutToDB(db->tmpGetConn(), this->activeGraph);
-    }
+	}
 
-    if (ok) {
-    	// robime zakladnu proceduru pre restartovanie layoutu
-    	AppCore::Core::getInstance()->restartLayout();
-    }
+	if (ok) {
+		// robime zakladnu proceduru pre restartovanie layoutu
+		AppCore::Core::getInstance()->restartLayout();
+	}
 
 	AppCore::Core::getInstance()->messageWindows->closeProgressBar();
 
-    Network::Server *server = Network::Server::getInstance();
-    server -> sendGraph();
+	Network::Server *server = Network::Server::getInstance();
+	server -> sendGraph();
 
-    return (ok ? this->activeGraph : NULL);
+	return (ok ? this->activeGraph : NULL);
 }
 
 Data::Graph* Manager::GraphManager::createNewGraph(QString name)
 {
 	bool ok = true;
 
-    AppCore::Core::getInstance()->thr->pause();
+	AppCore::Core::getInstance()->thr->pause();
 
-    // vytvorenie infoHandler
+	// vytvorenie infoHandler
 	std::auto_ptr<Importer::ImportInfoHandler> infoHandler (NULL);
 	if (ok) {
 		infoHandler.reset (new ImportInfoHandlerImpl);
@@ -186,35 +186,35 @@ Data::Graph* Manager::GraphManager::createNewGraph(QString name)
 	QString extension;
 
 
-    // vytvor graf
-    std::auto_ptr<Data::Graph> newGraph (NULL);
-    if (ok) {
+	// vytvor graf
+	std::auto_ptr<Data::Graph> newGraph (NULL);
+	if (ok) {
 		newGraph.reset (this->createGraph (name));
 		ok = (newGraph.get () != NULL);
-    }
+	}
 
-    // pridaj rozlozenie
-    if (ok) {
+	// pridaj rozlozenie
+	if (ok) {
 		Data::GraphLayout* gLay = newGraph->addLayout ("new Layout");
 		newGraph->selectLayout (gLay);
 	}
 
-    // nastav aktivny graf
-    if (ok) {
-    	// ak uz nejaky graf mame, tak ho najprv sejvneme a zavrieme
+	// nastav aktivny graf
+	if (ok) {
+		// ak uz nejaky graf mame, tak ho najprv sejvneme a zavrieme
 		if(this->activeGraph != NULL){
 			//this->saveGraph(this->activeGraph);
 			this->closeGraph(this->activeGraph);
 		}
 		this->activeGraph = newGraph.release ();
-    }
+	}
 
-    if (ok) {
-    	// robime zakladnu proceduru pre restartovanie layoutu
-    	AppCore::Core::getInstance()->restartLayout();
-    }
+	if (ok) {
+		// robime zakladnu proceduru pre restartovanie layoutu
+		AppCore::Core::getInstance()->restartLayout();
+	}
 
-    return (ok ? this->activeGraph : NULL);
+	return (ok ? this->activeGraph : NULL);
 }
 
 
@@ -223,14 +223,14 @@ Data::Graph* Manager::GraphManager::loadGraphFromDB(qlonglong graphID, qlonglong
 {
 	Data::Graph* newGraph;
 	bool error;
-	
+
 	newGraph = Model::GraphDAO::getGraph(db->tmpGetConn(), &error, graphID, layoutID);
 
 	if(!error)
 	{
 		qDebug() << "[Manager::GraphManager::loadGraphFromDB] Graph loaded from database successfully";
 
-   		// ak uz nejaky graf mame, tak ho zavrieme
+		// ak uz nejaky graf mame, tak ho zavrieme
 		if(this->activeGraph != NULL)
 		{
 			this->closeGraph(this->activeGraph);
@@ -239,9 +239,9 @@ Data::Graph* Manager::GraphManager::loadGraphFromDB(qlonglong graphID, qlonglong
 		this->activeGraph = newGraph;
 
 		//urobime zakladnu proceduru pre restartovanie layoutu
-   		AppCore::Core::getInstance()->restartLayout();
+		AppCore::Core::getInstance()->restartLayout();
 	}
-	else 
+	else
 	{
 		qDebug() << "[Manager::GraphManager::loadGraphFromDB] Error while loading graph from database";
 	}
@@ -251,27 +251,27 @@ Data::Graph* Manager::GraphManager::loadGraphFromDB(qlonglong graphID, qlonglong
 
 void Manager::GraphManager::exportGraph(Data::Graph* graph, QString filepath)
 {
-    // TODO export do GraphML
+	// TODO export do GraphML
 }
 
 Data::Graph* Manager::GraphManager::createGraph(QString graphname)
 {
-    Data::Graph* g;
-    if(!this->db->tmpGetConn()->isOpen()){
-        g = this->emptyGraph();
-    } else {
-        g = Model::GraphDAO::addGraph(graphname, this->db->tmpGetConn());
-    }
+	Data::Graph* g;
+	if(!this->db->tmpGetConn()->isOpen()){
+		g = this->emptyGraph();
+	} else {
+		g = Model::GraphDAO::addGraph(graphname, this->db->tmpGetConn());
+	}
 
-    this->graphs.insert(g->getId(), g);
-    return g;
+	this->graphs.insert(g->getId(), g);
+	return g;
 }
 
 void Manager::GraphManager::removeGraph(Data::Graph* graph)
 {
-    this->closeGraph(graph);
-    // odstranime graf z DB
-    Model::GraphDAO::removeGraph(graph, db->tmpGetConn());
+	this->closeGraph(graph);
+	// odstranime graf z DB
+	Model::GraphDAO::removeGraph(graph, db->tmpGetConn());
 }
 
 void Manager::GraphManager::closeGraph(Data::Graph* graph)
@@ -314,7 +314,7 @@ Manager::GraphManager* Manager::GraphManager::getInstance()
 	if(manager == NULL)
 	{
 
-            manager = new Manager::GraphManager();
+		manager = new Manager::GraphManager();
 
 	}
 
@@ -325,206 +325,206 @@ void Manager::GraphManager::runTestCase( qint32 action )
 {
 	//testovaci pripad, vytvorenie grafu, inicializacia Debug, 7 testovacich vstupov grafu
 	switch(action) {
-		case 1:
-		case 2: {
-			//inicializacia
-			qDebug() << "TestCase initialization";
-			bool error;
-			Data::Graph* g = Model::GraphDAO::addGraph("testCase1",this->db->tmpGetConn()); //vytvorenie grafu
-			g->addLayout("testCase1 layout 1"); //pridanie layoutu
-			Data::GraphLayout* gl2 = g->addLayout("testCase1 layout 2"); //pridanie layoutu
-			g->addLayout("testCase1 layout 3"); //pridanie layoutu
-			qDebug() << "layouty grafu: " << g->toString();
-			QMap<qlonglong,Data::GraphLayout*> layouts = g->getLayouts(&error);
-			foreach(qlonglong i, layouts.keys()) { //vypis layoutov
-				qDebug() << layouts.value(i)->toString();
-			}
+	case 1:
+	case 2: {
+		//inicializacia
+		qDebug() << "TestCase initialization";
+		bool error;
+		Data::Graph* g = Model::GraphDAO::addGraph("testCase1",this->db->tmpGetConn()); //vytvorenie grafu
+		g->addLayout("testCase1 layout 1"); //pridanie layoutu
+		Data::GraphLayout* gl2 = g->addLayout("testCase1 layout 2"); //pridanie layoutu
+		g->addLayout("testCase1 layout 3"); //pridanie layoutu
+		qDebug() << "layouty grafu: " << g->toString();
+		QMap<qlonglong,Data::GraphLayout*> layouts = g->getLayouts(&error);
+		foreach(qlonglong i, layouts.keys()) { //vypis layoutov
+			qDebug() << layouts.value(i)->toString();
+		}
 
-			g->selectLayout(gl2); //vybratie layoutu
-			Data::Type* t1 = g->addType("type1"); //pridanie typu
-			Data::Type* t2 = g->addType("type2"); //pridanie typu
-			Data::Type* t3 = g->addType("type3"); //pridanie typu
-			Data::Type* t4 = g->addType("type4"); //pridanie typu
-			Data::Type* t5 = g->addType("type5"); //pridanie typu
-			Data::Type* t6 = g->addType("type6"); //pridanie typu
-            for(qlonglong i=0;i<100;i++) {
-				if(i%3==1) {
-					g->addNode("node",t2);
-				} else if(i%3==2) {
-					g->addNode("node",t3);
+		g->selectLayout(gl2); //vybratie layoutu
+		Data::Type* t1 = g->addType("type1"); //pridanie typu
+		Data::Type* t2 = g->addType("type2"); //pridanie typu
+		Data::Type* t3 = g->addType("type3"); //pridanie typu
+		Data::Type* t4 = g->addType("type4"); //pridanie typu
+		Data::Type* t5 = g->addType("type5"); //pridanie typu
+		Data::Type* t6 = g->addType("type6"); //pridanie typu
+		for(qlonglong i=0;i<100;i++) {
+			if(i%3==1) {
+				g->addNode("node",t2);
+			} else if(i%3==2) {
+				g->addNode("node",t3);
+			} else {
+				g->addNode("node",t1);
+			}
+		}
+
+		QMap<qlonglong, osg::ref_ptr<Data::Node> >* gNodes = g->getNodes();
+		osg::ref_ptr<Data::Node> n1;
+		osg::ref_ptr<Data::Node> n2;
+		qlonglong iteration = 0;
+		foreach(qlonglong i, gNodes->keys()) {
+			if(iteration==0) {
+				n1 = gNodes->value(i);
+			} else {
+				n2 = gNodes->value(i);
+				if(iteration%3==1) {
+					g->addEdge("edge",n1,n2,t5,true);
+				} else if(iteration%3==2) {
+					g->addEdge("edge",n1,n2,t6,true);
 				} else {
-					g->addNode("node",t1);
+					g->addEdge("edge",n1,n2,t4,true);
 				}
+				n1 = gNodes->value(i);
 			}
+			iteration++;
+		}
+		n1 = NULL;
+		n2 = NULL;
 
-			QMap<qlonglong, osg::ref_ptr<Data::Node> >* gNodes = g->getNodes();
-			osg::ref_ptr<Data::Node> n1;
-			osg::ref_ptr<Data::Node> n2;
-			qlonglong iteration = 0;
-			foreach(qlonglong i, gNodes->keys()) {
-				if(iteration==0) {
-					n1 = gNodes->value(i);
-				} else {
-					n2 = gNodes->value(i);
-					if(iteration%3==1) {
-						g->addEdge("edge",n1,n2,t5,true);
-					} else if(iteration%3==2) {
-						g->addEdge("edge",n1,n2,t6,true);
-					} else {
-						g->addEdge("edge",n1,n2,t4,true);
-					}
-					n1 = gNodes->value(i);
-				}
-				iteration++;
-			}
-			n1 = NULL;
-			n2 = NULL;
+		qDebug() << "Nodes count: " << g->getNodes()->size();
+		qDebug() << "Types count: " << g->getTypes()->size();
+		qDebug() << "Edges count: " << g->getEdges()->size();
 
+		switch(action) {
+		case 1: //testovanie remove metod
+			qDebug() << "Starting testCase 1";
+
+			qDebug() << "Removing type t1";
+			g->removeType(t1);
+			qDebug() << "type t1 removed";
+
+			qDebug() << "Counts after the type t1 was removed";
 			qDebug() << "Nodes count: " << g->getNodes()->size();
 			qDebug() << "Types count: " << g->getTypes()->size();
 			qDebug() << "Edges count: " << g->getEdges()->size();
 
-			switch(action) {
-				case 1: //testovanie remove metod
-					qDebug() << "Starting testCase 1";
-
-					qDebug() << "Removing type t1";
-					g->removeType(t1);
-					qDebug() << "type t1 removed";
-
-					qDebug() << "Counts after the type t1 was removed";
-					qDebug() << "Nodes count: " << g->getNodes()->size();
-					qDebug() << "Types count: " << g->getTypes()->size();
-					qDebug() << "Edges count: " << g->getEdges()->size();
-
-					qDebug() << "Ending testCase 1";
-					break;
-				case 2:
-					qDebug() << "Starting testCase 2";
-
-					osg::ref_ptr<Data::Node> selectedNode = g->getNodes()->values().at(10);
-
-					qDebug() << "Removing node: " << selectedNode->toString();
-					g->removeNode(selectedNode);
-
-					qDebug() << "Counts after the type t1 was removed";
-					qDebug() << "Nodes count: " << g->getNodes()->size();
-					qDebug() << "Types count: " << g->getTypes()->size();
-					qDebug() << "Edges count: " << g->getEdges()->size();
-
-					qDebug() << "Ending testCase 2";
-					break;
-			}
-
-			//cleanup
-			if(Model::GraphDAO::removeGraph(g,this->db->tmpGetConn())) {
-				qDebug() << "graph successfully removed from db";
-			} else {
-				qDebug() << "could not be removed from db";
-			}
-
-			delete g;
-			g = NULL;
+			qDebug() << "Ending testCase 1";
 			break;
-		}
-		case 3: {
-			Data::Graph* g = Model::GraphDAO::addGraph("testCase1",this->db->tmpGetConn()); //vytvorenie grafu
-			Data::Type* t1 = g->addType("type");
-			Data::Type* t2 = g->addType("type2");
-			osg::ref_ptr<Data::Node> n1 = g->addNode("node1",t1);
-			osg::ref_ptr<Data::Node> n2 = g->addNode("node2",t1);
-			osg::ref_ptr<Data::Edge> e1 = g->addEdge("edge1",n1,n2,t2,true);
-			g->addEdge("edge2",n1,n2,t2,true);
-			g->addEdge("edge3",n1,n2,t2,true);
-			g->addEdge("edge4",n1,n2,t2,true);
-			g->removeNode(n1);
-			n1 = NULL;
-			qDebug() << "node should be deleted";
-			e1 = NULL;
-			qDebug() << "edge should be deleted";
+		case 2:
+			qDebug() << "Starting testCase 2";
 
-			delete g;
-			g = NULL;
-			qDebug() << "graph deleted";
-			n2 = NULL;
-			break;
-		}
-		case 4: {
-			Data::Graph* g = Model::GraphDAO::addGraph("testCase1",this->db->tmpGetConn()); //vytvorenie grafu
-			Data::Type* t1 = g->addType("type");
-			Data::Type* t2 = g->addType("type2");
-			osg::ref_ptr<Data::Node> n1 = g->addNode("node1",t1);
-			osg::ref_ptr<Data::Node> n2 = g->addNode("node2",t1);
-			osg::ref_ptr<Data::Edge> e1 = g->addEdge("edge1",n1,n2,t2,true);
-			g->removeEdge(e1);
-			e1 = NULL;
-			qDebug() << "edge should be deleted";
-			n2 = NULL;
-			n1 = NULL;
+			osg::ref_ptr<Data::Node> selectedNode = g->getNodes()->values().at(10);
 
-			delete g;
-			g = NULL;
-			qDebug() << "graph deleted";
+			qDebug() << "Removing node: " << selectedNode->toString();
+			g->removeNode(selectedNode);
+
+			qDebug() << "Counts after the type t1 was removed";
+			qDebug() << "Nodes count: " << g->getNodes()->size();
+			qDebug() << "Types count: " << g->getTypes()->size();
+			qDebug() << "Edges count: " << g->getEdges()->size();
+
+			qDebug() << "Ending testCase 2";
 			break;
 		}
 
-		case 5: {
-			Data::Graph* g = Model::GraphDAO::addGraph("testCase1",this->db->tmpGetConn()); //vytvorenie grafu
-			g->selectLayout(g->addLayout("layout"));
-			Data::Type* t1 = g->addType("type");
-			Data::MetaType* t2 = g->addMetaType("type2");
-			Data::Type* t3 = g->addType("type3");
-			osg::ref_ptr<Data::Node> n1 = g->addNode("node1",t1);
-			osg::ref_ptr<Data::Node> n2 = g->addNode("node2",t1);
-			osg::ref_ptr<Data::Edge> e1 = g->addEdge("edge1",n1,n2,t2,true);
-			g->addEdge("edge2",n1,n2,t2,true);
-			g->addEdge("edge3",n1,n2,t3,true);
-			g->addEdge("edge4",n1,n2,t3,true);
-			g->removeNode(n1);
-			n1 = NULL;
-			qDebug() << "node should be deleted";
-			e1 = NULL;
-			qDebug() << "edge should be deleted";
-			n2 = NULL;
-
-			delete g;
-			g = NULL;
-			qDebug() << "graph deleted";
-			break;
+		//cleanup
+		if(Model::GraphDAO::removeGraph(g,this->db->tmpGetConn())) {
+			qDebug() << "graph successfully removed from db";
+		} else {
+			qDebug() << "could not be removed from db";
 		}
 
-		case 6: {
-			Data::Graph* g = Model::GraphDAO::addGraph("testCase1",this->db->tmpGetConn()); //vytvorenie grafu
-			g->selectLayout(g->addLayout("layout"));
-			Data::Type* t1 = g->addType("type");
-			Data::MetaType* t2 = g->addMetaType("type2");
-			osg::ref_ptr<Data::Edge> e1 = g->addEdge("edge1",g->addNode("node1",t1),g->addNode("node2",t1),t2,true);
-			g->removeEdge(e1);
-			e1 = NULL;
-			qDebug() << "edge should be deleted";
+		delete g;
+		g = NULL;
+		break;
+	}
+	case 3: {
+		Data::Graph* g = Model::GraphDAO::addGraph("testCase1",this->db->tmpGetConn()); //vytvorenie grafu
+		Data::Type* t1 = g->addType("type");
+		Data::Type* t2 = g->addType("type2");
+		osg::ref_ptr<Data::Node> n1 = g->addNode("node1",t1);
+		osg::ref_ptr<Data::Node> n2 = g->addNode("node2",t1);
+		osg::ref_ptr<Data::Edge> e1 = g->addEdge("edge1",n1,n2,t2,true);
+		g->addEdge("edge2",n1,n2,t2,true);
+		g->addEdge("edge3",n1,n2,t2,true);
+		g->addEdge("edge4",n1,n2,t2,true);
+		g->removeNode(n1);
+		n1 = NULL;
+		qDebug() << "node should be deleted";
+		e1 = NULL;
+		qDebug() << "edge should be deleted";
 
-			delete g;
-			g = NULL;
-			qDebug() << "graph deleted";
-			break;
-		}
+		delete g;
+		g = NULL;
+		qDebug() << "graph deleted";
+		n2 = NULL;
+		break;
+	}
+	case 4: {
+		Data::Graph* g = Model::GraphDAO::addGraph("testCase1",this->db->tmpGetConn()); //vytvorenie grafu
+		Data::Type* t1 = g->addType("type");
+		Data::Type* t2 = g->addType("type2");
+		osg::ref_ptr<Data::Node> n1 = g->addNode("node1",t1);
+		osg::ref_ptr<Data::Node> n2 = g->addNode("node2",t1);
+		osg::ref_ptr<Data::Edge> e1 = g->addEdge("edge1",n1,n2,t2,true);
+		g->removeEdge(e1);
+		e1 = NULL;
+		qDebug() << "edge should be deleted";
+		n2 = NULL;
+		n1 = NULL;
 
-		case 7: {
-			Data::Graph* g = Model::GraphDAO::addGraph("testCase1",this->db->tmpGetConn()); //vytvorenie grafu
-			g->selectLayout(g->addLayout("layout"));
-			Data::Type* t1 = g->addType("type");
-			g->addEdge("edge1",g->addNode("node1",t1),g->addNode("node2",t1),g->addMetaType("type2"),true);
-			g->removeType(t1);
+		delete g;
+		g = NULL;
+		qDebug() << "graph deleted";
+		break;
+	}
 
-			delete t1;
-			t1 = NULL;
+	case 5: {
+		Data::Graph* g = Model::GraphDAO::addGraph("testCase1",this->db->tmpGetConn()); //vytvorenie grafu
+		g->selectLayout(g->addLayout("layout"));
+		Data::Type* t1 = g->addType("type");
+		Data::MetaType* t2 = g->addMetaType("type2");
+		Data::Type* t3 = g->addType("type3");
+		osg::ref_ptr<Data::Node> n1 = g->addNode("node1",t1);
+		osg::ref_ptr<Data::Node> n2 = g->addNode("node2",t1);
+		osg::ref_ptr<Data::Edge> e1 = g->addEdge("edge1",n1,n2,t2,true);
+		g->addEdge("edge2",n1,n2,t2,true);
+		g->addEdge("edge3",n1,n2,t3,true);
+		g->addEdge("edge4",n1,n2,t3,true);
+		g->removeNode(n1);
+		n1 = NULL;
+		qDebug() << "node should be deleted";
+		e1 = NULL;
+		qDebug() << "edge should be deleted";
+		n2 = NULL;
 
-			qDebug() << "type should be deleted";
+		delete g;
+		g = NULL;
+		qDebug() << "graph deleted";
+		break;
+	}
 
-			delete g;
-			g = NULL;
-			qDebug() << "graph deleted";
-			break;
-		}
+	case 6: {
+		Data::Graph* g = Model::GraphDAO::addGraph("testCase1",this->db->tmpGetConn()); //vytvorenie grafu
+		g->selectLayout(g->addLayout("layout"));
+		Data::Type* t1 = g->addType("type");
+		Data::MetaType* t2 = g->addMetaType("type2");
+		osg::ref_ptr<Data::Edge> e1 = g->addEdge("edge1",g->addNode("node1",t1),g->addNode("node2",t1),t2,true);
+		g->removeEdge(e1);
+		e1 = NULL;
+		qDebug() << "edge should be deleted";
+
+		delete g;
+		g = NULL;
+		qDebug() << "graph deleted";
+		break;
+	}
+
+	case 7: {
+		Data::Graph* g = Model::GraphDAO::addGraph("testCase1",this->db->tmpGetConn()); //vytvorenie grafu
+		g->selectLayout(g->addLayout("layout"));
+		Data::Type* t1 = g->addType("type");
+		g->addEdge("edge1",g->addNode("node1",t1),g->addNode("node2",t1),g->addMetaType("type2"),true);
+		g->removeType(t1);
+
+		delete t1;
+		t1 = NULL;
+
+		qDebug() << "type should be deleted";
+
+		delete g;
+		g = NULL;
+		qDebug() << "graph deleted";
+		break;
+	}
 	}
 }

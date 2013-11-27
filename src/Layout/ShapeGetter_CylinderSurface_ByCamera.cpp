@@ -6,20 +6,20 @@
 namespace Layout {
 
 ShapeGetter_CylinderSurface_ByCamera::ShapeGetter_CylinderSurface_ByCamera(const QOSG::ViewerQT *viewerWidget,
-                                                                           const QSlider &baseRadiusSlider) :
-    mViewerWidget(viewerWidget),
-    mBaseRadiusSlider(baseRadiusSlider)
+																		   const QSlider &baseRadiusSlider) :
+	mViewerWidget(viewerWidget),
+	mBaseRadiusSlider(baseRadiusSlider)
 {
 }
 
 QSharedPointer<Shape> ShapeGetter_CylinderSurface_ByCamera::getShape()
 {
-    return QSharedPointer<Shape>( new Shape_CylinderSurface(mViewerWidget, mBaseRadiusSlider) );
+	return QSharedPointer<Shape>( new Shape_CylinderSurface(mViewerWidget, mBaseRadiusSlider) );
 }
 QSet<Data::Node *> ShapeGetter_CylinderSurface_ByCamera::getNodesOfShape()
 {
-    //implement
-    QSet<Data::Node *  >  nodes;
-    return nodes;
+	//implement
+	QSet<Data::Node *  >  nodes;
+	return nodes;
 }
 }

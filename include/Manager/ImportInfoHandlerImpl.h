@@ -10,7 +10,7 @@ namespace Manager {
  * \brief Reports import status using the QT application GUI.
  */
 class ImportInfoHandlerImpl
-	: public Importer::ImportInfoHandler {
+		: public Importer::ImportInfoHandler {
 
 public:
 
@@ -19,24 +19,24 @@ public:
 
 	/***/
 	virtual void addMessage (
-		const QString &text
-	);
+			const QString &text
+			);
 
 	/**
 	 * \brief Shows message box with error text.
 	 * \param[] text Error text.
 	 */
 	virtual void reportError (
-		const QString &text
-	);
+			const QString &text
+			);
 
 	/**
 	 * \brief Updates progress bar position.
 	 * \param[in] value Progress value <0, 100>.
 	 */
 	virtual void setProgress (
-		const unsigned int value
-	);
+			const unsigned int value
+			);
 
 }; // class
 

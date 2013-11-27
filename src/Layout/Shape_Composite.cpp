@@ -6,8 +6,8 @@
 namespace Layout {
 
 void Shape_Composite::addShape (
-	QSharedPointer<Shape> shape
-) {
+		QSharedPointer<Shape> shape
+		) {
 	shapes_.push_back (shape);
 }
 
@@ -16,8 +16,8 @@ Shape_Composite::ShapesListType & Shape_Composite::getShapes (void) {
 }
 
 void Shape_Composite::accept (
-	ShapeVisitor & visitor
-) {
+		ShapeVisitor & visitor
+		) {
 	visitor.visit (*this);
 }
 

@@ -16,21 +16,21 @@ EdgeGroup::~EdgeGroup(void)
 }
 
 /*!
- * 
+ *
  * \param scale
  * Koeficient velkosti hran.
- * 
+ *
  * \returns
  * Podgraf hran.
- * 
- * 
+ *
+ *
  * Vytvori podgraf s hranami, ktore spajaju uzly na zaklade ich aktualnej pozicie.
- * 
+ *
  */
 void EdgeGroup::initEdges()
 {
-	osg::ref_ptr<osg::Group> allEdges = new osg::Group;	
-	
+	osg::ref_ptr<osg::Group> allEdges = new osg::Group;
+
 	osg::ref_ptr<osg::Vec2Array> edgeTexCoords = new osg::Vec2Array;
 	osg::ref_ptr<osg::Vec3Array> coordinates = new osg::Vec3Array;
 	osg::ref_ptr<osg::Vec4Array> colors = new osg::Vec4Array;
@@ -39,11 +39,11 @@ void EdgeGroup::initEdges()
 	geometry = new osg::Geometry;
 	orientedGeometry = new osg::Geometry;
 
-    QMap<qlonglong, osg::ref_ptr<Data::Edge> >::iterator i = edges->begin();
+	QMap<qlonglong, osg::ref_ptr<Data::Edge> >::iterator i = edges->begin();
 
 	int edgePos = 0;
 
-	while (i != edges->end()) 
+	while (i != edges->end())
 	{
 		getEdgeCoordinatesAndColors(i.value(), edgePos, coordinates, edgeTexCoords, colors, orientedEdgeColors);
 		edgePos += 4;
@@ -62,7 +62,7 @@ void EdgeGroup::initEdges()
 #ifdef BIND_PER_PRIMITIVE
 	geometry->setColorBinding(osg::Geometry::BIND_PER_PRIMITIVE);
 #else
-    geometry->setColorBinding(osg::Geometry::BIND_PER_PRIMITIVE_SET);
+	geometry->setColorBinding(osg::Geometry::BIND_PER_PRIMITIVE_SET);
 #endif
 	geometry->getOrCreateStateSet()->setMode(GL_BLEND, osg::StateAttribute::ON);
 	//geometry->getStateSet()->setRenderingHint(osg::StateSet::OPAQUE_BIN);
@@ -73,7 +73,7 @@ void EdgeGroup::initEdges()
 #ifdef BIND_PER_PRIMITIVE
 	orientedGeometry->setColorBinding(osg::Geometry::BIND_PER_PRIMITIVE);
 #else
-    orientedGeometry->setColorBinding(osg::Geometry::BIND_PER_PRIMITIVE_SET);
+	orientedGeometry->setColorBinding(osg::Geometry::BIND_PER_PRIMITIVE_SET);
 #endif
 	orientedGeometry->getOrCreateStateSet()->setMode(GL_BLEND, osg::StateAttribute::ON);
 	//orientedGeometry->getStateSet()->setRenderingHint(osg::StateSet::OPAQUE_BIN);
@@ -87,15 +87,15 @@ void EdgeGroup::initEdges()
 	g2->addDrawable(orientedGeometry);
 	g2->setStateSet(orientedEdgeStateSet);
 
-	allEdges->addChild(g1);	
-	allEdges->addChild(g2);	
+	allEdges->addChild(g1);
+	allEdges->addChild(g2);
 
 	this->edgeGroup = allEdges;
 }
 
 void EdgeGroup::updateEdgeCoords()
 {
-    osg::ref_ptr<osg::Vec2Array> edgeTexCoords = new osg::Vec2Array;
+	osg::ref_ptr<osg::Vec2Array> edgeTexCoords = new osg::Vec2Array;
 	osg::ref_ptr<osg::Vec3Array> coordinates = new osg::Vec3Array;
 	osg::ref_ptr<osg::Vec4Array> colors = new osg::Vec4Array;
 	osg::ref_ptr<osg::Vec4Array> orientedEdgeColors = new osg::Vec4Array;
@@ -104,7 +104,7 @@ void EdgeGroup::updateEdgeCoords()
 
 	int edgePos = 0;
 
-	while (i != edges->end()) 
+	while (i != edges->end())
 	{
 		getEdgeCoordinatesAndColors(i.value(), edgePos, coordinates, edgeTexCoords, colors, orientedEdgeColors);
 		edgePos += 4;
@@ -114,14 +114,14 @@ void EdgeGroup::updateEdgeCoords()
 	geometry->setVertexArray(coordinates);
 	geometry->setTexCoordArray(0, edgeTexCoords);
 	geometry->setColorArray(colors);
-		
+
 	orientedGeometry->setVertexArray(coordinates);
 	orientedGeometry->setTexCoordArray(0, edgeTexCoords);
-    orientedGeometry->setColorArray(orientedEdgeColors);
+	orientedGeometry->setColorArray(orientedEdgeColors);
 }
 
-void EdgeGroup::getEdgeCoordinatesAndColors(osg::ref_ptr<Data::Edge> edge, int first, 
-											osg::ref_ptr<osg::Vec3Array> coordinates, 
+void EdgeGroup::getEdgeCoordinatesAndColors(osg::ref_ptr<Data::Edge> edge, int first,
+											osg::ref_ptr<osg::Vec3Array> coordinates,
 											osg::ref_ptr<osg::Vec2Array> edgeTexCoords,
 											osg::ref_ptr<osg::Vec4Array> colors,
 											osg::ref_ptr<osg::Vec4Array> orientedEdgeColors)
@@ -170,7 +170,7 @@ void EdgeGroup::synchronizeEdges()
 
 	QMap<qlonglong, osg::ref_ptr<Data::Edge> >::iterator ie = edges->begin();
 
-	while (ie != edges->end()) 
+	while (ie != edges->end())
 	{
 		if (!(*ie)->isOriented() && geometry->getPrimitiveSetIndex((*ie)) == geometry->getNumPrimitiveSets())
 			geometry->addPrimitiveSet(*ie);
@@ -192,9 +192,9 @@ void EdgeGroup::createEdgeStateSets()
 
 	edgeStateSet->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
 
- 	osg::ref_ptr<osg::Depth> depth = new osg::Depth;
- 	depth->setWriteMask(false);
- 	edgeStateSet->setAttributeAndModes(depth, osg::StateAttribute::ON);
+	osg::ref_ptr<osg::Depth> depth = new osg::Depth;
+	depth->setWriteMask(false);
+	edgeStateSet->setAttributeAndModes(depth, osg::StateAttribute::ON);
 
 	orientedEdgeStateSet = new osg::StateSet;
 
@@ -203,6 +203,6 @@ void EdgeGroup::createEdgeStateSets()
 	orientedEdgeStateSet->setMode(GL_BLEND, osg::StateAttribute::ON);
 	orientedEdgeStateSet->setMode(GL_DEPTH_TEST, osg::StateAttribute::ON);
 
-	orientedEdgeStateSet->setRenderingHint(osg::StateSet::TRANSPARENT_BIN); 
+	orientedEdgeStateSet->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
 	orientedEdgeStateSet->setAttributeAndModes(depth, osg::StateAttribute::ON);
 }

@@ -15,7 +15,7 @@ using namespace Vwr;
 Vwr::CoreGraph::CoreGraph(Data::Graph * graph, osg::ref_ptr<osg::Camera> camera)
 {
 	this->graph = graph;
-    this->camera = ((camera == 0) ? ((osg::ref_ptr<osg::Camera>) new osg::Camera) : (camera));
+	this->camera = ((camera == 0) ? ((osg::ref_ptr<osg::Camera>) new osg::Camera) : (camera));
 
 	this->in_nodes = NULL;
 	this->in_edges = NULL;
@@ -30,7 +30,7 @@ Vwr::CoreGraph::CoreGraph(Data::Graph * graph, osg::ref_ptr<osg::Camera> camera)
 
 	root = new osg::Group();
 	root->addChild(createSkyBox());
-        backgroundPosition = 0;
+	backgroundPosition = 0;
 
 	reload(graph);
 }
@@ -43,7 +43,7 @@ void CoreGraph::reload(Data::Graph * graph)
 
 	if (root->getNumChildren() > 1)
 	{
-                for (int x = 8; x > 0; x--)
+		for (int x = 8; x > 0; x--)
 			root->removeChildren(x,1);
 	}
 
@@ -66,7 +66,7 @@ void CoreGraph::reload(Data::Graph * graph)
 
 	QMapIterator<qlonglong, osg::ref_ptr<Data::Edge> > i(*in_edges);
 
-	while (i.hasNext()) 
+	while (i.hasNext())
 	{
 		i.next();
 		i.value()->setCamera(camera);
@@ -93,17 +93,17 @@ void CoreGraph::reload(Data::Graph * graph)
 	root->addChild(initEdgeLabels());
 	labelsPosition = currentPos++;
 
-        this->restrictionVisualizationsGroup = QSharedPointer<Vwr::RestrictionVisualizationsGroup> (new Vwr::RestrictionVisualizationsGroup);
-        root->addChild (restrictionVisualizationsGroup->getGroup ());
-        restrictionVisualizationsPosition = currentPos++;
+	this->restrictionVisualizationsGroup = QSharedPointer<Vwr::RestrictionVisualizationsGroup> (new Vwr::RestrictionVisualizationsGroup);
+	root->addChild (restrictionVisualizationsGroup->getGroup ());
+	restrictionVisualizationsPosition = currentPos++;
 
-        this->restrictionManipulatorsGroup = QSharedPointer<Vwr::RestrictionManipulatorsGroup> (new Vwr::RestrictionManipulatorsGroup);
-        root->addChild (restrictionManipulatorsGroup->getGroup ());
-        restrictionManipulatorsPosition = currentPos++;
+	this->restrictionManipulatorsGroup = QSharedPointer<Vwr::RestrictionManipulatorsGroup> (new Vwr::RestrictionManipulatorsGroup);
+	root->addChild (restrictionManipulatorsGroup->getGroup ());
+	restrictionManipulatorsPosition = currentPos++;
 
-        if (this->graph != NULL) {
-                graph->getRestrictionsManager().setObservers (restrictionVisualizationsGroup, restrictionManipulatorsGroup);
-        }
+	if (this->graph != NULL) {
+		graph->getRestrictionsManager().setObservers (restrictionVisualizationsGroup, restrictionManipulatorsGroup);
+	}
 
 	customNodesPosition = currentPos;
 
@@ -119,7 +119,7 @@ void CoreGraph::cleanUp()
 		delete in_edges;
 		delete qmetaNodes;
 		delete qmetaEdges;
-		} else {
+	} else {
 		graph->getRestrictionsManager ().resetObserver ();
 	}
 
@@ -130,51 +130,51 @@ void CoreGraph::cleanUp()
 
 
 osg::ref_ptr<osg::Node> CoreGraph::createSkyBox(){
-    if (appConf->getValue("Viewer.SkyBox.Noise").toInt() == 0) {
-        SkyBox * skyBox = new SkyBox;
-        return skyBox->createSkyBox();
-    } else {
-        osg::ref_ptr<osg::Texture2D> skymap =
-                PerlinNoiseTextureGenerator::getCoudTexture(2048, 1024,
-                                                            appConf->getValue("Viewer.Display.BackGround.R").toInt(),
-                                                            appConf->getValue("Viewer.Display.BackGround.G").toInt(),
-                                                            appConf->getValue("Viewer.Display.BackGround.B").toInt(),
-                                                            255);
+	if (appConf->getValue("Viewer.SkyBox.Noise").toInt() == 0) {
+		SkyBox * skyBox = new SkyBox;
+		return skyBox->createSkyBox();
+	} else {
+		osg::ref_ptr<osg::Texture2D> skymap =
+				PerlinNoiseTextureGenerator::getCoudTexture(2048, 1024,
+															appConf->getValue("Viewer.Display.BackGround.R").toInt(),
+															appConf->getValue("Viewer.Display.BackGround.G").toInt(),
+															appConf->getValue("Viewer.Display.BackGround.B").toInt(),
+															255);
 
-        skymap->setDataVariance(osg::Object::DYNAMIC);
-        skymap->setFilter(osg::Texture::MIN_FILTER, osg::Texture::LINEAR_MIPMAP_LINEAR);
-        skymap->setFilter(osg::Texture::MAG_FILTER, osg::Texture::LINEAR);
-        skymap->setWrap(osg::Texture::WRAP_S, osg::Texture::CLAMP_TO_EDGE);
-        skymap->setWrap(osg::Texture::WRAP_T, osg::Texture::CLAMP_TO_EDGE);
+		skymap->setDataVariance(osg::Object::DYNAMIC);
+		skymap->setFilter(osg::Texture::MIN_FILTER, osg::Texture::LINEAR_MIPMAP_LINEAR);
+		skymap->setFilter(osg::Texture::MAG_FILTER, osg::Texture::LINEAR);
+		skymap->setWrap(osg::Texture::WRAP_S, osg::Texture::CLAMP_TO_EDGE);
+		skymap->setWrap(osg::Texture::WRAP_T, osg::Texture::CLAMP_TO_EDGE);
 
-        osg::ref_ptr<osg::StateSet> stateset = new osg::StateSet();
-        stateset->setTextureAttributeAndModes(0, skymap, osg::StateAttribute::ON);
-        stateset->setMode( GL_LIGHTING, osg::StateAttribute::OFF );
-        stateset->setMode( GL_CULL_FACE, osg::StateAttribute::OFF );
-        stateset->setRenderBinDetails(-1,"RenderBin");
+		osg::ref_ptr<osg::StateSet> stateset = new osg::StateSet();
+		stateset->setTextureAttributeAndModes(0, skymap, osg::StateAttribute::ON);
+		stateset->setMode( GL_LIGHTING, osg::StateAttribute::OFF );
+		stateset->setMode( GL_CULL_FACE, osg::StateAttribute::OFF );
+		stateset->setRenderBinDetails(-1,"RenderBin");
 
-        osg::ref_ptr<osg::Depth> depth = new osg::Depth;
-        depth->setFunction(osg::Depth::ALWAYS);
-        depth->setRange(1, 1);
-        stateset->setAttributeAndModes(depth, osg::StateAttribute::ON );
+		osg::ref_ptr<osg::Depth> depth = new osg::Depth;
+		depth->setFunction(osg::Depth::ALWAYS);
+		depth->setRange(1, 1);
+		stateset->setAttributeAndModes(depth, osg::StateAttribute::ON );
 
-        osg::ref_ptr<osg::Drawable> drawable = new osg::ShapeDrawable(new osg::Sphere(osg::Vec3(0.0f,0.0f,0.0f), 1));
-        osg::ref_ptr<osg::Geode> geode = new osg::Geode;
+		osg::ref_ptr<osg::Drawable> drawable = new osg::ShapeDrawable(new osg::Sphere(osg::Vec3(0.0f,0.0f,0.0f), 1));
+		osg::ref_ptr<osg::Geode> geode = new osg::Geode;
 
-        geode->setCullingActive(false);
-        geode->setStateSet(stateset);
-        geode->addDrawable(drawable);
+		geode->setCullingActive(false);
+		geode->setStateSet(stateset);
+		geode->addDrawable(drawable);
 
-        osg::ref_ptr<osg::Transform> transform = new SkyTransform;
-        transform->setCullingActive(false);
-        transform->addChild(geode);
+		osg::ref_ptr<osg::Transform> transform = new SkyTransform;
+		transform->setCullingActive(false);
+		transform->addChild(geode);
 
-        osg::ref_ptr<osg::ClearNode> clearNode = new osg::ClearNode;
-        clearNode->setRequiresClear(false);
-        clearNode->addChild(transform);
+		osg::ref_ptr<osg::ClearNode> clearNode = new osg::ClearNode;
+		clearNode->setRequiresClear(false);
+		clearNode->addChild(transform);
 
-        return clearNode;
-    }
+		return clearNode;
+	}
 }
 
 osg::ref_ptr<osg::Group> CoreGraph::initEdgeLabels()
@@ -183,13 +183,13 @@ osg::ref_ptr<osg::Group> CoreGraph::initEdgeLabels()
 
 	QMap<qlonglong, osg::ref_ptr<Data::Edge> >::iterator i = in_edges->begin();
 
-	while (i != in_edges->end()) 
+	while (i != in_edges->end())
 	{
 		geode->addDrawable(i.value()->createLabel(i.value()->getName()));
 		i++;
 	}
 
-	osg::ref_ptr<osg::Group> labels = new osg::Group;	
+	osg::ref_ptr<osg::Group> labels = new osg::Group;
 	labels->addChild(geode);
 	labels->setNodeMask(0);
 
@@ -201,7 +201,7 @@ osg::ref_ptr<osg::Group> CoreGraph::initCustomNodes()
 	osg::ref_ptr<osg::Group> customNodes = new osg::Group;
 
 	QLinkedList<osg::ref_ptr<osg::Node> >::const_iterator i = customNodeList.constBegin();
-	while (i != customNodeList.constEnd()) 
+	while (i != customNodeList.constEnd())
 	{
 		customNodes->addChild(*i);
 		++i;
@@ -210,17 +210,17 @@ osg::ref_ptr<osg::Group> CoreGraph::initCustomNodes()
 }
 
 /*!
- * 
- * 
+ *
+ *
  * Zaktualizuje pozicie uzlov a hran na obrazovke.
- * 
+ *
  */
-void CoreGraph::update() 
+void CoreGraph::update()
 {
 	root->removeChildren(customNodesPosition,1);
 
 	synchronize();
-	
+
 	if (!this->nodesFreezed)
 	{
 		float interpolationSpeed = appConf->getValue("Viewer.Display.InterpolationSpeed").toFloat();
@@ -233,17 +233,17 @@ void CoreGraph::update()
 		qmetaNodesGroup->updateNodeCoordinates(1);
 	}
 
-	edgesGroup->updateEdgeCoords();	
+	edgesGroup->updateEdgeCoords();
 	qmetaEdgesGroup->updateEdgeCoords();
 	root->addChild(initCustomNodes());
 
-        //posli layout ostatnym klientom (ak nejaki su)
-        Network::Server *server = Network::Server::getInstance();
-        int time = QTime::currentTime().msec();
-        if (abs(time - prevTime) > 100) {
-            server -> sendLayout();
-            prevTime = time;
-        }
+	//posli layout ostatnym klientom (ak nejaki su)
+	Network::Server *server = Network::Server::getInstance();
+	int time = QTime::currentTime().msec();
+	if (abs(time - prevTime) > 100) {
+		server -> sendLayout();
+		prevTime = time;
+	}
 }
 
 void CoreGraph::synchronize()
@@ -263,7 +263,7 @@ void CoreGraph::setNodeLabelsVisible(bool visible)
 {
 	QMap<qlonglong, osg::ref_ptr<Data::Node> >::const_iterator i = in_nodes->constBegin();
 
-	while (i != in_nodes->constEnd()) 
+	while (i != in_nodes->constEnd())
 	{
 		(*i)->showLabel(visible);
 		++i;
@@ -272,11 +272,11 @@ void CoreGraph::setNodeLabelsVisible(bool visible)
 
 void CoreGraph::reloadConfig()
 {
-	root->setChild(backgroundPosition, createSkyBox());	
+	root->setChild(backgroundPosition, createSkyBox());
 
 	QMap<qlonglong, osg::ref_ptr<Data::Node> >::const_iterator i = in_nodes->constBegin();
 
-	while (i != in_nodes->constEnd()) 
+	while (i != in_nodes->constEnd())
 	{
 		(*i)->reloadConfig();
 		++i;
@@ -287,6 +287,6 @@ void CoreGraph::reloadConfig()
 }
 
 CoreGraph::~CoreGraph(void)
-{	
+{
 	cleanUp();
 }

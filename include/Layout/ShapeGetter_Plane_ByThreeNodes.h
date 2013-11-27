@@ -17,18 +17,18 @@ class ShapeGetter_Plane_ByThreeNodes : public ShapeGetter {
 
 public:
 
-        ShapeGetter_Plane_ByThreeNodes (
-		osg::ref_ptr<Data::Node> node1,
-		osg::ref_ptr<Data::Node> node2,
-		osg::ref_ptr<Data::Node> node3
-	);
+	ShapeGetter_Plane_ByThreeNodes (
+			osg::ref_ptr<Data::Node> node1,
+			osg::ref_ptr<Data::Node> node2,
+			osg::ref_ptr<Data::Node> node3
+			);
 
 	/***/
 	virtual ~ShapeGetter_Plane_ByThreeNodes (void) {};
 
 	virtual QSharedPointer<Shape> getShape (void);
 
-        virtual QSet<Data::Node * > getNodesOfShape();
+	virtual QSet<Data::Node * > getNodesOfShape();
 
 private:
 

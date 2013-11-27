@@ -19,16 +19,16 @@ namespace Layout {
 class ShapeGetter_CylinderSurface_ByCamera : public ShapeGetter
 {
 public:
-    ShapeGetter_CylinderSurface_ByCamera (const QOSG::ViewerQT *viewerWidget, const QSlider &baseRadiusSlider);
+	ShapeGetter_CylinderSurface_ByCamera (const QOSG::ViewerQT *viewerWidget, const QSlider &baseRadiusSlider);
 
-    virtual ~ShapeGetter_CylinderSurface_ByCamera() {}
+	virtual ~ShapeGetter_CylinderSurface_ByCamera() {}
 
-    virtual QSharedPointer<Shape> getShape();
-    virtual QSet<Data::Node *> getNodesOfShape();
+	virtual QSharedPointer<Shape> getShape();
+	virtual QSet<Data::Node *> getNodesOfShape();
 
 private:
-    const QOSG::ViewerQT *mViewerWidget;
-    const QSlider &mBaseRadiusSlider;
+	const QOSG::ViewerQT *mViewerWidget;
+	const QSlider &mBaseRadiusSlider;
 };
 
 } // namespace

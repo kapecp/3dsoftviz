@@ -7,13 +7,13 @@ void GraphMetrics::computeGraphMetrics(Data::Graph * activeGraph)
 
 	int numVertices = activeGraph->getNodes()->size();
 	QVector<QLinkedList<osg::ref_ptr<Data::Node> > >  ** paths;
-	
+
 	paths = new QVector<QLinkedList<osg::ref_ptr<Data::Node> > > * [numVertices]();
 
 	int idx = 0;
 
 	Util::ApplicationConfig * appConf = Util::ApplicationConfig::get();
-    QString regexp = appConf->getValue("Graph.Metrics.Regexp");
+	QString regexp = appConf->getValue("Graph.Metrics.Regexp");
 
 	QRegExp re(regexp);
 	re.setPatternSyntax(QRegExp::Wildcard);
@@ -25,7 +25,7 @@ void GraphMetrics::computeGraphMetrics(Data::Graph * activeGraph)
 
 		// compute node degree
 		float nodeDegree = ((float) i.value()->getEdges()->size()) / (numVertices - 1);
-		i.value()->setNodeDegree(nodeDegree); 
+		i.value()->setNodeDegree(nodeDegree);
 
 		// get all shortest paths
 		DjikstraAlg * alg = new DjikstraAlg(activeGraph);
@@ -43,7 +43,7 @@ void GraphMetrics::computeGraphMetrics(Data::Graph * activeGraph)
 			pathSum += i2.value();
 		}
 
-		if (numVertices == 1) 
+		if (numVertices == 1)
 			numVertices = 2;
 
 		i.value()->setNodeCloseness(((float) pathSum) / (numVertices - 1));
@@ -78,7 +78,7 @@ void GraphMetrics::computeGraphMetrics(Data::Graph * activeGraph)
 	{
 
 		i.next();
-		float sum = 0; 
+		float sum = 0;
 
 		// compute node betweenness
 		for (int x = 0; x < numVertices; x++)

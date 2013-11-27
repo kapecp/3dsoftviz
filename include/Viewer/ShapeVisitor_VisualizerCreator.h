@@ -24,7 +24,7 @@ public:
 	/***/
 	virtual ~ShapeVisitor_VisualizerCreator (void) {};
 
-        osg::ref_ptr<osg::Node> getCreatedVisualizer (void);
+	osg::ref_ptr<osg::Node> getCreatedVisualizer (void);
 
 	/**
 	 * \brief Creates empty OSG group.
@@ -36,10 +36,10 @@ public:
 	 */
 	virtual void visit (Layout::Shape_Composite & shape);
 
-        /**
-         * \brief Creates OSG group containing visualizer for intersection of shapes contained in the composite shape.
-         */
-        virtual void visit (Layout::Shape_Intersection & shape);
+	/**
+		 * \brief Creates OSG group containing visualizer for intersection of shapes contained in the composite shape.
+		 */
+	virtual void visit (Layout::Shape_Intersection & shape);
 
 	/**
 	 * \brief Creates OSG geode visualizing the plane which conforms the plane position and rotation.
@@ -56,19 +56,19 @@ public:
 	 */
 	virtual void visit (Layout::Shape_SphereSurface & shape);
 
-    /**
-     * \brief Creates OSG geode visualizing the cylinder which conforms the cylinder surface center and radius.
-     */
-    virtual void visit(Layout::Shape_CylinderSurface &shape);
+	/**
+	 * \brief Creates OSG geode visualizing the cylinder which conforms the cylinder surface center and radius.
+	 */
+	virtual void visit(Layout::Shape_CylinderSurface &shape);
 
-    /**
-     * \brief Creates OSG geode visualizing the cone which conforms the cone surface center and radius.
-     */
-    virtual void visit(Layout::Shape_ConeSurface &shape);
+	/**
+	 * \brief Creates OSG geode visualizing the cone which conforms the cone surface center and radius.
+	 */
+	virtual void visit(Layout::Shape_ConeSurface &shape);
 
 private: // visitor context
 
-        osg::ref_ptr<osg::Node> createdVisualizer_;
+	osg::ref_ptr<osg::Node> createdVisualizer_;
 
 private: // common visualizers
 
@@ -77,15 +77,15 @@ private: // common visualizers
 	 */
 	void visualizeSphere (Layout::Shape_AbstractSphere & abstractSphere);
 
-    /**
-     * \brief Creates cylinder visualizer (used to visualize CylinderSurface).
-     */
-    void visualizeCylinder(Layout::Shape_CylinderSurface &cylinder);
+	/**
+	 * \brief Creates cylinder visualizer (used to visualize CylinderSurface).
+	 */
+	void visualizeCylinder(Layout::Shape_CylinderSurface &cylinder);
 
-    /**
-     * \brief Creates cone visualizer (used to visualize ConeSurface).
-     */
-    void visualizeCone(Layout::Shape_ConeSurface &cone);
+	/**
+	 * \brief Creates cone visualizer (used to visualize ConeSurface).
+	 */
+	void visualizeCone(Layout::Shape_ConeSurface &cone);
 
 private: // positions and distances
 
@@ -93,15 +93,15 @@ private: // positions and distances
 	 * \brief Multiplies the distance by the current graph scale.
 	 */
 	float getScaledDistance (
-		const float & distance
-	);
+			const float & distance
+			);
 
 	/**
 	 * \brief Multiplies the position by the current graph scale.
 	 */
 	osg::Vec3f getScaledPosition (
-		const osg::Vec3f & position
-	);
+			const osg::Vec3f & position
+			);
 
 	/**
 	 * \brief Gets current graph scale as set in the application configuration.

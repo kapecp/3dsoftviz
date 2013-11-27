@@ -22,55 +22,55 @@ void AdapterWidget::keyPressEvent( QKeyEvent* event )
 	switch(event->key())
 	{
 	case(Qt::Key_Up):
-		{
-			_gw->getEventQueue()->keyPress(osgGA::GUIEventAdapter::KEY_Up); 
-			break;
-		}
+	{
+		_gw->getEventQueue()->keyPress(osgGA::GUIEventAdapter::KEY_Up);
+		break;
+	}
 	case(Qt::Key_Down):
-		{
-			_gw->getEventQueue()->keyPress(osgGA::GUIEventAdapter::KEY_Down );
-			break;
-		}
+	{
+		_gw->getEventQueue()->keyPress(osgGA::GUIEventAdapter::KEY_Down );
+		break;
+	}
 	case(Qt::Key_Right):
-		{
-			_gw->getEventQueue()->keyPress(osgGA::GUIEventAdapter::KEY_Right );
-			break;
-		}
+	{
+		_gw->getEventQueue()->keyPress(osgGA::GUIEventAdapter::KEY_Right );
+		break;
+	}
 	case(Qt::Key_Left):
-		{
-			_gw->getEventQueue()->keyPress(osgGA::GUIEventAdapter::KEY_Left );
-			break;
-		}
+	{
+		_gw->getEventQueue()->keyPress(osgGA::GUIEventAdapter::KEY_Left );
+		break;
+	}
 	case(Qt::Key_PageDown):
-		{
-			_gw->getEventQueue()->keyPress(osgGA::GUIEventAdapter::KEY_Page_Down );
-			break;
-		}
+	{
+		_gw->getEventQueue()->keyPress(osgGA::GUIEventAdapter::KEY_Page_Down );
+		break;
+	}
 	case(Qt::Key_PageUp):
-		{
-			_gw->getEventQueue()->keyPress(osgGA::GUIEventAdapter::KEY_Page_Up );
-			break;
-		}
+	{
+		_gw->getEventQueue()->keyPress(osgGA::GUIEventAdapter::KEY_Page_Up );
+		break;
+	}
 	case(Qt::Key_Alt):
-		{
-			_gw->getEventQueue()->keyPress(osgGA::GUIEventAdapter::KEY_Alt_L );
-			break;
-		}
+	{
+		_gw->getEventQueue()->keyPress(osgGA::GUIEventAdapter::KEY_Alt_L );
+		break;
+	}
 	case(Qt::Key_Control):
-		{
-			_gw->getEventQueue()->keyPress(osgGA::GUIEventAdapter::KEY_Control_L );
-			break;
-		}
+	{
+		_gw->getEventQueue()->keyPress(osgGA::GUIEventAdapter::KEY_Control_L );
+		break;
+	}
 	case(Qt::Key_Shift):
-		{
-			_gw->getEventQueue()->keyPress(osgGA::GUIEventAdapter::KEY_Shift_L );
-			break;
-		}
+	{
+		_gw->getEventQueue()->keyPress(osgGA::GUIEventAdapter::KEY_Shift_L );
+		break;
+	}
 	default:
-		{
-			_gw->getEventQueue()->keyPress( (osgGA::GUIEventAdapter::KeySymbol) *(event->text().toAscii().data() ) );
-			break;
-		}
+	{
+		_gw->getEventQueue()->keyPress( (osgGA::GUIEventAdapter::KeySymbol) *(event->text().toAscii().data() ) );
+		break;
+	}
 	}
 }
 
@@ -80,63 +80,63 @@ void AdapterWidget::keyReleaseEvent( QKeyEvent* event )
 	switch(event->key())
 	{
 	case(Qt::Key_Up):
-		{
-			_gw->getEventQueue()->keyRelease(osgGA::GUIEventAdapter::KEY_Up); 
-			break;
-		}
+	{
+		_gw->getEventQueue()->keyRelease(osgGA::GUIEventAdapter::KEY_Up);
+		break;
+	}
 	case(Qt::Key_Down):
-		{
-			_gw->getEventQueue()->keyRelease(osgGA::GUIEventAdapter::KEY_Down );
-			break;
-		}
+	{
+		_gw->getEventQueue()->keyRelease(osgGA::GUIEventAdapter::KEY_Down );
+		break;
+	}
 	case(Qt::Key_Right):
-		{
-			_gw->getEventQueue()->keyRelease(osgGA::GUIEventAdapter::KEY_Right );
-			break;
-		}
+	{
+		_gw->getEventQueue()->keyRelease(osgGA::GUIEventAdapter::KEY_Right );
+		break;
+	}
 	case(Qt::Key_Left):
-		{
-			_gw->getEventQueue()->keyRelease(osgGA::GUIEventAdapter::KEY_Left );
-			break;
-		}
+	{
+		_gw->getEventQueue()->keyRelease(osgGA::GUIEventAdapter::KEY_Left );
+		break;
+	}
 	case(Qt::Key_PageDown):
-		{
-			_gw->getEventQueue()->keyRelease(osgGA::GUIEventAdapter::KEY_Page_Down );
-			break;
-		} 
+	{
+		_gw->getEventQueue()->keyRelease(osgGA::GUIEventAdapter::KEY_Page_Down );
+		break;
+	}
 	case(Qt::Key_PageUp):
-		{
-			_gw->getEventQueue()->keyRelease(osgGA::GUIEventAdapter::KEY_Page_Up );
-			break;
-		}
+	{
+		_gw->getEventQueue()->keyRelease(osgGA::GUIEventAdapter::KEY_Page_Up );
+		break;
+	}
 	case(Qt::Key_Alt):
-		{
-			_gw->getEventQueue()->keyRelease(osgGA::GUIEventAdapter::KEY_Alt_L );
-			break;
-		}
+	{
+		_gw->getEventQueue()->keyRelease(osgGA::GUIEventAdapter::KEY_Alt_L );
+		break;
+	}
 	case(Qt::Key_Control):
-		{
-			_gw->getEventQueue()->keyRelease(osgGA::GUIEventAdapter::KEY_Control_L );
-			break;
-		}
+	{
+		_gw->getEventQueue()->keyRelease(osgGA::GUIEventAdapter::KEY_Control_L );
+		break;
+	}
 	case(Qt::Key_Shift):
-		{
-			_gw->getEventQueue()->keyRelease(osgGA::GUIEventAdapter::KEY_Shift_L );
-			break;
-		}
+	{
+		_gw->getEventQueue()->keyRelease(osgGA::GUIEventAdapter::KEY_Shift_L );
+		break;
+	}
 	case(Qt::Key_AsciiTilde):
-		{	
-			CoreWindow * coreWindow = dynamic_cast<CoreWindow *>(parent());
-			if (coreWindow)
-			{
-				coreWindow->addSQLInput();
-			}
-		}
-	default:
+	{
+		CoreWindow * coreWindow = dynamic_cast<CoreWindow *>(parent());
+		if (coreWindow)
 		{
-			_gw->getEventQueue()->keyRelease( (osgGA::GUIEventAdapter::KeySymbol) *(event->text().toAscii().data() ) );
-			break;
+			coreWindow->addSQLInput();
 		}
+	}
+	default:
+	{
+		_gw->getEventQueue()->keyRelease( (osgGA::GUIEventAdapter::KeySymbol) *(event->text().toAscii().data() ) );
+		break;
+	}
 	}
 }
 
@@ -152,7 +152,7 @@ void AdapterWidget::mousePressEvent( QMouseEvent* event )
 	case(Qt::NoButton): button = 0; break;
 	default: button = 0; break;
 	}
-	_gw->getEventQueue()->mouseButtonPress(event->x(), event->y(), button);	
+	_gw->getEventQueue()->mouseButtonPress(event->x(), event->y(), button);
 }
 
 void AdapterWidget::mouseDoubleClickEvent ( QMouseEvent * event )
@@ -168,7 +168,7 @@ void AdapterWidget::mouseDoubleClickEvent ( QMouseEvent * event )
 	default: button = 0; break;
 	}
 	_gw->getEventQueue()->mouseDoubleButtonPress(event->x(), event->y(), button);
-	
+
 }
 
 void AdapterWidget::mouseReleaseEvent( QMouseEvent* event )
@@ -193,8 +193,8 @@ void AdapterWidget::mouseMoveEvent( QMouseEvent* event )
 }
 
 void AdapterWidget::wheelEvent(QWheelEvent *event)
-{    
+{
 	//odchytavanie udalosti mysi
-	_gw->getEventQueue()->mouseScroll((event->delta()>0) ?             
-		osgGA::GUIEventAdapter::SCROLL_UP : osgGA::GUIEventAdapter::SCROLL_DOWN);
+	_gw->getEventQueue()->mouseScroll((event->delta()>0) ?
+										  osgGA::GUIEventAdapter::SCROLL_UP : osgGA::GUIEventAdapter::SCROLL_DOWN);
 }
