@@ -44,7 +44,7 @@ bool GraphSerializer::edgeExists(Data::Edge * e)
 	for (unsigned int x = 0; x < edges->size(); x++)
 	{
 		if (edges->at(x)->getSrcNode()->getId() == e->getSrcNode()->getId()
-			&& edges->at(x)->getDstNode()->getId() == e->getDstNode()->getId())
+				&& edges->at(x)->getDstNode()->getId() == e->getDstNode()->getId())
 		{
 			return true;
 		}
