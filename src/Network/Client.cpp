@@ -4,8 +4,6 @@
 
 #include "Network/Client.h"
 #include "Network/Helper.h"
-#include "Importer/GraphOperations.h"
-#include "Manager/Manager.h"
 #include "QOSG/CoreWindow.h"
 
 using namespace Network;

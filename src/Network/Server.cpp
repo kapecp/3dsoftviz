@@ -7,9 +7,6 @@
 #include "Data/Graph.h"
 #include "Manager/Manager.h"
 
-#include <QTcpSocket>
-#include <QRegExp>
-
 using namespace Network;
 
 Server * Server::instance;

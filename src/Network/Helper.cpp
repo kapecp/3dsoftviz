@@ -1,10 +1,7 @@
 #include "Network/Helper.h"
 #include "Util/ApplicationConfig.h"
 
-#include <QDebug>
-
 #include <osg/Matrix>
-#include <osgDB/ReadFile>
 #include <osgText/FadeText>
 #include <osg/AutoTransform>
 #include <osg/ShapeDrawable>

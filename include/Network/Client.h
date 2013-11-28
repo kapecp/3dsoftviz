@@ -6,16 +6,15 @@
 #define __3DVisualClient_H__
 
 #include <QTcpSocket>
-#include <QStringList>
 
 #include "Data/Graph.h"
 #include "Viewer/CoreGraph.h"
 #include "Layout/LayoutThread.h"
+#include "Layout/RestrictionRemovalHandler_RestrictionNodesRemover.h"
 #include "Network/ExecutorFactory.h"
 
 #include "osg/PositionAttitudeTransform"
 #include "QtGui/QListWidgetItem"
-#include "Layout/RestrictionRemovalHandler_RestrictionNodesRemover.h"
 
 namespace Network{
 

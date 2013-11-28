@@ -14,10 +14,11 @@
 #include "osg/PositionAttitudeTransform"
 
 #include "Layout/LayoutThread.h"
+#include "Layout/RestrictionRemovalHandler_RestrictionNodesRemover.h"
 #include "Viewer/CoreGraph.h"
 #include "Network/ExecutorFactory.h"
 #include "QOSG/CoreWindow.h"
-#include "Layout/RestrictionRemovalHandler_RestrictionNodesRemover.h"
+
 
 namespace Network {
 
