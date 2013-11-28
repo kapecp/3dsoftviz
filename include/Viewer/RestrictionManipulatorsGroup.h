@@ -10,7 +10,6 @@
 #include <QMap>
 #include <QSharedPointer>
 #include <osgManipulator/Selection>
-#include <osgManipulator/CommandManager>
 #include <osgManipulator/TrackballDragger>
 #include <osg/Switch>
 //-----------------------------------------------------------------------------

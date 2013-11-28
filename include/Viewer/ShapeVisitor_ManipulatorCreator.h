@@ -2,10 +2,7 @@
 #define SHAPEVISITOR_MANIPULATORCREATOR_H
 //-----------------------------------------------------------------------------
 #include "Layout/ShapeVisitor.h"
-#include "Layout/Shape.h"
 //-----------------------------------------------------------------------------
-#include <osg/Node>
-#include <osg/Vec3f>
 #include <osgManipulator/Dragger>
 #include <osgManipulator/TrackballDragger>
 #include <osgManipulator/Selection>

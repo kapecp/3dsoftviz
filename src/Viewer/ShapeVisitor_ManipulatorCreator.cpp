@@ -1,5 +1,5 @@
 #include "Viewer/ShapeVisitor_ManipulatorCreator.h"
-#include <osg/ShapeDrawable>
+
 
 namespace Vwr {
 

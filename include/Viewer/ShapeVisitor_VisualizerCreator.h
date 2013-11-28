@@ -2,7 +2,6 @@
 #define Viewer_ShapeVisitor_VisualizerCreator_H
 //-----------------------------------------------------------------------------
 #include "Layout/ShapeVisitor.h"
-#include "Layout/Shape.h"
 //-----------------------------------------------------------------------------
 #include <osg/Node>
 #include <osg/Vec3f>

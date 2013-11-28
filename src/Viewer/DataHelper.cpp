@@ -1,5 +1,4 @@
 #include "Viewer/DataHelper.h"
-#include <QLinkedList>
 
 using namespace Vwr;
 using namespace Data;

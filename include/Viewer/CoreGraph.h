@@ -8,20 +8,13 @@
 #include <math.h>
 
 #include <osg/ref_ptr>
-#include <osg/CullFace>
-#include <osg/TexMat>
-#include <osg/TexGen>
 #include <osg/Depth>
-#include <osg/TextureCubeMap>
-#include <osg/AutoTransform>
 
 #include <QMap>
 #include <QLinkedList>
 #include <QSharedPointer>
 
 #include "Viewer/PerlinNoiseTextureGenerator.h"
-#include "Viewer/CameraManipulator.h"
-#include "Viewer/DataHelper.h"
 #include "Viewer/SkyTransform.h"
 #include "Viewer/TextureWrapper.h"
 #include "Viewer/EdgeGroup.h"

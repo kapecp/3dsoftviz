@@ -7,7 +7,6 @@
 
 #include <osg/ref_ptr>
 #include <osg/Group>
-#include <osg/AutoTransform>
 
 #include <QMap>
 

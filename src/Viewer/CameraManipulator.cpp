@@ -1,16 +1,11 @@
-#include "Viewer/CameraManipulator.h"
-#include <osg/Quat>
 #include <osg/Notify>
 #include <osg/BoundsChecking>
-#include <osgViewer/Viewer>
-#include "Manager/Manager.h"
 
+#include "Manager/Manager.h"
+#include "Viewer/CameraManipulator.h"
 #include "Network/Server.h"
 #include "Network/Client.h"
 
-//using namespace osg;
-//using namespace osgGA;
-//using namespace Vwr;
 
 double Vwr::CameraManipulator::EYE_MOVEMENT_SPEED;
 double Vwr::CameraManipulator::TARGET_MOVEMENT_SPEED;

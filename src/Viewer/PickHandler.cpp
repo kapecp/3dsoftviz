@@ -5,7 +5,6 @@
 #include <osg/Projection>
 
 #include "Manager/Manager.h"
-#include "Math/CameraMath.h"
 #include "Network/Client.h"
 #include "Network/Server.h"
 

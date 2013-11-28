@@ -1,5 +1,4 @@
 #include "Viewer/PerlinNoiseTextureGenerator.h"
-#include <osgDB/WriteFile>
 #include <iostream>
 #include <noise.h>
 #include <Noise/noiseutils.h>

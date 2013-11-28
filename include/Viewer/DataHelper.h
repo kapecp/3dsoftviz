@@ -11,7 +11,6 @@
 #include <osg/Geode>
 #include <osg/ShapeDrawable>
 #include "osg/Texture2D"
-#include "osgDB/ReadFile"
 #include <QString>
 
 #include "Data/Node.h"

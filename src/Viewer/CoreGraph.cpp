@@ -1,8 +1,8 @@
 #include "Viewer/CoreGraph.h"
 #include "Viewer/SkyBox.h"
-#include <osgUtil/Optimizer>
-
 #include "Network/Server.h"
+
+#include <osgUtil/Optimizer>
 
 using namespace Vwr;
 
