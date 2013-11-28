@@ -5,23 +5,14 @@
 #ifndef Manager_MANAGER_DEF
 #define Manager_MANAGER_DEF 1
 
-#include <vector>
 #include <QMap>
 #include <QString>
-#include <QtXml/QDomElement>
 #include <QFile>
 #include <qfileinfo.h>
 
 #include "Core/Core.h"
 #include "Model/DB.h"
 #include "Data/Graph.h"
-//#include "Layout/FRAlgorithm.h"
-//#include "Layout/LayoutThread.h"
-//#include "QOSG/CoreWindow.h"
-//#include "Viewer/CoreGraph.h"
-//#include "QOSG/MessageWindows.h"
-
-//#include "Network/Server.h"
 
 namespace Manager
 {

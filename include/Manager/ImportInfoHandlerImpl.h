@@ -4,6 +4,8 @@
 #include "Importer/ImportInfoHandler.h"
 //-----------------------------------------------------------------------------
 
+#include <QString>
+
 namespace Manager {
 
 /**

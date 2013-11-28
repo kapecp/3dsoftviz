@@ -5,14 +5,10 @@
 
 #include "Manager/Manager.h"
 #include "Model/GraphDAO.h"
-//#include "Util/ApplicationConfig.h"
-//#include "Math/GraphMetrics.h"
 #include "Importer/ImporterContext.h"
 #include "Importer/ImporterFactory.h"
 #include "Importer/StreamImporter.h"
-
 #include "Manager/ImportInfoHandlerImpl.h"
-
 #include "Network/Server.h"
 
 #include <memory>
