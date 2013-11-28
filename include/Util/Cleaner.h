@@ -9,9 +9,6 @@
 #ifndef UTIL_CLEANER_DEF
 #define UTIL_CLEANER_DEF 1
 
-#include "QOSG/CoreWindow.h"
-
-
 /**
 *  \class MessageWindows
 *

@@ -1,8 +1,6 @@
 #ifndef UTIL_ELEMENT_SELECTOR
 #define UTIL_ELEMENT_SELECTOR 1
 
-#include "Viewer/NodeGroup.h"
-#include "Viewer/EdgeGroup.h"
 #include "Viewer/PickHandler.h"
 
 namespace Util
