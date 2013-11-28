@@ -24,6 +24,10 @@ void QOpenCV::FaceRecognitionThread::setWindow(FaceRecognitionWindow *mFaceRecog
 
 void QOpenCV::FaceRecognitionThread::run()
 {
+	if (!this->mCapVideo->getCapture()){
+		qDebug() << "Camera is not opened";
+		return;
+	}
 	cv::Mat image;
 	while(!cancel) {
 		image=this->mCapVideo->queryFrame();

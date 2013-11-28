@@ -41,3 +41,8 @@ void OpenCV::CapVideo::createGray()
 {
 	cvtColor(this->frame, this->grayframe, CV_BGR2GRAY);
 }
+
+CvCapture *OpenCV::CapVideo::getCapture()
+{
+	return this->capture;
+}

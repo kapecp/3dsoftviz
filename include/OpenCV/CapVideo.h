@@ -66,6 +66,13 @@ public:
 		 */
 	cv::Mat getFrame();
 
+	/**
+		 * @author Autor: Marek Jakab
+		 * @brief getCapture Returns capture
+		 * @return CvCapture
+		 */
+	CvCapture *getCapture();
+
 private:
 	int device_id;
 	cv::Mat frame;
