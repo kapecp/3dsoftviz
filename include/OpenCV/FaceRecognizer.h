@@ -60,6 +60,14 @@ public:
 		 */
 	cv::Point2i getEyesCoords();
 
+	/**
+		 * @author Autor: Marek Jakab
+		 * @brief OpenCV::FaceRecognizer::getHeadDistance
+		 * @param screenWidth screen resolution - x axis
+		 * @return float head distance
+		 */
+	float getHeadDistance(int screenWidth);
+
 	bool detected;
 
 private:

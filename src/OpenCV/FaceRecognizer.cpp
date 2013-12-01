@@ -48,3 +48,15 @@ cv::Point2i OpenCV::FaceRecognizer::getEyesCoords()
 {
 	return this->eyesCoord;
 }
+
+float OpenCV::FaceRecognizer::getHeadDistance(int screenWidth)
+{
+	if (this->faces.size()>0)
+	{
+		Rect face = this->faces[0];
+		// 1.0 when the face width is 3.5 times smaller than frame
+		return ((float)screenWidth/(float)face.width)/3.5f;
+	}
+	return 0.0f;
+}
+

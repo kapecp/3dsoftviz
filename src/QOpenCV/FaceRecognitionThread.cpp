@@ -41,7 +41,10 @@ void QOpenCV::FaceRecognitionThread::run()
 		{
 			emit this->sendEyesCoords(-this->mFaceRecognizer->getEyesCoords().x,
 									  -this->mFaceRecognizer->getEyesCoords().y,
-									  0.0 );
+									  -this->mFaceRecognizer->getHeadDistance(
+										  cvGetCaptureProperty(
+											  this->mCapVideo->getCapture(),
+											  CV_CAP_PROP_FRAME_WIDTH )));
 		}
 	}
 }
