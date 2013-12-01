@@ -9,7 +9,6 @@
 #include "Data/Graph.h"
 #include "Model/GraphDAO.h"
 
-#include <QtSql>
 #include <QDebug>
 
 namespace Model {

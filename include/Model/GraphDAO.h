@@ -11,7 +11,6 @@
 
 #include <QString>
 #include <QMap>
-#include <QtSql>
 #include <QDebug>
 
 namespace Data

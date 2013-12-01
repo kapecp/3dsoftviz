@@ -6,11 +6,9 @@
 #define MODEL_GRAPHLAYOUTDAO_DEF 1
 
 #include "Data/GraphLayout.h"
-#include "Data/Graph.h"
 
 #include <QString>
 #include <QMap>
-#include <QtSql>
 #include <QDebug>
 
 namespace Data
