@@ -3,7 +3,6 @@
 #include <osg/Vec3d>
 #include <osg/ref_ptr>
 #include <QVector>
-#include <QLinkedList>
 #include "Data/Node.h"
 
 class CameraMath

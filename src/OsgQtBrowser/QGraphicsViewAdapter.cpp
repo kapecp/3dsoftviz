@@ -16,7 +16,7 @@
 
 #include <QtOpenGL/QGLWidget>
 #include <osgGA/GUIEventAdapter>
-#include <osg/io_utils>
+
 
 #define MYQKEYEVENT 2000
 #define MYQPOINTEREVENT 2001

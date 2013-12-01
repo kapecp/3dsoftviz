@@ -17,13 +17,11 @@
 #include <osg/Image>
 #include <osg/observer_ptr>
 
-#include <QtWebKit/QWebSettings>
-#include <QtWebKit/QtWebKit>
 #include <QtGui/QGraphicsScene>
 #include <QtGui/QGraphicsView>
 #include <QtGui/QApplication>
 #include <QtGui/QPainter>
-#include <QtGui/QtEvents>
+
 
 extern QCoreApplication* getOrCreateQApplication();
 

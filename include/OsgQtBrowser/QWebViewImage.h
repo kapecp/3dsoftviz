@@ -15,7 +15,6 @@
 #define QWEBVIEWIMAGE
 
 #include <osgWidget/Browser>
-#include <QtNetwork/QNetworkProxy>
 
 #include "OsgQtBrowser/QGraphicsViewAdapter.h"
 
@@ -60,7 +59,8 @@ public:
 	QWebPage* getQWebPage() { return _webPage; }
 
 	/**
-		*  \fn inline public  getQGraphicsViewAdapter
+		*  \fn inline public  get
+		*
 		*  \brief
 		*  \return QGraphicsViewAdapter *
 		*/
