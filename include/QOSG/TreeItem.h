@@ -47,7 +47,6 @@
 #include <QList>
 #include <QVariant>
 
-#include "Manager/Manager.h"
 
 namespace QOSG
 {

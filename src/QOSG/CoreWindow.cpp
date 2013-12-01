@@ -6,7 +6,7 @@
 #include "Layout/ShapeGetter_Sphere_ByTwoNodes.h"
 #include "Layout/ShapeGetter_ConeSurface_ByCamera.h"
 #include "Layout/ShapeGetter_Plane_ByThreeNodes.h"
-#include "Layout/RestrictionRemovalHandler_RestrictionNodesRemover.h"
+
 
 #include "Importer/GraphOperations.h"
 

@@ -11,7 +11,7 @@
 ///////////////////////////////////////////////////////////
 
 #include "QOSG/CheckBoxList.h"
-#include <QtGui>
+
 
 using namespace QOSG;
 

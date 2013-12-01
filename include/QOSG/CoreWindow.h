@@ -18,8 +18,6 @@
 #include <QAction>
 #include <QMenu>
 #include <QMenuBar>
-#include <QStatusBar>
-#include <QTextEdit>
 #include <QtGui>
 #include <QLineEdit>
 
@@ -29,7 +27,6 @@
 #include "QOSG/OptionsWindow.h"
 #include "QOSG/LoadGraphWindow.h"
 #include "Viewer/CoreGraph.h"
-#include "QOSG/CheckBoxList.h"
 #include "QOSG/ViewerQT.h"
 #include "Layout/LayoutThread.h"
 #include "Manager/Manager.h"

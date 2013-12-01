@@ -50,7 +50,6 @@ models.
 
 #include <QtGui>
 
-#include "QOSG/TreeItem.h"
 #include "QOSG/TreeModel.h"
 
 using namespace QOSG;

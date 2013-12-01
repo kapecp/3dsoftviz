@@ -12,7 +12,6 @@
 #include "Util/ApplicationConfig.h"
 #include "Viewer/PickHandler.h"
 
-#include "Viewer/CameraManipulator.h"
 
 /*!
 * \brief
