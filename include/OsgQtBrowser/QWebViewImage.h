@@ -16,7 +16,7 @@
 
 #include <osgWidget/Browser>
 #include <QtWebKit/QWebSettings>
- #include <QtWebKit/QtWebKit>
+#include <QtWebKit/QtWebKit>
 #include "OsgQtBrowser/QGraphicsViewAdapter.h"
 
 /**
@@ -30,114 +30,114 @@ class QWebViewImage : public osgWidget::BrowserImage
 public:
 
 
-    /**
-        *  \fn public constructor  QWebViewImage
-        *  \brief
-        */
-    QWebViewImage();
+	/**
+		*  \fn public constructor  QWebViewImage
+		*  \brief
+		*/
+	QWebViewImage();
 
 
-    /**
-        *  \fn public virtual  navigateTo
-        *  \brief
-        *  \param [in]       url const std::string &
-        */
-    virtual void navigateTo(const std::string& url);
+	/**
+		*  \fn public virtual  navigateTo
+		*  \brief
+		*  \param [in]       url const std::string &
+		*/
+	virtual void navigateTo(const std::string& url);
 
 
-    /**
-        *  \fn inline public  getQWebView
-        *  \brief
-        *  \return QWebView *
-        */
-    QWebView* getQWebView() { return _webView; }
+	/**
+		*  \fn inline public  getQWebView
+		*  \brief
+		*  \return QWebView *
+		*/
+	QWebView* getQWebView() { return _webView; }
 
-    /**
-        *  \fn inline public  getQWebPage
-        *  \brief
-        *  \return QWebPage *
-        */
-    QWebPage* getQWebPage() { return _webPage; }
+	/**
+		*  \fn inline public  getQWebPage
+		*  \brief
+		*  \return QWebPage *
+		*/
+	QWebPage* getQWebPage() { return _webPage; }
 
-    /**
-        *  \fn inline public  get
-        *
-        *  \brief
-        *  \return QGraphicsViewAdapter *
-        */
-    QGraphicsViewAdapter* getQGraphicsViewAdapter() { return _adapter; }
-
-
-    /**
-        *  \fn public  focusBrowser
-        *  \brief
-        *  \param [in]       focus bool
-        */
-    void focusBrowser(bool focus);
+	/**
+		*  \fn inline public  get
+		*
+		*  \brief
+		*  \return QGraphicsViewAdapter *
+		*/
+	QGraphicsViewAdapter* getQGraphicsViewAdapter() { return _adapter; }
 
 
-    /**
-        *  \fn public  clearWriteBuffer
-        *  \brief
-        */
-    void clearWriteBuffer();
+	/**
+		*  \fn public  focusBrowser
+		*  \brief
+		*  \param [in]       focus bool
+		*/
+	void focusBrowser(bool focus);
 
 
-    /**
-        *  \fn public  render
-        *  \brief
-        */
-    void render();
+	/**
+		*  \fn public  clearWriteBuffer
+		*  \brief
+		*/
+	void clearWriteBuffer();
 
 
-    /**
-        *  \fn public virtual  setFrameLastRendered
-        *  \brief
-        *  \param [in]       frameStamp const osg::FrameStamp *
-        */
-    virtual void setFrameLastRendered(const osg::FrameStamp* frameStamp);
+	/**
+		*  \fn public  render
+		*  \brief
+		*/
+	void render();
 
 
-    /**
-        *  \fn public virtual  sendPointerEvent
-        *  \brief
-        *  \param [in]       x int
-        *  \param [in]       y int
-        *  \param [in]       buttonMask int
-        *  \return bool
-        */
-    virtual bool sendPointerEvent(int x, int y, int buttonMask);
+	/**
+		*  \fn public virtual  setFrameLastRendered
+		*  \brief
+		*  \param [in]       frameStamp const osg::FrameStamp *
+		*/
+	virtual void setFrameLastRendered(const osg::FrameStamp* frameStamp);
 
 
-    /**
-        *  \fn public virtual  sendKeyEvent
-        *  \brief
-        *  \param [in]       key int
-        *  \param [in]       keyDown bool
-        *  \return bool
-        */
-    virtual bool sendKeyEvent(int key, bool keyDown);
+	/**
+		*  \fn public virtual  sendPointerEvent
+		*  \brief
+		*  \param [in]       x int
+		*  \param [in]       y int
+		*  \param [in]       buttonMask int
+		*  \return bool
+		*/
+	virtual bool sendPointerEvent(int x, int y, int buttonMask);
+
+
+	/**
+		*  \fn public virtual  sendKeyEvent
+		*  \brief
+		*  \param [in]       key int
+		*  \param [in]       keyDown bool
+		*  \return bool
+		*/
+	virtual bool sendKeyEvent(int key, bool keyDown);
 
 protected:
 
 
-    /**
-        *  QPointer<QGraphicsViewAdapter> _adapter
-        *  \brief
-        */
-    QPointer<QGraphicsViewAdapter>  _adapter;
+	/**
+		*  QPointer<QGraphicsViewAdapter> _adapter
+		*  \brief
+		*/
+	QPointer<QGraphicsViewAdapter>  _adapter;
 
-    /**
-        *  QPointer<QWebView> _webView
-        *  \brief
-        */
-    QPointer<QWebView>              _webView;
+	/**
+		*  QPointer<QWebView> _webView
+		*  \brief
+		*/
+	QPointer<QWebView>              _webView;
 
-    /**
-        *  QPointer<QWebPage> _webPage
-        *  \brief
-        */
-    QPointer<QWebPage>              _webPage;
+	/**
+		*  QPointer<QWebPage> _webPage
+		*  \brief
+		*/
+	QPointer<QWebPage>              _webPage;
 };
 
 #endif
