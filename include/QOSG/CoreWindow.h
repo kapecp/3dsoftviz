@@ -284,6 +284,7 @@ public slots:
 	void start_server();
 	void start_client();
 	void send_message();
+	void create_facewindow();
 
 	void toggleSpyWatch();
 	void toggleAttention();
@@ -504,6 +505,8 @@ private:
 		*  \brief Action for removing Nodes and Edges
 		*/
 	QPushButton * remove_all;
+
+	QPushButton * b_start_face;
 
 	/**
 		*  QAction * load

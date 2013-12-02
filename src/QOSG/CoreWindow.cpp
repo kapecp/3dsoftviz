@@ -10,6 +10,8 @@
 
 #include "Importer/GraphOperations.h"
 
+#include "OpenCV/OpenCVCore.h"
+
 using namespace QOSG;
 
 CoreWindow::CoreWindow(QWidget *parent, Vwr::CoreGraph* coreGraph, QApplication* app, Layout::LayoutThread * thread ) : QMainWindow(parent)
@@ -274,6 +276,10 @@ void CoreWindow::createActions()
 	b_send_message->setText("Send");
 	connect(b_send_message, SIGNAL(clicked()), this, SLOT(send_message()));
 
+    b_start_face = new QPushButton();
+    b_start_face->setText("Face Recognition");
+    connect(b_start_face, SIGNAL(clicked()), this, SLOT(create_facewindow()));
+
 	chb_center = new QCheckBox("&Center");
 	connect(chb_center, SIGNAL(clicked()), this, SLOT(toggleSpyWatch()));
 
@@ -502,7 +508,10 @@ void CoreWindow::createCollaborationToolBar() {
     frame->layout()->setAlignment(Qt::AlignHCenter);
     frame->layout()->addWidget(sl_avatarScale);
     toolBar->addWidget(frame);
-
+    #ifdef OPENCV_FOUND
+    toolBar->addSeparator();
+    toolBar->addWidget(b_start_face);
+    #endif
 
     addToolBar(Qt::RightToolBarArea,toolBar);
     toolBar->setMaximumHeight(400);
@@ -1656,6 +1665,11 @@ void CoreWindow::start_client()
 void CoreWindow::send_message()
 {
     client->send_message(le_message->text());
+}
+
+void CoreWindow::create_facewindow()
+{
+    OpenCV::OpenCVCore::getInstance(NULL)->faceRecognition();
 }
 
 void CoreWindow::toggleSpyWatch()

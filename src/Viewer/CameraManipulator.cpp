@@ -296,12 +296,12 @@ void Vwr::CameraManipulator::setByMatrix(const osg::Matrixd& matrix)
 
 osg::Matrixd Vwr::CameraManipulator::getMatrix() const
 {
-	return osg::Matrixd::translate(0.0,0.0,_distance)*osg::Matrixd::rotate(_rotation)*osg::Matrixd::translate(_center);
+	return osg::Matrixd::translate(0.0,0.0,_distance)*osg::Matrixd::rotate(_rotation*_rotationHead)*osg::Matrixd::translate(_center);
 }
 
 osg::Matrixd Vwr::CameraManipulator::getInverseMatrix() const
 {
-	return osg::Matrixd::translate(-_center)*osg::Matrixd::rotate(_rotation.inverse())*osg::Matrixd::translate(0.0,0.0,-_distance);
+	return osg::Matrixd::translate(-_center)*osg::Matrixd::rotate((_rotation*_rotationHead).inverse())*osg::Matrixd::translate(0.0,0.0,-_distance);
 }
 
 void Vwr::CameraManipulator::computePosition(const osg::Vec3& eye,const osg::Vec3& center,const osg::Vec3& up)
@@ -445,7 +445,6 @@ bool Vwr::CameraManipulator::calcMovement()
 	}
 	else if (buttonMask==GUIEventAdapter::SCROLL)
 	{
-
 		// zoom model.
 
 		float fd = _distance;
@@ -1026,6 +1025,41 @@ void Vwr::CameraManipulator::computeViewMetrics(osgViewer::Viewer* viewer, std::
 	}
 
 	cout << "Currently visible: " << cnt << " nodes\n";
+}
+
+/*
+ * Compute both horizontal & vertical rotation according head translation.
+ * Result rotation is in _rotationHead quaternion.
+ * ! distance is not implemented yet
+ */
+void Vwr::CameraManipulator::setRotationHead(float x, float y, float /*distance*/)
+{
+
+	osg::Vec3	axis;
+	float	angle;
+	double	throwScale;
+
+	if ( (-100.0 <= x && x <= 100.0) && (-100.0 <= y && y <= 100.0)){
+
+		throwScale =  (_thrown && _ga_t0.valid() && _ga_t1.valid()) ?
+					_delta_frame_time / (_ga_t0->getTime() - _ga_t1->getTime()) :
+					1.0;
+
+		// both rotation must be separated
+		// horizontal rotation
+		trackball(axis,angle, x/100, 0.0, 0.0, 0.0);
+		osg::Quat Xnew_rotate(angle * throwScale,axis);
+
+		// vertical rotation
+		trackball(axis,angle,0.0, y/100, 0.0, 0.0);
+		osg::Quat Ynew_rotate(angle * throwScale,axis);
+
+		// both rotation
+		_rotationHead = Xnew_rotate*Ynew_rotate;
+	}
+	else{
+		qDebug() << "Warning: setRotationHead(): wrong parameters";
+	}
 }
 
 } // namespace

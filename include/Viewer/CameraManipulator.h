@@ -19,6 +19,7 @@
 #include <osgGA/GUIActionAdapter>
 #include <osg/Quat>
 #include <osgViewer/Viewer>
+#include <QObject>
 
 #include "Util/ApplicationConfig.h"
 #include "Data/Node.h"
@@ -39,8 +40,9 @@ class CoreGraph;
 	*
 	*	This class is basically extended TrackballManipulator class with new functionality.
 	*/
-class CameraManipulator : public KeySwitchMatrixManipulator
+class CameraManipulator : public QObject, public KeySwitchMatrixManipulator
 {
+	Q_OBJECT
 public:
 	CameraManipulator(Vwr::CoreGraph * coreGraph);
 
@@ -152,6 +154,17 @@ public:
 
 	void setNewPosition(osg::Vec3d cameraTargetPoint, osg::Vec3d cameraInterestPoint, std::list<osg::ref_ptr<Data::Node> > selectedCluster, std::list<osg::ref_ptr<Data::Edge> > selectedEdges);
 
+public slots:
+
+	/**
+		 * @author Autor: David Durcak
+		 * @brief Set _rotationHead quaternion to rotate camera according head
+		 * ! distance is not implemented yet
+		 * @param x % distance from middle on horizontal axis
+		 * @param y % distance from middle on vertical axis
+		 */
+	void setRotationHead(float x, float y, float distance);
+
 protected:
 
 	virtual ~CameraManipulator();
@@ -245,6 +258,12 @@ protected:
 		*  \brief camera rotation
 		*/
 	osg::Quat    _rotation;
+
+	/**
+		*  osg::Quat _rotationHead
+		*  \brief another camera rotation according user head
+		*/
+	osg::Quat    _rotationHead;
 
 	/**
 		*  double _distance

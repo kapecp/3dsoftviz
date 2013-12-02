@@ -56,13 +56,14 @@ if( USE_STRICT_COMPILE_WARNINGS )
 	endif()
 endif()
 
+
 # Default build type
 if( NOT CMAKE_BUILD_TYPE )
 	set( CMAKE_BUILD_TYPE "MinSizeRel" CACHE STRING "" FORCE )
 #	set( CMAKE_BUILD_TYPE "Debug" CACHE STRING "" FORCE )
 endif()
 
-# Default install prefix
+
 if( CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT )
  	set( CMAKE_INSTALL_PREFIX ${CMAKE_CURRENT_SOURCE_DIR}/_install CACHE PATH "Installation Destination" FORCE )
 endif()
@@ -77,6 +78,7 @@ set( CMAKE_INSTALL_NAME_DIR @executable_path/../lib CACHE STRING "" FORCE )
 # --------------
 # Build settings - COTIRE module
 # --------------
+
 include(cotire)
 
 # ------------
@@ -148,7 +150,6 @@ set(QT_USE_QTXML 1)
 set(QT_USE_QTNETWORK 1)
 include(${QT_USE_FILE})
 
-# Find OpenSceneGraph
 find_package(OpenSceneGraph COMPONENTS
 	osgGA
 	osgUtil
@@ -168,7 +169,7 @@ find_package(OpenSceneGraph COMPONENTS
 	osgWidget
 )
 find_package(osgViewer)
-
+MESSAGE ("osg libraries:: ${OPENSCENEGRAPH_LIBRARIES}")
 # -----------------
 # Platform settings
 # -----------------
@@ -231,6 +232,23 @@ if( WIN32 )
 	set( CPACK_PACKAGE_ICON "${CMAKE_CURRENT_SOURCE_DIR}\\\\res\\\\logo2.bmp" )
 endif()
 
+# Find OpenCV
+FIND_PACKAGE( OpenCV )
+IF(OpenCV_FOUND)
+INCLUDE_DIRECTORIES( ${OpenCV_INCLUDE_DIRS} )
+ADD_DEFINITIONS( -DOPENCV_FOUND )
+MESSAGE ("OpenCV FOUND")
+SET(SOURCES_H
+		./include/QOpenCV/FaceRecognitionWindow.h
+		./include/QOpenCV/FaceRecognitionThread.h
+)
+FILE(GLOB_RECURSE SRC_OPENCV  "src/OpenCV/*.cpp")
+FILE(GLOB_RECURSE SRC_QOPENCV  "src/QOpenCV/*.cpp")
+SET(SRC ${SRC} ${SRC_OPENCV} ${SRC_QOPENCV})
+ELSE(OpenCV_FOUND)
+MESSAGE ("OpenCV NOT FOUND")
+ENDIF()
+
 # ---------------
 # Build 3DSOFTVIZ
 # ---------------
@@ -246,8 +264,25 @@ include_directories(
 )
 
 # Source files
-file(GLOB_RECURSE SRC  "src/*.cpp")
-file(GLOB_RECURSE INCL "include/*.h")
+# Source files
+file(GLOB_RECURSE SRC_MAIN "src/main.cpp")
+file(GLOB_RECURSE SRC_CORE  "src/Core/*.cpp")
+file(GLOB_RECURSE SRC_DATA  "src/Data/*.cpp")
+file(GLOB_RECURSE SRC_IMPORTER  "src/Importer/*.cpp")
+file(GLOB_RECURSE SRC_LAYOUT  "src/Layout/*.cpp")
+file(GLOB_RECURSE SRC_MANAGER  "src/Manager/*.cpp")
+file(GLOB_RECURSE SRC_MATH  "src/Math/*.cpp")
+file(GLOB_RECURSE SRC_MODEL  "src/Model/*.cpp")
+file(GLOB_RECURSE SRC_NETWORK  "src/Network/*.cpp")
+file(GLOB_RECURSE SRC_NOISE  "src/Noise/*.cpp")
+file(GLOB_RECURSE SRC_OSGQTBROWSER  "src/OsgQtBrowser/*.cpp")
+file(GLOB_RECURSE SRC_QOSG  "src/QOSG/*.cpp")
+file(GLOB_RECURSE SRC_UTIL  "src/Util/*.cpp")
+file(GLOB_RECURSE SRC_VIEWER  "src/Viewer/*.cpp")
+FILE(GLOB_RECURSE INCL "include/*.h")
+
+set(SRC ${SRC} ${SRC_MAIN} ${SRC_CORE} ${SRC_DATA} ${SRC_IMPORTER} ${SRC_LAYOUT} ${SRC_MANAGER} ${SRC_MATH} ${SRC_MODEL} ${SRC_NETWORK} ${SRC_NOISE} ${SRC_OSGQTBROWSER} ${SRC_QOSG} ${SRC_UTIL} ${SRC_VIEWER} )
+
 
 
 # Group source files
@@ -279,9 +314,14 @@ source_group(\\headers\\Noise "^.*Noise/.*h$")
 source_group(\\headers\\OsgQtBrowser "^.*OsgQtBrowser/.*h$")
 # Group generated moc files
 source_group(\\MOC "^.*moc_.*$")
-
+IF(OpenCV_FOUND)
+SOURCE_GROUP(\\src\\QOpenCV "^.*QOpenCV/.*$")
+SOURCE_GROUP(\\src\\OpenCV "^.*OpenCV/.*$")
+SOURCE_GROUP(\\headers\\QOpenCV "^.*QOpenCV/.*h$")
+SOURCE_GROUP(\\headers\\OpenCV "^.*OpenCV/.*h$")
+ENDIF()
 # header files containing Q_OBJECT macros
-set(SOURCES_H
+set(SOURCES_H ${SOURCES_H}
 	./include/OsgQtBrowser/QGraphicsViewAdapter.h
 	./include/QOSG/CoreWindow.h
 	./include/QOSG/TreeModel.h
@@ -292,8 +332,9 @@ set(SOURCES_H
 	./include/QOSG/CheckBoxList.h
 	./include/QOSG/qtcolorpicker.h
 	./include/Viewer/PickHandler.h
-	./include/Network/Server.h
-	./include/Network/Client.h
+		./include/Network/Server.h
+		./include/Network/Client.h
+	./include/Viewer/CameraManipulator.h
 )
 
 # Qt Generators
@@ -303,12 +344,18 @@ QT4_WRAP_CPP( SOURCES_H_MOC ${SOURCES_H} )
 # Build and link
 add_executable( ${3DSOFTVIZ_NAME} ${INCL} ${SRC} ${SOURCES_H_MOC} )
 
+
 target_link_libraries( ${3DSOFTVIZ_NAME}
 	${QT_LIBRARIES}
 	${OPENSCENEGRAPH_LIBRARIES}
 	${OSGVIEWER_LIBRARIES}
 	${LIBNOISE_LIBRARY}
 )
+IF(OpenCV_FOUND)
+TARGET_LINK_LIBRARIES(${3DSOFTVIZ_NAME}
+${OpenCV_LIBS}
+)
+ENDIF()
 
 # 'cotire' the executable
 cotire( ${3DSOFTVIZ_NAME} )

@@ -68,6 +68,12 @@ public:
 		 * \brief Thread of Layout algorithm.
 		 */
 	Layout::LayoutThread * thr;
+
+	/**
+		  * \fn getCoreWindow
+		  * \brief Returns QOSG::CoreWindow
+		  **/
+	QOSG::CoreWindow* getCoreWindow(){return this->cw;}
 private:
 	/**
 		*  QOSG::CoreWindow * cw
