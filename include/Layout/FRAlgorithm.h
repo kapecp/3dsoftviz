@@ -6,7 +6,6 @@
 #define LAYOUT_FRALGORITHM_DEF 1
 
 #include <stdio.h>
-#include <iostream>
 #include <sstream>
 #include <osg/Vec3f>
 #include <math.h>
@@ -17,7 +16,7 @@
 #include "Data/Edge.h"
 #include "Data/Node.h"
 #include "Data/Graph.h"
-#include "Util/ApplicationConfig.h"
+
 
 namespace Layout
 {

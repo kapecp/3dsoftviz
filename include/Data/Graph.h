@@ -9,7 +9,6 @@
 
 #include <osg/ref_ptr>
 
-#include "Data/Node.h"
 #include "Data/Type.h"
 #include "Data/Edge.h"
 #include "Data/MetaType.h"
