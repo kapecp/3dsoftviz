@@ -1066,7 +1066,7 @@ void Vwr::CameraManipulator::setRotationHead(float x, float y, float distance)
 
 		projectionConrrection = this->appConf->getValue("FaceDecetion.EnableProjectionCorrection").toInt();
 		if( projectionConrrection ){
-			updateProjectionAccordingFace( x, y, distance );
+			updateProjectionAccordingFace( x, y, -distance );
 		}
 
 
@@ -1078,29 +1078,30 @@ void Vwr::CameraManipulator::setRotationHead(float x, float y, float distance)
 
 void Vwr::CameraManipulator::updateProjectionAccordingFace(const float x, const float y, const float distance)
 {
-	double left, right, bottom, top, zNear, zFar, width, height;
+	double left, right, bottom, top, zNear, zFar;
+	double fovy, ratio, xReal, yReal, width, height;
 
 	// get current projection setting
-	this->coreGraph->getCamera()->getProjectionMatrixAsFrustum(left, right, bottom, top, zNear, zFar);
-
-	//qDebug() << "camera: " << left  << " " << right  << " " << bottom  << " " << top  << " " << zNear  << " " << zFar ;
-
-	//qDebug() << "head distance: " << distance;
+	this->coreGraph->getCamera()->getProjectionMatrixAsPerspective(fovy, ratio, zNear, zFar);
 
 	// compute new frustrum
-	width	= right - left;
-	height	= top - bottom;
+	xReal = x * distance;
+	yReal = y * distance;
+	zNear = 0.01 ;
 
-	left = -( width/2 * (1+x) );
-	right = height + left;
+	height = 0.01 * distance;
+	width = height * ratio;
 
-	bottom = -( height/2 * (1+y) );
+	bottom = -( height/2 * (1+yReal) );
 	top = height + bottom;
 
+	left = -( width/2 * (1+xReal) );
+	right = height + left;
 
-	// set new setting
+	//qDebug() << "camera: " << left  << " " << right  << " " << bottom  << " " << top  << " " << zNear  << " " << zFar ;
+	//qDebug() << "c: " << fovy  << " " << ratio  << " " << distance;
+
 	this->coreGraph->getCamera()->setProjectionMatrixAsFrustum(left, right, bottom, top, zNear, zFar);
-
 }
 
 } // namespace
