@@ -1,11 +1,15 @@
 
 #include "OpenCV/FaceRecognizer.h"
+#include <QDebug>
 
 using namespace cv;
 
 OpenCV::FaceRecognizer::FaceRecognizer()
 {
-	this->haar_cascade.load(file);
+	if (!this->haar_cascade.load(file))
+	{
+		qDebug() << "Cannot load file: " << QString::fromStdString(file);
+	}
 }
 
 OpenCV::FaceRecognizer::~FaceRecognizer()
