@@ -619,6 +619,9 @@ private:
 	osg::Vec3 lastTargetPoint;
 
 	Vwr::CoreGraph * coreGraph;
+
+
+	void updateProjectionAccordingFace(const float x, const float y, const float distance);
 };
 
 }
