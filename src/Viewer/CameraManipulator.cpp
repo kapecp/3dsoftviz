@@ -1085,18 +1085,18 @@ void Vwr::CameraManipulator::updateProjectionAccordingFace(const float x, const 
 	this->coreGraph->getCamera()->getProjectionMatrixAsPerspective(fovy, ratio, zNear, zFar);
 
 	// compute new frustrum
-	xReal = x * distance;
-	yReal = y * distance;
-	zNear = 0.01 ;
+	xReal	= x * distance;
+	yReal	= y * distance;
 
-	height = 0.01 * distance;
-	width = height * ratio;
+	width = height = zNear * distance;
 
-	bottom = -( height/2 * (1+yReal) );
-	top = height + bottom;
+	bottom	= -( height/2 * (1+yReal) );
+	top		= height + bottom;
 
-	left = -( width/2 * (1+xReal) );
-	right = height + left;
+	left	= -( width/2 * (1+xReal) );
+	right	= height + left;
+	left	*= ratio;
+	right	*= ratio;
 
 	//qDebug() << "camera: " << left  << " " << right  << " " << bottom  << " " << top  << " " << zNear  << " " << zFar ;
 	//qDebug() << "c: " << fovy  << " " << ratio  << " " << distance;
