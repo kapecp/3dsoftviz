@@ -62,7 +62,7 @@ if( NOT CMAKE_BUILD_TYPE )
 	set( CMAKE_BUILD_TYPE "MinSizeRel" CACHE STRING "" FORCE )
 #	set( CMAKE_BUILD_TYPE "Debug" CACHE STRING "" FORCE )
 endif()
-
+MESSAGE(CMAKE_BUILD_TYPE)
 
 if( CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT )
  	set( CMAKE_INSTALL_PREFIX ${CMAKE_CURRENT_SOURCE_DIR}/_install CACHE PATH "Installation Destination" FORCE )
@@ -112,23 +112,37 @@ if( USE_BUILTIN_DEPENDENCIES )
 			-C ${CMAKE_CURRENT_BINARY_DIR}/config.cmake
 	)
 
+	# Build aruco
+	include( ExternalProject )
+	ExternalProject_Add( dep_aruco
+		PREFIX aruco
+		SOURCE_DIR ${DEP_SOURCE}/aruco
+		BINARY_DIR aruco
+		CMAKE_ARGS
+			-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
+			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
+			-C ${CMAKE_CURRENT_BINARY_DIR}/config.cmake
+	)
 
 	# Ensure correct order of build(dependencies between ext. dependencies)
 	# add_dependencies( dep_lpeg dep_luajit )
-
 
 	# Define LUA_ variables
 	#set( LUA_LIBRARY ${DEP_BIN}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}lua${CMAKE_SHARED_LIBRARY_SUFFIX} )
 	#set( DILUCULUM_LIBRARY ${DEP_BIN}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}diluculum${CMAKE_SHARED_LIBRARY_SUFFIX} )
 	set( LIBNOISE_LIBRARY ${DEP_BIN}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}noise${CMAKE_SHARED_LIBRARY_SUFFIX} )
+	set( LIBARUCO_LIBRARY ${DEP_BIN}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}aruco${CMAKE_SHARED_LIBRARY_SUFFIX} )
 	if( WIN32 )
 		#set( LUA_LIBRARY ${DEP_BIN}/bin/${CMAKE_SHARED_LIBRARY_PREFIX}lua${CMAKE_SHARED_LIBRARY_SUFFIX} )
 		#set( DILUCULUM_LIBRARY ${DEP_BIN}/bin/${CMAKE_SHARED_LIBRARY_PREFIX}diluculum${CMAKE_SHARED_LIBRARY_SUFFIX} )
 		set( LIBNOISE_LIBRARY ${DEP_BIN}/bin/${CMAKE_SHARED_LIBRARY_PREFIX}noise${CMAKE_SHARED_LIBRARY_SUFFIX} )
+		set( LIBARUCO_LIBRARY ${DEP_BIN}/bin/${CMAKE_SHARED_LIBRARY_PREFIX}aruco${CMAKE_SHARED_LIBRARY_SUFFIX} )
 		if( MSVC )
 			# set "lib" prefix for MSVC, becasue libnoise.def files requires that the library is named "libnoise"
 			set( MISS_MSVC_PREFIX lib )
 			set( LIBNOISE_LIBRARY ${DEP_BIN}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}${MISS_MSVC_PREFIX}noise${CMAKE_STATIC_LIBRARY_SUFFIX} )
+			set( LIBARUCO_LIBRARY ${DEP_BIN}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}aruco${CMAKE_STATIC_LIBRARY_SUFFIX})
+
 		endif()
 	endif()
 	set( DEPENDENCIES_INCLUDE_DIR ${DEP_BIN}/include )
@@ -169,7 +183,7 @@ find_package(OpenSceneGraph COMPONENTS
 	osgWidget
 )
 find_package(osgViewer)
-MESSAGE ("osg libraries:: ${OPENSCENEGRAPH_LIBRARIES}")
+
 # -----------------
 # Platform settings
 # -----------------
@@ -261,6 +275,9 @@ include_directories(
 
 	${DEPENDENCIES_INCLUDE_DIR}
 	${DEPENDENCIES_INCLUDE_DIR}/libnoise
+	${DEPENDENCIES_INCLUDE_DIR}/aruco
+
+	${OpenCV_INCLUDE_DIRS}
 )
 
 # Source files
@@ -350,6 +367,8 @@ target_link_libraries( ${3DSOFTVIZ_NAME}
 	${OPENSCENEGRAPH_LIBRARIES}
 	${OSGVIEWER_LIBRARIES}
 	${LIBNOISE_LIBRARY}
+	${LIBARUCO_LIBRARY}
+	${OpenCV_LIBS}
 )
 IF(OpenCV_FOUND)
 TARGET_LINK_LIBRARIES(${3DSOFTVIZ_NAME}
@@ -366,6 +385,7 @@ endif()
 
 # ensure correct dependencies
 add_dependencies( ${3DSOFTVIZ_NAME} dep_libnoise )
+add_dependencies( ${3DSOFTVIZ_NAME} dep_aruco )
 
 # -------
 # Install
