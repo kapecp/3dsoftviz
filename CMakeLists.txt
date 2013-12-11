@@ -30,6 +30,7 @@ set( 3DSOFTVIZ_DOMAIN "${3DSOFTVIZ_DOMAIN_FIRST}.${3DSOFTVIZ_DOMAIN_SECOND}" )
 
 # Install destinations
 set( INSTALL_BIN bin CACHE PATH "Where to install binaries to." )
+set( INSTALL_LIB lib CACHE PATH "Where to install lib to." )
 set( INSTALL_DATA share/3dsoftviz CACHE PATH "Directory for shared data." )
 set( INSTALL_DEPS . )
 set( INSTALL_PLUGIN bin )
@@ -246,7 +247,7 @@ include_directories(
 )
 
 # Source files
-file(GLOB_RECURSE SRC_MAIN "src/main.cpp")
+set(SRC_MAIN "src/main.cpp")
 file(GLOB_RECURSE SRC_CORE  "src/Core/*.cpp")
 file(GLOB_RECURSE SRC_DATA  "src/Data/*.cpp")
 file(GLOB_RECURSE SRC_IMPORTER  "src/Importer/*.cpp")
@@ -262,11 +263,20 @@ file(GLOB_RECURSE SRC_UTIL  "src/Util/*.cpp")
 file(GLOB_RECURSE SRC_VIEWER  "src/Viewer/*.cpp")
 
 # Source files
-set(SRC ${SRC_MAIN} ${SRC_CORE} ${SRC_DATA}  ${SRC_LAYOUT} ${SRC_MANAGER} ${SRC_MATH} ${SRC_MODEL} ${SRC_NETWORK} ${SRC_NOISE} ${SRC_OSGQTBROWSER} ${SRC_QOSG} ${SRC_UTIL} ${SRC_VIEWER} )
+set(SRC ${SRC_MAIN} ${SRC_CORE} ${SRC_DATA}
+${SRC_LAYOUT} ${SRC_MANAGER} ${SRC_MATH}
+  ${SRC_NETWORK} ${SRC_NOISE}
+${SRC_OSGQTBROWSER} ${SRC_QOSG} ${SRC_UTIL} ${SRC_VIEWER} ${SRC_MODEL} )
 set(SRC ${SRC} ${SRC_IMPORTER})
 file(GLOB_RECURSE INCL "include/*.h")
 #create library
-#add_library(importer SHARED ${SRC_IMPORTER})
+#add_library(importer SHARED  ${SRC_IMPORTER} )
+
+#target_link_libraries( importer
+#	${QT_LIBRARIES}
+
+#)
+
 
 # Group source files
 source_group(\\src main.cpp)
@@ -325,7 +335,7 @@ target_link_libraries( ${3DSOFTVIZ_NAME}
 	${OPENSCENEGRAPH_LIBRARIES}
 	${OSGVIEWER_LIBRARIES}
 	${LIBNOISE_LIBRARY}
-#    importer
+#	importer
 )
 
 # 'cotire' the executable
@@ -336,7 +346,6 @@ if( MSVC )
 endif()
 
 # ensure correct dependencies
-add_dependencies( ${3DSOFTVIZ_NAME} dep_libnoise)
 #add_dependencies( ${3DSOFTVIZ_NAME} importer)
 # -------
 # Install
@@ -348,8 +357,9 @@ install( TARGETS ${3DSOFTVIZ_NAME}
 	RUNTIME DESTINATION ${INSTALL_BIN} COMPONENT Runtime )
 #move importer library
 #install( TARGETS importer
-#    BUNDLE DESTINATION ${INSTALL_BUNDLE} COMPONENT Runtime
-#    RUNTIME DESTINATION ${INSTALL_BIN} COMPONENT Runtime )
+#	BUNDLE DESTINATION ${INSTALL_BUNDLE} COMPONENT Runtime
+#	RUNTIME DESTINATION ${INSTALL_BIN} COMPONENT Runtime
+#	LIBRARY DESTINATION ${INSTALL_LIB} COMPONENT Runtime)
 
 install(DIRECTORY resources/ DESTINATION ${INSTALL_DATA} COMPONENT Data)
 
