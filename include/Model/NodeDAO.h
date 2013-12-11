@@ -7,7 +7,7 @@
 
 #include "Data/GraphLayout.h"
 #include "Data/Node.h"
-
+#include <QtSql>
 #include <QDebug>
 
 namespace Data {

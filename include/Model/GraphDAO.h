@@ -8,7 +8,7 @@
 #include "Data/Graph.h"
 #include "Model/NodeDAO.h"
 #include "Model/EdgeDAO.h"
-
+#include <QtSql>
 #include <QString>
 #include <QMap>
 #include <QDebug>

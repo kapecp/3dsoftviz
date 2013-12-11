@@ -7,7 +7,7 @@
 
 #include <QDebug>
 #include <iostream>
-
+#include <QtSql>
 #include "Util/ApplicationConfig.h"
 
 namespace Model
