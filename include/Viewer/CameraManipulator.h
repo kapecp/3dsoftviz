@@ -159,7 +159,6 @@ public slots:
 	/**
 		 * @author Autor: David Durcak
 		 * @brief Set _rotationHead quaternion to rotate camera according head
-		 * ! distance is not implemented yet
 		 * @param x % distance from middle on horizontal axis
 		 * @param y % distance from middle on vertical axis
 		 * @param distance face from camera
