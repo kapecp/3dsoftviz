@@ -1032,14 +1032,17 @@ void Vwr::CameraManipulator::computeViewMetrics(osgViewer::Viewer* viewer, std::
  * Result rotation is in _rotationHead quaternion.
  * ! distance is not implemented yet
  */
-void Vwr::CameraManipulator::setRotationHead(float x, float y, float /*distance*/)
+void Vwr::CameraManipulator::setRotationHead(float x, float y, float distance)
 {
 
 	osg::Vec3	axis;
 	float	angle;
 	double	throwScale;
 
-	if ( (-100.0 <= x && x <= 100.0) && (-100.0 <= y && y <= 100.0)){
+	x /= 100;
+	y /= 100;
+
+	if ( (-1.0 <= x && x <= 1.0) && (-1.0 <= y && y <= 1.0)){
 
 		throwScale =  (_thrown && _ga_t0.valid() && _ga_t1.valid()) ?
 					_delta_frame_time / (_ga_t0->getTime() - _ga_t1->getTime()) :
@@ -1047,19 +1050,54 @@ void Vwr::CameraManipulator::setRotationHead(float x, float y, float /*distance*
 
 		// both rotation must be separated
 		// horizontal rotation
-		trackball(axis,angle, x/100, 0.0, 0.0, 0.0);
+		trackball(axis,angle, x, 0.0, 0.0, 0.0);
 		osg::Quat Xnew_rotate(angle * throwScale,axis);
 
 		// vertical rotation
-		trackball(axis,angle,0.0, y/100, 0.0, 0.0);
+		trackball(axis,angle,0.0, y, 0.0, 0.0);
 		osg::Quat Ynew_rotate(angle * throwScale,axis);
 
 		// both rotation
 		_rotationHead = Xnew_rotate*Ynew_rotate;
+
+
+		// will we correct projection according face position
+		bool projectionConrrection = false;
+		projectionConrrection = this->appConf->getValue("FaceDecetion.EnableProjectionCorrection").toInt();
+
+		if( projectionConrrection ){
+			updateProjectionAccordingFace( x, y, -distance );
+		}
+
+
 	}
 	else{
 		qDebug() << "Warning: setRotationHead(): wrong parameters";
 	}
+}
+
+void Vwr::CameraManipulator::updateProjectionAccordingFace(const float x, const float y, const float distance)
+{
+	double left, right, bottom, top, zNear, zFar;
+	double fovy, ratio, width, height;
+
+	// get current projection setting
+	this->coreGraph->getCamera()->getProjectionMatrixAsPerspective(fovy, ratio, zNear, zFar);
+
+	// compute new frustrum
+	width = height = (zNear * distance)/2;
+
+	top		= height * (1 - y*distance);
+	bottom	= -(height + height) + top;
+
+	right	= width * (1- x*distance);
+	left	= -(width + width) + right;
+
+	// repair projection ratio for screen resizing
+	left	*= ratio;
+	right	*= ratio;
+
+	this->coreGraph->getCamera()->setProjectionMatrixAsFrustum(left, right, bottom, top, zNear, zFar);
 }
 
 } // namespace
