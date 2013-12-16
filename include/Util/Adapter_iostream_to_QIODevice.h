@@ -13,7 +13,7 @@ namespace Util {
  * Only reading is implemented.
  */
 class Adapter_iostream_to_QIODevice
-	: public QIODevice {
+		: public QIODevice {
 
 public:
 
@@ -22,8 +22,8 @@ public:
 	 * \param[] stream Stream to use by the adapter.
 	 */
 	Adapter_iostream_to_QIODevice (
-		std::iostream &stream
-	) : stream_ (stream)
+			std::iostream &stream
+			) : stream_ (stream)
 	{
 		setOpenMode (ReadWrite);
 	}

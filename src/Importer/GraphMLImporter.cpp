@@ -4,8 +4,8 @@
 namespace Importer {
 
 bool GraphMLImporter::import (
-	ImporterContext &context
-) {
+		ImporterContext &context
+		) {
 	// context
 	context_ = &context;
 	// helpers
@@ -42,19 +42,19 @@ bool GraphMLImporter::import (
 		QDomDocument doc("graphMLDocument");
 		if (doc.setContent(&(context_->getStream())))
 		{
-				QDomElement docElem = doc.documentElement();
-				if (!docElem.isNull() && docElem.nodeName() == "graphml")
+			QDomElement docElem = doc.documentElement();
+			if (!docElem.isNull() && docElem.nodeName() == "graphml")
+			{
+				QDomNodeList graphNodes = docElem.elementsByTagName("graph");
+				if (graphNodes.length() > 0)
 				{
-						QDomNodeList graphNodes = docElem.elementsByTagName("graph");
-						if (graphNodes.length() > 0)
-						{
-								graphNode = graphNodes.item(0);
-								if (!graphNode.isNull() && graphNode.parentNode() == docElem && graphNode.isElement())
-								{
-										graphElement = graphNode.toElement();
-								}
-						}
+					graphNode = graphNodes.item(0);
+					if (!graphNode.isNull() && graphNode.parentNode() == docElem && graphNode.isElement())
+					{
+						graphElement = graphNode.toElement();
+					}
 				}
+			}
 		}
 
 		ok = !graphElement.isNull();
@@ -82,24 +82,24 @@ bool GraphMLImporter::import (
 }
 
 bool GraphMLImporter::processGraph (
-	QDomElement &graphElement
-) {
+		QDomElement &graphElement
+		) {
 	bool ok = true;
 
 	ok =
-		processGraph_Nodes (graphElement)
-		&&
-		processGraph_Edges (graphElement)
-		&&
-		processGraph_Hyperedges (graphElement)
-	;
+			processGraph_Nodes (graphElement)
+			&&
+			processGraph_Edges (graphElement)
+			&&
+			processGraph_Hyperedges (graphElement)
+			;
 
 	return ok;
 }
 
 bool GraphMLImporter::processGraph_Nodes (
-	QDomElement &graphElement
-) {
+		QDomElement &graphElement
+		) {
 	bool ok = true;
 
 	iColor_ = 0;
@@ -117,42 +117,42 @@ bool GraphMLImporter::processGraph_Nodes (
 			QDomNode nodeData = nodeDataList.item(j);
 			if (!nodeData.isNull() && nodeData.isElement())
 			{
-					QDomElement nodeDataElement = nodeData.toElement();
-					QString dataName = nodeDataElement.attribute("key");
-					QString dataValue = nodeDataElement.text();
-					// rozpoznavame typy
-					if(dataName == nodeTypeAttribute_){
-						// overime ci uz dany typ existuje v grafe
-						QList<Data::Type*> types = context_->getGraph().getTypesByName(dataValue);
-						if(types.isEmpty()){
-							QMap<QString, QString> *settings = new QMap<QString, QString>;
+				QDomElement nodeDataElement = nodeData.toElement();
+				QString dataName = nodeDataElement.attribute("key");
+				QString dataValue = nodeDataElement.text();
+				// rozpoznavame typy
+				if(dataName == nodeTypeAttribute_){
+					// overime ci uz dany typ existuje v grafe
+					QList<Data::Type*> types = context_->getGraph().getTypesByName(dataValue);
+					if(types.isEmpty()){
+						QMap<QString, QString> *settings = new QMap<QString, QString>;
 
-							settings->insert("color.R", QString::number(colors_[iColor_][0]));
-							settings->insert("color.G", QString::number(colors_[iColor_][1]));
-							settings->insert("color.B", QString::number(colors_[iColor_][2]));
-							settings->insert("color.A", QString::number(colors_[iColor_][3]));
-							settings->insert("scale",		Util::ApplicationConfig::get()->getValue("Viewer.Textures.DefaultNodeScale"));
-							settings->insert("textureFile", Util::ApplicationConfig::get()->getValue("Viewer.Textures.Node"));
+						settings->insert("color.R", QString::number(colors_[iColor_][0]));
+						settings->insert("color.G", QString::number(colors_[iColor_][1]));
+						settings->insert("color.B", QString::number(colors_[iColor_][2]));
+						settings->insert("color.A", QString::number(colors_[iColor_][3]));
+						settings->insert("scale",		Util::ApplicationConfig::get()->getValue("Viewer.Textures.DefaultNodeScale"));
+						settings->insert("textureFile", Util::ApplicationConfig::get()->getValue("Viewer.Textures.Node"));
 
-							newNodeType = context_->getGraph().addType(dataValue, settings);
+						newNodeType = context_->getGraph().addType(dataValue, settings);
 
-							iColor_++;
-							if(iColor_ == colors_.size ()){
-								iColor_ = 0;
-							};
-						} else {
-							newNodeType = types.first();
-						}
-
+						iColor_++;
+						if(iColor_ == colors_.size ()){
+							iColor_ = 0;
+						};
 					} else {
-						// kazde dalsie data nacitame do nosica dat - Node.name
-						// FIXME potom prerobit cez Adamove Node.settings
-						if(name == NULL){
-							name = dataName+":"+dataValue;
-						} else {
-							name += " | "+dataName+":"+dataValue;
-						}
+						newNodeType = types.first();
 					}
+
+				} else {
+					// kazde dalsie data nacitame do nosica dat - Node.name
+					// FIXME potom prerobit cez Adamove Node.settings
+					if(name == NULL){
+						name = dataName+":"+dataValue;
+					} else {
+						name += " | "+dataName+":"+dataValue;
+					}
+				}
 			}
 		}
 
@@ -192,8 +192,8 @@ bool GraphMLImporter::processGraph_Nodes (
 }
 
 bool GraphMLImporter::processGraph_Edges (
-	QDomElement &graphElement
-) {
+		QDomElement &graphElement
+		) {
 	bool ok = true;
 
 	iColor_ = 0;
@@ -239,45 +239,45 @@ bool GraphMLImporter::processGraph_Edges (
 			QDomNode edgeData = edgeDataList.item(j);
 			if (!edgeData.isNull() && edgeData.isElement())
 			{
-					QDomElement edgeDataElement = edgeData.toElement();
-					QString dataName = edgeDataElement.attribute("key");
-					QString dataValue = edgeDataElement.text();
-					// rozpoznavame typy deklarovane atributom relation
-					if(dataName == edgeTypeAttribute_){
-						// overime ci uz dany typ existuje v grafe
-						QList<Data::Type*> types = context_->getGraph().getTypesByName(dataValue+direction);
-						if(types.isEmpty()){
-							QMap<QString, QString> *settings = new QMap<QString, QString>;
+				QDomElement edgeDataElement = edgeData.toElement();
+				QString dataName = edgeDataElement.attribute("key");
+				QString dataValue = edgeDataElement.text();
+				// rozpoznavame typy deklarovane atributom relation
+				if(dataName == edgeTypeAttribute_){
+					// overime ci uz dany typ existuje v grafe
+					QList<Data::Type*> types = context_->getGraph().getTypesByName(dataValue+direction);
+					if(types.isEmpty()){
+						QMap<QString, QString> *settings = new QMap<QString, QString>;
 
-							// FIXME spravit tak, aby to rotovalo po tom poli - palo az to budes prerabat tak pre hrany pouzi ine pole, take co ma alfu na 0.5.. a to sa tyka aj uzlov s defaultnym typom
-						   settings->insert("color.R", QString::number(colors_[iColor_][0]));
-						   settings->insert("color.G", QString::number(colors_[iColor_][1]));
-						   settings->insert("color.B", QString::number(colors_[iColor_][2]));
-						   settings->insert("color.A", QString::number(colors_[iColor_][3]));
-						   settings->insert("scale",		Util::ApplicationConfig::get()->getValue("Viewer.Textures.DefaultNodeScale"));
+						// FIXME spravit tak, aby to rotovalo po tom poli - palo az to budes prerabat tak pre hrany pouzi ine pole, take co ma alfu na 0.5.. a to sa tyka aj uzlov s defaultnym typom
+						settings->insert("color.R", QString::number(colors_[iColor_][0]));
+						settings->insert("color.G", QString::number(colors_[iColor_][1]));
+						settings->insert("color.B", QString::number(colors_[iColor_][2]));
+						settings->insert("color.A", QString::number(colors_[iColor_][3]));
+						settings->insert("scale",		Util::ApplicationConfig::get()->getValue("Viewer.Textures.DefaultNodeScale"));
 
-						   if (!directed)
-								settings->insert("textureFile", Util::ApplicationConfig::get()->getValue("Viewer.Textures.Edge"));
-						   else
-						   {
-							   settings->insert("textureFile", Util::ApplicationConfig::get()->getValue("Viewer.Textures.OrientedEdgePrefix"));
-							   settings->insert("textureFile", Util::ApplicationConfig::get()->getValue("Viewer.Textures.OrientedEdgeSuffix"));
-						   }
-
-							newEdgeType = context_->getGraph().addType(dataValue+direction, settings);
-
-							iColor_++;
-							if(iColor_ == colors_.size ()){
-								iColor_ = 0;
-							};
-						} else {
-							newEdgeType = types.first();
+						if (!directed)
+							settings->insert("textureFile", Util::ApplicationConfig::get()->getValue("Viewer.Textures.Edge"));
+						else
+						{
+							settings->insert("textureFile", Util::ApplicationConfig::get()->getValue("Viewer.Textures.OrientedEdgePrefix"));
+							settings->insert("textureFile", Util::ApplicationConfig::get()->getValue("Viewer.Textures.OrientedEdgeSuffix"));
 						}
 
+						newEdgeType = context_->getGraph().addType(dataValue+direction, settings);
+
+						iColor_++;
+						if(iColor_ == colors_.size ()){
+							iColor_ = 0;
+						};
 					} else {
-						// kazde dalsie data nacitame do nosica dat - Edge.name
-						// FIXME potom prerobit cez Adamove Node.settings
+						newEdgeType = types.first();
 					}
+
+				} else {
+					// kazde dalsie data nacitame do nosica dat - Edge.name
+					// FIXME potom prerobit cez Adamove Node.settings
+				}
 			}
 		}
 
@@ -287,7 +287,7 @@ bool GraphMLImporter::processGraph_Edges (
 
 		context_->getGraph().addEdge(sourceId+targetId, readNodes_->get(sourceId), readNodes_->get(targetId), newEdgeType, directed);
 
-		// subgraphs
+		// vnorene grafy
 		for (QDomElement subgraphElement = edgeElement.firstChildElement("graph"); ok && !subgraphElement.isNull(); subgraphElement = subgraphElement.nextSiblingElement("graph")) {
 			if (ok) {
 				// TODO: begin subgraph in edge
@@ -310,8 +310,8 @@ bool GraphMLImporter::processGraph_Edges (
 }
 
 bool GraphMLImporter::processGraph_Hyperedges (
-	QDomElement &graphElement
-) {
+		QDomElement &graphElement
+		) {
 	bool ok = true;
 	osg::ref_ptr<Data::Node> hyperEdgeNode;
 	iColor_ = 0;
@@ -319,7 +319,7 @@ bool GraphMLImporter::processGraph_Hyperedges (
 	// hyperedges
 	for (QDomElement hyperedgeElement = graphElement.firstChildElement("hyperedge"); ok && !hyperedgeElement.isNull(); hyperedgeElement = hyperedgeElement.nextSiblingElement("hyperedge")) {
 		if (ok) {
-			// TODO: add hyperedge
+			// pridanie hyperhrany
 			hyperEdgeNode = context_->getGraph ().addHyperEdge(QString::number(count));
 		}
 
@@ -353,12 +353,12 @@ bool GraphMLImporter::processGraph_Hyperedges (
 					}
 
 					ok =
-						direction.isEmpty()
-						||
-						(direction == QString("in"))
-						||
-						(direction == QString("out"))
-					;
+							direction.isEmpty()
+							||
+							(direction == QString("in"))
+							||
+							(direction == QString("out"))
+							;
 
 					context_->getInfoHandler ().reportError (ok, "Hyperedge endpoint - invalid direction.");
 				}
@@ -370,7 +370,7 @@ bool GraphMLImporter::processGraph_Hyperedges (
 				}
 
 				if (ok) {
-					//context_->getGraph().addEdge("", readNodes_->get(targetName), hyperEdgeNode, edgeType_, false);
+					//orientovana hrana
 					if (direction==QString("in"))
 						context_->getGraph ().addEdge("", readNodes_->get(targetName), hyperEdgeNode, nodeType_, true);
 					else if (direction==QString("out"))

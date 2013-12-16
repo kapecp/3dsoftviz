@@ -3,10 +3,10 @@
 namespace Importer {
 
 ImporterContext::ImporterContext (
-	QIODevice &stream,
-	Data::Graph &graph,
-	ImportInfoHandler &infoHandler
-) : stream_ (stream),
+		QIODevice &stream,
+		Data::Graph &graph,
+		ImportInfoHandler &infoHandler
+		) : stream_ (stream),
 	graph_ (graph),
 	infoHandler_ (infoHandler)
 {

@@ -1,12 +1,16 @@
 #include "QOSG/CoreWindow.h"
 #include "Util/Cleaner.h"
 
+#include "Layout/ShapeGetter_CylinderSurface_ByCamera.h"
 #include "Layout/ShapeGetter_SphereSurface_ByTwoNodes.h"
 #include "Layout/ShapeGetter_Sphere_ByTwoNodes.h"
+#include "Layout/ShapeGetter_ConeSurface_ByCamera.h"
 #include "Layout/ShapeGetter_Plane_ByThreeNodes.h"
 #include "Layout/RestrictionRemovalHandler_RestrictionNodesRemover.h"
 
 #include "Importer/GraphOperations.h"
+
+#include "OpenCV/OpenCVCore.h"
 
 using namespace QOSG;
 
@@ -17,15 +21,15 @@ CoreWindow::CoreWindow(QWidget *parent, Vwr::CoreGraph* coreGraph, QApplication*
 	application = app;
 	layout = thread;
 
-        client = new Network::Client(this);
-        new Network::Server(this);
+	client = new Network::Client(this);
+	new Network::Server(this);
 	
 	//vytvorenie menu a toolbar-ov
 	createActions();
 	createMenus();
-        createLeftToolBar();
-        createRightToolBar();
-        createCollaborationToolBar();
+	createLeftToolBar();
+	createRightToolBar();
+	createCollaborationToolBar();
 	
 	viewerWidget = new ViewerQT(this, 0, 0, 0, coreGraph);  
 	viewerWidget->setSceneData(coreGraph->getScene());
@@ -53,6 +57,7 @@ CoreWindow::CoreWindow(QWidget *parent, Vwr::CoreGraph* coreGraph, QApplication*
 
 	connect(lineEdit,SIGNAL(returnPressed()),this,SLOT(sqlQuery()));	
 }
+ 
 void CoreWindow::createActions()
 {	
 	quit = new QAction("Quit", this);
@@ -117,21 +122,21 @@ void CoreWindow::createActions()
 	label->setToolTip("&Turn on/off labels");
 	label->setCheckable(true);
 	label->setFocusPolicy(Qt::NoFocus);
-        connect(label, SIGNAL(clicked(bool)), this, SLOT(labelOnOff(bool)));
+	connect(label, SIGNAL(clicked(bool)), this, SLOT(labelOnOff(bool)));
 
-        applyColor = new QPushButton();
-        applyColor->setText("Apply color");
-        applyColor->setToolTip("Apply selected color");
-        applyColor->setFocusPolicy(Qt::NoFocus);
-        connect(applyColor,SIGNAL(clicked()),this,SLOT(applyColorClick()));
+	applyColor = new QPushButton();
+	applyColor->setText("Apply color");
+	applyColor->setToolTip("Apply selected color");
+	applyColor->setFocusPolicy(Qt::NoFocus);
+	connect(applyColor,SIGNAL(clicked()),this,SLOT(applyColorClick()));
 
-        applyLabel = new QPushButton();
-        applyLabel->setText("Apply label");
-        applyLabel->setToolTip("Apply selected label");
-        applyLabel->setFocusPolicy(Qt::NoFocus);
-        connect(applyLabel,SIGNAL(clicked()),this,SLOT(applyLabelClick()));
+	applyLabel = new QPushButton();
+	applyLabel->setText("Apply label");
+	applyLabel->setToolTip("Apply selected label");
+	applyLabel->setFocusPolicy(Qt::NoFocus);
+	connect(applyLabel,SIGNAL(clicked()),this,SLOT(applyLabelClick()));
 
-        le_applyLabel = new QLineEdit;
+	le_applyLabel = new QLineEdit;
 
 	//add edge
 	add_Edge = new QPushButton();
@@ -201,50 +206,105 @@ void CoreWindow::createActions()
 	b_SetRestriction_Plane->setFocusPolicy(Qt::NoFocus);
 	connect(b_SetRestriction_Plane, SIGNAL(clicked()), this, SLOT(setRestriction_Plane ()));
 
+        b_SetRestriction_SpherePlane = new QPushButton();
+        b_SetRestriction_SpherePlane->setIcon(QIcon("../share/3dsoftviz/img/gui/restriction_sphereplane.png"));
+        b_SetRestriction_SpherePlane->setToolTip("&Set restriction - sphere and plane");
+        b_SetRestriction_SpherePlane->setFocusPolicy(Qt::NoFocus);
+        connect(b_SetRestriction_SpherePlane, SIGNAL(clicked()), this, SLOT(setRestriction_SpherePlane ()));
+
+        b_SetRestriction_Circle = new QPushButton();
+        b_SetRestriction_Circle->setIcon(QIcon("../share/3dsoftviz/img/gui/restriction_circle.png"));
+        b_SetRestriction_Circle->setToolTip("&Set restriction - circle");
+        b_SetRestriction_Circle->setFocusPolicy(Qt::NoFocus);
+        connect(b_SetRestriction_Circle, SIGNAL(clicked()), this, SLOT(setRestriction_Circle ()));
+
+        b_SetRestriction_Cone = new QPushButton();
+        b_SetRestriction_Cone->setIcon(QIcon("../share/3dsoftviz/img/gui/restriction_cone.png"));
+        b_SetRestriction_Cone->setToolTip("&Set restriction - cone");
+        b_SetRestriction_Cone->setFocusPolicy(Qt::NoFocus);
+        connect(b_SetRestriction_Cone, SIGNAL(clicked()), this, SLOT(setRestriction_Cone ()));
+
+        b_SetRestriction_ConeTree = new QPushButton();
+        b_SetRestriction_ConeTree->setIcon(QIcon("../share/3dsoftviz/img/gui/restriction_conetree.png"));
+        b_SetRestriction_ConeTree->setToolTip("&Set restriction - cone tree");
+        b_SetRestriction_ConeTree->setFocusPolicy(Qt::NoFocus);
+        connect(b_SetRestriction_ConeTree, SIGNAL(clicked()), this, SLOT(setRestriction_ConeTree ()));
+
 	b_UnsetRestriction = new QPushButton();
 	b_UnsetRestriction->setIcon(QIcon("../share/3dsoftviz/img/gui/restriction_unset.png"));
 	b_UnsetRestriction->setToolTip("&Unset restriction");
 	b_UnsetRestriction->setFocusPolicy(Qt::NoFocus);
-	connect(b_UnsetRestriction, SIGNAL(clicked()), this, SLOT(unsetRestriction ()));
+	connect(b_UnsetRestriction, SIGNAL(clicked()), this, SLOT(unsetRestriction()));
 
-        b_start_server = new QPushButton();
-        b_start_server->setText("Host session");
-        connect(b_start_server, SIGNAL(clicked()), this, SLOT(start_server()));
+    b_SetRestriction_CylinderSurface = new QPushButton();
+    b_SetRestriction_CylinderSurface->setIcon(QIcon("../share/3dsoftviz/img/gui/restriction_cylinder_surface.png"));
+    b_SetRestriction_CylinderSurface->setToolTip("&Set restriction - cylinder surface");
+    b_SetRestriction_CylinderSurface->setFocusPolicy(Qt::NoFocus);
+    connect(b_SetRestriction_CylinderSurface, SIGNAL(clicked()), this, SLOT(setRestriction_CylinderSurface()));
 
-        b_start_client = new QPushButton();
-        b_start_client->setText("Connect to session");
-        connect(b_start_client, SIGNAL(clicked()), this, SLOT(start_client()));
+    b_SetRestriction_CylinderSurface_Slider = new QSlider(Qt::Horizontal);
+    b_SetRestriction_CylinderSurface_Slider->setToolTip("&Modify base radius of the restriction");
+    b_SetRestriction_CylinderSurface_Slider->setFocusPolicy(Qt::NoFocus);
+    b_SetRestriction_CylinderSurface_Slider->setValue(25);
 
-        b_send_message = new QPushButton();
-        b_send_message->setText("Send");
-        connect(b_send_message, SIGNAL(clicked()), this, SLOT(send_message()));
+    b_SetRestriction_ConeSurface = new QPushButton();
+    b_SetRestriction_ConeSurface->setIcon(QIcon("../share/3dsoftviz/img/gui/restriction_cone_surface.png"));
+    b_SetRestriction_ConeSurface->setToolTip("&Set restriction - cone surface");
+    b_SetRestriction_ConeSurface->setFocusPolicy(Qt::NoFocus);
+    connect(b_SetRestriction_ConeSurface, SIGNAL(clicked()), this, SLOT(setRestriction_ConeSurface()));
 
+    b_SetRestriction_ConeSurface_Slider = new QSlider(Qt::Horizontal);
+    b_SetRestriction_ConeSurface_Slider->setToolTip("&Modify base radius of the restriction");
+    b_SetRestriction_ConeSurface_Slider->setFocusPolicy(Qt::NoFocus);
+    b_SetRestriction_ConeSurface_Slider->setValue(25);
 
-        chb_center = new QCheckBox("&Center");
-        connect(chb_center, SIGNAL(clicked()), this, SLOT(toggleSpyWatch()));
+    b_UnsetRestrictionFromAll = new QPushButton();
+    b_UnsetRestrictionFromAll->setIcon(QIcon("../share/3dsoftviz/img/gui/restriction_unset.png"));
+    b_UnsetRestrictionFromAll->setToolTip("&Unset restriction from all nodes");
+    b_UnsetRestrictionFromAll->setFocusPolicy(Qt::NoFocus);
+    connect(b_UnsetRestrictionFromAll, SIGNAL(clicked()), this, SLOT(unsetRestrictionFromAll()));
 
-        chb_spy = new QCheckBox("&Spy");
-        connect(chb_spy, SIGNAL(clicked()), this, SLOT(toggleSpyWatch()));
+	b_start_server = new QPushButton();
+	b_start_server->setText("Host session");
+	connect(b_start_server, SIGNAL(clicked()), this, SLOT(start_server()));
 
-        chb_attention = new QCheckBox("S&hout");
-        connect(chb_attention, SIGNAL(clicked()), this, SLOT(toggleAttention()));
+	b_start_client = new QPushButton();
+	b_start_client->setText("Connect to session");
+	connect(b_start_client, SIGNAL(clicked()), this, SLOT(start_client()));
 
-        le_client_name = new QLineEdit("Nick");
-        le_server_addr = new QLineEdit("localhost");
-        le_message= new QLineEdit("Message");
+	b_send_message = new QPushButton();
+	b_send_message->setText("Send");
+	connect(b_send_message, SIGNAL(clicked()), this, SLOT(send_message()));
 
-        lw_users = new QListWidget();
-        lw_users->setSelectionMode(QListWidget::SingleSelection);
-        lw_users->setSortingEnabled(true);
-        lw_users->setMaximumHeight(200);
+    b_start_face = new QPushButton();
+    b_start_face->setText("Face Recognition");
+    connect(b_start_face, SIGNAL(clicked()), this, SLOT(create_facewindow()));
 
-        sl_avatarScale = new QSlider(Qt::Vertical,this);
-        sl_avatarScale->setTickPosition(QSlider::TicksAbove);
-        sl_avatarScale->setRange(1,20);
-        sl_avatarScale->setPageStep(1);
-        sl_avatarScale->setValue(1);
-        sl_avatarScale->setFocusPolicy(Qt::NoFocus);
-        connect(sl_avatarScale,SIGNAL(valueChanged(int)),this,SLOT(setAvatarScale(int)));
+	chb_center = new QCheckBox("&Center");
+	connect(chb_center, SIGNAL(clicked()), this, SLOT(toggleSpyWatch()));
+
+	chb_spy = new QCheckBox("&Spy");
+	connect(chb_spy, SIGNAL(clicked()), this, SLOT(toggleSpyWatch()));
+
+	chb_attention = new QCheckBox("S&hout");
+	connect(chb_attention, SIGNAL(clicked()), this, SLOT(toggleAttention()));
+
+	le_client_name = new QLineEdit("Nick");
+	le_server_addr = new QLineEdit("localhost");
+	le_message= new QLineEdit("Message");
+
+	lw_users = new QListWidget();
+	lw_users->setSelectionMode(QListWidget::SingleSelection);
+	lw_users->setSortingEnabled(true);
+	lw_users->setMaximumHeight(200);
+
+	sl_avatarScale = new QSlider(Qt::Vertical,this);
+	sl_avatarScale->setTickPosition(QSlider::TicksAbove);
+	sl_avatarScale->setRange(1,20);
+	sl_avatarScale->setPageStep(1);
+	sl_avatarScale->setValue(1);
+	sl_avatarScale->setFocusPolicy(Qt::NoFocus);
+	connect(sl_avatarScale,SIGNAL(valueChanged(int)),this,SLOT(setAvatarScale(int)));
 }
 
 void CoreWindow::createMenus()
@@ -311,15 +371,15 @@ void CoreWindow::createLeftToolBar()
 	toolBar->addWidget(add_Node);
 	toolBar->addWidget(remove_all);
 	toolBar->addWidget(applyColor);
-	
+
 	//inicializacia colorpickera
 	QtColorPicker * colorPicker = new QtColorPicker();
 	colorPicker->setStandardColors();
 	connect(colorPicker,SIGNAL(colorChanged(const QColor &)),this,SLOT(colorPickerChanged(const QColor &)));
-        toolBar->addWidget(colorPicker);
+	toolBar->addWidget(colorPicker);
 
-        toolBar->addWidget(applyLabel);
-        toolBar->addWidget(le_applyLabel);
+	toolBar->addWidget(applyLabel);
+	toolBar->addWidget(le_applyLabel);
 
 	toolBar->addSeparator();
 	
@@ -332,7 +392,34 @@ void CoreWindow::createLeftToolBar()
 	frame = createHorizontalFrame();
 	toolBar->addWidget(frame);
 	frame->layout()->addWidget(b_SetRestriction_Plane);
+	frame->layout()->addWidget(b_SetRestriction_SpherePlane);
+
+	frame = createHorizontalFrame();
+	toolBar->addWidget(frame);
+	frame->layout()->addWidget(b_SetRestriction_Circle);
+	frame->layout()->addWidget(b_SetRestriction_Cone);
+
+
+	frame = createHorizontalFrame();
+	toolBar->addWidget(frame);
+	frame->layout()->addWidget(b_SetRestriction_ConeTree);
 	frame->layout()->addWidget(b_UnsetRestriction);
+
+    toolBar->addSeparator();
+
+    frame = createHorizontalFrame();
+    toolBar->addWidget(frame);
+    frame->layout()->addWidget(b_SetRestriction_CylinderSurface);
+    frame->layout()->addWidget(b_SetRestriction_CylinderSurface_Slider);
+
+    frame = createHorizontalFrame();
+    toolBar->addWidget(frame);
+    frame->layout()->addWidget(b_SetRestriction_ConeSurface);
+    frame->layout()->addWidget(b_SetRestriction_ConeSurface_Slider);
+
+    frame = createHorizontalFrame();
+    toolBar->addWidget(frame);
+    frame->layout()->addWidget(b_UnsetRestrictionFromAll);
 
 	toolBar->addSeparator();
 
@@ -348,11 +435,11 @@ void CoreWindow::createLeftToolBar()
 	frame->setMaximumHeight(100);
 	frame->layout()->setAlignment(Qt::AlignHCenter);
 	toolBar->addWidget(frame);
-        frame->layout()->addWidget(slider);
+	frame->layout()->addWidget(slider);
 
 	addToolBar(Qt::LeftToolBarArea,toolBar);
-        toolBar->setMaximumWidth(120);
-        toolBar->setMovable(false);
+	toolBar->setMaximumWidth(120);
+	toolBar->setMovable(false);
 }
 
 void CoreWindow::createRightToolBar() {
@@ -421,7 +508,10 @@ void CoreWindow::createCollaborationToolBar() {
     frame->layout()->setAlignment(Qt::AlignHCenter);
     frame->layout()->addWidget(sl_avatarScale);
     toolBar->addWidget(frame);
-
+    #ifdef OPENCV_FOUND
+    toolBar->addSeparator();
+    toolBar->addWidget(b_start_face);
+    #endif
 
     addToolBar(Qt::RightToolBarArea,toolBar);
     toolBar->setMaximumHeight(400);
@@ -567,8 +657,18 @@ void CoreWindow::addMetaNode()
         QString metaNodeName = "metaNode";
         QString metaEdgeName = "metaEdge";
 
-        osg::ref_ptr<Data::Node> metaNode = NULL;
-        QLinkedList<osg::ref_ptr<Data::Node> > * selectedNodes = viewerWidget->getPickHandler()->getSelectedNodes();
+		osg::GraphicsContext * gc = viewerWidget->getCamera()->getGraphicsContext();
+		osgViewer::GraphicsWindow * gw = dynamic_cast<osgViewer::GraphicsWindow *>(gc);
+
+		int x, y, width, height;
+
+		gw->getWindowRectangle(x, y, width, height);
+
+		cout << width << " " << height << "\n";
+
+
+		osg::ref_ptr<Data::Node> metaNode = NULL;	
+		QLinkedList<osg::ref_ptr<Data::Node> > * selectedNodes = viewerWidget->getPickHandler()->getSelectedNodes();
 
         Network::Client * client = Network::Client::getInstance();
         if (!client->isConnected()) {
@@ -617,18 +717,18 @@ void CoreWindow::mergeNodes()
 		osg::Vec3 position = viewerWidget->getPickHandler()->getSelectionCenter(true); 
 		QLinkedList<osg::ref_ptr<Data::Node> > * selectedNodes = viewerWidget->getPickHandler()->getSelectedNodes();
 
-                if(selectedNodes->count() > 0) {
-                        Network::Server * server = Network::Server::getInstance();
-                        Network::Client * client = Network::Client::getInstance();
-                        osg::ref_ptr<Data::Node> mergeNode = NULL;
-                        if (!client->isConnected()) {
-                            mergeNode = currentGraph->mergeNodes(selectedNodes, position);
-                        }
-                        if (server->isListening() && mergeNode != NULL) {
-                            server->sendMergeNodes(selectedNodes, position, mergeNode->getId());
-                        } else {
-                            client->sendMergeNodes(selectedNodes, position);
-                        }
+		if(selectedNodes->count() > 0) {
+			Network::Server * server = Network::Server::getInstance();
+			Network::Client * client = Network::Client::getInstance();
+			osg::ref_ptr<Data::Node> mergeNode = NULL;
+			if (!client->isConnected()) {
+				mergeNode = currentGraph->mergeNodes(selectedNodes, position);
+			}
+			if (server->isListening() && mergeNode != NULL) {
+				server->sendMergeNodes(selectedNodes, position, mergeNode->getId());
+			} else {
+				client->sendMergeNodes(selectedNodes, position);
+			}
 		}
 		else {
 			qDebug() << "[QOSG::CoreWindow::mergeNodes] There are no nodes selected";
@@ -650,18 +750,18 @@ void CoreWindow::separateNodes()
 	{
 		QLinkedList<osg::ref_ptr<Data::Node> > * selectedNodes = viewerWidget->getPickHandler()->getSelectedNodes();
 
-                if(selectedNodes->count() > 0) {
-                    Network::Server * server = Network::Server::getInstance();
-                    Network::Client * client = Network::Client::getInstance();
-                    if (!client->isConnected()) {
-                        currentGraph->separateNodes(selectedNodes);
-                    }
+		if(selectedNodes->count() > 0) {
+			Network::Server * server = Network::Server::getInstance();
+			Network::Client * client = Network::Client::getInstance();
+			if (!client->isConnected()) {
+				currentGraph->separateNodes(selectedNodes);
+			}
 
-                    if (server->isListening()) {
-                        server->sendSeparateNodes(selectedNodes);
-                    } else if (client->isConnected()) {
-                        client->sendSeparateNodes(selectedNodes);
-                    }
+			if (server->isListening()) {
+				server->sendSeparateNodes(selectedNodes);
+			} else if (client->isConnected()) {
+				client->sendSeparateNodes(selectedNodes);
+			}
 		}
 		else {
 			qDebug() << "[QOSG::CoreWindow::separateNodes] There are no nodes selected";
@@ -711,7 +811,7 @@ void CoreWindow::loadFile()
 		tr("Open file"), ".", tr("GraphML files (*.graphml);;GXL files (*.gxl);;RSF files (*.rsf)"));
 
 	if (fileName != "") {
-                Manager::GraphManager::getInstance()->loadGraph(fileName);
+		Manager::GraphManager::getInstance()->loadGraph(fileName);
 
 		viewerWidget->getCameraManipulator()->home();
 	}
@@ -736,7 +836,7 @@ void CoreWindow::labelOnOff(bool)
 		nodeLabelsVisible = !nodeLabelsVisible;
 		coreGraph->setNodeLabelsVisible(nodeLabelsVisible);
 	}
-	else if (viewerWidget->getPickHandler()->getSelectionType() == Vwr::PickHandler::SelectionType::ALL)
+	else
 	{
 		bool state = edgeLabelsVisible & nodeLabelsVisible;
 
@@ -787,7 +887,7 @@ void CoreWindow::applyColorClick()
 	QLinkedList<osg::ref_ptr<Data::Node> > * selectedNodes = viewerWidget->getPickHandler()->getSelectedNodes();
 	QLinkedList<osg::ref_ptr<Data::Node> >::const_iterator ni = selectedNodes->constBegin();
 
-        Network::Server * server = Network::Server::getInstance();
+	Network::Server * server = Network::Server::getInstance();
 	while (ni != selectedNodes->constEnd()) 
 	{
             if (client->isConnected()) {
@@ -808,12 +908,12 @@ void CoreWindow::applyColorClick()
 		if((*ei)->getScale() != 0)
 		{
 
-                    if (client->isConnected()) {
-                        client->sendNodeColor((*ei)->getId(), red, green, blue, alpha);
-                    } else {
-                        (*ei)->setEdgeColor(osg::Vec4(red, green, blue, alpha));
-                        server->sendNodeColor((*ei)->getId(), red, green, blue, alpha);
-                    }
+			if (client->isConnected()) {
+				client->sendNodeColor((*ei)->getId(), red, green, blue, alpha);
+			} else {
+				(*ei)->setEdgeColor(osg::Vec4(red, green, blue, alpha));
+				server->sendNodeColor((*ei)->getId(), red, green, blue, alpha);
+			}
 
 		}
 		++ei;
@@ -838,6 +938,35 @@ void CoreWindow::applyLabelClick() {
             server->sendNodeLabel((*ni)->getId(), newLabel);
         }
         ++ni;
+    }
+}
+
+void CoreWindow::setRestriction_CylinderSurface()
+{
+    Data::Graph *currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
+
+    if (currentGraph != NULL)
+    {
+        //osg::Vec3 position = viewerWidget->getPickHandler()->getSelectionCenter(true);
+
+        //osg::ref_ptr<Data::Node> centerNode = currentGraph->addRestrictionNode (QString ("center"), position);
+        //osg::ref_ptr<Data::Node> surfaceNode = currentGraph->addRestrictionNode (QString ("surface"), position + osg::Vec3f (10, 0, 0));
+
+        Layout::RestrictionRemovalHandler_RestrictionNodesRemover::NodesListType restrictionNodes;
+        //restrictionNodes.push_back (centerNode);
+        //restrictionNodes.push_back (surfaceNode);
+
+        setRestrictionToAllNodes (
+                    QSharedPointer<Layout::ShapeGetter> (
+                        new Layout::ShapeGetter_CylinderSurface_ByCamera(viewerWidget, *b_SetRestriction_CylinderSurface_Slider)),
+                    currentGraph,
+                    QSharedPointer<Layout::RestrictionRemovalHandler_RestrictionNodesRemover> (
+                        new Layout::RestrictionRemovalHandler_RestrictionNodesRemover (
+                            *currentGraph,
+                            restrictionNodes
+                            )
+                        )
+                    );
     }
 }
 
@@ -935,55 +1064,321 @@ void CoreWindow::setRestriction_Sphere ()
 	}
 }
 
-void CoreWindow::setRestriction_Plane ()
+void CoreWindow::setRestriction_ConeSurface()
 {
-	Data::Graph * currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
+    Data::Graph *currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
 
-	if (currentGraph != NULL) {
-		osg::Vec3 position = viewerWidget->getPickHandler()->getSelectionCenter(true);
-		osg::ref_ptr<Data::Node> node1;
-		osg::ref_ptr<Data::Node> node2;
-		osg::ref_ptr<Data::Node> node3;
+    if (currentGraph != NULL)
+    {
+        //osg::Vec3 position = viewerWidget->getPickHandler()->getSelectionCenter(true);
 
-		QString name_node1 = "plane_node_1";
-		QString name_node2 = "plane_node_2";
-		QString name_node3 = "plane_node_3";
+        //osg::ref_ptr<Data::Node> centerNode = currentGraph->addRestrictionNode (QString ("center"), position);
+        //osg::ref_ptr<Data::Node> surfaceNode = currentGraph->addRestrictionNode (QString ("surface"), position + osg::Vec3f (10, 0, 0));
 
-		osg::Vec3 positionNode1 = position;
-		osg::Vec3 positionNode2 = position + osg::Vec3f (10, 0, 0);
-		osg::Vec3 positionNode3 = position + osg::Vec3f (0, 10, 0);
+        Layout::RestrictionRemovalHandler_RestrictionNodesRemover::NodesListType restrictionNodes;
+        //restrictionNodes.push_back (centerNode);
+        //restrictionNodes.push_back (surfaceNode);
 
-		Layout::RestrictionRemovalHandler_RestrictionNodesRemover::NodesListType restrictionNodes;
+        setRestrictionToAllNodes (
+                    QSharedPointer<Layout::ShapeGetter> (
+                        new Layout::ShapeGetter_ConeSurface_ByCamera(viewerWidget, *b_SetRestriction_ConeSurface_Slider)),
+                    currentGraph,
+                    QSharedPointer<Layout::RestrictionRemovalHandler_RestrictionNodesRemover> (
+                        new Layout::RestrictionRemovalHandler_RestrictionNodesRemover (
+                            *currentGraph,
+                            restrictionNodes
+                            )
+                        )
+                    );
+    }
+}
 
-		Network::Client * client = Network::Client::getInstance();
+void CoreWindow::setRestriction_Plane (QLinkedList<osg::ref_ptr<Data::Node> > * nodesToRestrict)
+{
+        Data::Graph * currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
 
-		if (!client->isConnected()) {
+        if (currentGraph != NULL) {
+                osg::Vec3 position = viewerWidget->getPickHandler()->getSelectionCenter(true);
 
-			node1 = currentGraph->addRestrictionNode (name_node1, positionNode1);
-			node2 = currentGraph->addRestrictionNode (name_node2, positionNode2);
-			node3 = currentGraph->addRestrictionNode (name_node3, positionNode3);
-			restrictionNodes.push_back (node1);
-			restrictionNodes.push_back (node2);
-			restrictionNodes.push_back (node3);
+                osg::ref_ptr<Data::Node> node1;
+                osg::ref_ptr<Data::Node> node2;
+                osg::ref_ptr<Data::Node> node3;
 
-			setRestrictionToSelectedNodes (
-						QSharedPointer<Layout::ShapeGetter> (
-							new Layout::ShapeGetter_Plane_ByThreeNodes (node1, node2, node3)
-							),
-						currentGraph,
-						QSharedPointer<Layout::RestrictionRemovalHandler_RestrictionNodesRemover> (
-							new Layout::RestrictionRemovalHandler_RestrictionNodesRemover (
-								*currentGraph,
-								restrictionNodes
-								)
-							)
-						);
-		} else {
-			client->sendSetRestriction(3,name_node1,positionNode1,name_node2, positionNode2, viewerWidget->getPickHandler()->getSelectedNodes(),name_node3,&positionNode3);
-		}
-		Network::Server * server = Network::Server::getInstance();
-		server->sendSetRestriction(3, node1, positionNode1, node2, positionNode2, viewerWidget->getPickHandler()->getSelectedNodes(), node3, &positionNode3);
-	}
+                QString name_node1 = "plane_node_1";
+                QString name_node2 = "plane_node_2";
+                QString name_node3 = "plane_node_3";
+
+                osg::Vec3 positionNode1 = position;
+                osg::Vec3 positionNode2 = position + osg::Vec3f (10, 0, 0);
+                osg::Vec3 positionNode3 = position + osg::Vec3f (0, 10, 0);
+
+                Layout::RestrictionRemovalHandler_RestrictionNodesRemover::NodesListType restrictionNodes;
+
+                Network::Client * client = Network::Client::getInstance();
+
+                if (!client->isConnected()) {
+
+                        node1 = currentGraph->addRestrictionNode (name_node1, positionNode1);
+                        node2 = currentGraph->addRestrictionNode (name_node2, positionNode2);
+                        node3 = currentGraph->addRestrictionNode (name_node3, positionNode3);
+                        restrictionNodes.push_back (node1);
+                        restrictionNodes.push_back (node2);
+                        restrictionNodes.push_back (node3);
+
+                        setRestrictionToSelectedNodes (
+                                                QSharedPointer<Layout::ShapeGetter> (
+                                                        new Layout::ShapeGetter_Plane_ByThreeNodes (node1, node2, node3)
+                                                        ),
+                                                currentGraph,
+                                                QSharedPointer<Layout::RestrictionRemovalHandler_RestrictionNodesRemover> (
+                                                        new Layout::RestrictionRemovalHandler_RestrictionNodesRemover (
+                                                                *currentGraph,
+                                                                restrictionNodes
+                                                                )
+                                                        ),
+                                                nodesToRestrict
+                                                );
+                } else {
+                        client->sendSetRestriction(3,name_node1,positionNode1,name_node2, positionNode2, viewerWidget->getPickHandler()->getSelectedNodes(),name_node3,&positionNode3);
+                }
+                Network::Server * server = Network::Server::getInstance();
+                server->sendSetRestriction(3, node1, positionNode1, node2, positionNode2, viewerWidget->getPickHandler()->getSelectedNodes(), node3, &positionNode3);
+        }
+}
+
+void CoreWindow::setRestriction_SpherePlane(QLinkedList<osg::ref_ptr<Data::Node> > * nodesToRestrict){
+    Data::Graph * currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
+
+    if (currentGraph != NULL) {
+
+            osg::Vec3 position = viewerWidget->getPickHandler()->getSelectionCenter(true);
+
+            osg::ref_ptr<Data::Node> node1;
+            osg::ref_ptr<Data::Node> node2;
+            osg::ref_ptr<Data::Node> node3;
+
+            QString name_node1 = "sphere_center_node";
+            QString name_node2 = "sphere_surface_node";
+            QString name_node3 = "plane_node_3";
+
+            osg::Vec3 positionNode1 = position;
+            osg::Vec3 positionNode2 = position + osg::Vec3f (10, 0, 0);
+            osg::Vec3 positionNode3 = position + osg::Vec3f (0, 10, 0);
+
+            Layout::RestrictionRemovalHandler_RestrictionNodesRemover::NodesListType restrictionNodes;
+
+            Network::Client * client = Network::Client::getInstance();
+
+            if (!client->isConnected()) {
+
+                    node1 = currentGraph->addRestrictionNode (name_node1, positionNode1);
+                    node2 = currentGraph->addRestrictionNode (name_node2, positionNode2);
+                    node3 = currentGraph->addRestrictionNode (name_node3, positionNode3);
+                    restrictionNodes.push_back (node1);
+                    restrictionNodes.push_back (node2);
+                    restrictionNodes.push_back (node3);
+
+
+
+                    setRestrictionToSelectedNodes (
+                                            QSharedPointer<Layout::ShapeGetter> (
+                                                    new Layout::ShapeGetter_SpherePlane_ByThreeNodes (node1, node2, node3)
+                                                    ),
+                                            currentGraph,
+                                            QSharedPointer<Layout::RestrictionRemovalHandler_RestrictionNodesRemover> (
+                                                    new Layout::RestrictionRemovalHandler_RestrictionNodesRemover (
+                                                            *currentGraph,
+                                                            restrictionNodes
+                                                            )
+                                                    ),
+                                            nodesToRestrict
+                                            );
+            } else {
+                    client->sendSetRestriction(3,name_node1,positionNode1,name_node2, positionNode2, viewerWidget->getPickHandler()->getSelectedNodes(),name_node3,&positionNode3);
+            }
+            Network::Server * server = Network::Server::getInstance();
+            server->sendSetRestriction(3, node1, positionNode1, node2, positionNode2, viewerWidget->getPickHandler()->getSelectedNodes(), node3, &positionNode3);
+    }
+}
+
+void CoreWindow::setRestriction_Circle(QLinkedList<osg::ref_ptr<Data::Node> > * nodesToRestrict,
+                                       osg::ref_ptr<Data::Node> centerNode){
+    Data::Graph * currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
+
+    if (currentGraph != NULL) {
+
+        if (nodesToRestrict == NULL){
+            nodesToRestrict = viewerWidget->getPickHandler()->getSelectedNodes();
+        }
+
+        osg::Vec3 position;
+        if (centerNode == NULL)
+            position = viewerWidget->getPickHandler()->getSelectionCenter(true);
+        else
+            position = centerNode->getTargetPosition();
+
+            osg::ref_ptr<Data::Node> node1;
+            osg::ref_ptr<Data::Node> node2;
+            osg::ref_ptr<Data::Node> node3;
+
+            QString name_node1 = "circle_center_node";
+            QString name_node2 = "circle_edge_node";
+            QString name_node3 = "circle_plane_node";
+
+            osg::Vec3 positionNode1 = position;
+            osg::Vec3 positionNode2 = position + osg::Vec3f (10, 0, 0);
+            osg::Vec3 positionNode3 = position + osg::Vec3f (0, 20, 0);
+
+            Layout::RestrictionRemovalHandler_RestrictionNodesRemover::NodesListType restrictionNodes;
+
+            Network::Client * client = Network::Client::getInstance();
+
+            if (!client->isConnected()) {
+
+                    if (centerNode == NULL)
+                        node1 = currentGraph->addRestrictionNode (name_node1, positionNode1);
+                    else
+                        node1 = centerNode;
+                    node2 = currentGraph->addRestrictionNode (name_node2, positionNode2);
+                    node3 = currentGraph->addRestrictionNode (name_node3, positionNode3);
+                    node3->setInvisible();
+                    restrictionNodes.push_back (node1);
+                    restrictionNodes.push_back (node2);
+                    restrictionNodes.push_back (node3);
+
+                    QLinkedList<osg::ref_ptr<Data::Node> > nodes;
+                    nodes.append(node1);
+                    nodes.append(node2);
+                    nodes.append(node3);
+
+                    osg::ref_ptr<Data::Edge> radiusEdge = currentGraph->addEdge("pomEdge", node1, node2, currentGraph->getEdgeMetaType(), true);
+                    radiusEdge->setScale(0);
+                    radiusEdge->setSharedCoordinates(false, false, true);
+
+                    setRestrictionToSelectedNodes (
+                                            QSharedPointer<Layout::ShapeGetter> (
+                                                    new Layout::ShapeGetter_Circle_ByThreeNodes (node1, node2, node3)
+                                                    ),
+                                            currentGraph,
+                                            QSharedPointer<Layout::RestrictionRemovalHandler_RestrictionNodesRemover> (
+                                                    new Layout::RestrictionRemovalHandler_RestrictionNodesRemover (
+                                                            *currentGraph,
+                                                            restrictionNodes
+                                                            )
+                                                    ),
+                                            nodesToRestrict
+                                            );
+            } else {
+                    client->sendSetRestriction(3,name_node1,positionNode1,name_node2, positionNode2, nodesToRestrict,name_node3,&positionNode3);
+            }
+            Network::Server * server = Network::Server::getInstance();
+            server->sendSetRestriction(3, node1, positionNode1, node2, positionNode2,nodesToRestrict, node3, &positionNode3);
+    }
+}
+
+void CoreWindow::setRestriction_Cone(QLinkedList<osg::ref_ptr<Data::Node> > * nodesToRestrict,
+                                     osg::ref_ptr<Data::Node> parentNode){
+    Data::Graph * currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
+
+    if (currentGraph != NULL) {
+        if (parentNode == NULL){
+             parentNode =  viewerWidget->getPickHandler()->getPickedNodeWithMaxEdgeCount();
+             parentNode->setFixed(true);
+        }
+
+        if (nodesToRestrict == NULL ){
+            nodesToRestrict = viewerWidget->getPickHandler()->getSelectedNodes();
+        }
+
+        nodesToRestrict->removeOne(parentNode);
+
+
+        osg::Vec3 positionCenter = parentNode->getTargetPosition() + osg::Vec3f (0, 0, (-50));
+
+        osg::ref_ptr<Data::Node> centernode = currentGraph->addRestrictionNode ("circle_center_node", positionCenter);
+
+        osg::ref_ptr<Data::Edge> parentCircleEdge = currentGraph->addEdge("pomEdge", parentNode, centernode, currentGraph->getEdgeMetaType(), true);
+        parentCircleEdge->setInvisible(true);
+        parentCircleEdge->setSharedCoordinates(true, true, false);
+
+        setRestriction_Circle(nodesToRestrict, centernode);
+    }
+
+}
+
+
+void CoreWindow::setRestriction_ConeTree (){
+    Data::Graph * currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
+    if (currentGraph == NULL) return;
+    QMap<qlonglong, osg::ref_ptr<Data::Node> >* allNodes = currentGraph->getNodes();
+
+    osg::ref_ptr<Data::Node> rootNode = viewerWidget->getPickHandler()->getPickedNodeWithMaxEdgeCount();
+    if(rootNode == NULL) return;
+
+    osg::Vec3 centerPosition = viewerWidget->getPickHandler()->getSelectionCenter(true);
+    osg::Vec3 rootPosition = centerPosition + osg::Vec3f (0, 0, 100);
+    rootNode->setTargetPosition(rootPosition);
+    rootNode->setFixed(true);
+
+    Data::GraphSpanningTree* spanningTree = currentGraph->getSpanningTree(rootNode->getId());
+    QLinkedList<osg::ref_ptr<Data::Node> > pickedNodes;
+
+    QList<qlonglong> groups = spanningTree->getAllGroups();
+    QList<qlonglong>::iterator groupIt;
+    for(groupIt=groups.begin(); groupIt!=groups.end();groupIt++){
+        if ((*groupIt) == 0) continue;
+        pickedNodes.clear();
+        QList<qlonglong> nodes = spanningTree->getNodesInGroup(*groupIt);
+        QList<qlonglong>::iterator nodeIt;
+        for(nodeIt=nodes.begin(); nodeIt!=nodes.end();nodeIt++){
+            pickedNodes.append(allNodes->value(*nodeIt));
+        }
+        osg::ref_ptr<Data::Node> parentNode = allNodes->value(*groupIt);
+        setRestriction_Cone(&pickedNodes,parentNode);
+    }
+
+    int maxDepth = spanningTree->getMaxDepth();
+    for (int depth=1; depth<=maxDepth;depth++){
+        pickedNodes.clear();
+        QList<qlonglong> groups = spanningTree->getGroupsInDepth(depth);
+
+        QList<qlonglong>::iterator groupIt;
+        for(groupIt=groups.begin(); groupIt!=groups.end();groupIt++){
+            qlonglong nodeId = spanningTree->getRandomNodeInGroup(*groupIt);
+            pickedNodes.append(allNodes->value(nodeId));
+
+        }
+
+        osg::Vec3 position = rootPosition + osg::Vec3f (0, 0, (-50)*depth);
+        osg::Vec3 positionNode1 = position;
+        osg::Vec3 positionNode2 = position + osg::Vec3f (10, 0, 0);
+        osg::Vec3 positionNode3 = position + osg::Vec3f (0, 10, 0);
+
+        Layout::RestrictionRemovalHandler_RestrictionNodesRemover::NodesListType restrictionNodes;
+
+        osg::ref_ptr<Data::Node> node1 = currentGraph->addRestrictionNode ("plane_node_1", positionNode1);
+        osg::ref_ptr<Data::Node> node2 = currentGraph->addRestrictionNode ("plane_node_2", positionNode2);
+        osg::ref_ptr<Data::Node> node3 = currentGraph->addRestrictionNode ("plane_node_3", positionNode3);
+        node1->setInvisible();
+        node2->setInvisible();
+        node3->setInvisible();
+        restrictionNodes.push_back (node1);
+        restrictionNodes.push_back (node2);
+        restrictionNodes.push_back (node3);
+
+        setRestrictionToShape(QSharedPointer<Layout::ShapeGetter> (
+                                  new Layout::ShapeGetter_Plane_ByThreeNodes (node1, node2, node3)
+                                  ),
+                          currentGraph,
+                          QSharedPointer<Layout::RestrictionRemovalHandler_RestrictionNodesRemover> (
+                                  new Layout::RestrictionRemovalHandler_RestrictionNodesRemover (
+                                          *currentGraph,
+                                          restrictionNodes
+                                          )
+                                  ),
+                          pickedNodes);
+
+    }
 }
 
 void CoreWindow::unsetRestriction () {
@@ -1006,6 +1401,18 @@ void CoreWindow::unsetRestriction () {
 	server->sendUnSetRestriction(viewerWidget->getPickHandler()->getSelectedNodes());
 }
 
+void CoreWindow::unsetRestrictionFromAll() {
+    Data::Graph * currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
+
+    if (currentGraph != NULL) {
+        setRestrictionToAllNodes (
+            QSharedPointer<Layout::ShapeGetter> (NULL),
+            currentGraph,
+            QSharedPointer<Layout::RestrictionRemovalHandler> (NULL)
+        );
+    }
+}
+
 void CoreWindow::setRestrictionToSelectedNodes (
 	QSharedPointer<Layout::ShapeGetter> shapeGetter,
 	Data::Graph * currentGraph,
@@ -1019,30 +1426,69 @@ void CoreWindow::setRestrictionToSelectedNodes (
 		nodes.insert (it->get ());
 	}
 
-	currentGraph->getRestrictionsManager ().setRestrictions (nodes, shapeGetter);
+	currentGraph->getRestrictionsManager().setRestrictions (nodes, shapeGetter);
 
 	if ((! shapeGetter.isNull ()) && (! removalHandler.isNull ())) {
-		currentGraph->getRestrictionsManager ().setOrRunRestrictionRemovalHandler (shapeGetter, removalHandler);
+		currentGraph->getRestrictionsManager().setOrRunRestrictionRemovalHandler (shapeGetter, removalHandler);
 	}
 
 	if (isPlaying)
 		layout->play();
 }
 
+void CoreWindow::setRestrictionToAllNodes (
+    QSharedPointer<Layout::ShapeGetter> shapeGetter,
+    Data::Graph * currentGraph,
+    QSharedPointer<Layout::RestrictionRemovalHandler> removalHandler
+) {
+    QSet<Data::Node *> nodes;
+
+    QMap<qlonglong, osg::ref_ptr<Data::Node> >::iterator j;
+    j = Manager::GraphManager::getInstance()->getActiveGraph()->getNodes()->begin();
+    for (int i = 0; i < Manager::GraphManager::getInstance()->getActiveGraph()->getNodes()->count(); ++i,++j)
+    {
+        nodes.insert(j.value());
+    }
+
+    currentGraph->getRestrictionsManager ().setRestrictions (nodes, shapeGetter);
+
+    if ((! shapeGetter.isNull ()) && (! removalHandler.isNull ())) {
+        currentGraph->getRestrictionsManager ().setOrRunRestrictionRemovalHandler (shapeGetter, removalHandler);
+    }
+
+    if (isPlaying)
+        layout->play();
+}
+
+void CoreWindow::setRestrictionToShape(
+    QSharedPointer<Layout::ShapeGetter> shapeGetter,
+    Data::Graph * currentGraph,
+    QSharedPointer<Layout::RestrictionRemovalHandler> removalHandler,
+    QLinkedList<osg::ref_ptr<Data::Node> >  nodesOfShapeGettersToRestrict)
+{
+
+    currentGraph->getRestrictionsManager().setRestrictionToShape (&nodesOfShapeGettersToRestrict, shapeGetter);
+
+
+    if ((! shapeGetter.isNull ()) && (! removalHandler.isNull ())) {
+            currentGraph->getRestrictionsManager().setOrRunRestrictionRemovalHandler (shapeGetter, removalHandler);
+    }
+
+    if (isPlaying)
+            layout->play();
+}
+
 bool CoreWindow::add_EdgeClick()
 {
-	Data::Type *edgeType = NULL;
-	Data::Type *nodeType = NULL;
 	Data::Graph * currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
-	
-	
+		
 	QLinkedList<osg::ref_ptr<Data::Node> > * selectedNodes = viewerWidget->getPickHandler()->getSelectedNodes();
 	QLinkedList<osg::ref_ptr<Data::Node> >::const_iterator ni = selectedNodes->constBegin();
 	
 	if (
 		selectedNodes==NULL
 			) {
-				AppCore::Core::getInstance()->messageWindows->showMessageBox("Upozornenie","Žiadny uzol oznaèený",false);
+				AppCore::Core::getInstance()->messageWindows->showMessageBox("Upozornenie","Ziadny uzol oznaceny",false);
 				return false;
 			}
 
@@ -1057,7 +1503,7 @@ bool CoreWindow::add_EdgeClick()
 		if (	
 			i!=2
 			) {
-				AppCore::Core::getInstance()->messageWindows->showMessageBox("Upozornenie","Musite vybrat práve 2 vrcholy",false);
+				AppCore::Core::getInstance()->messageWindows->showMessageBox("Upozornenie","Musite vybrat prave 2 vrcholy",false);
 				return false;
 			}
 	ni = selectedNodes->constBegin();
@@ -1066,33 +1512,33 @@ bool CoreWindow::add_EdgeClick()
 	node1=(* ni);
 	++ni;
 	QMap<qlonglong, osg::ref_ptr<Data::Edge> > *mapa = currentGraph->getEdges();
-        Data::Type* type = currentGraph->addType(Data::GraphLayout::META_EDGE_TYPE);
+	Data::Type* type = currentGraph->addType(Data::GraphLayout::META_EDGE_TYPE);
 	for (QMap<qlonglong, osg::ref_ptr<Data::Edge> >::iterator it = mapa->begin (); it != mapa->end (); ++it) {
 			osg::ref_ptr<Data::Edge> existingEdge = it.value ();
 			if (
-                                existingEdge->getSrcNode () ->getId () == node1 ->getId () &&
-                                existingEdge->getDstNode () ->getId () == node2 ->getId ()
+				existingEdge->getSrcNode () ->getId () == node1 ->getId () &&
+				existingEdge->getDstNode () ->getId () == node2 ->getId ()
 			) {
-				AppCore::Core::getInstance()->messageWindows->showMessageBox("Hrana najdená","Medzi vrcholmi nesmie byt hrana",false);
+				AppCore::Core::getInstance()->messageWindows->showMessageBox("Hrana najdena","Medzi vrcholmi nesmie byt hrana",false);
 				return false;
 			}
 			if (
-                                existingEdge->getSrcNode () ->getId () == node2 ->getId () &&
-                                existingEdge->getDstNode () ->getId () == node1 ->getId ()
+				existingEdge->getSrcNode () ->getId () == node2 ->getId () &&
+				existingEdge->getDstNode () ->getId () == node1 ->getId ()
 			) {
-				AppCore::Core::getInstance()->messageWindows->showMessageBox("Hrana najdená","Medzi vrcholmi nesmie byt hrana",false);
+				AppCore::Core::getInstance()->messageWindows->showMessageBox("Hrana najdena","Medzi vrcholmi nesmie byt hrana",false);
 				return false;
 			}
 		}
 
-        osg::ref_ptr<Data::Edge> newEdge;
-        if (!client->isConnected()) {
-            newEdge = currentGraph->addEdge("GUI_edge", node1, node2, type, false);
-            Network::Server * server = Network::Server::getInstance();
-            server->sendNewEdge(newEdge);
-        } else {
-            client->sendNewEdge("GUI_edge", node1->getId(), node2->getId(), false);
-        }
+    osg::ref_ptr<Data::Edge> newEdge;
+    if (!client->isConnected()) {
+        newEdge = currentGraph->addEdge("GUI_edge", node1, node2, type, false);
+        Network::Server * server = Network::Server::getInstance();
+        server->sendNewEdge(newEdge);
+    } else {
+        client->sendNewEdge("GUI_edge", node1->getId(), node2->getId(), false);
+    }
 	if (isPlaying)
 			layout->play();
 	QString nodename1 = QString(node1->getName());
@@ -1133,19 +1579,19 @@ bool CoreWindow::add_NodeClick()
 
 bool CoreWindow::removeClick()
 {	
-        Network::Server * server = Network::Server::getInstance();
+	Network::Server * server = Network::Server::getInstance();
 
 	Data::Graph * currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
 	QLinkedList<osg::ref_ptr<Data::Edge> > * selectedEdges = viewerWidget->getPickHandler()->getSelectedEdges();
 	
 	while (selectedEdges->size () > 0) {
 		osg::ref_ptr<Data::Edge> existingEdge1 = (* (selectedEdges->constBegin()));
-                if (!client->isConnected()) {
-                    currentGraph->removeEdge(existingEdge1);
-                    server->sendRemoveEdge(existingEdge1->getId());
-                } else {
-                    client->sendRemoveEdge(existingEdge1->getId());
-                }
+        if (!client->isConnected()) {
+            currentGraph->removeEdge(existingEdge1);
+            server->sendRemoveEdge(existingEdge1->getId());
+        } else {
+            client->sendRemoveEdge(existingEdge1->getId());
+        }
 		selectedEdges->removeFirst ();
 	}
 	currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
@@ -1153,14 +1599,14 @@ bool CoreWindow::removeClick()
 
 	while (selectedNodes->size () > 0) {
 		osg::ref_ptr<Data::Node> existingNode1 = (* (selectedNodes->constBegin()));
-                if (existingNode1->isRemovableByUser()) {
-                    if (!client->isConnected()) {
-                        currentGraph->removeNode(existingNode1);
-                        server->sendRemoveNode(existingNode1->getId());
-                    } else {
-                        client->sendRemoveNode(existingNode1->getId());
-                    }
-                }
+        if (existingNode1->isRemovableByUser()) {
+            if (!client->isConnected()) {
+                currentGraph->removeNode(existingNode1);
+                server->sendRemoveNode(existingNode1->getId());
+            } else {
+                client->sendRemoveNode(existingNode1->getId());
+            }
+        }
 		selectedNodes->removeFirst ();
 	}
 
@@ -1219,6 +1665,11 @@ void CoreWindow::start_client()
 void CoreWindow::send_message()
 {
     client->send_message(le_message->text());
+}
+
+void CoreWindow::create_facewindow()
+{
+    OpenCV::OpenCVCore::getInstance(NULL)->faceRecognition();
 }
 
 void CoreWindow::toggleSpyWatch()

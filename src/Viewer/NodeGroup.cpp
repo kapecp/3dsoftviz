@@ -17,16 +17,16 @@ NodeGroup::~NodeGroup(void)
 }
 
 /*!
- * 
+ *
  * \param scale
  * Koeficient velkosti uzlov.
- * 
+ *
  * \returns
  * Podgraf s uzlami.
- * 
- * 
+ *
+ *
  * Inicializuje uzly na ich pozicie a priradim im textury.
- * 
+ *
  */
 void NodeGroup::initNodes()
 {
@@ -41,24 +41,22 @@ void NodeGroup::initNodes()
 	if (appConf->getValue("Viewer.Display.NodesAlwaysOnTop").toInt())
 		nodeGroup->getOrCreateStateSet()->setRenderBinDetails(100, "RenderBin");
 
-	float graphScale = appConf->getValue("Viewer.Display.NodeDistanceScale").toFloat(); 
-	
-	QMapIterator<qlonglong, osg::ref_ptr<Data::Node> > i(*nodes);
-	
-	int px = 1000000, py = 1000, pz = 1000; 
+	float graphScale = appConf->getValue("Viewer.Display.NodeDistanceScale").toFloat();
 
-	while (i.hasNext()) 
+	QMapIterator<qlonglong, osg::ref_ptr<Data::Node> > i(*nodes);
+
+	while (i.hasNext())
 	{
 		i.next();
-		
+
 		nodeGroup->addChild(wrapChild(i.value(), graphScale));
 
-		
+
 		osg::ref_ptr<osg::Group> g = getNodeGroup(i.value(), NULL, graphScale);
 
 		if (g != NULL)
 			nodeGroup->addChild(g);
-		
+
 	}
 
 	this->group = nodeGroup;
@@ -76,30 +74,31 @@ osg::ref_ptr<osg::Group> NodeGroup::getNodeGroup(osg::ref_ptr<Data::Node> node, 
 
 		if(node->isParentNode()==true)
 		{
-				osg::ref_ptr<osg::AutoTransform> at = new osg::AutoTransform;
-				at->setPosition(node->getTargetPosition() * graphScale);
-				at->setAutoRotateMode(osg::AutoTransform::ROTATE_TO_SCREEN);
+			osg::ref_ptr<osg::AutoTransform> at = new osg::AutoTransform;
+			//at->setPosition(node->getTargetPosition() * graphScale);
+			at->setPosition(node->restrictedTargetPosition() * graphScale);
+			at->setAutoRotateMode(osg::AutoTransform::ROTATE_TO_SCREEN);
 
-				osg::ShapeDrawable * shape = new osg::ShapeDrawable;
-				osg::Sphere * sphere = new osg::Sphere;
-				sphere->setRadius(10);
-				shape->setShape(sphere);
-				shape->setColor(osg::Vec4(0.9, 0.1, 0.3, 0.5));
-				shape->getOrCreateStateSet()->setMode(GL_BLEND, osg::StateAttribute::ON);
-				shape->getStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
-				osg::Geode * geode = new osg::Geode;
-				geode->addDrawable(shape);
+			osg::ShapeDrawable * shape = new osg::ShapeDrawable;
+			osg::Sphere * sphere = new osg::Sphere;
+			sphere->setRadius(10);
+			shape->setShape(sphere);
+			shape->setColor(osg::Vec4(0.9, 0.1, 0.3, 0.5));
+			shape->getOrCreateStateSet()->setMode(GL_BLEND, osg::StateAttribute::ON);
+			shape->getStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
+			osg::Geode * geode = new osg::Geode;
+			geode->addDrawable(shape);
 
-				at->addChild(geode);
+			at->addChild(geode);
 
-				node->setOutBall(at);
+			node->setOutBall(at);
 
-				group->addChild(at);
+			group->addChild(at);
 		}
 
 		QMap<qlonglong, osg::ref_ptr<Data::Edge> >::iterator i = node->getEdges()->begin();
 
-		while (i != node->getEdges()->end()) 
+		while (i != node->getEdges()->end())
 		{
 			if (*i != parentEdge)
 			{
@@ -126,7 +125,8 @@ osg::ref_ptr<osg::Group> NodeGroup::getNodeGroup(osg::ref_ptr<Data::Node> node, 
 osg::ref_ptr<osg::AutoTransform> NodeGroup::wrapChild(osg::ref_ptr<Data::Node> node, float graphScale)
 {
 	osg::ref_ptr<osg::AutoTransform> at = new osg::AutoTransform;
-	at->setPosition(node->getTargetPosition() * graphScale);
+	//at->setPosition(node->getTargetPosition() * graphScale);
+	at->setPosition(node->restrictedTargetPosition() * graphScale);
 	at->setAutoRotateMode(osg::AutoTransform::ROTATE_TO_SCREEN);
 	at->addChild(node);
 
@@ -137,7 +137,6 @@ osg::ref_ptr<osg::AutoTransform> NodeGroup::wrapChild(osg::ref_ptr<Data::Node> n
 
 void NodeGroup::synchronizeNodes()
 {	//navyse
-	int count = nodes->size ();
 
 	QList<qlonglong> nodeKeys = nodes->keys();
 
@@ -146,9 +145,8 @@ void NodeGroup::synchronizeNodes()
 
 	QSet<qlonglong>::const_iterator i = result.constBegin();
 
-	while (i != result.constEnd()) 
-	{	
-		bool res = group->removeChild(nodeTransforms->value(*i));
+	while (i != result.constEnd())
+	{
 
 		nodeTransforms->remove(*i);
 		++i;
@@ -157,9 +155,9 @@ void NodeGroup::synchronizeNodes()
 	result = nodeKeys.toSet().subtract(nodeTransformsKeys.toSet());
 	i = result.constBegin();
 
-	float graphScale = appConf->getValue("Viewer.Display.NodeDistanceScale").toFloat(); 
+	float graphScale = appConf->getValue("Viewer.Display.NodeDistanceScale").toFloat();
 
-	while (i != result.constEnd()) 
+	while (i != result.constEnd())
 	{
 		group->addChild(wrapChild(nodes->value(*i), graphScale));
 		++i;
@@ -172,7 +170,7 @@ void NodeGroup::updateNodeCoordinates(float interpolationSpeed)
 {
 	QMap<qlonglong, osg::ref_ptr<Data::Node> >::const_iterator i = nodes->constBegin();
 
-	while (i != nodes->constEnd()) 
+	while (i != nodes->constEnd())
 	{
 
 		string a = typeid (i.value()).name();
@@ -193,13 +191,13 @@ void NodeGroup::updateNodeCoordinates(float interpolationSpeed)
 	}
 }
 
-void NodeGroup::freezeNodePositions() 
-{ 
+void NodeGroup::freezeNodePositions()
+{
 	float graphScale = appConf->getValue("Viewer.Display.NodeDistanceScale").toFloat();
 
 	QMap<qlonglong, osg::ref_ptr<Data::Node> >::const_iterator i = nodes->constBegin();
 
-	while (i != nodes->constEnd()) 
+	while (i != nodes->constEnd())
 	{
 		(*i)->setTargetPosition((*i)->getCurrentPosition() / graphScale);
 		++i;

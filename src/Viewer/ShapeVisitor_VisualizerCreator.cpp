@@ -10,7 +10,7 @@
 
 namespace Vwr {
 
-osg::Node * ShapeVisitor_VisualizerCreator::getCreatedVisualizer (void) {
+osg::ref_ptr<osg::Node> ShapeVisitor_VisualizerCreator::getCreatedVisualizer (void) {
 	return createdVisualizer_;
 }
 
@@ -29,6 +29,52 @@ void ShapeVisitor_VisualizerCreator::visit (Layout::Shape_Composite & shape) {
 	createdVisualizer_ = group;
 }
 
+
+void ShapeVisitor_VisualizerCreator::visit (Layout::Shape_Intersection & shape) {
+	float radius;
+	osg::Vec3 center;
+	//osg::Vec3 normalVector;
+
+	if (shape.getCompositeType() == Layout::Shape_Composite::CompositeType::CIRCLE){
+		Layout::Shape_Composite::ShapesListType & shapes = shape.getShapes();
+		Layout::Shape_Composite::ShapesListType::iterator it = shapes.begin ();
+
+		if(QSharedPointer<Layout::Shape_Sphere> sphere = qSharedPointerCast<Layout::Shape_Sphere>(*it)){
+			radius = sphere->getRadius();
+			center = sphere->getCenter();
+		}
+		it++;
+
+		//if(QSharedPointer<Layout::Shape_Plane> plane = qSharedPointerCast<Layout::Shape_Plane>(*it)){
+		//   normalVector = plane->getNormalVector();
+		//}
+
+		osg::Cylinder* cylinder = new osg::Cylinder;
+		cylinder->setCenter (getScaledPosition (center));
+		cylinder->setRadius(getScaledDistance(radius));
+		cylinder->setHeight(1);
+
+		osg::ShapeDrawable * sd = new osg::ShapeDrawable;
+		sd->setShape (cylinder);
+		sd->setColor (osg::Vec4 (0, 0, 1.0, 0.06));
+
+		sd->getOrCreateStateSet()->setMode (GL_BLEND, osg::StateAttribute::ON);
+		sd->getStateSet()->setRenderingHint (osg::StateSet::TRANSPARENT_BIN);
+		sd->getStateSet()->setMode(GL_DEPTH_TEST,osg::StateAttribute::OFF);
+		sd->getStateSet()->setMode(GL_LIGHTING, osg::StateAttribute::OFF);
+		sd->getStateSet()->setAttributeAndModes(new osg::BlendFunc, osg::StateAttribute::ON);
+		sd->getStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
+		sd->getStateSet()->setRenderBinDetails( 11, "RenderBin");
+
+		osg::Geode * geode = new osg::Geode;
+		geode->addDrawable (sd);
+
+		createdVisualizer_ = geode;
+
+	}
+
+}
+
 void ShapeVisitor_VisualizerCreator::visit (Layout::Shape_Plane & shape) {
 	// OSG does not support InfinitePlane drawing at this time, maybe try to use this piece of code with the new version of OSG
 	/*
@@ -41,6 +87,10 @@ void ShapeVisitor_VisualizerCreator::visit (Layout::Shape_Plane & shape) {
 	*/
 
 	// now we use a temporary code instead - drawing a plane using box:
+	if(shape.isInvisible()) {
+		createdVisualizer_ = new osg::Group;
+		return;
+	}
 
 	// center
 	osg::Vec3 center (0, 0, (- shape.getD ()) / shape.getNormalVector ().z () ); // some point on the plane
@@ -66,12 +116,24 @@ void ShapeVisitor_VisualizerCreator::visit (Layout::Shape_Plane & shape) {
 	createdVisualizer_ = geode;
 }
 
+
+
 void ShapeVisitor_VisualizerCreator::visit (Layout::Shape_Sphere & shape) {
 	visualizeSphere (shape);
 }
 
 void ShapeVisitor_VisualizerCreator::visit (Layout::Shape_SphereSurface & shape) {
 	visualizeSphere (shape);
+}
+
+void ShapeVisitor_VisualizerCreator::visit(Layout::Shape_CylinderSurface &shape)
+{
+	visualizeCylinder(shape);
+}
+
+void ShapeVisitor_VisualizerCreator::visit(Layout::Shape_ConeSurface &shape)
+{
+	visualizeCone(shape);
 }
 
 void ShapeVisitor_VisualizerCreator::visualizeSphere (Layout::Shape_AbstractSphere & abstractSphere) {
@@ -99,15 +161,71 @@ void ShapeVisitor_VisualizerCreator::visualizeSphere (Layout::Shape_AbstractSphe
 	createdVisualizer_ = geode;
 }
 
+void ShapeVisitor_VisualizerCreator::visualizeCylinder(Layout::Shape_CylinderSurface &cylinder)
+{
+	osg::Vec3f center = cylinder.secondBaseCenter();
+
+	osg::Cylinder *osgCylinder = new osg::Cylinder;
+	osgCylinder->setRadius(getScaledDistance(100));
+	osgCylinder->setCenter(getScaledPosition(center));
+
+	osg::ShapeDrawable *sd = new osg::ShapeDrawable;
+	sd->setShape(osgCylinder);
+	sd->setColor(osg::Vec4 (0, 0, 1.0, /*0.06*/0.0));
+
+	//transparency of cylinder
+	sd->getOrCreateStateSet()->setMode(GL_BLEND, osg::StateAttribute::ON);
+	sd->getStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
+	sd->getStateSet()->setMode(GL_DEPTH_TEST, osg::StateAttribute::OFF);
+	sd->getStateSet()->setMode(GL_LIGHTING, osg::StateAttribute::OFF);
+	sd->getStateSet()->setAttributeAndModes(new osg::BlendFunc, osg::StateAttribute::ON);
+	sd->getStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
+	sd->getStateSet()->setRenderBinDetails(11, "RenderBin");
+	//
+
+	osg::Geode *geode = new osg::Geode;
+	geode->addDrawable(sd);
+
+	createdVisualizer_ = geode;
+}
+
+void ShapeVisitor_VisualizerCreator::visualizeCone(Layout::Shape_ConeSurface &cone)
+{
+	osg::Vec3f center = cone.spike();
+
+	osg::Cone *osgCone = new osg::Cone;
+	osgCone->setRadius(getScaledDistance(100));
+	osgCone->setCenter(getScaledPosition(center));
+
+	osg::ShapeDrawable *sd = new osg::ShapeDrawable;
+	sd->setShape(osgCone);
+	sd->setColor(osg::Vec4 (0, 0, 1.0, /*0.06*/0.0));
+
+	//transparency of cone
+	sd->getOrCreateStateSet()->setMode(GL_BLEND, osg::StateAttribute::ON);
+	sd->getStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
+	sd->getStateSet()->setMode(GL_DEPTH_TEST, osg::StateAttribute::OFF);
+	sd->getStateSet()->setMode(GL_LIGHTING, osg::StateAttribute::OFF);
+	sd->getStateSet()->setAttributeAndModes(new osg::BlendFunc, osg::StateAttribute::ON);
+	sd->getStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
+	sd->getStateSet()->setRenderBinDetails(11, "RenderBin");
+	//
+
+	osg::Geode *geode = new osg::Geode;
+	geode->addDrawable(sd);
+
+	createdVisualizer_ = geode;
+}
+
 float ShapeVisitor_VisualizerCreator::getScaledDistance (
-	const float & distance
-) {
+		const float & distance
+		) {
 	return distance * getScale ();
 }
 
 osg::Vec3f ShapeVisitor_VisualizerCreator::getScaledPosition (
-	const osg::Vec3f & position
-) {
+		const osg::Vec3f & position
+		) {
 	return position * getScale ();
 }
 

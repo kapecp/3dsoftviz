@@ -20,8 +20,8 @@ void MessageWindows::showProgressBar()
 		progressBar->setModal(true);
 		progressBar->setCancelButton(NULL);
 	}
-		progressBar->setValue(0);
-		progressBar->show();	
+	progressBar->setValue(0);
+	progressBar->show();
 }
 
 void MessageWindows::closeProgressBar()
@@ -66,8 +66,8 @@ void MessageWindows::showLoadingDialog(QString message)
 	}
 	loadingDialog->setText(message);
 	loadingDialog->setStandardButtons(QMessageBox::NoButton);
-	
-	loadingDialog->show();	
+
+	loadingDialog->show();
 }
 
 

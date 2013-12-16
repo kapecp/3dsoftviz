@@ -29,221 +29,221 @@ extern QCoreApplication* getOrCreateQApplication();
 
 /**
 *  \class QGraphicsViewAdapter
-*  \brief 
-*  \author Adam Pazitnaj 
+*  \brief
+*  \author Adam Pazitnaj
 *  \date 29. 4. 2010
 */
 class QGraphicsViewAdapter : public QObject
 {
 	Q_OBJECT
 
-    public:
+public:
 
-		/**
+	/**
 		*  \fn public constructor  QGraphicsViewAdapter
 		*  \brief
-		*  \param [in, out]  image osg::Image *    
-		*  \param [in, out]  widget QWidget *    
+		*  \param [in, out]  image osg::Image *
+		*  \param [in, out]  widget QWidget *
 		*/
-		QGraphicsViewAdapter(osg::Image* image, QWidget* widget);
+	QGraphicsViewAdapter(osg::Image* image, QWidget* widget);
 
-		/**
+	/**
 		*  \fn public  setUpKeyMap
 		*  \brief
 		*/
-		void setUpKeyMap();
+	void setUpKeyMap();
 
-		/**
+	/**
 		*  \fn public  sendPointerEvent
 		*  \brief
-		*  \param [in]       x int    
-		*  \param [in]       y int    
-		*  \param [in]       buttonMask int    
-		*  \return bool 
+		*  \param [in]       x int
+		*  \param [in]       y int
+		*  \param [in]       buttonMask int
+		*  \return bool
 		*/
-		bool sendPointerEvent(int x, int y, int buttonMask);
+	bool sendPointerEvent(int x, int y, int buttonMask);
 
-		/**
+	/**
 		*  \fn public  sendKeyEvent
 		*  \brief
-		*  \param [in]       key int    
-		*  \param [in]       keyDown bool    
-		*  \return bool 
+		*  \param [in]       key int
+		*  \param [in]       keyDown bool
+		*  \return bool
 		*/
-		bool sendKeyEvent(int key, bool keyDown);
+	bool sendKeyEvent(int key, bool keyDown);
 
 
 
-		/**
+	/**
 		*  \fn public  setFrameLastRendered
 		*  \brief
-		*  \param [in]       frameStamp const osg::FrameStamp *    
+		*  \param [in]       frameStamp const osg::FrameStamp *
 		*/
-		void setFrameLastRendered(const osg::FrameStamp* frameStamp);
+	void setFrameLastRendered(const osg::FrameStamp* frameStamp);
 
 
-		/**
+	/**
 		*  \fn public  clearWriteBuffer
 		*  \brief
 		*/
-		void clearWriteBuffer();
+	void clearWriteBuffer();
 
 
-		/**
+	/**
 		*  \fn public  render
 		*  \brief
 		*/
-		void render();
+	void render();
 
 
-		/**
+	/**
 		*  \fn public  assignImage
 		*  \brief
-		*  \param [in]       i unsigned int    
+		*  \param [in]       i unsigned int
 		*/
-		void assignImage(unsigned int i);
+	void assignImage(unsigned int i);
 
-    protected:
+protected:
 
 
-		/**
+	/**
 		*  \fn protected  handlePointerEvent
 		*  \brief
-		*  \param [in]       x int    
-		*  \param [in]       y int    
-		*  \param [in]       buttonMask int    
-		*  \return bool 
+		*  \param [in]       x int
+		*  \param [in]       y int
+		*  \param [in]       buttonMask int
+		*  \return bool
 		*/
-		bool handlePointerEvent(int x, int y, int buttonMask);
+	bool handlePointerEvent(int x, int y, int buttonMask);
 
-		/**
+	/**
 		*  \fn protected  handleKeyEvent
 		*  \brief
-		*  \param [in]       key int    
-		*  \param [in]       keyDown bool    
-		*  \return bool 
+		*  \param [in]       key int
+		*  \param [in]       keyDown bool
+		*  \return bool
 		*/
-		bool handleKeyEvent(int key, bool keyDown);
+	bool handleKeyEvent(int key, bool keyDown);
 
 
-		/**
+	/**
 		*  osg::observer_ptr<osg::Image> _image
-		*  \brief 
+		*  \brief
 		*/
-		osg::observer_ptr<osg::Image>   _image;
+	osg::observer_ptr<osg::Image>   _image;
 
 
-		/**
+	/**
 		*  unsigned int _previousButtonMask
-		*  \brief 
+		*  \brief
 		*/
-		unsigned int                    _previousButtonMask;
+	unsigned int                    _previousButtonMask;
 
-		/**
+	/**
 		*  int _previousMouseX
-		*  \brief 
+		*  \brief
 		*/
-		int                             _previousMouseX;
+	int                             _previousMouseX;
 
-		/**
+	/**
 		*  int _previousMouseY
-		*  \brief 
+		*  \brief
 		*/
-		int                             _previousMouseY;
+	int                             _previousMouseY;
 
-        typedef std::map<int, Qt::Key> KeyMap;
+	typedef std::map<int, Qt::Key> KeyMap;
 
-		/**
+	/**
 		*  QGraphicsViewAdapter::KeyMap _keyMap
-		*  \brief 
+		*  \brief
 		*/
-		KeyMap                          _keyMap;
+	KeyMap                          _keyMap;
 
-		/**
+	/**
 		*  Qt::KeyboardModifiers _qtKeyModifiers
-		*  \brief 
+		*  \brief
 		*/
-		Qt::KeyboardModifiers           _qtKeyModifiers;
+	Qt::KeyboardModifiers           _qtKeyModifiers;
 
 
-		/**
+	/**
 		*  QColor _backgroundColor
-		*  \brief 
+		*  \brief
 		*/
-		QColor                          _backgroundColor;
+	QColor                          _backgroundColor;
 
-		/**
+	/**
 		*  QPointer<QGraphicsView> _graphicsView
-		*  \brief 
+		*  \brief
 		*/
-		QPointer<QGraphicsView>         _graphicsView;
+	QPointer<QGraphicsView>         _graphicsView;
 
-		/**
+	/**
 		*  QPointer<QGraphicsScene> _graphicsScene
-		*  \brief 
+		*  \brief
 		*/
-		QPointer<QGraphicsScene>        _graphicsScene;
+	QPointer<QGraphicsScene>        _graphicsScene;
 
 
-		/**
+	/**
 		*  OpenThreads::Mutex _qimagesMutex
-		*  \brief 
+		*  \brief
 		*/
-		OpenThreads::Mutex              _qimagesMutex;
+	OpenThreads::Mutex              _qimagesMutex;
 
-		/**
+	/**
 		*  unsigned int _previousFrameNumber
-		*  \brief 
+		*  \brief
 		*/
-		unsigned int                    _previousFrameNumber;
+	unsigned int                    _previousFrameNumber;
 
-		/**
+	/**
 		*  bool _newImageAvailable
-		*  \brief 
+		*  \brief
 		*/
-		bool                            _newImageAvailable;
+	bool                            _newImageAvailable;
 
-		/**
+	/**
 		*  unsigned int _currentRead
-		*  \brief 
+		*  \brief
 		*/
-		unsigned int                    _currentRead;
+	unsigned int                    _currentRead;
 
-		/**
+	/**
 		*  unsigned int _currentWrite
-		*  \brief 
+		*  \brief
 		*/
-		unsigned int                    _currentWrite;
+	unsigned int                    _currentWrite;
 
-		/**
+	/**
 		*  unsigned int _previousWrite
-		*  \brief 
+		*  \brief
 		*/
-		unsigned int                    _previousWrite;
+	unsigned int                    _previousWrite;
 
-		/**
+	/**
 		*  QImage [3] _qimages
-		*  \brief 
+		*  \brief
 		*/
-		QImage                          _qimages[3];
+	QImage                          _qimages[3];
 
 
-		/**
+	/**
 		*  \fn protected virtual  customEvent
 		*  \brief
-		*  \param [in, out]  event QEvent *    
+		*  \param [in, out]  event QEvent *
 		*/
-		virtual void customEvent ( QEvent * event ) ;
+	virtual void customEvent ( QEvent * event ) ;
 
-    private slots:
+private slots:
 
 
-		/**
+	/**
 		*  \fn private  repaintRequestedSlot
 		*  \brief
-		*  \param [in]       regions const QList<QRectF> &    
+		*  \param [in]       regions const QList<QRectF> &
 		*/
-		void repaintRequestedSlot(const QList<QRectF> &regions);
+	void repaintRequestedSlot(const QList<QRectF> &regions);
 
 };
 

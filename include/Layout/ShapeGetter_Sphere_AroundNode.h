@@ -2,8 +2,9 @@
 #define Layout_ShapeGetter_Sphere_AroundNode_H
 //-----------------------------------------------------------------------------
 #include "Layout/ShapeGetter.h"
+#include "Layout/Shape_Sphere.h"
 //-----------------------------------------------------------------------------
-#include "Data/Node.h"
+
 //-----------------------------------------------------------------------------
 
 namespace Layout {
@@ -28,16 +29,18 @@ public:
 	};
 
 	ShapeGetter_Sphere_AroundNode (
-		osg::ref_ptr<Data::Node> node,
-		float radius,
-		Shape_Sphere::RestrictionPolicy restrictionPolicy,
-		SphereCenterSource centerSource
-	);
+			osg::ref_ptr<Data::Node> node,
+			float radius,
+			Shape_Sphere::RestrictionPolicy restrictionPolicy,
+			SphereCenterSource centerSource
+			);
 
 	/***/
 	virtual ~ShapeGetter_Sphere_AroundNode (void) {};
 
 	virtual QSharedPointer<Shape> getShape (void);
+
+	virtual QSet<Data::Node *  > getNodesOfShape();
 
 private:
 

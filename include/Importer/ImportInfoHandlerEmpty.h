@@ -11,7 +11,7 @@ namespace Importer {
  * Each method does nothing.
  */
 class ImportInfoHandlerEmpty
-	: public ImportInfoHandler {
+		: public ImportInfoHandler {
 
 public:
 
@@ -20,20 +20,20 @@ public:
 
 	/***/
 	virtual void addMessage (
-		const QString &text
-	) {
+			const QString &text
+			) {
 	};
 
 	/***/
 	virtual void reportError (
-		const QString &text
-	) {
+			const QString &text
+			) {
 	};
 
 	/***/
 	virtual void setProgress (
-		const unsigned int value
-	) {
+			const unsigned int value
+			) {
 	};
 
 }; // class

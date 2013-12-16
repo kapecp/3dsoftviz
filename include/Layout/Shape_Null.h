@@ -23,8 +23,8 @@ public:
 	 * [visitor pattern]
 	 */
 	virtual void accept (
-		ShapeVisitor & visitor
-	);
+			ShapeVisitor & visitor
+			);
 
 }; // class
 
