@@ -68,7 +68,17 @@ public:
 		 */
 	float getHeadDistance(int screenWidth);
 
+	/**
+		 * @author Autor: Marek Jakab
+		 * @brief OpenCV::FaceRecognizer::computeMovement
+		 * @param width screen width
+		 * @param height screen height
+		 * @return true if head moves and is not just shaking
+		 */
+	bool computeMovement(int width, int height);
+
 	bool detected;
+	bool notShaking;
 
 private:
 
@@ -81,6 +91,7 @@ private:
 	void startRecognition();
 
 	cv::Point2f eyesCoord;
+	cv::Point2f previousEyesCoord;
 	cv::CascadeClassifier haar_cascade;
 	std::vector< cv::Rect_<int> > faces;
 };

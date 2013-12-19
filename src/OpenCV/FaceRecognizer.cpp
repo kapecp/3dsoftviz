@@ -10,6 +10,8 @@ OpenCV::FaceRecognizer::FaceRecognizer()
 	{
 		qDebug() << "Cannot load file: " << QString::fromStdString(file);
 	}
+	this->detected=false;
+	this->notShaking=false;
 }
 
 OpenCV::FaceRecognizer::~FaceRecognizer()
@@ -19,7 +21,40 @@ OpenCV::FaceRecognizer::~FaceRecognizer()
 
 void OpenCV::FaceRecognizer::detectFaces(Mat gray)
 {
-	this->haar_cascade.detectMultiScale(gray, this->faces);
+	if (this->detected)
+	{
+		if (this->rect.x-this->rect.width*0.1>0 && this->rect.y-this->rect.height*0.1>0
+				&& (this->rect.x-this->rect.width*0.1+
+					this->rect.width+this->rect.width*0.1)<gray.cols
+				&& (this->rect.y-this->rect.height*0.1+
+					this->rect.height+this->rect.height*0.1)<gray.rows)
+		{
+			cv::Mat subImg = gray(cv::Rect(this->rect.x-(int)this->rect.width*0.1,
+										   this->rect.y-(int)this->rect.height*0.1,
+										   this->rect.width+(int)this->rect.width*0.1,
+										   this->rect.height+(int)this->rect.height*0.1));
+			this->haar_cascade.detectMultiScale(gray, this->faces,1.1, 2,
+												0|CV_HAAR_SCALE_IMAGE|
+												CV_HAAR_FIND_BIGGEST_OBJECT|
+												CV_HAAR_DO_ROUGH_SEARCH);
+		}
+		else
+		{
+			cv::Mat subImg = gray(cv::Rect(this->rect.x,this->rect.y,
+										   this->rect.width,this->rect.height));
+			this->haar_cascade.detectMultiScale(gray, this->faces,1.1, 2,
+												0|CV_HAAR_SCALE_IMAGE|
+												CV_HAAR_FIND_BIGGEST_OBJECT|
+												CV_HAAR_DO_ROUGH_SEARCH);
+		}
+	}
+	else
+	{
+		this->haar_cascade.detectMultiScale(gray, this->faces,1.1, 2,
+											0|CV_HAAR_SCALE_IMAGE|
+											CV_HAAR_FIND_BIGGEST_OBJECT|
+											CV_HAAR_DO_ROUGH_SEARCH);
+	}
 }
 
 void OpenCV::FaceRecognizer::annotateFaces(Mat frame)
@@ -29,7 +64,18 @@ void OpenCV::FaceRecognizer::annotateFaces(Mat frame)
 		Rect face_i = this->faces[0];
 		rectangle(frame, face_i, CV_RGB(0, 255,0), 1);
 		computeEyesCoordinations(this->faces[0],frame.size());
-		detected=true;
+		this->rect=face_i;
+		if (!detected)
+		{
+			previousEyesCoord.x=eyesCoord.x;
+			previousEyesCoord.y=eyesCoord.y;
+			detected=true;
+		}
+		else
+		{
+			notShaking=computeMovement(frame.cols,frame.rows);
+		}
+
 	}
 	else
 	{
@@ -62,5 +108,24 @@ float OpenCV::FaceRecognizer::getHeadDistance(int screenWidth)
 		return ((float)screenWidth/(float)face.width)/3.5f;
 	}
 	return 0.0f;
+}
+
+bool OpenCV::FaceRecognizer::computeMovement(int width, int height)
+{
+	// movement if difference on x axis is more than threshold of 0,8% of screen width
+	if (((float)abs(previousEyesCoord.x-eyesCoord.x)/(float)width)>0.008)
+	{
+		previousEyesCoord.x=eyesCoord.x;
+		previousEyesCoord.y=eyesCoord.y;
+		return true;
+	}
+	// movement if difference on y axis is more than threshold of 1,05% of screen width
+	if (((float)abs(previousEyesCoord.y-eyesCoord.y)/(float)width)>0.0105)
+	{
+		previousEyesCoord.x=eyesCoord.x;
+		previousEyesCoord.y=eyesCoord.y;
+		return true;
+	}
+	return false;
 }
 

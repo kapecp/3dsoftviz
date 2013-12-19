@@ -37,7 +37,7 @@ void QOpenCV::FaceRecognitionThread::run()
 		this->mFaceRecognizer->annotateFaces(image);
 		cv::Mat im = image.clone();
 		emit this->pushImage(im);
-		if (this->mFaceRecognizer->detected)
+		if (this->mFaceRecognizer->detected && this->mFaceRecognizer->notShaking)
 		{
 			emit this->sendEyesCoords(-this->mFaceRecognizer->getEyesCoords().x,
 									  -this->mFaceRecognizer->getEyesCoords().y,
