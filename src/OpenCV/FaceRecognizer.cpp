@@ -23,30 +23,12 @@ void OpenCV::FaceRecognizer::detectFaces(Mat gray)
 {
 	if (this->detected)
 	{
-		if (this->rect.x-this->rect.width*0.1>0 && this->rect.y-this->rect.height*0.1>0
-				&& (this->rect.x-this->rect.width*0.1+
-					this->rect.width+this->rect.width*0.1)<gray.cols
-				&& (this->rect.y-this->rect.height*0.1+
-					this->rect.height+this->rect.height*0.1)<gray.rows)
-		{
-			cv::Mat subImg = gray(cv::Rect(this->rect.x-(int)this->rect.width*0.1,
-										   this->rect.y-(int)this->rect.height*0.1,
-										   this->rect.width+(int)this->rect.width*0.1,
-										   this->rect.height+(int)this->rect.height*0.1));
-			this->haar_cascade.detectMultiScale(gray, this->faces,1.1, 2,
-												0|CV_HAAR_SCALE_IMAGE|
-												CV_HAAR_FIND_BIGGEST_OBJECT|
-												CV_HAAR_DO_ROUGH_SEARCH);
-		}
-		else
-		{
 			cv::Mat subImg = gray(cv::Rect(this->rect.x,this->rect.y,
 										   this->rect.width,this->rect.height));
-			this->haar_cascade.detectMultiScale(gray, this->faces,1.1, 2,
+			this->haar_cascade.detectMultiScale(subImg, this->faces,1.1, 2,
 												0|CV_HAAR_SCALE_IMAGE|
 												CV_HAAR_FIND_BIGGEST_OBJECT|
 												CV_HAAR_DO_ROUGH_SEARCH);
-		}
 	}
 	else
 	{
@@ -62,18 +44,28 @@ void OpenCV::FaceRecognizer::annotateFaces(Mat frame)
 	if (this->faces.size()>0)
 	{
 		Rect face_i = this->faces[0];
+		if (detected)
+		{
+			face_i.x=(face_i.x-face_i.width*0.1+this->rect.x);
+			face_i.width=face_i.width*1.2;
+			face_i.y=(face_i.y-face_i.height*0.1+this->rect.y);
+			face_i.height=face_i.height*1.2;
+		}
 		rectangle(frame, face_i, CV_RGB(0, 255,0), 1);
-		computeEyesCoordinations(this->faces[0],frame.size());
+		computeEyesCoordinations(face_i,frame.size());
 		this->rect=face_i;
 		if (!detected)
 		{
-			previousEyesCoord.x=eyesCoord.x;
-			previousEyesCoord.y=eyesCoord.y;
 			detected=true;
 		}
 		else
 		{
 			notShaking=computeMovement(frame.cols,frame.rows);
+			if (notShaking)
+			{
+				previousEyesCoord.x=eyesCoord.x;
+				previousEyesCoord.y=eyesCoord.y;
+			}
 		}
 
 	}
