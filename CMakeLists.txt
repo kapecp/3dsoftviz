@@ -56,7 +56,6 @@ if( USE_STRICT_COMPILE_WARNINGS )
 	endif()
 endif()
 
-
 # Default build type
 if( NOT CMAKE_BUILD_TYPE )
 	set( CMAKE_BUILD_TYPE "MinSizeRel" CACHE STRING "" FORCE )
@@ -164,6 +163,15 @@ set(QT_USE_QTXML 1)
 set(QT_USE_QTNETWORK 1)
 include(${QT_USE_FILE})
 
+# add special flag to GCC compiler when using Qt 4.6.x with GCC >4.6
+if(	"${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" AND
+	"${QT_VERSION_MAJOR}.${QT_VERSION_MINOR}" VERSION_LESS "4.7" AND
+	${CMAKE_C_COMPILER_VERSION} VERSION_GREATER "4.6" )
+
+	set( CMAKE_CXX_FLAGS "-fpermissive" )
+endif()
+
+# find OpenSceneGraph
 find_package(OpenSceneGraph COMPONENTS
 	osgGA
 	osgUtil
