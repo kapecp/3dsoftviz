@@ -5,13 +5,13 @@
 #ifndef DATA_NODE_DEF
 #define DATA_NODE_DEF 1
 
-#include "Data/Graph.h"
+//#include "Data/Graph.h"
 
 #include <vector>
 #include <string>
 #include <osg/Vec3f>
-#include "Data/Type.h"
-#include "Data/Edge.h"
+//#include "Data/Type.h"
+//#include "Data/Edge.h"
 #include <QMap>
 #include <QString>
 #include <QTextStream>

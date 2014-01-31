@@ -1,6 +1,8 @@
 #include "Viewer/NodeGroup.h"
 #include "typeinfo"
 
+#include "Data/Edge.h"
+
 using namespace Vwr;
 
 NodeGroup::NodeGroup(QMap<qlonglong, osg::ref_ptr<Data::Node> > *nodes)

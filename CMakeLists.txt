@@ -149,6 +149,14 @@ set(QT_USE_QTXML 1)
 set(QT_USE_QTNETWORK 1)
 include(${QT_USE_FILE})
 
+# add special flag to GCC compiler when using Qt 4.6.x with GCC >4.6
+if(	"${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" AND
+	"${QT_VERSION_MAJOR}.${QT_VERSION_MINOR}" VERSION_LESS "4.7" AND
+	${CMAKE_C_COMPILER_VERSION} VERSION_GREATER "4.6" )
+
+	set( CMAKE_CXX_FLAGS "-fpermissive" )
+endif()
+
 # Find OpenSceneGraph
 find_package(OpenSceneGraph COMPONENTS
 	osgGA
@@ -263,20 +271,21 @@ file(GLOB_RECURSE SRC_UTIL  "src/Util/*.cpp")
 file(GLOB_RECURSE SRC_VIEWER  "src/Viewer/*.cpp")
 
 # Source files
-set(SRC ${SRC_MAIN} ${SRC_CORE} ${SRC_DATA}
-${SRC_LAYOUT} ${SRC_MANAGER} ${SRC_MATH}
-  ${SRC_NETWORK} ${SRC_NOISE}
-${SRC_OSGQTBROWSER} ${SRC_QOSG} ${SRC_UTIL} ${SRC_VIEWER} ${SRC_MODEL} )
-set(SRC ${SRC} ${SRC_IMPORTER})
+set(SRC
+	${SRC_MAIN} ${SRC_CORE} ${SRC_DATA}
+	${SRC_LAYOUT} ${SRC_MANAGER} ${SRC_MATH}
+	${SRC_NETWORK} ${SRC_NOISE}
+	${SRC_OSGQTBROWSER} ${SRC_QOSG} ${SRC_UTIL} ${SRC_VIEWER} ${SRC_MODEL} )
+
+#~ set(SRC ${SRC} ${SRC_IMPORTER})
+
 file(GLOB_RECURSE INCL "include/*.h")
+
 #create library
-#add_library(importer SHARED  ${SRC_IMPORTER} )
-
-#target_link_libraries( importer
-#	${QT_LIBRARIES}
-
-#)
-
+add_library(importer SHARED  ${SRC_IMPORTER} )
+target_link_libraries( importer
+	${QT_LIBRARIES}
+)
 
 # Group source files
 source_group(\\src main.cpp)
@@ -335,7 +344,7 @@ target_link_libraries( ${3DSOFTVIZ_NAME}
 	${OPENSCENEGRAPH_LIBRARIES}
 	${OSGVIEWER_LIBRARIES}
 	${LIBNOISE_LIBRARY}
-#	importer
+	importer
 )
 
 # 'cotire' the executable
@@ -346,7 +355,8 @@ if( MSVC )
 endif()
 
 # ensure correct dependencies
-#add_dependencies( ${3DSOFTVIZ_NAME} importer)
+add_dependencies( ${3DSOFTVIZ_NAME} importer)
+
 # -------
 # Install
 # -------
@@ -356,10 +366,10 @@ install( TARGETS ${3DSOFTVIZ_NAME}
 	BUNDLE DESTINATION ${INSTALL_BUNDLE} COMPONENT Runtime
 	RUNTIME DESTINATION ${INSTALL_BIN} COMPONENT Runtime )
 #move importer library
-#install( TARGETS importer
-#	BUNDLE DESTINATION ${INSTALL_BUNDLE} COMPONENT Runtime
-#	RUNTIME DESTINATION ${INSTALL_BIN} COMPONENT Runtime
-#	LIBRARY DESTINATION ${INSTALL_LIB} COMPONENT Runtime)
+install( TARGETS importer
+	BUNDLE DESTINATION ${INSTALL_BUNDLE} COMPONENT Runtime
+	RUNTIME DESTINATION ${INSTALL_BIN} COMPONENT Runtime
+	LIBRARY DESTINATION ${INSTALL_LIB} COMPONENT Runtime)
 
 install(DIRECTORY resources/ DESTINATION ${INSTALL_DATA} COMPONENT Data)
 

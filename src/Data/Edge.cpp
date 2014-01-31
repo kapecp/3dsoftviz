@@ -3,6 +3,7 @@
  * Projekt 3DVisual
  */
 #include "Data/Edge.h"
+#include "Data/Graph.h"
 
 Data::Edge::Edge(qlonglong id, QString name, Data::Graph* graph, osg::ref_ptr<Data::Node> srcNode, osg::ref_ptr<Data::Node> dstNode, Data::Type* type, bool isOriented, float scaling, int pos, osg::ref_ptr<osg::Camera> camera) : osg::DrawArrays(osg::PrimitiveSet::QUADS, pos, 4)
 {

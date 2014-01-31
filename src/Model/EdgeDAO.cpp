@@ -3,6 +3,8 @@
  * Projekt 3DVisual
  */
 #include "Model/EdgeDAO.h"
+#include "Data/Edge.h"
+#include "Data/Graph.h"
 
 Model::EdgeDAO::EdgeDAO(void)
 {

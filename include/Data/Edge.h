@@ -5,8 +5,8 @@
 #ifndef DATA_EDGE_DEF
 #define DATA_EDGE_DEF 1
 
-#include "Data/Type.h"
-#include "Data/Node.h"
+//#include "Data/Type.h"
+//#include "Data/Node.h"
 #include <QString>
 #include <QTextStream>
 #include <QtCore/QMap>

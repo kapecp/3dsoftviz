@@ -3,6 +3,8 @@
 #include <osg/LineWidth>
 #include <cmath>
 
+#include "Util/ApplicationConfig.h"
+
 osg::Vec3d CameraMath::getPointOnNextBezierCurve(double time, QVector<osg::Vec3d> * points, double weights[])
 {
 	int n = points->size() - 1;

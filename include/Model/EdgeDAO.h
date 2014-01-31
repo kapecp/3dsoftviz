@@ -5,12 +5,13 @@
 #ifndef MODEL_EDGEDAO_DEF
 #define MODEL_EDGEDAO_DEF 1
 
-#include "Data/Edge.h"
+//#include "Data/Edge.h"
 #include <QtSql>
 #include <QDebug>
 
 namespace Data {
 class Edge;
+class GraphLayout;
 }
 
 namespace Model
