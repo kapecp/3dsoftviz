@@ -3,6 +3,8 @@
 #include "Layout/ShapeVisitor.h"
 #include "QOSG/ViewerQT.h"
 
+#include "Viewer/CameraManipulator.h"
+
 namespace Layout {
 
 Shape_ConeSurface::Shape_ConeSurface(const QOSG::ViewerQT *viewerWidget, const QSlider &baseRadiusSlider) :

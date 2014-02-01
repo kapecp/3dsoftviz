@@ -48,12 +48,14 @@ Provides a simple tree model to show how to create and use hierarchical
 models.
 */
 
-#include <QtGui>
-
 #include "QOSG/TreeModel.h"
+#include "QOSG/TreeItem.h"
 
 #include "Data/Type.h"
 #include "Data/Graph.h"
+#include "Manager/Manager.h"
+
+#include <QtGui>
 
 using namespace QOSG;
 

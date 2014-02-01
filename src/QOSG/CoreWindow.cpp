@@ -10,7 +10,11 @@
 
 #include "Viewer/CoreGraph.h"
 #include "Viewer/CameraManipulator.h"
+#include "Viewer/PickHandler.h"
+
 #include "Manager/Manager.h"
+
+#include "Model/DB.h"
 
 #include "Layout/LayoutThread.h"
 

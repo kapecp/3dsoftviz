@@ -13,13 +13,6 @@
 #include <QtGui>
 #include <QMap>
 
-
-#include "Data/Graph.h"
-#include "Manager/Manager.h"
-#include "Model/DB.h"
-#include "Model/GraphDAO.h"
-#include "QOSG/SelectLayoutWindow.h"
-
 class QComboBox;
 class QLabel;
 class QPushButton;

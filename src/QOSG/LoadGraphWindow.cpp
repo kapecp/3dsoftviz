@@ -1,5 +1,11 @@
 #include "QOSG/LoadGraphWindow.h"
 
+#include "Data/Graph.h"
+#include "Manager/Manager.h"
+#include "Model/DB.h"
+#include "Model/GraphDAO.h"
+#include "QOSG/SelectLayoutWindow.h"
+
 using namespace QOSG;
 
 LoadGraphWindow::LoadGraphWindow(QWidget *parent)

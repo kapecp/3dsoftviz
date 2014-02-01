@@ -1,6 +1,9 @@
 #include "QOSG/SelectLayoutWindow.h"
 
 #include "Model/GraphLayoutDAO.h"
+#include "Model/DB.h"
+#include "Model/GraphDAO.h"
+#include "Manager/Manager.h"
 
 using namespace QOSG;
 

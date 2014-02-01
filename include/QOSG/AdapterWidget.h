@@ -13,9 +13,6 @@
 
 using Qt::WindowFlags;
 
-#include <iostream>
-
-
 namespace QOSG
 {
 /**

@@ -1,11 +1,14 @@
 #include "QOSG/OptionsWindow.h"
 
+#include "QOSG/ViewerQT.h"
+#include "QOSG/TreeItem.h"
+#include "QOSG/TreeModel.h"
 #include "Layout/LayoutThread.h"
-
 #include "Core/Core.h"
-
+#include "Viewer/CoreGraph.h"
 #include "Manager/Manager.h"
 #include "Data/Graph.h"
+#include "Util/ApplicationConfig.h"
 
 
 using namespace QOSG;

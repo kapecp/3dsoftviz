@@ -6,10 +6,6 @@
 #include <QtGui>
 #include <QMap>
 
-#include "Manager/Manager.h"
-#include "Model/DB.h"
-#include "Model/GraphDAO.h"
-
 class QComboBox;
 class QLabel;
 class QPushButton;
