@@ -10,9 +10,6 @@
 #include <osg/ref_ptr>
 #include <sstream>
 
-#include "Viewer/DataHelper.h"
-#include "Util/ApplicationConfig.h"
-
 namespace Vwr
 {
 /**

@@ -1,8 +1,10 @@
 #include "Viewer/PickHandler.h"
+
 #include "Viewer/DataHelper.h"
+#include "Viewer/CoreGraph.h"
+#include "Viewer/CameraManipulator.h"
+
 #include "Util/ElementSelector.h"
-#include <osg/MatrixTransform>
-#include <osg/Projection>
 
 #include "Manager/Manager.h"
 #include "Network/Client.h"
@@ -10,6 +12,10 @@
 
 #include "Core/Core.h"
 #include "Layout/LayoutThread.h"
+
+#include <osg/MatrixTransform>
+#include <osg/Projection>
+
 
 using namespace Vwr;
 

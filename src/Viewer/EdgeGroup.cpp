@@ -1,5 +1,9 @@
 #include "Viewer/EdgeGroup.h"
 
+#include "Viewer/TextureWrapper.h"
+#include "Data/Node.h"
+
+
 using namespace Vwr;
 
 EdgeGroup::EdgeGroup(QMap<qlonglong, osg::ref_ptr<Data::Edge> > *edges, float scale)

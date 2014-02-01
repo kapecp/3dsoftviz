@@ -2,6 +2,7 @@
 
 #include "Viewer/PickHandler.h"
 #include "Viewer/CameraManipulator.h"
+#include "Viewer/CoreGraph.h"
 #include "Util/ApplicationConfig.h"
 
 

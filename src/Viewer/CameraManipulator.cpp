@@ -1,10 +1,20 @@
-#include <osg/Notify>
-#include <osg/BoundsChecking>
+
+
+#include "Viewer/CameraManipulator.h"
+
+#include "Viewer/CoreGraph.h"
 
 #include "Manager/Manager.h"
-#include "Viewer/CameraManipulator.h"
+
 #include "Network/Server.h"
 #include "Network/Client.h"
+
+#include "Math/CameraMath.h"
+
+#include "Util/ApplicationConfig.h"
+
+#include <osg/Notify>
+#include <osg/BoundsChecking>
 
 
 double Vwr::CameraManipulator::EYE_MOVEMENT_SPEED;

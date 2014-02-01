@@ -13,8 +13,12 @@
 #include <osg/Group>
 #include <osg/ShapeDrawable>
 
-#include "Util/ApplicationConfig.h"
 #include "Data/Node.h"
+
+namespace Util
+{
+	class ApplicationConfig;
+}
 
 
 namespace Vwr

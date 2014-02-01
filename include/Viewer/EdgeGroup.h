@@ -11,7 +11,6 @@
 #include <QMap>
 
 #include "Data/Edge.h"
-#include "Viewer/TextureWrapper.h"
 
 namespace Vwr
 {

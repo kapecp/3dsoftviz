@@ -16,14 +16,16 @@
 
 #include "Data/Node.h"
 #include "Data/Edge.h"
-#include "Viewer/CameraManipulator.h"
-#include "Viewer/CoreGraph.h"
+
 
 #include <QLinkedList>
 #include <QTimer>
 
 namespace Vwr
 {
+		class CoreGraph;
+		class CameraManipulator;
+
 /**
 	*  \class PickHandler
 	*  \brief Handles picking events

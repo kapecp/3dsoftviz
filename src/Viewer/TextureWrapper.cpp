@@ -1,5 +1,8 @@
 #include "Viewer/TextureWrapper.h"
 
+#include "Viewer/DataHelper.h"
+#include "Util/ApplicationConfig.h"
+
 using namespace Vwr;
 using namespace std;
 

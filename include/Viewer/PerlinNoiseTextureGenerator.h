@@ -5,10 +5,7 @@
 #ifndef VIEWER_PERLIN_NOISE_GENERATOR_DEF
 #define VIEWER_PERLIN_NOISE_GENERATOR_DEF 1
 
-#include <osg/Image>
 #include <osg/Texture2D>
-
-#include "Viewer/DataHelper.h"
 
 namespace Vwr
 {

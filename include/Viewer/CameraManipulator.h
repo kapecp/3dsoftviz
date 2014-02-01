@@ -20,10 +20,12 @@
 #include <osg/Quat>
 #include <osgViewer/Viewer>
 
-#include "Util/ApplicationConfig.h"
 #include "Data/Node.h"
-#include "Math/CameraMath.h"
-#include "Viewer/CoreGraph.h"
+
+namespace Util
+{
+	class ApplicationConfig;
+}
 
 using namespace osgGA;
 

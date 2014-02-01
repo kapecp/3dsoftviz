@@ -1,7 +1,9 @@
 #include "Viewer/NodeGroup.h"
-#include "typeinfo"
 
 #include "Data/Edge.h"
+#include "Util/ApplicationConfig.h"
+
+#include "typeinfo"
 
 using namespace Vwr;
 
