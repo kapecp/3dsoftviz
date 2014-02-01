@@ -4,7 +4,10 @@
 #include "Data/Node.h"
 #include "Data/Graph.h"
 
+#include <iostream>
+
 using namespace Layout;
+using namespace std;
 
 //Konstruktor pre vlakno s algoritmom
 FRAlgorithm::FRAlgorithm()

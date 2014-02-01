@@ -12,13 +12,8 @@
 #include "Data/Type.h"
 #include "Data/Edge.h"
 #include "Data/MetaType.h"
-#include "Data/GraphLayout.h"
-#include "Data/GraphSpanningTree.h"
-#include "Model/GraphDAO.h"
-#include "Model/GraphLayoutDAO.h"
-#include "Model/TypeDAO.h"
-#include "Model/NodeDAO.h"
-#include "Model/EdgeDAO.h"
+
+
 #include "Layout/RestrictionsManager.h"
 
 #include <QString>
@@ -32,11 +27,12 @@
 
 namespace Data
 {
-class Node;
-class Type;
-class Edge;
+//class Node;
+//class Type;
+//class Edge;
 class MetaType;
 class GraphLayout;
+class GraphSpanningTree;
 
 
 /**

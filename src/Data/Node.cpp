@@ -9,7 +9,7 @@
 #include "Data/Graph.h"
 #include "Data/Node.h"
 #include "Util/ApplicationConfig.h"
-#include "Viewer/TextureWrapper.h"
+
 
 #include <osgText/FadeText>
 

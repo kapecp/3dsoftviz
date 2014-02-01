@@ -3,7 +3,11 @@
 #include "Data/Graph.h"
 #include "Manager/Manager.h"
 #include "Model/DB.h"
+#include "Model/NodeDAO.h"
+#include "Model/EdgeDAO.h"
 #include "Model/GraphDAO.h"
+#include "Model/GraphLayoutDAO.h"
+
 #include "QOSG/SelectLayoutWindow.h"
 
 using namespace QOSG;

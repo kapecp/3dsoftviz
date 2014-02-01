@@ -8,6 +8,7 @@
 
 #include "Model/DB.h"
 #include "Model/GraphDAO.h"
+#include "Model/GraphLayoutDAO.h"
 
 #include "Importer/ImporterContext.h"
 #include "Importer/ImporterFactory.h"
@@ -20,6 +21,7 @@
 #include "Data/Graph.h"
 
 #include "Layout/LayoutThread.h"
+#include "QOSG/MessageWindows.h"
 
 #include <memory>
 

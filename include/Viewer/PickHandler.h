@@ -17,9 +17,14 @@
 #include "Data/Node.h"
 #include "Data/Edge.h"
 
-
 #include <QLinkedList>
 #include <QTimer>
+
+namespace Util
+{
+	class ApplicationConfig;
+}
+
 
 namespace Vwr
 {

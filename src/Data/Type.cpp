@@ -3,7 +3,9 @@
  * Projekt 3DVisual
  */
 #include "Data/Type.h"
+
 #include "Viewer/DataHelper.h"
+#include "Util/ApplicationConfig.h"
 
 Data::Type::Type(qlonglong id, QString name,Data::Graph* graph, QMap<QString, QString> * settings)
 {

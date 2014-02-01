@@ -6,7 +6,7 @@
 #define DATA_EDGE_DEF 1
 
 //#include "Data/Type.h"
-//#include "Data/Node.h"
+#include "Data/Node.h"
 #include <QString>
 #include <QTextStream>
 #include <QtCore/QMap>
@@ -16,11 +16,16 @@
 #include <osgText/Text>
 #include <osgText/FadeText>
 
-#include "Util/ApplicationConfig.h"
+
+
+namespace Util
+{
+	class ApplicationConfig;
+}
 
 namespace Data
 {
-class Node;
+//class Node;
 class Graph;
 class Type;
 

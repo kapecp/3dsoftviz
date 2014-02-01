@@ -14,6 +14,8 @@
 
 #include "QOSG/CoreWindow.h"
 
+#include "Util/ApplicationConfig.h"
+
 using namespace Network;
 
 Server * Server::instance;

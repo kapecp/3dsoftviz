@@ -6,6 +6,7 @@
 
 #include "Model/NodeDAO.h"
 #include "Model/EdgeDAO.h"
+#include "Model/GraphLayoutDAO.h"
 
 #include "Data/Graph.h"
 

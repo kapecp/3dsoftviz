@@ -1,5 +1,6 @@
 #include "Importer/GraphMLImporter.h"
 //-----------------------------------------------------------------------------
+#include "Util/ApplicationConfig.h"
 
 namespace Importer {
 

@@ -4,6 +4,7 @@
  */
 #include "Model/NodeDAO.h"
 
+#include "Data/Graph.h"
 #include "Data/GraphLayout.h"
 
 #include <QDebug>

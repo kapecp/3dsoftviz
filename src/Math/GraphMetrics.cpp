@@ -3,6 +3,8 @@
 #include "Data/Graph.h"
 #include "Math/DjikstraAlg.h"
 
+#include "Util/ApplicationConfig.h"
+
 void GraphMetrics::computeGraphMetrics(Data::Graph * activeGraph)
 {
 	QMutableMapIterator<qlonglong, osg::ref_ptr<Data::Node> > i(*activeGraph->getNodes());

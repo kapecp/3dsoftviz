@@ -5,13 +5,14 @@
  */
 
 #include "Core/Core.h"
+
 #include "QOSG/CoreWindow.h"
+#include "QOSG/MessageWindows.h"
 #include "Viewer/CoreGraph.h"
 #include "Layout/LayoutThread.h"
-#include "Util/ApplicationConfig.h"
-#include "Manager/Manager.h"
-
 #include "Layout/FRAlgorithm.h"
+#include "Manager/Manager.h"
+#include "Util/ApplicationConfig.h"
 
 AppCore::Core * AppCore::Core::core;
 

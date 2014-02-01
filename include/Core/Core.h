@@ -6,7 +6,6 @@
 #define Core_CORE_DEF 1
 
 #include <QApplication>
-#include "QOSG/MessageWindows.h"
 
 namespace Vwr
 {
@@ -22,6 +21,7 @@ namespace Layout
 namespace QOSG
 {
 	class CoreWindow;
+	class MessageWindows;
 }
 
 namespace AppCore

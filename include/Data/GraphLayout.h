@@ -6,8 +6,6 @@
 #ifndef DATA_GRAPHLAYOUT_DEF
 #define DATA_GRAPHLAYOUT_DEF 1
 
-#include "Data/Graph.h"
-
 #include <QString>
 #include <QTextStream>
 #include <QDebug>

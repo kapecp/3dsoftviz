@@ -13,9 +13,10 @@
 #include "Core/Core.h"
 #include "Layout/LayoutThread.h"
 
+#include "Util/ApplicationConfig.h"
+
 #include <osg/MatrixTransform>
 #include <osg/Projection>
-
 
 using namespace Vwr;
 

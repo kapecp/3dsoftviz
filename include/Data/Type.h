@@ -13,8 +13,6 @@
 #include <osg/ref_ptr>
 #include <osg/Texture2D>
 
-#include "Util/ApplicationConfig.h"
-
 namespace Data
 {
 

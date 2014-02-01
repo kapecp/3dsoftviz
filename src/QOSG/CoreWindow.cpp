@@ -3,6 +3,7 @@
 #include "QOSG/ViewerQT.h"
 #include "QOSG/OptionsWindow.h"
 #include "QOSG/LoadGraphWindow.h"
+#include "QOSG/MessageWindows.h"
 #include "QOSG/qtcolorpicker.h"
 
 #include "Network/Server.h"
@@ -15,6 +16,7 @@
 #include "Manager/Manager.h"
 
 #include "Model/DB.h"
+#include "Model/GraphLayoutDAO.h"
 
 #include "Layout/LayoutThread.h"
 
@@ -30,7 +32,12 @@
 
 #include "Core/Core.h"
 
+#include "Data/GraphSpanningTree.h"
+
+#include <iostream>
+
 using namespace QOSG;
+using namespace std;
 
 CoreWindow::CoreWindow(QWidget *parent, Vwr::CoreGraph* coreGraph, QApplication* app, Layout::LayoutThread * thread ) : QMainWindow(parent)
 {

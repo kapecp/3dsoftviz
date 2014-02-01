@@ -3,7 +3,20 @@
  * Projekt 3DVisual
  */
 #include "Data/Graph.h"
+
+#include "Data/GraphLayout.h"
+#include "Data/GraphSpanningTree.h"
+
+#include "Model/GraphDAO.h"
+#include "Model/GraphLayoutDAO.h"
+#include "Model/TypeDAO.h"
+#include "Model/NodeDAO.h"
+#include "Model/EdgeDAO.h"
+
 #include "Layout/ShapeGetter_Sphere_AroundNode.h"
+
+#include "Util/ApplicationConfig.h"
+
 #include <QSharedPointer>
 
 Data::Graph::Graph(qlonglong graph_id, QString name, QSqlDatabase* conn, QMap<qlonglong,osg::ref_ptr<Data::Node> > *nodes, QMap<qlonglong,osg::ref_ptr<Data::Edge> > *edges,QMap<qlonglong,osg::ref_ptr<Data::Node> > *metaNodes, QMap<qlonglong,osg::ref_ptr<Data::Edge> > *metaEdges, QMap<qlonglong,Data::Type*> *types)

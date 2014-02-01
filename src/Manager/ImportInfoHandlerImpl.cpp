@@ -1,6 +1,7 @@
 #include "Manager/ImportInfoHandlerImpl.h"
 //-----------------------------------------------------------------------------
 #include "Core/Core.h"
+#include "QOSG/MessageWindows.h"
 
 namespace Manager {
 
