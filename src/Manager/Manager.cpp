@@ -4,12 +4,20 @@
  */
 
 #include "Manager/Manager.h"
+#include "Manager/ImportInfoHandlerImpl.h"
+
+#include "Model/DB.h"
 #include "Model/GraphDAO.h"
+
 #include "Importer/ImporterContext.h"
 #include "Importer/ImporterFactory.h"
 #include "Importer/StreamImporter.h"
-#include "Manager/ImportInfoHandlerImpl.h"
+
 #include "Network/Server.h"
+
+#include "Core/Core.h"
+
+#include "Data/Graph.h"
 
 #include <memory>
 

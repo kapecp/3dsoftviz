@@ -10,9 +10,15 @@
 #include <QFile>
 #include <qfileinfo.h>
 
-#include "Core/Core.h"
-#include "Model/DB.h"
-#include "Data/Graph.h"
+namespace Model
+{
+	class DB;
+}
+
+namespace Data
+{
+	class Graph;
+}
 
 namespace Manager
 {

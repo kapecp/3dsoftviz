@@ -2,6 +2,12 @@
 
 #include "Layout/LayoutThread.h"
 
+#include "Core/Core.h"
+
+#include "Manager/Manager.h"
+#include "Data/Graph.h"
+
+
 using namespace QOSG;
 
 OptionsWindow::OptionsWindow(Vwr::CoreGraph *cg, QOSG::ViewerQT * viewer)

@@ -24,6 +24,8 @@
 
 #include "Util/Cleaner.h"
 
+#include "Core/Core.h"
+
 using namespace QOSG;
 
 CoreWindow::CoreWindow(QWidget *parent, Vwr::CoreGraph* coreGraph, QApplication* app, Layout::LayoutThread * thread ) : QMainWindow(parent)

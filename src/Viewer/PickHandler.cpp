@@ -8,6 +8,8 @@
 #include "Network/Client.h"
 #include "Network/Server.h"
 
+#include "Core/Core.h"
+
 using namespace Vwr;
 
 PickHandler::PickHandler(Vwr::CameraManipulator * cameraManipulator, Vwr::CoreGraph * coreGraph)

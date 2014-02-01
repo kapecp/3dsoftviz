@@ -52,6 +52,9 @@ models.
 
 #include "QOSG/TreeModel.h"
 
+#include "Data/Type.h"
+#include "Data/Graph.h"
+
 using namespace QOSG;
 
 TreeModel::TreeModel(const QStringList &data, QObject *parent)
