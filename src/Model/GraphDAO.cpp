@@ -4,6 +4,13 @@
  */
 #include "Model/GraphDAO.h"
 
+#include "Model/NodeDAO.h"
+#include "Model/EdgeDAO.h"
+
+#include "Data/Graph.h"
+
+#include <QDebug>
+
 Model::GraphDAO::GraphDAO(void)
 {
 }

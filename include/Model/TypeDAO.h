@@ -5,11 +5,15 @@
 #ifndef MODEL_TYPEDAO_DEF
 #define MODEL_TYPEDAO_DEF 1
 
-#include "Data/Type.h"
-#include "Data/Graph.h"
-#include "Model/GraphDAO.h"
+
 #include <QtSql>
-#include <QDebug>
+
+
+namespace Data
+{
+	class Graph;
+	class Type;
+}
 
 namespace Model {
 /**

@@ -4,6 +4,11 @@
  */
 #include "Model/GraphLayoutDAO.h"
 
+#include "Data/GraphLayout.h"
+
+#include <QDebug>
+
+
 Model::GraphLayoutDAO::GraphLayoutDAO(void)
 {
 }

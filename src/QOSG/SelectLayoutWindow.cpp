@@ -1,5 +1,7 @@
 #include "QOSG/SelectLayoutWindow.h"
 
+#include "Model/GraphLayoutDAO.h"
+
 using namespace QOSG;
 
 qlonglong graphID;

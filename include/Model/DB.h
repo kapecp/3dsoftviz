@@ -5,10 +5,13 @@
 #ifndef Model_DB_DEF
 #define Model_DB_DEF 1
 
-#include <QDebug>
-#include <iostream>
 #include <QtSql>
-#include "Util/ApplicationConfig.h"
+
+
+namespace Util
+{
+	class ApplicationConfig;
+}
 
 namespace Model
 {

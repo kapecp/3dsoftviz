@@ -6,6 +6,8 @@
 #include "Data/Edge.h"
 #include "Data/Graph.h"
 
+#include <QDebug>
+
 Model::EdgeDAO::EdgeDAO(void)
 {
 }

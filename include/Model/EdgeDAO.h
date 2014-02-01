@@ -7,7 +7,7 @@
 
 //#include "Data/Edge.h"
 #include <QtSql>
-#include <QDebug>
+
 
 namespace Data {
 class Edge;

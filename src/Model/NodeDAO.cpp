@@ -4,6 +4,10 @@
  */
 #include "Model/NodeDAO.h"
 
+#include "Data/GraphLayout.h"
+
+#include <QDebug>
+
 Model::NodeDAO::NodeDAO(void)
 {
 }

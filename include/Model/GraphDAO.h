@@ -5,13 +5,10 @@
 #ifndef MODEL_GRAPHDAO_DEF
 #define MODEL_GRAPHDAO_DEF 1
 
-#include "Data/Graph.h"
-#include "Model/NodeDAO.h"
-#include "Model/EdgeDAO.h"
 #include <QtSql>
 #include <QString>
 #include <QMap>
-#include <QDebug>
+
 
 namespace Data
 {
