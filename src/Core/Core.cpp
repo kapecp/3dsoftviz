@@ -5,6 +5,9 @@
  */
 
 #include "Core/Core.h"
+#include "QOSG/CoreWindow.h"
+#include "Viewer/CoreGraph.h"
+#include "Layout/LayoutThread.h"
 #include "Util/ApplicationConfig.h"
 
 AppCore::Core * AppCore::Core::core;

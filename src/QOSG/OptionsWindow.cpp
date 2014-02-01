@@ -1,5 +1,6 @@
 #include "QOSG/OptionsWindow.h"
 
+#include "Layout/LayoutThread.h"
 
 using namespace QOSG;
 

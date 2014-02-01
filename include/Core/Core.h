@@ -6,14 +6,22 @@
 #define Core_CORE_DEF 1
 
 #include <QApplication>
-#include "Layout/LayoutThread.h"
-#include "QOSG/CoreWindow.h"
-#include "Viewer/CoreGraph.h"
 #include "QOSG/MessageWindows.h"
+
+namespace Vwr
+{
+	class CoreGraph;
+}
+
+namespace Layout
+{
+	class LayoutThread;
+	class FRAlgorithm;
+}
 
 namespace QOSG
 {
-class CoreWindow;
+	class CoreWindow;
 }
 
 namespace AppCore
