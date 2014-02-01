@@ -9,6 +9,7 @@
 #include "Viewer/CoreGraph.h"
 #include "Layout/LayoutThread.h"
 #include "Util/ApplicationConfig.h"
+#include "Manager/Manager.h"
 
 AppCore::Core * AppCore::Core::core;
 

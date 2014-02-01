@@ -21,22 +21,33 @@
 #include <QtGui>
 #include <QLineEdit>
 
-#include "Network/Server.h"
-#include "Network/Client.h"
-
-#include "QOSG/OptionsWindow.h"
-#include "QOSG/LoadGraphWindow.h"
-#include "Viewer/CoreGraph.h"
-#include "QOSG/ViewerQT.h"
-#include "Layout/LayoutThread.h"
-#include "Manager/Manager.h"
-#include "QOSG/qtcolorpicker.h"
-
 #include "Layout/ShapeGetter.h"
 #include "Layout/RestrictionRemovalHandler.h"
 #include "Layout/RestrictionRemovalHandler_RestrictionNodesRemover.h"
 #include "Layout/ShapeGetter_Circle_ByThreeNodes.h"
 #include "Layout/ShapeGetter_SpherePlane_ByThreeNodes.h"
+
+namespace Layout
+{
+	class LayoutThread;
+}
+
+namespace Vwr
+{
+	class CoreGraph;
+	class CameraManipulator;
+}
+
+namespace QOSG
+{
+	class ViewerQT;
+}
+
+namespace Network
+{
+	class Client;
+	class Network;
+}
 
 namespace QOSG
 {
@@ -655,7 +666,7 @@ public:
 		*/
 	Layout::LayoutThread * getLayoutThread() const { return layout; }
 	bool playing() { return isPlaying; }
-	Vwr::CameraManipulator * getCameraManipulator() { return viewerWidget->getCameraManipulator(); }
+	Vwr::CameraManipulator * getCameraManipulator();
 
 	/**
 		*  \fn inline public  setLayoutThread

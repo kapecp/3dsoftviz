@@ -5,6 +5,7 @@
 #include "Network/Client.h"
 #include "Network/Helper.h"
 #include "QOSG/CoreWindow.h"
+#include "Viewer/CameraManipulator.h"
 
 using namespace Network;
 

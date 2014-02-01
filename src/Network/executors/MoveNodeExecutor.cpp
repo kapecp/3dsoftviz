@@ -1,6 +1,7 @@
 #include "Network/executors/MoveNodeExecutor.h"
 #include "Manager/Manager.h"
 #include "Network/Server.h"
+#include "Network/Client.h"
 
 using namespace Network;
 

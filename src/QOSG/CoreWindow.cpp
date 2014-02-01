@@ -1,5 +1,18 @@
 #include "QOSG/CoreWindow.h"
-#include "Util/Cleaner.h"
+
+#include "QOSG/ViewerQT.h"
+#include "QOSG/OptionsWindow.h"
+#include "QOSG/LoadGraphWindow.h"
+#include "QOSG/qtcolorpicker.h"
+
+#include "Network/Server.h"
+#include "Network/Client.h"
+
+#include "Viewer/CoreGraph.h"
+#include "Viewer/CameraManipulator.h"
+#include "Manager/Manager.h"
+
+#include "Layout/LayoutThread.h"
 
 #include "Layout/ShapeGetter_CylinderSurface_ByCamera.h"
 #include "Layout/ShapeGetter_SphereSurface_ByTwoNodes.h"
@@ -7,8 +20,9 @@
 #include "Layout/ShapeGetter_ConeSurface_ByCamera.h"
 #include "Layout/ShapeGetter_Plane_ByThreeNodes.h"
 
-
 #include "Importer/GraphOperations.h"
+
+#include "Util/Cleaner.h"
 
 using namespace QOSG;
 
@@ -1777,4 +1791,8 @@ void CoreWindow::toggleAttention() {
 void CoreWindow::setAvatarScale(int scale) {
 	client->setAvatarScale(scale);
 	Network::Server::getInstance()->setAvatarScale(scale);
+}
+
+Vwr::CameraManipulator* CoreWindow::getCameraManipulator() {
+	return viewerWidget->getCameraManipulator();
 }

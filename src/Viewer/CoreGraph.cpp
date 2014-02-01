@@ -1,6 +1,17 @@
 #include "Viewer/CoreGraph.h"
+
 #include "Viewer/SkyBox.h"
+#include "Viewer/EdgeGroup.h"
+#include "Viewer/NodeGroup.h"
+#include "Viewer/PerlinNoiseTextureGenerator.h"
+#include "Viewer/SkyTransform.h"
+#include "Viewer/TextureWrapper.h"
+
 #include "Network/Server.h"
+
+#include "Data/Graph.h"
+
+#include "Util/ApplicationConfig.h"
 
 #include <osgUtil/Optimizer>
 
@@ -290,3 +301,11 @@ CoreGraph::~CoreGraph(void)
 {
 	cleanUp();
 }
+
+void CoreGraph::setNodesFreezed(bool val)
+{
+	this->nodesFreezed = val;
+	nodesGroup->freezeNodePositions();
+	qmetaNodesGroup->freezeNodePositions();
+}
+

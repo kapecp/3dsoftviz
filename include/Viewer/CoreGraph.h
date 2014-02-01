@@ -14,18 +14,28 @@
 #include <QLinkedList>
 #include <QSharedPointer>
 
-#include "Viewer/PerlinNoiseTextureGenerator.h"
-#include "Viewer/SkyTransform.h"
-#include "Viewer/TextureWrapper.h"
-#include "Viewer/EdgeGroup.h"
-#include "Viewer/NodeGroup.h"
 #include "Viewer/RestrictionVisualizationsGroup.h"
 #include "Viewer/RestrictionManipulatorsGroup.h"
 
-#include "Util/ApplicationConfig.h"
 #include "Data/Edge.h"
 #include "Data/Node.h"
-#include "Data/Graph.h"
+
+
+namespace Data
+{
+	class Graph;
+}
+
+namespace Vwr
+{
+	class EdgeGroup;
+	class NodeGroup;
+}
+
+namespace Util
+{
+	class ApplicationConfig;
+}
 
 namespace Vwr
 {
@@ -157,12 +167,7 @@ public:
 		*  \brief Sets nodes freeze state
 		*  \param      val     nodes freeze state
 		*/
-	void setNodesFreezed(bool val)
-	{
-		this->nodesFreezed = val;
-		nodesGroup->freezeNodePositions();
-		qmetaNodesGroup->freezeNodePositions();
-	}
+	void setNodesFreezed(bool val);
 
 	Vwr::NodeGroup * getNodesGroup() { return nodesGroup; }
 	Vwr::NodeGroup * getMetaNodesGroup() { return qmetaNodesGroup; }
