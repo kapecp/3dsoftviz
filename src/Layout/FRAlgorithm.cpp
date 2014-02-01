@@ -1,9 +1,10 @@
 #include "Layout/FRAlgorithm.h"
 
+#include "Data/Edge.h"
+#include "Data/Node.h"
+#include "Data/Graph.h"
+
 using namespace Layout;
-
-
-
 
 //Konstruktor pre vlakno s algoritmom
 FRAlgorithm::FRAlgorithm()

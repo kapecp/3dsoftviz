@@ -11,6 +11,8 @@
 #include "Util/ApplicationConfig.h"
 #include "Manager/Manager.h"
 
+#include "Layout/FRAlgorithm.h"
+
 AppCore::Core * AppCore::Core::core;
 
 AppCore::Core::Core(QApplication * app)

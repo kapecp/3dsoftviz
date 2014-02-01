@@ -13,10 +13,12 @@
 #include <QMutex>
 #include <QThread>
 
-#include "Data/Edge.h"
-#include "Data/Node.h"
-#include "Data/Graph.h"
-
+namespace Data
+{
+	class Graph;
+	class Node;
+	class Edge;
+}
 
 namespace Layout
 {
