@@ -9,6 +9,7 @@
 #include "Network/Server.h"
 
 #include "Core/Core.h"
+#include "Layout/LayoutThread.h"
 
 using namespace Vwr;
 

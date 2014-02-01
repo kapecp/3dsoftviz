@@ -7,16 +7,31 @@
 
 #include <QTcpSocket>
 
-#include "Data/Graph.h"
-#include "Viewer/CoreGraph.h"
-#include "Layout/LayoutThread.h"
+// TODO: typedef inside class
 #include "Layout/RestrictionRemovalHandler_RestrictionNodesRemover.h"
-#include "Network/ExecutorFactory.h"
 
 #include "osg/PositionAttitudeTransform"
 #include "QtGui/QListWidgetItem"
 
+namespace Data
+{
+	class Graph;
+}
+
+namespace Vwr
+{
+	class CoreGraph;
+}
+
+namespace Layout
+{
+	class LayoutThread;
+}
+
 namespace Network{
+
+	class ExecutorFactory;
+
 
 class Client : public QObject
 {

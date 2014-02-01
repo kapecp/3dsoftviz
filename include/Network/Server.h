@@ -13,14 +13,22 @@
 
 #include "osg/PositionAttitudeTransform"
 
-#include "Layout/LayoutThread.h"
 #include "Layout/RestrictionRemovalHandler_RestrictionNodesRemover.h"
-#include "Viewer/CoreGraph.h"
-#include "Network/ExecutorFactory.h"
-#include "QOSG/CoreWindow.h"
+
+namespace Layout
+{
+	class LayoutThread;
+}
+
+namespace Vwr
+{
+	class CoreGraph;
+}
 
 
 namespace Network {
+
+	class ExecutorFactory;
 
 class Server : public QTcpServer {
 

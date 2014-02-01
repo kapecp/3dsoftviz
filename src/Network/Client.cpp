@@ -3,9 +3,19 @@
  */
 
 #include "Network/Client.h"
+
+//#include "Data/Graph.h"
+
 #include "Network/Helper.h"
+#include "Network/ExecutorFactory.h"
+
 #include "QOSG/CoreWindow.h"
+
+#include "Layout/LayoutThread.h"
+
 #include "Viewer/CameraManipulator.h"
+#include "Viewer/CoreGraph.h"
+
 
 using namespace Network;
 

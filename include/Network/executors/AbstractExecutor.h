@@ -3,6 +3,10 @@
 
 #include <QObject>
 
+#include "QOSG/CoreWindow.h"
+#include "Layout/LayoutThread.h"
+#include "Viewer/CoreGraph.h"
+
 namespace Network {
 
     class AbstractExecutor {

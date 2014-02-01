@@ -19,6 +19,8 @@
 
 #include "Data/Graph.h"
 
+#include "Layout/LayoutThread.h"
+
 #include <memory>
 
 Manager::GraphManager * Manager::GraphManager::manager;

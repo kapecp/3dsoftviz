@@ -3,10 +3,16 @@
  */
 
 #include "Network/Server.h"
+
 #include "Network/Helper.h"
+#include "Network/ExecutorFactory.h"
 #include "Data/Graph.h"
 #include "Manager/Manager.h"
+#include "Layout/LayoutThread.h"
+#include "Viewer/CoreGraph.h"
 #include "Viewer/CameraManipulator.h"
+
+#include "QOSG/CoreWindow.h"
 
 using namespace Network;
 
