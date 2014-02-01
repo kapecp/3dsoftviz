@@ -1,6 +1,8 @@
 #include "Math/DjikstraAlg.h"
 #include <limits>
 
+#include "Data/Graph.h"
+
 // source: http://www.vogella.de/articles/JavaAlgorithmsDijkstra/article.html
 // altered to compute all shortest paths
 

@@ -1,4 +1,6 @@
 #include "Math/GraphMetrics.h"
+
+#include "Data/Graph.h"
 #include "Math/DjikstraAlg.h"
 
 void GraphMetrics::computeGraphMetrics(Data::Graph * activeGraph)

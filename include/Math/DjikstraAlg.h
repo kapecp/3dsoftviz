@@ -2,7 +2,11 @@
 
 #include "Data/Node.h"
 #include "Data/Edge.h"
-#include "Data/Graph.h"
+
+namespace Data
+{
+	class Graph;
+}
 
 class DjikstraAlg
 {
