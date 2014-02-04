@@ -1,9 +1,12 @@
 #include "Math/CameraMath.h"
+
+#include "Util/ApplicationConfig.h"
+
 #include <osg/Camera>
 #include <osg/LineWidth>
 #include <cmath>
 
-#include "Util/ApplicationConfig.h"
+
 
 osg::Vec3d CameraMath::getPointOnNextBezierCurve(double time, QVector<osg::Vec3d> * points, double weights[])
 {

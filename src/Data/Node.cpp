@@ -6,10 +6,10 @@
  * nemam cas, takze sa raz k tomu vratim 8)
  */
 
-#include "Data/Graph.h"
 #include "Data/Node.h"
-#include "Util/ApplicationConfig.h"
 
+#include "Data/Graph.h"
+#include "Util/ApplicationConfig.h"
 
 #include <osgText/FadeText>
 

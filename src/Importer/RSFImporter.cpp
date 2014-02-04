@@ -2,6 +2,10 @@
 #include "Importer/GraphOperations.h"
 #include "Importer/ReadNodesStore.h"
 
+
+#include "Data/Graph.h"
+#include "Data/Edge.h"
+
 #include <string>
 #include <memory>
 namespace Importer {
