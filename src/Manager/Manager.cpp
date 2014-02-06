@@ -145,17 +145,7 @@ Data::Graph* Manager::GraphManager::loadGraph(QString filepath)
 	}
 
 	//ked uz mame graf nacitany zo suboru, ulozime ho aj do databazy
-	if(db->tmpGetConn() != NULL && db->tmpGetConn()->open()) {
-		//ulozime obycajne uzly a hrany
-		this->activeGraph->saveGraphToDB(db->tmpGetConn(), this->activeGraph);
-		//nastavime meno grafu podla nazvu suboru
-		Model::GraphDAO::setGraphName(this->activeGraph->getId(), name, db->tmpGetConn());
-		//ulozime a nastavime default layout
-		Data::GraphLayout* layout = Model::GraphLayoutDAO::addLayout("original layout", this->activeGraph, db->tmpGetConn());
-		this->activeGraph->selectLayout(layout);
-		//este ulozit meta uzly, hrany a pozicie vsetkych uzlov
-		this->activeGraph->saveLayoutToDB(db->tmpGetConn(), this->activeGraph);
-	}
+	this->saveActiveGraphToDB();
 
 	if (ok) {
 		// robime zakladnu proceduru pre restartovanie layoutu
@@ -168,6 +158,25 @@ Data::Graph* Manager::GraphManager::loadGraph(QString filepath)
 	server -> sendGraph();
 
 	return (ok ? this->activeGraph : NULL);
+}
+
+
+void Manager::GraphManager::saveActiveGraphToDB(){
+	// vytvorenie prazdneho grafu v databaze
+	Model::GraphDAO::addGraph(this->getActiveGraph(), this->db->tmpGetConn());
+
+	// ulozenie grafu to do databazy
+	if(db->tmpGetConn() != NULL && db->tmpGetConn()->open()) {
+		//ulozime obycajne uzly a hrany
+		this->activeGraph->saveGraphToDB(db->tmpGetConn(), this->activeGraph);
+		//nastavime meno grafu podla nazvu suboru
+		Model::GraphDAO::setGraphName(this->activeGraph->getId(), this->activeGraph->getName(), db->tmpGetConn());
+		//ulozime a nastavime default layout
+		Data::GraphLayout* layout = Model::GraphLayoutDAO::addLayout("original layout", this->activeGraph, db->tmpGetConn());
+		this->activeGraph->selectLayout(layout);
+		//este ulozit meta uzly, hrany a pozicie vsetkych uzlov
+		this->activeGraph->saveLayoutToDB(db->tmpGetConn(), this->activeGraph);
+	}
 }
 
 Data::Graph* Manager::GraphManager::createNewGraph(QString name)
@@ -256,12 +265,7 @@ void Manager::GraphManager::exportGraph(Data::Graph* graph, QString filepath)
 
 Data::Graph* Manager::GraphManager::createGraph(QString graphname)
 {
-	Data::Graph* g;
-	if(!this->db->tmpGetConn()->isOpen()){
-		g = this->emptyGraph();
-	} else {
-		g = Model::GraphDAO::addGraph(graphname, this->db->tmpGetConn());
-	}
+	Data::Graph* g = this->emptyGraph();
 
 	this->graphs.insert(g->getId(), g);
 	return g;
