@@ -265,7 +265,7 @@ void Manager::GraphManager::exportGraph(Data::Graph* graph, QString filepath)
 
 Data::Graph* Manager::GraphManager::createGraph(QString graphname)
 {
-	Data::Graph* g = this->emptyGraph();
+	Data::Graph* g = this->emptyGraph(graphname);
 
 	this->graphs.insert(g->getId(), g);
 	return g;
@@ -287,9 +287,9 @@ void Manager::GraphManager::closeGraph(Data::Graph* graph)
 	this->activeGraph = NULL;
 }
 
-Data::Graph* Manager::GraphManager::emptyGraph()
+Data::Graph* Manager::GraphManager::emptyGraph(QString name)
 {
-	Data::Graph *newGraph = new Data::Graph(1, "simple", 0, 0, NULL);
+	Data::Graph *newGraph = new Data::Graph(1, name, 0, 0, NULL);
 
 	return newGraph;
 }

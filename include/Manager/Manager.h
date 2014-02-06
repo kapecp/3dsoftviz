@@ -130,7 +130,7 @@ namespace Manager
 				*  \deprecated
 				*  \return Data::Graph *
 				*/
-				Data::Graph* emptyGraph();
+				Data::Graph* emptyGraph(QString name = "simple");
 
 				/**
 				*  \fn private constructor GraphManager
