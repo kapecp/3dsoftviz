@@ -53,7 +53,8 @@ set( CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH} 
 option( USE_STRICT_COMPILE_WARNINGS "Use strict compilation warnings in debug mode." OFF )
 if( USE_STRICT_COMPILE_WARNINGS )
 	if( CMAKE_COMPILER_IS_GNUCXX )
-		set( CMAKE_CXX_FLAGS_DEBUG "-Wall -Wextra -Werror" )
+#~ 		set( CMAKE_CXX_FLAGS_DEBUG "-Wall -Wextra -Werror" )
+		set( CMAKE_CXX_FLAGS_DEBUG "-Wall -Wextra" )
 	endif()
 endif()
 
@@ -272,20 +273,12 @@ file(GLOB_RECURSE SRC_VIEWER  "src/Viewer/*.cpp")
 
 # Source files
 set(SRC
-	${SRC_MAIN} ${SRC_CORE} ${SRC_DATA}
+	${SRC_MAIN} ${SRC_CORE} ${SRC_DATA} ${SRC_IMPORTER}
 	${SRC_LAYOUT} ${SRC_MANAGER} ${SRC_MATH}
 	${SRC_NETWORK} ${SRC_NOISE}
 	${SRC_OSGQTBROWSER} ${SRC_QOSG} ${SRC_UTIL} ${SRC_VIEWER} ${SRC_MODEL} )
 
-#~ set(SRC ${SRC} ${SRC_IMPORTER})
-
 file(GLOB_RECURSE INCL "include/*.h")
-
-#create library
-add_library(importer SHARED  ${SRC_IMPORTER} )
-target_link_libraries( importer
-	${QT_LIBRARIES}
-)
 
 # Group source files
 source_group(\\src main.cpp)
@@ -344,7 +337,6 @@ target_link_libraries( ${3DSOFTVIZ_NAME}
 	${OPENSCENEGRAPH_LIBRARIES}
 	${OSGVIEWER_LIBRARIES}
 	${LIBNOISE_LIBRARY}
-	importer
 )
 
 # 'cotire' the executable
@@ -355,7 +347,7 @@ if( MSVC )
 endif()
 
 # ensure correct dependencies
-add_dependencies( ${3DSOFTVIZ_NAME} importer)
+#add_dependencies( ${3DSOFTVIZ_NAME} importer)
 
 # -------
 # Install
@@ -366,10 +358,10 @@ install( TARGETS ${3DSOFTVIZ_NAME}
 	BUNDLE DESTINATION ${INSTALL_BUNDLE} COMPONENT Runtime
 	RUNTIME DESTINATION ${INSTALL_BIN} COMPONENT Runtime )
 #move importer library
-install( TARGETS importer
-	BUNDLE DESTINATION ${INSTALL_BUNDLE} COMPONENT Runtime
-	RUNTIME DESTINATION ${INSTALL_BIN} COMPONENT Runtime
-	LIBRARY DESTINATION ${INSTALL_LIB} COMPONENT Runtime)
+#~ install( TARGETS importer
+#~ 	BUNDLE DESTINATION ${INSTALL_BUNDLE} COMPONENT Runtime
+#~ 	RUNTIME DESTINATION ${INSTALL_BIN} COMPONENT Runtime
+#~ 	LIBRARY DESTINATION ${INSTALL_LIB} COMPONENT Runtime)
 
 install(DIRECTORY resources/ DESTINATION ${INSTALL_DATA} COMPONENT Data)
 
