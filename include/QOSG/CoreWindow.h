@@ -50,7 +50,7 @@ namespace QOSG
 	*  \date 3. 5. 2010
 	*/
 class CoreWindow : public QMainWindow
-{
+	{
 	Q_OBJECT
 
 public slots:
@@ -66,6 +66,13 @@ public slots:
 				*  \brief Show the dialog to load graph from database
 				*/
 	void showLoadGraph();
+
+	/**
+				*  \fn public  saveGraphToDB
+				*  \brief Save a current graph to database
+				*/
+	void saveGraphToDB();
+
 
 	/**
 				*  \fn public  saveLayoutToDB
@@ -335,10 +342,17 @@ private:
 	QAction * loadGraph;
 
 	/**
+		*  QAction * saveLayout
+		*  \brief Pointer to save layout to database
+		*/
+	QAction * saveLayout;
+
+	/**
 		*  QAction * saveGraph
 		*  \brief Pointer to save graph to database
 		*/
 	QAction * saveGraph;
+
 
 	/**
 		*  QPushButton * play
@@ -708,7 +722,7 @@ private:
 			QSharedPointer<Layout::RestrictionRemovalHandler> removalHandler
 			);
 
-};
+	};
 }
 
 #endif

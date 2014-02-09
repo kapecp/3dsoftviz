@@ -145,7 +145,7 @@ Data::Graph* Manager::GraphManager::loadGraph(QString filepath)
 	}
 
 	//ked uz mame graf nacitany zo suboru, ulozime ho aj do databazy
-	this->saveActiveGraphToDB();
+	//this->saveActiveGraphToDB();
 
 	if (ok) {
 		// robime zakladnu proceduru pre restartovanie layoutu
