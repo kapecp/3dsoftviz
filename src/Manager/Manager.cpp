@@ -162,6 +162,12 @@ Data::Graph* Manager::GraphManager::loadGraph(QString filepath)
 
 
 void Manager::GraphManager::saveActiveGraphToDB(){
+	// test ci graf je uz v DB
+	if(this->getActiveGraph()->isInDB()) {
+		qDebug() << "[Manager::GraphManager::saveActiveGraphToDB] Graph is in DB allready";
+		return;
+	}
+
 	// vytvorenie prazdneho grafu v databaze
 	Model::GraphDAO::addGraph(this->getActiveGraph(), this->db->tmpGetConn());
 

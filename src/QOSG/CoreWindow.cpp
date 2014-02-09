@@ -583,6 +583,12 @@ void CoreWindow::saveLayoutToDB()
 
 	if(currentGraph != NULL)
 	{
+		// test ci graf je uz v DB
+		if( currentGraph->isInDB() == false ) {
+			qDebug() << "[QOSG::CoreWindow::saveLayoutToDB] Graph is not in DB yet ";
+			return;
+		}
+
 		QSqlDatabase * conn = Manager::GraphManager::getInstance()->getDB()->tmpGetConn();
 		bool ok;
 
