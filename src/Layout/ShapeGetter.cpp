@@ -1,6 +1,7 @@
 #include "Layout/ShapeGetter.h"
 #include "Data/Node.h"
 //-----------------------------------------------------------------------------
+#include <qset.h>
 
 namespace Layout {
 

@@ -6,22 +6,16 @@
 #ifndef DATA_GRAPH_DEF
 #define DATA_GRAPH_DEF 1
 
-
 #include <osg/ref_ptr>
 
 #include "Data/Type.h"
 #include "Data/Edge.h"
 #include "Data/MetaType.h"
 
-
 #include "Layout/RestrictionsManager.h"
 
 #include <QString>
-#include <QTextStream>
-#include <QList>
-#include <QDebug>
-#include <QtSql>
-#include <QMutableMapIterator>
+
 
 #define METASTRENGTH 1
 

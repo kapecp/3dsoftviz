@@ -6,8 +6,7 @@
 #ifndef DATA_METATYPE_DEF
 #define DATA_METATYPE_DEF 1
 
-#include "Data/Graph.h"
-#include "Data/GraphLayout.h"
+
 #include "Data/Type.h"
 
 #include <QString>
@@ -16,7 +15,7 @@ namespace Data
 {
 class Graph;
 class GraphLayout;
-class Type;
+
 
 /**
 		*  \class MetaType
@@ -38,7 +37,7 @@ public:
 		*  \param  layout    GraphLayout of the Graph to which the MetaType belongs
 		*  \param  settings     settings of the MetaType
 		*/
-	MetaType(qlonglong id, QString name, Data::Graph* graph, Data::GraphLayout* layout, QMap<QString, QString> * settings = 0):Data::Type(id,name,graph,settings) { this->layout = layout; this->meta = true; }
+	MetaType(qlonglong id, QString name, Data::Graph* graph, Data::GraphLayout* layout, QMap<QString, QString> * settings = 0);
 
 	/**
 		*  \fn public destructor  ~MetaType

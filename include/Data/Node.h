@@ -5,24 +5,13 @@
 #ifndef DATA_NODE_DEF
 #define DATA_NODE_DEF 1
 
-//#include "Data/Graph.h"
-
-#include <vector>
-#include <string>
 #include <osg/Vec3f>
-//#include "Data/Type.h"
-//#include "Data/Edge.h"
+#include <osg/Geode>
+#include <osg/AutoTransform>
+
 #include <QMap>
 #include <QString>
-#include <QTextStream>
 
-#include <osg/Geode>
-#include <osg/Geometry>
-#include <osg/Depth>
-#include <osg/CullFace>
-#include <osgText/Text>
-
-#include <osg/AutoTransform>
 
 namespace Data
 {
@@ -393,13 +382,7 @@ public:
 		*  \brief Returns human-readable string representing the Node
 		*  \return QString
 		*/
-	QString toString() const
-	{
-		QString str;
-		QTextStream(&str) << "node id:" << id << " name:" << name << " pos:[" << mTargetPosition.x() << "," << mTargetPosition.y() << "," << mTargetPosition.z() << "]";
-		return str;
-	}
-
+	QString toString() const;
 
 	/**
 		*  \fn inline public  setColor(osg::Vec4 color)

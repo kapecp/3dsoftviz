@@ -3,6 +3,10 @@
 #include "Viewer/DataHelper.h"
 #include "Util/ApplicationConfig.h"
 
+#include <osg/ImageSequence>
+
+#include <sstream>
+
 using namespace Vwr;
 using namespace std;
 

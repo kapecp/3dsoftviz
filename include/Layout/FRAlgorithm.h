@@ -5,11 +5,9 @@
 #ifndef LAYOUT_FRALGORITHM_DEF
 #define LAYOUT_FRALGORITHM_DEF 1
 
-#include <stdio.h>
-#include <sstream>
+
 #include <osg/Vec3f>
-#include <math.h>
-#include <ctime>
+
 #include <QMutex>
 #include <QThread>
 

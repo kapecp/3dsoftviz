@@ -3,6 +3,8 @@
 #include "Data/Edge.h"
 #include "Util/ApplicationConfig.h"
 
+#include <osg/ShapeDrawable>
+
 #include "typeinfo"
 
 using namespace Vwr;

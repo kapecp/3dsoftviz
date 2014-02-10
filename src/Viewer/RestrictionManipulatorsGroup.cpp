@@ -2,6 +2,9 @@
 //-----------------------------------------------------------------------------
 #include <osg/ShapeDrawable>
 #include <osg/Geode>
+#include <osgManipulator/Selection>
+#include <osgManipulator/TrackballDragger>
+
 namespace Vwr {
 
 RestrictionManipulatorsGroup::RestrictionManipulatorsGroup()

@@ -9,6 +9,7 @@
 
 #include "Data/Graph.h"
 #include "Data/Type.h"
+#include "Data/GraphLayout.h"
 
 #include <QDebug>
 

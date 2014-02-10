@@ -18,6 +18,8 @@
 #include "Util/ApplicationConfig.h"
 
 #include <QSharedPointer>
+#include <QTextStream>
+#include <QDebug>
 
 Data::Graph::Graph(qlonglong graph_id, QString name, QSqlDatabase* conn, QMap<qlonglong,osg::ref_ptr<Data::Node> > *nodes, QMap<qlonglong,osg::ref_ptr<Data::Edge> > *edges,QMap<qlonglong,osg::ref_ptr<Data::Node> > *metaNodes, QMap<qlonglong,osg::ref_ptr<Data::Edge> > *metaEdges, QMap<qlonglong,Data::Type*> *types)
 {

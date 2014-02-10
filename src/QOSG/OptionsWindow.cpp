@@ -10,6 +10,7 @@
 #include "Data/Graph.h"
 #include "Util/ApplicationConfig.h"
 
+#include <iostream>
 
 using namespace QOSG;
 

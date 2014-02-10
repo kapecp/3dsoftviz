@@ -5,17 +5,15 @@
 #ifndef VIEWER_DATA_HELPER_DEF
 #define VIEWER_DATA_HELPER_DEF 1
 
-#include <cstdlib>
-#include <sstream>
-#include <iostream>
-#include <osg/Geode>
-#include <osg/ShapeDrawable>
-#include "osg/Texture2D"
-#include <QString>
-
 #include "Data/Node.h"
 #include "Data/Edge.h"
 #include "Data/Type.h"
+
+
+#include <osg/Geode>
+#include "osg/Texture2D"
+
+#include <QString>
 
 namespace Vwr
 {

@@ -9,8 +9,7 @@
 #include <osg/Group>
 #include <QMap>
 #include <QSharedPointer>
-#include <osgManipulator/Selection>
-#include <osgManipulator/TrackballDragger>
+
 #include <osg/Switch>
 //-----------------------------------------------------------------------------
 

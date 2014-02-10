@@ -7,6 +7,11 @@
 
 #include "Util/ApplicationConfig.h"
 
+#include <osgText/Text>
+#include <osg/PrimitiveSet>
+
+#include <QTextStream>
+
 Data::Edge::Edge(qlonglong id, QString name, Data::Graph* graph, osg::ref_ptr<Data::Node> srcNode, osg::ref_ptr<Data::Node> dstNode, Data::Type* type, bool isOriented, float scaling, int pos, osg::ref_ptr<osg::Camera> camera) : osg::DrawArrays(osg::PrimitiveSet::QUADS, pos, 4)
 {
 	this->id = id;
@@ -159,4 +164,12 @@ osg::ref_ptr<Data::Node> Data::Edge::getSecondNode(osg::ref_ptr<Data::Node> firs
 		return dstNode;
 	else return srcNode;
 }
+
+
+QString Data::Edge::toString() const {
+	QString str;
+	QTextStream(&str) << "edge id:" << id << " name:" << name;
+	return str;
+}
+
 

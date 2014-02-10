@@ -5,18 +5,13 @@
 #ifndef DATA_EDGE_DEF
 #define DATA_EDGE_DEF 1
 
-//#include "Data/Type.h"
 #include "Data/Node.h"
+
 #include <QString>
-#include <QTextStream>
 #include <QtCore/QMap>
 
-#include <osg/PrimitiveSet>
 #include <osg/Camera>
-#include <osgText/Text>
 #include <osgText/FadeText>
-
-
 
 namespace Util
 {
@@ -25,7 +20,6 @@ namespace Util
 
 namespace Data
 {
-//class Node;
 class Graph;
 class Type;
 
@@ -193,12 +187,7 @@ public:
 		* \brief  Returns human-readable string representation of the Edge
 		* \return QString
 		*/
-	QString toString() const {
-		QString str;
-		QTextStream(&str) << "edge id:" << id << " name:" << name;
-		return str;
-	}
-
+	QString toString() const;
 
 	/**
 		*  \fn inline public constant  getCooridnates

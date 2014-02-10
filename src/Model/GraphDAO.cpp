@@ -9,6 +9,7 @@
 #include "Model/GraphLayoutDAO.h"
 
 #include "Data/Graph.h"
+#include "Data/GraphLayout.h"
 
 #include <QDebug>
 

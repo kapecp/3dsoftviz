@@ -1,5 +1,11 @@
 #include "Viewer/DataHelper.h"
 
+#include <osg/ShapeDrawable>
+
+#include <cstdlib>
+#include <sstream>
+#include <iostream>
+
 using namespace Vwr;
 using namespace Data;
 

@@ -5,20 +5,17 @@
 #ifndef VIEWER_CORE_GRAPH_DEF
 #define VIEWER_CORE_GRAPH_DEF 1
 
-#include <math.h>
-
 #include <osg/ref_ptr>
-#include <osg/Depth>
-
-#include <QMap>
-#include <QLinkedList>
-#include <QSharedPointer>
 
 #include "Viewer/RestrictionVisualizationsGroup.h"
 #include "Viewer/RestrictionManipulatorsGroup.h"
 
 #include "Data/Edge.h"
 #include "Data/Node.h"
+
+#include <QMap>
+#include <QLinkedList>
+#include <QSharedPointer>
 
 
 namespace Data

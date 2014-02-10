@@ -7,8 +7,7 @@
 
 #include <QMap>
 #include <QString>
-#include <QFile>
-#include <qfileinfo.h>
+
 
 namespace Model
 {

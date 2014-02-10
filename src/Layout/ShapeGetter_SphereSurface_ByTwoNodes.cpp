@@ -3,6 +3,7 @@
 #include "Layout/Shape_SphereSurface.h"
 #include "Data/Node.h"
 //-----------------------------------------------------------------------------
+#include <qset.h>
 
 namespace Layout {
 

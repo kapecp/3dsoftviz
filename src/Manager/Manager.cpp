@@ -19,9 +19,13 @@
 #include "Core/Core.h"
 
 #include "Data/Graph.h"
+#include "Data/GraphLayout.h"
 
 #include "Layout/LayoutThread.h"
 #include "QOSG/MessageWindows.h"
+
+#include <QFile>
+#include <qfileinfo.h>
 
 #include <memory>
 

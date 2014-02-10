@@ -9,6 +9,8 @@
 #include <osgViewer/ViewerBase>
 #include <osgViewer/ViewerEventHandlers>
 
+#include <qtimer.h>
+
 /*!
 * \brief
 * Widget, ktoryzobrazuje OSG sceny.

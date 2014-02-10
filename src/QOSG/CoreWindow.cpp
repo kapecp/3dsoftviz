@@ -18,8 +18,9 @@
 #include "Model/DB.h"
 #include "Model/GraphLayoutDAO.h"
 
-#include "Layout/LayoutThread.h"
+#include "Data/GraphLayout.h"
 
+#include "Layout/LayoutThread.h"
 #include "Layout/ShapeGetter_CylinderSurface_ByCamera.h"
 #include "Layout/ShapeGetter_SphereSurface_ByTwoNodes.h"
 #include "Layout/ShapeGetter_Sphere_ByTwoNodes.h"

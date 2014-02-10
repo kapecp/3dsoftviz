@@ -4,6 +4,10 @@
 #include "Data/Node.h"
 #include "Data/Graph.h"
 
+#include <stdio.h>
+#include <math.h>
+#include <ctime>
+#include <sstream>
 #include <iostream>
 
 using namespace Layout;

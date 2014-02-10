@@ -5,6 +5,7 @@
 #include "Model/EdgeDAO.h"
 #include "Data/Edge.h"
 #include "Data/Graph.h"
+#include "Data/GraphLayout.h"
 
 #include <QDebug>
 

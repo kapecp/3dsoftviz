@@ -11,7 +11,12 @@
 #include "Data/Graph.h"
 #include "Util/ApplicationConfig.h"
 
+#include <osg/Geometry>
+#include <osg/Depth>
+#include <osg/CullFace>
 #include <osgText/FadeText>
+
+#include <QTextStream>
 
 typedef osg::TemplateIndexArray<unsigned int, osg::Array::UIntArrayType,4,1> ColorIndexArray;
 
@@ -373,3 +378,12 @@ osg::Vec3f Data::Node::getCurrentPosition(bool calculateNew, float interpolation
 
 	return osg::Vec3(this->currentPosition);
 }
+
+
+QString Data::Node::toString() const
+{
+	QString str;
+	QTextStream(&str) << "node id:" << id << " name:" << name << " pos:[" << mTargetPosition.x() << "," << mTargetPosition.y() << "," << mTargetPosition.z() << "]";
+	return str;
+}
+

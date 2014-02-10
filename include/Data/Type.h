@@ -7,7 +7,7 @@
 #define DATA_TYPE_DEF 1
 
 #include <QString>
-#include <QTextStream>
+
 #include <QMap>
 
 #include <osg/ref_ptr>
@@ -77,12 +77,7 @@ public:
 		*  \brief Returns human-readable string representing the Type
 		*  \return QString
 		*/
-	QString toString() const {
-		QString str;
-		QTextStream(&str) << "type id:" << id << " name:" << name << " meta:" << this->isMeta();
-		return str;
-	}
-
+	QString toString() const;
 
 	/**
 		*  \fn public  loadConfig

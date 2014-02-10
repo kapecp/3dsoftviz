@@ -8,6 +8,8 @@
 //#include "Data/Edge.h"
 #include <QtSql>
 
+#include <osg/ref_ptr>
+#include <osg/Vec4f>
 
 namespace Data {
 class Edge;

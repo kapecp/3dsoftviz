@@ -1,7 +1,9 @@
 #include "Network/executors/NewEdgeExecutor.h"
+
 #include "Manager/Manager.h"
 #include "Network/Server.h"
 #include "Network/Client.h"
+#include "Data/GraphLayout.h"
 
 using namespace Network;
 

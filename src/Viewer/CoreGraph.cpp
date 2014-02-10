@@ -14,6 +14,7 @@
 #include "Util/ApplicationConfig.h"
 
 #include <osgUtil/Optimizer>
+#include <osg/Depth>
 
 using namespace Vwr;
 

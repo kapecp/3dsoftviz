@@ -7,6 +7,8 @@
 #include "Viewer/DataHelper.h"
 #include "Util/ApplicationConfig.h"
 
+#include <QTextStream>
+
 Data::Type::Type(qlonglong id, QString name,Data::Graph* graph, QMap<QString, QString> * settings)
 {
 	//konstruktor
@@ -51,3 +53,10 @@ Data::Type::~Type(void)
 	delete settings;
 	settings = NULL;
 }
+
+QString Data::Type::toString() const {
+	QString str;
+	QTextStream(&str) << "type id:" << id << " name:" << name << " meta:" << this->isMeta();
+	return str;
+}
+

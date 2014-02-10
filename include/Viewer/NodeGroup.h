@@ -5,15 +5,15 @@
 #ifndef VIEWER_NODEWRAPPER_DEF
 #define VIEWER_NODEWRAPPER_DEF 1
 
-#include <QMap>
-#include <QSet>
+#include "Data/Node.h"
 
 #include <osg/ref_ptr>
 #include <osg/AutoTransform>
 #include <osg/Group>
-#include <osg/ShapeDrawable>
 
-#include "Data/Node.h"
+#include <QMap>
+#include <QSet>
+
 
 namespace Util
 {

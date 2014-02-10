@@ -1,7 +1,15 @@
 #ifndef UTIL_ELEMENT_SELECTOR
 #define UTIL_ELEMENT_SELECTOR 1
 
-#include "Viewer/PickHandler.h"
+
+namespace Vwr {
+	class PickHandler;
+}
+
+namespace Data {
+	class Node;
+	class Edge;
+}
 
 namespace Util
 {

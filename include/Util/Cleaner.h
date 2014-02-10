@@ -18,6 +18,10 @@
 *
 *  \date 27. 4. 2010
 */
+
+#include <qobject.h>
+#include <qapplication.h>
+
 class Cleaner : public QObject
 {
 	Q_OBJECT

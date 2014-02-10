@@ -15,7 +15,7 @@
 
 #include <QMap>
 #include <OpenThreads/Mutex>
-#include <QFile>
+
 #include <memory>
 
 using namespace std;
