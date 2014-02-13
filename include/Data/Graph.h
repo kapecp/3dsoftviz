@@ -15,7 +15,7 @@
 #include "Layout/RestrictionsManager.h"
 
 #include <QString>
-
+#include <QSqlDatabase>
 
 #define METASTRENGTH 1
 

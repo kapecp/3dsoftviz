@@ -4,6 +4,7 @@
 #include "Util/ApplicationConfig.h"
 
 #include <osg/ImageSequence>
+#include <osgDB/ReadFile>
 
 #include <sstream>
 

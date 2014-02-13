@@ -6,6 +6,7 @@
 #define __3DVisualClient_H__
 
 #include <QTcpSocket>
+#include <QLinkedList>
 
 // TODO: typedef inside class
 #include "Layout/RestrictionRemovalHandler_RestrictionNodesRemover.h"

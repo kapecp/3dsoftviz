@@ -4,6 +4,7 @@
 
 #include <osg/Camera>
 #include <osg/LineWidth>
+#include <osg/Geometry>
 #include <cmath>
 
 

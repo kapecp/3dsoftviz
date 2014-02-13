@@ -21,6 +21,7 @@
 #include <QtGui/QGraphicsView>
 #include <QtGui/QApplication>
 #include <QtGui/QPainter>
+#include <QPointer>
 
 
 extern QCoreApplication* getOrCreateQApplication();

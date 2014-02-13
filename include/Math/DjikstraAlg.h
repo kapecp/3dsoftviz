@@ -3,6 +3,10 @@
 #include "Data/Node.h"
 #include "Data/Edge.h"
 
+#include <QLinkedList>
+#include <QVector>
+#include <QSet>
+
 namespace Data
 {
 	class Graph;

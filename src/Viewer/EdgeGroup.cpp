@@ -3,6 +3,8 @@
 #include "Viewer/TextureWrapper.h"
 #include "Data/Node.h"
 
+#include <osg/Depth>
+#include <osg/BlendFunc>
 
 using namespace Vwr;
 

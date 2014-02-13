@@ -17,6 +17,7 @@
 
 #include <osg/MatrixTransform>
 #include <osg/Projection>
+#include <osg/BlendFunc>
 
 using namespace Vwr;
 

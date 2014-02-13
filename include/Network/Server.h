@@ -10,6 +10,8 @@
 #include <QTcpSocket>
 #include <QMap>
 #include <QSet>
+#include <QListWidgetItem>
+#include <QLinkedList>
 
 #include "osg/PositionAttitudeTransform"
 

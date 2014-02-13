@@ -1,6 +1,7 @@
 #include "Viewer/DataHelper.h"
 
 #include <osg/ShapeDrawable>
+#include <osgDB/ReadFile>
 
 #include <cstdlib>
 #include <sstream>

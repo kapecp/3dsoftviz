@@ -16,6 +16,7 @@
 #include <osg/Notify>
 #include <osg/BoundsChecking>
 
+#include <iostream>
 
 double Vwr::CameraManipulator::EYE_MOVEMENT_SPEED;
 double Vwr::CameraManipulator::TARGET_MOVEMENT_SPEED;

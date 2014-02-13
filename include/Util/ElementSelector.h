@@ -1,6 +1,9 @@
 #ifndef UTIL_ELEMENT_SELECTOR
 #define UTIL_ELEMENT_SELECTOR 1
 
+#include <QMap>
+#include <osg/ref_ptr>
+
 
 namespace Vwr {
 	class PickHandler;
