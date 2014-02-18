@@ -65,7 +65,7 @@ endif()
 MESSAGE(CMAKE_BUILD_TYPE)
 
 if( CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT )
- 	set( CMAKE_INSTALL_PREFIX ${CMAKE_CURRENT_SOURCE_DIR}/_install CACHE PATH "Installation Destination" FORCE )
+	set( CMAKE_INSTALL_PREFIX ${CMAKE_CURRENT_SOURCE_DIR}/_install CACHE PATH "Installation Destination" FORCE )
 endif()
 
 # RPath functionality
@@ -249,18 +249,24 @@ endif()
 # Find OpenCV
 FIND_PACKAGE( OpenCV )
 IF(OpenCV_FOUND)
-INCLUDE_DIRECTORIES( ${OpenCV_INCLUDE_DIRS} )
-ADD_DEFINITIONS( -DOPENCV_FOUND )
-MESSAGE ("OpenCV FOUND")
-SET(SOURCES_H
+	INCLUDE_DIRECTORIES( ${OpenCV_INCLUDE_DIRS} )
+	ADD_DEFINITIONS( -DOPENCV_FOUND )
+	MESSAGE ("OpenCV FOUND")
+	SET(SOURCES_H
 		./include/QOpenCV/FaceRecognitionWindow.h
 		./include/QOpenCV/FaceRecognitionThread.h
-)
-FILE(GLOB_RECURSE SRC_OPENCV  "src/OpenCV/*.cpp")
-FILE(GLOB_RECURSE SRC_QOPENCV  "src/QOpenCV/*.cpp")
-SET(SRC ${SRC} ${SRC_OPENCV} ${SRC_QOPENCV})
+	)
+	FILE(GLOB_RECURSE SRC_OPENCV  "src/OpenCV/*.cpp")
+	FILE(GLOB_RECURSE SRC_QOPENCV  "src/QOpenCV/*.cpp")
+	SET(SRC ${SRC} ${SRC_OPENCV} ${SRC_QOPENCV})
+	#aruco
+	SET(SOURCES_H ${SOURCES_H}
+		./include/Aruco/arucocore.h
+	)
+	FILE(GLOB_RECURSE SRC_ARUCO  "src/Aruco/*.cpp")
+	SET(SRC ${SRC} ${SRC_ARUCO} )
 ELSE(OpenCV_FOUND)
-MESSAGE ("OpenCV NOT FOUND")
+	MESSAGE ("OpenCV NOT FOUND")
 ENDIF()
 
 # ---------------
@@ -316,7 +322,7 @@ source_group(\\src\\Layout "^.*Layout/.*$")
 source_group(\\src\\QOSG "^.*QOSG/.*$")
 source_group(\\src\\OsgQtBrowser "^.*OsgQtBrowser/.*$")
 source_group(\\src\\Noise "^.*Noise/.*$")
-source_group(\\src\\Aruco "^.*Aruco/.*$")
+
 # Group header files
 source_group(\\headers\\Network "^.*Network/.*h$")
 source_group(\\headers\\Viewer "^.*Viewer/.*h$")
@@ -329,16 +335,19 @@ source_group(\\headers\\Util "^.*Util/.*h$")
 source_group(\\headers\\Layout "^.*Layout/.*h$")
 source_group(\\headers\\QOSG "^.*QOSG/.*h$")
 source_group(\\headers\\Noise "^.*Noise/.*h$")
-source_group(\\headers\\Aruco "^.*Aruco/.*h$")
 source_group(\\headers\\OsgQtBrowser "^.*OsgQtBrowser/.*h$")
 # Group generated moc files
 source_group(\\MOC "^.*moc_.*$")
+
 IF(OpenCV_FOUND)
 SOURCE_GROUP(\\src\\QOpenCV "^.*QOpenCV/.*$")
 SOURCE_GROUP(\\src\\OpenCV "^.*OpenCV/.*$")
 SOURCE_GROUP(\\headers\\QOpenCV "^.*QOpenCV/.*h$")
 SOURCE_GROUP(\\headers\\OpenCV "^.*OpenCV/.*h$")
+SOURCE_GROUP(\\src\\Aruco "^.*Aruco/.*$")
+SOURCE_GROUP(\\headers\\Aruco "^.*Aruco/.*h$")
 ENDIF()
+
 # header files containing Q_OBJECT macros
 set(SOURCES_H ${SOURCES_H}
 	./include/OsgQtBrowser/QGraphicsViewAdapter.h
