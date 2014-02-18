@@ -1,6 +1,8 @@
 #include "Aruco/arucocore.h"
 #include "QDebug"
 
+using namespace ArucoModul;
+
 ArucoCore::ArucoCore()
 {
 
@@ -9,7 +11,7 @@ ArucoCore::ArucoCore()
 		cameraParameters();
 	}
 	catch(std::exception &ex) {
-		qDebug << "Exception: "<<ex.what()<<endl;
+		qDebug() << "Exception: " << QString::fromUtf8( ex.what());
 	}
 }
 void ArucoCore::cameraParameters()

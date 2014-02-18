@@ -4,8 +4,10 @@
 #include <aruco/aruco.h>
 #include <aruco/cvdrawingutils.h>
 
+namespace ArucoModul {
+
 class ArucoCore : public QObject
-{
+	{
 	/**
 		*@brief Class ArucoCore
 		*@author Autor: Martina Tregerova
@@ -52,8 +54,9 @@ private:
 	vector<aruco::Marker> mMarkers;
 	float mMarkerSize;
 
-//signals:
+	//signals:
 	//detect();
-};
+	};
+} // end ArucoModul namespace
 
 #endif // ARUCOCORE_H
