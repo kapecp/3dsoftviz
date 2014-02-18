@@ -6,9 +6,7 @@
 namespace Manager {
 
 //chybove hlasky
-void ImportInfoHandlerImpl::addMessage (
-		const QString &text
-		) {
+void ImportInfoHandlerImpl::addMessage () {
 	throw "not implemented";
 }
 

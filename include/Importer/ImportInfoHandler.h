@@ -19,15 +19,13 @@ class ImportInfoHandler {
 public:
 
 	/***/
-	virtual ~ImportInfoHandler (void) {};
+	virtual ~ImportInfoHandler (void) {}
 
 	/**
 	 * \brief Handles message (information from the importer).
 	 * \param[in] text Message text.
 	 */
-	virtual void addMessage (
-			const QString &text
-			) = 0;
+	virtual void addMessage () = 0;
 
 	/**
 	 * \brief Handles error.

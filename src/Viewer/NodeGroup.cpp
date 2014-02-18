@@ -179,10 +179,10 @@ void NodeGroup::updateNodeCoordinates(float interpolationSpeed)
 	while (i != nodes->constEnd())
 	{
 
-		string a = typeid (i.value()).name();
-		string b = typeid (Data::Node).name();
-		if(typeid (i.value()).name() == "aa")
-			;
+		//string a = typeid (i.value()).name();
+		//string b = typeid (Data::Node).name();
+		//if(typeid (i.value()).name() == "aa")
+			//;
 		nodeTransforms->value(i.key())->setPosition((*i)->getCurrentPosition(true, interpolationSpeed));
 
 		osg::ref_ptr<osg::AutoTransform> at = NULL;

@@ -36,6 +36,7 @@
 #include "Data/GraphSpanningTree.h"
 
 #include <iostream>
+#include "QDebug"
 
 using namespace QOSG;
 using namespace std;
@@ -637,6 +638,7 @@ void CoreWindow::noSelectClicked(bool checked)
 	singleSelect->setChecked(false);
 	multiSelect->setChecked(false);
 	center->setChecked(false);
+	noSelect->setChecked(checked);
 }
 
 void CoreWindow::singleSelectClicked(bool checked)
@@ -645,6 +647,7 @@ void CoreWindow::singleSelectClicked(bool checked)
 	noSelect->setChecked(false);
 	multiSelect->setChecked(false);
 	center->setChecked(false);
+	singleSelect->setChecked(checked);
 }
 
 void CoreWindow::multiSelectClicked(bool checked)
@@ -653,6 +656,7 @@ void CoreWindow::multiSelectClicked(bool checked)
 	noSelect->setChecked(false);
 	singleSelect->setChecked(false);
 	center->setChecked(false);
+	multiSelect->setChecked(checked);
 }
 
 void CoreWindow::centerView(bool checked)
@@ -660,7 +664,7 @@ void CoreWindow::centerView(bool checked)
 	noSelect->setChecked(false);
 	singleSelect->setChecked(false);
 	multiSelect->setChecked(false);
-
+	center->setChecked(checked);
 	viewerWidget->getCameraManipulator()->setCenter(viewerWidget->getPickHandler()->getSelectionCenter(false));
 }
 
@@ -868,7 +872,7 @@ void CoreWindow::labelOnOff(bool)
 
 void CoreWindow::sliderValueChanged(int value)
 {
-	layout->setAlphaValue((float)value * 0.001);
+	layout->setAlphaValue((float)value * 0.001f);
 }
 
 
@@ -893,15 +897,18 @@ void CoreWindow::nodeTypeComboBoxChanged(int index)
 		viewerWidget->getPickHandler()->setSelectionType(Vwr::PickHandler::SelectionType::EDGE);
 		label->setChecked(edgeLabelsVisible);
 		break;
+	default:
+		qDebug() << "CoreWindow:nodeTypeComboBoxChanged do not suported index";
+		break;
 	}
 }
 
 void CoreWindow::applyColorClick()
 {
-	float alpha = color.alphaF();
-	float red = color.redF();
-	float green = color.greenF();
-	float blue = color.blueF();
+	float alpha = (float)color.alphaF();
+	float red = (float)color.redF();
+	float green = (float)color.greenF();
+	float blue = (float)color.blueF();
 
 	QLinkedList<osg::ref_ptr<Data::Node> > * selectedNodes = viewerWidget->getPickHandler()->getSelectedNodes();
 	QLinkedList<osg::ref_ptr<Data::Node> >::const_iterator ni = selectedNodes->constBegin();
@@ -1368,10 +1375,10 @@ void CoreWindow::setRestriction_ConeTree (){
 
 		}
 
-		osg::Vec3 position = rootPosition + osg::Vec3f (0, 0, (-50)*depth);
+		osg::Vec3 position = rootPosition + osg::Vec3f (0.f, 0.f, (-50.f) * (float)depth);
 		osg::Vec3 positionNode1 = position;
-		osg::Vec3 positionNode2 = position + osg::Vec3f (10, 0, 0);
-		osg::Vec3 positionNode3 = position + osg::Vec3f (0, 10, 0);
+		osg::Vec3 positionNode2 = position + osg::Vec3f (10.f, 0.f, 0.f);
+		osg::Vec3 positionNode3 = position + osg::Vec3f (0.f, 10.f, 0.f);
 
 		Layout::RestrictionRemovalHandler_RestrictionNodesRemover::NodesListType restrictionNodes;
 
@@ -1560,8 +1567,8 @@ bool CoreWindow::add_EdgeClick()
 	}
 	if (isPlaying)
 		layout->play();
-	QString nodename1 = QString(node1->getName());
-	QString nodename2 = QString(node2->getName());
+	//QString nodename1 = QString(node1->getName());
+	//QString nodename2 = QString(node2->getName());
 	return true;
 	//context.getGraph ().addEdge (QString (""), node1[1], node1[2], edgeType, true);
 

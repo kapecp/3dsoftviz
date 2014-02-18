@@ -556,7 +556,7 @@ private:
 		*  static double SCREEN_MARGIN
 		*  \brief minimum distance of selected cluster from screen in t=0.5
 		*/
-	static double SCREEN_MARGIN;
+	static float SCREEN_MARGIN;
 
 	/**
 		*  \fn private  alterWeights(osgViewer::Viewer* viewer, std::list<osg::ref_ptr<Data::Node> > selectedCluster)

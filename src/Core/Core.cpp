@@ -65,7 +65,7 @@ void AppCore::Core::restartLayout()
 	delete this->thr;
 
 	this->alg->SetGraph(Manager::GraphManager::getInstance()->getActiveGraph());
-	this->alg->SetParameters(10,0.7f,1,true);
+	this->alg->SetParameters(10,0.7f,true);
 	this->thr = new Layout::LayoutThread(this->alg);
 	this->cw->setLayoutThread(thr);
 	this->cg->reload(Manager::GraphManager::getInstance()->getActiveGraph());

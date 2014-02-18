@@ -17,12 +17,10 @@ class ImportInfoHandlerImpl
 public:
 
 	/***/
-	virtual ~ImportInfoHandlerImpl (void) {};
+	virtual ~ImportInfoHandlerImpl (void) {}
 
 	/***/
-	virtual void addMessage (
-			const QString &text
-			);
+	virtual void addMessage ();
 
 	/**
 	 * \brief Shows message box with error text.

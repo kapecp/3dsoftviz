@@ -19,7 +19,7 @@ namespace QOSG
 {
 class CheckBoxList: public QComboBox
 {
-	Q_OBJECT;
+	Q_OBJECT
 
 public:
 	CheckBoxList(QWidget *widget = 0);

@@ -16,25 +16,19 @@ class ImportInfoHandlerEmpty
 public:
 
 	/***/
-	virtual ~ImportInfoHandlerEmpty (void) {};
+	virtual ~ImportInfoHandlerEmpty (void) {}
 
 	/***/
-	virtual void addMessage (
-			const QString &text
-			) {
-	};
+	virtual void addMessage () {
+	}
 
 	/***/
-	virtual void reportError (
-			const QString &text
-			) {
-	};
+	virtual void reportError () {
+	}
 
 	/***/
-	virtual void setProgress (
-			const unsigned int value
-			) {
-	};
+	virtual void setProgress () {
+	}
 
 }; // class
 

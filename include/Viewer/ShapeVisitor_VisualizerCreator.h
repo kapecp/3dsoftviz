@@ -21,7 +21,7 @@ class ShapeVisitor_VisualizerCreator : public Layout::ShapeVisitor {
 public:
 
 	/***/
-	virtual ~ShapeVisitor_VisualizerCreator (void) {};
+	virtual ~ShapeVisitor_VisualizerCreator (void) {}
 
 	osg::ref_ptr<osg::Node> getCreatedVisualizer (void);
 

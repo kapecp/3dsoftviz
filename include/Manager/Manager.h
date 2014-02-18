@@ -11,12 +11,12 @@
 
 namespace Model
 {
-	class DB;
+class DB;
 }
 
 namespace Data
 {
-	class Graph;
+class Graph;
 }
 
 namespace Manager
@@ -75,12 +75,6 @@ public:
 			 * \brief Saves graph.
 			 */
 	void saveGraph(Data::Graph* graph);
-
-	/**
-			 * \fn exportGraph
-			 * \brief Exports graph into file (not yet implemented).
-			 */
-	void exportGraph(Data::Graph* graph, QString filepath);
 
 	/**
 			 * \fn createGraph

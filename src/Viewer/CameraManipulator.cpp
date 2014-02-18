@@ -20,7 +20,7 @@
 
 double Vwr::CameraManipulator::EYE_MOVEMENT_SPEED;
 double Vwr::CameraManipulator::TARGET_MOVEMENT_SPEED;
-double Vwr::CameraManipulator::SCREEN_MARGIN;
+float Vwr::CameraManipulator::SCREEN_MARGIN;
 
 namespace Vwr {
 
@@ -46,7 +46,7 @@ Vwr::CameraManipulator::CameraManipulator(Vwr::CoreGraph * coreGraph)
 
 	EYE_MOVEMENT_SPEED = 0.005;
 	TARGET_MOVEMENT_SPEED = 0.005;
-	SCREEN_MARGIN = 200;
+	SCREEN_MARGIN = 200.f;
 
 	this->coreGraph = coreGraph;
 	stop();

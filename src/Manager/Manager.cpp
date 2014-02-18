@@ -261,11 +261,6 @@ Data::Graph* Manager::GraphManager::loadGraphFromDB(qlonglong graphID, qlonglong
 	return this->activeGraph;
 }
 
-void Manager::GraphManager::exportGraph(Data::Graph* graph, QString filepath)
-{
-	// TODO export do GraphML
-}
-
 Data::Graph* Manager::GraphManager::createGraph(QString graphname)
 {
 	Data::Graph* g;
@@ -396,8 +391,8 @@ void Manager::GraphManager::runTestCase( qint32 action )
 		qDebug() << "Types count: " << g->getTypes()->size();
 		qDebug() << "Edges count: " << g->getEdges()->size();
 
-		switch(action) {
-		case 1: //testovanie remove metod
+		if(action==1) {
+			//testovanie remove metod
 			qDebug() << "Starting testCase 1";
 
 			qDebug() << "Removing type t1";
@@ -410,8 +405,8 @@ void Manager::GraphManager::runTestCase( qint32 action )
 			qDebug() << "Edges count: " << g->getEdges()->size();
 
 			qDebug() << "Ending testCase 1";
-			break;
-		case 2:
+		}
+		if(action==2){
 			qDebug() << "Starting testCase 2";
 
 			osg::ref_ptr<Data::Node> selectedNode = g->getNodes()->values().at(10);
@@ -426,7 +421,10 @@ void Manager::GraphManager::runTestCase( qint32 action )
 
 			qDebug() << "Ending testCase 2";
 			break;
+
+
 		}
+
 
 		//cleanup
 		if(Model::GraphDAO::removeGraph(g,this->db->tmpGetConn())) {
@@ -538,5 +536,10 @@ void Manager::GraphManager::runTestCase( qint32 action )
 		qDebug() << "graph deleted";
 		break;
 	}
+	default:
+		qDebug() << "Manager:runTestCase not supported action";
+		break;
+
+
 	}
 }
