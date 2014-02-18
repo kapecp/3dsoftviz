@@ -102,7 +102,7 @@ public:
 
 	/** set the mouse scroll wheel zoom delta.
 		  * Range -1.0 to +1.0,  -ve value inverts wheel direction and zero switches off scroll wheel. */
-	void setScroolWheelZoomDelta(double zoomDelta) { _zoomDelta = zoomDelta; }
+	void setScroolWheelZoomDelta(float zoomDelta) { _zoomDelta = zoomDelta; }
 
 	/** get the mouse scroll wheel zoom delta. */
 	double getScroolWheelZoomDelta() const { return _zoomDelta; }
@@ -120,10 +120,10 @@ public:
 	const osg::Quat& getRotation() const { return _rotation; }
 
 	/** Set the distance of the trackball. */
-	void setDistance(double distance) { _distance = distance; }
+	void setDistance(float distance) { _distance = distance; }
 
 	/** Get the distance of the trackball. */
-	double getDistance() const { return _distance; }
+	float getDistance() const { return _distance; }
 
 	/** Set the size of the trackball. */
 	void setTrackballSize(float size);
@@ -150,7 +150,7 @@ public:
 		*  \brief Returns maximum camera speed
 		*  \return float maximum speed
 		*/
-	float getMaxSpeed() { return maxSpeed; }
+	double getMaxSpeed() { return maxSpeed; }
 
 	void setNewPosition(osg::Vec3d cameraTargetPoint, osg::Vec3d cameraInterestPoint, std::list<osg::ref_ptr<Data::Node> > selectedCluster, std::list<osg::ref_ptr<Data::Edge> > selectedEdges);
 
@@ -252,7 +252,7 @@ protected:
 		*  double _distance
 		*  \brief current distance from rotation center
 		*/
-	double       _distance;
+	float       _distance;
 
 	/**
 		*  float _trackballSize

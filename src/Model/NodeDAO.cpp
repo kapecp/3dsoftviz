@@ -404,7 +404,7 @@ QMap<qlonglong, osg::Vec3f> Model::NodeDAO::getNodesPositions(QSqlDatabase* conn
 	while(query->next())
 	{
 		nodeId = query->value(1).toLongLong();
-		position = osg::Vec3f(query->value(2).toDouble(), query->value(3).toDouble(), query->value(4).toDouble());
+		position = osg::Vec3f(query->value(2).toFloat(), query->value(3).toFloat(), query->value(4).toFloat());
 
 		positions.insert(nodeId, position);
 	}

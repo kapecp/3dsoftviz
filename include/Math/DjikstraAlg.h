@@ -39,5 +39,5 @@ private:
 	Data::Node * getMinimum(QSet<qlonglong> vertexes);
 	int getDistance(Data::Node * node, Data::Node * target);
 	bool isSettled(Data::Node * vertex);
-	int getShortestDistance(Data::Node * destination);
+	qlonglong getShortestDistance(Data::Node * destination);
 };

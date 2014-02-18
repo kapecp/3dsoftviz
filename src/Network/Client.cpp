@@ -425,7 +425,7 @@ void Client::sendNewEdge(QString name, int id_from, int id_to, bool oriented) {
 
 }
 
-void Client::sendRemoveNode(int id) {
+void Client::sendRemoveNode(qlonglong id) {
 
 	if (!this -> isConnected() ) {
 		return;
@@ -463,7 +463,7 @@ void Client::sendRemoveEdge(int id) {
 
 }
 
-void Client::sendNodeColor(int id, float r, float g, float b, float alpha) {
+void Client::sendNodeColor(qlonglong id, float r, float g, float b, float alpha) {
 	this->sendColor(SetNodeColorExecutor::INSTRUCTION_NUMBER, id, r, g, b, alpha);
 }
 
@@ -471,7 +471,7 @@ void Client::sendEdgeColor(int id, float r, float g, float b, float alpha) {
 	this->sendColor(SetEdgeColorExecutor::INSTRUCTION_NUMBER, id, r, g, b, alpha);
 }
 
-void Client::sendColor(quint8 instruction, int id, float r, float g, float b, float alpha) {
+void Client::sendColor(quint8 instruction, qlonglong id, float r, float g, float b, float alpha) {
 
 	if (!this -> isConnected() ) {
 		return;

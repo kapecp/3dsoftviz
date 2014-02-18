@@ -81,9 +81,9 @@ public:
 
 	void sendNewNode(QString name, osg::Vec3f position);
 	void sendNewEdge(QString name, int id_from, int id_to, bool oriented = false);
-	void sendRemoveNode(int id);
+	void sendRemoveNode(qlonglong id);
 	void sendRemoveEdge(int id);
-	void sendNodeColor(int id, float r, float g, float b, float alpha);
+	void sendNodeColor(qlonglong id, float r, float g, float b, float alpha);
 	void sendEdgeColor(int id, float r, float g, float b, float alpha);
 	void sendNodeLabel(int id, QString label);
 	void sendFixNodeState(int id, bool state);
@@ -150,7 +150,7 @@ private:
 	QTcpSocket *socket;
 
 	void addAvatar(int id, QString nick);
-	void sendColor(quint8 instruction, int id, float r, float g, float b, float alpha);
+	void sendColor(quint8 instruction, qlonglong id, float r, float g, float b, float alpha);
 	QListWidgetItem * getItemById(int id);
 
 	quint16 blockSize;

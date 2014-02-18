@@ -386,7 +386,7 @@ osg::ref_ptr<Data::Node> Data::Graph::addNode(qlonglong id, QString name, Data::
 osg::ref_ptr<Data::Node> Data::Graph::mergeNodes(QLinkedList<osg::ref_ptr<Data::Node> > * selectedNodes, osg::Vec3f position, qlonglong mergeNodeId)
 {
 	//vyratame velkost zluceneho uzla podla velkosti zlucovanych uzlov
-	float scale = this->getNodeScale() + (selectedNodes->count() / 2);
+	float scale = this->getNodeScale() + ((float)selectedNodes->count() / 2.f);
 
 	//vytvorime novy zluceny uzol
 	osg::ref_ptr<Data::Node> mergedNode = new Data::Node((mergeNodeId != -1) ? mergeNodeId : this->incEleIdCounter(), "mergedNode", this->getNodeMetaType(), scale, this, position);
@@ -918,7 +918,7 @@ Data::GraphSpanningTree* Data::Graph::getSpanningTree(qlonglong rootId){
 	int rootDepth = 0;
 	depthQueue.push_front(rootDepth);
 	pickedNodes.append(rootId);
-	spanningTree->addGroup(pickedNodes,rootDepth, 0);
+	spanningTree->addGroup(pickedNodes,rootDepth, (qlonglong) 0);
 
 
 	while (!queue.empty()) {
@@ -1161,7 +1161,7 @@ void Data::Graph::removeAllEdgesOfType(Data::Type* type )
 	if(type->isMeta()) edgesToKill = this->metaEdgesByType.values(type->getId());
 	else edgesToKill = this->edgesByType.values(type->getId());
 	if(!edgesToKill.isEmpty()) {
-		for(qlonglong i=0;i<edgesToKill.size();i++) {
+		for(int i=0;i<edgesToKill.size();i++) {
 			this->removeEdge(edgesToKill.at(i));
 		}
 
@@ -1177,7 +1177,7 @@ void Data::Graph::removeAllNodesOfType( Data::Type* type )
 	else nodesToKill = this->nodesByType.values(type->getId());
 
 	if(!nodesToKill.isEmpty()) {
-		for(qlonglong i=0;i<nodesToKill.size();i++) { //prejdeme kazdy jeden uzol
+		for(int i=0;i<nodesToKill.size();i++) { //prejdeme kazdy jeden uzol
 			this->removeNode(nodesToKill.at(i));
 		}
 

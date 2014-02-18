@@ -18,8 +18,8 @@ FRAlgorithm::FRAlgorithm()
 {
 	//nastavenie konstant parametrov
 	PI = acos((double) - 1);
-	ALPHA = 0.005;
-	MIN_MOVEMENT = 0.05;
+	ALPHA = 0.005f;
+	MIN_MOVEMENT = 0.05f;
 	MAX_MOVEMENT = 30;
 	MAX_DISTANCE = 400;
 	state = RUNNING;
@@ -40,8 +40,8 @@ FRAlgorithm::FRAlgorithm()
 FRAlgorithm::FRAlgorithm(Data::Graph *graph)
 {
 	PI = acos((double) - 1);
-	ALPHA = 0.005;
-	MIN_MOVEMENT = 0.05;
+	ALPHA = 0.005f;
+	MIN_MOVEMENT = 0.05f;
 	MAX_MOVEMENT = 30;
 	MAX_DISTANCE = 400;
 	state = RUNNING;
@@ -87,7 +87,7 @@ void FRAlgorithm::SetParameters(float sizeFactor,float flexibility,int animation
 /* Urci pokojovu dlzku strun */
 double FRAlgorithm::computeCalm() {
 	double R = 300;
-	float n = graph->getNodes()->count();
+	float n = (float) graph->getNodes()->count();
 	return sizeFactor* pow((4*R*R*R*PI)/(n*3), 1/3);
 }
 /* Rozmiestni uzly na nahodne pozicie */
@@ -459,7 +459,7 @@ void FRAlgorithm::addRepulsive(Data::Node* u, Data::Node* v, float factor) {
 	}
 	if (dist == 0) {
 		// pri splynuti uzlov medzi nimi vytvorime malu vzdialenost
-		vp.set(vp.x() + (rand() % 10), vp.y() + (rand() % 10), vp.z() + (rand() % 10));
+		vp.set( (vp.x() + (float)(rand() % 10)), ( vp.y() + (float)(rand() % 10)),( vp.z() + (float)(rand() % 10)));
 		dist = distance(up,vp);
 	}
 	fv = (vp - up);// smer sily

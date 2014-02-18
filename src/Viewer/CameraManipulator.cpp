@@ -24,6 +24,7 @@ double Vwr::CameraManipulator::SCREEN_MARGIN;
 
 namespace Vwr {
 
+
 Vwr::CameraManipulator::CameraManipulator(Vwr::CoreGraph * coreGraph)
 {
 	appConf = Util::ApplicationConfig::get();
@@ -902,14 +903,14 @@ float Vwr::CameraManipulator::alterCameraTargetPoint(osgViewer::Viewer* viewer)
 	osg::ref_ptr<osg::Camera> camera = new osg::Camera(*(viewer->getCamera()), osg::CopyOp::DEEP_COPY_ALL);
 	//osg::ref_ptr<osg::Camera> camera = viewer->getCamera();
 
-	int width = camera->getViewport()->width();
-	int height = camera->getViewport()->height();
+	float width =  (float) camera->getViewport()->width();
+	float height = (float) camera->getViewport()->height();
 
 	osg::Vec3d basicVec = cameraTargetPoint - weightPoint;
 	float scale = appConf->getValue("Viewer.Display.NodeDistanceScale").toFloat();
 
 	// minimum distance from center
-	float dist = basicVec.length() + 50 * scale;
+	float dist = (float) basicVec.length() + 50.f * scale;
 
 	osg::Vec3d eyePosition;
 
@@ -952,8 +953,8 @@ void Vwr::CameraManipulator::alterWeights(osgViewer::Viewer* viewer, std::list<o
 {
 	osg::ref_ptr<osg::Camera> camera = new osg::Camera(*(viewer->getCamera()), osg::CopyOp::DEEP_COPY_ALL);
 
-	int width = camera->getViewport()->width();
-	int height = camera->getViewport()->height();
+	float width = (float) camera->getViewport()->width();
+	float height = (float) camera->getViewport()->height();
 
 	osg::Vec3d eye;
 	osg::Vec3d center;
@@ -1025,7 +1026,7 @@ void Vwr::CameraManipulator::computeViewMetrics(osgViewer::Viewer* viewer, std::
 
 	for (i = selectedCluster.begin(); i != selectedCluster.end(); ++i)
 	{
-		if (CameraMath::isInRect(CameraMath::projectOnScreen(viewer->getCamera(), (*i)->getCurrentPosition()), viewer->getCamera()->getViewport()->width(), viewer->getCamera()->getViewport()->height(), 0))
+		if (CameraMath::isInRect(CameraMath::projectOnScreen(viewer->getCamera(), (*i)->getCurrentPosition()), viewer->getCamera()->getViewport()->width(), viewer->getCamera()->getViewport()->height(), 0.f))
 		{
 			cnt++;
 		}

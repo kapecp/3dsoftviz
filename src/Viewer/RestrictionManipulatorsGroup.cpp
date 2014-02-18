@@ -61,7 +61,7 @@ void RestrictionManipulatorsGroup::addNodeToSelection(QSharedPointer<Layout::Sha
 }
 
 osg::Geode* RestrictionManipulatorsGroup::test(){
-	osg::Vec3 center (0,0, -0.8);
+	osg::Vec3 center (0.f,0.f, -0.8f);
 	osg::Box * box = new osg::Box;
 	box->setCenter (center);
 	box->setHalfLengths (osg::Vec3 (100, 100, 100));

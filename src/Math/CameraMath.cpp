@@ -125,11 +125,11 @@ osg::Vec3d CameraMath::projectOnScreen(osg::ref_ptr<osg::Camera> camera, osg::Ve
 	return result;
 }
 
-osg::Vec3d CameraMath::getPointOnVector(osg::Vec3d p1, osg::Vec3d p2, float distance)
+osg::Vec3d CameraMath::getPointOnVector(osg::Vec3d p1, osg::Vec3d p2, double distance)
 {
 	//x = x1 + (x2-x1)*(d/D) = x1(1-(d/D)) + x2(d/D)
 	osg::Vec3d directionVec =  p1 - p2;
-	float distanceRatio = distance / directionVec.length();
+	double distanceRatio = distance / directionVec.length();
 
 	return p1 * (1 - distanceRatio) + p2 * distanceRatio;
 }

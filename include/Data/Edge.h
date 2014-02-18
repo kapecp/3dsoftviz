@@ -201,7 +201,7 @@ public:
 		*  \brief Returns length of the Edge
 		*  \return float length of the Edge
 		*/
-	float getLength() const { return length; }
+	double getLength() const { return length; }
 
 
 	/**
@@ -420,7 +420,7 @@ private:
 		*  float length
 		*  \brief Length of the Edge
 		*/
-	float length;
+	double length;
 
 
 	/**

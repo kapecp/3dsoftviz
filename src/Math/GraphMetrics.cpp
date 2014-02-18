@@ -28,7 +28,7 @@ void GraphMetrics::computeGraphMetrics(Data::Graph * activeGraph)
 		i.next();
 
 		// compute node degree
-		float nodeDegree = ((float) i.value()->getEdges()->size()) / (numVertices - 1);
+		float nodeDegree = ((float) i.value()->getEdges()->size()) / (float)(numVertices - 1);
 		i.value()->setNodeDegree(nodeDegree);
 
 		// get all shortest paths
@@ -40,7 +40,7 @@ void GraphMetrics::computeGraphMetrics(Data::Graph * activeGraph)
 		paths[idx] = new QVector<QLinkedList<osg::ref_ptr<Data::Node> > > [numVertices];
 
 		// compute node closeness
-		int pathSum = 0;
+		qlonglong pathSum = 0;
 		while(i2.hasNext())
 		{
 			i2.next();
@@ -50,7 +50,7 @@ void GraphMetrics::computeGraphMetrics(Data::Graph * activeGraph)
 		if (numVertices == 1)
 			numVertices = 2;
 
-		i.value()->setNodeCloseness(((float) pathSum) / (numVertices - 1));
+		i.value()->setNodeCloseness(((float) pathSum) / (float)(numVertices - 1));
 
 		// check for regexp match
 		if (re.exactMatch(i.value()->getName()))
@@ -104,7 +104,7 @@ void GraphMetrics::computeGraphMetrics(Data::Graph * activeGraph)
 			}
 		}
 
-		i.value()->setNodeBetweeness(sum / ((float) (numVertices - 1) * (numVertices - 2)));
+		i.value()->setNodeBetweeness(sum / ((float) (numVertices - 1) * (float)(numVertices - 2)));
 
 		float base = i.value()->isNodeMatched() ? regexpWeigth : 0;
 

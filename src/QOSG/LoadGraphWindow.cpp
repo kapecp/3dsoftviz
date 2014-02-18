@@ -63,7 +63,8 @@ void LoadGraphWindow::createGraphTable()
 	Manager::GraphManager * manager = Manager::GraphManager::getInstance();
 	Model::DB * db = manager->getDB();
 	bool error = false;
-	qlonglong id, graphsCount, row;
+	qlonglong id;
+	int graphsCount,row;
 	QList<qlonglong> nodes;
 	QList<qlonglong> edges;
 	QList<qlonglong> layouts;

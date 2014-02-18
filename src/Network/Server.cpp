@@ -630,7 +630,7 @@ void Server::sendFixNodeState(int id, bool state, QTcpSocket *client) {
 	this->sendBlock(block, client);
 }
 
-void Server::sendMergeNodes(QLinkedList<osg::ref_ptr<Data::Node> > *selectedNodes, osg::Vec3f position, int mergeNodeId, QTcpSocket *client) {
+void Server::sendMergeNodes(QLinkedList<osg::ref_ptr<Data::Node> > *selectedNodes, osg::Vec3f position, qlonglong mergeNodeId, QTcpSocket *client) {
 
 	if (!this -> isListening() || (client == NULL && clients.size() == 0)) {
 		return;

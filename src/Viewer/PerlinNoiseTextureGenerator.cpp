@@ -10,7 +10,7 @@
 
 using namespace Vwr;
 
-osg::ref_ptr<osg::Texture2D> PerlinNoiseTextureGenerator::getCoudTexture(int w, int h, int r, int g, int b, int alpha)//w and h speak for themselves, zoom wel zoom in and out on it, I usually  use 75. P stands for persistence, this controls the roughness of the picture, i use 1/2
+osg::ref_ptr<osg::Texture2D> PerlinNoiseTextureGenerator::getCoudTexture(int w, int h,unsigned char r, unsigned char g, unsigned char b, unsigned char alpha)//w and h speak for themselves, zoom wel zoom in and out on it, I usually  use 75. P stands for persistence, this controls the roughness of the picture, i use 1/2
 {
 	noise::module::Perlin perlinModule;
 
