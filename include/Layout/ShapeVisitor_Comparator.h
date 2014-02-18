@@ -21,7 +21,7 @@ class ShapeVisitor_Comparator : public ShapeVisitor {
 public:
 
 	/***/
-	virtual ~ShapeVisitor_Comparator (void) {};
+	virtual ~ShapeVisitor_Comparator (void) {}
 
 	void setOtherShape (QSharedPointer<Shape> otherShape);
 	bool getComparisonResult (void);

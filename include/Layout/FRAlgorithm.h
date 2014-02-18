@@ -54,7 +54,7 @@ public:
 		*  \param       animationSpeed
 		*  \param       useMaxDistance
 		*/
-	void SetParameters(float sizeFactor,float flexibility,int animationSpeed,bool useMaxDistance);
+	void SetParameters(float sizeFactor,float flexibility,bool useMaxDistance);
 
 	/**
 		*  \fn public  Randomize
@@ -67,7 +67,7 @@ public:
 		*  \brief Sets multiplicity of forces
 		*  \param      val  multipliciter of forces
 		*/
-	void SetAlphaValue(float val) {ALPHA = val; };
+	void SetAlphaValue(float val) {ALPHA = val; }
 
 	/**
 		*  \fn public  PauseAlg

@@ -9,6 +9,7 @@
 #include <ctime>
 #include <sstream>
 #include <iostream>
+#include <QDebug>
 
 using namespace Layout;
 using namespace std;
@@ -67,7 +68,7 @@ void FRAlgorithm::SetGraph(Data::Graph *graph)
 	this->graph = graph;
 	this->Randomize();
 }
-void FRAlgorithm::SetParameters(float sizeFactor,float flexibility,int animationSpeed,bool useMaxDistance)
+void FRAlgorithm::SetParameters(float sizeFactor,float flexibility,bool useMaxDistance)
 {
 	this->sizeFactor = sizeFactor;
 	this->flexibility = flexibility;
@@ -80,7 +81,7 @@ void FRAlgorithm::SetParameters(float sizeFactor,float flexibility,int animation
 	}
 	else
 	{
-		cout << "Nenastaveny graf. Pouzi metodu SetGraph(Data::Graph graph).";
+		qDebug() << "Nenastaveny graf. Pouzi metodu SetGraph(Data::Graph graph).";
 	}
 }
 
