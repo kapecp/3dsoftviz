@@ -1,45 +1,48 @@
 #include "Aruco/arucocore.h"
+#include "QDebug"
 
 ArucoCore::ArucoCore()
 {
 
-	ArucoCore::MarkerSize = 0.05;
-	try
-	{
+	mMarkerSize = 0.05;
+	try {
 		cameraParameters();
 	}
-	catch(std::exception &ex)
-	{
-		cout<<"Exception: "<<ex.what()<<endl;
+	catch(std::exception &ex) {
+		qDebug << "Exception: "<<ex.what()<<endl;
 	}
 }
 void ArucoCore::cameraParameters()
 {
 	//read camera paramters if passed
-	ArucoCore::Camera.readFromXMLFile("intrinsics.yml");
+	mCamParam.readFromXMLFile("intrinsics.yml");
 }
 
 void ArucoCore::updateImage(cv::Mat InputImage)
 {
 
-	ArucoCore::Camera.resize(InputImage.size());
-	ArucoCore::CameraImage.create(InputImage.size(),CV_8UC3);
+	mCamParam.resize(InputImage.size());
+	mCamImage.create(InputImage.size(),CV_8UC3);
 	//transform color that by default is BGR to RGB because windows systems do not allow reading BGR images with opengl properly
-   cv::cvtColor(InputImage,InputImage,CV_BGR2RGB);
+	cv::cvtColor(InputImage,InputImage,CV_BGR2RGB);
 	//remove distorion in image
-	cv::undistort(InputImage,ArucoCore::CameraImage, ArucoCore::Camera.CameraMatrix, ArucoCore::Camera.Distorsion);
+	cv::undistort(InputImage, mCamImage, mCamParam.CameraMatrix, mCamParam.Distorsion);
 }
 void ArucoCore::detectMarkers()
 {
 	//detect markers
-	ArucoCore::MDetector.detect(ArucoCore::CameraImage,ArucoCore::Markers, ArucoCore::Camera.CameraMatrix,cv::Mat(),ArucoCore::MarkerSize);
+	mMDetector.detect( mCamImage,
+					   mMarkers,
+					   mCamParam.CameraMatrix,
+					   cv::Mat(),
+					   mMarkerSize);
 }
 
 int ArucoCore::getMatrix(double *modelviewmatrix)
 {
-	if(ArucoCore::Markers.size() > 0)
+	if( mMarkers.size() > 0)
 	{
-		ArucoCore::Markers[0].glGetModelViewMatrix(modelviewmatrix);
+		mMarkers[0].glGetModelViewMatrix(modelviewmatrix);
 		return 0;
 	}
 	return -1;
