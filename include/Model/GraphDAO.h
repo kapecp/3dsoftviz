@@ -124,6 +124,8 @@ public:
 		* \return QMap<QString,QString> settings of the Graph
 		*/
 	static QMap<QString,QString> getSettings(Data::Graph* graph, QSqlDatabase* conn, bool* error);
+
+
 private:
 
 	/**
