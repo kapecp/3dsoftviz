@@ -261,7 +261,7 @@ IF(OpenCV_FOUND)
 	SET(SRC ${SRC} ${SRC_OPENCV} ${SRC_QOPENCV})
 	#aruco
 	SET(SOURCES_H ${SOURCES_H}
-		./include/Aruco/arucocore.h
+		./include/Aruco/arucothread.h
 	)
 	FILE(GLOB_RECURSE SRC_ARUCO  "src/Aruco/*.cpp")
 	SET(SRC ${SRC} ${SRC_ARUCO} )
