@@ -45,10 +45,10 @@ public:
 	void sendLayout(QTcpSocket *client = NULL);
 	void sendNewNode(osg::ref_ptr<Data::Node> node, QTcpSocket *client = NULL);
 	void sendNewEdge(osg::ref_ptr<Data::Edge> edge, QTcpSocket *client = NULL);
-	void sendRemoveNode(int id, QTcpSocket *client = NULL);
-	void sendRemoveEdge(int id, QTcpSocket *client = NULL);
+	void sendRemoveNode(qlonglong id, QTcpSocket *client = NULL);
+	void sendRemoveEdge(qlonglong id, QTcpSocket *client = NULL);
 	void sendMoveNodes();
-	void sendNodeColor(int id, float r, float g, float b, float alpha, QTcpSocket *client = NULL);
+	void sendNodeColor(qlonglong id, float r, float g, float b, float alpha, QTcpSocket *client = NULL);
 	void sendEdgeColor(int id, float r, float g, float b, float alpha, QTcpSocket *client = NULL);
 	void sendNodeLabel(int id, QString label, QTcpSocket *client = NULL);
 	void sendFixNodeState(int id, bool state, QTcpSocket *client = NULL);

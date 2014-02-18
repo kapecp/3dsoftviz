@@ -540,7 +540,7 @@ void Server::sendNewEdge(osg::ref_ptr<Data::Edge> edge, QTcpSocket *client) {
 
 }
 
-void Server::sendRemoveNode(int id, QTcpSocket *client) {
+void Server::sendRemoveNode(qlonglong id, QTcpSocket *client) {
 
 	if (!this -> isListening() || (client == NULL && clients.size() == 0)) {
 		return;
@@ -556,7 +556,7 @@ void Server::sendRemoveNode(int id, QTcpSocket *client) {
 	this->sendBlock(block, client);
 }
 
-void Server::sendRemoveEdge(int id, QTcpSocket *client) {
+void Server::sendRemoveEdge(qlonglong id, QTcpSocket *client) {
 
 	if (!this -> isListening() || (client == NULL && clients.size() == 0)) {
 		return;
@@ -572,7 +572,7 @@ void Server::sendRemoveEdge(int id, QTcpSocket *client) {
 	this->sendBlock(block, client);
 }
 
-void Server::sendNodeColor(int id, float r, float g, float b, float alpha, QTcpSocket * client) {
+void Server::sendNodeColor(qlonglong id, float r, float g, float b, float alpha, QTcpSocket * client) {
 	this->sendColor(SetNodeColorExecutor::INSTRUCTION_NUMBER, id, r, g, b, alpha, client);
 }
 
