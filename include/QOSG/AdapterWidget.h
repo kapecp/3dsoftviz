@@ -43,7 +43,7 @@ public:
 		* Konstruktor.
 		*
 		*/
-	AdapterWidget( QWidget * parent = 0, const char * name = 0, const QGLWidget * shareWidget = 0, WindowFlags f = 0 );
+	AdapterWidget( QWidget * parent = 0, const char  * name = 0, const QGLWidget * shareWidget = 0, WindowFlags f = 0 );
 
 
 	/*!

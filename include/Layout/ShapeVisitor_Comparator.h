@@ -26,7 +26,7 @@ public:
 	void setOtherShape (QSharedPointer<Shape> otherShape);
 	bool getComparisonResult (void);
 
-	virtual void visit(Shape_Null & shape);
+	virtual void visit(Shape_Null);
 	virtual void visit(Shape_Composite & shape);
 	virtual void visit (Shape_Intersection & shape);
 	virtual void visit(Shape_Plane & shape);
@@ -39,7 +39,7 @@ private:
 
 	void compareSpheres (Shape_AbstractSphere & shape, Shape_AbstractSphere & otherShape);
 	void compareCylinders(Shape_CylinderSurface &shape, Shape_CylinderSurface &otherShape);
-	void compareCones(Shape_ConeSurface &shape, Shape_ConeSurface &otherShape);
+	void compareCones(Shape_ConeSurface, Shape_ConeSurface);
 
 private: // visitor context
 

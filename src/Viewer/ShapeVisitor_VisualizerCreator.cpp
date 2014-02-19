@@ -13,7 +13,7 @@ osg::ref_ptr<osg::Node> ShapeVisitor_VisualizerCreator::getCreatedVisualizer (vo
 	return createdVisualizer_;
 }
 
-void ShapeVisitor_VisualizerCreator::visit (Layout::Shape_Null & shape) {
+void ShapeVisitor_VisualizerCreator::visit (Layout::Shape_Null /*& shape*/) {
 	createdVisualizer_ = new osg::Group;
 }
 

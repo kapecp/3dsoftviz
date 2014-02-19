@@ -3,7 +3,7 @@
 
 using namespace QOSG;
 
-AdapterWidget::AdapterWidget( QWidget * parent, const char * name, const QGLWidget * shareWidget, WindowFlags f) : QGLWidget(parent, shareWidget, f)
+AdapterWidget::AdapterWidget( QWidget * parent, const char *name , const QGLWidget * shareWidget, WindowFlags f) : QGLWidget(parent, shareWidget, f)
 {
 	_gw = new osgViewer::GraphicsWindowEmbedded(0,0,width(),height());
 	setFocusPolicy(Qt::StrongFocus);

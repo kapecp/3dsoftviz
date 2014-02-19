@@ -124,13 +124,13 @@ protected:
 	}
 
 	/***/
-	virtual qint64 readLineData(char *data, qint64 maxlen) {
+	virtual qint64 readLineData(char /* *data*/, qint64 /* maxlen */) {
 		throw "not implemented";
 
 	}
 
 	/***/
-	virtual qint64 writeData(const char *data, qint64 len) {
+	virtual qint64 writeData(const char /* *data*/, qint64 /*len*/) {
 		throw "not implemented";
 	}
 

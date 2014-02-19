@@ -15,7 +15,7 @@ const osg::Vec3f &ShapeVisitor_RestrictedPositionGetter::restrictedPositionConst
 	return mRestrictedPosition;
 }
 
-void ShapeVisitor_RestrictedPositionGetter::visit(Shape_Null &shape)
+void ShapeVisitor_RestrictedPositionGetter::visit(Shape_Null /*&shape*/)
 {
 	mRestrictedPosition = mOriginalPosition;
 }

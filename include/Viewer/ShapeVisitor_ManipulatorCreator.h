@@ -38,7 +38,7 @@ public:
 	/**
 	 * \brief Creates empty OSG group.
 	 */
-	virtual void visit (Layout::Shape_Null & shape);
+	virtual void visit (Layout::Shape_Null /*& shape*/);
 
 	/**
 	 * \brief Creates OSG group containing  manipulator for each shape contained in the composite shape.

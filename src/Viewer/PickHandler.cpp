@@ -150,7 +150,7 @@ bool PickHandler::handleDoubleclick( const osgGA::GUIEventAdapter& ea, osgGA::GU
 	return false;
 }
 
-bool PickHandler::handleKeyUp( const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& aa )
+bool PickHandler::handleKeyUp( const osgGA::GUIEventAdapter& ea, GUIActionAdapter& aa  )
 {
 	if(ea.getKey() == osgGA::GUIEventAdapter::KEY_Control_R || ea.getKey() == osgGA::GUIEventAdapter::KEY_Control_L)
 	{
@@ -168,7 +168,7 @@ bool PickHandler::handleKeyUp( const osgGA::GUIEventAdapter& ea, osgGA::GUIActio
 	return false;
 }
 
-bool PickHandler::handleKeyDown( const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& aa )
+bool PickHandler::handleKeyDown( const osgGA::GUIEventAdapter& ea, GUIActionAdapter& aa)
 {
 	if(ea.getKey() == osgGA::GUIEventAdapter::KEY_Control_R || ea.getKey() == osgGA::GUIEventAdapter::KEY_Control_L)
 	{

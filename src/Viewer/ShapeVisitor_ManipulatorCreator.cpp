@@ -3,7 +3,7 @@
 
 namespace Vwr {
 
-void ShapeVisitor_ManipulatorCreator::visit (Layout::Shape_Null & shape) {
+void ShapeVisitor_ManipulatorCreator::visit (Layout::Shape_Null /*& shape*/) {
 	executeDefault();
 }
 

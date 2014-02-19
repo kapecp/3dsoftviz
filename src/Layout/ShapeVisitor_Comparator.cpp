@@ -11,7 +11,7 @@ bool ShapeVisitor_Comparator::getComparisonResult (void) {
 	return comparisonResult_;
 }
 
-void ShapeVisitor_Comparator::visit (Shape_Null & shape) {
+void ShapeVisitor_Comparator::visit (Shape_Null /*& shape*/) {
 	QSharedPointer<Shape_Null> otherShape = otherShape_.dynamicCast<Shape_Null> ();
 
 	comparisonResult_ = (! otherShape.isNull ());
@@ -110,7 +110,7 @@ void ShapeVisitor_Comparator::compareCylinders(Shape_CylinderSurface &shape, Sha
 	//comparisonResult_ = (shape.getCenter() == otherShape.getCenter()) && (shape.getRadius() == otherShape.getRadius());
 }
 
-void ShapeVisitor_Comparator::compareCones(Shape_ConeSurface &shape, Shape_ConeSurface &otherShape)
+void ShapeVisitor_Comparator::compareCones(Shape_ConeSurface /*&shape*/, Shape_ConeSurface /*&otherShape*/)
 {
 	// TODO: Change made by Peter Sivak, I don't know how does this work for now - so return true for now
 	comparisonResult_ = true;
