@@ -63,7 +63,7 @@ QMap<qlonglong, Data::Graph*> Model::GraphDAO::getGraphs(QSqlDatabase* conn, boo
 }
 
 
-void getNestedGraph(qlonglong parentID, Data::Graph** graph, QSqlDatabase* conn, bool* error2, qlonglong graphID, qlonglong layoutID, qlonglong* maxIdEleUsed, QMap<qlonglong, osg::Vec3f>* positions, QMap<qlonglong, Data::Node*>* nodes, Data::Type* typeNode, Data::Type* typeMetaNode, QList<qlonglong>* parentNodes)
+void Model::GraphDAO::getNestedGraph(qlonglong parentID, Data::Graph** graph, QSqlDatabase* conn, bool* error2, qlonglong graphID, qlonglong layoutID, qlonglong* maxIdEleUsed, QMap<qlonglong, osg::Vec3f>* positions, QMap<qlonglong, Data::Node*>* nodes, Data::Type* typeNode, Data::Type* typeMetaNode, QList<qlonglong>* parentNodes)
 {
 
 	qlonglong nodeID;
@@ -194,7 +194,7 @@ Data::Graph* Model::GraphDAO::getGraph(QSqlDatabase* conn, bool* error2, qlonglo
 			{
 				newGraph->createNestedGraph(newNode);
 
-				getNestedGraph(nodeID, &newGraph, conn, &error, graphID, layoutID, &maxIdEleUsed, &positions, &nodes, typeNode, typeMetaNode, &parentNodes);
+				Model::GraphDAO::getNestedGraph(nodeID, &newGraph, conn, &error, graphID, layoutID, &maxIdEleUsed, &positions, &nodes, typeNode, typeMetaNode, &parentNodes);
 
 				newGraph->closeNestedGraph();
 			}

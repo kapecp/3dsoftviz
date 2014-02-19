@@ -49,9 +49,9 @@ public:
 	void sendRemoveEdge(qlonglong id, QTcpSocket *client = NULL);
 	void sendMoveNodes();
 	void sendNodeColor(qlonglong id, float r, float g, float b, float alpha, QTcpSocket *client = NULL);
-	void sendEdgeColor(int id, float r, float g, float b, float alpha, QTcpSocket *client = NULL);
-	void sendNodeLabel(int id, QString label, QTcpSocket *client = NULL);
-	void sendFixNodeState(int id, bool state, QTcpSocket *client = NULL);
+	void sendEdgeColor(qlonglong id, float r, float g, float b, float alpha, QTcpSocket *client = NULL);
+	void sendNodeLabel(qlonglong id, QString label, QTcpSocket *client = NULL);
+	void sendFixNodeState(qlonglong id, bool state, QTcpSocket *client = NULL);
 	void sendMergeNodes(QLinkedList<osg::ref_ptr<Data::Node> > * selectedNodes, osg::Vec3f position, qlonglong mergeNodeId, QTcpSocket *client = NULL);
 	void sendSeparateNodes(QLinkedList<osg::ref_ptr<Data::Node> > * selectedNodes, QTcpSocket *client = NULL);
 	void sendAddMetaNode(osg::ref_ptr<Data::Node> metaNode, QLinkedList<osg::ref_ptr<Data::Node> > * selectedNodes, QString edgeName, osg::Vec3f position, QTcpSocket *client = NULL);
@@ -147,7 +147,7 @@ private:
 
 	void sendPlainInstruction(quint8 instruction_number, QTcpSocket * client = NULL);
 	void sendBlock(QByteArray block, QTcpSocket * client = NULL);
-	void sendColor(quint8 instruction, int id, float r, float g, float b, float alpha, QTcpSocket *client = NULL);
+	void sendColor(quint8 instruction, qlonglong id, float r, float g, float b, float alpha, QTcpSocket *client = NULL);
 	QListWidgetItem * getItemById(int id);
 };
 }

@@ -125,6 +125,13 @@ public:
 		*/
 	static QMap<QString,QString> getSettings(Data::Graph* graph, QSqlDatabase* conn, bool* error);
 
+	/**
+	  *
+	  *
+	  */
+
+	static void getNestedGraph(qlonglong parentID, Data::Graph** graph, QSqlDatabase* conn, bool* error2, qlonglong graphID, qlonglong layoutID, qlonglong* maxIdEleUsed, QMap<qlonglong, osg::Vec3f>* positions, QMap<qlonglong, Data::Node*>* nodes, Data::Type* typeNode, Data::Type* typeMetaNode, QList<qlonglong>* parentNodes);
+
 
 private:
 

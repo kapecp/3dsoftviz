@@ -152,7 +152,7 @@ void AdapterWidget::mousePressEvent( QMouseEvent* event )
 	case(Qt::NoButton): button = 0; break;
 	default: button = 0; break;
 	}
-	_gw->getEventQueue()->mouseButtonPress(event->x(), event->y(), button);
+	_gw->getEventQueue()->mouseButtonPress((float)event->x(),(float) event->y(), button);
 }
 
 void AdapterWidget::mouseDoubleClickEvent ( QMouseEvent * event )
@@ -167,7 +167,7 @@ void AdapterWidget::mouseDoubleClickEvent ( QMouseEvent * event )
 	case(Qt::NoButton): button = 0; break;
 	default: button = 0; break;
 	}
-	_gw->getEventQueue()->mouseDoubleButtonPress(event->x(), event->y(), button);
+	_gw->getEventQueue()->mouseDoubleButtonPress((float)event->x(),(float) event->y(), button);
 
 }
 
@@ -189,7 +189,7 @@ void AdapterWidget::mouseReleaseEvent( QMouseEvent* event )
 void AdapterWidget::mouseMoveEvent( QMouseEvent* event )
 {
 	//odchytavanie udalosti mysi
-	_gw->getEventQueue()->mouseMotion(event->x(), event->y());
+	_gw->getEventQueue()->mouseMotion((float)event->x(),(float) event->y());
 }
 
 void AdapterWidget::wheelEvent(QWheelEvent *event)

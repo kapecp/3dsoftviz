@@ -35,9 +35,9 @@ osg::ref_ptr<osg::Vec3Array> DataHelper::getInitialVectors(int count)
 
 	for(int index = 0; index < count; index++)
 	{
-		x = lowest + (float)(range * (float)rand() / (float)(RAND_MAX + 1.0f));
-		y = lowest + (float)(range * (float)rand() / (float)(RAND_MAX + 1.0f));
-		z = lowest + (float)(range * (float)rand() / (float)(RAND_MAX + 1.0f));
+		x = lowest + (float)(range * (float)rand() / ((float)RAND_MAX + 1.0f));
+		y = lowest + (float)(range * (float)rand() / ((float)RAND_MAX + 1.0f));
+		z = lowest + (float)(range * (float)rand() / ((float)RAND_MAX + 1.0f));
 
 		positions->push_back(osg::Vec3(x, y, z));
 	}

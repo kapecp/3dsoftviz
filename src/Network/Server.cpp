@@ -576,11 +576,11 @@ void Server::sendNodeColor(qlonglong id, float r, float g, float b, float alpha,
 	this->sendColor(SetNodeColorExecutor::INSTRUCTION_NUMBER, id, r, g, b, alpha, client);
 }
 
-void Server::sendEdgeColor(int id, float r, float g, float b, float alpha, QTcpSocket * client) {
+void Server::sendEdgeColor(qlonglong id, float r, float g, float b, float alpha, QTcpSocket * client) {
 	this->sendColor(SetEdgeColorExecutor::INSTRUCTION_NUMBER, id, r, g, b, alpha, client);
 }
 
-void Server::sendColor(quint8 instruction, int id, float r, float g, float b, float alpha, QTcpSocket * client) {
+void Server::sendColor(quint8 instruction, qlonglong id, float r, float g, float b, float alpha, QTcpSocket * client) {
 
 	if (!this -> isListening() || (client == NULL && clients.size() == 0)) {
 		return;
@@ -598,7 +598,7 @@ void Server::sendColor(quint8 instruction, int id, float r, float g, float b, fl
 	this->sendBlock(block, client);
 }
 
-void Server::sendNodeLabel(int id, QString label, QTcpSocket *client) {
+void Server::sendNodeLabel(qlonglong id, QString label, QTcpSocket *client) {
 
 	if (!this -> isListening() || (client == NULL && clients.size() == 0)) {
 		return;
@@ -614,7 +614,7 @@ void Server::sendNodeLabel(int id, QString label, QTcpSocket *client) {
 	this->sendBlock(block, client);
 }
 
-void Server::sendFixNodeState(int id, bool state, QTcpSocket *client) {
+void Server::sendFixNodeState(qlonglong id, bool state, QTcpSocket *client) {
 
 	if (!this -> isListening() || (client == NULL && clients.size() == 0)) {
 		return;
