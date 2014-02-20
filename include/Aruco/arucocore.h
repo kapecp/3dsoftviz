@@ -57,7 +57,11 @@ private:
 		 * @note May not be needed anymore. Also the file will not be found.
 		 */
 	void cameraParameters(const QString markerDesFile);
-
+	/**
+		 * @author Autor:Dávid Durčák
+		 * @brief (debug method) show windov with imputImage and boundaries and 3D cube on detected markes
+		 */
+	void showDetImage();
 
 	cv::Mat mCamImage;
 	aruco::CameraParameters mCamParam;

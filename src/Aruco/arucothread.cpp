@@ -1,8 +1,6 @@
 #include "Aruco/arucothread.h"
 
 #include "opencv2/core/core.hpp"
-//#include "opencv2/imgproc/imgproc.hpp"
-//#include "opencv2/objdetect/objdetect.hpp"
 #include "opencv2/highgui/highgui.hpp"
 #include "Aruco/arucocore.h"
 #include <QFileInfo>
@@ -27,12 +25,12 @@ void ArucoThread::run()
 	cv::Mat frame;
 	CvCapture *capture;
 	QMatrix4x4 mat;
-	QString filename = "../share/3dsoftviz/config/GrafBoard.yml";
+	QString filename = "../share/3dsoftviz/config/camera.yml";
 
 	// this must do camera singleton
 	capture = cvCreateCameraCapture(1);
-	cvSetCaptureProperty(capture, CV_CAP_PROP_FRAME_WIDTH, 300);
-	cvSetCaptureProperty(capture, CV_CAP_PROP_FRAME_HEIGHT, 200);
+	cvSetCaptureProperty(capture, CV_CAP_PROP_FRAME_WIDTH, 640);
+	cvSetCaptureProperty(capture, CV_CAP_PROP_FRAME_HEIGHT, 480);
 
 	QFileInfo file(filename);
 	if( ! file.exists() ){
@@ -41,8 +39,8 @@ void ArucoThread::run()
 	ArucoCore aCore(filename);
 
 
-	while(!cancel) {
-		//for(int i=0; i<2000; i++ ) {
+	//while(!cancel) {
+	for(int i=0; i<50; i++ ) {
 		// doing aruco work in loop
 		// get image from camera
 		// add image to aruco and get matrix
@@ -50,8 +48,6 @@ void ArucoThread::run()
 
 
 		frame = cvQueryFrame(capture);
-		cv::imshow("face", frame);
-		cv::waitKey(1);
 		mat = aCore.getDetectedMatrix(frame);
 
 		// test print of matrix if changed
@@ -63,7 +59,6 @@ void ArucoThread::run()
 		msleep(200);
 
 	}
-	cv::destroyWindow("face");
 	cvReleaseCapture( &capture );
 
 }
