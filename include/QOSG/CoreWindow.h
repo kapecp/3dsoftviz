@@ -707,7 +707,12 @@ private:
 			Data::Graph * currentGraph,
 			QSharedPointer<Layout::RestrictionRemovalHandler> removalHandler
 			);
-
+protected:
+	/**
+	 * @brief closeEvent
+	 * @param event
+	 */
+	void closeEvent(QCloseEvent *event);
 };
 }
 

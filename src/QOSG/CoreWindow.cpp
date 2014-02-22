@@ -1792,3 +1792,9 @@ void CoreWindow::setAvatarScale(int scale) {
     client->setAvatarScale(scale);
     Network::Server::getInstance()->setAvatarScale(scale);
 }
+
+void CoreWindow::closeEvent(QCloseEvent *event)
+{
+	QApplication::closeAllWindows();
+	event->accept();
+}
