@@ -57,6 +57,8 @@ void ArucoThread::run()
 			emit pushArucoMVMat( mat );			// emit matrix to CameraManipulation
 		}
 
+		emit pushImage( aCore.getDetImage());	// emit image with marked marker for debuging
+
 		msleep(200);
 
 	}

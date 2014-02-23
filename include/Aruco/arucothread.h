@@ -32,7 +32,12 @@ signals:
 	* @param mat ModelView matrix from aruco
 	*/
 	void pushArucoMVMat( QMatrix4x4 mat);
-
+	/**
+	* @author Dávid Durčák
+	* @brief pushImage signal that emit image with marked marker for debuging
+	* @param image emited image matrix
+	*/
+	void pushImage(cv::Mat image);
 public slots:
 	/**
 	* @author Dávid Durčák

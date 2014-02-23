@@ -68,8 +68,6 @@ void ArucoCore::detectMarkers()
 					   mCamParam, //mCamParam.CameraMatrix,
 					   //cv::Mat(),
 					   mMarkerSize);
-
-	showDetImage();
 }
 
 int ArucoCore::getMatrix(double *modelviewmatrix)
@@ -82,9 +80,9 @@ int ArucoCore::getMatrix(double *modelviewmatrix)
 	return -1;
 }
 
-void ArucoCore::showDetImage(){
-	//for each marker, draw info and its boundaries in the image
+cv::Mat ArucoCore::getDetImage(){
 
+	//for each marker, draw info and its boundaries in the image
 	for (unsigned int i = 0; i < mMarkers.size(); i++) {
 		mMarkers[i].draw( mCamImage, cv::Scalar(0,0,255), 2);
 
@@ -94,7 +92,5 @@ void ArucoCore::showDetImage(){
 		}
 	}
 
-	//show input with augmented information
-	cv::imshow("in", mCamImage);
-	cv::waitKey(1);//wait for key to be pressed
+	return mCamImage;	// return image with augmented information
 }
