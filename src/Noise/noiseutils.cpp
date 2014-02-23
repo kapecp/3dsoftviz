@@ -27,6 +27,11 @@
 
 #include "Noise/noiseutils.h"
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wconversion"
+#pragma GCC diagnostic ignored "-Wfloat-equal"
+#pragma GCC diagnostic ignored "-Wpedantic"
+
 using namespace noise;
 using namespace noise::model;
 using namespace noise::module;
@@ -1298,3 +1303,5 @@ void RendererNormalMap::Render ()
     }
   }
 }
+
+#pragma GCC diagnostic pop

@@ -18,6 +18,9 @@
 
 #include <iostream>
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wswitch-enum"
+
 double Vwr::CameraManipulator::EYE_MOVEMENT_SPEED;
 double Vwr::CameraManipulator::TARGET_MOVEMENT_SPEED;
 float Vwr::CameraManipulator::SCREEN_MARGIN;
@@ -603,6 +606,8 @@ bool Vwr::CameraManipulator::handleKeyUp( const osgGA::GUIEventAdapter& ea, osgG
 	case osgGA::GUIEventAdapter::KEY_Page_Down:
 		decelerateVerticalRate = true;
 		break;
+	default:
+		break;
 	}
 
 	notifyServer();
@@ -662,6 +667,8 @@ bool Vwr::CameraManipulator::handleKeyDown( const osgGA::GUIEventAdapter &ea, os
 		decelerateVerticalRate = false;
 		break;
 	}
+	default:
+		break;
 	}
 
 	notifyServer();
@@ -1036,3 +1043,6 @@ void Vwr::CameraManipulator::computeViewMetrics(osgViewer::Viewer* viewer, std::
 }
 
 } // namespace
+
+
+#pragma GCC diagnostic pop

@@ -51,7 +51,7 @@ option( USE_STRICT_COMPILE_WARNINGS "Use strict compilation warnings in debug mo
 if( USE_STRICT_COMPILE_WARNINGS )
 	if( CMAKE_COMPILER_IS_GNUCXX )
 #~ 		set( CMAKE_CXX_FLAGS_DEBUG "-Wall -Wextra -Werror" )
-		set( CMAKE_CXX_FLAGS_DEBUG "-pedantic -Wall -Wextra -Wwrite-strings -Winit-self -Wcast-align -Wcast-qual -Wpointer-arith -Wstrict-aliasing -Wformat=2 -Wmissing-declarations -Wmissing-include-dirs -Wuninitialized -Werror-implicit-function-declaration -Wfloat-equal -Wundef -Wstrict-overflow=5 -Wswitch-default -Wswitch-enum -Wconversion -Wunreachable-code" )
+		set( CMAKE_CXX_FLAGS_DEBUG "-pedantic -Wall -Wextra -Wwrite-strings -Winit-self -Wcast-align -Wcast-qual -Wpointer-arith -Wstrict-aliasing -Wformat=2 -Wmissing-declarations -Wmissing-include-dirs -Wuninitialized -Werror-implicit-function-declaration -Wfloat-equal -Wundef -Wstrict-overflow=5 -Wswitch-default -Wswitch-enum -Wconversion -Wunreachable-code -Wno-unused-parameter" )
 			# could be used: -Wno-unused-parameter -Wno-unused-result
 			# only for C: -Wold-style-definition -Wstrict-prototypes -Wmissing-prototypes
 			# not used (too much warnings): -Wshadow -Waggregate-return
@@ -262,14 +262,14 @@ endif()
 # ---------------
 
 # Include Paths
-include_directories(
+include_directories(SYSTEM
 	${OPENSCENEGRAPH_INCLUDE_DIRS}
 	${OSGVIEWER_INCLUDE_DIR}
-	${CMAKE_CURRENT_SOURCE_DIR}/include
 
 	${DEPENDENCIES_INCLUDE_DIR}
 	${DEPENDENCIES_INCLUDE_DIR}/libnoise
 )
+include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/include )
 
 # Source files
 set(SRC_MAIN "src/main.cpp")

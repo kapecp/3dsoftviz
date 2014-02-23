@@ -19,6 +19,9 @@
 #include <osg/Projection>
 #include <osg/BlendFunc>
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wswitch-enum"
+
 using namespace Vwr;
 
 PickHandler::PickHandler(Vwr::CameraManipulator * cameraManipulator, Vwr::CoreGraph * coreGraph)
@@ -746,3 +749,5 @@ osg::ref_ptr<Data::Node> PickHandler::getPickedNodeWithMaxEdgeCount(){
 	}
 	return rootNode;
 }
+
+#pragma GCC diagnostic pop

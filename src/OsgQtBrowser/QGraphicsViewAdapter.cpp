@@ -17,6 +17,8 @@
 #include <QtOpenGL/QGLWidget>
 #include <osgGA/GUIEventAdapter>
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wconversion"
 
 #define MYQKEYEVENT 2000
 #define MYQPOINTEREVENT 2001
@@ -55,8 +57,8 @@ struct MyQPointerEvent : public QEvent
 
 QGraphicsViewAdapter::QGraphicsViewAdapter(osg::Image* image, QWidget* widget):
 	_image(image),
-	_backgroundColor(255,255,255),
-	_qtKeyModifiers(Qt::NoModifier)
+	_qtKeyModifiers(Qt::NoModifier),
+	_backgroundColor(255,255,255)
 {
 	// make sure we have a valid QApplication before we start creating widgets.
 	getOrCreateQApplication();
@@ -456,3 +458,5 @@ void QGraphicsViewAdapter::assignImage(unsigned int i)
 					 data,
 					 osg::Image::NO_DELETE, 1);
 }
+
+#pragma GCC diagnostic pop

@@ -136,7 +136,7 @@ protected:
 		*  unsigned int _previousButtonMask
 		*  \brief
 		*/
-	unsigned int                    _previousButtonMask;
+	int                    _previousButtonMask;
 
 	/**
 		*  int _previousMouseX

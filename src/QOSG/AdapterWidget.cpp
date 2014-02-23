@@ -1,6 +1,9 @@
 #include "QOSG/AdapterWidget.h"
 #include "QOSG/CoreWindow.h"
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wswitch-enum"
+
 using namespace QOSG;
 
 AdapterWidget::AdapterWidget( QWidget * parent, const char *name , const QGLWidget * shareWidget, WindowFlags f) : QGLWidget(parent, shareWidget, f)
@@ -198,3 +201,5 @@ void AdapterWidget::wheelEvent(QWheelEvent *event)
 	_gw->getEventQueue()->mouseScroll((event->delta()>0) ?
 										  osgGA::GUIEventAdapter::SCROLL_UP : osgGA::GUIEventAdapter::SCROLL_DOWN);
 }
+
+#pragma GCC diagnostic pop
