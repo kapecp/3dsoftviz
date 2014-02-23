@@ -146,11 +146,14 @@ osg::ref_ptr<osg::Node> CoreGraph::createSkyBox(){
 		SkyBox * skyBox = new SkyBox;
 		return skyBox->createSkyBox();
 	} else {
+		unsigned char red = (unsigned char) appConf->getValue("Viewer.Display.BackGround.R").toInt();
+		unsigned char green = (unsigned char) appConf->getValue("Viewer.Display.BackGround.G").toInt();
+		unsigned char blue =(unsigned char) appConf->getValue("Viewer.Display.BackGround.B").toInt() ;
 		osg::ref_ptr<osg::Texture2D> skymap =
 				PerlinNoiseTextureGenerator::getCoudTexture(2048, 1024,
-															appConf->getValue("Viewer.Display.BackGround.R").toInt(),
-															appConf->getValue("Viewer.Display.BackGround.G").toInt(),
-															appConf->getValue("Viewer.Display.BackGround.B").toInt(),
+															red,
+															green,
+															blue,
 															255);
 
 		skymap->setDataVariance(osg::Object::DYNAMIC);

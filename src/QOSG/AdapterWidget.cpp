@@ -186,7 +186,7 @@ void AdapterWidget::mouseReleaseEvent( QMouseEvent* event )
 	case(Qt::NoButton): button = 0; break;
 	default: button = 0; break;
 	}
-	_gw->getEventQueue()->mouseButtonRelease(event->x(), event->y(), button);
+	_gw->getEventQueue()->mouseButtonRelease((float)event->x(), (float)event->y(), button);
 }
 
 void AdapterWidget::mouseMoveEvent( QMouseEvent* event )

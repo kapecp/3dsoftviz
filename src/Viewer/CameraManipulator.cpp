@@ -231,10 +231,10 @@ bool Vwr::CameraManipulator::handlePush(const osgGA::GUIEventAdapter& ea, osgGA:
 			viewer->getCamera()->getViewMatrixAsLookAt(eye, cameraCenter, up);
 
 			_center = eye;
-			_distance = 0;
+			_distance = 0.f;
 		}
 		else {
-			_distance = lastDistance;
+			_distance = (float)lastDistance;
 		}
 
 		notifyServer();
@@ -279,7 +279,7 @@ bool Vwr::CameraManipulator::isMouseMoving()
 	float dx = _ga_t0->getXnormalized()-_ga_t1->getXnormalized();
 	float dy = _ga_t0->getYnormalized()-_ga_t1->getYnormalized();
 	float len = sqrtf(dx*dx+dy*dy);
-	float dt = _ga_t0->getTime()-_ga_t1->getTime();
+	float dt = (float)(_ga_t0->getTime()-_ga_t1->getTime());
 
 	return (len>dt*velocity);
 }
@@ -439,7 +439,7 @@ bool Vwr::CameraManipulator::calcMovement()
 
 		// pan model.
 
-		float scale = -0.3f * _distance * throwScale;
+		float scale = -0.3f * (float) _distance * (float) throwScale;
 
 		osg::Matrix rotation_matrix;
 		rotation_matrix.makeRotate(_rotation);
@@ -459,7 +459,7 @@ bool Vwr::CameraManipulator::calcMovement()
 		// zoom model.
 
 		float fd = _distance;
-		float scale = 1.0f+ dy * throwScale;
+		float scale = 1.0f+ dy * (float) throwScale;
 		if (fd*scale>_modelScale*_minimumZoomScale)
 		{
 			if (_distance * scale < 10000)
@@ -534,14 +534,14 @@ void Vwr::CameraManipulator::trackball(osg::Vec3& axis,float& angle, float p1x, 
 	/*
 	 *  Figure out how much to rotate around that axis.
 	 */
-	float t = (p2 - p1).length() / (2.0 * _trackballSize);
+	float t = (float)(p2 - p1).length() / (2.0f * (float) _trackballSize);
 
 	/*
 	 * Avoid problems with out-of-control values...
 	 */
 	if (t > 1.0) t = 1.0;
 	if (t < -1.0) t = -1.0;
-	angle = osg::inRadians(asin(t));
+	angle =(float) osg::inRadians(asin(t));
 
 }
 
@@ -554,15 +554,15 @@ float Vwr::CameraManipulator::tb_project_to_sphere(float r, float x, float y)
 {
 	float d, t, z;
 
-	d = sqrt(x*x + y*y);
+	d =(float) sqrt(x*x + y*y);
 	/* Inside sphere */
 	if (d < r * 0.70710678118654752440)
 	{
-		z = sqrt(r*r - d*d);
+		z = (float)sqrt(r*r - d*d);
 	}                            /* On hyperbola */
 	else
 	{
-		t = r / 1.41421356237309504880;
+		t =(float) r / 1.41421356237309504880f;
 		z = t*t / d;
 	}
 	return z;
@@ -1033,7 +1033,7 @@ void Vwr::CameraManipulator::computeViewMetrics(osgViewer::Viewer* viewer, std::
 
 	for (i = selectedCluster.begin(); i != selectedCluster.end(); ++i)
 	{
-		if (CameraMath::isInRect(CameraMath::projectOnScreen(viewer->getCamera(), (*i)->getCurrentPosition()), viewer->getCamera()->getViewport()->width(), viewer->getCamera()->getViewport()->height(), 0.f))
+		if (CameraMath::isInRect(CameraMath::projectOnScreen(viewer->getCamera(), (*i)->getCurrentPosition()), (float) viewer->getCamera()->getViewport()->width(),(float) viewer->getCamera()->getViewport()->height(), 0.f))
 		{
 			cnt++;
 		}

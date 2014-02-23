@@ -30,7 +30,7 @@
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wconversion"
 #pragma GCC diagnostic ignored "-Wfloat-equal"
-#pragma GCC diagnostic ignored "-Wpedantic"
+#pragma GCC diagnostic ignored "-pedantic"
 
 using namespace noise;
 using namespace noise::model;
@@ -59,58 +59,58 @@ namespace noise
   namespace utils
   {
 
-    // Performs linear interpolation between two 8-bit channel values.
-    inline noise::uint8 BlendChannel (const uint8 channel0,
-      const uint8 channel1, float alpha)
-    {
-      double c0 = (double)channel0 / 255.0;
-      double c1 = (double)channel1 / 255.0;
-      return (noise::uint8)(((c1 * alpha) + (c0 * (1.0f - alpha))) * 255.0f);
-    }
+	// Performs linear interpolation between two 8-bit channel values.
+	inline noise::uint8 BlendChannel (const uint8 channel0,
+	  const uint8 channel1, float alpha)
+	{
+	  double c0 = (double)channel0 / 255.0;
+	  double c1 = (double)channel1 / 255.0;
+	  return (noise::uint8)(((c1 * alpha) + (c0 * (1.0f - alpha))) * 255.0f);
+	}
 
-    // Performs linear interpolation between two colors and stores the result
-    // in out.
-    inline void LinearInterpColor (const Color& color0, const Color& color1,
-      float alpha, Color& out)
-    {
-      out.alpha = BlendChannel (color0.alpha, color1.alpha, alpha);
-      out.blue  = BlendChannel (color0.blue , color1.blue , alpha);
-      out.green = BlendChannel (color0.green, color1.green, alpha);
-      out.red   = BlendChannel (color0.red  , color1.red  , alpha);
-    }
+	// Performs linear interpolation between two colors and stores the result
+	// in out.
+	inline void LinearInterpColor (const Color& color0, const Color& color1,
+	  float alpha, Color& out)
+	{
+	  out.alpha = BlendChannel (color0.alpha, color1.alpha, alpha);
+	  out.blue  = BlendChannel (color0.blue , color1.blue , alpha);
+	  out.green = BlendChannel (color0.green, color1.green, alpha);
+	  out.red   = BlendChannel (color0.red  , color1.red  , alpha);
+	}
 
-    // Unpacks a floating-point value into four bytes.  This function is
-    // specific to Intel machines.  A portable version will come soon (I
-    // hope.)
-    inline noise::uint8* UnpackFloat (noise::uint8* bytes, float value)
-    {
-      noise::uint8* pBytes = (noise::uint8*)(&value);
-      bytes[0] = *pBytes++;
-      bytes[1] = *pBytes++;
-      bytes[2] = *pBytes++;
-      bytes[3] = *pBytes++;
-      return bytes;
-    }
+	// Unpacks a floating-point value into four bytes.  This function is
+	// specific to Intel machines.  A portable version will come soon (I
+	// hope.)
+	inline noise::uint8* UnpackFloat (noise::uint8* bytes, float value)
+	{
+	  noise::uint8* pBytes = (noise::uint8*)(&value);
+	  bytes[0] = *pBytes++;
+	  bytes[1] = *pBytes++;
+	  bytes[2] = *pBytes++;
+	  bytes[3] = *pBytes++;
+	  return bytes;
+	}
 
-    // Unpacks a 16-bit integer value into two bytes in little endian format.
-    inline noise::uint8* UnpackLittle16 (noise::uint8* bytes,
-      noise::uint16 integer)
-    {
-      bytes[0] = (noise::uint8)((integer & 0x00ff)      );
-      bytes[1] = (noise::uint8)((integer & 0xff00) >> 8 );
-      return bytes;
-    }
+	// Unpacks a 16-bit integer value into two bytes in little endian format.
+	inline noise::uint8* UnpackLittle16 (noise::uint8* bytes,
+	  noise::uint16 integer)
+	{
+	  bytes[0] = (noise::uint8)((integer & 0x00ff)      );
+	  bytes[1] = (noise::uint8)((integer & 0xff00) >> 8 );
+	  return bytes;
+	}
 
-    // Unpacks a 32-bit integer value into four bytes in little endian format.
-    inline noise::uint8* UnpackLittle32 (noise::uint8* bytes,
-      noise::uint32 integer)
-    {
-      bytes[0] = (noise::uint8)((integer & 0x000000ff)      );
-      bytes[1] = (noise::uint8)((integer & 0x0000ff00) >> 8 );
-      bytes[2] = (noise::uint8)((integer & 0x00ff0000) >> 16);
-      bytes[3] = (noise::uint8)((integer & 0xff000000) >> 24);
-      return bytes;
-    }
+	// Unpacks a 32-bit integer value into four bytes in little endian format.
+	inline noise::uint8* UnpackLittle32 (noise::uint8* bytes,
+	  noise::uint32 integer)
+	{
+	  bytes[0] = (noise::uint8)((integer & 0x000000ff)      );
+	  bytes[1] = (noise::uint8)((integer & 0x0000ff00) >> 8 );
+	  bytes[2] = (noise::uint8)((integer & 0x00ff0000) >> 16);
+	  bytes[3] = (noise::uint8)((integer & 0xff000000) >> 24);
+	  return bytes;
+	}
 
   }
 
@@ -154,16 +154,16 @@ int GradientColor::FindInsertionPos (double gradientPos)
 {
   int insertionPos;
   for (insertionPos = 0; insertionPos < m_gradientPointCount;
-    insertionPos++) {
-    if (gradientPos < m_pGradientPoints[insertionPos].pos) {
-      // We found the array index in which to insert the new gradient point.
-      // Exit now.
-      break;
-    } else if (gradientPos == m_pGradientPoints[insertionPos].pos) {
-      // Each gradient point is required to contain a unique gradient
-      // position, so throw an exception.
-      throw noise::ExceptionInvalidParam ();
-    }
+	insertionPos++) {
+	if (gradientPos < m_pGradientPoints[insertionPos].pos) {
+	  // We found the array index in which to insert the new gradient point.
+	  // Exit now.
+	  break;
+	} else if (gradientPos == m_pGradientPoints[insertionPos].pos) {
+	  // Each gradient point is required to contain a unique gradient
+	  // position, so throw an exception.
+	  throw noise::ExceptionInvalidParam ();
+	}
   }
   return insertionPos;
 }
@@ -176,9 +176,9 @@ const Color& GradientColor::GetColor (double gradientPos) const
   // position larger than the gradient position passed to this method.
   int indexPos;
   for (indexPos = 0; indexPos < m_gradientPointCount; indexPos++) {
-    if (gradientPos < m_pGradientPoints[indexPos].pos) {
-      break;
-    }
+	if (gradientPos < m_pGradientPoints[indexPos].pos) {
+	  break;
+	}
   }
 
   // Find the two nearest gradient points so that we can perform linear
@@ -192,10 +192,10 @@ const Color& GradientColor::GetColor (double gradientPos) const
   // the corresponding gradient color of the nearest gradient point and exit
   // now.
   if (index0 == index1) {
-    m_workingColor = m_pGradientPoints[index1].color;
-    return m_workingColor;
+	m_workingColor = m_pGradientPoints[index1].color;
+	return m_workingColor;
   }
-  
+
   // Compute the alpha value used for linear interpolation.
   double input0 = m_pGradientPoints[index0].pos;
   double input1 = m_pGradientPoints[index1].pos;
@@ -218,11 +218,11 @@ void GradientColor::InsertAtPos (int insertionPos, double gradientPos,
   GradientPoint* newGradientPoints;
   newGradientPoints = new GradientPoint[m_gradientPointCount + 1];
   for (int i = 0; i < m_gradientPointCount; i++) {
-    if (i < insertionPos) {
-      newGradientPoints[i] = m_pGradientPoints[i];
-    } else {
-      newGradientPoints[i + 1] = m_pGradientPoints[i];
-    }
+	if (i < insertionPos) {
+	  newGradientPoints[i] = m_pGradientPoints[i];
+	} else {
+	  newGradientPoints[i + 1] = m_pGradientPoints[i];
+	}
   }
   delete[] m_pGradientPoints;
   m_pGradientPoints = newGradientPoints;
@@ -269,12 +269,12 @@ NoiseMap& NoiseMap::operator= (const NoiseMap& rhs)
 void NoiseMap::Clear (float value)
 {
   if (m_pNoiseMap != NULL) {
-    for (int y = 0; y < m_height; y++) {
-      float* pDest = GetSlabPtr (0, y);
-      for (int x = 0; x < m_width; x++) {
-        *pDest++ = value;
-      }
-    }
+	for (int y = 0; y < m_height; y++) {
+	  float* pDest = GetSlabPtr (0, y);
+	  for (int x = 0; x < m_width; x++) {
+		*pDest++ = value;
+	  }
+	}
   }
 }
 
@@ -284,9 +284,9 @@ void NoiseMap::CopyNoiseMap (const NoiseMap& source)
   // map buffer to this noise map buffer.
   SetSize (source.GetWidth (), source.GetHeight ());
   for (int y = 0; y < source.GetHeight (); y++) {
-    const float* pSource = source.GetConstSlabPtr (0, y);
-    float* pDest = GetSlabPtr (0, y);
-    memcpy (pDest, pSource, (size_t)source.GetWidth () * sizeof (float));
+	const float* pSource = source.GetConstSlabPtr (0, y);
+	float* pDest = GetSlabPtr (0, y);
+	memcpy (pDest, pSource, (size_t)source.GetWidth () * sizeof (float));
   }
 
   // Copy the border value as well.
@@ -302,9 +302,9 @@ void NoiseMap::DeleteNoiseMapAndReset ()
 float NoiseMap::GetValue (int x, int y) const
 {
   if (m_pNoiseMap != NULL) {
-    if (x >= 0 && x < m_width && y >= 0 && y < m_height) {
-      return *(GetConstSlabPtr (x, y));
-    }
+	if (x >= 0 && x < m_width && y >= 0 && y < m_height) {
+	  return *(GetConstSlabPtr (x, y));
+	}
   }
   // The coordinates specified are outside the noise map.  Return the border
   // value.
@@ -325,61 +325,61 @@ void NoiseMap::ReclaimMem ()
 {
   size_t newMemUsage = CalcMinMemUsage (m_width, m_height);
   if (m_memUsed > newMemUsage) {
-    // There is wasted memory.  Create the smallest buffer that can fit the
-    // data and copy the data to it.
-    float* pNewNoiseMap = NULL;
-    try {
-      pNewNoiseMap = new float[newMemUsage];
-    }
-    catch (...) {
-      throw noise::ExceptionOutOfMemory ();
-    }
-    memcpy (pNewNoiseMap, m_pNoiseMap, newMemUsage * sizeof (float));
-    delete[] m_pNoiseMap;
-    m_pNoiseMap = pNewNoiseMap;
-    m_memUsed = newMemUsage;
+	// There is wasted memory.  Create the smallest buffer that can fit the
+	// data and copy the data to it.
+	float* pNewNoiseMap = NULL;
+	try {
+	  pNewNoiseMap = new float[newMemUsage];
+	}
+	catch (...) {
+	  throw noise::ExceptionOutOfMemory ();
+	}
+	memcpy (pNewNoiseMap, m_pNoiseMap, newMemUsage * sizeof (float));
+	delete[] m_pNoiseMap;
+	m_pNoiseMap = pNewNoiseMap;
+	m_memUsed = newMemUsage;
   }
 }
 
 void NoiseMap::SetSize (int width, int height)
 {
   if (width < 0 || height < 0
-    || width > RASTER_MAX_WIDTH || height > RASTER_MAX_HEIGHT) {
-    // Invalid width or height.
-    throw noise::ExceptionInvalidParam ();
+	|| width > RASTER_MAX_WIDTH || height > RASTER_MAX_HEIGHT) {
+	// Invalid width or height.
+	throw noise::ExceptionInvalidParam ();
   } else if (width == 0 || height == 0) {
-    // An empty noise map was specified.  Delete it and zero out the size
-    // member variables.
-    DeleteNoiseMapAndReset ();
+	// An empty noise map was specified.  Delete it and zero out the size
+	// member variables.
+	DeleteNoiseMapAndReset ();
   } else {
-    // A new noise map size was specified.  Allocate a new noise map buffer
-    // unless the current buffer is large enough for the new noise map (we
-    // don't want costly reallocations going on.)
-    size_t newMemUsage = CalcMinMemUsage (width, height);
-    if (m_memUsed < newMemUsage) {
-      // The new size is too big for the current noise map buffer.  We need to
-      // reallocate.
-      DeleteNoiseMapAndReset ();
-      try {
-        m_pNoiseMap = new float[newMemUsage];
-      }
-      catch (...) {
-        throw noise::ExceptionOutOfMemory ();
-      }
-      m_memUsed = newMemUsage;
-    }
-    m_stride = (int)CalcStride (width);
-    m_width  = width;
-    m_height = height;
+	// A new noise map size was specified.  Allocate a new noise map buffer
+	// unless the current buffer is large enough for the new noise map (we
+	// don't want costly reallocations going on.)
+	size_t newMemUsage = CalcMinMemUsage (width, height);
+	if (m_memUsed < newMemUsage) {
+	  // The new size is too big for the current noise map buffer.  We need to
+	  // reallocate.
+	  DeleteNoiseMapAndReset ();
+	  try {
+		m_pNoiseMap = new float[newMemUsage];
+	  }
+	  catch (...) {
+		throw noise::ExceptionOutOfMemory ();
+	  }
+	  m_memUsed = newMemUsage;
+	}
+	m_stride = (int)CalcStride (width);
+	m_width  = width;
+	m_height = height;
   }
 }
 
 void NoiseMap::SetValue (int x, int y, float value)
 {
   if (m_pNoiseMap != NULL) {
-    if (x >= 0 && x < m_width && y >= 0 && y < m_height) {
-      *(GetSlabPtr (x, y)) = value;
-    }
+	if (x >= 0 && x < m_width && y >= 0 && y < m_height) {
+	  *(GetSlabPtr (x, y)) = value;
+	}
   }
 }
 
@@ -434,12 +434,12 @@ Image& Image::operator= (const Image& rhs)
 void Image::Clear (const Color& value)
 {
   if (m_pImage != NULL) {
-    for (int y = 0; y < m_height; y++) {
-      Color* pDest = GetSlabPtr (0, y);
-      for (int x = 0; x < m_width; x++) {
-        *pDest++ = value;
-      }
-    }
+	for (int y = 0; y < m_height; y++) {
+	  Color* pDest = GetSlabPtr (0, y);
+	  for (int x = 0; x < m_width; x++) {
+		*pDest++ = value;
+	  }
+	}
   }
 }
 
@@ -449,9 +449,9 @@ void Image::CopyImage (const Image& source)
   // buffer to this image buffer.
   SetSize (source.GetWidth (), source.GetHeight ());
   for (int y = 0; y < source.GetHeight (); y++) {
-    const Color* pSource = source.GetConstSlabPtr (0, y);
-    Color* pDest = GetSlabPtr (0, y);
-    memcpy (pDest, pSource, (size_t)source.GetWidth () * sizeof (float));
+	const Color* pSource = source.GetConstSlabPtr (0, y);
+	Color* pDest = GetSlabPtr (0, y);
+	memcpy (pDest, pSource, (size_t)source.GetWidth () * sizeof (float));
   }
 
   // Copy the border value as well.
@@ -467,9 +467,9 @@ void Image::DeleteImageAndReset ()
 Color Image::GetValue (int x, int y) const
 {
   if (m_pImage != NULL) {
-    if (x >= 0 && x < m_width && y >= 0 && y < m_height) {
-      return *(GetConstSlabPtr (x, y));
-    }
+	if (x >= 0 && x < m_width && y >= 0 && y < m_height) {
+	  return *(GetConstSlabPtr (x, y));
+	}
   }
   // The coordinates specified are outside the image.  Return the border
   // value.
@@ -490,61 +490,61 @@ void Image::ReclaimMem ()
 {
   size_t newMemUsage = CalcMinMemUsage (m_width, m_height);
   if (m_memUsed > newMemUsage) {
-    // There is wasted memory.  Create the smallest buffer that can fit the
-    // data and copy the data to it.
-    Color* pNewImage = NULL;
-    try {
-      pNewImage = new Color[newMemUsage];
-    }
-    catch (...) {
-      throw noise::ExceptionOutOfMemory ();
-    }
-    memcpy (pNewImage, m_pImage, newMemUsage * sizeof (float));
-    delete[] m_pImage;
-    m_pImage = pNewImage;
-    m_memUsed = newMemUsage;
+	// There is wasted memory.  Create the smallest buffer that can fit the
+	// data and copy the data to it.
+	Color* pNewImage = NULL;
+	try {
+	  pNewImage = new Color[newMemUsage];
+	}
+	catch (...) {
+	  throw noise::ExceptionOutOfMemory ();
+	}
+	memcpy (pNewImage, m_pImage, newMemUsage * sizeof (float));
+	delete[] m_pImage;
+	m_pImage = pNewImage;
+	m_memUsed = newMemUsage;
   }
 }
 
 void Image::SetSize (int width, int height)
 {
   if (width < 0 || height < 0
-    || width > RASTER_MAX_WIDTH || height > RASTER_MAX_HEIGHT) {
-    // Invalid width or height.
-    throw noise::ExceptionInvalidParam ();
+	|| width > RASTER_MAX_WIDTH || height > RASTER_MAX_HEIGHT) {
+	// Invalid width or height.
+	throw noise::ExceptionInvalidParam ();
   } else if (width == 0 || height == 0) {
-    // An empty image was specified.  Delete it and zero out the size member
-    // variables.
-    DeleteImageAndReset ();
+	// An empty image was specified.  Delete it and zero out the size member
+	// variables.
+	DeleteImageAndReset ();
   } else {
-    // A new image size was specified.  Allocate a new image buffer unless
-    // the current buffer is large enough for the new image (we don't want
-    // costly reallocations going on.)
-    size_t newMemUsage = CalcMinMemUsage (width, height);
-    if (m_memUsed < newMemUsage) {
-      // The new size is too big for the current image buffer.  We need to
-      // reallocate.
-      DeleteImageAndReset ();
-      try {
-        m_pImage = new Color[newMemUsage];
-      }
-      catch (...) {
-        throw noise::ExceptionOutOfMemory ();
-      }
-      m_memUsed = newMemUsage;
-    }
-    m_stride = (int)CalcStride (width);
-    m_width  = width;
-    m_height = height;
+	// A new image size was specified.  Allocate a new image buffer unless
+	// the current buffer is large enough for the new image (we don't want
+	// costly reallocations going on.)
+	size_t newMemUsage = CalcMinMemUsage (width, height);
+	if (m_memUsed < newMemUsage) {
+	  // The new size is too big for the current image buffer.  We need to
+	  // reallocate.
+	  DeleteImageAndReset ();
+	  try {
+		m_pImage = new Color[newMemUsage];
+	  }
+	  catch (...) {
+		throw noise::ExceptionOutOfMemory ();
+	  }
+	  m_memUsed = newMemUsage;
+	}
+	m_stride = (int)CalcStride (width);
+	m_width  = width;
+	m_height = height;
   }
 }
 
 void Image::SetValue (int x, int y, const Color& value)
 {
   if (m_pImage != NULL) {
-    if (x >= 0 && x < m_width && y >= 0 && y < m_height) {
-      *(GetSlabPtr (x, y)) = value;
-    }
+	if (x >= 0 && x < m_width && y >= 0 && y < m_height) {
+	  *(GetSlabPtr (x, y)) = value;
+	}
   }
 }
 
@@ -575,7 +575,7 @@ int WriterBMP::CalcWidthByteCount (int width) const
 void WriterBMP::WriteDestFile ()
 {
   if (m_pSourceImage == NULL) {
-    throw noise::ExceptionInvalidParam ();
+	throw noise::ExceptionInvalidParam ();
   }
 
   int width  = m_pSourceImage->GetWidth  ();
@@ -591,20 +591,20 @@ void WriterBMP::WriteDestFile ()
   // File object used to write the file.
   std::ofstream os;
   os.clear ();
-  
+
   // Allocate a buffer to hold one horizontal line in the bitmap.
   try {
-    pLineBuffer = new noise::uint8[bufferSize];
+	pLineBuffer = new noise::uint8[bufferSize];
   }
   catch (...) {
-    throw noise::ExceptionOutOfMemory ();
+	throw noise::ExceptionOutOfMemory ();
   }
 
   // Open the destination file.
   os.open (m_destFilename.c_str (), std::ios::out | std::ios::binary);
   if (os.fail () || os.bad ()) {
-    delete[] pLineBuffer;
-    throw noise::ExceptionUnknown ();
+	delete[] pLineBuffer;
+	throw noise::ExceptionUnknown ();
   }
 
   // Build the header.
@@ -625,32 +625,32 @@ void WriterBMP::WriteDestFile ()
   os.write ("\0\0\0\0", 4);
   os.write ("\0\0\0\0", 4);
   if (os.fail () || os.bad ()) {
-    os.clear ();
-    os.close ();
-    os.clear ();
-    delete[] pLineBuffer;
-    throw noise::ExceptionUnknown ();
+	os.clear ();
+	os.close ();
+	os.clear ();
+	delete[] pLineBuffer;
+	throw noise::ExceptionUnknown ();
   }
 
   // Build and write each horizontal line to the file.
   for (int y = 0; y < height; y++) {
-    memset (pLineBuffer, 0, bufferSize);
-    Color* pSource = m_pSourceImage->GetSlabPtr (y);
-    noise::uint8* pDest   = pLineBuffer;
-    for (int x = 0; x < width; x++) {
-      *pDest++ = pSource->blue ;
-      *pDest++ = pSource->green;
-      *pDest++ = pSource->red  ;
-      ++pSource;
-    }
-    os.write ((char*)pLineBuffer, (size_t)bufferSize);
-    if (os.fail () || os.bad ()) {
-      os.clear ();
-      os.close ();
-      os.clear ();
-      delete[] pLineBuffer;
-      throw noise::ExceptionUnknown ();
-    }
+	memset (pLineBuffer, 0, bufferSize);
+	Color* pSource = m_pSourceImage->GetSlabPtr (y);
+	noise::uint8* pDest   = pLineBuffer;
+	for (int x = 0; x < width; x++) {
+	  *pDest++ = pSource->blue ;
+	  *pDest++ = pSource->green;
+	  *pDest++ = pSource->red  ;
+	  ++pSource;
+	}
+	os.write ((char*)pLineBuffer, (size_t)bufferSize);
+	if (os.fail () || os.bad ()) {
+	  os.clear ();
+	  os.close ();
+	  os.clear ();
+	  delete[] pLineBuffer;
+	  throw noise::ExceptionUnknown ();
+	}
   }
 
   os.close ();
@@ -669,7 +669,7 @@ int WriterTER::CalcWidthByteCount (int width) const
 void WriterTER::WriteDestFile ()
 {
   if (m_pSourceNoiseMap == NULL) {
-    throw noise::ExceptionInvalidParam ();
+	throw noise::ExceptionInvalidParam ();
   }
 
   int width  = m_pSourceNoiseMap->GetWidth  ();
@@ -686,18 +686,18 @@ void WriterTER::WriteDestFile ()
 
   // Allocate a buffer to hold one horizontal line in the height map.
   try {
-    pLineBuffer = new noise::uint8[bufferSize];
+	pLineBuffer = new noise::uint8[bufferSize];
   }
   catch (...) {
-    throw noise::ExceptionOutOfMemory ();
+	throw noise::ExceptionOutOfMemory ();
   }
 
   // Open the destination file.
   os.open (m_destFilename.c_str (), std::ios::out | std::ios::binary);
   if (os.fail () || os.bad ()) {
-    os.clear ();
-    delete[] pLineBuffer;
-    throw noise::ExceptionUnknown ();
+	os.clear ();
+	delete[] pLineBuffer;
+	throw noise::ExceptionUnknown ();
   }
 
   // Build the header.
@@ -721,31 +721,31 @@ void WriterTER::WriteDestFile ()
   os.write ((char*)UnpackLittle16 (d, heightScale), 2);
   os.write ("\0\0", 2);
   if (os.fail () || os.bad ()) {
-    os.clear ();
-    os.close ();
-    os.clear ();
-    delete[] pLineBuffer;
-    throw noise::ExceptionUnknown ();
+	os.clear ();
+	os.close ();
+	os.clear ();
+	delete[] pLineBuffer;
+	throw noise::ExceptionUnknown ();
   }
 
   // Build and write each horizontal line to the file.
   for (int y = 0; y < height; y++) {
-    float* pSource = m_pSourceNoiseMap->GetSlabPtr (y);
-    noise::uint8* pDest   = pLineBuffer;
-    for (int x = 0; x < width; x++) {
-      int16 scaledHeight = (int16)(floor (*pSource * 2.0));
-      UnpackLittle16 (pDest, scaledHeight);
-      pDest += 2;
-      ++pSource;
-    }
-    os.write ((char*)pLineBuffer, (size_t)bufferSize);
-    if (os.fail () || os.bad ()) {
-      os.clear ();
-      os.close ();
-      os.clear ();
-      delete[] pLineBuffer;
-      throw noise::ExceptionUnknown ();
-    }
+	float* pSource = m_pSourceNoiseMap->GetSlabPtr (y);
+	noise::uint8* pDest   = pLineBuffer;
+	for (int x = 0; x < width; x++) {
+	  int16 scaledHeight = (int16)(floor (*pSource * 2.0));
+	  UnpackLittle16 (pDest, scaledHeight);
+	  pDest += 2;
+	  ++pSource;
+	}
+	os.write ((char*)pLineBuffer, (size_t)bufferSize);
+	if (os.fail () || os.bad ()) {
+	  os.clear ();
+	  os.close ();
+	  os.clear ();
+	  delete[] pLineBuffer;
+	  throw noise::ExceptionUnknown ();
+	}
   }
 
   os.close ();
@@ -784,12 +784,12 @@ NoiseMapBuilderCylinder::NoiseMapBuilderCylinder ():
 void NoiseMapBuilderCylinder::Build ()
 {
   if ( m_upperAngleBound <= m_lowerAngleBound
-    || m_upperHeightBound <= m_lowerHeightBound
-    || m_destWidth <= 0
-    || m_destHeight <= 0
-    || m_pSourceModule == NULL
-    || m_pDestNoiseMap == NULL) {
-    throw noise::ExceptionInvalidParam ();
+	|| m_upperHeightBound <= m_lowerHeightBound
+	|| m_destWidth <= 0
+	|| m_destHeight <= 0
+	|| m_pSourceModule == NULL
+	|| m_pDestNoiseMap == NULL) {
+	throw noise::ExceptionInvalidParam ();
   }
 
   // Resize the destination noise map so that it can store the new output
@@ -809,17 +809,17 @@ void NoiseMapBuilderCylinder::Build ()
 
   // Fill every point in the noise map with the output values from the model.
   for (int y = 0; y < m_destHeight; y++) {
-    float* pDest = m_pDestNoiseMap->GetSlabPtr (y);
-    curAngle = m_lowerAngleBound;
-    for (int x = 0; x < m_destWidth; x++) {
-      float curValue = (float)cylinderModel.GetValue (curAngle, curHeight);
-      *pDest++ = curValue;
-      curAngle += xDelta;
-    }
-    curHeight += yDelta;
-    if (m_pCallback != NULL) {
-      m_pCallback (y);
-    }
+	float* pDest = m_pDestNoiseMap->GetSlabPtr (y);
+	curAngle = m_lowerAngleBound;
+	for (int x = 0; x < m_destWidth; x++) {
+	  float curValue = (float)cylinderModel.GetValue (curAngle, curHeight);
+	  *pDest++ = curValue;
+	  curAngle += xDelta;
+	}
+	curHeight += yDelta;
+	if (m_pCallback != NULL) {
+	  m_pCallback (y);
+	}
   }
 }
 
@@ -838,12 +838,12 @@ NoiseMapBuilderPlane::NoiseMapBuilderPlane ():
 void NoiseMapBuilderPlane::Build ()
 {
   if ( m_upperXBound <= m_lowerXBound
-    || m_upperZBound <= m_lowerZBound
-    || m_destWidth <= 0
-    || m_destHeight <= 0
-    || m_pSourceModule == NULL
-    || m_pDestNoiseMap == NULL) {
-    throw noise::ExceptionInvalidParam ();
+	|| m_upperZBound <= m_lowerZBound
+	|| m_destWidth <= 0
+	|| m_destHeight <= 0
+	|| m_pSourceModule == NULL
+	|| m_pDestNoiseMap == NULL) {
+	throw noise::ExceptionInvalidParam ();
   }
 
   // Resize the destination noise map so that it can store the new output
@@ -863,31 +863,31 @@ void NoiseMapBuilderPlane::Build ()
 
   // Fill every point in the noise map with the output values from the model.
   for (int z = 0; z < m_destHeight; z++) {
-    float* pDest = (float*) m_pDestNoiseMap->GetSlabPtr (z);
-    xCur = m_lowerXBound;
-    for (int x = 0; x < m_destWidth; x++) {
-      float finalValue;
-      if (!m_isSeamlessEnabled) {
-        finalValue = (float) planeModel.GetValue (xCur, zCur);
-      } else {
-        double swValue, seValue, nwValue, neValue;
-        swValue = planeModel.GetValue (xCur          , zCur          );
-        seValue = planeModel.GetValue (xCur + xExtent, zCur          );
-        nwValue = planeModel.GetValue (xCur          , zCur + zExtent);
-        neValue = planeModel.GetValue (xCur + xExtent, zCur + zExtent);
-        double xBlend = 1.0 - ((xCur - m_lowerXBound) / xExtent);
-        double zBlend = 1.0 - ((zCur - m_lowerZBound) / zExtent);
-        double z0 = LinearInterp (swValue, seValue, xBlend);
-        double z1 = LinearInterp (nwValue, neValue, xBlend);
-        finalValue = (float)LinearInterp (z0, z1, zBlend);
-      }
-      *pDest++ = finalValue;
-      xCur += xDelta;
-    }
-    zCur += zDelta;
-    if (m_pCallback != NULL) {
-      m_pCallback (z);
-    }
+	float* pDest = (float*) m_pDestNoiseMap->GetSlabPtr (z);
+	xCur = m_lowerXBound;
+	for (int x = 0; x < m_destWidth; x++) {
+	  float finalValue;
+	  if (!m_isSeamlessEnabled) {
+		finalValue = (float) planeModel.GetValue (xCur, zCur);
+	  } else {
+		double swValue, seValue, nwValue, neValue;
+		swValue = planeModel.GetValue (xCur          , zCur          );
+		seValue = planeModel.GetValue (xCur + xExtent, zCur          );
+		nwValue = planeModel.GetValue (xCur          , zCur + zExtent);
+		neValue = planeModel.GetValue (xCur + xExtent, zCur + zExtent);
+		double xBlend = 1.0 - ((xCur - m_lowerXBound) / xExtent);
+		double zBlend = 1.0 - ((zCur - m_lowerZBound) / zExtent);
+		double z0 = LinearInterp (swValue, seValue, xBlend);
+		double z1 = LinearInterp (nwValue, neValue, xBlend);
+		finalValue = (float)LinearInterp (z0, z1, zBlend);
+	  }
+	  *pDest++ = finalValue;
+	  xCur += xDelta;
+	}
+	zCur += zDelta;
+	if (m_pCallback != NULL) {
+	  m_pCallback (z);
+	}
   }
 }
 
@@ -905,12 +905,12 @@ NoiseMapBuilderSphere::NoiseMapBuilderSphere ():
 void NoiseMapBuilderSphere::Build ()
 {
   if ( m_eastLonBound <= m_westLonBound
-    || m_northLatBound <= m_southLatBound
-    || m_destWidth <= 0
-    || m_destHeight <= 0
-    || m_pSourceModule == NULL
-    || m_pDestNoiseMap == NULL) {
-    throw noise::ExceptionInvalidParam ();
+	|| m_northLatBound <= m_southLatBound
+	|| m_destWidth <= 0
+	|| m_destHeight <= 0
+	|| m_pSourceModule == NULL
+	|| m_pDestNoiseMap == NULL) {
+	throw noise::ExceptionInvalidParam ();
   }
 
   // Resize the destination noise map so that it can store the new output
@@ -930,17 +930,17 @@ void NoiseMapBuilderSphere::Build ()
 
   // Fill every point in the noise map with the output values from the model.
   for (int y = 0; y < m_destHeight; y++) {
-    float* pDest = m_pDestNoiseMap->GetSlabPtr (y);
-    curLon = m_westLonBound;
-    for (int x = 0; x < m_destWidth; x++) {
-      float curValue = (float)sphereModel.GetValue (curLat, curLon);
-      *pDest++ = curValue;
-      curLon += xDelta;
-    }
-    curLat += yDelta;
-    if (m_pCallback != NULL) {
-      m_pCallback (y);
-    }
+	float* pDest = m_pDestNoiseMap->GetSlabPtr (y);
+	curLon = m_westLonBound;
+	for (int x = 0; x < m_destWidth; x++) {
+	  float curValue = (float)sphereModel.GetValue (curLat, curLon);
+	  *pDest++ = curValue;
+	  curLon += xDelta;
+	}
+	curLat += yDelta;
+	if (m_pCallback != NULL) {
+	  m_pCallback (y);
+	}
   }
 }
 
@@ -1010,15 +1010,15 @@ Color RendererImage::CalcDestColor (const Color& sourceColor,
 
   if (m_isLightEnabled) {
 
-    // Now calculate the light color.
-    double lightRed   = lightValue * (double)m_lightColor.red   / 255.0;
-    double lightGreen = lightValue * (double)m_lightColor.green / 255.0;
-    double lightBlue  = lightValue * (double)m_lightColor.blue  / 255.0;
+	// Now calculate the light color.
+	double lightRed   = lightValue * (double)m_lightColor.red   / 255.0;
+	double lightGreen = lightValue * (double)m_lightColor.green / 255.0;
+	double lightBlue  = lightValue * (double)m_lightColor.blue  / 255.0;
 
-    // Apply the light color to the new color.
-    red   *= lightRed  ;
-    green *= lightGreen;
-    blue  *= lightBlue ;
+	// Apply the light color to the new color.
+	red   *= lightRed  ;
+	green *= lightGreen;
+	blue  *= lightBlue ;
   }
 
   // Clamp the color channels to the (0..1) range.
@@ -1033,10 +1033,10 @@ Color RendererImage::CalcDestColor (const Color& sourceColor,
   // the new color.
   typedef unsigned int xuint;
   Color newColor (
-    (noise::uint8)((xuint)(red   * 255.0) & 0xff),
-    (noise::uint8)((xuint)(green * 255.0) & 0xff),
-    (noise::uint8)((xuint)(blue  * 255.0) & 0xff),
-    GetMax (sourceColor.alpha, backgroundColor.alpha));
+	(noise::uint8)((xuint)(red   * 255.0) & 0xff),
+	(noise::uint8)((xuint)(green * 255.0) & 0xff),
+	(noise::uint8)((xuint)(blue  * 255.0) & 0xff),
+	GetMax (sourceColor.alpha, backgroundColor.alpha));
   return newColor;
 }
 
@@ -1047,23 +1047,23 @@ double RendererImage::CalcLightIntensity (double center, double left,
   // necessary so it does not have to be calculated each time this method is
   // called.
   if (m_recalcLightValues) {
-    m_cosAzimuth = cos (m_lightAzimuth * DEG_TO_RAD);
-    m_sinAzimuth = sin (m_lightAzimuth * DEG_TO_RAD);
-    m_cosElev    = cos (m_lightElev    * DEG_TO_RAD);
-    m_sinElev    = sin (m_lightElev    * DEG_TO_RAD);
-    m_recalcLightValues = false;
+	m_cosAzimuth = cos (m_lightAzimuth * DEG_TO_RAD);
+	m_sinAzimuth = sin (m_lightAzimuth * DEG_TO_RAD);
+	m_cosElev    = cos (m_lightElev    * DEG_TO_RAD);
+	m_sinElev    = sin (m_lightElev    * DEG_TO_RAD);
+	m_recalcLightValues = false;
   }
 
   // Now do the lighting calculations.
   const double I_MAX = 1.0;
   double io = I_MAX * SQRT_2 * m_sinElev / 2.0;
   double ix = (I_MAX - io) * m_lightContrast * SQRT_2 * m_cosElev
-    * m_cosAzimuth;
+	* m_cosAzimuth;
   double iy = (I_MAX - io) * m_lightContrast * SQRT_2 * m_cosElev
-    * m_sinAzimuth; 
+	* m_sinAzimuth;
   double intensity = (ix * (left - right) + iy * (down - up) + io);
   if (intensity < 0.0) {
-    intensity = 0.0;
+	intensity = 0.0;
   }
   return intensity;
 }
@@ -1076,11 +1076,11 @@ void RendererImage::ClearGradient ()
 void RendererImage::Render ()
 {
   if ( m_pSourceNoiseMap == NULL
-    || m_pDestImage == NULL
-    || m_pSourceNoiseMap->GetWidth  () <= 0
-    || m_pSourceNoiseMap->GetHeight () <= 0
-    || m_gradient.GetGradientPointCount () < 2) {
-    throw noise::ExceptionInvalidParam ();
+	|| m_pDestImage == NULL
+	|| m_pSourceNoiseMap->GetWidth  () <= 0
+	|| m_pSourceNoiseMap->GetHeight () <= 0
+	|| m_gradient.GetGradientPointCount () < 2) {
+	throw noise::ExceptionInvalidParam ();
   }
 
   int width  = m_pSourceNoiseMap->GetWidth  ();
@@ -1089,121 +1089,121 @@ void RendererImage::Render ()
   // If a background image was provided, make sure it is the same size the
   // source noise map.
   if (m_pBackgroundImage != NULL) {
-    if ( m_pBackgroundImage->GetWidth  () != width
-      || m_pBackgroundImage->GetHeight () != height) {
-      throw noise::ExceptionInvalidParam ();
-    }
+	if ( m_pBackgroundImage->GetWidth  () != width
+	  || m_pBackgroundImage->GetHeight () != height) {
+	  throw noise::ExceptionInvalidParam ();
+	}
   }
 
   // Create the destination image.  It is safe to reuse it if this is also the
   // background image.
   if (m_pDestImage != m_pBackgroundImage) {
-    m_pDestImage->SetSize (width, height);
+	m_pDestImage->SetSize (width, height);
   }
 
   for (int y = 0; y < height; y++) {
-    const Color* pBackground = NULL;
-    if (m_pBackgroundImage != NULL) {
-      pBackground = m_pBackgroundImage->GetConstSlabPtr (y);
-    }
-    const float* pSource = m_pSourceNoiseMap->GetConstSlabPtr (y);
-    Color* pDest = m_pDestImage->GetSlabPtr (y);
-    for (int x = 0; x < width; x++) {
+	const Color* pBackground = NULL;
+	if (m_pBackgroundImage != NULL) {
+	  pBackground = m_pBackgroundImage->GetConstSlabPtr (y);
+	}
+	const float* pSource = m_pSourceNoiseMap->GetConstSlabPtr (y);
+	Color* pDest = m_pDestImage->GetSlabPtr (y);
+	for (int x = 0; x < width; x++) {
 
-      // Get the color based on the value at the current point in the noise
-      // map.
-      Color destColor = m_gradient.GetColor (*pSource);
+	  // Get the color based on the value at the current point in the noise
+	  // map.
+	  Color destColor = m_gradient.GetColor (*pSource);
 
-      // If lighting is enabled, calculate the light intensity based on the
-      // rate of change at the current point in the noise map.
-      double lightIntensity;
-      if (m_isLightEnabled) {
+	  // If lighting is enabled, calculate the light intensity based on the
+	  // rate of change at the current point in the noise map.
+	  double lightIntensity;
+	  if (m_isLightEnabled) {
 
-        // Calculate the positions of the current point's four-neighbors.
-        int xLeftOffset, xRightOffset;
-        int yUpOffset  , yDownOffset ;
-        if (m_isWrapEnabled) {
-          if (x == 0) {
-            xLeftOffset  = (int)width - 1;
-            xRightOffset = 1;
-          } else if (x == (int)width - 1) {
-            xLeftOffset  = -1;
-            xRightOffset = -((int)width - 1);
-          } else {
-            xLeftOffset  = -1;
-            xRightOffset = 1;
-          }
-          if (y == 0) {
-            yDownOffset = (int)height - 1;
-            yUpOffset   = 1;
-          } else if (y == (int)height - 1) {
-            yDownOffset = -1;
-            yUpOffset   = -((int)height - 1);
-          } else {
-            yDownOffset = -1;
-            yUpOffset   = 1;
-          }
-        } else {
-          if (x == 0) {
-            xLeftOffset  = 0;
-            xRightOffset = 1;
-          } else if (x == (int)width - 1) {
-            xLeftOffset  = -1;
-            xRightOffset = 0;
-          } else {
-            xLeftOffset  = -1;
-            xRightOffset = 1;
-          }
-          if (y == 0) {
-            yDownOffset = 0;
-            yUpOffset   = 1;
-          } else if (y == (int)height - 1) {
-            yDownOffset = -1;
-            yUpOffset   = 0;
-          } else {
-            yDownOffset = -1;
-            yUpOffset   = 1;
-          }
-        }
-        yDownOffset *= m_pSourceNoiseMap->GetStride ();
-        yUpOffset   *= m_pSourceNoiseMap->GetStride ();
+		// Calculate the positions of the current point's four-neighbors.
+		int xLeftOffset, xRightOffset;
+		int yUpOffset  , yDownOffset ;
+		if (m_isWrapEnabled) {
+		  if (x == 0) {
+			xLeftOffset  = (int)width - 1;
+			xRightOffset = 1;
+		  } else if (x == (int)width - 1) {
+			xLeftOffset  = -1;
+			xRightOffset = -((int)width - 1);
+		  } else {
+			xLeftOffset  = -1;
+			xRightOffset = 1;
+		  }
+		  if (y == 0) {
+			yDownOffset = (int)height - 1;
+			yUpOffset   = 1;
+		  } else if (y == (int)height - 1) {
+			yDownOffset = -1;
+			yUpOffset   = -((int)height - 1);
+		  } else {
+			yDownOffset = -1;
+			yUpOffset   = 1;
+		  }
+		} else {
+		  if (x == 0) {
+			xLeftOffset  = 0;
+			xRightOffset = 1;
+		  } else if (x == (int)width - 1) {
+			xLeftOffset  = -1;
+			xRightOffset = 0;
+		  } else {
+			xLeftOffset  = -1;
+			xRightOffset = 1;
+		  }
+		  if (y == 0) {
+			yDownOffset = 0;
+			yUpOffset   = 1;
+		  } else if (y == (int)height - 1) {
+			yDownOffset = -1;
+			yUpOffset   = 0;
+		  } else {
+			yDownOffset = -1;
+			yUpOffset   = 1;
+		  }
+		}
+		yDownOffset *= m_pSourceNoiseMap->GetStride ();
+		yUpOffset   *= m_pSourceNoiseMap->GetStride ();
 
-        // Get the noise value of the current point in the source noise map
-        // and the noise values of its four-neighbors.
-        double nc = (double)(*pSource);
-        double nl = (double)(*(pSource + xLeftOffset ));
-        double nr = (double)(*(pSource + xRightOffset));
-        double nd = (double)(*(pSource + yDownOffset ));
-        double nu = (double)(*(pSource + yUpOffset   ));
+		// Get the noise value of the current point in the source noise map
+		// and the noise values of its four-neighbors.
+		double nc = (double)(*pSource);
+		double nl = (double)(*(pSource + xLeftOffset ));
+		double nr = (double)(*(pSource + xRightOffset));
+		double nd = (double)(*(pSource + yDownOffset ));
+		double nu = (double)(*(pSource + yUpOffset   ));
 
-        // Now we can calculate the lighting intensity.
-        lightIntensity = CalcLightIntensity (nc, nl, nr, nd, nu);
-        lightIntensity *= m_lightBrightness;
+		// Now we can calculate the lighting intensity.
+		lightIntensity = CalcLightIntensity (nc, nl, nr, nd, nu);
+		lightIntensity *= m_lightBrightness;
 
-      } else {
+	  } else {
 
-        // These values will apply no lighting to the destination image.
-        lightIntensity = 1.0;
-      }
+		// These values will apply no lighting to the destination image.
+		lightIntensity = 1.0;
+	  }
 
-      // Get the current background color from the background image.
-      Color backgroundColor (255, 255, 255, 255);
-      if (m_pBackgroundImage != NULL) {
-        backgroundColor = *pBackground;
-      }
+	  // Get the current background color from the background image.
+	  Color backgroundColor (255, 255, 255, 255);
+	  if (m_pBackgroundImage != NULL) {
+		backgroundColor = *pBackground;
+	  }
 
-      // Blend the destination color, background color, and the light
-      // intensity together, then update the destination image with that
-      // color.
-      *pDest = CalcDestColor (destColor, backgroundColor, lightIntensity);
+	  // Blend the destination color, background color, and the light
+	  // intensity together, then update the destination image with that
+	  // color.
+	  *pDest = CalcDestColor (destColor, backgroundColor, lightIntensity);
 
-      // Go to the next point.
-      ++pSource;
-      ++pDest;
-      if (m_pBackgroundImage != NULL) {
-        ++pBackground;
-      }
-    }
+	  // Go to the next point.
+	  ++pSource;
+	  ++pDest;
+	  if (m_pBackgroundImage != NULL) {
+		++pBackground;
+	  }
+	}
   }
 }
 
@@ -1246,61 +1246,61 @@ Color RendererNormalMap::CalcNormalColor (double nc, double nr, double nu,
 void RendererNormalMap::Render ()
 {
   if ( m_pSourceNoiseMap == NULL
-    || m_pDestImage == NULL
-    || m_pSourceNoiseMap->GetWidth  () <= 0
-    || m_pSourceNoiseMap->GetHeight () <= 0) {
-    throw noise::ExceptionInvalidParam ();
+	|| m_pDestImage == NULL
+	|| m_pSourceNoiseMap->GetWidth  () <= 0
+	|| m_pSourceNoiseMap->GetHeight () <= 0) {
+	throw noise::ExceptionInvalidParam ();
   }
 
   int width  = m_pSourceNoiseMap->GetWidth  ();
   int height = m_pSourceNoiseMap->GetHeight ();
 
   for (int y = 0; y < height; y++) {
-    const float* pSource = m_pSourceNoiseMap->GetConstSlabPtr (y);
-    Color* pDest = m_pDestImage->GetSlabPtr (y);
-    for (int x = 0; x < width; x++) {
+	const float* pSource = m_pSourceNoiseMap->GetConstSlabPtr (y);
+	Color* pDest = m_pDestImage->GetSlabPtr (y);
+	for (int x = 0; x < width; x++) {
 
-      // Calculate the positions of the current point's right and up
-      // neighbors.
-      int xRightOffset, yUpOffset;
-      if (m_isWrapEnabled) {
-        if (x == (int)width - 1) {
-          xRightOffset = -((int)width - 1);
-        } else {
-          xRightOffset = 1;
-        }
-        if (y == (int)height - 1) {
-          yUpOffset = -((int)height - 1);
-        } else {
-          yUpOffset = 1;
-        }
-      } else {
-        if (x == (int)width - 1) {
-          xRightOffset = 0;
-        } else {
-          xRightOffset = 1;
-        }
-        if (y == (int)height - 1) {
-          yUpOffset = 0;
-        } else {
-          yUpOffset = 1;
-        }
-      }
-      yUpOffset *= m_pSourceNoiseMap->GetStride ();
+	  // Calculate the positions of the current point's right and up
+	  // neighbors.
+	  int xRightOffset, yUpOffset;
+	  if (m_isWrapEnabled) {
+		if (x == (int)width - 1) {
+		  xRightOffset = -((int)width - 1);
+		} else {
+		  xRightOffset = 1;
+		}
+		if (y == (int)height - 1) {
+		  yUpOffset = -((int)height - 1);
+		} else {
+		  yUpOffset = 1;
+		}
+	  } else {
+		if (x == (int)width - 1) {
+		  xRightOffset = 0;
+		} else {
+		  xRightOffset = 1;
+		}
+		if (y == (int)height - 1) {
+		  yUpOffset = 0;
+		} else {
+		  yUpOffset = 1;
+		}
+	  }
+	  yUpOffset *= m_pSourceNoiseMap->GetStride ();
 
-      // Get the noise value of the current point in the source noise map
-      // and the noise values of its right and up neighbors.
-      double nc = (double)(*pSource);
-      double nr = (double)(*(pSource + xRightOffset));
-      double nu = (double)(*(pSource + yUpOffset   ));
+	  // Get the noise value of the current point in the source noise map
+	  // and the noise values of its right and up neighbors.
+	  double nc = (double)(*pSource);
+	  double nr = (double)(*(pSource + xRightOffset));
+	  double nu = (double)(*(pSource + yUpOffset   ));
 
-      // Calculate the normal product.
-      *pDest = CalcNormalColor (nc, nr, nu, m_bumpHeight);
+	  // Calculate the normal product.
+	  *pDest = CalcNormalColor (nc, nr, nu, m_bumpHeight);
 
-      // Go to the next point.
-      ++pSource;
-      ++pDest;
-    }
+	  // Go to the next point.
+	  ++pSource;
+	  ++pDest;
+	}
   }
 }
 
