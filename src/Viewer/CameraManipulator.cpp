@@ -296,12 +296,12 @@ void Vwr::CameraManipulator::setByMatrix(const osg::Matrixd& matrix)
 
 osg::Matrixd Vwr::CameraManipulator::getMatrix() const
 {
-	return osg::Matrixd::translate(0.0,0.0,_distance)*osg::Matrixd::rotate(_rotation*_rotationHead)*osg::Matrixd::translate(_center);
+	return osg::Matrixd::translate(_centerArucoTrans)*osg::Matrixd::translate(0.0,0.0,_distance)*osg::Matrixd::rotate(_rotation*_rotationHead)*osg::Matrixd::translate(_center);
 }
 
 osg::Matrixd Vwr::CameraManipulator::getInverseMatrix() const
 {
-	return osg::Matrixd::translate(-_center)*osg::Matrixd::rotate((_rotation*_rotationHead).inverse())*osg::Matrixd::translate(0.0,0.0,-_distance);
+	return osg::Matrixd::translate(-_centerArucoTrans)*osg::Matrixd::translate(-_center)*osg::Matrixd::rotate((_rotation*_rotationHead).inverse())*osg::Matrixd::translate(0.0,0.0,-_distance);
 }
 
 void Vwr::CameraManipulator::computePosition(const osg::Vec3& eye,const osg::Vec3& center,const osg::Vec3& up)
@@ -1061,5 +1061,40 @@ void Vwr::CameraManipulator::setRotationHead(float x, float y, float /*distance*
 		qDebug() << "Warning: setRotationHead(): wrong parameters";
 	}
 }
+
+void Vwr::CameraManipulator::updateArucoGraphPosition( QMatrix4x4 mat ){
+	//QString str;
+	//str  = " " + QString::number(mat.data()[ 3], 'f', 2);
+	//str += " " + QString::number(mat.data()[ 7], 'f', 2);
+	//str += " " + QString::number(mat.data()[11], 'f', 2);
+	//qDebug() << ": " << str;
+
+
+	const double constDist = 0.5;
+	double koef = 1.0;
+	// absolute values
+	double dist = _distance < 0.0 ? -_distance : _distance;		// distance of graph
+	double arDist	 =  mat.data()[11] < 0.0 ? -mat.data()[11] : mat.data()[11];	// distance of marker
+
+	if(dist >  1.0){
+		koef *= dist;
+	}
+
+	// compute translation according distance
+	_centerArucoTrans[1] = koef * (mat.data()[11] + constDist);	// vertical
+
+	koef = (koef + koef*constDist) * 5 * arDist;
+	_centerArucoTrans[0] = koef * mat.data()[ 3];	// horizontal
+	_centerArucoTrans[2] = koef * mat.data()[ 7];	// vertical
+
+
+	//str  = "  " + QString::number( _centerArucoTrans[1], 'f', 2);
+	//str += "  " + QString::number( _centerArucoTrans[0], 'f', 2);
+	//str += "  " + QString::number( _centerArucoTrans[2], 'f', 2);
+	//qDebug() << ": " << str;
+	//qDebug() << ": " << _distance ;
+
+}
+
 
 } // namespace
