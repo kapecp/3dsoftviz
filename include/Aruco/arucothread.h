@@ -2,7 +2,7 @@
 #define ARUCOTHREAD_H
 
 #include <QThread>
-
+#include <opencv2/core/core.hpp>
 
 namespace ArucoModul {
 
@@ -25,8 +25,15 @@ public:
 	*/
 	void run();
 
+signals:
+	/**
+	* @author Dávid Durčák
+	* @brief pushArucoMVMat signal that emit ModelViewMatrix that represent position and rotation of detected marker
+	* @param mat ModelView matrix from aruco
+	*/
+	void pushArucoMVMat( QMatrix4x4 mat);
 
-private slots:
+public slots:
 	/**
 	* @author Dávid Durčák
 	* @brief setCancel sets cancel=true

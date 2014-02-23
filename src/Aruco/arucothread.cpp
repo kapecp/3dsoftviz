@@ -3,7 +3,7 @@
 #include "opencv2/core/core.hpp"
 #include "opencv2/highgui/highgui.hpp"
 #include "Aruco/arucocore.h"
-#include <QFileInfo>
+
 #include <QDebug>
 
 using namespace ArucoModul;
@@ -23,14 +23,20 @@ void ArucoThread::run()
 {
 	// this code will be changed soon
 	cv::Mat frame;
-	CvCapture *capture;
+	//CvCapture *capture;
+	cv::VideoCapture capture;
+
 	QMatrix4x4 mat;
 	QString filename = "../share/3dsoftviz/config/camera.yml";
 
 	// this must do camera singleton
-	capture = cvCreateCameraCapture(1);
-	cvSetCaptureProperty(capture, CV_CAP_PROP_FRAME_WIDTH, 640);
-	cvSetCaptureProperty(capture, CV_CAP_PROP_FRAME_HEIGHT, 480);
+
+	if( ! capture.isOpened()){
+		capture.open(1);
+	}
+	capture.set(CV_CAP_PROP_FRAME_WIDTH, 400);
+	capture.set(CV_CAP_PROP_FRAME_HEIGHT, 300);
+
 
 	QFileInfo file(filename);
 	if( ! file.exists() ){
@@ -39,28 +45,22 @@ void ArucoThread::run()
 	ArucoCore aCore(filename);
 
 
-	//while(!cancel) {
-	for(int i=0; i<50; i++ ) {
-		// doing aruco work in loop
-		// get image from camera
+	while(!cancel) {	// doing aruco work in loop
+
+		capture >> frame;		// get image from camera
+
 		// add image to aruco and get matrix
-		// emit matrix
-
-
-		frame = cvQueryFrame(capture);
 		mat = aCore.getDetectedMatrix(frame);
 
-		// test print of matrix if changed
-		QString str;
-		str = QString::number(mat.data()[0],'g' ,1  );
-		str += " " +  QString::number(mat.data()[1], 'g', 2);
-		str += " " +  QString::number(mat.data()[2], 'g', 3);
-		qDebug() << i << ": " << str;
+		// test if marker was detect (if not, all number in matrix are not range)
+		if(mat.data()[ 0] > -1.0 && mat.data()[ 0] < 1.0  ){
+			emit pushArucoMVMat( mat );			// emit matrix to CameraManipulation
+		}
+
 		msleep(200);
 
 	}
-	cvReleaseCapture( &capture );
-
+	capture.release();
 }
 
 
