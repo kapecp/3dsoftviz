@@ -2,7 +2,7 @@
 
 using namespace QOpenCV;
 
-QOpenCV::FaceRecognitionWindow::FaceRecognitionWindow(QWidget *parent, QApplication * app, QOpenCV::FaceRecognitionThread *thr)
+QOpenCV::FaceRecognitionWindow::FaceRecognitionWindow(QWidget *parent, QApplication * app, QOpenCV::FaceRecognitionThread *thr): QDialog(parent)
 {
 	this->thr = thr;
 	this->app = app;
