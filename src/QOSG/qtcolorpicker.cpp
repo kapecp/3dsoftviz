@@ -48,6 +48,9 @@
 #include <math.h>
 
 #include "QOSG/qtcolorpicker.h"
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wcast-qual"
+
 
 /*! \class QtColorPicker
 
@@ -1016,3 +1019,4 @@ void ColorPickerButton::paintEvent(QPaintEvent *e)
 
 //#include "qtcolorpicker.moc"
 //#include "moc_qtcolorpicker.cxx"
+#pragma GCC diagnostic pop

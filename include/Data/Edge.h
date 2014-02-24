@@ -15,7 +15,7 @@
 
 namespace Util
 {
-	class ApplicationConfig;
+class ApplicationConfig;
 }
 
 namespace Data
@@ -359,13 +359,23 @@ public:
 				*  \fn public   setInvisible()
 				*/
 	bool setInvisible(bool invisible){
-		if (invisible) setScale(0);
-		else setScale(1);
+		if (invisible){
+			setScale(0);
+			isInvisible=true;
+		}
+		else {
+			setScale(1);
+			isInvisible=false;
+		}
 		return true;
 	}
 
+	bool getIsInvisible(){return isInvisible;}
+
 
 private:
+
+	bool isInvisible;
 	/**
 		*  Data::Graph * graph
 		*  \brief Graph to which the Edge belongs

@@ -21,6 +21,7 @@
 #include <QTextStream>
 #include <QDebug>
 
+
 Data::Graph::Graph(qlonglong graph_id, QString name, QSqlDatabase* conn, QMap<qlonglong,osg::ref_ptr<Data::Node> > *nodes, QMap<qlonglong,osg::ref_ptr<Data::Edge> > *edges,QMap<qlonglong,osg::ref_ptr<Data::Node> > *metaNodes, QMap<qlonglong,osg::ref_ptr<Data::Edge> > *metaEdges, QMap<qlonglong,Data::Type*> *types)
 {
 	//tento konstruktor je uz zastaraly a neda sa realne pouzit - uzly musia mat priradeny graph, ktory sa prave vytvarat, rovnako edge, type, metatype (ten musi mat naviac aj layout, ktory opat musi mat graph)
@@ -487,7 +488,8 @@ void Data::Graph::separateNodes(QLinkedList<osg::ref_ptr<Data::Node> > * selecte
 						osg::ref_ptr<Data::Node> srcNode = iedgeIn.value().get()->getSrcNode();
 						osg::ref_ptr<Data::Node> dstNode = iedgeIn.value().get()->getDstNode();
 
-						if(iedgeIn.value().get()->getScale() == 0 && (srcNode->getNodeMask() != 0 && dstNode->getNodeMask() != 0))
+						//iedgeIn.value().get()->getScale() == 0;
+						if(iedgeIn.value().get()->getIsInvisible() && (srcNode->getNodeMask() != 0 && dstNode->getNodeMask() != 0))
 						{
 							//TODO - nastavime velkost hranam - vsetkym default - treba prerobit ak budu mat hrany inu velkost
 							iedgeIn.value().get()->setScale(scale);

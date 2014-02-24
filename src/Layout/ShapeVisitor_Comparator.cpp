@@ -50,7 +50,8 @@ void ShapeVisitor_Comparator::visit (Shape_Plane & shape) {
 		comparisonResult_ =
 				(shape.getNormalVector () == otherShape->getNormalVector ())
 				&&
-				(shape.getD () == otherShape->getD ())
+				qFuzzyCompare(shape.getD (),otherShape->getD ())
+
 				;
 	} else {
 		comparisonResult_ = false;
@@ -99,7 +100,8 @@ void ShapeVisitor_Comparator::compareSpheres (Shape_AbstractSphere & shape, Shap
 	comparisonResult_ =
 			(shape.getCenter () == otherShape.getCenter ())
 			&&
-			(shape.getRadius () == otherShape.getRadius ())
+			qFuzzyCompare(shape.getRadius (),otherShape.getRadius ())
+			//(shape.getRadius () == otherShape.getRadius ())
 			;
 }
 
@@ -110,7 +112,7 @@ void ShapeVisitor_Comparator::compareCylinders(Shape_CylinderSurface &shape, Sha
 	//comparisonResult_ = (shape.getCenter() == otherShape.getCenter()) && (shape.getRadius() == otherShape.getRadius());
 }
 
-void ShapeVisitor_Comparator::compareCones(Shape_ConeSurface /*&shape*/, Shape_ConeSurface /*&otherShape*/)
+void ShapeVisitor_Comparator::compareCones(Shape_ConeSurface &shape, Shape_ConeSurface &otherShape)
 {
 	// TODO: Change made by Peter Sivak, I don't know how does this work for now - so return true for now
 	comparisonResult_ = true;

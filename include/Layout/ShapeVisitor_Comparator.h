@@ -39,7 +39,7 @@ private:
 
 	void compareSpheres (Shape_AbstractSphere & shape, Shape_AbstractSphere & otherShape);
 	void compareCylinders(Shape_CylinderSurface &shape, Shape_CylinderSurface &otherShape);
-	void compareCones(Shape_ConeSurface, Shape_ConeSurface);
+	void compareCones(Shape_ConeSurface &shape, Shape_ConeSurface &otherShape);
 
 private: // visitor context
 

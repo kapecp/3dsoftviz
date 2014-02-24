@@ -8,6 +8,9 @@
 #include "Data/GraphLayout.h"
 
 #include <QDebug>
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wfloat-equal"
+
 
 Model::EdgeDAO::EdgeDAO(void)
 {
@@ -190,7 +193,8 @@ bool Model::EdgeDAO::addEdgesScaleToDB(QSqlDatabase* conn, QMap<qlonglong, osg::
 	while(iEdges != edges->constEnd())
 	{
 		//ulozime scale len hranam, ktore maju scale ine nez default
-		if(iEdges.value()->getScale() != defaultScale)
+		bool isNotDefault = !qFuzzyCompare(iEdges.value()->getScale(),defaultScale);
+		if(isNotDefault)
 		{
 			if(meta)
 			{
@@ -625,3 +629,4 @@ bool Model::EdgeDAO::addSetings(QSqlDatabase* conn, qlonglong graphID, qlonglong
 
 	return true;
 }
+#pragma GCC diagnostic pop

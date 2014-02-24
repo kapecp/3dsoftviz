@@ -8,6 +8,8 @@
 #include "Data/GraphLayout.h"
 
 #include <QDebug>
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wfloat-equal"
 
 Model::NodeDAO::NodeDAO(void)
 {
@@ -192,6 +194,7 @@ bool Model::NodeDAO::addNodesColorToDB(QSqlDatabase* conn, QMap<qlonglong, osg::
 	while(iNodes != nodes->constEnd())
 	{
 		//ulozime farbu len nodom, ktore maju farbu inu nez default
+
 		if(iNodes.value()->getColor().r() != 1 || iNodes.value()->getColor().g() != 1 ||iNodes.value()->getColor().b() != 1 ||iNodes.value()->getColor().a() != 1)
 		{
 			if(meta)
@@ -233,7 +236,8 @@ bool Model::NodeDAO::addNodesScaleToDB(QSqlDatabase* conn, QMap<qlonglong, osg::
 	while(iNodes != nodes->constEnd())
 	{
 		//ulozime scale len nodom, ktore maju velkost inu nez default
-		if(iNodes.value()->getScale() != defaultScale)
+		if(!qFuzzyCompare(iNodes.value()->getScale(),defaultScale))
+		//if(iNodes.value()->getScale() != defaultScale)
 		{
 			if(meta)
 			{
@@ -869,3 +873,4 @@ bool Model::NodeDAO::addSettings(QSqlDatabase* conn, qlonglong graphID, qlonglon
 
 	return true;
 }
+#pragma GCC diagnostic pop

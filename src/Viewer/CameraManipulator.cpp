@@ -221,7 +221,8 @@ bool Vwr::CameraManipulator::handlePush(const osgGA::GUIEventAdapter& ea, osgGA:
 {
 	if (ea.getButtonMask() == GUIEventAdapter::MIDDLE_MOUSE_BUTTON)
 	{
-		if (_distance != 0)
+		bool notNullDistance = !qFuzzyCompare(_distance,0.0f);
+		if (notNullDistance)
 		{
 			lastDistance = _distance;
 
@@ -391,7 +392,8 @@ bool Vwr::CameraManipulator::calcMovement()
 		}
 
 		// return if there is no movement.
-		if (distance==0.0f)
+		bool nullDistance = qFuzzyCompare(distance,0.0f);
+		if (nullDistance)
 		{
 			return false;
 		}
@@ -783,8 +785,8 @@ void Vwr::CameraManipulator::computeStandardFrame(const osgGA::GUIEventAdapter &
 {
 	osgViewer::Viewer* viewer = dynamic_cast<osgViewer::Viewer*>( &aa );
 	double t1 = ea.getTime();
-
-	if( t0 == 0.0 )
+	bool nullT0=qFuzzyCompare(t0,0.0);
+	if( nullT0 )
 	{
 		t0 = ea.getTime();
 		dt = 0.0;

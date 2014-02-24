@@ -284,7 +284,8 @@ bool FRAlgorithm::iterate()
 		for (int i = 0; i < graph->getNodes()->count(); ++i,++j)
 		{
 			distanceFromFocus = graph->getRestrictionsManager().distanceFromFocus(*j.value());
-			if ( (distanceFromFocus != -1) && (distanceFromFocus < minimalDistanceFromFocus) )
+			bool testDistance = !qFuzzyCompare(distanceFromFocus,-1.0f);
+			if ( (testDistance) && (distanceFromFocus < minimalDistanceFromFocus) )
 			{
 				minimalDistanceFromFocus = distanceFromFocus;
 				focusedNode = j.value();
@@ -417,8 +418,10 @@ void FRAlgorithm::addAttractive(Data::Edge* edge, float factor) {
 	up = edge->getSrcNode()->targetPosition();
 	vp = edge->getDstNode()->targetPosition();
 	dist = distance(up,vp);
-	if (dist == 0)
+	if(qFuzzyCompare(dist,0.0))
+	{
 		return;
+	}
 	fv = vp - up; // smer sily
 	fv.normalize();
 	fv *= attr(dist) * factor;// velkost sily
@@ -437,8 +440,10 @@ void FRAlgorithm::addMetaAttractive(Data::Node* u, Data::Node* meta, float facto
 	up = u->targetPosition();
 	vp = meta->targetPosition();
 	dist = distance(up,vp);
-	if (dist == 0)
+	if(qFuzzyCompare(dist,0.0))
+	{
 		return;
+	}
 	fv = vp - up;// smer sily
 	fv.normalize();
 	fv *= attr(dist) * factor;// velkost sily
@@ -458,7 +463,9 @@ void FRAlgorithm::addRepulsive(Data::Node* u, Data::Node* v, float factor) {
 	if (useMaxDistance && dist > MAX_DISTANCE) {
 		return;
 	}
-	if (dist == 0) {
+	//if(dist==0)
+	if(qFuzzyCompare(dist,0.0))
+	{
 		// pri splynuti uzlov medzi nimi vytvorime malu vzdialenost
 		vp.set( (vp.x() + (float)(rand() % 10)), ( vp.y() + (float)(rand() % 10)),( vp.z() + (float)(rand() % 10)));
 		dist = distance(up,vp);

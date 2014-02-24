@@ -931,7 +931,8 @@ void CoreWindow::applyColorClick()
 	while (ei != selectedEdges->constEnd())
 	{
 		//ak je edge skryta, nebudeme jej menit farbu
-		if((*ei)->getScale() != 0)
+		//(*ei)->getScale() != 0
+		if(!(*ei)->getIsInvisible())
 		{
 
 			if (client->isConnected()) {

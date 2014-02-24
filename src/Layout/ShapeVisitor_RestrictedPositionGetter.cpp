@@ -69,7 +69,9 @@ void ShapeVisitor_RestrictedPositionGetter::visit (Shape_Plane & shape) {
 	double shapeY=(double) shape.getNormalVector ().y ();
 	double shapeZ=(double) shape.getNormalVector ().z ();
 	double n = pow (shapeX, 2.0) + pow (shapeY, 2.0) + pow (shapeZ, 2.0);
-	if (n != 0.0) {
+	if(!qFuzzyCompare(n,0.0))
+		//if (n != 0.0)
+	{
 		t = m / (float)n;
 	} else {
 		t = 0.f;
@@ -181,7 +183,9 @@ osg::Vec3f ShapeVisitor_RestrictedPositionGetter::toSphere(const osg::Vec3f &cen
 
 	osg::Vec3f changedPointMoved = pointMoved;
 
-	if (changedPointMoved.length() == 0.0) {
+	if(qFuzzyCompare(changedPointMoved.length(),0.0f))
+		//if (changedPointMoved.length() == 0.0)
+	{
 		// create random point
 		for (int i = 0; i < 3; ++i) {
 			changedPointMoved[i] = (float)(rand () % 100) + 1.f;
