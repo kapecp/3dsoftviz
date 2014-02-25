@@ -8,6 +8,7 @@
 #include <QtSql>
 #include <QString>
 #include <QMap>
+#include <Data/Node.h>
 
 
 namespace Data

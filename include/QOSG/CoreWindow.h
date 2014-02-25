@@ -46,7 +46,7 @@ namespace QOSG
 namespace Network
 {
 	class Client;
-	class Network;
+	//class Network;
 }
 
 namespace QOSG
