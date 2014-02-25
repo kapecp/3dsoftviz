@@ -4,6 +4,7 @@
 #include <QThread>
 #include <opencv2/core/core.hpp>
 
+
 namespace ArucoModul {
 
 /**
@@ -53,7 +54,36 @@ public slots:
 	void pause();
 
 private:
+
+	/**
+	* @author Dávid Durčák
+	* @brief computeCorMat Compute correction corM matrix.
+	* Correction matrix == rotation around point described by origM.
+	* Applycation: corected matrix = corM * mat.   Correction matrix must be on left in multiplication.
+	* result corrected matrix describe marker like camera was in horizontal direction.
+	* @param origM Matrix that describe point with translation and rotation
+	*/
+	void computeCorMat( QMatrix4x4 origM );
+
+	/**
+	* @author Dávid Durčák
+	* @brief printMat Debug method for printing matrix
+	* @param mat Printed matrix
+	* @param name Optional name of printed matrix
+	*/
+	void printMat( const QMatrix4x4 mat, const QString name = "Matrix: ");
+
+	/**
+	* @author Dávid Durčák
+	* @brief printVec Debug method for printing vector
+	* @param v Printed vector
+	* @param name Optional name of printed vector
+	*/
+	void printVec( const QVector3D v, const QString name = "vector:  ");
+
+
 	bool cancel;
+	QMatrix4x4 corM;		// correction matrix
 
 	};
 } // ArucoModul namespace
