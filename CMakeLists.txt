@@ -52,9 +52,9 @@ if( USE_STRICT_COMPILE_WARNINGS )
 	if( CMAKE_COMPILER_IS_GNUCXX )
 #~ 		set( CMAKE_CXX_FLAGS_DEBUG "-Wall -Wextra -Werror" )
 		set( CMAKE_CXX_FLAGS_DEBUG "-pedantic -Wall -Wextra -Wwrite-strings -Winit-self -Wcast-align -Wcast-qual -Wpointer-arith -Wstrict-aliasing -Wformat=2 -Wmissing-declarations -Wmissing-include-dirs -Wuninitialized -Werror-implicit-function-declaration -Wfloat-equal -Wundef -Wstrict-overflow=5 -Wswitch-default -Wswitch-enum -Wconversion -Wunreachable-code -Wno-unused-parameter" )
-			# could be used: -Wno-unused-parameter -Wno-unused-result
+			# use to suppress unused stuff: -Wno-unused-parameter -Wno-unused-result
 			# only for C: -Wold-style-definition -Wstrict-prototypes -Wmissing-prototypes
-			# not used (too much warnings): -Wshadow -Waggregate-return
+			# not used (too many warnings): -Wshadow -Waggregate-return
 	endif()
 endif()
 
@@ -62,8 +62,8 @@ endif()
 if( NOT CMAKE_BUILD_TYPE )
 	set( CMAKE_BUILD_TYPE "Debug" CACHE STRING "" FORCE )
 endif()
-MESSAGE(CMAKE_BUILD_TYPE)
 
+# Default install destination
 if( CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT )
 	set( CMAKE_INSTALL_PREFIX ${CMAKE_CURRENT_SOURCE_DIR}/_install CACHE PATH "Installation Destination" FORCE )
 endif()
@@ -82,11 +82,18 @@ set( CMAKE_INSTALL_NAME_DIR "@executable_path/../lib" CACHE STRING "" FORCE )
 include(cotire)
 if (COMMAND cotire)
 	if( NOT COTIRE_MAXIMUM_NUMBER_OF_UNITY_INCLUDES )
-		set( COTIRE_MAXIMUM_NUMBER_OF_UNITY_INCLUDES "-j4" )
+		include( ProcessorCount )
+		ProcessorCount( N )
+
+		if( NOT N EQUAL 0 )
+			set( COTIRE_MAXIMUM_NUMBER_OF_UNITY_INCLUDES "-j${N}" )
+		endif()
 	endif()
+
 	set( COTIRE_VERBOSE FALSE )
 	set( COTIRE_DEBUG FALSE )
 endif()
+
 # ------------
 # Dependencies - External projects
 # ------------
@@ -162,8 +169,6 @@ if( USE_BUILTIN_DEPENDENCIES )
 				IMPORTED_LOCATION  ${DEP_BIN}/bin/${CMAKE_SHARED_LIBRARY_PREFIX}${MISS_MSVC_PREFIX}noise${CMAKE_SHARED_LIBRARY_SUFFIX}
 				IMPORTED_IMPLIB  ${DEP_BIN}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}${MISS_MSVC_PREFIX}noise${CMAKE_STATIC_LIBRARY_SUFFIX} )
 
-
-
 		endif()
 	endif()
 	set( DEPENDENCIES_INCLUDE_DIR ${DEP_BIN}/include )
@@ -214,6 +219,23 @@ find_package(OpenSceneGraph COMPONENTS
 	osgWidget
 )
 find_package(osgViewer)
+
+
+# Find OpenCV
+find_package( OpenCV )
+if( OpenCV_FOUND )
+	add_definitions( -DOPENCV_FOUND )
+	message("OpenCV FOUND")
+	set( SOURCES_H
+		./include/QOpenCV/FaceRecognitionWindow.h
+		./include/QOpenCV/FaceRecognitionThread.h
+	)
+	file(GLOB_RECURSE SRC_OPENCV  "src/OpenCV/*.cpp")
+	file(GLOB_RECURSE SRC_QOPENCV  "src/QOpenCV/*.cpp")
+else()
+	message("OpenCV NOT FOUND")
+endif()
+
 
 # -----------------
 # Platform settings
@@ -277,23 +299,6 @@ if( WIN32 )
 	set( CPACK_PACKAGE_ICON "${CMAKE_CURRENT_SOURCE_DIR}\\\\res\\\\logo2.bmp" )
 endif()
 
-# Find OpenCV
-SET(SOURCES_H  )
-FIND_PACKAGE( OpenCV )
-IF(OpenCV_FOUND)
-INCLUDE_DIRECTORIES( ${OpenCV_INCLUDE_DIRS} )
-ADD_DEFINITIONS( -DOPENCV_FOUND )
-MESSAGE ("OpenCV FOUND")
-SET(SOURCES_H
-		./include/QOpenCV/FaceRecognitionWindow.h
-		./include/QOpenCV/FaceRecognitionThread.h
-)
-FILE(GLOB_RECURSE SRC_OPENCV  "src/OpenCV/*.cpp")
-FILE(GLOB_RECURSE SRC_QOPENCV  "src/QOpenCV/*.cpp")
-SET(SRC ${SRC} ${SRC_OPENCV} ${SRC_QOPENCV})
-ELSE(OpenCV_FOUND)
-MESSAGE ("OpenCV NOT FOUND")
-ENDIF()
 
 # ---------------
 # Build 3DSOFTVIZ
@@ -329,11 +334,13 @@ file(GLOB_RECURSE SRC_UTIL  "src/Util/*.cpp")
 file(GLOB_RECURSE SRC_VIEWER  "src/Viewer/*.cpp")
 
 # Source files
-set(SRC ${SRC}
+set(SRC
 	${SRC_MAIN} ${SRC_CORE} ${SRC_DATA} ${SRC_IMPORTER}
 	${SRC_LAYOUT} ${SRC_MANAGER} ${SRC_MATH}
 	${SRC_NETWORK} ${SRC_NOISE}
-	${SRC_OSGQTBROWSER} ${SRC_QOSG} ${SRC_UTIL} ${SRC_VIEWER} ${SRC_MODEL} )
+	${SRC_OSGQTBROWSER} ${SRC_QOSG} ${SRC_UTIL} ${SRC_VIEWER} ${SRC_MODEL}
+	${SRC_OPENCV} ${SRC_QOPENCV}
+)
 
 file(GLOB_RECURSE INCL "include/*.h")
 
@@ -365,14 +372,16 @@ source_group(\\headers\\QOSG "^.*QOSG/.*h$")
 source_group(\\headers\\Noise "^.*Noise/.*h$")
 source_group(\\headers\\OsgQtBrowser "^.*OsgQtBrowser/.*h$")
 
+if(OpenCV_FOUND)
+	source_group(\\src\\QOpenCV "^.*QOpenCV/.*$")
+	source_group(\\src\\OpenCV "^.*OpenCV/.*$")
+	source_group(\\headers\\QOpenCV "^.*QOpenCV/.*h$")
+	source_group(\\headers\\OpenCV "^.*OpenCV/.*h$")
+endif()
+
 # Group generated moc files
 source_group(\\MOC "^.*moc_.*$")
-IF(OpenCV_FOUND)
-SOURCE_GROUP(\\src\\QOpenCV "^.*QOpenCV/.*$")
-SOURCE_GROUP(\\src\\OpenCV "^.*OpenCV/.*$")
-SOURCE_GROUP(\\headers\\QOpenCV "^.*QOpenCV/.*h$")
-SOURCE_GROUP(\\headers\\OpenCV "^.*OpenCV/.*h$")
-ENDIF()
+
 # header files containing Q_OBJECT macros
 set(SOURCES_H ${SOURCES_H}
 	./include/OsgQtBrowser/QGraphicsViewAdapter.h
@@ -385,8 +394,8 @@ set(SOURCES_H ${SOURCES_H}
 	./include/QOSG/CheckBoxList.h
 	./include/QOSG/qtcolorpicker.h
 	./include/Viewer/PickHandler.h
-		./include/Network/Server.h
-		./include/Network/Client.h
+	./include/Network/Server.h
+	./include/Network/Client.h
 	./include/Viewer/CameraManipulator.h
 )
 
@@ -402,14 +411,12 @@ target_link_libraries( ${3DSOFTVIZ_NAME}
 	${OPENSCENEGRAPH_LIBRARIES}
 	${OSGVIEWER_LIBRARIES}
 	#${LIBARUCO_LIBRARY}
-	${OpenCV_LIBS}
 	libnoise
 )
-IF(OpenCV_FOUND)
-TARGET_LINK_LIBRARIES(${3DSOFTVIZ_NAME}
-${OpenCV_LIBS}
-)
-ENDIF()
+
+if(OpenCV_FOUND)
+	target_link_libraries( ${3DSOFTVIZ_NAME} ${OpenCV_LIBS} )
+endif()
 
 # 'cotire' the executable
 if (COMMAND cotire)
@@ -453,11 +460,6 @@ endif()
 install( TARGETS ${3DSOFTVIZ_NAME}
 	BUNDLE DESTINATION ${INSTALL_BUNDLE} COMPONENT Runtime
 	RUNTIME DESTINATION ${INSTALL_BIN} COMPONENT Runtime )
-#move importer library
-#~ install( TARGETS importer
-#~ 	BUNDLE DESTINATION ${INSTALL_BUNDLE} COMPONENT Runtime
-#~ 	RUNTIME DESTINATION ${INSTALL_BIN} COMPONENT Runtime
-#~ 	LIBRARY DESTINATION ${INSTALL_LIB} COMPONENT Runtime)
 
 if (COMMAND cotire)
 	add_custom_target(install_unity
@@ -529,3 +531,4 @@ set( CPACK_PACKAGE_VENDOR "${3DSOFTVIZ_VENDOR}" )
 set( CPACK_RESOURCE_FILE_README "${CMAKE_SOURCE_DIR}/${3DSOFTVIZ_README}" )
 #set( CPACK_COMPONENTS_ALL Runtime Dependencies Data )
 include( CPack )
+
