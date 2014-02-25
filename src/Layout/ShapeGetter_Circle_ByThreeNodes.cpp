@@ -1,6 +1,6 @@
 #include "Layout/ShapeGetter_Circle_ByThreeNodes.h"
 //-----------------------------------------------------------------------------
-#include "Layout/Shape_Plane.h"
+//#include "Layout/Shape_Plane.h"
 //-----------------------------------------------------------------------------
 
 namespace Layout {

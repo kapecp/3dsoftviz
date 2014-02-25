@@ -3,6 +3,14 @@
  * Projekt 3DVisual
  */
 #include "Data/Edge.h"
+#include "Data/Graph.h"
+
+#include "Util/ApplicationConfig.h"
+
+#include <osgText/Text>
+#include <osg/PrimitiveSet>
+
+#include <QTextStream>
 
 Data::Edge::Edge(qlonglong id, QString name, Data::Graph* graph, osg::ref_ptr<Data::Node> srcNode, osg::ref_ptr<Data::Node> dstNode, Data::Type* type, bool isOriented, float scaling, int pos, osg::ref_ptr<osg::Camera> camera) : osg::DrawArrays(osg::PrimitiveSet::QUADS, pos, 4)
 {
@@ -108,12 +116,12 @@ void Data::Edge::updateCoordinates(osg::Vec3 srcPos, osg::Vec3 dstPos)
 	up *= this->scale;
 
 	//updating edge coordinates due to scale
-	coordinates->push_back(osg::Vec3(x.x() + up.x(), x.y() + up.y(), x.z() + up.z()));
-	coordinates->push_back(osg::Vec3(x.x() - up.x(), x.y() - up.y(), x.z() - up.z()));
-	coordinates->push_back(osg::Vec3(y.x() - up.x(), y.y() - up.y(), y.z() - up.z()));
-	coordinates->push_back(osg::Vec3(y.x() + up.x(), y.y() + up.y(), y.z() + up.z()));
+	coordinates->push_back(osg::Vec3d(x.x() + up.x(), x.y() + up.y(), x.z() + up.z()));
+	coordinates->push_back(osg::Vec3d(x.x() - up.x(), x.y() - up.y(), x.z() - up.z()));
+	coordinates->push_back(osg::Vec3d(y.x() - up.x(), y.y() - up.y(), y.z() - up.z()));
+	coordinates->push_back(osg::Vec3d(y.x() + up.x(), y.y() + up.y(), y.z() + up.z()));
 
-	int repeatCnt = length / (2 * this->scale);
+	float repeatCnt =(float)  (length / (2.f * this->scale));
 
 	//init edge-text (label) coordinates
 	edgeTexCoords->push_back(osg::Vec2(0,1.0f));
@@ -128,7 +136,7 @@ void Data::Edge::updateCoordinates(osg::Vec3 srcPos, osg::Vec3 dstPos)
 osg::ref_ptr<osg::Drawable> Data::Edge::createLabel(QString name)
 {
 	label = new osgText::FadeText;
-	label->setFadeSpeed(0.03);
+	label->setFadeSpeed(0.03f);
 
 	QString fontPath = Util::ApplicationConfig::get()->getValue("Viewer.Labels.Font");
 
@@ -155,5 +163,14 @@ osg::ref_ptr<Data::Node> Data::Edge::getSecondNode(osg::ref_ptr<Data::Node> firs
 	if (firstNode->getId() == srcNode->getId())
 		return dstNode;
 	else return srcNode;
+
 }
+
+
+QString Data::Edge::toString() const {
+	QString str;
+	QTextStream(&str) << "edge id:" << id << " name:" << name;
+	return str;
+}
+
 

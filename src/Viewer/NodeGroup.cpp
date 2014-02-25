@@ -1,4 +1,10 @@
 #include "Viewer/NodeGroup.h"
+
+#include "Data/Edge.h"
+#include "Util/ApplicationConfig.h"
+
+#include <osg/ShapeDrawable>
+
 #include "typeinfo"
 
 using namespace Vwr;
@@ -83,7 +89,8 @@ osg::ref_ptr<osg::Group> NodeGroup::getNodeGroup(osg::ref_ptr<Data::Node> node, 
 			osg::Sphere * sphere = new osg::Sphere;
 			sphere->setRadius(10);
 			shape->setShape(sphere);
-			shape->setColor(osg::Vec4(0.9, 0.1, 0.3, 0.5));
+
+			shape->setColor(osg::Vec4(0.9f, 0.1f, 0.3f, 0.5f));
 			shape->getOrCreateStateSet()->setMode(GL_BLEND, osg::StateAttribute::ON);
 			shape->getStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
 			osg::Geode * geode = new osg::Geode;
@@ -173,10 +180,10 @@ void NodeGroup::updateNodeCoordinates(float interpolationSpeed)
 	while (i != nodes->constEnd())
 	{
 
-		string a = typeid (i.value()).name();
-		string b = typeid (Data::Node).name();
-		if(typeid (i.value()).name() == "aa")
-			;
+		//string a = typeid (i.value()).name();
+		//string b = typeid (Data::Node).name();
+		//if(typeid (i.value()).name() == "aa")
+			//;
 		nodeTransforms->value(i.key())->setPosition((*i)->getCurrentPosition(true, interpolationSpeed));
 
 		osg::ref_ptr<osg::AutoTransform> at = NULL;

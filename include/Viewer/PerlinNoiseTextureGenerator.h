@@ -5,10 +5,7 @@
 #ifndef VIEWER_PERLIN_NOISE_GENERATOR_DEF
 #define VIEWER_PERLIN_NOISE_GENERATOR_DEF 1
 
-#include <osg/Image>
 #include <osg/Texture2D>
-
-#include "Viewer/DataHelper.h"
 
 namespace Vwr
 {
@@ -33,7 +30,8 @@ public:
 		*  \param        alpha    alpha amount
 		*  \return osg::ref_ptr texture
 		*/
-	static osg::ref_ptr<osg::Texture2D> getCoudTexture(int w, int h, int r, int g, int b, int alpha);
+
+	static osg::ref_ptr<osg::Texture2D> getCoudTexture(int w, int h, unsigned char r, unsigned char g, unsigned char b, unsigned char alpha);
 };
 }
 

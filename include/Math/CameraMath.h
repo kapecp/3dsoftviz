@@ -3,7 +3,6 @@
 #include <osg/Vec3d>
 #include <osg/ref_ptr>
 #include <QVector>
-#include <QLinkedList>
 #include "Data/Node.h"
 
 class CameraMath
@@ -85,7 +84,8 @@ public:
 	 * \returns
 	 * point coordinates
 	 */
-	static osg::Vec3d getPointOnVector(osg::Vec3d p1, osg::Vec3d p2, float distance);
+
+	static osg::Vec3d getPointOnVector(osg::Vec3d p1, osg::Vec3d p2, double distance);
 
 	/*!
 	 * \brief

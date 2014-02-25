@@ -1,5 +1,13 @@
 #include "Viewer/TextureWrapper.h"
 
+#include "Viewer/DataHelper.h"
+#include "Util/ApplicationConfig.h"
+
+#include <osg/ImageSequence>
+#include <osgDB/ReadFile>
+
+#include <sstream>
+
 using namespace Vwr;
 using namespace std;
 

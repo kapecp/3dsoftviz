@@ -10,17 +10,8 @@
 #define QOSG_LOAD_GRAPH_WINDOW_H 1
 
 #include <QDialog>
-#include <QDir>
 #include <QtGui>
 #include <QMap>
-#include <QtSql>
-#include <QSqlQueryModel>
-
-#include "Data/Graph.h"
-#include "Manager/Manager.h"
-#include "Model/DB.h"
-#include "Model/GraphDAO.h"
-#include "QOSG/SelectLayoutWindow.h"
 
 class QComboBox;
 class QLabel;

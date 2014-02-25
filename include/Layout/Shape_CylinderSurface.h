@@ -5,8 +5,8 @@
 
 #include <QSlider>
 #include <osg/Vec3f>
-
-namespace QOSG { class ViewerQT; }
+#include "QOSG/ViewerQT.h"
+//namespace QOSG { class ViewerQT; }
 
 namespace Layout {
 

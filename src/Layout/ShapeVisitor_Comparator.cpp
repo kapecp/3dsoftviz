@@ -11,7 +11,7 @@ bool ShapeVisitor_Comparator::getComparisonResult (void) {
 	return comparisonResult_;
 }
 
-void ShapeVisitor_Comparator::visit (Shape_Null & shape) {
+void ShapeVisitor_Comparator::visit (Shape_Null /*& shape*/) {
 	QSharedPointer<Shape_Null> otherShape = otherShape_.dynamicCast<Shape_Null> ();
 
 	comparisonResult_ = (! otherShape.isNull ());
@@ -50,7 +50,9 @@ void ShapeVisitor_Comparator::visit (Shape_Plane & shape) {
 		comparisonResult_ =
 				(shape.getNormalVector () == otherShape->getNormalVector ())
 				&&
-				(shape.getD () == otherShape->getD ())
+
+				qFuzzyCompare(shape.getD (),otherShape->getD ())
+
 				;
 	} else {
 		comparisonResult_ = false;
@@ -99,7 +101,9 @@ void ShapeVisitor_Comparator::compareSpheres (Shape_AbstractSphere & shape, Shap
 	comparisonResult_ =
 			(shape.getCenter () == otherShape.getCenter ())
 			&&
-			(shape.getRadius () == otherShape.getRadius ())
+
+			qFuzzyCompare(shape.getRadius (),otherShape.getRadius ())
+			//(shape.getRadius () == otherShape.getRadius ())
 			;
 }
 

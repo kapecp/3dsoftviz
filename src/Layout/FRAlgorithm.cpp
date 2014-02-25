@@ -2,18 +2,29 @@
 
 #include <climits>
 
+
+
+#include "Data/Edge.h"
+#include "Data/Node.h"
+#include "Data/Graph.h"
+
+#include <stdio.h>
+#include <math.h>
+#include <ctime>
+#include <sstream>
+#include <iostream>
+#include <QDebug>
+
 using namespace Layout;
+using namespace std;
 using namespace Vwr;
-
-
-
 //Konstruktor pre vlakno s algoritmom
 FRAlgorithm::FRAlgorithm()
 {
 	//nastavenie konstant parametrov
 	PI = acos((double) - 1);
-	ALPHA = 0.005;
-	MIN_MOVEMENT = 0.05;
+	ALPHA = 0.005f;
+	MIN_MOVEMENT = 0.05f;
 	MAX_MOVEMENT = 30;
 	MAX_DISTANCE = 400;
 	state = RUNNING;
@@ -34,8 +45,8 @@ FRAlgorithm::FRAlgorithm()
 FRAlgorithm::FRAlgorithm(Data::Graph *graph)
 {
 	PI = acos((double) - 1);
-	ALPHA = 0.005;
-	MIN_MOVEMENT = 0.05;
+	ALPHA = 0.005f;
+	MIN_MOVEMENT = 0.05f;
 	MAX_MOVEMENT = 30;
 	MAX_DISTANCE = 400;
 	state = RUNNING;
@@ -61,7 +72,8 @@ void FRAlgorithm::SetGraph(Data::Graph *graph)
 	this->graph = graph;
 	this->Randomize();
 }
-void FRAlgorithm::SetParameters(float sizeFactor,float flexibility,int animationSpeed,bool useMaxDistance)
+
+void FRAlgorithm::SetParameters(float sizeFactor,float flexibility,bool useMaxDistance)
 {
 	this->sizeFactor = sizeFactor;
 	this->flexibility = flexibility;
@@ -74,14 +86,14 @@ void FRAlgorithm::SetParameters(float sizeFactor,float flexibility,int animation
 	}
 	else
 	{
-		cout << "Nenastaveny graf. Pouzi metodu SetGraph(Data::Graph graph).";
+		qDebug() << "Nenastaveny graf. Pouzi metodu SetGraph(Data::Graph graph).";
 	}
 }
 
 /* Urci pokojovu dlzku strun */
 double FRAlgorithm::computeCalm() {
 	double R = 300;
-	float n = graph->getNodes()->count();
+	float n = (float) graph->getNodes()->count();
 	return sizeFactor* pow((4*R*R*R*PI)/(n*3), 1/3);
 }
 /* Rozmiestni uzly na nahodne pozicie */
@@ -277,7 +289,9 @@ bool FRAlgorithm::iterate()
 		for (int i = 0; i < graph->getNodes()->count(); ++i,++j)
 		{
 			distanceFromFocus = graph->getRestrictionsManager().distanceFromFocus(*j.value());
-			if ( (distanceFromFocus != -1) && (distanceFromFocus < minimalDistanceFromFocus) )
+
+			bool testDistance = !qFuzzyCompare(distanceFromFocus,-1.0f);
+			if ( (testDistance) && (distanceFromFocus < minimalDistanceFromFocus) )
 			{
 				minimalDistanceFromFocus = distanceFromFocus;
 				focusedNode = j.value();
@@ -410,8 +424,10 @@ void FRAlgorithm::addAttractive(Data::Edge* edge, float factor) {
 	up = edge->getSrcNode()->targetPosition();
 	vp = edge->getDstNode()->targetPosition();
 	dist = distance(up,vp);
-	if (dist == 0)
+	if(qFuzzyCompare(dist,0.0))
+	{
 		return;
+	}
 	fv = vp - up; // smer sily
 	fv.normalize();
 	fv *= attr(dist) * factor;// velkost sily
@@ -430,8 +446,10 @@ void FRAlgorithm::addMetaAttractive(Data::Node* u, Data::Node* meta, float facto
 	up = u->targetPosition();
 	vp = meta->targetPosition();
 	dist = distance(up,vp);
-	if (dist == 0)
+	if(qFuzzyCompare(dist,0.0))
+	{
 		return;
+	}
 	fv = vp - up;// smer sily
 	fv.normalize();
 	fv *= attr(dist) * factor;// velkost sily
@@ -451,9 +469,11 @@ void FRAlgorithm::addRepulsive(Data::Node* u, Data::Node* v, float factor) {
 	if (useMaxDistance && dist > MAX_DISTANCE) {
 		return;
 	}
-	if (dist == 0) {
+	//if(dist==0)
+	if(qFuzzyCompare(dist,0.0))
+	{
 		// pri splynuti uzlov medzi nimi vytvorime malu vzdialenost
-		vp.set(vp.x() + (rand() % 10), vp.y() + (rand() % 10), vp.z() + (rand() % 10));
+		vp.set( (vp.x() + (float)(rand() % 10)), ( vp.y() + (float)(rand() % 10)),( vp.z() + (float)(rand() % 10)));
 		dist = distance(up,vp);
 	}
 	fv = (vp - up);// smer sily

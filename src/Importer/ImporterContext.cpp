@@ -1,5 +1,7 @@
 #include "Importer/ImporterContext.h"
 
+#include "Data/Graph.h"
+
 namespace Importer {
 
 ImporterContext::ImporterContext (

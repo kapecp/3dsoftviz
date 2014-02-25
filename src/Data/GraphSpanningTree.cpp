@@ -1,6 +1,7 @@
 #include "Data/GraphSpanningTree.h"
 
-void Data::GraphSpanningTree::addGroup(QList<qlonglong> nodes, int depth, int parentId){
+
+void Data::GraphSpanningTree::addGroup(QList<qlonglong> nodes, int depth, qlonglong parentId){
 	qlonglong groupId;
 	if (parentId != -1) groupId=parentId;
 	else groupId = getNextGroupId();

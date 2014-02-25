@@ -5,15 +5,13 @@
 #ifndef MODEL_NODEDAO_DEF
 #define MODEL_NODEDAO_DEF 1
 
-#include "Data/GraphLayout.h"
-#include "Data/Graph.h"
-#include "Data/Node.h"
 
+#include "Data/Node.h"
 #include <QtSql>
-#include <QDebug>
 
 namespace Data {
-class Node;
+
+	class GraphLayout;
 }
 
 namespace Model

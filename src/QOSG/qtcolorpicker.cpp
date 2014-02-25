@@ -44,27 +44,13 @@
 **
 ****************************************************************************/
 
-#include <QtGui/QApplication>
-#include <QtGui/QDesktopWidget>
-#include <QtGui/QPainter>
-#include <QtGui/QPushButton>
-#include <QtGui/QColorDialog>
-#include <QtCore/QMap>
-#include <QtGui/QLayout>
-#include <QtGui/QStyle>
-#include <QtGui/QLabel>
-#include <QtGui/QToolTip>
-#include <QtGui/QPixmap>
-#include <QtGui/QFocusEvent>
-#include <QtGui/QPaintEvent>
-#include <QtGui/QGridLayout>
-#include <QtGui/QHideEvent>
-#include <QtGui/QKeyEvent>
-#include <QtGui/QShowEvent>
-#include <QtGui/QMouseEvent>
+
 #include <math.h>
 
 #include "QOSG/qtcolorpicker.h"
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wcast-qual"
+
 
 /*! \class QtColorPicker
 
@@ -1033,3 +1019,4 @@ void ColorPickerButton::paintEvent(QPaintEvent *e)
 
 //#include "qtcolorpicker.moc"
 //#include "moc_qtcolorpicker.cxx"
+#pragma GCC diagnostic pop

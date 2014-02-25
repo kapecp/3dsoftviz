@@ -16,7 +16,9 @@
 
 #include <QtOpenGL/QGLWidget>
 #include <osgGA/GUIEventAdapter>
-#include <osg/io_utils>
+
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wconversion"
 
 #define MYQKEYEVENT 2000
 #define MYQPOINTEREVENT 2001
@@ -55,8 +57,9 @@ struct MyQPointerEvent : public QEvent
 
 QGraphicsViewAdapter::QGraphicsViewAdapter(osg::Image* image, QWidget* widget):
 	_image(image),
-	_backgroundColor(255,255,255),
-	_qtKeyModifiers(Qt::NoModifier)
+
+	_qtKeyModifiers(Qt::NoModifier),
+	_backgroundColor(255,255,255)
 {
 	// make sure we have a valid QApplication before we start creating widgets.
 	getOrCreateQApplication();
@@ -73,8 +76,9 @@ QGraphicsViewAdapter::QGraphicsViewAdapter(osg::Image* image, QWidget* widget):
 #endif
 	_graphicsView->viewport()->setParent(0);
 
-	int width = _graphicsScene->width();
-	int height = _graphicsScene->height();
+
+	int width = (int) _graphicsScene->width();
+	int height = (int) _graphicsScene->height();
 
 	_qimages[0] = QImage(QSize(width, height), QImage::Format_ARGB32);
 	_qimages[0].fill(_backgroundColor.rgba());
@@ -262,7 +266,8 @@ bool QGraphicsViewAdapter::handlePointerEvent(int x, int y, int buttonMask)
 {
 	osg::notify(osg::INFO)<<"dispatchPointerEvent("<<x<<", "<<y<<", "<<buttonMask<<")"<<std::endl;
 
-	y = _graphicsScene->height()-y;
+
+	y = (int) (_graphicsScene->height()-y);
 
 	bool leftButtonPressed = (buttonMask & osgGA::GUIEventAdapter::LEFT_MOUSE_BUTTON)!=0;
 	bool middleButtonPressed = (buttonMask & osgGA::GUIEventAdapter::MIDDLE_MOUSE_BUTTON)!=0;
@@ -456,3 +461,5 @@ void QGraphicsViewAdapter::assignImage(unsigned int i)
 					 data,
 					 osg::Image::NO_DELETE, 1);
 }
+
+#pragma GCC diagnostic pop

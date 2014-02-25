@@ -1,6 +1,8 @@
 #include "Layout/ShapeGetter_Const.h"
 #include "Data/Node.h"
 
+#include <qset.h>
+
 namespace Layout {
 
 ShapeGetter_Const::ShapeGetter_Const (

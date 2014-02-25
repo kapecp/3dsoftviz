@@ -6,40 +6,28 @@
 #ifndef DATA_GRAPH_DEF
 #define DATA_GRAPH_DEF 1
 
-
 #include <osg/ref_ptr>
 
-#include "Data/Node.h"
 #include "Data/Type.h"
 #include "Data/Edge.h"
 #include "Data/MetaType.h"
-#include "Data/GraphLayout.h"
-#include "Model/GraphDAO.h"
-#include "Model/GraphLayoutDAO.h"
-#include "Model/TypeDAO.h"
-#include "Model/NodeDAO.h"
-#include "Model/EdgeDAO.h"
-#include "Data/GraphSpanningTree.h"
-
-
-#include <QString>
-#include <QTextStream>
-#include <QList>
-#include <QDebug>
-#include <QtSql>
-#include <QMutableMapIterator>
 
 #include "Layout/RestrictionsManager.h"
+
+#include <QString>
+#include <QSqlDatabase>
 
 #define METASTRENGTH 1
 
 namespace Data
 {
-class Node;
-class Type;
-class Edge;
+
+//class Node;
+//class Type;
+//class Edge;
 class MetaType;
 class GraphLayout;
+class GraphSpanningTree;
 
 
 /**

@@ -2,7 +2,11 @@
 #define __3DVisualSetFixNodeStateExecutor_H__
 
 #include "Network/executors/AbstractExecutor.h"
-#include "Data/Node.h"
+
+namespace Data
+{
+	class Node;
+}
 
 namespace Network {
 

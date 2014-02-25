@@ -23,6 +23,8 @@
 #ifndef NOISEUTILS_H
 #define NOISEUTILS_H
 
+#pragma GCC system_header
+
 #include <stdlib.h>
 #include <string.h>
 #include <string>

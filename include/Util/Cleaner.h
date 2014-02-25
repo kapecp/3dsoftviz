@@ -9,9 +9,6 @@
 #ifndef UTIL_CLEANER_DEF
 #define UTIL_CLEANER_DEF 1
 
-#include "QOSG/CoreWindow.h"
-
-
 /**
 *  \class MessageWindows
 *
@@ -21,6 +18,10 @@
 *
 *  \date 27. 4. 2010
 */
+
+#include <qobject.h>
+#include <qapplication.h>
+
 class Cleaner : public QObject
 {
 	Q_OBJECT

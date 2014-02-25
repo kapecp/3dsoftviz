@@ -4,7 +4,6 @@
 //-----------------------------------------------------------------------------
 #include <osg/Geode>
 #include <osg/ShapeDrawable>
-#include <osg/AutoTransform>
 #include <osg/BlendFunc>
 //-----------------------------------------------------------------------------
 
@@ -14,7 +13,7 @@ osg::ref_ptr<osg::Node> ShapeVisitor_VisualizerCreator::getCreatedVisualizer (vo
 	return createdVisualizer_;
 }
 
-void ShapeVisitor_VisualizerCreator::visit (Layout::Shape_Null & shape) {
+void ShapeVisitor_VisualizerCreator::visit (Layout::Shape_Null /*& shape*/) {
 	createdVisualizer_ = new osg::Group;
 }
 
@@ -56,7 +55,8 @@ void ShapeVisitor_VisualizerCreator::visit (Layout::Shape_Intersection & shape) 
 
 		osg::ShapeDrawable * sd = new osg::ShapeDrawable;
 		sd->setShape (cylinder);
-		sd->setColor (osg::Vec4 (0, 0, 1.0, 0.06));
+
+		sd->setColor (osg::Vec4 (0.f, 0.f, 1.0f, 0.06f));
 
 		sd->getOrCreateStateSet()->setMode (GL_BLEND, osg::StateAttribute::ON);
 		sd->getStateSet()->setRenderingHint (osg::StateSet::TRANSPARENT_BIN);
@@ -106,7 +106,8 @@ void ShapeVisitor_VisualizerCreator::visit (Layout::Shape_Plane & shape) {
 
 	osg::ShapeDrawable * sd = new osg::ShapeDrawable;
 	sd->setShape (box);
-	sd->setColor (osg::Vec4 (0, 0, 1.0, 0.06));
+
+	sd->setColor (osg::Vec4 (0.f, 0.f, 1.0f, 0.06f));
 	sd->getOrCreateStateSet()->setMode (GL_BLEND, osg::StateAttribute::ON);
 	sd->getStateSet()->setRenderingHint (osg::StateSet::TRANSPARENT_BIN);
 
@@ -143,7 +144,7 @@ void ShapeVisitor_VisualizerCreator::visualizeSphere (Layout::Shape_AbstractSphe
 
 	osg::ShapeDrawable * sd = new osg::ShapeDrawable;
 	sd->setShape (sphere);
-	sd->setColor (osg::Vec4 (0, 0, 1.0, 0.06));
+	sd->setColor (osg::Vec4 (0.f, 0.f, 1.0f, 0.06f));
 
 	//transparency of sphere
 	sd->getOrCreateStateSet()->setMode (GL_BLEND, osg::StateAttribute::ON);

@@ -1,6 +1,7 @@
 #include "Network/executors/AddMetaNodeExecutor.h"
 #include "Manager/Manager.h"
 #include "Network/Client.h"
+#include "Network/Server.h"
 
 using namespace Network;
 

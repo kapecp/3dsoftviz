@@ -2,7 +2,15 @@
 
 #include "Data/Node.h"
 #include "Data/Edge.h"
-#include "Data/Graph.h"
+
+#include <QLinkedList>
+#include <QVector>
+#include <QSet>
+
+namespace Data
+{
+	class Graph;
+}
 
 class DjikstraAlg
 {
@@ -31,5 +39,6 @@ private:
 	Data::Node * getMinimum(QSet<qlonglong> vertexes);
 	int getDistance(Data::Node * node, Data::Node * target);
 	bool isSettled(Data::Node * vertex);
-	int getShortestDistance(Data::Node * destination);
+
+	qlonglong getShortestDistance(Data::Node * destination);
 };

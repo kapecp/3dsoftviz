@@ -4,6 +4,8 @@
 #include "Importer/ImportInfoHandler.h"
 //-----------------------------------------------------------------------------
 
+#include <QString>
+
 namespace Manager {
 
 /**
@@ -15,12 +17,11 @@ class ImportInfoHandlerImpl
 public:
 
 	/***/
-	virtual ~ImportInfoHandlerImpl (void) {};
+	virtual ~ImportInfoHandlerImpl (void) {}
 
 	/***/
-	virtual void addMessage (
-			const QString &text
-			);
+
+	virtual void addMessage ();
 
 	/**
 	 * \brief Shows message box with error text.

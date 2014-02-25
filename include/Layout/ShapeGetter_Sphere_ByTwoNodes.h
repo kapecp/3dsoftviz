@@ -3,6 +3,7 @@
 
 #include "Layout/ShapeGetter.h"
 
+#include <osg/ref_ptr>
 
 namespace Layout {
 

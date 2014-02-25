@@ -4,16 +4,28 @@
  */
 
 #include "Manager/Manager.h"
+#include "Manager/ImportInfoHandlerImpl.h"
+
+#include "Model/DB.h"
 #include "Model/GraphDAO.h"
-#include "Util/ApplicationConfig.h"
-#include "Math/GraphMetrics.h"
+#include "Model/GraphLayoutDAO.h"
+
 #include "Importer/ImporterContext.h"
 #include "Importer/ImporterFactory.h"
 #include "Importer/StreamImporter.h"
 
-#include "Manager/ImportInfoHandlerImpl.h"
-
 #include "Network/Server.h"
+
+#include "Core/Core.h"
+
+#include "Data/Graph.h"
+#include "Data/GraphLayout.h"
+
+#include "Layout/LayoutThread.h"
+#include "QOSG/MessageWindows.h"
+
+#include <QFile>
+#include <qfileinfo.h>
 
 #include <memory>
 
@@ -249,10 +261,6 @@ Data::Graph* Manager::GraphManager::loadGraphFromDB(qlonglong graphID, qlonglong
 	return this->activeGraph;
 }
 
-void Manager::GraphManager::exportGraph(Data::Graph* graph, QString filepath)
-{
-	// TODO export do GraphML
-}
 
 Data::Graph* Manager::GraphManager::createGraph(QString graphname)
 {
@@ -384,8 +392,9 @@ void Manager::GraphManager::runTestCase( qint32 action )
 		qDebug() << "Types count: " << g->getTypes()->size();
 		qDebug() << "Edges count: " << g->getEdges()->size();
 
-		switch(action) {
-		case 1: //testovanie remove metod
+
+		if(action==1) {
+			//testovanie remove metod
 			qDebug() << "Starting testCase 1";
 
 			qDebug() << "Removing type t1";
@@ -398,8 +407,8 @@ void Manager::GraphManager::runTestCase( qint32 action )
 			qDebug() << "Edges count: " << g->getEdges()->size();
 
 			qDebug() << "Ending testCase 1";
-			break;
-		case 2:
+		}
+		if(action==2){
 			qDebug() << "Starting testCase 2";
 
 			osg::ref_ptr<Data::Node> selectedNode = g->getNodes()->values().at(10);
@@ -412,9 +421,13 @@ void Manager::GraphManager::runTestCase( qint32 action )
 			qDebug() << "Types count: " << g->getTypes()->size();
 			qDebug() << "Edges count: " << g->getEdges()->size();
 
+
 			qDebug() << "Ending testCase 2";
 			break;
+
+
 		}
+
 
 		//cleanup
 		if(Model::GraphDAO::removeGraph(g,this->db->tmpGetConn())) {
@@ -478,6 +491,7 @@ void Manager::GraphManager::runTestCase( qint32 action )
 		osg::ref_ptr<Data::Node> n2 = g->addNode("node2",t1);
 		osg::ref_ptr<Data::Edge> e1 = g->addEdge("edge1",n1,n2,t2,true);
 		g->addEdge("edge2",n1,n2,t2,true);
+
 		g->addEdge("edge3",n1,n2,t3,true);
 		g->addEdge("edge4",n1,n2,t3,true);
 		g->removeNode(n1);
@@ -485,6 +499,7 @@ void Manager::GraphManager::runTestCase( qint32 action )
 		qDebug() << "node should be deleted";
 		e1 = NULL;
 		qDebug() << "edge should be deleted";
+
 		n2 = NULL;
 
 		delete g;
@@ -493,11 +508,13 @@ void Manager::GraphManager::runTestCase( qint32 action )
 		break;
 	}
 
+
 	case 6: {
 		Data::Graph* g = Model::GraphDAO::addGraph("testCase1",this->db->tmpGetConn()); //vytvorenie grafu
 		g->selectLayout(g->addLayout("layout"));
 		Data::Type* t1 = g->addType("type");
 		Data::MetaType* t2 = g->addMetaType("type2");
+
 		osg::ref_ptr<Data::Edge> e1 = g->addEdge("edge1",g->addNode("node1",t1),g->addNode("node2",t1),t2,true);
 		g->removeEdge(e1);
 		e1 = NULL;
@@ -508,6 +525,7 @@ void Manager::GraphManager::runTestCase( qint32 action )
 		qDebug() << "graph deleted";
 		break;
 	}
+
 
 	case 7: {
 		Data::Graph* g = Model::GraphDAO::addGraph("testCase1",this->db->tmpGetConn()); //vytvorenie grafu
@@ -526,5 +544,11 @@ void Manager::GraphManager::runTestCase( qint32 action )
 		qDebug() << "graph deleted";
 		break;
 	}
+
+	default:
+		qDebug() << "Manager:runTestCase not supported action";
+		break;
+
+
 	}
 }

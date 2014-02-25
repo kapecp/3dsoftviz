@@ -21,7 +21,7 @@ public:
 			);
 
 	/***/
-	virtual ~Shape_SphereSurface (void) {};
+	virtual ~Shape_SphereSurface (void) {}
 
 	/**
 	 * [visitor pattern]

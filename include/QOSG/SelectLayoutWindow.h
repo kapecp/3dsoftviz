@@ -5,13 +5,6 @@
 #include <QDir>
 #include <QtGui>
 #include <QMap>
-#include <QtSql>
-#include <QSqlQueryModel>
-
-#include "Data/Graph.h"
-#include "Manager/Manager.h"
-#include "Model/DB.h"
-#include "Model/GraphDAO.h"
 
 class QComboBox;
 class QLabel;

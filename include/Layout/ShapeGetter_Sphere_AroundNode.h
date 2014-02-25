@@ -4,7 +4,7 @@
 #include "Layout/ShapeGetter.h"
 #include "Layout/Shape_Sphere.h"
 //-----------------------------------------------------------------------------
-
+#include <osg/ref_ptr>
 //-----------------------------------------------------------------------------
 
 namespace Layout {
@@ -25,7 +25,7 @@ public:
 
 	enum SphereCenterSource {
 		NODE_CURRENT_POSITION,
-		NODE_TARGET_POSITION,
+		NODE_TARGET_POSITION
 	};
 
 	ShapeGetter_Sphere_AroundNode (

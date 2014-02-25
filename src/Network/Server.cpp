@@ -3,12 +3,18 @@
  */
 
 #include "Network/Server.h"
+
 #include "Network/Helper.h"
+#include "Network/ExecutorFactory.h"
 #include "Data/Graph.h"
 #include "Manager/Manager.h"
+#include "Layout/LayoutThread.h"
+#include "Viewer/CoreGraph.h"
+#include "Viewer/CameraManipulator.h"
 
-#include <QTcpSocket>
-#include <QRegExp>
+#include "QOSG/CoreWindow.h"
+
+#include "Util/ApplicationConfig.h"
 
 using namespace Network;
 
@@ -534,7 +540,7 @@ void Server::sendNewEdge(osg::ref_ptr<Data::Edge> edge, QTcpSocket *client) {
 
 }
 
-void Server::sendRemoveNode(int id, QTcpSocket *client) {
+void Server::sendRemoveNode(qlonglong id, QTcpSocket *client) {
 
 	if (!this -> isListening() || (client == NULL && clients.size() == 0)) {
 		return;
@@ -550,7 +556,7 @@ void Server::sendRemoveNode(int id, QTcpSocket *client) {
 	this->sendBlock(block, client);
 }
 
-void Server::sendRemoveEdge(int id, QTcpSocket *client) {
+void Server::sendRemoveEdge(qlonglong id, QTcpSocket *client) {
 
 	if (!this -> isListening() || (client == NULL && clients.size() == 0)) {
 		return;
@@ -566,15 +572,16 @@ void Server::sendRemoveEdge(int id, QTcpSocket *client) {
 	this->sendBlock(block, client);
 }
 
-void Server::sendNodeColor(int id, float r, float g, float b, float alpha, QTcpSocket * client) {
+
+void Server::sendNodeColor(qlonglong id, float r, float g, float b, float alpha, QTcpSocket * client) {
 	this->sendColor(SetNodeColorExecutor::INSTRUCTION_NUMBER, id, r, g, b, alpha, client);
 }
 
-void Server::sendEdgeColor(int id, float r, float g, float b, float alpha, QTcpSocket * client) {
+void Server::sendEdgeColor(qlonglong id, float r, float g, float b, float alpha, QTcpSocket * client) {
 	this->sendColor(SetEdgeColorExecutor::INSTRUCTION_NUMBER, id, r, g, b, alpha, client);
 }
 
-void Server::sendColor(quint8 instruction, int id, float r, float g, float b, float alpha, QTcpSocket * client) {
+void Server::sendColor(quint8 instruction, qlonglong id, float r, float g, float b, float alpha, QTcpSocket * client) {
 
 	if (!this -> isListening() || (client == NULL && clients.size() == 0)) {
 		return;
@@ -592,7 +599,7 @@ void Server::sendColor(quint8 instruction, int id, float r, float g, float b, fl
 	this->sendBlock(block, client);
 }
 
-void Server::sendNodeLabel(int id, QString label, QTcpSocket *client) {
+void Server::sendNodeLabel(qlonglong id, QString label, QTcpSocket *client) {
 
 	if (!this -> isListening() || (client == NULL && clients.size() == 0)) {
 		return;
@@ -608,7 +615,7 @@ void Server::sendNodeLabel(int id, QString label, QTcpSocket *client) {
 	this->sendBlock(block, client);
 }
 
-void Server::sendFixNodeState(int id, bool state, QTcpSocket *client) {
+void Server::sendFixNodeState(qlonglong id, bool state, QTcpSocket *client) {
 
 	if (!this -> isListening() || (client == NULL && clients.size() == 0)) {
 		return;
@@ -624,7 +631,7 @@ void Server::sendFixNodeState(int id, bool state, QTcpSocket *client) {
 	this->sendBlock(block, client);
 }
 
-void Server::sendMergeNodes(QLinkedList<osg::ref_ptr<Data::Node> > *selectedNodes, osg::Vec3f position, int mergeNodeId, QTcpSocket *client) {
+void Server::sendMergeNodes(QLinkedList<osg::ref_ptr<Data::Node> > *selectedNodes, osg::Vec3f position, qlonglong mergeNodeId, QTcpSocket *client) {
 
 	if (!this -> isListening() || (client == NULL && clients.size() == 0)) {
 		return;

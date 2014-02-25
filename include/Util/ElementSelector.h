@@ -1,9 +1,18 @@
 #ifndef UTIL_ELEMENT_SELECTOR
 #define UTIL_ELEMENT_SELECTOR 1
 
-#include "Viewer/NodeGroup.h"
-#include "Viewer/EdgeGroup.h"
-#include "Viewer/PickHandler.h"
+#include <QMap>
+#include <osg/ref_ptr>
+
+
+namespace Vwr {
+	class PickHandler;
+}
+
+namespace Data {
+	class Node;
+	class Edge;
+}
 
 namespace Util
 {

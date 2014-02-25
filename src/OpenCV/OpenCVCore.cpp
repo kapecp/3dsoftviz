@@ -1,6 +1,8 @@
 #include "OpenCV/OpenCVCore.h"
+#include "Viewer/CameraManipulator.h"
 
 using namespace OpenCV;
+
 
 OpenCV::OpenCVCore * OpenCV::OpenCVCore::mOpenCVCore;
 
@@ -16,6 +18,8 @@ void OpenCV::OpenCVCore::faceRecognition()
 
 	QOpenCV::FaceRecognitionThread *thr = new QOpenCV::FaceRecognitionThread(mFaceRecognizer);
 	QOpenCV::FaceRecognitionWindow *cvw = new QOpenCV::FaceRecognitionWindow(AppCore::Core::getInstance(this->app)->getCoreWindow(),this->app,thr);
+
+
 
 	QObject::connect( thr,SIGNAL(sendEyesCoords(float,float,float)),
 					  AppCore::Core::getInstance(this->app)->getCoreWindow()->getCameraManipulator(),
