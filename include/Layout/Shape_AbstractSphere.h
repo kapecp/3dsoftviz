@@ -18,9 +18,9 @@ class Shape_AbstractSphere : public Shape {
 public:
 
 	Shape_AbstractSphere (
-		const osg::Vec3f center_,
-		const float radius_
-	);
+			const osg::Vec3f center_,
+			const float radius_
+			);
 
 	osg::Vec3f & getCenter ();
 
@@ -30,8 +30,8 @@ public:
 	 * [visitor pattern]
 	 */
 	virtual void accept (
-		ShapeVisitor & visitor
-	) = 0;
+			ShapeVisitor & visitor
+			) = 0;
 
 protected:
 

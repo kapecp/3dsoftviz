@@ -7,11 +7,12 @@
 //	Modification History:
 //
 //	Who(SNo)			Date			Description
-//	
+//
 ///////////////////////////////////////////////////////////
 
-#include "QOSG/CheckBoxList.h" 
+#include "QOSG/CheckBoxList.h"
 #include <QtGui>
+
 
 using namespace QOSG;
 
@@ -26,7 +27,7 @@ public:
 	}
 
 	void paint(QPainter *painter, const QStyleOptionViewItem &option,
-		const QModelIndex &index) const
+			   const QModelIndex &index) const
 	{
 		//Get item data
 		bool value = index.data(Qt::UserRole).toBool();
@@ -45,8 +46,9 @@ public:
 	}
 
 	QWidget *createEditor(QWidget *parent,
-		const QStyleOptionViewItem & option ,
-		const QModelIndex & index ) const
+
+						  const QStyleOptionViewItem /*& option */,
+						  const QModelIndex /*& index*/ ) const
 	{
 		// create check box as our editor
 		QCheckBox *editor = new QCheckBox(parent);
@@ -54,7 +56,7 @@ public:
 	}
 
 	void setEditorData(QWidget *editor,
-		const QModelIndex &index) const
+					   const QModelIndex &index) const
 	{
 		//set editor data
 		QCheckBox *myEditor = static_cast<QCheckBox*>(editor);
@@ -63,7 +65,7 @@ public:
 	}
 
 	void setModelData(QWidget *editor, QAbstractItemModel *model,
-		const QModelIndex &index) const
+					  const QModelIndex &index) const
 	{
 		//get the value from the editor (CheckBox)
 		QCheckBox *myEditor = static_cast<QCheckBox*>(editor);
@@ -77,24 +79,25 @@ public:
 	}
 
 	void updateEditorGeometry(QWidget *editor,
-		const QStyleOptionViewItem &option, const QModelIndex &index ) const
+
+							  const QStyleOptionViewItem &option, const QModelIndex /*&index*/ ) const
 	{
 		editor->setGeometry(option.rect);
 	}
-}; 
+};
 
 
 
 CheckBoxList::CheckBoxList(QWidget *widget )
-:QComboBox(widget),m_DisplayText()
+	:QComboBox(widget),m_DisplayText()
 {
-	// set delegate items view 
+	// set delegate items view
 	view()->setItemDelegate(new CheckBoxListDelegate(this));
 
 	// Enable editing on items view
 	view()->setEditTriggers(QAbstractItemView::CurrentChanged);
 
-	// set "CheckBoxList::eventFilter" as event filter for items view 
+	// set "CheckBoxList::eventFilter" as event filter for items view
 	view()->viewport()->installEventFilter(this);
 
 	// it just cool to have it as defualt ;)
@@ -112,7 +115,7 @@ bool CheckBoxList::eventFilter(QObject *object, QEvent *event)
 {
 	// don't close items view after we release the mouse button
 	// by simple eating MouseButtonRelease in viewport of items view
-	if(event->type() == QEvent::MouseButtonRelease && object==view()->viewport()) 
+	if(event->type() == QEvent::MouseButtonRelease && object==view()->viewport())
 	{
 		return true;
 	}

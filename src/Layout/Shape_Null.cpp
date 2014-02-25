@@ -10,8 +10,8 @@ Shape_Null::Shape_Null (void) {
 }
 
 void Shape_Null::accept (
-	ShapeVisitor & visitor
-) {
+		ShapeVisitor & visitor
+		) {
 	visitor.visit (*this);
 }
 

@@ -14,13 +14,15 @@ class ShapeGetter_Const : public ShapeGetter {
 public:
 
 	ShapeGetter_Const (
-		QSharedPointer<Shape> shape
-	);
+			QSharedPointer<Shape> shape
+			);
 
 	/***/
 	virtual ~ShapeGetter_Const (void) {};
 
 	virtual QSharedPointer<Shape> getShape (void);
+
+	virtual QSet<Data::Node *  > getNodesOfShape();
 
 private:
 

@@ -3,7 +3,8 @@
 //-----------------------------------------------------------------------------
 #include "Layout/ShapeGetter.h"
 //-----------------------------------------------------------------------------
-#include "Data/Node.h"
+
+#include "Layout/RestrictionRemovalHandler_RestrictionNodesRemover.h"
 //-----------------------------------------------------------------------------
 
 namespace Layout {
@@ -17,15 +18,17 @@ class ShapeGetter_Plane_ByThreeNodes : public ShapeGetter {
 public:
 
 	ShapeGetter_Plane_ByThreeNodes (
-		osg::ref_ptr<Data::Node> node1,
-		osg::ref_ptr<Data::Node> node2,
-		osg::ref_ptr<Data::Node> node3
-	);
+			osg::ref_ptr<Data::Node> node1,
+			osg::ref_ptr<Data::Node> node2,
+			osg::ref_ptr<Data::Node> node3
+			);
 
 	/***/
 	virtual ~ShapeGetter_Plane_ByThreeNodes (void) {};
 
 	virtual QSharedPointer<Shape> getShape (void);
+
+	virtual QSet<Data::Node * > getNodesOfShape();
 
 private:
 

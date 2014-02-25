@@ -29,8 +29,8 @@ public:
 	 * Uses info handler in the context to inform about the progress.
 	 */
 	virtual bool import (
-		ImporterContext &context
-	) = 0;
+			ImporterContext &context
+			) = 0;
 
 }; // class
 

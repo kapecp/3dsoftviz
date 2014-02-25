@@ -1,7 +1,11 @@
 #ifndef Importer_GraphOperations_H
 #define Importer_GraphOperations_H
 //-----------------------------------------------------------------------------
-#include "Data/Graph.h"
+namespace Data
+{
+	class Graph;
+	class Type;
+}
 //-----------------------------------------------------------------------------
 
 namespace Importer {
@@ -18,8 +22,8 @@ public:
 	 * \param[in] graph Graph to perform the operations on.
 	 */
 	GraphOperations (
-		Data::Graph &graph
-	);
+			Data::Graph &graph
+			);
 
 	/***/
 	virtual ~GraphOperations (void) {};
@@ -31,9 +35,9 @@ public:
 	 * \return ( = success)
 	 */
 	bool addDefaultTypes (
-		Data::Type *&edgeType,
-		Data::Type *&nodeType
-	);
+			Data::Type *&edgeType,
+			Data::Type *&nodeType
+			);
 
 private:
 

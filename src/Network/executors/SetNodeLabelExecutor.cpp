@@ -1,5 +1,6 @@
 #include "Network/executors/SetNodeLabelExecutor.h"
 #include "Manager/Manager.h"
+#include "Network/Server.h"
 
 using namespace Network;
 
