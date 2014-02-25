@@ -279,7 +279,7 @@ protected:
 		*  double _distance
 		*  \brief current distance from rotation center
 		*/
-	double       _distance;
+	float       _distance;
 
 
 	/**
@@ -305,7 +305,7 @@ protected:
 		*  double maxSpeed
 		*  \brief maximum speed
 		*/
-	double    maxSpeed;
+	float    maxSpeed;
 
 	/**
 		*  double forwardSpeed
