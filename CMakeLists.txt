@@ -131,6 +131,7 @@ SOURCE_GROUP(\\src\\Layout "^.*Layout/.*$")
 SOURCE_GROUP(\\src\\QOSG "^.*QOSG/.*$")
 SOURCE_GROUP(\\src\\OsgQtBrowser "^.*OsgQtBrowser/.*$")
 SOURCE_GROUP(\\src\\Noise "^.*Noise/.*$")
+SOURCE_GROUP(\\src\\Clustering "^.*clustering/.*$")
 
 
 SOURCE_GROUP(\\headers\\Network "^.*Network/.*h$")
@@ -145,6 +146,7 @@ SOURCE_GROUP(\\headers\\Layout "^.*Layout/.*h$")
 SOURCE_GROUP(\\headers\\QOSG "^.*QOSG/.*h$")
 SOURCE_GROUP(\\headers\\Noise "^.*Noise/.*h$")
 SOURCE_GROUP(\\headers\\OsgQtBrowser "^.*OsgQtBrowser/.*h$")
+SOURCE_GROUP(\\headers\\Clustering "^.*clustering/.*h$")
 
 SOURCE_GROUP(\\MOC "^.*moc_.*$")
 

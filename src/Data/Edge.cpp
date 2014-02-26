@@ -150,3 +150,13 @@ osg::ref_ptr<osg::Drawable> Data::Edge::createLabel(QString name)
 	return label;
 }
 
+Data::Node* Data::Edge::getOtherNode(const Data::Node* node) const {
+    if (node == NULL)
+        return NULL;
+    if (node->getId() == srcNode->getId())
+        return dstNode;
+    if (node->getId() == dstNode->getId())
+        return srcNode;
+    qWarning() << "Node not incident to this edge";
+    return NULL;
+}

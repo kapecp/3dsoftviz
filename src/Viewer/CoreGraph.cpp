@@ -4,12 +4,181 @@
 
 #include "Network/Server.h"
 
+#include <math.h>
+
 using namespace Vwr;
 
 /*
 * TODO prerobit - v sucastnosti je scena jeden velky plochy graf. toto sa da optimalizovat do stromovej strukutry. pri vytvarani grafu ho treba prechadzat ako graf
 * a nie vsetko zaradom ako je to teraz
 */
+
+osg::ref_ptr<osg::AutoTransform> getSphere(osg::Vec3 position, float radius, osg::Vec4 color) {
+    osg::ref_ptr<osg::AutoTransform> at = new osg::AutoTransform;
+    at->setPosition(position * 1);
+    at->setAutoRotateMode(osg::AutoTransform::ROTATE_TO_SCREEN);
+
+    osg::ShapeDrawable * shape = new osg::ShapeDrawable;
+    osg::Sphere * sphere = new osg::Sphere;
+    sphere->setRadius(radius);
+    shape->setShape(sphere);
+    shape->setColor(color); //osg::Vec4(0.9, 0.1, 0.3, 0.5));
+    shape->getOrCreateStateSet()->setMode(GL_BLEND, osg::StateAttribute::ON);
+    shape->getStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
+    osg::Geode * geode = new osg::Geode;
+    geode->addDrawable(shape);
+
+    at->addChild(geode);
+    return at;
+}
+
+osg::Vec3f getMidPoint(QSet<Data::Node *> nodes) {
+
+    osg::Vec3 total = osg::Vec3(0,0,0);
+    int count = 0;
+
+    QSet<Data::Node *>::const_iterator i = nodes.constBegin();
+     while (i != nodes.constEnd()) {
+
+         Data::Node* v = *i;
+
+        osg::Vec3f pos = v->getCurrentPosition();
+
+        total += pos;
+
+         ++i; ++count;
+     }
+     total.operator /=(count);
+
+     return total;
+}
+
+float getRadius(QSet<Data::Node *> nodes, osg::Vec3f midPoint) {
+
+    float maxDistance = 0;
+
+    QSet<Data::Node *>::const_iterator i = nodes.constBegin();
+    while (i != nodes.constEnd()) {
+        Data::Node* v = *i;
+        osg::Vec3f pos = v->getCurrentPosition();
+
+        float newDistance = sqrt(pow(pos.x()-midPoint.x(),2) + pow(pos.y()-midPoint.y(),2) + pow(pos.z()-midPoint.z(),2));
+
+        if (newDistance > maxDistance) {
+            maxDistance = newDistance;
+        }
+        ++i;
+    }
+    return maxDistance;
+}
+
+osg::ref_ptr<osg::Group> CoreGraph::test2() {
+/*
+    if (testGroup != NULL) {
+        return testGroup;
+    }*/
+//    qDebug() << "***** INIT test2 ";
+    testGroup = new osg::Group;
+
+    if (graph != NULL) {
+
+//    Manager::GraphManager * manager = Manager::GraphManager::getInstance();
+//    QMap<qlonglong, Data::Type*> * types = manager->getActiveGraph()->getTypes();
+//    Data::Type * type = types->value(1);
+
+    QMap<qlonglong, osg::ref_ptr<Data::Node> > clusters = Clustering::Clusterer::getInstance().getClusters();
+
+    QMap<qlonglong, osg::ref_ptr<Data::Node> >::iterator i;
+//int tempID = 0;
+    for (i = clusters.begin(); i != clusters.end(); i++)
+    {
+        osg::ref_ptr<Data::Node> node = i.value();
+
+        // TODO pripadne prerobit vrece "clusters" nech uchovava len typ Cluster {aj tak v nom nie su Nody}
+        Data::Cluster* cluster = dynamic_cast<Data::Cluster*>(node.get());
+
+
+    //    osg::ref_ptr<Data::Cluster> cluster = node->getCluster();
+
+     //   osg::ref_ptr<Data::Cluster> cluster = new Data::Cluster(tempID++, "name", type, graph->getNodeScale(), graph, osg::Vec3f(0,0,0));
+
+    //    qDebug() << "***** test2 cluster " << cluster->getId() << " count: " << cluster->getClusteredNodesCount();
+
+    //    testGroup->addChild(getSphere(osg::Vec3( cluster->getId() * 10, cluster->getId() * 10, cluster->getId() * 10)));
+
+        osg::Vec3f midPoint = getMidPoint(cluster->getALLClusteredNodes());
+
+        testGroup->addChild(getSphere(midPoint, getRadius(cluster->getALLClusteredNodes(), midPoint), cluster->getColor()));
+    }
+
+    }
+    return testGroup;
+}
+
+osg::Geode* test() {
+    //cout << " test ...";
+    osg::Geode* pyramidGeode = new osg::Geode();
+    osg::Geometry* pyramidGeometry = new osg::Geometry();
+    pyramidGeode->addDrawable(pyramidGeometry);
+
+    osg::Vec3Array* pyramidVertices = new osg::Vec3Array;
+    pyramidVertices->push_back( osg::Vec3( 0, 0, 0) ); // front left
+    pyramidVertices->push_back( osg::Vec3(100, 0, 0) ); // front right
+    pyramidVertices->push_back( osg::Vec3(100,100, 0) ); // back right
+    pyramidVertices->push_back( osg::Vec3( 0,100, 0) ); // back left
+    pyramidVertices->push_back( osg::Vec3( 50, 50,100) ); // peak
+
+    pyramidGeometry->setVertexArray( pyramidVertices );
+
+    osg::DrawElementsUInt* pyramidBase =
+    new osg::DrawElementsUInt(osg::PrimitiveSet::QUADS, 0);
+    pyramidBase->push_back(3);
+    pyramidBase->push_back(2);
+    pyramidBase->push_back(1);
+    pyramidBase->push_back(0);
+    pyramidGeometry->addPrimitiveSet(pyramidBase);
+
+    osg::DrawElementsUInt* pyramidFaceOne =
+    new osg::DrawElementsUInt(osg::PrimitiveSet::TRIANGLES, 0);
+    pyramidFaceOne->push_back(0);
+    pyramidFaceOne->push_back(1);
+    pyramidFaceOne->push_back(4);
+    pyramidGeometry->addPrimitiveSet(pyramidFaceOne);
+
+    osg::DrawElementsUInt* pyramidFaceTwo =
+    new osg::DrawElementsUInt(osg::PrimitiveSet::TRIANGLES, 0);
+    pyramidFaceTwo->push_back(1);
+    pyramidFaceTwo->push_back(2);
+    pyramidFaceTwo->push_back(4);
+    pyramidGeometry->addPrimitiveSet(pyramidFaceTwo);
+
+    osg::DrawElementsUInt* pyramidFaceThree =
+    new osg::DrawElementsUInt(osg::PrimitiveSet::TRIANGLES, 0);
+    pyramidFaceThree->push_back(2);
+    pyramidFaceThree->push_back(3);
+    pyramidFaceThree->push_back(4);
+    pyramidGeometry->addPrimitiveSet(pyramidFaceThree);
+
+    osg::DrawElementsUInt* pyramidFaceFour =
+    new osg::DrawElementsUInt(osg::PrimitiveSet::TRIANGLES, 0);
+    pyramidFaceFour->push_back(3);
+    pyramidFaceFour->push_back(0);
+    pyramidFaceFour->push_back(4);
+    pyramidGeometry->addPrimitiveSet(pyramidFaceFour);
+
+    osg::Vec4Array* colors = new osg::Vec4Array;
+    colors->push_back(osg::Vec4(1.0f, 0.0f, 0.0f, 1.0f) ); //index 0 red
+    colors->push_back(osg::Vec4(0.0f, 1.0f, 0.0f, 1.0f) ); //index 1 green
+    colors->push_back(osg::Vec4(0.0f, 0.0f, 1.0f, 1.0f) ); //index 2 blue
+    colors->push_back(osg::Vec4(1.0f, 1.0f, 1.0f, 1.0f) ); //index 3 white
+    colors->push_back(osg::Vec4(1.0f, 0.0f, 0.0f, 1.0f) ); //index 4 red
+
+    pyramidGeometry->setColorArray(colors);
+    pyramidGeometry->setColorBinding(osg::Geometry::BIND_PER_VERTEX);
+
+    return pyramidGeode;
+}
+
 
 
 Vwr::CoreGraph::CoreGraph(Data::Graph * graph, osg::ref_ptr<osg::Camera> camera)
@@ -28,8 +197,8 @@ Vwr::CoreGraph::CoreGraph(Data::Graph * graph, osg::ref_ptr<osg::Camera> camera)
 
 	appConf = Util::ApplicationConfig::get();
 
-	root = new osg::Group();
-	root->addChild(createSkyBox());
+    root = new osg::Group();
+    root->addChild(createSkyBox());
         backgroundPosition = 0;
 
 	reload(graph);
@@ -39,11 +208,11 @@ void CoreGraph::reload(Data::Graph * graph)
 {
 	cleanUp();
 
-	int currentPos = 1;
+    int currentPos = 1;
 
 	if (root->getNumChildren() > 1)
 	{
-		for (int x = 7; x > 0; x--)
+        for (int x = 7; x > 0; x--)
 			root->removeChildren(x,1);
 	}
 
@@ -99,6 +268,9 @@ void CoreGraph::reload(Data::Graph * graph)
 	if (this->graph != NULL) {
 		graph->getRestrictionsManager ().setObserver (restrictionVisualizationsGroup);
 	}
+
+    root->addChild(test2());
+    currentPos++;
 
 	customNodesPosition = currentPos;
 
@@ -212,9 +384,9 @@ osg::ref_ptr<osg::Group> CoreGraph::initCustomNodes()
  */
 void CoreGraph::update() 
 {
-	root->removeChildren(customNodesPosition,1);
+    root->removeChildren(customNodesPosition,1);
 
-	synchronize();
+    synchronize();
 
 	float graphScale = appConf->getValue("Viewer.Display.NodeDistanceScale").toFloat();
 	
@@ -232,7 +404,12 @@ void CoreGraph::update()
 
 	edgesGroup->updateEdgeCoords();	
 	qmetaEdgesGroup->updateEdgeCoords();
-	root->addChild(initCustomNodes());
+
+    // TODO ... malo by byt odkomentovane.. zobrazuje to obdlzniky na select viac uzlov
+    // ale ked som zakomentoval, tak funguje zobrazovanie zhlukov nizsie
+//	root->addChild(initCustomNodes());
+
+    root->addChild(test2());
 
         //posli layout ostatnym klientom (ak nejaki su)
         Network::Server *server = Network::Server::getInstance();

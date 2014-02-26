@@ -29,7 +29,7 @@ Data::Node::Node(qlonglong id, QString name, Data::Type* type, float scaling, Da
 	this->setBall(NULL);
 	this->setParentBall(NULL);
 	this->hasNestedNodes = false;
-
+    this->cluster = NULL;
 
 
 	settings = new QMap<QString, QString>();
@@ -335,4 +335,34 @@ osg::Vec3f Data::Node::getCurrentPosition(bool calculateNew, float interpolation
 	}
 
 	return osg::Vec3(this->currentPosition); 
+}
+
+QSet<Data::Node*> Data::Node::getIncidentNodes() const {
+    QSet<Node*> nodes;
+
+    QMap<qlonglong, osg::ref_ptr<Data::Edge> >::iterator i;
+    for (i = edges->begin(); i != edges->end(); i++)
+    {
+        osg::ref_ptr<Data::Edge> edge = i.value();
+        nodes.insert(edge->getOtherNode(this));
+    }
+    return nodes;
+/*
+    if (ignoreClusters) {
+        return nodes;
+    } else {
+        QSet<Node*> visibleNodes;
+        QSetIterator<Node*> nodeIt(nodes);
+        while (nodeIt.hasNext()) {
+            Node* node = nodeIt.next();
+            Node* cluster = node->getTopCluster();
+            if (cluster != NULL && cluster != this) {
+                visibleNodes.insert(cluster);
+            } else {
+                visibleNodes.insert(node);
+            }
+        }
+        return visibleNodes;
+    }
+    */
 }

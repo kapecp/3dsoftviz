@@ -26,6 +26,7 @@ CoreWindow::CoreWindow(QWidget *parent, Vwr::CoreGraph* coreGraph, QApplication*
         createLeftToolBar();
         createRightToolBar();
         createCollaborationToolBar();
+	createClusterToolBar();
 	
 	viewerWidget = new ViewerQT(this, 0, 0, 0, coreGraph);  
 	viewerWidget->setSceneData(coreGraph->getScene());
@@ -245,6 +246,10 @@ void CoreWindow::createActions()
         sl_avatarScale->setValue(1);
         sl_avatarScale->setFocusPolicy(Qt::NoFocus);
         connect(sl_avatarScale,SIGNAL(valueChanged(int)),this,SLOT(setAvatarScale(int)));
+
+	b_cluster_test = new QPushButton();
+    b_cluster_test->setText("Cluster graph");
+    connect(b_cluster_test, SIGNAL(clicked()), this, SLOT(cluster_test()));
 }
 
 void CoreWindow::createMenus()
@@ -380,6 +385,16 @@ void CoreWindow::createRightToolBar() {
     toolBar->addSeparator();
     /*toolBar->addWidget(le_message);
     toolBar->addWidget(b_send_message);*/
+
+    addToolBar(Qt::TopToolBarArea,toolBar);
+    toolBar->setMovable(true);
+}
+
+void CoreWindow::createClusterToolBar() {
+    toolBar = new QToolBar("Clustering",this);
+
+    toolBar->addWidget(b_cluster_test);
+    toolBar->addSeparator();
 
     addToolBar(Qt::TopToolBarArea,toolBar);
     toolBar->setMovable(true);
@@ -1215,6 +1230,17 @@ void CoreWindow::start_client()
     }
 }
 
+void CoreWindow::cluster_test()
+{
+    qDebug() << "***** Cluster button clicked";
+    Data::Graph * currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
+
+    //Clustering::Clusterer* clusterer = new Clustering::Clusterer();
+
+    Clustering::Clusterer::getInstance().cluster(currentGraph);
+
+    //AppCore::Core::getInstance(NULL)->cg->reload(currentGraph);
+}
 
 void CoreWindow::send_message()
 {

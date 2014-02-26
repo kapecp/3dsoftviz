@@ -31,6 +31,7 @@ namespace Data
 	class Type;
 	class Graph;
 	class GraphLayout;
+    class Cluster;
 
 	/**
 	*  \class Node
@@ -38,7 +39,7 @@ namespace Data
 	*  \author Aurel Paulovic, Michal Paprcka
 	*  \date 29. 4. 2010
 	*/
-	class Node : public osg::Geode
+    class Node : public osg::Geode
 	{
 	public:
 
@@ -257,6 +258,25 @@ namespace Data
 		*  \return bool true, if the Node is fixed
 		*/
 		bool isFixed() const { return fixed; }
+
+        /**
+        *  \fn inline public constant cluster
+        *  \brief Returns Cluster which contains this Node
+        *  \return Cluster which contains this Node
+        */
+        Cluster* getCluster() const { return cluster; }
+
+        /**
+        *  \fn inline public  setCluster(Cluster* cluster)
+        *  \brief Sets cluster which contains this Node
+        *  \param     cluster     cluster containing this node
+        */
+        void setCluster(Cluster* cluster)
+        {
+            this->cluster = cluster;
+        }
+
+        virtual QSet<Node*> getIncidentNodes() const;
 		
 		/**
 		*  \fn inline public  setSelected(bool selected) 
@@ -563,6 +583,12 @@ namespace Data
 		*  \brief node fixed state
 		*/
 		bool fixed;
+
+        /**
+        *  Cluster* cluster
+        *  \brief Cluster containing this node
+        */
+        Cluster* cluster;
 
 		bool hasNestedNodes;
 

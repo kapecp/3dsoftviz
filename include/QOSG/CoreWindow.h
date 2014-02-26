@@ -33,6 +33,8 @@
 #include "Layout/ShapeGetter.h"
 #include "Layout/RestrictionRemovalHandler.h"
 
+#include "Clustering/Clusterer.h"
+
 namespace QOSG
 {
 	/**
@@ -238,6 +240,8 @@ namespace QOSG
                                 void toggleAttention();
 
                                 void setAvatarScale(int scale);
+
+				void cluster_test();
 	private:
 
 		/**
@@ -493,6 +497,12 @@ namespace QOSG
                 */
                 void createCollaborationToolBar();
 
+        /**
+        *  \fn private  createClusterToolBar
+        *  \brief Create toolBar with clustering actions
+        */
+        void createClusterToolBar();
+
 		/**
 		*  \fn private  createHorizontalFrame
 		*  \brief Crate frame with horizontal label
@@ -529,6 +539,8 @@ namespace QOSG
                 QSlider * sl_avatarScale;
 
                 Network::Client * client;
+
+		QPushButton * b_cluster_test;
 
 	public:
 

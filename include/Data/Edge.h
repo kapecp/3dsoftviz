@@ -22,7 +22,7 @@
 
 namespace Data
 {
-	class Node;
+    class Node;
 	class Graph;
 	class Type;
 
@@ -322,6 +322,8 @@ namespace Data
 		*  \param [in, out]  val QMap<QString,QString> *    new settings
 		*/
 		void setSettings(QMap<QString, QString> * val) { settings = val; }
+
+        Node* getOtherNode(const Node* node) const;
 
 	private:
 		/**

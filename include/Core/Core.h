@@ -68,6 +68,13 @@ namespace AppCore
          * \brief Thread of Layout algorithm.
          */
         Layout::LayoutThread * thr;
+
+        /**
+        *  Vwr::CoreGraph * cg
+        *  \brief instance of CoreGraph
+        */
+        Vwr::CoreGraph * cg;
+
     private:
         /**
         *  QOSG::CoreWindow * cw
@@ -87,13 +94,6 @@ namespace AppCore
         *  \brief instance of layout algorithm.
         */
         Layout::FRAlgorithm * alg;
-
-
-        /**
-        *  Vwr::CoreGraph * cg
-        *  \brief instance of CoreGraph
-        */
-        Vwr::CoreGraph * cg;
 
         /**
         *  Core * core;

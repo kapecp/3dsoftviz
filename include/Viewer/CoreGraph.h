@@ -32,6 +32,7 @@
 #include "Util/ApplicationConfig.h"
 #include "Data/Edge.h"
 #include "Data/Node.h"
+#include "Data/Cluster.h"
 #include "Data/Graph.h"
 
 namespace Vwr
@@ -274,6 +275,10 @@ namespace Vwr
 		*/
 		osg::ref_ptr<osg::Group> root;
 
+        osg::ref_ptr<osg::Group> testGroup;
+
+        osg::ref_ptr<osg::Group> test2();
+
 
 		/**
 		*  bool nodesFreezed
@@ -350,6 +355,7 @@ namespace Vwr
 		int customNodesPosition;
 
                 int prevTime;
+
 	};
 }
 
