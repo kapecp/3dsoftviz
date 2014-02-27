@@ -48,7 +48,7 @@ namespace Vwr
 	 * 7.12.2009
 	 */
 class CoreGraph
-{
+	{
 public:
 	/*!
 		 *
@@ -283,6 +283,12 @@ private:
 	osg::ref_ptr<osg::Group> root;
 
 	/**
+		*  osg::ref_ptr graphGroup
+		*  \brief graphGroup node
+		*/
+	osg::ref_ptr<osg::Group> graphGroup;
+
+	/**
 		*  bool nodesFreezed
 		*  \brief true, if nodes are freezed
 		*/
@@ -359,7 +365,7 @@ private:
 	int customNodesPosition;
 
 	int prevTime;
-};
+	};
 }
 
 #endif

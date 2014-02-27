@@ -29,7 +29,10 @@ Vwr::CoreGraph::CoreGraph(Data::Graph * graph, osg::ref_ptr<osg::Camera> camera)
 	appConf = Util::ApplicationConfig::get();
 
 	root = new osg::Group();
+	graphGroup = new osg::Group();
+
 	root->addChild(createSkyBox());
+	root->addChild(graphGroup);
 	backgroundPosition = 0;
 
 	reload(graph);
@@ -39,12 +42,11 @@ void CoreGraph::reload(Data::Graph * graph)
 {
 	cleanUp();
 
-	int currentPos = 1;
+	int currentPos = 0;
 
-	if (root->getNumChildren() > 1)
+	while ( graphGroup->getNumChildren() > 0)
 	{
-		for (int x = 8; x > 0; x--)
-			root->removeChildren(x,1);
+		graphGroup->removeChildren(0, 1);
 	}
 
 	this->graph = graph;
@@ -73,32 +75,32 @@ void CoreGraph::reload(Data::Graph * graph)
 	}
 
 	this->nodesGroup = new Vwr::NodeGroup(in_nodes);
-	root->addChild(nodesGroup->getGroup());
+	graphGroup->addChild(nodesGroup->getGroup());
 	nodesPosition = currentPos++;
 
 	this->edgesGroup = new Vwr::EdgeGroup(in_edges, appConf->getValue("Viewer.Textures.EdgeScale").toFloat());
 	//this->edgesGroup = new Vwr::EdgeGroup(in_edges, 10);
-	root->addChild(edgesGroup->getGroup());
+	graphGroup->addChild(edgesGroup->getGroup());
 	edgesPosition = currentPos++;
 
 	this->qmetaNodesGroup = new Vwr::NodeGroup(qmetaNodes);
-	root->addChild(qmetaNodesGroup->getGroup());
+	graphGroup->addChild(qmetaNodesGroup->getGroup());
 	qmetaNodesPosition = currentPos++;
 
 	this->qmetaEdgesGroup = new Vwr::EdgeGroup(qmetaEdges, appConf->getValue("Viewer.Textures.EdgeScale").toFloat());
 	//this->qmetaEdgesGroup = new Vwr::EdgeGroup(qmetaEdges, 10);
-	root->addChild(qmetaEdgesGroup->getGroup());
+	graphGroup->addChild(qmetaEdgesGroup->getGroup());
 	qmetaEdgesPosition = currentPos++;
 
-	root->addChild(initEdgeLabels());
+	graphGroup->addChild(initEdgeLabels());
 	labelsPosition = currentPos++;
 
 	this->restrictionVisualizationsGroup = QSharedPointer<Vwr::RestrictionVisualizationsGroup> (new Vwr::RestrictionVisualizationsGroup);
-	root->addChild (restrictionVisualizationsGroup->getGroup ());
+	graphGroup->addChild (restrictionVisualizationsGroup->getGroup ());
 	restrictionVisualizationsPosition = currentPos++;
 
 	this->restrictionManipulatorsGroup = QSharedPointer<Vwr::RestrictionManipulatorsGroup> (new Vwr::RestrictionManipulatorsGroup);
-	root->addChild (restrictionManipulatorsGroup->getGroup ());
+	graphGroup->addChild (restrictionManipulatorsGroup->getGroup ());
 	restrictionManipulatorsPosition = currentPos++;
 
 	if (this->graph != NULL) {
@@ -217,7 +219,7 @@ osg::ref_ptr<osg::Group> CoreGraph::initCustomNodes()
  */
 void CoreGraph::update()
 {
-	root->removeChildren(customNodesPosition,1);
+	graphGroup->removeChildren(customNodesPosition,1);
 
 	synchronize();
 
@@ -235,7 +237,7 @@ void CoreGraph::update()
 
 	edgesGroup->updateEdgeCoords();
 	qmetaEdgesGroup->updateEdgeCoords();
-	root->addChild(initCustomNodes());
+	graphGroup->addChild(initCustomNodes());
 
 	//posli layout ostatnym klientom (ak nejaki su)
 	Network::Server *server = Network::Server::getInstance();
@@ -256,7 +258,7 @@ void CoreGraph::synchronize()
 
 void CoreGraph::setEdgeLabelsVisible(bool visible)
 {
-	root->getChild(labelsPosition)->setNodeMask(visible);
+	graphGroup->getChild(labelsPosition)->setNodeMask(visible);
 }
 
 void CoreGraph::setNodeLabelsVisible(bool visible)
@@ -282,7 +284,7 @@ void CoreGraph::reloadConfig()
 		++i;
 	}
 
-	root->setChild(labelsPosition, initEdgeLabels());
+	graphGroup->setChild(labelsPosition, initEdgeLabels());
 	Vwr::TextureWrapper::reloadTextures();
 }
 
