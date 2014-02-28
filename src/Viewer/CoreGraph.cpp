@@ -29,10 +29,14 @@ Vwr::CoreGraph::CoreGraph(Data::Graph * graph, osg::ref_ptr<osg::Camera> camera)
 	appConf = Util::ApplicationConfig::get();
 
 	root = new osg::Group();
+	graphRotTransf = new osg::MatrixTransform();
 	graphGroup = new osg::Group();
 
 	root->addChild(createSkyBox());
-	root->addChild(graphGroup);
+
+	root->addChild(graphRotTransf);
+	graphRotTransf->addChild(graphGroup);
+
 	backgroundPosition = 0;
 
 	reload(graph);
@@ -291,4 +295,15 @@ void CoreGraph::reloadConfig()
 CoreGraph::~CoreGraph(void)
 {
 	cleanUp();
+}
+
+void CoreGraph::updateArucoGraphRotation( QMatrix4x4 mat )
+{
+	osg::Matrixd graphTransfMat;
+	graphTransfMat.set(mat.data());
+	graphTransfMat(3,0) = 0.0;
+	graphTransfMat(3,1) = 0.0;
+	graphTransfMat(3,2) = 0.0;
+
+	graphRotTransf->setMatrix(graphTransfMat);
 }
