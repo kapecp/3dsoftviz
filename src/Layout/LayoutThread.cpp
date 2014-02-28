@@ -1,5 +1,8 @@
 #include "Layout/LayoutThread.h"
 
+#include "Layout/FRAlgorithm.h"
+#include "Util/ApplicationConfig.h"
+
 using namespace Layout;
 
 LayoutThread::LayoutThread(Layout::FRAlgorithm* alg)

@@ -3,6 +3,8 @@
 #include "Layout/ShapeVisitor.h"
 #include "QOSG/ViewerQT.h"
 
+#include "Viewer/CameraManipulator.h"
+
 namespace Layout {
 
 Shape_ConeSurface::Shape_ConeSurface(const QOSG::ViewerQT *viewerWidget, const QSlider &baseRadiusSlider) :
@@ -38,7 +40,8 @@ osg::Vec3f Shape_ConeSurface::spike() const
 
 float Shape_ConeSurface::baseRadius() const
 {
-	return (mBaseRadiusSlider.value() / 100.0) * 250;
+
+	return ((float)mBaseRadiusSlider.value() / 100.0f) * 250.f;
 }
 
 }

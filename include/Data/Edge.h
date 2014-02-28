@@ -5,19 +5,18 @@
 #ifndef DATA_EDGE_DEF
 #define DATA_EDGE_DEF 1
 
-#include <string>
-#include "Data/Type.h"
 #include "Data/Node.h"
+
 #include <QString>
-#include <QTextStream>
 #include <QtCore/QMap>
 
-#include <osg/PrimitiveSet>
 #include <osg/Camera>
-#include <osgText/Text>
 #include <osgText/FadeText>
 
-#include "Util/ApplicationConfig.h"
+namespace Util
+{
+class ApplicationConfig;
+}
 
 namespace Data
 {
@@ -189,11 +188,9 @@ public:
 		* \brief  Returns human-readable string representation of the Edge
 		* \return QString
 		*/
-	QString toString() const {
-		QString str;
-		QTextStream(&str) << "edge id:" << id << " name:" << name;
-		return str;
-	}
+
+	QString toString() const ;
+
 
 
 	/**
@@ -208,7 +205,8 @@ public:
 		*  \brief Returns length of the Edge
 		*  \return float length of the Edge
 		*/
-	float getLength() const { return length; }
+
+	double getLength() const { return length; }
 
 
 	/**
@@ -366,13 +364,24 @@ public:
 				*  \fn public   setInvisible()
 				*/
 	bool setInvisible(bool invisible){
-		if (invisible) setScale(0);
-		else setScale(1);
+
+		if (invisible){
+			setScale(0);
+			isInvisible=true;
+		}
+		else {
+			setScale(1);
+			isInvisible=false;
+		}
 		return true;
 	}
 
+	bool getIsInvisible(){return isInvisible;}
+
 
 private:
+
+	bool isInvisible;
 	/**
 		*  Data::Graph * graph
 		*  \brief Graph to which the Edge belongs
@@ -427,7 +436,8 @@ private:
 		*  float length
 		*  \brief Length of the Edge
 		*/
-	float length;
+
+	double length;
 
 
 	/**

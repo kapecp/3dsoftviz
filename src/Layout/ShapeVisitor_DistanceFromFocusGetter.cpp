@@ -14,7 +14,7 @@ float ShapeVisitor_DistanceFromFocusGetter::distanceFromFocus()
 	return mDistanceFromFocus;
 }
 
-void ShapeVisitor_DistanceFromFocusGetter::visit(Shape_Null &shape)
+void ShapeVisitor_DistanceFromFocusGetter::visit(Shape_Null /*&shape*/)
 {
 	mDistanceFromFocus = -1;
 }

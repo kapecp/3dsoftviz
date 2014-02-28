@@ -1,13 +1,13 @@
 #include "Manager/ImportInfoHandlerImpl.h"
 //-----------------------------------------------------------------------------
 #include "Core/Core.h"
+#include "QOSG/MessageWindows.h"
 
 namespace Manager {
 
 //chybove hlasky
-void ImportInfoHandlerImpl::addMessage (
-		const QString &text
-		) {
+
+void ImportInfoHandlerImpl::addMessage () {
 	throw "not implemented";
 }
 

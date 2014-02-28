@@ -17,13 +17,12 @@
 #include <osg/Image>
 #include <osg/observer_ptr>
 
-#include <QtWebKit/QWebSettings>
-#include <QtWebKit/QtWebKit>
 #include <QtGui/QGraphicsScene>
 #include <QtGui/QGraphicsView>
 #include <QtGui/QApplication>
 #include <QtGui/QPainter>
-#include <QtGui/QtEvents>
+#include <QPointer>
+
 
 extern QCoreApplication* getOrCreateQApplication();
 
@@ -137,7 +136,8 @@ protected:
 		*  unsigned int _previousButtonMask
 		*  \brief
 		*/
-	unsigned int                    _previousButtonMask;
+
+	int                    _previousButtonMask;
 
 	/**
 		*  int _previousMouseX

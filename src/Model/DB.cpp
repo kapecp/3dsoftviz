@@ -4,6 +4,10 @@
  */
 #include "Model/DB.h"
 
+#include "Util/ApplicationConfig.h"
+
+#include <QDebug>
+
 Model::DB::DB()
 {
 	//konstruktor

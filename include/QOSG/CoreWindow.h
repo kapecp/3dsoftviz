@@ -18,28 +18,39 @@
 #include <QAction>
 #include <QMenu>
 #include <QMenuBar>
-#include <QStatusBar>
-#include <QTextEdit>
 #include <QtGui>
 #include <QLineEdit>
-
-#include "Network/Server.h"
-#include "Network/Client.h"
-
-#include "QOSG/OptionsWindow.h"
-#include "QOSG/LoadGraphWindow.h"
-#include "Viewer/CoreGraph.h"
-#include "QOSG/CheckBoxList.h"
-#include "QOSG/ViewerQT.h"
-#include "Layout/LayoutThread.h"
-#include "Manager/Manager.h"
-#include "QOSG/qtcolorpicker.h"
 
 #include "Layout/ShapeGetter.h"
 #include "Layout/RestrictionRemovalHandler.h"
 #include "Layout/RestrictionRemovalHandler_RestrictionNodesRemover.h"
 #include "Layout/ShapeGetter_Circle_ByThreeNodes.h"
 #include "Layout/ShapeGetter_SpherePlane_ByThreeNodes.h"
+//#include "Viewer/CameraManipulator.h"
+
+
+namespace Layout
+{
+	class LayoutThread;
+}
+
+namespace Vwr
+{
+	class CoreGraph;
+	class CameraManipulator;
+}
+
+namespace QOSG
+{
+
+	class ViewerQT;
+}
+
+namespace Network
+{
+	class Client;
+	//class Network;
+}
 
 namespace QOSG
 {
@@ -268,7 +279,6 @@ public slots:
 				*/
 	bool add_EdgeClick();
 
-
 	/**
 				*  \fn public  add_NodeClick
 				*  \brief create new Node in GUI
@@ -285,6 +295,7 @@ public slots:
 	void start_client();
 	void send_message();
 	void create_facewindow();
+
 
 	void toggleSpyWatch();
 	void toggleAttention();
@@ -491,9 +502,6 @@ private:
 		*/
 	QPushButton * add_Edge;
 
-
-
-
 	/**
 		*  QAction * create new Node
 		*  \brief Action for adding Node
@@ -507,6 +515,7 @@ private:
 	QPushButton * remove_all;
 
 	QPushButton * b_start_face;
+
 
 	/**
 		*  QAction * load
@@ -661,7 +670,8 @@ public:
 		*/
 	Layout::LayoutThread * getLayoutThread() const { return layout; }
 	bool playing() { return isPlaying; }
-	Vwr::CameraManipulator * getCameraManipulator() { return viewerWidget->getCameraManipulator(); }
+	Vwr::CameraManipulator * getCameraManipulator();
+
 
 	/**
 		*  \fn inline public  setLayoutThread

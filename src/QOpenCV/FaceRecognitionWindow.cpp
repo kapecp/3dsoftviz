@@ -1,4 +1,5 @@
 #include "QOpenCV/FaceRecognitionWindow.h"
+#include <QVBoxLayout>
 
 using namespace QOpenCV;
 
@@ -85,7 +86,7 @@ void QOpenCV::FaceRecognitionWindow::setLabel(cv::Mat image)
 	}
 
 	cv::cvtColor(image,image,CV_BGR2RGB);
-	QImage qimage((uchar*) image.data, image.cols, image.rows, image.step, QImage::Format_RGB888);
+	QImage qimage((uchar*) image.data, image.cols, image.rows,(int) image.step, QImage::Format_RGB888);
 
 	image.~Mat();
 	this->windowLabel->setPixmap(QPixmap::fromImage(qimage));

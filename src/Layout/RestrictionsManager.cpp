@@ -3,6 +3,8 @@
 #include "Data/Node.h"
 #include "Layout/Shape_Null.h"
 
+#include <qlinkedlist.h>
+
 namespace Layout {
 
 void RestrictionsManager::setRestrictions(QSet<Data::Node *> &nodes, const QSharedPointer<ShapeGetter> &shapeGetter)

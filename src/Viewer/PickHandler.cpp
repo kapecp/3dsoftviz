@@ -1,13 +1,26 @@
 #include "Viewer/PickHandler.h"
+
 #include "Viewer/DataHelper.h"
+#include "Viewer/CoreGraph.h"
+#include "Viewer/CameraManipulator.h"
+
 #include "Util/ElementSelector.h"
-#include <osg/MatrixTransform>
-#include <osg/Projection>
 
 #include "Manager/Manager.h"
-#include "Math/CameraMath.h"
 #include "Network/Client.h"
 #include "Network/Server.h"
+
+#include "Core/Core.h"
+#include "Layout/LayoutThread.h"
+
+#include "Util/ApplicationConfig.h"
+
+#include <osg/MatrixTransform>
+#include <osg/Projection>
+#include <osg/BlendFunc>
+
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wswitch-enum"
 
 using namespace Vwr;
 
@@ -140,7 +153,7 @@ bool PickHandler::handleDoubleclick( const osgGA::GUIEventAdapter& ea, osgGA::GU
 	return false;
 }
 
-bool PickHandler::handleKeyUp( const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& aa )
+bool PickHandler::handleKeyUp( const osgGA::GUIEventAdapter& ea, GUIActionAdapter& aa  )
 {
 	if(ea.getKey() == osgGA::GUIEventAdapter::KEY_Control_R || ea.getKey() == osgGA::GUIEventAdapter::KEY_Control_L)
 	{
@@ -158,7 +171,7 @@ bool PickHandler::handleKeyUp( const osgGA::GUIEventAdapter& ea, osgGA::GUIActio
 	return false;
 }
 
-bool PickHandler::handleKeyDown( const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& aa )
+bool PickHandler::handleKeyDown( const osgGA::GUIEventAdapter& ea, GUIActionAdapter& aa)
 {
 	if(ea.getKey() == osgGA::GUIEventAdapter::KEY_Control_R || ea.getKey() == osgGA::GUIEventAdapter::KEY_Control_L)
 	{
@@ -736,3 +749,5 @@ osg::ref_ptr<Data::Node> PickHandler::getPickedNodeWithMaxEdgeCount(){
 	}
 	return rootNode;
 }
+
+#pragma GCC diagnostic pop

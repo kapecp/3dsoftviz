@@ -1,15 +1,22 @@
 /*!
- * Node.cpp
+ * ::Node.cpp
  * Projekt 3DVisual
  *
  * TODO - reload configu sa da napisat aj efektivnejsie. Pri testoch na hranach priniesol vsak podobny prepis len male zvysenie vykonu. Teraz na to
  * nemam cas, takze sa raz k tomu vratim 8)
  */
-#include "Data/Node.h"
-#include "Util/ApplicationConfig.h"
-#include "Viewer/TextureWrapper.h"
 
+#include "Data/Node.h"
+
+#include "Data/Graph.h"
+#include "Util/ApplicationConfig.h"
+
+#include <osg/Geometry>
+#include <osg/Depth>
+#include <osg/CullFace>
 #include <osgText/FadeText>
+
+#include <QTextStream>
 
 typedef osg::TemplateIndexArray<unsigned int, osg::Array::UIntArrayType,4,1> ColorIndexArray;
 
@@ -50,6 +57,7 @@ Data::Node::Node(qlonglong id, QString name, Data::Type* type, float scaling, Da
 		if (++cnt % 3 == 0)
 			labelText = labelText.replace(pos, 1, "\n");
 	}
+
 	// MERGE BEGIN
 	// toto bolo u pleska/zelera
 	//	this->addDrawable(createNode(this->scale, Node::createStateSet(this->type)));
@@ -63,6 +71,7 @@ Data::Node::Node(qlonglong id, QString name, Data::Type* type, float scaling, Da
 	this->focusedSquare = createNode(this->scale * 16, Node::createStateSet(this->type));
 	this->addDrawable(square);
 	this->label = createLabel(this->type->getScale(), labelText);
+
 	// MERGE END
 	this->force = osg::Vec3f();
 	this->velocity = osg::Vec3f(0,0,0);
@@ -237,7 +246,7 @@ osg::ref_ptr<osg::Drawable> Data::Node::createLabel(const float & scale, QString
 {
 	//vytvorenie popisu uzla
 	osg::ref_ptr<osgText::FadeText> label = new osgText::FadeText;
-	label->setFadeSpeed(0.03);
+	label->setFadeSpeed(0.03f);
 
 	QString fontPath = Util::ApplicationConfig::get()->getValue("Viewer.Labels.Font");
 
@@ -371,3 +380,12 @@ osg::Vec3f Data::Node::getCurrentPosition(bool calculateNew, float interpolation
 
 	return osg::Vec3(this->currentPosition);
 }
+
+
+QString Data::Node::toString() const
+{
+	QString str;
+	QTextStream(&str) << "node id:" << id << " name:" << name << " pos:[" << mTargetPosition.x() << "," << mTargetPosition.y() << "," << mTargetPosition.z() << "]";
+	return str;
+}
+

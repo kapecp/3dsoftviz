@@ -3,6 +3,14 @@
  * Projekt 3DVisual
  */
 #include "Model/EdgeDAO.h"
+#include "Data/Edge.h"
+#include "Data/Graph.h"
+#include "Data/GraphLayout.h"
+
+#include <QDebug>
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wfloat-equal"
+
 
 Model::EdgeDAO::EdgeDAO(void)
 {
@@ -136,7 +144,7 @@ bool Model::EdgeDAO::addMetaEdgesToDB(QSqlDatabase* conn, QMap<qlonglong, osg::r
 	return true;
 }
 
-bool Model::EdgeDAO::addEdgesColorToDB(QSqlDatabase* conn, QMap<qlonglong, osg::ref_ptr<Data::Edge> >* edges, Data::GraphLayout* layout, QMap<qlonglong, qlonglong> newMetaNodeID, QMap<qlonglong, qlonglong> newMetaEdgeID, bool meta)
+bool Model::EdgeDAO::addEdgesColorToDB(QSqlDatabase* conn, QMap<qlonglong, osg::ref_ptr<Data::Edge> >* edges, Data::GraphLayout* layout, QMap<qlonglong, qlonglong> newMetaEdgeID, bool meta)
 {
 	QMap< qlonglong,osg::ref_ptr<Data::Edge> >::const_iterator iEdges = edges->constBegin();
 	qlonglong edgeID;
@@ -145,7 +153,7 @@ bool Model::EdgeDAO::addEdgesColorToDB(QSqlDatabase* conn, QMap<qlonglong, osg::
 	while(iEdges != edges->constEnd())
 	{
 		//ulozime farbu len hranam, ktore maju farbu inu nez default
-		if(iEdges.value()->getEdgeColor().r() != 1 || iEdges.value()->getEdgeColor().g() != 1 ||iEdges.value()->getEdgeColor().b() != 1 ||iEdges.value()->getEdgeColor().a() != 1)
+		if(iEdges.value()->getEdgeColor().r() != 1.f || iEdges.value()->getEdgeColor().g() != 1.f ||iEdges.value()->getEdgeColor().b() != 1.f ||iEdges.value()->getEdgeColor().a() != 1.f)
 		{
 			if(meta)
 			{
@@ -176,7 +184,7 @@ bool Model::EdgeDAO::addEdgesColorToDB(QSqlDatabase* conn, QMap<qlonglong, osg::
 	return true;
 }
 
-bool Model::EdgeDAO::addEdgesScaleToDB(QSqlDatabase* conn, QMap<qlonglong, osg::ref_ptr<Data::Edge> >* edges, Data::GraphLayout* layout, QMap<qlonglong, qlonglong> newMetaNodeID, QMap<qlonglong, qlonglong> newMetaEdgeID, bool meta, float defaultScale)
+bool Model::EdgeDAO::addEdgesScaleToDB(QSqlDatabase* conn, QMap<qlonglong, osg::ref_ptr<Data::Edge> >* edges, Data::GraphLayout* layout,  QMap<qlonglong, qlonglong> newMetaEdgeID, bool meta, float defaultScale)
 {
 	QMap< qlonglong,osg::ref_ptr<Data::Edge> >::const_iterator iEdges = edges->constBegin();
 	qlonglong edgeID;
@@ -185,7 +193,8 @@ bool Model::EdgeDAO::addEdgesScaleToDB(QSqlDatabase* conn, QMap<qlonglong, osg::
 	while(iEdges != edges->constEnd())
 	{
 		//ulozime scale len hranam, ktore maju scale ine nez default
-		if(iEdges.value()->getScale() != defaultScale)
+		bool isNotDefault = !qFuzzyCompare(iEdges.value()->getScale(),defaultScale);
+		if(isNotDefault)
 		{
 			if(meta)
 			{
@@ -223,7 +232,8 @@ QSqlQuery* Model::EdgeDAO::getEdgesQuery(QSqlDatabase* conn, bool* error, qlongl
 	{
 		qDebug() << "[Model::EdgeDAO::getEdgesQuery] Connection to DB not opened.";
 		*error = TRUE;
-		return query;
+
+		return NULL;
 	}
 
 	//nacitame SELECTom hrany z DB
@@ -251,6 +261,7 @@ QList<qlonglong> Model::EdgeDAO::getListOfEdges(QSqlDatabase* conn, bool* error)
 
 	//check if we have connection
 	if(conn==NULL || !conn->isOpen())
+
 	{
 		qDebug() << "[Model::EdgeDAO::getListOfEdges] Connection to DB not opened.";
 		*error = TRUE;
@@ -620,3 +631,4 @@ bool Model::EdgeDAO::addSetings(QSqlDatabase* conn, qlonglong graphID, qlonglong
 
 	return true;
 }
+#pragma GCC diagnostic pop

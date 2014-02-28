@@ -7,12 +7,10 @@
 
 #include <osg/ref_ptr>
 #include <osg/Group>
-#include <osg/AutoTransform>
 
 #include <QMap>
 
 #include "Data/Edge.h"
-#include "Viewer/TextureWrapper.h"
 
 namespace Vwr
 {

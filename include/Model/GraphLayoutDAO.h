@@ -5,17 +5,15 @@
 #ifndef MODEL_GRAPHLAYOUTDAO_DEF
 #define MODEL_GRAPHLAYOUTDAO_DEF 1
 
-#include "Data/GraphLayout.h"
-#include "Data/Graph.h"
-
+#include <QtSql>
 #include <QString>
 #include <QMap>
-#include <QtSql>
-#include <QDebug>
 
 namespace Data
 {
-class GraphLayout;
+
+	class Graph;
+	class GraphLayout;
 }
 
 namespace Model

@@ -5,6 +5,13 @@
  */
 
 #include "Core/Core.h"
+
+#include "QOSG/CoreWindow.h"
+#include "QOSG/MessageWindows.h"
+#include "Viewer/CoreGraph.h"
+#include "Layout/LayoutThread.h"
+#include "Layout/FRAlgorithm.h"
+#include "Manager/Manager.h"
 #include "Util/ApplicationConfig.h"
 
 AppCore::Core * AppCore::Core::core;
@@ -24,20 +31,23 @@ AppCore::Core::Core(QApplication * app)
 	this->thr = new Layout::LayoutThread(this->alg);
 	this->cg = new Vwr::CoreGraph();
 	this->cw = new QOSG::CoreWindow(0, this->cg, app, this->thr);
-	this->cw->resize(
-				appConf->getNumericValue (
-					"UI.MainWindow.DefaultWidth",
-					std::auto_ptr<long> (new long(200)),
-					std::auto_ptr<long> (NULL),
-					1024
-					),
-				appConf->getNumericValue (
-					"UI.MainWindow.DefaultHeight",
-					std::auto_ptr<long> (new long(200)),
-					std::auto_ptr<long> (NULL),
-					768
-					)
+
+	long width =appConf->getNumericValue (
+				"UI.MainWindow.DefaultWidth",
+				std::auto_ptr<long> (new long(200)),
+				std::auto_ptr<long> (NULL),
+				(long (1024))
 				);
+	long height= appConf->getNumericValue (
+				"UI.MainWindow.DefaultHeight",
+				std::auto_ptr<long> (new long(200)),
+				std::auto_ptr<long> (NULL),
+				(long (768))
+				);
+
+
+
+	this->cw->resize((int) width,(int) height);
 	this->cw->show();
 
 	app->exec();
@@ -56,7 +66,8 @@ void AppCore::Core::restartLayout()
 	delete this->thr;
 
 	this->alg->SetGraph(Manager::GraphManager::getInstance()->getActiveGraph());
-	this->alg->SetParameters(10,0.7,1,true);
+
+	this->alg->SetParameters(10,0.7f,true);
 	this->thr = new Layout::LayoutThread(this->alg);
 	this->cw->setLayoutThread(thr);
 	this->cg->reload(Manager::GraphManager::getInstance()->getActiveGraph());
@@ -80,3 +91,6 @@ AppCore::Core * AppCore::Core::getInstance(QApplication * app)
 
 	return core;
 }
+
+
+

@@ -3,10 +3,20 @@
  */
 
 #include "Network/Client.h"
+
+//#include "Data/Graph.h"
+
 #include "Network/Helper.h"
-#include "Importer/GraphOperations.h"
-#include "Manager/Manager.h"
+#include "Network/ExecutorFactory.h"
+
 #include "QOSG/CoreWindow.h"
+
+#include "Layout/LayoutThread.h"
+
+#include "Viewer/CameraManipulator.h"
+#include "Viewer/CoreGraph.h"
+#include "QDebug"
+
 
 using namespace Network;
 
@@ -52,6 +62,8 @@ void Client::ServerConnect(QString nick, QString address) {
 
 void Client::send_message(QString message) {
 	// todo: implement
+
+	qDebug() << "Client:send message: "+ message;
 }
 
 void Client::requestGraph() {
@@ -394,7 +406,7 @@ void Client::sendNewNode(QString name, osg::Vec3f position) {
 	socket->write(block);
 }
 
-void Client::sendNewEdge(QString name, int id_from, int id_to, bool oriented) {
+void Client::sendNewEdge(QString name, qlonglong id_from, qlonglong id_to, bool oriented) {
 
 	if (!this -> isConnected() ) {
 		return;
@@ -416,7 +428,7 @@ void Client::sendNewEdge(QString name, int id_from, int id_to, bool oriented) {
 
 }
 
-void Client::sendRemoveNode(int id) {
+void Client::sendRemoveNode(qlonglong id) {
 
 	if (!this -> isConnected() ) {
 		return;
@@ -435,7 +447,7 @@ void Client::sendRemoveNode(int id) {
 
 }
 
-void Client::sendRemoveEdge(int id) {
+void Client::sendRemoveEdge(qlonglong id) {
 
 	if (!this -> isConnected() ) {
 		return;
@@ -454,7 +466,8 @@ void Client::sendRemoveEdge(int id) {
 
 }
 
-void Client::sendNodeColor(int id, float r, float g, float b, float alpha) {
+
+void Client::sendNodeColor(qlonglong id, float r, float g, float b, float alpha) {
 	this->sendColor(SetNodeColorExecutor::INSTRUCTION_NUMBER, id, r, g, b, alpha);
 }
 
@@ -462,7 +475,7 @@ void Client::sendEdgeColor(int id, float r, float g, float b, float alpha) {
 	this->sendColor(SetEdgeColorExecutor::INSTRUCTION_NUMBER, id, r, g, b, alpha);
 }
 
-void Client::sendColor(quint8 instruction, int id, float r, float g, float b, float alpha) {
+void Client::sendColor(quint8 instruction, qlonglong id, float r, float g, float b, float alpha) {
 
 	if (!this -> isConnected() ) {
 		return;
@@ -482,7 +495,7 @@ void Client::sendColor(quint8 instruction, int id, float r, float g, float b, fl
 
 }
 
-void Client::sendNodeLabel(int id, QString label) {
+void Client::sendNodeLabel(qlonglong id, QString label) {
 
 	if (!this -> isConnected() ) {
 		return;
@@ -500,7 +513,7 @@ void Client::sendNodeLabel(int id, QString label) {
 
 }
 
-void Client::sendFixNodeState(int id, bool state) {
+void Client::sendFixNodeState(qlonglong id, bool state) {
 
 	if (!this -> isConnected() ) {
 		return;

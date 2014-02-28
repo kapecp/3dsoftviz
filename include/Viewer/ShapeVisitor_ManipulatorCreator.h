@@ -2,10 +2,7 @@
 #define SHAPEVISITOR_MANIPULATORCREATOR_H
 //-----------------------------------------------------------------------------
 #include "Layout/ShapeVisitor.h"
-#include "Layout/Shape.h"
 //-----------------------------------------------------------------------------
-#include <osg/Node>
-#include <osg/Vec3f>
 #include <osgManipulator/Dragger>
 #include <osgManipulator/TrackballDragger>
 #include <osgManipulator/Selection>
@@ -41,7 +38,8 @@ public:
 	/**
 	 * \brief Creates empty OSG group.
 	 */
-	virtual void visit (Layout::Shape_Null & shape);
+
+	virtual void visit (Layout::Shape_Null /*& shape*/);
 
 	/**
 	 * \brief Creates OSG group containing  manipulator for each shape contained in the composite shape.

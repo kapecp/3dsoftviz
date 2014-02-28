@@ -30,6 +30,7 @@ set( 3DSOFTVIZ_DOMAIN "${3DSOFTVIZ_DOMAIN_FIRST}.${3DSOFTVIZ_DOMAIN_SECOND}" )
 
 # Install destinations
 set( INSTALL_BIN bin CACHE PATH "Where to install binaries to." )
+set( INSTALL_LIB lib CACHE PATH "Where to install lib to." )
 set( INSTALL_DATA share/3dsoftviz CACHE PATH "Directory for shared data." )
 set( INSTALL_DEPS . )
 set( INSTALL_PLUGIN bin )
@@ -45,41 +46,53 @@ set( INSTALL_EXAMPLE ${INSTALL_DATA}/example CACHE PATH "Recommended directory t
 # Additional CMake scripts
 set( CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH} )
 
-# Additional CMake scripts
-set( CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH} )
-
 # Warnings for Debug mode
-option( USE_STRICT_COMPILE_WARNINGS "Use strict compilation warnings in debug mode." OFF )
+option( USE_STRICT_COMPILE_WARNINGS "Use strict compilation warnings in debug mode." ON )
 if( USE_STRICT_COMPILE_WARNINGS )
 	if( CMAKE_COMPILER_IS_GNUCXX )
-		set( CMAKE_CXX_FLAGS_DEBUG "-Wall -Wextra -Werror" )
+#~ 		set( CMAKE_CXX_FLAGS_DEBUG "-Wall -Wextra -Werror" )
+		set( CMAKE_CXX_FLAGS_DEBUG "-pedantic -Wall -Wextra -Wwrite-strings -Winit-self -Wcast-align -Wcast-qual -Wpointer-arith -Wstrict-aliasing -Wformat=2 -Wmissing-declarations -Wmissing-include-dirs -Wuninitialized -Werror-implicit-function-declaration -Wfloat-equal -Wundef -Wstrict-overflow=5 -Wswitch-default -Wswitch-enum -Wconversion -Wunreachable-code -Wno-unused-parameter" )
+			# use to suppress unused stuff: -Wno-unused-parameter -Wno-unused-result
+			# only for C: -Wold-style-definition -Wstrict-prototypes -Wmissing-prototypes
+			# not used (too many warnings): -Wshadow -Waggregate-return
 	endif()
 endif()
 
-
 # Default build type
 if( NOT CMAKE_BUILD_TYPE )
-	set( CMAKE_BUILD_TYPE "MinSizeRel" CACHE STRING "" FORCE )
-#	set( CMAKE_BUILD_TYPE "Debug" CACHE STRING "" FORCE )
+	set( CMAKE_BUILD_TYPE "Debug" CACHE STRING "" FORCE )
 endif()
-MESSAGE(CMAKE_BUILD_TYPE)
 
+# Default install destination
 if( CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT )
 	set( CMAKE_INSTALL_PREFIX ${CMAKE_CURRENT_SOURCE_DIR}/_install CACHE PATH "Installation Destination" FORCE )
 endif()
 
 # RPath functionality
 set( CMAKE_SKIP_BUILD_RPATH FALSE CACHE STRING "" FORCE )
-set( CMAKE_BUILD_WITH_INSTALL_RPATH FALSE CACHE STRING "" FORCE )
-set( CMAKE_INSTALL_RPATH ../lib CACHE STRING "" FORCE )
+set( CMAKE_BUILD_WITH_INSTALL_RPATH TRUE CACHE STRING "" FORCE )	# info: changed to TRUE for cotire unity build - works!
+set( CMAKE_INSTALL_RPATH "$ORIGIN/../lib" CACHE STRING "" FORCE )
 set( CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE CACHE STRING "" FORCE )
-set( CMAKE_INSTALL_NAME_DIR @executable_path/../lib CACHE STRING "" FORCE )
+set( CMAKE_INSTALL_NAME_DIR "@executable_path/../lib" CACHE STRING "" FORCE )
 
 # --------------
 # Build settings - COTIRE module
 # --------------
 
 include(cotire)
+if (COMMAND cotire)
+	if( NOT COTIRE_MAXIMUM_NUMBER_OF_UNITY_INCLUDES )
+		include( ProcessorCount )
+		ProcessorCount( N )
+
+		if( NOT N EQUAL 0 )
+			set( COTIRE_MAXIMUM_NUMBER_OF_UNITY_INCLUDES "-j${N}" )
+		endif()
+	endif()
+
+	set( COTIRE_VERBOSE FALSE )
+	set( COTIRE_DEBUG FALSE )
+endif()
 
 # ------------
 # Dependencies - External projects
@@ -124,24 +137,50 @@ if( USE_BUILTIN_DEPENDENCIES )
 			-C ${CMAKE_CURRENT_BINARY_DIR}/config.cmake
 	)
 
+
 	# Ensure correct order of build(dependencies between ext. dependencies)
 	# add_dependencies( dep_lpeg dep_luajit )
 
 	# Define LUA_ variables
 	#set( LUA_LIBRARY ${DEP_BIN}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}lua${CMAKE_SHARED_LIBRARY_SUFFIX} )
 	#set( DILUCULUM_LIBRARY ${DEP_BIN}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}diluculum${CMAKE_SHARED_LIBRARY_SUFFIX} )
-	set( LIBNOISE_LIBRARY ${DEP_BIN}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}noise${CMAKE_SHARED_LIBRARY_SUFFIX} )
-	set( LIBARUCO_LIBRARY ${DEP_BIN}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}aruco${CMAKE_SHARED_LIBRARY_SUFFIX} )
+	add_library(aruco SHARED IMPORTED)
+	add_dependencies(aruco dep_aruco)
+	set_target_properties( aruco PROPERTIES
+	IMPORTED_LOCATION ${DEP_BIN}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}aruco${CMAKE_SHARED_LIBRARY_SUFFIX} )
+
+	# more correct:
+	add_library(libnoise SHARED IMPORTED)
+	add_dependencies(libnoise  dep_libnoise)
+	set_target_properties(libnoise PROPERTIES
+		IMPORTED_LOCATION  ${DEP_BIN}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}noise${CMAKE_SHARED_LIBRARY_SUFFIX} )
+
 	if( WIN32 )
 		#set( LUA_LIBRARY ${DEP_BIN}/bin/${CMAKE_SHARED_LIBRARY_PREFIX}lua${CMAKE_SHARED_LIBRARY_SUFFIX} )
 		#set( DILUCULUM_LIBRARY ${DEP_BIN}/bin/${CMAKE_SHARED_LIBRARY_PREFIX}diluculum${CMAKE_SHARED_LIBRARY_SUFFIX} )
-		set( LIBNOISE_LIBRARY ${DEP_BIN}/bin/${CMAKE_SHARED_LIBRARY_PREFIX}noise${CMAKE_SHARED_LIBRARY_SUFFIX} )
-		set( LIBARUCO_LIBRARY ${DEP_BIN}/bin/${CMAKE_SHARED_LIBRARY_PREFIX}aruco${CMAKE_SHARED_LIBRARY_SUFFIX} )
+		#set( LIBARUCO_LIBRARY ${DEP_BIN}/bin/${CMAKE_SHARED_LIBRARY_PREFIX}aruco${CMAKE_SHARED_LIBRARY_SUFFIX} )
+
+		set_target_properties(aruco PROPERTIES
+			IMPORTED_LOCATION  ${DEP_BIN}/bin/${CMAKE_SHARED_LIBRARY_PREFIX}aruco${CMAKE_SHARED_LIBRARY_SUFFIX}
+			IMPORTED_IMPLIB  ${DEP_BIN}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}aruco${CMAKE_STATIC_LIBRARY_SUFFIX} )
+
+
+		set_target_properties(libnoise PROPERTIES
+			IMPORTED_LOCATION  ${DEP_BIN}/bin/${CMAKE_SHARED_LIBRARY_PREFIX}noise${CMAKE_SHARED_LIBRARY_SUFFIX}
+			IMPORTED_IMPLIB  ${DEP_BIN}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}noise${CMAKE_STATIC_LIBRARY_SUFFIX} )
+
 		if( MSVC )
 			# set "lib" prefix for MSVC, becasue libnoise.def files requires that the library is named "libnoise"
-			set( MISS_MSVC_PREFIX lib )
-			set( LIBNOISE_LIBRARY ${DEP_BIN}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}${MISS_MSVC_PREFIX}noise${CMAKE_STATIC_LIBRARY_SUFFIX} )
-			set( LIBARUCO_LIBRARY ${DEP_BIN}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}aruco${CMAKE_STATIC_LIBRARY_SUFFIX})
+				#set( LIBARUCO_LIBRARY ${DEP_BIN}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}aruco${CMAKE_STATIC_LIBRARY_SUFFIX})
+				set( MISS_MSVC_PREFIX lib )
+					set_target_properties(libnoise PROPERTIES
+					IMPORTED_LOCATION  ${DEP_BIN}/bin/${CMAKE_SHARED_LIBRARY_PREFIX}${MISS_MSVC_PREFIX}noise${CMAKE_SHARED_LIBRARY_SUFFIX}
+				IMPORTED_IMPLIB  ${DEP_BIN}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}${MISS_MSVC_PREFIX}noise${CMAKE_STATIC_LIBRARY_SUFFIX} )
+
+					set_target_properties(aruco PROPERTIES
+					IMPORTED_LOCATION  ${DEP_BIN}/bin/${CMAKE_SHARED_LIBRARY_PREFIX}${MISS_MSVC_PREFIX}aruco${CMAKE_SHARED_LIBRARY_SUFFIX}
+				IMPORTED_IMPLIB  ${DEP_BIN}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}${MISS_MSVC_PREFIX}aruco${CMAKE_STATIC_LIBRARY_SUFFIX} )
+
 
 		endif()
 	endif()
@@ -164,6 +203,16 @@ set(QT_USE_QTXML 1)
 set(QT_USE_QTNETWORK 1)
 include(${QT_USE_FILE})
 
+# add special flag to GCC compiler when using Qt 4.6.x with GCC >4.6
+if(	"${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" AND
+	"${QT_VERSION_MAJOR}.${QT_VERSION_MINOR}" VERSION_LESS "4.7" AND
+	${CMAKE_C_COMPILER_VERSION} VERSION_GREATER "4.6" )
+
+	set( CMAKE_CXX_FLAGS "-fpermissive" )
+endif()
+
+
+# Find OpenSceneGraph
 find_package(OpenSceneGraph COMPONENTS
 	osgGA
 	osgUtil
@@ -183,6 +232,23 @@ find_package(OpenSceneGraph COMPONENTS
 	osgWidget
 )
 find_package(osgViewer)
+
+
+# Find OpenCV
+find_package( OpenCV )
+if( OpenCV_FOUND )
+	add_definitions( -DOPENCV_FOUND )
+	message("OpenCV FOUND")
+	set( SOURCES_H
+		./include/QOpenCV/FaceRecognitionWindow.h
+		./include/QOpenCV/FaceRecognitionThread.h
+	)
+	file(GLOB_RECURSE SRC_OPENCV  "src/OpenCV/*.cpp")
+	file(GLOB_RECURSE SRC_QOPENCV  "src/QOpenCV/*.cpp")
+else()
+	message("OpenCV NOT FOUND")
+endif()
+
 
 # -----------------
 # Platform settings
@@ -246,6 +312,7 @@ if( WIN32 )
 	set( CPACK_PACKAGE_ICON "${CMAKE_CURRENT_SOURCE_DIR}\\\\res\\\\logo2.bmp" )
 endif()
 
+
 # Find OpenCV
 FIND_PACKAGE( OpenCV )
 IF(OpenCV_FOUND)
@@ -269,15 +336,15 @@ ELSE(OpenCV_FOUND)
 	MESSAGE ("OpenCV NOT FOUND")
 ENDIF()
 
+
 # ---------------
 # Build 3DSOFTVIZ
 # ---------------
 
 # Include Paths
-include_directories(
+include_directories(SYSTEM
 	${OPENSCENEGRAPH_INCLUDE_DIRS}
 	${OSGVIEWER_INCLUDE_DIR}
-	${CMAKE_CURRENT_SOURCE_DIR}/include
 
 	${DEPENDENCIES_INCLUDE_DIR}
 	${DEPENDENCIES_INCLUDE_DIR}/libnoise
@@ -285,10 +352,10 @@ include_directories(
 
 	${OpenCV_INCLUDE_DIRS}
 )
+include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/include )
 
 # Source files
-# Source files
-file(GLOB_RECURSE SRC_MAIN "src/main.cpp")
+set(SRC_MAIN "src/main.cpp")
 file(GLOB_RECURSE SRC_CORE  "src/Core/*.cpp")
 file(GLOB_RECURSE SRC_DATA  "src/Data/*.cpp")
 file(GLOB_RECURSE SRC_IMPORTER  "src/Importer/*.cpp")
@@ -302,11 +369,17 @@ file(GLOB_RECURSE SRC_OSGQTBROWSER  "src/OsgQtBrowser/*.cpp")
 file(GLOB_RECURSE SRC_QOSG  "src/QOSG/*.cpp")
 file(GLOB_RECURSE SRC_UTIL  "src/Util/*.cpp")
 file(GLOB_RECURSE SRC_VIEWER  "src/Viewer/*.cpp")
-FILE(GLOB_RECURSE INCL "include/*.h")
 
-set(SRC ${SRC} ${SRC_MAIN} ${SRC_CORE} ${SRC_DATA} ${SRC_IMPORTER} ${SRC_LAYOUT} ${SRC_MANAGER} ${SRC_MATH} ${SRC_MODEL} ${SRC_NETWORK} ${SRC_NOISE} ${SRC_OSGQTBROWSER} ${SRC_QOSG} ${SRC_UTIL} ${SRC_VIEWER} )
+# Source files
+set(SRC ${SRC}
+	${SRC_MAIN} ${SRC_CORE} ${SRC_DATA} ${SRC_IMPORTER}
+	${SRC_LAYOUT} ${SRC_MANAGER} ${SRC_MATH}
+	${SRC_NETWORK} ${SRC_NOISE}
+	${SRC_OSGQTBROWSER} ${SRC_QOSG} ${SRC_UTIL} ${SRC_VIEWER} ${SRC_MODEL}
+	${SRC_OPENCV} ${SRC_QOPENCV}
+)
 
-
+file(GLOB_RECURSE INCL "include/*.h")
 
 # Group source files
 source_group(\\src main.cpp)
@@ -336,8 +409,17 @@ source_group(\\headers\\Layout "^.*Layout/.*h$")
 source_group(\\headers\\QOSG "^.*QOSG/.*h$")
 source_group(\\headers\\Noise "^.*Noise/.*h$")
 source_group(\\headers\\OsgQtBrowser "^.*OsgQtBrowser/.*h$")
+
+if(OpenCV_FOUND)
+	source_group(\\src\\QOpenCV "^.*QOpenCV/.*$")
+	source_group(\\src\\OpenCV "^.*OpenCV/.*$")
+	source_group(\\headers\\QOpenCV "^.*QOpenCV/.*h$")
+	source_group(\\headers\\OpenCV "^.*OpenCV/.*h$")
+endif()
+
 # Group generated moc files
 source_group(\\MOC "^.*moc_.*$")
+
 
 IF(OpenCV_FOUND)
 SOURCE_GROUP(\\src\\QOpenCV "^.*QOpenCV/.*$")
@@ -360,8 +442,8 @@ set(SOURCES_H ${SOURCES_H}
 	./include/QOSG/CheckBoxList.h
 	./include/QOSG/qtcolorpicker.h
 	./include/Viewer/PickHandler.h
-		./include/Network/Server.h
-		./include/Network/Client.h
+	./include/Network/Server.h
+	./include/Network/Client.h
 	./include/Viewer/CameraManipulator.h
 	./include/Viewer/CoreGraph.h
 )
@@ -373,31 +455,53 @@ QT4_WRAP_CPP( SOURCES_H_MOC ${SOURCES_H} )
 # Build and link
 add_executable( ${3DSOFTVIZ_NAME} ${INCL} ${SRC} ${SOURCES_H_MOC} )
 
-
 target_link_libraries( ${3DSOFTVIZ_NAME}
 	${QT_LIBRARIES}
 	${OPENSCENEGRAPH_LIBRARIES}
 	${OSGVIEWER_LIBRARIES}
-	${LIBNOISE_LIBRARY}
-	${LIBARUCO_LIBRARY}
-	${OpenCV_LIBS}
+	aruco
+	libnoise
 )
-IF(OpenCV_FOUND)
-TARGET_LINK_LIBRARIES(${3DSOFTVIZ_NAME}
-${OpenCV_LIBS}
-)
-ENDIF()
 
-# 'cotire' the executable
-cotire( ${3DSOFTVIZ_NAME} )
-if( MSVC )
-	### Fix virtual memory range
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Zm200" CACHE STRING "" FORCE)
+if(OpenCV_FOUND)
+	target_link_libraries( ${3DSOFTVIZ_NAME} ${OpenCV_LIBS} )
 endif()
 
+# 'cotire' the executable
+if (COMMAND cotire)
+	# this needs CMake 2.8.11 and greater
+	if (${CMAKE_VERSION} VERSION_GREATER "2.8.10")
+		set_target_properties(${3DSOFTVIZ_NAME} PROPERTIES COTIRE_UNITY_LINK_LIBRARIES_INIT "COPY")
+	endif()
+
+	cotire( ${3DSOFTVIZ_NAME} )
+
+	if (${CMAKE_VERSION} VERSION_LESS "2.8.11")
+		target_link_libraries(${3DSOFTVIZ_NAME}_unity
+			${QT_LIBRARIES}
+			${OPENSCENEGRAPH_LIBRARIES}
+			${OSGVIEWER_LIBRARIES}
+			libnoise
+			aruco)
+	endif()
+
+	if( MSVC )
+		### Fix virtual memory range
+		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Zm200" CACHE STRING "" FORCE)
+	endif()
+endif()
+
+
 # ensure correct dependencies
-add_dependencies( ${3DSOFTVIZ_NAME} dep_libnoise )
-add_dependencies( ${3DSOFTVIZ_NAME} dep_aruco )
+
+add_dependencies( ${3DSOFTVIZ_NAME} aruco )
+
+add_dependencies( ${3DSOFTVIZ_NAME} libnoise)
+if (COMMAND cotire)
+	add_dependencies( ${3DSOFTVIZ_NAME}_unity libnoise)
+add_dependencies( ${3DSOFTVIZ_NAME}_unity aruco)
+endif()
+
 
 # -------
 # Install
@@ -408,12 +512,22 @@ install( TARGETS ${3DSOFTVIZ_NAME}
 	BUNDLE DESTINATION ${INSTALL_BUNDLE} COMPONENT Runtime
 	RUNTIME DESTINATION ${INSTALL_BIN} COMPONENT Runtime )
 
+if (COMMAND cotire)
+	add_custom_target(install_unity
+		COMMAND ${CMAKE_COMMAND} -P "cmake_install.cmake")
+	add_dependencies(install_unity ${3DSOFTVIZ_NAME}_unity)
+endif()
+
+
 install(DIRECTORY resources/ DESTINATION ${INSTALL_DATA} COMPONENT Data)
 
 # Install built in dependencies unless we are building an OSX Bundle
 if( USE_BUILTIN_DEPENDENCIES )
 	# Make sure dependencies are built
-	add_dependencies( ${3DSOFTVIZ_NAME} dep_libnoise )
+	add_dependencies( ${3DSOFTVIZ_NAME} libnoise )
+	if (COMMAND cotire)
+		add_dependencies( ${3DSOFTVIZ_NAME}_unity libnoise )
+	endif()
 
 	# Install all dependencies
 	install( DIRECTORY ${DEP_BIN}/

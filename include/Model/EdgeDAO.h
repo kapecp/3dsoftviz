@@ -5,13 +5,16 @@
 #ifndef MODEL_EDGEDAO_DEF
 #define MODEL_EDGEDAO_DEF 1
 
-#include "Data/Edge.h"
-
+//#include "Data/Edge.h"
 #include <QtSql>
-#include <QDebug>
+
+#include <osg/ref_ptr>
+#include <osg/Vec4f>
 
 namespace Data {
 class Edge;
+
+class GraphLayout;
 }
 
 namespace Model
@@ -58,7 +61,8 @@ public:
 		*  \param	meta true, if edges are meta type
 		*  \return	bool true, if color of edges was successfully added to DB
 		*/
-	static bool addEdgesColorToDB(QSqlDatabase* conn, QMap<qlonglong, osg::ref_ptr<Data::Edge> >* edges, Data::GraphLayout* layout, QMap<qlonglong, qlonglong> newMetaNodeID, QMap<qlonglong, qlonglong> newMetaEdgeID, bool meta);
+
+	static bool addEdgesColorToDB(QSqlDatabase* conn, QMap<qlonglong, osg::ref_ptr<Data::Edge> >* edges, Data::GraphLayout* layout, QMap<qlonglong, qlonglong> newMetaEdgeID, bool meta);
 
 	/**
 		*  \fn public static  addEdgesScaleToDB(QSqlDatabase* conn, QMap<qlonglong, osg::ref_ptr<Data::Edge> >* edges, Data::GraphLayout* layout, QMap<qlonglong, qlonglong> newMetaNodeID, QMap<qlonglong, qlonglong> newMetaEdgeID, bool meta, float defaultScale)
@@ -72,7 +76,8 @@ public:
 		*  \param	defaultScale default size of edges in graph
 		*  \return	bool true, if color of edges was successfully added to DB
 		*/
-	static bool addEdgesScaleToDB(QSqlDatabase* conn, QMap<qlonglong, osg::ref_ptr<Data::Edge> >* edges, Data::GraphLayout* layout, QMap<qlonglong, qlonglong> newMetaNodeID, QMap<qlonglong, qlonglong> newMetaEdgeID, bool meta, float defaultScale);
+
+	static bool addEdgesScaleToDB(QSqlDatabase* conn, QMap<qlonglong, osg::ref_ptr<Data::Edge> >* edges, Data::GraphLayout* layout, QMap<qlonglong, qlonglong> newMetaEdgeID, bool meta, float defaultScale);
 
 	/**
 		*  \fn public static  getEdgesQuery(QSqlDatabase* conn, bool* error, qlonglong graphID)

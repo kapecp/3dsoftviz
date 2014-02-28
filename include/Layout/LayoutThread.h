@@ -2,7 +2,17 @@
 #define LAYOUT_LAYOUT_THREAD_DEF 1
 
 #include <QThread>
-#include "Layout/FRAlgorithm.h"
+
+
+namespace Layout
+{
+	class FRAlgorithm;
+}
+
+namespace Util
+{
+	class ApplicationConfig;
+}
 
 namespace Layout
 {

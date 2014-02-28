@@ -5,16 +5,21 @@
 #ifndef VIEWER_NODEWRAPPER_DEF
 #define VIEWER_NODEWRAPPER_DEF 1
 
-#include <QMap>
+#include "Data/Node.h"
 
 #include <osg/ref_ptr>
 #include <osg/AutoTransform>
 #include <osg/Group>
 
-#include "Util/ApplicationConfig.h"
-#include "Data/Node.h"
-#include <osg/ShapeDrawable>
+#include <QMap>
 #include <QSet>
+
+
+namespace Util
+{
+	class ApplicationConfig;
+}
+
 
 namespace Vwr
 {

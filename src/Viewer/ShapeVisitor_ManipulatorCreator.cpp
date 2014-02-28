@@ -1,9 +1,10 @@
 #include "Viewer/ShapeVisitor_ManipulatorCreator.h"
-#include <osg/ShapeDrawable>
+
 
 namespace Vwr {
 
-void ShapeVisitor_ManipulatorCreator::visit (Layout::Shape_Null & shape) {
+
+void ShapeVisitor_ManipulatorCreator::visit (Layout::Shape_Null /*& shape*/) {
 	executeDefault();
 }
 
@@ -49,7 +50,8 @@ void ShapeVisitor_ManipulatorCreator::executeDefault(){
 void ShapeVisitor_ManipulatorCreator::createRotationManipulator(osg::Vec3 center,float trackBallRadius, int key){
 	createdDragger = new osgManipulator::TrackballDragger();
 	createdDragger->setupDefaultGeometry();
-	float scale =trackBallRadius* 1.6;
+
+	float scale =trackBallRadius* 1.6f;
 	createdDragger->setMatrix(osg::Matrix::scale(scale, scale, scale) *osg::Matrix::translate(center));
 	createdDragger->setHandleEvents(true);
 	createdDragger->setActivationModKeyMask(osgGA::GUIEventAdapter::MODKEY_CTRL);

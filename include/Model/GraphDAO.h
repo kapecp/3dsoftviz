@@ -5,14 +5,11 @@
 #ifndef MODEL_GRAPHDAO_DEF
 #define MODEL_GRAPHDAO_DEF 1
 
-#include "Data/Graph.h"
-#include "Model/NodeDAO.h"
-#include "Model/EdgeDAO.h"
-
+#include <QtSql>
 #include <QString>
 #include <QMap>
-#include <QtSql>
-#include <QDebug>
+#include <Data/Node.h>
+
 
 namespace Data
 {
@@ -128,6 +125,16 @@ public:
 		* \return QMap<QString,QString> settings of the Graph
 		*/
 	static QMap<QString,QString> getSettings(Data::Graph* graph, QSqlDatabase* conn, bool* error);
+
+
+	/**
+	  *
+	  *
+	  */
+
+	static void getNestedGraph(qlonglong parentID, Data::Graph** graph, QSqlDatabase* conn, bool* error2, qlonglong graphID, qlonglong layoutID, qlonglong* maxIdEleUsed, QMap<qlonglong, osg::Vec3f>* positions, QMap<qlonglong, Data::Node*>* nodes, Data::Type* typeNode, Data::Type* typeMetaNode, QList<qlonglong>* parentNodes);
+
+
 private:
 
 	/**

@@ -2,7 +2,6 @@
 #define Viewer_ShapeVisitor_VisualizerCreator_H
 //-----------------------------------------------------------------------------
 #include "Layout/ShapeVisitor.h"
-#include "Layout/Shape.h"
 //-----------------------------------------------------------------------------
 #include <osg/Node>
 #include <osg/Vec3f>
@@ -22,14 +21,14 @@ class ShapeVisitor_VisualizerCreator : public Layout::ShapeVisitor {
 public:
 
 	/***/
-	virtual ~ShapeVisitor_VisualizerCreator (void) {};
+	virtual ~ShapeVisitor_VisualizerCreator (void) {}
 
 	osg::ref_ptr<osg::Node> getCreatedVisualizer (void);
 
 	/**
 	 * \brief Creates empty OSG group.
 	 */
-	virtual void visit (Layout::Shape_Null & shape);
+	virtual void visit (Layout::Shape_Null /*& shape*/);
 
 	/**
 	 * \brief Creates OSG group containing visualizer for each shape contained in the composite shape.

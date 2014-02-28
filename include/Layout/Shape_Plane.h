@@ -27,7 +27,7 @@ public:
 			);
 
 	/***/
-	virtual ~Shape_Plane (void) {};
+	virtual ~Shape_Plane (void) {}
 
 	osg::Vec3f & getNormalVector (void);
 

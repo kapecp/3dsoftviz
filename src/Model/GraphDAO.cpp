@@ -4,6 +4,15 @@
  */
 #include "Model/GraphDAO.h"
 
+#include "Model/NodeDAO.h"
+#include "Model/EdgeDAO.h"
+#include "Model/GraphLayoutDAO.h"
+
+#include "Data/Graph.h"
+#include "Data/GraphLayout.h"
+
+#include <QDebug>
+
 Model::GraphDAO::GraphDAO(void)
 {
 }
@@ -54,9 +63,9 @@ QMap<qlonglong, Data::Graph*> Model::GraphDAO::getGraphs(QSqlDatabase* conn, boo
 }
 
 
-void getNestedGraph(qlonglong parentID, Data::Graph** graph, QSqlDatabase* conn, bool* error2, qlonglong graphID, qlonglong layoutID, qlonglong* maxIdEleUsed, QMap<qlonglong, osg::Vec3f>* positions, QMap<qlonglong, Data::Node*>* nodes, Data::Type* typeNode, Data::Type* typeMetaNode, QList<qlonglong>* parentNodes)
+void Model::GraphDAO::getNestedGraph(qlonglong parentID, Data::Graph** graph, QSqlDatabase* conn, bool* error2, qlonglong graphID, qlonglong layoutID, qlonglong* maxIdEleUsed, QMap<qlonglong, osg::Vec3f>* positions, QMap<qlonglong, Data::Node*>* nodes, Data::Type* typeNode, Data::Type* typeMetaNode, QList<qlonglong>* parentNodes)
 {
-	bool error;
+
 	qlonglong nodeID;
 	QString nodeName;
 	Data::Type* type;
@@ -64,7 +73,7 @@ void getNestedGraph(qlonglong parentID, Data::Graph** graph, QSqlDatabase* conn,
 	QSqlQuery* queryNestedNodes;
 	Data::Node* newNestedNode;
 
-	queryNestedNodes = Model::NodeDAO::getNodesQuery(conn, &error, graphID, layoutID, parentID);
+	queryNestedNodes = Model::NodeDAO::getNodesQuery(conn, error2, graphID, layoutID, parentID);
 
 	//TODO pridat vnorenym nodom atributy - scale, farbu, ...
 	//nacitavame rekurzivne vnorene grafy
@@ -87,7 +96,7 @@ void getNestedGraph(qlonglong parentID, Data::Graph** graph, QSqlDatabase* conn,
 		{
 			(*graph)->createNestedGraph(newNestedNode);
 
-			getNestedGraph(nodeID, graph, conn, &error, graphID, layoutID, maxIdEleUsed, positions, nodes, typeNode, typeMetaNode, parentNodes);
+			getNestedGraph(nodeID, graph, conn, error2, graphID, layoutID, maxIdEleUsed, positions, nodes, typeNode, typeMetaNode, parentNodes);
 
 			(*graph)->closeNestedGraph();
 		}
@@ -162,7 +171,8 @@ Data::Graph* Model::GraphDAO::getGraph(QSqlDatabase* conn, bool* error2, qlonglo
 
 			//vsetky uzly nastavime fixed, aby sme zachovali layout
 			//hodnota, ktora je ulozena v DB - premenna isFixed
-			newNode->setFixed(true);
+
+			newNode->setFixed(isFixed);
 
 			if(nodeColors.contains(nodeID))
 			{
@@ -185,7 +195,7 @@ Data::Graph* Model::GraphDAO::getGraph(QSqlDatabase* conn, bool* error2, qlonglo
 			{
 				newGraph->createNestedGraph(newNode);
 
-				getNestedGraph(nodeID, &newGraph, conn, &error, graphID, layoutID, &maxIdEleUsed, &positions, &nodes, typeNode, typeMetaNode, &parentNodes);
+				Model::GraphDAO::getNestedGraph(nodeID, &newGraph, conn, &error, graphID, layoutID, &maxIdEleUsed, &positions, &nodes, typeNode, typeMetaNode, &parentNodes);
 
 				newGraph->closeNestedGraph();
 			}

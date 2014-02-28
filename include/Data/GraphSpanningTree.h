@@ -20,7 +20,8 @@ public:
 	*  \param       depth   graph depth of siblings
 	*   \param      parentId ID of parent node of siblings. If is set, then is used as groupId.
 	*/
-	void addGroup(QList<qlonglong> nodes, int depth, int parentId=-1);
+
+	void addGroup(QList<qlonglong> nodes, int depth, qlonglong parentId=-1);
 
 	/**
 	*  \fn public  getMaxDepth()

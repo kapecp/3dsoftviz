@@ -5,35 +5,36 @@
 #ifndef VIEWER_CORE_GRAPH_DEF
 #define VIEWER_CORE_GRAPH_DEF 1
 
-#include <math.h>
-
 #include <osg/ref_ptr>
-#include <osg/CullFace>
-#include <osg/TexMat>
-#include <osg/TexGen>
-#include <osg/Depth>
-#include <osg/TextureCubeMap>
-#include <osg/AutoTransform>
+
+#include "Viewer/RestrictionVisualizationsGroup.h"
+#include "Viewer/RestrictionManipulatorsGroup.h"
+#include "Viewer/NodeGroup.h"
+#include "Data/Edge.h"
+#include "Data/Node.h"
+
 
 #include <QMap>
 #include <QLinkedList>
 #include <QSharedPointer>
 #include <QObject>
+#include <QTime>
 
-#include "Viewer/PerlinNoiseTextureGenerator.h"
-#include "Viewer/CameraManipulator.h"
-#include "Viewer/DataHelper.h"
-#include "Viewer/SkyTransform.h"
-#include "Viewer/TextureWrapper.h"
-#include "Viewer/EdgeGroup.h"
-#include "Viewer/NodeGroup.h"
-#include "Viewer/RestrictionVisualizationsGroup.h"
-#include "Viewer/RestrictionManipulatorsGroup.h"
+namespace Data
+{
+	class Graph;
+}
 
-#include "Util/ApplicationConfig.h"
-#include "Data/Edge.h"
-#include "Data/Node.h"
-#include "Data/Graph.h"
+namespace Vwr
+{
+	class EdgeGroup;
+//	class NodeGroup;
+}
+
+namespace Util
+{
+	class ApplicationConfig;
+}
 
 namespace Vwr
 {
@@ -130,6 +131,7 @@ public:
 
 		QMapIterator<qlonglong, osg::ref_ptr<Data::Edge> > i(*in_edges);
 
+
 		while (i.hasNext())
 		{
 			i.next();
@@ -167,12 +169,8 @@ public:
 		*  \brief Sets nodes freeze state
 		*  \param      val     nodes freeze state
 		*/
-	void setNodesFreezed(bool val)
-	{
-		this->nodesFreezed = val;
-		nodesGroup->freezeNodePositions();
-		qmetaNodesGroup->freezeNodePositions();
-	}
+	void setNodesFreezed(bool val);
+
 
 	Vwr::NodeGroup * getNodesGroup() { return nodesGroup; }
 	Vwr::NodeGroup * getMetaNodesGroup() { return qmetaNodesGroup; }

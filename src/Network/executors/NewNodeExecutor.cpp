@@ -2,6 +2,7 @@
 #include "Manager/Manager.h"
 #include "Importer/GraphOperations.h"
 #include "Network/Server.h"
+#include "Network/Client.h"
 
 using namespace Network;
 

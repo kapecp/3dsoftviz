@@ -9,6 +9,7 @@
 #include <QList>
 #include <osg/Vec4b>
 //-----------------------------------------------------------------------------
+#include <memory>
 
 namespace Importer {
 

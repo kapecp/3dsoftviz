@@ -1,10 +1,7 @@
 #include "Network/Helper.h"
 #include "Util/ApplicationConfig.h"
 
-#include <QDebug>
-
 #include <osg/Matrix>
-#include <osgDB/ReadFile>
 #include <osgText/FadeText>
 #include <osg/AutoTransform>
 #include <osg/ShapeDrawable>
@@ -44,7 +41,8 @@ osg::PositionAttitudeTransform * Helper::generateAvatar(QString label) {
 	if(fontPath != NULL && !fontPath.isEmpty())
 		labelNode->setFont(fontPath.toStdString());
 
-	labelNode->setFadeSpeed(0.03);
+
+	labelNode->setFadeSpeed(0.03f);
 
 	labelNode->setText(label.toStdString());
 	labelNode->setLineSpacing(0);

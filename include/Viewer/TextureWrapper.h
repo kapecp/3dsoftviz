@@ -5,15 +5,8 @@
 #ifndef VIEWER_TEXTURE_WRAPPER_DEF
 #define VIEWER_TEXTURE_WRAPPER_DEF 1
 
-#include <osg/ImageSequence>
 #include <osg/Texture2D>
 #include <osg/ref_ptr>
-#include <osgDB/ReadFile>
-#include <sstream>
-
-#include "Viewer/DataHelper.h"
-
-#include "Util/ApplicationConfig.h"
 
 namespace Vwr
 {

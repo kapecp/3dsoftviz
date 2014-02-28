@@ -1,9 +1,6 @@
 #include "Viewer/RestrictionVisualizationsGroup.h"
 //-----------------------------------------------------------------------------
 
-#include <osg/ShapeDrawable>
-#include <osg/Geode>
-
 
 namespace Vwr {
 

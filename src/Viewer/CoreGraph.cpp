@@ -1,8 +1,20 @@
 #include "Viewer/CoreGraph.h"
+
 #include "Viewer/SkyBox.h"
-#include <osgUtil/Optimizer>
+#include "Viewer/EdgeGroup.h"
+#include "Viewer/NodeGroup.h"
+#include "Viewer/PerlinNoiseTextureGenerator.h"
+#include "Viewer/SkyTransform.h"
+#include "Viewer/TextureWrapper.h"
 
 #include "Network/Server.h"
+
+#include "Data/Graph.h"
+
+#include "Util/ApplicationConfig.h"
+
+#include <osgUtil/Optimizer>
+#include <osg/Depth>
 
 using namespace Vwr;
 
@@ -140,11 +152,15 @@ osg::ref_ptr<osg::Node> CoreGraph::createSkyBox(){
 		SkyBox * skyBox = new SkyBox;
 		return skyBox->createSkyBox();
 	} else {
+
+		unsigned char red = (unsigned char) appConf->getValue("Viewer.Display.BackGround.R").toInt();
+		unsigned char green = (unsigned char) appConf->getValue("Viewer.Display.BackGround.G").toInt();
+		unsigned char blue =(unsigned char) appConf->getValue("Viewer.Display.BackGround.B").toInt() ;
 		osg::ref_ptr<osg::Texture2D> skymap =
 				PerlinNoiseTextureGenerator::getCoudTexture(2048, 1024,
-															appConf->getValue("Viewer.Display.BackGround.R").toInt(),
-															appConf->getValue("Viewer.Display.BackGround.G").toInt(),
-															appConf->getValue("Viewer.Display.BackGround.B").toInt(),
+															red,
+															green,
+															blue,
 															255);
 
 		skymap->setDataVariance(osg::Object::DYNAMIC);
@@ -307,3 +323,11 @@ void CoreGraph::updateArucoGraphRotation( QMatrix4x4 mat )
 
 	graphRotTransf->setMatrix(graphTransfMat);
 }
+
+void CoreGraph::setNodesFreezed(bool val)
+{
+	this->nodesFreezed = val;
+	nodesGroup->freezeNodePositions();
+	qmetaNodesGroup->freezeNodePositions();
+}
+

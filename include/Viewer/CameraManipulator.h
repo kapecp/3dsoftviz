@@ -26,6 +26,12 @@
 #include "Math/CameraMath.h"
 #include "Viewer/CoreGraph.h"
 
+
+namespace Util
+{
+	class ApplicationConfig;
+}
+
 using namespace osgGA;
 
 namespace Vwr{
@@ -41,8 +47,9 @@ class CoreGraph;
 	*	This class is basically extended TrackballManipulator class with new functionality.
 	*/
 class CameraManipulator : public QObject, public KeySwitchMatrixManipulator
-{
+	{
 	Q_OBJECT
+
 public:
 	CameraManipulator(Vwr::CoreGraph * coreGraph);
 
@@ -102,7 +109,8 @@ public:
 
 	/** set the mouse scroll wheel zoom delta.
 		  * Range -1.0 to +1.0,  -ve value inverts wheel direction and zero switches off scroll wheel. */
-	void setScroolWheelZoomDelta(double zoomDelta) { _zoomDelta = zoomDelta; }
+
+	void setScroolWheelZoomDelta(float zoomDelta) { _zoomDelta = zoomDelta; }
 
 	/** get the mouse scroll wheel zoom delta. */
 	double getScroolWheelZoomDelta() const { return _zoomDelta; }
@@ -120,10 +128,11 @@ public:
 	const osg::Quat& getRotation() const { return _rotation; }
 
 	/** Set the distance of the trackball. */
-	void setDistance(double distance) { _distance = distance; }
+
+	void setDistance(float distance) { _distance = distance; }
 
 	/** Get the distance of the trackball. */
-	double getDistance() const { return _distance; }
+	float getDistance() const { return _distance; }
 
 	/** Set the size of the trackball. */
 	void setTrackballSize(float size);
@@ -155,13 +164,14 @@ public:
 	void setNewPosition(osg::Vec3d cameraTargetPoint, osg::Vec3d cameraInterestPoint, std::list<osg::ref_ptr<Data::Node> > selectedCluster, std::list<osg::ref_ptr<Data::Edge> > selectedEdges);
 
 public slots:
-
 	/**
 		 * @author Autor: David Durcak
 		 * @brief setRotationHead Set _rotationHead quaternion to rotate camera according head
 		 * ! distance is not implemented yet
+
 		 * @param x % distance from middle on horizontal axis
 		 * @param y % distance from middle on vertical axis
+		 * @param distance face from camera
 		 */
 	void setRotationHead(float x, float y, float distance);
 
@@ -171,6 +181,7 @@ public slots:
 		 * @param mat % ModelView matrix that disribe posiotion and rotation of marker
 		 */
 	void updateArucoGraphPosition( QMatrix4x4 mat );
+
 
 protected:
 
@@ -273,6 +284,7 @@ protected:
 	osg::Quat    _rotation;
 
 	/**
+
 		*  osg::Quat _rotationHead
 		*  \brief another camera rotation according user head
 		*/
@@ -282,7 +294,8 @@ protected:
 		*  double _distance
 		*  \brief current distance from rotation center
 		*/
-	double       _distance;
+	float       _distance;
+
 
 	/**
 		*  float _trackballSize
@@ -307,7 +320,7 @@ protected:
 		*  double maxSpeed
 		*  \brief maximum speed
 		*/
-	double    maxSpeed;
+	float    maxSpeed;
 
 	/**
 		*  double forwardSpeed
@@ -586,7 +599,8 @@ private:
 		*  static double SCREEN_MARGIN
 		*  \brief minimum distance of selected cluster from screen in t=0.5
 		*/
-	static double SCREEN_MARGIN;
+
+	static float SCREEN_MARGIN;
 
 	/**
 		*  \fn private  alterWeights(osgViewer::Viewer* viewer, std::list<osg::ref_ptr<Data::Node> > selectedCluster)
@@ -632,7 +646,17 @@ private:
 	osg::Vec3 lastTargetPoint;
 
 	Vwr::CoreGraph * coreGraph;
-};
+
+	/**
+		 * @author Autor: David Durcak
+		 * @brief Update (correction) camera projection according head coordinates
+		 * @param x coordinate of head on horizontal axis
+		 * @param y coordinate of head on vertical axis
+		 * @param distance of head from camera
+		 */
+	void updateProjectionAccordingFace(const float x, const float y, const float distance);
+	};
+
 
 }
 

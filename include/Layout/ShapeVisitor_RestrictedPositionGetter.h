@@ -31,7 +31,8 @@ public:
 	/**
 	 * \brief Does not change the position.
 	 */
-	virtual void visit(Shape_Null &shape);
+
+	virtual void visit(Shape_Null /*&shape*/);
 
 	/**
 	 * \brief Finds the restricted position using each of the shapes contained

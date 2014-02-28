@@ -23,6 +23,7 @@ typedef QMap<QSharedPointer<ShapeGetter>, long> ShapeGetterUsagesMapType;
 typedef QMap<QSharedPointer<ShapeGetter>, QSharedPointer<Shape> > LastShapesMapType;
 typedef QMap<QSharedPointer<ShapeGetter>, QSharedPointer<RestrictionRemovalHandler> > RemovalHandlersMapType;
 
+
 /**
  * \brief Stores restrictions and provides main interface to work with the
  * restrictions in a graph.

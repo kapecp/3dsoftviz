@@ -39,8 +39,8 @@ void QOpenCV::FaceRecognitionThread::run()
 		emit this->pushImage(im);
 		if (this->mFaceRecognizer->detected)
 		{
-			emit this->sendEyesCoords(-this->mFaceRecognizer->getEyesCoords().x,
-									  -this->mFaceRecognizer->getEyesCoords().y,
+			emit this->sendEyesCoords((float)-this->mFaceRecognizer->getEyesCoords().x,
+									  (float)-this->mFaceRecognizer->getEyesCoords().y,
 									  -this->mFaceRecognizer->getHeadDistance(
 										  cvGetCaptureProperty(
 											  this->mCapVideo->getCapture(),

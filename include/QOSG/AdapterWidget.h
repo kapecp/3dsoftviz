@@ -6,24 +6,12 @@
 #define QOSG_ADAPTER_WIDGET_H 1
 
 #include <osgViewer/Viewer>
-#include <osgViewer/CompositeViewer>
-#include <osgViewer/ViewerEventHandlers>
-#include <osgGA/TrackballManipulator>
-#include <osgDB/ReadFile>
 
-#include <QtCore/QString>
-#include <QtCore/QTimer>
 #include <QtGui/QKeyEvent>
-#include <QtGui/QApplication>
 #include <QtOpenGL/QGLWidget>
-#include <QtGui/QMainWindow>
-#include <QtGui/QMdiSubWindow>
-#include <QtGui/QMdiArea>
+
 
 using Qt::WindowFlags;
-
-#include <iostream>
-
 
 namespace QOSG
 {
@@ -55,7 +43,8 @@ public:
 		* Konstruktor.
 		*
 		*/
-	AdapterWidget( QWidget * parent = 0, const char * name = 0, const QGLWidget * shareWidget = 0, WindowFlags f = 0 );
+
+	AdapterWidget( QWidget * parent = 0, const char  * name = 0, const QGLWidget * shareWidget = 0, WindowFlags f = 0 );
 
 
 	/*!

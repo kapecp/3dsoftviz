@@ -7,7 +7,7 @@
 #include "OpenCV/FaceRecognizer.h"
 #include "OpenCV/CapVideo.h"
 
-Q_DECLARE_METATYPE(cv::Mat);
+Q_DECLARE_METATYPE(cv::Mat)
 
 namespace QOpenCV
 {

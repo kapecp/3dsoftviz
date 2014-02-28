@@ -1,5 +1,9 @@
 #include "Util/ElementSelector.h"
 
+#include "Viewer/PickHandler.h"
+#include "Data/Node.h"
+#include "Data/Edge.h"
+
 void Util::ElementSelector::randomElementSelector(QMap<qlonglong, osg::ref_ptr<Data::Node> >* nodes, QMap<qlonglong, osg::ref_ptr<Data::Edge> >* edges, int num, Vwr::PickHandler * pickhandler)
 {
 	pickhandler->unselectPickedEdges();

@@ -4,6 +4,13 @@
  */
 #include "Model/NodeDAO.h"
 
+#include "Data/Graph.h"
+#include "Data/GraphLayout.h"
+
+#include <QDebug>
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wfloat-equal"
+
 Model::NodeDAO::NodeDAO(void)
 {
 }
@@ -187,6 +194,7 @@ bool Model::NodeDAO::addNodesColorToDB(QSqlDatabase* conn, QMap<qlonglong, osg::
 	while(iNodes != nodes->constEnd())
 	{
 		//ulozime farbu len nodom, ktore maju farbu inu nez default
+
 		if(iNodes.value()->getColor().r() != 1 || iNodes.value()->getColor().g() != 1 ||iNodes.value()->getColor().b() != 1 ||iNodes.value()->getColor().a() != 1)
 		{
 			if(meta)
@@ -228,7 +236,8 @@ bool Model::NodeDAO::addNodesScaleToDB(QSqlDatabase* conn, QMap<qlonglong, osg::
 	while(iNodes != nodes->constEnd())
 	{
 		//ulozime scale len nodom, ktore maju velkost inu nez default
-		if(iNodes.value()->getScale() != defaultScale)
+		if(!qFuzzyCompare(iNodes.value()->getScale(),defaultScale))
+		//if(iNodes.value()->getScale() != defaultScale)
 		{
 			if(meta)
 			{
@@ -399,7 +408,7 @@ QMap<qlonglong, osg::Vec3f> Model::NodeDAO::getNodesPositions(QSqlDatabase* conn
 	while(query->next())
 	{
 		nodeId = query->value(1).toLongLong();
-		position = osg::Vec3f(query->value(2).toDouble(), query->value(3).toDouble(), query->value(4).toDouble());
+		position = osg::Vec3f(query->value(2).toFloat(), query->value(3).toFloat(), query->value(4).toFloat());
 
 		positions.insert(nodeId, position);
 	}
@@ -414,6 +423,7 @@ QList<qlonglong> Model::NodeDAO::getListOfNodes(QSqlDatabase* conn, bool* error)
 
 	//check if we have connection
 	if(conn==NULL || !conn->isOpen())
+
 	{
 		qDebug() << "[Model::NodeDAO::getListOfNodes] Connection to DB not opened.";
 		*error = TRUE;
@@ -864,3 +874,4 @@ bool Model::NodeDAO::addSettings(QSqlDatabase* conn, qlonglong graphID, qlonglon
 
 	return true;
 }
+#pragma GCC diagnostic pop
