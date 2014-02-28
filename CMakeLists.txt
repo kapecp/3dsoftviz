@@ -363,6 +363,7 @@ set(SOURCES_H ${SOURCES_H}
 		./include/Network/Server.h
 		./include/Network/Client.h
 	./include/Viewer/CameraManipulator.h
+	./include/Viewer/CoreGraph.h
 )
 
 # Qt Generators
