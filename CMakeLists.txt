@@ -339,10 +339,35 @@ set(SRC
 	${SRC_LAYOUT} ${SRC_MANAGER} ${SRC_MATH}
 	${SRC_NETWORK} ${SRC_NOISE}
 	${SRC_OSGQTBROWSER} ${SRC_QOSG} ${SRC_UTIL} ${SRC_VIEWER} ${SRC_MODEL}
-	${SRC_OPENCV} ${SRC_QOPENCV}
 )
 
-file(GLOB_RECURSE INCL "include/*.h")
+if( OpenCV_FOUND )
+	list(APPEND SRC ${SRC_OPENCV} ${SRC_QOPENCV})
+endif()
+
+#file(GLOB_RECURSE INCL "include/*.h")
+file(GLOB_RECURSE HEADER_CORE  "include/Core/*.h")
+file(GLOB_RECURSE HEADER_DATA  "include/Data/*.h")
+file(GLOB_RECURSE HEADER_IMPORTER  "include/Importer/*.h")
+file(GLOB_RECURSE HEADER_LAYOUT  "include/Layout/*.h")
+file(GLOB_RECURSE HEADER_MANAGER  "include/Manager/*.h")
+file(GLOB_RECURSE HEADER_MATH  "include/Math/*.h")
+file(GLOB_RECURSE HEADER_MODEL  "include/Model/*.h")
+file(GLOB_RECURSE HEADER_NETWORK  "include/Network/*.h")
+file(GLOB_RECURSE HEADER_NOISE  "include/Noise/*.h")
+file(GLOB_RECURSE HEADER_OSGQTBROWSER  "include/OsgQtBrowser/*.h")
+file(GLOB_RECURSE HEADER_QOSG  "include/QOSG/*.h")
+file(GLOB_RECURSE HEADER_UTIL  "include/Util/*.h")
+file(GLOB_RECURSE HEADER_VIEWER  "include/Viewer/*.h")
+
+set(INCL
+	${HEADER_CORE} ${HEADER_DATA} ${HEADER_IMPORTER}
+	${HEADER_LAYOUT} ${HEADER_MANAGER} ${HEADER_MATH}
+	${HEADER_NETWORK} ${HEADER_NOISE}
+	${HEADER_OSGQTBROWSER} ${HEADER_QOSG} ${HEADER_UTIL} ${HEADER_VIEWER} ${HEADER_MODEL}
+)
+
+
 
 # Group source files
 source_group(\\src main.cpp)

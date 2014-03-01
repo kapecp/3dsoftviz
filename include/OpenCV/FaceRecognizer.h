@@ -66,7 +66,7 @@ public:
 		 * @param screenWidth screen resolution - x axis
 		 * @return float head distance
 		 */
-	float getHeadDistance(int screenWidth);
+	float getHeadDistance(double screenWidth);
 
 	bool detected;
 
