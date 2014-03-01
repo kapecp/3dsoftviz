@@ -25,11 +25,21 @@ public:
 
 	/**
 		 * @author Autor:Dávid Durčák
-		 * @brief method that encapsule all necessary funtionality for detecting marker on input image and than return result model view matrix
-		 * @param modelviewmatrix double* the field that needs to be filled
+		 * @brief getDetectedMatrix method that encapsule all necessary funtionality for detecting marker on input image and than return result model view matrix
+		 * @param inputImage Image from cammera, where marker should be detected
 		 * @param[out] result model view matrix
 		 */
 	const QMatrix4x4 getDetectedMatrix(cv::Mat inputImage);
+
+	/**
+		 * @author Autor:Dávid Durčák
+		 * @brief getDetectedPosAndQuat method that encapsule all necessary funtionality for detecting marker on input image and fill position and qauternion vectors with that informations
+		 * @param inputImage Image from cammera, where marker should be detected
+		 * @param position[3] output array that will describe positio of marker by vector (x,y,z)
+		 * @param quaternion[4] output array that will describe orientation of marker by quaternion (w,x,y,z)
+		 * @param[out] true if least one marker was detected
+		 */
+	bool getDetectedPosAndQuat(cv::Mat inputImage, double position[3], double quaternion[4]);
 
 	/**
 		 * @author Autor:Dávid Durčák
@@ -65,14 +75,12 @@ private:
 	void cameraParameters(const QString markerDesFile);
 
 
-	cv::Mat mCamImage;
-	aruco::CameraParameters mCamParam;
-	aruco::MarkerDetector mMDetector;
-	vector<aruco::Marker> mMarkers;
-	float mMarkerSize;
+	cv::Mat					mCamImage;		// frame
+	aruco::CameraParameters mCamParam;		// camera parameters
+	aruco::MarkerDetector	mMDetector;		// detector
+	vector<aruco::Marker>	mMarkers;		// vector of detected markers
+	float					mMarkerSize;	// real marker size
 
-	//signals:
-	//detect();
 	};
 } // end ArucoModul namespace
 

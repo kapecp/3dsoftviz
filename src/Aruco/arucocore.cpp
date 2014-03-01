@@ -27,7 +27,8 @@ void ArucoCore::cameraParameters(const QString markerDesFile)
 	mCamParam.readFromXMLFile( markerDesFile.toStdString() );
 }
 
-const QMatrix4x4 ArucoCore::getDetectedMatrix(cv::Mat inputImage){
+const QMatrix4x4 ArucoCore::getDetectedMatrix(cv::Mat inputImage)
+{
 	double modelViewMatrix[16];
 
 	//this->updateImage( inputImage );
@@ -40,6 +41,24 @@ const QMatrix4x4 ArucoCore::getDetectedMatrix(cv::Mat inputImage){
 
 	QMatrix4x4 matrix(modelViewMatrix);
 	return matrix;
+}
+
+bool ArucoCore::getDetectedPosAndQuat(cv::Mat inputImage, double position[3], double quaternion[4])
+{
+	//this->updateImage( inputImage );
+	mCamParam.resize(inputImage.size());
+	mCamImage = inputImage;
+
+	detectMarkers();
+
+	if( mMarkers.size() > 0){
+		mMarkers[0].OgreGetPoseParameters( position, quaternion);
+		return true;
+
+	} else {
+		return false;
+	}
+
 }
 
 // tato funkcia je nepouzitelna
@@ -60,6 +79,7 @@ void ArucoCore::updateImage(cv::Mat inputImage)
 
 
 }
+
 void ArucoCore::detectMarkers()
 {
 	//detect markers
@@ -80,8 +100,8 @@ int ArucoCore::getMatrix(double *modelviewmatrix)
 	return -1;
 }
 
-cv::Mat ArucoCore::getDetImage(){
-
+cv::Mat ArucoCore::getDetImage()
+{
 	//for each marker, draw info and its boundaries in the image
 	for (unsigned int i = 0; i < mMarkers.size(); i++) {
 		mMarkers[i].draw( mCamImage, cv::Scalar(0,0,255), 2);
