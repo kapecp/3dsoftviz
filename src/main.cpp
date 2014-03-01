@@ -3,7 +3,10 @@
 #include "Manager/Manager.h"
 #include "Core/Core.h"
 #include "Util/Cleaner.h"
-#include "OpenCV/OpenCVCore.h"
+
+#ifdef OPENCV_FOUND
+    #include "OpenCV/OpenCVCore.h"
+#endif
 
 int main(int argc, char *argv[])
 {

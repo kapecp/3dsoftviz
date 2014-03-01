@@ -29,7 +29,9 @@
 
 #include "Importer/GraphOperations.h"
 
-#include "OpenCV/OpenCVCore.h"
+#ifdef OPENCV_FOUND
+	#include "OpenCV/OpenCVCore.h"
+#endif
 
 #include "Util/Cleaner.h"
 
