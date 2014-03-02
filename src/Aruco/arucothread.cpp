@@ -12,6 +12,9 @@ ArucoThread::ArucoThread(void)
 {
 	mCancel		= false;
 	mCorSetted	= false;
+	mRatioCamCoef = 0;
+	qRegisterMetaType< osg::Vec3d >("osgVec3d");
+	qRegisterMetaType< osg::Quat >("osgQuat");
 }
 
 ArucoThread::~ArucoThread(void)
@@ -46,8 +49,11 @@ void ArucoThread::run()
 	if( ! capture.isOpened()){
 		capture.open(1);
 	}
-	capture.set(CV_CAP_PROP_FRAME_WIDTH, 600);
-	capture.set(CV_CAP_PROP_FRAME_HEIGHT, 500);
+	const double width = 600;
+	const double height = 500;
+	const double camDistRatio = 2.75;
+	capture.set(CV_CAP_PROP_FRAME_WIDTH, width);
+	capture.set(CV_CAP_PROP_FRAME_HEIGHT, height);
 
 
 	QFileInfo file(filename);
@@ -56,6 +62,17 @@ void ArucoThread::run()
 	}
 	ArucoCore aCore(filename);
 
+
+	// compute correction translation vector and rotation quaternion
+	//double xpos[3]	= {  0.00706000, -0.122270,  0.32559200 };
+	//double xor[4]	= {  0.98069500, -0.194950, -0.00705001, -0.0135225 };
+	double xpos[3]	= { -0.00709373, -0.124475,  0.33048100 };				// with ratio
+	double xor[4]	= {  0.98163100, -0.188311, -0.02564880, -0.0168029 };	// with ratio
+
+	//qDebug() << "pos  " << pos[0] << " " << pos[1] << " " << pos[2];
+	//qDebug() << "ori  " << or[0] << " " << or[1] << " " << or[2] << " " << or[3];
+
+	//computeCorQuatAndPos( xpos, xor);
 
 	while(! mCancel) {	// doing aruco work in loop
 
@@ -67,13 +84,23 @@ void ArucoThread::run()
 			// test if marker was detect (if not, all number in matrix are not range)
 			//if(mat.data()[ 0] > -100.0 && mat.data()[ 0] < 100.0  ){  ?????????????????
 
-			QVector3D	actPos(	-actPosArray[0], -actPosArray[1], -actPosArray[2]);
-			QQuaternion actQuat( QVector4D( actQuatArray[0], actQuatArray[1], actQuatArray[2], actQuatArray[3] ));
 
-			printVec( actPos, "ActPos ");
-			printVec( actQuat.toVector4D(), "ActQuat ");
 
-			//correctQuatAndPos( actPos, actQuat );
+			osg::Quat  actQuat( actQuatArray[1], actQuatArray[2], actQuatArray[3], actQuatArray[0] );
+			osg::Vec3d actPos( -actPosArray[0], -actPosArray[1], -actPosArray[2] );
+
+			// correct Y centering, because of camerra different ration aruco top max y value is less than bottom one
+			mRatioCamCoef = ( 1 - height/width ) / camDistRatio;
+			actPos.y() = ( mRatioCamCoef * actPos.z()  + actPos.y() );
+
+
+
+
+			//qDebug() << "1>>>>  " << actPos.x() << " " << actPos.y() << " " << actPos.z();
+
+			//this->correctQuatAndPos( actPos, actQuat);
+
+			//qDebug() << "2>>>>  " << actPos.x() << " " << actPos.y() << " " << actPos.z();
 
 			emit sendArucoPosVec( actPos );
 			emit sendArucoRorQuat( actQuat );
@@ -81,7 +108,9 @@ void ArucoThread::run()
 			//}  ?????
 		}
 		emit pushImage( aCore.getDetImage());	// emit image with marked marker for debuging
-		msleep(50);
+		if(! mCancel){
+			msleep(50);
+		}
 
 	}
 	capture.release();
@@ -89,28 +118,29 @@ void ArucoThread::run()
 
 
 
-
-
-void ArucoThread::computeCorQuatAndPos( const double position[3], const double rotation[] ){
+void ArucoThread::computeCorQuatAndPos(const double position[3], const double rotation[4] ){
 	// set corection translation
-	mCorP.setX( -position[0] );
-	mCorP.setY( -position[1] );
-	mCorP.setZ( -position[2] );
+	mCorP.x() = -position[0];
+	mCorP.y() = -position[1];
+	mCorP.z() = -position[2];
 	// set corection quaternion
-	mCorQ.setScalar( rotation[0] );
-	mCorQ.setVector( rotation[1], rotation[2], rotation[3] );
-	mCorSetted = true;
+	mCorQ.w() =  rotation[3];
+	mCorQ.x() =  rotation[0];
+	mCorQ.y() =  rotation[1];
+	mCorQ.z() =  rotation[2];
+	mCorQ = mCorQ.conj();
 }
 
-void ArucoThread::correctQuatAndPos( QVector3D &actPos, QQuaternion &actQuat ) const{
+void ArucoThread::correctQuatAndPos( osg::Vec3d &actPos, osg::Quat &actQuat ) const{
 	if( mCorSetted == true ){
 		// correct position
 		// rotate point around correction point(corP) =  translate, rotate and translate back
-		actPos = mCorQ.rotatedVector( actPos - mCorP ) + mCorP;
+
+		actPos = (mCorQ * (actPos - mCorP)) + mCorP;
 
 		// correct rotation
 		actQuat = mCorQ * actQuat;
-		//actQuat = actQuat * corQ ;
+		//actQuat = actQuat * mCorQ ;
 	} else {
 		qDebug() << "ArucoThread:computeCorQautAndPos() was called before setted correction parameters before!";
 	}
@@ -148,39 +178,39 @@ void ArucoThread::computeCorMat( QMatrix4x4 origM )
 }
 
 
-void ArucoThread::printVec( const QVector3D v, const QString name)const
+void ArucoThread::printVec( const osg::Vec3d v, const QString name)const
 {
 	qDebug() << name << " " << v.x() << " " << v.y() << " " << v.z();
 }
 
-void ArucoThread::printVec( const QVector4D v, const QString name) const
+void ArucoThread::printVec( const osg::Vec4d v, const QString name) const
 {
 	qDebug() << name << " " << v.x() << " " << v.y() << " " << v.z() << " " << v.w();
 }
 
-void ArucoThread::printMat( const QMatrix4x4 mat, const QString name) const
+void ArucoThread::printMat( const osg::Matrixd mat, const QString name) const
 {
 	qDebug() << name;
 	QString str;
-	str  = " " + QString::number(mat.data()[ 0], 'f', 2);
-	str += " " + QString::number(mat.data()[ 1], 'f', 2);
-	str += " " + QString::number(mat.data()[2], 'f', 2);
-	str += " " + QString::number(mat.data()[3], 'f', 2);
+	str  = " " + QString::number( mat(0,0), 'f', 2);
+	str += " " + QString::number( mat(0,1), 'f', 2);
+	str += " " + QString::number( mat(0,2), 'f', 2);
+	str += " " + QString::number( mat(0,3), 'f', 2);
 	qDebug() << ": " << str;
-	str  = " " + QString::number(mat.data()[ 4], 'f', 2);
-	str += " " + QString::number(mat.data()[ 5], 'f', 2);
-	str += " " + QString::number(mat.data()[6], 'f', 2);
-	str += " " + QString::number(mat.data()[7], 'f', 2);
+	str  = " " + QString::number( mat(1,0), 'f', 2);
+	str += " " + QString::number( mat(1,1), 'f', 2);
+	str += " " + QString::number( mat(1,2), 'f', 2);
+	str += " " + QString::number( mat(1,3), 'f', 2);
 	qDebug() << ": " << str;
-	str  = " " + QString::number(mat.data()[ 8], 'f', 2);
-	str += " " + QString::number(mat.data()[ 9], 'f', 2);
-	str += " " + QString::number(mat.data()[10], 'f', 2);
-	str += " " + QString::number(mat.data()[11], 'f', 2);
+	str  = " " + QString::number( mat(2,0), 'f', 2);
+	str += " " + QString::number( mat(2,1), 'f', 2);
+	str += " " + QString::number( mat(2,2), 'f', 2);
+	str += " " + QString::number( mat(2,3), 'f', 2);
 	qDebug() << ": " << str;
-	str  = " " + QString::number(mat.data()[ 12], 'f', 2);
-	str += " " + QString::number(mat.data()[ 13], 'f', 2);
-	str += " " + QString::number(mat.data()[14], 'f', 2);
-	str += " " + QString::number(mat.data()[15], 'f', 2);
+	str  = " " + QString::number( mat(3,0), 'f', 2);
+	str += " " + QString::number( mat(3,1), 'f', 2);
+	str += " " + QString::number( mat(3,2), 'f', 2);
+	str += " " + QString::number( mat(3,3), 'f', 2);
 	qDebug() << ": " << str;
 }
 

@@ -2,8 +2,15 @@
 #define ARUCOTHREAD_H
 
 #include <QThread>
+
+#include <osg/Quat>
+#include <osg/Vec3d>
+#include <osg/Matrixd>
+
 #include <opencv2/core/core.hpp>
 
+Q_DECLARE_METATYPE( osg::Vec3d );
+Q_DECLARE_METATYPE( osg::Quat );
 
 namespace ArucoModul {
 
@@ -39,14 +46,14 @@ signals:
 	* @brief sendArucoPosVec signal that emit vector that represent position of detected marker
 	* @param pos Position vector
 	*/
-	void sendArucoPosVec( QVector3D pos);
+	void sendArucoPosVec( osg::Vec3d pos);
 
 	/**
 	* @author Dávid Durčák
 	* @brief sendArucoRorQuat signal that emit Quaternion that represent rotation of detected marker
 	* @param quat Quaternion
 	*/
-	void sendArucoRorQuat( QQuaternion quat);
+	void sendArucoRorQuat( osg::Quat quat);
 
 	/**
 	* @author Dávid Durčák
@@ -76,7 +83,7 @@ private:
 	* @param position[3] array that describe position of marker by vector (x,y,z)
 	* @param quaternion[4] array that describe orientation of marker by quaternion (w,x,y,z)
 	*/
-	void computeCorQuatAndPos( const double position[3], const double rotation[] );
+	void computeCorQuatAndPos( const double position[3], const double rotation[4] );
 
 	/**
 	* @author Dávid Durčák
@@ -85,7 +92,7 @@ private:
 	* @param actPos input vector that  array that describe actual position of marker by vector (x,y,z)
 	* @param actQuat array that describe actual orientation of marker by quaternion (w,x,y,z)
 	*/
-	void correctQuatAndPos( QVector3D &actPos, QQuaternion &actQuat ) const;
+	void correctQuatAndPos( osg::Vec3d &actPos, osg::Quat &actQuat ) const;
 
 	/**
 	* @author Dávid Durčák
@@ -103,7 +110,7 @@ private:
 	* @param mat Printed matrix
 	* @param name Optional name of printed matrix
 	*/
-	void printMat( const QMatrix4x4 mat, const QString name = "Matrix: ") const;
+	void printMat( const osg::Matrixd mat, const QString name = "Matrix: ") const;
 
 	/**
 	* @author Dávid Durčák
@@ -111,15 +118,16 @@ private:
 	* @param v Printed vector
 	* @param name Optional name of printed vector
 	*/
-	void printVec( const QVector3D v, const QString name = "Vector:  ") const;
-	void printVec( const QVector4D v, const QString name = "Vector:  ") const;
+	void printVec( const osg::Vec3d v, const QString name = "Vector:  ") const;
+	void printVec( const osg::Vec4d v, const QString name = "Vector:  ") const;
 
 
 	bool		mCancel;
-	bool		mCorSetted;	// true if mCorQ and mCorP was setted by computeCorQuatAndPos()
-	QMatrix4x4	mCorM;		// correction matrix
-	QQuaternion mCorQ;		// correction quaternion
-	QVector3D   mCorP;		// correction vector
+	bool		mCorSetted;		// true if mCorQ and mCorP was setted by computeCorQuatAndPos()
+	QMatrix4x4	mCorM;			// correction matrix
+	osg::Quat	mCorQ;			// correction quaternion
+	osg::Vec3d	mCorP;			// correction vector
+	double		mRatioCamCoef;	// correct aruco ration not centering y-axis
 
 
 	};
