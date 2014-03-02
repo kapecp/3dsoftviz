@@ -245,12 +245,12 @@ if( OpenCV_FOUND )
 	set( SOURCES_H
 		./include/QOpenCV/FaceRecognitionWindow.h
 		./include/QOpenCV/FaceRecognitionThread.h
-                ./include/QOpenCV/CameraSelectWindow.h
+	   #         ./include/QOpenCV/CameraSelectWindow.h
 	)
 	file(GLOB_RECURSE SRC_OPENCV  "src/OpenCV/*.cpp")
-        file(GLOB_RECURSE SRC_QOPENCV  "src/QOpenCV/*.cpp")
-        file(GLOB_RECURSE HEADER_OPENCV  "include/OpenCV/*.h")
-        file(GLOB_RECURSE HEADER_QOPENCV  "include/QOpenCV/*.h")
+		file(GLOB_RECURSE SRC_QOPENCV  "src/QOpenCV/*.cpp")
+		file(GLOB_RECURSE HEADER_OPENCV  "include/OpenCV/*.h")
+		file(GLOB_RECURSE HEADER_QOPENCV  "include/QOpenCV/*.h")
 else()
 	message("OpenCV NOT FOUND")
 endif()
@@ -386,7 +386,7 @@ set(INCL
 	${HEADER_OSGQTBROWSER} ${HEADER_QOSG} ${HEADER_UTIL} ${HEADER_VIEWER} ${HEADER_MODEL}
 )
 if( OpenCV_FOUND )
-        list(APPEND INCL ${HEADER_OPENCV} ${HEADER_QOPENCV})
+		list(APPEND INCL ${HEADER_OPENCV} ${HEADER_QOPENCV})
 endif()
 
 
