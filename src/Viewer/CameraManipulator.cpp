@@ -1127,40 +1127,6 @@ void Vwr::CameraManipulator::updateProjectionAccordingFace(const float x, const 
 }
 
 
-void Vwr::CameraManipulator::updateArucoGraphPosition( QMatrix4x4 mat ){
-	//QString str;
-	//str  = " " + QString::number(mat.data()[ 3], 'f', 2);
-	//str += " " + QString::number(mat.data()[ 7], 'f', 2);
-	//str += " " + QString::number(mat.data()[11], 'f', 2);
-	//qDebug() << ": " << str;
-
-
-	const double constDist = 0.5;
-	double koef = 1.0;
-	// absolute values
-	double dist = _distance < 0.0 ? -_distance : _distance;		// distance of graph
-	double arDist	 =  mat.data()[11] < 0.0 ? -mat.data()[11] : mat.data()[11];	// distance of marker
-
-	if(dist >  1.0){
-		koef *= dist;
-	}
-
-	// compute translation according distance
-	_centerArucoTrans[1] = koef * (mat.data()[11] + constDist);	// vertical
-
-	koef = (koef + koef*constDist) * 5 * arDist;
-	_centerArucoTrans[0] = koef * mat.data()[ 3];	// horizontal
-	_centerArucoTrans[2] = koef * mat.data()[ 7];	// vertical
-
-
-	//str  = "  " + QString::number( _centerArucoTrans[1], 'f', 2);
-	//str += "  " + QString::number( _centerArucoTrans[0], 'f', 2);
-	//str += "  " + QString::number( _centerArucoTrans[2], 'f', 2);
-	//qDebug() << ": " << str;
-	//qDebug() << ": " << _distance ;
-
-}
-
 void Vwr::CameraManipulator::updateArucoGraphPosition( osg::Vec3d pos ){
 	//QString str;
 	//str  = "arMat " + QString::number( pos.x(), 'f', 2);
