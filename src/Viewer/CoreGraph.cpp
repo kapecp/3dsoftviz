@@ -313,6 +313,14 @@ CoreGraph::~CoreGraph(void)
 	cleanUp();
 }
 
+void CoreGraph::setNodesFreezed(bool val)
+{
+	this->nodesFreezed = val;
+	nodesGroup->freezeNodePositions();
+	qmetaNodesGroup->freezeNodePositions();
+}
+
+
 void CoreGraph::updateArucoGraphRotation( QMatrix4x4 mat )
 {
 	osg::Matrixd graphTransfMat;
@@ -324,10 +332,9 @@ void CoreGraph::updateArucoGraphRotation( QMatrix4x4 mat )
 	graphRotTransf->setMatrix(graphTransfMat);
 }
 
-void CoreGraph::setNodesFreezed(bool val)
+void CoreGraph::updateArucoGraphRotation(osg::Quat quat )
 {
-	this->nodesFreezed = val;
-	nodesGroup->freezeNodePositions();
-	qmetaNodesGroup->freezeNodePositions();
-}
+	osg::Matrixd graphTransfMat( quat );
 
+	graphRotTransf->setMatrix(graphTransfMat);
+}

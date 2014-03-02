@@ -181,9 +181,16 @@ public slots:
 	/**
 		 * @author Autor: David Durcak
 		 * @brief updateArucoGraphRotation Update graphRotTransf MatrixTransform node for rotating a graph according by rotation of marker
-		 * @param mat % ModelView matrix that disribe posiotion and rotation of marker
+		 * @param mat ModelView matrix that desribe posiotion and rotation of marker
 		 */
 	void updateArucoGraphRotation( QMatrix4x4 mat );
+
+	/**
+		 * @author Autor: David Durcak
+		 * @brief updateArucoGraphRotation Update graphRotTransf MatrixTransform node for rotating a graph according by rotation of marker
+		 * @param quat Quaternion that desribe rotation of marker
+		 */
+	void updateArucoGraphRotation( osg::Quat quat );
 
 private:
 
