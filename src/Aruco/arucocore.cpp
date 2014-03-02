@@ -7,7 +7,7 @@ using namespace ArucoModul;
 ArucoCore::ArucoCore(const QString markerDesFile)
 {
 
-	mMarkerSize = 0.06;
+	mMarkerSize = 0.06f;
 	try {
 		cameraParameters(markerDesFile);
 	}
@@ -72,9 +72,9 @@ void ArucoCore::updateImage(cv::Mat inputImage)
 	// cv::cvtColor(inputImage,inputImage,CV_BGR2RGB);   // pri testovani praveze opacny efekt
 
 	//remove distorion in image
-		// nemoze byt ak je camera nastavena v konstruktore,
-		// ma za nasledok neustalu postupnu zmenu parametrov kamary,
-		// az sa stanu nepouzitelne a tym deformovanie obrazka do jeho rohu
+	// nemoze byt ak je camera nastavena v konstruktore,
+	// ma za nasledok neustalu postupnu zmenu parametrov kamary,
+	// az sa stanu nepouzitelne a tym deformovanie obrazka do jeho rohu
 	//cv::undistort(inputImage, mCamImage, mCamParam.CameraMatrix, mCamParam.Distorsion);
 
 
@@ -107,7 +107,8 @@ cv::Mat ArucoCore::getDetImage()
 		mMarkers[i].draw( mCamImage, cv::Scalar(0,0,255), 2);
 
 		//draw a 3d cube in each marker if there is 3d info
-		if (  mCamParam.isValid() && mMarkerSize != -1 ){
+		//if (  mCamParam.isValid() && mMarkerSize != -1 ){
+		if (  mCamParam.isValid() &&  !qFuzzyCompare(mMarkerSize,-1.0f)){
 			aruco::CvDrawingUtils::draw3dCube( mCamImage, mMarkers[i], mCamParam);
 		}
 	}
