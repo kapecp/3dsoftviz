@@ -124,11 +124,10 @@ void ArucoThread::computeCorQuatAndPos(const double position[3], const double ro
 	mCorP.y() = -position[1];
 	mCorP.z() = -position[2];
 	// set corection quaternion
-	mCorQ.w() =  rotation[3];
-	mCorQ.x() =  rotation[0];
-	mCorQ.y() =  rotation[1];
-	mCorQ.z() =  rotation[2];
-	mCorQ = mCorQ.conj();
+	osg::Quat tmp(rotation[1], rotation[2], rotation[3], rotation[0] );
+	mCorQ = tmp.conj();
+
+	mCorSetted = true;
 }
 
 void ArucoThread::correctQuatAndPos( osg::Vec3d &actPos, osg::Quat &actQuat ) const{
