@@ -147,6 +147,14 @@ if( USE_BUILTIN_DEPENDENCIES )
 
 	#set( LIBARUCO_LIBRARY ${DEP_BIN}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}aruco${CMAKE_SHARED_LIBRARY_SUFFIX} )
 
+	#add Aruco library
+	add_library(aruco SHARED IMPORTED)
+	add_dependencies(aruco  dep_aruco)
+	set_target_properties(aruco PROPERTIES
+		IMPORTED_LOCATION  ${DEP_BIN}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}aruco${CMAKE_SHARED_LIBRARY_SUFFIX} )
+
+
+
 	# more correct:
 	add_library(libnoise SHARED IMPORTED)
 	add_dependencies(libnoise  dep_libnoise)
@@ -161,6 +169,10 @@ if( USE_BUILTIN_DEPENDENCIES )
 			IMPORTED_LOCATION  ${DEP_BIN}/bin/${CMAKE_SHARED_LIBRARY_PREFIX}noise${CMAKE_SHARED_LIBRARY_SUFFIX}
 			IMPORTED_IMPLIB  ${DEP_BIN}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}noise${CMAKE_STATIC_LIBRARY_SUFFIX} )
 
+		set_target_properties(aruco PROPERTIES
+			IMPORTED_LOCATION  ${DEP_BIN}/bin/${CMAKE_SHARED_LIBRARY_PREFIX}aruco${CMAKE_SHARED_LIBRARY_SUFFIX}
+			IMPORTED_IMPLIB  ${DEP_BIN}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}aruco${CMAKE_STATIC_LIBRARY_SUFFIX} )
+
 		if( MSVC )
 			# set "lib" prefix for MSVC, becasue libnoise.def files requires that the library is named "libnoise"
 				#set( LIBARUCO_LIBRARY ${DEP_BIN}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}aruco${CMAKE_STATIC_LIBRARY_SUFFIX})
@@ -168,6 +180,10 @@ if( USE_BUILTIN_DEPENDENCIES )
 				set_target_properties(libnoise PROPERTIES
 				IMPORTED_LOCATION  ${DEP_BIN}/bin/${CMAKE_SHARED_LIBRARY_PREFIX}${MISS_MSVC_PREFIX}noise${CMAKE_SHARED_LIBRARY_SUFFIX}
 				IMPORTED_IMPLIB  ${DEP_BIN}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}${MISS_MSVC_PREFIX}noise${CMAKE_STATIC_LIBRARY_SUFFIX} )
+
+				set_target_properties(aruco PROPERTIES
+				IMPORTED_LOCATION  ${DEP_BIN}/bin/${CMAKE_SHARED_LIBRARY_PREFIX}aruco${CMAKE_SHARED_LIBRARY_SUFFIX}
+				IMPORTED_IMPLIB  ${DEP_BIN}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}aruco${CMAKE_STATIC_LIBRARY_SUFFIX} )
 
 		endif()
 	endif()
@@ -311,7 +327,7 @@ include_directories(SYSTEM
 
 	${DEPENDENCIES_INCLUDE_DIR}
 	${DEPENDENCIES_INCLUDE_DIR}/libnoise
-	#${DEPENDENCIES_INCLUDE_DIR}/aruco
+	${DEPENDENCIES_INCLUDE_DIR}/aruco
 
 	${OpenCV_INCLUDE_DIRS}
 )
@@ -435,7 +451,7 @@ target_link_libraries( ${3DSOFTVIZ_NAME}
 	${QT_LIBRARIES}
 	${OPENSCENEGRAPH_LIBRARIES}
 	${OSGVIEWER_LIBRARIES}
-	#${LIBARUCO_LIBRARY}
+	aruco
 	libnoise
 )
 
@@ -457,7 +473,8 @@ if (COMMAND cotire)
 			${QT_LIBRARIES}
 			${OPENSCENEGRAPH_LIBRARIES}
 			${OSGVIEWER_LIBRARIES}
-			libnoise)
+			libnoise
+			aruco)
 	endif()
 
 	if( MSVC )
@@ -469,11 +486,12 @@ endif()
 
 # ensure correct dependencies
 
-#add_dependencies( ${3DSOFTVIZ_NAME} dep_aruco )
+add_dependencies( ${3DSOFTVIZ_NAME} aruco )
 
 add_dependencies( ${3DSOFTVIZ_NAME} libnoise)
 if (COMMAND cotire)
 	add_dependencies( ${3DSOFTVIZ_NAME}_unity libnoise)
+	add_dependencies( ${3DSOFTVIZ_NAME}_unity aruco)
 endif()
 
 
@@ -499,9 +517,11 @@ install(DIRECTORY resources/ DESTINATION ${INSTALL_DATA} COMPONENT Data)
 if( USE_BUILTIN_DEPENDENCIES )
 	# Make sure dependencies are built
 	add_dependencies( ${3DSOFTVIZ_NAME} libnoise )
-	if (COMMAND cotire)
+	add_dependencies( ${3DSOFTVIZ_NAME} aruco )
+if (COMMAND cotire)
 		add_dependencies( ${3DSOFTVIZ_NAME}_unity libnoise )
-	endif()
+		add_dependencies( ${3DSOFTVIZ_NAME}_unity aruco )
+endif()
 
 	# Install all dependencies
 	install( DIRECTORY ${DEP_BIN}/
