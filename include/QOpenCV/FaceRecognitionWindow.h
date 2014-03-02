@@ -10,10 +10,6 @@
 
 #include "QOpenCV/FaceRecognitionThread.h"
 
-#include "QOpenCV/FaceRecognitionWindow.h"
-#include "OpenCV/FaceRecognizer.h"
-#include "OpenCV/CapVideo.h"
-
 namespace QOpenCV
 {
 class FaceRecognitionThread;
