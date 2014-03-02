@@ -177,10 +177,17 @@ public slots:
 
 	/**
 		 * @author Autor: David Durcak
-		 * @brief updateArucoGrafPosition Update _centerArucoTrans quaternion to change graph position according by position of marker
+		 * @brief updateArucoGrafPosition Update _centerArucoTrans vetor to change graph position according by position of marker
 		 * @param mat % ModelView matrix that disribe posiotion and rotation of marker
 		 */
 	void updateArucoGraphPosition( QMatrix4x4 mat );
+
+	/**
+		 * @author Autor: David Durcak
+		 * @brief updateArucoGrafPosition Update _centerArucoTrans vector to change graph position according by position of marker
+		 * @param pos Vector that disribe posiotion of marker
+		 */
+	void updateArucoGraphPosition( osg::Vec3d pos );
 
 
 protected:

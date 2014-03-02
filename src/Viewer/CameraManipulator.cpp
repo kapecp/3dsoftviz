@@ -1102,6 +1102,31 @@ void Vwr::CameraManipulator::setRotationHead(float x, float y, float distance)
 	}
 }
 
+void Vwr::CameraManipulator::updateProjectionAccordingFace(const float x, const float y, const float distance)
+{
+	double left, right, bottom, top, zNear, zFar;
+	double fovy, ratio, width, height;
+
+	// get current projection setting
+	this->coreGraph->getCamera()->getProjectionMatrixAsPerspective(fovy, ratio, zNear, zFar);
+
+	// compute new frustrum
+	width = height = (zNear * distance)/2;
+
+	top		= height * (1 - y*distance);
+	bottom	= -(height + height) + top;
+
+	right	= width * (1- x*distance);
+	left	= -(width + width) + right;
+
+	// repair projection ratio for screen resizing
+	left	*= ratio;
+	right	*= ratio;
+
+	this->coreGraph->getCamera()->setProjectionMatrixAsFrustum(left, right, bottom, top, zNear, zFar);
+}
+
+
 void Vwr::CameraManipulator::updateArucoGraphPosition( QMatrix4x4 mat ){
 	//QString str;
 	//str  = " " + QString::number(mat.data()[ 3], 'f', 2);
@@ -1136,31 +1161,39 @@ void Vwr::CameraManipulator::updateArucoGraphPosition( QMatrix4x4 mat ){
 
 }
 
+void Vwr::CameraManipulator::updateArucoGraphPosition( osg::Vec3d pos ){
+	//QString str;
+	//str  = "arMat " + QString::number( pos.x(), 'f', 2);
+	//str += " " + QString::number( pos.y(), 'f', 2);
+	//str += " " + QString::number( pos.z(), 'f', 2);
+	//qDebug() << ": " << str;
 
 
-void Vwr::CameraManipulator::updateProjectionAccordingFace(const float x, const float y, const float distance)
-{
-	double left, right, bottom, top, zNear, zFar;
-	double fovy, ratio, width, height;
+	const double constDist = 0.5;
+	double distArc =  pos.z()  < 0.0 ? - pos.z()	:  pos.z();		// distance of marker
+	double distGra = _distance < 0.0 ? -_distance	: _distance;	// distance of graph
+	if( distGra < 1.0){
+		distGra = 1.0;
+	}
 
-	// get current projection setting
-	this->coreGraph->getCamera()->getProjectionMatrixAsPerspective(fovy, ratio, zNear, zFar);
+	_centerArucoTrans[1] = distGra * (pos.z() + constDist);			// distance
 
-	// compute new frustrum
-	width = height = (zNear * distance)/2;
+	double koef = distGra * 2.75 * 0.8 / distArc;
 
-	top		= height * (1 - y*distance);
-	bottom	= -(height + height) + top;
+	_centerArucoTrans[0] = koef * pos.x();							// horizontal
+	_centerArucoTrans[2] = koef * pos.y();							// vertical
 
-	right	= width * (1- x*distance);
-	left	= -(width + width) + right;
 
-	// repair projection ratio for screen resizing
-	left	*= ratio;
-	right	*= ratio;
+	//str  = "  " + QString::number( _centerArucoTrans[1], 'f', 2);
+	//str += "  " + QString::number( _centerArucoTrans[0], 'f', 2);
+	//str += "  " + QString::number( _centerArucoTrans[2], 'f', 2);
+	//qDebug() << ": " << str;
+	//qDebug() << ": " << _distance ;
 
-	this->coreGraph->getCamera()->setProjectionMatrixAsFrustum(left, right, bottom, top, zNear, zFar);
 }
+
+
+
 
 } // namespace
 
