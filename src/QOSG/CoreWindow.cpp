@@ -1835,3 +1835,9 @@ void CoreWindow::setAvatarScale(int scale) {
 Vwr::CameraManipulator* CoreWindow::getCameraManipulator() {
 	return viewerWidget->getCameraManipulator();
 }
+
+void CoreWindow::closeEvent(QCloseEvent *event)
+{
+	QApplication::closeAllWindows();
+	event->accept();
+}

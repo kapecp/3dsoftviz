@@ -69,6 +69,7 @@ public:
 	float getHeadDistance(double screenWidth);
 
 	bool detected;
+	bool isMovement;
 
 private:
 
@@ -81,6 +82,7 @@ private:
 	void startRecognition();
 
 	cv::Point2f eyesCoord;
+	cv::Point2f previousEyesCoord;
 	cv::CascadeClassifier haar_cascade;
 	std::vector< cv::Rect_<int> > faces;
 };
