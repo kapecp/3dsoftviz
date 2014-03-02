@@ -6,6 +6,7 @@
 #include <osg/Quat>
 #include <osg/Vec3d>
 #include <osg/Matrixd>
+#include <QMatrix4x4>
 
 #include <opencv2/core/core.hpp>
 
@@ -75,6 +76,13 @@ public slots:
 	*/
 	void pause();
 
+	/**
+	* @author Dávid Durčák
+	* @brief setPositionOfMarker Set mMarkerIsBehind variable. If true, marker is behing projection/monitor, else marker is in front of in our side
+	* @param behind
+	*/
+	void setPositionOfMarker( bool behind );
+
 private:
 
 	/**
@@ -122,12 +130,13 @@ private:
 	void printVec( const osg::Vec4d v, const QString name = "Vector:  ") const;
 
 
-	bool		mCancel;
-	bool		mCorSetted;		// true if mCorQ and mCorP was setted by computeCorQuatAndPos()
-	QMatrix4x4	mCorM;			// correction matrix
-	osg::Quat	mCorQ;			// correction quaternion
-	osg::Vec3d	mCorP;			// correction vector
-	double		mRatioCamCoef;	// correct aruco ration not centering y-axis
+	bool		mCancel;			// thread is running if false
+	bool		mCorSetted;			// true if mCorQ and mCorP was setted by computeCorQuatAndPos()
+	bool		mMarkerIsBehind;	// if true, marker is behing projection, else marker is in front of in our side
+	QMatrix4x4	mCorM;				// correction matrix
+	osg::Quat	mCorQ;				// correction quaternion
+	osg::Vec3d	mCorP;				// correction vector
+	double		mRatioCamCoef;		// correct aruco ration not centering y-axis
 
 
 	};
