@@ -48,6 +48,9 @@ private:
 	QApplication * app;
 	QPushButton *pauseButton;
 	QPushButton *cancelButton;
+    //radio buttons for switching the camera
+    QRadioButton *faceRadioButton;
+    QRadioButton *markerRadioButton;
 	QImage qimage;
 	FaceRecognitionThread *thr;
 
@@ -75,6 +78,12 @@ private slots:
 			 * @brief setLabel Draw image on label
 			 */
 	void setLabel(cv::Mat);
+
+    /**
+            * @author Autor: Martina Tregerova
+            * @brief switchImage Switches the image shown between marker detection and face recognition
+            */
+    void switchImage();
 };
 }
 

@@ -31,17 +31,18 @@ void QOpenCV::FaceRecognitionWindow::configureWindow()
 	QHBoxLayout *frameLayout = new QHBoxLayout;
 	QHBoxLayout *mainLayout = new QHBoxLayout;
 
-    //radio buttons for switching the camera
-    QRadioButton *radio1 = new QRadioButton("Face recognition");
-    QRadioButton *radio2 = new QRadioButton("Marker detection");
+
+    this->faceRadioButton = new QRadioButton("Face recognition");
+    this->markerRadioButton = new QRadioButton("Marker detection");
     QPushButton *switchButton = new QPushButton("Switch");
+    connect(switchButton,SIGNAL(clicked()),this,SLOT(switchImage()));
 
     buttonsLayout->setAlignment(Qt::AlignLeft);
     buttonsLayout_2->setAlignment(Qt::AlignTop);
     //buttonsLayout_2->addWidget(this->pauseButton);
     //buttonsLayout_2->addWidget(this->cancelButton);
-    buttonsLayout_2->addWidget(radio1);
-    buttonsLayout_2->addWidget(radio2);
+    buttonsLayout_2->addWidget(faceRadioButton);
+    buttonsLayout_2->addWidget(markerRadioButton);
     buttonsLayout_2->addWidget(switchButton);
 
 	frameLayout->setAlignment(Qt::AlignCenter);
@@ -51,8 +52,6 @@ void QOpenCV::FaceRecognitionWindow::configureWindow()
     mainLayout->addLayout(buttonsLayout);
 
     //bottom buttons layout
-    QHBoxLayout *bottomButtonsLayout = new QHBoxLayout;
-    bottomButtonsLayout->setAlignment(Qt::AlignBottom);
     QVBoxLayout *bottomButtonsLayout_2 = new QVBoxLayout;
 
     //checkbox to define which of the threads we want running or stopped.
@@ -63,7 +62,6 @@ void QOpenCV::FaceRecognitionWindow::configureWindow()
     bottomButtonsLayout_2->addWidget(checkbox2);
     bottomButtonsLayout_2->addWidget(startButton);
     buttonsLayout->addLayout(bottomButtonsLayout_2);
-   // mainLayout->addLayout(bottomButtonsLayout);
 
 	mainLayout->addLayout(frameLayout);
 	setLayout(mainLayout);
@@ -96,7 +94,7 @@ void QOpenCV::FaceRecognitionWindow::pauseWindow()
 	else
 	{
 		emit cancelLoop(false);
-		this->pauseButton->setText(tr("Pause"));
+        this->pauseButton->setText(tr("Pause"));
 		this->thr->start();
 	}
 }
@@ -132,4 +130,14 @@ void QOpenCV::FaceRecognitionWindow::closeEvent(QCloseEvent *event)
 		qDebug() << "thread is stopped";
 	delete this->thr;
 	delete this;
+}
+
+void QOpenCV::FaceRecognitionWindow::switchImage()
+{
+    if(this->faceRadioButton->isChecked()){
+        //TBD: add connect/disconnect functionality for opencv
+    }
+    else if(this->markerRadioButton->isChecked()){
+        //TBD: add connect/disconnect functionality for aruco
+    }
 }
