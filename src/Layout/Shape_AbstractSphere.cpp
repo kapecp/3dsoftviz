@@ -3,9 +3,9 @@
 namespace Layout {
 
 Shape_AbstractSphere::Shape_AbstractSphere (
-	const osg::Vec3f center,
-	const float radius
-) :	center_ (center),
+		const osg::Vec3f center,
+		const float radius
+		) :	center_ (center),
 	radius_ (radius)
 {
 	// nothing

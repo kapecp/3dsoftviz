@@ -22,12 +22,12 @@ public:
 
 	/***/
 	Shape_Plane (
-		const osg::Vec3f normalVector,
-		const float d
-	);
+			const osg::Vec3f normalVector,
+			const float d
+			);
 
 	/***/
-	virtual ~Shape_Plane (void) {};
+	virtual ~Shape_Plane (void) {}
 
 	osg::Vec3f & getNormalVector (void);
 
@@ -37,8 +37,8 @@ public:
 	 * [visitor pattern]
 	 */
 	virtual void accept (
-		ShapeVisitor & visitor
-	);
+			ShapeVisitor & visitor
+			);
 
 private:
 

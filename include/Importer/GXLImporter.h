@@ -7,6 +7,7 @@
 //-----------------------------------------------------------------------------
 #include <QtXml/QXmlStreamReader>
 //-----------------------------------------------------------------------------
+#include <memory>
 
 namespace Importer {
 
@@ -14,7 +15,7 @@ namespace Importer {
  * \brief Imports graph data from data in GXL format.
  */
 class GXLImporter
-	: public StreamImporter {
+		: public StreamImporter {
 
 public:
 
@@ -23,8 +24,8 @@ public:
 
 	/***/
 	virtual bool import (
-		ImporterContext &context
-	);
+			ImporterContext &context
+			);
 
 private:
 

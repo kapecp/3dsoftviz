@@ -5,88 +5,93 @@
 #ifndef QOSG_MESSAGE_WINDOWS
 #define QOSG_MESSAGE_WINDOWS 1
 
-#include <QtGui>
+#ifdef __APPLE__
+#include <qstring.h>
+#else
 #include <Qt/qstring.h>
+#endif
+
+#include <QtGui>
 
 namespace QOSG
 {
-	
-	/**
+
+/**
 	*  \class MessageWindows
 	*  \brief Class that show user progress bar, error, message and loading dialog
-	*  \author Adam Pazitnaj 
+	*  \author Adam Pazitnaj
 	*  \date 3. 5. 2010
 	*/
-	class MessageWindows
-	{
-	public:
-		/**
+class MessageWindows
+{
+public:
+	/**
 		*  \fn public constructor  MessageWindows
 		*  \brief Constructor
 		*/
-		MessageWindows(void);	
+	MessageWindows(void);
 
-		/**
+	/**
 		*  \fn public destructor  ~MessageWindows
 		*  \brief Destructor
 		*/
-		~MessageWindows(void);
+	~MessageWindows(void);
 
-		/**
+	/**
 		*  \fn public  showProgressBar
 		*  \brief Show user the progress bar
 		*/
-		void showProgressBar();		
+	void showProgressBar();
 
-		/**
+	/**
 		*  \fn public  closeProgressBar
 		*  \brief Close the progress bar
 		*/
-		void closeProgressBar();		
+	void closeProgressBar();
 
-		/**
+	/**
 		*  \fn public  setProgressBarValue(int value)
 		*  \brief Set the actual value for progress bar
-		*  \param  value     
+		*  \param  value
 		*/
-		void setProgressBarValue(int value);		
+	void setProgressBarValue(int value);
 
-		/**
+	/**
 		*  \fn public  showMessageBox(QString title, QString message, bool isError)
 		*  \brief Show user error or message dialog
 		*  \param  title   title of the dialog
 		*  \param  message message of the dialog
 		*  \param  isError flag if the dialog is message or error
 		*/
-		void showMessageBox(QString title, const QString &message, bool isError);
+	void showMessageBox(QString title, const QString &message, bool isError);
 
-		/**
+	/**
 		*  \fn public  showLoadingDialog(QString message)
 		*  \brief Show user loading dialog
 		*  \param message QString    message of the dialog
 		*/
-		void showLoadingDialog(QString message);		
+	void showLoadingDialog(QString message);
 
-		/**
+	/**
 		*  \fn public  closeLoadingDialog
 		*  \brief Close the loading dialog
 		*/
-		void closeLoadingDialog();
+	void closeLoadingDialog();
 
-	private:
-		/**
+private:
+	/**
 		*  QProgressDialog * progressBar
 		*  \brief  Poninter to progress bar
 		*/
-		QProgressDialog * progressBar;	
+	QProgressDialog * progressBar;
 
-		/**
+	/**
 		*  QMessageBox * loadingDialog
 		*  \brief Pointer to loading dialog
 		*/
-		QMessageBox * loadingDialog;
+	QMessageBox * loadingDialog;
 
-	};
+};
 }
 
 #endif

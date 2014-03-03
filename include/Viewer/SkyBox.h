@@ -59,12 +59,12 @@ namespace Vwr
 class SkyBox{
 
 public:
-    SkyBox();
-    ~SkyBox();
-    osg::Node* createSkyBox();
+	SkyBox();
+	~SkyBox();
+	osg::Node* createSkyBox();
 
 private:
-    osg::TextureCubeMap* readCubeMap();
+	osg::TextureCubeMap* readCubeMap();
 
 };
 }

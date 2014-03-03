@@ -1,6 +1,7 @@
 #include "Network/executors/GraphStartExecutor.h"
 #include "Manager/Manager.h"
 #include "Importer/GraphOperations.h"
+#include "Network/Client.h"
 
 using namespace Network;
 

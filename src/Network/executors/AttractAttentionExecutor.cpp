@@ -1,5 +1,6 @@
 #include "Network/executors/AttractAttentionExecutor.h"
 #include "Network/Server.h"
+#include "Network/Client.h"
 
 using namespace Network;
 

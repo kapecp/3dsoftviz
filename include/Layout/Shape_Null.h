@@ -17,14 +17,14 @@ public:
 	Shape_Null (void);
 
 	/***/
-	virtual ~Shape_Null (void) {};
+	virtual ~Shape_Null (void) {}
 
 	/**
 	 * [visitor pattern]
 	 */
 	virtual void accept (
-		ShapeVisitor & visitor
-	);
+			ShapeVisitor & visitor
+			);
 
 }; // class
 

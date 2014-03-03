@@ -16,3 +16,6 @@
 [submodule "dependencies/luametrics"]
 	path = dependencies/luametrics
 	url = https://github.com/LuaDist/luametrics.git
+[submodule "dependencies/aruco"]
+	path = dependencies/aruco
+	url = git@github.com:LuaDist/aruco.git

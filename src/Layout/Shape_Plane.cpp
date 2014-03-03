@@ -6,9 +6,9 @@
 namespace Layout {
 
 Shape_Plane::Shape_Plane (
-	const osg::Vec3f normalVector,
-	const float d
-) :	normalVector_ (normalVector),
+		const osg::Vec3f normalVector,
+		const float d
+		) :	normalVector_ (normalVector),
 	d_ (d)
 {
 	// nothing
@@ -23,8 +23,8 @@ float Shape_Plane::getD (void) {
 }
 
 void Shape_Plane::accept (
-	ShapeVisitor & visitor
-) {
+		ShapeVisitor & visitor
+		) {
 	visitor.visit (*this);
 }
 

@@ -1,203 +1,227 @@
-#ifndef Layout_RestrictionsManager_H
-#define Layout_RestrictionsManager_H
-//-----------------------------------------------------------------------------
-#include "Layout/ShapeGetter.h"
-#include "Layout/ShapeVisitor_RestrictedPositionGetter.h"
-#include "Layout/ShapeVisitor_Comparator.h"
-#include "Layout/RestrictionsObserver.h"
-#include "Layout/RestrictionRemovalHandler.h"
-//-----------------------------------------------------------------------------
+#ifndef LAYOUT_RESTRICTIONSMANAGER_H
+#define LAYOUT_RESTRICTIONSMANAGER_H
+
 #include <QMap>
 #include <QSet>
 #include <QSharedPointer>
 #include <QMutex>
 #include <QtGlobal>
-//-----------------------------------------------------------------------------
+#include "Layout/ShapeGetter.h"
+#include "Layout/ShapeVisitor_RestrictedPositionGetter.h"
+#include "Layout/ShapeVisitor_DistanceFromFocusGetter.h"
+#include "Layout/ShapeVisitor_Comparator.h"
+#include "Layout/RestrictionsObserver.h"
+#include "Layout/RestrictionRemovalHandler.h"
+#include "Viewer/RestrictionManipulatorsGroup.h"
+#include "Viewer/RestrictionVisualizationsGroup.h"
 
-namespace Data {
-	class Node;
-}
+namespace Data { class Node; }
 
 namespace Layout {
-
 typedef QMap<Data::Node *, QSharedPointer<ShapeGetter> > RestrictionsMapType;
 typedef QMap<QSharedPointer<ShapeGetter>, long> ShapeGetterUsagesMapType;
 typedef QMap<QSharedPointer<ShapeGetter>, QSharedPointer<Shape> > LastShapesMapType;
 typedef QMap<QSharedPointer<ShapeGetter>, QSharedPointer<RestrictionRemovalHandler> > RemovalHandlersMapType;
 
-//PK: Hack for Qt v4.6.2, because Qt compilation fails on qmap.h `operator <`
-//TODO: test if this operator implementation works...
-#if (QT_VERSION < QT_VERSION_CHECK(4, 7, 0))
-	typedef QSharedPointer<Layout::ShapeGetter> foo;
-	bool operator<( foo const & one, foo const & other );
-#endif
 
 /**
- * \brief Stores restrictions and provides main interface to work with the restrictions in a graph.
- * A graph should own one instance of this object and manage the restrictions though its methods.
+ * \brief Stores restrictions and provides main interface to work with the
+ * restrictions in a graph.
+ * A graph should own one instance of this object and manage the restrictions
+ * though its methods.
  * Responsibilities:
  * - setting restrictions to nodes
  * - storing restrictions
  * - managing usages count of restrictions
  * - removing restriction after the last usage has been removed
  */
-class RestrictionsManager {
-
+class RestrictionsManager
+{
 public:
+	virtual ~RestrictionsManager() {}
 
 	/**
-	 * \brief Sets the restriction represented by the shapeGetter to each node in the nodes set.
-	 * If some node in the set already has a restriction attached, this restriction usage is removed,
-	 * so the node will have only the new restriction represented by shapeGetter.
-	 * If the shapeGetter is NULL, restriction (if any attached) is removed from each node in the nodes set.
+	 * \brief Sets the restriction represented by the shapeGetter to each node
+	 * in the nodes set.
+	 * If some node in the set already has a restriction attached, this
+	 * restriction usage is removed, so the node will have only the new
+	 * restriction represented by shapeGetter. If the shapeGetter is NULL,
+	 * restriction (if any attached) is removed from each node in the nodes
+	 * set.
 	 */
-	void setRestrictions (
-		QSet<Data::Node *> nodes,
-		QSharedPointer<ShapeGetter> shapeGetter
-	);
+	void setRestrictions(QSet<Data::Node *> &nodes, const QSharedPointer<ShapeGetter> &shapeGetter);
+
+	/**
+		 * \brief Sets the restriction represented by the shapeGetter to nides that represented shape with
+		 *  specific node.
+		 */
+	void setRestrictionToShape(
+			QLinkedList<osg::ref_ptr<Data::Node> > * nodesOfShapeGettersToRestrict,
+			QSharedPointer<ShapeGetter> shapeGetter
+			);
+
+	/**
+	 * \brief Finds out the distance of a node from the focus point according
+	 * to currently used restriction. If none restriction is used at the
+	 * moment, this function will return -1 value.
+	 * \param node the node for which a distance from the focus point will be
+	 * computed
+	 * \return the distance of the node from the focus point
+	 */
+	float distanceFromFocus(Data::Node &node);
 
 	/**
 	 * \brief Computes the restricted position for the node.
 	 * \param[in] node Node to compute the position for.
-	 * \param[in] originalPosition Original position of the node as computed by the layout algorithm.
-	 * The returned restricted position is mostly the nearest point to the originalPosition which conforms
-	 * the restriction.
-	 * The process of getting the restricted position includes getting the latest shape from the shape getter and
-	 * notifying the observer if the shape has been changed.
+	 * The computed restricted position is mostly the nearest point to the
+	 * originalPosition which conforms the restriction.
+	 * The process of getting the restricted position includes getting the
+	 * latest shape from the shape getter and notifying the observer if the
+	 * shape has been changed.
 	 */
-	osg::Vec3f applyRestriction (
-		Data::Node &node,
-		osg::Vec3f originalPosition
-	);
+	void applyRestriction(Data::Node &node);
+
+	osg::Group* getRestrictedNodes(Shape& shape);
 
 	/**
-	 * \brief Tries to set the removal handler, which defines operations which need to be made when
-	 * the restriction is removed.
-	 * If the restriction represented by shapeGetter does not exist (e.g. its last usage has been removed and
-	 * the restriction has been already destroyed) it does nothing and returns false.
+	 * \brief Tries to set the removal handler, which defines operations which
+	 * need to be made when the restriction is removed.
+	 * If the restriction represented by shapeGetter does not exist (e.g. its
+	 * last usage has been removed and the restriction has been already
+	 * destroyed) it does nothing and returns false.
 	 */
-	bool trySetRestrictionRemovalHandler (
-		QSharedPointer<ShapeGetter> shapeGetter,
-		QSharedPointer<RestrictionRemovalHandler> handler
-	);
+	bool trySetRestrictionRemovalHandler(const QSharedPointer<ShapeGetter> &shapeGetter,
+										 const QSharedPointer<RestrictionRemovalHandler> &handler);
 
 	/**
-	 * \brief Sets the removal handler, which defines operations which need to be made when
-	 * the restriction is removed.
-	 * If the restriction represented by shapeGetter does not exist (e.g. its last usage has been removed and
-	 * the restriction has been already destroyed), the handler code is run.
+	 * \brief Sets the removal handler, which defines operations which need to
+	 * be made when the restriction is removed.
+	 * If the restriction represented by shapeGetter does not exist (e.g. its
+	 * last usage has been removed and the restriction has been already
+	 * destroyed), the handler code is run.
 	 */
-	void setOrRunRestrictionRemovalHandler (
-		QSharedPointer<ShapeGetter> shapeGetter,
-		QSharedPointer<RestrictionRemovalHandler> handler
-	);
+	void setOrRunRestrictionRemovalHandler(const QSharedPointer<ShapeGetter> &shapeGetter,
+										   const QSharedPointer<RestrictionRemovalHandler> &handler);
 
 	/**
-	 * \brief Sets the observer which is notified when a restriction is added, removed or its shape has been changed.
+	 * \brief Sets the observer which is notified when a restriction is added,
+	 * removed or its shape has been changed.
 	 * [observer pattern]
 	 */
-	void setObserver (
-		QSharedPointer<RestrictionsObserver> observer
-	);
+	void setObservers (
+			QSharedPointer<Vwr::RestrictionVisualizationsGroup> v_observer,
+			QSharedPointer<Vwr::RestrictionManipulatorsGroup> m_observer
+			);
 
 	/**
 	 * \brief Removes the observer.
 	 * [observer pattern]
 	 */
-	void resetObserver ();
-
-	/***/
-	virtual ~RestrictionsManager (void) {};
+	void resetObserver();
 
 private:
 
 	/**
-	 * \brief Gets restriction (shape getter) associated with the specified node.
+	 * \brief Gets restriction (shape getter) associated with the specified
+	 * node.
 	 * Returns NULL if no restriction is associated.
 	 */
+	QSharedPointer<ShapeGetter> getShapeGetter(Data::Node &node);
 	QSharedPointer<ShapeGetter> getShapeGetter (
-		Data::Node &node
-	);
-
+			osg::ref_ptr<Data::Node> node
+			);
 	/**
-	 * \brief Gets current shape from the restriction, notifies observer if the shape has been changed and
-	 * stores it as last shape.
+	 * \brief Gets current shape from the restriction, notifies observer if
+	 * the shape has been changed and stores it as last shape.
 	 */
-	void refreshShape (
-		QSharedPointer<ShapeGetter> shapeGetter
-	);
+	void refreshShape(const QSharedPointer<ShapeGetter> &shapeGetter);
+
+	osg::Group* getNodes(QSharedPointer<ShapeGetter> shapeGetter);
 
 private: // observer notification
 
 	/**
 	 * [observer pattern]
 	 */
-	void notifyRestrictionAdded (
-		QSharedPointer<ShapeGetter> shapeGetter
-	);
+	void notifyRestrictionAdded(const QSharedPointer<ShapeGetter> &shapeGetter);
 
 	/**
 	 * [observer pattern]
 	 */
-	void notifyShapeChanged (
-		QSharedPointer<ShapeGetter> shapeGetter,
-		QSharedPointer<Shape> shape
-	);
+	void notifyShapeChanged(const QSharedPointer<ShapeGetter> &shapeGetter, const QSharedPointer<Shape> &shape);
 
 	/**
 	 * [observer pattern]
 	 */
-	void notifyRestrictionRemoved (
-		QSharedPointer<ShapeGetter> shapeGetter
-	);
+	void notifyRestrictionRemoved(const QSharedPointer<ShapeGetter> &shapeGetter);
 
 private:
+
+	typedef QMap<osg::ref_ptr<Data::Node>, QSharedPointer<ShapeGetter> > RestrictionsMapType;
+	//typedef QMap<Data::Node *, QSharedPointer<ShapeGetter> > RestrictionsMapType;
+	typedef QMap<QSharedPointer<ShapeGetter>, long> ShapeGetterUsagesMapType;
+	typedef QMap<QSharedPointer<ShapeGetter>, QSharedPointer<Shape> > LastShapesMapType;
+	typedef QMap<QSharedPointer<ShapeGetter>, QSharedPointer<RestrictionRemovalHandler> > RemovalHandlersMapType;
 
 	/**
 	 * \brief Nodes and associated restrictions.
 	 */
-	RestrictionsMapType restrictions_;
+	RestrictionsMapType mRestrictions;
 
 	/**
 	 * \brief Usages count of shape getters.
-	 * Used to determine when to destroy the shape getter (and run the removal handler) after last usage has been removed.
+	 * Used to determine when to destroy the shape getter (and run the removal
+	 * handler) after last usage has been removed.
 	 */
-	ShapeGetterUsagesMapType shapeGetterUsages_;
+	ShapeGetterUsagesMapType mShapeGetterUsages;
 
 	/**
 	 * \brief Last shapes returned by the shape getters.
 	 * Used to determine if the shape has been changed.
 	 */
-	LastShapesMapType lastShapes_;
+	LastShapesMapType mLastShapes;
 
 	/**
-	 * \brief Removal handlers defining code to be called when the shape getter is removed (after its last usage has been removed).
+	 * \brief Removal handlers defining code to be called when the shape
+	 * getter is removed (after its last usage has been removed).
 	 */
-	RemovalHandlersMapType removalHandlers_;
+	RemovalHandlersMapType mRemovalHandlers;
+
+	/**
+	 * \brief Computes distance from focus for all shapes.
+	 */
+	ShapeVisitor_DistanceFromFocusGetter mDistanceFromFocusGetter;
 
 	/**
 	 * \brief Computes restricted positions for all restriction shapes.
 	 */
-	ShapeVisitor_RestrictedPositionGetter restrictedPositionGetter_;
+	ShapeVisitor_RestrictedPositionGetter mRestrictedPositionGetter;
 
 	/**
 	 * \brief Compares two shapes for equality.
 	 */
-	ShapeVisitor_Comparator shapeComparator_;
+	ShapeVisitor_Comparator mShapeComparator;
 
 	/**
 	 * \brief Observer currently set.
 	 * NULL if no observer is set.
 	 */
-	QSharedPointer<RestrictionsObserver> observer_;
+	QSharedPointer<Vwr::RestrictionVisualizationsGroup> visualizationObserver;
 
 	/**
-	 * \brief usage: to synchronize public method calls (they change/get internal state and can be called from 2 threads: layout and gui)
+		 * \brief Observer currently set.
+		 * NULL if no observer is set.
+		 */
+	QSharedPointer<Vwr::RestrictionManipulatorsGroup> manipulationObserver;
+
+
+	/**
+	 * \brief usage: to synchronize public method calls (they change/get
+	 * internal state and can be called from 2 threads: layout and gui)
 	 */
-	QMutex mutex_;
+	QMutex mMutex;
+};
 
-}; // class
+}
 
-} // namespace
-
-#endif // Layout_RestrictionsManager_H
+#endif // LAYOUT_RESTRICTIONSMANAGER_H
