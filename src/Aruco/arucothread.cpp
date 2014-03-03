@@ -15,6 +15,7 @@ ArucoThread::ArucoThread(void)
 	mCorSetted		= false;
 	mMarkerIsBehind = false; // marker is default in front of projection or monitor
 	mCorEnabled		= false;
+	mUpdCorPar		= false;
 	mSendImgEnabled	= true;
 	mRatioCamCoef	= 0;
 
@@ -49,6 +50,10 @@ void ArucoThread::setCorEnabling( bool corEnabled )
 void ArucoThread::setSendImgEnabling( bool sendImgEnabled )
 {
 	mSendImgEnabled = sendImgEnabled;
+}
+
+void ArucoThread::updateCorectionPar(){
+	mUpdCorPar = true;
 }
 
 void ArucoThread::run()
@@ -107,6 +112,10 @@ void ArucoThread::run()
 			// test if marker was detect (if not, all number in matrix are not range)
 			//if(mat.data()[ 0] > -100.0 && mat.data()[ 0] < 100.0  ){  ?????????????????
 
+			// can be corection parameters updated
+			if( mUpdCorPar ){
+				computeCorQuatAndPos( actPosArray, actQuatArray );
+			}
 
 			osg::Vec3d actPos( -actPosArray[0], -actPosArray[1], -actPosArray[2] );
 			osg::Quat  actQuat;
@@ -156,6 +165,8 @@ void ArucoThread::computeCorQuatAndPos(const double position[3], const double ro
 	mCorQ = tmp.conj();
 
 	mCorSetted = true;
+	mUpdCorPar = false;
+	emit corParUpdated();	// emit that corection parameters were updated
 }
 
 void ArucoThread::correctQuatAndPos( osg::Vec3d &actPos, osg::Quat &actQuat ) const{
