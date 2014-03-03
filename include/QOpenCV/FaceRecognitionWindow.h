@@ -51,6 +51,9 @@ private:
     //radio buttons for switching the camera
     QRadioButton *faceRadioButton;
     QRadioButton *markerRadioButton;
+    //check buttons for switching the threads on and off
+    QCheckBox *faceCheckbox;
+    QCheckBox *markerCheckbox;
 	QImage qimage;
 	FaceRecognitionThread *thr;
 
@@ -84,6 +87,20 @@ private slots:
             * @brief switchImage Switches the image shown between marker detection and face recognition
             */
     void switchImage();
+
+    /**
+            * @author Autor:Martina Tregerova
+            * @brief startThread Starts threads based on the checked box
+            */
+
+    void startThread();
+
+    /**
+            * @author Autor:Martina Tregerova
+            * @brief startThread Stops threads based on the checked box
+            */
+
+    void stopThread();
 };
 }
 

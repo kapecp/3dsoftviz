@@ -33,6 +33,7 @@ void QOpenCV::FaceRecognitionWindow::configureWindow()
 
 
     this->faceRadioButton = new QRadioButton("Face recognition");
+    this->faceRadioButton->setChecked(true);
     this->markerRadioButton = new QRadioButton("Marker detection");
     QPushButton *switchButton = new QPushButton("Switch");
     connect(switchButton,SIGNAL(clicked()),this,SLOT(switchImage()));
@@ -41,12 +42,13 @@ void QOpenCV::FaceRecognitionWindow::configureWindow()
     buttonsLayout_2->setAlignment(Qt::AlignTop);
     //buttonsLayout_2->addWidget(this->pauseButton);
     //buttonsLayout_2->addWidget(this->cancelButton);
-    buttonsLayout_2->addWidget(faceRadioButton);
-    buttonsLayout_2->addWidget(markerRadioButton);
+    buttonsLayout_2->addWidget(this->faceRadioButton);
+    buttonsLayout_2->addWidget(this->markerRadioButton);
     buttonsLayout_2->addWidget(switchButton);
 
 	frameLayout->setAlignment(Qt::AlignCenter);
 	frameLayout->addWidget(this->windowLabel);
+    this->thr->start();
 
     buttonsLayout->addLayout(buttonsLayout_2);  //WTF:D
     mainLayout->addLayout(buttonsLayout);
@@ -55,12 +57,17 @@ void QOpenCV::FaceRecognitionWindow::configureWindow()
     QVBoxLayout *bottomButtonsLayout_2 = new QVBoxLayout;
 
     //checkbox to define which of the threads we want running or stopped.
-    QCheckBox *checkbox1 = new QCheckBox(tr("Face recognition"));
-    QCheckBox *checkbox2 = new QCheckBox(tr("Marker detection"));
+    this->faceCheckbox = new QCheckBox(tr("Face recognition"));
+    this->markerCheckbox = new QCheckBox(tr("Marker detection"));
     QPushButton *startButton = new QPushButton("Start");
-    bottomButtonsLayout_2->addWidget(checkbox1);
-    bottomButtonsLayout_2->addWidget(checkbox2);
+    //startButton->setDisabled(true); -needed? think about it.
+    QPushButton *stopButton = new QPushButton("Stop");
+    bottomButtonsLayout_2->addWidget(this->faceCheckbox);
+    bottomButtonsLayout_2->addWidget(this->markerCheckbox);
     bottomButtonsLayout_2->addWidget(startButton);
+    connect(startButton,SIGNAL(clicked()),this,SLOT(startThread()));
+    bottomButtonsLayout_2->addWidget(stopButton);
+    connect(stopButton,SIGNAL(clicked()),this,SLOT(stopThread()));
     buttonsLayout->addLayout(bottomButtonsLayout_2);
 
 	mainLayout->addLayout(frameLayout);
@@ -135,9 +142,34 @@ void QOpenCV::FaceRecognitionWindow::closeEvent(QCloseEvent *event)
 void QOpenCV::FaceRecognitionWindow::switchImage()
 {
     if(this->faceRadioButton->isChecked()){
-        //TBD: add connect/disconnect functionality for opencv
+        //TBD: add connect/disconnect functionality for opencv - check if it is connected!
     }
     else if(this->markerRadioButton->isChecked()){
-        //TBD: add connect/disconnect functionality for aruco
+        //TBD: add connect/disconnect functionality for aruco - check if it is connected!
+    }
+}
+
+void QOpenCV::FaceRecognitionWindow::startThread()
+{
+    if(this->faceCheckbox->isChecked()){
+        if(!this->thr->isRunning()){
+            emit cancelLoop(false);
+            this->thr->start();
+        }
+    }
+    if(this->markerCheckbox->isChecked()){
+        //TBD: add the same for aruco as is for marker. Need to add aruco first.
+    }
+}
+
+void QOpenCV::FaceRecognitionWindow::stopThread()
+{
+    if(this->faceCheckbox->isChecked()){
+        if(this->thr->isRunning()){
+            emit cancelLoop(true);
+        }
+    }
+    if(this->markerCheckbox->isChecked()){
+        //TBD: add the same for aruco as is for marker. Need to add aruco first.
     }
 }
