@@ -64,6 +64,12 @@ signals:
 	*/
 	void pushImage(cv::Mat image);
 
+	/**
+	* @author Dávid Durčák
+	* @brief corParUpdated Signal when correction parameters were update succefull
+	*/
+	void corParUpdated();
+
 
 public slots:
 	/**
@@ -99,6 +105,14 @@ public slots:
 	* @param sendImgEnabled
 	*/
 	void setSendImgEnabling( bool sendImgEnabled );
+
+	/**
+	* @author Dávid Durčák
+	* @brief updateCorectionPar Set mUpdCorPar tu true what will cause calling computeCorQuatAndPos for updating correction parameters, and emit corParUpdated signal if succesed
+	* @param sendImgEnabled
+	*/
+	void updateCorectionPar();
+
 
 private:
 
@@ -150,8 +164,9 @@ private:
 	bool		mCancel;			// thread is running if false
 	bool		mCorSetted;			// true if mCorQ and mCorP was setted by computeCorQuatAndPos()
 	bool		mMarkerIsBehind;	// if true, marker is behing projection, else marker is in front of in our side
-	bool		mCorEnabled;			// if true, correction is enabled
-	bool		mSendImgEnabled;		// if true, of emiting actual frame is enabled
+	bool		mCorEnabled;		// if true, correction is enabled
+	bool		mUpdCorPar;			// if true, correction can be setted
+	bool		mSendImgEnabled;	// if true, of emiting actual frame is enabled
 
 	QMatrix4x4	mCorM;				// correction matrix
 	osg::Quat	mCorQ;				// correction quaternion
