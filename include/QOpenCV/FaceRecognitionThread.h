@@ -3,13 +3,13 @@
 
 #include <QThread>
 
-#include "QOpenCV/FaceRecognitionWindow.h"
+
 #include "OpenCV/FaceRecognizer.h"
 #include "OpenCV/CapVideo.h"
 
-Q_DECLARE_METATYPE(cv::Mat)
 
 namespace QOpenCV
+
 {
 class FaceRecognitionWindow;
 

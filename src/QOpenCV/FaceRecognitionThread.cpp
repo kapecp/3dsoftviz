@@ -1,4 +1,5 @@
 #include "QOpenCV/FaceRecognitionThread.h"
+#include "QOpenCV/FaceRecognitionWindow.h"
 
 using namespace QOpenCV;
 
@@ -7,7 +8,6 @@ QOpenCV::FaceRecognitionThread::FaceRecognitionThread(OpenCV::FaceRecognizer* al
 	this->mFaceRecognizer = alg;
 	this->mCapVideo = new OpenCV::CapVideo(0,320,240);
 	this->cancel=false;
-	qRegisterMetaType<cv::Mat>("Mat");
 }
 
 QOpenCV::FaceRecognitionThread::~FaceRecognitionThread(void)

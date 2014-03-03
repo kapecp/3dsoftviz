@@ -34,7 +34,7 @@ public:
 		 * @param app QApplication
 		 * @param thr Instance of thread
 		 */
-	FaceRecognitionWindow(QWidget *parent, QApplication *app, QOpenCV::FaceRecognitionThread *thr);
+    FaceRecognitionWindow(QWidget *parent, QApplication *mApp, QOpenCV::FaceRecognitionThread *thr);
 	QLabel *getLabel();
 	QLabel *windowLabel;
 signals:
@@ -45,16 +45,16 @@ signals:
 	void cancelLoop(bool set);
 
 private:
-	QApplication * app;
-	QPushButton *pauseButton;
-	QPushButton *cancelButton;
+    QApplication * mApp;
+    QPushButton *mPauseButton;
+    QPushButton *mCancelButton;
     //radio buttons for switching the camera
-    QRadioButton *faceRadioButton;
-    QRadioButton *markerRadioButton;
+    QRadioButton *mFaceRadioButton;
+    QRadioButton *mMarkerRadioButton;
     //check buttons for switching the threads on and off
-    QCheckBox *faceCheckbox;
-    QCheckBox *markerCheckbox;
-	QImage qimage;
+    QCheckBox *mFaceCheckbox;
+    QCheckBox *mMarkerCheckbox;
+    QImage mqimage;
 	FaceRecognitionThread *thr;
 
 	/**
