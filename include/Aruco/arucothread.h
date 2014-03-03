@@ -6,6 +6,7 @@
 #include <osg/Quat>
 #include <osg/Vec3d>
 #include <osg/Matrixd>
+#include <QMatrix4x4>
 
 #include <opencv2/core/core.hpp>
 
@@ -32,6 +33,7 @@ public:
 	*@author Dávid Durčák
 	*/
 	void run();
+
 
 signals:
 	/**
@@ -61,6 +63,8 @@ signals:
 	* @param image emited image matrix
 	*/
 	void pushImage(cv::Mat image);
+
+
 public slots:
 	/**
 	* @author Dávid Durčák
@@ -74,6 +78,27 @@ public slots:
 	* @brief pauses recognition window
 	*/
 	void pause();
+
+	/**
+	* @author Dávid Durčák
+	* @brief setPositionOfMarker Set mMarkerIsBehind variable. If true, marker is behing projection/monitor, else marker is in front of in our side
+	* @param behind
+	*/
+	void setPositionOfMarker( bool behind );
+
+	/**
+	* @author Dávid Durčák
+	* @brief setCorEnabling Set enabling of correction.
+	* @param corEnabled
+	*/
+	void setCorEnabling( bool corEnabled );
+
+	/**
+	* @author Dávid Durčák
+	* @brief setSendImgEnabling Set emiting of actual frame.
+	* @param sendImgEnabled
+	*/
+	void setSendImgEnabling( bool sendImgEnabled );
 
 private:
 
@@ -122,12 +147,16 @@ private:
 	void printVec( const osg::Vec4d v, const QString name = "Vector:  ") const;
 
 
-	bool		mCancel;
-	bool		mCorSetted;		// true if mCorQ and mCorP was setted by computeCorQuatAndPos()
-	QMatrix4x4	mCorM;			// correction matrix
-	osg::Quat	mCorQ;			// correction quaternion
-	osg::Vec3d	mCorP;			// correction vector
-	double		mRatioCamCoef;	// correct aruco ration not centering y-axis
+	bool		mCancel;			// thread is running if false
+	bool		mCorSetted;			// true if mCorQ and mCorP was setted by computeCorQuatAndPos()
+	bool		mMarkerIsBehind;	// if true, marker is behing projection, else marker is in front of in our side
+	bool		mCorEnabled;			// if true, correction is enabled
+	bool		mSendImgEnabled;		// if true, of emiting actual frame is enabled
+
+	QMatrix4x4	mCorM;				// correction matrix
+	osg::Quat	mCorQ;				// correction quaternion
+	osg::Vec3d	mCorP;				// correction vector
+	double		mRatioCamCoef;		// correct aruco ration not centering y-axis
 
 
 	};

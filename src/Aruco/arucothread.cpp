@@ -1,18 +1,23 @@
 #include "Aruco/arucothread.h"
-
-#include "opencv2/core/core.hpp"
-#include "opencv2/highgui/highgui.hpp"
 #include "Aruco/arucocore.h"
-
 #include <QDebug>
+
+// this will be erased, when camera singleton will be available
+#include "opencv2/highgui/highgui.hpp"
+
+
 
 using namespace ArucoModul;
 
 ArucoThread::ArucoThread(void)
 {
-	mCancel		= false;
-	mCorSetted	= false;
-	mRatioCamCoef = 0;
+	mCancel			= false;
+	mCorSetted		= false;
+	mMarkerIsBehind = false; // marker is default in front of projection or monitor
+	mCorEnabled		= false;
+	mSendImgEnabled	= true;
+	mRatioCamCoef	= 0;
+
 	qRegisterMetaType< osg::Vec3d >("osgVec3d");
 	qRegisterMetaType< osg::Quat >("osgQuat");
 }
@@ -21,13 +26,29 @@ ArucoThread::~ArucoThread(void)
 {
 }
 
-void ArucoThread::setCancel(bool set){
+void ArucoThread::setCancel(bool set)
+{
 	mCancel	= set;
 }
 
 void ArucoThread::pause()
 {
 	mCancel = true;
+}
+
+void ArucoThread::setPositionOfMarker( bool behind )
+{
+	mMarkerIsBehind = behind;
+}
+
+void ArucoThread::setCorEnabling( bool corEnabled )
+{
+	mCorEnabled = corEnabled;
+}
+
+void ArucoThread::setSendImgEnabling( bool sendImgEnabled )
+{
+	mSendImgEnabled = sendImgEnabled;
 }
 
 void ArucoThread::run()
@@ -65,14 +86,16 @@ void ArucoThread::run()
 
 	// compute correction translation vector and rotation quaternion
 	//double xpos[3]	= {  0.00706000, -0.122270,  0.32559200 };
-	//double xor[4]	= {  0.98069500, -0.194950, -0.00705001, -0.0135225 };
-	double xpos[3]	= { -0.00709373, -0.124475,  0.33048100 };				// with ratio
-	double xor2[4]	= {  0.98163100, -0.188311, -0.02564880, -0.0168029 };	// with ratio
+	//double xorient[4]	= {  0.98069500, -0.194950, -0.00705001, -0.0135225 };
+	//double xpos[3]	= { -0.00709373, -0.124475,  0.33048100 };				// with ratio
+	//double xorient[4]	= {  0.98163100, -0.188311, -0.02564880, -0.0168029 };	// with ratio
 
 	//qDebug() << "pos  " << pos[0] << " " << pos[1] << " " << pos[2];
-	//qDebug() << "ori  " << or[0] << " " << or[1] << " " << or[2] << " " << or[3];
+	//qDebug() << "ori  " << xorient[0] << " " << xorient[1] << " " << xorient[2] << " " << xorient[3];
 
-	//computeCorQuatAndPos( xpos, xor);
+	//computeCorQuatAndPos( xpos, xorient);
+
+
 
 	while(! mCancel) {	// doing aruco work in loop
 
@@ -85,29 +108,34 @@ void ArucoThread::run()
 			//if(mat.data()[ 0] > -100.0 && mat.data()[ 0] < 100.0  ){  ?????????????????
 
 
-
-			osg::Quat  actQuat( actQuatArray[1], actQuatArray[2], actQuatArray[3], actQuatArray[0] );
 			osg::Vec3d actPos( -actPosArray[0], -actPosArray[1], -actPosArray[2] );
+			osg::Quat  actQuat;
+
+			//  forward/backward,   left/right,  around,   w
+			if( mMarkerIsBehind ){
+				actQuat.set( -actQuatArray[1],  actQuatArray[3],  actQuatArray[2],  actQuatArray[0] );
+			} else {
+				actQuat.set(  actQuatArray[1], -actQuatArray[3],  actQuatArray[2],  actQuatArray[0] );
+			}
+
 
 			// correct Y centering, because of camerra different ration aruco top max y value is less than bottom one
 			mRatioCamCoef = ( 1 - height/width ) / camDistRatio;
 			actPos.y() = ( mRatioCamCoef * actPos.z()  + actPos.y() );
 
-
-
-
-			//qDebug() << "1>>>>  " << actPos.x() << " " << actPos.y() << " " << actPos.z();
-
-			//this->correctQuatAndPos( actPos, actQuat);
-
-			//qDebug() << "2>>>>  " << actPos.x() << " " << actPos.y() << " " << actPos.z();
+			if ( mCorEnabled ) {
+				correctQuatAndPos( actPos, actQuat);
+			}
 
 			emit sendArucoPosVec( actPos );
 			emit sendArucoRorQuat( actQuat );
 
 			//}  ?????
 		}
-		emit pushImage( aCore.getDetImage());	// emit image with marked marker for debuging
+
+		if ( mSendImgEnabled ) {
+			emit pushImage( aCore.getDetImage());	// emit image with marked marker for debuging
+		}
 		if(! mCancel){
 			msleep(50);
 		}
@@ -134,12 +162,11 @@ void ArucoThread::correctQuatAndPos( osg::Vec3d &actPos, osg::Quat &actQuat ) co
 	if( mCorSetted == true ){
 		// correct position
 		// rotate point around correction point(corP) =  translate, rotate and translate back
-
-		actPos = (mCorQ * (actPos - mCorP)) + mCorP;
+		actPos = ( mCorQ * (actPos - mCorP)) + mCorP;
 
 		// correct rotation
-		actQuat = mCorQ * actQuat;
-		//actQuat = actQuat * mCorQ ;
+		actQuat = actQuat * mCorQ;
+
 	} else {
 		qDebug() << "ArucoThread:computeCorQautAndPos() was called before setted correction parameters before!";
 	}
