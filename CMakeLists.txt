@@ -319,6 +319,34 @@ if( WIN32 )
 endif()
 
 
+# Find OPENNI2
+if ( WIN32 )
+	if ( MSVC )
+		find_package( OPENNI2 )
+		if (OPENNI2_FOUND)
+		include_directories( ${OPENNI2_INCLUDE_DIRS} )
+		add_definitions( -DOPENNI2_FOUND )
+		MESSAGE ("OpenNI2 FOUND")
+		else(OPENNI2_FOUND)
+		MESSAGE ("OpenNI2 NOT FOUND")
+		endif()
+	endif()
+endif()
+
+# Find NITE2
+if ( WIN32 )
+	if ( MSVC )
+		find_package( NITE2 )
+		if (NITE2_FOUND)
+		include_directories( ${NITE2_INCLUDE_DIRS} ${NITE2_OPENNI2_DRIVER_DIRS} )
+		add_definitions( -DNITE2_FOUND )
+		message ("NITE2 FOUND")
+		else(NITE2_FOUND)
+		message ("NITE2 NOT FOUND")
+		endif()
+	endif()
+endif()
+
 # ---------------
 # Build 3DSOFTVIZ
 # ---------------
@@ -464,6 +492,13 @@ if(OpenCV_FOUND)
 	target_link_libraries( ${3DSOFTVIZ_NAME} ${OpenCV_LIBS} )
 endif()
 
+if (NITE2_FOUND AND OPENNI2_FOUND)
+	target_link_libraries( ${3DSOFTVIZ_NAME}
+		${NITE2_LIBRARIES}
+		${OPENNI2_LIBRARIES}
+	)
+endif()
+
 # 'cotire' the executable
 if (COMMAND cotire)
 	# this needs CMake 2.8.11 and greater
@@ -517,6 +552,11 @@ endif()
 
 
 install(DIRECTORY resources/ DESTINATION ${INSTALL_DATA} COMPONENT Data)
+
+# Install needed .dll files for OpenNI2
+if (NITE2_FOUND AND OPENNI2_FOUND)
+	install(DIRECTORY ${NITE2_OPENNI2_DRIVER_DIRS}/ DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/_install/bin)
+endif()
 
 # Install built in dependencies unless we are building an OSX Bundle
 if( USE_BUILTIN_DEPENDENCIES )
