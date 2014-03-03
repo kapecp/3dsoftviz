@@ -34,6 +34,7 @@ public:
 	*/
 	void run();
 
+
 signals:
 	/**
 	* @author Dávid Durčák
@@ -62,6 +63,8 @@ signals:
 	* @param image emited image matrix
 	*/
 	void pushImage(cv::Mat image);
+
+
 public slots:
 	/**
 	* @author Dávid Durčák
@@ -82,6 +85,20 @@ public slots:
 	* @param behind
 	*/
 	void setPositionOfMarker( bool behind );
+
+	/**
+	* @author Dávid Durčák
+	* @brief setCorEnabling Set enabling of correction.
+	* @param corEnabled
+	*/
+	void setCorEnabling( bool corEnabled );
+
+	/**
+	* @author Dávid Durčák
+	* @brief setSendImgEnabling Set emiting of actual frame.
+	* @param sendImgEnabled
+	*/
+	void setSendImgEnabling( bool sendImgEnabled );
 
 private:
 
@@ -133,6 +150,9 @@ private:
 	bool		mCancel;			// thread is running if false
 	bool		mCorSetted;			// true if mCorQ and mCorP was setted by computeCorQuatAndPos()
 	bool		mMarkerIsBehind;	// if true, marker is behing projection, else marker is in front of in our side
+	bool		mCorEnabled;			// if true, correction is enabled
+	bool		mSendImgEnabled;		// if true, of emiting actual frame is enabled
+
 	QMatrix4x4	mCorM;				// correction matrix
 	osg::Quat	mCorQ;				// correction quaternion
 	osg::Vec3d	mCorP;				// correction vector

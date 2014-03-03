@@ -14,7 +14,10 @@ ArucoThread::ArucoThread(void)
 	mCancel			= false;
 	mCorSetted		= false;
 	mMarkerIsBehind = false; // marker is default in front of projection or monitor
+	mCorEnabled		= false;
+	mSendImgEnabled	= true;
 	mRatioCamCoef	= 0;
+
 	qRegisterMetaType< osg::Vec3d >("osgVec3d");
 	qRegisterMetaType< osg::Quat >("osgQuat");
 }
@@ -23,7 +26,8 @@ ArucoThread::~ArucoThread(void)
 {
 }
 
-void ArucoThread::setCancel(bool set){
+void ArucoThread::setCancel(bool set)
+{
 	mCancel	= set;
 }
 
@@ -32,8 +36,19 @@ void ArucoThread::pause()
 	mCancel = true;
 }
 
-void ArucoThread::setPositionOfMarker( bool behind ){
+void ArucoThread::setPositionOfMarker( bool behind )
+{
 	mMarkerIsBehind = behind;
+}
+
+void ArucoThread::setCorEnabling( bool corEnabled )
+{
+	mCorEnabled = corEnabled;
+}
+
+void ArucoThread::setSendImgEnabling( bool sendImgEnabled )
+{
+	mSendImgEnabled = sendImgEnabled;
 }
 
 void ArucoThread::run()
@@ -108,15 +123,19 @@ void ArucoThread::run()
 			mRatioCamCoef = ( 1 - height/width ) / camDistRatio;
 			actPos.y() = ( mRatioCamCoef * actPos.z()  + actPos.y() );
 
-			//correctQuatAndPos( actPos, actQuat);
+			if ( mCorEnabled ) {
+				correctQuatAndPos( actPos, actQuat);
+			}
 
 			emit sendArucoPosVec( actPos );
 			emit sendArucoRorQuat( actQuat );
 
 			//}  ?????
 		}
-		emit pushImage( aCore.getDetImage());	// emit image with marked marker for debuging
 
+		if ( mSendImgEnabled ) {
+			emit pushImage( aCore.getDetImage());	// emit image with marked marker for debuging
+		}
 		if(! mCancel){
 			msleep(50);
 		}
