@@ -1,5 +1,14 @@
 #include "OpenCV/OpenCVCore.h"
+
+#include <opencv2/core/core.hpp>
+
+#include "Aruco/arucothread.h"
+#include "QOpenCV/FaceRecognitionThread.h"
+#include "QOpenCV/FaceRecognitionWindow.h"
 #include "Viewer/CameraManipulator.h"
+
+Q_DECLARE_METATYPE(cv::Mat)
+
 
 using namespace OpenCV;
 
@@ -9,25 +18,34 @@ OpenCV::OpenCVCore * OpenCV::OpenCVCore::mOpenCVCore;
 OpenCV::OpenCVCore::OpenCVCore( QApplication* app)
 {
 	mOpenCVCore = this;
-	this->app=app;
+	mApp		= app;
+	qRegisterMetaType<cv::Mat>("Mat");
 }
 
 void OpenCV::OpenCVCore::faceRecognition()
 {
-	OpenCV::FaceRecognizer *mFaceRecognizer = new OpenCV::FaceRecognizer();
+	FaceRecognizer *mFaceRecognizer = new FaceRecognizer();
 
-	QOpenCV::FaceRecognitionThread *thr = new QOpenCV::FaceRecognitionThread(mFaceRecognizer);
-	QOpenCV::FaceRecognitionWindow *cvw = new QOpenCV::FaceRecognitionWindow(AppCore::Core::getInstance(this->app)->getCoreWindow(),this->app,thr);
+	mThrAruco		= new ArucoModul::ArucoThread();
+	mThrFaceRec		= new QOpenCV::FaceRecognitionThread( mFaceRecognizer );
+	mOpencvDialog	= new QOpenCV::FaceRecognitionWindow( AppCore::Core::getInstance( mApp )->getCoreWindow(), mApp, mThrFaceRec);
 
 
+	createConnection();
 
-	QObject::connect( thr,SIGNAL(sendEyesCoords(float,float,float)),
-					  AppCore::Core::getInstance(this->app)->getCoreWindow()->getCameraManipulator(),
-					  SLOT(setRotationHead(float,float,float)) );
+	mOpencvDialog->show();
+	mThrFaceRec->setWindow( mOpencvDialog );
+	mThrFaceRec->start();
+	//mThrAruco->start();
+}
 
-	cvw->show();
-	thr->setWindow(cvw);
-	thr->start();
+void OpenCVCore::createConnection(){
+
+	QObject::connect( mThrFaceRec,
+					  SIGNAL(sendEyesCoords(float, float, float)),
+					  AppCore::Core::getInstance( mApp )->getCoreWindow()->getCameraManipulator(),
+					  SLOT(setRotationHead(float, float, float)) );
+
 }
 
 OpenCV::OpenCVCore * OpenCV::OpenCVCore::getInstance( QApplication* app)
