@@ -9,7 +9,8 @@
 
 using namespace ArucoModul;
 
-ArucoThread::ArucoThread(void)
+ArucoThread::ArucoThread(QObject *parent)
+	: QThread(parent)
 {
 	mCancel			= false;
 	mCorSetted		= false;

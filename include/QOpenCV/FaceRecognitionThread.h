@@ -23,7 +23,7 @@ class FaceRecognitionThread : public QThread
 	Q_OBJECT
 
 public:
-	FaceRecognitionThread(OpenCV::FaceRecognizer *alg);
+	FaceRecognitionThread( OpenCV::FaceRecognizer *alg, QObject *parent = 0);
 	~FaceRecognitionThread(void);
 	OpenCV::FaceRecognizer *mFaceRecognizer;
 	OpenCV::CapVideo *mCapVideo;

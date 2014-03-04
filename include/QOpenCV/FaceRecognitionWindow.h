@@ -2,20 +2,20 @@
 #define FACERECOGNITIONWINDOW_H
 
 #include <QDialog>
-#include <QtGui/QPushButton>
-#include <QtGui/QLabel>
-#include <QtGui/QComboBox>
-#include <QtGui/QTableWidget>
-#include <QtGui/QTableWidgetItem>
+#include <opencv2/core/core.hpp>
 
-#include "QOpenCV/FaceRecognitionThread.h"
+class QLabel;
+class QPushButton;
+class QRadioButton;
 
-#include "QOpenCV/FaceRecognitionWindow.h"
-#include "OpenCV/FaceRecognizer.h"
-#include "OpenCV/CapVideo.h"
+
+namespace OpenCV {
+	class FaceRecognizer;
+}
 
 namespace QOpenCV
 {
+
 class FaceRecognitionThread;
 
 /**
@@ -34,9 +34,9 @@ public:
 		 * @param app QApplication
 		 * @param thr Instance of thread
 		 */
-    FaceRecognitionWindow(QWidget *parent, QApplication *mApp, QOpenCV::FaceRecognitionThread *thr);
+	FaceRecognitionWindow(QWidget *parent, QApplication *mApp, QOpenCV::FaceRecognitionThread *thrFaceRec);
 	QLabel *getLabel();
-	QLabel *windowLabel;
+
 signals:
 	/**
 		 * @author Autor: Marek Jakab
@@ -45,17 +45,18 @@ signals:
 	void cancelLoop(bool set);
 
 private:
-    QApplication * mApp;
-    QPushButton *mPauseButton;
-    QPushButton *mCancelButton;
-    //radio buttons for switching the camera
-    QRadioButton *mFaceRadioButton;
-    QRadioButton *mMarkerRadioButton;
-    //check buttons for switching the threads on and off
-    QCheckBox *mFaceCheckbox;
-    QCheckBox *mMarkerCheckbox;
-    QImage mqimage;
-	FaceRecognitionThread *thr;
+	QApplication	*mApp;
+	QLabel			*mWindowLabel;
+	QPushButton		*mPauseButton;
+	QPushButton		*mCancelButton;
+	//radio buttons for switching the camera
+	QRadioButton	*mFaceRadioButton;
+	QRadioButton	*mMarkerRadioButton;
+	//check buttons for switching the threads on and off
+	QCheckBox		*mFaceCheckbox;
+	QCheckBox		*mMarkerCheckbox;
+	QImage			mqimage;
+	FaceRecognitionThread *mThrFaceRec;
 
 	/**
 		 * @author Autor: Marek Jakab
@@ -82,25 +83,25 @@ private slots:
 			 */
 	void setLabel(cv::Mat);
 
-    /**
-            * @author Autor: Martina Tregerova
-            * @brief switchImage Switches the image shown between marker detection and face recognition
-            */
-    void switchImage();
+	/**
+			* @author Autor: Martina Tregerova
+			* @brief switchImage Switches the image shown between marker detection and face recognition
+			*/
+	void switchImage();
 
-    /**
-            * @author Autor:Martina Tregerova
-            * @brief startThread Starts threads based on the checked box
-            */
+	/**
+			* @author Autor:Martina Tregerova
+			* @brief startThread Starts threads based on the checked box
+			*/
 
-    void startThread();
+	void startThread();
 
-    /**
-            * @author Autor:Martina Tregerova
-            * @brief startThread Stops threads based on the checked box
-            */
+	/**
+			* @author Autor:Martina Tregerova
+			* @brief startThread Stops threads based on the checked box
+			*/
 
-    void stopThread();
+	void stopThread();
 };
 }
 

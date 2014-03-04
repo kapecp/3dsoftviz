@@ -2,6 +2,7 @@
 
 #include <opencv2/core/core.hpp>
 
+#include "Core/Core.h"
 #include "Aruco/arucothread.h"
 #include "QOpenCV/FaceRecognitionThread.h"
 #include "QOpenCV/FaceRecognitionWindow.h"

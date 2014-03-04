@@ -3,7 +3,8 @@
 
 using namespace QOpenCV;
 
-QOpenCV::FaceRecognitionThread::FaceRecognitionThread(OpenCV::FaceRecognizer* alg)
+QOpenCV::FaceRecognitionThread::FaceRecognitionThread(OpenCV::FaceRecognizer* alg, QObject *parent)
+	: QThread(parent)
 {
 	this->mFaceRecognizer = alg;
 	this->mCapVideo = new OpenCV::CapVideo(0,320,240);

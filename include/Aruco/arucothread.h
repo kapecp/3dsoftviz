@@ -25,7 +25,7 @@ class ArucoThread : public QThread
 	Q_OBJECT
 
 public:
-	ArucoThread(void);
+	ArucoThread( QObject *parent = 0);
 	~ArucoThread(void);
 
 	/**

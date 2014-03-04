@@ -1,9 +1,8 @@
 #ifndef OPENCVCORE_H
 #define OPENCVCORE_H
 
-#include "Core/Core.h"
 
-
+class QApplication;
 
 namespace ArucoModul{
 	class ArucoThread;
