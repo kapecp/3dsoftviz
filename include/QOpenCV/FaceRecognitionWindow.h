@@ -9,6 +9,8 @@
 #include <QtGui/QTableWidgetItem>
 
 #include "QOpenCV/FaceRecognitionThread.h"
+#include "OpenCV/FaceRecognizer.h"
+#include "OpenCV/CapVideo.h"
 
 namespace QOpenCV
 {

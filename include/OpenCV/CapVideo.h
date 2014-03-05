@@ -23,7 +23,6 @@ public:
 		 * @param height Camera device height
 		 */
 	CapVideo(int device_id, int width, int height);
-	~CapVideo();
 
 	/**
 		 * @author Autor: Marek Jakab
@@ -32,12 +31,6 @@ public:
 		 * @param height Camera device height
 		 */
 	void setCaptureProperties(int width, int height);
-
-	/**
-		 * @author Autor: Marek Jakab
-		 * @brief showFrame Show captured image in new frame
-		 */
-	void showFrame();
 
 	/**
 		 * @author Autor: Marek Jakab
@@ -71,14 +64,24 @@ public:
 		 * @brief getCapture Returns capture
 		 * @return CvCapture
 		 */
-	CvCapture *getCapture();
+	cv::VideoCapture getCapture();
+
+	void startCamera(int width, int height);
+	int getWidth();
+	int getHeight();
+	int getDeviceId();
+	bool isOpened();
+	void release();
 
 private:
+	~CapVideo();
 	int device_id;
+	int connections;
+	int width;
+	int height;
 	cv::Mat frame;
 	cv::Mat grayframe;
-	CvCapture *capture;
-	cv::Rect face;
+	cv::VideoCapture capture2;
 
 };
 }

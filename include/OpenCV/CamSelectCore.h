@@ -4,8 +4,10 @@
 #include "opencv2/highgui/highgui.hpp"
 #include "QOpenCV/CamSelectWindow.h"
 #include "Core/Core.h"
+#include "OpenCV/CapVideo.h"
+#include <map>
 
-namespace OpenCVCam
+namespace OpenCV
 {
 /**
 	*@brief Class CamSelectCore
@@ -28,15 +30,15 @@ public:
 	/**
 		 * @author Autor: Marek Jakab
 		 */
-	// cv::VideoCapture
-	cv::VideoCapture selectCamera();
+	OpenCV::CapVideo *selectCamera();
 	int countCameras();
 
 	static CamSelectCore *mCamSelectCore;
 	void setCam(int dev_id, int width, int height);
 private:
 	QApplication *app;
-
+	std::vector<OpenCV::CapVideo*> camlist;
+	int device_id;
 };
 }
 

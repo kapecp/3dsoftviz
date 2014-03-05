@@ -11,7 +11,7 @@
 #include <QtGui/QTreeView>
 #include <OpenCV/CamSelectCore.h>
 
-namespace QOpenCVCam
+namespace OpenCV
 {
 /**
 	 * @author Autor: Marek Jakab
@@ -35,16 +35,14 @@ signals:
 	void setCam(int devid, int width, int heigth);
 private:
 	QApplication * app;
-	QPushButton *pauseButton;
-	QPushButton *cancelButton;
-	QImage qimage;
 
 	QStandardItemModel * model;
 	QTreeView * view;
 	QList<QString> * changes;
 	QPushButton * applyButton;
+	QModelIndexList indexes;
 
-
+	int rowsize;
 	/**
 		 * @author Autor: Marek Jakab
 		 * @brief configureWindow Sets window properties
@@ -55,6 +53,7 @@ private:
 public slots:
 	//void itemClicked(QModelIndex index);
 	void commitChanges();
+	void printChanged(const QItemSelection &, const QItemSelection &);
 };
 }
 

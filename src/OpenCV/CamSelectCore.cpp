@@ -1,112 +1,79 @@
 #include "OpenCV/CamSelectCore.h"
-#include <map>
 
-using namespace OpenCVCam;
+using namespace OpenCV;
 
-OpenCVCam::CamSelectCore * OpenCVCam::CamSelectCore::mCamSelectCore;
-std::map<int, cv::VideoCapture> mapcam;
-std::vector<cv::VideoCapture> cam;
+OpenCV::CamSelectCore * OpenCV::CamSelectCore::mCamSelectCore;
 
-//typedef Camera cv::VideoCapture;
-
-OpenCVCam::CamSelectCore::CamSelectCore( QApplication* app)
+OpenCV::CamSelectCore::CamSelectCore( QApplication* app)
 {
 	mCamSelectCore = this;
 	this->app=app;
-	mapcam.clear();
 	int max=this->countCameras();
-	for (int i=1;i<max;i++){
-		std::cout << "kamera c.: " << i << std::endl;
-		static QMutex mutex;
-		mutex.lock();
-		mapcam.insert(std::pair<int,cv::VideoCapture>(i,cv::VideoCapture(i)));
-		cv::VideoCapture cap(max+1);
-		cam.push_back(cap);//NULL
-		mutex.unlock();
+	if (max>1) max--;
+	for (int i=0;i<max;i++){
+		camlist.push_back(new OpenCV::CapVideo(i,0,0));
 	}
-	std::cout << "skuska1" << std::endl;
 }
 
-cv::VideoCapture OpenCVCam::CamSelectCore::selectCamera()
+
+OpenCV::CapVideo *OpenCV::CamSelectCore::selectCamera()
 {
-	// implementacia kamery
+	// Vytvorenie stringu pre vypis dat o kamere
 	QString data;
-	for(int i=0; i < cam.size(); i++){
-		data.append(QString::number(i+1));
+	for(int i=0; i < camlist.size(); i++){
+		data.append(QString::number(camlist[i]->getDeviceId()));
 		data.append(",");
-		if (cam[i].isOpened()){
+		if (camlist[i]->isOpened()){
 			data.append("yes");data.append(",");
-			data.append(QString::number((int)cam[i].get(CV_CAP_PROP_FRAME_WIDTH)));
+			data.append(QString::number((int)camlist[i]->getWidth()));
 			data.append(",");
-			data.append(QString::number((int)cam[i].get(CV_CAP_PROP_FRAME_HEIGHT)));
+			data.append(QString::number((int)camlist[i]->getHeight()));
 		} else{
 			data.append("no");data.append(",");
 			data.append("0");
 			data.append(",");
 			data.append("0");
 		}
-		if (i<cam.size()-1) data.append(";");
+		if (i<camlist.size()-1) data.append(";");
 	}
-//	static QMutex mutex;
-//	mutex.lock();
-//	for(std::map<int, cv::VideoCapture>::iterator itr = mapcam.begin(); itr != mapcam.end(); ++itr) {
-//		data.append(QString::number(itr->first));
-//		data.append(",");
-//		if (itr->second.isOpened()){
-//			data.append("yes");data.append(",");
-//			//data.append("640");
-//			data.append(QString::number((int)itr->second.get(CV_CAP_PROP_FRAME_WIDTH)));
-//			data.append(",");
-//			//data.append("480");
-//			data.append(QString::number((int)itr->second.get(CV_CAP_PROP_FRAME_HEIGHT)));
-//			if (itr!= mapcam.end()) data.append(";");
-//		} else{
-//			data.append("no");data.append(",");
-//			data.append("0");
-//			data.append(",");
-//			data.append("0");
-//			if (itr!= mapcam.end()) data.append(";");
-//		}
-//	}
-//	mutex.unlock();
-	std::cout << data.toUtf8().constData() << std::endl;
-	//data.append("1,yes,640,480;2,no,0,0;3,yes,200,200");
-	QOpenCVCam::CamSelectWindow *csw = new QOpenCVCam::CamSelectWindow(AppCore::Core::getInstance(this->app)->getCoreWindow(),this->app,data);
+	//std::cout << data.toUtf8().constData();
+	OpenCV::CamSelectWindow *csw = new OpenCV::CamSelectWindow(AppCore::Core::getInstance(this->app)->getCoreWindow(),this->app,data);
 
-	csw->show();
-
+	csw->exec();
+	if (camlist[device_id]->isOpened()){
+		return camlist[device_id];
+	}
 	return NULL;
+
 }
 
-OpenCVCam::CamSelectCore * OpenCVCam::CamSelectCore::getInstance(QApplication *app)
+OpenCV::CamSelectCore * OpenCV::CamSelectCore::getInstance(QApplication *app)
 {
 	if(mCamSelectCore == NULL)
 	{
-		mCamSelectCore = new OpenCVCam::CamSelectCore(app);
+		mCamSelectCore = new OpenCV::CamSelectCore(app);
 	}
 	return mCamSelectCore;
 }
 
-int OpenCVCam::CamSelectCore::countCameras()
+int OpenCV::CamSelectCore::countCameras()
 {
-   //cv::VideoCapture temp_camera;
-   int maxTested = 5;
-   for (int i = 1; i < maxTested; i++){
-	 cv::VideoCapture temp_camera(i);
-	 bool res = (!temp_camera.isOpened());
-	 temp_camera.release();
-	 temp_camera.~VideoCapture();
-	 if (res)
-	 {
-	   return i;
-	 }
-   }
-   return maxTested;
+	int max = 10;
+	for (int i = 0; i < max; i++){
+		cv::VideoCapture temp(i);
+		if (!temp.isOpened()){
+			temp.release();
+			temp.~VideoCapture();
+			return i;
+		}
+		temp.release();
+		temp.~VideoCapture();
+	}
+	return max;
 }
 
-void OpenCVCam::CamSelectCore::setCam(int dev_id, int width, int height){
-	cv::VideoCapture cap(dev_id-1);
-	cap.set(CV_CAP_PROP_FRAME_WIDTH,(double)width);
-	cap.set(CV_CAP_PROP_FRAME_HEIGHT,(double)height);
-	cam[dev_id-1]=cap;
+void OpenCV::CamSelectCore::setCam(int dev_id, int width, int height){
+
+	camlist[dev_id]->startCamera(width,height);
+	this->device_id=dev_id;
 }
