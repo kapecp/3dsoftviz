@@ -5,6 +5,7 @@
 #include "Data/Edge.h"
 #include "Data/Type.h"
 #include "Data/Cluster.h"
+#include "Manager/Manager.h"
 #include <math.h>
 
 #include "QOSG/OptionsWindow.h"

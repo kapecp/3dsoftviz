@@ -332,13 +332,14 @@ file(GLOB_RECURSE SRC_OSGQTBROWSER  "src/OsgQtBrowser/*.cpp")
 file(GLOB_RECURSE SRC_QOSG  "src/QOSG/*.cpp")
 file(GLOB_RECURSE SRC_UTIL  "src/Util/*.cpp")
 file(GLOB_RECURSE SRC_VIEWER  "src/Viewer/*.cpp")
+file(GLOB_RECURSE SRC_CLUSTERING  "src/Clustering/*.cpp")
 
 # Source files
 set(SRC
 	${SRC_MAIN} ${SRC_CORE} ${SRC_DATA} ${SRC_IMPORTER}
 	${SRC_LAYOUT} ${SRC_MANAGER} ${SRC_MATH}
 	${SRC_NETWORK} ${SRC_NOISE}
-	${SRC_OSGQTBROWSER} ${SRC_QOSG} ${SRC_UTIL} ${SRC_VIEWER} ${SRC_MODEL}
+        ${SRC_OSGQTBROWSER} ${SRC_QOSG} ${SRC_UTIL} ${SRC_VIEWER} ${SRC_MODEL} ${SRC_CLUSTERING}
 )
 
 if( OpenCV_FOUND )
@@ -359,18 +360,20 @@ file(GLOB_RECURSE HEADER_OSGQTBROWSER  "include/OsgQtBrowser/*.h")
 file(GLOB_RECURSE HEADER_QOSG  "include/QOSG/*.h")
 file(GLOB_RECURSE HEADER_UTIL  "include/Util/*.h")
 file(GLOB_RECURSE HEADER_VIEWER  "include/Viewer/*.h")
+file(GLOB_RECURSE HEADER_CLUSTERING  "include/Clustering/*.h")
 
 set(INCL
 	${HEADER_CORE} ${HEADER_DATA} ${HEADER_IMPORTER}
 	${HEADER_LAYOUT} ${HEADER_MANAGER} ${HEADER_MATH}
 	${HEADER_NETWORK} ${HEADER_NOISE}
-	${HEADER_OSGQTBROWSER} ${HEADER_QOSG} ${HEADER_UTIL} ${HEADER_VIEWER} ${HEADER_MODEL}
+        ${HEADER_OSGQTBROWSER} ${HEADER_QOSG} ${HEADER_UTIL} ${HEADER_VIEWER} ${HEADER_MODEL} ${HEADER_CLUSTERING}
 )
 
 
 
 # Group source files
 source_group(\\src main.cpp)
+source_group(\\src\\Clustering "^.*Clustering/.*$")
 source_group(\\src\\Network "^.*Network/.*$")
 source_group(\\src\\Viewer "^.*Viewer/.*$")
 source_group(\\src\\Core "^.*Core/.*$")
@@ -383,8 +386,8 @@ source_group(\\src\\Layout "^.*Layout/.*$")
 source_group(\\src\\QOSG "^.*QOSG/.*$")
 source_group(\\src\\OsgQtBrowser "^.*OsgQtBrowser/.*$")
 source_group(\\src\\Noise "^.*Noise/.*$")
-source_group(\\src\\Clustering "^.*clustering/.*$")
 # Group header files
+source_group(\\headers\\Clustering "^.*Clustering/.*h$")
 source_group(\\headers\\Network "^.*Network/.*h$")
 source_group(\\headers\\Viewer "^.*Viewer/.*h$")
 source_group(\\headers\\Core "^.*Core/.*h$")
@@ -397,7 +400,6 @@ source_group(\\headers\\Layout "^.*Layout/.*h$")
 source_group(\\headers\\QOSG "^.*QOSG/.*h$")
 source_group(\\headers\\Noise "^.*Noise/.*h$")
 source_group(\\headers\\OsgQtBrowser "^.*OsgQtBrowser/.*h$")
-source_group(\\headers\\Clustering "^.*clustering/.*h$")
 
 if(OpenCV_FOUND)
 	source_group(\\src\\QOpenCV "^.*QOpenCV/.*$")
@@ -558,4 +560,3 @@ set( CPACK_PACKAGE_VENDOR "${3DSOFTVIZ_VENDOR}" )
 set( CPACK_RESOURCE_FILE_README "${CMAKE_SOURCE_DIR}/${3DSOFTVIZ_README}" )
 #set( CPACK_COMPONENTS_ALL Runtime Dependencies Data )
 include( CPack )
-
