@@ -5,6 +5,8 @@
 #include "Layout/ShapeGetter_SphereSurface_ByTwoNodes.h"
 #include "Layout/ShapeGetter_Sphere_ByTwoNodes.h"
 #include "Layout/ShapeGetter_Plane_ByThreeNodes.h"
+#include "Network/Server.h"
+#include "Network/Client.h"
 
 using namespace Network;
 

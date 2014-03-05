@@ -16,19 +16,19 @@ class Shape_SphereSurface : public Shape_AbstractSphere {
 public:
 
 	Shape_SphereSurface (
-		const osg::Vec3f center,
-		const float radius
-	);
+			const osg::Vec3f center,
+			const float radius
+			);
 
 	/***/
-	virtual ~Shape_SphereSurface (void) {};
+	virtual ~Shape_SphereSurface (void) {}
 
 	/**
 	 * [visitor pattern]
 	 */
 	virtual void accept (
-		ShapeVisitor & visitor
-	);
+			ShapeVisitor & visitor
+			);
 
 }; // class
 

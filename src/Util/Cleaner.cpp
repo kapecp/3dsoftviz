@@ -1,9 +1,12 @@
 #include "Util/Cleaner.h"
+#include <iostream>
+
+using namespace std;
 
 void Cleaner::clean()
 {
 	//sem kod na vycistenie pamata
-	cout<< "About to quit\n";
+	std::cout<< "About to quit\n";
 }
 
 Cleaner::Cleaner(QApplication* app)

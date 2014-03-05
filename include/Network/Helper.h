@@ -7,11 +7,11 @@
 #include <QString>
 
 namespace Network {
-    class Helper{
-    public:
-        static osg::Quat lookAt(osg::Vec3 from, osg::Vec3 to);
-        static osg::PositionAttitudeTransform * generateAvatar(QString label);
-    };
+class Helper{
+public:
+	static osg::Quat lookAt(osg::Vec3 from, osg::Vec3 to);
+	static osg::PositionAttitudeTransform * generateAvatar(QString label);
+};
 }
 
 #endif

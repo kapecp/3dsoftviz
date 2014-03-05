@@ -4,6 +4,7 @@
 #include <QIODevice>
 //-----------------------------------------------------------------------------
 #include <iostream>
+#include "QDebug"
 //-----------------------------------------------------------------------------
 
 namespace Util {
@@ -13,7 +14,7 @@ namespace Util {
  * Only reading is implemented.
  */
 class Adapter_iostream_to_QIODevice
-	: public QIODevice {
+		: public QIODevice {
 
 public:
 
@@ -22,8 +23,8 @@ public:
 	 * \param[] stream Stream to use by the adapter.
 	 */
 	Adapter_iostream_to_QIODevice (
-		std::iostream &stream
-	) : stream_ (stream)
+			std::iostream &stream
+			) : stream_ (stream)
 	{
 		setOpenMode (ReadWrite);
 	}
@@ -43,7 +44,7 @@ public:
 	 * \brief Open method provided for compatibility with QIODevice.
 	 * Only returns true (encapsulated iostream is already opened by construction).
 	 */
-	virtual bool open(OpenMode mode) {
+	virtual bool open() {
 		return true;
 	}
 
@@ -67,7 +68,7 @@ public:
 
 	/***/
 	virtual bool seek(qint64 pos) {
-		throw "not implemented";
+		throw "not implemented"+pos;
 	}
 
 	/***/
@@ -100,12 +101,13 @@ public:
 	 * Only returns true.
 	 */
 	virtual bool waitForReadyRead(int msecs) {
+		qDebug() << "not implement "+msecs;
 		return true;
 	}
 
 	/***/
 	virtual bool waitForBytesWritten(int msecs) {
-		throw "not implemented";
+		throw "not implemented"+msecs;
 	}
 
 protected:
@@ -122,12 +124,13 @@ protected:
 	}
 
 	/***/
-	virtual qint64 readLineData(char *data, qint64 maxlen) {
+	virtual qint64 readLineData(char /* *data*/, qint64 /* maxlen */) {
 		throw "not implemented";
+
 	}
 
 	/***/
-	virtual qint64 writeData(const char *data, qint64 len) {
+	virtual qint64 writeData(const char /* *data*/, qint64 /*len*/) {
 		throw "not implemented";
 	}
 

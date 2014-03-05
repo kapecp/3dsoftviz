@@ -1,6 +1,9 @@
 #include "Network/executors/LayoutExecutor.h"
 #include "Manager/Manager.h"
 
+#include "Network/Client.h"
+#include "Network/Server.h"
+
 using namespace Network;
 
 void LayoutExecutor::execute_client() {

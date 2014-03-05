@@ -9,6 +9,7 @@
 #include <QList>
 #include <osg/Vec4b>
 //-----------------------------------------------------------------------------
+#include <memory>
 
 namespace Importer {
 
@@ -16,7 +17,7 @@ namespace Importer {
  * \brief Imports graph data from data in GraphML format.
  */
 class GraphMLImporter
-	: public StreamImporter {
+		: public StreamImporter {
 
 public:
 
@@ -25,8 +26,8 @@ public:
 
 	/***/
 	virtual bool import (
-		ImporterContext &context
-	);
+			ImporterContext &context
+			);
 
 private:
 
@@ -35,29 +36,29 @@ private:
 	 * [recursive]
 	 */
 	bool processGraph (
-		QDomElement &graphElement
-	);
+			QDomElement &graphElement
+			);
 
 	/**
 	 * \brief Imports nodes from a graph (or subgraph).
 	 */
 	bool processGraph_Nodes (
-		QDomElement &graphElement
-	);
+			QDomElement &graphElement
+			);
 
 	/**
 	 * \brief Imports edges from a graph (or subgraph).
 	 */
 	bool processGraph_Edges (
-		QDomElement &graphElement
-	);
+			QDomElement &graphElement
+			);
 
 	/**
 	 * \brief Imports hyperedges from a graph (or subgraph).
 	 */
 	bool processGraph_Hyperedges (
-		QDomElement &graphElement
-	);
+			QDomElement &graphElement
+			);
 
 private:
 

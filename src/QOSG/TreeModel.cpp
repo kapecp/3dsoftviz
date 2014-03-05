@@ -48,15 +48,19 @@ Provides a simple tree model to show how to create and use hierarchical
 models.
 */
 
-#include <QtGui>
-
-#include "QOSG/TreeItem.h"
 #include "QOSG/TreeModel.h"
+#include "QOSG/TreeItem.h"
+
+#include "Data/Type.h"
+#include "Data/Graph.h"
+#include "Manager/Manager.h"
+
+#include <QtGui>
 
 using namespace QOSG;
 
 TreeModel::TreeModel(const QStringList &data, QObject *parent)
-: QAbstractItemModel(parent)
+	: QAbstractItemModel(parent)
 {
 	QList<QVariant> rootData;
 	rootData << "root" ;
@@ -157,7 +161,7 @@ int TreeModel::rowCount(const QModelIndex &parent) const
 
 void TreeModel::setupModelData(const QStringList &lines, TreeItem *parent)
 {
-	QList<TreeItem*> parents;   
+	QList<TreeItem*> parents;
 	parents << parent;
 	int i;
 	QStringList lastPath;
@@ -166,18 +170,18 @@ void TreeModel::setupModelData(const QStringList &lines, TreeItem *parent)
 	TreeItem * index;
 	//postupne sa prechadzaju vsetky polozky konfiguraku
 	for (i=0; i<lines.length(); i++)
-	{				
+	{
 		//vytiahnutie mena a hodnoty premennej spolu s cestou k nim
 		line = lines[i].split("\t");
 		path = line[0].split(".");
-		
+
 		//vytvorenie dat v tvare "meno_premmenej,hodnota"
 		QString data = QString("%1,%2").arg(path.last()).arg(line.last());
 		path.pop_back();
 
 		if (!i)
 		{
-			//ak je to prva hodnota z konfiguraku  tak sa vytvori nova polozka podla cesty 
+			//ak je to prva hodnota z konfiguraku  tak sa vytvori nova polozka podla cesty
 			lastPath = line[0].split(".");
 			lastPath.pop_back();
 			createStruct(path,parents.last(),data);
@@ -197,13 +201,13 @@ void TreeModel::setupModelData(const QStringList &lines, TreeItem *parent)
 						index->addColumnData(data);
 				}
 				else
-				{		
+				{
 					//ak nie tak sa vytvori nova polozka s novou cestou
 					for(int k=j;k<path.length();k++)
 						if (k > lastPath.length()-1)
 							lastPath << path[k];
 						else
-							lastPath[k] = path[k];						
+							lastPath[k] = path[k];
 
 					for(int l=0;l<j;l++)
 						path.pop_front();
@@ -252,7 +256,7 @@ void TreeModel::addNodesToList(QList<TreeItem*> * parents)
 	Manager::GraphManager * manager = Manager::GraphManager::getInstance();
 	QMap<qlonglong, Data::Type*> * nodes = manager->getActiveGraph()->getTypes();
 
-	QMap<qlonglong, Data::Type*>::iterator iterator;	
+	QMap<qlonglong, Data::Type*>::iterator iterator;
 
 	//typy uzlyovsa postupne prechadzaju
 	for (iterator = nodes->begin(); iterator != nodes->end(); ++iterator)
@@ -260,8 +264,8 @@ void TreeModel::addNodesToList(QList<TreeItem*> * parents)
 		//vytvori sa nova polozka a vlozi sa nazov polozky
 		QString name = iterator.value()->getName();
 		columnData = new QList<QVariant>();
-		columnData->append(name);		
-		
+		columnData->append(name);
+
 		//nacitaju sa data typu uzla
 		Data::Type * node = static_cast<Data::Type*>(iterator.value());
 		QMap<QString, QString> * settings = node->getSettings();
@@ -274,8 +278,8 @@ void TreeModel::addNodesToList(QList<TreeItem*> * parents)
 			if (settingsIterator != settings->begin())
 				data.append(";");
 			data.append(QString("%1,%2").arg(settingsIterator.key()).arg(settingsIterator.value()));
-		}		
-		
+		}
+
 		//nakoniec sa data prilozia danemu typu uzla
 		columnData->append(data);
 		columnData->append(iterator.key());

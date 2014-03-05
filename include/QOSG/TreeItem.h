@@ -47,32 +47,31 @@
 #include <QList>
 #include <QVariant>
 
-#include "Manager/Manager.h"
 
 namespace QOSG
 {
-	class TreeItem
-	{
-	public:
-		TreeItem(const QList<QVariant> &data, TreeItem *parent = 0);
-		~TreeItem();
+class TreeItem
+{
+public:
+	TreeItem(const QList<QVariant> &data, TreeItem *parent = 0);
+	~TreeItem();
 
-		void appendChild(TreeItem *child);
+	void appendChild(TreeItem *child);
 
-		TreeItem *child(int row);
-		int childCount() const;
-		int columnCount() const;
-		QVariant data(int column) const;
-		int row() const;
-		TreeItem *parent();
-		void addColumnData(QString data);
-		void replaceDataColumn(QString data);
+	TreeItem *child(int row);
+	int childCount() const;
+	int columnCount() const;
+	QVariant data(int column) const;
+	int row() const;
+	TreeItem *parent();
+	void addColumnData(QString data);
+	void replaceDataColumn(QString data);
 
-	private:
-		QList<TreeItem*> childItems;
-		QList<QVariant> itemData;
-		TreeItem *parentItem;
-	};
+private:
+	QList<TreeItem*> childItems;
+	QList<QVariant> itemData;
+	TreeItem *parentItem;
+};
 }
 
 #endif

@@ -15,128 +15,130 @@
 #define QWEBVIEWIMAGE
 
 #include <osgWidget/Browser>
-#include <QtNetwork/QNetworkProxy>
-
+#include <QtWebKit/QWebSettings>
+#include <QtWebKit/QtWebKit>
 #include "OsgQtBrowser/QGraphicsViewAdapter.h"
 
 /**
 *  \class QWebViewImage
-*  \brief 
-*  \author Adam Pazitnaj 
+*  \brief
+*  \author Adam Pazitnaj
 *  \date 29. 4. 2010
 */
 class QWebViewImage : public osgWidget::BrowserImage
 {
-    public:
+public:
 
 
-		/**
+	/**
 		*  \fn public constructor  QWebViewImage
 		*  \brief
 		*/
-		QWebViewImage();
+	QWebViewImage();
 
 
-		/**
+	/**
 		*  \fn public virtual  navigateTo
 		*  \brief
-		*  \param [in]       url const std::string &    
+		*  \param [in]       url const std::string &
 		*/
-		virtual void navigateTo(const std::string& url);
+	virtual void navigateTo(const std::string& url);
 
 
-		/**
+	/**
 		*  \fn inline public  getQWebView
 		*  \brief
-		*  \return QWebView * 
+		*  \return QWebView *
 		*/
-		QWebView* getQWebView() { return _webView; }
+	QWebView* getQWebView() { return _webView; }
 
-		/**
+	/**
 		*  \fn inline public  getQWebPage
 		*  \brief
-		*  \return QWebPage * 
+		*  \return QWebPage *
 		*/
-		QWebPage* getQWebPage() { return _webPage; }
+	QWebPage* getQWebPage() { return _webPage; }
 
-		/**
-		*  \fn inline public  getQGraphicsViewAdapter
+	/**
+
+		*  \fn inline public  get
+		*
 		*  \brief
-		*  \return QGraphicsViewAdapter * 
+		*  \return QGraphicsViewAdapter *
 		*/
-		QGraphicsViewAdapter* getQGraphicsViewAdapter() { return _adapter; }
+	QGraphicsViewAdapter* getQGraphicsViewAdapter() { return _adapter; }
 
 
-		/**
+	/**
 		*  \fn public  focusBrowser
 		*  \brief
-		*  \param [in]       focus bool    
+		*  \param [in]       focus bool
 		*/
-		void focusBrowser(bool focus);
+	void focusBrowser(bool focus);
 
 
-		/**
+	/**
 		*  \fn public  clearWriteBuffer
 		*  \brief
 		*/
-		void clearWriteBuffer();
+	void clearWriteBuffer();
 
 
-		/**
+	/**
 		*  \fn public  render
 		*  \brief
 		*/
-		void render();
+	void render();
 
 
-		/**
+	/**
 		*  \fn public virtual  setFrameLastRendered
 		*  \brief
-		*  \param [in]       frameStamp const osg::FrameStamp *    
+		*  \param [in]       frameStamp const osg::FrameStamp *
 		*/
-		virtual void setFrameLastRendered(const osg::FrameStamp* frameStamp);
+	virtual void setFrameLastRendered(const osg::FrameStamp* frameStamp);
 
 
-		/**
+	/**
 		*  \fn public virtual  sendPointerEvent
 		*  \brief
-		*  \param [in]       x int    
-		*  \param [in]       y int    
-		*  \param [in]       buttonMask int    
-		*  \return bool 
+		*  \param [in]       x int
+		*  \param [in]       y int
+		*  \param [in]       buttonMask int
+		*  \return bool
 		*/
-		virtual bool sendPointerEvent(int x, int y, int buttonMask);
+	virtual bool sendPointerEvent(int x, int y, int buttonMask);
 
 
-		/**
+	/**
 		*  \fn public virtual  sendKeyEvent
 		*  \brief
-		*  \param [in]       key int    
-		*  \param [in]       keyDown bool    
-		*  \return bool 
+		*  \param [in]       key int
+		*  \param [in]       keyDown bool
+		*  \return bool
 		*/
-		virtual bool sendKeyEvent(int key, bool keyDown);
+	virtual bool sendKeyEvent(int key, bool keyDown);
 
-    protected:
+protected:
 
 
-		/**
+	/**
 		*  QPointer<QGraphicsViewAdapter> _adapter
-		*  \brief 
+		*  \brief
 		*/
-		QPointer<QGraphicsViewAdapter>  _adapter;
+	QPointer<QGraphicsViewAdapter>  _adapter;
 
-		/**
+	/**
 		*  QPointer<QWebView> _webView
-		*  \brief 
+		*  \brief
 		*/
-		QPointer<QWebView>              _webView;
+	QPointer<QWebView>              _webView;
 
-		/**
+	/**
 		*  QPointer<QWebPage> _webPage
-		*  \brief 
+		*  \brief
 		*/
-		QPointer<QWebPage>              _webPage;
+	QPointer<QWebPage>              _webPage;
 };
 
 #endif

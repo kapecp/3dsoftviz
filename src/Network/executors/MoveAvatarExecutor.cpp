@@ -1,5 +1,6 @@
 #include "Network/executors/MoveAvatarExecutor.h"
 #include "Network/Server.h"
+#include "Network/Client.h"
 
 using namespace Network;
 

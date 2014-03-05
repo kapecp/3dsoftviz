@@ -1,11 +1,16 @@
 #ifndef Importer_ImporterContext_H
 #define Importer_ImporterContext_H
 //-----------------------------------------------------------------------------
-#include "Data/Graph.h"
+
 #include "Importer/ImportInfoHandler.h"
 //-----------------------------------------------------------------------------
 #include <QIODevice>
 //-----------------------------------------------------------------------------
+
+namespace Data
+{
+	class Graph;
+}
 
 namespace Importer {
 
@@ -26,10 +31,10 @@ public:
 	 * \param[in] importInfoHandler Import progress info handler.
 	 */
 	ImporterContext (
-		QIODevice &stream,
-		Data::Graph &graph,
-		ImportInfoHandler &importInfoHandler
-	);
+			QIODevice &stream,
+			Data::Graph &graph,
+			ImportInfoHandler &importInfoHandler
+			);
 
 	/***/
 	virtual ~ImporterContext (void) {};

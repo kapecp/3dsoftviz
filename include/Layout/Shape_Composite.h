@@ -15,15 +15,25 @@ namespace Layout {
 class Shape_Composite : public Shape {
 
 public:
+	class CompositeType
+	{
+	public:
+
+		/**
+			*  const int CIRCLE
+			*  \brief intersection of plane and sphere surface
+			*/
+		static const int CIRCLE = 1;
+	};
 
 	typedef std::list<QSharedPointer<Shape> > ShapesListType;
 
 	/***/
-	virtual ~Shape_Composite (void) {};
+	virtual ~Shape_Composite (void) {}
 
 	void addShape (
-		QSharedPointer<Shape> shape
-	);
+			QSharedPointer<Shape> shape
+			);
 
 	ShapesListType & getShapes (void);
 
@@ -31,12 +41,20 @@ public:
 	 * [visitor pattern]
 	 */
 	virtual void accept (
-		ShapeVisitor & visitor
-	);
+			ShapeVisitor & visitor
+			);
+
+	void setCompositeType(int compositeType){this->compositeType = compositeType;}
+
+	int getCompositeType(){return this->compositeType;}
 
 private:
 
 	ShapesListType shapes_;
+
+	int compositeType;
+
+
 
 }; // class
 

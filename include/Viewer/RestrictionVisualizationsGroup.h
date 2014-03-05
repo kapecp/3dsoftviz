@@ -16,8 +16,7 @@ namespace Vwr {
 /**
  * \brief Encapsulates part of the OSG including restriction visualizations.
  */
-class RestrictionVisualizationsGroup
-	: public Layout::RestrictionsObserver
+class RestrictionVisualizationsGroup: public Layout::RestrictionsObserver
 {
 
 public:
@@ -36,24 +35,26 @@ public:
 	 * [observer pattern]
 	 */
 	virtual void restrictionAdded (
-		QSharedPointer<Layout::ShapeGetter> shapeGetter
-	);
+			QSharedPointer<Layout::ShapeGetter> shapeGetter
+			);
 
 	/**
 	 * [observer pattern]
 	 */
 	virtual void shapeChanged (
-		QSharedPointer<Layout::ShapeGetter> shapeGetter,
-		QSharedPointer<Layout::Shape> shape
-	);
+			QSharedPointer<Layout::ShapeGetter> shapeGetter,
+			QSharedPointer<Layout::Shape> shape
+			);
 
 	/**
 	 * [observer pattern]
 	 */
 	virtual void restrictionRemoved (
-		QSharedPointer<Layout::ShapeGetter> shapeGetter
-	);
+			QSharedPointer<Layout::ShapeGetter> shapeGetter
+			);
 
+
+	osg::Group* getVisualizer(QSharedPointer<Layout::ShapeGetter> shapeGetter);
 private:
 
 	/**
@@ -61,7 +62,8 @@ private:
 	 */
 	osg::ref_ptr<osg::Group> group_;
 
-	typedef QMap<QSharedPointer<Layout::ShapeGetter>, osg::Group *> RestrictionsToVisualizersMapType;
+	typedef QMap<QSharedPointer<Layout::ShapeGetter>, osg::ref_ptr<osg::Group> > RestrictionsToVisualizersMapType;
+
 
 	/**
 	 * \brief Holds associations between restrictions and visualizations.
@@ -72,6 +74,8 @@ private:
 	 * \brief Creates visualizations (OSG objects) of provided restrictions.
 	 */
 	ShapeVisitor_VisualizerCreator visualizerCreator_;
+
+
 
 }; // class
 

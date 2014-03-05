@@ -1,17 +1,21 @@
 #include "Util/ApplicationConfig.h"
 
+#include "OpenThreads/Mutex"
+
+#include <QFile>
+
 Util::ApplicationConfig * Util::ApplicationConfig::_instance;
 OpenThreads::Mutex Util::ApplicationConfig::_mutex;
 
 Util::ApplicationConfig::ApplicationConfig(void)
-{ 
+{
 	//otvorenie suboru na nacitanie dat
-	QFile file("config/config");
+	QFile file("../share/3dsoftviz/config/config");
 	file.open(QIODevice::ReadOnly);
 	//rozdelenie dat podla riadkov
 	QList<QString> data = QString(file.readAll()).split("\n");
-    file.close();
-	
+	file.close();
+
 	//sparsovanie dat a ich ulozenie do mapy
 	for (int i=0; i<data.length();i++)
 	{
@@ -39,12 +43,13 @@ QString Util::ApplicationConfig::getValue(QString key)
 	return _map.value(key);
 }
 
+
 long Util::ApplicationConfig::getNumericValue (
-	QString key,
-	std::auto_ptr<long> minValue,
-	std::auto_ptr<long> maxValue,
-	const long defaultValue
-) {
+		QString key,
+		std::auto_ptr<long> minValue,
+		std::auto_ptr<long> maxValue,
+		const long defaultValue
+		) {
 	if (!_map.contains (key)) {
 		return defaultValue;
 	}
@@ -69,9 +74,9 @@ long Util::ApplicationConfig::getNumericValue (
 }
 
 bool Util::ApplicationConfig::getBoolValue (
-	QString key,
-	const bool defaultValue
-) {
+		QString key,
+		const bool defaultValue
+		) {
 	if (!_map.contains (key)) {
 		return defaultValue;
 	}
@@ -88,7 +93,7 @@ bool Util::ApplicationConfig::getBoolValue (
 }
 
 Util::ApplicationConfig * Util::ApplicationConfig::get()
-{	
+{
 	_mutex.lock();
 
 	if (_instance == NULL)
@@ -102,11 +107,11 @@ Util::ApplicationConfig * Util::ApplicationConfig::get()
 
 QStringList Util::ApplicationConfig::getList()
 {
-	MapSS::iterator i;	
+	MapSS::iterator i;
 	QStringList list;
 	QString item;
-	
-	//iteruje postupne cez vsetky polozky a uklada ich do zoznamu retazov 
+
+	//iteruje postupne cez vsetky polozky a uklada ich do zoznamu retazov
 	for (i = _map.begin(); i != _map.end(); ++i)
 	{
 		item = QString("%1\t%2").arg(i.key()).arg(i.value());
@@ -118,7 +123,7 @@ QStringList Util::ApplicationConfig::getList()
 
 void Util::ApplicationConfig::saveConfig()
 {
-	MapSS::iterator i;	
+	MapSS::iterator i;
 	QStringList list;
 	QString item;
 	QFile file("config/config");
@@ -133,4 +138,6 @@ void Util::ApplicationConfig::saveConfig()
 		file.write(ba.data());
 	}
 	file.close();
+
+	//GraphMetrics::computeGraphMetrics(Manager::GraphManager::getInstance()->getActiveGraph());
 }

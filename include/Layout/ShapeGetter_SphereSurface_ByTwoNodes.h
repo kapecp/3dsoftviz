@@ -3,8 +3,7 @@
 //-----------------------------------------------------------------------------
 #include "Layout/ShapeGetter.h"
 //-----------------------------------------------------------------------------
-#include "Data/Node.h"
-//-----------------------------------------------------------------------------
+#include <osg/ref_ptr>
 
 namespace Layout {
 
@@ -19,15 +18,16 @@ class ShapeGetter_SphereSurface_ByTwoNodes : public ShapeGetter {
 public:
 
 	ShapeGetter_SphereSurface_ByTwoNodes (
-		osg::ref_ptr<Data::Node> centerNode,
-		osg::ref_ptr<Data::Node> surfaceNode
-	);
+			osg::ref_ptr<Data::Node> centerNode,
+			osg::ref_ptr<Data::Node> surfaceNode
+			);
 
 	/***/
 	virtual ~ShapeGetter_SphereSurface_ByTwoNodes (void) {};
 
 	virtual QSharedPointer<Shape> getShape (void);
 
+	virtual QSet<Data::Node *> getNodesOfShape();
 private:
 
 	osg::ref_ptr<Data::Node> centerNode_;
