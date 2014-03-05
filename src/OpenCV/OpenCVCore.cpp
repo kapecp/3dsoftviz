@@ -36,7 +36,7 @@ void OpenCV::OpenCVCore::faceRecognition()
 
 	mOpencvDialog->show();
 	mThrFaceRec->setWindow( mOpencvDialog );
-	mThrFaceRec->start();
+	//mThrFaceRec->start();
 	//mThrAruco->start();
 }
 

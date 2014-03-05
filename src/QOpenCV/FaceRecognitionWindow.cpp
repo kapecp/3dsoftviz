@@ -3,9 +3,12 @@
 #include <QtGui/QPushButton>
 #include <QtGui/QLabel>
 #include <QtGui/QRadioButton>
-#include <QVBoxLayout>
+#include <QtGui/QCheckBox>
+#include <QtGui/QVBoxLayout>
+#include <QtGui/QStackedLayout>
 
 #include "QOpenCV/FaceRecognitionThread.h"
+
 
 
 using namespace QOpenCV;
@@ -14,7 +17,9 @@ QOpenCV::FaceRecognitionWindow::FaceRecognitionWindow(QWidget *parent, QApplicat
 {
 	mThrFaceRec = thrFaceRec;
 	this->mApp = app;
+
 	configureWindow();
+
 }
 
 QLabel *QOpenCV::FaceRecognitionWindow::getLabel()
@@ -29,6 +34,8 @@ void QOpenCV::FaceRecognitionWindow::configureWindow()
 	resize( 400, 280 );
 	setWindowTitle( tr("Face Recognition and Marker Detection"));
 
+	createGui();
+	/*
 	mWindowLabel = new QLabel("", this, 0);
 	mWindowLabel->setFixedWidth( 320 );
 	mWindowLabel->setFixedHeight( 240 );
@@ -87,8 +94,152 @@ void QOpenCV::FaceRecognitionWindow::configureWindow()
 
 
 	connect( mThrFaceRec, SIGNAL(pushImage(cv::Mat)), this, SLOT(setLabel(cv::Mat)) );
+	*/
+}
+
+void QOpenCV::FaceRecognitionWindow::createGui(){
+
+	mWindowLabel = new QLabel("", this, 0);
+	mWindowLabel->setFixedWidth( 320 );
+	mWindowLabel->setFixedHeight( 240 );
+
+	QHBoxLayout *mainLayout			= new QHBoxLayout;
+	QVBoxLayout *buttonLayout		= new QVBoxLayout;   //changed to QVBox layout because of the second button layout we want underneath
+	QHBoxLayout *frameLayout		= new QHBoxLayout;
+
+
+
+
+
+
+	mFaceRecRB				= new QRadioButton( tr("Face recognition"));
+	mMarkerRB				= new QRadioButton( tr("Marker detection"));
+	mNoVideo				= new QCheckBox( tr("NoVideo"));
+	mModulesStackL			= new QStackedLayout;
+	mFaceRecStartCancelPB	= new QPushButton( tr("Start FaceRec"));
+	mMarkerStartCancelPB	= new QPushButton( tr("Start Marker"));
+
+	mMarkerBehindCB			= new QCheckBox( tr("Marker is behind"));
+	mCorEnabledCB			= new QCheckBox( tr("Corection"));
+	mUpdateCorParPB			= new QPushButton( tr("Update cor. param."));
+
+	connect( mFaceRecRB, SIGNAL(clicked()), this, SLOT(onSelModulChange()) );
+	connect( mMarkerRB,	 SIGNAL(clicked()), this, SLOT(onSelModulChange()) );
+	connect( mNoVideo,	 SIGNAL(clicked()), this, SLOT(onSelModulChange()) );
+
+	mFaceRecRB->setChecked(true);
+	buttonLayout->addWidget( mFaceRecRB );
+	buttonLayout->addWidget( mMarkerRB );
+	buttonLayout->addWidget( mNoVideo );
+	buttonLayout->addLayout( mModulesStackL );
+
+
+
+	QWidget		*faceRecPageWid		= new QWidget;
+	QWidget		*markerPageWid		= new QWidget;
+	QVBoxLayout	*faceRecPageLayout	= new QVBoxLayout;
+	QVBoxLayout	*markerPageLayout	= new QVBoxLayout;
+	faceRecPageLayout->setAlignment( Qt::AlignBottom );
+	markerPageLayout->setAlignment( Qt::AlignBottom );
+	mModulesStackL->addWidget( faceRecPageWid );
+	mModulesStackL->addWidget( markerPageWid );
+	faceRecPageWid->setLayout( faceRecPageLayout );
+	markerPageWid->setLayout( markerPageLayout );
+
+
+	faceRecPageLayout->addWidget( mFaceRecStartCancelPB );
+
+	markerPageLayout->addWidget( mMarkerBehindCB );
+	markerPageLayout->addWidget( mCorEnabledCB );
+	markerPageLayout->addWidget( mUpdateCorParPB );
+	markerPageLayout->addWidget( mMarkerStartCancelPB );
+
+
+
+
+
+	frameLayout->setAlignment( Qt::AlignCenter );
+	frameLayout->addWidget( mWindowLabel );
+
+	mainLayout->addLayout( buttonLayout );
+	mainLayout->addLayout( frameLayout );
+	setLayout( mainLayout );
+
+	//connect( , SIGNAL, , SLOT );
+	mFaceRecStartCancelPB->setCheckable(true);
+	mMarkerStartCancelPB->setCheckable(true);
+	mMarkerBehindCB->setEnabled(false);
+	mCorEnabledCB->setEnabled(false);
+	mUpdateCorParPB->setEnabled(false);
+
+	connect( mUpdateCorParPB, SIGNAL(clicked()), this, SLOT(onUpdateCorPar()) );
+
+	connect( mMarkerStartCancelPB, SIGNAL(clicked(bool)), this, SLOT(onMarkerStartCancel(bool)) );
+	connect( mFaceRecStartCancelPB, SIGNAL(clicked()), this, SLOT(onFaceRecStartCancel(bool)) );
+
 
 }
+void QOpenCV::FaceRecognitionWindow::onSelModulChange(){
+	if( mNoVideo->isChecked() ){
+		qDebug() << "noVideo";
+	} else{
+		if( mFaceRecRB->isChecked() ){
+			mModulesStackL->setCurrentIndex(0);
+			qDebug() << "mFaceRecRB->isChecked()";
+		}
+		if( mMarkerRB->isChecked() ){
+			mModulesStackL->setCurrentIndex(1);
+			qDebug() << "mMarkerRB->isChecked()";
+		}
+
+	}
+}
+
+
+void QOpenCV::FaceRecognitionWindow::onUpdateCorPar(){
+	mUpdateCorParPB->setEnabled(false);
+}
+
+void QOpenCV::FaceRecognitionWindow::onCorParUpdated(){
+	mUpdateCorParPB->setEnabled(true);
+	mCorEnabledCB->setEnabled(true);
+}
+
+void QOpenCV::FaceRecognitionWindow::onFaceRecStartCancel( bool checked ){
+	if( checked ) {
+		mFaceRecStartCancelPB->setText( tr("Stop FaceRec"));
+
+	} else {
+		mFaceRecStartCancelPB->setEnabled(false);
+		mFaceRecStartCancelPB->setText( tr("Start FaceRec"));
+	}
+}
+
+void QOpenCV::FaceRecognitionWindow::onMarkerStartCancel( bool checked ){
+	if( checked ) {
+		mMarkerStartCancelPB->setText( tr("Stop Marker"));
+		mMarkerBehindCB->setEnabled(true);
+		mUpdateCorParPB->setEnabled(true);
+	} else {
+		mMarkerStartCancelPB->setEnabled(false);
+		mMarkerStartCancelPB->setText( tr("Start Marker"));
+		mMarkerBehindCB->setEnabled(false);
+		mCorEnabledCB->setEnabled(false);
+		mUpdateCorParPB->setEnabled(false);
+	}
+}
+
+void QOpenCV::FaceRecognitionWindow::onFaceRecThrFinished(){
+	mFaceRecStartCancelPB->setEnabled(true);
+}
+void QOpenCV::FaceRecognitionWindow::onMarkerThrFinished(){
+	mMarkerStartCancelPB->setEnabled(true);
+}
+
+
+
+
+
 
 void QOpenCV::FaceRecognitionWindow::quitWindow()
 {

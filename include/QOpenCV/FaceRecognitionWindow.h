@@ -7,10 +7,12 @@
 class QLabel;
 class QPushButton;
 class QRadioButton;
+class QCheckBox;
+class QStackedLayout;
 
 
 namespace OpenCV {
-	class FaceRecognizer;
+class FaceRecognizer;
 }
 
 namespace QOpenCV
@@ -23,7 +25,7 @@ class FaceRecognitionThread;
 	 * @brief Class FaceRecognitionWindow
 	 */
 class FaceRecognitionWindow : public QDialog
-{
+	{
 	Q_OBJECT
 
 public:
@@ -42,28 +44,15 @@ signals:
 		 * @author Autor: Marek Jakab
 		 * @brief cancelLoop Signal to cancel thread
 		 */
-	void cancelLoop(bool set);
+	void cancelLoop( bool set);
+	void sendImgFaceRec( bool send );
+	void sendImgMarker( bool send );
 
-private:
-	QApplication	*mApp;
-	QLabel			*mWindowLabel;
-	QPushButton		*mPauseButton;
-	QPushButton		*mCancelButton;
-	//radio buttons for switching the camera
-	QRadioButton	*mFaceRadioButton;
-	QRadioButton	*mMarkerRadioButton;
-	//check buttons for switching the threads on and off
-	QCheckBox		*mFaceCheckbox;
-	QCheckBox		*mMarkerCheckbox;
-	QImage			mqimage;
-	FaceRecognitionThread *mThrFaceRec;
+public slots:
+	void onCorParUpdated();
+	void onFaceRecThrFinished();
+	void onMarkerThrFinished();
 
-	/**
-		 * @author Autor: Marek Jakab
-		 * @brief configureWindow Sets window properties
-		 */
-	void configureWindow();
-	void closeEvent(QCloseEvent *event);
 private slots:
 	/**
 			 * @author Autor: Marek Jakab
@@ -102,7 +91,61 @@ private slots:
 			*/
 
 	void stopThread();
-};
+
+	void onSelModulChange();
+	void onUpdateCorPar();
+	void onFaceRecStartCancel(bool checked);
+	void onMarkerStartCancel(bool checked);
+
+
+
+
+private:
+	void closeEvent(QCloseEvent *event);
+	/**
+		 * @author Autor: Marek Jakab
+		 * @brief configureWindow Sets window properties
+		 */
+	void configureWindow();
+
+
+	void createGui();
+
+
+	QApplication	*mApp;
+	QLabel			*mWindowLabel;
+	// -new
+	QRadioButton	*mFaceRecRB;
+	QRadioButton	*mMarkerRB;
+	QCheckBox		*mNoVideo;
+	QStackedLayout	*mModulesStackL;
+
+	QPushButton		*mFaceRecStartCancelPB;
+	QPushButton		*mMarkerStartCancelPB;
+
+
+	QCheckBox		*mMarkerBehindCB;
+	QCheckBox		*mCorEnabledCB;
+	QPushButton		*mUpdateCorParPB;
+
+
+	//radio buttons for switching the camera
+	QRadioButton	*mFaceRadioButton;			//--
+	QRadioButton	*mMarkerRadioButton;		//--
+
+	QPushButton		*mPauseButton;				//--
+	QPushButton		*mCancelButton;				//--
+
+	//check buttons for switching the threads on and off
+	QCheckBox		*mFaceCheckbox;				//--
+	QCheckBox		*mMarkerCheckbox;			//--
+
+	QImage			mqimage;
+	FaceRecognitionThread *mThrFaceRec;
+
+
+
+	};
 }
 
 #endif //FACERECOGNITIONWINDOW_H
