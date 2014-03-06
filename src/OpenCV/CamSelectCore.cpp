@@ -14,7 +14,12 @@ OpenCV::CamSelectCore::CamSelectCore( QApplication* app)
 		camlist.push_back(new OpenCV::CapVideo(i,0,0));
 	}
 }
-
+OpenCV::CamSelectCore::~CamSelectCore()
+{
+	for (int i=0;i<camlist.size();i++){
+		delete camlist[i];
+	}
+}
 
 OpenCV::CapVideo *OpenCV::CamSelectCore::selectCamera()
 {
@@ -36,13 +41,16 @@ OpenCV::CapVideo *OpenCV::CamSelectCore::selectCamera()
 		}
 		if (i<camlist.size()-1) data.append(";");
 	}
-	//std::cout << data.toUtf8().constData();
 	OpenCV::CamSelectWindow *csw = new OpenCV::CamSelectWindow(AppCore::Core::getInstance(this->app)->getCoreWindow(),this->app,data);
 
-	csw->exec();
-	if (camlist[device_id]->isOpened()){
-		return camlist[device_id];
+	if (csw->exec())
+	{
+		if (camlist[device_id]->isOpened())
+		{
+			return camlist[device_id];
+		}
 	}
+
 	return NULL;
 
 }
@@ -72,8 +80,8 @@ int OpenCV::CamSelectCore::countCameras()
 	return max;
 }
 
-void OpenCV::CamSelectCore::setCam(int dev_id, int width, int height){
-
+void OpenCV::CamSelectCore::setCam(int dev_id, int width, int height)
+{
 	camlist[dev_id]->startCamera(width,height);
 	this->device_id=dev_id;
 }

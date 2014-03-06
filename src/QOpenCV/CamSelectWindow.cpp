@@ -6,6 +6,7 @@ using namespace OpenCV;
 OpenCV::CamSelectWindow::CamSelectWindow(QWidget *parent, QApplication * app, QString stringdata): QDialog(parent)
 {
 	this->app = app;
+	this->setResult(QDialog::Rejected);
 	configureWindow(stringdata);
 }
 
@@ -78,9 +79,11 @@ void CamSelectWindow::commitChanges()
 													   ,model->item(indexes.at(0).row(),2)->text().toInt(),
 													   model->item(indexes.at(0).row(),3)->text().toInt());
 	this->close();
+	this->setResult(QDialog::Accepted);
 }
 
-void CamSelectWindow::printChanged(const QItemSelection &, const QItemSelection &){
+void CamSelectWindow::printChanged(const QItemSelection &, const QItemSelection &)
+{
 	indexes = view->selectionModel()->selection().indexes();
 }
 

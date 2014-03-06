@@ -23,7 +23,7 @@ public:
 		 * @param height Camera device height
 		 */
 	CapVideo(int device_id, int width, int height);
-
+	~CapVideo();
 	/**
 		 * @author Autor: Marek Jakab
 		 * @brief setCaptureProperties Sets camera resolution
@@ -74,7 +74,6 @@ public:
 	void release();
 
 private:
-	~CapVideo();
 	int device_id;
 	int connections;
 	int width;

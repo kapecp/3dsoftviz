@@ -13,7 +13,9 @@ QOpenCV::FaceRecognitionThread::FaceRecognitionThread(OpenCV::FaceRecognizer* al
 
 QOpenCV::FaceRecognitionThread::~FaceRecognitionThread(void)
 {
-	this->mCapVideo->release();
+	if(this->mCapVideo!=NULL){
+		this->mCapVideo->release();
+	}
 	delete this->mFaceRecognizer;
 }
 
@@ -25,7 +27,7 @@ void QOpenCV::FaceRecognitionThread::setWindow(FaceRecognitionWindow *mFaceRecog
 
 void QOpenCV::FaceRecognitionThread::run()
 {
-	if (!this->mCapVideo->isOpened()){
+	if (this->mCapVideo==NULL){
 		qDebug() << "Camera is not opened";
 		return;
 	}
