@@ -8,25 +8,40 @@
 #include <QtGui/QStackedLayout>
 
 #include "QOpenCV/FaceRecognitionThread.h"
-
+#include "Aruco/arucothread.h"
 
 
 using namespace QOpenCV;
 
-QOpenCV::FaceRecognitionWindow::FaceRecognitionWindow(QWidget *parent, QApplication * app, QOpenCV::FaceRecognitionThread *thrFaceRec)
+QOpenCV::FaceRecognitionWindow::FaceRecognitionWindow(QWidget *parent, QApplication * app, QOpenCV::FaceRecognitionThread *thrFaceRec, ArucoModul::ArucoThread *thrAruco)
 {
 	mThrFaceRec = thrFaceRec;
-	this->mApp = app;
+	mThrAruco	= thrAruco;
+	mApp		= app;
 
 	configureWindow();
 
 }
 
-QLabel *QOpenCV::FaceRecognitionWindow::getLabel()
+QLabel *QOpenCV::FaceRecognitionWindow::getLabel() const
 {
 	return mWindowLabel;
 }
 
+QCheckBox	*QOpenCV::FaceRecognitionWindow::getMarkerBehindCB() const
+{
+	return mMarkerBehindCB;
+}
+
+QCheckBox	*QOpenCV::FaceRecognitionWindow::getCorEnabledCB() const
+{
+	return mCorEnabledCB;
+}
+
+QPushButton	*QOpenCV::FaceRecognitionWindow::getUpdateCorParPB() const
+{
+	return mUpdateCorParPB;
+}
 
 void QOpenCV::FaceRecognitionWindow::configureWindow()
 {
@@ -175,21 +190,27 @@ void QOpenCV::FaceRecognitionWindow::createGui(){
 	connect( mUpdateCorParPB, SIGNAL(clicked()), this, SLOT(onUpdateCorPar()) );
 
 	connect( mMarkerStartCancelPB, SIGNAL(clicked(bool)), this, SLOT(onMarkerStartCancel(bool)) );
-	connect( mFaceRecStartCancelPB, SIGNAL(clicked()), this, SLOT(onFaceRecStartCancel(bool)) );
+	connect( mFaceRecStartCancelPB, SIGNAL(clicked(bool)), this, SLOT(onFaceRecStartCancel(bool)) );
 
 
 }
 void QOpenCV::FaceRecognitionWindow::onSelModulChange(){
 	if( mNoVideo->isChecked() ){
-		qDebug() << "noVideo";
+		emit sendImgFaceRec(false);
+		emit sendImgMarker(false);
+
 	} else{
+		// face recognition
 		if( mFaceRecRB->isChecked() ){
 			mModulesStackL->setCurrentIndex(0);
-			qDebug() << "mFaceRecRB->isChecked()";
+			emit sendImgMarker(false);
+			emit sendImgFaceRec(true);
 		}
+		// marker
 		if( mMarkerRB->isChecked() ){
 			mModulesStackL->setCurrentIndex(1);
-			qDebug() << "mMarkerRB->isChecked()";
+			emit sendImgFaceRec(false);
+			emit sendImgMarker(true);
 		}
 
 	}
@@ -208,31 +229,42 @@ void QOpenCV::FaceRecognitionWindow::onCorParUpdated(){
 void QOpenCV::FaceRecognitionWindow::onFaceRecStartCancel( bool checked ){
 	if( checked ) {
 		mFaceRecStartCancelPB->setText( tr("Stop FaceRec"));
+		emit startFaceRec();
 
 	} else {
 		mFaceRecStartCancelPB->setEnabled(false);
-		mFaceRecStartCancelPB->setText( tr("Start FaceRec"));
+		emit stopFaceRec(true);
+
 	}
 }
 
 void QOpenCV::FaceRecognitionWindow::onMarkerStartCancel( bool checked ){
 	if( checked ) {
+		qDebug() << "shoul start aruco";
 		mMarkerStartCancelPB->setText( tr("Stop Marker"));
 		mMarkerBehindCB->setEnabled(true);
 		mUpdateCorParPB->setEnabled(true);
+		emit startMarker();
+
+
+
 	} else {
+		qDebug() << "shoul start stoping aruco";
 		mMarkerStartCancelPB->setEnabled(false);
-		mMarkerStartCancelPB->setText( tr("Start Marker"));
 		mMarkerBehindCB->setEnabled(false);
 		mCorEnabledCB->setEnabled(false);
 		mUpdateCorParPB->setEnabled(false);
+		emit stopMarker(true);
+
 	}
 }
 
 void QOpenCV::FaceRecognitionWindow::onFaceRecThrFinished(){
+	mFaceRecStartCancelPB->setText( tr("Start FaceRec"));
 	mFaceRecStartCancelPB->setEnabled(true);
 }
 void QOpenCV::FaceRecognitionWindow::onMarkerThrFinished(){
+	mMarkerStartCancelPB->setText( tr("Start Marker"));
 	mMarkerStartCancelPB->setEnabled(true);
 }
 

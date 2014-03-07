@@ -10,7 +10,9 @@ class QRadioButton;
 class QCheckBox;
 class QStackedLayout;
 
-
+namespace ArucoModul{
+	class ArucoThread;
+}
 namespace OpenCV {
 class FaceRecognizer;
 }
@@ -36,8 +38,11 @@ public:
 		 * @param app QApplication
 		 * @param thr Instance of thread
 		 */
-	FaceRecognitionWindow(QWidget *parent, QApplication *mApp, QOpenCV::FaceRecognitionThread *thrFaceRec);
-	QLabel *getLabel();
+	FaceRecognitionWindow(QWidget *parent, QApplication *mApp, QOpenCV::FaceRecognitionThread *thrFaceRec, ArucoModul::ArucoThread *thrAruco);
+	QLabel		*getLabel() const;
+	QCheckBox	*getMarkerBehindCB() const;
+	QCheckBox	*getCorEnabledCB() const;
+	QPushButton	*getUpdateCorParPB() const;
 
 signals:
 	/**
@@ -47,6 +52,10 @@ signals:
 	void cancelLoop( bool set);
 	void sendImgFaceRec( bool send );
 	void sendImgMarker( bool send );
+	void stopMarker( bool set );
+	void stopFaceRec( bool set );
+	void startMarker();
+	void startFaceRec();
 
 public slots:
 	void onCorParUpdated();
@@ -142,6 +151,7 @@ private:
 
 	QImage			mqimage;
 	FaceRecognitionThread *mThrFaceRec;
+	ArucoModul::ArucoThread *mThrAruco;
 
 
 

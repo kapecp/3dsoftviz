@@ -48,7 +48,8 @@ public:
 
 private:
 
-	void createConnection();
+	void createConnectionFaceRec();
+	void createConnectionAruco();
 
 	QApplication					*mApp;
 	ArucoModul::ArucoThread			*mThrAruco;
