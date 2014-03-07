@@ -33,11 +33,6 @@ public:
 		 */
 	void setCaptureProperties(int width, int height);
 
-	/**
-		 * @author Autor: Marek Jakab
-		 * @brief showFrame Show captured image in new frame
-		 */
-	void showFrame();
 
 	/**
 		 * @author Autor: Marek Jakab

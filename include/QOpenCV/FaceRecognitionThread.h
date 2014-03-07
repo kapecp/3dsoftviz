@@ -56,9 +56,8 @@ signals:
 			 * @param y % distance from middle on Y axis
 			 */
 	void sendEyesCoords(float x, float y, float distance);
-private:
-	bool cancel;
-private slots:
+
+public slots:
 	/**
 			 * @author Autor: Marek Jakab
 			 * @brief setCancel Sets cancel=true
@@ -69,6 +68,12 @@ private slots:
 			 * @brief pauseWindow Pauses recognition window
 			 */
 	void pauseWindow();
+
+	void setSendImgEnabled( bool sendImgEnabled );
+
+private:
+	bool cancel;
+	bool mSendImgEnabled;
 };
 }
 

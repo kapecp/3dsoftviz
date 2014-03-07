@@ -82,6 +82,8 @@ void ArucoThread::run()
 
 	if( ! capture.isOpened()){
 		capture.open(1);
+	} else {
+		qDebug() << "ARUCO:error: capture is already open";
 	}
 	const double width = 600;
 	const double height = 500;

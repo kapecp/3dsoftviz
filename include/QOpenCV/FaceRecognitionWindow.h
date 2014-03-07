@@ -39,17 +39,13 @@ public:
 		 * @param thr Instance of thread
 		 */
 	FaceRecognitionWindow(QWidget *parent, QApplication *mApp, QOpenCV::FaceRecognitionThread *thrFaceRec, ArucoModul::ArucoThread *thrAruco);
+
 	QLabel		*getLabel() const;
 	QCheckBox	*getMarkerBehindCB() const;
 	QCheckBox	*getCorEnabledCB() const;
 	QPushButton	*getUpdateCorParPB() const;
 
 signals:
-	/**
-		 * @author Autor: Marek Jakab
-		 * @brief cancelLoop Signal to cancel thread
-		 */
-	void cancelLoop( bool set);
 	void sendImgFaceRec( bool send );
 	void sendImgMarker( bool send );
 	void stopMarker( bool set );
@@ -65,12 +61,6 @@ public slots:
 private slots:
 	/**
 			 * @author Autor: Marek Jakab
-			 * @brief pauseWindow Cancel run
-			 */
-	void pauseWindow();
-
-	/**
-			 * @author Autor: Marek Jakab
 			 * @brief quitWindow Cancel thread and call destructor
 			 */
 	void quitWindow();
@@ -81,25 +71,6 @@ private slots:
 			 */
 	void setLabel(cv::Mat);
 
-	/**
-			* @author Autor: Martina Tregerova
-			* @brief switchImage Switches the image shown between marker detection and face recognition
-			*/
-	void switchImage();
-
-	/**
-			* @author Autor:Martina Tregerova
-			* @brief startThread Starts threads based on the checked box
-			*/
-
-	void startThread();
-
-	/**
-			* @author Autor:Martina Tregerova
-			* @brief startThread Stops threads based on the checked box
-			*/
-
-	void stopThread();
 
 	void onSelModulChange();
 	void onUpdateCorPar();
@@ -111,6 +82,7 @@ private slots:
 
 private:
 	void closeEvent(QCloseEvent *event);
+
 	/**
 		 * @author Autor: Marek Jakab
 		 * @brief configureWindow Sets window properties
@@ -118,42 +90,27 @@ private:
 	void configureWindow();
 
 
-	void createGui();
-
 
 	QApplication	*mApp;
 	QLabel			*mWindowLabel;
-	// -new
+	QImage			mqimage;
+
+	// switching the camera,
 	QRadioButton	*mFaceRecRB;
 	QRadioButton	*mMarkerRB;
 	QCheckBox		*mNoVideo;
 	QStackedLayout	*mModulesStackL;
-
 	QPushButton		*mFaceRecStartCancelPB;
 	QPushButton		*mMarkerStartCancelPB;
 
-
+	// aruco controll
 	QCheckBox		*mMarkerBehindCB;
 	QCheckBox		*mCorEnabledCB;
 	QPushButton		*mUpdateCorParPB;
 
 
-	//radio buttons for switching the camera
-	QRadioButton	*mFaceRadioButton;			//--
-	QRadioButton	*mMarkerRadioButton;		//--
-
-	QPushButton		*mPauseButton;				//--
-	QPushButton		*mCancelButton;				//--
-
-	//check buttons for switching the threads on and off
-	QCheckBox		*mFaceCheckbox;				//--
-	QCheckBox		*mMarkerCheckbox;			//--
-
-	QImage			mqimage;
 	FaceRecognitionThread *mThrFaceRec;
 	ArucoModul::ArucoThread *mThrAruco;
-
-
 
 	};
 }

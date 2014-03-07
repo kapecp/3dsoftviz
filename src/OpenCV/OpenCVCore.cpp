@@ -37,29 +37,29 @@ void OpenCV::OpenCVCore::faceRecognition()
 
 	mOpencvDialog->show();
 	mThrFaceRec->setWindow( mOpencvDialog );
-	//mThrFaceRec->start();
-	//mThrAruco->start();
 }
 
 void OpenCVCore::createConnectionFaceRec(){
 
-	//  data sending from
+	//  sending result data
 	QObject::connect( mThrFaceRec,
-					  SIGNAL(sendEyesCoords(float, float, float)),
+					  SIGNAL(sendEyesCoords(float,float,float)),
 					  AppCore::Core::getInstance( mApp )->getCoreWindow()->getCameraManipulator(),
-					  SLOT(setRotationHead(float, float, float)) );
+					  SLOT(setRotationHead(float,float,float)) );
 
-	// image
-	/*QObject::connect( mOpencvDialog,
+
+
+	// send actual image
+	QObject::connect( mOpencvDialog,
 					  SIGNAL(sendImgFaceRec(bool)),
 					  mThrFaceRec,
-					  SLOT );
-					  */
+					  SLOT(setSendImgEnabled(bool)) );
 	QObject::connect( mThrFaceRec,
 					  SIGNAL(pushImage(cv::Mat)),
 					  mOpencvDialog,
 					  SLOT(setLabel(cv::Mat)) );
-	// start
+
+	// start, stop
 	QObject::connect( mOpencvDialog,
 					  SIGNAL(startFaceRec()),
 					  mThrFaceRec,
@@ -73,19 +73,21 @@ void OpenCVCore::createConnectionFaceRec(){
 					  mOpencvDialog,
 					  SLOT(onFaceRecThrFinished()) );
 
-	/*
-	QObject::connect( ,
-					  SIGNAL,
-					  ,
-					  SLOT );
-*/
 }
 
 void OpenCVCore::createConnectionAruco(){
 
-	//  data sending from
+	//  sending result data
+	QObject::connect( mThrAruco,
+					  SIGNAL(sendArucoPosVec(osg::Vec3d)),
+					  AppCore::Core::getInstance( mApp )->getCoreWindow()->getCameraManipulator(),
+					  SLOT(updateArucoGraphPosition(osg::Vec3d)) );
+	QObject::connect( mThrAruco,
+					  SIGNAL(sendArucoRorQuat(osg::Quat)),
+					  AppCore::Core::getInstance( mApp )->getCoreGraph(),
+					  SLOT(updateArucoGraphRotation(osg::Quat)) );
 
-	// image
+	// send actual image
 	QObject::connect( mOpencvDialog,
 					  SIGNAL(sendImgMarker(bool)),
 					  mThrAruco,
@@ -126,6 +128,7 @@ void OpenCVCore::createConnectionAruco(){
 					  SIGNAL(corParUpdated()),
 					  mOpencvDialog,
 					  SLOT(onCorParUpdated()) );
+
 }
 
 OpenCV::OpenCVCore * OpenCV::OpenCVCore::getInstance( QApplication* app)

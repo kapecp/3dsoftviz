@@ -1,4 +1,5 @@
 #include "OpenCV/CapVideo.h"
+#include <QDebug>
 
 using namespace OpenCV;
 
@@ -12,14 +13,10 @@ OpenCV::CapVideo::CapVideo(int device_id, int width, int height)
 
 OpenCV::CapVideo::~CapVideo()
 {
-	cv::destroyWindow("face");
+	qDebug() << "CapVideo: dectructor: release capture";
 	cvReleaseCapture( &this->capture );
 }
 
-void OpenCV::CapVideo::showFrame()
-{
-	cv::imshow("face",this->frame);
-}
 
 cv::Mat OpenCV::CapVideo::queryFrame()
 {
