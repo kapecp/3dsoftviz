@@ -524,15 +524,11 @@ if (COMMAND cotire)
 	endif()
 endif()
 
-
-# ensure correct dependencies
-add_dependencies( ${3DSOFTVIZ_NAME} dep_diluculum dep_luajit )
-
 #add_dependencies( ${3DSOFTVIZ_NAME} dep_aruco )
 
-add_dependencies( ${3DSOFTVIZ_NAME} libnoise)
+add_dependencies( ${3DSOFTVIZ_NAME} libnoise dep_diluculum dep_luametrics dep_leg dep_lpeg dep_luajit )
 if (COMMAND cotire)
-	add_dependencies( ${3DSOFTVIZ_NAME}_unity libnoise)
+        add_dependencies( ${3DSOFTVIZ_NAME}_unity libnoise dep_diluculum dep_luametrics dep_leg dep_lpeg dep_luajit )
 endif()
 
 
@@ -557,9 +553,9 @@ install(DIRECTORY resources/ DESTINATION ${INSTALL_DATA} COMPONENT Data)
 # Install built in dependencies unless we are building an OSX Bundle
 if( USE_BUILTIN_DEPENDENCIES )
 	# Make sure dependencies are built
-	add_dependencies( ${3DSOFTVIZ_NAME} libnoise )
+        add_dependencies( ${3DSOFTVIZ_NAME} libnoise dep_diluculum dep_luametrics dep_leg dep_lpeg dep_luajit  )
 	if (COMMAND cotire)
-		add_dependencies( ${3DSOFTVIZ_NAME}_unity libnoise )
+                add_dependencies( ${3DSOFTVIZ_NAME}_unity libnoise dep_diluculum dep_luametrics dep_leg dep_lpeg dep_luajit  )
 	endif()
 
 	# Install all dependencies
