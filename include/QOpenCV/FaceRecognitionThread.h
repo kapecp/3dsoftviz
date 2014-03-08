@@ -27,14 +27,7 @@ public:
 	~FaceRecognitionThread(void);
 	OpenCV::FaceRecognizer *mFaceRecognizer;
 	OpenCV::CapVideo *mCapVideo;
-	FaceRecognitionWindow *mFaceRecognitionWindow;
 
-	/**
-		 * @author Autor: Marek Jakab
-		 * @brief setWindow Pass FaceRecognitionWindow instance param to thread
-		 * @param mFaceRecognitionWindow instance of window for recognition
-		 */
-	void setWindow(QOpenCV::FaceRecognitionWindow *mFaceRecognitionWindow);
 
 	/**
 		 * @author Autor: Marek Jakab

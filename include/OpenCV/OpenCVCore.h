@@ -1,6 +1,7 @@
 #ifndef OPENCVCORE_H
 #define OPENCVCORE_H
 
+#include <QPointer>
 
 class QApplication;
 
@@ -12,8 +13,7 @@ namespace QOpenCV {
 	class FaceRecognitionThread;
 	class FaceRecognitionWindow;
 }
-namespace OpenCV
-{
+namespace OpenCV{
 	class FaceRecognizer;
 }
 
@@ -48,13 +48,17 @@ public:
 
 private:
 
+	void createPermanentConnection();
 	void createConnectionFaceRec();
 	void createConnectionAruco();
 
+	bool	mThrsCreated;
 	QApplication					*mApp;
 	ArucoModul::ArucoThread			*mThrAruco;
 	QOpenCV::FaceRecognitionThread	*mThrFaceRec;
-	QOpenCV::FaceRecognitionWindow	*mOpencvDialog;
+	//QOpenCV::FaceRecognitionWindow	*mOpencvDialog;
+
+	QPointer<QOpenCV::FaceRecognitionWindow> mOpencvDialog;
 
 	};
 }

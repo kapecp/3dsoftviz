@@ -18,37 +18,59 @@ OpenCV::OpenCVCore * OpenCV::OpenCVCore::mOpenCVCore;
 
 OpenCV::OpenCVCore::OpenCVCore( QApplication* app)
 {
-	mOpenCVCore = this;
-	mApp		= app;
+	mOpenCVCore		= this;
+	mApp			= app;
+	mOpencvDialog	= NULL;
+	mThrsCreated	= false;
 	qRegisterMetaType<cv::Mat>("Mat");
 }
 
 void OpenCV::OpenCVCore::faceRecognition()
 {
-	FaceRecognizer *mFaceRecognizer = new FaceRecognizer();
+	if( !mOpencvDialog ){
+		if( !mThrsCreated ){
+			// create threads
+			qDebug() << "creating threads";
+			mThrsCreated = true;
+			FaceRecognizer *mFaceRecognizer = new FaceRecognizer();
+			mThrAruco		= new ArucoModul::ArucoThread();
+			mThrFaceRec		= new QOpenCV::FaceRecognitionThread( mFaceRecognizer );
+			createPermanentConnection();
+		}
+		// create window
+		qDebug() << "creating windows";
+		mOpencvDialog = new QOpenCV::FaceRecognitionWindow(
+					AppCore::Core::getInstance( mApp )->getCoreWindow(), mApp, mThrFaceRec, mThrAruco);
 
-	mThrAruco		= new ArucoModul::ArucoThread();
-	mThrFaceRec		= new QOpenCV::FaceRecognitionThread( mFaceRecognizer );
-	mOpencvDialog	= new QOpenCV::FaceRecognitionWindow( AppCore::Core::getInstance( mApp )->getCoreWindow(), mApp, mThrFaceRec, mThrAruco);
-
-
-	createConnectionFaceRec();
-	createConnectionAruco();
-
+	}
+	// if window was hidden, there no connection to threads
+	if( mOpencvDialog->isHidden() ){
+		createConnectionFaceRec();
+		createConnectionAruco();
+	}
 	mOpencvDialog->show();
-	mThrFaceRec->setWindow( mOpencvDialog );
 }
 
-void OpenCVCore::createConnectionFaceRec(){
-
-	//  sending result data
+void  OpenCVCore::createPermanentConnection(){
+	//  sending result data from face detection
 	QObject::connect( mThrFaceRec,
 					  SIGNAL(sendEyesCoords(float,float,float)),
 					  AppCore::Core::getInstance( mApp )->getCoreWindow()->getCameraManipulator(),
 					  SLOT(setRotationHead(float,float,float)) );
 
+	//  sending result data from aruco
+	QObject::connect( mThrAruco,
+					  SIGNAL(sendArucoPosVec(osg::Vec3d)),
+					  AppCore::Core::getInstance( mApp )->getCoreWindow()->getCameraManipulator(),
+					  SLOT(updateArucoGraphPosition(osg::Vec3d)) );
+	QObject::connect( mThrAruco,
+					  SIGNAL(sendArucoRorQuat(osg::Quat)),
+					  AppCore::Core::getInstance( mApp )->getCoreGraph(),
+					  SLOT(updateArucoGraphRotation(osg::Quat)) );
 
+}
 
+void OpenCVCore::createConnectionFaceRec(){
 	// send actual image
 	QObject::connect( mOpencvDialog,
 					  SIGNAL(sendImgFaceRec(bool)),
@@ -76,17 +98,6 @@ void OpenCVCore::createConnectionFaceRec(){
 }
 
 void OpenCVCore::createConnectionAruco(){
-
-	//  sending result data
-	QObject::connect( mThrAruco,
-					  SIGNAL(sendArucoPosVec(osg::Vec3d)),
-					  AppCore::Core::getInstance( mApp )->getCoreWindow()->getCameraManipulator(),
-					  SLOT(updateArucoGraphPosition(osg::Vec3d)) );
-	QObject::connect( mThrAruco,
-					  SIGNAL(sendArucoRorQuat(osg::Quat)),
-					  AppCore::Core::getInstance( mApp )->getCoreGraph(),
-					  SLOT(updateArucoGraphRotation(osg::Quat)) );
-
 	// send actual image
 	QObject::connect( mOpencvDialog,
 					  SIGNAL(sendImgMarker(bool)),

@@ -18,11 +18,6 @@ QOpenCV::FaceRecognitionThread::~FaceRecognitionThread(void)
 	delete this->mFaceRecognizer;
 }
 
-void QOpenCV::FaceRecognitionThread::setWindow(FaceRecognitionWindow *mFaceRecognitionWindow)
-{
-	this->mFaceRecognitionWindow = mFaceRecognitionWindow;
-	connect(this->mFaceRecognitionWindow,SIGNAL(cancelLoop(bool)),this,SLOT(setCancel(bool)));
-}
 
 void QOpenCV::FaceRecognitionThread::run()
 {

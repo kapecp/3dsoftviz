@@ -16,12 +16,14 @@ using namespace QOpenCV;
 QOpenCV::FaceRecognitionWindow::FaceRecognitionWindow(QWidget *parent, QApplication * app, QOpenCV::FaceRecognitionThread *thrFaceRec, ArucoModul::ArucoThread *thrAruco)
 	: QDialog(parent)
 {
+	qDebug() << "ARWindow konstructor";
 	mThrFaceRec = thrFaceRec;
 	mThrAruco	= thrAruco;
 	mApp		= app;
 
 	configureWindow();
 }
+
 
 QLabel *QOpenCV::FaceRecognitionWindow::getLabel() const
 {
@@ -237,13 +239,17 @@ void QOpenCV::FaceRecognitionWindow::quitWindow()
 
 void QOpenCV::FaceRecognitionWindow::closeEvent(QCloseEvent *event)
 {
-	if( mThrFaceRec->isRunning()){
-		//emit cancelLoop(true);
-		mThrFaceRec->wait();
-	}
-	if( ! mThrFaceRec->isRunning())
-		qDebug() << "thread is stopped";
-	//delete mThrFaceRec;
+
+	qDebug() << "ARWindow closeEvent";
+
+	// stop send images from threads
+	mNoVideo->setChecked( true );
+	onSelModulChange();
+
+	disconnect();
+
+	//deleteLater();   // its efective not destroy it, but disconnect its only, it will remeber its state
+
 	event->accept();
 }
 
