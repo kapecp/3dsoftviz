@@ -9,19 +9,19 @@ QOpenCV::FaceRecognitionThread::FaceRecognitionThread(OpenCV::FaceRecognizer* al
 	this->mFaceRecognizer = alg;
 	this->cancel=false;
 	this->mSendImgEnabled	= true;
+	mCapVideo = NULL;
+
 }
 
 
 QOpenCV::FaceRecognitionThread::~FaceRecognitionThread(void)
 {
-	delete this->mCapVideo;
 	delete this->mFaceRecognizer;
 }
 
 
 void QOpenCV::FaceRecognitionThread::run()
 {
-	qDebug() << "FaceRec run start --->";
 	cancel = false;
 	this->mCapVideo = new OpenCV::CapVideo(0,320,240);
 
@@ -51,7 +51,6 @@ void QOpenCV::FaceRecognitionThread::run()
 											  CV_CAP_PROP_FRAME_WIDTH )));
 		}
 	}
-	qDebug() << "FaceRec run ----> end";
 	delete this->mCapVideo;
 }
 

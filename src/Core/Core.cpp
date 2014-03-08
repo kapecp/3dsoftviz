@@ -14,6 +14,7 @@
 #include "Manager/Manager.h"
 #include "Util/ApplicationConfig.h"
 
+
 AppCore::Core * AppCore::Core::core;
 
 AppCore::Core::Core(QApplication * app)

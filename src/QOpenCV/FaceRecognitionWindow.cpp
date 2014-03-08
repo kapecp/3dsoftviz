@@ -7,18 +7,13 @@
 #include <QtGui/QVBoxLayout>
 #include <QtGui/QStackedLayout>
 
-#include "QOpenCV/FaceRecognitionThread.h"
-#include "Aruco/arucothread.h"
 
 
 using namespace QOpenCV;
 
-QOpenCV::FaceRecognitionWindow::FaceRecognitionWindow(QWidget *parent, QApplication * app, QOpenCV::FaceRecognitionThread *thrFaceRec, ArucoModul::ArucoThread *thrAruco)
+QOpenCV::FaceRecognitionWindow::FaceRecognitionWindow(QWidget *parent, QApplication * app )
 	: QDialog(parent)
 {
-	qDebug() << "ARWindow konstructor";
-	mThrFaceRec = thrFaceRec;
-	mThrAruco	= thrAruco;
 	mApp		= app;
 
 	configureWindow();
@@ -72,7 +67,7 @@ void QOpenCV::FaceRecognitionWindow::configureWindow()
 	buttonLayout->addLayout( mModulesStackL );
 
 
-	// aruco and marker controll buttons
+	// face detection and marker controll buttons
 	QWidget		*faceRecPageWid		= new QWidget;
 	QWidget		*markerPageWid		= new QWidget;
 	QVBoxLayout	*faceRecPageLayout	= new QVBoxLayout;
@@ -155,12 +150,10 @@ void QOpenCV::FaceRecognitionWindow::onCorParUpdated()
 void QOpenCV::FaceRecognitionWindow::onFaceRecStartCancel( bool checked )
 {
 	if( checked ) {
-		//qDebug() << "shoul start faceRec";
 		mFaceRecStartCancelPB->setText( tr("Stop FaceRec"));
 		emit startFaceRec();
 
 	} else {
-		//qDebug() << "shoul stop facerec";
 		mFaceRecStartCancelPB->setEnabled(false);
 		emit stopFaceRec(true);
 
@@ -170,7 +163,6 @@ void QOpenCV::FaceRecognitionWindow::onFaceRecStartCancel( bool checked )
 void QOpenCV::FaceRecognitionWindow::onMarkerStartCancel( bool checked )
 {
 	if( checked ) {
-		//qDebug() << "shoul start aruco";
 		mMarkerStartCancelPB->setText( tr("Stop Marker"));
 		mMarkerBehindCB->setEnabled(true);
 		mUpdateCorParPB->setEnabled(true);
@@ -179,7 +171,6 @@ void QOpenCV::FaceRecognitionWindow::onMarkerStartCancel( bool checked )
 
 
 	} else {
-		qDebug() << "shoul start stoping aruco";
 		mMarkerStartCancelPB->setEnabled(false);
 		mMarkerBehindCB->setEnabled(false);
 		mCorEnabledCB->setEnabled(false);
@@ -191,16 +182,15 @@ void QOpenCV::FaceRecognitionWindow::onMarkerStartCancel( bool checked )
 
 void QOpenCV::FaceRecognitionWindow::onFaceRecThrFinished()
 {
-	//qDebug() << "face rec shoud be stopped";
 	mFaceRecStartCancelPB->setText( tr("Start FaceRec"));
 	mFaceRecStartCancelPB->setEnabled(true);
 }
+
 void QOpenCV::FaceRecognitionWindow::onMarkerThrFinished()
 {
 	mMarkerStartCancelPB->setText( tr("Start Marker"));
 	mMarkerStartCancelPB->setEnabled(true);
 }
-
 
 void QOpenCV::FaceRecognitionWindow::setLabel(cv::Mat image)
 {
@@ -215,27 +205,7 @@ void QOpenCV::FaceRecognitionWindow::setLabel(cv::Mat image)
 	mWindowLabel->setPixmap( QPixmap::fromImage(qimage));
 
 	//image.~Mat();    //?????????
-	//mWindowLabel->show();
 }
-
-
-// ---------------------------------
-
-
-
-
-void QOpenCV::FaceRecognitionWindow::quitWindow()
-{
-	if( mThrFaceRec->isRunning()){
-		//emit cancelLoop(true);
-		mThrFaceRec->wait();
-	}
-	if( ! mThrFaceRec->isRunning())
-		qDebug() << "thread is stopped";
-	delete mThrFaceRec;
-	delete this;
-}
-
 
 void QOpenCV::FaceRecognitionWindow::closeEvent(QCloseEvent *event)
 {

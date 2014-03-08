@@ -28,14 +28,6 @@ class OpenCVCore
 	{
 
 public:
-	OpenCVCore( QApplication* app);
-	~OpenCVCore(void);
-
-	/**
-		 * @author Autor: Marek Jakab
-		 * @brief faceRecognition Starts window with face detection in another thread
-		 */
-	void faceRecognition();
 
 	/**
 		 * @author Autor: Marek Jakab
@@ -44,20 +36,53 @@ public:
 		 * @return OpenCVCore instance
 		 */
 	static OpenCVCore	*getInstance( QApplication* app);
-	static OpenCVCore	*mOpenCVCore;
+
+	/**
+		 * @author Autor: Marek Jakab
+		 * @brief ~OpenCVCore Destructor, that Stops thread, close Window, free memory
+		 */
+	~OpenCVCore(void);
+
+	/**
+		 * @author Autor: David Durcak
+		 * @brief faceRecognition Initialize Face Detection and Aruco threads and Face Detection Window
+		 */
+	void faceRecognition();
+
 
 private:
+	/**
+		 * @author Autor: David Durcak
+		 * @brief OpenCVCore Costructor
+		 * @param app QApplication
+		 */
+	OpenCVCore( QApplication* app);
 
+	/**
+		 * @author Autor: David Durcak
+		 * @brief createPermanentConnection Create conections for sending results from threads to Camera Manipulator and CoreGraph
+		 */
 	void createPermanentConnection();
+
+	/**
+		 * @author Autor: David Durcak
+		 * @brief createConnectionFaceRec Create conections for cotrollig Face Detection thread from Face Detection window
+		 */
 	void createConnectionFaceRec();
+
+	/**
+		 * @author Autor: David Durcak
+		 * @brief createConnectionAruco Create conections for cotrollig Aruco thread from Face Detection window
+		 */
 	void createConnectionAruco();
 
-	bool	mThrsCreated;
+
+	static OpenCVCore	*mOpenCVCore;	// static singleton instance
+	bool	mThrsCreated;				// if false, threads were not initialized yet
+
 	QApplication					*mApp;
 	ArucoModul::ArucoThread			*mThrAruco;
 	QOpenCV::FaceRecognitionThread	*mThrFaceRec;
-	//QOpenCV::FaceRecognitionWindow	*mOpencvDialog;
-
 	QPointer<QOpenCV::FaceRecognitionWindow> mOpencvDialog;
 
 	};

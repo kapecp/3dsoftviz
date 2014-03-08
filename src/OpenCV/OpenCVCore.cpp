@@ -20,9 +20,32 @@ OpenCV::OpenCVCore::OpenCVCore( QApplication* app)
 {
 	mOpenCVCore		= this;
 	mApp			= app;
-	mOpencvDialog	= NULL;
+
 	mThrsCreated	= false;
+	mOpencvDialog	= NULL;
+	mThrFaceRec		= NULL;
+	mThrAruco		= NULL;
+
 	qRegisterMetaType<cv::Mat>("Mat");
+}
+OpenCV::OpenCVCore::~OpenCVCore(void)
+{
+	if( mThrsCreated ) {
+
+		mThrFaceRec->setCancel(true);
+		mThrAruco->setCancel(true);
+		mThrFaceRec->setSendImgEnabled(false);
+		mThrAruco->setSendImgEnabling(false);
+
+		mOpencvDialog->disconnect();
+		mOpencvDialog->deleteLater();
+
+		mThrFaceRec->wait();
+		mThrAruco->wait();
+
+		mThrFaceRec->deleteLater();
+		mThrAruco->deleteLater();
+	}
 }
 
 void OpenCV::OpenCVCore::faceRecognition()
@@ -40,7 +63,7 @@ void OpenCV::OpenCVCore::faceRecognition()
 		// create window
 		qDebug() << "creating windows";
 		mOpencvDialog = new QOpenCV::FaceRecognitionWindow(
-					AppCore::Core::getInstance( mApp )->getCoreWindow(), mApp, mThrFaceRec, mThrAruco);
+					AppCore::Core::getInstance( mApp )->getCoreWindow(), mApp );
 
 	}
 	// if window was hidden, there no connection to threads

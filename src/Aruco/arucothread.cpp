@@ -30,7 +30,6 @@ ArucoThread::~ArucoThread(void)
 
 void ArucoThread::setCancel(bool set)
 {
-	qDebug() << "ARUCO: setcancel " << set ;
 	mCancel	= set;
 }
 
@@ -41,30 +40,25 @@ void ArucoThread::pause()
 
 void ArucoThread::setPositionOfMarker( bool behind )
 {
-	qDebug() << "ARUCO: marker behind " << behind;
 	mMarkerIsBehind = behind;
 }
 
 void ArucoThread::setCorEnabling( bool corEnabled )
 {
-	qDebug() << "ARUCO: coreEnabled " << corEnabled;
 	mCorEnabled = corEnabled;
 }
 
 void ArucoThread::setSendImgEnabling( bool sendImgEnabled )
 {
-	qDebug() << "ARUCO: send image " << sendImgEnabled;
 	mSendImgEnabled = sendImgEnabled;
 }
 
 void ArucoThread::updateCorectionPar(){
-	qDebug() << "ARUCO: update cor par enabled";
 	mUpdCorPar = true;
 }
 
 void ArucoThread::run()
 {
-	qDebug() << "ARUCO: run start ----> ";
 	mCancel = false;
 	double	actPosArray[3];		// x, y, z
 	double	actQuatArray[4];		// angle(w), x, y, z
@@ -161,8 +155,6 @@ void ArucoThread::run()
 
 	}
 	capture.release();
-	qDebug() << "ARUCO: run -----> end ";
-
 }
 
 

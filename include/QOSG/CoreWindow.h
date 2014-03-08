@@ -602,6 +602,12 @@ private:
 	void createCollaborationToolBar();
 
 	/**
+		*  \fn private  createAugmentedRealityToolBar
+		*  \brief Create Augmented Reality ToolBar
+		*/
+	void createAugmentedRealityToolBar();
+
+	/**
 		*  \fn private  createHorizontalFrame
 		*  \brief Crate frame with horizontal label
 		*  \return QFrame * created frame
@@ -706,6 +712,15 @@ public:
 			QSharedPointer<Layout::RestrictionRemovalHandler> removalHandler,
 			QLinkedList<osg::ref_ptr<Data::Node> > nodesOfShapeGettersToRestrict
 			);
+
+protected:
+
+	/**
+		 * @author Autor: David Durcak
+		 * @brief closeEvent Reimplement close event. Call destructor on OpenCVCore
+		 * @param event Close event
+		 */
+	void closeEvent(QCloseEvent *event);
 
 private:
 
