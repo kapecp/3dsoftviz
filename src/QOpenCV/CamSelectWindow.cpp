@@ -75,7 +75,7 @@ void CamSelectWindow::createTableModel(QString data)
 
 void CamSelectWindow::commitChanges()
 {
-	OpenCV::CamSelectCore::getInstance(app)->setCam(indexes.at(0).row()
+	OpenCV::CamSelectCore::getInstance()->setCam(indexes.at(0).row()
 													   ,model->item(indexes.at(0).row(),2)->text().toInt(),
 													   model->item(indexes.at(0).row(),3)->text().toInt());
 	this->close();

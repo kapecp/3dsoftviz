@@ -6,7 +6,7 @@ using namespace QOpenCV;
 QOpenCV::FaceRecognitionThread::FaceRecognitionThread(OpenCV::FaceRecognizer* alg)
 {
 	this->mFaceRecognizer = alg;
-	this->mCapVideo = OpenCV::CamSelectCore::getInstance(NULL)->selectCamera();
+	this->mCapVideo = OpenCV::CamSelectCore::getInstance()->selectCamera();
 	this->cancel=false;
 	qRegisterMetaType<cv::Mat>("Mat");
 }

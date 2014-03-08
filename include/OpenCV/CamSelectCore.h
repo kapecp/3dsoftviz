@@ -18,7 +18,7 @@ class CamSelectCore
 {
 
 public:
-	CamSelectCore( QApplication* app);
+	CamSelectCore();
 	~CamSelectCore(void);
 	/**
 		 * @author Autor: Marek Jakab
@@ -26,7 +26,7 @@ public:
 		 * @param app QApplication
 		 * @return CamSelectCore instance
 		 */
-	static CamSelectCore *getInstance( QApplication* app);
+	static CamSelectCore *getInstance();
 	/**
 		 * @author Autor: Marek Jakab
 		 */

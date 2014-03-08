@@ -15,10 +15,10 @@ void OpenCV::CapVideo::startCamera(int width,int height){
 	if (!capture2.isOpened()){
 		cv::VideoCapture cap(this->device_id);
 		this->capture2=cap;
-		this->width=width;
-		this->height=height;
 		this->capture2.set(CV_CAP_PROP_FRAME_WIDTH,width);
 		this->capture2.set(CV_CAP_PROP_FRAME_HEIGHT,height);
+		this->width=this->capture2.get(CV_CAP_PROP_FRAME_WIDTH);
+		this->height=this->capture2.get(CV_CAP_PROP_FRAME_HEIGHT);
 		this->connections++;
 		return;
 	}

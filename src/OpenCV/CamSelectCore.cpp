@@ -4,7 +4,7 @@ using namespace OpenCV;
 
 OpenCV::CamSelectCore * OpenCV::CamSelectCore::mCamSelectCore;
 
-OpenCV::CamSelectCore::CamSelectCore( QApplication* app)
+OpenCV::CamSelectCore::CamSelectCore()
 {
 	mCamSelectCore = this;
 	this->app=app;
@@ -41,7 +41,10 @@ OpenCV::CapVideo *OpenCV::CamSelectCore::selectCamera()
 		}
 		if (i<camlist.size()-1) data.append(";");
 	}
-	OpenCV::CamSelectWindow *csw = new OpenCV::CamSelectWindow(AppCore::Core::getInstance(this->app)->getCoreWindow(),this->app,data);
+	OpenCV::CamSelectWindow *csw = new OpenCV::CamSelectWindow(
+				AppCore::Core::getInstance(qApp)->getCoreWindow(),
+				qApp,
+				data);
 
 	if (csw->exec())
 	{
@@ -55,11 +58,11 @@ OpenCV::CapVideo *OpenCV::CamSelectCore::selectCamera()
 
 }
 
-OpenCV::CamSelectCore * OpenCV::CamSelectCore::getInstance(QApplication *app)
+OpenCV::CamSelectCore * OpenCV::CamSelectCore::getInstance()
 {
 	if(mCamSelectCore == NULL)
 	{
-		mCamSelectCore = new OpenCV::CamSelectCore(app);
+		mCamSelectCore = new OpenCV::CamSelectCore();
 	}
 	return mCamSelectCore;
 }
