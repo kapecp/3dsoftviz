@@ -117,8 +117,6 @@ void ArucoThread::run()
 					osg::Vec3d actPos( -actPosArray[0], -actPosArray[1], -actPosArray[2] );
 					osg::Quat  actQuat;
 
-					qDebug() << "POS:  " << actPosArray[0] << " " << actPosArray[1] << " " << actPosArray[2];
-					qDebug() << "QUA:  " << actQuatArray[0] << " " << actQuatArray[1] << " " << actQuatArray[2] << " " << actQuatArray[3];
 
 					//  forward/backward,   left/right,  around,   w
 					if( mMarkerIsBehind ){

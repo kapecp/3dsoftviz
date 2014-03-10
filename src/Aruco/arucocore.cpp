@@ -33,9 +33,12 @@ const QMatrix4x4 ArucoCore::getDetectedMatrix(cv::Mat inputImage)
 {
 	double modelViewMatrix[16];
 
-	//this->updateImage( inputImage );
+#ifdef WIN32
 	mCamParam.resize(inputImage.size());
 	mCamImage = inputImage;
+#else
+	updateImage( inputImage );
+#endif
 
 	// get result model view matrix from imput image
 	this->detectMarkers();
@@ -47,9 +50,12 @@ const QMatrix4x4 ArucoCore::getDetectedMatrix(cv::Mat inputImage)
 
 bool ArucoCore::getDetectedPosAndQuat(cv::Mat inputImage, double position[3], double quaternion[4])
 {
-	//this->updateImage( inputImage );
+#ifdef WIN32
 	mCamParam.resize(inputImage.size());
 	mCamImage = inputImage;
+#else
+	updateImage( inputImage );
+#endif
 
 	detectMarkers();
 
@@ -63,21 +69,23 @@ bool ArucoCore::getDetectedPosAndQuat(cv::Mat inputImage, double position[3], do
 
 }
 
-// tato funkcia je nepouzitelna
+// tato funkcia je nepouzitelna na Windows
 void ArucoCore::updateImage(cv::Mat inputImage)
 {
 
 	mCamParam.resize(inputImage.size());
-	//mCamImage.create(inputImage.size(),CV_8UC3);
+
+
+	mCamImage.create(inputImage.size(),CV_8UC3);
 
 	//transform color that by default is BGR to RGB because windows systems do not allow reading BGR images with opengl properly
-	// cv::cvtColor(inputImage,inputImage,CV_BGR2RGB);   // pri testovani praveze opacny efekt
+	cv::cvtColor(inputImage,inputImage,CV_BGR2RGB);   // pri testovani praveze opacny efekt
 
 	//remove distorion in image
 	// nemoze byt ak je camera nastavena v konstruktore,
 	// ma za nasledok neustalu postupnu zmenu parametrov kamary,
 	// az sa stanu nepouzitelne a tym deformovanie obrazka do jeho rohu
-	//cv::undistort(inputImage, mCamImage, mCamParam.CameraMatrix, mCamParam.Distorsion);
+	cv::undistort(inputImage, mCamImage, mCamParam.CameraMatrix, mCamParam.Distorsion);
 
 
 }
