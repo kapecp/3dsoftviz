@@ -64,18 +64,25 @@ void ArucoThread::run()
 	double	actQuatArray[4];		// angle(w), x, y, z
 	bool	marerDetected = false;
 
-
-	// this code will be changed soon
 	cv::Mat frame;
 	cv::VideoCapture capture;
 
-	QMatrix4x4 mat;
 	QString filename = "../share/3dsoftviz/config/camera.yml";
+	QFileInfo file(filename);
+	if( ! file.exists() ){
+		qDebug() << "File " << file.absoluteFilePath() << " does Not exist!";
+		return;
+	}
+
+	// create Aruco, set camera pararameters and check it
+	ArucoCore aCore;
+	bool camParametersOk = aCore.setCameraParameters( filename );
+
+
 
 	// this must do camera singleton
-
 	if( ! capture.isOpened()){
-		capture.open(1);
+		capture.open(0);
 	} else {
 		qDebug() << "ARUCO:error: capture is already open";
 	}
@@ -84,76 +91,67 @@ void ArucoThread::run()
 	const double camDistRatio = 2.75;
 	capture.set(CV_CAP_PROP_FRAME_WIDTH, width);
 	capture.set(CV_CAP_PROP_FRAME_HEIGHT, height);
+	// until this code will be changed soon
 
 
-	QFileInfo file(filename);
-	if( ! file.exists() ){
-		qDebug() << "File " << file.absoluteFilePath() << " does Not exist!";
+	if( camParametersOk ){
+		while(! mCancel) {	// doing aruco work in loop
+
+			capture >> frame;		// get image from camera
+
+			// add image to aruco and get position vector and rotation quaternion
+			marerDetected = aCore.getDetectedPosAndQuat( frame, actPosArray, actQuatArray );
+			if( marerDetected ){
+
+				// test if marker was detect (if not, all number in matrix are not range)
+				if( actPosArray[2] > 0.0  &&  actPosArray[2] < 10.0
+						&&   actQuatArray[0] >= -1.0  &&  actQuatArray[0] <= 1.0 ){
+
+
+
+					// can be corection parameters updated
+					if( mUpdCorPar ){
+						computeCorQuatAndPos( actPosArray, actQuatArray );
+					}
+
+					osg::Vec3d actPos( -actPosArray[0], -actPosArray[1], -actPosArray[2] );
+					osg::Quat  actQuat;
+
+					qDebug() << "POS:  " << actPosArray[0] << " " << actPosArray[1] << " " << actPosArray[2];
+					qDebug() << "QUA:  " << actQuatArray[0] << " " << actQuatArray[1] << " " << actQuatArray[2] << " " << actQuatArray[3];
+
+					//  forward/backward,   left/right,  around,   w
+					if( mMarkerIsBehind ){
+						actQuat.set( -actQuatArray[1],  actQuatArray[3],  actQuatArray[2],  actQuatArray[0] );
+					} else {
+						actQuat.set(  actQuatArray[1], -actQuatArray[3],  actQuatArray[2],  actQuatArray[0] );
+					}
+
+
+					// correct Y centering, because of camerra different ration aruco top max y value is less than bottom one
+					mRatioCamCoef = ( 1 - height/width ) / camDistRatio;
+					actPos.y() = ( mRatioCamCoef * actPos.z()  + actPos.y() );
+
+					if ( mCorEnabled ) {
+						correctQuatAndPos( actPos, actQuat);
+					}
+
+					emit sendArucoPosVec( actPos );
+					emit sendArucoRorQuat( actQuat );
+
+				}
+			}
+
+			if ( mSendImgEnabled ) {
+				emit pushImage( aCore.getDetImage());	// emit image with marked marker for debuging
+			}
+			if(! mCancel){
+				msleep(50);
+			}
+
+		}
 	}
-	ArucoCore aCore(filename);
 
-
-	// compute correction translation vector and rotation quaternion
-	//double xpos[3]	= {  0.00706000, -0.122270,  0.32559200 };
-	//double xorient[4]	= {  0.98069500, -0.194950, -0.00705001, -0.0135225 };
-	//double xpos[3]	= { -0.00709373, -0.124475,  0.33048100 };				// with ratio
-	//double xorient[4]	= {  0.98163100, -0.188311, -0.02564880, -0.0168029 };	// with ratio
-
-	//qDebug() << "pos  " << pos[0] << " " << pos[1] << " " << pos[2];
-	//qDebug() << "ori  " << xorient[0] << " " << xorient[1] << " " << xorient[2] << " " << xorient[3];
-
-	//computeCorQuatAndPos( xpos, xorient);
-
-
-
-	while(! mCancel) {	// doing aruco work in loop
-
-		capture >> frame;		// get image from camera
-
-		// add image to aruco and get position vector and rotation quaternion
-		marerDetected = aCore.getDetectedPosAndQuat( frame, actPosArray, actQuatArray );
-		if( marerDetected ){
-			// test if marker was detect (if not, all number in matrix are not range)
-			//if(mat.data()[ 0] > -100.0 && mat.data()[ 0] < 100.0  ){  ?????????????????
-
-			// can be corection parameters updated
-			if( mUpdCorPar ){
-				computeCorQuatAndPos( actPosArray, actQuatArray );
-			}
-
-			osg::Vec3d actPos( -actPosArray[0], -actPosArray[1], -actPosArray[2] );
-			osg::Quat  actQuat;
-
-			//  forward/backward,   left/right,  around,   w
-			if( mMarkerIsBehind ){
-				actQuat.set( -actQuatArray[1],  actQuatArray[3],  actQuatArray[2],  actQuatArray[0] );
-			} else {
-				actQuat.set(  actQuatArray[1], -actQuatArray[3],  actQuatArray[2],  actQuatArray[0] );
-			}
-
-
-			// correct Y centering, because of camerra different ration aruco top max y value is less than bottom one
-			mRatioCamCoef = ( 1 - height/width ) / camDistRatio;
-			actPos.y() = ( mRatioCamCoef * actPos.z()  + actPos.y() );
-
-			if ( mCorEnabled ) {
-				correctQuatAndPos( actPos, actQuat);
-			}
-
-			emit sendArucoPosVec( actPos );
-			emit sendArucoRorQuat( actQuat );
-
-			//}  ?????
-		}
-
-		if ( mSendImgEnabled ) {
-			emit pushImage( aCore.getDetImage());	// emit image with marked marker for debuging
-		}
-		if(! mCancel){
-			msleep(50);
-		}
-
-	}
 	capture.release();
 }
 

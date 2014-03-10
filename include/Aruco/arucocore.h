@@ -21,7 +21,14 @@ public:
 		 * @brief Constructor
 		 * @note Will be changed soon.
 		 */
-	ArucoCore(const QString markerDesFile);
+	ArucoCore();
+
+	/**
+		 * @author Autor: Martina Tregerova
+		 * @brief cameraParameters Function that reads the camera information from yml file.
+		 * @note May not be needed anymore. Also the file will not be found.
+		 */
+	bool setCameraParameters(const QString markerDesFile);
 
 	/**
 		 * @author Autor:Dávid Durčák
@@ -67,12 +74,7 @@ private:
 		 * @brief detectMarkers The actual function that creates a position information based on camera information.
 		 */
 	void detectMarkers();
-	/**
-		 * @author Autor: Martina Tregerova
-		 * @brief cameraParameters Function that reads the camera information from yml file.
-		 * @note May not be needed anymore. Also the file will not be found.
-		 */
-	void cameraParameters(const QString markerDesFile);
+
 
 
 	cv::Mat					mCamImage;		// frame

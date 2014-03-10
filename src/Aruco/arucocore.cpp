@@ -4,27 +4,29 @@
 
 using namespace ArucoModul;
 
-ArucoCore::ArucoCore(const QString markerDesFile)
+ArucoCore::ArucoCore()
 {
 
 	mMarkerSize = 0.06f;
-	try {
-		cameraParameters(markerDesFile);
-	}
-	catch(std::exception &ex) {
-		qDebug() << "Exception: " << QString::fromUtf8( ex.what());
-	}
+
 }
 
 
 
-void ArucoCore::cameraParameters(const QString markerDesFile)
+bool ArucoCore::setCameraParameters(const QString markerDesFile)
 {
-	if(markerDesFile.isEmpty()){
-		qDebug() << "ArucoCore::cameraParameters(): markerDesFile name is empty";
+	try {
+		if(markerDesFile.isEmpty()){
+			qDebug() << "ArucoCore::cameraParameters(): markerDesFile name is empty";
+		}
+		//read camera paramters if passed
+		mCamParam.readFromXMLFile( markerDesFile.toStdString() );
+		return true;
 	}
-	//read camera paramters if passed
-	mCamParam.readFromXMLFile( markerDesFile.toStdString() );
+	catch(std::exception &ex) {
+		qDebug() << "Exception: " << QString::fromUtf8( ex.what());
+		return false;
+	}
 }
 
 const QMatrix4x4 ArucoCore::getDetectedMatrix(cv::Mat inputImage)
