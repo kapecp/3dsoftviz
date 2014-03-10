@@ -1,5 +1,6 @@
 #include "OpenCV/OpenCVCore.h"
 #include "Viewer/CameraManipulator.h"
+#include "OpenCV/CamSelectCore.h"
 
 using namespace OpenCV;
 
@@ -14,20 +15,21 @@ OpenCV::OpenCVCore::OpenCVCore( QApplication* app)
 
 void OpenCV::OpenCVCore::faceRecognition()
 {
-	OpenCV::FaceRecognizer *mFaceRecognizer = new OpenCV::FaceRecognizer();
 
-	QOpenCV::FaceRecognitionThread *thr = new QOpenCV::FaceRecognitionThread(mFaceRecognizer);
-	QOpenCV::FaceRecognitionWindow *cvw = new QOpenCV::FaceRecognitionWindow(AppCore::Core::getInstance(this->app)->getCoreWindow(),this->app,thr);
+		OpenCV::FaceRecognizer *mFaceRecognizer = new OpenCV::FaceRecognizer();
+
+		QOpenCV::FaceRecognitionThread *thr = new QOpenCV::FaceRecognitionThread(mFaceRecognizer);
+		QOpenCV::FaceRecognitionWindow *cvw = new QOpenCV::FaceRecognitionWindow(AppCore::Core::getInstance(this->app)->getCoreWindow(),this->app,thr);
 
 
 
-	QObject::connect( thr,SIGNAL(sendEyesCoords(float,float,float)),
-					  AppCore::Core::getInstance(this->app)->getCoreWindow()->getCameraManipulator(),
-					  SLOT(setRotationHead(float,float,float)) );
+		QObject::connect( thr,SIGNAL(sendEyesCoords(float,float,float)),
+						  AppCore::Core::getInstance(this->app)->getCoreWindow()->getCameraManipulator(),
+						  SLOT(setRotationHead(float,float,float)) );
 
-	cvw->show();
-	thr->setWindow(cvw);
-	thr->start();
+		cvw->show();
+		thr->setWindow(cvw);
+		thr->start();
 }
 
 OpenCV::OpenCVCore * OpenCV::OpenCVCore::getInstance( QApplication* app)

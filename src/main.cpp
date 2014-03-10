@@ -5,7 +5,7 @@
 #include "Util/Cleaner.h"
 
 #ifdef OPENCV_FOUND
-    #include "OpenCV/OpenCVCore.h"
+	#include "OpenCV/OpenCVCore.h"
 #endif
 
 int main(int argc, char *argv[])
@@ -14,10 +14,10 @@ int main(int argc, char *argv[])
 	new Cleaner(&app);
 	AppCore::Core::getInstance(&app);
 	Manager::GraphManager::getInstance();
-
 #ifdef OPENCV_FOUND
 	OpenCV::OpenCVCore::getInstance(&app);
 #endif
+
 
 
 }

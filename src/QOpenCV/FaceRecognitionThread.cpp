@@ -1,18 +1,21 @@
 #include "QOpenCV/FaceRecognitionThread.h"
+#include "OpenCV/CamSelectCore.h"
 
 using namespace QOpenCV;
 
 QOpenCV::FaceRecognitionThread::FaceRecognitionThread(OpenCV::FaceRecognizer* alg)
 {
 	this->mFaceRecognizer = alg;
-	this->mCapVideo = new OpenCV::CapVideo(0,320,240);
+	this->mCapVideo = OpenCV::CamSelectCore::getInstance()->selectCamera();
 	this->cancel=false;
 	qRegisterMetaType<cv::Mat>("Mat");
 }
 
 QOpenCV::FaceRecognitionThread::~FaceRecognitionThread(void)
 {
-	delete this->mCapVideo;
+	if(this->mCapVideo!=NULL){
+		this->mCapVideo->release();
+	}
 	delete this->mFaceRecognizer;
 }
 
@@ -24,7 +27,7 @@ void QOpenCV::FaceRecognitionThread::setWindow(FaceRecognitionWindow *mFaceRecog
 
 void QOpenCV::FaceRecognitionThread::run()
 {
-	if (!this->mCapVideo->getCapture()){
+	if (this->mCapVideo==NULL){
 		qDebug() << "Camera is not opened";
 		return;
 	}
@@ -42,9 +45,7 @@ void QOpenCV::FaceRecognitionThread::run()
 			emit this->sendEyesCoords((float)-this->mFaceRecognizer->getEyesCoords().x,
 									  (float)-this->mFaceRecognizer->getEyesCoords().y,
 									  -this->mFaceRecognizer->getHeadDistance(
-										  cvGetCaptureProperty(
-											  this->mCapVideo->getCapture(),
-											  CV_CAP_PROP_FRAME_WIDTH )));
+										 this->mCapVideo->getWidth()));
 		}
 	}
 }

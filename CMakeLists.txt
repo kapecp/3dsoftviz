@@ -233,7 +233,7 @@ if( OpenCV_FOUND )
 	set( SOURCES_H
 		./include/QOpenCV/FaceRecognitionWindow.h
 		./include/QOpenCV/FaceRecognitionThread.h
-	   #         ./include/QOpenCV/CameraSelectWindow.h
+				./include/QOpenCV/CamSelectWindow.h
 	)
 	file(GLOB_RECURSE SRC_OPENCV  "src/OpenCV/*.cpp")
 		file(GLOB_RECURSE SRC_QOPENCV  "src/QOpenCV/*.cpp")
