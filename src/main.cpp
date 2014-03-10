@@ -8,31 +8,17 @@
     #include "OpenCV/OpenCVCore.h"
 #endif
 
-// lua development
-extern "C"
-{
-	#include "lua.h"
-	#include "lualib.h"
-	#include "lauxlib.h"
-}
-
-// include diluculum header files
-#include "Diluculum/CppObject.hpp"
-#include "Diluculum/LuaExceptions.hpp"
-#include "Diluculum/LuaFunction.hpp"
-#include "Diluculum/LuaState.hpp"
-#include "Diluculum/LuaUserData.hpp"
-#include "Diluculum/LuaUtils.hpp"
-#include "Diluculum/LuaValue.hpp"
-#include "Diluculum/LuaVariable.hpp"
-#include "Diluculum/Types.hpp"
-
-static Diluculum::LuaState* luaState;
+#include "LuaInterface/LuaInterface.h"
 
 int main(int argc, char *argv[])
 {
-	luaState = new Diluculum::LuaState;
-	luaState->doFile("../share/3dsoftviz/scripts/main.lua");
+
+    Lua::LuaInterface *lua = Lua::LuaInterface::getInstance();
+    lua->executeFile("../share/3dsoftviz/scripts/main.lua");
+    std::string var[] = {"test", "foo"};
+    std::cout << lua->getString(2, var) << " " << lua->getString("test2") << std::endl;
+    int fortyTwo = lua->getInt("test3");
+    std::cout << fortyTwo << std::endl;
 
 	QApplication app(argc, argv);
 	new Cleaner(&app);
