@@ -15,6 +15,7 @@
 
 #include <osgUtil/Optimizer>
 #include <osg/Depth>
+#include <osgFX/Outline>
 #include <math.h>
 
 using namespace Vwr;
@@ -40,6 +41,67 @@ osg::ref_ptr<osg::AutoTransform> getSphere(osg::Vec3 position, float radius, osg
     geode->addDrawable(shape);
 
     at->addChild(geode);
+    return at;
+}
+
+osg::ref_ptr<osg::AutoTransform> getCube(osg::Vec3 position, float width, osg::Vec4 color) {
+    osg::ref_ptr<osg::AutoTransform> at = new osg::AutoTransform;
+    at->setPosition(position * 1);
+    at->setAutoRotateMode(osg::AutoTransform::ROTATE_TO_SCREEN);
+
+    osg::ShapeDrawable * shape = new osg::ShapeDrawable;
+    osg::Box * cube = new osg::Box;
+    cube->setHalfLengths(osg::Vec3(width,width,width));
+    shape->setShape(cube);
+    shape->setColor(color); //osg::Vec4(0.9, 0.1, 0.3, 0.5));
+    shape->getOrCreateStateSet()->setMode(GL_BLEND, osg::StateAttribute::ON);
+    shape->getStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
+    osg::Geode * geode = new osg::Geode;
+    geode->addDrawable(shape);
+
+    at->addChild(geode);
+    return at;
+}
+
+osg::ref_ptr<osg::AutoTransform> getCone(osg::Vec3 position, float radius, osg::Vec4 color) {
+    osg::ref_ptr<osg::AutoTransform> at = new osg::AutoTransform;
+    at->setPosition(position * 1);
+    //at->setAutoRotateMode(osg::AutoTransform::ROTATE_TO_SCREEN);
+
+    osg::ShapeDrawable * shape = new osg::ShapeDrawable;
+    osg::Cone * cone = new osg::Cone;
+    cone->setRadius(radius);
+    cone->setHeight(radius*3);
+    shape->setShape(cone);
+    shape->setColor(color); //osg::Vec4(0.9, 0.1, 0.3, 0.5));
+    shape->getOrCreateStateSet()->setMode(GL_BLEND, osg::StateAttribute::ON);
+    shape->getStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
+    osg::Geode * geode = new osg::Geode;
+    geode->addDrawable(shape);
+
+    at->addChild(geode);
+
+    return at;
+}
+
+osg::ref_ptr<osg::AutoTransform> getCylinder(osg::Vec3 position, float radius, osg::Vec4 color) {
+    osg::ref_ptr<osg::AutoTransform> at = new osg::AutoTransform;
+    at->setPosition(position * 1);
+    //at->setAutoRotateMode(osg::AutoTransform::ROTATE_TO_SCREEN);
+
+    osg::ShapeDrawable * shape = new osg::ShapeDrawable;
+    osg::Cylinder * cylinder = new osg::Cylinder;
+    cylinder->setRadius(radius);
+    cylinder->setHeight(radius*2);
+    shape->setShape(cylinder);
+    shape->setColor(color); //osg::Vec4(0.9, 0.1, 0.3, 0.5));
+    shape->getOrCreateStateSet()->setMode(GL_BLEND, osg::StateAttribute::ON);
+    shape->getStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
+    osg::Geode * geode = new osg::Geode;
+    geode->addDrawable(shape);
+
+    at->addChild(geode);
+
     return at;
 }
 
@@ -108,7 +170,6 @@ osg::ref_ptr<osg::Group> CoreGraph::test2() {
         // TODO pripadne prerobit vrece "clusters" nech uchovava len typ Cluster {aj tak v nom nie su Nody}
         Data::Cluster* cluster = dynamic_cast<Data::Cluster*>(node.get());
 
-
     //    osg::ref_ptr<Data::Cluster> cluster = node->getCluster();
 
      //   osg::ref_ptr<Data::Cluster> cluster = new Data::Cluster(tempID++, "name", type, graph->getNodeScale(), graph, osg::Vec3f(0,0,0));
@@ -118,8 +179,17 @@ osg::ref_ptr<osg::Group> CoreGraph::test2() {
     //    testGroup->addChild(getSphere(osg::Vec3( cluster->getId() * 10, cluster->getId() * 10, cluster->getId() * 10)));
 
         osg::Vec3f midPoint = getMidPoint(cluster->getALLClusteredNodes());
+        int nodesCount = cluster->getClusteredNodesCount();
 
-        testGroup->addChild(getSphere(midPoint, getRadius(cluster->getALLClusteredNodes(), midPoint), cluster->getColor()));
+        if (nodesCount > clustersRangeMin && nodesCount <= clusters1Value) {
+            testGroup->addChild(getSphere(midPoint, getRadius(cluster->getALLClusteredNodes(), midPoint), cluster->getColor()));
+        } else if (nodesCount > clusters1Value && nodesCount <= clustersMiddleValue) {
+            testGroup->addChild(getCube(midPoint, getRadius(cluster->getALLClusteredNodes(), midPoint), cluster->getColor()));
+        } else if (nodesCount > clustersMiddleValue && nodesCount <= clusters2Value) {
+            testGroup->addChild(getCone(midPoint, getRadius(cluster->getALLClusteredNodes(), midPoint), cluster->getColor()));
+        } else {
+            testGroup->addChild(getCylinder(midPoint, getRadius(cluster->getALLClusteredNodes(), midPoint), cluster->getColor()));
+        }
     }
 
     }
@@ -191,6 +261,22 @@ osg::Geode* test() {
 }
 
 
+void CoreGraph::setClustersRange(int min, int max) {
+    this->clustersRangeMin = min;
+    this->clustersRangeMax = max;
+}
+
+void CoreGraph::setClusters1Value(int value) {
+    this->clusters1Value = value;
+}
+
+void CoreGraph::setClusters2Value(int value) {
+    this->clusters2Value = value;
+}
+
+void CoreGraph::setClustersMiddleValue(int value) {
+    this->clustersMiddleValue = value;
+}
 
 Vwr::CoreGraph::CoreGraph(Data::Graph * graph, osg::ref_ptr<osg::Camera> camera)
 {

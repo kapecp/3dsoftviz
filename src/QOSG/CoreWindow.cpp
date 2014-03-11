@@ -283,7 +283,7 @@ void CoreWindow::createActions()
 	b_SetRestriction_ConeSurface->setIcon(QIcon("../share/3dsoftviz/img/gui/restriction_cone_surface.png"));
 	b_SetRestriction_ConeSurface->setToolTip("&Set restriction - cone surface");
 	b_SetRestriction_ConeSurface->setFocusPolicy(Qt::NoFocus);
-	connect(b_SetRestriction_ConeSurface, SIGNAL(clicked()), this, SLOT(setRestriction_ConeSurface()));
+    connect(b_SetRestriction_ConeSurface, SIGNAL(clicked()), this, SLOT(setRestriction_ConeSurface()));
 
 	b_SetRestriction_ConeSurface_Slider = new QSlider(Qt::Horizontal);
 	b_SetRestriction_ConeSurface_Slider->setToolTip("&Modify base radius of the restriction");
@@ -338,9 +338,46 @@ void CoreWindow::createActions()
 	sl_avatarScale->setFocusPolicy(Qt::NoFocus);
 	connect(sl_avatarScale,SIGNAL(valueChanged(int)),this,SLOT(setAvatarScale(int)));
 
+    l_clusters1Min = new QLabel("0");
+    le_clusters1Max = new QLineEdit();
+    le_clusters2Min = new QLineEdit();
+    l_clusters2Max = new QLabel("max");
+
+    l_clusters1Min->setFixedWidth(30);
+    l_clusters1Min->setAlignment(Qt::AlignCenter);
+    le_clusters1Max->setFixedWidth(30);
+    le_clusters1Max->setAlignment(Qt::AlignCenter);
+    le_clusters2Min->setFixedWidth(30);
+    le_clusters2Min->setAlignment(Qt::AlignCenter);
+    l_clusters2Max->setFixedWidth(30);
+    l_clusters2Max->setAlignment(Qt::AlignCenter);
+
+    connect(le_clusters1Max, SIGNAL(textChanged(const QString &)), this, SLOT(clusters1RangeChanged(const QString &)));
+    connect(le_clusters2Min, SIGNAL(textChanged(const QString &)), this, SLOT(clusters2RangeChanged(const QString &)));
+
+    b_clusters1_Slider = new QSlider(Qt::Horizontal);
+    b_clusters1_Slider->setToolTip("&Modify range for clusters");
+    b_clusters1_Slider->setFocusPolicy(Qt::NoFocus);
+    b_clusters1_Slider->setValue(25);
+    connect(b_clusters1_Slider, SIGNAL(valueChanged(int)), this, SLOT(clusters1SliderValueChanged(int)));
+
+    b_clusters2_Slider = new QSlider(Qt::Horizontal);
+    b_clusters2_Slider->setToolTip("&Modify range for clusters");
+    b_clusters2_Slider->setFocusPolicy(Qt::NoFocus);
+    b_clusters2_Slider->setValue(25);
+    connect(b_clusters2_Slider, SIGNAL(valueChanged(int)), this, SLOT(clusters2SliderValueChanged(int)));
+
 	b_cluster_test = new QPushButton();
     b_cluster_test->setText("Cluster graph");
     connect(b_cluster_test, SIGNAL(clicked()), this, SLOT(cluster_test()));
+
+    // hide
+    l_clusters1Min->hide();
+    l_clusters2Max->hide();
+    le_clusters1Max->hide();
+    le_clusters2Min->hide();
+    b_clusters1_Slider->hide();
+    b_clusters2_Slider->hide();
 }
 
 void CoreWindow::createMenus()
@@ -511,8 +548,28 @@ void CoreWindow::createRightToolBar() {
 void CoreWindow::createClusterToolBar() {
     toolBar = new QToolBar("Clustering",this);
 
-    toolBar->addWidget(b_cluster_test);
+    QFrame *frame = createHorizontalFrame();
+    QLabel *label = new QLabel("Clustering: ");
+    frame->layout()->addWidget(label);
+    toolBar->addWidget(frame);
+
+    frame = createHorizontalFrame();
+    frame->layout()->addWidget(b_cluster_test);
+    toolBar->addWidget(frame);
+
     toolBar->addSeparator();
+
+    frame = createHorizontalFrame();
+    toolBar->addWidget(frame);
+    frame->layout()->addWidget(l_clusters1Min);
+    frame->layout()->addWidget(b_clusters1_Slider);
+    frame->layout()->addWidget(le_clusters1Max);
+
+    frame = createHorizontalFrame();
+    toolBar->addWidget(frame);
+    frame->layout()->addWidget(le_clusters2Min);
+    frame->layout()->addWidget(b_clusters2_Slider);
+    frame->layout()->addWidget(l_clusters2Max);
 
     addToolBar(Qt::TopToolBarArea,toolBar);
     toolBar->setMovable(true);
@@ -528,7 +585,7 @@ void CoreWindow::createCollaborationToolBar() {
 
 	frame = createHorizontalFrame();
 	frame->layout()->addWidget(lw_users);
-	toolBar->addWidget(frame);
+    toolBar->addWidget(frame);
 
 	frame = createHorizontalFrame();
 	frame->layout()->addWidget(chb_spy);
@@ -901,7 +958,6 @@ void CoreWindow::sliderValueChanged(int value)
 {
 	layout->setAlphaValue((float)value * 0.001f);
 }
-
 
 void CoreWindow::colorPickerChanged(const QColor & color)
 {
@@ -1715,6 +1771,30 @@ void CoreWindow::start_client()
 	}
 }
 
+void CoreWindow::clusters1SliderValueChanged(int value)
+{
+    coreGraph->setClusters1Value(value);
+}
+
+void CoreWindow::clusters2SliderValueChanged(int value)
+{
+    coreGraph->setClusters2Value(value);
+}
+
+void CoreWindow::clusters1RangeChanged(const QString &value)
+{
+    b_clusters1_Slider->setRange(0, value.toInt());
+    le_clusters2Min->setText(QString::number(value.toInt()+1));
+    coreGraph->setClustersMiddleValue(value.toInt());
+}
+
+void CoreWindow::clusters2RangeChanged(const QString &value)
+{
+    b_clusters2_Slider->setRange(value.toInt(), l_clusters2Max->text().toInt());
+    le_clusters1Max->setText(QString::number(value.toInt()-1));
+    coreGraph->setClustersMiddleValue(value.toInt()-1);
+}
+
 void CoreWindow::cluster_test()
 {
     qDebug() << "***** Cluster button clicked";
@@ -1723,6 +1803,31 @@ void CoreWindow::cluster_test()
     //Clustering::Clusterer* clusterer = new Clustering::Clusterer();
 
     Clustering::Clusterer::getInstance().cluster(currentGraph);
+
+    int maxNodes = Clustering::Clusterer::getInstance().getMaxCountOfNodesInClusters();
+    qDebug() << "***** maxNodes = " << maxNodes;
+
+    int half = maxNodes/2;
+
+    l_clusters2Max->setText(QString::number(maxNodes));
+    le_clusters1Max->setText(QString::number(half));
+    le_clusters2Min->setText(QString::number(half+1));
+
+    coreGraph->setClustersRange(0, maxNodes);
+
+    le_clusters1Max->setValidator( new QIntValidator(0, maxNodes, this) );
+    le_clusters2Min->setValidator( new QIntValidator(0, maxNodes, this) );
+
+    b_clusters1_Slider->setValue(half/2);
+    b_clusters2_Slider->setValue((half+1+maxNodes)/2);
+
+    // show
+    l_clusters1Min->show();
+    l_clusters2Max->show();
+    le_clusters1Max->show();
+    le_clusters2Min->show();
+    b_clusters1_Slider->show();
+    b_clusters2_Slider->show();
 
     //AppCore::Core::getInstance(NULL)->cg->reload(currentGraph);
 }

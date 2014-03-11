@@ -181,6 +181,11 @@ public slots:
 				*/
 	void sliderValueChanged(int value);
 
+    void clusters1SliderValueChanged(int value);
+    void clusters2SliderValueChanged(int value);
+    void clusters1RangeChanged(const QString &);
+    void clusters2RangeChanged(const QString &);
+
 	/**
 				*  \fn public  colorPickerChanged
 				*  \brief Color in colorpicker changed
@@ -649,6 +654,12 @@ private:
 
 	Network::Client * client;
 
+    QLabel * l_clusters1Min;
+    QLineEdit * le_clusters1Max;
+    QLineEdit * le_clusters2Min;
+    QLabel * l_clusters2Max;
+    QSlider *b_clusters1_Slider;
+    QSlider *b_clusters2_Slider;
 	QPushButton * b_cluster_test;
 
 public:

@@ -35,6 +35,7 @@ public:
     }
 
     QMap<qlonglong, osg::ref_ptr<Data::Node> > getClusters() {return clusters;}
+    int getMaxCountOfNodesInClusters();
 
 private:
 

@@ -396,3 +396,19 @@ void Clusterer::clusterAdjacency(QMap<qlonglong, osg::ref_ptr<Data::Node> >* som
     }
 
 }
+
+int Clusterer::getMaxCountOfNodesInClusters() {
+    int max = 0;
+    QMap<qlonglong, osg::ref_ptr<Data::Node> >::iterator i;
+    for (i = clusters.begin(); i != clusters.end(); i++)
+    {
+        osg::ref_ptr<Data::Node> node = i.value();
+        // TODO pripadne prerobit vrece "clusters" nech uchovava len typ Cluster {aj tak v nom nie su Nody}
+        Data::Cluster* cluster = dynamic_cast<Data::Cluster*>(node.get());
+
+        if (cluster->getClusteredNodesCount() > max) {
+            max = cluster->getClusteredNodesCount();
+        }
+    }
+    return max;
+}

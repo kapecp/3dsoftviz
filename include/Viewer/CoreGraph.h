@@ -168,6 +168,10 @@ public:
 		*/
 	void setNodesFreezed(bool val);
 
+    void setClustersRange(int min, int max);
+    void setClusters1Value(int value);
+    void setClusters2Value(int value);
+    void setClustersMiddleValue(int value);
 
 	Vwr::NodeGroup * getNodesGroup() { return nodesGroup; }
 	Vwr::NodeGroup * getMetaNodesGroup() { return qmetaNodesGroup; }
@@ -361,6 +365,12 @@ private:
 	int customNodesPosition;
 
 	int prevTime;
+
+    int clustersRangeMin;
+    int clustersRangeMax;
+    int clusters1Value;
+    int clusters2Value;
+    int clustersMiddleValue;
 };
 }
 
