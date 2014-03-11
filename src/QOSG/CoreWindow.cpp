@@ -1719,7 +1719,7 @@ void CoreWindow::send_message()
 void CoreWindow::create_facewindow()
 {
 #ifdef OPENCV_FOUND
-	OpenCV::OpenCVCore::getInstance(NULL)->faceRecognition();
+	OpenCV::OpenCVCore::getInstance(NULL, this)->faceRecognition();
 #endif
 }
 
@@ -1852,7 +1852,7 @@ Vwr::CameraManipulator* CoreWindow::getCameraManipulator() {
 void CoreWindow::closeEvent(QCloseEvent *event)
 {
 #ifdef OPENCV_FOUND
-	delete OpenCV::OpenCVCore::getInstance(NULL);
+	delete OpenCV::OpenCVCore::getInstance(NULL, this);
 #endif
 	event->accept();
 }

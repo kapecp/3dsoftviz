@@ -35,7 +35,7 @@ public:
 		 * @param app QApplication
 		 * @return OpenCVCore instance
 		 */
-	static OpenCVCore	*getInstance( QApplication* app);
+	static OpenCVCore	*getInstance( QApplication* app, QWidget *parent);
 
 	/**
 		 * @author Autor: Marek Jakab
@@ -56,7 +56,7 @@ private:
 		 * @brief OpenCVCore Costructor
 		 * @param app QApplication
 		 */
-	OpenCVCore( QApplication* app);
+	OpenCVCore( QApplication* app, QWidget *parent);
 
 	/**
 		 * @author Autor: David Durcak
@@ -80,6 +80,7 @@ private:
 	static OpenCVCore	*mOpenCVCore;	// static singleton instance
 	bool	mThrsCreated;				// if false, threads were not initialized yet
 
+	QWidget							*mParent;
 	QApplication					*mApp;
 	ArucoModul::ArucoThread			*mThrAruco;
 	QOpenCV::FaceRecognitionThread	*mThrFaceRec;

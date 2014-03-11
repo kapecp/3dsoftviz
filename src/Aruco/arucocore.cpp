@@ -1,4 +1,5 @@
 #include "Aruco/arucocore.h"
+#include "Util/ApplicationConfig.h"
 #include "QDebug"
 
 
@@ -7,7 +8,7 @@ using namespace ArucoModul;
 ArucoCore::ArucoCore()
 {
 
-	mMarkerSize = 0.06f;
+	mMarkerSize = Util::ApplicationConfig::get()->getValue("Aruco.MarkerSize").toDouble();;
 
 }
 
@@ -33,12 +34,8 @@ const QMatrix4x4 ArucoCore::getDetectedMatrix(cv::Mat inputImage)
 {
 	double modelViewMatrix[16];
 
-#ifdef WIN32
 	mCamParam.resize(inputImage.size());
-	mCamImage = inputImage;
-#else
-	updateImage( inputImage );
-#endif
+	mCamImage = inputImage;		//updateImage( inputImage );
 
 	// get result model view matrix from imput image
 	this->detectMarkers();
@@ -50,12 +47,9 @@ const QMatrix4x4 ArucoCore::getDetectedMatrix(cv::Mat inputImage)
 
 bool ArucoCore::getDetectedPosAndQuat(cv::Mat inputImage, double position[3], double quaternion[4])
 {
-#ifdef WIN32
 	mCamParam.resize(inputImage.size());
-	mCamImage = inputImage;
-#else
-	updateImage( inputImage );
-#endif
+
+	mCamImage = inputImage;		//updateImage( inputImage );
 
 	detectMarkers();
 
@@ -73,9 +67,6 @@ bool ArucoCore::getDetectedPosAndQuat(cv::Mat inputImage, double position[3], do
 void ArucoCore::updateImage(cv::Mat inputImage)
 {
 
-	mCamParam.resize(inputImage.size());
-
-
 	mCamImage.create(inputImage.size(),CV_8UC3);
 
 	//transform color that by default is BGR to RGB because windows systems do not allow reading BGR images with opengl properly
@@ -85,8 +76,8 @@ void ArucoCore::updateImage(cv::Mat inputImage)
 	// nemoze byt ak je camera nastavena v konstruktore,
 	// ma za nasledok neustalu postupnu zmenu parametrov kamary,
 	// az sa stanu nepouzitelne a tym deformovanie obrazka do jeho rohu
-	cv::undistort(inputImage, mCamImage, mCamParam.CameraMatrix, mCamParam.Distorsion);
-
+	//cv::undistort(inputImage, mCamImage, mCamParam.CameraMatrix, mCamParam.Distorsion);
+	mCamImage = inputImage;
 
 }
 
@@ -95,8 +86,7 @@ void ArucoCore::detectMarkers()
 	//detect markers
 	mMDetector.detect( mCamImage,
 					   mMarkers,
-					   mCamParam, //mCamParam.CameraMatrix,
-					   //cv::Mat(),
+					   mCamParam, //mCamParam.CameraMatrix, cv::Mat(),
 					   mMarkerSize);
 }
 

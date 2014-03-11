@@ -16,10 +16,11 @@ using namespace OpenCV;
 
 OpenCV::OpenCVCore * OpenCV::OpenCVCore::mOpenCVCore;
 
-OpenCV::OpenCVCore::OpenCVCore( QApplication* app)
+OpenCV::OpenCVCore::OpenCVCore( QApplication* app, QWidget *parent)
 {
 	mOpenCVCore		= this;
 	mApp			= app;
+	mParent			= parent;
 
 	mThrsCreated	= false;
 	mOpencvDialog	= NULL;
@@ -63,8 +64,7 @@ void OpenCV::OpenCVCore::faceRecognition()
 		// create window
 		qDebug() << "creating windows";
 		mOpencvDialog = new QOpenCV::FaceRecognitionWindow(
-					AppCore::Core::getInstance( mApp )->getCoreWindow(), mApp );
-
+					mParent, mApp );
 	}
 	// if window was hidden, there no connection to threads
 	if( mOpencvDialog->isHidden() ){
@@ -127,9 +127,10 @@ void OpenCVCore::createConnectionAruco(){
 					  mThrAruco,
 					  SLOT(setSendImgEnabling(bool)) );
 	QObject::connect( mThrAruco,
-					  SIGNAL(pushImage(cv::Mat)),
+					  SIGNAL(pushImage(QImage)),
 					  mOpencvDialog,
-					  SLOT(setLabel(cv::Mat)) );
+					  SLOT(setLabelQ(QImage)) );
+
 
 	// start, stop
 	QObject::connect( mOpencvDialog,
@@ -165,12 +166,12 @@ void OpenCVCore::createConnectionAruco(){
 
 }
 
-OpenCV::OpenCVCore * OpenCV::OpenCVCore::getInstance( QApplication* app)
+OpenCV::OpenCVCore * OpenCV::OpenCVCore::getInstance(QApplication* app, QWidget *parent)
 {
 	// if OpenCV exists
 	if(mOpenCVCore == NULL)
 	{
-		mOpenCVCore = new OpenCV::OpenCVCore(app);
+		mOpenCVCore = new OpenCV::OpenCVCore(app, parent);
 	}
 	return mOpenCVCore;
 }

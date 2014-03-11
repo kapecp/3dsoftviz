@@ -122,13 +122,14 @@ public slots:
 		 */
 	void onMarkerThrFinished();
 
-
-private slots:
 	/**
 		* @author Autor: Marek Jakab
 		* @brief setLabel Draw image on label
 		*/
-	void setLabel(cv::Mat);
+	void setLabel( cv::Mat image );
+	void setLabelQ( const QImage qimage );
+
+private slots:
 
 	/**
 		 * @author Autor: David Durcak

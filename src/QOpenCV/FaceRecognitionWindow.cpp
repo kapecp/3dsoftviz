@@ -115,6 +115,14 @@ void QOpenCV::FaceRecognitionWindow::configureWindow()
 
 void QOpenCV::FaceRecognitionWindow::onSelModulChange()
 {
+	if( mFaceRecRB->isChecked() ){
+		mModulesStackL->setCurrentIndex(0);
+	}
+	if( mMarkerRB->isChecked() ){
+		mModulesStackL->setCurrentIndex(1);
+	}
+
+
 	if( mNoVideo->isChecked() ){
 		emit sendImgFaceRec(false);
 		emit sendImgMarker(false);
@@ -122,13 +130,11 @@ void QOpenCV::FaceRecognitionWindow::onSelModulChange()
 	} else{
 		// face recognition
 		if( mFaceRecRB->isChecked() ){
-			mModulesStackL->setCurrentIndex(0);
 			emit sendImgMarker(false);
 			emit sendImgFaceRec(true);
 		}
 		// marker
 		if( mMarkerRB->isChecked() ){
-			mModulesStackL->setCurrentIndex(1);
 			emit sendImgFaceRec(false);
 			emit sendImgMarker(true);
 		}
@@ -204,7 +210,17 @@ void QOpenCV::FaceRecognitionWindow::setLabel(cv::Mat image)
 
 	mWindowLabel->setPixmap( QPixmap::fromImage(qimage));
 
-	//image.~Mat();    //?????????
+	image.~Mat();    //?????????
+}
+
+void QOpenCV::FaceRecognitionWindow::setLabelQ(const QImage qimage )
+{
+	if( qimage.isNull() ) {
+		mWindowLabel->setText( tr("Image empty"));
+		return;
+	}
+
+	mWindowLabel->setPixmap( QPixmap::fromImage(qimage) );
 }
 
 void QOpenCV::FaceRecognitionWindow::closeEvent(QCloseEvent *event)

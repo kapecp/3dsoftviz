@@ -62,7 +62,8 @@ signals:
 	* @brief pushImage signal that emit image with marked marker for debuging
 	* @param image emited image matrix
 	*/
-	void pushImage(cv::Mat image);
+	void pushImage( cv::Mat image );
+	void pushImage( const QImage qimage );
 
 	/**
 	* @author Dávid Durčák

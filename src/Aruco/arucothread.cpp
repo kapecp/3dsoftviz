@@ -1,5 +1,6 @@
 #include "Aruco/arucothread.h"
 #include "Aruco/arucocore.h"
+#include "Util/ApplicationConfig.h"
 #include <QDebug>
 
 // this will be erased, when camera singleton will be available
@@ -66,6 +67,8 @@ void ArucoThread::run()
 
 	cv::Mat frame;
 	cv::VideoCapture capture;
+	const double camDistRatio =  Util::ApplicationConfig::get()->getValue("Aruco.CamDistancRatio").toDouble();
+
 
 	QString filename = "../share/3dsoftviz/config/camera.yml";
 	QFileInfo file(filename);
@@ -82,13 +85,13 @@ void ArucoThread::run()
 
 	// this must do camera singleton
 	if( ! capture.isOpened()){
-		capture.open(0);
+		capture.open(1);
 	} else {
 		qDebug() << "ARUCO:error: capture is already open";
 	}
 	const double width = 600;
 	const double height = 500;
-	const double camDistRatio = 2.75;
+
 	capture.set(CV_CAP_PROP_FRAME_WIDTH, width);
 	capture.set(CV_CAP_PROP_FRAME_HEIGHT, height);
 	// until this code will be changed soon
@@ -141,7 +144,11 @@ void ArucoThread::run()
 			}
 
 			if ( mSendImgEnabled ) {
-				emit pushImage( aCore.getDetImage());	// emit image with marked marker for debuging
+				cv::Mat image = aCore.getDetImage();
+				cv::cvtColor( image, image, CV_BGR2RGB );
+				QImage qimage ( (uchar*) image.data, image.cols, image.rows,(int) image.step, QImage::Format_RGB888);
+
+				emit pushImage( qimage );	// emit image with marked marker for debuging
 			}
 			if(! mCancel){
 				msleep(50);

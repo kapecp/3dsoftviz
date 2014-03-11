@@ -1135,16 +1135,18 @@ void Vwr::CameraManipulator::updateArucoGraphPosition( osg::Vec3d pos ){
 	//qDebug() << ": " << str;
 
 
-	const double constDist = 0.3;
-	const double constHeightKoef = 0.8;
-	const double camDistRatio = 2.75;								// camera coeficient
+	// camera coeficient
+	double constHeigherScale = this->appConf->getValue("Aruco.ConstHeigherScale").toDouble();
+	double constDist		 = this->appConf->getValue("Aruco.ConstDist").toDouble();
+	double constHeightKoef	 = this->appConf->getValue("Aruco.ConstHeightKoef").toDouble();
+	double camDistRatio		 = this->appConf->getValue("Aruco.CamDistancRatio").toDouble();
 
 	double distArc =  pos.z()  < 0.0 ? - pos.z()	:  pos.z();		// distance of marker
 	double distGra = _distance < 0.0 ? -_distance	: _distance;	// distance of graph
 	if( distGra < 1.0){
 		distGra = 1.0;
 	}
-	double getHeigherKoef = 0.6 * distGra;							// if marker is on table, graph coud be too on bottom, so get him heigher
+	double getHeigherKoef = constHeigherScale * distGra;							// if marker is on table, graph coud be too on bottom, so get him heigher
 
 	_centerArucoTrans[1] = distGra * (pos.z() + constDist);			// distance
 
