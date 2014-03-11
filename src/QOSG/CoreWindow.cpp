@@ -225,7 +225,7 @@ void CoreWindow::createActions()
 
 	b_SetRestriction_Sphere = new QPushButton();
 	b_SetRestriction_Sphere->setIcon(QIcon("../share/3dsoftviz/img/gui/restriction_sphere.png"));
-	b_SetRestriction_Sphere->setToolTip("&Set restriction - sphere");
+    b_SetRestriction_Sphere->setToolTip("&Set restriction - sphere");
 	b_SetRestriction_Sphere->setFocusPolicy(Qt::NoFocus);
 	connect(b_SetRestriction_Sphere, SIGNAL(clicked()), this, SLOT(setRestriction_Sphere ()));
 
@@ -286,6 +286,14 @@ void CoreWindow::createActions()
 	b_SetRestriction_ConeSurface_Slider->setToolTip("&Modify base radius of the restriction");
 	b_SetRestriction_ConeSurface_Slider->setFocusPolicy(Qt::NoFocus);
 	b_SetRestriction_ConeSurface_Slider->setValue(25);
+
+    b_SetRestriction_RadialLayout = new QPushButton();
+    b_SetRestriction_RadialLayout->setIcon(QIcon("../share/3dsoftviz/img/gui/restriction_radial_layout.png"));
+    b_SetRestriction_RadialLayout->setToolTip("&Set restriction - radial Layout");
+    b_SetRestriction_RadialLayout->setFocusPolicy(Qt::NoFocus);
+    connect(b_SetRestriction_RadialLayout, SIGNAL(clicked()), this, SLOT(setRestriction_RadialLayout()));
+
+
 
 	b_UnsetRestrictionFromAll = new QPushButton();
 	b_UnsetRestrictionFromAll->setIcon(QIcon("../share/3dsoftviz/img/gui/restriction_unset.png"));
@@ -433,6 +441,10 @@ void CoreWindow::createLeftToolBar()
 	toolBar->addWidget(frame);
 	frame->layout()->addWidget(b_SetRestriction_ConeTree);
 	frame->layout()->addWidget(b_UnsetRestriction);
+
+    frame = createHorizontalFrame();
+    toolBar->addWidget(frame);
+    frame->layout()->addWidget(b_SetRestriction_RadialLayout);
 
 	toolBar->addSeparator();
 
@@ -1067,7 +1079,7 @@ void CoreWindow::setRestriction_Sphere ()
 		QString name_centerNode = "center";
 		QString name_sufraceNode = "surface";
 		osg::Vec3 positionNode1 = position;
-		osg::Vec3 positionNode2 = position + osg::Vec3f (10, 0, 0);
+        osg::Vec3 positionNode2 = position + osg::Vec3f (10, 0, 0);
 
 		Layout::RestrictionRemovalHandler_RestrictionNodesRemover::NodesListType restrictionNodes;
 
@@ -1495,6 +1507,72 @@ void CoreWindow::setRestrictionToAllNodes (
 
 	if (isPlaying)
 		layout->play();
+}
+
+void CoreWindow::setRestriction_RadialLayout()
+{
+    Data::Graph * currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
+    if (currentGraph == NULL)
+        return;
+    QMap<qlonglong, osg::ref_ptr<Data::Node> >* allNodes = currentGraph->getNodes();
+
+    osg::Vec3 rootPosition = viewerWidget->getPickHandler()->getSelectionCenter(true);
+    osg::Vec3 SurfacePosition = rootPosition;
+    osg::Vec3 dR(0.0, 10.0, 0.0);
+
+    QString name_rootNode = "Root";
+    QString name_surfaceNode;
+
+    osg::ref_ptr<Data::Node> rootNode = viewerWidget->getPickHandler()->getPickedNodeWithMaxEdgeCount(); //root node is node with max edge count
+    osg::ref_ptr<Data::Node> surfaceNode;
+
+    Data::GraphSpanningTree* spanningTree = currentGraph->getSpanningTree(rootNode->getId());
+
+    QLinkedList<osg::ref_ptr<Data::Node> > pickedNodes; //temp list which contains nodes with same depth
+    QList<qlonglong>::iterator groupIt;
+    QList<qlonglong> groups;
+    Layout::RestrictionRemovalHandler_RestrictionNodesRemover::NodesListType restrictionNodes;
+
+    rootNode->setTargetPosition(rootPosition);
+
+    int maxDepth = spanningTree->getMaxDepth();
+    for (int depth=1; depth<=maxDepth;depth++)
+    {
+        SurfacePosition += dR;
+
+        //setup name for nodes
+        name_surfaceNode = QString("Depth: %1").arg(depth);
+        surfaceNode = currentGraph->addRestrictionNode (name_surfaceNode , SurfacePosition);
+
+        groups = spanningTree->getGroupsInDepth(depth); //get groups with same depth
+        for(groupIt=groups.begin(); groupIt!=groups.end();groupIt++)  //groups are nodes with same parent
+        {
+            QList<qlonglong> nodes = spanningTree->getNodesInGroup(*groupIt);
+            QList<qlonglong>::iterator nodeIt;
+            for(nodeIt=nodes.begin(); nodeIt!=nodes.end();nodeIt++)
+                pickedNodes.append(allNodes->value(*nodeIt));
+
+
+        }
+
+        setRestrictionToSelectedNodes (
+                    QSharedPointer<Layout::ShapeGetter> (
+                        new Layout::ShapeGetter_Sphere_ByTwoNodes (rootNode, surfaceNode)
+                        ),
+                    currentGraph,
+                    QSharedPointer<Layout::RestrictionRemovalHandler_RestrictionNodesRemover> (
+                        new Layout::RestrictionRemovalHandler_RestrictionNodesRemover (
+                            *currentGraph,
+                            restrictionNodes
+                            )
+                        )
+                    );
+
+        groups.clear();
+        pickedNodes.clear(); //empty list for next iteration
+
+    }
+
 }
 
 void CoreWindow::setRestrictionToShape(

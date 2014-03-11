@@ -84,7 +84,7 @@ public slots:
 				*/
 	void saveLayoutToDB();
 
-	/**
+    /**
 				*  \fn public  sqlQuery
 				*  \brief Commit the sql in sql input
 				*/
@@ -265,6 +265,11 @@ public slots:
 				 * \brief Removes restrictions from all selected nodes (if any has been set). Destroys a
 				 * restriction (including manipulation nodes) if the last usage has been removed.
 				 */
+    void setRestriction_RadialLayout();
+    /**
+                 * \brief Create a new Radial restriction for all selected nodes.
+     */
+
 	void unsetRestriction ();
 
 	/**
@@ -464,8 +469,12 @@ private:
 	/**
 				 * \brief Button for adding Cone Tree restriction.
 				 */
-	QPushButton * b_SetRestriction_ConeTree;
+    QPushButton * b_SetRestriction_RadialLayout;
 
+    /**
+      brief rad layout
+    */
+    QPushButton * b_SetRestriction_ConeTree;
 	/**
 		 * \brief Button for removing restrictions.
 		 */
