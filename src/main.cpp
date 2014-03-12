@@ -9,6 +9,7 @@
 #endif
 
 #include "LuaInterface/LuaInterface.h"
+#include "LuaGraph/LuaNode.h"
 
 #include "iostream"
 
@@ -28,6 +29,7 @@ int main(int argc, char *argv[])
 	Manager::GraphManager::getInstance();
 
     delete lua;
+    Lua::LuaNode node;
 
 #ifdef OPENCV_FOUND
 	OpenCV::OpenCVCore::getInstance(&app);

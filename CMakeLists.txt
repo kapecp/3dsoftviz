@@ -379,6 +379,7 @@ file(GLOB_RECURSE SRC_CORE  "src/Core/*.cpp")
 file(GLOB_RECURSE SRC_DATA  "src/Data/*.cpp")
 file(GLOB_RECURSE SRC_IMPORTER  "src/Importer/*.cpp")
 file(GLOB_RECURSE SRC_LAYOUT  "src/Layout/*.cpp")
+file(GLOB_RECURSE SRC_LUAGRAPH  "src/LuaGraph/*.cpp")
 file(GLOB_RECURSE SRC_LUAINTERFACE  "src/LuaInterface/*.cpp")
 file(GLOB_RECURSE SRC_MANAGER  "src/Manager/*.cpp")
 file(GLOB_RECURSE SRC_MATH  "src/Math/*.cpp")
@@ -393,7 +394,7 @@ file(GLOB_RECURSE SRC_VIEWER  "src/Viewer/*.cpp")
 # Source files
 set(SRC
 	${SRC_MAIN} ${SRC_CORE} ${SRC_DATA} ${SRC_IMPORTER}
-        ${SRC_LAYOUT} ${SRC_LUAINTERFACE} ${SRC_MANAGER} ${SRC_MATH}
+        ${SRC_LAYOUT} ${SRC_LUAGRAPH} ${SRC_LUAINTERFACE} ${SRC_MANAGER} ${SRC_MATH}
 	${SRC_NETWORK} ${SRC_NOISE}
 	${SRC_OSGQTBROWSER} ${SRC_QOSG} ${SRC_UTIL} ${SRC_VIEWER} ${SRC_MODEL}
 )
@@ -407,6 +408,7 @@ file(GLOB_RECURSE HEADER_CORE  "include/Core/*.h")
 file(GLOB_RECURSE HEADER_DATA  "include/Data/*.h")
 file(GLOB_RECURSE HEADER_IMPORTER  "include/Importer/*.h")
 file(GLOB_RECURSE HEADER_LAYOUT  "include/Layout/*.h")
+file(GLOB_RECURSE HEADER_LUAGRAPH  "include/LuaGraph/*.h")
 file(GLOB_RECURSE HEADER_LUAINTERFACE  "include/LuaInterface/*.h")
 file(GLOB_RECURSE HEADER_MANAGER  "include/Manager/*.h")
 file(GLOB_RECURSE HEADER_MATH  "include/Math/*.h")
@@ -420,7 +422,7 @@ file(GLOB_RECURSE HEADER_VIEWER  "include/Viewer/*.h")
 
 set(INCL
 	${HEADER_CORE} ${HEADER_DATA} ${HEADER_IMPORTER}
-        ${HEADER_LAYOUT} ${HEADER_LUAINTERFACE} ${HEADER_MANAGER} ${HEADER_MATH}
+        ${HEADER_LAYOUT} ${HEADER_LUAGRAPH} ${HEADER_LUAINTERFACE} ${HEADER_MANAGER} ${HEADER_MATH}
 	${HEADER_NETWORK} ${HEADER_NOISE}
 	${HEADER_OSGQTBROWSER} ${HEADER_QOSG} ${HEADER_UTIL} ${HEADER_VIEWER} ${HEADER_MODEL}
 )
@@ -441,6 +443,7 @@ source_group(\\src\\Layout "^.*Layout/.*$")
 source_group(\\src\\QOSG "^.*QOSG/.*$")
 source_group(\\src\\OsgQtBrowser "^.*OsgQtBrowser/.*$")
 source_group(\\src\\Noise "^.*Noise/.*$")
+source_group(\\src\\LuaGraph "^.*LuaGraph/.*$")
 source_group(\\src\\LuaInterface "^.*LuaInterface/.*$")
 # Group header files
 source_group(\\headers\\Network "^.*Network/.*h$")
@@ -455,6 +458,7 @@ source_group(\\headers\\Layout "^.*Layout/.*h$")
 source_group(\\headers\\QOSG "^.*QOSG/.*h$")
 source_group(\\headers\\Noise "^.*Noise/.*h$")
 source_group(\\headers\\OsgQtBrowser "^.*OsgQtBrowser/.*h$")
+source_group(\\headers\\LuaGraph "^.*LuaGraph/.*h$")
 source_group(\\headers\\LuaInterface "^.*LuaInterface/.*h$")
 
 if(OpenCV_FOUND)
