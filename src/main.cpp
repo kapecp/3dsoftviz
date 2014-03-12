@@ -10,6 +10,8 @@
 
 #include "LuaInterface/LuaInterface.h"
 
+#include "iostream"
+
 int main(int argc, char *argv[])
 {
 
@@ -24,6 +26,8 @@ int main(int argc, char *argv[])
 	new Cleaner(&app);
 	AppCore::Core::getInstance(&app);
 	Manager::GraphManager::getInstance();
+
+    delete lua;
 
 #ifdef OPENCV_FOUND
 	OpenCV::OpenCVCore::getInstance(&app);

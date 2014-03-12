@@ -1,11 +1,39 @@
 #include "LuaInterface/LuaInterface.h"
 
+
+// lua development
+extern "C"
+{
+    #include "lua.h"
+    #include "lualib.h"
+    #include "lauxlib.h"
+}
+
+// include diluculum header files
+#include "Diluculum/CppObject.hpp"
+#include "Diluculum/LuaExceptions.hpp"
+#include "Diluculum/LuaFunction.hpp"
+#include "Diluculum/LuaState.hpp"
+#include "Diluculum/LuaUserData.hpp"
+#include "Diluculum/LuaUtils.hpp"
+#include "Diluculum/LuaValue.hpp"
+#include "Diluculum/LuaVariable.hpp"
+#include "Diluculum/Types.hpp"
+
 Lua::LuaInterface *Lua::LuaInterface::instance;
 
 Lua::LuaInterface *Lua::LuaInterface::getInstance(){
     if (instance == NULL)
         instance = new LuaInterface;
     return instance;
+}
+
+Lua::LuaInterface::~LuaInterface()
+{
+    delete luaState;
+    if (instance != NULL){
+        instance = NULL;
+    }
 }
 
 Lua::LuaInterface::LuaInterface()

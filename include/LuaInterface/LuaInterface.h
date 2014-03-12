@@ -1,24 +1,9 @@
 #ifndef LUAINTERFACE_H
 #define LUAINTERFACE_H
 
-// lua development
-extern "C"
-{
-    #include "lua.h"
-    #include "lualib.h"
-    #include "lauxlib.h"
+namespace Diluculum {
+	class LuaState;
 }
-
-// include diluculum header files
-#include "Diluculum/CppObject.hpp"
-#include "Diluculum/LuaExceptions.hpp"
-#include "Diluculum/LuaFunction.hpp"
-#include "Diluculum/LuaState.hpp"
-#include "Diluculum/LuaUserData.hpp"
-#include "Diluculum/LuaUtils.hpp"
-#include "Diluculum/LuaValue.hpp"
-#include "Diluculum/LuaVariable.hpp"
-#include "Diluculum/Types.hpp"
 
 namespace Lua {
 
@@ -26,6 +11,8 @@ class LuaInterface
 {
 public:
     static LuaInterface *getInstance();
+
+    ~LuaInterface();
 
     void executeFile(std::string path);
 
