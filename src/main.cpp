@@ -18,8 +18,8 @@ int main(int argc, char *argv[])
 
     Lua::LuaInterface *lua = Lua::LuaInterface::getInstance();
     lua->executeFile("../share/3dsoftviz/scripts/main.lua");
-    std::string var[] = {"test", "foo"};
-    std::cout << lua->getString(2, var) << " " << lua->getString("test2") << std::endl;
+    QString var[] = {"test", "foo"};
+    std::cout << lua->getString(2, var).toStdString() << " " << lua->getString("test2").toStdString() << std::endl;
     int fortyTwo = lua->getInt("test3");
     std::cout << fortyTwo << std::endl;
 

@@ -1,6 +1,8 @@
 #ifndef LUAINTERFACE_H
 #define LUAINTERFACE_H
 
+#include "QString"
+
 namespace Diluculum {
 	class LuaState;
 }
@@ -14,19 +16,19 @@ public:
 
     ~LuaInterface();
 
-    void executeFile(std::string path);
+    void executeFile(QString path);
 
-    std::string getString(std::string name);
+    QString getString(QString name);
 
-    std::string getString(unsigned int length, std::string args[]);
+    QString getString(unsigned int length, QString args[]);
 
-    int getInt(std::string name);
+    int getInt(QString name);
 
-    int getInt(unsigned int length, std::string args[]);
+    int getInt(unsigned int length, QString args[]);
 
-    double getDouble(std::string name);
+    double getDouble(QString name);
 
-    double getDouble(unsigned int length, std::string args[]);
+    double getDouble(unsigned int length, QString args[]);
 private:
     LuaInterface();
     LuaInterface(LuaInterface const&);

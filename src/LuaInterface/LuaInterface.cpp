@@ -41,52 +41,52 @@ Lua::LuaInterface::LuaInterface()
     luaState = new Diluculum::LuaState;
 }
 
-void Lua::LuaInterface::executeFile(std::string path)
+void Lua::LuaInterface::executeFile(QString path)
 {
-    luaState->doFile(path);
+    luaState->doFile(path.toStdString());
 }
 
-std::string Lua::LuaInterface::getString(std::string name)
+QString Lua::LuaInterface::getString(QString name)
 {
-    Diluculum::LuaVariable var = (*luaState)[name];
-    return var.value().asString();
+    Diluculum::LuaVariable var = (*luaState)[name.toStdString()];
+    return QString::fromStdString(var.value().asString());
 }
 
-std::string Lua::LuaInterface::getString(unsigned int length,std::string args[])
+QString Lua::LuaInterface::getString(unsigned int length, QString args[])
 {
-    Diluculum::LuaVariable var = (*luaState)[args[0]];
+    Diluculum::LuaVariable var = (*luaState)[args[0].toStdString()];
     for(unsigned int i = 1; i < length; i++) {
-        var = var[args[i]];
+        var = var[args[i].toStdString()];
     }
-    return var.value().asString();
+    return QString::fromStdString(var.value().asString());
 }
 
-int Lua::LuaInterface::getInt(std::string name)
+int Lua::LuaInterface::getInt(QString name)
 {
-    Diluculum::LuaVariable var = (*luaState)[name];
+    Diluculum::LuaVariable var = (*luaState)[name.toStdString()];
     return var.value().asInteger();
 }
 
-int Lua::LuaInterface::getInt(unsigned int length,std::string args[])
+int Lua::LuaInterface::getInt(unsigned int length,QString args[])
 {
-    Diluculum::LuaVariable var = (*luaState)[args[0]];
+    Diluculum::LuaVariable var = (*luaState)[args[0].toStdString()];
     for(unsigned int i = 1; i < length; i++) {
-        var = var[args[i]];
+        var = var[args[i].toStdString()];
     }
     return var.value().asInteger();
 }
 
-double Lua::LuaInterface::getDouble(std::string name)
+double Lua::LuaInterface::getDouble(QString name)
 {
-    Diluculum::LuaVariable var = (*luaState)[name];
+    Diluculum::LuaVariable var = (*luaState)[name.toStdString()];
     return var.value().asNumber();
 }
 
-double Lua::LuaInterface::getDouble(unsigned int length, std::string args[])
+double Lua::LuaInterface::getDouble(unsigned int length, QString args[])
 {
-    Diluculum::LuaVariable var = (*luaState)[args[0]];
+    Diluculum::LuaVariable var = (*luaState)[args[0].toStdString()];
     for(unsigned int i = 1; i < length; i++) {
-        var = var[args[i]];
+        var = var[args[i].toStdString()];
     }
     return var.value().asNumber();
 }
