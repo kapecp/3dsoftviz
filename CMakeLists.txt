@@ -480,10 +480,11 @@ if(COMMAND cotire)
 			${OPENSCENEGRAPH_LIBRARIES}
 			${OSGVIEWER_LIBRARIES}
 			libnoise
-			if( OpenCV_FOUND )
-				aruco
-			endif()
 		)
+                if( OpenCV_FOUND )
+                    target_link_libraries(${3DSOFTVIZ_NAME}_unity aruco)
+                endif()
+
 	endif()
 # toto kuknut este
 	if(OpenCV_FOUND)
@@ -535,7 +536,7 @@ install(DIRECTORY resources/ DESTINATION ${INSTALL_DATA} COMPONENT Data)
 # Install built in dependencies unless we are building an OSX Bundle
 if( USE_BUILTIN_DEPENDENCIES )
 	# Make sure dependencies are built
-	add_dependencies( ${3DSOFTVIZ_NAME} libnoise )
+        add_dependencies( ${3DSOFTVIZ_NAME} libnoise )
 	if (COMMAND cotire)
 		add_dependencies( ${3DSOFTVIZ_NAME}_unity libnoise )
 	endif()
