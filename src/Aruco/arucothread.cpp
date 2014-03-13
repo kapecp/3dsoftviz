@@ -85,7 +85,7 @@ void ArucoThread::run()
 
 	// this must do camera singleton
 	if( ! capture.isOpened()){
-		capture.open(1);
+        capture.open(0);
 	} else {
 		qDebug() << "ARUCO:error: capture is already open";
 	}

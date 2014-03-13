@@ -236,21 +236,29 @@ find_package(OpenSceneGraph COMPONENTS
 )
 find_package(osgViewer)
 
-
 # Find OpenCV
-#find_package( OpenCV )
 if( OpenCV_FOUND )
-	add_definitions( -DOPENCV_FOUND )
-	message("OpenCV FOUND")
-	set( SOURCES_H
-		./include/QOpenCV/FaceRecognitionWindow.h
-		./include/QOpenCV/FaceRecognitionThread.h
-	)
-	file(GLOB_RECURSE SRC_OPENCV  "src/OpenCV/*.cpp")
-	file(GLOB_RECURSE SRC_QOPENCV  "src/QOpenCV/*.cpp")
+        # include_directories( ${OpenCV_INCLUDE_DIRS} )
+
+        add_definitions( -DOPENCV_FOUND )
+        message("OpenCV FOUND")
+        set( SOURCES_H
+                ./include/QOpenCV/FaceRecognitionWindow.h
+                ./include/QOpenCV/FaceRecognitionThread.h
+        )
+        file(GLOB_RECURSE SRC_OPENCV  "src/OpenCV/*.cpp")
+        file(GLOB_RECURSE SRC_QOPENCV  "src/QOpenCV/*.cpp")
+        set(SRC ${SRC} ${SRC_OPENCV} ${SRC_QOPENCV})
+        #aruco
+        set(SOURCES_H ${SOURCES_H}
+                ./include/Aruco/arucothread.h
+        )
+        file(GLOB_RECURSE SRC_ARUCO  "src/Aruco/*.cpp")
+        set(SRC ${SRC} ${SRC_ARUCO} )
 else()
-	message("OpenCV NOT FOUND")
+        message("OpenCV NOT FOUND")
 endif()
+
 
 
 # -----------------
@@ -316,27 +324,6 @@ if( WIN32 )
 endif()
 
 
-# Find OpenCV
-IF(OpenCV_FOUND)
-	INCLUDE_DIRECTORIES( ${OpenCV_INCLUDE_DIRS} )
-	ADD_DEFINITIONS( -DOPENCV_FOUND )
-	MESSAGE ("OpenCV FOUND")
-	SET(SOURCES_H
-		./include/QOpenCV/FaceRecognitionWindow.h
-		./include/QOpenCV/FaceRecognitionThread.h
-	)
-	FILE(GLOB_RECURSE SRC_OPENCV  "src/OpenCV/*.cpp")
-	FILE(GLOB_RECURSE SRC_QOPENCV  "src/QOpenCV/*.cpp")
-	SET(SRC ${SRC} ${SRC_OPENCV} ${SRC_QOPENCV})
-	#aruco
-	SET(SOURCES_H ${SOURCES_H}
-		./include/Aruco/arucothread.h
-	)
-	FILE(GLOB_RECURSE SRC_ARUCO  "src/Aruco/*.cpp")
-	SET(SRC ${SRC} ${SRC_ARUCO} )
-ELSE(OpenCV_FOUND)
-	MESSAGE ("OpenCV NOT FOUND")
-ENDIF()
 
 
 # ---------------
@@ -350,11 +337,15 @@ include_directories(SYSTEM
 
 	${DEPENDENCIES_INCLUDE_DIR}
 	${DEPENDENCIES_INCLUDE_DIR}/libnoise
-	if( OpenCV_FOUND )
-		${DEPENDENCIES_INCLUDE_DIR}/aruco
-		${OpenCV_INCLUDE_DIRS}
-	endif()
 )
+if( OpenCV_FOUND )
+    include_directories(SYSTEM
+        ${DEPENDENCIES_INCLUDE_DIR}/aruco
+        ${OpenCV_INCLUDE_DIRS}
+    )
+endif()
+
+
 include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/include )
 
 # Source files
@@ -379,7 +370,6 @@ set(SRC ${SRC}
 	${SRC_LAYOUT} ${SRC_MANAGER} ${SRC_MATH}
 	${SRC_NETWORK} ${SRC_NOISE}
 	${SRC_OSGQTBROWSER} ${SRC_QOSG} ${SRC_UTIL} ${SRC_VIEWER} ${SRC_MODEL}
-	${SRC_OPENCV} ${SRC_QOPENCV}
 )
 
 file(GLOB_RECURSE INCL "include/*.h")
@@ -540,6 +530,13 @@ if( USE_BUILTIN_DEPENDENCIES )
 	if (COMMAND cotire)
 		add_dependencies( ${3DSOFTVIZ_NAME}_unity libnoise )
 	endif()
+        if( OpenCV_FOUND )
+            add_dependencies( ${3DSOFTVIZ_NAME} aruco )
+            if (COMMAND cotire)
+                add_dependencies( ${3DSOFTVIZ_NAME}_unity aruco )
+            endif()
+        endif()
+
 
 	# Install all dependencies
 	install( DIRECTORY ${DEP_BIN}/
