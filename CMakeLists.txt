@@ -101,6 +101,9 @@ endif()
 # Build dependencies by default
 option( USE_BUILTIN_DEPENDENCIES "Use builtin dependencies." ON )
 
+# Find OpenCV
+find_package( OpenCV )
+
 # Build dependencies
 if( USE_BUILTIN_DEPENDENCIES )
 
@@ -125,29 +128,6 @@ if( USE_BUILTIN_DEPENDENCIES )
 			-C ${CMAKE_CURRENT_BINARY_DIR}/config.cmake
 	)
 
-	# Build aruco
-	include( ExternalProject )
-	ExternalProject_Add( dep_aruco
-		PREFIX aruco
-		SOURCE_DIR ${DEP_SOURCE}/aruco
-		BINARY_DIR aruco
-		CMAKE_ARGS
-			-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
-			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-			-C ${CMAKE_CURRENT_BINARY_DIR}/config.cmake
-	)
-
-
-	# Ensure correct order of build(dependencies between ext. dependencies)
-	# add_dependencies( dep_lpeg dep_luajit )
-
-	# Define LUA_ variables
-	#set( LUA_LIBRARY ${DEP_BIN}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}lua${CMAKE_SHARED_LIBRARY_SUFFIX} )
-	#set( DILUCULUM_LIBRARY ${DEP_BIN}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}diluculum${CMAKE_SHARED_LIBRARY_SUFFIX} )
-	add_library(aruco SHARED IMPORTED)
-	add_dependencies(aruco dep_aruco)
-	set_target_properties( aruco PROPERTIES
-	IMPORTED_LOCATION ${DEP_BIN}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}aruco${CMAKE_SHARED_LIBRARY_SUFFIX} )
 
 	# more correct:
 	add_library(libnoise SHARED IMPORTED)
@@ -160,30 +140,53 @@ if( USE_BUILTIN_DEPENDENCIES )
 		#set( DILUCULUM_LIBRARY ${DEP_BIN}/bin/${CMAKE_SHARED_LIBRARY_PREFIX}diluculum${CMAKE_SHARED_LIBRARY_SUFFIX} )
 		#set( LIBARUCO_LIBRARY ${DEP_BIN}/bin/${CMAKE_SHARED_LIBRARY_PREFIX}aruco${CMAKE_SHARED_LIBRARY_SUFFIX} )
 
-		set_target_properties(aruco PROPERTIES
-			IMPORTED_LOCATION  ${DEP_BIN}/bin/${CMAKE_SHARED_LIBRARY_PREFIX}aruco${CMAKE_SHARED_LIBRARY_SUFFIX}
-			IMPORTED_IMPLIB  ${DEP_BIN}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}aruco${CMAKE_STATIC_LIBRARY_SUFFIX} )
-
-
 		set_target_properties(libnoise PROPERTIES
 			IMPORTED_LOCATION  ${DEP_BIN}/bin/${CMAKE_SHARED_LIBRARY_PREFIX}noise${CMAKE_SHARED_LIBRARY_SUFFIX}
 			IMPORTED_IMPLIB  ${DEP_BIN}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}noise${CMAKE_STATIC_LIBRARY_SUFFIX} )
 
 		if( MSVC )
 			# set "lib" prefix for MSVC, becasue libnoise.def files requires that the library is named "libnoise"
-				#set( LIBARUCO_LIBRARY ${DEP_BIN}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}aruco${CMAKE_STATIC_LIBRARY_SUFFIX})
-				set( MISS_MSVC_PREFIX lib )
-					set_target_properties(libnoise PROPERTIES
-					IMPORTED_LOCATION  ${DEP_BIN}/bin/${CMAKE_SHARED_LIBRARY_PREFIX}${MISS_MSVC_PREFIX}noise${CMAKE_SHARED_LIBRARY_SUFFIX}
+			set( MISS_MSVC_PREFIX lib )
+			set_target_properties(libnoise PROPERTIES
+				IMPORTED_LOCATION  ${DEP_BIN}/bin/${CMAKE_SHARED_LIBRARY_PREFIX}${MISS_MSVC_PREFIX}noise${CMAKE_SHARED_LIBRARY_SUFFIX}
 				IMPORTED_IMPLIB  ${DEP_BIN}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}${MISS_MSVC_PREFIX}noise${CMAKE_STATIC_LIBRARY_SUFFIX} )
-
-					set_target_properties(aruco PROPERTIES
-					IMPORTED_LOCATION  ${DEP_BIN}/bin/${CMAKE_SHARED_LIBRARY_PREFIX}aruco${CMAKE_SHARED_LIBRARY_SUFFIX}
-				IMPORTED_IMPLIB  ${DEP_BIN}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}aruco${CMAKE_STATIC_LIBRARY_SUFFIX} )
-
 
 		endif()
 	endif()
+
+	# Aruco
+	if( OpenCV_FOUND )
+		# Build aruco
+		include( ExternalProject )
+		ExternalProject_Add( dep_aruco
+			PREFIX aruco
+			SOURCE_DIR ${DEP_SOURCE}/aruco
+			BINARY_DIR aruco
+			CMAKE_ARGS
+				-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
+				-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
+				-C ${CMAKE_CURRENT_BINARY_DIR}/config.cmake
+		)
+
+		add_library(aruco SHARED IMPORTED)
+		add_dependencies(aruco dep_aruco)
+		set_target_properties( aruco PROPERTIES
+		IMPORTED_LOCATION ${DEP_BIN}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}aruco${CMAKE_SHARED_LIBRARY_SUFFIX} )
+
+		if( WIN32 )
+			set_target_properties(aruco PROPERTIES
+				IMPORTED_LOCATION  ${DEP_BIN}/bin/${CMAKE_SHARED_LIBRARY_PREFIX}aruco${CMAKE_SHARED_LIBRARY_SUFFIX}
+				IMPORTED_IMPLIB  ${DEP_BIN}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}aruco${CMAKE_STATIC_LIBRARY_SUFFIX} )
+
+			if( MSVC )
+				set_target_properties(aruco PROPERTIES
+					IMPORTED_LOCATION  ${DEP_BIN}/bin/${CMAKE_SHARED_LIBRARY_PREFIX}aruco${CMAKE_SHARED_LIBRARY_SUFFIX}
+					IMPORTED_IMPLIB  ${DEP_BIN}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}aruco${CMAKE_STATIC_LIBRARY_SUFFIX} )
+			endif()
+		endif()
+	endif()  # OpenCV_FOUND
+
+
 	set( DEPENDENCIES_INCLUDE_DIR ${DEP_BIN}/include )
 else()
 	# Find Lua implementation, assuming lpeg is installed by other means
@@ -235,7 +238,7 @@ find_package(osgViewer)
 
 
 # Find OpenCV
-find_package( OpenCV )
+#find_package( OpenCV )
 if( OpenCV_FOUND )
 	add_definitions( -DOPENCV_FOUND )
 	message("OpenCV FOUND")
@@ -314,7 +317,6 @@ endif()
 
 
 # Find OpenCV
-FIND_PACKAGE( OpenCV )
 IF(OpenCV_FOUND)
 	INCLUDE_DIRECTORIES( ${OpenCV_INCLUDE_DIRS} )
 	ADD_DEFINITIONS( -DOPENCV_FOUND )
@@ -348,9 +350,10 @@ include_directories(SYSTEM
 
 	${DEPENDENCIES_INCLUDE_DIR}
 	${DEPENDENCIES_INCLUDE_DIR}/libnoise
-	${DEPENDENCIES_INCLUDE_DIR}/aruco
-
-	${OpenCV_INCLUDE_DIRS}
+	if( OpenCV_FOUND )
+		${DEPENDENCIES_INCLUDE_DIR}/aruco
+		${OpenCV_INCLUDE_DIRS}
+	endif()
 )
 include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/include )
 
@@ -415,20 +418,13 @@ if(OpenCV_FOUND)
 	source_group(\\src\\OpenCV "^.*OpenCV/.*$")
 	source_group(\\headers\\QOpenCV "^.*QOpenCV/.*h$")
 	source_group(\\headers\\OpenCV "^.*OpenCV/.*h$")
+	source_group(\\src\\Aruco "^.*Aruco/.*$")
+	source_group(\\headers\\Aruco "^.*Aruco/.*h$")
 endif()
 
 # Group generated moc files
 source_group(\\MOC "^.*moc_.*$")
 
-
-IF(OpenCV_FOUND)
-SOURCE_GROUP(\\src\\QOpenCV "^.*QOpenCV/.*$")
-SOURCE_GROUP(\\src\\OpenCV "^.*OpenCV/.*$")
-SOURCE_GROUP(\\headers\\QOpenCV "^.*QOpenCV/.*h$")
-SOURCE_GROUP(\\headers\\OpenCV "^.*OpenCV/.*h$")
-SOURCE_GROUP(\\src\\Aruco "^.*Aruco/.*$")
-SOURCE_GROUP(\\headers\\Aruco "^.*Aruco/.*h$")
-ENDIF()
 
 # header files containing Q_OBJECT macros
 set(SOURCES_H ${SOURCES_H}
@@ -459,30 +455,39 @@ target_link_libraries( ${3DSOFTVIZ_NAME}
 	${QT_LIBRARIES}
 	${OPENSCENEGRAPH_LIBRARIES}
 	${OSGVIEWER_LIBRARIES}
-	aruco
 	libnoise
 )
 
 if(OpenCV_FOUND)
-	target_link_libraries( ${3DSOFTVIZ_NAME} ${OpenCV_LIBS} )
+	target_link_libraries( ${3DSOFTVIZ_NAME}
+		aruco
+		${OpenCV_LIBS}
+	)
 endif()
 
 # 'cotire' the executable
-if (COMMAND cotire)
+if(COMMAND cotire)
 	# this needs CMake 2.8.11 and greater
-	if (${CMAKE_VERSION} VERSION_GREATER "2.8.10")
+	if(${CMAKE_VERSION} VERSION_GREATER "2.8.10")
 		set_target_properties(${3DSOFTVIZ_NAME} PROPERTIES COTIRE_UNITY_LINK_LIBRARIES_INIT "COPY")
 	endif()
 
 	cotire( ${3DSOFTVIZ_NAME} )
 
-	if (${CMAKE_VERSION} VERSION_LESS "2.8.11")
+	if(${CMAKE_VERSION} VERSION_LESS "2.8.11")
 		target_link_libraries(${3DSOFTVIZ_NAME}_unity
 			${QT_LIBRARIES}
 			${OPENSCENEGRAPH_LIBRARIES}
 			${OSGVIEWER_LIBRARIES}
 			libnoise
-			aruco)
+			if( OpenCV_FOUND )
+				aruco
+			endif()
+		)
+	endif()
+# toto kuknut este
+	if(OpenCV_FOUND)
+		target_link_libraries( ${3DSOFTVIZ_NAME}_unity ${OpenCV_LIBS} )
 	endif()
 
 	if( MSVC )
@@ -494,12 +499,18 @@ endif()
 
 # ensure correct dependencies
 
-add_dependencies( ${3DSOFTVIZ_NAME} aruco )
+
 
 add_dependencies( ${3DSOFTVIZ_NAME} libnoise)
+if( OpenCV_FOUND )
+		add_dependencies( ${3DSOFTVIZ_NAME} aruco )
+endif()
+
 if (COMMAND cotire)
 	add_dependencies( ${3DSOFTVIZ_NAME}_unity libnoise)
-add_dependencies( ${3DSOFTVIZ_NAME}_unity aruco)
+	if( OpenCV_FOUND )
+		add_dependencies( ${3DSOFTVIZ_NAME}_unity aruco)
+	endif()
 endif()
 
 
