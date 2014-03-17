@@ -1,9 +1,6 @@
-metrics = require"metrics"
 
-test = { foo = "test1"}
+dofile "../share/3dsoftviz/scripts/graph.lua"
 
-test2 = "test2"
+graph = w;
 
-test3 = 42
 
-print"Hello from Lua ;-)"

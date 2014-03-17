@@ -10,14 +10,7 @@ extern "C"
 }
 
 // include diluculum header files
-#include "Diluculum/CppObject.hpp"
-#include "Diluculum/LuaExceptions.hpp"
-#include "Diluculum/LuaFunction.hpp"
 #include "Diluculum/LuaState.hpp"
-#include "Diluculum/LuaUserData.hpp"
-#include "Diluculum/LuaUtils.hpp"
-#include "Diluculum/LuaValue.hpp"
-#include "Diluculum/LuaVariable.hpp"
 #include "Diluculum/Types.hpp"
 
 Lua::LuaInterface *Lua::LuaInterface::instance;
@@ -40,6 +33,12 @@ Lua::LuaInterface::LuaInterface()
 {
     luaState = new Diluculum::LuaState;
 }
+
+Diluculum::LuaState *Lua::LuaInterface::getLuaState() const
+{
+    return luaState;
+}
+
 
 void Lua::LuaInterface::executeFile(QString path)
 {
@@ -89,4 +88,18 @@ double Lua::LuaInterface::getDouble(unsigned int length, QString args[])
         var = var[args[i].toStdString()];
     }
     return var.value().asNumber();
+}
+
+Diluculum::LuaValueList Lua::LuaInterface::callFunction(QString funcName, Diluculum::LuaValueList params)
+{
+    return (*luaState)[funcName.toStdString()](params);
+}
+
+Diluculum::LuaValueList Lua::LuaInterface::callFunction(unsigned int length, QString args[], Diluculum::LuaValueList params)
+{
+    Diluculum::LuaVariable var = (*luaState)[args[0].toStdString()];
+    for(unsigned int i = 1; i < length; i++) {
+        var = var[args[i].toStdString()];
+    }
+    return var(params);
 }

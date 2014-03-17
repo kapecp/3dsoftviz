@@ -2,6 +2,7 @@
 #define LUAEDGE_H
 
 #include "QList"
+#include "Q_LONG"
 #include "QString"
 
 namespace Lua {
@@ -10,16 +11,20 @@ class LuaEdge
 {
 public:
     LuaEdge();
-    long getId() const;
-    void setId(long value);
+    qlonglong getId() const;
+    void setId(qlonglong value);
 
     QString getLabel() const;
     void setLabel(const QString &value);
 
+    void addIncidence(qlonglong id);
+
+    QList<qlonglong> getIncidences() const;
+
 private:
-    long id;
+    qlonglong id;
     QString label;
-    QList<long> incidences;
+    QList<qlonglong> incidences;
 };
 
 }

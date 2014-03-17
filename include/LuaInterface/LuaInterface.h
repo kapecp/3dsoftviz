@@ -2,6 +2,8 @@
 #define LUAINTERFACE_H
 
 #include "QString"
+#include "Diluculum/LuaValue.hpp"
+#include "Diluculum/Types.hpp"
 
 namespace Diluculum {
 	class LuaState;
@@ -29,6 +31,14 @@ public:
     double getDouble(QString name);
 
     double getDouble(unsigned int length, QString args[]);
+
+    Diluculum::LuaValueList callFunction(QString funcName, Diluculum::LuaValueList params = Diluculum::LuaValueList());
+
+    Diluculum::LuaValueList callFunction(unsigned int length, QString args[],
+        Diluculum::LuaValueList params = Diluculum::LuaValueList());
+
+    Diluculum::LuaState *getLuaState() const;
+
 private:
     LuaInterface();
     LuaInterface(LuaInterface const&);

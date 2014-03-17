@@ -3,6 +3,7 @@
 
 #include "QList"
 #include "QString"
+#include "Q_LONG"
 #include "LuaGraph/LuaNode.h"
 #include "LuaGraph/LuaEdge.h"
 #include "LuaGraph/LuaIncidence.h"
@@ -13,11 +14,14 @@ class LuaGraph
 {
 public:
     LuaGraph();
+    static LuaGraph* loadGraph();
+
+    ~LuaGraph();
 
 private:
-    QList<LuaNode> nodes;
-    QList<LuaEdge> edges;
-    QList<LuaIncidence> incidences;
+    QMap<qlonglong, LuaNode*>* nodes;
+    QMap<qlonglong, LuaEdge*>* edges;
+    QMap<qlonglong, LuaIncidence*>* incidences;
 };
 
 }

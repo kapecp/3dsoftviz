@@ -2,6 +2,7 @@
 #define LUAINCIDENCE_H
 
 #include "QPair"
+#include "Q_LONG"
 #include "QString"
 
 namespace Lua {
@@ -10,16 +11,20 @@ class LuaIncidence
 {
 public:
     LuaIncidence();
-    long getId() const;
-    void setId(long value);
+    qlonglong getId() const;
+    void setId(qlonglong value);
 
     QString getLabel() const;
     void setLabel(const QString &value);
 
+    void setEdgeNode(const qlonglong edgeId, const qlonglong nodeId);
+
+    QPair<qlonglong, qlonglong> getEdgeNodePair() const;
+
 private:
-    long id;
+    qlonglong id;
     QString label;
-    QPair<long, long> edgeNodePair;
+    QPair<qlonglong, qlonglong> edgeNodePair;
 };
 
 }

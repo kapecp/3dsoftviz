@@ -4,12 +4,12 @@ Lua::LuaIncidence::LuaIncidence()
 {
 }
 
-long Lua::LuaIncidence::getId() const
+qlonglong Lua::LuaIncidence::getId() const
 {
     return id;
 }
 
-void Lua::LuaIncidence::setId(long value)
+void Lua::LuaIncidence::setId(qlonglong value)
 {
     id = value;
 }
@@ -23,3 +23,14 @@ void Lua::LuaIncidence::setLabel(const QString &value)
 {
     label = value;
 }
+
+void Lua::LuaIncidence::setEdgeNode(const qlonglong edgeId, const qlonglong nodeId)
+{
+    edgeNodePair.first = edgeId;
+    edgeNodePair.second = nodeId;
+}
+QPair<qlonglong, qlonglong> Lua::LuaIncidence::getEdgeNodePair() const
+{
+    return edgeNodePair;
+}
+
