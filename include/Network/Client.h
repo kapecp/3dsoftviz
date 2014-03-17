@@ -6,18 +6,33 @@
 #define __3DVisualClient_H__
 
 #include <QTcpSocket>
-#include <QStringList>
+#include <QLinkedList>
 
-#include "Data/Graph.h"
-#include "Viewer/CoreGraph.h"
-#include "Layout/LayoutThread.h"
-#include "Network/ExecutorFactory.h"
+// TODO: typedef inside class
+#include "Layout/RestrictionRemovalHandler_RestrictionNodesRemover.h"
 
 #include "osg/PositionAttitudeTransform"
 #include "QtGui/QListWidgetItem"
-#include "Layout/RestrictionRemovalHandler_RestrictionNodesRemover.h"
+
+namespace Data
+{
+	class Graph;
+}
+
+namespace Vwr
+{
+	class CoreGraph;
+}
+
+namespace Layout
+{
+	class LayoutThread;
+}
 
 namespace Network{
+
+	class ExecutorFactory;
+
 
 class Client : public QObject
 {
@@ -65,13 +80,14 @@ public:
 	void lookAt(osg::Vec3d coord);
 
 	void sendNewNode(QString name, osg::Vec3f position);
-	void sendNewEdge(QString name, int id_from, int id_to, bool oriented = false);
-	void sendRemoveNode(int id);
-	void sendRemoveEdge(int id);
-	void sendNodeColor(int id, float r, float g, float b, float alpha);
+
+	void sendNewEdge(QString name, qlonglong id_from, qlonglong id_to, bool oriented = false);
+	void sendRemoveNode(qlonglong id);
+	void sendRemoveEdge(qlonglong id);
+	void sendNodeColor(qlonglong id, float r, float g, float b, float alpha);
 	void sendEdgeColor(int id, float r, float g, float b, float alpha);
-	void sendNodeLabel(int id, QString label);
-	void sendFixNodeState(int id, bool state);
+	void sendNodeLabel(qlonglong id, QString label);
+	void sendFixNodeState(qlonglong id, bool state);
 	void sendMergeNodes(QLinkedList<osg::ref_ptr<Data::Node> > * selectedNodes, osg::Vec3f position);
 	void sendSeparateNodes(QLinkedList<osg::ref_ptr<Data::Node> > * selectedNodes);
 	void sendAddMetaNode(QString name, QLinkedList<osg::ref_ptr<Data::Node> > * selectedNodes, QString edgeName, osg::Vec3f position);
@@ -135,7 +151,8 @@ private:
 	QTcpSocket *socket;
 
 	void addAvatar(int id, QString nick);
-	void sendColor(quint8 instruction, int id, float r, float g, float b, float alpha);
+
+	void sendColor(quint8 instruction, qlonglong id, float r, float g, float b, float alpha);
 	QListWidgetItem * getItemById(int id);
 
 	quint16 blockSize;

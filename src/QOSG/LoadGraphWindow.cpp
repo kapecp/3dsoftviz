@@ -1,5 +1,15 @@
 #include "QOSG/LoadGraphWindow.h"
 
+#include "Data/Graph.h"
+#include "Manager/Manager.h"
+#include "Model/DB.h"
+#include "Model/NodeDAO.h"
+#include "Model/EdgeDAO.h"
+#include "Model/GraphDAO.h"
+#include "Model/GraphLayoutDAO.h"
+
+#include "QOSG/SelectLayoutWindow.h"
+
 using namespace QOSG;
 
 LoadGraphWindow::LoadGraphWindow(QWidget *parent)
@@ -53,7 +63,8 @@ void LoadGraphWindow::createGraphTable()
 	Manager::GraphManager * manager = Manager::GraphManager::getInstance();
 	Model::DB * db = manager->getDB();
 	bool error = false;
-	qlonglong id, graphsCount, row;
+	qlonglong id;
+	int graphsCount,row;
 	QList<qlonglong> nodes;
 	QList<qlonglong> edges;
 	QList<qlonglong> layouts;

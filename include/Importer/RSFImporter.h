@@ -2,6 +2,7 @@
 #define Importer_RSFImporter_H
 //-----------------------------------------------------------------------------
 #include "Importer/StreamImporter.h"
+#include "Data/Node.h"
 //-----------------------------------------------------------------------------
 
 namespace Importer {

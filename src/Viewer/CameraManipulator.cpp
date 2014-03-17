@@ -1,22 +1,32 @@
+
+
 #include "Viewer/CameraManipulator.h"
-#include <osg/Quat>
-#include <osg/Notify>
-#include <osg/BoundsChecking>
-#include <osgViewer/Viewer>
+
+#include "Viewer/CoreGraph.h"
+
 #include "Manager/Manager.h"
 
 #include "Network/Server.h"
 #include "Network/Client.h"
 
-//using namespace osg;
-//using namespace osgGA;
-//using namespace Vwr;
+#include "Math/CameraMath.h"
+
+#include "Util/ApplicationConfig.h"
+
+#include <osg/Notify>
+#include <osg/BoundsChecking>
+
+#include <iostream>
+
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wswitch-enum"
 
 double Vwr::CameraManipulator::EYE_MOVEMENT_SPEED;
 double Vwr::CameraManipulator::TARGET_MOVEMENT_SPEED;
-double Vwr::CameraManipulator::SCREEN_MARGIN;
+float Vwr::CameraManipulator::SCREEN_MARGIN;
 
 namespace Vwr {
+
 
 Vwr::CameraManipulator::CameraManipulator(Vwr::CoreGraph * coreGraph)
 {
@@ -39,7 +49,7 @@ Vwr::CameraManipulator::CameraManipulator(Vwr::CoreGraph * coreGraph)
 
 	EYE_MOVEMENT_SPEED = 0.005;
 	TARGET_MOVEMENT_SPEED = 0.005;
-	SCREEN_MARGIN = 200;
+	SCREEN_MARGIN = 200.f;
 
 	this->coreGraph = coreGraph;
 	stop();
@@ -211,7 +221,8 @@ bool Vwr::CameraManipulator::handlePush(const osgGA::GUIEventAdapter& ea, osgGA:
 {
 	if (ea.getButtonMask() == GUIEventAdapter::MIDDLE_MOUSE_BUTTON)
 	{
-		if (_distance != 0)
+		bool notNullDistance = !qFuzzyCompare(_distance,0.0f);
+		if (notNullDistance)
 		{
 			lastDistance = _distance;
 
@@ -221,10 +232,10 @@ bool Vwr::CameraManipulator::handlePush(const osgGA::GUIEventAdapter& ea, osgGA:
 			viewer->getCamera()->getViewMatrixAsLookAt(eye, cameraCenter, up);
 
 			_center = eye;
-			_distance = 0;
+			_distance = 0.f;
 		}
 		else {
-			_distance = lastDistance;
+			_distance = (float)lastDistance;
 		}
 
 		notifyServer();
@@ -269,7 +280,8 @@ bool Vwr::CameraManipulator::isMouseMoving()
 	float dx = _ga_t0->getXnormalized()-_ga_t1->getXnormalized();
 	float dy = _ga_t0->getYnormalized()-_ga_t1->getYnormalized();
 	float len = sqrtf(dx*dx+dy*dy);
-	float dt = _ga_t0->getTime()-_ga_t1->getTime();
+
+	float dt = (float)(_ga_t0->getTime()-_ga_t1->getTime());
 
 	return (len>dt*velocity);
 }
@@ -296,12 +308,14 @@ void Vwr::CameraManipulator::setByMatrix(const osg::Matrixd& matrix)
 
 osg::Matrixd Vwr::CameraManipulator::getMatrix() const
 {
-	return osg::Matrixd::translate(0.0,0.0,_distance)*osg::Matrixd::rotate(_rotation*_rotationHead)*osg::Matrixd::translate(_center);
+	return osg::Matrixd::translate(_centerArucoTrans)*osg::Matrixd::translate(0.0,0.0,_distance)*osg::Matrixd::rotate(_rotation*_rotationHead)*osg::Matrixd::translate(_center);
+
 }
 
 osg::Matrixd Vwr::CameraManipulator::getInverseMatrix() const
 {
-	return osg::Matrixd::translate(-_center)*osg::Matrixd::rotate((_rotation*_rotationHead).inverse())*osg::Matrixd::translate(0.0,0.0,-_distance);
+	return osg::Matrixd::translate(-_centerArucoTrans)*osg::Matrixd::translate(-_center)*osg::Matrixd::rotate((_rotation*_rotationHead).inverse())*osg::Matrixd::translate(0.0,0.0,-_distance);
+
 }
 
 void Vwr::CameraManipulator::computePosition(const osg::Vec3& eye,const osg::Vec3& center,const osg::Vec3& up)
@@ -381,7 +395,8 @@ bool Vwr::CameraManipulator::calcMovement()
 		}
 
 		// return if there is no movement.
-		if (distance==0.0f)
+		//if (distance==0.0f)
+		if(qFuzzyCompare(distance, 0.0f) )
 		{
 			return false;
 		}
@@ -418,6 +433,7 @@ bool Vwr::CameraManipulator::calcMovement()
 		_rotation = _rotation*new_rotate;
 
 
+
 		notifyServer();
 		notifyClients();
 
@@ -429,7 +445,7 @@ bool Vwr::CameraManipulator::calcMovement()
 
 		// pan model.
 
-		float scale = -0.3f * _distance * throwScale;
+		float scale = -0.3f * _distance * float(throwScale);
 
 		osg::Matrix rotation_matrix;
 		rotation_matrix.makeRotate(_rotation);
@@ -445,10 +461,11 @@ bool Vwr::CameraManipulator::calcMovement()
 	}
 	else if (buttonMask==GUIEventAdapter::SCROLL)
 	{
+
 		// zoom model.
 
 		float fd = _distance;
-		float scale = 1.0f+ dy * throwScale;
+		float scale = 1.0f+ dy * (float) throwScale;
 		if (fd*scale>_modelScale*_minimumZoomScale)
 		{
 			if (_distance * scale < 10000)
@@ -523,14 +540,16 @@ void Vwr::CameraManipulator::trackball(osg::Vec3& axis,float& angle, float p1x, 
 	/*
 	 *  Figure out how much to rotate around that axis.
 	 */
-	float t = (p2 - p1).length() / (2.0 * _trackballSize);
+
+	float t = (float)(p2 - p1).length() / (2.0f * (float) _trackballSize);
 
 	/*
 	 * Avoid problems with out-of-control values...
 	 */
 	if (t > 1.0) t = 1.0;
 	if (t < -1.0) t = -1.0;
-	angle = osg::inRadians(asin(t));
+
+	angle =(float) osg::inRadians(asin(t));
 
 }
 
@@ -543,15 +562,16 @@ float Vwr::CameraManipulator::tb_project_to_sphere(float r, float x, float y)
 {
 	float d, t, z;
 
-	d = sqrt(x*x + y*y);
+
+	d =(float) sqrt(x*x + y*y);
 	/* Inside sphere */
 	if (d < r * 0.70710678118654752440)
 	{
-		z = sqrt(r*r - d*d);
+		z = (float)sqrt(r*r - d*d);
 	}                            /* On hyperbola */
 	else
 	{
-		t = r / 1.41421356237309504880;
+		t =(float) r / 1.41421356237309504880f;
 		z = t*t / d;
 	}
 	return z;
@@ -594,6 +614,8 @@ bool Vwr::CameraManipulator::handleKeyUp( const osgGA::GUIEventAdapter& ea, osgG
 	case osgGA::GUIEventAdapter::KEY_Page_Up:
 	case osgGA::GUIEventAdapter::KEY_Page_Down:
 		decelerateVerticalRate = true;
+		break;
+	default:
 		break;
 	}
 
@@ -654,6 +676,9 @@ bool Vwr::CameraManipulator::handleKeyDown( const osgGA::GUIEventAdapter &ea, os
 		decelerateVerticalRate = false;
 		break;
 	}
+
+	default:
+		break;
 	}
 
 	notifyServer();
@@ -768,8 +793,8 @@ void Vwr::CameraManipulator::computeStandardFrame(const osgGA::GUIEventAdapter &
 {
 	osgViewer::Viewer* viewer = dynamic_cast<osgViewer::Viewer*>( &aa );
 	double t1 = ea.getTime();
-
-	if( t0 == 0.0 )
+	bool nullT0=qFuzzyCompare(t0,0.0);
+	if( nullT0 )
 	{
 		t0 = ea.getTime();
 		dt = 0.0;
@@ -895,14 +920,15 @@ float Vwr::CameraManipulator::alterCameraTargetPoint(osgViewer::Viewer* viewer)
 	osg::ref_ptr<osg::Camera> camera = new osg::Camera(*(viewer->getCamera()), osg::CopyOp::DEEP_COPY_ALL);
 	//osg::ref_ptr<osg::Camera> camera = viewer->getCamera();
 
-	int width = camera->getViewport()->width();
-	int height = camera->getViewport()->height();
+	float width =  (float) camera->getViewport()->width();
+	float height = (float) camera->getViewport()->height();
 
 	osg::Vec3d basicVec = cameraTargetPoint - weightPoint;
 	float scale = appConf->getValue("Viewer.Display.NodeDistanceScale").toFloat();
 
 	// minimum distance from center
-	float dist = basicVec.length() + 50 * scale;
+
+	float dist = (float) basicVec.length() + 50.f * scale;
 
 	osg::Vec3d eyePosition;
 
@@ -945,8 +971,8 @@ void Vwr::CameraManipulator::alterWeights(osgViewer::Viewer* viewer, std::list<o
 {
 	osg::ref_ptr<osg::Camera> camera = new osg::Camera(*(viewer->getCamera()), osg::CopyOp::DEEP_COPY_ALL);
 
-	int width = camera->getViewport()->width();
-	int height = camera->getViewport()->height();
+	float width = (float) camera->getViewport()->width();
+	float height = (float) camera->getViewport()->height();
 
 	osg::Vec3d eye;
 	osg::Vec3d center;
@@ -1018,7 +1044,7 @@ void Vwr::CameraManipulator::computeViewMetrics(osgViewer::Viewer* viewer, std::
 
 	for (i = selectedCluster.begin(); i != selectedCluster.end(); ++i)
 	{
-		if (CameraMath::isInRect(CameraMath::projectOnScreen(viewer->getCamera(), (*i)->getCurrentPosition()), viewer->getCamera()->getViewport()->width(), viewer->getCamera()->getViewport()->height(), 0))
+		if (CameraMath::isInRect(CameraMath::projectOnScreen(viewer->getCamera(), (*i)->getCurrentPosition()), (float) viewer->getCamera()->getViewport()->width(),(float) viewer->getCamera()->getViewport()->height(), 0.f))
 		{
 			cnt++;
 		}
@@ -1100,4 +1126,48 @@ void Vwr::CameraManipulator::updateProjectionAccordingFace(const float x, const 
 	this->coreGraph->getCamera()->setProjectionMatrixAsFrustum(left, right, bottom, top, zNear, zFar);
 }
 
+
+void Vwr::CameraManipulator::updateArucoGraphPosition( osg::Vec3d pos ){
+	//QString str;
+	//str  = "arMat " + QString::number( pos.x(), 'f', 2);
+	//str += " " + QString::number( pos.y(), 'f', 2);
+	//str += " " + QString::number( pos.z(), 'f', 2);
+	//qDebug() << ": " << str;
+
+
+	// camera coeficient
+	double constHeigherScale = this->appConf->getValue("Aruco.ConstHeigherScale").toDouble();
+	double constDist		 = this->appConf->getValue("Aruco.ConstDist").toDouble();
+	double constHeightKoef	 = this->appConf->getValue("Aruco.ConstHeightKoef").toDouble();
+	double camDistRatio		 = this->appConf->getValue("Aruco.CamDistancRatio").toDouble();
+
+	double distArc =  pos.z()  < 0.0 ? - pos.z()	:  pos.z();		// distance of marker
+	double distGra = _distance < 0.0 ? -_distance	: _distance;	// distance of graph
+	if( distGra < 1.0){
+		distGra = 1.0;
+	}
+	double getHeigherKoef = constHeigherScale * distGra;							// if marker is on table, graph coud be too on bottom, so get him heigher
+
+	_centerArucoTrans[1] = distGra * (pos.z() + constDist);			// distance
+
+	double koef = distGra * camDistRatio * constHeightKoef / distArc;
+
+	_centerArucoTrans[0] = koef * pos.x();							// horizontal
+	_centerArucoTrans[2] = koef * pos.y() - getHeigherKoef;			// vertical
+
+
+	//str  = "  " + QString::number( _centerArucoTrans[1], 'f', 2);
+	//str += "  " + QString::number( _centerArucoTrans[0], 'f', 2);
+	//str += "  " + QString::number( _centerArucoTrans[2], 'f', 2);
+	//qDebug() << ": " << str;
+	//qDebug() << ": " << _distance ;
+
+}
+
+
+
+
 } // namespace
+
+
+#pragma GCC diagnostic pop

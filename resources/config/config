@@ -42,3 +42,9 @@ Viewer.SkyBox.Down=../share/3dsoftviz/img/skybox/rays_down.bmp
 
 FaceDecetion.EnableProjectionCorrection=1
 FaceDecetion.CameraDistancePar=3.5
+Aruco.MarkerSize=0.06
+Aruco.CamDistancRatio=2.75
+Aruco.ConstDist=0.3
+Aruco.ConstHeightKoef=0.8
+Aruco.ConstHeigherScale=0.6
+

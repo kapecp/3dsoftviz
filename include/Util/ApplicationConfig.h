@@ -13,11 +13,10 @@
 #include <Qt/qstringlist.h>
 #endif
 
-#include <iostream>
-#include <memory>
 #include <QMap>
 #include <OpenThreads/Mutex>
-#include <QFile>
+
+#include <memory>
 
 using namespace std;
 

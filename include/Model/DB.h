@@ -5,16 +5,14 @@
 #ifndef Model_DB_DEF
 #define Model_DB_DEF 1
 
-#include "Data/Node.h"
-#include "Data/Edge.h"
-#include "Data/Type.h"
-
 #include <QtSql>
-#include <QDebug>
-#include <QList>
-#include <iostream>
 
-#include "Util/ApplicationConfig.h"
+
+
+namespace Util
+{
+	class ApplicationConfig;
+}
 
 namespace Model
 {
@@ -26,23 +24,8 @@ namespace Model
 	*/
 class DB
 {
-private:
-	/**
-		*	QSqlDatabase conn
-		*	\brief Database connection
-		*/
-	QSqlDatabase conn;
 
-
-	/**
-		*	Util::ApplicationConfig * appConf
-		*	\brief Application config
-		*/
-	Util::ApplicationConfig * appConf;
 public:
-
-	bool createConnection();
-	QSqlDatabase* tmpGetConn();
 
 	/**
 		*  \fn public constructor  DB
@@ -74,8 +57,35 @@ public:
 		*/
 	void closeConnection();
 
+	/**
+	 * @author Autor:Dávid Durčák
+	 * \fn createConnection
+	 * \brief Create connection only one time in first call.
+	 */
+	bool createConnection();
+
+	/**
+	 * @author Autor:Dávid Durčák
+	 * \fn tmpGetConn
+	 * \brief Create and return connection do database
+	 */
+	QSqlDatabase* tmpGetConn();
+
 private:
-	bool mConneCreationTried;
+	/**
+		*	QSqlDatabase conn
+		*	\brief Database connection
+		*/
+	QSqlDatabase conn;
+
+	/**
+		*	Util::ApplicationConfig * appConf
+		*	\brief Application config
+		*/
+	Util::ApplicationConfig * appConf;
+
+
+	bool mConneCreationTried;   // false if createConnection was not called yet
 
 };
 }

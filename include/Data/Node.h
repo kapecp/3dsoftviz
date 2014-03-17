@@ -5,25 +5,13 @@
 #ifndef DATA_NODE_DEF
 #define DATA_NODE_DEF 1
 
-#include "Data/Graph.h"
-
-#include <vector>
-#include <string>
 #include <osg/Vec3f>
-#include "Data/Type.h"
-#include "Data/Edge.h"
+#include <osg/Geode>
+#include <osg/AutoTransform>
+
 #include <QMap>
 #include <QString>
-#include <QTextStream>
 
-#include <osg/Geode>
-#include <osg/Geometry>
-#include <osg/BlendFunc>
-#include <osg/Depth>
-#include <osg/CullFace>
-#include <osgText/Text>
-
-#include <osg/AutoTransform>
 
 namespace Data
 {
@@ -209,8 +197,6 @@ public:
 		*/
 	void removeAllEdges();
 
-
-
 	/**
 		*	\fn public getParentNode
 		*	\brief Return parent node, else null
@@ -394,12 +380,8 @@ public:
 		*  \brief Returns human-readable string representing the Node
 		*  \return QString
 		*/
-	QString toString() const
-	{
-		QString str;
-		QTextStream(&str) << "node id:" << id << " name:" << name << " pos:[" << mTargetPosition.x() << "," << mTargetPosition.y() << "," << mTargetPosition.z() << "]";
-		return str;
-	}
+	QString toString() const;
+
 
 
 	/**
@@ -434,7 +416,6 @@ public:
 		*  \param     visible     node name shown
 		*/
 	void showLabel(bool visible);
-
 
 	/**
 		*  \fn inline public  isInDB
@@ -537,6 +518,7 @@ public:
 
 private:
 
+
 	/**
 		*	bool inDB
 		*	\brief Flag if the Type is in database
@@ -619,19 +601,17 @@ private:
 		*/
 	QMap<qlonglong, osg::ref_ptr<Data::Edge> > * edges;
 
-
-	/**
-		*  osg::Vec3f force
-		*  \brief Node force
-		*/
-	osg::Vec3f force;
+			  /**
+				  *  osg::Vec3f force
+				  *  \brief Node force
+				  */
+			  osg::Vec3f force;
 
 	/**
 		*  osg::Vec3f velocity
 		*  \brief Size of node force in previous iteration
 		*/
 	osg::Vec3f velocity;
-
 
 	/**
 		*  bool fixed

@@ -1,5 +1,10 @@
 #include "Math/DjikstraAlg.h"
+
+#include "Data/Graph.h"
+
 #include <limits>
+#include <iostream>
+using namespace std;
 
 // source: http://www.vogella.de/articles/JavaAlgorithmsDijkstra/article.html
 // altered to compute all shortest paths
@@ -34,8 +39,8 @@ void DjikstraAlg::findMinimalDistances(Data::Node * node)
 	{
 		Data::Node * target = adjacentNodes.at(x);
 
-		int tSh = getShortestDistance(target);
-		int nSh = getShortestDistance(node);
+		qlonglong tSh = getShortestDistance(target);
+		qlonglong nSh = getShortestDistance(node);
 		int d = getDistance(node, target);
 
 		if ( tSh > nSh + d)
@@ -122,7 +127,8 @@ bool DjikstraAlg::isSettled(Data::Node * vertex)
 	return settledNodes.contains(vertex->getId());
 }
 
-int DjikstraAlg::getShortestDistance(Data::Node * destination)
+
+qlonglong DjikstraAlg::getShortestDistance(Data::Node * destination)
 {
 	qlonglong d = -1;
 

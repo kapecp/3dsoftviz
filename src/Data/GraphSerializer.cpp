@@ -6,16 +6,16 @@ using namespace Data;
 osg::Vec3f GraphSerializer::getRandomPosition()
 {
 	//nastavime nahodne inicializnacne suradnice v 3D
-	int x, y, z;
-	int lowest = 1;
-	int highest = 100;
-	int range = (highest - lowest) + 1;
+	float x, y, z;
+	float lowest = 1.f;
+	float highest = 100.f;
+	float range = (highest - lowest) + 1.f;
 
 	srand((unsigned)time(0));
 
-	x = lowest + int(range * rand() / (RAND_MAX + 1.0));
-	y = lowest + int(range * rand() / (RAND_MAX + 1.0));
-	z = lowest + int(range * rand() / (RAND_MAX + 1.0));
+	x = lowest + (float)(range * (float) rand() / ((float) RAND_MAX + 1.f));
+	y = lowest + (float)(range * (float) rand() / ((float) RAND_MAX + 1.f));
+	z = lowest + (float)(range * (float) rand() / ((float) RAND_MAX + 1.f));
 
 	return osg::Vec3f(x, y, z);
 }

@@ -48,8 +48,6 @@
 #include <QModelIndex>
 #include <QVariant>
 
-#include "Manager/Manager.h"
-#include "QOSG/TreeItem.h"
 
 namespace QOSG
 {

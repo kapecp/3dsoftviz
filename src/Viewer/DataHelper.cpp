@@ -1,5 +1,11 @@
 #include "Viewer/DataHelper.h"
-#include <QLinkedList>
+
+#include <osg/ShapeDrawable>
+#include <osgDB/ReadFile>
+
+#include <cstdlib>
+#include <sstream>
+#include <iostream>
 
 using namespace Vwr;
 using namespace Data;
@@ -18,10 +24,10 @@ osg::ref_ptr<osg::Geode> DataHelper::getSphereGeode(osg::Vec3 center, float radi
 
 osg::ref_ptr<osg::Vec3Array> DataHelper::getInitialVectors(int count)
 {
-	int x, y, z;
-	int lowest = 1;
-	int highest = 100;
-	int range = (highest - lowest) + 1;
+	float x, y, z;
+	float lowest = 1.f;
+	float highest = 100.f;
+	float range = (highest - lowest) + 1.f;
 
 	osg::ref_ptr<osg::Vec3Array> positions = new osg::Vec3Array();
 
@@ -29,9 +35,10 @@ osg::ref_ptr<osg::Vec3Array> DataHelper::getInitialVectors(int count)
 
 	for(int index = 0; index < count; index++)
 	{
-		x = lowest + int(range * rand() / (RAND_MAX + 1.0));
-		y = lowest + int(range * rand() / (RAND_MAX + 1.0));
-		z = lowest + int(range * rand() / (RAND_MAX + 1.0));
+
+		x = lowest + (float)(range * (float)rand() / ((float)RAND_MAX + 1.0f));
+		y = lowest + (float)(range * (float)rand() / ((float)RAND_MAX + 1.0f));
+		z = lowest + (float)(range * (float)rand() / ((float)RAND_MAX + 1.0f));
 
 		positions->push_back(osg::Vec3(x, y, z));
 	}
@@ -51,8 +58,9 @@ osg::ref_ptr<osg::Vec3Array> DataHelper::getEdgeVectors(osg::ref_ptr<Data::Node>
 	osg::ref_ptr<osg::Vec3Array> edgeVectors = new osg::Vec3Array;
 
 	edgeVectors->push_back(osg::Vec3(inNode->restrictedTargetPosition()));
-	edgeVectors->push_back(osg::Vec3(inNode->restrictedTargetPosition().x() - 0.5, inNode->restrictedTargetPosition().y(), inNode->restrictedTargetPosition().z()));
-	edgeVectors->push_back(osg::Vec3(outNode->restrictedTargetPosition().x() - 0.5, outNode->restrictedTargetPosition().y(), outNode->restrictedTargetPosition().z()));
+
+	edgeVectors->push_back(osg::Vec3(inNode->restrictedTargetPosition().x() - 0.5f, inNode->restrictedTargetPosition().y(), inNode->restrictedTargetPosition().z()));
+	edgeVectors->push_back(osg::Vec3(outNode->restrictedTargetPosition().x() - 0.5f, outNode->restrictedTargetPosition().y(), outNode->restrictedTargetPosition().z()));
 	edgeVectors->push_back(osg::Vec3(outNode->restrictedTargetPosition()));
 
 	return edgeVectors;
@@ -529,14 +537,22 @@ osg::Vec3f DataHelper::getMassCenter(osg::ref_ptr<osg::Vec3Array> coordinates)
 	float x,y,z;
 	x = y = z = 0;
 
-	int num = coordinates->size();
 
-	for (int i = 0; i < num; i++)
+
+
+	long unsigned int num = coordinates->size();
+
+	for (long unsigned int i = 0; i < num; i++)
 	{
 		x += coordinates->at(i).x();
 		y += coordinates->at(i).y();
 		z += coordinates->at(i).z();
 	}
 
-	return osg::Vec3f(x/num, y/num, z/num);
+	if(num==0){
+		return osg::Vec3f(0.f,0.f,0.f);
+	}else
+	{
+		return osg::Vec3f(x/(float)num, y/(float)num, z/(float)num);
+	}
 }

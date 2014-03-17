@@ -4,6 +4,10 @@
  */
 #include "Model/DB.h"
 
+#include "Util/ApplicationConfig.h"
+
+#include <QDebug>
+
 Model::DB::DB()
 {
 	//konstruktor
@@ -11,7 +15,6 @@ Model::DB::DB()
 	this->appConf = Util::ApplicationConfig::get();
 
 	this->mConneCreationTried = false;
-	//this->createConnection();
 }
 
 Model::DB::~DB()
@@ -22,9 +25,8 @@ Model::DB::~DB()
 
 bool Model::DB::createConnection()
 {
-	qDebug() << "DB::Creation connection called";
 	if( !mConneCreationTried ){
-		qDebug() << "DB::Creation connection called firsttime";
+		// we want only one time call this as lazy as possible
 		DB::openConnection(
 					appConf->getValue("Model.DB.HostName"),
 					appConf->getValue("Model.DB.DbName"),
@@ -39,6 +41,7 @@ bool Model::DB::createConnection()
 
 QSqlDatabase* Model::DB::tmpGetConn()
 {
+	// create connection only when it needed
 	this->createConnection();
 	return &conn;
 }

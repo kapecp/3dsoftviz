@@ -7,12 +7,9 @@
 
 #include "QOSG/AdapterWidget.h"
 #include <osgViewer/ViewerBase>
-
-#include "Viewer/CameraManipulator.h"
-#include "Util/ApplicationConfig.h"
-#include "Viewer/PickHandler.h"
-
-#include "Viewer/CameraManipulator.h"
+#include <osgViewer/ViewerEventHandlers>
+//#include "Viewer/CoreGraph.h"
+#include <qtimer.h>
 
 /*!
 * \brief
@@ -25,6 +22,25 @@
 * \date
 * 1.12.2009
 */
+
+
+namespace Vwr
+{
+	class PickHandler;
+	class CoreGraph;
+}
+
+namespace Util
+{
+	class ApplicationConfig;
+}
+
+
+namespace Vwr
+{
+	class CameraManipulator;
+}
+
 
 namespace QOSG
 {
@@ -59,38 +75,10 @@ public:
 		* Vytvori widget, ktory dokaze zobrazit OSG grafy.
 		*
 		*/
-	ViewerQT(QWidget * parent = 0, const char * name = 0, const QGLWidget * shareWidget = 0, WindowFlags f = 0, Vwr::CoreGraph* cg = 0):
-		AdapterWidget( parent, name, shareWidget, f )
-	{
-		this->cg = cg;
-		cg->setCamera(this->getCamera());
 
-		appConf = Util::ApplicationConfig::get();
+	ViewerQT(QWidget * parent = 0, const char * name = 0, const QGLWidget * shareWidget = 0, WindowFlags f = 0, Vwr::CoreGraph* cg = 0);
 
-		osg::DisplaySettings::instance()->setStereo(appConf->getValue("Viewer.Display.Stereoscopic").toInt());
-		osg::DisplaySettings::instance()->setStereoMode(osg::DisplaySettings::ANAGLYPHIC);
 
-		getCamera()->setViewport(new osg::Viewport(0,0,width(),height()));
-		getCamera()->setProjectionMatrixAsPerspective(60, static_cast<double>(width())/static_cast<double>(height()), 0.01, appConf->getValue("Viewer.Display.ViewDistance").toFloat());
-		getCamera()->setGraphicsContext(getGraphicsWindow());
-		getCamera()->setComputeNearFarMode(osg::CullSettings::DO_NOT_COMPUTE_NEAR_FAR);
-
-		manipulator = new Vwr::CameraManipulator(cg);
-		pickHandler = new Vwr::PickHandler(manipulator, cg);
-
-		addEventHandler(new osgViewer::StatsHandler);
-		addEventHandler(pickHandler);
-		setCameraManipulator(manipulator);
-
-		getCamera()->setClearColor(osg::Vec4(0, 0, 0, 1));
-		getCamera()->setViewMatrixAsLookAt(osg::Vec3d(-10, 0, 0), osg::Vec3d(0, 0, 0), osg::Vec3d(0, 1, 0));
-
-		setThreadingModel(osgViewer::ViewerBase::SingleThreaded);
-
-		connect(&_timer, SIGNAL(timeout()), this, SLOT(updateGL()));
-
-		_timer.start(10);
-	}
 
 
 	/**
@@ -98,27 +86,24 @@ public:
 		  *  \brief Returns pick handler
 		  *  \return Vwr::PickHandler * pick handler
 		  */
-	Vwr::PickHandler * getPickHandler() const {return pickHandler;}
+	Vwr::PickHandler * getPickHandler() const ;
+
 
 	/**
 		  *  \fn inline public constant  getCameraManipulator
 		  *  \brief Returns camera manipulator
 		  *  \return Vwr::CameraManipulator * camera manipulator
 		  */
-	Vwr::CameraManipulator * getCameraManipulator() const {return manipulator;}
+	Vwr::CameraManipulator * getCameraManipulator() const;
+
 
 
 	/**
 		  *  \fn inline public  reloadConfig
 		  *  \brief Reloads configuration
 		  */
-	void reloadConfig()
-	{
-		manipulator->setMaxSpeed(appConf->getValue("Viewer.CameraManipulator.MaxSpeed").toFloat());
-		manipulator->setTrackballSize(appConf->getValue("Viewer.CameraManipulator.Sensitivity").toFloat());
+	void reloadConfig();
 
-		osg::DisplaySettings::instance()->setStereo(appConf->getValue("Viewer.Display.Stereoscopic").toInt());
-	}
 
 protected:
 
@@ -140,11 +125,9 @@ protected:
 		*  \fn inline protected virtual  paintGL
 		*  \brief Paints new frame
 		*/
-	virtual void paintGL()
-	{
-		frame();
-		cg->update();
-	}
+
+	virtual void paintGL();
+
 
 private:
 

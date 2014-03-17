@@ -4,6 +4,15 @@
  */
 #include "Model/TypeDAO.h"
 
+#include "Model/GraphDAO.h"
+#include "Model/GraphLayoutDAO.h"
+
+#include "Data/Graph.h"
+#include "Data/Type.h"
+#include "Data/GraphLayout.h"
+
+#include <QDebug>
+
 Model::TypeDAO::TypeDAO(void)
 {
 }

@@ -27,6 +27,11 @@
 
 #include "Noise/noiseutils.h"
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wconversion"
+#pragma GCC diagnostic ignored "-Wfloat-equal"
+#pragma GCC diagnostic ignored "-pedantic"
+
 using namespace noise;
 using namespace noise::model;
 using namespace noise::module;
@@ -50,6 +55,7 @@ const double DEFAULT_LIGHT_ELEVATION = 45.0;
 
 namespace noise
 {
+
 
 namespace utils
 {
@@ -147,6 +153,7 @@ void GradientColor::Clear ()
 
 int GradientColor::FindInsertionPos (double gradientPos)
 {
+
 	int insertionPos;
 	for (insertionPos = 0; insertionPos < m_gradientPointCount;
 		 insertionPos++) {
@@ -165,6 +172,7 @@ int GradientColor::FindInsertionPos (double gradientPos)
 
 const Color& GradientColor::GetColor (double gradientPos) const
 {
+
 	assert (m_gradientPointCount >= 2);
 
 	// Find the first element in the gradient point array that has a gradient
@@ -263,6 +271,7 @@ NoiseMap& NoiseMap::operator= (const NoiseMap& rhs)
 
 void NoiseMap::Clear (float value)
 {
+
 	if (m_pNoiseMap != NULL) {
 		for (int y = 0; y < m_height; y++) {
 			float* pDest = GetSlabPtr (0, y);
@@ -275,6 +284,7 @@ void NoiseMap::Clear (float value)
 
 void NoiseMap::CopyNoiseMap (const NoiseMap& source)
 {
+
 	// Resize the noise map buffer, then copy the slabs from the source noise
 	// map buffer to this noise map buffer.
 	SetSize (source.GetWidth (), source.GetHeight ());
@@ -296,6 +306,7 @@ void NoiseMap::DeleteNoiseMapAndReset ()
 
 float NoiseMap::GetValue (int x, int y) const
 {
+
 	if (m_pNoiseMap != NULL) {
 		if (x >= 0 && x < m_width && y >= 0 && y < m_height) {
 			return *(GetConstSlabPtr (x, y));
@@ -318,6 +329,7 @@ void NoiseMap::InitObj ()
 
 void NoiseMap::ReclaimMem ()
 {
+
 	size_t newMemUsage = CalcMinMemUsage (m_width, m_height);
 	if (m_memUsed > newMemUsage) {
 		// There is wasted memory.  Create the smallest buffer that can fit the
@@ -338,6 +350,7 @@ void NoiseMap::ReclaimMem ()
 
 void NoiseMap::SetSize (int width, int height)
 {
+
 	if (width < 0 || height < 0
 			|| width > RASTER_MAX_WIDTH || height > RASTER_MAX_HEIGHT) {
 		// Invalid width or height.
@@ -371,6 +384,7 @@ void NoiseMap::SetSize (int width, int height)
 
 void NoiseMap::SetValue (int x, int y, float value)
 {
+
 	if (m_pNoiseMap != NULL) {
 		if (x >= 0 && x < m_width && y >= 0 && y < m_height) {
 			*(GetSlabPtr (x, y)) = value;
@@ -428,6 +442,7 @@ Image& Image::operator= (const Image& rhs)
 
 void Image::Clear (const Color& value)
 {
+
 	if (m_pImage != NULL) {
 		for (int y = 0; y < m_height; y++) {
 			Color* pDest = GetSlabPtr (0, y);
@@ -440,6 +455,7 @@ void Image::Clear (const Color& value)
 
 void Image::CopyImage (const Image& source)
 {
+
 	// Resize the image buffer, then copy the slabs from the source image
 	// buffer to this image buffer.
 	SetSize (source.GetWidth (), source.GetHeight ());
@@ -461,6 +477,7 @@ void Image::DeleteImageAndReset ()
 
 Color Image::GetValue (int x, int y) const
 {
+
 	if (m_pImage != NULL) {
 		if (x >= 0 && x < m_width && y >= 0 && y < m_height) {
 			return *(GetConstSlabPtr (x, y));
@@ -483,6 +500,7 @@ void Image::InitObj ()
 
 void Image::ReclaimMem ()
 {
+
 	size_t newMemUsage = CalcMinMemUsage (m_width, m_height);
 	if (m_memUsed > newMemUsage) {
 		// There is wasted memory.  Create the smallest buffer that can fit the
@@ -503,6 +521,7 @@ void Image::ReclaimMem ()
 
 void Image::SetSize (int width, int height)
 {
+
 	if (width < 0 || height < 0
 			|| width > RASTER_MAX_WIDTH || height > RASTER_MAX_HEIGHT) {
 		// Invalid width or height.
@@ -536,6 +555,7 @@ void Image::SetSize (int width, int height)
 
 void Image::SetValue (int x, int y, const Color& value)
 {
+
 	if (m_pImage != NULL) {
 		if (x >= 0 && x < m_width && y >= 0 && y < m_height) {
 			*(GetSlabPtr (x, y)) = value;
@@ -569,6 +589,7 @@ int WriterBMP::CalcWidthByteCount (int width) const
 
 void WriterBMP::WriteDestFile ()
 {
+
 	if (m_pSourceImage == NULL) {
 		throw noise::ExceptionInvalidParam ();
 	}
@@ -663,6 +684,7 @@ int WriterTER::CalcWidthByteCount (int width) const
 
 void WriterTER::WriteDestFile ()
 {
+
 	if (m_pSourceNoiseMap == NULL) {
 		throw noise::ExceptionInvalidParam ();
 	}
@@ -778,6 +800,7 @@ NoiseMapBuilderCylinder::NoiseMapBuilderCylinder ():
 
 void NoiseMapBuilderCylinder::Build ()
 {
+
 	if ( m_upperAngleBound <= m_lowerAngleBound
 		 || m_upperHeightBound <= m_lowerHeightBound
 		 || m_destWidth <= 0
@@ -832,6 +855,7 @@ NoiseMapBuilderPlane::NoiseMapBuilderPlane ():
 
 void NoiseMapBuilderPlane::Build ()
 {
+
 	if ( m_upperXBound <= m_lowerXBound
 		 || m_upperZBound <= m_lowerZBound
 		 || m_destWidth <= 0
@@ -899,6 +923,7 @@ NoiseMapBuilderSphere::NoiseMapBuilderSphere ():
 
 void NoiseMapBuilderSphere::Build ()
 {
+
 	if ( m_eastLonBound <= m_westLonBound
 		 || m_northLatBound <= m_southLatBound
 		 || m_destWidth <= 0
@@ -987,6 +1012,7 @@ void RendererImage::BuildTerrainGradient ()
 }
 
 Color RendererImage::CalcDestColor (const Color& sourceColor,
+
 									const Color& backgroundColor, double lightValue) const
 {
 	double sourceRed   = (double)sourceColor.red   / 255.0;
@@ -1070,6 +1096,7 @@ void RendererImage::ClearGradient ()
 
 void RendererImage::Render ()
 {
+
 	if ( m_pSourceNoiseMap == NULL
 		 || m_pDestImage == NULL
 		 || m_pSourceNoiseMap->GetWidth  () <= 0
@@ -1240,6 +1267,7 @@ Color RendererNormalMap::CalcNormalColor (double nc, double nr, double nu,
 
 void RendererNormalMap::Render ()
 {
+
 	if ( m_pSourceNoiseMap == NULL
 		 || m_pDestImage == NULL
 		 || m_pSourceNoiseMap->GetWidth  () <= 0
@@ -1298,3 +1326,5 @@ void RendererNormalMap::Render ()
 		}
 	}
 }
+
+#pragma GCC diagnostic pop

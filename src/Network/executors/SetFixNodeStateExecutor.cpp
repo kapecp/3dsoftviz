@@ -2,6 +2,7 @@
 #include "Manager/Manager.h"
 #include "Network/Client.h"
 #include "Network/Server.h"
+#include "Data/Node.h"
 
 using namespace Network;
 

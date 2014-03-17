@@ -1,6 +1,10 @@
 #pragma once
 
-#include "Data/Graph.h"
+
+namespace Data
+{
+	class Graph;
+}
 
 class GraphMetrics
 {

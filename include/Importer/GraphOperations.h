@@ -1,7 +1,11 @@
 #ifndef Importer_GraphOperations_H
 #define Importer_GraphOperations_H
 //-----------------------------------------------------------------------------
-#include "Data/Graph.h"
+namespace Data
+{
+	class Graph;
+	class Type;
+}
 //-----------------------------------------------------------------------------
 
 namespace Importer {

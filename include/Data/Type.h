@@ -6,15 +6,12 @@
 #ifndef DATA_TYPE_DEF
 #define DATA_TYPE_DEF 1
 
-#include <string>
 #include <QString>
-#include <QTextStream>
+
 #include <QMap>
 
 #include <osg/ref_ptr>
 #include <osg/Texture2D>
-
-#include "Util/ApplicationConfig.h"
 
 namespace Data
 {
@@ -80,11 +77,9 @@ public:
 		*  \brief Returns human-readable string representing the Type
 		*  \return QString
 		*/
-	QString toString() const {
-		QString str;
-		QTextStream(&str) << "type id:" << id << " name:" << name << " meta:" << this->isMeta();
-		return str;
-	}
+
+	QString toString() const;
+
 
 
 	/**

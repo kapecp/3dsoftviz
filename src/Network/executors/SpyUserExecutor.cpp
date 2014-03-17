@@ -1,6 +1,7 @@
 #include "Network/executors/SpyUserExecutor.h"
 #include "Manager/Manager.h"
 #include "Network/Server.h"
+#include "Network/Client.h"
 
 using namespace Network;
 

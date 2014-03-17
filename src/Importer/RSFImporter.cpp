@@ -2,8 +2,14 @@
 #include "Importer/GraphOperations.h"
 #include "Importer/ReadNodesStore.h"
 
+#include "Data/Graph.h"
+#include "Data/Edge.h"
+
+#include <QTextStream>
+
 #include <string>
 #include <memory>
+
 namespace Importer {
 
 osg::ref_ptr<Data::Node> RSFImporter::getHyperEdge(

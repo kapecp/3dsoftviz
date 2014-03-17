@@ -5,21 +5,24 @@
 #ifndef Core_CORE_DEF
 #define Core_CORE_DEF 1
 
-#include <QMap>
-#include <QString>
 #include <QApplication>
-
-#include "Model/DB.h"
-#include "Data/Graph.h"
-#include "Layout/FRAlgorithm.h"
-#include "Layout/LayoutThread.h"
 #include "QOSG/CoreWindow.h"
-#include "Viewer/CoreGraph.h"
-#include "QOSG/MessageWindows.h"
+namespace Vwr
+{
+class CoreGraph;
+}
+
+namespace Layout
+{
+class LayoutThread;
+class FRAlgorithm;
+}
 
 namespace QOSG
 {
+
 class CoreWindow;
+class MessageWindows;
 }
 
 namespace AppCore
@@ -69,11 +72,19 @@ public:
 		 */
 	Layout::LayoutThread * thr;
 
+
 	/**
 		  * \fn getCoreWindow
 		  * \brief Returns QOSG::CoreWindow
 		  **/
-	QOSG::CoreWindow* getCoreWindow(){return this->cw;}
+	QOSG::CoreWindow* getCoreWindow() const;
+
+	/**
+		  * \fn getCoreGraph
+		  * \brief Returns Vwr::CoreGraph
+		  **/
+	Vwr::CoreGraph* getCoreGraph() const;
+
 private:
 	/**
 		*  QOSG::CoreWindow * cw

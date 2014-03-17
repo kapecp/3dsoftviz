@@ -18,28 +18,39 @@
 #include <QAction>
 #include <QMenu>
 #include <QMenuBar>
-#include <QStatusBar>
-#include <QTextEdit>
 #include <QtGui>
 #include <QLineEdit>
-
-#include "Network/Server.h"
-#include "Network/Client.h"
-
-#include "QOSG/OptionsWindow.h"
-#include "QOSG/LoadGraphWindow.h"
-#include "Viewer/CoreGraph.h"
-#include "QOSG/CheckBoxList.h"
-#include "QOSG/ViewerQT.h"
-#include "Layout/LayoutThread.h"
-#include "Manager/Manager.h"
-#include "QOSG/qtcolorpicker.h"
 
 #include "Layout/ShapeGetter.h"
 #include "Layout/RestrictionRemovalHandler.h"
 #include "Layout/RestrictionRemovalHandler_RestrictionNodesRemover.h"
 #include "Layout/ShapeGetter_Circle_ByThreeNodes.h"
 #include "Layout/ShapeGetter_SpherePlane_ByThreeNodes.h"
+//#include "Viewer/CameraManipulator.h"
+
+
+namespace Layout
+{
+class LayoutThread;
+}
+
+namespace Vwr
+{
+class CoreGraph;
+class CameraManipulator;
+}
+
+namespace QOSG
+{
+
+class ViewerQT;
+}
+
+namespace Network
+{
+class Client;
+//class Network;
+}
 
 namespace QOSG
 {
@@ -76,7 +87,7 @@ public slots:
 
 	/**
 				*  \fn public  saveLayoutToDB
-				*  \brief Save layout of current graph to database
+				*  \brief Save a current layout of current graph to database
 				*/
 	void saveLayoutToDB();
 
@@ -275,7 +286,6 @@ public slots:
 				*/
 	bool add_EdgeClick();
 
-
 	/**
 				*  \fn public  add_NodeClick
 				*  \brief create new Node in GUI
@@ -291,7 +301,9 @@ public slots:
 	void start_server();
 	void start_client();
 	void send_message();
+#ifdef OPENCV_FOUND
 	void create_facewindow();
+#endif
 
 	void toggleSpyWatch();
 	void toggleAttention();
@@ -505,9 +517,6 @@ private:
 		*/
 	QPushButton * add_Edge;
 
-
-
-
 	/**
 		*  QAction * create new Node
 		*  \brief Action for adding Node
@@ -521,6 +530,7 @@ private:
 	QPushButton * remove_all;
 
 	QPushButton * b_start_face;
+
 
 	/**
 		*  QAction * load
@@ -607,6 +617,12 @@ private:
 	void createCollaborationToolBar();
 
 	/**
+		*  \fn private  createAugmentedRealityToolBar
+		*  \brief Create Augmented Reality ToolBar
+		*/
+	void createAugmentedRealityToolBar();
+
+	/**
 		*  \fn private  createHorizontalFrame
 		*  \brief Crate frame with horizontal label
 		*  \return QFrame * created frame
@@ -675,7 +691,8 @@ public:
 		*/
 	Layout::LayoutThread * getLayoutThread() const { return layout; }
 	bool playing() { return isPlaying; }
-	Vwr::CameraManipulator * getCameraManipulator() { return viewerWidget->getCameraManipulator(); }
+	Vwr::CameraManipulator * getCameraManipulator();
+
 
 	/**
 		*  \fn inline public  setLayoutThread
@@ -710,6 +727,15 @@ public:
 			QSharedPointer<Layout::RestrictionRemovalHandler> removalHandler,
 			QLinkedList<osg::ref_ptr<Data::Node> > nodesOfShapeGettersToRestrict
 			);
+
+protected:
+
+	/**
+		 * @author Autor: David Durcak
+		 * @brief closeEvent Reimplement close event. Call destructor on OpenCVCore
+		 * @param event Close event
+		 */
+	void closeEvent(QCloseEvent *event);
 
 private:
 

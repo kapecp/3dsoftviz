@@ -1,5 +1,9 @@
 #include "Util/ApplicationConfig.h"
 
+#include "OpenThreads/Mutex"
+
+#include <QFile>
+
 Util::ApplicationConfig * Util::ApplicationConfig::_instance;
 OpenThreads::Mutex Util::ApplicationConfig::_mutex;
 

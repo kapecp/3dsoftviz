@@ -5,24 +5,18 @@
 #ifndef LAYOUT_FRALGORITHM_DEF
 #define LAYOUT_FRALGORITHM_DEF 1
 
-#include <stdio.h>
-#include <iostream>
-#include <sstream>
-#include <string.h>
+
 #include <osg/Vec3f>
-#include <QMap>
-#include <math.h>
-#include <ctime>
+
 #include <QMutex>
 #include <QThread>
-#include <QSharedPointer>
 
-#include "Viewer/DataHelper.h"
-#include "Data/Edge.h"
-#include "Data/Node.h"
-#include "Data/Type.h"
-#include "Data/Graph.h"
-#include "Util/ApplicationConfig.h"
+namespace Data
+{
+	class Graph;
+	class Node;
+	class Edge;
+}
 
 namespace Layout
 {
@@ -60,7 +54,8 @@ public:
 		*  \param       animationSpeed
 		*  \param       useMaxDistance
 		*/
-	void SetParameters(float sizeFactor,float flexibility,int animationSpeed,bool useMaxDistance);
+
+	void SetParameters(float sizeFactor,float flexibility,bool useMaxDistance);
 
 	/**
 		*  \fn public  Randomize
@@ -73,7 +68,8 @@ public:
 		*  \brief Sets multiplicity of forces
 		*  \param      val  multipliciter of forces
 		*/
-	void SetAlphaValue(float val) {ALPHA = val; };
+
+	void SetAlphaValue(float val) {ALPHA = val; }
 
 	/**
 		*  \fn public  PauseAlg

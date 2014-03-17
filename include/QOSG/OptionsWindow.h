@@ -10,24 +10,24 @@
 #define QOSG_OPTIONS_WINDOW_H 1
 
 #include <QDialog>
-#include "Util/ApplicationConfig.h"
-#include "QOSG/TreeModel.h"
-#include "QOSG/TreeItem.h"
+
 #include <QModelIndex>
 #include <QtGui>
-
-#include "Viewer/CoreGraph.h"
-#include "QOSG/ViewerQT.h"
-#include "Manager/Manager.h"
 
 class QListWidget;
 class QListWidgetItem;
 class QStackedWidget;
 
+namespace Vwr
+{
+	class CoreGraph;
+}
+
 namespace QOSG
 {
 class TreeItem;
 class TreeModel;
+class ViewerQT;
 
 /**
 	*  \class OptionsWindow

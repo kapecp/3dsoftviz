@@ -1,4 +1,5 @@
 #include "Importer/GXLImporter.h"
+#include "Data/Graph.h"
 //-----------------------------------------------------------------------------
 
 namespace Importer {

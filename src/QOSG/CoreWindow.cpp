@@ -1,18 +1,49 @@
 #include "QOSG/CoreWindow.h"
-#include "Util/Cleaner.h"
 
+#include "QOSG/ViewerQT.h"
+#include "QOSG/OptionsWindow.h"
+#include "QOSG/LoadGraphWindow.h"
+#include "QOSG/MessageWindows.h"
+#include "QOSG/qtcolorpicker.h"
+
+#include "Network/Server.h"
+#include "Network/Client.h"
+
+#include "Viewer/CoreGraph.h"
+#include "Viewer/CameraManipulator.h"
+#include "Viewer/PickHandler.h"
+
+#include "Manager/Manager.h"
+
+#include "Model/DB.h"
+#include "Model/GraphLayoutDAO.h"
+
+#include "Data/GraphLayout.h"
+
+#include "Layout/LayoutThread.h"
 #include "Layout/ShapeGetter_CylinderSurface_ByCamera.h"
 #include "Layout/ShapeGetter_SphereSurface_ByTwoNodes.h"
 #include "Layout/ShapeGetter_Sphere_ByTwoNodes.h"
 #include "Layout/ShapeGetter_ConeSurface_ByCamera.h"
 #include "Layout/ShapeGetter_Plane_ByThreeNodes.h"
-#include "Layout/RestrictionRemovalHandler_RestrictionNodesRemover.h"
 
 #include "Importer/GraphOperations.h"
 
+#ifdef OPENCV_FOUND
 #include "OpenCV/OpenCVCore.h"
+#endif
+
+#include "Util/Cleaner.h"
+
+#include "Core/Core.h"
+
+#include "Data/GraphSpanningTree.h"
+
+#include <iostream>
+#include "QDebug"
 
 using namespace QOSG;
+using namespace std;
 
 CoreWindow::CoreWindow(QWidget *parent, Vwr::CoreGraph* coreGraph, QApplication* app, Layout::LayoutThread * thread ) : QMainWindow(parent)
 {
@@ -30,6 +61,11 @@ CoreWindow::CoreWindow(QWidget *parent, Vwr::CoreGraph* coreGraph, QApplication*
 	createLeftToolBar();
 	createRightToolBar();
 	createCollaborationToolBar();
+#ifdef OPENCV_FOUND
+	createAugmentedRealityToolBar();
+#endif
+
+
 
 	viewerWidget = new ViewerQT(this, 0, 0, 0, coreGraph);
 	viewerWidget->setSceneData(coreGraph->getScene());
@@ -279,10 +315,6 @@ void CoreWindow::createActions()
 	b_send_message->setText("Send");
 	connect(b_send_message, SIGNAL(clicked()), this, SLOT(send_message()));
 
-	b_start_face = new QPushButton();
-	b_start_face->setText("Face Recognition");
-	connect(b_start_face, SIGNAL(clicked()), this, SLOT(create_facewindow()));
-
 	chb_center = new QCheckBox("&Center");
 	connect(chb_center, SIGNAL(clicked()), this, SLOT(toggleSpyWatch()));
 
@@ -476,6 +508,22 @@ void CoreWindow::createRightToolBar() {
 	toolBar->setMovable(true);
 }
 
+void CoreWindow::createAugmentedRealityToolBar() {
+	toolBar = new QToolBar( tr("Augmented Reality"),this);
+
+	QLabel *label = new QLabel( tr("Face & Marker detection"));
+	toolBar->addWidget( label );
+
+	b_start_face = new QPushButton();
+	b_start_face->setText("Start camera");
+	toolBar->addWidget( b_start_face );
+	connect(b_start_face, SIGNAL(clicked()), this, SLOT(create_facewindow()));
+
+	addToolBar(Qt::TopToolBarArea,toolBar);
+	toolBar->setMovable(true);
+}
+
+
 void CoreWindow::createCollaborationToolBar() {
 	toolBar = new QToolBar("Collaboration",this);
 
@@ -512,10 +560,6 @@ void CoreWindow::createCollaborationToolBar() {
 	frame->layout()->setAlignment(Qt::AlignHCenter);
 	frame->layout()->addWidget(sl_avatarScale);
 	toolBar->addWidget(frame);
-#ifdef OPENCV_FOUND
-	toolBar->addSeparator();
-	toolBar->addWidget(b_start_face);
-#endif
 
 	addToolBar(Qt::RightToolBarArea,toolBar);
 	toolBar->setMaximumHeight(400);
@@ -567,18 +611,19 @@ void CoreWindow::saveGraphToDB()
 void CoreWindow::saveLayoutToDB()
 {
 	bool ok;
+	// get name for layout
 	QString layout_name = QInputDialog::getText(this, tr("New layout name"),
 												tr("Layout name:"),
 												QLineEdit::Normal, "", &ok);
 
+
+	// save layout
 	if (ok && !layout_name.isEmpty()) {
 		Manager::GraphManager::getInstance()->saveActiveLayoutToDB( layout_name );
 
 	} else {
 		qDebug() << "[QOSG::CoreWindow::saveLayoutToDB()] Input dialog canceled";
 	}
-
-
 }
 
 void CoreWindow::sqlQuery()
@@ -610,6 +655,7 @@ void CoreWindow::noSelectClicked(bool checked)
 	singleSelect->setChecked(false);
 	multiSelect->setChecked(false);
 	center->setChecked(false);
+	noSelect->setChecked(checked);
 }
 
 void CoreWindow::singleSelectClicked(bool checked)
@@ -618,6 +664,7 @@ void CoreWindow::singleSelectClicked(bool checked)
 	noSelect->setChecked(false);
 	multiSelect->setChecked(false);
 	center->setChecked(false);
+	singleSelect->setChecked(checked);
 }
 
 void CoreWindow::multiSelectClicked(bool checked)
@@ -626,6 +673,7 @@ void CoreWindow::multiSelectClicked(bool checked)
 	noSelect->setChecked(false);
 	singleSelect->setChecked(false);
 	center->setChecked(false);
+	multiSelect->setChecked(checked);
 }
 
 void CoreWindow::centerView(bool checked)
@@ -633,6 +681,7 @@ void CoreWindow::centerView(bool checked)
 	noSelect->setChecked(false);
 	singleSelect->setChecked(false);
 	multiSelect->setChecked(false);
+	center->setChecked(checked);
 
 	viewerWidget->getCameraManipulator()->setCenter(viewerWidget->getPickHandler()->getSelectionCenter(false));
 }
@@ -642,8 +691,8 @@ void CoreWindow::addMetaNode()
 {
 	Data::Graph * currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
 
-	if (currentGraph != NULL)
-	{
+	if (currentGraph != NULL) {
+
 		osg::Vec3 position = viewerWidget->getPickHandler()->getSelectionCenter(true);
 
 		QString metaNodeName = "metaNode";
@@ -841,7 +890,7 @@ void CoreWindow::labelOnOff(bool)
 
 void CoreWindow::sliderValueChanged(int value)
 {
-	layout->setAlphaValue((float)value * 0.001);
+	layout->setAlphaValue((float)value * 0.001f);
 }
 
 
@@ -866,15 +915,19 @@ void CoreWindow::nodeTypeComboBoxChanged(int index)
 		viewerWidget->getPickHandler()->setSelectionType(Vwr::PickHandler::SelectionType::EDGE);
 		label->setChecked(edgeLabelsVisible);
 		break;
+	default:
+		qDebug() << "CoreWindow:nodeTypeComboBoxChanged do not suported index";
+		break;
+
 	}
 }
 
 void CoreWindow::applyColorClick()
 {
-	float alpha = color.alphaF();
-	float red = color.redF();
-	float green = color.greenF();
-	float blue = color.blueF();
+	float alpha = (float)color.alphaF();
+	float red = (float)color.redF();
+	float green = (float)color.greenF();
+	float blue = (float)color.blueF();
 
 	QLinkedList<osg::ref_ptr<Data::Node> > * selectedNodes = viewerWidget->getPickHandler()->getSelectedNodes();
 	QLinkedList<osg::ref_ptr<Data::Node> >::const_iterator ni = selectedNodes->constBegin();
@@ -897,7 +950,8 @@ void CoreWindow::applyColorClick()
 	while (ei != selectedEdges->constEnd())
 	{
 		//ak je edge skryta, nebudeme jej menit farbu
-		if((*ei)->getScale() != 0)
+		//(*ei)->getScale() != 0
+		if(!(*ei)->getIsInvisible())
 		{
 
 			if (client->isConnected()) {
@@ -1341,10 +1395,10 @@ void CoreWindow::setRestriction_ConeTree (){
 
 		}
 
-		osg::Vec3 position = rootPosition + osg::Vec3f (0, 0, (-50)*depth);
+		osg::Vec3 position = rootPosition + osg::Vec3f (0.f, 0.f, (-50.f) * (float)depth);
 		osg::Vec3 positionNode1 = position;
-		osg::Vec3 positionNode2 = position + osg::Vec3f (10, 0, 0);
-		osg::Vec3 positionNode3 = position + osg::Vec3f (0, 10, 0);
+		osg::Vec3 positionNode2 = position + osg::Vec3f (10.f, 0.f, 0.f);
+		osg::Vec3 positionNode3 = position + osg::Vec3f (0.f, 10.f, 0.f);
 
 		Layout::RestrictionRemovalHandler_RestrictionNodesRemover::NodesListType restrictionNodes;
 
@@ -1533,8 +1587,9 @@ bool CoreWindow::add_EdgeClick()
 	}
 	if (isPlaying)
 		layout->play();
-	QString nodename1 = QString(node1->getName());
-	QString nodename2 = QString(node2->getName());
+
+	//QString nodename1 = QString(node1->getName());
+	//QString nodename2 = QString(node2->getName());
 	return true;
 	//context.getGraph ().addEdge (QString (""), node1[1], node1[2], edgeType, true);
 
@@ -1659,10 +1714,14 @@ void CoreWindow::send_message()
 	client->send_message(le_message->text());
 }
 
+
 void CoreWindow::create_facewindow()
 {
-	OpenCV::OpenCVCore::getInstance(NULL)->faceRecognition();
+#ifdef OPENCV_FOUND
+	OpenCV::OpenCVCore::getInstance(NULL, this)->faceRecognition();
+#endif
 }
+
 
 void CoreWindow::toggleSpyWatch()
 {
@@ -1783,4 +1842,18 @@ void CoreWindow::toggleAttention() {
 void CoreWindow::setAvatarScale(int scale) {
 	client->setAvatarScale(scale);
 	Network::Server::getInstance()->setAvatarScale(scale);
+}
+
+Vwr::CameraManipulator* CoreWindow::getCameraManipulator() {
+	return viewerWidget->getCameraManipulator();
+}
+
+
+void CoreWindow::closeEvent(QCloseEvent *event)
+{
+
+#ifdef OPENCV_FOUND
+	delete OpenCV::OpenCVCore::getInstance(NULL, this);
+#endif
+	//QApplication::closeAllWindows();   // ????
 }
