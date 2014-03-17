@@ -10,19 +10,37 @@ Model::DB::DB()
 	//vytvorenie DB connection
 	this->appConf = Util::ApplicationConfig::get();
 
-	DB::openConnection(
-				appConf->getValue("Model.DB.HostName"),
-				appConf->getValue("Model.DB.DbName"),
-				appConf->getValue("Model.DB.UserName"),
-				appConf->getValue("Model.DB.Pass"),
-				appConf->getBoolValue("Model.DB.RequireSSL", true)
-				);
+	this->mConneCreationTried = false;
+	//this->createConnection();
 }
 
 Model::DB::~DB()
 {
 	//ukoncenie DB connection v destruktore
 	DB::closeConnection();
+}
+
+bool Model::DB::createConnection()
+{
+	qDebug() << "DB::Creation connection called";
+	if( !mConneCreationTried ){
+		qDebug() << "DB::Creation connection called firsttime";
+		DB::openConnection(
+					appConf->getValue("Model.DB.HostName"),
+					appConf->getValue("Model.DB.DbName"),
+					appConf->getValue("Model.DB.UserName"),
+					appConf->getValue("Model.DB.Pass"),
+					appConf->getBoolValue("Model.DB.RequireSSL", true)
+					);
+		this->mConneCreationTried = true;
+	}
+	return true;
+}
+
+QSqlDatabase* Model::DB::tmpGetConn()
+{
+	this->createConnection();
+	return &conn;
 }
 
 void Model::DB::closeConnection()

@@ -41,7 +41,8 @@ private:
 	Util::ApplicationConfig * appConf;
 public:
 
-	QSqlDatabase* tmpGetConn() { return &conn; }
+	bool createConnection();
+	QSqlDatabase* tmpGetConn();
 
 	/**
 		*  \fn public constructor  DB
@@ -72,6 +73,10 @@ public:
 		* \brief Closes current database connection
 		*/
 	void closeConnection();
+
+private:
+	bool mConneCreationTried;
+
 };
 }
 

@@ -27,7 +27,7 @@ Manager::GraphManager::GraphManager()
 	this->activeGraph = NULL;
 	this->db = new Model::DB();
 	bool error;
-	this->graphs = Model::GraphDAO::getGraphs(db->tmpGetConn(), &error);
+	//????   this->graphs = Model::GraphDAO::getGraphs(db->tmpGetConn(), &error);
 
 	//runTestCase(1);
 }
