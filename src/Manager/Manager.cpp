@@ -162,17 +162,24 @@ Data::Graph* Manager::GraphManager::loadGraph(QString filepath)
 
 
 void Manager::GraphManager::saveActiveGraphToDB(){
+
+	if( this->getActiveGraph() == NULL ) {
+		qDebug() << "[Manager::GraphManager::saveActiveGraphToDB()] There is no active graph loaded";
+		return;
+	}
+
 	// test ci graf je uz v DB
-	if(this->getActiveGraph()->isInDB()) {
+	if( this->getActiveGraph()->isInDB() ) {
 		qDebug() << "[Manager::GraphManager::saveActiveGraphToDB] Graph is in DB allready";
 		return;
 	}
 
-	// vytvorenie prazdneho grafu v databaze
-	Model::GraphDAO::addGraph(this->getActiveGraph(), this->db->tmpGetConn());
-
 	// ulozenie grafu to do databazy
-	if(db->tmpGetConn() != NULL && db->tmpGetConn()->open()) {
+	if( db->tmpGetConn() != NULL  &&  db->tmpGetConn()->open() ) {
+
+		// vytvorenie prazdneho grafu v databaze
+		Model::GraphDAO::addGraph(this->getActiveGraph(), this->db->tmpGetConn());
+
 		//ulozime obycajne uzly a hrany
 		this->activeGraph->saveGraphToDB(db->tmpGetConn(), this->activeGraph);
 		//nastavime meno grafu podla nazvu suboru
@@ -182,7 +189,11 @@ void Manager::GraphManager::saveActiveGraphToDB(){
 		this->activeGraph->selectLayout(layout);
 		//este ulozit meta uzly, hrany a pozicie vsetkych uzlov
 		this->activeGraph->saveLayoutToDB(db->tmpGetConn(), this->activeGraph);
+
+	} else {
+		qDebug() << "[Manager::GraphManager::saveActiveGraphToDB] Connection to DB not opened";
 	}
+
 }
 
 Data::Graph* Manager::GraphManager::createNewGraph(QString name)

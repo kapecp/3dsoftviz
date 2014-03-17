@@ -560,20 +560,7 @@ void CoreWindow::showLoadGraph()
 
 void CoreWindow::saveGraphToDB()
 {
-	Data::Graph * currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
-
-	if(currentGraph != NULL) {
-		QSqlDatabase * conn = Manager::GraphManager::getInstance()->getDB()->tmpGetConn();
-
-		if(conn != NULL && conn->open()) {
-			Manager::GraphManager::getInstance()->saveActiveGraphToDB();
-
-		} else {
-			qDebug() << "[QOSG::CoreWindow::saveGraphToDB] Connection to DB not opened";
-		}
-	} else {
-		qDebug() << "[QOSG::CoreWindow::saveGraphToDB] There is no active graph loaded";
-	}
+	Manager::GraphManager::getInstance()->saveActiveGraphToDB();
 }
 
 
