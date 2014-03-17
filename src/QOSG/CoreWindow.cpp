@@ -566,43 +566,19 @@ void CoreWindow::saveGraphToDB()
 
 void CoreWindow::saveLayoutToDB()
 {
-	Data::Graph * currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
+	bool ok;
+	QString layout_name = QInputDialog::getText(this, tr("New layout name"),
+												tr("Layout name:"),
+												QLineEdit::Normal, "", &ok);
 
-	if(currentGraph != NULL)
-	{
-		// test ci graf je uz v DB
-		if( currentGraph->isInDB() == false ) {
-			qDebug() << "[QOSG::CoreWindow::saveLayoutToDB] Graph is not in DB yet ";
-			return;
-		}
+	if (ok && !layout_name.isEmpty()) {
+		Manager::GraphManager::getInstance()->saveActiveLayoutToDB( layout_name );
 
-		QSqlDatabase * conn = Manager::GraphManager::getInstance()->getDB()->tmpGetConn();
-		bool ok;
-
-		if(conn != NULL && conn->open()) {
-			QString layout_name = QInputDialog::getText(this, tr("New layout name"), tr("Layout name:"), QLineEdit::Normal, "", &ok);
-
-			if (ok && !layout_name.isEmpty())
-			{
-				Data::GraphLayout* layout = Model::GraphLayoutDAO::addLayout(layout_name, currentGraph, conn);
-				currentGraph->selectLayout(layout);
-
-				currentGraph->saveLayoutToDB(conn, currentGraph);
-			}
-			else
-			{
-				qDebug() << "[QOSG::CoreWindow::saveLayoutToDB] Input dialog canceled";
-			}
-		}
-		else
-		{
-			qDebug() << "[QOSG::CoreWindow::saveLayoutToDB] Connection to DB not opened";
-		}
+	} else {
+		qDebug() << "[QOSG::CoreWindow::saveLayoutToDB()] Input dialog canceled";
 	}
-	else
-	{
-		qDebug() << "[QOSG::CoreWindow::saveLayoutToDB] There is no active graph loaded";
-	}
+
+
 }
 
 void CoreWindow::sqlQuery()

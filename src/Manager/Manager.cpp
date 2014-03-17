@@ -196,6 +196,34 @@ void Manager::GraphManager::saveActiveGraphToDB(){
 
 }
 
+void Manager::GraphManager::saveActiveLayoutToDB(const QString layoutName){
+
+	if( this->getActiveGraph() == NULL ) {
+		qDebug() << "[Manager::GraphManager::saveActiveLayoutToDB()] There is no active graph loaded";
+		return;
+	}
+
+	// test ci graf je uz v DB
+	if( this->getActiveGraph()->isInDB() == false ) {
+		qDebug() << "[Manager::GraphManager::saveActiveLayoutToDB()] Graph is not in DB yet ";
+		return;
+	}
+
+	if( db->tmpGetConn() != NULL  &&  db->tmpGetConn()->open()) {
+
+		Data::GraphLayout* layout = Model::GraphLayoutDAO::addLayout( layoutName, this->getActiveGraph(), db->tmpGetConn());
+
+		this->getActiveGraph()->selectLayout(layout);
+		this->getActiveGraph()->saveLayoutToDB(db->tmpGetConn(), this->getActiveGraph());
+
+	} else {
+		qDebug() << "[Manager::GraphManager::saveActiveLayoutToDB()] Connection to DB not opened";
+	}
+
+
+}
+
+
 Data::Graph* Manager::GraphManager::createNewGraph(QString name)
 {
 	bool ok = true;

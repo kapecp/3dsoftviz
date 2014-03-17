@@ -81,6 +81,12 @@ namespace Manager
 			void saveActiveGraphToDB();
 
 			/**
+			 * \fn saveActiveLayoutToDB
+			 * \brief Saves active layout to DB.
+			 */
+			void saveActiveLayoutToDB( const QString layoutName);
+
+			/**
 			 * \fn exportGraph
 			 * \brief Exports graph into file (not yet implemented).
 			 */
