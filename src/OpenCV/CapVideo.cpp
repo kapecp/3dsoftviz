@@ -1,6 +1,9 @@
 #include "OpenCV/CapVideo.h"
 #include "OpenCV/CamSelectCore.h"
 
+#include <QDebug>
+
+
 using namespace OpenCV;
 
 OpenCV::CapVideo::CapVideo(int device_id, int width, int height)
@@ -42,6 +45,8 @@ OpenCV::CapVideo::~CapVideo()
 		this->width=0;
 		this->height=0;
 	}
+	qDebug() << "CapVideo: dectructor: release capture";
+	//cvReleaseCapture( &this->capture ); // ????
 }
 
 int OpenCV::CapVideo::getWidth(){
@@ -56,6 +61,10 @@ int OpenCV::CapVideo::getDeviceId(){
 bool OpenCV::CapVideo::isOpened(){
 	return this->capture2.isOpened();
 }
+
+
+
+
 
 cv::Mat OpenCV::CapVideo::queryFrame()
 {

@@ -166,12 +166,21 @@ public:
 public slots:
 	/**
 		 * @author Autor: David Durcak
-		 * @brief Set _rotationHead quaternion to rotate camera according head
+		 * @brief setRotationHead Set _rotationHead quaternion to rotate camera according head
+		 * ! distance is not implemented yet
+
 		 * @param x % distance from middle on horizontal axis
 		 * @param y % distance from middle on vertical axis
 		 * @param distance face from camera
 		 */
 	void setRotationHead(float x, float y, float distance);
+
+	/**
+		 * @author Autor: David Durcak
+		 * @brief updateArucoGrafPosition Update _centerArucoTrans vector to change graph position according by position of marker
+		 * @param pos Vector that disribe posiotion of marker
+		 */
+	void updateArucoGraphPosition( osg::Vec3d pos );
 
 
 protected:
@@ -261,6 +270,12 @@ protected:
 		*  \brief camera center
 		*/
 	osg::Vec3d   _center;
+
+	/**
+		*  osg::Vec3d _centerArucoTrans
+		*  \brief transformation of marker, updated by updateArucoGrafPosition()
+		*/
+	osg::Vec3d   _centerArucoTrans;
 
 	/**
 		*  osg::Quat _rotation

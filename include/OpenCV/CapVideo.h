@@ -32,6 +32,7 @@ public:
 		 */
 	void setCaptureProperties(int width, int height);
 
+
 	/**
 		 * @author Autor: Marek Jakab
 		 * @brief queryFrame Get image from camera device
