@@ -161,7 +161,8 @@ Data::Graph* Manager::GraphManager::loadGraph(QString filepath)
 }
 
 
-void Manager::GraphManager::saveActiveGraphToDB(){
+void Manager::GraphManager::saveActiveGraphToDB()
+{
 
 	if( this->getActiveGraph() == NULL ) {
 		qDebug() << "[Manager::GraphManager::saveActiveGraphToDB()] There is no active graph loaded";
@@ -196,20 +197,20 @@ void Manager::GraphManager::saveActiveGraphToDB(){
 
 }
 
-void Manager::GraphManager::saveActiveLayoutToDB(const QString layoutName){
+void Manager::GraphManager::saveActiveLayoutToDB(const QString layoutName)
+{
 
 	if( this->getActiveGraph() == NULL ) {
 		qDebug() << "[Manager::GraphManager::saveActiveLayoutToDB()] There is no active graph loaded";
 		return;
 	}
 
-	// test ci graf je uz v DB
-	if( this->getActiveGraph()->isInDB() == false ) {
-		qDebug() << "[Manager::GraphManager::saveActiveLayoutToDB()] Graph is not in DB yet ";
-		return;
-	}
-
 	if( db->tmpGetConn() != NULL  &&  db->tmpGetConn()->open()) {
+
+		// ulozenie grafu do DB ak este nie je
+		if( this->getActiveGraph()->isInDB() == false ) {
+			this->saveActiveGraphToDB();
+		}
 
 		Data::GraphLayout* layout = Model::GraphLayoutDAO::addLayout( layoutName, this->getActiveGraph(), db->tmpGetConn());
 
