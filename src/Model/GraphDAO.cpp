@@ -172,7 +172,7 @@ Data::Graph* Model::GraphDAO::getGraph(QSqlDatabase* conn, bool* error2, qlonglo
 			//vsetky uzly nastavime fixed, aby sme zachovali layout
 			//hodnota, ktora je ulozena v DB - premenna isFixed
 
-			newNode->setFixed(isFixed);
+			newNode->setFixed( true );
 
 			if(nodeColors.contains(nodeID))
 			{
