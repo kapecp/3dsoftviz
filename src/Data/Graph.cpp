@@ -218,7 +218,7 @@ bool Data::Graph::saveLayoutToDB(QSqlDatabase* conn, Data::Graph * graph)
 Data::GraphLayout* Data::Graph::addLayout(QString layout_name)
 {
 	//Vytvarame novy layout pre graf
-	bool error;
+
 	/*if(this->layouts.isEmpty()) { //na zaciatok ak ziadne ine layouty nemame, sa pokusime nacitat layouty z DB
 		this->layouts = this->getLayouts(&error);
 	}*/ // nie je to potrebne a zdrziava to a pouzivatel to nemusi chciet, na to je funkcionalita v menu pre loadovanie grafu z databazy pri starte.
