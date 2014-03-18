@@ -11,8 +11,8 @@
 
 #include <opencv2/core/core.hpp>
 
-Q_DECLARE_METATYPE( osg::Vec3d );
-Q_DECLARE_METATYPE( osg::Quat );
+Q_DECLARE_METATYPE( osg::Vec3d )
+Q_DECLARE_METATYPE( osg::Quat )
 
 namespace ArucoModul {
 
@@ -22,7 +22,7 @@ namespace ArucoModul {
 * @date 18.02.2014
 */
 class ArucoThread : public QThread
-	{
+{
 	Q_OBJECT
 
 public:
@@ -176,6 +176,6 @@ private:
 	double		mRatioCamCoef;		// correct aruco ration not centering y-axis
 
 
-	};
+};
 } // ArucoModul namespace
 #endif //ARUCOTHREAD_H
