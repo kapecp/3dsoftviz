@@ -51,6 +51,7 @@ void OpenCV::FaceRecognizer::annotateFaces(Mat frame)
 				face_i=this->rect;
 				isMovement=false;
 			} else {
+				//TODO conversion to INT, no effective
 				face_i.x=(face_i.x-face_i.width*0.1+this->rect.x);
 				if (face_i.x<0) face_i.x=0;
 				if (face_i.x>frame.cols-1) face_i.x=frame.cols-1;

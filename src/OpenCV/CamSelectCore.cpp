@@ -16,7 +16,7 @@ OpenCV::CamSelectCore::CamSelectCore()
 }
 OpenCV::CamSelectCore::~CamSelectCore()
 {
-	for (int i=0;i<camlist.size();i++){
+	for (unsigned int i=0;i<camlist.size();i++){
 		delete camlist[i];
 	}
 }
@@ -25,7 +25,7 @@ OpenCV::CapVideo *OpenCV::CamSelectCore::selectCamera()
 {
 	// Vytvorenie stringu pre vypis dat o kamere
 	QString data;
-	for(int i=0; i < camlist.size(); i++){
+	for(unsigned int i=0; i < camlist.size(); i++){
 		data.append(QString::number(camlist[i]->getDeviceId()));
 		data.append(",");
 		if (camlist[i]->isOpened()){
