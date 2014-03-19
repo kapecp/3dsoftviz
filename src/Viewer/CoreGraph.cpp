@@ -15,6 +15,8 @@
 
 #include <osgUtil/Optimizer>
 #include <osg/Depth>
+#include <osg/PolygonMode>
+#include <osg/LineWidth>
 #include <osgFX/Outline>
 #include <math.h>
 
@@ -182,18 +184,215 @@ osg::ref_ptr<osg::Group> CoreGraph::test2() {
         int nodesCount = cluster->getClusteredNodesCount();
 
         if (nodesCount > clustersRangeMin && nodesCount <= clusters1Value) {
-            testGroup->addChild(getSphere(midPoint, getRadius(cluster->getALLClusteredNodes(), midPoint), cluster->getColor()));
+            testGroup->addChild(getCylinder(midPoint, getRadius(cluster->getALLClusteredNodes(), midPoint), cluster->getColor()));
         } else if (nodesCount > clusters1Value && nodesCount <= clustersMiddleValue) {
             testGroup->addChild(getCube(midPoint, getRadius(cluster->getALLClusteredNodes(), midPoint), cluster->getColor()));
         } else if (nodesCount > clustersMiddleValue && nodesCount <= clusters2Value) {
-            testGroup->addChild(getCone(midPoint, getRadius(cluster->getALLClusteredNodes(), midPoint), cluster->getColor()));
+            testGroup->addChild(dodecahedron(midPoint, getRadius(cluster->getALLClusteredNodes(), midPoint), cluster->getColor()));
         } else {
-            testGroup->addChild(getCylinder(midPoint, getRadius(cluster->getALLClusteredNodes(), midPoint), cluster->getColor()));
+            testGroup->addChild(getSphere(midPoint, getRadius(cluster->getALLClusteredNodes(), midPoint), cluster->getColor()));
         }
     }
 
     }
     return testGroup;
+}
+
+osg::ref_ptr<osg::AutoTransform> CoreGraph::dodecahedron(osg::Vec3 position, float radius, osg::Vec4 color) {
+//    (±1, ±1, ±1)
+//    (0, ±1/φ, ±φ)
+//    (±1/φ, ±φ, 0)
+//    (±φ, 0, ±1/φ)
+//    where φ = (1 + √5) / 2 is the golden ratio (also written τ) ≈ 1.618.
+//    The edge length is 2/φ = √5 – 1. The containing sphere has a radius of √3.
+
+    osg::Vec3 midpoint = osg::Vec3(0,0,0);
+
+    double x = midpoint.x();
+    double y = midpoint.y();
+    double z = midpoint.z();
+
+    double i = 1;
+    double fi = (1 + sqrt(5)) / 2;
+    double fi_rev = 1/fi;
+
+    osg::Geode* dodecahedronGeode = new osg::Geode();
+    osg::Geometry* dodecahedronGeometry = new osg::Geometry();
+    dodecahedronGeode->addDrawable(dodecahedronGeometry);
+
+    osg::Vec3Array* dodecahedronVertices = new osg::Vec3Array;
+    // use http://en.wikipedia.org/wiki/File:Dodecahedron_vertices.png as reference
+    // orange - cube
+    dodecahedronVertices->push_back( osg::Vec3( x-i, y-i, z-i) ); //front left bot  0
+    dodecahedronVertices->push_back( osg::Vec3( x+i, y-i, z-i) ); //front right bot 1
+    dodecahedronVertices->push_back( osg::Vec3( x-i, y+i, z-i) ); //front left top  2
+    dodecahedronVertices->push_back( osg::Vec3( x+i, y+i, z-i) ); //front right top 3
+
+    dodecahedronVertices->push_back( osg::Vec3( x-i, y-i, z+i) ); //back left bot   4
+    dodecahedronVertices->push_back( osg::Vec3( x+i, y-i, z+i) ); //back right bot  5
+    dodecahedronVertices->push_back( osg::Vec3( x-i, y+i, z+i) ); //back left top   6
+    dodecahedronVertices->push_back( osg::Vec3( x+i, y+i, z+i) ); //back right top  7
+
+    // green - y-z plane
+    dodecahedronVertices->push_back( osg::Vec3( x, y+fi_rev, z-fi) ); //front top   8
+    dodecahedronVertices->push_back( osg::Vec3( x, y-fi_rev, z-fi) ); //front bot   9
+    dodecahedronVertices->push_back( osg::Vec3( x, y+fi_rev, z+fi) ); //back top    10
+    dodecahedronVertices->push_back( osg::Vec3( x, y-fi_rev, z+fi) ); //back bot    11
+
+    // blue - x-y plane
+    dodecahedronVertices->push_back( osg::Vec3( x-fi_rev, y-fi, z) ); //bot left    12
+    dodecahedronVertices->push_back( osg::Vec3( x+fi_rev, y-fi, z) ); //bot right   13
+    dodecahedronVertices->push_back( osg::Vec3( x-fi_rev, y+fi, z) ); //top left    14
+    dodecahedronVertices->push_back( osg::Vec3( x+fi_rev, y+fi, z) ); //top right   15
+
+    // pink - x-z plane
+    dodecahedronVertices->push_back( osg::Vec3( x-fi, y, z-fi_rev) ); //front left  16
+    dodecahedronVertices->push_back( osg::Vec3( x+fi, y, z-fi_rev) ); //front right 17
+    dodecahedronVertices->push_back( osg::Vec3( x-fi, y, z+fi_rev) ); //back left   18
+    dodecahedronVertices->push_back( osg::Vec3( x+fi, y, z+fi_rev) ); //back right  19
+
+    dodecahedronGeometry->setVertexArray( dodecahedronVertices );
+
+    osg::DrawElementsUInt* front =
+    new osg::DrawElementsUInt(osg::PrimitiveSet::POLYGON, 0);
+    front->push_back(8);
+    front->push_back(3);
+    front->push_back(17);
+    front->push_back(1);
+    front->push_back(9);
+    dodecahedronGeometry->addPrimitiveSet(front);
+
+    osg::DrawElementsUInt* front2 =
+    new osg::DrawElementsUInt(osg::PrimitiveSet::POLYGON, 0);
+    front2->push_back(14);
+    front2->push_back(15);
+    front2->push_back(3);
+    front2->push_back(8);
+    front2->push_back(2);
+    dodecahedronGeometry->addPrimitiveSet(front2);
+
+    osg::DrawElementsUInt* front3 =
+    new osg::DrawElementsUInt(osg::PrimitiveSet::POLYGON, 0);
+    front3->push_back(16);
+    front3->push_back(2);
+    front3->push_back(8);
+    front3->push_back(9);
+    front3->push_back(0);
+    dodecahedronGeometry->addPrimitiveSet(front3);
+
+    osg::DrawElementsUInt* front4 =
+    new osg::DrawElementsUInt(osg::PrimitiveSet::POLYGON, 0);
+    front4->push_back(3);
+    front4->push_back(15);
+    front4->push_back(7);
+    front4->push_back(19);
+    front4->push_back(17);
+    dodecahedronGeometry->addPrimitiveSet(front4);
+
+    osg::DrawElementsUInt* front5 =
+    new osg::DrawElementsUInt(osg::PrimitiveSet::POLYGON, 0);
+    front5->push_back(17);
+    front5->push_back(19);
+    front5->push_back(5);
+    front5->push_back(13);
+    front5->push_back(1);
+    dodecahedronGeometry->addPrimitiveSet(front5);
+
+    osg::DrawElementsUInt* front6 =
+    new osg::DrawElementsUInt(osg::PrimitiveSet::POLYGON, 0);
+    front6->push_back(12);
+    front6->push_back(13);
+    front6->push_back(1);
+    front6->push_back(9);
+    front6->push_back(0);
+    dodecahedronGeometry->addPrimitiveSet(front6);
+
+    osg::DrawElementsUInt* back1 =
+    new osg::DrawElementsUInt(osg::PrimitiveSet::POLYGON, 0);
+    back1->push_back(6);
+    back1->push_back(10);
+    back1->push_back(11);
+    back1->push_back(4);
+    back1->push_back(18);
+    dodecahedronGeometry->addPrimitiveSet(back1);
+
+    osg::DrawElementsUInt* back2 =
+    new osg::DrawElementsUInt(osg::PrimitiveSet::POLYGON, 0);
+    back2->push_back(6);
+    back2->push_back(10);
+    back2->push_back(7);
+    back2->push_back(15);
+    back2->push_back(14);
+    dodecahedronGeometry->addPrimitiveSet(back2);
+
+    osg::DrawElementsUInt* back3 =
+    new osg::DrawElementsUInt(osg::PrimitiveSet::POLYGON, 0);
+    back3->push_back(11);
+    back3->push_back(10);
+    back3->push_back(7);
+    back3->push_back(19);
+    back3->push_back(5);
+    dodecahedronGeometry->addPrimitiveSet(back3);
+
+    osg::DrawElementsUInt* back4 =
+    new osg::DrawElementsUInt(osg::PrimitiveSet::POLYGON, 0);
+    back4->push_back(12);
+    back4->push_back(4);
+    back4->push_back(11);
+    back4->push_back(5);
+    back4->push_back(13);
+    dodecahedronGeometry->addPrimitiveSet(back4);
+
+    osg::DrawElementsUInt* back5 =
+    new osg::DrawElementsUInt(osg::PrimitiveSet::POLYGON, 0);
+    back5->push_back(16);
+    back5->push_back(18);
+    back5->push_back(4);
+    back5->push_back(12);
+    back5->push_back(0);
+    dodecahedronGeometry->addPrimitiveSet(back5);
+
+    osg::DrawElementsUInt* back6 =
+    new osg::DrawElementsUInt(osg::PrimitiveSet::POLYGON, 0);
+    back6->push_back(6);
+    back6->push_back(18);
+    back6->push_back(16);
+    back6->push_back(2);
+    back6->push_back(14);
+    dodecahedronGeometry->addPrimitiveSet(back6);
+
+    osg::Vec4Array* colors = new osg::Vec4Array;
+    colors->push_back(color);
+
+    dodecahedronGeometry->setColorArray(colors);
+    dodecahedronGeometry->setColorBinding(osg::Geometry::BIND_OVERALL);
+//    dodecahedronGeometry->setColorBinding(osg::Geometry::BIND_PER_PRIMITIVE_SET);
+
+
+    osg::ref_ptr<osg::StateSet> ss = dodecahedronGeometry->getOrCreateStateSet();
+/*
+// only wireframe (outline / contour)
+    osg::ref_ptr<osg::PolygonMode> pm = new osg::PolygonMode(osg::PolygonMode::FRONT_AND_BACK, osg::PolygonMode::LINE);
+    ss->setAttributeAndModes(pm.get(), osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE);
+
+// line width
+    osg::LineWidth* linewidth = new osg::LineWidth();
+    linewidth->setWidth(20.0f);
+    ss->setAttributeAndModes(linewidth, osg::StateAttribute::ON);
+*/
+// transparent
+
+    ss->setMode( GL_BLEND, osg::StateAttribute::ON );
+    ss->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
+
+    osg::ref_ptr<osg::AutoTransform> at = new osg::AutoTransform;
+    at->setPosition(position * 1);
+    at->setScale(radius/15 * sqrt(75 + 30*sqrt(5)));
+//    at->setAutoRotateMode(osg::AutoTransform::ROTATE_TO_SCREEN);
+
+    at->addChild(dodecahedronGeode);
+
+    return at;
 }
 
 osg::Geode* test() {
@@ -371,6 +570,7 @@ void CoreGraph::reload(Data::Graph * graph)
 		graph->getRestrictionsManager().setObservers (restrictionVisualizationsGroup, restrictionManipulatorsGroup);
 	}
 
+//    root->addChild(dodecahedron(osg::Vec3(0,0,0), 10, osg::Vec4(1.0,1.0,0.0,0.4)));
     root->addChild(test2());
     currentPos++;
 
