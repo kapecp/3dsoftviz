@@ -31,25 +31,25 @@
 
 namespace Layout
 {
-	class LayoutThread;
+class LayoutThread;
 }
 
 namespace Vwr
 {
-	class CoreGraph;
-	class CameraManipulator;
+class CoreGraph;
+class CameraManipulator;
 }
 
 namespace QOSG
 {
 
-	class ViewerQT;
+class ViewerQT;
 }
 
 namespace Network
 {
-	class Client;
-	//class Network;
+class Client;
+//class Network;
 }
 
 namespace QOSG
@@ -61,7 +61,7 @@ namespace QOSG
 	*  \date 3. 5. 2010
 	*/
 class CoreWindow : public QMainWindow
-{
+	{
 	Q_OBJECT
 
 public slots:
@@ -603,6 +603,12 @@ private:
 	void createCollaborationToolBar();
 
 	/**
+		*  \fn private  createAugmentedRealityToolBar
+		*  \brief Create Augmented Reality ToolBar
+		*/
+	void createAugmentedRealityToolBar();
+
+	/**
 		*  \fn private  createHorizontalFrame
 		*  \brief Crate frame with horizontal label
 		*  \return QFrame * created frame
@@ -708,6 +714,15 @@ public:
 			QLinkedList<osg::ref_ptr<Data::Node> > nodesOfShapeGettersToRestrict
 			);
 
+protected:
+
+	/**
+		 * @author Autor: David Durcak
+		 * @brief closeEvent Reimplement close event. Call destructor on OpenCVCore
+		 * @param event Close event
+		 */
+	void closeEvent(QCloseEvent *event);
+
 private:
 
 	/**
@@ -718,13 +733,8 @@ private:
 			Data::Graph * currentGraph,
 			QSharedPointer<Layout::RestrictionRemovalHandler> removalHandler
 			);
-protected:
-	/**
-	 * @brief closeEvent
-	 * @param event
-	 */
-	void closeEvent(QCloseEvent *event);
-};
+
+	};
 }
 
 #endif

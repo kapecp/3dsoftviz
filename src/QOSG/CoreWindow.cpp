@@ -30,7 +30,7 @@
 #include "Importer/GraphOperations.h"
 
 #ifdef OPENCV_FOUND
-	#include "OpenCV/OpenCVCore.h"
+#include "OpenCV/OpenCVCore.h"
 #endif
 
 #include "Util/Cleaner.h"
@@ -61,6 +61,10 @@ CoreWindow::CoreWindow(QWidget *parent, Vwr::CoreGraph* coreGraph, QApplication*
 	createLeftToolBar();
 	createRightToolBar();
 	createCollaborationToolBar();
+#ifdef OPENCV_FOUND
+	createAugmentedRealityToolBar();
+#endif
+
 
 	viewerWidget = new ViewerQT(this, 0, 0, 0, coreGraph);
 	viewerWidget->setSceneData(coreGraph->getScene());
@@ -307,10 +311,6 @@ void CoreWindow::createActions()
 	b_send_message->setText("Send");
 	connect(b_send_message, SIGNAL(clicked()), this, SLOT(send_message()));
 
-	b_start_face = new QPushButton();
-	b_start_face->setText("Face Recognition");
-	connect(b_start_face, SIGNAL(clicked()), this, SLOT(create_facewindow()));
-
 	chb_center = new QCheckBox("&Center");
 	connect(chb_center, SIGNAL(clicked()), this, SLOT(toggleSpyWatch()));
 
@@ -503,6 +503,21 @@ void CoreWindow::createRightToolBar() {
 	toolBar->setMovable(true);
 }
 
+void CoreWindow::createAugmentedRealityToolBar() {
+	toolBar = new QToolBar( tr("Augmented Reality"),this);
+
+	QLabel *label = new QLabel( tr("Face & Marker detection"));
+	toolBar->addWidget( label );
+
+	b_start_face = new QPushButton();
+	b_start_face->setText("Start camera");
+	toolBar->addWidget( b_start_face );
+	connect(b_start_face, SIGNAL(clicked()), this, SLOT(create_facewindow()));
+
+	addToolBar(Qt::TopToolBarArea,toolBar);
+	toolBar->setMovable(true);
+}
+
 void CoreWindow::createCollaborationToolBar() {
 	toolBar = new QToolBar("Collaboration",this);
 
@@ -539,11 +554,6 @@ void CoreWindow::createCollaborationToolBar() {
 	frame->layout()->setAlignment(Qt::AlignHCenter);
 	frame->layout()->addWidget(sl_avatarScale);
 	toolBar->addWidget(frame);
-	#ifdef OPENCV_FOUND
-	toolBar->addSeparator();
-	toolBar->addWidget(b_start_face);
-	#endif
-
 
 	addToolBar(Qt::RightToolBarArea,toolBar);
 	toolBar->setMaximumHeight(400);
@@ -1706,10 +1716,14 @@ void CoreWindow::send_message()
 	client->send_message(le_message->text());
 }
 
+#ifdef OPENCV_FOUND
 void CoreWindow::create_facewindow()
 {
-	OpenCV::OpenCVCore::getInstance(NULL)->faceRecognition();
+#ifdef OPENCV_FOUND
+	OpenCV::OpenCVCore::getInstance(NULL, this)->faceRecognition();
+#endif
 }
+#endif
 
 void CoreWindow::toggleSpyWatch()
 {
@@ -1836,8 +1850,13 @@ Vwr::CameraManipulator* CoreWindow::getCameraManipulator() {
 	return viewerWidget->getCameraManipulator();
 }
 
+
 void CoreWindow::closeEvent(QCloseEvent *event)
 {
-	QApplication::closeAllWindows();
+
+#ifdef OPENCV_FOUND
+	delete OpenCV::OpenCVCore::getInstance(NULL, this);
+#endif
+	//QApplication::closeAllWindows();   // ????
 	event->accept();
 }

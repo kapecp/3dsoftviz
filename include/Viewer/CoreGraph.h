@@ -17,6 +17,7 @@
 #include <QMap>
 #include <QLinkedList>
 #include <QSharedPointer>
+#include <QObject>
 #include <QTime>
 
 namespace Data
@@ -48,8 +49,10 @@ namespace Vwr
 	 * \date
 	 * 7.12.2009
 	 */
-class CoreGraph
-{
+class CoreGraph : public QObject
+	{
+	Q_OBJECT
+
 public:
 	/*!
 		 *
@@ -174,6 +177,15 @@ public:
 	Vwr::EdgeGroup * getEdgesGroup() { return edgesGroup; }
 	Vwr::EdgeGroup * getMetaEdgesGroup() { return qmetaEdgesGroup; }
 
+public slots:
+
+	/**
+		 * @author Autor: David Durcak
+		 * @brief updateArucoGraphRotation Update graphRotTransf MatrixTransform node for rotating a graph according by rotation of marker
+		 * @param quat Quaternion that desribe rotation of marker
+		 */
+	void updateArucoGraphRotation( osg::Quat quat );
+
 private:
 
 	/**
@@ -281,6 +293,18 @@ private:
 	osg::ref_ptr<osg::Group> root;
 
 	/**
+		*  osg::ref_ptr graphGroup
+		*  \brief graphGroup node
+		*/
+	osg::ref_ptr<osg::Group> graphGroup;
+
+	/**
+			*  osg::ref_ptr graphRotTransf
+			*  \brief graphRotTransf node for rotation graph according marker rotation from aruco
+			*/
+	osg::ref_ptr<osg::MatrixTransform> graphRotTransf;
+
+	/**
 		*  bool nodesFreezed
 		*  \brief true, if nodes are freezed
 		*/
@@ -357,7 +381,7 @@ private:
 	int customNodesPosition;
 
 	int prevTime;
-};
+	};
 }
 
 #endif

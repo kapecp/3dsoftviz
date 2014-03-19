@@ -3,13 +3,13 @@
 
 #include <QThread>
 
-#include "QOpenCV/FaceRecognitionWindow.h"
+
 #include "OpenCV/FaceRecognizer.h"
 #include "OpenCV/CapVideo.h"
 
-Q_DECLARE_METATYPE(cv::Mat)
 
 namespace QOpenCV
+
 {
 class FaceRecognitionWindow;
 
@@ -23,18 +23,11 @@ class FaceRecognitionThread : public QThread
 	Q_OBJECT
 
 public:
-	FaceRecognitionThread(OpenCV::FaceRecognizer *alg);
+	FaceRecognitionThread( OpenCV::FaceRecognizer *alg, QObject *parent = 0);
 	~FaceRecognitionThread(void);
 	OpenCV::FaceRecognizer *mFaceRecognizer;
 	OpenCV::CapVideo *mCapVideo;
-	FaceRecognitionWindow *mFaceRecognitionWindow;
 
-	/**
-		 * @author Autor: Marek Jakab
-		 * @brief setWindow Pass FaceRecognitionWindow instance param to thread
-		 * @param mFaceRecognitionWindow instance of window for recognition
-		 */
-	void setWindow(QOpenCV::FaceRecognitionWindow *mFaceRecognitionWindow);
 
 	/**
 		 * @author Autor: Marek Jakab
@@ -56,9 +49,8 @@ signals:
 			 * @param y % distance from middle on Y axis
 			 */
 	void sendEyesCoords(float x, float y, float distance);
-private:
-	bool cancel;
-private slots:
+
+public slots:
 	/**
 			 * @author Autor: Marek Jakab
 			 * @brief setCancel Sets cancel=true
@@ -69,6 +61,12 @@ private slots:
 			 * @brief pauseWindow Pauses recognition window
 			 */
 	void pauseWindow();
+
+	void setSendImgEnabled( bool sendImgEnabled );
+
+private:
+	bool cancel;
+	bool mSendImgEnabled;
 };
 }
 
