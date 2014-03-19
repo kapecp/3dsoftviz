@@ -473,23 +473,20 @@ target_link_libraries( ${3DSOFTVIZ_NAME}
 	${QT_LIBRARIES}
 	${OPENSCENEGRAPH_LIBRARIES}
 	${OSGVIEWER_LIBRARIES}
-	libnoise   # ???
+	libnoise
 )
-
-if( USE_BUILTIN_DEPENDENCIES )
-	target_link_libraries( ${3DSOFTVIZ_NAME} aruco libnoise )
-endif()
 
 if(OpenCV_FOUND)
 	target_link_libraries( ${3DSOFTVIZ_NAME}
-		aruco
 		${OpenCV_LIBS}
+		aruco
 	)
 endif()
 
 if (NITE2_FOUND AND OPENNI2_FOUND)
 	target_link_libraries( ${3DSOFTVIZ_NAME} ${NITE2_LIBRARIES} ${OPENNI2_LIBRARIES} )
 endif()
+
 
 # 'cotire' the executable
 if( COMMAND cotire )
@@ -507,19 +504,16 @@ if( COMMAND cotire )
 			${OPENSCENEGRAPH_LIBRARIES}
 			${OSGVIEWER_LIBRARIES}
 			libnoise
-
 		)
 # toto kuknut este
-	if(OpenCV_FOUND)
-		target_link_libraries( ${3DSOFTVIZ_NAME}_unity ${OpenCV_LIBS} )
-
-	endif()
-				if( OpenCV_FOUND )
-					target_link_libraries(${3DSOFTVIZ_NAME}_unity aruco)
-				endif()
-
+		if(OpenCV_FOUND)
+			target_link_libraries( ${3DSOFTVIZ_NAME}_unity aruco )
+		endif()
 	endif()
 
+if(OpenCV_FOUND)
+		target_link_libraries( ${3DSOFTVIZ_NAME}_unity ${OpenCV_LIBS})
+	endif()
 
 	if( MSVC )
 		### Fix virtual memory range
