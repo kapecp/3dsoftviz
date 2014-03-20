@@ -21,6 +21,7 @@ public:
 
 	void run();
 
+
 signals:
 
 	void pushImage(cv::Mat image);
