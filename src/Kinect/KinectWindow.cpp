@@ -29,11 +29,16 @@ QLabel *Kinect::KinectWindow::getLabel() const
 void Kinect::KinectWindow::configureWindow(void)
 {
 	setModal( false );
+	resize(400,260);
 	setWindowTitle( tr("Kinect Recognition"));
 
-	mWindowLabel = new QLabel("", this, 0);
-	mKinectColor = new QRadioButton( tr("Face recognition"));
-	mKinectDepthMap = new QRadioButton( tr("Marker detection"));
+	this->mWindowLabel = new QLabel("",this,0);
+		this->mWindowLabel->setFixedWidth(320);
+		this->mWindowLabel->setFixedHeight(240);
+
+	/*mWindowLabel = new QLabel("", this, 0);
+	mKinectColor = new QRadioButton( tr("Color Map"));
+	mKinectDepthMap = new QRadioButton( tr("Depth map"));
 
 	QHBoxLayout *mainLayout		= new QHBoxLayout;
 	QVBoxLayout *buttonLayout	= new QVBoxLayout;
@@ -42,15 +47,15 @@ void Kinect::KinectWindow::configureWindow(void)
 	buttonLayout->addWidget( mKinectColor );
 	buttonLayout->addWidget( mKinectDepthMap );
 
-	buttonLayout->addWidget( mKinectStartStop );
+	//buttonLayout->addWidget( mKinectStartStop );
 	// set layout
 	mainLayout->addLayout( buttonLayout );
 	mainLayout->addWidget( mWindowLabel, Qt::AlignCenter );
 	mainLayout->setSizeConstraint(QLayout::SetMinimumSize);
-	setLayout( mainLayout );
+	setLayout( mainLayout );*/
 	adjustSize();
 
-	connect(mKinectStartStop,SIGNAL(clicked(bool)),SLOT(onKinectStartCancel(bool)));
+	//connect(mKinectStartStop,SIGNAL(clicked(bool)),SLOT(onKinectStartCancel(bool)));
 
 
 }

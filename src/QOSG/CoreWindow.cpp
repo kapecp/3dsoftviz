@@ -1747,7 +1747,7 @@ void CoreWindow::create_facewindow()
 #ifdef OPENNI2_FOUND
 void CoreWindow::createKinectWindow(){
 
-	Kinect::KinectCore::getInstance(NULL)->kinectRecognition();
+	Kinect::KinectCore::getInstance(NULL,this)->kinectRecognition();
 }
 #endif
 

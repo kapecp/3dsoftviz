@@ -54,6 +54,8 @@ public slots:
 
 	void setLabel(cv::Mat image);
 
+	//void setLabelQ(QImage qimage );
+
 private slots:
 
 	void onKinectStartCancel(bool checked);
