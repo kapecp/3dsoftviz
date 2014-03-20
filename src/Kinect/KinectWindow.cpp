@@ -16,9 +16,10 @@
 using namespace Kinect;
 using namespace cv;
 
-Kinect::KinectWindow::KinectWindow(QWidget *parent, QApplication * app): QDialog(parent)
+Kinect::KinectWindow::KinectWindow(QWidget *parent, QApplication * app, KinectThread *thr): QDialog(parent)
 {
 	mApp=app;
+	this->thr=thr;
 	configureWindow();
 }
 QLabel *Kinect::KinectWindow::getLabel() const
@@ -32,9 +33,42 @@ void Kinect::KinectWindow::configureWindow(void)
 	resize(400,260);
 	setWindowTitle( tr("Kinect Recognition"));
 
-	this->mWindowLabel = new QLabel("",this,0);
-		this->mWindowLabel->setFixedWidth(320);
-		this->mWindowLabel->setFixedHeight(240);
+	mWindowLabel = new QLabel("",this,0);
+	mWindowLabel->setFixedWidth(320);
+	mWindowLabel->setFixedHeight(240);
+
+	mKinectPause=new QPushButton(tr("Pause"));
+	connect(mKinectPause,SIGNAL(clicked()),this,SLOT(pausewindows()));
+
+			mKinectSTop=new QPushButton(tr("Cancel"));
+	connect(mKinectSTop,SIGNAL(clicked()),this,SLOT(quitWindows()));
+
+	//mModulesStackL			= new QStackedLayout;
+	mKinectColor = new QRadioButton( tr("Color Map"));
+	mKinectDepthMap = new QRadioButton( tr("Depth map"));
+
+	//mModulesStackL->addWidget( mKinectColor );
+	//mModulesStackL->addWidget( mKinectDepthMap );
+
+
+	QHBoxLayout *buttonsLayout = new QHBoxLayout;
+	QVBoxLayout *buttonsLayout_2 = new QVBoxLayout;
+	QHBoxLayout *frameLayout = new QHBoxLayout;
+	QHBoxLayout *mainLayout = new QHBoxLayout;
+
+
+	buttonsLayout->setAlignment(Qt::AlignTop);
+	buttonsLayout->setAlignment(Qt::AlignTop);
+	buttonsLayout_2->addWidget(mKinectPause);
+	buttonsLayout_2->addWidget(mKinectSTop);
+	frameLayout->setAlignment(Qt::AlignCenter);
+	frameLayout->addWidget(mWindowLabel);
+
+	buttonsLayout->addLayout(buttonsLayout_2);
+	mainLayout->addLayout(buttonsLayout);
+	mainLayout->addLayout(frameLayout);
+	setLayout(mainLayout);
+
 
 	/*mWindowLabel = new QLabel("", this, 0);
 	mKinectColor = new QRadioButton( tr("Color Map"));
@@ -54,9 +88,6 @@ void Kinect::KinectWindow::configureWindow(void)
 	mainLayout->setSizeConstraint(QLayout::SetMinimumSize);
 	setLayout( mainLayout );*/
 	adjustSize();
-
-	//connect(mKinectStartStop,SIGNAL(clicked(bool)),SLOT(onKinectStartCancel(bool)));
-
 
 }
 
@@ -82,6 +113,16 @@ void Kinect::KinectWindow::setLabel(cv::Mat image)
 	image.~Mat();
 
 }
+void Kinect::KinectWindow::setLabelQ( QImage qimage )
+{
+	if( qimage.isNull() ) {
+		mWindowLabel->setText( tr("Image empty"));
+		return;
+	}
+
+	mWindowLabel->setPixmap( QPixmap::fromImage(qimage) );
+}
+
 
 void Kinect::KinectWindow::onKinectStartCancel(bool checked)
 {
@@ -89,31 +130,42 @@ void Kinect::KinectWindow::onKinectStartCancel(bool checked)
 	if(checked)
 	{
 		mKinectStartStop->setText(tr("Stop Kinect"));
-		emit startKinect();
+		emit startKinect(checked);
 	}
-
-	else{
+	else
+	{
 		mKinectStartStop->setEnabled(false);
 		emit stopKinect();
 	}
 
 }
 
+void Kinect::KinectWindow::pausewindows()
+{
+	if (mKinectPause->text().toStdString().compare(tr("Pause").toStdString())==0)
+	{
+		mKinectPause->setText(tr("Continue"));
+		emit startKinect(true);
+	}
+	else
+	{
+		emit startKinect(false);
+		mKinectPause->setText(tr("Pause"));
+
+	}
+
+}
+
+void Kinect::KinectWindow::quitWindows()
+{
+	if(thr->isRunning())
+	{
+		emit startKinect(false);
+		thr->wait();
+	}
+	delete thr;
+	delete this;
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+}

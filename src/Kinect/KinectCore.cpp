@@ -1,9 +1,12 @@
 #include "Kinect/KinectCore.h"
-
-#include "Kinect/KinectWindow.h"
 #include "QDebug"
 
+#include "Kinect/KinectThread.h"
+#include "Kinect/KinectWindow.h"
+
 using namespace Kinect;
+Q_DECLARE_METATYPE(cv::Mat)
+
 
 
 Kinect::KinectCore * Kinect::KinectCore::mKinectCore;
@@ -16,6 +19,7 @@ Kinect::KinectCore::KinectCore( QApplication* app,QWidget *parent)
 	mKinectDialog=NULL;
 	mThrsCreated=false;
 	mThrKinect=NULL;
+	qRegisterMetaType<cv::Mat>("Mat");
 }
 
 
@@ -30,16 +34,16 @@ void Kinect::KinectCore::kinectRecognition()
 			qDebug() << "Kinect Thread";
 			mThrsCreated=true;
 			mThrKinect = new Kinect::KinectThread();
-			//createConnectionKinect();
+
 		}
 		qDebug()<< "create Kinect Window";
 
-		mKinectDialog= new Kinect::KinectWindow(mParent,app);
-
+		mKinectDialog= new Kinect::KinectWindow(mParent,app,mThrKinect);
+		createConnectionKinect();
 	}
 
 	mKinectDialog->show();
-
+	mThrKinect->start();
 
 
 }
@@ -57,6 +61,7 @@ Kinect::KinectCore * Kinect::KinectCore::getInstance( QApplication* app,QWidget 
 
 void Kinect::KinectCore::createConnectionKinect()
 {
-	QObject::connect(mThrKinect,SIGNAL(pushImage(cv::Mat)),mKinectDialog,SLOT(Kinect::KinectWindow::setLabel() ));
+	QObject::connect(mThrKinect,SIGNAL(pushImage(cv::Mat)),mKinectDialog,SLOT(setLabel(cv::Mat)));
+
 
 }

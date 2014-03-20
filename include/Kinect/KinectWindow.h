@@ -3,11 +3,12 @@
 
 #include <QDialog>
 #include <opencv2/core/core.hpp>
-
+#include "Kinect/KinectThread.h"
 
 class QLabel;
 class QPushButton;
 class QRadioButton;
+class QStackedLayout;
 
 namespace Kinect
 {
@@ -26,9 +27,11 @@ public:
 	 *@brief KinectWindow
 	 * @param mApp
 	 */
-	KinectWindow(QWidget *parent, QApplication *app);
+	KinectWindow(QWidget *parent, QApplication *app,Kinect::KinectThread *thr);
 
 	QLabel *getLabel() const;
+
+
 
 signals:
 
@@ -41,7 +44,7 @@ signals:
 	/**
 	 * @brief startKinect
 	 */
-	void startKinect();
+	void startKinect(bool send);
 
 	/**
 	 * @brief stopKinect
@@ -52,9 +55,13 @@ signals:
 
 public slots:
 
-	void setLabel(cv::Mat image);
+	void setLabel( cv::Mat image );
+	void setLabelQ(QImage qimage );
 
-	//void setLabelQ(QImage qimage );
+	void pausewindows();
+
+	void quitWindows();
+
 
 private slots:
 
@@ -71,8 +78,13 @@ private:
 	QRadioButton	*mKinectColor;
 	QRadioButton	*mKinectDepthMap;
 
-	QPushButton		*mKinectStartStop;
+	QStackedLayout	*mModulesStackL;
 
+	QPushButton		*mKinectPause;
+	QPushButton		*mKinectSTop;
+	QPushButton *mKinectStartStop;
+
+	Kinect::KinectThread *thr;
 
 
 };

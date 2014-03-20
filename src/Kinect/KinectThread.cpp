@@ -8,6 +8,8 @@
 #include <opencv2/core/core.hpp>
 #include "opencv2/opencv.hpp"
 
+
+
 using namespace Kinect;
 
 //for testing
@@ -56,12 +58,13 @@ void Kinect::KinectThread::run()
 
 		cap >> frame; // get a new frame from camera
 
-		cv::cvtColor(frame, frame, CV_BGR2GRAY);
-//		QImage qimage ( (uchar*) image.data, image.cols, image.rows,(int) image.step, QImage::Format_RGB888);
+		cv::cvtColor(frame, frame, CV_BGR2RGB);
+		//QImage qimage ( (uchar*) image.data, image.cols, image.rows,(int) image.step, QImage::Format_RGB888);
 
 		//emit pushImage( qimage );
-		emit pushImage(frame);
-
+		emit pushImage( frame );
+		//cv::imshow("daco",frame);
+		//cv::waitKey(10);
 
 	}
 	//testing

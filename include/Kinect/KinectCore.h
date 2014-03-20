@@ -3,11 +3,16 @@
 
 #include "Core/Core.h"
 #include <QPointer>
-#include "Kinect/KinectThread.h"
-#include "Kinect/KinectWindow.h"
 
 namespace Kinect
 {
+	class KinectThread;
+	class KinectWindow;
+}
+
+namespace Kinect
+{
+
 /**
 	*@brief Class KinectCore
 	*@author Autor: Patrik Hlavac

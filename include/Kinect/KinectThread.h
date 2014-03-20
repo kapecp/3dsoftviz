@@ -7,7 +7,6 @@
 
 #include <opencv2/core/core.hpp>
 
-
 namespace Kinect{
 
 class KinectThread : public QThread
@@ -26,7 +25,7 @@ signals:
 
 	void pushImage(cv::Mat image);
 
-	void pushImage(QImage qimage);
+	void pushImageQ(QImage qimage);
 
 public slots:
 
