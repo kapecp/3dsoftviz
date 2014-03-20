@@ -234,7 +234,9 @@ find_package(osgViewer)
 
 # Find OpenCV
 if( OpenCV_FOUND )
-
+                if ( WIN32 )
+                    add_definitions( -DNOMINMAX )
+                endif()
 
 		# include_directories( ${OpenCV_INCLUDE_DIRS} )
 
