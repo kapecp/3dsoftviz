@@ -11,6 +11,10 @@ class QRadioButton;
 class QCheckBox;
 class QStackedLayout;
 
+namespace OpenCV {
+class CapVideo;
+}
+
 namespace QOpenCV
 {
 
@@ -102,6 +106,10 @@ signals:
 		 * @brief startFaceRec Signal for starting FaceDetection thread
 		 */
 	void startFaceRec();
+
+	void setCapVideoFaceRec( OpenCV::CapVideo *capVideo);
+
+	void setCapVideoMarker( OpenCV::CapVideo *capVideo);
 
 
 public slots:

@@ -9,6 +9,7 @@
 #include <QtGui/QTableWidgetItem>
 #include <QtGui/QStandardItemModel>
 #include <QtGui/QTreeView>
+#include <QtGui/QTableView>
 #include <OpenCV/CamSelectCore.h>
 
 namespace OpenCV
@@ -53,7 +54,6 @@ private:
 public slots:
 	//void itemClicked(QModelIndex index);
 	void commitChanges();
-	void printChanged(const QItemSelection &, const QItemSelection &);
 };
 }
 

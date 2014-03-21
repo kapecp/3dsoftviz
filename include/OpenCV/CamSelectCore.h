@@ -18,7 +18,6 @@ class CamSelectCore
 {
 
 public:
-	CamSelectCore();
 	~CamSelectCore(void);
 	/**
 		 * @author Autor: Marek Jakab
@@ -33,12 +32,15 @@ public:
 	OpenCV::CapVideo *selectCamera();
 	int countCameras();
 
-	static CamSelectCore *mCamSelectCore;
 	void setCam(int dev_id, int width, int height);
 private:
+	CamSelectCore();
+
 	QApplication *app;
 	std::vector<OpenCV::CapVideo*> camlist;
 	int device_id;
+	static CamSelectCore *mCamSelectCore;
+
 };
 }
 

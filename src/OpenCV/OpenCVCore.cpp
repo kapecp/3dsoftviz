@@ -8,6 +8,7 @@
 #include "QOpenCV/FaceRecognitionWindow.h"
 #include "Viewer/CameraManipulator.h"
 #include "OpenCV/CamSelectCore.h"
+#include "OpenCV/CapVideo.h"
 
 Q_DECLARE_METATYPE(cv::Mat)
 
@@ -124,6 +125,12 @@ void OpenCVCore::createConnectionFaceRec(){
 					  SIGNAL(finished()),
 					  mOpencvDialog,
 					  SLOT(onFaceRecThrFinished()) );
+	QObject::connect( mOpencvDialog,
+					  SIGNAL(setCapVideoFaceRec( OpenCV::CapVideo *)),
+					  mThrFaceRec,
+					  SLOT(setCapVideo(OpenCV::CapVideo*)) );
+
+
 
 }
 
@@ -152,6 +159,11 @@ void OpenCVCore::createConnectionAruco(){
 					  SIGNAL(finished()),
 					  mOpencvDialog,
 					  SLOT(onMarkerThrFinished()) );
+	/*QObject::connect( mOpencvDialog,
+					  SIGNAL(setCapVideoMarker( OpenCV::CapVideo *)),
+					  mThrAruco,
+					  SLOT(setCapVideo(OpenCV::CapVideo*)) );
+*/
 
 	// other seting
 	QObject::connect( mOpencvDialog->getMarkerBehindCB(),

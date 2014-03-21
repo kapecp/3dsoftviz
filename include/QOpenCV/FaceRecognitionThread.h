@@ -67,6 +67,8 @@ public slots:
 	*/
 	void setSendImgEnabled( bool sendImgEnabled );
 
+	void setCapVideo( OpenCV::CapVideo *capVideo);
+
 private:
 
 	OpenCV::FaceRecognizer	*mFaceRecognizer;

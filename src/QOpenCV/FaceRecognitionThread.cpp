@@ -28,7 +28,6 @@ void QOpenCV::FaceRecognitionThread::run()
 	mCancel = false;
 	cv::Mat image;
 
-	mCapVideo = OpenCV::CamSelectCore::getInstance()->selectCamera();
 	if( mCapVideo == NULL){
 		qDebug() << "Camera is not opened";
 		return;
@@ -53,7 +52,7 @@ void QOpenCV::FaceRecognitionThread::run()
 		}
 	}
 	mCapVideo->release();
-	//delete this->mCapVideo; ???
+	mCapVideo = NULL;
 }
 
 void QOpenCV::FaceRecognitionThread::pauseWindow()
@@ -68,4 +67,8 @@ void QOpenCV::FaceRecognitionThread::setCancel( bool set ){
 void QOpenCV::FaceRecognitionThread::setSendImgEnabled( bool sendImgEnabled )
 {
 	mSendImgEnabled = sendImgEnabled;
+}
+
+void QOpenCV::FaceRecognitionThread::setCapVideo( OpenCV::CapVideo *capVideo){
+	mCapVideo = capVideo;
 }
