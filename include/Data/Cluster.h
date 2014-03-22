@@ -21,11 +21,15 @@ public:
     // vracia nody kt. su v tomto clustri spolu s nodmi ktore su v clastroch v tomto clustri - rekurzivne
     QSet<Node*> getALLClusteredNodes() const;
     int getClusteredNodesCount() const {return clusteredNodes.size();}
+    osg::Vec3 getMidpoint();
+    void setSelected(bool selected, QLinkedList<osg::ref_ptr<Data::Node> > * pickedNodes);
+    Node * getRandomNode();
 
 private:
 
     qlonglong id;
     QSet<Node *> clusteredNodes;
+    osg::Vec4 originalColor;
 
 };
 

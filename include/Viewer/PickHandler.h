@@ -100,6 +100,8 @@ public:
 			*  \brief picking edges
 			*/
 		static const int EDGE = 2;
+
+        static const int CLUSTER = 3;
 	};
 
 
@@ -199,6 +201,8 @@ public:
 
 	void addPickedNode(osg::ref_ptr<Data::Node> node) { pickedNodes.append(node); }
 	void addPickedEdge(osg::ref_ptr<Data::Edge> edge) { pickedEdges.append(edge); }
+
+    void unselectPickedClusters();
 
 protected:
 	// Store mouse xy location for button press & move events.
@@ -324,6 +328,8 @@ private:
 		*  \return bool
 		*/
 	bool doEdgePick(osg::NodePath nodePath, unsigned int primitiveIndex);
+
+    bool doClusterPick(osg::NodePath nodePath);
 
 	/**
 		*  \fn private  dragNode(osgViewer::Viewer * viewer)
@@ -460,6 +466,8 @@ private:
 		*  \brief timer for detecting double click
 		*/
 	QTimer * timer;
+
+    QLinkedList<osg::ref_ptr<Data::Cluster> > pickedClusters;
 
 public slots:
 	/**

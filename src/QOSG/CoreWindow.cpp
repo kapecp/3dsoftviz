@@ -416,7 +416,7 @@ void CoreWindow::createLeftToolBar()
 {
 	//inicializacia comboboxu typov vyberu
 	nodeTypeComboBox = new QComboBox();
-	nodeTypeComboBox->insertItems(0,(QStringList() << "All" << "Node" << "Edge"));
+    nodeTypeComboBox->insertItems(0,(QStringList() << "All" << "Node" << "Edge" << "Cluster"));
 	nodeTypeComboBox->setFocusPolicy(Qt::NoFocus);
 	connect(nodeTypeComboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(nodeTypeComboBoxChanged(int)));
 
@@ -1008,6 +1008,10 @@ void CoreWindow::nodeTypeComboBoxChanged(int index)
 		viewerWidget->getPickHandler()->setSelectionType(Vwr::PickHandler::SelectionType::EDGE);
 		label->setChecked(edgeLabelsVisible);
 		break;
+    case 3:
+        viewerWidget->getPickHandler()->setSelectionType(Vwr::PickHandler::SelectionType::CLUSTER);
+        label->setChecked(edgeLabelsVisible & nodeLabelsVisible);
+        break;
 	default:
 		qDebug() << "CoreWindow:nodeTypeComboBoxChanged do not suported index";
 		break;
@@ -1868,6 +1872,8 @@ void CoreWindow::cluster_test()
 
     // show
     setVisibleClusterSection(true);
+
+    nodeTypeComboBox->setCurrentIndex(3);   // selectionType zment na CLUSTER
 
     //AppCore::Core::getInstance(NULL)->cg->reload(currentGraph);
 }

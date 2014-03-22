@@ -18,6 +18,7 @@
 #include <osg/MatrixTransform>
 #include <osg/Projection>
 #include <osg/BlendFunc>
+#include <osg/ValueObject>
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wswitch-enum"
@@ -318,7 +319,8 @@ bool PickHandler::handlePush( const osgGA::GUIEventAdapter& ea, osgGA::GUIAction
 
 		if (pickMode != PickMode::NONE && !isShiftPressed && !isCtrlPressed)
 		{
-			unselectPickedNodes();
+            unselectPickedClusters();
+            unselectPickedNodes();
 			unselectPickedEdges();
 		}
 
@@ -368,7 +370,7 @@ bool PickHandler::pick( const double xMin, const double yMin, const double xMax,
 		{
 			if (!hitr->nodePath.empty())
 			{
-				osg::NodePath nodePath = hitr->nodePath;
+                osg::NodePath nodePath = hitr->nodePath;
 
 				if (nodePath.size() > 1)
 				{
@@ -403,11 +405,13 @@ bool PickHandler::pick( const double xMin, const double yMin, const double xMax,
 
 bool PickHandler::doSinglePick(osg::NodePath nodePath, unsigned int primitiveIndex)
 {
-	if (selectionType == SelectionType::NODE)
+    if (selectionType == SelectionType::NODE)
 		return doNodePick(nodePath);
 	else if (selectionType == SelectionType::EDGE)
 		return doEdgePick(nodePath, primitiveIndex);
-	else
+    else if (selectionType == SelectionType::CLUSTER)
+        return doClusterPick(nodePath);
+    else
 		return (doNodePick(nodePath) || doEdgePick(nodePath, primitiveIndex));
 }
 
@@ -538,6 +542,36 @@ bool PickHandler::doEdgePick(osg::NodePath nodePath, unsigned int primitiveIndex
 	return false;
 }
 
+bool PickHandler::doClusterPick(osg::NodePath nodePath)
+{
+    std::string clusterIdStr;
+    nodePath[nodePath.size() - 1]->getUserValue("id", clusterIdStr);
+    qlonglong clusterId = QString::fromStdString(clusterIdStr).toLongLong();
+
+    osg::ref_ptr<Data::Node> node = Clustering::Clusterer::getInstance().getClusters().value(clusterId);
+    Data::Cluster* cluster = dynamic_cast<Data::Cluster*>(node.get());
+
+    if (cluster != NULL)
+    {
+        if (pickMode == PickMode::SINGLE)
+        {
+            if (!pickedNodes.contains(cluster->getRandomNode())) {
+                cluster->setSelected(true, &pickedNodes);
+                pickedClusters.append(cluster);
+            }
+
+            if (isCtrlPressed) {
+                cluster->setSelected(false, &pickedNodes);
+                pickedClusters.clear();
+            }
+            return true;
+        }
+    }
+
+    return false;
+
+}
+
 bool PickHandler::dragNode(osgViewer::Viewer * viewer)
 {
 	QLinkedList<osg::ref_ptr<Data::Node> >::const_iterator i = pickedNodes.constBegin();
@@ -641,6 +675,18 @@ void PickHandler::toggleSelectedNodesFixedState(bool isFixed)
 		}
 		++i;
 	}
+}
+
+void PickHandler::unselectPickedClusters() {
+    QLinkedList<osg::ref_ptr<Data::Cluster> >::const_iterator i = pickedClusters.constBegin();
+
+    while (i != pickedClusters.constEnd())
+    {
+        (*i)->setSelected(false, &pickedNodes);
+        ++i;
+    }
+
+    pickedClusters.clear();
 }
 
 void PickHandler::unselectPickedNodes(osg::ref_ptr<Data::Node> node)

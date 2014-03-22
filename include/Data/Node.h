@@ -668,12 +668,6 @@ private:
 	bool removableByUser;
 
 	/**
-		*  bool selected
-		*  \brief node picked state
-		*/
-	bool selected;
-
-	/**
 		*  bool usingInterpolation
 		*  \brief node interpolation usage
 		*/
@@ -770,6 +764,12 @@ protected:
 		*  \brief Settings of the Node
 		*/
 	QMap<QString, QString> * settings;
+
+    /**
+        *  bool selected
+        *  \brief node picked state
+        */
+    bool selected;
 };
 }
 

@@ -138,7 +138,7 @@ public:
 
 	osg::ref_ptr<osg::Camera> getCamera() { return camera; }
 
-    osg::ref_ptr<osg::AutoTransform> dodecahedron(osg::Vec3 midpoint, float radius, osg::Vec4 color);
+    osg::ref_ptr<osg::AutoTransform> dodecahedron(qlonglong id, osg::Vec3 midpoint, float radius, osg::Vec4 color);
 
 	/**
 		*  \fn public  setEdgeLabelsVisible(bool visible)

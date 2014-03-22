@@ -45,3 +45,66 @@ QSet<Node*> Cluster::getALLClusteredNodes() const {
 
     return nodes;
 }
+
+osg::Vec3 Cluster::getMidpoint() {
+    osg::Vec3 total = osg::Vec3(0,0,0);
+    int count = 0;
+
+    QSet<Data::Node *>::const_iterator i = clusteredNodes.constBegin();
+    while (i != clusteredNodes.constEnd()) {
+
+        Data::Node* v = *i;
+
+        osg::Vec3f pos = v->getCurrentPosition();
+
+        total += pos;
+
+        ++i; ++count;
+    }
+    total.operator /=(count);
+
+    return total;
+}
+
+void Cluster::setSelected(bool selected, QLinkedList<osg::ref_ptr<Data::Node> > * pickedNodes) {
+    this->selected = selected;
+    if (selected) {
+        originalColor = getColor();
+        setColor(osg::Vec4(0,1,0,1));
+
+        foreach (Node *node, clusteredNodes) {
+            Cluster* c = dynamic_cast<Cluster*>(node);
+            if(c != 0) {
+                c->setSelected(selected, pickedNodes);
+            } else {
+                node->setSelected(selected);
+                pickedNodes->append(node);
+            }
+        }
+
+    } else {
+        setColor(originalColor);
+
+        foreach (Node *node, clusteredNodes) {
+            Cluster* c = dynamic_cast<Cluster*>(node);
+            if(c != 0) {
+                c->setSelected(selected, pickedNodes);
+            } else {
+                node->setSelected(selected);
+                pickedNodes->removeOne(node);
+            }
+        }
+    }
+}
+
+Node * Cluster::getRandomNode() {
+    foreach (Node *node, clusteredNodes) {
+        Cluster* c = dynamic_cast<Cluster*>(node);
+        if(c != 0) {
+            return c->getRandomNode();
+        } else {
+            return node;
+        }
+    }
+    return NULL;
+}

@@ -28,7 +28,7 @@ using namespace Vwr;
 * a nie vsetko zaradom ako je to teraz
 */
 
-osg::ref_ptr<osg::AutoTransform> getSphere(osg::Vec3 position, float radius, osg::Vec4 color) {
+osg::ref_ptr<osg::AutoTransform> getSphere(qlonglong id, osg::Vec3 position, float radius, osg::Vec4 color) {
     osg::ref_ptr<osg::AutoTransform> at = new osg::AutoTransform;
     at->setPosition(position * 1);
     at->setAutoRotateMode(osg::AutoTransform::ROTATE_TO_SCREEN);
@@ -43,11 +43,13 @@ osg::ref_ptr<osg::AutoTransform> getSphere(osg::Vec3 position, float radius, osg
     osg::Geode * geode = new osg::Geode;
     geode->addDrawable(shape);
 
+    geode->setUserValue("id", QString::number(id).toStdString());
+
     at->addChild(geode);
     return at;
 }
 
-osg::ref_ptr<osg::AutoTransform> getCube(osg::Vec3 position, float width, osg::Vec4 color) {
+osg::ref_ptr<osg::AutoTransform> getCube(qlonglong id, osg::Vec3 position, float width, osg::Vec4 color) {
     osg::ref_ptr<osg::AutoTransform> at = new osg::AutoTransform;
     at->setPosition(position * 1);
     at->setAutoRotateMode(osg::AutoTransform::ROTATE_TO_SCREEN);
@@ -62,11 +64,13 @@ osg::ref_ptr<osg::AutoTransform> getCube(osg::Vec3 position, float width, osg::V
     osg::Geode * geode = new osg::Geode;
     geode->addDrawable(shape);
 
+    geode->setUserValue("id", QString::number(id).toStdString());
+
     at->addChild(geode);
     return at;
 }
 
-osg::ref_ptr<osg::AutoTransform> getCone(osg::Vec3 position, float radius, osg::Vec4 color) {
+osg::ref_ptr<osg::AutoTransform> getCone(qlonglong id, osg::Vec3 position, float radius, osg::Vec4 color) {
     osg::ref_ptr<osg::AutoTransform> at = new osg::AutoTransform;
     at->setPosition(position * 1);
     //at->setAutoRotateMode(osg::AutoTransform::ROTATE_TO_SCREEN);
@@ -82,12 +86,14 @@ osg::ref_ptr<osg::AutoTransform> getCone(osg::Vec3 position, float radius, osg::
     osg::Geode * geode = new osg::Geode;
     geode->addDrawable(shape);
 
+    geode->setUserValue("id", QString::number(id).toStdString());
+
     at->addChild(geode);
 
     return at;
 }
 
-osg::ref_ptr<osg::AutoTransform> getCylinder(osg::Vec3 position, float radius, osg::Vec4 color) {
+osg::ref_ptr<osg::AutoTransform> getCylinder(qlonglong id, osg::Vec3 position, float radius, osg::Vec4 color) {
     osg::ref_ptr<osg::AutoTransform> at = new osg::AutoTransform;
     at->setPosition(position * 1);
     //at->setAutoRotateMode(osg::AutoTransform::ROTATE_TO_SCREEN);
@@ -102,6 +108,8 @@ osg::ref_ptr<osg::AutoTransform> getCylinder(osg::Vec3 position, float radius, o
     shape->getStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
     osg::Geode * geode = new osg::Geode;
     geode->addDrawable(shape);
+
+    geode->setUserValue("id", QString::number(id).toStdString());
 
     at->addChild(geode);
 
@@ -227,13 +235,13 @@ osg::ref_ptr<osg::Group> CoreGraph::test2() {
         }
 
         if (nodesCount > clustersRangeMin && nodesCount <= clusters1Value) {
-            testGroup->addChild(getCylinder(midPoint, getRadius(cluster->getALLClusteredNodes(), midPoint), color));
+            testGroup->addChild(getCylinder(cluster->getId(), midPoint, getRadius(cluster->getALLClusteredNodes(), midPoint), color));
         } else if (nodesCount > clusters1Value && nodesCount <= clustersMiddleValue) {
-            testGroup->addChild(getCube(midPoint, getRadius(cluster->getALLClusteredNodes(), midPoint), color));
+            testGroup->addChild(getCube(cluster->getId(), midPoint, getRadius(cluster->getALLClusteredNodes(), midPoint), color));
         } else if (nodesCount > clustersMiddleValue && nodesCount <= clusters2Value) {
-            testGroup->addChild(dodecahedron(midPoint, getRadius(cluster->getALLClusteredNodes(), midPoint), color));
+            testGroup->addChild(dodecahedron(cluster->getId(), midPoint, getRadius(cluster->getALLClusteredNodes(), midPoint), color));
         } else {
-            testGroup->addChild(getSphere(midPoint, getRadius(cluster->getALLClusteredNodes(), midPoint), color));
+            testGroup->addChild(getSphere(cluster->getId(), midPoint, getRadius(cluster->getALLClusteredNodes(), midPoint), color));
         }
     }
 
@@ -241,7 +249,7 @@ osg::ref_ptr<osg::Group> CoreGraph::test2() {
     return testGroup;
 }
 
-osg::ref_ptr<osg::AutoTransform> CoreGraph::dodecahedron(osg::Vec3 position, float radius, osg::Vec4 color) {
+osg::ref_ptr<osg::AutoTransform> CoreGraph::dodecahedron(qlonglong id, osg::Vec3 position, float radius, osg::Vec4 color) {
 //    (±1, ±1, ±1)
 //    (0, ±1/φ, ±φ)
 //    (±1/φ, ±φ, 0)
@@ -432,6 +440,8 @@ osg::ref_ptr<osg::AutoTransform> CoreGraph::dodecahedron(osg::Vec3 position, flo
     at->setPosition(position * 1);
     at->setScale(radius/15 * sqrt(75 + 30*sqrt(5)));
 //    at->setAutoRotateMode(osg::AutoTransform::ROTATE_TO_SCREEN);
+
+    dodecahedronGeode->setUserValue("id", QString::number(id).toStdString());
 
     at->addChild(dodecahedronGeode);
 
