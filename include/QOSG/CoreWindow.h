@@ -531,6 +531,7 @@ private:
 
 	QPushButton * b_start_face;
 
+	QCheckBox * chb_camera_rot;
 
 	/**
 		*  QAction * load
@@ -727,6 +728,12 @@ public:
 			QSharedPointer<Layout::RestrictionRemovalHandler> removalHandler,
 			QLinkedList<osg::ref_ptr<Data::Node> > nodesOfShapeGettersToRestrict
 			);
+
+	/**
+		 * @author Autor: David Durcak
+		 * @brief getChbCameraRot Return chb_camera_rot
+		 */
+	QCheckBox *getChbCameraRot() const;
 
 protected:
 

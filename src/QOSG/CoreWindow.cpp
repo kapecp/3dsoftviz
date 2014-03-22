@@ -61,9 +61,8 @@ CoreWindow::CoreWindow(QWidget *parent, Vwr::CoreGraph* coreGraph, QApplication*
 	createLeftToolBar();
 	createRightToolBar();
 	createCollaborationToolBar();
-#ifdef OPENCV_FOUND
 	createAugmentedRealityToolBar();
-#endif
+
 
 
 
@@ -92,6 +91,10 @@ CoreWindow::CoreWindow(QWidget *parent, Vwr::CoreGraph* coreGraph, QApplication*
 	nodeLabelsVisible = edgeLabelsVisible = false;
 
 	connect(lineEdit,SIGNAL(returnPressed()),this,SLOT(sqlQuery()));
+
+	QObject::connect( chb_camera_rot, SIGNAL(clicked(bool)),
+					  viewerWidget->getCameraManipulator(), SLOT(setCameraCanRot(bool)));
+
 }
 
 void CoreWindow::createActions()
@@ -505,19 +508,25 @@ void CoreWindow::createRightToolBar() {
 	toolBar->addWidget(b_send_message);*/
 
 	addToolBar(Qt::TopToolBarArea,toolBar);
-	toolBar->setMovable(true);
 }
 
 void CoreWindow::createAugmentedRealityToolBar() {
 	toolBar = new QToolBar( tr("Augmented Reality"),this);
 
+	b_start_face = new QPushButton( tr("Start camera"));
 	QLabel *label = new QLabel( tr("Face & Marker detection"));
-	toolBar->addWidget( label );
 
-	b_start_face = new QPushButton();
-	b_start_face->setText("Start camera");
+#ifdef OPENCV_FOUND
+	toolBar->addWidget( label );
 	toolBar->addWidget( b_start_face );
 	connect(b_start_face, SIGNAL(clicked()), this, SLOT(create_facewindow()));
+	toolBar->addSeparator();
+#endif
+
+	chb_camera_rot = new QCheckBox( tr("Camera rotation"));
+	chb_camera_rot->setChecked(true);
+	toolBar->addWidget( chb_camera_rot );
+
 
 	addToolBar(Qt::TopToolBarArea,toolBar);
 	toolBar->setMovable(true);
