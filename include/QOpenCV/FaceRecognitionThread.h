@@ -4,9 +4,10 @@
 #include <QThread>
 
 
-#include "OpenCV/FaceRecognizer.h"
-#include "OpenCV/CapVideo.h"
-
+namespace OpenCV{
+class CapVideo;
+class FaceRecognizer;
+}
 
 namespace QOpenCV
 
@@ -67,6 +68,11 @@ public slots:
 	*/
 	void setSendImgEnabled( bool sendImgEnabled );
 
+	/**
+			* @author Dávid Durčák
+			* @brief setCapVideo Set member mCapVideo.
+			* @param capVideo
+	*/
 	void setCapVideo( OpenCV::CapVideo *capVideo);
 
 private:

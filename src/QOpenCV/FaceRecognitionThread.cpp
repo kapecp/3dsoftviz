@@ -1,9 +1,7 @@
 #include "QOpenCV/FaceRecognitionThread.h"
 
-#include "OpenCV/CamSelectCore.h"
-
-#include "QOpenCV/FaceRecognitionWindow.h"  // ????
-
+#include "OpenCV/CapVideo.h"
+#include "OpenCV/FaceRecognizer.h"
 
 using namespace QOpenCV;
 
@@ -11,7 +9,7 @@ QOpenCV::FaceRecognitionThread::FaceRecognitionThread( OpenCV::FaceRecognizer *f
 	: QThread(parent)
 {
 	mFaceRecognizer	= faceRecognizer;
-	mCapVideo	= NULL;
+	mCapVideo		= NULL;
 	mCancel			= false;
 	mSendImgEnabled	= true;
 }
@@ -29,7 +27,7 @@ void QOpenCV::FaceRecognitionThread::run()
 	cv::Mat image;
 
 	if( mCapVideo == NULL){
-		qDebug() << "Camera is not opened";
+		qDebug() << "[FaceRecognitionThread::run()]  Camera is not set";
 		return;
 	}
 

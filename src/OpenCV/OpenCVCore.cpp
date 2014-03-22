@@ -159,11 +159,10 @@ void OpenCVCore::createConnectionAruco(){
 					  SIGNAL(finished()),
 					  mOpencvDialog,
 					  SLOT(onMarkerThrFinished()) );
-	/*QObject::connect( mOpencvDialog,
+	QObject::connect( mOpencvDialog,
 					  SIGNAL(setCapVideoMarker( OpenCV::CapVideo *)),
 					  mThrAruco,
 					  SLOT(setCapVideo(OpenCV::CapVideo*)) );
-*/
 
 	// other seting
 	QObject::connect( mOpencvDialog->getMarkerBehindCB(),
