@@ -181,12 +181,17 @@ public slots:
 
 	/**
 		 * @author Autor: David Durcak
-		 * @brief updateGraphRotByAruco Update graphRotTransf MatrixTransform node for rotating a graph according by rotation of marker
+		 * @brief updateGraphRotByAruco Update graphRotTransf MatrixTransform node for rotating a graph by rotation of marker
 		 * @param quat Quaternion that desribe rotation of marker
 		 */
 	void updateGraphRotByAruco( osg::Quat quat );
 
-	void updateGraphRotByMouse( osg::Quat quat );
+	/**
+		 * @author Autor: David Durcak
+		 * @brief updateGraphRotByMouse Update graphRotTransf MatrixTransform node for rotating a graph by mouse
+		 * @param quat Quaternion that desribe rotation of mouse
+		 */
+	void updateGraphRotByMouse( const osg::Quat quat );
 
 private:
 

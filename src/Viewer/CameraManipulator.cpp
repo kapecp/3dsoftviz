@@ -430,8 +430,11 @@ bool Vwr::CameraManipulator::calcMovement()
 
 		new_rotate.makeRotate(angle * throwScale,axis);
 
-		_rotation = _rotation*new_rotate;
-
+		if(0){
+			_rotation = _rotation*new_rotate;
+		} else {
+			emit sendMouseRotation( new_rotate );
+		}
 
 
 		notifyServer();

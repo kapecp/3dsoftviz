@@ -328,7 +328,7 @@ void CoreGraph::updateGraphRotByAruco(osg::Quat quat )
 	graphRotTransf->setMatrix(graphTransfMat);
 }
 
-void CoreGraph::updateGraphRotByMouse(osg::Quat quat )
+void CoreGraph::updateGraphRotByMouse( const osg::Quat quat )
 {
 	mRotMouse = mRotMouse * quat;
 	osg::Matrixd graphTransfMat( mRotMouse * mRotAruco );

@@ -163,6 +163,15 @@ public:
 
 	void setNewPosition(osg::Vec3d cameraTargetPoint, osg::Vec3d cameraInterestPoint, std::list<osg::ref_ptr<Data::Node> > selectedCluster, std::list<osg::ref_ptr<Data::Edge> > selectedEdges);
 
+signals:
+
+	/**
+		 * @author Autor: David Durcak
+		 * @brief sendMouseRotation Send rotation quaternion caused by mouse
+		 * @param quat Quaternion that disribe rotation of mouse
+		 */
+	void sendMouseRotation( const osg::Quat quat );
+
 public slots:
 	/**
 		 * @author Autor: David Durcak
