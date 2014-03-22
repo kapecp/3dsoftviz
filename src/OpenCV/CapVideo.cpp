@@ -1,7 +1,9 @@
 #include "OpenCV/CapVideo.h"
-#include "OpenCV/CamSelectCore.h"
 
+#include <opencv2/imgproc/imgproc.hpp>
+#include "OpenCV/CamSelectCore.h"
 #include <QDebug>
+
 
 
 using namespace OpenCV;

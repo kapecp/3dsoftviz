@@ -1,11 +1,13 @@
 #ifndef CAMSELECTCORE_H
 #define CAMSELECTCORE_H
 
-#include "opencv2/highgui/highgui.hpp"
-#include "QOpenCV/CamSelectWindow.h"
-#include "Core/Core.h"
-#include "OpenCV/CapVideo.h"
-#include <map>
+#include <vector>
+
+class QApplication;
+
+namespace OpenCV{
+class CapVideo;
+}
 
 namespace OpenCV
 {
@@ -33,6 +35,7 @@ public:
 	int countCameras();
 
 	void setCam(int dev_id, int width, int height);
+
 private:
 	CamSelectCore();
 

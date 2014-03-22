@@ -2,14 +2,13 @@
 #define CAMSELECTWINDOW_H
 
 #include <QDialog>
-#include <QtGui/QPushButton>
-#include <QtGui/QLabel>
-#include <QtGui/QComboBox>
-#include <QtGui/QTableWidget>
-#include <QtGui/QTableWidgetItem>
-#include <QtGui/QStandardItemModel>
-#include <QtGui/QTreeView>
-#include <OpenCV/CamSelectCore.h>
+
+class QApplication;
+class QLabel;
+class QStandardItemModel;
+class QTreeView;
+class QPushButton;
+
 
 namespace OpenCV
 {

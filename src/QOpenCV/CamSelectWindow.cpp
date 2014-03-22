@@ -1,5 +1,13 @@
 #include "QOpenCV/CamSelectWindow.h"
-#include <QVBoxLayout>
+
+#include <QtGui/QLabel>
+#include <QtGui/QTreeView>
+#include <QtGui/QVBoxLayout>
+#include <QtGui/QPushButton>
+#include <QtGui/QStandardItemModel>
+
+#include "OpenCV/CamSelectCore.h"
+
 
 using namespace OpenCV;
 

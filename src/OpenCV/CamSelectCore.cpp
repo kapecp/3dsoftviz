@@ -1,5 +1,10 @@
 #include "OpenCV/CamSelectCore.h"
 
+#include "Core/Core.h"
+#include "opencv2/highgui/highgui.hpp"
+#include "QOpenCV/CamSelectWindow.h"
+#include "OpenCV/CapVideo.h"
+
 using namespace OpenCV;
 
 OpenCV::CamSelectCore * OpenCV::CamSelectCore::mCamSelectCore;
