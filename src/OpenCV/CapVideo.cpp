@@ -41,8 +41,8 @@ void OpenCV::CapVideo::release(){
 OpenCV::CapVideo::~CapVideo()
 {
 	this->release();
-	qDebug() << "CapVideo: dectructor: release capture";
-	//cvReleaseCapture( &this->capture ); // ????
+	//qDebug() << "CapVideo: dectructor: release capture";
+
 }
 
 int OpenCV::CapVideo::getWidth(){

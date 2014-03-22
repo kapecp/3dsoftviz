@@ -38,7 +38,6 @@ void QOpenCV::FaceRecognitionThread::run()
 		mFaceRecognizer->annotateFaces( image );
 
 		if( mSendImgEnabled ){
-			//cv::Mat im = ; // ???
 			emit pushImage( image.clone() ); // ???
 		}
 

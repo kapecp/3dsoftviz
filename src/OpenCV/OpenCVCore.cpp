@@ -48,6 +48,8 @@ OpenCV::OpenCVCore::~OpenCVCore(void)
 
 		mThrFaceRec->deleteLater();
 		mThrAruco->deleteLater();
+
+		delete OpenCV::CamSelectCore::getInstance();
 	}
 }
 
