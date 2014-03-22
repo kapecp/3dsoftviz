@@ -35,7 +35,6 @@ void QOpenCV::FaceRecognitionThread::run()
 
 	while( !mCancel ){
 		image = mCapVideo->queryFrame();
-		mCapVideo->createGray();
 
 		mFaceRecognizer->detectFaces( mCapVideo->getGrayframe() );
 		mFaceRecognizer->annotateFaces( image );

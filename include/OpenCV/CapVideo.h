@@ -42,13 +42,7 @@ public:
 
 	/**
 		 * @author Autor: Marek Jakab
-		 * @brief createGray Create grayscale image from captured image
-		 */
-	void createGray();
-
-	/**
-		 * @author Autor: Marek Jakab
-		 * @brief getGrayframe Returns grayscale image
+		 * @brief getGrayframe Create grayscale image from captured image and return it
 		 * @return cv::Mat
 		 */
 	cv::Mat getGrayframe();
@@ -81,7 +75,7 @@ private:
 	int height;
 	cv::Mat frame;
 	cv::Mat grayframe;
-	cv::VideoCapture capture2;
+	cv::VideoCapture capture;
 
 };
 }
