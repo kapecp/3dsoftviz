@@ -191,6 +191,12 @@ public slots:
 		 */
 	void updateArucoGraphPosition( osg::Vec3d pos );
 
+	/**
+		 * @author Autor: David Durcak
+		 * @brief setCameraCanRot Set _cameraCanRot member.
+		 * @param cameraCanRot
+		 */
+	void setCameraCanRot( bool cameraCanRot);
 
 protected:
 
@@ -664,6 +670,11 @@ private:
 		 * @param distance of head from camera
 		 */
 	void updateProjectionAccordingFace(const float x, const float y, const float distance);
+
+	/**
+		*  \brief cameraCanRot if true camera is rotating normally, else rotation quaternion by mouse is emited away
+		*/
+	bool _cameraCanRot;
 	};
 
 

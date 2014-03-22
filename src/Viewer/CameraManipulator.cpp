@@ -53,6 +53,8 @@ Vwr::CameraManipulator::CameraManipulator(Vwr::CoreGraph * coreGraph)
 
 	this->coreGraph = coreGraph;
 	stop();
+
+	_cameraCanRot = true;
 }
 
 Vwr::CameraManipulator::~CameraManipulator()
@@ -430,10 +432,10 @@ bool Vwr::CameraManipulator::calcMovement()
 
 		new_rotate.makeRotate(angle * throwScale,axis);
 
-		if(0){
+		if( _cameraCanRot ){
 			_rotation = _rotation*new_rotate;
 		} else {
-			emit sendMouseRotation( new_rotate );
+			emit sendMouseRotation( new_rotate.inverse() );
 		}
 
 
@@ -1167,6 +1169,10 @@ void Vwr::CameraManipulator::updateArucoGraphPosition( osg::Vec3d pos ){
 
 }
 
+void Vwr::CameraManipulator::setCameraCanRot( bool cameraCanRot)
+{
+	_cameraCanRot = cameraCanRot;
+}
 
 
 
