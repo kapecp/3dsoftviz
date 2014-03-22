@@ -181,10 +181,12 @@ public slots:
 
 	/**
 		 * @author Autor: David Durcak
-		 * @brief updateArucoGraphRotation Update graphRotTransf MatrixTransform node for rotating a graph according by rotation of marker
+		 * @brief updateGraphRotByAruco Update graphRotTransf MatrixTransform node for rotating a graph according by rotation of marker
 		 * @param quat Quaternion that desribe rotation of marker
 		 */
-	void updateArucoGraphRotation( osg::Quat quat );
+	void updateGraphRotByAruco( osg::Quat quat );
+
+	void updateGraphRotByMouse( osg::Quat quat );
 
 private:
 
@@ -299,10 +301,22 @@ private:
 	osg::ref_ptr<osg::Group> graphGroup;
 
 	/**
-			*  osg::ref_ptr graphRotTransf
-			*  \brief graphRotTransf node for rotation graph according marker rotation from aruco
-			*/
+		*  osg::ref_ptr graphRotTransf
+		*  \brief graphRotTransf node for rotation graph according marker rotation from aruco
+		*/
 	osg::ref_ptr<osg::MatrixTransform> graphRotTransf;
+
+	/**
+		*  osg::Quat mRotAruco
+		*  \brief mRotAruco quaternion of rotation by Aruco
+		*/
+	osg::Quat mRotAruco;
+
+	/**
+		*  osg::Quat mRotMouse
+		*  \brief mRotMouse quaternion of rotation by mouse
+		*/
+	osg::Quat mRotMouse;
 
 	/**
 		*  bool nodesFreezed
@@ -381,6 +395,7 @@ private:
 	int customNodesPosition;
 
 	int prevTime;
+
 	};
 }
 

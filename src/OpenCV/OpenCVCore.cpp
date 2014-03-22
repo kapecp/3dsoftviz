@@ -90,7 +90,7 @@ void  OpenCVCore::createPermanentConnection(){
 	QObject::connect( mThrAruco,
 					  SIGNAL(sendArucoRorQuat(osg::Quat)),
 					  AppCore::Core::getInstance( mApp )->getCoreGraph(),
-					  SLOT(updateArucoGraphRotation(osg::Quat)) );
+					  SLOT(updateGraphRotByAruco(osg::Quat)) );
 
 	QObject::connect( mThrFaceRec,
 					  SIGNAL(sendEyesCoords(float,float,float)),
