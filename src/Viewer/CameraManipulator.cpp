@@ -1127,6 +1127,17 @@ void Vwr::CameraManipulator::updateProjectionAccordingFace(const float x, const 
 	this->coreGraph->getCamera()->setProjectionMatrixAsFrustum(left, right, bottom, top, zNear, zFar);
 }
 
+osg::Vec3d CameraManipulator::getCameraPosition() {
+    osg::Vec3d center = getCenter();
+    float distance = getDistance();
+    osg::Quat rotation = getRotation();
+
+    osg::Vec3 direction = rotation * osg::Vec3(0, 0, 1);
+    direction *= distance;
+
+    return center+direction;
+}
+
 } // namespace
 
 

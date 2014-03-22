@@ -163,6 +163,8 @@ public:
 
 	void setNewPosition(osg::Vec3d cameraTargetPoint, osg::Vec3d cameraInterestPoint, std::list<osg::ref_ptr<Data::Node> > selectedCluster, std::list<osg::ref_ptr<Data::Edge> > selectedEdges);
 
+    osg::Vec3d getCameraPosition();
+
 public slots:
 	/**
 		 * @author Autor: David Durcak

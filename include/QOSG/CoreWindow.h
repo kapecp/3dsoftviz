@@ -181,6 +181,8 @@ public slots:
 				*/
 	void sliderValueChanged(int value);
 
+    void clustersOpacityCheckboxValueChanged(bool checked);
+    void clustersOpacitySliderValueChanged(int value);
     void clusters1SliderValueChanged(int value);
     void clusters2SliderValueChanged(int value);
     void clusters1RangeChanged(const QString &);
@@ -654,13 +656,18 @@ private:
 
 	Network::Client * client;
 
+    QLabel * l_clustersOpacity;
+    QCheckBox * chb_clustersOpacity;
+    QSlider * b_clustersOpacity_Slider;
     QLabel * l_clusters1Min;
     QLineEdit * le_clusters1Max;
     QLineEdit * le_clusters2Min;
     QLabel * l_clusters2Max;
-    QSlider *b_clusters1_Slider;
-    QSlider *b_clusters2_Slider;
+    QSlider * b_clusters1_Slider;
+    QSlider * b_clusters2_Slider;
 	QPushButton * b_cluster_test;
+
+    void setVisibleClusterSection(bool visible);
 
 public:
 

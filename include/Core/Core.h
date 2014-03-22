@@ -77,7 +77,7 @@ public:
 		  * \fn getCoreWindow
 		  * \brief Returns QOSG::CoreWindow
 		  **/
-	QOSG::CoreWindow* getCoreWindow(){return this->cw;}
+    QOSG::CoreWindow* getCoreWindow(){return this->cw;}
 
 private:
 	/**
@@ -100,11 +100,11 @@ private:
 	Layout::FRAlgorithm * alg;
 
 
-	/**
-		*  Vwr::CoreGraph * cg
-		*  \brief instance of CoreGraph
-		*/
-	Vwr::CoreGraph * cg;
+    /**
+        *  Vwr::CoreGraph * cg
+        *  \brief instance of CoreGraph
+        */
+    Vwr::CoreGraph * cg;
 
 	/**
 		*  Core * core;

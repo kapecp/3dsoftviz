@@ -1,5 +1,6 @@
 #include "Viewer/CoreGraph.h"
 
+#include "Viewer/CameraManipulator.h"
 #include "Viewer/SkyBox.h"
 #include "Viewer/EdgeGroup.h"
 #include "Viewer/NodeGroup.h"
@@ -147,6 +148,41 @@ float getRadius(QSet<Data::Node *> nodes, osg::Vec3f midPoint) {
     return maxDistance;
 }
 
+double CoreGraph::computeOpacity(osg::Vec3 clusterPosition) {
+    double distance = (cameraManipulator->getCameraPosition() - clusterPosition).length();
+    double opacity = 0.0;
+
+    if (distance > 1000) {
+        opacity = 1.0;
+    } else if (distance > 900) {
+        opacity = 0.9;
+    } else if (distance > 800) {
+        opacity = 0.8;
+    } else if (distance > 700) {
+        opacity = 0.7;
+    } else if (distance > 600) {
+        opacity = 0.6;
+    } else if (distance > 500) {
+        opacity = 0.5;
+    } else if (distance > 400) {
+        opacity = 0.4;
+    } else if (distance > 300) {
+        opacity = 0.3;
+    } else if (distance > 200) {
+        opacity = 0.2;
+    } else if (distance > 100) {
+        opacity = 0.1;
+    }
+
+//    double solidDistance = 1000.0;
+//    if (distance > solidDistance) {
+//        distance = solidDistance;
+//    }
+
+//    return distance / solidDistance;
+    return opacity;
+}
+
 osg::ref_ptr<osg::Group> CoreGraph::test2() {
 /*
     if (testGroup != NULL) {
@@ -183,14 +219,21 @@ osg::ref_ptr<osg::Group> CoreGraph::test2() {
         osg::Vec3f midPoint = getMidPoint(cluster->getALLClusteredNodes());
         int nodesCount = cluster->getClusteredNodesCount();
 
-        if (nodesCount > clustersRangeMin && nodesCount <= clusters1Value) {
-            testGroup->addChild(getCylinder(midPoint, getRadius(cluster->getALLClusteredNodes(), midPoint), cluster->getColor()));
-        } else if (nodesCount > clusters1Value && nodesCount <= clustersMiddleValue) {
-            testGroup->addChild(getCube(midPoint, getRadius(cluster->getALLClusteredNodes(), midPoint), cluster->getColor()));
-        } else if (nodesCount > clustersMiddleValue && nodesCount <= clusters2Value) {
-            testGroup->addChild(dodecahedron(midPoint, getRadius(cluster->getALLClusteredNodes(), midPoint), cluster->getColor()));
+        osg::Vec4 color = cluster->getColor();
+        if (clustersOpacityAutomatic) {
+            color.w() = computeOpacity(midPoint);
         } else {
-            testGroup->addChild(getSphere(midPoint, getRadius(cluster->getALLClusteredNodes(), midPoint), cluster->getColor()));
+            color.w() = clustersOpacity;
+        }
+
+        if (nodesCount > clustersRangeMin && nodesCount <= clusters1Value) {
+            testGroup->addChild(getCylinder(midPoint, getRadius(cluster->getALLClusteredNodes(), midPoint), color));
+        } else if (nodesCount > clusters1Value && nodesCount <= clustersMiddleValue) {
+            testGroup->addChild(getCube(midPoint, getRadius(cluster->getALLClusteredNodes(), midPoint), color));
+        } else if (nodesCount > clustersMiddleValue && nodesCount <= clusters2Value) {
+            testGroup->addChild(dodecahedron(midPoint, getRadius(cluster->getALLClusteredNodes(), midPoint), color));
+        } else {
+            testGroup->addChild(getSphere(midPoint, getRadius(cluster->getALLClusteredNodes(), midPoint), color));
         }
     }
 
@@ -459,6 +502,17 @@ osg::Geode* test() {
     return pyramidGeode;
 }
 
+void CoreGraph::setCameraManipulator(CameraManipulator * cameraManipulator) {
+    this->cameraManipulator = cameraManipulator;
+}
+
+void CoreGraph::setClustersOpacityAutomatic(bool automatic) {
+    this->clustersOpacityAutomatic = automatic;
+}
+
+void CoreGraph::setClustersOpacity(double opacity) {
+    this->clustersOpacity = opacity;
+}
 
 void CoreGraph::setClustersRange(int min, int max) {
     this->clustersRangeMin = min;
@@ -487,6 +541,7 @@ Vwr::CoreGraph::CoreGraph(Data::Graph * graph, osg::ref_ptr<osg::Camera> camera)
 	this->qmetaNodes = NULL;
 	this->qmetaEdges = NULL;
 	this->nodesFreezed = false;
+    this->clustersOpacityAutomatic = false;
 
 	this->edgesGroup = NULL;
 	this->qmetaEdgesGroup = NULL;

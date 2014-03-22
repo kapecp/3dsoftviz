@@ -169,10 +169,13 @@ public:
 		*/
 	void setNodesFreezed(bool val);
 
+    void setClustersOpacityAutomatic(bool automatic);
+    void setClustersOpacity(double opacity);
     void setClustersRange(int min, int max);
     void setClusters1Value(int value);
     void setClusters2Value(int value);
     void setClustersMiddleValue(int value);
+    void setCameraManipulator(CameraManipulator * cameraManipulator);
 
 	Vwr::NodeGroup * getNodesGroup() { return nodesGroup; }
 	Vwr::NodeGroup * getMetaNodesGroup() { return qmetaNodesGroup; }
@@ -367,11 +370,17 @@ private:
 
 	int prevTime;
 
+    bool clustersOpacityAutomatic;
+    double clustersOpacity;
     int clustersRangeMin;
     int clustersRangeMax;
     int clusters1Value;
     int clusters2Value;
     int clustersMiddleValue;
+
+    CameraManipulator * cameraManipulator;
+
+    double computeOpacity(osg::Vec3 clusterPosition);
 };
 }
 

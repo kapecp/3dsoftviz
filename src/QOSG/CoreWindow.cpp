@@ -338,6 +338,19 @@ void CoreWindow::createActions()
 	sl_avatarScale->setFocusPolicy(Qt::NoFocus);
 	connect(sl_avatarScale,SIGNAL(valueChanged(int)),this,SLOT(setAvatarScale(int)));
 
+    chb_clustersOpacity = new QCheckBox("auto");
+    connect(chb_clustersOpacity, SIGNAL(clicked(bool)), this, SLOT(clustersOpacityCheckboxValueChanged(bool)));
+
+    l_clustersOpacity = new QLabel("Opacity:");
+
+    b_clustersOpacity_Slider = new QSlider(Qt::Horizontal);
+    b_clustersOpacity_Slider->setToolTip("Set opacity for clusters");
+    b_clustersOpacity_Slider->setFocusPolicy(Qt::NoFocus);
+    b_clustersOpacity_Slider->setTickPosition(QSlider::TicksAbove);
+    b_clustersOpacity_Slider->setRange(0,10);
+    b_clustersOpacity_Slider->setPageStep(1);
+    connect(b_clustersOpacity_Slider, SIGNAL(valueChanged(int)), this, SLOT(clustersOpacitySliderValueChanged(int)));
+
     l_clusters1Min = new QLabel("0");
     le_clusters1Max = new QLineEdit();
     le_clusters2Min = new QLineEdit();
@@ -358,13 +371,11 @@ void CoreWindow::createActions()
     b_clusters1_Slider = new QSlider(Qt::Horizontal);
     b_clusters1_Slider->setToolTip("&Modify range for clusters");
     b_clusters1_Slider->setFocusPolicy(Qt::NoFocus);
-    b_clusters1_Slider->setValue(25);
     connect(b_clusters1_Slider, SIGNAL(valueChanged(int)), this, SLOT(clusters1SliderValueChanged(int)));
 
     b_clusters2_Slider = new QSlider(Qt::Horizontal);
     b_clusters2_Slider->setToolTip("&Modify range for clusters");
     b_clusters2_Slider->setFocusPolicy(Qt::NoFocus);
-    b_clusters2_Slider->setValue(25);
     connect(b_clusters2_Slider, SIGNAL(valueChanged(int)), this, SLOT(clusters2SliderValueChanged(int)));
 
 	b_cluster_test = new QPushButton();
@@ -372,12 +383,19 @@ void CoreWindow::createActions()
     connect(b_cluster_test, SIGNAL(clicked()), this, SLOT(cluster_test()));
 
     // hide
-    l_clusters1Min->hide();
-    l_clusters2Max->hide();
-    le_clusters1Max->hide();
-    le_clusters2Min->hide();
-    b_clusters1_Slider->hide();
-    b_clusters2_Slider->hide();
+    setVisibleClusterSection(false);
+}
+
+void CoreWindow::setVisibleClusterSection(bool visible) {
+    l_clustersOpacity->setVisible(visible);
+    chb_clustersOpacity->setVisible(visible);
+    b_clustersOpacity_Slider->setVisible(visible);
+    l_clusters1Min->setVisible(visible);
+    l_clusters2Max->setVisible(visible);
+    le_clusters1Max->setVisible(visible);
+    le_clusters2Min->setVisible(visible);
+    b_clusters1_Slider->setVisible(visible);
+    b_clusters2_Slider->setVisible(visible);
 }
 
 void CoreWindow::createMenus()
@@ -560,6 +578,16 @@ void CoreWindow::createClusterToolBar() {
     toolBar->addSeparator();
 
     frame = createHorizontalFrame();
+    frame->layout()->addWidget(l_clustersOpacity);
+
+    frame = createHorizontalFrame();
+    toolBar->addWidget(frame);
+    frame->layout()->addWidget(chb_clustersOpacity);
+    frame->layout()->addWidget(b_clustersOpacity_Slider);
+
+    toolBar->addSeparator();
+
+    frame = createHorizontalFrame();
     toolBar->addWidget(frame);
     frame->layout()->addWidget(l_clusters1Min);
     frame->layout()->addWidget(b_clusters1_Slider);
@@ -571,7 +599,7 @@ void CoreWindow::createClusterToolBar() {
     frame->layout()->addWidget(b_clusters2_Slider);
     frame->layout()->addWidget(l_clusters2Max);
 
-    addToolBar(Qt::TopToolBarArea,toolBar);
+    addToolBar(Qt::RightToolBarArea,toolBar);
     toolBar->setMovable(true);
 }
 
@@ -1771,6 +1799,17 @@ void CoreWindow::start_client()
 	}
 }
 
+void CoreWindow::clustersOpacityCheckboxValueChanged(bool checked)
+{
+    b_clustersOpacity_Slider->setEnabled(!checked);
+    coreGraph->setClustersOpacityAutomatic(checked);
+}
+
+void CoreWindow::clustersOpacitySliderValueChanged(int value)
+{
+    coreGraph->setClustersOpacity(double(value) / 10);
+}
+
 void CoreWindow::clusters1SliderValueChanged(int value)
 {
     coreGraph->setClusters1Value(value);
@@ -1797,10 +1836,11 @@ void CoreWindow::clusters2RangeChanged(const QString &value)
 
 void CoreWindow::cluster_test()
 {
-    qDebug() << "***** Cluster button clicked";
     Data::Graph * currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
 
-    //Clustering::Clusterer* clusterer = new Clustering::Clusterer();
+    if (currentGraph == NULL) {
+        return;
+    }
 
     Clustering::Clusterer::getInstance().cluster(currentGraph);
 
@@ -1821,13 +1861,13 @@ void CoreWindow::cluster_test()
     b_clusters1_Slider->setValue(half/2);
     b_clusters2_Slider->setValue((half+1+maxNodes)/2);
 
+    chb_clustersOpacity->setChecked(false);
+    b_clustersOpacity_Slider->setValue(5);
+
+    coreGraph->setCameraManipulator(getCameraManipulator());
+
     // show
-    l_clusters1Min->show();
-    l_clusters2Max->show();
-    le_clusters1Max->show();
-    le_clusters2Min->show();
-    b_clusters1_Slider->show();
-    b_clusters2_Slider->show();
+    setVisibleClusterSection(true);
 
     //AppCore::Core::getInstance(NULL)->cg->reload(currentGraph);
 }
