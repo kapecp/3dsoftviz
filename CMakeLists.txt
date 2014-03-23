@@ -353,6 +353,22 @@ if ( WIN32 )
 	endif()
 endif()
 
+# Find KINECT SDK
+add_definitions(-DNOMINMAX)
+if ( WIN32 )
+        if ( MSVC )
+                find_package( KINECTSDK )
+                if (KINECTSDK_FOUND)
+                include_directories( ${KINECTSDK_INCLUDE_DIRS} )
+                add_definitions( -DKINECTSDK_FOUND )
+                ## TODO: Speech SDK here
+                message (STATUS "KINECTSDK FOUND")
+                else(KINECTSDK_FOUND)
+                message (STATUS "KINECTSDK NOT FOUND")
+                endif()
+        endif()
+endif()
+
 # ---------------
 # 3DSoftviz sources
 # ---------------
@@ -501,6 +517,11 @@ if (NITE2_FOUND AND OPENNI2_FOUND)
 	target_link_libraries( ${3DSOFTVIZ_NAME} ${NITE2_LIBRARIES} ${OPENNI2_LIBRARIES} )
 endif()
 
+# KINECT SDK
+if (KINECTSDK_FOUND)
+    target_link_libraries( ${3DSOFTVIZ_NAME} ${KINECTSDK_LIBRARIES})
+    ## TODO : link Speech SDK
+endif()
 
 # 'cotire' the executable
 if( COMMAND cotire )
