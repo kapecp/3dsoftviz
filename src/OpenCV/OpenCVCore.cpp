@@ -9,6 +9,7 @@
 #include "Viewer/CameraManipulator.h"
 #include "OpenCV/CamSelectCore.h"
 #include "OpenCV/CapVideo.h"
+#include "OpenCV/FaceRecognizer.h"
 
 Q_DECLARE_METATYPE(cv::Mat)
 

@@ -320,7 +320,7 @@ void CoreGraph::setNodesFreezed(bool val)
 	qmetaNodesGroup->freezeNodePositions();
 }
 
-void CoreGraph::updateGraphRotByAruco(osg::Quat quat )
+void CoreGraph::updateGraphRotByAruco(const osg::Quat quat )
 {
 	mRotAruco = quat;
 	osg::Matrixd graphTransfMat( mRotMouse * mRotAruco );

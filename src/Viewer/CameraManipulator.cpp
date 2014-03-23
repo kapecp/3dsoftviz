@@ -1151,12 +1151,11 @@ void Vwr::CameraManipulator::updateArucoGraphPosition( osg::Vec3d pos ){
 	if( distGra < 1.0){
 		distGra = 1.0;
 	}
+
 	double getHeigherKoef = constHeigherScale * distGra;							// if marker is on table, graph coud be too on bottom, so get him heigher
-
-	_centerArucoTrans[1] = distGra * (pos.z() + constDist);			// distance
-
 	double koef = distGra * camDistRatio * constHeightKoef / distArc;
 
+	_centerArucoTrans[1] = distGra * (pos.z() + constDist);			// distance
 	_centerArucoTrans[0] = koef * pos.x();							// horizontal
 	_centerArucoTrans[2] = koef * pos.y() - getHeigherKoef;			// vertical
 

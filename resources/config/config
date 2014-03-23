@@ -46,5 +46,5 @@ Aruco.MarkerSize=0.06
 Aruco.CamDistancRatio=2.75
 Aruco.ConstDist=0.3
 Aruco.ConstHeightKoef=0.8
-Aruco.ConstHeigherScale=0.6
+Aruco.ConstHeigherScale=0.07
 

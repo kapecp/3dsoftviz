@@ -60,7 +60,7 @@ signals:
 	* @brief sendArucoRorQuat signal that emit Quaternion that represent rotation of detected marker
 	* @param quat Quaternion
 	*/
-	void sendArucoRorQuat( osg::Quat quat);
+	void sendArucoRorQuat( const osg::Quat quat);
 
 	/**
 	* @author Dávid Durčák

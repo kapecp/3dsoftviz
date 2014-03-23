@@ -184,7 +184,7 @@ public slots:
 		 * @brief updateGraphRotByAruco Update graphRotTransf MatrixTransform node for rotating a graph by rotation of marker
 		 * @param quat Quaternion that desribe rotation of marker
 		 */
-	void updateGraphRotByAruco( osg::Quat quat );
+	void updateGraphRotByAruco( const osg::Quat quat );
 
 	/**
 		 * @author Autor: David Durcak

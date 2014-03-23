@@ -71,11 +71,13 @@ void ArucoThread::run()
 	}
 	const double width  = mCapVideo->getWidth();
 	const double height = mCapVideo->getHeight();
+	const double camDistRatio  = Util::ApplicationConfig::get()->getValue("Aruco.CamDistancRatio").toDouble();
+	mRatioCamCoef = ( 1 - height/width ) / camDistRatio;
+
 
 	double		 actPosArray[3];			// x, y, z
 	double		 actQuatArray[4];		// angle(w), x, y, z
 	bool		 markerDetected = false;
-	const double camDistRatio  = Util::ApplicationConfig::get()->getValue("Aruco.CamDistancRatio").toDouble();
 
 
 	QString filename = "../share/3dsoftviz/config/camera.yml";
@@ -122,8 +124,8 @@ void ArucoThread::run()
 
 
 					// correct Y centering, because of camerra different ration aruco top max y value is less than bottom one
-					mRatioCamCoef = ( 1 - height/width ) / camDistRatio;
 					actPos.y() = ( mRatioCamCoef * actPos.z()  + actPos.y() );
+
 
 					if ( mCorEnabled ) {
 						correctQuatAndPos( actPos, actQuat);
