@@ -91,14 +91,6 @@ void Kinect::KinectWindow::configureWindow(void)
 
 }
 
-void Kinect::KinectWindow::closeEvent(QCloseEvent *event)
-{
-	qDebug() << "Close Kinect Window";
-	disconnect();
-	event->accept();
-
-}
-
 void Kinect::KinectWindow::setLabel(cv::Mat image)
 {
 	if( image.empty() ) {
@@ -130,12 +122,12 @@ void Kinect::KinectWindow::onKinectStartCancel(bool checked)
 	if(checked)
 	{
 		mKinectStartStop->setText(tr("Stop Kinect"));
-		emit startKinect(checked);
+		emit startKinect();
 	}
 	else
 	{
 		mKinectStartStop->setEnabled(false);
-		emit stopKinect();
+		emit stopKinect(false);
 	}
 
 }
@@ -145,11 +137,11 @@ void Kinect::KinectWindow::pausewindows()
 	if (mKinectPause->text().toStdString().compare(tr("Pause").toStdString())==0)
 	{
 		mKinectPause->setText(tr("Continue"));
-		emit startKinect(true);
+		emit startKinect();
 	}
 	else
 	{
-		emit startKinect(false);
+		emit startKinect();
 		mKinectPause->setText(tr("Pause"));
 
 	}
@@ -160,12 +152,21 @@ void Kinect::KinectWindow::quitWindows()
 {
 	if(thr->isRunning())
 	{
-		emit startKinect(false);
+		emit stopKinect(true);
 		thr->wait();
 	}
 	delete thr;
 	delete this;
 
-
-
 }
+
+void Kinect::KinectWindow::closeEvent(QCloseEvent *event)
+{
+	qDebug() << "Kinect close event";
+
+	emit sendImageKinect(false);
+
+	disconnect();
+	event->accept();
+}
+

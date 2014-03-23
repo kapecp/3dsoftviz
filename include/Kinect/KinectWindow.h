@@ -44,18 +44,20 @@ signals:
 	/**
 	 * @brief startKinect
 	 */
-	void startKinect(bool send);
+	void startKinect();
 
 	/**
 	 * @brief stopKinect
 	 */
-	void stopKinect();
+	void stopKinect(bool set);
+
+	void sendImageKinect(bool send);
 
 
 
 public slots:
 
-	void setLabel( cv::Mat image );
+	void setLabel(cv::Mat image);
 	void setLabelQ(QImage qimage );
 
 	void pausewindows();
