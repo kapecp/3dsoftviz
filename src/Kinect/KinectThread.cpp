@@ -31,6 +31,11 @@ void Kinect::KinectThread::setCancel(bool set)
 	mCancel=set;
 }
 
+void Kinect::KinectThread::setImageSend(bool set)
+{
+	mSetImageEnable=set;
+}
+
 void Kinect::KinectThread::pause()
 {
 	mCancel=true;

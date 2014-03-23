@@ -32,11 +32,14 @@ public slots:
 
 	void setCancel(bool set);
 
+	void setImageSend(bool set);
+
 	void pause();
 
 private:
 
 	bool mCancel;
+	bool mSetImageEnable;
 
 
 
