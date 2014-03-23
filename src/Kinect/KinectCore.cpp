@@ -16,13 +16,29 @@ Kinect::KinectCore::KinectCore( QApplication* app,QWidget *parent)
 	mKinectCore = this;
 	mParent=parent;
 	this->app=app;
+
 	mKinectDialog=NULL;
+
 	mThrsCreated=false;
 	mThrKinect=NULL;
+
 	qRegisterMetaType<cv::Mat>("Mat");
 }
 
+Kinect::KinectCore::~KinectCore()
+{
+	if(mThrsCreated)
+	{
+		mThrKinect->setCancel(true);
+		mThrKinect->setImageSend(false);
 
+		mKinectDialog->disconnect();
+		mKinectDialog->deleteLater();
+
+		mThrKinect->wait();
+		mThrKinect->deleteLater();
+	}
+}
 
 void Kinect::KinectCore::kinectRecognition()
 {
@@ -34,18 +50,12 @@ void Kinect::KinectCore::kinectRecognition()
 			qDebug() << "Kinect Thread";
 			mThrsCreated=true;
 			mThrKinect = new Kinect::KinectThread();
-
 		}
 		qDebug()<< "create Kinect Window";
-
 		mKinectDialog= new Kinect::KinectWindow(mParent,app,mThrKinect);
-		createConnectionKinect();
 	}
-
 	mKinectDialog->show();
-	mThrKinect->start();
-
-
+	createConnectionKinect();
 }
 
 
@@ -61,7 +71,25 @@ Kinect::KinectCore * Kinect::KinectCore::getInstance( QApplication* app,QWidget 
 
 void Kinect::KinectCore::createConnectionKinect()
 {
-	QObject::connect(mThrKinect,SIGNAL(pushImage(cv::Mat)),mKinectDialog,SLOT(setLabel(cv::Mat)));
+
+	QObject::connect(mKinectDialog,
+					 SIGNAL(sendImageKinect(bool)),
+					 mThrKinect,
+					 SLOT(setImageSend(bool)));
+	QObject::connect(mThrKinect,
+					 SIGNAL(pushImage(cv::Mat)),
+					 mKinectDialog,
+					 SLOT(setLabel(cv::Mat)));
+
+	QObject::connect(mKinectDialog,
+					 SIGNAL(startKinect()),
+					 mThrKinect,
+					 SLOT(start()));
+
+	QObject::connect(mKinectDialog,
+					 SIGNAL(stopKinect(bool)),
+					 mThrKinect,
+					 SLOT(setCancel(bool)));
 
 
 }

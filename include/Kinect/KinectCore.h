@@ -1,13 +1,12 @@
 #ifndef KinectCORE_H
 #define KinectCORE_H
 
-#include "Core/Core.h"
 #include <QPointer>
 
 namespace Kinect
 {
-	class KinectThread;
-	class KinectWindow;
+class KinectThread;
+class KinectWindow;
 }
 
 namespace Kinect
@@ -22,7 +21,7 @@ class KinectCore
 {
 
 public:
-	KinectCore(QApplication* app, QWidget *parent);
+
 	~KinectCore(void);
 	/**
 		 * @author Autor: Patrik Hlavac
@@ -32,7 +31,6 @@ public:
 		 */
 	static KinectCore *getInstance(QApplication* app, QWidget *parent);
 
-	static KinectCore *mKinectCore;
 
 	/**
 	 * @author Matej Marconak
@@ -42,14 +40,25 @@ public:
 
 private:
 
+	/**
+	  *author Matej Marconak
+	 * @brief create Connection Kinect
+	 */
 	void createConnectionKinect();
+
+	KinectCore(QApplication* app, QWidget *parent);
+
+	static KinectCore *mKinectCore;
 
 	QApplication *app;
 	QWidget	*mParent;
+
 	Kinect::KinectThread *mThrKinect;
+	bool	mThrsCreated;
+
 	QPointer<Kinect::KinectWindow> mKinectDialog;
 
-	bool	mThrsCreated;
+
 
 
 
