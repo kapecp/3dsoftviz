@@ -1,5 +1,13 @@
 #include "QOpenCV/CamSelectWindow.h"
-#include <QVBoxLayout>
+
+#include <QtGui/QLabel>
+#include <QtGui/QTreeView>
+#include <QtGui/QVBoxLayout>
+#include <QtGui/QPushButton>
+#include <QtGui/QStandardItemModel>
+
+#include "OpenCV/CamSelectCore.h"
+
 
 using namespace OpenCV;
 
@@ -70,21 +78,20 @@ void CamSelectWindow::createTableModel(QString data)
 	}
 	view->setVisible(true);
 	view->setModel(model);
-	connect(view->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)), this, SLOT(printChanged(const QItemSelection &, const QItemSelection &)));
 }
 
 void CamSelectWindow::commitChanges()
 {
-	OpenCV::CamSelectCore::getInstance()->setCam(indexes.at(0).row()
-													   ,model->item(indexes.at(0).row(),2)->text().toInt(),
-													   model->item(indexes.at(0).row(),3)->text().toInt());
+	if( !view->currentIndex().isValid() ){
+		qDebug() << "[CamSelectionWindow]: Invalid selection";
+		return;
+	}
+	int row = view->currentIndex().row();
+	OpenCV::CamSelectCore::getInstance()->setCam( row,
+												  model->item(row, 2)->text().toInt(),
+												  model->item(row, 2)->text().toInt() );
 	this->close();
 	this->setResult(QDialog::Accepted);
-}
-
-void CamSelectWindow::printChanged(const QItemSelection &, const QItemSelection &)
-{
-	indexes = view->selectionModel()->selection().indexes();
 }
 
 

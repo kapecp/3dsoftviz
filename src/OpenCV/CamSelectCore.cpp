@@ -1,5 +1,10 @@
 #include "OpenCV/CamSelectCore.h"
 
+#include "Core/Core.h"
+#include <opencv2/highgui/highgui.hpp>
+#include "QOpenCV/CamSelectWindow.h"
+#include "OpenCV/CapVideo.h"
+
 using namespace OpenCV;
 
 OpenCV::CamSelectCore * OpenCV::CamSelectCore::mCamSelectCore;
@@ -41,12 +46,11 @@ OpenCV::CapVideo *OpenCV::CamSelectCore::selectCamera()
 		}
 		if (i<camlist.size()-1) data.append(";");
 	}
-	OpenCV::CamSelectWindow *csw = new OpenCV::CamSelectWindow(
-				AppCore::Core::getInstance(qApp)->getCoreWindow(),
-				qApp,
-				data);
+	OpenCV::CamSelectWindow csw( AppCore::Core::getInstance(qApp)->getCoreWindow(),
+								 qApp,
+								 data);
 
-	if (csw->exec())
+	if (csw.exec())
 	{
 		if (camlist[device_id]->isOpened())
 		{
