@@ -20,8 +20,8 @@ void OpenCV::CapVideo::startCamera(int width,int height){
 		this->capture2=cap;
 		this->capture2.set(CV_CAP_PROP_FRAME_WIDTH,width);
 		this->capture2.set(CV_CAP_PROP_FRAME_HEIGHT,height);
-		this->width=this->capture2.get(CV_CAP_PROP_FRAME_WIDTH);
-		this->height=this->capture2.get(CV_CAP_PROP_FRAME_HEIGHT);
+		this->width= (int)this->capture2.get(CV_CAP_PROP_FRAME_WIDTH);
+		this->height=(int)this->capture2.get(CV_CAP_PROP_FRAME_HEIGHT);
 		this->connections++;
 		return;
 	}

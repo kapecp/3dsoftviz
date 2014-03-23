@@ -8,7 +8,7 @@ using namespace ArucoModul;
 ArucoCore::ArucoCore()
 {
 
-	mMarkerSize = Util::ApplicationConfig::get()->getValue("Aruco.MarkerSize").toDouble();;
+	mMarkerSize = Util::ApplicationConfig::get()->getValue("Aruco.MarkerSize").toFloat();
 
 }
 

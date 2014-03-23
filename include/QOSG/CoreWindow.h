@@ -79,8 +79,15 @@ public slots:
 	void showLoadGraph();
 
 	/**
+				*  \fn public  saveGraphToDB
+				*  \brief Save a current graph to database
+				*/
+	void saveGraphToDB();
+
+
+	/**
 				*  \fn public  saveLayoutToDB
-				*  \brief Save layout of current graph to database
+				*  \brief Save a current layout of current graph to database
 				*/
 	void saveLayoutToDB();
 
@@ -355,10 +362,17 @@ private:
 	QAction * loadGraph;
 
 	/**
+		*  QAction * saveLayout
+		*  \brief Pointer to save layout to database
+		*/
+	QAction * saveLayout;
+
+	/**
 		*  QAction * saveGraph
 		*  \brief Pointer to save graph to database
 		*/
 	QAction * saveGraph;
+
 
 	/**
 		*  QPushButton * play

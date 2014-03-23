@@ -67,6 +67,7 @@ CoreWindow::CoreWindow(QWidget *parent, Vwr::CoreGraph* coreGraph, QApplication*
 	createCollaborationToolBar();
 	createAugmentedRealityToolBar();
 
+
 	viewerWidget = new ViewerQT(this, 0, 0, 0, coreGraph);
 	viewerWidget->setSceneData(coreGraph->getScene());
 
@@ -108,8 +109,11 @@ void CoreWindow::createActions()
 	loadGraph = new QAction(QIcon("../share/3dsoftviz/img/gui/loadFromDB.png"),"&Load graph from database", this);
 	connect(loadGraph, SIGNAL(triggered()), this, SLOT(showLoadGraph()));
 
-	saveGraph = new QAction(QIcon("../share/3dsoftviz/img/gui/saveToDB.png"),"&Save graph layout", this);
-	connect(saveGraph, SIGNAL(triggered()), this, SLOT(saveLayoutToDB()));
+	saveGraph = new QAction(QIcon("../share/3dsoftviz/img/gui/saveToDB.png"),"&Save graph", this);
+	connect(saveGraph, SIGNAL(triggered()), this, SLOT(saveGraphToDB()));
+
+	saveLayout = new QAction(QIcon("../share/3dsoftviz/img/gui/saveToDB.png"),"&Save layout", this);
+	connect(saveLayout, SIGNAL(triggered()), this, SLOT(saveLayoutToDB()));
 
 	play = new QPushButton();
 	play->setIcon(QIcon("../share/3dsoftviz/img/gui/pause.png"));
@@ -346,6 +350,7 @@ void CoreWindow::createMenus()
 	file->addAction(loadGraph);
 	file->addSeparator();
 	file->addAction(saveGraph);
+	file->addAction(saveLayout);
 	file->addSeparator();
 	file->addAction(quit);
 
@@ -537,6 +542,7 @@ void CoreWindow::createAugmentedRealityToolBar() {
 
 }
 
+
 void CoreWindow::createCollaborationToolBar() {
 	toolBar = new QToolBar("Collaboration",this);
 
@@ -615,38 +621,27 @@ void CoreWindow::showLoadGraph()
 	loadGraph->show();
 }
 
+void CoreWindow::saveGraphToDB()
+{
+	Manager::GraphManager::getInstance()->saveActiveGraphToDB();
+}
+
+
 void CoreWindow::saveLayoutToDB()
 {
-	Data::Graph * currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
+	bool ok;
+	// get name for layout
+	QString layout_name = QInputDialog::getText(this, tr("New layout name"),
+												tr("Layout name:"),
+												QLineEdit::Normal, "", &ok);
 
-	if(currentGraph != NULL)
-	{
-		QSqlDatabase * conn = Manager::GraphManager::getInstance()->getDB()->tmpGetConn();
-		bool ok;
 
-		if(conn != NULL && conn->open()) {
-			QString layout_name = QInputDialog::getText(this, tr("New layout name"), tr("Layout name:"), QLineEdit::Normal, "", &ok);
+	// save layout
+	if (ok && !layout_name.isEmpty()) {
+		Manager::GraphManager::getInstance()->saveActiveLayoutToDB( layout_name );
 
-			if (ok && !layout_name.isEmpty())
-			{
-				Data::GraphLayout* layout = Model::GraphLayoutDAO::addLayout(layout_name, currentGraph, conn);
-				currentGraph->selectLayout(layout);
-
-				currentGraph->saveLayoutToDB(conn, currentGraph);
-			}
-			else
-			{
-				qDebug() << "[QOSG::CoreWindow::saveLayoutToDB] Input dialog canceled";
-			}
-		}
-		else
-		{
-			qDebug() << "[QOSG::CoreWindow::saveLayoutToDB] Connection to DB not opened";
-		}
-	}
-	else
-	{
-		qDebug() << "[QOSG::CoreWindow::saveLayoutToDB] There is no active graph loaded";
+	} else {
+		qDebug() << "[QOSG::CoreWindow::saveLayoutToDB()] Input dialog canceled";
 	}
 }
 
@@ -706,6 +701,7 @@ void CoreWindow::centerView(bool checked)
 	singleSelect->setChecked(false);
 	multiSelect->setChecked(false);
 	center->setChecked(checked);
+
 	viewerWidget->getCameraManipulator()->setCenter(viewerWidget->getPickHandler()->getSelectionCenter(false));
 }
 
@@ -714,8 +710,8 @@ void CoreWindow::addMetaNode()
 {
 	Data::Graph * currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
 
-	if (currentGraph != NULL)
-	{
+	if (currentGraph != NULL) {
+
 		osg::Vec3 position = viewerWidget->getPickHandler()->getSelectionCenter(true);
 
 		QString metaNodeName = "metaNode";
@@ -941,6 +937,7 @@ void CoreWindow::nodeTypeComboBoxChanged(int index)
 	default:
 		qDebug() << "CoreWindow:nodeTypeComboBoxChanged do not suported index";
 		break;
+
 	}
 }
 
@@ -1609,6 +1606,7 @@ bool CoreWindow::add_EdgeClick()
 	}
 	if (isPlaying)
 		layout->play();
+
 	//QString nodename1 = QString(node1->getName());
 	//QString nodename2 = QString(node2->getName());
 	return true;
@@ -1735,14 +1733,14 @@ void CoreWindow::send_message()
 	client->send_message(le_message->text());
 }
 
-#ifdef OPENCV_FOUND
+
 void CoreWindow::create_facewindow()
 {
 #ifdef OPENCV_FOUND
 	OpenCV::OpenCVCore::getInstance(NULL, this)->faceRecognition();
 #endif
 }
-#endif
+
 
 #ifdef OPENNI2_FOUND
 void CoreWindow::createKinectWindow(){
@@ -1888,5 +1886,4 @@ void CoreWindow::closeEvent(QCloseEvent *event)
 	delete OpenCV::OpenCVCore::getInstance(NULL, this);
 #endif
 	//QApplication::closeAllWindows();   // ????
-	event->accept();
 }

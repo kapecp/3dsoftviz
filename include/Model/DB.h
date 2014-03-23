@@ -24,22 +24,8 @@ namespace Model
 	*/
 class DB
 {
-private:
-	/**
-		*	QSqlDatabase conn
-		*	\brief Database connection
-		*/
-	QSqlDatabase conn;
 
-
-	/**
-		*	Util::ApplicationConfig * appConf
-		*	\brief Application config
-		*/
-	Util::ApplicationConfig * appConf;
 public:
-
-	QSqlDatabase* tmpGetConn() { return &conn; }
 
 	/**
 		*  \fn public constructor  DB
@@ -70,6 +56,37 @@ public:
 		* \brief Closes current database connection
 		*/
 	void closeConnection();
+
+	/**
+	 * @author Autor:Dávid Durčák
+	 * \fn createConnection
+	 * \brief Create connection only one time in first call.
+	 */
+	bool createConnection();
+
+	/**
+	 * @author Autor:Dávid Durčák
+	 * \fn tmpGetConn
+	 * \brief Create and return connection do database
+	 */
+	QSqlDatabase* tmpGetConn();
+
+private:
+	/**
+		*	QSqlDatabase conn
+		*	\brief Database connection
+		*/
+	QSqlDatabase conn;
+
+	/**
+		*	Util::ApplicationConfig * appConf
+		*	\brief Application config
+		*/
+	Util::ApplicationConfig * appConf;
+
+
+	bool mConneCreationTried;   // false if createConnection was not called yet
+
 };
 }
 

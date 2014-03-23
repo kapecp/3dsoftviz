@@ -36,13 +36,13 @@ bool RSFImporter::import (
 		ImporterContext &context
 		) {
 	QTextStream stream (&(context.getStream ()));
-	QString line, graphname="Graph";
+	QString line;
 
 	GraphOperations graphOp (context.getGraph ());
 	ReadNodesStore readNodes;
 	Data::Type *edgeType = NULL;
 	Data::Type *nodeType = NULL;
-	context.getGraph ().setName (graphname);
+
 	(void)graphOp.addDefaultTypes (edgeType, nodeType);
 
 

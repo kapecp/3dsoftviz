@@ -102,7 +102,7 @@ endif()
 option( USE_BUILTIN_DEPENDENCIES "Use builtin dependencies." ON )
 
 # Find OpenCV
-find_package( OpenCV )
+FIND_PACKAGE(OpenCV)
 
 # Build dependencies
 if( USE_BUILTIN_DEPENDENCIES )
@@ -234,11 +234,15 @@ find_package(osgViewer)
 
 # Find OpenCV
 if( OpenCV_FOUND )
+				if ( WIN32 )
+					add_definitions( -DNOMINMAX )
+				endif()
 
 		# include_directories( ${OpenCV_INCLUDE_DIRS} )
 
 		add_definitions( -DOPENCV_FOUND )
-		message(STATUS "OpenCV FOUND")
+		MESSAGE( STATUS "OpenCV_LIB_DIR=${OpenCV_LIB_DIR}")
+		MESSAGE( STATUS "OpenCV_LIB_DIR=${OpenCV_LIBS}")
 
 		file(GLOB_RECURSE SRC_OPENCV  "src/OpenCV/*.cpp")
 		file(GLOB_RECURSE SRC_QOPENCV  "src/QOpenCV/*.cpp")
@@ -252,7 +256,7 @@ if( OpenCV_FOUND )
 		set(SRC ${SRC} ${SRC_ARUCO} )
 
 else()
-		message("OpenCV NOT FOUND")
+		MESSAGE( STATUS "OpenCV Not Found")
 endif()
 
 # -----------------
@@ -483,23 +487,20 @@ target_link_libraries( ${3DSOFTVIZ_NAME}
 	${QT_LIBRARIES}
 	${OPENSCENEGRAPH_LIBRARIES}
 	${OSGVIEWER_LIBRARIES}
-	libnoise   # ???
+	libnoise
 )
-
-if( USE_BUILTIN_DEPENDENCIES )
-	target_link_libraries( ${3DSOFTVIZ_NAME} aruco libnoise )
-endif()
 
 if(OpenCV_FOUND)
 	target_link_libraries( ${3DSOFTVIZ_NAME}
-		aruco
 		${OpenCV_LIBS}
+		aruco
 	)
 endif()
 
 if (NITE2_FOUND AND OPENNI2_FOUND)
 	target_link_libraries( ${3DSOFTVIZ_NAME} ${NITE2_LIBRARIES} ${OPENNI2_LIBRARIES} )
 endif()
+
 
 # 'cotire' the executable
 if( COMMAND cotire )
@@ -517,17 +518,15 @@ if( COMMAND cotire )
 			${OPENSCENEGRAPH_LIBRARIES}
 			${OSGVIEWER_LIBRARIES}
 			libnoise
-
 		)
-				if( OpenCV_FOUND )
-					target_link_libraries(${3DSOFTVIZ_NAME}_unity aruco)
-				endif()
-
-	endif()
 # toto kuknut este
-	if(OpenCV_FOUND)
-		target_link_libraries( ${3DSOFTVIZ_NAME}_unity ${OpenCV_LIBS} )
+		if(OpenCV_FOUND)
+			target_link_libraries( ${3DSOFTVIZ_NAME}_unity aruco )
+		endif()
+	endif()
 
+if(OpenCV_FOUND)
+		target_link_libraries( ${3DSOFTVIZ_NAME}_unity ${OpenCV_LIBS})
 	endif()
 
 	if( MSVC )
@@ -545,14 +544,6 @@ endif()
 add_dependencies( ${3DSOFTVIZ_NAME} libnoise)
 if( OpenCV_FOUND )
 		add_dependencies( ${3DSOFTVIZ_NAME} aruco )
-endif()
-
-if (COMMAND cotire)
-	add_dependencies( ${3DSOFTVIZ_NAME}_unity libnoise)
-	if( OpenCV_FOUND )
-		add_dependencies( ${3DSOFTVIZ_NAME}_unity aruco)
-
-	endif()
 endif()
 
 # -------
@@ -584,14 +575,10 @@ if( USE_BUILTIN_DEPENDENCIES )
 
 	# Make sure dependencies are built
 		add_dependencies( ${3DSOFTVIZ_NAME} libnoise )
-	if (COMMAND cotire)
-		add_dependencies( ${3DSOFTVIZ_NAME}_unity libnoise )
-	endif()
+
 		if( OpenCV_FOUND )
 			add_dependencies( ${3DSOFTVIZ_NAME} aruco )
-			if (COMMAND cotire)
-				add_dependencies( ${3DSOFTVIZ_NAME}_unity aruco )
-			endif()
+
 		endif()
 
 

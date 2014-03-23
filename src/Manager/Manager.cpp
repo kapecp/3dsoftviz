@@ -38,10 +38,6 @@ Manager::GraphManager::GraphManager()
 	//konfiguracia/vytvorenie DB
 	this->activeGraph = NULL;
 	this->db = new Model::DB();
-	bool error;
-	this->graphs = Model::GraphDAO::getGraphs(db->tmpGetConn(), &error);
-
-	//runTestCase(1);
 }
 
 Manager::GraphManager::~GraphManager()
@@ -156,18 +152,6 @@ Data::Graph* Manager::GraphManager::loadGraph(QString filepath)
 		this->activeGraph = newGraph.release ();
 	}
 
-	//ked uz mame graf nacitany zo suboru, ulozime ho aj do databazy
-	if(db->tmpGetConn() != NULL && db->tmpGetConn()->open()) {
-		//ulozime obycajne uzly a hrany
-		this->activeGraph->saveGraphToDB(db->tmpGetConn(), this->activeGraph);
-		//nastavime meno grafu podla nazvu suboru
-		Model::GraphDAO::setGraphName(this->activeGraph->getId(), name, db->tmpGetConn());
-		//ulozime a nastavime default layout
-		Data::GraphLayout* layout = Model::GraphLayoutDAO::addLayout("original layout", this->activeGraph, db->tmpGetConn());
-		this->activeGraph->selectLayout(layout);
-		//este ulozit meta uzly, hrany a pozicie vsetkych uzlov
-		this->activeGraph->saveLayoutToDB(db->tmpGetConn(), this->activeGraph);
-	}
 
 	if (ok) {
 		// robime zakladnu proceduru pre restartovanie layoutu
@@ -181,6 +165,71 @@ Data::Graph* Manager::GraphManager::loadGraph(QString filepath)
 
 	return (ok ? this->activeGraph : NULL);
 }
+
+
+void Manager::GraphManager::saveActiveGraphToDB()
+{
+
+	if( this->getActiveGraph() == NULL ) {
+		qDebug() << "[Manager::GraphManager::saveActiveGraphToDB()] There is no active graph loaded";
+		return;
+	}
+
+	// test ci graf je uz v DB
+	if( this->getActiveGraph()->isInDB() ) {
+		qDebug() << "[Manager::GraphManager::saveActiveGraphToDB] Graph is in DB allready";
+		return;
+	}
+
+	// ulozenie grafu to do databazy
+	if( db->tmpGetConn() != NULL  &&  db->tmpGetConn()->open() ) {
+
+		// vytvorenie prazdneho grafu v databaze
+		Model::GraphDAO::addGraph(this->getActiveGraph(), this->db->tmpGetConn());
+
+		//ulozime obycajne uzly a hrany
+		this->activeGraph->saveGraphToDB(db->tmpGetConn(), this->activeGraph);
+		//nastavime meno grafu podla nazvu suboru
+		Model::GraphDAO::setGraphName(this->activeGraph->getId(), this->activeGraph->getName(), db->tmpGetConn());
+		//ulozime a nastavime default layout
+		Data::GraphLayout* layout = Model::GraphLayoutDAO::addLayout("original layout", this->activeGraph, db->tmpGetConn());
+		this->activeGraph->selectLayout(layout);
+		//este ulozit meta uzly, hrany a pozicie vsetkych uzlov
+		this->activeGraph->saveLayoutToDB(db->tmpGetConn(), this->activeGraph);
+
+	} else {
+		qDebug() << "[Manager::GraphManager::saveActiveGraphToDB] Connection to DB not opened";
+	}
+
+}
+
+void Manager::GraphManager::saveActiveLayoutToDB(const QString layoutName)
+{
+
+	if( this->getActiveGraph() == NULL ) {
+		qDebug() << "[Manager::GraphManager::saveActiveLayoutToDB()] There is no active graph loaded";
+		return;
+	}
+
+	if( db->tmpGetConn() != NULL  &&  db->tmpGetConn()->open()) {
+
+		// ulozenie grafu do DB ak este nie je
+		if( this->getActiveGraph()->isInDB() == false ) {
+			this->saveActiveGraphToDB();
+		}
+
+		Data::GraphLayout* layout = Model::GraphLayoutDAO::addLayout( layoutName, this->getActiveGraph(), db->tmpGetConn());
+
+		this->getActiveGraph()->selectLayout(layout);
+		this->getActiveGraph()->saveLayoutToDB(db->tmpGetConn(), this->getActiveGraph());
+
+	} else {
+		qDebug() << "[Manager::GraphManager::saveActiveLayoutToDB()] Connection to DB not opened";
+	}
+
+
+}
+
 
 Data::Graph* Manager::GraphManager::createNewGraph(QString name)
 {
@@ -264,12 +313,7 @@ Data::Graph* Manager::GraphManager::loadGraphFromDB(qlonglong graphID, qlonglong
 
 Data::Graph* Manager::GraphManager::createGraph(QString graphname)
 {
-	Data::Graph* g;
-	if(!this->db->tmpGetConn()->isOpen()){
-		g = this->emptyGraph();
-	} else {
-		g = Model::GraphDAO::addGraph(graphname, this->db->tmpGetConn());
-	}
+	Data::Graph* g = this->emptyGraph(graphname);
 
 	this->graphs.insert(g->getId(), g);
 	return g;
@@ -291,9 +335,9 @@ void Manager::GraphManager::closeGraph(Data::Graph* graph)
 	this->activeGraph = NULL;
 }
 
-Data::Graph* Manager::GraphManager::emptyGraph()
+Data::Graph* Manager::GraphManager::emptyGraph(QString name)
 {
-	Data::Graph *newGraph = new Data::Graph(1, "simple", 0, 0, NULL);
+	Data::Graph *newGraph = new Data::Graph(1, name, 0, 0, NULL);
 
 	return newGraph;
 }
