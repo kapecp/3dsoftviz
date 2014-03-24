@@ -2,6 +2,8 @@
 #define KINECTSPEECHTHREAD_H
 
 #include <QThread>
+//#pragma component(interface, on, references, __interface)
+#include <SpeechSDK.h>
 
 namespace Speech
 
@@ -20,7 +22,7 @@ class KinectSpeechThread : public QThread
 public:
 	KinectSpeechThread();
 	~KinectSpeechThread(void);
-	//SpeechSDK::SpeechSDKClass m_SpeechClass;
+	SpeechSDK::SpeechSDKClass *m_SpeechClass;
 
 	/**
 		 * @author Autor: Marek Jakab
