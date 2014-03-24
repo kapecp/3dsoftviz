@@ -323,15 +323,23 @@ void CoreGraph::setNodesFreezed(bool val)
 void CoreGraph::updateGraphRotByAruco(const osg::Quat quat )
 {
 	mRotAruco = quat;
-	osg::Matrixd graphTransfMat( mRotMouse * mRotAruco );
-
-	graphRotTransf->setMatrix(graphTransfMat);
+	computeGraphRotTransf();
 }
 
 void CoreGraph::updateGraphRotByMouse( const osg::Quat quat )
 {
 	mRotMouse = mRotMouse * quat;
-	osg::Matrixd graphTransfMat( mRotMouse * mRotAruco );
+	computeGraphRotTransf();
+}
 
+void CoreGraph::updateGraphRotByFaceDet( const osg::Quat quat )
+{
+	mRotFaceDet = quat;
+	computeGraphRotTransf();
+}
+
+void CoreGraph::computeGraphRotTransf()
+{
+	osg::Matrixd graphTransfMat( mRotMouse * mRotAruco * mRotFaceDet );
 	graphRotTransf->setMatrix(graphTransfMat);
 }

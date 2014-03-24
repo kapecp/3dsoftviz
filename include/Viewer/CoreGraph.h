@@ -193,7 +193,20 @@ public slots:
 		 */
 	void updateGraphRotByMouse( const osg::Quat quat );
 
+	/**
+		 * @author Autor: David Durcak
+		 * @brief updateGraphRotByFaceDet Update graphRotTransf MatrixTransform node for rotating a graph by face detection
+		 * @param quat Quaternion that desribe rotation of face
+		 */
+	void updateGraphRotByFaceDet( const osg::Quat quat );
+
 private:
+
+	/**
+		 * @author Autor: David Durcak
+		 * @brief computeGraphRotTransf Update graphRotTransf MatrixTransform node for rotating a graph
+		 */
+	void computeGraphRotTransf();
 
 	/**
 		*  Vwr::EdgeGroup * edgesGroup
@@ -322,6 +335,12 @@ private:
 		*  \brief mRotMouse quaternion of rotation by mouse
 		*/
 	osg::Quat mRotMouse;
+
+	/**
+		*  osg::Quat mRotFaceDet
+		*  \brief mRotFaceDet quaternion of rotation by face
+		*/
+	osg::Quat mRotFaceDet;
 
 	/**
 		*  bool nodesFreezed

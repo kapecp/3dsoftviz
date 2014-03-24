@@ -1088,19 +1088,27 @@ void Vwr::CameraManipulator::setRotationHead(float x, float y, float distance)
 		trackball(axis,angle,0.0, y, 0.0, 0.0);
 		osg::Quat Ynew_rotate(angle * throwScale,axis);
 
-		// both rotation
-		_rotationHead = Xnew_rotate*Ynew_rotate;
 
 
-		// will we correct projection according face position
-		bool projectionConrrection = false;
-		projectionConrrection = this->appConf->getValue("FaceDecetion.EnableProjectionCorrection").toInt();
 
-		if( projectionConrrection ){
-			updateProjectionAccordingFace( x, y, -distance );
+
+		if( _cameraCanRot ){ // rotate camera
+
+			// both rotation
+			_rotationHead = Xnew_rotate * Ynew_rotate;
+
+			// will we correct projection according face position
+			bool projectionConrrection = false;
+			projectionConrrection = this->appConf->getValue("FaceDecetion.EnableProjectionCorrection").toInt();
+
+			if( projectionConrrection ){
+				updateProjectionAccordingFace( x, y, -distance );
+			}
+
+
+		} else { // rotate graph
+			sendFaceDetRotation( Xnew_rotate*Ynew_rotate );
 		}
-
-
 	}
 	else{
 		qDebug() << "Warning: setRotationHead(): wrong parameters";

@@ -172,6 +172,13 @@ signals:
 		 */
 	void sendMouseRotation( const osg::Quat quat );
 
+	/**
+		 * @author Autor: David Durcak
+		 * @brief sendFaceDetRotation Send rotation quaternion caused by faceDetection
+		 * @param quat Quaternion that disribe rotation of face
+		 */
+	void sendFaceDetRotation( const osg::Quat quat );
+
 public slots:
 	/**
 		 * @author Autor: David Durcak
