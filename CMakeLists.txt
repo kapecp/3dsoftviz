@@ -431,7 +431,9 @@ if (OPENNI2_FOUND)
 	list(APPEND SRC ${SRC_KINECT})
 endif()
 if (KINECTSDK_FOUND)
+    if (SPEECHSDK_FOUND)
         list(APPEND SRC ${SRC_SPEECH})
+    endif()
 endif()
 
 file(GLOB_RECURSE HEADER_CORE  "include/Core/*.h")
@@ -461,7 +463,9 @@ if (OPENNI2_FOUND)
 		list(APPEND INCL ${HEADER_KINECT})
 endif()
 if (KINECTSDK_FOUND)
+    if (SPEECHSDK_FOUND)
         list(APPEND INCL ${HEADER_SPEECH})
+    endif()
 endif()
 
 # Group source files
@@ -506,8 +510,10 @@ if (OPENNI2_FOUND)
 	source_group(\\headers\\Kinect "^.*Kinect/.*h$")
 endif()
 if (KINECTSDK_FOUND)
+    if (SPEECHSDK_FOUND)
         source_group(\\src\\Speech "^.*Speech/.*$")
         source_group(\\headers\\Speech "^.*Speech/.*h$")
+    endif()
 endif()
 
 # ---------------
@@ -610,6 +616,11 @@ install(DIRECTORY resources/ DESTINATION ${INSTALL_DATA} COMPONENT Data)
 # Install needed .dll files for OpenNI2
 if (NITE2_FOUND AND OPENNI2_FOUND)
 	install(DIRECTORY ${NITE2_OPENNI2_DRIVER_DIRS}/ DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/_install/bin)
+endif()
+
+# install .dll for speech recognition
+if (SPEECHSDK_FOUND)
+        install(DIRECTORY ${SPEECHSDK_DRIVER_DIRS}/ DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/_install/bin)
 endif()
 
 # Install built in dependencies unless we are building an OSX Bundle

@@ -1,21 +1,21 @@
 
 #include "Speech/KinectSpeechThread.h"
 
-using namespace SpeechSDK;
+//using namespace SpeechSDK;
 
-Kinect::KinectSpeechThread::KinectSpeechThread()
+Speech::KinectSpeechThread::KinectSpeechThread()
 {
 
 }
 
 
-Kinect::KinectSpeechThread::~KinectSpeechThread(void)
+Speech::KinectSpeechThread::~KinectSpeechThread(void)
 {
 
 }
 
 
-void Kinect::KinectSpeechThread::run()
+void Speech::KinectSpeechThread::run()
 {
 
 }
