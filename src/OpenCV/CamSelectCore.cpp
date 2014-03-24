@@ -14,7 +14,6 @@ OpenCV::CamSelectCore::CamSelectCore()
 	mCamSelectCore = this;
 	this->app=app;
 	int max=this->countCameras();
-	if (max>1) max--;
 	for (int i=0;i<max;i++){
 		camlist.push_back(new OpenCV::CapVideo(i,0,0));
 	}
