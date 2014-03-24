@@ -37,7 +37,7 @@ void Kinect::KinectWindow::configureWindow(void)
 	mWindowLabel->setFixedWidth(320);
 	mWindowLabel->setFixedHeight(240);
 
-	mKinectPause=new QPushButton(tr("Pause"));
+	mKinectPause=new QPushButton(tr("Start"));
 	connect(mKinectPause,SIGNAL(clicked()),this,SLOT(pausewindows()));
 
 			mKinectSTop=new QPushButton(tr("Cancel"));

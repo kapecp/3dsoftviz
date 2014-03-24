@@ -567,7 +567,7 @@ install(DIRECTORY resources/ DESTINATION ${INSTALL_DATA} COMPONENT Data)
 
 # Install needed .dll files for OpenNI2
 if (NITE2_FOUND AND OPENNI2_FOUND)
-	install(DIRECTORY ${NITE2_OPENNI2_DRIVER_DIRS}/ DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/_install/bin)
+	install(DIRECTORY ${NITE2_OPENNI2_DRIVER_DIRS} DESTINATION ${INSTALL_BIN}/OpenNI2)
 endif()
 
 # Install built in dependencies unless we are building an OSX Bundle
