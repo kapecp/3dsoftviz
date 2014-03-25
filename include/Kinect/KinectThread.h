@@ -4,6 +4,9 @@
 #include <QThread>
 #include <QImage>
 
+#include "OpenNI.h"
+#include "NiTE.h"
+#include "Kinect/HistoryBuffer.h"
 
 #include <opencv2/core/core.hpp>
 
@@ -21,6 +24,8 @@ public:
 
 	void run();
 
+    nite::HandTracker m_pHandTracker;
+    std::map<int, HistoryBuffer<20> *> g_histories;
 
 signals:
 
