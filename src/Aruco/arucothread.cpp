@@ -3,16 +3,14 @@
 #include "Util/ApplicationConfig.h"
 #include <QDebug>
 
-// this will be erased, when camera singleton will be available
-#include "opencv2/highgui/highgui.hpp"
-
-
+#include "OpenCV/CapVideo.h"
 
 using namespace ArucoModul;
 
 ArucoThread::ArucoThread(QObject *parent)
 	: QThread(parent)
 {
+	mCapVideo		= NULL;
 	mCancel			= false;
 	mCorSetted		= false;
 	mMarkerIsBehind = false; // marker is default in front of projection or monitor
@@ -58,16 +56,28 @@ void ArucoThread::updateCorectionPar(){
 	mUpdCorPar = true;
 }
 
+void ArucoThread::setCapVideo( OpenCV::CapVideo *capVideo){
+	mCapVideo = capVideo;
+}
+
 void ArucoThread::run()
 {
-	mCancel = false;
-	double	actPosArray[3];		// x, y, z
-	double	actQuatArray[4];		// angle(w), x, y, z
-	bool	marerDetected = false;
-
 	cv::Mat frame;
-	cv::VideoCapture capture;
-	const double camDistRatio =  Util::ApplicationConfig::get()->getValue("Aruco.CamDistancRatio").toDouble();
+	mCancel = false;
+
+	if( mCapVideo == NULL){
+		qDebug() << "[ArucoThread::run()]  Camera is not set";
+		return;
+	}
+	const double width  = mCapVideo->getWidth();
+	const double height = mCapVideo->getHeight();
+	const double camDistRatio  = Util::ApplicationConfig::get()->getValue("Aruco.CamDistancRatio").toDouble();
+	mRatioCamCoef = ( 1 - height/width ) / camDistRatio;
+
+
+	double		 actPosArray[3];			// x, y, z
+	double		 actQuatArray[4];		// angle(w), x, y, z
+	bool		 markerDetected = false;
 
 
 	QString filename = "../share/3dsoftviz/config/camera.yml";
@@ -81,30 +91,14 @@ void ArucoThread::run()
 	ArucoCore aCore;
 	bool camParametersOk = aCore.setCameraParameters( filename );
 
-
-
-	// this must do camera singleton
-	if( ! capture.isOpened()){
-		capture.open(0);
-	} else {
-		qDebug() << "ARUCO:error: capture is already open";
-	}
-	const double width = 600;
-	const double height = 500;
-
-	capture.set(CV_CAP_PROP_FRAME_WIDTH, width);
-	capture.set(CV_CAP_PROP_FRAME_HEIGHT, height);
-	// until this code will be changed soon
-
-
 	if( camParametersOk ){
 		while(! mCancel) {	// doing aruco work in loop
 
-			capture >> frame;		// get image from camera
+			frame = mCapVideo->queryFrame();		// get image from camera
 
 			// add image to aruco and get position vector and rotation quaternion
-			marerDetected = aCore.getDetectedPosAndQuat( frame, actPosArray, actQuatArray );
-			if( marerDetected ){
+			markerDetected = aCore.getDetectedPosAndQuat( frame, actPosArray, actQuatArray );
+			if( markerDetected ){
 
 				// test if marker was detect (if not, all number in matrix are not range)
 				if( actPosArray[2] > 0.0  &&  actPosArray[2] < 10.0
@@ -130,8 +124,8 @@ void ArucoThread::run()
 
 
 					// correct Y centering, because of camerra different ration aruco top max y value is less than bottom one
-					mRatioCamCoef = ( 1 - height/width ) / camDistRatio;
 					actPos.y() = ( mRatioCamCoef * actPos.z()  + actPos.y() );
+
 
 					if ( mCorEnabled ) {
 						correctQuatAndPos( actPos, actQuat);
@@ -157,7 +151,8 @@ void ArucoThread::run()
 		}
 	}
 
-	capture.release();
+	mCapVideo->release();
+	mCapVideo = NULL;
 }
 
 

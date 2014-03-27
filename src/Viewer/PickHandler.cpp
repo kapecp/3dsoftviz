@@ -195,6 +195,13 @@ bool PickHandler::handleKeyDown( const osgGA::GUIEventAdapter& ea, GUIActionAdap
 		Data::Graph * currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
 		Util::ElementSelector::weightedElementSelector(currentGraph->getNodes(), appConf->getValue("Viewer.PickHandler.AutopickedNodes").toInt(), this);
 	}
+	else if(ea.getKey() == 'r')
+	{
+		QOSG::ViewerQT *viewer = AppCore::Core::getInstance()->getCoreWindow()->GetViewerQt();
+
+		qDebug() <<  viewer->cursor().pos().x();
+		qDebug() <<  viewer->cursor().pos().y() ;
+	}
 
 	return false;
 }

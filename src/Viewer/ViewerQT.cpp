@@ -23,6 +23,11 @@ QOSG::ViewerQT::ViewerQT(QWidget * parent , const char * name , const QGLWidget 
 	getCamera()->setComputeNearFarMode(osg::CullSettings::DO_NOT_COMPUTE_NEAR_FAR);
 
 	manipulator = new Vwr::CameraManipulator(cg);
+	QObject::connect( manipulator, SIGNAL(sendMouseRotation(osg::Quat)),
+					  cg, SLOT(updateGraphRotByMouse(osg::Quat)) );
+	QObject::connect( manipulator, SIGNAL(sendFaceDetRotation(osg::Quat)),
+					  cg, SLOT(updateGraphRotByFaceDet(osg::Quat)) );
+
 	pickHandler = new Vwr::PickHandler(manipulator, cg);
 
 	addEventHandler(new osgViewer::StatsHandler);

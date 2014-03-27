@@ -163,6 +163,22 @@ public:
 
 	void setNewPosition(osg::Vec3d cameraTargetPoint, osg::Vec3d cameraInterestPoint, std::list<osg::ref_ptr<Data::Node> > selectedCluster, std::list<osg::ref_ptr<Data::Edge> > selectedEdges);
 
+signals:
+
+	/**
+		 * @author Autor: David Durcak
+		 * @brief sendMouseRotation Send rotation quaternion caused by mouse
+		 * @param quat Quaternion that disribe rotation of mouse
+		 */
+	void sendMouseRotation( const osg::Quat quat );
+
+	/**
+		 * @author Autor: David Durcak
+		 * @brief sendFaceDetRotation Send rotation quaternion caused by faceDetection
+		 * @param quat Quaternion that disribe rotation of face
+		 */
+	void sendFaceDetRotation( const osg::Quat quat );
+
 public slots:
 	/**
 		 * @author Autor: David Durcak
@@ -182,6 +198,12 @@ public slots:
 		 */
 	void updateArucoGraphPosition( osg::Vec3d pos );
 
+	/**
+		 * @author Autor: David Durcak
+		 * @brief setCameraCanRot Set _cameraCanRot member.
+		 * @param cameraCanRot
+		 */
+	void setCameraCanRot( bool cameraCanRot);
 
 protected:
 
@@ -655,6 +677,11 @@ private:
 		 * @param distance of head from camera
 		 */
 	void updateProjectionAccordingFace(const float x, const float y, const float distance);
+
+	/**
+		*  \brief cameraCanRot if true camera is rotating normally, else rotation quaternion by mouse is emited away
+		*/
+	bool _cameraCanRot;
 	};
 
 

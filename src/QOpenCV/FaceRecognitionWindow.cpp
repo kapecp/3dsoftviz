@@ -6,6 +6,7 @@
 #include <QtGui/QCheckBox>
 #include <QtGui/QVBoxLayout>
 #include <QtGui/QStackedLayout>
+#include "OpenCV/CamSelectCore.h"
 
 
 
@@ -15,7 +16,6 @@ QOpenCV::FaceRecognitionWindow::FaceRecognitionWindow(QWidget *parent, QApplicat
 	: QDialog(parent)
 {
 	mApp		= app;
-
 	configureWindow();
 }
 
@@ -156,8 +156,11 @@ void QOpenCV::FaceRecognitionWindow::onCorParUpdated()
 void QOpenCV::FaceRecognitionWindow::onFaceRecStartCancel( bool checked )
 {
 	if( checked ) {
+		mFaceRecStartCancelPB->setEnabled(false);
 		mFaceRecStartCancelPB->setText( tr("Stop FaceRec"));
+		emit setCapVideoFaceRec( OpenCV::CamSelectCore::getInstance()->selectCamera());
 		emit startFaceRec();
+		mFaceRecStartCancelPB->setEnabled(true);
 
 	} else {
 		mFaceRecStartCancelPB->setEnabled(false);
@@ -169,12 +172,13 @@ void QOpenCV::FaceRecognitionWindow::onFaceRecStartCancel( bool checked )
 void QOpenCV::FaceRecognitionWindow::onMarkerStartCancel( bool checked )
 {
 	if( checked ) {
+		mMarkerStartCancelPB->setEnabled(false);
 		mMarkerStartCancelPB->setText( tr("Stop Marker"));
 		mMarkerBehindCB->setEnabled(true);
 		mUpdateCorParPB->setEnabled(true);
+		emit setCapVideoMarker( OpenCV::CamSelectCore::getInstance()->selectCamera());
 		emit startMarker();
-
-
+		mMarkerStartCancelPB->setEnabled(true);
 
 	} else {
 		mMarkerStartCancelPB->setEnabled(false);
