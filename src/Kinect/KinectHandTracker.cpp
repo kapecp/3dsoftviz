@@ -61,7 +61,9 @@ void Kinect::KinectHandTracker::getAllHands()
 			// Data for mouse
 			printf("user %d %.2lf %.2lf\n", user.getId(), user.getPosition().x, user.getPosition().y);
 			this->handX = user.getPosition().x;
-			this->handY = user.getPosition().y;
+			//revert Y position
+			//TODO test
+			this->handY = 0-user.getPosition().y;
 		}
 	}
 }

@@ -165,6 +165,7 @@ void Kinect::KinectWindow::closeEvent(QCloseEvent *event)
 	qDebug() << "Kinect close event";
 
 	emit sendImageKinect(false);
+	emit stopKinect(true);
 
 	disconnect();
 	event->accept();
