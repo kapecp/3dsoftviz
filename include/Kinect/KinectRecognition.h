@@ -37,7 +37,7 @@ private:
 	nite::HandTracker handTracker;
 	nite::Status mNiteStatus;
 	openni::Status mOpenniStatus;
-	openni::VideoStream  color;
+	//openni::VideoStream color;
 
 };
 }

@@ -69,12 +69,9 @@ void Kinect::KinectThread::run()
 
 	//nite::HandTracker handTracker;
 	//handTracker.create();
-	nite::HandTrackerFrameRef handTrackerFrame;
-	openni::VideoFrameRef depthFrame;
-
-	m_pHandTracker.create(&mKinect->device);
-	m_pHandTracker.startGestureDetection(nite::GESTURE_WAVE);
-	m_pHandTracker.startGestureDetection(nite::GESTURE_CLICK);
+	//nite::HandTrackerFrameRef handTrackerFrame;
+	//openni::VideoFrameRef depthFrame;
+	kht = new KinectHandTracker(&mKinect->device);
 
 	while(!mCancel)
 	{
@@ -86,49 +83,8 @@ void Kinect::KinectThread::run()
 		//frame = mKinect->depthImageCvMat(handTrackerFrame);
 
 		// cita handframe, najde gesto na snimke a vytvori mu "profil"
-		m_pHandTracker.readFrame(&handTrackerFrame);
-		const nite::Array<nite::GestureData>& gestures = handTrackerFrame.getGestures();
-		for (int i = 0; i < gestures.getSize(); ++i)
-		{
-			if (gestures[i].isComplete())
-			{
-				const nite::Point3f& position = gestures[i].getCurrentPosition();
-				printf("Gesture %d at (%f,%f,%f)\n", gestures[i].getType(), position.x, position.y, position.z);
-
-				nite::HandId newId;
-				m_pHandTracker.startHandTracking(gestures[i].getCurrentPosition(), &newId);
-			}
-		}
-
-		// List of hands evidence
-		// If hand matches old positions, previous ID is assigned again
-		const nite::Array<nite::HandData>& hands= handTrackerFrame.getHands();
-		for (int i = 0; i < hands.getSize(); ++i)
-		{
-			const nite::HandData& user = hands[i];
-
-			if (!user.isTracking())
-			{
-				printf("Lost hand %d\n", user.getId());
-				nite::HandId id = user.getId();
-				HistoryBuffer<20>* pHistory = g_histories[id];
-				g_histories.erase(g_histories.find(id));
-				delete pHistory;
-			}
-			else
-			{
-				if (user.isNew())
-				{
-					printf("New hand id %d\n", user.getId());
-					g_histories[user.getId()] = new HistoryBuffer<20>;
-				}
-				// Hand evidence in Buffer
-				HistoryBuffer<20>* pHistory = g_histories[user.getId()];
-				pHistory->AddPoint(user.getPosition());
-				// Data for mouse
-				printf("user %d %.2lf %.2lf\n", user.getId(), user.getPosition().x, user.getPosition().y);
-			}
-		}
+		kht->getAllGestures();
+		kht->getAllHands();
 
 		//////////////End/////////////
 
@@ -138,6 +94,17 @@ void Kinect::KinectThread::run()
 
 		///////Emit Qimage and Image////////////
 		//emit pushImage( qimage );
+		Rect hand_rect;
+		hand_rect.x = (kht->handX+1024/2)/4; // prerobit cez videoframeref
+		hand_rect.y = (kht->handY+768/2)/4; // prerobit cez handframe.getwidth....
+		hand_rect.height = 60;
+		hand_rect.width = 60;
+
+
+		cv::resize(frame, frame,cv::Size(320,240),0,0,cv::INTER_LINEAR);
+
+		rectangle(frame, hand_rect, CV_RGB(0, 255,0), 1);
+
 		emit pushImage( frame );
 
 	}

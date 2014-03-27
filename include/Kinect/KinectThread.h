@@ -6,7 +6,8 @@
 
 #include "OpenNI.h"
 #include "NiTE.h"
-#include "Kinect/HistoryBuffer.h"
+#include "Kinect/KinectThread.h"
+#include "Kinect/KinectHandTracker.h"
 
 #include <opencv2/core/core.hpp>
 
@@ -23,9 +24,7 @@ public:
 	~KinectThread(void);
 
 	void run();
-
-    nite::HandTracker m_pHandTracker;
-    std::map<int, HistoryBuffer<20> *> g_histories;
+	KinectHandTracker *kht;
 
 signals:
 
