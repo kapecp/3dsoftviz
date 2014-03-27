@@ -1706,10 +1706,13 @@ void CoreWindow::send_message()
 	client->send_message(le_message->text());
 }
 
+
+#ifdef OPENCV_FOUND
 void CoreWindow::create_facewindow()
 {
 	OpenCV::OpenCVCore::getInstance(NULL)->faceRecognition();
 }
+#endif
 
 void CoreWindow::toggleSpyWatch()
 {

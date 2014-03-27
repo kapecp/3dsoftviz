@@ -126,16 +126,16 @@ if( USE_BUILTIN_DEPENDENCIES )
 	)
 
 	# Build aruco
-	include( ExternalProject )
-	ExternalProject_Add( dep_aruco
-		PREFIX aruco
-		SOURCE_DIR ${DEP_SOURCE}/aruco
-		BINARY_DIR aruco
-		CMAKE_ARGS
-			-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
-			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-			-C ${CMAKE_CURRENT_BINARY_DIR}/config.cmake
-	)
+#	include( ExternalProject )
+#	ExternalProject_Add( dep_aruco
+#		PREFIX aruco
+#		SOURCE_DIR ${DEP_SOURCE}/aruco
+#		BINARY_DIR aruco
+#		CMAKE_ARGS
+#			-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
+#			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
+#			-C ${CMAKE_CURRENT_BINARY_DIR}/config.cmake
+#	)
 
 
 	# Ensure correct order of build(dependencies between ext. dependencies)
@@ -224,16 +224,16 @@ find_package(osgViewer)
 # Find OpenCV
 find_package( OpenCV )
 if( OpenCV_FOUND )
-	add_definitions( -DOPENCV_FOUND )
-	message("OpenCV FOUND")
-	set( SOURCES_H
-		./include/QOpenCV/FaceRecognitionWindow.h
-		./include/QOpenCV/FaceRecognitionThread.h
-	)
-	file(GLOB_RECURSE SRC_OPENCV  "src/OpenCV/*.cpp")
-	file(GLOB_RECURSE SRC_QOPENCV  "src/QOpenCV/*.cpp")
+        add_definitions( -DOPENCV_FOUND )
+        message("OpenCV FOUND")
+        set( SOURCES_H
+                ./include/QOpenCV/FaceRecognitionWindow.h
+                ./include/QOpenCV/FaceRecognitionThread.h
+        )
+        file(GLOB_RECURSE SRC_OPENCV  "src/OpenCV/*.cpp")
+        file(GLOB_RECURSE SRC_QOPENCV  "src/QOpenCV/*.cpp")
 else()
-	message("OpenCV NOT FOUND")
+        message("OpenCV NOT FOUND")
 endif()
 
 
