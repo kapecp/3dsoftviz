@@ -24,7 +24,7 @@ public:
 	~KinectThread(void);
 
 	void run();
-	KinectHandTracker *kht;
+
 
 signals:
 
@@ -44,7 +44,10 @@ private:
 
 	bool mCancel;
 	bool mSetImageEnable;
-
+	bool isOpen;
+	openni::VideoFrameRef colorFrame;
+	KinectHandTracker *kht;
+	KinectRecognition *mKinect;
 
 
 };

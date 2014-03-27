@@ -45,8 +45,8 @@ void Kinect::KinectThread::run()
 
 	mCancel=false;
 	/////Class kinect recognition
-	Kinect::KinectRecognition *mKinect = new Kinect::KinectRecognition();
-
+	mKinect = new Kinect::KinectRecognition();
+	isOpen=mKinect->isOpenOpenni();
 	openni::VideoStream  color;
 	/////////end////////////
 
@@ -62,18 +62,17 @@ void Kinect::KinectThread::run()
 	//////////////Koniec testovania//////////////////
 */
 	//////////////Kinect ///////
-	color.create(mKinect->device, openni::SENSOR_COLOR);
-	color.start();
-	openni::VideoFrameRef colorFrame;
+	if(isOpen)
+	{
+		color.create(mKinect->device, openni::SENSOR_COLOR);
+		color.start();
+
+		kht = new KinectHandTracker(&mKinect->device);
+
+	}
 
 
-	//nite::HandTracker handTracker;
-	//handTracker.create();
-	//nite::HandTrackerFrameRef handTrackerFrame;
-	//openni::VideoFrameRef depthFrame;
-	kht = new KinectHandTracker(&mKinect->device);
-
-	while(!mCancel)
+	while(!mCancel && isOpen)
 	{
 		color.readFrame(&colorFrame);
 		frame=mKinect->colorImageCvMat(colorFrame);
