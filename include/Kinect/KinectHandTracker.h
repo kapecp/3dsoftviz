@@ -3,6 +3,8 @@
 #include "NiTE.h"
 #include "Kinect/KinectRecognition.h"
 
+#include "QOSG/ViewerQT.h"
+
 #ifndef KINECTHANDTRACKER_H
 #define KINECTHANDTRACKER_H
 
@@ -35,7 +37,8 @@ public:
 	nite::HandTrackerFrameRef handTrackerFrame;
 
 private:
-
+	bool isClick;
+	QOSG::ViewerQT *viewer;
 
 };
 }

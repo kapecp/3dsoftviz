@@ -199,8 +199,14 @@ bool PickHandler::handleKeyDown( const osgGA::GUIEventAdapter& ea, GUIActionAdap
 	{
 		QOSG::ViewerQT *viewer = AppCore::Core::getInstance()->getCoreWindow()->GetViewerQt();
 
-		qDebug() <<  viewer->cursor().pos().x();
-		qDebug() <<  viewer->cursor().pos().y() ;
+
+		qDebug() <<  viewer->window()->cursor().pos().x();
+		qDebug() <<  viewer->window()->cursor().pos().y() ;
+		qDebug() << viewer->window()->pos().x();
+		qDebug() << viewer->window()->pos().y();
+		qDebug() << viewer->window()->size().height();
+		qDebug() << viewer->window()->size().width();
+		viewer->window()->cursor().setPos(0,0);
 	}
 
 	return false;

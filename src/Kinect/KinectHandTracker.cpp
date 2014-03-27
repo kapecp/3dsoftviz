@@ -1,10 +1,15 @@
 #include "Kinect/KinectHandTracker.h"
 
+#include "Core/Core.h"
+#include "QDebug"
+
 Kinect::KinectHandTracker::KinectHandTracker(openni::Device *device)
 {
 	m_pHandTracker.create(device);
 	m_pHandTracker.startGestureDetection(nite::GESTURE_WAVE);
 	m_pHandTracker.startGestureDetection(nite::GESTURE_CLICK);
+	isClick=false;
+	viewer=AppCore::Core::getInstance()->getCoreWindow()->GetViewerQt();
 }
 
 
@@ -21,6 +26,23 @@ void Kinect::KinectHandTracker::getAllGestures()
 	{
 		if (gestures[i].isComplete())
 		{
+			if(gestures[i].getType()==nite::GESTURE_CLICK)
+			{
+				if(isClick)
+				{
+					//TODO real click and release
+					isClick=false;
+					printf("Release\n");
+					printf("at %d a %d\n",viewer->cursor().pos().x(),viewer->cursor().pos().y());
+				}
+				else
+				{
+					isClick=true;
+					printf("Click");
+					printf("at %d a %d\n",viewer->cursor().pos().x(),viewer->cursor().pos().y());
+				}
+
+			}
 			const nite::Point3f& position = gestures[i].getCurrentPosition();
 			printf("Gesture %d at (%f,%f,%f)\n", gestures[i].getType(), position.x, position.y, position.z);
 
