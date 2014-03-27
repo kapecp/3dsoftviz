@@ -1857,6 +1857,10 @@ Vwr::CameraManipulator* CoreWindow::getCameraManipulator() {
 	return viewerWidget->getCameraManipulator();
 }
 
+QOSG::ViewerQT * CoreWindow::GetViewerQt()
+{
+	return viewerWidget;
+}
 
 void CoreWindow::closeEvent(QCloseEvent *event)
 {

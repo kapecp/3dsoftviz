@@ -694,6 +694,8 @@ public:
 	bool playing() { return isPlaying; }
 	Vwr::CameraManipulator * getCameraManipulator();
 
+	QOSG::ViewerQT * GetViewerQt();
+
 
 	/**
 		*  \fn inline public  setLayoutThread
