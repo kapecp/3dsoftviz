@@ -94,11 +94,11 @@ void Kinect::KinectThread::run()
 		///////Emit Qimage and Image////////////
 		//emit pushImage( qimage );
 		Rect hand_rect;
-		hand_rect.x = (kht->handX+1024/2)/4; // prerobit cez videoframeref
-		hand_rect.y = ((kht->handY)+768/2)/4; // prerobit cez handframe.getwidth....
+		hand_rect.x = (kht->handX+1024)/4; // prerobit cez videoframeref
+		hand_rect.y = ((kht->handY)+768)/4; // prerobit cez handframe.getwidth....
 
-		hand_rect.height = 60;
-		hand_rect.width = 60;
+		hand_rect.height = abs(kht->getDistance[1]) + 20;
+		hand_rect.width = abs(kht->getDistance[0]) + 20;
 
 
 		cv::resize(frame, frame,cv::Size(320,240),0,0,cv::INTER_LINEAR);

@@ -26,20 +26,22 @@ void Kinect::KinectHandTracker::getAllGestures()
 	{
 		if (gestures[i].isComplete())
 		{
+			printf("completed gesture\n");
 			if(gestures[i].getType()==nite::GESTURE_CLICK)
 			{
+				printf("gesture click is on\n");
 				if(isClick)
 				{
 					//TODO real click and release
 					isClick=false;
-					printf("Release\n");
-					printf("at %d a %d\n",viewer->cursor().pos().x(),viewer->cursor().pos().y());
+					printf("Release");
+					printf(" at %d a %d\n",viewer->cursor().pos().x(),viewer->cursor().pos().y());
 				}
 				else
 				{
 					isClick=true;
 					printf("Click");
-					printf("at %d a %d\n",viewer->cursor().pos().x(),viewer->cursor().pos().y());
+					printf(" at %d a %d\n",viewer->cursor().pos().x(),viewer->cursor().pos().y());
 				}
 
 			}
@@ -64,7 +66,7 @@ void Kinect::KinectHandTracker::getAllHands()
 
 		if (!user.isTracking())
 		{
-			printf("Lost hand %d\n", user.getId());
+			//printf("Lost hand %d\n", user.getId());
 			nite::HandId id = user.getId();
 			HistoryBuffer<20>* pHistory = this->g_histories[id];
 			this->g_histories.erase(this->g_histories.find(id));
@@ -74,18 +76,52 @@ void Kinect::KinectHandTracker::getAllHands()
 		{
 			if (user.isNew())
 			{
-				printf("New hand id %d\n", user.getId());
+				//printf("New hand id %d\n", user.getId());
 				this->g_histories[user.getId()] = new HistoryBuffer<20>;
 			}
 			// Hand evidence in Buffer
 			HistoryBuffer<20>* pHistory = this->g_histories[user.getId()];
 			pHistory->AddPoint(user.getPosition());
 			// Data for mouse
-			printf("user %d %.2lf %.2lf\n", user.getId(), user.getPosition().x, user.getPosition().y);
-			this->handX = user.getPosition().x;
-			//revert Y position
-			//TODO test
-			this->handY = 0-user.getPosition().y;
+			//printf("user %d %.2lf %.2lf\n", user.getId(), user.getPosition().x, user.getPosition().y);
+			// If two hands have been found get the position of the rectangle
+			if (hands.getSize() == 2)
+			{
+				printf("two hands found\n");
+				// get positions for both hands
+				for (int j = 0; j < hands.getSize(); ++j)
+				{
+					if (j < 1)
+					{
+						this->getArrayHands[i][j] = user.getPosition().x;
+						printf("%d ruka x: %f\n", i+1, getArrayHands[i][j]);
+					}
+					else
+					{
+						this->getArrayHands[i][j] = 0 - user.getPosition().y;
+						printf("%d ruka y: %f\n", i+1, getArrayHands[i][j]);
+					}
+				}
+				// reconstruct the rect parameters and get distance
+				if (i == 1)
+				{
+					// left hand is stored in handX
+					this->getDistance[0] = getArrayHands[0][0]-getArrayHands[1][0];
+					if (getDistance[0] < 0)
+					{
+						this->handX = getArrayHands[0][0];
+						this->handY = getArrayHands[0][1];
+					}
+					else
+					{
+						this->handX = getArrayHands[1][0];
+						this->handY = getArrayHands[1][1];
+					}
+					printf("rect x: %f\n",handX);
+					printf("rect y: %f\n",handY);
+					this->getDistance[1] = getArrayHands[0][1]-getArrayHands[1][1];
+				}
+			}
 		}
 	}
 }

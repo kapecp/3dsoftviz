@@ -8,6 +8,8 @@
 #ifndef KINECTHANDTRACKER_H
 #define KINECTHANDTRACKER_H
 
+#define NUM_HANDS 2
+
 namespace Kinect{
 
 /**
@@ -24,8 +26,14 @@ public:
 	//const nite::Array<nite::GestureData>& gestures;
 	//const nite::Array<nite::GestureData>& hands;
 
+	// left hand position
 	float handX;
 	float handY;
+
+	// both hands position and distance/direction to determine left hand
+	float getArrayHands[NUM_HANDS][NUM_HANDS];
+	int getDistance[NUM_HANDS];
+	//bool direction;
 
 	void getAllGestures();
 	void getAllHands();
