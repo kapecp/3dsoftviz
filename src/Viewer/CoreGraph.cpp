@@ -21,6 +21,9 @@
 #include <osgFX/Outline>
 #include <math.h>
 
+#include "Clustering/Figures/Sphere.h"
+#include "Clustering/Figures/SpikySphere.h"
+
 using namespace Vwr;
 
 /*
@@ -31,7 +34,7 @@ using namespace Vwr;
 osg::ref_ptr<osg::AutoTransform> getSphere(qlonglong id, osg::Vec3 position, float radius, osg::Vec4 color) {
     osg::ref_ptr<osg::AutoTransform> at = new osg::AutoTransform;
     at->setPosition(position * 1);
-    at->setAutoRotateMode(osg::AutoTransform::ROTATE_TO_SCREEN);
+    //at->setAutoRotateMode(osg::AutoTransform::ROTATE_TO_SCREEN);
 
     osg::ShapeDrawable * shape = new osg::ShapeDrawable;
     osg::Sphere * sphere = new osg::Sphere;
@@ -52,7 +55,7 @@ osg::ref_ptr<osg::AutoTransform> getSphere(qlonglong id, osg::Vec3 position, flo
 osg::ref_ptr<osg::AutoTransform> getCube(qlonglong id, osg::Vec3 position, float width, osg::Vec4 color) {
     osg::ref_ptr<osg::AutoTransform> at = new osg::AutoTransform;
     at->setPosition(position * 1);
-    at->setAutoRotateMode(osg::AutoTransform::ROTATE_TO_SCREEN);
+    //at->setAutoRotateMode(osg::AutoTransform::ROTATE_TO_SCREEN);
 
     osg::ShapeDrawable * shape = new osg::ShapeDrawable;
     osg::Box * cube = new osg::Box;
@@ -635,8 +638,13 @@ void CoreGraph::reload(Data::Graph * graph)
 		graph->getRestrictionsManager().setObservers (restrictionVisualizationsGroup, restrictionManipulatorsGroup);
 	}
 
-//    root->addChild(dodecahedron(osg::Vec3(0,0,0), 10, osg::Vec4(1.0,1.0,0.0,0.4)));
+//    root->addChild(dodecahedron(0, osg::Vec3(0,0,0), 10, osg::Vec4(1.0,1.0,0.0,0.4)));
     root->addChild(test2());
+//    qDebug() << "before";
+//    Sphere * test = new SpikySphere(10, 10, 10, osg::Vec4(1.0,1.0,0.0,0.4));
+
+//    root->addChild(test->getGeode());
+//    qDebug() << "after";
     currentPos++;
 
 	customNodesPosition = currentPos;
