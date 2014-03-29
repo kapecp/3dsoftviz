@@ -1894,6 +1894,10 @@ void CoreWindow::clusters2RangeChanged(const QString &value)
 
 void CoreWindow::cluster_test()
 {
+    if(isPlaying) {
+        playPause();
+    }
+
     Data::Graph * currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
 
     if (currentGraph == NULL) {
@@ -1930,6 +1934,10 @@ void CoreWindow::cluster_test()
     nodeTypeComboBox->setCurrentIndex(3);   // selectionType zment na CLUSTER
 
     //AppCore::Core::getInstance(NULL)->cg->reload(currentGraph);
+
+    if(!isPlaying) {
+        playPause();
+    }
 }
 
 void CoreWindow::send_message()
