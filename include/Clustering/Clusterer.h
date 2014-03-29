@@ -5,6 +5,8 @@
 #include <QSet>
 #include <osg/ref_ptr>
 
+#include <QProgressDialog>
+
 namespace Data {
     class Graph;
     class Node;
@@ -33,7 +35,7 @@ public:
 
     //Clusterer();
 
-    void cluster(Data::Graph* graph);
+    void cluster(Data::Graph* graph, QProgressDialog* clusteringProgressBar);
 
     // singleton
     static Clusterer& getInstance()
@@ -54,6 +56,7 @@ private:
     QMap<qlonglong, osg::ref_ptr<Data::Node> > clusters;
     int algorithmType;
     int clusteringDepth;
+    QProgressDialog * progressBar;
 
     void clusterNeighbours(QMap<qlonglong, osg::ref_ptr<Data::Node> >* someNodes, int maxLevels);
     void clusterLeafs(QMap<qlonglong, osg::ref_ptr<Data::Node> >* someNodes, int maxLevels);

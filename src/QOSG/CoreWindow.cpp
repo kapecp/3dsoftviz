@@ -394,6 +394,15 @@ void CoreWindow::createActions()
     b_cluster_test->setText("Cluster graph");
     connect(b_cluster_test, SIGNAL(clicked()), this, SLOT(cluster_test()));
 
+    clusteringProgressBar = new QProgressDialog("", "", 0, 10, this, Qt::Dialog);
+    clusteringProgressBar->setWindowTitle("Clustering");
+    clusteringProgressBar->setCancelButtonText("Abort");
+    Qt::WindowFlags flags = clusteringProgressBar->windowFlags();
+    flags = flags & (~Qt::WindowContextHelpButtonHint);
+    clusteringProgressBar->setWindowFlags(flags);
+    clusteringProgressBar->setModal(true);
+    clusteringProgressBar->setMinimumDuration(1000);
+
     // hide
     setVisibleClusterSection(false);
 }
@@ -1891,7 +1900,7 @@ void CoreWindow::cluster_test()
         return;
     }
 
-    Clustering::Clusterer::getInstance().cluster(currentGraph);
+    Clustering::Clusterer::getInstance().cluster(currentGraph, clusteringProgressBar);
 
     int maxNodes = Clustering::Clusterer::getInstance().getMaxCountOfNodesInClusters();
     qDebug() << "***** maxNodes = " << maxNodes;

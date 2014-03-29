@@ -19,7 +19,8 @@ Clusterer::Clusterer() {
     graph = NULL;
 }
 */
-void Clusterer::cluster(Graph* graph) {
+void Clusterer::cluster(Graph* graph, QProgressDialog* clusteringProgressBar) {
+    this->progressBar = clusteringProgressBar;
     if (graph == NULL) {
         qDebug() << "[Clustering::Clusterer::cluster] Nothing to cluster! Graph is null. ";
         return;
@@ -105,16 +106,23 @@ osg::Vec4 getNewColor(int colorCounter) {
 
 void Clusterer::clusterNeighbours(QMap<qlonglong, osg::ref_ptr<Data::Node> > *someNodes, int maxLevels) {
 
+    progressBar->reset();
+    progressBar->setLabelText(QString("Initializing. Depth = %1").arg(clusteringDepth - maxLevels));
+    progressBar->setMaximum(someNodes->size());
+    int step = 0;
+
     QMap<qlonglong, osg::ref_ptr<Data::Node> > newClusters;
 
     Manager::GraphManager * manager = Manager::GraphManager::getInstance();
     QMap<qlonglong, Data::Type*> * types = manager->getActiveGraph()->getTypes();
     Data::Type * type = types->value(1);
 
+    progressBar->setLabelText(QString("Clustering the graph. Depth = %1").arg(clusteringDepth - maxLevels));
+
     QMap<qlonglong, osg::ref_ptr<Data::Node> >::iterator i;
-//    int tempID = 0;
     for (i = someNodes->begin(); i != someNodes->end(); i++)
     {
+        progressBar->setValue(step++);
         osg::ref_ptr<Data::Node> node = i.value();
         if (node->getCluster() == NULL) {
             Cluster* cluster = NULL;
@@ -145,6 +153,8 @@ void Clusterer::clusterNeighbours(QMap<qlonglong, osg::ref_ptr<Data::Node> > *so
         }
     }
 
+    progressBar->setValue(someNodes->size());
+
     if (newClusters.size() > 1 && maxLevels != 0) {
         QMap<qlonglong, osg::ref_ptr<Data::Node> > newNodes(newClusters);
         newClusters.clear();
@@ -155,6 +165,11 @@ void Clusterer::clusterNeighbours(QMap<qlonglong, osg::ref_ptr<Data::Node> > *so
 
 void Clusterer::clusterLeafs(QMap<qlonglong, osg::ref_ptr<Data::Node> >* someNodes, int maxLevels) {
 
+    progressBar->reset();
+    progressBar->setLabelText(QString("Initializing. Depth = %1").arg(clusteringDepth - maxLevels));
+    progressBar->setMaximum(someNodes->size());
+    int step = 0;
+
     qDebug() << "*+* clusterLeafs level #" << maxLevels;
     QMap<qlonglong, osg::ref_ptr<Data::Node> > newClusters;
 
@@ -162,9 +177,12 @@ void Clusterer::clusterLeafs(QMap<qlonglong, osg::ref_ptr<Data::Node> >* someNod
     QMap<qlonglong, Data::Type*> * types = manager->getActiveGraph()->getTypes();
     Data::Type * type = types->value(1);
 
+    progressBar->setLabelText(QString("Clustering the graph. Depth = %1").arg(clusteringDepth - maxLevels));
+
     QMap<qlonglong, osg::ref_ptr<Data::Node> >::iterator i;
     for (i = someNodes->begin(); i != someNodes->end(); i++)
     {
+        progressBar->setValue(step++);
         osg::ref_ptr<Data::Node> node = i.value();
         if (node->getCluster() == NULL) {
             QSet<Node*> incidentNodes = node->getIncidentNodes();
@@ -200,6 +218,8 @@ void Clusterer::clusterLeafs(QMap<qlonglong, osg::ref_ptr<Data::Node> >* someNod
         }
     }
 
+    progressBar->setValue(someNodes->size());
+
     if (newClusters.size() > 1 && maxLevels != 0) {
         QMap<qlonglong, osg::ref_ptr<Data::Node> > newNodes(newClusters);
         newClusters.clear();
@@ -209,6 +229,11 @@ void Clusterer::clusterLeafs(QMap<qlonglong, osg::ref_ptr<Data::Node> >* someNod
 }
 
 void Clusterer::clusterAdjacency(QMap<qlonglong, osg::ref_ptr<Data::Node> >* someNodes, int maxLevels) {
+
+    progressBar->reset();
+    progressBar->setLabelText(QString("Initializing. Depth = %1").arg(clusteringDepth - maxLevels));
+    progressBar->setMaximum(someNodes->size() * 2);
+    int step = 0;
 
     QMap<qlonglong, osg::ref_ptr<Data::Node> > newClusters;
 
@@ -245,20 +270,15 @@ void Clusterer::clusterAdjacency(QMap<qlonglong, osg::ref_ptr<Data::Node> >* som
             }
         }
     }
-/*
-    for (i=0; i<n; i++) {
-        for (j=0; j<n; j++) {
-            qDebug() << "*matrix[" << i << "][" << j << "] = " << matrix[i][j];
-        }
-    }
-*/
+
     i = 0;
     float maxW = -1;
-//    QString str = "\n     ";
-    // prepare weight matrix w, using Pearson correlation
+
+    progressBar->setLabelText(QString("Preparing weight matrix using Pearson correlation. Depth = %1").arg(clusteringDepth - maxLevels));
     for (iterator = someNodes->begin(); iterator != someNodes->end(); ++iterator, i++) {
+        progressBar->setValue(step++);
+        if (progressBar->wasCanceled()) return;
         osg::ref_ptr<Data::Node> nodeU = iterator.value();
-//        str += QString("%1").arg(nodeU->getId(), 5) + " ";
         w[i][i] = 0;
         int degU = nodeU->getIncidentNodes().size();
         j = i+1;
@@ -279,30 +299,7 @@ void Clusterer::clusterAdjacency(QMap<qlonglong, osg::ref_ptr<Data::Node> >* som
                 maxW = w[j][i];
         }
     }
-/*
-    qDebug() << "--- W MATRIX ---";
-    for (i=0; i<n; i++) {
-        for (j=0; j<n; j++) {
-            qDebug() << "[" << i << "][" << j << "] = " << w[i][j];
-        }
-    }
-*/
-    /*
-    str += "\n";
-    iterator = someNodes->begin();
-    for (i=0; i < n; i++) {
-        float s = 0;
-        osg::ref_ptr<Data::Node> q = iterator.value();
-        str += QString("%1").arg(q->getId(), 5) + " ";
-        for (j=0; j < n; j++) {
-            str += QString("%1").arg(w[i][j], 5) + " ";
-            s += w[i][j];
-        }
-        str += "\n";
-        ++iterator;
-    }
-    qDebug() << str;
-*/
+
     float t = qMin(1.0f * K, maxW); // set correlation threashold for clustering
 
     // start clustering
@@ -311,9 +308,14 @@ void Clusterer::clusterAdjacency(QMap<qlonglong, osg::ref_ptr<Data::Node> >* som
     i = 0;
 
 //    int tempID = 0;
+
+    progressBar->setLabelText(QString("Clustering the graph. Depth = %1").arg(clusteringDepth - maxLevels));
+
     // set of clusters
     QSet<qlonglong> clustered;
     for (iterator = someNodes->begin(); iterator != someNodes->end(); ++iterator, i++) {
+        progressBar->setValue(step++);
+        if (progressBar->wasCanceled()) return;
         osg::ref_ptr<Data::Node> u = iterator.value();
         j = i+1;
         Cluster* c = u->getCluster();
@@ -402,9 +404,11 @@ void Clusterer::clusterAdjacency(QMap<qlonglong, osg::ref_ptr<Data::Node> >* som
         newNodesCopy.remove(*i);
     }
 
-
     newNodesCopy.unite(newClusters);
     newClusters.clear();
+
+    progressBar->setValue(someNodes->size() * 2);
+
     if (newNodesCopy.size() > 2 && maxLevels != 0) {
         clusterAdjacency(&newNodesCopy, maxLevels - 1);
     }

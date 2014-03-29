@@ -670,6 +670,7 @@ private:
 	QPushButton * b_cluster_test;
     QComboBox * cb_clusteringAlgorithm;
     QLineEdit * le_clusteringDepth;
+    QProgressDialog* clusteringProgressBar;
 
     void setVisibleClusterSection(bool visible);
 
