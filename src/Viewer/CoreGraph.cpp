@@ -237,13 +237,27 @@ osg::ref_ptr<osg::Group> CoreGraph::test2() {
             color.w() = clustersOpacity;
         }
 
+        // todo refactoring
+
         if (nodesCount > clustersRangeMin && nodesCount <= clusters1Value) {
+            if (cameraInsideCube(midPoint, getRadius(cluster->getALLClusteredNodes(), midPoint))) {
+                color.w() = 1;
+            }
             testGroup->addChild(getCube(cluster->getId(), midPoint, getRadius(cluster->getALLClusteredNodes(), midPoint), color));
         } else if (nodesCount > clusters1Value && nodesCount <= clustersMiddleValue) {
+            if (cameraInsideCube(midPoint, getRadius(cluster->getALLClusteredNodes(), midPoint))) {
+                color.w() = 1;
+            }
             testGroup->addChild((new Cube(midPoint, getRadius(cluster->getALLClusteredNodes(), midPoint), color))->getAT());
         } else if (nodesCount > clustersMiddleValue && nodesCount <= clusters2Value) {
+            if (cameraInsideSphere(midPoint, getRadius(cluster->getALLClusteredNodes(), midPoint))) {
+                color.w() = 1;
+            }
             testGroup->addChild(dodecahedron(cluster->getId(), midPoint, getRadius(cluster->getALLClusteredNodes(), midPoint), color));
         } else {
+            if (cameraInsideSphere(midPoint, getRadius(cluster->getALLClusteredNodes(), midPoint))) {
+                color.w() = 1;
+            }
             testGroup->addChild(getSphere(cluster->getId(), midPoint, getRadius(cluster->getALLClusteredNodes(), midPoint), color));
         }
     }
@@ -849,3 +863,12 @@ void CoreGraph::setNodesFreezed(bool val)
 	qmetaNodesGroup->freezeNodePositions();
 }
 
+bool CoreGraph::cameraInsideCube(osg::Vec3d midPoint, float radius) {
+    return (new osg::BoundingBox(midPoint.x() - radius, midPoint.y() - radius, midPoint.z() - radius,
+                                 midPoint.x() + radius, midPoint.y() + radius, midPoint.z() + radius))
+            ->contains(cameraManipulator->getCameraPosition());
+}
+
+bool CoreGraph::cameraInsideSphere(osg::Vec3d midPoint, float radius) {
+    return (new osg::BoundingSphere(midPoint, radius))->contains(cameraManipulator->getCameraPosition());
+}
