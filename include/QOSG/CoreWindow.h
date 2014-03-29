@@ -181,6 +181,8 @@ public slots:
 				*/
 	void sliderValueChanged(int value);
 
+    void clusteringDepthChanged(const QString &);
+    void clusteringAlgorithmChanged(int value);
     void clustersOpacityCheckboxValueChanged(bool checked);
     void clustersOpacitySliderValueChanged(int value);
     void clusters1SliderValueChanged(int value);
@@ -666,6 +668,8 @@ private:
     QSlider * b_clusters1_Slider;
     QSlider * b_clusters2_Slider;
 	QPushButton * b_cluster_test;
+    QComboBox * cb_clusteringAlgorithm;
+    QLineEdit * le_clusteringDepth;
 
     void setVisibleClusterSection(bool visible);
 

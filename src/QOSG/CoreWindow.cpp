@@ -378,7 +378,19 @@ void CoreWindow::createActions()
     b_clusters2_Slider->setFocusPolicy(Qt::NoFocus);
     connect(b_clusters2_Slider, SIGNAL(valueChanged(int)), this, SLOT(clusters2SliderValueChanged(int)));
 
-	b_cluster_test = new QPushButton();
+    cb_clusteringAlgorithm = new QComboBox();
+    cb_clusteringAlgorithm->insertItems(0,(QStringList() << "Adjacency" << "Leafs" << "Neighbours" ));
+    cb_clusteringAlgorithm->setFocusPolicy(Qt::NoFocus);
+    connect(cb_clusteringAlgorithm,SIGNAL(currentIndexChanged(int)),this,SLOT(clusteringAlgorithmChanged(int)));
+
+    le_clusteringDepth = new QLineEdit();
+    le_clusteringDepth->setText("0");
+    le_clusteringDepth->setAlignment(Qt::AlignCenter);
+    le_clusteringDepth->setFixedWidth(30);
+    le_clusteringDepth->setValidator( new QIntValidator(0, 10, this) );
+    connect(le_clusteringDepth, SIGNAL(textChanged(const QString &)), this, SLOT(clusteringDepthChanged(const QString &)));
+
+    b_cluster_test = new QPushButton();
     b_cluster_test->setText("Cluster graph");
     connect(b_cluster_test, SIGNAL(clicked()), this, SLOT(cluster_test()));
 
@@ -569,6 +581,15 @@ void CoreWindow::createClusterToolBar() {
     QFrame *frame = createHorizontalFrame();
     QLabel *label = new QLabel("Clustering: ");
     frame->layout()->addWidget(label);
+    toolBar->addWidget(frame);
+
+    frame = createHorizontalFrame();
+    frame->layout()->addWidget(cb_clusteringAlgorithm);
+    toolBar->addWidget(frame);
+
+    frame = createHorizontalFrame();
+    frame->layout()->addWidget(new QLabel("Depth: "));
+    frame->layout()->addWidget(le_clusteringDepth);
     toolBar->addWidget(frame);
 
     frame = createHorizontalFrame();
@@ -1801,6 +1822,30 @@ void CoreWindow::start_client()
 	} else {
 		client -> disconnect();
 	}
+}
+
+void CoreWindow::clusteringAlgorithmChanged(int index)
+{
+    switch(index)
+    {
+    case 0:
+        Clustering::Clusterer::getInstance().setAlgorithmType(Clustering::Clusterer::AlgorithmType::ADJACENCY);
+        break;
+    case 1:
+        Clustering::Clusterer::getInstance().setAlgorithmType(Clustering::Clusterer::AlgorithmType::LEAF);
+        break;
+    case 2:
+        Clustering::Clusterer::getInstance().setAlgorithmType(Clustering::Clusterer::AlgorithmType::NEIGHBOUR);
+        break;
+    default:
+        qDebug() << "CoreWindow:clusteringAlgorithmChanged : not suported index " << index;
+        break;
+    }
+}
+
+void CoreWindow::clusteringDepthChanged(const QString &value)
+{
+    Clustering::Clusterer::getInstance().setClusteringDepth(value.toInt());
 }
 
 void CoreWindow::clustersOpacityCheckboxValueChanged(bool checked)

@@ -28,9 +28,23 @@ void Clusterer::cluster(Graph* graph) {
     clusters.clear();
 
     qDebug() << "***** clustering algorithm BEGIN";
-//    clusterNeighbours(graph->getNodes(), 1);
-//    clusterLeafs(graph->getNodes(), 0);
-    clusterAdjacency(graph->getNodes(), 0);
+
+    switch(algorithmType)
+    {
+    case AlgorithmType::ADJACENCY:
+        clusterAdjacency(graph->getNodes(), clusteringDepth);
+        break;
+    case AlgorithmType::LEAF:
+        clusterLeafs(graph->getNodes(), clusteringDepth);
+        break;
+    case AlgorithmType::NEIGHBOUR:
+        clusterNeighbours(graph->getNodes(), clusteringDepth);
+        break;
+    default:
+        qDebug() << "Clusterer:cluster : not suported algorithmType " << algorithmType;
+        break;
+    }
+
     qDebug() << "***** clustering algorithm END";
     qDebug() << "number of new Clusters: " << clusters.size();
 
