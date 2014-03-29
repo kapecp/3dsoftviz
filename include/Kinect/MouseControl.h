@@ -20,25 +20,23 @@ public:
 	MouseControl();
 	~MouseControl();
 
-	void clickMouse();
+	void clickMouseLeftButton();
 
-	void clickMouse(Qt::MouseButton);
+	void clickPressMouse(Qt::MouseButton button);
 
-	void clickMouse(int positionX,int positionY,Qt::MouseButton);
+	void clickPressMouse(float positionX, float positionY, Qt::MouseButton button);
 
-	void releaseClickMouse();
+	void releasePressMouse(Qt::MouseButton button);
 
-	void releaseClickMouse(Qt::MouseButton);
+	void releasePressMouse(float positionX,float positionY,Qt::MouseButton button);
 
-	void releaseClickMouse(int positionX,int positionY,Qt::MouseButton);
-
-	void moveMouse(int positionX,int positionY);
+	void moveMouse(float positionX, float positionY);
 
 	void moveCursorMouse(int positionX,int positionY,bool isClick);
 
-	void corectionMousePosition(int positionX,int positionY);
-
 private:
+
+	void corectionMousePosition(int positionX,int positionY);
 
 	QOSG::ViewerQT *viewer;
 
@@ -49,8 +47,8 @@ private:
 	int mWindowEndX;
 	int mWindowEndY;
 
-	int clickX;
-	int clickY;
+	float clickX;
+	float clickY;
 
 };
 }
