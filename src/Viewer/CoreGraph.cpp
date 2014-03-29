@@ -21,8 +21,8 @@
 #include <osgFX/Outline>
 #include <math.h>
 
-#include "Clustering/Figures/Sphere.h"
-#include "Clustering/Figures/SpikySphere.h"
+#include "Clustering/Clusterer.h"
+#include "Clustering/Figures/Cube.h"
 
 using namespace Vwr;
 
@@ -46,7 +46,7 @@ osg::ref_ptr<osg::AutoTransform> getSphere(qlonglong id, osg::Vec3 position, flo
     osg::Geode * geode = new osg::Geode;
     geode->addDrawable(shape);
 
-    geode->setUserValue("id", QString::number(id).toStdString());
+    //geode->setUserValue("id", QString::number(id).toStdString());
 
     at->addChild(geode);
     return at;
@@ -67,7 +67,7 @@ osg::ref_ptr<osg::AutoTransform> getCube(qlonglong id, osg::Vec3 position, float
     osg::Geode * geode = new osg::Geode;
     geode->addDrawable(shape);
 
-    geode->setUserValue("id", QString::number(id).toStdString());
+//    geode->setUserValue("id", QString::number(id).toStdString());
 
     at->addChild(geode);
     return at;
@@ -89,7 +89,7 @@ osg::ref_ptr<osg::AutoTransform> getCone(qlonglong id, osg::Vec3 position, float
     osg::Geode * geode = new osg::Geode;
     geode->addDrawable(shape);
 
-    geode->setUserValue("id", QString::number(id).toStdString());
+//    geode->setUserValue("id", QString::number(id).toStdString());
 
     at->addChild(geode);
 
@@ -112,7 +112,7 @@ osg::ref_ptr<osg::AutoTransform> getCylinder(qlonglong id, osg::Vec3 position, f
     osg::Geode * geode = new osg::Geode;
     geode->addDrawable(shape);
 
-    geode->setUserValue("id", QString::number(id).toStdString());
+//    geode->setUserValue("id", QString::number(id).toStdString());
 
     at->addChild(geode);
 
@@ -238,9 +238,9 @@ osg::ref_ptr<osg::Group> CoreGraph::test2() {
         }
 
         if (nodesCount > clustersRangeMin && nodesCount <= clusters1Value) {
-            testGroup->addChild(getCylinder(cluster->getId(), midPoint, getRadius(cluster->getALLClusteredNodes(), midPoint), color));
-        } else if (nodesCount > clusters1Value && nodesCount <= clustersMiddleValue) {
             testGroup->addChild(getCube(cluster->getId(), midPoint, getRadius(cluster->getALLClusteredNodes(), midPoint), color));
+        } else if (nodesCount > clusters1Value && nodesCount <= clustersMiddleValue) {
+            testGroup->addChild((new Cube(midPoint, getRadius(cluster->getALLClusteredNodes(), midPoint), color))->getAT());
         } else if (nodesCount > clustersMiddleValue && nodesCount <= clusters2Value) {
             testGroup->addChild(dodecahedron(cluster->getId(), midPoint, getRadius(cluster->getALLClusteredNodes(), midPoint), color));
         } else {
@@ -444,7 +444,7 @@ osg::ref_ptr<osg::AutoTransform> CoreGraph::dodecahedron(qlonglong id, osg::Vec3
     at->setScale(radius/15 * sqrt(75 + 30*sqrt(5)));
 //    at->setAutoRotateMode(osg::AutoTransform::ROTATE_TO_SCREEN);
 
-    dodecahedronGeode->setUserValue("id", QString::number(id).toStdString());
+//    dodecahedronGeode->setUserValue("id", QString::number(id).toStdString());
 
     at->addChild(dodecahedronGeode);
 
@@ -641,9 +641,9 @@ void CoreGraph::reload(Data::Graph * graph)
 //    root->addChild(dodecahedron(0, osg::Vec3(0,0,0), 10, osg::Vec4(1.0,1.0,0.0,0.4)));
     root->addChild(test2());
 //    qDebug() << "before";
-//    Sphere * test = new SpikySphere(10, 10, 10, osg::Vec4(1.0,1.0,0.0,0.4));
+//    Cube * test = new Cube(osg::Vec3d(10,10,10), 10, osg::Vec4d(1.0,0.0,0.0,0.5));
 
-//    root->addChild(test->getGeode());
+//    root->addChild(test->getAT());
 //    qDebug() << "after";
     currentPos++;
 
