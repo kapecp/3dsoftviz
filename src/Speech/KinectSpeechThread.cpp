@@ -12,8 +12,11 @@ Speech::KinectSpeechThread::KinectSpeechThread()
 
 Speech::KinectSpeechThread::~KinectSpeechThread(void)
 {
-	this->m_SpeechClass->cancelRecognition();
-	this->m_SpeechClass->stopRecognition();
+	if (isConnected)
+	{
+		this->m_SpeechClass->cancelRecognition();
+		this->m_SpeechClass->stopRecognition();
+	}
 }
 
 int Speech::KinectSpeechThread::initializeSpeech()
@@ -21,15 +24,16 @@ int Speech::KinectSpeechThread::initializeSpeech()
 	if (this->m_SpeechClass->initRecognition())
 	{
 		qDebug() << "Speech initialization failure";
-		delete(this);
+		this->isConnected=false;
 		return 1;
 	}
 	if (this->m_SpeechClass->CreateFirstConnected()<0)
 	{
 		qDebug() << "Speech connection failure";
-		delete(this);
+		this->isConnected=false;
 		return 1;
 	}
+	this->isConnected=true;
 	return 0;
 }
 

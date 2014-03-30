@@ -533,7 +533,14 @@ void CoreWindow::createAugmentedRealityToolBar() {
 	toolBar->addWidget( b_start_kinect );
 	connect(b_start_kinect, SIGNAL(clicked()), this, SLOT(createKinectWindow()));
 #endif
-
+#ifdef SPEECHSDK_FOUND
+	QLabel *labelSpeech = new QLabel( tr("Speech"));
+	toolBar->addWidget( labelSpeech );
+	b_start_speech = new QPushButton();
+	b_start_speech->setText("Start Speech");
+	toolBar->addWidget( b_start_speech );
+	connect(b_start_speech, SIGNAL(clicked()), this, SLOT(startSpeech()));
+#endif
 
 
 	addToolBar(Qt::TopToolBarArea,toolBar);
@@ -1749,7 +1756,28 @@ void CoreWindow::createKinectWindow(){
 }
 #endif
 
-
+#ifdef SPEECHSDK_FOUND
+void CoreWindow::startSpeech()
+{
+	if (this->mSpeechThr!=NULL && (b_start_speech->text()=="Stop Speech"))
+	{
+		delete(this->mSpeechThr);
+		b_start_speech->setText("Start Speech");
+		this->mSpeechThr=NULL;
+		return;
+	}
+	this->mSpeechThr = new Speech::KinectSpeechThread();
+	CoUninitialize();
+	if (this->mSpeechThr->initializeSpeech()==1)
+	{
+		delete(this->mSpeechThr);
+		this->mSpeechThr=NULL;
+		return;
+	}
+	this->mSpeechThr->start();
+	b_start_speech->setText("Stop Speech");
+}
+#endif
 
 
 

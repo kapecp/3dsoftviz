@@ -24,6 +24,7 @@ public:
 	~KinectSpeechThread(void);
 	int initializeSpeech();
 	SpeechSDK::SpeechSDKClass *m_SpeechClass;
+	bool isConnected;
 
 	/**
 		 * @author Autor: Marek Jakab
