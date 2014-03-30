@@ -68,7 +68,6 @@ void Kinect::KinectThread::run()
 		color.start();
 
 		kht = new KinectHandTracker(&mKinect->device);
-
 	}
 
 

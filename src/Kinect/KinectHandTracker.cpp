@@ -1,6 +1,5 @@
 #include "Kinect/KinectHandTracker.h"
 
-#include "Core/Core.h"
 #include "QDebug"
 
 Kinect::KinectHandTracker::KinectHandTracker(openni::Device *device)
@@ -9,7 +8,7 @@ Kinect::KinectHandTracker::KinectHandTracker(openni::Device *device)
 	m_pHandTracker.startGestureDetection(nite::GESTURE_WAVE);
 	m_pHandTracker.startGestureDetection(nite::GESTURE_CLICK);
 	isClick=false;
-	viewer=AppCore::Core::getInstance()->getCoreWindow()->GetViewerQt();
+	mouse = new Kinect::MouseControl();
 }
 
 
@@ -32,16 +31,15 @@ void Kinect::KinectHandTracker::getAllGestures()
 				printf("gesture click is on\n");
 				if(isClick)
 				{
-					//TODO real click and release
 					isClick=false;
 					printf("Release");
-					printf(" at %d a %d\n",viewer->cursor().pos().x(),viewer->cursor().pos().y());
+					mouse->releasePressMouse(Qt::LeftButton);
 				}
 				else
 				{
 					isClick=true;
 					printf("Click");
-					printf(" at %d a %d\n",viewer->cursor().pos().x(),viewer->cursor().pos().y());
+					mouse->clickPressMouse(Qt::LeftButton);
 				}
 
 			}
@@ -82,8 +80,14 @@ void Kinect::KinectHandTracker::getAllHands()
 			// Hand evidence in Buffer
 			HistoryBuffer<20>* pHistory = this->g_histories[user.getId()];
 			pHistory->AddPoint(user.getPosition());
+
 			// Data for mouse
-			//printf("user %d %.2lf %.2lf\n", user.getId(), user.getPosition().x, user.getPosition().y);
+			//first find HAND = MOUSE
+			if(i==0)
+			{
+				mouse->moveCursorMouse(user.getPosition().x,user.getPosition().y,isClick);
+			}
+
 			// If two hands have been found get the position of the rectangle
 			if (hands.getSize() == 2)
 			{

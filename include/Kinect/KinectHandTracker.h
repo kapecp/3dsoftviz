@@ -2,8 +2,8 @@
 #include "OpenNI.h"
 #include "NiTE.h"
 #include "Kinect/KinectRecognition.h"
+#include "Kinect/MouseControl.h"
 
-#include "QOSG/ViewerQT.h"
 
 #ifndef KINECTHANDTRACKER_H
 #define KINECTHANDTRACKER_H
@@ -46,7 +46,7 @@ public:
 
 private:
 	bool isClick;
-	QOSG::ViewerQT *viewer;
+	MouseControl *mouse;
 
 };
 }
