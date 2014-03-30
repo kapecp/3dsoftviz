@@ -30,11 +30,15 @@ void Kinect::MouseControl::clickPressMouse(Qt::MouseButton button)
 {
 	this->corectionMousePosition(viewer->cursor().pos().x(),viewer->cursor().pos().y());
 	viewer->getEventQueue()->mouseButtonPress(clickX,clickY,button);
+	//TODO test action - click,move,release or click/release
+	this->moveMouse(clickX,clickY);
 }
 
 void Kinect::MouseControl::clickPressMouse(float positionX,float positionY,Qt::MouseButton button)
 {
 	viewer->getEventQueue()->mouseButtonPress(positionX,positionY,button);
+	//TODO  test action - click,move,release or click/release
+	this->moveMouse(positionX,positionY);
 }
 
 void Kinect::MouseControl::releasePressMouse(Qt::MouseButton button)
@@ -63,7 +67,7 @@ void Kinect::MouseControl::corectionMousePosition(int positionX, int positionY)
 }
 
 
-void Kinect::MouseControl::moveCursorMouse(int positionX, int positionY, bool isClick)
+void Kinect::MouseControl::moveCursorMouse(double positionX, double positionY, bool isClick)
 {
 	double curentCursorX=(double)viewer->cursor().pos().x();
 	double curentCursorY=(double)viewer->cursor().pos().y();
@@ -85,6 +89,11 @@ void Kinect::MouseControl::moveCursorMouse(int positionX, int positionY, bool is
 
 	//TODO add constraint for position
 	viewer->cursor().setPos(newPositionX,newPositionY);
+	if(isClick)
+	{
+		this->corectionMousePosition(viewer->cursor().pos().x(),viewer->cursor().pos().y());
+		this->moveMouse(clickX,clickY);
+	}
 
 	subPixelX=(deltaX*speed - (int)(deltaX*speed));
 	subPixelX=(deltaY*speed - (int)(deltaY*speed));

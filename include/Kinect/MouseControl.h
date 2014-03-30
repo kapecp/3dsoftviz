@@ -32,7 +32,7 @@ public:
 
 	void moveMouse(float positionX, float positionY);
 
-	void moveCursorMouse(int positionX,int positionY,bool isClick);
+	void moveCursorMouse(double positionX, double positionY, bool isClick);
 
 private:
 
