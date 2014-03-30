@@ -106,6 +106,7 @@ void Kinect::KinectThread::run()
 		rectangle(frame, hand_rect, CV_RGB(0, 255,0), 1);
 
 		emit pushImage( frame );
+		msleep(20);
 
 	}
 	//testing Camera//////////////

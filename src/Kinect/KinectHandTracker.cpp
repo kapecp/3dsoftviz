@@ -85,7 +85,8 @@ void Kinect::KinectHandTracker::getAllHands()
 			//first find HAND = MOUSE
 			if(i==0)
 			{
-				mouse->moveCursorMouse(user.getPosition().x,user.getPosition().y,isClick);
+				mouse->moveCursorMouse(user.getPosition().x/2,-1.0*user.getPosition().y/2,isClick);
+				printf("%lf %lf",user.getPosition().x,-1,0*user.getPosition().y);
 			}
 
 			// If two hands have been found get the position of the rectangle
