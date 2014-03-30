@@ -46,7 +46,7 @@ osg::ref_ptr<osg::AutoTransform> getSphere(qlonglong id, osg::Vec3 position, flo
     osg::Geode * geode = new osg::Geode;
     geode->addDrawable(shape);
 
-    //geode->setUserValue("id", QString::number(id).toStdString());
+    geode->setUserValue("id", QString::number(id).toStdString());
 
     at->addChild(geode);
     return at;
@@ -67,7 +67,7 @@ osg::ref_ptr<osg::AutoTransform> getCube(qlonglong id, osg::Vec3 position, float
     osg::Geode * geode = new osg::Geode;
     geode->addDrawable(shape);
 
-//    geode->setUserValue("id", QString::number(id).toStdString());
+    geode->setUserValue("id", QString::number(id).toStdString());
 
     at->addChild(geode);
     return at;
@@ -89,7 +89,7 @@ osg::ref_ptr<osg::AutoTransform> getCone(qlonglong id, osg::Vec3 position, float
     osg::Geode * geode = new osg::Geode;
     geode->addDrawable(shape);
 
-//    geode->setUserValue("id", QString::number(id).toStdString());
+    geode->setUserValue("id", QString::number(id).toStdString());
 
     at->addChild(geode);
 
@@ -112,7 +112,7 @@ osg::ref_ptr<osg::AutoTransform> getCylinder(qlonglong id, osg::Vec3 position, f
     osg::Geode * geode = new osg::Geode;
     geode->addDrawable(shape);
 
-//    geode->setUserValue("id", QString::number(id).toStdString());
+    geode->setUserValue("id", QString::number(id).toStdString());
 
     at->addChild(geode);
 
@@ -248,7 +248,9 @@ osg::ref_ptr<osg::Group> CoreGraph::test2() {
             if (cameraInsideCube(midPoint, getRadius(cluster->getALLClusteredNodes(), midPoint))) {
                 color.w() = 1;
             }
-            testGroup->addChild((new Cube(midPoint, getRadius(cluster->getALLClusteredNodes(), midPoint), color))->getAT());
+            Cube * cube = new Cube(midPoint, getRadius(cluster->getALLClusteredNodes(), midPoint), color);
+            cube->getGeode()->setUserValue("id", QString::number(cluster->getId()).toStdString());
+            testGroup->addChild(cube->getAT());
         } else if (nodesCount > clustersMiddleValue && nodesCount <= clusters2Value) {
             if (cameraInsideSphere(midPoint, getRadius(cluster->getALLClusteredNodes(), midPoint))) {
                 color.w() = 1;
@@ -458,7 +460,7 @@ osg::ref_ptr<osg::AutoTransform> CoreGraph::dodecahedron(qlonglong id, osg::Vec3
     at->setScale(radius/15 * sqrt(75 + 30*sqrt(5)));
 //    at->setAutoRotateMode(osg::AutoTransform::ROTATE_TO_SCREEN);
 
-//    dodecahedronGeode->setUserValue("id", QString::number(id).toStdString());
+    dodecahedronGeode->setUserValue("id", QString::number(id).toStdString());
 
     at->addChild(dodecahedronGeode);
 
