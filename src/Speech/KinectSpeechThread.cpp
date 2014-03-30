@@ -7,16 +7,31 @@ using namespace SpeechSDK;
 Speech::KinectSpeechThread::KinectSpeechThread()
 {
 	this->m_SpeechClass = new SpeechSDKClass(L"../share/3dsoftviz/SpeechGrammarFile.grxml");
-	this->m_SpeechClass->initRecognition();
-	this->m_SpeechClass->CreateFirstConnected();
 }
 
 
 Speech::KinectSpeechThread::~KinectSpeechThread(void)
 {
-
+	this->m_SpeechClass->cancelRecognition();
+	this->m_SpeechClass->stopRecognition();
 }
 
+int Speech::KinectSpeechThread::initializeSpeech()
+{
+	if (this->m_SpeechClass->initRecognition())
+	{
+		qDebug() << "Speech initialization failure";
+		delete(this);
+		return 1;
+	}
+	if (this->m_SpeechClass->CreateFirstConnected()<0)
+	{
+		qDebug() << "Speech connection failure";
+		delete(this);
+		return 1;
+	}
+	return 0;
+}
 
 void Speech::KinectSpeechThread::run()
 {

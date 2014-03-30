@@ -22,6 +22,7 @@ class KinectSpeechThread : public QThread
 public:
 	KinectSpeechThread();
 	~KinectSpeechThread(void);
+	int initializeSpeech();
 	SpeechSDK::SpeechSDKClass *m_SpeechClass;
 
 	/**
