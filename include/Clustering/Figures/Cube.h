@@ -22,9 +22,13 @@ public:
 
     void setColor(osg::Vec4d color) { this->color = color; }
 
+    osg::Vec3d getMidpoint() { return midPoint; }
+    float getRadius() { return radius; }
+
 protected:
 
     osg::Vec3d        midPoint;
+    float             radius;
     osg::Vec4d        color;
 
     osg::AutoTransform * at;
@@ -36,7 +40,7 @@ protected:
 
     std::vector<osg::DrawElementsUInt *> * primitiveSets;
 
-    void init();
+    void init(osg::Vec3d position, float radius);
     void computeGeode();
     void transform(osg::Vec3d position, float radius);
 

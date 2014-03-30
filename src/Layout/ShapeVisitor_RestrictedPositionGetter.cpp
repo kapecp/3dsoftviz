@@ -180,23 +180,16 @@ void ShapeVisitor_RestrictedPositionGetter::visit (Shape_Cube & shape) {
     if ((mOriginalPosition - shape.getCenter ()).length() > shape.getRadius ()) {
         // position outside
 
-        float radiusMin;
-        float radiusMax;
-        switch (shape.getRestrictionPolicy ()) {
-        case Shape_Cube::SURFACE:
-            radiusMin = shape.getRadius ();
-            radiusMax = shape.getRadius ();
-            break;
-        case Shape_Cube::RANDOM_DISTANCE_FROM_CENTER:
-            radiusMin = 0;
-            radiusMax = shape.getRadius ();
-            break;
-        default:
-            radiusMin = 0;
-            radiusMax = 0;
-        }
+//        switch (shape.getRestrictionPolicy ()) {
+//        case Shape_Cube::SURFACE:
+//        case Shape_Cube::RANDOM_DISTANCE_FROM_CENTER:
+//        }
 
-        mRestrictedPosition = toSphere (shape.getCenter (), radiusMin, radiusMax, mOriginalPosition);
+//        mRestrictedPosition = toCube(shape.getCenter(), shape.getRadius(), mOriginalPosition);
+
+        mRestrictedPosition = toSphere (shape.getCenter (), 0, shape.getRadius(), mOriginalPosition);
+
+
     } else {
         // position in sphere - OK
         mRestrictedPosition = mOriginalPosition;
@@ -232,6 +225,25 @@ osg::Vec3f ShapeVisitor_RestrictedPositionGetter::toSphere(const osg::Vec3f &cen
 	osg::Vec3f changedPoint = changedPointMoved + center;
 
 	return changedPoint;
+}
+
+osg::Vec3f ShapeVisitor_RestrictedPositionGetter::toCube(const osg::Vec3f &center, float radius, const osg::Vec3f &point)
+{
+    // create random point
+    osg::Vec3f changedPoint;
+    float LO_x = center.x() - radius;
+    float LO_y = center.y() - radius;
+    float LO_z = center.z() - radius;
+
+    float HI_x = center.x() + radius;
+    float HI_y = center.y() + radius;
+    float HI_z = center.z() + radius;
+
+    changedPoint.x() = LO_x + static_cast <float> (rand()) /( static_cast <float> (RAND_MAX/(HI_x-LO_x)));
+    changedPoint.x() = LO_y + static_cast <float> (rand()) /( static_cast <float> (RAND_MAX/(HI_y-LO_y)));
+    changedPoint.x() = LO_z + static_cast <float> (rand()) /( static_cast <float> (RAND_MAX/(HI_z-LO_z)));
+
+    return changedPoint;
 }
 
 } // namespace

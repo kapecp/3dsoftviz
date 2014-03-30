@@ -7,21 +7,22 @@
 #include <osg/Material>
 
 Cube::Cube(osg::Vec3d position, float radius) {
-    init();
+    init(position, radius);
     computeGeode();
     transform(position, radius);
 }
 
 Cube::Cube(osg::Vec3d position, float radius, osg::Vec4d color) {
-    init();
+    init(position, radius);
     setColor(color);
     computeGeode();
     transform(position, radius);
 }
 
-void Cube::init() {
+void Cube::init(osg::Vec3d position, float radius) {
     color = osg::Vec4d(0,0,0,1);
-    midPoint = osg::Vec3d(0,0,0);
+    midPoint = position;
+    this->radius = radius;
     geode = new osg::Geode();
     geometry = new osg::Geometry();
     vertices = new osg::Vec3Array;

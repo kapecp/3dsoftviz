@@ -204,6 +204,8 @@ public:
 
     void unselectPickedClusters();
 
+    QLinkedList<osg::ref_ptr<Data::Cluster> > getPickedClusters() {return pickedClusters;}
+
 protected:
 	// Store mouse xy location for button press & move events.
 	float _mX,_mY;

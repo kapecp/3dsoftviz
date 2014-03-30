@@ -190,6 +190,7 @@ public slots:
     void clusters1RangeChanged(const QString &);
     void clusters2RangeChanged(const QString &);
     void setRestriction_Cube();
+    void setRestriction_Cube_Selected();
     void cluster_test();
 
 	/**
@@ -673,6 +674,7 @@ private:
     QProgressDialog * clusteringProgressBar;
 
     QPushButton * b_SetRestriction_Cube;
+    QPushButton * b_SetRestriction_Cube_Selected;
 
     void setVisibleClusterSection(bool visible);
 

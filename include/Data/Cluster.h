@@ -4,6 +4,8 @@
 #include "Data/Node.h"
 #include <QSet>
 
+#include "Clustering/Figures/Cube.h"
+
 namespace Data {
 class Graph;
 
@@ -25,11 +27,16 @@ public:
     void setSelected(bool selected, QLinkedList<osg::ref_ptr<Data::Node> > * pickedNodes);
     Node * getRandomNode();
 
+    void setCube(Cube * cube) {this->cube = cube;}
+    Cube * getCube() {return cube;}
+
 private:
 
     qlonglong id;
     QSet<Node *> clusteredNodes;
     osg::Vec4 originalColor;
+
+    Cube * cube;
 
 };
 

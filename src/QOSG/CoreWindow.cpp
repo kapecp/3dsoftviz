@@ -411,6 +411,11 @@ void CoreWindow::createActions()
     connect(b_SetRestriction_Cube, SIGNAL(clicked()), this, SLOT(setRestriction_Cube()));
 
 
+    b_SetRestriction_Cube_Selected = new QPushButton();
+    b_SetRestriction_Cube_Selected->setText("sel");
+    b_SetRestriction_Cube_Selected->setFocusPolicy(Qt::NoFocus);
+    connect(b_SetRestriction_Cube_Selected, SIGNAL(clicked()), this, SLOT(setRestriction_Cube_Selected()));
+
     // hide
     setVisibleClusterSection(false);
 }
@@ -602,6 +607,7 @@ void CoreWindow::createClusterToolBar() {
 
     frame = createHorizontalFrame();
     frame->layout()->addWidget(b_SetRestriction_Cube);
+    frame->layout()->addWidget(b_SetRestriction_Cube_Selected);
     toolBar->addWidget(frame);
 
     frame = createHorizontalFrame();
@@ -1605,7 +1611,7 @@ void CoreWindow::setRestrictionToSelectedNodes (
 		) {
 	QLinkedList<osg::ref_ptr<Data::Node> > * selectedNodes = (nodesToRestrict == NULL) ? viewerWidget->getPickHandler()->getSelectedNodes() : nodesToRestrict;
 
-	QSet<Data::Node *> nodes;
+    QSet<Data::Node *> nodes;
 	for (QLinkedList<osg::ref_ptr<Data::Node> >::const_iterator it = selectedNodes->constBegin (); it != selectedNodes->constEnd (); ++it) {
 		nodes.insert (it->get ());
 	}
@@ -1996,6 +2002,61 @@ void CoreWindow::setRestriction_Cube()
         }
         Network::Server * server = Network::Server::getInstance();
         server->sendSetRestriction(2, centerNode, positionNode1, surfaceNode, positionNode2, viewerWidget->getPickHandler()->getSelectedNodes());
+    }
+}
+
+void CoreWindow::setRestriction_Cube_Selected()
+{
+    Data::Graph * currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
+
+    if (currentGraph != NULL)
+    {
+        QLinkedList<osg::ref_ptr<Data::Cluster> > clusters = viewerWidget->getPickHandler()->getPickedClusters();
+
+        //todo iter
+
+        osg::ref_ptr<Data::Cluster> cluster = clusters.first();
+
+        osg::ref_ptr<Data::Node> centerNode;
+        osg::ref_ptr<Data::Node> surfaceNode;
+
+        float scale = Util::ApplicationConfig::get()->getValue("Viewer.Display.NodeDistanceScale").toFloat();
+
+        QString name_centerNode = "center";
+        QString name_sufraceNode = "surface";
+        osg::Vec3 positionNode1 = cluster->getCube()->getMidpoint() / scale;
+        osg::Vec3 positionNode2 = positionNode1 + osg::Vec3f (cluster->getCube()->getRadius() / scale, 0, 0);
+
+
+        Layout::RestrictionRemovalHandler_RestrictionNodesRemover::NodesListType restrictionNodes;
+
+        centerNode = currentGraph->addRestrictionNode (name_centerNode, positionNode1);
+        surfaceNode = currentGraph->addRestrictionNode (name_sufraceNode, positionNode2);
+
+        restrictionNodes.push_back (centerNode);
+        restrictionNodes.push_back (surfaceNode);
+
+
+        QSharedPointer<Layout::ShapeGetter> shapeGetter = QSharedPointer<Layout::ShapeGetter> (
+                    new Layout::ShapeGetter_Cube (centerNode, surfaceNode)
+                    );
+        QSharedPointer<Layout::RestrictionRemovalHandler> removalHandler = QSharedPointer<Layout::RestrictionRemovalHandler_RestrictionNodesRemover> (
+                    new Layout::RestrictionRemovalHandler_RestrictionNodesRemover (
+                        *currentGraph,
+                        restrictionNodes
+                        )
+                    );
+
+        QSet<Data::Node *> nodes = cluster->getALLClusteredNodes();
+
+        currentGraph->getRestrictionsManager().setRestrictions (nodes, shapeGetter);
+
+        if ((! shapeGetter.isNull ()) && (! removalHandler.isNull ())) {
+            currentGraph->getRestrictionsManager().setOrRunRestrictionRemovalHandler (shapeGetter, removalHandler);
+        }
+
+        if (isPlaying)
+            layout->play();
     }
 }
 

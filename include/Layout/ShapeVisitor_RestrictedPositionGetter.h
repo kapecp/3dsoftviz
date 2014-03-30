@@ -88,6 +88,8 @@ private: // private methods
 	 */
 	osg::Vec3f toSphere(const osg::Vec3f &center, float radiusMin, float radiusMax, const osg::Vec3f &point);
 
+    osg::Vec3f toCube(const osg::Vec3f &center, float radius, const osg::Vec3f &point);
+
 private: // visitor context
 	osg::Vec3f mOriginalPosition;
 	osg::Vec3f mRestrictedPosition;

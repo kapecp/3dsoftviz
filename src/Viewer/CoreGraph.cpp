@@ -239,29 +239,32 @@ osg::ref_ptr<osg::Group> CoreGraph::test2() {
 
         // todo refactoring
 
-        if (nodesCount > clustersRangeMin && nodesCount <= clusters1Value) {
-            if (cameraInsideCube(midPoint, getRadius(cluster->getALLClusteredNodes(), midPoint))) {
-                color.w() = 1;
-            }
-            testGroup->addChild(getCube(cluster->getId(), midPoint, getRadius(cluster->getALLClusteredNodes(), midPoint), color));
-        } else if (nodesCount > clusters1Value && nodesCount <= clustersMiddleValue) {
+//        if (nodesCount > clustersRangeMin && nodesCount <= clusters1Value) {
+//            if (cameraInsideCube(midPoint, getRadius(cluster->getALLClusteredNodes(), midPoint))) {
+//                color.w() = 1;
+//            }
+//            testGroup->addChild(getCube(cluster->getId(), midPoint, getRadius(cluster->getALLClusteredNodes(), midPoint), color));
+//        } else if (nodesCount > clusters1Value && nodesCount <= clustersMiddleValue) {
             if (cameraInsideCube(midPoint, getRadius(cluster->getALLClusteredNodes(), midPoint))) {
                 color.w() = 1;
             }
             Cube * cube = new Cube(midPoint, getRadius(cluster->getALLClusteredNodes(), midPoint), color);
             cube->getGeode()->setUserValue("id", QString::number(cluster->getId()).toStdString());
+
+            cluster->setCube(cube);
+
             testGroup->addChild(cube->getAT());
-        } else if (nodesCount > clustersMiddleValue && nodesCount <= clusters2Value) {
-            if (cameraInsideSphere(midPoint, getRadius(cluster->getALLClusteredNodes(), midPoint))) {
-                color.w() = 1;
-            }
-            testGroup->addChild(dodecahedron(cluster->getId(), midPoint, getRadius(cluster->getALLClusteredNodes(), midPoint), color));
-        } else {
-            if (cameraInsideSphere(midPoint, getRadius(cluster->getALLClusteredNodes(), midPoint))) {
-                color.w() = 1;
-            }
-            testGroup->addChild(getSphere(cluster->getId(), midPoint, getRadius(cluster->getALLClusteredNodes(), midPoint), color));
-        }
+//        } else if (nodesCount > clustersMiddleValue && nodesCount <= clusters2Value) {
+//            if (cameraInsideSphere(midPoint, getRadius(cluster->getALLClusteredNodes(), midPoint))) {
+//                color.w() = 1;
+//            }
+//            testGroup->addChild(dodecahedron(cluster->getId(), midPoint, getRadius(cluster->getALLClusteredNodes(), midPoint), color));
+//        } else {
+//            if (cameraInsideSphere(midPoint, getRadius(cluster->getALLClusteredNodes(), midPoint))) {
+//                color.w() = 1;
+//            }
+//            testGroup->addChild(getSphere(cluster->getId(), midPoint, getRadius(cluster->getALLClusteredNodes(), midPoint), color));
+//        }
     }
 
     }
