@@ -1,8 +1,8 @@
 #ifndef FACERECOGNIZER_H
 #define FACERECOGNIZER_H
 
-#include "opencv2/core/core.hpp"
-#include "opencv2/objdetect/objdetect.hpp"
+#include <opencv2/core/core.hpp>
+#include <opencv2/objdetect/objdetect.hpp>
 
 namespace OpenCV
 {

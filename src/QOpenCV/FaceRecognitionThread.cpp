@@ -1,78 +1,70 @@
 #include "QOpenCV/FaceRecognitionThread.h"
 
-#include "OpenCV/CamSelectCore.h"
-
-#include "QOpenCV/FaceRecognitionWindow.h"  // ????
-
+#include "OpenCV/CapVideo.h"
+#include "OpenCV/FaceRecognizer.h"
 
 using namespace QOpenCV;
 
-QOpenCV::FaceRecognitionThread::FaceRecognitionThread(OpenCV::FaceRecognizer* alg, QObject *parent)
+QOpenCV::FaceRecognitionThread::FaceRecognitionThread( OpenCV::FaceRecognizer *faceRecognizer, QObject *parent)
 	: QThread(parent)
 {
-	this->mFaceRecognizer = alg;
-
-	this->mCapVideo = OpenCV::CamSelectCore::getInstance()->selectCamera();
-	this->cancel=false;
-	this->mSendImgEnabled	= true;
-	mCapVideo = NULL;
-
+	mFaceRecognizer	= faceRecognizer;
+	mCapVideo		= NULL;
+	mCancel			= false;
+	mSendImgEnabled	= true;
 }
 
 
 QOpenCV::FaceRecognitionThread::~FaceRecognitionThread(void)
 {
-
-	if(this->mCapVideo!=NULL){
-		this->mCapVideo->release();
-	}
-	delete this->mFaceRecognizer;
+	delete mFaceRecognizer;
 }
 
 
 void QOpenCV::FaceRecognitionThread::run()
 {
+	mCancel = false;
+	cv::Mat image;
 
-	cancel = false;
-
-	//if (!this->mCapVideo->getCapture()){ ???
-	if (this->mCapVideo==NULL){
-		qDebug() << "Camera is not opened";
+	if( mCapVideo == NULL){
+		qDebug() << "[FaceRecognitionThread::run()]  Camera is not set";
 		return;
 	}
-	cv::Mat image;
-	while(!cancel) {
-		image=this->mCapVideo->queryFrame();
-		this->mCapVideo->createGray();
 
-		this->mFaceRecognizer->detectFaces(this->mCapVideo->getGrayframe());
-		this->mFaceRecognizer->annotateFaces(image);
+	while( !mCancel ){
+		image = mCapVideo->queryFrame();
+
+		mFaceRecognizer->detectFaces( mCapVideo->getGrayframe() );
+		mFaceRecognizer->annotateFaces( image );
 
 		if( mSendImgEnabled ){
-			cv::Mat im = image.clone();
-			emit this->pushImage(im);
+			emit pushImage( image.clone() ); // ???
 		}
 
-		if (this->mFaceRecognizer->detected && this->mFaceRecognizer->isMovement) {
-			emit this->sendEyesCoords((float)-this->mFaceRecognizer->getEyesCoords().x,
-									  (float)-this->mFaceRecognizer->getEyesCoords().y,
-									  -this->mFaceRecognizer->getHeadDistance(
-										 this->mCapVideo->getWidth()));
+		if( mFaceRecognizer->detected && mFaceRecognizer->isMovement ) {
+			emit sendEyesCoords( (float) -mFaceRecognizer->getEyesCoords().x,
+								 (float) -mFaceRecognizer->getEyesCoords().y,
+								 -mFaceRecognizer->getHeadDistance( mCapVideo->getWidth()) );
 		}
 	}
-	delete this->mCapVideo;
+	mCapVideo->release();
+	mCapVideo = NULL;
 }
 
 void QOpenCV::FaceRecognitionThread::pauseWindow()
 {
-	this->cancel=true;
+	mCancel = true;
 }
 
-void QOpenCV::FaceRecognitionThread::setCancel(bool set){
-	this->cancel=set;
+void QOpenCV::FaceRecognitionThread::setCancel( bool set ){
+	mCancel = set;
 }
 
 void QOpenCV::FaceRecognitionThread::setSendImgEnabled( bool sendImgEnabled )
 {
 	mSendImgEnabled = sendImgEnabled;
+}
+
+void QOpenCV::FaceRecognitionThread::setCapVideo( OpenCV::CapVideo *capVideo){
+	mCapVideo = capVideo;
 }

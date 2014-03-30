@@ -67,7 +67,6 @@ CoreWindow::CoreWindow(QWidget *parent, Vwr::CoreGraph* coreGraph, QApplication*
 	createCollaborationToolBar();
 	createAugmentedRealityToolBar();
 
-
 	viewerWidget = new ViewerQT(this, 0, 0, 0, coreGraph);
 	viewerWidget->setSceneData(coreGraph->getScene());
 
@@ -93,6 +92,10 @@ CoreWindow::CoreWindow(QWidget *parent, Vwr::CoreGraph* coreGraph, QApplication*
 	nodeLabelsVisible = edgeLabelsVisible = false;
 
 	connect(lineEdit,SIGNAL(returnPressed()),this,SLOT(sqlQuery()));
+
+	QObject::connect( chb_camera_rot, SIGNAL(clicked(bool)),
+					  viewerWidget->getCameraManipulator(), SLOT(setCameraCanRot(bool)));
+
 }
 
 void CoreWindow::createActions()
@@ -509,21 +512,25 @@ void CoreWindow::createRightToolBar() {
 
 
 	addToolBar(Qt::TopToolBarArea,toolBar);
-	toolBar->setMovable(true);
 }
 
 void CoreWindow::createAugmentedRealityToolBar() {
 	toolBar = new QToolBar( tr("Augmented Reality"),this);
 
+	b_start_face = new QPushButton( tr("Start camera"));
+	QLabel *label = new QLabel( tr("Face & Marker detection"));
 
 #ifdef OPENCV_FOUND
-	QLabel *label = new QLabel( tr("Face & Marker detection"));
 	toolBar->addWidget( label );
-	b_start_face = new QPushButton();
-	b_start_face->setText("Start camera");
 	toolBar->addWidget( b_start_face );
 	connect(b_start_face, SIGNAL(clicked()), this, SLOT(create_facewindow()));
+	toolBar->addSeparator();
 #endif
+
+	chb_camera_rot = new QCheckBox( tr("Camera rotation"));
+	chb_camera_rot->setChecked(true);
+	toolBar->addWidget( chb_camera_rot );
+	toolBar->addSeparator();
 
 #ifdef OPENNI2_FOUND
 	QLabel *labelKinect = new QLabel( tr("Kinect"));
@@ -532,6 +539,7 @@ void CoreWindow::createAugmentedRealityToolBar() {
 	b_start_kinect->setText("Start kinect");
 	toolBar->addWidget( b_start_kinect );
 	connect(b_start_kinect, SIGNAL(clicked()), this, SLOT(createKinectWindow()));
+	toolBar->addSeparator();
 #endif
 #ifdef SPEECHSDK_FOUND
 	QLabel *labelSpeech = new QLabel( tr("Speech"));
@@ -541,6 +549,8 @@ void CoreWindow::createAugmentedRealityToolBar() {
 	toolBar->addWidget( b_start_speech );
 	connect(b_start_speech, SIGNAL(clicked()), this, SLOT(startSpeech()));
 #endif
+
+
 
 
 	addToolBar(Qt::TopToolBarArea,toolBar);
@@ -1906,6 +1916,10 @@ Vwr::CameraManipulator* CoreWindow::getCameraManipulator() {
 	return viewerWidget->getCameraManipulator();
 }
 
+QOSG::ViewerQT * CoreWindow::GetViewerQt()
+{
+	return viewerWidget;
+}
 
 void CoreWindow::closeEvent(QCloseEvent *event)
 {

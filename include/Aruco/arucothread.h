@@ -14,6 +14,10 @@
 Q_DECLARE_METATYPE( osg::Vec3d )
 Q_DECLARE_METATYPE( osg::Quat )
 
+namespace OpenCV{
+class CapVideo;
+}
+
 namespace ArucoModul {
 
 /**
@@ -22,7 +26,7 @@ namespace ArucoModul {
 * @date 18.02.2014
 */
 class ArucoThread : public QThread
-{
+	{
 	Q_OBJECT
 
 public:
@@ -56,7 +60,7 @@ signals:
 	* @brief sendArucoRorQuat signal that emit Quaternion that represent rotation of detected marker
 	* @param quat Quaternion
 	*/
-	void sendArucoRorQuat( osg::Quat quat);
+	void sendArucoRorQuat( const osg::Quat quat);
 
 	/**
 	* @author Dávid Durčák
@@ -115,6 +119,12 @@ public slots:
 	*/
 	void updateCorectionPar();
 
+	/**
+	* @author Dávid Durčák
+	* @brief setCapVideo Set member mCapVideo.
+	* @param capVideo
+	*/
+	void setCapVideo( OpenCV::CapVideo *capVideo);
 
 private:
 
@@ -175,7 +185,9 @@ private:
 	osg::Vec3d	mCorP;				// correction vector
 	double		mRatioCamCoef;		// correct aruco ration not centering y-axis
 
+	OpenCV::CapVideo	*mCapVideo; // Cap video instanc, that managed camera and provides frames
 
-};
+
+	};
 } // ArucoModul namespace
 #endif //ARUCOTHREAD_H

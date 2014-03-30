@@ -552,6 +552,7 @@ private:
 
 	QPushButton * b_start_face;
 
+
 	/**
 	 * QPushButton start kinect recognition
 	 *@brief b_start_kinect
@@ -563,6 +564,8 @@ private:
 	 *@brief b_start_speech
 	 */
 	QPushButton * b_start_speech;
+
+	QCheckBox * chb_camera_rot;
 
 	/**
 		*  QAction * load
@@ -725,6 +728,8 @@ public:
 	bool playing() { return isPlaying; }
 	Vwr::CameraManipulator * getCameraManipulator();
 
+	QOSG::ViewerQT * GetViewerQt();
+
 
 	/**
 		*  \fn inline public  setLayoutThread
@@ -759,6 +764,12 @@ public:
 			QSharedPointer<Layout::RestrictionRemovalHandler> removalHandler,
 			QLinkedList<osg::ref_ptr<Data::Node> > nodesOfShapeGettersToRestrict
 			);
+
+	/**
+		 * @author Autor: David Durcak
+		 * @brief getChbCameraRot Return chb_camera_rot
+		 */
+	QCheckBox *getChbCameraRot() const;
 
 protected:
 

@@ -1,10 +1,8 @@
 #ifndef CAPVIDEO_H
 #define CAPVIDEO_H
 
-#include "opencv2/core/core.hpp"
-#include "opencv2/imgproc/imgproc.hpp"
-#include "opencv2/objdetect/objdetect.hpp"
-#include "opencv2/highgui/highgui.hpp"
+#include <opencv2/core/core.hpp>
+#include <opencv2/highgui/highgui.hpp>
 
 namespace OpenCV
 {
@@ -42,13 +40,7 @@ public:
 
 	/**
 		 * @author Autor: Marek Jakab
-		 * @brief createGray Create grayscale image from captured image
-		 */
-	void createGray();
-
-	/**
-		 * @author Autor: Marek Jakab
-		 * @brief getGrayframe Returns grayscale image
+		 * @brief getGrayframe Create grayscale image from captured image and return it
 		 * @return cv::Mat
 		 */
 	cv::Mat getGrayframe();
@@ -81,7 +73,7 @@ private:
 	int height;
 	cv::Mat frame;
 	cv::Mat grayframe;
-	cv::VideoCapture capture2;
+	cv::VideoCapture capture;
 
 };
 }
