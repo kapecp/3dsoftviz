@@ -109,21 +109,32 @@ void Kinect::KinectHandTracker::getAllHands()
 				// reconstruct the rect parameters and get distance
 				if (i == 1)
 				{
-					// left hand is stored in handX
+					// left hand is stored in handX and higher height in handY
 					this->getDistance[0] = getArrayHands[0][0]-getArrayHands[1][0];
-					if (getDistance[0] < 0)
+					this->getDistance[1] = getArrayHands[0][1]-getArrayHands[1][1];
+
+					if ((getDistance[0]) < 0 && (getDistance[1] < 0))
 					{
 						this->handX = getArrayHands[0][0];
 						this->handY = getArrayHands[0][1];
 					}
-					else
+					else if ((getDistance[0] < 0) && (getDistance[1] >= 0))
+					{
+						this->handX = getArrayHands[0][0];
+						this->handY = getArrayHands[1][1];
+					}
+					else if((getDistance[0] >= 0) && (getDistance[1] < 0))
+					{
+						this->handX = getArrayHands[1][0];
+						this->handY = getArrayHands[0][1];
+					}
+					else if((getDistance[0] >= 0) && (getDistance[1] >= 0))
 					{
 						this->handX = getArrayHands[1][0];
 						this->handY = getArrayHands[1][1];
 					}
 					printf("rect x: %f\n",handX);
 					printf("rect y: %f\n",handY);
-					this->getDistance[1] = getArrayHands[0][1]-getArrayHands[1][1];
 				}
 			}
 		}
