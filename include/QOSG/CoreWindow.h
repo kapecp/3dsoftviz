@@ -189,6 +189,8 @@ public slots:
     void clusters2SliderValueChanged(int value);
     void clusters1RangeChanged(const QString &);
     void clusters2RangeChanged(const QString &);
+    void setRestriction_Cube();
+    void cluster_test();
 
 	/**
 				*  \fn public  colorPickerChanged
@@ -312,8 +314,6 @@ public slots:
 	void toggleAttention();
 
 	void setAvatarScale(int scale);
-
-	void cluster_test();
 
 private:
 
@@ -670,7 +670,9 @@ private:
 	QPushButton * b_cluster_test;
     QComboBox * cb_clusteringAlgorithm;
     QLineEdit * le_clusteringDepth;
-    QProgressDialog* clusteringProgressBar;
+    QProgressDialog * clusteringProgressBar;
+
+    QPushButton * b_SetRestriction_Cube;
 
     void setVisibleClusterSection(bool visible);
 

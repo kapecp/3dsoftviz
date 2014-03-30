@@ -176,6 +176,33 @@ void ShapeVisitor_RestrictedPositionGetter::visit(Shape_ConeSurface &shape)
 	}
 }
 
+void ShapeVisitor_RestrictedPositionGetter::visit (Shape_Cube & shape) {
+    if ((mOriginalPosition - shape.getCenter ()).length() > shape.getRadius ()) {
+        // position outside
+
+        float radiusMin;
+        float radiusMax;
+        switch (shape.getRestrictionPolicy ()) {
+        case Shape_Cube::SURFACE:
+            radiusMin = shape.getRadius ();
+            radiusMax = shape.getRadius ();
+            break;
+        case Shape_Cube::RANDOM_DISTANCE_FROM_CENTER:
+            radiusMin = 0;
+            radiusMax = shape.getRadius ();
+            break;
+        default:
+            radiusMin = 0;
+            radiusMax = 0;
+        }
+
+        mRestrictedPosition = toSphere (shape.getCenter (), radiusMin, radiusMax, mOriginalPosition);
+    } else {
+        // position in sphere - OK
+        mRestrictedPosition = mOriginalPosition;
+    }
+}
+
 osg::Vec3f ShapeVisitor_RestrictedPositionGetter::toSphere(const osg::Vec3f &center, float radiusMin,
 														   float radiusMax, const osg::Vec3f &point)
 {

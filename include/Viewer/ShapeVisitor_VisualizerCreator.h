@@ -65,6 +65,8 @@ public:
 	 */
 	virtual void visit(Layout::Shape_ConeSurface &shape);
 
+    virtual void visit(Layout::Shape_Cube &shape);
+
 private: // visitor context
 
 	osg::ref_ptr<osg::Node> createdVisualizer_;
@@ -85,6 +87,8 @@ private: // common visualizers
 	 * \brief Creates cone visualizer (used to visualize ConeSurface).
 	 */
 	void visualizeCone(Layout::Shape_ConeSurface &cone);
+
+    void visualizeCube(Layout::Shape_AbstractCube &abstractCube);
 
 private: // positions and distances
 

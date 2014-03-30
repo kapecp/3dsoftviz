@@ -75,6 +75,8 @@ public:
 	 */
 	virtual void visit(Shape_ConeSurface &shape);
 
+    virtual void visit(Shape_Cube &shape);
+
 private: // private methods
 
 	/**

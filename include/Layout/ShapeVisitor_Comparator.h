@@ -35,12 +35,14 @@ public:
 	virtual void visit(Shape_SphereSurface & shape);
 	virtual void visit(Shape_CylinderSurface &shape);
 	virtual void visit(Shape_ConeSurface &shape);
+    virtual void visit(Shape_Cube &shape);
 
 private:
 
 	void compareSpheres (Shape_AbstractSphere & shape, Shape_AbstractSphere & otherShape);
 	void compareCylinders(Shape_CylinderSurface &shape, Shape_CylinderSurface &otherShape);
 	void compareCones(Shape_ConeSurface &shape, Shape_ConeSurface &otherShape);
+    void compareCubes(Shape_AbstractCube &shape, Shape_AbstractCube &otherShape);
 
 private: // visitor context
 

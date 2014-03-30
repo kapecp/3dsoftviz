@@ -69,6 +69,8 @@ public:
 	virtual void visit (Layout::Shape_CylinderSurface & shape);
 	virtual void visit (Layout::Shape_ConeSurface & shape);
 
+    virtual void visit (Layout::Shape_Cube & shape);
+
 	void setType(int manipulatorType) {this->type = manipulatorType;}
 
 

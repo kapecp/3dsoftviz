@@ -97,6 +97,16 @@ void ShapeVisitor_Comparator::visit(Shape_ConeSurface &shape)
 	}
 }
 
+void ShapeVisitor_Comparator::visit(Shape_Cube &shape)
+{
+    QSharedPointer<Shape_Cube> otherShape = otherShape_.dynamicCast<Shape_Cube>();
+    if (! otherShape.isNull ()) {
+        compareCubes(shape, *otherShape);
+    } else {
+        comparisonResult_ = false;
+    }
+}
+
 void ShapeVisitor_Comparator::compareSpheres (Shape_AbstractSphere & shape, Shape_AbstractSphere & otherShape) {
 	comparisonResult_ =
 			(shape.getCenter () == otherShape.getCenter ())
@@ -119,6 +129,11 @@ void ShapeVisitor_Comparator::compareCones(Shape_ConeSurface &shape, Shape_ConeS
 	// TODO: Change made by Peter Sivak, I don't know how does this work for now - so return true for now
 	comparisonResult_ = true;
 	//comparisonResult_ = (shape.getCenter() == otherShape.getCenter()) && (shape.getRadius() == otherShape.getRadius());
+}
+
+void ShapeVisitor_Comparator::compareCubes(Shape_AbstractCube &shape, Shape_AbstractCube &otherShape)
+{
+    comparisonResult_ = (shape.getCenter () == otherShape.getCenter ()) && qFuzzyCompare(shape.getRadius (),otherShape.getRadius ());
 }
 
 } // namespace
