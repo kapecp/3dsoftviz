@@ -4,6 +4,10 @@
 #include <QThread>
 #include <QImage>
 
+#include "OpenNI.h"
+#include "NiTE.h"
+#include "Kinect/KinectThread.h"
+#include "Kinect/KinectHandTracker.h"
 
 #include <opencv2/core/core.hpp>
 
@@ -40,7 +44,10 @@ private:
 
 	bool mCancel;
 	bool mSetImageEnable;
-
+	bool isOpen;
+	openni::VideoFrameRef colorFrame;
+	KinectHandTracker *kht;
+	KinectRecognition *mKinect;
 
 
 };

@@ -5,15 +5,18 @@ using namespace Kinect;
 
 Kinect::KinectRecognition::KinectRecognition()
 {
+	isOpen=true;
 	mOpenniStatus=openni::OpenNI::initialize();
 	if(mOpenniStatus != openni::STATUS_OK)
 	{
 		qDebug() << "Openni initialization failed";
+		isOpen=false;
 	}
 	mOpenniStatus=device.open(openni::ANY_DEVICE);
 	if(mOpenniStatus != openni::STATUS_OK)
 	{
 		qDebug() << "Openni Device not Open";
+		isOpen=false;
 	}
 
 }
@@ -62,4 +65,7 @@ QImage Kinect::KinectRecognition::deptImageQImage(openni::VideoFrameRef &colorFr
 								  QImage::Format_Indexed8);
 	return image.convertToFormat(QImage::Format_RGB32);
 }
-
+bool Kinect::KinectRecognition::isOpenOpenni()
+{
+		return isOpen;
+}

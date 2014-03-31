@@ -539,6 +539,7 @@ void CoreWindow::createAugmentedRealityToolBar() {
 	b_start_kinect->setText("Start kinect");
 	toolBar->addWidget( b_start_kinect );
 	connect(b_start_kinect, SIGNAL(clicked()), this, SLOT(createKinectWindow()));
+
 	toolBar->addSeparator();
 #endif
 #ifdef SPEECHSDK_FOUND
@@ -549,9 +550,6 @@ void CoreWindow::createAugmentedRealityToolBar() {
 	toolBar->addWidget( b_start_speech );
 	connect(b_start_speech, SIGNAL(clicked()), this, SLOT(startSpeech()));
 #endif
-
-
-
 
 	addToolBar(Qt::TopToolBarArea,toolBar);
 	toolBar->setMovable(true);

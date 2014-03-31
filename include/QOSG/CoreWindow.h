@@ -565,7 +565,15 @@ private:
 	 */
 	QPushButton * b_start_speech;
 
+
+	/*
+	 *CheckBox for mapinulation camera or object
+	 *@brief chb_camera_rot
+	 */
 	QCheckBox * chb_camera_rot;
+
+
+
 
 	/**
 		*  QAction * load

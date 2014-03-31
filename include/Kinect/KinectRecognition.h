@@ -30,14 +30,16 @@ public:
 
 	QImage deptImageQImage(openni::VideoFrameRef& colorFrame);
 
+	bool isOpenOpenni();
+
 	openni::Device device;
 private:
 
-
+	bool isOpen;
 	nite::HandTracker handTracker;
 	nite::Status mNiteStatus;
 	openni::Status mOpenniStatus;
-	openni::VideoStream  color;
+	//openni::VideoStream color;
 
 };
 }
