@@ -234,9 +234,9 @@ find_package(osgViewer)
 
 # Find OpenCV
 if( OpenCV_FOUND )
-                if ( WIN32 )
-                    add_definitions( -DNOMINMAX )
-                endif()
+				if ( WIN32 )
+					add_definitions( -DNOMINMAX )
+				endif()
 
 		# include_directories( ${OpenCV_INCLUDE_DIRS} )
 
@@ -258,35 +258,6 @@ if( OpenCV_FOUND )
 else()
 		MESSAGE( STATUS "OpenCV Not Found")
 endif()
-
-# Find OPENNI2
-if ( WIN32 )
-	if ( MSVC )
-		find_package( OPENNI2 )
-		if (OPENNI2_FOUND)
-		include_directories( ${OPENNI2_INCLUDE_DIRS} )
-		add_definitions( -DOPENNI2_FOUND )
-		#MESSAGE ("OpenNI2 FOUND")
-		else(OPENNI2_FOUND)
-		MESSAGE ("OpenNI2 NOT FOUND")
-		endif()
-	endif()
-endif()
-
-# Find NITE2
-if ( WIN32 )
-	if ( MSVC )
-		find_package( NITE2 )
-		if (NITE2_FOUND)
-		include_directories( ${NITE2_INCLUDE_DIRS} ${NITE2_OPENNI2_DRIVER_DIRS} )
-		add_definitions( -DNITE2_FOUND )
-		#message ("NITE2 FOUND")
-		else(NITE2_FOUND)
-		message ("NITE2 NOT FOUND")
-		endif()
-	endif()
-endif()
-
 
 # -----------------
 # Platform settings
@@ -351,6 +322,37 @@ if( WIN32 )
 endif()
 
 
+
+# Find OPENNI2
+if ( WIN32 )
+	if ( MSVC )
+		find_package( OPENNI2 )
+		if (OPENNI2_FOUND)
+		include_directories( ${OPENNI2_INCLUDE_DIRS} )
+		add_definitions( -DOPENNI2_FOUND )
+		MESSAGE ( STATUS "OpenNI2 FOUND")
+		file(GLOB_RECURSE SRC_KINECT  "src/Kinect/*.cpp")
+		file(GLOB_RECURSE HEADER_KINECT  "include/Kinect/*.h")
+		else(OPENNI2_FOUND)
+		MESSAGE ( STATUS "OpenNI2 NOT FOUND")
+		endif()
+	endif()
+endif()
+
+# Find NITE2
+if ( WIN32 )
+	if ( MSVC )
+		find_package( NITE2 )
+		if (NITE2_FOUND)
+		include_directories( ${NITE2_INCLUDE_DIRS} ${NITE2_OPENNI2_DRIVER_DIRS} )
+		add_definitions( -DNITE2_FOUND )
+		message (STATUS "NITE2 FOUND")
+		else(NITE2_FOUND)
+		message (STATUS "NITE2 NOT FOUND")
+		endif()
+	endif()
+endif()
+
 # ---------------
 # 3DSoftviz sources
 # ---------------
@@ -400,6 +402,9 @@ set(SRC ${SRC}
 if( OpenCV_FOUND )
 	list(APPEND SRC ${SRC_OPENCV} ${SRC_QOPENCV})
 endif()
+if (OPENNI2_FOUND)
+	list(APPEND SRC ${SRC_KINECT})
+endif()
 
 file(GLOB_RECURSE HEADER_CORE  "include/Core/*.h")
 file(GLOB_RECURSE HEADER_DATA  "include/Data/*.h")
@@ -423,6 +428,9 @@ set(INCL
 )
 if( OpenCV_FOUND )
 		list(APPEND INCL ${HEADER_OPENCV} ${HEADER_QOPENCV} ${HEADER_ARUCO})
+endif()
+if (OPENNI2_FOUND)
+		list(APPEND INCL ${HEADER_KINECT})
 endif()
 
 # Group source files
@@ -461,6 +469,10 @@ if(OpenCV_FOUND)
 	source_group(\\headers\\OpenCV "^.*OpenCV/.*h$")
 	source_group(\\src\\Aruco "^.*Aruco/.*$")
 	source_group(\\headers\\Aruco "^.*Aruco/.*h$")
+endif()
+if (OPENNI2_FOUND)
+	source_group(\\src\\Kinect "^.*Kinect/.*$")
+	source_group(\\headers\\Kinect "^.*Kinect/.*h$")
 endif()
 
 # ---------------
@@ -555,7 +567,7 @@ install(DIRECTORY resources/ DESTINATION ${INSTALL_DATA} COMPONENT Data)
 
 # Install needed .dll files for OpenNI2
 if (NITE2_FOUND AND OPENNI2_FOUND)
-	install(DIRECTORY ${NITE2_OPENNI2_DRIVER_DIRS}/ DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/_install/bin)
+	install(DIRECTORY ${NITE2_OPENNI2_DRIVER_DIRS} DESTINATION ${INSTALL_BIN}/OpenNI2)
 endif()
 
 # Install built in dependencies unless we are building an OSX Bundle
