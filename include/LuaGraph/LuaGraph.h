@@ -16,6 +16,8 @@ public:
     LuaGraph();
     static LuaGraph *loadGraph();
 
+    void visualize(Data::Graph *graph);
+
     ~LuaGraph();
 
     QMap<qlonglong, LuaNode *> *getNodes() const;

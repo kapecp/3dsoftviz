@@ -2,6 +2,9 @@
 #include "LuaInterface/LuaInterface.h"
 #include "Diluculum/LuaState.hpp"
 
+#include "Data/Graph.h"
+#include "Importer/GraphOperations.h"
+
 Lua::LuaGraph::LuaGraph()
 {
     nodes = new QMap<qlonglong, Lua::LuaNode*>();
@@ -88,6 +91,50 @@ Lua::LuaGraph *Lua::LuaGraph::loadGraph()
     }
 
     return result;
+}
+
+void Lua::LuaGraph::visualize(Data::Graph *graph)
+{
+    Data::Type *edgeType = NULL;
+    Data::Type *nodeType = NULL;
+    Importer::GraphOperations *operations = new Importer::GraphOperations(*graph);
+    operations->addDefaultTypes(edgeType, nodeType);
+
+    for (QMap<qlonglong, Lua::LuaNode *>::iterator i = getNodes()->begin(); i != getNodes()->end(); ++i){
+         graph->addNode(i.key() , i.value()->getLabel(), nodeType);
+    }
+
+    QMap<QString, QString> *settings = new QMap<QString, QString>();
+    for (QMap<QString, QString>::iterator i = nodeType->getSettings()->begin(); i != nodeType->getSettings()->end(); ++i){
+        settings->insert(i.key(), i.value());
+    }
+    settings->insert("color.R", "0");
+    settings->insert("color.G", "0");
+    settings->insert("color.B", "1");
+    settings->insert("color.A", "1");
+    Data::Type *nodeType2 = graph->addType(NULL, settings);
+    for (QMap<qlonglong, Lua::LuaEdge *>::iterator i = getEdges()->begin(); i != getEdges()->end(); ++i){
+         graph->addNode(i.key() , i.value()->getLabel(), nodeType2);
+    }
+
+    QMap<QString, QString> *settings1 = new QMap<QString, QString>();
+    for (QMap<QString, QString>::iterator i = nodeType->getSettings()->begin(); i != nodeType->getSettings()->end(); ++i){
+        settings1->insert(i.key(), i.value());
+    }
+    settings1->insert("color.R", "0");
+    settings1->insert("color.G", "1");
+    settings1->insert("color.B", "0");
+    settings1->insert("color.A", "1");
+    Data::Type *nodeType3 = graph->addType(NULL, settings1);
+    for (QMap<qlonglong, Lua::LuaIncidence *>::iterator i = getIncidences()->begin(); i != getIncidences()->end(); ++i){
+        osg::ref_ptr<Data::Node> incNode = graph->addNode(i.key(), i.value()->getLabel(), nodeType3);
+
+        osg::ref_ptr<Data::Node> srcNode = graph->getNodes()->value(i.value()->getEdgeNodePair().first);
+        graph->addEdge(i.value()->getLabel(), srcNode, incNode, edgeType, false);
+
+        osg::ref_ptr<Data::Node> dstNode = graph->getNodes()->value(i.value()->getEdgeNodePair().second);
+        graph->addEdge(i.value()->getLabel(), incNode, dstNode, edgeType, false);
+    }
 }
 
 Lua::LuaGraph::~LuaGraph()
