@@ -2,13 +2,14 @@
 
 #include "QDebug"
 
-Kinect::KinectHandTracker::KinectHandTracker(openni::Device *device)
+Kinect::KinectHandTracker::KinectHandTracker(openni::Device *device, openni::VideoStream *m_depth)
 {
 	m_pHandTracker.create(device);
 	m_pHandTracker.startGestureDetection(nite::GESTURE_WAVE);
 	m_pHandTracker.startGestureDetection(nite::GESTURE_CLICK);
 	isClick=false;
 	mouse = new Kinect::MouseControl();
+	mDepth=m_depth;
 }
 
 
@@ -88,8 +89,13 @@ void Kinect::KinectHandTracker::getAllHands()
 			//first find HAND = MOUSE
 			if(i==0)
 			{
-				mouse->moveCursorMouse(user.getPosition().x/2,-1.0*user.getPosition().y/2,isClick);
-				printf("%lf %lf",user.getPosition().x,-1,0*user.getPosition().y);
+				//mouse->moveCursorMouse(user.getPosition().x/2,-1.0*user.getPosition().y/2,isClick);
+				//printf("%lf %lf",user.getPosition().x,-1,0*user.getPosition().y);
+				/// new version
+				coordinateConverter.convertWorldToDepth(*mDepth, user.getPosition().x, user.getPosition().y, user.getPosition().z, &mDepthX, &mDepthY, &mDepthZ);
+				mouse->moveCursorMouse(mDepthX/2,mDepthY/2,isClick);
+				/////////////
+
 			}
 
 			// If two hands have been found get the position of the rectangle

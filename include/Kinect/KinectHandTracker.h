@@ -20,7 +20,7 @@ namespace Kinect{
 class KinectHandTracker{
 
 public:
-	KinectHandTracker(openni::Device *device);
+	KinectHandTracker(openni::Device *device,openni::VideoStream  *m_depth);
 	~KinectHandTracker();
 
 	//const nite::Array<nite::GestureData>& gestures;
@@ -44,6 +44,12 @@ public:
 private:
 	bool isClick;
 	MouseControl *mouse;
+	openni::VideoStream  *mDepth;
+
+	openni::CoordinateConverter coordinateConverter;
+	float mDepthX;
+	float mDepthY;
+	float mDepthZ;
 
 };
 }

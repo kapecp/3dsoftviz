@@ -78,7 +78,7 @@ void Kinect::KinectThread::run()
 		m_depth.create(mKinect->device, openni::SENSOR_DEPTH);
 		m_depth.start();
 
-		kht = new KinectHandTracker(&mKinect->device);
+		kht = new KinectHandTracker(&mKinect->device,&m_depth);
 	}
 
 
