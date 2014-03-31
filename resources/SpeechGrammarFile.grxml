@@ -8,9 +8,9 @@
         </one-of>
       </item>
       <item>
-        <tag>CIRCLE</tag>
+        <tag>SPHERE</tag>
         <one-of>
-          <item> circle </item>
+          <item> sphere </item>
         </one-of>
       </item>
       <item>

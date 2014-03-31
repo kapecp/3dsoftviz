@@ -40,14 +40,18 @@ int Speech::KinectSpeechThread::initializeSpeech()
 
 void Speech::KinectSpeechThread::run()
 {
+	qDebug() << "Speech initialized! Possible commands:";
+	qDebug() << "\"select all nodes\"";
+	qDebug() << "\"select left side\"";
+	qDebug() << "\"select right side\"";
+	qDebug() << "\"clear screen\"";
+	qDebug() << "\"sphere\"";
+	qDebug() << "\"unset restrictions\"";
 	while (!cancel)
 	{
 		const wchar_t *a= this->m_SpeechClass->recognize();
-		if (0== wcscmp(a,L"NULL")){
-			printf("null\n");
-		}
 		if (0== wcscmp(a,L"ALL")){
-			printf("select all nodes\n");
+			qDebug() << "command: select all nodes";
 			AppCore::Core::getInstance()->getCoreWindow()->multiSelectClicked(true);
 			QOSG::ViewerQT *viewer=AppCore::Core::getInstance()->getCoreWindow()->GetViewerQt();
 			if(viewer!=NULL)
@@ -59,12 +63,12 @@ void Speech::KinectSpeechThread::run()
 				viewer->getEventQueue()->mouseButtonRelease(mWindowWidth,mWindowHeight,Qt::LeftButton);
 			}
 		}
-		if (0== wcscmp(a,L"CIRCLE")){
-			printf("circle\n");
+		if (0== wcscmp(a,L"SPHERE")){
+			qDebug() << "command: sphere";
 			AppCore::Core::getInstance()->getCoreWindow()->setRestriction_Sphere();
 		}
 		if (0== wcscmp(a,L"LEFT")){
-			printf("select left side\n");
+			qDebug() << "command: select left side";
 			AppCore::Core::getInstance()->getCoreWindow()->multiSelectClicked(true);
 			QOSG::ViewerQT *viewer=AppCore::Core::getInstance()->getCoreWindow()->GetViewerQt();
 			if(viewer!=NULL)
@@ -77,7 +81,7 @@ void Speech::KinectSpeechThread::run()
 			}
 		}
 		if (0== wcscmp(a,L"RIGHT")){
-			printf("select right ride\n");
+			qDebug() << "command: select right side";
 			AppCore::Core::getInstance()->getCoreWindow()->multiSelectClicked(true);
 			QOSG::ViewerQT *viewer=AppCore::Core::getInstance()->getCoreWindow()->GetViewerQt();
 			if(viewer!=NULL)
@@ -90,7 +94,7 @@ void Speech::KinectSpeechThread::run()
 			}
 		}
 		if (0== wcscmp(a,L"CLEAR")){
-			printf("clear screen\n");
+			qDebug() << "command: clear screen";
 			AppCore::Core::getInstance()->getCoreWindow()->multiSelectClicked(false);
 			QOSG::ViewerQT *viewer=AppCore::Core::getInstance()->getCoreWindow()->GetViewerQt();
 			if(viewer!=NULL)
@@ -99,7 +103,7 @@ void Speech::KinectSpeechThread::run()
 			}
 		}
 		if (0== wcscmp(a,L"UNSET")){
-			printf("unset restrictions\n");
+			qDebug() << "command: unset restrictions";
 			AppCore::Core::getInstance()->getCoreWindow()->unsetRestriction();
 		}
 	}
