@@ -53,6 +53,8 @@ Vwr::CameraManipulator::CameraManipulator(Vwr::CoreGraph * coreGraph)
 
 	this->coreGraph = coreGraph;
 	stop();
+
+	_cameraCanRot = true;
 }
 
 Vwr::CameraManipulator::~CameraManipulator()
@@ -308,13 +310,13 @@ void Vwr::CameraManipulator::setByMatrix(const osg::Matrixd& matrix)
 
 osg::Matrixd Vwr::CameraManipulator::getMatrix() const
 {
-	return osg::Matrixd::translate(0.0,0.0,_distance)*osg::Matrixd::rotate(_rotation*_rotationHead)*osg::Matrixd::translate(_center);
+	return osg::Matrixd::translate(_centerArucoTrans)*osg::Matrixd::translate(0.0,0.0,_distance)*osg::Matrixd::rotate(_rotation*_rotationHead)*osg::Matrixd::translate(_center);
 
 }
 
 osg::Matrixd Vwr::CameraManipulator::getInverseMatrix() const
 {
-	return osg::Matrixd::translate(-_center)*osg::Matrixd::rotate((_rotation*_rotationHead).inverse())*osg::Matrixd::translate(0.0,0.0,-_distance);
+	return osg::Matrixd::translate(-_centerArucoTrans)*osg::Matrixd::translate(-_center)*osg::Matrixd::rotate((_rotation*_rotationHead).inverse())*osg::Matrixd::translate(0.0,0.0,-_distance);
 
 }
 
@@ -430,8 +432,11 @@ bool Vwr::CameraManipulator::calcMovement()
 
 		new_rotate.makeRotate(angle * throwScale,axis);
 
-		_rotation = _rotation*new_rotate;
-
+		if( _cameraCanRot ){
+			_rotation = _rotation*new_rotate;
+		} else {
+			emit sendMouseRotation( new_rotate.inverse() );
+		}
 
 
 		notifyServer();
@@ -1083,25 +1088,32 @@ void Vwr::CameraManipulator::setRotationHead(float x, float y, float distance)
 		trackball(axis,angle,0.0, y, 0.0, 0.0);
 		osg::Quat Ynew_rotate(angle * throwScale,axis);
 
-		// both rotation
-		_rotationHead = Xnew_rotate*Ynew_rotate;
 
 
-		// will we correct projection according face position
-		bool projectionConrrection = false;
-		projectionConrrection = this->appConf->getValue("FaceDecetion.EnableProjectionCorrection").toInt();
 
-		if( projectionConrrection ){
-			updateProjectionAccordingFace( x, y, -distance );
+
+		if( _cameraCanRot ){ // rotate camera
+
+			// both rotation
+			_rotationHead = Xnew_rotate * Ynew_rotate;
+
+			// will we correct projection according face position
+			bool projectionConrrection = false;
+			projectionConrrection = this->appConf->getValue("FaceDecetion.EnableProjectionCorrection").toInt();
+
+			if( projectionConrrection ){
+				updateProjectionAccordingFace( x, y, -distance );
+			}
+
+
+		} else { // rotate graph
+			sendFaceDetRotation( Xnew_rotate*Ynew_rotate );
 		}
-
-
 	}
 	else{
 		qDebug() << "Warning: setRotationHead(): wrong parameters";
 	}
 }
-
 
 void Vwr::CameraManipulator::updateProjectionAccordingFace(const float x, const float y, const float distance)
 {
@@ -1126,6 +1138,50 @@ void Vwr::CameraManipulator::updateProjectionAccordingFace(const float x, const 
 
 	this->coreGraph->getCamera()->setProjectionMatrixAsFrustum(left, right, bottom, top, zNear, zFar);
 }
+
+
+void Vwr::CameraManipulator::updateArucoGraphPosition( osg::Vec3d pos ){
+	//QString str;
+	//str  = "arMat " + QString::number( pos.x(), 'f', 2);
+	//str += " " + QString::number( pos.y(), 'f', 2);
+	//str += " " + QString::number( pos.z(), 'f', 2);
+	//qDebug() << ": " << str;
+
+
+	// camera coeficient
+	double constHeigherScale = this->appConf->getValue("Aruco.ConstHeigherScale").toDouble();
+	double constDist		 = this->appConf->getValue("Aruco.ConstDist").toDouble();
+	double constHeightKoef	 = this->appConf->getValue("Aruco.ConstHeightKoef").toDouble();
+	double camDistRatio		 = this->appConf->getValue("Aruco.CamDistancRatio").toDouble();
+
+	double distArc =  pos.z()  < 0.0 ? - pos.z()	:  pos.z();		// distance of marker
+	double distGra = _distance < 0.0 ? -_distance	: _distance;	// distance of graph
+	if( distGra < 1.0){
+		distGra = 1.0;
+	}
+
+	double getHeigherKoef = constHeigherScale * distGra;							// if marker is on table, graph coud be too on bottom, so get him heigher
+	double koef = distGra * camDistRatio * constHeightKoef / distArc;
+
+	_centerArucoTrans[1] = distGra * (pos.z() + constDist);			// distance
+	_centerArucoTrans[0] = koef * pos.x();							// horizontal
+	_centerArucoTrans[2] = koef * pos.y() - getHeigherKoef;			// vertical
+
+
+	//str  = "  " + QString::number( _centerArucoTrans[1], 'f', 2);
+	//str += "  " + QString::number( _centerArucoTrans[0], 'f', 2);
+	//str += "  " + QString::number( _centerArucoTrans[2], 'f', 2);
+	//qDebug() << ": " << str;
+	//qDebug() << ": " << _distance ;
+
+}
+
+void Vwr::CameraManipulator::setCameraCanRot( bool cameraCanRot)
+{
+	_cameraCanRot = cameraCanRot;
+}
+
+
 
 } // namespace
 

@@ -14,6 +14,7 @@
 #include "Manager/Manager.h"
 #include "Util/ApplicationConfig.h"
 
+
 AppCore::Core * AppCore::Core::core;
 
 AppCore::Core::Core(QApplication * app)
@@ -90,6 +91,16 @@ AppCore::Core * AppCore::Core::getInstance(QApplication * app)
 	}
 
 	return core;
+}
+
+QOSG::CoreWindow* AppCore::Core::getCoreWindow() const
+{
+	return this->cw;
+}
+
+Vwr::CoreGraph* AppCore::Core::getCoreGraph() const
+{
+	return this->cg;
 }
 
 

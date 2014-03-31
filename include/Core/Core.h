@@ -77,7 +77,13 @@ public:
 		  * \fn getCoreWindow
 		  * \brief Returns QOSG::CoreWindow
 		  **/
-	QOSG::CoreWindow* getCoreWindow(){return this->cw;}
+	QOSG::CoreWindow* getCoreWindow() const;
+
+	/**
+		  * \fn getCoreGraph
+		  * \brief Returns Vwr::CoreGraph
+		  **/
+	Vwr::CoreGraph* getCoreGraph() const;
 
 private:
 	/**

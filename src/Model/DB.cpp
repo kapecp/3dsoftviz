@@ -14,19 +14,36 @@ Model::DB::DB()
 	//vytvorenie DB connection
 	this->appConf = Util::ApplicationConfig::get();
 
-	DB::openConnection(
-				appConf->getValue("Model.DB.HostName"),
-				appConf->getValue("Model.DB.DbName"),
-				appConf->getValue("Model.DB.UserName"),
-				appConf->getValue("Model.DB.Pass"),
-				appConf->getBoolValue("Model.DB.RequireSSL", true)
-				);
+	this->mConneCreationTried = false;
 }
 
 Model::DB::~DB()
 {
 	//ukoncenie DB connection v destruktore
 	DB::closeConnection();
+}
+
+bool Model::DB::createConnection()
+{
+	if( !mConneCreationTried ){
+		// we want only one time call this as lazy as possible
+		DB::openConnection(
+					appConf->getValue("Model.DB.HostName"),
+					appConf->getValue("Model.DB.DbName"),
+					appConf->getValue("Model.DB.UserName"),
+					appConf->getValue("Model.DB.Pass"),
+					appConf->getBoolValue("Model.DB.RequireSSL", true)
+					);
+		this->mConneCreationTried = true;
+	}
+	return true;
+}
+
+QSqlDatabase* Model::DB::tmpGetConn()
+{
+	// create connection only when it needed
+	this->createConnection();
+	return &conn;
 }
 
 void Model::DB::closeConnection()

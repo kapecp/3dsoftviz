@@ -31,25 +31,25 @@
 
 namespace Layout
 {
-	class LayoutThread;
+class LayoutThread;
 }
 
 namespace Vwr
 {
-	class CoreGraph;
-	class CameraManipulator;
+class CoreGraph;
+class CameraManipulator;
 }
 
 namespace QOSG
 {
 
-	class ViewerQT;
+class ViewerQT;
 }
 
 namespace Network
 {
-	class Client;
-	//class Network;
+class Client;
+//class Network;
 }
 
 namespace QOSG
@@ -79,8 +79,15 @@ public slots:
 	void showLoadGraph();
 
 	/**
+				*  \fn public  saveGraphToDB
+				*  \brief Save a current graph to database
+				*/
+	void saveGraphToDB();
+
+
+	/**
 				*  \fn public  saveLayoutToDB
-				*  \brief Save layout of current graph to database
+				*  \brief Save a current layout of current graph to database
 				*/
 	void saveLayoutToDB();
 
@@ -298,6 +305,14 @@ public slots:
 	void create_facewindow();
 #endif
 
+#ifdef OPENNI2_FOUND
+	/**
+		*
+		* @brief create Kinect Button
+	 */
+	void createKinectWindow();
+#endif
+
 	void toggleSpyWatch();
 	void toggleAttention();
 
@@ -347,10 +362,17 @@ private:
 	QAction * loadGraph;
 
 	/**
+		*  QAction * saveLayout
+		*  \brief Pointer to save layout to database
+		*/
+	QAction * saveLayout;
+
+	/**
 		*  QAction * saveGraph
 		*  \brief Pointer to save graph to database
 		*/
 	QAction * saveGraph;
+
 
 	/**
 		*  QPushButton * play
@@ -515,7 +537,27 @@ private:
 		*/
 	QPushButton * remove_all;
 
+	/**
+	 * QPushButton start face and mark recognition
+	 *@brief b_start_face
+	 */
+
 	QPushButton * b_start_face;
+
+
+
+	/**
+	 * QPushButton start kinect recognition
+	 *@brief b_start_kinect
+	 */
+	QPushButton * b_start_kinect;
+
+	/**
+	 *CheckBox for mapinulation camera or object
+	 *@brief chb_camera_rot
+	 */
+	QCheckBox * chb_camera_rot;
+
 
 
 	/**
@@ -603,6 +645,12 @@ private:
 	void createCollaborationToolBar();
 
 	/**
+		*  \fn private  createAugmentedRealityToolBar
+		*  \brief Create Augmented Reality ToolBar
+		*/
+	void createAugmentedRealityToolBar();
+
+	/**
 		*  \fn private  createHorizontalFrame
 		*  \brief Crate frame with horizontal label
 		*  \return QFrame * created frame
@@ -673,6 +721,8 @@ public:
 	bool playing() { return isPlaying; }
 	Vwr::CameraManipulator * getCameraManipulator();
 
+	QOSG::ViewerQT * GetViewerQt();
+
 
 	/**
 		*  \fn inline public  setLayoutThread
@@ -708,6 +758,21 @@ public:
 			QLinkedList<osg::ref_ptr<Data::Node> > nodesOfShapeGettersToRestrict
 			);
 
+	/**
+		 * @author Autor: David Durcak
+		 * @brief getChbCameraRot Return chb_camera_rot
+		 */
+	QCheckBox *getChbCameraRot() const;
+
+protected:
+
+	/**
+		 * @author Autor: David Durcak
+		 * @brief closeEvent Reimplement close event. Call destructor on OpenCVCore
+		 * @param event Close event
+		 */
+	void closeEvent(QCloseEvent *event);
+
 private:
 
 	/**
@@ -718,12 +783,7 @@ private:
 			Data::Graph * currentGraph,
 			QSharedPointer<Layout::RestrictionRemovalHandler> removalHandler
 			);
-protected:
-	/**
-	 * @brief closeEvent
-	 * @param event
-	 */
-	void closeEvent(QCloseEvent *event);
+
 };
 }
 

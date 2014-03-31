@@ -163,16 +163,47 @@ public:
 
 	void setNewPosition(osg::Vec3d cameraTargetPoint, osg::Vec3d cameraInterestPoint, std::list<osg::ref_ptr<Data::Node> > selectedCluster, std::list<osg::ref_ptr<Data::Edge> > selectedEdges);
 
+signals:
+
+	/**
+		 * @author Autor: David Durcak
+		 * @brief sendMouseRotation Send rotation quaternion caused by mouse
+		 * @param quat Quaternion that disribe rotation of mouse
+		 */
+	void sendMouseRotation( const osg::Quat quat );
+
+	/**
+		 * @author Autor: David Durcak
+		 * @brief sendFaceDetRotation Send rotation quaternion caused by faceDetection
+		 * @param quat Quaternion that disribe rotation of face
+		 */
+	void sendFaceDetRotation( const osg::Quat quat );
+
 public slots:
 	/**
 		 * @author Autor: David Durcak
-		 * @brief Set _rotationHead quaternion to rotate camera according head
+		 * @brief setRotationHead Set _rotationHead quaternion to rotate camera according head
+		 * ! distance is not implemented yet
+
 		 * @param x % distance from middle on horizontal axis
 		 * @param y % distance from middle on vertical axis
 		 * @param distance face from camera
 		 */
 	void setRotationHead(float x, float y, float distance);
 
+	/**
+		 * @author Autor: David Durcak
+		 * @brief updateArucoGrafPosition Update _centerArucoTrans vector to change graph position according by position of marker
+		 * @param pos Vector that disribe posiotion of marker
+		 */
+	void updateArucoGraphPosition( osg::Vec3d pos );
+
+	/**
+		 * @author Autor: David Durcak
+		 * @brief setCameraCanRot Set _cameraCanRot member.
+		 * @param cameraCanRot
+		 */
+	void setCameraCanRot( bool cameraCanRot);
 
 protected:
 
@@ -261,6 +292,12 @@ protected:
 		*  \brief camera center
 		*/
 	osg::Vec3d   _center;
+
+	/**
+		*  osg::Vec3d _centerArucoTrans
+		*  \brief transformation of marker, updated by updateArucoGrafPosition()
+		*/
+	osg::Vec3d   _centerArucoTrans;
 
 	/**
 		*  osg::Quat _rotation
@@ -640,6 +677,11 @@ private:
 		 * @param distance of head from camera
 		 */
 	void updateProjectionAccordingFace(const float x, const float y, const float distance);
+
+	/**
+		*  \brief cameraCanRot if true camera is rotating normally, else rotation quaternion by mouse is emited away
+		*/
+	bool _cameraCanRot;
 	};
 
 

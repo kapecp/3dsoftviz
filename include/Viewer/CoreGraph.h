@@ -17,6 +17,7 @@
 #include <QMap>
 #include <QLinkedList>
 #include <QSharedPointer>
+#include <QObject>
 #include <QTime>
 
 namespace Data
@@ -48,8 +49,10 @@ namespace Vwr
 	 * \date
 	 * 7.12.2009
 	 */
-class CoreGraph
-{
+class CoreGraph : public QObject
+	{
+	Q_OBJECT
+
 public:
 	/*!
 		 *
@@ -174,7 +177,36 @@ public:
 	Vwr::EdgeGroup * getEdgesGroup() { return edgesGroup; }
 	Vwr::EdgeGroup * getMetaEdgesGroup() { return qmetaEdgesGroup; }
 
+public slots:
+
+	/**
+		 * @author Autor: David Durcak
+		 * @brief updateGraphRotByAruco Update graphRotTransf MatrixTransform node for rotating a graph by rotation of marker
+		 * @param quat Quaternion that desribe rotation of marker
+		 */
+	void updateGraphRotByAruco( const osg::Quat quat );
+
+	/**
+		 * @author Autor: David Durcak
+		 * @brief updateGraphRotByMouse Update graphRotTransf MatrixTransform node for rotating a graph by mouse
+		 * @param quat Quaternion that desribe rotation of mouse
+		 */
+	void updateGraphRotByMouse( const osg::Quat quat );
+
+	/**
+		 * @author Autor: David Durcak
+		 * @brief updateGraphRotByFaceDet Update graphRotTransf MatrixTransform node for rotating a graph by face detection
+		 * @param quat Quaternion that desribe rotation of face
+		 */
+	void updateGraphRotByFaceDet( const osg::Quat quat );
+
 private:
+
+	/**
+		 * @author Autor: David Durcak
+		 * @brief computeGraphRotTransf Update graphRotTransf MatrixTransform node for rotating a graph
+		 */
+	void computeGraphRotTransf();
 
 	/**
 		*  Vwr::EdgeGroup * edgesGroup
@@ -281,6 +313,36 @@ private:
 	osg::ref_ptr<osg::Group> root;
 
 	/**
+		*  osg::ref_ptr graphGroup
+		*  \brief graphGroup node
+		*/
+	osg::ref_ptr<osg::Group> graphGroup;
+
+	/**
+		*  osg::ref_ptr graphRotTransf
+		*  \brief graphRotTransf node for rotation graph according marker rotation from aruco
+		*/
+	osg::ref_ptr<osg::MatrixTransform> graphRotTransf;
+
+	/**
+		*  osg::Quat mRotAruco
+		*  \brief mRotAruco quaternion of rotation by Aruco
+		*/
+	osg::Quat mRotAruco;
+
+	/**
+		*  osg::Quat mRotMouse
+		*  \brief mRotMouse quaternion of rotation by mouse
+		*/
+	osg::Quat mRotMouse;
+
+	/**
+		*  osg::Quat mRotFaceDet
+		*  \brief mRotFaceDet quaternion of rotation by face
+		*/
+	osg::Quat mRotFaceDet;
+
+	/**
 		*  bool nodesFreezed
 		*  \brief true, if nodes are freezed
 		*/
@@ -357,7 +419,8 @@ private:
 	int customNodesPosition;
 
 	int prevTime;
-};
+
+	};
 }
 
 #endif

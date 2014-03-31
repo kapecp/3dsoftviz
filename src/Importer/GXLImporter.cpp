@@ -65,21 +65,6 @@ bool GXLImporter::import (
 		attrs = xml_->attributes();
 	}
 
-	//nazov grafu
-	QString graphName;
-	if (ok) {
-		graphName = attrs.value ("id").toString ();
-
-		ok = ("" != graphName);
-
-		context_->getInfoHandler ().reportError (ok, "Graph name can not be empty.");
-	}
-
-	if (ok) {
-		context_->getGraph ().setName (graphName);
-
-		context_->getInfoHandler ().reportError (ok, "Unable to set graph name.");
-	}
 
 	if (ok) {
 		ok = parseGraph ();

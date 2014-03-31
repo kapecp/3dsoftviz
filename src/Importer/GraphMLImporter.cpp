@@ -65,12 +65,6 @@ bool GraphMLImporter::import (
 	}
 
 	if (ok) {
-		// graph name
-		QString graphname = "Graph "+graphElement.attribute("id");
-		context_->getGraph ().setName (graphname);
-	}
-
-	if (ok) {
 		// for progress reporting
 		entitiesProcessed_ = 0;
 		entitiesCount_ = graphElement.elementsByTagName("node").size() + graphElement.elementsByTagName("edge").count();

@@ -1,59 +1,70 @@
 #include "QOpenCV/FaceRecognitionThread.h"
 
+#include "OpenCV/CapVideo.h"
+#include "OpenCV/FaceRecognizer.h"
+
 using namespace QOpenCV;
 
-QOpenCV::FaceRecognitionThread::FaceRecognitionThread(OpenCV::FaceRecognizer* alg)
+QOpenCV::FaceRecognitionThread::FaceRecognitionThread( OpenCV::FaceRecognizer *faceRecognizer, QObject *parent)
+	: QThread(parent)
 {
-	this->mFaceRecognizer = alg;
-	this->mCapVideo = new OpenCV::CapVideo(0,320,240);
-	this->cancel=false;
-	qRegisterMetaType<cv::Mat>("Mat");
+	mFaceRecognizer	= faceRecognizer;
+	mCapVideo		= NULL;
+	mCancel			= false;
+	mSendImgEnabled	= true;
 }
+
 
 QOpenCV::FaceRecognitionThread::~FaceRecognitionThread(void)
 {
-	delete this->mCapVideo;
-	delete this->mFaceRecognizer;
+	delete mFaceRecognizer;
 }
 
-void QOpenCV::FaceRecognitionThread::setWindow(FaceRecognitionWindow *mFaceRecognitionWindow)
-{
-	this->mFaceRecognitionWindow = mFaceRecognitionWindow;
-	connect(this->mFaceRecognitionWindow,SIGNAL(cancelLoop(bool)),this,SLOT(setCancel(bool)));
-}
 
 void QOpenCV::FaceRecognitionThread::run()
 {
-	if (!this->mCapVideo->getCapture()){
-		qDebug() << "Camera is not opened";
+	mCancel = false;
+	cv::Mat image;
+
+	if( mCapVideo == NULL){
+		qDebug() << "[FaceRecognitionThread::run()]  Camera is not set";
 		return;
 	}
-	cv::Mat image;
-	while(!cancel) {
-		image=this->mCapVideo->queryFrame();
-		this->mCapVideo->createGray();
 
-		this->mFaceRecognizer->detectFaces(this->mCapVideo->getGrayframe());
-		this->mFaceRecognizer->annotateFaces(image);
-		cv::Mat im = image.clone();
-		emit this->pushImage(im);
-		if (this->mFaceRecognizer->detected && this->mFaceRecognizer->isMovement)
-		{
-			emit this->sendEyesCoords((float)-this->mFaceRecognizer->getEyesCoords().x,
-									  (float)-this->mFaceRecognizer->getEyesCoords().y,
-									  -this->mFaceRecognizer->getHeadDistance(
-										  cvGetCaptureProperty(
-											  this->mCapVideo->getCapture(),
-											  CV_CAP_PROP_FRAME_WIDTH )));
+	while( !mCancel ){
+		image = mCapVideo->queryFrame();
+
+		mFaceRecognizer->detectFaces( mCapVideo->getGrayframe() );
+		mFaceRecognizer->annotateFaces( image );
+
+		if( mSendImgEnabled ){
+			emit pushImage( image.clone() ); // ???
+		}
+
+		if( mFaceRecognizer->detected && mFaceRecognizer->isMovement ) {
+			emit sendEyesCoords( (float) -mFaceRecognizer->getEyesCoords().x,
+								 (float) -mFaceRecognizer->getEyesCoords().y,
+								 -mFaceRecognizer->getHeadDistance( mCapVideo->getWidth()) );
 		}
 	}
+	mCapVideo->release();
+	mCapVideo = NULL;
 }
 
 void QOpenCV::FaceRecognitionThread::pauseWindow()
 {
-	this->cancel=true;
+	mCancel = true;
 }
 
-void QOpenCV::FaceRecognitionThread::setCancel(bool set){
-	this->cancel=set;
+void QOpenCV::FaceRecognitionThread::setCancel( bool set ){
+	mCancel = set;
+}
+
+void QOpenCV::FaceRecognitionThread::setSendImgEnabled( bool sendImgEnabled )
+{
+	mSendImgEnabled = sendImgEnabled;
+}
+
+void QOpenCV::FaceRecognitionThread::setCapVideo( OpenCV::CapVideo *capVideo){
+	mCapVideo = capVideo;
 }

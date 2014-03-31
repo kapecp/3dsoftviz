@@ -110,7 +110,9 @@ Data::Graph* Model::GraphDAO::getGraph(QSqlDatabase* conn, bool* error2, qlonglo
 	QSqlQuery* queryNodes;
 	QSqlQuery* queryEdges;
 	QString graphName, layoutName, nodeName, edgeName;
-	bool error = false, isFixed, isOriented;
+	bool error = false,  isOriented;
+	//TODO repair of getting Graph
+	//bool isFixed;
 	qlonglong nodeID1, nodeID2, nodeID, edgeID, maxIdEleUsed = 0;
 	Data::Type *type;
 	QMap<qlonglong, Data::Node*> nodes;
@@ -157,7 +159,7 @@ Data::Graph* Model::GraphDAO::getGraph(QSqlDatabase* conn, bool* error2, qlonglo
 			nodeID = queryNodes->value(0).toLongLong();
 			nodeName = queryNodes->value(1).toString();
 			type = queryNodes->value(4).toBool() ? typeMetaNode : typeNode;
-			isFixed = queryNodes->value(5).toBool();
+			//isFixed = queryNodes->value(5).toBool();
 
 			if(maxIdEleUsed < nodeID)
 				maxIdEleUsed = nodeID + 1;
@@ -171,8 +173,8 @@ Data::Graph* Model::GraphDAO::getGraph(QSqlDatabase* conn, bool* error2, qlonglo
 
 			//vsetky uzly nastavime fixed, aby sme zachovali layout
 			//hodnota, ktora je ulozena v DB - premenna isFixed
-
-			newNode->setFixed(isFixed);
+			//TODO use of isFixed
+			newNode->setFixed( true );
 
 			if(nodeColors.contains(nodeID))
 			{
