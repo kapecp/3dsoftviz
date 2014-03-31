@@ -26,14 +26,11 @@ public:
 	//const nite::Array<nite::GestureData>& gestures;
 	//const nite::Array<nite::GestureData>& hands;
 
-	// left hand position
-	float handX;
-	float handY;
+	float handZ[2];
 
-	// both hands position and distance/direction to determine left hand
+	// both hands position
 	float getArrayHands[NUM_HANDS][NUM_HANDS];
-	int getDistance[NUM_HANDS];
-	//bool direction;
+	bool isTwoHands;
 
 	void getAllGestures();
 	void getAllHands();

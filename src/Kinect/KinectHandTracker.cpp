@@ -57,7 +57,10 @@ void Kinect::KinectHandTracker::getAllHands()
 	// List of hands evidence
 	// If hand matches old positions, previous ID is assigned again
 	const nite::Array<nite::HandData>& hands= this->handTrackerFrame.getHands();
+
 	printf("%d hands\n", hands.getSize());
+	this->isTwoHands = false;
+
 	for (int i = 0; i < hands.getSize(); ++i)
 	{
 		const nite::HandData& user = hands[i];
@@ -94,49 +97,14 @@ void Kinect::KinectHandTracker::getAllHands()
 			{
 				printf("two hands found\n");
 				// get positions for both hands
-				for (int j = 0; j < hands.getSize(); ++j)
-				{
-					if (j < 1)
-					{
-						this->getArrayHands[i][j] = user.getPosition().x;
-						printf("%d ruka x: %f\n", i+1, getArrayHands[i][j]);
-					}
-					else
-					{
-						this->getArrayHands[i][j] = 0 - user.getPosition().y;
-						printf("%d ruka y: %f\n", i+1, getArrayHands[i][j]);
-					}
-				}
-				// reconstruct the rect parameters and get distance
-				if (i == 1)
-				{
-					// left hand is stored in handX and higher height in handY
-					this->getDistance[0] = getArrayHands[0][0]-getArrayHands[1][0];
-					this->getDistance[1] = getArrayHands[0][1]-getArrayHands[1][1];
 
-					if ((getDistance[0]) < 0 && (getDistance[1] < 0))
-					{
-						this->handX = getArrayHands[0][0];
-						this->handY = getArrayHands[0][1];
-					}
-					else if ((getDistance[0] < 0) && (getDistance[1] >= 0))
-					{
-						this->handX = getArrayHands[0][0];
-						this->handY = getArrayHands[1][1];
-					}
-					else if((getDistance[0] >= 0) && (getDistance[1] < 0))
-					{
-						this->handX = getArrayHands[1][0];
-						this->handY = getArrayHands[0][1];
-					}
-					else if((getDistance[0] >= 0) && (getDistance[1] >= 0))
-					{
-						this->handX = getArrayHands[1][0];
-						this->handY = getArrayHands[1][1];
-					}
-					printf("rect x: %f\n",handX);
-					printf("rect y: %f\n",handY);
-				}
+				// TODO - further implementation should include depth information in pixels
+				this->handZ[i] = user.getPosition().z;
+
+				this->getArrayHands[i][0] = user.getPosition().x;
+				this->getArrayHands[i][1] = 0 - user.getPosition().y;
+
+				this->isTwoHands = true;
 			}
 		}
 	}

@@ -48,6 +48,15 @@ void Kinect::KinectThread::run()
 	mKinect = new Kinect::KinectRecognition();
 	isOpen=mKinect->isOpenOpenni();
 	openni::VideoStream  color;
+	openni::VideoStream  m_depth;
+	openni::CoordinateConverter coordinateConverter;
+	// convert milimeters to pixels
+	float pDepth_x;
+	float pDepth_y;
+	float pDepth_z;
+	float pDepth_x2;
+	float pDepth_y2;
+	float pDepth_z2;
 	/////////end////////////
 
 	cv::Mat frame;
@@ -66,6 +75,8 @@ void Kinect::KinectThread::run()
 	{
 		color.create(mKinect->device, openni::SENSOR_COLOR);
 		color.start();
+		m_depth.create(mKinect->device, openni::SENSOR_DEPTH);
+		m_depth.start();
 
 		kht = new KinectHandTracker(&mKinect->device);
 	}
@@ -92,19 +103,30 @@ void Kinect::KinectThread::run()
 
 		///////Emit Qimage and Image////////////
 		//emit pushImage( qimage );
-		Rect hand_rect;
-		hand_rect.x = (kht->handX+1024/2)/4; // prerobit cez videoframeref
-		hand_rect.y = ((kht->handY)+768/2)/4; // prerobit cez handframe.getwidth....
+		if (kht->isTwoHands == true)
+		{
+			coordinateConverter.convertWorldToDepth(m_depth, kht->getArrayHands[0][0], kht->getArrayHands[0][1], kht->handZ[0], &pDepth_x, &pDepth_y, &pDepth_z);
+			coordinateConverter.convertWorldToDepth(m_depth, kht->getArrayHands[1][0], kht->getArrayHands[1][1], kht->handZ[1], &pDepth_x2, &pDepth_y2, &pDepth_z2);
 
-		hand_rect.width = abs(kht->getDistance[0]) + 20;
-		hand_rect.height = abs(kht->getDistance[1]) + 20;
+			pDepth_y = kht->handTrackerFrame.getDepthFrame().getHeight() - pDepth_y;
+			pDepth_y2 = kht->handTrackerFrame.getDepthFrame().getHeight() - pDepth_y2;
 
+			//printf("depth X, Y, Z: %f %f %f\n",pDepth_x,pDepth_y,pDepth_z);
 
+			Rect hand_rect;
+
+			if (pDepth_x < pDepth_x2) hand_rect.x = pDepth_x;
+			else hand_rect.x = pDepth_x2;
+			if (pDepth_y < pDepth_y2) hand_rect.y = pDepth_y;
+			else hand_rect.y = pDepth_y2;
+
+			hand_rect.width = abs(pDepth_x - pDepth_x2);
+			hand_rect.height = abs(pDepth_y - pDepth_y2);//kht->handY[1] - kht->handY[0];
+
+			rectangle(frame, hand_rect, CV_RGB(0, 255,0), 3);
+		}
 
 		cv::resize(frame, frame,cv::Size(320,240),0,0,cv::INTER_LINEAR);
-
-		rectangle(frame, hand_rect, CV_RGB(0, 255,0), 1);
-
 		emit pushImage( frame );
 		msleep(20);
 
