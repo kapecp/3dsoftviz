@@ -104,7 +104,17 @@ void Kinect::MouseControl::moveCursorMouse(double positionX, double positionY, b
 }
 
 
+void Kinect::MouseControl::moveCursorWorldCoordinates(double positionX, double positionY, bool isClick)
+{
+	//viewer->cursor().pos();
+	viewer->cursor().setPos(positionX*1.5,positionY*1.5);
+	if(isClick)
+	{
+		this->corectionMousePosition(viewer->cursor().pos().x(),viewer->cursor().pos().y());
+		this->moveMouse(clickX,clickY);
+	}
 
+}
 
 
 

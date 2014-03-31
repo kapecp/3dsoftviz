@@ -34,6 +34,8 @@ public:
 
 	void moveCursorMouse(double positionX, double positionY, bool isClick);
 
+	void moveCursorWorldCoordinates(double positionX,double positionY,bool isClick);
+
 private:
 
 	void corectionMousePosition(int positionX,int positionY);

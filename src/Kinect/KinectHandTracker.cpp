@@ -93,7 +93,7 @@ void Kinect::KinectHandTracker::getAllHands()
 				//printf("%lf %lf",user.getPosition().x,-1,0*user.getPosition().y);
 				/// new version
 				coordinateConverter.convertWorldToDepth(*mDepth, user.getPosition().x, user.getPosition().y, user.getPosition().z, &mDepthX, &mDepthY, &mDepthZ);
-				mouse->moveCursorMouse(mDepthX/2,mDepthY/2,isClick);
+				mouse->moveCursorWorldCoordinates(mDepthX,mDepthY,isClick);
 				/////////////
 
 			}
