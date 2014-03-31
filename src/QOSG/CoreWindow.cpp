@@ -42,6 +42,10 @@
 #include <iostream>
 #include "QDebug"
 
+#include "LuaGraph/LuaGraph.h"
+#include "LuaInterface/LuaInterface.h"
+#include <Diluculum/LuaWrappers.hpp>
+
 using namespace QOSG;
 using namespace std;
 
@@ -189,6 +193,19 @@ void CoreWindow::createActions()
 	remove_all->setToolTip("Remove nodes and edges");
 	remove_all->setFocusPolicy(Qt::NoFocus);
 	connect(remove_all, SIGNAL(clicked()), this, SLOT(removeClick()));
+
+    //load lua graph
+    loadFromLua = new QPushButton();
+    loadFromLua->setText("Load lua graph");
+    loadFromLua->setToolTip("&Load graph from lua");
+    loadFromLua->setFocusPolicy(Qt::NoFocus);
+    connect(loadFromLua, SIGNAL(clicked()), this, SLOT(loadLuaGraph()));
+
+    updateFromLuaButton = new QPushButton();
+    updateFromLuaButton->setText("Update lua graph");
+    updateFromLuaButton->setToolTip("&Update graph from lua");
+    updateFromLuaButton->setFocusPolicy(Qt::NoFocus);
+    connect(updateFromLuaButton, SIGNAL(clicked()), this, SLOT(updateFromLua()));
 
 	//mody - ziadny vyber, vyber jedneho, multi vyber centrovanie
 	noSelect = new QPushButton();
@@ -361,6 +378,9 @@ void CoreWindow::createLeftToolBar()
 	connect(nodeTypeComboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(nodeTypeComboBoxChanged(int)));
 
 	toolBar = new QToolBar("Tools",this);
+
+    toolBar->addWidget(loadFromLua);
+    toolBar->addWidget(updateFromLuaButton);
 
 	QFrame * frame = createHorizontalFrame();
 
@@ -641,7 +661,81 @@ void CoreWindow::playPause()
 		isPlaying = 1;
 		coreGraph->setNodesFreezed(false);
 		layout->play();
-	}
+    }
+}
+
+void CoreWindow::loadLuaGraph()
+{
+
+    Data::Graph *currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
+    Data::Type *edgeType = NULL;
+    Data::Type *nodeType = NULL;
+
+    if (currentGraph != NULL) {
+        Manager::GraphManager::getInstance()->closeGraph(currentGraph);
+    }
+    currentGraph = Manager::GraphManager::getInstance()->createNewGraph("LuaGraph");
+
+
+    Importer::GraphOperations *operations = new Importer::GraphOperations(*currentGraph);
+    operations->addDefaultTypes(edgeType, nodeType);
+
+    Lua::LuaGraph *g = Lua::LuaGraph::loadGraph();
+
+    for (QMap<qlonglong, Lua::LuaNode *>::iterator i = g->getNodes()->begin(); i != g->getNodes()->end(); ++i){
+         currentGraph->addNode(i.key() , i.value()->getLabel(), nodeType);
+    }
+
+    QMap<QString, QString> *settings = new QMap<QString, QString>();
+    for (QMap<QString, QString>::iterator i = nodeType->getSettings()->begin(); i != nodeType->getSettings()->end(); ++i){
+        settings->insert(i.key(), i.value());
+    }
+    settings->insert("color.R", "0");
+    settings->insert("color.G", "0");
+    settings->insert("color.B", "1");
+    settings->insert("color.A", "1");
+    Data::Type *nodeType2 = currentGraph->addType(NULL, settings);
+    for (QMap<qlonglong, Lua::LuaEdge *>::iterator i = g->getEdges()->begin(); i != g->getEdges()->end(); ++i){
+         currentGraph->addNode(i.key() , i.value()->getLabel(), nodeType2);
+    }
+
+    QMap<QString, QString> *settings1 = new QMap<QString, QString>();
+    for (QMap<QString, QString>::iterator i = nodeType->getSettings()->begin(); i != nodeType->getSettings()->end(); ++i){
+        settings1->insert(i.key(), i.value());
+    }
+    settings1->insert("color.R", "0");
+    settings1->insert("color.G", "1");
+    settings1->insert("color.B", "0");
+    settings1->insert("color.A", "1");
+    Data::Type *nodeType3 = currentGraph->addType(NULL, settings1);
+    for (QMap<qlonglong, Lua::LuaIncidence *>::iterator i = g->getIncidences()->begin(); i != g->getIncidences()->end(); ++i){
+        osg::ref_ptr<Data::Node> incNode = currentGraph->addNode(i.key(), i.value()->getLabel(), nodeType3);
+
+        osg::ref_ptr<Data::Node> srcNode = currentGraph->getNodes()->value(i.value()->getEdgeNodePair().first);
+        currentGraph->addEdge(i.value()->getLabel(), srcNode, incNode, edgeType, false);
+
+        osg::ref_ptr<Data::Node> dstNode = currentGraph->getNodes()->value(i.value()->getEdgeNodePair().second);
+        currentGraph->addEdge(i.value()->getLabel(), incNode, dstNode, edgeType, false);
+    }
+
+    delete g;
+}
+
+Diluculum::LuaValueList luaCallback (const Diluculum::LuaValueList& params)
+{
+  cout << "C callback" << std::endl;
+  return Diluculum::LuaValueList();
+}
+
+DILUCULUM_WRAP_FUNCTION (luaCallback)
+
+void CoreWindow::updateFromLua()
+{
+    cout << "Update from lua pressed" << std::endl;
+    Lua::LuaInterface* lua = Lua::LuaInterface::getInstance();
+    Diluculum::LuaState *ls = lua->getLuaState();
+    (*ls)["callback"] = DILUCULUM_WRAPPER_FUNCTION (luaCallback);
+    lua->executeFile("../share/3dsoftviz/scripts/callback.lua");
 }
 
 void CoreWindow::noSelectClicked(bool checked)

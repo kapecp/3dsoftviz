@@ -8,17 +8,13 @@
     #include "OpenCV/OpenCVCore.h"
 #endif
 
-#include "LuaInterface/LuaInterface.h"
-#include "LuaGraph/LuaNode.h"
-#include "LuaGraph/LuaGraph.h"
 
 #include "iostream"
 
+#include "LuaInterface/LuaInterface.h"
+
 int main(int argc, char *argv[])
 {
-
-    Lua::LuaGraph* g = Lua::LuaGraph::loadGraph();
-    delete g;
 
 	QApplication app(argc, argv);
 	new Cleaner(&app);

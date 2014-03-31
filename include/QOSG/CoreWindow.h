@@ -96,6 +96,18 @@ public slots:
 				*/
 	void playPause();
 
+    /**
+                *  \fn public  loadLuaGraph()
+                *  \brief load lua graph clicked
+                */
+    void loadLuaGraph();
+
+    /**
+                *  \fn public  updateFromLua()
+                *  \brief lupdate from lua clicked
+                */
+    void updateFromLua();
+
 	/**
 				*  \fn public  noSelectClicked(bool checked
 				*  \brief No-select mode selected
@@ -387,6 +399,18 @@ private:
 		*  \brief Action for separate nodes
 		*/
 	QPushButton * separate;
+
+    /**
+        *  QPushButton * loadFromLua
+        *  \brief Action for loading graph from lua
+        */
+    QPushButton * loadFromLua;
+
+    /**
+        *  QPushButton * updateFromLuaButton
+        *  \brief Action for updating graph from lua
+        */
+    QPushButton * updateFromLuaButton;
 
 	/**
 		*  QPushButton * noSelect
@@ -707,6 +731,7 @@ public:
 			QSharedPointer<Layout::RestrictionRemovalHandler> removalHandler,
 			QLinkedList<osg::ref_ptr<Data::Node> > nodesOfShapeGettersToRestrict
 			);
+
 
 private:
 

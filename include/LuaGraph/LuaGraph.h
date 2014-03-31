@@ -14,14 +14,20 @@ class LuaGraph
 {
 public:
     LuaGraph();
-    static LuaGraph* loadGraph();
+    static LuaGraph *loadGraph();
 
     ~LuaGraph();
 
+    QMap<qlonglong, LuaNode *> *getNodes() const;
+
+    QMap<qlonglong, LuaEdge *> *getEdges() const;
+
+    QMap<qlonglong, LuaIncidence *> *getIncidences() const;
+
 private:
-    QMap<qlonglong, LuaNode*>* nodes;
-    QMap<qlonglong, LuaEdge*>* edges;
-    QMap<qlonglong, LuaIncidence*>* incidences;
+    QMap<qlonglong, LuaNode *> *nodes;
+    QMap<qlonglong, LuaEdge *> *edges;
+    QMap<qlonglong, LuaIncidence *> *incidences;
 };
 
 }

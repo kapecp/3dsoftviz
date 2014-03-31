@@ -39,6 +39,8 @@ public:
 
     Diluculum::LuaState *getLuaState() const;
 
+
+
 private:
     LuaInterface();
     LuaInterface(LuaInterface const&);
