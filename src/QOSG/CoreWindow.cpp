@@ -1771,6 +1771,12 @@ void CoreWindow::startSpeech()
 {
 	if (this->mSpeechThr!=NULL && (b_start_speech->text()=="Stop Speech"))
 	{
+		this->mSpeechThr->cancel=true;
+		if(!this->mSpeechThr->wait(5000))
+		{
+			this->mSpeechThr->terminate();
+			this->mSpeechThr->wait();
+		}
 		delete(this->mSpeechThr);
 		b_start_speech->setText("Start Speech");
 		this->mSpeechThr=NULL;

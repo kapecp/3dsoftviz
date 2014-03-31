@@ -1,4 +1,4 @@
-
+#include "Core/Core.h"
 #include "Speech/KinectSpeechThread.h"
 
 using namespace Speech;
@@ -7,6 +7,7 @@ using namespace SpeechSDK;
 Speech::KinectSpeechThread::KinectSpeechThread()
 {
 	this->m_SpeechClass = new SpeechSDKClass(L"../share/3dsoftviz/SpeechGrammarFile.grxml");
+	this->cancel=false;
 }
 
 
@@ -39,23 +40,67 @@ int Speech::KinectSpeechThread::initializeSpeech()
 
 void Speech::KinectSpeechThread::run()
 {
-	while (true)
+	while (!cancel)
 	{
 		const wchar_t *a= this->m_SpeechClass->recognize();
 		if (0== wcscmp(a,L"NULL")){
 			printf("null\n");
 		}
-		if (0== wcscmp(a,L"FORWARD")){
-			printf("forward\n");
+		if (0== wcscmp(a,L"ALL")){
+			printf("select all nodes\n");
+			AppCore::Core::getInstance()->getCoreWindow()->multiSelectClicked(true);
+			QOSG::ViewerQT *viewer=AppCore::Core::getInstance()->getCoreWindow()->GetViewerQt();
+			if(viewer!=NULL)
+			{
+				int mWindowWidth=viewer->width();
+				int mWindowHeight=viewer->height();
+				viewer->getEventQueue()->mouseButtonPress(0,0,Qt::LeftButton);
+				viewer->getEventQueue()->mouseMotion(mWindowWidth,mWindowHeight);
+				viewer->getEventQueue()->mouseButtonRelease(mWindowWidth,mWindowHeight,Qt::LeftButton);
+			}
 		}
-		if (0== wcscmp(a,L"BACK")){
-			printf("backward\n");
+		if (0== wcscmp(a,L"CIRCLE")){
+			printf("circle\n");
+			AppCore::Core::getInstance()->getCoreWindow()->setRestriction_Sphere();
 		}
 		if (0== wcscmp(a,L"LEFT")){
-			printf("left\n");
+			printf("select left side\n");
+			AppCore::Core::getInstance()->getCoreWindow()->multiSelectClicked(true);
+			QOSG::ViewerQT *viewer=AppCore::Core::getInstance()->getCoreWindow()->GetViewerQt();
+			if(viewer!=NULL)
+			{
+				int mWindowWidth=viewer->width();
+				int mWindowHeight=viewer->height();
+				viewer->getEventQueue()->mouseButtonPress(0,0,Qt::LeftButton);
+				viewer->getEventQueue()->mouseMotion(mWindowWidth/2,mWindowHeight);
+				viewer->getEventQueue()->mouseButtonRelease(mWindowWidth/2,mWindowHeight,Qt::LeftButton);
+			}
 		}
 		if (0== wcscmp(a,L"RIGHT")){
-			printf("right\n");
+			printf("select right ride\n");
+			AppCore::Core::getInstance()->getCoreWindow()->multiSelectClicked(true);
+			QOSG::ViewerQT *viewer=AppCore::Core::getInstance()->getCoreWindow()->GetViewerQt();
+			if(viewer!=NULL)
+			{
+				int mWindowWidth=viewer->width();
+				int mWindowHeight=viewer->height();
+				viewer->getEventQueue()->mouseButtonPress(mWindowWidth/2,0,Qt::LeftButton);
+				viewer->getEventQueue()->mouseMotion(mWindowWidth,mWindowHeight);
+				viewer->getEventQueue()->mouseButtonRelease(mWindowWidth,mWindowHeight,Qt::LeftButton);
+			}
+		}
+		if (0== wcscmp(a,L"CLEAR")){
+			printf("clear screen\n");
+			AppCore::Core::getInstance()->getCoreWindow()->multiSelectClicked(false);
+			QOSG::ViewerQT *viewer=AppCore::Core::getInstance()->getCoreWindow()->GetViewerQt();
+			if(viewer!=NULL)
+			{
+				viewer->getEventQueue()->mouseButtonPress(0,0,Qt::LeftButton);
+			}
+		}
+		if (0== wcscmp(a,L"UNSET")){
+			printf("unset restrictions\n");
+			AppCore::Core::getInstance()->getCoreWindow()->unsetRestriction();
 		}
 	}
 }

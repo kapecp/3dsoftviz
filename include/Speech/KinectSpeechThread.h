@@ -25,6 +25,7 @@ public:
 	int initializeSpeech();
 	SpeechSDK::SpeechSDKClass *m_SpeechClass;
 	bool isConnected;
+	bool cancel;
 
 	/**
 		 * @author Autor: Marek Jakab

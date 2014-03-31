@@ -2,31 +2,39 @@
   <rule id="rootRule">
     <one-of>
       <item>
-        <tag>FORWARD</tag>
+        <tag>ALL</tag>
         <one-of>
-          <item> forwards </item>
-          <item> forward </item>
-          <item> straight </item>
+          <item> select all nodes </item>
         </one-of>
       </item>
       <item>
-        <tag>BACK</tag>
+        <tag>CIRCLE</tag>
         <one-of>
-          <item> backward </item>
-          <item> backwards </item>
-          <item> back </item>
+          <item> circle </item>
         </one-of>
       </item>
       <item>
         <tag>LEFT</tag>
         <one-of>
-          <item> turn left </item>
+          <item> select left side </item>
         </one-of>
       </item>
       <item>
         <tag>RIGHT</tag>
         <one-of>
-          <item> turn right </item>
+          <item> select right side </item>
+        </one-of>
+      </item>
+	  <item>
+        <tag>CLEAR</tag>
+        <one-of>
+          <item> clear screen </item>
+        </one-of>
+      </item>
+	  <item>
+        <tag>UNSET</tag>
+        <one-of>
+          <item> unset restrictions </item>
         </one-of>
       </item>
     </one-of>
