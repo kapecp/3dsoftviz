@@ -32,6 +32,10 @@
 #ifdef OPENCV_FOUND
 #include "OpenCV/OpenCVCore.h"
 #endif
+#ifdef OPENNI2_FOUND
+#include "Kinect/KinectCore.h"
+#endif
+
 
 #include "Util/Cleaner.h"
 
@@ -62,9 +66,6 @@ CoreWindow::CoreWindow(QWidget *parent, Vwr::CoreGraph* coreGraph, QApplication*
 	createRightToolBar();
 	createCollaborationToolBar();
 	createAugmentedRealityToolBar();
-
-
-
 
 	viewerWidget = new ViewerQT(this, 0, 0, 0, coreGraph);
 	viewerWidget->setSceneData(coreGraph->getScene());
@@ -507,11 +508,15 @@ void CoreWindow::createRightToolBar() {
 	/*toolBar->addWidget(le_message);
 	toolBar->addWidget(b_send_message);*/
 
+	//add Kinect Button
+
+
 	addToolBar(Qt::TopToolBarArea,toolBar);
 }
 
 void CoreWindow::createAugmentedRealityToolBar() {
 	toolBar = new QToolBar( tr("Augmented Reality"),this);
+
 
 	b_start_face = new QPushButton( tr("Start camera"));
 	QLabel *label = new QLabel( tr("Face & Marker detection"));
@@ -526,10 +531,20 @@ void CoreWindow::createAugmentedRealityToolBar() {
 	chb_camera_rot = new QCheckBox( tr("Camera rotation"));
 	chb_camera_rot->setChecked(true);
 	toolBar->addWidget( chb_camera_rot );
+#ifdef OPENNI2_FOUND
+	QLabel *labelKinect = new QLabel( tr("Kinect"));
+	toolBar->addWidget( labelKinect );
+	b_start_kinect = new QPushButton();
+	b_start_kinect->setText("Start kinect");
+	toolBar->addWidget( b_start_kinect );
+	connect(b_start_kinect, SIGNAL(clicked()), this, SLOT(createKinectWindow()));
+#endif
 
 
 	addToolBar(Qt::TopToolBarArea,toolBar);
 	toolBar->setMovable(true);
+
+
 }
 
 
@@ -1730,6 +1745,17 @@ void CoreWindow::create_facewindow()
 	OpenCV::OpenCVCore::getInstance(NULL, this)->faceRecognition();
 #endif
 }
+
+
+#ifdef OPENNI2_FOUND
+void CoreWindow::createKinectWindow(){
+
+	Kinect::KinectCore::getInstance(NULL,this)->kinectRecognition();
+}
+#endif
+
+
+
 
 
 void CoreWindow::toggleSpyWatch()

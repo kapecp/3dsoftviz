@@ -61,7 +61,7 @@ namespace QOSG
 	*  \date 3. 5. 2010
 	*/
 class CoreWindow : public QMainWindow
-	{
+{
 	Q_OBJECT
 
 public slots:
@@ -305,6 +305,14 @@ public slots:
 	void create_facewindow();
 #endif
 
+#ifdef OPENNI2_FOUND
+	/**
+		*
+		* @brief create Kinect Button
+	 */
+	void createKinectWindow();
+#endif
+
 	void toggleSpyWatch();
 	void toggleAttention();
 
@@ -529,9 +537,28 @@ private:
 		*/
 	QPushButton * remove_all;
 
+	/**
+	 * QPushButton start face and mark recognition
+	 *@brief b_start_face
+	 */
+
 	QPushButton * b_start_face;
 
+
+
+	/**
+	 * QPushButton start kinect recognition
+	 *@brief b_start_kinect
+	 */
+	QPushButton * b_start_kinect;
+
+	/**
+	 *CheckBox for mapinulation camera or object
+	 *@brief chb_camera_rot
+	 */
 	QCheckBox * chb_camera_rot;
+
+
 
 	/**
 		*  QAction * load
@@ -757,7 +784,7 @@ private:
 			QSharedPointer<Layout::RestrictionRemovalHandler> removalHandler
 			);
 
-	};
+};
 }
 
 #endif
