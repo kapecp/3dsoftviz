@@ -657,7 +657,7 @@ void PickHandler::toggleSelectedNodesFixedState(bool isFixed)
 		if (client->isConnected()) {
 			client->sendFixNodeState((*i)->getId(), isFixed);
 		} else {
-			(*i)->setFixed(isFixed);
+			//(*i)->setFixed(isFixed);  // fixed nodes cannot by draged, layouter don compute new position for them
 			server->sendFixNodeState((*i)->getId(), isFixed);
 		}
 		++i;
