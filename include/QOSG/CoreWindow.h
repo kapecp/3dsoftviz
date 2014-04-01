@@ -27,7 +27,9 @@
 #include "Layout/ShapeGetter_Circle_ByThreeNodes.h"
 #include "Layout/ShapeGetter_SpherePlane_ByThreeNodes.h"
 //#include "Viewer/CameraManipulator.h"
-
+#ifdef SPEECHSDK_FOUND
+#include "Speech/KinectSpeechThread.h"
+#endif
 
 namespace Layout
 {
@@ -63,7 +65,10 @@ namespace QOSG
 class CoreWindow : public QMainWindow
 {
 	Q_OBJECT
-
+private:
+	#ifdef SPEECHSDK_FOUND
+	Speech::KinectSpeechThread *mSpeechThr;
+	#endif
 public slots:
 
 	/**
@@ -312,6 +317,9 @@ public slots:
 	 */
 	void createKinectWindow();
 #endif
+#ifdef SPEECHSDK_FOUND
+	void startSpeech();
+#endif
 
 	void toggleSpyWatch();
 	void toggleAttention();
@@ -545,7 +553,6 @@ private:
 	QPushButton * b_start_face;
 
 
-
 	/**
 	 * QPushButton start kinect recognition
 	 *@brief b_start_kinect
@@ -553,10 +560,18 @@ private:
 	QPushButton * b_start_kinect;
 
 	/**
+	 * QPushButton start speech recognition
+	 *@brief b_start_speech
+	 */
+	QPushButton * b_start_speech;
+
+
+	/*
 	 *CheckBox for mapinulation camera or object
 	 *@brief chb_camera_rot
 	 */
 	QCheckBox * chb_camera_rot;
+
 
 
 
