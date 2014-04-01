@@ -19,9 +19,6 @@
 #include <osg/Projection>
 #include <osg/BlendFunc>
 
-
-#include "Kinect/MouseControl.h"
-
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wswitch-enum"
 
