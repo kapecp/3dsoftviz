@@ -43,7 +43,6 @@ PickHandler::PickHandler(Vwr::CameraManipulator * cameraManipulator, Vwr::CoreGr
 	this->appConf = Util::ApplicationConfig::get();
 
 	_mX = _mY = 0;
-	x=y=0;
 	isCtrlPressed = false;
 	isShiftPressed = false;
 	isAltPressed = false;
@@ -198,23 +197,6 @@ bool PickHandler::handleKeyDown( const osgGA::GUIEventAdapter& ea, GUIActionAdap
 	{
 		Data::Graph * currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
 		Util::ElementSelector::weightedElementSelector(currentGraph->getNodes(), appConf->getValue("Viewer.PickHandler.AutopickedNodes").toInt(), this);
-	}
-	else if(ea.getKey() == 'c')
-	{
-		Kinect::MouseControl *mouse= new Kinect::MouseControl();
-		mouse->clickPressMouse(Qt::LeftButton);
-	}
-	else if(ea.getKey() == 'r')
-	{
-		Kinect::MouseControl *mouse= new Kinect::MouseControl();
-		mouse->releasePressMouse(Qt::LeftButton);
-	}
-	else if(ea.getKey() == 'k')
-	{
-		Kinect::MouseControl *mouse= new Kinect::MouseControl();
-		this->x+=1;
-		this->y+=1;
-		mouse->moveCursorMouse(this->x,this->y,true);
 	}
 
 	return false;
