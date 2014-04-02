@@ -353,6 +353,31 @@ if ( WIN32 )
 	endif()
 endif()
 
+# Find KINECT SDK
+add_definitions(-DNOMINMAX)
+if ( WIN32 )
+        if ( MSVC )
+                find_package( KINECTSDK )
+                if (KINECTSDK_FOUND)
+                include_directories( ${KINECTSDK_INCLUDE_DIRS} )
+                add_definitions( -DKINECTSDK_FOUND )
+                find_package( SPEECHSDK )
+                if (SPEECHSDK_FOUND)
+                    file(GLOB_RECURSE SRC_SPEECH  "src/Speech/*.cpp")
+                    file(GLOB_RECURSE HEADER_SPEECH  "include/Speech/*.h")
+                    include_directories( ${SPEECHSDK_INCLUDE_DIRS} )
+                    add_definitions( -DSPEECHSDK_FOUND )
+                    message (STATUS "SPEECHSDK FOUND")
+                    else(SPEECHSDK_FOUND)
+                    message (STATUS "SPEECHSDK NOT FOUND")
+                endif()
+                message (STATUS "KINECTSDK FOUND")
+                else(KINECTSDK_FOUND)
+                message (STATUS "KINECTSDK NOT FOUND")
+                endif()
+        endif()
+endif()
+
 # ---------------
 # 3DSoftviz sources
 # ---------------
@@ -405,6 +430,11 @@ endif()
 if (OPENNI2_FOUND)
 	list(APPEND SRC ${SRC_KINECT})
 endif()
+if (KINECTSDK_FOUND)
+    if (SPEECHSDK_FOUND)
+        list(APPEND SRC ${SRC_SPEECH})
+    endif()
+endif()
 
 file(GLOB_RECURSE HEADER_CORE  "include/Core/*.h")
 file(GLOB_RECURSE HEADER_DATA  "include/Data/*.h")
@@ -431,6 +461,11 @@ if( OpenCV_FOUND )
 endif()
 if (OPENNI2_FOUND)
 		list(APPEND INCL ${HEADER_KINECT})
+endif()
+if (KINECTSDK_FOUND)
+    if (SPEECHSDK_FOUND)
+        list(APPEND INCL ${HEADER_SPEECH})
+    endif()
 endif()
 
 # Group source files
@@ -474,6 +509,12 @@ if (OPENNI2_FOUND)
 	source_group(\\src\\Kinect "^.*Kinect/.*$")
 	source_group(\\headers\\Kinect "^.*Kinect/.*h$")
 endif()
+if (KINECTSDK_FOUND)
+    if (SPEECHSDK_FOUND)
+        source_group(\\src\\Speech "^.*Speech/.*$")
+        source_group(\\headers\\Speech "^.*Speech/.*h$")
+    endif()
+endif()
 
 # ---------------
 # Build and link 3Dsoftviz
@@ -501,6 +542,13 @@ if (NITE2_FOUND AND OPENNI2_FOUND)
 	target_link_libraries( ${3DSOFTVIZ_NAME} ${NITE2_LIBRARIES} ${OPENNI2_LIBRARIES} )
 endif()
 
+# KINECT SDK
+if (KINECTSDK_FOUND)
+    target_link_libraries( ${3DSOFTVIZ_NAME} ${KINECTSDK_LIBRARIES})
+    if (SPEECHSDK_FOUND)
+        target_link_libraries( ${3DSOFTVIZ_NAME} ${SPEECHSDK_LIBRARIES})
+    endif()
+endif()
 
 # 'cotire' the executable
 if( COMMAND cotire )
@@ -568,6 +616,11 @@ install(DIRECTORY resources/ DESTINATION ${INSTALL_DATA} COMPONENT Data)
 # Install needed .dll files for OpenNI2
 if (NITE2_FOUND AND OPENNI2_FOUND)
 	install(DIRECTORY ${NITE2_OPENNI2_DRIVER_DIRS} DESTINATION ${INSTALL_BIN}/OpenNI2)
+endif()
+
+# install .dll for speech recognition
+if (SPEECHSDK_FOUND)
+        install(DIRECTORY ${SPEECHSDK_DRIVER_DIRS}/ DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/_install/bin)
 endif()
 
 # Install built in dependencies unless we are building an OSX Bundle
