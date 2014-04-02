@@ -1,0 +1,42 @@
+﻿<grammar version="1.0" xml:lang="en-US" root="rootRule" tag-format="semantics/1.0-literals" xmlns="http://www.w3.org/2001/06/grammar">
+  <rule id="rootRule">
+    <one-of>
+      <item>
+        <tag>ALL</tag>
+        <one-of>
+          <item> select all nodes </item>
+        </one-of>
+      </item>
+      <item>
+        <tag>SPHERE</tag>
+        <one-of>
+          <item> sphere </item>
+        </one-of>
+      </item>
+      <item>
+        <tag>LEFT</tag>
+        <one-of>
+          <item> select left side </item>
+        </one-of>
+      </item>
+      <item>
+        <tag>RIGHT</tag>
+        <one-of>
+          <item> select right side </item>
+        </one-of>
+      </item>
+	  <item>
+        <tag>CLEAR</tag>
+        <one-of>
+          <item> clear screen </item>
+        </one-of>
+      </item>
+	  <item>
+        <tag>UNSET</tag>
+        <one-of>
+          <item> unset restrictions </item>
+        </one-of>
+      </item>
+    </one-of>
+  </rule>
+</grammar>

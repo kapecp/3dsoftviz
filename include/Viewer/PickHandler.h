@@ -203,8 +203,6 @@ public:
 protected:
 	// Store mouse xy location for button press & move events.
 	float _mX,_mY;
-	int x;
-	int y;
 	float origin_mX, origin_mY, origin_mX_normalized, origin_mY_normalized;
 
 	/**
