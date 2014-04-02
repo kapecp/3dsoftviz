@@ -3,6 +3,9 @@
 #include "Kinect/KinectCore.h"
 #include "Kinect/KinectRecognition.h"
 
+#include "Core/Core.h"
+#include "Viewer/CameraManipulator.h"
+
 #include "QDebug"
 
 //only for testing
@@ -19,6 +22,11 @@ using namespace cv;
 Kinect::KinectThread::KinectThread(QObject *parent) : QThread(parent)
 {
 	mCancel=false;
+	QObject::connect( this,
+					  SIGNAL(sendSliderCoords(float,float,float)),
+					  AppCore::Core::getInstance(NULL)->getCoreWindow()->getCameraManipulator(),
+					  SLOT(setRotationHead(float,float,float)) );
+
 }
 
 Kinect::KinectThread::~KinectThread(void)
@@ -39,6 +47,13 @@ void Kinect::KinectThread::pause()
 {
 	mCancel=true;
 }
+
+// SIGNAL 1
+//void Kinect::KinectThread::sendSliderCoords(float _t1, float _t2, float _t3)
+//{
+//	void *_a[] = { 0, const_cast<void*>(reinterpret_cast<const void*>(&_t1)), const_cast<void*>(reinterpret_cast<const void*>(&_t2)), const_cast<void*>(reinterpret_cast<const void*>(&_t3)) };
+//	QMetaObject::activate(this, &staticMetaObject, 1, _a);
+//}
 
 void Kinect::KinectThread::run()
 {
@@ -111,7 +126,7 @@ void Kinect::KinectThread::run()
 			pDepth_y = kht->handTrackerFrame.getDepthFrame().getHeight() - pDepth_y;
 			pDepth_y2 = kht->handTrackerFrame.getDepthFrame().getHeight() - pDepth_y2;
 
-			//printf("depth X, Y, Z: %f %f %f\n",pDepth_x,pDepth_y,pDepth_z);
+			printf("depth X, Y, Z: %f %f %f\n",pDepth_x,pDepth_y,pDepth_z);
 
 			Rect hand_rect;
 
@@ -126,6 +141,22 @@ void Kinect::KinectThread::run()
 			rectangle(frame, hand_rect, CV_RGB(0, 255,0), 3);
 		}
 
+
+		//sliding
+		kht->getRotatingMove();
+		line(frame, Point2i( 30, 30), Point2i( 30, 30), Scalar( 0, 0, 0 ), 5 ,8 );
+
+		char * text;
+		text = kht->slidingHand_type;
+		if((int)kht->slidingHand_x != 0){
+			putText(frame, text, cvPoint((int)kht->slidingHand_x,(int)kht->slidingHand_y), FONT_HERSHEY_COMPLEX_SMALL, 0.8, cvScalar(0,0,250), 1, CV_AA);
+			//signal pre
+			emit sendSliderCoords( (float) ((kht->slidingHand_x/640.0)-0.5)*200,
+								   (float) ((kht->slidingHand_y/480.0)-0.5)*200,
+								   (float) ((kht->slidingHand_z/480.0)-0.5)*200);
+			printf("%.2lf %.2lf z %.2lf -  %.2lf slider \n", (float) ((kht->slidingHand_x/640.0)-0.5)*200,
+				   (float) ((kht->slidingHand_y/480.0)-0.5)*200, (float) ((kht->slidingHand_z/480.0)-0.5)*200, kht->slidingHand_z);
+		}
 		cv::resize(frame, frame,cv::Size(320,240),0,0,cv::INTER_LINEAR);
 		emit pushImage( frame );
 		msleep(20);

@@ -32,8 +32,14 @@ public:
 	float getArrayHands[NUM_HANDS][NUM_HANDS];
 	bool isTwoHands;
 
+	float slidingHand_x;
+	float slidingHand_y;
+	float slidingHand_z;
+	char * slidingHand_type;
+
 	void getAllGestures();
 	void getAllHands();
+	void getRotatingMove();
 
 
 	nite::HandTracker m_pHandTracker;

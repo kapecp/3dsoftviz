@@ -28,6 +28,8 @@ public:
 
 signals:
 
+	void sendSliderCoords( float x, float y, float distance);
+
 	void pushImage(cv::Mat image);
 
 	void pushImageQ(QImage qimage);

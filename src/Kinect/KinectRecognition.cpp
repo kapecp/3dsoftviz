@@ -34,7 +34,6 @@ cv::Mat Kinect::KinectRecognition::colorImageCvMat(openni::VideoFrameRef &colorF
 	frame.create(colorFrame.getHeight(), colorFrame.getWidth(), CV_8UC3);
 	memcpy( frame.data, imageBuffer, 3*colorFrame.getHeight()*colorFrame.getWidth()*sizeof(uint8_t) );
 
-	cv::cvtColor(frame,frame,CV_BGR2RGB);
 	return frame;
 }
 
@@ -42,7 +41,7 @@ cv::Mat Kinect::KinectRecognition::depthImageCvMat(openni::VideoFrameRef &colorF
 {
 	openni::VideoMode mode = colorFrame.getVideoMode();
 	cv::Mat image = cv::Mat(mode.getResolutionY(), mode.getResolutionX(), CV_8UC3, (char*)colorFrame.getData());
-	cv::cvtColor(image, image, CV_RGB2BGR);
+//	cv::cvtColor(image, image, CV_RGB2BGR);
 	return image;
 
 }
