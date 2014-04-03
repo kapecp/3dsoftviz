@@ -675,7 +675,7 @@ void CoreWindow::loadLuaGraph()
 
     Lua::LuaGraph *g = Lua::LuaGraph::loadGraph();
 
-    g->visualize(currentGraph);
+    g->visualize(currentGraph, false);
 
     delete g;
 }

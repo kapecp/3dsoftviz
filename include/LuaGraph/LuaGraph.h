@@ -16,7 +16,7 @@ public:
     LuaGraph();
     static LuaGraph *loadGraph();
 
-    void visualize(Data::Graph *graph);
+    void visualize(Data::Graph *graph, bool incidence_as_node = false);
 
     ~LuaGraph();
 

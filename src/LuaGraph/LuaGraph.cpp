@@ -103,7 +103,7 @@ Lua::LuaGraph *Lua::LuaGraph::loadGraph()
     return result;
 }
 
-void Lua::LuaGraph::visualize(Data::Graph *graph)
+void Lua::LuaGraph::visualize(Data::Graph *graph, bool incidence_as_node)
 {
     Data::Type *edgeType = NULL;
     Data::Type *nodeType = NULL;
@@ -127,23 +127,31 @@ void Lua::LuaGraph::visualize(Data::Graph *graph)
          graph->addNode(i.key() , i.value()->getLabel(), nodeType2);
     }
 
-    QMap<QString, QString> *settings1 = new QMap<QString, QString>();
-    for (QMap<QString, QString>::iterator i = nodeType->getSettings()->begin(); i != nodeType->getSettings()->end(); ++i){
-        settings1->insert(i.key(), i.value());
-    }
-    settings1->insert("color.R", "0");
-    settings1->insert("color.G", "1");
-    settings1->insert("color.B", "0");
-    settings1->insert("color.A", "1");
-    Data::Type *nodeType3 = graph->addType(NULL, settings1);
-    for (QMap<qlonglong, Lua::LuaIncidence *>::iterator i = getIncidences()->begin(); i != getIncidences()->end(); ++i){
-        osg::ref_ptr<Data::Node> incNode = graph->addNode(i.key(), i.value()->getLabel(), nodeType3);
+    if (incidence_as_node){
+        QMap<QString, QString> *settings1 = new QMap<QString, QString>();
+        for (QMap<QString, QString>::iterator i = nodeType->getSettings()->begin(); i != nodeType->getSettings()->end(); ++i){
+            settings1->insert(i.key(), i.value());
+        }
+        settings1->insert("color.R", "0");
+        settings1->insert("color.G", "1");
+        settings1->insert("color.B", "0");
+        settings1->insert("color.A", "1");
+        Data::Type *nodeType3 = graph->addType(NULL, settings1);
+        for (QMap<qlonglong, Lua::LuaIncidence *>::iterator i = getIncidences()->begin(); i != getIncidences()->end(); ++i){
+            osg::ref_ptr<Data::Node> incNode = graph->addNode(i.key(), i.value()->getLabel(), nodeType3);
 
-        osg::ref_ptr<Data::Node> srcNode = graph->getNodes()->value(i.value()->getEdgeNodePair().first);
-        graph->addEdge(i.value()->getLabel(), srcNode, incNode, edgeType, false);
+            osg::ref_ptr<Data::Node> srcNode = graph->getNodes()->value(i.value()->getEdgeNodePair().first);
+            graph->addEdge(i.value()->getLabel(), srcNode, incNode, edgeType, false);
 
-        osg::ref_ptr<Data::Node> dstNode = graph->getNodes()->value(i.value()->getEdgeNodePair().second);
-        graph->addEdge(i.value()->getLabel(), incNode, dstNode, edgeType, false);
+            osg::ref_ptr<Data::Node> dstNode = graph->getNodes()->value(i.value()->getEdgeNodePair().second);
+            graph->addEdge(i.value()->getLabel(), incNode, dstNode, edgeType, false);
+        }
+    } else {
+        for (QMap<qlonglong, Lua::LuaIncidence *>::iterator i = getIncidences()->begin(); i != getIncidences()->end(); ++i){
+            osg::ref_ptr<Data::Node> srcNode = graph->getNodes()->value(i.value()->getEdgeNodePair().first);
+            osg::ref_ptr<Data::Node> dstNode = graph->getNodes()->value(i.value()->getEdgeNodePair().second);
+            graph->addEdge(i.value()->getLabel(), srcNode, dstNode, edgeType, false);
+        }
     }
 }
 
