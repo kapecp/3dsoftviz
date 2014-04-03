@@ -4,6 +4,7 @@
 
 #include "Data/Graph.h"
 #include "Importer/GraphOperations.h"
+#include <Diluculum/LuaWrappers.hpp>
 
 Lua::LuaGraph::LuaGraph()
 {
@@ -11,6 +12,13 @@ Lua::LuaGraph::LuaGraph()
     edges = new QMap<qlonglong, Lua::LuaEdge*>();
     incidences = new QMap<qlonglong, Lua::LuaIncidence*>();
 }
+
+Diluculum::LuaValueList luaCallback (const Diluculum::LuaValueList& params)
+{
+  cout << "C callback" << std::endl;
+  return Diluculum::LuaValueList();
+}
+DILUCULUM_WRAP_FUNCTION(luaCallback)
 
 Lua::LuaGraph *Lua::LuaGraph::loadGraph()
 {
@@ -89,6 +97,8 @@ Lua::LuaGraph *Lua::LuaGraph::loadGraph()
         cout << " E" << inc.first << " <-> N" << inc.second;
         cout << endl;
     }
+
+    (*ls)["callback"] = DILUCULUM_WRAPPER_FUNCTION (luaCallback);
 
     return result;
 }

@@ -44,7 +44,6 @@
 
 #include "LuaGraph/LuaGraph.h"
 #include "LuaInterface/LuaInterface.h"
-#include <Diluculum/LuaWrappers.hpp>
 
 using namespace QOSG;
 using namespace std;
@@ -681,20 +680,9 @@ void CoreWindow::loadLuaGraph()
     delete g;
 }
 
-Diluculum::LuaValueList luaCallback (const Diluculum::LuaValueList& params)
-{
-  cout << "C callback" << std::endl;
-  return Diluculum::LuaValueList();
-}
-
-DILUCULUM_WRAP_FUNCTION (luaCallback)
-
 void CoreWindow::updateFromLua()
 {
-    cout << "Update from lua pressed" << std::endl;
     Lua::LuaInterface* lua = Lua::LuaInterface::getInstance();
-    Diluculum::LuaState *ls = lua->getLuaState();
-    (*ls)["callback"] = DILUCULUM_WRAPPER_FUNCTION (luaCallback);
     lua->executeFile("../share/3dsoftviz/scripts/callback.lua");
 }
 
