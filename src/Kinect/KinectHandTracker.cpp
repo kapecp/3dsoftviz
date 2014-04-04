@@ -164,26 +164,43 @@ void Kinect::KinectHandTracker::getRotatingMove()
 			bool gesto_dole = false;
 
 
-			if(pHistory->GetSize() == 20){ // ak je historia naplnena
+			if(pHistory->GetSize() == 20)
+			{ // ak je historia naplnena
 				const nite::Point3f& position1 = pHistory->operator[](0);
 				this->m_pHandTracker.convertHandCoordinatesToDepth(position1.x, position1.y, position1.z, &koordy[0], &koordy[1]);
 				const nite::Point3f& position2 = pHistory->operator[](19);
 				this->m_pHandTracker.convertHandCoordinatesToDepth(position2.x, position2.y, position2.z, &koordy[2], &koordy[3]);
 
 
-				//printf("Horizontalne %.2lf  %.2lf \t\t vertikalne %.2lf  %.2lf \n", koordy[0], koordy[2], koordy[1], koordy[3]);
-				if(koordy[0] - koordy[2] > 100.0 || koordy[0] - koordy[2] < -100.0){
-					if(koordy[0] > koordy[2]) {gesto_dolava = false; gesto_doprava = true; } else {gesto_dolava = true; gesto_doprava = false; }
-				}	else {gesto_dolava = false; gesto_doprava = false; }
-				if(koordy[1] - koordy[3] > 100.0 || koordy[1] - koordy[3] < -100.0){
-					if(koordy[1] < koordy[3]) {gesto_dole = false; gesto_hore = true; } else {gesto_dole = true; gesto_hore = false; }
-				} else { gesto_dole = false; gesto_hore = false; }
-
-				//if(gesto_dole) this->slidingHand_type  = "scroll down";
-				//else if(gesto_hore) this->slidingHand_type  = "scroll up";
-				if(gesto_dolava) this->slidingHand_type = "scroll left"; //strcpy(this->slidingHand_type, "scroll left");
-				if(gesto_doprava) this->slidingHand_type = "scroll right"; // strcpy(this->slidingHand_type, "scroll right");
-
+				//check for output
+				if(abs(koordy[0] - koordy[2]) > 100.0)
+				{
+					if(koordy[0] > koordy[2])
+					{
+						gesto_dolava = false;
+						gesto_doprava = true;
+					}
+					else
+					{
+						gesto_dolava = true;
+						gesto_doprava = false;
+					}
+				}
+				if(abs(koordy[1] - koordy[3]) > 100.0)
+				{
+					if(koordy[1] < koordy[3])
+					{
+						gesto_dole = false;
+						gesto_hore = true;
+					}
+					else
+					{
+						gesto_dole = true;
+						gesto_hore = false;
+					}
+				}
+				if(gesto_dolava) this->slidingHand_type = "scroll left";
+				else if(gesto_doprava) this->slidingHand_type = "scroll right";
 			}
 		}
 	}
