@@ -55,11 +55,6 @@ private:
 
 
 };
-
-
-
-
-
 }
 
 #endif // KINECTTHREAD_H
