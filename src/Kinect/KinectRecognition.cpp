@@ -41,9 +41,7 @@ cv::Mat Kinect::KinectRecognition::depthImageCvMat(openni::VideoFrameRef &colorF
 {
 	openni::VideoMode mode = colorFrame.getVideoMode();
 	cv::Mat image = cv::Mat(mode.getResolutionY(), mode.getResolutionX(), CV_8UC3, (char*)colorFrame.getData());
-//	cv::cvtColor(image, image, CV_RGB2BGR);
 	return image;
-
 }
 
 QImage Kinect::KinectRecognition::colorImageQImage(openni::VideoFrameRef &colorFrame)
@@ -59,12 +57,13 @@ QImage Kinect::KinectRecognition::colorImageQImage(openni::VideoFrameRef &colorF
 QImage Kinect::KinectRecognition::deptImageQImage(openni::VideoFrameRef &colorFrame)
 {
 	cv::Mat depthMat = depthImageCvMat(colorFrame);
-			QImage image = QImage(depthMat.data,
-								  colorFrame.getWidth(), colorFrame.getHeight(),
-								  QImage::Format_Indexed8);
+	QImage image = QImage(depthMat.data,
+						  colorFrame.getWidth(), colorFrame.getHeight(),
+						  QImage::Format_Indexed8);
 	return image.convertToFormat(QImage::Format_RGB32);
 }
+
 bool Kinect::KinectRecognition::isOpenOpenni()
 {
-		return isOpen;
+	return isOpen;
 }
