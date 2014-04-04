@@ -2,7 +2,11 @@
 #define MOUSECONTROL_H
 
 #include <QtGui/QKeyEvent>
-#include "QOSG/ViewerQT.h"
+
+namespace QOSG
+{
+	class ViewerQT;
+}
 
 
 namespace Kinect
