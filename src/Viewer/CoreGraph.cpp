@@ -15,6 +15,9 @@
 
 #include <osgUtil/Optimizer>
 #include <osg/Depth>
+#include <osg/TextureRectangle>
+#include <osg/TexMat>
+#include <osg/Array>
 
 using namespace Vwr;
 
@@ -45,6 +48,7 @@ Vwr::CoreGraph::CoreGraph(Data::Graph * graph, osg::ref_ptr<osg::Camera> camera)
 	graphGroup = new osg::Group();
 
 	root->addChild(createSkyBox());
+
 
 	root->addChild(graphRotTransf);
 	graphRotTransf->addChild(graphGroup);
@@ -145,13 +149,98 @@ void CoreGraph::cleanUp()
 	delete edgesGroup;
 }
 
+osg::ref_ptr<osg::Node> CoreGraph::createTextureBackground(){
 
+	// texture
+	osg::Image* image = osgDB::readImageFile(appConf->getValue("Viewer.SkyBox.East").toStdString());
+	osg::ref_ptr<osg::Texture2D> skymap = new osg::Texture2D(image);
+
+	skymap->setDataVariance(osg::Object::DYNAMIC);
+	skymap->setFilter(osg::Texture::MIN_FILTER, osg::Texture::LINEAR_MIPMAP_LINEAR);
+	skymap->setFilter(osg::Texture::MAG_FILTER, osg::Texture::LINEAR);
+	skymap->setWrap(osg::Texture::WRAP_S, osg::Texture::CLAMP_TO_EDGE);
+	skymap->setWrap(osg::Texture::WRAP_T, osg::Texture::CLAMP_TO_EDGE);
+	//skymap->setWrap(osg::Texture::WRAP_R, osg::Texture::CLAMP_TO_EDGE);
+
+
+
+	// stateset
+	osg::ref_ptr<osg::StateSet> stateset = new osg::StateSet();
+	stateset->setTextureAttributeAndModes(0, skymap, osg::StateAttribute::ON);
+	stateset->setMode( GL_LIGHTING, osg::StateAttribute::OFF );
+	stateset->setMode( GL_CULL_FACE, osg::StateAttribute::OFF );
+	stateset->setRenderBinDetails(-1,"RenderBin");
+
+	osg::ref_ptr<osg::Depth> depth = new osg::Depth;
+	depth->setFunction(osg::Depth::ALWAYS);
+	depth->setRange(1, 1);
+	stateset->setAttributeAndModes(depth, osg::StateAttribute::ON );
+
+
+	// rectangle
+	// coordinates
+	osg::Vec3Array* coords = new osg::Vec3Array(4);
+	(*coords)[0].set( -1.0f, 1.0f, -1.0f );
+	(*coords)[1].set(  1.0f, 1.0f, -1.0f );
+	(*coords)[2].set(  1.0f, 1.0f,  1.0f );
+	(*coords)[3].set( -1.0f, 1.0f,  1.0f );
+
+	// normals
+	osg::Vec3Array* normals = new osg::Vec3Array(1);
+	(*normals)[0].set( 0.0f, 1.0f, 0.0f );
+
+	// texture coordinates
+	osg::Vec2Array* texCoords = new osg::Vec2Array(4);
+	(*texCoords)[0].set(0.0f, 0.0f);
+	(*texCoords)[1].set(1.0f, 0.0f);
+	(*texCoords)[2].set(1.0f, 1.0f);
+	(*texCoords)[3].set(0.0f, 1.0f);
+
+	osg::ref_ptr<osg::Geometry> geom = new osg::Geometry();
+	geom->addPrimitiveSet(new osg::DrawArrays(GL_QUADS, 0, 4));
+	geom->setVertexArray(coords);
+	geom->setNormalArray(normals);
+	geom->setNormalBinding(osg::Geometry::BIND_OVERALL);
+	geom->setTexCoordArray(0,texCoords);
+
+
+
+
+	osg::ref_ptr<osg::Geode> geode = new osg::Geode;
+	geode->setCullingActive(false);
+	geode->setStateSet(stateset);
+	geode->addDrawable(geom);
+
+	osg::ref_ptr<osg::Transform> transform = new SkyTransform;
+	//osg::ref_ptr<osg::Transform> transform = new MoveEarthySkyWithEyePointTran;
+	transform->setCullingActive(false);
+	transform->addChild(geode);
+
+	osg::ref_ptr<osg::ClearNode> clearNode = new osg::ClearNode;
+	clearNode->setRequiresClear(false);
+	clearNode->addChild(transform);
+	//clearNode->addChild(geode);
+
+
+	return clearNode;
+	return NULL;
+
+}
 
 osg::ref_ptr<osg::Node> CoreGraph::createSkyBox(){
+
+	if (appConf->getValue("Viewer.SkyBox.Noise").toInt() == 2) {
+		return createTextureBackground();
+	}
+
+	// skybox
 	if (appConf->getValue("Viewer.SkyBox.Noise").toInt() == 0) {
 		SkyBox * skyBox = new SkyBox;
 		return skyBox->createSkyBox();
-	} else {
+	}
+
+	// noise
+	if (appConf->getValue("Viewer.SkyBox.Noise").toInt() == 1) {
 
 		unsigned char red = (unsigned char) appConf->getValue("Viewer.Display.BackGround.R").toInt();
 		unsigned char green = (unsigned char) appConf->getValue("Viewer.Display.BackGround.G").toInt();
@@ -197,6 +286,7 @@ osg::ref_ptr<osg::Node> CoreGraph::createSkyBox(){
 
 		return clearNode;
 	}
+	return NULL;
 }
 
 osg::ref_ptr<osg::Group> CoreGraph::initEdgeLabels()

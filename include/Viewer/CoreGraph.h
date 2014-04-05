@@ -299,6 +299,7 @@ private:
 		*  \return osg::ref_ptr skybox node
 		*/
 	osg::ref_ptr<osg::Node> createSkyBox();
+	osg::ref_ptr<osg::Node> createTextureBackground();
 
 	/**
 		*  osg::ref_ptr camera
