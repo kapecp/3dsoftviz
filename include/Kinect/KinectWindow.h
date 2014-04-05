@@ -3,7 +3,6 @@
 
 #include <QDialog>
 #include <opencv2/core/core.hpp>
-#include "Kinect/KinectThread.h"
 
 class QLabel;
 class QPushButton;
@@ -12,6 +11,8 @@ class QStackedLayout;
 
 namespace Kinect
 {
+
+	class KinectThread;
 /**
  * @author Matej Marconak
  *@brief The KinectWindow class

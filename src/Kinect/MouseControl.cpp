@@ -13,7 +13,14 @@ Kinect::MouseControl::MouseControl()
 		mWindowWidth=viewer->width();
 		mWindowHeight=viewer->height();
 		mWindowEndX=mWindowStartX+mWindowWidth;
-		mWindowEndY=mWindowEndY+mWindowHeight;
+		mWindowEndY=mWindowStartX+mWindowHeight;
+
+		//primary speed of movement
+		mSpeedMoving=1.0;
+		//from Kinect World coordinates are 640x480
+		mRatioX = mWindowEndX/640.0;
+		mRatioY=mWindowEndY/480.0;
+
 	}
 	else
 	{
@@ -23,27 +30,31 @@ Kinect::MouseControl::MouseControl()
 
 void Kinect::MouseControl::moveMouse(float positionX, float positionY)
 {
+	// add event to Event Queue - osgGa eventy
 	viewer->getEventQueue()->mouseMotion(positionX,positionY);
 }
 
 void Kinect::MouseControl::clickPressMouse(Qt::MouseButton button)
 {
+	//corection of cursor position for VieverQT
 	this->corectionMousePosition(viewer->cursor().pos().x(),viewer->cursor().pos().y());
+	//add press action
 	viewer->getEventQueue()->mouseButtonPress(clickX,clickY,button);
-	//TODO test action - click,move,release or click/release
+	//register movement of action
 	this->moveMouse(clickX,clickY);
 }
 
 void Kinect::MouseControl::clickPressMouse(float positionX,float positionY,Qt::MouseButton button)
 {
 	viewer->getEventQueue()->mouseButtonPress(positionX,positionY,button);
-	//TODO  test action - click,move,release or click/release
 	this->moveMouse(positionX,positionY);
 }
 
 void Kinect::MouseControl::releasePressMouse(Qt::MouseButton button)
 {
+	//corection of position
 	this->corectionMousePosition(viewer->cursor().pos().x(),viewer->cursor().pos().y());
+	//release of button
 	viewer->getEventQueue()->mouseButtonRelease(clickX,clickY,button);
 }
 
@@ -61,8 +72,9 @@ void Kinect::MouseControl::clickMouseLeftButton()
 
 void Kinect::MouseControl::corectionMousePosition(int positionX, int positionY)
 {
+	// VieverQT is shiffted from start X,Y
 	clickX=(float)(positionX-mWindowStartX);
-	//temporary corection
+	//reverted Y + shifted position + constant for corection
 	clickY=(float)(mWindowHeight+mWindowStartY-positionY+20);
 }
 
@@ -72,6 +84,7 @@ void Kinect::MouseControl::moveCursorMouse(double positionX, double positionY, b
 	double curentCursorX=(double)viewer->cursor().pos().x();
 	double curentCursorY=(double)viewer->cursor().pos().y();
 
+	//data if previous position
 	static double subPixelX=0;
 	static double subPixelY=0;
 
@@ -80,6 +93,7 @@ void Kinect::MouseControl::moveCursorMouse(double positionX, double positionY, b
 	double deltaX=(double) ((double)(positionX)-prevX);
 	double deltaY=(double) ((double)(positionY)-prevY);
 
+	//based on formula
 	double speed = sqrt(deltaX*deltaX + deltaY*deltaY);
 	//acceleration
 	speed = 1.0*speed + 0.09*speed*speed;
@@ -87,7 +101,28 @@ void Kinect::MouseControl::moveCursorMouse(double positionX, double positionY, b
 	int newPositionX=(int) (curentCursorX + subPixelX+deltaX*speed);
 	int newPositionY=(int) (curentCursorY + subPixelY+deltaY*speed);
 
-	//TODO add constraint for position
+	viewer->cursor().setPos(newPositionX,newPositionY);
+	// if button is pressed, need for movement osgGA
+	if(isClick)
+	{
+		this->corectionMousePosition(viewer->cursor().pos().x(),viewer->cursor().pos().y());
+		this->moveMouse(clickX,clickY);
+	}
+	//for previous position
+	subPixelX=(deltaX*speed - (int)(deltaX*speed));
+	subPixelX=(deltaY*speed - (int)(deltaY*speed));
+
+	prevX=(double) positionX;
+	prevY= (double) positionY;
+
+}
+
+
+void Kinect::MouseControl::moveCursorWorldCoordinates(double positionX, double positionY, bool isClick)
+{
+	int newPositionX=positionX*mRatioX*mSpeedMoving;
+	int newPositionY=positionY*mRatioY*mSpeedMoving;
+
 	viewer->cursor().setPos(newPositionX,newPositionY);
 	if(isClick)
 	{
@@ -95,43 +130,9 @@ void Kinect::MouseControl::moveCursorMouse(double positionX, double positionY, b
 		this->moveMouse(clickX,clickY);
 	}
 
-	subPixelX=(deltaX*speed - (int)(deltaX*speed));
-	subPixelX=(deltaY*speed - (int)(deltaY*speed));
-
-	 prevX=(double) positionX;
-	 prevY= (double) positionY;
-
 }
 
-
-void Kinect::MouseControl::moveCursorWorldCoordinates(double positionX, double positionY, bool isClick)
+void Kinect::MouseControl::setSpeedUpMoving(double speed)
 {
-	//viewer->cursor().pos();
-	viewer->cursor().setPos(positionX*1.5,positionY*1.5);
-	if(isClick)
-	{
-		this->corectionMousePosition(viewer->cursor().pos().x(),viewer->cursor().pos().y());
-		this->moveMouse(clickX,clickY);
-	}
-
+	mSpeedMoving=speed;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

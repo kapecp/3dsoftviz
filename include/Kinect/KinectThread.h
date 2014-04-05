@@ -6,12 +6,14 @@
 
 #include "OpenNI.h"
 #include "NiTE.h"
-#include "Kinect/KinectThread.h"
-#include "Kinect/KinectHandTracker.h"
 
 #include <opencv2/core/core.hpp>
 
 namespace Kinect{
+
+	class KinectThread;
+	class KinectHandTracker;
+	class KinectRecognition;
 
 class KinectThread : public QThread
 {
@@ -53,11 +55,6 @@ private:
 
 
 };
-
-
-
-
-
 }
 
 #endif // KINECTTHREAD_H

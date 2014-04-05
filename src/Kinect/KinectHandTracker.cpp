@@ -1,5 +1,5 @@
 #include "Kinect/KinectHandTracker.h"
-
+#include "Kinect/MouseControl.h"
 #include "QDebug"
 
 Kinect::KinectHandTracker::KinectHandTracker(openni::Device *device, openni::VideoStream *m_depth)

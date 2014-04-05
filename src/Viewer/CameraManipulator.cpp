@@ -25,9 +25,6 @@ double Vwr::CameraManipulator::EYE_MOVEMENT_SPEED;
 double Vwr::CameraManipulator::TARGET_MOVEMENT_SPEED;
 float Vwr::CameraManipulator::SCREEN_MARGIN;
 
-namespace Vwr {
-
-
 Vwr::CameraManipulator::CameraManipulator(Vwr::CoreGraph * coreGraph)
 {
 	appConf = Util::ApplicationConfig::get();
@@ -1027,14 +1024,14 @@ void Vwr::CameraManipulator::stop()
 	pitchSpeed = 0.0;
 }
 
-void CameraManipulator::notifyClients() {
+void Vwr::CameraManipulator::notifyClients() {
 	Network::Server * server = Network::Server::getInstance();
 	if (server->isListening()) {
 		server->sendMyView(_center,_rotation, _distance);
 	}
 }
 
-void CameraManipulator::notifyServer() {
+void Vwr::CameraManipulator::notifyServer() {
 	Network::Client * client = Network::Client::getInstance();
 	if (client->isConnected()) {
 		client->sendMyView(_center,_rotation, _distance);
@@ -1087,9 +1084,6 @@ void Vwr::CameraManipulator::setRotationHead(float x, float y, float distance)
 		// vertical rotation
 		trackball(axis,angle,0.0, y, 0.0, 0.0);
 		osg::Quat Ynew_rotate(angle * throwScale,axis);
-
-
-
 
 
 		if( _cameraCanRot ){ // rotate camera
@@ -1180,10 +1174,5 @@ void Vwr::CameraManipulator::setCameraCanRot( bool cameraCanRot)
 {
 	_cameraCanRot = cameraCanRot;
 }
-
-
-
-} // namespace
-
 
 #pragma GCC diagnostic pop

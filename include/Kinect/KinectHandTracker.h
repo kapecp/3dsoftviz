@@ -1,12 +1,9 @@
+#ifndef KINECTHANDTRACKER_H
+#define KINECTHANDTRACKER_H
+
 #include "Kinect/HistoryBuffer.h"
 #include "OpenNI.h"
 #include "NiTE.h"
-#include "Kinect/KinectRecognition.h"
-#include "Kinect/MouseControl.h"
-
-
-#ifndef KINECTHANDTRACKER_H
-#define KINECTHANDTRACKER_H
 
 #define NUM_HANDS 2
 
@@ -16,6 +13,10 @@ namespace Kinect{
  * @author Patrik Hlavac
  * @brief The KinectHandTracker class
  */
+
+	class KinectRecognition;
+	class MouseControl;
+
 
 class KinectHandTracker{
 
