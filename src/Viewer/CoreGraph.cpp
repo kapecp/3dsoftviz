@@ -7,6 +7,7 @@
 #include "Viewer/SkyTransform.h"
 #include "Viewer/TextureWrapper.h"
 
+
 #include "Network/Server.h"
 
 #include "Data/Graph.h"
@@ -15,12 +16,7 @@
 
 #include <osgUtil/Optimizer>
 #include <osg/Depth>
-#include <osg/TextureRectangle>
-#include <osg/TexMat>
-#include <osg/Array>
 
-#include <opencv2/core/core.hpp>
-#include <opencv2/highgui/highgui.hpp>
 
 using namespace Vwr;
 
@@ -154,43 +150,6 @@ void CoreGraph::cleanUp()
 
 osg::ref_ptr<osg::Node> CoreGraph::createTextureBackground(){
 
-	// texture
-	//osg::Image* image = osgDB::readImageFile(appConf->getValue("Viewer.SkyBox.East").toStdString());
-
-	std::string filepath = appConf->getValue("Viewer.SkyBox.East").toStdString();
-	cv::Mat cvImg = cv::imread( filepath, CV_LOAD_IMAGE_COLOR);
-	IplImage* iplImg = cvCloneImage( &(IplImage)cvImg);
-
-	osg::Image* image = new osg::Image;
-	image->setImage( iplImg->width, iplImg->height, 3,
-				 GL_RGB, GL_BGR, GL_UNSIGNED_BYTE,
-				 (BYTE*)( iplImg->imageData),
-				 osg::Image::AllocationMode::NO_DELETE, 1);
-
-
-	osg::ref_ptr<osg::Texture2D> skymap = new osg::Texture2D(image);
-	skymap->setDataVariance(osg::Object::DYNAMIC);
-	skymap->setFilter(osg::Texture::MIN_FILTER, osg::Texture::LINEAR_MIPMAP_LINEAR);
-	skymap->setFilter(osg::Texture::MAG_FILTER, osg::Texture::LINEAR);
-	skymap->setWrap(osg::Texture::WRAP_S, osg::Texture::CLAMP_TO_EDGE);
-	skymap->setWrap(osg::Texture::WRAP_T, osg::Texture::CLAMP_TO_EDGE);
-	//skymap->setWrap(osg::Texture::WRAP_R, osg::Texture::CLAMP_TO_EDGE);
-
-
-
-	// stateset
-	osg::ref_ptr<osg::StateSet> stateset = new osg::StateSet();
-	stateset->setTextureAttributeAndModes(0, skymap, osg::StateAttribute::ON);
-	stateset->setMode( GL_LIGHTING, osg::StateAttribute::OFF );
-	stateset->setMode( GL_CULL_FACE, osg::StateAttribute::OFF );
-	stateset->setRenderBinDetails(-1,"RenderBin");
-
-	osg::ref_ptr<osg::Depth> depth = new osg::Depth;
-	depth->setFunction(osg::Depth::ALWAYS);
-	depth->setRange(1, 1);
-	stateset->setAttributeAndModes(depth, osg::StateAttribute::ON );
-
-
 	// rectangle
 	// coordinates
 	osg::Vec3Array* coords = new osg::Vec3Array(4);
@@ -211,11 +170,38 @@ osg::ref_ptr<osg::Node> CoreGraph::createTextureBackground(){
 	(*texCoords)[3].set(0.0f, 0.0f);
 
 	osg::ref_ptr<osg::Geometry> geom = new osg::Geometry();
+	//geom->setDataVariance(osg::Object::DYNAMIC);
 	geom->addPrimitiveSet(new osg::DrawArrays(GL_QUADS, 0, 4));
 	geom->setVertexArray(coords);
 	geom->setNormalArray(normals);
 	geom->setNormalBinding(osg::Geometry::BIND_OVERALL);
 	geom->setTexCoordArray(0,texCoords);
+
+
+	// texture
+	mCameraStream = new CameraStream();
+
+	osg::ref_ptr<osg::Texture2D> skymap = new osg::Texture2D( mCameraStream );
+	skymap->setDataVariance(osg::Object::DYNAMIC);
+	skymap->setFilter(osg::Texture::MIN_FILTER, osg::Texture::LINEAR_MIPMAP_LINEAR);
+	skymap->setFilter(osg::Texture::MAG_FILTER, osg::Texture::LINEAR);
+	skymap->setWrap(osg::Texture::WRAP_S, osg::Texture::CLAMP_TO_EDGE);
+	skymap->setWrap(osg::Texture::WRAP_T, osg::Texture::CLAMP_TO_EDGE);
+	//skymap->setWrap(osg::Texture::WRAP_R, osg::Texture::CLAMP_TO_EDGE);
+
+
+	// stateset
+	osg::ref_ptr<osg::StateSet> stateset = new osg::StateSet();
+	stateset->setTextureAttributeAndModes(0, skymap, osg::StateAttribute::ON);
+	stateset->setMode( GL_LIGHTING, osg::StateAttribute::OFF );
+	stateset->setMode( GL_CULL_FACE, osg::StateAttribute::OFF );
+	stateset->setRenderBinDetails(-1,"RenderBin");
+
+	osg::ref_ptr<osg::Depth> depth = new osg::Depth;
+	depth->setFunction(osg::Depth::ALWAYS);
+	depth->setRange(1, 1);
+	stateset->setAttributeAndModes(depth, osg::StateAttribute::ON );
+
 
 
 
@@ -237,7 +223,6 @@ osg::ref_ptr<osg::Node> CoreGraph::createTextureBackground(){
 
 
 	return clearNode;
-	return NULL;
 
 }
 

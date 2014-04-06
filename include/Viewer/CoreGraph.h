@@ -12,6 +12,7 @@
 #include "Viewer/NodeGroup.h"
 #include "Data/Edge.h"
 #include "Data/Node.h"
+#include "Viewer/CameraStream.h"
 
 
 #include <QMap>
@@ -28,6 +29,7 @@ namespace Data
 namespace Vwr
 {
 	class EdgeGroup;
+	//class CameraStream;
 //	class NodeGroup;
 }
 
@@ -420,6 +422,8 @@ private:
 	int customNodesPosition;
 
 	int prevTime;
+
+	osg::ref_ptr<CameraStream> mCameraStream;
 
 	};
 }
