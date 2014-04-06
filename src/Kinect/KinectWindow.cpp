@@ -129,12 +129,12 @@ void Kinect::KinectWindow::pausewindows()
 	else if(mKinectPause->text().toStdString().compare(tr("Pause").toStdString())==0)
 	{
 		mKinectPause->setText(tr("Continue"));
-		emit sendImageKinect(true);
+		emit sendImageKinect(false);
 	}
 	else
 	{
 		mKinectPause->setText(tr("Pause"));
-		emit sendImageKinect(false);
+		emit sendImageKinect(true);
 	}
 
 }
