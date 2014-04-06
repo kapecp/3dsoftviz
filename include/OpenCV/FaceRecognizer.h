@@ -74,6 +74,8 @@ public:
 private:
 
 	cv::Rect rect;
+	cv::Rect drawrect;
+	bool firstdetection;
 
 	/**
 		 * @author Autor: Marek Jakab

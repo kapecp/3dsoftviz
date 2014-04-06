@@ -38,14 +38,16 @@ void QOpenCV::FaceRecognitionThread::run()
 		mFaceRecognizer->annotateFaces( image );
 
 		if( mSendImgEnabled ){
-			emit pushImage( image.clone() ); // ???
+			if (image.data)
+				emit pushImage( image.clone() ); // ???
 		}
 
 		if( mFaceRecognizer->detected && mFaceRecognizer->isMovement ) {
 			emit sendEyesCoords( (float) -mFaceRecognizer->getEyesCoords().x,
 								 (float) -mFaceRecognizer->getEyesCoords().y,
 								 -mFaceRecognizer->getHeadDistance( mCapVideo->getWidth()) );
-		}
+		}	
+		msleep(80);
 	}
 	mCapVideo->release();
 	mCapVideo = NULL;
