@@ -516,7 +516,7 @@ if (COMMAND cotire)
 		set_target_properties(${3DSOFTVIZ_NAME} PROPERTIES COTIRE_UNITY_LINK_LIBRARIES_INIT "COPY")
 	endif()
 
-	cotire( ${3DSOFTVIZ_NAME} )
+        cotire( ${3DSOFTVIZ_NAME} CONFIGURATIONS Release Debug)
 
 	if (${CMAKE_VERSION} VERSION_LESS "2.8.11")
 		target_link_libraries(${3DSOFTVIZ_NAME}_unity
