@@ -19,6 +19,9 @@
 #include <osg/TexMat>
 #include <osg/Array>
 
+#include <opencv2/core/core.hpp>
+#include <opencv2/highgui/highgui.hpp>
+
 using namespace Vwr;
 
 /*
@@ -152,9 +155,20 @@ void CoreGraph::cleanUp()
 osg::ref_ptr<osg::Node> CoreGraph::createTextureBackground(){
 
 	// texture
-	osg::Image* image = osgDB::readImageFile(appConf->getValue("Viewer.SkyBox.East").toStdString());
-	osg::ref_ptr<osg::Texture2D> skymap = new osg::Texture2D(image);
+	//osg::Image* image = osgDB::readImageFile(appConf->getValue("Viewer.SkyBox.East").toStdString());
 
+	std::string filepath = appConf->getValue("Viewer.SkyBox.East").toStdString();
+	cv::Mat cvImg = cv::imread( filepath, CV_LOAD_IMAGE_COLOR);
+	IplImage* iplImg = cvCloneImage( &(IplImage)cvImg);
+
+	osg::Image* image = new osg::Image;
+	image->setImage( iplImg->width, iplImg->height, 3,
+				 GL_RGB, GL_BGR, GL_UNSIGNED_BYTE,
+				 (BYTE*)( iplImg->imageData),
+				 osg::Image::AllocationMode::NO_DELETE, 1);
+
+
+	osg::ref_ptr<osg::Texture2D> skymap = new osg::Texture2D(image);
 	skymap->setDataVariance(osg::Object::DYNAMIC);
 	skymap->setFilter(osg::Texture::MIN_FILTER, osg::Texture::LINEAR_MIPMAP_LINEAR);
 	skymap->setFilter(osg::Texture::MAG_FILTER, osg::Texture::LINEAR);
@@ -191,10 +205,10 @@ osg::ref_ptr<osg::Node> CoreGraph::createTextureBackground(){
 
 	// texture coordinates
 	osg::Vec2Array* texCoords = new osg::Vec2Array(4);
-	(*texCoords)[0].set(0.0f, 0.0f);
-	(*texCoords)[1].set(1.0f, 0.0f);
-	(*texCoords)[2].set(1.0f, 1.0f);
-	(*texCoords)[3].set(0.0f, 1.0f);
+	(*texCoords)[0].set(0.0f, 1.0f);
+	(*texCoords)[1].set(1.0f, 1.0f);
+	(*texCoords)[2].set(1.0f, 0.0f);
+	(*texCoords)[3].set(0.0f, 0.0f);
 
 	osg::ref_ptr<osg::Geometry> geom = new osg::Geometry();
 	geom->addPrimitiveSet(new osg::DrawArrays(GL_QUADS, 0, 4));
