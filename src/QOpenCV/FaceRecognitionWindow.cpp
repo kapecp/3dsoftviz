@@ -53,13 +53,19 @@ void QOpenCV::FaceRecognitionWindow::configureWindow()
 	mFaceRecStartCancelPB	= new QPushButton( tr("Start FaceRec"));
 	mMarkerStartCancelPB	= new QPushButton( tr("Start Marker"));
 
+	mMarkerBackgrCB			= new QCheckBox( tr("Background"));
+	mFaceDetBackgrCB		= new QCheckBox( tr("Background"));
+
 	mMarkerBehindCB			= new QCheckBox( tr("Marker is behind"));
 	mCorEnabledCB			= new QCheckBox( tr("Corection"));
 	mUpdateCorParPB			= new QPushButton( tr("Update cor. param."));
 
 	QHBoxLayout *mainLayout		= new QHBoxLayout;
 	QVBoxLayout *buttonLayout	= new QVBoxLayout;
-
+	/*
+	mFaceDetBackgrCB
+	mMarkerBackgrCB
+		*/
 	mFaceRecRB->setChecked(true);
 	buttonLayout->addWidget( mFaceRecRB );
 	buttonLayout->addWidget( mMarkerRB );
@@ -79,12 +85,19 @@ void QOpenCV::FaceRecognitionWindow::configureWindow()
 	faceRecPageWid->setLayout( faceRecPageLayout );
 	markerPageWid->setLayout( markerPageLayout );
 
+	faceRecPageLayout->addWidget( mFaceDetBackgrCB );
 	faceRecPageLayout->addWidget( mFaceRecStartCancelPB );
+
 
 	markerPageLayout->addWidget( mMarkerBehindCB );
 	markerPageLayout->addWidget( mCorEnabledCB );
 	markerPageLayout->addWidget( mUpdateCorParPB );
+
+	markerPageLayout->addWidget( mMarkerBackgrCB );
 	markerPageLayout->addWidget( mMarkerStartCancelPB );
+
+
+
 
 
 	// set layout
@@ -95,6 +108,10 @@ void QOpenCV::FaceRecognitionWindow::configureWindow()
 	adjustSize();
 
 	// this could be changed
+	mFaceDetBackgrCB->setEnabled(false);
+	mMarkerBackgrCB->setEnabled(false);
+	mFaceDetBackgrCB->setChecked(false);
+	mMarkerBackgrCB->setChecked(false);
 	mFaceRecStartCancelPB->setCheckable(true);
 	mMarkerStartCancelPB->setCheckable(true);
 	mMarkerBehindCB->setEnabled(false);
@@ -110,6 +127,29 @@ void QOpenCV::FaceRecognitionWindow::configureWindow()
 	connect( mMarkerStartCancelPB,  SIGNAL(clicked(bool)), this, SLOT(onMarkerStartCancel(bool)) );
 	connect( mFaceRecStartCancelPB, SIGNAL(clicked(bool)), this, SLOT(onFaceRecStartCancel(bool)) );
 
+	connect( mMarkerBackgrCB, SIGNAL(clicked(bool)), this, SLOT(onMarkerBackgrCBClicked(bool)) );
+	connect( mFaceDetBackgrCB, SIGNAL(clicked(bool)), this, SLOT(onFaceDetBackgrCBClicked(bool)) );
+}
+
+void QOpenCV::FaceRecognitionWindow::onFaceDetBackgrCBClicked(bool checked)
+{
+	qDebug() << "onFaceDetBackgrCBClicked " << checked;
+	emit sendBackgrImgFaceRec( checked );
+
+	if( checked){
+		emit sendBackgrImgMarker(false);
+		mMarkerBackgrCB->setChecked(false);
+	}
+}
+void QOpenCV::FaceRecognitionWindow::onMarkerBackgrCBClicked(bool checked)
+{
+	qDebug() << "onMarkerBackgrCBClicked " << checked;
+	emit sendBackgrImgMarker( checked );
+
+	if( checked){
+		emit sendBackgrImgFaceRec(false);
+		mFaceDetBackgrCB->setChecked(false);
+	}
 }
 
 
@@ -161,9 +201,11 @@ void QOpenCV::FaceRecognitionWindow::onFaceRecStartCancel( bool checked )
 		emit setCapVideoFaceRec( OpenCV::CamSelectCore::getInstance()->selectCamera());
 		emit startFaceRec();
 		mFaceRecStartCancelPB->setEnabled(true);
+		mFaceDetBackgrCB->setEnabled(true);
 
 	} else {
 		mFaceRecStartCancelPB->setEnabled(false);
+		mFaceDetBackgrCB->setEnabled(false);
 		emit stopFaceRec(true);
 
 	}
@@ -179,12 +221,14 @@ void QOpenCV::FaceRecognitionWindow::onMarkerStartCancel( bool checked )
 		emit setCapVideoMarker( OpenCV::CamSelectCore::getInstance()->selectCamera());
 		emit startMarker();
 		mMarkerStartCancelPB->setEnabled(true);
+		mMarkerBackgrCB->setEnabled(true);
 
 	} else {
 		mMarkerStartCancelPB->setEnabled(false);
 		mMarkerBehindCB->setEnabled(false);
 		mCorEnabledCB->setEnabled(false);
 		mUpdateCorParPB->setEnabled(false);
+		mMarkerBackgrCB->setEnabled(false);
 		emit stopMarker(true);
 
 	}
