@@ -8,6 +8,7 @@ Kinect::KinectHandTracker::KinectHandTracker(openni::Device *device, openni::Vid
 	m_pHandTracker.startGestureDetection(nite::GESTURE_WAVE);
 	m_pHandTracker.startGestureDetection(nite::GESTURE_CLICK);
 	isClick=false;
+	isCursorMovementEnable=true;
 	mouse = new Kinect::MouseControl();
 	mDepth=m_depth;
 }
@@ -15,6 +16,11 @@ Kinect::KinectHandTracker::KinectHandTracker(openni::Device *device, openni::Vid
 
 Kinect::KinectHandTracker::~KinectHandTracker()
 {
+}
+
+void Kinect::KinectHandTracker::setCursorMovement(bool set)
+{
+	isCursorMovementEnable=set;
 }
 
 void Kinect::KinectHandTracker::getAllGestures()
@@ -87,15 +93,11 @@ void Kinect::KinectHandTracker::getAllHands()
 
 			// Data for mouse
 			//first find HAND = MOUSE
-			if(i==0)
+			if(i==0 && isCursorMovementEnable)
 			{
 				//mouse->moveCursorMouse(user.getPosition().x/2,-1.0*user.getPosition().y/2,isClick);
-				//printf("%lf %lf",user.getPosition().x,-1,0*user.getPosition().y);
-				/// new version
 				coordinateConverter.convertWorldToDepth(*mDepth, user.getPosition().x, user.getPosition().y, user.getPosition().z, &mDepthX, &mDepthY, &mDepthZ);
 				mouse->moveCursorWorldCoordinates(mDepthX,mDepthY,isClick);
-				/////////////
-
 			}
 
 			// If two hands have been found get the position of the rectangle

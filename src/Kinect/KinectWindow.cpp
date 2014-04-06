@@ -36,6 +36,9 @@ void Kinect::KinectWindow::configureWindow(void)
 	mKinectPause=new QPushButton(tr("Start"));
 	connect(mKinectPause,SIGNAL(clicked()),this,SLOT(pausewindows()));
 
+	mDisableCursor = new QCheckBox(tr("Turn off cursor"));
+	connect(mDisableCursor,SIGNAL(clicked()),this,SLOT(stopMovingCursor()));
+
 	//TODO add two different options for view kinect video
 	mKinectColor = new QRadioButton( tr("Color Map"));
 	mKinectDepthMap = new QRadioButton( tr("Depth map"));
@@ -50,6 +53,7 @@ void Kinect::KinectWindow::configureWindow(void)
 	buttonsLayout->setAlignment(Qt::AlignTop);
 	buttonsLayout->setAlignment(Qt::AlignTop);
 	buttonsLayout_2->addWidget(mKinectPause);
+	buttonsLayout_2->addWidget(mDisableCursor);
 	frameLayout->setAlignment(Qt::AlignCenter);
 	frameLayout->addWidget(mWindowLabel);
 
@@ -59,6 +63,20 @@ void Kinect::KinectWindow::configureWindow(void)
 	setLayout(mainLayout);
 
 	adjustSize();
+
+}
+
+void Kinect::KinectWindow::stopMovingCursor()
+{
+	if(mDisableCursor->isChecked())
+	{
+		setMovementCursor(false);
+	}
+	else
+	{
+		setMovementCursor(true);
+	}
+
 
 }
 

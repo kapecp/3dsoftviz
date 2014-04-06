@@ -102,4 +102,10 @@ void Kinect::KinectCore::createConnectionKinect()
 					  AppCore::Core::getInstance(NULL)->getCoreWindow()->getCameraManipulator(),
 					  SLOT(setRotationHead(float,float,float)) );
 
+	//enable/disable cursor movement
+	QObject::connect(mKinectDialog,
+					 SIGNAL(setMovementCursor(bool)),
+					 mThrKinect,
+					 SLOT(setCursorMovement(bool)));
+
 }

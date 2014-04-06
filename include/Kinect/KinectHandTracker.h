@@ -42,6 +42,8 @@ public:
 	void getAllHands();
 	void getRotatingMove();
 
+	void setCursorMovement(bool set);
+
 
 	nite::HandTracker m_pHandTracker;
 	std::map<int, HistoryBuffer<20> *> g_histories;
@@ -50,6 +52,8 @@ public:
 
 private:
 	bool isClick;
+	bool isCursorMovementEnable;
+
 	MouseControl *mouse;
 	openni::VideoStream  *mDepth;
 

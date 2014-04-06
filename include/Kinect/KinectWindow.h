@@ -8,11 +8,12 @@ class QLabel;
 class QPushButton;
 class QRadioButton;
 class QStackedLayout;
+class QCheckBox;
 
 namespace Kinect
 {
 
-	class KinectThread;
+class KinectThread;
 /**
  * @author Matej Marconak
  *@brief The KinectWindow class
@@ -59,7 +60,11 @@ signals:
 	 */
 	void sendImageKinect(bool send);
 
-
+	/**
+	 * @brief enable/disable for cursor move
+	 * @param send true for stop, false for start
+	 */
+	void setMovementCursor(bool send);
 
 public slots:
 
@@ -69,6 +74,11 @@ public slots:
 	void pausewindows();
 
 	void quitWindows();
+
+
+private slots:
+
+	void stopMovingCursor();
 
 private:
 
@@ -80,9 +90,8 @@ private:
 	QLabel			*mWindowLabel;
 	QRadioButton	*mKinectColor;
 	QRadioButton	*mKinectDepthMap;
-
 	QStackedLayout	*mModulesStackL;
-
+	QCheckBox		*mDisableCursor;
 	QPushButton		*mKinectPause;
 
 	Kinect::KinectThread *thr;

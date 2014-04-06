@@ -33,6 +33,11 @@ void Kinect::KinectThread::pause()
 	mCancel=true;
 }
 
+void Kinect::KinectThread::setCursorMovement(bool set)
+{
+	isCursorEnable=set;
+}
+
 // SIGNAL 1
 //void Kinect::KinectThread::sendSliderCoords(float _t1, float _t2, float _t3)
 //{
@@ -78,11 +83,11 @@ void Kinect::KinectThread::run()
 		color.readFrame(&colorFrame);
 		frame=mKinect->colorImageCvMat(colorFrame);
 
+		kht->setCursorMovement(isCursorEnable);
 
 		// cita handframe, najde gesto na snimke a vytvori mu "profil"
 		kht->getAllGestures();
 		kht->getAllHands();
-
 		//////////////End/////////////
 
 		//	cap >> frame; // get a new frame from camera

@@ -122,7 +122,6 @@ void Kinect::MouseControl::moveCursorWorldCoordinates(double positionX, double p
 {
 	int newPositionX=positionX*mRatioX*mSpeedMoving;
 	int newPositionY=positionY*mRatioY*mSpeedMoving;
-
 	viewer->cursor().setPos(newPositionX,newPositionY);
 	if(isClick)
 	{
