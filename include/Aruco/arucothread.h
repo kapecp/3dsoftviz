@@ -70,6 +70,8 @@ signals:
 	//void pushImage( cv::Mat image );
 	void pushImage( QImage qimage );
 
+	void pushBackgrImage( cv::Mat image );
+
 	/**
 	* @author Dávid Durčák
 	* @brief corParUpdated Signal when correction parameters were update succefull
@@ -111,6 +113,7 @@ public slots:
 	* @param sendImgEnabled
 	*/
 	void setSendImgEnabling( bool sendImgEnabled );
+	void setSendBackgrImgEnabled( bool sendBackgrImgEnabled );
 
 	/**
 	* @author Dávid Durčák
@@ -179,6 +182,7 @@ private:
 	bool		mCorEnabled;		// if true, correction is enabled
 	bool		mUpdCorPar;			// if true, correction can be setted
 	bool		mSendImgEnabled;	// if true, of emiting actual frame is enabled
+	bool		mSendBackgrImgEnabled;
 
 	QMatrix4x4	mCorM;				// correction matrix
 	osg::Quat	mCorQ;				// correction quaternion
