@@ -38,7 +38,7 @@ signals:
 
 	/**
 	 * @brief Signal for enable Normal Video
-	 * @param send
+	 * @param true for color, false for depth
 	 */
 	void sendNormalVideo(bool send);
 
@@ -49,9 +49,14 @@ signals:
 
 	/**
 	 * @brief stopKinect
+	 * @param true for stop, false to continue
 	 */
 	void stopKinect(bool set);
 
+	/**
+	 * @brief enable to view kinect video
+	 * @param send true for enable, false for disable
+	 */
 	void sendImageKinect(bool send);
 
 
@@ -64,11 +69,6 @@ public slots:
 	void pausewindows();
 
 	void quitWindows();
-
-
-private slots:
-
-	void onKinectStartCancel(bool checked);
 
 private:
 
@@ -84,13 +84,9 @@ private:
 	QStackedLayout	*mModulesStackL;
 
 	QPushButton		*mKinectPause;
-	QPushButton		*mKinectSTop;
-	QPushButton *mKinectStartStop;
 
 	Kinect::KinectThread *thr;
 
-
 };
-
 }
 #endif // KINECTWINDOW_H

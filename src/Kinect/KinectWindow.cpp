@@ -8,11 +8,6 @@
 #include <QtGui/QStackedLayout>
 #include "QDebug"
 
-#include <opencv2/imgproc/imgproc.hpp>
-
-
-
-
 using namespace Kinect;
 using namespace cv;
 
@@ -22,6 +17,7 @@ Kinect::KinectWindow::KinectWindow(QWidget *parent, QApplication * app, KinectTh
 	this->thr=thr;
 	configureWindow();
 }
+
 QLabel *Kinect::KinectWindow::getLabel() const
 {
 	return mWindowLabel;
@@ -40,15 +36,9 @@ void Kinect::KinectWindow::configureWindow(void)
 	mKinectPause=new QPushButton(tr("Start"));
 	connect(mKinectPause,SIGNAL(clicked()),this,SLOT(pausewindows()));
 
-			mKinectSTop=new QPushButton(tr("Cancel"));
-	connect(mKinectSTop,SIGNAL(clicked()),this,SLOT(quitWindows()));
-
-	//mModulesStackL			= new QStackedLayout;
+	//TODO add two different options for view kinect video
 	mKinectColor = new QRadioButton( tr("Color Map"));
 	mKinectDepthMap = new QRadioButton( tr("Depth map"));
-
-	//mModulesStackL->addWidget( mKinectColor );
-	//mModulesStackL->addWidget( mKinectDepthMap );
 
 
 	QHBoxLayout *buttonsLayout = new QHBoxLayout;
@@ -60,7 +50,6 @@ void Kinect::KinectWindow::configureWindow(void)
 	buttonsLayout->setAlignment(Qt::AlignTop);
 	buttonsLayout->setAlignment(Qt::AlignTop);
 	buttonsLayout_2->addWidget(mKinectPause);
-	buttonsLayout_2->addWidget(mKinectSTop);
 	frameLayout->setAlignment(Qt::AlignCenter);
 	frameLayout->addWidget(mWindowLabel);
 
@@ -69,24 +58,6 @@ void Kinect::KinectWindow::configureWindow(void)
 	mainLayout->addLayout(frameLayout);
 	setLayout(mainLayout);
 
-
-	/*mWindowLabel = new QLabel("", this, 0);
-	mKinectColor = new QRadioButton( tr("Color Map"));
-	mKinectDepthMap = new QRadioButton( tr("Depth map"));
-
-	QHBoxLayout *mainLayout		= new QHBoxLayout;
-	QVBoxLayout *buttonLayout	= new QVBoxLayout;
-
-	mKinectColor->setChecked(true);
-	buttonLayout->addWidget( mKinectColor );
-	buttonLayout->addWidget( mKinectDepthMap );
-
-	//buttonLayout->addWidget( mKinectStartStop );
-	// set layout
-	mainLayout->addLayout( buttonLayout );
-	mainLayout->addWidget( mWindowLabel, Qt::AlignCenter );
-	mainLayout->setSizeConstraint(QLayout::SetMinimumSize);
-	setLayout( mainLayout );*/
 	adjustSize();
 
 }
@@ -115,35 +86,22 @@ void Kinect::KinectWindow::setLabelQ( QImage qimage )
 	mWindowLabel->setPixmap( QPixmap::fromImage(qimage) );
 }
 
-
-void Kinect::KinectWindow::onKinectStartCancel(bool checked)
-{
-
-	if(checked)
-	{
-		mKinectStartStop->setText(tr("Stop Kinect"));
-		emit startKinect();
-	}
-	else
-	{
-		mKinectStartStop->setEnabled(false);
-		emit stopKinect(false);
-	}
-
-}
-
 void Kinect::KinectWindow::pausewindows()
 {
-	if (mKinectPause->text().toStdString().compare(tr("Pause").toStdString())==0)
+	if (mKinectPause->text().toStdString().compare(tr("Start").toStdString())==0)
+	{
+		mKinectPause->setText(tr("Pause"));
+		emit startKinect();
+	}
+	else if(mKinectPause->text().toStdString().compare(tr("Pause").toStdString())==0)
 	{
 		mKinectPause->setText(tr("Continue"));
-		emit startKinect();
+		emit stopKinect(true);
 	}
 	else
 	{
-		emit startKinect();
 		mKinectPause->setText(tr("Pause"));
-
+		emit stopKinect(false);
 	}
 
 }
