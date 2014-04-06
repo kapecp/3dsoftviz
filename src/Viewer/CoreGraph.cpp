@@ -432,3 +432,8 @@ void CoreGraph::computeGraphRotTransf()
 	osg::Matrixd graphTransfMat( mRotMouse * mRotAruco * mRotFaceDet );
 	graphRotTransf->setMatrix(graphTransfMat);
 }
+
+CameraStream* CoreGraph::getCameraStream() const
+{
+	return mCameraStream;
+}

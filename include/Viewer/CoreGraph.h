@@ -179,6 +179,8 @@ public:
 	Vwr::EdgeGroup * getEdgesGroup() { return edgesGroup; }
 	Vwr::EdgeGroup * getMetaEdgesGroup() { return qmetaEdgesGroup; }
 
+	CameraStream *getCameraStream() const;
+
 public slots:
 
 	/**
