@@ -14,8 +14,8 @@ namespace Kinect{
  * @brief The KinectHandTracker class
  */
 
-	class KinectRecognition;
-	class MouseControl;
+class KinectRecognition;
+class MouseControl;
 
 
 class KinectHandTracker{
@@ -44,6 +44,7 @@ public:
 
 	void setCursorMovement(bool set);
 
+	void setSpeedMovement(double set);
 
 	nite::HandTracker m_pHandTracker;
 	std::map<int, HistoryBuffer<20> *> g_histories;
@@ -61,6 +62,8 @@ private:
 	float mDepthX;
 	float mDepthY;
 	float mDepthZ;
+
+	double mSpeed;
 
 };
 }

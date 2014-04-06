@@ -46,12 +46,16 @@ public slots:
 
 	void setCursorMovement(bool set);
 
+	void setSpeedKinect(double set);
+
 private:
 
 	bool mCancel;
 	bool mSetImageEnable;
 	bool isOpen;
 	bool isCursorEnable;
+
+	double mSpeed;
 
 	openni::VideoFrameRef colorFrame;
 	KinectHandTracker *kht;

@@ -6,6 +6,7 @@
 #include <QtGui/QCheckBox>
 #include <QtGui/QVBoxLayout>
 #include <QtGui/QStackedLayout>
+#include <QtGui/QSlider>
 #include "QDebug"
 
 using namespace Kinect;
@@ -39,6 +40,15 @@ void Kinect::KinectWindow::configureWindow(void)
 	mDisableCursor = new QCheckBox(tr("Turn off cursor"));
 	connect(mDisableCursor,SIGNAL(clicked()),this,SLOT(stopMovingCursor()));
 
+	mSpeed= new QSlider(Qt::Vertical);
+	mSpeed->setRange(5,20);
+	mSpeed->setValue(10);
+	mSpeed->setPageStep(1);
+	mSpeed->setFocusPolicy(Qt::NoFocus);
+	mSpeed->setToolTip("Modify speed of movement");
+	connect(mSpeed,SIGNAL(valueChanged(int)),this,SLOT(setSpeedKinect(int)));
+
+
 	//TODO add two different options for view kinect video
 	mKinectColor = new QRadioButton( tr("Color Map"));
 	mKinectDepthMap = new QRadioButton( tr("Depth map"));
@@ -54,6 +64,7 @@ void Kinect::KinectWindow::configureWindow(void)
 	buttonsLayout->setAlignment(Qt::AlignTop);
 	buttonsLayout_2->addWidget(mKinectPause);
 	buttonsLayout_2->addWidget(mDisableCursor);
+	buttonsLayout_2->addWidget(mSpeed);
 	frameLayout->setAlignment(Qt::AlignCenter);
 	frameLayout->addWidget(mWindowLabel);
 
@@ -70,14 +81,18 @@ void Kinect::KinectWindow::stopMovingCursor()
 {
 	if(mDisableCursor->isChecked())
 	{
-		setMovementCursor(false);
+		emit setMovementCursor(false);
 	}
 	else
 	{
-		setMovementCursor(true);
+		emit setMovementCursor(true);
 	}
+}
 
-
+void Kinect::KinectWindow::setSpeedKinect(int speed)
+{
+	double _speed=(double) ((double)(speed/10.0));
+	emit sendSpeedKinect(_speed);
 }
 
 void Kinect::KinectWindow::setLabel(cv::Mat image)

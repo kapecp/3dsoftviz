@@ -2,6 +2,7 @@
 #include "Kinect/KinectThread.h"
 #include "Kinect/KinectCore.h"
 #include "Kinect/KinectRecognition.h"
+#include "Kinect/KinectHandTracker.h"
 
 #include "QDebug"
 
@@ -12,6 +13,10 @@ using namespace cv;
 Kinect::KinectThread::KinectThread(QObject *parent) : QThread(parent)
 {
 	mCancel=false;
+	mSpeed=1.0;
+	isCursorEnable=true;
+	isOpen=false;
+	mSetImageEnable=true;
 }
 
 Kinect::KinectThread::~KinectThread(void)
@@ -36,6 +41,10 @@ void Kinect::KinectThread::pause()
 void Kinect::KinectThread::setCursorMovement(bool set)
 {
 	isCursorEnable=set;
+}
+void Kinect::KinectThread::setSpeedKinect(double set)
+{
+	mSpeed=set;
 }
 
 // SIGNAL 1
@@ -83,8 +92,9 @@ void Kinect::KinectThread::run()
 		color.readFrame(&colorFrame);
 		frame=mKinect->colorImageCvMat(colorFrame);
 
+		//set parameters for changes movement and cursor
 		kht->setCursorMovement(isCursorEnable);
-
+		kht->setSpeedMovement(mSpeed);
 		// cita handframe, najde gesto na snimke a vytvori mu "profil"
 		kht->getAllGestures();
 		kht->getAllHands();

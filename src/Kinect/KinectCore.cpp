@@ -108,4 +108,10 @@ void Kinect::KinectCore::createConnectionKinect()
 					 mThrKinect,
 					 SLOT(setCursorMovement(bool)));
 
+	//edit for speed movement
+	QObject::connect(mKinectDialog,
+					 SIGNAL(sendSpeedKinect(double)),
+					 mThrKinect,
+					 SLOT(setSpeedKinect(double)));
+
 }

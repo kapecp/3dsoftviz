@@ -9,6 +9,7 @@ class QPushButton;
 class QRadioButton;
 class QStackedLayout;
 class QCheckBox;
+class QSlider;
 
 namespace Kinect
 {
@@ -66,6 +67,12 @@ signals:
 	 */
 	void setMovementCursor(bool send);
 
+	/**
+	 * @brief change of speed movement for hand
+	 * @param send speed for movement
+	 */
+	void sendSpeedKinect(double send);
+
 public slots:
 
 	void setLabel(cv::Mat image);
@@ -80,6 +87,8 @@ private slots:
 
 	void stopMovingCursor();
 
+	void setSpeedKinect(int speed);
+
 private:
 
 	void closeEvent(QCloseEvent *event);
@@ -93,6 +102,7 @@ private:
 	QStackedLayout	*mModulesStackL;
 	QCheckBox		*mDisableCursor;
 	QPushButton		*mKinectPause;
+	QSlider			*mSpeed;
 
 	Kinect::KinectThread *thr;
 

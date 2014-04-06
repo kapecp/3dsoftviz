@@ -9,6 +9,7 @@ Kinect::KinectHandTracker::KinectHandTracker(openni::Device *device, openni::Vid
 	m_pHandTracker.startGestureDetection(nite::GESTURE_CLICK);
 	isClick=false;
 	isCursorMovementEnable=true;
+	mSpeed=1.0;
 	mouse = new Kinect::MouseControl();
 	mDepth=m_depth;
 }
@@ -21,6 +22,11 @@ Kinect::KinectHandTracker::~KinectHandTracker()
 void Kinect::KinectHandTracker::setCursorMovement(bool set)
 {
 	isCursorMovementEnable=set;
+}
+
+void Kinect::KinectHandTracker::setSpeedMovement(double set)
+{
+	mSpeed=set;
 }
 
 void Kinect::KinectHandTracker::getAllGestures()
@@ -95,6 +101,7 @@ void Kinect::KinectHandTracker::getAllHands()
 			//first find HAND = MOUSE
 			if(i==0 && isCursorMovementEnable)
 			{
+				mouse->setSpeedUpMoving(mSpeed);
 				//mouse->moveCursorMouse(user.getPosition().x/2,-1.0*user.getPosition().y/2,isClick);
 				coordinateConverter.convertWorldToDepth(*mDepth, user.getPosition().x, user.getPosition().y, user.getPosition().z, &mDepthX, &mDepthY, &mDepthZ);
 				mouse->moveCursorWorldCoordinates(mDepthX,mDepthY,isClick);
