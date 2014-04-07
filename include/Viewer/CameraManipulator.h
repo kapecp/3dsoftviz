@@ -311,6 +311,8 @@ protected:
 		*  \brief another camera rotation according user head
 		*/
 	osg::Quat    _rotationHead;
+	osg::Quat    _rotationHorAux;
+	osg::Quat    _rotationVerAux;
 
 	/**
 		*  double _distance

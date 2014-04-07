@@ -1085,11 +1085,32 @@ void Vwr::CameraManipulator::setRotationHead(float x, float y, float distance)
 		trackball(axis,angle,0.0, y, 0.0, 0.0);
 		osg::Quat Ynew_rotate(angle * throwScale,axis);
 
+		float aux, angleAux;
+		osg::Vec3	axisAux;
+		// _rotationVerAux
+
+
+		// rotation continously if x/y is out of margins
+		float region = this->appConf->getValue("Kinect.RegionRotationTreshold").toFloat();
+		float step = this->appConf->getValue("Kinect.RegionRotationStep").toFloat();
+
+		if( x < -region || x > region ){
+			aux = x < 0.0f ? -step : step;
+			trackball(axisAux, angleAux, aux, 0.0, 0.0, 0.0);
+			osg::Quat rotHorAux = osg::Quat(angleAux * throwScale, axisAux);
+			_rotationHorAux = _rotationHorAux * rotHorAux;
+		}
+		if( y < -region || y > region ){
+			aux = y < 0.0f ? -step : step;
+			trackball(axisAux, angleAux, aux, 0.0, 0.0, 0.0);
+			osg::Quat rotVerAux = osg::Quat(angleAux * throwScale, axisAux);
+			_rotationVerAux = _rotationVerAux * rotVerAux;
+		}
 
 		if( _cameraCanRot ){ // rotate camera
 
 			// both rotation
-			_rotationHead = Xnew_rotate * Ynew_rotate;
+			_rotationHead = Xnew_rotate * Ynew_rotate * _rotationHorAux * _rotationVerAux;
 
 			// will we correct projection according face position
 			bool projectionConrrection = false;
@@ -1101,7 +1122,7 @@ void Vwr::CameraManipulator::setRotationHead(float x, float y, float distance)
 
 
 		} else { // rotate graph
-			sendFaceDetRotation( Xnew_rotate*Ynew_rotate );
+			sendFaceDetRotation( Xnew_rotate * Ynew_rotate * _rotationHorAux * _rotationVerAux );
 		}
 	}
 	else{
