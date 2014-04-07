@@ -14,6 +14,8 @@ OpenCV::FaceRecognizer::FaceRecognizer()
 	this->detected=false;
 	this->isMovement=false;
 	this->firstdetection=true;
+	this->sumx=0;
+	this->sumy=0;
 }
 
 OpenCV::FaceRecognizer::~FaceRecognizer()
@@ -139,19 +141,20 @@ void OpenCV::FaceRecognizer::computeEyesCoordinations(Rect face, Size size)
 	if (this->lifo.size()<10){
 		this->lifo.push_front(Point2f(((((float)(face.x+face.width/2) / (float)size.width-0.5f)/0.5f)*100),
 								((((float)(face.y+face.height/3) / (float)size.height-0.5f)/0.5f)*100)));
+		this->sumx+=((((float)(face.x+face.width/2) / (float)size.width-0.5f)/0.5f)*100);
+		this->sumy+=((((float)(face.y+face.height/3) / (float)size.height-0.5f)/0.5f)*100);
 	} else {
-		this->lifo.pop_back();
+		Point2f p = lifo.at(0);
+		this->sumx-= p.x;
+		this->sumy-= p.y;
+		lifo.pop_back();
 		this->lifo.push_front(Point2f(((((float)(face.x+face.width/2) / (float)size.width-0.5f)/0.5f)*100),
 								((((float)(face.y+face.height/3) / (float)size.height-0.5f)/0.5f)*100)));
+		this->sumx+=((((float)(face.x+face.width/2) / (float)size.width-0.5f)/0.5f)*100);
+		this->sumy+=((((float)(face.y+face.height/3) / (float)size.height-0.5f)/0.5f)*100);
 	}
-	int sumx=0,sumy=0;
-	for (int i=0; i < lifo.size(); i++){
-		Point2f p = lifo.at(i);
-		sumx+= p.x;
-		sumy+= p.y;
-	}
-	this->eyesCoord.x = sumx/(float)lifo.size();
-	this->eyesCoord.y = sumy/(float)lifo.size();
+	this->eyesCoord.x = this->sumx/(float)lifo.size();
+	this->eyesCoord.y = this->sumy/(float)lifo.size();
 }
 cv::Point2i OpenCV::FaceRecognizer::getEyesCoords()
 {
