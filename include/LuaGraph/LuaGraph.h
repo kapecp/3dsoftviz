@@ -4,10 +4,10 @@
 #include "QList"
 #include "QString"
 #include "Q_LONG"
-#include "Data/Graph.h"
 #include "LuaGraph/LuaNode.h"
 #include "LuaGraph/LuaEdge.h"
 #include "LuaGraph/LuaIncidence.h"
+#include "LuaGraph/LuaGraphObserver.h"
 
 namespace Lua {
 
@@ -19,8 +19,6 @@ public:
 
     void visualize(Data::Graph *graph, bool incidence_as_node = false);
 
-    static void redisterUpdateCallback(Data::Graph *graph);
-
     ~LuaGraph();
 
     QMap<qlonglong, LuaNode *> *getNodes() const;
@@ -29,11 +27,15 @@ public:
 
     QMap<qlonglong, LuaIncidence *> *getIncidences() const;
 
-    static Data::Graph *currentGraph;
+    static bool hasObserver();
+    Lua::LuaGraphObserver *getObserver() const;
+    void setObserver(Lua::LuaGraphObserver *value);
+
 private:
     LuaGraph();
 
     static LuaGraph *instance;
+    Lua::LuaGraphObserver *observer;
 
     QMap<qlonglong, LuaNode *> *nodes;
     QMap<qlonglong, LuaEdge *> *edges;

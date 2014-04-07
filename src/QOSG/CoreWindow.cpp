@@ -44,7 +44,7 @@
 
 #include "LuaGraph/LuaGraph.h"
 #include "LuaInterface/LuaInterface.h"
-
+#include "LuaGraph/LuaGraphVisualizer.h"
 using namespace QOSG;
 using namespace std;
 
@@ -673,12 +673,8 @@ void CoreWindow::loadLuaGraph()
     }
     currentGraph = Manager::GraphManager::getInstance()->createNewGraph("LuaGraph");
 
-    Lua::LuaGraph *g = Lua::LuaGraph::loadGraph();
-
-    g->visualize(currentGraph, false);
-    g->redisterUpdateCallback(currentGraph);
-
-    delete g;
+    Lua::LuaGraphVisualizer *visualizer = new Lua::LuaGraphVisualizer(currentGraph);
+    visualizer->visualize();
 }
 
 void CoreWindow::updateFromLua()

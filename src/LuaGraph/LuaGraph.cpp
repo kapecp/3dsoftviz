@@ -6,33 +6,35 @@
 #include "Importer/GraphOperations.h"
 #include <Diluculum/LuaWrappers.hpp>
 
-Data::Graph *Lua::LuaGraph::currentGraph;
 Lua::LuaGraph *Lua::LuaGraph::instance;
+
+Diluculum::LuaValueList luaCallback (const Diluculum::LuaValueList& params)
+{
+    cout << "C callback" << std::endl;
+    if (!Lua::LuaGraph::hasObserver()) return Diluculum::LuaValueList();
+    Lua::LuaGraph::getInstance()->getObserver()->onUpdate();
+    return Diluculum::LuaValueList();
+}
+DILUCULUM_WRAP_FUNCTION(luaCallback)
 
 Lua::LuaGraph::LuaGraph()
 {
     nodes = new QMap<qlonglong, Lua::LuaNode*>();
     edges = new QMap<qlonglong, Lua::LuaEdge*>();
     incidences = new QMap<qlonglong, Lua::LuaIncidence*>();
+    observer = NULL;
+    Diluculum::LuaState *ls = Lua::LuaInterface::getInstance()->getLuaState();
+    (*ls)["callback"] = DILUCULUM_WRAPPER_FUNCTION (luaCallback);
 }
-
-Diluculum::LuaValueList luaCallback (const Diluculum::LuaValueList& params)
+Lua::LuaGraphObserver *Lua::LuaGraph::getObserver() const
 {
-    if (Lua::LuaGraph::currentGraph == NULL) return Diluculum::LuaValueList();
-    cout << "C callback" << std::endl;
-//    Lua::LuaGraph *graph = Lua::LuaGraph::loadGraph();
-
-    QMap<qlonglong, osg::ref_ptr<Data::Node> > *nodes = Lua::LuaGraph::currentGraph->getNodes();
-    osg::ref_ptr<Data::Node> node = (*nodes)[8];
-    cout << "Scale: " << node->getScale() << std::endl;
-    node->setScale(node->getScale() * 2);
-    node->reloadConfig();
-    cout << "Scale2: " << node->getScale() << std::endl;
-    node->setColor(osg::Vec4 (1,0,0,1));
-
-    return Diluculum::LuaValueList();
+    return observer;
 }
-DILUCULUM_WRAP_FUNCTION(luaCallback)
+
+void Lua::LuaGraph::setObserver(Lua::LuaGraphObserver *value)
+{
+    observer = value;
+}
 
 Lua::LuaGraph *Lua::LuaGraph::getInstance()
 {
@@ -98,49 +100,7 @@ Lua::LuaGraph *Lua::LuaGraph::loadGraph()
 
 void Lua::LuaGraph::visualize(Data::Graph *graph, bool incidence_as_node)
 {
-    Data::Type *edgeType = NULL;
-    Data::Type *nodeType = NULL;
-    Importer::GraphOperations *operations = new Importer::GraphOperations(*graph);
-    operations->addDefaultTypes(edgeType, nodeType);
 
-    for (QMap<qlonglong, Lua::LuaNode *>::iterator i = getNodes()->begin(); i != getNodes()->end(); ++i){
-         osg::ref_ptr<Data::Node> n = graph->addNode(i.key() , i.value()->getLabel(), nodeType);
-         n.get()->setColor(osg::Vec4 (1,0,0,1));
-         n.get()->reloadConfig();
-    }
-
-    for (QMap<qlonglong, Lua::LuaEdge *>::iterator i = getEdges()->begin(); i != getEdges()->end(); ++i){
-         osg::ref_ptr<Data::Node> n = graph->addNode(i.key() , i.value()->getLabel(), nodeType);
-         n.get()->setColor(osg::Vec4 (0,0,1,1));
-         n.get()->reloadConfig();
-    }
-
-    if (incidence_as_node){
-        for (QMap<qlonglong, Lua::LuaIncidence *>::iterator i = getIncidences()->begin(); i != getIncidences()->end(); ++i){
-            osg::ref_ptr<Data::Node> incNode = graph->addNode(i.key(), i.value()->getLabel(), nodeType);
-            incNode.get()->setColor(osg::Vec4 (0,1,0,1));
-            incNode.get()->reloadConfig();
-
-            osg::ref_ptr<Data::Node> srcNode = graph->getNodes()->value(i.value()->getEdgeNodePair().first);
-            graph->addEdge(i.value()->getLabel(), srcNode, incNode, edgeType, false);
-
-            osg::ref_ptr<Data::Node> dstNode = graph->getNodes()->value(i.value()->getEdgeNodePair().second);
-            graph->addEdge(i.value()->getLabel(), incNode, dstNode, edgeType, false);
-        }
-    } else {
-        for (QMap<qlonglong, Lua::LuaIncidence *>::iterator i = getIncidences()->begin(); i != getIncidences()->end(); ++i){
-            osg::ref_ptr<Data::Node> srcNode = graph->getNodes()->value(i.value()->getEdgeNodePair().first);
-            osg::ref_ptr<Data::Node> dstNode = graph->getNodes()->value(i.value()->getEdgeNodePair().second);
-            graph->addEdge(i.value()->getLabel(), srcNode, dstNode, edgeType, false);
-        }
-    }
-}
-
-void Lua::LuaGraph::redisterUpdateCallback(Data::Graph *graph)
-{
-    Diluculum::LuaState *ls = LuaInterface::getInstance()->getLuaState();
-    (*ls)["callback"] = DILUCULUM_WRAPPER_FUNCTION (luaCallback);
-    currentGraph = graph;
 }
 
 Lua::LuaGraph::~LuaGraph()
@@ -163,6 +123,12 @@ Lua::LuaGraph::~LuaGraph()
 QMap<qlonglong, Lua::LuaIncidence *> *Lua::LuaGraph::getIncidences() const
 {
     return incidences;
+}
+
+bool Lua::LuaGraph::hasObserver()
+{
+    if (instance == NULL) return false;
+    return instance->observer != NULL;
 }
 
 QMap<qlonglong, Lua::LuaEdge *> *Lua::LuaGraph::getEdges() const
