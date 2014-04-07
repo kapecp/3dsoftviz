@@ -25,7 +25,7 @@ class FaceRecognitionThread : public QThread
 
 public:
 
-	FaceRecognitionThread( OpenCV::FaceRecognizer *faceRecognizer, QObject *parent = 0);
+	FaceRecognitionThread( QObject *parent = 0);
 	~FaceRecognitionThread(void);
 
 	/**
@@ -77,7 +77,6 @@ public slots:
 
 private:
 
-	OpenCV::FaceRecognizer	*mFaceRecognizer;
 	OpenCV::CapVideo		*mCapVideo;
 	bool					mCancel;
 	bool					mSendImgEnabled;

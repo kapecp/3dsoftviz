@@ -5,10 +5,9 @@
 
 using namespace QOpenCV;
 
-QOpenCV::FaceRecognitionThread::FaceRecognitionThread( OpenCV::FaceRecognizer *faceRecognizer, QObject *parent)
+QOpenCV::FaceRecognitionThread::FaceRecognitionThread( QObject *parent)
 	: QThread(parent)
 {
-	mFaceRecognizer	= faceRecognizer;
 	mCapVideo		= NULL;
 	mCancel			= false;
 	mSendImgEnabled	= true;
@@ -17,14 +16,14 @@ QOpenCV::FaceRecognitionThread::FaceRecognitionThread( OpenCV::FaceRecognizer *f
 
 QOpenCV::FaceRecognitionThread::~FaceRecognitionThread(void)
 {
-	delete mFaceRecognizer;
-}
 
+}
 
 void QOpenCV::FaceRecognitionThread::run()
 {
 	mCancel = false;
 	cv::Mat image;
+	OpenCV::FaceRecognizer	*mFaceRecognizer = new OpenCV::FaceRecognizer();
 
 	if( mCapVideo == NULL){
 		qDebug() << "[FaceRecognitionThread::run()]  Camera is not set";
@@ -51,6 +50,7 @@ void QOpenCV::FaceRecognitionThread::run()
 	}
 	mCapVideo->release();
 	mCapVideo = NULL;
+	delete mFaceRecognizer;
 }
 
 void QOpenCV::FaceRecognitionThread::pauseWindow()
