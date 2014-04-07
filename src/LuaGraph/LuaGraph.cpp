@@ -23,7 +23,9 @@ Lua::LuaGraph::LuaGraph()
     edges = new QMap<qlonglong, Lua::LuaEdge*>();
     incidences = new QMap<qlonglong, Lua::LuaIncidence*>();
     observer = NULL;
-    Diluculum::LuaState *ls = Lua::LuaInterface::getInstance()->getLuaState();
+    Lua::LuaInterface* lua = Lua::LuaInterface::getInstance();
+    lua->executeFile("../share/3dsoftviz/scripts/main.lua");
+    Diluculum::LuaState *ls = lua->getLuaState();
     (*ls)["callback"] = DILUCULUM_WRAPPER_FUNCTION (luaCallback);
 }
 Lua::LuaGraphObserver *Lua::LuaGraph::getObserver() const
@@ -36,6 +38,32 @@ void Lua::LuaGraph::setObserver(Lua::LuaGraphObserver *value)
     observer = value;
 }
 
+void Lua::LuaGraph::clearGraph()
+{
+    nodes->clear();
+    edges->clear();
+    incidences->clear();
+}
+
+void Lua::LuaGraph::printGraph()
+{
+    cout << "Incidences " << incidences->count() << std::endl;
+    for (QMap<qlonglong, LuaIncidence*>::iterator i = incidences->begin(); i != incidences->end(); i++) {
+        cout << i.key() << " ";
+    }
+    cout << std::endl;
+    cout << "Nodes " << nodes->count() << std::endl;
+    for (QMap<qlonglong, LuaNode*>::iterator i = nodes->begin(); i != nodes->end(); i++) {
+        cout << i.key() << " ";
+    }
+    cout << std::endl;
+    cout << "Edges " << edges->count() << std::endl;
+    for (QMap<qlonglong, LuaEdge*>::iterator i = edges->begin(); i != edges->end(); i++) {
+        cout << i.key() << " ";
+    }
+    cout << std::endl;
+}
+
 Lua::LuaGraph *Lua::LuaGraph::getInstance()
 {
     if (instance == NULL) instance = new Lua::LuaGraph();
@@ -44,13 +72,10 @@ Lua::LuaGraph *Lua::LuaGraph::getInstance()
 
 Lua::LuaGraph *Lua::LuaGraph::loadGraph()
 {
-    cout << "Load graph called" << std::endl;
-
     Lua::LuaInterface* lua = Lua::LuaInterface::getInstance();
 
-    lua->executeFile("../share/3dsoftviz/scripts/main.lua");
-
     Lua::LuaGraph* result = Lua::LuaGraph::getInstance();
+    result->clearGraph();
 
     Diluculum::LuaState *ls = lua->getLuaState();
 
@@ -95,6 +120,8 @@ Lua::LuaGraph *Lua::LuaGraph::loadGraph()
             result->incidences->insert(id2, incidence);
         }
     }
+
+    cout << "Node count: " << result->nodes->count() << std::endl;
     return result;
 }
 

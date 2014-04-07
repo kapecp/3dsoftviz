@@ -31,6 +31,9 @@ public:
     Lua::LuaGraphObserver *getObserver() const;
     void setObserver(Lua::LuaGraphObserver *value);
 
+    void clearGraph();
+
+    void printGraph();
 private:
     LuaGraph();
 

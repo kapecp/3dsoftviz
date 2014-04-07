@@ -17,7 +17,8 @@ public:
     void onUpdate();
 private:
     Data::Graph *currentGraph;
-
+    Data::Type *edgeType = NULL;
+    Data::Type *nodeType = NULL;
 };
 
 }
