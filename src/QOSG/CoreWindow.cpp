@@ -532,6 +532,13 @@ void CoreWindow::createAugmentedRealityToolBar() {
 	toolBar->addWidget( chb_camera_rot );
 	toolBar->addSeparator();
 
+	// dont rotate camera if video background
+	if( Util::ApplicationConfig::get()->getValue("Viewer.SkyBox.Noise").toInt() == 2 ){
+		chb_camera_rot->setChecked(false);
+	} else {
+		chb_camera_rot->setChecked(true);
+	}
+
 #ifdef OPENNI2_FOUND
 	QLabel *labelKinect = new QLabel( tr("Kinect"));
 	toolBar->addWidget( labelKinect );

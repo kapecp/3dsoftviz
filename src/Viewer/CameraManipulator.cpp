@@ -54,7 +54,13 @@ Vwr::CameraManipulator::CameraManipulator(Vwr::CoreGraph * coreGraph)
 	this->coreGraph = coreGraph;
 	stop();
 
-	_cameraCanRot = true;
+	// dont rotate camera if video background
+	if( appConf->getValue("Viewer.SkyBox.Noise").toInt() == 2 ){
+		_cameraCanRot = false;
+	} else {
+		_cameraCanRot = true;
+	}
+
 }
 
 Vwr::CameraManipulator::~CameraManipulator()
