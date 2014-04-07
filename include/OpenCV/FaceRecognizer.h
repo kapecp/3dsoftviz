@@ -74,6 +74,10 @@ public:
 private:
 
 	cv::Rect rect;
+	cv::Rect drawrect;
+	bool firstdetection;
+	std::deque<cv::Point2f> lifo;
+	float sumx,sumy;
 
 	/**
 		 * @author Autor: Marek Jakab
