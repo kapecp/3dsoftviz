@@ -50,7 +50,7 @@ void Lua::LuaGraphVisualizer::visualize(bool incidence_as_node)
 
 void Lua::LuaGraphVisualizer::onUpdate()
 {
-    cout << "Graph update called" << std::endl;
+    std::cout << "Graph update called" << std::endl;
 
     Lua::LuaGraph *g = Lua::LuaGraph::loadGraph();
     g->printGraph();
@@ -64,7 +64,7 @@ void Lua::LuaGraphVisualizer::onUpdate()
 //    }
     for (QMap<qlonglong, osg::ref_ptr<Data::Edge> >::iterator i = currentGraph->getEdges()->begin(); i != currentGraph->getEdges()->end(); i++){
         if (!g->getIncidences()->contains(i.key())){
-            cout << "Removing edge " << i.key() << std::endl;
+            std::cout << "Removing edge " << i.key() << std::endl;
             currentGraph->removeEdge(i.value());
         }
     }

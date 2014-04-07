@@ -17,8 +17,6 @@ public:
     static LuaGraph *getInstance();
     static LuaGraph *loadGraph();
 
-    void visualize(Data::Graph *graph, bool incidence_as_node = false);
-
     ~LuaGraph();
 
     QMap<qlonglong, LuaNode *> *getNodes() const;

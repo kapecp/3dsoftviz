@@ -10,7 +10,7 @@ Lua::LuaGraph *Lua::LuaGraph::instance;
 
 Diluculum::LuaValueList luaCallback (const Diluculum::LuaValueList& params)
 {
-    cout << "C callback" << std::endl;
+    std::cout << "C callback" << std::endl;
     if (!Lua::LuaGraph::hasObserver()) return Diluculum::LuaValueList();
     Lua::LuaGraph::getInstance()->getObserver()->onUpdate();
     return Diluculum::LuaValueList();
@@ -47,21 +47,21 @@ void Lua::LuaGraph::clearGraph()
 
 void Lua::LuaGraph::printGraph()
 {
-    cout << "Incidences " << incidences->count() << std::endl;
+    std::cout << "Incidences " << incidences->count() << std::endl;
     for (QMap<qlonglong, LuaIncidence*>::iterator i = incidences->begin(); i != incidences->end(); i++) {
-        cout << i.key() << " ";
+        std::cout << i.key() << " ";
     }
-    cout << std::endl;
-    cout << "Nodes " << nodes->count() << std::endl;
+    std::cout << std::endl;
+    std::cout << "Nodes " << nodes->count() << std::endl;
     for (QMap<qlonglong, LuaNode*>::iterator i = nodes->begin(); i != nodes->end(); i++) {
-        cout << i.key() << " ";
+        std::cout << i.key() << " ";
     }
-    cout << std::endl;
-    cout << "Edges " << edges->count() << std::endl;
+    std::cout << std::endl;
+    std::cout << "Edges " << edges->count() << std::endl;
     for (QMap<qlonglong, LuaEdge*>::iterator i = edges->begin(); i != edges->end(); i++) {
-        cout << i.key() << " ";
+        std::cout << i.key() << " ";
     }
-    cout << std::endl;
+    std::cout << std::endl;
 }
 
 Lua::LuaGraph *Lua::LuaGraph::getInstance()
@@ -121,13 +121,8 @@ Lua::LuaGraph *Lua::LuaGraph::loadGraph()
         }
     }
 
-    cout << "Node count: " << result->nodes->count() << std::endl;
+    std::cout << "Node count: " << result->nodes->count() << std::endl;
     return result;
-}
-
-void Lua::LuaGraph::visualize(Data::Graph *graph, bool incidence_as_node)
-{
-
 }
 
 Lua::LuaGraph::~LuaGraph()
