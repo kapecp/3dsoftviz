@@ -1,12 +1,9 @@
+#ifndef KINECTHANDTRACKER_H
+#define KINECTHANDTRACKER_H
+
 #include "Kinect/HistoryBuffer.h"
 #include "OpenNI.h"
 #include "NiTE.h"
-#include "Kinect/KinectRecognition.h"
-#include "Kinect/MouseControl.h"
-
-
-#ifndef KINECTHANDTRACKER_H
-#define KINECTHANDTRACKER_H
 
 #define NUM_HANDS 2
 
@@ -16,6 +13,10 @@ namespace Kinect{
  * @author Patrik Hlavac
  * @brief The KinectHandTracker class
  */
+
+class KinectRecognition;
+class MouseControl;
+
 
 class KinectHandTracker{
 
@@ -32,9 +33,18 @@ public:
 	float getArrayHands[NUM_HANDS][NUM_HANDS];
 	bool isTwoHands;
 
+	float slidingHand_x;
+	float slidingHand_y;
+	float slidingHand_z;
+	char * slidingHand_type;
+
 	void getAllGestures();
 	void getAllHands();
+	void getRotatingMove();
 
+	void setCursorMovement(bool set);
+
+	void setSpeedMovement(double set);
 
 	nite::HandTracker m_pHandTracker;
 	std::map<int, HistoryBuffer<20> *> g_histories;
@@ -43,6 +53,8 @@ public:
 
 private:
 	bool isClick;
+	bool isCursorMovementEnable;
+
 	MouseControl *mouse;
 	openni::VideoStream  *mDepth;
 
@@ -50,6 +62,8 @@ private:
 	float mDepthX;
 	float mDepthY;
 	float mDepthZ;
+
+	double mSpeed;
 
 };
 }
