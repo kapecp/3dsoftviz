@@ -42,7 +42,7 @@ void QOpenCV::FaceRecognitionThread::run()
 				emit pushImage( image.clone() ); // ???
 		}
 
-		if( mFaceRecognizer->detected && mFaceRecognizer->isMovement ) {
+		if( mFaceRecognizer->detected ) { //&& mFaceRecognizer->isMovement
 			emit sendEyesCoords( (float) -mFaceRecognizer->getEyesCoords().x,
 								 (float) -mFaceRecognizer->getEyesCoords().y,
 								 -mFaceRecognizer->getHeadDistance( mCapVideo->getWidth()) );

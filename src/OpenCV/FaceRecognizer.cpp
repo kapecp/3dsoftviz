@@ -139,16 +139,16 @@ cv::CascadeClassifier OpenCV::FaceRecognizer::getCascadeClassifier()
 void OpenCV::FaceRecognizer::computeEyesCoordinations(Rect face, Size size)
 {
 	if (this->lifo.size()<10){
-		this->lifo.push_front(Point2f(((((float)(face.x+face.width/2) / (float)size.width-0.5f)/0.5f)*100),
+		this->lifo.push_back(Point2f(((((float)(face.x+face.width/2) / (float)size.width-0.5f)/0.5f)*100),
 								((((float)(face.y+face.height/3) / (float)size.height-0.5f)/0.5f)*100)));
 		this->sumx+=((((float)(face.x+face.width/2) / (float)size.width-0.5f)/0.5f)*100);
 		this->sumy+=((((float)(face.y+face.height/3) / (float)size.height-0.5f)/0.5f)*100);
 	} else {
-		Point2f p = lifo.at(0);
+		Point2f p = lifo.front();
 		this->sumx-= p.x;
 		this->sumy-= p.y;
-		lifo.pop_back();
-		this->lifo.push_front(Point2f(((((float)(face.x+face.width/2) / (float)size.width-0.5f)/0.5f)*100),
+		lifo.pop_front();
+		this->lifo.push_back(Point2f(((((float)(face.x+face.width/2) / (float)size.width-0.5f)/0.5f)*100),
 								((((float)(face.y+face.height/3) / (float)size.height-0.5f)/0.5f)*100)));
 		this->sumx+=((((float)(face.x+face.width/2) / (float)size.width-0.5f)/0.5f)*100);
 		this->sumy+=((((float)(face.y+face.height/3) / (float)size.height-0.5f)/0.5f)*100);
