@@ -170,7 +170,7 @@ osg::ref_ptr<osg::Node> CoreGraph::createTextureBackground(){
 	(*texCoords)[3].set(0.0f, 0.0f);
 
 	osg::ref_ptr<osg::Geometry> geom = new osg::Geometry();
-	//geom->setDataVariance(osg::Object::DYNAMIC);
+	geom->setDataVariance(osg::Object::DYNAMIC);
 	geom->addPrimitiveSet(new osg::DrawArrays(GL_QUADS, 0, 4));
 	geom->setVertexArray(coords);
 	geom->setNormalArray(normals);
@@ -179,7 +179,7 @@ osg::ref_ptr<osg::Node> CoreGraph::createTextureBackground(){
 
 
 	// texture
-	mCameraStream = new CameraStream();
+	mCameraStream = new CameraStream( geom );
 
 	osg::ref_ptr<osg::Texture2D> skymap = new osg::Texture2D( mCameraStream );
 	skymap->setDataVariance(osg::Object::DYNAMIC);
