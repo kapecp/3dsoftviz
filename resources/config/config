@@ -40,6 +40,9 @@ Viewer.SkyBox.West=../share/3dsoftviz/img/skybox/rays_west.bmp
 Viewer.SkyBox.Up=../share/3dsoftviz/img/skybox/rays_up.bmp
 Viewer.SkyBox.Down=../share/3dsoftviz/img/skybox/rays_down.bmp
 
+Kinect.RegionRotationTreshold=0.65
+Kinect.RegionRotationStep=0.05
+
 FaceDecetion.EnableProjectionCorrection=0
 FaceDecetion.CameraDistancePar=3.5
 Aruco.MarkerSize=0.06

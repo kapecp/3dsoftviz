@@ -2,23 +2,21 @@
 #include "Kinect/KinectThread.h"
 #include "Kinect/KinectCore.h"
 #include "Kinect/KinectRecognition.h"
+#include "Kinect/KinectHandTracker.h"
 
 #include "QDebug"
 
-//only for testing
-#include "opencv/highgui.h"
-#include <opencv2/core/core.hpp>
-#include "opencv2/opencv.hpp"
-
-
 using namespace Kinect;
 
-//for testing
 using namespace cv;
 
 Kinect::KinectThread::KinectThread(QObject *parent) : QThread(parent)
 {
 	mCancel=false;
+	mSpeed=1.0;
+	isCursorEnable=true;
+	isOpen=false;
+	mSetImageEnable=true;
 }
 
 Kinect::KinectThread::~KinectThread(void)
@@ -40,6 +38,22 @@ void Kinect::KinectThread::pause()
 	mCancel=true;
 }
 
+void Kinect::KinectThread::setCursorMovement(bool set)
+{
+	isCursorEnable=set;
+}
+void Kinect::KinectThread::setSpeedKinect(double set)
+{
+	mSpeed=set;
+}
+
+// SIGNAL 1
+//void Kinect::KinectThread::sendSliderCoords(float _t1, float _t2, float _t3)
+//{
+//	void *_a[] = { 0, const_cast<void*>(reinterpret_cast<const void*>(&_t1)), const_cast<void*>(reinterpret_cast<const void*>(&_t2)), const_cast<void*>(reinterpret_cast<const void*>(&_t3)) };
+//	QMetaObject::activate(this, &staticMetaObject, 1, _a);
+//}
+
 void Kinect::KinectThread::run()
 {
 
@@ -60,17 +74,8 @@ void Kinect::KinectThread::run()
 	/////////end////////////
 
 	cv::Mat frame;
-	/*
-	//////////////for Testing
-	cv::VideoCapture cap(0);
-	if(!cap.isOpened())
-	{
-		qDebug() << "No camera";
-		exit();
-	}
-	//////////////Koniec testovania//////////////////
-*/
-	//////////////Kinect ///////
+
+	//////////////Kinect start color and Hand tracking ///////
 	if(isOpen)
 	{
 		color.create(mKinect->device, openni::SENSOR_COLOR);
@@ -84,58 +89,65 @@ void Kinect::KinectThread::run()
 
 	while(!mCancel && isOpen)
 	{
-		color.readFrame(&colorFrame);
-		frame=mKinect->colorImageCvMat(colorFrame);
-
-		///////////////Depth test///////////
-		//handTracker.readFrame(&handTrackerFrame);
-		//frame = mKinect->depthImageCvMat(handTrackerFrame);
-
-		// cita handframe, najde gesto na snimke a vytvori mu "profil"
-		kht->getAllGestures();
-		kht->getAllHands();
-
-		//////////////End/////////////
-
-		//	cap >> frame; // get a new frame from camera
-		cv::cvtColor(frame, frame, CV_BGR2RGB);
-		//QImage qimage ( (uchar*) image.data, image.cols, image.rows,(int) image.step, QImage::Format_RGB888);
-
-		///////Emit Qimage and Image////////////
-		//emit pushImage( qimage );
-		if (kht->isTwoHands == true)
+		if(mSetImageEnable)
 		{
-			coordinateConverter.convertWorldToDepth(m_depth, kht->getArrayHands[0][0], kht->getArrayHands[0][1], kht->handZ[0], &pDepth_x, &pDepth_y, &pDepth_z);
-			coordinateConverter.convertWorldToDepth(m_depth, kht->getArrayHands[1][0], kht->getArrayHands[1][1], kht->handZ[1], &pDepth_x2, &pDepth_y2, &pDepth_z2);
+			color.readFrame(&colorFrame);
+			frame=mKinect->colorImageCvMat(colorFrame);
 
-			pDepth_y = kht->handTrackerFrame.getDepthFrame().getHeight() - pDepth_y;
-			pDepth_y2 = kht->handTrackerFrame.getDepthFrame().getHeight() - pDepth_y2;
+			//set parameters for changes movement and cursor
+			kht->setCursorMovement(isCursorEnable);
+			kht->setSpeedMovement(mSpeed);
+			// cita handframe, najde gesto na snimke a vytvori mu "profil"
+			kht->getAllGestures();
+			kht->getAllHands();
+			//////////////End/////////////
 
-			//printf("depth X, Y, Z: %f %f %f\n",pDepth_x,pDepth_y,pDepth_z);
+			//	cap >> frame; // get a new frame from camera
+			cv::cvtColor(frame, frame, CV_BGR2RGB);
 
-			Rect hand_rect;
+			if (kht->isTwoHands == true)
+			{
+				coordinateConverter.convertWorldToDepth(m_depth, kht->getArrayHands[0][0], kht->getArrayHands[0][1], kht->handZ[0], &pDepth_x, &pDepth_y, &pDepth_z);
+				coordinateConverter.convertWorldToDepth(m_depth, kht->getArrayHands[1][0], kht->getArrayHands[1][1], kht->handZ[1], &pDepth_x2, &pDepth_y2, &pDepth_z2);
 
-			if (pDepth_x < pDepth_x2) hand_rect.x = pDepth_x;
-			else hand_rect.x = pDepth_x2;
-			if (pDepth_y < pDepth_y2) hand_rect.y = pDepth_y;
-			else hand_rect.y = pDepth_y2;
+				pDepth_y = kht->handTrackerFrame.getDepthFrame().getHeight() - pDepth_y;
+				pDepth_y2 = kht->handTrackerFrame.getDepthFrame().getHeight() - pDepth_y2;
 
-			hand_rect.width = abs(pDepth_x - pDepth_x2);
-			hand_rect.height = abs(pDepth_y - pDepth_y2);//kht->handY[1] - kht->handY[0];
+				printf("depth X, Y, Z: %f %f %f\n",pDepth_x,pDepth_y,pDepth_z);
 
-			rectangle(frame, hand_rect, CV_RGB(0, 255,0), 3);
+				Rect hand_rect;
+
+				if (pDepth_x < pDepth_x2) hand_rect.x = pDepth_x;
+				else hand_rect.x = pDepth_x2;
+				if (pDepth_y < pDepth_y2) hand_rect.y = pDepth_y;
+				else hand_rect.y = pDepth_y2;
+
+				hand_rect.width = abs(pDepth_x - pDepth_x2);
+				hand_rect.height = abs(pDepth_y - pDepth_y2);//kht->handY[1] - kht->handY[0];
+
+				rectangle(frame, hand_rect, CV_RGB(0, 255,0), 3);
+			}
+
+			//sliding
+			kht->getRotatingMove();
+			line(frame, Point2i( 30, 30), Point2i( 30, 30), Scalar( 0, 0, 0 ), 5 ,8 );
+
+			char * text;
+			text = kht->slidingHand_type;
+			if((int)kht->slidingHand_x != 0){
+				putText(frame, text, cvPoint((int)kht->slidingHand_x,(int)kht->slidingHand_y), FONT_HERSHEY_COMPLEX_SMALL, 0.8, cvScalar(0,0,250), 1, CV_AA);
+				//signal pre
+				emit sendSliderCoords(  (kht->slidingHand_x/kht->handTrackerFrame.getDepthFrame().getWidth()-0.5)*200,
+										(kht->slidingHand_y/kht->handTrackerFrame.getDepthFrame().getHeight()-0.5)*200,
+										(kht->slidingHand_z/kht->handTrackerFrame.getDepthFrame().getHeight()-0.5)*200);
+				printf("%.2lf %.2lf z %.2lf -  %.2lf slider \n", (kht->slidingHand_x/kht->handTrackerFrame.getDepthFrame().getWidth()-0.5)*200,
+					   (kht->slidingHand_y/kht->handTrackerFrame.getDepthFrame().getHeight()-0.5)*200, (kht->slidingHand_z/kht->handTrackerFrame.getDepthFrame().getHeight()-0.5)*200, kht->slidingHand_z);
+			}
+
+			cv::resize(frame, frame,cv::Size(320,240),0,0,cv::INTER_LINEAR);
+			emit pushImage( frame );
+			msleep(20);
 		}
 
-		cv::resize(frame, frame,cv::Size(320,240),0,0,cv::INTER_LINEAR);
-		emit pushImage( frame );
-		msleep(20);
-
 	}
-	//testing Camera//////////////
-	//cap.release();
-
 }
-
-
-
-

@@ -58,10 +58,6 @@ private:
 
 	QPointer<Kinect::KinectWindow> mKinectDialog;
 
-
-
-
-
 };
 }
 
