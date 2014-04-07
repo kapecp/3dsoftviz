@@ -76,6 +76,7 @@ private:
 	cv::Rect rect;
 	cv::Rect drawrect;
 	bool firstdetection;
+	std::deque<cv::Point2f> lifo;
 
 	/**
 		 * @author Autor: Marek Jakab

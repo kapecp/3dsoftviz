@@ -1,6 +1,7 @@
 
 #include "OpenCV/FaceRecognizer.h"
 #include <QDebug>
+#include <deque>
 
 using namespace cv;
 
@@ -135,10 +136,23 @@ cv::CascadeClassifier OpenCV::FaceRecognizer::getCascadeClassifier()
 
 void OpenCV::FaceRecognizer::computeEyesCoordinations(Rect face, Size size)
 {
-	this->eyesCoord.x = (((float)(face.x+face.width/2) / (float)size.width-0.5f)/0.5f)*100;
-	this->eyesCoord.y = (((float)(face.y+face.height/3) / (float)size.height-0.5f)/0.5f)*100;
+	if (this->lifo.size()<10){
+		this->lifo.push_front(Point2f(((((float)(face.x+face.width/2) / (float)size.width-0.5f)/0.5f)*100),
+								((((float)(face.y+face.height/3) / (float)size.height-0.5f)/0.5f)*100)));
+	} else {
+		this->lifo.pop_back();
+		this->lifo.push_front(Point2f(((((float)(face.x+face.width/2) / (float)size.width-0.5f)/0.5f)*100),
+								((((float)(face.y+face.height/3) / (float)size.height-0.5f)/0.5f)*100)));
+	}
+	int sumx=0,sumy=0;
+	for (int i=0; i < lifo.size(); i++){
+		Point2f p = lifo.at(i);
+		sumx+= p.x;
+		sumy+= p.y;
+	}
+	this->eyesCoord.x = sumx/(float)lifo.size();
+	this->eyesCoord.y = sumy/(float)lifo.size();
 }
-
 cv::Point2i OpenCV::FaceRecognizer::getEyesCoords()
 {
 	return this->eyesCoord;
