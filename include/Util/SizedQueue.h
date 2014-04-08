@@ -13,7 +13,7 @@ public:
 	int getAvgBasedOnValue(std::pair<float,float> &currentCoordinates);
 
 private:
-	std::deque<std::pair<float,float>> stack;
+	std::deque< std::pair<float,float> > stack;
 	// size of queue
 	int size;
 	// threshold <0.0,1.0>

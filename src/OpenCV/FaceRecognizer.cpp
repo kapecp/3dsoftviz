@@ -1,9 +1,6 @@
 
 #include "OpenCV/FaceRecognizer.h"
 #include <QDebug>
-#include <deque>
-
-#define LIFOSIZE 10
 
 using namespace cv;
 
@@ -16,8 +13,7 @@ OpenCV::FaceRecognizer::FaceRecognizer()
 	this->detected=false;
 	this->isMovement=false;
 	this->firstdetection=true;
-	this->sumx=0;
-	this->sumy=0;
+	this->queue = new SizedQueue(5,0.0f);
 }
 
 OpenCV::FaceRecognizer::~FaceRecognizer()
@@ -140,23 +136,14 @@ cv::CascadeClassifier OpenCV::FaceRecognizer::getCascadeClassifier()
 
 void OpenCV::FaceRecognizer::computeEyesCoordinations(Rect face, Size size)
 {
-	if (this->lifo.size()<LIFOSIZE){
-		this->lifo.push_back(Point2f(((((float)(face.x+face.width/2) / (float)size.width-0.5f)/0.5f)*100),
-								((((float)(face.y+face.height/3) / (float)size.height-0.5f)/0.5f)*100)));
-		this->sumx+=((((float)(face.x+face.width/2) / (float)size.width-0.5f)/0.5f)*100);
-		this->sumy+=((((float)(face.y+face.height/3) / (float)size.height-0.5f)/0.5f)*100);
-	} else {
-		Point2f p = lifo.front();
-		this->sumx-= p.x;
-		this->sumy-= p.y;
-		lifo.pop_front();
-		this->lifo.push_back(Point2f(((((float)(face.x+face.width/2) / (float)size.width-0.5f)/0.5f)*100),
-								((((float)(face.y+face.height/3) / (float)size.height-0.5f)/0.5f)*100)));
-		this->sumx+=((((float)(face.x+face.width/2) / (float)size.width-0.5f)/0.5f)*100);
-		this->sumy+=((((float)(face.y+face.height/3) / (float)size.height-0.5f)/0.5f)*100);
+	std::pair<float,float> p;
+	p.first=((((float)(face.x+face.width/2) / (float)size.width-0.5f)/0.5f)*100);
+	p.second=((((float)(face.y+face.height/3) / (float)size.height-0.5f)/0.5f)*100);
+	if (this->queue->getAvgBasedOnValue(p))
+	{
+		this->eyesCoord.x = p.first;
+		this->eyesCoord.y = p.second;
 	}
-	this->eyesCoord.x = this->sumx/(float)lifo.size();
-	this->eyesCoord.y = this->sumy/(float)lifo.size();
 }
 cv::Point2i OpenCV::FaceRecognizer::getEyesCoords()
 {
