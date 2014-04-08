@@ -4,26 +4,18 @@
 #include "QList"
 #include "Q_LONG"
 #include "QString"
+#include "LuaGraphObject.h"
 
 namespace Lua {
 
-class LuaNode
+class LuaNode : public LuaGraphObject
 {
 public:
-    LuaNode();
-    qlonglong getId() const;
-    void setId(qlonglong value);
-
-    QString getLabel() const;
-    void setLabel(const QString &value);
-
     void addIncidence(const qlonglong id);
 
     QList<qlonglong> getIncidences() const;
 
 private:
-    qlonglong id;
-    QString label;
     QList<qlonglong> incidences;
 
 };
