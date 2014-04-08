@@ -7,11 +7,21 @@ class SizedQueue{
 
 public:
 
-	SizedQueue(int size);
+	SizedQueue(int size, float threshold);
 	~SizedQueue();
+
+	int getAvgBasedOnValue(std::pair<float,float> &currentCoordinates);
 
 private:
 	std::deque<std::pair<float,float>> stack;
+	// size of queue
+	int size;
+	// threshold <0.0,1.0>
+	float threshold;
+	// current sum for values in queue
+	std::pair<float,float> sum;
+	// sum considering threshold
+	std::pair<float,float> presum;
 
 };
 
