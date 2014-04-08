@@ -52,14 +52,11 @@ void OpenCV::FaceRecognizer::annotateFaces(Mat frame)
 		}
 		if (detected)
 		{
-			if ((1.15f > abs((float)this->drawrect.x/(float)(this->rect.x+face_i.x)))&&
-					(0.85f < abs((float)this->drawrect.x/(float)(this->rect.x+face_i.x))) &&
-					(1.15f > abs((float)this->drawrect.y/(float)(this->rect.y+face_i.y))) &&
-					(0.85f < abs((float)this->drawrect.y/(float)(this->rect.y+face_i.y))) &&
-					(1.15f > abs((float)this->drawrect.width/(float)(face_i.width))) &&
-					(0.85f < abs((float)this->drawrect.width/(float)(face_i.width))) &&
-					(1.15f > abs((float)this->drawrect.height/(float)(face_i.height))) &&
-					(0.85f < abs((float)this->drawrect.height/(float)(face_i.height)))){
+			if ((abs(1.0f-(float)this->drawrect.x/(float)(this->rect.x+face_i.x))<0.15f)&&
+					(abs(1.0f-(float)this->drawrect.y/(float)(this->rect.y+face_i.y))<0.15f) &&
+					(abs(1.0f-(float)this->drawrect.width/(float)(face_i.width))<0.15f) &&
+					(abs(1.0f-(float)this->drawrect.height/(float)(face_i.height))<0.15f))
+			{
 				face_i.x=(face_i.x-face_i.width*0.4+this->rect.x);
 				if (face_i.x<0) face_i.x=0;
 				if (face_i.x>frame.cols-1) face_i.x=frame.cols-1;
