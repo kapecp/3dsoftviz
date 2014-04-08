@@ -16,7 +16,11 @@ void Lua::LuaGraphVisualizer::visualize(bool incidence_as_node)
 
     for (QMap<qlonglong, Lua::LuaNode *>::iterator i = g->getNodes()->begin(); i != g->getNodes()->end(); ++i){
          osg::ref_ptr<Data::Node> n = currentGraph->addNode(i.key() , i.value()->getLabel(), nodeType);
-         n.get()->setColor(osg::Vec4 (1,0,0,1));
+         float r = static_cast<float>(i.value()->getParams()["colorR"].asNumber());
+         float g = static_cast<float>(i.value()->getParams()["colorG"].asNumber());
+         float b = static_cast<float>(i.value()->getParams()["colorB"].asNumber());
+         float a = static_cast<float>(i.value()->getParams()["colorA"].asNumber());
+         n.get()->setColor(osg::Vec4 (r,g,b,a));
          n.get()->reloadConfig();
     }
 

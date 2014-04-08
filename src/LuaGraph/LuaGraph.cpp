@@ -87,6 +87,7 @@ Lua::LuaGraph *Lua::LuaGraph::loadGraph()
 
         Lua::LuaEdge* edge = new Lua::LuaEdge();
         edge->setId(id);
+        edge->setParams(iterator->first.asTable()["params"]);
         std::stringstream sstm1;
         sstm1 << "Edge " << id;
         edge->setLabel(QString::fromStdString(sstm1.str()));
@@ -99,6 +100,7 @@ Lua::LuaGraph *Lua::LuaGraph::loadGraph()
             edge->addIncidence(id2);
             Lua::LuaIncidence* incidence = new Lua::LuaIncidence();
             incidence->setId(id2);
+            incidence->setParams(iterator2->first.asTable()["params"]);
             std::stringstream sstm2;
             sstm2 << "Incid " << id2;
             incidence->setLabel(QString::fromStdString(sstm2.str()));
@@ -109,6 +111,10 @@ Lua::LuaGraph *Lua::LuaGraph::loadGraph()
             } else {
                 Lua::LuaNode* node = new Lua::LuaNode();
                 node->setId(id3);
+                std::cout << "Node params: " << iterator2->second.asTable()["params"].typeName() << std::endl;
+                node->setParams(iterator2->second.asTable()["params"]);
+                std::cout << "Color R: " << iterator2->second.asTable()["params"]["colorR"].asNumber() << std::endl;
+                std::cout << "Color R: " << node->getParams().typeName() << std::endl;
                 std::stringstream sstm;
                 sstm << "Node " << id3;
                 node->setLabel(QString::fromStdString(sstm.str()));
