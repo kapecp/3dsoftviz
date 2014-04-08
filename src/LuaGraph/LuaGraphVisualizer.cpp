@@ -21,6 +21,7 @@ void Lua::LuaGraphVisualizer::visualize(bool incidence_as_node)
          float b = static_cast<float>(i.value()->getParams()["colorB"].asNumber());
          float a = static_cast<float>(i.value()->getParams()["colorA"].asNumber());
          n.get()->setColor(osg::Vec4 (r,g,b,a));
+         n.get()->setScale(static_cast<float>(i.value()->getParams()["size"].asNumber()));
          n.get()->reloadConfig();
     }
 

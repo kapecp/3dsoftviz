@@ -11,10 +11,10 @@ i10 = {type = "edge_part", id = 18}
 i11 = {type = "edge_part", id = 19}
 
 F = {type = "node", id = 8, params={size = 8, colorA = 1, colorR = 1, colorG = 1, colorB = 0}}
-X = {type = "node", id = 9, params={size = 8, colorA = 1, colorR = 1, colorG = 0, colorB = 1}}
-Y = {type = "node", id = 10, params={size = 8, colorA = 0.5, colorR = 1, colorG = 1, colorB = 0}}
-Z = {type = "node", id = 11, params={size = 8, colorA = 0.5, colorR = 1, colorG = 0, colorB = 1}}
-G = {type = "node", id = 12, params={size = 8, colorA = 1, colorR = 1, colorG = 1, colorB = 0}}
+X = {type = "node", id = 9, params={size = 12, colorA = 1, colorR = 1, colorG = 0, colorB = 1}}
+Y = {type = "node", id = 10, params={size = 16, colorA = 0.5, colorR = 1, colorG = 1, colorB = 0}}
+Z = {type = "node", id = 11, params={size = 20, colorA = 0.5, colorR = 1, colorG = 0, colorB = 1}}
+G = {type = "node", id = 12, params={size = 24, colorA = 1, colorR = 1, colorG = 1, colorB = 0}}
 
 E1 = {type = "edge", note = "temp", id = 13}
 E2 = {type = "edge", id = 14}
