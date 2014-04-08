@@ -3,7 +3,7 @@
 SizedQueue::SizedQueue(int size, float threshold)
 {
 	this->size=size;
-	this->threshold=threshold*100.0f;
+	this->threshold=threshold;
 	this->sum.first=0.0f;
 	this->sum.second=0.0f;
 	this->presum.first=0.0f;
