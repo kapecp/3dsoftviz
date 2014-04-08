@@ -10,7 +10,7 @@ public:
 	SizedQueue(int size, float threshold);
 	~SizedQueue();
 
-	int getAvgBasedOnValue(std::pair<float,float> &currentCoordinates);
+	int getAvgBasedOnValue(float &x, float &y);
 
 private:
 	std::deque< std::pair<float,float> > stack;

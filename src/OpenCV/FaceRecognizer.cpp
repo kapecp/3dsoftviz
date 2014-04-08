@@ -133,13 +133,12 @@ cv::CascadeClassifier OpenCV::FaceRecognizer::getCascadeClassifier()
 
 void OpenCV::FaceRecognizer::computeEyesCoordinations(Rect face, Size size)
 {
-	std::pair<float,float> p;
-	p.first=((((float)(face.x+face.width/2) / (float)size.width-0.5f)/0.5f)*100);
-	p.second=((((float)(face.y+face.height/3) / (float)size.height-0.5f)/0.5f)*100);
-	if (this->queue->getAvgBasedOnValue(p))
+	float x = ((((float)(face.x+face.width/2) / (float)size.width-0.5f)/0.5f)*100);
+	float y = ((((float)(face.y+face.height/3) / (float)size.height-0.5f)/0.5f)*100);
+	if (this->queue->getAvgBasedOnValue(x,y))
 	{
-		this->eyesCoord.x = p.first;
-		this->eyesCoord.y = p.second;
+		this->eyesCoord.x = x;
+		this->eyesCoord.y = y;
 	}
 }
 cv::Point2i OpenCV::FaceRecognizer::getEyesCoords()
