@@ -325,8 +325,10 @@ void CoreWindow::createActions()
 	connect(b_send_message, SIGNAL(clicked()), this, SLOT(send_message()));
 
 	b_start_face = new QPushButton();
-	b_start_face->setText("Face Recognition");
+    b_start_face->setText("Face Recognition");
+#ifdef OPENCV_FOUND
 	connect(b_start_face, SIGNAL(clicked()), this, SLOT(create_facewindow()));
+#endif
 
 	chb_center = new QCheckBox("&Center");
 	connect(chb_center, SIGNAL(clicked()), this, SLOT(toggleSpyWatch()));
