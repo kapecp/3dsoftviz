@@ -234,7 +234,7 @@ find_package(osgViewer)
 
 # Find OpenCV
 if( OpenCV_FOUND )
-				if ( WIN32 )
+				if( WIN32 )
 					add_definitions( -DNOMINMAX )
 				endif()
 
@@ -321,62 +321,75 @@ if( WIN32 )
 	set( CPACK_PACKAGE_ICON "${CMAKE_CURRENT_SOURCE_DIR}\\\\res\\\\logo2.bmp" )
 endif()
 
-
-
+# ------------------------------Openni and Nite-------------------------------
 # Find OPENNI2
-if ( WIN32 )
-	if ( MSVC )
+if( WIN32 )
+	if( MSVC )
 		find_package( OPENNI2 )
-		if (OPENNI2_FOUND)
-		include_directories( ${OPENNI2_INCLUDE_DIRS} )
-		add_definitions( -DOPENNI2_FOUND )
-		MESSAGE ( STATUS "OpenNI2 FOUND")
-		file(GLOB_RECURSE SRC_KINECT  "src/Kinect/*.cpp")
-		file(GLOB_RECURSE HEADER_KINECT  "include/Kinect/*.h")
+		if( OPENNI2_FOUND )
+			include_directories( ${OPENNI2_INCLUDE_DIRS} )
+			add_definitions( -DOPENNI2_FOUND )
+			MESSAGE( STATUS "OpenNI2 FOUND")
 		else(OPENNI2_FOUND)
-		MESSAGE ( STATUS "OpenNI2 NOT FOUND")
+			MESSAGE( STATUS "OpenNI2 NOT FOUND")
 		endif()
 	endif()
 endif()
 
 # Find NITE2
-if ( WIN32 )
-	if ( MSVC )
+if( WIN32 )
+	if( MSVC )
 		find_package( NITE2 )
-		if (NITE2_FOUND)
-		include_directories( ${NITE2_INCLUDE_DIRS} ${NITE2_OPENNI2_DRIVER_DIRS} )
-		add_definitions( -DNITE2_FOUND )
-		message (STATUS "NITE2 FOUND")
+		if(NITE2_FOUND)
+			include_directories( ${NITE2_INCLUDE_DIRS} ${NITE2_OPENNI2_DRIVER_DIRS} )
+			add_definitions( -DNITE2_FOUND )
+			message (STATUS "NITE2 FOUND")
 		else(NITE2_FOUND)
-		message (STATUS "NITE2 NOT FOUND")
+			message (STATUS "NITE2 NOT FOUND")
 		endif()
 	endif()
 endif()
 
-# Find KINECT SDK
-add_definitions(-DNOMINMAX)
-if ( WIN32 )
-        if ( MSVC )
-                find_package( KINECTSDK )
-                if (KINECTSDK_FOUND)
-                include_directories( ${KINECTSDK_INCLUDE_DIRS} )
-                add_definitions( -DKINECTSDK_FOUND )
-                find_package( SPEECHSDK )
-                if (SPEECHSDK_FOUND)
-                    file(GLOB_RECURSE SRC_SPEECH  "src/Speech/*.cpp")
-                    file(GLOB_RECURSE HEADER_SPEECH  "include/Speech/*.h")
-                    include_directories( ${SPEECHSDK_INCLUDE_DIRS} )
-                    add_definitions( -DSPEECHSDK_FOUND )
-                    message (STATUS "SPEECHSDK FOUND")
-                    else(SPEECHSDK_FOUND)
-                    message (STATUS "SPEECHSDK NOT FOUND")
-                endif()
-                message (STATUS "KINECTSDK FOUND")
-                else(KINECTSDK_FOUND)
-                message (STATUS "KINECTSDK NOT FOUND")
-                endif()
-        endif()
+#search h and cpp files for Kinect
+if( WIN32 )
+	if( MSVC )
+		#need Nite and Openni
+		if( NITE2_FOUND AND OPENNI2_FOUND )
+			#Kinect use cv::Mat for viewer
+			if( OpenCV_FOUND )
+				file(GLOB_RECURSE SRC_KINECT  "src/Kinect/*.cpp")
+				file(GLOB_RECURSE HEADER_KINECT  "include/Kinect/*.h")
+			endif()
+		endif()
+	endif()
 endif()
+#----------------------------------------------------------------------------------
+
+# -------------------------------Find KINECT SDK----------------------------------
+add_definitions(-DNOMINMAX)
+if( WIN32 )
+		if( MSVC )
+				find_package( KINECTSDK )
+				if(KINECTSDK_FOUND)
+					include_directories( ${KINECTSDK_INCLUDE_DIRS} )
+					add_definitions( -DKINECTSDK_FOUND )
+					find_package( SPEECHSDK )
+					if(SPEECHSDK_FOUND)
+						file(GLOB_RECURSE SRC_SPEECH  "src/Speech/*.cpp")
+						file(GLOB_RECURSE HEADER_SPEECH  "include/Speech/*.h")
+						include_directories( ${SPEECHSDK_INCLUDE_DIRS} )
+						add_definitions( -DSPEECHSDK_FOUND )
+						message(STATUS "SPEECHSDK FOUND")
+					else(SPEECHSDK_FOUND)
+						message (STATUS "SPEECHSDK NOT FOUND")
+					endif()
+				message (STATUS "KINECTSDK FOUND")
+				else(KINECTSDK_FOUND)
+					message (STATUS "KINECTSDK NOT FOUND")
+				endif()
+		endif()
+endif()
+#---------------------------------------------------------------------------------
 
 # ---------------
 # 3DSoftviz sources
@@ -400,7 +413,8 @@ endif()
 
 include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/include )
 
-# Source files
+#--------------------------------Source files-------------------------------
+#cpp
 set(SRC_MAIN "src/main.cpp")
 file(GLOB_RECURSE SRC_CORE  "src/Core/*.cpp")
 file(GLOB_RECURSE SRC_DATA  "src/Data/*.cpp")
@@ -427,15 +441,19 @@ set(SRC ${SRC}
 if( OpenCV_FOUND )
 	list(APPEND SRC ${SRC_OPENCV} ${SRC_QOPENCV})
 endif()
-if (OPENNI2_FOUND)
+
+# add Kinect if Nite,Openni and Openc
+if(NITE2_FOUND AND OPENNI2_FOUND AND OpenCV_FOUND)
 	list(APPEND SRC ${SRC_KINECT})
 endif()
-if (KINECTSDK_FOUND)
-    if (SPEECHSDK_FOUND)
-        list(APPEND SRC ${SRC_SPEECH})
-    endif()
+
+if(KINECTSDK_FOUND)
+	if (SPEECHSDK_FOUND)
+		list(APPEND SRC ${SRC_SPEECH})
+	endif()
 endif()
 
+#include
 file(GLOB_RECURSE HEADER_CORE  "include/Core/*.h")
 file(GLOB_RECURSE HEADER_DATA  "include/Data/*.h")
 file(GLOB_RECURSE HEADER_IMPORTER  "include/Importer/*.h")
@@ -459,16 +477,19 @@ set(INCL
 if( OpenCV_FOUND )
 		list(APPEND INCL ${HEADER_OPENCV} ${HEADER_QOPENCV} ${HEADER_ARUCO})
 endif()
-if (OPENNI2_FOUND)
+#Kinect use Nite,Openni and OpenCV
+if( NITE2_FOUND AND OPENNI2_FOUND AND OpenCV_FOUND)
 		list(APPEND INCL ${HEADER_KINECT})
 endif()
-if (KINECTSDK_FOUND)
-    if (SPEECHSDK_FOUND)
-        list(APPEND INCL ${HEADER_SPEECH})
-    endif()
-endif()
 
-# Group source files
+if(KINECTSDK_FOUND)
+	if(SPEECHSDK_FOUND)
+		list(APPEND INCL ${HEADER_SPEECH})
+	endif()
+endif()
+#-----------------------------------------------------------------------------------------------
+
+#-------------------------------------- Group source files--------------------------------------
 source_group(\\src main.cpp)
 source_group(\\src\\Network "^.*Network/.*$")
 source_group(\\src\\Viewer "^.*Viewer/.*$")
@@ -505,21 +526,22 @@ if(OpenCV_FOUND)
 	source_group(\\src\\Aruco "^.*Aruco/.*$")
 	source_group(\\headers\\Aruco "^.*Aruco/.*h$")
 endif()
-if (OPENNI2_FOUND)
+if( NITE2_FOUND AND OPENNI2_FOUND AND OpenCV_FOUND)
 	source_group(\\src\\Kinect "^.*Kinect/.*$")
 	source_group(\\headers\\Kinect "^.*Kinect/.*h$")
 endif()
-if (KINECTSDK_FOUND)
-    if (SPEECHSDK_FOUND)
-        source_group(\\src\\Speech "^.*Speech/.*$")
-        source_group(\\headers\\Speech "^.*Speech/.*h$")
-    endif()
+if(KINECTSDK_FOUND)
+	if(SPEECHSDK_FOUND)
+		source_group(\\src\\Speech "^.*Speech/.*$")
+		source_group(\\headers\\Speech "^.*Speech/.*h$")
+	endif()
 endif()
+#----------------------------------------------------------------------------
+
 
 # ---------------
 # Build and link 3Dsoftviz
 # ---------------
-
 
 # Build and link
 add_executable( ${3DSOFTVIZ_NAME} ${INCL} ${SRC} )
@@ -538,16 +560,16 @@ if(OpenCV_FOUND)
 	)
 endif()
 
-if (NITE2_FOUND AND OPENNI2_FOUND)
+if(NITE2_FOUND AND OPENNI2_FOUND)
 	target_link_libraries( ${3DSOFTVIZ_NAME} ${NITE2_LIBRARIES} ${OPENNI2_LIBRARIES} )
 endif()
 
 # KINECT SDK
-if (KINECTSDK_FOUND)
-    target_link_libraries( ${3DSOFTVIZ_NAME} ${KINECTSDK_LIBRARIES})
-    if (SPEECHSDK_FOUND)
-        target_link_libraries( ${3DSOFTVIZ_NAME} ${SPEECHSDK_LIBRARIES})
-    endif()
+if( KINECTSDK_FOUND)
+	target_link_libraries( ${3DSOFTVIZ_NAME} ${KINECTSDK_LIBRARIES})
+	if( SPEECHSDK_FOUND)
+		target_link_libraries( ${3DSOFTVIZ_NAME} ${SPEECHSDK_LIBRARIES})
+	endif()
 endif()
 
 # 'cotire' the executable
@@ -573,7 +595,7 @@ if( COMMAND cotire )
 		endif()
 	endif()
 
-if(OpenCV_FOUND)
+	if(OpenCV_FOUND)
 		target_link_libraries( ${3DSOFTVIZ_NAME}_unity ${OpenCV_LIBS})
 	endif()
 
@@ -585,13 +607,9 @@ endif()
 
 # ensure correct dependencies
 
-
-
-
-
 add_dependencies( ${3DSOFTVIZ_NAME} libnoise)
 if( OpenCV_FOUND )
-		add_dependencies( ${3DSOFTVIZ_NAME} aruco )
+	add_dependencies( ${3DSOFTVIZ_NAME} aruco )
 endif()
 
 # -------
@@ -614,13 +632,13 @@ endif()
 install(DIRECTORY resources/ DESTINATION ${INSTALL_DATA} COMPONENT Data)
 
 # Install needed .dll files for OpenNI2
-if (NITE2_FOUND AND OPENNI2_FOUND)
+if(NITE2_FOUND AND OPENNI2_FOUND)
 	install(DIRECTORY ${NITE2_OPENNI2_DRIVER_DIRS} DESTINATION ${INSTALL_BIN}/OpenNI2)
 endif()
 
 # install .dll for speech recognition
-if (SPEECHSDK_FOUND)
-        install(DIRECTORY ${SPEECHSDK_DRIVER_DIRS}/ DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/_install/bin)
+if(SPEECHSDK_FOUND)
+		install(DIRECTORY ${SPEECHSDK_DRIVER_DIRS}/ DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/_install/bin)
 endif()
 
 # Install built in dependencies unless we are building an OSX Bundle
