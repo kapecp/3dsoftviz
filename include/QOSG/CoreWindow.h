@@ -66,9 +66,9 @@ class CoreWindow : public QMainWindow
 {
 	Q_OBJECT
 private:
-	#ifdef SPEECHSDK_FOUND
+#ifdef SPEECHSDK_FOUND
 	Speech::KinectSpeechThread *mSpeechThr;
-	#endif
+#endif
 public slots:
 
 	/**
@@ -310,13 +310,18 @@ public slots:
 	void create_facewindow();
 #endif
 
+#ifdef OPENCV_FOUND
 #ifdef OPENNI2_FOUND
+#ifdef NITE2_FOUND
 	/**
 		*
 		* @brief create Kinect Button
 	 */
 	void createKinectWindow();
 #endif
+#endif
+#endif
+
 #ifdef SPEECHSDK_FOUND
 	void startSpeech();
 #endif

@@ -32,10 +32,14 @@
 #ifdef OPENCV_FOUND
 #include "OpenCV/OpenCVCore.h"
 #endif
+
+#ifdef OPENCV_FOUND
 #ifdef OPENNI2_FOUND
+#ifdef NITE2_FOUND
 #include "Kinect/KinectCore.h"
 #endif
-
+#endif
+#endif
 
 #include "Util/Cleaner.h"
 
@@ -508,9 +512,6 @@ void CoreWindow::createRightToolBar() {
 	/*toolBar->addWidget(le_message);
 	toolBar->addWidget(b_send_message);*/
 
-	//add Kinect Button
-
-
 	addToolBar(Qt::TopToolBarArea,toolBar);
 }
 
@@ -532,7 +533,9 @@ void CoreWindow::createAugmentedRealityToolBar() {
 	toolBar->addWidget( chb_camera_rot );
 	toolBar->addSeparator();
 
+#ifdef OPENCV_FOUND
 #ifdef OPENNI2_FOUND
+#ifdef NITE2_FOUND
 	QLabel *labelKinect = new QLabel( tr("Kinect"));
 	toolBar->addWidget( labelKinect );
 	b_start_kinect = new QPushButton();
@@ -542,6 +545,9 @@ void CoreWindow::createAugmentedRealityToolBar() {
 
 	toolBar->addSeparator();
 #endif
+#endif
+#endif
+
 #ifdef SPEECHSDK_FOUND
 	QLabel *labelSpeech = new QLabel( tr("Speech"));
 	toolBar->addWidget( labelSpeech );
@@ -1757,11 +1763,15 @@ void CoreWindow::create_facewindow()
 }
 
 
+#ifdef OPENCV_FOUND
 #ifdef OPENNI2_FOUND
+#ifdef NITE2_FOUND
 void CoreWindow::createKinectWindow(){
 
 	Kinect::KinectCore::getInstance(NULL,this)->kinectRecognition();
 }
+#endif
+#endif
 #endif
 
 #ifdef SPEECHSDK_FOUND
