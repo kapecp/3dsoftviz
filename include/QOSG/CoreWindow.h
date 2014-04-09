@@ -626,6 +626,12 @@ private:
 		*/
 	void createCollaborationToolBar();
 
+    /**
+        *  \fn private  createMetricsToolBar
+        *  \brief Create metrics toolBar
+        */
+    void createMetricsToolBar();
+
 	/**
 		*  \fn private  createHorizontalFrame
 		*  \brief Crate frame with horizontal label

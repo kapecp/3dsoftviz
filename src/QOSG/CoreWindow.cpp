@@ -64,6 +64,7 @@ CoreWindow::CoreWindow(QWidget *parent, Vwr::CoreGraph* coreGraph, QApplication*
 	createLeftToolBar();
 	createRightToolBar();
 	createCollaborationToolBar();
+    createMetricsToolBar();
 
 	viewerWidget = new ViewerQT(this, 0, 0, 0, coreGraph);
 	viewerWidget->setSceneData(coreGraph->getScene());
@@ -378,9 +379,6 @@ void CoreWindow::createLeftToolBar()
 
 	toolBar = new QToolBar("Tools",this);
 
-    toolBar->addWidget(loadFromLua);
-    toolBar->addWidget(updateFromLuaButton);
-
 	QFrame * frame = createHorizontalFrame();
 
 	frame->layout()->addWidget(noSelect);
@@ -567,7 +565,20 @@ void CoreWindow::createCollaborationToolBar() {
 	addToolBar(Qt::RightToolBarArea,toolBar);
 	toolBar->setMaximumHeight(400);
 	toolBar->setMaximumWidth(120);
-	toolBar->setMovable(true);
+    toolBar->setMovable(true);
+}
+
+void CoreWindow::createMetricsToolBar()
+{
+    toolBar = new QToolBar("Metrics visualizations",this);
+
+    toolBar->addWidget(loadFromLua);
+    toolBar->addWidget(updateFromLuaButton);
+
+    addToolBar(Qt::RightToolBarArea,toolBar);
+    toolBar->setMaximumHeight(400);
+    toolBar->setMaximumWidth(120);
+    toolBar->setMovable(true);
 }
 
 QFrame* CoreWindow::createHorizontalFrame()
