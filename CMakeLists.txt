@@ -177,6 +177,16 @@ if( USE_BUILTIN_DEPENDENCIES )
 			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
 	)
 
+        # Build luafilesystem
+        ExternalProject_Add ( dep_luafilesystem
+                PREFIX luafilesystem
+                SOURCE_DIR ${DEP_SOURCE}/luafilesystem
+                BINARY_DIR luafilesystem
+                CMAKE_ARGS
+                        -DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
+                        -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
+        )
+
 	# Build aruco
 	#include( ExternalProject )
 	#ExternalProject_Add( dep_aruco
@@ -195,6 +205,7 @@ if( USE_BUILTIN_DEPENDENCIES )
 	add_dependencies( dep_diluculum dep_luajit )
 	add_dependencies( dep_leg dep_lpeg )
 	add_dependencies( dep_luametrics dep_leg )
+        add_dependencies( dep_luafilesystem dep_luajit )
 
 	# Define LUA_ variables
 
@@ -534,9 +545,9 @@ endif()
 
 #add_dependencies( ${3DSOFTVIZ_NAME} dep_aruco )
 
-add_dependencies( ${3DSOFTVIZ_NAME} libnoise dep_diluculum dep_luametrics dep_leg dep_lpeg dep_luajit )
+add_dependencies( ${3DSOFTVIZ_NAME} libnoise dep_diluculum dep_luametrics dep_leg dep_lpeg dep_luajit dep_luafilesystem )
 if (COMMAND cotire)
-        add_dependencies( ${3DSOFTVIZ_NAME}_unity libnoise dep_diluculum dep_luametrics dep_leg dep_lpeg dep_luajit )
+        add_dependencies( ${3DSOFTVIZ_NAME}_unity libnoise dep_diluculum dep_luametrics dep_leg dep_lpeg dep_luajit dep_luafilesystem )
 endif()
 
 
@@ -561,9 +572,9 @@ install(DIRECTORY resources/ DESTINATION ${INSTALL_DATA} COMPONENT Data)
 # Install built in dependencies unless we are building an OSX Bundle
 if( USE_BUILTIN_DEPENDENCIES )
 	# Make sure dependencies are built
-        add_dependencies( ${3DSOFTVIZ_NAME} libnoise dep_diluculum dep_luametrics dep_leg dep_lpeg dep_luajit  )
+        add_dependencies( ${3DSOFTVIZ_NAME} libnoise dep_diluculum dep_luametrics dep_leg dep_lpeg dep_luajit dep_luafilesystem )
 	if (COMMAND cotire)
-                add_dependencies( ${3DSOFTVIZ_NAME}_unity libnoise dep_diluculum dep_luametrics dep_leg dep_lpeg dep_luajit  )
+                add_dependencies( ${3DSOFTVIZ_NAME}_unity libnoise dep_diluculum dep_luametrics dep_leg dep_lpeg dep_luajit dep_luafilesystem )
 	endif()
 
 	# Install all dependencies

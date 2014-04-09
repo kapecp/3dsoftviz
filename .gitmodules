@@ -19,3 +19,6 @@
 [submodule "dependencies/aruco"]
 	path = dependencies/aruco
 	url = git@github.com:LuaDist/aruco.git
+[submodule "dependencies/luafilesystem"]
+	path = dependencies/luafilesystem
+	url = https://github.com/LuaDist/luafilesystem.git
