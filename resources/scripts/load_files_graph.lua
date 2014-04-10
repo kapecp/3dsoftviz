@@ -11,9 +11,9 @@ end
 local function get_graph_from_tree(tree, graph, parent)
   print ("traversing " .. tree.name)
   local graph = graph or {}
-  local node = {type = "node", id = inc(), params={size = 8, colorA = 1, colorR = 1, colorG = 0, colorB = 0}}
+  local node = {type = "node", id = inc(), label = tree.name, params={size = 8, colorA = 1, colorR = 1, colorG = 0, colorB = 0}}
   if parent ~= nil then
-    local edge = {type = "edge", id = inc()}
+    local edge = {type = "edge", label = "", id = inc()}
     local incid1 = {type = "edge_part", id = inc()}
     local incid2 = {type = "edge_part", id = inc()}
     graph[edge] = {[incid1] = parent, [incid2] = node}
@@ -29,5 +29,4 @@ function create_file_graph(path)
   print "creating file graph"
   tree = filetree.load(path)
   graph = get_graph_from_tree(tree)
-  print(graph)
 end
