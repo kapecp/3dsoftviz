@@ -24,7 +24,6 @@ Lua::LuaGraph::LuaGraph()
     incidences = new QMap<qlonglong, Lua::LuaIncidence*>();
     observer = NULL;
     Lua::LuaInterface* lua = Lua::LuaInterface::getInstance();
-    lua->executeFile("../share/3dsoftviz/scripts/main.lua");
     Diluculum::LuaState *ls = lua->getLuaState();
     (*ls)["callback"] = DILUCULUM_WRAPPER_FUNCTION (luaCallback);
 }

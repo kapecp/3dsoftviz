@@ -104,9 +104,15 @@ public slots:
 
     /**
                 *  \fn public  updateFromLua()
-                *  \brief lupdate from lua clicked
+                *  \brief update from lua clicked
                 */
     void updateFromLua();
+
+    /**
+                *  \fn public  loadFileTree()
+                *  \brief load file tree clicked
+                */
+    void loadFileTree();
 
 	/**
 				*  \fn public  noSelectClicked(bool checked
@@ -411,6 +417,12 @@ private:
         *  \brief Action for updating graph from lua
         */
     QPushButton * updateFromLuaButton;
+
+    /**
+        *  QPushButton * loadFileTreeButton
+        *  \brief Action for loading file tree from lua
+        */
+    QPushButton * loadFileTreeButton;
 
 	/**
 		*  QPushButton * noSelect
