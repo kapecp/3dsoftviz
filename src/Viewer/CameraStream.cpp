@@ -12,7 +12,7 @@ CameraStream::CameraStream(osg::Geometry *geom) : QObject(), osg::ImageStream()
 	mWidth	= 0;
 	mHeight = 0;
 
-	cv::Mat cvImg = cv::Mat::zeros(640,640, CV_8UC3);
+	cv::Mat cvImg = cv::Mat::zeros(480,640, CV_8UC3);
 
 	updateBackgroundImage( cvImg);
 }
@@ -35,7 +35,7 @@ void CameraStream::updateBackgroundImage( cv::Mat cvImg)
 	IplImage* iplImg = cvCloneImage( &(IplImage)cvImg);
 
 	setImage( iplImg->width, iplImg->height, 3,
-			  GL_RGB, GL_RGB, GL_UNSIGNED_BYTE,
+			  GL_RGB, GL_BGR, GL_UNSIGNED_BYTE,
 			  (BYTE*)( iplImg->imageData),
 			  osg::Image::AllocationMode::NO_DELETE, 1);
 
@@ -45,21 +45,16 @@ void CameraStream::updateBackgroundImage( cv::Mat cvImg)
 void CameraStream::updateGeometryCoords(int width, int height)
 {
 	//qDebug() << width << " x " << height;
-	float x, z;
-	if(width >= height){
-		x = 1.0f;
-		z = ((float)height) / ((float)width);
-	}else{
-		x = ((float)width) / ((float)height);
-		z = 1.0f;
-	}
-	//qDebug() << "x,y   " << x << " " << z;
+	float x;
+	x = ((float)width) / ((float)height);
+
+	//qDebug() << "x " << x;
 
 	osg::Vec3Array* coords = (osg::Vec3Array*) mGeom->getVertexArray();
-	(*coords)[0].set( -x, 1.0f, -z );
-	(*coords)[1].set(  x, 1.0f, -z );
-	(*coords)[2].set(  x, 1.0f,  z );
-	(*coords)[3].set( -x, 1.0f,  z );
+	(*coords)[0].set( -x, 1.5f, -1.0f );
+	(*coords)[1].set(  x, 1.5f, -1.0f );
+	(*coords)[2].set(  x, 1.5f,  1.0f );
+	(*coords)[3].set( -x, 1.5f,  1.0f );
 
 	mGeom->dirtyDisplayList();  // update changes
 
