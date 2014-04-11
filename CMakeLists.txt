@@ -5,7 +5,7 @@
 # For details see the COPYRIGHT file distributed with 3DSoftviz.
 
 project( 3DSoftviz C CXX )
-cmake_minimum_required( VERSION 2.8 )
+cmake_minimum_required( VERSION 2.8.11 )
 
 # --------------
 # 3DSoftviz Info
@@ -44,22 +44,32 @@ set( INSTALL_TEST ${INSTALL_DATA}/test CACHE PATH "Test files." )
 set( INSTALL_EXAMPLE ${INSTALL_DATA}/example CACHE PATH "Recommended directory to install examples into." )
 
 # Additional CMake scripts
-set( CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH} )
+set( CMAKE_MODULE_PATH
+	"${CMAKE_CURRENT_SOURCE_DIR}/cmake"
+	${CMAKE_MODULE_PATH} )
 
 # Warnings for Debug mode
 option( USE_STRICT_COMPILE_WARNINGS "Use strict compilation warnings in debug mode." ON )
 if( USE_STRICT_COMPILE_WARNINGS )
 	if( CMAKE_COMPILER_IS_GNUCXX )
-#~ 		set( CMAKE_CXX_FLAGS_DEBUG "-Wall -Wextra -Werror" )
-		set( CMAKE_CXX_FLAGS_DEBUG "-pedantic -Wall -Wextra -Wwrite-strings -Winit-self -Wcast-align -Wcast-qual -Wpointer-arith -Wstrict-aliasing -Wformat=2 -Wmissing-declarations -Wmissing-include-dirs -Wuninitialized -Werror-implicit-function-declaration -Wfloat-equal -Wundef -Wstrict-overflow=5 -Wswitch-default -Wswitch-enum -Wconversion -Wunreachable-code -Wno-unused-parameter" )
-			# use to suppress unused stuff: -Wno-unused-parameter -Wno-unused-result
+#~		set( CMAKE_CXX_FLAGS_DEBUG "-Wall -Wextra" )
+
+                #set( CMAKE_CXX_FLAGS_DEBUG
+                set( FLAGS_FOR_DEBUG "-ansi -pedantic -Wall -Wcast-align -Wcast-qual -Wchar-subscripts -Wcomment -Wconversion -Wctor-dtor-privacy -Wdisabled-optimization -Wextra -Wfloat-equal  -Wformat  -Wformat-nonliteral -Wformat-security  -Wformat-y2k -Wformat=2  -Wimport  -Winit-self -Winline -Winvalid-pch -Wlogical-op -Wlong-long -Wmissing-braces -Wmissing-declarations -Wmissing-field-initializers -Wmissing-format-attribute   -Wmissing-include-dirs -Wmissing-noreturn -Wnoexcept  -Wpacked  -Wparentheses -Wpointer-arith -Wredundant-decls -Wreturn-type -Wsequence-point -Wsign-compare  -Wsign-promo -Wstack-protector -Wstrict-aliasing=2 -Wstrict-null-sentinel -Wstrict-overflow=5 -Wswitch -Wswitch-default -Wswitch-enum -Wtrigraphs -Wundef -Wuninitialized -Wunknown-pragmas -Wunreachable-code -Wunsafe-loop-optimizations -Wvariadic-macros -Wvolatile-register-var -Wwrite-strings  -Wno-unused-parameter -Wno-unused" )
+
+		# to suppress warnings for unused stuff use: -Wno-unused-parameter -Wno-unused-result
+		# not used:
+			# too much warnings in Qt headers: NULL vs 0 pointers: -Wzero-as-null-pointer-constant
+                        # too much warnings: -Wshadow -Waggregate-return
+                        # too much warnings, but should be used: -Wold-style-cast -Woverloaded-virtual -Wuseless-cast -Wsign-conversion
+			# class size optimizations (not really needed): -Wpadded
 			# only for C: -Wold-style-definition -Wstrict-prototypes -Wmissing-prototypes
-			# not used (too many warnings): -Wshadow -Waggregate-return
-	endif()
+        endif()
 endif()
 
 # Default build type
 if( NOT CMAKE_BUILD_TYPE )
+#	set( CMAKE_BUILD_TYPE "MinSizeRel" CACHE STRING "" FORCE )
 	set( CMAKE_BUILD_TYPE "Debug" CACHE STRING "" FORCE )
 endif()
 
@@ -70,17 +80,18 @@ endif()
 
 # RPath functionality
 set( CMAKE_SKIP_BUILD_RPATH FALSE CACHE STRING "" FORCE )
-set( CMAKE_BUILD_WITH_INSTALL_RPATH TRUE CACHE STRING "" FORCE )	# info: changed to TRUE for cotire unity build - works!
+# next line adds "$ORIGIN/../lib" to RPath:
+set( CMAKE_BUILD_WITH_INSTALL_RPATH TRUE CACHE STRING "" FORCE )
 set( CMAKE_INSTALL_RPATH "$ORIGIN/../lib" CACHE STRING "" FORCE )
+# next line adds additional link paths to RPath (e.g. for qscintilla when not in system):
 set( CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE CACHE STRING "" FORCE )
 set( CMAKE_INSTALL_NAME_DIR "@executable_path/../lib" CACHE STRING "" FORCE )
 
 # --------------
 # Build settings - COTIRE module
 # --------------
-
-include(cotire)
-if (COMMAND cotire)
+include( cotire )
+if( COMMAND cotire )
 	if( NOT COTIRE_MAXIMUM_NUMBER_OF_UNITY_INCLUDES )
 		include( ProcessorCount )
 		ProcessorCount( N )
@@ -205,7 +216,7 @@ if( USE_BUILTIN_DEPENDENCIES )
 	add_dependencies( dep_diluculum dep_luajit )
 	add_dependencies( dep_leg dep_lpeg )
 	add_dependencies( dep_luametrics dep_leg )
-        add_dependencies( dep_luafilesystem dep_luajit )
+	add_dependencies( dep_luafilesystem dep_luajit )
 
 	# Define LUA_ variables
 
@@ -256,6 +267,8 @@ set(QT_USE_QTWEBKIT 1)
 set(QT_USE_QTXML 1)
 set(QT_USE_QTNETWORK 1)
 include(${QT_USE_FILE})
+# autogenerate all moc files
+set( CMAKE_AUTOMOC TRUE )
 
 # add special flag to GCC compiler when using Qt 4.6.x with GCC >4.6
 if(	"${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" AND
@@ -293,12 +306,6 @@ find_package( OpenCV )
 if( OpenCV_FOUND )
 	add_definitions( -DOPENCV_FOUND )
 	message("OpenCV FOUND")
-	set( SOURCES_H
-		./include/QOpenCV/FaceRecognitionWindow.h
-		./include/QOpenCV/FaceRecognitionThread.h
-	)
-	file(GLOB_RECURSE SRC_OPENCV  "src/OpenCV/*.cpp")
-	file(GLOB_RECURSE SRC_QOPENCV  "src/QOpenCV/*.cpp")
 else()
 	message("OpenCV NOT FOUND")
 endif()
@@ -366,7 +373,6 @@ if( WIN32 )
 	set( CPACK_PACKAGE_ICON "${CMAKE_CURRENT_SOURCE_DIR}\\\\res\\\\logo2.bmp" )
 endif()
 
-
 # ---------------
 # Build 3DSOFTVIZ
 # ---------------
@@ -401,6 +407,8 @@ file(GLOB_RECURSE SRC_OSGQTBROWSER  "src/OsgQtBrowser/*.cpp")
 file(GLOB_RECURSE SRC_QOSG  "src/QOSG/*.cpp")
 file(GLOB_RECURSE SRC_UTIL  "src/Util/*.cpp")
 file(GLOB_RECURSE SRC_VIEWER  "src/Viewer/*.cpp")
+file(GLOB_RECURSE SRC_OPENCV  "src/OpenCV/*.cpp")
+file(GLOB_RECURSE SRC_QOPENCV  "src/QOpenCV/*.cpp")
 
 # Source files
 set(SRC
@@ -430,6 +438,8 @@ file(GLOB_RECURSE HEADER_OSGQTBROWSER  "include/OsgQtBrowser/*.h")
 file(GLOB_RECURSE HEADER_QOSG  "include/QOSG/*.h")
 file(GLOB_RECURSE HEADER_UTIL  "include/Util/*.h")
 file(GLOB_RECURSE HEADER_VIEWER  "include/Viewer/*.h")
+file(GLOB_RECURSE HEADER_QOPENCV  "include/OpenCV/*.h")
+file(GLOB_RECURSE HEADER_QOPENCV  "include/QOpenCV/*.h")
 
 set(INCL
 	${HEADER_CORE} ${HEADER_DATA} ${HEADER_IMPORTER}
@@ -438,6 +448,9 @@ set(INCL
 	${HEADER_OSGQTBROWSER} ${HEADER_QOSG} ${HEADER_UTIL} ${HEADER_VIEWER} ${HEADER_MODEL}
 )
 
+if( OpenCV_FOUND )
+    list(APPEND INCL ${HEADER_OPENCV} ${HEADER_QOPENCV} ${HEADER_ARUCO})
+endif()
 
 
 # Group source files
@@ -473,38 +486,25 @@ source_group(\\headers\\LuaGraph "^.*LuaGraph/.*h$")
 source_group(\\headers\\LuaInterface "^.*LuaInterface/.*h$")
 
 if(OpenCV_FOUND)
-	source_group(\\src\\QOpenCV "^.*QOpenCV/.*$")
-	source_group(\\src\\OpenCV "^.*OpenCV/.*$")
-	source_group(\\headers\\QOpenCV "^.*QOpenCV/.*h$")
-	source_group(\\headers\\OpenCV "^.*OpenCV/.*h$")
+    source_group(\\src\\QOpenCV "^.*QOpenCV/.*$")
+    source_group(\\src\\OpenCV "^.*OpenCV/.*$")
+    source_group(\\headers\\QOpenCV "^.*QOpenCV/.*h$")
+    source_group(\\headers\\OpenCV "^.*OpenCV/.*h$")
 endif()
 
 # Group generated moc files
-source_group(\\MOC "^.*moc_.*$")
-
-# header files containing Q_OBJECT macros
-set(SOURCES_H ${SOURCES_H}
-	./include/OsgQtBrowser/QGraphicsViewAdapter.h
-	./include/QOSG/CoreWindow.h
-	./include/QOSG/TreeModel.h
-	./include/Util/Cleaner.h
-	./include/QOSG/OptionsWindow.h
-	./include/QOSG/LoadGraphWindow.h
-	./include/QOSG/SelectLayoutWindow.h
-	./include/QOSG/CheckBoxList.h
-	./include/QOSG/qtcolorpicker.h
-	./include/Viewer/PickHandler.h
-	./include/Network/Server.h
-	./include/Network/Client.h
-	./include/Viewer/CameraManipulator.h
-)
+#source_group(\\MOC "^.*moc_.*$")
 
 # Qt Generators
 # process header files containing Q_OBJECT macros - generates moc files
-QT4_WRAP_CPP( SOURCES_H_MOC ${SOURCES_H} )
+# not needed anymore - using CMAKE_AUTOMOC set above
+#QT4_WRAP_CPP( SOURCES_H_MOC ${SOURCES_H} )
 
 # Build and link
-add_executable( ${3DSOFTVIZ_NAME} ${INCL} ${SRC} ${SOURCES_H_MOC} )
+add_executable( ${3DSOFTVIZ_NAME} ${INCL} ${SRC} )
+
+# set compile flags only for our code (suppresses warnigns on system headers)
+set_target_properties( ${3DSOFTVIZ_NAME} PROPERTIES COMPILE_FLAGS ${FLAGS_FOR_DEBUG})
 
 target_link_libraries( ${3DSOFTVIZ_NAME}
 	${QT_LIBRARIES}
@@ -521,13 +521,13 @@ if(OpenCV_FOUND)
 endif()
 
 # 'cotire' the executable
-if (COMMAND cotire)
+if( COMMAND cotire )
 	# this needs CMake 2.8.11 and greater
 	if (${CMAKE_VERSION} VERSION_GREATER "2.8.10")
 		set_target_properties(${3DSOFTVIZ_NAME} PROPERTIES COTIRE_UNITY_LINK_LIBRARIES_INIT "COPY")
 	endif()
 
-        cotire( ${3DSOFTVIZ_NAME} CONFIGURATIONS Release Debug)
+        cotire( ${3DSOFTVIZ_NAME} CONFIGURATIONS Release MinSizeRel Debug)
 
 	if (${CMAKE_VERSION} VERSION_LESS "2.8.11")
 		target_link_libraries(${3DSOFTVIZ_NAME}_unity
@@ -535,19 +535,16 @@ if (COMMAND cotire)
 			${OPENSCENEGRAPH_LIBRARIES}
 			${OSGVIEWER_LIBRARIES}
 			libnoise)
+
+                if(OpenCV_FOUND)
+                    target_link_libraries( ${3DSOFTVIZ_NAME}_unity ${OpenCV_LIBS} )
+                endif()
 	endif()
 
 	if( MSVC )
 		### Fix virtual memory range
 		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Zm200" CACHE STRING "" FORCE)
 	endif()
-endif()
-
-#add_dependencies( ${3DSOFTVIZ_NAME} dep_aruco )
-
-add_dependencies( ${3DSOFTVIZ_NAME} libnoise dep_diluculum dep_luametrics dep_leg dep_lpeg dep_luajit dep_luafilesystem )
-if (COMMAND cotire)
-        add_dependencies( ${3DSOFTVIZ_NAME}_unity libnoise dep_diluculum dep_luametrics dep_leg dep_lpeg dep_luajit dep_luafilesystem )
 endif()
 
 
@@ -573,8 +570,10 @@ install(DIRECTORY resources/ DESTINATION ${INSTALL_DATA} COMPONENT Data)
 if( USE_BUILTIN_DEPENDENCIES )
 	# Make sure dependencies are built
         add_dependencies( ${3DSOFTVIZ_NAME} libnoise dep_diluculum dep_luametrics dep_leg dep_lpeg dep_luajit dep_luafilesystem )
+        #add_dependencies( ${3DSOFTVIZ_NAME} dep_aruco )
 	if (COMMAND cotire)
                 add_dependencies( ${3DSOFTVIZ_NAME}_unity libnoise dep_diluculum dep_luametrics dep_leg dep_lpeg dep_luajit dep_luafilesystem )
+                #add_dependencies( ${3DSOFTVIZ_NAME}_unity dep_aruco )
 	endif()
 
 	# Install all dependencies
