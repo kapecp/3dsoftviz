@@ -18,6 +18,7 @@
 #include <osg/Depth>
 
 
+
 using namespace Vwr;
 
 /*
@@ -46,13 +47,15 @@ Vwr::CoreGraph::CoreGraph(Data::Graph * graph, osg::ref_ptr<osg::Camera> camera)
 	graphRotTransf = new osg::MatrixTransform();
 	graphGroup = new osg::Group();
 
+
+	graphRotTransf->addChild(graphGroup);
+	root->addChild(graphRotTransf);
+
+
 	root->addChild(createSkyBox());
 
 
-	root->addChild(graphRotTransf);
-	graphRotTransf->addChild(graphGroup);
-
-	backgroundPosition = 0;
+	backgroundPosition = 1;
 
 	reload(graph);
 }
@@ -148,6 +151,9 @@ void CoreGraph::cleanUp()
 	delete edgesGroup;
 }
 
+
+
+
 osg::ref_ptr<osg::Node> CoreGraph::createTextureBackground(){
 
 	// rectangle
@@ -212,6 +218,7 @@ osg::ref_ptr<osg::Node> CoreGraph::createTextureBackground(){
 	geode->addDrawable(geom);
 
 	osg::ref_ptr<osg::Transform> transform = new SkyTransform;
+
 	//osg::ref_ptr<osg::Transform> transform = new MoveEarthySkyWithEyePointTran;
 	transform->setCullingActive(false);
 	transform->addChild(geode);
@@ -226,10 +233,93 @@ osg::ref_ptr<osg::Node> CoreGraph::createTextureBackground(){
 
 }
 
+osg::ref_ptr<osg::Node> CoreGraph::createOrtho2dBackground(){
+
+	qDebug() << "createOrtho2dBackground()";
+
+	osg::Geode				*GeodeHUD = new osg::Geode();
+
+	osg::Projection			*ProjectionMatrixHUD = new osg::Projection;
+	osg::MatrixTransform	*ModelViewMatrixHUD = new osg::MatrixTransform;
+
+	ModelViewMatrixHUD->setMatrix(osg::Matrix::identity());
+	ModelViewMatrixHUD->setReferenceFrame(osg::Transform::ABSOLUTE_RF);
+
+	ProjectionMatrixHUD->setMatrix(osg::Matrix::ortho2D(0,640,0,480));
+	ProjectionMatrixHUD->addChild( ModelViewMatrixHUD );
+	ModelViewMatrixHUD->addChild( GeodeHUD );
+
+
+	osg::Vec3Array* coordsHUD = new osg::Vec3Array;
+	coordsHUD->push_back( osg::Vec3(   0,    0, -1 ));
+	coordsHUD->push_back( osg::Vec3( 640,    0, -1 ));
+	coordsHUD->push_back( osg::Vec3( 640,  480, -1 ));
+	coordsHUD->push_back( osg::Vec3(   0,  480, -1 ));
+
+	osg::DrawElementsUInt* indicesHUD =
+			new osg::DrawElementsUInt(osg::PrimitiveSet::POLYGON, 0);
+	indicesHUD->push_back(0);
+	indicesHUD->push_back(1);
+	indicesHUD->push_back(2);
+	indicesHUD->push_back(3);
+
+	osg::Vec2Array* texCoords = new osg::Vec2Array(4);
+	(*texCoords)[0].set( 0.0f, 0.0f);
+	(*texCoords)[1].set( 1.0f, 0.0f);
+	(*texCoords)[2].set( 1.0f, 1.0f);
+	(*texCoords)[3].set( 0.0f, 1.0f);
+
+	osg::Vec3Array* normalsHUD = new osg::Vec3Array;
+	normalsHUD->push_back(osg::Vec3(0.0f, 0.0f, 1.0f));
+
+
+	osg::Geometry* GeomHUD = new osg::Geometry();
+	GeomHUD->addPrimitiveSet(indicesHUD);
+	GeomHUD->setVertexArray(coordsHUD);
+	GeomHUD->setNormalArray(normalsHUD);
+	GeomHUD->setNormalBinding(osg::Geometry::BIND_OVERALL);
+	GeomHUD->setTexCoordArray(0,texCoords);
+
+
+	mCameraStream = new CameraStream();
+	osg::Texture2D* textureHUD = new osg::Texture2D( mCameraStream ) ;
+	textureHUD->setDataVariance(osg::Object::DYNAMIC);
+	textureHUD->setFilter(osg::Texture::MIN_FILTER, osg::Texture::LINEAR_MIPMAP_LINEAR);
+	textureHUD->setFilter(osg::Texture::MAG_FILTER, osg::Texture::LINEAR);
+	textureHUD->setWrap(osg::Texture::WRAP_S, osg::Texture::CLAMP_TO_EDGE);
+	textureHUD->setWrap(osg::Texture::WRAP_T, osg::Texture::CLAMP_TO_EDGE);
+
+
+
+	osg::StateSet* statesetHUD = new osg::StateSet();
+	statesetHUD->setTextureAttributeAndModes(0, textureHUD, osg::StateAttribute::ON);
+	statesetHUD->setMode( GL_LIGHTING, osg::StateAttribute::OFF );
+	statesetHUD->setMode( GL_CULL_FACE, osg::StateAttribute::OFF );
+	statesetHUD->setMode(GL_BLEND,osg::StateAttribute::OFF);
+
+	osg::ref_ptr<osg::Depth> depth = new osg::Depth;
+	depth->setFunction(osg::Depth::ALWAYS);
+	depth->setRange(1, 1);
+	statesetHUD->setAttributeAndModes(depth, osg::StateAttribute::ON );
+	statesetHUD->setRenderBinDetails( -1, "RenderBin");
+
+
+	GeodeHUD->setStateSet(statesetHUD);
+	GeodeHUD->addDrawable( GeomHUD );
+
+	osg::ref_ptr<osg::ClearNode> clearNode = new osg::ClearNode;
+	clearNode->setRequiresClear(false);
+	clearNode->addChild( ProjectionMatrixHUD );
+
+	return clearNode;
+
+}
+
 osg::ref_ptr<osg::Node> CoreGraph::createSkyBox(){
 
 	if (appConf->getValue("Viewer.SkyBox.Noise").toInt() == 2) {
-		return createTextureBackground();
+		 //return createTextureBackground();
+		return createOrtho2dBackground();
 	}
 
 	// skybox
