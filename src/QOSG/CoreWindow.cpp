@@ -64,6 +64,7 @@ CoreWindow::CoreWindow(QWidget *parent, Vwr::CoreGraph* coreGraph, QApplication*
 	createLeftToolBar();
 	createRightToolBar();
 	createCollaborationToolBar();
+    createMetricsToolBar();
 
 	viewerWidget = new ViewerQT(this, 0, 0, 0, coreGraph);
 	viewerWidget->setSceneData(coreGraph->getScene());
@@ -196,15 +197,21 @@ void CoreWindow::createActions()
     //load lua graph
     loadFromLua = new QPushButton();
     loadFromLua->setText("Load lua graph");
-    loadFromLua->setToolTip("&Load graph from lua");
+    loadFromLua->setToolTip("Load graph from lua");
     loadFromLua->setFocusPolicy(Qt::NoFocus);
     connect(loadFromLua, SIGNAL(clicked()), this, SLOT(loadLuaGraph()));
 
     updateFromLuaButton = new QPushButton();
     updateFromLuaButton->setText("Update lua graph");
-    updateFromLuaButton->setToolTip("&Update graph from lua");
+    updateFromLuaButton->setToolTip("Update graph from lua");
     updateFromLuaButton->setFocusPolicy(Qt::NoFocus);
     connect(updateFromLuaButton, SIGNAL(clicked()), this, SLOT(updateFromLua()));
+
+    loadFileTreeButton = new QPushButton();
+    loadFileTreeButton->setText("Load file tree");
+    loadFileTreeButton->setToolTip("Load file tree");
+    loadFileTreeButton->setFocusPolicy(Qt::NoFocus);
+    connect(loadFileTreeButton, SIGNAL(clicked()), this, SLOT(loadFileTree()));
 
 	//mody - ziadny vyber, vyber jedneho, multi vyber centrovanie
 	noSelect = new QPushButton();
@@ -324,8 +331,10 @@ void CoreWindow::createActions()
 	connect(b_send_message, SIGNAL(clicked()), this, SLOT(send_message()));
 
 	b_start_face = new QPushButton();
-	b_start_face->setText("Face Recognition");
+    b_start_face->setText("Face Recognition");
+#ifdef OPENCV_FOUND
 	connect(b_start_face, SIGNAL(clicked()), this, SLOT(create_facewindow()));
+#endif
 
 	chb_center = new QCheckBox("&Center");
 	connect(chb_center, SIGNAL(clicked()), this, SLOT(toggleSpyWatch()));
@@ -377,9 +386,6 @@ void CoreWindow::createLeftToolBar()
 	connect(nodeTypeComboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(nodeTypeComboBoxChanged(int)));
 
 	toolBar = new QToolBar("Tools",this);
-
-    toolBar->addWidget(loadFromLua);
-    toolBar->addWidget(updateFromLuaButton);
 
 	QFrame * frame = createHorizontalFrame();
 
@@ -567,7 +573,21 @@ void CoreWindow::createCollaborationToolBar() {
 	addToolBar(Qt::RightToolBarArea,toolBar);
 	toolBar->setMaximumHeight(400);
 	toolBar->setMaximumWidth(120);
-	toolBar->setMovable(true);
+    toolBar->setMovable(true);
+}
+
+void CoreWindow::createMetricsToolBar()
+{
+    toolBar = new QToolBar("Metrics visualizations",this);
+
+    toolBar->addWidget(loadFromLua);
+    toolBar->addWidget(updateFromLuaButton);
+    toolBar->addWidget(loadFileTreeButton);
+
+    addToolBar(Qt::RightToolBarArea,toolBar);
+    toolBar->setMaximumHeight(400);
+    toolBar->setMaximumWidth(120);
+    toolBar->setMovable(true);
 }
 
 QFrame* CoreWindow::createHorizontalFrame()
@@ -665,13 +685,15 @@ void CoreWindow::playPause()
 
 void CoreWindow::loadLuaGraph()
 {
-
     Data::Graph *currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
 
     if (currentGraph != NULL) {
         Manager::GraphManager::getInstance()->closeGraph(currentGraph);
     }
     currentGraph = Manager::GraphManager::getInstance()->createNewGraph("LuaGraph");
+
+    Lua::LuaInterface* lua = Lua::LuaInterface::getInstance();
+    lua->executeFile("main.lua");
 
     Lua::LuaGraphVisualizer *visualizer = new Lua::LuaGraphVisualizer(currentGraph);
     visualizer->visualize();
@@ -680,7 +702,28 @@ void CoreWindow::loadLuaGraph()
 void CoreWindow::updateFromLua()
 {
     Lua::LuaInterface* lua = Lua::LuaInterface::getInstance();
-    lua->executeFile("../share/3dsoftviz/scripts/callback.lua");
+    lua->executeFile("callback.lua");
+}
+
+void CoreWindow::loadFileTree()
+{
+    QString file = QFileDialog::getExistingDirectory(this, "Select lua project folder", ".");
+    cout << "You selected " << file.toStdString() << std::endl;
+    Lua::LuaInterface* lua = Lua::LuaInterface::getInstance();
+    lua->executeFile("load_files_graph.lua");
+
+    Diluculum::LuaValueList path;
+    path.push_back(file.toStdString());
+    lua->callFunction("create_file_graph", path);
+
+    Data::Graph *currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
+
+    if (currentGraph != NULL) {
+        Manager::GraphManager::getInstance()->closeGraph(currentGraph);
+    }
+    currentGraph = Manager::GraphManager::getInstance()->createNewGraph("LuaGraph");
+    Lua::LuaGraphVisualizer *visualizer = new Lua::LuaGraphVisualizer(currentGraph);
+    visualizer->visualize();
 }
 
 void CoreWindow::noSelectClicked(bool checked)

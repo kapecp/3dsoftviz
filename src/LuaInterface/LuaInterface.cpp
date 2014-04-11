@@ -42,7 +42,9 @@ Diluculum::LuaState *Lua::LuaInterface::getLuaState() const
 
 void Lua::LuaInterface::executeFile(QString path)
 {
-    luaState->doFile(path.toStdString());
+    std::stringstream sstm;
+    sstm << "../share/3dsoftviz/scripts/" << path.toStdString();
+    luaState->doFile(sstm.str());
 }
 
 QString Lua::LuaInterface::getString(QString name)

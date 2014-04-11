@@ -101,8 +101,8 @@ if( COMMAND cotire )
 		endif()
 	endif()
 
-	set( COTIRE_VERBOSE FALSE )
-	set( COTIRE_DEBUG FALSE )
+        set( COTIRE_VERBOSE TRUE )
+        set( COTIRE_DEBUG TRUE )
 endif()
 
 # ------------

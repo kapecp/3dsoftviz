@@ -24,7 +24,6 @@ Lua::LuaGraph::LuaGraph()
     incidences = new QMap<qlonglong, Lua::LuaIncidence*>();
     observer = NULL;
     Lua::LuaInterface* lua = Lua::LuaInterface::getInstance();
-    lua->executeFile("../share/3dsoftviz/scripts/main.lua");
     Diluculum::LuaState *ls = lua->getLuaState();
     (*ls)["callback"] = DILUCULUM_WRAPPER_FUNCTION (luaCallback);
 }
@@ -88,9 +87,13 @@ Lua::LuaGraph *Lua::LuaGraph::loadGraph()
         Lua::LuaEdge* edge = new Lua::LuaEdge();
         edge->setId(id);
         edge->setParams(iterator->first.asTable()["params"]);
-        std::stringstream sstm1;
-        sstm1 << "Edge " << id;
-        edge->setLabel(QString::fromStdString(sstm1.str()));
+        if (iterator->first.asTable()["label"].type() != 0)
+            edge->setLabel(QString::fromStdString(iterator->first.asTable()["label"].asString()));
+        else {
+            std::stringstream sstm1;
+            sstm1 << "Edge " << id;
+            edge->setLabel(QString::fromStdString(sstm1.str()));
+        }
         result->edges->insert(id, edge);
 
 
@@ -115,9 +118,13 @@ Lua::LuaGraph *Lua::LuaGraph::loadGraph()
                 node->setParams(iterator2->second.asTable()["params"]);
                 std::cout << "Color R: " << iterator2->second.asTable()["params"]["colorR"].asNumber() << std::endl;
                 std::cout << "Color R: " << node->getParams().typeName() << std::endl;
-                std::stringstream sstm;
-                sstm << "Node " << id3;
-                node->setLabel(QString::fromStdString(sstm.str()));
+                if (iterator2->second.asTable()["label"].type() != 0)
+                    node->setLabel(QString::fromStdString(iterator2->second.asTable()["label"].asString()));
+                else {
+                    std::stringstream sstm;
+                    sstm << "Node " << id3;
+                    node->setLabel(QString::fromStdString(sstm.str()));
+                }
                 node->addIncidence(id2);
                 result->nodes->insert(id3, node);
             }
