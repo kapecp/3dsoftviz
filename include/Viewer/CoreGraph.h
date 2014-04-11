@@ -297,13 +297,34 @@ private:
 		*/
 	osg::ref_ptr<osg::Group> initCustomNodes();
 
+
 	/**
-		*  \fn private  createSkyBox
-		*  \brief creates sky
-		*  \return osg::ref_ptr skybox node
+		*  \fn private  createBackground
+		*  \brief creates background (skybox, skynoise, video3d, video2dOrtho or nothing )
+		*  \return osg::ref_ptr node
 		*/
-	osg::ref_ptr<osg::Node> createSkyBox();
+	osg::ref_ptr<osg::Node> createBackground();
+
+	/**
+		*  \fn private  createSkyNoiseBox
+		*  \brief creates sky noise globe box
+		*  \return osg::ref_ptr node
+		*/
+	osg::ref_ptr<osg::Node> createSkyNoiseBox();
+
+	/**
+		*  \fn private  createTextureBackground
+		*  \brief creates video background as 3d rectangle
+		*  \return osg::ref_ptr node
+		*/
 	osg::ref_ptr<osg::Node> createTextureBackground();
+
+	/**
+		*  \fn private  createOrtho2dBackground
+		*  \brief creates video background rectangle in ortho2d mode
+		*  \return osg::ref_ptr node
+		*/
+	osg::ref_ptr<osg::Node> createOrtho2dBackground();
 
 	/**
 		*  osg::ref_ptr camera
