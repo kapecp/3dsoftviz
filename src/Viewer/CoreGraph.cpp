@@ -9,10 +9,9 @@
 
 
 #include "Network/Server.h"
-
 #include "Data/Graph.h"
-
 #include "Util/ApplicationConfig.h"
+#include "Viewer/CameraStream.h"
 
 #include <osgUtil/Optimizer>
 #include <osg/Depth>
@@ -234,10 +233,10 @@ osg::ref_ptr<osg::Node> CoreGraph::createTextureBackground()
 osg::ref_ptr<osg::Node> CoreGraph::createOrtho2dBackground()
 {
 
-	osg::Geode			*GeodeHUD = new osg::Geode();
+	osg::ref_ptr<osg::Geode> GeodeHUD = new osg::Geode();
 
-	osg::Projection			*ProjectionMatrixHUD = new osg::Projection;
-	osg::MatrixTransform	*ModelViewMatrixHUD = new osg::MatrixTransform;
+	osg::ref_ptr<osg::Projection> ProjectionMatrixHUD = new osg::Projection;
+	osg::ref_ptr<osg::MatrixTransform> ModelViewMatrixHUD = new osg::MatrixTransform;
 
 	ModelViewMatrixHUD->setMatrix(osg::Matrix::identity());
 	ModelViewMatrixHUD->setReferenceFrame(osg::Transform::ABSOLUTE_RF);
@@ -261,16 +260,16 @@ osg::ref_ptr<osg::Node> CoreGraph::createOrtho2dBackground()
 	indicesHUD->push_back(3);
 
 	osg::Vec2Array* texCoords = new osg::Vec2Array(4);
-	(*texCoords)[0].set( 0.0f, 0.0f);
-	(*texCoords)[1].set( 1.0f, 0.0f);
-	(*texCoords)[2].set( 1.0f, 1.0f);
-	(*texCoords)[3].set( 0.0f, 1.0f);
+	(*texCoords)[0].set( 0.0f, 1.0f);
+	(*texCoords)[1].set( 1.0f, 1.0f);
+	(*texCoords)[2].set( 1.0f, 0.0f);
+	(*texCoords)[3].set( 0.0f, 0.0f);
 
 	osg::Vec3Array* normalsHUD = new osg::Vec3Array;
 	normalsHUD->push_back(osg::Vec3(0.0f, 0.0f, 1.0f));
 
 
-	osg::Geometry* GeomHUD = new osg::Geometry();
+	osg::ref_ptr<osg::Geometry> GeomHUD = new osg::Geometry();
 	GeomHUD->addPrimitiveSet(indicesHUD);
 	GeomHUD->setVertexArray(coordsHUD);
 	GeomHUD->setNormalArray(normalsHUD);
@@ -279,7 +278,7 @@ osg::ref_ptr<osg::Node> CoreGraph::createOrtho2dBackground()
 
 
 	mCameraStream = new CameraStream();
-	osg::Texture2D* textureHUD = new osg::Texture2D( mCameraStream ) ;
+	osg::ref_ptr<osg::Texture2D> textureHUD = new osg::Texture2D( mCameraStream ) ;
 	textureHUD->setDataVariance(osg::Object::DYNAMIC);
 	textureHUD->setFilter(osg::Texture::MIN_FILTER, osg::Texture::LINEAR_MIPMAP_LINEAR);
 	textureHUD->setFilter(osg::Texture::MAG_FILTER, osg::Texture::LINEAR);
@@ -288,7 +287,7 @@ osg::ref_ptr<osg::Node> CoreGraph::createOrtho2dBackground()
 
 
 
-	osg::StateSet* statesetHUD = new osg::StateSet();
+	osg::ref_ptr<osg::StateSet> statesetHUD = new osg::StateSet();
 	statesetHUD->setTextureAttributeAndModes(0, textureHUD, osg::StateAttribute::ON);
 	statesetHUD->setMode( GL_LIGHTING, osg::StateAttribute::OFF );
 	statesetHUD->setMode( GL_CULL_FACE, osg::StateAttribute::OFF );

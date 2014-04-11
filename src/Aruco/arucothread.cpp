@@ -145,15 +145,16 @@ void ArucoThread::run()
 
 			cv::Mat image = aCore.getDetImage();
 
+			cv::cvtColor( image, image, CV_BGR2RGB );
 			if ( mSendImgEnabled ) {
-				cv::cvtColor( image, image, CV_BGR2RGB );
+
 				QImage qimage ( (uchar*) image.data, image.cols, image.rows,(int) image.step, QImage::Format_RGB888);
 
 				emit pushImage( qimage );	// emit image with marked marker for debuging
 			}
 
 			if( mSendBackgrImgEnabled ){
-				emit pushBackgrImage( image );
+				emit pushBackgrImage( image.clone() );
 			}
 
 			if(! mCancel){

@@ -31,11 +31,10 @@ void CameraStream::updateBackgroundImage( cv::Mat cvImg)
 		}
 	}
 
-
 	IplImage* iplImg = cvCloneImage( &(IplImage)cvImg);
 
 	setImage( iplImg->width, iplImg->height, 3,
-			  GL_RGB, GL_BGR, GL_UNSIGNED_BYTE,
+			  GL_RGB, GL_RGB, GL_UNSIGNED_BYTE,
 			  (BYTE*)( iplImg->imageData),
 			  osg::Image::AllocationMode::NO_DELETE, 1);
 

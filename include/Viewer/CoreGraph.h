@@ -12,8 +12,6 @@
 #include "Viewer/NodeGroup.h"
 #include "Data/Edge.h"
 #include "Data/Node.h"
-#include "Viewer/CameraStream.h"
-
 
 #include <QMap>
 #include <QLinkedList>
@@ -36,6 +34,10 @@ namespace Vwr
 namespace Util
 {
 	class ApplicationConfig;
+}
+
+namespace Vwr{
+	class CameraStream;
 }
 
 namespace Vwr
