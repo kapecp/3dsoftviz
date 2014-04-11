@@ -1,5 +1,6 @@
 #include "QOpenCV/FaceRecognitionWindow.h"
 #include <QVBoxLayout>
+#include <QtDebug>
 
 using namespace QOpenCV;
 
