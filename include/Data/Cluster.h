@@ -5,6 +5,7 @@
 #include <QSet>
 
 #include "Clustering/Figures/Cube.h"
+#include "Layout/ShapeGetter_Cube.h"
 
 namespace Data {
 class Graph;
@@ -30,6 +31,10 @@ public:
     void setCube(Cube * cube) {this->cube = cube;}
     Cube * getCube() {return cube;}
 
+    // zaregistruj obmedzovac na tento cluster
+    void registerShapeGetter(Layout::ShapeGetter_Cube * shapeGetter) {this->shapeGetter = shapeGetter;}
+    Layout::ShapeGetter_Cube * getShapeGetter() {return shapeGetter;}
+
 private:
 
     qlonglong id;
@@ -37,6 +42,7 @@ private:
     osg::Vec4 originalColor;
 
     Cube * cube;
+    Layout::ShapeGetter_Cube * shapeGetter;
 
 };
 

@@ -2005,6 +2005,7 @@ void CoreWindow::setRestriction_Cube()
     }
 }
 
+// TODO - toto by sa mohlo robit uz pri oznaceni zhluku a nie explicitne cez button
 void CoreWindow::setRestriction_Cube_Selected()
 {
     Data::Graph * currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
@@ -2036,16 +2037,17 @@ void CoreWindow::setRestriction_Cube_Selected()
         restrictionNodes.push_back (centerNode);
         restrictionNodes.push_back (surfaceNode);
 
+        Layout::ShapeGetter_Cube * cube = new Layout::ShapeGetter_Cube (centerNode, surfaceNode);
 
-        QSharedPointer<Layout::ShapeGetter> shapeGetter = QSharedPointer<Layout::ShapeGetter> (
-                    new Layout::ShapeGetter_Cube (centerNode, surfaceNode)
-                    );
+        QSharedPointer<Layout::ShapeGetter> shapeGetter = QSharedPointer<Layout::ShapeGetter> (cube);
         QSharedPointer<Layout::RestrictionRemovalHandler> removalHandler = QSharedPointer<Layout::RestrictionRemovalHandler_RestrictionNodesRemover> (
                     new Layout::RestrictionRemovalHandler_RestrictionNodesRemover (
                         *currentGraph,
                         restrictionNodes
                         )
                     );
+
+        cluster->registerShapeGetter(cube);
 
         QSet<Data::Node *> nodes = cluster->getALLClusteredNodes();
 

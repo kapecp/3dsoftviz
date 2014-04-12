@@ -12,6 +12,7 @@
 
 #include "Core/Core.h"
 #include "Layout/LayoutThread.h"
+#include "Layout/Shape_Cube.h"
 
 #include "Util/ApplicationConfig.h"
 
@@ -277,6 +278,12 @@ bool PickHandler::handleDrag( const osgGA::GUIEventAdapter& ea, osgGA::GUIAction
 
 		selectionQuad->getDrawable(0)->asGeometry()->setVertexArray(coordinates);
 	}
+    else if (selectionType == SelectionType::CLUSTER && pickMode == PickMode::NONE && leftButtonPressed) {
+        osgViewer::Viewer* viewer = dynamic_cast<osgViewer::Viewer*>( &aa );
+        if (!viewer)
+            return false;
+        return dragCluster(viewer);
+    }
 	else if (pickMode == PickMode::NONE && leftButtonPressed)
 	{
 		Network::Client * client = Network::Client::getInstance();
@@ -602,6 +609,50 @@ bool PickHandler::dragNode(osgViewer::Viewer * viewer)
 	return (pickedNodes.size() > 0);
 }
 
+bool PickHandler::dragCluster(osgViewer::Viewer * viewer)
+{
+    QLinkedList<osg::ref_ptr<Data::Cluster> >::const_iterator i = pickedClusters.constBegin();
+
+    osg::Matrixd&  viewM = viewer->getCamera()->getViewMatrix();
+    osg::Matrixd&  projM = viewer->getCamera()->getProjectionMatrix();
+    osg::Matrixd screenM = viewer->getCamera()->getViewport()->computeWindowMatrix();
+
+    osg::Matrixd compositeM = viewM*projM*screenM;
+    osg::Matrixd compositeMi = compositeMi.inverse(compositeM);
+
+    float scale = appConf->getValue("Viewer.Display.NodeDistanceScale").toFloat();
+
+    while (i != pickedClusters.constEnd())
+    {
+        Layout::ShapeGetter_Cube * shape = (*i)->getShapeGetter();
+
+//        QSharedPointer<Layout::Shape_Cube> shape_Cube = qSharedPointerDynamicCast<Layout::Shape_Cube>( shape->getShape() );
+
+//    //QSharedPointer<Layout::Shape_Cube> shape_Cube = shape->getShape().staticCast<Layout::Shape_Cube>() ;
+//    //qDebug() << "after cast";
+//            osg::Vec3f screenPoint = shape_Cube->getCenter() * compositeM;
+        if (!isCtrlPressed) {
+            osg::Vec3f screenPoint = shape->getCenterNode()->getTargetPosition() * compositeM;
+            osg::Vec3f newPosition = osg::Vec3f(screenPoint.x() - (origin_mX - _mX) / scale, screenPoint.y() - (origin_mY - _mY) / scale, screenPoint.z());
+            shape->getCenterNode()->setTargetPosition(newPosition * compositeMi);
+            shape->getCenterNode()->setCurrentPosition(newPosition * compositeMi);
+        }
+
+        osg::Vec3f screenPoint = shape->getSurfaceNode()->getTargetPosition() * compositeM;
+        osg::Vec3f newPosition = osg::Vec3f(screenPoint.x() - (origin_mX - _mX) / scale, screenPoint.y() - (origin_mY - _mY) / scale, screenPoint.z());
+        shape->getSurfaceNode()->setTargetPosition(newPosition * compositeMi);
+        shape->getSurfaceNode()->setCurrentPosition(newPosition * compositeMi);
+        ++i;
+    }
+
+    origin_mX = _mX;
+    origin_mY = _mY;
+
+    AppCore::Core::getInstance()->getLayoutThread()->wakeUp();
+
+    return (pickedClusters.size() > 0);
+}
+
 void PickHandler::drawSelectionQuad(float origin_mX, float origin_mY, osgViewer::Viewer * viewer)
 {
 	osg::ref_ptr<osg::StateSet> quadStateSet = new osg::StateSet;
@@ -670,7 +721,7 @@ void PickHandler::toggleSelectedNodesFixedState(bool isFixed)
 		if (client->isConnected()) {
 			client->sendFixNodeState((*i)->getId(), isFixed);
 		} else {
-			(*i)->setFixed(isFixed);
+            // (*i)->setFixed(isFixed);
 			server->sendFixNodeState((*i)->getId(), isFixed);
 		}
 		++i;

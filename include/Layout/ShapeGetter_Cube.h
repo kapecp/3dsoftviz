@@ -29,6 +29,11 @@ public:
 
 	virtual  QSet<Data::Node *> getNodesOfShape();
 
+    osg::ref_ptr<Data::Node> getCenterNode() {return centerNode_;}
+    osg::ref_ptr<Data::Node> getSurfaceNode() {return surfaceNode_;}
+
+    void setCenterNode(osg::ref_ptr<Data::Node> centerNode) {centerNode_ = centerNode;}
+    void setSurfaceNode(osg::ref_ptr<Data::Node> surfaceNode) {surfaceNode_ = surfaceNode;}
 
 private:
 

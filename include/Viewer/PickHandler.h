@@ -470,6 +470,7 @@ private:
 	QTimer * timer;
 
     QLinkedList<osg::ref_ptr<Data::Cluster> > pickedClusters;
+    bool dragCluster(osgViewer::Viewer * viewer);
 
 public slots:
 	/**
