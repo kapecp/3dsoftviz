@@ -417,6 +417,8 @@ public:
 			setDrawableColor(0, color);
 	}
 
+    void setDefaultColor();
+
 	void setInvisible(){
 		setColor(osg::Vec4 (0,0,0,0));
 	}

@@ -26,7 +26,10 @@ void Clusterer::cluster(Graph* graph, QProgressDialog* clusteringProgressBar) {
         return;
     }
     this->graph = graph;
-    clusters.clear();
+
+    if (clusters.size() > 0) {
+        resetClusters(true);
+    }
 
     qDebug() << "***** clustering algorithm BEGIN";
 
@@ -429,4 +432,23 @@ int Clusterer::getMaxCountOfNodesInClusters() {
         }
     }
     return max;
+}
+
+void Clusterer::resetClusters(bool removeReferences) {
+    if (removeReferences) {
+        for (QMap<qlonglong, osg::ref_ptr<Data::Node> >::iterator c = clusters.begin(); c != clusters.end(); c++)
+        {
+            osg::ref_ptr<Data::Node> node = c.value();
+            // TODO pripadne prerobit vrece "clusters" nech uchovava len typ Cluster {aj tak v nom nie su Nody}
+            Data::Cluster* cluster = dynamic_cast<Data::Cluster*>(node.get());
+
+            QSet<Node*> allClusteredNodes = cluster->getALLClusteredNodes();
+            for (QSet<Node*>::const_iterator n = allClusteredNodes.constBegin(); n != allClusteredNodes.constEnd(); ++n) {
+                Node * node = (*n);
+                node->setCluster(NULL);
+                node->setDefaultColor();
+            }
+        }
+    }
+    clusters.clear();
 }

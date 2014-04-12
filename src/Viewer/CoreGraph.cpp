@@ -608,7 +608,7 @@ void CoreGraph::reload(Data::Graph * graph)
 
 	if (root->getNumChildren() > 1)
 	{
-		for (int x = 8; x > 0; x--)
+        for (int x = 9; x > 0; x--)
 			root->removeChildren(x,1);
 	}
 

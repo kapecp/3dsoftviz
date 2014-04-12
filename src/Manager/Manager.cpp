@@ -289,6 +289,7 @@ void Manager::GraphManager::closeGraph(Data::Graph* graph)
 	// TODO zatial pracujeme len s aktivnym grafom, takze deletujeme len jeho, inak treba deletnut dany graf
 
 	this->activeGraph = NULL;
+    Clustering::Clusterer::getInstance().resetClusters();
 }
 
 Data::Graph* Manager::GraphManager::emptyGraph()

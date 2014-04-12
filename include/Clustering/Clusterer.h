@@ -44,6 +44,8 @@ public:
         return instance;
     }
 
+	// clears clusters collection, if 'removeReferences' = true then removes cluster references from all nodes and resets their color to default
+    void resetClusters(bool removeReferences = false);
     QMap<qlonglong, osg::ref_ptr<Data::Node> > getClusters() {return clusters;}
     int getMaxCountOfNodesInClusters();
 
