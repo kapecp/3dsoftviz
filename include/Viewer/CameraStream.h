@@ -3,7 +3,7 @@
 #define VIEWER_CAMERA_STREAM_DEF 1
 
 #include <QObject>
-#include <osg/ImageStream>
+#include <osg/Image>
 #include <osg/Geometry>
 #include <opencv2/core/core.hpp>
 
@@ -11,7 +11,7 @@
 
 namespace Vwr{
 
-class CameraStream : public QObject, public osg::ImageStream
+class CameraStream : public QObject, public osg::Image
 {
 	Q_OBJECT
 

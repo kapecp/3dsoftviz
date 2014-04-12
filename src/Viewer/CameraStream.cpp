@@ -6,7 +6,7 @@
 
 using namespace Vwr;
 
-CameraStream::CameraStream(osg::Geometry *geom) : QObject(), osg::ImageStream()
+CameraStream::CameraStream(osg::Geometry *geom) : QObject(), osg::Image()
 {
 	mGeom	= geom;
 	mWidth	= 0;
@@ -37,8 +37,8 @@ void CameraStream::updateBackgroundImage( cv::Mat cvImg)
 			  GL_RGB, GL_RGB, GL_UNSIGNED_BYTE,
 			  (BYTE*)( iplImg->imageData),
 			  osg::Image::AllocationMode::NO_DELETE, 1);
-
 	dirty();
+
 }
 
 void CameraStream::updateGeometryCoords(int width, int height)

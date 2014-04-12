@@ -17,7 +17,6 @@
 #include <osg/Depth>
 
 
-
 using namespace Vwr;
 
 /*
@@ -185,6 +184,7 @@ osg::ref_ptr<osg::Node> CoreGraph::createTextureBackground()
 
 	// texture
 	mCameraStream = new CameraStream( geom );
+	mCameraStream->setDataVariance(osg::Object::DYNAMIC);
 
 	osg::ref_ptr<osg::Texture2D> skymap = new osg::Texture2D( mCameraStream );
 	skymap->setDataVariance(osg::Object::DYNAMIC);
@@ -192,7 +192,8 @@ osg::ref_ptr<osg::Node> CoreGraph::createTextureBackground()
 	skymap->setFilter(osg::Texture::MAG_FILTER, osg::Texture::LINEAR);
 	skymap->setWrap(osg::Texture::WRAP_S, osg::Texture::CLAMP_TO_EDGE);
 	skymap->setWrap(osg::Texture::WRAP_T, osg::Texture::CLAMP_TO_EDGE);
-	//skymap->setWrap(osg::Texture::WRAP_R, osg::Texture::CLAMP_TO_EDGE);
+	skymap->setResizeNonPowerOfTwoHint(false);
+
 
 
 	// stateset
@@ -252,13 +253,6 @@ osg::ref_ptr<osg::Node> CoreGraph::createOrtho2dBackground()
 	coordsHUD->push_back( osg::Vec3( 640,  480, -1 ));
 	coordsHUD->push_back( osg::Vec3(   0,  480, -1 ));
 
-	osg::DrawElementsUInt* indicesHUD =
-			new osg::DrawElementsUInt(osg::PrimitiveSet::POLYGON, 0);
-	indicesHUD->push_back(0);
-	indicesHUD->push_back(1);
-	indicesHUD->push_back(2);
-	indicesHUD->push_back(3);
-
 	osg::Vec2Array* texCoords = new osg::Vec2Array(4);
 	(*texCoords)[0].set( 0.0f, 1.0f);
 	(*texCoords)[1].set( 1.0f, 1.0f);
@@ -270,7 +264,7 @@ osg::ref_ptr<osg::Node> CoreGraph::createOrtho2dBackground()
 
 
 	osg::ref_ptr<osg::Geometry> GeomHUD = new osg::Geometry();
-	GeomHUD->addPrimitiveSet(indicesHUD);
+	GeomHUD->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::POLYGON,0,4));
 	GeomHUD->setVertexArray(coordsHUD);
 	GeomHUD->setNormalArray(normalsHUD);
 	GeomHUD->setNormalBinding(osg::Geometry::BIND_OVERALL);
@@ -278,12 +272,15 @@ osg::ref_ptr<osg::Node> CoreGraph::createOrtho2dBackground()
 
 
 	mCameraStream = new CameraStream();
-	osg::ref_ptr<osg::Texture2D> textureHUD = new osg::Texture2D( mCameraStream ) ;
+	mCameraStream->setDataVariance(osg::Object::DYNAMIC);
+
+	osg::ref_ptr<osg::Texture2D> textureHUD = new osg::Texture2D( mCameraStream );
 	textureHUD->setDataVariance(osg::Object::DYNAMIC);
 	textureHUD->setFilter(osg::Texture::MIN_FILTER, osg::Texture::LINEAR_MIPMAP_LINEAR);
 	textureHUD->setFilter(osg::Texture::MAG_FILTER, osg::Texture::LINEAR);
 	textureHUD->setWrap(osg::Texture::WRAP_S, osg::Texture::CLAMP_TO_EDGE);
 	textureHUD->setWrap(osg::Texture::WRAP_T, osg::Texture::CLAMP_TO_EDGE);
+	textureHUD->setResizeNonPowerOfTwoHint(false);
 
 
 
@@ -292,6 +289,7 @@ osg::ref_ptr<osg::Node> CoreGraph::createOrtho2dBackground()
 	statesetHUD->setMode( GL_LIGHTING, osg::StateAttribute::OFF );
 	statesetHUD->setMode( GL_CULL_FACE, osg::StateAttribute::OFF );
 	statesetHUD->setMode(GL_BLEND,osg::StateAttribute::OFF);
+
 
 	osg::ref_ptr<osg::Depth> depth = new osg::Depth;
 	depth->setFunction(osg::Depth::ALWAYS);
