@@ -2039,6 +2039,11 @@ void CoreWindow::setRestriction_Cube_Selected()
 
         Layout::ShapeGetter_Cube * cube = new Layout::ShapeGetter_Cube (centerNode, surfaceNode);
 
+        // schovaj kocku obmedzovaca a aj nody ktorymi je reprezentovany - pretoze samotny tvar clusteru predstavuje obmedzovac
+        centerNode->setInvisible();
+        surfaceNode->setInvisible();
+        cube->setInvisible(true);
+
         QSharedPointer<Layout::ShapeGetter> shapeGetter = QSharedPointer<Layout::ShapeGetter> (cube);
         QSharedPointer<Layout::RestrictionRemovalHandler> removalHandler = QSharedPointer<Layout::RestrictionRemovalHandler_RestrictionNodesRemover> (
                     new Layout::RestrictionRemovalHandler_RestrictionNodesRemover (

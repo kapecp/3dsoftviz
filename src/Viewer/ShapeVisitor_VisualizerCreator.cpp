@@ -225,6 +225,10 @@ void ShapeVisitor_VisualizerCreator::visualizeCone(Layout::Shape_ConeSurface &co
 
 void ShapeVisitor_VisualizerCreator::visualizeCube(Layout::Shape_AbstractCube &cube)
 {
+    if(cube.isInvisible()) {
+        createdVisualizer_ = new osg::Group;
+        return;
+    }
     osg::Box *osgBox = new osg::Box(getScaledPosition(cube.getCenter()), getScaledDistance(cube.getRadius() * 2));
 
     osg::ShapeDrawable *sd = new osg::ShapeDrawable;
