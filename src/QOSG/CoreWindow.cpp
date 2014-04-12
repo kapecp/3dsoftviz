@@ -991,7 +991,7 @@ void CoreWindow::loadFile()
 	layout->pause();
 	coreGraph->setNodesFreezed(true);
 	QString fileName = QFileDialog::getOpenFileName(this,
-													tr("Open file"), ".", tr("GraphML files (*.graphml);;GXL files (*.gxl);;RSF files (*.rsf)"));
+                                                    tr("Open file"), "../../resources", tr("GraphML files (*.graphml);;GXL files (*.gxl);;RSF files (*.rsf)"));
 
 	if (fileName != "") {
 		Manager::GraphManager::getInstance()->loadGraph(fileName);
