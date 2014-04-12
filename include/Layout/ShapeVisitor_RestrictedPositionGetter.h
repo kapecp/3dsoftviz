@@ -90,6 +90,8 @@ private: // private methods
 
     osg::Vec3f toCube(const osg::Vec3f &center, float radius, const osg::Vec3f &point);
 
+    bool insideCube(const osg::Vec3f &center, float radius, osg::Vec3f &point);
+
 private: // visitor context
 	osg::Vec3f mOriginalPosition;
 	osg::Vec3f mRestrictedPosition;
