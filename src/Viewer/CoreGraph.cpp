@@ -227,7 +227,20 @@ osg::ref_ptr<osg::Group> CoreGraph::test2() {
 
     //    testGroup->addChild(getSphere(osg::Vec3( cluster->getId() * 10, cluster->getId() * 10, cluster->getId() * 10)));
 
-        osg::Vec3f midPoint = getMidPoint(cluster->getALLClusteredNodes());
+        osg::Vec3f midPoint;
+        float radius;
+
+        // ak je na tomto clusteri zaregistrovany obmedzovac, vezmi jeho tvar
+        if (cluster->getShapeGetter() != NULL) {
+            midPoint = cluster->getShapeGetter()->getCenterNode()->getCurrentPosition(true);
+            radius = (midPoint - cluster->getShapeGetter()->getSurfaceNode()->getCurrentPosition(true)).length();
+        }
+        // inak vypocitaj tvar podla zlucenych uzlov
+        else {
+            midPoint = getMidPoint(cluster->getALLClusteredNodes());
+            radius = getRadius(cluster->getALLClusteredNodes(), midPoint);
+        }
+
         int nodesCount = cluster->getClusteredNodesCount();
 
         osg::Vec4 color = cluster->getColor();
@@ -245,10 +258,10 @@ osg::ref_ptr<osg::Group> CoreGraph::test2() {
 //            }
 //            testGroup->addChild(getCube(cluster->getId(), midPoint, getRadius(cluster->getALLClusteredNodes(), midPoint), color));
 //        } else if (nodesCount > clusters1Value && nodesCount <= clustersMiddleValue) {
-            if (cameraInsideCube(midPoint, getRadius(cluster->getALLClusteredNodes(), midPoint))) {
+            if (cameraInsideCube(midPoint, radius)) {
                 color.w() = 1;
             }
-            Cube * cube = new Cube(midPoint, getRadius(cluster->getALLClusteredNodes(), midPoint), color);
+            Cube * cube = new Cube(midPoint, radius, color);
             cube->getGeode()->setUserValue("id", QString::number(cluster->getId()).toStdString());
 
             cluster->setCube(cube);

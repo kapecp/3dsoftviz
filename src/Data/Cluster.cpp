@@ -7,6 +7,7 @@ Cluster::Cluster(qlonglong id, QString name, Data::Type* type, float scaling, Da
     : Node(id, name, type, scaling, graph, position) {
 
     this->id = id;
+    this->shapeGetter = NULL;
 }
 
 QSet<Node*> Cluster::getIncidentNodes() const {
