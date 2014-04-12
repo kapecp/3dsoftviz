@@ -626,22 +626,19 @@ bool PickHandler::dragCluster(osgViewer::Viewer * viewer)
     {
         Layout::ShapeGetter_Cube * shape = (*i)->getShapeGetter();
 
-//        QSharedPointer<Layout::Shape_Cube> shape_Cube = qSharedPointerDynamicCast<Layout::Shape_Cube>( shape->getShape() );
+        if (shape != NULL) {
+            if (!isCtrlPressed) {
+                osg::Vec3f screenPoint = shape->getCenterNode()->getTargetPosition() * compositeM;
+                osg::Vec3f newPosition = osg::Vec3f(screenPoint.x() - (origin_mX - _mX) / scale, screenPoint.y() - (origin_mY - _mY) / scale, screenPoint.z());
+                shape->getCenterNode()->setTargetPosition(newPosition * compositeMi);
+                shape->getCenterNode()->setCurrentPosition(newPosition * compositeMi);
+            }
 
-//    //QSharedPointer<Layout::Shape_Cube> shape_Cube = shape->getShape().staticCast<Layout::Shape_Cube>() ;
-//    //qDebug() << "after cast";
-//            osg::Vec3f screenPoint = shape_Cube->getCenter() * compositeM;
-        if (!isCtrlPressed) {
-            osg::Vec3f screenPoint = shape->getCenterNode()->getTargetPosition() * compositeM;
+            osg::Vec3f screenPoint = shape->getSurfaceNode()->getTargetPosition() * compositeM;
             osg::Vec3f newPosition = osg::Vec3f(screenPoint.x() - (origin_mX - _mX) / scale, screenPoint.y() - (origin_mY - _mY) / scale, screenPoint.z());
-            shape->getCenterNode()->setTargetPosition(newPosition * compositeMi);
-            shape->getCenterNode()->setCurrentPosition(newPosition * compositeMi);
+            shape->getSurfaceNode()->setTargetPosition(newPosition * compositeMi);
+            shape->getSurfaceNode()->setCurrentPosition(newPosition * compositeMi);
         }
-
-        osg::Vec3f screenPoint = shape->getSurfaceNode()->getTargetPosition() * compositeM;
-        osg::Vec3f newPosition = osg::Vec3f(screenPoint.x() - (origin_mX - _mX) / scale, screenPoint.y() - (origin_mY - _mY) / scale, screenPoint.z());
-        shape->getSurfaceNode()->setTargetPosition(newPosition * compositeMi);
-        shape->getSurfaceNode()->setCurrentPosition(newPosition * compositeMi);
         ++i;
     }
 

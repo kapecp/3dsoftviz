@@ -2009,14 +2009,14 @@ void CoreWindow::setRestriction_Cube()
 void CoreWindow::setRestriction_Cube_Selected()
 {
     Data::Graph * currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
-
-    if (currentGraph != NULL)
+    QLinkedList<osg::ref_ptr<Data::Cluster> > clusters = viewerWidget->getPickHandler()->getPickedClusters();
+    if (currentGraph != NULL && !clusters.empty())
     {
-        QLinkedList<osg::ref_ptr<Data::Cluster> > clusters = viewerWidget->getPickHandler()->getPickedClusters();
-
         //todo iter
-
         osg::ref_ptr<Data::Cluster> cluster = clusters.first();
+        if (cluster == NULL) {
+            return;
+        }
 
         osg::ref_ptr<Data::Node> centerNode;
         osg::ref_ptr<Data::Node> surfaceNode;
