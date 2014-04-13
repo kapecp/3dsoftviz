@@ -8,6 +8,9 @@
 #include <osg/Vec3f>
 #include <osg/Geode>
 #include <osg/AutoTransform>
+//volovar_zac
+//#include <Layout/RadialLayout.h>
+//volovar_kon
 
 #include <QMap>
 #include <QString>
@@ -515,7 +518,10 @@ public:
 
 	bool isNodeMatched() { return nodeMatched; }
 	void setNodeMatched(bool nodeMatched) { this->nodeMatched = nodeMatched; }
-
+    //volovar_zac
+    void setSphereID(int id);
+    int getSphereID();
+    //volovar_kon
 private:
 
 
@@ -736,6 +742,9 @@ private:
 	bool nodeMatched;
 
 	float overallWeight;
+    //volovar_zac pre repulzivne sily, ktore posobia iba na uzly nachadzajuce sa na guli
+    int sphereID;
+    //volovak_kon
 
 protected:
 

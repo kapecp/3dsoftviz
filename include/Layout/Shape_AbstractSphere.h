@@ -33,6 +33,18 @@ public:
 			ShapeVisitor & visitor
 			) = 0;
 
+    //volovar zac, kvoli radial layoutu na zvysenie citatelnosti, v triede abstract sphere, kvoli tomu, ze shapeVisitor_visualizerCreator berie tento typ
+    enum RenderType {
+        WIREFRAME,
+        SOLID,
+        CIRCLE
+    };
+    void setAlpha(float alpha);
+    float getAlpha();
+    void setRenderType(RenderType rt);
+    RenderType getRenderType();
+    //volovar_kon
+
 protected:
 
 	/***/
@@ -42,6 +54,12 @@ private:
 
 	osg::Vec3f center_;
 	float radius_;
+
+    //volovar zac
+    RenderType renderType_;
+    float alpha_;
+    //volovar kon
+
 
 }; // class
 

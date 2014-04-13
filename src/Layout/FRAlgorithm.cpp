@@ -459,7 +459,7 @@ void FRAlgorithm::addMetaAttractive(Data::Node* u, Data::Node* meta, float facto
 /* Pricitanie odpudivych sil */
 void FRAlgorithm::addRepulsive(Data::Node* u, Data::Node* v, float factor) {
 	// [GrafIT][+] forces are only between nodes which are in the same graph (or some of them is meta) AND are not ignored
-	if (!areForcesBetween (u, v)) {
+    if (!areForcesBetween (u, v)) {
 		return;
 	}
 	// [GrafIT]
@@ -479,6 +479,13 @@ void FRAlgorithm::addRepulsive(Data::Node* u, Data::Node* v, float factor) {
 	fv = (vp - up);// smer sily
 	fv.normalize();
 	fv *= rep(dist) * factor;// velkost sily
+    //volovar zmena aby repulzivne sily posobili len na uzly s rovnaky sphereID, ked nemaju radial layout tak ho maju 0
+    if (u->getSphereID() != 0 and v->getSphereID() != 0 and u->getSphereID() == v->getSphereID())
+    {
+        fv *= 1000;
+        u->addForce(fv);
+    }
+    else
 	u->addForce(fv);
 }
 /* Vzorec na vypocet odpudivej sily */

@@ -180,7 +180,19 @@ public slots:
 				*/
 	void sliderValueChanged(int value);
 
-	/**
+    //volovar_zac
+    /**
+                *  \fn public  RadialLayoutSizeChanged
+                *  \brief size of radial layout is changed
+                *  \param color const    changed size
+                */
+    void RadialLayoutSizeChanged(int value);
+
+
+    void RadialLayoutAlphaChanged(int value);
+
+    //volovar_kon
+    /**
 				*  \fn public  colorPickerChanged
 				*  \brief Color in colorpicker changed
 				*  \param color const    changed color
@@ -489,6 +501,18 @@ private:
 		 * \brief Spinbox for modifying CylinderSurface restriction.
 		 */
 	QSlider *b_SetRestriction_CylinderSurface_Slider;
+
+    //volovar_zac
+    /**
+     * @brief slider for change size of radial layout
+     */
+    QSlider *b_SetRestriction_RadialLayout_Slider;
+
+    /**
+     * @brief slider for change alpha of radial layout
+     */
+    QSlider *b_SetAlpha_RadialLayout_Slider;
+    //volovar_kon
 
 	/**
 		 * \brief Button for adding ConeSurface restriction.

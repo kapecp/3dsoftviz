@@ -50,6 +50,10 @@ private:
 	Shape_Sphere::RestrictionPolicy restrictionPolicy_;
 	SphereCenterSource centerSource_;
 
+    //volovar zac
+    QSharedPointer<Shape> sphere_;
+    //volovar kon
+
 }; // class
 
 } // namespace

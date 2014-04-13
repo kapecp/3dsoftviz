@@ -89,6 +89,10 @@ Data::Node::Node(qlonglong id, QString name, Data::Type* type, float scaling, Da
 	float a = type->getSettings()->value("color.A").toFloat();
 
 	this->setColor(osg::Vec4(r, g, b, a));
+
+    //volovar_zac
+    sphereID = 0;
+    //volovar_kon
 }
 
 Data::Node::~Node(void)
@@ -389,3 +393,12 @@ QString Data::Node::toString() const
 	return str;
 }
 
+void Data::Node::setSphereID(int id)
+{
+    sphereID = id;
+}
+
+int Data::Node::getSphereID()
+{
+    return sphereID;
+}

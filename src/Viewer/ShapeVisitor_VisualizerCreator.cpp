@@ -5,6 +5,8 @@
 #include <osg/Geode>
 #include <osg/ShapeDrawable>
 #include <osg/BlendFunc>
+//volovar pridanie wireframe modu pre radial layout
+#include <osg/PolygonMode>
 //-----------------------------------------------------------------------------
 
 namespace Vwr {
@@ -56,7 +58,7 @@ void ShapeVisitor_VisualizerCreator::visit (Layout::Shape_Intersection & shape) 
 		osg::ShapeDrawable * sd = new osg::ShapeDrawable;
 		sd->setShape (cylinder);
 
-		sd->setColor (osg::Vec4 (0.f, 0.f, 1.0f, 0.06f));
+        sd->setColor (osg::Vec4 (0.0f, 0.f, 1.0f, 0.06f));
 
 		sd->getOrCreateStateSet()->setMode (GL_BLEND, osg::StateAttribute::ON);
 		sd->getStateSet()->setRenderingHint (osg::StateSet::TRANSPARENT_BIN);
@@ -107,7 +109,7 @@ void ShapeVisitor_VisualizerCreator::visit (Layout::Shape_Plane & shape) {
 	osg::ShapeDrawable * sd = new osg::ShapeDrawable;
 	sd->setShape (box);
 
-	sd->setColor (osg::Vec4 (0.f, 0.f, 1.0f, 0.06f));
+    sd->setColor (osg::Vec4 (0.f, 0.f, 1.0f, 0.06f));
 	sd->getOrCreateStateSet()->setMode (GL_BLEND, osg::StateAttribute::ON);
 	sd->getStateSet()->setRenderingHint (osg::StateSet::TRANSPARENT_BIN);
 
@@ -138,21 +140,45 @@ void ShapeVisitor_VisualizerCreator::visit(Layout::Shape_ConeSurface &shape)
 }
 
 void ShapeVisitor_VisualizerCreator::visualizeSphere (Layout::Shape_AbstractSphere & abstractSphere) {
-	osg::Sphere * sphere = new osg::Sphere;
+    osg::Sphere * sphere = new osg::Sphere;
 	sphere->setRadius (getScaledDistance (abstractSphere.getRadius ()));
 	sphere->setCenter (getScaledPosition (abstractSphere.getCenter ()));
 
 	osg::ShapeDrawable * sd = new osg::ShapeDrawable;
 	sd->setShape (sphere);
-	sd->setColor (osg::Vec4 (0.f, 0.f, 1.0f, 0.06f));
+    //volovar zmena
+    osg::PolygonMode * polygonMode = new osg::PolygonMode; //podla http://snipplr.com/view/30978/osg-wireframe-display/
+
+    sd->getOrCreateStateSet()->setMode (GL_BLEND, osg::StateAttribute::ON);
+    switch(abstractSphere.getRenderType())
+    {
+    case Layout::Shape_AbstractSphere::SOLID:
+
+        sd->setColor (osg::Vec4 (0.f, 0.f, 1.0f, abstractSphere.getAlpha()));
+        sd->getStateSet()->setAttributeAndModes(new osg::BlendFunc, osg::StateAttribute::ON);
+        sd->getStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
+        break;
+    case Layout::Shape_AbstractSphere::WIREFRAME:
+        polygonMode->setMode( osg::PolygonMode::FRONT_AND_BACK, osg::PolygonMode::LINE );
+        sd->setColor (osg::Vec4 (0.f, 0.f, 1.0f, abstractSphere.getAlpha()));
+        sd->getStateSet()->setAttributeAndModes(polygonMode,
+                                                osg::StateAttribute::OVERRIDE | osg::StateAttribute::ON );
+                                                sd->getStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
+        break;
+    case Layout::Shape_AbstractSphere::CIRCLE:
+        break;
+        default:
+            return;
+    }
+
+
 
 	//transparency of sphere
-	sd->getOrCreateStateSet()->setMode (GL_BLEND, osg::StateAttribute::ON);
+
 	sd->getStateSet()->setRenderingHint (osg::StateSet::TRANSPARENT_BIN);
 	sd->getStateSet()->setMode(GL_DEPTH_TEST,osg::StateAttribute::OFF);
 	sd->getStateSet()->setMode(GL_LIGHTING, osg::StateAttribute::OFF);
-	sd->getStateSet()->setAttributeAndModes(new osg::BlendFunc, osg::StateAttribute::ON);
-	sd->getStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
+
 	sd->getStateSet()->setRenderBinDetails( 11, "RenderBin");
 	//
 

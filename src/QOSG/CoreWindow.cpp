@@ -26,6 +26,7 @@
 #include "Layout/ShapeGetter_Sphere_ByTwoNodes.h"
 #include "Layout/ShapeGetter_ConeSurface_ByCamera.h"
 #include "Layout/ShapeGetter_Plane_ByThreeNodes.h"
+#include "Layout/RadialLayout.h"
 
 #include "Importer/GraphOperations.h"
 
@@ -276,6 +277,22 @@ void CoreWindow::createActions()
 	b_SetRestriction_CylinderSurface_Slider->setFocusPolicy(Qt::NoFocus);
 	b_SetRestriction_CylinderSurface_Slider->setValue(25);
 
+    //volovar_zac
+    b_SetRestriction_RadialLayout_Slider = new QSlider(Qt::Horizontal);
+    b_SetRestriction_RadialLayout_Slider->setToolTip("&Change radius of Radial layout");
+    b_SetRestriction_RadialLayout_Slider->setRange(0, 300);
+    b_SetRestriction_RadialLayout_Slider->setSingleStep(10);
+    b_SetRestriction_RadialLayout_Slider->setFocusPolicy(Qt::ClickFocus);
+    b_SetRestriction_RadialLayout_Slider->setValue(100);
+
+    b_SetAlpha_RadialLayout_Slider = new QSlider(Qt::Horizontal);
+    b_SetAlpha_RadialLayout_Slider->setToolTip("&Change alpha of Radial layout");
+    b_SetAlpha_RadialLayout_Slider->setRange(0, 100);
+    b_SetAlpha_RadialLayout_Slider->setSingleStep(1);
+    b_SetAlpha_RadialLayout_Slider->setFocusPolicy(Qt::ClickFocus);
+    b_SetAlpha_RadialLayout_Slider->setValue(100);
+    //volovar_kon
+
 	b_SetRestriction_ConeSurface = new QPushButton();
 	b_SetRestriction_ConeSurface->setIcon(QIcon("../share/3dsoftviz/img/gui/restriction_cone_surface.png"));
 	b_SetRestriction_ConeSurface->setToolTip("&Set restriction - cone surface");
@@ -287,13 +304,13 @@ void CoreWindow::createActions()
 	b_SetRestriction_ConeSurface_Slider->setFocusPolicy(Qt::NoFocus);
 	b_SetRestriction_ConeSurface_Slider->setValue(25);
 
+    //volovar_zac
     b_SetRestriction_RadialLayout = new QPushButton();
     b_SetRestriction_RadialLayout->setIcon(QIcon("../share/3dsoftviz/img/gui/restriction_radial_layout.png"));
     b_SetRestriction_RadialLayout->setToolTip("&Set restriction - radial Layout");
     b_SetRestriction_RadialLayout->setFocusPolicy(Qt::NoFocus);
     connect(b_SetRestriction_RadialLayout, SIGNAL(clicked()), this, SLOT(setRestriction_RadialLayout()));
-
-
+    //volovar_kon
 
 	b_UnsetRestrictionFromAll = new QPushButton();
 	b_UnsetRestrictionFromAll->setIcon(QIcon("../share/3dsoftviz/img/gui/restriction_unset.png"));
@@ -442,14 +459,25 @@ void CoreWindow::createLeftToolBar()
 	frame->layout()->addWidget(b_SetRestriction_ConeTree);
 	frame->layout()->addWidget(b_UnsetRestriction);
 
+    //volovar_zac
     frame = createHorizontalFrame();
     toolBar->addWidget(frame);
     frame->layout()->addWidget(b_SetRestriction_RadialLayout);
-
+    //volovar_kon
 	toolBar->addSeparator();
 
 	frame = createHorizontalFrame();
 	toolBar->addWidget(frame);
+    //volovar_zac
+    frame->layout()->addWidget(b_SetRestriction_RadialLayout_Slider);
+    connect(b_SetRestriction_RadialLayout_Slider,SIGNAL(valueChanged(int)),this,SLOT(RadialLayoutSizeChanged(int)));
+    frame = createHorizontalFrame();
+    toolBar->addWidget(frame);
+    frame->layout()->addWidget(b_SetAlpha_RadialLayout_Slider);
+    connect(b_SetAlpha_RadialLayout_Slider,SIGNAL(valueChanged(int)),this,SLOT(RadialLayoutAlphaChanged(int)));
+    //volovar_kon
+    frame = createHorizontalFrame();
+    toolBar->addWidget(frame);
 	frame->layout()->addWidget(b_SetRestriction_CylinderSurface);
 	frame->layout()->addWidget(b_SetRestriction_CylinderSurface_Slider);
 
@@ -470,7 +498,7 @@ void CoreWindow::createLeftToolBar()
 	slider->setTickInterval(5);
 	slider->setValue(5);
 	slider->setFocusPolicy(Qt::NoFocus);
-	connect(slider,SIGNAL(valueChanged(int)),this,SLOT(sliderValueChanged(int)));
+    connect(slider,SIGNAL(valueChanged(int)),this,SLOT(sliderValueChanged(int)));
 
 	frame = createHorizontalFrame();
 	frame->setMaximumHeight(100);
@@ -896,6 +924,27 @@ void CoreWindow::sliderValueChanged(int value)
 {
 	layout->setAlphaValue((float)value * 0.001f);
 }
+
+//Volovar zac
+
+void CoreWindow::RadialLayoutSizeChanged(int value)
+{
+    Layout::RadialLayout* selectedRadialLayout = Layout::RadialLayout::getSelectedRadialLayout();
+    //qDebug()<<"Value: "<<value<<", selected: "<<selectedRadialLayout;
+    if (selectedRadialLayout != NULL)
+        selectedRadialLayout->changeSize((float) value);
+}
+
+void CoreWindow::RadialLayoutAlphaChanged(int value)
+{
+    Layout::RadialLayout* selectedRadialLayout = Layout::RadialLayout::getSelectedRadialLayout();
+    //qDebug()<<"Value: "<<value<<", selected: "<<selectedRadialLayout;
+    if (selectedRadialLayout != NULL)
+        selectedRadialLayout->setAlpha((float) value/100);
+}
+
+//Volovar koniec
+
 
 
 void CoreWindow::colorPickerChanged(const QColor & color)
@@ -1509,71 +1558,21 @@ void CoreWindow::setRestrictionToAllNodes (
 		layout->play();
 }
 
+/**Volovar zaciatok
+ */
 void CoreWindow::setRestriction_RadialLayout()
 {
     Data::Graph * currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
+    QLinkedList<osg::ref_ptr<Data::Node> > * selectedNodes = viewerWidget->getPickHandler()->getSelectedNodes();
+    osg::ref_ptr<Data::Node> rootNode = viewerWidget->getPickHandler()->getPickedNodeWithMinEdgeCount();
+     osg::Vec3 rootPosition = viewerWidget->getPickHandler()->getSelectionCenter(true);
     if (currentGraph == NULL)
         return;
-    QMap<qlonglong, osg::ref_ptr<Data::Node> >* allNodes = currentGraph->getNodes();
-
-    osg::Vec3 rootPosition = viewerWidget->getPickHandler()->getSelectionCenter(true);
-    osg::Vec3 SurfacePosition = rootPosition;
-    osg::Vec3 dR(0.0, 10.0, 0.0);
-
-    QString name_rootNode = "Root";
-    QString name_surfaceNode;
-
-    osg::ref_ptr<Data::Node> rootNode = viewerWidget->getPickHandler()->getPickedNodeWithMaxEdgeCount(); //root node is node with max edge count
-    osg::ref_ptr<Data::Node> surfaceNode;
-
-    Data::GraphSpanningTree* spanningTree = currentGraph->getSpanningTree(rootNode->getId());
-
-    QLinkedList<osg::ref_ptr<Data::Node> > pickedNodes; //temp list which contains nodes with same depth
-    QList<qlonglong>::iterator groupIt;
-    QList<qlonglong> groups;
-    Layout::RestrictionRemovalHandler_RestrictionNodesRemover::NodesListType restrictionNodes;
-
-    rootNode->setTargetPosition(rootPosition);
-
-    int maxDepth = spanningTree->getMaxDepth();
-    for (int depth=1; depth<=maxDepth;depth++)
-    {
-        SurfacePosition += dR;
-
-        //setup name for nodes
-        name_surfaceNode = QString("Depth: %1").arg(depth);
-        surfaceNode = currentGraph->addRestrictionNode (name_surfaceNode , SurfacePosition);
-
-        groups = spanningTree->getGroupsInDepth(depth); //get groups with same depth
-        for(groupIt=groups.begin(); groupIt!=groups.end();groupIt++)  //groups are nodes with same parent
-        {
-            QList<qlonglong> nodes = spanningTree->getNodesInGroup(*groupIt);
-            QList<qlonglong>::iterator nodeIt;
-            for(nodeIt=nodes.begin(); nodeIt!=nodes.end();nodeIt++)
-                pickedNodes.append(allNodes->value(*nodeIt));
-
-
-        }
-
-        setRestrictionToSelectedNodes (
-                    QSharedPointer<Layout::ShapeGetter> (
-                        new Layout::ShapeGetter_Sphere_ByTwoNodes (rootNode, surfaceNode)
-                        ),
-                    currentGraph,
-                    QSharedPointer<Layout::RestrictionRemovalHandler_RestrictionNodesRemover> (
-                        new Layout::RestrictionRemovalHandler_RestrictionNodesRemover (
-                            *currentGraph,
-                            restrictionNodes
-                            )
-                        )
-                    );
-
-        groups.clear();
-        pickedNodes.clear(); //empty list for next iteration
-
-    }
-
+    Layout::RadialLayout *radialLayout = new Layout::RadialLayout(currentGraph, selectedNodes, 100, rootNode, rootPosition);
+    radialLayout->select();
 }
+/*Volovar koniec
+ */
 
 void CoreWindow::setRestrictionToShape(
 		QSharedPointer<Layout::ShapeGetter> shapeGetter,

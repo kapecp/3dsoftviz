@@ -18,9 +18,9 @@ ShapeGetter_Sphere_AroundNode::ShapeGetter_Sphere_AroundNode (
 		) : node_ (node),
 	radius_ (radius),
 	restrictionPolicy_ (restrictionPolicy),
-	centerSource_ (centerSource)
+    centerSource_ (centerSource)
 {
-	// nothing
+    // nothing
 }
 
 QSharedPointer<Shape> ShapeGetter_Sphere_AroundNode::getShape (void) {
@@ -39,14 +39,16 @@ QSharedPointer<Shape> ShapeGetter_Sphere_AroundNode::getShape (void) {
 	default:
 		center = osg::Vec3 (0, 0, 0);
 	}
-
-	return QSharedPointer<Shape> (
-				new Shape_Sphere (
-					center,
-					radius_,
-					restrictionPolicy_
-					)
-				);
+    //volovar zmena, zakazdym getshape sa vytvoril novy objekt, ale potreboval som zmenit atribut, tak som spravil aby bol iba jeden mozne vytvorit
+    if (sphere_ == NULL) //only one instance
+        sphere_ = QSharedPointer<Shape> (
+                new Shape_Sphere (
+                    center,
+                    radius_,
+                    restrictionPolicy_
+                    ));
+    return sphere_;
+    //volovar koniec
 }
 
 QSet<Data::Node *  > ShapeGetter_Sphere_AroundNode::getNodesOfShape(){
