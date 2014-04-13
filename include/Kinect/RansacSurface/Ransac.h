@@ -16,7 +16,7 @@ public:
 	void findPoints(int *vectorDepths);
 
 private:
-	PlaneAlgorithm calc;
+	PlaneAlgorithm *calc;
 
 
 };
