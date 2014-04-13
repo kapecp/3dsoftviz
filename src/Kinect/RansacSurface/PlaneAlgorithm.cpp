@@ -9,7 +9,7 @@ Kinect::PlaneAlgorithm::PlaneAlgorithm()
 	points[1] = Vector3( -1, -1, -1 );
 	points[2] = Vector3( -1, -1, -1 );
 
-	std::string log= Util::ApplicationConfig::get()->getValue("Aruco.CamDistancRatio").toStdString();
+	std::string log= Util::ApplicationConfig::get()->getValue("Kinect.Surface.LOG").toStdString();
 
 	logfile.open(log, std::ios::app);
 
@@ -52,7 +52,7 @@ int Kinect::PlaneAlgorithm::calculatePlane()
 	//qDebug() << "vektor: [" << w.x << "," << w.y << "," << w.z << "]\n";
 	d = (points[1].mX*w1) + (points[1].mY*w2) + (points[1].mZ*w3);
 	d *= -1;
-	//qDebug() << "d: " << d << std::endl;
+	//qDebug() << "d: " << d ;
 	logfile << w1 << "x + " << w2 << "y + " << w3 << "z + " << d << " = 0\n";
 
 	if ((w1 == 0) && (w2 == 0) && (w3 == 0) && (d == 0))
@@ -68,7 +68,7 @@ int Kinect::PlaneAlgorithm::findIntersection(int x, int y, int z)
 {
 
 	int result = (w.mX * x) + (w.mY * y) + (w.mX *z) + d;
-	//qDebug() << vysledok << std::endl;
+	//qDebug() << vysledok ;
 	if ((result < 5) && (result > -5))
 	{
 		return 0;
