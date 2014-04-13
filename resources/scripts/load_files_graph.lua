@@ -21,7 +21,9 @@ local function get_graph_from_tree(tree, graph, parent, min_size, max_size)
     local incid1 = {type = "edge_part", id = inc()}
     local incid2 = {type = "edge_part", id = inc()}
     graph[edge] = {[incid1] = parent, [incid2] = node}
-  end  
+  else
+    node.params.colorG = 1  
+  end    
   local contents = tree.contents or {}
   for k, v in pairs(contents) do
     _, min_size, max_size = get_graph_from_tree(v, graph, node, min_size, max_size)

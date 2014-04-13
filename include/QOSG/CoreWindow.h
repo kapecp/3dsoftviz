@@ -114,6 +114,12 @@ public slots:
                 */
     void loadFileTree();
 
+    /**
+                *  \fn public  loadFunctionCall()
+                *  \brief load function call clicked
+                */
+    void loadFunctionCall();
+
 	/**
 				*  \fn public  noSelectClicked(bool checked
 				*  \brief No-select mode selected
@@ -423,6 +429,12 @@ private:
         *  \brief Action for loading file tree from lua
         */
     QPushButton * loadFileTreeButton;
+
+    /**
+        *  QPushButton * loadFunctionCallButton
+        *  \brief Action for loading function call graph from lua
+        */
+    QPushButton * loadFunctionCallButton;
 
 	/**
 		*  QPushButton * noSelect

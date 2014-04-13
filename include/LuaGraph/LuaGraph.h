@@ -47,4 +47,6 @@ private:
 
 }
 
+Diluculum::LuaValueList luaCallback (const Diluculum::LuaValueList& params);
+
 #endif // LUAGRAPH_H

@@ -213,6 +213,13 @@ void CoreWindow::createActions()
     loadFileTreeButton->setFocusPolicy(Qt::NoFocus);
     connect(loadFileTreeButton, SIGNAL(clicked()), this, SLOT(loadFileTree()));
 
+    loadFunctionCallButton = new QPushButton();
+    loadFunctionCallButton->setText("Load function calls");
+    loadFunctionCallButton->setToolTip("Load function calls");
+    loadFunctionCallButton->setFocusPolicy(Qt::NoFocus);
+    connect(loadFunctionCallButton, SIGNAL(clicked()), this, SLOT(loadFunctionCall()));
+
+
 	//mody - ziadny vyber, vyber jedneho, multi vyber centrovanie
 	noSelect = new QPushButton();
 	noSelect->setIcon(QIcon("../share/3dsoftviz/img/gui/noselect.png"));
@@ -583,6 +590,7 @@ void CoreWindow::createMetricsToolBar()
     toolBar->addWidget(loadFromLua);
     toolBar->addWidget(updateFromLuaButton);
     toolBar->addWidget(loadFileTreeButton);
+    toolBar->addWidget(loadFunctionCallButton);
 
     addToolBar(Qt::RightToolBarArea,toolBar);
     toolBar->setMaximumHeight(400);
@@ -716,6 +724,20 @@ void CoreWindow::loadFileTree()
     path.push_back(file.toStdString());
     lua->callFunction("create_file_graph", path);
 
+    Data::Graph *currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
+
+    if (currentGraph != NULL) {
+        Manager::GraphManager::getInstance()->closeGraph(currentGraph);
+    }
+    currentGraph = Manager::GraphManager::getInstance()->createNewGraph("LuaGraph");
+    Lua::LuaGraphVisualizer *visualizer = new Lua::LuaGraphVisualizer(currentGraph);
+    visualizer->visualize();
+}
+
+void CoreWindow::loadFunctionCall()
+{
+    Lua::LuaInterface* lua = Lua::LuaInterface::getInstance();
+    lua->executeFile("main_test.lua");
     Data::Graph *currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
 
     if (currentGraph != NULL) {

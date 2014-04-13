@@ -15,8 +15,16 @@ public:
 
     QPair<qlonglong, qlonglong> getEdgeNodePair() const;
 
+    bool getOriented() const;
+    void setOriented(bool value);
+
+    bool getOutGoing() const;
+    void setOutGoing(bool value);
+
 private:
     QPair<qlonglong, qlonglong> edgeNodePair;
+    bool oriented;
+    bool outGoing;
 };
 
 }

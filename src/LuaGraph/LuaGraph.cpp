@@ -107,6 +107,12 @@ Lua::LuaGraph *Lua::LuaGraph::loadGraph()
             std::stringstream sstm2;
             sstm2 << "Incid " << id2;
             incidence->setLabel(QString::fromStdString(sstm2.str()));
+            incidence->setOriented(iterator2->first.asTable()["direction"].type() != 0);
+            std::cout << "oriented " << iterator2->first.asTable()["direction"].type() << incidence->getOriented() << std::endl;
+            if (incidence->getOriented()){
+                std::cout << "outgoing " << iterator2->first.asTable()["direction"].asString()  << std::endl;
+                incidence->setOutGoing(iterator2->first.asTable()["direction"].asString() == "out");
+            }
 
             qlonglong id3 = iterator2->second.asTable()["id"].asInteger();
             if (result->nodes->contains(id3)){
@@ -114,10 +120,7 @@ Lua::LuaGraph *Lua::LuaGraph::loadGraph()
             } else {
                 Lua::LuaNode* node = new Lua::LuaNode();
                 node->setId(id3);
-                std::cout << "Node params: " << iterator2->second.asTable()["params"].typeName() << std::endl;
                 node->setParams(iterator2->second.asTable()["params"]);
-                std::cout << "Color R: " << iterator2->second.asTable()["params"]["colorR"].asNumber() << std::endl;
-                std::cout << "Color R: " << node->getParams().typeName() << std::endl;
                 if (iterator2->second.asTable()["label"].type() != 0)
                     node->setLabel(QString::fromStdString(iterator2->second.asTable()["label"].asString()));
                 else {
