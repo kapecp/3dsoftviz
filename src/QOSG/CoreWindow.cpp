@@ -37,6 +37,7 @@
 #ifdef OPENNI2_FOUND
 #ifdef NITE2_FOUND
 #include "Kinect/KinectCore.h"
+#include "Kinect/RansacSurface/Ransac.h"
 #endif
 #endif
 #endif
@@ -536,14 +537,21 @@ void CoreWindow::createAugmentedRealityToolBar() {
 #ifdef OPENCV_FOUND
 #ifdef OPENNI2_FOUND
 #ifdef NITE2_FOUND
+
 	QLabel *labelKinect = new QLabel( tr("Kinect"));
 	toolBar->addWidget( labelKinect );
 	b_start_kinect = new QPushButton();
 	b_start_kinect->setText("Start kinect");
 	toolBar->addWidget( b_start_kinect );
 	connect(b_start_kinect, SIGNAL(clicked()), this, SLOT(createKinectWindow()));
-
 	toolBar->addSeparator();
+
+	b_start_ransac = new QPushButton();
+	b_start_ransac->setText("Start calculate surface");
+	toolBar->addWidget( b_start_ransac );
+	connect(b_start_ransac, SIGNAL(clicked()), this, SLOT(calculateRansac()));
+	toolBar->addSeparator();
+
 #endif
 #endif
 #endif
@@ -1770,6 +1778,13 @@ void CoreWindow::createKinectWindow(){
 
 	Kinect::KinectCore::getInstance(NULL,this)->kinectRecognition();
 }
+
+void CoreWindow::calculateRansac()
+{
+	Kinect::Ransac *ransac= new Kinect::Ransac();
+	ransac->calculate();
+}
+
 #endif
 #endif
 #endif
