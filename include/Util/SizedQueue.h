@@ -15,8 +15,8 @@ public:
 private:
 	std::deque< std::pair<float,float> > stack;
 	// size of queue
-	int size;
-	// threshold <0.0,1.0>
+    unsigned int size;
+    // threshold <0.0,1.0>
 	float threshold;
 	// current sum for values in queue
 	std::pair<float,float> sum;

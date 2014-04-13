@@ -32,12 +32,12 @@ int SizedQueue::getAvgBasedOnValue(float &x, float &y)
 	// threshold implementation
 	int retval=0;
 
-	if (abs((this->presum.first-this->sum.first) / (float)this->stack.size()) > this->threshold)
+    if (fabs((this->presum.first-this->sum.first) / (float)this->stack.size()) > this->threshold)
 	{
 		this->presum.first=this->sum.first;
 		retval=1;
 	}
-	if (abs((this->presum.second-this->sum.second) / (float)this->stack.size()) > this->threshold)
+    if (fabs((this->presum.second-this->sum.second) / (float)this->stack.size()) > this->threshold)
 	{
 		this->presum.second=this->sum.second;
 		retval=1;
