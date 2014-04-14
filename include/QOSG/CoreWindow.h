@@ -318,6 +318,12 @@ public slots:
 		* @brief create Kinect Button
 	 */
 	void createKinectWindow();
+
+	/**
+	 * @brief calculateRansac
+	 */
+	void calculateRansac();
+
 #endif
 #endif
 #endif
@@ -563,6 +569,11 @@ private:
 	 *@brief b_start_kinect
 	 */
 	QPushButton * b_start_kinect;
+
+	/**
+	 * @brief Button for start calculate Ransac Surface
+	 */
+	QPushButton * b_start_ransac;
 
 	/**
 	 * QPushButton start speech recognition
