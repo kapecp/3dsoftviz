@@ -45,6 +45,9 @@
 #include "LuaGraph/LuaGraph.h"
 #include "LuaInterface/LuaInterface.h"
 #include "LuaGraph/LuaGraphVisualizer.h"
+#include "LuaGraph/FullHyperGraphVisualizer.h"
+#include "LuaGraph/HyperGraphVisualizer.h"
+#include "LuaGraph/SimpleGraphVisualizer.h"
 using namespace QOSG;
 using namespace std;
 
@@ -703,7 +706,7 @@ void CoreWindow::loadLuaGraph()
     Lua::LuaInterface* lua = Lua::LuaInterface::getInstance();
     lua->executeFile("main.lua");
 
-    Lua::LuaGraphVisualizer *visualizer = new Lua::LuaGraphVisualizer(currentGraph);
+    Lua::LuaGraphVisualizer *visualizer = new Lua::FullHyperGraphVisualizer(currentGraph);
     visualizer->visualize();
 }
 
@@ -730,7 +733,7 @@ void CoreWindow::loadFileTree()
         Manager::GraphManager::getInstance()->closeGraph(currentGraph);
     }
     currentGraph = Manager::GraphManager::getInstance()->createNewGraph("LuaGraph");
-    Lua::LuaGraphVisualizer *visualizer = new Lua::LuaGraphVisualizer(currentGraph);
+    Lua::LuaGraphVisualizer *visualizer = new Lua::SimpleGraphVisualizer(currentGraph);
     visualizer->visualize();
 }
 
@@ -744,8 +747,8 @@ void CoreWindow::loadFunctionCall()
         Manager::GraphManager::getInstance()->closeGraph(currentGraph);
     }
     currentGraph = Manager::GraphManager::getInstance()->createNewGraph("LuaGraph");
-    Lua::LuaGraphVisualizer *visualizer = new Lua::LuaGraphVisualizer(currentGraph);
-    visualizer->visualize(true);
+    Lua::LuaGraphVisualizer *visualizer = new Lua::SimpleGraphVisualizer(currentGraph);
+    visualizer->visualize();
 }
 
 void CoreWindow::noSelectClicked(bool checked)

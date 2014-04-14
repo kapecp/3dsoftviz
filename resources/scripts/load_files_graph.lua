@@ -18,8 +18,8 @@ local function get_graph_from_tree(tree, graph, parent, min_size, max_size)
   local node = {type = "node", id = inc(), label = tree.name, params={size = tree.attributes.size, colorA = 1, colorR = 1, colorG = 0, colorB = 0}}
   if parent ~= nil then
     local edge = {type = "edge", label = "", id = inc()}
-    local incid1 = {type = "edge_part", id = inc()}
-    local incid2 = {type = "edge_part", id = inc()}
+    local incid1 = {type = "edge_part", label = "", id = inc(), direction = "in"}
+    local incid2 = {type = "edge_part", label = "", id = inc(), direction = "out"}
     graph[edge] = {[incid1] = parent, [incid2] = node}
   else
     node.params.colorG = 1  
