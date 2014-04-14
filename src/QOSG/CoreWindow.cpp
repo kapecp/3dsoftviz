@@ -395,6 +395,10 @@ void CoreWindow::createActions()
     b_cluster_test->setText("Cluster graph");
     connect(b_cluster_test, SIGNAL(clicked()), this, SLOT(cluster_test()));
 
+    b_restartLayouting = new QPushButton();
+    b_restartLayouting->setText("Restart Layout");
+    connect(b_restartLayouting, SIGNAL(clicked()), this, SLOT(restartLayouting()));
+
     clusteringProgressBar = new QProgressDialog("", "", 0, 10, this, Qt::Dialog);
     clusteringProgressBar->setWindowTitle("Clustering");
     clusteringProgressBar->setCancelButtonText("Abort");
@@ -608,6 +612,10 @@ void CoreWindow::createClusterToolBar() {
     frame = createHorizontalFrame();
     frame->layout()->addWidget(b_SetRestriction_Cube);
     frame->layout()->addWidget(b_SetRestriction_Cube_Selected);
+    toolBar->addWidget(frame);
+
+    frame = createHorizontalFrame();
+    frame->layout()->addWidget(b_restartLayouting);
     toolBar->addWidget(frame);
 
     frame = createHorizontalFrame();
@@ -1956,6 +1964,11 @@ void CoreWindow::cluster_test()
     if(!isPlaying) {
         playPause();
     }
+}
+
+void CoreWindow::restartLayouting() {
+    coreGraph->setNodesFreezed(true);
+    coreGraph->setNodesFreezed(false);
 }
 
 void CoreWindow::setRestriction_Cube()
