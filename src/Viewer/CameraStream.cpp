@@ -12,9 +12,9 @@ CameraStream::CameraStream(osg::Geometry *geom) : QObject(), osg::Image()
 	mWidth	= 0;
 	mHeight = 0;
 
-	cv::Mat cvImg = cv::Mat::zeros(480,640, CV_8UC3);
+    cv::Mat cvImg(cv::Mat::zeros(480,640, CV_8UC3));
 
-	updateBackgroundImage( cvImg);
+    updateBackgroundImage( cvImg);
 }
 
 CameraStream::~CameraStream(){}
@@ -23,7 +23,8 @@ void CameraStream::updateBackgroundImage( cv::Mat cvImg)
 {
 	// update geometry coordinates if thare are different dimensions of image,
 	// becasuse probebly changed it ratio of sides
-	if(mGeom != NULL ){
+    if(!cvImg.empty()){
+    if(mGeom != NULL ){
 		if( cvImg.cols != mWidth || mHeight != cvImg.rows){
 			mWidth	= cvImg.cols;
 			mHeight = cvImg.rows;
@@ -31,13 +32,16 @@ void CameraStream::updateBackgroundImage( cv::Mat cvImg)
 		}
 	}
 
-	IplImage* iplImg = cvCloneImage( &(IplImage)cvImg);
+    //IplImage* iplImg = cvCloneImage( &(IplImage)cvImg);
 
-	setImage( iplImg->width, iplImg->height, 3,
-			  GL_RGB, GL_RGB, GL_UNSIGNED_BYTE,
-			  (BYTE*)( iplImg->imageData),
-			  osg::Image::AllocationMode::NO_DELETE, 1);
-	dirty();
+
+
+    setImage(cvImg.cols, cvImg.rows, 3,
+              GL_RGB, GL_RGB, GL_UNSIGNED_BYTE,
+              (cvImg.data),
+              NO_DELETE, 1);
+    }
+   dirty();
 
 }
 
