@@ -150,7 +150,7 @@ void CoreGraph::cleanUp()
 
 
 
-
+#ifdef OPENCV_FOUND
 osg::ref_ptr<osg::Node> CoreGraph::createTextureBackground()
 {
 
@@ -308,6 +308,7 @@ osg::ref_ptr<osg::Node> CoreGraph::createOrtho2dBackground()
 	return clearNode;
 
 }
+#endif
 
 osg::ref_ptr<osg::Node> CoreGraph::createSkyNoiseBox()
 {
@@ -360,25 +361,30 @@ osg::ref_ptr<osg::Node> CoreGraph::createSkyNoiseBox()
 osg::ref_ptr<osg::Node> CoreGraph::createBackground(){
 
 	// skybox
-	if (appConf->getValue("Viewer.SkyBox.Noise").toInt() == 0) {
+	int background = appConf->getValue("Viewer.SkyBox.Noise").toInt();
+
+
+	if ( background == 0) {
 		SkyBox * skyBox = new SkyBox;
 		return skyBox->createSkyBox();
 	}
 
 	// skynoise
-	if (appConf->getValue("Viewer.SkyBox.Noise").toInt() == 1) {
+	if ( background == 1) {
 		return createSkyNoiseBox();
 	}
 
+#ifdef OPENCV_FOUND
 	// video backgroung as 3d rectangle
-	if (appConf->getValue("Viewer.SkyBox.Noise").toInt() == 2) {
+	if ( background == 2) {
 		return createTextureBackground();
 	}
 
 	// video backgroung as rectangle in ortho2d
-	if (appConf->getValue("Viewer.SkyBox.Noise").toInt() == 3) {
+	if ( background == 3) {
 		return createOrtho2dBackground();
 	}
+#endif
 
 	return NULL;
 }
@@ -529,7 +535,10 @@ void CoreGraph::computeGraphRotTransf()
 	graphRotTransf->setMatrix(graphTransfMat);
 }
 
+#ifdef OPENCV_FOUND
 OpenCV::CameraStream* CoreGraph::getCameraStream() const
 {
 	return mCameraStream;
 }
+#endif
+

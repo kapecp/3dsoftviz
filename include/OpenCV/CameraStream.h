@@ -5,8 +5,10 @@
 #include <QObject>
 #include <osg/Image>
 #include <osg/Geometry>
-#include <opencv2/core/core.hpp>
 
+#ifdef OPENCV_FOUND
+#include <opencv2/core/core.hpp>
+#endif
 
 
 namespace OpenCV{
@@ -23,8 +25,9 @@ public:
 
 public slots:
 
+#ifdef OPENCV_FOUND
 	void updateBackgroundImage(cv::Mat cvImg);
-
+#endif
 
 private:
 

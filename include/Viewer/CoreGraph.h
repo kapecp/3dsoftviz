@@ -37,7 +37,10 @@ namespace Util
 }
 
 namespace OpenCV{
+#ifdef OPENCV_FOUND
 	class CameraStream;
+#endif
+
 }
 
 namespace Vwr
@@ -181,7 +184,9 @@ public:
 	Vwr::EdgeGroup * getEdgesGroup() { return edgesGroup; }
 	Vwr::EdgeGroup * getMetaEdgesGroup() { return qmetaEdgesGroup; }
 
+#ifdef OPENCV_FOUND
 	OpenCV::CameraStream *getCameraStream() const;
+#endif
 
 public slots:
 
@@ -448,7 +453,10 @@ private:
 
 	int prevTime;
 
+#ifdef OPENCV_FOUND
 	osg::ref_ptr<OpenCV::CameraStream> mCameraStream;
+#endif
+
 
 	};
 }
