@@ -19,6 +19,7 @@ private:
     Data::Graph *currentGraph;
     Data::Type *edgeType = NULL;
     Data::Type *nodeType = NULL;
+    void setNodeParams(osg::ref_ptr<Data::Node> node, Lua::LuaGraphObject *obj);
 };
 
 }

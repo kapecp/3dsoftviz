@@ -17,6 +17,7 @@ public:
     Diluculum::LuaValue getParams() const;
     void setParams(const Diluculum::LuaValue &value);
 
+    float getFloatParam(std::string name, float defaultValue);
 private:
     qlonglong id;
     QString label;

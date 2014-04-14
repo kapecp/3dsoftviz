@@ -29,4 +29,10 @@ void Lua::LuaGraphObject::setParams(const Diluculum::LuaValue &value)
     params = value;
 }
 
+float Lua::LuaGraphObject::getFloatParam(std::string name, float defaultValue){
+    if (params.type() == 0) return defaultValue;
+    if (params[name].typeName() != "number") return defaultValue;
+    return static_cast<float>(params[name].asNumber());
+}
+
 
