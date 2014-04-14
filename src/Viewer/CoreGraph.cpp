@@ -11,7 +11,7 @@
 #include "Network/Server.h"
 #include "Data/Graph.h"
 #include "Util/ApplicationConfig.h"
-#include "Viewer/CameraStream.h"
+#include "OpenCV/CameraStream.h"
 
 #include <osgUtil/Optimizer>
 #include <osg/Depth>
@@ -183,7 +183,7 @@ osg::ref_ptr<osg::Node> CoreGraph::createTextureBackground()
 
 
 	// texture
-	mCameraStream = new CameraStream( geom );
+	mCameraStream = new OpenCV::CameraStream( geom );
 	mCameraStream->setDataVariance(osg::Object::DYNAMIC);
 
 	osg::ref_ptr<osg::Texture2D> skymap = new osg::Texture2D( mCameraStream );
@@ -271,7 +271,7 @@ osg::ref_ptr<osg::Node> CoreGraph::createOrtho2dBackground()
 	GeomHUD->setTexCoordArray(0,texCoords);
 
 
-	mCameraStream = new CameraStream();
+	mCameraStream = new OpenCV::CameraStream();
 	mCameraStream->setDataVariance(osg::Object::DYNAMIC);
 
 	osg::ref_ptr<osg::Texture2D> textureHUD = new osg::Texture2D( mCameraStream );
@@ -529,7 +529,7 @@ void CoreGraph::computeGraphRotTransf()
 	graphRotTransf->setMatrix(graphTransfMat);
 }
 
-CameraStream* CoreGraph::getCameraStream() const
+OpenCV::CameraStream* CoreGraph::getCameraStream() const
 {
 	return mCameraStream;
 }

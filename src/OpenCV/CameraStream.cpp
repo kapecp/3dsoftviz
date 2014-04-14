@@ -1,10 +1,10 @@
-#include "Viewer/CameraStream.h"
+#include "OpenCV/CameraStream.h"
 #include <QDebug>
 #include <opencv2/highgui/highgui.hpp>
 #include "Util/ApplicationConfig.h"
 
 
-using namespace Vwr;
+using namespace OpenCV;
 
 CameraStream::CameraStream(osg::Geometry *geom) : QObject(), osg::Image()
 {

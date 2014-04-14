@@ -10,7 +10,7 @@
 #include "OpenCV/CamSelectCore.h"
 #include "OpenCV/CapVideo.h"
 #include "OpenCV/FaceRecognizer.h"
-#include "Viewer/CameraStream.h"
+#include "OpenCV/CameraStream.h"
 
 Q_DECLARE_METATYPE(cv::Mat)
 

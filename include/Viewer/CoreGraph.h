@@ -36,7 +36,7 @@ namespace Util
 	class ApplicationConfig;
 }
 
-namespace Vwr{
+namespace OpenCV{
 	class CameraStream;
 }
 
@@ -181,7 +181,7 @@ public:
 	Vwr::EdgeGroup * getEdgesGroup() { return edgesGroup; }
 	Vwr::EdgeGroup * getMetaEdgesGroup() { return qmetaEdgesGroup; }
 
-	CameraStream *getCameraStream() const;
+	OpenCV::CameraStream *getCameraStream() const;
 
 public slots:
 
@@ -448,7 +448,7 @@ private:
 
 	int prevTime;
 
-	osg::ref_ptr<CameraStream> mCameraStream;
+	osg::ref_ptr<OpenCV::CameraStream> mCameraStream;
 
 	};
 }

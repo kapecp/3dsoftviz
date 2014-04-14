@@ -9,7 +9,7 @@
 
 
 
-namespace Vwr{
+namespace OpenCV{
 
 class CameraStream : public QObject, public osg::Image
 {
