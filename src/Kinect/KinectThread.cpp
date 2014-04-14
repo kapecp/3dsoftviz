@@ -150,4 +150,6 @@ void Kinect::KinectThread::run()
 		}
 
 	}
+	//delete(mKinect);
+	//delete(this);
 }

@@ -125,6 +125,7 @@ void Kinect::KinectWindow::pausewindows()
 	{
 		mKinectPause->setText(tr("Pause"));
 		emit startKinect();
+		emit sendImageKinect(true);
 	}
 	else if(mKinectPause->text().toStdString().compare(tr("Pause").toStdString())==0)
 	{
@@ -160,5 +161,6 @@ void Kinect::KinectWindow::closeEvent(QCloseEvent *event)
 
 	disconnect();
 	event->accept();
+	this->deleteLater();
 }
 
