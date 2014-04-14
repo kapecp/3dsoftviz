@@ -38,10 +38,19 @@ void Lua::LuaGraphVisualizer::visualize(bool incidence_as_node)
             incNode.get()->reloadConfig();
 
             osg::ref_ptr<Data::Node> srcNode = currentGraph->getNodes()->value(i.value()->getEdgeNodePair().first);
-            currentGraph->addEdge(i.value()->getLabel(), srcNode, incNode, edgeType, false);
-
             osg::ref_ptr<Data::Node> dstNode = currentGraph->getNodes()->value(i.value()->getEdgeNodePair().second);
-            currentGraph->addEdge(i.value()->getLabel(), incNode, dstNode, edgeType, false);
+            if (i.value()->getOriented()){
+                if (i.value()->getOutGoing()){
+                    currentGraph->addEdge(i.value()->getLabel(), srcNode, incNode, edgeType, true);
+                    currentGraph->addEdge(i.value()->getLabel(), incNode, dstNode, edgeType, true);
+                } else {
+                    currentGraph->addEdge(i.value()->getLabel(), dstNode, incNode, edgeType, true);
+                    currentGraph->addEdge(i.value()->getLabel(), incNode, srcNode, edgeType, true);
+                }
+            } else {
+                currentGraph->addEdge(i.value()->getLabel(), srcNode, incNode, edgeType, false);
+                currentGraph->addEdge(i.value()->getLabel(), incNode, dstNode, edgeType, false);
+            }
         }
     } else {
         for (QMap<qlonglong, Lua::LuaIncidence *>::iterator i = g->getIncidences()->begin(); i != g->getIncidences()->end(); ++i){

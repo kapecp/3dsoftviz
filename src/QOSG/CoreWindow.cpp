@@ -745,7 +745,7 @@ void CoreWindow::loadFunctionCall()
     }
     currentGraph = Manager::GraphManager::getInstance()->createNewGraph("LuaGraph");
     Lua::LuaGraphVisualizer *visualizer = new Lua::LuaGraphVisualizer(currentGraph);
-    visualizer->visualize();
+    visualizer->visualize(true);
 }
 
 void CoreWindow::noSelectClicked(bool checked)

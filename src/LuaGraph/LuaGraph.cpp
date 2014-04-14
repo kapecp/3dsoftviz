@@ -104,9 +104,13 @@ Lua::LuaGraph *Lua::LuaGraph::loadGraph()
             Lua::LuaIncidence* incidence = new Lua::LuaIncidence();
             incidence->setId(id2);
             incidence->setParams(iterator2->first.asTable()["params"]);
-            std::stringstream sstm2;
-            sstm2 << "Incid " << id2;
-            incidence->setLabel(QString::fromStdString(sstm2.str()));
+            if (iterator2->first.asTable()["label"].type() != 0)
+                incidence->setLabel(QString::fromStdString(iterator2->first.asTable()["label"].asString()));
+            else {
+                std::stringstream sstm2;
+                sstm2 << "Incid " << id2;
+                incidence->setLabel(QString::fromStdString(sstm2.str()));
+            }
             incidence->setOriented(iterator2->first.asTable()["direction"].type() != 0);
             std::cout << "oriented " << iterator2->first.asTable()["direction"].type() << incidence->getOriented() << std::endl;
             if (incidence->getOriented()){
