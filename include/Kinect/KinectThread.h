@@ -6,12 +6,14 @@
 
 #include "OpenNI.h"
 #include "NiTE.h"
-#include "Kinect/KinectThread.h"
-#include "Kinect/KinectHandTracker.h"
 
 #include <opencv2/core/core.hpp>
 
 namespace Kinect{
+
+	class KinectThread;
+	class KinectHandTracker;
+	class KinectRecognition;
 
 class KinectThread : public QThread
 {
@@ -28,6 +30,8 @@ public:
 
 signals:
 
+	void sendSliderCoords( float x, float y, float distance);
+
 	void pushImage(cv::Mat image);
 
 	void pushImageQ(QImage qimage);
@@ -40,22 +44,25 @@ public slots:
 
 	void pause();
 
+	void setCursorMovement(bool set);
+
+	void setSpeedKinect(double set);
+
 private:
 
 	bool mCancel;
 	bool mSetImageEnable;
 	bool isOpen;
+	bool isCursorEnable;
+
+	double mSpeed;
+
 	openni::VideoFrameRef colorFrame;
 	KinectHandTracker *kht;
 	KinectRecognition *mKinect;
 
 
 };
-
-
-
-
-
 }
 
 #endif // KINECTTHREAD_H

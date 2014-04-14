@@ -1,5 +1,5 @@
 #include "Kinect/KinectHandTracker.h"
-
+#include "Kinect/MouseControl.h"
 #include "QDebug"
 
 Kinect::KinectHandTracker::KinectHandTracker(openni::Device *device, openni::VideoStream *m_depth)
@@ -8,6 +8,8 @@ Kinect::KinectHandTracker::KinectHandTracker(openni::Device *device, openni::Vid
 	m_pHandTracker.startGestureDetection(nite::GESTURE_WAVE);
 	m_pHandTracker.startGestureDetection(nite::GESTURE_CLICK);
 	isClick=false;
+	isCursorMovementEnable=true;
+	mSpeed=1.0;
 	mouse = new Kinect::MouseControl();
 	mDepth=m_depth;
 }
@@ -15,6 +17,16 @@ Kinect::KinectHandTracker::KinectHandTracker(openni::Device *device, openni::Vid
 
 Kinect::KinectHandTracker::~KinectHandTracker()
 {
+}
+
+void Kinect::KinectHandTracker::setCursorMovement(bool set)
+{
+	isCursorMovementEnable=set;
+}
+
+void Kinect::KinectHandTracker::setSpeedMovement(double set)
+{
+	mSpeed=set;
 }
 
 void Kinect::KinectHandTracker::getAllGestures()
@@ -59,7 +71,7 @@ void Kinect::KinectHandTracker::getAllHands()
 	// If hand matches old positions, previous ID is assigned again
 	const nite::Array<nite::HandData>& hands= this->handTrackerFrame.getHands();
 
-	printf("%d hands\n", hands.getSize());
+	//printf("%d hands\n", hands.getSize());
 	this->isTwoHands = false;
 
 	for (int i = 0; i < hands.getSize(); ++i)
@@ -87,15 +99,12 @@ void Kinect::KinectHandTracker::getAllHands()
 
 			// Data for mouse
 			//first find HAND = MOUSE
-			if(i==0)
+			if(i==0 && isCursorMovementEnable)
 			{
+				mouse->setSpeedUpMoving(mSpeed);
 				//mouse->moveCursorMouse(user.getPosition().x/2,-1.0*user.getPosition().y/2,isClick);
-				//printf("%lf %lf",user.getPosition().x,-1,0*user.getPosition().y);
-				/// new version
 				coordinateConverter.convertWorldToDepth(*mDepth, user.getPosition().x, user.getPosition().y, user.getPosition().z, &mDepthX, &mDepthY, &mDepthZ);
 				mouse->moveCursorWorldCoordinates(mDepthX,mDepthY,isClick);
-				/////////////
-
 			}
 
 			// If two hands have been found get the position of the rectangle
@@ -111,6 +120,96 @@ void Kinect::KinectHandTracker::getAllHands()
 				this->getArrayHands[i][1] = 0 - user.getPosition().y;
 
 				this->isTwoHands = true;
+			}
+		}
+	}
+}
+
+void Kinect::KinectHandTracker::getRotatingMove()
+{
+	// List of hands evidence
+	// If hand matches old positions, previous ID is assigned again
+	const nite::Array<nite::HandData>& hands= this->handTrackerFrame.getHands();
+
+	this->slidingHand_x = 0;
+	this->slidingHand_y = 0;
+	this->slidingHand_z = 0;
+	this->slidingHand_type = "";
+	//strcpy(this->slidingHand_type, "");
+
+	for (int i = 0; i < hands.getSize(); ++i)
+	{
+		const nite::HandData& user = hands[i];
+
+		if (!user.isTracking())
+		{
+			//printf("Lost hand %d\n", user.getId());
+			nite::HandId id = user.getId();
+			HistoryBuffer<20>* pHistory = this->g_histories[id];
+			this->g_histories.erase(this->g_histories.find(id));
+			delete pHistory;
+		}
+		else
+		{
+			if (user.isNew())
+			{
+				this->g_histories[user.getId()] = new HistoryBuffer<20>;
+			}
+			// Hand evidence in Buffer
+			HistoryBuffer<20>* pHistory = this->g_histories[user.getId()];
+			pHistory->AddPoint(user.getPosition());
+
+
+			coordinateConverter.convertWorldToDepth(*mDepth, user.getPosition().x, user.getPosition().y, user.getPosition().z, &this->slidingHand_x, &this->slidingHand_y, &this->slidingHand_z);
+
+			// printf("%lf %lf \n", this->slidingHand_x,this->slidingHand_y );
+
+
+			float koordy[60] = {0};
+
+			bool gesto_dolava = false;
+			bool gesto_doprava = false;
+			bool gesto_hore = false;
+			bool gesto_dole = false;
+
+
+			if(pHistory->GetSize() == 20)
+			{ // ak je historia naplnena
+				const nite::Point3f& position1 = pHistory->operator[](0);
+				this->m_pHandTracker.convertHandCoordinatesToDepth(position1.x, position1.y, position1.z, &koordy[0], &koordy[1]);
+				const nite::Point3f& position2 = pHistory->operator[](19);
+				this->m_pHandTracker.convertHandCoordinatesToDepth(position2.x, position2.y, position2.z, &koordy[2], &koordy[3]);
+
+
+				//check for output
+				if(abs(koordy[0] - koordy[2]) > 100.0)
+				{
+					if(koordy[0] > koordy[2])
+					{
+						gesto_dolava = false;
+						gesto_doprava = true;
+					}
+					else
+					{
+						gesto_dolava = true;
+						gesto_doprava = false;
+					}
+				}
+				if(abs(koordy[1] - koordy[3]) > 100.0)
+				{
+					if(koordy[1] < koordy[3])
+					{
+						gesto_dole = false;
+						gesto_hore = true;
+					}
+					else
+					{
+						gesto_dole = true;
+						gesto_hore = false;
+					}
+				}
+				if(gesto_dolava) this->slidingHand_type = "scroll left";
+				else if(gesto_doprava) this->slidingHand_type = "scroll right";
 			}
 		}
 	}

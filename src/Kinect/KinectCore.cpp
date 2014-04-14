@@ -4,10 +4,11 @@
 #include "Kinect/KinectThread.h"
 #include "Kinect/KinectWindow.h"
 
+#include "Core/Core.h"
+#include "Viewer/CameraManipulator.h"
+
 using namespace Kinect;
 Q_DECLARE_METATYPE(cv::Mat)
-
-
 
 Kinect::KinectCore * Kinect::KinectCore::mKinectCore;
 
@@ -42,7 +43,6 @@ Kinect::KinectCore::~KinectCore()
 
 void Kinect::KinectCore::kinectRecognition()
 {
-
 	if(!mKinectDialog)
 	{
 		if(!mThrsCreated)
@@ -72,24 +72,46 @@ Kinect::KinectCore * Kinect::KinectCore::getInstance( QApplication* app,QWidget 
 void Kinect::KinectCore::createConnectionKinect()
 {
 
+	//for video sending
 	QObject::connect(mKinectDialog,
 					 SIGNAL(sendImageKinect(bool)),
 					 mThrKinect,
 					 SLOT(setImageSend(bool)));
+
+	//send image to label
 	QObject::connect(mThrKinect,
 					 SIGNAL(pushImage(cv::Mat)),
 					 mKinectDialog,
 					 SLOT(setLabel(cv::Mat)));
 
+	//start
 	QObject::connect(mKinectDialog,
 					 SIGNAL(startKinect()),
 					 mThrKinect,
 					 SLOT(start()));
 
+	//stop
 	QObject::connect(mKinectDialog,
 					 SIGNAL(stopKinect(bool)),
 					 mThrKinect,
 					 SLOT(setCancel(bool)));
 
+	// moving camera with gesture
+	QObject::connect( mThrKinect,
+					  SIGNAL(sendSliderCoords(float,float,float)),
+					  AppCore::Core::getInstance(NULL)->getCoreWindow()->getCameraManipulator(),
+					  SLOT(setRotationHead(float,float,float)) );
+
+	//enable/disable cursor movement
+	QObject::connect(mKinectDialog,
+					 SIGNAL(setMovementCursor(bool)),
+					 mThrKinect,
+					 SLOT(setCursorMovement(bool)));
+
+	//edit for speed movement
+	QObject::connect(mKinectDialog,
+					 SIGNAL(sendSpeedKinect(double)),
+					 mThrKinect,
+					 SLOT(setSpeedKinect(double)));
 
 }

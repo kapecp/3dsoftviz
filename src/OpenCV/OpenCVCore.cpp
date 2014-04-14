@@ -9,7 +9,6 @@
 #include "Viewer/CameraManipulator.h"
 #include "OpenCV/CamSelectCore.h"
 #include "OpenCV/CapVideo.h"
-#include "OpenCV/FaceRecognizer.h"
 #include "OpenCV/CameraStream.h"
 
 Q_DECLARE_METATYPE(cv::Mat)
@@ -62,9 +61,8 @@ void OpenCV::OpenCVCore::faceRecognition()
 			// create threads
 			qDebug() << "creating threads";
 			mThrsCreated = true;
-			FaceRecognizer *mFaceRecognizer = new FaceRecognizer();
 			mThrAruco		= new ArucoModul::ArucoThread();
-			mThrFaceRec		= new QOpenCV::FaceRecognitionThread( mFaceRecognizer );
+			mThrFaceRec		= new QOpenCV::FaceRecognitionThread();
 			createPermanentConnection();
 		}
 		// create window

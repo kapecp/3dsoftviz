@@ -32,10 +32,15 @@
 #ifdef OPENCV_FOUND
 #include "OpenCV/OpenCVCore.h"
 #endif
-#ifdef OPENNI2_FOUND
-#include "Kinect/KinectCore.h"
-#endif
 
+#ifdef OPENCV_FOUND
+#ifdef OPENNI2_FOUND
+#ifdef NITE2_FOUND
+#include "Kinect/KinectCore.h"
+#include "Kinect/RansacSurface/Ransac.h"
+#endif
+#endif
+#endif
 
 #include "Util/Cleaner.h"
 
@@ -508,9 +513,6 @@ void CoreWindow::createRightToolBar() {
 	/*toolBar->addWidget(le_message);
 	toolBar->addWidget(b_send_message);*/
 
-	//add Kinect Button
-
-
 	addToolBar(Qt::TopToolBarArea,toolBar);
 }
 
@@ -532,6 +534,7 @@ void CoreWindow::createAugmentedRealityToolBar() {
 	toolBar->addWidget( chb_camera_rot );
 	toolBar->addSeparator();
 
+
 	// dont rotate camera if video background
 	if( Util::ApplicationConfig::get()->getValue("Viewer.SkyBox.Noise").toInt() == 2 ){
 		chb_camera_rot->setChecked(false);
@@ -539,16 +542,29 @@ void CoreWindow::createAugmentedRealityToolBar() {
 		chb_camera_rot->setChecked(true);
 	}
 
+#ifdef OPENCV_FOUND
+
 #ifdef OPENNI2_FOUND
+#ifdef NITE2_FOUND
+
 	QLabel *labelKinect = new QLabel( tr("Kinect"));
 	toolBar->addWidget( labelKinect );
 	b_start_kinect = new QPushButton();
 	b_start_kinect->setText("Start kinect");
 	toolBar->addWidget( b_start_kinect );
 	connect(b_start_kinect, SIGNAL(clicked()), this, SLOT(createKinectWindow()));
-
 	toolBar->addSeparator();
+
+	b_start_ransac = new QPushButton();
+	b_start_ransac->setText("Start calculate surface");
+	toolBar->addWidget( b_start_ransac );
+	connect(b_start_ransac, SIGNAL(clicked()), this, SLOT(calculateRansac()));
+	toolBar->addSeparator();
+
 #endif
+#endif
+#endif
+
 #ifdef SPEECHSDK_FOUND
 	QLabel *labelSpeech = new QLabel( tr("Speech"));
 	toolBar->addWidget( labelSpeech );
@@ -1764,11 +1780,22 @@ void CoreWindow::create_facewindow()
 }
 
 
+#ifdef OPENCV_FOUND
 #ifdef OPENNI2_FOUND
+#ifdef NITE2_FOUND
 void CoreWindow::createKinectWindow(){
 
 	Kinect::KinectCore::getInstance(NULL,this)->kinectRecognition();
 }
+
+void CoreWindow::calculateRansac()
+{
+	Kinect::Ransac *ransac= new Kinect::Ransac();
+	ransac->calculate();
+}
+
+#endif
+#endif
 #endif
 
 #ifdef SPEECHSDK_FOUND

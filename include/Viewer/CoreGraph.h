@@ -319,6 +319,7 @@ private:
 		*/
 	osg::ref_ptr<osg::Node> createSkyNoiseBox();
 
+#ifdef OPENCV_FOUND
 	/**
 		*  \fn private  createTextureBackground
 		*  \brief creates video background as 3d rectangle
@@ -332,7 +333,7 @@ private:
 		*  \return osg::ref_ptr node
 		*/
 	osg::ref_ptr<osg::Node> createOrtho2dBackground();
-
+#endif
 	/**
 		*  osg::ref_ptr camera
 		*  \brief current viewing camera

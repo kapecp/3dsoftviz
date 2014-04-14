@@ -3,6 +3,7 @@
 
 #include <opencv2/core/core.hpp>
 #include <opencv2/objdetect/objdetect.hpp>
+#include "Util/SizedQueue.h"
 
 namespace OpenCV
 {
@@ -74,6 +75,9 @@ public:
 private:
 
 	cv::Rect rect;
+	cv::Rect drawrect;
+	bool firstdetection;
+	SizedQueue *queue;
 
 	/**
 		 * @author Autor: Marek Jakab
