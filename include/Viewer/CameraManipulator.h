@@ -642,7 +642,10 @@ private:
 		 * @param distance of head from camera
 		 */
 	void updateProjectionAccordingFace(const float x, const float y, const float distance);
-	};
+
+    bool ctrlPressed;
+
+};
 
 
 }

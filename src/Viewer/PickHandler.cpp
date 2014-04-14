@@ -121,6 +121,10 @@ bool PickHandler::handle( const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdap
 	{
 		return handleKeyUp(ea, aa);
 	}
+    case::osgGA::GUIEventAdapter::SCROLL:
+    {
+        return handleScroll(ea, aa);
+    }
 	default:
 
 		return false;
@@ -153,6 +157,37 @@ bool PickHandler::handleMove( const osgGA::GUIEventAdapter& ea, osgGA::GUIAction
 bool PickHandler::handleDoubleclick( const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& aa )
 {
 	return false;
+}
+
+bool PickHandler::handleScroll( const osgGA::GUIEventAdapter& ea, GUIActionAdapter& aa  )
+{
+    if (isCtrlPressed && selectionType == SelectionType::CLUSTER && !pickedClusters.empty()) {
+        QLinkedList<osg::ref_ptr<Data::Cluster> >::const_iterator i = pickedClusters.constBegin();
+        float scale = appConf->getValue("Viewer.Display.NodeDistanceScale").toFloat();
+        while (i != pickedClusters.constEnd())
+        {
+            Layout::ShapeGetter_Cube * shape = (*i)->getShapeGetter();
+            if (shape != NULL) {
+                osg::Vec3f vector = shape->getSurfaceNode()->getCurrentPosition() - shape->getCenterNode()->getCurrentPosition();
+                float length = vector.normalize();
+
+                if (length > 10) {
+                    vector *= length / 5;
+                }
+
+                if( ea.getScrollingMotion() == osgGA::GUIEventAdapter::SCROLL_UP) {
+                    vector *= -1;
+                }
+                osg::Vec3f newPosition = shape->getSurfaceNode()->getTargetPosition() + vector;
+
+                shape->getSurfaceNode()->setTargetPosition(newPosition);
+                shape->getSurfaceNode()->setCurrentPosition(newPosition);
+            }
+            ++i;
+        }
+        AppCore::Core::getInstance()->getLayoutThread()->wakeUp();
+    }
+    return false;
 }
 
 bool PickHandler::handleKeyUp( const osgGA::GUIEventAdapter& ea, GUIActionAdapter& aa  )
@@ -627,15 +662,13 @@ bool PickHandler::dragCluster(osgViewer::Viewer * viewer)
         Layout::ShapeGetter_Cube * shape = (*i)->getShapeGetter();
 
         if (shape != NULL) {
-            if (!isCtrlPressed) {
-                osg::Vec3f screenPoint = shape->getCenterNode()->getTargetPosition() * compositeM;
-                osg::Vec3f newPosition = osg::Vec3f(screenPoint.x() - (origin_mX - _mX) / scale, screenPoint.y() - (origin_mY - _mY) / scale, screenPoint.z());
-                shape->getCenterNode()->setTargetPosition(newPosition * compositeMi);
-                shape->getCenterNode()->setCurrentPosition(newPosition * compositeMi);
-            }
-
-            osg::Vec3f screenPoint = shape->getSurfaceNode()->getTargetPosition() * compositeM;
+            osg::Vec3f screenPoint = shape->getCenterNode()->getTargetPosition() * compositeM;
             osg::Vec3f newPosition = osg::Vec3f(screenPoint.x() - (origin_mX - _mX) / scale, screenPoint.y() - (origin_mY - _mY) / scale, screenPoint.z());
+            shape->getCenterNode()->setTargetPosition(newPosition * compositeMi);
+            shape->getCenterNode()->setCurrentPosition(newPosition * compositeMi);
+
+            screenPoint = shape->getSurfaceNode()->getTargetPosition() * compositeM;
+            newPosition = osg::Vec3f(screenPoint.x() - (origin_mX - _mX) / scale, screenPoint.y() - (origin_mY - _mY) / scale, screenPoint.z());
             shape->getSurfaceNode()->setTargetPosition(newPosition * compositeMi);
             shape->getSurfaceNode()->setCurrentPosition(newPosition * compositeMi);
         }

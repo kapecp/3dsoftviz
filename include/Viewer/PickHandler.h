@@ -471,6 +471,7 @@ private:
 
     QLinkedList<osg::ref_ptr<Data::Cluster> > pickedClusters;
     bool dragCluster(osgViewer::Viewer * viewer);
+    bool handleScroll( const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& aa );
 
 public slots:
 	/**

@@ -51,6 +51,8 @@ Vwr::CameraManipulator::CameraManipulator(Vwr::CoreGraph * coreGraph)
 	TARGET_MOVEMENT_SPEED = 0.005;
 	SCREEN_MARGIN = 200.f;
 
+    ctrlPressed = false;
+
 	this->coreGraph = coreGraph;
 	stop();
 }
@@ -350,6 +352,9 @@ bool Vwr::CameraManipulator::calcMovement()
 	// mouse scroll is only a single event
 	if (_ga_t0.get()==NULL) return false;
 
+    // ignoruj event ak je stlaceny ctrl
+    if(ctrlPressed) return false;
+
 	float dx=0.0f;
 	float dy=0.0f;
 	unsigned int buttonMask=osgGA::GUIEventAdapter::NONE;
@@ -589,6 +594,12 @@ bool Vwr::CameraManipulator::handleKeyUp( const osgGA::GUIEventAdapter& ea, osgG
 {
 	switch( ea.getKey() )
 	{
+    case osgGA::GUIEventAdapter::KEY_Control_R:
+    case osgGA::GUIEventAdapter::KEY_Control_L:
+    {
+        ctrlPressed = false;
+        break;
+    }
 	case osgGA::GUIEventAdapter::KEY_Space:
 	{
 		flushMouseEventStack();
@@ -637,6 +648,12 @@ bool Vwr::CameraManipulator::handleKeyDown( const osgGA::GUIEventAdapter &ea, os
 {
 	switch( ea.getKey() )
 	{
+    case osgGA::GUIEventAdapter::KEY_Control_R:
+    case osgGA::GUIEventAdapter::KEY_Control_L:
+    {
+        ctrlPressed = true;
+        break;
+    }
 	case osgGA::GUIEventAdapter::KEY_Up:
 	{
 		forwardSpeed = 2 * maxSpeed;
