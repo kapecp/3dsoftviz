@@ -12,9 +12,13 @@ CameraStream::CameraStream(osg::Geometry *geom) : QObject(), osg::Image()
 	mWidth	= 0;
 	mHeight = 0;
 
-	cv::Mat cvImg(480,640, CV_8UC3, CV_RGB(0,0,0));
-
+#ifdef WIN32
+	cv::Mat cvImg(480,640, CV_8UC3, CV_RGB(0,0,0));  // Black on Win
+#else
+	cv::Mat cvImg;			// gray on Linux
+#endif
 	updateBackgroundImage( cvImg);
+
 }
 
 CameraStream::~CameraStream(){}
@@ -46,10 +50,14 @@ void CameraStream::updateBackgroundImage( cv::Mat cvImg)
 			  (unsigned char*) iplImg->imageData,
 			  NO_DELETE, 1);
 #else
-	setImage(cvImg.cols, cvImg.rows, 3,
-			 GL_RGB, GL_RGB, GL_UNSIGNED_BYTE,
-			 (unsigned char*) cvImg.data,
-			 NO_DELETE, 1);
+	cv::Mat img = cvImg.clone();
+
+	setImage(cvImg.cols, cvImg.rows,
+		8, cvImg.channels(), GL_RGB,
+		GL_UNSIGNED_BYTE,
+		(unsigned char*)( cvImg.data),
+		NO_DELETE, 1);
+
 #endif
 
 	dirty();
