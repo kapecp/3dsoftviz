@@ -5,11 +5,7 @@
 #include "Importer/GraphOperations.h"
 
 Lua::SimpleGraphVisualizer::SimpleGraphVisualizer(Data::Graph *graph)
-{
-    currentGraph = graph;
-    Importer::GraphOperations *operations = new Importer::GraphOperations(*currentGraph);
-    operations->addDefaultTypes(edgeType, nodeType);
-}
+    : Lua::LuaGraphVisualizer(graph){}
 
 void Lua::SimpleGraphVisualizer::visualize()
 {
@@ -18,7 +14,7 @@ void Lua::SimpleGraphVisualizer::visualize()
 
     for (QMap<qlonglong, Lua::LuaNode *>::iterator i = g->getNodes()->begin(); i != g->getNodes()->end(); ++i){
          osg::ref_ptr<Data::Node> n = currentGraph->addNode(i.key() , i.value()->getLabel(), nodeType);
-         setNodeParams(n, i.value());
+         setNodeParams(n, i.value(), osg::Vec4f(1,0,0,1), 8);
     }
 
     for (QMap<qlonglong, Lua::LuaEdge *>::iterator i = g->getEdges()->begin(); i != g->getEdges()->end(); ++i){
@@ -38,17 +34,6 @@ void Lua::SimpleGraphVisualizer::visualize()
         }
     }
     g->setObserver(this);
-}
-
-void Lua::SimpleGraphVisualizer::setNodeParams(osg::ref_ptr<Data::Node> node, Lua::LuaGraphObject *obj){
-    float r = obj->getFloatParam("colorR", 1);
-    float g = obj->getFloatParam("colorG", 1);
-    float b = obj->getFloatParam("colorB", 1);
-    float a = obj->getFloatParam("colorA", 1);
-    node.get()->setColor(osg::Vec4 (r,g,b,a));
-    float scale = obj->getFloatParam("size", 8);
-    node->setScale(scale);
-    node->reloadConfig();
 }
 
 void Lua::SimpleGraphVisualizer::onUpdate()
