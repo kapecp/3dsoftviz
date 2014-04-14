@@ -3,6 +3,7 @@
 
 #include <opencv2/core/core.hpp>
 #include <opencv2/objdetect/objdetect.hpp>
+#include "Util/SizedQueue.h"
 
 namespace OpenCV
 {
@@ -76,8 +77,7 @@ private:
 	cv::Rect rect;
 	cv::Rect drawrect;
 	bool firstdetection;
-	std::deque<cv::Point2f> lifo;
-	float sumx,sumy;
+	SizedQueue *queue;
 
 	/**
 		 * @author Autor: Marek Jakab
