@@ -534,7 +534,16 @@ void CoreWindow::createAugmentedRealityToolBar() {
 	toolBar->addWidget( chb_camera_rot );
 	toolBar->addSeparator();
 
+
+	// dont rotate camera if video background
+	if( Util::ApplicationConfig::get()->getValue("Viewer.SkyBox.Noise").toInt() == 2 ){
+		chb_camera_rot->setChecked(false);
+	} else {
+		chb_camera_rot->setChecked(true);
+	}
+
 #ifdef OPENCV_FOUND
+
 #ifdef OPENNI2_FOUND
 #ifdef NITE2_FOUND
 

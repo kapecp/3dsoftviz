@@ -17,6 +17,7 @@ ArucoThread::ArucoThread(QObject *parent)
 	mCorEnabled		= false;
 	mUpdCorPar		= false;
 	mSendImgEnabled	= true;
+	mSendBackgrImgEnabled = false;
 	mRatioCamCoef	= 0;
 
 	qRegisterMetaType< osg::Vec3d >("osgVec3d");
@@ -50,6 +51,11 @@ void ArucoThread::setCorEnabling( bool corEnabled )
 void ArucoThread::setSendImgEnabling( bool sendImgEnabled )
 {
 	mSendImgEnabled = sendImgEnabled;
+}
+
+void ArucoThread::setSendBackgrImgEnabled( bool sendBackgrImgEnabled )
+{
+	mSendBackgrImgEnabled = sendBackgrImgEnabled;
 }
 
 void ArucoThread::updateCorectionPar(){
@@ -137,13 +143,20 @@ void ArucoThread::run()
 				}
 			}
 
+			cv::Mat image = aCore.getDetImage();
+
+			cv::cvtColor( image, image, CV_BGR2RGB );
 			if ( mSendImgEnabled ) {
-				cv::Mat image = aCore.getDetImage();
-				cv::cvtColor( image, image, CV_BGR2RGB );
+
 				QImage qimage ( (uchar*) image.data, image.cols, image.rows,(int) image.step, QImage::Format_RGB888);
 
 				emit pushImage( qimage );	// emit image with marked marker for debuging
 			}
+
+			if( mSendBackgrImgEnabled ){
+				emit pushBackgrImage( image.clone() );
+			}
+
 			if(! mCancel){
 				msleep(50);
 			}

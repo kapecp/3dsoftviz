@@ -11,6 +11,7 @@ QOpenCV::FaceRecognitionThread::FaceRecognitionThread( QObject *parent)
 	mCapVideo		= NULL;
 	mCancel			= false;
 	mSendImgEnabled	= true;
+	mSendBackgrImgEnabled = false;
 }
 
 
@@ -40,6 +41,10 @@ void QOpenCV::FaceRecognitionThread::run()
 			if (image.data)
 				emit pushImage( image.clone() ); // ???
 		}
+		if( mSendBackgrImgEnabled ){
+			emit pushBackgrImage( image.clone() );
+		}
+
 
 		if( mFaceRecognizer->detected ) { //&& mFaceRecognizer->isMovement
 			emit sendEyesCoords( (float) -mFaceRecognizer->getEyesCoords().x,
@@ -67,6 +72,14 @@ void QOpenCV::FaceRecognitionThread::setSendImgEnabled( bool sendImgEnabled )
 	mSendImgEnabled = sendImgEnabled;
 }
 
+void QOpenCV::FaceRecognitionThread::setSendBackgrImgEnabled( bool sendBackgrImgEnabled )
+{
+	mSendBackgrImgEnabled = sendBackgrImgEnabled;
+}
+
+
+
 void QOpenCV::FaceRecognitionThread::setCapVideo( OpenCV::CapVideo *capVideo){
 	mCapVideo = capVideo;
 }
+

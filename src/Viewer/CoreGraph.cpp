@@ -7,14 +7,15 @@
 #include "Viewer/SkyTransform.h"
 #include "Viewer/TextureWrapper.h"
 
+
 #include "Network/Server.h"
-
 #include "Data/Graph.h"
-
 #include "Util/ApplicationConfig.h"
+#include "OpenCV/CameraStream.h"
 
 #include <osgUtil/Optimizer>
 #include <osg/Depth>
+
 
 using namespace Vwr;
 
@@ -44,12 +45,14 @@ Vwr::CoreGraph::CoreGraph(Data::Graph * graph, osg::ref_ptr<osg::Camera> camera)
 	graphRotTransf = new osg::MatrixTransform();
 	graphGroup = new osg::Group();
 
-	root->addChild(createSkyBox());
 
-	root->addChild(graphRotTransf);
 	graphRotTransf->addChild(graphGroup);
+	root->addChild(graphRotTransf);
 
-	backgroundPosition = 0;
+
+	// backgroung this must be last Node in root !!!  ( because of ortho2d background)
+	root->addChild( createBackground());
+	backgroundPosition = 1;
 
 	reload(graph);
 }
@@ -147,57 +150,245 @@ void CoreGraph::cleanUp()
 
 
 
-osg::ref_ptr<osg::Node> CoreGraph::createSkyBox(){
-	if (appConf->getValue("Viewer.SkyBox.Noise").toInt() == 0) {
+#ifdef OPENCV_FOUND
+osg::ref_ptr<osg::Node> CoreGraph::createTextureBackground()
+{
+
+	// rectangle
+	// coordinates
+	osg::Vec3Array* coords = new osg::Vec3Array(4);
+	(*coords)[0].set( -1.0f, 1.0f, -1.0f );
+	(*coords)[1].set(  1.0f, 1.0f, -1.0f );
+	(*coords)[2].set(  1.0f, 1.0f,  1.0f );
+	(*coords)[3].set( -1.0f, 1.0f,  1.0f );
+
+	// normals
+	osg::Vec3Array* normals = new osg::Vec3Array(1);
+	(*normals)[0].set( 0.0f, 1.0f, 0.0f );
+
+	// texture coordinates
+	osg::Vec2Array* texCoords = new osg::Vec2Array(4);
+	(*texCoords)[0].set(0.0f, 1.0f);
+	(*texCoords)[1].set(1.0f, 1.0f);
+	(*texCoords)[2].set(1.0f, 0.0f);
+	(*texCoords)[3].set(0.0f, 0.0f);
+
+	osg::ref_ptr<osg::Geometry> geom = new osg::Geometry();
+	geom->setDataVariance(osg::Object::DYNAMIC);
+	geom->addPrimitiveSet(new osg::DrawArrays(GL_QUADS, 0, 4));
+	geom->setVertexArray(coords);
+	geom->setNormalArray(normals);
+	geom->setNormalBinding(osg::Geometry::BIND_OVERALL);
+	geom->setTexCoordArray(0,texCoords);
+
+
+	// texture
+	mCameraStream = new OpenCV::CameraStream( geom );
+	mCameraStream->setDataVariance(osg::Object::DYNAMIC);
+
+	osg::ref_ptr<osg::Texture2D> skymap = new osg::Texture2D( mCameraStream );
+	skymap->setDataVariance(osg::Object::DYNAMIC);
+	skymap->setFilter(osg::Texture::MIN_FILTER, osg::Texture::LINEAR_MIPMAP_LINEAR);
+	skymap->setFilter(osg::Texture::MAG_FILTER, osg::Texture::LINEAR);
+	skymap->setWrap(osg::Texture::WRAP_S, osg::Texture::CLAMP_TO_EDGE);
+	skymap->setWrap(osg::Texture::WRAP_T, osg::Texture::CLAMP_TO_EDGE);
+	skymap->setResizeNonPowerOfTwoHint(false);
+
+
+
+	// stateset
+	osg::ref_ptr<osg::StateSet> stateset = new osg::StateSet();
+	stateset->setTextureAttributeAndModes(0, skymap, osg::StateAttribute::ON);
+	stateset->setMode( GL_LIGHTING, osg::StateAttribute::OFF );
+	stateset->setMode( GL_CULL_FACE, osg::StateAttribute::OFF );
+	stateset->setRenderBinDetails(-1,"RenderBin");
+
+	osg::ref_ptr<osg::Depth> depth = new osg::Depth;
+	depth->setFunction(osg::Depth::ALWAYS);
+	depth->setRange(1, 1);
+	stateset->setAttributeAndModes(depth, osg::StateAttribute::ON );
+
+
+
+	osg::ref_ptr<osg::Geode> geode = new osg::Geode;
+	geode->setCullingActive(false);
+	geode->setStateSet(stateset);
+	geode->addDrawable(geom);
+
+	osg::ref_ptr<osg::Transform> transform = new SkyTransform;
+
+	//osg::ref_ptr<osg::Transform> transform = new MoveEarthySkyWithEyePointTran;
+	transform->setCullingActive(false);
+	transform->addChild(geode);
+
+	osg::ref_ptr<osg::ClearNode> clearNode = new osg::ClearNode;
+	clearNode->setRequiresClear(false);
+	clearNode->addChild(transform);
+	//clearNode->addChild(geode);
+
+
+	return clearNode;
+
+}
+
+osg::ref_ptr<osg::Node> CoreGraph::createOrtho2dBackground()
+{
+
+	osg::ref_ptr<osg::Geode> GeodeHUD = new osg::Geode();
+
+	osg::ref_ptr<osg::Projection> ProjectionMatrixHUD = new osg::Projection;
+	osg::ref_ptr<osg::MatrixTransform> ModelViewMatrixHUD = new osg::MatrixTransform;
+
+	ModelViewMatrixHUD->setMatrix(osg::Matrix::identity());
+	ModelViewMatrixHUD->setReferenceFrame(osg::Transform::ABSOLUTE_RF);
+
+	ProjectionMatrixHUD->setMatrix(osg::Matrix::ortho2D(0,640,0,480));
+	ProjectionMatrixHUD->addChild( ModelViewMatrixHUD );
+	ModelViewMatrixHUD->addChild( GeodeHUD );
+
+
+	osg::Vec3Array* coordsHUD = new osg::Vec3Array;
+	coordsHUD->push_back( osg::Vec3(   0,    0, -1 ));
+	coordsHUD->push_back( osg::Vec3( 640,    0, -1 ));
+	coordsHUD->push_back( osg::Vec3( 640,  480, -1 ));
+	coordsHUD->push_back( osg::Vec3(   0,  480, -1 ));
+
+	osg::Vec2Array* texCoords = new osg::Vec2Array(4);
+	(*texCoords)[0].set( 0.0f, 1.0f);
+	(*texCoords)[1].set( 1.0f, 1.0f);
+	(*texCoords)[2].set( 1.0f, 0.0f);
+	(*texCoords)[3].set( 0.0f, 0.0f);
+
+	osg::Vec3Array* normalsHUD = new osg::Vec3Array;
+	normalsHUD->push_back(osg::Vec3(0.0f, 0.0f, 1.0f));
+
+
+	osg::ref_ptr<osg::Geometry> GeomHUD = new osg::Geometry();
+	GeomHUD->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::POLYGON,0,4));
+	GeomHUD->setVertexArray(coordsHUD);
+	GeomHUD->setNormalArray(normalsHUD);
+	GeomHUD->setNormalBinding(osg::Geometry::BIND_OVERALL);
+	GeomHUD->setTexCoordArray(0,texCoords);
+
+
+	mCameraStream = new OpenCV::CameraStream();
+	mCameraStream->setDataVariance(osg::Object::DYNAMIC);
+
+	osg::ref_ptr<osg::Texture2D> textureHUD = new osg::Texture2D( mCameraStream );
+	textureHUD->setDataVariance(osg::Object::DYNAMIC);
+	textureHUD->setFilter(osg::Texture::MIN_FILTER, osg::Texture::LINEAR_MIPMAP_LINEAR);
+	textureHUD->setFilter(osg::Texture::MAG_FILTER, osg::Texture::LINEAR);
+	textureHUD->setWrap(osg::Texture::WRAP_S, osg::Texture::CLAMP_TO_EDGE);
+	textureHUD->setWrap(osg::Texture::WRAP_T, osg::Texture::CLAMP_TO_EDGE);
+	textureHUD->setResizeNonPowerOfTwoHint(false);
+
+
+
+	osg::ref_ptr<osg::StateSet> statesetHUD = new osg::StateSet();
+	statesetHUD->setTextureAttributeAndModes(0, textureHUD, osg::StateAttribute::ON);
+	statesetHUD->setMode( GL_LIGHTING, osg::StateAttribute::OFF );
+	statesetHUD->setMode( GL_CULL_FACE, osg::StateAttribute::OFF );
+	statesetHUD->setMode(GL_BLEND,osg::StateAttribute::OFF);
+
+
+	osg::ref_ptr<osg::Depth> depth = new osg::Depth;
+	depth->setFunction(osg::Depth::ALWAYS);
+	depth->setRange(1, 1);
+	statesetHUD->setAttributeAndModes(depth, osg::StateAttribute::ON );
+	statesetHUD->setRenderBinDetails( -1, "RenderBin");
+
+
+	GeodeHUD->setStateSet(statesetHUD);
+	GeodeHUD->addDrawable( GeomHUD );
+
+	osg::ref_ptr<osg::ClearNode> clearNode = new osg::ClearNode;
+	clearNode->setRequiresClear(false);
+	clearNode->addChild( ProjectionMatrixHUD );
+
+	return clearNode;
+
+}
+#endif
+
+osg::ref_ptr<osg::Node> CoreGraph::createSkyNoiseBox()
+{
+	unsigned char red = (unsigned char) appConf->getValue("Viewer.Display.BackGround.R").toInt();
+	unsigned char green = (unsigned char) appConf->getValue("Viewer.Display.BackGround.G").toInt();
+	unsigned char blue =(unsigned char) appConf->getValue("Viewer.Display.BackGround.B").toInt() ;
+	osg::ref_ptr<osg::Texture2D> skymap =
+			PerlinNoiseTextureGenerator::getCoudTexture(2048, 1024,
+														red,
+														green,
+														blue,
+														255);
+
+	skymap->setDataVariance(osg::Object::DYNAMIC);
+	skymap->setFilter(osg::Texture::MIN_FILTER, osg::Texture::LINEAR_MIPMAP_LINEAR);
+	skymap->setFilter(osg::Texture::MAG_FILTER, osg::Texture::LINEAR);
+	skymap->setWrap(osg::Texture::WRAP_S, osg::Texture::CLAMP_TO_EDGE);
+	skymap->setWrap(osg::Texture::WRAP_T, osg::Texture::CLAMP_TO_EDGE);
+
+	osg::ref_ptr<osg::StateSet> stateset = new osg::StateSet();
+	stateset->setTextureAttributeAndModes(0, skymap, osg::StateAttribute::ON);
+	stateset->setMode( GL_LIGHTING, osg::StateAttribute::OFF );
+	stateset->setMode( GL_CULL_FACE, osg::StateAttribute::OFF );
+	stateset->setRenderBinDetails(-1,"RenderBin");
+
+	osg::ref_ptr<osg::Depth> depth = new osg::Depth;
+	depth->setFunction(osg::Depth::ALWAYS);
+	depth->setRange(1, 1);
+	stateset->setAttributeAndModes(depth, osg::StateAttribute::ON );
+
+	osg::ref_ptr<osg::Drawable> drawable = new osg::ShapeDrawable(new osg::Sphere(osg::Vec3(0.0f,0.0f,0.0f), 1));
+	osg::ref_ptr<osg::Geode> geode = new osg::Geode;
+
+	geode->setCullingActive(false);
+	geode->setStateSet(stateset);
+	geode->addDrawable(drawable);
+
+	osg::ref_ptr<osg::Transform> transform = new SkyTransform;
+	transform->setCullingActive(false);
+	transform->addChild(geode);
+
+	osg::ref_ptr<osg::ClearNode> clearNode = new osg::ClearNode;
+	clearNode->setRequiresClear(false);
+	clearNode->addChild(transform);
+
+	return clearNode;
+}
+
+
+osg::ref_ptr<osg::Node> CoreGraph::createBackground(){
+
+	// skybox
+	int background = appConf->getValue("Viewer.SkyBox.Noise").toInt();
+
+
+	if ( background == 0) {
 		SkyBox * skyBox = new SkyBox;
 		return skyBox->createSkyBox();
-	} else {
-
-		unsigned char red = (unsigned char) appConf->getValue("Viewer.Display.BackGround.R").toInt();
-		unsigned char green = (unsigned char) appConf->getValue("Viewer.Display.BackGround.G").toInt();
-		unsigned char blue =(unsigned char) appConf->getValue("Viewer.Display.BackGround.B").toInt() ;
-		osg::ref_ptr<osg::Texture2D> skymap =
-				PerlinNoiseTextureGenerator::getCoudTexture(2048, 1024,
-															red,
-															green,
-															blue,
-															255);
-
-		skymap->setDataVariance(osg::Object::DYNAMIC);
-		skymap->setFilter(osg::Texture::MIN_FILTER, osg::Texture::LINEAR_MIPMAP_LINEAR);
-		skymap->setFilter(osg::Texture::MAG_FILTER, osg::Texture::LINEAR);
-		skymap->setWrap(osg::Texture::WRAP_S, osg::Texture::CLAMP_TO_EDGE);
-		skymap->setWrap(osg::Texture::WRAP_T, osg::Texture::CLAMP_TO_EDGE);
-
-		osg::ref_ptr<osg::StateSet> stateset = new osg::StateSet();
-		stateset->setTextureAttributeAndModes(0, skymap, osg::StateAttribute::ON);
-		stateset->setMode( GL_LIGHTING, osg::StateAttribute::OFF );
-		stateset->setMode( GL_CULL_FACE, osg::StateAttribute::OFF );
-		stateset->setRenderBinDetails(-1,"RenderBin");
-
-		osg::ref_ptr<osg::Depth> depth = new osg::Depth;
-		depth->setFunction(osg::Depth::ALWAYS);
-		depth->setRange(1, 1);
-		stateset->setAttributeAndModes(depth, osg::StateAttribute::ON );
-
-		osg::ref_ptr<osg::Drawable> drawable = new osg::ShapeDrawable(new osg::Sphere(osg::Vec3(0.0f,0.0f,0.0f), 1));
-		osg::ref_ptr<osg::Geode> geode = new osg::Geode;
-
-		geode->setCullingActive(false);
-		geode->setStateSet(stateset);
-		geode->addDrawable(drawable);
-
-		osg::ref_ptr<osg::Transform> transform = new SkyTransform;
-		transform->setCullingActive(false);
-		transform->addChild(geode);
-
-		osg::ref_ptr<osg::ClearNode> clearNode = new osg::ClearNode;
-		clearNode->setRequiresClear(false);
-		clearNode->addChild(transform);
-
-		return clearNode;
 	}
+
+	// skynoise
+	if ( background == 1) {
+		return createSkyNoiseBox();
+	}
+
+#ifdef OPENCV_FOUND
+	// video backgroung as 3d rectangle
+	if ( background == 2) {
+		return createTextureBackground();
+	}
+
+	// video backgroung as rectangle in ortho2d
+	if ( background == 3) {
+		return createOrtho2dBackground();
+	}
+#endif
+
+	return NULL;
 }
+
 
 osg::ref_ptr<osg::Group> CoreGraph::initEdgeLabels()
 {
@@ -294,7 +485,7 @@ void CoreGraph::setNodeLabelsVisible(bool visible)
 
 void CoreGraph::reloadConfig()
 {
-	root->setChild(backgroundPosition, createSkyBox());
+	root->setChild(backgroundPosition, createBackground());
 
 	QMap<qlonglong, osg::ref_ptr<Data::Node> >::const_iterator i = in_nodes->constBegin();
 
@@ -343,3 +534,11 @@ void CoreGraph::computeGraphRotTransf()
 	osg::Matrixd graphTransfMat( mRotMouse * mRotAruco * mRotFaceDet );
 	graphRotTransf->setMatrix(graphTransfMat);
 }
+
+#ifdef OPENCV_FOUND
+OpenCV::CameraStream* CoreGraph::getCameraStream() const
+{
+	return mCameraStream;
+}
+#endif
+

@@ -9,6 +9,7 @@
 #include "Viewer/CameraManipulator.h"
 #include "OpenCV/CamSelectCore.h"
 #include "OpenCV/CapVideo.h"
+#include "OpenCV/CameraStream.h"
 
 Q_DECLARE_METATYPE(cv::Mat)
 
@@ -99,6 +100,15 @@ void  OpenCVCore::createPermanentConnection(){
 					  AppCore::Core::getInstance( mApp)->getCoreWindow()->getCameraManipulator(),
 					  SLOT(setRotationHead(float,float,float)) );
 
+	// updating background image
+	QObject::connect( mThrFaceRec,
+					  SIGNAL(pushBackgrImage(cv::Mat)),
+					  AppCore::Core::getInstance( mApp)->getCoreGraph()->getCameraStream(),
+					  SLOT(updateBackgroundImage(cv::Mat)) );
+	QObject::connect( mThrAruco,
+					  SIGNAL(pushBackgrImage(cv::Mat)),
+					  AppCore::Core::getInstance( mApp)->getCoreGraph()->getCameraStream(),
+					  SLOT(updateBackgroundImage(cv::Mat)) );
 
 }
 
@@ -112,6 +122,13 @@ void OpenCVCore::createConnectionFaceRec(){
 					  SIGNAL(pushImage(cv::Mat)),
 					  mOpencvDialog,
 					  SLOT(setLabel(cv::Mat)) );
+	// send actual image to background
+	QObject::connect( mOpencvDialog,
+					  SIGNAL(sendBackgrImgFaceRec(bool)),
+					  mThrFaceRec,
+					  SLOT(setSendBackgrImgEnabled(bool)) );
+
+
 
 	// start, stop
 	QObject::connect( mOpencvDialog,
@@ -145,7 +162,11 @@ void OpenCVCore::createConnectionAruco(){
 					  SIGNAL(pushImage(QImage)),
 					  mOpencvDialog,
 					  SLOT(setLabelQ(QImage)) );
-
+	// send actual image to background
+	QObject::connect( mOpencvDialog,
+					  SIGNAL(sendBackgrImgMarker(bool)),
+					  mThrAruco,
+					  SLOT(setSendBackgrImgEnabled(bool)) );
 
 	// start, stop
 	QObject::connect( mOpencvDialog,

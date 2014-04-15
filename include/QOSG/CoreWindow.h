@@ -306,9 +306,7 @@ public slots:
 	void start_server();
 	void start_client();
 	void send_message();
-#ifdef OPENCV_FOUND
 	void create_facewindow();
-#endif
 
 #ifdef OPENCV_FOUND
 #ifdef OPENNI2_FOUND
