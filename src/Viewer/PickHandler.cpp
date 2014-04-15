@@ -647,6 +647,7 @@ bool PickHandler::dragNode(osgViewer::Viewer * viewer)
 bool PickHandler::dragCluster(osgViewer::Viewer * viewer)
 {
     QLinkedList<osg::ref_ptr<Data::Cluster> >::const_iterator i = pickedClusters.constBegin();
+    QLinkedList<osg::ref_ptr<Data::Node> >::const_iterator n = pickedNodes.constBegin();
 
     osg::Matrixd&  viewM = viewer->getCamera()->getViewMatrix();
     osg::Matrixd&  projM = viewer->getCamera()->getProjectionMatrix();
@@ -670,9 +671,18 @@ bool PickHandler::dragCluster(osgViewer::Viewer * viewer)
             screenPoint = shape->getSurfaceNode()->getTargetPosition() * compositeM;
             newPosition = osg::Vec3f(screenPoint.x() - (origin_mX - _mX) / scale, screenPoint.y() - (origin_mY - _mY) / scale, screenPoint.z());
             shape->getSurfaceNode()->setTargetPosition(newPosition * compositeMi);
-            shape->getSurfaceNode()->setCurrentPosition(newPosition * compositeMi);
+            shape->getSurfaceNode()->getCurrentPosition(true);
         }
         ++i;
+    }
+    while (n != pickedNodes.constEnd())
+    {
+        osg::Vec3f screenPoint = (*n)->targetPositionConstRef() * compositeM;
+        osg::Vec3f newPosition = osg::Vec3f(screenPoint.x() - (origin_mX - _mX) / scale, screenPoint.y() - (origin_mY - _mY) / scale, screenPoint.z());
+
+        (*n)->setTargetPosition(newPosition * compositeMi);
+        (*n)->getCurrentPosition(true);
+        ++n;
     }
 
     origin_mX = _mX;
