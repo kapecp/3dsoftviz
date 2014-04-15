@@ -52,10 +52,10 @@ void CameraStream::updateBackgroundImage( cv::Mat cvImg)
 #else
 	cv::Mat img = cvImg.clone();
 
-	setImage(cvImg.cols, cvImg.rows,
-		8, cvImg.channels(), GL_RGB,
+	setImage(img.cols, img.rows,
+		8, img.channels(), GL_RGB,
 		GL_UNSIGNED_BYTE,
-		(unsigned char*)( cvImg.data),
+		(unsigned char*)( img.data),
 		NO_DELETE, 1);
 
 #endif
