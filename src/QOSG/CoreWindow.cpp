@@ -391,9 +391,9 @@ void CoreWindow::createActions()
     le_clusteringDepth->setValidator( new QIntValidator(0, 10, this) );
     connect(le_clusteringDepth, SIGNAL(textChanged(const QString &)), this, SLOT(clusteringDepthChanged(const QString &)));
 
-    b_cluster_test = new QPushButton();
-    b_cluster_test->setText("Cluster graph");
-    connect(b_cluster_test, SIGNAL(clicked()), this, SLOT(cluster_test()));
+    b_cluster_nodes = new QPushButton();
+    b_cluster_nodes->setText("Cluster nodes");
+    connect(b_cluster_nodes, SIGNAL(clicked()), this, SLOT(cluster_nodes()));
 
     b_restartLayouting = new QPushButton();
     b_restartLayouting->setText("Restart Layout");
@@ -628,7 +628,7 @@ void CoreWindow::createClusterToolBar() {
     toolBar->addWidget(frame);
 
     frame = createHorizontalFrame();
-    frame->layout()->addWidget(b_cluster_test);
+    frame->layout()->addWidget(b_cluster_nodes);
     toolBar->addWidget(frame);
 
     toolBar->addSeparator();
@@ -1918,7 +1918,7 @@ void CoreWindow::clusters2RangeChanged(const QString &value)
     coreGraph->setClustersMiddleValue(value.toInt()-1);
 }
 
-void CoreWindow::cluster_test()
+void CoreWindow::cluster_nodes()
 {
     if(isPlaying) {
         playPause();

@@ -191,7 +191,7 @@ public slots:
     void clusters2RangeChanged(const QString &);
     void setRestriction_Cube();
     void setRestriction_Cube_Selected();
-    void cluster_test();
+    void cluster_nodes();
     // currentPosition nastavi na targetPosition - cim sposobi to, ze uzly vo vnutri obmedzovaca sa pekne nalayoutuju, pretoze uz nebudu tahane mimo neho kvoli targetPos
     void restartLayouting();
 
@@ -670,7 +670,7 @@ private:
     QLabel * l_clusters2Max;
     QSlider * b_clusters1_Slider;
     QSlider * b_clusters2_Slider;
-	QPushButton * b_cluster_test;
+    QPushButton * b_cluster_nodes;
     QPushButton * b_restartLayouting;
     QComboBox * cb_clusteringAlgorithm;
     QLineEdit * le_clusteringDepth;
