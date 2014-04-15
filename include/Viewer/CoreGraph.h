@@ -176,6 +176,7 @@ public:
     void setClusters2Value(int value);
     void setClustersMiddleValue(int value);
     void setCameraManipulator(CameraManipulator * cameraManipulator);
+    void addChildrenToClustersGroup(QMap<qlonglong, osg::ref_ptr<Data::Node> > clusters);
 
 	Vwr::NodeGroup * getNodesGroup() { return nodesGroup; }
 	Vwr::NodeGroup * getMetaNodesGroup() { return qmetaNodesGroup; }
@@ -378,7 +379,11 @@ private:
     int clusters2Value;
     int clustersMiddleValue;
 
+    osg::ref_ptr<osg::Group> clustersGroup;
+
     CameraManipulator * cameraManipulator;
+
+    void updateClustersCoords();
 
     double computeOpacity(osg::Vec3 clusterPosition);
     bool cameraInsideSphere(osg::Vec3d midPoint, float radius);

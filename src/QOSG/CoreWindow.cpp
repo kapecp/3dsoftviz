@@ -1932,6 +1932,8 @@ void CoreWindow::cluster_nodes()
 
     Clustering::Clusterer::getInstance().cluster(currentGraph, clusteringProgressBar);
 
+    coreGraph->addChildrenToClustersGroup(Clustering::Clusterer::getInstance().getClusters());
+
     int maxNodes = Clustering::Clusterer::getInstance().getMaxCountOfNodesInClusters();
     qDebug() << "***** maxNodes = " << maxNodes;
 

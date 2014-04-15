@@ -670,16 +670,11 @@ void CoreGraph::reload(Data::Graph * graph)
 		graph->getRestrictionsManager().setObservers (restrictionVisualizationsGroup, restrictionManipulatorsGroup);
 	}
 
-//    root->addChild(dodecahedron(0, osg::Vec3(0,0,0), 10, osg::Vec4(1.0,1.0,0.0,0.4)));
-    root->addChild(test2());
-//    qDebug() << "before";
-//    Cube * test = new Cube(osg::Vec3d(10,10,10), 10, osg::Vec4d(1.0,0.0,0.0,0.5));
-
-//    root->addChild(test->getAT());
-//    qDebug() << "after";
+    clustersGroup = new osg::Group;
+    root->addChild(clustersGroup);
     currentPos++;
 
-	customNodesPosition = currentPos;
+    customNodesPosition = currentPos;
 
 	osgUtil::Optimizer opt;
 	opt.optimize(edgesGroup->getGroup(), osgUtil::Optimizer::CHECK_GEOMETRY);
@@ -787,6 +782,63 @@ osg::ref_ptr<osg::Group> CoreGraph::initCustomNodes()
 	return customNodes;
 }
 
+void CoreGraph::addChildrenToClustersGroup(QMap<qlonglong, osg::ref_ptr<Data::Node> > clusters) {
+
+    QMap<qlonglong, osg::ref_ptr<Data::Node> >::iterator i;
+    for (i = clusters.begin(); i != clusters.end(); i++)
+    {
+        osg::ref_ptr<Data::Node> node = i.value();
+        // TODO pripadne prerobit vrece "clusters" nech uchovava len typ Cluster {aj tak v nom nie su Nody}
+        Data::Cluster* cluster = dynamic_cast<Data::Cluster*>(node.get());
+
+        osg::Vec3f midPoint = getMidPoint(cluster->getALLClusteredNodes());
+        float radius = getRadius(cluster->getALLClusteredNodes(), midPoint);
+
+        Cube * cube = new Cube(midPoint, radius, osg::Vec4d(1,1,1,0.5));
+        cube->getGeode()->setUserValue("id", QString::number(cluster->getId()).toStdString());
+        cluster->setCube(cube);
+
+        clustersGroup->addChild(cluster->getCube()->getAT());
+    }
+}
+
+void CoreGraph::updateClustersCoords() {
+    QMap<qlonglong, osg::ref_ptr<Data::Node> > clusters = Clustering::Clusterer::getInstance().getClusters();
+    QMap<qlonglong, osg::ref_ptr<Data::Node> >::iterator i;
+    for (i = clusters.begin(); i != clusters.end(); i++)
+    {
+        osg::ref_ptr<Data::Node> node = i.value();
+        // TODO pripadne prerobit vrece "clusters" nech uchovava len typ Cluster {aj tak v nom nie su Nody}
+        Data::Cluster* cluster = dynamic_cast<Data::Cluster*>(node.get());
+
+        osg::Vec3f midPoint;
+        float radius;
+
+        // ak je na tomto clusteri zaregistrovany obmedzovac, vezmi jeho tvar
+        if (cluster->getShapeGetter() != NULL) {
+            midPoint = cluster->getShapeGetter()->getCenterNode()->getCurrentPosition(true);
+            radius = (midPoint - cluster->getShapeGetter()->getSurfaceNode()->getCurrentPosition(true)).length();
+        }
+        // inak vypocitaj tvar podla zlucenych uzlov
+        else {
+            midPoint = getMidPoint(cluster->getALLClusteredNodes());
+            radius = getRadius(cluster->getALLClusteredNodes(), midPoint);
+        }
+
+        osg::Vec4 color = cluster->getColor();
+        if (clustersOpacityAutomatic) {
+            color.w() = computeOpacity(midPoint);
+        } else {
+            color.w() = clustersOpacity;
+        }
+        if (cameraInsideCube(midPoint, radius)) {
+            color.w() = 1;
+        }
+
+        cluster->getCube()->transform(midPoint, radius, color);
+    }
+}
+
 /*!
  *
  *
@@ -812,13 +864,11 @@ void CoreGraph::update()
 	}
 
 	edgesGroup->updateEdgeCoords();
-	qmetaEdgesGroup->updateEdgeCoords();
+    qmetaEdgesGroup->updateEdgeCoords();
 
-    // TODO ... malo by byt odkomentovane.. zobrazuje to obdlzniky na select viac uzlov
-    // ale ked som zakomentoval, tak funguje zobrazovanie zhlukov nizsie
-//	root->addChild(initCustomNodes());
+    updateClustersCoords();
 
-    root->addChild(test2());
+    root->addChild(initCustomNodes());
 
 	//posli layout ostatnym klientom (ak nejaki su)
 	Network::Server *server = Network::Server::getInstance();

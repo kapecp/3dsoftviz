@@ -7,22 +7,10 @@
 #include <osg/Material>
 
 Cube::Cube(osg::Vec3d position, float radius) {
-    init(position, radius);
-    computeGeode();
-    transform(position, radius);
+    Cube(position, radius, osg::Vec4d(0,0,0,1));
 }
 
 Cube::Cube(osg::Vec3d position, float radius, osg::Vec4d color) {
-    init(position, radius);
-    setColor(color);
-    computeGeode();
-    transform(position, radius);
-}
-
-void Cube::init(osg::Vec3d position, float radius) {
-    color = osg::Vec4d(0,0,0,1);
-    midPoint = position;
-    this->radius = radius;
     geode = new osg::Geode();
     geometry = new osg::Geometry();
     vertices = new osg::Vec3Array;
@@ -30,6 +18,10 @@ void Cube::init(osg::Vec3d position, float radius) {
     texCoords = new osg::Vec2Array;
     primitiveSets = new std::vector<osg::DrawElementsUInt *>;
     at = new osg::AutoTransform;
+
+    computeGeode();
+    transform(position, radius, color);
+    at->addChild(geode);
 }
 
 //void Cube::computeGeode() {
@@ -179,9 +171,6 @@ void Cube::init(osg::Vec3d position, float radius) {
 
 void Cube::computeGeode()
 {
-    osg::Vec4Array *colors = new osg::Vec4Array;
-    colors->push_back(color);
-
     // define normals for each face
     osg::ref_ptr<osg::Vec3Array> cube_normals = new osg::Vec3Array;
     cube_normals->push_back(osg::Vec3( 0.0f,-1.0f, 0.0f));
@@ -265,16 +254,13 @@ void Cube::computeGeode()
     geometry->addPrimitiveSet(new
     osg::DrawArrays(osg::PrimitiveSet::QUADS,0,numCoords));
 
-    geometry->setColorArray(colors);
-    geometry->setColorBinding(osg::Geometry::BIND_OVERALL);
-
     geometry->setNormalArray(cube_normals.get());
     geometry->setNormalBinding(osg::Geometry::BIND_PER_VERTEX);
 
     geode->addDrawable(geometry);
 }
 
-void Cube::transform(osg::Vec3d position, float radius) {
+void Cube::transform(osg::Vec3d position, float radius, osg::Vec4d color) {
     osg::StateSet * ss = geometry->getOrCreateStateSet();
 /*
 // only wireframe (outline / contour)
@@ -308,5 +294,4 @@ void Cube::transform(osg::Vec3d position, float radius) {
 
 //    dodecahedronGeode->setUserValue("id", QString::number(id).toStdString());
 
-    at->addChild(geode);
 }

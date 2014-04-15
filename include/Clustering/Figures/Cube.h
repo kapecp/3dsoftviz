@@ -20,16 +20,12 @@ public:
     osg::Vec3Array *getNormals()    { return normals;   }
     osg::Vec2Array *getTexCoords()  { return texCoords; }
 
-    void setColor(osg::Vec4d color) { this->color = color; }
+    osg::Vec3d getMidpoint() { return at->getPosition(); }
+    float getRadius() { return at->getScale().x(); }
 
-    osg::Vec3d getMidpoint() { return midPoint; }
-    float getRadius() { return radius; }
+    void transform(osg::Vec3d position, float radius, osg::Vec4d color);
 
 protected:
-
-    osg::Vec3d        midPoint;
-    float             radius;
-    osg::Vec4d        color;
 
     osg::AutoTransform * at;
     osg::Geode         * geode;
@@ -40,9 +36,7 @@ protected:
 
     std::vector<osg::DrawElementsUInt *> * primitiveSets;
 
-    void init(osg::Vec3d position, float radius);
     void computeGeode();
-    void transform(osg::Vec3d position, float radius);
 
 };
 
