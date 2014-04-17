@@ -41,7 +41,7 @@ Vwr::CoreGraph::CoreGraph(Data::Graph * graph, osg::ref_ptr<osg::Camera> camera)
 	appConf = Util::ApplicationConfig::get();
 
 	root = new osg::Group();
-	root->addChild(createSkyBox());
+    root->addChild(createSkyBox());
 	backgroundPosition = 0;
 
 	reload(graph);
@@ -142,7 +142,7 @@ void CoreGraph::cleanUp()
 
 
 osg::ref_ptr<osg::Node> CoreGraph::createSkyBox(){
-	if (appConf->getValue("Viewer.SkyBox.Noise").toInt() == 0) {
+    if (appConf->getValue("Viewer.SkyBox.Noise").toInt() == 1) {
 		SkyBox * skyBox = new SkyBox;
 		return skyBox->createSkyBox();
 	} else {
@@ -288,7 +288,7 @@ void CoreGraph::setNodeLabelsVisible(bool visible)
 
 void CoreGraph::reloadConfig()
 {
-	root->setChild(backgroundPosition, createSkyBox());
+    root->setChild(backgroundPosition, createSkyBox());
 
 	QMap<qlonglong, osg::ref_ptr<Data::Node> >::const_iterator i = in_nodes->constBegin();
 

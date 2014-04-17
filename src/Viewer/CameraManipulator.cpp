@@ -25,7 +25,7 @@ double Vwr::CameraManipulator::EYE_MOVEMENT_SPEED;
 double Vwr::CameraManipulator::TARGET_MOVEMENT_SPEED;
 float Vwr::CameraManipulator::SCREEN_MARGIN;
 
-namespace Vwr {
+
 
 
 Vwr::CameraManipulator::CameraManipulator(Vwr::CoreGraph * coreGraph)
@@ -1022,14 +1022,14 @@ void Vwr::CameraManipulator::stop()
 	pitchSpeed = 0.0;
 }
 
-void CameraManipulator::notifyClients() {
+void Vwr::CameraManipulator::notifyClients() {
 	Network::Server * server = Network::Server::getInstance();
 	if (server->isListening()) {
 		server->sendMyView(_center,_rotation, _distance);
 	}
 }
 
-void CameraManipulator::notifyServer() {
+void Vwr::CameraManipulator::notifyServer() {
 	Network::Client * client = Network::Client::getInstance();
 	if (client->isConnected()) {
 		client->sendMyView(_center,_rotation, _distance);
@@ -1127,7 +1127,7 @@ void Vwr::CameraManipulator::updateProjectionAccordingFace(const float x, const 
 	this->coreGraph->getCamera()->setProjectionMatrixAsFrustum(left, right, bottom, top, zNear, zFar);
 }
 
-} // namespace
+
 
 
 #pragma GCC diagnostic pop

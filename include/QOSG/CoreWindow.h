@@ -300,8 +300,13 @@ public slots:
 
 	void toggleSpyWatch();
 	void toggleAttention();
+    void setAvatarScale(int scale);
 
-	void setAvatarScale(int scale);
+    void toggleVertigo();
+    void setVertigoScale(int scale);
+    void add_PlanesClick(QLinkedList<osg::ref_ptr<Data::Node> > * nodesToRestrict  = NULL);
+    void remove_PlanesClick(QLinkedList<osg::ref_ptr<Data::Node> > * nodesToRestrict  = NULL);
+
 private:
 
 	/**
@@ -689,6 +694,10 @@ public:
 	QCheckBox *chb_spy;
 	QCheckBox *chb_center;
 	QCheckBox *chb_attention;
+    QCheckBox *chb_vertigo;
+    QSlider * sl_vertigoScale;
+    QPushButton * add_Planes;
+    QPushButton * remove_Planes;
 
 
 	/**

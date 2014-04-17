@@ -306,11 +306,11 @@ void CoreWindow::createActions()
 	b_send_message = new QPushButton();
 	b_send_message->setText("Send");
 	connect(b_send_message, SIGNAL(clicked()), this, SLOT(send_message()));
-
+    #ifdef OPENCV_FOUND
 	b_start_face = new QPushButton();
 	b_start_face->setText("Face Recognition");
 	connect(b_start_face, SIGNAL(clicked()), this, SLOT(create_facewindow()));
-
+    #endif
 	chb_center = new QCheckBox("&Center");
 	connect(chb_center, SIGNAL(clicked()), this, SLOT(toggleSpyWatch()));
 
@@ -336,6 +336,37 @@ void CoreWindow::createActions()
 	sl_avatarScale->setValue(1);
 	sl_avatarScale->setFocusPolicy(Qt::NoFocus);
 	connect(sl_avatarScale,SIGNAL(valueChanged(int)),this,SLOT(setAvatarScale(int)));
+
+    chb_vertigo = new QCheckBox("Vertigo zoom");
+    connect(chb_vertigo, SIGNAL(clicked()), this, SLOT(toggleVertigo()));
+
+    sl_vertigoScale = new QSlider(Qt::Vertical,this);
+    sl_vertigoScale->setTickPosition(QSlider::TicksAbove);
+    sl_vertigoScale->setRange(1,20);
+    sl_vertigoScale->setPageStep(1);
+    sl_vertigoScale->setValue(10);
+    sl_vertigoScale->setFocusPolicy(Qt::NoFocus);
+    sl_vertigoScale->setMaximumHeight(100);
+    sl_vertigoScale->hide();
+    connect(sl_vertigoScale,SIGNAL(valueChanged(int)),this,SLOT(setVertigoScale(int)));
+
+    //Add planes
+    add_Planes = new QPushButton();
+    add_Planes->setText("Add Planes");
+    add_Planes->setToolTip("Adds two planes for the vertigo zoom");
+    add_Planes->setFocusPolicy(Qt::NoFocus);
+    add_Planes->hide();
+    connect(add_Planes,SIGNAL(clicked()),this,SLOT(add_PlanesClick()));
+
+
+    //Remove planes
+    remove_Planes = new QPushButton();
+    remove_Planes->setText("Remove Planes");
+    remove_Planes->setToolTip("Removes two planes for the vertigo zoom");
+    remove_Planes->setFocusPolicy(Qt::NoFocus);
+    remove_Planes->hide();
+    connect(remove_Planes,SIGNAL(clicked()),this,SLOT(remove_PlanesClick()));
+
 }
 
 void CoreWindow::createMenus()
@@ -544,10 +575,29 @@ void CoreWindow::createCollaborationToolBar() {
 	toolBar->addWidget(b_start_face);
 	#endif
 
+    toolBar->addSeparator();
+    frame = createHorizontalFrame();
+    frame->layout()->addWidget(chb_vertigo);
+    toolBar->addWidget(frame);
+
+    frame = createHorizontalFrame();
+    frame->layout()->addWidget(sl_vertigoScale);
+    toolBar->addWidget(frame);
+
+    frame = createHorizontalFrame();
+    frame->setMaximumHeight(100);
+    //frame->layout()->setAlignment(Qt::AlignHCenter);
+
+    frame->layout()->addWidget(add_Planes);
+    toolBar->addWidget(frame);
+
+    frame = createHorizontalFrame();
+    frame->layout()->addWidget(remove_Planes);
+    toolBar->addWidget(frame);
 
 	addToolBar(Qt::RightToolBarArea,toolBar);
-	toolBar->setMaximumHeight(400);
-	toolBar->setMaximumWidth(120);
+    toolBar->setMaximumHeight(500);
+    toolBar->setMaximumWidth(120);
 	toolBar->setMovable(true);
 }
 
@@ -1833,6 +1883,135 @@ void CoreWindow::toggleAttention() {
 void CoreWindow::setAvatarScale(int scale) {
 	client->setAvatarScale(scale);
 	Network::Server::getInstance()->setAvatarScale(scale);
+}
+
+void CoreWindow::toggleVertigo() {
+    // ak je "Vertigo zoom" zakliknute
+    if (chb_vertigo->isChecked()) {
+        sl_vertigoScale->setValue(10);
+        sl_vertigoScale->show();
+        add_Planes->show();
+        remove_Planes->show();
+
+        //TODO-Dur nastavit kameru do Vertigo rezimu
+    }else{
+        // ak je "Vertigo zoom" odkliknute
+        sl_vertigoScale->hide();
+        add_Planes->hide();
+        remove_Planes->hide();
+
+
+        //TODO-Dur resetovat kameru z danej pozicie
+    }
+}
+
+void CoreWindow::setVertigoScale(int scale) {
+    //TODO-Dur nastavit akciu pri zmene slideru
+}
+
+void CoreWindow::add_PlanesClick(QLinkedList<osg::ref_ptr<Data::Node> > * nodesToRestrict)
+{
+    Data::Graph * currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
+
+    QLinkedList<osg::ref_ptr<Data::Node> > * selectedNodes = viewerWidget->getPickHandler()->getSelectedNodes();
+    QLinkedList<osg::ref_ptr<Data::Node> > nodesToRestrictFirst;
+    QLinkedList<osg::ref_ptr<Data::Node> > nodesToRestrictSecond;
+
+    QLinkedList<osg::ref_ptr<Data::Node> >::const_iterator it = selectedNodes->constBegin();
+
+    int i = 0;
+
+    for(it; it != selectedNodes->constEnd(); ++it, ++i){
+        if(i < selectedNodes->size() / 2){
+            nodesToRestrictFirst.append(it->get());
+        }else{
+            nodesToRestrictSecond.append(it->get());
+        }
+    }
+
+    if (currentGraph != NULL) {
+        osg::Vec3 position = viewerWidget->getPickHandler()->getSelectionCenter(true);
+
+        osg::ref_ptr<Data::Node> node1;
+        osg::ref_ptr<Data::Node> node2;
+        osg::ref_ptr<Data::Node> node3;
+        osg::ref_ptr<Data::Node> node4;
+        osg::ref_ptr<Data::Node> node5;
+        osg::ref_ptr<Data::Node> node6;
+
+        QString name_node1 = "plane_node_1";
+        QString name_node2 = "plane_node_2";
+        QString name_node3 = "plane_node_3";
+
+        osg::Vec3 positionNode1 = position + osg::Vec3f (-80, -10, 0);
+        osg::Vec3 positionNode2 = position + osg::Vec3f (-80, 10, 0);
+        osg::Vec3 positionNode3 = position + osg::Vec3f (-80, 10, 20);
+
+        osg::Vec3 positionNode4 = position + osg::Vec3f (80, -10, 0);
+        osg::Vec3 positionNode5 = position + osg::Vec3f (80, 10, 0);
+        osg::Vec3 positionNode6 = position + osg::Vec3f (80, 10, 20);
+
+        Layout::RestrictionRemovalHandler_RestrictionNodesRemover::NodesListType restrictionNodes;
+
+        Network::Client * client = Network::Client::getInstance();
+
+        if (!client->isConnected()) {
+
+            node1 = currentGraph->addRestrictionNode (name_node1, positionNode1);
+            node2 = currentGraph->addRestrictionNode (name_node2, positionNode2);
+            node3 = currentGraph->addRestrictionNode (name_node3, positionNode3);
+            restrictionNodes.push_back (node1);
+            restrictionNodes.push_back (node2);
+            restrictionNodes.push_back (node3);
+
+            setRestrictionToSelectedNodes (
+                        QSharedPointer<Layout::ShapeGetter> (
+                            new Layout::ShapeGetter_Plane_ByThreeNodes (node1, node2, node3)
+                            ),
+                        currentGraph,
+                        QSharedPointer<Layout::RestrictionRemovalHandler_RestrictionNodesRemover> (
+                            new Layout::RestrictionRemovalHandler_RestrictionNodesRemover (
+                                *currentGraph,
+                                restrictionNodes
+                                )
+                            ),
+                        &nodesToRestrictFirst
+                        );
+
+            restrictionNodes.clear();
+
+            node4 = currentGraph->addRestrictionNode (name_node1, positionNode4);
+            node5 = currentGraph->addRestrictionNode (name_node2, positionNode5);
+            node6 = currentGraph->addRestrictionNode (name_node3, positionNode6);
+            restrictionNodes.push_back (node4);
+            restrictionNodes.push_back (node5);
+            restrictionNodes.push_back (node6);
+
+            setRestrictionToSelectedNodes (
+                        QSharedPointer<Layout::ShapeGetter> (
+                            new Layout::ShapeGetter_Plane_ByThreeNodes (node4, node5, node6)
+                            ),
+                        currentGraph,
+                        QSharedPointer<Layout::RestrictionRemovalHandler_RestrictionNodesRemover> (
+                            new Layout::RestrictionRemovalHandler_RestrictionNodesRemover (
+                                *currentGraph,
+                                restrictionNodes
+                                )
+                            ),
+                        &nodesToRestrictSecond
+                        );
+
+
+        } else {
+            client->sendSetRestriction(3,name_node1,positionNode1,name_node2, positionNode2, viewerWidget->getPickHandler()->getSelectedNodes(),name_node3,&positionNode3);
+        }
+        Network::Server * server = Network::Server::getInstance();
+        server->sendSetRestriction(3, node1, positionNode1, node2, positionNode2, viewerWidget->getPickHandler()->getSelectedNodes(), node3, &positionNode3);
+    }
+}
+
+void CoreWindow::remove_PlanesClick(QLinkedList<osg::ref_ptr<Data::Node> > *nodesToRestrict) {
+    //TODO-Dur nastavit akciu pri kliknuti na odstranenie rovin
 }
 
 Vwr::CameraManipulator* CoreWindow::getCameraManipulator() {
