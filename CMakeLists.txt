@@ -545,7 +545,7 @@ endif()
 add_executable( ${3DSOFTVIZ_NAME} ${INCL} ${SRC} )
 
 # set compile flags only for our code ( suppresses warnigns on system headers )
-set_target_properties( ${3DSOFTVIZ_NAME} PROPERTIES COMPILE_FLAGS ${FLAGS_FOR_DEBUG} )
+set_target_properties( ${3DSOFTVIZ_NAME} PROPERTIES COMPILE_FLAGS "${FLAGS_FOR_DEBUG}" )
 
 target_link_libraries( ${3DSOFTVIZ_NAME}
 	${QT_LIBRARIES}
