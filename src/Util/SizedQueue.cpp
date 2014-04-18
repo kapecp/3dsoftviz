@@ -19,13 +19,13 @@ int SizedQueue::getAvgBasedOnValue(float &x, float &y)
 {
 	// push/pop, LIFO stack
 	if (this->stack.size() >= this->size){
-		pair<float,float> p;
+        std::pair<float,float> p;
 		p = this->stack.front();
 		this->sum.first -= p.first;
 		this->sum.second -= p.second;
 		this->stack.pop_front();
 	}
-	this->stack.push_back(pair<float,float>(x,y));
+    this->stack.push_back(std::pair<float,float>(x,y));
 	this->sum.first += x;
 	this->sum.second += y;
 
