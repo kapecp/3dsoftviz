@@ -33,6 +33,19 @@ void Lua::HyperGraphVisualizer::visualize()
             currentGraph->addEdge(i.key(), i.value()->getLabel(), srcNode, dstNode, edgeType, false);
     }
     g->setObserver(this);
+
+    QString metaNodeName = "metaNode";
+    QString metaEdgeName = "metaEdge";
+    osg::ref_ptr<Data::Node> filesAnchor = currentGraph->addNode(metaNodeName, currentGraph->getNodeMetaType(), osg::Vec3(0, 0, 1000));
+    osg::ref_ptr<Data::Node> functionsAnchor = currentGraph->addNode(metaNodeName, currentGraph->getNodeMetaType(), osg::Vec3(0, 0, -1000));
+
+    for (QMap<qlonglong, Lua::LuaNode *>::iterator i = g->getNodes()->begin(); i != g->getNodes()->end(); ++i){
+        if (i.value()->getParams()["root"]== true){
+            std::cout << "connecting to files meta node ";
+            osg::ref_ptr<Data::Edge> me = currentGraph->addEdge(metaEdgeName, currentGraph->getNodes()->value(i.value()->getId()), filesAnchor, currentGraph->getEdgeMetaType(), false);
+            std::cout << me->getId() << std::endl;
+        }
+    }
 }
 
 void Lua::HyperGraphVisualizer::onUpdate()

@@ -733,21 +733,21 @@ void CoreWindow::loadFileTree()
         Manager::GraphManager::getInstance()->closeGraph(currentGraph);
     }
     currentGraph = Manager::GraphManager::getInstance()->createNewGraph("LuaGraph");
-    Lua::LuaGraphVisualizer *visualizer = new Lua::SimpleGraphVisualizer(currentGraph);
+    Lua::LuaGraphVisualizer *visualizer = new Lua::HyperGraphVisualizer(currentGraph);
     visualizer->visualize();
 }
 
 void CoreWindow::loadFunctionCall()
 {
     Lua::LuaInterface* lua = Lua::LuaInterface::getInstance();
-    lua->executeFile("main_test.lua");
+    lua->executeFile("function_call_test.lua");
     Data::Graph *currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
 
     if (currentGraph != NULL) {
         Manager::GraphManager::getInstance()->closeGraph(currentGraph);
     }
     currentGraph = Manager::GraphManager::getInstance()->createNewGraph("LuaGraph");
-    Lua::LuaGraphVisualizer *visualizer = new Lua::FullHyperGraphVisualizer(currentGraph);
+    Lua::LuaGraphVisualizer *visualizer = new Lua::SimpleGraphVisualizer(currentGraph);
     visualizer->visualize();
 }
 

@@ -15,7 +15,7 @@ local function get_graph_from_tree(tree, graph, parent, min_size, max_size)
   max_size = max_size or tree.attributes.size
   if tree.attributes.size < min_size then min_size = tree.attributes.size end
   if tree.attributes.size > max_size then max_size = tree.attributes.size end
-  local node = {type = "node", id = inc(), label = tree.name, params={size = tree.attributes.size, colorA = 1, colorR = 1, colorG = 0, colorB = 0}}
+  local node = {type = "node", id = inc(), label = tree.name, params={size = tree.attributes.size, colorA = 1, colorR = 1, colorG = 0, colorB = 0, nodetype = "file"}}
   if parent ~= nil then
     local edge = {type = "edge", label = "", id = inc()}
     local incid1 = {type = "edge_part", label = "", id = inc(), direction = "in"}

@@ -1,0 +1,78 @@
+INFO	require hypergraph - done.
+INFO	require filestree extractor - done.
+INFO	require data mapper - done.
+INFO	require function calls extractor - done.
+WARN	Logger: changing loglevel from DEBUG to INFO
+INFO	started extraction
+INFO	extraction successfully finished
+node with id: N1 and name: luadist-git-master
+node with id: N3 and name: test_sys.lua
+node with id: N4 and name: test_depends.lua
+node with id: N2 and name: test
+node with id: N5 and name: dist.info
+node with id: N6 and name: luadist.lua
+node with id: N7 and name: COPYRIGHT.TXT
+node with id: N8 and name: README.md
+node with id: N9 and name: CMakeLists.txt
+node with id: N11 and name: lua.cmake
+node with id: N12 and name: FindLua.cmake
+node with id: N13 and name: dist.cmake
+node with id: N10 and name: cmake
+node with id: N15 and name: package.lua
+node with id: N16 and name: git.lua
+node with id: N17 and name: logger.lua
+node with id: N18 and name: manifest.lua
+node with id: N19 and name: config.lua.in
+node with id: N20 and name: sys.lua
+node with id: N21 and name: utils.lua
+node with id: N22 and name: init.lua
+node with id: N23 and name: depends.lua
+node with id: N24 and name: constraints.lua
+node with id: N14 and name: dist
+node with id: G2
+node with id: G3
+node with id: G4
+node with id: G5
+node with id: G6
+node with id: G7
+node with id: G8
+node with id: G9
+node with id: G10
+node with id: G11
+node with id: G12
+node with id: G13
+edge with id: E1 from nodes N2 to N3
+edge with id: E2 from nodes N2 to N4
+edge with id: E3 from nodes N1 to N2
+edge with id: E4 from nodes N1 to N5
+edge with id: E5 from nodes N1 to N6
+edge with id: E6 from nodes N1 to N7
+edge with id: E7 from nodes N1 to N8
+edge with id: E8 from nodes N1 to N9
+edge with id: E9 from nodes N10 to N11
+edge with id: E10 from nodes N10 to N12
+edge with id: E11 from nodes N10 to N13
+edge with id: E12 from nodes N1 to N10
+edge with id: E13 from nodes N14 to N15
+edge with id: E14 from nodes N14 to N16
+edge with id: E15 from nodes N14 to N17
+edge with id: E16 from nodes N14 to N18
+edge with id: E17 from nodes N14 to N19
+edge with id: E18 from nodes N14 to N20
+edge with id: E19 from nodes N14 to N21
+edge with id: E20 from nodes N14 to N22
+edge with id: E21 from nodes N14 to N23
+edge with id: E22 from nodes N14 to N24
+edge with id: E23 from nodes N1 to N14
+edge with id: E33 from nodes N3 to G2
+edge with id: E45 from nodes N4 to G3
+edge with id: E78 from nodes N6 to G4
+edge with id: E306 from nodes N15 to G5
+edge with id: E440 from nodes N16 to G6
+edge with id: E461 from nodes N17 to G7
+edge with id: E543 from nodes N18 to G8
+edge with id: E712 from nodes N20 to G9
+edge with id: E769 from nodes N21 to G10
+edge with id: E896 from nodes N22 to G11
+edge with id: E1134 from nodes N23 to G12
+edge with id: E1177 from nodes N24 to G13
