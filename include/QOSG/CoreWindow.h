@@ -120,6 +120,12 @@ public slots:
                 */
     void loadFunctionCall();
 
+    /**
+                *  \fn public  filterGraph()
+                *  \brief filter graph from query
+                */
+    void filterGraph();
+
 	/**
 				*  \fn public  noSelectClicked(bool checked
 				*  \brief No-select mode selected
@@ -435,6 +441,12 @@ private:
         *  \brief Action for loading function call graph from lua
         */
     QPushButton * loadFunctionCallButton;
+
+    /**
+        *  QLineEdit * filterEdit
+        *  \brief Edit area for filter query
+        */
+    QLineEdit * filterEdit;
 
 	/**
 		*  QPushButton * noSelect

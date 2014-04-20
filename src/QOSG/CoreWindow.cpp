@@ -222,6 +222,9 @@ void CoreWindow::createActions()
     loadFunctionCallButton->setFocusPolicy(Qt::NoFocus);
     connect(loadFunctionCallButton, SIGNAL(clicked()), this, SLOT(loadFunctionCall()));
 
+    filterEdit = new QLineEdit();
+    connect(filterEdit, SIGNAL(returnPressed()), this, SLOT(filterGraph()));
+
 
 	//mody - ziadny vyber, vyber jedneho, multi vyber centrovanie
 	noSelect = new QPushButton();
@@ -596,8 +599,13 @@ void CoreWindow::createMetricsToolBar()
     toolBar->addWidget(loadFunctionCallButton);
 
     addToolBar(Qt::RightToolBarArea,toolBar);
-    toolBar->setMaximumHeight(400);
-    toolBar->setMaximumWidth(120);
+    //toolBar->setMaximumHeight(400);
+    //toolBar->setMaximumWidth(120);
+    toolBar->setMovable(true);
+
+    toolBar = new QToolBar("Metrics filter",this);
+    toolBar->addWidget(filterEdit);
+    addToolBar(Qt::BottomToolBarArea, toolBar);
     toolBar->setMovable(true);
 }
 
@@ -778,6 +786,11 @@ void CoreWindow::loadFunctionCall()
         layout->play();
         coreGraph->setNodesFreezed(false);
     }
+}
+
+void CoreWindow::filterGraph()
+{
+    std::cout << "return pressed in filter" << std::endl;
 }
 
 void CoreWindow::noSelectClicked(bool checked)
