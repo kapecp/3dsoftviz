@@ -42,11 +42,8 @@ void Lua::SimpleGraphVisualizer::visualize()
 
     for (QMap<qlonglong, Lua::LuaNode *>::iterator i = g->getNodes()->begin(); i != g->getNodes()->end(); ++i){
         if (i.value()->getParams()["root"]== true){
-            std::cout << "found root " << i.key() << std::endl;
-            std::cout << "connecting to files meta node " << filesAnchor->getId() << std::endl;
             osg::ref_ptr<Data::Node> root = currentGraph->getNodes()->value(i.key());
-            osg::ref_ptr<Data::Edge> me = currentGraph->addEdge(metaEdgeName, root, filesAnchor, currentGraph->getEdgeMetaType(), false);
-            std::cout << "meta edge id "<< me->getId() << std::endl;
+            currentGraph->addEdge(metaEdgeName, root, filesAnchor, currentGraph->getEdgeMetaType(), false);
             break;
         }
     }

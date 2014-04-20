@@ -702,12 +702,20 @@ void CoreWindow::loadLuaGraph()
         Manager::GraphManager::getInstance()->closeGraph(currentGraph);
     }
     currentGraph = Manager::GraphManager::getInstance()->createNewGraph("LuaGraph");
+    layout->pause();
+    coreGraph->setNodesFreezed(true);
 
     Lua::LuaInterface* lua = Lua::LuaInterface::getInstance();
     lua->executeFile("main.lua");
 
     Lua::LuaGraphVisualizer *visualizer = new Lua::FullHyperGraphVisualizer(currentGraph);
     visualizer->visualize();
+
+    if (isPlaying)
+    {
+        layout->play();
+        coreGraph->setNodesFreezed(false);
+    }
 }
 
 void CoreWindow::updateFromLua()
@@ -733,12 +741,23 @@ void CoreWindow::loadFileTree()
         Manager::GraphManager::getInstance()->closeGraph(currentGraph);
     }
     currentGraph = Manager::GraphManager::getInstance()->createNewGraph("LuaGraph");
+    layout->pause();
+    coreGraph->setNodesFreezed(true);
+
     Lua::LuaGraphVisualizer *visualizer = new Lua::HyperGraphVisualizer(currentGraph);
     visualizer->visualize();
+
+    if (isPlaying)
+    {
+        layout->play();
+        coreGraph->setNodesFreezed(false);
+    }
 }
 
 void CoreWindow::loadFunctionCall()
 {
+
+
     Lua::LuaInterface* lua = Lua::LuaInterface::getInstance();
     lua->executeFile("function_call_test.lua");
     Data::Graph *currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
@@ -747,8 +766,18 @@ void CoreWindow::loadFunctionCall()
         Manager::GraphManager::getInstance()->closeGraph(currentGraph);
     }
     currentGraph = Manager::GraphManager::getInstance()->createNewGraph("LuaGraph");
+
+    layout->pause();
+    coreGraph->setNodesFreezed(true);
+
     Lua::LuaGraphVisualizer *visualizer = new Lua::SimpleGraphVisualizer(currentGraph);
     visualizer->visualize();
+
+    if (isPlaying)
+    {
+        layout->play();
+        coreGraph->setNodesFreezed(false);
+    }
 }
 
 void CoreWindow::noSelectClicked(bool checked)

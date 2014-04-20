@@ -2,6 +2,7 @@
 #include "LuaGraph/LuaGraphVisualizer.h"
 #include "LuaGraph/LuaGraph.h"
 #include "Importer/GraphOperations.h"
+#include "limits"
 
 Lua::HyperGraphVisualizer::HyperGraphVisualizer(Data::Graph *graph)
     : Lua::LuaGraphVisualizer(graph){}
@@ -36,14 +37,13 @@ void Lua::HyperGraphVisualizer::visualize()
 
     QString metaNodeName = "metaNode";
     QString metaEdgeName = "metaEdge";
-    osg::ref_ptr<Data::Node> filesAnchor = currentGraph->addNode(metaNodeName, currentGraph->getNodeMetaType(), osg::Vec3(0, 0, 1000));
-    osg::ref_ptr<Data::Node> functionsAnchor = currentGraph->addNode(metaNodeName, currentGraph->getNodeMetaType(), osg::Vec3(0, 0, -1000));
+    osg::ref_ptr<Data::Node> filesAnchor = currentGraph->addNode(std::numeric_limits<qlonglong>::max(),metaNodeName, currentGraph->getNodeMetaType(), osg::Vec3(0, 0, 1000));
 
     for (QMap<qlonglong, Lua::LuaNode *>::iterator i = g->getNodes()->begin(); i != g->getNodes()->end(); ++i){
         if (i.value()->getParams()["root"]== true){
-            std::cout << "connecting to files meta node ";
-            osg::ref_ptr<Data::Edge> me = currentGraph->addEdge(metaEdgeName, currentGraph->getNodes()->value(i.value()->getId()), filesAnchor, currentGraph->getEdgeMetaType(), false);
-            std::cout << me->getId() << std::endl;
+            osg::ref_ptr<Data::Node> root = currentGraph->getNodes()->value(i.key());
+            currentGraph->addEdge(metaEdgeName, root, filesAnchor, currentGraph->getEdgeMetaType(), false);
+            break;
         }
     }
 }
