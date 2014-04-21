@@ -78,7 +78,7 @@ Lua::LuaGraph *Lua::LuaGraph::loadGraph()
 
     Diluculum::LuaState *ls = lua->getLuaState();
 
-    Diluculum::LuaValueMap edges = (*ls)["graph"].value().asTable();
+    Diluculum::LuaValueMap edges = (*ls)["getGraph"]()[0].asTable();
 
     for(Diluculum::LuaValueMap::iterator iterator = edges.begin(); iterator != edges.end(); iterator++) {
 

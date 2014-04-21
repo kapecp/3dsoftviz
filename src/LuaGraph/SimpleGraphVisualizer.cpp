@@ -15,7 +15,7 @@ void Lua::SimpleGraphVisualizer::visualize()
 
     for (QMap<qlonglong, Lua::LuaNode *>::iterator i = g->getNodes()->begin(); i != g->getNodes()->end(); ++i){
         osg::ref_ptr<Data::Node> n = currentGraph->addNode(i.key() , i.value()->getLabel(), nodeType);
-        setNodeParams(n, i.value(), osg::Vec4f(1,0,0,1), 8);
+        setNodeParams(n, i.value(), osg::Vec4f(1,1,1,1), 8);
     }
 
     for (QMap<qlonglong, Lua::LuaEdge *>::iterator i = g->getEdges()->begin(); i != g->getEdges()->end(); ++i){
@@ -39,11 +39,13 @@ void Lua::SimpleGraphVisualizer::visualize()
     QString metaNodeName = "metaNode";
     QString metaEdgeName = "metaEdge";
     osg::ref_ptr<Data::Node> filesAnchor = currentGraph->addNode(std::numeric_limits<qlonglong>::max(),metaNodeName, currentGraph->getNodeMetaType(), osg::Vec3(0, 0, 1000));
+//    filesAnchor->setColor(osg::Vec4(0,0,0,0));
 
     for (QMap<qlonglong, Lua::LuaNode *>::iterator i = g->getNodes()->begin(); i != g->getNodes()->end(); ++i){
         if (i.value()->getParams()["root"]== true){
             osg::ref_ptr<Data::Node> root = currentGraph->getNodes()->value(i.key());
-            currentGraph->addEdge(metaEdgeName, root, filesAnchor, currentGraph->getEdgeMetaType(), false);
+            osg::ref_ptr<Data::Edge> metaLink = currentGraph->addEdge(metaEdgeName, root, filesAnchor, currentGraph->getEdgeMetaType(), false);
+//            metaLink->setEdgeColor(osg::Vec4(0,0,0,0));
             break;
         }
     }

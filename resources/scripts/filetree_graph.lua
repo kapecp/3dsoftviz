@@ -1,12 +1,12 @@
-package.path = package.path .. ";../share/3dsoftviz/scripts/?.lua"
+local filetree = require "filetree"
 
-filetree = require "filetree"
-
-function inc()
+local function inc()
   a = a or 0
   a = a + 1
   return a
 end
+
+local filegraph = {}
 
 local function get_graph_from_tree(tree, graph, parent, min_size, max_size)
   print ("traversing " .. tree.name)
@@ -31,12 +31,12 @@ local function get_graph_from_tree(tree, graph, parent, min_size, max_size)
   return graph, min_size, max_size
 end
 
-function create_file_graph(path)
+local function create_file_graph(path)
   print "creating file graph"
   tree = filetree.load(path)
-  graph, min, max = get_graph_from_tree(tree)
+  filegraph, min, max = get_graph_from_tree(tree)
   print ("sizes " .. min .. "-" .. max)
-  for _, v in pairs(graph) do
+  for _, v in pairs(filegraph) do
     for _, n in pairs(v) do
       if n.size_counted == nil then
         n.params.size = 8 + 50 * ((n.params.size - min) / (max - min)) 
@@ -45,3 +45,10 @@ function create_file_graph(path)
     end
   end
 end
+
+local function getGraph()
+  return filegraph
+end
+
+return {create_file_graph = create_file_graph,
+  getGraph = getGraph}

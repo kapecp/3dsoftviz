@@ -48,6 +48,8 @@
 #include "LuaGraph/FullHyperGraphVisualizer.h"
 #include "LuaGraph/HyperGraphVisualizer.h"
 #include "LuaGraph/SimpleGraphVisualizer.h"
+
+#include "Diluculum/LuaState.hpp"
 using namespace QOSG;
 using namespace std;
 
@@ -94,6 +96,8 @@ CoreWindow::CoreWindow(QWidget *parent, Vwr::CoreGraph* coreGraph, QApplication*
 	nodeLabelsVisible = edgeLabelsVisible = false;
 
 	connect(lineEdit,SIGNAL(returnPressed()),this,SLOT(sqlQuery()));
+
+    Lua::LuaInterface::getInstance()->executeFile("main.lua");
 }
 
 void CoreWindow::createActions()
@@ -713,8 +717,7 @@ void CoreWindow::loadLuaGraph()
     layout->pause();
     coreGraph->setNodesFreezed(true);
 
-    Lua::LuaInterface* lua = Lua::LuaInterface::getInstance();
-    lua->executeFile("main.lua");
+    Lua::LuaInterface::getInstance()->getLuaState()->doString("getGraph = test_graph.getGraph");
 
     Lua::LuaGraphVisualizer *visualizer = new Lua::FullHyperGraphVisualizer(currentGraph);
     visualizer->visualize();
@@ -737,11 +740,12 @@ void CoreWindow::loadFileTree()
     QString file = QFileDialog::getExistingDirectory(this, "Select lua project folder", ".");
     cout << "You selected " << file.toStdString() << std::endl;
     Lua::LuaInterface* lua = Lua::LuaInterface::getInstance();
-    lua->executeFile("load_files_graph.lua");
 
     Diluculum::LuaValueList path;
     path.push_back(file.toStdString());
-    lua->callFunction("create_file_graph", path);
+    QString createGraph[] = {"filetree_graph", "create_file_graph"};
+    lua->callFunction(2, createGraph, path);
+    lua->getLuaState()->doString("getGraph = filetree_graph.getGraph");
 
     Data::Graph *currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
 
@@ -764,10 +768,16 @@ void CoreWindow::loadFileTree()
 
 void CoreWindow::loadFunctionCall()
 {
-
-
+    QString file = QFileDialog::getExistingDirectory(this, "Select lua project folder", ".");
+    cout << "You selected " << file.toStdString() << std::endl;
     Lua::LuaInterface* lua = Lua::LuaInterface::getInstance();
-    lua->executeFile("function_call_test.lua");
+
+    Diluculum::LuaValueList path;
+    path.push_back(file.toStdString());
+    QString createGraph[] = {"function_call_graph", "extractGraph"};
+    lua->callFunction(2, createGraph, path);
+    lua->getLuaState()->doString("getGraph = function_call_graph.getGraph");
+
     Data::Graph *currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
 
     if (currentGraph != NULL) {
