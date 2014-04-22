@@ -41,6 +41,7 @@ signals:
 			 * @param Image cv::Mat
 			 */
 	void pushImage( cv::Mat Image );
+	void pushBackgrImage( cv::Mat image );
 
 	/**
 			 * @author Autor: Marek Jakab
@@ -68,6 +69,8 @@ public slots:
 	*/
 	void setSendImgEnabled( bool sendImgEnabled );
 
+	void setSendBackgrImgEnabled( bool sendBackgrImgEnabled );
+
 	/**
 			* @author Dávid Durčák
 			* @brief setCapVideo Set member mCapVideo.
@@ -80,6 +83,7 @@ private:
 	OpenCV::CapVideo		*mCapVideo;
 	bool					mCancel;
 	bool					mSendImgEnabled;
+	bool					mSendBackgrImgEnabled;
 
 	};
 }

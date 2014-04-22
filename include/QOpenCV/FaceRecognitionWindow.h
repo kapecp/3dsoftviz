@@ -81,12 +81,16 @@ signals:
 		 */
 	void sendImgMarker( bool send );
 
+	void sendBackgrImgFaceRec( bool send );
+	void sendBackgrImgMarker( bool send );
+
 	/**
 		 * @author Autor: David Durcak
 		 * @brief stopMarker Signal for canceling Aruco thread
 		 * @param set cancel if true
 		 */
 	void stopMarker( bool set );
+
 
 	/**
 		 * @author Autor: David Durcak
@@ -166,7 +170,8 @@ private slots:
 		 */
 	void onMarkerStartCancel(bool checked);
 
-
+	void onFaceDetBackgrCBClicked(bool checked);
+	void onMarkerBackgrCBClicked(bool checked);
 
 
 private:
@@ -196,6 +201,9 @@ private:
 	QStackedLayout	*mModulesStackL;
 	QPushButton		*mFaceRecStartCancelPB;
 	QPushButton		*mMarkerStartCancelPB;
+
+	QCheckBox		*mMarkerBackgrCB;
+	QCheckBox		*mFaceDetBackgrCB;
 
 	// aruco controll
 	QCheckBox		*mMarkerBehindCB;

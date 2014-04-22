@@ -32,13 +32,14 @@ Viewer.Textures.OrientedEdgePrefix=../share/3dsoftviz/img/arrows/arrow
 Viewer.Textures.OrientedEdgeSuffix=.png
 Viewer.Textures.MetaNode=../share/3dsoftviz/img/MetaNode.png
 
-Viewer.SkyBox.Noise=0
+Viewer.SkyBox.Noise=2
 Viewer.SkyBox.North=../share/3dsoftviz/img/skybox/rays_north.bmp
 Viewer.SkyBox.East=../share/3dsoftviz/img/skybox/rays_east.bmp
 Viewer.SkyBox.South=../share/3dsoftviz/img/skybox/rays_south.bmp
 Viewer.SkyBox.West=../share/3dsoftviz/img/skybox/rays_west.bmp
 Viewer.SkyBox.Up=../share/3dsoftviz/img/skybox/rays_up.bmp
 Viewer.SkyBox.Down=../share/3dsoftviz/img/skybox/rays_down.bmp
+
 
 Kinect.Surface.LOG= ../share/3dsoftviz/kinectMaps/log.txt
 Kinect.Surface.DATA= ../share/3dsoftviz/kinectMaps/file4.txt

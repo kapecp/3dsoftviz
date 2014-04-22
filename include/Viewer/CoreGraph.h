@@ -13,7 +13,6 @@
 #include "Data/Edge.h"
 #include "Data/Node.h"
 
-
 #include <QMap>
 #include <QLinkedList>
 #include <QSharedPointer>
@@ -28,12 +27,20 @@ namespace Data
 namespace Vwr
 {
 	class EdgeGroup;
+	//class CameraStream;
 //	class NodeGroup;
 }
 
 namespace Util
 {
 	class ApplicationConfig;
+}
+
+namespace OpenCV{
+#ifdef OPENCV_FOUND
+	class CameraStream;
+#endif
+
 }
 
 namespace Vwr
@@ -177,6 +184,10 @@ public:
 	Vwr::EdgeGroup * getEdgesGroup() { return edgesGroup; }
 	Vwr::EdgeGroup * getMetaEdgesGroup() { return qmetaEdgesGroup; }
 
+#ifdef OPENCV_FOUND
+	OpenCV::CameraStream *getCameraStream() const;
+#endif
+
 public slots:
 
 	/**
@@ -293,13 +304,36 @@ private:
 		*/
 	osg::ref_ptr<osg::Group> initCustomNodes();
 
-	/**
-		*  \fn private  createSkyBox
-		*  \brief creates sky
-		*  \return osg::ref_ptr skybox node
-		*/
-	osg::ref_ptr<osg::Node> createSkyBox();
 
+	/**
+		*  \fn private  createBackground
+		*  \brief creates background (skybox, skynoise, video3d, video2dOrtho or nothing )
+		*  \return osg::ref_ptr node
+		*/
+	osg::ref_ptr<osg::Node> createBackground();
+
+	/**
+		*  \fn private  createSkyNoiseBox
+		*  \brief creates sky noise globe box
+		*  \return osg::ref_ptr node
+		*/
+	osg::ref_ptr<osg::Node> createSkyNoiseBox();
+
+#ifdef OPENCV_FOUND
+	/**
+		*  \fn private  createTextureBackground
+		*  \brief creates video background as 3d rectangle
+		*  \return osg::ref_ptr node
+		*/
+	osg::ref_ptr<osg::Node> createTextureBackground();
+
+	/**
+		*  \fn private  createOrtho2dBackground
+		*  \brief creates video background rectangle in ortho2d mode
+		*  \return osg::ref_ptr node
+		*/
+	osg::ref_ptr<osg::Node> createOrtho2dBackground();
+#endif
 	/**
 		*  osg::ref_ptr camera
 		*  \brief current viewing camera
@@ -419,6 +453,11 @@ private:
 	int customNodesPosition;
 
 	int prevTime;
+
+#ifdef OPENCV_FOUND
+	osg::ref_ptr<OpenCV::CameraStream> mCameraStream;
+#endif
+
 
 	};
 }
