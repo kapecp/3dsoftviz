@@ -165,21 +165,7 @@ void ArucoThread::run()
 				if( actPosArray[2] > 0.0  &&  actPosArray[2] < 10.0
 						&&   actQuatArray[0] >= -1.0  &&  actQuatArray[0] <= 1.0 ){
 
-					osg::Vec3d actPos(  -actPosArray[0], -actPosArray[1], -actPosArray[2] );
-					osg::Quat  actQuat(  actQuatArray[1], -actQuatArray[3],  actQuatArray[2],  actQuatArray[0] );
-					osg::Vec4d acQuat(  actQuatArray[1], -actQuatArray[3],  actQuatArray[2],  actQuatArray[0] );
-
-					// correct Y centering, because of camerra different ration aruco top max y value is less than bottom one
-					actPos.y() = ( mRatioCamCoef * actPos.z()  + actPos.y() );
-					if ( mCorEnabled ) {
-						correctQuatAndPos( actPos, actQuat);
-					}
-
-					printVec(actPos, "pos  ");
-					printVec(acQuat, "quat ");
-
-
-
+					mouseControlling( actPosArray, actQuatArray );
 
 				}
 			}
@@ -195,6 +181,22 @@ void ArucoThread::run()
 
 	mCapVideo->release();
 	mCapVideo = NULL;
+}
+
+void ArucoThread::mouseControlling(const double actPosArray[3], const double actQuatArray[4])
+{
+	osg::Vec3d actPos(  -actPosArray[0], -actPosArray[1], -actPosArray[2] );
+	osg::Quat  actQuat(  actQuatArray[1], -actQuatArray[3],  actQuatArray[2],  actQuatArray[0] );
+	osg::Vec4d acQuat(  actQuatArray[1], -actQuatArray[3],  actQuatArray[2],  actQuatArray[0] );
+
+	// correct Y centering, because of camerra different ration aruco top max y value is less than bottom one
+	actPos.y() = ( mRatioCamCoef * actPos.z()  + actPos.y() );
+	if ( mCorEnabled ) {
+		correctQuatAndPos( actPos, actQuat);
+	}
+
+	printVec(actPos, "pos  ");
+	printVec(acQuat, "quat ");
 }
 
 void ArucoThread::imagesSending(ArucoCore &aCore) const
