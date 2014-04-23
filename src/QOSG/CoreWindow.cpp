@@ -555,11 +555,12 @@ void CoreWindow::createAugmentedRealityToolBar() {
 	connect(b_start_kinect, SIGNAL(clicked()), this, SLOT(createKinectWindow()));
 	toolBar->addSeparator();
 
-	b_start_ransac = new QPushButton();
-	b_start_ransac->setText("Start calculate surface");
-	toolBar->addWidget( b_start_ransac );
-	connect(b_start_ransac, SIGNAL(clicked()), this, SLOT(calculateRansac()));
-	toolBar->addSeparator();
+	//TODO future feature - experimental state
+	//b_start_ransac = new QPushButton();
+	//b_start_ransac->setText("Start calculate surface");
+	//toolBar->addWidget( b_start_ransac );
+	//connect(b_start_ransac, SIGNAL(clicked()), this, SLOT(calculateRansac()));
+	//toolBar->addSeparator();
 
 #endif
 #endif
