@@ -124,35 +124,7 @@ void ArucoThread::run()
 				if( actPosArray[2] > 0.0  &&  actPosArray[2] < 10.0
 						&&   actQuatArray[0] >= -1.0  &&  actQuatArray[0] <= 1.0 ){
 
-
-
-					// can be corection parameters updated
-					if( mUpdCorPar ){
-						computeCorQuatAndPos( actPosArray, actQuatArray );
-					}
-
-					osg::Vec3d actPos( -actPosArray[0], -actPosArray[1], -actPosArray[2] );
-					osg::Quat  actQuat;
-
-
-					//  forward/backward,   left/right,  around,   w
-					if( mMarkerIsBehind ){
-						actQuat.set( -actQuatArray[1],  actQuatArray[3],  actQuatArray[2],  actQuatArray[0] );
-					} else {
-						actQuat.set(  actQuatArray[1], -actQuatArray[3],  actQuatArray[2],  actQuatArray[0] );
-					}
-
-
-					// correct Y centering, because of camerra different ration aruco top max y value is less than bottom one
-					actPos.y() = ( mRatioCamCoef * actPos.z()  + actPos.y() );
-
-
-					if ( mCorEnabled ) {
-						correctQuatAndPos( actPos, actQuat);
-					}
-
-					emit sendArucoPosVec( actPos );
-					emit sendArucoRorQuat( actQuat );
+					graphControlling( actPosArray, actQuatArray );
 
 				}
 			}
@@ -181,6 +153,38 @@ void ArucoThread::run()
 
 	mCapVideo->release();
 	mCapVideo = NULL;
+}
+
+void ArucoThread::graphControlling(const double actPosArray[3], const double actQuatArray[4])
+{
+
+	// can be corection parameters updated
+	if( mUpdCorPar ){
+		computeCorQuatAndPos( actPosArray, actQuatArray );
+	}
+
+	osg::Vec3d actPos( -actPosArray[0], -actPosArray[1], -actPosArray[2] );
+	osg::Quat  actQuat;
+
+
+	//  forward/backward,   left/right,  around,   w
+	if( mMarkerIsBehind ){
+		actQuat.set( -actQuatArray[1],  actQuatArray[3],  actQuatArray[2],  actQuatArray[0] );
+	} else {
+		actQuat.set(  actQuatArray[1], -actQuatArray[3],  actQuatArray[2],  actQuatArray[0] );
+	}
+
+
+	// correct Y centering, because of camerra different ration aruco top max y value is less than bottom one
+	actPos.y() = ( mRatioCamCoef * actPos.z()  + actPos.y() );
+
+
+	if ( mCorEnabled ) {
+		correctQuatAndPos( actPos, actQuat);
+	}
+
+	emit sendArucoPosVec( actPos );
+	emit sendArucoRorQuat( actQuat );
 }
 
 void ArucoThread::mouseControlling(const double actPosArray[3], const double actQuatArray[4])

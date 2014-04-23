@@ -142,6 +142,14 @@ private:
 
 	/**
 	* @author Dávid Durčák
+	* @brief graphControlling method that process info about marker to controlling graph
+	* @param actPosArray[3] const array that describe position of marker by vector (x,y,z)
+	* @param actQuatArray[4] const array that describe orientation of marker by quaternion (w,x,y,z)
+	*/
+	void graphControlling(const double actPosArray[3], const double actQuatArray[4]);
+
+	/**
+	* @author Dávid Durčák
 	* @brief mouseControlling method that process info about marker to controlling mouse
 	* @param actPosArray[3] const array that describe position of marker by vector (x,y,z)
 	* @param actQuatArray[4] const array that describe orientation of marker by quaternion (w,x,y,z)
