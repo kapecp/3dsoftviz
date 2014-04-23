@@ -50,6 +50,15 @@ public:
 
 	/**
 		 * @author Autor:Dávid Durčák
+		 * @brief detect method that encapsule all necessary funtionality for detecting marker on input image
+		 * @param inputImage Image from cammera, where markers should be detected
+		 * @param[out] number of detected markers
+		 */
+	int detect(cv::Mat inputImage);
+
+
+	/**
+		 * @author Autor:Dávid Durčák
 		 * @brief  getDetImage return image with drawed boundaries and 3D cube on detected markers, if any are
 		 */
 	cv::Mat getDetImage();
