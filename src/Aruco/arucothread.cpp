@@ -69,6 +69,13 @@ void ArucoThread::setCapVideo( OpenCV::CapVideo *capVideo){
 	mCapVideo = capVideo;
 }
 
+void ArucoThread::interchangeMarkers()
+{
+	int aux = mGrM;
+	mGrM	= mMoM;
+	mMoM	= aux;
+}
+
 void ArucoThread::run()
 {
 	cv::Mat frame;

@@ -118,7 +118,6 @@ public slots:
 	/**
 	* @author Dávid Durčák
 	* @brief updateCorectionPar Set mUpdCorPar tu true what will cause calling computeCorQuatAndPos for updating correction parameters, and emit corParUpdated signal if succesed
-	* @param sendImgEnabled
 	*/
 	void updateCorectionPar();
 
@@ -128,6 +127,12 @@ public slots:
 	* @param capVideo
 	*/
 	void setCapVideo( OpenCV::CapVideo *capVideo);
+
+	/**
+	* @author Dávid Durčák
+	* @brief interchangeMarkers Interchange markers for Graph and Mouse controll
+	*/
+	void interchangeMarkers();
 
 private:
 
