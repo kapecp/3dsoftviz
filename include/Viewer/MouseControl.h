@@ -8,7 +8,7 @@ namespace QOSG
 class ViewerQT;
 }
 
-namespace Kinect
+namespace Vwr
 {
 
 /**
