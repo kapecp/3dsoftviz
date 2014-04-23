@@ -74,7 +74,18 @@ int ArucoCore::detect(cv::Mat inputImage)
 	return mMarkers.size();
 }
 
+bool ArucoCore::getPosAndQuat(int markerNum, double position[3], double quaternion[4])
+{
+	// markerNum is counted from 0
+	if( mMarkers.size() > markerNum){
+		mMarkers[markerNum].OgreGetPoseParameters( position, quaternion);
+		return true;
 
+	} else {
+		return false;
+	}
+
+}
 
 // tato funkcia je nepouzitelna na Windows
 void ArucoCore::updateImage(cv::Mat inputImage)
