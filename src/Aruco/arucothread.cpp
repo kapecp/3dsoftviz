@@ -19,6 +19,9 @@ ArucoThread::ArucoThread(QObject *parent)
 	mSendImgEnabled	= true;
 	mSendBackgrImgEnabled = false;
 	mRatioCamCoef	= 0;
+	mGrM			= 0;
+	mMoM			= 1;
+
 
 	qRegisterMetaType< osg::Vec3d >("osgVec3d");
 	qRegisterMetaType< osg::Quat >("osgQuat");
@@ -103,7 +106,11 @@ void ArucoThread::run()
 			frame = mCapVideo->queryFrame();		// get image from camera
 
 			// add image to aruco and get position vector and rotation quaternion
-			markerDetected = aCore.getDetectedPosAndQuat( frame, actPosArray, actQuatArray );
+			//markerDetected = aCore.getDetectedPosAndQuat( frame, actPosArray, actQuatArray );
+			aCore.detect(frame );
+
+			// graph controll
+			markerDetected = aCore.getPosAndQuat( mGrM, actPosArray, actQuatArray );
 			if( markerDetected ){
 
 				// test if marker was detect (if not, all number in matrix are not range)
@@ -139,6 +146,33 @@ void ArucoThread::run()
 
 					emit sendArucoPosVec( actPos );
 					emit sendArucoRorQuat( actQuat );
+
+				}
+			}
+
+			// mouse controll
+			markerDetected = aCore.getPosAndQuat( mMoM, actPosArray, actQuatArray );
+			if( markerDetected ){
+
+				// test if marker was detect (if not, all number in matrix are not range)
+				if( actPosArray[2] > 0.0  &&  actPosArray[2] < 10.0
+						&&   actQuatArray[0] >= -1.0  &&  actQuatArray[0] <= 1.0 ){
+
+					osg::Vec3d actPos(  -actPosArray[0], -actPosArray[1], -actPosArray[2] );
+					osg::Quat  actQuat(  actQuatArray[1], -actQuatArray[3],  actQuatArray[2],  actQuatArray[0] );
+					osg::Vec4d acQuat(  actQuatArray[1], -actQuatArray[3],  actQuatArray[2],  actQuatArray[0] );
+
+					// correct Y centering, because of camerra different ration aruco top max y value is less than bottom one
+					actPos.y() = ( mRatioCamCoef * actPos.z()  + actPos.y() );
+					if ( mCorEnabled ) {
+						correctQuatAndPos( actPos, actQuat);
+					}
+
+					printVec(actPos, "pos  ");
+					printVec(acQuat, "quat ");
+
+
+
 
 				}
 			}

@@ -183,6 +183,9 @@ private:
 	bool		mUpdCorPar;			// if true, correction can be setted
 	bool		mSendImgEnabled;	// if true, of emiting actual frame is enabled
 	bool		mSendBackgrImgEnabled;
+	int			mGrM;				// number of marker for graph controll
+	int			mMoM;				// number of marker for mouse controll
+
 
 	QMatrix4x4	mCorM;				// correction matrix
 	osg::Quat	mCorQ;				// correction quaternion
