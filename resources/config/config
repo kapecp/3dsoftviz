@@ -32,7 +32,7 @@ Viewer.Textures.OrientedEdgePrefix=../share/3dsoftviz/img/arrows/arrow
 Viewer.Textures.OrientedEdgeSuffix=.png
 Viewer.Textures.MetaNode=../share/3dsoftviz/img/MetaNode.png
 
-Viewer.SkyBox.Noise=2
+Viewer.SkyBox.Noise=0
 Viewer.SkyBox.North=../share/3dsoftviz/img/skybox/rays_north.bmp
 Viewer.SkyBox.East=../share/3dsoftviz/img/skybox/rays_east.bmp
 Viewer.SkyBox.South=../share/3dsoftviz/img/skybox/rays_south.bmp

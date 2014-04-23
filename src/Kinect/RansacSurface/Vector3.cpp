@@ -17,7 +17,7 @@ Kinect::Vector3::~Vector3()
 }
 
 
-Vector3 Kinect::Vector3::subtract(Vector3 first, Vector3 second)
+Kinect::Vector3 Kinect::Vector3::subtract(Vector3 first, Vector3 second)
 {
 	return Vector3(first.mX-second.mX,first.mY-second.mY,first.mZ-second.mZ);
 }

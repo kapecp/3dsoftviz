@@ -153,7 +153,7 @@ void ArucoThread::run()
 				emit pushImage( qimage );	// emit image with marked marker for debuging
 			}
 
-			if( mSendBackgrImgEnabled ){
+			if( mSendBackgrImgEnabled && !image.empty() ){
 				emit pushBackgrImage( image.clone() );
 			}
 

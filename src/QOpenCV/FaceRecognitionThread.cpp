@@ -37,11 +37,11 @@ void QOpenCV::FaceRecognitionThread::run()
 		mFaceRecognizer->detectFaces( mCapVideo->getGrayframe() );
 		mFaceRecognizer->annotateFaces( image );
 
-		if( mSendImgEnabled ){
+		if( mSendImgEnabled && !image.empty()){
 			if (image.data)
 				emit pushImage( image.clone() ); // ???
 		}
-		if( mSendBackgrImgEnabled ){
+		if( mSendBackgrImgEnabled && !image.empty()){
 			emit pushBackgrImage( image.clone() );
 		}
 
@@ -50,7 +50,7 @@ void QOpenCV::FaceRecognitionThread::run()
 			emit sendEyesCoords( (float) -mFaceRecognizer->getEyesCoords().x,
 								 (float) -mFaceRecognizer->getEyesCoords().y,
 								 -mFaceRecognizer->getHeadDistance( mCapVideo->getWidth()) );
-		}	
+		}
 		msleep(80);
 	}
 	mCapVideo->release();
