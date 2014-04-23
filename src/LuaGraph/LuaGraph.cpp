@@ -25,7 +25,7 @@ Lua::LuaGraph::LuaGraph()
     observer = NULL;
     Lua::LuaInterface* lua = Lua::LuaInterface::getInstance();
     Diluculum::LuaState *ls = lua->getLuaState();
-    (*ls)["callback"] = DILUCULUM_WRAPPER_FUNCTION (luaCallback);
+    (*ls)["graphChangedCallback"] = DILUCULUM_WRAPPER_FUNCTION (luaCallback);
 }
 Lua::LuaGraphObserver *Lua::LuaGraph::getObserver() const
 {

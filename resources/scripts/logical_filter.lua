@@ -1,5 +1,3 @@
---package.path = package.path .. ";../share/3dsoftviz/scripts/?.lua"
-
 local lpeg = require "lpeg"
 local helper = require "helper"
 
@@ -15,7 +13,8 @@ local Decimal =	(Integer * Fractional^-1) + (S("+-") * Fractional)
 local Scientific = Decimal * S("Ee") * Integer
 local Number = C(Decimal + Scientific)
 local Name = C((locale.alpha + P "_") * (locale.alnum + P "_")^0)
-local Id = Ct(Name * (P"." * Name)^0)
+local EdgeOp = C(S("><-")^-1) * Space
+local Id = Ct(EdgeOp * Name * (P"." * Name)^0)
 local RelOp = C(P"==" + P"~=" + P"<=" + P"<" + P">=" + P">")
 local AndOp = C(P"and")
 local OrOp = C(P"or")
@@ -28,24 +27,29 @@ local Like = C(P"like")
 
 local Exp, And, Or, Rel, Regex = V"Exp", V"And", V"Or", V"Rel", V"Regex"
 G = lpeg.P{ Exp,
-  Exp = Ct(Or * (Space * OrOp * Space * Or)^0),
+  Exp = Ct(-1) + Ct(Or * (Space * OrOp * Space * Or)^0),
   Or = Ct(And * (Space * AndOp * Space * And)^0),
   And = Rel + Regex + Open * Exp * Close,
   Rel = Ct(Id * Space * RelOp * Space * Number),
   Regex = Ct(Id * Space * Like * Space * LiteralString)
 }
 
-local function nodeAccepted(node, expTree)
+local function nodeAccepted(node, expTree, edge)
   if expTree[2] == 'or' then
-    return nodeAccepted(node, expTree[1]) or nodeAccepted(node, expTree[3])
+    return nodeAccepted(node, expTree[1], edge) or nodeAccepted(node, expTree[3], edge)
   elseif expTree[2] == 'and' then
-    return nodeAccepted(node, expTree[1]) and nodeAccepted(node, expTree[3])
+    return nodeAccepted(node, expTree[1], edge) and nodeAccepted(node, expTree[3], edge)
   elseif #expTree == 1 then
-    return nodeAccepted(node, expTree[1])
+    return nodeAccepted(node, expTree[1], edge)
   else
     local var = node
-    for _, v in ipairs(expTree[1]) do
-      var = var[v]
+    local edgeOps = {["-"] = true, [">"] = true, ["<"] = true}
+    if edgeOps[expTree[1][1]] ~= nil then 
+      print"edge operator"
+    end
+    local i
+    for i = 2,#expTree[1] do
+      var = var[expTree[1][i]]
       if var == nil then return false end
     end
     local op = expTree[2]
@@ -53,6 +57,7 @@ local function nodeAccepted(node, expTree)
       local patt = expTree[3] 
       if patt:sub(2,2) ~= '^' then patt = patt:sub(1,1) .. '^' .. patt:sub(2) end
       if patt:sub(-2,-2) ~= '$' then patt = patt:sub(1,-2) .. '$' .. patt:sub(-1,-1) end
+      print(patt)
       local s = loadstring('return ' .. patt)
       return string.find(var, s()) ~= nil
     else
@@ -62,29 +67,60 @@ local function nodeAccepted(node, expTree)
   end
 end
 
-local function filterGraph(g, s)
-  local t = lpeg.match(G, s)
-  for _, is in pairs(g) do
-    for _, n in pairs(is) do
-      n.params = n.params or {}
-      if nodeAccepted(n, t) then
-        n.params.colorA = 1
-      else
-        n.params.colorA = 0.2
-      end
-    end
+local function copyNode(node)
+  local result = {}
+  for k, v in pairs(node) do
+    result[k] = v
   end
-  return g
+  result.params = {}
+  for k, v in pairs(node.params) do
+    result.params[k] = v
+  end
+  return result
 end
 
-local graph = {
-[{}] = {[{}] = {id = 1}},
-[{}] = {[{}] = {id = 2}}
-}
+local filteredgraph = {}
+local checkedNodes = {}
 
-local s = 'id ~= 1'
-local t = lpeg.match(G, s)
-helper.vardump(s)
---helper.vardump(t)
+local function filterGraph(s)
+  if getFullGraph == nil then return end
+  local g = getFullGraph()
+  filteredgraph = {}
+  if s == "" then 
+    filteredgraph = g
+    graphChangedCallback()
+    return
+  end
+  checkedNodes = {}
+  local t = lpeg.match(G, s)
+  for e, is in pairs(g) do
+    local incidences = {}
+    for i, n in pairs(is) do
+      local node = copyNode(n)
+      if checkedNodes[n] == nil then
+        checkedNodes[n] = true
+        if nodeAccepted(n, t, is) then
+          node.params.colorA = 1
+          node.params.size = node.params.size * 2
+        else
+          node.params.colorA = 0.1
+        end
+      end
+      incidences[i] = node
+    end
+    filteredgraph[e] = incidences
+  end
+  graphChangedCallback()
+end
 
-helper.vardump(filterGraph(graph, s))
+local function validQuery(s)
+  return lpeg.match(G, s) ~= nil
+end
+
+local function getGraph()
+  return filteredgraph
+end
+
+return {validQuery = validQuery,
+  filterGraph = filterGraph,
+  getGraph = getGraph}

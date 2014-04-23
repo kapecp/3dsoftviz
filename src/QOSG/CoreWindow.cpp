@@ -718,8 +718,9 @@ void CoreWindow::loadLuaGraph()
     coreGraph->setNodesFreezed(true);
 
     Lua::LuaInterface::getInstance()->getLuaState()->doString("getGraph = test_graph.getGraph");
+    Lua::LuaInterface::getInstance()->getLuaState()->doString("getFullGraph = getGraph");
 
-    Lua::LuaGraphVisualizer *visualizer = new Lua::FullHyperGraphVisualizer(currentGraph);
+    Lua::LuaGraphVisualizer *visualizer = new Lua::HyperGraphVisualizer(currentGraph);
     visualizer->visualize();
 
     if (isPlaying)
@@ -738,6 +739,7 @@ void CoreWindow::updateFromLua()
 void CoreWindow::loadFileTree()
 {
     QString file = QFileDialog::getExistingDirectory(this, "Select lua project folder", ".");
+    if (file == "") return;
     cout << "You selected " << file.toStdString() << std::endl;
     Lua::LuaInterface* lua = Lua::LuaInterface::getInstance();
 
@@ -746,6 +748,7 @@ void CoreWindow::loadFileTree()
     QString createGraph[] = {"filetree_graph", "create_file_graph"};
     lua->callFunction(2, createGraph, path);
     lua->getLuaState()->doString("getGraph = filetree_graph.getGraph");
+    Lua::LuaInterface::getInstance()->getLuaState()->doString("getFullGraph = getGraph");
 
     Data::Graph *currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
 
@@ -756,7 +759,7 @@ void CoreWindow::loadFileTree()
     layout->pause();
     coreGraph->setNodesFreezed(true);
 
-    Lua::LuaGraphVisualizer *visualizer = new Lua::HyperGraphVisualizer(currentGraph);
+    Lua::LuaGraphVisualizer *visualizer = new Lua::SimpleGraphVisualizer(currentGraph);
     visualizer->visualize();
 
     if (isPlaying)
@@ -769,6 +772,7 @@ void CoreWindow::loadFileTree()
 void CoreWindow::loadFunctionCall()
 {
     QString file = QFileDialog::getExistingDirectory(this, "Select lua project folder", ".");
+    if (file == "") return;
     cout << "You selected " << file.toStdString() << std::endl;
     Lua::LuaInterface* lua = Lua::LuaInterface::getInstance();
 
@@ -777,6 +781,7 @@ void CoreWindow::loadFunctionCall()
     QString createGraph[] = {"function_call_graph", "extractGraph"};
     lua->callFunction(2, createGraph, path);
     lua->getLuaState()->doString("getGraph = function_call_graph.getGraph");
+    Lua::LuaInterface::getInstance()->getLuaState()->doString("getFullGraph = getGraph");
 
     Data::Graph *currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
 
@@ -800,7 +805,22 @@ void CoreWindow::loadFunctionCall()
 
 void CoreWindow::filterGraph()
 {
-    std::cout << "return pressed in filter" << std::endl;
+    string queryText = filterEdit->text().trimmed().toStdString();
+
+    Lua::LuaInterface * lua = Lua::LuaInterface::getInstance();
+
+    Diluculum::LuaValueList query;
+    query.push_back(queryText);
+    QString validQuery[] = {"logical_filter", "validQuery"};
+    if (lua->callFunction(2, validQuery, query)[0] == true){
+        std::cout << "valid query" << std::endl;
+        lua->getLuaState()->doString("getGraph = logical_filter.getGraph");
+        QString filterGraph[] = {"logical_filter", "filterGraph"};
+        lua->callFunction(2, filterGraph, query);
+    } else {
+        std::cout << "invalid query" << std::endl;
+    }
+
 }
 
 void CoreWindow::noSelectClicked(bool checked)

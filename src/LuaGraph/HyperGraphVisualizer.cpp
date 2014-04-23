@@ -50,7 +50,18 @@ void Lua::HyperGraphVisualizer::visualize()
 
 void Lua::HyperGraphVisualizer::onUpdate()
 {
-    std::cout << "Graph update called" << std::endl;
+    std::cout << "HyperGraph update called" << std::endl;
+    Lua::LuaGraph *g = Lua::LuaGraph::loadGraph();
+
+    for (QMap<qlonglong, Lua::LuaNode *>::iterator i = g->getNodes()->begin(); i != g->getNodes()->end(); ++i){
+        osg::ref_ptr<Data::Node> n = currentGraph->getNodes()->value(i.key());
+        setNodeParams(n, i.value(), osg::Vec4f(1,1,1,1), 8);
+    }
+
+    for (QMap<qlonglong, Lua::LuaEdge *>::iterator i = g->getEdges()->begin(); i != g->getEdges()->end(); ++i){
+        osg::ref_ptr<Data::Node> n = currentGraph->getNodes()->value(i.key());
+        setNodeParams(n, i.value(), osg::Vec4f(1,1,1,1), 8);
+    }
 }
 
 
