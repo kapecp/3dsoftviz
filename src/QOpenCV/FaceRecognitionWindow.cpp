@@ -8,6 +8,8 @@
 #include <QtGui/QStackedLayout>
 #include "OpenCV/CamSelectCore.h"
 
+#include "Util/ApplicationConfig.h"
+
 
 
 using namespace QOpenCV;
@@ -97,7 +99,10 @@ void QOpenCV::FaceRecognitionWindow::configureWindow()
 	markerPageLayout->addWidget( mMarkerStartCancelPB );
 
 
-
+	if(Util::ApplicationConfig::get()->getValue("Viewer.SkyBox.Noise").toInt() < 2)
+	{
+		mMarkerBackgrCB->setDisabled(true);
+	}
 
 
 	// set layout
@@ -201,8 +206,12 @@ void QOpenCV::FaceRecognitionWindow::onFaceRecStartCancel( bool checked )
 		emit setCapVideoFaceRec( OpenCV::CamSelectCore::getInstance()->selectCamera());
 		emit startFaceRec();
 		mFaceRecStartCancelPB->setEnabled(true);
-		mFaceDetBackgrCB->setEnabled(true);
 
+		if(Util::ApplicationConfig::get()->getValue("Viewer.SkyBox.Noise").toInt() >1)
+		{
+			mFaceDetBackgrCB->setEnabled(true);
+
+		}
 	} else {
 		mFaceRecStartCancelPB->setEnabled(false);
 		mFaceDetBackgrCB->setEnabled(false);
@@ -221,8 +230,11 @@ void QOpenCV::FaceRecognitionWindow::onMarkerStartCancel( bool checked )
 		emit setCapVideoMarker( OpenCV::CamSelectCore::getInstance()->selectCamera());
 		emit startMarker();
 		mMarkerStartCancelPB->setEnabled(true);
-		mMarkerBackgrCB->setEnabled(true);
 
+		if(Util::ApplicationConfig::get()->getValue("Viewer.SkyBox.Noise").toInt() >1)
+		{
+			mMarkerBackgrCB->setEnabled(true);
+		}
 	} else {
 		mMarkerStartCancelPB->setEnabled(false);
 		mMarkerBehindCB->setEnabled(false);

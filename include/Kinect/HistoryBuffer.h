@@ -8,6 +8,8 @@
 #ifndef _HISTORY_BUFFER_H_
 #define _HISTORY_BUFFER_H_
 
+#include "NiTE.h"
+
 template <int BufferSize>
 class HistoryBuffer
 {

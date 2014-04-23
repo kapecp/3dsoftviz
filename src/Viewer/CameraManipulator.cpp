@@ -1199,7 +1199,15 @@ void Vwr::CameraManipulator::updateArucoGraphPosition( osg::Vec3d pos ){
 
 void Vwr::CameraManipulator::setCameraCanRot( bool cameraCanRot)
 {
-	_cameraCanRot = cameraCanRot;
+	//if SKYBOX 2 disable camera rotation
+	if(appConf->getValue("Viewer.SkyBox.Noise").toInt() != 2 )
+	{
+		_cameraCanRot = cameraCanRot;
+	}
+	else
+	{
+		_cameraCanRot=false;
+	}
 }
 
 #pragma GCC diagnostic pop
