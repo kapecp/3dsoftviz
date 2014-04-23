@@ -14,6 +14,10 @@
 Q_DECLARE_METATYPE( osg::Vec3d )
 Q_DECLARE_METATYPE( osg::Quat )
 
+namespace ArucoModul {
+class ArucoCore;
+}
+
 namespace OpenCV{
 class CapVideo;
 }
@@ -68,9 +72,9 @@ signals:
 	* @param image emited image matrix
 	*/
 	//void pushImage( cv::Mat image );
-	void pushImage( QImage qimage );
+	void pushImage( QImage qimage ) const;
 
-	void pushBackgrImage( cv::Mat image );
+	void pushBackgrImage( cv::Mat image ) const;
 
 	/**
 	* @author Dávid Durčák
@@ -138,6 +142,12 @@ private:
 
 	/**
 	* @author Dávid Durčák
+	* @brief imagesSending Pripare images for sending and emiting them
+	*/
+	void imagesSending(ArucoCore &aCore) const;
+
+	/**
+	* @author Dávid Durčák
 	* @brief computeCorQuatAndPos Compute correction corP translation vector and corQ rotation quaternion, that are used later in correctQuatAndPost method.
 	* @param position[3] array that describe position of marker by vector (x,y,z)
 	* @param quaternion[4] array that describe orientation of marker by quaternion (w,x,y,z)
@@ -188,8 +198,8 @@ private:
 	bool		mUpdCorPar;			// if true, correction can be setted
 	bool		mSendImgEnabled;	// if true, of emiting actual frame is enabled
 	bool		mSendBackgrImgEnabled;
-	int			mGrM;				// number of marker for graph controll
-	int			mMoM;				// number of marker for mouse controll
+	unsigned int	mGrM;				// number of marker for graph controll
+	unsigned int	mMoM;				// number of marker for mouse controll
 
 
 	QMatrix4x4	mCorM;				// correction matrix

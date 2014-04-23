@@ -71,7 +71,7 @@ void ArucoThread::setCapVideo( OpenCV::CapVideo *capVideo){
 
 void ArucoThread::interchangeMarkers()
 {
-	int aux = mGrM;
+	unsigned int aux = mGrM;
 	mGrM	= mMoM;
 	mMoM	= aux;
 }
@@ -184,19 +184,7 @@ void ArucoThread::run()
 				}
 			}
 
-			cv::Mat image = aCore.getDetImage();
-
-			cv::cvtColor( image, image, CV_BGR2RGB );
-			if ( mSendImgEnabled ) {
-
-				QImage qimage ( (uchar*) image.data, image.cols, image.rows,(int) image.step, QImage::Format_RGB888);
-
-				emit pushImage( qimage );	// emit image with marked marker for debuging
-			}
-
-			if( mSendBackgrImgEnabled ){
-				emit pushBackgrImage( image.clone() );
-			}
+			imagesSending(aCore);
 
 			if(! mCancel){
 				msleep(50);
@@ -209,7 +197,23 @@ void ArucoThread::run()
 	mCapVideo = NULL;
 }
 
+void ArucoThread::imagesSending(ArucoCore &aCore) const
+{
+	cv::Mat image = aCore.getDetImage();
 
+	cv::cvtColor( image, image, CV_BGR2RGB );
+	if ( mSendImgEnabled ) {
+
+		QImage qimage ( (uchar*) image.data, image.cols, image.rows,(int) image.step, QImage::Format_RGB888);
+
+		emit pushImage( qimage );	// emit image with marked marker for debuging
+	}
+
+	if( mSendBackgrImgEnabled ){
+		emit pushBackgrImage( image.clone() );
+	}
+
+}
 
 void ArucoThread::computeCorQuatAndPos(const double position[3], const double rotation[4] ){
 	qDebug() << "ARUCO: comput cor par done>";

@@ -64,7 +64,7 @@ public:
 			 * @param quaternion[4] output array that will describe orientation of marker by quaternion (w,x,y,z)
 			 * @param[out] true if least markerNum of markers were found
 			 */
-		bool getPosAndQuat(int markerNum, double position[3], double quaternion[4]);
+		bool getPosAndQuat(unsigned int markerNum, double position[3], double quaternion[4]);
 
 	/**
 		 * @author Autor:Dávid Durčák

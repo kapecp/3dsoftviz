@@ -74,7 +74,7 @@ int ArucoCore::detect(cv::Mat inputImage)
 	return mMarkers.size();
 }
 
-bool ArucoCore::getPosAndQuat(int markerNum, double position[3], double quaternion[4])
+bool ArucoCore::getPosAndQuat(unsigned int markerNum, double position[3], double quaternion[4])
 {
 	// markerNum is counted from 0
 	if( mMarkers.size() > markerNum){
