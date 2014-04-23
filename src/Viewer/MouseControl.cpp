@@ -5,7 +5,8 @@
 
 Vwr::MouseControl::MouseControl()
 {
-	viewer=AppCore::Core::getInstance()->getCoreWindow()->GetViewerQt();
+	window = AppCore::Core::getInstance()->getCoreWindow();
+	viewer = AppCore::Core::getInstance()->getCoreWindow()->GetViewerQt();
 	if(viewer!=NULL)
 	{
 		mWindowStartX=viewer->pos().x();
@@ -26,6 +27,32 @@ Vwr::MouseControl::MouseControl()
 	{
 		qDebug() << "[MouseControl] viewer is not open";
 	}
+}
+
+Vwr::MouseControl::~MouseControl()
+{
+}
+
+void Vwr::MouseControl::moveMouseAruco(double positionX,double positionY,bool isClick, Qt::MouseButton button )
+{
+	qDebug() << positionX << "  " << positionY << "         " << isClick;
+
+	int wieverX, wieverY;
+	int windowX, windowY;
+	int screenX, screenY;
+
+	wieverX = positionX * viewer->width();
+	wieverY = positionY * viewer->height();
+	windowX = positionX * viewer->width()  + viewer->x();
+	windowY = positionX * viewer->height() + viewer->y();
+	screenX = positionX * viewer->width()  + viewer->x() + window->x();
+	screenY = positionX * viewer->height() + viewer->y() + window->y();
+
+
+	qDebug() << wieverX << "  " << wieverY;
+	qDebug() << windowX << "  " << windowY;
+	qDebug() << screenX << "  " << screenY;
+
 }
 
 void Vwr::MouseControl::moveMouse(float positionX, float positionY)
