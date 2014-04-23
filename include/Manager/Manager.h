@@ -174,7 +174,15 @@ public:
 	*  \brief active graph
 	*/
 	Data::Graph *activeGraph;
+
+	/**
+	 * @brief if no database connection find, set to true
+	 */
+	bool noDatabaseFind;
+
 	};
+
+
 
 }
 

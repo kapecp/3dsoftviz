@@ -38,6 +38,7 @@ Manager::GraphManager::GraphManager()
 	//konfiguracia/vytvorenie DB
 	this->activeGraph = NULL;
 	this->db = new Model::DB();
+	noDatabaseFind=false;
 }
 
 Manager::GraphManager::~GraphManager()
@@ -176,13 +177,13 @@ void Manager::GraphManager::saveActiveGraphToDB()
 	}
 
 	// test ci graf je uz v DB
-	if( this->getActiveGraph()->isInDB() ) {
+	if( !noDatabaseFind &&  this->getActiveGraph()->isInDB() ) {
 		qDebug() << "[Manager::GraphManager::saveActiveGraphToDB] Graph is in DB allready";
 		return;
 	}
 
 	// ulozenie grafu to do databazy
-	if( db->tmpGetConn() != NULL  &&  db->tmpGetConn()->open() ) {
+	if(!noDatabaseFind && db->tmpGetConn() != NULL  &&  db->tmpGetConn()->open() ) {
 
 		// vytvorenie prazdneho grafu v databaze
 		Model::GraphDAO::addGraph(this->getActiveGraph(), this->db->tmpGetConn());
@@ -199,6 +200,7 @@ void Manager::GraphManager::saveActiveGraphToDB()
 
 	} else {
 		qDebug() << "[Manager::GraphManager::saveActiveGraphToDB] Connection to DB not opened";
+		noDatabaseFind=true;
 	}
 
 }
@@ -211,7 +213,7 @@ void Manager::GraphManager::saveActiveLayoutToDB(const QString layoutName)
 		return;
 	}
 
-	if( db->tmpGetConn() != NULL  &&  db->tmpGetConn()->open()) {
+	if(!noDatabaseFind &&  db->tmpGetConn() != NULL  &&  db->tmpGetConn()->open()) {
 
 		// ulozenie grafu do DB ak este nie je
 		if( this->getActiveGraph()->isInDB() == false ) {
@@ -225,6 +227,7 @@ void Manager::GraphManager::saveActiveLayoutToDB(const QString layoutName)
 
 	} else {
 		qDebug() << "[Manager::GraphManager::saveActiveLayoutToDB()] Connection to DB not opened";
+		noDatabaseFind=true;
 	}
 
 
