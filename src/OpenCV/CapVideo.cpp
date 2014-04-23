@@ -67,8 +67,10 @@ cv::Mat OpenCV::CapVideo::queryFrame()
 
 cv::Mat CapVideo::getGrayframe()
 {
-	cvtColor( this->frame, this->grayframe, CV_BGR2GRAY);
-	return this->grayframe;
+	if(!frame.empty())
+	{
+		cvtColor( this->frame, this->grayframe, CV_BGR2GRAY);
+	}return this->grayframe;
 }
 
 cv::Mat CapVideo::getFrame()
