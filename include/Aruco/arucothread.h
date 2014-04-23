@@ -14,6 +14,10 @@
 Q_DECLARE_METATYPE( osg::Vec3d )
 Q_DECLARE_METATYPE( osg::Quat )
 
+namespace Vwr {
+class MouseControl;
+}
+
 namespace ArucoModul {
 class ArucoCore;
 }
@@ -222,8 +226,11 @@ private:
 	osg::Quat	mCorQ;				// correction quaternion
 	osg::Vec3d	mCorP;				// correction vector
 	double		mRatioCamCoef;		// correct aruco ration not centering y-axis
+	double		mCamDistRatio;
+	double		mHalfRatioCoef;
 
 	OpenCV::CapVideo	*mCapVideo; // Cap video instanc, that managed camera and provides frames
+	Vwr::MouseControl	*mMouse;
 
 
 	};

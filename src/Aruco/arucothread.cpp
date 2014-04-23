@@ -4,6 +4,7 @@
 #include <QDebug>
 
 #include "OpenCV/CapVideo.h"
+#include "Viewer/MouseControl.h"
 
 using namespace ArucoModul;
 
@@ -19,9 +20,10 @@ ArucoThread::ArucoThread(QObject *parent)
 	mSendImgEnabled	= true;
 	mSendBackgrImgEnabled = false;
 	mRatioCamCoef	= 0;
-	mGrM			= 0;
-	mMoM			= 1;
+	mGrM			= 1;
+	mMoM			= 0;
 
+	mMouse			= new Vwr::MouseControl();
 
 	qRegisterMetaType< osg::Vec3d >("osgVec3d");
 	qRegisterMetaType< osg::Quat >("osgQuat");
@@ -29,6 +31,7 @@ ArucoThread::ArucoThread(QObject *parent)
 
 ArucoThread::~ArucoThread(void)
 {
+	delete mMouse;
 }
 
 void ArucoThread::setCancel(bool set)
@@ -87,8 +90,9 @@ void ArucoThread::run()
 	}
 	const double width  = mCapVideo->getWidth();
 	const double height = mCapVideo->getHeight();
-	const double camDistRatio  = Util::ApplicationConfig::get()->getValue("Aruco.CamDistancRatio").toDouble();
-	mRatioCamCoef = ( 1 - height/width ) / camDistRatio;
+	mCamDistRatio  = Util::ApplicationConfig::get()->getValue("Aruco.CamDistancRatio").toDouble();
+	mRatioCamCoef  = ( 1 - height/width ) / mCamDistRatio;
+	mHalfRatioCoef = 0.5 + width / (2*height);
 
 
 	double		 actPosArray[3];			// x, y, z
@@ -189,18 +193,27 @@ void ArucoThread::graphControlling(const double actPosArray[3], const double act
 
 void ArucoThread::mouseControlling(const double actPosArray[3], const double actQuatArray[4])
 {
-	osg::Vec3d actPos(  -actPosArray[0], -actPosArray[1], -actPosArray[2] );
-	osg::Quat  actQuat(  actQuatArray[1], -actQuatArray[3],  actQuatArray[2],  actQuatArray[0] );
-	osg::Vec4d acQuat(  actQuatArray[1], -actQuatArray[3],  actQuatArray[2],  actQuatArray[0] );
+	osg::Vec3d actPos(  -actPosArray[0], -actPosArray[1] * mHalfRatioCoef, -actPosArray[2] );
 
-	// correct Y centering, because of camerra different ration aruco top max y value is less than bottom one
-	actPos.y() = ( mRatioCamCoef * actPos.z()  + actPos.y() );
-	if ( mCorEnabled ) {
-		correctQuatAndPos( actPos, actQuat);
-	}
+	//printVec(actPos, "pos0  ");
 
-	printVec(actPos, "pos  ");
-	printVec(acQuat, "quat ");
+	// normalizin from [0,0] in top left corner to [1,1] in roght bottom corner
+	double absZ		= actPosArray[2]  < 0.0 ? - actPosArray[2]	:  actPosArray[2];		// distance of marker
+	double halfSize = absZ / mCamDistRatio;
+
+	double normX = (halfSize + actPos.x()) / (halfSize*2);							// horizontal
+	double normY = (halfSize + actPos.y()) / (halfSize*2);		// vertical
+
+	if(normX < 0.0) normX = 0.0;
+	if(normX > 1.0) normX = 1.0;
+	if(normY < 0.0) normY = 0.0;
+	if(normY > 1.0) normY = 1.0;
+	//qDebug() << normX << "  " << normY;
+
+
+	qDebug() << (actQuatArray[3] < 0.0);
+	mMouse->moveMouseAruco( normX, normY, actQuatArray[3] <= 0.0, Qt::LeftButton);
+
 }
 
 void ArucoThread::imagesSending(ArucoCore &aCore) const
