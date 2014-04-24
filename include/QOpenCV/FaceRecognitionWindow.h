@@ -65,6 +65,13 @@ public:
 		 */
 	QPushButton	*getUpdateCorParPB() const;
 
+	/**
+		 * @author Autor: David Durcak
+		 * @brief getInterchangeMarkersCB Return mInterchangeMarkersCB
+		 * @return QCheckBox*
+		 */
+	QPushButton	*getInterchangeMarkersPB() const;
+
 
 signals:
 	/**
@@ -209,6 +216,7 @@ private:
 	QCheckBox		*mMarkerBehindCB;
 	QCheckBox		*mCorEnabledCB;
 	QPushButton		*mUpdateCorParPB;
+	QPushButton		*mInterchangeMarkersPB;
 
 	};
 }

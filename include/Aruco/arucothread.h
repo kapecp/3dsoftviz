@@ -14,6 +14,14 @@
 Q_DECLARE_METATYPE( osg::Vec3d )
 Q_DECLARE_METATYPE( osg::Quat )
 
+namespace Vwr {
+class MouseControl;
+}
+
+namespace ArucoModul {
+class ArucoCore;
+}
+
 namespace OpenCV{
 class CapVideo;
 }
@@ -38,7 +46,6 @@ public:
 	*@author Dávid Durčák
 	*/
 	void run();
-
 
 signals:
 	/**
@@ -68,9 +75,9 @@ signals:
 	* @param image emited image matrix
 	*/
 	//void pushImage( cv::Mat image );
-	void pushImage( QImage qimage );
+	void pushImage( QImage qimage ) const;
 
-	void pushBackgrImage( cv::Mat image );
+	void pushBackgrImage( cv::Mat image ) const;
 
 	/**
 	* @author Dávid Durčák
@@ -118,7 +125,6 @@ public slots:
 	/**
 	* @author Dávid Durčák
 	* @brief updateCorectionPar Set mUpdCorPar tu true what will cause calling computeCorQuatAndPos for updating correction parameters, and emit corParUpdated signal if succesed
-	* @param sendImgEnabled
 	*/
 	void updateCorectionPar();
 
@@ -129,7 +135,35 @@ public slots:
 	*/
 	void setCapVideo( OpenCV::CapVideo *capVideo);
 
+	/**
+	* @author Dávid Durčák
+	* @brief interchangeMarkers Interchange markers for Graph and Mouse controll
+	*/
+	void interchangeMarkers();
+
 private:
+
+	/**
+	* @author Dávid Durčák
+	* @brief graphControlling method that process info about marker to controlling graph
+	* @param actPosArray[3] const array that describe position of marker by vector (x,y,z)
+	* @param actQuatArray[4] const array that describe orientation of marker by quaternion (w,x,y,z)
+	*/
+	void graphControlling(const double actPosArray[3], const double actQuatArray[4]);
+
+	/**
+	* @author Dávid Durčák
+	* @brief mouseControlling method that process info about marker to controlling mouse
+	* @param actPosArray[3] const array that describe position of marker by vector (x,y,z)
+	* @param actQuatArray[4] const array that describe orientation of marker by quaternion (w,x,y,z)
+	*/
+	void mouseControlling(const double actPosArray[3], const double actQuatArray[4]);
+
+	/**
+	* @author Dávid Durčák
+	* @brief imagesSending Pripare images for sending and emiting them
+	*/
+	void imagesSending(ArucoCore &aCore) const;
 
 	/**
 	* @author Dávid Durčák
@@ -183,13 +217,19 @@ private:
 	bool		mUpdCorPar;			// if true, correction can be setted
 	bool		mSendImgEnabled;	// if true, of emiting actual frame is enabled
 	bool		mSendBackgrImgEnabled;
+	unsigned int	mGrM;				// number of marker for graph controll
+	unsigned int	mMoM;				// number of marker for mouse controll
+
 
 	QMatrix4x4	mCorM;				// correction matrix
 	osg::Quat	mCorQ;				// correction quaternion
 	osg::Vec3d	mCorP;				// correction vector
 	double		mRatioCamCoef;		// correct aruco ration not centering y-axis
+	double		mCamDistRatio;
+	double		mHalfRatioCoef;
 
 	OpenCV::CapVideo	*mCapVideo; // Cap video instanc, that managed camera and provides frames
+	Vwr::MouseControl	*mMouse;
 
 
 	};

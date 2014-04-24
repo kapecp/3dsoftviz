@@ -1,11 +1,12 @@
-#include "Kinect/MouseControl.h"
+#include "Viewer/MouseControl.h"
 #include "Core/Core.h"
 
 #include  "QDebug"
 
-Kinect::MouseControl::MouseControl()
+Vwr::MouseControl::MouseControl()
 {
-	viewer=AppCore::Core::getInstance()->getCoreWindow()->GetViewerQt();
+	window = AppCore::Core::getInstance()->getCoreWindow();
+	viewer = AppCore::Core::getInstance()->getCoreWindow()->GetViewerQt();
 	if(viewer!=NULL)
 	{
 		mWindowStartX=viewer->pos().x();
@@ -26,15 +27,54 @@ Kinect::MouseControl::MouseControl()
 	{
 		qDebug() << "[MouseControl] viewer is not open";
 	}
+
+	mIsClicAruco = false;
 }
 
-void Kinect::MouseControl::moveMouse(float positionX, float positionY)
+Vwr::MouseControl::~MouseControl()
+{
+}
+
+void Vwr::MouseControl::moveMouseAruco(double positionX,double positionY,bool isClick, Qt::MouseButton button )
+{
+	qDebug() << positionX << "  " << positionY << "         " << isClick;
+
+	int wieverX = positionX * viewer->width();
+	int wieverY = positionY * viewer->height();
+	int windowX = positionX * viewer->width()  + viewer->x() + 8;
+	int windowY = positionY * viewer->height() + viewer->y() + 28;
+	int screenX = positionX * viewer->width()  + viewer->x() + window->x() + 8;
+	int screenY = positionY * viewer->height() + viewer->y() + window->y() + 28;
+
+
+	viewer->cursor().setPos(screenX, screenY);
+
+
+	wieverY = viewer->height() - wieverY;
+
+	if( isClick != mIsClicAruco){
+		mIsClicAruco = isClick;
+
+		if(isClick) {
+			viewer->getEventQueue()->mouseButtonPress(wieverX, wieverY,button);
+			viewer->getEventQueue()->mouseMotion(wieverX, wieverY);
+		} else {
+			viewer->getEventQueue()->mouseButtonRelease(wieverX, wieverY, button);
+			return;
+		}
+	}
+	viewer->getEventQueue()->mouseMotion(wieverX, wieverY);
+
+
+}
+
+void Vwr::MouseControl::moveMouse(float positionX, float positionY)
 {
 	// add event to Event Queue - osgGa eventy
 	viewer->getEventQueue()->mouseMotion(positionX,positionY);
 }
 
-void Kinect::MouseControl::clickPressMouse(Qt::MouseButton button)
+void Vwr::MouseControl::clickPressMouse(Qt::MouseButton button)
 {
 	//corection of cursor position for VieverQT
 	this->corectionMousePosition(viewer->cursor().pos().x(),viewer->cursor().pos().y());
@@ -44,13 +84,13 @@ void Kinect::MouseControl::clickPressMouse(Qt::MouseButton button)
 	this->moveMouse(clickX,clickY);
 }
 
-void Kinect::MouseControl::clickPressMouse(float positionX,float positionY,Qt::MouseButton button)
+void Vwr::MouseControl::clickPressMouse(float positionX,float positionY,Qt::MouseButton button)
 {
 	viewer->getEventQueue()->mouseButtonPress(positionX,positionY,button);
 	this->moveMouse(positionX,positionY);
 }
 
-void Kinect::MouseControl::releasePressMouse(Qt::MouseButton button)
+void Vwr::MouseControl::releasePressMouse(Qt::MouseButton button)
 {
 	//corection of position
 	this->corectionMousePosition(viewer->cursor().pos().x(),viewer->cursor().pos().y());
@@ -58,19 +98,19 @@ void Kinect::MouseControl::releasePressMouse(Qt::MouseButton button)
 	viewer->getEventQueue()->mouseButtonRelease(clickX,clickY,button);
 }
 
-void Kinect::MouseControl::releasePressMouse(float positionX, float positionY, Qt::MouseButton button)
+void Vwr::MouseControl::releasePressMouse(float positionX, float positionY, Qt::MouseButton button)
 {
 	viewer->getEventQueue()->mouseButtonRelease(positionX,positionY,button);
 }
 
-void Kinect::MouseControl::clickMouseLeftButton()
+void Vwr::MouseControl::clickMouseLeftButton()
 {
 	this->clickPressMouse(Qt::LeftButton);
 	this->moveMouse(clickX,clickY);
 	this->releasePressMouse(Qt::LeftButton);
 }
 
-void Kinect::MouseControl::corectionMousePosition(int positionX, int positionY)
+void Vwr::MouseControl::corectionMousePosition(int positionX, int positionY)
 {
 	// VieverQT is shiffted from start X,Y
 	clickX=(float)(positionX-mWindowStartX);
@@ -79,7 +119,7 @@ void Kinect::MouseControl::corectionMousePosition(int positionX, int positionY)
 }
 
 
-void Kinect::MouseControl::moveCursorMouse(double positionX, double positionY, bool isClick)
+void Vwr::MouseControl::moveCursorMouse(double positionX, double positionY, bool isClick)
 {
 	double curentCursorX=(double)viewer->cursor().pos().x();
 	double curentCursorY=(double)viewer->cursor().pos().y();
@@ -118,7 +158,7 @@ void Kinect::MouseControl::moveCursorMouse(double positionX, double positionY, b
 }
 
 
-void Kinect::MouseControl::moveCursorWorldCoordinates(double positionX, double positionY, bool isClick)
+void Vwr::MouseControl::moveCursorWorldCoordinates(double positionX, double positionY, bool isClick)
 {
 	int newPositionX=positionX*mRatioX*mSpeedMoving;
 	int newPositionY=positionY*mRatioY*mSpeedMoving;
@@ -131,7 +171,7 @@ void Kinect::MouseControl::moveCursorWorldCoordinates(double positionX, double p
 
 }
 
-void Kinect::MouseControl::setSpeedUpMoving(double speed)
+void Vwr::MouseControl::setSpeedUpMoving(double speed)
 {
 	mSpeedMoving=speed;
 }

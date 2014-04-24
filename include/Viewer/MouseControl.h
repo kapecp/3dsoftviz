@@ -6,9 +6,10 @@
 namespace QOSG
 {
 class ViewerQT;
+class CoreWindow;
 }
 
-namespace Kinect
+namespace Vwr
 {
 
 /**
@@ -85,6 +86,8 @@ public:
 	 */
 	void setSpeedUpMoving(double speed);
 
+	void moveMouseAruco(double positionX,double positionY,bool isClick, Qt::MouseButton button );
+
 private:
 
 	/**
@@ -94,7 +97,8 @@ private:
 	 */
 	void corectionMousePosition(int positionX,int positionY);
 
-	QOSG::ViewerQT *viewer;
+	QOSG::ViewerQT		*viewer;
+	QOSG::CoreWindow	*window;
 
 	double mSpeedMoving;
 	double mRatioX;
@@ -109,6 +113,8 @@ private:
 
 	float clickX;
 	float clickY;
+
+	bool mIsClicAruco;
 
 };
 }
