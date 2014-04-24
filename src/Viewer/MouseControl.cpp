@@ -43,15 +43,30 @@ void Vwr::MouseControl::moveMouseAruco(double positionX,double positionY,bool is
 
 	wieverX = positionX * viewer->width();
 	wieverY = positionY * viewer->height();
-	windowX = positionX * viewer->width()  + viewer->x();
-	windowY = positionX * viewer->height() + viewer->y();
-	screenX = positionX * viewer->width()  + viewer->x() + window->x();
-	screenY = positionX * viewer->height() + viewer->y() + window->y();
+	windowX = positionX * viewer->width()  + viewer->x() + 8;
+	windowY = positionY * viewer->height() + viewer->y() + 28;
+	screenX = positionX * viewer->width()  + viewer->x() + window->x() + 8;
+	screenY = positionY * viewer->height() + viewer->y() + window->y() + 28;
 
 
 	qDebug() << wieverX << "  " << wieverY;
 	qDebug() << windowX << "  " << windowY;
 	qDebug() << screenX << "  " << screenY;
+
+	//moveCursorMouse( screenX, screenY, false);
+
+	viewer->cursor().setPos(screenX, screenY);
+
+
+	if(isClick) {
+		this->corectionMousePosition(windowX, windowY);
+		viewer->getEventQueue()->mouseButtonPress(clickX,clickY,button);
+		this->moveMouse(clickX,clickY);
+
+	} else {
+		viewer->getEventQueue()->mouseButtonPress(wieverX, wieverY,button);
+		this->moveMouse(wieverX, wieverY);
+	}
 
 }
 
