@@ -71,6 +71,7 @@ private:
 #endif
 public slots:
 
+
 	/**
 				*  \fn public  showOptions
 				*  \brief Show the options of aplication

@@ -196,6 +196,39 @@ bool PickHandler::handleKeyDown( const osgGA::GUIEventAdapter& ea, GUIActionAdap
 		Util::ElementSelector::weightedElementSelector(currentGraph->getNodes(), appConf->getValue("Viewer.PickHandler.AutopickedNodes").toInt(), this);
 	}
 
+	// FULLSCREEN
+	else if(ea.getKey() == 'l' || ea.getKey() == 'L')
+	{
+		bool hideToolbars = appConf->getValue("Viewer.Fullscreen").toInt();
+
+		if( AppCore::Core::getInstance()->getCoreWindow()->isFullScreen()){
+			AppCore::Core::getInstance()->getCoreWindow()->menuBar()->show();
+			AppCore::Core::getInstance()->getCoreWindow()->statusBar()->show();
+			AppCore::Core::getInstance()->getCoreWindow()->showNormal();
+
+			if(hideToolbars){
+				QList<QToolBar *> toolbars = AppCore::Core::getInstance()->getCoreWindow()->findChildren<QToolBar *>();
+				QListIterator<QToolBar *> i(toolbars);
+				while (i.hasNext()){
+					i.next()->show();
+				}
+			}
+		} else {
+			AppCore::Core::getInstance()->getCoreWindow()->menuBar()->hide();
+			AppCore::Core::getInstance()->getCoreWindow()->statusBar()->hide();
+			AppCore::Core::getInstance()->getCoreWindow()->showFullScreen();
+
+			if(hideToolbars){
+				QList<QToolBar *> toolbars = AppCore::Core::getInstance()->getCoreWindow()->findChildren<QToolBar *>();
+				QListIterator<QToolBar *> i(toolbars);
+				while (i.hasNext()){
+					i.next()->hide();
+				}
+			}
+
+		}
+	}
+
 	return false;
 }
 
