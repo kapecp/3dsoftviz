@@ -40,6 +40,11 @@ QPushButton	*QOpenCV::FaceRecognitionWindow::getUpdateCorParPB() const
 	return mUpdateCorParPB;
 }
 
+QPushButton *QOpenCV::FaceRecognitionWindow::getInterchangeMarkersPB() const
+{
+	return mInterchangeMarkersPB;
+}
+
 void QOpenCV::FaceRecognitionWindow::configureWindow()
 {
 	setModal( false );
@@ -59,6 +64,9 @@ void QOpenCV::FaceRecognitionWindow::configureWindow()
 	mMarkerBehindCB			= new QCheckBox( tr("Marker is behind"));
 	mCorEnabledCB			= new QCheckBox( tr("Corection"));
 	mUpdateCorParPB			= new QPushButton( tr("Update cor. param."));
+	mInterchangeMarkersPB	= new QPushButton( tr("Change Markers"));
+
+
 
 	QHBoxLayout *mainLayout		= new QHBoxLayout;
 	QVBoxLayout *buttonLayout	= new QVBoxLayout;
@@ -88,13 +96,15 @@ void QOpenCV::FaceRecognitionWindow::configureWindow()
 	faceRecPageLayout->addWidget( mFaceDetBackgrCB );
 	faceRecPageLayout->addWidget( mFaceRecStartCancelPB );
 
-
+	markerPageLayout->addWidget( mMarkerBackgrCB );
 	markerPageLayout->addWidget( mMarkerBehindCB );
 	markerPageLayout->addWidget( mCorEnabledCB );
 	markerPageLayout->addWidget( mUpdateCorParPB );
+	markerPageLayout->addWidget( mInterchangeMarkersPB );
 
-	markerPageLayout->addWidget( mMarkerBackgrCB );
 	markerPageLayout->addWidget( mMarkerStartCancelPB );
+
+
 
 
 
