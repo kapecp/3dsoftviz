@@ -50,6 +50,24 @@ public:
 
 	/**
 		 * @author Autor:Dávid Durčák
+		 * @brief detect method that encapsule all necessary funtionality for detecting marker on input image
+		 * @param inputImage Image from cammera, where markers should be detected
+		 * @param[out] number of detected markers
+		 */
+	int detect(cv::Mat inputImage);
+
+	/**
+			 * @author Autor:Dávid Durcák
+			 * @brief getPosAndQuat method thad fill position and qauternion vectors with that informations of marker with number markerNum, if least markerNum of markers were found
+			 * @param markerNum  number of marker, that we want position and orientation for. MarkerNum is counted from 0
+			 * @param position[3] output array that will describe positio of marker by vector (x,y,z)
+			 * @param quaternion[4] output array that will describe orientation of marker by quaternion (w,x,y,z)
+			 * @param[out] true if least markerNum of markers were found
+			 */
+		bool getPosAndQuat(unsigned int markerNum, double position[3], double quaternion[4]);
+
+	/**
+		 * @author Autor:Dávid Durčák
 		 * @brief  getDetImage return image with drawed boundaries and 3D cube on detected markers, if any are
 		 */
 	cv::Mat getDetImage();

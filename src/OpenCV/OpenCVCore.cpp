@@ -10,6 +10,7 @@
 #include "OpenCV/CamSelectCore.h"
 #include "OpenCV/CapVideo.h"
 #include "OpenCV/CameraStream.h"
+#include "Viewer/MouseControl.h"
 
 Q_DECLARE_METATYPE(cv::Mat)
 
@@ -204,6 +205,11 @@ void OpenCVCore::createConnectionAruco(){
 					  mOpencvDialog,
 					  SLOT(onCorParUpdated()) );
 
+	// aruco mouse Controll
+	QObject::connect( mOpencvDialog->getInterchangeMarkersPB(),
+					  SIGNAL(clicked()),
+					  mThrAruco,
+					  SLOT(interchangeMarkers()) );
 
 }
 
