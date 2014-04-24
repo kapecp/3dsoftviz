@@ -39,33 +39,15 @@ void Vwr::MouseControl::moveMouseAruco(double positionX,double positionY,bool is
 {
 	qDebug() << positionX << "  " << positionY << "         " << isClick;
 
-	int wieverX, wieverY;
-	int windowX, windowY;
-	int screenX, screenY;
+	int wieverX = positionX * viewer->width();
+	int wieverY = positionY * viewer->height();
+	int windowX = positionX * viewer->width()  + viewer->x() + 8;
+	int windowY = positionY * viewer->height() + viewer->y() + 28;
+	int screenX = positionX * viewer->width()  + viewer->x() + window->x() + 8;
+	int screenY = positionY * viewer->height() + viewer->y() + window->y() + 28;
 
-	wieverX = positionX * viewer->width();
-	wieverY = positionY * viewer->height();
-	windowX = positionX * viewer->width()  + viewer->x() + 8;
-	windowY = positionY * viewer->height() + viewer->y() + 28;
-	screenX = positionX * viewer->width()  + viewer->x() + window->x() + 8;
-	screenY = positionY * viewer->height() + viewer->y() + window->y() + 28;
-
-	qDebug() << "";
-	//qDebug() << wieverX << "  " << wieverY;
-	//qDebug() << windowX << "  " << windowY;
-	//qDebug() << screenX << "  " << screenY;
-
-	//moveCursorMouse( screenX, screenY, false);
-
-
-	button = Qt::LeftButton;
-	//button = Qt::RightButton;
-	//button = Qt::MiddleButton;
 
 	viewer->cursor().setPos(screenX, screenY);
-
-	//wieverY = viewer->height() - wieverY;
-	//qDebug() << wieverY;
 
 
 	wieverY = viewer->height() - wieverY;
@@ -78,11 +60,9 @@ void Vwr::MouseControl::moveMouseAruco(double positionX,double positionY,bool is
 			viewer->getEventQueue()->mouseMotion(wieverX, wieverY);
 		} else {
 			viewer->getEventQueue()->mouseButtonRelease(wieverX, wieverY, button);
-			//viewer->getEventQueue()->mouseMotion(wieverX, wiev
 			return;
 		}
 	}
-	//wieverY = viewer->height() - wieverY;
 	viewer->getEventQueue()->mouseMotion(wieverX, wieverY);
 
 

@@ -62,7 +62,7 @@ void QOpenCV::FaceRecognitionWindow::configureWindow()
 	mFaceDetBackgrCB		= new QCheckBox( tr("Background"));
 
 	mMarkerBehindCB			= new QCheckBox( tr("Marker is behind"));
-	mCorEnabledCB			= new QCheckBox( tr("Corection"));
+	mCorEnabledCB			= new QCheckBox( tr("Correction"));
 	mUpdateCorParPB			= new QPushButton( tr("Update cor. param."));
 	mInterchangeMarkersPB	= new QPushButton( tr("Change Markers"));
 

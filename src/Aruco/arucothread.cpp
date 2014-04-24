@@ -212,7 +212,7 @@ void ArucoThread::mouseControlling(const double actPosArray[3], const double act
 
 
 	qDebug() << (actQuatArray[3] < 0.0);
-	mMouse->moveMouseAruco( normX, normY, actQuatArray[3] <= 0.0, Qt::MiddleButton);
+	mMouse->moveMouseAruco( normX, normY, actQuatArray[1] <= 0.0, Qt::LeftButton);
 
 }
 
