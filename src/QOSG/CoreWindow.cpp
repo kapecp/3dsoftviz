@@ -793,7 +793,7 @@ void CoreWindow::loadFunctionCall()
     layout->pause();
     coreGraph->setNodesFreezed(true);
 
-    Lua::LuaGraphVisualizer *visualizer = new Lua::HyperGraphVisualizer(currentGraph);
+    Lua::LuaGraphVisualizer *visualizer = new Lua::SimpleGraphVisualizer(currentGraph);
     visualizer->visualize();
 
     if (isPlaying)
