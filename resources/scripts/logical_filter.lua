@@ -20,9 +20,9 @@ local AndOp = C(P"and")
 local OrOp = C(P"or")
 local Open = "(" * Space
 local Close = ")" * Space
-local QuotString = P'"' * ( (P'\\' * 1) + (1 - (S'"\n\r\f')) )^0 * P'"'
-local AposString = P"'" * ( (P'\\' * 1) + (1 - (S"'\n\r\f")) )^0 * P"'"
-local LiteralString = C(QuotString + AposString)
+local QuotString = P'"' * C(( (P'\\' * 1) + (1 - (S'"\n\r\f')) )^0) * P'"'
+local AposString = P"'" * C(( (P'\\' * 1) + (1 - (S"'\n\r\f")) )^0) * P"'"
+local LiteralString = QuotString + AposString
 local Like = C(P"like")
 
 local Exp, And, Or, Rel, Regex = V"Exp", V"And", V"Or", V"Rel", V"Regex"
@@ -34,13 +34,13 @@ G = lpeg.P{ Exp,
   Regex = Ct(Id * Space * Like * Space * LiteralString)
 }
 
-local function nodeAccepted(node, expTree, edge)
+local function nodeAccepted(node, expTree)
   if expTree[2] == 'or' then
-    return nodeAccepted(node, expTree[1], edge) or nodeAccepted(node, expTree[3], edge)
+    return nodeAccepted(node, expTree[1]) or nodeAccepted(node, expTree[3])
   elseif expTree[2] == 'and' then
-    return nodeAccepted(node, expTree[1], edge) and nodeAccepted(node, expTree[3], edge)
+    return nodeAccepted(node, expTree[1]) and nodeAccepted(node, expTree[3])
   elseif #expTree == 1 then
-    return nodeAccepted(node, expTree[1], edge)
+    return nodeAccepted(node, expTree[1])
   else
     local var = node
     local edgeOps = {["-"] = true, [">"] = true, ["<"] = true}
@@ -55,11 +55,7 @@ local function nodeAccepted(node, expTree, edge)
     local op = expTree[2]
     if op == 'like' then
       local patt = expTree[3] 
-      if patt:sub(2,2) ~= '^' then patt = patt:sub(1,1) .. '^' .. patt:sub(2) end
-      if patt:sub(-2,-2) ~= '$' then patt = patt:sub(1,-2) .. '$' .. patt:sub(-1,-1) end
-      print(patt)
-      local s = loadstring('return ' .. patt)
-      return string.find(var, s()) ~= nil
+      return string.find(var, patt) ~= nil
     else
       local s = 'return ' .. var .. expTree[2] .. expTree[3]
       return loadstring(s)()
@@ -80,7 +76,19 @@ local function copyNode(node)
 end
 
 local filteredgraph = {}
+local invertedgraph = {}
 local checkedNodes = {}
+
+local function getInvertedGraph(g)
+  local result = {}
+  for e, is in pairs(g) do
+    for i, n in pairs(is) do
+      result[n] = result[n] or {}
+      result[n][i] = e
+    end
+  end
+  return result
+end
 
 local function filterGraph(s)
   if getFullGraph == nil then return end
@@ -91,6 +99,7 @@ local function filterGraph(s)
     graphChangedCallback()
     return
   end
+  invertedgraph = getInvertedGraph(g)
   checkedNodes = {}
   local t = lpeg.match(G, s)
   for e, is in pairs(g) do
@@ -98,13 +107,16 @@ local function filterGraph(s)
     for i, n in pairs(is) do
       local node = copyNode(n)
       if checkedNodes[n] == nil then
-        checkedNodes[n] = true
-        if nodeAccepted(n, t, is) then
+        if nodeAccepted(n, t) then
           node.params.colorA = 1
           node.params.size = node.params.size * 2
         else
+          node.label = ''
           node.params.colorA = 0.1
         end
+        checkedNodes[n] = node
+      else
+        node = checkedNodes[n]
       end
       incidences[i] = node
     end

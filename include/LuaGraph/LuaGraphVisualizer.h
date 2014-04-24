@@ -2,6 +2,7 @@
 #define LUAGRAPHVISUALIZER_H
 
 #include "LuaGraph/LuaGraphObserver.h"
+#include "LuaGraph/LuaGraphObject.h"
 #include "Data/Graph.h"
 
 namespace Lua {
