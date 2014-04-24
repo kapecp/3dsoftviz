@@ -114,6 +114,8 @@ private:
 	float clickX;
 	float clickY;
 
+	bool mIsClicAruco;
+
 };
 }
 #endif // MOUSECONTROL_H

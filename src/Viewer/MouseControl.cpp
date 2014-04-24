@@ -27,6 +27,8 @@ Vwr::MouseControl::MouseControl()
 	{
 		qDebug() << "[MouseControl] viewer is not open";
 	}
+
+	mIsClicAruco = false;
 }
 
 Vwr::MouseControl::~MouseControl()
@@ -48,25 +50,41 @@ void Vwr::MouseControl::moveMouseAruco(double positionX,double positionY,bool is
 	screenX = positionX * viewer->width()  + viewer->x() + window->x() + 8;
 	screenY = positionY * viewer->height() + viewer->y() + window->y() + 28;
 
-
-	qDebug() << wieverX << "  " << wieverY;
-	qDebug() << windowX << "  " << windowY;
-	qDebug() << screenX << "  " << screenY;
+	qDebug() << "";
+	//qDebug() << wieverX << "  " << wieverY;
+	//qDebug() << windowX << "  " << windowY;
+	//qDebug() << screenX << "  " << screenY;
 
 	//moveCursorMouse( screenX, screenY, false);
 
+
+	button = Qt::LeftButton;
+	//button = Qt::RightButton;
+	//button = Qt::MiddleButton;
+
 	viewer->cursor().setPos(screenX, screenY);
 
+	//wieverY = viewer->height() - wieverY;
+	//qDebug() << wieverY;
 
-	if(isClick) {
-		this->corectionMousePosition(windowX, windowY);
-		viewer->getEventQueue()->mouseButtonPress(clickX,clickY,button);
-		this->moveMouse(clickX,clickY);
 
-	} else {
-		viewer->getEventQueue()->mouseButtonPress(wieverX, wieverY,button);
-		this->moveMouse(wieverX, wieverY);
+	wieverY = viewer->height() - wieverY;
+
+	if( isClick != mIsClicAruco){
+		mIsClicAruco = isClick;
+
+		if(isClick) {
+			viewer->getEventQueue()->mouseButtonPress(wieverX, wieverY,button);
+			viewer->getEventQueue()->mouseMotion(wieverX, wieverY);
+		} else {
+			viewer->getEventQueue()->mouseButtonRelease(wieverX, wieverY, button);
+			//viewer->getEventQueue()->mouseMotion(wieverX, wiev
+			return;
+		}
 	}
+	//wieverY = viewer->height() - wieverY;
+	viewer->getEventQueue()->mouseMotion(wieverX, wieverY);
+
 
 }
 
