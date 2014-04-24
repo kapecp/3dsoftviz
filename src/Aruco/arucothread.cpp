@@ -193,7 +193,7 @@ void ArucoThread::graphControlling(const double actPosArray[3], const double act
 
 void ArucoThread::mouseControlling(const double actPosArray[3], const double actQuatArray[4])
 {
-	osg::Vec3d actPos(  -actPosArray[0], -actPosArray[1] * mHalfRatioCoef, -actPosArray[2] );
+	osg::Vec3d actPos(  actPosArray[0], -actPosArray[1] * mHalfRatioCoef, -actPosArray[2] );
 
 	//printVec(actPos, "pos0  ");
 

@@ -47,7 +47,6 @@ public:
 	*/
 	void run();
 
-
 signals:
 	/**
 	* @author Dávid Durčák
