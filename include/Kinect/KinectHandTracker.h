@@ -59,7 +59,7 @@ private:
 	bool isClick;
 	bool isCursorMovementEnable;
 
-	MouseControl *mouse;
+	Vwr::MouseControl *mouse;
 	openni::VideoStream  *mDepth;
 
 	openni::CoordinateConverter coordinateConverter;
