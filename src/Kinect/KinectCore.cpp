@@ -8,7 +8,8 @@
 #include "Viewer/CameraManipulator.h"
 
 using namespace Kinect;
-Q_DECLARE_METATYPE(cv::Mat)
+//already in Aruco, been defined
+//Q_DECLARE_METATYPE(cv::Mat)
 
 Kinect::KinectCore * Kinect::KinectCore::mKinectCore;
 
@@ -23,7 +24,7 @@ Kinect::KinectCore::KinectCore( QApplication* app,QWidget *parent)
 	mThrsCreated=false;
 	mThrKinect=NULL;
 
-	qRegisterMetaType<cv::Mat>("Mat");
+	//qRegisterMetaType<cv::Mat>("Mat");
 }
 
 Kinect::KinectCore::~KinectCore()
