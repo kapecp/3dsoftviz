@@ -23,6 +23,8 @@ local function extractGraph(absolutePath)
 
   local nodes = {}
   local rootcandidates = {}
+  local minComplexity, maxComplexity
+  local minLines, maxLines
 
   for _, v in ipairs(extractedGraph.nodes) do
     local origname = v.data.name or v.id
@@ -32,13 +34,28 @@ local function extractGraph(absolutePath)
       rootcandidates[newnode] = true
     else
       local subnodes = {}
-      for _, v1 in ipairs(v.nodes) do
+      for _, v1 in ipairs(v.nodes) do     
         local origname = v1.data.name or v1.id
-        subnodes[v1.id] = {type = "node", id = inc(), label = origname, params={size = 8, colorA = 1, colorR = 0, colorG = 0, colorB = 1, name = v1.name, origid = v1.id, nodetype = "function"}}
+        local newnode = {type = "node", id = inc(), label = origname, params={size = 8, colorA = 1, colorR = 0, colorG = 0, colorB = 1, name = v1.name, origid = v1.id, nodetype = "function"}}
+        if v1.data.metrics ~= nil then
+          newnode.params.metrics = {}
+          newnode.params.metrics.halstead = v1.data.metrics.halstead
+          newnode.params.metrics.cyclomatic = v1.data.metrics.cyclomatic
+          newnode.params.metrics.LOC = v1.data.metrics.LOC
+          newnode.params.metrics.infoflow = v1.data.metrics.infoflow
+
+          minComplexity = (minComplexity and (minComplexity < newnode.params.metrics.cyclomatic.upperBound and minComplexity)) or newnode.params.metrics.cyclomatic.upperBound
+          maxComplexity = (maxComplexity and (maxComplexity > newnode.params.metrics.cyclomatic.upperBound and maxComplexity)) or newnode.params.metrics.cyclomatic.upperBound
+          minLines = (minLines and (minLines < newnode.params.metrics.LOC.lines and minLines)) or newnode.params.metrics.LOC.lines
+          maxLines = (maxLines and (maxLines > newnode.params.metrics.LOC.lines and maxLines)) or newnode.params.metrics.LOC.lines
+        end
+        subnodes[v1.id] = newnode
       end
       nodes[v.id] = {subnodes = subnodes, subedges = v.edges}
     end
   end
+
+  print("complexity", minComplexity, maxComplexity, minLines, maxLines)
 
   local existingedges = {}
 
@@ -58,7 +75,9 @@ local function extractGraph(absolutePath)
       end
       for _, v1 in pairs(nodes[v.to[1]].subedges) do
         if v1.from[1] ~= v1.to[1] then 
-          local ind = v1.from[1] .. "|" .. v1.to[1]
+          if #v1.from ~= 1 then print('from', #v1.from, v1.id, v1.data.name) end 
+          if #v1.to ~= 1 then print('to', #v1.to, v1.id, v1.data.name) end 
+          local ind = (v1.from[1] or '') .. "|" .. v1.to[1]
           if existingedges[ind] ~= nil then
             existingedges[ind].params.count = existingedges[ind].params.count + 1
           else

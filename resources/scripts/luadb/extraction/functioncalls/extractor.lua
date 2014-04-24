@@ -18,6 +18,7 @@ local function extractNodes(AST, graph)
     local newNode = hypergraph.node.new()
     newNode.data.metrics = func.metrics
     newNode.data.name = func.name
+    newNode.data.tag = func.tag
     graph:addNode(newNode)
   end
 end
