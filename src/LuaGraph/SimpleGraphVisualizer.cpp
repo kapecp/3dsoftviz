@@ -5,8 +5,8 @@
 #include "Importer/GraphOperations.h"
 #include "limits"
 
-Lua::SimpleGraphVisualizer::SimpleGraphVisualizer(Data::Graph *graph)
-    : Lua::LuaGraphVisualizer(graph){}
+Lua::SimpleGraphVisualizer::SimpleGraphVisualizer(Data::Graph *graph, osg::ref_ptr<osg::Camera> camera)
+    : Lua::LuaGraphVisualizer(graph, camera){}
 
 void Lua::SimpleGraphVisualizer::visualize()
 {
@@ -24,15 +24,18 @@ void Lua::SimpleGraphVisualizer::visualize()
         LuaIncidence * const incid2 = g->getIncidences()->value(i.value()->getIncidences()[1]);
         osg::ref_ptr<Data::Node> srcNode = currentGraph->getNodes()->value(incid1->getEdgeNodePair().second);
         osg::ref_ptr<Data::Node> dstNode = currentGraph->getNodes()->value(incid2->getEdgeNodePair().second);
+        osg::ref_ptr<Data::Edge> newEdge;
         if (incid1->getOriented()){
             if (incid1->getOutGoing()){
-                currentGraph->addEdge(i.key(), i.value()->getLabel(), dstNode, srcNode, edgeType, true);
+                newEdge = currentGraph->addEdge(i.key(), i.value()->getLabel(), dstNode, srcNode, edgeType, true);
             } else {
-                currentGraph->addEdge(i.key(), i.value()->getLabel(), srcNode, dstNode, edgeType, true);
+                newEdge = currentGraph->addEdge(i.key(), i.value()->getLabel(), srcNode, dstNode, edgeType, true);
             }
         } else {
-            currentGraph->addEdge(i.key(), i.value()->getLabel(), srcNode, dstNode, edgeType, false);
+            newEdge = currentGraph->addEdge(i.key(), i.value()->getLabel(), srcNode, dstNode, edgeType, false);
         }
+        newEdge->setEdgeColor(osg::Vec4f(1,1,1,1));
+        newEdge->setCamera(camera);
     }
     g->setObserver(this);
 

@@ -759,7 +759,7 @@ void CoreWindow::loadFileTree()
     layout->pause();
     coreGraph->setNodesFreezed(true);
 
-    Lua::LuaGraphVisualizer *visualizer = new Lua::SimpleGraphVisualizer(currentGraph);
+    Lua::LuaGraphVisualizer *visualizer = new Lua::SimpleGraphVisualizer(currentGraph, coreGraph->getCamera());
     visualizer->visualize();
 
     if (isPlaying)
@@ -793,9 +793,10 @@ void CoreWindow::loadFunctionCall()
     layout->pause();
     coreGraph->setNodesFreezed(true);
 
-    Lua::LuaGraphVisualizer *visualizer = new Lua::SimpleGraphVisualizer(currentGraph);
+    Lua::LuaGraphVisualizer *visualizer = new Lua::SimpleGraphVisualizer(currentGraph, coreGraph->getCamera());
     visualizer->visualize();
 
+    coreGraph->reloadConfig();
     if (isPlaying)
     {
         layout->play();

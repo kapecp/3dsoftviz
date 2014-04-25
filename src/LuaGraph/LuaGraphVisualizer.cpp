@@ -1,7 +1,8 @@
 #include "LuaGraph/LuaGraphVisualizer.h"
 
-Lua::LuaGraphVisualizer::LuaGraphVisualizer(Data::Graph *graph){
+Lua::LuaGraphVisualizer::LuaGraphVisualizer(Data::Graph *graph, osg::ref_ptr<osg::Camera> camera){
     currentGraph = graph;
+    this->camera = camera;
     Importer::GraphOperations *operations = new Importer::GraphOperations(*currentGraph);
     operations->addDefaultTypes(edgeType, nodeType);
 }

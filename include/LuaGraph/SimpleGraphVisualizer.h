@@ -8,7 +8,7 @@ namespace Lua {
 class SimpleGraphVisualizer : public Lua::LuaGraphVisualizer
 {
 public:
-    SimpleGraphVisualizer(Data::Graph *graph);
+    SimpleGraphVisualizer(Data::Graph *graph, osg::ref_ptr<osg::Camera> camera = 0);
 
     void visualize();
 
