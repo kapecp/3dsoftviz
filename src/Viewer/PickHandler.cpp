@@ -620,7 +620,7 @@ void PickHandler::drawSelectionQuad(float origin_mX, float origin_mY, osgViewer:
 	coordinates->push_back(osg::Vec3(origin_mX, origin_mY, -1));
 	coordinates->push_back(osg::Vec3(origin_mX, origin_mY, -1));
 
-	colors->push_back(osg::Vec4(1,1,1,0.1f));
+	colors->push_back(osg::Vec4(0.2f, 0.2f, 1.0f, 0.3f));  // color of selection restangle
 
 	geometry->setVertexArray(coordinates);
 	geometry->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::QUADS,0,4));
