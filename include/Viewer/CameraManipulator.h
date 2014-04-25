@@ -189,7 +189,8 @@ public slots:
 		 * @param y % distance from middle on vertical axis
 		 * @param distance face from camera
 		 */
-	void setRotationHead(float x, float y, float distance);
+	void setRotationHeadFaceDet(float x, float y, float distance);
+	void setRotationHeadKinect(float x, float y, float distance);
 
 	/**
 		 * @author Autor: David Durcak
@@ -311,6 +312,8 @@ protected:
 		*  \brief another camera rotation according user head
 		*/
 	osg::Quat    _rotationHead;
+	osg::Quat	 _rotHeadFaceDet;
+	osg::Quat	 _rotHeadKinect;
 	osg::Quat    _rotationHorAux;
 	osg::Quat    _rotationVerAux;
 
@@ -441,6 +444,8 @@ protected:
 		*  \param    osgGA::GUIActionAdapter &    action adapter
 		*/
 	void frame(const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter &);
+
+	void setRotationHead(float x, float y, float distance, int caller);
 
 private:
 
