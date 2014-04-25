@@ -84,7 +84,7 @@ void  OpenCVCore::createPermanentConnection(){
 	QObject::connect( mThrFaceRec,
 					  SIGNAL(sendEyesCoords(float,float,float)),
 					  AppCore::Core::getInstance( mApp )->getCoreWindow()->getCameraManipulator(),
-					  SLOT(setRotationHeadFaceDet(float,float,float));
+					  SLOT(setRotationHeadFaceDet(float,float,float)) );
 
 	//  sending result data from aruco
 	QObject::connect( mThrAruco,
