@@ -13,8 +13,8 @@ local Decimal =	(Integer * Fractional^-1) + (S("+-") * Fractional)
 local Scientific = Decimal * S("Ee") * Integer
 local Number = C(Decimal + Scientific)
 local Name = C((locale.alpha + P "_") * (locale.alnum + P "_")^0)
-local EdgeOp = C(S("><-")^-1) * Space
-local Id = Ct(EdgeOp * Name * (P"." * Name)^0)
+local EdgeOp = C(S("><-")) * Space
+local Id = Ct(Ct(EdgeOp^0) * Name * (P"." * Name)^0)
 local RelOp = C(P"==" + P"~=" + P"<=" + P"<" + P">=" + P">")
 local AndOp = C(P"and")
 local OrOp = C(P"or")
@@ -34,7 +34,73 @@ G = lpeg.P{ Exp,
   Regex = Ct(Id * Space * Like * Space * LiteralString)
 }
 
-local function nodeAccepted(node, expTree)
+local nodeAccepted
+local invertedgraph = {}
+local filteredgraph = {}
+local fullGraph = {}
+local checkedNodes = {}
+
+local function deleteFirstEdgeOp(expTree)
+  local newExp = {}
+  local i
+  newExp[1] = {}
+  newExp[2] = expTree[2]
+  newExp[3] = expTree[3]
+  newExp[1][1] = {}
+  for i = 2,#expTree[1][1] do
+    newExp[1][1][i-1] = expTree[1][1][i]
+  end
+  for i = 2,#expTree[1] do
+    newExp[1][i] = expTree[1][i]
+  end
+  return newExp
+end
+
+local function edgeOpLocalCorrect(edgeOp, inc)
+  if edgeOp == '-' then 
+    return true
+  elseif edgeOp == '>' and inc.direction == 'in' then
+    return true
+  elseif edgeOp == '<' and inc.direction == 'out' then
+    return true
+  end 
+  return false 
+end
+
+local function edgeOpRemoteCorrect(edgeOp, inc)
+  if edgeOp == '-' then 
+    return true
+  elseif edgeOp == '<' and inc.direction == 'in' then
+    return true
+  elseif edgeOp == '>' and inc.direction == 'out' then
+    return true
+  end 
+  return false 
+end
+
+local function checkNeighbors(node, expTree)
+  local edgeOp = expTree[1][1][1]
+  local newExp = deleteFirstEdgeOp(expTree)
+  for i1, e in pairs(invertedgraph[node]) do
+    local possible = false
+    for i2, n in pairs(fullGraph[e]) do
+      if node ~= n then
+        if edgeOpRemoteCorrect(edgeOp, i2) and nodeAccepted(n, newExp) then 
+          if possible then return true
+          else possible = true end
+        end
+      else
+        if edgeOpLocalCorrect(edgeOp, i2) then 
+          if possible then return true
+          else possible = true end
+        end
+      end
+    end
+  end
+  return false
+end
+
+function nodeAccepted(node, expTree)
   if expTree[2] == 'or' then
     return nodeAccepted(node, expTree[1]) or nodeAccepted(node, expTree[3])
   elseif expTree[2] == 'and' then
@@ -42,11 +108,10 @@ local function nodeAccepted(node, expTree)
   elseif #expTree == 1 then
     return nodeAccepted(node, expTree[1])
   else
-    local var = node
-    local edgeOps = {["-"] = true, [">"] = true, ["<"] = true}
-    if edgeOps[expTree[1][1]] ~= nil then 
-      print"edge operator"
+    if next(expTree[1][1]) ~= nil then 
+      return checkNeighbors(node, expTree)
     end
+    local var = node
     local i
     for i = 2,#expTree[1] do
       var = var[expTree[1][i]]
@@ -75,10 +140,6 @@ local function copyNode(node)
   return result
 end
 
-local filteredgraph = {}
-local invertedgraph = {}
-local checkedNodes = {}
-
 local function getInvertedGraph(g)
   local result = {}
   for e, is in pairs(g) do
@@ -90,19 +151,36 @@ local function getInvertedGraph(g)
   return result
 end
 
+local function hasEdgeOperator(exp)
+  if exp[2] == 'or' then
+    return hasEdgeOperator(exp[1]) or hasEdgeOperator(exp[3])
+  elseif exp[2] == 'and' then
+    return hasEdgeOperator(exp[1]) or hasEdgeOperator(exp[3])
+  elseif #exp == 1 then
+    return hasEdgeOperator(exp[1])
+  else
+    return next(exp[1][1]) ~= nil
+  end
+end
+
 local function filterGraph(s)
   if getFullGraph == nil then return end
-  local g = getFullGraph()
+  fullGraph = getFullGraph()
   filteredgraph = {}
   if s == "" then 
-    filteredgraph = g
+    filteredgraph = fullGraph
     graphChangedCallback()
     return
   end
-  invertedgraph = getInvertedGraph(g)
   checkedNodes = {}
   local t = lpeg.match(G, s)
-  for e, is in pairs(g) do
+  print("has edgeop", hasEdgeOperator(t))
+  if hasEdgeOperator(t) then
+    invertedgraph = getInvertedGraph(fullGraph)
+  end
+  print(invertedgraph)
+ 
+  for e, is in pairs(fullGraph) do
     local incidences = {}
     for i, n in pairs(is) do
       local node = copyNode(n)
