@@ -78,6 +78,7 @@ private:
 	cv::Rect drawrect;
 	bool firstdetection;
 	SizedQueue *queue;
+	SizedQueue *queueDistance;
 
 	/**
 		 * @author Autor: Marek Jakab
