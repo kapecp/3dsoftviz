@@ -208,16 +208,13 @@ osg::ref_ptr<osg::Group> CoreGraph::test2() {
 //    QMap<qlonglong, Data::Type*> * types = manager->getActiveGraph()->getTypes();
 //    Data::Type * type = types->value(1);
 
-    QMap<qlonglong, osg::ref_ptr<Data::Node> > clusters = Clustering::Clusterer::getInstance().getClusters();
+    QMap<qlonglong, osg::ref_ptr<Data::Cluster> > clusters = Clustering::Clusterer::getInstance().getClusters();
 
-    QMap<qlonglong, osg::ref_ptr<Data::Node> >::iterator i;
+    QMap<qlonglong, osg::ref_ptr<Data::Cluster> >::iterator i;
 //int tempID = 0;
     for (i = clusters.begin(); i != clusters.end(); i++)
     {
-        osg::ref_ptr<Data::Node> node = i.value();
-
-        // TODO pripadne prerobit vrece "clusters" nech uchovava len typ Cluster {aj tak v nom nie su Nody}
-        Data::Cluster* cluster = dynamic_cast<Data::Cluster*>(node.get());
+        osg::ref_ptr<Data::Cluster> cluster = i.value();
 
     //    osg::ref_ptr<Data::Cluster> cluster = node->getCluster();
 
@@ -782,14 +779,12 @@ osg::ref_ptr<osg::Group> CoreGraph::initCustomNodes()
 	return customNodes;
 }
 
-void CoreGraph::addChildrenToClustersGroup(QMap<qlonglong, osg::ref_ptr<Data::Node> > clusters) {
-
-    QMap<qlonglong, osg::ref_ptr<Data::Node> >::iterator i;
+void CoreGraph::createClusterGroup(QMap<qlonglong, osg::ref_ptr<Data::Cluster> > clusters) {
+    clustersGroup->removeChildren(0,clustersGroup->getNumChildren());
+    QMap<qlonglong, osg::ref_ptr<Data::Cluster> >::iterator i;
     for (i = clusters.begin(); i != clusters.end(); i++)
     {
-        osg::ref_ptr<Data::Node> node = i.value();
-        // TODO pripadne prerobit vrece "clusters" nech uchovava len typ Cluster {aj tak v nom nie su Nody}
-        Data::Cluster* cluster = dynamic_cast<Data::Cluster*>(node.get());
+        osg::ref_ptr<Data::Cluster> cluster = i.value();
 
         osg::Vec3f midPoint = getMidPoint(cluster->getALLClusteredNodes());
         float radius = getRadius(cluster->getALLClusteredNodes(), midPoint);
@@ -803,13 +798,11 @@ void CoreGraph::addChildrenToClustersGroup(QMap<qlonglong, osg::ref_ptr<Data::No
 }
 
 void CoreGraph::updateClustersCoords() {
-    QMap<qlonglong, osg::ref_ptr<Data::Node> > clusters = Clustering::Clusterer::getInstance().getClusters();
-    QMap<qlonglong, osg::ref_ptr<Data::Node> >::iterator i;
+    QMap<qlonglong, osg::ref_ptr<Data::Cluster> > clusters = Clustering::Clusterer::getInstance().getClusters();
+    QMap<qlonglong, osg::ref_ptr<Data::Cluster> >::iterator i;
     for (i = clusters.begin(); i != clusters.end(); i++)
     {
-        osg::ref_ptr<Data::Node> node = i.value();
-        // TODO pripadne prerobit vrece "clusters" nech uchovava len typ Cluster {aj tak v nom nie su Nody}
-        Data::Cluster* cluster = dynamic_cast<Data::Cluster*>(node.get());
+        osg::ref_ptr<Data::Cluster> cluster = i.value();
 
         osg::Vec3f midPoint;
         float radius;

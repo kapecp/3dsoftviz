@@ -10,6 +10,7 @@
 namespace Data {
     class Graph;
     class Node;
+    class Cluster;
 }
 
 namespace Clustering {
@@ -46,7 +47,7 @@ public:
 
 	// clears clusters collection, if 'removeReferences' = true then removes cluster references from all nodes and resets their color to default
     void resetClusters(bool removeReferences = false);
-    QMap<qlonglong, osg::ref_ptr<Data::Node> > getClusters() {return clusters;}
+    QMap<qlonglong, osg::ref_ptr<Data::Cluster> > getClusters() {return clusters;}
     int getMaxCountOfNodesInClusters();
 
     void setAlgorithmType(int algorithmType) {this->algorithmType = algorithmType;}
@@ -55,7 +56,7 @@ public:
 private:
 
     Data::Graph* graph;
-    QMap<qlonglong, osg::ref_ptr<Data::Node> > clusters;
+    QMap<qlonglong, osg::ref_ptr<Data::Cluster> > clusters;
     int algorithmType;
     int clusteringDepth;
     QProgressDialog * progressBar;

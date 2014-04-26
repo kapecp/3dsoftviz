@@ -590,8 +590,7 @@ bool PickHandler::doClusterPick(osg::NodePath nodePath)
     nodePath[nodePath.size() - 1]->getUserValue("id", clusterIdStr);
     qlonglong clusterId = QString::fromStdString(clusterIdStr).toLongLong();
 
-    osg::ref_ptr<Data::Node> node = Clustering::Clusterer::getInstance().getClusters().value(clusterId);
-    Data::Cluster* cluster = dynamic_cast<Data::Cluster*>(node.get());
+    osg::ref_ptr<Data::Cluster> cluster = Clustering::Clusterer::getInstance().getClusters().value(clusterId);
 
     if (cluster != NULL)
     {

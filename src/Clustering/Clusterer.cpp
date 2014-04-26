@@ -53,12 +53,11 @@ void Clusterer::cluster(Graph* graph, QProgressDialog* clusteringProgressBar) {
     qDebug() << "number of new Clusters: " << clusters.size();
 
     qDebug() << "***** DEBUG VNORENE CLUSTRE BEGIN";
-    QMap<qlonglong, osg::ref_ptr<Data::Node> >::iterator i;
+    QMap<qlonglong, osg::ref_ptr<Data::Cluster> >::iterator i;
 
     for (i = clusters.begin(); i != clusters.end(); i++)
     {
-        osg::ref_ptr<Data::Node> node = i.value();
-        Data::Cluster* cluster = dynamic_cast<Data::Cluster*>(node.get());
+        osg::ref_ptr<Data::Cluster> cluster = i.value();
 
         qDebug() << "cluster #" << cluster->getId() << " has nodes inside: " << cluster->getClusteredNodesCount();
 
@@ -194,10 +193,8 @@ void Clusterer::clusterLeafs(QMap<qlonglong, osg::ref_ptr<Data::Node> >* someNod
             if (incidentNodes.size() == 1) {
                 Node* parent = *(incidentNodes.constBegin());
 
-                osg::ref_ptr<Data::Node> c = clusters.value(parent->getId());
-                Data::Cluster* cluster = dynamic_cast<Data::Cluster*>(c.get());
+                osg::ref_ptr<Data::Cluster> cluster = clusters.value(parent->getId());
 
-                //Cluster* cluster = dynamic_cast<Cluster*>(clusters.value(v->getId()).get);
                 // pridaj rodica do clustru (ak uz nie je v clustri - tzn. spracuvame dalsi list toho rodica)
                 if (cluster == NULL) {
                     cluster = new Cluster(parent->getId(), "name", type, graph->getNodeScale(), graph, osg::Vec3f(0,0,0));
@@ -420,12 +417,10 @@ void Clusterer::clusterAdjacency(QMap<qlonglong, osg::ref_ptr<Data::Node> >* som
 
 int Clusterer::getMaxCountOfNodesInClusters() {
     int max = 0;
-    QMap<qlonglong, osg::ref_ptr<Data::Node> >::iterator i;
+    QMap<qlonglong, osg::ref_ptr<Data::Cluster> >::iterator i;
     for (i = clusters.begin(); i != clusters.end(); i++)
     {
-        osg::ref_ptr<Data::Node> node = i.value();
-        // TODO pripadne prerobit vrece "clusters" nech uchovava len typ Cluster {aj tak v nom nie su Nody}
-        Data::Cluster* cluster = dynamic_cast<Data::Cluster*>(node.get());
+        osg::ref_ptr<Data::Cluster> cluster = i.value();
 
         if (cluster->getClusteredNodesCount() > max) {
             max = cluster->getClusteredNodesCount();
@@ -436,11 +431,9 @@ int Clusterer::getMaxCountOfNodesInClusters() {
 
 void Clusterer::resetClusters(bool removeReferences) {
     if (removeReferences) {
-        for (QMap<qlonglong, osg::ref_ptr<Data::Node> >::iterator c = clusters.begin(); c != clusters.end(); c++)
+        for (QMap<qlonglong, osg::ref_ptr<Data::Cluster> >::iterator c = clusters.begin(); c != clusters.end(); c++)
         {
-            osg::ref_ptr<Data::Node> node = c.value();
-            // TODO pripadne prerobit vrece "clusters" nech uchovava len typ Cluster {aj tak v nom nie su Nody}
-            Data::Cluster* cluster = dynamic_cast<Data::Cluster*>(node.get());
+            osg::ref_ptr<Data::Cluster> cluster = c.value();
 
             QSet<Node*> allClusteredNodes = cluster->getALLClusteredNodes();
             for (QSet<Node*>::const_iterator n = allClusteredNodes.constBegin(); n != allClusteredNodes.constEnd(); ++n) {

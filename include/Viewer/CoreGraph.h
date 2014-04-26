@@ -176,7 +176,7 @@ public:
     void setClusters2Value(int value);
     void setClustersMiddleValue(int value);
     void setCameraManipulator(CameraManipulator * cameraManipulator);
-    void addChildrenToClustersGroup(QMap<qlonglong, osg::ref_ptr<Data::Node> > clusters);
+    void createClusterGroup(QMap<qlonglong, osg::ref_ptr<Data::Cluster> > clusters);
 
 	Vwr::NodeGroup * getNodesGroup() { return nodesGroup; }
 	Vwr::NodeGroup * getMetaNodesGroup() { return qmetaNodesGroup; }
