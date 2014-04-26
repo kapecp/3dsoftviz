@@ -172,10 +172,7 @@ public:
     void setClustersOpacityAutomatic(bool automatic);
     void setClustersOpacitySelected(bool selected);
     void setClustersOpacity(double opacity);
-    void setClustersRange(int min, int max);
-    void setClusters1Value(int value);
-    void setClusters2Value(int value);
-    void setClustersMiddleValue(int value);
+    void setClustersShapeBoundary(int value);
     void setCameraManipulator(CameraManipulator * cameraManipulator);
     void createClusterGroup(QMap<qlonglong, osg::ref_ptr<Data::Cluster> > clusters);
 
@@ -375,11 +372,7 @@ private:
     bool clustersOpacityAutomatic;
     bool clustersOpacitySelected;
     double clustersOpacity;
-    int clustersRangeMin;
-    int clustersRangeMax;
-    int clusters1Value;
-    int clusters2Value;
-    int clustersMiddleValue;
+    int clustersShapeBoundary;
 
     osg::ref_ptr<osg::Group> clustersGroup;
 

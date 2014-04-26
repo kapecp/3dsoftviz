@@ -186,10 +186,7 @@ public slots:
     void clustersOpacityCheckboxValueChanged(bool checked);
     void clusterSelectedOpacityCheckboxValueChanged(bool checked);
     void clustersOpacitySliderValueChanged(int value);
-    void clusters1SliderValueChanged(int value);
-    void clusters2SliderValueChanged(int value);
-    void clusters1RangeChanged(const QString &);
-    void clusters2RangeChanged(const QString &);
+    void clustersShapeBoundarySliderValueChanged(int value);
     void repulsiveForceInsideClusterValueChanged(double value);
     void setRestriction_Cube();
     void setRestriction_Cube_Selected();
@@ -667,12 +664,10 @@ private:
     QCheckBox * chb_clustersOpacity;
     QCheckBox * chb_clusterSelectedOpacity;
     QSlider * b_clustersOpacity_Slider;
+    QLabel * l_clustersShapes;
     QLabel * l_clusters1Min;
-    QLineEdit * le_clusters1Max;
-    QLineEdit * le_clusters2Min;
-    QLabel * l_clusters2Max;
-    QSlider * b_clusters1_Slider;
-    QSlider * b_clusters2_Slider;
+    QLabel * l_clusters1Max;
+    QSlider * b_clustersShapeBoundary_Slider;
     QPushButton * b_cluster_nodes;
     QPushButton * b_restartLayouting;
     QComboBox * cb_clusteringAlgorithm;

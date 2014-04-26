@@ -346,6 +346,7 @@ void CoreWindow::createActions()
     connect(chb_clusterSelectedOpacity, SIGNAL(clicked(bool)), this, SLOT(clusterSelectedOpacityCheckboxValueChanged(bool)));
 
     l_clustersOpacity = new QLabel("Opacity:");
+    l_clustersShapes = new QLabel("Cluster shapes:");
 
     b_clustersOpacity_Slider = new QSlider(Qt::Horizontal);
     b_clustersOpacity_Slider->setToolTip("Set opacity for clusters");
@@ -356,31 +357,17 @@ void CoreWindow::createActions()
     connect(b_clustersOpacity_Slider, SIGNAL(valueChanged(int)), this, SLOT(clustersOpacitySliderValueChanged(int)));
 
     l_clusters1Min = new QLabel("0");
-    le_clusters1Max = new QLineEdit();
-    le_clusters2Min = new QLineEdit();
-    l_clusters2Max = new QLabel("max");
+    l_clusters1Max = new QLabel("0");
 
     l_clusters1Min->setFixedWidth(30);
     l_clusters1Min->setAlignment(Qt::AlignCenter);
-    le_clusters1Max->setFixedWidth(30);
-    le_clusters1Max->setAlignment(Qt::AlignCenter);
-    le_clusters2Min->setFixedWidth(30);
-    le_clusters2Min->setAlignment(Qt::AlignCenter);
-    l_clusters2Max->setFixedWidth(30);
-    l_clusters2Max->setAlignment(Qt::AlignCenter);
+    l_clusters1Max->setFixedWidth(30);
+    l_clusters1Max->setAlignment(Qt::AlignCenter);
 
-    connect(le_clusters1Max, SIGNAL(textChanged(const QString &)), this, SLOT(clusters1RangeChanged(const QString &)));
-    connect(le_clusters2Min, SIGNAL(textChanged(const QString &)), this, SLOT(clusters2RangeChanged(const QString &)));
-
-    b_clusters1_Slider = new QSlider(Qt::Horizontal);
-    b_clusters1_Slider->setToolTip("&Modify range for clusters");
-    b_clusters1_Slider->setFocusPolicy(Qt::NoFocus);
-    connect(b_clusters1_Slider, SIGNAL(valueChanged(int)), this, SLOT(clusters1SliderValueChanged(int)));
-
-    b_clusters2_Slider = new QSlider(Qt::Horizontal);
-    b_clusters2_Slider->setToolTip("&Modify range for clusters");
-    b_clusters2_Slider->setFocusPolicy(Qt::NoFocus);
-    connect(b_clusters2_Slider, SIGNAL(valueChanged(int)), this, SLOT(clusters2SliderValueChanged(int)));
+    b_clustersShapeBoundary_Slider = new QSlider(Qt::Horizontal);
+    b_clustersShapeBoundary_Slider->setToolTip("Change cluster shapes based on number of clustered nodes inside them");
+    b_clustersShapeBoundary_Slider->setFocusPolicy(Qt::NoFocus);
+    connect(b_clustersShapeBoundary_Slider, SIGNAL(valueChanged(int)), this, SLOT(clustersShapeBoundarySliderValueChanged(int)));
 
     cb_clusteringAlgorithm = new QComboBox();
     cb_clusteringAlgorithm->insertItems(0,(QStringList() << "Adjacency" << "Leafs" << "Neighbours" ));
@@ -442,12 +429,10 @@ void CoreWindow::setVisibleClusterSection(bool visible) {
     chb_clustersOpacity->setVisible(visible);
     chb_clusterSelectedOpacity->setVisible(visible);
     b_clustersOpacity_Slider->setVisible(visible);
+    l_clustersShapes->setVisible(visible);
     l_clusters1Min->setVisible(visible);
-    l_clusters2Max->setVisible(visible);
-    le_clusters1Max->setVisible(visible);
-    le_clusters2Min->setVisible(visible);
-    b_clusters1_Slider->setVisible(visible);
-    b_clusters2_Slider->setVisible(visible);
+    l_clusters1Max->setVisible(visible);
+    b_clustersShapeBoundary_Slider->setVisible(visible);
 }
 
 void CoreWindow::createMenus()
@@ -648,6 +633,7 @@ void CoreWindow::createClusterToolBar() {
     toolBar->addSeparator();
 
     frame = createHorizontalFrame();
+    toolBar->addWidget(frame);
     frame->layout()->addWidget(l_clustersOpacity);
 
     frame = createHorizontalFrame();
@@ -663,15 +649,13 @@ void CoreWindow::createClusterToolBar() {
 
     frame = createHorizontalFrame();
     toolBar->addWidget(frame);
-    frame->layout()->addWidget(l_clusters1Min);
-    frame->layout()->addWidget(b_clusters1_Slider);
-    frame->layout()->addWidget(le_clusters1Max);
+    frame->layout()->addWidget(l_clustersShapes);
 
     frame = createHorizontalFrame();
     toolBar->addWidget(frame);
-    frame->layout()->addWidget(le_clusters2Min);
-    frame->layout()->addWidget(b_clusters2_Slider);
-    frame->layout()->addWidget(l_clusters2Max);
+    frame->layout()->addWidget(l_clusters1Min);
+    frame->layout()->addWidget(b_clustersShapeBoundary_Slider);
+    frame->layout()->addWidget(l_clusters1Max);
 
     frame = createHorizontalFrame();
     toolBar->addWidget(frame);
@@ -1926,28 +1910,9 @@ void CoreWindow::clustersOpacitySliderValueChanged(int value)
     coreGraph->setClustersOpacity(double(value) / 10);
 }
 
-void CoreWindow::clusters1SliderValueChanged(int value)
+void CoreWindow::clustersShapeBoundarySliderValueChanged(int value)
 {
-    coreGraph->setClusters1Value(value);
-}
-
-void CoreWindow::clusters2SliderValueChanged(int value)
-{
-    coreGraph->setClusters2Value(value);
-}
-
-void CoreWindow::clusters1RangeChanged(const QString &value)
-{
-    b_clusters1_Slider->setRange(0, value.toInt());
-    le_clusters2Min->setText(QString::number(value.toInt()+1));
-    coreGraph->setClustersMiddleValue(value.toInt());
-}
-
-void CoreWindow::clusters2RangeChanged(const QString &value)
-{
-    b_clusters2_Slider->setRange(value.toInt(), l_clusters2Max->text().toInt());
-    le_clusters1Max->setText(QString::number(value.toInt()-1));
-    coreGraph->setClustersMiddleValue(value.toInt()-1);
+    coreGraph->setClustersShapeBoundary(value);
 }
 
 void CoreWindow::repulsiveForceInsideClusterValueChanged(double value)
@@ -1980,19 +1945,10 @@ void CoreWindow::cluster_nodes()
     int maxNodes = Clustering::Clusterer::getInstance().getMaxCountOfNodesInClusters();
     qDebug() << "***** maxNodes = " << maxNodes;
 
-    int half = maxNodes/2;
+    l_clusters1Max->setText(QString::number(maxNodes));
 
-    l_clusters2Max->setText(QString::number(maxNodes));
-    le_clusters1Max->setText(QString::number(half));
-    le_clusters2Min->setText(QString::number(half+1));
-
-    coreGraph->setClustersRange(0, maxNodes);
-
-    le_clusters1Max->setValidator( new QIntValidator(0, maxNodes, this) );
-    le_clusters2Min->setValidator( new QIntValidator(0, maxNodes, this) );
-
-    b_clusters1_Slider->setValue(half/2);
-    b_clusters2_Slider->setValue((half+1+maxNodes)/2);
+    b_clustersShapeBoundary_Slider->setValue(maxNodes/2);
+    b_clustersShapeBoundary_Slider->setMaximum(maxNodes);
 
     chb_clustersOpacity->setChecked(false);
     b_clustersOpacity_Slider->setValue(5);
@@ -2002,7 +1958,7 @@ void CoreWindow::cluster_nodes()
     // show
     setVisibleClusterSection(true);
 
-    nodeTypeComboBox->setCurrentIndex(3);   // selectionType zment na CLUSTER
+    nodeTypeComboBox->setCurrentIndex(3);   // selectionType zmen na CLUSTER
 
     //AppCore::Core::getInstance(NULL)->cg->reload(currentGraph);
 

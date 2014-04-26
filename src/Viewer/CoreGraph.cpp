@@ -560,21 +560,8 @@ void CoreGraph::setClustersOpacity(double opacity) {
     this->clustersOpacity = opacity;
 }
 
-void CoreGraph::setClustersRange(int min, int max) {
-    this->clustersRangeMin = min;
-    this->clustersRangeMax = max;
-}
-
-void CoreGraph::setClusters1Value(int value) {
-    this->clusters1Value = value;
-}
-
-void CoreGraph::setClusters2Value(int value) {
-    this->clusters2Value = value;
-}
-
-void CoreGraph::setClustersMiddleValue(int value) {
-    this->clustersMiddleValue = value;
+void CoreGraph::setClustersShapeBoundary(int value) {
+    this->clustersShapeBoundary = value;
 }
 
 Vwr::CoreGraph::CoreGraph(Data::Graph * graph, osg::ref_ptr<osg::Camera> camera)
