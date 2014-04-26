@@ -552,6 +552,10 @@ void CoreGraph::setClustersOpacityAutomatic(bool automatic) {
     this->clustersOpacityAutomatic = automatic;
 }
 
+void CoreGraph::setClustersOpacitySelected(bool selected) {
+    this->clustersOpacitySelected = selected;
+}
+
 void CoreGraph::setClustersOpacity(double opacity) {
     this->clustersOpacity = opacity;
 }
@@ -821,7 +825,7 @@ void CoreGraph::updateClustersCoords() {
         osg::Vec4 color = cluster->getColor();
         if (clustersOpacityAutomatic) {
             color.w() = computeOpacity(midPoint);
-        } else {
+        } else if ((clustersOpacitySelected && cluster->isSelected()) || !clustersOpacitySelected){
             color.w() = clustersOpacity;
         }
         if (cameraInsideCube(midPoint, radius)) {

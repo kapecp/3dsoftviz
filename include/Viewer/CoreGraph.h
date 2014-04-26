@@ -170,6 +170,7 @@ public:
 	void setNodesFreezed(bool val);
 
     void setClustersOpacityAutomatic(bool automatic);
+    void setClustersOpacitySelected(bool selected);
     void setClustersOpacity(double opacity);
     void setClustersRange(int min, int max);
     void setClusters1Value(int value);
@@ -372,6 +373,7 @@ private:
 	int prevTime;
 
     bool clustersOpacityAutomatic;
+    bool clustersOpacitySelected;
     double clustersOpacity;
     int clustersRangeMin;
     int clustersRangeMax;

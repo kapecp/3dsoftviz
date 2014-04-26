@@ -184,6 +184,7 @@ public slots:
     void clusteringDepthChanged(const QString &);
     void clusteringAlgorithmChanged(int value);
     void clustersOpacityCheckboxValueChanged(bool checked);
+    void clusterSelectedOpacityCheckboxValueChanged(bool checked);
     void clustersOpacitySliderValueChanged(int value);
     void clusters1SliderValueChanged(int value);
     void clusters2SliderValueChanged(int value);
@@ -663,6 +664,7 @@ private:
 
     QLabel * l_clustersOpacity;
     QCheckBox * chb_clustersOpacity;
+    QCheckBox * chb_clusterSelectedOpacity;
     QSlider * b_clustersOpacity_Slider;
     QLabel * l_clusters1Min;
     QLineEdit * le_clusters1Max;

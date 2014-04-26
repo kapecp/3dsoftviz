@@ -342,6 +342,9 @@ void CoreWindow::createActions()
     chb_clustersOpacity = new QCheckBox("auto");
     connect(chb_clustersOpacity, SIGNAL(clicked(bool)), this, SLOT(clustersOpacityCheckboxValueChanged(bool)));
 
+    chb_clusterSelectedOpacity = new QCheckBox("selected");
+    connect(chb_clusterSelectedOpacity, SIGNAL(clicked(bool)), this, SLOT(clusterSelectedOpacityCheckboxValueChanged(bool)));
+
     l_clustersOpacity = new QLabel("Opacity:");
 
     b_clustersOpacity_Slider = new QSlider(Qt::Horizontal);
@@ -639,6 +642,10 @@ void CoreWindow::createClusterToolBar() {
     frame = createHorizontalFrame();
     toolBar->addWidget(frame);
     frame->layout()->addWidget(chb_clustersOpacity);
+    frame->layout()->addWidget(chb_clusterSelectedOpacity);
+
+    frame = createHorizontalFrame();
+    toolBar->addWidget(frame);
     frame->layout()->addWidget(b_clustersOpacity_Slider);
 
     toolBar->addSeparator();
@@ -1886,7 +1893,13 @@ void CoreWindow::clusteringDepthChanged(const QString &value)
 void CoreWindow::clustersOpacityCheckboxValueChanged(bool checked)
 {
     b_clustersOpacity_Slider->setEnabled(!checked);
+    chb_clusterSelectedOpacity->setEnabled(!checked);
     coreGraph->setClustersOpacityAutomatic(checked);
+}
+
+void CoreWindow::clusterSelectedOpacityCheckboxValueChanged(bool checked)
+{
+    coreGraph->setClustersOpacitySelected(checked);
 }
 
 void CoreWindow::clustersOpacitySliderValueChanged(int value)
