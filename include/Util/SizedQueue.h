@@ -11,6 +11,7 @@ public:
 	~SizedQueue();
 
 	int getAvgBasedOnValue(float &x, float &y);
+	int getAvgBasedOnValue(float &x);
 
 private:
 	std::deque< std::pair<float,float> > stack;

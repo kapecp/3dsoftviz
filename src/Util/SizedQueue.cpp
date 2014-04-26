@@ -49,3 +49,30 @@ int SizedQueue::getAvgBasedOnValue(float &x, float &y)
 
 	return retval;
 }
+
+int SizedQueue::getAvgBasedOnValue(float &x)
+{
+	// push/pop, LIFO stack
+	if (this->stack.size() >= this->size){
+
+		std::pair<float,float> p;
+		p = this->stack.front();
+		this->sum.first -= p.first;
+		this->stack.pop_front();
+	}
+
+	this->stack.push_back(std::pair<float,float>(x,0.0f));
+	this->sum.first += x;
+
+	// threshold implementation
+	int retval=0;
+
+	if (fabs((this->presum.first-this->sum.first) / (float)this->stack.size()) > this->threshold)
+	{
+		this->presum.first=this->sum.first;
+		retval=1;
+	}
+	x = this->presum.first / (float)this->stack.size();
+
+	return retval;
+}
