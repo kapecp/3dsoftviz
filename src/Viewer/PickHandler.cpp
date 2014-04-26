@@ -48,6 +48,7 @@ PickHandler::PickHandler(Vwr::CameraManipulator * cameraManipulator, Vwr::CoreGr
 	isManipulatingNodes = false;
 	pickMode = PickMode::NONE;
 	selectionType = SelectionType::ALL;
+    selectionObserver = NULL;
 }
 
 bool PickHandler::handle( const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& aa )
@@ -335,8 +336,8 @@ bool PickHandler::handlePush( const osgGA::GUIEventAdapter& ea, osgGA::GUIAction
 		}
 
 		else
-		{
-			return pick(ea.getXnormalized() - 0.00005f, ea.getYnormalized() - 0.00005f, ea.getXnormalized() + 0.00005f, ea.getYnormalized() + 0.00005f, viewer );
+        {
+            return pick(ea.getXnormalized() - 0.00005f, ea.getYnormalized() - 0.00005f, ea.getXnormalized() + 0.00005f, ea.getYnormalized() + 0.00005f, viewer );
 
 		}
 	}
@@ -396,16 +397,26 @@ bool PickHandler::pick( const double xMin, const double yMin, const double xMax,
 				}
 			}
 		}
-	}
+    }
 
 	return result;
 }
+SelectionObserver *PickHandler::getSelectionObserver() const
+{
+    return selectionObserver;
+}
+
+void PickHandler::setSelectionObserver(SelectionObserver *value)
+{
+    selectionObserver = value;
+}
+
 
 bool PickHandler::doSinglePick(osg::NodePath nodePath, unsigned int primitiveIndex)
 {
-	if (selectionType == SelectionType::NODE)
-		return doNodePick(nodePath);
-	else if (selectionType == SelectionType::EDGE)
+    if (selectionType == SelectionType::NODE)
+        return doNodePick(nodePath);
+    else if (selectionType == SelectionType::EDGE)
 		return doEdgePick(nodePath, primitiveIndex);
 	else
 		return (doNodePick(nodePath) || doEdgePick(nodePath, primitiveIndex));
@@ -443,7 +454,7 @@ bool PickHandler::doNodePick(osg::NodePath nodePath)
 
 			cameraManipulator->setNewPosition(n->getCurrentPosition(), getSelectionCenter(false), getSelectedNodes()->toStdList(), getSelectedEdges()->toStdList());
 
-			if (wasEmpty)
+            if (wasEmpty)
 				pickedNodes.removeFirst();
 		}
 		else if (pickMode != PickMode::NONE)
@@ -452,6 +463,8 @@ bool PickHandler::doNodePick(osg::NodePath nodePath)
 			{
 				pickedNodes.append(n);
 				n->setSelected(true);
+                if (selectionObserver != NULL)
+                    selectionObserver->onChange();
 			}
 
 			if (isCtrlPressed)
@@ -655,7 +668,11 @@ void PickHandler::unselectPickedNodes(osg::ref_ptr<Data::Node> node)
 			++i;
 		}
 
+        bool wasEmpty = pickedNodes.empty();
 		pickedNodes.clear();
+
+        if (!wasEmpty && selectionObserver != NULL)
+            selectionObserver->onChange();
 	}
 	else
 	{

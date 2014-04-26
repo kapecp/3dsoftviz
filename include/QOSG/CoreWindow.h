@@ -21,6 +21,8 @@
 #include <QtGui>
 #include <QLineEdit>
 
+#include <Viewer/SelectionObserver.h>
+
 #include "Layout/ShapeGetter.h"
 #include "Layout/RestrictionRemovalHandler.h"
 #include "Layout/RestrictionRemovalHandler_RestrictionNodesRemover.h"
@@ -60,7 +62,7 @@ namespace QOSG
 	*  \author Adam Pazitnaj
 	*  \date 3. 5. 2010
 	*/
-class CoreWindow : public QMainWindow
+class CoreWindow : public QMainWindow, public SelectionObserver
 {
 	Q_OBJECT
 
@@ -785,6 +787,8 @@ private:
 			Data::Graph * currentGraph,
 			QSharedPointer<Layout::RestrictionRemovalHandler> removalHandler
 			);
+
+    void onChange();
 
 };
 }

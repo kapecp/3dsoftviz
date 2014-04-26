@@ -17,6 +17,8 @@
 #include "Data/Node.h"
 #include "Data/Edge.h"
 
+#include "SelectionObserver.h"
+
 #include <QLinkedList>
 #include <QTimer>
 
@@ -200,10 +202,13 @@ public:
 	void addPickedNode(osg::ref_ptr<Data::Node> node) { pickedNodes.append(node); }
 	void addPickedEdge(osg::ref_ptr<Data::Edge> edge) { pickedEdges.append(edge); }
 
+    SelectionObserver *getSelectionObserver() const;
+    void setSelectionObserver(SelectionObserver *value);
+
 protected:
-	// Store mouse xy location for button press & move events.
-	float _mX,_mY;
-	float origin_mX, origin_mY, origin_mX_normalized, origin_mY_normalized;
+    // Store mouse xy location for button press & move events.
+    float _mX,_mY;
+    float origin_mX, origin_mY, origin_mX_normalized, origin_mY_normalized;
 
 	/**
 		*  bool leftButtonPressed
@@ -213,6 +218,8 @@ protected:
 
 	// Perform a pick operation.
 	bool pick(const double xMin, const double yMin, const double xMax, const double yMax, osgViewer::Viewer* viewer);
+
+    SelectionObserver *selectionObserver;
 
 private:
 

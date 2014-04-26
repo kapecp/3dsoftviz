@@ -98,6 +98,7 @@ CoreWindow::CoreWindow(QWidget *parent, Vwr::CoreGraph* coreGraph, QApplication*
 	connect(lineEdit,SIGNAL(returnPressed()),this,SLOT(sqlQuery()));
 
     Lua::LuaInterface::getInstance()->executeFile("main.lua");
+    viewerWidget->getPickHandler()->setSelectionObserver(this);
 }
 
 void CoreWindow::createActions()
@@ -2016,4 +2017,14 @@ void CoreWindow::setAvatarScale(int scale) {
 
 Vwr::CameraManipulator* CoreWindow::getCameraManipulator() {
 	return viewerWidget->getCameraManipulator();
+}
+
+
+void CoreWindow::onChange()
+{
+    QLinkedList<osg::ref_ptr<Data::Node> > *selected = viewerWidget->getPickHandler()->getSelectedNodes();
+    if (selected->size() == 1)
+        cout << "Selected single node" << std::endl;
+    else
+        cout << "Not selected single node" << std::endl;
 }
