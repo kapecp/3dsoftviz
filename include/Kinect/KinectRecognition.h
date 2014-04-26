@@ -27,6 +27,11 @@ public:
 	void inicialize();
 
 	/**
+	 * @brief close connection with Openni
+	 */
+	void closeOpenni();
+
+	/**
 	 * @brief convert depth videoframe to cv::Mat
 	 * @param colorFrame depth videoframe
 	 * @return converted gray cv::Mat

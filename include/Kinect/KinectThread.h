@@ -28,9 +28,14 @@ public:
 	void run();
 
 	/**
-	 * @brief inicialize nite for handtracking and add device
+	 * @brief inicialize openni and nite for handtracking and add device
 	 */
-	void inicializeNite();
+	bool inicializeKinect();
+
+	/**
+	 * @brief pause,stop calculate
+	 */
+	void closeActionOpenni();
 
 signals:
 

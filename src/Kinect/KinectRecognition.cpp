@@ -26,6 +26,11 @@ void Kinect::KinectRecognition::inicialize()
 	}
 }
 
+void Kinect::KinectRecognition::closeOpenni()
+{
+	openni::OpenNI::shutdown();
+}
+
 Kinect::KinectRecognition::~KinectRecognition()
 {
 	openni::OpenNI::shutdown();

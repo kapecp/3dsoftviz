@@ -23,17 +23,27 @@ Kinect::KinectThread::~KinectThread(void)
 {
 }
 
-void Kinect::KinectThread::inicializeNite()
+bool Kinect::KinectThread::inicializeKinect()
 {
-	// color data for Kinect windows
-	color.create(mKinect->device, openni::SENSOR_COLOR);
-	color.start();
-	// depth data for Hand Tracking
-	m_depth.create(mKinect->device, openni::SENSOR_DEPTH);
-	m_depth.start();
+	mKinect = new Kinect::KinectRecognition();
+	isOpen=mKinect->isOpenOpenni();
+	if(isOpen)
+	{
+		// color data for Kinect windows
+		color.create(mKinect->device, openni::SENSOR_COLOR);
+		color.start();
+		// depth data for Hand Tracking
+		m_depth.create(mKinect->device, openni::SENSOR_DEPTH);
+		m_depth.start();
 
-	kht = new KinectHandTracker(&mKinect->device,&m_depth);
+		kht = new KinectHandTracker(&mKinect->device,&m_depth);
+	}
+	return isOpen;
+}
 
+void Kinect::KinectThread::closeActionOpenni()
+{
+	mKinect->closeOpenni();
 }
 
 void Kinect::KinectThread::setCancel(bool set)
@@ -64,9 +74,6 @@ void Kinect::KinectThread::run()
 {
 
 	mCancel=false;
-	/////Class kinect recognition
-	mKinect = new Kinect::KinectRecognition();
-	isOpen=mKinect->isOpenOpenni();
 
 	openni::CoordinateConverter coordinateConverter;
 	// convert milimeters to pixels
@@ -80,14 +87,7 @@ void Kinect::KinectThread::run()
 
 	cv::Mat frame;
 
-	//////////////Kinect start color and Hand tracking ///////
-	if(isOpen)
-	{
-		inicializeNite();
-	}
-
-
-	while(!mCancel && isOpen)
+	while(!mCancel)
 	{
 		if(mSetImageEnable)
 		{
