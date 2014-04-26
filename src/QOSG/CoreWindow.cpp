@@ -428,7 +428,8 @@ void CoreWindow::createActions()
 
     sb_repulsiveForceInsideCluster = new QDoubleSpinBox();
     sb_repulsiveForceInsideCluster->setToolTip("Modify repulsive force inside cluster");
-    sb_repulsiveForceInsideCluster->setFocusPolicy(Qt::NoFocus);
+    sb_repulsiveForceInsideCluster->setMinimum(0);
+    sb_repulsiveForceInsideCluster->setMaximum(500);
     connect(sb_repulsiveForceInsideCluster, SIGNAL(valueChanged(double)), this, SLOT(repulsiveForceInsideClusterValueChanged(double)));
     sb_repulsiveForceInsideCluster->hide();
 
