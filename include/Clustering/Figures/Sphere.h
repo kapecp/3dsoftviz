@@ -3,15 +3,16 @@
 
 #include <osg/Geode>
 #include <osg/Geometry>
+#include <osg/AutoTransform>
 
 class Sphere
 {
 
 public:
 
-    Sphere(float radius, unsigned int rings, unsigned int sectors);
-    Sphere(float radius, unsigned int rings, unsigned int sectors, osg::Vec4d color);
+    Sphere(osg::Vec3d position, float radius, osg::Vec4d color);
 
+    osg::AutoTransform * getAT()    { return at;              }
     osg::Geode     *getGeode()      { return sphereGeode;     }
     osg::Geometry  *getGeometry()   { return sphereGeometry;  }
     osg::Vec3Array *getVertices()   { return sphereVertices;  }
@@ -20,21 +21,24 @@ public:
 
     void setColor(osg::Vec4d color) { this->color = color; }
 
+    void transform(osg::Vec3d position, float radius, osg::Vec4d color);
+
 protected:
 
     osg::Vec3d        midPoint;
     osg::Vec4d        color;
 
-    osg::Geode      * sphereGeode;
-    osg::Geometry   * sphereGeometry;
-    osg::Vec3Array  * sphereVertices;
-    osg::Vec3Array  * sphereNormals;
-    osg::Vec2Array  * sphereTexCoords;
+    osg::AutoTransform  * at;
+    osg::Geode          * sphereGeode;
+    osg::Geometry       * sphereGeometry;
+    osg::Vec3Array      * sphereVertices;
+    osg::Vec3Array      * sphereNormals;
+    osg::Vec2Array      * sphereTexCoords;
 
     std::vector<osg::DrawElementsUInt *> * spherePrimitiveSets;
 
     void init();
-    void computeGeode(float radius, unsigned int rings, unsigned int sectors);
+    void computeGeode(unsigned int rings, unsigned int sectors);
 
 };
 

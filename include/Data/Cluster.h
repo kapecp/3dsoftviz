@@ -5,6 +5,7 @@
 #include <QSet>
 
 #include "Clustering/Figures/Cube.h"
+#include "Clustering/Figures/Sphere.h"
 #include "Layout/ShapeGetter_Cube.h"
 
 namespace Data {
@@ -31,6 +32,9 @@ public:
     void setCube(Cube * cube) {this->cube = cube;}
     Cube * getCube() {return cube;}
 
+    void setSphere(Sphere * sphere) {this->sphere = sphere;}
+    Sphere * getSphere() {return sphere;}
+
     void setRepulsiveForceInside(double repulsiveForceInside);
     double getRepulsiveForceInside() {return repulsiveForceInside;}
 
@@ -47,6 +51,8 @@ private:
     double repulsiveForceInside;
 
     Cube * cube;
+    Sphere * sphere;
+
     Layout::ShapeGetter_Cube * shapeGetter;
 
 };

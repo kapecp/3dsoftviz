@@ -8,8 +8,7 @@ class SpikySphere : public Sphere
 
 public:
 
-    SpikySphere(float radius, unsigned int rings, unsigned int sectors);
-    SpikySphere(float radius, unsigned int rings, unsigned int sectors, osg::Vec4d color);
+    SpikySphere(osg::Vec3d position, float radius, osg::Vec4d color);
 
 private:
 

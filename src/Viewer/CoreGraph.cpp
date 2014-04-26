@@ -23,6 +23,7 @@
 
 #include "Clustering/Clusterer.h"
 #include "Clustering/Figures/Cube.h"
+#include "Clustering/Figures/Sphere.h"
 
 using namespace Vwr;
 
@@ -784,6 +785,11 @@ void CoreGraph::createClusterGroup(QMap<qlonglong, osg::ref_ptr<Data::Cluster> >
         cube->getGeode()->setUserValue("id", QString::number(cluster->getId()).toStdString());
         cluster->setCube(cube);
 
+        Sphere * sphere = new Sphere(midPoint, radius, osg::Vec4d(1,1,1,0.5));
+        sphere->getGeode()->setUserValue("id", QString::number(cluster->getId()).toStdString());
+        cluster->setSphere(sphere);
+
+        clustersGroup->addChild(cluster->getSphere()->getAT());
         clustersGroup->addChild(cluster->getCube()->getAT());
     }
 }
@@ -819,7 +825,15 @@ void CoreGraph::updateClustersCoords() {
             color.w() = 1;
         }
 
-        cluster->getCube()->transform(midPoint, radius, color);
+        if (cluster->getALLClusteredNodes().count() <= clustersShapeBoundary) {
+            cluster->getCube()->transform(midPoint, radius, color);
+            color.w() = 0;
+            cluster->getSphere()->transform(midPoint, radius, color);
+        } else {
+            cluster->getSphere()->transform(midPoint, radius, color);
+            color.w() = 0;
+            cluster->getCube()->transform(midPoint, radius, color);
+        }
     }
 }
 

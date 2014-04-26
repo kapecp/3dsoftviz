@@ -3,15 +3,11 @@
 #include <vector>
 #include <QDebug>
 
-Sphere::Sphere(float radius, unsigned int rings, unsigned int sectors) {
+Sphere::Sphere(osg::Vec3d position, float radius, osg::Vec4d color) {
     init();
-    computeGeode(radius, rings, sectors);
-}
-
-Sphere::Sphere(float radius, unsigned int rings, unsigned int sectors, osg::Vec4d color) {
-    init();
-    computeGeode(radius, rings, sectors);
-    setColor(color);
+    computeGeode(20, 20);
+    transform(position, radius, color);
+    at->addChild(sphereGeode);
 }
 
 void Sphere::init() {
@@ -22,9 +18,11 @@ void Sphere::init() {
     sphereNormals = new osg::Vec3Array;
     sphereTexCoords = new osg::Vec2Array;
     spherePrimitiveSets = new std::vector<osg::DrawElementsUInt *>;
+    at = new osg::AutoTransform;
 }
 
-void Sphere::computeGeode(float radius, unsigned int rings, unsigned int sectors) {
+void Sphere::computeGeode(unsigned int rings, unsigned int sectors) {
+    float radius = 1;
     float const R = 1./(float)(rings-1);
     float const S = 1./(float)(sectors-1);
     int r, s;
@@ -44,7 +42,8 @@ void Sphere::computeGeode(float radius, unsigned int rings, unsigned int sectors
         }
     }
 
-    sphereGeometry->setVertexArray  (sphereVertices);
+    sphereGeometry->setNormalArray(sphereNormals);
+    sphereGeometry->setVertexArray(sphereVertices);
     sphereGeometry->setTexCoordArray(0, sphereTexCoords);
 
     // Generate quads for each face.
@@ -67,4 +66,23 @@ void Sphere::computeGeode(float radius, unsigned int rings, unsigned int sectors
     osg::Vec4Array* colors = new osg::Vec4Array;
     colors->push_back(color);
     sphereGeometry->setColorArray(colors);
+}
+
+void Sphere::transform(osg::Vec3d position, float radius, osg::Vec4d color) {
+    osg::StateSet * ss = sphereGeometry->getOrCreateStateSet();
+
+    osg::Material* material = new osg::Material();
+    material->setAmbient(osg::Material::FRONT,color);
+    material->setDiffuse(osg::Material::FRONT,color);
+    material->setSpecular(osg::Material::FRONT,color);
+    material->setAlpha(osg::Material::FRONT,color.a());
+
+    ss->setAttribute(material,osg::StateAttribute::OVERRIDE);
+    ss->setMode(GL_DEPTH_TEST,osg::StateAttribute::ON);
+    ss->setMode(GL_LIGHTING,osg::StateAttribute::ON);
+    ss->setMode(GL_BLEND,osg::StateAttribute::ON);
+    ss->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
+
+    at->setPosition(position * 1);
+    at->setScale(radius);
 }
