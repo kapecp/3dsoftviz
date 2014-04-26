@@ -96,6 +96,9 @@ private:
 	KinectHandTracker *kht;
 	KinectRecognition *mKinect;
 
+	openni::VideoStream  color;
+	openni::VideoStream  m_depth;
+
 
 };
 }

@@ -67,8 +67,7 @@ void Kinect::KinectThread::run()
 	/////Class kinect recognition
 	mKinect = new Kinect::KinectRecognition();
 	isOpen=mKinect->isOpenOpenni();
-	openni::VideoStream  color;
-	openni::VideoStream  m_depth;
+
 	openni::CoordinateConverter coordinateConverter;
 	// convert milimeters to pixels
 	float pDepth_x;
