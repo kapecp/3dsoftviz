@@ -423,6 +423,15 @@ void CoreWindow::createActions()
     b_SetRestriction_Cube_Selected->setFocusPolicy(Qt::NoFocus);
     connect(b_SetRestriction_Cube_Selected, SIGNAL(clicked()), this, SLOT(setRestriction_Cube_Selected()));
 
+    l_repulsiveForceInsideCluster = new QLabel("Repulsive force");
+    l_repulsiveForceInsideCluster->hide();
+
+    sb_repulsiveForceInsideCluster = new QDoubleSpinBox();
+    sb_repulsiveForceInsideCluster->setToolTip("Modify repulsive force inside cluster");
+    sb_repulsiveForceInsideCluster->setFocusPolicy(Qt::NoFocus);
+    connect(sb_repulsiveForceInsideCluster, SIGNAL(valueChanged(double)), this, SLOT(repulsiveForceInsideClusterValueChanged(double)));
+    sb_repulsiveForceInsideCluster->hide();
+
     // hide
     setVisibleClusterSection(false);
 }
@@ -430,6 +439,7 @@ void CoreWindow::createActions()
 void CoreWindow::setVisibleClusterSection(bool visible) {
     l_clustersOpacity->setVisible(visible);
     chb_clustersOpacity->setVisible(visible);
+    chb_clusterSelectedOpacity->setVisible(visible);
     b_clustersOpacity_Slider->setVisible(visible);
     l_clusters1Min->setVisible(visible);
     l_clusters2Max->setVisible(visible);
@@ -661,6 +671,14 @@ void CoreWindow::createClusterToolBar() {
     frame->layout()->addWidget(le_clusters2Min);
     frame->layout()->addWidget(b_clusters2_Slider);
     frame->layout()->addWidget(l_clusters2Max);
+
+    frame = createHorizontalFrame();
+    toolBar->addWidget(frame);
+    frame->layout()->addWidget(l_repulsiveForceInsideCluster);
+
+    frame = createHorizontalFrame();
+    toolBar->addWidget(frame);
+    frame->layout()->addWidget(sb_repulsiveForceInsideCluster);
 
     addToolBar(Qt::RightToolBarArea,toolBar);
     toolBar->setMovable(true);
@@ -1931,6 +1949,17 @@ void CoreWindow::clusters2RangeChanged(const QString &value)
     coreGraph->setClustersMiddleValue(value.toInt()-1);
 }
 
+void CoreWindow::repulsiveForceInsideClusterValueChanged(double value)
+{
+    QLinkedList<osg::ref_ptr<Data::Cluster> > clusters = viewerWidget->getPickHandler()->getPickedClusters();
+    QLinkedList<osg::ref_ptr<Data::Cluster> >::iterator i;
+    for (i = clusters.begin(); i != clusters.end(); i++)
+    {
+        osg::ref_ptr<Data::Cluster> cluster = *i;
+        cluster->setRepulsiveForceInside(value);
+    }
+}
+
 void CoreWindow::cluster_nodes()
 {
     if(isPlaying) {
@@ -2230,4 +2259,15 @@ void CoreWindow::setAvatarScale(int scale) {
 
 Vwr::CameraManipulator* CoreWindow::getCameraManipulator() {
 	return viewerWidget->getCameraManipulator();
+}
+
+void CoreWindow::setRepulsiveForceInsideCluster(double repulsiveForceInsideCluster) {
+    sb_repulsiveForceInsideCluster->setValue(repulsiveForceInsideCluster);
+    l_repulsiveForceInsideCluster->show();
+    sb_repulsiveForceInsideCluster->show();
+}
+
+void CoreWindow::hideRepulsiveForceSpinBox() {
+    l_repulsiveForceInsideCluster->hide();
+    sb_repulsiveForceInsideCluster->hide();
 }

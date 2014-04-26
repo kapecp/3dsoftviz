@@ -190,6 +190,7 @@ public slots:
     void clusters2SliderValueChanged(int value);
     void clusters1RangeChanged(const QString &);
     void clusters2RangeChanged(const QString &);
+    void repulsiveForceInsideClusterValueChanged(double value);
     void setRestriction_Cube();
     void setRestriction_Cube_Selected();
     void cluster_nodes();
@@ -681,9 +682,15 @@ private:
     QPushButton * b_SetRestriction_Cube;
     QPushButton * b_SetRestriction_Cube_Selected;
 
+    QLabel * l_repulsiveForceInsideCluster;
+    QDoubleSpinBox * sb_repulsiveForceInsideCluster;
+
     void setVisibleClusterSection(bool visible);
 
 public:
+
+    void setRepulsiveForceInsideCluster(double repulsiveForceInsideCluster);
+    void hideRepulsiveForceSpinBox();
 
 	/*!
 		*

@@ -8,6 +8,7 @@ Cluster::Cluster(qlonglong id, QString name, Data::Type* type, float scaling, Da
 
     this->id = id;
     this->shapeGetter = NULL;
+    this->repulsiveForceInside = 1;
 }
 
 QSet<Node*> Cluster::getIncidentNodes() const {
@@ -108,4 +109,19 @@ Node * Cluster::getRandomNode() {
         }
     }
     return NULL;
+}
+
+void Cluster::setRepulsiveForceInside(double repulsiveForceInside) {
+    this->repulsiveForceInside = repulsiveForceInside;
+
+    QSet<Node *>::const_iterator i = clusteredNodes.constBegin();
+    while (i != clusteredNodes.constEnd()) {
+        Node* clusteredNode = *i;
+
+        Cluster* cluster = dynamic_cast<Cluster*>(clusteredNode);
+        if(cluster != 0) { // je to cluster
+            cluster->setRepulsiveForceInside(repulsiveForceInside);
+        }
+        ++i;
+    }
 }

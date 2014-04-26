@@ -431,7 +431,15 @@ void FRAlgorithm::addAttractive(Data::Edge* edge, float factor) {
 	}
 	fv = vp - up; // smer sily
 	fv.normalize();
-	fv *= attr(dist) * factor;// velkost sily
+
+    if (edge->getSrcNode()->getCluster() != NULL && edge->getDstNode()->getCluster() && edge->getSrcNode()->getCluster()->getId() == edge->getDstNode()->getCluster()->getId()) {
+        double clusterForce = edge->getSrcNode()->getCluster()->getRepulsiveForceInside();
+        clusterForce = qFuzzyCompare(clusterForce, 0.0) ? 1 : clusterForce;
+        fv *= attr(dist) * factor / clusterForce; // velkost sily medzi uzlami zhluku
+    } else {
+        fv *= attr(dist) * factor; // velkost sily
+    }
+
 	edge->getSrcNode()->addForce(fv);
 	fv = center - fv;
 	edge->getDstNode()->addForce(fv);
@@ -479,7 +487,13 @@ void FRAlgorithm::addRepulsive(Data::Node* u, Data::Node* v, float factor) {
 	}
 	fv = (vp - up);// smer sily
 	fv.normalize();
-	fv *= rep(dist) * factor;// velkost sily
+
+    if (u->getCluster() != NULL && v->getCluster() && u->getCluster()->getId() == v->getCluster()->getId()) {
+        fv *= rep(dist) * factor * u->getCluster()->getRepulsiveForceInside(); // velkost sily medzi uzlami zhluku
+    } else {
+        fv *= rep(dist) * factor; // velkost sily
+    }
+
 	u->addForce(fv);
 }
 /* Vzorec na vypocet odpudivej sily */

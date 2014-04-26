@@ -599,11 +599,13 @@ bool PickHandler::doClusterPick(osg::NodePath nodePath)
             if (!pickedNodes.contains(cluster->getRandomNode())) {
                 cluster->setSelected(true, &pickedNodes);
                 pickedClusters.append(cluster);
+                AppCore::Core::getInstance()->getCoreWindow()->setRepulsiveForceInsideCluster(cluster->getRepulsiveForceInside());
             }
 
             if (isCtrlPressed) {
                 cluster->setSelected(false, &pickedNodes);
                 pickedClusters.clear();
+                AppCore::Core::getInstance()->getCoreWindow()->hideRepulsiveForceSpinBox();
             }
             return true;
         }
@@ -775,7 +777,7 @@ void PickHandler::unselectPickedClusters() {
         (*i)->setSelected(false, &pickedNodes);
         ++i;
     }
-
+    AppCore::Core::getInstance()->getCoreWindow()->hideRepulsiveForceSpinBox();
     pickedClusters.clear();
 }
 

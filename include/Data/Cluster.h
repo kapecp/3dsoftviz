@@ -31,6 +31,9 @@ public:
     void setCube(Cube * cube) {this->cube = cube;}
     Cube * getCube() {return cube;}
 
+    void setRepulsiveForceInside(double repulsiveForceInside);
+    double getRepulsiveForceInside() {return repulsiveForceInside;}
+
     // zaregistruj obmedzovac na tento cluster
     void registerShapeGetter(Layout::ShapeGetter_Cube * shapeGetter) {this->shapeGetter = shapeGetter;}
     Layout::ShapeGetter_Cube * getShapeGetter() {return shapeGetter;}
@@ -40,6 +43,8 @@ private:
     qlonglong id;
     QSet<Node *> clusteredNodes;
     osg::Vec4 originalColor;
+
+    double repulsiveForceInside;
 
     Cube * cube;
     Layout::ShapeGetter_Cube * shapeGetter;
