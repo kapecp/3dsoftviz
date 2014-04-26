@@ -44,7 +44,6 @@ class CameraManipulator;
 
 namespace QOSG
 {
-	class CoreWindow;
 /**
 	*  \class ViewerQT
 	*  \brief
@@ -138,10 +137,6 @@ protected:
 
 private:
 
-
-	bool mIsClicAruco;
-
-	QOSG::CoreWindow	*window;
 	/**
 		*  Vwr::CameraManipulator * manipulator
 		*  \brief camera manipulator

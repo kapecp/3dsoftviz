@@ -71,6 +71,7 @@ private:
 #endif
 public slots:
 
+	void moveMouseAruco(double positionX,double positionY,bool isClick, Qt::MouseButton button );
 
 	/**
 				*  \fn public  showOptions
@@ -336,6 +337,8 @@ public slots:
 
 	void setAvatarScale(int scale);
 private:
+
+	bool mIsClicAruco;
 
 	/**
 		*  QApplication * application

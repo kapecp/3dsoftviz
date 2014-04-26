@@ -4,10 +4,6 @@
 #include "Viewer/CameraManipulator.h"
 #include "Viewer/CoreGraph.h"
 #include "Util/ApplicationConfig.h"
-#include "Core/Core.h"
-
-
-
 
 QOSG::ViewerQT::ViewerQT(QWidget * parent , const char * name , const QGLWidget * shareWidget , WindowFlags f , Vwr::CoreGraph* cg):
 	AdapterWidget( parent, name, shareWidget, f )
@@ -45,7 +41,6 @@ QOSG::ViewerQT::ViewerQT(QWidget * parent , const char * name , const QGLWidget 
 	connect(&_timer, SIGNAL(timeout()), this, SLOT(updateGL()));
 
 	_timer.start(10);
-	window = AppCore::Core::getInstance()->getCoreWindow();
 }
 
 Vwr::PickHandler * QOSG::ViewerQT::getPickHandler() const {
@@ -69,37 +64,3 @@ void QOSG::ViewerQT::paintGL()
 	frame();
 	cg->update();
 }
-
-void QOSG::ViewerQT::moveMouseAruco(double positionX,double positionY,bool isClick, Qt::MouseButton button )
-{
-	qDebug() << positionX << "  " << positionY << "         " << isClick;
-
-	float wieverX = (float) (positionX * this->width());
-	float wieverY = (float) (positionY * this->height());
-	int windowX = (int) positionX * this->width()  + this->x() + 8;
-	int windowY = (int) positionY * this->height() + this->y() + 28;
-	int screenX = (int) positionX * this->width()  + this->x() + window->x() + 8;
-	int screenY = (int) positionY * this->height() + this->y() + window->y() + 28;
-
-
-	this->cursor().setPos(screenX, screenY);
-
-
-	wieverY =  ((float) this->height() - wieverY);
-
-	if( isClick != mIsClicAruco){
-		mIsClicAruco = isClick;
-
-		if(isClick) {
-			this->getEventQueue()->mouseButtonPress(wieverX, wieverY,button);
-			this->getEventQueue()->mouseMotion(wieverX, wieverY);
-		} else {
-			this->getEventQueue()->mouseButtonRelease(wieverX, wieverY, button);
-			return;
-		}
-	}
-	this->getEventQueue()->mouseMotion(wieverX, wieverY);
-
-
-}
-
