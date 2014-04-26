@@ -2,6 +2,7 @@
 #define CAMSELECTWINDOW_H
 
 #include <QDialog>
+#include <QModelIndex>
 
 class QApplication;
 class QLabel;

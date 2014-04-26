@@ -2,6 +2,7 @@
 #include "Aruco/arucocore.h"
 #include "Util/ApplicationConfig.h"
 #include <QDebug>
+#include <QFileInfo>
 
 #include "OpenCV/CapVideo.h"
 #include "Viewer/MouseControl.h"

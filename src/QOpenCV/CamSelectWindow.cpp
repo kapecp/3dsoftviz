@@ -5,6 +5,7 @@
 #include <QtGui/QVBoxLayout>
 #include <QtGui/QPushButton>
 #include <QtGui/QStandardItemModel>
+#include <QDebug>
 
 #include "OpenCV/CamSelectCore.h"
 

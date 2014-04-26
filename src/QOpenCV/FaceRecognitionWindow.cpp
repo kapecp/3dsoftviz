@@ -6,10 +6,11 @@
 #include <QtGui/QCheckBox>
 #include <QtGui/QVBoxLayout>
 #include <QtGui/QStackedLayout>
+#include <QCloseEvent>
 #include "OpenCV/CamSelectCore.h"
 
 #include "Util/ApplicationConfig.h"
-
+#include <opencv2/imgproc/imgproc.hpp>
 
 
 using namespace QOpenCV;
