@@ -4,7 +4,7 @@
 #include <QDebug>
 
 #include "OpenCV/CapVideo.h"
-#include "Viewer/MouseControl.h"
+
 
 using namespace ArucoModul;
 
@@ -23,15 +23,13 @@ ArucoThread::ArucoThread(QObject *parent)
 	mGrM			= 1;
 	mMoM			= 0;
 
-	mMouse			= new Vwr::MouseControl();
-
 	qRegisterMetaType< osg::Vec3d >("osgVec3d");
 	qRegisterMetaType< osg::Quat >("osgQuat");
 }
 
 ArucoThread::~ArucoThread(void)
 {
-	delete mMouse;
+
 }
 
 void ArucoThread::setCancel(bool set)
@@ -212,7 +210,7 @@ void ArucoThread::mouseControlling(const double actPosArray[3], const double act
 
 
 	qDebug() << (actQuatArray[3] < 0.0);
-	mMouse->moveMouseAruco( normX, normY, actQuatArray[1] <= 0.0, Qt::LeftButton);
+	emit moveMouseArucoSignal(normX, normY, actQuatArray[1] <= 0.0, Qt::LeftButton);
 
 }
 

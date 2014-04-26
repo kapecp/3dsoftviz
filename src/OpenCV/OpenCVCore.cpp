@@ -111,6 +111,11 @@ void  OpenCVCore::createPermanentConnection(){
 					  AppCore::Core::getInstance( mApp)->getCoreGraph()->getCameraStream(),
 					  SLOT(updateBackgroundImage(cv::Mat)) );
 
+	QObject::connect(mThrAruco,
+					 SIGNAL(moveMouseArucoSignal(double,double,bool,Qt::MouseButton)),
+					 AppCore::Core::getInstance(mApp)->getCoreWindow()->GetViewerQt(),
+					 SLOT(moveMouseAruco(double,double,bool,Qt::MouseButton)));
+
 }
 
 void OpenCVCore::createConnectionFaceRec(){

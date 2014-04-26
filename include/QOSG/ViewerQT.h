@@ -8,8 +8,8 @@
 #include "QOSG/AdapterWidget.h"
 #include <osgViewer/ViewerBase>
 #include <osgViewer/ViewerEventHandlers>
-//#include "Viewer/CoreGraph.h"
 #include <qtimer.h>
+#include <QObject>
 
 /*!
 * \brief
@@ -26,24 +26,25 @@
 
 namespace Vwr
 {
-	class PickHandler;
-	class CoreGraph;
+class PickHandler;
+class CoreGraph;
 }
 
 namespace Util
 {
-	class ApplicationConfig;
+class ApplicationConfig;
 }
 
 
 namespace Vwr
 {
-	class CameraManipulator;
+class CameraManipulator;
 }
 
 
 namespace QOSG
 {
+	class CoreWindow;
 /**
 	*  \class ViewerQT
 	*  \brief
@@ -52,6 +53,8 @@ namespace QOSG
 	*/
 class ViewerQT : public osgViewer::Viewer, public AdapterWidget
 {
+
+
 public:
 
 	/*!
@@ -104,6 +107,9 @@ public:
 		  */
 	void reloadConfig();
 
+public slots:
+
+	void moveMouseAruco(double positionX,double positionY,bool isClick, Qt::MouseButton button );
 
 protected:
 
@@ -129,8 +135,13 @@ protected:
 	virtual void paintGL();
 
 
+
 private:
 
+
+	bool mIsClicAruco;
+
+	QOSG::CoreWindow	*window;
 	/**
 		*  Vwr::CameraManipulator * manipulator
 		*  \brief camera manipulator

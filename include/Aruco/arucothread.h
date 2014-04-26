@@ -14,9 +14,6 @@
 Q_DECLARE_METATYPE( osg::Vec3d )
 Q_DECLARE_METATYPE( osg::Quat )
 
-namespace Vwr {
-class MouseControl;
-}
 
 namespace ArucoModul {
 class ArucoCore;
@@ -84,6 +81,8 @@ signals:
 	* @brief corParUpdated Signal when correction parameters were update succefull
 	*/
 	void corParUpdated();
+
+	void moveMouseArucoSignal(double positionX,double positionY,bool isClick, Qt::MouseButton button );
 
 
 public slots:
@@ -229,7 +228,7 @@ private:
 	double		mHalfRatioCoef;
 
 	OpenCV::CapVideo	*mCapVideo; // Cap video instanc, that managed camera and provides frames
-	Vwr::MouseControl	*mMouse;
+
 
 
 	};
