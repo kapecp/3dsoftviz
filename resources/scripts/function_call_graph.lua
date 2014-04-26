@@ -45,14 +45,14 @@ local function extractEdge(v, existingedges, nodes, rootcandidates)
   if string.sub(v.to[1], 1, 1) == 'N' then
     rootcandidates[nodes[v.to[1]]] = nil
     local edge = {type = "edge", id = inc(), label = '', params = { origid = v.id}}
-    local incid1 = {type = "edge_part", id = inc(), label = '', direction = "in"}
-    local incid2 = {type = "edge_part", id = inc(), label = '', direction = "out"}
+    local incid1 = {type = "edge_part", id = inc(), label = ''}
+    local incid2 = {type = "edge_part", id = inc(), label = ''}
     graph[edge] = {[incid1] = nodes[v.from[1]], [incid2] = nodes[v.to[1]]}
   else
     for _, v1 in pairs(nodes[v.to[1]].subnodes) do
       local edge1 = {type = "edge", id = inc(), label = ''}
-      local incid11 = {type = "edge_part", id = inc(), label = '', direction = "in"}
-      local incid12 = {type = "edge_part", id = inc(), label = '', direction = "out"}
+      local incid11 = {type = "edge_part", id = inc(), label = ''}
+      local incid12 = {type = "edge_part", id = inc(), label = ''}
       graph[edge1] = {[incid11] = nodes[v.from[1]], [incid12] = v1}
     end
     for _, v1 in pairs(nodes[v.to[1]].subedges) do
