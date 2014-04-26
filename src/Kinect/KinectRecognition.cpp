@@ -5,6 +5,11 @@ using namespace Kinect;
 
 Kinect::KinectRecognition::KinectRecognition()
 {
+	this->inicialize();
+}
+
+void Kinect::KinectRecognition::inicialize()
+{
 	isOpen=true;
 	mOpenniStatus=openni::OpenNI::initialize();
 	if(mOpenniStatus != openni::STATUS_OK)
@@ -12,13 +17,13 @@ Kinect::KinectRecognition::KinectRecognition()
 		qDebug() << "Openni initialization failed";
 		isOpen=false;
 	}
+
 	mOpenniStatus=device.open(openni::ANY_DEVICE);
 	if(mOpenniStatus != openni::STATUS_OK)
 	{
 		qDebug() << "Openni Device not Open";
 		isOpen=false;
 	}
-
 }
 
 Kinect::KinectRecognition::~KinectRecognition()

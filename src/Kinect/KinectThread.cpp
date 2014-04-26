@@ -23,6 +23,19 @@ Kinect::KinectThread::~KinectThread(void)
 {
 }
 
+void Kinect::KinectThread::inicializeNite()
+{
+	// color data for Kinect windows
+	color.create(mKinect->device, openni::SENSOR_COLOR);
+	color.start();
+	// depth data for Hand Tracking
+	m_depth.create(mKinect->device, openni::SENSOR_DEPTH);
+	m_depth.start();
+
+	kht = new KinectHandTracker(&mKinect->device,&m_depth);
+
+}
+
 void Kinect::KinectThread::setCancel(bool set)
 {
 	mCancel=set;
@@ -46,13 +59,6 @@ void Kinect::KinectThread::setSpeedKinect(double set)
 {
 	mSpeed=set;
 }
-
-// SIGNAL 1
-//void Kinect::KinectThread::sendSliderCoords(float _t1, float _t2, float _t3)
-//{
-//	void *_a[] = { 0, const_cast<void*>(reinterpret_cast<const void*>(&_t1)), const_cast<void*>(reinterpret_cast<const void*>(&_t2)), const_cast<void*>(reinterpret_cast<const void*>(&_t3)) };
-//	QMetaObject::activate(this, &staticMetaObject, 1, _a);
-//}
 
 void Kinect::KinectThread::run()
 {
@@ -78,12 +84,7 @@ void Kinect::KinectThread::run()
 	//////////////Kinect start color and Hand tracking ///////
 	if(isOpen)
 	{
-		color.create(mKinect->device, openni::SENSOR_COLOR);
-		color.start();
-		m_depth.create(mKinect->device, openni::SENSOR_DEPTH);
-		m_depth.start();
-
-		kht = new KinectHandTracker(&mKinect->device,&m_depth);
+		inicializeNite();
 	}
 
 
@@ -150,6 +151,4 @@ void Kinect::KinectThread::run()
 		}
 
 	}
-	//delete(mKinect);
-	//delete(this);
 }

@@ -34,8 +34,6 @@ public:
 
 	QLabel *getLabel() const;
 
-
-
 signals:
 
 	/**
@@ -93,6 +91,9 @@ private:
 
 	void closeEvent(QCloseEvent *event);
 
+	/**
+	 * @brief create Kinect Window
+	 */
 	void configureWindow(void);
 
 	QApplication	*mApp;
