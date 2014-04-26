@@ -2,6 +2,8 @@
 
 #include <vector>
 #include <QDebug>
+#include <osg/Depth>
+#include <osg/BlendFunc>
 
 Sphere::Sphere(osg::Vec3d position, float radius, osg::Vec4d color) {
     init();
@@ -79,9 +81,14 @@ void Sphere::transform(osg::Vec3d position, float radius, osg::Vec4d color) {
 
     ss->setAttribute(material,osg::StateAttribute::OVERRIDE);
     ss->setMode(GL_DEPTH_TEST,osg::StateAttribute::ON);
-    ss->setMode(GL_LIGHTING,osg::StateAttribute::ON);
+    ss->setMode(GL_LIGHTING,osg::StateAttribute::OFF);
     ss->setMode(GL_BLEND,osg::StateAttribute::ON);
     ss->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
+
+    osg::ref_ptr<osg::Depth> depth = new osg::Depth;
+    depth->setWriteMask(false);
+    ss->setAttributeAndModes(depth, osg::StateAttribute::ON);
+    ss->setAttributeAndModes(new osg::BlendFunc, osg::StateAttribute::ON);
 
     at->setPosition(position * 1);
     at->setScale(radius);
