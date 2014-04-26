@@ -57,41 +57,42 @@ void OpenCV::FaceRecognizer::annotateFaces(Mat frame)
 					(abs(1.0f-(float)this->drawrect.width/(float)(face_i.width))<0.15f) &&
 					(abs(1.0f-(float)this->drawrect.height/(float)(face_i.height))<0.15f))
 			{
-				face_i.x=(face_i.x-face_i.width*0.4+this->rect.x);
+				//TODO conversion to INT,
+				face_i.x=(int)(face_i.x-face_i.width*0.4+this->rect.x);
 				if (face_i.x<0) face_i.x=0;
 				if (face_i.x>frame.cols-1) face_i.x=frame.cols-1;
-				face_i.width=face_i.width*1.8;
+				face_i.width=(int)(face_i.width*1.8);
 				if (face_i.x+face_i.width>frame.cols-1) face_i.width=frame.cols-1-face_i.x;
-				face_i.y=(face_i.y-face_i.height*0.4+this->rect.y);
+				face_i.y=(int)(face_i.y-face_i.height*0.4+this->rect.y);
 				if (face_i.y<0) face_i.y=0;
 				if (face_i.y>frame.rows-1) face_i.y=frame.rows-1;
-				face_i.height=face_i.height*1.8;
+				face_i.height=(int)(face_i.height*1.8);
 				if (face_i.y+face_i.height>frame.rows-1) face_i.height=frame.rows-1-face_i.y;
 
 				this->rect=face_i;
 				isMovement=false;
 			} else {
-				//TODO conversion to INT, no effective
-				this->drawrect.x=(face_i.x+this->rect.x); //-face_i.width*0.1
+				//TODO conversion to INT,
+				this->drawrect.x=(int)(face_i.x+this->rect.x); //-face_i.width*0.1
 				if (this->drawrect.x<0) this->drawrect.x=0;
 				if (this->drawrect.x>frame.cols-1) this->drawrect.x=frame.cols-1;
-				this->drawrect.width=face_i.width;//*1.2;
+				this->drawrect.width=(int)(face_i.width);//*1.2;
 				if (this->drawrect.x+this->drawrect.width>frame.cols-1) this->drawrect.width=frame.cols-1-this->drawrect.x;
-				this->drawrect.y=(face_i.y+this->rect.y); //-face_i.height*0.1
+				this->drawrect.y=(int)(face_i.y+this->rect.y); //-face_i.height*0.1
 				if (this->drawrect.y<0) this->drawrect.y=0;
 				if (this->drawrect.y>frame.rows-1) this->drawrect.y=frame.rows-1;
-				this->drawrect.height=face_i.height;//*1.2;
+				this->drawrect.height=(int)(face_i.height);//*1.2;
 				if (this->drawrect.y+this->drawrect.height>frame.rows-1) this->drawrect.height=frame.rows-1-this->drawrect.y;
 
-				face_i.x=(face_i.x-face_i.width*0.4+this->rect.x);
+				face_i.x=(int)(face_i.x-face_i.width*0.4+this->rect.x);
 				if (face_i.x<0) face_i.x=0;
 				if (face_i.x>frame.cols-1) face_i.x=frame.cols-1;
-				face_i.width=face_i.width*1.8;
+				face_i.width=(int)(face_i.width*1.8);
 				if (face_i.x+face_i.width>frame.cols-1) face_i.width=frame.cols-1-face_i.x;
-				face_i.y=(face_i.y-face_i.height*0.4+this->rect.y);
+				face_i.y=(int)(face_i.y-face_i.height*0.4+this->rect.y);
 				if (face_i.y<0) face_i.y=0;
 				if (face_i.y>frame.rows-1) face_i.y=frame.rows-1;
-				face_i.height=face_i.height*1.8;
+				face_i.height=(int)(face_i.height*1.8);
 				if (face_i.y+face_i.height>frame.rows-1) face_i.height=frame.rows-1-face_i.y;
 
 				this->rect=face_i;
@@ -103,15 +104,15 @@ void OpenCV::FaceRecognizer::annotateFaces(Mat frame)
 			detected=true;
 			isMovement=true;
 			this->drawrect=face_i;
-			face_i.x=(face_i.x-face_i.width*0.4);
+			face_i.x=(int)(face_i.x-face_i.width*0.4);
 			if (face_i.x<0) face_i.x=0;
 			if (face_i.x>frame.cols-1) face_i.x=frame.cols-1;
-			face_i.width=face_i.width*1.8;
+			face_i.width=(int)(face_i.width*1.8);
 			if (face_i.x+face_i.width>frame.cols-1) face_i.width=frame.cols-1-face_i.x;
-			face_i.y=(face_i.y-face_i.height*0.4);
+			face_i.y=(int)(face_i.y-face_i.height*0.4);
 			if (face_i.y<0) face_i.y=0;
 			if (face_i.y>frame.rows-1) face_i.y=frame.rows-1;
-			face_i.height=face_i.height*1.8;
+			face_i.height=(int)(face_i.height*1.8);
 			if (face_i.y+face_i.height>frame.rows-1) face_i.height=frame.rows-1-face_i.y;
 			this->rect=face_i;
 		}

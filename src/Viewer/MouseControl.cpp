@@ -39,18 +39,18 @@ void Vwr::MouseControl::moveMouseAruco(double positionX,double positionY,bool is
 {
 	qDebug() << positionX << "  " << positionY << "         " << isClick;
 
-	int wieverX = positionX * viewer->width();
-	int wieverY = positionY * viewer->height();
-	int windowX = positionX * viewer->width()  + viewer->x() + 8;
-	int windowY = positionY * viewer->height() + viewer->y() + 28;
-	int screenX = positionX * viewer->width()  + viewer->x() + window->x() + 8;
-	int screenY = positionY * viewer->height() + viewer->y() + window->y() + 28;
+	float wieverX = (float) (positionX * viewer->width());
+	float wieverY = (float) (positionY * viewer->height());
+	int windowX = (int) positionX * viewer->width()  + viewer->x() + 8;
+	int windowY = (int) positionY * viewer->height() + viewer->y() + 28;
+	int screenX = (int) positionX * viewer->width()  + viewer->x() + window->x() + 8;
+	int screenY = (int) positionY * viewer->height() + viewer->y() + window->y() + 28;
 
 
 	viewer->cursor().setPos(screenX, screenY);
 
 
-	wieverY = viewer->height() - wieverY;
+	wieverY =  ((float) viewer->height() - wieverY);
 
 	if( isClick != mIsClicAruco){
 		mIsClicAruco = isClick;
@@ -160,8 +160,8 @@ void Vwr::MouseControl::moveCursorMouse(double positionX, double positionY, bool
 
 void Vwr::MouseControl::moveCursorWorldCoordinates(double positionX, double positionY, bool isClick)
 {
-	int newPositionX=positionX*mRatioX*mSpeedMoving;
-	int newPositionY=positionY*mRatioY*mSpeedMoving;
+	int newPositionX=(int) (positionX*mRatioX*mSpeedMoving);
+	int newPositionY=(int) (positionY*mRatioY*mSpeedMoving);
 	viewer->cursor().setPos(newPositionX,newPositionY);
 	if(isClick)
 	{
