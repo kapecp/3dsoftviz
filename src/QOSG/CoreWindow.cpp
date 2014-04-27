@@ -50,6 +50,7 @@
 #include "LuaGraph/SimpleGraphVisualizer.h"
 
 #include "Diluculum/LuaState.hpp"
+#include <LuaGraph/LuaGraphTreeModel.h>
 using namespace QOSG;
 using namespace std;
 
@@ -230,6 +231,7 @@ void CoreWindow::createActions()
     filterEdit = new QLineEdit();
     connect(filterEdit, SIGNAL(returnPressed()), this, SLOT(filterGraph()));
 
+    luaGraphTreeView = new QTreeView();
 
 	//mody - ziadny vyber, vyber jedneho, multi vyber centrovanie
 	noSelect = new QPushButton();
@@ -603,9 +605,8 @@ void CoreWindow::createMetricsToolBar()
     toolBar->addWidget(loadFileTreeButton);
     toolBar->addWidget(loadFunctionCallButton);
 
+    toolBar->addWidget(luaGraphTreeView);
     addToolBar(Qt::RightToolBarArea,toolBar);
-    //toolBar->setMaximumHeight(400);
-    //toolBar->setMaximumWidth(120);
     toolBar->setMovable(true);
 
     toolBar = new QToolBar("Metrics filter",this);
@@ -2022,9 +2023,15 @@ Vwr::CameraManipulator* CoreWindow::getCameraManipulator() {
 
 void CoreWindow::onChange()
 {
+    QAbstractItemModel *model = luaGraphTreeView->model();
+    if (model != NULL){
+        delete model;
+        model == NULL;
+    }
     QLinkedList<osg::ref_ptr<Data::Node> > *selected = viewerWidget->getPickHandler()->getSelectedNodes();
     if (selected->size() == 1)
-        cout << "Selected single node" << std::endl;
-    else
-        cout << "Not selected single node" << std::endl;
+        if (Lua::LuaGraph::getInstance()->getNodes()->contains(selected->first()->getId())){
+            Lua::LuaNode *node = Lua::LuaGraph::getInstance()->getNodes()->value(selected->first()->getId());
+            luaGraphTreeView->setModel(new LuaGraphTreeModel(node));
+        }
 }

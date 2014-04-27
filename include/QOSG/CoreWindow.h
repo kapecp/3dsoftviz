@@ -450,6 +450,12 @@ private:
         */
     QLineEdit * filterEdit;
 
+    /**
+        *  QTreeView * luaGraphTreeView
+        *  \brief TreeView for exploring selected node of lua graph
+        */
+    QTreeView * luaGraphTreeView;
+
 	/**
 		*  QPushButton * noSelect
 		*  \brief Action for no-select mode
