@@ -3,6 +3,7 @@
 
 #include <QThread>
 
+#include "opencv2/highgui/highgui.hpp"
 
 namespace OpenCV{
 class CapVideo;

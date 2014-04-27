@@ -14,6 +14,7 @@ OpenCV::FaceRecognizer::FaceRecognizer()
 	this->isMovement=false;
 	this->firstdetection=true;
 	this->queue = new SizedQueue(5,0.0f);
+	this->queueDistance = new SizedQueue(5,0.0f);
 }
 
 OpenCV::FaceRecognizer::~FaceRecognizer()
@@ -152,7 +153,9 @@ float OpenCV::FaceRecognizer::getHeadDistance(double screenWidth)
 	{
 		Rect face = this->faces[0];
 		// 1.0 when the face width is 3.5 times smaller than frame
-		return ((float)screenWidth/(float)face.width)/3.5f;
+		float dist = ((float)screenWidth/(float)face.width)/3.5f;
+		this->queueDistance->getAvgBasedOnValue(dist);
+		return dist;
 	}
 	return 0.0f;
 }

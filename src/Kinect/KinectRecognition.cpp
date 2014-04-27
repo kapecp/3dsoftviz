@@ -1,5 +1,5 @@
 #include "Kinect/KinectRecognition.h"
-#include "QDebug"
+#include <QDebug>
 
 using namespace Kinect;
 
