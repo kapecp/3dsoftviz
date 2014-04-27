@@ -229,6 +229,30 @@ bool PickHandler::handleKeyDown( const osgGA::GUIEventAdapter& ea, GUIActionAdap
 		}
 	}
 
+	// toolbars only
+	else if(ea.getKey() == 't' || ea.getKey() == 'T')
+	{
+		static bool toolbars = true;
+		if( toolbars ){
+			toolbars = !toolbars;
+			QList<QToolBar *> toolbars = AppCore::Core::getInstance()->getCoreWindow()->findChildren<QToolBar *>();
+			QListIterator<QToolBar *> i(toolbars);
+			while (i.hasNext()){
+				i.next()->show();
+			}
+
+		} else {
+			toolbars = !toolbars;
+			QList<QToolBar *> toolbars = AppCore::Core::getInstance()->getCoreWindow()->findChildren<QToolBar *>();
+			QListIterator<QToolBar *> i(toolbars);
+			while (i.hasNext()){
+				i.next()->hide();
+			}
+		}
+
+	}
+
+
 	return false;
 }
 
