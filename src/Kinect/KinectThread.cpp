@@ -27,8 +27,11 @@ bool Kinect::KinectThread::inicializeKinect()
 {
 	mKinect = new Kinect::KinectRecognition();
 	isOpen=mKinect->isOpenOpenni();
+
+	qDebug() <<isOpen ;
 	if(isOpen)
 	{
+
 		// color data for Kinect windows
 		color.create(mKinect->device, openni::SENSOR_COLOR);
 		color.start();

@@ -139,6 +139,7 @@ void Kinect::KinectWindow::pausewindows()
 	{
 		mKinectPause->setText(tr("Continue"));
 		emit sendImageKinect(false);
+		this->thr->closeActionOpenni();
 	}
 	else
 	{

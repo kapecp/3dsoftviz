@@ -28,6 +28,7 @@ void Kinect::KinectRecognition::inicialize()
 
 void Kinect::KinectRecognition::closeOpenni()
 {
+	device.close();
 	openni::OpenNI::shutdown();
 }
 
