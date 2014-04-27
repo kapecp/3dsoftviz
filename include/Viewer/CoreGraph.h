@@ -382,7 +382,7 @@ private:
 
     double computeOpacity(osg::Vec3 clusterPosition);
     bool cameraInsideSphere(osg::Vec3d midPoint, float radius);
-    bool cameraInsideCube(osg::Vec3d midPoint, float radius);
+    bool cameraInsideCube(osg::Vec3d lowerPoint, osg::Vec3d upperPoint);
 };
 }
 

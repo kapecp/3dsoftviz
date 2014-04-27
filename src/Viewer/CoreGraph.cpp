@@ -194,12 +194,13 @@ double CoreGraph::computeOpacity(osg::Vec3 clusterPosition) {
 //    return distance / solidDistance;
     return opacity;
 }
-
-osg::ref_ptr<osg::Group> CoreGraph::test2() {
 /*
-    if (testGroup != NULL) {
-        return testGroup;
-    }*/
+osg::ref_ptr<osg::Group> CoreGraph::test2() {
+
+//    if (testGroup != NULL) {
+//        return testGroup;
+//    }
+
 //    qDebug() << "***** INIT test2 ";
     testGroup = new osg::Group;
 
@@ -281,7 +282,7 @@ osg::ref_ptr<osg::Group> CoreGraph::test2() {
     }
     return testGroup;
 }
-
+*/
 osg::ref_ptr<osg::AutoTransform> CoreGraph::dodecahedron(qlonglong id, osg::Vec3 position, float radius, osg::Vec4 color) {
 //    (±1, ±1, ±1)
 //    (0, ±1/φ, ±φ)
@@ -803,16 +804,31 @@ void CoreGraph::updateClustersCoords() {
 
         osg::Vec3f midPoint;
         float radius;
+        osg::Vec3d scale;
+
+        osg::Vec3f lowerPoint;
+        osg::Vec3f upperPoint;
 
         // ak je na tomto clusteri zaregistrovany obmedzovac, vezmi jeho tvar
         if (cluster->getShapeGetter() != NULL) {
-            midPoint = cluster->getShapeGetter()->getCenterNode()->getCurrentPosition(true);
-            radius = (midPoint - cluster->getShapeGetter()->getSurfaceNode()->getCurrentPosition(true)).length();
+            Layout::ShapeGetter_Cube * shapeGetter = cluster->getShapeGetter();
+            midPoint = shapeGetter->getCenterNode()->getCurrentPosition();
+            double distanceX = (shapeGetter->getSurfaceNodeX()->getCurrentPosition() - midPoint).length();
+            double distanceY = (shapeGetter->getSurfaceNodeY()->getCurrentPosition() - midPoint).length();
+            double distanceZ = (shapeGetter->getSurfaceNodeZ()->getCurrentPosition() - midPoint).length();
+            scale = osg::Vec3d(distanceX, distanceY, distanceZ);
+
+            lowerPoint = osg::Vec3f(midPoint.x() - distanceX, midPoint.y() - distanceY, midPoint.z() - distanceZ);
+            upperPoint = osg::Vec3f(midPoint.x() + distanceX, midPoint.y() + distanceY, midPoint.z() + distanceZ);
         }
         // inak vypocitaj tvar podla zlucenych uzlov
         else {
             midPoint = getMidPoint(cluster->getALLClusteredNodes());
             radius = getRadius(cluster->getALLClusteredNodes(), midPoint);
+            scale = osg::Vec3d(radius,radius,radius);
+
+            lowerPoint = osg::Vec3f(midPoint.x() - radius, midPoint.y() - radius, midPoint.z() - radius);
+            upperPoint = osg::Vec3f(midPoint.x() + radius, midPoint.y() + radius, midPoint.z() + radius);
         }
 
         osg::Vec4 color = cluster->getColor();
@@ -821,18 +837,23 @@ void CoreGraph::updateClustersCoords() {
         } else if ((clustersOpacitySelected && cluster->isSelected()) || !clustersOpacitySelected){
             color.w() = clustersOpacity;
         }
-        if (cameraInsideCube(midPoint, radius)) {
-            color.w() = 1;
-        }
 
         if (cluster->getALLClusteredNodes().count() <= clustersShapeBoundary) {
-            cluster->getCube()->transform(midPoint, radius, color);
+            if (cameraInsideCube(lowerPoint, upperPoint)) {
+                //color.w() = 1;
+                color = osg::Vec4d(1,1,1,1);
+            }
+            cluster->getCube()->transform(midPoint, scale, color);
             color.w() = 0;
-            cluster->getSphere()->transform(midPoint, radius, color);
+            cluster->getSphere()->transform(midPoint, scale, color);
         } else {
-            cluster->getSphere()->transform(midPoint, radius, color);
+            if (cameraInsideSphere(midPoint, radius)) {
+                //color.w() = 1;
+                color = osg::Vec4d(1,1,1,1);
+            }
+            cluster->getSphere()->transform(midPoint, scale, color);
             color.w() = 0;
-            cluster->getCube()->transform(midPoint, radius, color);
+            cluster->getCube()->transform(midPoint, scale, color);
         }
     }
 }
@@ -929,9 +950,9 @@ void CoreGraph::setNodesFreezed(bool val)
 	qmetaNodesGroup->freezeNodePositions();
 }
 
-bool CoreGraph::cameraInsideCube(osg::Vec3d midPoint, float radius) {
-    return (new osg::BoundingBox(midPoint.x() - radius, midPoint.y() - radius, midPoint.z() - radius,
-                                 midPoint.x() + radius, midPoint.y() + radius, midPoint.z() + radius))
+bool CoreGraph::cameraInsideCube(osg::Vec3d lowerPoint, osg::Vec3d upperPoint) {
+    return (new osg::BoundingBox(lowerPoint.x(), lowerPoint.y(), lowerPoint.z(),
+                                 upperPoint.x(), upperPoint.y(), upperPoint.z()))
             ->contains(cameraManipulator->getCameraPosition());
 }
 

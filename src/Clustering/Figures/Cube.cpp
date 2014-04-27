@@ -22,7 +22,7 @@ Cube::Cube(osg::Vec3d position, float radius, osg::Vec4d color) {
     at = new osg::AutoTransform;
 
     computeGeode();
-    transform(position, radius, color);
+    transform(position, osg::Vec3d(radius,radius,radius), color);
     at->addChild(geode);
 }
 
@@ -262,7 +262,7 @@ void Cube::computeGeode()
     geode->addDrawable(geometry);
 }
 
-void Cube::transform(osg::Vec3d position, float radius, osg::Vec4d color) {
+void Cube::transform(osg::Vec3d position, osg::Vec3d scale, osg::Vec4d color) {
     osg::StateSet * ss = geometry->getOrCreateStateSet();
 /*
 // only wireframe (outline / contour)
@@ -297,7 +297,7 @@ void Cube::transform(osg::Vec3d position, float radius, osg::Vec4d color) {
     ss->setAttributeAndModes(new osg::BlendFunc, osg::StateAttribute::ON);
 
     at->setPosition(position * 1);
-    at->setScale(radius);
+    at->setScale(scale);
 
 //    dodecahedronGeode->setUserValue("id", QString::number(id).toStdString());
 

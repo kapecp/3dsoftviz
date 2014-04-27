@@ -8,7 +8,7 @@
 Sphere::Sphere(osg::Vec3d position, float radius, osg::Vec4d color) {
     init();
     computeGeode(20, 20);
-    transform(position, radius, color);
+    transform(position, osg::Vec3d(radius,radius,radius), color);
     at->addChild(sphereGeode);
 }
 
@@ -70,7 +70,7 @@ void Sphere::computeGeode(unsigned int rings, unsigned int sectors) {
     sphereGeometry->setColorArray(colors);
 }
 
-void Sphere::transform(osg::Vec3d position, float radius, osg::Vec4d color) {
+void Sphere::transform(osg::Vec3d position, osg::Vec3d scale, osg::Vec4d color) {
     osg::StateSet * ss = sphereGeometry->getOrCreateStateSet();
 
     osg::Material* material = new osg::Material();
@@ -91,5 +91,5 @@ void Sphere::transform(osg::Vec3d position, float radius, osg::Vec4d color) {
     ss->setAttributeAndModes(new osg::BlendFunc, osg::StateAttribute::ON);
 
     at->setPosition(position * 1);
-    at->setScale(radius);
+    at->setScale(scale);
 }

@@ -473,6 +473,10 @@ private:
     bool dragCluster(osgViewer::Viewer * viewer);
     bool handleScroll( const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& aa );
 
+    bool isXPressed;
+    bool isYPressed;
+    bool isZPressed;
+
 public slots:
 	/**
 		*	\fn public mouseTimerTimeout

@@ -52,6 +52,7 @@ Vwr::CameraManipulator::CameraManipulator(Vwr::CoreGraph * coreGraph)
 	SCREEN_MARGIN = 200.f;
 
     ctrlPressed = false;
+    shiftPressed = false;
 
 	this->coreGraph = coreGraph;
 	stop();
@@ -353,7 +354,7 @@ bool Vwr::CameraManipulator::calcMovement()
 	if (_ga_t0.get()==NULL) return false;
 
     // ignoruj event ak je stlaceny ctrl
-    if(ctrlPressed) return false;
+    if(ctrlPressed || shiftPressed) return false;
 
 	float dx=0.0f;
 	float dy=0.0f;
@@ -600,6 +601,12 @@ bool Vwr::CameraManipulator::handleKeyUp( const osgGA::GUIEventAdapter& ea, osgG
         ctrlPressed = false;
         break;
     }
+    case osgGA::GUIEventAdapter::KEY_Shift_R:
+    case osgGA::GUIEventAdapter::KEY_Shift_L:
+    {
+        shiftPressed = false;
+        break;
+    }
 	case osgGA::GUIEventAdapter::KEY_Space:
 	{
 		flushMouseEventStack();
@@ -652,6 +659,12 @@ bool Vwr::CameraManipulator::handleKeyDown( const osgGA::GUIEventAdapter &ea, os
     case osgGA::GUIEventAdapter::KEY_Control_L:
     {
         ctrlPressed = true;
+        break;
+    }
+    case osgGA::GUIEventAdapter::KEY_Shift_R:
+    case osgGA::GUIEventAdapter::KEY_Shift_L:
+    {
+        shiftPressed = true;
         break;
     }
 	case osgGA::GUIEventAdapter::KEY_Up:

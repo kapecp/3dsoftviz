@@ -19,12 +19,15 @@ public:
 
     Shape_AbstractCube (
 			const osg::Vec3f center_,
-			const float radius_
+            const osg::Vec3f surfaceX_,
+            const osg::Vec3f surfaceY_,
+            const osg::Vec3f surfaceZ_
 			);
 
 	osg::Vec3f & getCenter ();
-
-	float getRadius ();
+    osg::Vec3f & getSurfaceX ();
+    osg::Vec3f & getSurfaceY ();
+    osg::Vec3f & getSurfaceZ ();
 
 	/**
 	 * [visitor pattern]
@@ -41,7 +44,9 @@ protected:
 private:
 
 	osg::Vec3f center_;
-	float radius_;
+    osg::Vec3f surfaceX_;
+    osg::Vec3f surfaceY_;
+    osg::Vec3f surfaceZ_;
 
 }; // class
 

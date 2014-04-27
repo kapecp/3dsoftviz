@@ -644,6 +644,7 @@ private:
 	void updateProjectionAccordingFace(const float x, const float y, const float distance);
 
     bool ctrlPressed;
+    bool shiftPressed;
 
 };
 

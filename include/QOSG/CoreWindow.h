@@ -188,7 +188,6 @@ public slots:
     void clustersOpacitySliderValueChanged(int value);
     void clustersShapeBoundarySliderValueChanged(int value);
     void repulsiveForceInsideClusterValueChanged(double value);
-    void setRestriction_Cube();
     void setRestriction_Cube_Selected();
     void cluster_nodes();
     // currentPosition nastavi na targetPosition - cim sposobi to, ze uzly vo vnutri obmedzovaca sa pekne nalayoutuju, pretoze uz nebudu tahane mimo neho kvoli targetPos
@@ -674,7 +673,6 @@ private:
     QLineEdit * le_clusteringDepth;
     QProgressDialog * clusteringProgressBar;
 
-    QPushButton * b_SetRestriction_Cube;
     QPushButton * b_SetRestriction_Cube_Selected;
 
     QLabel * l_repulsiveForceInsideCluster;

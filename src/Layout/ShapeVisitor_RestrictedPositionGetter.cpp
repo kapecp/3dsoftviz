@@ -1,6 +1,9 @@
 #include "Layout/ShapeVisitor_RestrictedPositionGetter.h"
 //-----------------------------------------------------------------------------
 #include <cstdlib>
+#include <cmath>
+#include <osgUtil/IntersectVisitor>
+#include <osg/ShapeDrawable>
 //-----------------------------------------------------------------------------
 
 namespace Layout {
@@ -177,23 +180,27 @@ void ShapeVisitor_RestrictedPositionGetter::visit(Shape_ConeSurface &shape)
 }
 
 void ShapeVisitor_RestrictedPositionGetter::visit (Shape_Cube & shape) {
-    if (!insideCube(shape.getCenter(), shape.getRadius(), mOriginalPosition)) {
+    if (!insideCube(shape.getCenter(), shape.getSurfaceX(), shape.getSurfaceY(), shape.getSurfaceZ(), mOriginalPosition)) {
         // position outside cube - BAD
 //        switch (shape.getRestrictionPolicy ()) {
 //        case Shape_Cube::SURFACE:
 //        case Shape_Cube::RANDOM_DISTANCE_FROM_CENTER:
 //        }
-        mRestrictedPosition = toCube(shape.getCenter(), shape.getRadius(), mOriginalPosition);
+        mRestrictedPosition = toCube(shape.getCenter(), shape.getSurfaceX(), shape.getSurfaceY(), shape.getSurfaceZ(), mOriginalPosition);
     } else {
         // position inside cube - OK
         mRestrictedPosition = mOriginalPosition;
     }
 }
 
-bool ShapeVisitor_RestrictedPositionGetter::insideCube(const osg::Vec3f &center, float radius, osg::Vec3f &point) {
-    return (point.x() > center.x() - radius && point.x() < center.x() + radius &&
-            point.y() > center.y() - radius && point.y() < center.y() + radius &&
-            point.z() > center.z() - radius && point.z() < center.z() + radius);
+bool ShapeVisitor_RestrictedPositionGetter::insideCube(const osg::Vec3f &center, const osg::Vec3f &surfaceX, const osg::Vec3f &surfaceY, const osg::Vec3f &surfaceZ, osg::Vec3f &point) {
+    double distanceX = abs((center - surfaceX).x());
+    double distanceY = abs((center - surfaceY).y());
+    double distanceZ = abs((center - surfaceZ).z());
+
+    return (point.x() > center.x() - distanceX && point.x() < center.x() + distanceX &&
+            point.y() > center.y() - distanceY && point.y() < center.y() + distanceY &&
+            point.z() > center.z() - distanceZ && point.z() < center.z() + distanceZ);
 }
 
 osg::Vec3f ShapeVisitor_RestrictedPositionGetter::toSphere(const osg::Vec3f &center, float radiusMin,
@@ -227,23 +234,27 @@ osg::Vec3f ShapeVisitor_RestrictedPositionGetter::toSphere(const osg::Vec3f &cen
 	return changedPoint;
 }
 
-osg::Vec3f ShapeVisitor_RestrictedPositionGetter::toCube(const osg::Vec3f &center, float radius, const osg::Vec3f &point)
+float median(float A, float B, float C) {
+    if ((A >= B && A <= C) || (A >= C && A <= B)) {
+        return A;
+    } else if ((B >= A && B <= C) || (B >= C && B <= A)) {
+        return B;
+    }
+    return C;
+}
+
+osg::Vec3f ShapeVisitor_RestrictedPositionGetter::toCube(const osg::Vec3f &center, const osg::Vec3f &surfaceX, const osg::Vec3f &surfaceY, const osg::Vec3f &surfaceZ, const osg::Vec3f &point)
 {
-    // create random point
-    osg::Vec3f changedPoint;
-    float LO_x = center.x() - radius;
-    float LO_y = center.y() - radius;
-    float LO_z = center.z() - radius;
+    double distanceX = abs((center - surfaceX).x());
+    double distanceY = abs((center - surfaceY).y());
+    double distanceZ = abs((center - surfaceZ).z());
 
-    float HI_x = center.x() + radius;
-    float HI_y = center.y() + radius;
-    float HI_z = center.z() + radius;
+    //  nearest_point_on_box(x, y, z, box_min_x, box_min_y, box_min_z, box_max_x, box_max_y, box_max_z)
+    float x = /*point.x() -*/ median(point.x(), center.x() - distanceX, center.x() + distanceX);
+    float y = /*point.y() -*/ median(point.y(), center.y() - distanceY, center.y() + distanceY);
+    float z = /*point.z() -*/ median(point.z(), center.z() - distanceZ, center.z() + distanceZ);
 
-    changedPoint.x() = LO_x + static_cast <float> (rand()) /( static_cast <float> (RAND_MAX/(HI_x-LO_x)));
-    changedPoint.y() = LO_y + static_cast <float> (rand()) /( static_cast <float> (RAND_MAX/(HI_y-LO_y)));
-    changedPoint.z() = LO_z + static_cast <float> (rand()) /( static_cast <float> (RAND_MAX/(HI_z-LO_z)));
-
-    return changedPoint;
+    return osg::Vec3f(x,y,z);
 }
 
 } // namespace

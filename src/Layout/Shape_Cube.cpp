@@ -7,9 +7,11 @@ namespace Layout {
 
 Shape_Cube::Shape_Cube (
 		const osg::Vec3f center,
-		const float radius,
+        const osg::Vec3f surfaceX,
+        const osg::Vec3f surfaceY,
+        const osg::Vec3f surfaceZ,
 		RestrictionPolicy restrictionPolicy
-        ) :	Shape_AbstractCube (center, radius),
+        ) :	Shape_AbstractCube (center, surfaceX, surfaceY, surfaceZ),
 	restrictionPolicy_ (restrictionPolicy)
 {
 	// nothing

@@ -133,7 +133,10 @@ void ShapeVisitor_Comparator::compareCones(Shape_ConeSurface &shape, Shape_ConeS
 
 void ShapeVisitor_Comparator::compareCubes(Shape_AbstractCube &shape, Shape_AbstractCube &otherShape)
 {
-    comparisonResult_ = (shape.getCenter () == otherShape.getCenter ()) && qFuzzyCompare(shape.getRadius (),otherShape.getRadius ());
+    comparisonResult_ = shape.getCenter () == otherShape.getCenter () &&
+                        shape.getSurfaceX() == otherShape.getSurfaceX() &&
+                        shape.getSurfaceY() == otherShape.getSurfaceY() &&
+                        shape.getSurfaceZ() == otherShape.getSurfaceZ();
 }
 
 } // namespace

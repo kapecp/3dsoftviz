@@ -27,7 +27,9 @@ public:
 
     Shape_Cube (
 			const osg::Vec3f center,
-			const float radius,
+            const osg::Vec3f surfaceX,
+            const osg::Vec3f surfaceY,
+            const osg::Vec3f surfaceZ,
 			RestrictionPolicy restrictionPolicy
 			);
 

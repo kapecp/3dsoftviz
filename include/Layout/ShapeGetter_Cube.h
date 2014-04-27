@@ -4,41 +4,51 @@
 #include "Layout/ShapeGetter.h"
 
 #include <osg/ref_ptr>
+#include <osg/Vec3d>
 
 namespace Layout {
 
-/**
- * \brief Returning a sphere.
- * Center is defined by the centerNode position.
- * Radius is defined by the surfaceNode position (the radius is computed in a way that
- * surfaceNode will be placed on the surface of the resulting sphere).
- */
 class ShapeGetter_Cube : public ShapeGetter {
 
 public:
 
     ShapeGetter_Cube (
 			osg::ref_ptr<Data::Node> centerNode,
-			osg::ref_ptr<Data::Node> surfaceNode
+            osg::ref_ptr<Data::Node> surfaceNodeX,
+            osg::ref_ptr<Data::Node> surfaceNodeY,
+            osg::ref_ptr<Data::Node> surfaceNodeZ
 			);
 
 	/***/
     virtual ~ShapeGetter_Cube (void) {}
 
-	virtual QSharedPointer<Shape> getShape (void);
+    virtual QSharedPointer<Shape> getShape (void);
 
 	virtual  QSet<Data::Node *> getNodesOfShape();
 
+    void move(double lengthX, double lengthY, double lengthZ);
+    double getDistanceX();
+    double getDistanceY();
+    double getDistanceZ();
+
     osg::ref_ptr<Data::Node> getCenterNode() {return centerNode_;}
-    osg::ref_ptr<Data::Node> getSurfaceNode() {return surfaceNode_;}
+    osg::ref_ptr<Data::Node> getSurfaceNodeX() {return surfaceNodeX_;}
+    osg::ref_ptr<Data::Node> getSurfaceNodeY() {return surfaceNodeY_;}
+    osg::ref_ptr<Data::Node> getSurfaceNodeZ() {return surfaceNodeZ_;}
 
     void setCenterNode(osg::ref_ptr<Data::Node> centerNode) {centerNode_ = centerNode;}
-    void setSurfaceNode(osg::ref_ptr<Data::Node> surfaceNode) {surfaceNode_ = surfaceNode;}
+    void setSurfaceNodeX(osg::ref_ptr<Data::Node> surfaceNodeX) {surfaceNodeX_ = surfaceNodeX;}
+    void setSurfaceNodeY(osg::ref_ptr<Data::Node> surfaceNodeY) {surfaceNodeY_ = surfaceNodeY;}
+    void setSurfaceNodeZ(osg::ref_ptr<Data::Node> surfaceNodeZ) {surfaceNodeZ_ = surfaceNodeZ;}
 
 private:
 
 	osg::ref_ptr<Data::Node> centerNode_;
-	osg::ref_ptr<Data::Node> surfaceNode_;
+    osg::ref_ptr<Data::Node> surfaceNodeX_;
+    osg::ref_ptr<Data::Node> surfaceNodeY_;
+    osg::ref_ptr<Data::Node> surfaceNodeZ_;
+
+    QSharedPointer<Shape> shape;
 
 }; // class
 

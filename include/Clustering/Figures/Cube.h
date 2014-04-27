@@ -23,7 +23,7 @@ public:
     osg::Vec3d getMidpoint() { return at->getPosition(); }
     float getRadius() { return at->getScale().x(); }
 
-    void transform(osg::Vec3d position, float radius, osg::Vec4d color);
+    void transform(osg::Vec3d position, osg::Vec3d scale, osg::Vec4d color);
 
 protected:
 
