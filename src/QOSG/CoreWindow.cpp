@@ -1082,6 +1082,7 @@ void CoreWindow::setRestriction_SphereSurface ()
 	if (currentGraph != NULL)
 	{
 		osg::Vec3 position = viewerWidget->getPickHandler()->getSelectionCenter(true);
+		if (position.length()==0) return;
 		osg::ref_ptr<Data::Node> centerNode;
 		osg::ref_ptr<Data::Node> surfaceNode;
 
