@@ -71,8 +71,8 @@ signals:
 	* @brief pushImage signal that emit image with marked marker for debuging
 	* @param image emited image matrix
 	*/
-	//void pushImage( cv::Mat image );
-	void pushImage( QImage qimage ) const;
+	void pushImagemMat( cv::Mat image ) const;
+	//void pushImageQ( QImage qimage ) const;
 
 	void pushBackgrImage( cv::Mat image ) const;
 
@@ -162,7 +162,7 @@ private:
 	* @author Dávid Durčák
 	* @brief imagesSending Pripare images for sending and emiting them
 	*/
-	void imagesSending(ArucoCore &aCore) const;
+	void imagesSending(ArucoCore &aCore, const cv::Mat frame) const;
 
 	/**
 	* @author Dávid Durčák

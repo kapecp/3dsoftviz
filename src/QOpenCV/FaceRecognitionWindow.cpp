@@ -276,7 +276,6 @@ void QOpenCV::FaceRecognitionWindow::setLabel(cv::Mat image)
 		return;
 	}
 
-	cv::cvtColor( image, image, CV_BGR2RGB );
 	QImage qimage( (uchar*) image.data, image.cols, image.rows,(int) image.step, QImage::Format_RGB888);
 
 	mWindowLabel->setPixmap( QPixmap::fromImage(qimage));

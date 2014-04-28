@@ -161,10 +161,16 @@ void OpenCVCore::createConnectionAruco(){
 					  SIGNAL(sendImgMarker(bool)),
 					  mThrAruco,
 					  SLOT(setSendImgEnabling(bool)) );
-	QObject::connect( mThrAruco,
+	/*QObject::connect( mThrAruco,
 					  SIGNAL(pushImage(QImage)),
 					  mOpencvDialog,
-					  SLOT(setLabelQ(QImage)) );
+					  SLOT(setLabelQ(QImage)) );*/
+	QObject::connect( mThrAruco,
+					  SIGNAL(pushImagemMat(cv::Mat)),
+					  mOpencvDialog,
+					  SLOT(setLabel(cv::Mat)) );
+
+
 	// send actual image to background
 	QObject::connect( mOpencvDialog,
 					  SIGNAL(sendBackgrImgMarker(bool)),

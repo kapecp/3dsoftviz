@@ -145,7 +145,7 @@ void ArucoThread::run()
 				}
 			}
 
-			imagesSending(aCore);
+			imagesSending(aCore, frame);
 
 			if(! mCancel){
 				msleep(50);
@@ -215,28 +215,39 @@ void ArucoThread::mouseControlling(const double actPosArray[3], const double act
 
 }
 
-void ArucoThread::imagesSending(ArucoCore &aCore) const
+void ArucoThread::imagesSending(ArucoCore &aCore, const cv::Mat frame) const
 {
-	cv::Mat image = aCore.getDetImage();
 
+	if( mSendBackgrImgEnabled && !frame.empty() ){
+		cv::Mat flippedFrame(frame.clone());
+		if( ! mMarkerIsBehind){
+			cv::flip( flippedFrame, flippedFrame, 1);
+		}
+
+		emit pushBackgrImage( flippedFrame.clone() );
+	}
+
+
+	cv::Mat image = aCore.getDetImage();
 	cv::cvtColor( image, image, CV_BGR2RGB );
 
-	if( ! mMarkerIsBehind){
-		cv::Mat flipped(image);
-		cv::flip( flipped, flipped, 1);
-		image = flipped;
-	}
-
 	if ( mSendImgEnabled ) {
+		cv::Mat flipped(image);
+		cv::cvtColor( flipped, flipped, CV_BGR2RGB );
+		if( ! mMarkerIsBehind){
+			cv::flip( flipped, flipped, 1);
+			image = flipped;
 
-		QImage qimage ( (uchar*) image.data, image.cols, image.rows,(int) image.step, QImage::Format_RGB888);
+		}
+		//QImage qimage ( (uchar*) flipped.data, flipped.cols, flipped.rows,(int) flipped.step, QImage::Format_RGB888);
+		//emit pushImage( qimage );
+		emit pushImagemMat( flipped.clone() );
 
-		emit pushImage( qimage );	// emit image with marked marker for debuging
+		// emit image with marked marker for debuging
 	}
 
-	if( mSendBackgrImgEnabled && !image.empty() ){
-		emit pushBackgrImage( image.clone() );
-	}
+
+
 
 }
 
