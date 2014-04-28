@@ -172,9 +172,9 @@ void ArucoThread::graphControlling(const double actPosArray[3], const double act
 
 	//  forward/backward,   left/right,  around,   w
 	if( mMarkerIsBehind ){
-		actQuat.set( -actQuatArray[1],  actQuatArray[3],  actQuatArray[2],  actQuatArray[0] );
-	} else {
 		actQuat.set(  actQuatArray[1], -actQuatArray[3],  actQuatArray[2],  actQuatArray[0] );
+	} else {
+		actQuat.set( actQuatArray[1],  actQuatArray[3],  actQuatArray[2],  -actQuatArray[0] );
 	}
 
 
@@ -218,6 +218,7 @@ void ArucoThread::mouseControlling(const double actPosArray[3], const double act
 void ArucoThread::imagesSending(ArucoCore &aCore, const cv::Mat frame) const
 {
 	qDebug() << "frame" << frame.data ;
+
 	if( mSendBackgrImgEnabled && !frame.empty() ){
 		if( ! mMarkerIsBehind){
 			cv::flip( frame, frame, 1);
@@ -226,6 +227,7 @@ void ArucoThread::imagesSending(ArucoCore &aCore, const cv::Mat frame) const
 
 		emit pushBackgrImage( frame.clone() );
 	}
+
 
 
 	cv::Mat image = aCore.getDetImage();
