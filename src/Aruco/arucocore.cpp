@@ -63,7 +63,7 @@ bool ArucoCore::getDetectedPosAndQuat(cv::Mat inputImage, double position[3], do
 
 }
 
-int ArucoCore::detect(cv::Mat inputImage)
+long ArucoCore::detect(cv::Mat inputImage)
 {
 	mCamParam.resize(inputImage.size());
 

@@ -5,7 +5,6 @@
 #include "Viewer/CoreGraph.h"
 #include "Util/ApplicationConfig.h"
 
-
 QOSG::ViewerQT::ViewerQT(QWidget * parent , const char * name , const QGLWidget * shareWidget , WindowFlags f , Vwr::CoreGraph* cg):
 	AdapterWidget( parent, name, shareWidget, f )
 {
