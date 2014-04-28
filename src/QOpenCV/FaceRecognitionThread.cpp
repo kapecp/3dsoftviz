@@ -37,6 +37,10 @@ void QOpenCV::FaceRecognitionThread::run()
 		mFaceRecognizer->detectFaces( mCapVideo->getGrayframe() );
 		mFaceRecognizer->annotateFaces( image );
 
+		cv::Mat flipped(image);
+		cv::flip( image, flipped, 1);
+		image = flipped;
+
 		if( mSendImgEnabled && !image.empty()){
 			if (image.data)
 				emit pushImage( image.clone() ); // ???

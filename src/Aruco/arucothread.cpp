@@ -220,6 +220,13 @@ void ArucoThread::imagesSending(ArucoCore &aCore) const
 	cv::Mat image = aCore.getDetImage();
 
 	cv::cvtColor( image, image, CV_BGR2RGB );
+
+	if( ! mMarkerIsBehind){
+		cv::Mat flipped(image);
+		cv::flip( flipped, flipped, 1);
+		image = flipped;
+	}
+
 	if ( mSendImgEnabled ) {
 
 		QImage qimage ( (uchar*) image.data, image.cols, image.rows,(int) image.step, QImage::Format_RGB888);
