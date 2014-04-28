@@ -140,8 +140,8 @@ void Kinect::KinectThread::run()
 				if((int)kht->slidingHand_x != 0){
 					putText(frame, text, cvPoint((int)kht->slidingHand_x,(int)kht->slidingHand_y), FONT_HERSHEY_COMPLEX_SMALL, 0.8, cvScalar(0,0,250), 1, CV_AA);
 					//signal pre
-					emit sendSliderCoords(  (kht->slidingHand_x/kht->handTrackerFrame.getDepthFrame().getWidth()-0.5)*200,
-											(kht->slidingHand_y/kht->handTrackerFrame.getDepthFrame().getHeight()-0.5)*(-200),
+					emit sendSliderCoords(  (kht->slidingHand_x/kht->handTrackerFrame.getDepthFrame().getWidth()-0.5)*(-200),
+											(kht->slidingHand_y/kht->handTrackerFrame.getDepthFrame().getHeight()-0.5)*(200),
 											(kht->slidingHand_z/kht->handTrackerFrame.getDepthFrame().getHeight()-0.5)*200);
 					printf("%.2lf %.2lf z %.2lf -  %.2lf slider \n", (kht->slidingHand_x/kht->handTrackerFrame.getDepthFrame().getWidth()-0.5)*200,
 						   (kht->slidingHand_y/kht->handTrackerFrame.getDepthFrame().getHeight()-0.5)*200, (kht->slidingHand_z/kht->handTrackerFrame.getDepthFrame().getHeight()-0.5)*200, kht->slidingHand_z);
