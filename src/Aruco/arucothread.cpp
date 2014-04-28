@@ -21,8 +21,8 @@ ArucoThread::ArucoThread(QObject *parent)
 	mSendImgEnabled	= true;
 	mSendBackgrImgEnabled = false;
 	mRatioCamCoef	= 0;
-	mGrM			= 1;
-	mMoM			= 0;
+	mGrM			= 0;
+	mMoM			= 1;
 
 	mMouse			= new Vwr::MouseControl();
 

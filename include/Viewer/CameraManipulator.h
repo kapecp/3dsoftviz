@@ -182,14 +182,21 @@ signals:
 public slots:
 	/**
 		 * @author Autor: David Durcak
-		 * @brief setRotationHead Set _rotationHead quaternion to rotate camera according head
-		 * ! distance is not implemented yet
-
+		 * @brief setRotationHeadFaceDet Update _rotHeadFaceDet quaternion to rotate camera according head and call setRotationHead()
 		 * @param x % distance from middle on horizontal axis
 		 * @param y % distance from middle on vertical axis
-		 * @param distance face from camera
+		 * @param distance from camera
 		 */
-	void setRotationHead(float x, float y, float distance);
+	void setRotationHeadFaceDet(float x, float y, float distance);
+
+	/**
+		 * @author Autor: David Durcak
+		 * @brief setRotationHeadKinect Update _rotHeadKinect quaternion to rotate camera according Kinect and call setRotationHead()
+		 * @param x % distance from middle on horizontal axis
+		 * @param y % distance from middle on vertical axis
+		 * @param distance from camera
+		 */
+	void setRotationHeadKinect(float x, float y, float distance);
 
 	/**
 		 * @author Autor: David Durcak
@@ -311,7 +318,29 @@ protected:
 		*  \brief another camera rotation according user head
 		*/
 	osg::Quat    _rotationHead;
+
+	/**
+		*  osg::Quat _rotHeadFaceDet
+		*  \brief last head rotation from FaceDet
+		*/
+	osg::Quat	 _rotHeadFaceDet;
+
+	/**
+		*  osg::Quat _rotHeadKinect
+		*  \brief last head rotation from Kinect
+		*/
+	osg::Quat	 _rotHeadKinect;
+
+	/**
+		*  osg::Quat _rotationHorAux
+		*  \brief Horizontal continous rotation when Kinect/FaceDet coords are out of margins
+		*/
 	osg::Quat    _rotationHorAux;
+
+	/**
+		*  osg::Quat _rotationVerAux
+		*  \brief Horizontal continous rotation when Kinect/FaceDet coords are out of margins
+		*/
 	osg::Quat    _rotationVerAux;
 
 	/**
@@ -441,6 +470,17 @@ protected:
 		*  \param    osgGA::GUIActionAdapter &    action adapter
 		*/
 	void frame(const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter &);
+
+
+	/**
+		 * @author Autor: David Durcak
+		 * @brief setRotationHead Set _rotationHead quaternion to rotate camera according head or kinect
+		 * @param x % distance from middle on horizontal axis
+		 * @param y % distance from middle on vertical axis
+		 * @param distance from camera
+		 * @param caller who call this method 0-FaceDet  1-Kinect
+		 */
+	void setRotationHead(float x, float y, float distance, int caller);
 
 private:
 
