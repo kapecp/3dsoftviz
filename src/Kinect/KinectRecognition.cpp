@@ -1,9 +1,14 @@
 #include "Kinect/KinectRecognition.h"
-#include "QDebug"
+#include <QDebug>
 
 using namespace Kinect;
 
 Kinect::KinectRecognition::KinectRecognition()
+{
+	this->inicialize();
+}
+
+void Kinect::KinectRecognition::inicialize()
 {
 	isOpen=true;
 	mOpenniStatus=openni::OpenNI::initialize();
@@ -12,13 +17,19 @@ Kinect::KinectRecognition::KinectRecognition()
 		qDebug() << "Openni initialization failed";
 		isOpen=false;
 	}
+
 	mOpenniStatus=device.open(openni::ANY_DEVICE);
 	if(mOpenniStatus != openni::STATUS_OK)
 	{
 		qDebug() << "Openni Device not Open";
 		isOpen=false;
 	}
+}
 
+void Kinect::KinectRecognition::closeOpenni()
+{
+	device.close();
+	openni::OpenNI::shutdown();
 }
 
 Kinect::KinectRecognition::~KinectRecognition()

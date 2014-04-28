@@ -226,7 +226,7 @@ public:
 	osg::Vec4 getEdgeColor() const
 	{
 		if (selected)
-			return osg::Vec4(0.0f, 0.0f, 0.0f, 1.0f);
+			return osg::Vec4(0.0f, 0.0f, 1.0f, 1.0f); // color of selected node
 		else
 			return edgeColor;
 	}

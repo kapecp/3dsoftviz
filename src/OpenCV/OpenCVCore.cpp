@@ -84,7 +84,7 @@ void  OpenCVCore::createPermanentConnection(){
 	QObject::connect( mThrFaceRec,
 					  SIGNAL(sendEyesCoords(float,float,float)),
 					  AppCore::Core::getInstance( mApp )->getCoreWindow()->getCameraManipulator(),
-					  SLOT(setRotationHead(float,float,float)) );
+					  SLOT(setRotationHeadFaceDet(float,float,float)) );
 
 	//  sending result data from aruco
 	QObject::connect( mThrAruco,
@@ -96,10 +96,6 @@ void  OpenCVCore::createPermanentConnection(){
 					  AppCore::Core::getInstance( mApp )->getCoreGraph(),
 					  SLOT(updateGraphRotByAruco(osg::Quat)) );
 
-	QObject::connect( mThrFaceRec,
-					  SIGNAL(sendEyesCoords(float,float,float)),
-					  AppCore::Core::getInstance( mApp)->getCoreWindow()->getCameraManipulator(),
-					  SLOT(setRotationHead(float,float,float)) );
 
 	// updating background image
 	QObject::connect( mThrFaceRec,

@@ -1061,12 +1061,15 @@ void Vwr::CameraManipulator::computeViewMetrics(osgViewer::Viewer* viewer, std::
 	cout << "Currently visible: " << cnt << " nodes\n";
 }
 
+
+
 /*
  * Compute both horizontal & vertical rotation according head translation.
  * Result rotation is in _rotationHead quaternion.
  * ! distance is not implemented yet
  */
-void Vwr::CameraManipulator::setRotationHead(float x, float y, float distance)
+
+void Vwr::CameraManipulator::setRotationHeadKinect(float x, float y, float distance)
 {
 
 	osg::Vec3	axis;
@@ -1091,49 +1094,99 @@ void Vwr::CameraManipulator::setRotationHead(float x, float y, float distance)
 		trackball(axis,angle,0.0, y, 0.0, 0.0);
 		osg::Quat Ynew_rotate(angle * throwScale,axis);
 
-		float aux, angleAux;
-		osg::Vec3	axisAux;
-		// _rotationVerAux
+		_rotHeadKinect = Xnew_rotate * Ynew_rotate;
 
-
-		// rotation continously if x/y is out of margins
-		float region = this->appConf->getValue("Kinect.RegionRotationTreshold").toFloat();
-		float step = this->appConf->getValue("Kinect.RegionRotationStep").toFloat();
-
-		if( x < -region || x > region ){
-			aux = x < 0.0f ? -step : step;
-			trackball(axisAux, angleAux, aux, 0.0, 0.0, 0.0);
-			osg::Quat rotHorAux = osg::Quat(angleAux * throwScale, axisAux);
-			_rotationHorAux = _rotationHorAux * rotHorAux;
-		}
-		if( y < -region || y > region ){
-			aux = y < 0.0f ? -step : step;
-			trackball(axisAux, angleAux, 0.0, aux, 0.0, 0.0);
-			osg::Quat rotVerAux = osg::Quat(angleAux * throwScale, axisAux);
-			_rotationVerAux = _rotationVerAux * rotVerAux;
-		}
-
-		if( _cameraCanRot ){ // rotate camera
-
-			// both rotation
-			_rotationHead = Xnew_rotate * Ynew_rotate * _rotationHorAux * _rotationVerAux;
-
-			// will we correct projection according face position
-			bool projectionConrrection = false;
-			projectionConrrection = this->appConf->getValue("FaceDecetion.EnableProjectionCorrection").toInt();
-
-			if( projectionConrrection ){
-				updateProjectionAccordingFace( x, y, -distance );
-			}
-
-
-		} else { // rotate graph
-			sendFaceDetRotation( Xnew_rotate * Ynew_rotate * _rotationHorAux * _rotationVerAux );
-		}
+		setRotationHead( x, y, distance, 1);  // 0 because its from Kinect
 	}
 	else{
 		qDebug() << "Warning: setRotationHead(): wrong parameters";
 	}
+}
+
+void Vwr::CameraManipulator::setRotationHeadFaceDet(float x, float y, float distance)
+{
+
+	osg::Vec3	axis;
+	float	angle;
+	double	throwScale;
+
+	x /= 100;
+	y /= 100;
+
+	if ( (-1.0 <= x && x <= 1.0) && (-1.0 <= y && y <= 1.0)){
+
+		throwScale =  (_thrown && _ga_t0.valid() && _ga_t1.valid()) ?
+					_delta_frame_time / (_ga_t0->getTime() - _ga_t1->getTime()) :
+					1.0;
+
+		// both rotation must be separated
+		// horizontal rotation
+		trackball(axis,angle, x, 0.0, 0.0, 0.0);
+		osg::Quat Xnew_rotate(angle * throwScale,axis);
+
+		// vertical rotation
+		trackball(axis,angle,0.0, y, 0.0, 0.0);
+		osg::Quat Ynew_rotate(angle * throwScale,axis);
+
+		_rotHeadFaceDet = Xnew_rotate * Ynew_rotate;
+
+		setRotationHead( x, y, distance, 0);  // 0 because its from face detection
+	}
+	else{
+		qDebug() << "Warning: setRotationHead(): wrong parameters";
+	}
+}
+
+
+void Vwr::CameraManipulator::setRotationHead(float x, float y, float distance, int caller )
+{
+
+	double	throwScale;
+	float aux, angleAux;
+	osg::Vec3	axisAux;
+
+	throwScale =  (_thrown && _ga_t0.valid() && _ga_t1.valid()) ?
+				_delta_frame_time / (_ga_t0->getTime() - _ga_t1->getTime()) :
+				1.0;
+
+	// rotation continously if x/y is out of margins
+	float region = this->appConf->getValue("Kinect.RegionRotationTreshold").toFloat();
+	float step = this->appConf->getValue("Kinect.RegionRotationStep").toFloat();
+
+	if( x < -region || x > region ){
+		aux = x < 0.0f ? -step : step;
+		trackball(axisAux, angleAux, aux, 0.0, 0.0, 0.0);
+		osg::Quat rotHorAux = osg::Quat(angleAux * throwScale, axisAux);
+		_rotationHorAux = _rotationHorAux * rotHorAux;
+	}
+	if( y < -region || y > region ){
+		aux = y < 0.0f ? -step : step;
+		trackball(axisAux, angleAux, 0.0, aux, 0.0, 0.0);
+		osg::Quat rotVerAux = osg::Quat(angleAux * throwScale, axisAux);
+		_rotationVerAux = _rotationVerAux * rotVerAux;
+	}
+
+
+
+	if( _cameraCanRot ){ // rotate camera
+
+		// both rotation
+		_rotationHead = _rotHeadFaceDet * _rotHeadKinect * _rotationHorAux * _rotationVerAux;
+
+		// will we correct projection according face position
+		bool projectionConrrection = false;
+		projectionConrrection = this->appConf->getValue("FaceDecetion.EnableProjectionCorrection").toInt();
+
+		if( projectionConrrection && caller == 0 ){
+			updateProjectionAccordingFace( x, y, -distance );
+		}
+
+
+	} else { // rotate graph
+		sendFaceDetRotation( _rotHeadFaceDet * _rotHeadKinect * _rotationHorAux * _rotationVerAux );
+	}
+
+
 }
 
 void Vwr::CameraManipulator::updateProjectionAccordingFace(const float x, const float y, const float distance)

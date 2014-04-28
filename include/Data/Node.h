@@ -289,14 +289,14 @@ public:
 	bool isFixed() const { return fixed; }
 
 	/**
-		*  \fn inline public  setSelected(bool selected)
+		*  \fn inline public  setSelected(bool selected) and  color of selected node
 		*  \brief Sets node picked state
 		*  \param     selected     picked state
 		*/
 	void setSelected(bool selected)
 	{
 		if (selected)
-			setDrawableColor(0, osg::Vec4(0.0f, 0.0f, 0.0f, 1.0f));
+			setDrawableColor(0, osg::Vec4(0.0f, 0.1f, 1.0f, 1.0f));    // color of selected node
 		else
 			setDrawableColor(0, color);
 
