@@ -54,7 +54,7 @@ public:
 		 * @param inputImage Image from cammera, where markers should be detected
 		 * @param[out] number of detected markers
 		 */
-	int detect(cv::Mat inputImage);
+	long detect(cv::Mat inputImage);
 
 	/**
 			 * @author Autor:Dávid Durcák
