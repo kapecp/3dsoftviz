@@ -1,6 +1,7 @@
 #include "Aruco/arucocore.h"
 #include "Util/ApplicationConfig.h"
 #include "QDebug"
+#include "opencv2/imgproc/imgproc.hpp"
 
 
 using namespace ArucoModul;

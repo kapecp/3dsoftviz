@@ -44,8 +44,6 @@ void QOpenCV::FaceRecognitionThread::run()
 		cv::flip( image, image, 1);
 
 
-
-
 		if( mSendImgEnabled && !image.empty()){
 			if (image.data)
 				emit pushImage( image.clone() ); // ???

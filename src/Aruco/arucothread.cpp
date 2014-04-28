@@ -117,7 +117,7 @@ void ArucoThread::run()
 
 			// add image to aruco and get position vector and rotation quaternion
 			//markerDetected = aCore.getDetectedPosAndQuat( frame, actPosArray, actQuatArray );
-			aCore.detect(frame );
+			aCore.detect(frame.clone() );
 
 			// graph controll
 			markerDetected = aCore.getPosAndQuat( mGrM, actPosArray, actQuatArray );
@@ -217,33 +217,28 @@ void ArucoThread::mouseControlling(const double actPosArray[3], const double act
 
 void ArucoThread::imagesSending(ArucoCore &aCore, const cv::Mat frame) const
 {
-
+	qDebug() << "frame" << frame.data ;
 	if( mSendBackgrImgEnabled && !frame.empty() ){
-		cv::Mat flippedFrame(frame.clone());
 		if( ! mMarkerIsBehind){
-			cv::flip( flippedFrame, flippedFrame, 1);
+			cv::flip( frame, frame, 1);
 		}
+		cv::cvtColor(frame, frame,CV_BGR2RGB);   // pri testovani praveze opacny efekt
 
-		emit pushBackgrImage( flippedFrame.clone() );
+		emit pushBackgrImage( frame.clone() );
 	}
 
 
 	cv::Mat image = aCore.getDetImage();
-	cv::cvtColor( image, image, CV_BGR2RGB );
+	qDebug() << "image" << image.data ;
 
 	if ( mSendImgEnabled ) {
-		cv::Mat flipped(image);
-		cv::cvtColor( flipped, flipped, CV_BGR2RGB );
 		if( ! mMarkerIsBehind){
-			cv::flip( flipped, flipped, 1);
-			image = flipped;
-
+			cv::flip( image, image, 1);
 		}
-		//QImage qimage ( (uchar*) flipped.data, flipped.cols, flipped.rows,(int) flipped.step, QImage::Format_RGB888);
-		//emit pushImage( qimage );
-		emit pushImagemMat( flipped.clone() );
+		cv::cvtColor(image, image, CV_BGR2RGB);   // pri testovani praveze opacny efekt
 
-		// emit image with marked marker for debuging
+		emit pushImagemMat( image.clone() );
+
 	}
 
 
