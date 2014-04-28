@@ -30,33 +30,41 @@ void CameraStream::updateBackgroundImage( cv::Mat cvImg)
 		return;
 	}
 
-	// update geometry coordinates if thare are different dimensions of image,
-	// becasuse probebly changed it ratio of sides
-	if(mGeom != NULL ){
-		if( cvImg.cols != mWidth || mHeight != cvImg.rows){
-			mWidth	= cvImg.cols;
-			mHeight = cvImg.rows;
+
+	if( cvImg.cols != mWidth || mHeight != cvImg.rows){
+		mWidth	= cvImg.cols;
+		mHeight = cvImg.rows;
+
+		iplImg = cvCloneImage( &(IplImage)cvImg);
+
+		// update geometry coordinates if thare are different dimensions of image,
+		// becasuse probebly changed it ratio of sides
+		if(mGeom != NULL ){
 			updateGeometryCoords( mWidth, mHeight);
 		}
 	}
 
+
 	// There will be probably needed refactoring on MAC OS
 #ifdef WIN32
-	IplImage *iplImg = cvCloneImage( &(IplImage)cvImg);
+	cvCopy(&(IplImage)cvImg, iplImg, NULL);
 
 	setImage( iplImg->width, iplImg->height,
 			  3, GL_RGB, GL_RGB,
 			  GL_UNSIGNED_BYTE,
 			  (unsigned char*) iplImg->imageData,
-			  NO_DELETE, 1);
+			 osg::Image::NO_DELETE, 1);
+
+	cvImg.~Mat();
+
 #else
 	cv::Mat img = cvImg.clone();
 
 	setImage(img.cols, img.rows,
-		8, img.channels(), GL_RGB,
-		GL_UNSIGNED_BYTE,
-		(unsigned char*)( img.data),
-		NO_DELETE, 1);
+			 8, img.channels(), GL_RGB,
+			 GL_UNSIGNED_BYTE,
+			 (unsigned char*)( img.data),
+			 NO_DELETE, 1);
 
 #endif
 
