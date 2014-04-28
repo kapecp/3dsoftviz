@@ -122,21 +122,34 @@ void Kinect::KinectWindow::setLabelQ( QImage qimage )
 
 void Kinect::KinectWindow::pausewindows()
 {
+	bool start=false;
 	if (mKinectPause->text().toStdString().compare(tr("Start").toStdString())==0)
 	{
-		mKinectPause->setText(tr("Pause"));
-		emit startKinect();
-		emit sendImageKinect(true);
+		//inicialize openni and start device
+		start = thr->inicializeKinect();
+		if(start)
+		{
+			emit startKinect();
+
+			emit sendImageKinect(true);
+			mKinectPause->setText(tr("Pause"));
+		}
 	}
 	else if(mKinectPause->text().toStdString().compare(tr("Pause").toStdString())==0)
 	{
 		mKinectPause->setText(tr("Continue"));
 		emit sendImageKinect(false);
+		this->thr->closeActionOpenni();
 	}
 	else
 	{
-		mKinectPause->setText(tr("Pause"));
-		emit sendImageKinect(true);
+		//inicialize openni and start device
+		start = thr->inicializeKinect();
+		if(start)
+		{
+			mKinectPause->setText(tr("Pause"));
+			emit sendImageKinect(true);
+		}
 	}
 
 }
