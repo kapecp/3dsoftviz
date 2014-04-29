@@ -1228,8 +1228,8 @@ void Vwr::CameraManipulator::updateArucoGraphPosition( osg::Vec3d pos ){
 	}
 
 	_centerArucoTrans[1] = distGra * (distArc + 0.5);//constDist);			// distance
-	_centerArucoTrans[0] = distGra * distArc*0.8;							// horizontal
-	_centerArucoTrans[2] = distGra * distArc*0.8;			// vertical
+	_centerArucoTrans[0] = distGra * pos.x()*0.8;							// horizontal
+	_centerArucoTrans[2] = distGra * pos.y()*0.8;			// vertical
 
 
 	//str  = "  " + QString::number( _centerArucoTrans[1], 'f', 2);

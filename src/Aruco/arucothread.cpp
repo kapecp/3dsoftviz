@@ -206,7 +206,7 @@ void ArucoThread::graphControlling(const double actPosArray[3], const double act
 	actPos.y() = normY;
 
 	emit sendArucoPosVec( actPos );
-	//emit sendArucoRorQuat( actQuat );
+	emit sendArucoRorQuat( actQuat );
 
 
 }
@@ -228,7 +228,7 @@ void ArucoThread::mouseControlling(const double actPosArray[3], const double act
 	if(normX > 1.0) normX = 1.0;
 	if(normY < 0.0) normY = 0.0;
 	if(normY > 1.0) normY = 1.0;
-	//qDebug() << normX << "  " << normY;
+	qDebug() << normX << "  " << normY;
 
 
 	qDebug() << (actQuatArray[3] < 0.0);
