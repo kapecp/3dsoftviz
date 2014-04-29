@@ -522,7 +522,7 @@ void Vwr::CameraManipulator::trackball(osg::Vec3& axis,float& angle, float p1x, 
 	 * deformed sphere
 	 */
 
-	osg::Matrix rotation_matrix(_rotation);
+	osg::Matrix rotation_matrix(_rotation * _rotationAux);
 
 
 	osg::Vec3 uv = osg::Vec3(0.0f,1.0f,0.0f)*rotation_matrix;
@@ -1157,13 +1157,13 @@ void Vwr::CameraManipulator::setRotationHead(float x, float y, float distance, i
 		aux = x < 0.0f ? -step : step;
 		trackball(axisAux, angleAux, aux, 0.0, 0.0, 0.0);
 		osg::Quat rotHorAux = osg::Quat(angleAux * throwScale, axisAux);
-		_rotationHorAux = _rotationHorAux * rotHorAux;
+		_rotationAux = _rotationAux * rotHorAux;
 	}
 	if( y < -region || y > region ){
 		aux = y < 0.0f ? -step : step;
 		trackball(axisAux, angleAux, 0.0, aux, 0.0, 0.0);
 		osg::Quat rotVerAux = osg::Quat(angleAux * throwScale, axisAux);
-		_rotationVerAux = _rotationVerAux * rotVerAux;
+		_rotationAux = _rotationAux * rotVerAux;
 	}
 
 
@@ -1171,7 +1171,7 @@ void Vwr::CameraManipulator::setRotationHead(float x, float y, float distance, i
 	if( _cameraCanRot ){ // rotate camera
 
 		// both rotation
-		_rotationHead = _rotHeadFaceDet * _rotHeadKinect * _rotationHorAux * _rotationVerAux;
+		_rotationHead = _rotationAux * _rotHeadFaceDet * _rotHeadKinect;
 
 		// will we correct projection according face position
 		bool projectionConrrection = false;
@@ -1183,7 +1183,7 @@ void Vwr::CameraManipulator::setRotationHead(float x, float y, float distance, i
 
 
 	} else { // rotate graph
-		sendFaceDetRotation( _rotHeadFaceDet * _rotHeadKinect * _rotationHorAux * _rotationVerAux );
+		sendFaceDetRotation( _rotationAux * _rotHeadFaceDet * _rotHeadKinect );
 	}
 
 

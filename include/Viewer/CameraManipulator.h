@@ -332,16 +332,11 @@ protected:
 	osg::Quat	 _rotHeadKinect;
 
 	/**
-		*  osg::Quat _rotationHorAux
-		*  \brief Horizontal continous rotation when Kinect/FaceDet coords are out of margins
+		*  osg::Quat _rotationAux
+		*  \brief Continous rotation when Kinect/FaceDet coords are out of margins
 		*/
-	osg::Quat    _rotationHorAux;
+	osg::Quat    _rotationAux;
 
-	/**
-		*  osg::Quat _rotationVerAux
-		*  \brief Horizontal continous rotation when Kinect/FaceDet coords are out of margins
-		*/
-	osg::Quat    _rotationVerAux;
 
 	/**
 		*  double _distance
