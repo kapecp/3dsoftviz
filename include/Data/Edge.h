@@ -379,12 +379,15 @@ public:
 	bool getIsInvisible(){return isInvisible;}
 
 
+    float getEdgeStrength() const;
+    void setEdgeStrength(float value);
+
 private:
 
-	bool isInvisible;
-	/**
-		*  Data::Graph * graph
-		*  \brief Graph to which the Edge belongs
+    bool isInvisible;
+    /**
+        *  Data::Graph * graph
+        *  \brief Graph to which the Edge belongs
 		*/
 	Data::Graph* graph;
 
@@ -507,6 +510,8 @@ private:
 		*  \brief Color of the Edge
 		*/
 	osg::Vec4 edgeColor;
+
+    float edgeStrength;
 
 protected:
 

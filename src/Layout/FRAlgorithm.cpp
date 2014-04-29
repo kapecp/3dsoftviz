@@ -430,7 +430,7 @@ void FRAlgorithm::addAttractive(Data::Edge* edge, float factor) {
 	}
 	fv = vp - up; // smer sily
 	fv.normalize();
-	fv *= attr(dist) * factor;// velkost sily
+    fv *= attr(dist) * factor * edge->getEdgeStrength();// velkost sily
 	edge->getSrcNode()->addForce(fv);
 	fv = center - fv;
 	edge->getDstNode()->addForce(fv);

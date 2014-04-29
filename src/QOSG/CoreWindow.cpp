@@ -734,8 +734,23 @@ void CoreWindow::loadLuaGraph()
 
 void CoreWindow::updateFromLua()
 {
-    Lua::LuaInterface* lua = Lua::LuaInterface::getInstance();
-    lua->executeFile("callback.lua");
+    Data::Graph *currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
+    Data::Type *edgeType = NULL;
+    Data::Type *nodeType = NULL;
+
+    if (currentGraph == NULL) {
+        currentGraph= Manager::GraphManager::getInstance()->createNewGraph("NewGraph");
+    }
+    Importer::GraphOperations * operations = new Importer::GraphOperations(*currentGraph);
+    operations->addDefaultTypes(edgeType, nodeType);
+    osg::ref_ptr<Data::Node> n1 = currentGraph->addNode("test", nodeType);
+    osg::ref_ptr<Data::Node> n2 = currentGraph->addNode("test", nodeType);
+    osg::ref_ptr<Data::Node> n3 = currentGraph->addNode("test", nodeType);
+    osg::ref_ptr<Data::Edge> e1 = currentGraph->addEdge("test", n1, n2, edgeType, false);
+    osg::ref_ptr<Data::Edge> e2 = currentGraph->addEdge("test", n2, n3, edgeType, false);
+    e1->setEdgeStrength(0.01f);
+    e2->setEdgeStrength(2);
+
 }
 
 void CoreWindow::loadFileTree()

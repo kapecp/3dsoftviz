@@ -32,6 +32,8 @@ Data::Edge::Edge(qlonglong id, QString name, Data::Graph* graph, osg::ref_ptr<Da
 
 	this->edgeColor = osg::Vec4(r, g, b, /*a*/0.5);
 
+    this->edgeStrength = 1;
+
 	this->appConf = Util::ApplicationConfig::get();
 	coordinates = new osg::Vec3Array();
 	edgeTexCoords = new osg::Vec2Array();
@@ -158,9 +160,19 @@ osg::ref_ptr<osg::Drawable> Data::Edge::createLabel(QString name)
 
 	return label;
 }
+float Data::Edge::Edge::getEdgeStrength() const
+{
+    return edgeStrength;
+}
+
+void Data::Edge::Edge::setEdgeStrength(float value)
+{
+    edgeStrength = value;
+}
+
 
 osg::ref_ptr<Data::Node> Data::Edge::getSecondNode(osg::ref_ptr<Data::Node> firstNode){
-	if (firstNode->getId() == srcNode->getId())
+    if (firstNode->getId() == srcNode->getId())
 		return dstNode;
 	else return srcNode;
 
