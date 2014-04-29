@@ -522,7 +522,7 @@ void Vwr::CameraManipulator::trackball(osg::Vec3& axis,float& angle, float p1x, 
 	 * deformed sphere
 	 */
 
-	osg::Matrix rotation_matrix(_rotation);
+	osg::Matrix rotation_matrix(_rotation * _rotationAux);
 
 
 	osg::Vec3 uv = osg::Vec3(0.0f,1.0f,0.0f)*rotation_matrix;
@@ -1157,13 +1157,13 @@ void Vwr::CameraManipulator::setRotationHead(float x, float y, float distance, i
 		aux = x < 0.0f ? -step : step;
 		trackball(axisAux, angleAux, aux, 0.0, 0.0, 0.0);
 		osg::Quat rotHorAux = osg::Quat(angleAux * throwScale, axisAux);
-		_rotationHorAux = _rotationHorAux * rotHorAux;
+		_rotationAux = _rotationAux * rotHorAux;
 	}
 	if( y < -region || y > region ){
 		aux = y < 0.0f ? -step : step;
 		trackball(axisAux, angleAux, 0.0, aux, 0.0, 0.0);
 		osg::Quat rotVerAux = osg::Quat(angleAux * throwScale, axisAux);
-		_rotationVerAux = _rotationVerAux * rotVerAux;
+		_rotationAux = _rotationAux * rotVerAux;
 	}
 
 
@@ -1171,7 +1171,7 @@ void Vwr::CameraManipulator::setRotationHead(float x, float y, float distance, i
 	if( _cameraCanRot ){ // rotate camera
 
 		// both rotation
-		_rotationHead = _rotHeadFaceDet * _rotHeadKinect * _rotationHorAux * _rotationVerAux;
+		_rotationHead = _rotationAux * _rotHeadFaceDet * _rotHeadKinect;
 
 		// will we correct projection according face position
 		bool projectionConrrection = false;
@@ -1183,7 +1183,7 @@ void Vwr::CameraManipulator::setRotationHead(float x, float y, float distance, i
 
 
 	} else { // rotate graph
-		sendFaceDetRotation( _rotHeadFaceDet * _rotHeadKinect * _rotationHorAux * _rotationVerAux );
+		sendFaceDetRotation( _rotationAux * _rotHeadFaceDet * _rotHeadKinect );
 	}
 
 
@@ -1215,18 +1215,11 @@ void Vwr::CameraManipulator::updateProjectionAccordingFace(const float x, const 
 
 
 void Vwr::CameraManipulator::updateArucoGraphPosition( osg::Vec3d pos ){
-	//QString str;
+	QString str;
 	//str  = "arMat " + QString::number( pos.x(), 'f', 2);
 	//str += " " + QString::number( pos.y(), 'f', 2);
 	//str += " " + QString::number( pos.z(), 'f', 2);
 	//qDebug() << ": " << str;
-
-
-	// camera coeficient
-	double constHeigherScale = this->appConf->getValue("Aruco.ConstHeigherScale").toDouble();
-	double constDist		 = this->appConf->getValue("Aruco.ConstDist").toDouble();
-	double constHeightKoef	 = this->appConf->getValue("Aruco.ConstHeightKoef").toDouble();
-	double camDistRatio		 = this->appConf->getValue("Aruco.CamDistancRatio").toDouble();
 
 	double distArc =  pos.z()  < 0.0 ? - pos.z()	:  pos.z();		// distance of marker
 	double distGra = _distance < 0.0 ? -_distance	: _distance;	// distance of graph
@@ -1234,17 +1227,14 @@ void Vwr::CameraManipulator::updateArucoGraphPosition( osg::Vec3d pos ){
 		distGra = 1.0;
 	}
 
-	double getHeigherKoef = constHeigherScale * distGra;							// if marker is on table, graph coud be too on bottom, so get him heigher
-	double koef = distGra * camDistRatio * constHeightKoef / distArc;
-
-	_centerArucoTrans[1] = distGra * (pos.z() + constDist);			// distance
-	_centerArucoTrans[0] = koef * pos.x();							// horizontal
-	_centerArucoTrans[2] = koef * pos.y() - getHeigherKoef;			// vertical
+	_centerArucoTrans[1] = distGra * (pos.z() + 0.5);//constDist);			// distance
+	_centerArucoTrans[0] = distGra * pos.x()*0.8;							// horizontal
+	_centerArucoTrans[2] = distGra * pos.y()*0.8;			// vertical
 
 
-	//str  = "  " + QString::number( _centerArucoTrans[1], 'f', 2);
-	//str += "  " + QString::number( _centerArucoTrans[0], 'f', 2);
-	//str += "  " + QString::number( _centerArucoTrans[2], 'f', 2);
+	str  = "  " + QString::number( _centerArucoTrans[1], 'f', 2);
+	str += "  " + QString::number( _centerArucoTrans[0], 'f', 2);
+	str += "  " + QString::number( _centerArucoTrans[2], 'f', 2);
 	//qDebug() << ": " << str;
 	//qDebug() << ": " << _distance ;
 

@@ -129,24 +129,24 @@ void Kinect::KinectThread::run()
 				hand_rect.height = abs(pDepth_y - pDepth_y2);//kht->handY[1] - kht->handY[0];
 
 				rectangle(frame, hand_rect, CV_RGB(0, 255,0), 3);
+			}else{
+
+				//sliding
+				kht->getRotatingMove();
+				line(frame, Point2i( 30, 30), Point2i( 30, 30), Scalar( 0, 0, 0 ), 5 ,8 );
+
+				char * text;
+				text = kht->slidingHand_type;
+				if((int)kht->slidingHand_x != 0){
+					putText(frame, text, cvPoint((int)kht->slidingHand_x,(int)kht->slidingHand_y), FONT_HERSHEY_COMPLEX_SMALL, 0.8, cvScalar(0,0,250), 1, CV_AA);
+					//signal pre
+					emit sendSliderCoords(  (kht->slidingHand_x/kht->handTrackerFrame.getDepthFrame().getWidth()-0.5)*(-200),
+											(kht->slidingHand_y/kht->handTrackerFrame.getDepthFrame().getHeight()-0.5)*(200),
+											(kht->slidingHand_z/kht->handTrackerFrame.getDepthFrame().getHeight()-0.5)*200);
+					printf("%.2lf %.2lf z %.2lf -  %.2lf slider \n", (kht->slidingHand_x/kht->handTrackerFrame.getDepthFrame().getWidth()-0.5)*200,
+						   (kht->slidingHand_y/kht->handTrackerFrame.getDepthFrame().getHeight()-0.5)*200, (kht->slidingHand_z/kht->handTrackerFrame.getDepthFrame().getHeight()-0.5)*200, kht->slidingHand_z);
+				}
 			}
-
-			//sliding
-			kht->getRotatingMove();
-			line(frame, Point2i( 30, 30), Point2i( 30, 30), Scalar( 0, 0, 0 ), 5 ,8 );
-
-			char * text;
-			text = kht->slidingHand_type;
-			if((int)kht->slidingHand_x != 0){
-				putText(frame, text, cvPoint((int)kht->slidingHand_x,(int)kht->slidingHand_y), FONT_HERSHEY_COMPLEX_SMALL, 0.8, cvScalar(0,0,250), 1, CV_AA);
-				//signal pre
-				emit sendSliderCoords(  (kht->slidingHand_x/kht->handTrackerFrame.getDepthFrame().getWidth()-0.5)*200,
-										(kht->slidingHand_y/kht->handTrackerFrame.getDepthFrame().getHeight()-0.5)*200,
-										(kht->slidingHand_z/kht->handTrackerFrame.getDepthFrame().getHeight()-0.5)*200);
-				printf("%.2lf %.2lf z %.2lf -  %.2lf slider \n", (kht->slidingHand_x/kht->handTrackerFrame.getDepthFrame().getWidth()-0.5)*200,
-					   (kht->slidingHand_y/kht->handTrackerFrame.getDepthFrame().getHeight()-0.5)*200, (kht->slidingHand_z/kht->handTrackerFrame.getDepthFrame().getHeight()-0.5)*200, kht->slidingHand_z);
-			}
-
 			cv::resize(frame, frame,cv::Size(320,240),0,0,cv::INTER_LINEAR);
 			emit pushImage( frame );
 			msleep(20);

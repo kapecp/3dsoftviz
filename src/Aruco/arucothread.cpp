@@ -6,7 +6,6 @@
 
 #include "OpenCV/CapVideo.h"
 
-
 using namespace ArucoModul;
 
 ArucoThread::ArucoThread(QObject *parent)
@@ -23,6 +22,7 @@ ArucoThread::ArucoThread(QObject *parent)
 	mRatioCamCoef	= 0;
 	mGrM			= 0;
 	mMoM			= 1;
+	boolQueue = new SizedQueue(5, 0.0);
 
 	qRegisterMetaType< osg::Vec3d >("osgVec3d");
 	qRegisterMetaType< osg::Quat >("osgQuat");
@@ -117,7 +117,7 @@ void ArucoThread::run()
 
 			// add image to aruco and get position vector and rotation quaternion
 			//markerDetected = aCore.getDetectedPosAndQuat( frame, actPosArray, actQuatArray );
-			aCore.detect(frame );
+			aCore.detect(frame.clone() );
 
 			// graph controll
 			markerDetected = aCore.getPosAndQuat( mGrM, actPosArray, actQuatArray );
@@ -145,7 +145,7 @@ void ArucoThread::run()
 				}
 			}
 
-			imagesSending(aCore);
+			imagesSending(aCore, frame);
 
 			if(! mCancel){
 				msleep(50);
@@ -167,27 +167,48 @@ void ArucoThread::graphControlling(const double actPosArray[3], const double act
 	}
 
 	osg::Vec3d actPos( -actPosArray[0], -actPosArray[1], -actPosArray[2] );
+	//osg::Vec3d actPos( -actPosArray[0], -actPosArray[1] * mHalfRatioCoef, -actPosArray[2] );
+
 	osg::Quat  actQuat;
 
 
 	//  forward/backward,   left/right,  around,   w
 	if( mMarkerIsBehind ){
-		actQuat.set( -actQuatArray[1],  actQuatArray[3],  actQuatArray[2],  actQuatArray[0] );
-	} else {
 		actQuat.set(  actQuatArray[1], -actQuatArray[3],  actQuatArray[2],  actQuatArray[0] );
+	} else {
+		actQuat.set( actQuatArray[1],  actQuatArray[3],  actQuatArray[2],  -actQuatArray[0] );
 	}
 
 
 	// correct Y centering, because of camerra different ration aruco top max y value is less than bottom one
-	actPos.y() = ( mRatioCamCoef * actPos.z()  + actPos.y() );
+	//actPos.y() = ( mRatioCamCoef * actPos.z()  + actPos.y() );
 
 
 	if ( mCorEnabled ) {
 		correctQuatAndPos( actPos, actQuat);
 	}
 
+
+
+	//printVec(actPos, "pos0  ");
+
+	// normalizin from [0,0] in top left corner to [1,1] in roght bottom corner
+	double absZ		= actPosArray[2]  < 0.0 ? - actPosArray[2]	:  actPosArray[2];		// distance of marker
+	double halfSize = absZ / mCamDistRatio;
+
+	double normX = actPos.x() / halfSize;							// horizontal
+	double normY = actPos.y() / halfSize;		// vertical
+
+	// correct Y centering, because of camerra different ration aruco top max y value is less than bottom one
+	normX = normX - 0.1 - 0.01/absZ;
+
+	actPos.x() = normX;
+	actPos.y() = normY;
+
 	emit sendArucoPosVec( actPos );
 	emit sendArucoRorQuat( actQuat );
+
+
 }
 
 void ArucoThread::mouseControlling(const double actPosArray[3], const double actQuatArray[4])
@@ -210,26 +231,42 @@ void ArucoThread::mouseControlling(const double actPosArray[3], const double act
 	//qDebug() << normX << "  " << normY;
 
 
-	qDebug() << (actQuatArray[3] < 0.0);
-	emit moveMouseArucoSignal(normX, normY, actQuatArray[1] <= 0.0, Qt::LeftButton);
+	bool click = boolQueue->getAvgBool(actQuatArray[3] <= 0.0);
+
+	emit moveMouseArucoSignal(normX, normY, click, Qt::LeftButton);
 
 }
 
-void ArucoThread::imagesSending(ArucoCore &aCore) const
+void ArucoThread::imagesSending(ArucoCore &aCore, const cv::Mat frame) const
 {
+	//qDebug() << "frame" << frame.data ;
+
+	if( mSendBackgrImgEnabled && !frame.empty() ){
+		if( ! mMarkerIsBehind){
+			cv::flip( frame, frame, 1);
+		}
+		cv::cvtColor(frame, frame,CV_BGR2RGB);   // pri testovani praveze opacny efekt
+
+		emit pushBackgrImage( frame.clone() );
+	}
+
+
+
 	cv::Mat image = aCore.getDetImage();
+	//qDebug() << "image" << image.data ;
 
-	cv::cvtColor( image, image, CV_BGR2RGB );
 	if ( mSendImgEnabled ) {
+		if( ! mMarkerIsBehind){
+			cv::flip( image, image, 1);
+		}
+		cv::cvtColor(image, image, CV_BGR2RGB);   // pri testovani praveze opacny efekt
 
-		QImage qimage ( (uchar*) image.data, image.cols, image.rows,(int) image.step, QImage::Format_RGB888);
+		emit pushImagemMat( image.clone() );
 
-		emit pushImage( qimage );	// emit image with marked marker for debuging
 	}
 
-	if( mSendBackgrImgEnabled && !image.empty() ){
-		emit pushBackgrImage( image.clone() );
-	}
+
+
 
 }
 

@@ -2,6 +2,7 @@
 
 #include "OpenCV/CapVideo.h"
 #include "OpenCV/FaceRecognizer.h"
+#include "opencv2/imgproc/imgproc.hpp"
 
 using namespace QOpenCV;
 
@@ -34,8 +35,14 @@ void QOpenCV::FaceRecognitionThread::run()
 	while( !mCancel ){
 		image = mCapVideo->queryFrame();
 
+		cv::cvtColor( image, image, CV_BGR2RGB );
+
+
 		mFaceRecognizer->detectFaces( mCapVideo->getGrayframe() );
 		mFaceRecognizer->annotateFaces( image );
+
+		cv::flip( image, image, 1);
+
 
 		if( mSendImgEnabled && !image.empty()){
 			if (image.data)

@@ -28,7 +28,7 @@ int Speech::KinectSpeechThread::initializeSpeech()
 		this->isConnected=false;
 		return 1;
 	}
-	if (this->m_SpeechClass->CreateFirstConnected()<0)
+	if (this->m_SpeechClass->CreateFirstConnected(1)!=0)
 	{
 		qDebug() << "Speech connection failure";
 		this->isConnected=false;

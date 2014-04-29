@@ -37,14 +37,14 @@ Vwr::MouseControl::~MouseControl()
 
 void Vwr::MouseControl::moveMouseAruco(double positionX,double positionY,bool isClick, Qt::MouseButton button )
 {
-	qDebug() << positionX << "  " << positionY << "         " << isClick;
+	//qDebug() << positionX << "  " << positionY << "         " << isClick;
 
 	float wieverX = (float) (positionX * viewer->width());
 	float wieverY = (float) (positionY * viewer->height());
 	int windowX = (int) positionX * viewer->width()  + viewer->x() + 8;
 	int windowY = (int) positionY * viewer->height() + viewer->y() + 28;
-	int screenX = (int) positionX * viewer->width()  + viewer->x() + window->x() + 8;
-	int screenY = (int) positionY * viewer->height() + viewer->y() + window->y() + 28;
+	int screenX = (int) positionX * viewer->width()  + viewer->x() + window->x()+8;
+	int screenY = (int) positionY * viewer->height() + viewer->y() + window->y()+28 ;
 
 
 	viewer->cursor().setPos(screenX, screenY);

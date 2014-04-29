@@ -8,8 +8,8 @@
 
 #ifdef OPENCV_FOUND
 #include <opencv2/core/core.hpp>
-#endif
 
+#endif
 
 namespace OpenCV{
 
@@ -57,7 +57,7 @@ private:
 	int				mWidth;
 	int				mHeight;
 	osg::Geometry	*mGeom;
-
+	IplImage		*iplImg;
 };
 }
 
