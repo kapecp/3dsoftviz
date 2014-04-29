@@ -1215,7 +1215,7 @@ void Vwr::CameraManipulator::updateProjectionAccordingFace(const float x, const 
 
 
 void Vwr::CameraManipulator::updateArucoGraphPosition( osg::Vec3d pos ){
-	//QString str;
+	QString str;
 	//str  = "arMat " + QString::number( pos.x(), 'f', 2);
 	//str += " " + QString::number( pos.y(), 'f', 2);
 	//str += " " + QString::number( pos.z(), 'f', 2);
@@ -1227,14 +1227,14 @@ void Vwr::CameraManipulator::updateArucoGraphPosition( osg::Vec3d pos ){
 		distGra = 1.0;
 	}
 
-	_centerArucoTrans[1] = distGra * (distArc + 0.5);//constDist);			// distance
+	_centerArucoTrans[1] = distGra * (pos.z() + 0.5);//constDist);			// distance
 	_centerArucoTrans[0] = distGra * pos.x()*0.8;							// horizontal
 	_centerArucoTrans[2] = distGra * pos.y()*0.8;			// vertical
 
 
-	//str  = "  " + QString::number( _centerArucoTrans[1], 'f', 2);
-	//str += "  " + QString::number( _centerArucoTrans[0], 'f', 2);
-	//str += "  " + QString::number( _centerArucoTrans[2], 'f', 2);
+	str  = "  " + QString::number( _centerArucoTrans[1], 'f', 2);
+	str += "  " + QString::number( _centerArucoTrans[0], 'f', 2);
+	str += "  " + QString::number( _centerArucoTrans[2], 'f', 2);
 	//qDebug() << ": " << str;
 	//qDebug() << ": " << _distance ;
 

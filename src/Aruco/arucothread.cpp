@@ -234,7 +234,7 @@ void ArucoThread::mouseControlling(const double actPosArray[3], const double act
 	qDebug() << (actQuatArray[3] < 0.0);
 	bool click = boolQueue->getAvgBool(actQuatArray[3] <= 0.0);
 
-	emit moveMouseArucoSignal(normX, normY, click, Qt::LeftButton);
+	emit moveMouseArucoSignal(normX, normY, actQuatArray[1] <= 0.0, Qt::LeftButton);
 
 }
 
