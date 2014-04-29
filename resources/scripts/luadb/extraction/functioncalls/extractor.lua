@@ -6,10 +6,11 @@
 local hypergraph = require "luadb.hypergraph"
 local utils      = require "luadb.utils"
 local ast        = require "luadb.ast"
-local mapper     = require "luadb.mapping"
 local logger     = utils.logger
 
-local function extractNodes(AST, graph)
+
+local function extractFunctions(AST, graph, path)
+  local nodes = {}
   local functions = ast.getFunctions(AST)
   logger:debug("importing nodes")
   
@@ -18,59 +19,86 @@ local function extractNodes(AST, graph)
     local newNode = hypergraph.node.new()
     newNode.data.metrics = func.metrics
     newNode.data.name = func.name
-    newNode.data.tag = func.tag
+    newNode.data.type = "function"
+    newNode.data.modulePath = path
     graph:addNode(newNode)
+    table.insert(nodes, newNode)
+  end
+  
+  return nodes
+end
+
+
+local function addGlobalCall(graph, newEdge, call, calledFunction)
+  -- module function call
+  if call.metrics.module_functionCall then
+    calledFunction = call.metrics.module_functionCall.functionName
+    
+    graph.moduleCalls = graph.moduleCalls or {}
+    graph.moduleCalls[calledFunction] = graph.moduleCalls[calledFunction] or {}
+    
+    newEdge.meta.calledFunction = calledFunction
+    newEdge.meta.calledFunctionModule = call.metrics.module_functionCall.moduleName
+    newEdge.meta.calledFunctionModulePath = newEdge.meta.calledFunctionModule:gsub('%.', '/')..".lua"
+    table.insert(graph.moduleCalls[calledFunction], newEdge)
+  
+  -- global function call
+  else            
+    graph.globalCalls = graph.globalCalls or {}
+    graph.globalCalls[calledFunction] = graph.globalCalls[calledFunction] or {}   
+    table.insert(graph.globalCalls[calledFunction], newEdge)  
   end
 end
 
 
-local function extractEdges(AST, graph)
-  logger:debug("printing all function calls")
-  local functions_calls = AST.metrics.functionExecutions
+local function getCalleeFunctionName(call)
+  local from  = ast.getParentNodesByTag(call, "LocalFunction", nil)
+  if not utils.isEmpty(from) then
+    return ast.getChildNodesByTag(from[1], "Name", nil)[1].str
+  else
+    from = ast.getParentNodesByTag(call, "GlobalFunction", nil)
+    if not utils.isEmpty(from) then return from[1].name end
+  end
+end
+
+
+local function extractFunctionCalls(AST, graph, nodes)
+  local edges = {}
   local functions = ast.getFunctions(AST)
+  local functionsCalls = ast.getFunctionsCalls(AST)
   
-  logger:debug("importing edges")
-  for i,function_calls in pairs(functions_calls) do
-    for j,call in pairs(function_calls) do
-      local l_from = ast.getParentNodesByTag(call, "LocalFunction", nil)
-      local f_from = ((next(l_from) ~= nil) and l_from) or ast.getParentNodesByTag(call, "GlobalFunction", nil)
-      
-      if (next(f_from) ~= nil) then
-        local s_func_from = ast.getChildNodesByTag(f_from[1], "Name", nil)[1].str
-        local s_func_to   = i
-        
-        local from = graph:findNodeIdsByName(s_func_from)
-        local to   = graph:findNodeIdsByName(s_func_to)
-        
-        -- function definition not found in file
-        if (next(to) == nil) then
-          logger:debug('found undeclared function '..s_func_to)
-          logger:debug('adding node '..s_func_to)
-          local newNode = hypergraph.node.new()
-          newNode.data.name = s_func_to
-          graph:addNode(newNode)
-          to = graph:findNodeIdsByName(s_func_to)
-        end
-        
-        local newEdge = hypergraph.edge.new()
-        newEdge.label = "FunctionCall"
-        newEdge.from  = from
-        newEdge.to    = to
-        
-        newEdge:setAsOriented()
-        graph:addEdge(newEdge)
+  for calledFunction,functionCalls in pairs(functionsCalls) do
+    for index,call in pairs(functionCalls) do
+      local newEdge = hypergraph.edge.new()
+      newEdge.label = "FunctionCall"
+      newEdge.meta  = newEdge.meta or {}
+      newEdge.meta.calleeFunction = getCalleeFunctionName(call)
+      newEdge.meta.calledFunction = calledFunction
+      newEdge.data.text = call.text
+      newEdge:addSource(hypergraph.node.findByName(nodes, newEdge.meta.calleeFunction))
+      newEdge:addTarget(hypergraph.node.findByName(nodes, calledFunction))
+              
+      -- function's declaration not found
+      if utils.isEmpty(newEdge.to) then
+        logger:debug('found undeclared function '..calledFunction)
+        addGlobalCall(graph, newEdge, call, calledFunction)
       end
       
+      newEdge:setAsOriented()
+      graph:addEdge(newEdge)
+      table.insert(edges, newEdge)
     end
   end
-
+  return edges
 end
 
 
-local function extractFunctionCalls(graph, fileName)
-  local AST = ast.getAST(fileName)
-  extractNodes(AST, graph)  
-  extractEdges(AST, graph)    
+local function extract(fileName, graph)
+  local graph = graph or hypergraph.graph.new()
+  local AST   = ast.getAST(fileName)
+  local nodes = extractFunctions(AST, graph, fileName)
+  local edges = extractFunctionCalls(AST, graph, nodes)
+  return { nodes = nodes, edges = edges }
 end
 
 -----------------------------------------------
@@ -79,7 +107,7 @@ end
 
 return
 {
-  extract      = extractFunctionCalls,
-  extractEdges = extractEdges,
-  extractNodes = extractNodes
+  extract      = extract,
+  extractNodes = extractFunctions,
+  extractEdges = extractFunctionCalls
 }

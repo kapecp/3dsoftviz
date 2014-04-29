@@ -4,8 +4,8 @@
 #include "Importer/GraphOperations.h"
 #include "limits"
 
-Lua::HyperGraphVisualizer::HyperGraphVisualizer(Data::Graph *graph)
-    : Lua::LuaGraphVisualizer(graph){}
+Lua::HyperGraphVisualizer::HyperGraphVisualizer(Data::Graph *graph, osg::ref_ptr<osg::Camera> camera)
+    : Lua::LuaGraphVisualizer(graph, camera){}
 
 void Lua::HyperGraphVisualizer::visualize()
 {

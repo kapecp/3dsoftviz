@@ -19,5 +19,5 @@ return {
 	graph = graph,
 	node = node,
 	edge = edge,
-	incidence = incidence,
+	incidence = incidence
 }

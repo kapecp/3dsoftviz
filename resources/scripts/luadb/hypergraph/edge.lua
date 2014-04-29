@@ -22,7 +22,6 @@ local function E(arguments)
     id = "E"..inc(),
     label = nil,
     orientation = nil,
-    incidences  = {},
     from  = {},
     to    = {},
     data  = {}
@@ -68,22 +67,42 @@ function pEdge:isOriented()
 end
 
 
-function pEdge:addTarget(node)
-  if utils.isTable(node) then
-    assert(node.id, "id must be defined")
-    table.insert(self.to, node.id)
+function pEdge:setSource(nodes)
+  if utils.isArray(nodes) then
+    self.from = nodes
   else
-    table.insert(self.to, node)
+    self.from = { nodes }
   end
 end
 
 
-function pEdge:addSource(node)
-  if utils.isTable(node) then
-    assert(node.id, "id must be defined")
-    table.insert(self.from, node.id)
+function pEdge:addSource(nodes)
+  if utils.isArray(nodes) then
+    for i,node in pairs(nodes) do
+      table.insert(self.from, node)
+    end
   else
-    table.insert(self.from, node)
+    table.insert(self.from, nodes)
+  end
+end
+
+
+function pEdge:setTarget(nodes)
+  if utils.isArray(nodes) then
+    self.to = nodes
+  else
+    self.to = { nodes }
+  end
+end
+
+
+function pEdge:addTarget(nodes)
+  if utils.isArray(nodes) then
+    for i,node in pairs(nodes) do
+      table.insert(self.to, node)
+    end
+  else
+    table.insert(self.to, nodes)
   end
 end
 

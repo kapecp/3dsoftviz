@@ -79,15 +79,18 @@ end
 
 
 local function getFunctions(AST)
-  local global_functions = getChildNodesByTag(AST, "GlobalFunction", nil)
-  local local_functions  = getChildNodesByTag(AST, "LocalFunction", nil)
-  return utils.joinArrays(global_functions, local_functions)
+  return AST.metrics.functionDefinitions
+end
+
+
+local function getFunctionsCalls(AST)
+  return AST.metrics.functionExecutions
 end
 
 
 -- return first occurrency of node name
 local function getName(node, maxdepth)
-  node = metrics_utils.searchForTagItem_recursive("Name", node, maxdepth)
+  node = metrics_utils. TagItem_recursive("Name", node, maxdepth)
   if node then return node['str'] end
   return nil
 end
@@ -101,6 +104,7 @@ return
   getAST = getAST,
   getName = getName,
   getFunctions = getFunctions,
+  getFunctionsCalls = getFunctionsCalls,
   getChildNodesByTag = getChildNodesByTag,
   getParentNodesByTag = getParentNodesByTag
 }

@@ -63,6 +63,11 @@ local function isArray(var)
 end
 
 
+local function isEmpty(tbl)
+  if next(tbl) ~= nil then return false else return true end
+end
+
+
 local function fileExists(file)
   local f = io.open(file, "rb")
   if f then f:close() end
@@ -86,13 +91,13 @@ end
 
 
 local function split(str, pat)
-   local t = {}  -- NOTE: use {n = 0} in Lua-5.0
+   local t = {}
    local fpat = "(.-)" .. pat
    local last_end = 1
    local s, e, cap = str:find(fpat, 1)
    while s do
       if s ~= 1 or cap ~= "" then
-   table.insert(t,cap)
+        table.insert(t,cap)
       end
       last_end = e+1
       s, e, cap = str:find(fpat, last_end)
@@ -218,6 +223,7 @@ return
   firstToUpper = firstToUpper,
   isTable = isTable,
   isArray = isArray,
+  isEmpty = isEmpty,
   isHidden = isHidden,
   isLuaFile = isLuaFile,
   fileExists = fileExists,

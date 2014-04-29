@@ -8,7 +8,7 @@ namespace Lua {
 class FullHyperGraphVisualizer : public Lua::LuaGraphVisualizer
 {
 public:
-    FullHyperGraphVisualizer(Data::Graph *graph);
+    FullHyperGraphVisualizer(Data::Graph *graph, osg::Camera *camera = NULL);
 
     void visualize();
 

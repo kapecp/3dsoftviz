@@ -18,10 +18,8 @@ local function G(arguments)
   
   local o = {
       id = "G"..inc(),
-      data = {},
       nodes = {},
       edges = {},
-      incidences = {},
       label = nil
   }
 
@@ -47,7 +45,6 @@ end
 -------------------------------- Add functions
 
 function pGraph:addNode(node)
-  node.graph = self
   table.insert(self.nodes, node)
   if self.NodeMapper then
     self.NodeMapper:save(node)
@@ -56,7 +53,6 @@ end
 
 
 function pGraph:addEdge(edge)
-  edge.graph = self
   table.insert(self.edges, edge)
   if self.EdgeMapper then
     self.EdgeMapper:save(edge)
@@ -68,27 +64,34 @@ end
 function pGraph:printNodes()
   for index,node in pairs(self.nodes) do
     if node.data.name then
-      print("node with id: "..node['id'].." and name: "..node['data']['name'])
+      print("NODE with ID: "..node['id'].." NAME: "..node['data']['name'])
     else
-      print("node with id: "..node['id'])
+      print("NODE with ID: "..node['id'])
     end
   end
 end
 
 
+local function concatNodes(str, nodes)
+  for i,node in pairs(nodes) do
+    if type(node) == "table" and node.data and node.data.name then
+      str = str.." "..node.data.name
+    elseif type(node) == "table" and node.id then
+      str = str.." "..node.id
+    else
+      str = str.." "..node
+    end
+  end
+  return str
+end
+
+
 function pGraph:printEdges()
   for index,edge in pairs(self.edges) do
-    -- directed edge
     if edge.from and edge.to then
-      
-      local from = " from nodes " .. table.concat(edge.from, ", ")
-      local to   = " to " .. table.concat(edge.to, ", ")
-      print("edge with id: ".. edge.id .. from .. to)
-      
-    -- undirected edge
-    elseif edge.nodes then
-      local nodes = "nodes: " .. table.concat(edge.nodes, ", ")
-      print("edge with id: ".. edge.id .. "connecting nodes: " .. nodes)
+        local from = concatNodes(" FROM", edge.from)
+        local to = concatNodes(" TO", edge.to)
+        print("EDGE with ID: ".. edge.id .. from .. to)
     end
   end
 end

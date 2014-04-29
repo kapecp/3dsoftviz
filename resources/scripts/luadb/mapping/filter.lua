@@ -55,8 +55,8 @@ function pFilter:getValueByPath(t_object, s_path)
   assert(utils.isTable(t_object), "passed param must be an object")
 
   local var = t_object
---  local s_path = string.gsub(s_path, "/", ".") 
-  local path = utils.split(s_path, "/")
+  local s_path = string.gsub(s_path, "/", "\.")
+  local path = utils.split(s_path, '%.')
   for k,v in pairs(path) do var = var[v] end
   return var
 end

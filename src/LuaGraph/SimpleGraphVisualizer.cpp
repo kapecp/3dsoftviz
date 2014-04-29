@@ -34,7 +34,9 @@ void Lua::SimpleGraphVisualizer::visualize()
         } else {
             newEdge = currentGraph->addEdge(i.key(), i.value()->getLabel(), srcNode, dstNode, edgeType, false);
         }
-        newEdge->setEdgeColor(osg::Vec4f(1,1,1,1));
+        if (newEdge == NULL){
+            std::cout << "pruser multihrana" << std::endl;
+        }
         newEdge->setCamera(camera);
     }
     g->setObserver(this);
@@ -53,7 +55,7 @@ void Lua::SimpleGraphVisualizer::visualize()
             metaLink->setEdgeColor(osg::Vec4(0,0,0,0));
             metaLink->setInvisible(true);
         }
-        if (i.value()->getParams()["nodetype"] == "function"){
+        if (i.value()->getParams()["type"] == "function"){
             osg::ref_ptr<Data::Node> func = currentGraph->getNodes()->value(i.key());
             osg::ref_ptr<Data::Edge> metaLink = currentGraph->addEdge(metaEdgeName, func, functionsAnchor, currentGraph->getEdgeMetaType(), false);
             metaLink->setEdgeColor(osg::Vec4(0,0,0,0));

@@ -43,11 +43,37 @@ local function N(arguments)
 	return o
 end
 
+-------------------------------- Find functions
+
+local function findByName(nodes, name)
+  local occurrences = {}
+  for i,node in pairs(nodes) do
+    if node.data.name and node.data.name == name then
+      table.insert(occurrences, node)
+    end
+  end
+  return occurrences
+end
+
+
+-- get all ids for nodes with selected name
+local function findIdsByName(nodes, name)
+  local occurrenceIds = {}
+  for i,node in pairs(nodes) do
+    if node.data.name and node.data.name == name then
+      table.insert(occurrenceIds, node.id)
+    end
+  end
+  return occurrenceIds
+end
+
 -----------------------------------------------
 -- Return
 -----------------------------------------------
 
 return
 {
-	new = N
+	new = N,
+	findByName = findByName,
+  findIdsByName = findIdsByName
 }

@@ -71,6 +71,7 @@ Lua::LuaGraph *Lua::LuaGraph::getInstance()
 
 Lua::LuaGraph *Lua::LuaGraph::loadGraph()
 {
+    std::cout << "loading graph" << std::endl;
     Lua::LuaInterface* lua = Lua::LuaInterface::getInstance();
 
     Lua::LuaGraph* result = Lua::LuaGraph::getInstance();
