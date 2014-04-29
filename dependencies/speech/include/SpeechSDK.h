@@ -4,6 +4,12 @@
 #define SPEECHSDK_API __declspec(dllimport) 
 #endif
 
+//------------------------------------------------------------------------------
+// <copyright file="SpeechBasics.h" company="Microsoft">
+//     Copyright (c) Microsoft Corporation.  All rights reserved.
+// </copyright>
+//------------------------------------------------------------------------------
+
 #pragma once
 
 #include "KinectAudioStream.h"
@@ -41,7 +47,7 @@ public:
 	SPEECHSDK_API void cancelRecognition();
 	
     //static LRESULT CALLBACK MessageRouter(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
-    SPEECHSDK_API HRESULT CreateFirstConnected();
+    SPEECHSDK_API HRESULT CreateFirstConnected(int i);
 	SPEECHSDK_API LPCWSTR recognize();
     SPEECHSDK_API LPCWSTR ProcessSpeech();
 	

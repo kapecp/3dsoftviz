@@ -13,8 +13,8 @@ OpenCV::FaceRecognizer::FaceRecognizer()
 	this->detected=false;
 	this->isMovement=false;
 	this->firstdetection=true;
-	this->queue = new SizedQueue(5,0.0f);
-	this->queueDistance = new SizedQueue(5,0.0f);
+	this->queue = new SizedQueue(8,0.0f);
+	this->queueDistance = new SizedQueue(8,0.0f);
 }
 
 OpenCV::FaceRecognizer::~FaceRecognizer()
@@ -53,10 +53,10 @@ void OpenCV::FaceRecognizer::annotateFaces(Mat frame)
 		}
 		if (detected)
 		{
-			if ((abs(1.0f-(float)this->drawrect.x/(float)(this->rect.x+face_i.x))<0.15f)&&
-					(abs(1.0f-(float)this->drawrect.y/(float)(this->rect.y+face_i.y))<0.15f) &&
-					(abs(1.0f-(float)this->drawrect.width/(float)(face_i.width))<0.15f) &&
-					(abs(1.0f-(float)this->drawrect.height/(float)(face_i.height))<0.15f))
+			if ((abs(1.0f-(float)this->drawrect.x/(float)(this->rect.x+face_i.x))<0.10f)&&
+					(abs(1.0f-(float)this->drawrect.y/(float)(this->rect.y+face_i.y))<0.10f) &&
+					(abs(1.0f-(float)this->drawrect.width/(float)(face_i.width))<0.10f) &&
+					(abs(1.0f-(float)this->drawrect.height/(float)(face_i.height))<0.10f))
 			{
 				//TODO conversion to INT,
 				face_i.x=(int)(face_i.x-face_i.width*0.4+this->rect.x);
@@ -152,10 +152,11 @@ float OpenCV::FaceRecognizer::getHeadDistance(double screenWidth)
 {
 	if (this->faces.size()>0)
 	{
-		Rect face = this->faces[0];
+		Rect face = this->drawrect; // faces[0]
 		// 1.0 when the face width is 3.5 times smaller than frame
-		float dist = ((float)screenWidth/(float)face.width)/3.5f;
+		float dist = ((float)screenWidth/(float)face.width)/12.5f;
 		this->queueDistance->getAvgBasedOnValue(dist);
+		qDebug() << "dist value: " << dist;
 		return dist;
 	}
 	return 0.0f;

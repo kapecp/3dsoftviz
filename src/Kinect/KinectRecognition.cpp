@@ -19,6 +19,8 @@ void Kinect::KinectRecognition::inicialize()
 	}
 
 	mOpenniStatus=device.open(openni::ANY_DEVICE);
+//	openni::DeviceInfo devinf;
+//	devinf.getUri();
 	if(mOpenniStatus != openni::STATUS_OK)
 	{
 		qDebug() << "Openni Device not Open";
