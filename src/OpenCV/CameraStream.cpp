@@ -34,9 +34,9 @@ void CameraStream::updateBackgroundImage( cv::Mat cvImg)
 	if( cvImg.cols != mWidth || mHeight != cvImg.rows){
 		mWidth	= cvImg.cols;
 		mHeight = cvImg.rows;
-
+		#ifdef WIN32
 		iplImg = cvCloneImage( &(IplImage)cvImg);
-
+		#endif
 		// update geometry coordinates if thare are different dimensions of image,
 		// becasuse probebly changed it ratio of sides
 		if(mGeom != NULL ){
@@ -46,7 +46,7 @@ void CameraStream::updateBackgroundImage( cv::Mat cvImg)
 
 
 	// There will be probably needed refactoring on MAC OS
-#ifdef WIN32
+	#ifdef WIN32
 	cvCopy(&(IplImage)cvImg, iplImg, NULL);
 
 	setImage( iplImg->width, iplImg->height,
