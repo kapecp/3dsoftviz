@@ -8,11 +8,14 @@ SizedQueue::SizedQueue(int size, float threshold)
 	this->sum.second = 0.0f;
 	this->presum.first = 0.0f;
 	this->presum.second = 0.0f;
+
+	positive = 0;
 }
 
 SizedQueue::~SizedQueue()
 {
 	this->stack.clear();
+	this->boolStack.clear();
 }
 
 int SizedQueue::getAvgBasedOnValue(float &x, float &y)
@@ -75,4 +78,25 @@ int SizedQueue::getAvgBasedOnValue(float &x)
 	x = this->presum.first / (float)this->stack.size();
 
 	return retval;
+}
+
+
+
+bool SizedQueue::getAvgBool(bool y)
+{
+	// push/pop, LIFO stack
+	if (this->boolStack.size() >= this->size){
+		bool front = boolStack.front();
+		boolStack.pop_front();
+		if(front == true){
+			positive--;
+		}
+	}
+	boolStack.push_back(y);
+	if(y){
+		positive++;
+	}
+
+	return positive > boolStack.size();
+
 }

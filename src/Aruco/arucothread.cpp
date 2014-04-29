@@ -6,7 +6,6 @@
 
 #include "OpenCV/CapVideo.h"
 
-
 using namespace ArucoModul;
 
 ArucoThread::ArucoThread(QObject *parent)
@@ -23,6 +22,7 @@ ArucoThread::ArucoThread(QObject *parent)
 	mRatioCamCoef	= 0;
 	mGrM			= 0;
 	mMoM			= 1;
+	boolQueue = new SizedQueue(5, 0.0);
 
 	qRegisterMetaType< osg::Vec3d >("osgVec3d");
 	qRegisterMetaType< osg::Quat >("osgQuat");
@@ -207,6 +207,8 @@ void ArucoThread::graphControlling(const double actPosArray[3], const double act
 
 	emit sendArucoPosVec( actPos );
 	//emit sendArucoRorQuat( actQuat );
+
+
 }
 
 void ArucoThread::mouseControlling(const double actPosArray[3], const double actQuatArray[4])
@@ -230,7 +232,9 @@ void ArucoThread::mouseControlling(const double actPosArray[3], const double act
 
 
 	qDebug() << (actQuatArray[3] < 0.0);
-	emit moveMouseArucoSignal(normX, normY, actQuatArray[1] <= 0.0, Qt::LeftButton);
+	bool click = boolQueue->getAvgBool(actQuatArray[3] <= 0.0);
+
+	emit moveMouseArucoSignal(normX, normY, click, Qt::LeftButton);
 
 }
 

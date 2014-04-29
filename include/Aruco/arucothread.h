@@ -11,6 +11,8 @@
 
 #include <opencv2/core/core.hpp>
 
+#include "Util/SizedQueue.h"
+
 Q_DECLARE_METATYPE( osg::Vec3d )
 Q_DECLARE_METATYPE( osg::Quat )
 
@@ -228,7 +230,7 @@ private:
 	double		mHalfRatioCoef;
 
 	OpenCV::CapVideo	*mCapVideo; // Cap video instanc, that managed camera and provides frames
-
+	SizedQueue *boolQueue;
 
 
 	};
