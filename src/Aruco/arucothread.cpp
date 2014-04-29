@@ -167,6 +167,8 @@ void ArucoThread::graphControlling(const double actPosArray[3], const double act
 	}
 
 	osg::Vec3d actPos( -actPosArray[0], -actPosArray[1], -actPosArray[2] );
+	//osg::Vec3d actPos( -actPosArray[0], -actPosArray[1] * mHalfRatioCoef, -actPosArray[2] );
+
 	osg::Quat  actQuat;
 
 
@@ -179,15 +181,32 @@ void ArucoThread::graphControlling(const double actPosArray[3], const double act
 
 
 	// correct Y centering, because of camerra different ration aruco top max y value is less than bottom one
-	actPos.y() = ( mRatioCamCoef * actPos.z()  + actPos.y() );
+	//actPos.y() = ( mRatioCamCoef * actPos.z()  + actPos.y() );
 
 
 	if ( mCorEnabled ) {
 		correctQuatAndPos( actPos, actQuat);
 	}
 
+
+
+	//printVec(actPos, "pos0  ");
+
+	// normalizin from [0,0] in top left corner to [1,1] in roght bottom corner
+	double absZ		= actPosArray[2]  < 0.0 ? - actPosArray[2]	:  actPosArray[2];		// distance of marker
+	double halfSize = absZ / mCamDistRatio;
+
+	double normX = actPos.x() / halfSize;							// horizontal
+	double normY = actPos.y() / halfSize;		// vertical
+
+	// correct Y centering, because of camerra different ration aruco top max y value is less than bottom one
+	normX = normX - 0.1 - 0.01/absZ;
+
+	actPos.x() = normX;
+	actPos.y() = normY;
+
 	emit sendArucoPosVec( actPos );
-	emit sendArucoRorQuat( actQuat );
+	//emit sendArucoRorQuat( actQuat );
 }
 
 void ArucoThread::mouseControlling(const double actPosArray[3], const double actQuatArray[4])
@@ -217,7 +236,7 @@ void ArucoThread::mouseControlling(const double actPosArray[3], const double act
 
 void ArucoThread::imagesSending(ArucoCore &aCore, const cv::Mat frame) const
 {
-	qDebug() << "frame" << frame.data ;
+	//qDebug() << "frame" << frame.data ;
 
 	if( mSendBackgrImgEnabled && !frame.empty() ){
 		if( ! mMarkerIsBehind){
@@ -231,7 +250,7 @@ void ArucoThread::imagesSending(ArucoCore &aCore, const cv::Mat frame) const
 
 
 	cv::Mat image = aCore.getDetImage();
-	qDebug() << "image" << image.data ;
+	//qDebug() << "image" << image.data ;
 
 	if ( mSendImgEnabled ) {
 		if( ! mMarkerIsBehind){

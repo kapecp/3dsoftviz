@@ -1221,25 +1221,15 @@ void Vwr::CameraManipulator::updateArucoGraphPosition( osg::Vec3d pos ){
 	//str += " " + QString::number( pos.z(), 'f', 2);
 	//qDebug() << ": " << str;
 
-
-	// camera coeficient
-	double constHeigherScale = this->appConf->getValue("Aruco.ConstHeigherScale").toDouble();
-	double constDist		 = this->appConf->getValue("Aruco.ConstDist").toDouble();
-	double constHeightKoef	 = this->appConf->getValue("Aruco.ConstHeightKoef").toDouble();
-	double camDistRatio		 = this->appConf->getValue("Aruco.CamDistancRatio").toDouble();
-
 	double distArc =  pos.z()  < 0.0 ? - pos.z()	:  pos.z();		// distance of marker
 	double distGra = _distance < 0.0 ? -_distance	: _distance;	// distance of graph
 	if( distGra < 1.0){
 		distGra = 1.0;
 	}
 
-	double getHeigherKoef = constHeigherScale * distGra;							// if marker is on table, graph coud be too on bottom, so get him heigher
-	double koef = distGra * camDistRatio * constHeightKoef / distArc;
-
-	_centerArucoTrans[1] = distGra * (pos.z() + constDist);			// distance
-	_centerArucoTrans[0] = koef * pos.x();							// horizontal
-	_centerArucoTrans[2] = koef * pos.y() - getHeigherKoef;			// vertical
+	_centerArucoTrans[1] = distGra * (distArc + 0.5);//constDist);			// distance
+	_centerArucoTrans[0] = distGra * distArc*0.8;							// horizontal
+	_centerArucoTrans[2] = distGra * distArc*0.8;			// vertical
 
 
 	//str  = "  " + QString::number( _centerArucoTrans[1], 'f', 2);
