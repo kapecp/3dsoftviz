@@ -12,7 +12,7 @@ end
 
 local function extractNode(v, nodes, rootcandidates, minComplexity, maxComplexity, minLines, maxLines)
   local origname = v.data.name or v.id
-  local newnode = {type = "node", id = inc(), label = origname, params={size = 8, name = v.name, origid = v.id, type = v.data.type, colorA = 1, colorR = 1, colorG = 1, colorB = 1}}
+  local newnode = {type = "node", id = inc(), label = origname, params={size = 8, name = v.name, origid = v.id, type = v.data.type, path = v.data.path, modulePath = v.data.modulePath, colorA = 1, colorR = 1, colorG = 1, colorB = 1}}
   nodes[v] = newnode
   rootcandidates[newnode] = true
   if v.data.type == 'file' then 
@@ -62,18 +62,20 @@ local function extractEdge(v, existingedges, nodes, rootcandidates)
   if existingedges[ind] ~= nil then
     existingedges[ind].params.count = existingedges[ind].params.count + 1
   else
-    local edge = {type = "edge", id = inc(), label = '', params = { origid = v.id, count = 1}}
+    local edge = {type = "edge", id = inc(), label = '', params = { origid = v.id, count = 1, edgeStrength = 2}}
     local incid1 = {type = "edge_part", id = inc(), label = ''}
     local incid2 = {type = "edge_part", id = inc(), label = ''}
-    if v.from[1].data.type == 'function' and v.to[1].data.type == 'function' then
+    if v.from[1].data.type == 'function' or v.to[1].data.type == 'globalFunction' then
       incid1.direction = 'in'
       incid2.direction = 'out'
     end
+    if v.from[1].data.modulePath ~= v.to[1].data.modulePath then
+      edge.params.edgeStrength = 0.01
+      print("call", v.from[1].data.name, v.to[1].data.name)
+    end 
     graph[edge] = {[incid1] = nodes[v.from[1]], [incid2] = nodes[v.to[1]]}
     existingedges[ind] = edge
   end
-  
-  --TODO vyriesit multihrany
 end
 
 local function doVisualMapping(nodes, minComplexity, maxComplexity, minLines, maxLines)

@@ -34,10 +34,8 @@ void Lua::SimpleGraphVisualizer::visualize()
         } else {
             newEdge = currentGraph->addEdge(i.key(), i.value()->getLabel(), srcNode, dstNode, edgeType, false);
         }
-        if (newEdge == NULL){
-            std::cout << "pruser multihrana" << std::endl;
-        }
         newEdge->setCamera(camera);
+        newEdge->setEdgeStrength(i.value()->getFloatParam("edgeStrength", 1));
     }
     g->setObserver(this);
 
@@ -60,6 +58,7 @@ void Lua::SimpleGraphVisualizer::visualize()
             osg::ref_ptr<Data::Edge> metaLink = currentGraph->addEdge(metaEdgeName, func, functionsAnchor, currentGraph->getEdgeMetaType(), false);
             metaLink->setEdgeColor(osg::Vec4(0,0,0,0));
             metaLink->setInvisible(true);
+            metaLink->setEdgeStrength(0.1f);
         }
     }
 }

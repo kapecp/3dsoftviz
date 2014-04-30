@@ -18,6 +18,7 @@ local Id = Ct(Ct(EdgeOp^0) * Name * (P"." * Name)^0)
 local RelOp = C(P"==" + P"~=" + P"<=" + P"<" + P">=" + P">")
 local AndOp = C(P"and")
 local OrOp = C(P"or")
+local NotOp = C(P"not")
 local Open = "(" * Space
 local Close = ")" * Space
 local QuotString = P'"' * C(( (P'\\' * 1) + (1 - (S'"\n\r\f')) )^0) * P'"'
@@ -25,11 +26,12 @@ local AposString = P"'" * C(( (P'\\' * 1) + (1 - (S"'\n\r\f")) )^0) * P"'"
 local LiteralString = QuotString + AposString
 local Like = C(P"like")
 
-local Exp, And, Or, Rel, Regex = V"Exp", V"And", V"Or", V"Rel", V"Regex"
+local Exp, And, Or, Rel, Regex, Not = V"Exp", V"And", V"Or", V"Rel", V"Regex", V"Not"
 G = lpeg.P{ Exp,
-  Exp = Ct(-1) + Ct(Or * (Space * OrOp * Space * Or)^0),
+  Exp = Ct(-1) + Not + Ct(Or * (Space * OrOp * Space * Or)^0),
+  Not = Ct(NotOp * Space * Open * Exp * Close),
   Or = Ct(And * (Space * AndOp * Space * And)^0),
-  And = Rel + Regex + Open * Exp * Close,
+  And = Rel + Regex +  Open * Exp * Close,
   Rel = Ct(Id * Space * RelOp * Space * Number),
   Regex = Ct(Id * Space * Like * Space * LiteralString)
 }
@@ -105,6 +107,8 @@ function nodeAccepted(node, expTree)
     return nodeAccepted(node, expTree[1]) or nodeAccepted(node, expTree[3])
   elseif expTree[2] == 'and' then
     return nodeAccepted(node, expTree[1]) and nodeAccepted(node, expTree[3])
+  elseif expTree[1] == 'not' then
+    return not nodeAccepted(node, expTree[2])
   elseif #expTree == 1 then
     return nodeAccepted(node, expTree[1])
   else
@@ -156,6 +160,8 @@ local function hasEdgeOperator(exp)
     return hasEdgeOperator(exp[1]) or hasEdgeOperator(exp[3])
   elseif exp[2] == 'and' then
     return hasEdgeOperator(exp[1]) or hasEdgeOperator(exp[3])
+  elseif exp[1] == 'not' then
+    return hasEdgeOperator(exp[2])
   elseif #exp == 1 then
     return hasEdgeOperator(exp[1])
   else
@@ -174,6 +180,7 @@ local function filterGraph(s)
   end
   checkedNodes = {}
   local t = lpeg.match(G, s)
+  helper.vardump(t)
   print("has edgeop", hasEdgeOperator(t))
   if hasEdgeOperator(t) then
     invertedgraph = getInvertedGraph(fullGraph)
