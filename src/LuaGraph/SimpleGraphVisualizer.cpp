@@ -36,6 +36,8 @@ void Lua::SimpleGraphVisualizer::visualize()
         }
         newEdge->setCamera(camera);
         newEdge->setEdgeStrength(i.value()->getFloatParam("edgeStrength", 1));
+        if (i.value()->getParams()["visible"] == false)
+            newEdge->setScale(0);
     }
     g->setObserver(this);
 
@@ -70,6 +72,13 @@ void Lua::SimpleGraphVisualizer::onUpdate()
     for (QMap<qlonglong, Lua::LuaNode *>::iterator i = g->getNodes()->begin(); i != g->getNodes()->end(); ++i){
         osg::ref_ptr<Data::Node> n = currentGraph->getNodes()->value(i.key());
         setNodeParams(n, i.value(), osg::Vec4f(1,1,1,1), 8);
+    }
+    for (QMap<qlonglong, Lua::LuaEdge *>::iterator i = g->getEdges()->begin(); i != g->getEdges()->end(); ++i){
+        osg::ref_ptr<Data::Edge> n = currentGraph->getEdges()->value(i.key());
+        if (i.value()->getParams()["visible"] == false)
+            n->setScale(0);
+        else
+            n->setScale(1);
     }
 }
 

@@ -132,13 +132,13 @@ function nodeAccepted(node, expTree)
   end
 end
 
-local function copyNode(node)
+local function copyObj(obj)
   local result = {}
-  for k, v in pairs(node) do
+  for k, v in pairs(obj) do
     result[k] = v
   end
   result.params = {}
-  for k, v in pairs(node.params) do
+  for k, v in pairs(obj.params) do
     result.params[k] = v
   end
   return result
@@ -187,25 +187,39 @@ local function filterGraph(s)
   end
   print(invertedgraph)
  
+  local acceptedNodes = {}
   for e, is in pairs(fullGraph) do
+    local edge = copyObj(e)
+    edge.params.visible = false
     local incidences = {}
+    local hasAccepted = false
     for i, n in pairs(is) do
-      local node = copyNode(n)
+      local node
       if checkedNodes[n] == nil then
+        node = copyObj(n)
         if nodeAccepted(n, t) then
           node.params.colorA = 1
           node.params.size = node.params.size * 2
+          acceptedNodes[n] = true
         else
           node.label = ''
-          node.params.colorA = 0.1
+          node.params.colorA = 0.5
         end
         checkedNodes[n] = node
       else
         node = checkedNodes[n]
       end
+      if hasAccepted then
+        if acceptedNodes[n] then
+          edge.params.visible = true
+          print('visible', e.id)
+        end
+      else
+        hasAccepted = acceptedNodes[n]
+      end
       incidences[i] = node
     end
-    filteredgraph[e] = incidences
+    filteredgraph[edge] = incidences
   end
   graphChangedCallback()
 end
