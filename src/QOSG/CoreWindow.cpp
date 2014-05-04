@@ -86,6 +86,23 @@ CoreWindow::CoreWindow(QWidget *parent, Vwr::CoreGraph* coreGraph, QApplication*
 	this->coreGraph = coreGraph;
 	nodeLabelsVisible = edgeLabelsVisible = false;
 
+    // Duransky begin
+
+    // inicializacia poctu rovin pre vertigo mode
+    numberOfPlanes = 0;
+
+    // koeficient zmeny vzdialenosti rovin pre vertigo mode
+    deltaVertigoDistance = 20;
+
+    // vychodzia hodnota pre vzdialenost medzi rovinami pre vertigo mode
+    vertigoPlanesDistance = 100;
+
+    // ohranicenie vzdialenosti medzi rovinami pre vertigo mode
+    vertigoPlanesMinDistance = 50;
+    vertigoPlanesMaxDistance = 300;
+
+    // Duransky end
+
 	connect(lineEdit,SIGNAL(returnPressed()),this,SLOT(sqlQuery()));
 }
 
@@ -340,22 +357,25 @@ void CoreWindow::createActions()
     chb_vertigo = new QCheckBox("Vertigo zoom");
     connect(chb_vertigo, SIGNAL(clicked()), this, SLOT(toggleVertigo()));
 
-    sl_vertigoScale = new QSlider(Qt::Vertical,this);
-    sl_vertigoScale->setTickPosition(QSlider::TicksAbove);
-    sl_vertigoScale->setRange(1,20);
-    sl_vertigoScale->setPageStep(1);
-    sl_vertigoScale->setValue(10);
-    sl_vertigoScale->setFocusPolicy(Qt::NoFocus);
-    sl_vertigoScale->setMaximumHeight(100);
-    sl_vertigoScale->hide();
-    connect(sl_vertigoScale,SIGNAL(valueChanged(int)),this,SLOT(setVertigoScale(int)));
+    //Add distance
+    add_Distance = new QPushButton();
+    add_Distance->setText("+");
+    add_Distance->setToolTip("Adds distance between planes");
+    add_Distance->setFocusPolicy(Qt::NoFocus);
+    connect(add_Distance,SIGNAL(clicked()),this,SLOT(add_DistanceClick()));
+
+    //Subtract distance
+    subtract_Distance = new QPushButton();
+    subtract_Distance->setText("-");
+    subtract_Distance->setToolTip("Subtracts distance between planes");
+    subtract_Distance->setFocusPolicy(Qt::NoFocus);
+    connect(subtract_Distance,SIGNAL(clicked()),this,SLOT(subtract_DistanceClick()));
 
     //Add planes
     add_Planes = new QPushButton();
     add_Planes->setText("Add Planes");
     add_Planes->setToolTip("Adds two planes for the vertigo zoom");
     add_Planes->setFocusPolicy(Qt::NoFocus);
-    add_Planes->hide();
     connect(add_Planes,SIGNAL(clicked()),this,SLOT(add_PlanesClick()));
 
 
@@ -364,7 +384,6 @@ void CoreWindow::createActions()
     remove_Planes->setText("Remove Planes");
     remove_Planes->setToolTip("Removes two planes for the vertigo zoom");
     remove_Planes->setFocusPolicy(Qt::NoFocus);
-    remove_Planes->hide();
     connect(remove_Planes,SIGNAL(clicked()),this,SLOT(remove_PlanesClick()));
 
 }
@@ -581,13 +600,12 @@ void CoreWindow::createCollaborationToolBar() {
     toolBar->addWidget(frame);
 
     frame = createHorizontalFrame();
-    frame->layout()->addWidget(sl_vertigoScale);
+    frame->layout()->addWidget(subtract_Distance);
+    frame->layout()->addWidget(add_Distance);
     toolBar->addWidget(frame);
 
     frame = createHorizontalFrame();
     frame->setMaximumHeight(100);
-    //frame->layout()->setAlignment(Qt::AlignHCenter);
-
     frame->layout()->addWidget(add_Planes);
     toolBar->addWidget(frame);
 
@@ -633,7 +651,8 @@ void CoreWindow::showOptions()
 void CoreWindow::showLoadGraph()
 {
 	LoadGraphWindow *loadGraph = new LoadGraphWindow(this);
-	loadGraph->show();
+    loadGraph->show();
+    numberOfPlanes = 0;
 }
 
 void CoreWindow::saveLayoutToDB()
@@ -1181,6 +1200,65 @@ void CoreWindow::setRestriction_ConeSurface()
 					);
 	}
 }
+
+// Duransky begin
+Layout::ShapeGetter_Plane_ByThreeNodes* CoreWindow::setRestriction_Plane_Vertigo (QLinkedList<osg::ref_ptr<Data::Node> > * nodesToRestrict, int nOfPlane)
+{
+    Data::Graph * currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
+
+    if (currentGraph != NULL) {
+
+        osg::ref_ptr<Data::Node> node1;
+        osg::ref_ptr<Data::Node> node2;
+        osg::ref_ptr<Data::Node> node3;
+
+        QString name_node1 = "plane_node_1";
+        QString name_node2 = "plane_node_2";
+        QString name_node3 = "plane_node_3";
+
+        osg::Vec3 rootPosition = osg::Vec3f (0.f, 0.f, 0.f);
+
+        // pozicia bodu zavisi od poradoveho cisla roviny
+        osg::Vec3 position = rootPosition + osg::Vec3f ((float)(nOfPlane - 1) * (float)vertigoPlanesDistance, 0.f, 0.f);
+
+        osg::Vec3 positionNode1 = position + osg::Vec3f (0.f, -100.f, 0.f);
+        osg::Vec3 positionNode2 = position + osg::Vec3f (0.f, 100.f, 200.f);
+        osg::Vec3 positionNode3 = position + osg::Vec3f (0.f, 100.f, -200.f);
+
+        Layout::RestrictionRemovalHandler_RestrictionNodesRemover::NodesListType restrictionNodes;
+
+        Network::Client * client = Network::Client::getInstance();
+
+        if (!client->isConnected()) {
+
+            node1 = currentGraph->addRestrictionNode (name_node1, positionNode1);
+            node2 = currentGraph->addRestrictionNode (name_node2, positionNode2);
+            node3 = currentGraph->addRestrictionNode (name_node3, positionNode3);
+            restrictionNodes.push_back (node1);
+            restrictionNodes.push_back (node2);
+            restrictionNodes.push_back (node3);
+
+            Layout::ShapeGetter_Plane_ByThreeNodes* plane = new Layout::ShapeGetter_Plane_ByThreeNodes (node1, node2, node3);
+
+            setRestrictionToSelectedNodes (
+                        QSharedPointer<Layout::ShapeGetter> (plane),currentGraph,
+                        QSharedPointer<Layout::RestrictionRemovalHandler_RestrictionNodesRemover> (
+                            new Layout::RestrictionRemovalHandler_RestrictionNodesRemover (
+                                *currentGraph,restrictionNodes
+                                )
+                            ),
+                        nodesToRestrict
+                        );
+
+            return plane;
+        } else {
+            client->sendSetRestriction(3,name_node1,positionNode1,name_node2, positionNode2, viewerWidget->getPickHandler()->getSelectedNodes(),name_node3,&positionNode3);
+        }
+        Network::Server * server = Network::Server::getInstance();
+        server->sendSetRestriction(3, node1, positionNode1, node2, positionNode2, viewerWidget->getPickHandler()->getSelectedNodes(), node3, &positionNode3);
+    }
+}
+// Duransky end
 
 void CoreWindow::setRestriction_Plane (QLinkedList<osg::ref_ptr<Data::Node> > * nodesToRestrict)
 {
@@ -1885,135 +1963,263 @@ void CoreWindow::setAvatarScale(int scale) {
 	Network::Server::getInstance()->setAvatarScale(scale);
 }
 
+// Duransky begin
+
 void CoreWindow::toggleVertigo() {
     // ak je "Vertigo zoom" zakliknute
     if (chb_vertigo->isChecked()) {
-        sl_vertigoScale->setValue(10);
-        sl_vertigoScale->show();
-        add_Planes->show();
-        remove_Planes->show();
-
-        //TODO-Dur nastavit kameru do Vertigo rezimu
+        // nastavi kameru do vertigo modu
+        viewerWidget->getCameraManipulator()->setVertigoMode(true);
     }else{
         // ak je "Vertigo zoom" odkliknute
-        sl_vertigoScale->hide();
-        add_Planes->hide();
-        remove_Planes->hide();
-
-
-        //TODO-Dur resetovat kameru z danej pozicie
+        viewerWidget->getCameraManipulator()->setVertigoMode(false);
+        // resetuje projekcnu maticu
+        viewerWidget->getCameraManipulator()->resetProjectionMatrixToDefault();
     }
 }
 
-void CoreWindow::setVertigoScale(int scale) {
-    //TODO-Dur nastavit akciu pri zmene slideru
+void CoreWindow::create_Vertigo_Planes(int numberOfPlanes, int nOfDepthsInOnePlane, Data::GraphSpanningTree* spanningTree, int maxDepth, QMap<qlonglong, osg::ref_ptr<Data::Node> >* allNodes ){
+
+   QLinkedList<osg::ref_ptr<Data::Node> > pickedNodes;
+
+   //Data::Graph * currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
+
+   // vymazanie starych uzlov rovin - setInvisible
+   QLinkedList<Layout::ShapeGetter_Plane_ByThreeNodes*>::const_iterator it = planes_Vertigo.constBegin();
+   for(it; it != planes_Vertigo.constEnd(); ++it){
+
+       //currentGraph->getRestrictionsManager().setOrRunRestrictionRemovalHandler((*it),(*it)->);
+
+       QSet<Data::Node *> nodesOfPlane = (*it)->getNodesOfShape();
+       QSetIterator<Data::Node *> i(nodesOfPlane);
+       while (i.hasNext()){
+           Data::Node* node = i.next();
+           node->setInvisible();
+           //node->Referenced.deleteUsingDeleteHandler();
+           //osg::ref_ptr<Data::Node> nodeRefPtr = node;
+           //currentGraph->removeNode(nodeRefPtr);
+       }
+   }
+
+   planes_Vertigo.clear();
+
+   int nOfDepths = 0;
+   int nOfPlane = 1;
+
+   // rozdelenie uzlov do rovin podla hlbky
+   for (int depth = 0; depth <= maxDepth; depth++){
+
+       ++nOfDepths;
+
+       QList<qlonglong> groups = spanningTree->getGroupsInDepth(depth);
+
+       QList<qlonglong>::iterator groupIt;
+       for(groupIt=groups.begin(); groupIt!=groups.end();groupIt++){
+
+           // vyber vsetkych skupin a uzlov v skupine danej hlbky
+           QList<qlonglong> nodes = spanningTree->getNodesInGroup(*groupIt);
+           QList<qlonglong>::iterator nodeIt;
+
+           for(nodeIt=nodes.begin(); nodeIt!=nodes.end();nodeIt++){
+               pickedNodes.append(allNodes->value(*nodeIt));
+           }
+
+       }
+
+       // obmedzenie uzlov podla poctu hlbok, ktore sa maju obmedzit na jednu rovinu
+       if((depth != (nOfDepthsInOnePlane * numberOfPlanes - 1)) && nOfDepths == nOfDepthsInOnePlane){
+
+           Layout::ShapeGetter_Plane_ByThreeNodes * plane = setRestriction_Plane_Vertigo(&pickedNodes,nOfPlane);
+           planes_Vertigo.append(plane);
+
+           nOfDepths = 0;
+           ++nOfPlane;
+           pickedNodes.clear();
+       }
+   }
+
+   //zbytok uzlov sa obmedzi na poslednu rovinu
+   Layout::ShapeGetter_Plane_ByThreeNodes * plane = setRestriction_Plane_Vertigo(&pickedNodes,nOfPlane);
+   planes_Vertigo.append(plane);
+
 }
 
-void CoreWindow::add_PlanesClick(QLinkedList<osg::ref_ptr<Data::Node> > * nodesToRestrict)
+void CoreWindow::add_PlanesClick()
 {
     Data::Graph * currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
 
-    QLinkedList<osg::ref_ptr<Data::Node> > * selectedNodes = viewerWidget->getPickHandler()->getSelectedNodes();
-    QLinkedList<osg::ref_ptr<Data::Node> > nodesToRestrictFirst;
-    QLinkedList<osg::ref_ptr<Data::Node> > nodesToRestrictSecond;
+    // ak nebol nacitany graf, tak sa nic nestane
+    if(currentGraph == NULL){
+        return;
+    }
 
-    QLinkedList<osg::ref_ptr<Data::Node> >::const_iterator it = selectedNodes->constBegin();
+    // vsetky uzly grafu
+    QMap<qlonglong, osg::ref_ptr<Data::Node> >* allNodes = currentGraph->getNodes();
 
-    int i = 0;
+    // uzly grafu vlozene do linked listu pre jednoduche iterovanie
+    QLinkedList<osg::ref_ptr<Data::Node> > nodesList;
+    QMap<qlonglong, osg::ref_ptr<Data::Node>>::const_iterator i = allNodes->constBegin();
+    while (i != allNodes->constEnd()) {
+        nodesList.append(i.value());
+        ++i;
+    }
 
-    for(it; it != selectedNodes->constEnd(); ++it, ++i){
-        if(i < selectedNodes->size() / 2){
-            nodesToRestrictFirst.append(it->get());
-        }else{
-            nodesToRestrictSecond.append(it->get());
+    // vyber root node pre kostru grafu
+    int maxEdges=0;
+    osg::ref_ptr<Data::Node> rootNode;
+    QLinkedList<osg::ref_ptr<Data::Node> >::const_iterator itNode = nodesList.constBegin();
+    for ( itNode; itNode != nodesList.constEnd(); itNode++) {
+        int actEdges = itNode->get()->getEdges()->size();
+        if ( actEdges>maxEdges){
+            rootNode= itNode->get();
+            maxEdges=actEdges;
+        }
+
+    }
+
+    // vytvorenie kostry stromu z root node
+    Data::GraphSpanningTree* spanningTree = currentGraph->getSpanningTree(rootNode->getId());
+
+    // maximalna hlbka kostry grafu
+    int maxDepth = spanningTree->getMaxDepth();
+
+    // pocet hlbok na jednu rovinu
+    int nOfDepthsInOnePlane = (maxDepth + 1) / (numberOfPlanes + 2);
+
+    // ak nevieme rozdelit jemnejsie rozdelit kostru grafu, tak nic neurobime
+    if(nOfDepthsInOnePlane == 0){
+        return;
+    }
+
+    // pridame dve roviny
+    numberOfPlanes += 2;
+
+    // vytvorime roviny s ich zmenenym poctom
+    create_Vertigo_Planes(numberOfPlanes, nOfDepthsInOnePlane, spanningTree, maxDepth, allNodes);
+
+}
+
+void CoreWindow::remove_PlanesClick() {
+
+    if(numberOfPlanes == 0){
+        return;
+    }
+
+    // odstranenie obmedzeni vsetkych uzlov
+    if(numberOfPlanes == 2){
+
+        //vymazanie starych uzlov rovin - setInvisible
+        QLinkedList<Layout::ShapeGetter_Plane_ByThreeNodes*>::const_iterator it = planes_Vertigo.constBegin();
+        for(it; it != planes_Vertigo.constEnd(); ++it){
+
+            QSet<Data::Node *> nodesOfPlane = (*it)->getNodesOfShape();
+            QSetIterator<Data::Node *> i(nodesOfPlane);
+            while (i.hasNext()){
+                Data::Node* node = i.next();
+                node->setInvisible();
+                //node->Referenced.deleteUsingDeleteHandler();
+                /*osg::ref_ptr<Data::Node> nodeRefPtr = node;
+                node->setRemovableByUser(true);
+                currentGraph->removeNode(nodeRefPtr);*/
+            }
+        }
+
+        planes_Vertigo.clear();
+
+        // uvolni vsetky uzly z obmedzovacov
+        unsetRestrictionFromAll();
+
+        numberOfPlanes = 0;
+        return;
+    }
+
+    Data::Graph * currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
+
+    // ak nebol nacitany graf, tak sa nic nestane
+    if(currentGraph == NULL){
+        return;
+    }
+
+    // vsetky uzly grafu
+    QMap<qlonglong, osg::ref_ptr<Data::Node> >* allNodes = currentGraph->getNodes();
+
+    // uzly grafu vlozene do linked listu pre jednoduche iterovanie
+    QLinkedList<osg::ref_ptr<Data::Node> > nodesList;
+    QMap<qlonglong, osg::ref_ptr<Data::Node>>::const_iterator i = allNodes->constBegin();
+    while (i != allNodes->constEnd()) {
+        nodesList.append(i.value());
+        ++i;
+    }
+
+    // vyber root node pre kostru grafu
+    int maxEdges=0;
+    osg::ref_ptr<Data::Node> rootNode;
+    QLinkedList<osg::ref_ptr<Data::Node> >::const_iterator itNode = nodesList.constBegin();
+    for ( itNode; itNode != nodesList.constEnd(); itNode++) {
+        int actEdges = itNode->get()->getEdges()->size();
+        if ( actEdges>maxEdges){
+            rootNode= itNode->get();
+            maxEdges=actEdges;
         }
     }
 
-    if (currentGraph != NULL) {
-        osg::Vec3 position = viewerWidget->getPickHandler()->getSelectionCenter(true);
+    // vytvorenie kostry stromu z root node
+    Data::GraphSpanningTree* spanningTree = currentGraph->getSpanningTree(rootNode->getId());
+    QLinkedList<osg::ref_ptr<Data::Node> > pickedNodes;
 
-        osg::ref_ptr<Data::Node> node1;
-        osg::ref_ptr<Data::Node> node2;
-        osg::ref_ptr<Data::Node> node3;
-        osg::ref_ptr<Data::Node> node4;
-        osg::ref_ptr<Data::Node> node5;
-        osg::ref_ptr<Data::Node> node6;
+    // maximalna hlbka kostry grafu
+    int maxDepth = spanningTree->getMaxDepth();
 
-        QString name_node1 = "plane_node_1";
-        QString name_node2 = "plane_node_2";
-        QString name_node3 = "plane_node_3";
+    // pocet hlbok na jednu rovinu
+    int nOfDepthsInOnePlane = (maxDepth + 1) / (numberOfPlanes - 2);
 
-        osg::Vec3 positionNode1 = position + osg::Vec3f (-80, -10, 0);
-        osg::Vec3 positionNode2 = position + osg::Vec3f (-80, 10, 0);
-        osg::Vec3 positionNode3 = position + osg::Vec3f (-80, 10, 20);
+    // odoberieme dve roviny
+    numberOfPlanes -= 2;
 
-        osg::Vec3 positionNode4 = position + osg::Vec3f (80, -10, 0);
-        osg::Vec3 positionNode5 = position + osg::Vec3f (80, 10, 0);
-        osg::Vec3 positionNode6 = position + osg::Vec3f (80, 10, 20);
+    // vytvorime roviny s ich zmenenym poctom
+    create_Vertigo_Planes(numberOfPlanes, nOfDepthsInOnePlane, spanningTree, maxDepth, allNodes);
 
-        Layout::RestrictionRemovalHandler_RestrictionNodesRemover::NodesListType restrictionNodes;
+}
 
-        Network::Client * client = Network::Client::getInstance();
+void CoreWindow::change_Vertigo_Planes_Distance(int value){
 
-        if (!client->isConnected()) {
+    int nOfPlane = 0;
+    QLinkedList<Layout::ShapeGetter_Plane_ByThreeNodes*>::const_iterator it = planes_Vertigo.constBegin();
+    for(it; it != planes_Vertigo.constEnd(); ++it , ++nOfPlane){
 
-            node1 = currentGraph->addRestrictionNode (name_node1, positionNode1);
-            node2 = currentGraph->addRestrictionNode (name_node2, positionNode2);
-            node3 = currentGraph->addRestrictionNode (name_node3, positionNode3);
-            restrictionNodes.push_back (node1);
-            restrictionNodes.push_back (node2);
-            restrictionNodes.push_back (node3);
+        // ziskanie troch uzlov, ktore urcuju rovinu - obmedzenie
+        QSet<Data::Node *> nodesOfPlane = (*it)->getNodesOfShape();
+        QSetIterator<Data::Node *> i(nodesOfPlane);
 
-            setRestrictionToSelectedNodes (
-                        QSharedPointer<Layout::ShapeGetter> (
-                            new Layout::ShapeGetter_Plane_ByThreeNodes (node1, node2, node3)
-                            ),
-                        currentGraph,
-                        QSharedPointer<Layout::RestrictionRemovalHandler_RestrictionNodesRemover> (
-                            new Layout::RestrictionRemovalHandler_RestrictionNodesRemover (
-                                *currentGraph,
-                                restrictionNodes
-                                )
-                            ),
-                        &nodesToRestrictFirst
-                        );
-
-            restrictionNodes.clear();
-
-            node4 = currentGraph->addRestrictionNode (name_node1, positionNode4);
-            node5 = currentGraph->addRestrictionNode (name_node2, positionNode5);
-            node6 = currentGraph->addRestrictionNode (name_node3, positionNode6);
-            restrictionNodes.push_back (node4);
-            restrictionNodes.push_back (node5);
-            restrictionNodes.push_back (node6);
-
-            setRestrictionToSelectedNodes (
-                        QSharedPointer<Layout::ShapeGetter> (
-                            new Layout::ShapeGetter_Plane_ByThreeNodes (node4, node5, node6)
-                            ),
-                        currentGraph,
-                        QSharedPointer<Layout::RestrictionRemovalHandler_RestrictionNodesRemover> (
-                            new Layout::RestrictionRemovalHandler_RestrictionNodesRemover (
-                                *currentGraph,
-                                restrictionNodes
-                                )
-                            ),
-                        &nodesToRestrictSecond
-                        );
-
-
-        } else {
-            client->sendSetRestriction(3,name_node1,positionNode1,name_node2, positionNode2, viewerWidget->getPickHandler()->getSelectedNodes(),name_node3,&positionNode3);
+        // ohranicenie minimalnej a maximalnej vzdialenosti dvoch rovin
+        if((value > 0 && nOfPlane == 1 && i.peekNext()->getTargetPosition().x() >= vertigoPlanesMaxDistance) ||
+           (value < 0 && nOfPlane == 1 && i.peekNext()->getTargetPosition().x() <= vertigoPlanesMinDistance)){
+            return;
         }
-        Network::Server * server = Network::Server::getInstance();
-        server->sendSetRestriction(3, node1, positionNode1, node2, positionNode2, viewerWidget->getPickHandler()->getSelectedNodes(), node3, &positionNode3);
+
+        // pridanie zmeny vzdialenosti ku kazdemu uzlu, ktory urcuje rovinu - obmedzenie
+        while (i.hasNext()){
+            Data::Node* node = i.next();
+            osg::Vec3f oldPosition = node->getTargetPosition();
+            node->setTargetPosition(oldPosition + osg::Vec3f ((float)(value * nOfPlane), 0.f, 0.f));
+        }
     }
+    //zmena vzdialenosti medzi rovinami globalne
+    vertigoPlanesDistance += value;
 }
 
-void CoreWindow::remove_PlanesClick(QLinkedList<osg::ref_ptr<Data::Node> > *nodesToRestrict) {
-    //TODO-Dur nastavit akciu pri kliknuti na odstranenie rovin
+void CoreWindow::add_DistanceClick(){
+    // zvysenie vzdialenosti medzi rovinami
+    change_Vertigo_Planes_Distance(deltaVertigoDistance);
 }
+
+void CoreWindow::subtract_DistanceClick(){
+    // znizenie vzdialenosti medzi rovinami
+    change_Vertigo_Planes_Distance(-deltaVertigoDistance);
+}
+
+// Duransky end
 
 Vwr::CameraManipulator* CoreWindow::getCameraManipulator() {
-	return viewerWidget->getCameraManipulator();
+    return viewerWidget->getCameraManipulator();
 }

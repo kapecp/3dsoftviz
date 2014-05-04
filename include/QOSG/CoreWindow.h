@@ -236,9 +236,15 @@ public slots:
 				 */
 	void setRestriction_Plane (QLinkedList<osg::ref_ptr<Data::Node> > * nodesToRestrict = NULL);
 
+    /**
+                                 * \brief Creates a new Plane restriction (defined by positions of 3 nodes) with position according to nOfPlane and sets
+                                 * it to all selected nodes (replacing any previously attached restrictions to these nodes).
+                                 */
+    Layout::ShapeGetter_Plane_ByThreeNodes* setRestriction_Plane_Vertigo (QLinkedList<osg::ref_ptr<Data::Node> > * nodesToRestrict = NULL, int nOfPlane = 0);
 	/**
 								 * \brief Creates a new restriction - composition sphere and plane (defined by positions of 3 nodes) and sets
 								 * if to all selected nodes (replacing any previously attached restrictions to these nodes).
+                                 * \return Layout::ShapeGetter_Plane_ByThreeNodes *
 								 */
 	void setRestriction_SpherePlane (QLinkedList<osg::ref_ptr<Data::Node> > * nodesToRestrict = NULL);
 
@@ -302,10 +308,41 @@ public slots:
 	void toggleAttention();
     void setAvatarScale(int scale);
 
+    /**
+                *  \fn public  toggleVertigo
+                *  \brief toggles between normal and vertigo camera mode
+                */
     void toggleVertigo();
-    void setVertigoScale(int scale);
-    void add_PlanesClick(QLinkedList<osg::ref_ptr<Data::Node> > * nodesToRestrict  = NULL);
-    void remove_PlanesClick(QLinkedList<osg::ref_ptr<Data::Node> > * nodesToRestrict  = NULL);
+    /**
+                *  \fn public  create_Vertigo_Planes
+                *  \brief creates planes and restricts the nodes of current graph nodes according to their depth of spanning tree
+                */
+    void create_Vertigo_Planes(int numberOfPlanes, int nOfDepthsInOnePlane, Data::GraphSpanningTree* spanningTree, int maxDepth, QMap<qlonglong, osg::ref_ptr<Data::Node> >* allNodes);
+    /**
+                *  \fn public  change_Vertigo_Planes_Distance
+                *  \brief changes the distance between the planes
+                */
+    void change_Vertigo_Planes_Distance(int value);
+    /**
+                *  \fn public  add_DistanceClick
+                *  \brief adds the distance between the planes
+                */
+    void add_DistanceClick();
+    /**
+                *  \fn public  subtract_DistanceClick
+                *  \brief subtracts the distance between the planes
+                */
+    void subtract_DistanceClick();
+    /**
+                *  \fn public  add_PlanesClick
+                *  \brief creates two more planes for vertigo mode
+                */
+    void add_PlanesClick();
+    /**
+                *  \fn public  remove_PlanesClick
+                *  \brief removes two planes for vertigo mode
+                */
+    void remove_PlanesClick();
 
 private:
 
@@ -556,8 +593,8 @@ private:
 	/**
 		*  QOSG::ViewerQT * viewerWidget
 		*  \brief Ponter to viewer widget
-		*/
-	ViewerQT * viewerWidget;
+        */
+    ViewerQT * viewerWidget;
 
 	/**
 		*  Layout::LayoutThread * layout
@@ -644,6 +681,36 @@ private:
 
 	Network::Client * client;
 
+    /**
+        *  int numberOfPlanes
+        *  \brief number of paralell planes created for vertigo mode
+        */
+    int numberOfPlanes;
+
+    /**
+        *  int deltaVertigoDistance
+        *  \brief delta number for changing the plane distance in vertigo mode
+        */
+    int deltaVertigoDistance;
+
+    /**
+        *  int vertigoPlanesDistance
+        *  \brief distance between two planes in vertigo mode
+        */
+    int vertigoPlanesDistance;
+
+    /**
+        *  int vertigoPlanesMinDistance
+        *  \brief minimal distance between two planes in vertigo mode
+        */
+    int vertigoPlanesMinDistance;
+
+    /**
+        *  int vertigoPlanesMaxDistance
+        *  \brief maximal distance between two planes in vertigo mode
+        */
+    int vertigoPlanesMaxDistance;
+
 public:
 
 	/*!
@@ -695,10 +762,14 @@ public:
 	QCheckBox *chb_center;
 	QCheckBox *chb_attention;
     QCheckBox *chb_vertigo;
-    QSlider * sl_vertigoScale;
+    QPushButton * add_Distance;
+    QPushButton * subtract_Distance;
     QPushButton * add_Planes;
     QPushButton * remove_Planes;
 
+    static ViewerQT *getViewerWidget();
+
+    QLinkedList<Layout::ShapeGetter_Plane_ByThreeNodes*> planes_Vertigo;
 
 	/**
 		 * \brief Gets selected nodes and sets the restriction defined by shapeGetter to these nodes.

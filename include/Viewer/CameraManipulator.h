@@ -73,6 +73,8 @@ public:
 	/** Get the FusionDistanceValue. Used by SceneView for setting up stereo convergence.*/
 	virtual float getFusionDistanceValue() const { return _distance; }
 
+    virtual void setVertigoMode(boolean value);
+
 	/** Attach a node to the manipulator.
 			Automatically detaches previously attached node.
 			setNode(NULL) detaches previously nodes.
@@ -146,6 +148,8 @@ public:
 	/** Returns true if the camera can be thrown, false otherwise. This defaults to true. */
 	bool getAllowThrow() const { return _allowThrow; }
 
+    /** Resets the projection matrix to default values */
+    void resetProjectionMatrixToDefault();
 
 	/**
 		*  \fn inline public  setMaxSpeed(float speed)
@@ -161,7 +165,7 @@ public:
 		*/
 	float getMaxSpeed() { return maxSpeed; }
 
-	void setNewPosition(osg::Vec3d cameraTargetPoint, osg::Vec3d cameraInterestPoint, std::list<osg::ref_ptr<Data::Node> > selectedCluster, std::list<osg::ref_ptr<Data::Edge> > selectedEdges);
+    void setNewPosition(osg::Vec3d cameraTargetPoint, osg::Vec3d cameraInterestPoint, std::list<osg::ref_ptr<Data::Node> > selectedCluster, std::list<osg::ref_ptr<Data::Edge> > selectedEdges);
 
 public slots:
 	/**
@@ -243,6 +247,21 @@ protected:
 		*  \brief true, if camera was thrown
 		*/
 	bool _thrown;
+
+    /**
+        *  bool _vertigo
+        *  \brief true, if camera is in vertigo mode
+        */
+    bool _vertigo;
+
+    /**
+     * double PI
+     * \brief value of mathematical constant PI
+     */
+
+    double PI;
+
+    double fovy, ratio, zNear, zFar, _width;
 
 	/** The approximate amount of time it is currently taking to draw a frame.
 		  * This is used to compute the delta in translation/rotation during a thrown display update.
@@ -404,7 +423,11 @@ protected:
 	void frame(const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter &);
 
 private:
-
+    /**
+     * A pointer to viewer widget from which we can set the field of view
+     * from setProjectionMatrixAsPerspective
+     */
+    QOSG::ViewerQT *mViewerWidget;
 
 	/**
 			*  Util::ApplicationConfig * appConf
@@ -641,6 +664,8 @@ private:
 		 */
 	void updateProjectionAccordingFace(const float x, const float y, const float distance);
 	};
+
+
 
 
 }
