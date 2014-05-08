@@ -399,7 +399,7 @@ void CoreWindow::createActions()
     clusteringProgressBar->setMinimumDuration(1000);
 
     b_SetRestriction_Cube_Selected = new QPushButton();
-    b_SetRestriction_Cube_Selected->setText("sel");
+    b_SetRestriction_Cube_Selected->setText("Restrict");
     b_SetRestriction_Cube_Selected->setFocusPolicy(Qt::NoFocus);
     connect(b_SetRestriction_Cube_Selected, SIGNAL(clicked()), this, SLOT(setRestriction_Cube_Selected()));
 
@@ -411,7 +411,10 @@ void CoreWindow::createActions()
     sb_repulsiveForceInsideCluster->setMinimum(0);
     sb_repulsiveForceInsideCluster->setMaximum(500);
     connect(sb_repulsiveForceInsideCluster, SIGNAL(valueChanged(double)), this, SLOT(repulsiveForceInsideClusterValueChanged(double)));
+
     sb_repulsiveForceInsideCluster->hide();
+    b_SetRestriction_Cube_Selected->hide();
+    b_restartLayouting->hide();
 
     // hide
     setVisibleClusterSection(false);
@@ -602,14 +605,6 @@ void CoreWindow::createClusterToolBar() {
     toolBar->addWidget(frame);
 
     frame = createHorizontalFrame();
-    frame->layout()->addWidget(b_SetRestriction_Cube_Selected);
-    toolBar->addWidget(frame);
-
-    frame = createHorizontalFrame();
-    frame->layout()->addWidget(b_restartLayouting);
-    toolBar->addWidget(frame);
-
-    frame = createHorizontalFrame();
     frame->layout()->addWidget(cb_clusteringAlgorithm);
     toolBar->addWidget(frame);
 
@@ -648,6 +643,14 @@ void CoreWindow::createClusterToolBar() {
     frame->layout()->addWidget(l_clusters1Min);
     frame->layout()->addWidget(b_clustersShapeBoundary_Slider);
     frame->layout()->addWidget(l_clusters1Max);
+
+    frame = createHorizontalFrame();
+    frame->layout()->addWidget(b_SetRestriction_Cube_Selected);
+    toolBar->addWidget(frame);
+
+    frame = createHorizontalFrame();
+    frame->layout()->addWidget(b_restartLayouting);
+    toolBar->addWidget(frame);
 
     frame = createHorizontalFrame();
     toolBar->addWidget(frame);
@@ -1927,6 +1930,7 @@ void CoreWindow::cluster_nodes()
     Data::Graph * currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
 
     if (currentGraph == NULL) {
+        AppCore::Core::getInstance()->messageWindows->showMessageBox("Upozornenie","Ziadny graf nie je nacitany. Nie je co zhlukovat.",false);
         return;
     }
 
@@ -2196,9 +2200,13 @@ void CoreWindow::setRepulsiveForceInsideCluster(double repulsiveForceInsideClust
     sb_repulsiveForceInsideCluster->setValue(repulsiveForceInsideCluster);
     l_repulsiveForceInsideCluster->show();
     sb_repulsiveForceInsideCluster->show();
+    b_SetRestriction_Cube_Selected->show();
+    b_restartLayouting->show();
 }
 
 void CoreWindow::hideRepulsiveForceSpinBox() {
     l_repulsiveForceInsideCluster->hide();
     sb_repulsiveForceInsideCluster->hide();
+    b_SetRestriction_Cube_Selected->hide();
+    b_restartLayouting->hide();
 }

@@ -20,7 +20,7 @@ QSet<Node*> Cluster::getIncidentNodes() const {
         nodes.unite(v->getIncidentNodes());
         ++i;
     }
-    nodes.subtract(clusteredNodes);
+    nodes.subtract(getALLClusteredNodes());
 
     Cluster* n = const_cast<Cluster*>(this);
     nodes.remove(n);

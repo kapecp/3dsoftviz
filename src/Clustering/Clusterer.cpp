@@ -172,7 +172,6 @@ void Clusterer::clusterLeafs(QMap<qlonglong, osg::ref_ptr<Data::Node> >* someNod
     progressBar->setMaximum(someNodes->size());
     int step = 0;
 
-    qDebug() << "*+* clusterLeafs level #" << maxLevels;
     QMap<qlonglong, osg::ref_ptr<Data::Node> > newClusters;
 
     Manager::GraphManager * manager = Manager::GraphManager::getInstance();
@@ -213,8 +212,9 @@ void Clusterer::clusterLeafs(QMap<qlonglong, osg::ref_ptr<Data::Node> >* someNod
                 node->setColor(cluster->getColor());
                 cluster->addNodeToCluster(node);
             }
-
-            // ignoruj uzol lebo nie je list
+            else { // nie je list -> skus ho zhlukovat v dalsej hlbke
+                newClusters.insert(node->getId(), node);
+            }
         }
     }
 
@@ -245,7 +245,7 @@ void Clusterer::clusterAdjacency(QMap<qlonglong, osg::ref_ptr<Data::Node> >* som
     std::vector<bool> p(7);
     std::vector<std::vector<bool> > matrix(n, std::vector<bool>(n, false));
     std::vector<std::vector<unsigned char> > w(n, std::vector<unsigned char>(n, 0));
-    // we don't use float, floats are multiplied by K and stored as unsigned char;
+
     unsigned char K = 100;
 
     int i = 0, j = 0;
@@ -307,8 +307,6 @@ void Clusterer::clusterAdjacency(QMap<qlonglong, osg::ref_ptr<Data::Node> >* som
     t *= 0.9f;
     i = 0;
 
-//    int tempID = 0;
-
     progressBar->setLabelText(QString("Clustering the graph. Depth = %1").arg(clusteringDepth - maxLevels));
 
     // set of clusters
@@ -324,14 +322,10 @@ void Clusterer::clusterAdjacency(QMap<qlonglong, osg::ref_ptr<Data::Node> >* som
         for (iterator2 = iterator + 1; iterator2 != someNodes->end(); ++iterator2, j++) {
             osg::ref_ptr<Data::Node> v = iterator2.value();
             if (w[i][j] >= t) {
-                //											qDebug() << "v: " << v->getId() << " w=" << w[i][j];
                 if (c == NULL) {
                     c = v->getCluster();
-                    //								qDebug() << "c = v->getParent()";
-                    //								qDebug() << "c: " << (c == NULL ? "NULL" : QString("%1").arg(c->getId()));
                 } else {
                     if (v->getCluster() != NULL) {
-                        //								qDebug() << "v has other parent!";
                         continue;
                     }
                 }
@@ -350,11 +344,9 @@ void Clusterer::clusterAdjacency(QMap<qlonglong, osg::ref_ptr<Data::Node> >* som
                     }
                 }
                 if (link >= 0) {
-                    //							qDebug() << "link = " << link;
 
                     osg::ref_ptr<Data::Node> x = someNodes->value(someNodes->keys().at(link));
                     if (!clustered.contains(x->getId())) {
-                        //								qDebug() << "x: " << x->getId();
                         if (c = NULL) {
                             c = x->getCluster();
                         } else if (x->getCluster() != NULL) {
@@ -365,34 +357,28 @@ void Clusterer::clusterAdjacency(QMap<qlonglong, osg::ref_ptr<Data::Node> >* som
                     }
                 }
 
-                //											qDebug() << "is clusterable";
             }
         }
         if (!toCluster.isEmpty()) {
             if (c == NULL) {
-                //c = addCluster();
                 c = new Cluster(getNextId(), "name", type, graph->getNodeScale(), graph, osg::Vec3f(0,0,0));
                 clusters.insert(c->getId(), c);
                 newClusters.insert(c->getId(), c);
 
                 c->setColor(getNewColor(colorCounter));
                 colorCounter++;
-                //											qDebug() << "new c: " << c->getId();
             }
             foreach (Node *v, toCluster) {
-                //											qDebug() << "v': " << v->getId();
                 if (v->getCluster() == NULL) {
                     v->setCluster(c);
                     v->setColor(c->getColor());
                     c->addNodeToCluster(v);
-                    //											qDebug() << "v' added to c";
                 }
             }
             if (u->getCluster() == NULL) {
                 u->setCluster(c);
                 u->setColor(c->getColor());
                 c->addNodeToCluster(u);
-                //											qDebug() << "u added to c";
                 clustered.insert(u->getId());
             }
         }
