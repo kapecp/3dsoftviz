@@ -34,18 +34,6 @@ void Lua::HyperGraphVisualizer::visualize()
             currentGraph->addEdge(i.key(), i.value()->getLabel(), srcNode, dstNode, edgeType, false);
     }
     g->setObserver(this);
-
-    QString metaNodeName = "metaNode";
-    QString metaEdgeName = "metaEdge";
-    osg::ref_ptr<Data::Node> filesAnchor = currentGraph->addNode(std::numeric_limits<qlonglong>::max(),metaNodeName, currentGraph->getNodeMetaType(), osg::Vec3(0, 0, 1000));
-
-    for (QMap<qlonglong, Lua::LuaNode *>::iterator i = g->getNodes()->begin(); i != g->getNodes()->end(); ++i){
-        if (i.value()->getParams()["root"]== true){
-            osg::ref_ptr<Data::Node> root = currentGraph->getNodes()->value(i.key());
-            currentGraph->addEdge(metaEdgeName, root, filesAnchor, currentGraph->getEdgeMetaType(), false);
-            break;
-        }
-    }
 }
 
 void Lua::HyperGraphVisualizer::onUpdate()

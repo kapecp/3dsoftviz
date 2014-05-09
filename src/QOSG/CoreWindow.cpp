@@ -722,7 +722,7 @@ void CoreWindow::loadLuaGraph()
     Lua::LuaInterface::getInstance()->getLuaState()->doString("getGraph = test_graph.getGraph");
     Lua::LuaInterface::getInstance()->getLuaState()->doString("getFullGraph = getGraph");
 
-    Lua::LuaGraphVisualizer *visualizer = new Lua::HyperGraphVisualizer(currentGraph);
+    Lua::LuaGraphVisualizer *visualizer = new Lua::FullHyperGraphVisualizer(currentGraph);
     visualizer->visualize();
 
     if (isPlaying)

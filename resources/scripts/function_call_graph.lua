@@ -10,11 +10,11 @@ local function inc()
   return a
 end
 
-local function extractNode(v, nodes, rootcandidates, minComplexity, maxComplexity, minLines, maxLines)
+local function extractNode(v, nodes, minComplexity, maxComplexity, minLines, maxLines)
   local origname = v.data.name or v.id
   local newnode = {type = "node", id = inc(), label = origname, params={size = 8, name = v.name, origid = v.id, type = v.data.type, path = v.data.path, modulePath = v.data.modulePath, colorA = 1, colorR = 1, colorG = 1, colorB = 1}}
+  if newnode.id == 1 then newnode.params.root = true end
   nodes[v] = newnode
-  rootcandidates[newnode] = true
   if v.data.type == 'file' then 
     newnode.params.colorA = 1
     newnode.params.colorR = 1
@@ -54,10 +54,9 @@ local function extractNode(v, nodes, rootcandidates, minComplexity, maxComplexit
   return minComplexity, maxComplexity, minLines, maxLines
 end
 
-local function extractEdge(v, existingedges, nodes, rootcandidates)
+local function extractEdge(v, existingedges, nodes)
   if #v.from ~= 1 then print('from', #v.from, v.id, v.from[1], v.from[2]) end 
   if #v.to ~= 1 then print('to', #v.to, v.id, v.to[1], v.to[2]) end    
-  rootcandidates[v.to[1]] = nil
   local ind = v.from[1].id .. "|" .. v.to[1].id
   if existingedges[ind] ~= nil then
     existingedges[ind].params.count = existingedges[ind].params.count + 1
@@ -71,7 +70,6 @@ local function extractEdge(v, existingedges, nodes, rootcandidates)
     end
     if v.from[1].data.modulePath ~= v.to[1].data.modulePath then
       edge.params.edgeStrength = 0.01
-      print("call", v.from[1].data.name, v.to[1].data.name)
     end 
     graph[edge] = {[incid1] = nodes[v.from[1]], [incid2] = nodes[v.to[1]]}
     existingedges[ind] = edge
@@ -110,12 +108,11 @@ local function extractGraph(absolutePath)
   extractedGraph:printEdges()
 
   local nodes = {}
-  local rootcandidates = {}
   local minComplexity, maxComplexity
   local minLines, maxLines
 
   for _, v in ipairs(extractedGraph.nodes) do
-    minComplexity, maxComplexity, minLines, maxLines = extractNode(v, nodes, rootcandidates, minComplexity, maxComplexity, minLines, maxLines)
+    minComplexity, maxComplexity, minLines, maxLines = extractNode(v, nodes, minComplexity, maxComplexity, minLines, maxLines)
   end
 
   print("complexity", minComplexity, maxComplexity, minLines, maxLines)
@@ -123,17 +120,10 @@ local function extractGraph(absolutePath)
   local existingedges = {}
 
   for _, v in ipairs(extractedGraph.edges) do
-    extractEdge(v, existingedges, nodes, rootcandidates)
-  end
-
-  for k, _ in pairs(rootcandidates) do
-    k.params.root = true
-    break
+    extractEdge(v, existingedges, nodes)
   end
   
-  print"visual mapping"
   doVisualMapping(nodes, minComplexity, maxComplexity, minLines, maxLines)
-  print"done"
 end
 
 local function getGraph()

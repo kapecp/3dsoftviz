@@ -85,8 +85,8 @@ void CoreGraph::reload(Data::Graph * graph)
 	}
 
 	this->nodesGroup = new Vwr::NodeGroup(in_nodes);
-	root->addChild(nodesGroup->getGroup());
-	nodesPosition = currentPos++;
+    root->addChild(nodesGroup->getGroup());
+    nodesPosition = currentPos++;
 
 	this->edgesGroup = new Vwr::EdgeGroup(in_edges, appConf->getValue("Viewer.Textures.EdgeScale").toFloat());
 	//this->edgesGroup = new Vwr::EdgeGroup(in_edges, 10);

@@ -148,9 +148,9 @@ void EdgeGroup::getEdgeCoordinatesAndColors(osg::ref_ptr<Data::Edge> edge, int f
 	edgeTexCoords->push_back(edge->getEdgeTexCoords()->at(2));
 	edgeTexCoords->push_back(edge->getEdgeTexCoords()->at(3));
 
-	if (edge->isOriented())
-		orientedEdgeColors->push_back(edge->getEdgeColor());
-	else
+    if (edge->isOriented())
+        orientedEdgeColors->push_back(edge->getEdgeColor());
+    else
 		colors->push_back(edge->getEdgeColor());
 }
 
