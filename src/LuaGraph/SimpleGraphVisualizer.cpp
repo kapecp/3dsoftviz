@@ -63,7 +63,6 @@ void Lua::SimpleGraphVisualizer::visualize()
     functionsAnchor->setColor(osg::Vec4(0,0,0,0));
 
     for (QMap<qlonglong, Lua::LuaNode *>::iterator i = g->getNodes()->begin(); i != g->getNodes()->end(); ++i){
-        std::cout << i.value()->getParams().type() << i.value()->getParams().typeName() << std::endl;
         if (i.value()->getParams().type() == 0) continue;
         if (i.value()->getParams()["root"]== true){
             osg::ref_ptr<Data::Node> root = currentGraph->getNodes()->value(i.key());

@@ -84,17 +84,17 @@ local function checkNeighbors(node, expTree)
   local edgeOp = expTree[1][1][1]
   local newExp = deleteFirstEdgeOp(expTree)
   for i1, e in pairs(invertedgraph[node]) do
-    local possible = false
+    local possible1, possible2 = false, false
     for i2, n in pairs(fullGraph[e]) do
       if node ~= n then
         if edgeOpRemoteCorrect(edgeOp, i2) and nodeAccepted(n, newExp) then 
-          if possible then return true
-          else possible = true end
+          if possible1 then return true
+          else possible2 = true end
         end
       else
         if edgeOpLocalCorrect(edgeOp, i2) then 
-          if possible then return true
-          else possible = true end
+          if possible2 then return true
+          else possible1 = true end
         end
       end
     end
@@ -104,9 +104,19 @@ end
 
 function nodeAccepted(node, expTree)
   if expTree[2] == 'or' then
-    return nodeAccepted(node, expTree[1]) or nodeAccepted(node, expTree[3])
+    local result = false
+    local i = 1
+    for i = 1, #expTree, 2 do
+      result = result or nodeAccepted(node, expTree[i])
+    end
+    return result
   elseif expTree[2] == 'and' then
-    return nodeAccepted(node, expTree[1]) and nodeAccepted(node, expTree[3])
+    local result = true
+    local i = 1
+    for i = 1, #expTree, 2 do
+      result = result and nodeAccepted(node, expTree[i])
+    end
+    return result
   elseif expTree[1] == 'not' then
     return not nodeAccepted(node, expTree[2])
   elseif #expTree == 1 then
@@ -157,9 +167,19 @@ end
 
 local function hasEdgeOperator(exp)
   if exp[2] == 'or' then
-    return hasEdgeOperator(exp[1]) or hasEdgeOperator(exp[3])
+    local result = false
+    local i = 1
+    for i = 1, #exp, 2 do
+      result = result or hasEdgeOperator(exp[i])
+    end
+    return result
   elseif exp[2] == 'and' then
-    return hasEdgeOperator(exp[1]) or hasEdgeOperator(exp[3])
+    local result = true
+    local i = 1
+    for i = 1, #exp, 2 do
+      result = result and hasEdgeOperator(exp[i])
+    end
+    return result
   elseif exp[1] == 'not' then
     return hasEdgeOperator(exp[2])
   elseif #exp == 1 then
@@ -181,8 +201,8 @@ local function filterGraph(s)
   checkedNodes = {}
   local t = lpeg.match(G, s)
   helper.vardump(t)
-  print("has edgeop", hasEdgeOperator(t))
-  if hasEdgeOperator(t) then
+  local hasEdgeOp = hasEdgeOperator(t)
+  if hasEdgeOp then
     invertedgraph = getInvertedGraph(fullGraph)
   end
   print(invertedgraph)
@@ -212,7 +232,6 @@ local function filterGraph(s)
       if hasAccepted then
         if acceptedNodes[n] then
           edge.params.visible = true
-          print('visible', e.id)
         end
       else
         hasAccepted = acceptedNodes[n]

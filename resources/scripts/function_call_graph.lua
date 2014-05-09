@@ -12,7 +12,7 @@ end
 
 local function extractNode(v, nodes, minComplexity, maxComplexity, minLines, maxLines)
   local origname = v.data.name or v.id
-  local newnode = {type = "node", id = inc(), label = origname, params={size = 8, name = v.name, origid = v.id, type = v.data.type, path = v.data.path, modulePath = v.data.modulePath, colorA = 1, colorR = 1, colorG = 1, colorB = 1}}
+  local newnode = {type = "node", id = inc(), label = origname, params={size = 8, name = origname, origid = v.id, type = v.data.type, path = v.data.path, modulePath = v.data.modulePath, colorA = 1, colorR = 1, colorG = 1, colorB = 1}}
   if newnode.id == 1 then newnode.params.root = true end
   nodes[v] = newnode
   if v.data.type == 'file' then 
@@ -69,7 +69,9 @@ local function extractEdge(v, existingedges, nodes)
       incid2.direction = 'out'
     end
     if v.from[1].data.modulePath ~= v.to[1].data.modulePath then
-      edge.params.edgeStrength = 0.01
+      edge.params.edgeStrength = 0.1
+    elseif v.from[1].data.modulePath ~= nil then
+      edge.params.edgeStrength = 0.5
     end 
     graph[edge] = {[incid1] = nodes[v.from[1]], [incid2] = nodes[v.to[1]]}
     existingedges[ind] = edge
@@ -78,12 +80,12 @@ end
 
 local function doVisualMapping(nodes, minComplexity, maxComplexity, minLines, maxLines)
   local minSize = 8
-  local maxSize = 50
+  local maxSize = 100
   for k, n in pairs(nodes) do
     if n.params.type == 'function' then
       if n.params.metrics ~= nil then
         n.params.size = minSize + (n.params.metrics.LOC.lines - minLines) / (maxLines - minLines) * (maxSize - minSize)
-        local complexRatio = n.params.metrics.cyclomatic.upperBound * minComplexity / maxComplexity
+        local complexRatio = (n.params.metrics.cyclomatic.upperBound - minComplexity) / (maxComplexity - minComplexity) 
         n.params.colorG = 1 - complexRatio
         n.params.colorR = complexRatio
         n.params.colorB = 0
