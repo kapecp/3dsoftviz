@@ -344,6 +344,8 @@ public slots:
                 */
     void remove_PlanesClick();
 
+    void repulsive_Forces_ValueChanged();
+
 private:
 
 	/**
@@ -766,6 +768,7 @@ public:
     QPushButton * subtract_Distance;
     QPushButton * add_Planes;
     QPushButton * remove_Planes;
+    QSpinBox * change_Forces;
 
     static ViewerQT *getViewerWidget();
 

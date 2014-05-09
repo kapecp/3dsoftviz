@@ -33,7 +33,7 @@ class FRAlgorithm : public QThread
 {
 public:
 
-	/**
+    /**
 		*  \fn public overloaded constructor  FRAlgorithm
 		*  \brief Creates new FRAlgorithm object
 		*/
@@ -114,6 +114,13 @@ public:
 		*/
 	void RequestEnd();
 
+    /**
+        *  \brief Sets the repulsive force multiplier between two nodes in one vertigo plane
+        */
+    void setRepulsiveForceVertigo(int value);
+
+    //int repulsiveForceVertigo;
+
 private:
 
 	/**
@@ -156,6 +163,8 @@ private:
 		*  enum State
 		*  \brief maximal distance of nodes, when repulsive force is aplied
 		*/
+
+
 	enum State {
 		RUNNING, PAUSED
 	};
@@ -273,6 +282,12 @@ private:
 		*  \brief distance between two positions
 		*/
 	double dist;
+
+    /**
+        *  int repulsiveForceVertigo
+        *  \brief repulsive force multiplier between two nodes in one vertigo plane
+        */
+    int repulsiveForceVertigo;
 
 	/**
 		*  \fn private  iterate

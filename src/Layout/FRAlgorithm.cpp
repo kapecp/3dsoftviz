@@ -40,6 +40,9 @@ FRAlgorithm::FRAlgorithm()
 	useMaxDistance = false;
 	this->graph = NULL;
 
+    // Duransky - pociatocne nastavenie nasobica odpudivych sil na rovnakej rovine na hodnotu 1
+    setRepulsiveForceVertigo(1);
+
 	mLastFocusedNode = 0;   // No node is focused on the beginning
 }
 FRAlgorithm::FRAlgorithm(Data::Graph *graph)
@@ -216,7 +219,7 @@ bool FRAlgorithm::iterate()
 			k = graph->getMetaNodes()->begin();
 			for (int h = 0; h < graph->getMetaNodes()->count(); ++h,++k)
 			{ // pre vsetky metauzly..
-				if (!j.value()->equals(k.value()))
+                if (!j.value()->equals(k.value())) //Duransky - Bug (j == null zapricini pad programu) pri pridani alebo odstraneni vertigo roviny
 				{
 					// odpudiva sila medzi metauzlami
 					addRepulsive(j.value(), k.value(), Data::Graph::getMetaStrength());
@@ -479,6 +482,12 @@ void FRAlgorithm::addRepulsive(Data::Node* u, Data::Node* v, float factor) {
 	fv = (vp - up);// smer sily
 	fv.normalize();
 	fv *= rep(dist) * factor;// velkost sily
+
+    // Duransky - vynasobenie odpudivej sily medzi dvoma uzlami hodnotou zo spinboxu ak su na rovnakej vertigo rovine
+    if(u->getNumberOfVertigoPlane() == v->getNumberOfVertigoPlane()){
+        fv *= repulsiveForceVertigo;
+    }
+
 	u->addForce(fv);
 }
 /* Vzorec na vypocet odpudivej sily */
@@ -517,3 +526,11 @@ bool FRAlgorithm::areForcesBetween (Data::Node * u, Data::Node * v) {
 				)
 			;
 }
+
+void FRAlgorithm::setRepulsiveForceVertigo(int value){
+
+  repulsiveForceVertigo = value;
+
+}
+
+//int getRepulsiveForceVertigo();

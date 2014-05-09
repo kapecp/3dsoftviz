@@ -78,6 +78,8 @@ public:
 
 	void requestEnd();
 
+    Layout::FRAlgorithm* getAlg();
+
 protected:
 
 	/**

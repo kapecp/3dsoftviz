@@ -105,9 +105,8 @@ void ShapeVisitor_VisualizerCreator::visit (Layout::Shape_Plane & shape) {
 	box->setHalfLengths (osg::Vec3 (1000, 1000, 1));
 
 	osg::ShapeDrawable * sd = new osg::ShapeDrawable;
-	sd->setShape (box);
-
-	sd->setColor (osg::Vec4 (0.f, 0.f, 1.0f, 0.06f));
+    sd->setShape (box);
+    sd->setColor (osg::Vec4 (0.f, 0.f, 1.0f, 0.06f));
 	sd->getOrCreateStateSet()->setMode (GL_BLEND, osg::StateAttribute::ON);
 	sd->getStateSet()->setRenderingHint (osg::StateSet::TRANSPARENT_BIN);
 
