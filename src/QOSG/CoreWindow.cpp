@@ -664,7 +664,6 @@ void CoreWindow::showLoadGraph()
 {
 	LoadGraphWindow *loadGraph = new LoadGraphWindow(this);
     loadGraph->show();
-    numberOfPlanes = 0;
 }
 
 void CoreWindow::saveLayoutToDB()
@@ -920,6 +919,11 @@ void CoreWindow::removeMetaNodes()
 
 void CoreWindow::loadFile()
 {
+
+    // Duransky - vynulovanie vertigo rovin pri nacitani noveho grafu
+    planes_Vertigo.clear();
+    numberOfPlanes = 0;
+
 	//treba overit
 	layout->pause();
 	coreGraph->setNodesFreezed(true);

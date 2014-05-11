@@ -119,8 +119,6 @@ public:
         */
     void setRepulsiveForceVertigo(int value);
 
-    //int repulsiveForceVertigo;
-
 private:
 
 	/**
