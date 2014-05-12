@@ -51,10 +51,15 @@ option( USE_STRICT_COMPILE_WARNINGS "Use strict compilation warnings in debug mo
 if( USE_STRICT_COMPILE_WARNINGS )
 	if( CMAKE_COMPILER_IS_GNUCXX )
 #~ 		set( CMAKE_CXX_FLAGS_DEBUG "-Wall -Wextra -Werror" )
-		set( CMAKE_CXX_FLAGS_DEBUG "-pedantic -Wall -Wextra -Wwrite-strings -Winit-self -Wcast-align -Wcast-qual -Wpointer-arith -Wstrict-aliasing -Wformat=2 -Wmissing-declarations -Wmissing-include-dirs -Wuninitialized -Werror-implicit-function-declaration -Wfloat-equal -Wundef -Wstrict-overflow=5 -Wswitch-default -Wswitch-enum -Wconversion -Wunreachable-code -Wno-unused-parameter" )
-			# use to suppress unused stuff: -Wno-unused-parameter -Wno-unused-result
+		set( CMAKE_CXX_FLAGS_DEBUG  "-ansi -pedantic -Wall -Wcast-align -Wcast-qual -Wchar-subscripts -Wcomment -Wconversion -Wctor-dtor-privacy -Wdisabled-optimization -Wextra -Wfloat-equal -Wformat -Wformat-nonliteral -Wformat-security -Wformat-y2k -Wformat=2 -Wimport -Winit-self -Winline -Winvalid-pch -Wlogical-op -Wlong-long -Wmissing-braces -Wmissing-declarations -Wmissing-field-initializers -Wmissing-format-attribute -Wmissing-include-dirs -Wmissing-noreturn -Wnoexcept -Wpacked -Wparentheses -Wpointer-arith -Wredundant-decls -Wreturn-type -Wsequence-point -Wsign-compare -Wsign-promo -Wstack-protector -Wstrict-aliasing=2 -Wstrict-null-sentinel -Wstrict-overflow=5 -Wswitch -Wswitch-default -Wswitch-enum -Wtrigraphs -Wundef -Wuninitialized -Wunknown-pragmas -Wunreachable-code -Wunsafe-loop-optimizations -Wvariadic-macros -Wvolatile-register-var -Wwrite-strings -Wno-unused-parameter -Wno-unused"  )
+
+# to suppress warnings for unused stuff use: -Wno-unused-parameter -Wno-unused-result
+		# not used:
+			# too much warnings in Qt headers: NULL vs 0 pointers: -Wzero-as-null-pointer-constant
+			# too much warnings: -Wshadow -Waggregate-return
+			# too much warnings, but should be used: -Wold-style-cast -Woverloaded-virtual -Wuseless-cast -Wsign-conversion
+			# class size optimizations ( not really needed ): -Wpadded
 			# only for C: -Wold-style-definition -Wstrict-prototypes -Wmissing-prototypes
-			# not used (too many warnings): -Wshadow -Waggregate-return
 	endif()
 endif()
 
