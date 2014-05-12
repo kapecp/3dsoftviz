@@ -106,18 +106,18 @@ void Kinect::KinectHandTracker::getAllHands()
 				coordinateConverter.convertWorldToDepth(*mDepth, user.getPosition().x, user.getPosition().y, user.getPosition().z, &mDepthX, &mDepthY, &mDepthZ);
 				mouse->moveCursorWorldCoordinates(mDepthX,mDepthY,isClick);
 			}
+			// TODO - further implementation should include depth information in pixels
+			this->handZ[i] = user.getPosition().z;
 
+			this->getArrayHands[i][0] = user.getPosition().x;
+			this->getArrayHands[i][1] = 0 - user.getPosition().y;
 			// If two hands have been found get the position of the rectangle
 			if (hands.getSize() == 2)
 			{
 				printf("two hands found\n");
 				// get positions for both hands
 
-				// TODO - further implementation should include depth information in pixels
-				this->handZ[i] = user.getPosition().z;
 
-				this->getArrayHands[i][0] = user.getPosition().x;
-				this->getArrayHands[i][1] = 0 - user.getPosition().y;
 
 				this->isTwoHands = true;
 			}
