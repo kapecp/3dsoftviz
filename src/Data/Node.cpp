@@ -9,6 +9,8 @@
 #include "Data/Node.h"
 
 #include "Data/Graph.h"
+#include "Data/Cluster.h"
+
 #include "Util/ApplicationConfig.h"
 
 #include <osg/Geometry>
@@ -422,4 +424,13 @@ QString Data::Node::toString() const
 	QTextStream(&str) << "node id:" << id << " name:" << name << " pos:[" << mTargetPosition.x() << "," << mTargetPosition.y() << "," << mTargetPosition.z() << "]";
 	return str;
 }
+
+
+Data::Cluster* Data::Node::getCluster() const { return cluster; }
+
+void Data::Node::setCluster(Data::Cluster* cluster)
+{
+    this->cluster = cluster;
+}
+
 

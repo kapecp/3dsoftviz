@@ -12,6 +12,10 @@
 
 #include "Data/Graph.h"
 
+#include "Clustering/Clusterer.h"
+#include "Clustering/Figures/Cube.h"
+#include "Clustering/Figures/Sphere.h"
+
 #include "Util/ApplicationConfig.h"
 
 #include <osgUtil/Optimizer>
@@ -19,11 +23,9 @@
 #include <osg/PolygonMode>
 #include <osg/LineWidth>
 #include <osgFX/Outline>
-#include <math.h>
+#include <osg/ValueObject>
 
-#include "Clustering/Clusterer.h"
-#include "Clustering/Figures/Cube.h"
-#include "Clustering/Figures/Sphere.h"
+#include <math.h>
 
 using namespace Vwr;
 
@@ -786,7 +788,7 @@ void CoreGraph::createClusterGroup(QMap<qlonglong, osg::ref_ptr<Data::Cluster> >
         cube->getGeode()->setUserValue("id", QString::number(cluster->getId()).toStdString());
         cluster->setCube(cube);
 
-        Sphere * sphere = new Sphere(midPoint, radius, osg::Vec4d(1,1,1,0.5));
+        ::Sphere * sphere = new ::Sphere(midPoint, radius, osg::Vec4d(1,1,1,0.5));
         sphere->getGeode()->setUserValue("id", QString::number(cluster->getId()).toStdString());
         cluster->setSphere(sphere);
 

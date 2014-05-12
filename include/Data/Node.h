@@ -294,17 +294,14 @@ public:
 		*  \brief Returns Cluster which contains this Node
 		*  \return Cluster which contains this Node
 		*/
-    Cluster* getCluster() const { return cluster; }
+    Cluster* getCluster() const;
 
     /**
 		*  \fn inline public  setCluster(Cluster* cluster)
 		*  \brief Sets cluster which contains this Node
 		*  \param     cluster     cluster containing this node
 		*/
-    void setCluster(Cluster* cluster)
-    {
-        this->cluster = cluster;
-    }
+    void setCluster(Cluster* cluster);
 
     virtual QSet<Node*> getIncidentNodes() const;
 

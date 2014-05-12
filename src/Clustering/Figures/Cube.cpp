@@ -207,7 +207,7 @@ void Cube::computeGeode()
 
     osg::Vec3 vPosition = osg::Vec3(0, 0, 0);
 
-    int fRadius = 1;
+    float fRadius = 1.0f;
 
     // note, counterclockwise winding order with respect to normals
     osg::Vec3 myCoords[] =

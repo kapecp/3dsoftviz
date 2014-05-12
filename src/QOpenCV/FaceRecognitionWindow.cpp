@@ -1,6 +1,8 @@
 #include "QOpenCV/FaceRecognitionWindow.h"
 #include <QVBoxLayout>
 
+#include <QDebug>
+
 using namespace QOpenCV;
 
 QOpenCV::FaceRecognitionWindow::FaceRecognitionWindow(QWidget *parent, QApplication * app, QOpenCV::FaceRecognitionThread *thr)
