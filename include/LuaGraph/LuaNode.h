@@ -1,10 +1,10 @@
 #ifndef LUANODE_H
 #define LUANODE_H
 
+#include "LuaGraphObject.h"
+
 #include "QList"
 #include "Q_LONG"
-#include "QString"
-#include "LuaGraphObject.h"
 
 namespace Lua {
 

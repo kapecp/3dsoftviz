@@ -1,6 +1,5 @@
 #include "LuaInterface/LuaInterface.h"
 
-
 // lua development
 extern "C"
 {
@@ -12,6 +11,8 @@ extern "C"
 // include diluculum header files
 #include "Diluculum/LuaState.hpp"
 #include "Diluculum/Types.hpp"
+
+#include <sstream>
 
 Lua::LuaInterface *Lua::LuaInterface::instance;
 
@@ -62,13 +63,13 @@ QString Lua::LuaInterface::getString(unsigned int length, QString args[])
     return QString::fromStdString(var.value().asString());
 }
 
-int Lua::LuaInterface::getInt(QString name)
+long int Lua::LuaInterface::getInt(QString name)
 {
     Diluculum::LuaVariable var = (*luaState)[name.toStdString()];
     return var.value().asInteger();
 }
 
-int Lua::LuaInterface::getInt(unsigned int length,QString args[])
+long int Lua::LuaInterface::getInt(unsigned int length,QString args[])
 {
     Diluculum::LuaVariable var = (*luaState)[args[0].toStdString()];
     for(unsigned int i = 1; i < length; i++) {

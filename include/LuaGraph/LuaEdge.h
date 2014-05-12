@@ -1,10 +1,10 @@
 #ifndef LUAEDGE_H
 #define LUAEDGE_H
 
+#include "LuaGraphObject.h"
+
 #include "QList"
 #include "Q_LONG"
-#include "QString"
-#include "LuaGraphObject.h"
 
 namespace Lua {
 

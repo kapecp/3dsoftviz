@@ -2,10 +2,19 @@
 #define LUAGRAPHVISUALIZER_H
 
 #include "LuaGraph/LuaGraphObserver.h"
-#include "LuaGraph/LuaGraphObject.h"
-#include "Data/Graph.h"
+
+#include <osg/Camera>
+#include <osg/ref_ptr>
+
+namespace Data {
+    class Graph;
+    class Type;
+    class Node;
+}
 
 namespace Lua {
+
+class LuaGraphObject;
 
 class LuaGraphVisualizer : public Lua::LuaGraphObserver
 {

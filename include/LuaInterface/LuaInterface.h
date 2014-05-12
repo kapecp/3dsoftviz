@@ -24,9 +24,9 @@ public:
 
     QString getString(unsigned int length, QString args[]);
 
-    int getInt(QString name);
+    long int getInt(QString name);
 
-    int getInt(unsigned int length, QString args[]);
+    long int getInt(unsigned int length, QString args[]);
 
     double getDouble(QString name);
 

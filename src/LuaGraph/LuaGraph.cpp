@@ -1,10 +1,16 @@
 #include "LuaGraph/LuaGraph.h"
+
+#include "LuaGraph/LuaGraphObserver.h"
 #include "LuaInterface/LuaInterface.h"
-#include "Diluculum/LuaState.hpp"
 
 #include "Data/Graph.h"
 #include "Importer/GraphOperations.h"
+
 #include <Diluculum/LuaWrappers.hpp>
+#include "Diluculum/LuaState.hpp"
+
+#include <sstream>
+#include <iostream>
 
 Lua::LuaGraph *Lua::LuaGraph::instance;
 

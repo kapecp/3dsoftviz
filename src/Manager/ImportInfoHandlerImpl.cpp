@@ -7,7 +7,7 @@ namespace Manager {
 
 //chybove hlasky
 
-void ImportInfoHandlerImpl::addMessage () {
+void __attribute__((noreturn)) ImportInfoHandlerImpl::addMessage () {
 	throw "not implemented";
 }
 

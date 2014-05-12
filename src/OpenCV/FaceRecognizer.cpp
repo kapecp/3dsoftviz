@@ -2,6 +2,8 @@
 #include "OpenCV/FaceRecognizer.h"
 #include <QDebug>
 
+#include "opencv2/core/core_c.h"
+
 using namespace cv;
 
 OpenCV::FaceRecognizer::FaceRecognizer()

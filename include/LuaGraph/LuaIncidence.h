@@ -1,10 +1,10 @@
 #ifndef LUAINCIDENCE_H
 #define LUAINCIDENCE_H
 
+#include "LuaGraphObject.h"
+
 #include "QPair"
 #include "Q_LONG"
-#include "QString"
-#include "LuaGraphObject.h"
 
 namespace Lua {
 

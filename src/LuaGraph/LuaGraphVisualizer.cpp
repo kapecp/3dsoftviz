@@ -1,5 +1,9 @@
 #include "LuaGraph/LuaGraphVisualizer.h"
+
+#include "LuaGraph/LuaGraphObject.h"
+
 #include "Importer/GraphOperations.h"
+#include "Data/Graph.h"
 
 Lua::LuaGraphVisualizer::LuaGraphVisualizer(Data::Graph *graph, osg::ref_ptr<osg::Camera> camera){
     currentGraph = graph;

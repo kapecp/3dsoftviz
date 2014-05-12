@@ -2,7 +2,13 @@
 #include "LuaGraph/LuaGraphVisualizer.h"
 #include "LuaGraph/LuaGraph.h"
 #include "Importer/GraphOperations.h"
+
+#include "Data/Graph.h"
+
+#include <QMap>
+
 #include "limits"
+#include <iostream>
 
 Lua::FullHyperGraphVisualizer::FullHyperGraphVisualizer(Data::Graph *graph, osg::Camera *camera)
     : Lua::LuaGraphVisualizer(graph, camera){}

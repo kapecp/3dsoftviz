@@ -1,15 +1,15 @@
 #ifndef LUAGRAPH_H
 #define LUAGRAPH_H
 
-#include "QList"
-#include "QString"
-#include "Q_LONG"
 #include "LuaGraph/LuaNode.h"
 #include "LuaGraph/LuaEdge.h"
 #include "LuaGraph/LuaIncidence.h"
-#include "LuaGraph/LuaGraphObserver.h"
+
+#include "Q_LONG"
 
 namespace Lua {
+
+class LuaGraphObserver;
 
 class LuaGraph
 {

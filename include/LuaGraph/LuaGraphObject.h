@@ -3,6 +3,9 @@
 
 #include "Diluculum/LuaValue.hpp"
 
+#include "QString"
+#include "Q_LONG"
+
 namespace Lua {
 
 class LuaGraphObject
