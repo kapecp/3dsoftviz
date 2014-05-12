@@ -3,6 +3,7 @@
 #include "Kinect/KinectCore.h"
 #include "Kinect/KinectRecognition.h"
 #include "Kinect/KinectHandTracker.h"
+#include "Kinect/KinectZoom.h"
 
 #include "QDebug"
 
@@ -87,7 +88,7 @@ void Kinect::KinectThread::run()
 	float pDepth_y2;
 	float pDepth_z2;
 	/////////end////////////
-
+	Kinect::KinectZoom *zoom = new Kinect::KinectZoom();
 	cv::Mat frame;
 
 	while(!mCancel)
@@ -143,6 +144,7 @@ void Kinect::KinectThread::run()
 					emit sendSliderCoords(  (kht->slidingHand_x/kht->handTrackerFrame.getDepthFrame().getWidth()-0.5)*(-200),
 											(kht->slidingHand_y/kht->handTrackerFrame.getDepthFrame().getHeight()-0.5)*(200),
 											(kht->slidingHand_z/kht->handTrackerFrame.getDepthFrame().getHeight()-0.5)*200);
+					zoom->zoom(frame,&m_depth,kht->getArrayHands[0][0], kht->getArrayHands[0][1], kht->handZ[0]);
 					printf("%.2lf %.2lf z %.2lf -  %.2lf slider \n", (kht->slidingHand_x/kht->handTrackerFrame.getDepthFrame().getWidth()-0.5)*200,
 						   (kht->slidingHand_y/kht->handTrackerFrame.getDepthFrame().getHeight()-0.5)*200, (kht->slidingHand_z/kht->handTrackerFrame.getDepthFrame().getHeight()-0.5)*200, kht->slidingHand_z);
 				}
