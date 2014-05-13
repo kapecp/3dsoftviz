@@ -1,5 +1,8 @@
 
 #include "OpenCV/FaceRecognizer.h"
+
+#include <opencv2/core/core_c.h>
+
 #include <QDebug>
 
 using namespace cv;
