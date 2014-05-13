@@ -73,7 +73,7 @@ public:
 	/** Get the FusionDistanceValue. Used by SceneView for setting up stereo convergence.*/
 	virtual float getFusionDistanceValue() const { return _distance; }
 
-    virtual void setVertigoMode(boolean value);
+    virtual void setVertigoMode(bool value);
 
 	/** Attach a node to the manipulator.
 			Automatically detaches previously attached node.

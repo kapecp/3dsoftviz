@@ -2071,7 +2071,7 @@ void CoreWindow::add_PlanesClick()
 
     // uzly grafu vlozene do linked listu pre jednoduche iterovanie
     QLinkedList<osg::ref_ptr<Data::Node> > nodesList;
-    QMap<qlonglong, osg::ref_ptr<Data::Node>>::const_iterator i = allNodes->constBegin();
+    QMap<qlonglong, osg::ref_ptr<Data::Node> >::const_iterator i = allNodes->constBegin();
     while (i != allNodes->constEnd()) {
         nodesList.append(i.value());
         ++i;
@@ -2132,7 +2132,7 @@ void CoreWindow::remove_PlanesClick() {
         QMap<qlonglong, osg::ref_ptr<Data::Node> >* allNodes = currentGraph->getNodes();
 
         // reset hodnot urcujucich ktorej rovine patri uzol
-        QMap<qlonglong, osg::ref_ptr<Data::Node>>::const_iterator i = allNodes->constBegin();
+        QMap<qlonglong, osg::ref_ptr<Data::Node> >::const_iterator i = allNodes->constBegin();
         while (i != allNodes->constEnd()) {
             i.value()->setNumberOfVertigoPlane(i.value()->getId());
             ++i;
@@ -2173,7 +2173,7 @@ void CoreWindow::remove_PlanesClick() {
 
     // uzly grafu vlozene do linked listu pre jednoduche iterovanie
     QLinkedList<osg::ref_ptr<Data::Node> > nodesList;
-    QMap<qlonglong, osg::ref_ptr<Data::Node>>::const_iterator i = allNodes->constBegin();
+    QMap<qlonglong, osg::ref_ptr<Data::Node> >::const_iterator i = allNodes->constBegin();
     while (i != allNodes->constEnd()) {
         nodesList.append(i.value());
         ++i;

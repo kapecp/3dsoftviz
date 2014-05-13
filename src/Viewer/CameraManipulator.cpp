@@ -65,7 +65,7 @@ Vwr::CameraManipulator::~CameraManipulator()
 {
 }
 
-void Vwr::CameraManipulator::setVertigoMode(boolean value)
+void Vwr::CameraManipulator::setVertigoMode(bool value)
 {
     _vertigo = value;
 }
