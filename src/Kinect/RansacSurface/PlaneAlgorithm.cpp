@@ -5,9 +5,9 @@
 
 Kinect::PlaneAlgorithm::PlaneAlgorithm()
 {
-	points[0] = Vector3( -1, -1, -1 );
-	points[1] = Vector3( -1, -1, -1 );
-	points[2] = Vector3( -1, -1, -1 );
+	points[0] =  Vector3( -1, -1, -1 );
+	points[1] =   Vector3( -1, -1, -1 );
+	points[2] =   Vector3( -1, -1, -1 );
 
 	std::string log= Util::ApplicationConfig::get()->getValue("Kinect.Surface.LOG").toStdString();
 
@@ -41,8 +41,8 @@ int Kinect::PlaneAlgorithm::setRandomPoint(int i, int x, int y, int z)
 
 int Kinect::PlaneAlgorithm::calculatePlane()
 {
-	Vector3 u = u.subtract(points[1], points[0]);
-	Vector3 v = v.subtract(points[2], points[0]);
+	Vector3 u = this->subtract(points[1], points[0]);
+	Vector3 v = this->subtract(points[2], points[0]);
 	//qDebug() << "vektor: [" << u.x << "," << u.y << "," << u.z << "]\n";
 	//qDebug() << "vektor: [" << v.x << "," << v.y << "," << v.z << "]\n";
 	int w1 = (u.mY*v.mZ) - (u.mZ*v.mY);
@@ -78,4 +78,9 @@ int Kinect::PlaneAlgorithm::findIntersection(int x, int y, int z)
 		return -1;
 	}
 	return 0;
+}
+
+Kinect::Vector3 Kinect::PlaneAlgorithm::subtract(Vector3 first, Vector3 second)
+{
+	return  Vector3(first.mX-second.mX,first.mY-second.mY,first.mZ-second.mZ);
 }
