@@ -36,6 +36,16 @@ using namespace noise;
 using namespace noise::model;
 using namespace noise::module;
 
+//////////////////////////////////////////////////////////////////////////////
+// Miscellaneous functions
+
+namespace noise
+{
+
+
+namespace utils
+{
+
 // Bitmap header size.
 const int BMP_HEADER_SIZE = 54;
 
@@ -50,15 +60,6 @@ const double DEFAULT_LIGHT_CONTRAST  =  1.0;
 // horizon, 90 = directly overhead)
 const double DEFAULT_LIGHT_ELEVATION = 45.0;
 
-//////////////////////////////////////////////////////////////////////////////
-// Miscellaneous functions
-
-namespace noise
-{
-
-
-namespace utils
-{
 
 // Performs linear interpolation between two 8-bit channel values.
 inline noise::uint8 BlendChannel (const uint8 channel0,

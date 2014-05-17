@@ -20,7 +20,7 @@
 
 using namespace std;
 
-typedef QMap<QString, QString> MapSS;
+
 
 /*!
  * \brief
@@ -29,6 +29,8 @@ typedef QMap<QString, QString> MapSS;
  */
 namespace Util
 {
+
+typedef QMap<QString, QString> MapSS;
 /*!
 	 * \brief
 	 * Trieda udrzujuca konfiguracne nastavenia aplikacie

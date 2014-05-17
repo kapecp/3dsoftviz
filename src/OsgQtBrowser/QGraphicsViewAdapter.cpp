@@ -20,10 +20,10 @@
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wconversion"
 
-#define MYQKEYEVENT 2000
-#define MYQPOINTEREVENT 2001
 
-QCoreApplication* getOrCreateQApplication()
+using namespace OsgQtBrowser;
+
+QCoreApplication* OsgQtBrowser::QGraphicsViewAdapter::getOrCreateQApplication()
 {
 	if (QApplication::instance()==0)
 	{
@@ -33,6 +33,8 @@ QCoreApplication* getOrCreateQApplication()
 	}
 	return QApplication::instance();
 }
+
+namespace OsgQtBrowser{
 
 class MyQKeyEvent : public QEvent
 {
@@ -44,16 +46,7 @@ public:
 	int         _key;
 	bool        _down;
 };
-
-struct MyQPointerEvent : public QEvent
-{
-	MyQPointerEvent(int x, int y, unsigned int buttonMask):
-		QEvent( QEvent::Type(MYQPOINTEREVENT) ),
-		_x(x), _y(y),_buttonMask(buttonMask) {}
-
-	int _x, _y;
-	unsigned int _buttonMask;
-};
+}
 
 QGraphicsViewAdapter::QGraphicsViewAdapter(osg::Image* image, QWidget* widget):
 	_image(image),
@@ -62,7 +55,7 @@ QGraphicsViewAdapter::QGraphicsViewAdapter(osg::Image* image, QWidget* widget):
 	_backgroundColor(255,255,255)
 {
 	// make sure we have a valid QApplication before we start creating widgets.
-	getOrCreateQApplication();
+	this->getOrCreateQApplication();
 
 
 	setUpKeyMap();

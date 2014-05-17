@@ -13,10 +13,12 @@
 
 #include "OsgQtBrowser/QWebViewImage.h"
 
+using namespace OsgQtBrowser;
+
 QWebViewImage::QWebViewImage()
 {
 	// make sure we have a valid QApplication before we start creating widgets.
-	getOrCreateQApplication();
+	OsgQtBrowser::QGraphicsViewAdapter::getOrCreateQApplication();
 
 	_webView = new QWebView;
 

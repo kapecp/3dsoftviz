@@ -7,8 +7,6 @@
 
 using namespace QOSG;
 
-qlonglong graphID;
-
 SelectLayoutWindow::SelectLayoutWindow(QWidget *parent, qlonglong graphID)
 {
 	this->graphID = graphID;

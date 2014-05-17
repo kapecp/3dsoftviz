@@ -13,8 +13,8 @@ OpenCV::FaceRecognizer::FaceRecognizer()
 	this->detected=false;
 	this->isMovement=false;
 	this->firstdetection=true;
-	this->queue = new SizedQueue(8,0.0f);
-	this->queueDistance = new SizedQueue(8,0.0f);
+	this->queue = new Util::SizedQueue(8,0.0f);
+	this->queueDistance = new Util::SizedQueue(8,0.0f);
 }
 
 OpenCV::FaceRecognizer::~FaceRecognizer()

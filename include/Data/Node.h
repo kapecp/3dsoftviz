@@ -20,6 +20,8 @@ class Type;
 class Graph;
 class GraphLayout;
 
+typedef osg::TemplateIndexArray<unsigned int, osg::Array::UIntArrayType,4,1> ColorIndexArray;
+
 /**
 	*  \class Node
 	*  \brief Node object represents a single node in a Graph

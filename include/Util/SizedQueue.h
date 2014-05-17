@@ -3,6 +3,8 @@
 
 #include <deque>
 
+namespace Util{
+
 class SizedQueue{
 
 public:
@@ -29,5 +31,5 @@ private:
 	std::deque< bool > boolStack;
 	int positive;
 };
-
+}
 #endif // SIZEDQUEUE_H

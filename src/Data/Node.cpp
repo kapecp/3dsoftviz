@@ -18,7 +18,6 @@
 
 #include <QTextStream>
 
-typedef osg::TemplateIndexArray<unsigned int, osg::Array::UIntArrayType,4,1> ColorIndexArray;
 
 Data::Node::Node(qlonglong id, QString name, Data::Type* type, float scaling, Data::Graph* graph, osg::Vec3f position)
 {

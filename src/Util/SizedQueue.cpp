@@ -1,5 +1,7 @@
 #include "Util/SizedQueue.h"
 
+using namespace Util;
+
 SizedQueue::SizedQueue(int size, float threshold)
 {
 	this->size = size;

@@ -24,7 +24,25 @@
 #include <QPointer>
 
 
-extern QCoreApplication* getOrCreateQApplication();
+
+
+namespace OsgQtBrowser{
+
+#define MYQKEYEVENT 2000
+#define MYQPOINTEREVENT 2001
+
+struct MyQPointerEvent : public QEvent
+{
+	MyQPointerEvent(int x, int y, unsigned int buttonMask):
+		QEvent( QEvent::Type(MYQPOINTEREVENT) ),
+		_x(x), _y(y),_buttonMask(buttonMask) {}
+
+	int _x, _y;
+	unsigned int _buttonMask;
+};
+
+
+
 
 /**
 *  \class QGraphicsViewAdapter
@@ -45,6 +63,8 @@ public:
 		*  \param [in, out]  widget QWidget *
 		*/
 	QGraphicsViewAdapter(osg::Image* image, QWidget* widget);
+
+	static QCoreApplication* getOrCreateQApplication();
 
 	/**
 		*  \fn public  setUpKeyMap
@@ -246,5 +266,5 @@ private slots:
 	void repaintRequestedSlot(const QList<QRectF> &regions);
 
 };
-
+}
 #endif

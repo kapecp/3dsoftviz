@@ -17,6 +17,8 @@ Q_DECLARE_METATYPE( osg::Vec3d )
 Q_DECLARE_METATYPE( osg::Quat )
 
 
+using namespace Util;
+
 namespace ArucoModul {
 class ArucoCore;
 }
