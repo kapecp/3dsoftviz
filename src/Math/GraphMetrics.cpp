@@ -5,6 +5,8 @@
 
 #include "Util/ApplicationConfig.h"
 
+using namespace MathModule;
+
 void GraphMetrics::computeGraphMetrics(Data::Graph * activeGraph)
 {
 	QMutableMapIterator<qlonglong, osg::ref_ptr<Data::Node> > i(*activeGraph->getNodes());

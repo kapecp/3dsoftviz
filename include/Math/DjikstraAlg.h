@@ -11,6 +11,7 @@ namespace Data
 {
 	class Graph;
 }
+namespace MathModule{
 
 class DjikstraAlg
 {
@@ -42,3 +43,4 @@ private:
 
 	qlonglong getShortestDistance(Data::Node * destination);
 };
+}

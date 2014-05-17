@@ -7,7 +7,7 @@
 int main(int argc, char *argv[])
 {
 	QApplication app(argc, argv);
-	new Cleaner(&app);
+	new Util::Cleaner(&app);
 	AppCore::Core::getInstance(&app);
 
 

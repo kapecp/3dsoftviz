@@ -110,6 +110,7 @@ public:
 	osg::TexMat& _texMat;
 };
 
+namespace Vwr{
 
 class MoveEarthySkyWithEyePointTransform : public osg::Transform
 {
@@ -136,7 +137,7 @@ public:
 		return true;
 	}
 };
-
+}
 
 osg::Node* SkyBox::createSkyBox()
 {

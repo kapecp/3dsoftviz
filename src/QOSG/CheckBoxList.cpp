@@ -12,87 +12,76 @@
 
 #include "QOSG/CheckBoxList.h"
 #include <QtGui>
-
+#include <QItemDelegate>
 
 using namespace QOSG;
 
-// internal private delegate
-class CheckBoxListDelegate : public QItemDelegate
+void CheckBoxList::paint(QPainter *painter, const QStyleOptionViewItem &option,
+		   const QModelIndex &index) const
 {
-public:
-	CheckBoxListDelegate(QObject *parent)
-		: QItemDelegate(parent)
-	{
-		;
-	}
+	//Get item data
+	bool value = index.data(Qt::UserRole).toBool();
+	QString text = index.data(Qt::DisplayRole).toString();
 
-	void paint(QPainter *painter, const QStyleOptionViewItem &option,
-			   const QModelIndex &index) const
-	{
-		//Get item data
-		bool value = index.data(Qt::UserRole).toBool();
-		QString text = index.data(Qt::DisplayRole).toString();
+	// fill style options with item data
+	const QStyle *style = QApplication::style();
+	QStyleOptionButton opt;
+	opt.state |= value ? QStyle::State_On : QStyle::State_Off;
+	opt.state |= QStyle::State_Enabled;
+	opt.text = text;
+	opt.rect = option.rect;
 
-		// fill style options with item data
-		const QStyle *style = QApplication::style();
-		QStyleOptionButton opt;
-		opt.state |= value ? QStyle::State_On : QStyle::State_Off;
-		opt.state |= QStyle::State_Enabled;
-		opt.text = text;
-		opt.rect = option.rect;
+	// draw item data as CheckBox
+	style->drawControl(QStyle::CE_CheckBox,&opt,painter);
+}
 
-		// draw item data as CheckBox
-		style->drawControl(QStyle::CE_CheckBox,&opt,painter);
-	}
+QWidget *CheckBoxList::createEditor(QWidget *parent,
 
-	QWidget *createEditor(QWidget *parent,
+					  const QStyleOptionViewItem /*& option */,
+					  const QModelIndex /*& index*/ ) const
+{
+	// create check box as our editor
+	QCheckBox *editor = new QCheckBox(parent);
+	return editor;
+}
 
-						  const QStyleOptionViewItem /*& option */,
-						  const QModelIndex /*& index*/ ) const
-	{
-		// create check box as our editor
-		QCheckBox *editor = new QCheckBox(parent);
-		return editor;
-	}
+void CheckBoxList::setEditorData(QWidget *editor,
+				   const QModelIndex &index) const
+{
+	//set editor data
+	QCheckBox *myEditor = static_cast<QCheckBox*>(editor);
+	myEditor->setText(index.data(Qt::DisplayRole).toString());
+	myEditor->setChecked(index.data(Qt::UserRole).toBool());
+}
 
-	void setEditorData(QWidget *editor,
-					   const QModelIndex &index) const
-	{
-		//set editor data
-		QCheckBox *myEditor = static_cast<QCheckBox*>(editor);
-		myEditor->setText(index.data(Qt::DisplayRole).toString());
-		myEditor->setChecked(index.data(Qt::UserRole).toBool());
-	}
+void CheckBoxList::setModelData(QWidget *editor, QAbstractItemModel *model,
+				  const QModelIndex &index) const
+{
+	//get the value from the editor (CheckBox)
+	QCheckBox *myEditor = static_cast<QCheckBox*>(editor);
+	bool value = myEditor->isChecked();
 
-	void setModelData(QWidget *editor, QAbstractItemModel *model,
-					  const QModelIndex &index) const
-	{
-		//get the value from the editor (CheckBox)
-		QCheckBox *myEditor = static_cast<QCheckBox*>(editor);
-		bool value = myEditor->isChecked();
+	//set model data
+	QMap<int,QVariant> data;
+	data.insert(Qt::DisplayRole,myEditor->text());
+	data.insert(Qt::UserRole,value);
+	model->setItemData(index,data);
+}
 
-		//set model data
-		QMap<int,QVariant> data;
-		data.insert(Qt::DisplayRole,myEditor->text());
-		data.insert(Qt::UserRole,value);
-		model->setItemData(index,data);
-	}
+void CheckBoxList::updateEditorGeometry(QWidget *editor,
 
-	void updateEditorGeometry(QWidget *editor,
-
-							  const QStyleOptionViewItem &option, const QModelIndex /*&index*/ ) const
-	{
-		editor->setGeometry(option.rect);
-	}
-};
+						  const QStyleOptionViewItem &option, const QModelIndex /*&index*/ ) const
+{
+	editor->setGeometry(option.rect);
+}
 
 
 
-CheckBoxList::CheckBoxList(QWidget *widget )
-	:QComboBox(widget),m_DisplayText()
+
+CheckBoxList::CheckBoxList(QWidget *widget)
 {
 	// set delegate items view
-	view()->setItemDelegate(new CheckBoxListDelegate(this));
+	view()->setItemDelegate(new QItemDelegate(this));
 
 	// Enable editing on items view
 	view()->setEditTriggers(QAbstractItemView::CurrentChanged);
@@ -107,7 +96,7 @@ CheckBoxList::CheckBoxList(QWidget *widget )
 
 CheckBoxList::~CheckBoxList()
 {
-	;
+
 }
 
 
