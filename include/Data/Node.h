@@ -274,11 +274,12 @@ public:
 	void setFixed(bool fixed)
 	{
 		this->fixed = fixed;
-
+		/*
+		  first version square - simple red, now primary object for NODE
 		if (fixed && !this->containsDrawable(square))
 			this->addDrawable(square);
 		else if (!fixed)
-			this->removeDrawable(square);
+			this->removeDrawable(square);*/
 	}
 
 	/**
