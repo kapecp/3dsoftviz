@@ -276,12 +276,12 @@ public:
 	void setFixed(bool fixed)
 	{
 		this->fixed = fixed;
-		/*
-		  first version square - simple red, now primary object for NODE
-		if (fixed && !this->containsDrawable(square))
-			this->addDrawable(square);
-		else if (!fixed)
-			this->removeDrawable(square);*/
+
+		if (fixed && this->containsDrawable(square)){
+			this->setDrawableColor(0, osg::Vec4(1.0f, 0.0f, 0.0f, 1.0f));
+		}
+		else if (!fixed && this->containsDrawable(square))
+			this->setDrawableColor(0, colorOfNode);
 	}
 
 	/**
@@ -747,6 +747,7 @@ protected:
 		*  \brief Settings of the Node
 		*/
 	QMap<QString, QString> * settings;
+	osg::Vec4 colorOfNode;
 };
 }
 
