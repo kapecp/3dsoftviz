@@ -904,13 +904,21 @@ void CoreWindow::removeMetaNodes()
 
 void CoreWindow::loadFile()
 {
+	QFileDialog dialog;
+	dialog.setDirectory( "../share/3dsoftviz" );
+
 	//treba overit
 	layout->pause();
 	coreGraph->setNodesFreezed(true);
-	QString fileName = QFileDialog::getOpenFileName(this,
-													tr("Open file"), ".", tr("GraphML files (*.graphml);;GXL files (*.gxl);;RSF files (*.rsf)"));
 
-	if (fileName != "") {
+	QString fileName =NULL;
+
+	if(dialog.exec()){
+		QStringList filenames = dialog.selectedFiles();
+		fileName = filenames.at(0);
+	}
+
+	if (fileName != NULL) {
 		Manager::GraphManager::getInstance()->loadGraph(fileName);
 
 		viewerWidget->getCameraManipulator()->home();
@@ -922,6 +930,8 @@ void CoreWindow::loadFile()
 		layout->play();
 		coreGraph->setNodesFreezed(false);
 	}
+
+
 }
 
 void CoreWindow::labelOnOff(bool)
