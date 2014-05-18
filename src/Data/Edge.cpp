@@ -8,11 +8,14 @@
 #include "Util/ApplicationConfig.h"
 
 #include <osgText/Text>
+#include <osg/BlendFunc>
+#include <osg/Depth>
 #include <osg/PrimitiveSet>
+#include <Viewer/TextureWrapper.h>
 
 #include <QTextStream>
 
-Data::Edge::Edge(qlonglong id, QString name, Data::Graph* graph, osg::ref_ptr<Data::Node> srcNode, osg::ref_ptr<Data::Node> dstNode, Data::Type* type, bool isOriented, float scaling, int pos, osg::ref_ptr<osg::Camera> camera) : osg::DrawArrays(osg::PrimitiveSet::QUADS, pos, 4)
+Data::Edge::Edge(qlonglong id, QString name, Data::Graph* graph, osg::ref_ptr<Data::Node> srcNode, osg::ref_ptr<Data::Node> dstNode, Data::Type* type, bool isOriented, float scaling, int pos, osg::ref_ptr<osg::Camera> camera)
 {
 	this->id = id;
 	this->name = name;
@@ -38,6 +41,7 @@ Data::Edge::Edge(qlonglong id, QString name, Data::Graph* graph, osg::ref_ptr<Da
 	coordinates = new osg::Vec3Array();
 	edgeTexCoords = new osg::Vec2Array();
 
+    this->addDrawable(createEdge(createStateSet(this->type)));
 	//updateCoordinates(getSrcNode()->getTargetPosition(), getDstNode()->getTargetPosition());
 	updateCoordinates(getSrcNode()->restrictedTargetPosition(), getDstNode()->restrictedTargetPosition());
 }
@@ -133,6 +137,17 @@ void Data::Edge::updateCoordinates(osg::Vec3 srcPos, osg::Vec3 dstPos)
 
 	if (label != NULL)
 		label->setPosition((srcPos + dstPos) / 2 );
+
+    osg::Geometry *geometry = getDrawable(0)->asGeometry();
+    if (geometry != NULL){
+        geometry->setVertexArray(coordinates);
+        geometry->setTexCoordArray(0, edgeTexCoords);
+
+        osg::Vec4Array * colorArray =  dynamic_cast<osg::Vec4Array *>(geometry->getColorArray());
+
+        colorArray->pop_back();
+        colorArray->push_back(getEdgeColor());
+    }
 }
 
 osg::ref_ptr<osg::Drawable> Data::Edge::createLabel(QString name)
@@ -185,4 +200,64 @@ QString Data::Edge::toString() const {
 	return str;
 }
 
+osg::ref_ptr<osg::Drawable> Data::Edge::createEdge(osg::StateSet* bbState)
+{
+    osg::ref_ptr<osg::Geometry> nodeQuad = new osg::Geometry;
+
+    nodeQuad->setUseDisplayList(false);
+
+    nodeQuad->setVertexArray(coordinates);
+    nodeQuad->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::QUADS,0,4));
+
+    nodeQuad->setTexCoordArray(0, edgeTexCoords);
+
+    osg::ref_ptr<osg::Vec4Array> colorArray = new osg::Vec4Array;
+    colorArray->push_back(osg::Vec4(1.0f, 1.0f, 1.0f, 1.0f));
+
+    osg::ref_ptr<osg::TemplateIndexArray<unsigned int, osg::Array::UIntArrayType, 4, 1> > colorIndexArray = new osg::TemplateIndexArray<unsigned int, osg::Array::UIntArrayType, 4, 1>;
+    colorIndexArray->push_back(0);
+
+    nodeQuad->setColorArray( colorArray);
+#ifdef BIND_PER_PRIMITIVE
+    nodeQuad->setColorIndices(colorIndexArray);
+#endif
+    nodeQuad->setColorBinding(osg::Geometry::BIND_OVERALL);
+    nodeQuad->setStateSet(bbState);
+
+    return nodeQuad;
+}
+
+osg::ref_ptr<osg::StateSet> Data::Edge::createStateSet(Data::Type * type)
+{
+    if (isOriented()){
+        osg::StateSet *edgeStateSet = new osg::StateSet;
+
+        edgeStateSet->setMode(GL_LIGHTING, osg::StateAttribute::OFF);
+        edgeStateSet->setTextureAttributeAndModes(0, Vwr::TextureWrapper::getEdgeTexture(), osg::StateAttribute::ON);
+        edgeStateSet->setAttributeAndModes(new osg::BlendFunc, osg::StateAttribute::ON);
+        edgeStateSet->setMode(GL_DEPTH_TEST, osg::StateAttribute::ON);
+
+        edgeStateSet->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
+
+        osg::ref_ptr<osg::Depth> depth = new osg::Depth;
+        depth->setWriteMask(false);
+        edgeStateSet->setAttributeAndModes(depth, osg::StateAttribute::ON);
+
+        return edgeStateSet;
+    } else {
+        osg::StateSet *orientedEdgeStateSet = new osg::StateSet;
+
+        orientedEdgeStateSet->setMode(GL_LIGHTING, osg::StateAttribute::OFF);
+        orientedEdgeStateSet->setTextureAttributeAndModes(0, Vwr::TextureWrapper::getOrientedEdgeTexture(), osg::StateAttribute::ON);
+        orientedEdgeStateSet->setMode(GL_BLEND, osg::StateAttribute::ON);
+        orientedEdgeStateSet->setMode(GL_DEPTH_TEST, osg::StateAttribute::ON);
+
+        orientedEdgeStateSet->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
+        osg::ref_ptr<osg::Depth> depth = new osg::Depth;
+        depth->setWriteMask(false);
+        orientedEdgeStateSet->setAttributeAndModes(depth, osg::StateAttribute::ON);
+
+        return orientedEdgeStateSet;
+    }
+}
 

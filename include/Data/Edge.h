@@ -30,7 +30,7 @@ class Type;
 	*  \author Aurel Paulovic, Michal Paprcka
 	*  \date 29. 4. 2010
 	*/
-class Edge : public osg::DrawArrays
+class Edge : public osg::Geode
 {
 public:
 
@@ -513,6 +513,8 @@ private:
 
     float edgeStrength;
 
+    osg::ref_ptr<osg::StateSet> createStateSet(Data::Type *type);
+    osg::ref_ptr<osg::Drawable> createEdge(osg::StateSet *bbState);
 protected:
 
 	/**

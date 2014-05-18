@@ -479,73 +479,52 @@ bool PickHandler::doNodePick(osg::NodePath nodePath)
 
 bool PickHandler::doEdgePick(osg::NodePath nodePath, unsigned int primitiveIndex)
 {
-	osg::Geode * geode = dynamic_cast<osg::Geode *>(nodePath[nodePath.size() - 1]);
+    Data::Edge * e = dynamic_cast<Data::Edge *>(nodePath[nodePath.size() - 1]);
 
-	if (geode != 0)
+    if (e != 0)
 	{
-		osg::Drawable * d = geode->getDrawable(0);
-		osg::Geometry * geometry = d->asGeometry();
+        if (isAltPressed && pickMode == PickMode::NONE && !isShiftPressed)
+        {
+            osg::ref_ptr<osg::Vec3Array> coords = e->getCooridnates();
 
-		if (geometry != NULL)
-		{
-			// zmena (plesko): ak vyber zachytil avatara, nastal segmentation fault,
-			// lebo sa vyberal neexistujuci primitiveSet
-			Data::Edge * e;
-			if (geometry->getNumPrimitiveSets() > primitiveIndex) {
-				e = dynamic_cast<Data::Edge *>(geometry->getPrimitiveSet(primitiveIndex));
-			} else {
-				return false;
-			}
-			// koniec zmeny
+            cameraManipulator->setCenter(DataHelper::getMassCenter(coords));
+            cameraManipulator->setDistance(Util::ApplicationConfig::get()->getValue("Viewer.PickHandler.PickedEdgeDistance").toFloat());
+        }
+        else if (isAltPressed && pickMode == PickMode::NONE && isShiftPressed)
+        {
+            if (appConf->getValue("Viewer.PickHandler.SelectInterestPoints").toInt() == 1)
+            {
+                Data::Graph * currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
+                Util::ElementSelector::weightedElementSelector(currentGraph->getNodes(), appConf->getValue("Viewer.PickHandler.AutopickedNodes").toInt(), this);
+            }
 
-			if (e != NULL)
-			{
-				if (isAltPressed && pickMode == PickMode::NONE && !isShiftPressed)
-				{
-					osg::ref_ptr<osg::Vec3Array> coords = e->getCooridnates();
+            bool wasEmpty = false;
+            if (pickedEdges.isEmpty())
+            {
+                pickedEdges.append(e);
+                wasEmpty = true;
+            }
 
-					cameraManipulator->setCenter(DataHelper::getMassCenter(coords));
-					cameraManipulator->setDistance(Util::ApplicationConfig::get()->getValue("Viewer.PickHandler.PickedEdgeDistance").toFloat());
-				}
-				else if (isAltPressed && pickMode == PickMode::NONE && isShiftPressed)
-				{
-					if (appConf->getValue("Viewer.PickHandler.SelectInterestPoints").toInt() == 1)
-					{
-						Data::Graph * currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
-						Util::ElementSelector::weightedElementSelector(currentGraph->getNodes(), appConf->getValue("Viewer.PickHandler.AutopickedNodes").toInt(), this);
-					}
+            osg::Vec3f edgeCenter = (e->getSrcNode()->getCurrentPosition() + e->getDstNode()->getCurrentPosition()) / 2;
 
-					bool wasEmpty = false;
-					if (pickedEdges.isEmpty())
-					{
-						pickedEdges.append(e);
-						wasEmpty = true;
-					}
+            cameraManipulator->setNewPosition(edgeCenter, getSelectionCenter(false), getSelectedNodes()->toStdList(), getSelectedEdges()->toStdList());
 
-					osg::Vec3f edgeCenter = (e->getSrcNode()->getCurrentPosition() + e->getDstNode()->getCurrentPosition()) / 2;
+            if (wasEmpty)
+                pickedEdges.removeFirst();
+        }
+        else if (pickMode != PickMode::NONE)
+        {
+            if (!pickedEdges.contains(e))
+            {
+                pickedEdges.append(e);
+                e->setSelected(true);
+            }
 
-					cameraManipulator->setNewPosition(edgeCenter, getSelectionCenter(false), getSelectedNodes()->toStdList(), getSelectedEdges()->toStdList());
+            if (isCtrlPressed)
+                unselectPickedEdges(e);
 
-					if (wasEmpty)
-						pickedEdges.removeFirst();
-				}
-				else if (pickMode != PickMode::NONE)
-				{
-					if (!pickedEdges.contains(e))
-					{
-						pickedEdges.append(e);
-						e->setSelected(true);
-					}
-
-					if (isCtrlPressed)
-						unselectPickedEdges(e);
-
-					return true;
-				}
-
-				return true;
-			}
-		}
+            return true;
+        }
 	}
 
 	return false;
