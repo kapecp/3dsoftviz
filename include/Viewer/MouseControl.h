@@ -86,8 +86,6 @@ public:
 	 */
 	void setSpeedUpMoving(double speed);
 
-	void moveMouseAruco(double positionX,double positionY,bool isClick, Qt::MouseButton button );
-
 private:
 
 	/**

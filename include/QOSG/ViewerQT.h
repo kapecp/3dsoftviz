@@ -81,7 +81,16 @@ public:
 	ViewerQT(QWidget * parent = 0, const char * name = 0, const QGLWidget * shareWidget = 0, WindowFlags f = 0, Vwr::CoreGraph* cg = 0);
 
 
-
+	/**
+	 * @brief moveMouseAruco
+	 * @param positionX position of x ais v Aruco <0,1>
+	 * @param positionY position of y ais v Aruco <0,1>
+	 * @param windowX size of window X
+	 *@param windowY size of window Y
+	 * @param isClick is position click
+	 * @param button which button click
+	 */
+	void moveMouseAruco(double positionX, double positionY, bool isClick, int windowX, int windowY, Qt::MouseButton button );
 
 	/**
 		  *  \fn inline public constant  getPickHandler
@@ -105,10 +114,6 @@ public:
 		  *  \brief Reloads configuration
 		  */
 	void reloadConfig();
-
-public slots:
-
-	void moveMouseAruco(double positionX,double positionY,bool isClick, Qt::MouseButton button );
 
 protected:
 
@@ -154,6 +159,10 @@ private:
 		*  \brief application configuration
 		*/
 	Util::ApplicationConfig * appConf;
+
+
+	bool mIsClicAruco;
+
 
 };
 }

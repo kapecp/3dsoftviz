@@ -60,7 +60,6 @@ CoreWindow::CoreWindow(QWidget *parent, Vwr::CoreGraph* coreGraph, QApplication*
 	isPlaying = true;
 	application = app;
 	layout = thread;
-	mIsClicAruco=false;
 
 	client = new Network::Client(this);
 	new Network::Server(this);
@@ -1981,37 +1980,7 @@ void CoreWindow::closeEvent(QCloseEvent *event)
 	//QApplication::closeAllWindows();   // ????
 }
 
-
-
 void QOSG::CoreWindow::moveMouseAruco(double positionX,double positionY,bool isClick, Qt::MouseButton button )
 {
-	//qDebug() << positionX << "  " << positionY << "         " << isClick;
-
-	float wieverX =(float)  (positionX * (float) this->GetViewerQt()->width());
-	float wieverY =(float)  (positionY * (float) this->GetViewerQt()->height());
-	int windowX = (int) (positionX * this->GetViewerQt()->width()  + this->GetViewerQt()->x() + 8);
-	int windowY =  (int)(positionY * this->GetViewerQt()->height() + this->GetViewerQt()->y() + 28);
-	int screenX =(int)  (positionX * this->GetViewerQt()->width()  + this->GetViewerQt()->x() + this->x() + 8);
-	int screenY = (int)(positionY * this->GetViewerQt()->height() + this->GetViewerQt()->y() + this->y() + 28);
-
-
-	this->GetViewerQt()->cursor().setPos(screenX, screenY);
-
-	qDebug() << screenX << "  " << screenY ;
-	wieverY =  ((float) this->height() - wieverY);
-
-	if( isClick != mIsClicAruco){
-		mIsClicAruco = isClick;
-
-		if(isClick) {
-			this->GetViewerQt()->getEventQueue()->mouseButtonPress(wieverX, wieverY,button);
-			this->GetViewerQt()->getEventQueue()->mouseMotion(wieverX, wieverY);
-		} else {
-			this->GetViewerQt()->getEventQueue()->mouseButtonRelease(wieverX, wieverY, button);
-			return;
-		}
-	}
-	this->GetViewerQt()->getEventQueue()->mouseMotion(wieverX, wieverY);
-
-
+	this->viewerWidget->moveMouseAruco(positionX,positionY,isClick,this->x(),this->y(),button);
 }
