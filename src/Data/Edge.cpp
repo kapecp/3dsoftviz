@@ -32,8 +32,9 @@ Data::Edge::Edge(qlonglong id, QString name, Data::Graph* graph, osg::ref_ptr<Da
 	float r = type->getSettings()->value("color.R").toFloat();
 	float g = type->getSettings()->value("color.G").toFloat();
 	float b = type->getSettings()->value("color.B").toFloat();
+    float a = type->getSettings()->value("color.A").toFloat();
 
-	this->edgeColor = osg::Vec4(r, g, b, /*a*/0.5);
+    this->edgeColor = osg::Vec4(r, g, b, a);
 
     this->edgeStrength = 1;
 

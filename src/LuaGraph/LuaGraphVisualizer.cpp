@@ -4,6 +4,7 @@
 
 #include "Importer/GraphOperations.h"
 #include "Data/Graph.h"
+#include "Data/Edge.h"
 
 Lua::LuaGraphVisualizer::LuaGraphVisualizer(Data::Graph *graph, osg::ref_ptr<osg::Camera> camera){
     currentGraph = graph;
@@ -19,8 +20,18 @@ void Lua::LuaGraphVisualizer::setNodeParams(osg::ref_ptr<Data::Node> node, Lua::
     float g = obj->getFloatParam("colorG", defColor.g());
     float b = obj->getFloatParam("colorB", defColor.b());
     float a = obj->getFloatParam("colorA", defColor.a());
-    node.get()->setColor(osg::Vec4 (r,g,b,a));
+    node->setColor(osg::Vec4 (r,g,b,a));
     float scale = obj->getFloatParam("size", defSize);
     node->setScale(scale);
     node->reloadConfig();
+}
+
+void Lua::LuaGraphVisualizer::setEdgeParams(osg::ref_ptr<Data::Edge> edge, Lua::LuaGraphObject *obj, osg::Vec4f defColor){
+    edge->setName(obj->getLabel());
+    float r = obj->getFloatParam("colorR", defColor.r());
+    float g = obj->getFloatParam("colorG", defColor.g());
+    float b = obj->getFloatParam("colorB", defColor.b());
+    float a = obj->getFloatParam("colorA", defColor.a());
+    edge->setEdgeColor(osg::Vec4 (r,g,b,a));
+    edge->setEdgeStrength(obj->getFloatParam("edgeStrength", 1));
 }

@@ -99,24 +99,6 @@ public slots:
 	void playPause();
 
     /**
-                *  \fn public  loadLuaGraph()
-                *  \brief load lua graph clicked
-                */
-    void loadLuaGraph();
-
-    /**
-                *  \fn public  updateFromLua()
-                *  \brief update from lua clicked
-                */
-    void updateFromLua();
-
-    /**
-                *  \fn public  loadFileTree()
-                *  \brief load file tree clicked
-                */
-    void loadFileTree();
-
-    /**
                 *  \fn public  loadFunctionCall()
                 *  \brief load function call clicked
                 */
@@ -421,34 +403,22 @@ private:
 	QPushButton * separate;
 
     /**
-        *  QPushButton * loadFromLua
-        *  \brief Action for loading graph from lua
-        */
-    QPushButton * loadFromLua;
-
-    /**
-        *  QPushButton * updateFromLuaButton
-        *  \brief Action for updating graph from lua
-        */
-    QPushButton * updateFromLuaButton;
-
-    /**
-        *  QPushButton * loadFileTreeButton
-        *  \brief Action for loading file tree from lua
-        */
-    QPushButton * loadFileTreeButton;
-
-    /**
         *  QPushButton * loadFunctionCallButton
         *  \brief Action for loading function call graph from lua
         */
     QPushButton * loadFunctionCallButton;
 
     /**
-        *  QLineEdit * filterEdit
-        *  \brief Edit area for filter query
+        *  QLineEdit * filterNodesEdit
+        *  \brief Edit area for node filter query
         */
-    QLineEdit * filterEdit;
+    QLineEdit * filterNodesEdit;
+
+    /**
+        *  QLineEdit * filterEdgesEdit
+        *  \brief Edit area for edge filter query
+        */
+    QLineEdit * filterEdgesEdit;
 
     /**
         *  QTreeView * luaGraphTreeView

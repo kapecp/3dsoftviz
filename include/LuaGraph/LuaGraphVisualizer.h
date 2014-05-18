@@ -10,6 +10,7 @@ namespace Data {
     class Graph;
     class Type;
     class Node;
+    class Edge;
 }
 
 namespace Lua {
@@ -27,6 +28,7 @@ protected:
     Data::Type *edgeType = NULL;
     Data::Type *nodeType = NULL;
     void setNodeParams(osg::ref_ptr<Data::Node> node, Lua::LuaGraphObject *obj, osg::Vec4f defColor, float defSize);
+    void setEdgeParams(osg::ref_ptr<Data::Edge> edge, Lua::LuaGraphObject *obj, osg::Vec4f defColor);
 };
 
 }
