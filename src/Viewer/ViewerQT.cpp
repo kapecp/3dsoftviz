@@ -96,3 +96,34 @@ void QOSG::ViewerQT::moveMouseAruco(double positionX,double positionY,bool isCli
 	}
 	this->getEventQueue()->mouseMotion(wieverX, wieverY);
 }
+
+void QOSG::ViewerQT::moveMouseKinect(double positionX,double positionY,double speed,bool isClick,int windowX,int windowY ,Qt::MouseButton button )
+{
+	//qDebug() << positionX << "  " << positionY << "         " << isClick;
+	positionX /=640.0;
+	positionY/=480.0;
+
+	float wieverX =(float)  (positionX * (float) this->width());
+	float wieverY =(float)  (positionY * (float) this->height());
+
+	int screenX =(int)  (positionX * this->width()  + this->x() + windowX + 8);
+	int screenY = (int)(positionY * this->height() + this->y() + windowY + 28);
+
+	this->cursor().setPos(screenX, screenY);
+
+	qDebug() << screenX << "  " << screenY ;
+	wieverY =  ((float) this->height() - wieverY);
+
+	if( isClick != mIsClicAruco){
+		mIsClicAruco = isClick;
+
+		if(isClick) {
+			this->getEventQueue()->mouseButtonPress(wieverX, wieverY,button);
+			this->getEventQueue()->mouseMotion(wieverX, wieverY);
+		} else {
+			this->getEventQueue()->mouseButtonRelease(wieverX, wieverY, button);
+			return;
+		}
+	}
+	this->getEventQueue()->mouseMotion(wieverX, wieverY);
+}

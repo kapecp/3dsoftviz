@@ -82,7 +82,7 @@ public:
 
 
 	/**
-	 * @brief moveMouseAruco
+	 * @brief move and click Mouse based on Aruco
 	 * @param positionX position of x ais v Aruco <0,1>
 	 * @param positionY position of y ais v Aruco <0,1>
 	 * @param windowX size of window X
@@ -91,6 +91,18 @@ public:
 	 * @param button which button click
 	 */
 	void moveMouseAruco(double positionX, double positionY, bool isClick, int windowX, int windowY, Qt::MouseButton button );
+
+	/**
+	 * @brief move and click Mouse based on Kinect
+	 * @param positionX position of y in real world kinect
+	 * @param positionY position of x in real world kinect
+	 * @param isClick is click mouse
+	 * @param windowX size of window x
+	 * @param windowY size of window y
+	 * @param button which button is clicked
+	 */
+	void moveMouseKinect(double positionX, double positionY,double speed, bool isClick, int windowX, int windowY, Qt::MouseButton button);
+
 
 	/**
 		  *  \fn inline public constant  getPickHandler
