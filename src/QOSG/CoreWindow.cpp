@@ -837,6 +837,7 @@ void CoreWindow::filterGraph()
         lua->callFunction(2, filterGraph, query);
     } else {
         std::cout << "invalid query" << std::endl;
+        AppCore::Core::getInstance()->messageWindows->showMessageBox("Upozornenie","Neplatny vyraz filtra vrcholov",false);
     }
 
 }
