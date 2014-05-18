@@ -15,7 +15,7 @@ local function extractNode(v, nodes, minComplexity, maxComplexity, minLines, max
   local newnode = {type = "node", id = inc(), label = origname, params={size = 8, name = origname, origid = v.id, type = v.data.type, path = v.data.path, modulePath = v.data.modulePath, colorA = 1, colorR = 1, colorG = 1, colorB = 1}}
   if newnode.id == 1 then newnode.params.root = true end
   nodes[v] = newnode
-  if v.data.type == 'file' then 
+  if v.data.type == 'file' or v.data.type == 'globalModule' then 
     newnode.params.colorA = 1
     newnode.params.colorR = 1
     newnode.params.colorG = 0
