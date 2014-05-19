@@ -80,10 +80,10 @@ local function extractEdge(v, existingedges, nodes)
   if existingedges[ind] ~= nil then
     existingedges[ind].params.count = existingedges[ind].params.count + 1
   else
-    local edge = {type = "edge", id = inc(), label = '', params = {origid = v.id, count = 1, edgeStrength = 2}}
+    local edge = {type = "edge", id = inc(), params = {origid = v.id, count = 1, edgeStrength = 2}}
     local incid1 = {type = "edge_part", id = inc(), label = ''}
     local incid2 = {type = "edge_part", id = inc(), label = ''}
-    if v.from[1].data.type == 'function' or v.to[1].data.type == 'globalFunction' then
+    if v.from[1].data.type == 'function' or (v.from[1].data.type == 'file' and v.to[1].data.type == 'globalFunction') then
       edge.params.type = "function call"
       incid1.direction = 'in'
       incid2.direction = 'out'
@@ -94,6 +94,8 @@ local function extractEdge(v, existingedges, nodes)
     if v.from[1].data.type == 'directory' then 
       edge.params.type = 'in directory'
     end
+
+    edge.label = edge.params.type
     if v.from[1].data.modulePath ~= v.to[1].data.modulePath then
       edge.params.edgeStrength = 0.1
     elseif v.from[1].data.modulePath ~= nil then

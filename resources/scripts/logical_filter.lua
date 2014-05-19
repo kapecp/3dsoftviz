@@ -15,6 +15,7 @@ local Number = C(Decimal + Scientific)
 local Name = C((locale.alpha + P "_") * (locale.alnum + P "_")^0)
 local EdgeOp = C(S("><-")) * Space
 local Id = Ct(Ct(EdgeOp^0) * Name * (P"." * Name)^0)
+local EdgeId = Ct(Ct(EdgeOp^-1) * Name * (P"." * Name)^0)
 local RelOp = C(P"==" + P"~=" + P"<=" + P"<" + P">=" + P">")
 local AndOp = C(P"and")
 local OrOp = C(P"or")
@@ -27,13 +28,22 @@ local LiteralString = QuotString + AposString
 local Like = C(P"like")
 
 local Exp, And, Or, Rel, Regex, Not = V"Exp", V"And", V"Or", V"Rel", V"Regex", V"Not"
-G = lpeg.P{ Exp,
+local G = lpeg.P{ Exp,
   Exp = Ct(-1) + Not + Ct(Or * (Space * OrOp * Space * Or)^0),
   Not = Ct(NotOp * Space * Open * Exp * Close),
   Or = Ct(And * (Space * AndOp * Space * And)^0),
   And = Rel + Regex +  Open * Exp * Close,
   Rel = Ct(Id * Space * RelOp * Space * Number),
   Regex = Ct(Id * Space * Like * Space * LiteralString)
+}
+
+local G2 = lpeg.P{ Exp,
+  Exp = Ct(-1) + Not + Ct(Or * (Space * OrOp * Space * Or)^0),
+  Not = Ct(NotOp * Space * Open * Exp * Close),
+  Or = Ct(And * (Space * AndOp * Space * And)^0),
+  And = Rel + Regex +  Open * Exp * Close,
+  Rel = Ct(EdgeId * Space * RelOp * Space * Number),
+  Regex = Ct(EdgeId * Space * Like * Space * LiteralString)
 }
 
 local nodeAccepted
@@ -102,8 +112,22 @@ local function checkNeighbors(node, expTree)
   return false
 end
 
+local function checkEdgeNeighbors(is, expTree)
+  local edgeOp = expTree[1][1][1]
+  local newExp = deleteFirstEdgeOp(expTree)
+  print("edgeop", edgeOp, is.direction, edgeOpRemoteCorrect(edgeOp, is))
+  for inc, node in pairs(is) do
+    if edgeOpRemoteCorrect(edgeOp, is) and nodeAccepted(node, newExp) then
+      return true
+    end
+  end
+  return false
+end
+
 function nodeAccepted(node, expTree)
-  if expTree[2] == 'or' then
+  if #expTree == 0 then
+    return true 
+  elseif expTree[2] == 'or' then
     local result = false
     local i = 1
     for i = 1, #expTree, 2 do
@@ -166,7 +190,9 @@ local function getInvertedGraph(g)
 end
 
 local function hasEdgeOperator(exp)
-  if exp[2] == 'or' then
+  if #exp == 0 then
+    return false
+  elseif exp[2] == 'or' then
     local result = false
     local i = 1
     for i = 1, #exp, 2 do
@@ -189,18 +215,67 @@ local function hasEdgeOperator(exp)
   end
 end
 
-local function filterGraph(s)
+local function edgeAccepted(edge, expTree, is)
+  if expTree[2] == 'or' then
+    local result = false
+    local i = 1
+    for i = 1, #expTree, 2 do
+      result = result or edgeAccepted(edge, expTree[i], is)
+    end
+    return result
+  elseif expTree[2] == 'and' then
+    local result = true
+    local i = 1
+    for i = 1, #expTree, 2 do
+      result = result and edgeAccepted(edge, expTree[i], is)
+    end
+    return result
+  elseif expTree[1] == 'not' then
+    return not edgeAccepted(edge, expTree[2], is)
+  elseif #expTree == 1 then
+    return edgeAccepted(edge, expTree[1], is)
+  else
+    if next(expTree[1][1]) ~= nil then 
+      print("edge", edge.id)
+      return checkEdgeNeighbors(is, expTree)
+    end
+    local var = edge
+    local i
+    for i = 2,#expTree[1] do
+      var = var[expTree[1][i]]
+      if var == nil then return false end
+    end
+    local op = expTree[2]
+    if op == 'like' then
+      local patt = expTree[3] 
+      return string.find(var, patt) ~= nil
+    else
+      local s = 'return ' .. var .. expTree[2] .. expTree[3]
+      return loadstring(s)()
+    end
+  end
+end
+
+local function filterEdges(graph, query)
+  local t = lpeg.match(G2, query)
+  helper.vardump(t)
+  for e,is in pairs(graph) do
+    if edgeAccepted(e, t, is) then
+      e.params.colorA = 1
+      e.label = e.params.type
+    else
+      e.params.colorA = 0.1
+      e.label = ''
+    end
+  end
+end
+
+local function filterGraph(nodeFilter, edgeFilter)
   if getFullGraph == nil then return end
   fullGraph = getFullGraph()
   filteredgraph = {}
-  if s == "" then 
-    filteredgraph = fullGraph
-    graphChangedCallback()
-    return
-  end
   checkedNodes = {}
-  local t = lpeg.match(G, s)
-  helper.vardump(t)
+  local t = lpeg.match(G, nodeFilter)
   local hasEdgeOp = hasEdgeOperator(t)
   if hasEdgeOp then
     invertedgraph = getInvertedGraph(fullGraph)
@@ -210,7 +285,8 @@ local function filterGraph(s)
   local acceptedNodes = {}
   for e, is in pairs(fullGraph) do
     local edge = copyObj(e)
-    edge.params.visible = false
+    edge.params.colorA = 0.1
+    edge.label = ''
     local incidences = {}
     local hasAccepted = false
     for i, n in pairs(is) do
@@ -219,38 +295,48 @@ local function filterGraph(s)
         node = copyObj(n)
         if nodeAccepted(n, t) then
           node.params.colorA = 1
-          node.params.size = node.params.size * 2
           acceptedNodes[n] = true
         else
           node.label = ''
-          node.params.colorA = 0.5
+          node.params.colorA = 0.3
         end
         checkedNodes[n] = node
       else
         node = checkedNodes[n]
       end
-      if hasAccepted then
-        if acceptedNodes[n] then
-          edge.params.visible = true
+      if edgeFilter ~= nil then
+        if hasAccepted then
+          if acceptedNodes[n] then
+            edge.params.colorA = 1
+            edge.label = e.label
+          end
+        else
+          hasAccepted = acceptedNodes[n]
         end
-      else
-        hasAccepted = acceptedNodes[n]
       end
       incidences[i] = node
     end
     filteredgraph[edge] = incidences
   end
+  if edgeFilter ~= "" then 
+    filterEdges(filteredgraph, edgeFilter)
+  end
   graphChangedCallback()
 end
 
-local function validQuery(s)
+local function validNodeQuery(s)
   return lpeg.match(G, s) ~= nil
+end
+
+local function validEdgeQuery(s)
+  return lpeg.match(G2, s) ~= nil
 end
 
 local function getGraph()
   return filteredgraph
 end
 
-return {validQuery = validQuery,
+return {validNodeQuery = validNodeQuery,
+  validEdgeQuery = validEdgeQuery,
   filterGraph = filterGraph,
   getGraph = getGraph}
