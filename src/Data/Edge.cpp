@@ -43,6 +43,7 @@ Data::Edge::Edge(qlonglong id, QString name, Data::Graph* graph, osg::ref_ptr<Da
 	edgeTexCoords = new osg::Vec2Array();
 
     this->addDrawable(createEdge(createStateSet(this->type)));
+    createLabel(name);
 	//updateCoordinates(getSrcNode()->getTargetPosition(), getDstNode()->getTargetPosition());
 	updateCoordinates(getSrcNode()->restrictedTargetPosition(), getDstNode()->restrictedTargetPosition());
 }
@@ -230,7 +231,7 @@ osg::ref_ptr<osg::Drawable> Data::Edge::createEdge(osg::StateSet* bbState)
 
 osg::ref_ptr<osg::StateSet> Data::Edge::createStateSet(Data::Type * type)
 {
-    if (isOriented()){
+    if (!oriented){
         osg::StateSet *edgeStateSet = new osg::StateSet;
 
         edgeStateSet->setMode(GL_LIGHTING, osg::StateAttribute::OFF);
@@ -262,3 +263,20 @@ osg::ref_ptr<osg::StateSet> Data::Edge::createStateSet(Data::Type * type)
     }
 }
 
+void Data::Edge::showLabel(bool visible)
+{
+    //nastavenie zobrazenia popisku uzla
+    if (visible && !this->containsDrawable(label))
+        this->addDrawable(label);
+    else if (!visible)
+        this->removeDrawable(label);
+}
+
+void Data::Edge::reloadLabel(){
+    osg::ref_ptr<osg::Drawable> newLabel = createLabel(name);
+
+    if (this->containsDrawable(label))
+    {
+        this->setDrawable(this->getDrawableIndex(label), newLabel);
+    }
+}

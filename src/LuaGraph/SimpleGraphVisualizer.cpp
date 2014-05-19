@@ -37,10 +37,8 @@ void Lua::SimpleGraphVisualizer::visualize()
             } else {
                 newEdge = currentGraph->addEdge(i.key(), i.value()->getLabel(), srcNode, dstNode, edgeType, true);
             }
-            newEdge->setEdgeColor(osg::Vec4(1,0,0,1));
         } else {
             newEdge = currentGraph->addEdge(i.key(), i.value()->getLabel(), srcNode, dstNode, edgeType, false);
-            newEdge->setEdgeColor(osg::Vec4(0,1,0,1));
         }
         newEdge->setCamera(camera);
         setEdgeParams(newEdge, i.value(), osg::Vec4f(1,1,1,1));
@@ -81,11 +79,9 @@ void Lua::SimpleGraphVisualizer::onUpdate()
         setNodeParams(n, i.value(), osg::Vec4f(1,1,1,1), 8);
     }
     for (QMap<qlonglong, Lua::LuaEdge *>::iterator i = g->getEdges()->begin(); i != g->getEdges()->end(); ++i){
-        osg::ref_ptr<Data::Edge> n = currentGraph->getEdges()->value(i.key());
-        if (i.value()->getParams()["visible"] == false)
-            n->setScale(0);
-        else
-            n->setScale(1);
+        osg::ref_ptr<Data::Edge> e = currentGraph->getEdges()->value(i.key());
+        setEdgeParams(e, i.value(), osg::Vec4f(1,1,1,1));
+        e->reloadLabel();
     }
 }
 

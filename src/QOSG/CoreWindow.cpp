@@ -735,13 +735,14 @@ void CoreWindow::filterGraph()
 
     Diluculum::LuaValueList query;
     query.push_back(nodesQueryText);
-    QString validQuery[] = {"logical_filter", "validQuery"};
-    if (lua->callFunction(2, validQuery, query)[0] == false){
+    QString validNodesQuery[] = {"logical_filter", "validNodeQuery"};
+    if (lua->callFunction(2, validNodesQuery, query)[0] == false){
         AppCore::Core::getInstance()->messageWindows->showMessageBox("Upozornenie","Neplatny vyraz filtra vrcholov",false);
         return;
     }
     query[0] = edgesQueryText;
-    if (lua->callFunction(2, validQuery, query)[0] == false){
+    QString validEdgesQuery[] = {"logical_filter", "validEdgeQuery"};
+    if (lua->callFunction(2, validEdgesQuery, query)[0] == false){
         AppCore::Core::getInstance()->messageWindows->showMessageBox("Upozornenie","Neplatny vyraz filtra hran",false);
         return;
     }

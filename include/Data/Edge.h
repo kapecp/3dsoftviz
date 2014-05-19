@@ -382,6 +382,8 @@ public:
     float getEdgeStrength() const;
     void setEdgeStrength(float value);
 
+    void reloadLabel();
+    void showLabel(bool visible);
 private:
 
     bool isInvisible;

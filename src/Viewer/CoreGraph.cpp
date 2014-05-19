@@ -102,7 +102,7 @@ void CoreGraph::reload(Data::Graph * graph)
 	root->addChild(qmetaEdgesGroup->getGroup());
 	qmetaEdgesPosition = currentPos++;
 
-	root->addChild(initEdgeLabels());
+//	root->addChild(initEdgeLabels());
 	labelsPosition = currentPos++;
 
 	this->restrictionVisualizationsGroup = QSharedPointer<Vwr::RestrictionVisualizationsGroup> (new Vwr::RestrictionVisualizationsGroup);
@@ -193,24 +193,24 @@ osg::ref_ptr<osg::Node> CoreGraph::createSkyBox(){
 	}
 }
 
-osg::ref_ptr<osg::Group> CoreGraph::initEdgeLabels()
-{
-	osg::ref_ptr<osg::Geode> geode = new osg::Geode;
+//osg::ref_ptr<osg::Group> CoreGraph::initEdgeLabels()
+//{
+//	osg::ref_ptr<osg::Geode> geode = new osg::Geode;
 
-	QMap<qlonglong, osg::ref_ptr<Data::Edge> >::iterator i = in_edges->begin();
+//	QMap<qlonglong, osg::ref_ptr<Data::Edge> >::iterator i = in_edges->begin();
 
-	while (i != in_edges->end())
-	{
-		geode->addDrawable(i.value()->createLabel(i.value()->getName()));
-		i++;
-	}
+//	while (i != in_edges->end())
+//	{
+//		geode->addDrawable(i.value()->createLabel(i.value()->getName()));
+//		i++;
+//	}
 
-	osg::ref_ptr<osg::Group> labels = new osg::Group;
-	labels->addChild(geode);
-	labels->setNodeMask(0);
+//	osg::ref_ptr<osg::Group> labels = new osg::Group;
+//	labels->addChild(geode);
+//	labels->setNodeMask(0);
 
-	return labels;
-}
+//	return labels;
+//}
 
 osg::ref_ptr<osg::Group> CoreGraph::initCustomNodes()
 {
@@ -272,7 +272,13 @@ void CoreGraph::synchronize()
 
 void CoreGraph::setEdgeLabelsVisible(bool visible)
 {
-	root->getChild(labelsPosition)->setNodeMask(visible);
+    QMap<qlonglong, osg::ref_ptr<Data::Edge> >::const_iterator i = in_edges->constBegin();
+
+    while (i != in_edges->constEnd())
+    {
+        (*i)->showLabel(visible);
+        ++i;
+    }
 }
 
 void CoreGraph::setNodeLabelsVisible(bool visible)
@@ -298,7 +304,7 @@ void CoreGraph::reloadConfig()
 		++i;
 	}
 
-	root->setChild(labelsPosition, initEdgeLabels());
+//	root->setChild(labelsPosition, initEdgeLabels());
 	Vwr::TextureWrapper::reloadTextures();
 }
 
