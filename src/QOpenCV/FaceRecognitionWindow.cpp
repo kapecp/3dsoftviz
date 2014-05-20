@@ -73,10 +73,7 @@ void QOpenCV::FaceRecognitionWindow::configureWindow()
 
 	QHBoxLayout *mainLayout		= new QHBoxLayout;
 	QVBoxLayout *buttonLayout	= new QVBoxLayout;
-	/*
-	mFaceDetBackgrCB
-	mMarkerBackgrCB
-		*/
+
 	mFaceRecRB->setChecked(true);
 	buttonLayout->addWidget( mFaceRecRB );
 	buttonLayout->addWidget( mMarkerRB );
@@ -280,7 +277,7 @@ void QOpenCV::FaceRecognitionWindow::setLabel(cv::Mat image)
 
 	mWindowLabel->setPixmap( QPixmap::fromImage(qimage));
 
-	image.~Mat();    //?????????
+	image.~Mat();
 }
 
 void QOpenCV::FaceRecognitionWindow::setLabelQ( QImage qimage )
@@ -291,6 +288,8 @@ void QOpenCV::FaceRecognitionWindow::setLabelQ( QImage qimage )
 	}
 
 	mWindowLabel->setPixmap( QPixmap::fromImage(qimage) );
+
+	image.~Mat();
 }
 
 void QOpenCV::FaceRecognitionWindow::closeEvent(QCloseEvent *event)
@@ -302,9 +301,7 @@ void QOpenCV::FaceRecognitionWindow::closeEvent(QCloseEvent *event)
 	mNoVideo->setChecked( true );
 	onSelModulChange();
 
-	disconnect();
-
-	//deleteLater();   // its efective not destroy it, but disconnect its only, it will remeber its state
+	disconnect();  // disconnect unnecessary connection, while dialog is hidden(disabling sending image to window)
 
 	event->accept();
 }

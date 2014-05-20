@@ -18,7 +18,6 @@ QOpenCV::FaceRecognitionThread::FaceRecognitionThread( QObject *parent)
 
 QOpenCV::FaceRecognitionThread::~FaceRecognitionThread(void)
 {
-
 }
 
 void QOpenCV::FaceRecognitionThread::run()

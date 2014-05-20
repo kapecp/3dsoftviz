@@ -13,7 +13,6 @@
 #include "Viewer/MouseControl.h"
 
 
-
 using namespace OpenCV;
 
 
@@ -79,6 +78,8 @@ void OpenCV::OpenCVCore::faceRecognition()
 }
 
 void  OpenCVCore::createPermanentConnection(){
+	// they are still created
+
 	//  sending result data from face detection
 	QObject::connect( mThrFaceRec,
 					  SIGNAL(sendEyesCoords(float,float,float)),

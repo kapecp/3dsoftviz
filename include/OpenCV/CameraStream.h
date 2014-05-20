@@ -17,6 +17,8 @@ namespace OpenCV{
 * @brief Class CameraStream
 * @author Dávid Durčák
 * @date 14.04.2014
+* @brief Class provides a obect, that cam by uses as dynamic image for texture. When we changed it, all texture that use it will be automaticly
+* updated. It is uses for video background functionality. On linux with old osg library(older than 3.0), there cam be performance troubles.
 */
 class CameraStream : public QObject, public osg::Image
 {
