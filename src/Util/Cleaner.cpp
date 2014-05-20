@@ -1,6 +1,7 @@
 #include "Util/Cleaner.h"
 #include <iostream>
 
+using namespace Util;
 using namespace std;
 
 void Cleaner::clean()

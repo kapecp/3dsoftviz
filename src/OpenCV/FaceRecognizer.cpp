@@ -13,8 +13,8 @@ OpenCV::FaceRecognizer::FaceRecognizer()
 	this->detected=false;
 	this->isMovement=false;
 	this->firstdetection=true;
-	this->queue = new SizedQueue(8,0.0f);
-	this->queueDistance = new SizedQueue(8,0.0f);
+	this->queue = new Util::SizedQueue(8,0.0f);
+	this->queueDistance = new Util::SizedQueue(8,0.0f);
 }
 
 OpenCV::FaceRecognizer::~FaceRecognizer()
@@ -24,6 +24,8 @@ OpenCV::FaceRecognizer::~FaceRecognizer()
 
 void OpenCV::FaceRecognizer::detectFaces(Mat gray)
 {
+	// If we detected head in previous frame, detect next head in region
+	// of previous detection
 	if (this->detected)
 	{
 			cv::Mat subImg = gray(cv::Rect(this->rect.x,this->rect.y,
@@ -53,12 +55,14 @@ void OpenCV::FaceRecognizer::annotateFaces(Mat frame)
 		}
 		if (detected)
 		{
+			// if the movement was under the threshold
 			if ((abs(1.0f-(float)this->drawrect.x/(float)(this->rect.x+face_i.x))<0.10f)&&
 					(abs(1.0f-(float)this->drawrect.y/(float)(this->rect.y+face_i.y))<0.10f) &&
 					(abs(1.0f-(float)this->drawrect.width/(float)(face_i.width))<0.10f) &&
 					(abs(1.0f-(float)this->drawrect.height/(float)(face_i.height))<0.10f))
 			{
 				//TODO conversion to INT,
+				// rectangle around the head
 				face_i.x=(int)(face_i.x-face_i.width*0.4+this->rect.x);
 				if (face_i.x<0) face_i.x=0;
 				if (face_i.x>frame.cols-1) face_i.x=frame.cols-1;
@@ -74,6 +78,7 @@ void OpenCV::FaceRecognizer::annotateFaces(Mat frame)
 				isMovement=false;
 			} else {
 				//TODO conversion to INT,
+				// rectangle to be drawn as the head was detected
 				this->drawrect.x=(int)(face_i.x+this->rect.x); //-face_i.width*0.1
 				if (this->drawrect.x<0) this->drawrect.x=0;
 				if (this->drawrect.x>frame.cols-1) this->drawrect.x=frame.cols-1;
@@ -100,6 +105,7 @@ void OpenCV::FaceRecognizer::annotateFaces(Mat frame)
 				isMovement=true;
 			}
 		}
+		// when head was lost in previous frame
 		if (!detected)
 		{
 			detected=true;
@@ -117,7 +123,7 @@ void OpenCV::FaceRecognizer::annotateFaces(Mat frame)
 			if (face_i.y+face_i.height>frame.rows-1) face_i.height=frame.rows-1-face_i.y;
 			this->rect=face_i;
 		}
-
+		// draw the results & compute eyes coordinates
 		rectangle(frame, drawrect, CV_RGB(0, 255,0), 1);
 		rectangle(frame, face_i, CV_RGB(255, 0,0), 1);
 		computeEyesCoordinations(this->drawrect,frame.size()); //face_i

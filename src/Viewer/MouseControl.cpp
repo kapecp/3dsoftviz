@@ -35,39 +35,6 @@ Vwr::MouseControl::~MouseControl()
 {
 }
 
-void Vwr::MouseControl::moveMouseAruco(double positionX,double positionY,bool isClick, Qt::MouseButton button )
-{
-	//qDebug() << positionX << "  " << positionY << "         " << isClick;
-
-	float wieverX = (float) (positionX * viewer->width());
-	float wieverY = (float) (positionY * viewer->height());
-	int windowX = (int) positionX * viewer->width()  + viewer->x() + 8;
-	int windowY = (int) positionY * viewer->height() + viewer->y() + 28;
-	int screenX = (int) positionX * viewer->width()  + viewer->x() + window->x()+8;
-	int screenY = (int) positionY * viewer->height() + viewer->y() + window->y()+28 ;
-
-
-	viewer->cursor().setPos(screenX, screenY);
-
-
-	wieverY =  ((float) viewer->height() - wieverY);
-
-	if( isClick != mIsClicAruco){
-		mIsClicAruco = isClick;
-
-		if(isClick) {
-			viewer->getEventQueue()->mouseButtonPress(wieverX, wieverY,button);
-			viewer->getEventQueue()->mouseMotion(wieverX, wieverY);
-		} else {
-			viewer->getEventQueue()->mouseButtonRelease(wieverX, wieverY, button);
-			return;
-		}
-	}
-	viewer->getEventQueue()->mouseMotion(wieverX, wieverY);
-
-
-}
-
 void Vwr::MouseControl::moveMouse(float positionX, float positionY)
 {
 	// add event to Event Queue - osgGa eventy

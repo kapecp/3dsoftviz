@@ -19,7 +19,7 @@ namespace QOpenCV
 {
 
 /**
-	 * @author Autor: Marek Jakab
+	 * @author Autor: Marek Jakab, David Durcak
 	 * @brief Class FaceRecognitionWindow
 	 */
 class FaceRecognitionWindow : public QDialog
@@ -83,12 +83,23 @@ signals:
 
 	/**
 		 * @author Autor: David Durcak
-		 * @brief sendImgMarker Signal for enagling or disabling sending actual image from Aruco thread
+		 * @brief sendImgMarker Signal for enagling or disabling sending actual image from Aruco thread to this window
 		 * @param send
 		 */
 	void sendImgMarker( bool send );
 
+	/**
+		 * @author Autor: David Durcak
+		 * @brief sendBackgrImgFaceRec Signal for enagling or disabling sending actual image from FaceDetection thread to background
+		 * @param send
+		 */
 	void sendBackgrImgFaceRec( bool send );
+
+	/**
+		 * @author Autor: David Durcak
+		 * @brief sendBackgrImgMarker Signal for enagling or disabling sending actual image from Aruco thread thread to background
+		 * @param send
+		 */
 	void sendBackgrImgMarker( bool send );
 
 	/**
@@ -118,8 +129,18 @@ signals:
 		 */
 	void startFaceRec();
 
+	/**
+		 * @author Autor: David Durcak
+		 * @brief setCapVideoFaceRec Signal for setting camera in FaceRecognizationThread
+		 * @param capVideo camera object
+		 */
 	void setCapVideoFaceRec( OpenCV::CapVideo *capVideo);
 
+	/**
+		 * @author Autor: David Durcak
+		 * @brief setCapVideoMarker Signal for setting camera in ArucoThread
+		 * @param capVideo camera object
+		 */
 	void setCapVideoMarker( OpenCV::CapVideo *capVideo);
 
 
@@ -177,7 +198,18 @@ private slots:
 		 */
 	void onMarkerStartCancel(bool checked);
 
+	/**
+		 * @author Autor: David Durcak
+		 * @brief onFaceDetBackgrCBClicked Slot for enabling video backgroung from FaceRecongition and disabling from Aruco
+		 * @param checked
+		 */
 	void onFaceDetBackgrCBClicked(bool checked);
+
+	/**
+		 * @author Autor: David Durcak
+		 * @brief onMarkerBackgrCBClicked Slot for enabling video backgroung from Aruco and disabling from FaceRecongition
+		 * @param checked
+		 */
 	void onMarkerBackgrCBClicked(bool checked);
 
 

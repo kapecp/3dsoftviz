@@ -33,7 +33,19 @@ public:
 	QLabel *windowLabel;
 signals:
 	void setCam(int devid, int width, int heigth);
+
+public slots:
+	//void itemClicked(QModelIndex index);
+	void commitChanges();
+
 private:
+	/**
+		 * @author Autor: Marek Jakab
+		 * @brief configureWindow Sets window properties
+		 */
+	void configureWindow(QString stringdata);
+	void createTableModel(QString stringdata);
+
 	QApplication * app;
 
 	QStandardItemModel * model;
@@ -43,16 +55,7 @@ private:
 	QModelIndexList indexes;
 
 	int rowsize;
-	/**
-		 * @author Autor: Marek Jakab
-		 * @brief configureWindow Sets window properties
-		 */
-	void configureWindow(QString stringdata);
-	void createTableModel(QString stringdata);
 
-public slots:
-	//void itemClicked(QModelIndex index);
-	void commitChanges();
 };
 }
 

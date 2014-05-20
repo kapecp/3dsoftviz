@@ -20,8 +20,8 @@ namespace OpenCV{
 namespace OpenCV
 {
 /**
-	*@brief Class OpenCVCore
-	*@author Autor: Marek Jakab
+	*@brief Class OpenCVCore Controller for Face detection and Aruco functionality.
+	*@author Autor: Marek Jakab, David Durcak
 	*@date 18.11.2013
 	*/
 class OpenCVCore
@@ -78,7 +78,7 @@ private:
 
 
 	static OpenCVCore	*mOpenCVCore;	// static singleton instance
-	bool	mThrsCreated;				// if false, threads were not initialized yet
+	bool				mThrsCreated;	// if false, threads were not initialized yet
 
 	QWidget							*mParent;
 	QApplication					*mApp;

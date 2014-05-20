@@ -51,6 +51,7 @@
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wcast-qual"
 
+using namespace QOSG;
 
 /*! \class QtColorPicker
 

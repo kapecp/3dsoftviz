@@ -322,14 +322,14 @@ private:
 #ifdef OPENCV_FOUND
 	/**
 		*  \fn private  createTextureBackground
-		*  \brief creates video background as 3d rectangle
+		*  \brief creates video background as 3d rectangle. It uses image, that can be dynamicly changed
 		*  \return osg::ref_ptr node
 		*/
 	osg::ref_ptr<osg::Node> createTextureBackground();
 
 	/**
 		*  \fn private  createOrtho2dBackground
-		*  \brief creates video background rectangle in ortho2d mode
+		*  \brief creates video background rectangle in ortho2d mode. It uses image, that can be dynamicly changed
 		*  \return osg::ref_ptr node
 		*/
 	osg::ref_ptr<osg::Node> createOrtho2dBackground();

@@ -60,7 +60,6 @@ CoreWindow::CoreWindow(QWidget *parent, Vwr::CoreGraph* coreGraph, QApplication*
 	isPlaying = true;
 	application = app;
 	layout = thread;
-	mIsClicAruco=false;
 
 	client = new Network::Client(this);
 	new Network::Server(this);
@@ -99,6 +98,8 @@ CoreWindow::CoreWindow(QWidget *parent, Vwr::CoreGraph* coreGraph, QApplication*
 
 	connect(lineEdit,SIGNAL(returnPressed()),this,SLOT(sqlQuery()));
 
+
+	// connect checkbox for interchanging between rotation of camera or rotation of graph
 	QObject::connect( chb_camera_rot, SIGNAL(clicked(bool)),
 					  viewerWidget->getCameraManipulator(), SLOT(setCameraCanRot(bool)));
 
@@ -557,11 +558,11 @@ void CoreWindow::createAugmentedRealityToolBar() {
 	toolBar->addSeparator();
 
 	//TODO future feature - experimental state
-	//b_start_ransac = new QPushButton();
-	//b_start_ransac->setText("Start calculate surface");
-	//toolBar->addWidget( b_start_ransac );
-	//connect(b_start_ransac, SIGNAL(clicked()), this, SLOT(calculateRansac()));
-	//toolBar->addSeparator();
+	b_start_ransac = new QPushButton();
+	b_start_ransac->setText("Start calculate surface");
+	toolBar->addWidget( b_start_ransac );
+	connect(b_start_ransac, SIGNAL(clicked()), this, SLOT(calculateRansac()));
+	toolBar->addSeparator();
 
 #endif
 #endif
@@ -904,13 +905,21 @@ void CoreWindow::removeMetaNodes()
 
 void CoreWindow::loadFile()
 {
+	QFileDialog dialog;
+	dialog.setDirectory( "../share/3dsoftviz" );
+
 	//treba overit
 	layout->pause();
 	coreGraph->setNodesFreezed(true);
-	QString fileName = QFileDialog::getOpenFileName(this,
-													tr("Open file"), ".", tr("GraphML files (*.graphml);;GXL files (*.gxl);;RSF files (*.rsf)"));
 
-	if (fileName != "") {
+	QString fileName =NULL;
+
+	if(dialog.exec()){
+		QStringList filenames = dialog.selectedFiles();
+		fileName = filenames.at(0);
+	}
+
+	if (fileName != NULL) {
 		Manager::GraphManager::getInstance()->loadGraph(fileName);
 
 		viewerWidget->getCameraManipulator()->home();
@@ -922,6 +931,8 @@ void CoreWindow::loadFile()
 		layout->play();
 		coreGraph->setNodesFreezed(false);
 	}
+
+
 }
 
 void CoreWindow::labelOnOff(bool)
@@ -1971,37 +1982,7 @@ void CoreWindow::closeEvent(QCloseEvent *event)
 	//QApplication::closeAllWindows();   // ????
 }
 
-
-
 void QOSG::CoreWindow::moveMouseAruco(double positionX,double positionY,bool isClick, Qt::MouseButton button )
 {
-	//qDebug() << positionX << "  " << positionY << "         " << isClick;
-
-	float wieverX =(float)  (positionX * (float) this->GetViewerQt()->width());
-	float wieverY =(float)  (positionY * (float) this->GetViewerQt()->height());
-	int windowX = (int) (positionX * this->GetViewerQt()->width()  + this->GetViewerQt()->x() + 8);
-	int windowY =  (int)(positionY * this->GetViewerQt()->height() + this->GetViewerQt()->y() + 28);
-	int screenX =(int)  (positionX * this->GetViewerQt()->width()  + this->GetViewerQt()->x() + this->x() + 8);
-	int screenY = (int)(positionY * this->GetViewerQt()->height() + this->GetViewerQt()->y() + this->y() + 28);
-
-
-	this->GetViewerQt()->cursor().setPos(screenX, screenY);
-
-	qDebug() << screenX << "  " << screenY ;
-	wieverY =  ((float) this->height() - wieverY);
-
-	if( isClick != mIsClicAruco){
-		mIsClicAruco = isClick;
-
-		if(isClick) {
-			this->GetViewerQt()->getEventQueue()->mouseButtonPress(wieverX, wieverY,button);
-			this->GetViewerQt()->getEventQueue()->mouseMotion(wieverX, wieverY);
-		} else {
-			this->GetViewerQt()->getEventQueue()->mouseButtonRelease(wieverX, wieverY, button);
-			return;
-		}
-	}
-	this->GetViewerQt()->getEventQueue()->mouseMotion(wieverX, wieverY);
-
-
+	this->viewerWidget->moveMouseAruco(positionX,positionY,isClick,this->x(),this->y(),button);
 }

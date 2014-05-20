@@ -18,7 +18,7 @@
 #include <QtWebKit/QWebSettings>
 #include <QtWebKit/QtWebKit>
 #include "OsgQtBrowser/QGraphicsViewAdapter.h"
-
+namespace OsgQtBrowser{
 /**
 *  \class QWebViewImage
 *  \brief
@@ -140,5 +140,5 @@ protected:
 		*/
 	QPointer<QWebPage>              _webPage;
 };
-
+}
 #endif

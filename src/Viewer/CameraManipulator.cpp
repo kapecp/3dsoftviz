@@ -25,6 +25,9 @@ double Vwr::CameraManipulator::EYE_MOVEMENT_SPEED;
 double Vwr::CameraManipulator::TARGET_MOVEMENT_SPEED;
 float Vwr::CameraManipulator::SCREEN_MARGIN;
 
+using namespace Vwr;
+using namespace MathModule;
+
 Vwr::CameraManipulator::CameraManipulator(Vwr::CoreGraph * coreGraph)
 {
 	appConf = Util::ApplicationConfig::get();

@@ -4,12 +4,15 @@
 #include "Viewer/CameraManipulator.h"
 #include "Viewer/CoreGraph.h"
 #include "Util/ApplicationConfig.h"
+#include "Core/Core.h"
 
 QOSG::ViewerQT::ViewerQT(QWidget * parent , const char * name , const QGLWidget * shareWidget , WindowFlags f , Vwr::CoreGraph* cg):
 	AdapterWidget( parent, name, shareWidget, f )
 {
 	this->cg = cg;
 	cg->setCamera(this->getCamera());
+
+	this->mIsClicAruco=false;
 
 	appConf = Util::ApplicationConfig::get();
 
@@ -63,4 +66,64 @@ void QOSG::ViewerQT::paintGL()
 {
 	frame();
 	cg->update();
+}
+
+void QOSG::ViewerQT::moveMouseAruco(double positionX,double positionY,bool isClick,int windowX,int windowY ,Qt::MouseButton button )
+{
+	//qDebug() << positionX << "  " << positionY << "         " << isClick;
+
+	float wieverX =(float)  (positionX * (float) this->width());
+	float wieverY =(float)  (positionY * (float) this->height());
+
+	int screenX =(int)  (positionX * this->width()  + this->x() + windowX + 8);
+	int screenY = (int)(positionY * this->height() + this->y() + windowY + 28);
+
+	this->cursor().setPos(screenX, screenY);
+
+	qDebug() << screenX << "  " << screenY ;
+	wieverY =  ((float) this->height() - wieverY);
+
+	if( isClick != mIsClicAruco){
+		mIsClicAruco = isClick;
+
+		if(isClick) {
+			this->getEventQueue()->mouseButtonPress(wieverX, wieverY,button);
+			this->getEventQueue()->mouseMotion(wieverX, wieverY);
+		} else {
+			this->getEventQueue()->mouseButtonRelease(wieverX, wieverY, button);
+			return;
+		}
+	}
+	this->getEventQueue()->mouseMotion(wieverX, wieverY);
+}
+
+void QOSG::ViewerQT::moveMouseKinect(double positionX,double positionY,double speed,bool isClick,int windowX,int windowY ,Qt::MouseButton button )
+{
+	//qDebug() << positionX << "  " << positionY << "         " << isClick;
+	positionX /=640.0;
+	positionY/=480.0;
+
+	float wieverX =(float)  (positionX * (float) this->width());
+	float wieverY =(float)  (positionY * (float) this->height());
+
+	int screenX =(int)  (positionX * this->width()  + this->x() + windowX + 8);
+	int screenY = (int)(positionY * this->height() + this->y() + windowY + 28);
+
+	this->cursor().setPos(screenX, screenY);
+
+	qDebug() << screenX << "  " << screenY ;
+	wieverY =  ((float) this->height() - wieverY);
+
+	if( isClick != mIsClicAruco){
+		mIsClicAruco = isClick;
+
+		if(isClick) {
+			this->getEventQueue()->mouseButtonPress(wieverX, wieverY,button);
+			this->getEventQueue()->mouseMotion(wieverX, wieverY);
+		} else {
+			this->getEventQueue()->mouseButtonRelease(wieverX, wieverY, button);
+			return;
+		}
+	}
+	this->getEventQueue()->mouseMotion(wieverX, wieverY);
 }

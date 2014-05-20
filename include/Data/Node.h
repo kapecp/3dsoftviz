@@ -20,6 +20,8 @@ class Type;
 class Graph;
 class GraphLayout;
 
+typedef osg::TemplateIndexArray<unsigned int, osg::Array::UIntArrayType,4,1> ColorIndexArray;
+
 /**
 	*  \class Node
 	*  \brief Node object represents a single node in a Graph
@@ -275,10 +277,11 @@ public:
 	{
 		this->fixed = fixed;
 
-		if (fixed && !this->containsDrawable(square))
-			this->addDrawable(square);
-		else if (!fixed)
-			this->removeDrawable(square);
+		if (fixed && this->containsDrawable(square)){
+			this->setDrawableColor(0, osg::Vec4(1.0f, 0.0f, 0.0f, 1.0f));
+		}
+		else if (!fixed && this->containsDrawable(square))
+			this->setDrawableColor(0, colorOfNode);
 	}
 
 	/**
@@ -744,6 +747,7 @@ protected:
 		*  \brief Settings of the Node
 		*/
 	QMap<QString, QString> * settings;
+	osg::Vec4 colorOfNode;
 };
 }
 

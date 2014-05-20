@@ -7,7 +7,7 @@
 #include <osg/Geometry>
 #include <cmath>
 
-
+using namespace MathModule;
 
 osg::Vec3d CameraMath::getPointOnNextBezierCurve(double time, QVector<osg::Vec3d> * points, double weights[])
 {

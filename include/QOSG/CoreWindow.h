@@ -338,8 +338,6 @@ public slots:
 	void setAvatarScale(int scale);
 private:
 
-	bool mIsClicAruco;
-
 	/**
 		*  QApplication * application
 		*  \brief Pointer to aplication

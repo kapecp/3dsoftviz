@@ -77,8 +77,8 @@ private:
 	cv::Rect rect;
 	cv::Rect drawrect;
 	bool firstdetection;
-	SizedQueue *queue;
-	SizedQueue *queueDistance;
+	Util::SizedQueue *queue;
+	Util::SizedQueue *queueDistance;
 
 	/**
 		 * @author Autor: Marek Jakab

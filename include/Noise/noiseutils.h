@@ -33,6 +33,8 @@
 
 using namespace noise;
 
+
+
 namespace noise
 {
 
@@ -77,6 +79,16 @@ namespace utils
 /// address is jlbezigvins@gmzigail.com (For great email, take off every
 /// <a href=http://www.planettribes.com/allyourbase/story.shtml>zig</a>.)
 
+/// A pointer to a callback function used by the NoiseMapBuilder class.
+///
+/// The NoiseMapBuilder::Build() method calls this callback function each
+/// time it fills a row of the noise map with coherent-noise values.
+///
+/// This callback function has a single integer parameter that contains
+/// a count of the rows that have been completed.  It returns void.  Pass
+/// a function with this signature to the NoiseMapBuilder::SetCallback()
+/// method.
+
 /// The maximum width of a raster.
 const int RASTER_MAX_WIDTH = 32767;
 
@@ -88,15 +100,6 @@ const int RASTER_MAX_HEIGHT = 32767;
 const int RASTER_STRIDE_BOUNDARY = 4;
 #endif
 
-/// A pointer to a callback function used by the NoiseMapBuilder class.
-///
-/// The NoiseMapBuilder::Build() method calls this callback function each
-/// time it fills a row of the noise map with coherent-noise values.
-///
-/// This callback function has a single integer parameter that contains
-/// a count of the rows that have been completed.  It returns void.  Pass
-/// a function with this signature to the NoiseMapBuilder::SetCallback()
-/// method.
 typedef void(*NoiseMapCallback) (int row);
 
 /// Number of meters per point in a Terragen terrain (TER) file.

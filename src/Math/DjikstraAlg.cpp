@@ -4,6 +4,8 @@
 
 #include <limits>
 #include <iostream>
+
+using namespace MathModule;
 using namespace std;
 
 // source: http://www.vogella.de/articles/JavaAlgorithmsDijkstra/article.html

@@ -16,7 +16,6 @@
 #include <QMap>
 #include <QString>
 
-typedef QMap<QString, long> MapSL;
 
 
 
@@ -24,6 +23,9 @@ namespace Data
 {
 class Node;
 class Edge;
+
+typedef QMap<QString, long> MapSL;
+
 /**
 	*  \class GraphSerializer
 	*  \brief Hypergraph serialzer

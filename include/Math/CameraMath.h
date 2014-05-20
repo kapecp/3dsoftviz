@@ -5,6 +5,8 @@
 #include <QVector>
 #include "Data/Node.h"
 
+namespace MathModule{
+
 class CameraMath
 {
 public:
@@ -142,3 +144,4 @@ public:
 	 */
 	static osg::Drawable* createAxis(const osg::Vec3& corner,const osg::Vec3& xdir, osg::Vec4 color = osg::Vec4d(0.0f,0.0f,1.0f,0.0f));
 };
+}

@@ -80,36 +80,8 @@ osg::TextureCubeMap* SkyBox::readCubeMap()
 
 
 // Update texture matrix for cubemaps
-struct TexMatCallback : public osg::NodeCallback
-{
-public:
 
-	TexMatCallback(osg::TexMat& tm) :
-		_texMat(tm)
-	{
-	}
-
-	virtual void operator()(osg::Node* node, osg::NodeVisitor* nv)
-	{
-		osgUtil::CullVisitor* cv = dynamic_cast<osgUtil::CullVisitor*>(nv);
-		if (cv)
-		{
-			const osg::Matrix * MV = cv->getModelViewMatrix();
-			const osg::Matrix R = osg::Matrix::rotate( osg::DegreesToRadians(112.0f), 0.0f,0.0f,1.0f)*
-					osg::Matrix::rotate( osg::DegreesToRadians(90.0f), 1.0f,0.0f,0.0f);
-
-			osg::Quat q = MV->getRotate();
-			const osg::Matrix C = osg::Matrix::rotate( q.inverse() );
-
-			_texMat.setMatrix( C*R );
-		}
-
-		traverse(node,nv);
-	}
-
-	osg::TexMat& _texMat;
-};
-
+namespace Vwr{
 
 class MoveEarthySkyWithEyePointTransform : public osg::Transform
 {
@@ -136,7 +108,7 @@ public:
 		return true;
 	}
 };
-
+}
 
 osg::Node* SkyBox::createSkyBox()
 {

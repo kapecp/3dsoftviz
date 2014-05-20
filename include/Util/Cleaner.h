@@ -22,6 +22,8 @@
 #include <qobject.h>
 #include <qapplication.h>
 
+namespace Util{
+
 class Cleaner : public QObject
 {
 	Q_OBJECT
@@ -57,5 +59,6 @@ public:
 
 
 };
-
+}
 #endif
+

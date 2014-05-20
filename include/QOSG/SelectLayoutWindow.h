@@ -14,6 +14,10 @@ class QTableWidgetItem;
 
 namespace QOSG
 {
+
+
+
+
 /**
 	*  \class SelectLayoutWindow
 	*

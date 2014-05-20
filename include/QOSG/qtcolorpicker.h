@@ -89,6 +89,8 @@
 #  define QT_QTCOLORPICKER_EXPORT
 #endif
 
+namespace QOSG{
+
 class ColorPickerPopup;
 
 
@@ -247,5 +249,6 @@ private:
 	bool dirty;
 	bool firstInserted;
 };
-
+}
 #endif
+

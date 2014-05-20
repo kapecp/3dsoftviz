@@ -66,6 +66,7 @@ void CameraStream::updateBackgroundImage( cv::Mat cvImg)
 			 (unsigned char*)( img.data),
 			 NO_DELETE, 1);
 
+	//cvImg.~Mat();  // must be tested on linux for memory leaks
 #endif
 
 	dirty();

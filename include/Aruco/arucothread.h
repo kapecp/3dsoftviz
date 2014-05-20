@@ -13,9 +13,8 @@
 
 #include "Util/SizedQueue.h"
 
-Q_DECLARE_METATYPE( osg::Vec3d )
-Q_DECLARE_METATYPE( osg::Quat )
 
+using namespace Util;
 
 namespace ArucoModul {
 class ArucoCore;
@@ -28,10 +27,11 @@ class CapVideo;
 namespace ArucoModul {
 
 /**
-* @brief Class ArucoThread
-* @author Dávid Durčák
-* @date 18.02.2014
-*/
+	*@brief Class ArucoThread
+	*@author Autor: David durcak
+	*@date 18.02.2014
+	*@note This class provides a thread for tracking Aruco.
+	*/
 class ArucoThread : public QThread
 	{
 	Q_OBJECT
@@ -41,8 +41,10 @@ public:
 	~ArucoThread(void);
 
 	/**
-	* @brief run Starts thread
 	*@author Dávid Durčák
+	* @brief run It is a thread method.  In cyclus are performed: get frame from camera, add frame to aruco for detecting,
+	* get result position and rotation from Aruco, correct it, if correction is enabled, send it to Camera manipulator ang CoreGraph
+	* for rotating and translating graph, send it for mouse controll, and send frame to FaceDetectionWindow to user can see it
 	*/
 	void run();
 
@@ -74,8 +76,12 @@ signals:
 	* @param image emited image matrix
 	*/
 	void pushImagemMat( cv::Mat image ) const;
-	//void pushImageQ( QImage qimage ) const;
 
+	/**
+	* @author Dávid Durčák
+	* @brief pushBackgrImage signal that emit image for background
+	* @param image emited image matrix
+	*/
 	void pushBackgrImage( cv::Mat image ) const;
 
 	/**
@@ -84,6 +90,10 @@ signals:
 	*/
 	void corParUpdated();
 
+	/**
+	* @author Dávid Durčák
+	* @brief moveMouseArucoSignal Signal for sending parameters to control mouse
+	*/
 	void moveMouseArucoSignal(double positionX,double positionY,bool isClick, Qt::MouseButton button );
 
 
@@ -121,6 +131,12 @@ public slots:
 	* @param sendImgEnabled
 	*/
 	void setSendImgEnabling( bool sendImgEnabled );
+
+	/**
+	* @author Dávid Durčák
+	* @brief setSendBackgrImgEnabled Set emiting of actual frame to backgroung.
+	* @param sendImgEnabled
+	*/
 	void setSendBackgrImgEnabled( bool sendBackgrImgEnabled );
 
 	/**
