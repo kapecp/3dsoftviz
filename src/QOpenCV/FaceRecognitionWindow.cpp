@@ -289,7 +289,6 @@ void QOpenCV::FaceRecognitionWindow::setLabelQ( QImage qimage )
 
 	mWindowLabel->setPixmap( QPixmap::fromImage(qimage) );
 
-	image.~Mat();
 }
 
 void QOpenCV::FaceRecognitionWindow::closeEvent(QCloseEvent *event)
