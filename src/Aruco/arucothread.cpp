@@ -24,8 +24,6 @@ ArucoThread::ArucoThread(QObject *parent)
 	mMoM			= 1;
 	boolQueue = new SizedQueue(5, 0.0);
 
-	qRegisterMetaType< osg::Vec3d >("osgVec3d");
-	qRegisterMetaType< osg::Quat >("osgQuat");
 }
 
 ArucoThread::~ArucoThread(void)

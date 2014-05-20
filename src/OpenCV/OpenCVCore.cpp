@@ -12,8 +12,7 @@
 #include "OpenCV/CameraStream.h"
 #include "Viewer/MouseControl.h"
 
-Q_DECLARE_METATYPE(cv::Mat)
-Q_DECLARE_METATYPE(Qt::MouseButton)
+
 
 using namespace OpenCV;
 
@@ -31,8 +30,7 @@ OpenCV::OpenCVCore::OpenCVCore( QApplication* app, QWidget *parent)
 	mThrFaceRec		= NULL;
 	mThrAruco		= NULL;
 
-	qRegisterMetaType<cv::Mat>("Mat");
-	qRegisterMetaType<Qt::MouseButton>("MouseButton");
+
 }
 OpenCV::OpenCVCore::~OpenCVCore(void)
 {
