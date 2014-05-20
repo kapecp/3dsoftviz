@@ -20,6 +20,7 @@ public:
 	~KinectZoom();
 
 	void zoom(cv::Mat handImage, openni::VideoStream  *m_depth, float x, float y, float z);
+	void DetectContour(cv::Mat img);
 };
 }
 

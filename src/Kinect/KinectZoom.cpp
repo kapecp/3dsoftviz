@@ -10,6 +10,60 @@ Kinect::KinectZoom::~KinectZoom()
 
 }
 
+void Kinect::KinectZoom::DetectContour(Mat img){
+	Mat drawing = Mat::zeros( img.size(), CV_8UC3 );
+	vector<vector<Point> > contours;
+	vector<vector<Point> > bigContours;
+	vector<Vec4i> hierarchy;
+
+	findContours(img,contours, hierarchy, cv::RETR_LIST, cv::CHAIN_APPROX_SIMPLE, Point());
+
+	if(contours.size()>0)
+	{
+		vector<std::vector<int> >hull( contours.size() );
+		vector<vector<Vec4i>> convDef(contours.size() );
+		vector<vector<Point>> hull_points(contours.size());
+		vector<vector<Point>> defect_points(contours.size());
+
+
+		for( int i = 0; i < contours.size(); i++ )
+		{
+			if(contourArea(contours[i])>1000)
+			{
+				convexHull( contours[i], hull[i], false );
+				convexityDefects( contours[i],hull[i], convDef[i]);
+
+				for(int k=0;k<hull[i].size();k++)
+				{
+					int ind=hull[i][k];
+					hull_points[i].push_back(contours[i][ind]);
+				}
+
+				for(int k=0;k<convDef[i].size();k++)
+				{
+					if(convDef[i][k][3]>10*256) // filter defects by depth
+					{
+					int ind_0=convDef[i][k][0];
+					int ind_1=convDef[i][k][1];
+					int ind_2=convDef[i][k][2];
+					defect_points[i].push_back(contours[i][ind_2]);
+					cv::circle(drawing,contours[i][ind_0],5,Scalar(0,255,0),-1);
+					cv::circle(drawing,contours[i][ind_1],5,Scalar(0,255,0),-1);
+					cv::circle(drawing,contours[i][ind_2],5,Scalar(0,0,255),-1);
+					cv::line(drawing,contours[i][ind_2],contours[i][ind_0],Scalar(0,0,255),1);
+					cv::line(drawing,contours[i][ind_2],contours[i][ind_1],Scalar(0,0,255),1);
+					}
+				}
+
+				drawContours( drawing, contours, i, Scalar(0,255,0), 1, 8, vector<Vec4i>(), 0, Point() );
+				drawContours( drawing, hull_points, i, Scalar(255,0,0), 1, 8, vector<Vec4i>(), 0, Point() );
+			}
+		}
+	}
+	imshow( "Hull", drawing );
+}
+
+
 void Kinect::KinectZoom::zoom(cv::Mat frame,openni::VideoStream *m_depth, float x, float y, float z)
 {
 	openni::CoordinateConverter coordinateConverter;
@@ -18,8 +72,8 @@ void Kinect::KinectZoom::zoom(cv::Mat frame,openni::VideoStream *m_depth, float 
 	float x2;
 	float y2;
 	float z1;
-	coordinateConverter.convertWorldToDepth(*m_depth, x-90.0,y-90.0,z, &x1, &y1, &z1);
-	coordinateConverter.convertWorldToDepth(*m_depth, x+110.0,y+130.0,z, &x2, &y2, &z1);
+	coordinateConverter.convertWorldToDepth(*m_depth, x-150.0,y-150.0,z, &x1, &y1, &z1);
+	coordinateConverter.convertWorldToDepth(*m_depth, x+200.0,y+200.0,z, &x2, &y2, &z1);
 
 	openni::VideoFrameRef depthFrame;
 	m_depth->readFrame(&depthFrame);
@@ -64,14 +118,14 @@ void Kinect::KinectZoom::zoom(cv::Mat frame,openni::VideoStream *m_depth, float 
 	//			  cv::Scalar(255) ,0, cv::Scalar(low),cv::Scalar(high));
 	cv::Mat mask = cv::Mat::zeros(depthImage3.rows + 2, depthImage3.cols + 2, CV_8U);
 	cv::floodFill(depthImage3, mask, cv::Point(depthImage3.cols/2,depthImage3.rows/2),
-				  255, 0, cv::Scalar(2),
-				  cv::Scalar(2),  4 + (255 << 8) + cv::FLOODFILL_MASK_ONLY);
+				  255, 0, cv::Scalar(4),
+				  cv::Scalar(4),  4 + (255 << 8) + cv::FLOODFILL_MASK_ONLY + cv::FLOODFILL_FIXED_RANGE);
 	cv::Mat binary,binary2;
 	//cv::adaptiveThreshold(gray,binary,255,CV_ADAPTIVE_THRESH_GAUSSIAN_C, CV_THRESH_BINARY,11,2);
 	//threshold( gray, binary, cv::mean( gray ).val[0], 255,0 );
 	cv::blur(depthImage2,binary,cv::Size(5,5));
 	cv::blur(depthImage2,binary2,cv::Size(5,5));
-	cv::blur(mask,mask,cv::Size(3,3));
+	//cv::blur(mask,mask,cv::Size(3,3));
 	cv::bitwise_not(binary2,binary2);
 	cv::threshold(binary,binary,(int)mean[0]-15,255,CV_THRESH_BINARY);
 	cv::threshold(binary2,binary2,255-(int)mean[0]-1,255,CV_THRESH_BINARY);
@@ -87,4 +141,6 @@ void Kinect::KinectZoom::zoom(cv::Mat frame,openni::VideoStream *m_depth, float 
 	cv::imshow("binary2", binary2);
 	cv::imshow("floodfill", mask);
 	cv::waitKey(33);
+
+	DetectContour(mask);
 }
