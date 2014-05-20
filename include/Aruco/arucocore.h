@@ -11,15 +11,15 @@ class ArucoCore : public QObject
 	{
 	/**
 		*@brief Class ArucoCore
-		*@author Autor: Martina Tregerova
+		*@author Autor: Martina Tregerova, David Durcak
 		*@date 16.12.2013
-		*@note This is the first draft version of class. Most functions will be changed in next few weeks.
+		*@note Class provides method for detecking markers and setting position and rotation vectors and also can
+		* augument frame (draw cube on marker) for debuging.
 		*/
 public:
 	/**
 		 * @author Autor:Martina Tregerova
 		 * @brief Constructor
-		 * @note Will be changed soon.
 		 */
 	ArucoCore();
 

@@ -81,10 +81,12 @@ void ArucoThread::run()
 	cv::Mat frame;
 	mCancel = false;
 
+	// test if camera is set
 	if( mCapVideo == NULL){
 		qDebug() << "[ArucoThread::run()]  Camera is not set";
 		return;
 	}
+	// prepare parameters for correction
 	const double width  = mCapVideo->getWidth();
 	const double height = mCapVideo->getHeight();
 	mCamDistRatio  = Util::ApplicationConfig::get()->getValue("Aruco.CamDistancRatio").toDouble();
@@ -92,15 +94,17 @@ void ArucoThread::run()
 	mHalfRatioCoef = 0.5 + width / (2*height);
 
 
+	// variables for result from aruco
 	double		 actPosArray[3];			// x, y, z
 	double		 actQuatArray[4];		// angle(w), x, y, z
 	bool		 markerDetected = false;
 
 
+	// file with parameters for camera, Aruco need it
 	QString filename = "../share/3dsoftviz/config/camera.yml";
 	QFileInfo file(filename);
 	if( ! file.exists() ){
-		qDebug() << "File " << file.absoluteFilePath() << " does Not exist!";
+		qDebug() << "[ArucoThread::run()]: File " << file.absoluteFilePath() << " does Not exist!";
 		return;
 	}
 
@@ -178,17 +182,9 @@ void ArucoThread::graphControlling(const double actPosArray[3], const double act
 	}
 
 
-	// correct Y centering, because of camerra different ration aruco top max y value is less than bottom one
-	//actPos.y() = ( mRatioCamCoef * actPos.z()  + actPos.y() );
-
-
 	if ( mCorEnabled ) {
 		correctQuatAndPos( actPos, actQuat);
 	}
-
-
-
-	//printVec(actPos, "pos0  ");
 
 	// normalizin from [0,0] in top left corner to [1,1] in roght bottom corner
 	double absZ		= actPosArray[2]  < 0.0 ? - actPosArray[2]	:  actPosArray[2];		// distance of marker
@@ -205,15 +201,11 @@ void ArucoThread::graphControlling(const double actPosArray[3], const double act
 
 	emit sendArucoPosVec( actPos );
 	emit sendArucoRorQuat( actQuat );
-
-
 }
 
 void ArucoThread::mouseControlling(const double actPosArray[3], const double actQuatArray[4])
 {
 	osg::Vec3d actPos(  actPosArray[0], -actPosArray[1] * mHalfRatioCoef, -actPosArray[2] );
-
-	//printVec(actPos, "pos0  ");
 
 	// normalizin from [0,0] in top left corner to [1,1] in roght bottom corner
 	double absZ		= actPosArray[2]  < 0.0 ? - actPosArray[2]	:  actPosArray[2];		// distance of marker
@@ -226,46 +218,36 @@ void ArucoThread::mouseControlling(const double actPosArray[3], const double act
 	if(normX > 1.0) normX = 1.0;
 	if(normY < 0.0) normY = 0.0;
 	if(normY > 1.0) normY = 1.0;
-	//qDebug() << normX << "  " << normY;
-
 
 	bool click = boolQueue->getAvgBool(actQuatArray[3] <= 0.0);
 
-	emit moveMouseArucoSignal(normX, normY, click, Qt::LeftButton);
+	emit moveMouseArucoSignal(normX, normY, click, Qt::LeftButton);  // now we dont recognize buttons, but in future it could be implemented
 
 }
 
 void ArucoThread::imagesSending(ArucoCore &aCore, const cv::Mat frame) const
 {
-	//qDebug() << "frame" << frame.data ;
 
 	if( mSendBackgrImgEnabled && !frame.empty() ){
 		if( ! mMarkerIsBehind){
 			cv::flip( frame, frame, 1);
 		}
-		cv::cvtColor(frame, frame,CV_BGR2RGB);   // pri testovani praveze opacny efekt
+		cv::cvtColor(frame, frame,CV_BGR2RGB);
 
 		emit pushBackgrImage( frame.clone() );
 	}
 
-
-
 	cv::Mat image = aCore.getDetImage();
-	//qDebug() << "image" << image.data ;
 
 	if ( mSendImgEnabled ) {
 		if( ! mMarkerIsBehind){
 			cv::flip( image, image, 1);
 		}
-		cv::cvtColor(image, image, CV_BGR2RGB);   // pri testovani praveze opacny efekt
+		cv::cvtColor(image, image, CV_BGR2RGB);
 
 		emit pushImagemMat( image.clone() );
 
 	}
-
-
-
-
 }
 
 void ArucoThread::computeCorQuatAndPos(const double position[3], const double rotation[4] ){
@@ -319,13 +301,6 @@ void ArucoThread::computeCorMat( QMatrix4x4 origM )
 
 	// !!! corection matrix must be on left in multiplication
 	// corM * corrected matrix
-
-
-	//printMat( T2,	 "Translation matrix" );
-	//printMat( T1,	 "Inverse translation matrix" );
-	//printMat( origM, "Rotation matrix" );
-	//printMat( corM,	 "Corection Matrix" );
-
 }
 
 
