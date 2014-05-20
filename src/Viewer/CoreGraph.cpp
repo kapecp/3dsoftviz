@@ -153,7 +153,6 @@ void CoreGraph::cleanUp()
 #ifdef OPENCV_FOUND
 osg::ref_ptr<osg::Node> CoreGraph::createTextureBackground()
 {
-
 	// rectangle
 	// coordinates
 	osg::Vec3Array* coords = new osg::Vec3Array(4);
@@ -217,15 +216,12 @@ osg::ref_ptr<osg::Node> CoreGraph::createTextureBackground()
 
 	osg::ref_ptr<osg::Transform> transform = new SkyTransform;
 
-	//osg::ref_ptr<osg::Transform> transform = new MoveEarthySkyWithEyePointTran;
 	transform->setCullingActive(false);
 	transform->addChild(geode);
 
 	osg::ref_ptr<osg::ClearNode> clearNode = new osg::ClearNode;
 	clearNode->setRequiresClear(false);
 	clearNode->addChild(transform);
-	//clearNode->addChild(geode);
-
 
 	return clearNode;
 

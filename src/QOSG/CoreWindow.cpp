@@ -98,6 +98,8 @@ CoreWindow::CoreWindow(QWidget *parent, Vwr::CoreGraph* coreGraph, QApplication*
 
 	connect(lineEdit,SIGNAL(returnPressed()),this,SLOT(sqlQuery()));
 
+
+	// connect checkbox for interchanging between rotation of camera or rotation of graph
 	QObject::connect( chb_camera_rot, SIGNAL(clicked(bool)),
 					  viewerWidget->getCameraManipulator(), SLOT(setCameraCanRot(bool)));
 

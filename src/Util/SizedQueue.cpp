@@ -82,8 +82,6 @@ int SizedQueue::getAvgBasedOnValue(float &x)
 	return retval;
 }
 
-
-
 bool SizedQueue::getAvgBool(bool y)
 {
 	// push/pop, LIFO stack
@@ -98,7 +96,6 @@ bool SizedQueue::getAvgBool(bool y)
 	if(y){
 		positive++;
 	}
-
 
 	return positive*2 > boolStack.size();
 

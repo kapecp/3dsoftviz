@@ -716,7 +716,7 @@ private:
 	void updateProjectionAccordingFace(const float x, const float y, const float distance);
 
 	/**
-		*  \brief cameraCanRot if true camera is rotating normally, else rotation quaternion by mouse is emited away
+		*  \brief cameraCanRot if true camera is rotating normally, else rotation quaternion by mouse is emited away to CoreGraph to rotate graph directly
 		*/
 	bool _cameraCanRot;
 	};
