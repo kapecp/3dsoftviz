@@ -22,6 +22,11 @@ class KinectSpeechThread : public QThread
 public:
 	KinectSpeechThread();
 	~KinectSpeechThread(void);
+	/**
+	 * @brief initializeSpeech
+	 * @author Autor: Marek Jakab
+	 * @return 0/1 if the initialization was succesfful
+	 */
 	int initializeSpeech();
 	SpeechSDK::SpeechSDKClass *m_SpeechClass;
 	bool isConnected;

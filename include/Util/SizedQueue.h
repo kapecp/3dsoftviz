@@ -5,15 +5,34 @@
 
 namespace Util{
 
+/**
+	*@brief Class FaceRecognizer
+	*@author Autor: Marek Jakab
+	*@date 20.5.2014
+	*/
+
 class SizedQueue{
 
 public:
 
 	SizedQueue(int size, float threshold);
 	~SizedQueue();
-
+	/**
+	 * @brief getAvgBasedOnValue Compute average value from N previous values
+	 * @author Autor: Marek Jakab
+	 * @param x float value on current x axis (will be rewriten)
+	 * @param y float value on current y axis (will be rewriten)
+	 * @return 0/1 if the computed value changed over by set threshold
+	 */
 	int getAvgBasedOnValue(float &x, float &y);
+	/**
+	 * @brief getAvgBasedOnValue Compute average value from N previous values
+	 *@author Autor: Marek Jakab
+	 * @param x float current value (will be rewriten)
+	 * @return 0/1 if te computed value changed over by set threshold
+	 */
 	int getAvgBasedOnValue(float &x);
+
 	bool getAvgBool(bool y);
 
 private:
