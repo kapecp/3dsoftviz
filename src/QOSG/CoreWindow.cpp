@@ -590,9 +590,13 @@ void CoreWindow::createMetricsToolBar()
     toolBar->setMovable(true);
 
     toolBar = new QToolBar("Metrics filter",this);
+    #if QT_VERSION >= 0x040700
     filterNodesEdit->setPlaceholderText("nodes filter");
+    #endif
     toolBar->addWidget(filterNodesEdit);
+    #if QT_VERSION >= 0x040700
     filterEdgesEdit->setPlaceholderText("edges filter");
+    #endif
     toolBar->addWidget(filterEdgesEdit);
     addToolBar(Qt::BottomToolBarArea, toolBar);
     toolBar->setMovable(true);
