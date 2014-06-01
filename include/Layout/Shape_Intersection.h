@@ -18,6 +18,10 @@ class Shape_Intersection : public Shape_Composite {
 	virtual void accept (
 			ShapeVisitor & visitor
 			);
+    //volovar_zac
+public:
+    Shape_Intersection() {setAlpha(0.06f);}
+    //volovar_kon
 
 }; // class
 

@@ -58,7 +58,8 @@ void ShapeVisitor_VisualizerCreator::visit (Layout::Shape_Intersection & shape) 
 		osg::ShapeDrawable * sd = new osg::ShapeDrawable;
 		sd->setShape (cylinder);
 
-        sd->setColor (osg::Vec4 (0.0f, 0.f, 1.0f, 0.06f));
+        //volovar zmena
+        sd->setColor (osg::Vec4 (0.0f, 0.f, 1.0f, shape.getAlpha()));
 
 		sd->getOrCreateStateSet()->setMode (GL_BLEND, osg::StateAttribute::ON);
 		sd->getStateSet()->setRenderingHint (osg::StateSet::TRANSPARENT_BIN);

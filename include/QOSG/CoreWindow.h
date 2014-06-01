@@ -190,6 +190,10 @@ public slots:
 
 
     void RadialLayoutAlphaChanged(int value);
+    void RadialLayoutSetVisibleSpheres(int value);
+
+    void RadialLayoutSetForceScale(int value);
+    void RadialLayoutSetForceSphereScale(int value);
 
     //volovar_kon
     /**
@@ -277,10 +281,14 @@ public slots:
 				 * \brief Removes restrictions from all selected nodes (if any has been set). Destroys a
 				 * restriction (including manipulation nodes) if the last usage has been removed.
 				 */
+    //volovar_zac
     void setRestriction_RadialLayout();
     /**
                  * \brief Create a new Radial restriction for all selected nodes.
      */
+    void changeDrawMethod_RadialLayout();
+    void changeMode_RadialLayout();
+    //volovar_kon
 
 	void unsetRestriction ();
 
@@ -481,11 +489,16 @@ private:
 	/**
 				 * \brief Button for adding Cone Tree restriction.
 				 */
+    //volovar_zac
     QPushButton * b_SetRestriction_RadialLayout;
 
     /**
       brief rad layout
     */
+
+    QPushButton * b_drawMethod_RadialLayout;
+    QPushButton * b_mode_RadialLayout;
+    //volovar_kon
     QPushButton * b_SetRestriction_ConeTree;
 	/**
 		 * \brief Button for removing restrictions.
@@ -512,6 +525,16 @@ private:
      * @brief slider for change alpha of radial layout
      */
     QSlider *b_SetAlpha_RadialLayout_Slider;
+
+    /**
+     * @brief b_SetVisibleSpheres_RadialLayout_Slider change how many spheres are visible
+     */
+
+    QSlider *b_SetVisibleSpheres_RadialLayout_Slider;
+
+    QSlider *b_SetForceScale_RadialLayout_Slider;
+    QSlider *b_SetForceSphereScale_RadialLayout_Slider;
+
     //volovar_kon
 
 	/**

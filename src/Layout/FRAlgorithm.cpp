@@ -8,6 +8,10 @@
 #include "Data/Node.h"
 #include "Data/Graph.h"
 
+//volovar_zac
+#include "Layout/RadialLayout.h"
+//volovar_kon
+
 #include <stdio.h>
 #include <math.h>
 #include <ctime>
@@ -480,12 +484,13 @@ void FRAlgorithm::addRepulsive(Data::Node* u, Data::Node* v, float factor) {
 	fv.normalize();
 	fv *= rep(dist) * factor;// velkost sily
     //volovar zmena aby repulzivne sily posobili len na uzly s rovnaky sphereID, ked nemaju radial layout tak ho maju 0
-    if (u->getSphereID() != 0 and v->getSphereID() != 0 and u->getSphereID() == v->getSphereID())
+    if (u->getRadialLayout() != NULL && (u->getRadialLayout() == v->getRadialLayout()))
     {
-        fv *= 1000;
-        u->addForce(fv);
+        if (u->getLayerID() == v->getLayerID())
+            fv *= u->getRadialLayout()->getForceSphereScale();
+        else
+            fv *= u->getRadialLayout()->getForceScale();
     }
-    else
 	u->addForce(fv);
 }
 /* Vzorec na vypocet odpudivej sily */

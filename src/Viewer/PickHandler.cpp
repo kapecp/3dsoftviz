@@ -389,8 +389,13 @@ bool PickHandler::pick( const double xMin, const double yMin, const double xMax,
 							if (selectionType == SelectionType::EDGE || selectionType == SelectionType::ALL)
 								edgePicked = doEdgePick(nodePath, hitr->primitiveIndex);
 						}
-
-
+                        static int count = 0;
+                        if (!nodePicked && !edgePicked)
+                        {
+                            osg::ShapeDrawable* shape = dynamic_cast<osg::ShapeDrawable *>(nodePath[nodePath.size() - 1]);
+                            if (shape != NULL)
+                                qDebug()<<"shape shape"<<count++;
+                        }
 						result = result || nodePicked || edgePicked ;
 					}
 				}

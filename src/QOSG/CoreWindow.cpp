@@ -290,7 +290,29 @@ void CoreWindow::createActions()
     b_SetAlpha_RadialLayout_Slider->setRange(0, 100);
     b_SetAlpha_RadialLayout_Slider->setSingleStep(1);
     b_SetAlpha_RadialLayout_Slider->setFocusPolicy(Qt::ClickFocus);
-    b_SetAlpha_RadialLayout_Slider->setValue(100);
+    b_SetAlpha_RadialLayout_Slider->setValue(10);
+
+    b_SetVisibleSpheres_RadialLayout_Slider = new QSlider(Qt::Horizontal);
+    b_SetVisibleSpheres_RadialLayout_Slider->setToolTip("&Change number of visible spheres in Radial layout");
+    b_SetVisibleSpheres_RadialLayout_Slider->setRange(0, 100);
+    b_SetVisibleSpheres_RadialLayout_Slider->setSingleStep(1);
+    b_SetVisibleSpheres_RadialLayout_Slider->setFocusPolicy(Qt::ClickFocus);
+    b_SetVisibleSpheres_RadialLayout_Slider->setValue(100);
+
+
+    b_SetForceScale_RadialLayout_Slider = new QSlider(Qt::Horizontal);
+    b_SetForceScale_RadialLayout_Slider->setToolTip("&Change force between two nodes in Radial layout");
+    b_SetForceScale_RadialLayout_Slider->setRange(1, 5000);
+    b_SetForceScale_RadialLayout_Slider->setSingleStep(1);
+    b_SetForceScale_RadialLayout_Slider->setFocusPolicy(Qt::ClickFocus);
+    b_SetForceScale_RadialLayout_Slider->setValue(1000);
+
+    b_SetForceSphereScale_RadialLayout_Slider = new QSlider(Qt::Horizontal);
+    b_SetForceSphereScale_RadialLayout_Slider->setToolTip("&Change force between two nodes in same sphere in Radial layout");
+    b_SetForceSphereScale_RadialLayout_Slider->setRange(1, 5000);
+    b_SetForceSphereScale_RadialLayout_Slider->setSingleStep(1);
+    b_SetForceSphereScale_RadialLayout_Slider->setFocusPolicy(Qt::ClickFocus);
+    b_SetForceSphereScale_RadialLayout_Slider->setValue(1000);
     //volovar_kon
 
 	b_SetRestriction_ConeSurface = new QPushButton();
@@ -310,6 +332,19 @@ void CoreWindow::createActions()
     b_SetRestriction_RadialLayout->setToolTip("&Set restriction - radial Layout");
     b_SetRestriction_RadialLayout->setFocusPolicy(Qt::NoFocus);
     connect(b_SetRestriction_RadialLayout, SIGNAL(clicked()), this, SLOT(setRestriction_RadialLayout()));
+
+    b_drawMethod_RadialLayout = new QPushButton();
+    b_drawMethod_RadialLayout->setIcon(QIcon("../share/3dsoftviz/img/gui/drawMethod_radial_layout.png"));
+    b_drawMethod_RadialLayout->setToolTip("&Set restriction - radial Layout");
+    b_drawMethod_RadialLayout->setFocusPolicy(Qt::NoFocus);
+    connect(b_drawMethod_RadialLayout, SIGNAL(clicked()), this, SLOT(changeDrawMethod_RadialLayout()));
+
+    b_mode_RadialLayout = new QPushButton();
+    b_mode_RadialLayout->setIcon(QIcon("../share/3dsoftviz/img/gui/mode_radial_layout.png"));
+    b_mode_RadialLayout->setToolTip("&Set restriction - radial Layout");
+    b_mode_RadialLayout->setFocusPolicy(Qt::NoFocus);
+    connect(b_mode_RadialLayout, SIGNAL(clicked()), this, SLOT(changeMode_RadialLayout()));
+
     //volovar_kon
 
 	b_UnsetRestrictionFromAll = new QPushButton();
@@ -463,6 +498,11 @@ void CoreWindow::createLeftToolBar()
     frame = createHorizontalFrame();
     toolBar->addWidget(frame);
     frame->layout()->addWidget(b_SetRestriction_RadialLayout);
+    frame->layout()->addWidget(b_drawMethod_RadialLayout);
+
+    frame = createHorizontalFrame();
+    toolBar->addWidget(frame);
+    frame->layout()->addWidget(b_mode_RadialLayout);
     //volovar_kon
 	toolBar->addSeparator();
 
@@ -475,6 +515,24 @@ void CoreWindow::createLeftToolBar()
     toolBar->addWidget(frame);
     frame->layout()->addWidget(b_SetAlpha_RadialLayout_Slider);
     connect(b_SetAlpha_RadialLayout_Slider,SIGNAL(valueChanged(int)),this,SLOT(RadialLayoutAlphaChanged(int)));
+
+
+    frame = createHorizontalFrame();
+    toolBar->addWidget(frame);
+    frame->layout()->addWidget(b_SetVisibleSpheres_RadialLayout_Slider);
+    connect(b_SetVisibleSpheres_RadialLayout_Slider,SIGNAL(valueChanged(int)),this,SLOT(RadialLayoutSetVisibleSpheres(int)));
+
+    frame = createHorizontalFrame();
+    toolBar->addWidget(frame);
+    frame->layout()->addWidget(b_SetForceScale_RadialLayout_Slider);
+    connect(b_SetForceScale_RadialLayout_Slider,SIGNAL(valueChanged(int)),this,SLOT(RadialLayoutSetForceScale(int)));
+
+    frame = createHorizontalFrame();
+    toolBar->addWidget(frame);
+    frame->layout()->addWidget(b_SetForceSphereScale_RadialLayout_Slider);
+    connect(b_SetForceSphereScale_RadialLayout_Slider,SIGNAL(valueChanged(int)),this,SLOT(RadialLayoutSetForceSphereScale(int)));
+
+
     //volovar_kon
     frame = createHorizontalFrame();
     toolBar->addWidget(frame);
@@ -940,7 +998,47 @@ void CoreWindow::RadialLayoutAlphaChanged(int value)
     Layout::RadialLayout* selectedRadialLayout = Layout::RadialLayout::getSelectedRadialLayout();
     //qDebug()<<"Value: "<<value<<", selected: "<<selectedRadialLayout;
     if (selectedRadialLayout != NULL)
-        selectedRadialLayout->setAlpha((float) value/100);
+        selectedRadialLayout->setAlpha((float) value/500.0f);
+}
+
+void CoreWindow::RadialLayoutSetVisibleSpheres(int value)
+{
+    Layout::RadialLayout* selectedRadialLayout = Layout::RadialLayout::getSelectedRadialLayout();
+    //qDebug()<<"Value: "<<value<<", selected: "<<selectedRadialLayout;
+    if (selectedRadialLayout != NULL)
+        selectedRadialLayout->setVisibleSpheres((float) value/100);
+}
+
+void CoreWindow::RadialLayoutSetForceScale(int value)
+{
+    Layout::RadialLayout* selectedRadialLayout = Layout::RadialLayout::getSelectedRadialLayout();
+    //qDebug()<<"Value: "<<value<<", selected: "<<selectedRadialLayout;
+    if (selectedRadialLayout != NULL)
+        selectedRadialLayout->setForceScale((float) value);
+}
+
+void CoreWindow::RadialLayoutSetForceSphereScale(int value)
+{
+    Layout::RadialLayout* selectedRadialLayout = Layout::RadialLayout::getSelectedRadialLayout();
+    //qDebug()<<"Value: "<<value<<", selected: "<<selectedRadialLayout;
+    if (selectedRadialLayout != NULL)
+        selectedRadialLayout->setForceSphereScale((float) value);
+}
+
+void CoreWindow::changeDrawMethod_RadialLayout()
+{
+    Layout::RadialLayout* selectedRadialLayout = Layout::RadialLayout::getSelectedRadialLayout();
+    //qDebug()<<"Value: "<<value<<", selected: "<<selectedRadialLayout;
+    if (selectedRadialLayout != NULL)
+        selectedRadialLayout->changeRenderType();
+}
+
+void CoreWindow::changeMode_RadialLayout()
+{
+    Layout::RadialLayout* selectedRadialLayout = Layout::RadialLayout::getSelectedRadialLayout();
+    //qDebug()<<"Value: "<<value<<", selected: "<<selectedRadialLayout;
+    if (selectedRadialLayout != NULL)
+        selectedRadialLayout->changeMode();
 }
 
 //Volovar koniec
@@ -1508,6 +1606,11 @@ void CoreWindow::unsetRestrictionFromAll() {
 					currentGraph,
 					QSharedPointer<Layout::RestrictionRemovalHandler> (NULL)
 					);
+        //volovar_zac
+        Layout::RadialLayout* selectedRadialLayout = Layout::RadialLayout::getSelectedRadialLayout();
+        if (selectedRadialLayout != NULL)
+            selectedRadialLayout->unselectNodes();
+        //volovar_kon
 	}
 }
 
@@ -1570,6 +1673,7 @@ void CoreWindow::setRestriction_RadialLayout()
         return;
     Layout::RadialLayout *radialLayout = new Layout::RadialLayout(currentGraph, selectedNodes, 100, rootNode, rootPosition);
     radialLayout->select();
+    viewerWidget->getCameraManipulator()->setCenter(rootPosition);
 }
 /*Volovar koniec
  */

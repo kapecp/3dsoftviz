@@ -15,6 +15,12 @@
 #include <QMap>
 #include <QString>
 
+//volovar_zac
+namespace Layout
+{
+    class RadialLayout;
+}
+//volovar_kon
 
 namespace Data
 {
@@ -22,7 +28,8 @@ class Edge;
 class Type;
 class Graph;
 class GraphLayout;
-
+//volovar_zac
+//volovar_kon
 /**
 	*  \class Node
 	*  \brief Node object represents a single node in a Graph
@@ -519,8 +526,10 @@ public:
 	bool isNodeMatched() { return nodeMatched; }
 	void setNodeMatched(bool nodeMatched) { this->nodeMatched = nodeMatched; }
     //volovar_zac
-    void setSphereID(int id);
-    int getSphereID();
+    void setLayerID(int id);
+    int getLayerID();
+    Layout::RadialLayout* getRadialLayout();
+    void setRadialLayout(Layout::RadialLayout *rl);
     //volovar_kon
 private:
 
@@ -743,7 +752,8 @@ private:
 
 	float overallWeight;
     //volovar_zac pre repulzivne sily, ktore posobia iba na uzly nachadzajuce sa na guli
-    int sphereID;
+    int layerID;
+    Layout::RadialLayout* radialLayout;
     //volovak_kon
 
 protected:

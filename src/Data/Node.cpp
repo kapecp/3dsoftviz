@@ -18,6 +18,10 @@
 
 #include <QTextStream>
 
+//volovar_zac
+//#include <Layout/RadialLayout.h>
+//volovar_kon
+
 typedef osg::TemplateIndexArray<unsigned int, osg::Array::UIntArrayType,4,1> ColorIndexArray;
 
 Data::Node::Node(qlonglong id, QString name, Data::Type* type, float scaling, Data::Graph* graph, osg::Vec3f position)
@@ -91,7 +95,8 @@ Data::Node::Node(qlonglong id, QString name, Data::Type* type, float scaling, Da
 	this->setColor(osg::Vec4(r, g, b, a));
 
     //volovar_zac
-    sphereID = 0;
+    layerID = 0;
+    radialLayout = NULL;
     //volovar_kon
 }
 
@@ -393,12 +398,25 @@ QString Data::Node::toString() const
 	return str;
 }
 
-void Data::Node::setSphereID(int id)
+//volovar_zac
+//pre potreby odpudivych sil v radialLayoute
+void Data::Node::setLayerID(int id)
 {
-    sphereID = id;
+    layerID = id;
 }
 
-int Data::Node::getSphereID()
+int Data::Node::getLayerID()
 {
-    return sphereID;
+    return layerID;
 }
+
+Layout::RadialLayout* Data::Node::getRadialLayout()
+{
+    return radialLayout;
+}
+void Data::Node::setRadialLayout(Layout::RadialLayout *rl)
+{
+    radialLayout = rl;
+}
+
+//volovar_kon

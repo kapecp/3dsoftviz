@@ -20,6 +20,7 @@ namespace Data
 
 namespace Layout
 {
+    class RadialLayout;
 /**
 	*  \class FRAlgorithm
 	*
@@ -115,6 +116,7 @@ public:
 	void RequestEnd();
 
 private:
+    Layout::RadialLayout* rl;
 
 	/**
 		*  Data::Graph * graph

@@ -11,7 +11,8 @@ ShapeGetter_Circle_ByThreeNodes::ShapeGetter_Circle_ByThreeNodes (
 		osg::ref_ptr<Data::Node> node3
 		) : node1_ (node1),
 	node2_ (node2),
-	node3_ (node3)
+    node3_ (node3),
+  intersection_(NULL)
 {
 	// nothing
 }
@@ -22,13 +23,16 @@ QSharedPointer<Shape> ShapeGetter_Circle_ByThreeNodes::getShape (void) {
 	QSharedPointer<Layout::ShapeGetter> planeGetter =
 			QSharedPointer<Layout::ShapeGetter>(new ShapeGetter_Plane_ByThreeNodes (node1_, node2_, node3_));
 
-
-	QSharedPointer<Shape_Intersection> intersection = QSharedPointer<Shape_Intersection>(new Shape_Intersection);
-	intersection->setCompositeType(Shape_Composite::CompositeType::CIRCLE);
-	intersection->addShape(sphereSurfaceGetter->getShape());
-	intersection->addShape(planeGetter->getShape());
-
-	return intersection;
+    //volovar zmena
+    if (intersection_ == NULL)
+    {
+        intersection_ = QSharedPointer<Shape_Intersection>(new Shape_Intersection);
+        intersection_->setCompositeType(Shape_Composite::CompositeType::CIRCLE);
+        intersection_->addShape(sphereSurfaceGetter->getShape());
+        intersection_->addShape(planeGetter->getShape());
+    }
+    //volovar koniec zmeny
+    return intersection_;
 
 }
 

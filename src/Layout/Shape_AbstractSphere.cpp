@@ -9,10 +9,7 @@ Shape_AbstractSphere::Shape_AbstractSphere (
 	radius_ (radius)
 {
 	// nothing
-    //volovar_zac
-    setAlpha(0.06f);
-    setRenderType(Shape_AbstractSphere::SOLID);
-    //volovar_kon
+
 }
 
 osg::Vec3f & Shape_AbstractSphere::getCenter () {
@@ -23,6 +20,7 @@ float Shape_AbstractSphere::getRadius () {
 	return radius_;
 }
 
+/*
 //volovar zac
 void Shape_AbstractSphere::setAlpha(float alpha)
 {
@@ -45,5 +43,5 @@ Shape_AbstractSphere::RenderType Shape_AbstractSphere::getRenderType()
 }
 
 //volovar kon
-
+*/
 } // namespace
