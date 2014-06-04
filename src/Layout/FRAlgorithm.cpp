@@ -40,8 +40,9 @@ FRAlgorithm::FRAlgorithm()
 	useMaxDistance = false;
 	this->graph = NULL;
 
-    // Duransky - pociatocne nastavenie nasobica odpudivych sil na rovnakej rovine na hodnotu 1
+    // Duransky start - pociatocne nastavenie nasobica odpudivych sil na rovnakej rovine na hodnotu 1
     setRepulsiveForceVertigo(1);
+    // Duransky end - pociatocne nastavenie nasobica odpudivych sil na rovnakej rovine na hodnotu 1
 
 	mLastFocusedNode = 0;   // No node is focused on the beginning
 }
@@ -483,10 +484,11 @@ void FRAlgorithm::addRepulsive(Data::Node* u, Data::Node* v, float factor) {
 	fv.normalize();
 	fv *= rep(dist) * factor;// velkost sily
 
-    // Duransky - vynasobenie odpudivej sily medzi dvoma uzlami hodnotou zo spinboxu ak su na rovnakej vertigo rovine
+    // Duransky start - vynasobenie odpudivej sily medzi dvoma uzlami hodnotou zo spinboxu ak su na rovnakej vertigo rovine
     if(u->getNumberOfVertigoPlane() == v->getNumberOfVertigoPlane()){
         fv *= repulsiveForceVertigo;
     }
+    // Duransky end - vynasobenie odpudivej sily medzi dvoma uzlami hodnotou zo spinboxu ak su na rovnakej vertigo rovine
 
 	u->addForce(fv);
 }

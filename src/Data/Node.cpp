@@ -38,8 +38,9 @@ Data::Node::Node(qlonglong id, QString name, Data::Type* type, float scaling, Da
 	this->setParentBall(NULL);
 	this->hasNestedNodes = false;
 
-    // Duransky - Pociatocne nastavenie roznych cisiel vertigo rovin pre uzly
+    // Duransky start - Pociatocne nastavenie roznych cisiel vertigo rovin pre uzly
     this->numberOfVertigoPlane = id;
+    // Duransky end - Pociatocne nastavenie roznych cisiel vertigo rovin pre uzly
 
 	settings = new QMap<QString, QString>();
 	//APA
@@ -382,7 +383,7 @@ osg::Vec3f Data::Node::getCurrentPosition(bool calculateNew, float interpolation
 	return osg::Vec3(this->currentPosition);
 }
 
-// Duransky - Funkcie na nastavenie a ziskanie cisla vertigo roviny, na ktorej sa uzol nachadza
+// Duransky start - Funkcie na nastavenie a ziskanie cisla vertigo roviny, na ktorej sa uzol nachadza
 void Data::Node::setNumberOfVertigoPlane(qlonglong value){
    this->numberOfVertigoPlane = value;
 }
@@ -390,7 +391,7 @@ void Data::Node::setNumberOfVertigoPlane(qlonglong value){
 qlonglong Data::Node::getNumberOfVertigoPlane(){
    return this->numberOfVertigoPlane;
 }
-
+// Duransky end - Funkcie na nastavenie a ziskanie cisla vertigo roviny, na ktorej sa uzol nachadza
 
 QString Data::Node::toString() const
 {

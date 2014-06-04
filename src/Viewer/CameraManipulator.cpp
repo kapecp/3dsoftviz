@@ -482,7 +482,7 @@ bool Vwr::CameraManipulator::calcMovement()
             if (_distance * scale < 10000){
                     _distance *= scale;
 
-                    // Duransky - zmena uhlu zobrazenia spolu so zmenou vzdialenosti pri zapnutom vertigo mode
+                    // Duransky start - zmena uhlu zobrazenia spolu so zmenou vzdialenosti pri zapnutom vertigo mode
                     if(_vertigo){
 
                         // ziskanie sirky sceny
@@ -496,6 +496,8 @@ bool Vwr::CameraManipulator::calcMovement()
 
                         // nastavenie novej projekcnej matice s novym FOV
                         coreGraph->getCamera()->setProjectionMatrixAsPerspective(newFovInDegree, ratio, zNear, zFar);
+
+                     // Duransky end - zmena uhlu zobrazenia spolu so zmenou vzdialenosti pri zapnutom vertigo mode
 
                 }
             }
@@ -1156,9 +1158,10 @@ void Vwr::CameraManipulator::updateProjectionAccordingFace(const float x, const 
 	this->coreGraph->getCamera()->setProjectionMatrixAsFrustum(left, right, bottom, top, zNear, zFar);
 }
 
-// Duransky - Resetovanie projekcnej matice pri vypnuti vertigo modu
+// Duransky start - Resetovanie projekcnej matice pri vypnuti vertigo modu
 void Vwr::CameraManipulator::resetProjectionMatrixToDefault(){
     this->coreGraph->getCamera()->setProjectionMatrixAsPerspective(60, ratio, 0.01, appConf->getValue("Viewer.Display.ViewDistance").toFloat());
 }
+// Duransky end - Resetovanie projekcnej matice pri vypnuti vertigo modu
 
 #pragma GCC diagnostic pop

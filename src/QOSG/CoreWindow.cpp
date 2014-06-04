@@ -87,7 +87,7 @@ CoreWindow::CoreWindow(QWidget *parent, Vwr::CoreGraph* coreGraph, QApplication*
 	this->coreGraph = coreGraph;
 	nodeLabelsVisible = edgeLabelsVisible = false;
 
-    // Duransky - Inicializacia premennych
+    // Duransky start - Inicializacia premennych
 
         // inicializacia poctu rovin pre vertigo mode
         numberOfPlanes = 0;
@@ -101,6 +101,8 @@ CoreWindow::CoreWindow(QWidget *parent, Vwr::CoreGraph* coreGraph, QApplication*
         // ohranicenie vzdialenosti medzi rovinami pre vertigo mode
         vertigoPlanesMinDistance = 50;
         vertigoPlanesMaxDistance = 300;
+
+    // Duransky end - Inicializacia premennych
 
 	connect(lineEdit,SIGNAL(returnPressed()),this,SLOT(sqlQuery()));
 }
@@ -353,7 +355,7 @@ void CoreWindow::createActions()
 	sl_avatarScale->setFocusPolicy(Qt::NoFocus);
 	connect(sl_avatarScale,SIGNAL(valueChanged(int)),this,SLOT(setAvatarScale(int)));
 
-    // Duransky - Nastavenie widgetov
+    // Duransky start - Nastavenie widgetov
 
     chb_vertigo = new QCheckBox("Vertigo zoom");
     connect(chb_vertigo, SIGNAL(clicked()), this, SLOT(toggleVertigo()));
@@ -393,6 +395,8 @@ void CoreWindow::createActions()
     change_Forces->setToolTip("Changes the repulsive forces between nodes restricted in one plane");
     change_Forces->setFocusPolicy(Qt::NoFocus);
     connect(change_Forces,SIGNAL(valueChanged(int)),this,SLOT(repulsive_Forces_ValueChanged()));
+
+    // Duransky end - Nastavenie widgetov
 
 }
 
@@ -920,9 +924,11 @@ void CoreWindow::removeMetaNodes()
 void CoreWindow::loadFile()
 {
 
-    // Duransky - vynulovanie vertigo rovin pri nacitani noveho grafu
+    // Duransky start - vynulovanie vertigo rovin pri nacitani noveho grafu
     planes_Vertigo.clear();
     numberOfPlanes = 0;
+
+    // Duransky end - vynulovanie vertigo rovin pri nacitani noveho grafu
 
 	//treba overit
 	layout->pause();
@@ -1217,7 +1223,7 @@ void CoreWindow::setRestriction_ConeSurface()
 	}
 }
 
-// Duransky - Upravena funkcia na vytvorenie obmedzenia - roviny pre ucely vertigo zoomu
+// Duransky start - Upravena funkcia na vytvorenie obmedzenia - roviny pre ucely vertigo zoomu
 Layout::ShapeGetter_Plane_ByThreeNodes* CoreWindow::setRestriction_Plane_Vertigo (QLinkedList<osg::ref_ptr<Data::Node> > * nodesToRestrict, int nOfPlane)
 {
     Data::Graph * currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
@@ -1276,6 +1282,7 @@ Layout::ShapeGetter_Plane_ByThreeNodes* CoreWindow::setRestriction_Plane_Vertigo
     }
     return NULL;
 }
+// Duransky end - Upravena funkcia na vytvorenie obmedzenia - roviny pre ucely vertigo zoomu
 
 void CoreWindow::setRestriction_Plane (QLinkedList<osg::ref_ptr<Data::Node> > * nodesToRestrict)
 {
@@ -1980,7 +1987,7 @@ void CoreWindow::setAvatarScale(int scale) {
 	Network::Server::getInstance()->setAvatarScale(scale);
 }
 
-// Duransky - Akcia pri prepnuti checkboxu "Vertigo zoom"
+// Duransky start - Akcia pri prepnuti checkboxu "Vertigo zoom"
 void CoreWindow::toggleVertigo() {
     // ak je "Vertigo zoom" zakliknute
     if (chb_vertigo->isChecked()) {
@@ -1993,8 +2000,9 @@ void CoreWindow::toggleVertigo() {
         viewerWidget->getCameraManipulator()->resetProjectionMatrixToDefault();
     }
 }
+// Duransky end - Akcia pri prepnuti checkboxu "Vertigo zoom"
 
-// Duransky - Funkcia na vytvorenie daneho poctu vertigo rovin
+// Duransky start - Funkcia na vytvorenie daneho poctu vertigo rovin
 void CoreWindow::create_Vertigo_Planes(int numberOfPlanes, int nOfDepthsInOnePlane, Data::GraphSpanningTree* spanningTree, int maxDepth, QMap<qlonglong, osg::ref_ptr<Data::Node> >* allNodes ){
 
    QLinkedList<osg::ref_ptr<Data::Node> > pickedNodes;
@@ -2055,8 +2063,9 @@ void CoreWindow::create_Vertigo_Planes(int numberOfPlanes, int nOfDepthsInOnePla
    planes_Vertigo.append(plane);
 
 }
+// Duransky end - Funkcia na vytvorenie daneho poctu vertigo rovin
 
-// Duransky - Funkcia na pridanie dvoch vertigo rovin
+// Duransky start - Funkcia na pridanie dvoch vertigo rovin
 void CoreWindow::add_PlanesClick()
 {
     Data::Graph * currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
@@ -2110,8 +2119,9 @@ void CoreWindow::add_PlanesClick()
     create_Vertigo_Planes(numberOfPlanes, nOfDepthsInOnePlane, spanningTree, maxDepth, allNodes);
 
 }
+// Duransky end - Funkcia na pridanie dvoch vertigo rovin
 
-// Duransky - Funkcia na odobranie dvoch vertigo rovin
+// Duransky start - Funkcia na odobranie dvoch vertigo rovin
 void CoreWindow::remove_PlanesClick() {
 
     if(numberOfPlanes == 0){
@@ -2208,8 +2218,9 @@ void CoreWindow::remove_PlanesClick() {
     create_Vertigo_Planes(numberOfPlanes, nOfDepthsInOnePlane, spanningTree, maxDepth, allNodes);
 
 }
+// Duransky end - Funkcia na odobranie dvoch vertigo rovin
 
-// Duransky - Funkcie na zmenu vzajomnej vzdialenosti vertigo rovin
+// Duransky start - Funkcie na zmenu vzajomnej vzdialenosti vertigo rovin
 void CoreWindow::change_Vertigo_Planes_Distance(int value){
 
     int nOfPlane = 0;
@@ -2246,11 +2257,13 @@ void CoreWindow::subtract_DistanceClick(){
     // znizenie vzdialenosti medzi rovinami
     change_Vertigo_Planes_Distance(-deltaVertigoDistance);
 }
+// Duransky end - Funkcie na zmenu vzajomnej vzdialenosti vertigo rovin
 
-// Duransky - Funkcia na zmenu hodnoty nasobica odpudivych sil dvoch uzlov nachadzajucich sa na rovnakej rovine
+// Duransky start - Funkcia na zmenu hodnoty nasobica odpudivych sil dvoch uzlov nachadzajucich sa na rovnakej rovine
 void CoreWindow::repulsive_Forces_ValueChanged() {
     layout->getAlg()->setRepulsiveForceVertigo(change_Forces->value());
 }
+// Duransky end - Funkcia na zmenu hodnoty nasobica odpudivych sil dvoch uzlov nachadzajucich sa na rovnakej rovine
 
 Vwr::CameraManipulator* CoreWindow::getCameraManipulator() {
     return viewerWidget->getCameraManipulator();
