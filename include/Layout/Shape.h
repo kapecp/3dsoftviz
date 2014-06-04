@@ -22,15 +22,15 @@ public:
 
 	bool isInvisible(){return invisible;}
 
-    //volovar zac, kvoli radial layoutu na zvysenie citatelnosti, v triede abstract sphere, kvoli tomu, ze shapeVisitor_visualizerCreator berie tento typ
+    //volovar zac, kvoli radial layoutu na manipuláciu zobrazenia shapu
     enum RenderType {
         WIREFRAME,
         SOLID,
         CIRCLE
     };
-    void setAlpha(float alpha) {alpha_ = alpha;}
+    void setAlpha(float alpha) {alpha_ = alpha;} //kvoli zobrazeniu priehladnosti
     float getAlpha() {return alpha_;}
-    void setRenderType(RenderType rt) {renderType_ = rt;}
+    void setRenderType(RenderType rt) {renderType_ = rt;} //zmena modu vykreslenia (droteny model, plny)
     RenderType getRenderType() {return renderType_;}
     //volovar_kon
 

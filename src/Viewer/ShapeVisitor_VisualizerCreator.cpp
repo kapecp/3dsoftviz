@@ -7,6 +7,7 @@
 #include <osg/BlendFunc>
 //volovar pridanie wireframe modu pre radial layout
 #include <osg/PolygonMode>
+//volovar koniec
 //-----------------------------------------------------------------------------
 
 namespace Vwr {
@@ -58,7 +59,7 @@ void ShapeVisitor_VisualizerCreator::visit (Layout::Shape_Intersection & shape) 
 		osg::ShapeDrawable * sd = new osg::ShapeDrawable;
 		sd->setShape (cylinder);
 
-        //volovar zmena
+        //volovar zmena apha nie je konstanta 0.06f
         sd->setColor (osg::Vec4 (0.0f, 0.f, 1.0f, shape.getAlpha()));
 
 		sd->getOrCreateStateSet()->setMode (GL_BLEND, osg::StateAttribute::ON);
@@ -151,7 +152,7 @@ void ShapeVisitor_VisualizerCreator::visualizeSphere (Layout::Shape_AbstractSphe
     osg::PolygonMode * polygonMode = new osg::PolygonMode; //podla http://snipplr.com/view/30978/osg-wireframe-display/
 
     sd->getOrCreateStateSet()->setMode (GL_BLEND, osg::StateAttribute::ON);
-    switch(abstractSphere.getRenderType())
+    switch(abstractSphere.getRenderType()) //prepinanie medzi vykreslovacimi modmi shapu
     {
     case Layout::Shape_AbstractSphere::SOLID:
 
@@ -171,7 +172,7 @@ void ShapeVisitor_VisualizerCreator::visualizeSphere (Layout::Shape_AbstractSphe
         default:
             return;
     }
-
+    //volovar koniec zmeny
 
 
 	//transparency of sphere

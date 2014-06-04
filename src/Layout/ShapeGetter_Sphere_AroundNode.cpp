@@ -40,7 +40,7 @@ QSharedPointer<Shape> ShapeGetter_Sphere_AroundNode::getShape (void) {
 		center = osg::Vec3 (0, 0, 0);
 	}
     //volovar zmena, zakazdym getshape sa vytvoril novy objekt, ale potreboval som zmenit atribut, tak som spravil aby bol iba jeden mozne vytvorit
-    if (sphere_ == NULL) //only one instance
+    if (sphere_ == NULL)
         sphere_ = QSharedPointer<Shape> (
                 new Shape_Sphere (
                     center,

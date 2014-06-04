@@ -26,6 +26,8 @@ QSharedPointer<Shape> ShapeGetter_Circle_ByThreeNodes::getShape (void) {
     //volovar zmena
     if (intersection_ == NULL)
     {
+        //kvoli radial layoutu je treba ziskat shape a nie kopiu
+        //predtym vytvaralo zakazdym novy shape, asi bude treba naprogramovat funkcie, ktore zmenia vlastnosti shapu ziskane cez argumenty metody
         intersection_ = QSharedPointer<Shape_Intersection>(new Shape_Intersection);
         intersection_->setCompositeType(Shape_Composite::CompositeType::CIRCLE);
         intersection_->addShape(sphereSurfaceGetter->getShape());

@@ -20,28 +20,4 @@ float Shape_AbstractSphere::getRadius () {
 	return radius_;
 }
 
-/*
-//volovar zac
-void Shape_AbstractSphere::setAlpha(float alpha)
-{
-    alpha_ = alpha;
-}
-
-float Shape_AbstractSphere::getAlpha()
-{
-    return alpha_;
-}
-
-void Shape_AbstractSphere::setRenderType(RenderType rt)
-{
-    renderType_ = rt;
-}
-
-Shape_AbstractSphere::RenderType Shape_AbstractSphere::getRenderType()
-{
-    return renderType_;
-}
-
-//volovar kon
-*/
 } // namespace

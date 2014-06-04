@@ -8,9 +8,6 @@
 #include <osg/Vec3f>
 #include <osg/Geode>
 #include <osg/AutoTransform>
-//volovar_zac
-//#include <Layout/RadialLayout.h>
-//volovar_kon
 
 #include <QMap>
 #include <QString>
@@ -28,8 +25,6 @@ class Edge;
 class Type;
 class Graph;
 class GraphLayout;
-//volovar_zac
-//volovar_kon
 /**
 	*  \class Node
 	*  \brief Node object represents a single node in a Graph
@@ -526,9 +521,9 @@ public:
 	bool isNodeMatched() { return nodeMatched; }
 	void setNodeMatched(bool nodeMatched) { this->nodeMatched = nodeMatched; }
     //volovar_zac
-    void setLayerID(int id);
+    void setLayerID(int id); //get unique layer id of selected radial layout, 0 node has no radial layout
     int getLayerID();
-    Layout::RadialLayout* getRadialLayout();
+    Layout::RadialLayout* getRadialLayout(); //pointer to radial layout, NULL if node doesn't belong to radial layout
     void setRadialLayout(Layout::RadialLayout *rl);
     //volovar_kon
 private:

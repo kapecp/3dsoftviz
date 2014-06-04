@@ -987,14 +987,15 @@ void CoreWindow::sliderValueChanged(int value)
 
 void CoreWindow::RadialLayoutSizeChanged(int value)
 {
+    //notify radial layout that size was changed
     Layout::RadialLayout* selectedRadialLayout = Layout::RadialLayout::getSelectedRadialLayout();
-    //qDebug()<<"Value: "<<value<<", selected: "<<selectedRadialLayout;
     if (selectedRadialLayout != NULL)
         selectedRadialLayout->changeSize((float) value);
 }
 
 void CoreWindow::RadialLayoutAlphaChanged(int value)
 {
+    //notify radial layout that alpha channel was changed
     Layout::RadialLayout* selectedRadialLayout = Layout::RadialLayout::getSelectedRadialLayout();
     //qDebug()<<"Value: "<<value<<", selected: "<<selectedRadialLayout;
     if (selectedRadialLayout != NULL)
@@ -1003,40 +1004,40 @@ void CoreWindow::RadialLayoutAlphaChanged(int value)
 
 void CoreWindow::RadialLayoutSetVisibleSpheres(int value)
 {
+    //notify radial layout that number of visibles spheres was changed
     Layout::RadialLayout* selectedRadialLayout = Layout::RadialLayout::getSelectedRadialLayout();
-    //qDebug()<<"Value: "<<value<<", selected: "<<selectedRadialLayout;
     if (selectedRadialLayout != NULL)
         selectedRadialLayout->setVisibleSpheres((float) value/100);
 }
 
 void CoreWindow::RadialLayoutSetForceScale(int value)
 {
+    //notify that multiplier of repulsive forces in radial layout was changed
     Layout::RadialLayout* selectedRadialLayout = Layout::RadialLayout::getSelectedRadialLayout();
-    //qDebug()<<"Value: "<<value<<", selected: "<<selectedRadialLayout;
     if (selectedRadialLayout != NULL)
         selectedRadialLayout->setForceScale((float) value);
 }
 
 void CoreWindow::RadialLayoutSetForceSphereScale(int value)
 {
+    //notify that multiplier of repulsive forces in radial layout on same layer was changed
     Layout::RadialLayout* selectedRadialLayout = Layout::RadialLayout::getSelectedRadialLayout();
-    //qDebug()<<"Value: "<<value<<", selected: "<<selectedRadialLayout;
     if (selectedRadialLayout != NULL)
         selectedRadialLayout->setForceSphereScale((float) value);
 }
 
 void CoreWindow::changeDrawMethod_RadialLayout()
 {
+    //notify that drawing method (WIREFRAME/SOLID) was changed
     Layout::RadialLayout* selectedRadialLayout = Layout::RadialLayout::getSelectedRadialLayout();
-    //qDebug()<<"Value: "<<value<<", selected: "<<selectedRadialLayout;
     if (selectedRadialLayout != NULL)
         selectedRadialLayout->changeRenderType();
 }
 
 void CoreWindow::changeMode_RadialLayout()
 {
+    //notify that mode of radial layout was changed (2D/3D)
     Layout::RadialLayout* selectedRadialLayout = Layout::RadialLayout::getSelectedRadialLayout();
-    //qDebug()<<"Value: "<<value<<", selected: "<<selectedRadialLayout;
     if (selectedRadialLayout != NULL)
         selectedRadialLayout->changeMode();
 }

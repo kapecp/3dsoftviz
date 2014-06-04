@@ -483,7 +483,7 @@ void FRAlgorithm::addRepulsive(Data::Node* u, Data::Node* v, float factor) {
 	fv = (vp - up);// smer sily
 	fv.normalize();
 	fv *= rep(dist) * factor;// velkost sily
-    //volovar zmena aby repulzivne sily posobili len na uzly s rovnaky sphereID, ked nemaju radial layout tak ho maju 0
+    //volovar zmena aby repulzivne sily posobili len na uzly s rovnakym layerID, ked nemaju radial layout tak ho maju 0
     if (u->getRadialLayout() != NULL && (u->getRadialLayout() == v->getRadialLayout()))
     {
         if (u->getLayerID() == v->getLayerID())
@@ -491,6 +491,7 @@ void FRAlgorithm::addRepulsive(Data::Node* u, Data::Node* v, float factor) {
         else
             fv *= u->getRadialLayout()->getForceScale();
     }
+    //volovar koniec zmeny
 	u->addForce(fv);
 }
 /* Vzorec na vypocet odpudivej sily */

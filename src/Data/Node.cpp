@@ -18,10 +18,6 @@
 
 #include <QTextStream>
 
-//volovar_zac
-//#include <Layout/RadialLayout.h>
-//volovar_kon
-
 typedef osg::TemplateIndexArray<unsigned int, osg::Array::UIntArrayType,4,1> ColorIndexArray;
 
 Data::Node::Node(qlonglong id, QString name, Data::Type* type, float scaling, Data::Graph* graph, osg::Vec3f position)
@@ -95,8 +91,8 @@ Data::Node::Node(qlonglong id, QString name, Data::Type* type, float scaling, Da
 	this->setColor(osg::Vec4(r, g, b, a));
 
     //volovar_zac
-    layerID = 0;
-    radialLayout = NULL;
+    layerID = 0;  //node is not on layer of radial layout
+    radialLayout = NULL;  //node does not belong to radial layout
     //volovar_kon
 }
 
