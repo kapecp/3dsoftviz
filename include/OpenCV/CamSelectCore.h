@@ -32,16 +32,37 @@ public:
 		 * @author Autor: Marek Jakab
 		 */
 	OpenCV::CapVideo *selectCamera();
+	/**
+		 * @author Autor: Marek Jakab
+		 * @brief countCameras Count the number of active cameras
+		 * @return number of plugged in and active camera devices
+		 */
 	int countCameras();
 
+	/**
+		 * @author Autor: David Durcak, Marek Jakab
+		 * @brief setCam Set camera parameters
+		 * @param dev_id Camera ID
+		 * @param width Camera width
+		 * @param height Camera height
+		 */
 	void setCam(int dev_id, int width, int height);
 
 private:
 	CamSelectCore();
 
 	QApplication *app;
+	/**
+		 * @brief camlist Vector holding list of camera devices
+		 */
 	std::vector<OpenCV::CapVideo*> camlist;
+	/**
+		 * @brief device_id Specific camera ID for selection
+		 */
 	int device_id;
+	/**
+		 * @brief mCamSelectCore Instance for Singleton
+		 */
 	static CamSelectCore *mCamSelectCore;
 
 };

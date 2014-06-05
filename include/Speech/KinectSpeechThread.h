@@ -23,13 +23,22 @@ public:
 	KinectSpeechThread();
 	~KinectSpeechThread(void);
 	/**
-	 * @brief initializeSpeech
-	 * @author Autor: Marek Jakab
-	 * @return 0/1 if the initialization was succesfful
-	 */
+		 * @brief initializeSpeech
+		 * @author Autor: Marek Jakab
+		 * @return 0/1 if the initialization was succesfful
+		 */
 	int initializeSpeech();
+	/**
+		 * @brief m_SpeechClass Object which holds basic functions for speech recognition
+		 */
 	SpeechSDK::SpeechSDKClass *m_SpeechClass;
+	/**
+		 * @brief isConnected Used to store information if the kinect device have been initialized
+		 */
 	bool isConnected;
+	/**
+		 * @brief cancel Boolean for canceling the thread
+		 */
 	bool cancel;
 
 	/**

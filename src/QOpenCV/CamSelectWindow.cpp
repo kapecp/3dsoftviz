@@ -25,8 +25,6 @@ void OpenCV::CamSelectWindow::configureWindow(QString stringdata)
 	resize(400,260);
 	setWindowTitle(tr("Select camera to use"));
 
-	changes = new QList<QString>();
-
 	view = new QTreeView();
 	view->setFocusPolicy(Qt::NoFocus);
 	view->setVisible(false);
