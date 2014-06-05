@@ -8,6 +8,7 @@
 
 using namespace OpenCV;
 
+// constructor sets basic camera settings
 OpenCV::CapVideo::CapVideo( int device_id, int width, int height)
 {
 	this->device_id		= device_id;
@@ -16,6 +17,7 @@ OpenCV::CapVideo::CapVideo( int device_id, int width, int height)
 	this->height		= height;
 }
 
+// open camera device based on set parameters
 void OpenCV::CapVideo::startCamera(int width,int height){
 	this->connections++;
 	if ( !capture.isOpened() ){
@@ -29,6 +31,7 @@ void OpenCV::CapVideo::startCamera(int width,int height){
 	}
 }
 
+//release camera
 void OpenCV::CapVideo::release(){
 	this->connections--;
 	if (this->connections == 0){
@@ -58,13 +61,14 @@ bool OpenCV::CapVideo::isOpened(){
 	return this->capture.isOpened();
 }
 
-
+// return frame from camera device
 cv::Mat OpenCV::CapVideo::queryFrame()
 {
 	capture >> this->frame;
 	return this->frame;
 }
 
+// transform current camera frame to grayscale and return it
 cv::Mat CapVideo::getGrayframe()
 {
 	if(!frame.empty())

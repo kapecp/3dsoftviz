@@ -4,6 +4,7 @@
 
 using namespace cv;
 
+// constructor loads classifier file with learned faces and set start parameters
 OpenCV::FaceRecognizer::FaceRecognizer()
 {
 	if (!this->haar_cascade.load(file))
@@ -22,9 +23,10 @@ OpenCV::FaceRecognizer::~FaceRecognizer()
 	this->faces.clear();
 }
 
+// face detection at given frame
 void OpenCV::FaceRecognizer::detectFaces(Mat gray)
 {
-	// If we detected head in previous frame, detect next head in region
+	// If we detected face in previous frame, detect next face in region
 	// of previous detection
 	if (this->detected)
 	{
@@ -35,6 +37,7 @@ void OpenCV::FaceRecognizer::detectFaces(Mat gray)
 												CV_HAAR_FIND_BIGGEST_OBJECT|
 												CV_HAAR_DO_ROUGH_SEARCH);
 	}
+	// else find face again in whole frame
 	else
 	{
 		this->haar_cascade.detectMultiScale(gray, this->faces,1.15, 5,
@@ -44,10 +47,13 @@ void OpenCV::FaceRecognizer::detectFaces(Mat gray)
 	}
 }
 
+// used to draw rectangle and compute eyes coordinates
 void OpenCV::FaceRecognizer::annotateFaces(Mat frame)
 {
+	// if there was at least 1 face
 	if (this->faces.size()>0)
 	{
+		// we select only first face
 		Rect face_i = this->faces[0];
 		if (this->firstdetection){
 			this->drawrect=this->faces[0];
@@ -90,6 +96,7 @@ void OpenCV::FaceRecognizer::annotateFaces(Mat frame)
 				this->drawrect.height=(int)(face_i.height);//*1.2;
 				if (this->drawrect.y+this->drawrect.height>frame.rows-1) this->drawrect.height=frame.rows-1-this->drawrect.y;
 
+				// determine the searching window for next frame
 				face_i.x=(int)(face_i.x-face_i.width*0.4+this->rect.x);
 				if (face_i.x<0) face_i.x=0;
 				if (face_i.x>frame.cols-1) face_i.x=frame.cols-1;
@@ -139,6 +146,7 @@ cv::CascadeClassifier OpenCV::FaceRecognizer::getCascadeClassifier()
 	return this->haar_cascade;
 }
 
+// compute eyes coordinates based on the location of face in the frame
 void OpenCV::FaceRecognizer::computeEyesCoordinations(Rect face, Size size)
 {
 	float x = ((((float)(face.x+face.width/2) / (float)size.width-0.5f)/0.5f)*100);
@@ -154,6 +162,7 @@ cv::Point2i OpenCV::FaceRecognizer::getEyesCoords()
 	return this->eyesCoord;
 }
 
+// distance of the face is determined by the size of the drawn rectangle
 float OpenCV::FaceRecognizer::getHeadDistance(double screenWidth)
 {
 	if (this->faces.size()>0)
