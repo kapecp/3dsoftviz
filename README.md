@@ -11,7 +11,7 @@
 
 * [Aruco](http://www.uco.es/investiga/grupos/ava/node/26)
 * Kinect
-* [OpenNi](https://github.com/OpenNI/OpenNI)
+* [OpenNi](http://structure.io/openni)
 * Nite
 * OSG
 * OpenCV
