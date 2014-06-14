@@ -1,4 +1,3 @@
-#include "Core/Core.h"
 #include "Kinect/KinectZoom.h"
 
 Kinect::KinectZoom::KinectZoom()
@@ -6,7 +5,8 @@ Kinect::KinectZoom::KinectZoom()
 	previousZ = 0.0f;
 	currentZ = 0.0f;
 	delta = 0.0f;
-	zoomThreshold=0.0f;
+	zoomThreshold=7.0f;
+	viewer = AppCore::Core::getInstance()->getCoreWindow()->GetViewerQt();
 }
 
 Kinect::KinectZoom::~KinectZoom()
@@ -64,7 +64,9 @@ int Kinect::KinectZoom::DetectContour(Mat img){
 			}
 		}
 	}
+#ifdef QT_DEBUG
 	imshow( "Hull", drawing );
+#endif
 	return numFingers;
 }
 
@@ -115,28 +117,19 @@ void Kinect::KinectZoom::zoom(cv::Mat frame,openni::VideoStream *m_depth, float 
 	cv::floodFill(depthImage2, mask, cv::Point(depthImage2.cols/2,depthImage2.rows/2),
 				  255, 0, cv::Scalar(4),
 				  cv::Scalar(4),  4 + (255 << 8) + cv::FLOODFILL_MASK_ONLY + cv::FLOODFILL_FIXED_RANGE);
-
+#ifdef QT_DEBUG
 	cv::namedWindow( "floodfill", CV_WINDOW_AUTOSIZE );
 
 	cv::imshow("floodfill", mask);
 	cv::waitKey(33);
-
+#endif
 	int numFingers = DetectContour(mask);
-	std::cout << "fingers " << numFingers << std::endl;
+	delta = (previousZ-currentZ);
 	if (numFingers > 2)
 	{
-		QOSG::ViewerQT *viewer = AppCore::Core::getInstance()->getCoreWindow()->GetViewerQt();
-		delta = (previousZ-currentZ);
-
-		if( delta > 0 && delta > zoomThreshold)
+		if (abs(delta) > zoomThreshold)
 		{
-			std::cout << "delta " << delta << std::endl;
-			viewer->getEventQueue()->mouseScroll(osgGA::GUIEventAdapter::SCROLL_UP,100);
-		}
-		else if (delta < 0 && delta < -1.0*zoomThreshold)
-		{
-			std::cout << "delta " << delta << std::endl;
-			viewer->getEventQueue()->mouseScroll(osgGA::GUIEventAdapter::SCROLL_DOWN,100);
+			viewer->getEventQueue()->mouseScroll2D(0,delta*5.0,0);
 		}
 	}
 	previousZ=z1;
