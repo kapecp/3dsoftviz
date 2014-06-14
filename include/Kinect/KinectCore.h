@@ -13,9 +13,10 @@ namespace Kinect
 {
 
 /**
-	*@brief Class KinectCore
-	*@author Autor: Patrik Hlavac
-	*@date 4.3.2014
+	* @brief Class KinectCore
+	* @author Autor: Patrik Hlavac
+	* @date 4.3.2014
+	* @brief Core class for create Window a Thread Kinect, here is create connection between Window and Thread based on SLOT a SIGNAL
 	*/
 class KinectCore
 {
@@ -34,18 +35,26 @@ public:
 
 	/**
 	 * @author Matej Marconak
-	 *@brief kinectRecognition start
+	 * @brief kinectRecognition start
+	 * @brief create thread and window for Kinect
 	 */
 	void kinectRecognition();
 
 private:
 
 	/**
-	  *author Matej Marconak
+	 * @author Matej Marconak
 	 * @brief create Connection Kinect
+	 * @brief create SLOT and SIGNAL for comunication between THREAD and Window,CameraManipulator
 	 */
 	void createConnectionKinect();
 
+	/**
+	 * @brief KinectCore
+	 * @param app link to QApplication
+	 * @param parent link to parent QWidget
+	 * @brief Singleton
+	 */
 	KinectCore(QApplication* app, QWidget *parent);
 
 	static KinectCore *mKinectCore;

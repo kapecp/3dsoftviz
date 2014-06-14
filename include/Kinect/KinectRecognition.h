@@ -10,9 +10,9 @@ namespace Kinect{
 
 /**
  * @author Matej Marconak
- *@brief Kinect class for start recognition and conversion of VideoFrame
+ * @brief Kinect class for start recognition and conversion of VideoFrame
+ * @brief //TODO divide class for open and for converted cv:Mat - Strategy
  */
-
 class KinectRecognition{
 
 public:
@@ -48,14 +48,14 @@ public:
 	/**
 	 * @brief convert videoframe getting from classing frame
 	 * @param colorFrame color videoframe
-	 * @return
+	 * @return converterd QImage
 	 */
 	QImage colorImageQImage(openni::VideoFrameRef& colorFrame);
 
 	/**
 	 * @brief convert depth videoframe to QImage
 	 * @param colorFrame depth videoframe
-	 * @return
+	 * @return coverted colofrmae to QImage
 	 */
 	QImage deptImageQImage(openni::VideoFrameRef& colorFrame);
 

@@ -26,12 +26,16 @@ class KinectWindow : public QDialog
 public:
 
 	/**
-	 * @author Matej Marconak
-	 *@brief KinectWindow
-	 * @param mApp
+	 *	@author Matej Marconak
+	 *	@brief KinectWindow
+	 *	@param mApp
 	 */
 	KinectWindow(QWidget *parent, QApplication *app,Kinect::KinectThread *thr);
 
+	/**
+	 * @brief getLabel
+	 * @return actual QImage in frame
+	 */
 	QLabel *getLabel() const;
 
 signals:
@@ -73,18 +77,40 @@ signals:
 
 public slots:
 
+	/**
+	 * @brief SLOT for setting picture in Frame
+	 * @param image to set fo frame
+	 */
 	void setLabel(cv::Mat image);
+
+	/**
+	 * @brief SLOT for setting picture in Frame
+	 * @param qimage to set frame
+	 */
 	void setLabelQ(QImage qimage );
 
+	/**
+	 * @brief SLOT for pause video
+	 */
 	void pausewindows();
 
+	/**
+	 * @brief SLOT for stop Window
+	 */
 	void quitWindows();
 
 
 private slots:
 
+	/**
+	 * @brief private SLOT for turn OFF cursor
+	 */
 	void stopMovingCursor();
 
+	/**
+	 * @brief private SLOT set speed movements
+	 * @param speed of movement
+	 */
 	void setSpeedKinect(int speed);
 
 private:

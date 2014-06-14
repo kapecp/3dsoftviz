@@ -15,6 +15,11 @@ class KinectThread;
 class KinectHandTracker;
 class KinectRecognition;
 
+/**
+ * @author Matej Marconak
+ * @brief The KinectThread class
+ * @brief Thread for processing Openni and Nite data
+ */
 class KinectThread : public QThread
 {
 	Q_OBJECT
@@ -98,9 +103,14 @@ private:
 	double mSpeed;
 
 	openni::VideoFrameRef colorFrame;
+
+	// base class for Hand Recognition
 	KinectHandTracker *kht;
+
+	// base class for open Kinect a converted
 	KinectRecognition *mKinect;
 
+	// video stream data for save
 	openni::VideoStream  color;
 	openni::VideoStream  m_depth;
 
