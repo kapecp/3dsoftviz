@@ -115,6 +115,10 @@ private slots:
 
 private:
 
+	/**
+	 * @brief closeEvent
+	 * @param event
+	 */
 	void closeEvent(QCloseEvent *event);
 
 	/**
@@ -131,6 +135,9 @@ private:
 	QPushButton		*mKinectPause;
 	QSlider			*mSpeed;
 
+	/**
+	 * @brief Kinect thread
+	 */
 	Kinect::KinectThread *thr;
 
 };

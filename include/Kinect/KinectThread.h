@@ -95,23 +95,54 @@ public slots:
 
 private:
 
+	/**
+	 * @brief information about status thread
+	 */
 	bool mCancel;
+
+	/**
+	 * @brief status for sending image and processing
+	 */
 	bool mSetImageEnable;
+
+	/**
+	 * @brief status of OpenNI device
+	 */
 	bool isOpen;
+
+	/**
+	 * @brief status of cursor
+	 */
 	bool isCursorEnable;
 
+	/**
+	 * @brief speed for reaction
+	 */
 	double mSpeed;
 
+	/**
+	 * @brief base colorframe enity for save data
+	 */
 	openni::VideoFrameRef colorFrame;
 
-	// base class for Hand Recognition
+	/**
+	 * @brief base class for Hand Recognition
+	 */
 	KinectHandTracker *kht;
 
-	// base class for open Kinect a converted
+	/**
+	 * @brief base class for open Kinect a converted
+	 */
 	KinectRecognition *mKinect;
 
-	// video stream data for save
+	/**
+	 * @brief video stream data for save
+	 */
 	openni::VideoStream  color;
+
+	/**
+	 * @brief video stream data for save
+	 */
 	openni::VideoStream  m_depth;
 
 

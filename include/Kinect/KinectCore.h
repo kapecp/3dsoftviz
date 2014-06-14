@@ -57,14 +57,34 @@ private:
 	 */
 	KinectCore(QApplication* app, QWidget *parent);
 
+	/**
+	 * @brief Singleton Kinect core
+	 */
 	static KinectCore *mKinectCore;
 
+	/**
+	 * @brief link to Qaplication
+	 */
 	QApplication *app;
+
+	/**
+	 * @brief link to QWidget parent
+	 */
 	QWidget	*mParent;
 
+	/**
+	 * @brief Kinect thread
+	 */
 	Kinect::KinectThread *mThrKinect;
+
+	/**
+	 * @brief is Thread created
+	 */
 	bool	mThrsCreated;
 
+	/**
+	 * @brief Kinect Window
+	 */
 	QPointer<Kinect::KinectWindow> mKinectDialog;
 
 };

@@ -65,10 +65,20 @@ public:
 	 */
 	bool isOpenOpenni();
 
+	/**
+	 * @brief Kinect device
+	 */
 	openni::Device device;
 private:
 
+	/**
+	 * @brief is Kinect conection opened
+	 */
 	bool isOpen;
+
+	/**
+	 * @brief status of OpenNI
+	 */
 	openni::Status mOpenniStatus;
 
 };

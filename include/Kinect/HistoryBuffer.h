@@ -54,9 +54,24 @@ public:
 private:
 	friend class Iterator;
 
+	/**
+	 * @brief buffer size
+	 */
 	static const int m_bufferSize = BufferSize;
+
+	/**
+	 * @brief array of points
+	 */
 	nite::Point3f m_points[BufferSize];
+
+	/**
+	 * @brief current head in History buffer
+	 */
 	int m_currentHead;
+
+	/**
+	 * @brief current size of History buffer
+	 */
 	int m_size;
 };
 

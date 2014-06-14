@@ -87,22 +87,53 @@ public:
 	nite::HandTrackerFrameRef handTrackerFrame;
 
 private:
+
+	/**
+	 * @brief is Mouse pressed
+	 */
 	bool isClick;
+
+	/**
+	 * @brief is mouse cursor movement enable
+	 */
 	bool isCursorMovementEnable;
 
-	// class for controlling mouse
+
+	/**
+	 * @brief class for controlling mouse
+	 */
 	Vwr::MouseControl *mouse;
 
-	//video stream
+	/**
+	 * @brief save videostream - get points
+	 */
 	openni::VideoStream  *mDepth;
 
-	// convertor between Kinect 3D coordinates to real word coordinates
+	/**
+	 * @brief convertor between Kinect 3D coordinates to real word coordinates
+	 */
 	openni::CoordinateConverter coordinateConverter;
+
+	/**
+	 * @brief real coordinate X
+	 */
 	float mDepthX;
+
+
+	/**
+	 * @brief real coordinate Y
+	 */
 	float mDepthY;
+
+
+	/**
+	 * @brief real coordinate Z
+	 */
 	float mDepthZ;
 
-	// speed of movemenent
+	/**
+	 * @brief speed of movemenent
+	 */
 	double mSpeed;
 
 };

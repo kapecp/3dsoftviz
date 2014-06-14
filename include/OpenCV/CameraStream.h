@@ -56,10 +56,10 @@ private:
 		*/
 	void updateGeometryCoords(int width, int height);
 
-	int				mWidth;
-	int				mHeight;
-	osg::Geometry	*mGeom;
-	IplImage		*iplImg;
+	int				mWidth; // data about cols cv:Mat
+	int				mHeight; // data about rows cv:Mat
+	osg::Geometry	*mGeom; // Geometry for vertex array and update
+	IplImage		*iplImg; // image for background
 };
 }
 
