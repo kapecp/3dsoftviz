@@ -29,13 +29,21 @@ public:
 		 * @param app QApplication
 		 */
 	CamSelectWindow(QWidget *parent, QApplication *app, QString stringdata);
-	QLabel *getLabel();
-	QLabel *windowLabel;
+
 signals:
+	/**
+	 * @author Autor: Marek Jakab
+	 * @brief setCam Signal for selecting Camera by ID
+	 * @param devid Camera ID
+	 * @param width Selected width of Camera
+	 * @param heigth Selected height of Camera
+	 */
 	void setCam(int devid, int width, int heigth);
 
 public slots:
-	//void itemClicked(QModelIndex index);
+	/**
+	 * @brief commitChanges Commit the selection of camera
+	 */
 	void commitChanges();
 
 private:
@@ -44,17 +52,27 @@ private:
 		 * @brief configureWindow Sets window properties
 		 */
 	void configureWindow(QString stringdata);
+	/**
+		 * @author Autor: Marek Jakab
+		 * @brief createTableModel Create gui model and fill data
+		 * @param stringdata Data from cameras
+		 */
 	void createTableModel(QString stringdata);
 
 	QApplication * app;
 
+	/**
+	 * @brief model Model used for QT gui
+	 */
 	QStandardItemModel * model;
+	/**
+	 * @brief view Tree view used in gui model
+	 */
 	QTreeView * view;
-	QList<QString> * changes;
+	/**
+	 * @brief applyButton Confirmation button
+	 */
 	QPushButton * applyButton;
-	QModelIndexList indexes;
-
-	int rowsize;
 
 };
 }

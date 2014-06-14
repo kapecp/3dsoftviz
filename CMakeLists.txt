@@ -85,7 +85,7 @@ set( CMAKE_INSTALL_NAME_DIR "@executable_path/../lib" CACHE STRING "" FORCE )
 # --------------
 
 include( cotire )
-if ( COMMAND cotire )
+if(COMMAND cotire )
 	if( NOT COTIRE_MAXIMUM_NUMBER_OF_UNITY_INCLUDES )
 		include( ProcessorCount )
 		ProcessorCount( N )
@@ -594,7 +594,7 @@ install( TARGETS ${3DSOFTVIZ_NAME}
 	RUNTIME DESTINATION ${INSTALL_BIN} COMPONENT Runtime )
 
 # add custom install_unity target
-if ( COMMAND cotire )
+if( COMMAND cotire )
 	add_custom_target( install_unity
 		COMMAND ${CMAKE_COMMAND} -P "cmake_install.cmake" )
 	add_dependencies( install_unity ${3DSOFTVIZ_NAME}_unity )

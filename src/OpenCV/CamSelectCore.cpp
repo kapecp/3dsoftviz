@@ -9,6 +9,7 @@ using namespace OpenCV;
 
 OpenCV::CamSelectCore * OpenCV::CamSelectCore::mCamSelectCore;
 
+//constructor search automatically for number of active cameras and store them
 OpenCV::CamSelectCore::CamSelectCore()
 {
 	mCamSelectCore = this;
@@ -61,6 +62,7 @@ OpenCV::CapVideo *OpenCV::CamSelectCore::selectCamera()
 
 }
 
+// new instance of singleton
 OpenCV::CamSelectCore * OpenCV::CamSelectCore::getInstance()
 {
 	if(mCamSelectCore == NULL)
@@ -70,6 +72,7 @@ OpenCV::CamSelectCore * OpenCV::CamSelectCore::getInstance()
 	return mCamSelectCore;
 }
 
+// get the number of active cameras
 int OpenCV::CamSelectCore::countCameras()
 {
 	int max = 10;

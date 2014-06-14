@@ -11,6 +11,7 @@
 
 #include "Util/ApplicationConfig.h"
 #include <opencv2/imgproc/imgproc.hpp>
+#include <QDebug>
 
 
 using namespace QOpenCV;
