@@ -4,6 +4,7 @@
 #include "Kinect/HistoryBuffer.h"
 #include "OpenNI.h"
 #include "NiTE.h"
+#include <map>
 
 #define NUM_HANDS 2
 

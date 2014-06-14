@@ -8,6 +8,7 @@
 #include <QtGui/QVBoxLayout>
 #include <QtGui/QStackedLayout>
 #include <QtGui/QSlider>
+#include <QCloseEvent>
 #include "QDebug"
 
 using namespace Kinect;
