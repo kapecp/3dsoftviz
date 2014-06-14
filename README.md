@@ -5,7 +5,7 @@
 
 ### Requirements and Setup
 
-  path = doc/
+     path = doc/
   
 ### Implemented Technologies
 
