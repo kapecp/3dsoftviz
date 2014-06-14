@@ -3,10 +3,10 @@
 
 * Website: www.arvis.sk
 
-### Setup
+### Requirements and Setup
 
-### Requirements
-
+  path = doc/
+  
 ### Implemented Technologies
 
 * [Aruco](http://www.uco.es/investiga/grupos/ava/node/26)
