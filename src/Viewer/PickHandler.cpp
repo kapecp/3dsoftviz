@@ -18,6 +18,8 @@
 #include <osg/MatrixTransform>
 #include <osg/Projection>
 #include <osg/BlendFunc>
+#include <osg/ShapeDrawable>
+
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wswitch-enum"

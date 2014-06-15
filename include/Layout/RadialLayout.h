@@ -1,7 +1,17 @@
 #ifndef LAYOUT_RADIAL_LAYUOT_H
 #define LAYOUT_RADIAL_LAYUOT_H
 
+#include "Layout/Shape_AbstractSphere.h"
+
+#include <QLinkedList>
+#include <QSet>
 #include <osg/Vec3f>
+#include <osg/ref_ptr>
+
+namespace Data {
+    class Graph;
+    class Node;
+}
 
 namespace Layout
 {

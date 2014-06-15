@@ -1,5 +1,7 @@
 #include "QOpenCV/FaceRecognitionThread.h"
 
+#include <QDebug>
+
 using namespace QOpenCV;
 
 QOpenCV::FaceRecognitionThread::FaceRecognitionThread(OpenCV::FaceRecognizer* alg)

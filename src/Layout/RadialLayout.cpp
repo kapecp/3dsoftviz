@@ -1,11 +1,16 @@
 #include "Layout/RadialLayout.h"
-#include "Data/GraphSpanningTree.h"
+
 #include "Layout/ShapeGetter_Sphere_AroundNode.h"
 #include "Layout/ShapeGetter_Circle_ByThreeNodes.h"
 #include "Layout/RestrictionsManager.h"
+
+#include "Data/GraphSpanningTree.h"
 #include "Data/Graph.h"
 #include "Data/Node.h"
+
 #include "QDebug"
+
+using namespace Layout;
 
 //instance of static members
 RadialLayout* RadialLayout::selectedRadialLayout = NULL;
