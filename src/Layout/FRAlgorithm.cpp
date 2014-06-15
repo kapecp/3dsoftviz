@@ -486,7 +486,7 @@ void FRAlgorithm::addRepulsive(Data::Node* u, Data::Node* v, float factor) {
 
     // Duransky start - vynasobenie odpudivej sily medzi dvoma uzlami hodnotou zo spinboxu ak su na rovnakej vertigo rovine
     if(u->getNumberOfVertigoPlane() == v->getNumberOfVertigoPlane()){
-        fv *= repulsiveForceVertigo;
+        fv *= (float)repulsiveForceVertigo;
     }
     // Duransky end - vynasobenie odpudivej sily medzi dvoma uzlami hodnotou zo spinboxu ak su na rovnakej vertigo rovine
 
