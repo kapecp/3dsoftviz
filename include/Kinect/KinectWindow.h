@@ -66,6 +66,12 @@ signals:
 	void setMovementCursor(bool send);
 
 	/**
+	 * @brief enable/disable graph zoom
+	 * @param send true for stop, false for start
+	 */
+	void setZoom(bool send);
+
+	/**
 	 * @brief change of speed movement for hand
 	 * @param send speed for movement
 	 */
@@ -84,6 +90,7 @@ public slots:
 private slots:
 
 	void stopMovingCursor();
+	void stopZoom();
 
 	void setSpeedKinect(int speed);
 
@@ -102,6 +109,7 @@ private:
 	QRadioButton	*mKinectDepthMap;
 	QStackedLayout	*mModulesStackL;
 	QCheckBox		*mDisableCursor;
+	QCheckBox		*mDisableZoomCursor;
 	QPushButton		*mKinectPause;
 	QSlider			*mSpeed;
 

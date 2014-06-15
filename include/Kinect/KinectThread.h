@@ -83,6 +83,12 @@ public slots:
 	void setCursorMovement(bool set);
 
 	/**
+	 * @brief control for graph zoom
+	 * @param set true for start,false for stop
+	 */
+	void setZoomUpdate(bool set);
+
+	/**
 	 * @brief speed of reaction from Kinect gesture
 	 * @param set base 1.0 for normal speed, <1 slower, >1 faster
 	 */
@@ -94,6 +100,7 @@ private:
 	bool mSetImageEnable;
 	bool isOpen;
 	bool isCursorEnable;
+	bool isZoomEnable;
 
 	double mSpeed;
 

@@ -40,6 +40,8 @@ void Kinect::KinectWindow::configureWindow(void)
 
 	mDisableCursor = new QCheckBox(tr("Turn off cursor"));
 	connect(mDisableCursor,SIGNAL(clicked()),this,SLOT(stopMovingCursor()));
+	mDisableZoomCursor = new QCheckBox(tr("Turn off zoom"));
+	connect(mDisableZoomCursor,SIGNAL(clicked()),this,SLOT(stopZoom()));
 
 	mSpeed= new QSlider(Qt::Vertical);
 	mSpeed->setRange(5,20);
@@ -65,6 +67,7 @@ void Kinect::KinectWindow::configureWindow(void)
 	buttonsLayout->setAlignment(Qt::AlignTop);
 	buttonsLayout_2->addWidget(mKinectPause);
 	buttonsLayout_2->addWidget(mDisableCursor);
+	buttonsLayout_2->addWidget(mDisableZoomCursor);
 	buttonsLayout_2->addWidget(mSpeed);
 	frameLayout->setAlignment(Qt::AlignCenter);
 	frameLayout->addWidget(mWindowLabel);
@@ -87,6 +90,18 @@ void Kinect::KinectWindow::stopMovingCursor()
 	else
 	{
 		emit setMovementCursor(true);
+	}
+}
+
+void Kinect::KinectWindow::stopZoom()
+{
+	if(mDisableZoomCursor->isChecked())
+	{
+		emit setZoom(false);
+	}
+	else
+	{
+		emit setZoom(true);
 	}
 }
 

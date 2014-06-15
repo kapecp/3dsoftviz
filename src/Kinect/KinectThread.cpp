@@ -18,6 +18,7 @@ Kinect::KinectThread::KinectThread(QObject *parent) : QThread(parent)
 	isCursorEnable=true;
 	isOpen=false;
 	mSetImageEnable=true;
+	isZoomEnable=true;
 }
 
 Kinect::KinectThread::~KinectThread(void)
@@ -68,6 +69,10 @@ void Kinect::KinectThread::pause()
 void Kinect::KinectThread::setCursorMovement(bool set)
 {
 	isCursorEnable=set;
+}
+void Kinect::KinectThread::setZoomUpdate(bool set)
+{
+	isZoomEnable=set;
 }
 void Kinect::KinectThread::setSpeedKinect(double set)
 {
@@ -144,7 +149,11 @@ void Kinect::KinectThread::run()
 					emit sendSliderCoords(  (kht->slidingHand_x/kht->handTrackerFrame.getDepthFrame().getWidth()-0.5)*(-200),
 											(kht->slidingHand_y/kht->handTrackerFrame.getDepthFrame().getHeight()-0.5)*(200),
 											(kht->slidingHand_z/kht->handTrackerFrame.getDepthFrame().getHeight()-0.5)*200);
-					zoom->zoom(frame,&m_depth,kht->getArrayHands[0][0], kht->getArrayHands[0][1], kht->handZ[0]);
+					// compute zoom if enabled
+					if (isZoomEnable)
+					{
+						zoom->zoom(frame,&m_depth,kht->getArrayHands[0][0], kht->getArrayHands[0][1], kht->handZ[0]);
+					}
 					printf("%.2lf %.2lf z %.2lf -  %.2lf slider \n", (kht->slidingHand_x/kht->handTrackerFrame.getDepthFrame().getWidth()-0.5)*200,
 						   (kht->slidingHand_y/kht->handTrackerFrame.getDepthFrame().getHeight()-0.5)*200, (kht->slidingHand_z/kht->handTrackerFrame.getDepthFrame().getHeight()-0.5)*200, kht->slidingHand_z);
 				}
