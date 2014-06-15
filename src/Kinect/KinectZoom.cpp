@@ -14,6 +14,7 @@ Kinect::KinectZoom::~KinectZoom()
 
 }
 
+// find contours of segmented hand
 int Kinect::KinectZoom::DetectContour(Mat img){
 	Mat drawing = Mat::zeros( img.size(), CV_8UC3 );
 	vector<vector<Point> > contours;
@@ -58,7 +59,7 @@ int Kinect::KinectZoom::DetectContour(Mat img){
 						cv::line(drawing,contours[i][ind_2],contours[i][ind_1],Scalar(0,0,255),1);
 					}
 				}
-
+				// draw results
 				drawContours( drawing, contours, i, Scalar(0,255,0), 1, 8, vector<Vec4i>(), 0, Point() );
 				drawContours( drawing, hull_points, i, Scalar(255,0,0), 1, 8, vector<Vec4i>(), 0, Point() );
 			}
@@ -73,6 +74,7 @@ int Kinect::KinectZoom::DetectContour(Mat img){
 
 void Kinect::KinectZoom::zoom(cv::Mat frame,openni::VideoStream *m_depth, float x, float y, float z)
 {
+	// convert coordinates of hand
 	openni::CoordinateConverter coordinateConverter;
 	float x1;
 	float y1;
@@ -82,6 +84,7 @@ void Kinect::KinectZoom::zoom(cv::Mat frame,openni::VideoStream *m_depth, float 
 	coordinateConverter.convertWorldToDepth(*m_depth, x-150.0,y-150.0,z, &x1, &y1, &z1);
 	coordinateConverter.convertWorldToDepth(*m_depth, x+200.0,y+200.0,z, &x2, &y2, &z1);
 
+	// store current depth
 	currentZ=z1;
 
 	openni::VideoFrameRef depthFrame;
@@ -113,11 +116,13 @@ void Kinect::KinectZoom::zoom(cv::Mat frame,openni::VideoStream *m_depth, float 
 	cv::Mat depthImage2;
 	depthImage.convertTo(depthImage2,CV_8UC1,255/maxVal);
 
+	// floodfill segmentation of hand from depth map
 	cv::Mat mask = cv::Mat::zeros(depthImage2.rows + 2, depthImage2.cols + 2, CV_8U);
 	cv::floodFill(depthImage2, mask, cv::Point(depthImage2.cols/2,depthImage2.rows/2),
 				  255, 0, cv::Scalar(4),
 				  cv::Scalar(4),  4 + (255 << 8) + cv::FLOODFILL_MASK_ONLY + cv::FLOODFILL_FIXED_RANGE);
 #ifdef QT_DEBUG
+	// show images of segmented hand in debug mode only
 	cv::namedWindow( "floodfill", CV_WINDOW_AUTOSIZE );
 
 	cv::imshow("floodfill", mask);
@@ -125,12 +130,15 @@ void Kinect::KinectZoom::zoom(cv::Mat frame,openni::VideoStream *m_depth, float 
 #endif
 	int numFingers = DetectContour(mask);
 	delta = (previousZ-currentZ);
+	// threshold for open hand to start zoom
 	if (numFingers > 2)
 	{
+		// threshold for movement to start zoom
 		if (abs(delta) > zoomThreshold)
 		{
 			viewer->getEventQueue()->mouseScroll2D(0,delta*5.0,0);
 		}
 	}
+	// store previous value to compute next threshold
 	previousZ=z1;
 }
