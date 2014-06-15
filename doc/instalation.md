@@ -82,12 +82,14 @@ Libnoise - Windows problem unity build - comment 36 line
 > normal build
     
 ```sh
+cmake ..
 make
 make install
 ``` 
 > unity build
 
 ```sh
+cmake ..
 make 3DSoftviz_unity
 make install_unity
 ``` 
