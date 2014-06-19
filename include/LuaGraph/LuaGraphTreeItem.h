@@ -44,6 +44,14 @@
  #include <QList>
  #include <QVariant>
 
+namespace Lua {
+
+/**
+  * @brief The LuaGraphTreeItem class for displaying Lua table in treeview
+  *
+  * @author Frantisek Nagy
+  * @date 19.5.2014
+  */
  class LuaGraphTreeItem
  {
  public:
@@ -65,4 +73,5 @@
      LuaGraphTreeItem *parentItem;
  };
 
+ }
  #endif // LUAGRAPHTREEITEM_H

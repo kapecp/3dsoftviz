@@ -574,8 +574,8 @@ void CoreWindow::createCollaborationToolBar() {
 
 
 	addToolBar(Qt::RightToolBarArea,toolBar);
-	toolBar->setMaximumHeight(400);
-	toolBar->setMaximumWidth(120);
+    toolBar->setMaximumHeight(400);
+    toolBar->setMaximumWidth(120);
     toolBar->setMovable(true);
 }
 
@@ -584,8 +584,9 @@ void CoreWindow::createMetricsToolBar()
     toolBar = new QToolBar("Metrics visualizations",this);
 
     toolBar->addWidget(loadFunctionCallButton);
-
     toolBar->addWidget(luaGraphTreeView);
+    toolBar->setMinimumWidth(350);
+
     addToolBar(Qt::RightToolBarArea,toolBar);
     toolBar->setMovable(true);
 
@@ -1963,6 +1964,6 @@ void CoreWindow::onChange()
     if (selected->size() == 1)
         if (Lua::LuaGraph::getInstance()->getNodes()->contains(selected->first()->getId())){
             Lua::LuaNode *node = Lua::LuaGraph::getInstance()->getNodes()->value(selected->first()->getId());
-            luaGraphTreeView->setModel(new LuaGraphTreeModel(node));
+            luaGraphTreeView->setModel(new Lua::LuaGraphTreeModel(node));
         }
 }

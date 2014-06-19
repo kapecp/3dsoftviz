@@ -38,7 +38,7 @@ public:
 
     /**
          * \fn visualize
-         * \brief Abstract method to fill the graph with hzpergraph loaded from Lua
+         * \brief Abstract method to fill the graph with hypergraph loaded from Lua
          */
     virtual void visualize() = 0;
 protected:

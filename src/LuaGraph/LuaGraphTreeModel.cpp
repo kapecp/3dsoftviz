@@ -47,21 +47,21 @@
  #include "LuaGraph/LuaGraphTreeItem.h"
  #include "LuaGraph/LuaNode.h"
 
- LuaGraphTreeModel::LuaGraphTreeModel(const Lua::LuaNode *node, QObject *parent)
+ Lua::LuaGraphTreeModel::LuaGraphTreeModel(const Lua::LuaNode *node, QObject *parent)
      : QAbstractItemModel(parent)
  {
      QList<QVariant> rootData;
      rootData << "Property" << "Value";
-     rootItem = new LuaGraphTreeItem(rootData);
+     rootItem = new Lua::LuaGraphTreeItem(rootData);
      setupModelData(node, rootItem);
  }
 
- LuaGraphTreeModel::~LuaGraphTreeModel()
+ Lua::LuaGraphTreeModel::~LuaGraphTreeModel()
  {
      delete rootItem;
  }
 
- int LuaGraphTreeModel::columnCount(const QModelIndex &parent) const
+ int Lua::LuaGraphTreeModel::columnCount(const QModelIndex &parent) const
  {
      if (parent.isValid())
          return static_cast<LuaGraphTreeItem*>(parent.internalPointer())->columnCount();
@@ -69,7 +69,7 @@
          return rootItem->columnCount();
  }
 
- QVariant LuaGraphTreeModel::data(const QModelIndex &index, int role) const
+ QVariant Lua::LuaGraphTreeModel::data(const QModelIndex &index, int role) const
  {
      if (!index.isValid())
          return QVariant();
@@ -82,7 +82,7 @@
      return item->data(index.column());
  }
 
- Qt::ItemFlags LuaGraphTreeModel::flags(const QModelIndex &index) const
+ Qt::ItemFlags Lua::LuaGraphTreeModel::flags(const QModelIndex &index) const
  {
      if (!index.isValid())
          return 0;
@@ -90,7 +90,7 @@
      return Qt::ItemIsEnabled | Qt::ItemIsSelectable;
  }
 
- QVariant LuaGraphTreeModel::headerData(int section, Qt::Orientation orientation,
+ QVariant Lua::LuaGraphTreeModel::headerData(int section, Qt::Orientation orientation,
                                 int role) const
  {
      if (orientation == Qt::Horizontal && role == Qt::DisplayRole)
@@ -99,7 +99,7 @@
      return QVariant();
  }
 
- QModelIndex LuaGraphTreeModel::index(int row, int column, const QModelIndex &parent)
+ QModelIndex Lua::LuaGraphTreeModel::index(int row, int column, const QModelIndex &parent)
              const
  {
      if (!hasIndex(row, column, parent))
@@ -119,7 +119,7 @@
          return QModelIndex();
  }
 
- QModelIndex LuaGraphTreeModel::parent(const QModelIndex &index) const
+ QModelIndex Lua::LuaGraphTreeModel::parent(const QModelIndex &index) const
  {
      if (!index.isValid())
          return QModelIndex();
@@ -133,7 +133,7 @@
      return createIndex(parentItem->row(), 0, parentItem);
  }
 
- int LuaGraphTreeModel::rowCount(const QModelIndex &parent) const
+ int Lua::LuaGraphTreeModel::rowCount(const QModelIndex &parent) const
  {
      LuaGraphTreeItem *parentItem;
      if (parent.column() > 0)
@@ -147,14 +147,14 @@
      return parentItem->childCount();
  }
 
- void LuaGraphTreeModel::setupModelData(const Lua::LuaNode *node, LuaGraphTreeItem *parent){
+ void Lua::LuaGraphTreeModel::setupModelData(const Lua::LuaNode *node, LuaGraphTreeItem *parent){
      parent->appendChild( new LuaGraphTreeItem(QList<QVariant>() << "id" << node->getId(), parent));
      parent->appendChild( new LuaGraphTreeItem(QList<QVariant>() << "label" << node->getLabel(), parent));
      Diluculum::LuaValue luaParams = node->getParams();
      loadLuaModel("params", luaParams, parent);
  }
 
- void LuaGraphTreeModel::loadLuaModel(QString name, const Diluculum::LuaValue value, LuaGraphTreeItem *parent)
+ void Lua::LuaGraphTreeModel::loadLuaModel(QString name, const Diluculum::LuaValue value, LuaGraphTreeItem *parent)
  {
      if (value.type() == 5){
         LuaGraphTreeItem *newParent = new LuaGraphTreeItem(QList<QVariant>() << name << "", parent);

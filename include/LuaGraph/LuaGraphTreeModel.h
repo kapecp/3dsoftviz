@@ -45,16 +45,23 @@
  #include <QModelIndex>
  #include <QVariant>
 
- class LuaGraphTreeItem;
-
  namespace Lua {
     class LuaNode;
+    class LuaGraphTreeItem;
  }
 
  namespace Diluculum {
     class LuaValue;
  }
 
+ namespace Lua {
+
+ /**
+   * @brief The LuaGraphTreeModel class for displaying Lua table in treeview
+   *
+   * @author Frantisek Nagy
+   * @date 19.5.2014
+   */
  class LuaGraphTreeModel : public QAbstractItemModel
  {
      Q_OBJECT
@@ -80,5 +87,7 @@
 
      LuaGraphTreeItem *rootItem;
  };
+
+ }
 
  #endif // LUAGRAPHTREEMODEL_H

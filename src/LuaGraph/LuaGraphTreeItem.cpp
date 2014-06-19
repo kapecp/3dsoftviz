@@ -48,48 +48,48 @@
 
  #include "LuaGraph/LuaGraphTreeItem.h"
 
- LuaGraphTreeItem::LuaGraphTreeItem(const QList<QVariant> &data,LuaGraphTreeItem *parent)
+ Lua::LuaGraphTreeItem::LuaGraphTreeItem(const QList<QVariant> &data,LuaGraphTreeItem *parent)
  {
      parentItem = parent;
      itemData = data;
  }
 
-LuaGraphTreeItem::~LuaGraphTreeItem()
+Lua::LuaGraphTreeItem::~LuaGraphTreeItem()
  {
      qDeleteAll(childItems);
  }
 
- void LuaGraphTreeItem::appendChild(LuaGraphTreeItem *item)
+ void Lua::LuaGraphTreeItem::appendChild(LuaGraphTreeItem *item)
  {
      childItems.append(item);
  }
 
-LuaGraphTreeItem *LuaGraphTreeItem::child(int row)
+Lua::LuaGraphTreeItem *Lua::LuaGraphTreeItem::child(int row)
  {
      return childItems.value(row);
  }
 
- int LuaGraphTreeItem::childCount() const
+ int Lua::LuaGraphTreeItem::childCount() const
  {
      return childItems.count();
  }
 
- int LuaGraphTreeItem::columnCount() const
+ int Lua::LuaGraphTreeItem::columnCount() const
  {
      return itemData.count();
  }
 
- QVariant LuaGraphTreeItem::data(int column) const
+ QVariant Lua::LuaGraphTreeItem::data(int column) const
  {
      return itemData.value(column);
  }
 
-LuaGraphTreeItem *LuaGraphTreeItem::parent()
+Lua::LuaGraphTreeItem *Lua::LuaGraphTreeItem::parent()
  {
      return parentItem;
  }
 
- int LuaGraphTreeItem::row() const
+ int Lua::LuaGraphTreeItem::row() const
  {
      if (parentItem)
          return parentItem->childItems.indexOf(const_cast<LuaGraphTreeItem*>(this));
