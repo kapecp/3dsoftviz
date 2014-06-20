@@ -1,6 +1,8 @@
 #ifndef CLUSTERER_H_
 #define CLUSTERER_H_
 
+#include "Data/Cluster.h"
+
 #include <QMap>
 #include <QSet>
 #include <osg/ref_ptr>
@@ -10,7 +12,7 @@
 namespace Data {
     class Graph;
     class Node;
-    class Cluster;
+//    class Cluster;
 }
 
 namespace Clustering {

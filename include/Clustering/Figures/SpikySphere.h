@@ -3,7 +3,7 @@
 
 #include "Clustering/Figures/Sphere.h"
 
-class SpikySphere : public Sphere
+class SpikySphere : public ::Sphere
 {
 
 public:

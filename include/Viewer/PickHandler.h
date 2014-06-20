@@ -16,6 +16,7 @@
 
 #include "Data/Node.h"
 #include "Data/Edge.h"
+#include "Data/Cluster.h"
 
 #include <QLinkedList>
 #include <QTimer>

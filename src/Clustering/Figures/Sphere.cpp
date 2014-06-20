@@ -4,15 +4,16 @@
 #include <QDebug>
 #include <osg/Depth>
 #include <osg/BlendFunc>
+#include <osg/Material>
 
-Sphere::Sphere(osg::Vec3d position, float radius, osg::Vec4d color) {
+::Sphere::Sphere(osg::Vec3d position, float radius, osg::Vec4d color) {
     init();
     computeGeode(20, 20);
     transform(position, osg::Vec3d(radius,radius,radius), color);
     at->addChild(sphereGeode);
 }
 
-void Sphere::init() {
+void ::Sphere::init() {
     midPoint = osg::Vec3d(0,0,0);
     sphereGeode = new osg::Geode();
     sphereGeometry = new osg::Geometry();
@@ -23,7 +24,7 @@ void Sphere::init() {
     at = new osg::AutoTransform;
 }
 
-void Sphere::computeGeode(unsigned int rings, unsigned int sectors) {
+void ::Sphere::computeGeode(unsigned int rings, unsigned int sectors) {
     float radius = 1;
     float const R = 1./(float)(rings-1);
     float const S = 1./(float)(sectors-1);
@@ -70,7 +71,7 @@ void Sphere::computeGeode(unsigned int rings, unsigned int sectors) {
     sphereGeometry->setColorArray(colors);
 }
 
-void Sphere::transform(osg::Vec3d position, osg::Vec3d scale, osg::Vec4d color) {
+void ::Sphere::transform(osg::Vec3d position, osg::Vec3d scale, osg::Vec4d color) {
     osg::StateSet * ss = sphereGeometry->getOrCreateStateSet();
 
     osg::Material* material = new osg::Material();

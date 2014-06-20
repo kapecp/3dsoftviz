@@ -1,6 +1,8 @@
 
 #include "Data/Cluster.h"
 
+#include <QLinkedList>
+
 using namespace Data;
 
 Cluster::Cluster(qlonglong id, QString name, Data::Type* type, float scaling, Data::Graph* graph, osg::Vec3f position)
