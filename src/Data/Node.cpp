@@ -89,6 +89,11 @@ Data::Node::Node(qlonglong id, QString name, Data::Type* type, float scaling, Da
 
 	this->colorOfNode=osg::Vec4(r, g, b, a);
 	this->setColor(colorOfNode);
+
+    //volovar_zac
+    layerID = 0;  //node is not on layer of radial layout
+    radialLayout = NULL;  //node does not belong to radial layout
+    //volovar_kon
 }
 
 Data::Node::~Node(void)
@@ -389,3 +394,25 @@ QString Data::Node::toString() const
 	return str;
 }
 
+//volovar_zac
+//pre potreby odpudivych sil v radialLayoute
+void Data::Node::setLayerID(int id)
+{
+    layerID = id;
+}
+
+int Data::Node::getLayerID()
+{
+    return layerID;
+}
+
+Layout::RadialLayout* Data::Node::getRadialLayout()
+{
+    return radialLayout;
+}
+void Data::Node::setRadialLayout(Layout::RadialLayout *rl)
+{
+    radialLayout = rl;
+}
+
+//volovar_kon

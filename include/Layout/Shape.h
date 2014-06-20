@@ -22,8 +22,25 @@ public:
 
 	bool isInvisible(){return invisible;}
 
+    //volovar zac, kvoli radial layoutu na manipuláciu zobrazenia shapu
+    enum RenderType {
+        WIREFRAME,
+        SOLID,
+        CIRCLE
+    };
+    void setAlpha(float alpha) {alpha_ = alpha;} //kvoli zobrazeniu priehladnosti
+    float getAlpha() {return alpha_;}
+    void setRenderType(RenderType rt) {renderType_ = rt;} //zmena modu vykreslenia (droteny model, plny)
+    RenderType getRenderType() {return renderType_;}
+    //volovar_kon
+
 private:
 	bool invisible;
+
+    //volovar zac
+    RenderType renderType_;
+    float alpha_;
+    //volovar kon
 
 }; // class
 

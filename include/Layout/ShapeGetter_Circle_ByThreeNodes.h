@@ -36,6 +36,9 @@ private:
 	osg::ref_ptr<Data::Node> node2_;
 	osg::ref_ptr<Data::Node> node3_;
 
+    //volovar_zac
+    QSharedPointer<Shape_Intersection> intersection_; //aby vratilo rovnaky shape pri kazdom volani getshape
+    //volovar_kon
 }; // class
 
 } // namespace

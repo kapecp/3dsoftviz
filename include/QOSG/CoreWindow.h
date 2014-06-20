@@ -98,7 +98,7 @@ public slots:
 				*/
 	void saveLayoutToDB();
 
-	/**
+    /**
 				*  \fn public  sqlQuery
 				*  \brief Commit the sql in sql input
 				*/
@@ -194,7 +194,46 @@ public slots:
 				*/
 	void sliderValueChanged(int value);
 
-	/**
+    //volovar_zac
+    /**
+                *  \fn public  RadialLayoutSizeChanged
+                *  \brief size of radial layout is changed
+                *  \param size const
+                */
+    void RadialLayoutSizeChanged(int value);
+
+    /**
+                *  \fn public  RadialLayoutAlphaChanged
+                *  \brief alpha of radial layout is changed
+                *  \param alpha const
+                */
+    void RadialLayoutAlphaChanged(int value);
+
+    /**
+                *  \fn public  RadialLayoutSetVisibleSpheres
+                *  \brief number of visible spheres is changed
+                *  \param visibility const
+                */
+    void RadialLayoutSetVisibleSpheres(int value);
+
+
+    /**
+                *  \fn public  RadialLayoutSetForceScale
+                *  \brief multiplier of repulsive forces between two nodes in same radial layout and different layer
+                *  \param forceFactor const
+                */
+    void RadialLayoutSetForceScale(int value);
+
+
+    /**
+                *  \fn public  RadialLayoutSetForceSphereScale
+                *  \brief multiplier of repulsive forces between two nodes in same radial layout and layer
+                *  \param forceFactor const
+                */
+    void RadialLayoutSetForceSphereScale(int value);
+
+    //volovar_kon
+    /**
 				*  \fn public  colorPickerChanged
 				*  \brief Color in colorpicker changed
 				*  \param color const    changed color
@@ -279,6 +318,23 @@ public slots:
 				 * \brief Removes restrictions from all selected nodes (if any has been set). Destroys a
 				 * restriction (including manipulation nodes) if the last usage has been removed.
 				 */
+    //volovar_zac
+    /**
+                 * \brief Create a new Radial restriction for all selected nodes.
+     */
+    void setRestriction_RadialLayout();
+
+    /**
+     * @brief changeDrawMethod_RadialLayout change Drawing method of radial layout (SOLID, WIREFRAME)
+     */
+    void changeDrawMethod_RadialLayout();
+
+    /**
+     * @brief changeMode_RadialLayout switch between 2D and 3D mode of radial layout
+     */
+    void changeMode_RadialLayout();
+    //volovar_kon
+
 	void unsetRestriction ();
 
 	/**
@@ -506,8 +562,24 @@ private:
 	/**
 				 * \brief Button for adding Cone Tree restriction.
 				 */
-	QPushButton * b_SetRestriction_ConeTree;
+    //volovar_zac
+    /**
+     * @brief b_SetRestriction_RadialLayout Button for create new radial layout
+     */
+    QPushButton * b_SetRestriction_RadialLayout;
 
+    /**
+     * @brief b_drawMethod_RadialLayout Button for switch between drawing method (WIREFRAME, SOLID)
+     */
+
+    QPushButton * b_drawMethod_RadialLayout;
+
+    /**
+     * @brief b_mode_RadialLayout Button for switch between 2D and 3D mode
+     */
+    QPushButton * b_mode_RadialLayout;
+    //volovar_kon
+    QPushButton * b_SetRestriction_ConeTree;
 	/**
 		 * \brief Button for removing restrictions.
 		 */
@@ -522,6 +594,35 @@ private:
 		 * \brief Spinbox for modifying CylinderSurface restriction.
 		 */
 	QSlider *b_SetRestriction_CylinderSurface_Slider;
+
+    //volovar_zac
+    /**
+     * @brief slider for change size of radial layout
+     */
+    QSlider *b_SetRestriction_RadialLayout_Slider;
+
+    /**
+     * @brief slider for change alpha of radial layout
+     */
+    QSlider *b_SetAlpha_RadialLayout_Slider;
+
+    /**
+     * @brief b_SetVisibleSpheres_RadialLayout_Slider change how many spheres are visible
+     */
+
+    QSlider *b_SetVisibleSpheres_RadialLayout_Slider;
+
+    /**
+     * @brief b_SetForceScale_RadialLayout_Slider slider for multiplier repulsive forces between two nodes in same radial layout, but different layer
+     */
+    QSlider *b_SetForceScale_RadialLayout_Slider;
+
+    /**
+     * @brief b_SetForceSphereScale_RadialLayout_Slider slider for multiplier repulsive forces between two nodes in same radial layout and layer
+     */
+    QSlider *b_SetForceSphereScale_RadialLayout_Slider;
+
+    //volovar_kon
 
 	/**
 		 * \brief Button for adding ConeSurface restriction.
