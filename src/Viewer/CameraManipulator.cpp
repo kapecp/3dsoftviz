@@ -3,6 +3,8 @@
 #include "Viewer/CameraManipulator.h"
 
 #include "Viewer/CoreGraph.h"
+#include "QOSG/ViewerQT.h"
+#include "QOSG/CoreWindow.h"
 
 #include "Manager/Manager.h"
 
@@ -17,6 +19,7 @@
 #include <osg/BoundsChecking>
 
 #include <iostream>
+#include <cmath>
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wswitch-enum"
@@ -30,14 +33,17 @@ using namespace MathModule;
 
 Vwr::CameraManipulator::CameraManipulator(Vwr::CoreGraph * coreGraph)
 {
-	appConf = Util::ApplicationConfig::get();
+    appConf = Util::ApplicationConfig::get();
 
 	_modelScale = 1.0f;
 	_minimumZoomScale = 0.0f;
 	_allowThrow = true;
 	_thrown = false;
 
-	_distance = 1.0f;
+    _vertigo = false;
+    PI = 3.141592653589793;
+
+    _distance = 1.0f;
 	_trackballSize = appConf->getValue("Viewer.CameraManipulator.Sensitivity").toFloat();
 	_zoomDelta = 0.4f;
 
@@ -47,7 +53,7 @@ Vwr::CameraManipulator::CameraManipulator(Vwr::CoreGraph * coreGraph)
 
 	movingAutomatically = false;
 
-	EYE_MOVEMENT_SPEED = 0.005;
+    EYE_MOVEMENT_SPEED = 0.005;
 	TARGET_MOVEMENT_SPEED = 0.005;
 	SCREEN_MARGIN = 200.f;
 
@@ -65,6 +71,11 @@ Vwr::CameraManipulator::CameraManipulator(Vwr::CoreGraph * coreGraph)
 
 Vwr::CameraManipulator::~CameraManipulator()
 {
+}
+
+void Vwr::CameraManipulator::setVertigoMode(bool value)
+{
+    _vertigo = value;
 }
 
 void Vwr::CameraManipulator::setNode(osg::Node* node)
@@ -154,7 +165,7 @@ bool Vwr::CameraManipulator::handle(const GUIEventAdapter& ea, GUIActionAdapter&
 	}
 	case(GUIEventAdapter::KEYDOWN):
 	{
-		return handleKeyDown(ea, us);
+        return handleKeyDown(ea, us);
 	}
 	case(GUIEventAdapter::KEYUP):
 	{
@@ -385,7 +396,7 @@ bool Vwr::CameraManipulator::calcMovement()
 			break;
 		default:
 			break;
-		}
+        }//}
 		buttonMask=GUIEventAdapter::SCROLL;
 	}
 	else
@@ -479,8 +490,28 @@ bool Vwr::CameraManipulator::calcMovement()
 		float scale = 1.0f+ dy * (float) throwScale;
 		if (fd*scale>_modelScale*_minimumZoomScale)
 		{
-			if (_distance * scale < 10000)
-				_distance *= scale;
+            if (_distance * scale < 10000){
+                    _distance *= scale;
+
+                    // Duransky start - zmena uhlu zobrazenia spolu so zmenou vzdialenosti pri zapnutom vertigo mode
+                    if(_vertigo){
+
+                        // ziskanie sirky sceny
+                        _width = this->coreGraph->getCamera()->getViewport()->width();
+
+                        // ziskanie aktualneho FOV - field of view
+                        this->coreGraph->getCamera()->getProjectionMatrixAsPerspective(fovy, ratio, zNear, zFar);
+
+                        // nove FOV vypocitane podla vzorca
+                        double newFovInDegree = atan(_width/_distance) * (180 / PI);
+
+                        // nastavenie novej projekcnej matice s novym FOV
+                        coreGraph->getCamera()->setProjectionMatrixAsPerspective(newFovInDegree, ratio, zNear, zFar);
+
+                     // Duransky end - zmena uhlu zobrazenia spolu so zmenou vzdialenosti pri zapnutom vertigo mode
+
+                }
+            }
 		}
 
 		notifyServer();
@@ -1216,7 +1247,6 @@ void Vwr::CameraManipulator::updateProjectionAccordingFace(const float x, const 
 	this->coreGraph->getCamera()->setProjectionMatrixAsFrustum(left, right, bottom, top, zNear, zFar);
 }
 
-
 void Vwr::CameraManipulator::updateArucoGraphPosition( osg::Vec3d pos ){
 	QString str;
 	//str  = "arMat " + QString::number( pos.x(), 'f', 2);
@@ -1255,5 +1285,11 @@ void Vwr::CameraManipulator::setCameraCanRot( bool cameraCanRot)
 		_cameraCanRot=false;
 	}
 }
+
+// Duransky start - Resetovanie projekcnej matice pri vypnuti vertigo modu
+void Vwr::CameraManipulator::resetProjectionMatrixToDefault(){
+    this->coreGraph->getCamera()->setProjectionMatrixAsPerspective(60, ratio, 0.01, appConf->getValue("Viewer.Display.ViewDistance").toFloat());
+}
+// Duransky end - Resetovanie projekcnej matice pri vypnuti vertigo modu
 
 #pragma GCC diagnostic pop

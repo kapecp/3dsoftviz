@@ -14,6 +14,8 @@
 #include <QDebug>
 
 
+#include <QDebug>
+
 using namespace QOpenCV;
 
 QOpenCV::FaceRecognitionWindow::FaceRecognitionWindow(QWidget *parent, QApplication * app )

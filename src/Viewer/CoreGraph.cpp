@@ -153,6 +153,7 @@ void CoreGraph::cleanUp()
 
 
 
+
 #ifdef OPENCV_FOUND
 osg::ref_ptr<osg::Node> CoreGraph::createTextureBackground()
 {
