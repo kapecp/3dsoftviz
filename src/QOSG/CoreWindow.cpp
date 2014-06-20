@@ -26,6 +26,7 @@
 #include "Layout/ShapeGetter_Sphere_ByTwoNodes.h"
 #include "Layout/ShapeGetter_ConeSurface_ByCamera.h"
 #include "Layout/ShapeGetter_Plane_ByThreeNodes.h"
+#include "Layout/ShapeGetter_Cube.h"
 
 #include "Importer/GraphOperations.h"
 
@@ -71,6 +72,7 @@ CoreWindow::CoreWindow(QWidget *parent, Vwr::CoreGraph* coreGraph, QApplication*
 	createRightToolBar();
 	createCollaborationToolBar();
 	createAugmentedRealityToolBar();
+	createClusterToolBar();
 
 	viewerWidget = new ViewerQT(this, 0, 0, 0, coreGraph);
 	viewerWidget->setSceneData(coreGraph->getScene());
@@ -301,7 +303,7 @@ void CoreWindow::createActions()
 	b_SetRestriction_ConeSurface->setIcon(QIcon("../share/3dsoftviz/img/gui/restriction_cone_surface.png"));
 	b_SetRestriction_ConeSurface->setToolTip("&Set restriction - cone surface");
 	b_SetRestriction_ConeSurface->setFocusPolicy(Qt::NoFocus);
-	connect(b_SetRestriction_ConeSurface, SIGNAL(clicked()), this, SLOT(setRestriction_ConeSurface()));
+    connect(b_SetRestriction_ConeSurface, SIGNAL(clicked()), this, SLOT(setRestriction_ConeSurface()));
 
 	b_SetRestriction_ConeSurface_Slider = new QSlider(Qt::Horizontal);
 	b_SetRestriction_ConeSurface_Slider->setToolTip("&Modify base radius of the restriction");
@@ -342,7 +344,7 @@ void CoreWindow::createActions()
 	lw_users = new QListWidget();
 	lw_users->setSelectionMode(QListWidget::SingleSelection);
 	lw_users->setSortingEnabled(true);
-	lw_users->setMaximumHeight(200);
+    lw_users->setMaximumHeight(100);
 
 	sl_avatarScale = new QSlider(Qt::Vertical,this);
 	sl_avatarScale->setTickPosition(QSlider::TicksAbove);
@@ -351,6 +353,97 @@ void CoreWindow::createActions()
 	sl_avatarScale->setValue(1);
 	sl_avatarScale->setFocusPolicy(Qt::NoFocus);
 	connect(sl_avatarScale,SIGNAL(valueChanged(int)),this,SLOT(setAvatarScale(int)));
+
+    chb_clustersOpacity = new QCheckBox("auto");
+    connect(chb_clustersOpacity, SIGNAL(clicked(bool)), this, SLOT(clustersOpacityCheckboxValueChanged(bool)));
+
+    chb_clusterSelectedOpacity = new QCheckBox("selected");
+    connect(chb_clusterSelectedOpacity, SIGNAL(clicked(bool)), this, SLOT(clusterSelectedOpacityCheckboxValueChanged(bool)));
+
+    l_clustersOpacity = new QLabel("Opacity:");
+    l_clustersShapes = new QLabel("Cluster shapes:");
+
+    b_clustersOpacity_Slider = new QSlider(Qt::Horizontal);
+    b_clustersOpacity_Slider->setToolTip("Set opacity for clusters");
+    b_clustersOpacity_Slider->setFocusPolicy(Qt::NoFocus);
+    b_clustersOpacity_Slider->setTickPosition(QSlider::TicksAbove);
+    b_clustersOpacity_Slider->setRange(0,10);
+    b_clustersOpacity_Slider->setPageStep(1);
+    connect(b_clustersOpacity_Slider, SIGNAL(valueChanged(int)), this, SLOT(clustersOpacitySliderValueChanged(int)));
+
+    l_clusters1Min = new QLabel("0");
+    l_clusters1Max = new QLabel("0");
+
+    l_clusters1Min->setFixedWidth(30);
+    l_clusters1Min->setAlignment(Qt::AlignCenter);
+    l_clusters1Max->setFixedWidth(30);
+    l_clusters1Max->setAlignment(Qt::AlignCenter);
+
+    b_clustersShapeBoundary_Slider = new QSlider(Qt::Horizontal);
+    b_clustersShapeBoundary_Slider->setToolTip("Change cluster shapes based on number of clustered nodes inside them");
+    b_clustersShapeBoundary_Slider->setFocusPolicy(Qt::NoFocus);
+    connect(b_clustersShapeBoundary_Slider, SIGNAL(valueChanged(int)), this, SLOT(clustersShapeBoundarySliderValueChanged(int)));
+
+    cb_clusteringAlgorithm = new QComboBox();
+    cb_clusteringAlgorithm->insertItems(0,(QStringList() << "Adjacency" << "Leafs" << "Neighbours" ));
+    cb_clusteringAlgorithm->setFocusPolicy(Qt::NoFocus);
+    connect(cb_clusteringAlgorithm,SIGNAL(currentIndexChanged(int)),this,SLOT(clusteringAlgorithmChanged(int)));
+
+    le_clusteringDepth = new QLineEdit();
+    le_clusteringDepth->setText("0");
+    le_clusteringDepth->setAlignment(Qt::AlignCenter);
+    le_clusteringDepth->setFixedWidth(30);
+    le_clusteringDepth->setValidator( new QIntValidator(0, 10, this) );
+    connect(le_clusteringDepth, SIGNAL(textChanged(const QString &)), this, SLOT(clusteringDepthChanged(const QString &)));
+
+    b_cluster_nodes = new QPushButton();
+    b_cluster_nodes->setText("Cluster nodes");
+    connect(b_cluster_nodes, SIGNAL(clicked()), this, SLOT(cluster_nodes()));
+
+    b_restartLayouting = new QPushButton();
+    b_restartLayouting->setText("Restart Layout");
+    connect(b_restartLayouting, SIGNAL(clicked()), this, SLOT(restartLayouting()));
+
+    clusteringProgressBar = new QProgressDialog("", "", 0, 10, this, Qt::Dialog);
+    clusteringProgressBar->setWindowTitle("Clustering");
+    clusteringProgressBar->setCancelButtonText("Abort");
+    Qt::WindowFlags flags = clusteringProgressBar->windowFlags();
+    flags = flags & (~Qt::WindowContextHelpButtonHint);
+    clusteringProgressBar->setWindowFlags(flags);
+    clusteringProgressBar->setModal(true);
+    clusteringProgressBar->setMinimumDuration(1000);
+
+    b_SetRestriction_Cube_Selected = new QPushButton();
+    b_SetRestriction_Cube_Selected->setText("Restrict");
+    b_SetRestriction_Cube_Selected->setFocusPolicy(Qt::NoFocus);
+    connect(b_SetRestriction_Cube_Selected, SIGNAL(clicked()), this, SLOT(setRestriction_Cube_Selected()));
+
+    l_repulsiveForceInsideCluster = new QLabel("Repulsive force");
+    l_repulsiveForceInsideCluster->hide();
+
+    sb_repulsiveForceInsideCluster = new QDoubleSpinBox();
+    sb_repulsiveForceInsideCluster->setToolTip("Modify repulsive force inside cluster");
+    sb_repulsiveForceInsideCluster->setMinimum(0);
+    sb_repulsiveForceInsideCluster->setMaximum(500);
+    connect(sb_repulsiveForceInsideCluster, SIGNAL(valueChanged(double)), this, SLOT(repulsiveForceInsideClusterValueChanged(double)));
+
+    sb_repulsiveForceInsideCluster->hide();
+    b_SetRestriction_Cube_Selected->hide();
+    b_restartLayouting->hide();
+
+    // hide
+    setVisibleClusterSection(false);
+}
+
+void CoreWindow::setVisibleClusterSection(bool visible) {
+    l_clustersOpacity->setVisible(visible);
+    chb_clustersOpacity->setVisible(visible);
+    chb_clusterSelectedOpacity->setVisible(visible);
+    b_clustersOpacity_Slider->setVisible(visible);
+    l_clustersShapes->setVisible(visible);
+    l_clusters1Min->setVisible(visible);
+    l_clusters1Max->setVisible(visible);
+    b_clustersShapeBoundary_Slider->setVisible(visible);
 }
 
 void CoreWindow::createMenus()
@@ -372,7 +465,7 @@ void CoreWindow::createLeftToolBar()
 {
 	//inicializacia comboboxu typov vyberu
 	nodeTypeComboBox = new QComboBox();
-	nodeTypeComboBox->insertItems(0,(QStringList() << "All" << "Node" << "Edge"));
+    nodeTypeComboBox->insertItems(0,(QStringList() << "All" << "Node" << "Edge" << "Cluster"));
 	nodeTypeComboBox->setFocusPolicy(Qt::NoFocus);
 	connect(nodeTypeComboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(nodeTypeComboBoxChanged(int)));
 
@@ -584,6 +677,75 @@ void CoreWindow::createAugmentedRealityToolBar() {
 }
 
 
+void CoreWindow::createClusterToolBar() {
+    toolBar = new QToolBar("Clustering",this);
+
+    QFrame *frame = createHorizontalFrame();
+    QLabel *label = new QLabel("Clustering: ");
+    frame->layout()->addWidget(label);
+    toolBar->addWidget(frame);
+
+    frame = createHorizontalFrame();
+    frame->layout()->addWidget(cb_clusteringAlgorithm);
+    toolBar->addWidget(frame);
+
+    frame = createHorizontalFrame();
+    frame->layout()->addWidget(new QLabel("Depth: "));
+    frame->layout()->addWidget(le_clusteringDepth);
+    toolBar->addWidget(frame);
+
+    frame = createHorizontalFrame();
+    frame->layout()->addWidget(b_cluster_nodes);
+    toolBar->addWidget(frame);
+
+    toolBar->addSeparator();
+
+    frame = createHorizontalFrame();
+    toolBar->addWidget(frame);
+    frame->layout()->addWidget(l_clustersOpacity);
+
+    frame = createHorizontalFrame();
+    toolBar->addWidget(frame);
+    frame->layout()->addWidget(chb_clustersOpacity);
+    frame->layout()->addWidget(chb_clusterSelectedOpacity);
+
+    frame = createHorizontalFrame();
+    toolBar->addWidget(frame);
+    frame->layout()->addWidget(b_clustersOpacity_Slider);
+
+    toolBar->addSeparator();
+
+    frame = createHorizontalFrame();
+    toolBar->addWidget(frame);
+    frame->layout()->addWidget(l_clustersShapes);
+
+    frame = createHorizontalFrame();
+    toolBar->addWidget(frame);
+    frame->layout()->addWidget(l_clusters1Min);
+    frame->layout()->addWidget(b_clustersShapeBoundary_Slider);
+    frame->layout()->addWidget(l_clusters1Max);
+
+    frame = createHorizontalFrame();
+    frame->layout()->addWidget(b_SetRestriction_Cube_Selected);
+    toolBar->addWidget(frame);
+
+    frame = createHorizontalFrame();
+    frame->layout()->addWidget(b_restartLayouting);
+    toolBar->addWidget(frame);
+
+    frame = createHorizontalFrame();
+    toolBar->addWidget(frame);
+    frame->layout()->addWidget(l_repulsiveForceInsideCluster);
+
+    frame = createHorizontalFrame();
+    toolBar->addWidget(frame);
+    frame->layout()->addWidget(sb_repulsiveForceInsideCluster);
+
+    addToolBar(Qt::RightToolBarArea,toolBar);
+    toolBar->setMovable(true);
+}
+
+
 void CoreWindow::createCollaborationToolBar() {
 	toolBar = new QToolBar("Collaboration",this);
 
@@ -594,7 +756,7 @@ void CoreWindow::createCollaborationToolBar() {
 
 	frame = createHorizontalFrame();
 	frame->layout()->addWidget(lw_users);
-	toolBar->addWidget(frame);
+    toolBar->addWidget(frame);
 
 	frame = createHorizontalFrame();
 	frame->layout()->addWidget(chb_spy);
@@ -905,33 +1067,32 @@ void CoreWindow::removeMetaNodes()
 
 void CoreWindow::loadFile()
 {
-	QFileDialog dialog;
-	dialog.setDirectory( "../share/3dsoftviz" );
+    QFileDialog dialog;
+    dialog.setDirectory( "../share/3dsoftviz" );
 
-	//treba overit
-	layout->pause();
-	coreGraph->setNodesFreezed(true);
+    //treba overit
+    layout->pause();
+    coreGraph->setNodesFreezed(true);
 
-	QString fileName =NULL;
+    QString fileName =NULL;
 
-	if(dialog.exec()){
-		QStringList filenames = dialog.selectedFiles();
-		fileName = filenames.at(0);
-	}
+    if(dialog.exec()){
+        QStringList filenames = dialog.selectedFiles();
+        fileName = filenames.at(0);
+    }
 
-	if (fileName != NULL) {
-		Manager::GraphManager::getInstance()->loadGraph(fileName);
+    if (fileName != NULL) {
+        Manager::GraphManager::getInstance()->loadGraph(fileName);
 
-		viewerWidget->getCameraManipulator()->home();
-	}
+        viewerWidget->getCameraManipulator()->home();
+    }
 
-	//treba overit ci funguje
-	if (isPlaying)
-	{
-		layout->play();
-		coreGraph->setNodesFreezed(false);
-	}
-
+    //treba overit ci funguje
+    if (isPlaying)
+    {
+        layout->play();
+        coreGraph->setNodesFreezed(false);
+    }
 
 }
 
@@ -963,7 +1124,6 @@ void CoreWindow::sliderValueChanged(int value)
 	layout->setAlphaValue((float)value * 0.001f);
 }
 
-
 void CoreWindow::colorPickerChanged(const QColor & color)
 {
 	this->color = color;
@@ -985,6 +1145,10 @@ void CoreWindow::nodeTypeComboBoxChanged(int index)
 		viewerWidget->getPickHandler()->setSelectionType(Vwr::PickHandler::SelectionType::EDGE);
 		label->setChecked(edgeLabelsVisible);
 		break;
+    case 3:
+        viewerWidget->getPickHandler()->setSelectionType(Vwr::PickHandler::SelectionType::CLUSTER);
+        label->setChecked(edgeLabelsVisible & nodeLabelsVisible);
+        break;
 	default:
 		qDebug() << "CoreWindow:nodeTypeComboBoxChanged do not suported index";
 		break;
@@ -1538,7 +1702,7 @@ void CoreWindow::setRestrictionToSelectedNodes (
 		) {
 	QLinkedList<osg::ref_ptr<Data::Node> > * selectedNodes = (nodesToRestrict == NULL) ? viewerWidget->getPickHandler()->getSelectedNodes() : nodesToRestrict;
 
-	QSet<Data::Node *> nodes;
+    QSet<Data::Node *> nodes;
 	for (QLinkedList<osg::ref_ptr<Data::Node> >::const_iterator it = selectedNodes->constBegin (); it != selectedNodes->constEnd (); ++it) {
 		nodes.insert (it->get ());
 	}
@@ -1779,12 +1943,205 @@ void CoreWindow::start_client()
 	}
 }
 
+void CoreWindow::clusteringAlgorithmChanged(int index)
+{
+    switch(index)
+    {
+    case 0:
+        Clustering::Clusterer::getInstance().setAlgorithmType(Clustering::Clusterer::AlgorithmType::ADJACENCY);
+        break;
+    case 1:
+        Clustering::Clusterer::getInstance().setAlgorithmType(Clustering::Clusterer::AlgorithmType::LEAF);
+        break;
+    case 2:
+        Clustering::Clusterer::getInstance().setAlgorithmType(Clustering::Clusterer::AlgorithmType::NEIGHBOUR);
+        break;
+    default:
+        qDebug() << "CoreWindow:clusteringAlgorithmChanged : not suported index " << index;
+        break;
+    }
+}
+
+void CoreWindow::clusteringDepthChanged(const QString &value)
+{
+    Clustering::Clusterer::getInstance().setClusteringDepth(value.toInt());
+}
+
+void CoreWindow::clustersOpacityCheckboxValueChanged(bool checked)
+{
+    b_clustersOpacity_Slider->setEnabled(!checked);
+    chb_clusterSelectedOpacity->setEnabled(!checked);
+    coreGraph->setClustersOpacityAutomatic(checked);
+}
+
+void CoreWindow::clusterSelectedOpacityCheckboxValueChanged(bool checked)
+{
+    coreGraph->setClustersOpacitySelected(checked);
+}
+
+void CoreWindow::clustersOpacitySliderValueChanged(int value)
+{
+    coreGraph->setClustersOpacity(double(value) / 10);
+}
+
+void CoreWindow::clustersShapeBoundarySliderValueChanged(int value)
+{
+    coreGraph->setClustersShapeBoundary(value);
+}
+
+void CoreWindow::repulsiveForceInsideClusterValueChanged(double value)
+{
+    QLinkedList<osg::ref_ptr<Data::Cluster> > clusters = viewerWidget->getPickHandler()->getPickedClusters();
+    QLinkedList<osg::ref_ptr<Data::Cluster> >::iterator i;
+    for (i = clusters.begin(); i != clusters.end(); i++)
+    {
+        osg::ref_ptr<Data::Cluster> cluster = *i;
+        cluster->setRepulsiveForceInside(value);
+    }
+}
+
+void CoreWindow::cluster_nodes()
+{
+    if(isPlaying) {
+        playPause();
+    }
+
+    Data::Graph * currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
+
+    if (currentGraph == NULL) {
+        AppCore::Core::getInstance()->messageWindows->showMessageBox("Upozornenie","Ziadny graf nie je nacitany. Nie je co zhlukovat.",false);
+        return;
+    }
+
+    Clustering::Clusterer::getInstance().cluster(currentGraph, clusteringProgressBar);
+
+    coreGraph->createClusterGroup(Clustering::Clusterer::getInstance().getClusters());
+
+    int maxNodes = Clustering::Clusterer::getInstance().getMaxCountOfNodesInClusters();
+    qDebug() << "***** maxNodes = " << maxNodes;
+
+    l_clusters1Max->setText(QString::number(maxNodes));
+
+    b_clustersShapeBoundary_Slider->setValue(maxNodes/2);
+    b_clustersShapeBoundary_Slider->setMaximum(maxNodes);
+
+    chb_clustersOpacity->setChecked(false);
+    b_clustersOpacity_Slider->setValue(5);
+
+    coreGraph->setCameraManipulator(getCameraManipulator());
+
+    // show
+    setVisibleClusterSection(true);
+
+    nodeTypeComboBox->setCurrentIndex(3);   // selectionType zmen na CLUSTER
+
+    //AppCore::Core::getInstance(NULL)->cg->reload(currentGraph);
+
+    if(!isPlaying) {
+        playPause();
+    }
+}
+
+void CoreWindow::restartLayouting() {
+    float scale = Util::ApplicationConfig::get()->getValue("Viewer.Display.NodeDistanceScale").toFloat();
+
+    QLinkedList<osg::ref_ptr<Data::Cluster> > clusters = viewerWidget->getPickHandler()->getPickedClusters();
+    QLinkedList<osg::ref_ptr<Data::Cluster> >::iterator i;
+    for (i = clusters.begin(); i != clusters.end(); i++)
+    {
+        osg::ref_ptr<Data::Cluster> cluster = *i;
+        Layout::ShapeGetter_Cube * shapeGetter = cluster->getShapeGetter();
+
+        if (shapeGetter != NULL) {
+            QSet<Data::Node*> allClusteredNodes = cluster->getALLClusteredNodes();
+            for (QSet<Data::Node*>::const_iterator n = allClusteredNodes.constBegin(); n != allClusteredNodes.constEnd(); ++n) {
+                Data::Node * node = (*n);
+                node->setCurrentPosition(shapeGetter->getCenterNode()->getTargetPosition() * scale);
+            }
+        }
+    }
+
+    coreGraph->setNodesFreezed(true);
+    coreGraph->setNodesFreezed(false);
+}
+
+// TODO - toto by sa mohlo robit uz pri oznaceni zhluku a nie explicitne cez button
+void CoreWindow::setRestriction_Cube_Selected()
+{
+    Data::Graph * currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
+    QLinkedList<osg::ref_ptr<Data::Cluster> > clusters = viewerWidget->getPickHandler()->getPickedClusters();
+    if (currentGraph != NULL && !clusters.empty())
+    {
+        //todo iter
+        osg::ref_ptr<Data::Cluster> cluster = clusters.first();
+        if (cluster == NULL) {
+            return;
+        }
+
+        osg::ref_ptr<Data::Node> centerNode;
+        osg::ref_ptr<Data::Node> surfaceNodeX;
+        osg::ref_ptr<Data::Node> surfaceNodeY;
+        osg::ref_ptr<Data::Node> surfaceNodeZ;
+
+        float scale = Util::ApplicationConfig::get()->getValue("Viewer.Display.NodeDistanceScale").toFloat();
+
+        QString name_centerNode = "center";
+        QString name_sufraceNodeX = "surfaceX";
+        QString name_sufraceNodeY = "surfaceY";
+        QString name_sufraceNodeZ = "surfaceZ";
+        osg::Vec3 positionNode1 = cluster->getCube()->getMidpoint() / scale;
+        osg::Vec3 positionNode2 = positionNode1 + osg::Vec3f (cluster->getCube()->getRadius() / scale, 0, 0);
+        osg::Vec3 positionNode3 = positionNode1 + osg::Vec3f (0, cluster->getCube()->getRadius() / scale, 0);
+        osg::Vec3 positionNode4 = positionNode1 + osg::Vec3f (0, 0, cluster->getCube()->getRadius() / scale);
+
+        Layout::RestrictionRemovalHandler_RestrictionNodesRemover::NodesListType restrictionNodes;
+
+        centerNode = currentGraph->addRestrictionNode (name_centerNode, positionNode1);
+        surfaceNodeX = currentGraph->addRestrictionNode (name_sufraceNodeX, positionNode2);
+        surfaceNodeY = currentGraph->addRestrictionNode (name_sufraceNodeY, positionNode3);
+        surfaceNodeZ = currentGraph->addRestrictionNode (name_sufraceNodeZ, positionNode4);
+
+        restrictionNodes.push_back (centerNode);
+        restrictionNodes.push_back (surfaceNodeX);
+        restrictionNodes.push_back (surfaceNodeY);
+        restrictionNodes.push_back (surfaceNodeZ);
+
+        Layout::ShapeGetter_Cube * cube = new Layout::ShapeGetter_Cube (centerNode, surfaceNodeX, surfaceNodeY, surfaceNodeZ);
+
+        // schovaj kocku obmedzovaca a aj nody ktorymi je reprezentovany - pretoze samotny tvar clusteru predstavuje obmedzovac
+        centerNode->setInvisible();
+        surfaceNodeX->setInvisible();
+        surfaceNodeY->setInvisible();
+        surfaceNodeZ->setInvisible();
+        cube->setInvisible(true);
+
+        QSharedPointer<Layout::ShapeGetter> shapeGetter = QSharedPointer<Layout::ShapeGetter> (cube);
+        QSharedPointer<Layout::RestrictionRemovalHandler> removalHandler = QSharedPointer<Layout::RestrictionRemovalHandler_RestrictionNodesRemover> (
+                    new Layout::RestrictionRemovalHandler_RestrictionNodesRemover (
+                        *currentGraph,
+                        restrictionNodes
+                        )
+                    );
+
+        cluster->registerShapeGetter(cube);
+
+        QSet<Data::Node *> nodes = cluster->getALLClusteredNodes();
+
+        currentGraph->getRestrictionsManager().setRestrictions (nodes, shapeGetter);
+
+        if ((! shapeGetter.isNull ()) && (! removalHandler.isNull ())) {
+            currentGraph->getRestrictionsManager().setOrRunRestrictionRemovalHandler (shapeGetter, removalHandler);
+        }
+
+        if (isPlaying)
+            layout->play();
+    }
+}
 
 void CoreWindow::send_message()
 {
 	client->send_message(le_message->text());
 }
-
 
 void CoreWindow::create_facewindow()
 {
@@ -1792,7 +2149,6 @@ void CoreWindow::create_facewindow()
 	OpenCV::OpenCVCore::getInstance(NULL, this)->faceRecognition();
 #endif
 }
-
 
 #ifdef OPENCV_FOUND
 #ifdef OPENNI2_FOUND
@@ -1985,4 +2341,19 @@ void CoreWindow::closeEvent(QCloseEvent *event)
 void QOSG::CoreWindow::moveMouseAruco(double positionX,double positionY,bool isClick, Qt::MouseButton button )
 {
 	this->viewerWidget->moveMouseAruco(positionX,positionY,isClick,this->x(),this->y(),button);
+}
+
+void CoreWindow::setRepulsiveForceInsideCluster(double repulsiveForceInsideCluster) {
+    sb_repulsiveForceInsideCluster->setValue(repulsiveForceInsideCluster);
+    l_repulsiveForceInsideCluster->show();
+    sb_repulsiveForceInsideCluster->show();
+    b_SetRestriction_Cube_Selected->show();
+    b_restartLayouting->show();
+}
+
+void CoreWindow::hideRepulsiveForceSpinBox() {
+    l_repulsiveForceInsideCluster->hide();
+    sb_repulsiveForceInsideCluster->hide();
+    b_SetRestriction_Cube_Selected->hide();
+    b_restartLayouting->hide();
 }

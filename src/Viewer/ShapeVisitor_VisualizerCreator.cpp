@@ -137,6 +137,11 @@ void ShapeVisitor_VisualizerCreator::visit(Layout::Shape_ConeSurface &shape)
 	visualizeCone(shape);
 }
 
+void ShapeVisitor_VisualizerCreator::visit(Layout::Shape_Cube &shape)
+{
+    visualizeCube(shape);
+}
+
 void ShapeVisitor_VisualizerCreator::visualizeSphere (Layout::Shape_AbstractSphere & abstractSphere) {
 	osg::Sphere * sphere = new osg::Sphere;
 	sphere->setRadius (getScaledDistance (abstractSphere.getRadius ()));
@@ -216,6 +221,34 @@ void ShapeVisitor_VisualizerCreator::visualizeCone(Layout::Shape_ConeSurface &co
 	geode->addDrawable(sd);
 
 	createdVisualizer_ = geode;
+}
+
+void ShapeVisitor_VisualizerCreator::visualizeCube(Layout::Shape_AbstractCube &cube)
+{
+//    if(cube.isInvisible()) {
+        createdVisualizer_ = new osg::Group;
+//        return;
+//    }
+//    osg::Box *osgBox = new osg::Box(getScaledPosition(cube.getCenter()), getScaledDistance(cube.getRadius() * 2));
+
+//    osg::ShapeDrawable *sd = new osg::ShapeDrawable;
+//    sd->setShape(osgBox);
+//    sd->setColor(osg::Vec4 (0, 0, 1.0, 0.06));
+
+//    //transparency of cube
+//    sd->getOrCreateStateSet()->setMode(GL_BLEND, osg::StateAttribute::ON);
+//    sd->getStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
+//    sd->getStateSet()->setMode(GL_DEPTH_TEST, osg::StateAttribute::OFF);
+//    sd->getStateSet()->setMode(GL_LIGHTING, osg::StateAttribute::OFF);
+//    sd->getStateSet()->setAttributeAndModes(new osg::BlendFunc, osg::StateAttribute::ON);
+//    sd->getStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
+//    sd->getStateSet()->setRenderBinDetails(11, "RenderBin");
+//    //
+
+//    osg::Geode *geode = new osg::Geode;
+//    geode->addDrawable(sd);
+
+//    createdVisualizer_ = geode;
 }
 
 float ShapeVisitor_VisualizerCreator::getScaledDistance (

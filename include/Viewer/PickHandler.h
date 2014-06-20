@@ -16,6 +16,7 @@
 
 #include "Data/Node.h"
 #include "Data/Edge.h"
+#include "Data/Cluster.h"
 
 #include <QLinkedList>
 #include <QTimer>
@@ -100,6 +101,8 @@ public:
 			*  \brief picking edges
 			*/
 		static const int EDGE = 2;
+
+        static const int CLUSTER = 3;
 	};
 
 
@@ -199,6 +202,10 @@ public:
 
 	void addPickedNode(osg::ref_ptr<Data::Node> node) { pickedNodes.append(node); }
 	void addPickedEdge(osg::ref_ptr<Data::Edge> edge) { pickedEdges.append(edge); }
+
+    void unselectPickedClusters();
+
+    QLinkedList<osg::ref_ptr<Data::Cluster> > getPickedClusters() {return pickedClusters;}
 
 protected:
 	// Store mouse xy location for button press & move events.
@@ -324,6 +331,8 @@ private:
 		*  \return bool
 		*/
 	bool doEdgePick(osg::NodePath nodePath, unsigned int primitiveIndex);
+
+    bool doClusterPick(osg::NodePath nodePath);
 
 	/**
 		*  \fn private  dragNode(osgViewer::Viewer * viewer)
@@ -460,6 +469,14 @@ private:
 		*  \brief timer for detecting double click
 		*/
 	QTimer * timer;
+
+    QLinkedList<osg::ref_ptr<Data::Cluster> > pickedClusters;
+    bool dragCluster(osgViewer::Viewer * viewer);
+    bool handleScroll( const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& aa );
+
+    bool isXPressed;
+    bool isYPressed;
+    bool isZPressed;
 
 public slots:
 	/**

@@ -163,6 +163,8 @@ public:
 
 	void setNewPosition(osg::Vec3d cameraTargetPoint, osg::Vec3d cameraInterestPoint, std::list<osg::ref_ptr<Data::Node> > selectedCluster, std::list<osg::ref_ptr<Data::Edge> > selectedEdges);
 
+        osg::Vec3d getCameraPosition();
+
 signals:
 
 	/**
@@ -178,6 +180,8 @@ signals:
 		 * @param quat Quaternion that disribe rotation of face
 		 */
 	void sendFaceDetRotation( const osg::Quat quat );
+
+
 
 public slots:
 	/**
@@ -715,12 +719,16 @@ private:
 		 */
 	void updateProjectionAccordingFace(const float x, const float y, const float distance);
 
+
 	/**
 		*  \brief cameraCanRot if true camera is rotating normally, else rotation quaternion by mouse is emited away to CoreGraph to rotate graph directly
 		*/
 	bool _cameraCanRot;
-	};
 
+    bool ctrlPressed;
+    bool shiftPressed;
+
+	};
 
 }
 

@@ -1,6 +1,7 @@
 #include "Layout/RestrictionsManager.h"
 
 #include "Data/Node.h"
+#include "Data/Cluster.h"
 #include "Layout/Shape_Null.h"
 
 #include <qlinkedlist.h>
@@ -35,6 +36,12 @@ void RestrictionsManager::setRestrictions(QSet<Data::Node *> &nodes, const QShar
 				mRemovalHandlers.erase(removalHandlerIt);
 			}
 			mRestrictions.remove(*it);
+
+            //odstran zaregistrovany obmedzovac z clusteru tohto uzla
+            Data::Node * node = *it;
+            if (node->getCluster() != NULL && node->getCluster()->getShapeGetter() != NULL) {
+                node->getCluster()->registerShapeGetter(NULL);
+            }
 		}
 
 		if ( (!shapeGetter.isNull()) && ((*it)->getPositionCanBeRestricted()) )

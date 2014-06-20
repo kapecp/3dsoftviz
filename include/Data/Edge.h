@@ -327,6 +327,8 @@ public:
 		*/
 	void setSettings(QMap<QString, QString> * val) { settings = val; }
 
+        Node* getOtherNode(const Node* node) const;
+
 	int getWeight() { return 1; }
 
 	/**

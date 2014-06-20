@@ -106,11 +106,11 @@ private:
 	Layout::FRAlgorithm * alg;
 
 
-	/**
-		*  Vwr::CoreGraph * cg
-		*  \brief instance of CoreGraph
-		*/
-	Vwr::CoreGraph * cg;
+    /**
+        *  Vwr::CoreGraph * cg
+        *  \brief instance of CoreGraph
+        */
+    Vwr::CoreGraph * cg;
 
 	/**
 		*  Core * core;
