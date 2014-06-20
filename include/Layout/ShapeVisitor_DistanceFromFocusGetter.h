@@ -69,6 +69,8 @@ public:
 	 */
 	virtual void visit(Shape_ConeSurface &shape);
 
+    virtual void visit(Shape_Cube &shape);
+
 private: // visitor context
 	osg::Vec3f mPosition;
 	float mDistanceFromFocus;

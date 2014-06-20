@@ -19,6 +19,7 @@ class Edge;
 class Type;
 class Graph;
 class GraphLayout;
+class Cluster;
 
 typedef osg::TemplateIndexArray<unsigned int, osg::Array::UIntArrayType,4,1> ColorIndexArray;
 
@@ -292,6 +293,22 @@ public:
 	bool isFixed() const { return fixed; }
 
 	/**
+		*  \fn inline public constant cluster
+		*  \brief Returns Cluster which contains this Node
+		*  \return Cluster which contains this Node
+		*/
+    Cluster* getCluster() const;
+
+    /**
+		*  \fn inline public  setCluster(Cluster* cluster)
+		*  \brief Sets cluster which contains this Node
+		*  \param     cluster     cluster containing this node
+		*/
+    void setCluster(Cluster* cluster);
+
+    virtual QSet<Node*> getIncidentNodes() const;
+
+	/**
 		*  \fn inline public  setSelected(bool selected) and  color of selected node
 		*  \brief Sets node picked state
 		*  \param     selected     picked state
@@ -399,6 +416,8 @@ public:
 		if (!selected)
 			setDrawableColor(0, color);
 	}
+
+    void setDefaultColor();
 
 	void setInvisible(){
 		setColor(osg::Vec4 (0,0,0,0));
@@ -622,6 +641,12 @@ private:
 		*/
 	bool fixed;
 
+    /**
+        *  Cluster* cluster
+        *  \brief Cluster containing this node
+        */
+    Cluster* cluster;
+
 	bool hasNestedNodes;
 
 	/**
@@ -643,12 +668,6 @@ private:
 		 * elsewhere, so they can not be removed by user).
 		 */
 	bool removableByUser;
-
-	/**
-		*  bool selected
-		*  \brief node picked state
-		*/
-	bool selected;
 
 	/**
 		*  bool usingInterpolation
@@ -748,6 +767,12 @@ protected:
 		*/
 	QMap<QString, QString> * settings;
 	osg::Vec4 colorOfNode;
+
+    /**
+        *  bool selected
+        *  \brief node picked state
+        */
+    bool selected;
 };
 }
 

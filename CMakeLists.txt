@@ -405,6 +405,7 @@ file( GLOB_RECURSE SRC_OSGQTBROWSER	"src/OsgQtBrowser/*.cpp" )
 file( GLOB_RECURSE SRC_QOSG		"src/QOSG/*.cpp" )
 file( GLOB_RECURSE SRC_UTIL		"src/Util/*.cpp" )
 file( GLOB_RECURSE SRC_VIEWER		"src/Viewer/*.cpp" )
+file(GLOB_RECURSE SRC_CLUSTERING  "src/Clustering/*.cpp")
 
 # OpenCV
 file( GLOB_RECURSE SRC_OPENCV	"src/OpenCV/*.cpp" )
@@ -424,7 +425,7 @@ set( SRC
 	${SRC_MAIN} ${SRC_CORE} ${SRC_DATA} ${SRC_IMPORTER}
 	${SRC_LAYOUT} ${SRC_MANAGER} ${SRC_MATH}
 	${SRC_NETWORK} ${SRC_NOISE}
-	${SRC_OSGQTBROWSER} ${SRC_QOSG} ${SRC_UTIL} ${SRC_VIEWER} ${SRC_MODEL}
+	${SRC_OSGQTBROWSER} ${SRC_QOSG} ${SRC_UTIL} ${SRC_VIEWER} ${SRC_MODEL} ${SRC_CLUSTERING}
 )
 
 if( OpenCV_FOUND )
@@ -454,6 +455,7 @@ file( GLOB_RECURSE HEADER_OSGQTBROWSER	"include/OsgQtBrowser/*.h" )
 file( GLOB_RECURSE HEADER_QOSG		"include/QOSG/*.h" )
 file( GLOB_RECURSE HEADER_UTIL		"include/Util/*.h" )
 file( GLOB_RECURSE HEADER_VIEWER	"include/Viewer/*.h" )
+file(GLOB_RECURSE HEADER_CLUSTERING  "include/Clustering/*.h")
 
 # OpenCV
 file( GLOB_RECURSE HEADER_OPENCV	"include/OpenCV/*.h" )
@@ -473,7 +475,7 @@ set( INCL
 	${HEADER_CORE} ${HEADER_DATA} ${HEADER_IMPORTER}
 	${HEADER_LAYOUT} ${HEADER_MANAGER} ${HEADER_MATH}
 	${HEADER_NETWORK} ${HEADER_NOISE}
-	${HEADER_OSGQTBROWSER} ${HEADER_QOSG} ${HEADER_UTIL} ${HEADER_VIEWER} ${HEADER_MODEL}
+	${HEADER_OSGQTBROWSER} ${HEADER_QOSG} ${HEADER_UTIL} ${HEADER_VIEWER} ${HEADER_MODEL} ${HEADER_CLUSTERING}
 )
 
 if( OpenCV_FOUND )
@@ -505,6 +507,7 @@ source_group( \\src\\OsgQtBrowser "^.*OsgQtBrowser/.*$" )
 source_group( \\src\\Noise "^.*Noise/.*$" )
 
 # Group header files
+source_group(\\headers\\Clustering "^.*Clustering/.*h$")
 source_group( \\headers\\Network "^.*Network/.*h$" )
 source_group( \\headers\\Viewer "^.*Viewer/.*h$" )
 source_group( \\headers\\Core "^.*Core/.*h$" )

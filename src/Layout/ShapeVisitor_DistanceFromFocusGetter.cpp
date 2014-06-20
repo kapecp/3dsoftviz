@@ -65,4 +65,9 @@ void ShapeVisitor_DistanceFromFocusGetter::visit(Shape_ConeSurface &shape)
 	mDistanceFromFocus = (shape.spike() - mPosition).length();
 }
 
+void ShapeVisitor_DistanceFromFocusGetter::visit(Shape_Cube &shape)
+{
+    mDistanceFromFocus = -1;
+}
+
 }

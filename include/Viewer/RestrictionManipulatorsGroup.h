@@ -28,7 +28,7 @@ public:
 	RestrictionManipulatorsGroup();
 
 	/***/
-	virtual ~RestrictionManipulatorsGroup (void) {};
+    virtual ~RestrictionManipulatorsGroup (void) {}
 
 	/**
 	 * [getter].

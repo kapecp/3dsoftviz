@@ -1,5 +1,6 @@
 #include "Viewer/CoreGraph.h"
 
+#include "Viewer/CameraManipulator.h"
 #include "Viewer/SkyBox.h"
 #include "Viewer/EdgeGroup.h"
 #include "Viewer/NodeGroup.h"
@@ -10,6 +11,11 @@
 
 #include "Network/Server.h"
 #include "Data/Graph.h"
+
+#include "Clustering/Clusterer.h"
+#include "Clustering/Figures/Cube.h"
+#include "Clustering/Figures/Sphere.h"
+
 #include "Util/ApplicationConfig.h"
 
 #ifdef OPENCV_FOUND
@@ -18,6 +24,12 @@
 
 #include <osgUtil/Optimizer>
 #include <osg/Depth>
+#include <osg/PolygonMode>
+#include <osg/LineWidth>
+#include <osgFX/Outline>
+#include <osg/ValueObject>
+
+#include <math.h>
 
 
 using namespace Vwr;
@@ -27,6 +39,539 @@ using namespace Vwr;
 * a nie vsetko zaradom ako je to teraz
 */
 
+osg::ref_ptr<osg::AutoTransform> getSphere(qlonglong id, osg::Vec3 position, float radius, osg::Vec4 color) {
+    osg::ref_ptr<osg::AutoTransform> at = new osg::AutoTransform;
+    at->setPosition(position * 1);
+    //at->setAutoRotateMode(osg::AutoTransform::ROTATE_TO_SCREEN);
+
+    osg::ShapeDrawable * shape = new osg::ShapeDrawable;
+    osg::Sphere * sphere = new osg::Sphere;
+    sphere->setRadius(radius);
+    shape->setShape(sphere);
+    shape->setColor(color); //osg::Vec4(0.9, 0.1, 0.3, 0.5));
+    shape->getOrCreateStateSet()->setMode(GL_BLEND, osg::StateAttribute::ON);
+    shape->getStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
+    osg::Geode * geode = new osg::Geode;
+    geode->addDrawable(shape);
+
+    geode->setUserValue("id", QString::number(id).toStdString());
+
+    at->addChild(geode);
+    return at;
+}
+
+osg::ref_ptr<osg::AutoTransform> getCube(qlonglong id, osg::Vec3 position, float width, osg::Vec4 color) {
+    osg::ref_ptr<osg::AutoTransform> at = new osg::AutoTransform;
+    at->setPosition(position * 1);
+    //at->setAutoRotateMode(osg::AutoTransform::ROTATE_TO_SCREEN);
+
+    osg::ShapeDrawable * shape = new osg::ShapeDrawable;
+    osg::Box * cube = new osg::Box;
+    cube->setHalfLengths(osg::Vec3(width,width,width));
+    shape->setShape(cube);
+    shape->setColor(color); //osg::Vec4(0.9, 0.1, 0.3, 0.5));
+    shape->getOrCreateStateSet()->setMode(GL_BLEND, osg::StateAttribute::ON);
+    shape->getStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
+    osg::Geode * geode = new osg::Geode;
+    geode->addDrawable(shape);
+
+    geode->setUserValue("id", QString::number(id).toStdString());
+
+    at->addChild(geode);
+    return at;
+}
+
+osg::ref_ptr<osg::AutoTransform> getCone(qlonglong id, osg::Vec3 position, float radius, osg::Vec4 color) {
+    osg::ref_ptr<osg::AutoTransform> at = new osg::AutoTransform;
+    at->setPosition(position * 1);
+    //at->setAutoRotateMode(osg::AutoTransform::ROTATE_TO_SCREEN);
+
+    osg::ShapeDrawable * shape = new osg::ShapeDrawable;
+    osg::Cone * cone = new osg::Cone;
+    cone->setRadius(radius);
+    cone->setHeight(radius*3);
+    shape->setShape(cone);
+    shape->setColor(color); //osg::Vec4(0.9, 0.1, 0.3, 0.5));
+    shape->getOrCreateStateSet()->setMode(GL_BLEND, osg::StateAttribute::ON);
+    shape->getStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
+    osg::Geode * geode = new osg::Geode;
+    geode->addDrawable(shape);
+
+    geode->setUserValue("id", QString::number(id).toStdString());
+
+    at->addChild(geode);
+
+    return at;
+}
+
+osg::ref_ptr<osg::AutoTransform> getCylinder(qlonglong id, osg::Vec3 position, float radius, osg::Vec4 color) {
+    osg::ref_ptr<osg::AutoTransform> at = new osg::AutoTransform;
+    at->setPosition(position * 1);
+    //at->setAutoRotateMode(osg::AutoTransform::ROTATE_TO_SCREEN);
+
+    osg::ShapeDrawable * shape = new osg::ShapeDrawable;
+    osg::Cylinder * cylinder = new osg::Cylinder;
+    cylinder->setRadius(radius);
+    cylinder->setHeight(radius*2);
+    shape->setShape(cylinder);
+    shape->setColor(color); //osg::Vec4(0.9, 0.1, 0.3, 0.5));
+    shape->getOrCreateStateSet()->setMode(GL_BLEND, osg::StateAttribute::ON);
+    shape->getStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
+    osg::Geode * geode = new osg::Geode;
+    geode->addDrawable(shape);
+
+    geode->setUserValue("id", QString::number(id).toStdString());
+
+    at->addChild(geode);
+
+    return at;
+}
+
+osg::Vec3f getMidPoint(QSet<Data::Node *> nodes) {
+
+    osg::Vec3 total = osg::Vec3(0,0,0);
+    int count = 0;
+
+    QSet<Data::Node *>::const_iterator i = nodes.constBegin();
+     while (i != nodes.constEnd()) {
+
+         Data::Node* v = *i;
+
+        osg::Vec3f pos = v->getCurrentPosition();
+
+        total += pos;
+
+         ++i; ++count;
+     }
+     total.operator /=(count);
+
+     return total;
+}
+
+float getRadius(QSet<Data::Node *> nodes, osg::Vec3f midPoint) {
+
+    float maxDistance = 0;
+
+    QSet<Data::Node *>::const_iterator i = nodes.constBegin();
+    while (i != nodes.constEnd()) {
+        Data::Node* v = *i;
+        osg::Vec3f pos = v->getCurrentPosition();
+
+        float newDistance = sqrt(pow(pos.x()-midPoint.x(),2) + pow(pos.y()-midPoint.y(),2) + pow(pos.z()-midPoint.z(),2));
+
+        if (newDistance > maxDistance) {
+            maxDistance = newDistance;
+        }
+        ++i;
+    }
+    return maxDistance;
+}
+
+double CoreGraph::computeOpacity(osg::Vec3 clusterPosition) {
+    double distance = (cameraManipulator->getCameraPosition() - clusterPosition).length();
+    double opacity = 0.0;
+
+    if (distance > 1000) {
+        opacity = 1.0;
+    } else if (distance > 900) {
+        opacity = 0.9;
+    } else if (distance > 800) {
+        opacity = 0.8;
+    } else if (distance > 700) {
+        opacity = 0.7;
+    } else if (distance > 600) {
+        opacity = 0.6;
+    } else if (distance > 500) {
+        opacity = 0.5;
+    } else if (distance > 400) {
+        opacity = 0.4;
+    } else if (distance > 300) {
+        opacity = 0.3;
+    } else if (distance > 200) {
+        opacity = 0.2;
+    } else if (distance > 100) {
+        opacity = 0.1;
+    }
+
+//    double solidDistance = 1000.0;
+//    if (distance > solidDistance) {
+//        distance = solidDistance;
+//    }
+
+//    return distance / solidDistance;
+    return opacity;
+}
+/*
+osg::ref_ptr<osg::Group> CoreGraph::test2() {
+
+//    if (testGroup != NULL) {
+//        return testGroup;
+//    }
+
+//    qDebug() << "***** INIT test2 ";
+    testGroup = new osg::Group;
+
+    if (graph != NULL) {
+
+//    Manager::GraphManager * manager = Manager::GraphManager::getInstance();
+//    QMap<qlonglong, Data::Type*> * types = manager->getActiveGraph()->getTypes();
+//    Data::Type * type = types->value(1);
+
+    QMap<qlonglong, osg::ref_ptr<Data::Cluster> > clusters = Clustering::Clusterer::getInstance().getClusters();
+
+    QMap<qlonglong, osg::ref_ptr<Data::Cluster> >::iterator i;
+//int tempID = 0;
+    for (i = clusters.begin(); i != clusters.end(); i++)
+    {
+        osg::ref_ptr<Data::Cluster> cluster = i.value();
+
+    //    osg::ref_ptr<Data::Cluster> cluster = node->getCluster();
+
+     //   osg::ref_ptr<Data::Cluster> cluster = new Data::Cluster(tempID++, "name", type, graph->getNodeScale(), graph, osg::Vec3f(0,0,0));
+
+    //    qDebug() << "***** test2 cluster " << cluster->getId() << " count: " << cluster->getClusteredNodesCount();
+
+    //    testGroup->addChild(getSphere(osg::Vec3( cluster->getId() * 10, cluster->getId() * 10, cluster->getId() * 10)));
+
+        osg::Vec3f midPoint;
+        float radius;
+
+        // ak je na tomto clusteri zaregistrovany obmedzovac, vezmi jeho tvar
+        if (cluster->getShapeGetter() != NULL) {
+            midPoint = cluster->getShapeGetter()->getCenterNode()->getCurrentPosition(true);
+            radius = (midPoint - cluster->getShapeGetter()->getSurfaceNode()->getCurrentPosition(true)).length();
+        }
+        // inak vypocitaj tvar podla zlucenych uzlov
+        else {
+            midPoint = getMidPoint(cluster->getALLClusteredNodes());
+            radius = getRadius(cluster->getALLClusteredNodes(), midPoint);
+        }
+
+        int nodesCount = cluster->getClusteredNodesCount();
+
+        osg::Vec4 color = cluster->getColor();
+        if (clustersOpacityAutomatic) {
+            color.w() = computeOpacity(midPoint);
+        } else {
+            color.w() = clustersOpacity;
+        }
+
+        // todo refactoring
+
+//        if (nodesCount > clustersRangeMin && nodesCount <= clusters1Value) {
+//            if (cameraInsideCube(midPoint, getRadius(cluster->getALLClusteredNodes(), midPoint))) {
+//                color.w() = 1;
+//            }
+//            testGroup->addChild(getCube(cluster->getId(), midPoint, getRadius(cluster->getALLClusteredNodes(), midPoint), color));
+//        } else if (nodesCount > clusters1Value && nodesCount <= clustersMiddleValue) {
+            if (cameraInsideCube(midPoint, radius)) {
+                color.w() = 1;
+            }
+            Cube * cube = new Cube(midPoint, radius, color);
+            cube->getGeode()->setUserValue("id", QString::number(cluster->getId()).toStdString());
+
+            cluster->setCube(cube);
+
+            testGroup->addChild(cube->getAT());
+//        } else if (nodesCount > clustersMiddleValue && nodesCount <= clusters2Value) {
+//            if (cameraInsideSphere(midPoint, getRadius(cluster->getALLClusteredNodes(), midPoint))) {
+//                color.w() = 1;
+//            }
+//            testGroup->addChild(dodecahedron(cluster->getId(), midPoint, getRadius(cluster->getALLClusteredNodes(), midPoint), color));
+//        } else {
+//            if (cameraInsideSphere(midPoint, getRadius(cluster->getALLClusteredNodes(), midPoint))) {
+//                color.w() = 1;
+//            }
+//            testGroup->addChild(getSphere(cluster->getId(), midPoint, getRadius(cluster->getALLClusteredNodes(), midPoint), color));
+//        }
+    }
+
+    }
+    return testGroup;
+}
+*/
+osg::ref_ptr<osg::AutoTransform> CoreGraph::dodecahedron(qlonglong id, osg::Vec3 position, float radius, osg::Vec4 color) {
+//    (±1, ±1, ±1)
+//    (0, ±1/φ, ±φ)
+//    (±1/φ, ±φ, 0)
+//    (±φ, 0, ±1/φ)
+//    where φ = (1 + √5) / 2 is the golden ratio (also written τ) ≈ 1.618.
+//    The edge length is 2/φ = √5 – 1. The containing sphere has a radius of √3.
+
+    osg::Vec3 midpoint = osg::Vec3(0,0,0);
+
+    double x = midpoint.x();
+    double y = midpoint.y();
+    double z = midpoint.z();
+
+    double i = 1;
+    double fi = (1 + sqrt(5)) / 2;
+    double fi_rev = 1/fi;
+
+    osg::Geode* dodecahedronGeode = new osg::Geode();
+    osg::Geometry* dodecahedronGeometry = new osg::Geometry();
+    dodecahedronGeode->addDrawable(dodecahedronGeometry);
+
+    osg::Vec3Array* dodecahedronVertices = new osg::Vec3Array;
+    // use http://en.wikipedia.org/wiki/File:Dodecahedron_vertices.png as reference
+    // orange - cube
+    dodecahedronVertices->push_back( osg::Vec3( x-i, y-i, z-i) ); //front left bot  0
+    dodecahedronVertices->push_back( osg::Vec3( x+i, y-i, z-i) ); //front right bot 1
+    dodecahedronVertices->push_back( osg::Vec3( x-i, y+i, z-i) ); //front left top  2
+    dodecahedronVertices->push_back( osg::Vec3( x+i, y+i, z-i) ); //front right top 3
+
+    dodecahedronVertices->push_back( osg::Vec3( x-i, y-i, z+i) ); //back left bot   4
+    dodecahedronVertices->push_back( osg::Vec3( x+i, y-i, z+i) ); //back right bot  5
+    dodecahedronVertices->push_back( osg::Vec3( x-i, y+i, z+i) ); //back left top   6
+    dodecahedronVertices->push_back( osg::Vec3( x+i, y+i, z+i) ); //back right top  7
+
+    // green - y-z plane
+    dodecahedronVertices->push_back( osg::Vec3( x, y+fi_rev, z-fi) ); //front top   8
+    dodecahedronVertices->push_back( osg::Vec3( x, y-fi_rev, z-fi) ); //front bot   9
+    dodecahedronVertices->push_back( osg::Vec3( x, y+fi_rev, z+fi) ); //back top    10
+    dodecahedronVertices->push_back( osg::Vec3( x, y-fi_rev, z+fi) ); //back bot    11
+
+    // blue - x-y plane
+    dodecahedronVertices->push_back( osg::Vec3( x-fi_rev, y-fi, z) ); //bot left    12
+    dodecahedronVertices->push_back( osg::Vec3( x+fi_rev, y-fi, z) ); //bot right   13
+    dodecahedronVertices->push_back( osg::Vec3( x-fi_rev, y+fi, z) ); //top left    14
+    dodecahedronVertices->push_back( osg::Vec3( x+fi_rev, y+fi, z) ); //top right   15
+
+    // pink - x-z plane
+    dodecahedronVertices->push_back( osg::Vec3( x-fi, y, z-fi_rev) ); //front left  16
+    dodecahedronVertices->push_back( osg::Vec3( x+fi, y, z-fi_rev) ); //front right 17
+    dodecahedronVertices->push_back( osg::Vec3( x-fi, y, z+fi_rev) ); //back left   18
+    dodecahedronVertices->push_back( osg::Vec3( x+fi, y, z+fi_rev) ); //back right  19
+
+    dodecahedronGeometry->setVertexArray( dodecahedronVertices );
+
+    osg::DrawElementsUInt* front =
+    new osg::DrawElementsUInt(osg::PrimitiveSet::POLYGON, 0);
+    front->push_back(8);
+    front->push_back(3);
+    front->push_back(17);
+    front->push_back(1);
+    front->push_back(9);
+    dodecahedronGeometry->addPrimitiveSet(front);
+
+    osg::DrawElementsUInt* front2 =
+    new osg::DrawElementsUInt(osg::PrimitiveSet::POLYGON, 0);
+    front2->push_back(14);
+    front2->push_back(15);
+    front2->push_back(3);
+    front2->push_back(8);
+    front2->push_back(2);
+    dodecahedronGeometry->addPrimitiveSet(front2);
+
+    osg::DrawElementsUInt* front3 =
+    new osg::DrawElementsUInt(osg::PrimitiveSet::POLYGON, 0);
+    front3->push_back(16);
+    front3->push_back(2);
+    front3->push_back(8);
+    front3->push_back(9);
+    front3->push_back(0);
+    dodecahedronGeometry->addPrimitiveSet(front3);
+
+    osg::DrawElementsUInt* front4 =
+    new osg::DrawElementsUInt(osg::PrimitiveSet::POLYGON, 0);
+    front4->push_back(3);
+    front4->push_back(15);
+    front4->push_back(7);
+    front4->push_back(19);
+    front4->push_back(17);
+    dodecahedronGeometry->addPrimitiveSet(front4);
+
+    osg::DrawElementsUInt* front5 =
+    new osg::DrawElementsUInt(osg::PrimitiveSet::POLYGON, 0);
+    front5->push_back(17);
+    front5->push_back(19);
+    front5->push_back(5);
+    front5->push_back(13);
+    front5->push_back(1);
+    dodecahedronGeometry->addPrimitiveSet(front5);
+
+    osg::DrawElementsUInt* front6 =
+    new osg::DrawElementsUInt(osg::PrimitiveSet::POLYGON, 0);
+    front6->push_back(12);
+    front6->push_back(13);
+    front6->push_back(1);
+    front6->push_back(9);
+    front6->push_back(0);
+    dodecahedronGeometry->addPrimitiveSet(front6);
+
+    osg::DrawElementsUInt* back1 =
+    new osg::DrawElementsUInt(osg::PrimitiveSet::POLYGON, 0);
+    back1->push_back(6);
+    back1->push_back(10);
+    back1->push_back(11);
+    back1->push_back(4);
+    back1->push_back(18);
+    dodecahedronGeometry->addPrimitiveSet(back1);
+
+    osg::DrawElementsUInt* back2 =
+    new osg::DrawElementsUInt(osg::PrimitiveSet::POLYGON, 0);
+    back2->push_back(6);
+    back2->push_back(10);
+    back2->push_back(7);
+    back2->push_back(15);
+    back2->push_back(14);
+    dodecahedronGeometry->addPrimitiveSet(back2);
+
+    osg::DrawElementsUInt* back3 =
+    new osg::DrawElementsUInt(osg::PrimitiveSet::POLYGON, 0);
+    back3->push_back(11);
+    back3->push_back(10);
+    back3->push_back(7);
+    back3->push_back(19);
+    back3->push_back(5);
+    dodecahedronGeometry->addPrimitiveSet(back3);
+
+    osg::DrawElementsUInt* back4 =
+    new osg::DrawElementsUInt(osg::PrimitiveSet::POLYGON, 0);
+    back4->push_back(12);
+    back4->push_back(4);
+    back4->push_back(11);
+    back4->push_back(5);
+    back4->push_back(13);
+    dodecahedronGeometry->addPrimitiveSet(back4);
+
+    osg::DrawElementsUInt* back5 =
+    new osg::DrawElementsUInt(osg::PrimitiveSet::POLYGON, 0);
+    back5->push_back(16);
+    back5->push_back(18);
+    back5->push_back(4);
+    back5->push_back(12);
+    back5->push_back(0);
+    dodecahedronGeometry->addPrimitiveSet(back5);
+
+    osg::DrawElementsUInt* back6 =
+    new osg::DrawElementsUInt(osg::PrimitiveSet::POLYGON, 0);
+    back6->push_back(6);
+    back6->push_back(18);
+    back6->push_back(16);
+    back6->push_back(2);
+    back6->push_back(14);
+    dodecahedronGeometry->addPrimitiveSet(back6);
+
+    osg::Vec4Array* colors = new osg::Vec4Array;
+    colors->push_back(color);
+
+    dodecahedronGeometry->setColorArray(colors);
+    dodecahedronGeometry->setColorBinding(osg::Geometry::BIND_OVERALL);
+//    dodecahedronGeometry->setColorBinding(osg::Geometry::BIND_PER_PRIMITIVE_SET);
+
+
+    osg::ref_ptr<osg::StateSet> ss = dodecahedronGeometry->getOrCreateStateSet();
+/*
+// only wireframe (outline / contour)
+    osg::ref_ptr<osg::PolygonMode> pm = new osg::PolygonMode(osg::PolygonMode::FRONT_AND_BACK, osg::PolygonMode::LINE);
+    ss->setAttributeAndModes(pm.get(), osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE);
+
+// line width
+    osg::LineWidth* linewidth = new osg::LineWidth();
+    linewidth->setWidth(20.0f);
+    ss->setAttributeAndModes(linewidth, osg::StateAttribute::ON);
+*/
+// transparent
+
+    ss->setMode( GL_BLEND, osg::StateAttribute::ON );
+    ss->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
+
+    osg::ref_ptr<osg::AutoTransform> at = new osg::AutoTransform;
+    at->setPosition(position * 1);
+    at->setScale(radius/15 * sqrt(75 + 30*sqrt(5)));
+//    at->setAutoRotateMode(osg::AutoTransform::ROTATE_TO_SCREEN);
+
+    dodecahedronGeode->setUserValue("id", QString::number(id).toStdString());
+
+    at->addChild(dodecahedronGeode);
+
+    return at;
+}
+
+osg::Geode* test() {
+    //cout << " test ...";
+    osg::Geode* pyramidGeode = new osg::Geode();
+    osg::Geometry* pyramidGeometry = new osg::Geometry();
+    pyramidGeode->addDrawable(pyramidGeometry);
+
+    osg::Vec3Array* pyramidVertices = new osg::Vec3Array;
+    pyramidVertices->push_back( osg::Vec3( 0, 0, 0) ); // front left
+    pyramidVertices->push_back( osg::Vec3(100, 0, 0) ); // front right
+    pyramidVertices->push_back( osg::Vec3(100,100, 0) ); // back right
+    pyramidVertices->push_back( osg::Vec3( 0,100, 0) ); // back left
+    pyramidVertices->push_back( osg::Vec3( 50, 50,100) ); // peak
+
+    pyramidGeometry->setVertexArray( pyramidVertices );
+
+    osg::DrawElementsUInt* pyramidBase =
+    new osg::DrawElementsUInt(osg::PrimitiveSet::QUADS, 0);
+    pyramidBase->push_back(3);
+    pyramidBase->push_back(2);
+    pyramidBase->push_back(1);
+    pyramidBase->push_back(0);
+    pyramidGeometry->addPrimitiveSet(pyramidBase);
+
+    osg::DrawElementsUInt* pyramidFaceOne =
+    new osg::DrawElementsUInt(osg::PrimitiveSet::TRIANGLES, 0);
+    pyramidFaceOne->push_back(0);
+    pyramidFaceOne->push_back(1);
+    pyramidFaceOne->push_back(4);
+    pyramidGeometry->addPrimitiveSet(pyramidFaceOne);
+
+    osg::DrawElementsUInt* pyramidFaceTwo =
+    new osg::DrawElementsUInt(osg::PrimitiveSet::TRIANGLES, 0);
+    pyramidFaceTwo->push_back(1);
+    pyramidFaceTwo->push_back(2);
+    pyramidFaceTwo->push_back(4);
+    pyramidGeometry->addPrimitiveSet(pyramidFaceTwo);
+
+    osg::DrawElementsUInt* pyramidFaceThree =
+    new osg::DrawElementsUInt(osg::PrimitiveSet::TRIANGLES, 0);
+    pyramidFaceThree->push_back(2);
+    pyramidFaceThree->push_back(3);
+    pyramidFaceThree->push_back(4);
+    pyramidGeometry->addPrimitiveSet(pyramidFaceThree);
+
+    osg::DrawElementsUInt* pyramidFaceFour =
+    new osg::DrawElementsUInt(osg::PrimitiveSet::TRIANGLES, 0);
+    pyramidFaceFour->push_back(3);
+    pyramidFaceFour->push_back(0);
+    pyramidFaceFour->push_back(4);
+    pyramidGeometry->addPrimitiveSet(pyramidFaceFour);
+
+    osg::Vec4Array* colors = new osg::Vec4Array;
+    colors->push_back(osg::Vec4(1.0f, 0.0f, 0.0f, 1.0f) ); //index 0 red
+    colors->push_back(osg::Vec4(0.0f, 1.0f, 0.0f, 1.0f) ); //index 1 green
+    colors->push_back(osg::Vec4(0.0f, 0.0f, 1.0f, 1.0f) ); //index 2 blue
+    colors->push_back(osg::Vec4(1.0f, 1.0f, 1.0f, 1.0f) ); //index 3 white
+    colors->push_back(osg::Vec4(1.0f, 0.0f, 0.0f, 1.0f) ); //index 4 red
+
+    pyramidGeometry->setColorArray(colors);
+    pyramidGeometry->setColorBinding(osg::Geometry::BIND_PER_VERTEX);
+
+    return pyramidGeode;
+}
+
+void CoreGraph::setCameraManipulator(CameraManipulator * cameraManipulator) {
+    this->cameraManipulator = cameraManipulator;
+}
+
+void CoreGraph::setClustersOpacityAutomatic(bool automatic) {
+    this->clustersOpacityAutomatic = automatic;
+}
+
+void CoreGraph::setClustersOpacitySelected(bool selected) {
+    this->clustersOpacitySelected = selected;
+}
+
+void CoreGraph::setClustersOpacity(double opacity) {
+    this->clustersOpacity = opacity;
+}
+
+void CoreGraph::setClustersShapeBoundary(int value) {
+    this->clustersShapeBoundary = value;
+}
 
 Vwr::CoreGraph::CoreGraph(Data::Graph * graph, osg::ref_ptr<osg::Camera> camera)
 {
@@ -38,6 +583,7 @@ Vwr::CoreGraph::CoreGraph(Data::Graph * graph, osg::ref_ptr<osg::Camera> camera)
 	this->qmetaNodes = NULL;
 	this->qmetaEdges = NULL;
 	this->nodesFreezed = false;
+    this->clustersOpacityAutomatic = false;
 
 	this->edgesGroup = NULL;
 	this->qmetaEdgesGroup = NULL;
@@ -129,7 +675,11 @@ void CoreGraph::reload(Data::Graph * graph)
 		graph->getRestrictionsManager().setObservers (restrictionVisualizationsGroup, restrictionManipulatorsGroup);
 	}
 
-	customNodesPosition = currentPos;
+    clustersGroup = new osg::Group;
+    root->addChild(clustersGroup);
+    currentPos++;
+
+    customNodesPosition = currentPos;
 
 	osgUtil::Optimizer opt;
 	opt.optimize(edgesGroup->getGroup(), osgUtil::Optimizer::CHECK_GEOMETRY);
@@ -421,6 +971,92 @@ osg::ref_ptr<osg::Group> CoreGraph::initCustomNodes()
 	return customNodes;
 }
 
+void CoreGraph::createClusterGroup(QMap<qlonglong, osg::ref_ptr<Data::Cluster> > clusters) {
+    clustersGroup->removeChildren(0,clustersGroup->getNumChildren());
+    QMap<qlonglong, osg::ref_ptr<Data::Cluster> >::iterator i;
+    for (i = clusters.begin(); i != clusters.end(); i++)
+    {
+        osg::ref_ptr<Data::Cluster> cluster = i.value();
+
+        osg::Vec3f midPoint = getMidPoint(cluster->getALLClusteredNodes());
+        float radius = getRadius(cluster->getALLClusteredNodes(), midPoint);
+
+        Cube * cube = new Cube(midPoint, radius, osg::Vec4d(1,1,1,0.5));
+        cube->getGeode()->setUserValue("id", QString::number(cluster->getId()).toStdString());
+        cluster->setCube(cube);
+
+        ::Sphere * sphere = new ::Sphere(midPoint, radius, osg::Vec4d(1,1,1,0.5));
+        sphere->getGeode()->setUserValue("id", QString::number(cluster->getId()).toStdString());
+        cluster->setSphere(sphere);
+
+        clustersGroup->addChild(cluster->getSphere()->getAT());
+        clustersGroup->addChild(cluster->getCube()->getAT());
+    }
+}
+
+void CoreGraph::updateClustersCoords() {
+    QMap<qlonglong, osg::ref_ptr<Data::Cluster> > clusters = Clustering::Clusterer::getInstance().getClusters();
+    QMap<qlonglong, osg::ref_ptr<Data::Cluster> >::iterator i;
+    for (i = clusters.begin(); i != clusters.end(); i++)
+    {
+        osg::ref_ptr<Data::Cluster> cluster = i.value();
+
+        osg::Vec3f midPoint;
+        float radius;
+        osg::Vec3d scale;
+
+        osg::Vec3f lowerPoint;
+        osg::Vec3f upperPoint;
+
+        // ak je na tomto clusteri zaregistrovany obmedzovac, vezmi jeho tvar
+        if (cluster->getShapeGetter() != NULL) {
+            Layout::ShapeGetter_Cube * shapeGetter = cluster->getShapeGetter();
+            midPoint = shapeGetter->getCenterNode()->getCurrentPosition();
+            double distanceX = (shapeGetter->getSurfaceNodeX()->getCurrentPosition() - midPoint).length();
+            double distanceY = (shapeGetter->getSurfaceNodeY()->getCurrentPosition() - midPoint).length();
+            double distanceZ = (shapeGetter->getSurfaceNodeZ()->getCurrentPosition() - midPoint).length();
+            scale = osg::Vec3d(distanceX, distanceY, distanceZ);
+
+            lowerPoint = osg::Vec3f(midPoint.x() - distanceX, midPoint.y() - distanceY, midPoint.z() - distanceZ);
+            upperPoint = osg::Vec3f(midPoint.x() + distanceX, midPoint.y() + distanceY, midPoint.z() + distanceZ);
+        }
+        // inak vypocitaj tvar podla zlucenych uzlov
+        else {
+            midPoint = getMidPoint(cluster->getALLClusteredNodes());
+            radius = getRadius(cluster->getALLClusteredNodes(), midPoint);
+            scale = osg::Vec3d(radius,radius,radius);
+
+            lowerPoint = osg::Vec3f(midPoint.x() - radius, midPoint.y() - radius, midPoint.z() - radius);
+            upperPoint = osg::Vec3f(midPoint.x() + radius, midPoint.y() + radius, midPoint.z() + radius);
+        }
+
+        osg::Vec4 color = cluster->getColor();
+        if (clustersOpacityAutomatic) {
+            color.w() = computeOpacity(midPoint);
+        } else if ((clustersOpacitySelected && cluster->isSelected()) || !clustersOpacitySelected){
+            color.w() = clustersOpacity;
+        }
+
+        if (cluster->getALLClusteredNodes().count() <= clustersShapeBoundary) {
+            if (cameraInsideCube(lowerPoint, upperPoint)) {
+                //color.w() = 1;
+                color = osg::Vec4d(1,1,1,1);
+            }
+            cluster->getCube()->transform(midPoint, scale, color);
+            color.w() = 0;
+            cluster->getSphere()->transform(midPoint, scale, color);
+        } else {
+            if (cameraInsideSphere(midPoint, radius)) {
+                //color.w() = 1;
+                color = osg::Vec4d(1,1,1,1);
+            }
+            cluster->getSphere()->transform(midPoint, scale, color);
+            color.w() = 0;
+            cluster->getCube()->transform(midPoint, scale, color);
+        }
+    }
+}
+
 /*!
  *
  *
@@ -446,8 +1082,11 @@ void CoreGraph::update()
 	}
 
 	edgesGroup->updateEdgeCoords();
-	qmetaEdgesGroup->updateEdgeCoords();
-	graphGroup->addChild(initCustomNodes());
+    qmetaEdgesGroup->updateEdgeCoords();
+
+    updateClustersCoords();
+
+    graphGroup->addChild(initCustomNodes());
 
 	//posli layout ostatnym klientom (ak nejaki su)
 	Network::Server *server = Network::Server::getInstance();
@@ -510,6 +1149,7 @@ void CoreGraph::setNodesFreezed(bool val)
 	qmetaNodesGroup->freezeNodePositions();
 }
 
+
 void CoreGraph::updateGraphRotByAruco(const osg::Quat quat )
 {
 	mRotAruco = quat;
@@ -541,3 +1181,12 @@ OpenCV::CameraStream* CoreGraph::getCameraStream() const
 }
 #endif
 
+bool CoreGraph::cameraInsideCube(osg::Vec3d lowerPoint, osg::Vec3d upperPoint) {
+    return (new osg::BoundingBox(lowerPoint.x(), lowerPoint.y(), lowerPoint.z(),
+                                 upperPoint.x(), upperPoint.y(), upperPoint.z()))
+            ->contains(cameraManipulator->getCameraPosition());
+}
+
+bool CoreGraph::cameraInsideSphere(osg::Vec3d midPoint, float radius) {
+    return (new osg::BoundingSphere(midPoint, radius))->contains(cameraManipulator->getCameraPosition());
+}
