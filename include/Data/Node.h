@@ -78,6 +78,27 @@ public:
 		*/
 	QString getName() const { return name; }
 
+    /**
+        *  \fn inline public numberOfVertigoPlane
+        *  \brief Returns the value of the vertigo plane, which the node belongs to
+        *  \return qlonglong value of the vertigo plane
+        */
+    qlonglong  numberOfVertigoPlane;
+
+    /**
+        *  \fn inline public  setNumberOfVertigoPlane(qlonglong value);
+        *  \brief Sets the value of the vertigo plane, which the node belongs to
+        *  \param  qlonglong value of the vertigo plane
+        */
+    void setNumberOfVertigoPlane(qlonglong value);
+
+    /**
+        *  \fn inline public  getNumberOfVertigoPlane();
+        *  \brief Gets the value of the vertigo plane, which the node belongs to
+        *  \return  qlonglong value of the vertigo plane
+        */
+    qlonglong getNumberOfVertigoPlane();
+
 	/**
 		*  \fn inline public  setName(QString val)
 		*  \brief Sets new name to the Node
@@ -137,7 +158,7 @@ public:
 		 * \return target position
 		 * Returned target position IS NOT multiplied by the graph scale.
 		 */
-	osg::Vec3f targetPosition() const;
+    osg::Vec3f targetPosition() const;
 	osg::Vec3f getTargetPosition() const;
 	/**
 		 * \fn public constant targetPositionConstRef
