@@ -9,6 +9,7 @@ Shape_AbstractSphere::Shape_AbstractSphere (
 	radius_ (radius)
 {
 	// nothing
+
 }
 
 osg::Vec3f & Shape_AbstractSphere::getCenter () {

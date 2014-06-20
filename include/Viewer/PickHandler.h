@@ -136,6 +136,14 @@ public:
 				*/
 	osg::ref_ptr<Data::Node> getPickedNodeWithMaxEdgeCount();
 
+    //volovar zac
+    /**
+     * @brief getPickedNodeWithMinEdgeCount
+     *  Find picked node from pickedNodes with min edge count for radial layout purpose
+     * @return
+     */
+    osg::ref_ptr<Data::Node>  getPickedNodeWithMinEdgeCount();
+    //volovar kon
 
 	/**
 		*  \fn inline public  setPickMode( int pickMode )

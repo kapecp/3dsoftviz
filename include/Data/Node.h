@@ -12,6 +12,12 @@
 #include <QMap>
 #include <QString>
 
+//volovar_zac
+namespace Layout
+{
+    class RadialLayout;
+}
+//volovar_kon
 
 namespace Data
 {
@@ -518,7 +524,12 @@ public:
 
 	bool isNodeMatched() { return nodeMatched; }
 	void setNodeMatched(bool nodeMatched) { this->nodeMatched = nodeMatched; }
-
+    //volovar_zac
+    void setLayerID(int id); //get unique layer id of selected radial layout, 0 node has no radial layout
+    int getLayerID();
+    Layout::RadialLayout* getRadialLayout(); //pointer to radial layout, NULL if node doesn't belong to radial layout
+    void setRadialLayout(Layout::RadialLayout *rl);
+    //volovar_kon
 private:
 
 
@@ -739,6 +750,10 @@ private:
 	bool nodeMatched;
 
 	float overallWeight;
+    //volovar_zac pre repulzivne sily, ktore posobia iba na uzly nachadzajuce sa na guli
+    int layerID;
+    Layout::RadialLayout* radialLayout;
+    //volovak_kon
 
 protected:
 
