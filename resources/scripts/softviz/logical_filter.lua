@@ -1,5 +1,8 @@
+-----------------------------------------------
+-- Logical filter - module for filtering hypergraph
+-- @release 2014/05/19, Frantisek Nagy
+-----------------------------------------------
 local lpeg = require "lpeg"
-local helper = require "helper"
 
 local P, R, S, V, C, Ct = lpeg.P, lpeg.R, lpeg.S, lpeg.V, lpeg.C, lpeg.Ct
 local locale, match = lpeg.locale(), lpeg.match
@@ -28,6 +31,9 @@ local LiteralString = QuotString + AposString
 local Like = C(P"like")
 
 local Exp, And, Or, Rel, Regex, Not = V"Exp", V"And", V"Or", V"Rel", V"Regex", V"Not"
+
+------------------------------------
+-- Grammar for expressions for filtering nodes
 local G = lpeg.P{ Exp,
   Exp = Ct(-1) + Not + Ct(Or * (Space * OrOp * Space * Or)^0),
   Not = Ct(NotOp * Space * Open * Exp * Close),
@@ -37,6 +43,8 @@ local G = lpeg.P{ Exp,
   Regex = Ct(Id * Space * Like * Space * LiteralString)
 }
 
+------------------------------------
+-- Grammar for expressions for filtering edges
 local G2 = lpeg.P{ Exp,
   Exp = Ct(-1) + Not + Ct(Or * (Space * OrOp * Space * Or)^0),
   Not = Ct(NotOp * Space * Open * Exp * Close),
@@ -47,11 +55,18 @@ local G2 = lpeg.P{ Exp,
 }
 
 local nodeAccepted
+
+--------------------------------------------
+-- Inverted hypergraph indexed by nodes.
 local invertedgraph = {}
 local filteredgraph = {}
 local fullGraph = {}
 local checkedNodes = {}
 
+----------------------------------------
+-- Create copy of filtering expression 
+-- without the first edge operator (<,>,-)
+-- @param expTree tree of filtering expression as returned from lpeg
 local function deleteFirstEdgeOp(expTree)
   local newExp = {}
   local i
@@ -68,6 +83,11 @@ local function deleteFirstEdgeOp(expTree)
   return newExp
 end
 
+--------------------------------------------
+-- Check if incidence direction at node being checked 
+-- is same as edge operator
+-- @param edgeOp edge operator (<,>,-)
+-- @param incidence being checked 
 local function edgeOpLocalCorrect(edgeOp, inc)
   if edgeOp == '-' then 
     return true
@@ -79,6 +99,11 @@ local function edgeOpLocalCorrect(edgeOp, inc)
   return false 
 end
 
+------------------------------------------------
+-- Check if incidence direction at node connected 
+-- to node being checked is same as edge operator
+-- @param edgeOp edge operator (<,>,-)
+-- @param incidence being checked 
 local function edgeOpRemoteCorrect(edgeOp, inc)
   if edgeOp == '-' then 
     return true
@@ -90,6 +115,11 @@ local function edgeOpRemoteCorrect(edgeOp, inc)
   return false 
 end
 
+----------------------------------------------------
+-- Check connected nodes when filtering expression 
+-- contains edge operator
+-- @param node node being checked
+-- @param expTree filtering expression
 local function checkNeighbors(node, expTree)
   local edgeOp = expTree[1][1][1]
   local newExp = deleteFirstEdgeOp(expTree)
@@ -112,6 +142,11 @@ local function checkNeighbors(node, expTree)
   return false
 end
 
+----------------------------------------------------
+-- Check connected nodes when filtering expression 
+-- contains edge operator
+-- @param is incidences connected to edge
+-- @param expTree filtering expression
 local function checkEdgeNeighbors(is, expTree)
   local edgeOp = expTree[1][1][1]
   local newExp = deleteFirstEdgeOp(expTree)
@@ -124,6 +159,12 @@ local function checkEdgeNeighbors(is, expTree)
   return false
 end
 
+-----------------------------------------------------
+-- Check if node is accepted by filtering expression.
+-- If the expression is compound (eg. with and/or operators),
+-- check it recursively with subexpressions.
+-- @param node node being checked
+-- @param expTree filtering expression
 function nodeAccepted(node, expTree)
   if #expTree == 0 then
     return true 
@@ -166,6 +207,9 @@ function nodeAccepted(node, expTree)
   end
 end
 
+------------------------------------------------
+-- Make copy of graph node/edge/incidence.
+-- @param obj object being copied
 local function copyObj(obj)
   local result = {}
   for k, v in pairs(obj) do
@@ -178,6 +222,9 @@ local function copyObj(obj)
   return result
 end
 
+----------------------------------
+-- Create inverted graph indexed with nodes
+-- @param g original graph indexed with edges
 local function getInvertedGraph(g)
   local result = {}
   for e, is in pairs(g) do
@@ -189,6 +236,9 @@ local function getInvertedGraph(g)
   return result
 end
 
+------------------------------------------
+-- Check if filtering expression contains an edge operator.
+-- @param exp filtering expression being checked
 local function hasEdgeOperator(exp)
   if #exp == 0 then
     return false
@@ -215,6 +265,13 @@ local function hasEdgeOperator(exp)
   end
 end
 
+-----------------------------------------------------
+-- Check if edge is accepted by filtering expression.
+-- If the expression is compound (eg. with and/or operators),
+-- check it recursively with subexpressions.
+-- @param edge edge being checked
+-- @param expTree filtering expression
+-- @param is array of incidences connected to edge
 local function edgeAccepted(edge, expTree, is)
   if expTree[2] == 'or' then
     local result = false
@@ -256,9 +313,12 @@ local function edgeAccepted(edge, expTree, is)
   end
 end
 
+-----------------------------------------
+-- Filter edges of graph
+-- @param graph graph being filtered
+-- @param query filter string
 local function filterEdges(graph, query)
   local t = lpeg.match(G2, query)
-  helper.vardump(t)
   for e,is in pairs(graph) do
     if edgeAccepted(e, t, is) then
       e.params.colorA = 1
@@ -270,6 +330,10 @@ local function filterEdges(graph, query)
   end
 end
 
+-----------------------------------------
+-- Filter nodes of graph
+-- @param graph graph being filtered
+-- @param query filter string
 local function filterGraph(nodeFilter, edgeFilter)
   if getFullGraph == nil then return end
   fullGraph = getFullGraph()
@@ -324,18 +388,29 @@ local function filterGraph(nodeFilter, edgeFilter)
   graphChangedCallback()
 end
 
+---------------------------------------
+-- Check if nodes filter query is valid 
+-- according to given grammar.
 local function validNodeQuery(s)
   return lpeg.match(G, s) ~= nil
 end
 
+---------------------------------------
+-- Check if edges filter query is valid 
+-- according to given grammar.
 local function validEdgeQuery(s)
   return lpeg.match(G2, s) ~= nil
 end
 
+----------------------------------------
+-- Return filtered graph.
 local function getGraph()
   return filteredgraph
 end
 
+
+----------------------------------------
+-- Public interface of module
 return {validNodeQuery = validNodeQuery,
   validEdgeQuery = validEdgeQuery,
   filterGraph = filterGraph,

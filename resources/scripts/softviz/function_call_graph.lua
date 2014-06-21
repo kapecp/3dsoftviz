@@ -1,40 +1,64 @@
+-----------------------------------------------
+-- Function call graph - module for extracting 
+-- function calls graph from given project
+-- @release 2014/05/19, Frantisek Nagy
+-----------------------------------------------
 local artifactsExtractor = require "luadb.extraction.extractor"
-local lfs                = require "lfs"
 local utils              = require "luadb.utils"
 
+----------------------------------------------
+-- Local graph stored after extraction
 local graph = {}
 
+----------------------------------------------
+-- Increment function for generating of ids
 local function inc()
   a = a or 0
   a = a + 1
   return a
 end
 
+--------------------------------------------------
+-- Set color for node based on node type
+local function setNodeColor(node)
+  if node.params.type == 'file' or node.params.type == 'globalModule' then 
+    node.params.colorA = 1
+    node.params.colorR = 1
+    node.params.colorG = 0
+    node.params.colorB = 1
+  end
+
+  if node.params.type == 'directory' then 
+    node.params.colorA = 1
+    node.params.colorR = 0
+    node.params.colorG = 1
+    node.params.colorB = 1
+  end
+
+  if node.params.type == 'globalFunction' then 
+    node.params.colorA = 1
+    node.params.colorR = 0
+    node.params.colorG = 0
+    node.params.colorB = 1
+  end
+end
+
+----------------------------------------------
+-- Convert nodes from LuaDB format to import 
+-- format for 3DSoftviz
+-- @param v node in LuaDB format
+-- @param nodes table with created nodes indexed by id
+-- @param minComplexity minimal complexity found in graph so far
+-- @param maxComplexity maximum complexity found in graph so far
+-- @param minLines minimal LOC found in graph so far
+-- @param maxLines maximum LOC found in graph so far
+-- @return minComplexity, maxComplexity, minLines, maxLines
 local function extractNode(v, nodes, minComplexity, maxComplexity, minLines, maxLines)
   local origname = v.data.name or v.id
   local newnode = {type = "node", id = inc(), label = origname, params={size = 8, name = origname, origid = v.id, type = v.data.type, path = v.data.path, modulePath = v.data.modulePath, colorA = 1, colorR = 1, colorG = 1, colorB = 1}}
   if newnode.id == 1 then newnode.params.root = true end
   nodes[v] = newnode
-  if v.data.type == 'file' or v.data.type == 'globalModule' then 
-    newnode.params.colorA = 1
-    newnode.params.colorR = 1
-    newnode.params.colorG = 0
-    newnode.params.colorB = 1
-  end
-
-  if v.data.type == 'directory' then 
-    newnode.params.colorA = 1
-    newnode.params.colorR = 0
-    newnode.params.colorG = 1
-    newnode.params.colorB = 1
-  end
-
-  if v.data.type == 'globalFunction' then 
-    newnode.params.colorA = 1
-    newnode.params.colorR = 0
-    newnode.params.colorG = 0
-    newnode.params.colorB = 1
-  end
+  setNodeColor(newnode)
  
   if v.data.type == 'function' then
     newnode.params.tag = v.data.tag       
@@ -54,6 +78,8 @@ local function extractNode(v, nodes, minComplexity, maxComplexity, minLines, max
   return minComplexity, maxComplexity, minLines, maxLines
 end
 
+--------------------------------------------------
+-- Set color for edge based on edge type
 local function setEdgeColor(edge)
   if edge.params.type == 'function call' then
     edge.params.colorA = 1
@@ -73,6 +99,12 @@ local function setEdgeColor(edge)
   end
 end
 
+-------------------------------------------------------
+-- Convert edge from LuaDB format to import 
+-- format for 3DSoftviz
+-- @param v edge in LuaDB format
+-- @param existingedges table with already converted edges
+-- @param nodes table of extracted nodes
 local function extractEdge(v, existingedges, nodes)
   if #v.from ~= 1 then print('from', #v.from, v.id, v.from[1], v.from[2]) end 
   if #v.to ~= 1 then print('to', #v.to, v.id, v.to[1], v.to[2]) end    
@@ -107,6 +139,9 @@ local function extractEdge(v, existingedges, nodes)
   end
 end
 
+-------------------------------------------------------------------------
+-- Set color and size for nodes representing functions
+-- based on cyclomatic complexity and LOC metrics
 local function doVisualMapping(nodes, minComplexity, maxComplexity, minLines, maxLines)
   local minSize = 8
   local maxSize = 100
@@ -127,6 +162,10 @@ local function doVisualMapping(nodes, minComplexity, maxComplexity, minLines, ma
   end
 end
 
+-------------------------------------------------
+-- Extract function call graph from project and
+-- convert it to format for importing to 3DSoftviz
+-- @param absolutePath path to project being analysed
 local function extractGraph(absolutePath)
   graph = {}
   utils.logger:setLevel(utils.logging.INFO)
@@ -157,10 +196,13 @@ local function extractGraph(absolutePath)
   doVisualMapping(nodes, minComplexity, maxComplexity, minLines, maxLines)
 end
 
+-------------------------------------
+-- Function for retreiving extracted graph
 local function getGraph()
   print"getting function graph"
   return graph
 end
-
+-------------------------------------
+-- Public interface of module
 return {extractGraph = extractGraph,
   getGraph = getGraph}
