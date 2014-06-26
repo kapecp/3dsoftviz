@@ -145,7 +145,7 @@ void RadialLayout::update()
         if (sphere != NULL) //shape is sphere
         {
             sphere->setRenderType(mRenderType);
-            if ((float)depth/(float)maxDepth <= mVisibleSpheres and mVisibleSpheres > 0.0)
+            if ((float)depth/(float)maxDepth <= mVisibleSpheres && mVisibleSpheres > 0.0)
                 sphere->setAlpha(mAlpha);
             else
                 sphere->setAlpha(0);
@@ -153,7 +153,7 @@ void RadialLayout::update()
         if (circle != NULL) //shape is circle
         {
             circle->setRenderType(mRenderType);
-            if ((float)depth/(float)maxDepth <= mVisibleSpheres and mVisibleSpheres > 0.0)
+            if ((float)depth/(float)maxDepth <= mVisibleSpheres && mVisibleSpheres > 0.0)
                 circle->setAlpha(mAlpha);
             else
                 circle->setAlpha(0);
