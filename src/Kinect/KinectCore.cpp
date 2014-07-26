@@ -105,6 +105,12 @@ void Kinect::KinectCore::createConnectionKinect()
 					 mThrKinect,
 					 SLOT(setCursorMovement(bool)));
 
+	//enable/disable zoom
+	QObject::connect(mKinectDialog,
+					 SIGNAL(setZoom(bool)),
+					 mThrKinect,
+					 SLOT(setZoomUpdate(bool)));
+
 	//edit for speed movement
 	QObject::connect(mKinectDialog,
 					 SIGNAL(sendSpeedKinect(double)),
