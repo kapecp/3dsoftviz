@@ -98,6 +98,6 @@ bool SizedQueue::getAvgBool(bool y)
 		positive++;
 	}
 
-	return positive*2 > boolStack.size();
+    return positive*2 > (int)boolStack.size();
 
 }
