@@ -7,7 +7,13 @@ namespace Manager {
 
 //chybove hlasky
 
-void ImportInfoHandlerImpl::addMessage () {
+#if defined(__GNUC__)
+    #define NORETURN __attribute__ ((noreturn))
+#elif defined(_MSC_VER)
+    #define NORETURN __declspec(noreturn)
+#endif
+
+void NORETURN ImportInfoHandlerImpl::addMessage () {
 	throw "not implemented";
 }
 
