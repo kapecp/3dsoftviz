@@ -12,6 +12,7 @@
 
 #include "Core/Core.h"
 #include "Layout/LayoutThread.h"
+#include "Layout/Shape_Cube.h"
 
 #include "Util/ApplicationConfig.h"
 
@@ -19,6 +20,7 @@
 #include <osg/Projection>
 #include <osg/BlendFunc>
 #include <osg/ShapeDrawable>
+#include <osg/ValueObject>
 
 
 #pragma GCC diagnostic push
@@ -45,6 +47,9 @@ PickHandler::PickHandler(Vwr::CameraManipulator * cameraManipulator, Vwr::CoreGr
 	isCtrlPressed = false;
 	isShiftPressed = false;
 	isAltPressed = false;
+    isXPressed = false;
+    isYPressed = false;
+    isZPressed = false;
 	isDrawingSelectionQuad = false;
 	isDragging = false;
 	isManipulatingNodes = false;
@@ -121,6 +126,10 @@ bool PickHandler::handle( const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdap
 	{
 		return handleKeyUp(ea, aa);
 	}
+    case::osgGA::GUIEventAdapter::SCROLL:
+    {
+        return handleScroll(ea, aa);
+    }
 	default:
 
 		return false;
@@ -155,6 +164,65 @@ bool PickHandler::handleDoubleclick( const osgGA::GUIEventAdapter& ea, osgGA::GU
 	return false;
 }
 
+bool PickHandler::handleScroll( const osgGA::GUIEventAdapter& ea, GUIActionAdapter& aa  )
+{
+    if (selectionType == SelectionType::CLUSTER && !pickedClusters.empty()) {
+        QLinkedList<osg::ref_ptr<Data::Cluster> >::const_iterator i = pickedClusters.constBegin();
+        float scale = appConf->getValue("Viewer.Display.NodeDistanceScale").toFloat();
+        while (i != pickedClusters.constEnd())
+        {
+            Layout::ShapeGetter_Cube * shapeGetter = (*i)->getShapeGetter();
+            if (shapeGetter != NULL) {
+                if (isCtrlPressed) {
+//                    double size = 5;
+
+//                    if( ea.getScrollingMotion() == osgGA::GUIEventAdapter::SCROLL_UP) {
+//                        size *= -1;
+//                    }
+
+//                    shapeGetter->changeSize(size);
+//                    osg::Vec3f vector = shapeGetter->getSurfaceNodeX()->getTargetPosition() - shapeGetter->getCenterNode()->getTargetPosition();
+//                    float length = vector.normalize();
+
+//                    if (length > 10) {
+//                        vector *= length / 5;
+//                    }
+
+//                    if( ea.getScrollingMotion() == osgGA::GUIEventAdapter::SCROLL_UP) {
+//                        vector *= -1;
+//                    }
+//                    osg::Vec3f newPosition = shapeGetter->getSurfaceNodeX()->getTargetPosition() + vector / scale;
+
+//                    shapeGetter->getSurfaceNodeX()->setTargetPosition(newPosition);
+//                    //shapeGetter->getSurfaceNodeX()->setCntPosition(newPosition);
+                    //                    shapeGetter->getSurfaceNodeX()->getCurrentPosition(true);urre
+
+                    double moveLength = 1;
+
+                    if( ea.getScrollingMotion() == osgGA::GUIEventAdapter::SCROLL_UP) {
+                        moveLength *= -1;
+                    }
+
+                    if (isXPressed) {
+                        shapeGetter->move(shapeGetter->getDistanceX() / 5 * moveLength,0,0);
+                    } else if (isYPressed) {
+                        shapeGetter->move(0,shapeGetter->getDistanceY() / 5 * moveLength,0);
+                    } else if (isZPressed) {
+                        shapeGetter->move(0,0,shapeGetter->getDistanceZ() / 5 * moveLength);
+                    } else {
+                        double avgDist = (shapeGetter->getDistanceX() + shapeGetter->getDistanceY() + shapeGetter->getDistanceZ()) / 3;
+                        shapeGetter->move(avgDist / 5 * moveLength, avgDist / 5 * moveLength, avgDist / 5 * moveLength);
+                    }
+
+                }
+            }
+            ++i;
+        }
+        AppCore::Core::getInstance()->getLayoutThread()->wakeUp();
+    }
+    return false;
+}
+
 bool PickHandler::handleKeyUp( const osgGA::GUIEventAdapter& ea, GUIActionAdapter& aa  )
 {
 	if(ea.getKey() == osgGA::GUIEventAdapter::KEY_Control_R || ea.getKey() == osgGA::GUIEventAdapter::KEY_Control_L)
@@ -169,7 +237,18 @@ bool PickHandler::handleKeyUp( const osgGA::GUIEventAdapter& ea, GUIActionAdapte
 	{
 		isAltPressed = false;
 	}
-
+    else if(ea.getKey() == osgGA::GUIEventAdapter::KEY_X)
+    {
+        isXPressed = false;
+    }
+    else if(ea.getKey() == osgGA::GUIEventAdapter::KEY_Y)
+    {
+        isYPressed = false;
+    }
+    else if(ea.getKey() == osgGA::GUIEventAdapter::KEY_Z)
+    {
+        isZPressed = false;
+    }
 	return false;
 }
 
@@ -187,16 +266,28 @@ bool PickHandler::handleKeyDown( const osgGA::GUIEventAdapter& ea, GUIActionAdap
 	{
 		isAltPressed = true;
 	}
-	else if(ea.getKey() == 'q')
-	{
-		Data::Graph * currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
-		Util::ElementSelector::randomElementSelector(currentGraph->getNodes(), currentGraph->getEdges(), appConf->getValue("Viewer.PickHandler.AutopickedNodes").toInt(), this);
-	}
-	else if(ea.getKey() == 'w')
-	{
-		Data::Graph * currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
-		Util::ElementSelector::weightedElementSelector(currentGraph->getNodes(), appConf->getValue("Viewer.PickHandler.AutopickedNodes").toInt(), this);
-	}
+    else if(ea.getKey() == 'q')
+    {
+        Data::Graph * currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
+        Util::ElementSelector::randomElementSelector(currentGraph->getNodes(), currentGraph->getEdges(), appConf->getValue("Viewer.PickHandler.AutopickedNodes").toInt(), this);
+    }
+    else if(ea.getKey() == 'w')
+    {
+        Data::Graph * currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
+        Util::ElementSelector::weightedElementSelector(currentGraph->getNodes(), appConf->getValue("Viewer.PickHandler.AutopickedNodes").toInt(), this);
+    }
+    else if(ea.getKey() == osgGA::GUIEventAdapter::KEY_X)
+    {
+        isXPressed = true;
+    }
+    else if(ea.getKey() == osgGA::GUIEventAdapter::KEY_Y)
+    {
+        isYPressed = true;
+    }
+    else if(ea.getKey() == osgGA::GUIEventAdapter::KEY_Z)
+    {
+        isZPressed = true;
+    }
 
 	// FULLSCREEN
 	else if(ea.getKey() == 'l' || ea.getKey() == 'L')
@@ -335,6 +426,12 @@ bool PickHandler::handleDrag( const osgGA::GUIEventAdapter& ea, osgGA::GUIAction
 
 		selectionQuad->getDrawable(0)->asGeometry()->setVertexArray(coordinates);
 	}
+    else if (selectionType == SelectionType::CLUSTER && pickMode == PickMode::NONE && leftButtonPressed) {
+        osgViewer::Viewer* viewer = dynamic_cast<osgViewer::Viewer*>( &aa );
+        if (!viewer)
+            return false;
+        return dragCluster(viewer);
+    }
 	else if (pickMode == PickMode::NONE && leftButtonPressed)
 	{
 		Network::Client * client = Network::Client::getInstance();
@@ -377,7 +474,8 @@ bool PickHandler::handlePush( const osgGA::GUIEventAdapter& ea, osgGA::GUIAction
 
 		if (pickMode != PickMode::NONE && !isShiftPressed && !isCtrlPressed)
 		{
-			unselectPickedNodes();
+            unselectPickedClusters();
+            unselectPickedNodes();
 			unselectPickedEdges();
 		}
 
@@ -427,7 +525,7 @@ bool PickHandler::pick( const double xMin, const double yMin, const double xMax,
 		{
 			if (!hitr->nodePath.empty())
 			{
-				osg::NodePath nodePath = hitr->nodePath;
+                osg::NodePath nodePath = hitr->nodePath;
 
 				if (nodePath.size() > 1)
 				{
@@ -467,11 +565,13 @@ bool PickHandler::pick( const double xMin, const double yMin, const double xMax,
 
 bool PickHandler::doSinglePick(osg::NodePath nodePath, unsigned int primitiveIndex)
 {
-	if (selectionType == SelectionType::NODE)
+    if (selectionType == SelectionType::NODE)
 		return doNodePick(nodePath);
 	else if (selectionType == SelectionType::EDGE)
 		return doEdgePick(nodePath, primitiveIndex);
-	else
+    else if (selectionType == SelectionType::CLUSTER)
+        return doClusterPick(nodePath);
+    else
 		return (doNodePick(nodePath) || doEdgePick(nodePath, primitiveIndex));
 }
 
@@ -602,6 +702,37 @@ bool PickHandler::doEdgePick(osg::NodePath nodePath, unsigned int primitiveIndex
 	return false;
 }
 
+bool PickHandler::doClusterPick(osg::NodePath nodePath)
+{
+    std::string clusterIdStr;
+    nodePath[nodePath.size() - 1]->getUserValue("id", clusterIdStr);
+    qlonglong clusterId = QString::fromStdString(clusterIdStr).toLongLong();
+
+    osg::ref_ptr<Data::Cluster> cluster = Clustering::Clusterer::getInstance().getClusters().value(clusterId);
+
+    if (cluster != NULL)
+    {
+        if (pickMode == PickMode::SINGLE)
+        {
+            if (!pickedNodes.contains(cluster->getRandomNode())) {
+                cluster->setSelected(true, &pickedNodes);
+                pickedClusters.append(cluster);
+                AppCore::Core::getInstance()->getCoreWindow()->setRepulsiveForceInsideCluster(cluster->getRepulsiveForceInside());
+            }
+
+            if (isCtrlPressed) {
+                cluster->setSelected(false, &pickedNodes);
+                pickedClusters.clear();
+                AppCore::Core::getInstance()->getCoreWindow()->hideRepulsiveForceSpinBox();
+            }
+            return true;
+        }
+    }
+
+    return false;
+
+}
+
 bool PickHandler::dragNode(osgViewer::Viewer * viewer)
 {
 	QLinkedList<osg::ref_ptr<Data::Node> >::const_iterator i = pickedNodes.constBegin();
@@ -630,6 +761,66 @@ bool PickHandler::dragNode(osgViewer::Viewer * viewer)
 	AppCore::Core::getInstance()->getLayoutThread()->wakeUp();
 
 	return (pickedNodes.size() > 0);
+}
+
+bool PickHandler::dragCluster(osgViewer::Viewer * viewer)
+{
+    QLinkedList<osg::ref_ptr<Data::Cluster> >::const_iterator i = pickedClusters.constBegin();
+    QLinkedList<osg::ref_ptr<Data::Node> >::const_iterator n = pickedNodes.constBegin();
+
+    osg::Matrixd&  viewM = viewer->getCamera()->getViewMatrix();
+    osg::Matrixd&  projM = viewer->getCamera()->getProjectionMatrix();
+    osg::Matrixd screenM = viewer->getCamera()->getViewport()->computeWindowMatrix();
+
+    osg::Matrixd compositeM = viewM*projM*screenM;
+    osg::Matrixd compositeMi = compositeMi.inverse(compositeM);
+
+    float scale = appConf->getValue("Viewer.Display.NodeDistanceScale").toFloat();
+
+    while (i != pickedClusters.constEnd())
+    {
+        Layout::ShapeGetter_Cube * shape = (*i)->getShapeGetter();
+
+        if (shape != NULL) {
+            osg::Vec3d screenPoint = shape->getCenterNode()->getTargetPosition() * compositeM;
+            osg::Vec3d newPosition = osg::Vec3d(screenPoint.x() - (origin_mX - _mX) / scale, screenPoint.y() - (origin_mY - _mY) / scale, screenPoint.z());
+            shape->getCenterNode()->setTargetPosition(newPosition * compositeMi);
+            //shape->getCenterNode()->setCurrentPosition(newPosition * compositeMi);
+            shape->getCenterNode()->getCurrentPosition(true);
+
+            screenPoint = shape->getSurfaceNodeX()->getTargetPosition() * compositeM;
+            newPosition = osg::Vec3d(screenPoint.x() - (origin_mX - _mX) / scale, screenPoint.y() - (origin_mY - _mY) / scale, screenPoint.z());
+            shape->getSurfaceNodeX()->setTargetPosition(newPosition * compositeMi);
+            shape->getSurfaceNodeX()->getCurrentPosition(true);
+
+            screenPoint = shape->getSurfaceNodeY()->getTargetPosition() * compositeM;
+            newPosition = osg::Vec3d(screenPoint.x() - (origin_mX - _mX) / scale, screenPoint.y() - (origin_mY - _mY) / scale, screenPoint.z());
+            shape->getSurfaceNodeY()->setTargetPosition(newPosition * compositeMi);
+            shape->getSurfaceNodeY()->getCurrentPosition(true);
+
+            screenPoint = shape->getSurfaceNodeZ()->getTargetPosition() * compositeM;
+            newPosition = osg::Vec3d(screenPoint.x() - (origin_mX - _mX) / scale, screenPoint.y() - (origin_mY - _mY) / scale, screenPoint.z());
+            shape->getSurfaceNodeZ()->setTargetPosition(newPosition * compositeMi);
+            shape->getSurfaceNodeZ()->getCurrentPosition(true);
+        }
+        ++i;
+    }
+//    while (n != pickedNodes.constEnd())
+//    {
+//        osg::Vec3f screenPoint = (*n)->targetPositionConstRef() * compositeM;
+//        osg::Vec3f newPosition = osg::Vec3f(screenPoint.x() - (origin_mX - _mX) / scale, screenPoint.y() - (origin_mY - _mY) / scale, screenPoint.z());
+
+//        (*n)->setTargetPosition(newPosition * compositeMi);
+//        (*n)->getCurrentPosition(true);
+//        ++n;
+//    }
+
+    origin_mX = _mX;
+    origin_mY = _mY;
+
+    AppCore::Core::getInstance()->getLayoutThread()->wakeUp();
+
+    return (pickedClusters.size() > 0);
 }
 
 void PickHandler::drawSelectionQuad(float origin_mX, float origin_mY, osgViewer::Viewer * viewer)
@@ -705,6 +896,18 @@ void PickHandler::toggleSelectedNodesFixedState(bool isFixed)
 		}
 		++i;
 	}
+}
+
+void PickHandler::unselectPickedClusters() {
+    QLinkedList<osg::ref_ptr<Data::Cluster> >::const_iterator i = pickedClusters.constBegin();
+
+    while (i != pickedClusters.constEnd())
+    {
+        (*i)->setSelected(false, &pickedNodes);
+        ++i;
+    }
+    AppCore::Core::getInstance()->getCoreWindow()->hideRepulsiveForceSpinBox();
+    pickedClusters.clear();
 }
 
 void PickHandler::unselectPickedNodes(osg::ref_ptr<Data::Node> node)

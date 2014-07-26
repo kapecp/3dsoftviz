@@ -42,6 +42,10 @@ void ShapeVisitor_ManipulatorCreator::visit (Layout::Shape_CylinderSurface & sha
 	executeDefault();
 }
 
+void ShapeVisitor_ManipulatorCreator::visit (Layout::Shape_Cube & shape){
+    executeDefault();
+}
+
 void ShapeVisitor_ManipulatorCreator::executeDefault(){
 	createdDragger = 0;
 	createdSelection = 0;

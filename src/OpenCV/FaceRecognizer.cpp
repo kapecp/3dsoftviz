@@ -5,6 +5,8 @@
 
 #include <QDebug>
 
+#include <opencv2/core/core_c.h>
+
 using namespace cv;
 
 // constructor loads classifier file with learned faces and set start parameters

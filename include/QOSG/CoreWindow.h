@@ -31,6 +31,8 @@
 #include "Speech/KinectSpeechThread.h"
 #endif
 
+#include "Clustering/Clusterer.h"
+
 namespace Layout
 {
 class LayoutThread;
@@ -193,6 +195,18 @@ public slots:
 				*  \param value actual value of slider
 				*/
 	void sliderValueChanged(int value);
+
+    void clusteringDepthChanged(const QString &);
+    void clusteringAlgorithmChanged(int value);
+    void clustersOpacityCheckboxValueChanged(bool checked);
+    void clusterSelectedOpacityCheckboxValueChanged(bool checked);
+    void clustersOpacitySliderValueChanged(int value);
+    void clustersShapeBoundarySliderValueChanged(int value);
+    void repulsiveForceInsideClusterValueChanged(double value);
+    void setRestriction_Cube_Selected();
+    void cluster_nodes();
+    // currentPosition nastavi na targetPosition - cim sposobi to, ze uzly vo vnutri obmedzovaca sa pekne nalayoutuju, pretoze uz nebudu tahane mimo neho kvoli targetPos
+    void restartLayouting();
 
     //volovar_zac
     /**
@@ -435,6 +449,7 @@ public slots:
     void remove_PlanesClick();
 
     void repulsive_Forces_ValueChanged();
+
 
 private:
 
@@ -820,6 +835,12 @@ private:
 		*/
 	void createCollaborationToolBar();
 
+    /**
+        *  \fn private  createClusterToolBar
+        *  \brief Create toolBar with clustering actions
+        */
+    void createClusterToolBar();
+
 	/**
 		*  \fn private  createAugmentedRealityToolBar
 		*  \brief Create Augmented Reality ToolBar
@@ -893,7 +914,31 @@ private:
         */
     int vertigoPlanesMaxDistance;
 
+    QLabel * l_clustersOpacity;
+    QCheckBox * chb_clustersOpacity;
+    QCheckBox * chb_clusterSelectedOpacity;
+    QSlider * b_clustersOpacity_Slider;
+    QLabel * l_clustersShapes;
+    QLabel * l_clusters1Min;
+    QLabel * l_clusters1Max;
+    QSlider * b_clustersShapeBoundary_Slider;
+    QPushButton * b_cluster_nodes;
+    QPushButton * b_restartLayouting;
+    QComboBox * cb_clusteringAlgorithm;
+    QLineEdit * le_clusteringDepth;
+    QProgressDialog * clusteringProgressBar;
+
+    QPushButton * b_SetRestriction_Cube_Selected;
+
+    QLabel * l_repulsiveForceInsideCluster;
+    QDoubleSpinBox * sb_repulsiveForceInsideCluster;
+
+    void setVisibleClusterSection(bool visible);
+
 public:
+
+    void setRepulsiveForceInsideCluster(double repulsiveForceInsideCluster);
+    void hideRepulsiveForceSpinBox();
 
 	/*!
 		*

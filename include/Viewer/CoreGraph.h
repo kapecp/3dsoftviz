@@ -13,6 +13,8 @@
 #include "Data/Edge.h"
 #include "Data/Node.h"
 
+#include "Data/Cluster.h"
+
 #include <QMap>
 #include <QLinkedList>
 #include <QSharedPointer>
@@ -148,6 +150,7 @@ public:
 
 	osg::ref_ptr<osg::Camera> getCamera() { return camera; }
 
+    osg::ref_ptr<osg::AutoTransform> dodecahedron(qlonglong id, osg::Vec3 midpoint, float radius, osg::Vec4 color);
 
 	/**
 		*  \fn public  setEdgeLabelsVisible(bool visible)
@@ -178,6 +181,12 @@ public:
 		*/
 	void setNodesFreezed(bool val);
 
+    void setClustersOpacityAutomatic(bool automatic);
+    void setClustersOpacitySelected(bool selected);
+    void setClustersOpacity(double opacity);
+    void setClustersShapeBoundary(int value);
+    void setCameraManipulator(CameraManipulator * cameraManipulator);
+    void createClusterGroup(QMap<qlonglong, osg::ref_ptr<Data::Cluster> > clusters);
 
 	Vwr::NodeGroup * getNodesGroup() { return nodesGroup; }
 	Vwr::NodeGroup * getMetaNodesGroup() { return qmetaNodesGroup; }
@@ -346,6 +355,10 @@ private:
 		*/
 	osg::ref_ptr<osg::Group> root;
 
+        osg::ref_ptr<osg::Group> testGroup;
+
+        osg::ref_ptr<osg::Group> test2();
+
 	/**
 		*  osg::ref_ptr graphGroup
 		*  \brief graphGroup node
@@ -458,8 +471,22 @@ private:
 	osg::ref_ptr<OpenCV::CameraStream> mCameraStream;
 #endif
 
+    bool clustersOpacityAutomatic;
+    bool clustersOpacitySelected;
+    double clustersOpacity;
+    int clustersShapeBoundary;
 
-	};
+    osg::ref_ptr<osg::Group> clustersGroup;
+
+    CameraManipulator * cameraManipulator;
+
+    void updateClustersCoords();
+
+    double computeOpacity(osg::Vec3 clusterPosition);
+    bool cameraInsideSphere(osg::Vec3d midPoint, float radius);
+    bool cameraInsideCube(osg::Vec3d lowerPoint, osg::Vec3d upperPoint);
+};
+
 }
 
 #endif

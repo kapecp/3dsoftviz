@@ -12,6 +12,8 @@
 
 #include <QTextStream>
 
+#include <QDebug>
+
 Data::Edge::Edge(qlonglong id, QString name, Data::Graph* graph, osg::ref_ptr<Data::Node> srcNode, osg::ref_ptr<Data::Node> dstNode, Data::Type* type, bool isOriented, float scaling, int pos, osg::ref_ptr<osg::Camera> camera) : osg::DrawArrays(osg::PrimitiveSet::QUADS, pos, 4)
 {
 	this->id = id;
@@ -174,3 +176,13 @@ QString Data::Edge::toString() const {
 }
 
 
+Data::Node* Data::Edge::getOtherNode(const Data::Node* node) const {
+    if (node == NULL)
+        return NULL;
+    if (node->getId() == srcNode->getId())
+        return dstNode;
+    if (node->getId() == dstNode->getId())
+        return srcNode;
+    qWarning() << "Node not incident to this edge";
+    return NULL;
+}

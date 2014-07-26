@@ -57,6 +57,9 @@ Vwr::CameraManipulator::CameraManipulator(Vwr::CoreGraph * coreGraph)
 	TARGET_MOVEMENT_SPEED = 0.005;
 	SCREEN_MARGIN = 200.f;
 
+    ctrlPressed = false;
+    shiftPressed = false;
+
 	this->coreGraph = coreGraph;
 	stop();
 
@@ -369,6 +372,9 @@ bool Vwr::CameraManipulator::calcMovement()
 	// mouse scroll is only a single event
 	if (_ga_t0.get()==NULL) return false;
 
+    // ignoruj event ak je stlaceny ctrl
+    if(ctrlPressed || shiftPressed) return false;
+
 	float dx=0.0f;
 	float dy=0.0f;
 	unsigned int buttonMask=osgGA::GUIEventAdapter::NONE;
@@ -631,6 +637,18 @@ bool Vwr::CameraManipulator::handleKeyUp( const osgGA::GUIEventAdapter& ea, osgG
 {
 	switch( ea.getKey() )
 	{
+    case osgGA::GUIEventAdapter::KEY_Control_R:
+    case osgGA::GUIEventAdapter::KEY_Control_L:
+    {
+        ctrlPressed = false;
+        break;
+    }
+    case osgGA::GUIEventAdapter::KEY_Shift_R:
+    case osgGA::GUIEventAdapter::KEY_Shift_L:
+    {
+        shiftPressed = false;
+        break;
+    }
 	case osgGA::GUIEventAdapter::KEY_Space:
 	{
 		flushMouseEventStack();
@@ -679,6 +697,18 @@ bool Vwr::CameraManipulator::handleKeyDown( const osgGA::GUIEventAdapter &ea, os
 {
 	switch( ea.getKey() )
 	{
+    case osgGA::GUIEventAdapter::KEY_Control_R:
+    case osgGA::GUIEventAdapter::KEY_Control_L:
+    {
+        ctrlPressed = true;
+        break;
+    }
+    case osgGA::GUIEventAdapter::KEY_Shift_R:
+    case osgGA::GUIEventAdapter::KEY_Shift_L:
+    {
+        shiftPressed = true;
+        break;
+    }
 	case osgGA::GUIEventAdapter::KEY_Up:
 	{
 		forwardSpeed = 2 * maxSpeed;
@@ -1247,6 +1277,17 @@ void Vwr::CameraManipulator::updateProjectionAccordingFace(const float x, const 
 	this->coreGraph->getCamera()->setProjectionMatrixAsFrustum(left, right, bottom, top, zNear, zFar);
 }
 
+
+osg::Vec3d Vwr::CameraManipulator::getCameraPosition() {
+    osg::Vec3d center = getCenter();
+    float distance = getDistance();
+    osg::Quat rotation = getRotation();
+
+    osg::Vec3 direction = rotation * osg::Vec3(0, 0, 1);
+    direction *= distance;
+
+    return center+direction;
+}
 void Vwr::CameraManipulator::updateArucoGraphPosition( osg::Vec3d pos ){
 	QString str;
 	//str  = "arMat " + QString::number( pos.x(), 'f', 2);

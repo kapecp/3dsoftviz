@@ -9,6 +9,8 @@
 #include "Data/Node.h"
 
 #include "Data/Graph.h"
+#include "Data/Cluster.h"
+
 #include "Util/ApplicationConfig.h"
 
 #include <osg/Geometry>
@@ -36,7 +38,7 @@ Data::Node::Node(qlonglong id, QString name, Data::Type* type, float scaling, Da
 	this->setBall(NULL);
 	this->setParentBall(NULL);
 	this->hasNestedNodes = false;
-
+    this->cluster = NULL;
     // Duransky start - Pociatocne nastavenie roznych cisiel vertigo rovin pre uzly
     this->numberOfVertigoPlane = id;
     // Duransky end - Pociatocne nastavenie roznych cisiel vertigo rovin pre uzly
@@ -92,10 +94,14 @@ Data::Node::Node(qlonglong id, QString name, Data::Type* type, float scaling, Da
 	this->colorOfNode=osg::Vec4(r, g, b, a);
 	this->setColor(colorOfNode);
 
+	// merging Britvik: this was here
+    //setDefaultColor();
+
     //volovar_zac
     layerID = 0;  //node is not on layer of radial layout
     radialLayout = NULL;  //node does not belong to radial layout
     //volovar_kon
+
 }
 
 Data::Node::~Node(void)
@@ -388,6 +394,45 @@ osg::Vec3f Data::Node::getCurrentPosition(bool calculateNew, float interpolation
 	return osg::Vec3(this->currentPosition);
 }
 
+QSet<Data::Node*> Data::Node::getIncidentNodes() const {
+    QSet<Node*> nodes;
+
+    QMap<qlonglong, osg::ref_ptr<Data::Edge> >::iterator i;
+    for (i = edges->begin(); i != edges->end(); i++)
+    {
+        osg::ref_ptr<Data::Edge> edge = i.value();
+        nodes.insert(edge->getOtherNode(this));
+    }
+    return nodes;
+/*
+    if (ignoreClusters) {
+        return nodes;
+    } else {
+        QSet<Node*> visibleNodes;
+        QSetIterator<Node*> nodeIt(nodes);
+        while (nodeIt.hasNext()) {
+            Node* node = nodeIt.next();
+            Node* cluster = node->getTopCluster();
+            if (cluster != NULL && cluster != this) {
+                visibleNodes.insert(cluster);
+            } else {
+                visibleNodes.insert(node);
+            }
+        }
+        return visibleNodes;
+    }
+    */
+}
+
+void Data::Node::setDefaultColor() {
+    float r = type->getSettings()->value("color.R").toFloat();
+    float g = type->getSettings()->value("color.G").toFloat();
+    float b = type->getSettings()->value("color.B").toFloat();
+    float a = type->getSettings()->value("color.A").toFloat();
+
+    this->setColor(osg::Vec4(r, g, b, a));
+}
+
 // Duransky start - Funkcie na nastavenie a ziskanie cisla vertigo roviny, na ktorej sa uzol nachadza
 void Data::Node::setNumberOfVertigoPlane(qlonglong value){
    this->numberOfVertigoPlane = value;
@@ -404,6 +449,15 @@ QString Data::Node::toString() const
 	QTextStream(&str) << "node id:" << id << " name:" << name << " pos:[" << mTargetPosition.x() << "," << mTargetPosition.y() << "," << mTargetPosition.z() << "]";
 	return str;
 }
+
+
+Data::Cluster* Data::Node::getCluster() const { return cluster; }
+
+void Data::Node::setCluster(Data::Cluster* cluster)
+{
+    this->cluster = cluster;
+}
+
 
 //volovar_zac
 //pre potreby odpudivych sil v radialLayoute
