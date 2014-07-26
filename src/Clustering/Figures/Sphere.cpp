@@ -26,20 +26,20 @@ void ::Sphere::init() {
 
 void ::Sphere::computeGeode(unsigned int rings, unsigned int sectors) {
     float radius = 1;
-    float const R = 1./(float)(rings-1);
-    float const S = 1./(float)(sectors-1);
-    int r, s;
+    float const R = 1.0f/(float)(rings-1);
+    float const S = 1.0f/(float)(sectors-1);
+    unsigned int r, s;
 
     sphereGeode->addDrawable( sphereGeometry );
 
     // Establish texture coordinates, vertex list, and normals
     for(r = 0; r < rings; r++) {
         for(s = 0; s < sectors; s++) {
-            float const y = sin( -M_PI_2 + M_PI * r * R);
-            float const x = cos(2*M_PI * s * S) * sin(M_PI * r * R);
-            float const z = sin(2*M_PI * s * S) * sin(M_PI * r * R);
+            float const y = (float)sin( -M_PI_2 + M_PI * r * R);
+            float const x = (float)cos(2*M_PI * s * S) * (float)sin(M_PI * r * R);
+            float const z = (float)sin(2*M_PI * s * S) * (float)sin(M_PI * r * R);
 
-            sphereTexCoords->push_back(osg::Vec2(s * R, r * R));
+            sphereTexCoords->push_back(osg::Vec2((float)s * R, (float)r * R));
             sphereVertices->push_back(osg::Vec3(x * radius, y * radius, z * radius));
             sphereNormals->push_back(osg::Vec3(x, y, z));
         }
@@ -78,7 +78,7 @@ void ::Sphere::transform(osg::Vec3d position, osg::Vec3d scale, osg::Vec4d color
     material->setAmbient(osg::Material::FRONT,color);
     material->setDiffuse(osg::Material::FRONT,color);
     material->setSpecular(osg::Material::FRONT,color);
-    material->setAlpha(osg::Material::FRONT,color.a());
+    material->setAlpha(osg::Material::FRONT,(float)color.a());
 
     ss->setAttribute(material,osg::StateAttribute::OVERRIDE);
     ss->setMode(GL_DEPTH_TEST,osg::StateAttribute::ON);

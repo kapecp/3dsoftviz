@@ -79,7 +79,7 @@ void Clusterer::cluster(Graph* graph, QProgressDialog* clusteringProgressBar) {
 
 }
 
-osg::Vec4 getNewColor(int colorCounter) {
+osg::Vec4 Vwr::getNewColor(int colorCounter) {
 
     osg::Vec4 colors [21] = {osg::Vec4(1.0f, 0.0f, 0.0f, 0.5f),
                            osg::Vec4(0.0f, 1.0f, 0.0f, 0.5f),
@@ -286,15 +286,15 @@ void Clusterer::clusterAdjacency(QMap<qlonglong, osg::ref_ptr<Data::Node> >* som
             osg::ref_ptr<Data::Node> nodeV = iterator2.value();
             int degV = nodeV->getIncidentNodes().size();
 
-            float sum = 0;
+            int sum = 0;
             for (int k = 0; k < n; k++) {
                 sum += matrix[i][k] && matrix[j][k] ? 1 : 0;
             }
             // apply Pearson
             float wij = ((float)((n * sum) - (degU * degV))) /
-                    sqrt(degU * degV * (n - degU) * (n - degV));
+                    (float)sqrt(degU * degV * (n - degU) * (n - degV));
             // ignore negative values
-            w[j][i] = w[i][j] = qMax(0.0f, wij * K); // K is used to store 0-1 floats in uchar matrix
+            w[j][i] = w[i][j] = (unsigned char)qMax(0.0f, wij * K); // K is used to store 0-1 floats in uchar matrix
             if (w[j][i] > maxW) // remember largest weight
                 maxW = w[j][i];
         }
@@ -347,7 +347,7 @@ void Clusterer::clusterAdjacency(QMap<qlonglong, osg::ref_ptr<Data::Node> >* som
 
                     osg::ref_ptr<Data::Node> x = someNodes->value(someNodes->keys().at(link));
                     if (!clustered.contains(x->getId())) {
-                        if (c = NULL) {
+                        if (c == NULL) {
                             c = x->getCluster();
                         } else if (x->getCluster() != NULL) {
                             continue;

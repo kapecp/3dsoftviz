@@ -21,7 +21,7 @@ public:
     osg::Vec2Array *getTexCoords()  { return texCoords; }
 
     osg::Vec3d getMidpoint() { return at->getPosition(); }
-    float getRadius() { return at->getScale().x(); }
+    double getRadius() { return at->getScale().x(); }
 
     void transform(osg::Vec3d position, osg::Vec3d scale, osg::Vec4d color);
 

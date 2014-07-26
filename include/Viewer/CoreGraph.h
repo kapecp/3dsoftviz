@@ -31,6 +31,15 @@ namespace Vwr
 	class EdgeGroup;
 	//class CameraStream;
 //	class NodeGroup;
+
+    osg::ref_ptr<osg::AutoTransform> getSphere(qlonglong id, osg::Vec3 position, float radius, osg::Vec4 color);
+    osg::ref_ptr<osg::AutoTransform> getCube(qlonglong id, osg::Vec3 position, float width, osg::Vec4 color);
+    osg::ref_ptr<osg::AutoTransform> getCone(qlonglong id, osg::Vec3 position, float radius, osg::Vec4 color);
+    osg::ref_ptr<osg::AutoTransform> getCylinder(qlonglong id, osg::Vec3 position, float radius, osg::Vec4 color);
+    osg::Geode* test();
+    osg::Vec4 getNewColor(int colorCounter);
+    osg::Vec3f getMidPoint(QSet<Data::Node *> nodes);
+    float getRadius(QSet<Data::Node *> nodes, osg::Vec3f midPoint);
 }
 
 namespace Util

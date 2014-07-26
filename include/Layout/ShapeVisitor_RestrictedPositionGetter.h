@@ -97,6 +97,8 @@ private: // visitor context
 	osg::Vec3f mRestrictedPosition;
 };
 
+float median(float A, float B, float C);
+
 }
 
 #endif // LAYOUT_SHAPEVISITOR_RESTRICTEDPOSITIONGETTER_H

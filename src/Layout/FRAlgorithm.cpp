@@ -441,8 +441,8 @@ void FRAlgorithm::addAttractive(Data::Edge* edge, float factor) {
 	fv.normalize();
 
     if (edge->getSrcNode()->getCluster() != NULL && edge->getDstNode()->getCluster() && edge->getSrcNode()->getCluster()->getId() == edge->getDstNode()->getCluster()->getId()) {
-        double clusterForce = edge->getSrcNode()->getCluster()->getRepulsiveForceInside();
-        clusterForce = qFuzzyCompare(clusterForce, 0.0) ? 1 : clusterForce;
+        float clusterForce = (float)edge->getSrcNode()->getCluster()->getRepulsiveForceInside();
+        clusterForce = qFuzzyCompare(clusterForce, 0.0f) ? 1 : clusterForce;
         fv *= attr(dist) * factor / clusterForce; // velkost sily medzi uzlami zhluku
     } else {
         fv *= attr(dist) * factor; // velkost sily
@@ -497,7 +497,7 @@ void FRAlgorithm::addRepulsive(Data::Node* u, Data::Node* v, float factor) {
 	fv.normalize();
 
     if (u->getCluster() != NULL && v->getCluster() && u->getCluster()->getId() == v->getCluster()->getId()) {
-        fv *= rep(dist) * factor * u->getCluster()->getRepulsiveForceInside(); // velkost sily medzi uzlami zhluku
+        fv *= rep(dist) * factor * (float)u->getCluster()->getRepulsiveForceInside(); // velkost sily medzi uzlami zhluku
     } else {
         fv *= rep(dist) * factor; // velkost sily
     }
@@ -544,8 +544,17 @@ double FRAlgorithm::distance(osg::Vec3f u,osg::Vec3f v)
 
 bool FRAlgorithm::areForcesBetween (Data::Node * u, Data::Node * v) {
 	// ak sa aspon 1 z nodov nachadza v zhluku, na ktorom je zaregistrovany obmedzovac, neposobia medzi nimi ziadne sily
-    if ((u->getCluster() != NULL && u->getCluster()->getShapeGetter() != NULL && (v->getCluster() == NULL || v->getCluster() != NULL && v->getCluster()->getShapeGetter() == NULL)) ||
-        (v->getCluster() != NULL && v->getCluster()->getShapeGetter() != NULL && (u->getCluster() == NULL || u->getCluster() != NULL && u->getCluster()->getShapeGetter() == NULL))) {
+    if(
+            (
+                u->getCluster() != NULL && u->getCluster()->getShapeGetter() != NULL &&
+                ( (v->getCluster() == NULL || v->getCluster() != NULL) && v->getCluster()->getShapeGetter() == NULL)
+             )
+            ||
+            (
+                v->getCluster() != NULL && v->getCluster()->getShapeGetter() != NULL &&
+                ( (u->getCluster() == NULL || u->getCluster() != NULL) && u->getCluster()->getShapeGetter() == NULL)
+            )
+    ) {
         return false;
     }
 	return

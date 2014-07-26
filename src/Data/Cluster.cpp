@@ -65,7 +65,7 @@ osg::Vec3 Cluster::getMidpoint() {
 
         ++i; ++count;
     }
-    total.operator /=(count);
+    total.operator /=((float)count);
 
     return total;
 }
