@@ -50,6 +50,10 @@ private:
 	Shape_Sphere::RestrictionPolicy restrictionPolicy_;
 	SphereCenterSource centerSource_;
 
+    //volovar zac
+    QSharedPointer<Shape> sphere_; //aby vratilo rovnaky shape pri kazdom volani getshape
+    //volovar kon
+
 }; // class
 
 } // namespace

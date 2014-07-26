@@ -8,6 +8,10 @@
 #include "Data/Node.h"
 #include "Data/Graph.h"
 
+//volovar_zac
+#include "Layout/RadialLayout.h"
+//volovar_kon
+
 #include <stdio.h>
 #include <math.h>
 #include <ctime>
@@ -39,6 +43,10 @@ FRAlgorithm::FRAlgorithm()
 	/* moznost odpudiveho posobenia limitovaneho vzdialenostou*/
 	useMaxDistance = false;
 	this->graph = NULL;
+
+    // Duransky start - pociatocne nastavenie nasobica odpudivych sil na rovnakej rovine na hodnotu 1
+    setRepulsiveForceVertigo(1);
+    // Duransky end - pociatocne nastavenie nasobica odpudivych sil na rovnakej rovine na hodnotu 1
 
 	mLastFocusedNode = 0;   // No node is focused on the beginning
 }
@@ -216,7 +224,7 @@ bool FRAlgorithm::iterate()
 			k = graph->getMetaNodes()->begin();
 			for (int h = 0; h < graph->getMetaNodes()->count(); ++h,++k)
 			{ // pre vsetky metauzly..
-				if (!j.value()->equals(k.value()))
+                if (!j.value()->equals(k.value())) //Duransky - Bug (j == null zapricini pad programu) pri pridani alebo odstraneni vertigo roviny
 				{
 					// odpudiva sila medzi metauzlami
 					addRepulsive(j.value(), k.value(), Data::Graph::getMetaStrength());
@@ -459,7 +467,7 @@ void FRAlgorithm::addMetaAttractive(Data::Node* u, Data::Node* meta, float facto
 /* Pricitanie odpudivych sil */
 void FRAlgorithm::addRepulsive(Data::Node* u, Data::Node* v, float factor) {
 	// [GrafIT][+] forces are only between nodes which are in the same graph (or some of them is meta) AND are not ignored
-	if (!areForcesBetween (u, v)) {
+    if (!areForcesBetween (u, v)) {
 		return;
 	}
 	// [GrafIT]
@@ -479,6 +487,23 @@ void FRAlgorithm::addRepulsive(Data::Node* u, Data::Node* v, float factor) {
 	fv = (vp - up);// smer sily
 	fv.normalize();
 	fv *= rep(dist) * factor;// velkost sily
+
+    //volovar zmena aby repulzivne sily posobili len na uzly s rovnakym layerID, ked nemaju radial layout tak ho maju 0
+    if (u->getRadialLayout() != NULL && (u->getRadialLayout() == v->getRadialLayout()))
+    {
+        if (u->getLayerID() == v->getLayerID())
+            fv *= u->getRadialLayout()->getForceSphereScale();
+        else
+            fv *= u->getRadialLayout()->getForceScale();
+    }
+    //volovar koniec zmeny
+
+    // Duransky start - vynasobenie odpudivej sily medzi dvoma uzlami hodnotou zo spinboxu ak su na rovnakej vertigo rovine
+    if(u->getNumberOfVertigoPlane() == v->getNumberOfVertigoPlane()){
+        fv *= (float)repulsiveForceVertigo;
+    }
+    // Duransky end - vynasobenie odpudivej sily medzi dvoma uzlami hodnotou zo spinboxu ak su na rovnakej vertigo rovine
+
 	u->addForce(fv);
 }
 /* Vzorec na vypocet odpudivej sily */
@@ -517,3 +542,11 @@ bool FRAlgorithm::areForcesBetween (Data::Node * u, Data::Node * v) {
 				)
 			;
 }
+
+void FRAlgorithm::setRepulsiveForceVertigo(int value){
+
+  repulsiveForceVertigo = value;
+
+}
+
+//int getRepulsiveForceVertigo();

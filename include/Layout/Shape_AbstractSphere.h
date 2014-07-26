@@ -33,6 +33,8 @@ public:
 			ShapeVisitor & visitor
 			) = 0;
 
+
+
 protected:
 
 	/***/
@@ -42,6 +44,7 @@ private:
 
 	osg::Vec3f center_;
 	float radius_;
+
 
 }; // class
 

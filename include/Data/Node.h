@@ -12,6 +12,12 @@
 #include <QMap>
 #include <QString>
 
+//volovar_zac
+namespace Layout
+{
+    class RadialLayout;
+}
+//volovar_kon
 
 namespace Data
 {
@@ -72,6 +78,27 @@ public:
 		*/
 	QString getName() const { return name; }
 
+    /**
+        *  \fn inline public numberOfVertigoPlane
+        *  \brief Returns the value of the vertigo plane, which the node belongs to
+        *  \return qlonglong value of the vertigo plane
+        */
+    qlonglong  numberOfVertigoPlane;
+
+    /**
+        *  \fn inline public  setNumberOfVertigoPlane(qlonglong value);
+        *  \brief Sets the value of the vertigo plane, which the node belongs to
+        *  \param  qlonglong value of the vertigo plane
+        */
+    void setNumberOfVertigoPlane(qlonglong value);
+
+    /**
+        *  \fn inline public  getNumberOfVertigoPlane();
+        *  \brief Gets the value of the vertigo plane, which the node belongs to
+        *  \return  qlonglong value of the vertigo plane
+        */
+    qlonglong getNumberOfVertigoPlane();
+
 	/**
 		*  \fn inline public  setName(QString val)
 		*  \brief Sets new name to the Node
@@ -131,7 +158,7 @@ public:
 		 * \return target position
 		 * Returned target position IS NOT multiplied by the graph scale.
 		 */
-	osg::Vec3f targetPosition() const;
+    osg::Vec3f targetPosition() const;
 	osg::Vec3f getTargetPosition() const;
 	/**
 		 * \fn public constant targetPositionConstRef
@@ -518,7 +545,12 @@ public:
 
 	bool isNodeMatched() { return nodeMatched; }
 	void setNodeMatched(bool nodeMatched) { this->nodeMatched = nodeMatched; }
-
+    //volovar_zac
+    void setLayerID(int id); //get unique layer id of selected radial layout, 0 node has no radial layout
+    int getLayerID();
+    Layout::RadialLayout* getRadialLayout(); //pointer to radial layout, NULL if node doesn't belong to radial layout
+    void setRadialLayout(Layout::RadialLayout *rl);
+    //volovar_kon
 private:
 
 
@@ -739,6 +771,10 @@ private:
 	bool nodeMatched;
 
 	float overallWeight;
+    //volovar_zac pre repulzivne sily, ktore posobia iba na uzly nachadzajuce sa na guli
+    int layerID;
+    Layout::RadialLayout* radialLayout;
+    //volovak_kon
 
 protected:
 

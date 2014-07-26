@@ -18,6 +18,8 @@
 #include <osg/MatrixTransform>
 #include <osg/Projection>
 #include <osg/BlendFunc>
+#include <osg/ShapeDrawable>
+
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wswitch-enum"
@@ -446,8 +448,13 @@ bool PickHandler::pick( const double xMin, const double yMin, const double xMax,
 							if (selectionType == SelectionType::EDGE || selectionType == SelectionType::ALL)
 								edgePicked = doEdgePick(nodePath, hitr->primitiveIndex);
 						}
-
-
+                        static int count = 0;
+                        if (!nodePicked && !edgePicked)
+                        {
+                            osg::ShapeDrawable* shape = dynamic_cast<osg::ShapeDrawable *>(nodePath[nodePath.size() - 1]);
+                            if (shape != NULL)
+                                qDebug()<<"shape shape"<<count++;
+                        }
 						result = result || nodePicked || edgePicked ;
 					}
 				}
@@ -806,5 +813,26 @@ osg::ref_ptr<Data::Node> PickHandler::getPickedNodeWithMaxEdgeCount(){
 	}
 	return rootNode;
 }
+
+//volovar zac
+osg::ref_ptr<Data::Node> PickHandler::getPickedNodeWithMinEdgeCount(){
+    int minEdges;
+    int first = 1;
+    osg::ref_ptr<Data::Node> rootNode = NULL;
+    QLinkedList<osg::ref_ptr<Data::Node> >::const_iterator itNode;
+    for ( itNode = pickedNodes.constBegin (); itNode != pickedNodes.constEnd (); itNode++)
+    {
+        int actEdges = (*itNode)->getEdges()->size();
+        if ( actEdges < minEdges || first)
+        {
+            rootNode=(*itNode);
+            minEdges=actEdges;
+        }
+        first = 0;
+
+    }
+    return rootNode;
+}
+//volovar kon
 
 #pragma GCC diagnostic pop

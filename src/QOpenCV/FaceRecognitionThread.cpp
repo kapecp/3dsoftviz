@@ -1,5 +1,6 @@
 #include "QOpenCV/FaceRecognitionThread.h"
 
+
 #include "OpenCV/CapVideo.h"
 #include "OpenCV/FaceRecognizer.h"
 #include "opencv2/imgproc/imgproc.hpp"

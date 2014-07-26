@@ -37,7 +37,9 @@ Data::Node::Node(qlonglong id, QString name, Data::Type* type, float scaling, Da
 	this->setParentBall(NULL);
 	this->hasNestedNodes = false;
 
-
+    // Duransky start - Pociatocne nastavenie roznych cisiel vertigo rovin pre uzly
+    this->numberOfVertigoPlane = id;
+    // Duransky end - Pociatocne nastavenie roznych cisiel vertigo rovin pre uzly
 
 	settings = new QMap<QString, QString>();
 	//APA
@@ -89,6 +91,11 @@ Data::Node::Node(qlonglong id, QString name, Data::Type* type, float scaling, Da
 
 	this->colorOfNode=osg::Vec4(r, g, b, a);
 	this->setColor(colorOfNode);
+
+    //volovar_zac
+    layerID = 0;  //node is not on layer of radial layout
+    radialLayout = NULL;  //node does not belong to radial layout
+    //volovar_kon
 }
 
 Data::Node::~Node(void)
@@ -381,6 +388,15 @@ osg::Vec3f Data::Node::getCurrentPosition(bool calculateNew, float interpolation
 	return osg::Vec3(this->currentPosition);
 }
 
+// Duransky start - Funkcie na nastavenie a ziskanie cisla vertigo roviny, na ktorej sa uzol nachadza
+void Data::Node::setNumberOfVertigoPlane(qlonglong value){
+   this->numberOfVertigoPlane = value;
+}
+
+qlonglong Data::Node::getNumberOfVertigoPlane(){
+   return this->numberOfVertigoPlane;
+}
+// Duransky end - Funkcie na nastavenie a ziskanie cisla vertigo roviny, na ktorej sa uzol nachadza
 
 QString Data::Node::toString() const
 {
@@ -389,3 +405,25 @@ QString Data::Node::toString() const
 	return str;
 }
 
+//volovar_zac
+//pre potreby odpudivych sil v radialLayoute
+void Data::Node::setLayerID(int id)
+{
+    layerID = id;
+}
+
+int Data::Node::getLayerID()
+{
+    return layerID;
+}
+
+Layout::RadialLayout* Data::Node::getRadialLayout()
+{
+    return radialLayout;
+}
+void Data::Node::setRadialLayout(Layout::RadialLayout *rl)
+{
+    radialLayout = rl;
+}
+
+//volovar_kon
