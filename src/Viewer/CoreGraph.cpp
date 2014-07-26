@@ -11,7 +11,10 @@
 #include "Network/Server.h"
 #include "Data/Graph.h"
 #include "Util/ApplicationConfig.h"
+
+#ifdef OPENCV_FOUND
 #include "OpenCV/CameraStream.h"
+#endif
 
 #include <osgUtil/Optimizer>
 #include <osg/Depth>

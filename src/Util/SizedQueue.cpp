@@ -1,4 +1,5 @@
 #include "Util/SizedQueue.h"
+#include <math.h>
 
 using namespace Util;
 

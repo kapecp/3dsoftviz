@@ -58,21 +58,71 @@ public:
 		 * @return CvCapture
 		 */
 	cv::VideoCapture getCapture();
-
+	/**
+		 * @author Autor: Marek Jakab
+		 * @brief startCamera Set camera parameters and open it for use
+		 * @param width Camera width
+		 * @param height Camera height
+		 */
 	void startCamera(int width, int height);
+	/**
+		 * @author Autor: Marek Jakab
+		 * @brief getWidth Return width of the camera used by this object
+		 * @return Camera width
+		 */
 	int getWidth();
+	/**
+		 * @author Autor: Marek Jakab
+		 * @brief getHeight Return height of the camera used by this object
+		 * @return Camera height
+		 */
 	int getHeight();
+	/**
+		 * @author Autor: Marek Jakab
+		 * @brief getDeviceId Return ID of the camera used by this object
+		 * @return Camera ID
+		 */
 	int getDeviceId();
+	/**
+		 * @author Autor: Marek Jakab
+		 * @brief isOpened Check if camera is opened for capture
+		 * @return true/false if camera is ready
+		 */
 	bool isOpened();
+	/**
+		 * @author Autor: Marek Jakab
+		 * @brief release Release the camera, making it available by another object to use
+		 */
 	void release();
 
 private:
+	/**
+		 * @brief device_id Camera ID
+		 */
 	int device_id;
+	/**
+		 * @brief connections Number of active connections using the camera
+		 */
 	int connections;
+	/**
+		 * @brief width Camera width
+		 */
 	int width;
+	/**
+		 * @brief height Camera height
+		 */
 	int height;
+	/**
+		 * @brief frame Camera frame (RGB)
+		 */
 	cv::Mat frame;
+	/**
+		 * @brief grayframe Camera frame (GRAYSCALE)
+		 */
 	cv::Mat grayframe;
+	/**
+		 * @brief capture VideoCapture object used to manipulate with camera (OpenCV)
+		 */
 	cv::VideoCapture capture;
 
 };

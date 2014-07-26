@@ -19,13 +19,12 @@ OpenCV::CamSelectWindow::CamSelectWindow(QWidget *parent, QApplication * app, QS
 	configureWindow(stringdata);
 }
 
+// configuration for window where we select cameras
 void OpenCV::CamSelectWindow::configureWindow(QString stringdata)
 {
 	setModal(true);
 	resize(400,260);
 	setWindowTitle(tr("Select camera to use"));
-
-	changes = new QList<QString>();
 
 	view = new QTreeView();
 	view->setFocusPolicy(Qt::NoFocus);
@@ -53,6 +52,7 @@ void OpenCV::CamSelectWindow::configureWindow(QString stringdata)
 	setLayout(mainLayout);
 }
 
+// fill model with data string which hold information about current state of cameras
 void CamSelectWindow::createTableModel(QString data)
 {
 	model = new QStandardItemModel(0, 4);
@@ -81,6 +81,7 @@ void CamSelectWindow::createTableModel(QString data)
 	view->setModel(model);
 }
 
+// apply selected camera
 void CamSelectWindow::commitChanges()
 {
 	if( !view->currentIndex().isValid() ){

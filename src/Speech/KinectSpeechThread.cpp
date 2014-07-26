@@ -4,6 +4,8 @@
 using namespace Speech;
 using namespace SpeechSDK;
 
+// constructor loads grammar file with speech commands
+// DLL
 Speech::KinectSpeechThread::KinectSpeechThread()
 {
 	this->m_SpeechClass = new SpeechSDKClass(L"../share/3dsoftviz/SpeechGrammarFile.grxml");
@@ -20,6 +22,7 @@ Speech::KinectSpeechThread::~KinectSpeechThread(void)
 	}
 }
 
+// initialize kinect along with audio and grammar
 int Speech::KinectSpeechThread::initializeSpeech()
 {
 	if (this->m_SpeechClass->initRecognition())
@@ -28,7 +31,7 @@ int Speech::KinectSpeechThread::initializeSpeech()
 		this->isConnected=false;
 		return 1;
 	}
-	if (this->m_SpeechClass->CreateFirstConnected(1)!=0)
+	if (this->m_SpeechClass->CreateFirstConnected(0)!=0)
 	{
 		qDebug() << "Speech connection failure";
 		this->isConnected=false;
@@ -38,6 +41,8 @@ int Speech::KinectSpeechThread::initializeSpeech()
 	return 0;
 }
 
+// run thread for speech recognition
+// commands will be shown in the command line output
 void Speech::KinectSpeechThread::run()
 {
 	qDebug() << "Speech initialized! Possible commands:";
@@ -49,7 +54,11 @@ void Speech::KinectSpeechThread::run()
 	qDebug() << "\"unset restrictions\"";
 	while (!cancel)
 	{
+		// recognize next input
+		// this method is blocking, code will stop here until some word is received
 		const wchar_t *a= this->m_SpeechClass->recognize();
+		// compare recognized word with the TAG in grammar file
+		// when recognized, do commands specific for each phrase
 		if (0== wcscmp(a,L"ALL")){
 			qDebug() << "command: select all nodes";
 			AppCore::Core::getInstance()->getCoreWindow()->multiSelectClicked(true);

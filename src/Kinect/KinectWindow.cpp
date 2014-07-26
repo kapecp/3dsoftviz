@@ -8,6 +8,7 @@
 #include <QtGui/QVBoxLayout>
 #include <QtGui/QStackedLayout>
 #include <QtGui/QSlider>
+#include <QCloseEvent>
 #include "QDebug"
 
 using namespace Kinect;
@@ -17,6 +18,7 @@ Kinect::KinectWindow::KinectWindow(QWidget *parent, QApplication * app, KinectTh
 {
 	mApp=app;
 	this->thr=thr;
+	// create window - parts
 	configureWindow();
 }
 
@@ -117,6 +119,7 @@ void Kinect::KinectWindow::setLabel(cv::Mat image)
 		mWindowLabel->setText( tr("Image empty"));
 		return;
 	}
+	//convert to QImage - for Label
 	cv::cvtColor( image, image, CV_BGR2RGB );
 	QImage qimage( (uchar*) image.data, image.cols, image.rows,(int) image.step, QImage::Format_RGB888);
 
@@ -138,6 +141,7 @@ void Kinect::KinectWindow::setLabelQ( QImage qimage )
 void Kinect::KinectWindow::pausewindows()
 {
 	bool start=false;
+	//check button name, based on that stop pause and start
 	if (mKinectPause->text().toStdString().compare(tr("Start").toStdString())==0)
 	{
 		//inicialize openni and start device
@@ -171,6 +175,7 @@ void Kinect::KinectWindow::pausewindows()
 
 void Kinect::KinectWindow::quitWindows()
 {
+	// stop and destroy object //TODO use better closeEvent
 	if(this->thr->isRunning())
 	{
 		emit stopKinect(true);

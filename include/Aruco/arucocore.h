@@ -94,12 +94,30 @@ private:
 	void detectMarkers();
 
 
+	/**
+	 * @brief frame
+	 */
+	cv::Mat					mCamImage;
 
-	cv::Mat					mCamImage;		// frame
-	aruco::CameraParameters mCamParam;		// camera parameters
-	aruco::MarkerDetector	mMDetector;		// detector
-	vector<aruco::Marker>	mMarkers;		// vector of detected markers
-	float					mMarkerSize;	// real marker size
+	/**
+	 * @brief camera parameters
+	 */
+	aruco::CameraParameters mCamParam;
+
+	/**
+	 * @brief detector
+	 */
+	aruco::MarkerDetector	mMDetector;
+
+	/**
+	 * @brief vector of detected markers
+	 */
+	vector<aruco::Marker>	mMarkers;
+
+	/**
+	 * @brief real marker size
+	 */
+	float					mMarkerSize;
 
 	};
 } // end ArucoModul namespace

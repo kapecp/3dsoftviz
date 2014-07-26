@@ -80,8 +80,13 @@ public slots:
 	void setCapVideo( OpenCV::CapVideo *capVideo);
 
 private:
-
+	/**
+		 * @brief mCapVideo CapVideo object representing camera
+		 */
 	OpenCV::CapVideo		*mCapVideo;
+	/**
+		 * @brief mCancel if the thread was canceled
+		 */
 	bool					mCancel;
 	bool					mSendImgEnabled;
 	bool					mSendBackgrImgEnabled;

@@ -4,7 +4,10 @@
 
 Kinect::KinectHandTracker::KinectHandTracker(openni::Device *device, openni::VideoStream *m_depth)
 {
+	// create hand tracking from device
 	m_pHandTracker.create(device);
+
+	// add automatec gesture from Openni to track
 	m_pHandTracker.startGestureDetection(nite::GESTURE_WAVE);
 	m_pHandTracker.startGestureDetection(nite::GESTURE_CLICK);
 	isClick=false;
@@ -31,11 +34,14 @@ void Kinect::KinectHandTracker::setSpeedMovement(double set)
 
 void Kinect::KinectHandTracker::getAllGestures()
 {
+	// get frame - depth data
 	this->m_pHandTracker.readFrame(&this->handTrackerFrame);
 
+	// get automatic gesture - Wave and Click
 	const nite::Array<nite::GestureData>& gestures = this->handTrackerFrame.getGestures();
 	for (int i = 0; i < gestures.getSize(); ++i)
 	{
+		// checking for complete gesture
 		if (gestures[i].isComplete())
 		{
 			printf("completed gesture\n");
@@ -59,6 +65,7 @@ void Kinect::KinectHandTracker::getAllGestures()
 			const nite::Point3f& position = gestures[i].getCurrentPosition();
 			printf("Gesture %d at (%f,%f,%f)\n", gestures[i].getType(), position.x, position.y, position.z);
 
+			// for better tracking
 			nite::HandId newId;
 			this->m_pHandTracker.startHandTracking(gestures[i].getCurrentPosition(), &newId);
 		}
