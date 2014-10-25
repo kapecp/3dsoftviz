@@ -302,13 +302,22 @@ find_package(osgViewer)
 
 
 # Find OpenCV
-find_package( OpenCV )
+#find_package( OpenCV )
 if( OpenCV_FOUND )
 	add_definitions( -DOPENCV_FOUND )
 	message("OpenCV FOUND")
 else()
 	message("OpenCV NOT FOUND")
 endif()
+
+
+# Find Boost
+set ( Booqst_USE_STATIC_LIBS OFF)
+find_package ( Boost 1.39 COMPONENTS unit_test_framework REQUIRED )
+#add_definitions ( -DBOOST_ALL_DYN_LINK )
+
+# Include directories
+include_directories ( ${Boost_INCLUDE_DIRS}  )
 
 
 # -----------------
@@ -336,7 +345,7 @@ if( APPLE )
 	set( MACOSX_BUNDLE_LONG_VERSION_STRING "${3DSOFTVIZ_NAME} ${3DSOFTVIZ_VERSION}" )
 	set( MACOSX_BUNDLE_SHORT_VERSION_STRING "${3DSOFTVIZ_VERSION}" )
 	set( MACOSX_BUNDLE_COPYRIGHT "${3DSOFTVIZ_COPYRIGHT_YEAR} ${3DSOFTVIZ_VENDOR}" )
-	set( MACOSX_BUNDLE_ICON_FILE "3DSOFTVIZ_app.icns" )
+	#set( MACOSX_BUNDLE_ICON_FILE "3DSOFTVIZ_app.icns" )
 	set( MACOSX_BUNDLE_GUI_IDENTIFIER "${3DSOFTVIZ_DOMAIN_SECOND}.${3DSOFTVIZ_DOMAIN_FIRST}.${3DSOFTVIZ_NAME}" )
 	set( MACOSX_BUNDLE_BUNDLE_NAME "${3DSOFTVIZ_NAME}" )
 
@@ -346,7 +355,7 @@ if( APPLE )
 	set( CPACK_PACKAGE_FILE_NAME "${3DSOFTVIZ_NAME}-${3DSOFTVIZ_VERSION}" )
 
 	# OSX Specific resources
-	install( FILES res/3DSOFTVIZ_app.icns DESTINATION ${INSTALL_RES} )
+	#install( FILES resources/${MACOSX_BUNDLE_ICON_FILE} DESTINATION ${INSTALL_RES} )
 endif()
 
 # Windows specific overrides
@@ -504,7 +513,7 @@ endif()
 add_executable( ${3DSOFTVIZ_NAME} ${INCL} ${SRC} )
 
 # set compile flags only for our code (suppresses warnigns on system headers)
-set_target_properties( ${3DSOFTVIZ_NAME} PROPERTIES COMPILE_FLAGS ${FLAGS_FOR_DEBUG})
+#set_target_properties( ${3DSOFTVIZ_NAME} PROPERTIES COMPILE_FLAGS ${FLAGS_FOR_DEBUG})
 
 target_link_libraries( ${3DSOFTVIZ_NAME}
 	${QT_LIBRARIES}
@@ -545,6 +554,12 @@ if( COMMAND cotire )
 		### Fix virtual memory range
 		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Zm200" CACHE STRING "" FORCE)
 	endif()
+
+        # fix for Diluculum and LuaJIT on 64bit OSX: Lua new_state returned NULL, LuaJIT needs following flags
+        if( APPLE )
+            set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pagezero_size 10000 -image_base 100000000" CACHE STRING "" FORCE)
+        endif()
+
 endif()
 
 
@@ -584,7 +599,7 @@ if( USE_BUILTIN_DEPENDENCIES )
 endif()
 
 # Include QT4 libraries in Apple bundle and on Windows
-if( WIN32 OR APPLE )
+if( WIN32 ) # APPLE removed - TODO mac app bundle + uncomment & add icns file for MACOSX_BUNDLE_ICON_FILE
 	# On Apple plugins need to be bundled
 	if( APPLE )
 		# Install Qt Plugins
