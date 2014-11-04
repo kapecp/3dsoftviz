@@ -217,6 +217,16 @@ if( WIN32 AND MSVC )
 	endif()
 endif()
 
+# ------------------------------ FGLOVE -------------------------------
+# Find fglove
+find_package( FGLOVE )
+if( FGLOVE_FOUND )
+	add_definitions( -DFGLOVE_FOUND )
+	message( STATUS "FGLOVE_LIB_DIR=${FGLOVE_LIBRARIES}" )
+else()
+	message( STATUS "FGLOVE Not Found" )
+endif()
+
 # ------------
 # Dependencies - External projects
 # ------------
@@ -388,6 +398,12 @@ if( OpenCV_FOUND )
 	)
 endif()
 
+if( FGLOVE_FOUND )
+	include_directories( SYSTEM
+		${FGLOVE_INCLUDE_DIRS}
+	)
+endif()
+
 include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/include )
 
 #-------------------------------- Source files -------------------------------
@@ -420,6 +436,10 @@ file( GLOB_RECURSE SRC_KINECT	"src/Kinect/*.cpp" )
 # SpeechSDK
 file( GLOB_RECURSE SRC_SPEECH	"src/Speech/*.cpp" )
 
+# FGlove
+file ( GLOB_RECURSE SRC_FGLOVE "src/FGlove/*.cpp" )
+
+
 # All source files
 set( SRC
 	${SRC_MAIN} ${SRC_CORE} ${SRC_DATA} ${SRC_IMPORTER}
@@ -440,6 +460,12 @@ endif()
 if( KINECTSDK_FOUND AND SPEECHSDK_FOUND )
 	list( APPEND SRC ${SRC_SPEECH} )
 endif()
+
+# add Gloves if Fgloves
+if( FGLOVE_FOUND )
+	list( APPEND SRC ${SRC_FGLOVE} )
+endif()
+
 
 #-------------------------------- Header files -------------------------------
 file( GLOB_RECURSE HEADER_CORE		"include/Core/*.h" )
@@ -470,6 +496,9 @@ file( GLOB_RECURSE HEADER_KINECT	"include/Kinect/*.h" )
 # SpeechSDK
 file( GLOB_RECURSE HEADER_SPEECH	"include/Speech/*.h" )
 
+# FGLOVE
+file( GLOB_RECURSE HEADER_FGLOVE	"include/FGlove/*.h" )
+
 # All header files
 set( INCL
 	${HEADER_CORE} ${HEADER_DATA} ${HEADER_IMPORTER}
@@ -489,6 +518,11 @@ endif()
 
 if( KINECTSDK_FOUND AND SPEECHSDK_FOUND )
 	list( APPEND INCL ${HEADER_SPEECH} )
+endif()
+
+#FGLOVE
+if( FGLOVE_FOUND )
+	list( APPEND INCL ${HEADER_FGLOVE} )
 endif()
 
 #-------------------------------------- Group source files --------------------------------------
@@ -540,6 +574,12 @@ if( KINECTSDK_FOUND AND SPEECHSDK_FOUND )
 	source_group( \\headers\\Speech "^.*Speech/.*h$" )
 endif()
 
+#fglove
+if( FGLOVE_FOUND )
+	source_group( \\src\\Fglove "^.*Fglove/.*$" )
+	source_group( \\headers\\Fglove "^.*Fglove/.*h$" )
+endif()
+
 # ---------------
 # Build and link 3Dsoftviz
 # ---------------
@@ -570,6 +610,10 @@ if( KINECTSDK_FOUND )
 	if( SPEECHSDK_FOUND )
 		target_link_libraries( ${3DSOFTVIZ_NAME} ${SPEECHSDK_LIBRARIES} )
 	endif()
+endif()
+
+if( FGLOVE_FOUND )
+	target_link_libraries( ${3DSOFTVIZ_NAME} ${FGLOVE_LIBRARIES} )
 endif()
 
 # 'cotire' the executable
@@ -614,6 +658,16 @@ endif()
 # install .dll for speech recognition
 if( SPEECHSDK_FOUND )
 	install( DIRECTORY ${SPEECHSDK_DRIVER_DIRS}/ DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/_install/bin )
+endif()
+
+# Install needed .dll files for fglove
+if( FGLOVE_FOUND )
+
+	install( DIRECTORY ${FGLOVE_DRIVER_DIRS}/ DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/_install/bin )
+
+	#install( FILES ${FGLOVE_LIBRARIES} DESTINATION ${INSTALL_BIN} 
+		#	RUNTIME DESTINATION ${INSTALL_BIN} 
+        #   LIBRARY DESTINATION ${INSTALL_LIB} )
 endif()
 
 # Install built in dependencies unless we are building an OSX Bundle

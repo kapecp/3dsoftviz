@@ -27,8 +27,14 @@
 #include "Layout/ShapeGetter_Circle_ByThreeNodes.h"
 #include "Layout/ShapeGetter_SpherePlane_ByThreeNodes.h"
 //#include "Viewer/CameraManipulator.h"
+
 #ifdef SPEECHSDK_FOUND
 #include "Speech/KinectSpeechThread.h"
+#endif
+
+#ifdef FGLOVE_FOUND
+#include "fglove.h"
+#include "Fglove/FgloveThread.h"
 #endif
 
 #include "Clustering/Clusterer.h"
@@ -70,6 +76,10 @@ class CoreWindow : public QMainWindow
 private:
 #ifdef SPEECHSDK_FOUND
 	Speech::KinectSpeechThread *mSpeechThr;
+#endif
+
+#ifdef FGLOVE_FOUND
+    Fglove::FgloveThread *mGloveThr;
 #endif
 public slots:
 
@@ -408,6 +418,10 @@ public slots:
 	void startSpeech();
 #endif
 
+#ifdef FGLOVE_FOUND
+    void startGlovesRecognition();
+#endif
+
 	void toggleSpyWatch();
 	void toggleAttention();
     void setAvatarScale(int scale);
@@ -740,6 +754,12 @@ private:
 	 *@brief b_start_speech
 	 */
 	QPushButton * b_start_speech;
+
+    /**
+     * QPushButton start 5DT gloves recognition
+     *@brief b_start_gloves
+     */
+    QPushButton * b_start_gloves;
 
 
 	/*

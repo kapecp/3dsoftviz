@@ -832,6 +832,16 @@ void CoreWindow::createAugmentedRealityToolBar() {
 	connect(b_start_speech, SIGNAL(clicked()), this, SLOT(startSpeech()));
 #endif
 
+#ifdef FGLOVE_FOUND
+    QLabel *labelGloves = new QLabel( tr("5DT Gloves"));
+    toolBar->addWidget( labelGloves );
+    b_start_gloves = new QPushButton();
+    b_start_gloves->setText("Start Gloves");
+    toolBar->addWidget( b_start_gloves );
+    connect(b_start_gloves, SIGNAL(clicked()), this, SLOT(startGlovesRecognition()));
+    toolBar->addSeparator();
+#endif
+
 	addToolBar(Qt::TopToolBarArea,toolBar);
 	toolBar->setMovable(true);
 
@@ -2981,3 +2991,24 @@ void CoreWindow::hideRepulsiveForceSpinBox() {
     b_SetRestriction_Cube_Selected->hide();
     b_restartLayouting->hide();
 }
+
+#ifdef FGLOVE_FOUND
+void CoreWindow::startGlovesRecognition()
+{
+
+    if (this->mGloveThr!=NULL && (b_start_gloves->text()=="Stop Gloves")){
+        this->mGloveThr->terminate();
+    	delete(this->mGloveThr);
+
+    	b_start_gloves->setText("Start Gloves");
+    	this->mGloveThr=NULL;
+    	return;
+    }
+
+    this->mGloveThr = new Fglove::FgloveThread();
+    this->mGloveThr->start();
+    b_start_gloves->setText("Stop Gloves");
+
+}
+
+#endif
