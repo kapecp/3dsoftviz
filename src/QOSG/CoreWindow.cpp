@@ -2996,6 +2996,7 @@ void CoreWindow::hideRepulsiveForceSpinBox() {
 void CoreWindow::startGlovesRecognition()
 {
 
+    // terminating fgloveThread
     if (this->mGloveThr!=NULL && (b_start_gloves->text()=="Stop Gloves")){
         this->mGloveThr->terminate();
     	delete(this->mGloveThr);
@@ -3005,6 +3006,7 @@ void CoreWindow::startGlovesRecognition()
     	return;
     }
 
+    // starting fgloveThread
     this->mGloveThr = new Fglove::FgloveThread();
     this->mGloveThr->start();
     b_start_gloves->setText("Stop Gloves");

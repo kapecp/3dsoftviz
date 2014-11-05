@@ -8,22 +8,21 @@ using namespace Fglove;
 
 Fglove::FgloveThread::FgloveThread(QObject *parent) : QThread(parent){
 
-    mCancel = false;
+    // variable for last recognized gesture
     mLastGesture = -2;
     mNodeSelected = false;
 
-    qDebug() << "vytvoril sa fgloveThread";
+    qDebug() << "fgloveThread created";
 }
 
 Fglove::FgloveThread::~FgloveThread(void){
-    qDebug() << "zomrel fgloveThread";
+    qDebug() << "fgloveThread destroyed";
 }
 
 void Fglove::FgloveThread::run(){
-    mCancel = false;
     pGlove = NULL;
-    int i;
 
+    // initialize gloves on port 0
     pGlove = fdOpen( "USB0" );
 
     if (NULL == (pGlove = fdOpen( "USB0" ))){
@@ -32,8 +31,10 @@ void Fglove::FgloveThread::run(){
     }else{
         qDebug() << "initGloves succeeded";
 
+        // recognizing gestures
         while(1){
 
+            // get gesture number
             switch(fdGetGesture(pGlove)){
 
             // case index finger pointed
