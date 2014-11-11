@@ -7,6 +7,7 @@
 
 #include <osg/ref_ptr>
 #include <osg/Group>
+#include <osg/ShapeDrawable>
 
 #include <QMap>
 
@@ -105,6 +106,18 @@ private:
 		*  \brief oriented edges geometry
 		*/
 	osg::ref_ptr<osg::Geometry> orientedGeometry;
+
+	/**
+		*  osg::ref_ptr drawable
+		*  \brief drawable edges
+		*/
+	QList<osg::ref_ptr<osg::ShapeDrawable> > drawable;
+
+	/**
+		*  bool useDrawable
+		*  \brief if true, then use drawable as edge
+		*/
+	bool useDrawable;
 
 
 	/**
