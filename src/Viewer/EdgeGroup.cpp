@@ -98,8 +98,8 @@ void EdgeGroup::initEdges()
 			(*il)->setColor(osg::Vec4 (1.0f, 1.0f, 1.0f, 0.5f));
 			(*il)->getOrCreateStateSet()->setMode(GL_BLEND, osg::StateAttribute::ON);
 			(*il)->getStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
-            (*il)->getStateSet()->setMode(GL_DEPTH_TEST, osg::StateAttribute::ON);
-            (*il)->getStateSet()->setMode(GL_LIGHTING, osg::StateAttribute::ON);
+			(*il)->getStateSet()->setMode(GL_DEPTH_TEST, osg::StateAttribute::ON);
+			(*il)->getStateSet()->setMode(GL_LIGHTING, osg::StateAttribute::ON);
 			(*il)->getStateSet()->setAttributeAndModes(new osg::BlendFunc, osg::StateAttribute::ON);
 			(*il)->getStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
 			(*il)->getStateSet()->setRenderBinDetails(11, "RenderBin");
@@ -141,32 +141,32 @@ void EdgeGroup::updateEdgeCoords()
 		getEdgeCoordinatesAndColors(i.value(), edgePos, coordinates, edgeTexCoords, colors, orientedEdgeColors);
 		if (useDrawable){
 
-		osg::Vec3 cor1 = coordinates->at(edgePos);
-		//osg::Vec3 cor2 = coordinates->at(edgePos+1);
-		osg::Vec3 cor3 = coordinates->at(edgePos+2);
-		osg::Vec3 cor4 = coordinates->at(edgePos+3);
+			osg::Vec3 cor1 = coordinates->at(edgePos);
+			osg::Vec3 cor2 = coordinates->at(edgePos+1);
+			osg::Vec3 cor3 = coordinates->at(edgePos+2);
+			osg::Vec3 cor4 = coordinates->at(edgePos+3);
+			osg::Vec3 cor12 = osg::Vec3((cor1.x() + cor2.x())/2, (cor1.y() + cor2.y())/2, (cor1.z() + cor2.z())/2);
+			osg::Vec3 cor34 = osg::Vec3((cor3.x() + cor4.x())/2, (cor3.y() + cor4.y())/2, (cor3.z() + cor4.z())/2);
 
-		osg::Vec3 center = osg::Vec3((cor1.x() + cor3.x())/2, (cor1.y() + cor3.y())/2, (cor1.z() + cor3.z())/2);
-		double cLength = sqrt(pow((cor4.x() - cor1.x()),2) + pow((cor4.y() - cor1.y()),2) + pow((cor4.z() - cor1.z()),2));
+			osg::Vec3 center = osg::Vec3((cor12.x() + cor34.x())/2, (cor12.y() + cor34.y())/2, (cor12.z() + cor34.z())/2);
+			double cLength = sqrt(pow((cor34.x() - cor12.x()),2) + pow((cor34.y() - cor12.y()),2) + pow((cor34.z() - cor12.z()),2));
 
-		double lengthA = sqrt(pow((cor4.x() - cor1.x()),2));
-		double lengthC = sqrt(pow((cor4.x() - cor1.x()),2) + pow((cor4.z() - cor1.z()),2));
-		double sinA = lengthA/lengthC;
-		double degreeY = asin(sinA);
-		if ((cor4.x() < cor1.x()) && (cor4.z() < cor1.z()))
-			degreeY *=(-1);
-		if ((cor1.x() < cor4.x()) && (cor1.z() < cor4.z()))
-			degreeY *=(-1);
+			double lengthA = sqrt(pow((cor34.x() - cor12.x()),2));
+			double lengthC = sqrt(pow((cor34.x() - cor12.x()),2) + pow((cor34.z() - cor12.z()),2));
+			double sinA = lengthA/lengthC;
+			double degreeY = (-1)*asin(sinA);
+			if ((cor34.x() < cor12.x()) && (cor34.z() < cor12.z()))
+				degreeY *=(-1);
+			if ((cor12.x() < cor34.x()) && (cor12.z() < cor34.z()))
+				degreeY *=(-1);
 
-		degreeY *=(-1);
-
-		lengthA = sqrt(pow((cor4.y() - cor1.y()),2));
-		lengthC = sqrt(pow((cor4.y() - cor1.y()),2) + pow((cor4.z() - cor1.z()),2));
-		sinA = lengthA/lengthC;
+			lengthA = sqrt(pow((cor34.y() - cor12.y()),2));
+			lengthC = sqrt(pow((cor34.y() - cor12.y()),2) + pow((cor34.z() - cor12.z()),2));
+			sinA = lengthA/lengthC;
 			double degreeX = asin(sinA);
-			if ((cor4.y() < cor1.y()) && (cor4.z() < cor1.z()))
+			if ((cor34.y() < cor12.y()) && (cor34.z() < cor12.z()))
 				degreeX *=(-1);
-			if ((cor1.y() < cor4.y()) && (cor1.z() < cor4.z()))
+			if ((cor12.y() < cor34.y()) && (cor12.z() < cor34.z()))
 				degreeX *=(-1);
 
 			((osg::Cylinder*)((*ic)->getShape()))->setHeight((float)cLength);
@@ -175,7 +175,6 @@ void EdgeGroup::updateEdgeCoords()
 			((osg::Cylinder*)((*ic)->getShape()))->setRotation(osg::Quat(degreeY,osg::Vec3(0,1,0), degreeX,osg::Vec3(1,0,0), 0,osg::Vec3(0,0,1) ));
 			(*ic)->dirtyDisplayList();
 			ic++;
-
 
 		}
 		edgePos += 4;
