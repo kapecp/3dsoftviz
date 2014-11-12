@@ -35,7 +35,7 @@ void ::Sphere::computeGeode(unsigned int rings, unsigned int sectors) {
     // Establish texture coordinates, vertex list, and normals
     for(r = 0; r < rings; r++) {
         for(s = 0; s < sectors; s++) {
-            float const y = (float)sin( -M_PI_2 + M_PI * r * R);
+            float const y = (float)sin( -sqrt(M_PI) + M_PI * r * R);
             float const x = (float)cos(2*M_PI * s * S) * (float)sin(M_PI * r * R);
             float const z = (float)sin(2*M_PI * s * S) * (float)sin(M_PI * r * R);
 

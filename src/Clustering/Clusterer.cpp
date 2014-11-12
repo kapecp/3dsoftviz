@@ -292,7 +292,7 @@ void Clusterer::clusterAdjacency(QMap<qlonglong, osg::ref_ptr<Data::Node> >* som
             }
             // apply Pearson
             float wij = ((float)((n * sum) - (degU * degV))) /
-                    (float)sqrt(degU * degV * (n - degU) * (n - degV));
+                    (float)sqrt((float)(degU * degV * (n - degU) * (n - degV)));
             // ignore negative values
             w[j][i] = w[i][j] = (unsigned char)qMax(0.0f, wij * K); // K is used to store 0-1 floats in uchar matrix
             if (w[j][i] > maxW) // remember largest weight

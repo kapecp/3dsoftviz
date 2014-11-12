@@ -68,13 +68,13 @@ CoreWindow::CoreWindow(QWidget *parent, Vwr::CoreGraph* coreGraph, QApplication*
 	new Network::Server(this);
 
 	//vytvorenie menu a toolbar-ov
-	createActions();
-	createMenus();
+    createActions();
+    createMenus();
 	createLeftToolBar();
-	createRightToolBar();
-	createCollaborationToolBar();
-	createAugmentedRealityToolBar();
-	createClusterToolBar();
+    createRightToolBar();
+    createCollaborationToolBar();
+    createAugmentedRealityToolBar();
+    createClusterToolBar();
 
 	viewerWidget = new ViewerQT(this, 0, 0, 0, coreGraph);
 	viewerWidget->setSceneData(coreGraph->getScene());
@@ -145,6 +145,8 @@ void CoreWindow::createActions()
 
 	saveLayout = new QAction(QIcon("../share/3dsoftviz/img/gui/saveToDB.png"),"&Save layout", this);
 	connect(saveLayout, SIGNAL(triggered()), this, SLOT(saveLayoutToDB()));
+
+    about = new QAction("About", this);
 
 	play = new QPushButton();
 	play->setIcon(QIcon("../share/3dsoftviz/img/gui/pause.png"));
@@ -581,406 +583,593 @@ void CoreWindow::createMenus()
 	file->addSeparator();
 	file->addAction(quit);
 
-	edit = menuBar()->addMenu("Edit");
+    edit = menuBar()->addMenu("Settings");
 	edit->addAction(options);
+
+    help = menuBar()->addMenu("Help");
+    help->addAction(about);
 }
 
 void CoreWindow::createLeftToolBar()
 {
-	//inicializacia comboboxu typov vyberu
-	nodeTypeComboBox = new QComboBox();
+    //inicializacia comboboxu typov vyberu
+    nodeTypeComboBox = new QComboBox();
     nodeTypeComboBox->insertItems(0,(QStringList() << "All" << "Node" << "Edge" << "Cluster"));
-	nodeTypeComboBox->setFocusPolicy(Qt::NoFocus);
-	connect(nodeTypeComboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(nodeTypeComboBoxChanged(int)));
+    nodeTypeComboBox->setFocusPolicy(Qt::NoFocus);
+    connect(nodeTypeComboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(nodeTypeComboBoxChanged(int)));
 
-	toolBar = new QToolBar("Tools",this);
+    //inicializacia colorpickera
+    QtColorPicker * colorPicker = new QtColorPicker();
+    colorPicker->setStandardColors();
+    connect(colorPicker,SIGNAL(colorChanged(const QColor &)),this,SLOT(colorPickerChanged(const QColor &)));
 
-	QFrame * frame = createHorizontalFrame();
-
-	frame->layout()->addWidget(noSelect);
-	frame->layout()->addWidget(singleSelect);
-	toolBar->addWidget(frame);
-
-	frame = createHorizontalFrame();
-	toolBar->addWidget(frame);
-	frame->layout()->addWidget(multiSelect);
-	frame->layout()->addWidget(center);
-
-	toolBar->addWidget(nodeTypeComboBox);
-	toolBar->addSeparator();
-
-	frame = createHorizontalFrame();
-
-	toolBar->addWidget(frame);
-	frame->layout()->addWidget(addMeta);
-	frame->layout()->addWidget(removeMeta);
-
-	frame = createHorizontalFrame();
-
-	toolBar->addWidget(frame);
-	frame->layout()->addWidget(fix);
-	frame->layout()->addWidget(unFix);
-
-	frame = createHorizontalFrame();
-
-	toolBar->addWidget(frame);
-	frame->layout()->addWidget(merge);
-	frame->layout()->addWidget(separate);
-
-	toolBar->addWidget(label);
-	toolBar->addSeparator();
-	toolBar->addWidget(play);
-	toolBar->addSeparator();
-	toolBar->addWidget(add_Edge);
-	toolBar->addWidget(add_Node);
-	toolBar->addWidget(remove_all);
-	toolBar->addWidget(applyColor);
-
-	//inicializacia colorpickera
-	QtColorPicker * colorPicker = new QtColorPicker();
-	colorPicker->setStandardColors();
-	connect(colorPicker,SIGNAL(colorChanged(const QColor &)),this,SLOT(colorPickerChanged(const QColor &)));
-	toolBar->addWidget(colorPicker);
-
-	toolBar->addWidget(applyLabel);
-	toolBar->addWidget(le_applyLabel);
-
-	toolBar->addSeparator();
-
-	// layout restrictions
-	frame = createHorizontalFrame();
-	toolBar->addWidget(frame);
-	frame->layout()->addWidget(b_SetRestriction_SphereSurface);
-	frame->layout()->addWidget(b_SetRestriction_Sphere);
-
-	frame = createHorizontalFrame();
-	toolBar->addWidget(frame);
-	frame->layout()->addWidget(b_SetRestriction_Plane);
-	frame->layout()->addWidget(b_SetRestriction_SpherePlane);
-
-	frame = createHorizontalFrame();
-	toolBar->addWidget(frame);
-	frame->layout()->addWidget(b_SetRestriction_Circle);
-	frame->layout()->addWidget(b_SetRestriction_Cone);
-
-
-	frame = createHorizontalFrame();
-	toolBar->addWidget(frame);
-	frame->layout()->addWidget(b_SetRestriction_ConeTree);
-	frame->layout()->addWidget(b_UnsetRestriction);
-
-    //volovar_zac
-    frame = createHorizontalFrame();
-    toolBar->addWidget(frame);
-    frame->layout()->addWidget(b_SetRestriction_RadialLayout);
-    frame->layout()->addWidget(b_drawMethod_RadialLayout);
-
-    frame = createHorizontalFrame();
-    toolBar->addWidget(frame);
-    frame->layout()->addWidget(b_mode_RadialLayout);
-    //volovar_kon
-	toolBar->addSeparator();
-
-	frame = createHorizontalFrame();
-	toolBar->addWidget(frame);
-    //volovar_zac
-    frame->layout()->addWidget(b_SetRestriction_RadialLayout_Slider);
-    connect(b_SetRestriction_RadialLayout_Slider,SIGNAL(valueChanged(int)),this,SLOT(RadialLayoutSizeChanged(int)));
-    frame = createHorizontalFrame();
-    toolBar->addWidget(frame);
-    frame->layout()->addWidget(b_SetAlpha_RadialLayout_Slider);
-    connect(b_SetAlpha_RadialLayout_Slider,SIGNAL(valueChanged(int)),this,SLOT(RadialLayoutAlphaChanged(int)));
-
-
-    frame = createHorizontalFrame();
-    toolBar->addWidget(frame);
-    frame->layout()->addWidget(b_SetVisibleSpheres_RadialLayout_Slider);
-    connect(b_SetVisibleSpheres_RadialLayout_Slider,SIGNAL(valueChanged(int)),this,SLOT(RadialLayoutSetVisibleSpheres(int)));
-
-    frame = createHorizontalFrame();
-    toolBar->addWidget(frame);
-    frame->layout()->addWidget(b_SetForceScale_RadialLayout_Slider);
-    connect(b_SetForceScale_RadialLayout_Slider,SIGNAL(valueChanged(int)),this,SLOT(RadialLayoutSetForceScale(int)));
-
-    frame = createHorizontalFrame();
-    toolBar->addWidget(frame);
-    frame->layout()->addWidget(b_SetForceSphereScale_RadialLayout_Slider);
-    connect(b_SetForceSphereScale_RadialLayout_Slider,SIGNAL(valueChanged(int)),this,SLOT(RadialLayoutSetForceSphereScale(int)));
-
-
-    //volovar_kon
-    frame = createHorizontalFrame();
-    toolBar->addWidget(frame);
-	frame->layout()->addWidget(b_SetRestriction_CylinderSurface);
-	frame->layout()->addWidget(b_SetRestriction_CylinderSurface_Slider);
-
-	frame = createHorizontalFrame();
-	toolBar->addWidget(frame);
-	frame->layout()->addWidget(b_SetRestriction_ConeSurface);
-	frame->layout()->addWidget(b_SetRestriction_ConeSurface_Slider);
-
-	frame = createHorizontalFrame();
-	toolBar->addWidget(frame);
-	frame->layout()->addWidget(b_UnsetRestrictionFromAll);
-
-	toolBar->addSeparator();
-
-	//inicializacia slideru
-	slider = new QSlider(Qt::Vertical,this);
-	slider->setTickPosition(QSlider::TicksAbove);
-	slider->setTickInterval(5);
-	slider->setValue(5);
-	slider->setFocusPolicy(Qt::NoFocus);
+    //inicializacia slideru
+    slider = new QSlider(Qt::Vertical,this);
+    slider->setTickPosition(QSlider::TicksAbove);
+    slider->setTickInterval(5);
+    slider->setValue(5);
+    //slider->
+    slider->setFocusPolicy(Qt::NoFocus);
     connect(slider,SIGNAL(valueChanged(int)),this,SLOT(sliderValueChanged(int)));
 
-	frame = createHorizontalFrame();
-	frame->setMaximumHeight(100);
-	frame->layout()->setAlignment(Qt::AlignHCenter);
-	toolBar->addWidget(frame);
-	frame->layout()->addWidget(slider);
+    //Graph tab////////////////////////////////////
+    QWidget * wGraph = new QWidget();
+    QFormLayout * lGraph = new QFormLayout(wGraph);
+    lGraph->setContentsMargins(1,1,1,1);
+    lGraph->setSpacing(2);
 
-	addToolBar(Qt::LeftToolBarArea,toolBar);
-	toolBar->setMaximumWidth(120);
-	toolBar->setMovable(false);
-}
+    noSelect->setMinimumWidth(68);
+    lGraph->addRow(noSelect,singleSelect);
+    multiSelect->setMinimumWidth(68);
+    lGraph->addRow(multiSelect,center);
+    lGraph->addRow(nodeTypeComboBox);
+    addMeta->setMinimumWidth(68);
+    lGraph->addRow(addMeta,removeMeta);
+    fix->setMinimumWidth(68);
+    lGraph->addRow(fix,unFix);
+    merge->setMinimumWidth(68);
+    lGraph->addRow(merge,separate);
+    lGraph->addRow(label);
+    lGraph->addRow(play);
+    lGraph->addRow(add_Edge);
+    lGraph->addRow(add_Node);
+    lGraph->addRow(remove_all);
+    lGraph->addRow(applyColor);
+    lGraph->addRow(colorPicker);
+    lGraph->addRow(applyLabel);
+    lGraph->addRow(le_applyLabel);
+    lGraph->addRow(slider);
 
-void CoreWindow::createRightToolBar() {
-	toolBar = new QToolBar("Network",this);
+    wGraph->setLayout(lGraph);
 
-	QFrame *frame = createHorizontalFrame();
-	QLabel *label = new QLabel("Nick:");
-	frame->layout()->addWidget(label);
-	frame->layout()->addWidget(le_client_name);
+    //Constraints tab///////////////////////////////////////////
+    QWidget * wConstraints = new QWidget();
+    QFormLayout * lConstraints = new QFormLayout(wConstraints);
+    lConstraints->setContentsMargins(1,1,1,1);
+    lConstraints->setSpacing(2);
 
-	toolBar->addWidget(frame);
+    b_SetRestriction_SphereSurface->setMinimumWidth(68);
+    lConstraints->addRow(b_SetRestriction_SphereSurface,b_SetRestriction_Sphere);
+    b_SetRestriction_Plane->setMinimumWidth(68);
+    lConstraints->addRow(b_SetRestriction_Plane,b_SetRestriction_SpherePlane);
+    b_SetRestriction_Circle->setMinimumWidth(68);
+    lConstraints->addRow(b_SetRestriction_Circle,b_SetRestriction_Cone);
+    b_SetRestriction_ConeTree->setMinimumWidth(68);
+    lConstraints->addRow(b_SetRestriction_ConeTree,b_UnsetRestriction);
+    //volovar_zac
+    b_SetRestriction_RadialLayout->setMinimumWidth(68);
+    lConstraints->addRow(b_SetRestriction_RadialLayout,b_drawMethod_RadialLayout);
+    lConstraints->addRow(b_mode_RadialLayout);
+    lConstraints->addRow(b_SetRestriction_RadialLayout_Slider);
+    connect(b_SetRestriction_RadialLayout_Slider,SIGNAL(valueChanged(int)),this,SLOT(RadialLayoutSizeChanged(int)));
+    lConstraints->addRow(b_SetAlpha_RadialLayout_Slider);
+    connect(b_SetAlpha_RadialLayout_Slider,SIGNAL(valueChanged(int)),this,SLOT(RadialLayoutAlphaChanged(int)));
+    lConstraints->addRow(b_SetVisibleSpheres_RadialLayout_Slider);
+    connect(b_SetVisibleSpheres_RadialLayout_Slider,SIGNAL(valueChanged(int)),this,SLOT(RadialLayoutSetVisibleSpheres(int)));
+    lConstraints->addRow(b_SetForceScale_RadialLayout_Slider);
+    connect(b_SetForceScale_RadialLayout_Slider,SIGNAL(valueChanged(int)),this,SLOT(RadialLayoutSetForceScale(int)));
+    lConstraints->addRow(b_SetForceSphereScale_RadialLayout_Slider);
+    connect(b_SetForceSphereScale_RadialLayout_Slider,SIGNAL(valueChanged(int)),this,SLOT(RadialLayoutSetForceSphereScale(int)));
+    //volovar_kon
+    lConstraints->addRow(b_SetRestriction_CylinderSurface);
+    lConstraints->addRow(b_SetRestriction_CylinderSurface_Slider);
+    lConstraints->addRow(b_SetRestriction_ConeSurface);
+    lConstraints->addRow(b_SetRestriction_ConeSurface_Slider);
+    lConstraints->addRow(b_UnsetRestrictionFromAll);
 
-	toolBar->addSeparator();
-	toolBar->addWidget(b_start_server);
-	toolBar->addSeparator();
-
-	frame = createHorizontalFrame();
-	label = new QLabel("Host:");
-	frame->layout()->addWidget(label);
-	frame->layout()->addWidget(le_server_addr);
-
-	toolBar->addWidget(frame);
-
-	toolBar->addWidget(b_start_client);
-	toolBar->addSeparator();
-	/*toolBar->addWidget(le_message);
-	toolBar->addWidget(b_send_message);*/
-
-	addToolBar(Qt::TopToolBarArea,toolBar);
-}
-
-void CoreWindow::createAugmentedRealityToolBar() {
-	toolBar = new QToolBar( tr("Augmented Reality"),this);
-
-	b_start_face = new QPushButton( tr("Start camera"));
-	QLabel *label = new QLabel( tr("Face & Marker detection"));
-
-#ifdef OPENCV_FOUND
-	toolBar->addWidget( label );
-	toolBar->addWidget( b_start_face );
-	connect(b_start_face, SIGNAL(clicked()), this, SLOT(create_facewindow()));
-	toolBar->addSeparator();
-#endif
-
-	chb_camera_rot = new QCheckBox( tr("Camera rotation"));
-	chb_camera_rot->setChecked(true);
-	toolBar->addWidget( chb_camera_rot );
-	toolBar->addSeparator();
+    wConstraints->setLayout(lConstraints);
 
 
-	// dont rotate camera if video background
-	if( Util::ApplicationConfig::get()->getValue("Viewer.SkyBox.Noise").toInt() == 2 ){
-		chb_camera_rot->setChecked(false);
-	} else {
-		chb_camera_rot->setChecked(true);
-	}
+    //Manage session tab//////////////////////////////
+    QWidget * wManage = new QWidget();
+    QFormLayout * lManage = new QFormLayout(wManage);
+    lManage->setContentsMargins(1,1,1,1);
+    lManage->setSpacing(2);
 
+    lManage->addRow(new QLabel("Nick:"), le_client_name);
+    le_client_name->setMaximumWidth(110);
+    lManage->addRow(b_start_server);
+    lManage->addRow(new QLabel("Host:"), le_server_addr);
+    le_server_addr->setMaximumWidth(110);
+    lManage->addRow(b_start_client);
+    b_start_client->setMaximumWidth(110);
+    lManage->addRow(new QLabel("Collaborators: "));
+    lManage->addRow(lw_users);
+    lw_users->setMaximumWidth(112);
+    lManage->addRow(chb_spy);
+    lManage->addRow(chb_center);
+    lManage->addRow(chb_attention);
+    lManage->addRow(new QLabel("Avatar scale"));
+    lManage->addRow(sl_avatarScale);
+    lManage->addRow(chb_vertigo);
+    lManage->addRow(subtract_Distance, add_Distance);
+    lManage->addRow(add_Planes);
+    lManage->addRow(remove_Planes);
+    lManage->addRow(change_Forces);
+    lManage->addRow(new QLabel("Clustering: "));
+    lManage->addRow(cb_clusteringAlgorithm);
+    lManage->addRow(new QLabel("Depth: "), le_clusteringDepth);
+    lManage->addRow(b_cluster_nodes);
+    lManage->addRow(l_clustersOpacity);
+    lManage->addRow(chb_clustersOpacity);
+    lManage->addRow(chb_clusterSelectedOpacity);
+    lManage->addRow(b_clustersOpacity_Slider);
+    lManage->addRow(l_clustersShapes);
+    lManage->addRow(l_clusters1Min);
+    lManage->addRow(b_clustersShapeBoundary_Slider);
+    lManage->addRow(l_clusters1Max);
+    lManage->addRow(b_SetRestriction_Cube_Selected);
+    lManage->addRow(b_restartLayouting);
+    lManage->addRow(l_repulsiveForceInsideCluster);
+    lManage->addRow(sb_repulsiveForceInsideCluster);
+
+    wManage->setLayout(lManage);
+
+    //More features tab//////////////////////////////
+    QWidget * wMore = new QWidget();
+    QFormLayout * lMore = new QFormLayout(wMore);
+    lMore->setContentsMargins(1,1,1,1);
+    lMore->setSpacing(2);
+
+    #ifdef OPENCV_FOUND
+    b_start_face = new QPushButton( tr("Start camera"));
+    lMore->addRow(new QLabel( tr("Face & Marker detection")));
+    lMore->addRow(b_start_face);
+    connect(b_start_face, SIGNAL(clicked()), this, SLOT(create_facewindow()));
+    #endif
+    chb_camera_rot = new QCheckBox( tr("Camera rotation"));
+    chb_camera_rot->setChecked(true);
+    lMore->addRow(chb_camera_rot);
+    // dont rotate camera if video background
+    if( Util::ApplicationConfig::get()->getValue("Viewer.SkyBox.Noise").toInt() == 2 ){
+        chb_camera_rot->setChecked(false);
+    } else {
+        chb_camera_rot->setChecked(true);
+    }
 #ifdef OPENCV_FOUND
 
 #ifdef OPENNI2_FOUND
 #ifdef NITE2_FOUND
-
-	QLabel *labelKinect = new QLabel( tr("Kinect"));
-	toolBar->addWidget( labelKinect );
-	b_start_kinect = new QPushButton();
-	b_start_kinect->setText("Start kinect");
-	toolBar->addWidget( b_start_kinect );
-	connect(b_start_kinect, SIGNAL(clicked()), this, SLOT(createKinectWindow()));
-	toolBar->addSeparator();
-
-	//TODO future feature - experimental state
-	b_start_ransac = new QPushButton();
-	b_start_ransac->setText("Start calculate surface");
-	toolBar->addWidget( b_start_ransac );
-	connect(b_start_ransac, SIGNAL(clicked()), this, SLOT(calculateRansac()));
-	toolBar->addSeparator();
-
+   lMore->addRow(new QLabel( tr("Kinect")));
+   lMore->addRow();
+   b_start_kinect = new QPushButton();
+   b_start_kinect->setText("Start kinect");
+   lMore->addRow(b_start_kinect);
+   connect(b_start_kinect, SIGNAL(clicked()), this, SLOT(createKinectWindow()));
+   b_start_ransac = new QPushButton();
+   b_start_ransac->setText("Start calculate surface");
+   lMore->addRow(b_start_ransac);
+   connect(b_start_ransac, SIGNAL(clicked()), this, SLOT(calculateRansac()));
 #endif
 #endif
 #endif
 
 #ifdef SPEECHSDK_FOUND
-	QLabel *labelSpeech = new QLabel( tr("Speech"));
-	toolBar->addWidget( labelSpeech );
-	b_start_speech = new QPushButton();
-	b_start_speech->setText("Start Speech");
-	toolBar->addWidget( b_start_speech );
-	connect(b_start_speech, SIGNAL(clicked()), this, SLOT(startSpeech()));
+    lMore->addRow(new QLabel( tr("Speech")));
+    b_start_speech = new QPushButton();
+    b_start_speech->setText("Start Speech");
+    lMore->addRow(b_start_speech);
+    connect(b_start_speech, SIGNAL(clicked()), this, SLOT(startSpeech()));
 #endif
 
-	addToolBar(Qt::TopToolBarArea,toolBar);
-	toolBar->setMovable(true);
+    wMore->setLayout(lMore);
+
+    toolBox = new QToolBox();
+    toolBox->setSizePolicy(QSizePolicy(QSizePolicy::Maximum, QSizePolicy::Ignored));
+    toolBox->setMinimumWidth(140);
+    toolBox->addItem(wGraph, tr("Graph"));
+    toolBox->addItem(wConstraints, tr("Constraints"));
+    toolBox->addItem(wManage, tr("Manage session"));
+    toolBox->addItem(wMore, tr("More features"));
+
+
+    toolBar = new QToolBar("Tools",this);
+
+    QFrame * frame = createHorizontalFrame();
+    frame->layout()->addWidget(toolBox);
+    toolBar->addWidget(frame);
+
+    addToolBar(Qt::LeftToolBarArea,toolBar);
+    toolBar->setMaximumWidth(200);
+    toolBar->setMovable(false);
+////////
+
+
+    /*toolBar->addWidget(le_message);
+    toolBar->addWidget(b_send_message); manage session maybe*/
+
+//    frame = createHorizontalFrame();
+//    frame->layout()->addWidget(noSelect);
+//    frame->layout()->addWidget(singleSelect);
+//    toolBar->addWidget(frame);
+
+//    frame = createHorizontalFrame();
+//    toolBar->addWidget(frame);
+//    frame->layout()->addWidget(multiSelect);
+//    frame->layout()->addWidget(center);
+
+//	toolBar->addWidget(nodeTypeComboBox);
+//	toolBar->addSeparator();
+
+//	frame = createHorizontalFrame();
+
+//	toolBar->addWidget(frame);
+//	frame->layout()->addWidget(addMeta);
+//	frame->layout()->addWidget(removeMeta);
+
+//	frame = createHorizontalFrame();
+
+//	toolBar->addWidget(frame);
+//	frame->layout()->addWidget(fix);
+//	frame->layout()->addWidget(unFix);
+
+//	frame = createHorizontalFrame();
+
+//	toolBar->addWidget(frame);
+//	frame->layout()->addWidget(merge);
+//	frame->layout()->addWidget(separate);
+//////////////////////
+//	toolBar->addWidget(label);
+//	toolBar->addSeparator();
+//    toolBar->addWidget(play);
+//	toolBar->addSeparator();
+//	toolBar->addWidget(add_Edge);
+//	toolBar->addWidget(add_Node);
+//	toolBar->addWidget(remove_all);
+//	toolBar->addWidget(applyColor);
+
+
+//	toolBar->addWidget(colorPicker);
+
+//	toolBar->addWidget(applyLabel);
+//	toolBar->addWidget(le_applyLabel);
+
+//	toolBar->addSeparator();
+
+	// layout restrictions
+//	frame = createHorizontalFrame();
+//	toolBar->addWidget(frame);
+//	frame->layout()->addWidget(b_SetRestriction_SphereSurface);
+//	frame->layout()->addWidget(b_SetRestriction_Sphere);
+
+//	frame = createHorizontalFrame();
+//	toolBar->addWidget(frame);
+//	frame->layout()->addWidget(b_SetRestriction_Plane);
+//	frame->layout()->addWidget(b_SetRestriction_SpherePlane);
+
+//	frame = createHorizontalFrame();
+//	toolBar->addWidget(frame);
+//	frame->layout()->addWidget(b_SetRestriction_Circle);
+//	frame->layout()->addWidget(b_SetRestriction_Cone);
+
+
+//	frame = createHorizontalFrame();
+//	toolBar->addWidget(frame);
+//	frame->layout()->addWidget(b_SetRestriction_ConeTree);
+//	frame->layout()->addWidget(b_UnsetRestriction);
+
+//    //volovar_zac
+//    frame = createHorizontalFrame();
+//    toolBar->addWidget(frame);
+//    frame->layout()->addWidget(b_SetRestriction_RadialLayout);
+//    frame->layout()->addWidget(b_drawMethod_RadialLayout);
+
+//    frame = createHorizontalFrame();
+//    toolBar->addWidget(frame);
+//    frame->layout()->addWidget(b_mode_RadialLayout);
+//    //volovar_kon
+//	toolBar->addSeparator();
+
+//    frame = createHorizontalFrame();
+//    toolBar->addWidget(frame);
+//    //volovar_zac
+//    frame->layout()->addWidget(b_SetRestriction_RadialLayout_Slider);
+//    connect(b_SetRestriction_RadialLayout_Slider,SIGNAL(valueChanged(int)),this,SLOT(RadialLayoutSizeChanged(int)));
+//    frame = createHorizontalFrame();
+//    toolBar->addWidget(frame);
+//    frame->layout()->addWidget(b_SetAlpha_RadialLayout_Slider);
+//    connect(b_SetAlpha_RadialLayout_Slider,SIGNAL(valueChanged(int)),this,SLOT(RadialLayoutAlphaChanged(int)));
+
+
+//    frame = createHorizontalFrame();
+//    toolBar->addWidget(frame);
+//    frame->layout()->addWidget(b_SetVisibleSpheres_RadialLayout_Slider);
+//    connect(b_SetVisibleSpheres_RadialLayout_Slider,SIGNAL(valueChanged(int)),this,SLOT(RadialLayoutSetVisibleSpheres(int)));
+
+//    frame = createHorizontalFrame();
+//    toolBar->addWidget(frame);
+//    frame->layout()->addWidget(b_SetForceScale_RadialLayout_Slider);
+//    connect(b_SetForceScale_RadialLayout_Slider,SIGNAL(valueChanged(int)),this,SLOT(RadialLayoutSetForceScale(int)));
+
+//    frame = createHorizontalFrame();
+//    toolBar->addWidget(frame);
+//    frame->layout()->addWidget(b_SetForceSphereScale_RadialLayout_Slider);
+//    connect(b_SetForceSphereScale_RadialLayout_Slider,SIGNAL(valueChanged(int)),this,SLOT(RadialLayoutSetForceSphereScale(int)));
+
+
+//    //volovar_kon
+//    frame = createHorizontalFrame();
+//    toolBar->addWidget(frame);
+//    frame->layout()->addWidget(b_SetRestriction_CylinderSurface);
+//    frame->layout()->addWidget(b_SetRestriction_CylinderSurface_Slider);
+
+//    frame = createHorizontalFrame();
+//    toolBar->addWidget(frame);
+//    frame->layout()->addWidget(b_SetRestriction_ConeSurface);
+//    frame->layout()->addWidget(b_SetRestriction_ConeSurface_Slider);
+
+//    frame = createHorizontalFrame();
+//    toolBar->addWidget(frame);
+//    frame->layout()->addWidget(b_UnsetRestrictionFromAll);
+
+//    toolBar->addSeparator();
+
+
+
+//    frame = createHorizontalFrame();
+//    frame->setMaximumHeight(100);
+//    frame->layout()->setAlignment(Qt::AlignHCenter);
+//    toolBar->addWidget(frame);
+//    frame->layout()->addWidget(slider);
+}
+
+void CoreWindow::createRightToolBar() {
+//	toolBar = new QToolBar("Network",this);
+
+//	QFrame *frame = createHorizontalFrame();
+//	QLabel *label = new QLabel("Nick:");
+//	frame->layout()->addWidget(label);
+//	frame->layout()->addWidget(le_client_name);
+
+//	toolBar->addWidget(frame);
+
+//	toolBar->addSeparator();
+//	toolBar->addWidget(b_start_server);
+//	toolBar->addSeparator();
+
+//	frame = createHorizontalFrame();
+//	label = new QLabel("Host:");
+//	frame->layout()->addWidget(label);
+//	frame->layout()->addWidget(le_server_addr);
+
+//	toolBar->addWidget(frame);
+
+//	toolBar->addWidget(b_start_client);
+//	toolBar->addSeparator();
+//	/*toolBar->addWidget(le_message);
+//	toolBar->addWidget(b_send_message);*/
+
+//	addToolBar(Qt::TopToolBarArea,toolBar);
+}
+
+void CoreWindow::createAugmentedRealityToolBar() {
+//	toolBar = new QToolBar( tr("Augmented Reality"),this);
+
+//    b_start_face = new QPushButton( tr("Start camera"));
+//	QLabel *label = new QLabel( tr("Face & Marker detection"));
+
+//#ifdef OPENCV_FOUND
+//	toolBar->addWidget( label );
+//	toolBar->addWidget( b_start_face );
+//	connect(b_start_face, SIGNAL(clicked()), this, SLOT(create_facewindow()));
+//	toolBar->addSeparator();
+//#endif
+
+//	chb_camera_rot = new QCheckBox( tr("Camera rotation"));
+//	chb_camera_rot->setChecked(true);
+//	toolBar->addWidget( chb_camera_rot );
+//	toolBar->addSeparator();
+
+
+//	// dont rotate camera if video background
+//	if( Util::ApplicationConfig::get()->getValue("Viewer.SkyBox.Noise").toInt() == 2 ){
+//		chb_camera_rot->setChecked(false);
+//	} else {
+//		chb_camera_rot->setChecked(true);
+//	}
+
+//#ifdef OPENCV_FOUND
+
+//#ifdef OPENNI2_FOUND
+//#ifdef NITE2_FOUND
+
+//	QLabel *labelKinect = new QLabel( tr("Kinect"));
+//	toolBar->addWidget( labelKinect );
+//	b_start_kinect = new QPushButton();
+//	b_start_kinect->setText("Start kinect");
+//	toolBar->addWidget( b_start_kinect );
+//	connect(b_start_kinect, SIGNAL(clicked()), this, SLOT(createKinectWindow()));
+//	toolBar->addSeparator();
+
+//	//TODO future feature - experimental state
+//	b_start_ransac = new QPushButton();
+//	b_start_ransac->setText("Start calculate surface");
+//	toolBar->addWidget( b_start_ransac );
+//	connect(b_start_ransac, SIGNAL(clicked()), this, SLOT(calculateRansac()));
+//	toolBar->addSeparator();
+
+//#endif
+//#endif
+//#endif
+
+//#ifdef SPEECHSDK_FOUND
+//	QLabel *labelSpeech = new QLabel( tr("Speech"));
+//	toolBar->addWidget( labelSpeech );
+//	b_start_speech = new QPushButton();
+//	b_start_speech->setText("Start Speech");
+//	toolBar->addWidget( b_start_speech );
+//	connect(b_start_speech, SIGNAL(clicked()), this, SLOT(startSpeech()));
+//#endif
+
+//	addToolBar(Qt::TopToolBarArea,toolBar);
+//	toolBar->setMovable(true);
 
 
 }
 
 
 void CoreWindow::createClusterToolBar() {
-    toolBar = new QToolBar("Clustering",this);
+//    toolBar = new QToolBar("Clustering",this);
 
-    QFrame *frame = createHorizontalFrame();
-    QLabel *label = new QLabel("Clustering: ");
-    frame->layout()->addWidget(label);
-    toolBar->addWidget(frame);
+//    QFrame *frame = createHorizontalFrame();
+//    QLabel *label = new QLabel("Clustering: ");
+//    frame->layout()->addWidget(label);
+//    toolBar->addWidget(frame);
 
-    frame = createHorizontalFrame();
-    frame->layout()->addWidget(cb_clusteringAlgorithm);
-    toolBar->addWidget(frame);
+//    frame = createHorizontalFrame();
+//    frame->layout()->addWidget(cb_clusteringAlgorithm);
+//    toolBar->addWidget(frame);
 
-    frame = createHorizontalFrame();
-    frame->layout()->addWidget(new QLabel("Depth: "));
-    frame->layout()->addWidget(le_clusteringDepth);
-    toolBar->addWidget(frame);
+//    frame = createHorizontalFrame();
+//    frame->layout()->addWidget(new QLabel("Depth: "));
+//    frame->layout()->addWidget(le_clusteringDepth);
+//    toolBar->addWidget(frame);
 
-    frame = createHorizontalFrame();
-    frame->layout()->addWidget(b_cluster_nodes);
-    toolBar->addWidget(frame);
+//    frame = createHorizontalFrame();
+//    frame->layout()->addWidget(b_cluster_nodes);
+//    toolBar->addWidget(frame);
 
-    toolBar->addSeparator();
+//    toolBar->addSeparator();
 
-    frame = createHorizontalFrame();
-    toolBar->addWidget(frame);
-    frame->layout()->addWidget(l_clustersOpacity);
+//    frame = createHorizontalFrame();
+//    toolBar->addWidget(frame);
+//    frame->layout()->addWidget(l_clustersOpacity);
 
-    frame = createHorizontalFrame();
-    toolBar->addWidget(frame);
-    frame->layout()->addWidget(chb_clustersOpacity);
-    frame->layout()->addWidget(chb_clusterSelectedOpacity);
+//    frame = createHorizontalFrame();
+//    toolBar->addWidget(frame);
+//    frame->layout()->addWidget(chb_clustersOpacity);
+//    frame->layout()->addWidget(chb_clusterSelectedOpacity);
 
-    frame = createHorizontalFrame();
-    toolBar->addWidget(frame);
-    frame->layout()->addWidget(b_clustersOpacity_Slider);
+//    frame = createHorizontalFrame();
+//    toolBar->addWidget(frame);
+//    frame->layout()->addWidget(b_clustersOpacity_Slider);
 
-    toolBar->addSeparator();
+//    toolBar->addSeparator();
 
-    frame = createHorizontalFrame();
-    toolBar->addWidget(frame);
-    frame->layout()->addWidget(l_clustersShapes);
+//    frame = createHorizontalFrame();
+//    toolBar->addWidget(frame);
+//    frame->layout()->addWidget(l_clustersShapes);
 
-    frame = createHorizontalFrame();
-    toolBar->addWidget(frame);
-    frame->layout()->addWidget(l_clusters1Min);
-    frame->layout()->addWidget(b_clustersShapeBoundary_Slider);
-    frame->layout()->addWidget(l_clusters1Max);
+//    frame = createHorizontalFrame();
+//    toolBar->addWidget(frame);
+//    frame->layout()->addWidget(l_clusters1Min);
+//    frame->layout()->addWidget(b_clustersShapeBoundary_Slider);
+//    frame->layout()->addWidget(l_clusters1Max);
 
-    frame = createHorizontalFrame();
-    frame->layout()->addWidget(b_SetRestriction_Cube_Selected);
-    toolBar->addWidget(frame);
+//    frame = createHorizontalFrame();
+//    frame->layout()->addWidget(b_SetRestriction_Cube_Selected);
+//    toolBar->addWidget(frame);
 
-    frame = createHorizontalFrame();
-    frame->layout()->addWidget(b_restartLayouting);
-    toolBar->addWidget(frame);
+//    frame = createHorizontalFrame();
+//    frame->layout()->addWidget(b_restartLayouting);
+//    toolBar->addWidget(frame);
 
-    frame = createHorizontalFrame();
-    toolBar->addWidget(frame);
-    frame->layout()->addWidget(l_repulsiveForceInsideCluster);
+//    frame = createHorizontalFrame();
+//    toolBar->addWidget(frame);
+//    frame->layout()->addWidget(l_repulsiveForceInsideCluster);
 
-    frame = createHorizontalFrame();
-    toolBar->addWidget(frame);
-    frame->layout()->addWidget(sb_repulsiveForceInsideCluster);
+//    frame = createHorizontalFrame();
+//    toolBar->addWidget(frame);
+//    frame->layout()->addWidget(sb_repulsiveForceInsideCluster);
 
-    addToolBar(Qt::RightToolBarArea,toolBar);
-    toolBar->setMovable(true);
+//    addToolBar(Qt::RightToolBarArea,toolBar);
+//    toolBar->setMovable(true);
 }
 
 
 void CoreWindow::createCollaborationToolBar() {
-	toolBar = new QToolBar("Collaboration",this);
+//	toolBar = new QToolBar("Collaboration",this);
 
-	QFrame *frame = createHorizontalFrame();
-	QLabel *label = new QLabel("Collaborators: ");
-	frame->layout()->addWidget(label);
-	toolBar->addWidget(frame);
+//	QFrame *frame = createHorizontalFrame();
+//	QLabel *label = new QLabel("Collaborators: ");
+//	frame->layout()->addWidget(label);
+//	toolBar->addWidget(frame);
 
-	frame = createHorizontalFrame();
-	frame->layout()->addWidget(lw_users);
-    toolBar->addWidget(frame);
+//	frame = createHorizontalFrame();
+//	frame->layout()->addWidget(lw_users);
+//    toolBar->addWidget(frame);
 
-	frame = createHorizontalFrame();
-	frame->layout()->addWidget(chb_spy);
-	toolBar->addWidget(frame);
-	frame = createHorizontalFrame();
-	frame->layout()->addWidget(chb_center);
-	toolBar->addWidget(frame);
+//	frame = createHorizontalFrame();
+//	frame->layout()->addWidget(chb_spy);
+//	toolBar->addWidget(frame);
+//	frame = createHorizontalFrame();
+//	frame->layout()->addWidget(chb_center);
+//	toolBar->addWidget(frame);
 
-	toolBar->addSeparator();
+//	toolBar->addSeparator();
 
-	frame = createHorizontalFrame();
-	frame->layout()->addWidget(chb_attention);
-	toolBar->addWidget(frame);
+//	frame = createHorizontalFrame();
+//	frame->layout()->addWidget(chb_attention);
+//	toolBar->addWidget(frame);
 
-	toolBar->addSeparator();
+//	toolBar->addSeparator();
 
-	frame = createHorizontalFrame();
-	frame->layout()->addWidget(new QLabel("Avatar scale"));
-	toolBar->addWidget(frame);
+//	frame = createHorizontalFrame();
+//	frame->layout()->addWidget(new QLabel("Avatar scale"));
+//	toolBar->addWidget(frame);
 
-	frame = createHorizontalFrame();
-	frame->setMaximumHeight(100);
-	frame->layout()->setAlignment(Qt::AlignHCenter);
-	frame->layout()->addWidget(sl_avatarScale);
-	toolBar->addWidget(frame);
+//	frame = createHorizontalFrame();
+//	frame->setMaximumHeight(100);
+//	frame->layout()->setAlignment(Qt::AlignHCenter);
+//	frame->layout()->addWidget(sl_avatarScale);
+//	toolBar->addWidget(frame);
 
-	// merge Duransky: this was here, but should be obsolete
-	/*
-	#ifdef OPENCV_FOUND
-	toolBar->addSeparator();
-	toolBar->addWidget(b_start_face);
-	#endif
-	*/
+//	// merge Duransky: this was here, but should be obsolete
+//	/*
+//	#ifdef OPENCV_FOUND
+//	toolBar->addSeparator();
+//	toolBar->addWidget(b_start_face);
+//	#endif
+//	*/
 
-    toolBar->addSeparator();
-    frame = createHorizontalFrame();
-    frame->layout()->addWidget(chb_vertigo);
-    toolBar->addWidget(frame);
+//    toolBar->addSeparator();
+//    frame = createHorizontalFrame();
+//    frame->layout()->addWidget(chb_vertigo);
+//    toolBar->addWidget(frame);
 
-    frame = createHorizontalFrame();
-    frame->layout()->addWidget(subtract_Distance);
-    frame->layout()->addWidget(add_Distance);
-    toolBar->addWidget(frame);
+//    frame = createHorizontalFrame();
+//    frame->layout()->addWidget(subtract_Distance);
+//    frame->layout()->addWidget(add_Distance);
+//    toolBar->addWidget(frame);
 
-    frame = createHorizontalFrame();
-    frame->setMaximumHeight(100);
-    frame->layout()->addWidget(add_Planes);
-    toolBar->addWidget(frame);
+//    frame = createHorizontalFrame();
+//    frame->setMaximumHeight(100);
+//    frame->layout()->addWidget(add_Planes);
+//    toolBar->addWidget(frame);
 
-    frame = createHorizontalFrame();
-    frame->layout()->addWidget(remove_Planes);
-    toolBar->addWidget(frame);
+//    frame = createHorizontalFrame();
+//    frame->layout()->addWidget(remove_Planes);
+//    toolBar->addWidget(frame);
 
-    frame = createHorizontalFrame();
-    frame->layout()->addWidget(change_Forces);
-    toolBar->addWidget(frame);
+//    frame = createHorizontalFrame();
+//    frame->layout()->addWidget(change_Forces);
+//    toolBar->addWidget(frame);
 
 
-	addToolBar(Qt::RightToolBarArea,toolBar);
-    toolBar->setMaximumHeight(500);
-    toolBar->setMaximumWidth(120);
-	toolBar->setMovable(true);
+//	addToolBar(Qt::RightToolBarArea,toolBar);
+//    toolBar->setMaximumHeight(500);
+//    toolBar->setMaximumWidth(120);
+//	toolBar->setMovable(true);
 }
 
 QFrame* CoreWindow::createHorizontalFrame()

@@ -370,7 +370,7 @@ osg::ref_ptr<osg::AutoTransform> CoreGraph::dodecahedron(qlonglong id, osg::Vec3
     float z = midpoint.z();
 
     float i = 1;
-    float fi = (1 + (float)sqrt(5)) / 2;
+    float fi = (1 + (float)sqrt((float)5)) / 2;
     float fi_rev = 1/fi;
 
     osg::Geode* dodecahedronGeode = new osg::Geode();
@@ -544,7 +544,7 @@ osg::ref_ptr<osg::AutoTransform> CoreGraph::dodecahedron(qlonglong id, osg::Vec3
 
     osg::ref_ptr<osg::AutoTransform> at = new osg::AutoTransform;
     at->setPosition(position * 1);
-    at->setScale(radius/15 * sqrt(75 + 30*sqrt(5)));
+    at->setScale(radius/15 * sqrt(75 + 30*sqrt((float)5)));
 //    at->setAutoRotateMode(osg::AutoTransform::ROTATE_TO_SCREEN);
 
     dodecahedronGeode->setUserValue("id", QString::number(id).toStdString());
@@ -556,7 +556,7 @@ osg::ref_ptr<osg::AutoTransform> CoreGraph::dodecahedron(qlonglong id, osg::Vec3
 
 
 
-void CoreGraph::setCameraManipulator(CameraManipulator * cameraManipulator) {
+void CoreGraph::setCameraManipulator(Vwr::CameraManipulator * cameraManipulator) {
     this->cameraManipulator = cameraManipulator;
 }
 

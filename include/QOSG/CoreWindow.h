@@ -20,6 +20,7 @@
 #include <QMenuBar>
 #include <QtGui>
 #include <QLineEdit>
+#include <QToolBox>
 
 #include "Layout/ShapeGetter.h"
 #include "Layout/RestrictionRemovalHandler.h"
@@ -453,6 +454,7 @@ public slots:
 
 private:
 
+
 	/**
 		*  QApplication * application
 		*  \brief Pointer to aplication
@@ -472,10 +474,16 @@ private:
 	QLineEdit * lineEdit;
 
 	/**
-		*  QToolBar * toolBar
+        *  QToolBar * toolBar
 		*  \brief Pointer to toolbar
 		*/
 	QToolBar * toolBar;
+
+    /**
+        *  ToolBox * toolBox
+        *  \brief Pointer to toolbox
+        */
+    QToolBox * toolBox;
 
 	/**
 		*  QAction * quit
@@ -507,6 +515,11 @@ private:
 		*/
 	QAction * saveGraph;
 
+    /**
+         *  QAction * about
+        *  \brief Pointer to show info about software
+        */
+    QAction * about;
 
 	/**
 		*  QPushButton * play
@@ -780,6 +793,12 @@ private:
 		*  \brief Pointer to edit menu
 		*/
 	QMenu * edit;
+
+    /**
+        *  QMenu * help
+        *  \brief Pointer to edit menu
+        */
+    QMenu * help;
 
 	/**
 		*  QOSG::ViewerQT * viewerWidget
