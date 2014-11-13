@@ -288,6 +288,11 @@ public slots:
 	void unsetRestrictionFromAll();
 
 	/**
+				 * \brief Start edge bundling.
+				 */
+	void startEdgeBundling();
+
+	/**
 				*  \fn public  add_EdgeClick
 				*  \brief create edge between selected node
 				*/
@@ -537,6 +542,11 @@ private:
 		 * \brief Button for removing restrictions from all nodes.
 		 */
 	QPushButton *b_UnsetRestrictionFromAll;
+
+	/**
+		 * \brief Button for starting edge bundling.
+		 */
+	QPushButton *b_StartEdgeBundling;
 
 	/**
 		*  QAction * create new Edge

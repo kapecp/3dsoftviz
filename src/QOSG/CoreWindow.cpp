@@ -190,14 +190,14 @@ void CoreWindow::createActions()
 
 	//add edge
 	add_Edge = new QPushButton();
-	add_Edge->setText("Add Edge");
+	add_Edge->setText("+ Edge");
 	add_Edge->setToolTip("Create new edge between two selected Nodes");
 	add_Edge->setFocusPolicy(Qt::NoFocus);
 	connect(add_Edge,SIGNAL(clicked()),this,SLOT(add_EdgeClick()));
 
 	//add Node
 	add_Node = new QPushButton();
-	add_Node->setText("Add Node");
+	add_Node->setText("+ Node");
 	add_Node->setToolTip("Create node");
 	add_Node->setFocusPolicy(Qt::NoFocus);
 	connect(add_Node, SIGNAL(clicked()), this, SLOT(add_NodeClick()));
@@ -314,6 +314,13 @@ void CoreWindow::createActions()
 	b_UnsetRestrictionFromAll->setFocusPolicy(Qt::NoFocus);
 	connect(b_UnsetRestrictionFromAll, SIGNAL(clicked()), this, SLOT(unsetRestrictionFromAll()));
 
+	b_StartEdgeBundling = new QPushButton();
+	b_StartEdgeBundling->setText("Edge Bundling");
+	b_StartEdgeBundling->setToolTip("&Start edge bundling");
+	b_StartEdgeBundling->setFocusPolicy(Qt::NoFocus);
+	connect(b_StartEdgeBundling, SIGNAL(clicked()), this, SLOT(startEdgeBundling()));
+
+
 	b_start_server = new QPushButton();
 	b_start_server->setText("Host session");
 	connect(b_start_server, SIGNAL(clicked()), this, SLOT(start_server()));
@@ -414,8 +421,12 @@ void CoreWindow::createLeftToolBar()
 	toolBar->addSeparator();
 	toolBar->addWidget(play);
 	toolBar->addSeparator();
-	toolBar->addWidget(add_Edge);
-	toolBar->addWidget(add_Node);
+
+	frame = createHorizontalFrame();
+	toolBar->addWidget(frame);
+	frame->layout()->addWidget(add_Node);
+	frame->layout()->addWidget(add_Edge);
+
 	toolBar->addWidget(remove_all);
 	toolBar->addWidget(applyColor);
 
@@ -464,9 +475,8 @@ void CoreWindow::createLeftToolBar()
 	frame->layout()->addWidget(b_SetRestriction_ConeSurface);
 	frame->layout()->addWidget(b_SetRestriction_ConeSurface_Slider);
 
-	frame = createHorizontalFrame();
-	toolBar->addWidget(frame);
-	frame->layout()->addWidget(b_UnsetRestrictionFromAll);
+	toolBar->addWidget(b_UnsetRestrictionFromAll);
+	toolBar->addWidget(b_StartEdgeBundling);
 
 	toolBar->addSeparator();
 
@@ -1528,6 +1538,10 @@ void CoreWindow::unsetRestrictionFromAll() {
 					QSharedPointer<Layout::RestrictionRemovalHandler> (NULL)
 					);
 	}
+}
+
+void CoreWindow::startEdgeBundling() {
+
 }
 
 void CoreWindow::setRestrictionToSelectedNodes (
