@@ -771,13 +771,30 @@ QList<osg::ref_ptr<Data::Edge> > Data::Graph::splitEdge(QString name, osg::ref_p
 	return newEdgeList;
 }
 
-void Data::Graph::splitAllEdges(int number){
+void Data::Graph::splitAllEdges(int splitCount){
 	QMap<qlonglong, osg::ref_ptr<Data::Edge> >::iterator iEdge = edges->begin();
 
+	//create new edges
+	QList<osg::ref_ptr<Data::Edge> > newEdgeList;
 	while (iEdge != edges->end()){
-		(*iEdge)->getName();
-
+		newEdgeList.append(splitEdge((*iEdge)->getName(), (*iEdge)->getSrcNode(), (*iEdge)->getDstNode(), (*iEdge)->isOriented(), splitCount));
 		iEdge ++;
+	}
+
+	//delete old edges
+	iEdge = edges->begin();
+	while (iEdge != edges->end()){
+	   removeEdge(*iEdge);
+	   iEdge ++;
+	}
+
+	//add new edges
+	QList<osg::ref_ptr<Data::Edge> >::iterator iNewEdge = newEdgeList.begin();
+	while (iNewEdge != newEdgeList.end())
+	{
+		(*iNewEdge)->linkNodes(edges);
+		edgesByType.insert((*iNewEdge)->getType()->getId(),(*iNewEdge));
+		iNewEdge++;
 	}
 }
 

@@ -12,6 +12,7 @@ EdgeGroup::EdgeGroup(QMap<qlonglong, osg::ref_ptr<Data::Edge> > *edges, float sc
 {
 	this->edges = edges;
 	this->scale = scale;
+	useDrawable = false;
 
 	createEdgeStateSets();
 	initEdges();

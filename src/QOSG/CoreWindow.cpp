@@ -1541,7 +1541,14 @@ void CoreWindow::unsetRestrictionFromAll() {
 }
 
 void CoreWindow::startEdgeBundling() {
+	//pause playing graph
+//	if (isPlaying)
+//	playPause();
 
+	Data::Graph * currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
+	if (currentGraph != NULL) {
+		currentGraph->splitAllEdges(5);
+	}
 }
 
 void CoreWindow::setRestrictionToSelectedNodes (
