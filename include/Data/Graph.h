@@ -351,9 +351,20 @@ public:
 		*  \param   dstNode     ending Node of the Edge
 		*  \param   type    Type of the Edge
 		*  \param   isOriented   true, if the Edge is oriented
-		*  \return osg::ref_ptr the added Edge
 		*/
 	void addMultiEdge(QString name, osg::ref_ptr<Data::Node> srcNode, osg::ref_ptr<Data::Node> dstNode, Data::Type* type, bool isOriented, osg::ref_ptr<Data::Edge> replacedSingleEdge);
+
+	/**
+		*  \fn public  splitEdge(QString name, osg::ref_ptr<Data::Node> srcNode, osg::ref_ptr<Data::Node> dstNode, bool isOriented, int splitCount)
+		*  \brief Split edge between source and destination node using meta nodes
+		*  \param   name	 name of the Edge
+		*  \param   srcNode	starting Node of the Edge
+		*  \param   dstNode	 ending Node of the Edge
+		*  \param   isOriented   true, if the Edge is oriented
+		*  \param   splitCount   count of new edges instead of original one
+		*  \return  QList<osg::ref_ptr<Data::Edge> >	the added edges
+		*/
+	QList<osg::ref_ptr<Data::Edge> > splitEdge(QString name, osg::ref_ptr<Data::Node> srcNode, osg::ref_ptr<Data::Node> dstNode, bool isOriented, int splitCount);
 
 	/**
 		*  \fn public isParralel(osg::ref_ptr<Data::Node> srcNode, osg::ref_ptr<Data::Node> dstNode)
@@ -526,6 +537,13 @@ public:
 		*  \brief Set element ID counter
 		*/
 	void setEleIdCounter(qlonglong number) { ele_id_counter = number; }
+
+	/**
+		*  \fn inline public  splitEdges
+		*  \brief Split every edge in graph using metanodes.
+		*  \param   splitCount   count of new edges instead of original one
+		*/
+	void splitAllEdges(int splitCount);
 
 private:
 

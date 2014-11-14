@@ -686,15 +686,28 @@ Data::Type* Data::Graph::getNestedMetaEdgeType()
 
 void Data::Graph::addMultiEdge(QString name, osg::ref_ptr<Data::Node> srcNode, osg::ref_ptr<Data::Node> dstNode, Data::Type* type, bool isOriented, osg::ref_ptr<Data::Edge> replacedSingleEdge)
 {
-	Data::Type* mtype;
+	QList<osg::ref_ptr<Data::Edge> > newEdgeList = splitEdge(name, srcNode, dstNode, isOriented, 2);
+	QList<osg::ref_ptr<Data::Edge> >::iterator iEdge = newEdgeList.begin();
 
-	//pridavame multihranu
+	while (iEdge != newEdgeList.end())
+	{
+		(*iEdge)->linkNodes(edges);
+		edgesByType.insert(type->getId(),(*iEdge));
+		iEdge++;
+	}
 
-	Data::Type* metype;
+	if(replacedSingleEdge!= NULL)
+	{
+		removeEdge(replacedSingleEdge);
+	}
+}
 
-	QList<Data::Type*> mtypes = getTypesByName(Data::GraphLayout::MULTI_NODE_TYPE);
+QList<osg::ref_ptr<Data::Edge> > Data::Graph::splitEdge(QString name, osg::ref_ptr<Data::Node> srcNode, osg::ref_ptr<Data::Node> dstNode, bool isOriented, int splitCount)
+{
+	Data::Type* mNodeType;
+	QList<Data::Type*> mNodeTypes = getTypesByName(Data::GraphLayout::MULTI_NODE_TYPE);
 	//osetrime typ
-	if(mtypes.isEmpty())
+	if(mNodeTypes.isEmpty())
 	{
 		//adding META_NODE_TYPE settings if necessary
 		QMap<QString, QString> *settings = new QMap<QString, QString>;
@@ -706,16 +719,17 @@ void Data::Graph::addMultiEdge(QString name, osg::ref_ptr<Data::Node> srcNode, o
 		settings->insert("color.B", "1");
 		settings->insert("color.A", "1");
 
-		mtype = this->addType(Data::GraphLayout::MULTI_NODE_TYPE, settings);
+		mNodeType = this->addType(Data::GraphLayout::MULTI_NODE_TYPE, settings);
 	}
 	else
 	{
-		mtype = mtypes[0];
+		mNodeType = mNodeTypes[0];
 	}
 
-	QList<Data::Type*> metypes = getTypesByName(Data::GraphLayout::MULTI_EDGE_TYPE);
+	Data::Type* mEdgeType;
+	QList<Data::Type*> mEdgetypes = getTypesByName(Data::GraphLayout::MULTI_EDGE_TYPE);
 
-	if(mtypes.isEmpty())
+	if(mNodeTypes.isEmpty())
 	{
 		//adding META_EDGE_TYPE settings if necessary
 		QMap<QString, QString> *settings = new QMap<QString, QString>;
@@ -727,34 +741,43 @@ void Data::Graph::addMultiEdge(QString name, osg::ref_ptr<Data::Node> srcNode, o
 		settings->insert("color.B", "1");
 		settings->insert("color.A", "1");
 
-		metype = this->addType(Data::GraphLayout::MULTI_EDGE_TYPE, settings);
+		mEdgeType = this->addType(Data::GraphLayout::MULTI_EDGE_TYPE, settings);
 	}
 	else
 	{
-		metype = metypes[0];
+		mEdgeType = mEdgetypes[0];
 	}
 
-	//pridame multiranu tvorenu pomocnymi hranami a pomocnym uzlom
-	osg::ref_ptr<Data::Node> parallelNode = addNode("PNode", mtype);
+	//creating meta nodes to split edge
+	QList<osg::ref_ptr<Data::Node> > splitNodeList;
+	splitNodeList.push_back(srcNode);
+	for (int i = 1; i < splitCount; i++)
+	{
+		splitNodeList.push_back(addNode("SNode", mNodeType));
+	}
+	splitNodeList.push_back(dstNode);
 
 	if(this->parent_id.count()>0)
 	{
-		metype = getNestedEdgeType();
+		mEdgeType = getNestedEdgeType();
 	}
 
-	osg::ref_ptr<Data::Edge> edge1 = new Data::Edge(this->incEleIdCounter(), name, this, srcNode, parallelNode, metype, isOriented, this->getEdgeScale());
-	edge1->linkNodes(this->edges);
-
-	this->edgesByType.insert(type->getId(),edge1);
-
-	osg::ref_ptr<Data::Edge> edge2 = new Data::Edge(this->incEleIdCounter(), name, this, parallelNode, dstNode, metype, isOriented, this->getEdgeScale());
-	edge2->linkNodes(this->edges);
-
-	this->edgesByType.insert(type->getId(),edge2);
-
-	if(replacedSingleEdge!= NULL)
+	QList<osg::ref_ptr<Data::Edge> > newEdgeList;
+	for (int i = 0; i < splitCount; i++)
 	{
-		removeEdge(replacedSingleEdge);
+		newEdgeList.push_back(new Data::Edge(this->incEleIdCounter(), name, this, splitNodeList.at(i), splitNodeList.at(i+1), mEdgeType, isOriented, this->getEdgeScale()));
+	}
+
+	return newEdgeList;
+}
+
+void Data::Graph::splitAllEdges(int number){
+	QMap<qlonglong, osg::ref_ptr<Data::Edge> >::iterator iEdge = edges->begin();
+
+	while (iEdge != edges->end()){
+		(*iEdge)->getName();
+
+		iEdge ++;
 	}
 }
 
