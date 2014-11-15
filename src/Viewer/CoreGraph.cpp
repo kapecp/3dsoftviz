@@ -679,7 +679,7 @@ void CoreGraph::reload(Data::Graph * graph)
 	}
 
     clustersGroup = new osg::Group;
-    root->addChild(clustersGroup);
+    graphGroup->addChild(clustersGroup);
     currentPos++;
 
     customNodesPosition = currentPos;
