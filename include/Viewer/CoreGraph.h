@@ -9,7 +9,9 @@
 
 #include "Viewer/RestrictionVisualizationsGroup.h"
 #include "Viewer/RestrictionManipulatorsGroup.h"
+#include "Viewer/EdgeGroup.h"
 #include "Viewer/NodeGroup.h"
+#include "Viewer/BrowserGroup.h"
 #include "Data/Edge.h"
 #include "Data/Node.h"
 
@@ -19,15 +21,11 @@
 #include <QSharedPointer>
 #include <QTime>
 
+#include "OsgQtBrowser/QWebViewImage.h"
+
 namespace Data
 {
 	class Graph;
-}
-
-namespace Vwr
-{
-	class EdgeGroup;
-//	class NodeGroup;
 }
 
 namespace Util
@@ -172,7 +170,8 @@ public:
 	Vwr::NodeGroup * getNodesGroup() { return nodesGroup; }
 	Vwr::NodeGroup * getMetaNodesGroup() { return qmetaNodesGroup; }
 	Vwr::EdgeGroup * getEdgesGroup() { return edgesGroup; }
-	Vwr::EdgeGroup * getMetaEdgesGroup() { return qmetaEdgesGroup; }
+    Vwr::EdgeGroup * getMetaEdgesGroup() { return qmetaEdgesGroup; }
+    Vwr::BrowserGroup * getBrowsersGroup() { return browsersGroup; }
 
 private:
 
@@ -210,6 +209,12 @@ private:
 				 * \brief Encapsulates part of the OSG including restriction manipulations.
 				 */
 	QSharedPointer<Vwr::RestrictionManipulatorsGroup> restrictionManipulatorsGroup;
+
+    /**
+        *  Vwr::BrowserGroup * browsersGroup
+        *  \brief browser group
+        */
+    Vwr::BrowserGroup * browsersGroup;
 
 	/**
 		*  Data::Graph * graph
@@ -346,9 +351,15 @@ private:
 	int restrictionVisualizationsPosition;
 
 	/**
-				 * \brief Index of restrictionManipulatorsGroup in the root group.
-				 */
+         * \brief Index of restrictionManipulatorsGroup in the root group.
+         */
 	int restrictionManipulatorsPosition;
+
+    /**
+        *  int groupsPosition
+        *  \brief browsers group position
+        */
+    int browsersPosition;
 
 	/**
 		*  int customNodesPosition

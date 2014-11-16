@@ -87,7 +87,7 @@ CoreWindow::CoreWindow(QWidget *parent, Vwr::CoreGraph* coreGraph, QApplication*
 	//vytvorenie sql vstupu
 	QWidget * widget = new QWidget();
 	QHBoxLayout *layoutt = new QHBoxLayout();
-	layoutt->addWidget(lineEdit);
+    layoutt->addWidget(lineEdit);
 	widget->setLayout(layoutt);
 	dock->setWidget(widget);
 	addDockWidget(Qt::TopDockWidgetArea, dock);
@@ -384,7 +384,7 @@ void CoreWindow::createLeftToolBar()
 {
 	//inicializacia comboboxu typov vyberu
 	nodeTypeComboBox = new QComboBox();
-	nodeTypeComboBox->insertItems(0,(QStringList() << "All" << "Node" << "Edge"));
+    nodeTypeComboBox->insertItems(0,(QStringList() << "All" << "Node" << "Edge"));
 	nodeTypeComboBox->setFocusPolicy(Qt::NoFocus);
 	connect(nodeTypeComboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(nodeTypeComboBoxChanged(int)));
 
@@ -1958,12 +1958,22 @@ void CoreWindow::onChange()
     QAbstractItemModel *model = luaGraphTreeView->model();
     if (model != NULL){
         delete model;
-        model == NULL;
+        model = NULL;
     }
     QLinkedList<osg::ref_ptr<Data::Node> > *selected = viewerWidget->getPickHandler()->getSelectedNodes();
-    if (selected->size() == 1)
+    if (selected->size() == 1){
         if (Lua::LuaGraph::getInstance()->getNodes()->contains(selected->first()->getId())){
-            Lua::LuaNode *node = Lua::LuaGraph::getInstance()->getNodes()->value(selected->first()->getId());
-            luaGraphTreeView->setModel(new Lua::LuaGraphTreeModel(node));
+            std::cout << "Lua node selected\n";
+            std::cout << flush;
+
+            Data::Node *qtNode = selected->first();
+            Lua::LuaNode *luaNode = Lua::LuaGraph::getInstance()->getNodes()->value(qtNode->getId());
+            Lua::LuaGraphTreeModel *model = new Lua::LuaGraphTreeModel(luaNode);
+            luaGraphTreeView->setModel(model);
+
+            coreGraph->getBrowsersGroup()->addBrowser(qtNode->getCurrentPosition(), model);
         }
+    }else{
+        coreGraph->getBrowsersGroup()->clearBrowsers();
+    }
 }
