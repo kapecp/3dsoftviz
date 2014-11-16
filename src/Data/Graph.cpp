@@ -686,24 +686,6 @@ Data::Type* Data::Graph::getNestedMetaEdgeType()
 
 void Data::Graph::addMultiEdge(QString name, osg::ref_ptr<Data::Node> srcNode, osg::ref_ptr<Data::Node> dstNode, Data::Type* type, bool isOriented, osg::ref_ptr<Data::Edge> replacedSingleEdge)
 {
-	QList<osg::ref_ptr<Data::Edge> > newEdgeList = splitEdge(name, srcNode, dstNode, isOriented, 2);
-	QList<osg::ref_ptr<Data::Edge> >::iterator iEdge = newEdgeList.begin();
-
-	while (iEdge != newEdgeList.end())
-	{
-		(*iEdge)->linkNodes(edges);
-		edgesByType.insert(type->getId(),(*iEdge));
-		iEdge++;
-	}
-
-	if(replacedSingleEdge!= NULL)
-	{
-		removeEdge(replacedSingleEdge);
-	}
-}
-
-QList<osg::ref_ptr<Data::Edge> > Data::Graph::splitEdge(QString name, osg::ref_ptr<Data::Node> srcNode, osg::ref_ptr<Data::Node> dstNode, bool isOriented, int splitCount)
-{
 	Data::Type* mNodeType;
 	QList<Data::Type*> mNodeTypes = getTypesByName(Data::GraphLayout::MULTI_NODE_TYPE);
 	//osetrime typ
@@ -729,7 +711,7 @@ QList<osg::ref_ptr<Data::Edge> > Data::Graph::splitEdge(QString name, osg::ref_p
 	Data::Type* mEdgeType;
 	QList<Data::Type*> mEdgetypes = getTypesByName(Data::GraphLayout::MULTI_EDGE_TYPE);
 
-	if(mNodeTypes.isEmpty())
+	if(mNodeTypes.isEmpty()) // really mNodeTypes?
 	{
 		//adding META_EDGE_TYPE settings if necessary
 		QMap<QString, QString> *settings = new QMap<QString, QString>;
@@ -748,24 +730,42 @@ QList<osg::ref_ptr<Data::Edge> > Data::Graph::splitEdge(QString name, osg::ref_p
 		mEdgeType = mEdgetypes[0];
 	}
 
+	QList<osg::ref_ptr<Data::Edge> > newEdgeList = splitEdge(name, srcNode, dstNode, isOriented, mNodeType, mEdgeType, 2);
+	QList<osg::ref_ptr<Data::Edge> >::iterator iEdge = newEdgeList.begin();
+
+	while (iEdge != newEdgeList.end())
+	{
+		(*iEdge)->linkNodes(edges);
+		edgesByType.insert(type->getId(),(*iEdge));
+		iEdge++;
+	}
+
+	if(replacedSingleEdge!= NULL)
+	{
+		removeEdge(replacedSingleEdge);
+	}
+}
+
+QList<osg::ref_ptr<Data::Edge> > Data::Graph::splitEdge(QString name, osg::ref_ptr<Data::Node> srcNode, osg::ref_ptr<Data::Node> dstNode, bool isOriented, Data::Type* nodeType, Data::Type* edgeType, int splitCount)
+{
 	//creating meta nodes to split edge
 	QList<osg::ref_ptr<Data::Node> > splitNodeList;
 	splitNodeList.push_back(srcNode);
 	for (int i = 1; i < splitCount; i++)
 	{
-		splitNodeList.push_back(addNode("SNode", mNodeType));
+		splitNodeList.push_back(addNode("SNode", nodeType));
 	}
 	splitNodeList.push_back(dstNode);
 
 	if(this->parent_id.count()>0)
 	{
-		mEdgeType = getNestedEdgeType();
+		edgeType = getNestedEdgeType();
 	}
 
 	QList<osg::ref_ptr<Data::Edge> > newEdgeList;
 	for (int i = 0; i < splitCount; i++)
 	{
-		newEdgeList.push_back(new Data::Edge(this->incEleIdCounter(), name, this, splitNodeList.at(i), splitNodeList.at(i+1), mEdgeType, isOriented, this->getEdgeScale()));
+		newEdgeList.push_back(new Data::Edge(this->incEleIdCounter(), name, this, splitNodeList.at(i), splitNodeList.at(i+1), edgeType, isOriented, this->getEdgeScale()));
 	}
 
 	return newEdgeList;
@@ -777,7 +777,7 @@ void Data::Graph::splitAllEdges(int splitCount){
 	//create new edges
 	QList<osg::ref_ptr<Data::Edge> > newEdgeList;
 	while (iEdge != edges->end()){
-		newEdgeList.append(splitEdge((*iEdge)->getName(), (*iEdge)->getSrcNode(), (*iEdge)->getDstNode(), (*iEdge)->isOriented(), splitCount));
+		newEdgeList.append(splitEdge((*iEdge)->getName(), (*iEdge)->getSrcNode(), (*iEdge)->getDstNode(), (*iEdge)->isOriented(), getNodeMetaType(), getEdgeMetaType(), splitCount));
 		iEdge ++;
 	}
 

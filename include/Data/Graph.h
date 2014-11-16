@@ -361,10 +361,12 @@ public:
 		*  \param   srcNode	starting Node of the Edge
 		*  \param   dstNode	 ending Node of the Edge
 		*  \param   isOriented   true, if the Edge is oriented
+		*  \param   nodeType   type of nodes splitting edge
+		*  \param   edgeType   type of new edges
 		*  \param   splitCount   count of new edges instead of original one
 		*  \return  QList<osg::ref_ptr<Data::Edge> >	the added edges
 		*/
-	QList<osg::ref_ptr<Data::Edge> > splitEdge(QString name, osg::ref_ptr<Data::Node> srcNode, osg::ref_ptr<Data::Node> dstNode, bool isOriented, int splitCount);
+	QList<osg::ref_ptr<Data::Edge> > splitEdge(QString name, osg::ref_ptr<Data::Node> srcNode, osg::ref_ptr<Data::Node> dstNode, bool isOriented, Data::Type* nodeType, Data::Type* edgeType, int splitCount);
 
 	/**
 		*  \fn public isParralel(osg::ref_ptr<Data::Node> srcNode, osg::ref_ptr<Data::Node> dstNode)
