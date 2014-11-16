@@ -753,7 +753,7 @@ QList<osg::ref_ptr<Data::Edge> > Data::Graph::splitEdge(QString name, osg::ref_p
 	splitNodeList.push_back(srcNode);
 	for (int i = 1; i < splitCount; i++)
 	{
-		splitNodeList.push_back(addNode("SNode", nodeType));
+		splitNodeList.push_back(addNode("SNode", nodeType, srcNode->getTargetPosition()));
 	}
 	splitNodeList.push_back(dstNode);
 
