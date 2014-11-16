@@ -1541,13 +1541,19 @@ void CoreWindow::unsetRestrictionFromAll() {
 }
 
 void CoreWindow::startEdgeBundling() {
-	//pause playing graph
-//	if (isPlaying)
-//	playPause();
-
 	Data::Graph * currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
+
+	//select all nodes and fix them
+	QMap<qlonglong, osg::ref_ptr<Data::Node> >::iterator iNode = currentGraph->getNodes()->begin();
+	while (iNode != currentGraph->getNodes()->end()){
+		viewerWidget->getPickHandler()->addPickedNode(*iNode);
+		iNode++;
+	}
+	fixNodes();
+
+	//split edges
 	if (currentGraph != NULL) {
-		currentGraph->splitAllEdges(5);
+		currentGraph->splitAllEdges(3);
 	}
 }
 
