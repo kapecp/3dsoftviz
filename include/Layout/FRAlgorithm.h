@@ -114,6 +114,12 @@ public:
 		*/
 	void RequestEnd();
 
+	/**
+		*  \fn public  RunAlg
+		*  \brief Play edge bundling algorithm
+		*/
+	void RunAlgEdgeBundling();
+
 private:
 
 	/**
@@ -189,6 +195,13 @@ private:
 		*  \brief actual status of the algorithm
 		*/
 	FRAlgorithm::State state;
+
+	/**
+		*  FRAlgorithm::State stateEdgeBundling
+		*  \brief actual status of the edge bundling algorithm
+		*/
+	FRAlgorithm::State stateEdgeBundling;
+
 	/**
 		*  bool useMaxDistance
 		*  \brief constaint using maximal distance of nodes, when repulsive force is aplied
@@ -305,6 +318,15 @@ private:
 		*  \param   factor  multiplicer of attaractive force
 		*/
 	void addMetaAttractive(Data::Node* u, Data::Node* meta, float factor);
+
+	/**
+		*  \fn private  addNeighbourAttractive(Data::Node* meta, Data::Node* neighbour, float factor)
+		*  \brief Adds attractive force between meta node and his neighbour
+		*  \param   meta	meta node
+		*  \param   neighbour   neighbour node
+		*  \param   factor  multiplicer of attaractive force
+		*/
+	void addNeighbourAttractive(Data::Node* meta, Data::Node* neighbour, float factor);
 
 	/**
 		*  \fn private  addRepulsive(Data::Node* u, Data::Node* v, float factor)

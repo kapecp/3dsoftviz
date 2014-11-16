@@ -28,6 +28,7 @@ FRAlgorithm::FRAlgorithm()
 	MAX_MOVEMENT = 30;
 	MAX_DISTANCE = 400;
 	state = RUNNING;
+	stateEdgeBundling = PAUSED;
 	notEnd = true;
 	center = osg::Vec3f (0,0,0);
 	fv = osg::Vec3f();
@@ -50,6 +51,7 @@ FRAlgorithm::FRAlgorithm(Data::Graph *graph)
 	MAX_MOVEMENT = 30;
 	MAX_DISTANCE = 400;
 	state = RUNNING;
+	stateEdgeBundling = PAUSED;
 	notEnd = true;
 	osg::Vec3f p(0,0,0);
 	center = p;
@@ -172,7 +174,7 @@ void FRAlgorithm::Run()
 		{
 			// slucka pozastavenia - ak je pauza
 			// alebo je graf zmrazeny (spravidla pocas editacie)
-			while (notEnd && (state != RUNNING || graph->isFrozen()))
+			while (notEnd && (state != RUNNING || graph->isFrozen()) && (stateEdgeBundling != RUNNING))
 			{
 				// [GrafIT][!] not 100% OK (e.g. msleep(100) remains here), but we have fixed the most obvious multithreading issues of the original code
 				isIterating_mutex.unlock();
@@ -213,13 +215,29 @@ bool FRAlgorithm::iterate()
 		for (int i = 0; i < graph->getMetaNodes()->count(); ++i,++j)
 		{ // pre vsetky metauzly..
 			j.value()->resetForce(); // vynulovanie posobiacej sily
-			k = graph->getMetaNodes()->begin();
-			for (int h = 0; h < graph->getMetaNodes()->count(); ++h,++k)
-			{ // pre vsetky metauzly..
-				if (!j.value()->equals(k.value()))
+
+			if (stateEdgeBundling == RUNNING)
+			{
+				QMap<qlonglong, osg::ref_ptr<Data::Edge> >::iterator iEdge = j.value()->getEdges()->begin();
+				while (iEdge != j.value()->getEdges()->end())
 				{
-					// odpudiva sila medzi metauzlami
-					addRepulsive(j.value(), k.value(), Data::Graph::getMetaStrength());
+					//pritazliva sila meta uzlom a jeho susedom
+					if (!j.value()->equals((*iEdge)->getSrcNode()))
+						addNeighbourAttractive(j.value(), (*iEdge)->getSrcNode(), Data::Graph::getMetaStrength());
+					else
+						addNeighbourAttractive(j.value(), (*iEdge)->getDstNode(), Data::Graph::getMetaStrength());
+					iEdge++;
+				}
+			} else
+			{
+				k = graph->getMetaNodes()->begin();
+				for (int h = 0; h < graph->getMetaNodes()->count(); ++h,++k)
+				{ // pre vsetky metauzly..
+					if (!j.value()->equals(k.value()))
+					{
+						// odpudiva sila medzi metauzlami
+						addRepulsive(j.value(), k.value(), Data::Graph::getMetaStrength());
+					}
 				}
 			}
 		}
@@ -456,6 +474,26 @@ void FRAlgorithm::addMetaAttractive(Data::Node* u, Data::Node* meta, float facto
 	u->addForce(fv);
 }
 
+/* Pricitanie pritazlivych sil medzi metauzlom a jeho susedom */
+void FRAlgorithm::addNeighbourAttractive(Data::Node* meta, Data::Node* neighbour, float factor) {
+	// [GrafIT][+] forces are only between nodes which are in the same graph (or some of them is meta) AND are not ignored
+	if (!areForcesBetween (meta, neighbour)) {
+		return;
+	}
+	// [GrafIT]
+	up = meta->targetPosition();
+	vp = neighbour->targetPosition();
+	dist = distance(up,vp);
+	if(qFuzzyCompare(dist,0.0))
+	{
+		return;
+	}
+	fv = vp - up;// smer sily
+	fv.normalize();
+	fv *= attr(dist) * factor;// velkost sily
+	meta->addForce(fv);
+}
+
 /* Pricitanie odpudivych sil */
 void FRAlgorithm::addRepulsive(Data::Node* u, Data::Node* v, float factor) {
 	// [GrafIT][+] forces are only between nodes which are in the same graph (or some of them is meta) AND are not ignored
@@ -516,4 +554,14 @@ bool FRAlgorithm::areForcesBetween (Data::Node * u, Data::Node * v) {
 				v->getType ()->isMeta ()
 				)
 			;
+}
+
+void FRAlgorithm::RunAlgEdgeBundling()
+{
+	if(graph != NULL)
+	{
+		graph->setFrozen(false);
+		state = RUNNING;
+		stateEdgeBundling = RUNNING;
+	}
 }

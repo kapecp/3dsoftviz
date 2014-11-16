@@ -44,3 +44,7 @@ void LayoutThread::requestEnd()
 {
 	alg->RequestEnd();
 }
+void LayoutThread::playEdgeBundling()
+{
+	alg->RunAlgEdgeBundling();
+}

@@ -1555,6 +1555,8 @@ void CoreWindow::startEdgeBundling() {
 	if (currentGraph != NULL) {
 		currentGraph->splitAllEdges(3);
 	}
+
+	layout->playEdgeBundling();
 }
 
 void CoreWindow::setRestrictionToSelectedNodes (

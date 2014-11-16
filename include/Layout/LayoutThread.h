@@ -78,6 +78,12 @@ public:
 
 	void requestEnd();
 
+	/**
+		*  \fn public  playEdgeBundling
+		*  \brief Play edge bundling algorithm
+		*/
+	void playEdgeBundling();
+
 protected:
 
 	/**
