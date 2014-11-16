@@ -42,7 +42,7 @@ void Clusterer::cluster(Graph* graph, QProgressDialog* clusteringProgressBar) {
         clusterLeafs(graph->getNodes(), clusteringDepth);
         break;
     case AlgorithmType::NEIGHBOUR:
-       clusterNeighbours(graph->getNodes(), clusteringDepth);
+        clusterNeighbours(graph->getNodes(), clusteringDepth);
         break;
     default:
         qDebug() << "Clusterer:cluster : not suported algorithmType " << algorithmType;

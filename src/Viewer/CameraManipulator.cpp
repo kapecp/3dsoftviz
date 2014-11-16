@@ -126,9 +126,9 @@ void Vwr::CameraManipulator::init(const GUIEventAdapter& ,GUIActionAdapter& )
 }
 
 
-void Vwr::CameraManipulator::getUsage(osg::ApplicationUsage&  usage) const
+void Vwr::CameraManipulator::getUsage(osg::ApplicationUsage& usage) const
 {
-    usage.addKeyboardMouseBinding("Trackball: Space","Reset the viewing position to home");
+	usage.addKeyboardMouseBinding("Trackball: Space","Reset the viewing position to home");
 	usage.addKeyboardMouseBinding("Trackball: +","When in stereo, increase the fusion distance");
 	usage.addKeyboardMouseBinding("Trackball: -","When in stereo, reduce the fusion distance");
 }
@@ -269,7 +269,7 @@ bool Vwr::CameraManipulator::handlePush(const osgGA::GUIEventAdapter& ea, osgGA:
 	{
 		flushMouseEventStack();
 		addMouseEvent(ea);
-        if (calcMovement()) us.requestRedraw();
+		if (calcMovement()) us.requestRedraw();
 		us.requestContinuousUpdate(false);
 		_thrown = false;
 		return true;
@@ -434,8 +434,6 @@ bool Vwr::CameraManipulator::calcMovement()
 				_delta_frame_time / (_ga_t0->getTime() - _ga_t1->getTime()) :
 				1.0;
 
-
-
 	if (buttonMask==GUIEventAdapter::RIGHT_MOUSE_BUTTON)
 	{
 
@@ -448,10 +446,10 @@ bool Vwr::CameraManipulator::calcMovement()
 		float py0 = _ga_t0->getYnormalized();
 
 		float px1 = _ga_t1->getXnormalized();
-        float py1 = _ga_t1->getYnormalized();
+		float py1 = _ga_t1->getYnormalized();
 
 
-        trackball(axis,angle,px1,py1,px0,py0);
+		trackball(axis,angle,px1,py1,px0,py0);
 
 		osg::Quat new_rotate;
 
@@ -478,7 +476,7 @@ bool Vwr::CameraManipulator::calcMovement()
 		float scale = -0.3f * _distance * float(throwScale);
 
 		osg::Matrix rotation_matrix;
-        rotation_matrix.makeRotate(_rotation);
+		rotation_matrix.makeRotate(_rotation);
 
 		osg::Vec3 dv(dx*scale,dy*scale,0.0f);
 
