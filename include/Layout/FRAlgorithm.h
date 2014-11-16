@@ -315,7 +315,7 @@ private:
 		*  \brief Adds attractive force between node U and meta node
 		*  \param   u  node U
 		*  \param   meta meta node
-		*  \param   factor  multiplicer of attaractive force
+		*  \param   factor  multiplicer of attractive force
 		*/
 	void addMetaAttractive(Data::Node* u, Data::Node* meta, float factor);
 
@@ -324,10 +324,18 @@ private:
 		*  \brief Adds attractive force between meta node and his neighbour
 		*  \param   meta	meta node
 		*  \param   neighbour   neighbour node
-		*  \param   factor  multiplicer of attaractive force
+		*  \param   factor  multiplicer of attractive force
 		*/
 	void addNeighbourAttractive(Data::Node* meta, Data::Node* neighbour, float factor);
 
+	/**
+		*  \fn private  addSameIndexAttractive(Data::Node* meta1, Data::Node* meta2, float factor)
+		*  \brief Adds attractive force between two meta nodes with same index
+		*  \param   meta1	first meta node
+		*  \param   meta2   second meta node
+		*  \param   factor  multiplicer of attractive force
+		*/
+	void addSameIndexAttractive(Data::Node* meta1, Data::Node* meta2, float factor);
 	/**
 		*  \fn private  addRepulsive(Data::Node* u, Data::Node* v, float factor)
 		*  \brief Adds repulsive force between two nodes into node U

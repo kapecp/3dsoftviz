@@ -218,16 +218,35 @@ bool FRAlgorithm::iterate()
 
 			if (stateEdgeBundling == RUNNING)
 			{
+				//pritazlive sily medzi meta uzlom a jeho susedmi
 				QMap<qlonglong, osg::ref_ptr<Data::Edge> >::iterator iEdge = j.value()->getEdges()->begin();
 				while (iEdge != j.value()->getEdges()->end())
-				{
-					//pritazliva sila meta uzlom a jeho susedom
+				{				
 					if (!j.value()->equals((*iEdge)->getSrcNode()))
 						addNeighbourAttractive(j.value(), (*iEdge)->getSrcNode(), Data::Graph::getMetaStrength());
 					else
 						addNeighbourAttractive(j.value(), (*iEdge)->getDstNode(), Data::Graph::getMetaStrength());
 					iEdge++;
 				}
+
+				//pritazliva sila medzi meta uzlom a ostatnymi metauzlami s rovnakym cislom
+				QString jName = (*j)->getName();
+				jName = jName.right(jName.length() - jName.indexOf(' ') - 1);
+				k = graph->getMetaNodes()->begin();
+				while (k != graph->getMetaNodes()->end()){
+					if (!j.value()->equals(k.value()))
+					{
+						QString kName = (*k)->getName();
+						kName = kName.right(kName.length() - kName.indexOf(' ') - 1);
+
+						if (QString::compare(jName, kName, Qt::CaseInsensitive) == 0)
+						{
+							addSameIndexAttractive(j.value(), k.value(), Data::Graph::getMetaStrength());
+						}
+						k++;
+					}
+				}
+
 			} else
 			{
 				k = graph->getMetaNodes()->begin();
@@ -475,7 +494,8 @@ void FRAlgorithm::addMetaAttractive(Data::Node* u, Data::Node* meta, float facto
 }
 
 /* Pricitanie pritazlivych sil medzi metauzlom a jeho susedom */
-void FRAlgorithm::addNeighbourAttractive(Data::Node* meta, Data::Node* neighbour, float factor) {
+void FRAlgorithm::addNeighbourAttractive(Data::Node* meta, Data::Node* neighbour, float factor)
+{
 	// [GrafIT][+] forces are only between nodes which are in the same graph (or some of them is meta) AND are not ignored
 	if (!areForcesBetween (meta, neighbour)) {
 		return;
@@ -492,6 +512,27 @@ void FRAlgorithm::addNeighbourAttractive(Data::Node* meta, Data::Node* neighbour
 	fv.normalize();
 	fv *= attr(dist) * factor;// velkost sily
 	meta->addForce(fv);
+}
+
+/* Pricitanie pritazlivych sil medzi dvoma metauzlami s rovnakym indexom */
+void FRAlgorithm::addSameIndexAttractive(Data::Node* meta1, Data::Node* meta2, float factor)
+{
+	// [GrafIT][+] forces are only between nodes which are in the same graph (or some of them is meta) AND are not ignored
+	if (!areForcesBetween (meta1, meta2)) {
+		return;
+	}
+	// [GrafIT]
+	up = meta1->targetPosition();
+	vp = meta2->targetPosition();
+	dist = distance(up,vp);
+	if(qFuzzyCompare(dist,0.0))
+	{
+		return;
+	}
+	fv = vp - up;// smer sily
+	fv.normalize();
+	fv *= 1/attr(dist);// velkost sily
+	meta1->addForce(fv);
 }
 
 /* Pricitanie odpudivych sil */
