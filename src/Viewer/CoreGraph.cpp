@@ -111,7 +111,11 @@ void CoreGraph::reload(Data::Graph * graph)
 
 	this->restrictionManipulatorsGroup = QSharedPointer<Vwr::RestrictionManipulatorsGroup> (new Vwr::RestrictionManipulatorsGroup);
 	root->addChild (restrictionManipulatorsGroup->getGroup ());
-	restrictionManipulatorsPosition = currentPos++;
+    restrictionManipulatorsPosition = currentPos++;
+
+    this->browsersGroup = new Vwr::BrowserGroup();
+    root->addChild(browsersGroup->getGroup());
+    browsersPosition = currentPos++;
 
 	if (this->graph != NULL) {
 		graph->getRestrictionsManager().setObservers (restrictionVisualizationsGroup, restrictionManipulatorsGroup);
