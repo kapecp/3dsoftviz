@@ -232,7 +232,7 @@ void Clusterer::clusterAdjacency(QMap<qlonglong, osg::ref_ptr<Data::Node> >* som
 
     progressBar->reset();
     progressBar->setLabelText(QString("Initializing. Depth = %1").arg(clusteringDepth - maxLevels));
-    progressBar->setMaximum(someNodes->size() * 2);
+    progressBar->setMaximum(someNodes->size());
     int step = 0;
 
     QMap<qlonglong, osg::ref_ptr<Data::Node> > newClusters;
@@ -312,7 +312,6 @@ void Clusterer::clusterAdjacency(QMap<qlonglong, osg::ref_ptr<Data::Node> >* som
     // set of clusters
     QSet<qlonglong> clustered;
     for (iterator = someNodes->begin(); iterator != someNodes->end(); ++iterator, i++) {
-        progressBar->setValue(step++);
         if (progressBar->wasCanceled()) return;
         osg::ref_ptr<Data::Node> u = iterator.value();
         j = i+1;
@@ -393,7 +392,7 @@ void Clusterer::clusterAdjacency(QMap<qlonglong, osg::ref_ptr<Data::Node> >* som
     newNodesCopy.unite(newClusters);
     newClusters.clear();
 
-    progressBar->setValue(someNodes->size() * 2);
+    progressBar->close();
 
     if (newNodesCopy.size() > 2 && maxLevels != 0) {
         clusterAdjacency(&newNodesCopy, maxLevels - 1);
