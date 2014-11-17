@@ -1,6 +1,6 @@
-#include "Core/Core.h"
 #include "Fglove/FgloveThread.h"
 
+#include "Core/Core.h"
 #include "QtCore"
 #include "QDebug"
 

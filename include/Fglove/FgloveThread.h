@@ -1,20 +1,21 @@
 #ifndef FGLOVETHREAD_H
 #define FGLOVETHREAD_H
 
+#include <fglove.h>
 #include <QtCore>
 #include <QThread>
-#include <fglove.h>
 
 namespace Fglove{
 
 class FgloveThread : public QThread{
 public:
-    FgloveThread( QObject *parent = 0);
+    FgloveThread( QObject *parent = NULL);
     ~FgloveThread(void);
     void run();
 
 private:
     fdGlove *pGlove;
+    // variable to hold last detected gesture
     int mLastGesture;
     // variable to know if nodes are selected
     bool mNodeSelected;
