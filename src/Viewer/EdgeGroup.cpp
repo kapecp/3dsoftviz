@@ -12,7 +12,7 @@ EdgeGroup::EdgeGroup(QMap<qlonglong, osg::ref_ptr<Data::Edge> > *edges, float sc
 {
 	this->edges = edges;
 	this->scale = scale;
-	useDrawable = false;
+	useDrawable = true;
 
 	createEdgeStateSets();
 	initEdges();
@@ -42,6 +42,9 @@ void EdgeGroup::initEdges()
 	osg::ref_ptr<osg::Vec3Array> coordinates = new osg::Vec3Array;
 	osg::ref_ptr<osg::Vec4Array> colors = new osg::Vec4Array;
 	osg::ref_ptr<osg::Vec4Array> orientedEdgeColors = new osg::Vec4Array;
+	double length = 0;
+	double degreeX = 0;
+	double degreeY = 0;
 
 	geometry = new osg::Geometry;
 	orientedGeometry = new osg::Geometry;
@@ -52,11 +55,12 @@ void EdgeGroup::initEdges()
 
 	while (i != edges->end())
 	{
-		getEdgeCoordinatesAndColors(i.value(), edgePos, coordinates, edgeTexCoords, colors, orientedEdgeColors);
+		osg::ref_ptr<osg::Vec3Array> center = new osg::Vec3Array;
+		getEdgeCoordinatesAndColors(i.value(), edgePos, coordinates, edgeTexCoords, colors, orientedEdgeColors,&length, center, &degreeX, &degreeY);
 		edgePos += 4;
 
 		if (useDrawable)
-			drawable.push_back(new osg::ShapeDrawable());
+			drawableList.push_back(new osg::ShapeDrawable());
 		else if (i.value()->isOriented())
 			orientedGeometry->addPrimitiveSet(i.value());
 		else
@@ -89,9 +93,9 @@ void EdgeGroup::initEdges()
 
 	if (useDrawable){
 
-		QList<osg::ref_ptr<osg::ShapeDrawable> >::iterator il = drawable.begin();
+		QList<osg::ref_ptr<osg::ShapeDrawable> >::iterator il = drawableList.begin();
 
-		while (il != drawable.end())
+		while (il != drawableList.end())
 		{
 			osg::ref_ptr<osg::Geode> geode = new osg::Geode;
 			osg::ref_ptr<osg::Cylinder> c = new osg::Cylinder(osg::Vec3(0,0,0), 1.0, 1.0);
@@ -131,48 +135,23 @@ void EdgeGroup::updateEdgeCoords()
 	osg::ref_ptr<osg::Vec3Array> coordinates = new osg::Vec3Array;
 	osg::ref_ptr<osg::Vec4Array> colors = new osg::Vec4Array;
 	osg::ref_ptr<osg::Vec4Array> orientedEdgeColors = new osg::Vec4Array;
+	double length = 0;
+	double degreeX = 0;
+	double degreeY = 0;
 
 	QMap<qlonglong, osg::ref_ptr<Data::Edge> >::iterator i = edges->begin();
-	QList<osg::ref_ptr<osg::ShapeDrawable> >::iterator ic = drawable.begin();
+	QList<osg::ref_ptr<osg::ShapeDrawable> >::iterator ic = drawableList.begin();
 
 	int edgePos = 0;
 
 	while (i != edges->end())
 	{
-		getEdgeCoordinatesAndColors(i.value(), edgePos, coordinates, edgeTexCoords, colors, orientedEdgeColors);
+		osg::ref_ptr<osg::Vec3Array> center = new osg::Vec3Array;
+		getEdgeCoordinatesAndColors(i.value(), edgePos, coordinates, edgeTexCoords, colors, orientedEdgeColors, &length, center, &degreeX, &degreeY);
 		if (useDrawable){
-
-			osg::Vec3 cor1 = coordinates->at(edgePos);
-			osg::Vec3 cor2 = coordinates->at(edgePos+1);
-			osg::Vec3 cor3 = coordinates->at(edgePos+2);
-			osg::Vec3 cor4 = coordinates->at(edgePos+3);
-			osg::Vec3 cor12 = osg::Vec3((cor1.x() + cor2.x())/2, (cor1.y() + cor2.y())/2, (cor1.z() + cor2.z())/2);
-			osg::Vec3 cor34 = osg::Vec3((cor3.x() + cor4.x())/2, (cor3.y() + cor4.y())/2, (cor3.z() + cor4.z())/2);
-
-			osg::Vec3 center = osg::Vec3((cor12.x() + cor34.x())/2, (cor12.y() + cor34.y())/2, (cor12.z() + cor34.z())/2);
-			double cLength = sqrt(pow((cor34.x() - cor12.x()),2) + pow((cor34.y() - cor12.y()),2) + pow((cor34.z() - cor12.z()),2));
-
-			double lengthA = sqrt(pow((cor34.x() - cor12.x()),2));
-			double lengthC = sqrt(pow((cor34.x() - cor12.x()),2) + pow((cor34.z() - cor12.z()),2));
-			double sinA = lengthA/lengthC;
-			double degreeY = (-1)*asin(sinA);
-			if ((cor34.x() < cor12.x()) && (cor34.z() < cor12.z()))
-				degreeY *=(-1);
-			if ((cor12.x() < cor34.x()) && (cor12.z() < cor34.z()))
-				degreeY *=(-1);
-
-			lengthA = sqrt(pow((cor34.y() - cor12.y()),2));
-			lengthC = sqrt(pow((cor34.y() - cor12.y()),2) + pow((cor34.z() - cor12.z()),2));
-			sinA = lengthA/lengthC;
-			double degreeX = asin(sinA);
-			if ((cor34.y() < cor12.y()) && (cor34.z() < cor12.z()))
-				degreeX *=(-1);
-			if ((cor12.y() < cor34.y()) && (cor12.z() < cor34.z()))
-				degreeX *=(-1);
-
-			((osg::Cylinder*)((*ic)->getShape()))->setHeight((float)cLength);
+			((osg::Cylinder*)((*ic)->getShape()))->setHeight((float)length);
 			((osg::Cylinder*)((*ic)->getShape()))->setRadius(2);
-			((osg::Cylinder*)((*ic)->getShape()))->setCenter(center);
+			((osg::Cylinder*)((*ic)->getShape()))->setCenter(center->at(0));
 			((osg::Cylinder*)((*ic)->getShape()))->setRotation(osg::Quat(degreeY,osg::Vec3(0,1,0), degreeX,osg::Vec3(1,0,0), 0,osg::Vec3(0,0,1) ));
 			(*ic)->dirtyDisplayList();
 			ic++;
@@ -197,28 +176,76 @@ void EdgeGroup::getEdgeCoordinatesAndColors(osg::ref_ptr<Data::Edge> edge, int f
 											osg::ref_ptr<osg::Vec3Array> coordinates,
 											osg::ref_ptr<osg::Vec2Array> edgeTexCoords,
 											osg::ref_ptr<osg::Vec4Array> colors,
-											osg::ref_ptr<osg::Vec4Array> orientedEdgeColors)
+											osg::ref_ptr<osg::Vec4Array> orientedEdgeColors,
+											double* length,
+											osg::ref_ptr<osg::Vec3Array> center,
+											double* degreeX,
+											double* degreeY)
 {
 	osg::Vec3 srcNodePosition = edge->getSrcNode()->getCurrentPosition();
 	osg::Vec3 dstNodePosition = edge->getDstNode()->getCurrentPosition();
 
 	edge->updateCoordinates(srcNodePosition, dstNodePosition);
-	edge->setFirst(first);
 
-	coordinates->push_back(edge->getCooridnates()->at(0));
-	coordinates->push_back(edge->getCooridnates()->at(1));
-	coordinates->push_back(edge->getCooridnates()->at(2));
-	coordinates->push_back(edge->getCooridnates()->at(3));
+	if (useDrawable)
+	{
+		//calculation of properties of cylinder
+		osg::Vec3 cor1 = edge->getCooridnates()->at(0);
+		osg::Vec3 cor2 = edge->getCooridnates()->at(1);
+		osg::Vec3 cor3 = edge->getCooridnates()->at(2);
+		osg::Vec3 cor4 = edge->getCooridnates()->at(3);
 
-	edgeTexCoords->push_back(edge->getEdgeTexCoords()->at(0));
-	edgeTexCoords->push_back(edge->getEdgeTexCoords()->at(1));
-	edgeTexCoords->push_back(edge->getEdgeTexCoords()->at(2));
-	edgeTexCoords->push_back(edge->getEdgeTexCoords()->at(3));
+		//center between coordinates 1 and 2 / 3 and 4
+		osg::Vec3 cor12 = osg::Vec3((cor1.x() + cor2.x())/2, (cor1.y() + cor2.y())/2, (cor1.z() + cor2.z())/2);
+		osg::Vec3 cor34 = osg::Vec3((cor3.x() + cor4.x())/2, (cor3.y() + cor4.y())/2, (cor3.z() + cor4.z())/2);
 
-	if (edge->isOriented())
-		orientedEdgeColors->push_back(edge->getEdgeColor());
-	else
-		colors->push_back(edge->getEdgeColor());
+		//center of cylinder as center between coordinates 1-4
+		center->push_back(osg::Vec3((cor12.x() + cor34.x())/2, (cor12.y() + cor34.y())/2, (cor12.z() + cor34.z())/2));
+
+		//length of cylinder as length between cor12 and cor24
+		(*length) = sqrt(pow((cor34.x() - cor12.x()),2) + pow((cor34.y() - cor12.y()),2) + pow((cor34.z() - cor12.z()),2));
+
+		const double PI  =3.141592653589793238463;
+		//calculation of rotation around Y axis using sin function in projection triangle
+		//triangle points: [cor12.x(), cor12.z()] , [cor34.x(),cor34.z()] , [cor12.x(), cor34.z()]
+		double lengthA = sqrt(pow((cor34.x() - cor12.x()),2));
+		double lengthC = sqrt(pow((cor34.x() - cor12.x()),2) +  pow((cor34.z() - cor12.z()),2));
+		double sinA = lengthA/lengthC;
+		(*degreeY) = (-1)*asin(sinA);
+		//change angle to (180 degrees - origin) in special cases
+		if (((cor34.x() < cor12.x()) && (cor34.z() < cor12.z()))
+				|| ((cor12.x() < cor34.x()) && (cor12.z() < cor34.z())))
+			(*degreeY) = PI - (*degreeY);
+
+		//calculation of rotation around X axis using sin function in projection triangle
+		//triangle points: [cor12.y(), cor12.z()] , [cor34.y(),cor34.z()] , [cor12.y(), cor34.z()]
+		lengthA = sqrt(pow((cor34.y() - cor12.y()),2));
+		lengthC = sqrt(pow((cor34.y() - cor12.y()),2) + pow((cor34.z() - cor12.z()),2));
+		sinA = lengthA/lengthC;
+		(*degreeX) = asin(sinA);
+		//change angle to (180 degrees - origin) in special cases
+		if (((cor34.y() < cor12.y()) && (cor34.z() < cor12.z()))
+				|| ((cor12.y() < cor34.y()) && (cor12.z() < cor34.z())))
+			(*degreeX) = PI - (*degreeX);
+	}else
+	{
+		edge->setFirst(first);
+
+		coordinates->push_back(edge->getCooridnates()->at(0));
+		coordinates->push_back(edge->getCooridnates()->at(1));
+		coordinates->push_back(edge->getCooridnates()->at(2));
+		coordinates->push_back(edge->getCooridnates()->at(3));
+
+		edgeTexCoords->push_back(edge->getEdgeTexCoords()->at(0));
+		edgeTexCoords->push_back(edge->getEdgeTexCoords()->at(1));
+		edgeTexCoords->push_back(edge->getEdgeTexCoords()->at(2));
+		edgeTexCoords->push_back(edge->getEdgeTexCoords()->at(3));
+
+		if (edge->isOriented())
+			orientedEdgeColors->push_back(edge->getEdgeColor());
+		else
+			colors->push_back(edge->getEdgeColor());
+	}
 }
 
 void EdgeGroup::synchronizeEdges()
@@ -226,7 +253,8 @@ void EdgeGroup::synchronizeEdges()
 	QList<qlonglong> edgeKeys = edges->keys();
 
 	if (useDrawable){
-		//TODO ak sa prida hrana
+		//drawableList.clear();
+		//initEdges();
 	}else{
 
 		for (int i = 0; i < 2; i++)

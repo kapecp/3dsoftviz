@@ -111,7 +111,7 @@ private:
 		*  osg::ref_ptr drawable
 		*  \brief drawable edges
 		*/
-	QList<osg::ref_ptr<osg::ShapeDrawable> > drawable;
+	QList<osg::ref_ptr<osg::ShapeDrawable> > drawableList;
 
 	/**
 		*  bool useDrawable
@@ -135,12 +135,19 @@ private:
 		*  \param      edgeTexCoords     texture coordinates array
 		*  \param      colors    color array
 		*  \param      orientedEdgeColors   oriented edge color array
+		*  \param	  length   length of edge
+		*  \param	  length   center of edge
+		*  \param	  degreeX   roation for cylinder around X axis
+		*  \param	  degreeY   roation for cylinder around Y axis
 		*/
 	void getEdgeCoordinatesAndColors(osg::ref_ptr<Data::Edge> edge, int first,
 									 osg::ref_ptr<osg::Vec3Array> coordinates,
 									 osg::ref_ptr<osg::Vec2Array> edgeTexCoords,
 									 osg::ref_ptr<osg::Vec4Array> colors,
-									 osg::ref_ptr<osg::Vec4Array> orientedEdgeColors);
+									 osg::ref_ptr<osg::Vec4Array> orientedEdgeColors,
+									 double* length,
+									 osg::ref_ptr<osg::Vec3Array>center,
+									 double* degreeX, double* degreeY);
 
 	/**
 		*  \fn private  createEdgeStateSets
