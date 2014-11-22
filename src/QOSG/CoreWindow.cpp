@@ -70,7 +70,7 @@ CoreWindow::CoreWindow(QWidget *parent, Vwr::CoreGraph* coreGraph, QApplication*
 	createLeftToolBar();
 	createRightToolBar();
 	createCollaborationToolBar();
-    createMetricsToolBar();
+	createMetricsToolBar();
 
 	viewerWidget = new ViewerQT(this, 0, 0, 0, coreGraph);
 	viewerWidget->setSceneData(coreGraph->getScene());
@@ -87,7 +87,7 @@ CoreWindow::CoreWindow(QWidget *parent, Vwr::CoreGraph* coreGraph, QApplication*
 	//vytvorenie sql vstupu
 	QWidget * widget = new QWidget();
 	QHBoxLayout *layoutt = new QHBoxLayout();
-    layoutt->addWidget(lineEdit);
+	layoutt->addWidget(lineEdit);
 	widget->setLayout(layoutt);
 	dock->setWidget(widget);
 	addDockWidget(Qt::TopDockWidgetArea, dock);
@@ -98,8 +98,8 @@ CoreWindow::CoreWindow(QWidget *parent, Vwr::CoreGraph* coreGraph, QApplication*
 
 	connect(lineEdit,SIGNAL(returnPressed()),this,SLOT(sqlQuery()));
 
-    Lua::LuaInterface::getInstance()->executeFile("main.lua");
-    viewerWidget->getPickHandler()->setSelectionObserver(this);
+	Lua::LuaInterface::getInstance()->executeFile("main.lua");
+	viewerWidget->getPickHandler()->setSelectionObserver(this);
 }
 
 void CoreWindow::createActions()
@@ -203,18 +203,18 @@ void CoreWindow::createActions()
 	remove_all->setFocusPolicy(Qt::NoFocus);
 	connect(remove_all, SIGNAL(clicked()), this, SLOT(removeClick()));
 
-    loadFunctionCallButton = new QPushButton();
-    loadFunctionCallButton->setText("Load function calls");
-    loadFunctionCallButton->setToolTip("Load function calls");
-    loadFunctionCallButton->setFocusPolicy(Qt::NoFocus);
-    connect(loadFunctionCallButton, SIGNAL(clicked()), this, SLOT(loadFunctionCall()));
+	loadFunctionCallButton = new QPushButton();
+	loadFunctionCallButton->setText("Load function calls");
+	loadFunctionCallButton->setToolTip("Load function calls");
+	loadFunctionCallButton->setFocusPolicy(Qt::NoFocus);
+	connect(loadFunctionCallButton, SIGNAL(clicked()), this, SLOT(loadFunctionCall()));
 
-    filterNodesEdit = new QLineEdit();
-    filterEdgesEdit = new QLineEdit();
-    connect(filterNodesEdit, SIGNAL(returnPressed()), this, SLOT(filterGraph()));
-    connect(filterEdgesEdit, SIGNAL(returnPressed()), this, SLOT(filterGraph()));
+	filterNodesEdit = new QLineEdit();
+	filterEdgesEdit = new QLineEdit();
+	connect(filterNodesEdit, SIGNAL(returnPressed()), this, SLOT(filterGraph()));
+	connect(filterEdgesEdit, SIGNAL(returnPressed()), this, SLOT(filterGraph()));
 
-    luaGraphTreeView = new QTreeView();
+	luaGraphTreeView = new QTreeView();
 
 	//mody - ziadny vyber, vyber jedneho, multi vyber centrovanie
 	noSelect = new QPushButton();
@@ -334,7 +334,7 @@ void CoreWindow::createActions()
 	connect(b_send_message, SIGNAL(clicked()), this, SLOT(send_message()));
 
 	b_start_face = new QPushButton();
-    b_start_face->setText("Face Recognition");
+	b_start_face->setText("Face Recognition");
 #ifdef OPENCV_FOUND
 	connect(b_start_face, SIGNAL(clicked()), this, SLOT(create_facewindow()));
 #endif
@@ -384,7 +384,7 @@ void CoreWindow::createLeftToolBar()
 {
 	//inicializacia comboboxu typov vyberu
 	nodeTypeComboBox = new QComboBox();
-    nodeTypeComboBox->insertItems(0,(QStringList() << "All" << "Node" << "Edge"));
+	nodeTypeComboBox->insertItems(0,(QStringList() << "All" << "Node" << "Edge"));
 	nodeTypeComboBox->setFocusPolicy(Qt::NoFocus);
 	connect(nodeTypeComboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(nodeTypeComboBoxChanged(int)));
 
@@ -574,33 +574,33 @@ void CoreWindow::createCollaborationToolBar() {
 
 
 	addToolBar(Qt::RightToolBarArea,toolBar);
-    toolBar->setMaximumHeight(400);
-    toolBar->setMaximumWidth(120);
-    toolBar->setMovable(true);
+	toolBar->setMaximumHeight(400);
+	toolBar->setMaximumWidth(120);
+	toolBar->setMovable(true);
 }
 
 void CoreWindow::createMetricsToolBar()
 {
-    toolBar = new QToolBar("Metrics visualizations",this);
+	toolBar = new QToolBar("Metrics visualizations",this);
 
-    toolBar->addWidget(loadFunctionCallButton);
-    toolBar->addWidget(luaGraphTreeView);
-    toolBar->setMinimumWidth(350);
+	toolBar->addWidget(loadFunctionCallButton);
+	toolBar->addWidget(luaGraphTreeView);
+	toolBar->setMinimumWidth(350);
 
-    addToolBar(Qt::RightToolBarArea,toolBar);
-    toolBar->setMovable(true);
+	addToolBar(Qt::RightToolBarArea,toolBar);
+	toolBar->setMovable(true);
 
-    toolBar = new QToolBar("Metrics filter",this);
-    #if QT_VERSION >= 0x040700
-    filterNodesEdit->setPlaceholderText("nodes filter");
-    #endif
-    toolBar->addWidget(filterNodesEdit);
-    #if QT_VERSION >= 0x040700
-    filterEdgesEdit->setPlaceholderText("edges filter");
-    #endif
-    toolBar->addWidget(filterEdgesEdit);
-    addToolBar(Qt::BottomToolBarArea, toolBar);
-    toolBar->setMovable(true);
+	toolBar = new QToolBar("Metrics filter",this);
+	#if QT_VERSION >= 0x040700
+	filterNodesEdit->setPlaceholderText("nodes filter");
+	#endif
+	toolBar->addWidget(filterNodesEdit);
+	#if QT_VERSION >= 0x040700
+	filterEdgesEdit->setPlaceholderText("edges filter");
+	#endif
+	toolBar->addWidget(filterEdgesEdit);
+	addToolBar(Qt::BottomToolBarArea, toolBar);
+	toolBar->setMovable(true);
 }
 
 QFrame* CoreWindow::createHorizontalFrame()
@@ -693,69 +693,69 @@ void CoreWindow::playPause()
 		isPlaying = 1;
 		coreGraph->setNodesFreezed(false);
 		layout->play();
-    }
+	}
 }
 
 void CoreWindow::loadFunctionCall()
 {
-    QString file = QFileDialog::getExistingDirectory(this, "Select lua project folder", ".");
-    if (file == "") return;
-    cout << "You selected " << file.toStdString() << std::endl;
-    Lua::LuaInterface* lua = Lua::LuaInterface::getInstance();
+	QString file = QFileDialog::getExistingDirectory(this, "Select lua project folder", ".");
+	if (file == "") return;
+	cout << "You selected " << file.toStdString() << std::endl;
+	Lua::LuaInterface* lua = Lua::LuaInterface::getInstance();
 
-    Diluculum::LuaValueList path;
-    path.push_back(file.toStdString());
-    QString createGraph[] = {"function_call_graph", "extractGraph"};
-    lua->callFunction(2, createGraph, path);
-    lua->getLuaState()->doString("getGraph = function_call_graph.getGraph");
-    Lua::LuaInterface::getInstance()->getLuaState()->doString("getFullGraph = getGraph");
+	Diluculum::LuaValueList path;
+	path.push_back(file.toStdString());
+	QString createGraph[] = {"function_call_graph", "extractGraph"};
+	lua->callFunction(2, createGraph, path);
+	lua->getLuaState()->doString("getGraph = function_call_graph.getGraph");
+	Lua::LuaInterface::getInstance()->getLuaState()->doString("getFullGraph = getGraph");
 
-    Data::Graph *currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
+	Data::Graph *currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
 
-    if (currentGraph != NULL) {
-        Manager::GraphManager::getInstance()->closeGraph(currentGraph);
-    }
-    currentGraph = Manager::GraphManager::getInstance()->createNewGraph("LuaGraph");
+	if (currentGraph != NULL) {
+		Manager::GraphManager::getInstance()->closeGraph(currentGraph);
+	}
+	currentGraph = Manager::GraphManager::getInstance()->createNewGraph("LuaGraph");
 
-    layout->pause();
-    coreGraph->setNodesFreezed(true);
+	layout->pause();
+	coreGraph->setNodesFreezed(true);
 
-    Lua::LuaGraphVisualizer *visualizer = new Lua::SimpleGraphVisualizer(currentGraph, coreGraph->getCamera());
-    visualizer->visualize();
+	Lua::LuaGraphVisualizer *visualizer = new Lua::SimpleGraphVisualizer(currentGraph, coreGraph->getCamera());
+	visualizer->visualize();
 
-    coreGraph->reloadConfig();
-    if (isPlaying)
-    {
-        layout->play();
-        coreGraph->setNodesFreezed(false);
-    }
+	coreGraph->reloadConfig();
+	if (isPlaying)
+	{
+		layout->play();
+		coreGraph->setNodesFreezed(false);
+	}
 }
 
 void CoreWindow::filterGraph()
 {
-    string nodesQueryText = filterNodesEdit->text().trimmed().toStdString();
-    string edgesQueryText = filterEdgesEdit->text().trimmed().toStdString();
+	string nodesQueryText = filterNodesEdit->text().trimmed().toStdString();
+	string edgesQueryText = filterEdgesEdit->text().trimmed().toStdString();
 
-    Lua::LuaInterface * lua = Lua::LuaInterface::getInstance();
+	Lua::LuaInterface * lua = Lua::LuaInterface::getInstance();
 
-    Diluculum::LuaValueList query;
-    query.push_back(nodesQueryText);
-    QString validNodesQuery[] = {"logical_filter", "validNodeQuery"};
-    if (lua->callFunction(2, validNodesQuery, query)[0] == false){
-        AppCore::Core::getInstance()->messageWindows->showMessageBox("Upozornenie","Neplatny vyraz filtra vrcholov",false);
-        return;
-    }
-    query[0] = edgesQueryText;
-    QString validEdgesQuery[] = {"logical_filter", "validEdgeQuery"};
-    if (lua->callFunction(2, validEdgesQuery, query)[0] == false){
-        AppCore::Core::getInstance()->messageWindows->showMessageBox("Upozornenie","Neplatny vyraz filtra hran",false);
-        return;
-    }
-    query[0] = nodesQueryText;
-    query.push_back(edgesQueryText);
-    lua->getLuaState()->doString("getGraph = logical_filter.getGraph");
-    QString filterGraph[] = {"logical_filter", "filterGraph"};
-    lua->callFunction(2, filterGraph, query);
+	Diluculum::LuaValueList query;
+	query.push_back(nodesQueryText);
+	QString validNodesQuery[] = {"logical_filter", "validNodeQuery"};
+	if (lua->callFunction(2, validNodesQuery, query)[0] == false){
+		AppCore::Core::getInstance()->messageWindows->showMessageBox("Upozornenie","Neplatny vyraz filtra vrcholov",false);
+		return;
+	}
+	query[0] = edgesQueryText;
+	QString validEdgesQuery[] = {"logical_filter", "validEdgeQuery"};
+	if (lua->callFunction(2, validEdgesQuery, query)[0] == false){
+		AppCore::Core::getInstance()->messageWindows->showMessageBox("Upozornenie","Neplatny vyraz filtra hran",false);
+		return;
+	}
+	query[0] = nodesQueryText;
+	query.push_back(edgesQueryText);
+	lua->getLuaState()->doString("getGraph = logical_filter.getGraph");
+	QString filterGraph[] = {"logical_filter", "filterGraph"};
+	lua->callFunction(2, filterGraph, query);
 }
 
 void CoreWindow::noSelectClicked(bool checked)
@@ -1955,29 +1955,29 @@ Vwr::CameraManipulator* CoreWindow::getCameraManipulator() {
 
 void CoreWindow::onChange()
 {
-    QAbstractItemModel *model = luaGraphTreeView->model();
-    if (model != NULL){
-        delete model;
-        model = NULL;
-    }
+	QAbstractItemModel *model = luaGraphTreeView->model();
+	if (model != NULL){
+		delete model;
+		model = NULL;
+	}
 
-    // Remove all browsers on select. Currently only one browser is visible
-    coreGraph->getBrowsersGroup()->clearBrowsers();
+	// Remove all browsers on select. Currently only one browser is visible
+	coreGraph->getBrowsersGroup()->clearBrowsers();
 
-    QLinkedList<osg::ref_ptr<Data::Node> > *selected = viewerWidget->getPickHandler()->getSelectedNodes();
-    if (selected->size() == 1){
-        if (Lua::LuaGraph::getInstance()->getNodes()->contains(selected->first()->getId())){
+	QLinkedList<osg::ref_ptr<Data::Node> > *selected = viewerWidget->getPickHandler()->getSelectedNodes();
+	if (selected->size() == 1){
+		if (Lua::LuaGraph::getInstance()->getNodes()->contains(selected->first()->getId())){
 
-            // Get node info
-            Data::Node *qtNode = selected->first();
-            Lua::LuaNode *luaNode = Lua::LuaGraph::getInstance()->getNodes()->value(qtNode->getId());
-            Lua::LuaGraphTreeModel *model = new Lua::LuaGraphTreeModel(luaNode);
+			// Get node info
+			Data::Node *qtNode = selected->first();
+			Lua::LuaNode *luaNode = Lua::LuaGraph::getInstance()->getNodes()->value(qtNode->getId());
+			Lua::LuaGraphTreeModel *model = new Lua::LuaGraphTreeModel(luaNode);
 
-            // Set lua model to tree view UI
-            luaGraphTreeView->setModel(model);
+			// Set lua model to tree view UI
+			luaGraphTreeView->setModel(model);
 
-            // Add browser directly to browsers group
-            coreGraph->getBrowsersGroup()->addBrowser(qtNode->getCurrentPosition(), model);
-        }
-    }
+			// Add browser directly to browsers group
+			coreGraph->getBrowsersGroup()->addBrowser(qtNode->getCurrentPosition(), model);
+		}
+	}
 }

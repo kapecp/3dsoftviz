@@ -98,17 +98,17 @@ public slots:
 				*/
 	void playPause();
 
-    /**
-                *  \fn public  loadFunctionCall()
-                *  \brief load function call clicked
-                */
-    void loadFunctionCall();
+	/**
+				*  \fn public  loadFunctionCall()
+				*  \brief load function call clicked
+				*/
+	void loadFunctionCall();
 
-    /**
-                *  \fn public  filterGraph()
-                *  \brief filter graph from query
-                */
-    void filterGraph();
+	/**
+				*  \fn public  filterGraph()
+				*  \brief filter graph from query
+				*/
+	void filterGraph();
 
 	/**
 				*  \fn public  noSelectClicked(bool checked
@@ -402,29 +402,29 @@ private:
 		*/
 	QPushButton * separate;
 
-    /**
-        *  QPushButton * loadFunctionCallButton
-        *  \brief Action for loading function call graph from lua
-        */
-    QPushButton * loadFunctionCallButton;
+	/**
+		*  QPushButton * loadFunctionCallButton
+		*  \brief Action for loading function call graph from lua
+		*/
+	QPushButton * loadFunctionCallButton;
 
-    /**
-        *  QLineEdit * filterNodesEdit
-        *  \brief Edit area for node filter query
-        */
-    QLineEdit * filterNodesEdit;
+	/**
+		*  QLineEdit * filterNodesEdit
+		*  \brief Edit area for node filter query
+		*/
+	QLineEdit * filterNodesEdit;
 
-    /**
-        *  QLineEdit * filterEdgesEdit
-        *  \brief Edit area for edge filter query
-        */
-    QLineEdit * filterEdgesEdit;
+	/**
+		*  QLineEdit * filterEdgesEdit
+		*  \brief Edit area for edge filter query
+		*/
+	QLineEdit * filterEdgesEdit;
 
-    /**
-        *  QTreeView * luaGraphTreeView
-        *  \brief TreeView for exploring selected node of lua graph
-        */
-    QTreeView * luaGraphTreeView;
+	/**
+		*  QTreeView * luaGraphTreeView
+		*  \brief TreeView for exploring selected node of lua graph
+		*/
+	QTreeView * luaGraphTreeView;
 
 	/**
 		*  QPushButton * noSelect
@@ -640,11 +640,11 @@ private:
 		*/
 	void createCollaborationToolBar();
 
-    /**
-        *  \fn private  createMetricsToolBar
-        *  \brief Create metrics toolBar
-        */
-    void createMetricsToolBar();
+	/**
+		*  \fn private  createMetricsToolBar
+		*  \brief Create metrics toolBar
+		*/
+	void createMetricsToolBar();
 
 	/**
 		*  \fn private  createHorizontalFrame
@@ -764,7 +764,7 @@ private:
 			QSharedPointer<Layout::RestrictionRemovalHandler> removalHandler
 			);
 
-    void onChange();
+	void onChange();
 
 };
 }

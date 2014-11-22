@@ -170,8 +170,8 @@ public:
 	Vwr::NodeGroup * getNodesGroup() { return nodesGroup; }
 	Vwr::NodeGroup * getMetaNodesGroup() { return qmetaNodesGroup; }
 	Vwr::EdgeGroup * getEdgesGroup() { return edgesGroup; }
-    Vwr::EdgeGroup * getMetaEdgesGroup() { return qmetaEdgesGroup; }
-    Vwr::BrowserGroup * getBrowsersGroup() { return browsersGroup; }
+	Vwr::EdgeGroup * getMetaEdgesGroup() { return qmetaEdgesGroup; }
+	Vwr::BrowserGroup * getBrowsersGroup() { return browsersGroup; }
 
 private:
 
@@ -210,11 +210,11 @@ private:
 				 */
 	QSharedPointer<Vwr::RestrictionManipulatorsGroup> restrictionManipulatorsGroup;
 
-    /**
-        *  Vwr::BrowserGroup * browsersGroup
-        *  \brief browser group
-        */
-    Vwr::BrowserGroup * browsersGroup;
+	/**
+		*  Vwr::BrowserGroup * browsersGroup
+		*  \brief browser group
+		*/
+	Vwr::BrowserGroup * browsersGroup;
 
 	/**
 		*  Data::Graph * graph
@@ -351,15 +351,15 @@ private:
 	int restrictionVisualizationsPosition;
 
 	/**
-         * \brief Index of restrictionManipulatorsGroup in the root group.
-         */
+		 * \brief Index of restrictionManipulatorsGroup in the root group.
+		 */
 	int restrictionManipulatorsPosition;
 
-    /**
-        *  int groupsPosition
-        *  \brief browsers group position
-        */
-    int browsersPosition;
+	/**
+		*  int groupsPosition
+		*  \brief browsers group position
+		*/
+	int browsersPosition;
 
 	/**
 		*  int customNodesPosition

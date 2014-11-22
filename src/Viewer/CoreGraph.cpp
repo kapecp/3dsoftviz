@@ -85,8 +85,8 @@ void CoreGraph::reload(Data::Graph * graph)
 	}
 
 	this->nodesGroup = new Vwr::NodeGroup(in_nodes);
-    root->addChild(nodesGroup->getGroup());
-    nodesPosition = currentPos++;
+	root->addChild(nodesGroup->getGroup());
+	nodesPosition = currentPos++;
 
 	this->edgesGroup = new Vwr::EdgeGroup(in_edges, appConf->getValue("Viewer.Textures.EdgeScale").toFloat());
 	//this->edgesGroup = new Vwr::EdgeGroup(in_edges, 10);
@@ -111,11 +111,11 @@ void CoreGraph::reload(Data::Graph * graph)
 
 	this->restrictionManipulatorsGroup = QSharedPointer<Vwr::RestrictionManipulatorsGroup> (new Vwr::RestrictionManipulatorsGroup);
 	root->addChild (restrictionManipulatorsGroup->getGroup ());
-    restrictionManipulatorsPosition = currentPos++;
+	restrictionManipulatorsPosition = currentPos++;
 
-    this->browsersGroup = new Vwr::BrowserGroup();
-    root->addChild(browsersGroup->getGroup());
-    browsersPosition = currentPos++;
+	this->browsersGroup = new Vwr::BrowserGroup();
+	root->addChild(browsersGroup->getGroup());
+	browsersPosition = currentPos++;
 
 	if (this->graph != NULL) {
 		graph->getRestrictionsManager().setObservers (restrictionVisualizationsGroup, restrictionManipulatorsGroup);
@@ -255,7 +255,7 @@ void CoreGraph::update()
 
 	edgesGroup->updateEdgeCoords();
 	qmetaEdgesGroup->updateEdgeCoords();
-    browsersGroup->updateBrowsers();
+	browsersGroup->updateBrowsers();
 	root->addChild(initCustomNodes());
 
 	//posli layout ostatnym klientom (ak nejaki su)
@@ -277,13 +277,13 @@ void CoreGraph::synchronize()
 
 void CoreGraph::setEdgeLabelsVisible(bool visible)
 {
-    QMap<qlonglong, osg::ref_ptr<Data::Edge> >::const_iterator i = in_edges->constBegin();
+	QMap<qlonglong, osg::ref_ptr<Data::Edge> >::const_iterator i = in_edges->constBegin();
 
-    while (i != in_edges->constEnd())
-    {
-        (*i)->showLabel(visible);
-        ++i;
-    }
+	while (i != in_edges->constEnd())
+	{
+		(*i)->showLabel(visible);
+		++i;
+	}
 }
 
 void CoreGraph::setNodeLabelsVisible(bool visible)
