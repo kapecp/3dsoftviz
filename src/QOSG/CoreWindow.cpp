@@ -1960,20 +1960,24 @@ void CoreWindow::onChange()
         delete model;
         model = NULL;
     }
+
+    // Remove all browsers on select. Currently only one browser is visible
+    coreGraph->getBrowsersGroup()->clearBrowsers();
+
     QLinkedList<osg::ref_ptr<Data::Node> > *selected = viewerWidget->getPickHandler()->getSelectedNodes();
     if (selected->size() == 1){
         if (Lua::LuaGraph::getInstance()->getNodes()->contains(selected->first()->getId())){
-            std::cout << "Lua node selected\n";
-            std::cout << flush;
 
+            // Get node info
             Data::Node *qtNode = selected->first();
             Lua::LuaNode *luaNode = Lua::LuaGraph::getInstance()->getNodes()->value(qtNode->getId());
             Lua::LuaGraphTreeModel *model = new Lua::LuaGraphTreeModel(luaNode);
+
+            // Set lua model to tree view UI
             luaGraphTreeView->setModel(model);
 
+            // Add browser directly to browsers group
             coreGraph->getBrowsersGroup()->addBrowser(qtNode->getCurrentPosition(), model);
         }
-    }else{
-        coreGraph->getBrowsersGroup()->clearBrowsers();
     }
 }

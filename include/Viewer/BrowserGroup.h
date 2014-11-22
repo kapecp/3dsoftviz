@@ -7,7 +7,6 @@
 #include <QList>
 
 #include "Data/Node.h"
-#include "Util/ApplicationConfig.h"
 #include "LuaGraph/LuaGraphTreeModel.h"
 
 namespace Vwr
@@ -54,6 +53,11 @@ public:
         */
     void clearBrowsers();
 
+    /**
+        *  \fn public  updateBrowsers
+        *  \brief Animates browsers pop out
+        */
+    void updateBrowsers();
 
 private:
     /**
@@ -63,10 +67,20 @@ private:
     osg::ref_ptr<osg::Group> group;
 
     /**
-        *  Util::ApplicationConfig * appConf
-        *  \brief application configuration
+        *  \brief List of browsers transforms
         */
-    Util::ApplicationConfig* appConf;
+    QList<osg::ref_ptr<osg::AutoTransform> > *browsersTransforms;
+
+    /**
+        *  \fn public  interpolate
+        *  \brief Calculates interpolation function
+        *  \param  currentFrame
+        *  \param  endFrame
+        *  \param  startValue
+        *  \param  endValue
+        *  \return Caculated interpolation value
+        */
+    double interpolate(long currentFrame, long endFrame, double startValue, double endValue);
 };
 }
 

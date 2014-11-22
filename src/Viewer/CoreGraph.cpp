@@ -255,6 +255,7 @@ void CoreGraph::update()
 
 	edgesGroup->updateEdgeCoords();
 	qmetaEdgesGroup->updateEdgeCoords();
+    browsersGroup->updateBrowsers();
 	root->addChild(initCustomNodes());
 
 	//posli layout ostatnym klientom (ak nejaki su)
