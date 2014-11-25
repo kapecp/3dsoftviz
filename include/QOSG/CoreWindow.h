@@ -1081,7 +1081,8 @@ public:
     void createGraphSlider();
 
     /**
-     * @brief createSelectionComboBox initialize combobox
+     * @brief createSelectionComboBox initialize combobox for selecting parts of graph
+     * available options are node,edge, cluster, all
      */
     void createSelectionComboBox();
 protected:
