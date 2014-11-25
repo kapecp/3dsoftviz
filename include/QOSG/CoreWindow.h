@@ -10,6 +10,7 @@
 #else
 #include <Qt/qstringlist.h>
 #endif
+#include <QOSG/qtcolorpicker.h>
 
 #include <QMainWindow>
 #include <QToolBar>
@@ -1027,6 +1028,62 @@ public:
          */
     QCheckBox *getChbCameraRot() const;
 
+    /**
+     * @author Peter Mendel
+     * @brief createGraphTab add elements to QWidget for graph functionality
+     * @param line pointer to add line
+     * @return QWidget for graph functionality
+     */
+    QWidget * createGraphTab(QFrame* line);
+
+    /**
+     * @author Peter Mendel
+     * @brief createConstraintsTab add elements to QWidget for constraints functionality
+     * @param line pointer to add line
+     * @return QWidget for constraints functionality
+     */
+    QWidget * createConstraintsTab(QFrame* line);
+
+    /**
+     * @author Peter Mendel
+     * @brief createConnectionsTab add elements to QWidget for connections functionality
+     * @param line pointer to add line
+     * @return QWidget for connections functionality
+     */
+    QWidget * createConnectionsTab(QFrame* line);
+
+    /**
+     * @author Peter Mendel
+     * @brief createClusteringTab add elements to QWidget for clustering functionality
+     * @param line pointer to add line
+     * @return QWidget for clustering functionality
+     */
+    QWidget * createClusteringTab(QFrame* line);
+
+    /**
+     * @author Peter Mendel
+     * @brief createMoreFeaturesTab add elements to QWidget for more features functionality
+     * @param line pointer to add line
+     * @return QWidget for clustering functionality
+     */
+    QWidget * createMoreFeaturesTab(QFrame* line);
+
+    /**
+     * @author Peter Mendel
+     * @brief createColorPicker initialize color picker
+     * @return pointer of color picker
+     */
+    QtColorPicker * createColorPicker();
+
+    /**
+     * @brief createGraphSlider initialize slider
+     */
+    void createGraphSlider();
+
+    /**
+     * @brief createSelectionComboBox initialize combobox
+     */
+    void createSelectionComboBox();
 protected:
 
     /**

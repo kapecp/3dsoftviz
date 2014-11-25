@@ -4,7 +4,6 @@
 #include "QOSG/OptionsWindow.h"
 #include "QOSG/LoadGraphWindow.h"
 #include "QOSG/MessageWindows.h"
-#include "QOSG/qtcolorpicker.h"
 
 #include "Network/Server.h"
 #include "Network/Client.h"
@@ -586,30 +585,21 @@ void CoreWindow::createMenus()
     help->addAction(about);
 }
 
-void CoreWindow::createLeftToolBar()
+QtColorPicker * CoreWindow::createColorPicker()
 {
-    //inicializacia comboboxu typov vyberu
-    nodeTypeComboBox = new QComboBox();
-    nodeTypeComboBox->insertItems(0,(QStringList() << "All" << "Node" << "Edge" << "Cluster"));
-    nodeTypeComboBox->setFocusPolicy(Qt::NoFocus);
-    connect(nodeTypeComboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(nodeTypeComboBoxChanged(int)));
-
-    //inicializacia colorpickera
     QtColorPicker * colorPicker = new QtColorPicker();
     colorPicker->setStandardColors();
     connect(colorPicker,SIGNAL(colorChanged(const QColor &)),this,SLOT(colorPickerChanged(const QColor &)));
 
-    //inicializacia slideru
-    slider = new QSlider(Qt::Horizontal,this);
-    slider->setTickPosition(QSlider::TicksAbove);
-    slider->setTickInterval(5);
-    slider->setValue(5);
-    slider->setFocusPolicy(Qt::NoFocus);
-    connect(slider,SIGNAL(valueChanged(int)),this,SLOT(sliderValueChanged(int)));
+    return colorPicker;
+}
 
-    QFrame* line;
+QWidget * CoreWindow::createGraphTab(QFrame* line)
+{
+    QtColorPicker* colorPicker = createColorPicker();
+    createGraphSlider();
+    createSelectionComboBox();
 
-    //Graph tab////////////////////////////////////
     QWidget* wGraph = new QWidget();
 
     QFormLayout* lGraph = new QFormLayout(wGraph);
@@ -654,7 +644,11 @@ void CoreWindow::createLeftToolBar()
 
     wGraph->setLayout(lGraph);
 
-    //Constraints tab///////////////////////////////////////////
+    return wGraph;
+}
+
+QWidget * CoreWindow::createConstraintsTab(QFrame* line)
+{
     QWidget * wConstraints = new QWidget();
     QFormLayout * lConstraints = new QFormLayout(wConstraints);
     lConstraints->setContentsMargins(1,1,1,1);
@@ -699,8 +693,11 @@ void CoreWindow::createLeftToolBar()
 
     wConstraints->setLayout(lConstraints);
 
+    return wConstraints;
+}
 
-    //Connections session tab//////////////////////////////
+QWidget * CoreWindow::createConnectionsTab(QFrame* line)
+{
     QWidget * wManage = new QWidget();
     QFormLayout * lManage = new QFormLayout(wManage);
     lManage->setContentsMargins(1,1,1,1);
@@ -708,11 +705,9 @@ void CoreWindow::createLeftToolBar()
 
     lManage->addRow(new QLabel("Nick:"));
     lManage->addRow(le_client_name);
-//    le_client_name->setMaximumWidth(109);
     lManage->addRow(b_start_server);
     lManage->addRow(new QLabel("Host:"));
     lManage->addRow(le_server_addr);
-//    le_server_addr->setMaximumWidth(109);
     lManage->addRow(b_start_client);
     line = createLine();
     lManage->addRow(line);
@@ -737,7 +732,11 @@ void CoreWindow::createLeftToolBar()
 
     wManage->setLayout(lManage);
 
-    //Clustering tab//////////////////////////////
+    return wManage;
+}
+
+QWidget * CoreWindow::createClusteringTab(QFrame* line)
+{
     QWidget * wClustering = new QWidget();
     QFormLayout * lClustering = new QFormLayout(wClustering);
     lClustering->setContentsMargins(1,1,1,1);
@@ -767,7 +766,11 @@ void CoreWindow::createLeftToolBar()
 
     wClustering->setLayout(lClustering);
 
-    //More features tab//////////////////////////////
+    return wClustering;
+}
+
+QWidget * CoreWindow::createMoreFeaturesTab(QFrame* line)
+{
     QWidget * wMore = new QWidget();
     QFormLayout * lMore = new QFormLayout(wMore);
     lMore->setContentsMargins(1,1,1,1);
@@ -821,6 +824,41 @@ void CoreWindow::createLeftToolBar()
 
     wMore->setLayout(lMore);
 
+    return wMore;
+}
+
+void CoreWindow::createGraphSlider()
+{
+    slider = new QSlider(Qt::Horizontal,this);
+    slider->setTickPosition(QSlider::TicksAbove);
+    slider->setTickInterval(5);
+    slider->setValue(5);
+    slider->setFocusPolicy(Qt::NoFocus);
+    connect(slider,SIGNAL(valueChanged(int)),this,SLOT(sliderValueChanged(int)));
+}
+
+void CoreWindow::createSelectionComboBox()
+{
+    nodeTypeComboBox = new QComboBox();
+    nodeTypeComboBox->insertItems(0,(QStringList() << "All" << "Node" << "Edge" << "Cluster"));
+    nodeTypeComboBox->setFocusPolicy(Qt::NoFocus);
+    connect(nodeTypeComboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(nodeTypeComboBoxChanged(int)));
+}
+
+void CoreWindow::createLeftToolBar()
+{
+    QFrame* line = NULL;
+
+    QWidget* wGraph = createGraphTab(line);
+
+    QWidget* wConstraints = createConstraintsTab(line);
+
+    QWidget* wManage = createConnectionsTab(line);
+
+    QWidget* wClustering = createClusteringTab(line);
+
+    QWidget* wMore = createMoreFeaturesTab(line);
+
     toolBox = new QToolBox();
     toolBox->setSizePolicy(QSizePolicy(QSizePolicy::Maximum, QSizePolicy::Ignored));
     toolBox->setMinimumWidth(140);
@@ -840,10 +878,8 @@ void CoreWindow::createLeftToolBar()
     toolBar->setMaximumWidth(200);
     toolBar->setMovable(false);
 
-
     /*toolBar->addWidget(le_message);
     toolBar->addWidget(b_send_message); */
-
 }
 
 QFrame* CoreWindow::createLine()
