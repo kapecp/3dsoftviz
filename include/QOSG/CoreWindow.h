@@ -10,6 +10,7 @@
 #else
 #include <Qt/qstringlist.h>
 #endif
+#include <QOSG/qtcolorpicker.h>
 
 #include <QMainWindow>
 #include <QToolBar>
@@ -20,6 +21,7 @@
 #include <QMenuBar>
 #include <QtGui>
 #include <QLineEdit>
+#include <QToolBox>
 
 #include "Layout/ShapeGetter.h"
 #include "Layout/RestrictionRemovalHandler.h"
@@ -492,6 +494,12 @@ private:
     QToolBar * toolBar;
 
     /**
+        *  ToolBox * toolBox
+        *  \brief Pointer to toolbox
+        */
+    QToolBox * toolBox;
+
+    /**
         *  QAction * quit
         *  \brief Action to quit aplication
         */
@@ -521,6 +529,11 @@ private:
         */
     QAction * saveGraph;
 
+    /**
+         *  QAction * about
+        *  \brief Pointer to show info about software
+        */
+    QAction * about;
 
     /**
         *  QPushButton * play
@@ -761,15 +774,11 @@ private:
      */
     QPushButton *b_start_gloves;
 
-
-    /*
+    /**
      *CheckBox for mapinulation camera or object
      *@brief chb_camera_rot
      */
     QCheckBox * chb_camera_rot;
-
-
-
 
     /**
         *  QAction * load
@@ -800,6 +809,12 @@ private:
         *  \brief Pointer to edit menu
         */
     QMenu * edit;
+
+    /**
+        *  QMenu * help
+        *  \brief Pointer to edit menu
+        */
+    QMenu * help;
 
     /**
         *  QOSG::ViewerQT * viewerWidget
@@ -844,35 +859,18 @@ private:
     void createLeftToolBar();
 
     /**
-        *  \fn private  createRightToolBar
-        *  \brief Create right toolBar
-        */
-    void createRightToolBar();
-
-    /**
-        *  \fn private  createCollaborationToolBar
-        *  \brief Create collaboration toolBar
-        */
-    void createCollaborationToolBar();
-
-    /**
-        *  \fn private  createClusterToolBar
-        *  \brief Create toolBar with clustering actions
-        */
-    void createClusterToolBar();
-
-    /**
-        *  \fn private  createAugmentedRealityToolBar
-        *  \brief Create Augmented Reality ToolBar
-        */
-    void createAugmentedRealityToolBar();
-
-    /**
         *  \fn private  createHorizontalFrame
         *  \brief Crate frame with horizontal label
         *  \return QFrame * created frame
         */
     QFrame * createHorizontalFrame();
+
+    /**
+        *  \fn private  createLine
+        *  \brief Creates horizontal line
+        *  \return QFrame * created line
+        */
+    QFrame * createLine();
 
     /**
         *  Vwr::CoreGraph * coreGraph
@@ -1044,6 +1042,63 @@ public:
          */
     QCheckBox *getChbCameraRot() const;
 
+    /**
+     * @author Peter Mendel
+     * @brief createGraphTab add elements to QWidget for graph functionality
+     * @param line pointer to add line
+     * @return QWidget for graph functionality
+     */
+    QWidget * createGraphTab(QFrame* line);
+
+    /**
+     * @author Peter Mendel
+     * @brief createConstraintsTab add elements to QWidget for constraints functionality
+     * @param line pointer to add line
+     * @return QWidget for constraints functionality
+     */
+    QWidget * createConstraintsTab(QFrame* line);
+
+    /**
+     * @author Peter Mendel
+     * @brief createConnectionsTab add elements to QWidget for connections functionality
+     * @param line pointer to add line
+     * @return QWidget for connections functionality
+     */
+    QWidget * createConnectionsTab(QFrame* line);
+
+    /**
+     * @author Peter Mendel
+     * @brief createClusteringTab add elements to QWidget for clustering functionality
+     * @param line pointer to add line
+     * @return QWidget for clustering functionality
+     */
+    QWidget * createClusteringTab(QFrame* line);
+
+    /**
+     * @author Peter Mendel
+     * @brief createMoreFeaturesTab add elements to QWidget for more features functionality
+     * @param line pointer to add line
+     * @return QWidget for clustering functionality
+     */
+    QWidget * createMoreFeaturesTab(QFrame* line);
+
+    /**
+     * @author Peter Mendel
+     * @brief createColorPicker initialize color picker
+     * @return pointer of color picker
+     */
+    QtColorPicker * createColorPicker();
+
+    /**
+     * @brief createGraphSlider initialize slider
+     */
+    void createGraphSlider();
+
+    /**
+     * @brief createSelectionComboBox initialize combobox for selecting parts of graph
+     * available options are node,edge, cluster, all
+     */
+    void createSelectionComboBox();
 protected:
 
     /**
