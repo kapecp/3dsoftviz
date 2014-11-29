@@ -64,7 +64,9 @@ if( USE_STRICT_COMPILE_WARNINGS )
                         # too much warnings, but should be used: -Wold-style-cast -Woverloaded-virtual -Wuseless-cast -Wsign-conversion
 			# class size optimizations (not really needed): -Wpadded
 			# only for C: -Wold-style-definition -Wstrict-prototypes -Wmissing-prototypes
-        endif()
+		elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+			set( FLAGS_FOR_DEBUG "-ansi -pedantic -Wall -Wcast-align -Wcast-qual -Wchar-subscripts -Wcomment -Wconversion -Wctor-dtor-privacy -Wdisabled-optimization -Wextra -Wfloat-equal  -Wformat  -Wformat-nonliteral -Wformat-security  -Wformat-y2k -Wformat=2  -Wimport  -Winit-self -Winline -Winvalid-pch -Wlogical-op -Wlong-long -Wmissing-braces -Wmissing-declarations -Wmissing-field-initializers -Wmissing-format-attribute   -Wmissing-include-dirs -Wmissing-noreturn -Wnoexcept  -Wpacked  -Wparentheses -Wpointer-arith -Wredundant-decls -Wreturn-type -Wsequence-point -Wsign-compare  -Wsign-promo -Wstack-protector -Wstrict-aliasing=2 -Wstrict-null-sentinel -Wstrict-overflow=5 -Wswitch -Wswitch-default -Wswitch-enum -Wtrigraphs -Wundef -Wuninitialized -Wunknown-pragmas -Wunreachable-code -Wunsafe-loop-optimizations -Wvariadic-macros -Wvolatile-register-var -Wwrite-strings  -Wno-unused-parameter -Wno-unused" )
+		endif()
 endif()
 
 # Default build type
@@ -128,10 +130,10 @@ if( USE_BUILTIN_DEPENDENCIES )
 
 	# Build libnoise
 	ExternalProject_Add( dep_libnoise
-	  	PREFIX libnoise
-	  	SOURCE_DIR ${DEP_SOURCE}/libnoise
-	  	BINARY_DIR libnoise
-	  	CMAKE_ARGS
+		PREFIX libnoise
+		SOURCE_DIR ${DEP_SOURCE}/libnoise
+		BINARY_DIR libnoise
+		CMAKE_ARGS
 			-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
 			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
 			-C ${CMAKE_CURRENT_BINARY_DIR}/config.cmake
@@ -188,15 +190,15 @@ if( USE_BUILTIN_DEPENDENCIES )
 			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
 	)
 
-        # Build luafilesystem
-        ExternalProject_Add ( dep_luafilesystem
-                PREFIX luafilesystem
-                SOURCE_DIR ${DEP_SOURCE}/luafilesystem
-                BINARY_DIR luafilesystem
-                CMAKE_ARGS
-                        -DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
-                        -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-        )
+		# Build luafilesystem
+		ExternalProject_Add ( dep_luafilesystem
+				PREFIX luafilesystem
+				SOURCE_DIR ${DEP_SOURCE}/luafilesystem
+				BINARY_DIR luafilesystem
+				CMAKE_ARGS
+						-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
+						-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
+		)
 
 	# Build aruco
 	#include( ExternalProject )
@@ -422,7 +424,7 @@ file(GLOB_RECURSE SRC_QOPENCV  "src/QOpenCV/*.cpp")
 # Source files
 set(SRC
 	${SRC_MAIN} ${SRC_CORE} ${SRC_DATA} ${SRC_IMPORTER}
-        ${SRC_LAYOUT} ${SRC_LUAGRAPH} ${SRC_LUAINTERFACE} ${SRC_MANAGER} ${SRC_MATH}
+		${SRC_LAYOUT} ${SRC_LUAGRAPH} ${SRC_LUAINTERFACE} ${SRC_MANAGER} ${SRC_MATH}
 	${SRC_NETWORK} ${SRC_NOISE}
 	${SRC_OSGQTBROWSER} ${SRC_QOSG} ${SRC_UTIL} ${SRC_VIEWER} ${SRC_MODEL}
 )
@@ -452,13 +454,13 @@ file(GLOB_RECURSE HEADER_QOPENCV  "include/QOpenCV/*.h")
 
 set(INCL
 	${HEADER_CORE} ${HEADER_DATA} ${HEADER_IMPORTER}
-        ${HEADER_LAYOUT} ${HEADER_LUAGRAPH} ${HEADER_LUAINTERFACE} ${HEADER_MANAGER} ${HEADER_MATH}
+		${HEADER_LAYOUT} ${HEADER_LUAGRAPH} ${HEADER_LUAINTERFACE} ${HEADER_MANAGER} ${HEADER_MATH}
 	${HEADER_NETWORK} ${HEADER_NOISE}
 	${HEADER_OSGQTBROWSER} ${HEADER_QOSG} ${HEADER_UTIL} ${HEADER_VIEWER} ${HEADER_MODEL}
 )
 
 if( OpenCV_FOUND )
-    list(APPEND INCL ${HEADER_OPENCV} ${HEADER_QOPENCV} ${HEADER_ARUCO})
+	list(APPEND INCL ${HEADER_OPENCV} ${HEADER_QOPENCV} ${HEADER_ARUCO})
 endif()
 
 
@@ -495,10 +497,10 @@ source_group(\\headers\\LuaGraph "^.*LuaGraph/.*h$")
 source_group(\\headers\\LuaInterface "^.*LuaInterface/.*h$")
 
 if(OpenCV_FOUND)
-    source_group(\\src\\QOpenCV "^.*QOpenCV/.*$")
-    source_group(\\src\\OpenCV "^.*OpenCV/.*$")
-    source_group(\\headers\\QOpenCV "^.*QOpenCV/.*h$")
-    source_group(\\headers\\OpenCV "^.*OpenCV/.*h$")
+	source_group(\\src\\QOpenCV "^.*QOpenCV/.*$")
+	source_group(\\src\\OpenCV "^.*OpenCV/.*$")
+	source_group(\\headers\\QOpenCV "^.*QOpenCV/.*h$")
+	source_group(\\headers\\OpenCV "^.*OpenCV/.*h$")
 endif()
 
 # Group generated moc files
@@ -536,7 +538,7 @@ if( COMMAND cotire )
 		set_target_properties(${3DSOFTVIZ_NAME} PROPERTIES COTIRE_UNITY_LINK_LIBRARIES_INIT "COPY")
 	endif()
 
-        cotire( ${3DSOFTVIZ_NAME} CONFIGURATIONS Release MinSizeRel Debug)
+		cotire( ${3DSOFTVIZ_NAME} CONFIGURATIONS Release MinSizeRel Debug)
 
 	if (${CMAKE_VERSION} VERSION_LESS "2.8.11")
 		target_link_libraries(${3DSOFTVIZ_NAME}_unity
@@ -545,9 +547,9 @@ if( COMMAND cotire )
 			${OSGVIEWER_LIBRARIES}
 			libnoise)
 
-                if(OpenCV_FOUND)
-                    target_link_libraries( ${3DSOFTVIZ_NAME}_unity ${OpenCV_LIBS} )
-                endif()
+				if(OpenCV_FOUND)
+					target_link_libraries( ${3DSOFTVIZ_NAME}_unity ${OpenCV_LIBS} )
+				endif()
 	endif()
 
 	if( MSVC )
@@ -555,10 +557,10 @@ if( COMMAND cotire )
 		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Zm200" CACHE STRING "" FORCE)
 	endif()
 
-        # fix for Diluculum and LuaJIT on 64bit OSX: Lua new_state returned NULL, LuaJIT needs following flags
-        if( APPLE )
-            set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pagezero_size 10000 -image_base 100000000" CACHE STRING "" FORCE)
-        endif()
+		# fix for Diluculum and LuaJIT on 64bit OSX: Lua new_state returned NULL, LuaJIT needs following flags
+		if( APPLE )
+			set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pagezero_size 10000 -image_base 100000000" CACHE STRING "" FORCE)
+		endif()
 
 endif()
 
@@ -584,11 +586,11 @@ install(DIRECTORY resources/ DESTINATION ${INSTALL_DATA} COMPONENT Data)
 # Install built in dependencies unless we are building an OSX Bundle
 if( USE_BUILTIN_DEPENDENCIES )
 	# Make sure dependencies are built
-        add_dependencies( ${3DSOFTVIZ_NAME} libnoise dep_diluculum dep_luametrics dep_leg dep_lpeg dep_luajit dep_luafilesystem )
-        #add_dependencies( ${3DSOFTVIZ_NAME} dep_aruco )
+		add_dependencies( ${3DSOFTVIZ_NAME} libnoise dep_diluculum dep_luametrics dep_leg dep_lpeg dep_luajit dep_luafilesystem )
+		#add_dependencies( ${3DSOFTVIZ_NAME} dep_aruco )
 	if (COMMAND cotire)
-                add_dependencies( ${3DSOFTVIZ_NAME}_unity libnoise dep_diluculum dep_luametrics dep_leg dep_lpeg dep_luajit dep_luafilesystem )
-                #add_dependencies( ${3DSOFTVIZ_NAME}_unity dep_aruco )
+				add_dependencies( ${3DSOFTVIZ_NAME}_unity libnoise dep_diluculum dep_luametrics dep_leg dep_lpeg dep_luajit dep_luafilesystem )
+				#add_dependencies( ${3DSOFTVIZ_NAME}_unity dep_aruco )
 	endif()
 
 	# Install all dependencies
