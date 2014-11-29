@@ -23,14 +23,13 @@ void BrowserGroup::addBrowser(osg::Vec3 position, Lua::LuaGraphTreeModel *model)
 
 	// Create webView
 	osg::ref_ptr<QWebViewImage> webView = new QWebViewImage();
-	webView->navigateTo("http://www.google.com");
+	webView->navigateTo("../share/3DSOFTVIZ/webview/index.html");
 
 	// Add it to browser
 	osgWidget::GeometryHints hints(osg::Vec3(30.0f,30.0f,0.0f),
 								   osg::Vec3(100.0f,0.0f,0.0f),
 								   osg::Vec3(0.0f,100.0f,0.0f),
-								   osg::Vec4(1.0f,1.0f,1.0f,1.0f),
-								   osgWidget::GeometryHints::RESIZE_HEIGHT_TO_MAINTAINCE_ASPECT_RATIO);
+								   osg::Vec4(0.0f,0.0f,0.0f,0.0f));
 
 	osg::ref_ptr<osgWidget::Browser> browser = new osgWidget::Browser;
 	browser->assign(webView, hints);
