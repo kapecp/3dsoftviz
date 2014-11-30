@@ -1,4 +1,5 @@
 #include "Viewer/BrowserGroup.h"
+#include <osg/ValueObject>
 
 #include <math.h>
 
@@ -151,8 +152,8 @@ void BrowserGroup::addBrowser(osg::Vec3 position, QList<Lua::LuaGraphTreeModel*>
 
 	// Add it to browser
 	osgWidget::GeometryHints hints(osg::Vec3(30.0f,30.0f,0.0f),
-								   osg::Vec3(100.0f,0.0f,0.0f),
-								   osg::Vec3(0.0f,100.0f,0.0f),
+								   osg::Vec3(150.0f,0.0f,0.0f),
+								   osg::Vec3(0.0f,150.0f,0.0f),
 								   osg::Vec4(0.0f,0.0f,0.0f,0.0f));
 
 	osg::ref_ptr<osgWidget::Browser> browser = new osgWidget::Browser;
@@ -165,8 +166,8 @@ void BrowserGroup::addBrowser(osg::Vec3 position, QList<Lua::LuaGraphTreeModel*>
 	transform->addChild(browser);
 
 	// Set initial scale & set animation start frame to help us calculate interpolation value
-	transform->setScale(1);
-	//transform->setUserValue("frame", 0); // TODO fix error with undefined symbols for architecture........
+	transform->setScale(0);
+	transform->setUserValue("frame", 0); // TODO fix error with undefined symbols for architecture........
 
 	// Add transform to group
 	this->group->addChild(transform);
@@ -187,6 +188,7 @@ void BrowserGroup::clearModels()
 	this->selectedNodes->clear();
 
 	// TODO make sure no memory is leaking ...
+	// UPDATE: fix memory leaking ....
 }
 
 double BrowserGroup::interpolate(long currentFrame, long endFrame, double startValue, double endValue)
@@ -213,13 +215,13 @@ void BrowserGroup::updateBrowsers()
 		if(transform->getScale().x() < 1){
 
 			// Get animation frame for current transform
-			//transform->getUserValue("frame", frame);
+			transform->getUserValue("frame", frame);
 
 			// Apply interpolation function
 			transform->setScale(this->interpolate(frame, 20, 0, 1));
 
 			// Increment transform animation time
-			//transform->setUserValue("frame", frame + 1);
+			transform->setUserValue("frame", frame + 1);
 		}
 	}
 }
