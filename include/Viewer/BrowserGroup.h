@@ -6,7 +6,9 @@
 #include <osg/Group>
 #include <QList>
 
+#include "OsgQtBrowser/QWebViewImage.h"
 #include "Data/Node.h"
+#include "LuaGraph/LuaNode.h"
 #include "LuaGraph/LuaGraphTreeModel.h"
 
 namespace Vwr
@@ -33,33 +35,71 @@ public:
 	~BrowserGroup(void);
 
 	/**
-		*  \fn inline public  getGroup
+		*  \fn public  setSelectedNodes
+		*  \brief Adds only nodes not previously added to selectedNodesModels map
+		*  \param  selected
+		*/
+	void setSelectedNodes(QLinkedList<osg::ref_ptr<Data::Node> > *selected);
+
+	/**
+		*  \fn public  setBrowsersGrouping
+		*  \brief Changes browsersGrouping value
+		*/
+	void setBrowsersGrouping(bool browsersGrouping);
+
+	/**
+		*  \fn public  updateBrowsers
+		*  \brief Animates browsers pop out interpolation
+		*/
+	void updateBrowsers();
+
+	/**
+		*  \fn public  getGroup
 		*  \brief Returns wrapped browsers group
 		*  \return osg::ref_ptr browsers group
 		*/
 	osg::ref_ptr<osg::Group> getGroup()	{return group;}
 
 	/**
-		*  \fn inline public  addBrowser
-		*  \brief Adds browser at position with data model to group
-		*  \param  position
-		*  \param  model
+		*  \fn public  getSelectedNodesModels
+		*  \return Selected nodes models map
 		*/
-	void addBrowser(osg::Vec3 position, Lua::LuaGraphTreeModel *model);
+	inline QMap<qlonglong, Lua::LuaGraphTreeModel * > * getSelectedNodesModels() {return selectedNodesModels;}
+
+private:
 
 	/**
-		*  \fn inline public  clearBrowsers
+		*  \fn private  addBrowser
+		*  \brief Adds browser at position, passes supplied list of model data objects to js variable qData and calls js function qDataReady.
+		*  \param  position
+		*  \param  *models
+		*/
+	void addBrowser(osg::Vec3 position, QList<Lua::LuaGraphTreeModel*> *models);
+
+	/**
+		*  \fn private  initBrowsers
+		*  \brief Initializes sepparate browser for all selected nodes models
+		*/
+	void initBrowsers();
+
+	/**
+		*  \fn private  initGroupedBrowser
+		*  \brief Initializes one grouped browser for all selected nodes models
+		*/
+	void initGroupedBrowser();
+
+	/**
+		*  \fn private  clearBrowsers
 		*  \brief Removes all browsers from group
 		*/
 	void clearBrowsers();
 
 	/**
-		*  \fn public  updateBrowsers
-		*  \brief Animates browsers pop out
+		*  \fn private  clearModels
+		*  \brief Removes all model
 		*/
-	void updateBrowsers();
+	void clearModels();
 
-private:
 	/**
 		*  osg::ref_ptr group
 		*  \brief browsers group
@@ -67,9 +107,25 @@ private:
 	osg::ref_ptr<osg::Group> group;
 
 	/**
+		*  bool browsersGrouping
+		*  \brief bool value indicating if browsers are grouping into one
+		*/
+	bool browsersGrouping;
+
+	/**
 		*  \brief List of browsers transforms
 		*/
 	QList<osg::ref_ptr<osg::AutoTransform> > *browsersTransforms;
+
+	/**
+		*  \brief Map of Data::Node ids to Data::Node containing all selected nodes
+		*/
+	QMap<qlonglong, osg::ref_ptr<Data::Node> > *selectedNodes;
+
+	/**
+		*  \brief Map of Data::Node ids to Lua::LuaGraphTreeModel(s) containing all selected nodes
+		*/
+	QMap<qlonglong, Lua::LuaGraphTreeModel*> *selectedNodesModels;
 
 	/**
 		*  \fn public  interpolate

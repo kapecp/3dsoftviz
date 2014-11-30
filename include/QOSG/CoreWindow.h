@@ -105,6 +105,13 @@ public slots:
 	void loadFunctionCall();
 
 	/**
+				*  \fn public  browsersGroupingClicked()
+				*  \brief toggles between browsers grouping and sepparate browsers
+				*  \param checked    flag if button is checked
+				*/
+	void browsersGroupingClicked(bool checked);
+
+	/**
 				*  \fn public  filterGraph()
 				*  \brief filter graph from query
 				*/
@@ -409,6 +416,12 @@ private:
 	QPushButton * loadFunctionCallButton;
 
 	/**
+		*  QPushButton * browsersGroupingButton
+		*  \brief Action for switching browsers grouping when nodes are selected
+		*/
+	QPushButton * browsersGroupingButton;
+
+	/**
 		*  QLineEdit * filterNodesEdit
 		*  \brief Edit area for node filter query
 		*/
@@ -648,10 +661,17 @@ private:
 
 	/**
 		*  \fn private  createHorizontalFrame
-		*  \brief Crate frame with horizontal label
+		*  \brief Crate frame with horizontal layout
 		*  \return QFrame * created frame
 		*/
 	QFrame * createHorizontalFrame();
+
+	/**
+		*  \fn private  createVerticalFrame
+		*  \brief Crate frame with vertical layout
+		*  \return QFrame * created frame
+		*/
+	QFrame * createVerticalFrame();
 
 	/**
 		*  Vwr::CoreGraph * coreGraph

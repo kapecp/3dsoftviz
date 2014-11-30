@@ -209,6 +209,13 @@ void CoreWindow::createActions()
 	loadFunctionCallButton->setFocusPolicy(Qt::NoFocus);
 	connect(loadFunctionCallButton, SIGNAL(clicked()), this, SLOT(loadFunctionCall()));
 
+	browsersGroupingButton = new QPushButton();
+	browsersGroupingButton->setIcon(QIcon("../share/3dsoftviz/img/gui/grouping.png"));
+	browsersGroupingButton->setToolTip("Toggle browsers (webViews) grouping");
+	browsersGroupingButton->setCheckable(true);
+	browsersGroupingButton->setFocusPolicy(Qt::NoFocus);
+	connect(browsersGroupingButton, SIGNAL(clicked(bool)), this, SLOT(browsersGroupingClicked(bool)));
+
 	filterNodesEdit = new QLineEdit();
 	filterEdgesEdit = new QLineEdit();
 	connect(filterNodesEdit, SIGNAL(returnPressed()), this, SLOT(filterGraph()));
@@ -575,7 +582,7 @@ void CoreWindow::createCollaborationToolBar() {
 
 	addToolBar(Qt::RightToolBarArea,toolBar);
 	toolBar->setMaximumHeight(400);
-	toolBar->setMaximumWidth(120);
+	//toolBar->setMaximumWidth(120);
 	toolBar->setMovable(true);
 }
 
@@ -583,9 +590,15 @@ void CoreWindow::createMetricsToolBar()
 {
 	toolBar = new QToolBar("Metrics visualizations",this);
 
-	toolBar->addWidget(loadFunctionCallButton);
+	// <Change> Gloger start: added horizontal frame to support browser (webView) grouping toggling
+	QFrame * frame = createHorizontalFrame();
+	frame->layout()->addWidget(loadFunctionCallButton);
+	frame->layout()->addWidget(browsersGroupingButton);
+	toolBar->addWidget(frame);
+	// Gloger end
+
 	toolBar->addWidget(luaGraphTreeView);
-	toolBar->setMinimumWidth(350);
+	//toolBar->setMinimumWidth(350);
 
 	addToolBar(Qt::RightToolBarArea,toolBar);
 	toolBar->setMovable(true);
@@ -607,6 +620,17 @@ QFrame* CoreWindow::createHorizontalFrame()
 {
 	QFrame * frame = new QFrame();
 	QHBoxLayout * layout = new QHBoxLayout();
+	frame->setLayout(layout);
+	layout->setMargin(0);
+	layout->setSpacing(0);
+
+	return frame;
+}
+
+QFrame* CoreWindow::createVerticalFrame()
+{
+	QFrame * frame = new QFrame();
+	QVBoxLayout * layout = new QVBoxLayout();
 	frame->setLayout(layout);
 	layout->setMargin(0);
 	layout->setSpacing(0);
@@ -729,6 +753,11 @@ void CoreWindow::loadFunctionCall()
 		layout->play();
 		coreGraph->setNodesFreezed(false);
 	}
+}
+
+void CoreWindow::browsersGroupingClicked(bool checked)
+{
+	this->coreGraph->getBrowsersGroup()->setBrowsersGrouping(checked);
 }
 
 void CoreWindow::filterGraph()
@@ -1961,23 +1990,34 @@ void CoreWindow::onChange()
 		model = NULL;
 	}
 
-	// Remove all browsers on select. Currently only one browser is visible
-	coreGraph->getBrowsersGroup()->clearBrowsers();
-
+	// <Change> Gloger start: added support for multiple node selection using browser visualization
 	QLinkedList<osg::ref_ptr<Data::Node> > *selected = viewerWidget->getPickHandler()->getSelectedNodes();
-	if (selected->size() == 1){
-		if (Lua::LuaGraph::getInstance()->getNodes()->contains(selected->first()->getId())){
 
-			// Get node info
-			Data::Node *qtNode = selected->first();
-			Lua::LuaNode *luaNode = Lua::LuaGraph::getInstance()->getNodes()->value(qtNode->getId());
-			Lua::LuaGraphTreeModel *model = new Lua::LuaGraphTreeModel(luaNode);
+	coreGraph->getBrowsersGroup()->setSelectedNodes(selected);
 
-			// Set lua model to tree view UI
-			luaGraphTreeView->setModel(model);
-
-			// Add browser directly to browsers group
-			coreGraph->getBrowsersGroup()->addBrowser(qtNode->getCurrentPosition(), model);
-		}
+	if (selected->size() > 0){
+		// Get last node model & display it in qt view
+		qlonglong lastNodeId = selected->last()->getId();
+		Lua::LuaGraphTreeModel *lastNodeModel = coreGraph->getBrowsersGroup()->getSelectedNodesModels()->value(lastNodeId);
+		luaGraphTreeView->setModel(lastNodeModel);
 	}
+
+	// Gloger end
+
+//	if (selected->size() == 1){
+//		if (Lua::LuaGraph::getInstance()->getNodes()->contains(selected->first()->getId())) {
+
+//			// Get node info
+//			Data::Node *qtNode = selected->first();
+//			Lua::LuaNode *luaNode = Lua::LuaGraph::getInstance()->getNodes()->value(qtNode->getId());
+//			Lua::LuaGraphTreeModel *model = new Lua::LuaGraphTreeModel(luaNode);
+//			model->
+
+//			// Set lua model to tree view UI
+//			luaGraphTreeView->setModel(model);
+
+//			// Add browser directly to browsers group
+//			coreGraph->getBrowsersGroup()->addBrowser(qtNode->getCurrentPosition(), model);
+//		}
+//	}
 }

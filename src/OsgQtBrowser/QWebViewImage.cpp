@@ -26,7 +26,38 @@ QWebViewImage::QWebViewImage()
 
 	_webView->setPage(_webPage);
 
+	// Add loadFinished listener to ensure our page is loaded before assigning data objects
+	connect(_webPage->mainFrame(), SIGNAL(loadFinished(bool)), this, SLOT(loadFinished(bool)));
+
 	_adapter = new QGraphicsViewAdapter(this, _webView.data());
+}
+
+void QWebViewImage::loadFinished(bool ok)
+{
+	// Hack: in previous attempts we were unable to pass array to javascript
+	// Therefore we loop through selected models arrays and add array item by item
+
+	// Clear qData object with empty models array attribute
+	_webPage->mainFrame()->evaluateJavaScript("var qData={models:[]};");
+
+	// Iterate over all models and add them one by one to models array
+	QList<Lua::LuaGraphTreeModel * >::iterator i;
+	Lua::LuaGraphTreeModel *model;
+
+	// Iterate over each selected node
+	for (i = _models->begin(); i != _models->end(); i++){
+		model = *i;
+
+		// Pass current model to javascript temp variable
+		_webPage->mainFrame()->addToJavaScriptWindowObject("tempModelItem", model);
+
+		// Send signal to javascript that item could be added to qData.models
+		// Note: sadly, this needs to be implemented in javascript
+		_webPage->mainFrame()->evaluateJavaScript("tempModelItemReady();");
+	}
+
+	// Send signal to browser that qData is ready
+	_webPage->mainFrame()->evaluateJavaScript("qDataReady();");
 }
 
 void QWebViewImage::navigateTo(const std::string& url)
