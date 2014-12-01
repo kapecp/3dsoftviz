@@ -1984,16 +1984,18 @@ Vwr::CameraManipulator* CoreWindow::getCameraManipulator() {
 
 void CoreWindow::onChange()
 {
-	QAbstractItemModel *model = luaGraphTreeView->model();
-	if (model != NULL){
-		delete model;
-		model = NULL;
-	}
+//	TODO release models from memory in browser group
+//	QAbstractItemModel *model = luaGraphTreeView->model();
+//	if (model != NULL){
+//		delete model;
+//		model = NULL;
+//	}
 
 	// <Change> Gloger start: added support for multiple node selection using browser visualization
 	QLinkedList<osg::ref_ptr<Data::Node> > *selected = viewerWidget->getPickHandler()->getSelectedNodes();
 
 	coreGraph->getBrowsersGroup()->setSelectedNodes(selected);
+	// qDebug() << "Selected nodes count: " << selected->size();
 
 	if (selected->size() > 0){
 		// Get last node model & display it in qt view
@@ -2003,21 +2005,4 @@ void CoreWindow::onChange()
 	}
 
 	// Gloger end
-
-//	if (selected->size() == 1){
-//		if (Lua::LuaGraph::getInstance()->getNodes()->contains(selected->first()->getId())) {
-
-//			// Get node info
-//			Data::Node *qtNode = selected->first();
-//			Lua::LuaNode *luaNode = Lua::LuaGraph::getInstance()->getNodes()->value(qtNode->getId());
-//			Lua::LuaGraphTreeModel *model = new Lua::LuaGraphTreeModel(luaNode);
-//			model->
-
-//			// Set lua model to tree view UI
-//			luaGraphTreeView->setModel(model);
-
-//			// Add browser directly to browsers group
-//			coreGraph->getBrowsersGroup()->addBrowser(qtNode->getCurrentPosition(), model);
-//		}
-//	}
 }

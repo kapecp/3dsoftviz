@@ -151,7 +151,7 @@ void BrowserGroup::addBrowser(osg::Vec3 position, QList<Lua::LuaGraphTreeModel*>
 	webView->setModels(models);
 
 	// Add it to browser
-	osgWidget::GeometryHints hints(osg::Vec3(30.0f,30.0f,0.0f),
+	osgWidget::GeometryHints hints(osg::Vec3(0.0f,0.0f,0.0f),
 								   osg::Vec3(150.0f,0.0f,0.0f),
 								   osg::Vec3(0.0f,150.0f,0.0f),
 								   osg::Vec4(0.0f,0.0f,0.0f,0.0f));
