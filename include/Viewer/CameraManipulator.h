@@ -165,6 +165,8 @@ public:
 		*/
 	float getMaxSpeed() { return maxSpeed; }
 
+	void setCenterSmoothly(osg::Vec3 newCenter);
+
     void setNewPosition(osg::Vec3d cameraTargetPoint, osg::Vec3d cameraInterestPoint, std::list<osg::ref_ptr<Data::Node> > selectedCluster, std::list<osg::ref_ptr<Data::Edge> > selectedEdges);
 
         osg::Vec3d getCameraPosition();
@@ -578,6 +580,30 @@ private:
 		*  \param  us     action adapter
 		*/
 	void computeStandardFrame(const osgGA::GUIEventAdapter &ea, osgGA::GUIActionAdapter &aa);
+
+	/**
+		*  bool movingCenter
+		*  \brief automatic movement flag for smooth center view
+		*/
+	bool movingCenter;
+
+	/**
+		*  int pointID
+		*  \brief point order in smooth center view
+		*/
+	int pointID;
+
+	/**
+		*  osg::Vec3 originalCenter
+		*  \brief original camera center
+		*/
+	osg::Vec3 originalCenter;
+
+	/**
+		*  osg::Vec3 newCenter
+		*  \brief new camera center
+		*/
+	osg::Vec3 newCenter;
 
 	/**
 		*  bool movingAutomatically

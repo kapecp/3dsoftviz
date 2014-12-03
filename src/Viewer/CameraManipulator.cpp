@@ -770,6 +770,29 @@ bool Vwr::CameraManipulator::handleKeyDown( const osgGA::GUIEventAdapter &ea, os
 void Vwr::CameraManipulator::frame( const osgGA::GUIEventAdapter &ea, osgGA::GUIActionAdapter &aa )
 {
 	osgViewer::Viewer* viewer = dynamic_cast<osgViewer::Viewer*>( &aa );
+	//rychlost pohybu centra pohladu > 0
+	int v = 5;
+	osg::Vec3 d = this->newCenter - this->originalCenter;
+	int points = d.length()/v;
+
+	if(pointID > points)
+	{
+		movingCenter = false;
+	}
+
+	if(movingCenter && points > 0)
+	{
+		osg::Vec3 d = this->newCenter - this->originalCenter;
+		int l = d.length();
+		float x = this->originalCenter.x() + d.x() * pointID/points;
+		float y = this->originalCenter.y() + d.y() * pointID/points;
+		float z = this->originalCenter.z() + d.z() * pointID/points;
+		pointID++;
+		
+		_center = osg::Vec3(x, y, z);
+		notifyServer();
+		notifyClients();
+	}
 
 	// ak sme v rezime automatickeho pohybu
 	if(movingAutomatically)
@@ -904,6 +927,15 @@ void Vwr::CameraManipulator::computeStandardFrame(const osgGA::GUIEventAdapter &
 	{
 		pitchSpeed *= speedDecelerationFactor;
 	}
+}
+
+void Vwr::CameraManipulator::setCenterSmoothly(osg::Vec3 newCenter)
+{
+	this->originalCenter = getCenter();
+	this->newCenter = newCenter;
+	pointID = 1;
+	
+	movingCenter = true;	
 }
 
 void Vwr::CameraManipulator::setNewPosition(osg::Vec3d cameraTargetPoint, osg::Vec3d cameraInterestPoint, std::list<osg::ref_ptr<Data::Node> > selectedCluster, std::list<osg::ref_ptr<Data::Edge> > selectedEdges)

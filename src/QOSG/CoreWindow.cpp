@@ -1012,12 +1012,19 @@ void CoreWindow::multiSelectClicked(bool checked)
 
 void CoreWindow::centerView(bool checked)
 {
-    noSelect->setChecked(false);
-    singleSelect->setChecked(false);
-    multiSelect->setChecked(false);
-    center->setChecked(checked);
-
-    viewerWidget->getCameraManipulator()->setCenter(viewerWidget->getPickHandler()->getSelectionCenter(false));
+	noSelect->setChecked(false);
+	singleSelect->setChecked(false);
+	multiSelect->setChecked(false);
+	center->setChecked(checked);
+	
+	if(viewerWidget->getPickHandler()->getSelectedNodes()->count() == 1 && viewerWidget->getPickHandler()->getSelectedEdges()->count() == 0) 
+	{
+		viewerWidget->getCameraManipulator()->setCenterSmoothly(viewerWidget->getPickHandler()->getSelectedNodes()->first()->getCurrentPosition());
+	}
+	else
+	{
+		viewerWidget->getCameraManipulator()->setCenterSmoothly(viewerWidget->getPickHandler()->getSelectionCenter(false));
+	}
 }
 
 
