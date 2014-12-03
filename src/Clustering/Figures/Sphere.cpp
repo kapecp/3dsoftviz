@@ -5,6 +5,7 @@
 #include <osg/Depth>
 #include <osg/BlendFunc>
 #include <osg/Material>
+#include <math.h>
 
 ::Sphere::Sphere(osg::Vec3d position, float radius, osg::Vec4d color) {
     init();
