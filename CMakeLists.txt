@@ -65,7 +65,7 @@ if( USE_STRICT_COMPILE_WARNINGS )
             # only for C: -Wold-style-definition -Wstrict-prototypes -Wmissing-prototypes
 	elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
  	# using Visual Studio C++
-    	set( FLAGS_FOR_DEBUG "/Wall")
+    	set( FLAGS_FOR_DEBUG "/W3")
 	endif()
 endif()
 
