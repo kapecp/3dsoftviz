@@ -12,6 +12,7 @@
 */
 
 #include "OsgQtBrowser/QWebViewImage.h"
+#include "LuaGraph/LuaGraphTreeItem.h"
 
 QWebViewImage::QWebViewImage()
 {
@@ -34,11 +35,11 @@ QWebViewImage::QWebViewImage()
 
 void QWebViewImage::loadFinished(bool ok)
 {
-	// Hack: in previous attempts we were unable to pass array to javascript
-	// Therefore we loop through selected models arrays and add array item by item
-
 	// Clear qData object with empty models array attribute
 	_webPage->mainFrame()->evaluateJavaScript("var qData={models:[]};");
+
+	// TODO pass variables via Q_PROPERTY and public slots (problems with data retrieving)
+	// - currently manually added via js evaluation
 
 	// Iterate over all models and add them one by one to models array
 	QList<Lua::LuaGraphTreeModel * >::iterator i;
@@ -48,16 +49,63 @@ void QWebViewImage::loadFinished(bool ok)
 	for (i = _models->begin(); i != _models->end(); i++){
 		model = *i;
 
+		// Create new javascript model object
+//		_webPage->mainFrame()->evaluateJavaScript("var curModel = {};");
+//		_webPage->mainFrame()->evaluateJavaScript("curModel.test = 5;");
+//		_webPage->mainFrame()->evaluateJavaScript("curModel.test2 = 7;");
+//		_webPage->mainFrame()->evaluateJavaScript("qData.models.push(curModel);");
+
+		Lua::LuaGraphTreeItem *root = model->getRootItem();
+
+		// Call recursive function to travel through each tree model item
+		this->addChildrenToJsModel(root, "curModel");
+
+		// Add curModel to array of models
+		_webPage->mainFrame()->evaluateJavaScript("qData.models.push(curModel);");
+
+		//root->childCount()
+
+//		qDebug() << root->child(0)->data(0).toString();
+//		qDebug() << root->child(0)->data(1).toString();
+
 		// Pass current model to javascript temp variable
-		_webPage->mainFrame()->addToJavaScriptWindowObject("tempModelItem", model);
+		//_webPage->mainFrame()->addToJavaScriptWindowObject("tempModelItem", model);
 
 		// Send signal to javascript that item could be added to qData.models
 		// Note: sadly, this needs to be implemented in javascript
-		_webPage->mainFrame()->evaluateJavaScript("tempModelItemReady();");
+		//_webPage->mainFrame()->evaluateJavaScript("tempModelItemReady();");
 	}
 
 	// Send signal to browser that qData is ready
 	_webPage->mainFrame()->evaluateJavaScript("qDataReady();");
+}
+
+void QWebViewImage::addChildrenToJsModel(Lua::LuaGraphTreeItem *item, QString path)
+{
+	// Clear current path variable (for example: "curModel = {};" if is root)
+	_webPage->mainFrame()->evaluateJavaScript(path + " = {};");
+
+	Lua::LuaGraphTreeItem *child;
+	QVariant key, value;
+
+	// Iterate over all item children
+	for(int i=0; i<item->childCount(); i++){
+		child = item->child(i);
+		key = child->data(0);
+		value = child->data(1);
+
+		// If has children, then append item key to path & call this function recursively
+		if(child->childCount() > 0){
+
+			// Concatenate current js variable path to tree item key
+			this->addChildrenToJsModel(child, path + "." + key.toString());
+
+		}else{
+			// Otherwise pass value to current path as model
+			_webPage->mainFrame()->evaluateJavaScript(path + "." + key.toString() + " = " + value.toString() + ";");
+			//qDebug() << child->data(0).toString() << " " << value.toString();
+		}
+	}
 }
 
 void QWebViewImage::navigateTo(const std::string& url)
