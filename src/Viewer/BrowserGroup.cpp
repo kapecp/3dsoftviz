@@ -142,8 +142,7 @@ void BrowserGroup::initGroupedBrowser()
 
 void BrowserGroup::addBrowser(osg::Vec3 position, QList<Lua::LuaGraphTreeModel*> *models)
 {
-	// std::cout << "Adding browser to Lua Node\n";
-	// std::cout << flush;
+	// qDebug() << "Adding browser";
 
 	// Create webView
 	osg::ref_ptr<QWebViewImage> webView = new QWebViewImage();

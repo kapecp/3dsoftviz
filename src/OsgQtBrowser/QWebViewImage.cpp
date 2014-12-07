@@ -81,11 +81,12 @@ void QWebViewImage::addChildrenToJsModel(Lua::LuaGraphTreeItem *item, QString pa
 
 			// Concatenate current js variable path to tree item key
 			this->addChildrenToJsModel(child, path + "." + key.toString());
+			// qDebug() << path << "." << key.toString();
 
 		}else{
 			// Otherwise pass value to current path as model
 			_webPage->mainFrame()->evaluateJavaScript(path + "." + key.toString() + " = " + value.toString() + ";");
-			//qDebug() << child->data(0).toString() << " " << value.toString();
+			// qDebug() << "  VAL" << key.toString() << " " << value.toString();
 		}
 	}
 }
