@@ -598,7 +598,7 @@ void CoreWindow::createMetricsToolBar()
 	// Gloger end
 
 	toolBar->addWidget(luaGraphTreeView);
-	//toolBar->setMinimumWidth(350);
+	toolBar->setMinimumWidth(350);
 
 	addToolBar(Qt::RightToolBarArea,toolBar);
 	toolBar->setMovable(true);
