@@ -49,12 +49,6 @@ void QWebViewImage::loadFinished(bool ok)
 	for (i = _models->begin(); i != _models->end(); i++){
 		model = *i;
 
-		// Create new javascript model object
-//		_webPage->mainFrame()->evaluateJavaScript("var curModel = {};");
-//		_webPage->mainFrame()->evaluateJavaScript("curModel.test = 5;");
-//		_webPage->mainFrame()->evaluateJavaScript("curModel.test2 = 7;");
-//		_webPage->mainFrame()->evaluateJavaScript("qData.models.push(curModel);");
-
 		Lua::LuaGraphTreeItem *root = model->getRootItem();
 
 		// Call recursive function to travel through each tree model item
@@ -62,18 +56,6 @@ void QWebViewImage::loadFinished(bool ok)
 
 		// Add curModel to array of models
 		_webPage->mainFrame()->evaluateJavaScript("qData.models.push(curModel);");
-
-		//root->childCount()
-
-//		qDebug() << root->child(0)->data(0).toString();
-//		qDebug() << root->child(0)->data(1).toString();
-
-		// Pass current model to javascript temp variable
-		//_webPage->mainFrame()->addToJavaScriptWindowObject("tempModelItem", model);
-
-		// Send signal to javascript that item could be added to qData.models
-		// Note: sadly, this needs to be implemented in javascript
-		//_webPage->mainFrame()->evaluateJavaScript("tempModelItemReady();");
 	}
 
 	// Send signal to browser that qData is ready
