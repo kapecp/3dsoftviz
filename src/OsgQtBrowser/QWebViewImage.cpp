@@ -69,6 +69,7 @@ void QWebViewImage::addChildrenToJsModel(Lua::LuaGraphTreeItem *item, QString pa
 
 	Lua::LuaGraphTreeItem *child;
 	QVariant key, value;
+	QString escapedValue;
 
 	// Iterate over all item children
 	for(int i=0; i<item->childCount(); i++){
@@ -84,9 +85,11 @@ void QWebViewImage::addChildrenToJsModel(Lua::LuaGraphTreeItem *item, QString pa
 			// qDebug() << path << "." << key.toString();
 
 		}else{
-			// Otherwise pass value to current path as model
-			_webPage->mainFrame()->evaluateJavaScript(path + "." + key.toString() + " = " + value.toString() + ";");
-			// qDebug() << "  VAL" << key.toString() << " " << value.toString();
+			// Otherwise pass value to current path as model (we need to add strings between "")
+			escapedValue = "\"" + value.toString() + "\"";
+			QString js = path + "." + key.toString() + " = " + escapedValue + ";";
+			_webPage->mainFrame()->evaluateJavaScript(js);
+			// qDebug() << js;
 		}
 	}
 }

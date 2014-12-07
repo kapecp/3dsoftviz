@@ -1,19 +1,37 @@
+
+
+// This is draft. Will be refactored
+
 // Only for testing in desktop browser (prevent double initialization)
-var isChrome = navigator.userAgent.toLowerCase().indexOf('chrome') > -1;
-if(isChrome){
-    $(document).ready(function(){
-        $("#single").show();
-        initLOC(36, 4, 4);
-        initComplexity(7, 5, 6, 8);
-    });
-}
+// var isChrome = navigator.userAgent.toLowerCase().indexOf('chrome') > -1;
+// if(isChrome){
+//     $(document).ready(function(){
+//         // $("#single").show();
+//         // initLOC(36, 4, 4);
+//         // initComplexity(7, 5, 6, 8);
+//
+//         $("#multiple").show();
+//
+//         var data = {
+//             labels: ["factorial", "sum", "service", "interface"],
+//             datasets: [
+//             {
+//                 label: "My First dataset",
+//                 fillColor: "rgba(220,220,220,0.8)",
+//                 strokeColor: "rgba(220,220,220,1)",
+//                 data: [120, 50, 120, 30]
+//             }
+//             ]
+//         };
+//
+//         initMultipleLOC(data);
+//     });
+// }
 
 /*
  * Initialize lines of code metrics polar area chart (pie) for single model
  */
 function initLOC(codeLines, commentLines, blankLines) {
-    // Get context with jQuery - using jQuery's .get() method.
-
     var $fig = $("#fig1");
     var ctx = $fig.find("canvas").get(0).getContext("2d");
 
@@ -40,17 +58,35 @@ function initLOC(codeLines, commentLines, blankLines) {
         legendTemplate : "<ul class=\"<%=name.toLowerCase()%>-legend\"><% for (var i=0; i<segments.length; i++){%><li><span style=\"background-color:<%=segments[i].fillColor%>\">&nbsp;&nbsp;&nbsp;</span><%if(segments[i].label){%><%=segments[i].label%><%}%> (<%=segments[i].value%>)</li><%}%></ul>"
     };
 
-    // This will get the first returned node in the jQuery collection.
     var myChart = new Chart(ctx).PolarArea(data, options);
 
     $fig.find(".legend").html(myChart.generateLegend());
 }
 
 /*
+* Initialize lines of code metrics bar chart for multiple model (test)
+*/
+function initMultipleLOC(data) {
+    var $fig = $("#fig10");
+    var ctx = $fig.find("canvas").get(0).getContext("2d");
+
+    var myChart = new Chart(ctx).Bar(data);
+}
+
+/*
+* Initialize lines of code metrics line chart for multiple model (test)
+*/
+function initMultipleLOC2(data) {
+    var $fig = $("#fig10");
+    var ctx = $fig.find("canvas").get(0).getContext("2d");
+
+    var myChart = new Chart(ctx).Line(data);
+}
+
+/*
 * Initialize complexity metrics bar chart for single model
 */
 function initComplexity(conditions, decisions, lowerBound, upperBound) {
-    // Get context with jQuery - using jQuery's .get() method.
     var $fig = $("#fig2");
     var ctx = $fig.find("canvas").get(0).getContext("2d");
 
@@ -68,7 +104,6 @@ function initComplexity(conditions, decisions, lowerBound, upperBound) {
         ]
     };
 
-    // This will get the first returned node in the jQuery collection.
     var myChart = new Chart(ctx).Bar(data);
 }
 
@@ -81,7 +116,7 @@ function qDataReady() {
 
         if(qData.models.length == 1){
             $("#single").show();
-            $("#single-label").html(qData.models[0].label);
+            $("#single-label").html(qData.models[0].params.name);
             $("#single-type").html(qData.models[0].params.type);
             $("#single-path").html(qData.models[0].params.modulePath);
 
@@ -99,31 +134,32 @@ function qDataReady() {
             );
         }else{
             $("#multiple").show();
+
+            // Get data from multiple nodes
+            var labelsArray = [];
+            var dataArray = [];
+            for(var i=0; i<qData.models.length; i++){
+                var model = qData.models[i];
+                labelsArray.push(model.params.name + " (" + model.params.type + ")");
+                dataArray.push(model.params.metrics.LOC.lines);
+            }
+
+            var data = {
+                labels: labelsArray,
+                datasets: [
+                {
+                    label: "My First dataset",
+                    fillColor: "rgba(220,220,220,0.8)",
+                    strokeColor: "rgba(220,220,220,1)",
+                    data: dataArray
+                }
+                ]
+            };
+
+            initMultipleLOC(data);
+
+            // test line
+            //initMultipleLOC2(data);
         }
-        // Test qData
-        //alert(qData.toString());
-        //alert($("#test"));
-        //$("#test").html("Selected nodes count: " + qData.getModels() + " m: " + getMethods(qData));
-        //alert(getMethods(qData));
-
-        //$("#test").append(qData + "<br>");
-        // $("#test").append(qData.getName() + "<br>");
-        // $("#test").append(qData.getModel + "<br>");
-        // $("#test").append(qData.getModel() + "<br>");
-        // $("#test").append(qData.getModel().constructor + "<br>");
-        // $("#test").append(qData.model + "<br>");
-        // $("#test").append("1: " + qData + "<br>");
-        // $("#test").append("2: " + qData.models.length + "<br>");
-        // $("#test").append("3: " + qData.models[0].rootItem + "<br>");
-        // $("#test").append("5: <pre>" + getMethods(qData.models[0].rootItem) + "</pre><br>");
-        // $("#test").append("6: " + qData.models[0].test + "<br>");
-        // $("#test").append("7: " + qData.models[0].test() + "<br>");
-        // $("#test").append("8: " + qData.models[0].rootItem.hello + "<br>");
-        //console.log(qData);
-
-        // $("#test").append("<pre>" + qData.models.length + "</pre>");
-        // $("#test").append("<pre>" + qData.models[0].id + "</pre>");
-        // $("#test").append("<pre>" + qData.models[0].label + "</pre>");
-        // $("#test").append("<pre>" + qData.models[0].params.metrics.LOC.lines + "</pre>");
     });
 }
