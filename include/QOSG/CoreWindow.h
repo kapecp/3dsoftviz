@@ -679,7 +679,7 @@ private:
     /**
          * \brief Spinbox for modifying CylinderSurface restriction.
          */
-    QSlider *b_SetRestriction_CylinderSurface_Slider;
+    QSpinBox *b_SetRestriction_CylinderSurface_SpinBox;
 
     //volovar_zac
     /**
@@ -718,7 +718,7 @@ private:
     /**
          * \brief Spinbox for modifying ConeSurface restriction.
          */
-    QSlider *b_SetRestriction_ConeSurface_Slider;
+    QSpinBox *b_SetRestriction_ConeSurface_SpinBox;
 
     /**
          * \brief Button for removing restrictions from all nodes.
@@ -798,6 +798,10 @@ private:
         */
     QSlider * slider;
 
+    QFrame* line1;
+    QFrame* line2;
+    QFrame* line3;
+
     /**
         *  QMenu * file
         *  \brief Pointer to file menu
@@ -871,6 +875,20 @@ private:
         *  \return QFrame * created line
         */
     QFrame * createLine();
+
+    /**
+        *  \fn private  createGroupLayout
+        *  \brief Creates layout for grouping elements
+        *  \return QFormLayout * created layout
+        */
+    QFormLayout * createGroupLayout();
+
+    /**
+        *  \fn private  createGroupBox
+        *  \brief Creates group box for grouping elements
+        *  \return createGroupBox * created group box
+        */
+    QGroupBox * createGroupBox(QString name);
 
     /**
         *  Vwr::CoreGraph * coreGraph
