@@ -990,6 +990,68 @@ osg::Vec3 PickHandler::getSelectionCenter(bool nodesOnly)
 
 	return center * scale;
 }
+osg::Vec3 PickHandler::getSelectionCenterNnE()
+{
+	QLinkedList<osg::ref_ptr<Data::Node> >::const_iterator i = pickedNodes.constBegin();
+	QLinkedList<osg::ref_ptr<Data::Edge> >::const_iterator j = pickedEdges.constBegin();
+	float x = 0;
+	float y = 0;
+	float z = 0;
+	int pickedNodesCount = pickedNodes.count();
+	int pickedEdgesCount = pickedEdges.count();
+	//iba uzly
+	if(pickedNodesCount > 0 && pickedEdgesCount == 0)
+	{
+		while (i != pickedNodes.constEnd())
+		{
+			x += (*i)->getCurrentPosition().x();
+			y += (*i)->getCurrentPosition().y();
+			z += (*i)->getCurrentPosition().z();
+			++i;
+		}
+		return osg::Vec3(x/pickedNodesCount,y/pickedNodesCount,z/pickedNodesCount);
+	}	
+	//iba hrany
+	else if(pickedNodesCount == 0 && pickedEdgesCount > 0)
+	{
+		while (j != pickedEdges.constEnd())
+		{
+			x += ((*j)->getSrcNode()->getCurrentPosition().x() + (*j)->getDstNode()->getCurrentPosition().x())/2;
+			y += ((*j)->getSrcNode()->getCurrentPosition().y() + (*j)->getDstNode()->getCurrentPosition().y())/2;
+			z += ((*j)->getSrcNode()->getCurrentPosition().z() + (*j)->getDstNode()->getCurrentPosition().z())/2;
+			++j;
+		}
+		return osg::Vec3(x/pickedEdgesCount,y/pickedEdgesCount,z/pickedEdgesCount);
+	}
+	//uzly aj hrany
+	else if(pickedNodesCount > 0 && pickedEdgesCount > 0)
+	{
+		while (j != pickedEdges.constEnd())
+		{
+			x += ((*j)->getSrcNode()->getCurrentPosition().x() + (*j)->getDstNode()->getCurrentPosition().x())/2;
+			y += ((*j)->getSrcNode()->getCurrentPosition().y() + (*j)->getDstNode()->getCurrentPosition().y())/2;
+			z += ((*j)->getSrcNode()->getCurrentPosition().z() + (*j)->getDstNode()->getCurrentPosition().z())/2;
+			++j;
+		}
+		while (i != pickedNodes.constEnd())
+		{
+			x += (*i)->getCurrentPosition().x();
+			y += (*i)->getCurrentPosition().y();
+			z += (*i)->getCurrentPosition().z();
+			++i;
+		}
+		return osg::Vec3(x/(pickedEdgesCount+pickedNodesCount),y/(pickedEdgesCount+pickedNodesCount),z/(pickedEdgesCount+pickedNodesCount));
+	}
+	//ani uzly, ani hrany, vrati stred grafu
+	else
+	{
+		float scale = appConf->getValue("Viewer.Display.NodeDistanceScale").toFloat();
+		osg::Vec3 center;
+
+		return center * scale;
+	}
+
+}
 
 void PickHandler::setSelectedNodesInterpolation(bool state)
 {
