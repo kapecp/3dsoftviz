@@ -112,7 +112,31 @@ void ShapeVisitor_VisualizerCreator::visit (Layout::Shape_Plane & shape) {
     // gridVertices->push_back( center + osg::Vec3f(-size/2,-size/2, 0) ); // bottom right
     // gridVertices->push_back( center + osg::Vec3f( size/2,-size/2, 0) ); // bottom left
 
+    osg::Geometry* gridGeometry = new osg::Geometry();
+    gridGeometry = createGridGeometry(size, noOfLines, center);
+
+    // creating new geode
+    osg::Geode *geode = new osg::Geode;
+
+    // assign geometry
+    geode->addDrawable(gridGeometry);
+    // turn off GL_LIGHTNING
+    gridGeometry->getOrCreateStateSet()->setMode(GL_LIGHTING,osg::StateAttribute::OFF);
+    // setting color of grid
+    osg::Vec4Array* colors = new osg::Vec4Array;
+    colors->push_back(osg::Vec4(0.0f, 0.0f, 1.0f, 0.6f) ); // blue
+    gridGeometry->setColorArray(colors);
+    gridGeometry->setColorBinding(osg::Geometry::BIND_OVERALL);
+
+    createdVisualizer_ = geode;
+}
+
+osg::Geometry* ShapeVisitor_VisualizerCreator::createGridGeometry(int size, int noOfLines, osg::Vec3f center){
+
+    osg::Geometry *geom = new osg::Geometry();
     osg::Vec3Array* positionsOfLines = new osg::Vec3Array;
+
+    geom->setVertexArray(positionsOfLines);
 
     // position of borders
     osg::Vec3f dif1(-size/2, size/2, -10); // top left
@@ -122,9 +146,6 @@ void ShapeVisitor_VisualizerCreator::visit (Layout::Shape_Plane & shape) {
     // increment for creating points of mesh at border
     osg::Vec3f incrementX(size/noOfLines, 0, 0);
     osg::Vec3f incrementY(0,-size/noOfLines,0);
-
-    osg::Geometry* gridGeometry = new osg::Geometry();
-    gridGeometry->setVertexArray(positionsOfLines);
 
     // computing and saving positions of points at border of mesh
     for(int i=0;i<2;i++){
@@ -156,24 +177,11 @@ void ShapeVisitor_VisualizerCreator::visit (Layout::Shape_Plane & shape) {
             osg::DrawElementsUInt* line = new osg::DrawElementsUInt(osg::PrimitiveSet::LINES, 0);
             line->push_back(k);
             line->push_back(k+1);
-            gridGeometry->addPrimitiveSet(line);
+            geom->addPrimitiveSet(line);
         }
     }
 
-    // creating new geode
-    osg::Geode *geode = new osg::Geode;
-
-    // assign geometry
-    geode->addDrawable(gridGeometry);
-    // turn off GL_LIGHTNING
-    gridGeometry->getOrCreateStateSet()->setMode(GL_LIGHTING,osg::StateAttribute::OFF);
-    // setting color of grid
-    osg::Vec4Array* colors = new osg::Vec4Array;
-    colors->push_back(osg::Vec4(0.0f, 0.0f, 1.0f, 0.6f) ); // blue
-    gridGeometry->setColorArray(colors);
-    gridGeometry->setColorBinding(osg::Geometry::BIND_OVERALL);
-
-    createdVisualizer_ = geode;
+    return geom;
 }
 
 void ShapeVisitor_VisualizerCreator::visit (Layout::Shape_Sphere & shape) {
