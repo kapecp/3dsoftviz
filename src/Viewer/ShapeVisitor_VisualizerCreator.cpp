@@ -98,7 +98,7 @@ void ShapeVisitor_VisualizerCreator::visit (Layout::Shape_Plane & shape) {
 
     // position of center point
     osg::Vec3f center(0, 0, ( -shape.getD()) / shape.getNormalVector().z() ); // some point on the plane
-    qDebug() << "center: " << center.z();
+    //qDebug() << "center: " << center.z();
 
     // size of grid
     int size = 1000;
