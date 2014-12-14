@@ -310,10 +310,10 @@ void CoreWindow::createActions()
     b_SetRestriction_CylinderSurface->setFocusPolicy(Qt::NoFocus);
     connect(b_SetRestriction_CylinderSurface, SIGNAL(clicked()), this, SLOT(setRestriction_CylinderSurface()));
 
-    b_SetRestriction_CylinderSurface_Slider = new QSlider(Qt::Horizontal);
-    b_SetRestriction_CylinderSurface_Slider->setToolTip("&Modify base radius of the restriction");
-    b_SetRestriction_CylinderSurface_Slider->setFocusPolicy(Qt::NoFocus);
-    b_SetRestriction_CylinderSurface_Slider->setValue(25);
+    b_SetRestriction_CylinderSurface_SpinBox = new QSpinBox();
+    b_SetRestriction_CylinderSurface_SpinBox->setToolTip("&Modify base radius of the restriction");
+    b_SetRestriction_CylinderSurface_SpinBox->setFocusPolicy(Qt::NoFocus);
+    b_SetRestriction_CylinderSurface_SpinBox->setValue(25);
 
     //volovar_zac
     b_SetRestriction_RadialLayout_Slider = new QSlider(Qt::Horizontal);
@@ -359,10 +359,10 @@ void CoreWindow::createActions()
     b_SetRestriction_ConeSurface->setFocusPolicy(Qt::NoFocus);
     connect(b_SetRestriction_ConeSurface, SIGNAL(clicked()), this, SLOT(setRestriction_ConeSurface()));
 
-    b_SetRestriction_ConeSurface_Slider = new QSlider(Qt::Horizontal);
-    b_SetRestriction_ConeSurface_Slider->setToolTip("&Modify base radius of the restriction");
-    b_SetRestriction_ConeSurface_Slider->setFocusPolicy(Qt::NoFocus);
-    b_SetRestriction_ConeSurface_Slider->setValue(25);
+    b_SetRestriction_ConeSurface_SpinBox = new QSpinBox();
+    b_SetRestriction_ConeSurface_SpinBox->setToolTip("&Modify base radius of the restriction");
+    b_SetRestriction_ConeSurface_SpinBox->setFocusPolicy(Qt::NoFocus);
+    b_SetRestriction_ConeSurface_SpinBox->setValue(25);
 
     //volovar_zac
     b_SetRestriction_RadialLayout = new QPushButton();
@@ -473,7 +473,7 @@ void CoreWindow::createActions()
     // Duransky end - Nastavenie widgetov
 
     // Britvik start
- chb_clustersOpacity = new QCheckBox("auto");
+    chb_clustersOpacity = new QCheckBox("auto");
     connect(chb_clustersOpacity, SIGNAL(clicked(bool)), this, SLOT(clustersOpacityCheckboxValueChanged(bool)));
 
     chb_clusterSelectedOpacity = new QCheckBox("selected");
@@ -550,6 +550,9 @@ void CoreWindow::createActions()
     b_SetRestriction_Cube_Selected->hide();
     b_restartLayouting->hide();
 
+    line1 = createLine();
+    line2 = createLine();
+    line3 = createLine();
     // hide
     setVisibleClusterSection(false);
 }
@@ -558,11 +561,14 @@ void CoreWindow::setVisibleClusterSection(bool visible) {
     l_clustersOpacity->setVisible(visible);
     chb_clustersOpacity->setVisible(visible);
     chb_clusterSelectedOpacity->setVisible(visible);
+    line1->setVisible(visible);
     b_clustersOpacity_Slider->setVisible(visible);
+    line2->setVisible(visible);
     l_clustersShapes->setVisible(visible);
     l_clusters1Min->setVisible(visible);
     l_clusters1Max->setVisible(visible);
     b_clustersShapeBoundary_Slider->setVisible(visible);
+    line3->setVisible(visible);
     // Britvik end
 
 }
@@ -606,40 +612,51 @@ QWidget * CoreWindow::createGraphTab(QFrame* line)
     lGraph->setContentsMargins(1,1,1,1);
     lGraph->setSpacing(2);
     lGraph->setAlignment(Qt::AlignHCenter);
+
     noSelect->setMinimumWidth(68);
+    singleSelect->setMaximumWidth(68);
     lGraph->addRow(noSelect,singleSelect);
-    multiSelect->setMinimumWidth(68);
+    //multiSelect->setMinimumWidth(68);
     lGraph->addRow(multiSelect,center);
-    line = createLine();
-    lGraph->addRow(line);
+    multiSelect->setMinimumWidth(68);
+    center->setMaximumWidth(68);
     lGraph->addRow(nodeTypeComboBox);
+    nodeTypeComboBox->setMaximumWidth(136);
     line = createLine();
     lGraph->addRow(line);
     addMeta->setMinimumWidth(68);
+    removeMeta->setMaximumWidth(68);
     lGraph->addRow(addMeta,removeMeta);
     fix->setMinimumWidth(68);
+    unFix->setMaximumWidth(68);
     lGraph->addRow(fix,unFix);
-    merge->setMinimumWidth(68);
-    lGraph->addRow(merge,separate);
     line = createLine();
     lGraph->addRow(line);
-    lGraph->addRow(label);
-    lGraph->addRow(play);
-    line = createLine();
-    lGraph->addRow(line);
+    add_Edge->setMaximumWidth(136);
     lGraph->addRow(add_Edge);
+    add_Node->setMaximumWidth(136);
     lGraph->addRow(add_Node);
+    remove_all->setMaximumWidth(136);
     lGraph->addRow(remove_all);
     line = createLine();
     lGraph->addRow(line);
+    colorPicker->setMaximumWidth(136);
+    applyColor->setMaximumWidth(136);
     lGraph->addRow(colorPicker);
     lGraph->addRow(applyColor);
     line = createLine();
     lGraph->addRow(line);
+    le_applyLabel->setMaximumWidth(136);
     lGraph->addRow(le_applyLabel);
+    applyLabel->setMaximumWidth(136);
     lGraph->addRow(applyLabel);
+    label->setMaximumWidth(136);
+    lGraph->addRow(label);
     line = createLine();
     lGraph->addRow(line);
+    play->setMaximumWidth(136);
+    lGraph->addRow(play);
+    slider->setMaximumWidth(136);
     lGraph->addRow(slider);
 
     wGraph->setLayout(lGraph);
@@ -647,48 +664,120 @@ QWidget * CoreWindow::createGraphTab(QFrame* line)
     return wGraph;
 }
 
-QWidget * CoreWindow::createConstraintsTab(QFrame* line)
+QFormLayout* CoreWindow::createGroupLayout()
+{
+    QFormLayout *vbox = new QFormLayout;
+    vbox->setContentsMargins(1,1,1,1);
+    return vbox;
+}
+
+QGroupBox* CoreWindow::createGroupBox(QString name)
+{
+    QGroupBox* group = new QGroupBox(name);
+    return group;
+}
+
+QGroupBox* CoreWindow::sphereAndPlaneGroup()
+{
+    QGroupBox* group = createGroupBox(tr("Sphere and plane"));
+    QFormLayout* layoutGroup = createGroupLayout();
+    b_SetRestriction_SphereSurface->setMinimumWidth(68);
+    layoutGroup->addRow(b_SetRestriction_SphereSurface,b_SetRestriction_Sphere);
+    b_SetRestriction_Plane->setMinimumWidth(68);
+    layoutGroup->addRow(b_SetRestriction_Plane,b_SetRestriction_SpherePlane);
+    group->setLayout(layoutGroup);
+
+    return group;
+}
+
+QGroupBox* CoreWindow::circleAndConeGroup()
+{
+    QGroupBox* group = createGroupBox(tr("Circle and cone"));
+    QFormLayout* layoutGroup = createGroupLayout();
+    b_SetRestriction_Circle->setMinimumWidth(68);
+    layoutGroup->addRow(b_SetRestriction_Circle,b_SetRestriction_Cone);
+    b_SetRestriction_ConeTree->setMinimumWidth(68);
+    layoutGroup->addRow(b_SetRestriction_ConeTree,b_UnsetRestriction);
+    group->setLayout(layoutGroup);
+
+    return group;
+}
+
+QGroupBox* CoreWindow::cylinderAndConeSurfaceGroup()
+{
+    QGroupBox* group = createGroupBox(tr("Cylinder and cone surface"));
+    QFormLayout* layoutGroup = createGroupLayout();
+    b_SetRestriction_CylinderSurface->setMinimumWidth(68);
+    layoutGroup->addRow(b_SetRestriction_CylinderSurface,b_SetRestriction_CylinderSurface_SpinBox);
+    b_SetRestriction_ConeSurface->setMinimumWidth(68);
+    layoutGroup->addRow(b_SetRestriction_ConeSurface, b_SetRestriction_ConeSurface_SpinBox);
+    group->setLayout(layoutGroup);
+
+    return group ;
+}
+
+QGroupBox* CoreWindow::radialLayoutGroup()
+{
+    QGroupBox* group = createGroupBox(tr("Radial layout"));
+    QFormLayout* layoutGroup = createGroupLayout();
+    //volovar_zac
+    b_SetRestriction_RadialLayout->setMinimumWidth(68);
+    layoutGroup->addRow(b_SetRestriction_RadialLayout,b_drawMethod_RadialLayout);
+    layoutGroup->addRow(b_mode_RadialLayout);
+    layoutGroup->addRow(b_SetRestriction_RadialLayout_Slider);
+    connect(b_SetRestriction_RadialLayout_Slider,SIGNAL(valueChanged(int)),this,SLOT(RadialLayoutSizeChanged(int)));
+    layoutGroup->addRow(b_SetAlpha_RadialLayout_Slider);
+    connect(b_SetAlpha_RadialLayout_Slider,SIGNAL(valueChanged(int)),this,SLOT(RadialLayoutAlphaChanged(int)));
+    layoutGroup->addRow(b_SetVisibleSpheres_RadialLayout_Slider);
+    connect(b_SetVisibleSpheres_RadialLayout_Slider,SIGNAL(valueChanged(int)),this,SLOT(RadialLayoutSetVisibleSpheres(int)));
+    layoutGroup->addRow(b_SetForceScale_RadialLayout_Slider);
+    connect(b_SetForceScale_RadialLayout_Slider,SIGNAL(valueChanged(int)),this,SLOT(RadialLayoutSetForceScale(int)));
+    layoutGroup->addRow(b_SetForceSphereScale_RadialLayout_Slider);
+    connect(b_SetForceSphereScale_RadialLayout_Slider,SIGNAL(valueChanged(int)),this,SLOT(RadialLayoutSetForceSphereScale(int)));
+    //volovar_kon
+    group->setLayout(layoutGroup);
+
+    return group;
+}
+
+QWidget* CoreWindow::createConstraintsTab(QFrame* line)
 {
     QWidget * wConstraints = new QWidget();
     QFormLayout * lConstraints = new QFormLayout(wConstraints);
     lConstraints->setContentsMargins(1,1,1,1);
     lConstraints->setSpacing(2);
+    QGroupBox* group = NULL;
 
-    b_SetRestriction_SphereSurface->setMinimumWidth(68);
-    lConstraints->addRow(b_SetRestriction_SphereSurface,b_SetRestriction_Sphere);
-    b_SetRestriction_Plane->setMinimumWidth(68);
-    lConstraints->addRow(b_SetRestriction_Plane,b_SetRestriction_SpherePlane);
+    group = sphereAndPlaneGroup();
+    lConstraints->addRow(group);
+
+    group = circleAndConeGroup();
+    lConstraints->addRow(group);
+
+    group = cylinderAndConeSurfaceGroup();
+    lConstraints->addRow(group);
+
+    group = radialLayoutGroup();
+    lConstraints->addRow(group);
+
     line = createLine();
     lConstraints->addRow(line);
-    b_SetRestriction_Circle->setMinimumWidth(68);
-    lConstraints->addRow(b_SetRestriction_Circle,b_SetRestriction_Cone);
-    b_SetRestriction_ConeTree->setMinimumWidth(68);
-    lConstraints->addRow(b_SetRestriction_ConeTree,b_UnsetRestriction);
-    lConstraints->addRow(b_SetRestriction_ConeSurface);
-    lConstraints->addRow(b_SetRestriction_ConeSurface_Slider);
+    chb_vertigo->setMaximumWidth(136);
+    lConstraints->addRow(chb_vertigo);
+    add_Distance->setMaximumWidth(136);
+    lConstraints->addRow(add_Distance);
+    subtract_Distance->setMaximumWidth(136);
+    lConstraints->addRow(subtract_Distance);
+    add_Planes->setMaximumWidth(136);
+    lConstraints->addRow(add_Planes);
+    remove_Planes->setMaximumWidth(136);
+    lConstraints->addRow(remove_Planes);
+    change_Forces->setMaximumWidth(136);
+    lConstraints->addRow(change_Forces);
+
     line = createLine();
     lConstraints->addRow(line);
-    //volovar_zac
-    b_SetRestriction_RadialLayout->setMinimumWidth(68);
-    lConstraints->addRow(b_SetRestriction_RadialLayout,b_drawMethod_RadialLayout);
-    lConstraints->addRow(b_mode_RadialLayout);
-    lConstraints->addRow(b_SetRestriction_RadialLayout_Slider);
-    connect(b_SetRestriction_RadialLayout_Slider,SIGNAL(valueChanged(int)),this,SLOT(RadialLayoutSizeChanged(int)));
-    lConstraints->addRow(b_SetAlpha_RadialLayout_Slider);
-    connect(b_SetAlpha_RadialLayout_Slider,SIGNAL(valueChanged(int)),this,SLOT(RadialLayoutAlphaChanged(int)));
-    lConstraints->addRow(b_SetVisibleSpheres_RadialLayout_Slider);
-    connect(b_SetVisibleSpheres_RadialLayout_Slider,SIGNAL(valueChanged(int)),this,SLOT(RadialLayoutSetVisibleSpheres(int)));
-    lConstraints->addRow(b_SetForceScale_RadialLayout_Slider);
-    connect(b_SetForceScale_RadialLayout_Slider,SIGNAL(valueChanged(int)),this,SLOT(RadialLayoutSetForceScale(int)));
-    lConstraints->addRow(b_SetForceSphereScale_RadialLayout_Slider);
-    connect(b_SetForceSphereScale_RadialLayout_Slider,SIGNAL(valueChanged(int)),this,SLOT(RadialLayoutSetForceSphereScale(int)));
-    //volovar_kon
-    line = createLine();
-    lConstraints->addRow(line);
-    lConstraints->addRow(b_SetRestriction_CylinderSurface);
-    lConstraints->addRow(b_SetRestriction_CylinderSurface_Slider);
-    line = createLine();
-    lConstraints->addRow(line);
+    b_UnsetRestrictionFromAll->setMaximumWidth(136);
     lConstraints->addRow(b_UnsetRestrictionFromAll);
 
     wConstraints->setLayout(lConstraints);
@@ -704,10 +793,14 @@ QWidget * CoreWindow::createConnectionsTab(QFrame* line)
     lManage->setSpacing(2);
 
     lManage->addRow(new QLabel("Nick:"));
+    le_client_name->setMaximumWidth(136);
     lManage->addRow(le_client_name);
+    b_start_server->setMaximumWidth(136);
     lManage->addRow(b_start_server);
     lManage->addRow(new QLabel("Host:"));
+    le_server_addr->setMaximumWidth(136);
     lManage->addRow(le_server_addr);
+    b_start_client->setMaximumWidth(136);
     lManage->addRow(b_start_client);
     line = createLine();
     lManage->addRow(line);
@@ -722,13 +815,6 @@ QWidget * CoreWindow::createConnectionsTab(QFrame* line)
     lManage->addRow(new QLabel("Avatar scale"));
     sl_avatarScale->setMaximumWidth(136);
     lManage->addRow(sl_avatarScale);
-    line = createLine();
-    lManage->addRow(line);
-    lManage->addRow(add_Distance);
-    lManage->addRow(subtract_Distance);
-    lManage->addRow(add_Planes);
-    lManage->addRow(remove_Planes);
-    lManage->addRow(change_Forces);
 
     wManage->setLayout(lManage);
 
@@ -742,26 +828,38 @@ QWidget * CoreWindow::createClusteringTab(QFrame* line)
     lClustering->setContentsMargins(1,1,1,1);
     lClustering->setSpacing(2);
 
+    merge->setMinimumWidth(68);
+    separate->setMaximumWidth(68);
+    lClustering->addRow(merge,separate);
+    cb_clusteringAlgorithm->setMaximumWidth(136);
     lClustering->addRow(cb_clusteringAlgorithm);
     lClustering->addRow(new QLabel("Depth: "), le_clusteringDepth);
+    b_cluster_nodes->setMaximumWidth(136);
     lClustering->addRow(b_cluster_nodes);
+    l_clustersOpacity->setMaximumWidth(136);
     lClustering->addRow(l_clustersOpacity);
+    chb_clustersOpacity->setMaximumWidth(136);
     lClustering->addRow(chb_clustersOpacity);
+    chb_clusterSelectedOpacity->setMaximumWidth(136);
     lClustering->addRow(chb_clusterSelectedOpacity);
-    line = createLine();
-    lClustering->addRow(line);
+    lClustering->addRow(line1);
+    b_clustersOpacity_Slider->setMaximumWidth(136);
     lClustering->addRow(b_clustersOpacity_Slider);
-    line = createLine();
-    lClustering->addRow(line);
+    lClustering->addRow(line2);
+    l_clustersShapes->setMaximumWidth(136);
     lClustering->addRow(l_clustersShapes);
     lClustering->addRow(l_clusters1Min);
+    b_clustersShapeBoundary_Slider->setMaximumWidth(136);
     lClustering->addRow(b_clustersShapeBoundary_Slider);
     lClustering->addRow(l_clusters1Max);
+    b_SetRestriction_Cube_Selected->setMaximumWidth(136);
     lClustering->addRow(b_SetRestriction_Cube_Selected);
-    line = createLine();
-    lClustering->addRow(line);
+    lClustering->addRow(line3);
+    b_restartLayouting->setMaximumWidth(136);
     lClustering->addRow(b_restartLayouting);
+    l_repulsiveForceInsideCluster->setMaximumWidth(136);
     lClustering->addRow(l_repulsiveForceInsideCluster);
+    sb_repulsiveForceInsideCluster->setMaximumWidth(136);
     lClustering->addRow(sb_repulsiveForceInsideCluster);
 
     wClustering->setLayout(lClustering);
@@ -776,15 +874,16 @@ QWidget * CoreWindow::createMoreFeaturesTab(QFrame* line)
     lMore->setContentsMargins(1,1,1,1);
     lMore->setSpacing(2);
 
-    lMore->addRow(chb_vertigo);
-    #ifdef OPENCV_FOUND
+    #ifdef osgOPENCV_FOUND
     b_start_face = new QPushButton( tr("Start camera"));
     lMore->addRow(new QLabel( tr("Face & Marker detection")));
+    b_start_face->setMaximumWidth(136);
     lMore->addRow(b_start_face);
     connect(b_start_face, SIGNAL(clicked()), this, SLOT(create_facewindow()));
     #endif
     chb_camera_rot = new QCheckBox( tr("Camera rotation"));
     chb_camera_rot->setChecked(true);
+    chb_camera_rot->setMaximumWidth(136);
     lMore->addRow(chb_camera_rot);
     // dont rotate camera if video background
     if( Util::ApplicationConfig::get()->getValue("Viewer.SkyBox.Noise").toInt() == 2 ){
@@ -801,10 +900,12 @@ QWidget * CoreWindow::createMoreFeaturesTab(QFrame* line)
    lMore->addRow(new QLabel( tr("Kinect")));
    b_start_kinect = new QPushButton();
    b_start_kinect->setText("Start kinect");
+   b_start_kinect->setMaximumWidth(136);
    lMore->addRow(b_start_kinect);
    connect(b_start_kinect, SIGNAL(clicked()), this, SLOT(createKinectWindow()));
    b_start_ransac = new QPushButton();
    b_start_ransac->setText("Start calculate surface");
+   b_start_ransac->setMaximumWidth(136);
    lMore->addRow(b_start_ransac);
    connect(b_start_ransac, SIGNAL(clicked()), this, SLOT(calculateRansac()));
 #endif
@@ -817,6 +918,7 @@ QWidget * CoreWindow::createMoreFeaturesTab(QFrame* line)
     lMore->addRow(new QLabel( tr("Speech")));
     b_start_speech = new QPushButton();
     b_start_speech->setText("Start Speech");
+    b_start_speech->setMaximumWidth(136);
     lMore->addRow(b_start_speech);
     connect(b_start_speech, SIGNAL(clicked()), this, SLOT(startSpeech()));
 #endif
@@ -827,6 +929,7 @@ QWidget * CoreWindow::createMoreFeaturesTab(QFrame* line)
     lMore->addRow(new QLabel( tr("5DT Gloves")));
     b_start_gloves = new QPushButton();
     b_start_gloves->setText("Start Gloves");
+    b_start_gloves->setMaximumWidth(136);
     lMore->addRow(b_start_gloves);
     connect(b_start_gloves, SIGNAL(clicked()), this, SLOT(startGlovesRecognition()));
 #endif
@@ -870,13 +973,12 @@ void CoreWindow::createLeftToolBar()
 
     toolBox = new QToolBox();
     toolBox->setSizePolicy(QSizePolicy(QSizePolicy::Maximum, QSizePolicy::Ignored));
-    toolBox->setMinimumWidth(140);
+    toolBox->setMinimumWidth(163);
     toolBox->addItem(wGraph, tr("Graph"));
     toolBox->addItem(wConstraints, tr("Constraints"));
     toolBox->addItem(wClustering, tr("Clustering"));
     toolBox->addItem(wManage, tr("Connections"));
     toolBox->addItem(wMore, tr("More features"));
-
     toolBar = new QToolBar("Tools",this);
 
     QFrame * frame = createHorizontalFrame();
@@ -897,6 +999,7 @@ QFrame* CoreWindow::createLine()
     line->setFrameShape(QFrame::HLine);
     line->setFrameShadow(QFrame::Sunken);
     line->setMinimumHeight(15);
+    line->setMaximumWidth(138);
 
     return line;
 }
@@ -1419,7 +1522,7 @@ void CoreWindow::setRestriction_CylinderSurface()
 
         setRestrictionToAllNodes (
                     QSharedPointer<Layout::ShapeGetter> (
-                        new Layout::ShapeGetter_CylinderSurface_ByCamera(viewerWidget, *b_SetRestriction_CylinderSurface_Slider)),
+                        new Layout::ShapeGetter_CylinderSurface_ByCamera(viewerWidget, *b_SetRestriction_CylinderSurface_SpinBox)),
                     currentGraph,
                     QSharedPointer<Layout::RestrictionRemovalHandler_RestrictionNodesRemover> (
                         new Layout::RestrictionRemovalHandler_RestrictionNodesRemover (
@@ -1543,7 +1646,7 @@ void CoreWindow::setRestriction_ConeSurface()
 
         setRestrictionToAllNodes (
                     QSharedPointer<Layout::ShapeGetter> (
-                        new Layout::ShapeGetter_ConeSurface_ByCamera(viewerWidget, *b_SetRestriction_ConeSurface_Slider)),
+                        new Layout::ShapeGetter_ConeSurface_ByCamera(viewerWidget, *b_SetRestriction_ConeSurface_SpinBox)),
                     currentGraph,
                     QSharedPointer<Layout::RestrictionRemovalHandler_RestrictionNodesRemover> (
                         new Layout::RestrictionRemovalHandler_RestrictionNodesRemover (
@@ -2907,11 +3010,11 @@ void CoreWindow::startGlovesRecognition()
     // terminating fgloveThread
     if (this->mGloveThr!=NULL && (b_start_gloves->text()=="Stop Gloves")){
         this->mGloveThr->terminate();
-    	delete(this->mGloveThr);
+        delete(this->mGloveThr);
 
-    	b_start_gloves->setText("Start Gloves");
-    	this->mGloveThr=NULL;
-    	return;
+        b_start_gloves->setText("Start Gloves");
+        this->mGloveThr=NULL;
+        return;
     }
 
     // starting fgloveThread

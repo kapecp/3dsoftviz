@@ -4,6 +4,7 @@
 #include "Layout/Shape.h"
 
 #include <QSlider>
+#include <QSpinBox>
 #include <osg/Vec3f>
 
 namespace QOSG { class ViewerQT; }
@@ -17,26 +18,26 @@ namespace Layout {
 class Shape_ConeSurface : public Shape
 {
 public:
-	Shape_ConeSurface(const QOSG::ViewerQT *viewerWidget, const QSlider &baseRadiusSlider);
-	virtual ~Shape_ConeSurface() {}
+    Shape_ConeSurface(const QOSG::ViewerQT *viewerWidget, const QSpinBox &baseRadiusSpinBox);
+    virtual ~Shape_ConeSurface() {}
 
-	/**
-	 * [visitor pattern]
-	 */
-	virtual void accept(ShapeVisitor &visitor);
+    /**
+     * [visitor pattern]
+     */
+    virtual void accept(ShapeVisitor &visitor);
 
-	osg::Vec3f baseCenter() const;
-	osg::Vec3f spike() const;
-	float baseRadius() const;
+    osg::Vec3f baseCenter() const;
+    osg::Vec3f spike() const;
+    float baseRadius() const;
 
 private:
-	/**
-	 * A pointer to viewer widget from which we can get base center point and
-	 * spike point of a cone.
-	 */
-	const QOSG::ViewerQT *mViewerWidget;
+    /**
+     * A pointer to viewer widget from which we can get base center point and
+     * spike point of a cone.
+     */
+    const QOSG::ViewerQT *mViewerWidget;
 
-	const QSlider &mBaseRadiusSlider;
+    const QSpinBox &mBaseRadiusSpinBox;
 };
 
 } // namespace

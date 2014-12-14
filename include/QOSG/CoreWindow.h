@@ -679,7 +679,7 @@ private:
     /**
          * \brief Spinbox for modifying CylinderSurface restriction.
          */
-    QSlider *b_SetRestriction_CylinderSurface_Slider;
+    QSpinBox *b_SetRestriction_CylinderSurface_SpinBox;
 
     //volovar_zac
     /**
@@ -718,7 +718,7 @@ private:
     /**
          * \brief Spinbox for modifying ConeSurface restriction.
          */
-    QSlider *b_SetRestriction_ConeSurface_Slider;
+    QSpinBox *b_SetRestriction_ConeSurface_SpinBox;
 
     /**
          * \brief Button for removing restrictions from all nodes.
@@ -799,6 +799,24 @@ private:
     QSlider * slider;
 
     /**
+        *  QFrame * line1
+        *  \brief Pointer to first line in clustering tab
+        */
+    QFrame* line1;
+
+    /**
+        *  QFrame * line2
+        *  \brief Pointer to second line in clustering tab
+        */
+    QFrame* line2;
+
+    /**
+        *  QFrame * line3
+        *  \brief Pointer to third line in clustering tab
+        */
+    QFrame* line3;
+
+    /**
         *  QMenu * file
         *  \brief Pointer to file menu
         */
@@ -871,6 +889,20 @@ private:
         *  \return QFrame * created line
         */
     QFrame * createLine();
+
+    /**
+        *  \fn private  createGroupLayout
+        *  \brief Creates layout for grouping elements
+        *  \return QFormLayout * created layout
+        */
+    QFormLayout * createGroupLayout();
+
+    /**
+        *  \fn private  createGroupBox
+        *  \brief Creates group box for grouping elements
+        *  \return createGroupBox * created group box
+        */
+    QGroupBox * createGroupBox(QString name);
 
     /**
         *  Vwr::CoreGraph * coreGraph
@@ -1099,6 +1131,35 @@ public:
      * available options are node,edge, cluster, all
      */
     void createSelectionComboBox();
+
+    /**
+     * @brief circleAndConeGroup creates group for control elements for circle and cone
+     * and inserts these elements into the group
+     * @return created group
+     */
+    QGroupBox *circleAndConeGroup();
+
+    /**
+     * @brief sphereAndPlaneGroup creates group for control elements for sphere and plane
+     * and inserts these elements into the group
+     * @return created group
+     */
+    QGroupBox *sphereAndPlaneGroup();
+
+    /**
+     * @brief cylinderAndConeSurfaceGroup creates group for control elements for cylinder and cone surface
+     * and inserts these elements into the group
+     * @return created group
+     */
+    QGroupBox *cylinderAndConeSurfaceGroup();
+
+    /**
+     * @brief radialLayoutGroup creates group for control elements for radial layout
+     * and inserts these elements into the group
+     * @return created group
+     */
+    QGroupBox *radialLayoutGroup();
+
 protected:
 
     /**
