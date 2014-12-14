@@ -677,42 +677,49 @@ QGroupBox* CoreWindow::createGroupBox(QString name)
     return group;
 }
 
-QWidget * CoreWindow::createConstraintsTab(QFrame* line)
+QGroupBox* CoreWindow::sphereAndPlaneGroup()
 {
-    QWidget * wConstraints = new QWidget();
-    QFormLayout * lConstraints = new QFormLayout(wConstraints);
-    lConstraints->setContentsMargins(1,1,1,1);
-    lConstraints->setSpacing(2);
     QGroupBox* group = createGroupBox(tr("Sphere and plane"));
-    QFormLayout *layoutGroup = createGroupLayout();
-
+    QFormLayout* layoutGroup = createGroupLayout();
     b_SetRestriction_SphereSurface->setMinimumWidth(68);
     layoutGroup->addRow(b_SetRestriction_SphereSurface,b_SetRestriction_Sphere);
     b_SetRestriction_Plane->setMinimumWidth(68);
     layoutGroup->addRow(b_SetRestriction_Plane,b_SetRestriction_SpherePlane);
     group->setLayout(layoutGroup);
-    lConstraints->addRow(group);
 
-    group = createGroupBox(tr("Circle and cone"));
-    layoutGroup = createGroupLayout();
+    return group;
+}
+
+QGroupBox* CoreWindow::circleAndConeGroup()
+{
+    QGroupBox* group = createGroupBox(tr("Circle and cone"));
+    QFormLayout* layoutGroup = createGroupLayout();
     b_SetRestriction_Circle->setMinimumWidth(68);
     layoutGroup->addRow(b_SetRestriction_Circle,b_SetRestriction_Cone);
     b_SetRestriction_ConeTree->setMinimumWidth(68);
     layoutGroup->addRow(b_SetRestriction_ConeTree,b_UnsetRestriction);
     group->setLayout(layoutGroup);
-    lConstraints->addRow(group);
 
-    group = createGroupBox(tr("Cylinder and cone surface"));
-    layoutGroup = createGroupLayout();
+    return group;
+}
+
+QGroupBox* CoreWindow::cylinderAndConeSurfaceGroup()
+{
+    QGroupBox* group = createGroupBox(tr("Cylinder and cone surface"));
+    QFormLayout* layoutGroup = createGroupLayout();
     b_SetRestriction_CylinderSurface->setMinimumWidth(68);
     layoutGroup->addRow(b_SetRestriction_CylinderSurface,b_SetRestriction_CylinderSurface_SpinBox);
     b_SetRestriction_ConeSurface->setMinimumWidth(68);
     layoutGroup->addRow(b_SetRestriction_ConeSurface, b_SetRestriction_ConeSurface_SpinBox);
     group->setLayout(layoutGroup);
-    lConstraints->addRow(group);
 
-    group = createGroupBox(tr("Radial layout"));
-    layoutGroup = createGroupLayout();
+    return group ;
+}
+
+QGroupBox* CoreWindow::radialLayoutGroup()
+{
+    QGroupBox* group = createGroupBox(tr("Radial layout"));
+    QFormLayout* layoutGroup = createGroupLayout();
     //volovar_zac
     b_SetRestriction_RadialLayout->setMinimumWidth(68);
     layoutGroup->addRow(b_SetRestriction_RadialLayout,b_drawMethod_RadialLayout);
@@ -729,6 +736,28 @@ QWidget * CoreWindow::createConstraintsTab(QFrame* line)
     connect(b_SetForceSphereScale_RadialLayout_Slider,SIGNAL(valueChanged(int)),this,SLOT(RadialLayoutSetForceSphereScale(int)));
     //volovar_kon
     group->setLayout(layoutGroup);
+
+    return group;
+}
+
+QWidget* CoreWindow::createConstraintsTab(QFrame* line)
+{
+    QWidget * wConstraints = new QWidget();
+    QFormLayout * lConstraints = new QFormLayout(wConstraints);
+    lConstraints->setContentsMargins(1,1,1,1);
+    lConstraints->setSpacing(2);
+    QGroupBox* group = NULL;
+
+    group = sphereAndPlaneGroup();
+    lConstraints->addRow(group);
+
+    group = circleAndConeGroup();
+    lConstraints->addRow(group);
+
+    group = cylinderAndConeSurfaceGroup();
+    lConstraints->addRow(group);
+
+    group = radialLayoutGroup();
     lConstraints->addRow(group);
 
     line = createLine();

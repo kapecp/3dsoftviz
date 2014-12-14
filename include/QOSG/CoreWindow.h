@@ -1131,6 +1131,35 @@ public:
      * available options are node,edge, cluster, all
      */
     void createSelectionComboBox();
+
+    /**
+     * @brief circleAndConeGroup creates group for control elements for circle and cone
+     * and inserts these elements into the group
+     * @return created group
+     */
+    QGroupBox *circleAndConeGroup();
+
+    /**
+     * @brief sphereAndPlaneGroup creates group for control elements for sphere and plane
+     * and inserts these elements into the group
+     * @return created group
+     */
+    QGroupBox *sphereAndPlaneGroup();
+
+    /**
+     * @brief cylinderAndConeSurfaceGroup creates group for control elements for cylinder and cone surface
+     * and inserts these elements into the group
+     * @return created group
+     */
+    QGroupBox *cylinderAndConeSurfaceGroup();
+
+    /**
+     * @brief radialLayoutGroup creates group for control elements for radial layout
+     * and inserts these elements into the group
+     * @return created group
+     */
+    QGroupBox *radialLayoutGroup();
+
 protected:
 
     /**
