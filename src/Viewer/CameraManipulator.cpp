@@ -770,16 +770,21 @@ bool Vwr::CameraManipulator::handleKeyDown( const osgGA::GUIEventAdapter &ea, os
 void Vwr::CameraManipulator::frame( const osgGA::GUIEventAdapter &ea, osgGA::GUIActionAdapter &aa )
 {
 	osgViewer::Viewer* viewer = dynamic_cast<osgViewer::Viewer*>( &aa );
-	//rychlost pohybu centra pohladu > 0
-	int v = 5;
+
+	//rychlost pohybu centra pohladu > 0, kedze je to delitel
+	//deli pocet bodov na priamke medzi pociatocnym a cielovym bodom,
+	//s rastucim v sa zmensuje pocet bodov, po ktorych sa presuva center pohladu, a tym sa zrychluje presun kamery
+	int v = 5; //zvolil som 5 pre ani rychly, ani pomaly presun
 	osg::Vec3 d = this->newCenter - this->originalCenter;
 	int points = d.length()/v;
 
+	//ak kamera prejde vsetkymi bodmi, centrovanie pohladu sa zastavi
 	if(pointID > points)
 	{
 		movingCenter = false;
 	}
 
+	//ak sme v rezime centrovania pohladu a pohlad este nie je vycentrovany
 	if(movingCenter && points > 0)
 	{
 		osg::Vec3 d = this->newCenter - this->originalCenter;

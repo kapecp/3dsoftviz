@@ -165,6 +165,11 @@ public:
 		*/
 	float getMaxSpeed() { return maxSpeed; }
 
+	/**
+		 * @author Viktor Vinczler
+		 * @brief setCenterSmoothly Inicializuje plynuly prechod kamery pri centrovani pohladu
+		 * @param newCenter Cielovy bod pre centrovanie pohladu pri presune kamery
+		 */
 	void setCenterSmoothly(osg::Vec3 newCenter);
 
     void setNewPosition(osg::Vec3d cameraTargetPoint, osg::Vec3d cameraInterestPoint, std::list<osg::ref_ptr<Data::Node> > selectedCluster, std::list<osg::ref_ptr<Data::Edge> > selectedEdges);
@@ -583,25 +588,30 @@ private:
 
 	/**
 		*  bool movingCenter
-		*  \brief automatic movement flag for smooth center view
+		*  \brief Priznak pre plynuly prechod kamery pri centrovani pohladu.
+		*  Ak je true a pohlad este nie je vycentrovany - kamera sa presuva.
+		*  Ak kamera opise vsetky body (pohlad je vycentrovany), nastavi sa tento priznak na false.
 		*/
 	bool movingCenter;
 
 	/**
 		*  int pointID
-		*  \brief point order in smooth center view
+		*  \brief Poradove cislo bodu pre plynuly prechod kamery pri centrovani pohladu.
+		*  Sluzi pre zistenie, ci kamera presla vsetkymi bodmi.
 		*/
 	int pointID;
 
 	/**
 		*  osg::Vec3 originalCenter
-		*  \brief original camera center
+		*  \brief Pociatocny bod - aktualny center pohladu.
+		*  Bod, z ktoreho sa kamera presuva pri centrovani pohladu.
 		*/
 	osg::Vec3 originalCenter;
 
 	/**
 		*  osg::Vec3 newCenter
-		*  \brief new camera center
+		*  \brief Cielovy bod - tazisko selekcie bodov/uzlov.
+		*  Bod, do ktoreho sa kamera presuva pri centrovani pohladu.
 		*/
 	osg::Vec3 newCenter;
 

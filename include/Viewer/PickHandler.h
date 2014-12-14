@@ -180,10 +180,11 @@ public:
 	osg::Vec3 getSelectionCenter(bool nodesOnly);
 
 	/**
-		*  \fn public  getSelectionCenterNnE()
-		*  \brief Returns correct center from selection or graph center if all nodes and edges are unselected 
-		*  \return osg::Vec3
-		*/
+		 * @author Viktor Vinczler
+		 * @brief getSelectionCenterNnE Vypocita tazisko selekcie uzlov/hran.
+		 * @return osg::Vec3 Tazisko selekcie, 
+		 * ak nie je zvoleny ziaden uzol ani hrana, vrati sa stred grafu.
+		 */
 	osg::Vec3 getSelectionCenterNnE();
 
 	/**

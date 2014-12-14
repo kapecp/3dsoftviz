@@ -999,7 +999,8 @@ osg::Vec3 PickHandler::getSelectionCenterNnE()
 	float z = 0;
 	int pickedNodesCount = pickedNodes.count();
 	int pickedEdgesCount = pickedEdges.count();
-	//iba uzly
+
+	//ak su oznacene iba uzly, vypocita a vrati tazisko danych uzlov
 	if(pickedNodesCount > 0 && pickedEdgesCount == 0)
 	{
 		while (i != pickedNodes.constEnd())
@@ -1011,7 +1012,8 @@ osg::Vec3 PickHandler::getSelectionCenterNnE()
 		}
 		return osg::Vec3(x/pickedNodesCount,y/pickedNodesCount,z/pickedNodesCount);
 	}	
-	//iba hrany
+
+	//ak su oznacene iba hrany, vypocita a vrati tazisko danych hran
 	else if(pickedNodesCount == 0 && pickedEdgesCount > 0)
 	{
 		while (j != pickedEdges.constEnd())
@@ -1023,7 +1025,8 @@ osg::Vec3 PickHandler::getSelectionCenterNnE()
 		}
 		return osg::Vec3(x/pickedEdgesCount,y/pickedEdgesCount,z/pickedEdgesCount);
 	}
-	//uzly aj hrany
+
+	//ak su oznacene uzly aj hrany, vypocita a vrati tazisko danych uzlov a hran
 	else if(pickedNodesCount > 0 && pickedEdgesCount > 0)
 	{
 		while (j != pickedEdges.constEnd())
@@ -1042,7 +1045,8 @@ osg::Vec3 PickHandler::getSelectionCenterNnE()
 		}
 		return osg::Vec3(x/(pickedEdgesCount+pickedNodesCount),y/(pickedEdgesCount+pickedNodesCount),z/(pickedEdgesCount+pickedNodesCount));
 	}
-	//ani uzly, ani hrany, vrati stred grafu
+
+	//ak nie su oznacene ani uzly, ani hrany, vrati stred grafu
 	else
 	{
 		float scale = appConf->getValue("Viewer.Display.NodeDistanceScale").toFloat();
