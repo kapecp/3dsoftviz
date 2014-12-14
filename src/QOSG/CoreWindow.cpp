@@ -848,11 +848,13 @@ QWidget * CoreWindow::createMoreFeaturesTab(QFrame* line)
     #ifdef osgOPENCV_FOUND
     b_start_face = new QPushButton( tr("Start camera"));
     lMore->addRow(new QLabel( tr("Face & Marker detection")));
+    b_start_face->setMaximumWidth(136);
     lMore->addRow(b_start_face);
     connect(b_start_face, SIGNAL(clicked()), this, SLOT(create_facewindow()));
     #endif
     chb_camera_rot = new QCheckBox( tr("Camera rotation"));
     chb_camera_rot->setChecked(true);
+    chb_camera_rot->setMaximumWidth(136);
     lMore->addRow(chb_camera_rot);
     // dont rotate camera if video background
     if( Util::ApplicationConfig::get()->getValue("Viewer.SkyBox.Noise").toInt() == 2 ){
@@ -869,10 +871,12 @@ QWidget * CoreWindow::createMoreFeaturesTab(QFrame* line)
    lMore->addRow(new QLabel( tr("Kinect")));
    b_start_kinect = new QPushButton();
    b_start_kinect->setText("Start kinect");
+   b_start_kinect->setMaximumWidth(136);
    lMore->addRow(b_start_kinect);
    connect(b_start_kinect, SIGNAL(clicked()), this, SLOT(createKinectWindow()));
    b_start_ransac = new QPushButton();
    b_start_ransac->setText("Start calculate surface");
+   b_start_ransac->setMaximumWidth(136);
    lMore->addRow(b_start_ransac);
    connect(b_start_ransac, SIGNAL(clicked()), this, SLOT(calculateRansac()));
 #endif
@@ -885,6 +889,7 @@ QWidget * CoreWindow::createMoreFeaturesTab(QFrame* line)
     lMore->addRow(new QLabel( tr("Speech")));
     b_start_speech = new QPushButton();
     b_start_speech->setText("Start Speech");
+    b_start_speech->setMaximumWidth(136);
     lMore->addRow(b_start_speech);
     connect(b_start_speech, SIGNAL(clicked()), this, SLOT(startSpeech()));
 #endif
@@ -895,6 +900,7 @@ QWidget * CoreWindow::createMoreFeaturesTab(QFrame* line)
     lMore->addRow(new QLabel( tr("5DT Gloves")));
     b_start_gloves = new QPushButton();
     b_start_gloves->setText("Start Gloves");
+    b_start_gloves->setMaximumWidth(136);
     lMore->addRow(b_start_gloves);
     connect(b_start_gloves, SIGNAL(clicked()), this, SLOT(startGlovesRecognition()));
 #endif

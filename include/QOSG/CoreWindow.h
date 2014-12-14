@@ -798,8 +798,22 @@ private:
         */
     QSlider * slider;
 
+    /**
+        *  QFrame * line1
+        *  \brief Pointer to first line in clustering tab
+        */
     QFrame* line1;
+
+    /**
+        *  QFrame * line2
+        *  \brief Pointer to second line in clustering tab
+        */
     QFrame* line2;
+
+    /**
+        *  QFrame * line3
+        *  \brief Pointer to third line in clustering tab
+        */
     QFrame* line3;
 
     /**
