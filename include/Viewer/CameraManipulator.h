@@ -165,6 +165,13 @@ public:
 		*/
 	float getMaxSpeed() { return maxSpeed; }
 
+	/**
+		 * @author Viktor Vinczler
+		 * @brief setCenterSmoothly Initializes smooth center view
+		 * @param newCenter Destination point for smooth center view
+		 */
+	void setCenterSmoothly(osg::Vec3 newCenter);
+
     void setNewPosition(osg::Vec3d cameraTargetPoint, osg::Vec3d cameraInterestPoint, std::list<osg::ref_ptr<Data::Node> > selectedCluster, std::list<osg::ref_ptr<Data::Edge> > selectedEdges);
 
         osg::Vec3d getCameraPosition();
@@ -578,6 +585,35 @@ private:
 		*  \param  us     action adapter
 		*/
 	void computeStandardFrame(const osgGA::GUIEventAdapter &ea, osgGA::GUIActionAdapter &aa);
+
+	/**
+		*  bool movingCenter
+		*  \brief Flag for camera movement in smooth center view.
+		*  If true and view is not centered - camera is moving.
+		*  If camera moved through all points(view is centered), this flag is removed.
+		*/
+	bool movingCenter;
+
+	/**
+		*  int pointID
+		*  \brief Point order for camera movement in smooth center view.
+		*  For get information if camera moved through all points.
+		*/
+	int pointID;
+
+	/**
+		*  osg::Vec3 originalCenter
+		*  \brief Initial point - actual center view.
+		*  Initial point of camera movement in smooth center view.
+		*/
+	osg::Vec3 originalCenter;
+
+	/**
+		*  osg::Vec3 newCenter
+		*  \brief Destination point - center of nodes/edges selection.
+		*  Destination point of camera movement in smooth center view.
+		*/
+	osg::Vec3 newCenter;
 
 	/**
 		*  bool movingAutomatically

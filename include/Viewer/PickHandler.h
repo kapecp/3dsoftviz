@@ -179,6 +179,13 @@ public:
 		*/
 	osg::Vec3 getSelectionCenter(bool nodesOnly);
 
+	/**
+		 * @author Viktor Vinczler
+		 * @brief getSelectionCenterNnE Computes center of nodes/edges selection.
+		 * @return osg::Vec3 Selection center, 
+		 * if are all nodes and edges unselected, returns center of graph.
+		 */
+	osg::Vec3 getSelectionCenterNnE();
 
 	/**
 		*  \fn inline public  getSelectedNodes
