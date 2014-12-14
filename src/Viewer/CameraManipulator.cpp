@@ -771,20 +771,21 @@ void Vwr::CameraManipulator::frame( const osgGA::GUIEventAdapter &ea, osgGA::GUI
 {
 	osgViewer::Viewer* viewer = dynamic_cast<osgViewer::Viewer*>( &aa );
 
-	//rychlost pohybu centra pohladu > 0, kedze je to delitel
-	//deli pocet bodov na priamke medzi pociatocnym a cielovym bodom,
-	//s rastucim v sa zmensuje pocet bodov, po ktorych sa presuva center pohladu, a tym sa zrychluje presun kamery
-	int v = 5; //zvolil som 5 pre ani rychly, ani pomaly presun
+	//Smooth center view speed > 0, because it is factor of points count 
+	//between initial and destination points in smooth center view
+	//Increase in the value of v results in a decrease in the points count for camera movement in smooth center view
+	//and camera movement speed is higher
+	int v = 5; //speed 5 for not too fast and not too slow camera movement 
 	osg::Vec3 d = this->newCenter - this->originalCenter;
 	int points = d.length()/v;
 
-	//ak kamera prejde vsetkymi bodmi, centrovanie pohladu sa zastavi
+	//if camera moved through all points, stop camera movement
 	if(pointID > points)
 	{
 		movingCenter = false;
 	}
 
-	//ak sme v rezime centrovania pohladu a pohlad este nie je vycentrovany
+	//if movingCenter flag is set and view is not centered
 	if(movingCenter && points > 0)
 	{
 		osg::Vec3 d = this->newCenter - this->originalCenter;

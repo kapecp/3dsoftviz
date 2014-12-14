@@ -181,9 +181,9 @@ public:
 
 	/**
 		 * @author Viktor Vinczler
-		 * @brief getSelectionCenterNnE Vypocita tazisko selekcie uzlov/hran.
-		 * @return osg::Vec3 Tazisko selekcie, 
-		 * ak nie je zvoleny ziaden uzol ani hrana, vrati sa stred grafu.
+		 * @brief getSelectionCenterNnE Computes center of nodes/edges selection.
+		 * @return osg::Vec3 Selection center, 
+		 * if are all nodes and edges unselected, returns center of graph.
 		 */
 	osg::Vec3 getSelectionCenterNnE();
 

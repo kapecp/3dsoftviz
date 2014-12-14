@@ -167,8 +167,8 @@ public:
 
 	/**
 		 * @author Viktor Vinczler
-		 * @brief setCenterSmoothly Inicializuje plynuly prechod kamery pri centrovani pohladu
-		 * @param newCenter Cielovy bod pre centrovanie pohladu pri presune kamery
+		 * @brief setCenterSmoothly Initializes smooth center view
+		 * @param newCenter Destination point for smooth center view
 		 */
 	void setCenterSmoothly(osg::Vec3 newCenter);
 
@@ -588,30 +588,30 @@ private:
 
 	/**
 		*  bool movingCenter
-		*  \brief Priznak pre plynuly prechod kamery pri centrovani pohladu.
-		*  Ak je true a pohlad este nie je vycentrovany - kamera sa presuva.
-		*  Ak kamera opise vsetky body (pohlad je vycentrovany), nastavi sa tento priznak na false.
+		*  \brief Flag for camera movement in smooth center view.
+		*  If true and view is not centered - camera is moving.
+		*  If camera moved through all points(view is centered), this flag is removed.
 		*/
 	bool movingCenter;
 
 	/**
 		*  int pointID
-		*  \brief Poradove cislo bodu pre plynuly prechod kamery pri centrovani pohladu.
-		*  Sluzi pre zistenie, ci kamera presla vsetkymi bodmi.
+		*  \brief Point order for camera movement in smooth center view.
+		*  For get information if camera moved through all points.
 		*/
 	int pointID;
 
 	/**
 		*  osg::Vec3 originalCenter
-		*  \brief Pociatocny bod - aktualny center pohladu.
-		*  Bod, z ktoreho sa kamera presuva pri centrovani pohladu.
+		*  \brief Initial point - actual center view.
+		*  Initial point of camera movement in smooth center view.
 		*/
 	osg::Vec3 originalCenter;
 
 	/**
 		*  osg::Vec3 newCenter
-		*  \brief Cielovy bod - tazisko selekcie bodov/uzlov.
-		*  Bod, do ktoreho sa kamera presuva pri centrovani pohladu.
+		*  \brief Destination point - center of nodes/edges selection.
+		*  Destination point of camera movement in smooth center view.
 		*/
 	osg::Vec3 newCenter;
 
