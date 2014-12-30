@@ -117,7 +117,7 @@ void Vwr::MouseControl::moveCursorMouse(double positionX, double positionY, bool
 	}
 	//for previous position
 	subPixelX=(deltaX*speed - (int)(deltaX*speed));
-	subPixelX=(deltaY*speed - (int)(deltaY*speed));
+	subPixelY=(deltaY*speed - (int)(deltaY*speed));
 
 	prevX=(double) positionX;
 	prevY= (double) positionY;
