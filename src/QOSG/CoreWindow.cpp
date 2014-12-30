@@ -874,7 +874,7 @@ QWidget * CoreWindow::createMoreFeaturesTab(QFrame* line)
     lMore->setContentsMargins(1,1,1,1);
     lMore->setSpacing(2);
 
-    #ifdef osgOPENCV_FOUND
+    #ifdef OPENCV_FOUND
     b_start_face = new QPushButton( tr("Start camera"));
     lMore->addRow(new QLabel( tr("Face & Marker detection")));
     b_start_face->setMaximumWidth(136);
