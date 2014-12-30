@@ -112,7 +112,7 @@ void ShapeVisitor_VisualizerCreator::visit (Layout::Shape_Plane & shape) {
     // gridVertices->push_back( center + osg::Vec3f(-size/2,-size/2, 0) ); // bottom right
     // gridVertices->push_back( center + osg::Vec3f( size/2,-size/2, 0) ); // bottom left
 
-    osg::Geometry* gridGeometry = new osg::Geometry();
+    osg::Geometry* gridGeometry;
     gridGeometry = createGridGeometry(size, noOfLines, center);
 
     // creating new geode
