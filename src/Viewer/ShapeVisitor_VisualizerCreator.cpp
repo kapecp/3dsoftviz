@@ -33,11 +33,13 @@ void ShapeVisitor_VisualizerCreator::visit (Layout::Shape_Composite & shape) {
 
 
 void ShapeVisitor_VisualizerCreator::visit (Layout::Shape_Intersection & shape) {
-    float radius;
+
     osg::Vec3 center;
     //osg::Vec3 normalVector;
 
     if (shape.getCompositeType() == Layout::Shape_Composite::CompositeType::CIRCLE){
+        float radius;
+
         Layout::Shape_Composite::ShapesListType & shapes = shape.getShapes();
         Layout::Shape_Composite::ShapesListType::iterator it = shapes.begin ();
 

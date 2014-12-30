@@ -86,7 +86,6 @@ void RadialLayout::update()
 
     //temporary variables
     osg::ref_ptr<Data::Node> node;
-    float radius = 0;
     QList<qlonglong> groups;
     QList<qlonglong>::iterator groupIt;
     QList<qlonglong> nodes;
@@ -96,7 +95,7 @@ void RadialLayout::update()
 
     for (int depth = 0; depth <= maxDepth; depth++)
     {
-        radius = (float) depth*mSize/ (float) maxDepth;  //radius of sphere or circle
+        float radius = (float) depth*mSize/ (float) maxDepth;  //radius of sphere or circle
         groups = spanningTree->getGroupsInDepth(depth);  //groups are set of nodes with same parent
         QSet<Data::Node*>  pickedNodes; //nodes in same depth
         lastLayerID++; //because every layer need id, cause repulsive forces

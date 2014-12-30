@@ -683,7 +683,6 @@ QMap<qlonglong, float> Model::NodeDAO::getScales(QSqlDatabase* conn, bool* error
 {
 	*error = FALSE;
 	bool error2 = false;
-	float scale;
 	qlonglong id;
 	QMap<qlonglong, float> scales;
 
@@ -697,7 +696,7 @@ QMap<qlonglong, float> Model::NodeDAO::getScales(QSqlDatabase* conn, bool* error
 	{
 		id = iter.key();
 
-		scale = iter.value().toFloat();
+		float scale = iter.value().toFloat();
 		scales.insert(id, scale);
 	}
 
@@ -710,7 +709,6 @@ QMap<qlonglong, int> Model::NodeDAO::getMasks(QSqlDatabase* conn, bool* error, q
 {
 	*error = FALSE;
 	bool error2 = false;
-	int mask;
 	qlonglong id;
 	QMap<qlonglong, int> masks;
 
@@ -724,7 +722,7 @@ QMap<qlonglong, int> Model::NodeDAO::getMasks(QSqlDatabase* conn, bool* error, q
 	{
 		id = iter.key();
 
-		mask = iter.value().toInt();
+		int mask = iter.value().toInt();
 		masks.insert(id, mask);
 	}
 

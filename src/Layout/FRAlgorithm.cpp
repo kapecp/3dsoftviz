@@ -289,7 +289,6 @@ bool FRAlgorithm::iterate()
 
 	// Find out the focused node according to current restriction (if any)
 	{
-		float distanceFromFocus;
 		float minimalDistanceFromFocus = FLT_MAX;
 		Data::Node *focusedNode = 0;
 
@@ -297,7 +296,7 @@ bool FRAlgorithm::iterate()
 		j = graph->getNodes()->begin();
 		for (int i = 0; i < graph->getNodes()->count(); ++i,++j)
 		{
-			distanceFromFocus = graph->getRestrictionsManager().distanceFromFocus(*j.value());
+			float distanceFromFocus = graph->getRestrictionsManager().distanceFromFocus(*j.value());
 
 			bool testDistance = !qFuzzyCompare(distanceFromFocus,-1.0f);
 			if ( (testDistance) && (distanceFromFocus < minimalDistanceFromFocus) )

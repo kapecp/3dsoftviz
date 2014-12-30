@@ -126,8 +126,9 @@ Data::Graph::~Graph(void)
 	//uvolnime types - treba iterovat a kazde jedno deletnut samostatne
 	QMap<qlonglong, Data::Type*>::iterator it = this->types->begin();
 
-	Data::Type* type;
+
 	while (it!=this->types->end()) {
+		Data::Type* type;
 		type = it.value();
 		it = this->types->erase(it);
 		delete type;
@@ -140,9 +141,10 @@ Data::Graph::~Graph(void)
 
 	//uvolnime vsetky layouty
 	QMap<qlonglong, Data::GraphLayout*>::iterator it2 = this->layouts.begin();
-	Data::GraphLayout* l;
+
 	this->selectedLayout = NULL;
 	while (it2!=this->layouts.end()) {
+		Data::GraphLayout* l;
 		l = it2.value();
 		it2 = this->layouts.erase(it2);
 		delete l;
@@ -889,9 +891,9 @@ Data::GraphLayout* Data::Graph::selectLayout( Data::GraphLayout* layout )
 			this->selectedLayout = layout;
 
 			QMap<qlonglong, Data::Type*>::iterator it = this->types->begin();
-			Data::Type* t;
 
 			while (it!=this->types->end()) {
+				Data::Type* t;
 				t=it.value();
 				if(t->isMeta() && ((Data::MetaType* ) t)->getLayout()!=layout) {
 					it = this->types->erase(it);

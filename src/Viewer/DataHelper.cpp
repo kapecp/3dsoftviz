@@ -24,7 +24,6 @@ osg::ref_ptr<osg::Geode> DataHelper::getSphereGeode(osg::Vec3 center, float radi
 
 osg::ref_ptr<osg::Vec3Array> DataHelper::getInitialVectors(int count)
 {
-	float x, y, z;
 	float lowest = 1.f;
 	float highest = 100.f;
 	float range = (highest - lowest) + 1.f;
@@ -35,7 +34,7 @@ osg::ref_ptr<osg::Vec3Array> DataHelper::getInitialVectors(int count)
 
 	for(int index = 0; index < count; index++)
 	{
-
+		float x, y, z;
 		x = lowest + (float)(range * (float)rand() / ((float)RAND_MAX + 1.0f));
 		y = lowest + (float)(range * (float)rand() / ((float)RAND_MAX + 1.0f));
 		z = lowest + (float)(range * (float)rand() / ((float)RAND_MAX + 1.0f));

@@ -332,11 +332,12 @@ int Server::getMaxUserId() {
 }
 
 void Server::updateUserList() {
-	QListWidgetItem * item;
+
 	QListWidget * lw = ((QOSG::CoreWindow *) cw)->lw_users;
 	lw->clear();
 	QMap<QTcpSocket*,QString>::iterator i = users.begin();
 	while (i != users.end()) {
+		QListWidgetItem * item;
 		item = new QListWidgetItem();
 		item->setData(6,usersID[i.key()]);
 		item->setText(i.value());

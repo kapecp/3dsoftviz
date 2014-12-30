@@ -224,12 +224,13 @@ void TreeModel::setupModelData(const QStringList &lines, TreeItem *parent)
 
 void TreeModel::createStruct(QStringList path, TreeItem * index, QString data)
 {
-	QList<QVariant> * columnData;
+
 
 	int j;
 	//postupne sa posklada cesta k novo vytvorenej polozke
 	for (j=0; j<path.length(); j++)
 	{
+		QList<QVariant> * columnData;
 		columnData = new QList<QVariant>();
 		columnData->append(path[j]);
 		index->appendChild(new TreeItem(*columnData,index));

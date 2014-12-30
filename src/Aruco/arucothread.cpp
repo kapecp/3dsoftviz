@@ -93,13 +93,6 @@ void ArucoThread::run()
 	mRatioCamCoef  = ( 1 - height/width ) / mCamDistRatio;
 	mHalfRatioCoef = 0.5 + width / (2*height);
 
-
-	// variables for result from aruco
-	double		 actPosArray[3];			// x, y, z
-	double		 actQuatArray[4];		// angle(w), x, y, z
-	bool		 markerDetected = false;
-
-
 	// file with parameters for camera, Aruco need it
 	QString filename = "../share/3dsoftviz/config/camera.yml";
 	QFileInfo file(filename);
@@ -114,6 +107,11 @@ void ArucoThread::run()
 
 	if( camParametersOk ){
 		while(! mCancel) {	// doing aruco work in loop
+
+			// variables for result from aruco
+			double		 actPosArray[3];			// x, y, z
+			double		 actQuatArray[4];		// angle(w), x, y, z
+			bool		 markerDetected;
 
 			frame = mCapVideo->queryFrame();		// get image from camera
 

@@ -174,12 +174,6 @@ void Kinect::KinectHandTracker::getRotatingMove()
 
 			float koordy[60] = {0};
 
-			bool gesto_dolava = false;
-			bool gesto_doprava = false;
-			bool gesto_hore = false;
-			bool gesto_dole = false;
-
-
 			if(pHistory->GetSize() == 20)
 			{ // ak je historia naplnena
 				const nite::Point3f& position1 = pHistory->operator[](0);
@@ -187,6 +181,10 @@ void Kinect::KinectHandTracker::getRotatingMove()
 				const nite::Point3f& position2 = pHistory->operator[](19);
 				this->m_pHandTracker.convertHandCoordinatesToDepth(position2.x, position2.y, position2.z, &koordy[2], &koordy[3]);
 
+				bool gesto_dolava = false;
+				bool gesto_doprava = false;
+				bool gesto_hore = false;
+				bool gesto_dole = false;
 
 				//check for output
 				if(abs(koordy[0] - koordy[2]) > 100.0)

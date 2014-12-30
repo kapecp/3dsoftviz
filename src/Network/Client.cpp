@@ -232,11 +232,11 @@ void Client::sendMyView() {
 }
 
 void Client::updateUserList() {
-	QListWidgetItem * item;
 	QListWidget * lw = ((QOSG::CoreWindow *) cw)->lw_users;
 	lw->clear();
 	QMap<int,QString>::iterator i = userList.begin();
 	while (i != userList.end()) {
+		QListWidgetItem * item;
 		item = new QListWidgetItem();
 		item->setData(6,i.key());
 		item->setText(i.value());

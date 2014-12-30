@@ -22,8 +22,6 @@ Model::EdgeDAO::~EdgeDAO(void)
 
 bool Model::EdgeDAO::addEdgesToDB(QSqlDatabase* conn, QMap<qlonglong, osg::ref_ptr<Data::Edge> >* edges)
 {
-	bool isNested;
-
 	//overime ci mame pripojenie
 	if(conn==NULL || !conn->isOpen())
 	{
@@ -38,7 +36,7 @@ bool Model::EdgeDAO::addEdgesToDB(QSqlDatabase* conn, QMap<qlonglong, osg::ref_p
 	//pridavame hrany do query
 	while(iEdges != edges->constEnd())
 	{
-		isNested = false;
+		bool isNested = false;
 		if(iEdges.value()->getType() == iEdges.value()->getGraph()->getNestedEdgeType())
 			isNested = true;
 
@@ -67,8 +65,6 @@ bool Model::EdgeDAO::addEdgesToDB(QSqlDatabase* conn, QMap<qlonglong, osg::ref_p
 
 bool Model::EdgeDAO::addMetaEdgesToDB(QSqlDatabase* conn, QMap<qlonglong, osg::ref_ptr<Data::Edge> >* edges, Data::GraphLayout* layout, QMap<qlonglong, qlonglong> newMetaNodeID, QMap<qlonglong, qlonglong> newMetaEdgeID)
 {
-	bool isNested;
-
 	//check if we have connection
 	if(conn==NULL || !conn->isOpen())
 	{
@@ -116,7 +112,7 @@ bool Model::EdgeDAO::addMetaEdgesToDB(QSqlDatabase* conn, QMap<qlonglong, osg::r
 			qDebug() << "[Model::NodeDAO::addMetaEdgesToDB] Edge ID: " << iEdges.value()->getId() <<  " mismatch";
 		}
 
-		isNested = false;
+		bool isNested = false;
 		if(iEdges.value()->getType() == iEdges.value()->getGraph()->getNestedEdgeType())
 			isNested = true;
 
@@ -520,7 +516,6 @@ QMap<qlonglong, float> Model::EdgeDAO::getScales(QSqlDatabase* conn, bool* error
 {
 	*error = FALSE;
 	bool error2 = false;
-	float scale;
 	qlonglong id;
 	QMap<qlonglong, float> scales;
 
@@ -534,7 +529,7 @@ QMap<qlonglong, float> Model::EdgeDAO::getScales(QSqlDatabase* conn, bool* error
 	{
 		id = iter.key();
 
-		scale = iter.value().toFloat();
+		float scale = iter.value().toFloat();
 		scales.insert(id, scale);
 	}
 

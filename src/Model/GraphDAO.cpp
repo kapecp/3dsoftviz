@@ -68,10 +68,9 @@ void Model::GraphDAO::getNestedGraph(qlonglong parentID, Data::Graph** graph, QS
 
 	qlonglong nodeID;
 	QString nodeName;
-	Data::Type* type;
+
 	osg::Vec3f position;
 	QSqlQuery* queryNestedNodes;
-	Data::Node* newNestedNode;
 
 	queryNestedNodes = Model::NodeDAO::getNodesQuery(conn, error2, graphID, layoutID, parentID);
 
@@ -81,14 +80,14 @@ void Model::GraphDAO::getNestedGraph(qlonglong parentID, Data::Graph** graph, QS
 	{
 		nodeID = queryNestedNodes->value(0).toLongLong();
 		nodeName = queryNestedNodes->value(1).toString();
-		type = queryNestedNodes->value(4).toBool() ? typeMetaNode : typeNode;
+		Data::Type* type = queryNestedNodes->value(4).toBool() ? typeMetaNode : typeNode;
 		if(*maxIdEleUsed < nodeID)
 			*maxIdEleUsed = nodeID + 1;
 
 		if((*positions).contains(nodeID))
 			position = (*positions).value(nodeID);
 
-		newNestedNode = (*graph)->addNode(nodeID, nodeName, type, position);
+		Data::Node* newNestedNode = (*graph)->addNode(nodeID, nodeName, type, position);
 		(*nodes).insert(nodeID, newNestedNode);
 		(*graph)->addNestedNode(newNestedNode);
 
