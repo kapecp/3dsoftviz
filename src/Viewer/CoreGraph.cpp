@@ -952,7 +952,7 @@ osg::ref_ptr<osg::Group> CoreGraph::initEdgeLabels()
     while (i != in_edges->end())
     {
         geode->addDrawable(i.value()->createLabel(i.value()->getName()));
-        i++;
+        ++i;
     }
 
     osg::ref_ptr<osg::Group> labels = new osg::Group;
@@ -978,7 +978,7 @@ osg::ref_ptr<osg::Group> CoreGraph::initCustomNodes()
 void CoreGraph::createClusterGroup(QMap<qlonglong, osg::ref_ptr<Data::Cluster> > clusters) {
     clustersGroup->removeChildren(0,clustersGroup->getNumChildren());
     QMap<qlonglong, osg::ref_ptr<Data::Cluster> >::iterator i;
-    for (i = clusters.begin(); i != clusters.end(); i++)
+    for (i = clusters.begin(); i != clusters.end(); ++i)
     {
         osg::ref_ptr<Data::Cluster> cluster = i.value();
 
@@ -1001,7 +1001,7 @@ void CoreGraph::createClusterGroup(QMap<qlonglong, osg::ref_ptr<Data::Cluster> >
 void CoreGraph::updateClustersCoords() {
     QMap<qlonglong, osg::ref_ptr<Data::Cluster> > clusters = Clustering::Clusterer::getInstance().getClusters();
     QMap<qlonglong, osg::ref_ptr<Data::Cluster> >::iterator i;
-    for (i = clusters.begin(); i != clusters.end(); i++)
+    for (i = clusters.begin(); i != clusters.end(); ++i)
     {
         osg::ref_ptr<Data::Cluster> cluster = i.value();
 

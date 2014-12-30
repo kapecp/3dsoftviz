@@ -55,7 +55,7 @@ void Clusterer::cluster(Graph* graph, QProgressDialog* clusteringProgressBar) {
     qDebug() << "***** DEBUG VNORENE CLUSTRE BEGIN";
     QMap<qlonglong, osg::ref_ptr<Data::Cluster> >::iterator i;
 
-    for (i = clusters.begin(); i != clusters.end(); i++)
+    for (i = clusters.begin(); i != clusters.end(); ++i)
     {
         osg::ref_ptr<Data::Cluster> cluster = i.value();
 
@@ -122,7 +122,7 @@ void Clusterer::clusterNeighbours(QMap<qlonglong, osg::ref_ptr<Data::Node> > *so
     progressBar->setLabelText(QString("Clustering the graph. Depth = %1").arg(clusteringDepth - maxLevels));
 
     QMap<qlonglong, osg::ref_ptr<Data::Node> >::iterator i;
-    for (i = someNodes->begin(); i != someNodes->end(); i++)
+    for (i = someNodes->begin(); i != someNodes->end(); ++i)
     {
         progressBar->setValue(step++);
         osg::ref_ptr<Data::Node> node = i.value();
@@ -181,7 +181,7 @@ void Clusterer::clusterLeafs(QMap<qlonglong, osg::ref_ptr<Data::Node> >* someNod
     progressBar->setLabelText(QString("Clustering the graph. Depth = %1").arg(clusteringDepth - maxLevels));
 
     QMap<qlonglong, osg::ref_ptr<Data::Node> >::iterator i;
-    for (i = someNodes->begin(); i != someNodes->end(); i++)
+    for (i = someNodes->begin(); i != someNodes->end(); ++i)
     {
         progressBar->setValue(step++);
         osg::ref_ptr<Data::Node> node = i.value();
@@ -403,7 +403,7 @@ void Clusterer::clusterAdjacency(QMap<qlonglong, osg::ref_ptr<Data::Node> >* som
 int Clusterer::getMaxCountOfNodesInClusters() {
     int max = 0;
     QMap<qlonglong, osg::ref_ptr<Data::Cluster> >::iterator i;
-    for (i = clusters.begin(); i != clusters.end(); i++)
+    for (i = clusters.begin(); i != clusters.end(); ++i)
     {
         osg::ref_ptr<Data::Cluster> cluster = i.value();
 
@@ -416,7 +416,7 @@ int Clusterer::getMaxCountOfNodesInClusters() {
 
 void Clusterer::resetClusters(bool removeReferences) {
     if (removeReferences) {
-        for (QMap<qlonglong, osg::ref_ptr<Data::Cluster> >::iterator c = clusters.begin(); c != clusters.end(); c++)
+        for (QMap<qlonglong, osg::ref_ptr<Data::Cluster> >::iterator c = clusters.begin(); c != clusters.end(); ++c)
         {
             osg::ref_ptr<Data::Cluster> cluster = c.value();
 

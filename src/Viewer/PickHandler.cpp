@@ -521,7 +521,7 @@ bool PickHandler::pick( const double xMin, const double yMin, const double xMax,
 	{
 		osgUtil::PolytopeIntersector::Intersections intersections = picker->getIntersections();
 
-		for(osgUtil::PolytopeIntersector::Intersections::iterator hitr = intersections.begin(); hitr != intersections.end(); hitr++)
+		for(osgUtil::PolytopeIntersector::Intersections::iterator hitr = intersections.begin(); hitr != intersections.end(); ++hitr)
 		{
 			if (!hitr->nodePath.empty())
 			{
@@ -1011,7 +1011,7 @@ osg::Vec3 PickHandler::getSelectionCenterNnE()
 			++i;
 		}
 		return osg::Vec3(x/pickedNodesCount,y/pickedNodesCount,z/pickedNodesCount);
-	}	
+	}
 
 	//only edges selection - computes and returns center of edges selection
 	else if(pickedNodesCount == 0 && pickedEdgesCount > 0)
@@ -1072,7 +1072,7 @@ osg::ref_ptr<Data::Node> PickHandler::getPickedNodeWithMaxEdgeCount(){
 	int maxEdges=0;
 	osg::ref_ptr<Data::Node> rootNode;
 	QLinkedList<osg::ref_ptr<Data::Node> >::const_iterator itNode;
-	for ( itNode = pickedNodes.constBegin (); itNode != pickedNodes.constEnd (); itNode++) {
+	for ( itNode = pickedNodes.constBegin (); itNode != pickedNodes.constEnd (); ++itNode) {
 		int actEdges = (*itNode)->getEdges()->size();
 		if ( actEdges>maxEdges){
 			rootNode=(*itNode);
@@ -1089,7 +1089,7 @@ osg::ref_ptr<Data::Node> PickHandler::getPickedNodeWithMinEdgeCount(){
     int first = 1;
     osg::ref_ptr<Data::Node> rootNode = NULL;
     QLinkedList<osg::ref_ptr<Data::Node> >::const_iterator itNode;
-    for ( itNode = pickedNodes.constBegin (); itNode != pickedNodes.constEnd (); itNode++)
+    for ( itNode = pickedNodes.constBegin (); itNode != pickedNodes.constEnd (); ++itNode)
     {
         int actEdges = (*itNode)->getEdges()->size();
         if ( actEdges < minEdges || first)

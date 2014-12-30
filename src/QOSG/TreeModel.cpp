@@ -273,7 +273,7 @@ void TreeModel::addNodesToList(QList<TreeItem*> * parents)
 
 		QString data;
 		//postupne sa data zlozia
-		for (settingsIterator = settings->begin(); settingsIterator != settings->end(); settingsIterator++)
+		for (settingsIterator = settings->begin(); settingsIterator != settings->end(); ++settingsIterator)
 		{
 			if (settingsIterator != settings->begin())
 				data.append(";");

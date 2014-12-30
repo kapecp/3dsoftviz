@@ -663,7 +663,7 @@ QMap<qlonglong, osg::Vec4f> Model::NodeDAO::getColors(QSqlDatabase* conn, bool* 
 	nodeColorA = getSettings(conn, &error2, graphID, layoutID, "color_a");
 
 	//nacitavame z databazy farby podla ID grafu a layoutu
-	for(iter_r = nodeColorR.begin(); iter_r != nodeColorR.end(); iter_r++)
+	for(iter_r = nodeColorR.begin(); iter_r != nodeColorR.end(); ++iter_r)
 	{
 		id = iter_r.key();
 		iter_g = nodeColorG.find(id);
@@ -693,7 +693,7 @@ QMap<qlonglong, float> Model::NodeDAO::getScales(QSqlDatabase* conn, bool* error
 	nodeScale = getSettings(conn, &error2, graphID, layoutID, "scale");
 
 	//nacitavame z databazy velkost layoutu a rozlozenia grafu
-	for(iter = nodeScale.begin(); iter != nodeScale.end(); iter++)
+	for(iter = nodeScale.begin(); iter != nodeScale.end(); ++iter)
 	{
 		id = iter.key();
 
@@ -720,7 +720,7 @@ QMap<qlonglong, int> Model::NodeDAO::getMasks(QSqlDatabase* conn, bool* error, q
 	nodeMask = getSettings(conn, &error2, graphID, layoutID, "mask");
 
 	//nacitavame z databazy masky uzlov
-	for(iter = nodeMask.begin(); iter != nodeMask.end(); iter++)
+	for(iter = nodeMask.begin(); iter != nodeMask.end(); ++iter)
 	{
 		id = iter.key();
 
@@ -747,7 +747,7 @@ QList<qlonglong> Model::NodeDAO::getParents(QSqlDatabase* conn, bool* error, qlo
 	nodeParents = getSettings(conn, &error2, graphID, layoutID, "is_parent");
 
 	//nacitavame z databazy rodicovske/nadradene uzly
-	for(iter = nodeParents.begin(); iter != nodeParents.end(); iter++)
+	for(iter = nodeParents.begin(); iter != nodeParents.end(); ++iter)
 	{
 		id = iter.key();
 		parents << id;

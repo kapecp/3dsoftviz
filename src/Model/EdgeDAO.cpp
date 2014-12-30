@@ -502,7 +502,7 @@ QMap<qlonglong, osg::Vec4f> Model::EdgeDAO::getColors(QSqlDatabase* conn, bool* 
 	edgeColorA = getSettings(conn, &error2, graphID, layoutID, "color_a");
 
 	//nacitavame ulozene farby v databaze
-	for(iter_r = edgeColorR.begin(); iter_r != edgeColorR.end(); iter_r++)
+	for(iter_r = edgeColorR.begin(); iter_r != edgeColorR.end(); ++iter_r)
 	{
 		id = iter_r.key();
 		iter_g = edgeColorG.find(id);
@@ -530,7 +530,7 @@ QMap<qlonglong, float> Model::EdgeDAO::getScales(QSqlDatabase* conn, bool* error
 	edgeScale = getSettings(conn, &error2, graphID, layoutID, "scale");
 
 	//nacitavame z databazy velkosti jednotlivych prvkov
-	for(iter = edgeScale.begin(); iter != edgeScale.end(); iter++)
+	for(iter = edgeScale.begin(); iter != edgeScale.end(); ++iter)
 	{
 		id = iter.key();
 

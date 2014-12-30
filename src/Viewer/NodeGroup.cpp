@@ -122,7 +122,7 @@ osg::ref_ptr<osg::Group> NodeGroup::getNodeGroup(osg::ref_ptr<Data::Node> node, 
 					group->addChild(nodeGroup);
 			}
 
-			i++;
+			++i;
 		}
 	}
 

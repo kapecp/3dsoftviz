@@ -1951,12 +1951,12 @@ void CoreWindow::setRestriction_ConeTree (){
 
     QList<qlonglong> groups = spanningTree->getAllGroups();
     QList<qlonglong>::iterator groupIt;
-    for(groupIt=groups.begin(); groupIt!=groups.end();groupIt++){
+    for(groupIt=groups.begin(); groupIt!=groups.end();++groupIt){
         if ((*groupIt) == 0) continue;
         pickedNodes.clear();
         QList<qlonglong> nodes = spanningTree->getNodesInGroup(*groupIt);
         QList<qlonglong>::iterator nodeIt;
-        for(nodeIt=nodes.begin(); nodeIt!=nodes.end();nodeIt++){
+        for(nodeIt=nodes.begin(); nodeIt!=nodes.end();++nodeIt){
             pickedNodes.append(allNodes->value(*nodeIt));
         }
         osg::ref_ptr<Data::Node> parentNode = allNodes->value(*groupIt);
@@ -1969,7 +1969,7 @@ void CoreWindow::setRestriction_ConeTree (){
         QList<qlonglong> groups = spanningTree->getGroupsInDepth(depth);
 
         QList<qlonglong>::iterator groupIt;
-        for(groupIt=groups.begin(); groupIt!=groups.end();groupIt++){
+        for(groupIt=groups.begin(); groupIt!=groups.end();++groupIt){
             qlonglong nodeId = spanningTree->getRandomNodeInGroup(*groupIt);
             pickedNodes.append(allNodes->value(nodeId));
 
@@ -2360,7 +2360,7 @@ void CoreWindow::repulsiveForceInsideClusterValueChanged(double value)
 {
     QLinkedList<osg::ref_ptr<Data::Cluster> > clusters = viewerWidget->getPickHandler()->getPickedClusters();
     QLinkedList<osg::ref_ptr<Data::Cluster> >::iterator i;
-    for (i = clusters.begin(); i != clusters.end(); i++)
+    for (i = clusters.begin(); i != clusters.end(); ++i)
     {
         osg::ref_ptr<Data::Cluster> cluster = *i;
         cluster->setRepulsiveForceInside(value);
@@ -2414,7 +2414,7 @@ void CoreWindow::restartLayouting() {
 
     QLinkedList<osg::ref_ptr<Data::Cluster> > clusters = viewerWidget->getPickHandler()->getPickedClusters();
     QLinkedList<osg::ref_ptr<Data::Cluster> >::iterator i;
-    for (i = clusters.begin(); i != clusters.end(); i++)
+    for (i = clusters.begin(); i != clusters.end(); ++i)
     {
         osg::ref_ptr<Data::Cluster> cluster = *i;
         Layout::ShapeGetter_Cube * shapeGetter = cluster->getShapeGetter();
@@ -2733,13 +2733,13 @@ void CoreWindow::create_Vertigo_Planes(int numberOfPlanes, int nOfDepthsInOnePla
        QList<qlonglong> groups = spanningTree->getGroupsInDepth(depth);
 
        QList<qlonglong>::iterator groupIt;
-       for(groupIt=groups.begin(); groupIt!=groups.end();groupIt++){
+       for(groupIt=groups.begin(); groupIt!=groups.end();++groupIt){
 
            // vyber vsetkych skupin a uzlov v skupine danej hlbky
            QList<qlonglong> nodes = spanningTree->getNodesInGroup(*groupIt);
            QList<qlonglong>::iterator nodeIt;
 
-           for(nodeIt=nodes.begin(); nodeIt!=nodes.end();nodeIt++){
+           for(nodeIt=nodes.begin(); nodeIt!=nodes.end();++nodeIt){
                // nastavi uzlu cislo vertigo roviny, na ktorej sa nachadza
                allNodes->value(*nodeIt)->setNumberOfVertigoPlane(nOfPlane);
                pickedNodes.append(allNodes->value(*nodeIt));
@@ -2790,7 +2790,7 @@ void CoreWindow::add_PlanesClick()
     int maxEdges=0;
     osg::ref_ptr<Data::Node> rootNode;
     QLinkedList<osg::ref_ptr<Data::Node> >::const_iterator itNode = nodesList.constBegin();
-    for (itNode; itNode != nodesList.constEnd(); itNode++) {
+    for (itNode; itNode != nodesList.constEnd(); ++itNode) {
         int actEdges = itNode->get()->getEdges()->size();
         if (actEdges>maxEdges){
             rootNode= itNode->get();
@@ -2893,7 +2893,7 @@ void CoreWindow::remove_PlanesClick() {
     int maxEdges=0;
     osg::ref_ptr<Data::Node> rootNode;
     QLinkedList<osg::ref_ptr<Data::Node> >::const_iterator itNode = nodesList.constBegin();
-    for ( itNode; itNode != nodesList.constEnd(); itNode++) {
+    for ( itNode; itNode != nodesList.constEnd(); ++itNode) {
         int actEdges = itNode->get()->getEdges()->size();
         if ( actEdges>maxEdges){
             rootNode= itNode->get();

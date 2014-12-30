@@ -100,10 +100,10 @@ void RadialLayout::update()
         groups = spanningTree->getGroupsInDepth(depth);  //groups are set of nodes with same parent
         QSet<Data::Node*>  pickedNodes; //nodes in same depth
         lastLayerID++; //because every layer need id, cause repulsive forces
-        for(groupIt=groups.begin(); groupIt!=groups.end();groupIt++)  //iterating groups from current depth
+        for(groupIt=groups.begin(); groupIt!=groups.end();++groupIt)  //iterating groups from current depth
         {
             nodes = spanningTree->getNodesInGroup(*groupIt);
-            for(nodeIt=nodes.begin(); nodeIt!=nodes.end();nodeIt++)  //iterating nodes from current group
+            for(nodeIt=nodes.begin(); nodeIt!=nodes.end();++nodeIt)  //iterating nodes from current group
             {
                 node = allNodes->value(*nodeIt);
 

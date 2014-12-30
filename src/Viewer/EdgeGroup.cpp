@@ -59,7 +59,7 @@ void EdgeGroup::initEdges()
 		else
 			geometry->addPrimitiveSet(i.value());
 
-		i++;
+		++i;
 	}
 
 	geometry->setTexCoordArray(0, edgeTexCoords);
@@ -114,7 +114,7 @@ void EdgeGroup::updateEdgeCoords()
 	{
 		getEdgeCoordinatesAndColors(i.value(), edgePos, coordinates, edgeTexCoords, colors, orientedEdgeColors);
 		edgePos += 4;
-		i++;
+		++i;
 	}
 
 	geometry->setVertexArray(coordinates);
@@ -183,7 +183,7 @@ void EdgeGroup::synchronizeEdges()
 		else if ((*ie)->isOriented() && orientedGeometry->getPrimitiveSetIndex((*ie)) == orientedGeometry->getNumPrimitiveSets())
 			orientedGeometry->addPrimitiveSet(*ie);
 
-		ie++;
+		++ie;
 	}
 }
 

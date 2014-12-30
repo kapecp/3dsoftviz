@@ -358,7 +358,7 @@ bool FRAlgorithm::applyForces(Data::Node* node)
 {
 
 	QMap<qlonglong, osg::ref_ptr<Data::Edge> >::iterator edgeIt;
-	for (edgeIt=node->getEdges()->begin();edgeIt!=node->getEdges()->end(); edgeIt++){
+	for (edgeIt=node->getEdges()->begin();edgeIt!=node->getEdges()->end(); ++edgeIt){
 		if ((*edgeIt)->isShared_X() || (*edgeIt)->isShared_Y() || (*edgeIt)->isShared_Z()){
 			osg::ref_ptr<Data::Node> secondNode = (*edgeIt)->getSecondNode(node);
 			if (secondNode->isFixed()) return false;
@@ -393,7 +393,7 @@ bool FRAlgorithm::applyForces(Data::Node* node)
 	node->setTargetPosition( node->targetPositionConstRef() + fv );   // Compute target position
 	graph->getRestrictionsManager().applyRestriction(*node);          // Compute restricted target position
 
-	for (edgeIt=node->getEdges()->begin();edgeIt!=node->getEdges()->end(); edgeIt++){
+	for (edgeIt=node->getEdges()->begin();edgeIt!=node->getEdges()->end(); ++edgeIt){
 		if ((*edgeIt)->isShared_X()){
 			osg::ref_ptr<Data::Node> secondNode = (*edgeIt)->getSecondNode(node);
 			osg::Vec3f secondOriginalTargetPosition = secondNode->getTargetPosition();

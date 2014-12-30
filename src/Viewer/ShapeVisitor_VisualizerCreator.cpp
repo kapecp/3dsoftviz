@@ -45,7 +45,7 @@ void ShapeVisitor_VisualizerCreator::visit (Layout::Shape_Intersection & shape) 
             radius = sphere->getRadius();
             center = sphere->getCenter();
         }
-        it++;
+        ++it;
 
         //if(QSharedPointer<Layout::Shape_Plane> plane = qSharedPointerCast<Layout::Shape_Plane>(*it)){
         //   normalVector = plane->getNormalVector();

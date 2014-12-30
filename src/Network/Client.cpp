@@ -241,7 +241,7 @@ void Client::updateUserList() {
 		item->setData(6,i.key());
 		item->setText(i.value());
 		lw->addItem(item);
-		i++;
+		++i;
 	}
 }
 

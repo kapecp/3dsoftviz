@@ -341,7 +341,7 @@ void Server::updateUserList() {
 		item->setData(6,usersID[i.key()]);
 		item->setText(i.value());
 		lw->addItem(item);
-		i++;
+		++i;
 	}
 }
 
@@ -359,7 +359,7 @@ QTcpSocket * Server::getClientById(int id) {
 		if (i.value() == id) {
 			return i.key();
 		}
-		i++;
+		++i;
 	}
 	return NULL;
 }
