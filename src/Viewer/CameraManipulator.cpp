@@ -771,11 +771,11 @@ void Vwr::CameraManipulator::frame( const osgGA::GUIEventAdapter &ea, osgGA::GUI
 {
 	osgViewer::Viewer* viewer = dynamic_cast<osgViewer::Viewer*>( &aa );
 
-	//Smooth center view speed > 0, because it is factor of points count 
+	//Smooth center view speed > 0, because it is factor of points count
 	//between initial and destination points in smooth center view
 	//Increase in the value of v results in a decrease in the points count for camera movement in smooth center view
 	//and camera movement speed is higher
-	int v = 5; //speed 5 for not too fast and not too slow camera movement 
+	int v = 5; //speed 5 for not too fast and not too slow camera movement
 	osg::Vec3 d = this->newCenter - this->originalCenter;
 	int points = d.length()/v;
 
@@ -794,7 +794,7 @@ void Vwr::CameraManipulator::frame( const osgGA::GUIEventAdapter &ea, osgGA::GUI
 		float y = this->originalCenter.y() + d.y() * pointID/points;
 		float z = this->originalCenter.z() + d.z() * pointID/points;
 		pointID++;
-		
+
 		_center = osg::Vec3(x, y, z);
 		notifyServer();
 		notifyClients();
@@ -940,8 +940,8 @@ void Vwr::CameraManipulator::setCenterSmoothly(osg::Vec3 newCenter)
 	this->originalCenter = getCenter();
 	this->newCenter = newCenter;
 	pointID = 1;
-	
-	movingCenter = true;	
+
+	movingCenter = true;
 }
 
 void Vwr::CameraManipulator::setNewPosition(osg::Vec3d cameraTargetPoint, osg::Vec3d cameraInterestPoint, std::list<osg::ref_ptr<Data::Node> > selectedCluster, std::list<osg::ref_ptr<Data::Edge> > selectedEdges)
@@ -1276,7 +1276,7 @@ void Vwr::CameraManipulator::setRotationHead(float x, float y, float distance, i
 		_rotationHead = _rotationAux * _rotHeadFaceDet * _rotHeadKinect;
 
 		// will we correct projection according face position
-		bool projectionConrrection = false;
+		bool projectionConrrection;
 		projectionConrrection = this->appConf->getValue("FaceDecetion.EnableProjectionCorrection").toInt();
 
 		if( projectionConrrection && caller == 0 ){

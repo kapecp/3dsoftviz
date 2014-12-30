@@ -80,7 +80,7 @@ bool GraphMLImporter::import (
 bool GraphMLImporter::processGraph (
 		QDomElement &graphElement
 		) {
-	bool ok = true;
+	bool ok;
 
 	ok =
 			processGraph_Nodes (graphElement)
