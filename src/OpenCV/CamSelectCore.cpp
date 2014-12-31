@@ -13,7 +13,7 @@ OpenCV::CamSelectCore * OpenCV::CamSelectCore::mCamSelectCore;
 OpenCV::CamSelectCore::CamSelectCore()
 {
 	mCamSelectCore = this;
-	this->app=app;
+	//this->app=app; // wtf???
 	int max=this->countCameras();
 	for (int i=0;i<max;i++){
 		camlist.push_back(new OpenCV::CapVideo(i,0,0));
