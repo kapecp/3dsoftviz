@@ -18,7 +18,7 @@ public:
 			);
 
 	/***/
-	virtual ~ShapeGetter_Const (void) {};
+	virtual ~ShapeGetter_Const (void) {}
 
 	virtual QSharedPointer<Shape> getShape (void);
 

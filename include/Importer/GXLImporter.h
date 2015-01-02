@@ -20,7 +20,7 @@ class GXLImporter
 public:
 
 	/***/
-	virtual ~GXLImporter (void) {};
+	virtual ~GXLImporter (void) {}
 
 	/***/
 	virtual bool import (

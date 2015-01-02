@@ -17,7 +17,7 @@ class StreamImporter {
 public:
 
 	/***/
-	virtual ~StreamImporter (void) {};
+	virtual ~StreamImporter (void) {}
 
 	/**
 	 * \brief Performs import.

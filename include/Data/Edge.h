@@ -302,7 +302,7 @@ public:
 		*  \fn inline public  setIsInDB
 		*  \brief Sets the inDB flag of the Edge to true (meaning that the Edge is in database)
 		*/
-	void setIsInDB() { inDB = true; };
+	void setIsInDB() { inDB = true; }
 
 
 	/**
@@ -371,7 +371,8 @@ public:
 			setScale(0);
 			isInvisible=true;
 		}
-		else {
+		else
+		{
 			setScale(1);
 			isInvisible=false;
 		}

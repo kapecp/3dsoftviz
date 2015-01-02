@@ -7,6 +7,9 @@
 
 #include "Util/SizedQueue.h"
 
+#include <string>
+#include <vector>
+
 namespace OpenCV
 {
 /**

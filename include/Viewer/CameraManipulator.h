@@ -26,6 +26,7 @@
 #include "Math/CameraMath.h"
 #include "Viewer/CoreGraph.h"
 
+#include <list>
 
 namespace Util
 {

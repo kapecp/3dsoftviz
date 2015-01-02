@@ -38,7 +38,7 @@ public:
 	virtual void afterRestrictionRemoved (void);
 
 	/***/
-	virtual ~RestrictionRemovalHandler_RestrictionNodesRemover (void) {};
+	virtual ~RestrictionRemovalHandler_RestrictionNodesRemover (void) {}
 
 private:
 
