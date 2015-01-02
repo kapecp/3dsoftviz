@@ -79,7 +79,7 @@ void Clusterer::cluster(Graph* graph, QProgressDialog* clusteringProgressBar) {
 
 }
 
-osg::Vec4 Vwr::getNewColor(int colorCounter) {
+osg::Vec4 Clusterer::getNewColor(int colorCounter) {
 
     osg::Vec4 colors [21] = {osg::Vec4(1.0f, 0.0f, 0.0f, 0.5f),
                            osg::Vec4(0.0f, 1.0f, 0.0f, 0.5f),
@@ -136,7 +136,7 @@ void Clusterer::clusterNeighbours(QMap<qlonglong, osg::ref_ptr<Data::Node> > *so
                         clusters.insert(cluster->getId(), cluster);
                         newClusters.insert(cluster->getId(), cluster);
 
-                        cluster->setColor(getNewColor(colorCounter));
+                        cluster->setColor(this->getNewColor(colorCounter));
                         colorCounter++;
                     }
                     incidentNode->setCluster(cluster);
@@ -200,7 +200,7 @@ void Clusterer::clusterLeafs(QMap<qlonglong, osg::ref_ptr<Data::Node> >* someNod
                     clusters.insert(cluster->getId(), cluster);
                     newClusters.insert(cluster->getId(), cluster);
 
-                    cluster->setColor(getNewColor(colorCounter));
+                    cluster->setColor(this->getNewColor(colorCounter));
                     colorCounter++;
 
                     parent->setCluster(cluster);
@@ -364,7 +364,7 @@ void Clusterer::clusterAdjacency(QMap<qlonglong, osg::ref_ptr<Data::Node> >* som
                 clusters.insert(c->getId(), c);
                 newClusters.insert(c->getId(), c);
 
-                c->setColor(getNewColor(colorCounter));
+                c->setColor(this->getNewColor(colorCounter));
                 colorCounter++;
             }
             foreach (Node *v, toCluster) {
