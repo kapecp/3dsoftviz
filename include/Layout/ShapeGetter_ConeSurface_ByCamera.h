@@ -3,7 +3,7 @@
 
 #include "Layout/ShapeGetter.h"
 
-#include <QSlider>
+#include <QSpinBox>
 
 #include "Data/Node.h"
 #include "QOSG/ViewerQT.h"

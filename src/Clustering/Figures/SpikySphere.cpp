@@ -17,7 +17,7 @@ void SpikySphere::addSpikes() {
         colorArray->push_back(color);
         lineGeometry->setVertexArray(points.get());
         lineGeometry->setColorArray(colorArray);
-        lineGeometry->setColorBinding(osg::Geometry::BIND_PER_PRIMITIVE);
+        lineGeometry->setColorBinding(osg::Geometry::BIND_OVERALL);
         lineGeometry->addPrimitiveSet(new osg::DrawArrays(GL_LINES,0,2));
 
 //        osg::Geode* lineGeode = new osg::Geode();
