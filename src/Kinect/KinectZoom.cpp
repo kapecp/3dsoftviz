@@ -1,7 +1,5 @@
 #include "Kinect/KinectZoom.h"
 
-using namespace cv;
-
 Kinect::KinectZoom::KinectZoom()
 {
     previousZ = 0.0f;
@@ -17,20 +15,20 @@ Kinect::KinectZoom::~KinectZoom()
 }
 
 // find contours of segmented hand
-int Kinect::KinectZoom::DetectContour(Mat img){
-    Mat drawing = Mat::zeros( img.size(), CV_8UC3 );
-    vector<vector<Point> > contours;
+int Kinect::KinectZoom::DetectContour(cv::Mat img){
+    cv::Mat drawing = cv::Mat::zeros( img.size(), CV_8UC3 );
+    cv::vector<cv::vector<cv::Point> > contours;
     int numFingers=0;
-    vector<Vec4i> hierarchy;
+    cv::vector<cv::Vec4i> hierarchy;
 
-    findContours(img,contours, hierarchy, cv::RETR_LIST, cv::CHAIN_APPROX_SIMPLE, Point());
+    findContours(img,contours, hierarchy, cv::RETR_LIST, cv::CHAIN_APPROX_SIMPLE, cv::Point());
 
     if(contours.size()>0)
     {
-        vector<std::vector<int> >hull( contours.size() );
-        vector<vector<Vec4i>> convDef(contours.size() );
-        vector<vector<Point>> hull_points(contours.size());
-        vector<vector<Point>> defect_points(contours.size());
+        cv::vector<std::vector<int> >hull( contours.size() );
+        cv::vector<cv::vector<cv::Vec4i>> convDef(contours.size() );
+        cv::vector<cv::vector<cv::Point>> hull_points(contours.size());
+        cv::vector<cv::vector<cv::Point>> defect_points(contours.size());
 
         for( int i = 0; i < contours.size(); i++ )
         {
@@ -54,16 +52,16 @@ int Kinect::KinectZoom::DetectContour(Mat img){
                         int ind_1=convDef[i][k][1];
                         int ind_2=convDef[i][k][2];
                         defect_points[i].push_back(contours[i][ind_2]);
-                        cv::circle(drawing,contours[i][ind_0],5,Scalar(0,255,0),-1);
-                        cv::circle(drawing,contours[i][ind_1],5,Scalar(0,255,0),-1);
-                        cv::circle(drawing,contours[i][ind_2],5,Scalar(0,0,255),-1);
-                        cv::line(drawing,contours[i][ind_2],contours[i][ind_0],Scalar(0,0,255),1);
-                        cv::line(drawing,contours[i][ind_2],contours[i][ind_1],Scalar(0,0,255),1);
+                        cv::circle(drawing,contours[i][ind_0],5,cv::Scalar(0,255,0),-1);
+                        cv::circle(drawing,contours[i][ind_1],5,cv::Scalar(0,255,0),-1);
+                        cv::circle(drawing,contours[i][ind_2],5,cv::Scalar(0,0,255),-1);
+                        cv::line(drawing,contours[i][ind_2],contours[i][ind_0],cv::Scalar(0,0,255),1);
+                        cv::line(drawing,contours[i][ind_2],contours[i][ind_1],cv::Scalar(0,0,255),1);
                     }
                 }
                 // draw results
-                drawContours( drawing, contours, i, Scalar(0,255,0), 1, 8, vector<Vec4i>(), 0, Point() );
-                drawContours( drawing, hull_points, i, Scalar(255,0,0), 1, 8, vector<Vec4i>(), 0, Point() );
+                drawContours( drawing, contours, i, cv::Scalar(0,255,0), 1, 8, cv::vector<cv::Vec4i>(), 0, cv::Point() );
+                drawContours( drawing, hull_points, i, cv::Scalar(255,0,0), 1, 8, cv::vector<cv::Vec4i>(), 0, cv::Point() );
             }
         }
     }

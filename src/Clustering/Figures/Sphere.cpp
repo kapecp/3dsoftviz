@@ -5,7 +5,13 @@
 #include <osg/Depth>
 #include <osg/BlendFunc>
 #include <osg/Material>
+
+/* If VS2010 compiler is used , we need to define math.h constants*/
+#if (_MSC_VER == 1600)
 #define _USE_MATH_DEFINES
+#endif
+
+
 #include <math.h>
 
 ::Sphere::Sphere(osg::Vec3d position, float radius, osg::Vec4d color) {
