@@ -33,9 +33,9 @@ namespace Util
 	class ApplicationConfig;
 }
 
-using namespace osgGA;
-
 namespace Vwr{
+
+using namespace osgGA;
 
 class CoreGraph;
 

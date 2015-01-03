@@ -16,7 +16,7 @@
 
 #include "Util/ApplicationConfig.h"
 
-using namespace Network;
+namespace Network {
 
 Server * Server::instance;
 
@@ -878,3 +878,5 @@ void Server::setAvatarScale(int scale) {
 		avatar->setScale(osg::Vec3d(avatarScale,avatarScale,avatarScale));
 	}
 }
+
+} // namespace Network

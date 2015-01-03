@@ -1,14 +1,9 @@
 #include "Network/executors/UnSetRestrictionExecutor.h"
 #include "Manager/Manager.h"
-#include "Importer/GraphOperations.h"
-#include "Layout/RestrictionRemovalHandler_RestrictionNodesRemover.h"
-#include "Layout/ShapeGetter_SphereSurface_ByTwoNodes.h"
-#include "Layout/ShapeGetter_Sphere_ByTwoNodes.h"
-#include "Layout/ShapeGetter_Plane_ByThreeNodes.h"
 #include "Network/Server.h"
 #include "Network/Client.h"
 
-using namespace Network;
+namespace Network {
 
 void UnSetRestrictionExecutor::execute_client() {
 	int id;
@@ -72,3 +67,5 @@ void UnSetRestrictionExecutor::execute_server() {
 	Server * server = Server::getInstance();
 	server->sendUnSetRestriction(nodesToUnRestrict);
 }
+
+} // namespace Network

@@ -2,7 +2,7 @@
 #include "Network/Client.h"
 
 
-using namespace Network;
+namespace Network {
 
 void GraphEndExecutor::execute_client() {
 
@@ -18,3 +18,5 @@ void GraphEndExecutor::execute_client() {
 void GraphEndExecutor::execute_server() {
     return;
 }
+
+} // namespace Network

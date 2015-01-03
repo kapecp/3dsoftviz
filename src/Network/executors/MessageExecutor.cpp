@@ -1,7 +1,7 @@
 #include "Network/executors/MessageExecutor.h"
 #include <QDebug>
 
-using namespace Network;
+namespace Network {
 
 void MessageExecutor::execute_server() {
 
@@ -14,3 +14,5 @@ void MessageExecutor::execute_server() {
 void MessageExecutor::execute_client() {
     return;
 }
+
+} // namespace Network

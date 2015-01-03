@@ -4,7 +4,7 @@
 #include "Network/Server.h"
 #include "Data/Node.h"
 
-using namespace Network;
+namespace Network {
 
 void SetFixNodeStateExecutor::execute_client() {
     int id;
@@ -67,3 +67,5 @@ void SetFixNodeStateExecutor::SetFixNodeState(Data::Node *node, bool state) {
     node->setUsingInterpolation(!state);
 
 }
+
+} // namespace Network

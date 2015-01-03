@@ -21,8 +21,7 @@
 #include <QDebug>
 
 namespace Layout {
-using namespace std;
-using namespace Vwr;
+
 //Konstruktor pre vlakno s algoritmom
 FRAlgorithm::FRAlgorithm()
 {
@@ -197,7 +196,7 @@ void FRAlgorithm::Run()
 	}
 	else
 	{
-		cout << "Nenastaveny graf. Pouzi metodu SetGraph(Data::Graph graph).";
+        std::cout << "Nenastaveny graf. Pouzi metodu SetGraph(Data::Graph graph).";
 
 	}
 }

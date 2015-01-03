@@ -21,7 +21,7 @@
 #pragma GCC diagnostic ignored "-Wconversion"
 
 
-using namespace OsgQtBrowser;
+namespace OsgQtBrowser{
 
 QCoreApplication* OsgQtBrowser::QGraphicsViewAdapter::getOrCreateQApplication()
 {
@@ -34,7 +34,7 @@ QCoreApplication* OsgQtBrowser::QGraphicsViewAdapter::getOrCreateQApplication()
 	return QApplication::instance();
 }
 
-namespace OsgQtBrowser{
+
 
 class MyQKeyEvent : public QEvent
 {
@@ -46,7 +46,7 @@ public:
 	int         _key;
 	bool        _down;
 };
-}
+
 
 QGraphicsViewAdapter::QGraphicsViewAdapter(osg::Image* image, QWidget* widget):
 	_image(image),
@@ -453,6 +453,8 @@ void QGraphicsViewAdapter::assignImage(unsigned int i)
 					 GL_RGBA,GL_UNSIGNED_BYTE,
 					 data,
 					 osg::Image::NO_DELETE, 1);
+}
+
 }
 
 #pragma GCC diagnostic pop

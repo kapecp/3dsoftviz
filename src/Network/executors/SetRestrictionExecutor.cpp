@@ -1,6 +1,5 @@
 #include "Network/executors/SetRestrictionExecutor.h"
 #include "Manager/Manager.h"
-#include "Importer/GraphOperations.h"
 #include "Layout/RestrictionRemovalHandler_RestrictionNodesRemover.h"
 #include "Layout/ShapeGetter_SphereSurface_ByTwoNodes.h"
 #include "Layout/ShapeGetter_Sphere_ByTwoNodes.h"
@@ -8,7 +7,7 @@
 #include "Network/Server.h"
 #include "Network/Client.h"
 
-using namespace Network;
+namespace Network {
 
 void SetRestrictionExecutor::execute_client() {
     int id;
@@ -168,3 +167,5 @@ void SetRestrictionExecutor::execute_server() {
 
 	server->sendSetRestriction(type, node1, position_node1, node2, position_node2, nodesToRestrict, node3, position_node3);
 }
+
+} // namespace Network

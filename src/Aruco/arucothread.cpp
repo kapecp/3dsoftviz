@@ -22,7 +22,7 @@ ArucoThread::ArucoThread(QObject *parent)
 	mRatioCamCoef	= 0;
 	mGrM			= 0;
 	mMoM			= 1;
-	boolQueue = new SizedQueue(5, 0.0);
+    boolQueue = new Util::SizedQueue(5, 0.0);
 
 }
 

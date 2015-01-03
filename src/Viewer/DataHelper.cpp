@@ -8,7 +8,6 @@
 #include <iostream>
 
 namespace Vwr {
-using namespace Data;
 
 osg::ref_ptr<osg::Geode> DataHelper::getSphereGeode(osg::Vec3 center, float radius)
 {

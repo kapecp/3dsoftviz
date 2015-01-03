@@ -3,7 +3,7 @@
 #include "Network/Client.h"
 #include "Network/Server.h"
 
-using namespace Network;
+namespace Network {
 
 void AddMetaNodeExecutor::execute_client() {
 
@@ -65,5 +65,7 @@ void AddMetaNodeExecutor::execute_server() {
         server->getLayoutThread()->play();
     }
 
+
+}
 
 }
