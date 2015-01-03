@@ -6,13 +6,13 @@
 namespace Layout {
 
 Shape_Null::Shape_Null (void) {
-	// nothing
+    // nothing
 }
 
 void Shape_Null::accept (
-		ShapeVisitor & visitor
-		) {
-	visitor.visit (*this);
+        ShapeVisitor & visitor
+        ) {
+    visitor.visit (*this);
 }
 
 } // namespace

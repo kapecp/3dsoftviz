@@ -14,23 +14,23 @@ namespace Manager {
 #endif
 
 void ImportInfoHandlerImpl::addMessage () {
-	throw "not implemented";
+    throw "not implemented";
 }
 
 void ImportInfoHandlerImpl::reportError (
-		const QString &text
-		) {
-	AppCore::Core::getInstance()->messageWindows->showMessageBox (
-				"Chyba",
-				text,
-				true
-				);
+        const QString &text
+        ) {
+    AppCore::Core::getInstance()->messageWindows->showMessageBox (
+                "Chyba",
+                text,
+                true
+                );
 }
 
 void ImportInfoHandlerImpl::setProgress (
-		const unsigned int value
-		) {
-	AppCore::Core::getInstance()->messageWindows->setProgressBarValue (value);
+        const unsigned int value
+        ) {
+    AppCore::Core::getInstance()->messageWindows->setProgressBarValue (value);
 }
 
 } // namespace

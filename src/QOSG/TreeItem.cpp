@@ -42,9 +42,9 @@
 ****************************************************************************/
 
 /*
-	treeitem.cpp
+    treeitem.cpp
 
-	A container for items of data supplied by the simple tree model.
+    A container for items of data supplied by the simple tree model.
 */
 
 #include <QStringList>
@@ -54,90 +54,90 @@ using namespace QOSG;
 
 TreeItem::TreeItem(const QList<QVariant> &data, TreeItem *parent)
 {
-	parentItem = parent;
-	itemData = data;
+    parentItem = parent;
+    itemData = data;
 }
 
 TreeItem::~TreeItem()
 {
-	qDeleteAll(childItems);
+    qDeleteAll(childItems);
 }
 
 void TreeItem::appendChild(TreeItem *item)
 {
-	childItems.append(item);
+    childItems.append(item);
 }
 
 TreeItem *TreeItem::child(int row)
 {
-	return childItems.value(row);
+    return childItems.value(row);
 }
 
 int TreeItem::childCount() const
 {
-	return childItems.count();
+    return childItems.count();
 }
 
 int TreeItem::columnCount() const
 {
-	return itemData.count();
+    return itemData.count();
 }
 
 QVariant TreeItem::data(int column) const
 {
-	return itemData.value(column);
+    return itemData.value(column);
 }
 
 TreeItem *TreeItem::parent()
 {
-	return parentItem;
+    return parentItem;
 }
 
 int TreeItem::row() const
 {
-	if (parentItem)
-		return parentItem->childItems.indexOf(const_cast<TreeItem*>(this));
+    if (parentItem)
+        return parentItem->childItems.indexOf(const_cast<TreeItem*>(this));
 
-	return 0;
+    return 0;
 }
 
 void TreeItem::addColumnData(QString data)
 {
-	// v pripade ze polozka ma len nazov pridaju sa jej tieto data
-	if (itemData.length() == 1 )
-	{
-		itemData.append(data);
-	}
-	else
-	{
-		// ak ma aj ine data tak sa nahradia novymi
-		QString str = itemData[1].toString();
-		itemData.pop_back();
-		str.append(";");
-		str.append(data);
-		itemData.append(str);
-	}
+    // v pripade ze polozka ma len nazov pridaju sa jej tieto data
+    if (itemData.length() == 1 )
+    {
+        itemData.append(data);
+    }
+    else
+    {
+        // ak ma aj ine data tak sa nahradia novymi
+        QString str = itemData[1].toString();
+        itemData.pop_back();
+        str.append(";");
+        str.append(data);
+        itemData.append(str);
+    }
 }
 
 void TreeItem::replaceDataColumn(QString data)
 {
-	//ak ma polozka len nazov pridaju sa jej data
-	if (itemData.length() ==1)
-	{
-		itemData.append(data);
-	}
-	else if (itemData.length() == 3)
-	{
-		//ak je to typ uzla tak sa jej nahradia data
-		QVariant tmp = itemData.takeLast();
-		itemData.pop_back();
-		itemData.append(data);
-		itemData.append(tmp);
-	}
-	else
-	{
-		//ak ma aj vlastne data tieto data sa nahradia
-		itemData.pop_back();
-		itemData.append(data);
-	}
+    //ak ma polozka len nazov pridaju sa jej data
+    if (itemData.length() ==1)
+    {
+        itemData.append(data);
+    }
+    else if (itemData.length() == 3)
+    {
+        //ak je to typ uzla tak sa jej nahradia data
+        QVariant tmp = itemData.takeLast();
+        itemData.pop_back();
+        itemData.append(data);
+        itemData.append(tmp);
+    }
+    else
+    {
+        //ak ma aj vlastne data tieto data sa nahradia
+        itemData.pop_back();
+        itemData.append(data);
+    }
 }

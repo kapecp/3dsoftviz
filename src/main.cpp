@@ -19,16 +19,16 @@ Q_DECLARE_METATYPE(Qt::MouseButton)
 
 int main(int argc, char *argv[])
 {
-	qRegisterMetaType< osg::Vec3d >("osgVec3d");
-	qRegisterMetaType< osg::Quat >("osgQuat");
+    qRegisterMetaType< osg::Vec3d >("osgVec3d");
+    qRegisterMetaType< osg::Quat >("osgQuat");
 #ifdef OPENCV_FOUND
 qRegisterMetaType<cv::Mat>("Mat");
 #endif
-	qRegisterMetaType<Qt::MouseButton>("MouseButton");
+    qRegisterMetaType<Qt::MouseButton>("MouseButton");
 
-	QApplication app(argc, argv);
-	new Util::Cleaner(&app);
-	AppCore::Core::getInstance(&app);
+    QApplication app(argc, argv);
+    new Util::Cleaner(&app);
+    AppCore::Core::getInstance(&app);
 
 
 }

@@ -3,12 +3,12 @@
 namespace Importer {
 
 void ImportInfoHandler::reportError (
-		const bool cond,
-		const QString &text
-		) {
-	if (!cond) {
-		reportError (text);
-	}
+        const bool cond,
+        const QString &text
+        ) {
+    if (!cond) {
+        reportError (text);
+    }
 }
 
 } // namespace

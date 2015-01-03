@@ -7,8 +7,8 @@ using namespace Layout;
 
 LayoutThread::LayoutThread(Layout::FRAlgorithm* alg)
 {
-	this->alg = alg;
-	appConf = Util::ApplicationConfig::get();
+    this->alg = alg;
+    appConf = Util::ApplicationConfig::get();
 }
 
 LayoutThread::~LayoutThread(void)
@@ -17,32 +17,32 @@ LayoutThread::~LayoutThread(void)
 
 void LayoutThread::run()
 {
-	this->sleep(appConf->getValue("Layout.Thread.StartSleepTime").toLong());
-	alg->Run();
+    this->sleep(appConf->getValue("Layout.Thread.StartSleepTime").toLong());
+    alg->Run();
 }
 void LayoutThread::pause()
 {
-	alg->PauseAlg();
+    alg->PauseAlg();
 }
 void LayoutThread::play()
 {
-	alg->RunAlg();
+    alg->RunAlg();
 }
 void LayoutThread::wakeUp()
 {
-	alg->WakeUpAlg();
+    alg->WakeUpAlg();
 }
 void LayoutThread::setAlphaValue(float val)
 {
-	alg->SetAlphaValue(val);
+    alg->SetAlphaValue(val);
 }
 bool LayoutThread::isRunning()
 {
-	return alg->IsRunning();
+    return alg->IsRunning();
 }
 void LayoutThread::requestEnd()
 {
-	alg->RequestEnd();
+    alg->RequestEnd();
 }
 Layout::FRAlgorithm* LayoutThread::getAlg()
 {

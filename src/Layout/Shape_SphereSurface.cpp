@@ -6,17 +6,17 @@
 namespace Layout {
 
 Shape_SphereSurface::Shape_SphereSurface (
-		const osg::Vec3f center,
-		const float radius
-		) :	Shape_AbstractSphere (center, radius)
+        const osg::Vec3f center,
+        const float radius
+        ) :	Shape_AbstractSphere (center, radius)
 {
-	// nothing
+    // nothing
 }
 
 void Shape_SphereSurface::accept (
-		ShapeVisitor & visitor
-		) {
-	visitor.visit (*this);
+        ShapeVisitor & visitor
+        ) {
+    visitor.visit (*this);
 }
 
 } // namespace

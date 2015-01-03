@@ -1115,12 +1115,12 @@ void CoreWindow::multiSelectClicked(bool checked)
 
 void CoreWindow::centerView(bool checked)
 {
-	noSelect->setChecked(false);
-	singleSelect->setChecked(false);
-	multiSelect->setChecked(false);
-	center->setChecked(checked);
+    noSelect->setChecked(false);
+    singleSelect->setChecked(false);
+    multiSelect->setChecked(false);
+    center->setChecked(checked);
 
-	viewerWidget->getCameraManipulator()->setCenterSmoothly(viewerWidget->getPickHandler()->getSelectionCenterNnE());
+    viewerWidget->getCameraManipulator()->setCenterSmoothly(viewerWidget->getPickHandler()->getSelectionCenterNnE());
 }
 
 

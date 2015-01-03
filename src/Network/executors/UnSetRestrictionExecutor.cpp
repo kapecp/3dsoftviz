@@ -11,13 +11,13 @@
 using namespace Network;
 
 void UnSetRestrictionExecutor::execute_client() {
-	int id;
+    int id;
 
     Data::Graph * currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
-	Client * client = Client::getInstance();
+    Client * client = Client::getInstance();
     QOSG::CoreWindow * cw = (QOSG::CoreWindow *) client->getCoreWindowReference();
 
-	QLinkedList<osg::ref_ptr<Data::Node> > * nodesToUnRestrict = new QLinkedList<osg::ref_ptr<Data::Node> >();
+    QLinkedList<osg::ref_ptr<Data::Node> > * nodesToUnRestrict = new QLinkedList<osg::ref_ptr<Data::Node> >();
 
     int count;
 
@@ -27,48 +27,48 @@ void UnSetRestrictionExecutor::execute_client() {
     for (int i = 0; i < count; i++) {
         *stream >> id;
         if (nodes->contains(id)) {
-			nodesToUnRestrict->append(*nodes->find(id));
+            nodesToUnRestrict->append(*nodes->find(id));
         }
     }
 
 
-	cw->setRestrictionToSelectedNodes(
-				QSharedPointer<Layout::ShapeGetter> (NULL),
-				currentGraph,
-				QSharedPointer<Layout::RestrictionRemovalHandler> (NULL),
-				nodesToUnRestrict
-				);
+    cw->setRestrictionToSelectedNodes(
+                QSharedPointer<Layout::ShapeGetter> (NULL),
+                currentGraph,
+                QSharedPointer<Layout::RestrictionRemovalHandler> (NULL),
+                nodesToUnRestrict
+                );
 
 }
 
 void UnSetRestrictionExecutor::execute_server() {
-	int id;
+    int id;
 
-	Data::Graph * currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
-	Client * client = Client::getInstance();
-	QOSG::CoreWindow * cw = (QOSG::CoreWindow *) client->getCoreWindowReference();
+    Data::Graph * currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
+    Client * client = Client::getInstance();
+    QOSG::CoreWindow * cw = (QOSG::CoreWindow *) client->getCoreWindowReference();
 
-	QLinkedList<osg::ref_ptr<Data::Node> > * nodesToUnRestrict = new QLinkedList<osg::ref_ptr<Data::Node> >();
+    QLinkedList<osg::ref_ptr<Data::Node> > * nodesToUnRestrict = new QLinkedList<osg::ref_ptr<Data::Node> >();
 
-	int count;
+    int count;
 
-	*stream >> count;
+    *stream >> count;
 
-	QMap<qlonglong, osg::ref_ptr<Data::Node> >* nodes = currentGraph->getNodes();
-	for (int i = 0; i < count; i++) {
-		*stream >> id;
-		if (nodes->contains(id)) {
-			nodesToUnRestrict->append(*nodes->find(id));
-		}
-	}
+    QMap<qlonglong, osg::ref_ptr<Data::Node> >* nodes = currentGraph->getNodes();
+    for (int i = 0; i < count; i++) {
+        *stream >> id;
+        if (nodes->contains(id)) {
+            nodesToUnRestrict->append(*nodes->find(id));
+        }
+    }
 
 
-	cw->setRestrictionToSelectedNodes(
-				QSharedPointer<Layout::ShapeGetter> (NULL),
-				currentGraph,
-				QSharedPointer<Layout::RestrictionRemovalHandler> (NULL),
-				nodesToUnRestrict
-				);
-	Server * server = Server::getInstance();
-	server->sendUnSetRestriction(nodesToUnRestrict);
+    cw->setRestrictionToSelectedNodes(
+                QSharedPointer<Layout::ShapeGetter> (NULL),
+                currentGraph,
+                QSharedPointer<Layout::RestrictionRemovalHandler> (NULL),
+                nodesToUnRestrict
+                );
+    Server * server = Server::getInstance();
+    server->sendUnSetRestriction(nodesToUnRestrict);
 }

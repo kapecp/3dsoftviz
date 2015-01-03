@@ -7,9 +7,9 @@ namespace Layout {
 
 
 void Shape_Intersection::accept (
-		ShapeVisitor & visitor
-		) {
-	visitor.visit (*this);
+        ShapeVisitor & visitor
+        ) {
+    visitor.visit (*this);
 }
 
 } // namespace

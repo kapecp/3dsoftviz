@@ -10,7 +10,7 @@
 
 Data::MetaType::MetaType(qlonglong id, QString name, Data::Graph* graph, Data::GraphLayout* layout, QMap<QString, QString> * settings) : Data::Type(id,name,graph,settings)
 {
-	this->layout = layout; this->meta = true;
+    this->layout = layout; this->meta = true;
 }
 
 

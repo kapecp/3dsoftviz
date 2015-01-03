@@ -17,53 +17,53 @@ using namespace OsgQtBrowser;
 
 QWebViewImage::QWebViewImage()
 {
-	// make sure we have a valid QApplication before we start creating widgets.
-	OsgQtBrowser::QGraphicsViewAdapter::getOrCreateQApplication();
+    // make sure we have a valid QApplication before we start creating widgets.
+    OsgQtBrowser::QGraphicsViewAdapter::getOrCreateQApplication();
 
-	_webView = new QWebView;
+    _webView = new QWebView;
 
-	_webPage = new QWebPage;
-	_webPage->settings()->setAttribute(QWebSettings::JavascriptEnabled, true);
-	_webPage->settings()->setAttribute(QWebSettings::PluginsEnabled, true);
+    _webPage = new QWebPage;
+    _webPage->settings()->setAttribute(QWebSettings::JavascriptEnabled, true);
+    _webPage->settings()->setAttribute(QWebSettings::PluginsEnabled, true);
 
-	_webView->setPage(_webPage);
+    _webView->setPage(_webPage);
 
-	_adapter = new QGraphicsViewAdapter(this, _webView.data());
+    _adapter = new QGraphicsViewAdapter(this, _webView.data());
 }
 
 void QWebViewImage::navigateTo(const std::string& url)
 {
-	_webView->load(QUrl(url.c_str()));
+    _webView->load(QUrl(url.c_str()));
 }
 
 void QWebViewImage::focusBrowser(bool focus)
 {
-	QFocusEvent event(focus ? QEvent::FocusIn : QEvent::FocusOut, Qt::OtherFocusReason);
-	QCoreApplication::sendEvent(_webPage, &event);
+    QFocusEvent event(focus ? QEvent::FocusIn : QEvent::FocusOut, Qt::OtherFocusReason);
+    QCoreApplication::sendEvent(_webPage, &event);
 }
 
 void QWebViewImage::clearWriteBuffer()
 {
-	_adapter->clearWriteBuffer();
+    _adapter->clearWriteBuffer();
 }
 
 void QWebViewImage::render()
 {
-	_adapter->render();
+    _adapter->render();
 }
 
 void QWebViewImage::setFrameLastRendered(const osg::FrameStamp* frameStamp)
 {
-	_adapter->setFrameLastRendered(frameStamp);
+    _adapter->setFrameLastRendered(frameStamp);
 }
 
 bool QWebViewImage::sendPointerEvent(int x, int y, int buttonMask)
 {
-	return _adapter->sendPointerEvent(x,y,buttonMask);
+    return _adapter->sendPointerEvent(x,y,buttonMask);
 }
 
 bool QWebViewImage::sendKeyEvent(int key, bool keyDown)
 {
-	return QWebViewImage::_adapter->sendKeyEvent(key, keyDown);
+    return QWebViewImage::_adapter->sendKeyEvent(key, keyDown);
 }
 

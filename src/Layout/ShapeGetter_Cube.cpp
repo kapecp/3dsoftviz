@@ -14,7 +14,7 @@ ShapeGetter_Cube::ShapeGetter_Cube (
         osg::ref_ptr<Data::Node> surfaceNodeZ
         ) : centerNode_ (centerNode), surfaceNodeX_ (surfaceNodeX), surfaceNodeY_ (surfaceNodeY), surfaceNodeZ_ (surfaceNodeZ)
 {
-	// nothing
+    // nothing
 }
 
 QSharedPointer<Shape> ShapeGetter_Cube::getShape (void) {
@@ -30,12 +30,12 @@ QSharedPointer<Shape> ShapeGetter_Cube::getShape (void) {
 }
 
 QSet<Data::Node * > ShapeGetter_Cube::getNodesOfShape(){
-	QSet<Data::Node * > nodes;
-	nodes.insert (centerNode_.get());
+    QSet<Data::Node * > nodes;
+    nodes.insert (centerNode_.get());
     nodes.insert (surfaceNodeX_.get());
     nodes.insert (surfaceNodeY_.get());
     nodes.insert (surfaceNodeZ_.get());
-	return nodes;
+    return nodes;
 }
 
 void ShapeGetter_Cube::move(double lengthX, double lengthY, double lengthZ) {

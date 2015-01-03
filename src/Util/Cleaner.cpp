@@ -6,11 +6,11 @@ using namespace std;
 
 void Cleaner::clean()
 {
-	//sem kod na vycistenie pamata
-	std::cout<< "About to quit\n";
+    //sem kod na vycistenie pamata
+    std::cout<< "About to quit\n";
 }
 
 Cleaner::Cleaner(QApplication* app)
 {
-	connect(app,SIGNAL(aboutToQuit()),this,SLOT(clean()));
+    connect(app,SIGNAL(aboutToQuit()),this,SLOT(clean()));
 }
