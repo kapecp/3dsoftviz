@@ -4,7 +4,8 @@
 #include "opencv2/imgproc/imgproc.hpp"
 
 
-using namespace ArucoModul;
+
+namespace ArucoModul {
 
 ArucoCore::ArucoCore()
 {
@@ -139,3 +140,5 @@ cv::Mat ArucoCore::getDetImage()
 
 	return mCamImage;	// return image with augmented information
 }
+
+} // namespace ArucoModul

@@ -57,7 +57,7 @@ Data::Type::~Type(void)
 
 QString Data::Type::toString() const {
 	QString str;
-    QTextStream(&str) << "type id:" << id << " name:" << name << " meta:" << (int)this->isMeta();
+    QTextStream(&str) << "type id:" << id << " name:" << name << " meta:" << static_cast<int>(this->isMeta());
 	return str;
 }
 

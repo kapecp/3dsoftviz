@@ -1,12 +1,11 @@
 #include "OpenCV/CapVideo.h"
 
-#include <opencv2/imgproc/imgproc.hpp>
 #include "OpenCV/CamSelectCore.h"
+
+#include <opencv2/imgproc/imgproc.hpp>
+#include <opencv2/core/core.hpp>
+
 #include <QDebug>
-
-
-
-using namespace OpenCV;
 
 // constructor sets basic camera settings
 OpenCV::CapVideo::CapVideo( int device_id, int width, int height)
@@ -25,8 +24,8 @@ void OpenCV::CapVideo::startCamera(int width,int height){
 		this->capture = cap;
 		this->capture.set( CV_CAP_PROP_FRAME_WIDTH, width );
 		this->capture.set( CV_CAP_PROP_FRAME_HEIGHT, height );
-		this->width  = (int) this->capture.get( CV_CAP_PROP_FRAME_WIDTH );
-		this->height = (int) this->capture.get( CV_CAP_PROP_FRAME_HEIGHT );
+		this->width  = static_cast<int>( this->capture.get( CV_CAP_PROP_FRAME_WIDTH ) );
+		this->height = static_cast<int>( this->capture.get( CV_CAP_PROP_FRAME_HEIGHT ) );
 		return;
 	}
 }
@@ -69,7 +68,7 @@ cv::Mat OpenCV::CapVideo::queryFrame()
 }
 
 // transform current camera frame to grayscale and return it
-cv::Mat CapVideo::getGrayframe()
+cv::Mat OpenCV::CapVideo::getGrayframe()
 {
 	if(!frame.empty())
 	{
@@ -77,7 +76,7 @@ cv::Mat CapVideo::getGrayframe()
 	}return this->grayframe;
 }
 
-cv::Mat CapVideo::getFrame()
+cv::Mat OpenCV::CapVideo::getFrame()
 {
 	return this->frame;
 }

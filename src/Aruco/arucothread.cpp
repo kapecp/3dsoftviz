@@ -6,7 +6,7 @@
 
 #include "OpenCV/CapVideo.h"
 
-using namespace ArucoModul;
+namespace ArucoModul {
 
 ArucoThread::ArucoThread(QObject *parent)
 	: QThread(parent)
@@ -340,7 +340,7 @@ void ArucoThread::printMat( const osg::Matrixd mat, const QString name) const
 	qDebug() << ": " << str;
 }
 
-
+} // namespace ArucoModul
 
 /*
 test(){

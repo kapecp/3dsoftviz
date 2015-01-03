@@ -5,9 +5,11 @@
 #include <osg/Camera>
 #include <osg/LineWidth>
 #include <osg/Geometry>
-#include <cmath>
 
-using namespace MathModule;
+#include <cmath>
+#include <list>
+
+namespace MathModule {
 
 osg::Vec3d CameraMath::getPointOnNextBezierCurve(double time, QVector<osg::Vec3d> * points, double weights[])
 {
@@ -196,3 +198,4 @@ osg::Drawable* CameraMath::createAxis(const osg::Vec3& corner,const osg::Vec3& d
 	return geom;
 }
 
+} // namespace MathModule

@@ -13,11 +13,6 @@
 #include <opencv2/imgproc/imgproc.hpp>
 #include <QDebug>
 
-
-#include <QDebug>
-
-using namespace QOpenCV;
-
 QOpenCV::FaceRecognitionWindow::FaceRecognitionWindow(QWidget *parent, QApplication * app )
 	: QDialog(parent)
 {
@@ -276,7 +271,7 @@ void QOpenCV::FaceRecognitionWindow::setLabel(cv::Mat image)
 		return;
 	}
 
-	QImage qimage( (uchar*) image.data, image.cols, image.rows,(int) image.step, QImage::Format_RGB888);
+	QImage qimage( reinterpret_cast<uchar*>(image.data), image.cols, image.rows,static_cast<int>(image.step), QImage::Format_RGB888);
 
 	mWindowLabel->setPixmap( QPixmap::fromImage(qimage));
 

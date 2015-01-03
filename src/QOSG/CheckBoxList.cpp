@@ -14,7 +14,7 @@
 #include <QtGui>
 #include <QItemDelegate>
 
-using namespace QOSG;
+namespace QOSG {
 
 void CheckBoxList::paint(QPainter *painter, const QStyleOptionViewItem &option,
 		   const QModelIndex &index) const
@@ -142,3 +142,5 @@ QString CheckBoxList::GetDisplayText() const
 {
 	return m_DisplayText;
 }
+
+} // namespace QOSG

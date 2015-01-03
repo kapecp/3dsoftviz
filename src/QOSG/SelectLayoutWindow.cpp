@@ -5,7 +5,7 @@
 #include "Model/GraphDAO.h"
 #include "Manager/Manager.h"
 
-using namespace QOSG;
+namespace QOSG {
 
 SelectLayoutWindow::SelectLayoutWindow(QWidget *parent, qlonglong graphID)
 {
@@ -64,7 +64,7 @@ void SelectLayoutWindow::createLayoutTable()
 	layoutsCount = layouts.count();
 
 	numberOfLayouts->setText(tr("%1 layout(s) found").arg(layoutsCount));
-	layoutsTable->setRowCount((int)layoutsCount);
+	layoutsTable->setRowCount(static_cast<int>(layoutsCount));
 
 	for(iterLayout = layouts.begin(), row=0; iterLayout != layouts.end(); ++iterLayout, row++)
 	{
@@ -74,8 +74,8 @@ void SelectLayoutWindow::createLayoutTable()
 
 		QTableWidgetItem *itemID = new QTableWidgetItem(tr("%1").arg(layoutID));
 		QTableWidgetItem *itemName = new QTableWidgetItem(name);
-		layoutsTable->setItem((int)row, 0, itemID);
-		layoutsTable->setItem((int)row, 1, itemName);
+		layoutsTable->setItem(static_cast<int>(row), 0, itemID);
+		layoutsTable->setItem(static_cast<int>(row), 1, itemName);
 	}
 	if(layoutsTable->rowCount() > 0)
 		layoutsTable->selectRow(0);
@@ -163,3 +163,5 @@ QPushButton *SelectLayoutWindow::createButton(const QString &text, const char *m
 	connect(button, SIGNAL(clicked()), this, member);
 	return button;
 }
+
+} // namespace QOSG

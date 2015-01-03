@@ -48,7 +48,8 @@ bool Model::TypeDAO::checkIfExists(Data::Type* type, QSqlDatabase* conn)
 	}
 	if(query->next() && query->value(0)==1) {
 		return true;
-	} else return false;
+	}
+	else return false;
 }
 
 bool Model::TypeDAO::removeType( Data::Type* type, QSqlDatabase* conn )

@@ -31,7 +31,8 @@ qlonglong Data::GraphSpanningTree::getRandomNodeInGroup(qlonglong groupId){
 
 qlonglong Data::GraphSpanningTree::getNextGroupId(){
 	if (groupToDepth.empty()) return 1;
-	else {
+	else
+	{
 		QMap<qlonglong,int>::iterator mapIt;
 		qlonglong max =0;
 		for(mapIt=groupToDepth.begin();mapIt!=groupToDepth.end(); mapIt++){

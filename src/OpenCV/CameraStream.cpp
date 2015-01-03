@@ -4,7 +4,7 @@
 #include "Util/ApplicationConfig.h"
 
 
-using namespace OpenCV;
+namespace OpenCV {
 
 CameraStream::CameraStream(osg::Geometry *geom) : QObject(), osg::Image()
 {
@@ -76,7 +76,7 @@ void CameraStream::updateBackgroundImage( cv::Mat cvImg)
 void CameraStream::updateGeometryCoords(int width, int height)
 {
 	float x;
-	x = ((float)width) / ((float)height);
+	x = static_cast<float>(width) / static_cast<float>(height);
 
 	osg::Vec3Array* coords = (osg::Vec3Array*) mGeom->getVertexArray();
 	(*coords)[0].set( -x, 1.5f, -1.0f );
@@ -87,3 +87,5 @@ void CameraStream::updateGeometryCoords(int width, int height)
 	mGeom->dirtyDisplayList();  // update changes
 
 }
+
+} // namespace OpenCV

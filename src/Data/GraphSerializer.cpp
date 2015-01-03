@@ -1,6 +1,8 @@
 #include "Data/GraphSerializer.h"
 
-using namespace Data;
+#include <vector>
+
+namespace Data {
 
 //Nepouziva sa
 osg::Vec3f GraphSerializer::getRandomPosition()
@@ -13,9 +15,9 @@ osg::Vec3f GraphSerializer::getRandomPosition()
 
 	srand((unsigned)time(0));
 
-	x = lowest + (float)(range * (float) rand() / ((float) RAND_MAX + 1.f));
-	y = lowest + (float)(range * (float) rand() / ((float) RAND_MAX + 1.f));
-	z = lowest + (float)(range * (float) rand() / ((float) RAND_MAX + 1.f));
+    x = lowest + static_cast<float>(range * static_cast<float>(rand()) / (static_cast<float>(RAND_MAX) + 1.f));
+    y = lowest + static_cast<float>(range * static_cast<float>(rand()) / (static_cast<float>(RAND_MAX) + 1.f));
+    z = lowest + static_cast<float>(range * static_cast<float>(rand()) / (static_cast<float>(RAND_MAX) + 1.f));
 
 	return osg::Vec3f(x, y, z);
 }
@@ -89,3 +91,5 @@ Data::Node* GraphSerializer::createNode(QString id, QString data)
 
 	return new Data::Node(nodeIdMap.value(id), data, types->at(0), 0, NULL, getRandomPosition());
 }
+
+} // namespace Data

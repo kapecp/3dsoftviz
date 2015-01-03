@@ -1,19 +1,23 @@
 
 #include "Clustering/Clusterer.h"
+
 #include "Data/Graph.h"
 #include "Data/Node.h"
 #include "Data/Edge.h"
 #include "Data/Type.h"
 #include "Data/Cluster.h"
 #include "Manager/Manager.h"
-#include <math.h>
 
 #include "QOSG/OptionsWindow.h"
 #include "QOSG/CheckBoxList.h"
 
+#include <math.h>
+#include <vector>
+
+namespace Clustering {
+
 using namespace Data;
 
-using namespace Clustering;
 /*
 Clusterer::Clusterer() {
     graph = NULL;
@@ -212,7 +216,8 @@ void Clusterer::clusterLeafs(QMap<qlonglong, osg::ref_ptr<Data::Node> >* someNod
                 node->setColor(cluster->getColor());
                 cluster->addNodeToCluster(node);
             }
-            else { // nie je list -> skus ho zhlukovat v dalsej hlbke
+            else
+            { // nie je list -> skus ho zhlukovat v dalsej hlbke
                 newClusters.insert(node->getId(), node);
             }
         }
@@ -291,8 +296,8 @@ void Clusterer::clusterAdjacency(QMap<qlonglong, osg::ref_ptr<Data::Node> >* som
                 sum += matrix[i][k] && matrix[j][k] ? 1 : 0;
             }
             // apply Pearson
-            float wij = ((float)((n * sum) - (degU * degV))) /
-                    (float)sqrt((float)(degU * degV * (n - degU) * (n - degV)));
+            float wij = (static_cast<float>((n * sum) - (degU * degV))) /
+                    static_cast<float>( sqrt(static_cast<float>(degU * degV * (n - degU) * (n - degV))) );
             // ignore negative values
             w[j][i] = w[i][j] = (unsigned char)qMax(0.0f, wij * K); // K is used to store 0-1 floats in uchar matrix
             if (w[j][i] > maxW) // remember largest weight
@@ -430,3 +435,5 @@ void Clusterer::resetClusters(bool removeReferences) {
     }
     clusters.clear();
 }
+
+} // namespace Clustering

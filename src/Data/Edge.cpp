@@ -123,7 +123,7 @@ void Data::Edge::updateCoordinates(osg::Vec3 srcPos, osg::Vec3 dstPos)
 	coordinates->push_back(osg::Vec3d(y.x() - up.x(), y.y() - up.y(), y.z() - up.z()));
 	coordinates->push_back(osg::Vec3d(y.x() + up.x(), y.y() + up.y(), y.z() + up.z()));
 
-	float repeatCnt =(float)  (length / (2.f * this->scale));
+	float repeatCnt = static_cast<float>(length / (2.f * this->scale));
 
 	//init edge-text (label) coordinates
 	edgeTexCoords->push_back(osg::Vec2(0,1.0f));

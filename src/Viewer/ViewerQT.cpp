@@ -72,16 +72,16 @@ void QOSG::ViewerQT::moveMouseAruco(double positionX,double positionY,bool isCli
 {
 	//qDebug() << positionX << "  " << positionY << "         " << isClick;
 
-	float wieverX =(float)  (positionX * (float) this->width());
-	float wieverY =(float)  (positionY * (float) this->height());
+	float wieverX = static_cast<float>(positionX * static_cast<float>(this->width()));
+	float wieverY = static_cast<float>(positionY * static_cast<float>(this->height()));
 
-	int screenX =(int)  (positionX * this->width()  + this->x() + windowX + 8);
-	int screenY = (int)(positionY * this->height() + this->y() + windowY + 28);
+	int screenX = static_cast<int>(positionX * this->width()  + this->x() + windowX + 8);
+	int screenY = static_cast<int>(positionY * this->height() + this->y() + windowY + 28);
 
 	this->cursor().setPos(screenX, screenY);
 
 	qDebug() << screenX << "  " << screenY ;
-	wieverY =  ((float) this->height() - wieverY);
+	wieverY =  ( static_cast<float>(this->height()) - wieverY);
 
 	if( isClick != mIsClicAruco){
 		mIsClicAruco = isClick;
@@ -103,16 +103,16 @@ void QOSG::ViewerQT::moveMouseKinect(double positionX,double positionY,double sp
 	positionX /=640.0;
 	positionY/=480.0;
 
-	float wieverX =(float)  (positionX * (float) this->width());
-	float wieverY =(float)  (positionY * (float) this->height());
+	float wieverX = static_cast<float>(positionX * static_cast<float>(this->width()));
+	float wieverY = static_cast<float>(positionY * static_cast<float>(this->height()));
 
-	int screenX =(int)  (positionX * this->width()  + this->x() + windowX + 8);
-	int screenY = (int)(positionY * this->height() + this->y() + windowY + 28);
+	int screenX = static_cast<int>(positionX * this->width()  + this->x() + windowX + 8);
+	int screenY = static_cast<int>(positionY * this->height() + this->y() + windowY + 28);
 
 	this->cursor().setPos(screenX, screenY);
 
 	qDebug() << screenX << "  " << screenY ;
-	wieverY =  ((float) this->height() - wieverY);
+	wieverY =  ( static_cast<float>(this->height()) - wieverY);
 
 	if( isClick != mIsClicAruco){
 		mIsClicAruco = isClick;

@@ -370,7 +370,7 @@ osg::ref_ptr<osg::AutoTransform> CoreGraph::dodecahedron(qlonglong id, osg::Vec3
     float z = midpoint.z();
 
     float i = 1;
-    float fi = (1 + (float)sqrt(5.0f)) / 2;
+    float fi = (1 + static_cast<float>(sqrt(5.0f))) / 2;
     float fi_rev = 1/fi;
 
     osg::Geode* dodecahedronGeode = new osg::Geode();
@@ -1025,7 +1025,8 @@ void CoreGraph::updateClustersCoords() {
             upperPoint = osg::Vec3f(midPoint.x() + distanceX, midPoint.y() + distanceY, midPoint.z() + distanceZ);
         }
         // inak vypocitaj tvar podla zlucenych uzlov
-        else {
+        else
+        {
             midPoint = ::getMidPoint(cluster->getALLClusteredNodes());
             radius = ::getRadius(cluster->getALLClusteredNodes(), midPoint);
             scale = osg::Vec3d(radius,radius,radius);
@@ -1036,9 +1037,9 @@ void CoreGraph::updateClustersCoords() {
 
         osg::Vec4 color = cluster->getColor();
         if (clustersOpacityAutomatic) {
-            color.w() = (float)computeOpacity(midPoint);
+            color.w() = static_cast<float>(computeOpacity(midPoint));
         } else if ((clustersOpacitySelected && cluster->isSelected()) || !clustersOpacitySelected){
-            color.w() = (float)clustersOpacity;
+            color.w() = static_cast<float>(clustersOpacity);
         }
 
         if (cluster->getALLClusteredNodes().count() <= clustersShapeBoundary) {
@@ -1186,9 +1187,10 @@ OpenCV::CameraStream* CoreGraph::getCameraStream() const
 #endif
 
 bool CoreGraph::cameraInsideCube(osg::Vec3d lowerPoint, osg::Vec3d upperPoint) {
-    return (new osg::BoundingBox((float)lowerPoint.x(), (float)lowerPoint.y(), (float)lowerPoint.z(),
-                                 (float)upperPoint.x(), (float)upperPoint.y(), (float)upperPoint.z()))
-            ->contains(cameraManipulator->getCameraPosition());
+    return (new osg::BoundingBox(
+                static_cast<float>(lowerPoint.x()), static_cast<float>(lowerPoint.y()), static_cast<float>(lowerPoint.z()),
+                static_cast<float>(upperPoint.x()), static_cast<float>(upperPoint.y()), static_cast<float>(upperPoint.z()))
+            )->contains(cameraManipulator->getCameraPosition());
 }
 
 bool CoreGraph::cameraInsideSphere(osg::Vec3d midPoint, float radius) {

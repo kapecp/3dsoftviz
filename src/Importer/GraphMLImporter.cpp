@@ -135,7 +135,7 @@ bool GraphMLImporter::processGraph_Nodes (
 						iColor_++;
 						if(iColor_ == colors_.size ()){
 							iColor_ = 0;
-						};
+						}
 					} else {
 						newNodeType = types.first();
 					}
@@ -265,7 +265,7 @@ bool GraphMLImporter::processGraph_Edges (
 						iColor_++;
 						if(iColor_ == colors_.size ()){
 							iColor_ = 0;
-						};
+						}
 					} else {
 						newEdgeType = types.first();
 					}

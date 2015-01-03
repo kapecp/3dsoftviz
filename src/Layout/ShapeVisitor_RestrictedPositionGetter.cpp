@@ -69,14 +69,14 @@ void ShapeVisitor_RestrictedPositionGetter::visit (Shape_Plane & shape) {
 	float t;
 	float m = - shape.getD () - shape.getNormalVector ().x () * mOriginalPosition.x () - shape.getNormalVector ().y () * mOriginalPosition.y () - shape.getNormalVector ().z () * mOriginalPosition.z ();
 
-	double shapeX= (double) shape.getNormalVector ().x ();
-	double shapeY=(double) shape.getNormalVector ().y ();
-	double shapeZ=(double) shape.getNormalVector ().z ();
+    double shapeX= static_cast<double>( shape.getNormalVector ().x () );
+    double shapeY= static_cast<double>( shape.getNormalVector ().y () );
+    double shapeZ= static_cast<double>(shape.getNormalVector ().z () );
 	double n = pow (shapeX, 2.0) + pow (shapeY, 2.0) + pow (shapeZ, 2.0);
 	if(!qFuzzyCompare(n,0.0))
 		//if (n != 0.0)
 	{
-		t = m / (float)n;
+        t = m / static_cast<float>(n);
 	} else {
 		t = 0.f;
 	}
@@ -216,7 +216,7 @@ osg::Vec3f ShapeVisitor_RestrictedPositionGetter::toSphere(const osg::Vec3f &cen
 	{
 		// create random point
 		for (int i = 0; i < 3; ++i) {
-			changedPointMoved[i] = (float)(rand () % 100) + 1.f;
+            changedPointMoved[i] = static_cast<float>(rand () % 100) + 1.f;
 		}
 	}
 
@@ -224,7 +224,7 @@ osg::Vec3f ShapeVisitor_RestrictedPositionGetter::toSphere(const osg::Vec3f &cen
 
 	float multiplier = radiusMin;
 	if (radiusMax > radiusMin) {
-		float randomIncrement = ((float)rand() / (float)RAND_MAX) * (radiusMax - radiusMin);
+        float randomIncrement = ( static_cast<float>(rand()) / static_cast<float>(RAND_MAX) ) * (radiusMax - radiusMin);
 		multiplier += randomIncrement;
 	}
 	changedPointMoved *= multiplier;

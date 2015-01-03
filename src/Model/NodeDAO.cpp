@@ -476,7 +476,8 @@ bool Model::NodeDAO::checkIfExists(Data::Node* node, QSqlDatabase* conn)
 	}
 	if(query->next() && query->value(0)==1) {
 		return true;
-	} else return false;
+	}
+	else return false;
 }
 
 bool Model::NodeDAO::removeNode( Data::Node* node, QSqlDatabase* conn )

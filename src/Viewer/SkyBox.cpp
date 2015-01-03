@@ -29,7 +29,7 @@
 
 #include <QDebug>
 
-using namespace Vwr;
+namespace Vwr {
 
 SkyBox::SkyBox()
 {
@@ -81,7 +81,7 @@ osg::TextureCubeMap* SkyBox::readCubeMap()
 
 // Update texture matrix for cubemaps
 
-namespace Vwr{
+
 
 class MoveEarthySkyWithEyePointTransform : public osg::Transform
 {
@@ -108,7 +108,7 @@ public:
 		return true;
 	}
 };
-}
+
 
 osg::Node* SkyBox::createSkyBox()
 {
@@ -159,3 +159,5 @@ osg::Node* SkyBox::createSkyBox()
 
 	return clearNode;
 }
+
+} // namespace Vwr

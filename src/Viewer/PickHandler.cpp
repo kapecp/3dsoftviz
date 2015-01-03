@@ -22,11 +22,12 @@
 #include <osg/ShapeDrawable>
 #include <osg/ValueObject>
 
+#include <string>
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wswitch-enum"
 
-using namespace Vwr;
+namespace Vwr {
 
 PickHandler::PickHandler(Vwr::CameraManipulator * cameraManipulator, Vwr::CoreGraph * coreGraph)
 {
@@ -1011,7 +1012,7 @@ osg::Vec3 PickHandler::getSelectionCenterNnE()
 			++i;
 		}
 		return osg::Vec3(x/pickedNodesCount,y/pickedNodesCount,z/pickedNodesCount);
-	}	
+	}
 
 	//only edges selection - computes and returns center of edges selection
 	else if(pickedNodesCount == 0 && pickedEdgesCount > 0)
@@ -1103,5 +1104,7 @@ osg::ref_ptr<Data::Node> PickHandler::getPickedNodeWithMinEdgeCount(){
     return rootNode;
 }
 //volovar kon
+
+} // namespace Vwr
 
 #pragma GCC diagnostic pop

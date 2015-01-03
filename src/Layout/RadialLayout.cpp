@@ -10,7 +10,7 @@
 
 #include "QDebug"
 
-using namespace Layout;
+namespace Layout {
 
 //instance of static members
 RadialLayout* RadialLayout::selectedRadialLayout = NULL;
@@ -82,7 +82,7 @@ void RadialLayout::update()
     mSphereCount = maxDepth; //sphere count is equal to max depth of spaning tree
 
     osg::Vec4 color(0.0, 0.0, 0.0, 1.0); //center node is black
-    osg::Vec4 d_color((float) (1.0/maxDepth), (float) (1.0/maxDepth), 0.0, 1.0);
+    osg::Vec4 d_color(static_cast<float>(1.0/maxDepth), static_cast<float>(1.0/maxDepth), 0.0, 1.0);
 
     //temporary variables
     osg::ref_ptr<Data::Node> node;
@@ -96,7 +96,7 @@ void RadialLayout::update()
 
     for (int depth = 0; depth <= maxDepth; depth++)
     {
-        radius = (float) depth*mSize/ (float) maxDepth;  //radius of sphere or circle
+        radius = static_cast<float>(depth)*mSize/ static_cast<float>(maxDepth);  //radius of sphere or circle
         groups = spanningTree->getGroupsInDepth(depth);  //groups are set of nodes with same parent
         QSet<Data::Node*>  pickedNodes; //nodes in same depth
         lastLayerID++; //because every layer need id, cause repulsive forces
@@ -111,7 +111,7 @@ void RadialLayout::update()
                 {
                     node->setColor(color); //for debugging
                     node->setLayerID(lastLayerID); //because repulsive forces
-                    node->setRadialLayout((RadialLayout*) this); //because repulsive forces
+                    node->setRadialLayout(reinterpret_cast<RadialLayout*>(this) ); //because repulsive forces
                     pickedNodes.insert(node);
                 }
             }
@@ -145,7 +145,7 @@ void RadialLayout::update()
         if (sphere != NULL) //shape is sphere
         {
             sphere->setRenderType(mRenderType);
-            if ((float)depth/(float)maxDepth <= mVisibleSpheres && mVisibleSpheres > 0.0)
+            if (static_cast<float>(depth) / static_cast<float>(maxDepth) <= mVisibleSpheres && mVisibleSpheres > 0.0)
                 sphere->setAlpha(mAlpha);
             else
                 sphere->setAlpha(0);
@@ -153,7 +153,7 @@ void RadialLayout::update()
         if (circle != NULL) //shape is circle
         {
             circle->setRenderType(mRenderType);
-            if ((float)depth/(float)maxDepth <= mVisibleSpheres && mVisibleSpheres > 0.0)
+            if (static_cast<float>(depth)/static_cast<float>(maxDepth) <= mVisibleSpheres && mVisibleSpheres > 0.0)
                 circle->setAlpha(mAlpha);
             else
                 circle->setAlpha(0);
@@ -337,3 +337,5 @@ void RadialLayout::changeMode()
     m2D = !m2D;
     update();
 }
+
+} // namespace Layout

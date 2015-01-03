@@ -370,7 +370,8 @@ bool Model::GraphLayoutDAO::checkIfExists( Data::GraphLayout* graphLayout, QSqlD
 	}
 	if(query->next() && query->value(0)==1) {
 		return true;
-	} else return false;
+	}
+	else return false;
 }
 
 QMap<QString,QString> Model::GraphLayoutDAO::getSettings( Data::GraphLayout* graphLayout, QSqlDatabase* conn, bool* error )

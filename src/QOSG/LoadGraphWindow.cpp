@@ -10,7 +10,7 @@
 
 #include "QOSG/SelectLayoutWindow.h"
 
-using namespace QOSG;
+namespace QOSG {
 
 LoadGraphWindow::LoadGraphWindow(QWidget *parent)
 {
@@ -198,3 +198,5 @@ QPushButton *LoadGraphWindow::createButton(const QString &text, const char *memb
 	connect(button, SIGNAL(clicked()), this, member);
 	return button;
 }
+
+} // namespace QOSG

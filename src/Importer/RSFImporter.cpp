@@ -59,11 +59,13 @@ bool RSFImporter::import (
 			context.getInfoHandler ().reportError ("Zvoleny subor nie je validny RSF subor.");
 			return false;
 		}
-		else{
+		else
+		{
 			if (words[0]=="tagged")
 			{
 
-			}else
+			}
+			else
 			{
 				QString edgeName = words[0];
 				QString srcNodeName = words[1];

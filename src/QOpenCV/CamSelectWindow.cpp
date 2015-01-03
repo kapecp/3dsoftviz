@@ -9,9 +9,6 @@
 
 #include "OpenCV/CamSelectCore.h"
 
-
-using namespace OpenCV;
-
 OpenCV::CamSelectWindow::CamSelectWindow(QWidget *parent, QApplication * app, QString stringdata): QDialog(parent)
 {
 	this->app = app;
@@ -53,7 +50,7 @@ void OpenCV::CamSelectWindow::configureWindow(QString stringdata)
 }
 
 // fill model with data string which hold information about current state of cameras
-void CamSelectWindow::createTableModel(QString data)
+void OpenCV::CamSelectWindow::createTableModel(QString data)
 {
 	model = new QStandardItemModel(0, 4);
 	model->setHeaderData(0, Qt::Horizontal, QObject::tr("Device ID"));
@@ -82,7 +79,7 @@ void CamSelectWindow::createTableModel(QString data)
 }
 
 // apply selected camera
-void CamSelectWindow::commitChanges()
+void OpenCV::CamSelectWindow::commitChanges()
 {
 	if( !view->currentIndex().isValid() ){
 		qDebug() << "[CamSelectionWindow]: Invalid selection";

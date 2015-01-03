@@ -8,8 +8,7 @@
 
 #include <sstream>
 
-using namespace Vwr;
-using namespace std;
+namespace Vwr {
 
 osg::ref_ptr<osg::Texture2D> TextureWrapper::nodeTexture;
 osg::ref_ptr<osg::Texture2D> TextureWrapper::edgeTexture;
@@ -33,7 +32,7 @@ osg::ref_ptr<osg::Texture2D> TextureWrapper::getOrientedEdgeTexture()
 
 		for (int x = 0; x < 15; x++)
 		{
-			stringstream os;
+            std::stringstream os;
 			os << appConf->getValue("Viewer.Textures.OrientedEdgePrefix").toStdString() << x << appConf->getValue("Viewer.Textures.OrientedEdgeSuffix").toStdString();
 
 			osg::ref_ptr<osg::Image> image = osgDB::readImageFile(os.str());
@@ -71,3 +70,5 @@ void TextureWrapper::reloadTextures()
 	edgeTexture = NULL;
 	orientedEdgeTexture = NULL;
 }
+
+} // namespace Vwr

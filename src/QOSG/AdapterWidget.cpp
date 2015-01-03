@@ -4,7 +4,7 @@
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wswitch-enum"
 
-using namespace QOSG;
+namespace QOSG {
 
 AdapterWidget::AdapterWidget( QWidget * parent, const char *name , const QGLWidget * shareWidget, WindowFlags f) : QGLWidget(parent, shareWidget, f)
 {
@@ -156,7 +156,7 @@ void AdapterWidget::mousePressEvent( QMouseEvent* event )
 	default: button = 0; break;
 	}
 
-	_gw->getEventQueue()->mouseButtonPress((float)event->x(),(float) event->y(), button);
+	_gw->getEventQueue()->mouseButtonPress( static_cast<float>(event->x()),static_cast<float>(event->y()), button);
 }
 
 void AdapterWidget::mouseDoubleClickEvent ( QMouseEvent * event )
@@ -172,7 +172,7 @@ void AdapterWidget::mouseDoubleClickEvent ( QMouseEvent * event )
 	default: button = 0; break;
 	}
 
-	_gw->getEventQueue()->mouseDoubleButtonPress((float)event->x(),(float) event->y(), button);
+	_gw->getEventQueue()->mouseDoubleButtonPress(static_cast<float>(event->x()),static_cast<float>(event->y()), button);
 
 }
 
@@ -188,13 +188,13 @@ void AdapterWidget::mouseReleaseEvent( QMouseEvent* event )
 	case(Qt::NoButton): button = 0; break;
 	default: button = 0; break;
 	}
-	_gw->getEventQueue()->mouseButtonRelease((float)event->x(), (float)event->y(), button);
+	_gw->getEventQueue()->mouseButtonRelease(static_cast<float>(event->x()),static_cast<float>(event->y()), button);
 }
 
 void AdapterWidget::mouseMoveEvent( QMouseEvent* event )
 {
 	//odchytavanie udalosti mysi
-	_gw->getEventQueue()->mouseMotion((float)event->x(),(float) event->y());
+	_gw->getEventQueue()->mouseMotion(static_cast<float>(event->x()),static_cast<float>(event->y()));
 }
 
 void AdapterWidget::wheelEvent(QWheelEvent *event)
@@ -203,5 +203,7 @@ void AdapterWidget::wheelEvent(QWheelEvent *event)
 	_gw->getEventQueue()->mouseScroll((event->delta()>0) ?
 										  osgGA::GUIEventAdapter::SCROLL_UP : osgGA::GUIEventAdapter::SCROLL_DOWN);
 }
+
+} // namespace QOSG
 
 #pragma GCC diagnostic pop

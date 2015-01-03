@@ -6,8 +6,6 @@
 #include "opencv2/imgproc/imgproc.hpp"
 #include <QDebug>
 
-using namespace QOpenCV;
-
 QOpenCV::FaceRecognitionThread::FaceRecognitionThread( QObject *parent)
 	: QThread(parent)
 {
@@ -59,8 +57,8 @@ void QOpenCV::FaceRecognitionThread::run()
 		// when face was detected along with movement (implemented with threshold)
 		// send eyes coordinate to change view
 		if( mFaceRecognizer->detected ) { //&& mFaceRecognizer->isMovement
-			emit sendEyesCoords( (float) -mFaceRecognizer->getEyesCoords().x,
-								 (float) -mFaceRecognizer->getEyesCoords().y,
+			emit sendEyesCoords( static_cast<float>(-mFaceRecognizer->getEyesCoords().x),
+								 static_cast<float>(-mFaceRecognizer->getEyesCoords().y),
 								 -mFaceRecognizer->getHeadDistance( mCapVideo->getWidth()) );
 		}
 		msleep(80);

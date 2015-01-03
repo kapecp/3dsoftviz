@@ -126,9 +126,9 @@ bool GXLImporter::parseGraph (void) {
 					(xml_->name () == "graph")
 					) {
 				if (ok) {
-					if ((bool)currentNode) {
+					if ( static_cast<bool>(currentNode) ) {
 						context_->getGraph().createNestedGraph (currentNode);
-					} else if ((bool)currentEdge) {
+					} else if ( static_cast<bool>(currentEdge) ) {
 						// moznost pridania vnoreneho grafu do hrany
 					} else {
 						ok = false;

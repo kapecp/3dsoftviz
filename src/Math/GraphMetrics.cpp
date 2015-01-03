@@ -5,7 +5,7 @@
 
 #include "Util/ApplicationConfig.h"
 
-using namespace MathModule;
+namespace MathModule {
 
 void GraphMetrics::computeGraphMetrics(Data::Graph * activeGraph)
 {
@@ -31,7 +31,7 @@ void GraphMetrics::computeGraphMetrics(Data::Graph * activeGraph)
 
 		// compute node degree
 
-		float nodeDegree = ((float) i.value()->getEdges()->size()) / (float)(numVertices - 1);
+		float nodeDegree = static_cast<float>( i.value()->getEdges()->size()) / static_cast<float>(numVertices - 1);
 		i.value()->setNodeDegree(nodeDegree);
 
 		// get all shortest paths
@@ -53,7 +53,7 @@ void GraphMetrics::computeGraphMetrics(Data::Graph * activeGraph)
 		if (numVertices == 1)
 			numVertices = 2;
 
-		i.value()->setNodeCloseness(((float) pathSum) / (float)(numVertices - 1));
+		i.value()->setNodeCloseness( static_cast<float>(pathSum) / static_cast<float>(numVertices - 1) );
 
 		// check for regexp match
 		if (re.exactMatch(i.value()->getName()))
@@ -103,11 +103,11 @@ void GraphMetrics::computeGraphMetrics(Data::Graph * activeGraph)
 				}
 
 				if (cnt != 0)
-					sum += ((float) cnt) / ((float) paths[x][y].size());
+					sum += static_cast<float>(cnt) / static_cast<float>(paths[x][y].size());
 			}
 		}
 
-		i.value()->setNodeBetweeness(sum / ((float) (numVertices - 1) * (float)(numVertices - 2)));
+		i.value()->setNodeBetweeness(sum / (static_cast<float>(numVertices - 1) * static_cast<float>(numVertices - 2)) 	);
 
 		float base = i.value()->isNodeMatched() ? regexpWeigth : 0;
 
@@ -117,3 +117,5 @@ void GraphMetrics::computeGraphMetrics(Data::Graph * activeGraph)
 		i.value()->setOverallWeight(overallWeight);
 	}
 }
+
+} // namespace MathModule

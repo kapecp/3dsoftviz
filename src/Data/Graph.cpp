@@ -389,7 +389,7 @@ osg::ref_ptr<Data::Node> Data::Graph::addNode(qlonglong id, QString name, Data::
 osg::ref_ptr<Data::Node> Data::Graph::mergeNodes(QLinkedList<osg::ref_ptr<Data::Node> > * selectedNodes, osg::Vec3f position, qlonglong mergeNodeId)
 {
 	//vyratame velkost zluceneho uzla podla velkosti zlucovanych uzlov
-	float scale = this->getNodeScale() + ((float)selectedNodes->count() / 2.f);
+    float scale = this->getNodeScale() + ( static_cast<float>(selectedNodes->count()) / 2.f);
 
 	//vytvorime novy zluceny uzol
 	osg::ref_ptr<Data::Node> mergedNode = new Data::Node((mergeNodeId != -1) ? mergeNodeId : this->incEleIdCounter(), "mergedNode", this->getNodeMetaType(), scale, this, position);

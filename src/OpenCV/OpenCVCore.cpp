@@ -12,10 +12,6 @@
 #include "OpenCV/CameraStream.h"
 #include "Viewer/MouseControl.h"
 
-
-using namespace OpenCV;
-
-
 OpenCV::OpenCVCore * OpenCV::OpenCVCore::mOpenCVCore;
 
 OpenCV::OpenCVCore::OpenCVCore( QApplication* app, QWidget *parent)
@@ -77,7 +73,7 @@ void OpenCV::OpenCVCore::faceRecognition()
 	mOpencvDialog->show();
 }
 
-void  OpenCVCore::createPermanentConnection(){
+void  OpenCV::OpenCVCore::createPermanentConnection(){
 	// they are still created
 
 	//  sending result data from face detection
@@ -114,7 +110,7 @@ void  OpenCVCore::createPermanentConnection(){
 
 }
 
-void OpenCVCore::createConnectionFaceRec(){
+void OpenCV::OpenCVCore::createConnectionFaceRec(){
 	// send actual image
 	QObject::connect( mOpencvDialog,
 					  SIGNAL(sendImgFaceRec(bool)),
@@ -154,7 +150,7 @@ void OpenCVCore::createConnectionFaceRec(){
 
 }
 
-void OpenCVCore::createConnectionAruco(){
+void OpenCV::OpenCVCore::createConnectionAruco(){
 	// send actual image
 	QObject::connect( mOpencvDialog,
 					  SIGNAL(sendImgMarker(bool)),

@@ -39,7 +39,7 @@ osg::Vec3f Shape_CylinderSurface::secondBaseCenter() const
 float Shape_CylinderSurface::baseRadius() const
 {
 
-    return ((float) mBaseRadiusSpinBox.value() / 100.0f) * 250.f;
+    return (static_cast<float>(mBaseRadiusSpinBox.value()) / 100.0f) * 250.f;
 }
 
 }

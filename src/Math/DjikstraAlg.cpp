@@ -5,8 +5,7 @@
 #include <limits>
 #include <iostream>
 
-using namespace MathModule;
-using namespace std;
+namespace MathModule {
 
 // source: http://www.vogella.de/articles/JavaAlgorithmsDijkstra/article.html
 // altered to compute all shortest paths
@@ -74,7 +73,7 @@ int DjikstraAlg::getDistance(Data::Node * node, Data::Node * target)
 		}
 	}
 
-	cout << "Error, no data!";
+    std::cout << "Error, no data!";
 
 	return 0;
 }
@@ -197,3 +196,5 @@ QVector<QLinkedList<osg::ref_ptr<Data::Node> > > DjikstraAlg::getAllPaths(Data::
 DjikstraAlg::~DjikstraAlg(void)
 {
 }
+
+} // namespace MathModule

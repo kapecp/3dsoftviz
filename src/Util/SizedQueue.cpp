@@ -1,7 +1,9 @@
 #include "Util/SizedQueue.h"
-#include <math.h>
 
-using namespace Util;
+#include <math.h>
+#include <utility>
+
+namespace Util {
 
 SizedQueue::SizedQueue(int size, float threshold)
 {
@@ -40,18 +42,18 @@ int SizedQueue::getAvgBasedOnValue(float &x, float &y)
 	// threshold implementation
 	int retval=0;
 
-	if (fabs((this->presum.first-this->sum.first) / (float)this->stack.size()) > this->threshold)
+	if (fabs((this->presum.first-this->sum.first) / static_cast<float>(this->stack.size())) > this->threshold)
 	{
 		this->presum.first=this->sum.first;
 		retval=1;
 	}
-	if (fabs((this->presum.second-this->sum.second) / (float)this->stack.size()) > this->threshold)
+	if (fabs((this->presum.second-this->sum.second) / static_cast<float>(this->stack.size())) > this->threshold)
 	{
 		this->presum.second=this->sum.second;
 		retval=1;
 	}
-	x = this->presum.first / (float)this->stack.size();
-	y = this->presum.second / (float)this->stack.size();
+	x = this->presum.first / static_cast<float>(this->stack.size());
+    y = this->presum.second / static_cast<float>(this->stack.size());
 
 	return retval;
 }
@@ -73,12 +75,12 @@ int SizedQueue::getAvgBasedOnValue(float &x)
 	// threshold implementation
 	int retval=0;
 
-	if (fabs((this->presum.first-this->sum.first) / (float)this->stack.size()) > this->threshold)
+	if (fabs((this->presum.first-this->sum.first) / static_cast<float>(this->stack.size())) > this->threshold)
 	{
 		this->presum.first=this->sum.first;
 		retval=1;
 	}
-	x = this->presum.first / (float)this->stack.size();
+	x = this->presum.first / static_cast<float>(this->stack.size());
 
 	return retval;
 }
@@ -98,6 +100,8 @@ bool SizedQueue::getAvgBool(bool y)
 		positive++;
 	}
 
-    return positive*2 > (int)boolStack.size();
+    return positive*2 > static_cast<int>(boolStack.size());
 
 }
+
+} // namespace Util

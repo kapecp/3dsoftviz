@@ -48,7 +48,7 @@ AppCore::Core::Core(QApplication * app)
 
 
 
-	this->cw->resize((int) width,(int) height);
+	this->cw->resize( static_cast<int>(width), static_cast<int>(height) );
 	this->cw->show();
 
 	app->exec();

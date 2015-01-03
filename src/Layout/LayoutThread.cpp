@@ -3,7 +3,7 @@
 #include "Layout/FRAlgorithm.h"
 #include "Util/ApplicationConfig.h"
 
-using namespace Layout;
+namespace Layout {
 
 LayoutThread::LayoutThread(Layout::FRAlgorithm* alg)
 {
@@ -48,3 +48,5 @@ Layout::FRAlgorithm* LayoutThread::getAlg()
 {
     return alg;
 }
+
+} // namespace Layout
