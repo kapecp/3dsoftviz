@@ -10,7 +10,7 @@
 #else
 #include <Qt/qstringlist.h>
 #endif
-#include <QOSG/qtcolorpicker.h>
+#include <qtcolorpicker.h>
 
 #include <QMainWindow>
 #include <QToolBar>

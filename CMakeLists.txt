@@ -52,7 +52,7 @@ if( USE_STRICT_COMPILE_WARNINGS )
 	if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang" OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "AppleClang")
   		# using Clang
   		# TODO
-	elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR CMAKE_COMPILER_IS_GNUCXX)       
+	elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR CMAKE_COMPILER_IS_GNUCXX)
  		# using GCC
 		set( FLAGS_FOR_DEBUG "-ansi -pedantic -Wall -Wcast-align -Wcast-qual -Wchar-subscripts -Wcomment -Wconversion -Wctor-dtor-privacy -Wdisabled-optimization -Wextra -Wfloat-equal -Wformat -Wformat-nonliteral -Wformat-security -Wformat-y2k -Wformat=2 -Wimport -Winit-self -Winline -Winvalid-pch -Wlogical-op -Wlong-long -Wmissing-braces -Wmissing-declarations -Wmissing-field-initializers -Wmissing-format-attribute -Wmissing-include-dirs -Wmissing-noreturn -Wnoexcept -Wpacked -Wparentheses -Wpointer-arith -Wredundant-decls -Wreturn-type -Wsequence-point -Wsign-compare -Wsign-promo -Wstack-protector -Wstrict-aliasing=2 -Wstrict-null-sentinel -Wstrict-overflow=5 -Wswitch -Wswitch-default -Wswitch-enum -Wtrigraphs -Wundef -Wuninitialized -Wunknown-pragmas -Wunreachable-code -Wunsafe-loop-optimizations -Wvariadic-macros -Wvolatile-register-var -Wwrite-strings -Wno-unused-parameter -Wno-unused" )
 
@@ -422,7 +422,6 @@ file( GLOB_RECURSE SRC_MANAGER		"src/Manager/*.cpp" )
 file( GLOB_RECURSE SRC_MATH		"src/Math/*.cpp" )
 file( GLOB_RECURSE SRC_MODEL		"src/Model/*.cpp" )
 file( GLOB_RECURSE SRC_NETWORK		"src/Network/*.cpp" )
-file( GLOB_RECURSE SRC_NOISE		"src/Noise/*.cpp" )
 file( GLOB_RECURSE SRC_OSGQTBROWSER	"src/OsgQtBrowser/*.cpp" )
 file( GLOB_RECURSE SRC_QOSG		"src/QOSG/*.cpp" )
 file( GLOB_RECURSE SRC_UTIL		"src/Util/*.cpp" )
@@ -450,7 +449,7 @@ file( GLOB_RECURSE SRC_SPEECH	"src/Speech/*.cpp" )
 set( SRC
 	${SRC_MAIN} ${SRC_CORE} ${SRC_DATA} ${SRC_IMPORTER}
 	${SRC_LAYOUT} ${SRC_MANAGER} ${SRC_MATH}
-	${SRC_NETWORK} ${SRC_NOISE}
+	${SRC_NETWORK} #${SRC_NOISE}
 	${SRC_OSGQTBROWSER} ${SRC_QOSG} ${SRC_UTIL} ${SRC_VIEWER} ${SRC_MODEL} ${SRC_CLUSTERING}
 )
 
@@ -482,7 +481,6 @@ file( GLOB_RECURSE HEADER_MANAGER	"include/Manager/*.h" )
 file( GLOB_RECURSE HEADER_MATH		"include/Math/*.h" )
 file( GLOB_RECURSE HEADER_MODEL		"include/Model/*.h" )
 file( GLOB_RECURSE HEADER_NETWORK	"include/Network/*.h" )
-file( GLOB_RECURSE HEADER_NOISE		"include/Noise/*.h" )
 file( GLOB_RECURSE HEADER_OSGQTBROWSER	"include/OsgQtBrowser/*.h" )
 file( GLOB_RECURSE HEADER_QOSG		"include/QOSG/*.h" )
 file( GLOB_RECURSE HEADER_UTIL		"include/Util/*.h" )
@@ -509,7 +507,7 @@ file( GLOB_RECURSE HEADER_SPEECH	"include/Speech/*.h" )
 set( INCL
 	${HEADER_CORE} ${HEADER_DATA} ${HEADER_IMPORTER}
 	${HEADER_LAYOUT} ${HEADER_MANAGER} ${HEADER_MATH}
-	${HEADER_NETWORK} ${HEADER_NOISE}
+	${HEADER_NETWORK} #${HEADER_NOISE}
 	${HEADER_OSGQTBROWSER} ${HEADER_QOSG} ${HEADER_UTIL} ${HEADER_VIEWER} ${HEADER_MODEL} ${HEADER_CLUSTERING}
 )
 
@@ -544,7 +542,7 @@ source_group( \\src\\Util "^.*Util/.*$" )
 source_group( \\src\\Layout "^.*Layout/.*$" )
 source_group( \\src\\QOSG "^.*QOSG/.*$" )
 source_group( \\src\\OsgQtBrowser "^.*OsgQtBrowser/.*$" )
-source_group( \\src\\Noise "^.*Noise/.*$" )
+#source_group( \\src\\Noise "^.*Noise/.*$" )
 
 # Group header files
 source_group(\\headers\\Clustering "^.*Clustering/.*h$")
@@ -558,7 +556,7 @@ source_group( \\headers\\Model "^.*Model/.*h$" )
 source_group( \\headers\\Util "^.*Util/.*h$" )
 source_group( \\headers\\Layout "^.*Layout/.*h$" )
 source_group( \\headers\\QOSG "^.*QOSG/.*h$" )
-source_group( \\headers\\Noise "^.*Noise/.*h$" )
+#source_group( \\headers\\Noise "^.*Noise/.*h$" )
 source_group( \\headers\\OsgQtBrowser "^.*OsgQtBrowser/.*h$" )
 
 if( OpenCV_FOUND )
@@ -586,6 +584,17 @@ endif()
 #	source_group( \\headers\\Fglove "^.*Fglove/.*h$" )
 # endif()
 
+
+# ---------------
+# 3rd party sources
+# ---------------
+
+include_directories( SYSTEM dependencies/noiseutils )
+add_library( noiseutils STATIC dependencies/noiseutils/noiseutils.cpp )
+
+include_directories( SYSTEM dependencies/qtcolorpicker )
+add_library( qtcolorpicker STATIC dependencies/qtcolorpicker/qtcolorpicker.cpp )
+
 # ---------------
 # Build and link 3Dsoftviz
 # ---------------
@@ -601,6 +610,8 @@ target_link_libraries( ${3DSOFTVIZ_NAME}
 	${OPENSCENEGRAPH_LIBRARIES}
 	${OSGVIEWER_LIBRARIES}
 	libnoise
+	noiseutils
+	qtcolorpicker
 )
 
 if( OpenCV_FOUND )
@@ -671,8 +682,8 @@ endif()
 #
 #	install( DIRECTORY ${FGLOVE_DRIVER_DIRS}/ DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/_install/bin )
 #
-#	#install( FILES ${FGLOVE_LIBRARIES} DESTINATION ${INSTALL_BIN} 
-		#	RUNTIME DESTINATION ${INSTALL_BIN} 
+#	#install( FILES ${FGLOVE_LIBRARIES} DESTINATION ${INSTALL_BIN}
+		#	RUNTIME DESTINATION ${INSTALL_BIN}
         #   LIBRARY DESTINATION ${INSTALL_LIB} )
 # endif()
 
