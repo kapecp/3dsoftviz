@@ -57,7 +57,7 @@ models.
 
 #include <QtGui>
 
-using namespace QOSG;
+namespace QOSG {
 
 TreeModel::TreeModel(const QStringList &data, QObject *parent)
 	: QAbstractItemModel(parent)
@@ -287,3 +287,5 @@ void TreeModel::addNodesToList(QList<TreeItem*> * parents)
 		nodeRoot->appendChild(new TreeItem(*columnData,nodeRoot));
 	}
 }
+
+} // namespace QOSG

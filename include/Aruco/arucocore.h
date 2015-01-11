@@ -5,6 +5,8 @@
 #include <aruco/cvdrawingutils.h>
 #include <QMatrix4x4>
 
+#include <vector>
+
 namespace ArucoModul {
 
 class ArucoCore : public QObject

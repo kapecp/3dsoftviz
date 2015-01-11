@@ -4,8 +4,6 @@
 #include "QtCore"
 #include "QDebug"
 
-using namespace Fglove;
-
 Fglove::FgloveThread::FgloveThread(QObject *parent) : QThread(parent){
 
     // variable for last recognized gesture

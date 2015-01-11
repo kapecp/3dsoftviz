@@ -1,7 +1,7 @@
 #include "Network/executors/SendGraphExecutor.h"
 #include "Network/Server.h"
 
-using namespace Network;
+namespace Network {
 
 
 void SendGraphExecutor::execute_server() {
@@ -15,3 +15,5 @@ void SendGraphExecutor::execute_server() {
 void SendGraphExecutor::execute_client() {
     return;
 }
+
+} // namespace Network

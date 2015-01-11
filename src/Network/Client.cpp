@@ -18,7 +18,7 @@
 #include "QDebug"
 
 
-using namespace Network;
+namespace Network {
 
 Client * Client::instance;
 
@@ -744,3 +744,5 @@ void Client::setAvatarScale(int scale) {
 		avatar->setScale(osg::Vec3d(avatarScale,avatarScale,avatarScale));
 	}
 }
+
+} // namespace Network

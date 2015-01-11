@@ -7,8 +7,7 @@
 #include <sstream>
 #include <iostream>
 
-using namespace Vwr;
-using namespace Data;
+namespace Vwr {
 
 osg::ref_ptr<osg::Geode> DataHelper::getSphereGeode(osg::Vec3 center, float radius)
 {
@@ -35,9 +34,9 @@ osg::ref_ptr<osg::Vec3Array> DataHelper::getInitialVectors(int count)
 	for(int index = 0; index < count; index++)
 	{
 		float x, y, z;
-		x = lowest + (float)(range * (float)rand() / ((float)RAND_MAX + 1.0f));
-		y = lowest + (float)(range * (float)rand() / ((float)RAND_MAX + 1.0f));
-		z = lowest + (float)(range * (float)rand() / ((float)RAND_MAX + 1.0f));
+		x = lowest + static_cast<float>(range * static_cast<float>(rand()) / (static_cast<float>(RAND_MAX) + 1.0f));
+		y = lowest + static_cast<float>(range * static_cast<float>(rand()) / (static_cast<float>(RAND_MAX) + 1.0f));
+		z = lowest + static_cast<float>(range * static_cast<float>(rand()) / (static_cast<float>(RAND_MAX) + 1.0f));
 
 		positions->push_back(osg::Vec3(x, y, z));
 	}
@@ -49,7 +48,7 @@ int DataHelper::getRandomNumber(int lowest, int highest)
 {
 	int range = (highest - lowest) + 1;
 
-	return lowest + int(range * rand() / (RAND_MAX + 1.0));
+	return lowest + static_cast<int>(range * rand() / (RAND_MAX + 1.0));
 }
 
 osg::ref_ptr<osg::Vec3Array> DataHelper::getEdgeVectors(osg::ref_ptr<Data::Node> inNode, osg::ref_ptr<Data::Node> outNode)
@@ -550,8 +549,11 @@ osg::Vec3f DataHelper::getMassCenter(osg::ref_ptr<osg::Vec3Array> coordinates)
 
 	if(num==0){
 		return osg::Vec3f(0.f,0.f,0.f);
-	}else
+	}
+	else
 	{
-		return osg::Vec3f(x/(float)num, y/(float)num, z/(float)num);
+		return osg::Vec3f(x/static_cast<float>(num), y/static_cast<float>(num), z/static_cast<float>(num));
 	}
 }
+
+} // namespace Vwr

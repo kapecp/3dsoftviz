@@ -18,6 +18,7 @@
 #include "Model/GraphLayoutDAO.h"
 
 #include "Data/GraphLayout.h"
+#include "Data/GraphSpanningTree.h"
 
 #include "Layout/LayoutThread.h"
 #include "Layout/FRAlgorithm.h"
@@ -30,6 +31,13 @@
 #include "Layout/ShapeGetter_Cube.h"
 
 #include "Importer/GraphOperations.h"
+#include "Util/Cleaner.h"
+#include "Core/Core.h"
+
+#include "QDebug"
+
+#include <iostream>
+#include <osg/ref_ptr>
 
 #ifdef OPENCV_FOUND
 #include "OpenCV/OpenCVCore.h"
@@ -44,17 +52,7 @@
 #endif
 #endif
 
-#include "Util/Cleaner.h"
-
-#include "Core/Core.h"
-
-#include "Data/GraphSpanningTree.h"
-
-#include <iostream>
-#include "QDebug"
-
-using namespace QOSG;
-using namespace std;
+namespace QOSG {
 
 CoreWindow::CoreWindow(QWidget *parent, Vwr::CoreGraph* coreGraph, QApplication* app, Layout::LayoutThread * thread ) : QMainWindow(parent)
 {
@@ -1065,7 +1063,7 @@ void CoreWindow::saveLayoutToDB()
 
 void CoreWindow::sqlQuery()
 {
-    cout << lineEdit->text().toStdString() << endl;
+    std::cout << lineEdit->text().toStdString() << endl;
 }
 
 void CoreWindow::playPause()
@@ -1142,7 +1140,7 @@ void CoreWindow::addMetaNode()
 
         gw->getWindowRectangle(x, y, width, height);
 
-        cout << width << " " << height << "\n";
+        std::cout << width << " " << height << "\n";
 
 
         osg::ref_ptr<Data::Node> metaNode = NULL;
@@ -1208,7 +1206,8 @@ void CoreWindow::mergeNodes()
                 client->sendMergeNodes(selectedNodes, position);
             }
         }
-        else {
+        else
+        {
             qDebug() << "[QOSG::CoreWindow::mergeNodes] There are no nodes selected";
         }
 
@@ -1241,7 +1240,8 @@ void CoreWindow::separateNodes()
                 client->sendSeparateNodes(selectedNodes);
             }
         }
-        else {
+        else
+        {
             qDebug() << "[QOSG::CoreWindow::separateNodes] There are no nodes selected";
         }
 
@@ -1343,7 +1343,7 @@ void CoreWindow::labelOnOff(bool)
 
 void CoreWindow::sliderValueChanged(int value)
 {
-    layout->setAlphaValue((float)value * 0.001f);
+    layout->setAlphaValue(static_cast<float>(value) * 0.001f);
 }
 
 //Volovar zac
@@ -1353,7 +1353,7 @@ void CoreWindow::RadialLayoutSizeChanged(int value)
     //notify radial layout that size was changed
     Layout::RadialLayout* selectedRadialLayout = Layout::RadialLayout::getSelectedRadialLayout();
     if (selectedRadialLayout != NULL)
-        selectedRadialLayout->changeSize((float) value);
+        selectedRadialLayout->changeSize(static_cast<float>(value));
 }
 
 void CoreWindow::RadialLayoutAlphaChanged(int value)
@@ -1362,7 +1362,7 @@ void CoreWindow::RadialLayoutAlphaChanged(int value)
     Layout::RadialLayout* selectedRadialLayout = Layout::RadialLayout::getSelectedRadialLayout();
     //qDebug()<<"Value: "<<value<<", selected: "<<selectedRadialLayout;
     if (selectedRadialLayout != NULL)
-        selectedRadialLayout->setAlpha((float) value/500.0f);
+        selectedRadialLayout->setAlpha( static_cast<float>(value)/500.0f);
 }
 
 void CoreWindow::RadialLayoutSetVisibleSpheres(int value)
@@ -1370,7 +1370,7 @@ void CoreWindow::RadialLayoutSetVisibleSpheres(int value)
     //notify radial layout that number of visibles spheres was changed
     Layout::RadialLayout* selectedRadialLayout = Layout::RadialLayout::getSelectedRadialLayout();
     if (selectedRadialLayout != NULL)
-        selectedRadialLayout->setVisibleSpheres((float) value/100);
+        selectedRadialLayout->setVisibleSpheres(static_cast<float>(value)/100);
 }
 
 void CoreWindow::RadialLayoutSetForceScale(int value)
@@ -1378,7 +1378,7 @@ void CoreWindow::RadialLayoutSetForceScale(int value)
     //notify that multiplier of repulsive forces in radial layout was changed
     Layout::RadialLayout* selectedRadialLayout = Layout::RadialLayout::getSelectedRadialLayout();
     if (selectedRadialLayout != NULL)
-        selectedRadialLayout->setForceScale((float) value);
+        selectedRadialLayout->setForceScale(static_cast<float>(value));
 }
 
 void CoreWindow::RadialLayoutSetForceSphereScale(int value)
@@ -1386,7 +1386,7 @@ void CoreWindow::RadialLayoutSetForceSphereScale(int value)
     //notify that multiplier of repulsive forces in radial layout on same layer was changed
     Layout::RadialLayout* selectedRadialLayout = Layout::RadialLayout::getSelectedRadialLayout();
     if (selectedRadialLayout != NULL)
-        selectedRadialLayout->setForceSphereScale((float) value);
+        selectedRadialLayout->setForceSphereScale(static_cast<float>(value));
 }
 
 void CoreWindow::changeDrawMethod_RadialLayout()
@@ -1442,10 +1442,10 @@ void CoreWindow::nodeTypeComboBoxChanged(int index)
 
 void CoreWindow::applyColorClick()
 {
-    float alpha = (float)color.alphaF();
-    float red = (float)color.redF();
-    float green = (float)color.greenF();
-    float blue = (float)color.blueF();
+    float alpha = static_cast<float>(color.alphaF());
+    float red = static_cast<float>(color.redF());
+    float green = static_cast<float>(color.greenF());
+    float blue = static_cast<float>(color.blueF());
 
     QLinkedList<osg::ref_ptr<Data::Node> > * selectedNodes = viewerWidget->getPickHandler()->getSelectedNodes();
     QLinkedList<osg::ref_ptr<Data::Node> >::const_iterator ni = selectedNodes->constBegin();
@@ -1541,7 +1541,7 @@ void CoreWindow::setRestriction_SphereSurface ()
     if (currentGraph != NULL)
     {
         osg::Vec3 position = viewerWidget->getPickHandler()->getSelectionCenter(true);
-        if( qFuzzyCompare((float)position.length(),0.0f) ) return;
+        if( qFuzzyCompare(static_cast<float>(position.length()),0.0f) ) return;
         osg::ref_ptr<Data::Node> centerNode;
         osg::ref_ptr<Data::Node> surfaceNode;
 
@@ -1676,7 +1676,7 @@ Layout::ShapeGetter_Plane_ByThreeNodes* CoreWindow::setRestriction_Plane_Vertigo
         osg::Vec3 rootPosition = osg::Vec3f (0.f, 0.f, 0.f);
 
         // pozicia bodu zavisi od poradoveho cisla roviny
-        osg::Vec3 position = rootPosition + osg::Vec3f ((float)(nOfPlane - 1) * (float)vertigoPlanesDistance, 0.f, 0.f);
+        osg::Vec3 position = rootPosition + osg::Vec3f (static_cast<float>(nOfPlane - 1) * static_cast<float>(vertigoPlanesDistance), 0.f, 0.f);
 
         osg::Vec3 positionNode1 = position + osg::Vec3f (0.f, -100.f, 0.f);
         osg::Vec3 positionNode2 = position + osg::Vec3f (0.f, 100.f, 200.f);
@@ -1975,7 +1975,7 @@ void CoreWindow::setRestriction_ConeTree (){
 
         }
 
-        osg::Vec3 position = rootPosition + osg::Vec3f (0.f, 0.f, (-50.f) * (float)depth);
+        osg::Vec3 position = rootPosition + osg::Vec3f (0.f, 0.f, (-50.f) * static_cast<float>(depth));
         osg::Vec3 positionNode1 = position;
         osg::Vec3 positionNode2 = position + osg::Vec3f (10.f, 0.f, 0.f);
         osg::Vec3 positionNode3 = position + osg::Vec3f (0.f, 10.f, 0.f);
@@ -2260,7 +2260,7 @@ bool CoreWindow::removeClick()
     }
 
     int NodesCount=currentGraph->getNodes()->size();
-    cout<<NodesCount;
+    std::cout<<NodesCount;
     if (isPlaying)
         layout->play();
 
@@ -2348,7 +2348,7 @@ void CoreWindow::clusterSelectedOpacityCheckboxValueChanged(bool checked)
 
 void CoreWindow::clustersOpacitySliderValueChanged(int value)
 {
-    coreGraph->setClustersOpacity(double(value) / 10);
+    coreGraph->setClustersOpacity(static_cast<double>(value) / 10);
 }
 
 void CoreWindow::clustersShapeBoundarySliderValueChanged(int value)
@@ -2457,9 +2457,9 @@ void CoreWindow::setRestriction_Cube_Selected()
         QString name_sufraceNodeY = "surfaceY";
         QString name_sufraceNodeZ = "surfaceZ";
         osg::Vec3 positionNode1 = cluster->getCube()->getMidpoint() / scale;
-        osg::Vec3 positionNode2 = positionNode1 + osg::Vec3f ((float)cluster->getCube()->getRadius() / scale, 0, 0);
-        osg::Vec3 positionNode3 = positionNode1 + osg::Vec3f (0, (float)cluster->getCube()->getRadius() / scale, 0);
-        osg::Vec3 positionNode4 = positionNode1 + osg::Vec3f (0, 0, (float)cluster->getCube()->getRadius() / scale);
+        osg::Vec3 positionNode2 = positionNode1 + osg::Vec3f (static_cast<float>(cluster->getCube()->getRadius()) / scale, 0, 0);
+        osg::Vec3 positionNode3 = positionNode1 + osg::Vec3f (0, static_cast<float>(cluster->getCube()->getRadius()) / scale, 0);
+        osg::Vec3 positionNode4 = positionNode1 + osg::Vec3f (0, 0, static_cast<float>(cluster->getCube()->getRadius()) / scale);
 
         Layout::RestrictionRemovalHandler_RestrictionNodesRemover::NodesListType restrictionNodes;
 
@@ -2584,7 +2584,7 @@ void CoreWindow::toggleSpyWatch()
     Network::Server * server = Network::Server::getInstance();
     bool is_server = server->isListening();
 
-    QCheckBox *sender_chb = (QCheckBox*)sender();
+    QCheckBox *sender_chb = reinterpret_cast<QCheckBox*>(sender());
 
     int id_user = lw_users->currentItem()->data(6).toInt();
 
@@ -2612,7 +2612,8 @@ void CoreWindow::toggleSpyWatch()
             chb_center->setChecked(false);
         }
         // ak je "spy" odkliknute
-        else {
+        else
+        {
 
             // ak je spehovanie aktivne, deaktivujem
             if (client->isSpying() || server->isSpying()) {
@@ -2650,7 +2651,8 @@ void CoreWindow::toggleSpyWatch()
         }
 
         // ak je "center" odkliknute
-        else {
+        else
+        {
 
             // ak je centrovanie aktivne, deaktivujem
             if (client->isCenteringUser() || server->isCenteringUser()) {
@@ -2941,7 +2943,7 @@ void CoreWindow::change_Vertigo_Planes_Distance(int value){
         while (i.hasNext()){
             Data::Node* node = i.next();
             osg::Vec3f oldPosition = node->getTargetPosition();
-            node->setTargetPosition(oldPosition + osg::Vec3f ((float)(value * nOfPlane), 0.f, 0.f));
+            node->setTargetPosition(oldPosition + osg::Vec3f (static_cast<float>(value * nOfPlane), 0.f, 0.f));
         }
     }
     //zmena vzdialenosti medzi rovinami globalne
@@ -3025,3 +3027,5 @@ void CoreWindow::startGlovesRecognition()
 }
 
 #endif
+
+} // namespace QOSG

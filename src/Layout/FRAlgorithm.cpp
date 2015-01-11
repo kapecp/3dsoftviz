@@ -20,14 +20,13 @@
 #include <iostream>
 #include <QDebug>
 
-using namespace Layout;
-using namespace std;
-using namespace Vwr;
+namespace Layout {
+
 //Konstruktor pre vlakno s algoritmom
 FRAlgorithm::FRAlgorithm()
 {
 	//nastavenie konstant parametrov
-	PI = acos((double) - 1);
+	PI = acos( static_cast<double>(-1) );
 	ALPHA = 0.005f;
 	MIN_MOVEMENT = 0.05f;
 	MAX_MOVEMENT = 30;
@@ -53,7 +52,7 @@ FRAlgorithm::FRAlgorithm()
 }
 FRAlgorithm::FRAlgorithm(Data::Graph *graph)
 {
-	PI = acos((double) - 1);
+	PI = acos(static_cast<double>(-1));
 	ALPHA = 0.005f;
 	MIN_MOVEMENT = 0.05f;
 	MAX_MOVEMENT = 30;
@@ -102,7 +101,7 @@ void FRAlgorithm::SetParameters(float sizeFactor,float flexibility,bool useMaxDi
 /* Urci pokojovu dlzku strun */
 double FRAlgorithm::computeCalm() {
 	double R = 300;
-	float n = (float) graph->getNodes()->count();
+    double n = static_cast<double>( graph->getNodes()->count() );
 	return sizeFactor* pow((4*R*R*R*PI)/(n*3), 1/3);
 }
 /* Rozmiestni uzly na nahodne pozicie */
@@ -128,13 +127,13 @@ osg::Vec3f FRAlgorithm::getRandomLocation()
 	double l = getRandomDouble() * 300;
 	double alpha = getRandomDouble() * 2 * PI;
 	double beta = getRandomDouble() * 2 * PI;
-	osg::Vec3f newPos =  osg::Vec3f((float) (l * sin(alpha)), (float) (l * cos(alpha) * cos(beta)), (float) (l	* cos(alpha) * sin(beta)));
+    osg::Vec3f newPos =  osg::Vec3f( static_cast<float>(l * sin(alpha)), static_cast<float>(l * cos(alpha) * cos(beta)), static_cast<float>(l	* cos(alpha) * sin(beta)));
 	return newPos;
 }
 double FRAlgorithm::getRandomDouble()
 {
 
-	return (double)rand() / (double)RAND_MAX;
+    return static_cast<double>(rand()) / static_cast<double>(RAND_MAX);
 }
 
 void FRAlgorithm::PauseAlg()
@@ -197,7 +196,7 @@ void FRAlgorithm::Run()
 	}
 	else
 	{
-		cout << "Nenastaveny graf. Pouzi metodu SetGraph(Data::Graph graph).";
+        std::cout << "Nenastaveny graf. Pouzi metodu SetGraph(Data::Graph graph).";
 
 	}
 }
@@ -440,7 +439,7 @@ void FRAlgorithm::addAttractive(Data::Edge* edge, float factor) {
 	fv.normalize();
 
     if (edge->getSrcNode()->getCluster() != NULL && edge->getDstNode()->getCluster() && edge->getSrcNode()->getCluster()->getId() == edge->getDstNode()->getCluster()->getId()) {
-        float clusterForce = (float)edge->getSrcNode()->getCluster()->getRepulsiveForceInside();
+        float clusterForce = static_cast<float>(edge->getSrcNode()->getCluster()->getRepulsiveForceInside());
         clusterForce = qFuzzyCompare(clusterForce, 0.0f) ? 1 : clusterForce;
         fv *= attr(dist) * factor / clusterForce; // velkost sily medzi uzlami zhluku
     } else {
@@ -489,14 +488,14 @@ void FRAlgorithm::addRepulsive(Data::Node* u, Data::Node* v, float factor) {
 	if(qFuzzyCompare(dist,0.0))
 	{
 		// pri splynuti uzlov medzi nimi vytvorime malu vzdialenost
-		vp.set( (vp.x() + (float)(rand() % 10)), ( vp.y() + (float)(rand() % 10)),( vp.z() + (float)(rand() % 10)));
+        vp.set( (vp.x() + static_cast<float>(rand() % 10)), ( vp.y() + static_cast<float>(rand() % 10)),( vp.z() + static_cast<float>(rand() % 10)));
 		dist = distance(up,vp);
 	}
 	fv = (vp - up);// smer sily
 	fv.normalize();
 
     if (u->getCluster() != NULL && v->getCluster() && u->getCluster()->getId() == v->getCluster()->getId()) {
-        fv *= rep(dist) * factor * (float)u->getCluster()->getRepulsiveForceInside(); // velkost sily medzi uzlami zhluku
+        fv *= rep(dist) * factor * static_cast<float>(u->getCluster()->getRepulsiveForceInside()); // velkost sily medzi uzlami zhluku
     } else {
         fv *= rep(dist) * factor; // velkost sily
     }
@@ -514,7 +513,7 @@ void FRAlgorithm::addRepulsive(Data::Node* u, Data::Node* v, float factor) {
 
     // Duransky start - vynasobenie odpudivej sily medzi dvoma uzlami hodnotou zo spinboxu ak su na rovnakej vertigo rovine
     if(u->getNumberOfVertigoPlane() == v->getNumberOfVertigoPlane()){
-        fv *= (float)repulsiveForceVertigo;
+        fv *= static_cast<float>(repulsiveForceVertigo);
     }
     // Duransky end - vynasobenie odpudivej sily medzi dvoma uzlami hodnotou zo spinboxu ak su na rovnakej vertigo rovine
 
@@ -522,23 +521,23 @@ void FRAlgorithm::addRepulsive(Data::Node* u, Data::Node* v, float factor) {
 }
 /* Vzorec na vypocet odpudivej sily */
 float FRAlgorithm::rep(double distance) {
-	return (float) (-(K * K) / distance);
+    return static_cast<float>(-(K * K) / distance);
 }
 
 /* Vzorec na vypocet pritazlivej sily */
 float FRAlgorithm::attr(double distance) {
-	return (float) ((distance * distance) / K);
+    return static_cast<float>((distance * distance) / K);
 }
 
 /* Vzorec na vypocet dostredivej sily */
 float FRAlgorithm::centr(double distance) {
-	return (float) distance;
+    return static_cast<float>(distance);
 }
 
 double FRAlgorithm::distance(osg::Vec3f u,osg::Vec3f v)
 {
 	osg::Vec3f x = u - v;
-	return (double) x.length();
+    return static_cast<double>( x.length() );
 }
 
 bool FRAlgorithm::areForcesBetween (Data::Node * u, Data::Node * v) {
@@ -576,5 +575,7 @@ void FRAlgorithm::setRepulsiveForceVertigo(int value){
   repulsiveForceVertigo = value;
 
 }
+
+} // namespace Layout
 
 //int getRepulsiveForceVertigo();

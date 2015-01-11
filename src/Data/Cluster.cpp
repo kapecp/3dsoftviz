@@ -3,7 +3,7 @@
 
 #include <QLinkedList>
 
-using namespace Data;
+namespace Data {
 
 Cluster::Cluster(qlonglong id, QString name, Data::Type* type, float scaling, Data::Graph* graph, osg::Vec3f position)
     : Node(id, name, type, scaling, graph, position) {
@@ -65,7 +65,7 @@ osg::Vec3 Cluster::getMidpoint() {
 
         ++i; ++count;
     }
-    total.operator /=((float)count);
+    total.operator /=(static_cast<float>(count));
 
     return total;
 }
@@ -127,3 +127,5 @@ void Cluster::setRepulsiveForceInside(double repulsiveForceInside) {
         ++i;
     }
 }
+
+} // namespace Data

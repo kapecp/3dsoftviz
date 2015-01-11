@@ -19,7 +19,7 @@ public:
 	virtual void afterRestrictionRemoved (void) = 0;
 
 	/***/
-	virtual ~RestrictionRemovalHandler (void) {};
+	virtual ~RestrictionRemovalHandler (void) {}
 
 }; // class
 

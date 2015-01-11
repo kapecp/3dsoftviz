@@ -22,11 +22,12 @@
 #include <osg/ShapeDrawable>
 #include <osg/ValueObject>
 
+#include <string>
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wswitch-enum"
 
-using namespace Vwr;
+namespace Vwr {
 
 PickHandler::PickHandler(Vwr::CameraManipulator * cameraManipulator, Vwr::CoreGraph * coreGraph)
 {
@@ -1103,5 +1104,7 @@ osg::ref_ptr<Data::Node> PickHandler::getPickedNodeWithMinEdgeCount(){
     return rootNode;
 }
 //volovar kon
+
+} // namespace Vwr
 
 #pragma GCC diagnostic pop

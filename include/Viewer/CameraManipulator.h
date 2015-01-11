@@ -26,15 +26,16 @@
 #include "Math/CameraMath.h"
 #include "Viewer/CoreGraph.h"
 
+#include <list>
 
 namespace Util
 {
 	class ApplicationConfig;
 }
 
-using namespace osgGA;
-
 namespace Vwr{
+
+using namespace osgGA;
 
 class CoreGraph;
 

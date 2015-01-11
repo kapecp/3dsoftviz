@@ -80,33 +80,33 @@ void Vwr::MouseControl::clickMouseLeftButton()
 void Vwr::MouseControl::corectionMousePosition(int positionX, int positionY)
 {
 	// VieverQT is shiffted from start X,Y
-	clickX=(float)(positionX-mWindowStartX);
+	clickX=static_cast<float>(positionX-mWindowStartX);
 	//reverted Y + shifted position + constant for corection
-	clickY=(float)(mWindowHeight+mWindowStartY-positionY+20);
+	clickY=static_cast<float>(mWindowHeight+mWindowStartY-positionY+20);
 }
 
 
 void Vwr::MouseControl::moveCursorMouse(double positionX, double positionY, bool isClick)
 {
-	double curentCursorX=(double)viewer->cursor().pos().x();
-	double curentCursorY=(double)viewer->cursor().pos().y();
+	double curentCursorX=static_cast<double>(viewer->cursor().pos().x());
+	double curentCursorY=static_cast<double>(viewer->cursor().pos().y());
 
 	//data if previous position
 	static double subPixelX=0;
 	static double subPixelY=0;
 
-	static double prevX=(double) positionX;
-	static double prevY= (double) positionY;
-	double deltaX=(double) ((double)(positionX)-prevX);
-	double deltaY=(double) ((double)(positionY)-prevY);
+	static double prevX= positionX;
+	static double prevY=  positionY;
+	double deltaX= ((positionX)-prevX);
+	double deltaY= ((positionY)-prevY);
 
 	//based on formula
 	double speed = sqrt(deltaX*deltaX + deltaY*deltaY);
 	//acceleration
 	speed = 1.0*speed + 0.09*speed*speed;
 
-	int newPositionX=(int) (curentCursorX + subPixelX+deltaX*speed);
-	int newPositionY=(int) (curentCursorY + subPixelY+deltaY*speed);
+	int newPositionX= static_cast<int>(curentCursorX + subPixelX+deltaX*speed);
+	int newPositionY= static_cast<int>(curentCursorY + subPixelY+deltaY*speed);
 
 	viewer->cursor().setPos(newPositionX,newPositionY);
 	// if button is pressed, need for movement osgGA
@@ -116,19 +116,19 @@ void Vwr::MouseControl::moveCursorMouse(double positionX, double positionY, bool
 		this->moveMouse(clickX,clickY);
 	}
 	//for previous position
-	subPixelX=(deltaX*speed - (int)(deltaX*speed));
-	subPixelY=(deltaY*speed - (int)(deltaY*speed));
+	subPixelX=(deltaX*speed - static_cast<int>(deltaX*speed));
+	subPixelY=(deltaY*speed - static_cast<int>(deltaY*speed));
 
-	prevX=(double) positionX;
-	prevY= (double) positionY;
+    prevX = positionX;
+    prevY = positionY;
 
 }
 
 
 void Vwr::MouseControl::moveCursorWorldCoordinates(double positionX, double positionY, bool isClick)
 {
-	int newPositionX=(int) (positionX*mRatioX*mSpeedMoving);
-	int newPositionY=(int) (positionY*mRatioY*mSpeedMoving);
+	int newPositionX= static_cast<int>(positionX*mRatioX*mSpeedMoving);
+	int newPositionY= static_cast<int>(positionY*mRatioY*mSpeedMoving);
 	viewer->cursor().setPos(newPositionX,newPositionY);
 	if(isClick)
 	{

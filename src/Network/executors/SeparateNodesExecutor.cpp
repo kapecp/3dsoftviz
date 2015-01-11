@@ -3,7 +3,7 @@
 #include "Network/Client.h"
 #include "Network/Server.h"
 
-using namespace Network;
+namespace Network {
 
 void SeparateNodesExecutor::execute_client() {
 
@@ -55,3 +55,5 @@ void SeparateNodesExecutor::execute_server() {
     return;
 
 }
+
+} // namespace Network

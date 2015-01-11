@@ -13,7 +13,7 @@
 
 #include "OsgQtBrowser/QWebViewImage.h"
 
-using namespace OsgQtBrowser;
+namespace OsgQtBrowser {
 
 QWebViewImage::QWebViewImage()
 {
@@ -67,3 +67,4 @@ bool QWebViewImage::sendKeyEvent(int key, bool keyDown)
     return QWebViewImage::_adapter->sendKeyEvent(key, keyDown);
 }
 
+}

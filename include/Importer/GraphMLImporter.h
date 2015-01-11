@@ -22,7 +22,7 @@ class GraphMLImporter
 public:
 
 	/***/
-	virtual ~GraphMLImporter (void) {};
+	virtual ~GraphMLImporter (void) {}
 
 	/***/
 	virtual bool import (

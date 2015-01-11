@@ -17,7 +17,7 @@
 #include <QString>
 #include <QSqlDatabase>
 
-#define METASTRENGTH 1
+#define METASTRENGTH 1.0f
 
 namespace Data
 {
@@ -103,7 +103,7 @@ public:
 		*  \brief Returns the strength of meta-element for layout algorithm
 		*  \return float strength of the meta-element
 		*/
-	float static getMetaStrength() { return (float) METASTRENGTH; }
+	static float getMetaStrength() { return static_cast<float>(METASTRENGTH); }
 
 
 	/**
@@ -119,7 +119,11 @@ public:
 		* \param 		graph_id    new ID of the Graph.
 		* \return qlonglong resultant ID of Graph
 		*/
-	qlonglong setId(qlonglong graph_id) { if(!inDB) this->graph_id = graph_id; return this->graph_id; }
+	qlonglong setId(qlonglong graph_id) {
+			if(!inDB)
+				this->graph_id = graph_id;
+			return this->graph_id;
+		}
 
 
 	/**
@@ -459,7 +463,7 @@ public:
 		*  \fn inline public  setIsInDB
 		*  \brief Sets the inDB flag of the Graph to true
 		*/
-	void setIsInDB() { inDB = true; };
+	void setIsInDB() { inDB = true; }
 
 
 	/**

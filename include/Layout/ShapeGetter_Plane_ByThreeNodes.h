@@ -24,7 +24,7 @@ public:
 			);
 
 	/***/
-	virtual ~ShapeGetter_Plane_ByThreeNodes (void) {};
+	virtual ~ShapeGetter_Plane_ByThreeNodes (void) {}
 
 	virtual QSharedPointer<Shape> getShape (void);
 

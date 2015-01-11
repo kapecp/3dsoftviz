@@ -13,9 +13,6 @@
 
 #include "Util/SizedQueue.h"
 
-
-using namespace Util;
-
 namespace ArucoModul {
 class ArucoCore;
 }
@@ -246,7 +243,7 @@ private:
 	double		mHalfRatioCoef;
 
 	OpenCV::CapVideo	*mCapVideo; // Cap video instanc, that managed camera and provides frames
-	SizedQueue *boolQueue;
+    Util::SizedQueue *boolQueue;
 
 
 	};

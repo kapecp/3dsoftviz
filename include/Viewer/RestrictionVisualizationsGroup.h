@@ -24,7 +24,7 @@ public:
 	RestrictionVisualizationsGroup (void);
 
 	/***/
-	virtual ~RestrictionVisualizationsGroup (void) {};
+	virtual ~RestrictionVisualizationsGroup (void) {}
 
 	/**
 	 * [getter].

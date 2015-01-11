@@ -16,163 +16,163 @@
 
 Data::Edge::Edge(qlonglong id, QString name, Data::Graph* graph, osg::ref_ptr<Data::Node> srcNode, osg::ref_ptr<Data::Node> dstNode, Data::Type* type, bool isOriented, float scaling, int pos, osg::ref_ptr<osg::Camera> camera) : osg::DrawArrays(osg::PrimitiveSet::QUADS, pos, 4)
 {
-    this->id = id;
-    this->name = name;
-    this->graph = graph;
-    this->srcNode = srcNode;
-    this->dstNode = dstNode;
-    this->type = type;
-    this->oriented = isOriented;
-    this->camera = camera;
-    this->selected = false;
-    this->setSharedCoordinates(false, false, false);
-    this->inDB = false;
-    this->scale = scaling;
-    float r = type->getSettings()->value("color.R").toFloat();
-    float g = type->getSettings()->value("color.G").toFloat();
-    float b = type->getSettings()->value("color.B").toFloat();
+	this->id = id;
+	this->name = name;
+	this->graph = graph;
+	this->srcNode = srcNode;
+	this->dstNode = dstNode;
+	this->type = type;
+	this->oriented = isOriented;
+	this->camera = camera;
+	this->selected = false;
+	this->setSharedCoordinates(false, false, false);
+	this->inDB = false;
+	this->scale = scaling;
+	float r = type->getSettings()->value("color.R").toFloat();
+	float g = type->getSettings()->value("color.G").toFloat();
+	float b = type->getSettings()->value("color.B").toFloat();
 
-    this->edgeColor = osg::Vec4(r, g, b, /*a*/0.5);
+	this->edgeColor = osg::Vec4(r, g, b, /*a*/0.5);
 
-    this->appConf = Util::ApplicationConfig::get();
-    coordinates = new osg::Vec3Array();
-    edgeTexCoords = new osg::Vec2Array();
+	this->appConf = Util::ApplicationConfig::get();
+	coordinates = new osg::Vec3Array();
+	edgeTexCoords = new osg::Vec2Array();
 
-    //updateCoordinates(getSrcNode()->getTargetPosition(), getDstNode()->getTargetPosition());
-    updateCoordinates(getSrcNode()->restrictedTargetPosition(), getDstNode()->restrictedTargetPosition());
+	//updateCoordinates(getSrcNode()->getTargetPosition(), getDstNode()->getTargetPosition());
+	updateCoordinates(getSrcNode()->restrictedTargetPosition(), getDstNode()->restrictedTargetPosition());
 }
 
 
 Data::Edge::~Edge(void)
 {
-    this->graph = NULL;
-    if(this->srcNode!=NULL) {
-        this->srcNode->removeEdge(this);
-        this->srcNode = NULL;
-    }
+	this->graph = NULL;
+	if(this->srcNode!=NULL) {
+		this->srcNode->removeEdge(this);
+		this->srcNode = NULL;
+	}
 
-    if(this->dstNode!=NULL) {
-        this->dstNode->removeEdge(this);
-        this->dstNode = NULL;
-    }
+	if(this->dstNode!=NULL) {
+		this->dstNode->removeEdge(this);
+		this->dstNode = NULL;
+	}
 
-    this->type = NULL;
-    this->appConf = NULL;
+	this->type = NULL;
+	this->appConf = NULL;
 }
 
 void Data::Edge::linkNodes(QMap<qlonglong, osg::ref_ptr<Data::Edge> > *edges)
 {
-    edges->insert(this->id, this);
-    this->dstNode->addEdge(this);
-    this->srcNode->addEdge(this);
+	edges->insert(this->id, this);
+	this->dstNode->addEdge(this);
+	this->srcNode->addEdge(this);
 }
 
 void Data::Edge::unlinkNodes()
 {
-    this->dstNode->removeEdge(this);
-    this->srcNode->removeEdge(this);
-    this->srcNode = NULL;
-    this->dstNode = NULL;
+	this->dstNode->removeEdge(this);
+	this->srcNode->removeEdge(this);
+	this->srcNode = NULL;
+	this->dstNode = NULL;
 }
 
 void Data::Edge::unlinkNodesAndRemoveFromGraph() {
-    //unlinkNodes will be called from graph->removeEdge !!
-    this->graph->removeEdge(this);
+	//unlinkNodes will be called from graph->removeEdge !!
+	this->graph->removeEdge(this);
 }
 
 void Data::Edge::updateCoordinates(osg::Vec3 srcPos, osg::Vec3 dstPos)
 {
-    coordinates->clear();
-    edgeTexCoords->clear();
+	coordinates->clear();
+	edgeTexCoords->clear();
 
-    osg::Vec3d viewVec(0, 0, 1);
-    osg::Vec3d up;
+	osg::Vec3d viewVec(0, 0, 1);
+	osg::Vec3d up;
 
-    if (camera != 0)
-    {
-        osg::Vec3d eye;
-        osg::Vec3d center;
+	if (camera != 0)
+	{
+		osg::Vec3d eye;
+		osg::Vec3d center;
 
-        camera->getViewMatrixAsLookAt(eye,center,up);
+		camera->getViewMatrixAsLookAt(eye,center,up);
 
-        viewVec = eye - center;
+		viewVec = eye - center;
 
-        //	std::cout << eye.x() << " " << eye.y() << " " << eye.z() << "\n";
-        //	std::cout << center.x() << " " << center.y() << " " << center.z() << "\n";
-    }
+		//	std::cout << eye.x() << " " << eye.y() << " " << eye.z() << "\n";
+		//	std::cout << center.x() << " " << center.y() << " " << center.z() << "\n";
+	}
 
-    viewVec.normalize();
+	viewVec.normalize();
 
-    //getting setting for edge scale
+	//getting setting for edge scale
 
-    osg::Vec3 x, y;
-    x.set(srcPos);
-    y.set(dstPos);
+	osg::Vec3 x, y;
+	x.set(srcPos);
+	y.set(dstPos);
 
-    osg::Vec3d edgeDir = x - y;
-    length = edgeDir.length();
+	osg::Vec3d edgeDir = x - y;
+	length = edgeDir.length();
 
-    up = edgeDir ^ viewVec;
-    up.normalize();
+	up = edgeDir ^ viewVec;
+	up.normalize();
 
-    up *= this->scale;
+	up *= this->scale;
 
-    //updating edge coordinates due to scale
-    coordinates->push_back(osg::Vec3d(x.x() + up.x(), x.y() + up.y(), x.z() + up.z()));
-    coordinates->push_back(osg::Vec3d(x.x() - up.x(), x.y() - up.y(), x.z() - up.z()));
-    coordinates->push_back(osg::Vec3d(y.x() - up.x(), y.y() - up.y(), y.z() - up.z()));
-    coordinates->push_back(osg::Vec3d(y.x() + up.x(), y.y() + up.y(), y.z() + up.z()));
+	//updating edge coordinates due to scale
+	coordinates->push_back(osg::Vec3d(x.x() + up.x(), x.y() + up.y(), x.z() + up.z()));
+	coordinates->push_back(osg::Vec3d(x.x() - up.x(), x.y() - up.y(), x.z() - up.z()));
+	coordinates->push_back(osg::Vec3d(y.x() - up.x(), y.y() - up.y(), y.z() - up.z()));
+	coordinates->push_back(osg::Vec3d(y.x() + up.x(), y.y() + up.y(), y.z() + up.z()));
 
-    float repeatCnt =(float)  (length / (2.f * this->scale));
+	float repeatCnt = static_cast<float>(length / (2.f * this->scale));
 
-    //init edge-text (label) coordinates
-    edgeTexCoords->push_back(osg::Vec2(0,1.0f));
-    edgeTexCoords->push_back(osg::Vec2(0,0.0f));
-    edgeTexCoords->push_back(osg::Vec2(repeatCnt,0.0f));
-    edgeTexCoords->push_back(osg::Vec2(repeatCnt,1.0f));
+	//init edge-text (label) coordinates
+	edgeTexCoords->push_back(osg::Vec2(0,1.0f));
+	edgeTexCoords->push_back(osg::Vec2(0,0.0f));
+	edgeTexCoords->push_back(osg::Vec2(repeatCnt,0.0f));
+	edgeTexCoords->push_back(osg::Vec2(repeatCnt,1.0f));
 
-    if (label != NULL)
-        label->setPosition((srcPos + dstPos) / 2 );
+	if (label != NULL)
+		label->setPosition((srcPos + dstPos) / 2 );
 }
 
 osg::ref_ptr<osg::Drawable> Data::Edge::createLabel(QString name)
 {
-    label = new osgText::FadeText;
-    label->setFadeSpeed(0.03f);
+	label = new osgText::FadeText;
+	label->setFadeSpeed(0.03f);
 
-    QString fontPath = Util::ApplicationConfig::get()->getValue("Viewer.Labels.Font");
+	QString fontPath = Util::ApplicationConfig::get()->getValue("Viewer.Labels.Font");
 
-    // experimental value
-    float scale = 1.375f * this->type->getScale();
+	// experimental value
+	float scale = 1.375f * this->type->getScale();
 
-    if(fontPath != NULL && !fontPath.isEmpty())
-        label->setFont(fontPath.toStdString());
+	if(fontPath != NULL && !fontPath.isEmpty())
+		label->setFont(fontPath.toStdString());
 
-    label->setText(name.toStdString());
-    label->setLineSpacing(0);
-    label->setAxisAlignment(osgText::Text::SCREEN);
-    label->setCharacterSize(scale);
-    label->setDrawMode(osgText::Text::TEXT);
-    label->setAlignment(osgText::Text::CENTER_BOTTOM_BASE_LINE);
-    //label->setPosition((this->dstNode->getTargetPosition() + this->srcNode->getTargetPosition()) / 2 );
-    label->setPosition((this->dstNode->restrictedTargetPosition() + this->srcNode->restrictedTargetPosition()) / 2 );
-    label->setColor( osg::Vec4(1.0f, 1.0f, 1.0f, 1.0f) );
+	label->setText(name.toStdString());
+	label->setLineSpacing(0);
+	label->setAxisAlignment(osgText::Text::SCREEN);
+	label->setCharacterSize(scale);
+	label->setDrawMode(osgText::Text::TEXT);
+	label->setAlignment(osgText::Text::CENTER_BOTTOM_BASE_LINE);
+	//label->setPosition((this->dstNode->getTargetPosition() + this->srcNode->getTargetPosition()) / 2 );
+	label->setPosition((this->dstNode->restrictedTargetPosition() + this->srcNode->restrictedTargetPosition()) / 2 );
+	label->setColor( osg::Vec4(1.0f, 1.0f, 1.0f, 1.0f) );
 
-    return label;
+	return label;
 }
 
 osg::ref_ptr<Data::Node> Data::Edge::getSecondNode(osg::ref_ptr<Data::Node> firstNode){
-    if (firstNode->getId() == srcNode->getId())
-        return dstNode;
-    else return srcNode;
+	if (firstNode->getId() == srcNode->getId())
+		return dstNode;
+	else return srcNode;
 
 }
 
 
 QString Data::Edge::toString() const {
-    QString str;
-    QTextStream(&str) << "edge id:" << id << " name:" << name;
-    return str;
+	QString str;
+	QTextStream(&str) << "edge id:" << id << " name:" << name;
+	return str;
 }
 
 

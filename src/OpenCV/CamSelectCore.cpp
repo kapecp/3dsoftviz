@@ -5,8 +5,6 @@
 #include "QOpenCV/CamSelectWindow.h"
 #include "OpenCV/CapVideo.h"
 
-using namespace OpenCV;
-
 OpenCV::CamSelectCore * OpenCV::CamSelectCore::mCamSelectCore;
 
 //constructor search automatically for number of active cameras and store them
@@ -35,9 +33,9 @@ OpenCV::CapVideo *OpenCV::CamSelectCore::selectCamera()
 		data.append(",");
 		if (camlist[i]->isOpened()){
 			data.append("yes");data.append(",");
-			data.append(QString::number((int)camlist[i]->getWidth()));
+			data.append(QString::number(static_cast<int>(camlist[i]->getWidth())));
 			data.append(",");
-			data.append(QString::number((int)camlist[i]->getHeight()));
+			data.append(QString::number(static_cast<int>(camlist[i]->getHeight())));
 		} else{
 			data.append("no");data.append(",");
 			data.append("0");

@@ -7,7 +7,7 @@
 
 #include "typeinfo"
 
-using namespace Vwr;
+namespace Vwr {
 
 NodeGroup::NodeGroup(QMap<qlonglong, osg::ref_ptr<Data::Node> > *nodes)
 {
@@ -210,3 +210,5 @@ void NodeGroup::freezeNodePositions()
 		++i;
 	}
 }
+
+} // namespace Vwr

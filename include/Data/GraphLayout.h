@@ -202,7 +202,7 @@ public:
 		*  \fn inline public  setIsInDB
 		*  \brief Sets this GraphLayout inDB flag to true, meaning that the GraphLayout is in database
 		*/
-	void setIsInDB() { inDB = true; };
+	void setIsInDB() { inDB = true; }
 
 
 	/**

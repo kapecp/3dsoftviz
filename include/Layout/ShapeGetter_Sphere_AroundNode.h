@@ -36,7 +36,7 @@ public:
 			);
 
 	/***/
-	virtual ~ShapeGetter_Sphere_AroundNode (void) {};
+	virtual ~ShapeGetter_Sphere_AroundNode (void) {}
 
 	virtual QSharedPointer<Shape> getShape (void);
 

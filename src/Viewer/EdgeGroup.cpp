@@ -6,7 +6,7 @@
 #include <osg/Depth>
 #include <osg/BlendFunc>
 
-using namespace Vwr;
+namespace Vwr {
 
 EdgeGroup::EdgeGroup(QMap<qlonglong, osg::ref_ptr<Data::Edge> > *edges, float scale)
 {
@@ -212,3 +212,5 @@ void EdgeGroup::createEdgeStateSets()
 	orientedEdgeStateSet->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
 	orientedEdgeStateSet->setAttributeAndModes(depth, osg::StateAttribute::ON);
 }
+
+} // namespace Vwr

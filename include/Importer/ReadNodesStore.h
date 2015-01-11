@@ -20,7 +20,7 @@ class ReadNodesStore {
 public:
 
 	/***/
-	virtual ~ReadNodesStore (void) {};
+	virtual ~ReadNodesStore (void) {}
 
 	/**
 	 * \brief Adds a new node.

@@ -1,9 +1,9 @@
 #include "Network/executors/SpyUserExecutor.h"
-#include "Manager/Manager.h"
+
 #include "Network/Server.h"
 #include "Network/Client.h"
 
-using namespace Network;
+namespace Network {
 
 void SpyUserExecutor::execute_client() {
 
@@ -43,3 +43,5 @@ void SpyUserExecutor::execute_server() {
     server->removeAvatar(senderClient);
 
 }
+
+} // namespace Network

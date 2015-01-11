@@ -4,7 +4,7 @@
 #include "Network/Client.h"
 #include "Network/Server.h"
 
-using namespace Network;
+namespace Network {
 
 void LayoutExecutor::execute_client() {
 
@@ -39,3 +39,5 @@ void LayoutExecutor::execute_client() {
 void LayoutExecutor::execute_server() {
     return;
 }
+
+} // namespace Network

@@ -2,7 +2,7 @@
 #include "Manager/Manager.h"
 #include "Network/Server.h"
 
-using namespace Network;
+namespace Network {
 
 void SetEdgeColorExecutor::execute_client() {
     int id;
@@ -41,3 +41,5 @@ void SetEdgeColorExecutor::execute_server() {
     }
 
 }
+
+} // namespace Network

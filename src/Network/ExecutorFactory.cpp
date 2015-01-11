@@ -1,6 +1,6 @@
 #include "Network/ExecutorFactory.h"
 
-using namespace Network;
+namespace Network {
 
 ExecutorFactory::ExecutorFactory() {
 
@@ -54,3 +54,5 @@ AbstractExecutor* ExecutorFactory::getExecutor(QDataStream * stream) {
 
 
 }
+
+} // namespace Network

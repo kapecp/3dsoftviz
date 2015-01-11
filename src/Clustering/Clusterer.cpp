@@ -1,25 +1,27 @@
 
 #include "Clustering/Clusterer.h"
+
 #include "Data/Graph.h"
 #include "Data/Node.h"
 #include "Data/Edge.h"
 #include "Data/Type.h"
 #include "Data/Cluster.h"
 #include "Manager/Manager.h"
-#include <math.h>
 
 #include "QOSG/OptionsWindow.h"
 #include "QOSG/CheckBoxList.h"
 
-using namespace Data;
+#include <math.h>
+#include <vector>
 
-using namespace Clustering;
+namespace Clustering {
+
 /*
 Clusterer::Clusterer() {
     graph = NULL;
 }
 */
-void Clusterer::cluster(Graph* graph, QProgressDialog* clusteringProgressBar) {
+void Clusterer::cluster(Data::Graph* graph, QProgressDialog* clusteringProgressBar) {
     this->progressBar = clusteringProgressBar;
     if (graph == NULL) {
         qDebug() << "[Clustering::Clusterer::cluster] Nothing to cluster! Graph is null. ";
@@ -61,10 +63,10 @@ void Clusterer::cluster(Graph* graph, QProgressDialog* clusteringProgressBar) {
 
         qDebug() << "cluster #" << cluster->getId() << " has nodes inside: " << cluster->getClusteredNodesCount();
 
-        QSet<Node*> clusteredNodes = cluster->getClusteredNodes();
-        foreach (Node *clusteredNode, clusteredNodes) {
+        QSet<Data::Node*> clusteredNodes = cluster->getClusteredNodes();
+        foreach (Data::Node *clusteredNode, clusteredNodes) {
 
-            Cluster* c = dynamic_cast<Cluster*>(clusteredNode);
+            Data::Cluster* c = dynamic_cast<Data::Cluster*>(clusteredNode);
             if(c != 0) {
                qDebug() << "-- cluster #" << c->getId() << " has nodes inside: " << c->getClusteredNodesCount();
 
@@ -79,7 +81,7 @@ void Clusterer::cluster(Graph* graph, QProgressDialog* clusteringProgressBar) {
 
 }
 
-osg::Vec4 Vwr::getNewColor(int colorCounter) {
+osg::Vec4 Clusterer::getNewColor(int colorCounter) {
 
     osg::Vec4 colors [21] = {osg::Vec4(1.0f, 0.0f, 0.0f, 0.5f),
                            osg::Vec4(0.0f, 1.0f, 0.0f, 0.5f),
@@ -127,16 +129,16 @@ void Clusterer::clusterNeighbours(QMap<qlonglong, osg::ref_ptr<Data::Node> > *so
         progressBar->setValue(step++);
         osg::ref_ptr<Data::Node> node = i.value();
         if (node->getCluster() == NULL) {
-            Cluster* cluster = NULL;
-            QSet<Node*> incidentNodes = node->getIncidentNodes();
-            foreach (Node *incidentNode, incidentNodes) {
+            Data::Cluster* cluster = NULL;
+            QSet<Data::Node*> incidentNodes = node->getIncidentNodes();
+            foreach (Data::Node *incidentNode, incidentNodes) {
                 if (!newClusters.contains(incidentNode->getId()) && incidentNode->getCluster() == NULL) {
                     if (cluster == NULL) {
-                        cluster = new Cluster(getNextId(), "name", type, graph->getNodeScale(), graph, osg::Vec3f(0,0,0));
+                        cluster = new Data::Cluster(getNextId(), "name", type, graph->getNodeScale(), graph, osg::Vec3f(0,0,0));
                         clusters.insert(cluster->getId(), cluster);
                         newClusters.insert(cluster->getId(), cluster);
 
-                        cluster->setColor(getNewColor(colorCounter));
+                        cluster->setColor(this->getNewColor(colorCounter));
                         colorCounter++;
                     }
                     incidentNode->setCluster(cluster);
@@ -186,21 +188,21 @@ void Clusterer::clusterLeafs(QMap<qlonglong, osg::ref_ptr<Data::Node> >* someNod
         progressBar->setValue(step++);
         osg::ref_ptr<Data::Node> node = i.value();
         if (node->getCluster() == NULL) {
-            QSet<Node*> incidentNodes = node->getIncidentNodes();
+            QSet<Data::Node*> incidentNodes = node->getIncidentNodes();
 
             // je to list
             if (incidentNodes.size() == 1) {
-                Node* parent = *(incidentNodes.constBegin());
+                Data::Node* parent = *(incidentNodes.constBegin());
 
                 osg::ref_ptr<Data::Cluster> cluster = clusters.value(parent->getId());
 
                 // pridaj rodica do clustru (ak uz nie je v clustri - tzn. spracuvame dalsi list toho rodica)
                 if (cluster == NULL) {
-                    cluster = new Cluster(parent->getId(), "name", type, graph->getNodeScale(), graph, osg::Vec3f(0,0,0));
+                    cluster = new Data::Cluster(parent->getId(), "name", type, graph->getNodeScale(), graph, osg::Vec3f(0,0,0));
                     clusters.insert(cluster->getId(), cluster);
                     newClusters.insert(cluster->getId(), cluster);
 
-                    cluster->setColor(getNewColor(colorCounter));
+                    cluster->setColor(this->getNewColor(colorCounter));
                     colorCounter++;
 
                     parent->setCluster(cluster);
@@ -212,7 +214,8 @@ void Clusterer::clusterLeafs(QMap<qlonglong, osg::ref_ptr<Data::Node> >* someNod
                 node->setColor(cluster->getColor());
                 cluster->addNodeToCluster(node);
             }
-            else { // nie je list -> skus ho zhlukovat v dalsej hlbke
+            else
+            { // nie je list -> skus ho zhlukovat v dalsej hlbke
                 newClusters.insert(node->getId(), node);
             }
         }
@@ -257,7 +260,7 @@ void Clusterer::clusterAdjacency(QMap<qlonglong, osg::ref_ptr<Data::Node> >* som
     {
         osg::ref_ptr<Data::Node> node = iterator.value();
         matrix[i][i] = true;
-        QSet<Node*> neighbours = node->getIncidentNodes();
+        QSet<Data::Node*> neighbours = node->getIncidentNodes();
         j = i+1;
         for (iterator2 = iterator + 1; iterator2 != someNodes->end(); ++iterator2, j++) {
             osg::ref_ptr<Data::Node> v = iterator2.value();
@@ -291,8 +294,8 @@ void Clusterer::clusterAdjacency(QMap<qlonglong, osg::ref_ptr<Data::Node> >* som
                 sum += matrix[i][k] && matrix[j][k] ? 1 : 0;
             }
             // apply Pearson
-            float wij = ((float)((n * sum) - (degU * degV))) /
-                    (float)sqrt((float)(degU * degV * (n - degU) * (n - degV)));
+            float wij = (static_cast<float>((n * sum) - (degU * degV))) /
+                    static_cast<float>( sqrt(static_cast<float>(degU * degV * (n - degU) * (n - degV))) );
             // ignore negative values
             w[j][i] = w[i][j] = (unsigned char)qMax(0.0f, wij * K); // K is used to store 0-1 floats in uchar matrix
             if (w[j][i] > maxW) // remember largest weight
@@ -315,7 +318,7 @@ void Clusterer::clusterAdjacency(QMap<qlonglong, osg::ref_ptr<Data::Node> >* som
         if (progressBar->wasCanceled()) return;
         osg::ref_ptr<Data::Node> u = iterator.value();
         j = i+1;
-        Cluster* c = u->getCluster();
+        Data::Cluster* c = u->getCluster();
         // set of nodes about to cluster
         QSet<Data::Node *> toCluster;
         for (iterator2 = iterator + 1; iterator2 != someNodes->end(); ++iterator2, j++) {
@@ -360,14 +363,14 @@ void Clusterer::clusterAdjacency(QMap<qlonglong, osg::ref_ptr<Data::Node> >* som
         }
         if (!toCluster.isEmpty()) {
             if (c == NULL) {
-                c = new Cluster(getNextId(), "name", type, graph->getNodeScale(), graph, osg::Vec3f(0,0,0));
+                c = new Data::Cluster(getNextId(), "name", type, graph->getNodeScale(), graph, osg::Vec3f(0,0,0));
                 clusters.insert(c->getId(), c);
                 newClusters.insert(c->getId(), c);
 
-                c->setColor(getNewColor(colorCounter));
+                c->setColor(this->getNewColor(colorCounter));
                 colorCounter++;
             }
-            foreach (Node *v, toCluster) {
+            foreach (Data::Node *v, toCluster) {
                 if (v->getCluster() == NULL) {
                     v->setCluster(c);
                     v->setColor(c->getColor());
@@ -420,9 +423,9 @@ void Clusterer::resetClusters(bool removeReferences) {
         {
             osg::ref_ptr<Data::Cluster> cluster = c.value();
 
-            QSet<Node*> allClusteredNodes = cluster->getALLClusteredNodes();
-            for (QSet<Node*>::const_iterator n = allClusteredNodes.constBegin(); n != allClusteredNodes.constEnd(); ++n) {
-                Node * node = (*n);
+            QSet<Data::Node*> allClusteredNodes = cluster->getALLClusteredNodes();
+            for (QSet<Data::Node*>::const_iterator n = allClusteredNodes.constBegin(); n != allClusteredNodes.constEnd(); ++n) {
+                Data::Node * node = (*n);
                 node->setCluster(NULL);
                 node->setDefaultColor();
             }
@@ -430,3 +433,5 @@ void Clusterer::resetClusters(bool removeReferences) {
     }
     clusters.clear();
 }
+
+} // namespace Clustering

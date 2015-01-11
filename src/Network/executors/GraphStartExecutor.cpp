@@ -3,7 +3,7 @@
 #include "Importer/GraphOperations.h"
 #include "Network/Client.h"
 
-using namespace Network;
+namespace Network {
 
 void GraphStartExecutor::execute_client() {
 
@@ -23,3 +23,5 @@ void GraphStartExecutor::execute_client() {
 void GraphStartExecutor::execute_server() {
     return;
 }
+
+} // namespace Network

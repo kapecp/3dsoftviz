@@ -2,7 +2,7 @@
 #include "Manager/Manager.h"
 #include "Network/Server.h"
 
-using namespace Network;
+namespace Network {
 
 void SetNodeLabelExecutor::execute_client() {
 
@@ -42,3 +42,5 @@ void SetNodeLabelExecutor::execute_server() {
     server->sendNodeLabel(id, label);
 
 }
+
+} // namespace Network

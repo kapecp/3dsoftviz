@@ -310,7 +310,8 @@ bool Model::EdgeDAO::checkIfExists(Data::Edge* edge, QSqlDatabase* conn)
 	}
 	if(query->next() && query->value(0)==1) {
 		return true;
-	} else return false;
+	}
+	else return false;
 }
 
 bool Model::EdgeDAO::removeEdge( Data::Edge* edge, QSqlDatabase* conn )

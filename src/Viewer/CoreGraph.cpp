@@ -32,14 +32,14 @@
 #include <math.h>
 
 
-using namespace Vwr;
+namespace Vwr {
 
 /*
 * TODO prerobit - v sucastnosti je scena jeden velky plochy graf. toto sa da optimalizovat do stromovej strukutry. pri vytvarani grafu ho treba prechadzat ako graf
 * a nie vsetko zaradom ako je to teraz
 */
 
-osg::ref_ptr<osg::AutoTransform> Vwr::getSphere(qlonglong id, osg::Vec3 position, float radius, osg::Vec4 color) {
+osg::ref_ptr<osg::AutoTransform> getSphere(qlonglong id, osg::Vec3 position, float radius, osg::Vec4 color) {
     osg::ref_ptr<osg::AutoTransform> at = new osg::AutoTransform;
     at->setPosition(position * 1);
     //at->setAutoRotateMode(osg::AutoTransform::ROTATE_TO_SCREEN);
@@ -60,7 +60,7 @@ osg::ref_ptr<osg::AutoTransform> Vwr::getSphere(qlonglong id, osg::Vec3 position
     return at;
 }
 
-osg::ref_ptr<osg::AutoTransform> Vwr::getCube(qlonglong id, osg::Vec3 position, float width, osg::Vec4 color) {
+osg::ref_ptr<osg::AutoTransform> getCube(qlonglong id, osg::Vec3 position, float width, osg::Vec4 color) {
     osg::ref_ptr<osg::AutoTransform> at = new osg::AutoTransform;
     at->setPosition(position * 1);
     //at->setAutoRotateMode(osg::AutoTransform::ROTATE_TO_SCREEN);
@@ -81,7 +81,7 @@ osg::ref_ptr<osg::AutoTransform> Vwr::getCube(qlonglong id, osg::Vec3 position, 
     return at;
 }
 
-osg::ref_ptr<osg::AutoTransform> Vwr::getCone(qlonglong id, osg::Vec3 position, float radius, osg::Vec4 color) {
+osg::ref_ptr<osg::AutoTransform> getCone(qlonglong id, osg::Vec3 position, float radius, osg::Vec4 color) {
     osg::ref_ptr<osg::AutoTransform> at = new osg::AutoTransform;
     at->setPosition(position * 1);
     //at->setAutoRotateMode(osg::AutoTransform::ROTATE_TO_SCREEN);
@@ -104,7 +104,7 @@ osg::ref_ptr<osg::AutoTransform> Vwr::getCone(qlonglong id, osg::Vec3 position, 
     return at;
 }
 
-osg::ref_ptr<osg::AutoTransform> Vwr::getCylinder(qlonglong id, osg::Vec3 position, float radius, osg::Vec4 color) {
+osg::ref_ptr<osg::AutoTransform> getCylinder(qlonglong id, osg::Vec3 position, float radius, osg::Vec4 color) {
     osg::ref_ptr<osg::AutoTransform> at = new osg::AutoTransform;
     at->setPosition(position * 1);
     //at->setAutoRotateMode(osg::AutoTransform::ROTATE_TO_SCREEN);
@@ -127,7 +127,7 @@ osg::ref_ptr<osg::AutoTransform> Vwr::getCylinder(qlonglong id, osg::Vec3 positi
     return at;
 }
 
-osg::Vec3f Vwr::getMidPoint(QSet<Data::Node *> nodes) {
+osg::Vec3f getMidPoint(QSet<Data::Node *> nodes) {
 
     osg::Vec3 total = osg::Vec3(0,0,0);
     float count = 0;
@@ -148,7 +148,7 @@ osg::Vec3f Vwr::getMidPoint(QSet<Data::Node *> nodes) {
      return total;
 }
 
-float Vwr::getRadius(QSet<Data::Node *> nodes, osg::Vec3f midPoint) {
+float getRadius(QSet<Data::Node *> nodes, osg::Vec3f midPoint) {
 
     float maxDistance = 0;
 
@@ -167,7 +167,7 @@ float Vwr::getRadius(QSet<Data::Node *> nodes, osg::Vec3f midPoint) {
     return maxDistance;
 }
 
-osg::Geode* Vwr::test() {
+osg::Geode* test() {
     //cout << " test ...";
     osg::Geode* pyramidGeode = new osg::Geode();
     osg::Geometry* pyramidGeometry = new osg::Geometry();
@@ -370,7 +370,7 @@ osg::ref_ptr<osg::AutoTransform> CoreGraph::dodecahedron(qlonglong id, osg::Vec3
     float z = midpoint.z();
 
     float i = 1;
-    float fi = (1 + (float)sqrt(5.0f)) / 2;
+    float fi = (1 + static_cast<float>(sqrt(5.0f))) / 2;
     float fi_rev = 1/fi;
 
     osg::Geode* dodecahedronGeode = new osg::Geode();
@@ -982,8 +982,8 @@ void CoreGraph::createClusterGroup(QMap<qlonglong, osg::ref_ptr<Data::Cluster> >
     {
         osg::ref_ptr<Data::Cluster> cluster = i.value();
 
-        osg::Vec3f midPoint = ::getMidPoint(cluster->getALLClusteredNodes());
-        float radius = ::getRadius(cluster->getALLClusteredNodes(), midPoint);
+        osg::Vec3f midPoint = getMidPoint(cluster->getALLClusteredNodes());
+        float radius = getRadius(cluster->getALLClusteredNodes(), midPoint);
 
         Cube * cube = new Cube(midPoint, radius, osg::Vec4d(1,1,1,0.5));
         cube->getGeode()->setUserValue("id", QString::number(cluster->getId()).toStdString());
@@ -1025,9 +1025,10 @@ void CoreGraph::updateClustersCoords() {
             upperPoint = osg::Vec3f(midPoint.x() + distanceX, midPoint.y() + distanceY, midPoint.z() + distanceZ);
         }
         // inak vypocitaj tvar podla zlucenych uzlov
-        else {
-            midPoint = ::getMidPoint(cluster->getALLClusteredNodes());
-            radius = ::getRadius(cluster->getALLClusteredNodes(), midPoint);
+        else
+        {
+            midPoint = getMidPoint(cluster->getALLClusteredNodes());
+            radius = getRadius(cluster->getALLClusteredNodes(), midPoint);
             scale = osg::Vec3d(radius,radius,radius);
 
             lowerPoint = osg::Vec3f(midPoint.x() - radius, midPoint.y() - radius, midPoint.z() - radius);
@@ -1036,9 +1037,9 @@ void CoreGraph::updateClustersCoords() {
 
         osg::Vec4 color = cluster->getColor();
         if (clustersOpacityAutomatic) {
-            color.w() = (float)computeOpacity(midPoint);
+            color.w() = static_cast<float>(computeOpacity(midPoint));
         } else if ((clustersOpacitySelected && cluster->isSelected()) || !clustersOpacitySelected){
-            color.w() = (float)clustersOpacity;
+            color.w() = static_cast<float>(clustersOpacity);
         }
 
         if (cluster->getALLClusteredNodes().count() <= clustersShapeBoundary) {
@@ -1186,11 +1187,14 @@ OpenCV::CameraStream* CoreGraph::getCameraStream() const
 #endif
 
 bool CoreGraph::cameraInsideCube(osg::Vec3d lowerPoint, osg::Vec3d upperPoint) {
-    return (new osg::BoundingBox((float)lowerPoint.x(), (float)lowerPoint.y(), (float)lowerPoint.z(),
-                                 (float)upperPoint.x(), (float)upperPoint.y(), (float)upperPoint.z()))
-            ->contains(cameraManipulator->getCameraPosition());
+    return (new osg::BoundingBox(
+                static_cast<float>(lowerPoint.x()), static_cast<float>(lowerPoint.y()), static_cast<float>(lowerPoint.z()),
+                static_cast<float>(upperPoint.x()), static_cast<float>(upperPoint.y()), static_cast<float>(upperPoint.z()))
+            )->contains(cameraManipulator->getCameraPosition());
 }
 
 bool CoreGraph::cameraInsideSphere(osg::Vec3d midPoint, float radius) {
     return (new osg::BoundingSphere(midPoint, radius))->contains(cameraManipulator->getCameraPosition());
+}
+
 }

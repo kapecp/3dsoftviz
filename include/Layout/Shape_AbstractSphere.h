@@ -38,7 +38,7 @@ public:
 protected:
 
 	/***/
-	virtual ~Shape_AbstractSphere (void) {};
+	virtual ~Shape_AbstractSphere (void) {}
 
 private:
 

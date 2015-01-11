@@ -5,6 +5,8 @@
 #include <QVector>
 #include "Data/Node.h"
 
+#include <list>
+
 namespace MathModule{
 
 class CameraMath

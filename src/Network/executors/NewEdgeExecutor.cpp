@@ -5,7 +5,7 @@
 #include "Network/Client.h"
 #include "Data/GraphLayout.h"
 
-using namespace Network;
+namespace Network {
 
 void NewEdgeExecutor::execute_client() {
 
@@ -56,4 +56,6 @@ void NewEdgeExecutor::execute_server() {
     }
 
     server->sendNewEdge(newEdge);
+}
+
 }

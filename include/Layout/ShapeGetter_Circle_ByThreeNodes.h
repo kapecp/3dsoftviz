@@ -24,7 +24,7 @@ public:
 			);
 
 	/***/
-	virtual ~ShapeGetter_Circle_ByThreeNodes (void) {};
+	virtual ~ShapeGetter_Circle_ByThreeNodes (void) {}
 
 	virtual QSharedPointer<Shape> getShape (void);
 

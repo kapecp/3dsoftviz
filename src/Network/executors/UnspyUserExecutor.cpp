@@ -1,9 +1,8 @@
 #include "Network/executors/UnspyUserExecutor.h"
-#include "Manager/Manager.h"
 #include "Network/Server.h"
 #include "Network/Client.h"
 
-using namespace Network;
+namespace Network {
 
 void UnspyUserExecutor::execute_client() {
 
@@ -50,3 +49,5 @@ void UnspyUserExecutor::execute_server() {
     server->addAvatar(senderClient, server->getUserName(senderClient));
 
 }
+
+} // namespace Network

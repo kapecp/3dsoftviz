@@ -32,7 +32,7 @@ public:
 private:
 
 	/***/
-	ImporterFactory (void) {};
+	ImporterFactory (void) {}
 
 	/***/
 	virtual ~ImporterFactory (void) = 0;

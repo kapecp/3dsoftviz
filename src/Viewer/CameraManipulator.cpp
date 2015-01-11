@@ -28,8 +28,7 @@ double Vwr::CameraManipulator::EYE_MOVEMENT_SPEED;
 double Vwr::CameraManipulator::TARGET_MOVEMENT_SPEED;
 float Vwr::CameraManipulator::SCREEN_MARGIN;
 
-using namespace Vwr;
-using namespace MathModule;
+namespace Vwr {
 
 Vwr::CameraManipulator::CameraManipulator(Vwr::CoreGraph * coreGraph)
 {
@@ -256,8 +255,9 @@ bool Vwr::CameraManipulator::handlePush(const osgGA::GUIEventAdapter& ea, osgGA:
 			_center = eye;
 			_distance = 0.f;
 		}
-		else {
-			_distance = (float)lastDistance;
+		else
+		{
+			_distance = static_cast<float>(lastDistance);
 		}
 
 		notifyServer();
@@ -303,7 +303,7 @@ bool Vwr::CameraManipulator::isMouseMoving()
 	float dy = _ga_t0->getYnormalized()-_ga_t1->getYnormalized();
 	float len = sqrtf(dx*dx+dy*dy);
 
-	float dt = (float)(_ga_t0->getTime()-_ga_t1->getTime());
+	float dt = static_cast<float>(_ga_t0->getTime()-_ga_t1->getTime());
 
 	return (len>dt*velocity);
 }
@@ -473,7 +473,7 @@ bool Vwr::CameraManipulator::calcMovement()
 
 		// pan model.
 
-		float scale = -0.3f * _distance * float(throwScale);
+		float scale = -0.3f * _distance * static_cast<float>(throwScale);
 
 		osg::Matrix rotation_matrix;
 		rotation_matrix.makeRotate(_rotation);
@@ -493,7 +493,7 @@ bool Vwr::CameraManipulator::calcMovement()
 		// zoom model.
 
 		float fd = _distance;
-		float scale = 1.0f+ dy * (float) throwScale;
+		float scale = 1.0f+ dy * static_cast<float>(throwScale);
 		if (fd*scale>_modelScale*_minimumZoomScale)
 		{
             if (_distance * scale < 10000){
@@ -813,13 +813,13 @@ void Vwr::CameraManipulator::frame( const osgGA::GUIEventAdapter &ea, osgGA::GUI
 			// ziskanie novych pozicii na krivke
 			if (t1 <= 1)
 			{
-				cameraPosition = CameraMath::getPointOnNextBezierCurve(t1, cameraPositions, w1);
+                cameraPosition = MathModule::CameraMath::getPointOnNextBezierCurve(t1, cameraPositions, w1);
 				t1 += EYE_MOVEMENT_SPEED;
 			}
 
 			if (t2 <= 1)
 			{
-				targetPoint = CameraMath::getPointOnNextBezierCurve(t2, targetPositions, w2 );
+                targetPoint = MathModule::CameraMath::getPointOnNextBezierCurve(t2, targetPositions, w2 );
 				t2 += TARGET_MOVEMENT_SPEED;
 			}
 
@@ -841,8 +841,8 @@ void Vwr::CameraManipulator::frame( const osgGA::GUIEventAdapter &ea, osgGA::GUI
 				osg::ref_ptr<osg::Group> group = new osg::Group;
 				osg::ref_ptr<osg::Geode> g1 = new osg::Geode;
 
-				g1->addDrawable(CameraMath::createAxis(eye, lastPosition));
-				g1->addDrawable(CameraMath::createAxis(targetPoint, lastTargetPoint, osg::Vec4d(1,0,0,1)));
+                g1->addDrawable(MathModule::CameraMath::createAxis(eye, lastPosition));
+                g1->addDrawable(MathModule::CameraMath::createAxis(targetPoint, lastTargetPoint, osg::Vec4d(1,0,0,1)));
 
 				group->addChild(g1);
 				lastPosition = eye;
@@ -1051,17 +1051,17 @@ float Vwr::CameraManipulator::alterCameraTargetPoint(osgViewer::Viewer* viewer)
 	// move camera target point backwards until all interest points can be seen
 	while(true)
 	{
-		eyePosition = CameraMath::getPointOnVector(weightPoint, cameraTargetPoint, dist);
+        eyePosition = MathModule::CameraMath::getPointOnVector(weightPoint, cameraTargetPoint, dist);
 		camera->setViewMatrixAsLookAt(eyePosition, weightPoint, up);
 
-		osg::Vec3d eyeScr = CameraMath::projectOnScreen(camera, originalEyePosition);
-		osg::Vec3d cameraInterestPointScr = CameraMath::projectOnScreen(camera, cameraInterestPoint);
+        osg::Vec3d eyeScr = MathModule::CameraMath::projectOnScreen(camera, originalEyePosition);
+        osg::Vec3d cameraInterestPointScr = MathModule::CameraMath::projectOnScreen(camera, cameraInterestPoint);
 
 		//cout << "eyeScr: " << eyeScr.x() << " " << eyeScr.y() << "\n";
 		//cout << "cameraInterestPointScr: " << cameraInterestPointScr.x() << " " << cameraInterestPointScr.y() << "\n";
 
-		bool onScreen1 = CameraMath::isInRect(eyeScr, width, height, SCREEN_MARGIN);
-		bool onScreen2 = CameraMath::isInRect(cameraInterestPointScr, width, height, SCREEN_MARGIN);
+        bool onScreen1 = MathModule::CameraMath::isInRect(eyeScr, width, height, SCREEN_MARGIN);
+        bool onScreen2 = MathModule::CameraMath::isInRect(cameraInterestPointScr, width, height, SCREEN_MARGIN);
 
 		if (!(onScreen1 && onScreen2))
 		{
@@ -1095,20 +1095,20 @@ void Vwr::CameraManipulator::alterWeights(osgViewer::Viewer* viewer, std::list<o
 	while(true)
 	{
 		// get position and orientation in t = 0.5
-		osg::Vec3d eyePosition = CameraMath::getPointOnNextBezierCurve(0.5f, cameraPositions, w1);
-		osg::Vec3d targetPosition = CameraMath::getPointOnNextBezierCurve(0.5f / (EYE_MOVEMENT_SPEED / TARGET_MOVEMENT_SPEED), targetPositions, w2);
+        osg::Vec3d eyePosition = MathModule::CameraMath::getPointOnNextBezierCurve(0.5f, cameraPositions, w1);
+        osg::Vec3d targetPosition = MathModule::CameraMath::getPointOnNextBezierCurve(0.5f / (EYE_MOVEMENT_SPEED / TARGET_MOVEMENT_SPEED), targetPositions, w2);
 
 		camera->setViewMatrixAsLookAt(eyePosition, targetPosition, up);
 
 		// get cluster nodes in extreme positions in t = 0.5
-		QVector<osg::ref_ptr<Data::Node> > * extremes = CameraMath::getViewExtremes(camera, selectedCluster);
+        QVector<osg::ref_ptr<Data::Node> > * extremes = MathModule::CameraMath::getViewExtremes(camera, selectedCluster);
 
 		bool onScreen = true;
 
 		// check for visibility of extremes
 		for (int x = 0; x < 4; x++)
 		{
-			onScreen &= CameraMath::isInRect(CameraMath::projectOnScreen(camera, extremes->at(x)->getCurrentPosition()), width, height, SCREEN_MARGIN);
+            onScreen &= MathModule::CameraMath::isInRect(MathModule::CameraMath::projectOnScreen(camera, extremes->at(x)->getCurrentPosition()), width, height, SCREEN_MARGIN);
 		}
 
 		if (!onScreen)
@@ -1154,13 +1154,13 @@ void Vwr::CameraManipulator::computeViewMetrics(osgViewer::Viewer* viewer, std::
 
 	for (i = selectedCluster.begin(); i != selectedCluster.end(); ++i)
 	{
-		if (CameraMath::isInRect(CameraMath::projectOnScreen(viewer->getCamera(), (*i)->getCurrentPosition()), (float) viewer->getCamera()->getViewport()->width(),(float) viewer->getCamera()->getViewport()->height(), 0.f))
+        if (MathModule::CameraMath::isInRect(MathModule::CameraMath::projectOnScreen(viewer->getCamera(), (*i)->getCurrentPosition()), (float) viewer->getCamera()->getViewport()->width(),(float) viewer->getCamera()->getViewport()->height(), 0.f))
 		{
 			cnt++;
 		}
 	}
 
-	cout << "Currently visible: " << cnt << " nodes\n";
+    std::cout << "Currently visible: " << cnt << " nodes\n";
 }
 
 
@@ -1370,5 +1370,7 @@ void Vwr::CameraManipulator::resetProjectionMatrixToDefault(){
     this->coreGraph->getCamera()->setProjectionMatrixAsPerspective(60, ratio, 0.01, appConf->getValue("Viewer.Display.ViewDistance").toFloat());
 }
 // Duransky end - Resetovanie projekcnej matice pri vypnuti vertigo modu
+
+} // namespace Vwr
 
 #pragma GCC diagnostic pop

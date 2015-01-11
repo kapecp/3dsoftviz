@@ -26,7 +26,7 @@ public:
 			);
 
 	/***/
-	virtual ~GraphOperations (void) {};
+	virtual ~GraphOperations (void) {}
 
 	/**
 	 * \brief Adds default edge and node type to the graph and returns the created objects.
