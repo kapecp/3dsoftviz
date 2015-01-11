@@ -398,7 +398,7 @@ QSet<Data::Node*> Data::Node::getIncidentNodes() const {
     QSet<Node*> nodes;
 
     QMap<qlonglong, osg::ref_ptr<Data::Edge> >::iterator i;
-    for (i = edges->begin(); i != edges->end(); i++)
+    for (i = edges->begin(); i != edges->end(); ++i)
     {
         osg::ref_ptr<Data::Edge> edge = i.value();
         nodes.insert(edge->getOtherNode(this));

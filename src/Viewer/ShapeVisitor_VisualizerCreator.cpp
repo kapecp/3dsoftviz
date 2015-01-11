@@ -33,11 +33,13 @@ void ShapeVisitor_VisualizerCreator::visit (Layout::Shape_Composite & shape) {
 
 
 void ShapeVisitor_VisualizerCreator::visit (Layout::Shape_Intersection & shape) {
-    float radius;
+
     osg::Vec3 center;
     //osg::Vec3 normalVector;
 
     if (shape.getCompositeType() == Layout::Shape_Composite::CompositeType::CIRCLE){
+        float radius;
+
         Layout::Shape_Composite::ShapesListType & shapes = shape.getShapes();
         Layout::Shape_Composite::ShapesListType::iterator it = shapes.begin ();
 
@@ -45,7 +47,7 @@ void ShapeVisitor_VisualizerCreator::visit (Layout::Shape_Intersection & shape) 
             radius = sphere->getRadius();
             center = sphere->getCenter();
         }
-        it++;
+        ++it;
 
         //if(QSharedPointer<Layout::Shape_Plane> plane = qSharedPointerCast<Layout::Shape_Plane>(*it)){
         //   normalVector = plane->getNormalVector();
@@ -112,7 +114,7 @@ void ShapeVisitor_VisualizerCreator::visit (Layout::Shape_Plane & shape) {
     // gridVertices->push_back( center + osg::Vec3f(-size/2,-size/2, 0) ); // bottom right
     // gridVertices->push_back( center + osg::Vec3f( size/2,-size/2, 0) ); // bottom left
 
-    osg::Geometry* gridGeometry = new osg::Geometry();
+    osg::Geometry* gridGeometry;
     gridGeometry = createGridGeometry(size, noOfLines, center);
 
     // creating new geode
