@@ -52,7 +52,7 @@ if( USE_STRICT_COMPILE_WARNINGS )
 	if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang" OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "AppleClang")
   		# using Clang
   		# TODO
-	elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR CMAKE_COMPILER_IS_GNUCXX)       
+	elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR CMAKE_COMPILER_IS_GNUCXX)
  		# using GCC
 		set( FLAGS_FOR_DEBUG "-ansi -pedantic -Wall -Wcast-align -Wcast-qual -Wchar-subscripts -Wcomment -Wconversion -Wctor-dtor-privacy -Wdisabled-optimization -Wextra -Wfloat-equal -Wformat -Wformat-nonliteral -Wformat-security -Wformat-y2k -Wformat=2 -Wimport -Winit-self -Winline -Winvalid-pch -Wlogical-op -Wlong-long -Wmissing-braces -Wmissing-declarations -Wmissing-field-initializers -Wmissing-format-attribute -Wmissing-include-dirs -Wmissing-noreturn -Wnoexcept -Wpacked -Wparentheses -Wpointer-arith -Wredundant-decls -Wreturn-type -Wsequence-point -Wsign-compare -Wsign-promo -Wstack-protector -Wstrict-aliasing=2 -Wstrict-null-sentinel -Wstrict-overflow=5 -Wswitch -Wswitch-default -Wswitch-enum -Wtrigraphs -Wundef -Wuninitialized -Wunknown-pragmas -Wunreachable-code -Wunsafe-loop-optimizations -Wvariadic-macros -Wvolatile-register-var -Wwrite-strings -Wno-unused-parameter -Wno-unused" )
 
@@ -175,30 +175,25 @@ endif()
 
 # ------------------------------ Openni and Nite -------------------------------
 # Find OPENNI2
-if( WIN32 AND MSVC )
-
-	find_package( OPENNI2 )
-	if( OPENNI2_FOUND )
-		include_directories( SYSTEM ${OPENNI2_INCLUDE_DIRS} )
-		add_definitions( -DOPENNI2_FOUND )
-		message( STATUS "OpenNI2 FOUND" )
-	else( OPENNI2_FOUND )
-		message( STATUS "OpenNI2 NOT FOUND" )
-	endif()
+find_package( OPENNI2 )
+if( OPENNI2_FOUND )
+	include_directories( SYSTEM ${OPENNI2_INCLUDE_DIRS} )
+	add_definitions( -DOPENNI2_FOUND )
+	message( STATUS "OpenNI2 FOUND" )
+else( OPENNI2_FOUND )
+	message( STATUS "OpenNI2 NOT FOUND" )
 endif()
 
 # Find NITE2
-if( WIN32 AND MSVC )
-
-	find_package( NITE2 )
-	if( NITE2_FOUND )
-		include_directories( SYSTEM ${NITE2_INCLUDE_DIRS} ${NITE2_OPENNI2_DRIVER_DIRS} )
-		add_definitions( -DNITE2_FOUND )
-		message ( STATUS "NITE2 FOUND" )
-	else( NITE2_FOUND )
-		message ( STATUS "NITE2 NOT FOUND" )
-	endif()
+find_package( NITE2 )
+if( NITE2_FOUND )
+	include_directories( SYSTEM ${NITE2_INCLUDE_DIRS} ${NITE2_OPENNI2_DRIVER_DIRS} )
+	add_definitions( -DNITE2_FOUND )
+	message ( STATUS "NITE2 FOUND" )
+else( NITE2_FOUND )
+	message ( STATUS "NITE2 NOT FOUND" )
 endif()
+
 
 # ------------------------------- KINECT SDK ----------------------------------
 if( WIN32 AND MSVC )
@@ -487,7 +482,7 @@ file( GLOB_RECURSE HEADER_OSGQTBROWSER	"include/OsgQtBrowser/*.h" )
 file( GLOB_RECURSE HEADER_QOSG		"include/QOSG/*.h" )
 file( GLOB_RECURSE HEADER_UTIL		"include/Util/*.h" )
 file( GLOB_RECURSE HEADER_VIEWER	"include/Viewer/*.h" )
-file(GLOB_RECURSE HEADER_CLUSTERING  "include/Clustering/*.h")
+file( GLOB_RECURSE HEADER_CLUSTERING  "include/Clustering/*.h")
 
 # OpenCV
 file( GLOB_RECURSE HEADER_OPENCV	"include/OpenCV/*.h" )
@@ -671,8 +666,8 @@ endif()
 #
 #	install( DIRECTORY ${FGLOVE_DRIVER_DIRS}/ DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/_install/bin )
 #
-#	#install( FILES ${FGLOVE_LIBRARIES} DESTINATION ${INSTALL_BIN} 
-		#	RUNTIME DESTINATION ${INSTALL_BIN} 
+#	#install( FILES ${FGLOVE_LIBRARIES} DESTINATION ${INSTALL_BIN}
+		#	RUNTIME DESTINATION ${INSTALL_BIN}
         #   LIBRARY DESTINATION ${INSTALL_LIB} )
 # endif()
 
