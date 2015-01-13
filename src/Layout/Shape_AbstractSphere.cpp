@@ -9,7 +9,7 @@ Shape_AbstractSphere::Shape_AbstractSphere (
     radius_ (radius)
 {
     setAlpha(0.2f);
-    setRenderType(Shape::RenderType::SOLID);
+    setRenderType(SOLID);
 }
 
 osg::Vec3f & Shape_AbstractSphere::getCenter () {
