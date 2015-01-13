@@ -7,10 +7,11 @@
 #include <osg/Material>
 
 /* If VS2010 compiler is used , we need to define math.h constants*/
+#ifdef _MSC_VER
 #if (_MSC_VER == 1600)
 #define _USE_MATH_DEFINES
 #endif
-
+#endif
 
 #include <math.h>
 
