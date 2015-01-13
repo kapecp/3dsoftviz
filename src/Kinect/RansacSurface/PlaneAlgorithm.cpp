@@ -11,7 +11,7 @@ Kinect::PlaneAlgorithm::PlaneAlgorithm()
 
     std::string log= Util::ApplicationConfig::get()->getValue("Kinect.Surface.LOG").toStdString();
 
-    logfile.open(log, std::ios::app);
+    //logfile.open(log, std::ios::app);
 
     if (!logfile.is_open())
     {
