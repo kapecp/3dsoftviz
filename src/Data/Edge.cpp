@@ -8,13 +8,16 @@
 #include "Util/ApplicationConfig.h"
 
 #include <osgText/Text>
+#include <osg/BlendFunc>
+#include <osg/Depth>
 #include <osg/PrimitiveSet>
+#include <Viewer/TextureWrapper.h>
 
 #include <QTextStream>
 
 #include <QDebug>
 
-Data::Edge::Edge(qlonglong id, QString name, Data::Graph* graph, osg::ref_ptr<Data::Node> srcNode, osg::ref_ptr<Data::Node> dstNode, Data::Type* type, bool isOriented, float scaling, int pos, osg::ref_ptr<osg::Camera> camera) : osg::DrawArrays(osg::PrimitiveSet::QUADS, pos, 4)
+Data::Edge::Edge(qlonglong id, QString name, Data::Graph* graph, osg::ref_ptr<Data::Node> srcNode, osg::ref_ptr<Data::Node> dstNode, Data::Type* type, bool isOriented, float scaling, int pos, osg::ref_ptr<osg::Camera> camera)
 {
 	this->id = id;
 	this->name = name;
@@ -31,13 +34,18 @@ Data::Edge::Edge(qlonglong id, QString name, Data::Graph* graph, osg::ref_ptr<Da
 	float r = type->getSettings()->value("color.R").toFloat();
 	float g = type->getSettings()->value("color.G").toFloat();
 	float b = type->getSettings()->value("color.B").toFloat();
+    float a = type->getSettings()->value("color.A").toFloat();
 
-	this->edgeColor = osg::Vec4(r, g, b, /*a*/0.5);
+    this->edgeColor = osg::Vec4(r, g, b, a);
+
+    this->edgeStrength = 1;
 
 	this->appConf = Util::ApplicationConfig::get();
 	coordinates = new osg::Vec3Array();
 	edgeTexCoords = new osg::Vec2Array();
 
+    this->addDrawable(createEdge(createStateSet(this->type)));
+    createLabel(name);
 	//updateCoordinates(getSrcNode()->getTargetPosition(), getDstNode()->getTargetPosition());
 	updateCoordinates(getSrcNode()->restrictedTargetPosition(), getDstNode()->restrictedTargetPosition());
 }
@@ -133,6 +141,17 @@ void Data::Edge::updateCoordinates(osg::Vec3 srcPos, osg::Vec3 dstPos)
 
 	if (label != NULL)
 		label->setPosition((srcPos + dstPos) / 2 );
+
+    osg::Geometry *geometry = getDrawable(0)->asGeometry();
+    if (geometry != NULL){
+        geometry->setVertexArray(coordinates);
+        geometry->setTexCoordArray(0, edgeTexCoords);
+
+        osg::Vec4Array * colorArray =  dynamic_cast<osg::Vec4Array *>(geometry->getColorArray());
+
+        colorArray->pop_back();
+        colorArray->push_back(getEdgeColor());
+    }
 }
 
 osg::ref_ptr<osg::Drawable> Data::Edge::createLabel(QString name)
@@ -160,9 +179,19 @@ osg::ref_ptr<osg::Drawable> Data::Edge::createLabel(QString name)
 
 	return label;
 }
+float Data::Edge::Edge::getEdgeStrength() const
+{
+    return edgeStrength;
+}
+
+void Data::Edge::Edge::setEdgeStrength(float value)
+{
+    edgeStrength = value;
+}
+
 
 osg::ref_ptr<Data::Node> Data::Edge::getSecondNode(osg::ref_ptr<Data::Node> firstNode){
-	if (firstNode->getId() == srcNode->getId())
+    if (firstNode->getId() == srcNode->getId())
 		return dstNode;
 	else return srcNode;
 
@@ -175,7 +204,6 @@ QString Data::Edge::toString() const {
 	return str;
 }
 
-
 Data::Node* Data::Edge::getOtherNode(const Data::Node* node) const {
     if (node == NULL)
         return NULL;
@@ -185,4 +213,83 @@ Data::Node* Data::Edge::getOtherNode(const Data::Node* node) const {
         return srcNode;
     qWarning() << "Node not incident to this edge";
     return NULL;
+}
+
+osg::ref_ptr<osg::Drawable> Data::Edge::createEdge(osg::StateSet* bbState)
+{
+    osg::ref_ptr<osg::Geometry> nodeQuad = new osg::Geometry;
+
+    nodeQuad->setUseDisplayList(false);
+
+    nodeQuad->setVertexArray(coordinates);
+    nodeQuad->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::QUADS,0,4));
+
+    nodeQuad->setTexCoordArray(0, edgeTexCoords);
+
+    osg::ref_ptr<osg::Vec4Array> colorArray = new osg::Vec4Array;
+    colorArray->push_back(osg::Vec4(1.0f, 1.0f, 1.0f, 1.0f));
+
+    osg::ref_ptr<osg::TemplateIndexArray<unsigned int, osg::Array::UIntArrayType, 4, 1> > colorIndexArray = new osg::TemplateIndexArray<unsigned int, osg::Array::UIntArrayType, 4, 1>;
+    colorIndexArray->push_back(0);
+
+    nodeQuad->setColorArray( colorArray);
+#ifdef BIND_PER_PRIMITIVE
+    nodeQuad->setColorIndices(colorIndexArray);
+#endif
+    nodeQuad->setColorBinding(osg::Geometry::BIND_OVERALL);
+    nodeQuad->setStateSet(bbState);
+
+    return nodeQuad;
+}
+
+osg::ref_ptr<osg::StateSet> Data::Edge::createStateSet(Data::Type * type)
+{
+    if (!oriented){
+        osg::StateSet *edgeStateSet = new osg::StateSet;
+
+        edgeStateSet->setMode(GL_LIGHTING, osg::StateAttribute::OFF);
+        edgeStateSet->setTextureAttributeAndModes(0, Vwr::TextureWrapper::getEdgeTexture(), osg::StateAttribute::ON);
+        edgeStateSet->setAttributeAndModes(new osg::BlendFunc, osg::StateAttribute::ON);
+        edgeStateSet->setMode(GL_DEPTH_TEST, osg::StateAttribute::ON);
+
+        edgeStateSet->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
+
+        osg::ref_ptr<osg::Depth> depth = new osg::Depth;
+        depth->setWriteMask(false);
+        edgeStateSet->setAttributeAndModes(depth, osg::StateAttribute::ON);
+
+        return edgeStateSet;
+    } else {
+        osg::StateSet *orientedEdgeStateSet = new osg::StateSet;
+
+        orientedEdgeStateSet->setMode(GL_LIGHTING, osg::StateAttribute::OFF);
+        orientedEdgeStateSet->setTextureAttributeAndModes(0, Vwr::TextureWrapper::getOrientedEdgeTexture(), osg::StateAttribute::ON);
+        orientedEdgeStateSet->setMode(GL_BLEND, osg::StateAttribute::ON);
+        orientedEdgeStateSet->setMode(GL_DEPTH_TEST, osg::StateAttribute::ON);
+
+        orientedEdgeStateSet->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
+        osg::ref_ptr<osg::Depth> depth = new osg::Depth;
+        depth->setWriteMask(false);
+        orientedEdgeStateSet->setAttributeAndModes(depth, osg::StateAttribute::ON);
+
+        return orientedEdgeStateSet;
+    }
+}
+
+void Data::Edge::showLabel(bool visible)
+{
+    //nastavenie zobrazenia popisku uzla
+    if (visible && !this->containsDrawable(label))
+        this->addDrawable(label);
+    else if (!visible)
+        this->removeDrawable(label);
+}
+
+void Data::Edge::reloadLabel(){
+    osg::ref_ptr<osg::Drawable> newLabel = createLabel(name);
+
+    if (this->containsDrawable(label))
+    {
+        this->setDrawable(this->getDrawableIndex(label), newLabel);
+    }
 }

@@ -12,10 +12,15 @@ Q_DECLARE_METATYPE(cv::Mat)
 #include <osg/Vec3d>
 #include <osg/Quat>
 
-
 Q_DECLARE_METATYPE( osg::Vec3d )
 Q_DECLARE_METATYPE( osg::Quat )
 Q_DECLARE_METATYPE(Qt::MouseButton)
+
+#include "iostream"
+#include "LuaInterface/LuaInterface.h"
+
+#include "dirent.h"
+
 
 int main(int argc, char *argv[])
 {
@@ -26,10 +31,26 @@ qRegisterMetaType<cv::Mat>("Mat");
 #endif
     qRegisterMetaType<Qt::MouseButton>("MouseButton");
 
+    DIR *dir;
+    struct dirent *ent;
+    if ((dir = opendir (".")) != NULL) {
+      /* print all the files and directories within directory */
+      while ((ent = readdir (dir)) != NULL) {
+        printf ("%s\n", ent->d_name);
+      }
+      closedir (dir);
+    } else {
+      /* could not open directory */
+      perror ("");
+      return EXIT_FAILURE;
+    }
+
     QApplication app(argc, argv);
     new Util::Cleaner(&app);
     AppCore::Core::getInstance(&app);
+	Manager::GraphManager::getInstance();
 
-
+#ifdef OPENCV_FOUND
+	OpenCV::OpenCVCore::getInstance(&app);
+#endif
 }
-

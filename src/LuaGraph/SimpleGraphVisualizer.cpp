@@ -1,0 +1,89 @@
+#include "LuaGraph/SimpleGraphVisualizer.h"
+#include "LuaGraph/HyperGraphVisualizer.h"
+#include "LuaGraph/LuaGraphVisualizer.h"
+#include "LuaGraph/LuaGraph.h"
+#include "Importer/GraphOperations.h"
+
+#include "Data/Graph.h"
+
+#include <QMap>
+
+#include "limits"
+#include <iostream>
+
+Lua::SimpleGraphVisualizer::SimpleGraphVisualizer(Data::Graph *graph, osg::ref_ptr<osg::Camera> camera)
+    : Lua::LuaGraphVisualizer(graph, camera){}
+
+void Lua::SimpleGraphVisualizer::visualize()
+{
+    Lua::LuaGraph *g = Lua::LuaGraph::loadGraph();
+    g->printGraph();
+
+    for (QMap<qlonglong, Lua::LuaNode *>::iterator i = g->getNodes()->begin(); i != g->getNodes()->end(); ++i){
+        osg::ref_ptr<Data::Node> n = currentGraph->addNode(i.key() , i.value()->getLabel(), nodeType);
+        setNodeParams(n, i.value(), osg::Vec4f(1,1,1,1), 8);
+    }
+
+    for (QMap<qlonglong, Lua::LuaEdge *>::iterator i = g->getEdges()->begin(); i != g->getEdges()->end(); ++i){
+        if (i.value()->getIncidences().size() != 2) throw new std::runtime_error("Not a simple graph");
+        LuaIncidence * const incid1 = g->getIncidences()->value(i.value()->getIncidences()[0]);
+        LuaIncidence * const incid2 = g->getIncidences()->value(i.value()->getIncidences()[1]);
+        osg::ref_ptr<Data::Node> srcNode = currentGraph->getNodes()->value(incid1->getEdgeNodePair().second);
+        osg::ref_ptr<Data::Node> dstNode = currentGraph->getNodes()->value(incid2->getEdgeNodePair().second);
+        osg::ref_ptr<Data::Edge> newEdge;
+        if (incid1->getOriented()){
+            if (incid1->getOutGoing()){
+                newEdge = currentGraph->addEdge(i.key(), i.value()->getLabel(), dstNode, srcNode, edgeType, true);
+            } else {
+                newEdge = currentGraph->addEdge(i.key(), i.value()->getLabel(), srcNode, dstNode, edgeType, true);
+            }
+        } else {
+            newEdge = currentGraph->addEdge(i.key(), i.value()->getLabel(), srcNode, dstNode, edgeType, false);
+        }
+        newEdge->setCamera(camera);
+        setEdgeParams(newEdge, i.value(), osg::Vec4f(1,1,1,1));
+    }
+    g->setObserver(this);
+
+    QString metaNodeName = "metaNode";
+    QString metaEdgeName = "metaEdge";
+    osg::ref_ptr<Data::Node> filesAnchor = currentGraph->addNode(std::numeric_limits<qlonglong>::max(), metaNodeName, currentGraph->getNodeMetaType(), osg::Vec3(0, 0, 500));
+    osg::ref_ptr<Data::Node> functionsAnchor = currentGraph->addNode(std::numeric_limits<qlonglong>::max() - 1, metaNodeName, currentGraph->getNodeMetaType(), osg::Vec3(0, 0, -500));
+    filesAnchor->setColor(osg::Vec4(0,0,0,0));
+    functionsAnchor->setColor(osg::Vec4(0,0,0,0));
+
+    for (QMap<qlonglong, Lua::LuaNode *>::iterator i = g->getNodes()->begin(); i != g->getNodes()->end(); ++i){
+        if (i.value()->getParams().type() == 0) continue;
+        if (i.value()->getParams()["root"]== true){
+            osg::ref_ptr<Data::Node> root = currentGraph->getNodes()->value(i.key());
+            osg::ref_ptr<Data::Edge> metaLink = currentGraph->addEdge(metaEdgeName, root, filesAnchor, currentGraph->getEdgeMetaType(), false);
+            metaLink->setEdgeColor(osg::Vec4(0,0,0,0));
+            metaLink->setInvisible(true);
+        }
+        if (i.value()->getParams()["type"] == "function"){
+            osg::ref_ptr<Data::Node> func = currentGraph->getNodes()->value(i.key());
+            osg::ref_ptr<Data::Edge> metaLink = currentGraph->addEdge(metaEdgeName, func, functionsAnchor, currentGraph->getEdgeMetaType(), false);
+            metaLink->setEdgeColor(osg::Vec4(0,0,0,0));
+            metaLink->setInvisible(true);
+            metaLink->setEdgeStrength(0.1f);
+        }
+    }
+}
+
+void Lua::SimpleGraphVisualizer::onUpdate()
+{
+    std::cout << "SimpleGraph update called" << std::endl;
+    Lua::LuaGraph *g = Lua::LuaGraph::loadGraph();
+    for (QMap<qlonglong, Lua::LuaNode *>::iterator i = g->getNodes()->begin(); i != g->getNodes()->end(); ++i){
+        osg::ref_ptr<Data::Node> n = currentGraph->getNodes()->value(i.key());
+        setNodeParams(n, i.value(), osg::Vec4f(1,1,1,1), 8);
+    }
+    for (QMap<qlonglong, Lua::LuaEdge *>::iterator i = g->getEdges()->begin(); i != g->getEdges()->end(); ++i){
+        osg::ref_ptr<Data::Edge> e = currentGraph->getEdges()->value(i.key());
+        setEdgeParams(e, i.value(), osg::Vec4f(1,1,1,1));
+        e->reloadLabel();
+    }
+}
+
+
+

@@ -1,6 +1,24 @@
 [submodule "dependencies/libnoise"]
 	path = dependencies/libnoise
 	url = git@github.com:LuaDist/libnoise.git
+[submodule "dependencies/luajit"]
+	path = dependencies/luajit
+	url = https://github.com/LuaDist/luajit.git
+[submodule "dependencies/diluculum"]
+	path = dependencies/diluculum
+	url = https://github.com/LuaDist/diluculum.git
+[submodule "dependencies/lpeg"]
+	path = dependencies/lpeg
+	url = https://github.com/LuaDist/lpeg.git
+[submodule "dependencies/leg"]
+	path = dependencies/leg
+	url = https://github.com/LuaDist/leg.git
+[submodule "dependencies/luametrics"]
+	path = dependencies/luametrics
+	url = https://github.com/LuaDist/luametrics.git
 [submodule "dependencies/aruco"]
 	path = dependencies/aruco
 	url = git@github.com:LuaDist/aruco.git
+[submodule "dependencies/luafilesystem"]
+	path = dependencies/luafilesystem
+	url = https://github.com/LuaDist/luafilesystem.git
