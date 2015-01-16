@@ -308,11 +308,11 @@ private:
 		*/
 	Util::ApplicationConfig* appConf;
 
-	/**
-		*  \fn private  initEdgeLabels
-		*  \brief inits edge labels
-		*  \return osg::ref_ptr
-		*/
+//	/**
+//		*  \fn private  initEdgeLabels
+//		*  \brief inits edge labels
+//		*  \return osg::ref_ptr
+//		*/
 	osg::ref_ptr<osg::Group> initEdgeLabels();
 
 	/**

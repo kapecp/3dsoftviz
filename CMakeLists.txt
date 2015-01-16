@@ -44,7 +44,9 @@ set( INSTALL_TEST ${INSTALL_DATA}/test CACHE PATH "Test files." )
 set( INSTALL_EXAMPLE ${INSTALL_DATA}/example CACHE PATH "Recommended directory to install examples into." )
 
 # Additional CMake scripts
-set( CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH} )
+set( CMAKE_MODULE_PATH
+	"${CMAKE_CURRENT_SOURCE_DIR}/cmake"
+	${CMAKE_MODULE_PATH} )
 
 # Warnings for Debug mode
 option( USE_STRICT_COMPILE_WARNINGS "Use strict compilation warnings in debug mode." ON )
@@ -81,15 +83,16 @@ endif()
 
 # RPath functionality
 set( CMAKE_SKIP_BUILD_RPATH FALSE CACHE STRING "" FORCE )
-set( CMAKE_BUILD_WITH_INSTALL_RPATH TRUE CACHE STRING "" FORCE )	# info: changed to TRUE for cotire unity build - works!
+# next line adds "$ORIGIN/../lib" to RPath:
+set( CMAKE_BUILD_WITH_INSTALL_RPATH TRUE CACHE STRING "" FORCE )
 set( CMAKE_INSTALL_RPATH "$ORIGIN/../lib" CACHE STRING "" FORCE )
+# next line adds additional link paths to RPath (e.g. for qscintilla when not in system):
 set( CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE CACHE STRING "" FORCE )
 set( CMAKE_INSTALL_NAME_DIR "@executable_path/../lib" CACHE STRING "" FORCE )
 
 # --------------
 # Build settings - COTIRE module
 # --------------
-
 include( cotire )
 if(COMMAND cotire )
 	if( NOT COTIRE_MAXIMUM_NUMBER_OF_UNITY_INCLUDES )
@@ -243,17 +246,18 @@ option( USE_BUILTIN_DEPENDENCIES "Use builtin dependencies." ON )
 # Build dependencies
 if( USE_BUILTIN_DEPENDENCIES )
 
+	include( ExternalProject )
+
 	# set search paths to the dependencies
 	set( DEP_SOURCE ${CMAKE_CURRENT_SOURCE_DIR}/dependencies )
 	set( DEP_BIN ${CMAKE_CURRENT_BINARY_DIR}/dependencies )
 	set( CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH} ${DEP_BIN}/lib ${DEP_BIN}/bin )
-	set( CMAKE_INCLUDE_PATH ${CMaKE_INCLUDE_PATH} ${DEP_BIN}/include )
+	set( CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} ${DEP_BIN}/include )
 
 	# Generate cache
 	configure_file( config.cmake.in ${CMAKE_CURRENT_BINARY_DIR}/config.cmake )
 
 	# Build libnoise
-	include( ExternalProject )
 	ExternalProject_Add( dep_libnoise
 		PREFIX libnoise
 		SOURCE_DIR ${DEP_SOURCE}/libnoise
@@ -316,6 +320,84 @@ if( USE_BUILTIN_DEPENDENCIES )
 			endif()
 		endif()
 	endif() # OpenCV_FOUND
+
+ # Build LuaJIT2
+	ExternalProject_Add ( dep_luajit
+		PREFIX luajit
+		SOURCE_DIR ${DEP_SOURCE}/luajit
+		BINARY_DIR luajit
+		CMAKE_ARGS
+			-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
+			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
+			-C ${CMAKE_CURRENT_BINARY_DIR}/config.cmake
+	)
+
+	# Build Diluculum
+	ExternalProject_Add ( dep_diluculum
+		PREFIX diluculum
+		SOURCE_DIR ${DEP_SOURCE}/diluculum
+		BINARY_DIR diluculum
+		CMAKE_ARGS
+			-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
+			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
+	)
+
+	# Build lpeg
+	ExternalProject_Add ( dep_lpeg
+		PREFIX lpeg
+		SOURCE_DIR ${DEP_SOURCE}/lpeg
+		BINARY_DIR lpeg
+		CMAKE_ARGS
+			-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
+			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
+	)
+
+	# Build leg
+	ExternalProject_Add ( dep_leg
+		PREFIX leg
+		SOURCE_DIR ${DEP_SOURCE}/leg
+		BINARY_DIR leg
+		CMAKE_ARGS
+			-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
+			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
+	)
+
+	# Build luametrics
+	ExternalProject_Add ( dep_luametrics
+		PREFIX luametrics
+		SOURCE_DIR ${DEP_SOURCE}/luametrics
+		BINARY_DIR luametrics
+		CMAKE_ARGS
+			-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
+			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
+	)
+
+	# Build luafilesystem
+	ExternalProject_Add ( dep_luafilesystem
+		PREFIX luafilesystem
+		SOURCE_DIR ${DEP_SOURCE}/luafilesystem
+		BINARY_DIR luafilesystem
+		CMAKE_ARGS
+			-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
+			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
+	)
+
+# Ensure correct order of build(dependencies between ext. dependencies)
+	add_dependencies( dep_lpeg dep_luajit )
+	add_dependencies( dep_diluculum dep_luajit )
+	add_dependencies( dep_leg dep_lpeg )
+	add_dependencies( dep_luametrics dep_leg )
+	add_dependencies( dep_luafilesystem dep_luajit )
+
+# Define LUA_ variables
+
+	set( LUA_LIBRARY ${DEP_BIN}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}lua${CMAKE_SHARED_LIBRARY_SUFFIX} )
+	set( DILUCULUM_LIBRARY ${DEP_BIN}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}diluculum${CMAKE_SHARED_LIBRARY_SUFFIX} )
+	
+	if( WIN32 )
+		set( LUA_LIBRARY ${DEP_BIN}/bin/${CMAKE_SHARED_LIBRARY_PREFIX}lua${CMAKE_SHARED_LIBRARY_SUFFIX} )
+		set( DILUCULUM_LIBRARY ${DEP_BIN}/bin/${CMAKE_SHARED_LIBRARY_PREFIX}diluculum${CMAKE_SHARED_LIBRARY_SUFFIX} )
+	endif()
 
 	set( DEPENDENCIES_INCLUDE_DIR ${DEP_BIN}/include )
 else()
@@ -418,6 +500,8 @@ file( GLOB_RECURSE SRC_CORE		"src/Core/*.cpp" )
 file( GLOB_RECURSE SRC_DATA		"src/Data/*.cpp" )
 file( GLOB_RECURSE SRC_IMPORTER		"src/Importer/*.cpp" )
 file( GLOB_RECURSE SRC_LAYOUT		"src/Layout/*.cpp" )
+file(GLOB_RECURSE SRC_LUAGRAPH  "src/LuaGraph/*.cpp")
+file(GLOB_RECURSE SRC_LUAINTERFACE  "src/LuaInterface/*.cpp")
 file( GLOB_RECURSE SRC_MANAGER		"src/Manager/*.cpp" )
 file( GLOB_RECURSE SRC_MATH		"src/Math/*.cpp" )
 file( GLOB_RECURSE SRC_MODEL		"src/Model/*.cpp" )
@@ -449,7 +533,7 @@ file( GLOB_RECURSE SRC_SPEECH	"src/Speech/*.cpp" )
 # All source files
 set( SRC
 	${SRC_MAIN} ${SRC_CORE} ${SRC_DATA} ${SRC_IMPORTER}
-	${SRC_LAYOUT} ${SRC_MANAGER} ${SRC_MATH}
+        ${SRC_LAYOUT} ${SRC_LUAGRAPH} ${SRC_LUAINTERFACE} ${SRC_MANAGER} ${SRC_MATH}
 	${SRC_NETWORK} ${SRC_NOISE}
 	${SRC_OSGQTBROWSER} ${SRC_QOSG} ${SRC_UTIL} ${SRC_VIEWER} ${SRC_MODEL} ${SRC_CLUSTERING}
 )
@@ -478,6 +562,8 @@ file( GLOB_RECURSE HEADER_CORE		"include/Core/*.h" )
 file( GLOB_RECURSE HEADER_DATA		"include/Data/*.h" )
 file( GLOB_RECURSE HEADER_IMPORTER	"include/Importer/*.h" )
 file( GLOB_RECURSE HEADER_LAYOUT	"include/Layout/*.h" )
+file(GLOB_RECURSE HEADER_LUAGRAPH  "include/LuaGraph/*.h")
+file(GLOB_RECURSE HEADER_LUAINTERFACE  "include/LuaInterface/*.h")
 file( GLOB_RECURSE HEADER_MANAGER	"include/Manager/*.h" )
 file( GLOB_RECURSE HEADER_MATH		"include/Math/*.h" )
 file( GLOB_RECURSE HEADER_MODEL		"include/Model/*.h" )
@@ -508,7 +594,7 @@ file( GLOB_RECURSE HEADER_SPEECH	"include/Speech/*.h" )
 # All header files
 set( INCL
 	${HEADER_CORE} ${HEADER_DATA} ${HEADER_IMPORTER}
-	${HEADER_LAYOUT} ${HEADER_MANAGER} ${HEADER_MATH}
+        ${HEADER_LAYOUT} ${HEADER_LUAGRAPH} ${HEADER_LUAINTERFACE} ${HEADER_MANAGER} ${HEADER_MATH}
 	${HEADER_NETWORK} ${HEADER_NOISE}
 	${HEADER_OSGQTBROWSER} ${HEADER_QOSG} ${HEADER_UTIL} ${HEADER_VIEWER} ${HEADER_MODEL} ${HEADER_CLUSTERING}
 )
@@ -545,6 +631,8 @@ source_group( \\src\\Layout "^.*Layout/.*$" )
 source_group( \\src\\QOSG "^.*QOSG/.*$" )
 source_group( \\src\\OsgQtBrowser "^.*OsgQtBrowser/.*$" )
 source_group( \\src\\Noise "^.*Noise/.*$" )
+source_group(\\src\\LuaGraph "^.*LuaGraph/.*$")
+source_group(\\src\\LuaInterface "^.*LuaInterface/.*$")
 
 # Group header files
 source_group(\\headers\\Clustering "^.*Clustering/.*h$")
@@ -560,6 +648,8 @@ source_group( \\headers\\Layout "^.*Layout/.*h$" )
 source_group( \\headers\\QOSG "^.*QOSG/.*h$" )
 source_group( \\headers\\Noise "^.*Noise/.*h$" )
 source_group( \\headers\\OsgQtBrowser "^.*OsgQtBrowser/.*h$" )
+source_group(\\headers\\LuaGraph "^.*LuaGraph/.*h$")
+source_group(\\headers\\LuaInterface "^.*LuaInterface/.*h$")
 
 if( OpenCV_FOUND )
 	source_group( \\src\\QOpenCV "^.*QOpenCV/.*$" )
@@ -600,6 +690,8 @@ target_link_libraries( ${3DSOFTVIZ_NAME}
 	${QT_LIBRARIES}
 	${OPENSCENEGRAPH_LIBRARIES}
 	${OSGVIEWER_LIBRARIES}
+	${DILUCULUM_LIBRARY}
+	${LUA_LIBRARY}
 	libnoise
 )
 
@@ -678,7 +770,14 @@ endif()
 
 # Install built in dependencies unless we are building an OSX Bundle
 if( USE_BUILTIN_DEPENDENCIES )
-
+	# Make sure dependencies are built
+	add_dependencies( ${3DSOFTVIZ_NAME} libnoise dep_diluculum dep_luametrics dep_leg dep_lpeg dep_luajit dep_luafilesystem )
+	#add_dependencies( ${3DSOFTVIZ_NAME} dep_aruco )
+	if (COMMAND cotire)
+		add_dependencies( ${3DSOFTVIZ_NAME}_unity libnoise dep_diluculum dep_luametrics dep_leg dep_lpeg dep_luajit dep_luafilesystem )
+		#add_dependencies( ${3DSOFTVIZ_NAME}_unity dep_aruco )
+	endif()
+		
 	# Install all dependencies
 	install( DIRECTORY ${DEP_BIN}/
 		DESTINATION ${INSTALL_DEPS}
@@ -733,3 +832,4 @@ set( CPACK_PACKAGE_VENDOR "${3DSOFTVIZ_VENDOR}" )
 set( CPACK_RESOURCE_FILE_README "${CMAKE_SOURCE_DIR}/${3DSOFTVIZ_README}" )
 #set( CPACK_COMPONENTS_ALL Runtime Dependencies Data )
 include( CPack )
+
