@@ -239,11 +239,19 @@ void CoreWindow::createActions()
     remove_all->setFocusPolicy(Qt::NoFocus);
     connect(remove_all, SIGNAL(clicked()), this, SLOT(removeClick()));
 
+    // <Change> Nagy+Gloger
 	loadFunctionCallButton = new QPushButton();
     loadFunctionCallButton->setText("Load function calls");
     loadFunctionCallButton->setToolTip("Load function calls");
     loadFunctionCallButton->setFocusPolicy(Qt::NoFocus);
     connect(loadFunctionCallButton, SIGNAL(clicked()), this, SLOT(loadFunctionCall()));
+
+    browsersGroupingButton = new QPushButton();
+    browsersGroupingButton->setIcon(QIcon("../share/3dsoftviz/img/gui/grouping.png"));
+    browsersGroupingButton->setToolTip("Toggle browsers (webViews) grouping");
+    browsersGroupingButton->setCheckable(true);
+    browsersGroupingButton->setFocusPolicy(Qt::NoFocus);
+    connect(browsersGroupingButton, SIGNAL(clicked(bool)), this, SLOT(browsersGroupingClicked(bool)));
 
     filterNodesEdit = new QLineEdit();
     filterEdgesEdit = new QLineEdit();
@@ -251,6 +259,7 @@ void CoreWindow::createActions()
     connect(filterEdgesEdit, SIGNAL(returnPressed()), this, SLOT(filterGraph()));
 
     luaGraphTreeView = new QTreeView();
+    // <end change> Nagy+Gloger
 
     //mody - ziadny vyber, vyber jedneho, multi vyber centrovanie
     noSelect = new QPushButton();
@@ -3057,26 +3066,30 @@ void CoreWindow::startGlovesRecognition()
 
 void CoreWindow::createMetricsToolBar()
 {
-    toolBar = new QToolBar("Metrics visualizations",this);
+	// <Change> Gloger start: added horizontal frame to support browser (webView) grouping toggling
+	QFrame * frame = createHorizontalFrame();
+	frame->layout()->addWidget(loadFunctionCallButton);
+	frame->layout()->addWidget(browsersGroupingButton);
+	toolBar->addWidget(frame);
+	// Gloger end
 
-    toolBar->addWidget(loadFunctionCallButton);
-    toolBar->addWidget(luaGraphTreeView);
-    toolBar->setMinimumWidth(350);
+	toolBar->addWidget(luaGraphTreeView);
+	toolBar->setMinimumWidth(350);
 
-    addToolBar(Qt::RightToolBarArea,toolBar);
-    toolBar->setMovable(true);
+	addToolBar(Qt::RightToolBarArea,toolBar);
+	toolBar->setMovable(true);
 
-    toolBar = new QToolBar("Metrics filter",this);
-    #if QT_VERSION >= 0x040700
-    filterNodesEdit->setPlaceholderText("nodes filter");
-    #endif
-    toolBar->addWidget(filterNodesEdit);
-    #if QT_VERSION >= 0x040700
-    filterEdgesEdit->setPlaceholderText("edges filter");
-    #endif
-    toolBar->addWidget(filterEdgesEdit);
-    addToolBar(Qt::BottomToolBarArea, toolBar);
-    toolBar->setMovable(true);
+	toolBar = new QToolBar("Metrics filter",this);
+	#if QT_VERSION >= 0x040700
+	filterNodesEdit->setPlaceholderText("nodes filter");
+	#endif
+	toolBar->addWidget(filterNodesEdit);
+	#if QT_VERSION >= 0x040700
+	filterEdgesEdit->setPlaceholderText("edges filter");
+	#endif
+	toolBar->addWidget(filterEdgesEdit);
+	addToolBar(Qt::BottomToolBarArea, toolBar);
+	toolBar->setMovable(true);
 }
 
 void CoreWindow::loadFunctionCall()
@@ -3143,17 +3156,32 @@ void CoreWindow::filterGraph()
 
 void CoreWindow::onChange()
 {
-    QAbstractItemModel *model = luaGraphTreeView->model();
-    if (model != NULL){
-        delete model;
-        model == NULL;
-    }
-    QLinkedList<osg::ref_ptr<Data::Node> > *selected = viewerWidget->getPickHandler()->getSelectedNodes();
-    if (selected->size() == 1)
-        if (Lua::LuaGraph::getInstance()->getNodes()->contains(selected->first()->getId())){
-            Lua::LuaNode *node = Lua::LuaGraph::getInstance()->getNodes()->value(selected->first()->getId());
-            luaGraphTreeView->setModel(new Lua::LuaGraphTreeModel(node));
-        }
+//	TODO release models from memory in browser group
+//	QAbstractItemModel *model = luaGraphTreeView->model();
+//	if (model != NULL){
+//		delete model;
+//		model = NULL;
+//	}
+
+	// <Change> Gloger start: added support for multiple node selection using browser visualization
+	QLinkedList<osg::ref_ptr<Data::Node> > *selected = viewerWidget->getPickHandler()->getSelectedNodes();
+
+	coreGraph->getBrowsersGroup()->setSelectedNodes(selected);
+	// qDebug() << "Selected nodes count: " << selected->size();
+
+	if (selected->size() > 0){
+		// Get last node model & display it in qt view
+		qlonglong lastNodeId = selected->last()->getId();
+		Lua::LuaGraphTreeModel *lastNodeModel = coreGraph->getBrowsersGroup()->getSelectedNodesModels()->value(lastNodeId);
+		luaGraphTreeView->setModel(lastNodeModel);
+	}
+
+	// Gloger end
+}
+
+void CoreWindow::browsersGroupingClicked(bool checked)
+{
+	this->coreGraph->getBrowsersGroup()->setBrowsersGrouping(checked);
 }
 
 } // namespace QOSG

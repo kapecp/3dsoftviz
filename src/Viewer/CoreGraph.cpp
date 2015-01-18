@@ -674,6 +674,10 @@ void CoreGraph::reload(Data::Graph * graph)
     graphGroup->addChild (restrictionManipulatorsGroup->getGroup ());
     restrictionManipulatorsPosition = currentPos++;
 
+	this->browsersGroup = new Vwr::BrowserGroup();
+	root->addChild(browsersGroup->getGroup());
+	browsersPosition = currentPos++;
+
     if (this->graph != NULL) {
         graph->getRestrictionsManager().setObservers (restrictionVisualizationsGroup, restrictionManipulatorsGroup);
     }
@@ -1086,8 +1090,9 @@ void CoreGraph::update()
         qmetaNodesGroup->updateNodeCoordinates(1);
     }
 
-    edgesGroup->updateEdgeCoords();
-    qmetaEdgesGroup->updateEdgeCoords();
+	edgesGroup->updateEdgeCoords();
+	qmetaEdgesGroup->updateEdgeCoords();
+	browsersGroup->updateBrowsers();
 
     updateClustersCoords();
 
