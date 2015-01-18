@@ -46,12 +46,12 @@
  #include <QVariant>
 
  namespace Lua {
-    class LuaNode;
-    class LuaGraphTreeItem;
+	class LuaNode;
+	class LuaGraphTreeItem;
  }
 
  namespace Diluculum {
-    class LuaValue;
+	class LuaValue;
  }
 
  namespace Lua {
@@ -64,28 +64,30 @@
    */
  class LuaGraphTreeModel : public QAbstractItemModel
  {
-     Q_OBJECT
+	 Q_OBJECT
 
  public:
-     LuaGraphTreeModel(const Lua::LuaNode *node, QObject *parent = 0);
-     ~LuaGraphTreeModel();
+	 LuaGraphTreeModel(const Lua::LuaNode *node, QObject *parent = 0);
+	 ~LuaGraphTreeModel();
 
-     QVariant data(const QModelIndex &index, int role) const;
-     Qt::ItemFlags flags(const QModelIndex &index) const;
-     QVariant headerData(int section, Qt::Orientation orientation,
-                         int role = Qt::DisplayRole) const;
-     QModelIndex index(int row, int column,
-                       const QModelIndex &parent = QModelIndex()) const;
-     QModelIndex parent(const QModelIndex &index) const;
-     int rowCount(const QModelIndex &parent = QModelIndex()) const;
-     int columnCount(const QModelIndex &parent = QModelIndex()) const;
+	 QVariant data(const QModelIndex &index, int role) const;
+	 Qt::ItemFlags flags(const QModelIndex &index) const;
+	 QVariant headerData(int section, Qt::Orientation orientation,
+						 int role = Qt::DisplayRole) const;
+	 QModelIndex index(int row, int column,
+					   const QModelIndex &parent = QModelIndex()) const;
+	 QModelIndex parent(const QModelIndex &index) const;
+	 int rowCount(const QModelIndex &parent = QModelIndex()) const;
+	 int columnCount(const QModelIndex &parent = QModelIndex()) const;
+
+	 inline Lua::LuaGraphTreeItem* getRootItem() {return rootItem;}
 
  private:
-     void setupModelData(const Lua::LuaNode *node, LuaGraphTreeItem *parent);
+	 void setupModelData(const Lua::LuaNode *node, LuaGraphTreeItem *parent);
 
-     void loadLuaModel(QString name, const Diluculum::LuaValue value, LuaGraphTreeItem *parent);
+	 void loadLuaModel(QString name, const Diluculum::LuaValue value, LuaGraphTreeItem *parent);
 
-     LuaGraphTreeItem *rootItem;
+	 Lua::LuaGraphTreeItem *rootItem;
  };
 
  }

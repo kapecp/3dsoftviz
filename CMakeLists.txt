@@ -52,22 +52,22 @@ set( CMAKE_MODULE_PATH
 option( USE_STRICT_COMPILE_WARNINGS "Use strict compilation warnings in debug mode." ON )
 if( USE_STRICT_COMPILE_WARNINGS )
 	if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang" OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "AppleClang")
-  		# using Clang
-  		# TODO
+		# using Clang
+		set( FLAGS_FOR_DEBUG "-ansi -pedantic -Wall -Wcast-align -Wcast-qual -Wchar-subscripts -Wcomment -Wconversion -Wctor-dtor-privacy -Wdisabled-optimization -Wextra -Wfloat-equal  -Wformat  -Wformat-nonliteral -Wformat-security  -Wformat-y2k -Wformat=2  -Wimport  -Winit-self -Winline -Winvalid-pch -Wlogical-op -Wlong-long -Wmissing-braces -Wmissing-declarations -Wmissing-field-initializers -Wmissing-format-attribute   -Wmissing-include-dirs -Wmissing-noreturn -Wnoexcept  -Wpacked  -Wparentheses -Wpointer-arith -Wredundant-decls -Wreturn-type -Wsequence-point -Wsign-compare  -Wsign-promo -Wstack-protector -Wstrict-aliasing=2 -Wstrict-null-sentinel -Wstrict-overflow=5 -Wswitch -Wswitch-default -Wswitch-enum -Wtrigraphs -Wundef -Wuninitialized -Wunknown-pragmas -Wunreachable-code -Wunsafe-loop-optimizations -Wvariadic-macros -Wvolatile-register-var -Wwrite-strings  -Wno-unused-parameter -Wno-unused" )
 	elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR CMAKE_COMPILER_IS_GNUCXX)       
- 		# using GCC
+		# using GCC
 		set( FLAGS_FOR_DEBUG "-ansi -pedantic -Wall -Wcast-align -Wcast-qual -Wchar-subscripts -Wcomment -Wconversion -Wctor-dtor-privacy -Wdisabled-optimization -Wextra -Wfloat-equal -Wformat -Wformat-nonliteral -Wformat-security -Wformat-y2k -Wformat=2 -Wimport -Winit-self -Winline -Winvalid-pch -Wlogical-op -Wlong-long -Wmissing-braces -Wmissing-declarations -Wmissing-field-initializers -Wmissing-format-attribute -Wmissing-include-dirs -Wmissing-noreturn -Wnoexcept -Wpacked -Wparentheses -Wpointer-arith -Wredundant-decls -Wreturn-type -Wsequence-point -Wsign-compare -Wsign-promo -Wstack-protector -Wstrict-aliasing=2 -Wstrict-null-sentinel -Wstrict-overflow=5 -Wswitch -Wswitch-default -Wswitch-enum -Wtrigraphs -Wundef -Wuninitialized -Wunknown-pragmas -Wunreachable-code -Wunsafe-loop-optimizations -Wvariadic-macros -Wvolatile-register-var -Wwrite-strings -Wno-unused-parameter -Wno-unused" )
 
-        # to suppress warnings for unused stuff use: -Wno-unused-parameter -Wno-unused-result
-        # not used:
-            # too much warnings in Qt headers: NULL vs 0 pointers: -Wzero-as-null-pointer-constant
-            # too much warnings: -Wshadow -Waggregate-return
-            # too much warnings, but should be used: -Wold-style-cast -Woverloaded-virtual -Wuseless-cast -Wsign-conversion
-            # class size optimizations ( not really needed ): -Wpadded
-            # only for C: -Wold-style-definition -Wstrict-prototypes -Wmissing-prototypes
+		# to suppress warnings for unused stuff use: -Wno-unused-parameter -Wno-unused-result
+		# not used:
+			# too much warnings in Qt headers: NULL vs 0 pointers: -Wzero-as-null-pointer-constant
+			# too much warnings: -Wshadow -Waggregate-return
+			# too much warnings, but should be used: -Wold-style-cast -Woverloaded-virtual -Wuseless-cast -Wsign-conversion
+			# class size optimizations ( not really needed ): -Wpadded
+			# only for C: -Wold-style-definition -Wstrict-prototypes -Wmissing-prototypes
 	elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
- 	# using Visual Studio C++
-    	set( FLAGS_FOR_DEBUG "/W3")
+		# using Visual Studio C++
+		set( FLAGS_FOR_DEBUG "/W3")
 	endif()
 endif()
 
@@ -111,6 +111,11 @@ if(COMMAND cotire )
 	### Fix virtual memory range
 	if( MSVC )
 		set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Zm200" CACHE STRING "" FORCE )
+	endif()
+
+	# fix for Diluculum and LuaJIT on 64bit OSX: Lua new_state returned NULL, LuaJIT needs following flags
+	if( APPLE )
+		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pagezero_size 10000 -image_base 100000000" CACHE STRING "" FORCE)
 	endif()
 endif()
 
@@ -405,6 +410,15 @@ else()
 	#find_package( Lua51 REQUIRED )
 endif()
 
+# Find Boost
+set ( Booqst_USE_STATIC_LIBS OFF)
+find_package ( Boost 1.39 COMPONENTS unit_test_framework REQUIRED )
+#add_definitions ( -DBOOST_ALL_DYN_LINK )
+
+# Include directories
+include_directories ( ${Boost_INCLUDE_DIRS}  )
+
+
 # -----------------
 # Platform settings
 # -----------------
@@ -533,7 +547,7 @@ file( GLOB_RECURSE SRC_SPEECH	"src/Speech/*.cpp" )
 # All source files
 set( SRC
 	${SRC_MAIN} ${SRC_CORE} ${SRC_DATA} ${SRC_IMPORTER}
-        ${SRC_LAYOUT} ${SRC_LUAGRAPH} ${SRC_LUAINTERFACE} ${SRC_MANAGER} ${SRC_MATH}
+		${SRC_LAYOUT} ${SRC_LUAGRAPH} ${SRC_LUAINTERFACE} ${SRC_MANAGER} ${SRC_MATH}
 	${SRC_NETWORK} ${SRC_NOISE}
 	${SRC_OSGQTBROWSER} ${SRC_QOSG} ${SRC_UTIL} ${SRC_VIEWER} ${SRC_MODEL} ${SRC_CLUSTERING}
 )
@@ -594,7 +608,7 @@ file( GLOB_RECURSE HEADER_SPEECH	"include/Speech/*.h" )
 # All header files
 set( INCL
 	${HEADER_CORE} ${HEADER_DATA} ${HEADER_IMPORTER}
-        ${HEADER_LAYOUT} ${HEADER_LUAGRAPH} ${HEADER_LUAINTERFACE} ${HEADER_MANAGER} ${HEADER_MATH}
+		${HEADER_LAYOUT} ${HEADER_LUAGRAPH} ${HEADER_LUAINTERFACE} ${HEADER_MANAGER} ${HEADER_MATH}
 	${HEADER_NETWORK} ${HEADER_NOISE}
 	${HEADER_OSGQTBROWSER} ${HEADER_QOSG} ${HEADER_UTIL} ${HEADER_VIEWER} ${HEADER_MODEL} ${HEADER_CLUSTERING}
 )

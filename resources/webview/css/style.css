@@ -1,0 +1,30 @@
+.page-header {
+    text-align: center;
+}
+
+.figures {
+    text-align: center;
+}
+
+figure {
+    display: inline-block;
+    vertical-align: top;
+    text-align: left;
+}
+
+figure figcaption {
+    text-align: center;
+}
+
+.legend span {
+    margin-right: 10px
+}
+
+.legend ul, .legend li {
+    margin: 0;
+    padding: 0;
+}
+
+.legend ul li {
+    list-style-type: none;
+}
