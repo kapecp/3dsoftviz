@@ -675,7 +675,7 @@ void CoreGraph::reload(Data::Graph * graph)
     restrictionManipulatorsPosition = currentPos++;
 
 	this->browsersGroup = new Vwr::BrowserGroup();
-	root->addChild(browsersGroup->getGroup());
+    graphGroup->addChild(browsersGroup->getGroup());
 	browsersPosition = currentPos++;
 
     if (this->graph != NULL) {
