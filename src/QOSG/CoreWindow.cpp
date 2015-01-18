@@ -78,7 +78,7 @@ CoreWindow::CoreWindow(QWidget *parent, Vwr::CoreGraph* coreGraph, QApplication*
     createActions();
     createMenus();
     createLeftToolBar();
-	createMetricsToolBar();
+    createMetricsToolBar();
 
     viewerWidget = new ViewerQT(this, 0, 0, 0, coreGraph);
     viewerWidget->setSceneData(coreGraph->getScene());
@@ -3066,6 +3066,8 @@ void CoreWindow::startGlovesRecognition()
 
 void CoreWindow::createMetricsToolBar()
 {
+    toolBar = new QToolBar("Metrics visualizations",this);
+
 	// <Change> Gloger start: added horizontal frame to support browser (webView) grouping toggling
 	QFrame * frame = createHorizontalFrame();
 	frame->layout()->addWidget(loadFunctionCallButton);
