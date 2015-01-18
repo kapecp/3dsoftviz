@@ -49,8 +49,4 @@ qRegisterMetaType<cv::Mat>("Mat");
     new Util::Cleaner(&app);
     AppCore::Core::getInstance(&app);
 	Manager::GraphManager::getInstance();
-
-#ifdef OPENCV_FOUND
-	OpenCV::OpenCVCore::getInstance(&app);
-#endif
 }
