@@ -8,11 +8,15 @@
 
 find_path( OPENNI2_INCLUDE_DIR
 	NAMES OpenNI.h
-	HINTS /home/kapec/Desktop/work-in-progress/OpenNI2/Include
+	HINTS 
+		/home/kapec/Desktop/work-in-progress/OpenNI2/Include
+		/home/kapecp/Desktop/Kinect/OpenNI2/Include
 	)
 find_library( OPENNI2_LIBRARY
 	NAMES OpenNI2
-	HINTS /home/kapec/Desktop/work-in-progress/OpenNI2/Bin/x64-Release
+	HINTS 
+		/home/kapec/Desktop/work-in-progress/OpenNI2/Bin/x64-Release
+		/home/kapecp/Desktop/Kinect/OpenNI2/Bin/x64-Release/
 	)
 
 
