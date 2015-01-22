@@ -54,7 +54,7 @@ if( USE_STRICT_COMPILE_WARNINGS )
 	if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang" OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "AppleClang")
   		# using Clang
   		# TODO
-	elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR CMAKE_COMPILER_IS_GNUCXX)       
+	elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR CMAKE_COMPILER_IS_GNUCXX)
  		# using GCC
 		set( FLAGS_FOR_DEBUG "-ansi -pedantic -Wall -Wcast-align -Wcast-qual -Wchar-subscripts -Wcomment -Wconversion -Wctor-dtor-privacy -Wdisabled-optimization -Wextra -Wfloat-equal -Wformat -Wformat-nonliteral -Wformat-security -Wformat-y2k -Wformat=2 -Wimport -Winit-self -Winline -Winvalid-pch -Wlogical-op -Wlong-long -Wmissing-braces -Wmissing-declarations -Wmissing-field-initializers -Wmissing-format-attribute -Wmissing-include-dirs -Wmissing-noreturn -Wnoexcept -Wpacked -Wparentheses -Wpointer-arith -Wredundant-decls -Wreturn-type -Wsequence-point -Wsign-compare -Wsign-promo -Wstack-protector -Wstrict-aliasing=2 -Wstrict-null-sentinel -Wstrict-overflow=5 -Wswitch -Wswitch-default -Wswitch-enum -Wtrigraphs -Wundef -Wuninitialized -Wunknown-pragmas -Wunreachable-code -Wunsafe-loop-optimizations -Wvariadic-macros -Wvolatile-register-var -Wwrite-strings -Wno-unused-parameter -Wno-unused" )
 
@@ -89,6 +89,21 @@ set( CMAKE_INSTALL_RPATH "$ORIGIN/../lib" CACHE STRING "" FORCE )
 # next line adds additional link paths to RPath (e.g. for qscintilla when not in system):
 set( CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE CACHE STRING "" FORCE )
 set( CMAKE_INSTALL_NAME_DIR "@executable_path/../lib" CACHE STRING "" FORCE )
+
+# Use ld.gold if it is available and isn't disabled explicitly
+option(USE_LD_GOLD "Use GNU gold linker" ON)
+if (USE_LD_GOLD)
+	execute_process(COMMAND ${CMAKE_C_COMPILER} -fuse-ld=gold -Wl,--version ERROR_QUIET OUTPUT_VARIABLE LD_VERSION)
+	if ("${LD_VERSION}" MATCHES "GNU gold")
+		message(STATUS "GNU gold linker found.")
+		set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fuse-ld=gold" CACHE STRING "" FORCE)
+		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fuse-ld=gold" CACHE STRING "" FORCE)
+		set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fuse-ld=gold -Wl,--disable-new-dtags" CACHE STRING "" FORCE)
+		set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fuse-ld=gold -Wl,--disable-new-dtags" CACHE STRING "" FORCE)
+	else ()
+		message(WARNING "GNU gold linker isn't available, using the default system linker.")
+	endif ()
+endif ()
 
 # --------------
 # Build settings - COTIRE module
@@ -245,6 +260,9 @@ option( USE_BUILTIN_DEPENDENCIES "Use builtin dependencies." ON )
 
 # Build dependencies
 if( USE_BUILTIN_DEPENDENCIES )
+	# to use Gold linker add following flags to ExternalProject_Add command, to CMAKE_ARGS (needs more testing):
+		#-DCMAKE_EXE_LINKER_FLAGS:STRING=${CMAKE_EXE_LINKER_FLAGS}
+		#-DCMAKE_SHARED_LINKER_FLAGS:STRING=${CMAKE_EXE_LINKER_FLAGS}
 
 	include( ExternalProject )
 
@@ -393,7 +411,7 @@ if( USE_BUILTIN_DEPENDENCIES )
 
 	set( LUA_LIBRARY ${DEP_BIN}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}lua${CMAKE_SHARED_LIBRARY_SUFFIX} )
 	set( DILUCULUM_LIBRARY ${DEP_BIN}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}diluculum${CMAKE_SHARED_LIBRARY_SUFFIX} )
-	
+
 	if( WIN32 )
 		set( LUA_LIBRARY ${DEP_BIN}/bin/${CMAKE_SHARED_LIBRARY_PREFIX}lua${CMAKE_SHARED_LIBRARY_SUFFIX} )
 		set( DILUCULUM_LIBRARY ${DEP_BIN}/bin/${CMAKE_SHARED_LIBRARY_PREFIX}diluculum${CMAKE_SHARED_LIBRARY_SUFFIX} )
@@ -763,8 +781,8 @@ endif()
 #
 #	install( DIRECTORY ${FGLOVE_DRIVER_DIRS}/ DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/_install/bin )
 #
-#	#install( FILES ${FGLOVE_LIBRARIES} DESTINATION ${INSTALL_BIN} 
-		#	RUNTIME DESTINATION ${INSTALL_BIN} 
+#	#install( FILES ${FGLOVE_LIBRARIES} DESTINATION ${INSTALL_BIN}
+		#	RUNTIME DESTINATION ${INSTALL_BIN}
         #   LIBRARY DESTINATION ${INSTALL_LIB} )
 # endif()
 
@@ -777,7 +795,7 @@ if( USE_BUILTIN_DEPENDENCIES )
 		add_dependencies( ${3DSOFTVIZ_NAME}_unity libnoise dep_diluculum dep_luametrics dep_leg dep_lpeg dep_luajit dep_luafilesystem )
 		#add_dependencies( ${3DSOFTVIZ_NAME}_unity dep_aruco )
 	endif()
-		
+
 	# Install all dependencies
 	install( DIRECTORY ${DEP_BIN}/
 		DESTINATION ${INSTALL_DEPS}
