@@ -50,22 +50,22 @@ set( CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH} 
 option( USE_STRICT_COMPILE_WARNINGS "Use strict compilation warnings in debug mode." ON )
 if( USE_STRICT_COMPILE_WARNINGS )
 	if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang" OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "AppleClang")
-  		# using Clang
-  		# TODO
+		# using Clang
+		# TODO
 	elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR CMAKE_COMPILER_IS_GNUCXX)
- 		# using GCC
+		# using GCC
 		set( FLAGS_FOR_DEBUG "-ansi -pedantic -Wall -Wcast-align -Wcast-qual -Wchar-subscripts -Wcomment -Wconversion -Wctor-dtor-privacy -Wdisabled-optimization -Wextra -Wfloat-equal -Wformat -Wformat-nonliteral -Wformat-security -Wformat-y2k -Wformat=2 -Wimport -Winit-self -Winline -Winvalid-pch -Wlogical-op -Wlong-long -Wmissing-braces -Wmissing-declarations -Wmissing-field-initializers -Wmissing-format-attribute -Wmissing-include-dirs -Wmissing-noreturn -Wnoexcept -Wpacked -Wparentheses -Wpointer-arith -Wredundant-decls -Wreturn-type -Wsequence-point -Wsign-compare -Wsign-promo -Wstack-protector -Wstrict-aliasing=2 -Wstrict-null-sentinel -Wstrict-overflow=5 -Wswitch -Wswitch-default -Wswitch-enum -Wtrigraphs -Wundef -Wuninitialized -Wunknown-pragmas -Wunreachable-code -Wunsafe-loop-optimizations -Wvariadic-macros -Wvolatile-register-var -Wwrite-strings -Wno-unused-parameter -Wno-unused" )
 
-        # to suppress warnings for unused stuff use: -Wno-unused-parameter -Wno-unused-result
-        # not used:
-            # too much warnings in Qt headers: NULL vs 0 pointers: -Wzero-as-null-pointer-constant
-            # too much warnings: -Wshadow -Waggregate-return
-            # too much warnings, but should be used: -Wold-style-cast -Woverloaded-virtual -Wuseless-cast -Wsign-conversion
-            # class size optimizations ( not really needed ): -Wpadded
-            # only for C: -Wold-style-definition -Wstrict-prototypes -Wmissing-prototypes
+	# to suppress warnings for unused stuff use: -Wno-unused-parameter -Wno-unused-result
+	# not used:
+		# too much warnings in Qt headers: NULL vs 0 pointers: -Wzero-as-null-pointer-constant
+		# too much warnings: -Wshadow -Waggregate-return
+		# too much warnings, but should be used: -Wold-style-cast -Woverloaded-virtual -Wuseless-cast -Wsign-conversion
+		# class size optimizations ( not really needed ): -Wpadded
+		# only for C: -Wold-style-definition -Wstrict-prototypes -Wmissing-prototypes
 	elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
- 	# using Visual Studio C++
-    	set( FLAGS_FOR_DEBUG "/W3")
+	# using Visual Studio C++
+	set( FLAGS_FOR_DEBUG "/W3")
 	endif()
 endif()
 
@@ -129,7 +129,7 @@ include( ${QT_USE_FILE} )
 set( CMAKE_AUTOMOC TRUE )
 
 # add special flag to GCC compiler when using Qt 4.6.x with GCC >4.6
-if( 	"${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" AND
+if(	"${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" AND
 	"${QT_VERSION_MAJOR}.${QT_VERSION_MINOR}" VERSION_LESS "4.7" AND
 	${CMAKE_C_COMPILER_VERSION} VERSION_GREATER "4.6" )
 
@@ -416,17 +416,17 @@ include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/include )
 set( SRC_MAIN "src/main.cpp" )
 file( GLOB_RECURSE SRC_CORE		"src/Core/*.cpp" )
 file( GLOB_RECURSE SRC_DATA		"src/Data/*.cpp" )
-file( GLOB_RECURSE SRC_IMPORTER		"src/Importer/*.cpp" )
-file( GLOB_RECURSE SRC_LAYOUT		"src/Layout/*.cpp" )
-file( GLOB_RECURSE SRC_MANAGER		"src/Manager/*.cpp" )
+file( GLOB_RECURSE SRC_IMPORTER	"src/Importer/*.cpp" )
+file( GLOB_RECURSE SRC_LAYOUT	"src/Layout/*.cpp" )
+file( GLOB_RECURSE SRC_MANAGER	"src/Manager/*.cpp" )
 file( GLOB_RECURSE SRC_MATH		"src/Math/*.cpp" )
-file( GLOB_RECURSE SRC_MODEL		"src/Model/*.cpp" )
-file( GLOB_RECURSE SRC_NETWORK		"src/Network/*.cpp" )
+file( GLOB_RECURSE SRC_MODEL	"src/Model/*.cpp" )
+file( GLOB_RECURSE SRC_NETWORK	"src/Network/*.cpp" )
 file( GLOB_RECURSE SRC_OSGQTBROWSER	"src/OsgQtBrowser/*.cpp" )
 file( GLOB_RECURSE SRC_QOSG		"src/QOSG/*.cpp" )
 file( GLOB_RECURSE SRC_UTIL		"src/Util/*.cpp" )
-file( GLOB_RECURSE SRC_VIEWER		"src/Viewer/*.cpp" )
-file(GLOB_RECURSE SRC_CLUSTERING  "src/Clustering/*.cpp")
+file( GLOB_RECURSE SRC_VIEWER	"src/Viewer/*.cpp" )
+file( GLOB_RECURSE SRC_CLUSTERING	"src/Clustering/*.cpp")
 
 # OpenCV
 file( GLOB_RECURSE SRC_OPENCV	"src/OpenCV/*.cpp" )
@@ -449,7 +449,7 @@ file( GLOB_RECURSE SRC_SPEECH	"src/Speech/*.cpp" )
 set( SRC
 	${SRC_MAIN} ${SRC_CORE} ${SRC_DATA} ${SRC_IMPORTER}
 	${SRC_LAYOUT} ${SRC_MANAGER} ${SRC_MATH}
-	${SRC_NETWORK} #${SRC_NOISE}
+	${SRC_NETWORK}
 	${SRC_OSGQTBROWSER} ${SRC_QOSG} ${SRC_UTIL} ${SRC_VIEWER} ${SRC_MODEL} ${SRC_CLUSTERING}
 )
 
@@ -485,7 +485,7 @@ file( GLOB_RECURSE HEADER_OSGQTBROWSER	"include/OsgQtBrowser/*.h" )
 file( GLOB_RECURSE HEADER_QOSG		"include/QOSG/*.h" )
 file( GLOB_RECURSE HEADER_UTIL		"include/Util/*.h" )
 file( GLOB_RECURSE HEADER_VIEWER	"include/Viewer/*.h" )
-file(GLOB_RECURSE HEADER_CLUSTERING  "include/Clustering/*.h")
+file( GLOB_RECURSE HEADER_CLUSTERING	"include/Clustering/*.h")
 
 # OpenCV
 file( GLOB_RECURSE HEADER_OPENCV	"include/OpenCV/*.h" )
@@ -507,7 +507,7 @@ file( GLOB_RECURSE HEADER_SPEECH	"include/Speech/*.h" )
 set( INCL
 	${HEADER_CORE} ${HEADER_DATA} ${HEADER_IMPORTER}
 	${HEADER_LAYOUT} ${HEADER_MANAGER} ${HEADER_MATH}
-	${HEADER_NETWORK} #${HEADER_NOISE}
+	${HEADER_NETWORK}
 	${HEADER_OSGQTBROWSER} ${HEADER_QOSG} ${HEADER_UTIL} ${HEADER_VIEWER} ${HEADER_MODEL} ${HEADER_CLUSTERING}
 )
 
@@ -542,10 +542,9 @@ source_group( \\src\\Util "^.*Util/.*$" )
 source_group( \\src\\Layout "^.*Layout/.*$" )
 source_group( \\src\\QOSG "^.*QOSG/.*$" )
 source_group( \\src\\OsgQtBrowser "^.*OsgQtBrowser/.*$" )
-#source_group( \\src\\Noise "^.*Noise/.*$" )
 
 # Group header files
-source_group(\\headers\\Clustering "^.*Clustering/.*h$")
+source_group( \\headers\\Clustering "^.*Clustering/.*h$")
 source_group( \\headers\\Network "^.*Network/.*h$" )
 source_group( \\headers\\Viewer "^.*Viewer/.*h$" )
 source_group( \\headers\\Core "^.*Core/.*h$" )
@@ -556,7 +555,6 @@ source_group( \\headers\\Model "^.*Model/.*h$" )
 source_group( \\headers\\Util "^.*Util/.*h$" )
 source_group( \\headers\\Layout "^.*Layout/.*h$" )
 source_group( \\headers\\QOSG "^.*QOSG/.*h$" )
-#source_group( \\headers\\Noise "^.*Noise/.*h$" )
 source_group( \\headers\\OsgQtBrowser "^.*OsgQtBrowser/.*h$" )
 
 if( OpenCV_FOUND )
@@ -615,7 +613,7 @@ target_link_libraries( ${3DSOFTVIZ_NAME}
 )
 
 if( OpenCV_FOUND )
-	target_link_libraries( ${3DSOFTVIZ_NAME} ${OpenCV_LIBS}	aruco )
+	target_link_libraries( ${3DSOFTVIZ_NAME} ${OpenCV_LIBS} aruco )
 endif()
 
 if( NITE2_FOUND AND OPENNI2_FOUND )
@@ -684,7 +682,7 @@ endif()
 #
 #	#install( FILES ${FGLOVE_LIBRARIES} DESTINATION ${INSTALL_BIN}
 		#	RUNTIME DESTINATION ${INSTALL_BIN}
-        #   LIBRARY DESTINATION ${INSTALL_LIB} )
+# LIBRARY DESTINATION ${INSTALL_LIB} )
 # endif()
 
 # Install built in dependencies unless we are building an OSX Bundle
