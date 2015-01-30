@@ -25,7 +25,7 @@
 #include <interp.h>
 #include <mathconsts.h>
 
-#include "Noise/noiseutils.h"
+#include "noiseutils.h"
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wconversion"

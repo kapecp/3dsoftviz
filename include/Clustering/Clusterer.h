@@ -83,6 +83,7 @@ private:
     int colorCounter;
     int idGen;
     //osg::Vec4 getNewColor();
+    osg::Vec4 getNewColor(int colorCounter);
 };
 
 }
