@@ -2,7 +2,7 @@
 #include "Network/executors/WelcomeExecutor.h"
 #include "Network/Server.h"
 
-using namespace Network;
+namespace Network {
 
 void IncommingUserExecutor::execute_server() {
 
@@ -41,3 +41,5 @@ void IncommingUserExecutor::execute_server() {
 void IncommingUserExecutor::execute_client() {
     return;
 }
+
+} // namespace Network

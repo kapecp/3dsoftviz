@@ -2,7 +2,7 @@
 #include "Network/Server.h"
 #include "Network/Client.h"
 
-using namespace Network;
+namespace Network {
 
 void MoveAvatarExecutor::execute_client() {
 
@@ -88,3 +88,5 @@ void MoveAvatarExecutor::execute_server() {
     }
 
 }
+
+} // namespace Network

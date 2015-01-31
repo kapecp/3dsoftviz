@@ -5,7 +5,7 @@
 #include "QOSG/CoreWindow.h"
 
 
-using namespace Network;
+namespace Network {
 
 void UsersExecutor::execute_client() {
 
@@ -55,3 +55,5 @@ void UsersExecutor::execute_client() {
 void UsersExecutor::execute_server() {
     return;
 }
+
+} // namespace Network

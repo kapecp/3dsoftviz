@@ -23,6 +23,8 @@
 #include <QLineEdit>
 #include <QToolBox>
 
+#include <Viewer/SelectionObserver.h>
+
 #include "Layout/ShapeGetter.h"
 #include "Layout/RestrictionRemovalHandler.h"
 #include "Layout/RestrictionRemovalHandler_RestrictionNodesRemover.h"
@@ -72,7 +74,7 @@ namespace QOSG
     *  \author Adam Pazitnaj
     *  \date 3. 5. 2010
     */
-class CoreWindow : public QMainWindow
+class CoreWindow : public QMainWindow, public SelectionObserver
 {
     Q_OBJECT
 private:
@@ -106,7 +108,26 @@ public slots:
     void saveGraphToDB();
 
 
-    /**
+	/**
+				*  \fn public  loadFunctionCall()
+				*  \brief load function call clicked
+				*/
+	void loadFunctionCall();
+
+	/**
+				*  \fn public  browsersGroupingClicked()
+				*  \brief toggles between browsers grouping and sepparate browsers
+				*  \param checked    flag if button is checked
+				*/
+	void browsersGroupingClicked(bool checked);
+
+	/**
+				*  \fn public  filterGraph()
+				*  \brief filter graph from query
+				*/
+	void filterGraph();
+  
+	/**
                 *  \fn public  saveLayoutToDB
                 *  \brief Save a current layout of current graph to database
                 */
@@ -553,6 +574,36 @@ private:
         */
     QPushButton * fix;
 
+	/**
+		*  QPushButton * loadFunctionCallButton
+		*  \brief Action for loading function call graph from lua
+		*/
+	QPushButton * loadFunctionCallButton;
+
+	/**
+		*  QPushButton * browsersGroupingButton
+		*  \brief Action for switching browsers grouping when nodes are selected
+		*/
+	QPushButton * browsersGroupingButton;
+
+	/**
+		*  QLineEdit * filterNodesEdit
+		*  \brief Edit area for node filter query
+		*/
+	QLineEdit * filterNodesEdit;
+
+	/**
+		*  QLineEdit * filterEdgesEdit
+		*  \brief Edit area for edge filter query
+		*/
+	QLineEdit * filterEdgesEdit;
+
+	/**
+		*  QTreeView * luaGraphTreeView
+		*  \brief TreeView for exploring selected node of lua graph
+		*/
+	QTreeView * luaGraphTreeView;
+
     /**
         *  QPushButton * unFix
         *  \brief Action for unfix nodes
@@ -876,6 +927,12 @@ private:
         */
     void createLeftToolBar();
 
+	/**
+		*  \fn private  createMetricsToolBar
+		*  \brief Create metrics toolBar
+		*/
+	void createMetricsToolBar();
+
     /**
         *  \fn private  createHorizontalFrame
         *  \brief Crate frame with horizontal label
@@ -1169,6 +1226,7 @@ protected:
          */
     void closeEvent(QCloseEvent *event);
 
+
 private:
 
     /**
@@ -1179,6 +1237,8 @@ private:
             Data::Graph * currentGraph,
             QSharedPointer<Layout::RestrictionRemovalHandler> removalHandler
             );
+
+	void onChange();
 
 };
 }

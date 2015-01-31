@@ -5,7 +5,7 @@ SpikySphere::SpikySphere(osg::Vec3d position, float radius, osg::Vec4d color) : 
 }
 
 void SpikySphere::addSpikes() {
-    for(osg::Vec3Array::iterator i = sphereVertices->begin(); i != sphereVertices->end();i++)
+    for(osg::Vec3Array::iterator i = sphereVertices->begin(); i != sphereVertices->end();++i)
     {
         osg::Vec3 sp(i->x(),i->y(),i->z());
         osg::Vec3 ep = ( sp - midPoint ) * 1.5;

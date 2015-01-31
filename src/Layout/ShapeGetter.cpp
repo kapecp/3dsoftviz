@@ -8,7 +8,7 @@ namespace Layout {
 #if (QT_VERSION < QT_VERSION_CHECK(4, 7, 0))
 bool operator<( foo const & one, foo const & other )
 {
-    return one != other;
+	return one != other;
 }
 #endif
 

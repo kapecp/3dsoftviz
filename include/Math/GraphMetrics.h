@@ -10,6 +10,6 @@ namespace MathModule{
 class GraphMetrics
 {
 public:
-	void static computeGraphMetrics(Data::Graph * activeGraph);
+	static void computeGraphMetrics(Data::Graph * activeGraph);
 };
 }

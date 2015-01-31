@@ -30,7 +30,7 @@ class Type;
 	*  \author Aurel Paulovic, Michal Paprcka
 	*  \date 29. 4. 2010
 	*/
-class Edge : public osg::DrawArrays
+class Edge : public osg::Geode
 {
 public:
 
@@ -302,7 +302,7 @@ public:
 		*  \fn inline public  setIsInDB
 		*  \brief Sets the inDB flag of the Edge to true (meaning that the Edge is in database)
 		*/
-	void setIsInDB() { inDB = true; };
+	void setIsInDB() { inDB = true; }
 
 
 	/**
@@ -327,7 +327,7 @@ public:
 		*/
 	void setSettings(QMap<QString, QString> * val) { settings = val; }
 
-        Node* getOtherNode(const Node* node) const;
+    Data::Node* getOtherNode(const Data::Node* node) const;
 
 	int getWeight() { return 1; }
 
@@ -371,7 +371,8 @@ public:
 			setScale(0);
 			isInvisible=true;
 		}
-		else {
+		else
+		{
 			setScale(1);
 			isInvisible=false;
 		}
@@ -381,12 +382,17 @@ public:
 	bool getIsInvisible(){return isInvisible;}
 
 
+    float getEdgeStrength() const;
+    void setEdgeStrength(float value);
+
+    void reloadLabel();
+    void showLabel(bool visible);
 private:
 
-	bool isInvisible;
-	/**
-		*  Data::Graph * graph
-		*  \brief Graph to which the Edge belongs
+    bool isInvisible;
+    /**
+        *  Data::Graph * graph
+        *  \brief Graph to which the Edge belongs
 		*/
 	Data::Graph* graph;
 
@@ -510,6 +516,10 @@ private:
 		*/
 	osg::Vec4 edgeColor;
 
+    float edgeStrength;
+
+    osg::ref_ptr<osg::StateSet> createStateSet(Data::Type *type);
+    osg::ref_ptr<osg::Drawable> createEdge(osg::StateSet *bbState);
 protected:
 
 	/**

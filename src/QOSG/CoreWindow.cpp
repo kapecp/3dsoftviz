@@ -18,6 +18,7 @@
 #include "Model/GraphLayoutDAO.h"
 
 #include "Data/GraphLayout.h"
+#include "Data/GraphSpanningTree.h"
 
 #include "Layout/LayoutThread.h"
 #include "Layout/FRAlgorithm.h"
@@ -30,6 +31,23 @@
 #include "Layout/ShapeGetter_Cube.h"
 
 #include "Importer/GraphOperations.h"
+#include "Util/Cleaner.h"
+#include "Core/Core.h"
+
+#include "QDebug"
+
+#include "LuaGraph/LuaGraph.h"
+#include "LuaInterface/LuaInterface.h"
+#include "LuaGraph/LuaGraphVisualizer.h"
+#include "LuaGraph/FullHyperGraphVisualizer.h"
+#include "LuaGraph/HyperGraphVisualizer.h"
+#include "LuaGraph/SimpleGraphVisualizer.h"
+
+#include "Diluculum/LuaState.hpp"
+#include <LuaGraph/LuaGraphTreeModel.h>
+
+#include <iostream>
+#include <osg/ref_ptr>
 
 #ifdef OPENCV_FOUND
 #include "OpenCV/OpenCVCore.h"
@@ -44,17 +62,7 @@
 #endif
 #endif
 
-#include "Util/Cleaner.h"
-
-#include "Core/Core.h"
-
-#include "Data/GraphSpanningTree.h"
-
-#include <iostream>
-#include "QDebug"
-
-using namespace QOSG;
-using namespace std;
+namespace QOSG {
 
 CoreWindow::CoreWindow(QWidget *parent, Vwr::CoreGraph* coreGraph, QApplication* app, Layout::LayoutThread * thread ) : QMainWindow(parent)
 {
@@ -70,6 +78,7 @@ CoreWindow::CoreWindow(QWidget *parent, Vwr::CoreGraph* coreGraph, QApplication*
     createActions();
     createMenus();
     createLeftToolBar();
+    createMetricsToolBar();
 
     viewerWidget = new ViewerQT(this, 0, 0, 0, coreGraph);
     viewerWidget->setSceneData(coreGraph->getScene());
@@ -118,6 +127,9 @@ CoreWindow::CoreWindow(QWidget *parent, Vwr::CoreGraph* coreGraph, QApplication*
     // connect checkbox for interchanging between rotation of camera or rotation of graph
     QObject::connect( chb_camera_rot, SIGNAL(clicked(bool)),
                       viewerWidget->getCameraManipulator(), SLOT(setCameraCanRot(bool)));
+
+	Lua::LuaInterface::getInstance()->executeFile("main.lua");
+    viewerWidget->getPickHandler()->setSelectionObserver(this);
 
 }
 
@@ -226,6 +238,28 @@ void CoreWindow::createActions()
     remove_all->setToolTip("Remove nodes and edges");
     remove_all->setFocusPolicy(Qt::NoFocus);
     connect(remove_all, SIGNAL(clicked()), this, SLOT(removeClick()));
+
+    // <Change> Nagy+Gloger
+	loadFunctionCallButton = new QPushButton();
+    loadFunctionCallButton->setText("Load function calls");
+    loadFunctionCallButton->setToolTip("Load function calls");
+    loadFunctionCallButton->setFocusPolicy(Qt::NoFocus);
+    connect(loadFunctionCallButton, SIGNAL(clicked()), this, SLOT(loadFunctionCall()));
+
+    browsersGroupingButton = new QPushButton();
+    browsersGroupingButton->setIcon(QIcon("../share/3dsoftviz/img/gui/grouping.png"));
+    browsersGroupingButton->setToolTip("Toggle browsers (webViews) grouping");
+    browsersGroupingButton->setCheckable(true);
+    browsersGroupingButton->setFocusPolicy(Qt::NoFocus);
+    connect(browsersGroupingButton, SIGNAL(clicked(bool)), this, SLOT(browsersGroupingClicked(bool)));
+
+    filterNodesEdit = new QLineEdit();
+    filterEdgesEdit = new QLineEdit();
+    connect(filterNodesEdit, SIGNAL(returnPressed()), this, SLOT(filterGraph()));
+    connect(filterEdgesEdit, SIGNAL(returnPressed()), this, SLOT(filterGraph()));
+
+    luaGraphTreeView = new QTreeView();
+    // <end change> Nagy+Gloger
 
     //mody - ziadny vyber, vyber jedneho, multi vyber centrovanie
     noSelect = new QPushButton();
@@ -874,7 +908,7 @@ QWidget * CoreWindow::createMoreFeaturesTab(QFrame* line)
     lMore->setContentsMargins(1,1,1,1);
     lMore->setSpacing(2);
 
-    #ifdef osgOPENCV_FOUND
+    #ifdef OPENCV_FOUND
     b_start_face = new QPushButton( tr("Start camera"));
     lMore->addRow(new QLabel( tr("Face & Marker detection")));
     b_start_face->setMaximumWidth(136);
@@ -1065,7 +1099,7 @@ void CoreWindow::saveLayoutToDB()
 
 void CoreWindow::sqlQuery()
 {
-    cout << lineEdit->text().toStdString() << endl;
+    std::cout << lineEdit->text().toStdString() << endl;
 }
 
 void CoreWindow::playPause()
@@ -1142,7 +1176,7 @@ void CoreWindow::addMetaNode()
 
         gw->getWindowRectangle(x, y, width, height);
 
-        cout << width << " " << height << "\n";
+        std::cout << width << " " << height << "\n";
 
 
         osg::ref_ptr<Data::Node> metaNode = NULL;
@@ -1208,7 +1242,8 @@ void CoreWindow::mergeNodes()
                 client->sendMergeNodes(selectedNodes, position);
             }
         }
-        else {
+        else
+        {
             qDebug() << "[QOSG::CoreWindow::mergeNodes] There are no nodes selected";
         }
 
@@ -1241,7 +1276,8 @@ void CoreWindow::separateNodes()
                 client->sendSeparateNodes(selectedNodes);
             }
         }
-        else {
+        else
+        {
             qDebug() << "[QOSG::CoreWindow::separateNodes] There are no nodes selected";
         }
 
@@ -1343,7 +1379,7 @@ void CoreWindow::labelOnOff(bool)
 
 void CoreWindow::sliderValueChanged(int value)
 {
-    layout->setAlphaValue((float)value * 0.001f);
+    layout->setAlphaValue(static_cast<float>(value) * 0.001f);
 }
 
 //Volovar zac
@@ -1353,7 +1389,7 @@ void CoreWindow::RadialLayoutSizeChanged(int value)
     //notify radial layout that size was changed
     Layout::RadialLayout* selectedRadialLayout = Layout::RadialLayout::getSelectedRadialLayout();
     if (selectedRadialLayout != NULL)
-        selectedRadialLayout->changeSize((float) value);
+        selectedRadialLayout->changeSize(static_cast<float>(value));
 }
 
 void CoreWindow::RadialLayoutAlphaChanged(int value)
@@ -1362,7 +1398,7 @@ void CoreWindow::RadialLayoutAlphaChanged(int value)
     Layout::RadialLayout* selectedRadialLayout = Layout::RadialLayout::getSelectedRadialLayout();
     //qDebug()<<"Value: "<<value<<", selected: "<<selectedRadialLayout;
     if (selectedRadialLayout != NULL)
-        selectedRadialLayout->setAlpha((float) value/500.0f);
+        selectedRadialLayout->setAlpha( static_cast<float>(value)/500.0f);
 }
 
 void CoreWindow::RadialLayoutSetVisibleSpheres(int value)
@@ -1370,7 +1406,7 @@ void CoreWindow::RadialLayoutSetVisibleSpheres(int value)
     //notify radial layout that number of visibles spheres was changed
     Layout::RadialLayout* selectedRadialLayout = Layout::RadialLayout::getSelectedRadialLayout();
     if (selectedRadialLayout != NULL)
-        selectedRadialLayout->setVisibleSpheres((float) value/100);
+        selectedRadialLayout->setVisibleSpheres(static_cast<float>(value)/100);
 }
 
 void CoreWindow::RadialLayoutSetForceScale(int value)
@@ -1378,7 +1414,7 @@ void CoreWindow::RadialLayoutSetForceScale(int value)
     //notify that multiplier of repulsive forces in radial layout was changed
     Layout::RadialLayout* selectedRadialLayout = Layout::RadialLayout::getSelectedRadialLayout();
     if (selectedRadialLayout != NULL)
-        selectedRadialLayout->setForceScale((float) value);
+        selectedRadialLayout->setForceScale(static_cast<float>(value));
 }
 
 void CoreWindow::RadialLayoutSetForceSphereScale(int value)
@@ -1386,7 +1422,7 @@ void CoreWindow::RadialLayoutSetForceSphereScale(int value)
     //notify that multiplier of repulsive forces in radial layout on same layer was changed
     Layout::RadialLayout* selectedRadialLayout = Layout::RadialLayout::getSelectedRadialLayout();
     if (selectedRadialLayout != NULL)
-        selectedRadialLayout->setForceSphereScale((float) value);
+        selectedRadialLayout->setForceSphereScale(static_cast<float>(value));
 }
 
 void CoreWindow::changeDrawMethod_RadialLayout()
@@ -1442,10 +1478,10 @@ void CoreWindow::nodeTypeComboBoxChanged(int index)
 
 void CoreWindow::applyColorClick()
 {
-    float alpha = (float)color.alphaF();
-    float red = (float)color.redF();
-    float green = (float)color.greenF();
-    float blue = (float)color.blueF();
+    float alpha = static_cast<float>(color.alphaF());
+    float red = static_cast<float>(color.redF());
+    float green = static_cast<float>(color.greenF());
+    float blue = static_cast<float>(color.blueF());
 
     QLinkedList<osg::ref_ptr<Data::Node> > * selectedNodes = viewerWidget->getPickHandler()->getSelectedNodes();
     QLinkedList<osg::ref_ptr<Data::Node> >::const_iterator ni = selectedNodes->constBegin();
@@ -1541,7 +1577,7 @@ void CoreWindow::setRestriction_SphereSurface ()
     if (currentGraph != NULL)
     {
         osg::Vec3 position = viewerWidget->getPickHandler()->getSelectionCenter(true);
-        if( qFuzzyCompare((float)position.length(),0.0f) ) return;
+        if( qFuzzyCompare(static_cast<float>(position.length()),0.0f) ) return;
         osg::ref_ptr<Data::Node> centerNode;
         osg::ref_ptr<Data::Node> surfaceNode;
 
@@ -1676,7 +1712,7 @@ Layout::ShapeGetter_Plane_ByThreeNodes* CoreWindow::setRestriction_Plane_Vertigo
         osg::Vec3 rootPosition = osg::Vec3f (0.f, 0.f, 0.f);
 
         // pozicia bodu zavisi od poradoveho cisla roviny
-        osg::Vec3 position = rootPosition + osg::Vec3f ((float)(nOfPlane - 1) * (float)vertigoPlanesDistance, 0.f, 0.f);
+        osg::Vec3 position = rootPosition + osg::Vec3f (static_cast<float>(nOfPlane - 1) * static_cast<float>(vertigoPlanesDistance), 0.f, 0.f);
 
         osg::Vec3 positionNode1 = position + osg::Vec3f (0.f, -100.f, 0.f);
         osg::Vec3 positionNode2 = position + osg::Vec3f (0.f, 100.f, 200.f);
@@ -1951,12 +1987,12 @@ void CoreWindow::setRestriction_ConeTree (){
 
     QList<qlonglong> groups = spanningTree->getAllGroups();
     QList<qlonglong>::iterator groupIt;
-    for(groupIt=groups.begin(); groupIt!=groups.end();groupIt++){
+    for(groupIt=groups.begin(); groupIt!=groups.end();++groupIt){
         if ((*groupIt) == 0) continue;
         pickedNodes.clear();
         QList<qlonglong> nodes = spanningTree->getNodesInGroup(*groupIt);
         QList<qlonglong>::iterator nodeIt;
-        for(nodeIt=nodes.begin(); nodeIt!=nodes.end();nodeIt++){
+        for(nodeIt=nodes.begin(); nodeIt!=nodes.end();++nodeIt){
             pickedNodes.append(allNodes->value(*nodeIt));
         }
         osg::ref_ptr<Data::Node> parentNode = allNodes->value(*groupIt);
@@ -1969,13 +2005,13 @@ void CoreWindow::setRestriction_ConeTree (){
         QList<qlonglong> groups = spanningTree->getGroupsInDepth(depth);
 
         QList<qlonglong>::iterator groupIt;
-        for(groupIt=groups.begin(); groupIt!=groups.end();groupIt++){
+        for(groupIt=groups.begin(); groupIt!=groups.end();++groupIt){
             qlonglong nodeId = spanningTree->getRandomNodeInGroup(*groupIt);
             pickedNodes.append(allNodes->value(nodeId));
 
         }
 
-        osg::Vec3 position = rootPosition + osg::Vec3f (0.f, 0.f, (-50.f) * (float)depth);
+        osg::Vec3 position = rootPosition + osg::Vec3f (0.f, 0.f, (-50.f) * static_cast<float>(depth));
         osg::Vec3 positionNode1 = position;
         osg::Vec3 positionNode2 = position + osg::Vec3f (10.f, 0.f, 0.f);
         osg::Vec3 positionNode3 = position + osg::Vec3f (0.f, 10.f, 0.f);
@@ -2260,7 +2296,7 @@ bool CoreWindow::removeClick()
     }
 
     int NodesCount=currentGraph->getNodes()->size();
-    cout<<NodesCount;
+    std::cout<<NodesCount;
     if (isPlaying)
         layout->play();
 
@@ -2348,7 +2384,7 @@ void CoreWindow::clusterSelectedOpacityCheckboxValueChanged(bool checked)
 
 void CoreWindow::clustersOpacitySliderValueChanged(int value)
 {
-    coreGraph->setClustersOpacity(double(value) / 10);
+    coreGraph->setClustersOpacity(static_cast<double>(value) / 10);
 }
 
 void CoreWindow::clustersShapeBoundarySliderValueChanged(int value)
@@ -2360,7 +2396,7 @@ void CoreWindow::repulsiveForceInsideClusterValueChanged(double value)
 {
     QLinkedList<osg::ref_ptr<Data::Cluster> > clusters = viewerWidget->getPickHandler()->getPickedClusters();
     QLinkedList<osg::ref_ptr<Data::Cluster> >::iterator i;
-    for (i = clusters.begin(); i != clusters.end(); i++)
+    for (i = clusters.begin(); i != clusters.end(); ++i)
     {
         osg::ref_ptr<Data::Cluster> cluster = *i;
         cluster->setRepulsiveForceInside(value);
@@ -2414,7 +2450,7 @@ void CoreWindow::restartLayouting() {
 
     QLinkedList<osg::ref_ptr<Data::Cluster> > clusters = viewerWidget->getPickHandler()->getPickedClusters();
     QLinkedList<osg::ref_ptr<Data::Cluster> >::iterator i;
-    for (i = clusters.begin(); i != clusters.end(); i++)
+    for (i = clusters.begin(); i != clusters.end(); ++i)
     {
         osg::ref_ptr<Data::Cluster> cluster = *i;
         Layout::ShapeGetter_Cube * shapeGetter = cluster->getShapeGetter();
@@ -2457,9 +2493,9 @@ void CoreWindow::setRestriction_Cube_Selected()
         QString name_sufraceNodeY = "surfaceY";
         QString name_sufraceNodeZ = "surfaceZ";
         osg::Vec3 positionNode1 = cluster->getCube()->getMidpoint() / scale;
-        osg::Vec3 positionNode2 = positionNode1 + osg::Vec3f ((float)cluster->getCube()->getRadius() / scale, 0, 0);
-        osg::Vec3 positionNode3 = positionNode1 + osg::Vec3f (0, (float)cluster->getCube()->getRadius() / scale, 0);
-        osg::Vec3 positionNode4 = positionNode1 + osg::Vec3f (0, 0, (float)cluster->getCube()->getRadius() / scale);
+        osg::Vec3 positionNode2 = positionNode1 + osg::Vec3f (static_cast<float>(cluster->getCube()->getRadius()) / scale, 0, 0);
+        osg::Vec3 positionNode3 = positionNode1 + osg::Vec3f (0, static_cast<float>(cluster->getCube()->getRadius()) / scale, 0);
+        osg::Vec3 positionNode4 = positionNode1 + osg::Vec3f (0, 0, static_cast<float>(cluster->getCube()->getRadius()) / scale);
 
         Layout::RestrictionRemovalHandler_RestrictionNodesRemover::NodesListType restrictionNodes;
 
@@ -2584,7 +2620,7 @@ void CoreWindow::toggleSpyWatch()
     Network::Server * server = Network::Server::getInstance();
     bool is_server = server->isListening();
 
-    QCheckBox *sender_chb = (QCheckBox*)sender();
+    QCheckBox *sender_chb = reinterpret_cast<QCheckBox*>(sender());
 
     int id_user = lw_users->currentItem()->data(6).toInt();
 
@@ -2612,7 +2648,8 @@ void CoreWindow::toggleSpyWatch()
             chb_center->setChecked(false);
         }
         // ak je "spy" odkliknute
-        else {
+        else
+        {
 
             // ak je spehovanie aktivne, deaktivujem
             if (client->isSpying() || server->isSpying()) {
@@ -2650,7 +2687,8 @@ void CoreWindow::toggleSpyWatch()
         }
 
         // ak je "center" odkliknute
-        else {
+        else
+        {
 
             // ak je centrovanie aktivne, deaktivujem
             if (client->isCenteringUser() || server->isCenteringUser()) {
@@ -2733,13 +2771,13 @@ void CoreWindow::create_Vertigo_Planes(int numberOfPlanes, int nOfDepthsInOnePla
        QList<qlonglong> groups = spanningTree->getGroupsInDepth(depth);
 
        QList<qlonglong>::iterator groupIt;
-       for(groupIt=groups.begin(); groupIt!=groups.end();groupIt++){
+       for(groupIt=groups.begin(); groupIt!=groups.end();++groupIt){
 
            // vyber vsetkych skupin a uzlov v skupine danej hlbky
            QList<qlonglong> nodes = spanningTree->getNodesInGroup(*groupIt);
            QList<qlonglong>::iterator nodeIt;
 
-           for(nodeIt=nodes.begin(); nodeIt!=nodes.end();nodeIt++){
+           for(nodeIt=nodes.begin(); nodeIt!=nodes.end();++nodeIt){
                // nastavi uzlu cislo vertigo roviny, na ktorej sa nachadza
                allNodes->value(*nodeIt)->setNumberOfVertigoPlane(nOfPlane);
                pickedNodes.append(allNodes->value(*nodeIt));
@@ -2790,7 +2828,7 @@ void CoreWindow::add_PlanesClick()
     int maxEdges=0;
     osg::ref_ptr<Data::Node> rootNode;
     QLinkedList<osg::ref_ptr<Data::Node> >::const_iterator itNode = nodesList.constBegin();
-    for (itNode; itNode != nodesList.constEnd(); itNode++) {
+    for (itNode; itNode != nodesList.constEnd(); ++itNode) {
         int actEdges = itNode->get()->getEdges()->size();
         if (actEdges>maxEdges){
             rootNode= itNode->get();
@@ -2893,7 +2931,7 @@ void CoreWindow::remove_PlanesClick() {
     int maxEdges=0;
     osg::ref_ptr<Data::Node> rootNode;
     QLinkedList<osg::ref_ptr<Data::Node> >::const_iterator itNode = nodesList.constBegin();
-    for ( itNode; itNode != nodesList.constEnd(); itNode++) {
+    for ( itNode; itNode != nodesList.constEnd(); ++itNode) {
         int actEdges = itNode->get()->getEdges()->size();
         if ( actEdges>maxEdges){
             rootNode= itNode->get();
@@ -2941,7 +2979,7 @@ void CoreWindow::change_Vertigo_Planes_Distance(int value){
         while (i.hasNext()){
             Data::Node* node = i.next();
             osg::Vec3f oldPosition = node->getTargetPosition();
-            node->setTargetPosition(oldPosition + osg::Vec3f ((float)(value * nOfPlane), 0.f, 0.f));
+            node->setTargetPosition(oldPosition + osg::Vec3f (static_cast<float>(value * nOfPlane), 0.f, 0.f));
         }
     }
     //zmena vzdialenosti medzi rovinami globalne
@@ -3025,3 +3063,127 @@ void CoreWindow::startGlovesRecognition()
 }
 
 #endif
+
+void CoreWindow::createMetricsToolBar()
+{
+    toolBar = new QToolBar("Metrics visualizations",this);
+
+	// <Change> Gloger start: added horizontal frame to support browser (webView) grouping toggling
+	QFrame * frame = createHorizontalFrame();
+	frame->layout()->addWidget(loadFunctionCallButton);
+	frame->layout()->addWidget(browsersGroupingButton);
+	toolBar->addWidget(frame);
+	// Gloger end
+
+	toolBar->addWidget(luaGraphTreeView);
+	toolBar->setMinimumWidth(350);
+
+	addToolBar(Qt::RightToolBarArea,toolBar);
+	toolBar->setMovable(true);
+
+	toolBar = new QToolBar("Metrics filter",this);
+	#if QT_VERSION >= 0x040700
+	filterNodesEdit->setPlaceholderText("nodes filter");
+	#endif
+	toolBar->addWidget(filterNodesEdit);
+	#if QT_VERSION >= 0x040700
+	filterEdgesEdit->setPlaceholderText("edges filter");
+	#endif
+	toolBar->addWidget(filterEdgesEdit);
+	addToolBar(Qt::BottomToolBarArea, toolBar);
+	toolBar->setMovable(true);
+}
+
+void CoreWindow::loadFunctionCall()
+{
+    QString file = QFileDialog::getExistingDirectory(this, "Select lua project folder", ".");
+    if (file == "") return;
+    std::cout << "You selected " << file.toStdString() << std::endl;
+    Lua::LuaInterface* lua = Lua::LuaInterface::getInstance();
+
+    Diluculum::LuaValueList path;
+    path.push_back(file.toStdString());
+    QString createGraph[] = {"function_call_graph", "extractGraph"};
+    lua->callFunction(2, createGraph, path);
+    lua->getLuaState()->doString("getGraph = function_call_graph.getGraph");
+    Lua::LuaInterface::getInstance()->getLuaState()->doString("getFullGraph = getGraph");
+
+    Data::Graph *currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
+
+    if (currentGraph != NULL) {
+        Manager::GraphManager::getInstance()->closeGraph(currentGraph);
+    }
+    currentGraph = Manager::GraphManager::getInstance()->createNewGraph("LuaGraph");
+
+    layout->pause();
+    coreGraph->setNodesFreezed(true);
+
+    Lua::LuaGraphVisualizer *visualizer = new Lua::SimpleGraphVisualizer(currentGraph, coreGraph->getCamera());
+    visualizer->visualize();
+
+    coreGraph->reloadConfig();
+    if (isPlaying)
+    {
+        layout->play();
+        coreGraph->setNodesFreezed(false);
+    }
+}
+
+void CoreWindow::filterGraph()
+{
+    std::string nodesQueryText = filterNodesEdit->text().trimmed().toStdString();
+    std::string edgesQueryText = filterEdgesEdit->text().trimmed().toStdString();
+
+    Lua::LuaInterface * lua = Lua::LuaInterface::getInstance();
+
+    Diluculum::LuaValueList query;
+    query.push_back(nodesQueryText);
+    QString validNodesQuery[] = {"logical_filter", "validNodeQuery"};
+    if (lua->callFunction(2, validNodesQuery, query)[0] == false){
+        AppCore::Core::getInstance()->messageWindows->showMessageBox("Upozornenie","Neplatny vyraz filtra vrcholov",false);
+        return;
+    }
+    query[0] = edgesQueryText;
+    QString validEdgesQuery[] = {"logical_filter", "validEdgeQuery"};
+    if (lua->callFunction(2, validEdgesQuery, query)[0] == false){
+        AppCore::Core::getInstance()->messageWindows->showMessageBox("Upozornenie","Neplatny vyraz filtra hran",false);
+        return;
+    }
+    query[0] = nodesQueryText;
+    query.push_back(edgesQueryText);
+    lua->getLuaState()->doString("getGraph = logical_filter.getGraph");
+    QString filterGraph[] = {"logical_filter", "filterGraph"};
+    lua->callFunction(2, filterGraph, query);
+}
+
+void CoreWindow::onChange()
+{
+//	TODO release models from memory in browser group
+//	QAbstractItemModel *model = luaGraphTreeView->model();
+//	if (model != NULL){
+//		delete model;
+//		model = NULL;
+//	}
+
+	// <Change> Gloger start: added support for multiple node selection using browser visualization
+	QLinkedList<osg::ref_ptr<Data::Node> > *selected = viewerWidget->getPickHandler()->getSelectedNodes();
+
+	coreGraph->getBrowsersGroup()->setSelectedNodes(selected);
+	// qDebug() << "Selected nodes count: " << selected->size();
+
+	if (selected->size() > 0){
+		// Get last node model & display it in qt view
+		qlonglong lastNodeId = selected->last()->getId();
+		Lua::LuaGraphTreeModel *lastNodeModel = coreGraph->getBrowsersGroup()->getSelectedNodesModels()->value(lastNodeId);
+		luaGraphTreeView->setModel(lastNodeModel);
+	}
+
+	// Gloger end
+}
+
+void CoreWindow::browsersGroupingClicked(bool checked)
+{
+	this->coreGraph->getBrowsersGroup()->setBrowsersGrouping(checked);
+}
+
+} // namespace QOSG

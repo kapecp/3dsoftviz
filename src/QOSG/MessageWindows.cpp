@@ -1,6 +1,6 @@
 #include  "QOSG/MessageWindows.h"
 
-using namespace QOSG;
+namespace QOSG {
 
 MessageWindows::MessageWindows(void)
 {
@@ -78,3 +78,5 @@ void MessageWindows::closeLoadingDialog()
         loadingDialog->hide();
     }
 }
+
+} // namespace QOSG

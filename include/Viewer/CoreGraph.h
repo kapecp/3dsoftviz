@@ -9,7 +9,9 @@
 
 #include "Viewer/RestrictionVisualizationsGroup.h"
 #include "Viewer/RestrictionManipulatorsGroup.h"
+#include "Viewer/EdgeGroup.h"
 #include "Viewer/NodeGroup.h"
+#include "Viewer/BrowserGroup.h"
 #include "Data/Edge.h"
 #include "Data/Node.h"
 
@@ -20,6 +22,8 @@
 #include <QSharedPointer>
 #include <QObject>
 #include <QTime>
+
+#include "OsgQtBrowser/QWebViewImage.h"
 
 namespace Data
 {
@@ -201,6 +205,7 @@ public:
 	Vwr::NodeGroup * getMetaNodesGroup() { return qmetaNodesGroup; }
 	Vwr::EdgeGroup * getEdgesGroup() { return edgesGroup; }
 	Vwr::EdgeGroup * getMetaEdgesGroup() { return qmetaEdgesGroup; }
+	Vwr::BrowserGroup * getBrowsersGroup() { return browsersGroup; }
 
 #ifdef OPENCV_FOUND
 	OpenCV::CameraStream *getCameraStream() const;
@@ -273,6 +278,12 @@ private:
 	QSharedPointer<Vwr::RestrictionManipulatorsGroup> restrictionManipulatorsGroup;
 
 	/**
+		*  Vwr::BrowserGroup * browsersGroup
+		*  \brief browser group
+		*/
+	Vwr::BrowserGroup * browsersGroup;
+
+	/**
 		*  Data::Graph * graph
 		*  \brief current graph
 		*/
@@ -308,11 +319,11 @@ private:
 		*/
 	Util::ApplicationConfig* appConf;
 
-	/**
-		*  \fn private  initEdgeLabels
-		*  \brief inits edge labels
-		*  \return osg::ref_ptr
-		*/
+//	/**
+//		*  \fn private  initEdgeLabels
+//		*  \brief inits edge labels
+//		*  \return osg::ref_ptr
+//		*/
 	osg::ref_ptr<osg::Group> initEdgeLabels();
 
 	/**
@@ -464,9 +475,15 @@ private:
 	int restrictionVisualizationsPosition;
 
 	/**
-				 * \brief Index of restrictionManipulatorsGroup in the root group.
-				 */
+		 * \brief Index of restrictionManipulatorsGroup in the root group.
+		 */
 	int restrictionManipulatorsPosition;
+
+	/**
+		*  int groupsPosition
+		*  \brief browsers group position
+		*/
+	int browsersPosition;
 
 	/**
 		*  int customNodesPosition

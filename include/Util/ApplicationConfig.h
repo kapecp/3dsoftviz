@@ -18,10 +18,6 @@
 
 #include <memory>
 
-using namespace std;
-
-
-
 /*!
  * \brief
  * Pomocne triedy aplikacie

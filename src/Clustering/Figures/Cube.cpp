@@ -249,7 +249,7 @@ void Cube::computeGeode()
     osg::Vec3(-fRadius, +fRadius, +fRadius) + vPosition
     };
 
-    int numCoords = int(sizeof(myCoords)/sizeof(osg::Vec3));
+    int numCoords = static_cast<int>(sizeof(myCoords)/sizeof(osg::Vec3));
     osg::Vec3Array* vertices = new osg::Vec3Array(numCoords,myCoords);
     geometry->setVertexArray(vertices);
 
@@ -283,7 +283,7 @@ void Cube::transform(osg::Vec3d position, osg::Vec3d scale, osg::Vec4d color) {
     material->setAmbient(osg::Material::FRONT,color);
     material->setDiffuse(osg::Material::FRONT,color);
     material->setSpecular(osg::Material::FRONT,color);
-    material->setAlpha(osg::Material::FRONT,(float)color.a());
+    material->setAlpha(osg::Material::FRONT,static_cast<float>(color.a()));
 
     ss->setAttribute(material,osg::StateAttribute::OVERRIDE);
     ss->setMode(GL_DEPTH_TEST,osg::StateAttribute::ON);

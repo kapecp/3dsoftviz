@@ -17,7 +17,7 @@ class RestrictionsObserver {
 public:
 
 	/***/
-	virtual ~RestrictionsObserver (void) {};
+	virtual ~RestrictionsObserver (void) {}
 
 public:
 

@@ -44,28 +44,30 @@ set( INSTALL_TEST ${INSTALL_DATA}/test CACHE PATH "Test files." )
 set( INSTALL_EXAMPLE ${INSTALL_DATA}/example CACHE PATH "Recommended directory to install examples into." )
 
 # Additional CMake scripts
-set( CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH} )
+set( CMAKE_MODULE_PATH
+	"${CMAKE_CURRENT_SOURCE_DIR}/cmake"
+	${CMAKE_MODULE_PATH} )
 
 # Warnings for Debug mode
 option( USE_STRICT_COMPILE_WARNINGS "Use strict compilation warnings in debug mode." ON )
 if( USE_STRICT_COMPILE_WARNINGS )
 	if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang" OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "AppleClang")
 		# using Clang
-		# TODO
-	elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR CMAKE_COMPILER_IS_GNUCXX)
+		set( FLAGS_FOR_DEBUG "-ansi -pedantic -Wall -Wcast-align -Wcast-qual -Wchar-subscripts -Wcomment -Wconversion -Wctor-dtor-privacy -Wdisabled-optimization -Wextra -Wfloat-equal  -Wformat  -Wformat-nonliteral -Wformat-security  -Wformat-y2k -Wformat=2  -Wimport  -Winit-self -Winline -Winvalid-pch -Wlogical-op -Wlong-long -Wmissing-braces -Wmissing-declarations -Wmissing-field-initializers -Wmissing-format-attribute   -Wmissing-include-dirs -Wmissing-noreturn -Wnoexcept  -Wpacked  -Wparentheses -Wpointer-arith -Wredundant-decls -Wreturn-type -Wsequence-point -Wsign-compare  -Wsign-promo -Wstack-protector -Wstrict-aliasing=2 -Wstrict-null-sentinel -Wstrict-overflow=5 -Wswitch -Wswitch-default -Wswitch-enum -Wtrigraphs -Wundef -Wuninitialized -Wunknown-pragmas -Wunreachable-code -Wunsafe-loop-optimizations -Wvariadic-macros -Wvolatile-register-var -Wwrite-strings  -Wno-unused-parameter -Wno-unused" )
+	elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR CMAKE_COMPILER_IS_GNUCXX)       
 		# using GCC
 		set( FLAGS_FOR_DEBUG "-ansi -pedantic -Wall -Wcast-align -Wcast-qual -Wchar-subscripts -Wcomment -Wconversion -Wctor-dtor-privacy -Wdisabled-optimization -Wextra -Wfloat-equal -Wformat -Wformat-nonliteral -Wformat-security -Wformat-y2k -Wformat=2 -Wimport -Winit-self -Winline -Winvalid-pch -Wlogical-op -Wlong-long -Wmissing-braces -Wmissing-declarations -Wmissing-field-initializers -Wmissing-format-attribute -Wmissing-include-dirs -Wmissing-noreturn -Wnoexcept -Wpacked -Wparentheses -Wpointer-arith -Wredundant-decls -Wreturn-type -Wsequence-point -Wsign-compare -Wsign-promo -Wstack-protector -Wstrict-aliasing=2 -Wstrict-null-sentinel -Wstrict-overflow=5 -Wswitch -Wswitch-default -Wswitch-enum -Wtrigraphs -Wundef -Wuninitialized -Wunknown-pragmas -Wunreachable-code -Wunsafe-loop-optimizations -Wvariadic-macros -Wvolatile-register-var -Wwrite-strings -Wno-unused-parameter -Wno-unused" )
 
-	# to suppress warnings for unused stuff use: -Wno-unused-parameter -Wno-unused-result
-	# not used:
-		# too much warnings in Qt headers: NULL vs 0 pointers: -Wzero-as-null-pointer-constant
-		# too much warnings: -Wshadow -Waggregate-return
-		# too much warnings, but should be used: -Wold-style-cast -Woverloaded-virtual -Wuseless-cast -Wsign-conversion
-		# class size optimizations ( not really needed ): -Wpadded
-		# only for C: -Wold-style-definition -Wstrict-prototypes -Wmissing-prototypes
+		# to suppress warnings for unused stuff use: -Wno-unused-parameter -Wno-unused-result
+		# not used:
+			# too much warnings in Qt headers: NULL vs 0 pointers: -Wzero-as-null-pointer-constant
+			# too much warnings: -Wshadow -Waggregate-return
+			# too much warnings, but should be used: -Wold-style-cast -Woverloaded-virtual -Wuseless-cast -Wsign-conversion
+			# class size optimizations ( not really needed ): -Wpadded
+			# only for C: -Wold-style-definition -Wstrict-prototypes -Wmissing-prototypes
 	elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
-	# using Visual Studio C++
-	set( FLAGS_FOR_DEBUG "/W3")
+		# using Visual Studio C++
+		set( FLAGS_FOR_DEBUG "/W3")
 	endif()
 endif()
 
@@ -81,15 +83,16 @@ endif()
 
 # RPath functionality
 set( CMAKE_SKIP_BUILD_RPATH FALSE CACHE STRING "" FORCE )
-set( CMAKE_BUILD_WITH_INSTALL_RPATH TRUE CACHE STRING "" FORCE )	# info: changed to TRUE for cotire unity build - works!
+# next line adds "$ORIGIN/../lib" to RPath:
+set( CMAKE_BUILD_WITH_INSTALL_RPATH TRUE CACHE STRING "" FORCE )
 set( CMAKE_INSTALL_RPATH "$ORIGIN/../lib" CACHE STRING "" FORCE )
+# next line adds additional link paths to RPath (e.g. for qscintilla when not in system):
 set( CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE CACHE STRING "" FORCE )
 set( CMAKE_INSTALL_NAME_DIR "@executable_path/../lib" CACHE STRING "" FORCE )
 
 # --------------
 # Build settings - COTIRE module
 # --------------
-
 include( cotire )
 if(COMMAND cotire )
 	if( NOT COTIRE_MAXIMUM_NUMBER_OF_UNITY_INCLUDES )
@@ -108,6 +111,11 @@ if(COMMAND cotire )
 	### Fix virtual memory range
 	if( MSVC )
 		set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Zm200" CACHE STRING "" FORCE )
+	endif()
+
+	# fix for Diluculum and LuaJIT on 64bit OSX: Lua new_state returned NULL, LuaJIT needs following flags
+	if( APPLE )
+		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pagezero_size 10000 -image_base 100000000" CACHE STRING "" FORCE)
 	endif()
 endif()
 
@@ -129,7 +137,7 @@ include( ${QT_USE_FILE} )
 set( CMAKE_AUTOMOC TRUE )
 
 # add special flag to GCC compiler when using Qt 4.6.x with GCC >4.6
-if(	"${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" AND
+if( 	"${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" AND
 	"${QT_VERSION_MAJOR}.${QT_VERSION_MINOR}" VERSION_LESS "4.7" AND
 	${CMAKE_C_COMPILER_VERSION} VERSION_GREATER "4.6" )
 
@@ -243,17 +251,18 @@ option( USE_BUILTIN_DEPENDENCIES "Use builtin dependencies." ON )
 # Build dependencies
 if( USE_BUILTIN_DEPENDENCIES )
 
+	include( ExternalProject )
+
 	# set search paths to the dependencies
 	set( DEP_SOURCE ${CMAKE_CURRENT_SOURCE_DIR}/dependencies )
 	set( DEP_BIN ${CMAKE_CURRENT_BINARY_DIR}/dependencies )
 	set( CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH} ${DEP_BIN}/lib ${DEP_BIN}/bin )
-	set( CMAKE_INCLUDE_PATH ${CMaKE_INCLUDE_PATH} ${DEP_BIN}/include )
+	set( CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} ${DEP_BIN}/include )
 
 	# Generate cache
 	configure_file( config.cmake.in ${CMAKE_CURRENT_BINARY_DIR}/config.cmake )
 
 	# Build libnoise
-	include( ExternalProject )
 	ExternalProject_Add( dep_libnoise
 		PREFIX libnoise
 		SOURCE_DIR ${DEP_SOURCE}/libnoise
@@ -317,11 +326,98 @@ if( USE_BUILTIN_DEPENDENCIES )
 		endif()
 	endif() # OpenCV_FOUND
 
+ # Build LuaJIT2
+	ExternalProject_Add ( dep_luajit
+		PREFIX luajit
+		SOURCE_DIR ${DEP_SOURCE}/luajit
+		BINARY_DIR luajit
+		CMAKE_ARGS
+			-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
+			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
+			-C ${CMAKE_CURRENT_BINARY_DIR}/config.cmake
+	)
+
+	# Build Diluculum
+	ExternalProject_Add ( dep_diluculum
+		PREFIX diluculum
+		SOURCE_DIR ${DEP_SOURCE}/diluculum
+		BINARY_DIR diluculum
+		CMAKE_ARGS
+			-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
+			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
+	)
+
+	# Build lpeg
+	ExternalProject_Add ( dep_lpeg
+		PREFIX lpeg
+		SOURCE_DIR ${DEP_SOURCE}/lpeg
+		BINARY_DIR lpeg
+		CMAKE_ARGS
+			-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
+			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
+	)
+
+	# Build leg
+	ExternalProject_Add ( dep_leg
+		PREFIX leg
+		SOURCE_DIR ${DEP_SOURCE}/leg
+		BINARY_DIR leg
+		CMAKE_ARGS
+			-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
+			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
+	)
+
+	# Build luametrics
+	ExternalProject_Add ( dep_luametrics
+		PREFIX luametrics
+		SOURCE_DIR ${DEP_SOURCE}/luametrics
+		BINARY_DIR luametrics
+		CMAKE_ARGS
+			-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
+			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
+	)
+
+	# Build luafilesystem
+	ExternalProject_Add ( dep_luafilesystem
+		PREFIX luafilesystem
+		SOURCE_DIR ${DEP_SOURCE}/luafilesystem
+		BINARY_DIR luafilesystem
+		CMAKE_ARGS
+			-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
+			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
+	)
+
+# Ensure correct order of build(dependencies between ext. dependencies)
+	add_dependencies( dep_lpeg dep_luajit )
+	add_dependencies( dep_diluculum dep_luajit )
+	add_dependencies( dep_leg dep_lpeg )
+	add_dependencies( dep_luametrics dep_leg )
+	add_dependencies( dep_luafilesystem dep_luajit )
+
+# Define LUA_ variables
+
+	set( LUA_LIBRARY ${DEP_BIN}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}lua${CMAKE_SHARED_LIBRARY_SUFFIX} )
+	set( DILUCULUM_LIBRARY ${DEP_BIN}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}diluculum${CMAKE_SHARED_LIBRARY_SUFFIX} )
+	
+	if( WIN32 )
+		set( LUA_LIBRARY ${DEP_BIN}/bin/${CMAKE_SHARED_LIBRARY_PREFIX}lua${CMAKE_SHARED_LIBRARY_SUFFIX} )
+		set( DILUCULUM_LIBRARY ${DEP_BIN}/bin/${CMAKE_SHARED_LIBRARY_PREFIX}diluculum${CMAKE_SHARED_LIBRARY_SUFFIX} )
+	endif()
+
 	set( DEPENDENCIES_INCLUDE_DIR ${DEP_BIN}/include )
 else()
 	# Find Lua implementation, assuming lpeg is installed by other means
 	#find_package( Lua51 REQUIRED )
 endif()
+
+# Find Boost
+set ( Booqst_USE_STATIC_LIBS OFF)
+find_package ( Boost 1.39 COMPONENTS unit_test_framework REQUIRED )
+#add_definitions ( -DBOOST_ALL_DYN_LINK )
+
+# Include directories
+include_directories ( ${Boost_INCLUDE_DIRS}  )
+
 
 # -----------------
 # Platform settings
@@ -416,9 +512,11 @@ include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/include )
 set( SRC_MAIN "src/main.cpp" )
 file( GLOB_RECURSE SRC_CORE		"src/Core/*.cpp" )
 file( GLOB_RECURSE SRC_DATA		"src/Data/*.cpp" )
-file( GLOB_RECURSE SRC_IMPORTER	"src/Importer/*.cpp" )
-file( GLOB_RECURSE SRC_LAYOUT	"src/Layout/*.cpp" )
-file( GLOB_RECURSE SRC_MANAGER	"src/Manager/*.cpp" )
+file( GLOB_RECURSE SRC_IMPORTER		"src/Importer/*.cpp" )
+file( GLOB_RECURSE SRC_LAYOUT		"src/Layout/*.cpp" )
+file(GLOB_RECURSE SRC_LUAGRAPH  "src/LuaGraph/*.cpp")
+file(GLOB_RECURSE SRC_LUAINTERFACE  "src/LuaInterface/*.cpp")
+file( GLOB_RECURSE SRC_MANAGER		"src/Manager/*.cpp" )
 file( GLOB_RECURSE SRC_MATH		"src/Math/*.cpp" )
 file( GLOB_RECURSE SRC_MODEL	"src/Model/*.cpp" )
 file( GLOB_RECURSE SRC_NETWORK	"src/Network/*.cpp" )
@@ -448,7 +546,7 @@ file( GLOB_RECURSE SRC_SPEECH	"src/Speech/*.cpp" )
 # All source files
 set( SRC
 	${SRC_MAIN} ${SRC_CORE} ${SRC_DATA} ${SRC_IMPORTER}
-	${SRC_LAYOUT} ${SRC_MANAGER} ${SRC_MATH}
+		${SRC_LAYOUT} ${SRC_LUAGRAPH} ${SRC_LUAINTERFACE} ${SRC_MANAGER} ${SRC_MATH}
 	${SRC_NETWORK}
 	${SRC_OSGQTBROWSER} ${SRC_QOSG} ${SRC_UTIL} ${SRC_VIEWER} ${SRC_MODEL} ${SRC_CLUSTERING}
 )
@@ -477,6 +575,8 @@ file( GLOB_RECURSE HEADER_CORE		"include/Core/*.h" )
 file( GLOB_RECURSE HEADER_DATA		"include/Data/*.h" )
 file( GLOB_RECURSE HEADER_IMPORTER	"include/Importer/*.h" )
 file( GLOB_RECURSE HEADER_LAYOUT	"include/Layout/*.h" )
+file(GLOB_RECURSE HEADER_LUAGRAPH  "include/LuaGraph/*.h")
+file(GLOB_RECURSE HEADER_LUAINTERFACE  "include/LuaInterface/*.h")
 file( GLOB_RECURSE HEADER_MANAGER	"include/Manager/*.h" )
 file( GLOB_RECURSE HEADER_MATH		"include/Math/*.h" )
 file( GLOB_RECURSE HEADER_MODEL		"include/Model/*.h" )
@@ -506,7 +606,7 @@ file( GLOB_RECURSE HEADER_SPEECH	"include/Speech/*.h" )
 # All header files
 set( INCL
 	${HEADER_CORE} ${HEADER_DATA} ${HEADER_IMPORTER}
-	${HEADER_LAYOUT} ${HEADER_MANAGER} ${HEADER_MATH}
+		${HEADER_LAYOUT} ${HEADER_LUAGRAPH} ${HEADER_LUAINTERFACE} ${HEADER_MANAGER} ${HEADER_MATH}
 	${HEADER_NETWORK}
 	${HEADER_OSGQTBROWSER} ${HEADER_QOSG} ${HEADER_UTIL} ${HEADER_VIEWER} ${HEADER_MODEL} ${HEADER_CLUSTERING}
 )
@@ -542,6 +642,8 @@ source_group( \\src\\Util "^.*Util/.*$" )
 source_group( \\src\\Layout "^.*Layout/.*$" )
 source_group( \\src\\QOSG "^.*QOSG/.*$" )
 source_group( \\src\\OsgQtBrowser "^.*OsgQtBrowser/.*$" )
+source_group(\\src\\LuaGraph "^.*LuaGraph/.*$")
+source_group(\\src\\LuaInterface "^.*LuaInterface/.*$")
 
 # Group header files
 source_group( \\headers\\Clustering "^.*Clustering/.*h$")
@@ -556,6 +658,8 @@ source_group( \\headers\\Util "^.*Util/.*h$" )
 source_group( \\headers\\Layout "^.*Layout/.*h$" )
 source_group( \\headers\\QOSG "^.*QOSG/.*h$" )
 source_group( \\headers\\OsgQtBrowser "^.*OsgQtBrowser/.*h$" )
+source_group(\\headers\\LuaGraph "^.*LuaGraph/.*h$")
+source_group(\\headers\\LuaInterface "^.*LuaInterface/.*h$")
 
 if( OpenCV_FOUND )
 	source_group( \\src\\QOpenCV "^.*QOpenCV/.*$" )
@@ -607,6 +711,8 @@ target_link_libraries( ${3DSOFTVIZ_NAME}
 	${QT_LIBRARIES}
 	${OPENSCENEGRAPH_LIBRARIES}
 	${OSGVIEWER_LIBRARIES}
+	${DILUCULUM_LIBRARY}
+	${LUA_LIBRARY}
 	libnoise
 	noiseutils
 	qtcolorpicker
@@ -687,7 +793,14 @@ endif()
 
 # Install built in dependencies unless we are building an OSX Bundle
 if( USE_BUILTIN_DEPENDENCIES )
-
+	# Make sure dependencies are built
+	add_dependencies( ${3DSOFTVIZ_NAME} libnoise dep_diluculum dep_luametrics dep_leg dep_lpeg dep_luajit dep_luafilesystem )
+	#add_dependencies( ${3DSOFTVIZ_NAME} dep_aruco )
+	if (COMMAND cotire)
+		add_dependencies( ${3DSOFTVIZ_NAME}_unity libnoise dep_diluculum dep_luametrics dep_leg dep_lpeg dep_luajit dep_luafilesystem )
+		#add_dependencies( ${3DSOFTVIZ_NAME}_unity dep_aruco )
+	endif()
+		
 	# Install all dependencies
 	install( DIRECTORY ${DEP_BIN}/
 		DESTINATION ${INSTALL_DEPS}
@@ -742,3 +855,4 @@ set( CPACK_PACKAGE_VENDOR "${3DSOFTVIZ_VENDOR}" )
 set( CPACK_RESOURCE_FILE_README "${CMAKE_SOURCE_DIR}/${3DSOFTVIZ_README}" )
 #set( CPACK_COMPONENTS_ALL Runtime Dependencies Data )
 include( CPack )
+

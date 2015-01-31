@@ -30,7 +30,7 @@ public:
 	}
 
 	/***/
-	virtual ~Adapter_iostream_to_QIODevice (void) {};
+	virtual ~Adapter_iostream_to_QIODevice (void) {}
 
 	/**
 	 * \brief Method provided for compatibility with QIODevice.

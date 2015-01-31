@@ -1,0 +1,4 @@
+1. remove node nefunguje (tlacidlo ani funkcia)
+2. setEdgeColor nefunguje - hrany preberaju farbu okolitych vrcholov a preblikavaju
+3. textury hran sa neotacaju smerom ku kamere
+4. ked su zobrazene labels (pomocou tlacidla) a nacita sa graf znovu, labele sa nezobrazuju

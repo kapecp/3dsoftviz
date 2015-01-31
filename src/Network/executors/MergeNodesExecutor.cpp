@@ -3,7 +3,7 @@
 #include "Network/Client.h"
 #include "Network/Server.h"
 
-using namespace Network;
+namespace Network {
 
 void MergeNodesExecutor::execute_client() {
 
@@ -65,3 +65,5 @@ void MergeNodesExecutor::execute_server() {
     return;
 
 }
+
+} // namespace Network

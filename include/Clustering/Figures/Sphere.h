@@ -5,6 +5,8 @@
 #include <osg/Geometry>
 #include <osg/AutoTransform>
 
+#include <vector>
+
 class Sphere
 {
 

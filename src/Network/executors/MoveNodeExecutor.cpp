@@ -4,7 +4,7 @@
 #include "Network/Client.h"
 #include "Data/Node.h"
 
-using namespace Network;
+namespace Network {
 
 void MoveNodeExecutor::execute_client() {
 
@@ -91,3 +91,5 @@ void MoveNodeExecutor::moveNode(Data::Node *node, osg::Vec3 position) {
     node -> setFixed(true);
     node -> setTargetPosition(position);
 }
+
+} // namespace Network

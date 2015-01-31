@@ -16,7 +16,7 @@ class RSFImporter
 public:
 
 	/***/
-	virtual ~RSFImporter (void) {};
+	virtual ~RSFImporter (void) {}
 
 	/**
 	*\brief If exists return special node representing HyperEdge

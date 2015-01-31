@@ -1,7 +1,7 @@
 #include "Network/executors/WelcomeExecutor.h"
 #include "Network/Client.h"
 
-using namespace Network;
+namespace Network {
 
 void WelcomeExecutor::execute_client() {
 
@@ -16,3 +16,5 @@ void WelcomeExecutor::execute_client() {
 void WelcomeExecutor::execute_server() {
     return;
 }
+
+} // namespace Network

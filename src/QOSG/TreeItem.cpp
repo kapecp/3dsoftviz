@@ -50,7 +50,7 @@
 #include <QStringList>
 #include "QOSG/TreeItem.h"
 
-using namespace QOSG;
+namespace QOSG {
 
 TreeItem::TreeItem(const QList<QVariant> &data, TreeItem *parent)
 {
@@ -141,3 +141,5 @@ void TreeItem::replaceDataColumn(QString data)
         itemData.append(data);
     }
 }
+
+} // namespace QOSG

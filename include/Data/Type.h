@@ -133,7 +133,7 @@ public:
 		*  \fn inline public  setIsInDB
 		*  \brief Sets the inDB flag of the Type to true (meaning that the Type is in database)
 		*/
-	void setIsInDB() { inDB = true; };
+	void setIsInDB() { inDB = true; }
 
 
 	/**

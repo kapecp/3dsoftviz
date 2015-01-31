@@ -2,7 +2,7 @@
 #include "Network/Server.h"
 #include "Network/Client.h"
 
-using namespace Network;
+namespace Network {
 
 void AttractAttentionExecutor::execute_client() {
 
@@ -42,5 +42,7 @@ void AttractAttentionExecutor::execute_server() {
         }
         server->sendAttractAttention(attract,id,client);
     }
+
+}
 
 }

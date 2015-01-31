@@ -4,7 +4,7 @@
 #include "Network/Server.h"
 #include "Network/Client.h"
 
-using namespace Network;
+namespace Network {
 
 void NewNodeExecutor::execute_client() {
 
@@ -63,3 +63,5 @@ void NewNodeExecutor::execute_server() {
 
     server->sendNewNode(newNode);
 }
+
+} // namespace Network

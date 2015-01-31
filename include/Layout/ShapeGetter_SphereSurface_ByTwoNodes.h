@@ -23,7 +23,7 @@ public:
 			);
 
 	/***/
-	virtual ~ShapeGetter_SphereSurface_ByTwoNodes (void) {};
+	virtual ~ShapeGetter_SphereSurface_ByTwoNodes (void) {}
 
 	virtual QSharedPointer<Shape> getShape (void);
 
