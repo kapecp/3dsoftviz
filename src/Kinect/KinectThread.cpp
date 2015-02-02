@@ -7,10 +7,6 @@
 
 #include "QDebug"
 
-using namespace Kinect;
-
-using namespace cv;
-
 Kinect::KinectThread::KinectThread(QObject *parent) : QThread(parent)
 {
     //initialize based atributes
@@ -43,7 +39,9 @@ bool Kinect::KinectThread::inicializeKinect()
         m_depth.start();
 
         //create hand tracker, TODO 2. parameter remove - unused
+#ifdef NITE2_FOUND
         kht = new KinectHandTracker(&mKinect->device,&m_depth);
+#endif
     }
     return isOpen;
 }
@@ -110,17 +108,21 @@ void Kinect::KinectThread::run()
             //convert for sending
             frame=mKinect->colorImageCvMat(colorFrame);
 
+#ifdef NITE2_FOUND
             //set parameters for changes movement and cursor
             kht->setCursorMovement(isCursorEnable);
             kht->setSpeedMovement(mSpeed);
             // cita handframe, najde gesto na snimke a vytvori mu "profil"
             kht->getAllGestures();
             kht->getAllHands();
+#endif
+
             //////////////End/////////////
 
             //	cap >> frame; // get a new frame from camera
             cv::cvtColor(frame, frame, CV_BGR2RGB);
 
+#ifdef NITE2_FOUND
             if (kht->isTwoHands == true) //TODO must be two hands for green square mark hand in frame
             {
                 // convert hand coordinate
@@ -167,6 +169,7 @@ void Kinect::KinectThread::run()
                            (kht->slidingHand_y/kht->handTrackerFrame.getDepthFrame().getHeight()-0.5)*200, (kht->slidingHand_z/kht->handTrackerFrame.getDepthFrame().getHeight()-0.5)*200, kht->slidingHand_z);
                 }
             }
+#endif
             // resize, send a msleep for next frame
             cv::resize(frame, frame,cv::Size(320,240),0,0,cv::INTER_LINEAR);
             emit pushImage( frame );

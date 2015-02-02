@@ -2,6 +2,8 @@
 #include "Viewer/MouseControl.h"
 #include "QDebug"
 
+#ifdef NITE2_FOUND
+
 Kinect::KinectHandTracker::KinectHandTracker(openni::Device *device, openni::VideoStream *m_depth)
 {
     // create hand tracking from device
@@ -221,3 +223,5 @@ void Kinect::KinectHandTracker::getRotatingMove()
         }
     }
 }
+
+#endif // NITE2_FOUND

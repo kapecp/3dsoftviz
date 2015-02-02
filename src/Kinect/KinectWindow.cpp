@@ -11,9 +11,6 @@
 #include <QCloseEvent>
 #include "QDebug"
 
-using namespace Kinect;
-using namespace cv;
-
 Kinect::KinectWindow::KinectWindow(QWidget *parent, QApplication * app, KinectThread *thr): QDialog(parent)
 {
     mApp=app;

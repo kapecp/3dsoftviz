@@ -7,8 +7,6 @@
 #include "Core/Core.h"
 #include "Viewer/CameraManipulator.h"
 
-using namespace Kinect;
-
 Kinect::KinectCore * Kinect::KinectCore::mKinectCore;
 
 Kinect::KinectCore::KinectCore( QApplication* app,QWidget *parent)

@@ -3,8 +3,12 @@
 
 #include "Kinect/HistoryBuffer.h"
 #include "OpenNI.h"
-#include "NiTE.h"
+
 #include <map>
+
+#ifdef NITE2_FOUND
+
+#include "NiTE.h"
 
 #define NUM_HANDS 2
 
@@ -139,4 +143,7 @@ private:
 
 };
 }
+
+#endif // NITE2_FOUND
+
 #endif // KINECTHANDTRACKER_H

@@ -5,7 +5,10 @@
 #include <QImage>
 
 #include "OpenNI.h"
+
+#ifdef NITE2_FOUND
 #include "NiTE.h"
+#endif
 
 #include <opencv2/core/core.hpp>
 
@@ -135,7 +138,10 @@ private:
 	/**
 	 * @brief base class for Hand Recognition
 	 */
+#ifdef NITE2_FOUND
 	KinectHandTracker *kht;
+#endif
+
 
 	/**
 	 * @brief base class for open Kinect a converted

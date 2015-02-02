@@ -454,7 +454,7 @@ if( OpenCV_FOUND )
 endif()
 
 # add Kinect if Nite, Openni and Opencv
-if( NITE2_FOUND AND OPENNI2_FOUND AND OpenCV_FOUND )
+if( OPENNI2_FOUND AND OpenCV_FOUND )
 	list( APPEND SRC ${SRC_KINECT} )
 endif()
 
@@ -513,7 +513,7 @@ if( OpenCV_FOUND )
 endif()
 
 #Kinect use Nite, Openni and OpenCV
-if( NITE2_FOUND AND OPENNI2_FOUND AND OpenCV_FOUND )
+if( OPENNI2_FOUND AND OpenCV_FOUND )
 	list( APPEND INCL ${HEADER_KINECT} )
 endif()
 
@@ -602,9 +602,14 @@ if( OpenCV_FOUND )
 	target_link_libraries( ${3DSOFTVIZ_NAME} ${OpenCV_LIBS}	aruco )
 endif()
 
-if( NITE2_FOUND AND OPENNI2_FOUND )
-	target_link_libraries( ${3DSOFTVIZ_NAME} ${NITE2_LIBRARIES} ${OPENNI2_LIBRARIES} )
+if( OPENNI2_FOUND )
+	target_link_libraries( ${3DSOFTVIZ_NAME} ${OPENNI2_LIBRARIES} )
 endif()
+
+if( NITE2_FOUND )
+	target_link_libraries( ${3DSOFTVIZ_NAME} ${NITE2_LIBRARIES} )
+endif()
+
 
 if( KINECTSDK_FOUND )
 	target_link_libraries( ${3DSOFTVIZ_NAME} ${KINECTSDK_LIBRARIES} )

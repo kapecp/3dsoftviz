@@ -1,8 +1,6 @@
 #include "Kinect/KinectRecognition.h"
 #include <QDebug>
 
-using namespace Kinect;
-
 Kinect::KinectRecognition::KinectRecognition()
 {
     this->inicialize();

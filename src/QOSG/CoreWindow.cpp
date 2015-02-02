@@ -37,10 +37,8 @@
 
 #ifdef OPENCV_FOUND
 #ifdef OPENNI2_FOUND
-#ifdef NITE2_FOUND
 #include "Kinect/KinectCore.h"
 #include "Kinect/RansacSurface/Ransac.h"
-#endif
 #endif
 #endif
 
@@ -874,7 +872,7 @@ QWidget * CoreWindow::createMoreFeaturesTab(QFrame* line)
     lMore->setContentsMargins(1,1,1,1);
     lMore->setSpacing(2);
 
-    #ifdef osgOPENCV_FOUND
+    #ifdef OPENCV_FOUND
     b_start_face = new QPushButton( tr("Start camera"));
     lMore->addRow(new QLabel( tr("Face & Marker detection")));
     b_start_face->setMaximumWidth(136);
@@ -894,21 +892,19 @@ QWidget * CoreWindow::createMoreFeaturesTab(QFrame* line)
 #ifdef OPENCV_FOUND
 
 #ifdef OPENNI2_FOUND
-#ifdef NITE2_FOUND
     line = createLine();
     lMore->addRow(line);
-   lMore->addRow(new QLabel( tr("Kinect")));
-   b_start_kinect = new QPushButton();
-   b_start_kinect->setText("Start kinect");
-   b_start_kinect->setMaximumWidth(136);
-   lMore->addRow(b_start_kinect);
-   connect(b_start_kinect, SIGNAL(clicked()), this, SLOT(createKinectWindow()));
-   b_start_ransac = new QPushButton();
-   b_start_ransac->setText("Start calculate surface");
-   b_start_ransac->setMaximumWidth(136);
-   lMore->addRow(b_start_ransac);
-   connect(b_start_ransac, SIGNAL(clicked()), this, SLOT(calculateRansac()));
-#endif
+    lMore->addRow(new QLabel( tr("Kinect")));
+    b_start_kinect = new QPushButton();
+    b_start_kinect->setText("Start kinect");
+    b_start_kinect->setMaximumWidth(136);
+    lMore->addRow(b_start_kinect);
+    connect(b_start_kinect, SIGNAL(clicked()), this, SLOT(createKinectWindow()));
+    b_start_ransac = new QPushButton();
+    b_start_ransac->setText("Start calculate surface");
+    b_start_ransac->setMaximumWidth(136);
+    lMore->addRow(b_start_ransac);
+    connect(b_start_ransac, SIGNAL(clicked()), this, SLOT(calculateRansac()));
 #endif
 #endif
 
@@ -2519,7 +2515,6 @@ void CoreWindow::create_facewindow()
 
 #ifdef OPENCV_FOUND
 #ifdef OPENNI2_FOUND
-#ifdef NITE2_FOUND
 void CoreWindow::createKinectWindow(){
 
     Kinect::KinectCore::getInstance(NULL,this)->kinectRecognition();
@@ -2530,8 +2525,6 @@ void CoreWindow::calculateRansac()
     Kinect::Ransac *ransac= new Kinect::Ransac();
     ransac->calculate();
 }
-
-#endif
 #endif
 #endif
 
