@@ -8,13 +8,17 @@
 
 find_path( NITE2_INCLUDE_DIR
 	NAMES NiTE.h
-	HINTS /home/kapec/Desktop/work-in-progress/NiTE-Linux-x64-2.2/Include
+	HINTS 
+		/home/kapec/Desktop/work-in-progress/NiTE-Linux-x64-2.2/Include
+		/home/kapecp/Desktop/Kinect/NiTE-Linux-x64-2.2/Include/
 	)
 #find_path( OPENNI2_DLL NAMES Kinect.dll)
 
 find_library( NITE2_LIBRARY
 	NAMES NiTE2
-	HINTS /home/kapec/Desktop/work-in-progress/NiTE-Linux-x64-2.2/Redist
+	HINTS 
+		/home/kapec/Desktop/work-in-progress/NiTE-Linux-x64-2.2/Redist
+		/home/kapecp/Desktop/Kinect/NiTE-Linux-x64-2.2/Redist/
 	)
 
 
