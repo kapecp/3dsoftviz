@@ -421,7 +421,6 @@ public slots:
 
 #ifdef OPENCV_FOUND
 #ifdef OPENNI2_FOUND
-#ifdef NITE2_FOUND
     /**
         *
         * @brief create Kinect Button
@@ -432,8 +431,6 @@ public slots:
      * @brief calculateRansac
      */
     void calculateRansac();
-
-#endif
 #endif
 #endif
 

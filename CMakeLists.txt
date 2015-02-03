@@ -1,4 +1,4 @@
-# Copyright ( C ) 2013-2014 3DSoftviz.
+# Copyright ( C ) 2013-2015 3DSoftviz.
 # Created by Peter Kapec
 # Redistribution and use of this file is allowed
 # according to the terms of the MIT license.
@@ -205,30 +205,25 @@ endif()
 
 # ------------------------------ OpenNI2 and Nite -------------------------------
 # Find OPENNI2
-if( WIN32 AND MSVC )
-
-	find_package( OPENNI2 )
-	if( OPENNI2_FOUND )
-		include_directories( SYSTEM ${OPENNI2_INCLUDE_DIRS} )
-		add_definitions( -DOPENNI2_FOUND )
-		message( STATUS "OpenNI2 FOUND" )
-	else( OPENNI2_FOUND )
-		message( STATUS "OpenNI2 NOT FOUND" )
-	endif()
+find_package( OPENNI2 )
+if( OPENNI2_FOUND )
+	include_directories( SYSTEM ${OPENNI2_INCLUDE_DIRS} )
+	add_definitions( -DOPENNI2_FOUND )
+	message( STATUS "OpenNI2 FOUND" )
+else( OPENNI2_FOUND )
+	message( STATUS "OpenNI2 NOT FOUND" )
 endif()
 
 # Find NITE2
-if( WIN32 AND MSVC )
-
-	find_package( NITE2 )
-	if( NITE2_FOUND )
-		include_directories( SYSTEM ${NITE2_INCLUDE_DIRS} ${NITE2_OPENNI2_DRIVER_DIRS} )
-		add_definitions( -DNITE2_FOUND )
-		message ( STATUS "NITE2 FOUND" )
-	else( NITE2_FOUND )
-		message ( STATUS "NITE2 NOT FOUND" )
-	endif()
+find_package( NITE2 )
+if( NITE2_FOUND )
+	include_directories( SYSTEM ${NITE2_INCLUDE_DIRS} ${NITE2_OPENNI2_DRIVER_DIRS} )
+	add_definitions( -DNITE2_FOUND )
+	message ( STATUS "NITE2 FOUND" )
+else( NITE2_FOUND )
+	message ( STATUS "NITE2 NOT FOUND" )
 endif()
+
 
 # ------------------------------- KINECT SDK ----------------------------------
 if( WIN32 AND MSVC )
@@ -593,7 +588,7 @@ if( OpenCV_FOUND )
 endif()
 
 # add Kinect if Nite, Openni and Opencv
-if( NITE2_FOUND AND OPENNI2_FOUND AND OpenCV_FOUND )
+if( OPENNI2_FOUND AND OpenCV_FOUND )
 	list( APPEND SRC ${SRC_KINECT} )
 endif()
 
@@ -660,7 +655,7 @@ if( OpenCV_FOUND )
 endif()
 
 #Kinect use Nite, Openni and OpenCV
-if( NITE2_FOUND AND OPENNI2_FOUND AND OpenCV_FOUND )
+if( OPENNI2_FOUND AND OpenCV_FOUND )
 	list( APPEND INCL ${HEADER_KINECT} )
 endif()
 
@@ -768,9 +763,14 @@ if( OpenCV_FOUND )
 	target_link_libraries( ${3DSOFTVIZ_NAME} ${OpenCV_LIBS} aruco )
 endif()
 
-if( NITE2_FOUND AND OPENNI2_FOUND )
-	target_link_libraries( ${3DSOFTVIZ_NAME} ${NITE2_LIBRARIES} ${OPENNI2_LIBRARIES} )
+if( OPENNI2_FOUND )
+	target_link_libraries( ${3DSOFTVIZ_NAME} ${OPENNI2_LIBRARIES} )
 endif()
+
+if( NITE2_FOUND )
+	target_link_libraries( ${3DSOFTVIZ_NAME} ${NITE2_LIBRARIES} )
+endif()
+
 
 if( KINECTSDK_FOUND )
 	target_link_libraries( ${3DSOFTVIZ_NAME} ${KINECTSDK_LIBRARIES} )

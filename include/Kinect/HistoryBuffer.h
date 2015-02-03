@@ -8,6 +8,8 @@
 #ifndef _HISTORY_BUFFER_H_
 #define _HISTORY_BUFFER_H_
 
+#ifdef NITE2_FOUND
+
 #include "NiTE.h"
 
 
@@ -75,5 +77,6 @@ private:
 	int m_size;
 };
 
+#endif // NITE2_FOUND
 
 #endif

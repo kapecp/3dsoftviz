@@ -54,7 +54,7 @@ void Kinect::Ransac::calculate()
     char *pch;
     char *context = NULL;
     std::string data= Util::ApplicationConfig::get()->getValue("Kinect.Surface.DATA").toStdString();
-
+/*
     ifstream myfile(data);
     if(!myfile.is_open()){
         qDebug() << "FILE dont find." << endl;
@@ -84,5 +84,6 @@ void Kinect::Ransac::calculate()
         myfile.close();
         qDebug() << "Calculate end";
     }
+ */
 }
 

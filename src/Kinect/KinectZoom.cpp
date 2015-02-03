@@ -26,9 +26,9 @@ int Kinect::KinectZoom::DetectContour(cv::Mat img){
     if(contours.size()>0)
     {
         cv::vector<std::vector<int> >hull( contours.size() );
-        cv::vector<cv::vector<cv::Vec4i>> convDef(contours.size() );
-        cv::vector<cv::vector<cv::Point>> hull_points(contours.size());
-        cv::vector<cv::vector<cv::Point>> defect_points(contours.size());
+        cv::vector<cv::vector<cv::Vec4i> > convDef(contours.size() );
+        cv::vector<cv::vector<cv::Point> > hull_points(contours.size());
+        cv::vector<cv::vector<cv::Point> > defect_points(contours.size());
 
         for( int i = 0; i < contours.size(); i++ )
         {
