@@ -1,0 +1,19 @@
+
+# Other Options
+suffix=none 	# Do not retain a backup of the original file.
+recursive		# For each directory in the command line, process all subdirectories recursively.
+preserve-date	# Preserve the original file's date and time modified.
+
+# Style
+style=kr		# Kernighan & Ritchie style
+
+# Options
+align-pointer=type	# Attach a pointer or reference operator (*, &, or ^) to either the variable type.
+attach-namespaces	# Attach brackets to a namespace statement.
+indent=force-tab	# Indent using all tab characters,
+indent-switches		# Indent 'switch' blocks so that the 'case X:' statements are indented in the switch block.
+pad-paren-in		# Insert space padding around parenthesis on the inside only.
+pad-header			# Insert space padding between a header (e.g. 'if', 'for', 'while'...) and the following paren.
+unpad-paren			# Remove extra space padding around parenthesis on the inside and outside.
+add-brackets		# Add brackets to unbracketed one line conditional statements (e.g. 'if', 'for', 'while'...).
+break-closing-brackets	#  this breaks closing headers (e.g. 'else', 'catch', ...) from their immediately preceding closing brackets.
