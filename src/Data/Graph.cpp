@@ -66,6 +66,8 @@ Data::Graph::Graph(qlonglong graph_id, QString name, QSqlDatabase* conn, QMap<ql
 			this->typesByName->insert(this->types->value(i)->getName(), this->types->value(i));
 		}
 	}
+
+	this->is3D = false;
 }
 
 Data::Graph::Graph(qlonglong graph_id, QString name, qlonglong layout_id_counter, qlonglong ele_id_counter, QSqlDatabase* conn)
@@ -86,6 +88,8 @@ Data::Graph::Graph(qlonglong graph_id, QString name, qlonglong layout_id_counter
 	this->metaNodes = new QMap<qlonglong,osg::ref_ptr<Data::Node> >();
 	this->frozen = false;
 	this->typesByName = new QMultiMap<QString, Data::Type*>();
+
+	this->is3D = false;
 }
 
 Data::Graph::~Graph(void)
@@ -1315,5 +1319,45 @@ osg::ref_ptr<Data::Node> Data::Graph::addFloatingRestrictionNode(QString name, o
 	node->setRemovableByUser (false);
 
 	return node;
+}
+
+void Data::Graph::switch2Dand3D(){
+	is3D = !is3D;
+
+	//switch all edges
+	for (QMap<qlonglong, osg::ref_ptr<Data::Edge> >::iterator it = edges->begin (); it != edges->end (); ++it) {
+		osg::ref_ptr<Data::Edge> edge = it.value ();
+		if (is3D)
+			edge->turnTo3D();
+	   else
+			edge->turnTo2D();
+	}
+
+	//switch all meta edges
+	for (QMap<qlonglong, osg::ref_ptr<Data::Edge> >::iterator it = metaEdges->begin (); it != metaEdges->end (); ++it) {
+		osg::ref_ptr<Data::Edge> metaEdge = it.value ();
+		if (is3D)
+			metaEdge->turnTo3D();
+	   else
+			metaEdge->turnTo2D();
+	}
+
+	//switch all nodes
+	for (QMap<qlonglong, osg::ref_ptr<Data::Node> >::iterator it = nodes->begin (); it != nodes->end (); ++it) {
+		osg::ref_ptr<Data::Node> node = it.value ();
+	   if (is3D)
+		   node->turnTo3D();
+	   else
+		   node->turnTo2D();
+	}
+
+	//switch all meta nodes
+	for (QMap<qlonglong, osg::ref_ptr<Data::Node> >::iterator it = metaNodes->begin (); it != metaNodes->end (); ++it) {
+		osg::ref_ptr<Data::Node> metaNode = it.value ();
+	   if (is3D)
+		   metaNode->turnTo3D();
+	   else
+		   metaNode->turnTo2D();
+	}
 }
 

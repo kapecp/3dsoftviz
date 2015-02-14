@@ -114,13 +114,6 @@ private:
 	QList<osg::ref_ptr<osg::ShapeDrawable> > drawableList;
 
 	/**
-		*  bool useDrawable
-		*  \brief if true, then use drawable as edge
-		*/
-	bool useDrawable;
-
-
-	/**
 		*  \fn private  initEdges
 		*  \brief inits geometry
 		*/

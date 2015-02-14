@@ -293,6 +293,11 @@ public slots:
 	void startEdgeBundling();
 
 	/**
+				 * \brief Turn graph parts from 2D to 3D and from 3D to 2D.
+				 */
+	void switch2Dand3D();
+
+	/**
 				*  \fn public  add_EdgeClick
 				*  \brief create edge between selected node
 				*/
@@ -547,6 +552,11 @@ private:
 		 * \brief Button for starting edge bundling.
 		 */
 	QPushButton *b_StartEdgeBundling;
+
+	/**
+		 * \brief Button for switching 2D and 3D representation of graph parts.
+		 */
+	QPushButton *b_switch2Dand3D;
 
 	/**
 		*  QAction * create new Edge

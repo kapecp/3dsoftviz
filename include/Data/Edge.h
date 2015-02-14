@@ -214,8 +214,21 @@ public:
 		*  \brief Updates coordinates of the Edge
 		*  \param    srcPos    new coordinates of the starting Node
 		*  \param   dstNode    new coordinates of the ending Node
+		*  \param   is3D	true if edge is 3D object
 		*/
-	void updateCoordinates(osg::Vec3 srcPos, osg::Vec3 dstNode);
+	void updateCoordinates(osg::Vec3 srcPos, osg::Vec3 dstNode, bool is3D);
+
+	/**
+		*  \fn public  turnTo3D()
+		*  \brief Turn edge representation to 3D object
+		*/
+	void turnTo3D();
+
+	/**
+		*  \fn public  turnTo2D()
+		*  \brief Turn edge representation to 2D object
+		*/
+	void turnTo2D();
 
 
 	/**

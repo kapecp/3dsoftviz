@@ -320,6 +320,11 @@ void CoreWindow::createActions()
 	b_StartEdgeBundling->setFocusPolicy(Qt::NoFocus);
 	connect(b_StartEdgeBundling, SIGNAL(clicked()), this, SLOT(startEdgeBundling()));
 
+	b_switch2Dand3D = new QPushButton();
+	b_switch2Dand3D->setText("3D/2D");
+	b_switch2Dand3D->setToolTip("&Turn to 3D or 2D");
+	b_switch2Dand3D->setFocusPolicy(Qt::NoFocus);
+	connect(b_switch2Dand3D, SIGNAL(clicked()), this, SLOT(switch2Dand3D()));
 
 	b_start_server = new QPushButton();
 	b_start_server->setText("Host session");
@@ -477,6 +482,7 @@ void CoreWindow::createLeftToolBar()
 
 	toolBar->addWidget(b_UnsetRestrictionFromAll);
 	toolBar->addWidget(b_StartEdgeBundling);
+	toolBar->addWidget(b_switch2Dand3D);
 
 	toolBar->addSeparator();
 
@@ -1557,6 +1563,14 @@ void CoreWindow::startEdgeBundling() {
 	}
 
 	layout->playEdgeBundling();
+}
+
+void CoreWindow::switch2Dand3D() {
+	Data::Graph * currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
+
+	if (currentGraph != NULL) {
+		currentGraph->switch2Dand3D();
+	}
 }
 
 void CoreWindow::setRestrictionToSelectedNodes (

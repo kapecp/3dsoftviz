@@ -385,6 +385,18 @@ public:
 		*/
 	QString toString() const;
 
+	/**
+		*  \fn public  turnTo3D()
+		*  \brief Turn node representation to 3D object
+		*/
+	void turnTo3D();
+
+	/**
+		*  \fn public  turnTo2D()
+		*  \brief Turn node representation to 2D object
+		*/
+	void turnTo2D();
+
 
 
 	/**

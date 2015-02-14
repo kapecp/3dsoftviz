@@ -547,6 +547,15 @@ public:
 		*/
 	void splitAllEdges(int splitCount);
 
+	/**
+		*  \fn inline public  switch2Dand3D()
+		*  \brief Turn graph parts to 3D or 2D.
+		*/
+	void switch2Dand3D();
+
+	bool getIs3D(){return is3D;}
+
+
 private:
 
 	/**
@@ -743,6 +752,12 @@ private:
 		 * interface for setting restrictions and getting restricted positions).
 		 */
 	Layout::RestrictionsManager restrictionsManager_;
+
+	/**
+		*  bool is3D
+		*  \brief Flag if the Graph have 3D or 2D parts.
+		*/
+	bool is3D;
 
 };
 }

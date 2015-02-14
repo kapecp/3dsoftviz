@@ -36,8 +36,7 @@ Data::Edge::Edge(qlonglong id, QString name, Data::Graph* graph, osg::ref_ptr<Da
 	coordinates = new osg::Vec3Array();
 	edgeTexCoords = new osg::Vec2Array();
 
-	//updateCoordinates(getSrcNode()->getTargetPosition(), getDstNode()->getTargetPosition());
-	updateCoordinates(getSrcNode()->restrictedTargetPosition(), getDstNode()->restrictedTargetPosition());
+	updateCoordinates(getSrcNode()->restrictedTargetPosition(), getDstNode()->restrictedTargetPosition(), graph->getIs3D());
 }
 
 
@@ -78,7 +77,7 @@ void Data::Edge::unlinkNodesAndRemoveFromGraph() {
 	this->graph->removeEdge(this);
 }
 
-void Data::Edge::updateCoordinates(osg::Vec3 srcPos, osg::Vec3 dstPos)
+void Data::Edge::updateCoordinates(osg::Vec3 srcPos, osg::Vec3 dstPos, bool is3D)
 {
 	coordinates->clear();
 	edgeTexCoords->clear();
@@ -115,22 +114,95 @@ void Data::Edge::updateCoordinates(osg::Vec3 srcPos, osg::Vec3 dstPos)
 
 	up *= this->scale;
 
-	//updating edge coordinates due to scale
-	coordinates->push_back(osg::Vec3d(x.x() + up.x(), x.y() + up.y(), x.z() + up.z()));
-	coordinates->push_back(osg::Vec3d(x.x() - up.x(), x.y() - up.y(), x.z() - up.z()));
-	coordinates->push_back(osg::Vec3d(y.x() - up.x(), y.y() - up.y(), y.z() - up.z()));
-	coordinates->push_back(osg::Vec3d(y.x() + up.x(), y.y() + up.y(), y.z() + up.z()));
+	if(is3D)
+	{
+		osg::Vec3d p0 = osg::Vec3d(x.x() - up.x(), x.y() - up.y(), x.z() - up.z());
+		osg::Vec3d p1 = osg::Vec3d(x.x() + up.x(), x.y() - up.y(), x.z() - up.z());
+		osg::Vec3d p2 = osg::Vec3d(y.x() + up.x(), y.y() - up.y(), y.z() + up.z());
+		osg::Vec3d p3 = osg::Vec3d(y.x() - up.x(), y.y() - up.y(), y.z() + up.z());
+		osg::Vec3d p4 = osg::Vec3d(x.x() - up.x(), x.y() + up.y(), x.z() - up.z());
+		osg::Vec3d p5 = osg::Vec3d(x.x() + up.x(), x.y() + up.y(), x.z() - up.z());
+		osg::Vec3d p6 = osg::Vec3d(y.x() + up.x(), y.y() + up.y(), y.z() + up.z());
+		osg::Vec3d p7 = osg::Vec3d(y.x() - up.x(), y.y() + up.y(), y.z() + up.z());
+
+		coordinates->push_back(p0);
+		coordinates->push_back(p1);
+		coordinates->push_back(p2);
+		coordinates->push_back(p3);
+
+		coordinates->push_back(p0);
+		coordinates->push_back(p4);
+		coordinates->push_back(p7);
+		coordinates->push_back(p3);
+
+		coordinates->push_back(p4);
+		coordinates->push_back(p5);
+		coordinates->push_back(p6);
+		coordinates->push_back(p7);
+
+		coordinates->push_back(p1);
+		coordinates->push_back(p5);
+		coordinates->push_back(p6);
+		coordinates->push_back(p2);
+
+		coordinates->push_back(p2);
+		coordinates->push_back(p3);
+		coordinates->push_back(p7);
+		coordinates->push_back(p6);
+
+		coordinates->push_back(p0);
+		coordinates->push_back(p1);
+		coordinates->push_back(p5);
+		coordinates->push_back(p4);
+
+	} else
+		// Brndiarova end
+	{
+		//updating edge coordinates due to scale
+		coordinates->push_back(osg::Vec3d(x.x() + up.x(), x.y() + up.y(), x.z() + up.z()));
+		coordinates->push_back(osg::Vec3d(x.x() - up.x(), x.y() - up.y(), x.z() - up.z()));
+		coordinates->push_back(osg::Vec3d(y.x() - up.x(), y.y() - up.y(), y.z() - up.z()));
+		coordinates->push_back(osg::Vec3d(y.x() + up.x(), y.y() + up.y(), y.z() + up.z()));
+	}
 
 	float repeatCnt =(float)  (length / (2.f * this->scale));
 
-	//init edge-text (label) coordinates
-	edgeTexCoords->push_back(osg::Vec2(0,1.0f));
-	edgeTexCoords->push_back(osg::Vec2(0,0.0f));
-	edgeTexCoords->push_back(osg::Vec2(repeatCnt,0.0f));
-	edgeTexCoords->push_back(osg::Vec2(repeatCnt,1.0f));
+	// Brndiarova start: add texture coordinates if edge is 3D object
+	if(is3D)
+	{
+		edgeTexCoords->push_back(osg::Vec2(0,0));
+		edgeTexCoords->push_back(osg::Vec2(1,0));
+		edgeTexCoords->push_back(osg::Vec2(1,1));
+		edgeTexCoords->push_back(osg::Vec2(0,1));
+	} else
+		// Brndiarova end
+	{
+		//init edge-text (label) coordinates
+		edgeTexCoords->push_back(osg::Vec2(0,1.0f));
+		edgeTexCoords->push_back(osg::Vec2(0,0.0f));
+		edgeTexCoords->push_back(osg::Vec2(repeatCnt,0.0f));
+		edgeTexCoords->push_back(osg::Vec2(repeatCnt,1.0f));
+	}
 
 	if (label != NULL)
 		label->setPosition((srcPos + dstPos) / 2 );
+}
+
+void Data::Edge::turnTo3D(){
+	setMode(GL_QUADS);
+	setCount(24);
+	this->edgeColor = osg::Vec4(0.0, 0.4, 0.0, /*a*/0.5);
+	updateCoordinates(getSrcNode()->restrictedTargetPosition(), getDstNode()->restrictedTargetPosition(), true);
+}
+
+void Data::Edge::turnTo2D(){
+	setMode(osg::PrimitiveSet::QUADS);
+	setCount(4);
+	float r = type->getSettings()->value("color.R").toFloat();
+	float g = type->getSettings()->value("color.G").toFloat();
+	float b = type->getSettings()->value("color.B").toFloat();
+	this->edgeColor = osg::Vec4(r, g, b, /*a*/0.5);
+	updateCoordinates(getSrcNode()->restrictedTargetPosition(), getDstNode()->restrictedTargetPosition(), false);
 }
 
 osg::ref_ptr<osg::Drawable> Data::Edge::createLabel(QString name)

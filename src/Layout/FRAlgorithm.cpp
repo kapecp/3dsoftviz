@@ -243,8 +243,8 @@ bool FRAlgorithm::iterate()
 						{
 							addSameIndexAttractive(j.value(), k.value(), Data::Graph::getMetaStrength());
 						}
-						k++;
 					}
+					 k++;
 				}
 
 			} else
@@ -531,7 +531,7 @@ void FRAlgorithm::addSameIndexAttractive(Data::Node* meta1, Data::Node* meta2, f
 	}
 	fv = vp - up;// smer sily
 	fv.normalize();
-	fv *= 1/attr(dist);// velkost sily
+	fv *= (50/attr(dist))*factor;// velkost sily
 	meta1->addForce(fv);
 }
 

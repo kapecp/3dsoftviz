@@ -15,6 +15,7 @@
 #include <osg/Depth>
 #include <osg/CullFace>
 #include <osgText/FadeText>
+#include <osg/ShapeDrawable>
 
 #include <QTextStream>
 
@@ -57,6 +58,20 @@ Data::Node::Node(qlonglong id, QString name, Data::Type* type, float scaling, Da
 			labelText = labelText.replace(pos, 1, "\n");
 	}
 
+	if (graph->getIs3D()){
+		this->square  = new osg::ShapeDrawable;
+		osg::Sphere * sphere = new osg::Sphere;
+		if (type->isMeta())
+			sphere->setRadius(this->scale*0.25);
+		else
+			sphere->setRadius(this->scale*0.5);
+		this->square->setShape(sphere);
+
+		this->square->getOrCreateStateSet()->setMode(GL_BLEND, osg::StateAttribute::ON);
+		this->square->getStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
+		addDrawable(this->square);
+  } else{
+
 	// MERGE BEGIN
 	// toto bolo u pleska/zelera
 	//	this->addDrawable(createNode(this->scale, Node::createStateSet(this->type)));
@@ -70,7 +85,7 @@ Data::Node::Node(qlonglong id, QString name, Data::Type* type, float scaling, Da
 	this->focusedSquare = createNode(this->scale * 16, Node::createStateSet(this->type));
 	this->addDrawable(square);
 	this->label = createLabel(this->type->getScale(), labelText);
-
+	}
 	// MERGE END
 	this->force = osg::Vec3f();
 	this->velocity = osg::Vec3f(0,0,0);
@@ -80,6 +95,7 @@ Data::Node::Node(qlonglong id, QString name, Data::Type* type, float scaling, Da
 	this->removableByUser = true;
 	this->selected = false;
 	this->usingInterpolation = true;
+
 
 	//nastavenie farebneho typu
 	float r = type->getSettings()->value("color.R").toFloat();
@@ -388,4 +404,26 @@ QString Data::Node::toString() const
 	QTextStream(&str) << "node id:" << id << " name:" << name << " pos:[" << mTargetPosition.x() << "," << mTargetPosition.y() << "," << mTargetPosition.z() << "]";
 	return str;
 }
+
+void Data::Node::turnTo3D(){
+	square  = new osg::ShapeDrawable;
+	osg::Sphere * sphere = new osg::Sphere;
+	if (type->isMeta())
+		sphere->setRadius(this->scale*0.25);
+	else
+		sphere->setRadius(this->scale*0.5);
+	square->setShape(sphere);
+
+	square->getOrCreateStateSet()->setMode(GL_BLEND, osg::StateAttribute::ON);
+	square->getStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
+	setColor( osg::Vec4(1.0f,1.0f,1.0f,1.0f) );
+
+	setDrawable(0, square);
+}
+
+void Data::Node::turnTo2D(){
+	this->square = createNode(this->scale * 4, Node::createStateSet(this->type));
+	setDrawable(0, square);
+}
+
 
