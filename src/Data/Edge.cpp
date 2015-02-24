@@ -26,17 +26,15 @@ Data::Edge::Edge(qlonglong id, QString name, Data::Graph* graph, osg::ref_ptr<Da
 	this->setSharedCoordinates(false, false, false);
 	this->inDB = false;
 	this->scale = scaling;
-	float r = type->getSettings()->value("color.R").toFloat();
-	float g = type->getSettings()->value("color.G").toFloat();
-	float b = type->getSettings()->value("color.B").toFloat();
-
-	this->edgeColor = osg::Vec4(r, g, b, /*a*/0.5);
 
 	this->appConf = Util::ApplicationConfig::get();
 	coordinates = new osg::Vec3Array();
 	edgeTexCoords = new osg::Vec2Array();
 
-	updateCoordinates(getSrcNode()->restrictedTargetPosition(), getDstNode()->restrictedTargetPosition(), graph->getIs3D());
+	if (graph->getIs3D())
+		turnTo3D();
+	else
+		turnTo2D();
 }
 
 
