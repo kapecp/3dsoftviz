@@ -1,7 +1,7 @@
 #include "Viewer/PerlinNoiseTextureGenerator.h"
 
 #include "Viewer/DataHelper.h"
-#include <noiseutils.h>
+#include <Noise/noiseutils.h>
 
 #include <osg/Image>
 

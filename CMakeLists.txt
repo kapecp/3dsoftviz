@@ -233,14 +233,14 @@ if( WIN32 AND MSVC )
 		include_directories( SYSTEM ${KINECTSDK_INCLUDE_DIRS} )
 		add_definitions( -DKINECTSDK_FOUND )
 
-		find_package( SPEECHSDK )
-		if( SPEECHSDK_FOUND )
-			include_directories( SYSTEM ${SPEECHSDK_INCLUDE_DIRS} )
-			add_definitions( -DSPEECHSDK_FOUND )
-			message( STATUS "SPEECHSDK FOUND" )
-		else( SPEECHSDK_FOUND )
-			message ( STATUS "SPEECHSDK NOT FOUND" )
-		endif()
+		# find_package( SPEECHSDK )
+		# if( SPEECHSDK_FOUND )
+			# include_directories( SYSTEM ${SPEECHSDK_INCLUDE_DIRS} )
+			# add_definitions( -DSPEECHSDK_FOUND )
+			# message( STATUS "SPEECHSDK FOUND" )
+		# else( SPEECHSDK_FOUND )
+			# message ( STATUS "SPEECHSDK NOT FOUND" )
+		# endif()
 
 		message ( STATUS "KINECTSDK FOUND" )
 	else( KINECTSDK_FOUND )
@@ -251,7 +251,7 @@ endif()
 # ------------------------------ BOOST -------------------------------
 # Find Boost
 set( Boost_USE_STATIC_LIBS OFF )
-find_package( Boost 1.39 COMPONENTS unit_test_framework REQUIRED )
+find_package( Boost 1.39 REQUIRED )
 #add_definitions( -DBOOST_ALL_DYN_LINK )
 
 # Include directories
@@ -353,10 +353,10 @@ if( USE_BUILTIN_DEPENDENCIES )
 	endif() # OpenCV_FOUND
 
 	# Build LuaJIT2
-	ExternalProject_Add ( dep_luajit
-		PREFIX luajit
-		SOURCE_DIR ${DEP_SOURCE}/luajit
-		BINARY_DIR luajit
+	ExternalProject_Add ( dep_lua
+		PREFIX lua
+		SOURCE_DIR ${DEP_SOURCE}/lua
+		BINARY_DIR lua
 		CMAKE_ARGS
 			-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
 			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
@@ -375,27 +375,27 @@ if( USE_BUILTIN_DEPENDENCIES )
 			IMPORTED_IMPLIB ${DEP_BIN}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}lua${CMAKE_STATIC_LIBRARY_SUFFIX} )
 	endif()
 
-	# Build Diluculum
-	ExternalProject_Add ( dep_diluculum
-		PREFIX diluculum
-		SOURCE_DIR ${DEP_SOURCE}/diluculum
-		BINARY_DIR diluculum
-		CMAKE_ARGS
-			-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
-			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-	)
+	# # Build Diluculum
+	# ExternalProject_Add ( dep_diluculum
+		# PREFIX diluculum
+		# SOURCE_DIR ${DEP_SOURCE}/diluculum
+		# BINARY_DIR diluculum
+		# CMAKE_ARGS
+			# -DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
+			# -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
+	# )
 
-	# add diluculum library
-	add_library( diluculum SHARED IMPORTED )
-	add_dependencies( diluculum dep_diluculum )
-	set_target_properties( diluculum PROPERTIES
-		IMPORTED_LOCATION ${DEP_BIN}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}diluculum${CMAKE_SHARED_LIBRARY_SUFFIX} )
+	# # add diluculum library
+	# add_library( diluculum SHARED IMPORTED )
+	# add_dependencies( diluculum dep_diluculum )
+	# set_target_properties( diluculum PROPERTIES
+		# IMPORTED_LOCATION ${DEP_BIN}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}diluculum${CMAKE_SHARED_LIBRARY_SUFFIX} )
 
-	if( WIN32 AND MSVC )
-		set_target_properties( diluculum PROPERTIES
-			IMPORTED_LOCATION ${DEP_BIN}/bin/${CMAKE_SHARED_LIBRARY_PREFIX}diluculum${CMAKE_SHARED_LIBRARY_SUFFIX}
-			IMPORTED_IMPLIB ${DEP_BIN}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}diluculum${CMAKE_STATIC_LIBRARY_SUFFIX} )
-	endif()
+	# if( WIN32 AND MSVC )
+		# set_target_properties( diluculum PROPERTIES
+			# IMPORTED_LOCATION ${DEP_BIN}/bin/${CMAKE_SHARED_LIBRARY_PREFIX}diluculum${CMAKE_SHARED_LIBRARY_SUFFIX}
+			# IMPORTED_IMPLIB ${DEP_BIN}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}diluculum${CMAKE_STATIC_LIBRARY_SUFFIX} )
+	# endif()
 
 
 	# Build lpeg
@@ -439,11 +439,11 @@ if( USE_BUILTIN_DEPENDENCIES )
 	)
 
 	# Ensure correct order of build (dependencies between external dependencies)
-	add_dependencies( dep_lpeg dep_luajit )
-	add_dependencies( dep_diluculum dep_luajit )
+	add_dependencies( dep_lpeg dep_lua )
+	#add_dependencies( dep_diluculum dep_lua )
 	add_dependencies( dep_leg dep_lpeg )
 	add_dependencies( dep_luametrics dep_leg )
-	add_dependencies( dep_luafilesystem dep_luajit )
+	add_dependencies( dep_luafilesystem dep_lua )
 
 	# path to include directory where external dependencies deploy headers
 	set( DEPENDENCIES_INCLUDE_DIR ${DEP_BIN}/include )
@@ -545,6 +545,7 @@ file( GLOB_RECURSE SRC_MANAGER	"src/Manager/*.cpp" )
 file( GLOB_RECURSE SRC_MATH		"src/Math/*.cpp" )
 file( GLOB_RECURSE SRC_MODEL	"src/Model/*.cpp" )
 file( GLOB_RECURSE SRC_NETWORK	"src/Network/*.cpp" )
+file( GLOB_RECURSE SRC_NOISE	"src/Noise/*.cpp" )
 file( GLOB_RECURSE SRC_OSGQTBROWSER	"src/OsgQtBrowser/*.cpp" )
 file( GLOB_RECURSE SRC_QOSG		"src/QOSG/*.cpp" )
 file( GLOB_RECURSE SRC_UTIL		"src/Util/*.cpp" )
@@ -578,6 +579,7 @@ set( SRC
 	${SRC_LUAGRAPH} ${SRC_LUAINTERFACE}
 	${SRC_MATH}
 	${SRC_NETWORK}
+	${SRC_NOISE}
 	${SRC_MODEL}
 	${SRC_OSGQTBROWSER} ${SRC_QOSG} ${SRC_VIEWER}
 	${SRC_UTIL}
@@ -613,6 +615,7 @@ file( GLOB_RECURSE HEADER_MANAGER	"include/Manager/*.h" )
 file( GLOB_RECURSE HEADER_MATH		"include/Math/*.h" )
 file( GLOB_RECURSE HEADER_MODEL		"include/Model/*.h" )
 file( GLOB_RECURSE HEADER_NETWORK	"include/Network/*.h" )
+file( GLOB_RECURSE HEADER_NOISE		"include/Noise/*.h" )
 file( GLOB_RECURSE HEADER_OSGQTBROWSER	"include/OsgQtBrowser/*.h" )
 file( GLOB_RECURSE HEADER_QOSG		"include/QOSG/*.h" )
 file( GLOB_RECURSE HEADER_UTIL		"include/Util/*.h" )
@@ -645,6 +648,7 @@ set( INCL
 	${HEADER_LUAGRAPH} ${HEADER_LUAINTERFACE}
 	${HEADER_MATH}
 	${HEADER_NETWORK}
+	${HEADER_NOISE}
 	${HEADER_MODEL}
 	${HEADER_OSGQTBROWSER} ${HEADER_QOSG} ${HEADER_VIEWER}
 	${HEADER_UTIL}
@@ -681,6 +685,7 @@ source_group( \\src\\Util "^.*Util/.*$" )
 source_group( \\src\\Layout "^.*Layout/.*$" )
 source_group( \\src\\QOSG "^.*QOSG/.*$" )
 source_group( \\src\\OsgQtBrowser "^.*OsgQtBrowser/.*$" )
+source_group( \\src\\Noise "^.*Noise/.*$" )
 source_group( \\src\\LuaGraph "^.*LuaGraph/.*$")
 source_group( \\src\\LuaInterface "^.*LuaInterface/.*$")
 
@@ -696,6 +701,7 @@ source_group( \\headers\\Model "^.*Model/.*h$" )
 source_group( \\headers\\Util "^.*Util/.*h$" )
 source_group( \\headers\\Layout "^.*Layout/.*h$" )
 source_group( \\headers\\QOSG "^.*QOSG/.*h$" )
+source_group( \\headers\\Noise "^.*Noise/.*h$" )
 source_group( \\headers\\OsgQtBrowser "^.*OsgQtBrowser/.*h$" )
 source_group( \\headers\\LuaGraph "^.*LuaGraph/.*h$")
 source_group( \\headers\\LuaInterface "^.*LuaInterface/.*h$")
@@ -725,23 +731,32 @@ endif()
 #	source_group( \\headers\\Fglove "^.*Fglove/.*h$" )
 # endif()
 
+# diluculum due to problems
+if(MSVC)
+	include_directories( SYSTEM dependencies/diluculum/include )
+	include_directories( SYSTEM $ENV{CMAKE_INCLUDE_PATH} )
+
+message(">>>>:"$ENV{CMAKE_INCLUDE_PATH})
+
+	file( GLOB_RECURSE SRC_DILUCULUM	"dependencies/diluculum/Sources/*.cpp" )
+endif()
 
 # ---------------------------------------------------------------
 # 3rd party sources
 # ---------------------------------------------------------------
 
-include_directories( SYSTEM dependencies/noiseutils )
-add_library( noiseutils STATIC dependencies/noiseutils/noiseutils.cpp )
+#include_directories( SYSTEM dependencies/noiseutils )
+#add_library( noiseutils STATIC dependencies/noiseutils/noiseutils.cpp )
 
-include_directories( SYSTEM dependencies/qtcolorpicker )
-add_library( qtcolorpicker STATIC dependencies/qtcolorpicker/qtcolorpicker.cpp )
+#include_directories( SYSTEM dependencies/qtcolorpicker )
+#add_library( qtcolorpicker STATIC dependencies/qtcolorpicker/qtcolorpicker.cpp )
 
 # ---------------------------------------------------------------
 # Build and link 3Dsoftviz
 # ---------------------------------------------------------------
 
 # Build and link
-add_executable( ${3DSOFTVIZ_NAME} ${INCL} ${SRC} )
+add_executable( ${3DSOFTVIZ_NAME} ${INCL} ${SRC_DILUCULUM} ${SRC} )
 
 # set compile flags only for our code ( suppresses warnigns on system headers )
 set_target_properties( ${3DSOFTVIZ_NAME} PROPERTIES COMPILE_FLAGS "${FLAGS_FOR_DEBUG}" )
@@ -752,11 +767,11 @@ target_link_libraries( ${3DSOFTVIZ_NAME}
 	${OSGVIEWER_LIBRARIES}
 	#${DILUCULUM_LIBRARY}
 	#${LUA_LIBRARY}
-	diluculum
+	#diluculum
 	lua
 	libnoise
-	noiseutils
-	qtcolorpicker
+	#noiseutils
+	#qtcolorpicker
 )
 
 if( OpenCV_FOUND )
@@ -792,22 +807,29 @@ if( COMMAND cotire )
 endif()
 
 # Ensure correct dependencies
-if( USE_BUILTIN_DEPENDENCIES )
+# if( USE_BUILTIN_DEPENDENCIES )
 
-	# dependencies of non-unity build
-	add_dependencies( ${3DSOFTVIZ_NAME} libnoise dep_diluculum dep_luametrics dep_leg dep_lpeg dep_luajit dep_luafilesystem )
-	if( OpenCV_FOUND )
-		add_dependencies( ${3DSOFTVIZ_NAME} aruco )
-	endif()
+	# # dependencies of non-unity build
+	# add_dependencies( ${3DSOFTVIZ_NAME} libnoise dep_diluculum dep_luametrics dep_leg dep_lpeg dep_lua dep_luafilesystem )
+	# if( OpenCV_FOUND )
+		# add_dependencies( ${3DSOFTVIZ_NAME} aruco )
+	# endif()
 
-	# dependencies of unity build
-	if (COMMAND cotire)
-		add_dependencies( ${3DSOFTVIZ_NAME}_unity libnoise dep_diluculum dep_luametrics dep_leg dep_lpeg dep_luajit dep_luafilesystem )
+	# # dependencies of unity build
+	# if (COMMAND cotire)
+		# add_dependencies( ${3DSOFTVIZ_NAME}_unity libnoise dep_diluculum dep_luametrics dep_leg dep_lpeg dep_lua dep_luafilesystem )
 
-		if( OpenCV_FOUND )
-			add_dependencies( ${3DSOFTVIZ_NAME}_unity aruco )
-		endif()
-	endif()
+		# if( OpenCV_FOUND )
+			# add_dependencies( ${3DSOFTVIZ_NAME}_unity aruco )
+		# endif()
+	# endif()
+# endif()
+
+# Ensure correct dependencies
+add_dependencies( ${3DSOFTVIZ_NAME} libnoise )
+
+if( OpenCV_FOUND )
+	add_dependencies( ${3DSOFTVIZ_NAME} aruco )
 endif()
 
 # -------------------------------------------------------
@@ -851,6 +873,11 @@ endif()
 
 # Install built in dependencies unless we are building an OSX Bundle
 if( USE_BUILTIN_DEPENDENCIES )
+	add_dependencies( ${3DSOFTVIZ_NAME} libnoise dep_diluculum dep_luametrics dep_leg dep_lpeg dep_lua dep_luafilesystem )
+	if (COMMAND cotire)
+		add_dependencies( ${3DSOFTVIZ_NAME}_unity libnoise dep_diluculum dep_luametrics dep_leg dep_lpeg dep_lua dep_luafilesystem )
+	endif()
+
 	# Install all dependencies
 	install( DIRECTORY ${DEP_BIN}/
 		DESTINATION ${INSTALL_DEPS}

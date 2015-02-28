@@ -47,7 +47,7 @@
 
 #include <math.h>
 
-#include "qtcolorpicker.h"
+#include "QOSG/qtcolorpicker.h"
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wcast-qual"
 

@@ -10,7 +10,7 @@
 #else
 #include <Qt/qstringlist.h>
 #endif
-#include <qtcolorpicker.h>
+#include <QOSG/qtcolorpicker.h>
 
 #include <QMainWindow>
 #include <QToolBar>
@@ -108,26 +108,26 @@ public slots:
     void saveGraphToDB();
 
 
-	/**
-				*  \fn public  loadFunctionCall()
-				*  \brief load function call clicked
-				*/
-	void loadFunctionCall();
+    /**
+                *  \fn public  loadFunctionCall()
+                *  \brief load function call clicked
+                */
+    void loadFunctionCall();
 
-	/**
-				*  \fn public  browsersGroupingClicked()
-				*  \brief toggles between browsers grouping and sepparate browsers
-				*  \param checked    flag if button is checked
-				*/
-	void browsersGroupingClicked(bool checked);
+    /**
+                *  \fn public  browsersGroupingClicked()
+                *  \brief toggles between browsers grouping and sepparate browsers
+                *  \param checked    flag if button is checked
+                */
+    void browsersGroupingClicked(bool checked);
 
-	/**
-				*  \fn public  filterGraph()
-				*  \brief filter graph from query
-				*/
-	void filterGraph();
-  
-	/**
+    /**
+                *  \fn public  filterGraph()
+                *  \brief filter graph from query
+                */
+    void filterGraph();
+
+    /**
                 *  \fn public  saveLayoutToDB
                 *  \brief Save a current layout of current graph to database
                 */
@@ -571,35 +571,35 @@ private:
         */
     QPushButton * fix;
 
-	/**
-		*  QPushButton * loadFunctionCallButton
-		*  \brief Action for loading function call graph from lua
-		*/
-	QPushButton * loadFunctionCallButton;
+    /**
+        *  QPushButton * loadFunctionCallButton
+        *  \brief Action for loading function call graph from lua
+        */
+    QPushButton * loadFunctionCallButton;
 
-	/**
-		*  QPushButton * browsersGroupingButton
-		*  \brief Action for switching browsers grouping when nodes are selected
-		*/
-	QPushButton * browsersGroupingButton;
+    /**
+        *  QPushButton * browsersGroupingButton
+        *  \brief Action for switching browsers grouping when nodes are selected
+        */
+    QPushButton * browsersGroupingButton;
 
-	/**
-		*  QLineEdit * filterNodesEdit
-		*  \brief Edit area for node filter query
-		*/
-	QLineEdit * filterNodesEdit;
+    /**
+        *  QLineEdit * filterNodesEdit
+        *  \brief Edit area for node filter query
+        */
+    QLineEdit * filterNodesEdit;
 
-	/**
-		*  QLineEdit * filterEdgesEdit
-		*  \brief Edit area for edge filter query
-		*/
-	QLineEdit * filterEdgesEdit;
+    /**
+        *  QLineEdit * filterEdgesEdit
+        *  \brief Edit area for edge filter query
+        */
+    QLineEdit * filterEdgesEdit;
 
-	/**
-		*  QTreeView * luaGraphTreeView
-		*  \brief TreeView for exploring selected node of lua graph
-		*/
-	QTreeView * luaGraphTreeView;
+    /**
+        *  QTreeView * luaGraphTreeView
+        *  \brief TreeView for exploring selected node of lua graph
+        */
+    QTreeView * luaGraphTreeView;
 
     /**
         *  QPushButton * unFix
@@ -924,11 +924,11 @@ private:
         */
     void createLeftToolBar();
 
-	/**
-		*  \fn private  createMetricsToolBar
-		*  \brief Create metrics toolBar
-		*/
-	void createMetricsToolBar();
+    /**
+        *  \fn private  createMetricsToolBar
+        *  \brief Create metrics toolBar
+        */
+    void createMetricsToolBar();
 
     /**
         *  \fn private  createHorizontalFrame
@@ -1235,7 +1235,7 @@ private:
             QSharedPointer<Layout::RestrictionRemovalHandler> removalHandler
             );
 
-	void onChange();
+    void onChange();
 
 };
 }
