@@ -99,7 +99,7 @@ if (USE_LD_GOLD)
 		set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fuse-ld=gold" CACHE STRING "" FORCE)
 		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fuse-ld=gold" CACHE STRING "" FORCE)
 		set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fuse-ld=gold -Wl,--disable-new-dtags" CACHE STRING "" FORCE)
-		set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fuse-ld=gold -Wl,--disable-new-dtags" CACHE STRING "" FORCE)
+		set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -fuse-ld=gold -Wl,--disable-new-dtags" CACHE STRING "" FORCE)
 	else ()
 		message(WARNING "GNU gold linker isn't available, using the default system linker.")
 	endif ()
@@ -281,7 +281,7 @@ option( USE_BUILTIN_DEPENDENCIES "Use builtin dependencies." ON )
 if( USE_BUILTIN_DEPENDENCIES )
 	# to use Gold linker add following flags to ExternalProject_Add command, to CMAKE_ARGS (TODO: needs more testing):
 		#-DCMAKE_EXE_LINKER_FLAGS:STRING=${CMAKE_EXE_LINKER_FLAGS}
-		#-DCMAKE_SHARED_LINKER_FLAGS:STRING=${CMAKE_EXE_LINKER_FLAGS}
+		#-DCMAKE_SHARED_LINKER_FLAGS:STRING=${CMAKE_SHARED_LINKER_FLAGS}
 
 	include( ExternalProject )
 
@@ -352,51 +352,82 @@ if( USE_BUILTIN_DEPENDENCIES )
 		endif()
 	endif() # OpenCV_FOUND
 
-	# Build LuaJIT2
-	ExternalProject_Add ( dep_lua
-		PREFIX lua
-		SOURCE_DIR ${DEP_SOURCE}/lua
-		BINARY_DIR lua
-		CMAKE_ARGS
-			-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
-			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-			-C ${CMAKE_CURRENT_BINARY_DIR}/config.cmake
-	)
+	if ( MSVC )
+		# Build Lua
+		ExternalProject_Add ( dep_lua
+			PREFIX lua
+			SOURCE_DIR ${DEP_SOURCE}/lua
+			BINARY_DIR lua
+			CMAKE_ARGS
+				-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
+				-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
+				-C ${CMAKE_CURRENT_BINARY_DIR}/config.cmake
+		)
 
-	# add lua library
-	add_library( lua SHARED IMPORTED )
-	add_dependencies( lua dep_lua )
-	set_target_properties( lua PROPERTIES
-		IMPORTED_LOCATION ${DEP_BIN}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}lua${CMAKE_SHARED_LIBRARY_SUFFIX} )
-
-	if( WIN32 AND MSVC )
+		# add lua library
+		add_library( lua SHARED IMPORTED )
+		add_dependencies( lua dep_lua )
 		set_target_properties( lua PROPERTIES
-			IMPORTED_LOCATION ${DEP_BIN}/bin/${CMAKE_SHARED_LIBRARY_PREFIX}lua${CMAKE_SHARED_LIBRARY_SUFFIX}
-			IMPORTED_IMPLIB ${DEP_BIN}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}lua${CMAKE_STATIC_LIBRARY_SUFFIX} )
+			IMPORTED_LOCATION ${DEP_BIN}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}lua${CMAKE_SHARED_LIBRARY_SUFFIX} )
+
+		if( WIN32 AND MSVC )
+			set_target_properties( lua PROPERTIES
+				IMPORTED_LOCATION ${DEP_BIN}/bin/${CMAKE_SHARED_LIBRARY_PREFIX}lua${CMAKE_SHARED_LIBRARY_SUFFIX}
+				IMPORTED_IMPLIB ${DEP_BIN}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}lua${CMAKE_STATIC_LIBRARY_SUFFIX} )
+		endif()
+
+	else ()
+		# NOTE: Diluculum requires luaconf.h from original Lua, so original Lua headers must be available
+
+		# Build LuaJIT
+		ExternalProject_Add ( dep_luajit
+			PREFIX luajit
+			SOURCE_DIR ${DEP_SOURCE}/luajit
+			BINARY_DIR luajit
+			CMAKE_ARGS
+				-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
+				-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
+				-C ${CMAKE_CURRENT_BINARY_DIR}/config.cmake
+		)
+
+		# add lua library
+		add_library( lua SHARED IMPORTED )
+		add_dependencies( lua dep_luajit )
+		set_target_properties( lua PROPERTIES
+			IMPORTED_LOCATION ${DEP_BIN}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}lua${CMAKE_SHARED_LIBRARY_SUFFIX} )
+
+		if( WIN32 AND MSVC )
+			set_target_properties( lua PROPERTIES
+				IMPORTED_LOCATION ${DEP_BIN}/bin/${CMAKE_SHARED_LIBRARY_PREFIX}lua${CMAKE_SHARED_LIBRARY_SUFFIX}
+				IMPORTED_IMPLIB ${DEP_BIN}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}lua${CMAKE_STATIC_LIBRARY_SUFFIX} )
+		endif()
 	endif()
 
-	# # Build Diluculum
-	# ExternalProject_Add ( dep_diluculum
-		# PREFIX diluculum
-		# SOURCE_DIR ${DEP_SOURCE}/diluculum
-		# BINARY_DIR diluculum
-		# CMAKE_ARGS
-			# -DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
-			# -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-	# )
+	if( NOT MSVC )
+		# NOTE: on MSVC Diluculum code is directly inserted
 
-	# # add diluculum library
-	# add_library( diluculum SHARED IMPORTED )
-	# add_dependencies( diluculum dep_diluculum )
-	# set_target_properties( diluculum PROPERTIES
-		# IMPORTED_LOCATION ${DEP_BIN}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}diluculum${CMAKE_SHARED_LIBRARY_SUFFIX} )
+		# Build Diluculum
+		ExternalProject_Add ( dep_diluculum
+			PREFIX diluculum
+			SOURCE_DIR ${DEP_SOURCE}/diluculum
+			BINARY_DIR diluculum
+			CMAKE_ARGS
+				-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
+				-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
+		)
 
-	# if( WIN32 AND MSVC )
-		# set_target_properties( diluculum PROPERTIES
-			# IMPORTED_LOCATION ${DEP_BIN}/bin/${CMAKE_SHARED_LIBRARY_PREFIX}diluculum${CMAKE_SHARED_LIBRARY_SUFFIX}
-			# IMPORTED_IMPLIB ${DEP_BIN}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}diluculum${CMAKE_STATIC_LIBRARY_SUFFIX} )
-	# endif()
+		# add diluculum library
+		add_library( diluculum SHARED IMPORTED )
+		add_dependencies( diluculum dep_diluculum )
+		set_target_properties( diluculum PROPERTIES
+			IMPORTED_LOCATION ${DEP_BIN}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}diluculum${CMAKE_SHARED_LIBRARY_SUFFIX} )
 
+		if( WIN32 AND MSVC )
+			set_target_properties( diluculum PROPERTIES
+				IMPORTED_LOCATION ${DEP_BIN}/bin/${CMAKE_SHARED_LIBRARY_PREFIX}diluculum${CMAKE_SHARED_LIBRARY_SUFFIX}
+				IMPORTED_IMPLIB ${DEP_BIN}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}diluculum${CMAKE_STATIC_LIBRARY_SUFFIX} )
+		endif()
+	endif()
 
 	# Build lpeg
 	ExternalProject_Add ( dep_lpeg
@@ -439,11 +470,19 @@ if( USE_BUILTIN_DEPENDENCIES )
 	)
 
 	# Ensure correct order of build (dependencies between external dependencies)
-	add_dependencies( dep_lpeg dep_lua )
-	#add_dependencies( dep_diluculum dep_lua )
-	add_dependencies( dep_leg dep_lpeg )
-	add_dependencies( dep_luametrics dep_leg )
-	add_dependencies( dep_luafilesystem dep_lua )
+	if( MSVC )
+		add_dependencies( dep_lpeg dep_lua )
+		add_dependencies( dep_diluculum dep_lua )
+		add_dependencies( dep_leg dep_lpeg )
+		add_dependencies( dep_luametrics dep_leg )
+		add_dependencies( dep_luafilesystem dep_lua )
+	else()
+		add_dependencies( dep_lpeg dep_luajit )
+		add_dependencies( dep_diluculum dep_luajit )
+		add_dependencies( dep_leg dep_lpeg )
+		add_dependencies( dep_luametrics dep_leg )
+		add_dependencies( dep_luafilesystem dep_luajit )
+	endif()
 
 	# path to include directory where external dependencies deploy headers
 	set( DEPENDENCIES_INCLUDE_DIR ${DEP_BIN}/include )
@@ -731,12 +770,10 @@ endif()
 #	source_group( \\headers\\Fglove "^.*Fglove/.*h$" )
 # endif()
 
-# diluculum due to problems
-if(MSVC)
+# add diluculum code directly due to MSVC problems
+if( MSVC )
 	include_directories( SYSTEM dependencies/diluculum/include )
-	include_directories( SYSTEM $ENV{CMAKE_INCLUDE_PATH} )
-
-message(">>>>:"$ENV{CMAKE_INCLUDE_PATH})
+	#include_directories( SYSTEM $ENV{CMAKE_INCLUDE_PATH} )
 
 	file( GLOB_RECURSE SRC_DILUCULUM	"dependencies/diluculum/Sources/*.cpp" )
 endif()
@@ -755,8 +792,12 @@ endif()
 # Build and link 3Dsoftviz
 # ---------------------------------------------------------------
 
+if( MSVC )
+	list( APPEND ${SRC} ${SRC_DILUCULUM} )
+endif()
+
 # Build and link
-add_executable( ${3DSOFTVIZ_NAME} ${INCL} ${SRC_DILUCULUM} ${SRC} )
+add_executable( ${3DSOFTVIZ_NAME} ${INCL}  ${SRC} )
 
 # set compile flags only for our code ( suppresses warnigns on system headers )
 set_target_properties( ${3DSOFTVIZ_NAME} PROPERTIES COMPILE_FLAGS "${FLAGS_FOR_DEBUG}" )
@@ -765,14 +806,16 @@ target_link_libraries( ${3DSOFTVIZ_NAME}
 	${QT_LIBRARIES}
 	${OPENSCENEGRAPH_LIBRARIES}
 	${OSGVIEWER_LIBRARIES}
-	#${DILUCULUM_LIBRARY}
-	#${LUA_LIBRARY}
-	#diluculum
 	lua
 	libnoise
-	#noiseutils
-	#qtcolorpicker
 )
+
+if( NOT MSVC )
+	target_link_libraries( ${3DSOFTVIZ_NAME} diluculum
+		#noiseutils
+		#qtcolorpicker
+	)
+endif()
 
 if( OpenCV_FOUND )
 	target_link_libraries( ${3DSOFTVIZ_NAME} ${OpenCV_LIBS} aruco )
@@ -807,23 +850,36 @@ if( COMMAND cotire )
 endif()
 
 # Ensure correct dependencies
-# if( USE_BUILTIN_DEPENDENCIES )
+if( USE_BUILTIN_DEPENDENCIES )
 
-	# # dependencies of non-unity build
-	# add_dependencies( ${3DSOFTVIZ_NAME} libnoise dep_diluculum dep_luametrics dep_leg dep_lpeg dep_lua dep_luafilesystem )
-	# if( OpenCV_FOUND )
-		# add_dependencies( ${3DSOFTVIZ_NAME} aruco )
-	# endif()
+	# dependencies of non-unity build
+	add_dependencies( ${3DSOFTVIZ_NAME} libnoise dep_diluculum dep_luametrics dep_leg dep_lpeg dep_luafilesystem )
 
-	# # dependencies of unity build
-	# if (COMMAND cotire)
-		# add_dependencies( ${3DSOFTVIZ_NAME}_unity libnoise dep_diluculum dep_luametrics dep_leg dep_lpeg dep_lua dep_luafilesystem )
+	if( MSVC )
+		add_dependencies( ${3DSOFTVIZ_NAME} dep_lua )
+	else()
+		add_dependencies( ${3DSOFTVIZ_NAME} dep_luajit )
+	endif()
 
-		# if( OpenCV_FOUND )
-			# add_dependencies( ${3DSOFTVIZ_NAME}_unity aruco )
-		# endif()
-	# endif()
-# endif()
+	if( OpenCV_FOUND )
+		add_dependencies( ${3DSOFTVIZ_NAME} aruco )
+	endif()
+
+	# dependencies of unity build
+	if (COMMAND cotire)
+		add_dependencies( ${3DSOFTVIZ_NAME}_unity libnoise dep_diluculum dep_luametrics dep_leg dep_lpeg dep_luafilesystem )
+
+		if( MSVC )
+			add_dependencies( ${3DSOFTVIZ_NAME}_unity dep_lua )
+		else()
+			add_dependencies( ${3DSOFTVIZ_NAME}_unity dep_luajit )
+		endif()
+
+		if( OpenCV_FOUND )
+			add_dependencies( ${3DSOFTVIZ_NAME}_unity aruco )
+		endif()
+	endif()
+endif()
 
 # Ensure correct dependencies
 add_dependencies( ${3DSOFTVIZ_NAME} libnoise )
@@ -873,11 +929,6 @@ endif()
 
 # Install built in dependencies unless we are building an OSX Bundle
 if( USE_BUILTIN_DEPENDENCIES )
-	add_dependencies( ${3DSOFTVIZ_NAME} libnoise dep_diluculum dep_luametrics dep_leg dep_lpeg dep_lua dep_luafilesystem )
-	if (COMMAND cotire)
-		add_dependencies( ${3DSOFTVIZ_NAME}_unity libnoise dep_diluculum dep_luametrics dep_leg dep_lpeg dep_lua dep_luafilesystem )
-	endif()
-
 	# Install all dependencies
 	install( DIRECTORY ${DEP_BIN}/
 		DESTINATION ${INSTALL_DEPS}
