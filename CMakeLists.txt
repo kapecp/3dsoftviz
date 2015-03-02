@@ -472,7 +472,6 @@ if( USE_BUILTIN_DEPENDENCIES )
 	# Ensure correct order of build (dependencies between external dependencies)
 	if( MSVC )
 		add_dependencies( dep_lpeg dep_lua )
-		add_dependencies( dep_diluculum dep_lua )
 		add_dependencies( dep_leg dep_lpeg )
 		add_dependencies( dep_luametrics dep_leg )
 		add_dependencies( dep_luafilesystem dep_lua )
@@ -793,7 +792,7 @@ endif()
 # ---------------------------------------------------------------
 
 if( MSVC )
-	list( APPEND ${SRC} ${SRC_DILUCULUM} )
+	list( APPEND SRC ${SRC_DILUCULUM} )
 endif()
 
 # Build and link
