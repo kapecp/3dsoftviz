@@ -19,47 +19,47 @@ class LuaIncidence : public LuaGraphObject
 {
 public:
 
-    /**
-     * @brief setEdgeNode set edge and node for incidence
-     * @param edgeId id of edge
-     * @param nodeId id of incidence
-     */
-    void setEdgeNode(const qlonglong edgeId, const qlonglong nodeId);
+	/**
+	 * @brief setEdgeNode set edge and node for incidence
+	 * @param edgeId id of edge
+	 * @param nodeId id of incidence
+	 */
+	void setEdgeNode( const qlonglong edgeId, const qlonglong nodeId );
 
-    /**
-     * @brief getEdgeNodePair getter for edge an node
-     * @return pair with edge and node ids
-     */
-    QPair<qlonglong, qlonglong> getEdgeNodePair() const;
+	/**
+	 * @brief getEdgeNodePair getter for edge an node
+	 * @return pair with edge and node ids
+	 */
+	QPair<qlonglong, qlonglong> getEdgeNodePair() const;
 
-    /**
-     * @brief getOriented getter if the incidence is oriented
-     * @return oriented
-     */
-    bool getOriented() const;
+	/**
+	 * @brief getOriented getter if the incidence is oriented
+	 * @return oriented
+	 */
+	bool getOriented() const;
 
-    /**
-     * @brief setOriented setter for oriented
-     * @param value oriented
-     */
-    void setOriented(bool value);
+	/**
+	 * @brief setOriented setter for oriented
+	 * @param value oriented
+	 */
+	void setOriented( bool value );
 
-    /**
-     * @brief getOutGoing getter if the incidence is outgoing from edge
-     * @return outGoing
-     */
-    bool getOutGoing() const;
+	/**
+	 * @brief getOutGoing getter if the incidence is outgoing from edge
+	 * @return outGoing
+	 */
+	bool getOutGoing() const;
 
-    /**
-     * @brief setOutGoing setter for outgoing
-     * @param value outGoing
-     */
-    void setOutGoing(bool value);
+	/**
+	 * @brief setOutGoing setter for outgoing
+	 * @param value outGoing
+	 */
+	void setOutGoing( bool value );
 
 private:
-    QPair<qlonglong, qlonglong> edgeNodePair;
-    bool oriented;
-    bool outGoing;
+	QPair<qlonglong, qlonglong> edgeNodePair;
+	bool oriented;
+	bool outGoing;
 };
 
 }

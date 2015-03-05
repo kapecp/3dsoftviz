@@ -33,15 +33,16 @@
 
 namespace Network {
 
-class ExecutorFactory {
+class ExecutorFactory
+{
 
 public:
 	ExecutorFactory();
-	AbstractExecutor* getExecutor(QDataStream * stream);
+	AbstractExecutor* getExecutor( QDataStream* stream );
 
 private:
 
-	QMap<quint8, AbstractExecutor *> executorList;
+	QMap<quint8, AbstractExecutor*> executorList;
 };
 
 }

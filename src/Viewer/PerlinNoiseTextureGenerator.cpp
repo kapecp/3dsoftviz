@@ -11,52 +11,50 @@
 namespace Vwr {
 
 
-osg::ref_ptr<osg::Texture2D> PerlinNoiseTextureGenerator::getCoudTexture(int w, int h,unsigned char r, unsigned char g, unsigned char b, unsigned char alpha)//w and h speak for themselves, zoom wel zoom in and out on it, I usually  use 75. P stands for persistence, this controls the roughness of the picture, i use 1/2
+osg::ref_ptr<osg::Texture2D> PerlinNoiseTextureGenerator::getCoudTexture( int w, int h,unsigned char r, unsigned char g, unsigned char b, unsigned char alpha ) //w and h speak for themselves, zoom wel zoom in and out on it, I usually  use 75. P stands for persistence, this controls the roughness of the picture, i use 1/2
 {
-    noise::module::Perlin perlinModule;
+	noise::module::Perlin perlinModule;
 
-    noise::utils::NoiseMap heightMap;
-    noise::utils::NoiseMapBuilderSphere heightMapBuilder;
+	noise::utils::NoiseMap heightMap;
+	noise::utils::NoiseMapBuilderSphere heightMapBuilder;
 
-    heightMapBuilder.SetSourceModule (perlinModule);
-    heightMapBuilder.SetDestNoiseMap (heightMap);
-    heightMapBuilder.SetDestSize (w, h);
-    heightMapBuilder.SetBounds (-90.0, 90.0, -180.0, 180.0);
+	heightMapBuilder.SetSourceModule( perlinModule );
+	heightMapBuilder.SetDestNoiseMap( heightMap );
+	heightMapBuilder.SetDestSize( w, h );
+	heightMapBuilder.SetBounds( -90.0, 90.0, -180.0, 180.0 );
 
-    heightMapBuilder.Build ();
+	heightMapBuilder.Build();
 
-    noise::utils::RendererImage renderer;
-    noise::utils::Image image;
+	noise::utils::RendererImage renderer;
+	noise::utils::Image image;
 
-    renderer.SetSourceNoiseMap (heightMap);
-    renderer.SetDestImage (image);
+	renderer.SetSourceNoiseMap( heightMap );
+	renderer.SetDestImage( image );
 
-    renderer.ClearGradient ();
-    renderer.AddGradientPoint (-1.0000, noise::utils::Color (r, g, b, alpha));
-    renderer.AddGradientPoint ( 1.0000, noise::utils::Color (0, 0, 0, 255));
+	renderer.ClearGradient();
+	renderer.AddGradientPoint( -1.0000, noise::utils::Color( r, g, b, alpha ) );
+	renderer.AddGradientPoint( 1.0000, noise::utils::Color( 0, 0, 0, 255 ) );
 
-    renderer.Render ();
+	renderer.Render();
 
-    char * data = new char[w * h * 3];
+	char* data = new char[w * h * 3];
 
-    int index = 0;
+	int index = 0;
 
-    for (int y = 0; y < h; y++)
-    {
-        for (int x = 0; x < w; x++)
-        {
-            data[index++] = image.GetValue(x, y).red;
-            data[index++] = image.GetValue(x, y).green;
-            data[index++] = image.GetValue(x, y).blue;
-        }
-    }
+	for ( int y = 0; y < h; y++ ) {
+		for ( int x = 0; x < w; x++ ) {
+			data[index++] = image.GetValue( x, y ).red;
+			data[index++] = image.GetValue( x, y ).green;
+			data[index++] = image.GetValue( x, y ).blue;
+		}
+	}
 
-    osg::ref_ptr<osg::Image> i = new(std::nothrow) osg::Image;
-    i->setImage(w, h, 1,  GL_RGB, GL_RGB, GL_UNSIGNED_BYTE, (unsigned char *) data, osg::Image::USE_NEW_DELETE);
+	osg::ref_ptr<osg::Image> i = new( std::nothrow ) osg::Image;
+	i->setImage( w, h, 1,  GL_RGB, GL_RGB, GL_UNSIGNED_BYTE, ( unsigned char* ) data, osg::Image::USE_NEW_DELETE );
 
-    osg::ref_ptr<osg::Texture2D> tex = DataHelper::createTexture(i);
+	osg::ref_ptr<osg::Texture2D> tex = DataHelper::createTexture( i );
 
-    return tex;
+	return tex;
 }
 
 } // namespace Vwr

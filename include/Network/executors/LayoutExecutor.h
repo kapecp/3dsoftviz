@@ -5,13 +5,14 @@
 
 namespace Network {
 
-    class LayoutExecutor : public AbstractExecutor {
+class LayoutExecutor : public AbstractExecutor
+{
 
-    public:
-        void execute_client();
-        void execute_server();
-        static const quint8 INSTRUCTION_NUMBER = 9;
-    };
+public:
+	void execute_client();
+	void execute_server();
+	static const quint8 INSTRUCTION_NUMBER = 9;
+};
 
 }
 

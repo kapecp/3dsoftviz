@@ -11,7 +11,7 @@
 
 #endif
 
-namespace OpenCV{
+namespace OpenCV {
 
 /**
 * @brief Class CameraStream
@@ -31,7 +31,7 @@ public:
 		* @brief CameraStream constructor
 		* @param geom Geometry for updating it's vertexArray according ratio of image
 		*/
-	CameraStream( osg::Geometry *geom = NULL);
+	CameraStream( osg::Geometry* geom = NULL );
 	~CameraStream();
 
 
@@ -43,7 +43,7 @@ public slots:
 		* @param cvImg opencv image
 		*/
 #ifdef OPENCV_FOUND
-	void updateBackgroundImage(cv::Mat cvImg);
+	void updateBackgroundImage( cv::Mat cvImg );
 #endif
 
 private:
@@ -54,12 +54,12 @@ private:
 		* @param width image' width
 		* @param height image' height
 		*/
-	void updateGeometryCoords(int width, int height);
+	void updateGeometryCoords( int width, int height );
 
 	int				mWidth; // data about cols cv:Mat
 	int				mHeight; // data about rows cv:Mat
-	osg::Geometry	*mGeom; // Geometry for vertex array and update
-	IplImage		*iplImg; // image for background
+	osg::Geometry*	mGeom; // Geometry for vertex array and update
+	IplImage*		iplImg; // image for background
 };
 }
 

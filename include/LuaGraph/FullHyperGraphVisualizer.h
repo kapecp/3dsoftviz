@@ -15,18 +15,18 @@ namespace Lua {
 class FullHyperGraphVisualizer : public Lua::LuaGraphVisualizer
 {
 public:
-    /**
-         * \fn FullHyperGraphVisualizer
-         * \brief constructor
-         *
-         * \params graph    Data::Graph object to fill
-         * \params camera   camera for edges to face
-         */
-    FullHyperGraphVisualizer(Data::Graph *graph, osg::Camera *camera = NULL);
+	/**
+	     * \fn FullHyperGraphVisualizer
+	     * \brief constructor
+	     *
+	     * \params graph    Data::Graph object to fill
+	     * \params camera   camera for edges to face
+	     */
+	FullHyperGraphVisualizer( Data::Graph* graph, osg::Camera* camera = NULL );
 
-    void visualize();
+	void visualize();
 
-    void onUpdate();
+	void onUpdate();
 };
 
 }

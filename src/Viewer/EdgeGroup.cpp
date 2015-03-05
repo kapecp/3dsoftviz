@@ -8,7 +8,7 @@
 
 namespace Vwr {
 
-EdgeGroup::EdgeGroup(QMap<qlonglong, osg::ref_ptr<Data::Edge> > *edges, float scale)
+EdgeGroup::EdgeGroup( QMap<qlonglong, osg::ref_ptr<Data::Edge> >* edges, float scale )
 {
 	this->edges = edges;
 	this->scale = scale;
@@ -17,7 +17,7 @@ EdgeGroup::EdgeGroup(QMap<qlonglong, osg::ref_ptr<Data::Edge> > *edges, float sc
 	initEdges();
 }
 
-EdgeGroup::~EdgeGroup(void)
+EdgeGroup::~EdgeGroup( void )
 {
 }
 
@@ -39,9 +39,8 @@ void EdgeGroup::initEdges()
 
 	QMap<qlonglong, osg::ref_ptr<Data::Edge> >::iterator i = edges->begin();
 
-	while (i != edges->end())
-	{
-        allEdges->addChild(i.value());
+	while ( i != edges->end() ) {
+		allEdges->addChild( i.value() );
 
 		++i;
 	}
@@ -51,60 +50,60 @@ void EdgeGroup::initEdges()
 
 void EdgeGroup::updateEdgeCoords()
 {
-    QMap<qlonglong, osg::ref_ptr<Data::Edge> >::iterator i = edges->begin();
+	QMap<qlonglong, osg::ref_ptr<Data::Edge> >::iterator i = edges->begin();
 
-    while (i != edges->end())
-    {
-        osg::Vec3 srcNodePosition = i.value()->getSrcNode()->getCurrentPosition();
-        osg::Vec3 dstNodePosition = i.value()->getDstNode()->getCurrentPosition();
+	while ( i != edges->end() ) {
+		osg::Vec3 srcNodePosition = i.value()->getSrcNode()->getCurrentPosition();
+		osg::Vec3 dstNodePosition = i.value()->getDstNode()->getCurrentPosition();
 
-        i.value()->updateCoordinates(srcNodePosition, dstNodePosition);
-        i++;
-    }
+		i.value()->updateCoordinates( srcNodePosition, dstNodePosition );
+		i++;
+	}
 }
 
 void EdgeGroup::synchronizeEdges()
 {
-    for (unsigned int i = 0; i < edgeGroup->getNumChildren(); i++){
-        if (edges->key(static_cast<Data::Edge*>(edgeGroup->getChild(i)->asGeode()), -1) == -1)
-            edgeGroup->removeChild(i);
-    }
+	for ( unsigned int i = 0; i < edgeGroup->getNumChildren(); i++ ) {
+		if ( edges->key( static_cast<Data::Edge*>( edgeGroup->getChild( i )->asGeode() ), -1 ) == -1 ) {
+			edgeGroup->removeChild( i );
+		}
+	}
 
-    QMap<qlonglong, osg::ref_ptr<Data::Edge> >::iterator ie = edges->begin();
+	QMap<qlonglong, osg::ref_ptr<Data::Edge> >::iterator ie = edges->begin();
 
-    while (ie != edges->end())
-    {
-        if (!edgeGroup->containsNode(ie.value()))
-            edgeGroup->addChild(ie.value());
+	while ( ie != edges->end() ) {
+		if ( !edgeGroup->containsNode( ie.value() ) ) {
+			edgeGroup->addChild( ie.value() );
+		}
 
-        ie++;
-    }
+		ie++;
+	}
 }
 
 void EdgeGroup::createEdgeStateSets()
 {
 	edgeStateSet = new osg::StateSet;
 
-	edgeStateSet->setMode(GL_LIGHTING, osg::StateAttribute::OFF);
-	edgeStateSet->setTextureAttributeAndModes(0, TextureWrapper::getEdgeTexture(), osg::StateAttribute::ON);
-	edgeStateSet->setAttributeAndModes(new osg::BlendFunc, osg::StateAttribute::ON);
-	edgeStateSet->setMode(GL_DEPTH_TEST, osg::StateAttribute::ON);
+	edgeStateSet->setMode( GL_LIGHTING, osg::StateAttribute::OFF );
+	edgeStateSet->setTextureAttributeAndModes( 0, TextureWrapper::getEdgeTexture(), osg::StateAttribute::ON );
+	edgeStateSet->setAttributeAndModes( new osg::BlendFunc, osg::StateAttribute::ON );
+	edgeStateSet->setMode( GL_DEPTH_TEST, osg::StateAttribute::ON );
 
-	edgeStateSet->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
+	edgeStateSet->setRenderingHint( osg::StateSet::TRANSPARENT_BIN );
 
 	osg::ref_ptr<osg::Depth> depth = new osg::Depth;
-	depth->setWriteMask(false);
-	edgeStateSet->setAttributeAndModes(depth, osg::StateAttribute::ON);
+	depth->setWriteMask( false );
+	edgeStateSet->setAttributeAndModes( depth, osg::StateAttribute::ON );
 
 	orientedEdgeStateSet = new osg::StateSet;
 
-	orientedEdgeStateSet->setMode(GL_LIGHTING, osg::StateAttribute::OFF);
-	orientedEdgeStateSet->setTextureAttributeAndModes(0, TextureWrapper::getOrientedEdgeTexture(), osg::StateAttribute::ON);
-	orientedEdgeStateSet->setMode(GL_BLEND, osg::StateAttribute::ON);
-	orientedEdgeStateSet->setMode(GL_DEPTH_TEST, osg::StateAttribute::ON);
+	orientedEdgeStateSet->setMode( GL_LIGHTING, osg::StateAttribute::OFF );
+	orientedEdgeStateSet->setTextureAttributeAndModes( 0, TextureWrapper::getOrientedEdgeTexture(), osg::StateAttribute::ON );
+	orientedEdgeStateSet->setMode( GL_BLEND, osg::StateAttribute::ON );
+	orientedEdgeStateSet->setMode( GL_DEPTH_TEST, osg::StateAttribute::ON );
 
-	orientedEdgeStateSet->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
-	orientedEdgeStateSet->setAttributeAndModes(depth, osg::StateAttribute::ON);
+	orientedEdgeStateSet->setRenderingHint( osg::StateSet::TRANSPARENT_BIN );
+	orientedEdgeStateSet->setAttributeAndModes( depth, osg::StateAttribute::ON );
 }
 
 } // namespace Vwr

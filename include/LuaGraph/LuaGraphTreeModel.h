@@ -38,58 +38,61 @@
  **
  ****************************************************************************/
 
- #ifndef LUAGRAPHTREEMODEL_H
- #define LUAGRAPHTREEMODEL_H
+#ifndef LUAGRAPHTREEMODEL_H
+#define LUAGRAPHTREEMODEL_H
 
- #include <QAbstractItemModel>
- #include <QModelIndex>
- #include <QVariant>
+#include <QAbstractItemModel>
+#include <QModelIndex>
+#include <QVariant>
 
- namespace Lua {
-	class LuaNode;
-	class LuaGraphTreeItem;
- }
+namespace Lua {
+class LuaNode;
+class LuaGraphTreeItem;
+}
 
- namespace Diluculum {
-	class LuaValue;
- }
+namespace Diluculum {
+class LuaValue;
+}
 
- namespace Lua {
+namespace Lua {
 
- /**
-   * @brief The LuaGraphTreeModel class for displaying Lua table in treeview
-   *
-   * @author Frantisek Nagy
-   * @date 19.5.2014
-   */
- class LuaGraphTreeModel : public QAbstractItemModel
- {
-	 Q_OBJECT
+/**
+  * @brief The LuaGraphTreeModel class for displaying Lua table in treeview
+  *
+  * @author Frantisek Nagy
+  * @date 19.5.2014
+  */
+class LuaGraphTreeModel : public QAbstractItemModel
+{
+	Q_OBJECT
 
- public:
-	 LuaGraphTreeModel(const Lua::LuaNode *node, QObject *parent = 0);
-	 ~LuaGraphTreeModel();
+public:
+	LuaGraphTreeModel( const Lua::LuaNode* node, QObject* parent = 0 );
+	~LuaGraphTreeModel();
 
-	 QVariant data(const QModelIndex &index, int role) const;
-	 Qt::ItemFlags flags(const QModelIndex &index) const;
-	 QVariant headerData(int section, Qt::Orientation orientation,
-						 int role = Qt::DisplayRole) const;
-	 QModelIndex index(int row, int column,
-					   const QModelIndex &parent = QModelIndex()) const;
-	 QModelIndex parent(const QModelIndex &index) const;
-	 int rowCount(const QModelIndex &parent = QModelIndex()) const;
-	 int columnCount(const QModelIndex &parent = QModelIndex()) const;
+	QVariant data( const QModelIndex& index, int role ) const;
+	Qt::ItemFlags flags( const QModelIndex& index ) const;
+	QVariant headerData( int section, Qt::Orientation orientation,
+						 int role = Qt::DisplayRole ) const;
+	QModelIndex index( int row, int column,
+					   const QModelIndex& parent = QModelIndex() ) const;
+	QModelIndex parent( const QModelIndex& index ) const;
+	int rowCount( const QModelIndex& parent = QModelIndex() ) const;
+	int columnCount( const QModelIndex& parent = QModelIndex() ) const;
 
-	 inline Lua::LuaGraphTreeItem* getRootItem() {return rootItem;}
+	inline Lua::LuaGraphTreeItem* getRootItem()
+	{
+		return rootItem;
+	}
 
- private:
-	 void setupModelData(const Lua::LuaNode *node, LuaGraphTreeItem *parent);
+private:
+	void setupModelData( const Lua::LuaNode* node, LuaGraphTreeItem* parent );
 
-	 void loadLuaModel(QString name, const Diluculum::LuaValue value, LuaGraphTreeItem *parent);
+	void loadLuaModel( QString name, const Diluculum::LuaValue value, LuaGraphTreeItem* parent );
 
-	 Lua::LuaGraphTreeItem *rootItem;
- };
+	Lua::LuaGraphTreeItem* rootItem;
+};
 
- }
+}
 
- #endif // LUAGRAPHTREEMODEL_H
+#endif // LUAGRAPHTREEMODEL_H

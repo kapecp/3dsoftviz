@@ -15,15 +15,14 @@ namespace OpenCV {
 class CapVideo;
 }
 
-namespace QOpenCV
-{
+namespace QOpenCV {
 
 /**
 	 * @author Autor: Marek Jakab, David Durcak
 	 * @brief Class FaceRecognitionWindow
 	 */
 class FaceRecognitionWindow : public QDialog
-	{
+{
 	Q_OBJECT
 
 public:
@@ -35,42 +34,42 @@ public:
 		 * @param app QApplication
 		 * @param thr Instance of thread
 		 */
-	FaceRecognitionWindow(QWidget *parent, QApplication *mApp);
+	FaceRecognitionWindow( QWidget* parent, QApplication* mApp );
 
 	/**
 		 * @author Autor: David Durcak
 		 * @brief getLabel Return mWindowLabel
 		 * @return QLabel*
 		 */
-	QLabel		*getLabel() const;
+	QLabel*		getLabel() const;
 
 	/**
 		 * @author Autor: David Durcak
 		 * @brief getMarkerBehindCB Return mMarkerBehindCB
 		 * @return QCheckBox*
 		 */
-	QCheckBox	*getMarkerBehindCB() const;
+	QCheckBox*	getMarkerBehindCB() const;
 
 	/**
 		 * @author Autor: David Durcak
 		 * @brief getCorEnabledCB Return mCorEnabledCB
 		 * @return QCheckBox*
 		 */
-	QCheckBox	*getCorEnabledCB() const;
+	QCheckBox*	getCorEnabledCB() const;
 
 	/**
 		 * @author Autor: David Durcak
 		 * @brief getUpdateCorParPB Return mUpdateCorParPB
 		 * @return QPushButton*
 		 */
-	QPushButton	*getUpdateCorParPB() const;
+	QPushButton*	getUpdateCorParPB() const;
 
 	/**
 		 * @author Autor: David Durcak
 		 * @brief getInterchangeMarkersCB Return mInterchangeMarkersCB
 		 * @return QCheckBox*
 		 */
-	QPushButton	*getInterchangeMarkersPB() const;
+	QPushButton*	getInterchangeMarkersPB() const;
 
 
 signals:
@@ -134,14 +133,14 @@ signals:
 		 * @brief setCapVideoFaceRec Signal for setting camera in FaceRecognizationThread
 		 * @param capVideo camera object
 		 */
-	void setCapVideoFaceRec( OpenCV::CapVideo *capVideo);
+	void setCapVideoFaceRec( OpenCV::CapVideo* capVideo );
 
 	/**
 		 * @author Autor: David Durcak
 		 * @brief setCapVideoMarker Signal for setting camera in ArucoThread
 		 * @param capVideo camera object
 		 */
-	void setCapVideoMarker( OpenCV::CapVideo *capVideo);
+	void setCapVideoMarker( OpenCV::CapVideo* capVideo );
 
 
 public slots:
@@ -168,7 +167,7 @@ public slots:
 		* @brief setLabel Draw image on label
 		*/
 	void setLabel( cv::Mat image );
-	void setLabelQ(QImage qimage );
+	void setLabelQ( QImage qimage );
 
 private slots:
 
@@ -189,28 +188,28 @@ private slots:
 		 * @brief onFaceRecStartCancel Start or stop Face Detection thread
 		 * @param checked If true, thread will start
 		 */
-	void onFaceRecStartCancel(bool checked);
+	void onFaceRecStartCancel( bool checked );
 
 	/**
 		 * @author Autor: David Durcak
 		 * @brief onMarkerStartCancel Start or stop Aruco thread
 		 * @param checked If true, thread will start
 		 */
-	void onMarkerStartCancel(bool checked);
+	void onMarkerStartCancel( bool checked );
 
 	/**
 		 * @author Autor: David Durcak
 		 * @brief onFaceDetBackgrCBClicked Slot for enabling video backgroung from FaceRecongition and disabling from Aruco
 		 * @param checked
 		 */
-	void onFaceDetBackgrCBClicked(bool checked);
+	void onFaceDetBackgrCBClicked( bool checked );
 
 	/**
 		 * @author Autor: David Durcak
 		 * @brief onMarkerBackgrCBClicked Slot for enabling video backgroung from Aruco and disabling from FaceRecongition
 		 * @param checked
 		 */
-	void onMarkerBackgrCBClicked(bool checked);
+	void onMarkerBackgrCBClicked( bool checked );
 
 
 private:
@@ -219,7 +218,7 @@ private:
 		 * @brief closeEvent Reimplement close event. Disconnect all conections
 		 * @param event Close event
 		 */
-	void closeEvent(QCloseEvent *event);
+	void closeEvent( QCloseEvent* event );
 
 	/**
 		 * @author Autor: David Durcak
@@ -229,28 +228,28 @@ private:
 
 
 
-	QApplication	*mApp;
-	QLabel			*mWindowLabel;
+	QApplication*	mApp;
+	QLabel*			mWindowLabel;
 	QImage			mqimage;
 
 	// switching the camera,
-	QRadioButton	*mFaceRecRB;
-	QRadioButton	*mMarkerRB;
-	QCheckBox		*mNoVideo;
-	QStackedLayout	*mModulesStackL;
-	QPushButton		*mFaceRecStartCancelPB;
-	QPushButton		*mMarkerStartCancelPB;
+	QRadioButton*	mFaceRecRB;
+	QRadioButton*	mMarkerRB;
+	QCheckBox*		mNoVideo;
+	QStackedLayout*	mModulesStackL;
+	QPushButton*		mFaceRecStartCancelPB;
+	QPushButton*		mMarkerStartCancelPB;
 
-	QCheckBox		*mMarkerBackgrCB;
-	QCheckBox		*mFaceDetBackgrCB;
+	QCheckBox*		mMarkerBackgrCB;
+	QCheckBox*		mFaceDetBackgrCB;
 
 	// aruco controll
-	QCheckBox		*mMarkerBehindCB;
-	QCheckBox		*mCorEnabledCB;
-	QPushButton		*mUpdateCorParPB;
-	QPushButton		*mInterchangeMarkersPB;
+	QCheckBox*		mMarkerBehindCB;
+	QCheckBox*		mCorEnabledCB;
+	QPushButton*		mUpdateCorParPB;
+	QPushButton*		mInterchangeMarkersPB;
 
-	};
+};
 }
 
 #endif //FACERECOGNITIONWINDOW_H

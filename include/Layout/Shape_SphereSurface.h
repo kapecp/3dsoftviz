@@ -11,24 +11,25 @@ namespace Layout {
 /**
  * [immutable]
  */
-class Shape_SphereSurface : public Shape_AbstractSphere {
+class Shape_SphereSurface : public Shape_AbstractSphere
+{
 
 public:
 
-	Shape_SphereSurface (
-			const osg::Vec3f center,
-			const float radius
-			);
+	Shape_SphereSurface(
+		const osg::Vec3f center,
+		const float radius
+	);
 
 	/***/
-	virtual ~Shape_SphereSurface (void) {}
+	virtual ~Shape_SphereSurface( void ) {}
 
 	/**
 	 * [visitor pattern]
 	 */
-	virtual void accept (
-			ShapeVisitor & visitor
-			);
+	virtual void accept(
+		ShapeVisitor& visitor
+	);
 
 }; // class
 

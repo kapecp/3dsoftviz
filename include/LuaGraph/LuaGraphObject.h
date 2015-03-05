@@ -17,57 +17,57 @@ namespace Lua {
 class LuaGraphObject
 {
 public:
-    /**
-     * @brief getId getter for id
-     * @return id
-     */
-    qlonglong getId() const;
+	/**
+	 * @brief getId getter for id
+	 * @return id
+	 */
+	qlonglong getId() const;
 
-    /**
-     * @brief setId setter for id
-     * @param value ne id
-     */
-    void setId(qlonglong value);
+	/**
+	 * @brief setId setter for id
+	 * @param value ne id
+	 */
+	void setId( qlonglong value );
 
-    /**
-     * @brief getLabel getter for label
-     * @return label
-     */
-    QString getLabel() const;
+	/**
+	 * @brief getLabel getter for label
+	 * @return label
+	 */
+	QString getLabel() const;
 
-    /**
-     * @brief setLabel setter for label
-     * @param value new label
-     */
-    void setLabel(const QString &value);
+	/**
+	 * @brief setLabel setter for label
+	 * @param value new label
+	 */
+	void setLabel( const QString& value );
 
-    /**
-     * @brief getParams getter for params
-     * @return params
-     */
-    Diluculum::LuaValue getParams() const;
+	/**
+	 * @brief getParams getter for params
+	 * @return params
+	 */
+	Diluculum::LuaValue getParams() const;
 
-    /**
-     * @brief setParams setter for params
-     * @param value new params
-     */
-    void setParams(const Diluculum::LuaValue &value);
+	/**
+	 * @brief setParams setter for params
+	 * @param value new params
+	 */
+	void setParams( const Diluculum::LuaValue& value );
 
-    /**
-     * @brief getFloatParam return float value from params table
-     * @param name key in the params table
-     * @param defaultValue value to be returned if key is not in the table
-     * @return value as float
-     */
-    float getFloatParam(std::string name, float defaultValue);
+	/**
+	 * @brief getFloatParam return float value from params table
+	 * @param name key in the params table
+	 * @param defaultValue value to be returned if key is not in the table
+	 * @return value as float
+	 */
+	float getFloatParam( std::string name, float defaultValue );
 private:
-    qlonglong id;
-    QString label;
+	qlonglong id;
+	QString label;
 
-    /**
-     * @brief params Lua table
-     */
-    Diluculum::LuaValue params;
+	/**
+	 * @brief params Lua table
+	 */
+	Diluculum::LuaValue params;
 };
 
 }

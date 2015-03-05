@@ -4,44 +4,46 @@
 
 namespace Network {
 
-void RemoveEdgeExecutor::execute_client() {
+void RemoveEdgeExecutor::execute_client()
+{
 
-    int id;
+	int id;
 
-    *stream >> id;
+	*stream >> id;
 
-    Data::Graph * currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
-    QMap<qlonglong, osg::ref_ptr<Data::Edge> >* edges = currentGraph -> getEdges();
-    if (edges->contains(id)) {
-        Data::Edge *edge = *edges->find(id);
-        if (edge != NULL) {
-            currentGraph->removeEdge(edge);
-        }
-    }
+	Data::Graph* currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
+	QMap<qlonglong, osg::ref_ptr<Data::Edge> >* edges = currentGraph -> getEdges();
+	if ( edges->contains( id ) ) {
+		Data::Edge* edge = *edges->find( id );
+		if ( edge != NULL ) {
+			currentGraph->removeEdge( edge );
+		}
+	}
 
 }
 
-void RemoveEdgeExecutor::execute_server() {
+void RemoveEdgeExecutor::execute_server()
+{
 
-    int id;
+	int id;
 
-    *stream >> id;
+	*stream >> id;
 
-    Data::Graph * currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
-    QMap<qlonglong, osg::ref_ptr<Data::Edge> >* edges = currentGraph -> getEdges();
-    if (edges->contains(id)) {
-        Data::Edge *edge = *edges->find(id);
-        if (edge != NULL) {
-            currentGraph->removeEdge(edge);
-        }
-    }
+	Data::Graph* currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
+	QMap<qlonglong, osg::ref_ptr<Data::Edge> >* edges = currentGraph -> getEdges();
+	if ( edges->contains( id ) ) {
+		Data::Edge* edge = *edges->find( id );
+		if ( edge != NULL ) {
+			currentGraph->removeEdge( edge );
+		}
+	}
 
-    Server * server = Server::getInstance();
-    server->sendRemoveEdge(id);
+	Server* server = Server::getInstance();
+	server->sendRemoveEdge( id );
 
-    if (((QOSG::CoreWindow *)server->getCoreWindowReference())->playing()) {
-        server->getLayoutThread()->play();
-    }
+	if ( ( ( QOSG::CoreWindow* )server->getCoreWindowReference() )->playing() ) {
+		server->getLayoutThread()->play();
+	}
 
 }
 

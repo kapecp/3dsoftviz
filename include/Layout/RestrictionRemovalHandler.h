@@ -7,7 +7,8 @@ namespace Layout {
 /**
  * \brief Performs a cleanup after a restriction is removed.
  */
-class RestrictionRemovalHandler {
+class RestrictionRemovalHandler
+{
 
 public:
 
@@ -16,10 +17,10 @@ public:
 	 * been associated with the restriction).
 	 * Called from RestrictionsManager after the restriction is removed.
 	 */
-	virtual void afterRestrictionRemoved (void) = 0;
+	virtual void afterRestrictionRemoved( void ) = 0;
 
 	/***/
-	virtual ~RestrictionRemovalHandler (void) {}
+	virtual ~RestrictionRemovalHandler( void ) {}
 
 }; // class
 

@@ -13,22 +13,23 @@ namespace Layout {
  * \brief Returning a circle on plane defined by three points (specified by current positions of three nodes
  * provided in the constructor).
  */
-class ShapeGetter_SpherePlane_ByThreeNodes : public ShapeGetter {
+class ShapeGetter_SpherePlane_ByThreeNodes : public ShapeGetter
+{
 
 public:
 
-	ShapeGetter_SpherePlane_ByThreeNodes (
-			osg::ref_ptr<Data::Node> node1,
-			osg::ref_ptr<Data::Node> node2,
-			osg::ref_ptr<Data::Node> node3
-			);
+	ShapeGetter_SpherePlane_ByThreeNodes(
+		osg::ref_ptr<Data::Node> node1,
+		osg::ref_ptr<Data::Node> node2,
+		osg::ref_ptr<Data::Node> node3
+	);
 
 	/***/
-	virtual ~ShapeGetter_SpherePlane_ByThreeNodes (void) {}
+	virtual ~ShapeGetter_SpherePlane_ByThreeNodes( void ) {}
 
-	virtual QSharedPointer<Shape> getShape (void);
+	virtual QSharedPointer<Shape> getShape( void );
 
-	virtual QSet<Data::Node * > getNodesOfShape();
+	virtual QSet<Data::Node* > getNodesOfShape();
 
 private:
 

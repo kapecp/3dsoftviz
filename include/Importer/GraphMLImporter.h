@@ -17,17 +17,18 @@ namespace Importer {
  * \brief Imports graph data from data in GraphML format.
  */
 class GraphMLImporter
-		: public StreamImporter {
+	: public StreamImporter
+{
 
 public:
 
 	/***/
-	virtual ~GraphMLImporter (void) {}
+	virtual ~GraphMLImporter( void ) {}
 
 	/***/
-	virtual bool import (
-			ImporterContext &context
-			);
+	virtual bool import(
+		ImporterContext& context
+	);
 
 private:
 
@@ -35,45 +36,45 @@ private:
 	 * \brief Imports one graph (or subgraph).
 	 * [recursive]
 	 */
-	bool processGraph (
-			QDomElement &graphElement
-			);
+	bool processGraph(
+		QDomElement& graphElement
+	);
 
 	/**
 	 * \brief Imports nodes from a graph (or subgraph).
 	 */
-	bool processGraph_Nodes (
-			QDomElement &graphElement
-			);
+	bool processGraph_Nodes(
+		QDomElement& graphElement
+	);
 
 	/**
 	 * \brief Imports edges from a graph (or subgraph).
 	 */
-	bool processGraph_Edges (
-			QDomElement &graphElement
-			);
+	bool processGraph_Edges(
+		QDomElement& graphElement
+	);
 
 	/**
 	 * \brief Imports hyperedges from a graph (or subgraph).
 	 */
-	bool processGraph_Hyperedges (
-			QDomElement &graphElement
-			);
+	bool processGraph_Hyperedges(
+		QDomElement& graphElement
+	);
 
 private:
 
 	/**
 	 * \brief Holds input (file stream) and output (graph structure and objects used for import process information reporting).
 	 */
-	ImporterContext *context_;
+	ImporterContext* context_;
 
 	// helpers
 	std::auto_ptr<GraphOperations> graphOp_;
 	std::auto_ptr<ReadNodesStore> readNodes_;
 
 	//default types
-	Data::Type *edgeType_;
-	Data::Type *nodeType_;
+	Data::Type* edgeType_;
+	Data::Type* nodeType_;
 
 	QString edgeTypeAttribute_;
 	QString nodeTypeAttribute_;

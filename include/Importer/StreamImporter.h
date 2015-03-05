@@ -12,12 +12,13 @@ namespace Importer {
  * Implementations of this interface perform import of graph data from streams.
  * Each implementation should handle one stream data format.
  */
-class StreamImporter {
+class StreamImporter
+{
 
 public:
 
 	/***/
-	virtual ~StreamImporter (void) {}
+	virtual ~StreamImporter( void ) {}
 
 	/**
 	 * \brief Performs import.
@@ -28,9 +29,9 @@ public:
 	 * Modifies graph data in the context.
 	 * Uses info handler in the context to inform about the progress.
 	 */
-	virtual bool import (
-			ImporterContext &context
-			) = 0;
+	virtual bool import(
+		ImporterContext& context
+	) = 0;
 
 }; // class
 

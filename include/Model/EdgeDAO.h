@@ -17,8 +17,7 @@ class Edge;
 class GraphLayout;
 }
 
-namespace Model
-{
+namespace Model {
 /**
 		*  \class EdgeDAO
 		*  \brief Class represents a database layer for Data::Edge objects
@@ -36,7 +35,7 @@ public:
 		*  \param   edges  edges from actual graph
 		*  \return	bool true, if edges were successfully added to DB
 		*/
-	static bool addEdgesToDB(QSqlDatabase* conn, QMap<qlonglong, osg::ref_ptr<Data::Edge> >* edges);
+	static bool addEdgesToDB( QSqlDatabase* conn, QMap<qlonglong, osg::ref_ptr<Data::Edge> >* edges );
 
 	/**
 		*  \fn public static  addEdgesToDB(QSqlDatabase* conn, QMap<qlonglong, osg::ref_ptr<Data::Edge> >* edges, Data::GraphLayout* layout, QMap<qlonglong, qlonglong> newMetaNodeID, QMap<qlonglong, qlonglong> newMetaEdgeID)
@@ -48,7 +47,7 @@ public:
 		*  \param	newMetaEdgeID	new ID of meta edges (because of unique ID in DB)
 		*  \return	bool true, if edges were successfully added to DB
 		*/
-	static bool addMetaEdgesToDB(QSqlDatabase* conn, QMap<qlonglong, osg::ref_ptr<Data::Edge> >* edges, Data::GraphLayout* layout, QMap<qlonglong, qlonglong> newMetaNodeID, QMap<qlonglong, qlonglong> newMetaEdgeID);
+	static bool addMetaEdgesToDB( QSqlDatabase* conn, QMap<qlonglong, osg::ref_ptr<Data::Edge> >* edges, Data::GraphLayout* layout, QMap<qlonglong, qlonglong> newMetaNodeID, QMap<qlonglong, qlonglong> newMetaEdgeID );
 
 	/**
 		*  \fn public static  addEdgesColorToDB(QSqlDatabase* conn, QMap<qlonglong, osg::ref_ptr<Data::Edge> >* edges, Data::GraphLayout* layout, QMap<qlonglong, qlonglong> newMetaNodeID, QMap<qlonglong, qlonglong> newMetaEdgeID, bool meta)
@@ -62,7 +61,7 @@ public:
 		*  \return	bool true, if color of edges was successfully added to DB
 		*/
 
-	static bool addEdgesColorToDB(QSqlDatabase* conn, QMap<qlonglong, osg::ref_ptr<Data::Edge> >* edges, Data::GraphLayout* layout, QMap<qlonglong, qlonglong> newMetaEdgeID, bool meta);
+	static bool addEdgesColorToDB( QSqlDatabase* conn, QMap<qlonglong, osg::ref_ptr<Data::Edge> >* edges, Data::GraphLayout* layout, QMap<qlonglong, qlonglong> newMetaEdgeID, bool meta );
 
 	/**
 		*  \fn public static  addEdgesScaleToDB(QSqlDatabase* conn, QMap<qlonglong, osg::ref_ptr<Data::Edge> >* edges, Data::GraphLayout* layout, QMap<qlonglong, qlonglong> newMetaNodeID, QMap<qlonglong, qlonglong> newMetaEdgeID, bool meta, float defaultScale)
@@ -77,7 +76,7 @@ public:
 		*  \return	bool true, if color of edges was successfully added to DB
 		*/
 
-	static bool addEdgesScaleToDB(QSqlDatabase* conn, QMap<qlonglong, osg::ref_ptr<Data::Edge> >* edges, Data::GraphLayout* layout, QMap<qlonglong, qlonglong> newMetaEdgeID, bool meta, float defaultScale);
+	static bool addEdgesScaleToDB( QSqlDatabase* conn, QMap<qlonglong, osg::ref_ptr<Data::Edge> >* edges, Data::GraphLayout* layout, QMap<qlonglong, qlonglong> newMetaEdgeID, bool meta, float defaultScale );
 
 	/**
 		*  \fn public static  getEdgesQuery(QSqlDatabase* conn, bool* error, qlonglong graphID)
@@ -87,7 +86,7 @@ public:
 		*  \param   graphID  graph ID
 		*  \return	QSqlQuery* edges query from DB
 		*/
-	static QSqlQuery* getEdgesQuery(QSqlDatabase* conn, bool* error, qlonglong graphID, qlonglong layoutID);
+	static QSqlQuery* getEdgesQuery( QSqlDatabase* conn, bool* error, qlonglong graphID, qlonglong layoutID );
 
 	/**
 		*  \fn public static  getNumberOfEdges(QSqlDatabase* conn, bool* error)
@@ -96,7 +95,7 @@ public:
 		*  \param   error  error flag, will be set to true, if the method encounters an error
 		*  \return	qlonglong number of edges in DB in graph
 		*/
-	static QList<qlonglong> getListOfEdges(QSqlDatabase* conn, bool* error);
+	static QList<qlonglong> getListOfEdges( QSqlDatabase* conn, bool* error );
 
 	/**
 		*  \fn public static  checkIfExists(Data::Edge* edge, QSqlDatabase* conn)
@@ -105,7 +104,7 @@ public:
 		*  \param   conn     connection to the database
 		*  \return bool true, if the Edge is in database
 		*/
-	static bool checkIfExists(Data::Edge* edge, QSqlDatabase* conn);
+	static bool checkIfExists( Data::Edge* edge, QSqlDatabase* conn );
 
 
 	/**
@@ -115,7 +114,7 @@ public:
 		*  \param   conn     connection to the database
 		*  \return bool true, if the Edge was removed from database
 		*/
-	static bool removeEdge(Data::Edge* edge, QSqlDatabase* conn);
+	static bool removeEdge( Data::Edge* edge, QSqlDatabase* conn );
 
 	/**
 		*  \fn public static  removeEdges(qlonglong graphID, QSqlDatabase* conn)
@@ -124,7 +123,7 @@ public:
 		*  \param   conn     connection to the database
 		*  \return bool true, if the Edges was successfully removed from database
 		*/
-	static bool removeEdges(qlonglong graphID, QSqlDatabase* conn);
+	static bool removeEdges( qlonglong graphID, QSqlDatabase* conn );
 
 	/**
 		*  \fn public static  removeEdges(qlonglong graphID, qlonglong layoutID, QSqlDatabase* conn)
@@ -134,7 +133,7 @@ public:
 		*  \param   conn     connection to the database
 		*  \return bool true, if the Edges was successfully removed from database
 		*/
-	static bool removeEdges(qlonglong graphID, qlonglong layoutID, QSqlDatabase* conn);
+	static bool removeEdges( qlonglong graphID, qlonglong layoutID, QSqlDatabase* conn );
 
 	/**
 		* \fn public static getSettings(Data::Edge* edge, QSqlDatabase* conn, bool* error)
@@ -144,7 +143,7 @@ public:
 		* \param  error 		error flag, will be set to true, if the method encounters an error
 		* \return QMap<QString,QString> settings of the Edge
 		*/
-	static QMap<QString,QString> getSettings(Data::Edge* edge, QSqlDatabase* conn, bool* error);
+	static QMap<QString,QString> getSettings( Data::Edge* edge, QSqlDatabase* conn, bool* error );
 
 	/**
 		*  \fn public static  getSettings(QSqlDatabase* conn, bool* error, qlonglong graphID, qlonglong layoutID, QString attributeName)
@@ -156,7 +155,7 @@ public:
 		*  \param   attributeName  name of node attribute
 		*  \return	QMap<qlonglong, QString> settings of the Edge
 		*/
-	static QMap<qlonglong, QString> getSettings(QSqlDatabase* conn, bool* error, qlonglong graphID, qlonglong layoutID, QString attributeName);
+	static QMap<qlonglong, QString> getSettings( QSqlDatabase* conn, bool* error, qlonglong graphID, qlonglong layoutID, QString attributeName );
 
 	/**
 		*  \fn public static  getColors(QSqlDatabase* conn, bool* error, qlonglong graphID, qlonglong layoutID)
@@ -167,7 +166,7 @@ public:
 		*  \param   layoutID  layout ID
 		*  \return	QMap<qlonglong, osg::Vec4f> colors of the Edges
 		*/
-	static QMap<qlonglong, osg::Vec4f> getColors(QSqlDatabase* conn, bool* error, qlonglong graphID, qlonglong layoutID);
+	static QMap<qlonglong, osg::Vec4f> getColors( QSqlDatabase* conn, bool* error, qlonglong graphID, qlonglong layoutID );
 
 	/**
 		*  \fn public static  getScales(QSqlDatabase* conn, bool* error, qlonglong graphID, qlonglong layoutID)
@@ -178,7 +177,7 @@ public:
 		*  \param   layoutID  layout ID
 		*  \return	QMap<qlonglong, float> scales of the Edges
 		*/
-	static QMap<qlonglong, float> getScales(QSqlDatabase* conn, bool* error, qlonglong graphID, qlonglong layoutID);
+	static QMap<qlonglong, float> getScales( QSqlDatabase* conn, bool* error, qlonglong graphID, qlonglong layoutID );
 
 	/**
 		*  \fn public static  getNewMetaEdgesId(QSqlDatabase* conn, qlonglong graphID, QMap<qlonglong, osg::ref_ptr<Data::Edge> >* edges)
@@ -188,7 +187,7 @@ public:
 		*  \param	edges edges of graph
 		*  \return	QMap<qlonglong, qlonglong> new edges ID
 		*/
-	static QMap<qlonglong, qlonglong> getNewMetaEdgesId(QSqlDatabase* conn, qlonglong graphID, QMap<qlonglong, osg::ref_ptr<Data::Edge> >* edges);
+	static QMap<qlonglong, qlonglong> getNewMetaEdgesId( QSqlDatabase* conn, qlonglong graphID, QMap<qlonglong, osg::ref_ptr<Data::Edge> >* edges );
 
 	/**
 		*  \fn public  static addSetings(QSqlDatabase* conn, qlonglong graphID, qlonglong layoutID, qlonglong edgeID, QString valName, double val)
@@ -201,7 +200,7 @@ public:
 		*  \param   val  value
 		*  \return	bool true, if edge setting was successfully added to DB
 		*/
-	static bool addSetings(QSqlDatabase* conn, qlonglong graphID, qlonglong layoutID, qlonglong edgeID, QString valName, double val);
+	static bool addSetings( QSqlDatabase* conn, qlonglong graphID, qlonglong layoutID, qlonglong edgeID, QString valName, double val );
 
 	/**
 		*  \fn public  static addSetings(QSqlDatabase* conn, qlonglong graphID, qlonglong layoutID, qlonglong edgeID, QString valName, float val)
@@ -214,7 +213,7 @@ public:
 		*  \param   val  value
 		*  \return	bool true, if edge setting was successfully added to DB
 		*/
-	static bool addSetings(QSqlDatabase* conn, qlonglong graphID, qlonglong layoutID, qlonglong edgeID, QString valName, float val);
+	static bool addSetings( QSqlDatabase* conn, qlonglong graphID, qlonglong layoutID, qlonglong edgeID, QString valName, float val );
 
 private:
 
@@ -224,13 +223,13 @@ private:
 		*
 		* Only static members of the class should be used
 		*/
-	EdgeDAO(void);
+	EdgeDAO( void );
 
 	/**
 		*  \fn private destructor  ~EdgeDAO
 		*  \brief Destroys EdgeDAO object
 		*/
-	~EdgeDAO(void);
+	~EdgeDAO( void );
 };
 }
 #endif

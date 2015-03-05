@@ -8,7 +8,7 @@
 #include <QDebug>
 
 // constructor sets basic camera settings
-OpenCV::CapVideo::CapVideo( int device_id, int width, int height)
+OpenCV::CapVideo::CapVideo( int device_id, int width, int height )
 {
 	this->device_id		= device_id;
 	this->connections	= 0;
@@ -17,10 +17,11 @@ OpenCV::CapVideo::CapVideo( int device_id, int width, int height)
 }
 
 // open camera device based on set parameters
-void OpenCV::CapVideo::startCamera(int width,int height){
+void OpenCV::CapVideo::startCamera( int width,int height )
+{
 	this->connections++;
-	if ( !capture.isOpened() ){
-		cv::VideoCapture cap( this->device_id);
+	if ( !capture.isOpened() ) {
+		cv::VideoCapture cap( this->device_id );
 		this->capture = cap;
 		this->capture.set( CV_CAP_PROP_FRAME_WIDTH, width );
 		this->capture.set( CV_CAP_PROP_FRAME_HEIGHT, height );
@@ -31,9 +32,10 @@ void OpenCV::CapVideo::startCamera(int width,int height){
 }
 
 //release camera
-void OpenCV::CapVideo::release(){
+void OpenCV::CapVideo::release()
+{
 	this->connections--;
-	if (this->connections == 0){
+	if ( this->connections == 0 ) {
 		this->capture.release();
 		this->width  = 0;
 		this->height = 0;
@@ -47,16 +49,20 @@ OpenCV::CapVideo::~CapVideo()
 
 }
 
-int OpenCV::CapVideo::getWidth(){
+int OpenCV::CapVideo::getWidth()
+{
 	return this->width;
 }
-int OpenCV::CapVideo::getHeight(){
+int OpenCV::CapVideo::getHeight()
+{
 	return this->height;
 }
-int OpenCV::CapVideo::getDeviceId(){
+int OpenCV::CapVideo::getDeviceId()
+{
 	return this->device_id;
 }
-bool OpenCV::CapVideo::isOpened(){
+bool OpenCV::CapVideo::isOpened()
+{
 	return this->capture.isOpened();
 }
 
@@ -70,10 +76,10 @@ cv::Mat OpenCV::CapVideo::queryFrame()
 // transform current camera frame to grayscale and return it
 cv::Mat OpenCV::CapVideo::getGrayframe()
 {
-	if(!frame.empty())
-	{
-		cvtColor( this->frame, this->grayframe, CV_BGR2GRAY);
-	}return this->grayframe;
+	if ( !frame.empty() ) {
+		cvtColor( this->frame, this->grayframe, CV_BGR2GRAY );
+	}
+	return this->grayframe;
 }
 
 cv::Mat OpenCV::CapVideo::getFrame()

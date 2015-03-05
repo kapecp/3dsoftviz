@@ -11,16 +11,14 @@
 #include <QMutex>
 #include <QThread>
 
-namespace Data
-{
-	class Graph;
-	class Node;
-	class Edge;
+namespace Data {
+class Graph;
+class Node;
+class Edge;
 }
 
-namespace Layout
-{
-    class RadialLayout;
+namespace Layout {
+class RadialLayout;
 /**
 	*  \class FRAlgorithm
 	*
@@ -34,7 +32,7 @@ class FRAlgorithm : public QThread
 {
 public:
 
-    /**
+	/**
 		*  \fn public overloaded constructor  FRAlgorithm
 		*  \brief Creates new FRAlgorithm object
 		*/
@@ -45,7 +43,7 @@ public:
 		*  \brief Creates new FRAlgorithm object and sets input graph
 		*  \param  graph  Graph to which layout will be setted
 		*/
-	FRAlgorithm(Data::Graph *graph);
+	FRAlgorithm( Data::Graph* graph );
 
 	/**
 		*  \fn public  SetParameters(float sizeFactor,float flexibility,int animationSpeed,bool useMaxDistance)
@@ -56,7 +54,7 @@ public:
 		*  \param       useMaxDistance
 		*/
 
-	void SetParameters(float sizeFactor,float flexibility,bool useMaxDistance);
+	void SetParameters( float sizeFactor,float flexibility,bool useMaxDistance );
 
 	/**
 		*  \fn public  Randomize
@@ -70,7 +68,10 @@ public:
 		*  \param      val  multipliciter of forces
 		*/
 
-	void SetAlphaValue(float val) {ALPHA = val; }
+	void SetAlphaValue( float val )
+	{
+		ALPHA = val;
+	}
 
 	/**
 		*  \fn public  PauseAlg
@@ -108,26 +109,26 @@ public:
 		*  \brief Sets graph data structure
 		*  \param graph  data structure containing nodes, edges and types
 		*/
-	void SetGraph(Data::Graph *graph);
+	void SetGraph( Data::Graph* graph );
 
 	/**
 		*  \brief Sets the end status (causing the loops in run method to end)
 		*/
 	void RequestEnd();
 
-    /**
-        *  \brief Sets the repulsive force multiplier between two nodes in one vertigo plane
-        */
-    void setRepulsiveForceVertigo(int value);
+	/**
+	    *  \brief Sets the repulsive force multiplier between two nodes in one vertigo plane
+	    */
+	void setRepulsiveForceVertigo( int value );
 
 private:
-    Layout::RadialLayout* rl;
+	Layout::RadialLayout* rl;
 
 	/**
 		*  Data::Graph * graph
 		*  \brief data structure containing nodes, edges and types
 		*/
-	Data::Graph *graph;
+	Data::Graph* graph;
 
 	/**
 		*  double PI
@@ -283,11 +284,11 @@ private:
 		*/
 	double dist;
 
-    /**
-        *  int repulsiveForceVertigo
-        *  \brief repulsive force multiplier between two nodes in one vertigo plane
-        */
-    int repulsiveForceVertigo;
+	/**
+	    *  int repulsiveForceVertigo
+	    *  \brief repulsive force multiplier between two nodes in one vertigo plane
+	    */
+	int repulsiveForceVertigo;
 
 	/**
 		*  \fn private  iterate
@@ -302,7 +303,7 @@ private:
 		*  \param   node node to which will be aplified forces
 		*  \return bool
 		*/
-	bool applyForces(Data::Node* node);
+	bool applyForces( Data::Node* node );
 
 	/**
 		*  \fn private  addAttractive(Data::Edge* edge, float factor)
@@ -310,7 +311,7 @@ private:
 		*  \param  edge  which associate two nodes on which effect attractive force
 		*  \param  factor  multiplicer of attaractive force
 		*/
-	void addAttractive(Data::Edge* edge, float factor);
+	void addAttractive( Data::Edge* edge, float factor );
 
 	/**
 		*  \fn private  addMetaAttractive(Data::Node* u, Data::Node* meta, float factor)
@@ -319,7 +320,7 @@ private:
 		*  \param   meta meta node
 		*  \param   factor  multiplicer of attaractive force
 		*/
-	void addMetaAttractive(Data::Node* u, Data::Node* meta, float factor);
+	void addMetaAttractive( Data::Node* u, Data::Node* meta, float factor );
 
 	/**
 		*  \fn private  addRepulsive(Data::Node* u, Data::Node* v, float factor)
@@ -328,7 +329,7 @@ private:
 		*  \param  v  node V
 		*  \param  factor  multiplicer of repulsive force
 		*/
-	void addRepulsive(Data::Node* u, Data::Node* v, float factor);
+	void addRepulsive( Data::Node* u, Data::Node* v, float factor );
 
 	/**
 		*  \fn private  rep(double distance)
@@ -336,7 +337,7 @@ private:
 		*  \param  distance  distance between two vectors
 		*  \return float size of repulsive force
 		*/
-	float rep(double distance);
+	float rep( double distance );
 
 	/**
 		*  \fn private  attr(double distance)
@@ -344,7 +345,7 @@ private:
 		*  \param     distance  distance between two vectors
 		*  \return float size of attractive force
 		*/
-	float attr(double distance);
+	float attr( double distance );
 
 	/**
 		*  \fn private  centr(double distance)
@@ -352,7 +353,7 @@ private:
 		*  \param      distance   distance between two vectors
 		*  \return float size of centripetal force
 		*/
-	float centr(double distance);
+	float centr( double distance );
 
 	/**
 		*  \fn private  distance(osg::Vec3f u,osg::Vec3f v)
@@ -361,19 +362,19 @@ private:
 		*  \param       v  vector V
 		*  \return double distance between two vectors
 		*/
-	double distance(osg::Vec3f u,osg::Vec3f v);
+	double distance( osg::Vec3f u,osg::Vec3f v );
 
 	/**
 		 * \brief If the nodes are not ignored and are from the same graph.
 		 * If one of the nodes (or both) is a meta node, there are forces between these
 		 * nodes even if they are from different graphs.
 		 */
-	bool areForcesBetween (Data::Node * u, Data::Node * v);
+	bool areForcesBetween( Data::Node* u, Data::Node* v );
 
 	/**
 		 * \brief Last focused node (if any).
 		 */
-	Data::Node *mLastFocusedNode;
+	Data::Node* mLastFocusedNode;
 
 };
 }

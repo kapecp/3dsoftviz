@@ -5,20 +5,22 @@
 
 namespace Layout {
 
-ShapeGetter_Const::ShapeGetter_Const (
-        QSharedPointer<Shape> shape
-        ) : shape_ (shape)
+ShapeGetter_Const::ShapeGetter_Const(
+	QSharedPointer<Shape> shape
+) : shape_( shape )
 {
-    // nothing
+	// nothing
 }
 
-QSharedPointer<Shape> ShapeGetter_Const::getShape (void) {
-    return shape_;
+QSharedPointer<Shape> ShapeGetter_Const::getShape( void )
+{
+	return shape_;
 }
 
-QSet<Data::Node* >  ShapeGetter_Const::getNodesOfShape(){
-    QSet<Data::Node* > nodes;
-    return nodes;
+QSet<Data::Node* >  ShapeGetter_Const::getNodesOfShape()
+{
+	QSet<Data::Node* > nodes;
+	return nodes;
 }
 
 } // namespace

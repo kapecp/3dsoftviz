@@ -10,21 +10,22 @@ namespace Layout {
  * \brief Shape representing "no shape".
  * [null object pattern][immutable]
  */
-class Shape_Null : public Shape {
+class Shape_Null : public Shape
+{
 
 public:
 
-	Shape_Null (void);
+	Shape_Null( void );
 
 	/***/
-	virtual ~Shape_Null (void) {}
+	virtual ~Shape_Null( void ) {}
 
 	/**
 	 * [visitor pattern]
 	 */
-	virtual void accept (
-			ShapeVisitor & visitor
-			);
+	virtual void accept(
+		ShapeVisitor& visitor
+	);
 
 }; // class
 

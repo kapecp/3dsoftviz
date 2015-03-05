@@ -15,10 +15,12 @@
 #include "Viewer/RestrictionManipulatorsGroup.h"
 #include "Viewer/RestrictionVisualizationsGroup.h"
 
-namespace Data { class Node; }
+namespace Data {
+class Node;
+}
 
 namespace Layout {
-typedef QMap<Data::Node *, QSharedPointer<ShapeGetter> > RestrictionsMapType;
+typedef QMap<Data::Node*, QSharedPointer<ShapeGetter> > RestrictionsMapType;
 typedef QMap<QSharedPointer<ShapeGetter>, long> ShapeGetterUsagesMapType;
 typedef QMap<QSharedPointer<ShapeGetter>, QSharedPointer<Shape> > LastShapesMapType;
 typedef QMap<QSharedPointer<ShapeGetter>, QSharedPointer<RestrictionRemovalHandler> > RemovalHandlersMapType;
@@ -49,16 +51,16 @@ public:
 	 * restriction (if any attached) is removed from each node in the nodes
 	 * set.
 	 */
-	void setRestrictions(QSet<Data::Node *> &nodes, const QSharedPointer<ShapeGetter> &shapeGetter);
+	void setRestrictions( QSet<Data::Node*>& nodes, const QSharedPointer<ShapeGetter>& shapeGetter );
 
 	/**
 		 * \brief Sets the restriction represented by the shapeGetter to nides that represented shape with
 		 *  specific node.
 		 */
 	void setRestrictionToShape(
-			QLinkedList<osg::ref_ptr<Data::Node> > * nodesOfShapeGettersToRestrict,
-			QSharedPointer<ShapeGetter> shapeGetter
-			);
+		QLinkedList<osg::ref_ptr<Data::Node> >* nodesOfShapeGettersToRestrict,
+		QSharedPointer<ShapeGetter> shapeGetter
+	);
 
 	/**
 	 * \brief Finds out the distance of a node from the focus point according
@@ -68,7 +70,7 @@ public:
 	 * computed
 	 * \return the distance of the node from the focus point
 	 */
-	float distanceFromFocus(Data::Node &node);
+	float distanceFromFocus( Data::Node& node );
 
 	/**
 	 * \brief Computes the restricted position for the node.
@@ -79,9 +81,9 @@ public:
 	 * latest shape from the shape getter and notifying the observer if the
 	 * shape has been changed.
 	 */
-	void applyRestriction(Data::Node &node);
+	void applyRestriction( Data::Node& node );
 
-	osg::Group* getRestrictedNodes(Shape& shape);
+	osg::Group* getRestrictedNodes( Shape& shape );
 
 	/**
 	 * \brief Tries to set the removal handler, which defines operations which
@@ -90,8 +92,8 @@ public:
 	 * last usage has been removed and the restriction has been already
 	 * destroyed) it does nothing and returns false.
 	 */
-	bool trySetRestrictionRemovalHandler(const QSharedPointer<ShapeGetter> &shapeGetter,
-										 const QSharedPointer<RestrictionRemovalHandler> &handler);
+	bool trySetRestrictionRemovalHandler( const QSharedPointer<ShapeGetter>& shapeGetter,
+										  const QSharedPointer<RestrictionRemovalHandler>& handler );
 
 	/**
 	 * \brief Sets the removal handler, which defines operations which need to
@@ -100,18 +102,18 @@ public:
 	 * last usage has been removed and the restriction has been already
 	 * destroyed), the handler code is run.
 	 */
-	void setOrRunRestrictionRemovalHandler(const QSharedPointer<ShapeGetter> &shapeGetter,
-										   const QSharedPointer<RestrictionRemovalHandler> &handler);
+	void setOrRunRestrictionRemovalHandler( const QSharedPointer<ShapeGetter>& shapeGetter,
+											const QSharedPointer<RestrictionRemovalHandler>& handler );
 
 	/**
 	 * \brief Sets the observer which is notified when a restriction is added,
 	 * removed or its shape has been changed.
 	 * [observer pattern]
 	 */
-	void setObservers (
-			QSharedPointer<Vwr::RestrictionVisualizationsGroup> v_observer,
-			QSharedPointer<Vwr::RestrictionManipulatorsGroup> m_observer
-			);
+	void setObservers(
+		QSharedPointer<Vwr::RestrictionVisualizationsGroup> v_observer,
+		QSharedPointer<Vwr::RestrictionManipulatorsGroup> m_observer
+	);
 
 	/**
 	 * \brief Removes the observer.
@@ -126,34 +128,34 @@ private:
 	 * node.
 	 * Returns NULL if no restriction is associated.
 	 */
-	QSharedPointer<ShapeGetter> getShapeGetter(Data::Node &node);
-	QSharedPointer<ShapeGetter> getShapeGetter (
-			osg::ref_ptr<Data::Node> node
-			);
+	QSharedPointer<ShapeGetter> getShapeGetter( Data::Node& node );
+	QSharedPointer<ShapeGetter> getShapeGetter(
+		osg::ref_ptr<Data::Node> node
+	);
 	/**
 	 * \brief Gets current shape from the restriction, notifies observer if
 	 * the shape has been changed and stores it as last shape.
 	 */
-	void refreshShape(const QSharedPointer<ShapeGetter> &shapeGetter);
+	void refreshShape( const QSharedPointer<ShapeGetter>& shapeGetter );
 
-	osg::Group* getNodes(QSharedPointer<ShapeGetter> shapeGetter);
+	osg::Group* getNodes( QSharedPointer<ShapeGetter> shapeGetter );
 
 private: // observer notification
 
 	/**
 	 * [observer pattern]
 	 */
-	void notifyRestrictionAdded(const QSharedPointer<ShapeGetter> &shapeGetter);
+	void notifyRestrictionAdded( const QSharedPointer<ShapeGetter>& shapeGetter );
 
 	/**
 	 * [observer pattern]
 	 */
-	void notifyShapeChanged(const QSharedPointer<ShapeGetter> &shapeGetter, const QSharedPointer<Shape> &shape);
+	void notifyShapeChanged( const QSharedPointer<ShapeGetter>& shapeGetter, const QSharedPointer<Shape>& shape );
 
 	/**
 	 * [observer pattern]
 	 */
-	void notifyRestrictionRemoved(const QSharedPointer<ShapeGetter> &shapeGetter);
+	void notifyRestrictionRemoved( const QSharedPointer<ShapeGetter>& shapeGetter );
 
 private:
 

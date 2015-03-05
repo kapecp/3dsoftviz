@@ -5,13 +5,14 @@
 
 namespace Network {
 
-    class RemoveEdgeExecutor : public AbstractExecutor {
+class RemoveEdgeExecutor : public AbstractExecutor
+{
 
-    public:
-        void execute_client();
-        void execute_server();
-        static const quint8 INSTRUCTION_NUMBER = 15;
-    };
+public:
+	void execute_client();
+	void execute_server();
+	static const quint8 INSTRUCTION_NUMBER = 15;
+};
 
 }
 
