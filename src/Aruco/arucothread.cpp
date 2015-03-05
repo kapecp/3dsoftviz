@@ -8,23 +8,6 @@
 
 namespace ArucoModul {
 
-<<<<<<< Updated upstream
-ArucoThread::ArucoThread( QObject* parent )
-	: QThread( parent )
-{
-	mCapVideo		= NULL;
-	mCancel			= false;
-	mCorSetted		= false;
-	mMarkerIsBehind = false; // marker is default in front of projection or monitor
-	mCorEnabled		= false;
-	mUpdCorPar		= false;
-	mSendImgEnabled	= true;
-	mSendBackgrImgEnabled = false;
-	mRatioCamCoef	= 0;
-	mGrM			= 0;
-	mMoM			= 1;
-	boolQueue = new Util::SizedQueue( 5, 0.0 );
-=======
 ArucoThread::ArucoThread(QObject *parent)
     : QThread(parent)
 {
@@ -41,7 +24,6 @@ ArucoThread::ArucoThread(QObject *parent)
     mGrM			= 0;
     mMoM			= 1;
     boolQueue = new Util::SizedQueue(5, 0.0);
->>>>>>> Stashed changes
 
 }
 
@@ -85,23 +67,12 @@ void ArucoThread::setSendBackgrImgEnabled( bool sendBackgrImgEnabled )
     mSendBackgrImgEnabled = sendBackgrImgEnabled;
 }
 
-<<<<<<< Updated upstream
-void ArucoThread::updateCorectionPar()
-{
-	mUpdCorPar = true;
-}
-
-void ArucoThread::setCapVideo( OpenCV::CapVideo* capVideo )
-{
-	mCapVideo = capVideo;
-=======
 void ArucoThread::updateCorectionPar(){
     mUpdCorPar = true;
 }
 
 void ArucoThread::setCapVideo( OpenCV::CapVideo *capVideo){
     mCapVideo = capVideo;
->>>>>>> Stashed changes
 }
 
 void ArucoThread::interchangeMarkers()
@@ -122,27 +93,6 @@ void ArucoThread::run()
         return;
     }
 
-<<<<<<< Updated upstream
-	// test if camera is set
-	if ( mCapVideo == NULL ) {
-		qDebug() << "[ArucoThread::run()]  Camera is not set";
-		return;
-	}
-	// prepare parameters for correction
-	const double width  = mCapVideo->getWidth();
-	const double height = mCapVideo->getHeight();
-	mCamDistRatio  = Util::ApplicationConfig::get()->getValue( "Aruco.CamDistancRatio" ).toDouble();
-	mRatioCamCoef  = ( 1 - height/width ) / mCamDistRatio;
-	mHalfRatioCoef = 0.5 + width / ( 2*height );
-
-	// file with parameters for camera, Aruco need it
-	QString filename = "../share/3dsoftviz/config/camera.yml";
-	QFileInfo file( filename );
-	if ( ! file.exists() ) {
-		qDebug() << "[ArucoThread::run()]: File " << file.absoluteFilePath() << " does Not exist!";
-		return;
-	}
-=======
     // prepare parameters for correction
     const double width  = mCapVideo->getWidth();
     const double height = mCapVideo->getHeight();
@@ -157,19 +107,13 @@ void ArucoThread::run()
         qDebug() << "[ArucoThread::run()]: File " << file.absoluteFilePath() << " does Not exist!";
         return;
     }
->>>>>>> Stashed changes
 
     // create Aruco, set camera pararameters and check it
     ArucoCore aCore;
     bool camParametersOk = aCore.setCameraParameters( filename );
 
-<<<<<<< Updated upstream
-	if ( camParametersOk ) {
-		while ( ! mCancel ) {	// doing aruco work in loop
-=======
     if( camParametersOk ){
         while(! mCancel) {	// doing aruco work in loop
->>>>>>> Stashed changes
 
             // variables for result from aruco
             double		 actPosArray[3];			// x, y, z
@@ -178,19 +122,6 @@ void ArucoThread::run()
 
             frame = mCapVideo->queryFrame();		// get image from camera
 
-<<<<<<< Updated upstream
-			// add image to aruco and get position vector and rotation quaternion
-			//markerDetected = aCore.getDetectedPosAndQuat( frame, actPosArray, actQuatArray );
-			aCore.detect( frame.clone() );
-
-			// graph controll
-			markerDetected = aCore.getPosAndQuat( mGrM, actPosArray, actQuatArray );
-			if ( markerDetected ) {
-
-				// test if marker was detect (if not, all number in matrix are not range)
-				if ( actPosArray[2] > 0.0  &&  actPosArray[2] < 10.0
-						&&   actQuatArray[0] >= -1.0  &&  actQuatArray[0] <= 1.0 ) {
-=======
             if(mMultiMarkerEnabled) {
 
                 // add image to aruco and get position vector and rotation quaternion
@@ -204,22 +135,12 @@ void ArucoThread::run()
                     // test if marker was detect (if not, all number in matrix are not range)
                     if( actPosArray[2] > 0.0  &&  actPosArray[2] < 10.0
                             &&   actQuatArray[0] >= -1.0  &&  actQuatArray[0] <= 1.0 ){
->>>>>>> Stashed changes
 
                         graphControlling( actPosArray, actQuatArray );
 
                     }
                 }
 
-<<<<<<< Updated upstream
-			// mouse controll
-			markerDetected = aCore.getPosAndQuat( mMoM, actPosArray, actQuatArray );
-			if ( markerDetected ) {
-
-				// test if marker was detect (if not, all number in matrix are not range)
-				if ( actPosArray[2] > 0.0  &&  actPosArray[2] < 10.0
-						&&   actQuatArray[0] >= -1.0  &&  actQuatArray[0] <= 1.0 ) {
-=======
                 // mouse controll
                 markerDetected = aCore.getPosAndQuat( mMoM, actPosArray, actQuatArray );
                 if( markerDetected ){
@@ -227,7 +148,6 @@ void ArucoThread::run()
                     // test if marker was detect (if not, all number in matrix are not range)
                     if( actPosArray[2] > 0.0  &&  actPosArray[2] < 10.0
                             &&   actQuatArray[0] >= -1.0  &&  actQuatArray[0] <= 1.0 ){
->>>>>>> Stashed changes
 
                         mouseControlling( actPosArray, actQuatArray );
 
@@ -236,18 +156,10 @@ void ArucoThread::run()
             }
             imagesSending(aCore, frame);
 
-<<<<<<< Updated upstream
-			imagesSending( aCore, frame );
-
-			if ( ! mCancel ) {
-				msleep( 50 );
-			}
-=======
             if(! mCancel){
                 msleep(50);
             }
 
->>>>>>> Stashed changes
 
         }
     }
@@ -259,17 +171,10 @@ void ArucoThread::run()
 void ArucoThread::graphControlling( const double actPosArray[3], const double actQuatArray[4] )
 {
 
-<<<<<<< Updated upstream
-	// can be corection parameters updated
-	if ( mUpdCorPar ) {
-		computeCorQuatAndPos( actPosArray, actQuatArray );
-	}
-=======
     // can be corection parameters updated
     if( mUpdCorPar ){
         computeCorQuatAndPos( actPosArray, actQuatArray );
     }
->>>>>>> Stashed changes
 
     osg::Vec3d actPos( -actPosArray[0], -actPosArray[1], -actPosArray[2] );
     //osg::Vec3d actPos( -actPosArray[0], -actPosArray[1] * mHalfRatioCoef, -actPosArray[2] );
@@ -277,20 +182,6 @@ void ArucoThread::graphControlling( const double actPosArray[3], const double ac
     osg::Quat  actQuat;
 
 
-<<<<<<< Updated upstream
-	//  forward/backward,   left/right,  around,   w
-	if ( mMarkerIsBehind ) {
-		actQuat.set( actQuatArray[1], -actQuatArray[3],  actQuatArray[2],  actQuatArray[0] );
-	}
-	else {
-		actQuat.set( actQuatArray[1],  actQuatArray[3],  actQuatArray[2],  -actQuatArray[0] );
-	}
-
-
-	if ( mCorEnabled ) {
-		correctQuatAndPos( actPos, actQuat );
-	}
-=======
     //  forward/backward,   left/right,  around,   w
     if( mMarkerIsBehind ){
         actQuat.set(  actQuatArray[1], -actQuatArray[3],  actQuatArray[2],  actQuatArray[0] );
@@ -302,7 +193,6 @@ void ArucoThread::graphControlling( const double actPosArray[3], const double ac
     if ( mCorEnabled ) {
         correctQuatAndPos( actPos, actQuat);
     }
->>>>>>> Stashed changes
 
     // normalizin from [0,0] in top left corner to [1,1] in roght bottom corner
     double absZ		= actPosArray[2]  < 0.0 ? - actPosArray[2]	:  actPosArray[2];		// distance of marker
@@ -323,37 +213,12 @@ void ArucoThread::graphControlling( const double actPosArray[3], const double ac
 
 void ArucoThread::mouseControlling( const double actPosArray[3], const double actQuatArray[4] )
 {
-<<<<<<< Updated upstream
-	osg::Vec3d actPos( actPosArray[0], -actPosArray[1] * mHalfRatioCoef, -actPosArray[2] );
-=======
     osg::Vec3d actPos(  actPosArray[0], -actPosArray[1] * mHalfRatioCoef, -actPosArray[2] );
->>>>>>> Stashed changes
 
     // normalizin from [0,0] in top left corner to [1,1] in roght bottom corner
     double absZ		= actPosArray[2]  < 0.0 ? - actPosArray[2]	:  actPosArray[2];		// distance of marker
     double halfSize = absZ / mCamDistRatio;
 
-<<<<<<< Updated upstream
-	double normX = ( halfSize + actPos.x() ) / ( halfSize*2 );							// horizontal
-	double normY = ( halfSize + actPos.y() ) / ( halfSize*2 );		// vertical
-
-	if ( normX < 0.0 ) {
-		normX = 0.0;
-	}
-	if ( normX > 1.0 ) {
-		normX = 1.0;
-	}
-	if ( normY < 0.0 ) {
-		normY = 0.0;
-	}
-	if ( normY > 1.0 ) {
-		normY = 1.0;
-	}
-
-	bool click = boolQueue->getAvgBool( actQuatArray[3] <= 0.0 );
-
-	emit moveMouseArucoSignal( normX, normY, click, Qt::LeftButton ); // now we dont recognize buttons, but in future it could be implemented
-=======
     double normX = (halfSize + actPos.x()) / (halfSize*2);							// horizontal
     double normY = (halfSize + actPos.y()) / (halfSize*2);		// vertical
 
@@ -365,75 +230,34 @@ void ArucoThread::mouseControlling( const double actPosArray[3], const double ac
     bool click = boolQueue->getAvgBool(actQuatArray[3] <= 0.0);
 
     emit moveMouseArucoSignal(normX, normY, click, Qt::LeftButton);  // now we dont recognize buttons, but in future it could be implemented
->>>>>>> Stashed changes
 
 }
 
 void ArucoThread::imagesSending( ArucoCore& aCore, const cv::Mat frame ) const
 {
 
-<<<<<<< Updated upstream
-	if ( mSendBackgrImgEnabled && !frame.empty() ) {
-		if ( ! mMarkerIsBehind ) {
-			cv::flip( frame, frame, 1 );
-		}
-		cv::cvtColor( frame, frame,CV_BGR2RGB );
-=======
     if( mSendBackgrImgEnabled && !frame.empty() ){
         if( ! mMarkerIsBehind){
             cv::flip( frame, frame, 1);
         }
         cv::cvtColor(frame, frame,CV_BGR2RGB);
->>>>>>> Stashed changes
 
         emit pushBackgrImage( frame.clone() );
     }
 
     cv::Mat image = aCore.getDetImage();
 
-<<<<<<< Updated upstream
-	if ( mSendImgEnabled ) {
-		if ( ! mMarkerIsBehind ) {
-			cv::flip( image, image, 1 );
-		}
-		cv::cvtColor( image, image, CV_BGR2RGB );
-=======
     if ( mSendImgEnabled ) {
         if( ! mMarkerIsBehind){
             cv::flip( image, image, 1);
         }
         cv::cvtColor(image, image, CV_BGR2RGB);
->>>>>>> Stashed changes
 
         emit pushImagemMat( image.clone() );
 
     }
 }
 
-<<<<<<< Updated upstream
-void ArucoThread::computeCorQuatAndPos( const double position[3], const double rotation[4] )
-{
-	qDebug() << "ARUCO: comput cor par done>";
-	// set corection translation
-	mCorP.x() = -position[0];
-	mCorP.y() = -position[1];
-	mCorP.z() = -position[2];
-	// set corection quaternion
-	osg::Quat tmp( rotation[1], rotation[2], rotation[3], rotation[0] );
-	mCorQ = tmp.conj();
-
-	mCorSetted = true;
-	mUpdCorPar = false;
-	emit corParUpdated();	// emit that corection parameters were updated
-}
-
-void ArucoThread::correctQuatAndPos( osg::Vec3d& actPos, osg::Quat& actQuat ) const
-{
-	if ( mCorSetted == true ) {
-		// correct position
-		// rotate point around correction point(corP) =  translate, rotate and translate back
-		actPos = ( mCorQ * ( actPos - mCorP ) ) + mCorP;
-=======
 void ArucoThread::computeCorQuatAndPos(const double position[3], const double rotation[4] ){
     qDebug() << "ARUCO: comput cor par done>";
     // set corection translation
@@ -454,21 +278,13 @@ void ArucoThread::correctQuatAndPos( osg::Vec3d &actPos, osg::Quat &actQuat ) co
         // correct position
         // rotate point around correction point(corP) =  translate, rotate and translate back
         actPos = ( mCorQ * (actPos - mCorP)) + mCorP;
->>>>>>> Stashed changes
 
         // correct rotation
         actQuat = actQuat * mCorQ;
 
-<<<<<<< Updated upstream
-	}
-	else {
-		qDebug() << "ArucoThread:computeCorQautAndPos() was called before setted correction parameters before!";
-	}
-=======
     } else {
         qDebug() << "ArucoThread:computeCorQautAndPos() was called before setted correction parameters before!";
     }
->>>>>>> Stashed changes
 }
 
 void ArucoThread::computeCorMat( QMatrix4x4 origM )
@@ -476,19 +292,6 @@ void ArucoThread::computeCorMat( QMatrix4x4 origM )
 
     QMatrix4x4 T1, T2;
 
-<<<<<<< Updated upstream
-	// get translation's vectors
-	QVector3D vTran2( origM( 0,3 ),  origM( 1,3 ),	 origM( 2,3 ) );
-	QVector3D vTran1( -origM( 0,3 ), -origM( 1,3 ), -origM( 2,3 ) );
-	// create translation matrixes
-	T1.translate( vTran1 );					//printMat(T1, "T1");
-	T2.translate( vTran2 );					//printMat(T2, "T2");
-
-	// delete translation info -> make rotation matrix
-	origM( 0,3 ) = 0.0;
-	origM( 1,3 ) = 0.0;
-	origM( 2,3 ) = 0.0;
-=======
     // get translation's vectors
     QVector3D vTran2(  origM(0,3),  origM(1,3),	 origM(2,3) );
     QVector3D vTran1( -origM(0,3), -origM(1,3), -origM(2,3) );
@@ -500,7 +303,6 @@ void ArucoThread::computeCorMat( QMatrix4x4 origM )
     origM(0,3) = 0.0;
     origM(1,3) = 0.0;
     origM(2,3) = 0.0;
->>>>>>> Stashed changes
 
     // compute corection matrix
     mCorM = T2 * origM * T1;
@@ -522,30 +324,6 @@ void ArucoThread::printVec( const osg::Vec4d v, const QString name ) const
 
 void ArucoThread::printMat( const osg::Matrixd mat, const QString name ) const
 {
-<<<<<<< Updated upstream
-	qDebug() << name;
-	QString str;
-	str  = " " + QString::number( mat( 0,0 ), 'f', 2 );
-	str += " " + QString::number( mat( 0,1 ), 'f', 2 );
-	str += " " + QString::number( mat( 0,2 ), 'f', 2 );
-	str += " " + QString::number( mat( 0,3 ), 'f', 2 );
-	qDebug() << ": " << str;
-	str  = " " + QString::number( mat( 1,0 ), 'f', 2 );
-	str += " " + QString::number( mat( 1,1 ), 'f', 2 );
-	str += " " + QString::number( mat( 1,2 ), 'f', 2 );
-	str += " " + QString::number( mat( 1,3 ), 'f', 2 );
-	qDebug() << ": " << str;
-	str  = " " + QString::number( mat( 2,0 ), 'f', 2 );
-	str += " " + QString::number( mat( 2,1 ), 'f', 2 );
-	str += " " + QString::number( mat( 2,2 ), 'f', 2 );
-	str += " " + QString::number( mat( 2,3 ), 'f', 2 );
-	qDebug() << ": " << str;
-	str  = " " + QString::number( mat( 3,0 ), 'f', 2 );
-	str += " " + QString::number( mat( 3,1 ), 'f', 2 );
-	str += " " + QString::number( mat( 3,2 ), 'f', 2 );
-	str += " " + QString::number( mat( 3,3 ), 'f', 2 );
-	qDebug() << ": " << str;
-=======
     qDebug() << name;
     QString str;
     str  = " " + QString::number( mat(0,0), 'f', 2);
@@ -568,7 +346,6 @@ void ArucoThread::printMat( const osg::Matrixd mat, const QString name ) const
     str += " " + QString::number( mat(3,2), 'f', 2);
     str += " " + QString::number( mat(3,3), 'f', 2);
     qDebug() << ": " << str;
->>>>>>> Stashed changes
 }
 
 } // namespace ArucoModul
