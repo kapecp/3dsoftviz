@@ -135,7 +135,7 @@ void Kinect::KinectThread::run()
                 printf("depth X, Y, Z: %f %f %f\n",pDepth_x,pDepth_y,pDepth_z);
 
                 // green square for hand
-                Rect hand_rect;
+                cv::Rect hand_rect;
 
                 if (pDepth_x < pDepth_x2) hand_rect.x = pDepth_x;
                 else hand_rect.x = pDepth_x2;
@@ -150,12 +150,12 @@ void Kinect::KinectThread::run()
 
                 //sliding - calculate gesture
                 kht->getRotatingMove();
-                line(frame, Point2i( 30, 30), Point2i( 30, 30), Scalar( 0, 0, 0 ), 5 ,8 );
+                line(frame, cv::Point2i( 30, 30), cv::Point2i( 30, 30), cv::Scalar( 0, 0, 0 ), 5 ,8 );
 
                 char * text;
                 text = kht->slidingHand_type;
                 if((int)kht->slidingHand_x != 0){
-                    putText(frame, text, cvPoint((int)kht->slidingHand_x,(int)kht->slidingHand_y), FONT_HERSHEY_COMPLEX_SMALL, 0.8, cvScalar(0,0,250), 1, CV_AA);
+                    putText(frame, text, cvPoint((int)kht->slidingHand_x,(int)kht->slidingHand_y), cv::FONT_HERSHEY_COMPLEX_SMALL, 0.8, cvScalar(0,0,250), 1, CV_AA);
                     //signal pre
                     emit sendSliderCoords(  (kht->slidingHand_x/kht->handTrackerFrame.getDepthFrame().getWidth()-0.5)*(-200),
                                             (kht->slidingHand_y/kht->handTrackerFrame.getDepthFrame().getHeight()-0.5)*(200),
