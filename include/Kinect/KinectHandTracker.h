@@ -12,11 +12,11 @@
 
 #define NUM_HANDS 2
 
-namespace Vwr{
+namespace Vwr {
 class MouseControl;
 }
 
-namespace Kinect{
+namespace Kinect {
 class KinectRecognition;
 
 
@@ -25,7 +25,8 @@ class KinectRecognition;
  * @brief The KinectHandTracker class
  * @brief Class for recognition of Hands
  */
-class KinectHandTracker{
+class KinectHandTracker
+{
 
 public:
 	/**
@@ -33,7 +34,7 @@ public:
 	 * @param device device for recognition
 	 * @param m_depth Videostream
 	 */
-	KinectHandTracker(openni::Device *device,openni::VideoStream  *m_depth);
+	KinectHandTracker( openni::Device* device,openni::VideoStream*  m_depth );
 	~KinectHandTracker();
 
 	//const nite::Array<nite::GestureData>& gestures;
@@ -48,7 +49,7 @@ public:
 	float slidingHand_x;
 	float slidingHand_y;
 	float slidingHand_z;
-	char * slidingHand_type;
+	char* slidingHand_type;
 
 	/**
 	 * @brief getAllGestures
@@ -74,13 +75,13 @@ public:
 	 * @brief enable moving cursor mouse based on Hand
 	 * @param set if true mouse is moving, other is not connected
 	 */
-	void setCursorMovement(bool set);
+	void setCursorMovement( bool set );
 
 	/**
 	 * @brief setSpeedMovement
 	 * @param set number of speed movement. based is 1.0
 	 */
-	void setSpeedMovement(double set);
+	void setSpeedMovement( double set );
 
 	// Hand Tracker
 	nite::HandTracker m_pHandTracker;
@@ -107,12 +108,12 @@ private:
 	/**
 	 * @brief class for controlling mouse
 	 */
-	Vwr::MouseControl *mouse;
+	Vwr::MouseControl* mouse;
 
 	/**
 	 * @brief save videostream - get points
 	 */
-	openni::VideoStream  *mDepth;
+	openni::VideoStream*  mDepth;
 
 	/**
 	 * @brief convertor between Kinect 3D coordinates to real word coordinates

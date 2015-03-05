@@ -5,13 +5,14 @@
 
 namespace Network {
 
-    class NewNodeExecutor : public AbstractExecutor {
+class NewNodeExecutor : public AbstractExecutor
+{
 
-    public:
-        void execute_client();
-        void execute_server();
-        static const quint8 INSTRUCTION_NUMBER = 6;
-    };
+public:
+	void execute_client();
+	void execute_server();
+	static const quint8 INSTRUCTION_NUMBER = 6;
+};
 
 }
 

@@ -13,8 +13,7 @@
 #include <osg/ref_ptr>
 #include <osg/Texture2D>
 
-namespace Data
-{
+namespace Data {
 
 class Graph;
 /**
@@ -35,20 +34,23 @@ public:
 		*  \param  name   name of the Type
 		*  \param  settings    settings of the Type
 		*/
-	Type(qlonglong id, QString name, Graph* graph, QMap<QString, QString> * settings = 0);
+	Type( qlonglong id, QString name, Graph* graph, QMap<QString, QString>* settings = 0 );
 
 	/**
 		*  \fn public destructor  ~MetaType
 		*  \brief Destroys Type object
 		*/
-	~Type(void);
+	~Type( void );
 
 	/**
 		*  \fn inline public  getName
 		*  \brief Returns the name of the Type
 		*  \return QString name of the Type
 		*/
-	QString getName() const { return name; }
+	QString getName() const
+	{
+		return name;
+	}
 
 	/**
 		*  \fn inline public  setName
@@ -56,21 +58,30 @@ public:
 		*  \param [in]       name QString    new Name for the Type
 		*  \return QString resultant name of the Type
 		*/
-	void setName(QString val) { name = val; }
+	void setName( QString val )
+	{
+		name = val;
+	}
 
 	/**
 		*  \fn inline public  getId
 		*  \brief Returns ID of the Type
 		*  \return qlonglong ID of the Type
 		*/
-	qlonglong getId() const { return id; }
+	qlonglong getId() const
+	{
+		return id;
+	}
 
 	/**
 		*	\fn inline public isMeta
 		*	\brief Returns flag indicating if the Type is an MetaType or not
 		*	\return bool true, if the Type is an MetaType
 		*/
-	bool isMeta() const { return meta; }
+	bool isMeta() const
+	{
+		return meta;
+	}
 
 	/**
 		*  \fn inline public constant  toString
@@ -94,7 +105,10 @@ public:
 		*  \brief Returns settings of the Type
 		*  \return QMap<QString,QString> * settings
 		*/
-	QMap<QString, QString> * getSettings() const { return settings; }
+	QMap<QString, QString>* getSettings() const
+	{
+		return settings;
+	}
 
 	/**
 		*  \fn inline public  setSettings(QMap<QString, QString> * val)
@@ -104,7 +118,10 @@ public:
 		*
 		*  \param  val   new settings
 		*/
-	void setSettings(QMap<QString, QString> * val) { settings = val; }
+	void setSettings( QMap<QString, QString>* val )
+	{
+		settings = val;
+	}
 
 
 	/**
@@ -112,14 +129,20 @@ public:
 		*  \brief Returns type texture
 		*  \return osg::ref_ptr<osg::Texture2D> type texture
 		*/
-	osg::ref_ptr<osg::Texture2D> getTypeTexture() const { return typeTexture; }
+	osg::ref_ptr<osg::Texture2D> getTypeTexture() const
+	{
+		return typeTexture;
+	}
 
 	/**
 		*  \fn inline public constant  getScale
 		*  \brief Returns type scale
 		*  \return float type scale
 		*/
-	float getScale() const { return scale; }
+	float getScale() const
+	{
+		return scale;
+	}
 
 
 	/**
@@ -127,13 +150,19 @@ public:
 		*  \brief Returns true, if the Type is already in database
 		*  \return bool true, if the Type is in database
 		*/
-	bool isInDB() { return inDB; }
+	bool isInDB()
+	{
+		return inDB;
+	}
 
 	/**
 		*  \fn inline public  setIsInDB
 		*  \brief Sets the inDB flag of the Type to true (meaning that the Type is in database)
 		*/
-	void setIsInDB() { inDB = true; }
+	void setIsInDB()
+	{
+		inDB = true;
+	}
 
 
 	/**
@@ -141,7 +170,10 @@ public:
 		*  \brief Returns Graph to which is the Type assigned
 		*  \return Data::Graph *
 		*/
-	Data::Graph* getGraph() { return graph; }
+	Data::Graph* getGraph()
+	{
+		return graph;
+	}
 protected:
 	/**
 		*	bool inDB
@@ -179,7 +211,7 @@ protected:
 		*  QMap<QString,QString> * settings
 		*  \brief Settings of the Type
 		*/
-	QMap<QString, QString> * settings;
+	QMap<QString, QString>* settings;
 
 	/**
 		*  osg::ref_ptr typeTexture

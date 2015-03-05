@@ -19,7 +19,8 @@ namespace Layout {
  * - NODE_TARGET_POSITION - the latest position computed by the layout algorithm (the node
  * is moving to this position)
  */
-class ShapeGetter_Sphere_AroundNode : public ShapeGetter {
+class ShapeGetter_Sphere_AroundNode : public ShapeGetter
+{
 
 public:
 
@@ -28,19 +29,19 @@ public:
 		NODE_TARGET_POSITION
 	};
 
-	ShapeGetter_Sphere_AroundNode (
-			osg::ref_ptr<Data::Node> node,
-			float radius,
-			Shape_Sphere::RestrictionPolicy restrictionPolicy,
-			SphereCenterSource centerSource
-			);
+	ShapeGetter_Sphere_AroundNode(
+		osg::ref_ptr<Data::Node> node,
+		float radius,
+		Shape_Sphere::RestrictionPolicy restrictionPolicy,
+		SphereCenterSource centerSource
+	);
 
 	/***/
-	virtual ~ShapeGetter_Sphere_AroundNode (void) {}
+	virtual ~ShapeGetter_Sphere_AroundNode( void ) {}
 
-	virtual QSharedPointer<Shape> getShape (void);
+	virtual QSharedPointer<Shape> getShape( void );
 
-	virtual QSet<Data::Node *  > getNodesOfShape();
+	virtual QSet<Data::Node*  > getNodesOfShape();
 
 private:
 
@@ -50,9 +51,9 @@ private:
 	Shape_Sphere::RestrictionPolicy restrictionPolicy_;
 	SphereCenterSource centerSource_;
 
-    //volovar zac
-    QSharedPointer<Shape> sphere_; //aby vratilo rovnaky shape pri kazdom volani getshape
-    //volovar kon
+	//volovar zac
+	QSharedPointer<Shape> sphere_; //aby vratilo rovnaky shape pri kazdom volani getshape
+	//volovar kon
 
 }; // class
 

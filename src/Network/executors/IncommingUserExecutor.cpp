@@ -4,42 +4,44 @@
 
 namespace Network {
 
-void IncommingUserExecutor::execute_server() {
+void IncommingUserExecutor::execute_server()
+{
 
-    QString user;
-    *stream >> user;
+	QString user;
+	*stream >> user;
 
-    QTcpSocket * out_socket = (QTcpSocket*) stream->device();
+	QTcpSocket* out_socket = ( QTcpSocket* ) stream->device();
 
-    Server * server = Server::getInstance();
+	Server* server = Server::getInstance();
 
-    int newID = 1;
-    if (server->getUserCount() > 0) {
-        newID = server->getMaxUserId() + 1;
-    }
-    server->addUser(out_socket, user, newID);
+	int newID = 1;
+	if ( server->getUserCount() > 0 ) {
+		newID = server->getMaxUserId() + 1;
+	}
+	server->addUser( out_socket, user, newID );
 
-    server->addAvatar(out_socket, user);
+	server->addAvatar( out_socket, user );
 
-    QByteArray block;
-    QDataStream out(&block, QIODevice::WriteOnly);
+	QByteArray block;
+	QDataStream out( &block, QIODevice::WriteOnly );
 
-    out << (quint16)0;
-    out << WelcomeExecutor::INSTRUCTION_NUMBER;
-    out << newID;
-    out.device()->seek(0);
-    out << (quint16)(block.size() - sizeof(quint16));
+	out << ( quint16 )0;
+	out << WelcomeExecutor::INSTRUCTION_NUMBER;
+	out << newID;
+	out.device()->seek( 0 );
+	out << ( quint16 )( block.size() - sizeof( quint16 ) );
 
-    out_socket->write(block);
+	out_socket->write( block );
 
-    server->updateUserList();
-    server->sendUserList();
-    server->sendMyView(out_socket);
+	server->updateUserList();
+	server->sendUserList();
+	server->sendMyView( out_socket );
 
 }
 
-void IncommingUserExecutor::execute_client() {
-    return;
+void IncommingUserExecutor::execute_client()
+{
+	return;
 }
 
 } // namespace Network

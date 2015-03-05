@@ -13,10 +13,10 @@ class LuaGraphObserver
 {
 public:
 
-    /**
-     * @brief onUpdate method that will be called after hypergraph changes
-     */
-    virtual void onUpdate() = 0;
+	/**
+	 * @brief onUpdate method that will be called after hypergraph changes
+	 */
+	virtual void onUpdate() = 0;
 };
 
 }

@@ -7,9 +7,8 @@
 #include <QIODevice>
 //-----------------------------------------------------------------------------
 
-namespace Data
-{
-	class Graph;
+namespace Data {
+class Graph;
 }
 
 namespace Importer {
@@ -20,7 +19,8 @@ namespace Importer {
  * - input: input data (stream)
  * - output: graph root object (graph), progress info (info handler)
  */
-class ImporterContext {
+class ImporterContext
+{
 
 public:
 
@@ -30,46 +30,46 @@ public:
 	 * \param[in] graph Graph root object.
 	 * \param[in] importInfoHandler Import progress info handler.
 	 */
-	ImporterContext (
-			QIODevice &stream,
-			Data::Graph &graph,
-			ImportInfoHandler &importInfoHandler
-			);
+	ImporterContext(
+		QIODevice& stream,
+		Data::Graph& graph,
+		ImportInfoHandler& importInfoHandler
+	);
 
 	/***/
-	virtual ~ImporterContext (void) {}
+	virtual ~ImporterContext( void ) {}
 
 	/**
 	 * \brief \link ImporterContext::stream_ [getter] \endlink
 	 */
-	QIODevice &getStream (void);
+	QIODevice& getStream( void );
 
 	/**
 	 * \brief \link ImporterContext::graph_ [getter] \endlink
 	 */
-	Data::Graph &getGraph (void);
+	Data::Graph& getGraph( void );
 
 	/**
 	 * \brief \link ImporterContext::infoHandler_ [getter] \endlink
 	 */
-	ImportInfoHandler &getInfoHandler (void);
+	ImportInfoHandler& getInfoHandler( void );
 
 private:
 
 	/**
 	 * \brief Stream to read data from.
 	 */
-	QIODevice &stream_;
+	QIODevice& stream_;
 
 	/**
 	 * \brief Graph to fill according to data read from the stream.
 	 */
-	Data::Graph &graph_;
+	Data::Graph& graph_;
 
 	/**
 	 * \brief Used by the importer to report status of the import (progress, messages, errors).
 	 */
-	ImportInfoHandler &infoHandler_;
+	ImportInfoHandler& infoHandler_;
 
 }; // class
 

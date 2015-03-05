@@ -8,11 +8,11 @@ class SpikySphere : public ::Sphere
 
 public:
 
-    SpikySphere(osg::Vec3d position, float radius, osg::Vec4d color);
+	SpikySphere( osg::Vec3d position, float radius, osg::Vec4d color );
 
 private:
 
-    void addSpikes();
+	void addSpikes();
 
 };
 

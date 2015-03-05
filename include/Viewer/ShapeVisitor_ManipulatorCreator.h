@@ -12,7 +12,8 @@
 namespace Vwr {
 
 
-class ShapeVisitor_ManipulatorCreator: public Layout::ShapeVisitor {
+class ShapeVisitor_ManipulatorCreator: public Layout::ShapeVisitor
+{
 
 public:
 	class ManipulatorType
@@ -30,48 +31,57 @@ public:
 
 
 	/***/
-	virtual ~ShapeVisitor_ManipulatorCreator () {}
+	virtual ~ShapeVisitor_ManipulatorCreator() {}
 
-	osgManipulator::Dragger* getCreatedDragger() {return createdDragger;}
-	osgManipulator::Selection* getCreatedSelection() {return createdSelection;}
+	osgManipulator::Dragger* getCreatedDragger()
+	{
+		return createdDragger;
+	}
+	osgManipulator::Selection* getCreatedSelection()
+	{
+		return createdSelection;
+	}
 
 	/**
 	 * \brief Creates empty OSG group.
 	 */
 
-	virtual void visit (Layout::Shape_Null /*& shape*/);
+	virtual void visit( Layout::Shape_Null /*& shape*/ );
 
 	/**
 	 * \brief Creates OSG group containing  manipulator for each shape contained in the composite shape.
 	 */
-	virtual void visit (Layout::Shape_Composite & shape);
+	virtual void visit( Layout::Shape_Composite& shape );
 
 	/**
 	 * \brief Creates OSG group containing  manipulator for intersection of shapes contained in the composite shape.
 	 */
-	virtual void visit (Layout::Shape_Intersection & shape);
+	virtual void visit( Layout::Shape_Intersection& shape );
 
 	/**
 	 * \brief Creates OSG manipulator for the plane.
 	 */
-	virtual void visit (Layout::Shape_Plane & shape);
+	virtual void visit( Layout::Shape_Plane& shape );
 
 	/**
 	 * \brief Creates OSG manipulator for the sphere.
 	 */
-	virtual void visit (Layout::Shape_Sphere & shape);
+	virtual void visit( Layout::Shape_Sphere& shape );
 
 	/**
 	 * \brief Creates OSG manipulator for the sphere.
 	 */
-	virtual void visit (Layout::Shape_SphereSurface & shape);
+	virtual void visit( Layout::Shape_SphereSurface& shape );
 
-	virtual void visit (Layout::Shape_CylinderSurface & shape);
-	virtual void visit (Layout::Shape_ConeSurface & shape);
+	virtual void visit( Layout::Shape_CylinderSurface& shape );
+	virtual void visit( Layout::Shape_ConeSurface& shape );
 
-    virtual void visit (Layout::Shape_Cube & shape);
+	virtual void visit( Layout::Shape_Cube& shape );
 
-	void setType(int manipulatorType) {this->type = manipulatorType;}
+	void setType( int manipulatorType )
+	{
+		this->type = manipulatorType;
+	}
 
 
 
@@ -83,7 +93,7 @@ private:
 
 	void executeDefault();
 
-	void createRotationManipulator(osg::Vec3 center,float trackBallRadius, int key);
+	void createRotationManipulator( osg::Vec3 center,float trackBallRadius, int key );
 };
 
 

@@ -13,22 +13,23 @@ namespace Layout {
  * \brief Returning a circle on plane defined by three points (specified by current positions of three nodes
  * provided in the constructor).
  */
-class ShapeGetter_Circle_ByThreeNodes : public ShapeGetter {
+class ShapeGetter_Circle_ByThreeNodes : public ShapeGetter
+{
 
 public:
 
-	ShapeGetter_Circle_ByThreeNodes (
-			osg::ref_ptr<Data::Node> node1,
-			osg::ref_ptr<Data::Node> node2,
-			osg::ref_ptr<Data::Node> node3
-			);
+	ShapeGetter_Circle_ByThreeNodes(
+		osg::ref_ptr<Data::Node> node1,
+		osg::ref_ptr<Data::Node> node2,
+		osg::ref_ptr<Data::Node> node3
+	);
 
 	/***/
-	virtual ~ShapeGetter_Circle_ByThreeNodes (void) {}
+	virtual ~ShapeGetter_Circle_ByThreeNodes( void ) {}
 
-	virtual QSharedPointer<Shape> getShape (void);
+	virtual QSharedPointer<Shape> getShape( void );
 
-	virtual  QSet<Data::Node * > getNodesOfShape();
+	virtual  QSet<Data::Node* > getNodesOfShape();
 
 private:
 
@@ -36,9 +37,9 @@ private:
 	osg::ref_ptr<Data::Node> node2_;
 	osg::ref_ptr<Data::Node> node3_;
 
-    //volovar_zac
-    QSharedPointer<Shape_Intersection> intersection_; //aby vratilo rovnaky shape pri kazdom volani getshape
-    //volovar_kon
+	//volovar_zac
+	QSharedPointer<Shape_Intersection> intersection_; //aby vratilo rovnaky shape pri kazdom volani getshape
+	//volovar_kon
 }; // class
 
 } // namespace

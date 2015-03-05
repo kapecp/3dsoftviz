@@ -1,32 +1,32 @@
 #include "LuaGraph/LuaIncidence.h"
 
-void Lua::LuaIncidence::setEdgeNode(const qlonglong edgeId, const qlonglong nodeId)
+void Lua::LuaIncidence::setEdgeNode( const qlonglong edgeId, const qlonglong nodeId )
 {
-    edgeNodePair.first = edgeId;
-    edgeNodePair.second = nodeId;
+	edgeNodePair.first = edgeId;
+	edgeNodePair.second = nodeId;
 }
 QPair<qlonglong, qlonglong> Lua::LuaIncidence::getEdgeNodePair() const
 {
-    return edgeNodePair;
+	return edgeNodePair;
 }
 bool Lua::LuaIncidence::getOutGoing() const
 {
-    return outGoing;
+	return outGoing;
 }
 
-void Lua::LuaIncidence::setOutGoing(bool value)
+void Lua::LuaIncidence::setOutGoing( bool value )
 {
-    outGoing = value;
+	outGoing = value;
 }
 
 bool Lua::LuaIncidence::getOriented() const
 {
-    return oriented;
+	return oriented;
 }
 
-void Lua::LuaIncidence::setOriented(bool value)
+void Lua::LuaIncidence::setOriented( bool value )
 {
-    oriented = value;
+	oriented = value;
 }
 
 

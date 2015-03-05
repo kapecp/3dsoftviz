@@ -10,7 +10,8 @@ class PlaneAlgorithm;
  * @brief The Ransac class
  * @brief class for calculate Ransac
  */
-class Ransac{
+class Ransac
+{
 
 
 public:
@@ -27,11 +28,11 @@ public:
 	 * @brief find Points from vector of depths
 	 * @param vectorDepths
 	 */
-	void findPoints(int *vectorDepths);
+	void findPoints( int* vectorDepths );
 
 private:
 	// algoritm for calculate
-	PlaneAlgorithm *calc;
+	PlaneAlgorithm* calc;
 
 
 };

@@ -13,13 +13,11 @@
 #include <osg/Camera>
 #include <osgText/FadeText>
 
-namespace Util
-{
+namespace Util {
 class ApplicationConfig;
 }
 
-namespace Data
-{
+namespace Data {
 class Node;
 class Graph;
 class Type;
@@ -48,27 +46,33 @@ public:
 		* \param pos int		first coordinate in Drawable coordinates array
 		* \param camera 	current camera used in viewer
 		*/
-	Edge(qlonglong id, QString name, Data::Graph* graph, osg::ref_ptr<Data::Node> srcNode, osg::ref_ptr<Data::Node> dstNode, Data::Type* type, bool isOriented, float scaling, int pos = 0, osg::ref_ptr<osg::Camera> camera = 0);
+	Edge( qlonglong id, QString name, Data::Graph* graph, osg::ref_ptr<Data::Node> srcNode, osg::ref_ptr<Data::Node> dstNode, Data::Type* type, bool isOriented, float scaling, int pos = 0, osg::ref_ptr<osg::Camera> camera = 0 );
 
 	/**
 		*  \fn public destructor  ~Edge
 		*  \brief Destroys the Edge object
 		*/
-	~Edge(void);
+	~Edge( void );
 
 	/**
 		*  \fn inline public  getId
 		*  \brief Returns ID of the Edge
 		*  \return qlonglong ID of the Edge
 		*/
-	qlonglong getId() const { return id; }
+	qlonglong getId() const
+	{
+		return id;
+	}
 
 	/**
 		*  \fn inline public  getName
 		*  \brief Returns the name of the Edge
 		*  \return QString name of the Edge
 		*/
-	QString getName() const { return name; }
+	QString getName() const
+	{
+		return name;
+	}
 
 	/**
 		*  \fn inline public  setName(QString val)
@@ -76,28 +80,40 @@ public:
 		*  \param   name   new Name for the Edge
 		*  \return QString resultant name of the Edge
 		*/
-	void setName(QString val) { name = val; }
+	void setName( QString val )
+	{
+		name = val;
+	}
 
 	/**
 		*  \fn inline public  getScale()
 		*  \brief Gets edge scale
 		*  \return float size of the scale
 		*/
-	float getScale() { return scale; }
+	float getScale()
+	{
+		return scale;
+	}
 
 	/**
 		*  \fn inline public  setScale(float val)
 		*  \brief Sets new scale
 		*  \param   val   new scale for the Edge
 		*/
-	void setScale(float val) { scale = val; }
+	void setScale( float val )
+	{
+		scale = val;
+	}
 
 	/**
 		* \fn inline public constant getSrcNode
 		* \brief  Returns the starting Node of the Edge
 		* \return osg::ref_ptr<Data::Node> starting Node of the Edge
 		*/
-	osg::ref_ptr<Data::Node> getSrcNode() const { return srcNode; }
+	osg::ref_ptr<Data::Node> getSrcNode() const
+	{
+		return srcNode;
+	}
 
 	/**
 		* \fn inline public constant setSrcNode
@@ -107,14 +123,20 @@ public:
 		*
 		* \param val new starting Node of the Edge
 		*/
-	void setSrcNode(osg::ref_ptr<Data::Node> val) { srcNode = val; }
+	void setSrcNode( osg::ref_ptr<Data::Node> val )
+	{
+		srcNode = val;
+	}
 
 	/**
 		* \fn inline public constant getDstNode
 		* \brief  Returns ending Node of the Edge
 		* \return osg::ref_ptr<Data::Node> ending Node of the Edge
 		*/
-	osg::ref_ptr<Data::Node> getDstNode() const { return dstNode; }
+	osg::ref_ptr<Data::Node> getDstNode() const
+	{
+		return dstNode;
+	}
 
 	/**
 		* \fn inline public setDstNode(osg::ref_ptr<Data::Node> val)
@@ -124,21 +146,27 @@ public:
 		*
 		* \param val new ending Node of the Edge
 		*/
-	void setDstNode(osg::ref_ptr<Data::Node> val) { dstNode = val; }
+	void setDstNode( osg::ref_ptr<Data::Node> val )
+	{
+		dstNode = val;
+	}
 
 	/**
 				* \fn public getSecondNode(osg::ref_ptr<Data::Node> firstNode)
 				* \brief  Returns the second ending Node of the Edge
 				* \return osg::ref_ptr<Data::Node> the second ending Node of the Edge
 				*/
-	osg::ref_ptr<Data::Node> getSecondNode(osg::ref_ptr<Data::Node> firstNode);
+	osg::ref_ptr<Data::Node> getSecondNode( osg::ref_ptr<Data::Node> firstNode );
 
 	/**
 		* \fn inline public constant getType
 		* \brief  Returns the Type of the Edge
 		* \return Data::Type * Type of the Edge
 		*/
-	Data::Type* getType() const { return type; }
+	Data::Type* getType() const
+	{
+		return type;
+	}
 
 	/**
 		* \fn void setType(Data::Type* val)
@@ -148,28 +176,37 @@ public:
 		*
 		* \param  val new Type of the Edge
 		*/
-	void setType(Data::Type* val) { type = val; }
+	void setType( Data::Type* val )
+	{
+		type = val;
+	}
 
 	/**
 		* \fn inline public constant isOriented
 		* \brief Returns if the Edge is oriented or not
 		* \return bool true, if the Edge is oriented
 		*/
-	bool isOriented() const { return oriented; }
+	bool isOriented() const
+	{
+		return oriented;
+	}
 
 	/**
 		* \fn inline public setOriented(bool val)
 		* \brief  Sets if the Edge is oriented
 		* \param val 		true, if the Edge is oriented
 		*/
-	void setOriented(bool val) { oriented = val; }
+	void setOriented( bool val )
+	{
+		oriented = val;
+	}
 
 	/**
 		* \fn public linkNodes(QMap<qlonglong, osg::ref_ptr<Data::Edge> > *edges)
 		* \brief  Links the Edge to it's Nodes and adds itself to the edges
 		* \param  edges
 		*/
-	void linkNodes(QMap<qlonglong, osg::ref_ptr<Data::Edge> > *edges);
+	void linkNodes( QMap<qlonglong, osg::ref_ptr<Data::Edge> >* edges );
 
 	/**
 		* \fn public unlinkNodes
@@ -198,7 +235,10 @@ public:
 		*  \brief Returns coordinates of the Edge
 		*  \return osg::ref_ptr coordinates of the Edge
 		*/
-	osg::ref_ptr<osg::Vec3Array> getCooridnates() const { return coordinates; }
+	osg::ref_ptr<osg::Vec3Array> getCooridnates() const
+	{
+		return coordinates;
+	}
 
 	/**
 		*  \fn inline public constant  getLength
@@ -206,7 +246,10 @@ public:
 		*  \return float length of the Edge
 		*/
 
-	double getLength() const { return length; }
+	double getLength() const
+	{
+		return length;
+	}
 
 
 	/**
@@ -215,7 +258,7 @@ public:
 		*  \param    srcPos    new coordinates of the starting Node
 		*  \param   dstNode    new coordinates of the ending Node
 		*/
-	void updateCoordinates(osg::Vec3 srcPos, osg::Vec3 dstNode);
+	void updateCoordinates( osg::Vec3 srcPos, osg::Vec3 dstNode );
 
 
 	/**
@@ -225,10 +268,12 @@ public:
 		*/
 	osg::Vec4 getEdgeColor() const
 	{
-		if (selected)
-			return osg::Vec4(0.0f, 0.0f, 1.0f, 1.0f); // color of selected node
-		else
+		if ( selected ) {
+			return osg::Vec4( 0.0f, 0.0f, 1.0f, 1.0f );    // color of selected node
+		}
+		else {
 			return edgeColor;
+		}
 	}
 
 
@@ -237,7 +282,10 @@ public:
 		*  \brief Sets the color of the Edge
 		*  \param     val   new color
 		*/
-	void setEdgeColor(osg::Vec4 val) { edgeColor = val; }
+	void setEdgeColor( osg::Vec4 val )
+	{
+		edgeColor = val;
+	}
 
 
 	/**
@@ -245,7 +293,10 @@ public:
 		*  \brief Returns Texture coordinates array.
 		*  \return osg::ref_ptr<osg::Vec2Array>
 		*/
-	osg::ref_ptr<osg::Vec2Array> getEdgeTexCoords() const { return edgeTexCoords; }
+	osg::ref_ptr<osg::Vec2Array> getEdgeTexCoords() const
+	{
+		return edgeTexCoords;
+	}
 
 
 	/**
@@ -253,7 +304,10 @@ public:
 		*  \brief returns current camera looking at edge
 		*  \return osg::ref_ptr<osg::Camera>
 		*/
-	osg::ref_ptr<osg::Camera> getCamera() const { return camera; }
+	osg::ref_ptr<osg::Camera> getCamera() const
+	{
+		return camera;
+	}
 
 
 	/**
@@ -261,14 +315,20 @@ public:
 		*  \brief sets current camera used in viewer.
 		*  \param       val
 		*/
-	void setCamera(osg::ref_ptr<osg::Camera> val) { camera = val; }
+	void setCamera( osg::ref_ptr<osg::Camera> val )
+	{
+		camera = val;
+	}
 
 	/**
 		*  \fn inline public constant  isSelected
 		*  \brief Returns selected flag
 		*  \return bool true, if the Edge is selected
 		*/
-	bool isSelected() const { return selected; }
+	bool isSelected() const
+	{
+		return selected;
+	}
 
 
 	/**
@@ -276,7 +336,7 @@ public:
 		*  \brief Sets the selected flag of the Edge
 		*  \param       val   true, if the Edge is selected
 		*/
-	void setSelected(bool val)
+	void setSelected( bool val )
 	{
 		selected = val;
 	}
@@ -288,7 +348,7 @@ public:
 		*  \param      name     new label
 		*  \return osg::ref_ptr added label
 		*/
-	osg::ref_ptr<osg::Drawable> createLabel(QString name);
+	osg::ref_ptr<osg::Drawable> createLabel( QString name );
 
 
 	/**
@@ -296,13 +356,19 @@ public:
 		*  \brief Returns true, if the Edge is already in database
 		*  \return bool
 		*/
-	bool isInDB() { return inDB; }
+	bool isInDB()
+	{
+		return inDB;
+	}
 
 	/**
 		*  \fn inline public  setIsInDB
 		*  \brief Sets the inDB flag of the Edge to true (meaning that the Edge is in database)
 		*/
-	void setIsInDB() { inDB = true; }
+	void setIsInDB()
+	{
+		inDB = true;
+	}
 
 
 	/**
@@ -310,7 +376,10 @@ public:
 		*  \brief Returns the Graph to which is the Edge assigned
 		*  \return Data::Graph * Edge's Graph
 		*/
-	Data::Graph* getGraph() { return graph; }
+	Data::Graph* getGraph()
+	{
+		return graph;
+	}
 
 
 	/**
@@ -318,18 +387,27 @@ public:
 		*  \brief Returns current settings of the Edge
 		*  \return QMap<QString,QString> * settings of the Edge
 		*/
-	QMap<QString, QString> * getSettings() const { return settings; }
+	QMap<QString, QString>* getSettings() const
+	{
+		return settings;
+	}
 
 	/**
 		*  \fn inline public  setSettings(QMap<QString, QString> * val)
 		*  \brief Sets new settings to the Edge
 		*  \param [in, out]  val QMap<QString,QString> *    new settings
 		*/
-	void setSettings(QMap<QString, QString> * val) { settings = val; }
+	void setSettings( QMap<QString, QString>* val )
+	{
+		settings = val;
+	}
 
-    Data::Node* getOtherNode(const Data::Node* node) const;
+	Data::Node* getOtherNode( const Data::Node* node ) const;
 
-	int getWeight() { return 1; }
+	int getWeight()
+	{
+		return 1;
+	}
 
 	/**
 				*  \fn public  setSharedCoordinates (bool x, bool y, bool z)
@@ -338,7 +416,8 @@ public:
 				*  \param y true, if nodes share y coordinate
 				*  \param z true, if nodes share z coordinate
 				*/
-	void setSharedCoordinates (bool x, bool y, bool z){
+	void setSharedCoordinates( bool x, bool y, bool z )
+	{
 		this->shared_X = x;
 		this->shared_Y = y;
 		this->shared_Z = z;
@@ -348,51 +427,63 @@ public:
 				*  \fn public   isShared_X()
 				*  \return value of shared_X flag
 				*/
-	bool isShared_X(){return this->shared_X;}
+	bool isShared_X()
+	{
+		return this->shared_X;
+	}
 
 	/**
 				*  \fn public   isShared_Y()
 				*  \return value of shared_Y flag
 				*/
-	bool isShared_Y(){return this->shared_Y;}
+	bool isShared_Y()
+	{
+		return this->shared_Y;
+	}
 
 	/**
 				*  \fn public   isShared_Z()
 				*  \return value of shared_Z flag
 				*/
-	bool isShared_Z(){return this->shared_Z;}
+	bool isShared_Z()
+	{
+		return this->shared_Z;
+	}
 
 	/**
 				*  \fn public   setInvisible()
 				*/
-	bool setInvisible(bool invisible){
+	bool setInvisible( bool invisible )
+	{
 
-		if (invisible){
-			setScale(0);
+		if ( invisible ) {
+			setScale( 0 );
 			isInvisible=true;
 		}
-		else
-		{
-			setScale(1);
+		else {
+			setScale( 1 );
 			isInvisible=false;
 		}
 		return true;
 	}
 
-	bool getIsInvisible(){return isInvisible;}
+	bool getIsInvisible()
+	{
+		return isInvisible;
+	}
 
 
-    float getEdgeStrength() const;
-    void setEdgeStrength(float value);
+	float getEdgeStrength() const;
+	void setEdgeStrength( float value );
 
-    void reloadLabel();
-    void showLabel(bool visible);
+	void reloadLabel();
+	void showLabel( bool visible );
 private:
 
-    bool isInvisible;
-    /**
-        *  Data::Graph * graph
-        *  \brief Graph to which the Edge belongs
+	bool isInvisible;
+	/**
+	    *  Data::Graph * graph
+	    *  \brief Graph to which the Edge belongs
 		*/
 	Data::Graph* graph;
 
@@ -507,7 +598,7 @@ private:
 		*  Util::ApplicationConfig * appConf
 		*  \brief ApplicationConfig
 		*/
-	Util::ApplicationConfig * appConf;
+	Util::ApplicationConfig* appConf;
 
 
 	/**
@@ -516,17 +607,17 @@ private:
 		*/
 	osg::Vec4 edgeColor;
 
-    float edgeStrength;
+	float edgeStrength;
 
-    osg::ref_ptr<osg::StateSet> createStateSet(Data::Type *type);
-    osg::ref_ptr<osg::Drawable> createEdge(osg::StateSet *bbState);
+	osg::ref_ptr<osg::StateSet> createStateSet( Data::Type* type );
+	osg::ref_ptr<osg::Drawable> createEdge( osg::StateSet* bbState );
 protected:
 
 	/**
 		*  QMap<QString,QString> * settings
 		*  \brief Settings of the Egde
 		*/
-	QMap<QString, QString> * settings;
+	QMap<QString, QString>* settings;
 };
 }
 

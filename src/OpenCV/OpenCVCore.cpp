@@ -12,9 +12,9 @@
 #include "OpenCV/CameraStream.h"
 #include "Viewer/MouseControl.h"
 
-OpenCV::OpenCVCore * OpenCV::OpenCVCore::mOpenCVCore;
+OpenCV::OpenCVCore* OpenCV::OpenCVCore::mOpenCVCore;
 
-OpenCV::OpenCVCore::OpenCVCore( QApplication* app, QWidget *parent)
+OpenCV::OpenCVCore::OpenCVCore( QApplication* app, QWidget* parent )
 {
 	mOpenCVCore		= this;
 	mApp			= app;
@@ -27,14 +27,14 @@ OpenCV::OpenCVCore::OpenCVCore( QApplication* app, QWidget *parent)
 
 
 }
-OpenCV::OpenCVCore::~OpenCVCore(void)
+OpenCV::OpenCVCore::~OpenCVCore( void )
 {
-	if( mThrsCreated ) {
+	if ( mThrsCreated ) {
 
-		mThrFaceRec->setCancel(true);
-		mThrAruco->setCancel(true);
-		mThrFaceRec->setSendImgEnabled(false);
-		mThrAruco->setSendImgEnabling(false);
+		mThrFaceRec->setCancel( true );
+		mThrAruco->setCancel( true );
+		mThrFaceRec->setSendImgEnabled( false );
+		mThrAruco->setSendImgEnabling( false );
 
 		mOpencvDialog->disconnect();
 		mOpencvDialog->deleteLater();
@@ -51,8 +51,8 @@ OpenCV::OpenCVCore::~OpenCVCore(void)
 
 void OpenCV::OpenCVCore::faceRecognition()
 {
-	if( !mOpencvDialog ){
-		if( !mThrsCreated ){
+	if ( !mOpencvDialog ) {
+		if ( !mThrsCreated ) {
 			// create threads
 			qDebug() << "creating threads";
 			mThrsCreated = true;
@@ -63,165 +63,167 @@ void OpenCV::OpenCVCore::faceRecognition()
 		// create window
 		qDebug() << "creating windows";
 		mOpencvDialog = new QOpenCV::FaceRecognitionWindow(
-					mParent, mApp );
+			mParent, mApp );
 	}
 	// if window was hidden, there no connection to threads
-	if( mOpencvDialog->isHidden() ){
+	if ( mOpencvDialog->isHidden() ) {
 		createConnectionFaceRec();
 		createConnectionAruco();
 	}
 	mOpencvDialog->show();
 }
 
-void  OpenCV::OpenCVCore::createPermanentConnection(){
+void  OpenCV::OpenCVCore::createPermanentConnection()
+{
 	// they are still created
 
 	//  sending result data from face detection
 	QObject::connect( mThrFaceRec,
-					  SIGNAL(sendEyesCoords(float,float,float)),
+					  SIGNAL( sendEyesCoords( float,float,float ) ),
 					  AppCore::Core::getInstance( mApp )->getCoreWindow()->getCameraManipulator(),
-					  SLOT(setRotationHeadFaceDet(float,float,float)) );
+					  SLOT( setRotationHeadFaceDet( float,float,float ) ) );
 
 	//  sending result data from aruco
 	QObject::connect( mThrAruco,
-					  SIGNAL(sendArucoPosVec(osg::Vec3d)),
+					  SIGNAL( sendArucoPosVec( osg::Vec3d ) ),
 					  AppCore::Core::getInstance( mApp )->getCoreWindow()->getCameraManipulator(),
-					  SLOT(updateArucoGraphPosition(osg::Vec3d)) );
+					  SLOT( updateArucoGraphPosition( osg::Vec3d ) ) );
 	QObject::connect( mThrAruco,
-					  SIGNAL(sendArucoRorQuat(osg::Quat)),
+					  SIGNAL( sendArucoRorQuat( osg::Quat ) ),
 					  AppCore::Core::getInstance( mApp )->getCoreGraph(),
-					  SLOT(updateGraphRotByAruco(osg::Quat)) );
+					  SLOT( updateGraphRotByAruco( osg::Quat ) ) );
 
 
 	// updating background image
 	QObject::connect( mThrFaceRec,
-					  SIGNAL(pushBackgrImage(cv::Mat)),
-					  AppCore::Core::getInstance( mApp)->getCoreGraph()->getCameraStream(),
-					  SLOT(updateBackgroundImage(cv::Mat)) );
+					  SIGNAL( pushBackgrImage( cv::Mat ) ),
+					  AppCore::Core::getInstance( mApp )->getCoreGraph()->getCameraStream(),
+					  SLOT( updateBackgroundImage( cv::Mat ) ) );
 	QObject::connect( mThrAruco,
-					  SIGNAL(pushBackgrImage(cv::Mat)),
-					  AppCore::Core::getInstance( mApp)->getCoreGraph()->getCameraStream(),
-					  SLOT(updateBackgroundImage(cv::Mat)) );
+					  SIGNAL( pushBackgrImage( cv::Mat ) ),
+					  AppCore::Core::getInstance( mApp )->getCoreGraph()->getCameraStream(),
+					  SLOT( updateBackgroundImage( cv::Mat ) ) );
 
-	QObject::connect(mThrAruco,
-					 SIGNAL(moveMouseArucoSignal(double,double,bool,Qt::MouseButton)),
-					 AppCore::Core::getInstance()->getCoreWindow(),
-					 SLOT(moveMouseAruco(double,double,bool,Qt::MouseButton)));
+	QObject::connect( mThrAruco,
+					  SIGNAL( moveMouseArucoSignal( double,double,bool,Qt::MouseButton ) ),
+					  AppCore::Core::getInstance()->getCoreWindow(),
+					  SLOT( moveMouseAruco( double,double,bool,Qt::MouseButton ) ) );
 
 }
 
-void OpenCV::OpenCVCore::createConnectionFaceRec(){
+void OpenCV::OpenCVCore::createConnectionFaceRec()
+{
 	// send actual image
 	QObject::connect( mOpencvDialog,
-					  SIGNAL(sendImgFaceRec(bool)),
+					  SIGNAL( sendImgFaceRec( bool ) ),
 					  mThrFaceRec,
-					  SLOT(setSendImgEnabled(bool)) );
+					  SLOT( setSendImgEnabled( bool ) ) );
 	QObject::connect( mThrFaceRec,
-					  SIGNAL(pushImage(cv::Mat)),
+					  SIGNAL( pushImage( cv::Mat ) ),
 					  mOpencvDialog,
-					  SLOT(setLabel(cv::Mat)) );
+					  SLOT( setLabel( cv::Mat ) ) );
 	// send actual image to background
 	QObject::connect( mOpencvDialog,
-					  SIGNAL(sendBackgrImgFaceRec(bool)),
+					  SIGNAL( sendBackgrImgFaceRec( bool ) ),
 					  mThrFaceRec,
-					  SLOT(setSendBackgrImgEnabled(bool)) );
+					  SLOT( setSendBackgrImgEnabled( bool ) ) );
 
 
 
 	// start, stop
 	QObject::connect( mOpencvDialog,
-					  SIGNAL(startFaceRec()),
+					  SIGNAL( startFaceRec() ),
 					  mThrFaceRec,
-					  SLOT(start()) );
+					  SLOT( start() ) );
 	QObject::connect( mOpencvDialog,
-					  SIGNAL(stopFaceRec(bool)),
+					  SIGNAL( stopFaceRec( bool ) ),
 					  mThrFaceRec,
-					  SLOT(setCancel(bool)) );
+					  SLOT( setCancel( bool ) ) );
 	QObject::connect( mThrFaceRec,
-					  SIGNAL(finished()),
+					  SIGNAL( finished() ),
 					  mOpencvDialog,
-					  SLOT(onFaceRecThrFinished()) );
+					  SLOT( onFaceRecThrFinished() ) );
 	QObject::connect( mOpencvDialog,
-					  SIGNAL(setCapVideoFaceRec( OpenCV::CapVideo *)),
+					  SIGNAL( setCapVideoFaceRec( OpenCV::CapVideo* ) ),
 					  mThrFaceRec,
-					  SLOT(setCapVideo(OpenCV::CapVideo*)) );
+					  SLOT( setCapVideo( OpenCV::CapVideo* ) ) );
 
 
 
 }
 
-void OpenCV::OpenCVCore::createConnectionAruco(){
+void OpenCV::OpenCVCore::createConnectionAruco()
+{
 	// send actual image
 	QObject::connect( mOpencvDialog,
-					  SIGNAL(sendImgMarker(bool)),
+					  SIGNAL( sendImgMarker( bool ) ),
 					  mThrAruco,
-					  SLOT(setSendImgEnabling(bool)) );
+					  SLOT( setSendImgEnabling( bool ) ) );
 	/*QObject::connect( mThrAruco,
 					  SIGNAL(pushImage(QImage)),
 					  mOpencvDialog,
 					  SLOT(setLabelQ(QImage)) );*/
 	QObject::connect( mThrAruco,
-					  SIGNAL(pushImagemMat(cv::Mat)),
+					  SIGNAL( pushImagemMat( cv::Mat ) ),
 					  mOpencvDialog,
-					  SLOT(setLabel(cv::Mat)) );
+					  SLOT( setLabel( cv::Mat ) ) );
 
 
 	// send actual image to background
 	QObject::connect( mOpencvDialog,
-					  SIGNAL(sendBackgrImgMarker(bool)),
+					  SIGNAL( sendBackgrImgMarker( bool ) ),
 					  mThrAruco,
-					  SLOT(setSendBackgrImgEnabled(bool)) );
+					  SLOT( setSendBackgrImgEnabled( bool ) ) );
 
 	// start, stop
 	QObject::connect( mOpencvDialog,
-					  SIGNAL(startMarker()),
+					  SIGNAL( startMarker() ),
 					  mThrAruco,
-					  SLOT(start()) );
+					  SLOT( start() ) );
 	QObject::connect( mOpencvDialog,
-					  SIGNAL(stopMarker(bool)),
+					  SIGNAL( stopMarker( bool ) ),
 					  mThrAruco,
-					  SLOT(setCancel(bool)) );
+					  SLOT( setCancel( bool ) ) );
 	QObject::connect( mThrAruco,
-					  SIGNAL(finished()),
+					  SIGNAL( finished() ),
 					  mOpencvDialog,
-					  SLOT(onMarkerThrFinished()) );
+					  SLOT( onMarkerThrFinished() ) );
 	QObject::connect( mOpencvDialog,
-					  SIGNAL(setCapVideoMarker( OpenCV::CapVideo *)),
+					  SIGNAL( setCapVideoMarker( OpenCV::CapVideo* ) ),
 					  mThrAruco,
-					  SLOT(setCapVideo(OpenCV::CapVideo*)) );
+					  SLOT( setCapVideo( OpenCV::CapVideo* ) ) );
 
 	// other seting
 	QObject::connect( mOpencvDialog->getMarkerBehindCB(),
-					  SIGNAL(clicked(bool)),
+					  SIGNAL( clicked( bool ) ),
 					  mThrAruco,
-					  SLOT(setPositionOfMarker(bool)) );
+					  SLOT( setPositionOfMarker( bool ) ) );
 	QObject::connect( mOpencvDialog->getCorEnabledCB(),
-					  SIGNAL(clicked(bool)),
+					  SIGNAL( clicked( bool ) ),
 					  mThrAruco,
-					  SLOT(setCorEnabling(bool)) );
+					  SLOT( setCorEnabling( bool ) ) );
 	QObject::connect( mOpencvDialog->getUpdateCorParPB(),
-					  SIGNAL(clicked()),
+					  SIGNAL( clicked() ),
 					  mThrAruco,
-					  SLOT(updateCorectionPar()) );
+					  SLOT( updateCorectionPar() ) );
 	QObject::connect( mThrAruco,
-					  SIGNAL(corParUpdated()),
+					  SIGNAL( corParUpdated() ),
 					  mOpencvDialog,
-					  SLOT(onCorParUpdated()) );
+					  SLOT( onCorParUpdated() ) );
 
 	// aruco mouse Controll
 	QObject::connect( mOpencvDialog->getInterchangeMarkersPB(),
-					  SIGNAL(clicked()),
+					  SIGNAL( clicked() ),
 					  mThrAruco,
-					  SLOT(interchangeMarkers()) );
+					  SLOT( interchangeMarkers() ) );
 
 }
 
-OpenCV::OpenCVCore * OpenCV::OpenCVCore::getInstance(QApplication* app, QWidget *parent)
+OpenCV::OpenCVCore* OpenCV::OpenCVCore::getInstance( QApplication* app, QWidget* parent )
 {
 	// if OpenCV exists
-	if(mOpenCVCore == NULL)
-	{
-		mOpenCVCore = new OpenCV::OpenCVCore(app, parent);
+	if ( mOpenCVCore == NULL ) {
+		mOpenCVCore = new OpenCV::OpenCVCore( app, parent );
 	}
 	return mOpenCVCore;
 }

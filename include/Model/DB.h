@@ -9,13 +9,11 @@
 
 
 
-namespace Util
-{
-	class ApplicationConfig;
+namespace Util {
+class ApplicationConfig;
 }
 
-namespace Model
-{
+namespace Model {
 /**
 	*  \class DB
 	*  \brief Class represents connection to the database.
@@ -49,7 +47,7 @@ public:
 		* \param  requireSSL 		force ssl
 		* \return bool true ak sa podarilo otvorit spojenie, false ak nie.
 		*/
-	bool openConnection(QString host_name, QString db_name, QString user_name, QString pass, bool requireSSL);
+	bool openConnection( QString host_name, QString db_name, QString user_name, QString pass, bool requireSSL );
 
 	/**
 		* \fn public closeConnection
@@ -82,7 +80,7 @@ private:
 		*	Util::ApplicationConfig * appConf
 		*	\brief Application config
 		*/
-	Util::ApplicationConfig * appConf;
+	Util::ApplicationConfig* appConf;
 
 
 	bool mConneCreationTried;   // false if createConnection was not called yet

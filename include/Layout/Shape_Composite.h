@@ -12,7 +12,8 @@ namespace Layout {
 /**
  * Shape which can be composed using more shapes of various types.
  */
-class Shape_Composite : public Shape {
+class Shape_Composite : public Shape
+{
 
 public:
 	class CompositeType
@@ -29,24 +30,30 @@ public:
 	typedef std::list<QSharedPointer<Shape> > ShapesListType;
 
 	/***/
-	virtual ~Shape_Composite (void) {}
+	virtual ~Shape_Composite( void ) {}
 
-	void addShape (
-			QSharedPointer<Shape> shape
-			);
+	void addShape(
+		QSharedPointer<Shape> shape
+	);
 
-	ShapesListType & getShapes (void);
+	ShapesListType& getShapes( void );
 
 	/**
 	 * [visitor pattern]
 	 */
-	virtual void accept (
-			ShapeVisitor & visitor
-			);
+	virtual void accept(
+		ShapeVisitor& visitor
+	);
 
-	void setCompositeType(int compositeType){this->compositeType = compositeType;}
+	void setCompositeType( int compositeType )
+	{
+		this->compositeType = compositeType;
+	}
 
-	int getCompositeType(){return this->compositeType;}
+	int getCompositeType()
+	{
+		return this->compositeType;
+	}
 
 private:
 

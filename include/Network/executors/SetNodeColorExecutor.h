@@ -5,13 +5,14 @@
 
 namespace Network {
 
-    class SetNodeColorExecutor : public AbstractExecutor {
+class SetNodeColorExecutor : public AbstractExecutor
+{
 
-    public:
-        void execute_client();
-        void execute_server();
-        static const quint8 INSTRUCTION_NUMBER = 16;
-    };
+public:
+	void execute_client();
+	void execute_server();
+	static const quint8 INSTRUCTION_NUMBER = 16;
+};
 
 }
 

@@ -5,13 +5,14 @@
 
 namespace Network {
 
-    class SeparateNodesExecutor : public AbstractExecutor {
+class SeparateNodesExecutor : public AbstractExecutor
+{
 
-    public:
-        void execute_client();
-        void execute_server();
-        static const quint8 INSTRUCTION_NUMBER = 23;
-    };
+public:
+	void execute_client();
+	void execute_server();
+	static const quint8 INSTRUCTION_NUMBER = 23;
+};
 
 }
 

@@ -5,14 +5,16 @@
 
 namespace Layout {
 
-Shape_Null::Shape_Null (void) {
-    // nothing
+Shape_Null::Shape_Null( void )
+{
+	// nothing
 }
 
-void Shape_Null::accept (
-        ShapeVisitor & visitor
-        ) {
-    visitor.visit (*this);
+void Shape_Null::accept(
+	ShapeVisitor& visitor
+)
+{
+	visitor.visit( *this );
 }
 
 } // namespace

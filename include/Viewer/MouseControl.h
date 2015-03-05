@@ -3,14 +3,12 @@
 
 #include <QtGui/QKeyEvent>
 
-namespace QOSG
-{
+namespace QOSG {
 class ViewerQT;
 class CoreWindow;
 }
 
-namespace Vwr
-{
+namespace Vwr {
 
 /**
 	* @brief Control of mouse action and movement for other way of controling mouse
@@ -33,7 +31,7 @@ public:
 	 * @brief click and press of button at position os cursor
 	 * @param button type of mouse button
 	 */
-	void clickPressMouse(Qt::MouseButton button);
+	void clickPressMouse( Qt::MouseButton button );
 
 	/**
 	 * @brief click and press of button at position os cursor
@@ -41,13 +39,13 @@ public:
 	 * @param positionY position Y of click
 	 * @param button type of mouse button
 	 */
-	void clickPressMouse(float positionX, float positionY, Qt::MouseButton button);
+	void clickPressMouse( float positionX, float positionY, Qt::MouseButton button );
 
 	/**
 	 * @brief release pressed button of mouse at position of cursor
 	 * @param button type of mouse button
 	 */
-	void releasePressMouse(Qt::MouseButton button);
+	void releasePressMouse( Qt::MouseButton button );
 
 	/**
 	 * @brief release pressed button of mouse at concrete position
@@ -55,14 +53,14 @@ public:
 	 * @param positionY	position y of release pressed button
 	 * @param button type of mouse button
 	 */
-	void releasePressMouse(float positionX,float positionY,Qt::MouseButton button);
+	void releasePressMouse( float positionX,float positionY,Qt::MouseButton button );
 
 	/**
 	 * @brief move mouse position of GUI listener
 	 * @param positionX position x of movement
 	 * @param positionY position y of movement
 	 */
-	void moveMouse(float positionX, float positionY);
+	void moveMouse( float positionX, float positionY );
 
 	/**
 	 * @brief move cursor of mouse at concrete place of screen based on old position of mouse
@@ -70,7 +68,7 @@ public:
 	 * @param positionY new positino y of cursor
 	 * @param isClick is press any button
 	 */
-	void moveCursorMouse(double positionX, double positionY, bool isClick);
+	void moveCursorMouse( double positionX, double positionY, bool isClick );
 
 	/**
 	 * @brief move cursor of based on Kinect World position of Hand
@@ -78,13 +76,13 @@ public:
 	 * @param positionY position y
 	 * @param isClick is press any button
 	 */
-	void moveCursorWorldCoordinates(double positionX,double positionY,bool isClick);
+	void moveCursorWorldCoordinates( double positionX,double positionY,bool isClick );
 
 	/**
 	 * @brief set for speed up of movement of cursor
 	 * @param speed speed up of movement
 	 */
-	void setSpeedUpMoving(double speed);
+	void setSpeedUpMoving( double speed );
 
 private:
 
@@ -93,10 +91,10 @@ private:
 	 * @param positionX position of cursor x
 	 * @param positionY position of cursor y
 	 */
-	void corectionMousePosition(int positionX,int positionY);
+	void corectionMousePosition( int positionX,int positionY );
 
-	QOSG::ViewerQT		*viewer;
-	QOSG::CoreWindow	*window;
+	QOSG::ViewerQT*		viewer;
+	QOSG::CoreWindow*	window;
 
 	double mSpeedMoving;
 	double mRatioX;

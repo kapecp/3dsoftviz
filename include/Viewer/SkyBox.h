@@ -54,26 +54,23 @@
 #include <osgUtil/Optimizer>
 #include <osgUtil/CullVisitor>
 
-namespace Vwr
-{
+namespace Vwr {
 
-struct TexMatCallback : public osg::NodeCallback
-{
+struct TexMatCallback : public osg::NodeCallback {
 public:
 
-	TexMatCallback(osg::TexMat& tm) :
-		_texMat(tm)
+	TexMatCallback( osg::TexMat& tm ) :
+		_texMat( tm )
 	{
 	}
 
-	virtual void operator()(osg::Node* node, osg::NodeVisitor* nv)
+	virtual void operator()( osg::Node* node, osg::NodeVisitor* nv )
 	{
-		osgUtil::CullVisitor* cv = dynamic_cast<osgUtil::CullVisitor*>(nv);
-		if (cv)
-		{
-			const osg::Matrix * MV = cv->getModelViewMatrix();
-			const osg::Matrix R = osg::Matrix::rotate( osg::DegreesToRadians(112.0f), 0.0f,0.0f,1.0f)*
-					osg::Matrix::rotate( osg::DegreesToRadians(90.0f), 1.0f,0.0f,0.0f);
+		osgUtil::CullVisitor* cv = dynamic_cast<osgUtil::CullVisitor*>( nv );
+		if ( cv ) {
+			const osg::Matrix* MV = cv->getModelViewMatrix();
+			const osg::Matrix R = osg::Matrix::rotate( osg::DegreesToRadians( 112.0f ), 0.0f,0.0f,1.0f )*
+								  osg::Matrix::rotate( osg::DegreesToRadians( 90.0f ), 1.0f,0.0f,0.0f );
 
 			osg::Quat q = MV->getRotate();
 			const osg::Matrix C = osg::Matrix::rotate( q.inverse() );
@@ -81,14 +78,15 @@ public:
 			_texMat.setMatrix( C*R );
 		}
 
-		traverse(node,nv);
+		traverse( node,nv );
 	}
 
 	osg::TexMat& _texMat;
 };
 
 
-class SkyBox{
+class SkyBox
+{
 
 public:
 	SkyBox();

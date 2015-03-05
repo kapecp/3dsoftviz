@@ -15,8 +15,7 @@
 
 #include <QString>
 
-namespace Vwr
-{
+namespace Vwr {
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// \class  DataHelper
 ///
@@ -37,12 +36,12 @@ public:
 				 * Vytvori objekt gulu.
 				 *
 				 **/
-	osg::ref_ptr<osg::Geode> static getSphereGeode(osg::Vec3 center, float radius);
+	osg::ref_ptr<osg::Geode> static getSphereGeode( osg::Vec3 center, float radius );
 	/**
 				 * \param count pocet vektorov
 				 * \returns pole vygenerovanych vektorov
 				 **/
-	osg::ref_ptr<osg::Vec3Array> static getInitialVectors(int count);
+	osg::ref_ptr<osg::Vec3Array> static getInitialVectors( int count );
 	/**
 				 * \brief Vygeneruje jednoduhcy graf - Kocku
 				 *
@@ -75,7 +74,7 @@ public:
 				 * \param pocetUzlovNaPodstave  pocet uzlov na podstave
 				 * \param pocetUzlovNaVysku     pocet uzlov na vysku valca
 				 **/
-	static void generateCylinder(QMap<qlonglong, osg::ref_ptr<Data::Node> > *nodes, QMap<qlonglong, osg::ref_ptr<Data::Edge> > *edges,QMap<qlonglong, Data::Type*> *types, int pocetUzlovNaPodstave, int pocetUzlovNaVysku);
+	static void generateCylinder( QMap<qlonglong, osg::ref_ptr<Data::Node> >* nodes, QMap<qlonglong, osg::ref_ptr<Data::Edge> >* edges,QMap<qlonglong, Data::Type*>* types, int pocetUzlovNaPodstave, int pocetUzlovNaVysku );
 
 	/**
 				 * \brief Vygeneruje testovaciu scenu pozostavajucu z niekolkych samostatnych grafov
@@ -88,12 +87,12 @@ public:
 				 * \param inNode                 pozicia zdrojoveho uzla
 				 * \param outNode                pozicia cieloveho uzla
 				 **/
-	static osg::ref_ptr<osg::Vec3Array> getEdgeVectors(osg::ref_ptr<Data::Node> inNode, osg::ref_ptr<Data::Node> outNode);
+	static osg::ref_ptr<osg::Vec3Array> getEdgeVectors( osg::ref_ptr<Data::Node> inNode, osg::ref_ptr<Data::Node> outNode );
 	/**
 				 * Nacita textury vo formate PNG.
 				 *
 				 **/
-	static osg::ref_ptr<osg::Texture2D> readTextureFromFile(QString path);
+	static osg::ref_ptr<osg::Texture2D> readTextureFromFile( QString path );
 
 	/**
 		*  \fn public static  createTexture
@@ -101,7 +100,7 @@ public:
 		*  \param      image    texture image
 		*  \return osg::ref_ptr texture
 		*/
-	static osg::ref_ptr<osg::Texture2D> createTexture(osg::ref_ptr<osg::Image> image);
+	static osg::ref_ptr<osg::Texture2D> createTexture( osg::ref_ptr<osg::Image> image );
 
 	/**
 		*  \fn public static  getRandomNumber(int lowest, int highest)
@@ -110,7 +109,7 @@ public:
 		*  \param      highest     highest random number
 		*  \return int random number
 		*/
-	static int getRandomNumber(int lowest, int highest);
+	static int getRandomNumber( int lowest, int highest );
 
 
 	/**
@@ -119,7 +118,7 @@ public:
 		*  \param    coordinates    points in space
 		*  \return osg::Vec3f position of mass center
 		*/
-	static osg::Vec3f getMassCenter(osg::ref_ptr<osg::Vec3Array> coordinates);
+	static osg::Vec3f getMassCenter( osg::ref_ptr<osg::Vec3Array> coordinates );
 };
 }
 

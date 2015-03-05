@@ -13,8 +13,7 @@
 
 using Qt::WindowFlags;
 
-namespace QOSG
-{
+namespace QOSG {
 /**
 	*  \class AdapterWidget
 	*  \brief
@@ -44,7 +43,7 @@ public:
 		*
 		*/
 
-	AdapterWidget( QWidget * parent = 0, const char  * name = 0, const QGLWidget * shareWidget = 0, WindowFlags f = 0 );
+	AdapterWidget( QWidget* parent = 0, const char*   name = 0, const QGLWidget* shareWidget = 0, WindowFlags f = 0 );
 
 
 	/*!
@@ -61,14 +60,20 @@ public:
 		*  \brief
 		*  \return osgViewer::GraphicsWindow *
 		*/
-	osgViewer::GraphicsWindow* getGraphicsWindow() { return _gw.get(); }
+	osgViewer::GraphicsWindow* getGraphicsWindow()
+	{
+		return _gw.get();
+	}
 
 	/**
 		*  \fn inline public overloaded constant  getGraphicsWindow
 		*  \brief
 		*  \return const osgViewer::GraphicsWindow *
 		*/
-	const osgViewer::GraphicsWindow* getGraphicsWindow() const { return _gw.get(); }
+	const osgViewer::GraphicsWindow* getGraphicsWindow() const
+	{
+		return _gw.get();
+	}
 
 protected:
 
@@ -114,7 +119,7 @@ protected:
 		*  \brief
 		*  \param event
 		*/
-	virtual void mouseDoubleClickEvent ( QMouseEvent * event );
+	virtual void mouseDoubleClickEvent( QMouseEvent* event );
 
 	/**
 		*  \fn protected virtual  mouseReleaseEvent( QMouseEvent * event )
@@ -135,7 +140,7 @@ protected:
 		*  \brief
 		*  \param event
 		*/
-	virtual void wheelEvent(QWheelEvent *event);
+	virtual void wheelEvent( QWheelEvent* event );
 
 
 	/**

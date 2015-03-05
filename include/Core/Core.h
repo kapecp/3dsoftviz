@@ -7,26 +7,22 @@
 
 #include <QApplication>
 #include "QOSG/CoreWindow.h"
-namespace Vwr
-{
+namespace Vwr {
 class CoreGraph;
 }
 
-namespace Layout
-{
+namespace Layout {
 class LayoutThread;
 class FRAlgorithm;
 }
 
-namespace QOSG
-{
+namespace QOSG {
 
 class CoreWindow;
 class MessageWindows;
 }
 
-namespace AppCore
-{
+namespace AppCore {
 
 /**
 	 * \class Core
@@ -52,25 +48,28 @@ public:
 		 * \fn getLayoutThread
 		 * \brief Returns Layout::LayoutThread
 		 */
-	Layout::LayoutThread* getLayoutThread(){return this->thr;}
+	Layout::LayoutThread* getLayoutThread()
+	{
+		return this->thr;
+	}
 
 	/**
 		 * \fn getInstance
 		 * \brief Returns instance.
 		 */
-	static Core* getInstance(QApplication * app = 0);
+	static Core* getInstance( QApplication* app = 0 );
 
 	/**
 		 * QOSG::MessageWindows * messageWindows;
 		 * \brief Provides functionality to show information or error popup windows and progress bar.
 		 */
-	QOSG::MessageWindows * messageWindows;
+	QOSG::MessageWindows* messageWindows;
 
 	/**
 		 * Layout::LayoutThread * thr
 		 * \brief Thread of Layout algorithm.
 		 */
-	Layout::LayoutThread * thr;
+	Layout::LayoutThread* thr;
 
 
 	/**
@@ -90,33 +89,33 @@ private:
 		*  QOSG::CoreWindow * cw
 		*  \brief instance of CoreWindow
 		*/
-	QOSG::CoreWindow * cw;
+	QOSG::CoreWindow* cw;
 
 	/**
 		*  \fn private constructor  GraphManager(QApplication * app)
 		*  \brief
 		*  \param app
 		*/
-	Core(QApplication * app);
+	Core( QApplication* app );
 
 	/**
 		*  Layout::FRAlgorithm * alg
 		*  \brief instance of layout algorithm.
 		*/
-	Layout::FRAlgorithm * alg;
+	Layout::FRAlgorithm* alg;
 
 
-    /**
-        *  Vwr::CoreGraph * cg
-        *  \brief instance of CoreGraph
-        */
-    Vwr::CoreGraph * cg;
+	/**
+	    *  Vwr::CoreGraph * cg
+	    *  \brief instance of CoreGraph
+	    */
+	Vwr::CoreGraph* cg;
 
 	/**
 		*  Core * core;
 		*  \brief instance of this class
 		*/
-	static Core * core;
+	static Core* core;
 };
 }
 

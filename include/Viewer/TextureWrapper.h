@@ -8,8 +8,7 @@
 #include <osg/Texture2D>
 #include <osg/ref_ptr>
 
-namespace Vwr
-{
+namespace Vwr {
 /**
 	*  \class TextureWrapper
 	*  \brief Texture operations wrapper

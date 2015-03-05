@@ -7,13 +7,14 @@
 
 namespace Network {
 
-    class SendGraphExecutor : public AbstractExecutor {
+class SendGraphExecutor : public AbstractExecutor
+{
 
-    public:
-        void execute_server();
-        void execute_client();
-        static const quint8 INSTRUCTION_NUMBER = 4;
-    };
+public:
+	void execute_server();
+	void execute_client();
+	static const quint8 INSTRUCTION_NUMBER = 4;
+};
 
 }
 

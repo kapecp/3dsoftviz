@@ -13,14 +13,12 @@
 #include <QString>
 
 //volovar_zac
-namespace Layout
-{
-    class RadialLayout;
+namespace Layout {
+class RadialLayout;
 }
 //volovar_kon
 
-namespace Data
-{
+namespace Data {
 class Edge;
 class Type;
 class Graph;
@@ -48,13 +46,13 @@ public:
 		*  \param  graph   Graph to which the Node belongs
 		*  \param  position    Node position in space
 		*/
-	Node(qlonglong id, QString name, Data::Type* type, float scaling, Data::Graph* graph, osg::Vec3f position);
+	Node( qlonglong id, QString name, Data::Type* type, float scaling, Data::Graph* graph, osg::Vec3f position );
 
 	/**
 		*  \fn public virtual destructor  ~Node
 		*  \brief Destroys the Node object
 		*/
-	~Node(void);
+	~Node( void );
 
 
 	/**
@@ -62,14 +60,20 @@ public:
 		*  \brief Returns ID of the Node
 		*  \return qlonglong ID of the Node
 		*/
-	qlonglong getId() const { return id; }
+	qlonglong getId() const
+	{
+		return id;
+	}
 
 	/**
 		*  \fn inline public  getGraph
 		*  \brief Returns Graph to which the Nodes belongs
 		*  \return Data::Graph * Graph
 		*/
-	Data::Graph* getGraph() { return graph; }
+	Data::Graph* getGraph()
+	{
+		return graph;
+	}
 
 
 	/**
@@ -77,67 +81,91 @@ public:
 		*  \brief Returns name of the Node
 		*  \return QString name of the Node
 		*/
-	QString getName() const { return name; }
+	QString getName() const
+	{
+		return name;
+	}
 
-    /**
-        *  \fn inline public numberOfVertigoPlane
-        *  \brief Returns the value of the vertigo plane, which the node belongs to
-        *  \return qlonglong value of the vertigo plane
-        */
-    qlonglong  numberOfVertigoPlane;
+	/**
+	    *  \fn inline public numberOfVertigoPlane
+	    *  \brief Returns the value of the vertigo plane, which the node belongs to
+	    *  \return qlonglong value of the vertigo plane
+	    */
+	qlonglong  numberOfVertigoPlane;
 
-    /**
-        *  \fn inline public  setNumberOfVertigoPlane(qlonglong value);
-        *  \brief Sets the value of the vertigo plane, which the node belongs to
-        *  \param  qlonglong value of the vertigo plane
-        */
-    void setNumberOfVertigoPlane(qlonglong value);
+	/**
+	    *  \fn inline public  setNumberOfVertigoPlane(qlonglong value);
+	    *  \brief Sets the value of the vertigo plane, which the node belongs to
+	    *  \param  qlonglong value of the vertigo plane
+	    */
+	void setNumberOfVertigoPlane( qlonglong value );
 
-    /**
-        *  \fn inline public  getNumberOfVertigoPlane();
-        *  \brief Gets the value of the vertigo plane, which the node belongs to
-        *  \return  qlonglong value of the vertigo plane
-        */
-    qlonglong getNumberOfVertigoPlane();
+	/**
+	    *  \fn inline public  getNumberOfVertigoPlane();
+	    *  \brief Gets the value of the vertigo plane, which the node belongs to
+	    *  \return  qlonglong value of the vertigo plane
+	    */
+	qlonglong getNumberOfVertigoPlane();
 
 	/**
 		*  \fn inline public  setName(QString val)
 		*  \brief Sets new name to the Node
 		*  \param   val    new name
 		*/
-	void setName(QString val) { name = val; }
+	void setName( QString val )
+	{
+		name = val;
+	}
 
 	/**
 		*  \fn inline public  getScale()
 		*  \brief Gets node scale
 		*  \return float size of the scale
 		*/
-	float getScale() { return scale; }
+	float getScale()
+	{
+		return scale;
+	}
 
 	/**
 		*  \fn inline public  setScale(float val)
 		*  \brief Sets new scale
 		*  \param   val   new scale for the Node
 		*/
-	void setScale(float val) { scale = val; }
+	void setScale( float val )
+	{
+		scale = val;
+	}
 
 	/**
 		*  \fn inline public constant  getType
 		*  \brief Returns Type of the Node
 		*  \return Data::Type * Type of the Node
 		*/
-	Data::Type* getType() const { return type; }
+	Data::Type* getType() const
+	{
+		return type;
+	}
 
 	/**
 		*  \fn inline public  setType(Data::Type* val)
 		*  \brief Sets new Type of the Node
 		*  \param   val  new Type
 		*/
-	void setType(Data::Type* val) { type = val; }
+	void setType( Data::Type* val )
+	{
+		type = val;
+	}
 
-	bool isParentNode() { return hasNestedNodes; }
+	bool isParentNode()
+	{
+		return hasNestedNodes;
+	}
 
-	void setAsParentNode() { hasNestedNodes = true; }
+	void setAsParentNode()
+	{
+		hasNestedNodes = true;
+	}
 
 	/**
 		 * \fn public constant isFocused
@@ -151,7 +179,7 @@ public:
 		 * \brief Sets whether this node is focused at the moment.
 		 * \param value whether this node is focused at the moment
 		 */
-	void setIsFocused(bool value);
+	void setIsFocused( bool value );
 
 	/**
 		 * \fn public constant targetPosition
@@ -159,7 +187,7 @@ public:
 		 * \return target position
 		 * Returned target position IS NOT multiplied by the graph scale.
 		 */
-    osg::Vec3f targetPosition() const;
+	osg::Vec3f targetPosition() const;
 	osg::Vec3f getTargetPosition() const;
 	/**
 		 * \fn public constant targetPositionConstRef
@@ -167,7 +195,7 @@ public:
 		 * \return target position
 		 * Returned target position IS NOT multiplied by the graph scale.
 		 */
-	const osg::Vec3f &targetPositionConstRef() const;
+	const osg::Vec3f& targetPositionConstRef() const;
 
 	/**
 		 * \fn public setTargetPosition(const osg::Vec3f &position)
@@ -175,7 +203,7 @@ public:
 		 * \param position target position
 		 * Target position being set MUST NOT BE multiplied by the graph scale.
 		 */
-	void setTargetPosition(const osg::Vec3f &position);
+	void setTargetPosition( const osg::Vec3f& position );
 
 	/**
 		 * \fn public constant restrictedTargetPosition
@@ -191,7 +219,7 @@ public:
 		 * \return restricted target position
 		 * Returned restricted target position IS NOT multiplied by the graph scale.
 		 */
-	const osg::Vec3f &restrictedTargetPositionConstRef() const;
+	const osg::Vec3f& restrictedTargetPositionConstRef() const;
 
 	/**
 		 * \fn public setRestrictedTargetPosition(const osg::Vec3f &position)
@@ -199,7 +227,7 @@ public:
 		 * \param position restricted target position
 		 * Restricted target position being set MUST NOT BE multiplied by the graph scale.
 		 */
-	void setRestrictedTargetPosition(const osg::Vec3f &position);
+	void setRestrictedTargetPosition( const osg::Vec3f& position );
 
 	/**
 		*  \fn public  getCurrentPosition(bool calculateNew = false, float interpolationSpeed = 1.0f)
@@ -209,7 +237,7 @@ public:
 		*  \return osg::Vec3f actual position
 		*  returned currentPosition IS already multiplied by the graph scale
 		*/
-	osg::Vec3f getCurrentPosition(bool calculateNew = false, float interpolationSpeed = 1.0f);
+	osg::Vec3f getCurrentPosition( bool calculateNew = false, float interpolationSpeed = 1.0f );
 
 	/**
 		*  \fn inline public  setCurrentPosition(osg::Vec3f val)
@@ -217,7 +245,10 @@ public:
 		*  \param   val  current node position
 		*  currentPosition being set MUST BE multiplied by the graph scale
 		*/
-	void setCurrentPosition(osg::Vec3f val) { currentPosition.set(val); }
+	void setCurrentPosition( osg::Vec3f val )
+	{
+		currentPosition.set( val );
+	}
 
 	/**
 		*	\fn public removeAllEdges
@@ -241,7 +272,7 @@ public:
 		*
 		*
 		*/
-	void setParentNode(Node* parent);
+	void setParentNode( Node* parent );
 
 
 	/**
@@ -249,14 +280,20 @@ public:
 		*  \brief Returns all Edges connected to the Node
 		*  \return QMap<qlonglong,osg::ref_ptr<Data::Edge> > * Edges connected to the Node
 		*/
-	QMap<qlonglong, osg::ref_ptr<Data::Edge> > * getEdges() const { return edges; }
+	QMap<qlonglong, osg::ref_ptr<Data::Edge> >* getEdges() const
+	{
+		return edges;
+	}
 
 	/**
 		*  \fn inline public  setEdges(QMap<qlonglong, osg::ref_ptr<Data::Edge> > *val)
 		*  \brief Sets (overrides) new Edges which are connected to the Node
 		*  \param   val   new Edges
 		*/
-	void setEdges(QMap<qlonglong, osg::ref_ptr<Data::Edge> > *val) { edges = val; }
+	void setEdges( QMap<qlonglong, osg::ref_ptr<Data::Edge> >* val )
+	{
+		edges = val;
+	}
 
 
 	/**
@@ -264,8 +301,8 @@ public:
 		*  \brief Adds new Edge to the Node
 		*  \param    edge   new Edge
 		*/
-	void addEdge(osg::ref_ptr<Data::Edge> edge);
-	void removeEdge(osg::ref_ptr<Data::Edge> edge);
+	void addEdge( osg::ref_ptr<Data::Edge> edge );
+	void removeEdge( osg::ref_ptr<Data::Edge> edge );
 
 
 	/**
@@ -273,27 +310,39 @@ public:
 		*  \brief Sets force of node
 		*  \param      v  Force vector
 		*/
-	void setForce(osg::Vec3f v) { force = v; }
+	void setForce( osg::Vec3f v )
+	{
+		force = v;
+	}
 
 	/**
 		*  \fn inline public constant  getForce
 		*  \brief Gets force of node
 		*  \return osg::Vec3f Force vector
 		*/
-	osg::Vec3f getForce() const { return force; }
+	osg::Vec3f getForce() const
+	{
+		return force;
+	}
 
 	/**
 		*  \fn inline public  addForce(bool fixed)
 		*  \brief Adds force V to node force
 		*  \param       v  Force V
 		*/
-	void addForce(osg::Vec3f v) { force += v; }
+	void addForce( osg::Vec3f v )
+	{
+		force += v;
+	}
 
 	/**
 		*  \fn inline public  resetForce
 		*  \brief Sets nodes force to zero value.
 		*/
-	void resetForce() { force = osg::Vec3f(0,0,0); }
+	void resetForce()
+	{
+		force = osg::Vec3f( 0,0,0 );
+	}
 
 
 	/**
@@ -301,15 +350,16 @@ public:
 		*  \brief Sets node fixed state
 		*  \param     fixed     fixed state
 		*/
-	void setFixed(bool fixed)
+	void setFixed( bool fixed )
 	{
 		this->fixed = fixed;
 
-		if (fixed && this->containsDrawable(square)){
-			this->setDrawableColor(0, osg::Vec4(1.0f, 0.0f, 0.0f, 1.0f));
+		if ( fixed && this->containsDrawable( square ) ) {
+			this->setDrawableColor( 0, osg::Vec4( 1.0f, 0.0f, 0.0f, 1.0f ) );
 		}
-		else if (!fixed && this->containsDrawable(square))
-			this->setDrawableColor(0, colorOfNode);
+		else if ( !fixed && this->containsDrawable( square ) ) {
+			this->setDrawableColor( 0, colorOfNode );
+		}
 	}
 
 	/**
@@ -317,35 +367,40 @@ public:
 		*  \brief Returns if the Node is fixed
 		*  \return bool true, if the Node is fixed
 		*/
-	bool isFixed() const { return fixed; }
+	bool isFixed() const
+	{
+		return fixed;
+	}
 
 	/**
 		*  \fn inline public constant cluster
 		*  \brief Returns Cluster which contains this Node
 		*  \return Cluster which contains this Node
 		*/
-    Cluster* getCluster() const;
+	Cluster* getCluster() const;
 
-    /**
+	/**
 		*  \fn inline public  setCluster(Cluster* cluster)
 		*  \brief Sets cluster which contains this Node
 		*  \param     cluster     cluster containing this node
 		*/
-    void setCluster(Cluster* cluster);
+	void setCluster( Cluster* cluster );
 
-    virtual QSet<Node*> getIncidentNodes() const;
+	virtual QSet<Node*> getIncidentNodes() const;
 
 	/**
 		*  \fn inline public  setSelected(bool selected) and  color of selected node
 		*  \brief Sets node picked state
 		*  \param     selected     picked state
 		*/
-	void setSelected(bool selected)
+	void setSelected( bool selected )
 	{
-		if (selected)
-			setDrawableColor(0, osg::Vec4(0.0f, 0.1f, 1.0f, 1.0f));    // color of selected node
-		else
-			setDrawableColor(0, color);
+		if ( selected ) {
+			setDrawableColor( 0, osg::Vec4( 0.0f, 0.1f, 1.0f, 1.0f ) );    // color of selected node
+		}
+		else {
+			setDrawableColor( 0, color );
+		}
 
 		this->selected = selected;
 	}
@@ -355,7 +410,10 @@ public:
 		*  \brief Returns if the Node is selected
 		*  \return bool true, if the Node is selected
 		*/
-	bool isSelected() const { return selected; }
+	bool isSelected() const
+	{
+		return selected;
+	}
 
 
 	/**
@@ -363,54 +421,81 @@ public:
 		*  \brief Sets ignoring by layout algorithm.
 		*  \param       b  True, if node is ignored.
 		*/
-	void setIgnored(bool b) { ignore = b; }
+	void setIgnored( bool b )
+	{
+		ignore = b;
+	}
 
 	/**
 		*  \fn inline public constant  isIgnored
 		*  \brief Return if the Node is ignored
 		*  \return bool true, if the Node is ignored
 		*/
-	bool isIgnored() const { return ignore; }
+	bool isIgnored() const
+	{
+		return ignore;
+	}
 
 	/**
 		 * \brief \link Node::positionCanBeRestricted [setter] \endlink
 		 */
-	void setPositionCanBeRestricted (bool b) {positionCanBeRestricted = b; }
+	void setPositionCanBeRestricted( bool b )
+	{
+		positionCanBeRestricted = b;
+	}
 
 	/**
 		 * \brief \link Node::positionCanBeRestricted [getter] \endlink
 		 */
-	bool getPositionCanBeRestricted () {return positionCanBeRestricted; }
+	bool getPositionCanBeRestricted()
+	{
+		return positionCanBeRestricted;
+	}
 
 	/**
 		 * \brief \link Node::removableByUser [setter] \endlink
 		 */
-	void setRemovableByUser (bool b) {removableByUser = b; }
+	void setRemovableByUser( bool b )
+	{
+		removableByUser = b;
+	}
 
 	/**
 		 * \brief \link Node::removableByUser [getter] \endlink
 		 */
-	bool isRemovableByUser () {return removableByUser; }
+	bool isRemovableByUser()
+	{
+		return removableByUser;
+	}
 
 	/**
 		*  \fn inline public  setVelocity(osg::Vec3f v)
 		*  \brief Sets node force for next iteration
 		*  \param    v  Force in actual iteration
 		*/
-	void setVelocity(osg::Vec3f v) { velocity = v; }
+	void setVelocity( osg::Vec3f v )
+	{
+		velocity = v;
+	}
 
 	/**
 		*  \fn inline public  resetVelocity
 		*  \brief Reset node force for next iteration
 		*/
-	void resetVelocity() {velocity = osg::Vec3(0,0,0);}
+	void resetVelocity()
+	{
+		velocity = osg::Vec3( 0,0,0 );
+	}
 
 	/**
 		*  \fn inline public constant  getVelocity
 		*  \brief Sets node force for next iteration.
 		*  \return osg::Vec3f Node force
 		*/
-	osg::Vec3f getVelocity() const { return velocity; }
+	osg::Vec3f getVelocity() const
+	{
+		return velocity;
+	}
 
 
 	/**
@@ -419,7 +504,7 @@ public:
 		*  \param   node     Node to compare
 		*  \return bool true, if this object and node are the same object
 		*/
-	bool equals(Node* node);
+	bool equals( Node* node );
 
 
 	/**
@@ -436,18 +521,20 @@ public:
 		*  \brief Sets default node color
 		*  \param     color   default color
 		*/
-	void setColor(osg::Vec4 color)
+	void setColor( osg::Vec4 color )
 	{
 		this->color = color;
 
-		if (!selected)
-			setDrawableColor(0, color);
+		if ( !selected ) {
+			setDrawableColor( 0, color );
+		}
 	}
 
-    void setDefaultColor();
+	void setDefaultColor();
 
-	void setInvisible(){
-		setColor(osg::Vec4 (0,0,0,0));
+	void setInvisible()
+	{
+		setColor( osg::Vec4( 0,0,0,0 ) );
 	}
 
 
@@ -456,7 +543,10 @@ public:
 		*  \brief Returns color of the Node
 		*  \return osg::Vec4 color of the Node
 		*/
-	osg::Vec4 getColor() const { return color; }
+	osg::Vec4 getColor() const
+	{
+		return color;
+	}
 
 
 	/**
@@ -464,20 +554,26 @@ public:
 		*  \brief If true, node name will be shown.
 		*  \param     visible     node name shown
 		*/
-	void showLabel(bool visible);
+	void showLabel( bool visible );
 
 	/**
 		*  \fn inline public  isInDB
 		*  \brief Returns if the Node is already in database or not
 		*  \return bool true, if the Node is in database
 		*/
-	bool isInDB() { return inDB; }
+	bool isInDB()
+	{
+		return inDB;
+	}
 
 	/**
 		*  \fn inline public  setIsInDB
 		*  \brief  Sets the inDB flag of the Node to true (meaning that the Node is in database)
 		*/
-	void setIsInDB() { inDB = true; }
+	void setIsInDB()
+	{
+		inDB = true;
+	}
 
 
 	/**
@@ -485,26 +581,50 @@ public:
 		*  \brief Returns if the Node is using interpolation or not
 		*  \return bool true, if the Node is using interpolation
 		*/
-	bool isUsingInterpolation() const { return usingInterpolation; }
+	bool isUsingInterpolation() const
+	{
+		return usingInterpolation;
+	}
 
 	/**
 		*  \fn inline public  setUsingInterpolation(bool val)
 		*  \brief Sets if the Node is using interpolation or not
 		*  \param      val
 		*/
-	void setUsingInterpolation(bool val) { usingInterpolation = val; }
+	void setUsingInterpolation( bool val )
+	{
+		usingInterpolation = val;
+	}
 
-	void setParentBall(osg::Sphere * val) { parentBall = val; }
+	void setParentBall( osg::Sphere* val )
+	{
+		parentBall = val;
+	}
 
-	osg::Sphere * getParentBall() { return parentBall; }
+	osg::Sphere* getParentBall()
+	{
+		return parentBall;
+	}
 
-	void setBall(osg::Geode * val) { ball = val; }
+	void setBall( osg::Geode* val )
+	{
+		ball = val;
+	}
 
-	osg::Geode * getBall() { return ball; }
+	osg::Geode* getBall()
+	{
+		return ball;
+	}
 
-	osg::ref_ptr<osg::AutoTransform> getOutBall() { return outBall; }
+	osg::ref_ptr<osg::AutoTransform> getOutBall()
+	{
+		return outBall;
+	}
 
-	void setOutBall(osg::ref_ptr<osg::AutoTransform> val) { outBall = val; }
+	void setOutBall( osg::ref_ptr<osg::AutoTransform> val )
+	{
+		outBall = val;
+	}
 
 
 	/**
@@ -518,58 +638,106 @@ public:
 		*  \brief Sets parent of note, if null, node has no parent
 		*  \param      val
 		*/
-	void setNestedParent(osg::ref_ptr<Data::Node> val) { nested_parent = val; }
+	void setNestedParent( osg::ref_ptr<Data::Node> val )
+	{
+		nested_parent = val;
+	}
 
 	/**
 		*  \fn inline public  getNestedParent
 		*  \brief Return node parent, if no parent then return NULL
 			*  \return QString name of the Node
 		*/
-	osg::ref_ptr<Data::Node> getNestedParent() { return nested_parent; }
+	osg::ref_ptr<Data::Node> getNestedParent()
+	{
+		return nested_parent;
+	}
 
 	/**
 		*  \fn inline public  getName
 		*  \brief Return node name
 			*  \return QString name of the Node
 		*/
-	QString getName() { return name; }
+	QString getName()
+	{
+		return name;
+	}
 
 	/**
 		*  \fn inline public constant  getSettings
 		*  \brief Returns settings of the Node
 		*  \return QMap<QString,QString> * settings of the Node
 		*/
-	QMap<QString, QString> * getSettings() const { return settings; }
+	QMap<QString, QString>* getSettings() const
+	{
+		return settings;
+	}
 
 	/**
 		*  \fn inline public  setSettings(QMap<QString, QString> * val)
 		*  \brief Sets (overrides) new settings of the Node
 		*  \param   val    new settings
 		*/
-	void setSettings(QMap<QString, QString> * val) { settings = val; }
+	void setSettings( QMap<QString, QString>* val )
+	{
+		settings = val;
+	}
 
-	void setLabelText(QString label) { labelText = label; }
+	void setLabelText( QString label )
+	{
+		labelText = label;
+	}
 
-	float getNodeDegree() { return nodeDegree; }
-	void setNodeDegree(float nodeDegree) { this->nodeDegree = nodeDegree; }
+	float getNodeDegree()
+	{
+		return nodeDegree;
+	}
+	void setNodeDegree( float nodeDegree )
+	{
+		this->nodeDegree = nodeDegree;
+	}
 
-	float getNodeCloseness() { return nodeCloseness; }
-	void setNodeCloseness(float nodeCloseness) { this->nodeCloseness = nodeCloseness; }
+	float getNodeCloseness()
+	{
+		return nodeCloseness;
+	}
+	void setNodeCloseness( float nodeCloseness )
+	{
+		this->nodeCloseness = nodeCloseness;
+	}
 
-	float getNodeBetweeness() { return nodeBetweeness; }
-	void setNodeBetweeness(float nodeBetweeness) { this->nodeBetweeness = nodeBetweeness; }
+	float getNodeBetweeness()
+	{
+		return nodeBetweeness;
+	}
+	void setNodeBetweeness( float nodeBetweeness )
+	{
+		this->nodeBetweeness = nodeBetweeness;
+	}
 
-	float getOverallWeight() { return overallWeight; }
-	void setOverallWeight(float overallWeight) { this->overallWeight = overallWeight; }
+	float getOverallWeight()
+	{
+		return overallWeight;
+	}
+	void setOverallWeight( float overallWeight )
+	{
+		this->overallWeight = overallWeight;
+	}
 
-	bool isNodeMatched() { return nodeMatched; }
-	void setNodeMatched(bool nodeMatched) { this->nodeMatched = nodeMatched; }
-    //volovar_zac
-    void setLayerID(int id); //get unique layer id of selected radial layout, 0 node has no radial layout
-    int getLayerID();
-    Layout::RadialLayout* getRadialLayout(); //pointer to radial layout, NULL if node doesn't belong to radial layout
-    void setRadialLayout(Layout::RadialLayout *rl);
-    //volovar_kon
+	bool isNodeMatched()
+	{
+		return nodeMatched;
+	}
+	void setNodeMatched( bool nodeMatched )
+	{
+		this->nodeMatched = nodeMatched;
+	}
+	//volovar_zac
+	void setLayerID( int id ); //get unique layer id of selected radial layout, 0 node has no radial layout
+	int getLayerID();
+	Layout::RadialLayout* getRadialLayout(); //pointer to radial layout, NULL if node doesn't belong to radial layout
+	void setRadialLayout( Layout::RadialLayout* rl );
+	//volovar_kon
 private:
 
 
@@ -643,9 +811,9 @@ private:
 		*  osg::Sphere nested ball
 		*  \brief
 		*/
-	osg::Sphere * parentBall;
+	osg::Sphere* parentBall;
 
-	osg::Geode * ball;
+	osg::Geode* ball;
 
 	osg::ref_ptr<osg::AutoTransform> outBall;
 
@@ -653,13 +821,13 @@ private:
 		*  QMap<qlonglong, osg::ref_ptr<Data::Edge> > * edges
 		*  \brief Edges connected to the Node
 		*/
-	QMap<qlonglong, osg::ref_ptr<Data::Edge> > * edges;
+	QMap<qlonglong, osg::ref_ptr<Data::Edge> >* edges;
 
-			  /**
-				  *  osg::Vec3f force
-				  *  \brief Node force
-				  */
-			  osg::Vec3f force;
+	/**
+	  *  osg::Vec3f force
+	  *  \brief Node force
+	  */
+	osg::Vec3f force;
 
 	/**
 		*  osg::Vec3f velocity
@@ -673,11 +841,11 @@ private:
 		*/
 	bool fixed;
 
-    /**
-        *  Cluster* cluster
-        *  \brief Cluster containing this node
-        */
-    Cluster* cluster;
+	/**
+	    *  Cluster* cluster
+	    *  \brief Cluster containing this node
+	    */
+	Cluster* cluster;
 
 	bool hasNestedNodes;
 
@@ -715,7 +883,7 @@ private:
 		*  \param  bbState    node stateset
 		*  \return osg::ref_ptr node drawable
 		*/
-	static osg::ref_ptr<osg::Drawable> createNode(const float & scale, osg::StateSet* bbState);
+	static osg::ref_ptr<osg::Drawable> createNode( const float& scale, osg::StateSet* bbState );
 
 	/**
 		*  \fn private static  createStateSet(Data::Type * type = 0)
@@ -723,7 +891,7 @@ private:
 		*  \param   type     node type
 		*  \return osg::ref_ptr node stateset
 		*/
-	static osg::ref_ptr<osg::StateSet> createStateSet(Data::Type * type = 0);
+	static osg::ref_ptr<osg::StateSet> createStateSet( Data::Type* type = 0 );
 
 	/**
 		*  \fn private static  createLabel(const float & scale, QString name)
@@ -732,7 +900,7 @@ private:
 		*  \param       name     label text
 		*  \return osg::ref_ptr node label
 		*/
-	static osg::ref_ptr<osg::Drawable> createLabel(const float & scale, QString name);
+	static osg::ref_ptr<osg::Drawable> createLabel( const float& scale, QString name );
 
 	/**
 		*  \fn private static  createSquare
@@ -741,7 +909,7 @@ private:
 		*  \param  bbState     square stateset
 		*  \return osg::ref_ptr square drawable
 		*/
-	static osg::ref_ptr<osg::Drawable> createSquare(const float & scale, osg::StateSet* bbState);
+	static osg::ref_ptr<osg::Drawable> createSquare( const float& scale, osg::StateSet* bbState );
 
 
 	/**
@@ -757,7 +925,7 @@ private:
 		*  \param     pos     drawable position
 		*  \param     color     drawable color
 		*/
-	void setDrawableColor(int pos, osg::Vec4 color);
+	void setDrawableColor( int pos, osg::Vec4 color );
 
 	/**
 		*  QString labelText
@@ -790,10 +958,10 @@ private:
 	bool nodeMatched;
 
 	float overallWeight;
-    //volovar_zac pre repulzivne sily, ktore posobia iba na uzly nachadzajuce sa na guli
-    int layerID;
-    Layout::RadialLayout* radialLayout;
-    //volovak_kon
+	//volovar_zac pre repulzivne sily, ktore posobia iba na uzly nachadzajuce sa na guli
+	int layerID;
+	Layout::RadialLayout* radialLayout;
+	//volovak_kon
 
 protected:
 
@@ -801,14 +969,14 @@ protected:
 		*  QMap<QString,QString> * settings
 		*  \brief Settings of the Node
 		*/
-	QMap<QString, QString> * settings;
+	QMap<QString, QString>* settings;
 	osg::Vec4 colorOfNode;
 
-    /**
-        *  bool selected
-        *  \brief node picked state
-        */
-    bool selected;
+	/**
+	    *  bool selected
+	    *  \brief node picked state
+	    */
+	bool selected;
 };
 }
 

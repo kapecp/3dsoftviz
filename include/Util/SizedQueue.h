@@ -4,7 +4,7 @@
 #include <deque>
 #include <utility>
 
-namespace Util{
+namespace Util {
 
 /**
 	*@brief Class FaceRecognizer
@@ -12,11 +12,12 @@ namespace Util{
 	*@date 20.5.2014
 	*/
 
-class SizedQueue{
+class SizedQueue
+{
 
 public:
 
-	SizedQueue(int size, float threshold);
+	SizedQueue( int size, float threshold );
 	~SizedQueue();
 
 	/**
@@ -26,7 +27,7 @@ public:
 	 * @param y float value on current y axis (will be rewriten)
 	 * @return 0/1 if the computed value changed over by set threshold
 	 */
-	int getAvgBasedOnValue(float &x, float &y);
+	int getAvgBasedOnValue( float& x, float& y );
 
 	/**
 	 * @brief getAvgBasedOnValue Compute average value from N previous values
@@ -34,7 +35,7 @@ public:
 	 * @param x float current value (will be rewriten)
 	 * @return 0/1 if te computed value changed over by set threshold
 	 */
-	int getAvgBasedOnValue(float &x);
+	int getAvgBasedOnValue( float& x );
 
 	/**
 	 * @brief getAvgBool add y to stack, and return true if there are nore true values then false values
@@ -42,7 +43,7 @@ public:
 	 * @param y value that will be added to stack
 	 * @return true if there are nore true values then false values in stack
 	 */
-	bool getAvgBool(bool y);
+	bool getAvgBool( bool y );
 
 private:
 	std::deque< std::pair<float,float> > stack;

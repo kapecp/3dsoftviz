@@ -16,33 +16,34 @@ namespace Layout {
  * Used to remove nodes which are used to change the restriction (e.g. by defining the sphere center and radius)
  * which has been added by the user using GUI.
  */
-class RestrictionRemovalHandler_RestrictionNodesRemover : public RestrictionRemovalHandler {
+class RestrictionRemovalHandler_RestrictionNodesRemover : public RestrictionRemovalHandler
+{
 
 public:
 
 	typedef QList<osg::ref_ptr<Data::Node> > NodesListType;
 
 	/***/
-	RestrictionRemovalHandler_RestrictionNodesRemover (
-			Data::Graph & graph,
-			NodesListType nodesToRemove
-			);
+	RestrictionRemovalHandler_RestrictionNodesRemover(
+		Data::Graph& graph,
+		NodesListType nodesToRemove
+	);
 
-	RestrictionRemovalHandler_RestrictionNodesRemover (
-			Data::Graph & graph,
-			NodesListType nodesToRemove,
-			NodesListType ignoredNodes
-			);
-
-	/***/
-	virtual void afterRestrictionRemoved (void);
+	RestrictionRemovalHandler_RestrictionNodesRemover(
+		Data::Graph& graph,
+		NodesListType nodesToRemove,
+		NodesListType ignoredNodes
+	);
 
 	/***/
-	virtual ~RestrictionRemovalHandler_RestrictionNodesRemover (void) {}
+	virtual void afterRestrictionRemoved( void );
+
+	/***/
+	virtual ~RestrictionRemovalHandler_RestrictionNodesRemover( void ) {}
 
 private:
 
-	Data::Graph & graph_;
+	Data::Graph& graph_;
 	NodesListType nodesToRemove_;
 	NodesListType ignoredNodes_;
 

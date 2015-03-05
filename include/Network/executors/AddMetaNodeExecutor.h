@@ -5,13 +5,14 @@
 
 namespace Network {
 
-    class AddMetaNodeExecutor : public AbstractExecutor {
+class AddMetaNodeExecutor : public AbstractExecutor
+{
 
-    public:
-        void execute_client();
-        void execute_server();
-        static const quint8 INSTRUCTION_NUMBER = 24;
-    };
+public:
+	void execute_client();
+	void execute_server();
+	static const quint8 INSTRUCTION_NUMBER = 24;
+};
 
 }
 

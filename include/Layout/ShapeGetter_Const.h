@@ -9,20 +9,21 @@ namespace Layout {
 /**
  * \brief Returning a constant shape (specified in the constructor).
  */
-class ShapeGetter_Const : public ShapeGetter {
+class ShapeGetter_Const : public ShapeGetter
+{
 
 public:
 
-	ShapeGetter_Const (
-			QSharedPointer<Shape> shape
-			);
+	ShapeGetter_Const(
+		QSharedPointer<Shape> shape
+	);
 
 	/***/
-	virtual ~ShapeGetter_Const (void) {}
+	virtual ~ShapeGetter_Const( void ) {}
 
-	virtual QSharedPointer<Shape> getShape (void);
+	virtual QSharedPointer<Shape> getShape( void );
 
-	virtual QSet<Data::Node *  > getNodesOfShape();
+	virtual QSet<Data::Node*  > getNodesOfShape();
 
 private:
 

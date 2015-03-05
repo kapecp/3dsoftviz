@@ -14,45 +14,46 @@ namespace Importer {
  * - errors
  * - progress
  */
-class ImportInfoHandler {
+class ImportInfoHandler
+{
 
 public:
 
 	/***/
-	virtual ~ImportInfoHandler (void) {}
+	virtual ~ImportInfoHandler( void ) {}
 
 	/**
 	 * \brief Handles message (information from the importer).
 	 * \param[in] text Message text.
 	 */
 
-	virtual void addMessage () = 0;
+	virtual void addMessage() = 0;
 
 	/**
 	 * \brief Handles error.
 	 * \param[in] text Error text.
 	 */
-	virtual void reportError (
-			const QString &text
-			) = 0;
+	virtual void reportError(
+		const QString& text
+	) = 0;
 
 	/**
 	 * \brief Handles error if the condition is not true.
 	 * \param[in] cond Condition.
 	 * \param[in] text Error text.
 	 */
-	void reportError (
-			const bool cond,
-			const QString &text
-			);
+	void reportError(
+		const bool cond,
+		const QString& text
+	);
 
 	/**
 	 * \brief Handles progress change.
 	 * \param[in] value Progress value <0, 100>.
 	 */
-	virtual void setProgress (
-			const unsigned int value
-			) = 0;
+	virtual void setProgress(
+		const unsigned int value
+	) = 0;
 
 }; // class
 
