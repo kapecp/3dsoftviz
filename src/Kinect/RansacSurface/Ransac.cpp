@@ -46,7 +46,7 @@ void Kinect::Ransac::findPoints(int *vectorDepths)
 void Kinect::Ransac::calculate()
 {
 
-    string line;
+    std::string line;
     srand(time(NULL));
     char cline[1000];
     int numbers[3000];
