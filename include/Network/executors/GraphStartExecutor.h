@@ -5,14 +5,15 @@
 
 namespace Network {
 
-    class GraphStartExecutor : public AbstractExecutor {
+class GraphStartExecutor : public AbstractExecutor
+{
 
-    public:
-        void execute_client();
-        void execute_server();
-        static const quint8 INSTRUCTION_NUMBER = 5;
+public:
+	void execute_client();
+	void execute_server();
+	static const quint8 INSTRUCTION_NUMBER = 5;
 
-    };
+};
 
 }
 

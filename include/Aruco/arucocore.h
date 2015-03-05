@@ -5,10 +5,12 @@
 #include <aruco/cvdrawingutils.h>
 #include <QMatrix4x4>
 
+#include <vector>
+
 namespace ArucoModul {
 
 class ArucoCore : public QObject
-	{
+{
 	/**
 		*@brief Class ArucoCore
 		*@author Autor: Martina Tregerova, David Durcak
@@ -28,7 +30,7 @@ public:
 		 * @brief cameraParameters Function that reads the camera information from yml file.
 		 * @note May not be needed anymore. Also the file will not be found.
 		 */
-	bool setCameraParameters(const QString markerDesFile);
+	bool setCameraParameters( const QString markerDesFile );
 
 	/**
 		 * @author Autor:Dávid Durčák
@@ -36,7 +38,7 @@ public:
 		 * @param inputImage Image from cammera, where marker should be detected
 		 * @param[out] result model view matrix
 		 */
-	const QMatrix4x4 getDetectedMatrix(cv::Mat inputImage);
+	const QMatrix4x4 getDetectedMatrix( cv::Mat inputImage );
 
 	/**
 		 * @author Autor:Dávid Durčák
@@ -46,7 +48,7 @@ public:
 		 * @param quaternion[4] output array that will describe orientation of marker by quaternion (w,x,y,z)
 		 * @param[out] true if least one marker was detected
 		 */
-	bool getDetectedPosAndQuat(cv::Mat inputImage, double position[3], double quaternion[4]);
+	bool getDetectedPosAndQuat( cv::Mat inputImage, double position[3], double quaternion[4] );
 
 	/**
 		 * @author Autor:Dávid Durčák
@@ -54,7 +56,7 @@ public:
 		 * @param inputImage Image from cammera, where markers should be detected
 		 * @param[out] number of detected markers
 		 */
-	long detect(cv::Mat inputImage);
+	long detect( cv::Mat inputImage );
 
 	/**
 			 * @author Autor:Dávid Durcák
@@ -64,7 +66,7 @@ public:
 			 * @param quaternion[4] output array that will describe orientation of marker by quaternion (w,x,y,z)
 			 * @param[out] true if least markerNum of markers were found
 			 */
-		bool getPosAndQuat(unsigned int markerNum, double position[3], double quaternion[4]);
+	bool getPosAndQuat( unsigned int markerNum, double position[3], double quaternion[4] );
 
 	/**
 		 * @author Autor:Dávid Durčák
@@ -79,14 +81,14 @@ private:
 		 * @param modelviewmatrix double* the field that needs to be filled
 		 * @note The need to send a field will be changed, too.
 		 */
-	int getMatrix(double* modelviewmatrix);
+	int getMatrix( double* modelviewmatrix );
 	/**
 		 * @author Autor: Martina Tregerova
 		 * @brief updateImage updates the camera matrix with each update.
 		 * @param ImputImage cv::Mat the camera matrix
 		 * @note The need to send the image will be changed too.
 		 */
-	void updateImage(cv::Mat inputImage);
+	void updateImage( cv::Mat inputImage );
 	/**
 		 * @author Autor: Martina Tregerova
 		 * @brief detectMarkers The actual function that creates a position information based on camera information.
@@ -119,7 +121,7 @@ private:
 	 */
 	float					mMarkerSize;
 
-	};
+};
 } // end ArucoModul namespace
 
 #endif // ARUCOCORE_H

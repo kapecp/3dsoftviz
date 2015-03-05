@@ -15,14 +15,12 @@
 #include <QSet>
 
 
-namespace Util
-{
-	class ApplicationConfig;
+namespace Util {
+class ApplicationConfig;
 }
 
 
-namespace Vwr
-{
+namespace Vwr {
 /**
 	*  \class NodeGroup
 	*  \brief
@@ -38,13 +36,13 @@ public:
 		*  \brief Creates node group
 		*  \param  nodes    nodes to wrap
 		*/
-	NodeGroup(QMap<qlonglong, osg::ref_ptr<Data::Node> > *nodes);
+	NodeGroup( QMap<qlonglong, osg::ref_ptr<Data::Node> >* nodes );
 
 	/**
 		*  \fn public destructor  ~NodeGroup
 		*  \brief destructor
 		*/
-	~NodeGroup(void);
+	~NodeGroup( void );
 
 
 	/**
@@ -52,7 +50,7 @@ public:
 		*  \brief Updates nodes current position with given interpolation speed
 		*  \param       interpolationSpeed
 		*/
-	void updateNodeCoordinates(float interpolationSpeed);
+	void updateNodeCoordinates( float interpolationSpeed );
 
 	/**
 		*  \fn public  synchronizeNodes
@@ -72,7 +70,10 @@ public:
 		*  \brief returns all nodes transformations
 		*  \return QMap<qlonglong,osg::ref_ptr<osg::AutoTransform> > * node transforms
 		*/
-	QMap<qlonglong, osg::ref_ptr<osg::AutoTransform> > * getNodeTransforms() { return nodeTransforms; }
+	QMap<qlonglong, osg::ref_ptr<osg::AutoTransform> >* getNodeTransforms()
+	{
+		return nodeTransforms;
+	}
 
 
 	/**
@@ -80,7 +81,10 @@ public:
 		*  \brief Returns wrapped nodes group
 		*  \return osg::ref_ptr nodes group
 		*/
-	osg::ref_ptr<osg::Group> getGroup()	{return group;}
+	osg::ref_ptr<osg::Group> getGroup()
+	{
+		return group;
+	}
 
 private:
 
@@ -88,13 +92,13 @@ private:
 		*  QMap<qlonglong,osg::ref_ptr<Data::Node> > * nodes
 		*  \brief wrapped nodes
 		*/
-	QMap<qlonglong, osg::ref_ptr<Data::Node> > *nodes;
+	QMap<qlonglong, osg::ref_ptr<Data::Node> >* nodes;
 
 	/**
 		*  QMap<qlonglong,osg::ref_ptr<osg::AutoTransform> > * nodeTransforms
 		*  \brief node transforms
 		*/
-	QMap<qlonglong, osg::ref_ptr<osg::AutoTransform> > *nodeTransforms;
+	QMap<qlonglong, osg::ref_ptr<osg::AutoTransform> >* nodeTransforms;
 
 	/**
 		*  osg::ref_ptr group
@@ -123,7 +127,7 @@ private:
 		*  \param      graphScale     graph scale
 		*  \return osg::ref_ptr node transform
 		*/
-	osg::ref_ptr<osg::AutoTransform> wrapChild(osg::ref_ptr<Data::Node> node, float graphScale);
+	osg::ref_ptr<osg::AutoTransform> wrapChild( osg::ref_ptr<Data::Node> node, float graphScale );
 
 	/**
 		*  \fn private  getNodeGroup(osg::ref_ptr<Data::Node> node, osg::ref_ptr<Data::Edge> parentEdge, float graphScale)
@@ -133,7 +137,7 @@ private:
 		*  \param       graphScale     graph scale
 		*  \return osg::ref_ptr nodes group
 		*/
-	osg::ref_ptr<osg::Group> getNodeGroup(osg::ref_ptr<Data::Node> node, osg::ref_ptr<Data::Edge> parentEdge, float graphScale);
+	osg::ref_ptr<osg::Group> getNodeGroup( osg::ref_ptr<Data::Node> node, osg::ref_ptr<Data::Edge> parentEdge, float graphScale );
 };
 }
 

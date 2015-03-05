@@ -3,23 +3,27 @@
 #include "Importer/GraphOperations.h"
 #include "Network/Client.h"
 
-using namespace Network;
+namespace Network {
 
-void GraphStartExecutor::execute_client() {
+void GraphStartExecutor::execute_client()
+{
 
-    Client * client = Client::getInstance();
-    client->ignoreLayout(true);
+	Client* client = Client::getInstance();
+	client->ignoreLayout( true );
 
-    client->currentGraph = Manager::GraphManager::getInstance()->createNewGraph("NewGraph");
-    Importer::GraphOperations * operations = new Importer::GraphOperations(*client->currentGraph);
-    operations->addDefaultTypes(client->edgeType, client->nodeType);
+	client->currentGraph = Manager::GraphManager::getInstance()->createNewGraph( "NewGraph" );
+	Importer::GraphOperations* operations = new Importer::GraphOperations( *client->currentGraph );
+	operations->addDefaultTypes( client->edgeType, client->nodeType );
 
-    client->thread->pause();
-    client->coreGraph->setNodesFreezed(true);
-    client->currentGraph->setFrozen(true);
+	client->thread->pause();
+	client->coreGraph->setNodesFreezed( true );
+	client->currentGraph->setFrozen( true );
 
 }
 
-void GraphStartExecutor::execute_server() {
-    return;
+void GraphStartExecutor::execute_server()
+{
+	return;
 }
+
+} // namespace Network

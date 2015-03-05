@@ -5,55 +5,56 @@
 #include "QOpenCV/CamSelectWindow.h"
 #include "OpenCV/CapVideo.h"
 
-using namespace OpenCV;
-
-OpenCV::CamSelectCore * OpenCV::CamSelectCore::mCamSelectCore;
+OpenCV::CamSelectCore* OpenCV::CamSelectCore::mCamSelectCore;
 
 //constructor search automatically for number of active cameras and store them
 OpenCV::CamSelectCore::CamSelectCore()
 {
 	mCamSelectCore = this;
-	this->app=app;
+	//this->app=app; // wtf???
 	int max=this->countCameras();
-	for (int i=0;i<max;i++){
-		camlist.push_back(new OpenCV::CapVideo(i,0,0));
+	for ( int i=0; i<max; i++ ) {
+		camlist.push_back( new OpenCV::CapVideo( i,0,0 ) );
 	}
 }
 OpenCV::CamSelectCore::~CamSelectCore()
 {
-	for (unsigned int i=0;i<camlist.size();i++){
+	for ( unsigned int i=0; i<camlist.size(); i++ ) {
 		delete camlist[i];
 	}
 }
 
-OpenCV::CapVideo *OpenCV::CamSelectCore::selectCamera()
+OpenCV::CapVideo* OpenCV::CamSelectCore::selectCamera()
 {
 	// Vytvorenie stringu pre vypis dat o kamere
 	QString data;
-	for(unsigned int i=0; i < camlist.size(); i++){
-		data.append(QString::number(camlist[i]->getDeviceId()));
-		data.append(",");
-		if (camlist[i]->isOpened()){
-			data.append("yes");data.append(",");
-			data.append(QString::number((int)camlist[i]->getWidth()));
-			data.append(",");
-			data.append(QString::number((int)camlist[i]->getHeight()));
-		} else{
-			data.append("no");data.append(",");
-			data.append("0");
-			data.append(",");
-			data.append("0");
+	for ( unsigned int i=0; i < camlist.size(); i++ ) {
+		data.append( QString::number( camlist[i]->getDeviceId() ) );
+		data.append( "," );
+		if ( camlist[i]->isOpened() ) {
+			data.append( "yes" );
+			data.append( "," );
+			data.append( QString::number( static_cast<int>( camlist[i]->getWidth() ) ) );
+			data.append( "," );
+			data.append( QString::number( static_cast<int>( camlist[i]->getHeight() ) ) );
 		}
-		if (i<camlist.size()-1) data.append(";");
+		else {
+			data.append( "no" );
+			data.append( "," );
+			data.append( "0" );
+			data.append( "," );
+			data.append( "0" );
+		}
+		if ( i<camlist.size()-1 ) {
+			data.append( ";" );
+		}
 	}
-	OpenCV::CamSelectWindow csw( AppCore::Core::getInstance(qApp)->getCoreWindow(),
+	OpenCV::CamSelectWindow csw( AppCore::Core::getInstance( qApp )->getCoreWindow(),
 								 qApp,
-								 data);
+								 data );
 
-	if (csw.exec())
-	{
-		if (camlist[device_id]->isOpened())
-		{
+	if ( csw.exec() ) {
+		if ( camlist[device_id]->isOpened() ) {
 			return camlist[device_id];
 		}
 	}
@@ -63,10 +64,9 @@ OpenCV::CapVideo *OpenCV::CamSelectCore::selectCamera()
 }
 
 // new instance of singleton
-OpenCV::CamSelectCore * OpenCV::CamSelectCore::getInstance()
+OpenCV::CamSelectCore* OpenCV::CamSelectCore::getInstance()
 {
-	if(mCamSelectCore == NULL)
-	{
+	if ( mCamSelectCore == NULL ) {
 		mCamSelectCore = new OpenCV::CamSelectCore();
 	}
 	return mCamSelectCore;
@@ -76,9 +76,9 @@ OpenCV::CamSelectCore * OpenCV::CamSelectCore::getInstance()
 int OpenCV::CamSelectCore::countCameras()
 {
 	int max = 10;
-	for (int i = 0; i < max; i++){
-		cv::VideoCapture temp(i);
-		if (!temp.isOpened()){
+	for ( int i = 0; i < max; i++ ) {
+		cv::VideoCapture temp( i );
+		if ( !temp.isOpened() ) {
 			temp.release();
 			temp.~VideoCapture();
 			return i;
@@ -89,8 +89,8 @@ int OpenCV::CamSelectCore::countCameras()
 	return max;
 }
 
-void OpenCV::CamSelectCore::setCam(int dev_id, int width, int height)
+void OpenCV::CamSelectCore::setCam( int dev_id, int width, int height )
 {
-	camlist[dev_id]->startCamera(width,height);
+	camlist[dev_id]->startCamera( width,height );
 	this->device_id=dev_id;
 }

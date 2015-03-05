@@ -16,29 +16,30 @@ namespace Layout {
  *
  * ax + by + cz + d = 0
  */
-class Shape_Plane : public Shape {
+class Shape_Plane : public Shape
+{
 
 public:
 
 	/***/
-	Shape_Plane (
-			const osg::Vec3f normalVector,
-			const float d
-			);
+	Shape_Plane(
+		const osg::Vec3f normalVector,
+		const float d
+	);
 
 	/***/
-	virtual ~Shape_Plane (void) {}
+	virtual ~Shape_Plane( void ) {}
 
-	osg::Vec3f & getNormalVector (void);
+	osg::Vec3f& getNormalVector( void );
 
-	float getD (void);
+	float getD( void );
 
 	/**
 	 * [visitor pattern]
 	 */
-	virtual void accept (
-			ShapeVisitor & visitor
-			);
+	virtual void accept(
+		ShapeVisitor& visitor
+	);
 
 private:
 

@@ -4,30 +4,31 @@
 
 namespace Importer {
 
-GraphOperations::GraphOperations (
-		Data::Graph &graph
-		) : graph_ (graph)
+GraphOperations::GraphOperations(
+	Data::Graph& graph
+) : graph_( graph )
 {
 }
 
-bool GraphOperations::addDefaultTypes (
-		Data::Type *&edgeType,
-		Data::Type *&nodeType
-		) {
+bool GraphOperations::addDefaultTypes(
+	Data::Type*& edgeType,
+	Data::Type*& nodeType
+)
+{
 	bool ok = true;
 
-	if (ok) {
+	if ( ok ) {
 		//typ hrany
-		edgeType = graph_.addType ("edge");
+		edgeType = graph_.addType( "edge" );
 
-		ok = (NULL != edgeType);
+		ok = ( NULL != edgeType );
 	}
 
-	if (ok) {
+	if ( ok ) {
 		//typ uzla
-		nodeType = graph_.addType ("node");
+		nodeType = graph_.addType( "node" );
 
-		ok = (NULL != nodeType);
+		ok = ( NULL != nodeType );
 	}
 
 	return ok;

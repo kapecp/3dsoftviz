@@ -26,15 +26,15 @@
 #include "Math/CameraMath.h"
 #include "Viewer/CoreGraph.h"
 
+#include <list>
 
-namespace Util
-{
-	class ApplicationConfig;
+namespace Util {
+class ApplicationConfig;
 }
 
-using namespace osgGA;
+namespace Vwr {
 
-namespace Vwr{
+using namespace osgGA;
 
 class CoreGraph;
 
@@ -47,19 +47,25 @@ class CoreGraph;
 	*	This class is basically extended TrackballManipulator class with new functionality.
 	*/
 class CameraManipulator : public QObject, public KeySwitchMatrixManipulator
-	{
+{
 	Q_OBJECT
 
 public:
-	CameraManipulator(Vwr::CoreGraph * coreGraph);
+	CameraManipulator( Vwr::CoreGraph* coreGraph );
 
-	virtual const char* className() const { return "Trackball"; }
+	virtual const char* className() const
+	{
+		return "Trackball";
+	}
 
 	/** set the position of the matrix manipulator using a 4x4 Matrix.*/
-	virtual void setByMatrix(const osg::Matrixd& matrix);
+	virtual void setByMatrix( const osg::Matrixd& matrix );
 
 	/** set the position of the matrix manipulator using a 4x4 Matrix.*/
-	virtual void setByInverseMatrix(const osg::Matrixd& matrix) { setByMatrix(osg::Matrixd::inverse(matrix)); }
+	virtual void setByInverseMatrix( const osg::Matrixd& matrix )
+	{
+		setByMatrix( osg::Matrixd::inverse( matrix ) );
+	}
 
 	/** get the position of the manipulator as 4x4 Matrix.*/
 	virtual osg::Matrixd getMatrix() const;
@@ -68,18 +74,24 @@ public:
 	virtual osg::Matrixd getInverseMatrix() const;
 
 	/** Get the FusionDistanceMode. Used by SceneView for setting up stereo convergence.*/
-	virtual osgUtil::SceneView::FusionDistanceMode getFusionDistanceMode() const { return osgUtil::SceneView::USE_FUSION_DISTANCE_VALUE; }
+	virtual osgUtil::SceneView::FusionDistanceMode getFusionDistanceMode() const
+	{
+		return osgUtil::SceneView::USE_FUSION_DISTANCE_VALUE;
+	}
 
 	/** Get the FusionDistanceValue. Used by SceneView for setting up stereo convergence.*/
-	virtual float getFusionDistanceValue() const { return _distance; }
+	virtual float getFusionDistanceValue() const
+	{
+		return _distance;
+	}
 
-    virtual void setVertigoMode(bool value);
+	virtual void setVertigoMode( bool value );
 
 	/** Attach a node to the manipulator.
 			Automatically detaches previously attached node.
 			setNode(NULL) detaches previously nodes.
 			Is ignored by manipulators which do not require a reference model.*/
-	virtual void setNode(osg::Node*);
+	virtual void setNode( osg::Node* );
 
 	/** Return node if attached.*/
 	virtual const osg::Node* getNode() const;
@@ -89,85 +101,137 @@ public:
 
 	/** Move the camera to the default position.
 			May be ignored by manipulators if home functionality is not appropriate.*/
-	virtual void home(const GUIEventAdapter& ea,GUIActionAdapter& us);
-	virtual void home(double time = 0);
+	virtual void home( const GUIEventAdapter& ea,GUIActionAdapter& us );
+	virtual void home( double time = 0 );
 
 	/** Start/restart the manipulator.*/
-	virtual void init(const GUIEventAdapter& ea,GUIActionAdapter& us);
+	virtual void init( const GUIEventAdapter& ea,GUIActionAdapter& us );
 
 	/** handle events, return true if handled, false otherwise.*/
-	virtual bool handle(const GUIEventAdapter& ea,GUIActionAdapter& us);
+	virtual bool handle( const GUIEventAdapter& ea,GUIActionAdapter& us );
 
 	/** Get the keyboard and mouse usage of this manipulator.*/
-	virtual void getUsage(osg::ApplicationUsage& usage) const;
+	virtual void getUsage( osg::ApplicationUsage& usage ) const;
 
 
 	/** set the minimum distance (as ratio) the eye point can be zoomed in towards the
 			center before the center is pushed forward.*/
-	void setMinimumZoomScale(double minimumZoomScale) { _minimumZoomScale=minimumZoomScale; }
+	void setMinimumZoomScale( double minimumZoomScale )
+	{
+		_minimumZoomScale=minimumZoomScale;
+	}
 
 	/** get the minimum distance (as ratio) the eye point can be zoomed in */
-	double getMinimumZoomScale() const { return _minimumZoomScale; }
+	double getMinimumZoomScale() const
+	{
+		return _minimumZoomScale;
+	}
 
 	/** set the mouse scroll wheel zoom delta.
 		  * Range -1.0 to +1.0,  -ve value inverts wheel direction and zero switches off scroll wheel. */
 
-	void setScroolWheelZoomDelta(float zoomDelta) { _zoomDelta = zoomDelta; }
+	void setScroolWheelZoomDelta( float zoomDelta )
+	{
+		_zoomDelta = zoomDelta;
+	}
 
 	/** get the mouse scroll wheel zoom delta. */
-	double getScroolWheelZoomDelta() const { return _zoomDelta; }
+	double getScroolWheelZoomDelta() const
+	{
+		return _zoomDelta;
+	}
 
 	/** Set the center of the trackball. */
-	void setCenter(const osg::Vec3d& center) { _center = center; }
+	void setCenter( const osg::Vec3d& center )
+	{
+		_center = center;
+	}
 
 	/** Get the center of the trackball. */
-	const osg::Vec3d& getCenter() const { return _center; }
+	const osg::Vec3d& getCenter() const
+	{
+		return _center;
+	}
 
 	/** Set the rotation of the trackball. */
-	void setRotation(const osg::Quat& rotation) { _rotation = rotation; }
+	void setRotation( const osg::Quat& rotation )
+	{
+		_rotation = rotation;
+	}
 
 	/** Get the rotation of the trackball. */
-	const osg::Quat& getRotation() const { return _rotation; }
+	const osg::Quat& getRotation() const
+	{
+		return _rotation;
+	}
 
 	/** Set the distance of the trackball. */
 
-	void setDistance(float distance) { _distance = distance; }
+	void setDistance( float distance )
+	{
+		_distance = distance;
+	}
 
 	/** Get the distance of the trackball. */
-	float getDistance() const { return _distance; }
+	float getDistance() const
+	{
+		return _distance;
+	}
 
 	/** Set the size of the trackball. */
-	void setTrackballSize(float size);
+	void setTrackballSize( float size );
 
 	/** Get the size of the trackball. */
-	float getTrackballSize() const { return _trackballSize; }
+	float getTrackballSize() const
+	{
+		return _trackballSize;
+	}
 
 	/** Set the 'allow throw' flag. Releasing the mouse button while moving the camera results in a throw. */
-	void setAllowThrow(bool allowThrow) { _allowThrow = allowThrow; }
+	void setAllowThrow( bool allowThrow )
+	{
+		_allowThrow = allowThrow;
+	}
 
 	/** Returns true if the camera can be thrown, false otherwise. This defaults to true. */
-	bool getAllowThrow() const { return _allowThrow; }
+	bool getAllowThrow() const
+	{
+		return _allowThrow;
+	}
 
-    /** Resets the projection matrix to default values */
-    void resetProjectionMatrixToDefault();
+	/** Resets the projection matrix to default values */
+	void resetProjectionMatrixToDefault();
 
 	/**
 		*  \fn inline public  setMaxSpeed(float speed)
 		*  \brief Sets maximum camera speed
 		*  \param     speed    maximum speed
 		*/
-	void setMaxSpeed(float speed) { this->maxSpeed = speed; }
+	void setMaxSpeed( float speed )
+	{
+		this->maxSpeed = speed;
+	}
 
 	/**
 		*  \fn inline public  getMaxSpeed
 		*  \brief Returns maximum camera speed
 		*  \return float maximum speed
 		*/
-	float getMaxSpeed() { return maxSpeed; }
+	float getMaxSpeed()
+	{
+		return maxSpeed;
+	}
 
-    void setNewPosition(osg::Vec3d cameraTargetPoint, osg::Vec3d cameraInterestPoint, std::list<osg::ref_ptr<Data::Node> > selectedCluster, std::list<osg::ref_ptr<Data::Edge> > selectedEdges);
+	/**
+		 * @author Viktor Vinczler
+		 * @brief setCenterSmoothly Initializes smooth center view
+		 * @param newCenter Destination point for smooth center view
+		 */
+	void setCenterSmoothly( osg::Vec3 newCenter );
 
-        osg::Vec3d getCameraPosition();
+	void setNewPosition( osg::Vec3d cameraTargetPoint, osg::Vec3d cameraInterestPoint, std::list<osg::ref_ptr<Data::Node> > selectedCluster, std::list<osg::ref_ptr<Data::Edge> > selectedEdges );
+
+	osg::Vec3d getCameraPosition();
 
 signals:
 
@@ -195,7 +259,7 @@ public slots:
 		 * @param y % distance from middle on vertical axis
 		 * @param distance from camera
 		 */
-	void setRotationHeadFaceDet(float x, float y, float distance);
+	void setRotationHeadFaceDet( float x, float y, float distance );
 
 	/**
 		 * @author Autor: David Durcak
@@ -204,7 +268,7 @@ public slots:
 		 * @param y % distance from middle on vertical axis
 		 * @param distance from camera
 		 */
-	void setRotationHeadKinect(float x, float y, float distance);
+	void setRotationHeadKinect( float x, float y, float distance );
 
 	/**
 		 * @author Autor: David Durcak
@@ -218,7 +282,7 @@ public slots:
 		 * @brief setCameraCanRot Set _cameraCanRot member.
 		 * @param cameraCanRot
 		 */
-	void setCameraCanRot( bool cameraCanRot);
+	void setCameraCanRot( bool cameraCanRot );
 
 protected:
 
@@ -227,16 +291,16 @@ protected:
 	/** Reset the internal GUIEvent stack.*/
 	void flushMouseEventStack();
 	/** Add the current mouse GUIEvent to internal stack.*/
-	void addMouseEvent(const GUIEventAdapter& ea);
+	void addMouseEvent( const GUIEventAdapter& ea );
 
-	void computePosition(const osg::Vec3& eye,const osg::Vec3& lv,const osg::Vec3& up);
+	void computePosition( const osg::Vec3& eye,const osg::Vec3& lv,const osg::Vec3& up );
 
 	/** For the give mouse movement calculate the movement of the camera.
 			Return true is camera has moved and a redraw is required.*/
 	bool calcMovement();
 
-	void trackball(osg::Vec3& axis,float& angle, float p1x, float p1y, float p2x, float p2y);
-	float tb_project_to_sphere(float r, float x, float y);
+	void trackball( osg::Vec3& axis,float& angle, float p1x, float p1y, float p2x, float p2y );
+	float tb_project_to_sphere( float r, float x, float y );
 
 
 	/** Check the speed at which the mouse is moving.
@@ -290,20 +354,20 @@ protected:
 		*/
 	bool _thrown;
 
-    /**
-        *  bool _vertigo
-        *  \brief true, if camera is in vertigo mode
-        */
-    bool _vertigo;
+	/**
+	    *  bool _vertigo
+	    *  \brief true, if camera is in vertigo mode
+	    */
+	bool _vertigo;
 
-    /**
-     * double PI
-     * \brief value of mathematical constant PI
-     */
+	/**
+	 * double PI
+	 * \brief value of mathematical constant PI
+	 */
 
-    double PI;
+	double PI;
 
-    double fovy, ratio, zNear, zFar, _width;
+	double fovy, ratio, zNear, zFar, _width;
 
 	/** The approximate amount of time it is currently taking to draw a frame.
 		  * This is used to compute the delta in translation/rotation during a thrown display update.
@@ -487,7 +551,7 @@ protected:
 		*  \param       ea  event adapter
 		*  \param    osgGA::GUIActionAdapter &    action adapter
 		*/
-	void frame(const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter &);
+	void frame( const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& );
 
 
 	/**
@@ -498,14 +562,14 @@ protected:
 		 * @param distance from camera
 		 * @param caller who call this method 0-FaceDet  1-Kinect
 		 */
-	void setRotationHead(float x, float y, float distance, int caller);
+	void setRotationHead( float x, float y, float distance, int caller );
 
 private:
-    /**
-     * A pointer to viewer widget from which we can set the field of view
-     * from setProjectionMatrixAsPerspective
-     */
-    QOSG::ViewerQT *mViewerWidget;
+	/**
+	 * A pointer to viewer widget from which we can set the field of view
+	 * from setProjectionMatrixAsPerspective
+	 */
+	QOSG::ViewerQT* mViewerWidget;
 
 	/**
 			*  Util::ApplicationConfig * appConf
@@ -521,7 +585,7 @@ private:
 		*  \param   us     action adapter
 		*  \return bool true, if handled
 		*/
-	bool handleFrame(const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& us);
+	bool handleFrame( const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& us );
 
 	/**
 		*  \fn private  handlePush(const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& us)
@@ -530,7 +594,7 @@ private:
 		*  \param   us    action adapter
 		*  \return bool true, if handled
 		*/
-	bool handlePush(const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& us);
+	bool handlePush( const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& us );
 
 	/**
 		*  \fn private  handleRelease(const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& us)
@@ -539,7 +603,7 @@ private:
 		*  \param  us     action adapter
 		*  \return bool true, if handled
 		*/
-	bool handleRelease(const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& us);
+	bool handleRelease( const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& us );
 
 	/**
 		*  \fn private  handleScroll(const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& us)
@@ -548,7 +612,7 @@ private:
 		*  \param  us   action adapter
 		*  \return bool true, if handled
 		*/
-	bool handleScroll(const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& us);
+	bool handleScroll( const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& us );
 
 	/**
 		*  \fn private  handleKeyDown( const osgGA::GUIEventAdapter &ea, osgGA::GUIActionAdapter& us)
@@ -557,7 +621,7 @@ private:
 		*  \param  us    action adapter
 		*  \return bool true, if handled
 		*/
-	bool handleKeyDown( const osgGA::GUIEventAdapter &ea, osgGA::GUIActionAdapter& us);
+	bool handleKeyDown( const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& us );
 
 	/**
 		*  \fn private  handleKeyUp( const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& us)
@@ -566,7 +630,7 @@ private:
 		*  \param   us   action adapter
 		*  \return bool true, if handled
 		*/
-	bool handleKeyUp( const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& us);
+	bool handleKeyUp( const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& us );
 
 	void notifyClients();
 	void notifyServer();
@@ -577,7 +641,36 @@ private:
 		*  \param  ea     event adapter
 		*  \param  us     action adapter
 		*/
-	void computeStandardFrame(const osgGA::GUIEventAdapter &ea, osgGA::GUIActionAdapter &aa);
+	void computeStandardFrame( const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& aa );
+
+	/**
+		*  bool movingCenter
+		*  \brief Flag for camera movement in smooth center view.
+		*  If true and view is not centered - camera is moving.
+		*  If camera moved through all points(view is centered), this flag is removed.
+		*/
+	bool movingCenter;
+
+	/**
+		*  int pointID
+		*  \brief Point order for camera movement in smooth center view.
+		*  For get information if camera moved through all points.
+		*/
+	int pointID;
+
+	/**
+		*  osg::Vec3 originalCenter
+		*  \brief Initial point - actual center view.
+		*  Initial point of camera movement in smooth center view.
+		*/
+	osg::Vec3 originalCenter;
+
+	/**
+		*  osg::Vec3 newCenter
+		*  \brief Destination point - center of nodes/edges selection.
+		*  Destination point of camera movement in smooth center view.
+		*/
+	osg::Vec3 newCenter;
 
 	/**
 		*  bool movingAutomatically
@@ -655,13 +748,13 @@ private:
 		*  QVector<osg::Vec3d> * cameraPositions
 		*  \brief control points for camera position curve
 		*/
-	QVector<osg::Vec3d> * cameraPositions;
+	QVector<osg::Vec3d>* cameraPositions;
 
 	/**
 		*  QVector<osg::Vec3d> * targetPositions
 		*  \brief control points for camera target curve
 		*/
-	QVector<osg::Vec3d> * targetPositions;
+	QVector<osg::Vec3d>* targetPositions;
 
 	/**
 		*  std::list<osg::ref_ptr<Data::Node> > selectedCluster
@@ -694,7 +787,7 @@ private:
 		*  \param  viewer     viewer
 		*  \param  selectedCluster     selected nodes
 		*/
-	void alterWeights(osgViewer::Viewer* viewer, std::list<osg::ref_ptr<Data::Node> > selectedCluster);
+	void alterWeights( osgViewer::Viewer* viewer, std::list<osg::ref_ptr<Data::Node> > selectedCluster );
 
 	/**
 		*  \fn private  alterCameraTargetPoint(osgViewer::Viewer* viewer)
@@ -702,14 +795,14 @@ private:
 		*  \param  viewer     viewer
 		*  \return float distance from center
 		*/
-	float alterCameraTargetPoint(osgViewer::Viewer* viewer);
+	float alterCameraTargetPoint( osgViewer::Viewer* viewer );
 
 	/**
 		*  \fn private  initAutomaticMovement(osgViewer::Viewer* viewer)
 		*  \brief inits automatic movement
 		*  \param  viewer     viewer
 		*/
-	void initAutomaticMovement(osgViewer::Viewer* viewer);
+	void initAutomaticMovement( osgViewer::Viewer* viewer );
 
 	/**
 		*  \fn private  computeViewMetrics(osgViewer::Viewer* viewer, std::list<osg::ref_ptr<Data::Node> > selectedCluster)
@@ -717,7 +810,7 @@ private:
 		*  \param  viewer     viewer
 		*  \param  selectedCluster     selected nodes
 		*/
-	void computeViewMetrics(osgViewer::Viewer* viewer, std::list<osg::ref_ptr<Data::Node> > selectedCluster);
+	void computeViewMetrics( osgViewer::Viewer* viewer, std::list<osg::ref_ptr<Data::Node> > selectedCluster );
 
 	/**
 		*  osg::Vec3 lastPosition
@@ -731,7 +824,7 @@ private:
 		*/
 	osg::Vec3 lastTargetPoint;
 
-	Vwr::CoreGraph * coreGraph;
+	Vwr::CoreGraph* coreGraph;
 
 	/**
 		 * @author Autor: David Durcak
@@ -740,7 +833,7 @@ private:
 		 * @param y coordinate of head on vertical axis
 		 * @param distance of head from camera
 		 */
-	void updateProjectionAccordingFace(const float x, const float y, const float distance);
+	void updateProjectionAccordingFace( const float x, const float y, const float distance );
 
 
 	/**
@@ -748,10 +841,10 @@ private:
 		*/
 	bool _cameraCanRot;
 
-    bool ctrlPressed;
-    bool shiftPressed;
+	bool ctrlPressed;
+	bool shiftPressed;
 
-	};
+};
 
 
 

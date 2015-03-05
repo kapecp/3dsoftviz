@@ -7,8 +7,7 @@
 
 #include <osg/Texture2D>
 
-namespace Vwr
-{
+namespace Vwr {
 /**
 	*  \class PerlinNoiseTextureGenerator
 	*  \brief Generates textures form perlin noise
@@ -31,7 +30,7 @@ public:
 		*  \return osg::ref_ptr texture
 		*/
 
-	static osg::ref_ptr<osg::Texture2D> getCoudTexture(int w, int h, unsigned char r, unsigned char g, unsigned char b, unsigned char alpha);
+	static osg::ref_ptr<osg::Texture2D> getCoudTexture( int w, int h, unsigned char r, unsigned char g, unsigned char b, unsigned char alpha );
 };
 }
 

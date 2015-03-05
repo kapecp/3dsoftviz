@@ -3,7 +3,7 @@
 
 #include "Layout/ShapeGetter.h"
 
-#include <QSlider>
+#include <QSpinBox>
 
 #include "Data/Node.h"
 #include "QOSG/ViewerQT.h"
@@ -19,15 +19,15 @@ namespace Layout {
 class ShapeGetter_ConeSurface_ByCamera : public ShapeGetter
 {
 public:
-    ShapeGetter_ConeSurface_ByCamera (const QOSG::ViewerQT *viewerWidget, const QSpinBox &baseRadiusSlider);
+	ShapeGetter_ConeSurface_ByCamera( const QOSG::ViewerQT* viewerWidget, const QSpinBox& baseRadiusSlider );
 
-    virtual ~ShapeGetter_ConeSurface_ByCamera() {}
+	virtual ~ShapeGetter_ConeSurface_ByCamera() {}
 
-    virtual QSharedPointer<Shape> getShape();
-    virtual QSet<Data::Node *> getNodesOfShape();
+	virtual QSharedPointer<Shape> getShape();
+	virtual QSet<Data::Node*> getNodesOfShape();
 private:
-    const QOSG::ViewerQT *mViewerWidget;
-    const QSpinBox &mBaseRadiusSpinBox;
+	const QOSG::ViewerQT* mViewerWidget;
+	const QSpinBox& mBaseRadiusSpinBox;
 };
 
 } // namespace

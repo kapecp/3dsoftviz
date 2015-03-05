@@ -12,8 +12,7 @@ class QPushButton;
 class QTableWidget;
 class QTableWidgetItem;
 
-namespace QOSG
-{
+namespace QOSG {
 
 
 
@@ -35,7 +34,7 @@ public:
 		*  \param  parent	Parent window
 		*  \param  graphID	graph ID
 		*/
-	SelectLayoutWindow(QWidget *parent, qlonglong graphID);
+	SelectLayoutWindow( QWidget* parent, qlonglong graphID );
 
 private:
 	/**
@@ -45,7 +44,7 @@ private:
 		*  \param   text     Button name
 		*  \param   member   Member
 		*/
-	QPushButton *createButton(const QString &text, const char *member);
+	QPushButton* createButton( const QString& text, const char* member );
 
 	/**
 		*  \fn		createLayoutTable()
@@ -57,19 +56,19 @@ private:
 		*  QPushButton *loadButton
 		*  \brief Load button
 		*/
-	QPushButton *loadButton;
+	QPushButton* loadButton;
 
 	/**
 		*  QPushButton *removeButton
 		*  \brief Remove button
 		*/
-	QPushButton *removeButton;
+	QPushButton* removeButton;
 
 	/**
 		*  QLabel *numberOfLayouts
 		*  \brief Label which show number of graph layouts stored in database
 		*/
-	QLabel *numberOfLayouts;
+	QLabel* numberOfLayouts;
 
 	/**
 		*  QStringList layoutList
@@ -81,7 +80,7 @@ private:
 		*  QTableWidget *layoutsTable
 		*  \brief Table where are shown data about graph layouts stored in database
 		*/
-	QTableWidget *layoutsTable;
+	QTableWidget* layoutsTable;
 
 	/**
 		*  qlonglong graphID
