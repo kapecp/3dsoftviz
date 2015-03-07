@@ -257,6 +257,16 @@ find_package( Boost 1.39 REQUIRED )
 # Include directories
 include_directories( SYSTEM ${Boost_INCLUDE_DIRS}  )
 
+# ------------------------------ LEAP -------------------------------
+# Find leap
+find_package( LEAP )
+if( LEAP_FOUND )
+	add_definitions( -DLEAP_FOUND )
+	message( STATUS "LEAP_LIB_DIR=${LEAP_LIBRARIES}" )
+else()
+	message( STATUS "LEAP Not Found" )
+endif()
+
 # ------------------------------ FGLOVE -------------------------------
 # Find fglove
 # find_package( FGLOVE )
@@ -571,6 +581,12 @@ include_directories( SYSTEM
 	${DEPENDENCIES_INCLUDE_DIR}/libnoise
 )
 
+if( LEAP_FOUND )
+	include_directories( SYSTEM
+		${LEAP_INCLUDE_DIRS}
+	)
+endif()
+
 #-------------------------------- Source files -------------------------------
 set( SRC_MAIN "src/main.cpp" )
 file( GLOB_RECURSE SRC_CORE		"src/Core/*.cpp" )
@@ -605,6 +621,9 @@ file( GLOB_RECURSE SRC_SPEECH	"src/Speech/*.cpp" )
 
 # FGlove
 # file ( GLOB_RECURSE SRC_FGLOVE "src/FGlove/*.cpp" )
+
+# Leap
+file ( GLOB_RECURSE SRC_LEAP "src/Leap/*.cpp" )
 
 
 # All source files
@@ -641,6 +660,12 @@ endif()
 #	list( APPEND SRC ${SRC_FGLOVE} )
 # endif()
 
+# add Leap
+if( LEAP_FOUND )
+	list( APPEND SRC ${SRC_LEAP} )
+endif()
+
+
 
 #-------------------------------- Header files -------------------------------
 file( GLOB_RECURSE HEADER_CORE		"include/Core/*.h" )
@@ -676,6 +701,9 @@ file( GLOB_RECURSE HEADER_SPEECH	"include/Speech/*.h" )
 # FGLOVE
 # file( GLOB_RECURSE HEADER_FGLOVE	"include/FGlove/*.h" )
 
+# LEAP
+file( GLOB_RECURSE HEADER_LEAP	"include/Leap/*.h" )
+
 # All header files
 set( INCL
 	${HEADER_MAIN} ${HEADER_CORE}
@@ -709,6 +737,11 @@ endif()
 # if( FGLOVE_FOUND )
 #	list( APPEND INCL ${HEADER_FGLOVE} )
 # endif()
+
+#LEAP
+if( LEAP_FOUND )
+	list( APPEND INCL ${HEADER_LEAP} )
+endif()
 
 #-------------------------------------- Group source files --------------------------------------
 source_group( \\src main.cpp )
@@ -768,6 +801,12 @@ endif()
 #	source_group( \\src\\Fglove "^.*Fglove/.*$" )
 #	source_group( \\headers\\Fglove "^.*Fglove/.*h$" )
 # endif()
+
+#leap
+if( LEAP_FOUND )
+	source_group( \\src\\Leap "^.*Leap/.*$" )
+	source_group( \\headers\\Leap "^.*Leap/.*h$" )
+endif()
 
 # add diluculum code directly due to MSVC problems
 if( MSVC )
@@ -839,6 +878,10 @@ endif()
 # if( FGLOVE_FOUND )
 #	target_link_libraries( ${3DSOFTVIZ_NAME} ${FGLOVE_LIBRARIES} )
 # endif()
+
+if( LEAP_FOUND )
+	target_link_libraries( ${3DSOFTVIZ_NAME} ${LEAP_LIBRARIES} )
+endif()
 
 # 'cotire' the executable
 if( COMMAND cotire )
@@ -925,6 +968,16 @@ endif()
 #			RUNTIME DESTINATION ${INSTALL_BIN}
 #			LIBRARY DESTINATION ${INSTALL_LIB} )
 # endif()
+
+# Install needed .dll files for leap
+if( LEAP_FOUND )
+
+	install( DIRECTORY ${LEAP_DRIVER_DIRS}/ DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/_install/bin )
+
+	#install( FILES ${LEAP_LIBRARIES} DESTINATION ${INSTALL_BIN} 
+#			RUNTIME DESTINATION ${INSTALL_BIN} 
+#   		LIBRARY DESTINATION ${INSTALL_LIB} )
+endif()
 
 # Install built in dependencies unless we are building an OSX Bundle
 if( USE_BUILTIN_DEPENDENCIES )
