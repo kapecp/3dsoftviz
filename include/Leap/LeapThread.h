@@ -1,3 +1,6 @@
+#ifndef LEAPTHREAD_H
+#define LEAPTHREAD_H
+
 #include "Leap.h"
 
 namespace Leap {
@@ -5,7 +8,7 @@ namespace Leap {
 class LeapThread;
 
 /**
- * @author Matej Marconak
+ * @author Peter Sutarik
  * @brief The LeapThread class
  * @brief Thread for processing LeapMotion data
  */
@@ -20,3 +23,4 @@ public:
 
 };
 }
+#endif // LEAPTHREAD_H
