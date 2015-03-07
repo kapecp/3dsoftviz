@@ -13,4 +13,6 @@ Leap::LeapThread::~LeapThread( void )
 void Leap::LeapThread::run()
 {
     qDebug() << "[Leap::LeapThread::run()]";
+    LeapController leapController;
+    leapController.startListening();
 }

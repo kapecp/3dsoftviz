@@ -2,6 +2,7 @@
 #define LEAPTHREAD_H
 
 #include "Leap.h"
+#include "Leap/LeapController.h"
 
 namespace Leap {
 
