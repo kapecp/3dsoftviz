@@ -433,6 +433,10 @@ public slots:
 	void startSpeech();
 #endif
 
+#ifdef LEAP_FOUND
+    void startLeap();
+#endif
+
 #ifdef FGLOVE_FOUND
 	void startGlovesRecognition();
 #endif
@@ -799,6 +803,12 @@ private:
 	 *@brief b_start_kinect
 	 */
 	QPushButton* b_start_kinect;
+
+    /**
+     * QPushButton start leap senzor
+     * @brief b_start_leap
+     */
+    QPushButton* b_start_leap;
 
 	/**
 	 * @brief Button for start calculate Ransac Surface

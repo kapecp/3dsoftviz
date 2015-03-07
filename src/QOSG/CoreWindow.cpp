@@ -944,6 +944,17 @@ QWidget* CoreWindow::createMoreFeaturesTab( QFrame* line )
 #endif
 #endif
 
+#ifdef LEAP_FOUND
+    line = createLine();
+    lMore->addRow( line );
+    lMore->addRow( new QLabel( tr( "Leap" ) ) );
+    b_start_leap = new QPushButton();
+    b_start_leap->setText( "Start leap" );
+    b_start_leap->setMaximumWidth( 136 );
+    lMore->addRow( b_start_leap );
+    connect( b_start_leap, SIGNAL( clicked() ), this, SLOT( startLeap() ) );
+#endif
+
 #ifdef SPEECHSDK_FOUND
 	line = createLine();
 	lMore->addRow( line );
@@ -2628,6 +2639,13 @@ void CoreWindow::startSpeech()
 	}
 	this->mSpeechThr->start();
 	b_start_speech->setText( "Stop Speech" );
+}
+#endif
+
+#ifdef LEAP_FOUND
+void CoreWindow::startLeap()
+{
+
 }
 #endif
 
