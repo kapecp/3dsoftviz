@@ -1,8 +1,7 @@
 #ifndef LEAPLISTENER_H
 #define LEAPLISTENER_H
 #include "Leap.h"
-
-#include "math.h"
+#include "Leap/LeapActions.h"
 
 namespace Leap {
 
@@ -11,12 +10,17 @@ class LeapListener;
 /**
  * @author Filip Mikle
  * @brief The Leap listener class
- * @brief Used for all operations regarding LeapSensor
+ * @brief Overrides listener actions from default Listener with custom code
  */
 class LeapListener : public Listener
 {
   public:
-    Controller controller;
+
+    /**
+     * @brief Class that contains Actions that should be executed after a specific gesture
+     */
+    LeapActions leapActions;
+
     void onInit(const Controller&);
     void onConnect(const Controller&);
     void onDisconnect(const Controller&);

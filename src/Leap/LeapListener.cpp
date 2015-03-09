@@ -26,8 +26,6 @@ void Leap::LeapListener::onExit(const Controller& controller)
 
 void Leap::LeapListener::onFrame(const Controller& controller)
 {
-    // here we need to put our code
-    //qDebug() << "[Leap::LeapController::onFrame()]";
     Frame frame = controller.frame();
     //HandList hands = frame.hands();
     //std::cout << "id: " << frame.id();
@@ -39,46 +37,22 @@ void Leap::LeapListener::onFrame(const Controller& controller)
         switch (gesture.type()) {
           case Gesture::TYPE_CIRCLE:
           {
-            CircleGesture circle = gesture;
-
-            if (circle.pointable().direction().angleTo(circle.normal()) <= PI/2) {
-              qDebug() << "[onFrame()::CircleGesture - clockwise]";
-            } else {
-                qDebug() << "[onFrame()::CircleGesture - counterclockwise]";
-            }
+            leapActions.onCircle(gesture);
             break;
           }
           case Gesture::TYPE_SWIPE:
           {
-            // swipe gesture
-            SwipeGesture swipe = gesture;
-
-            Vector direction = swipe.direction();
-            // najprv porovnam direction[0] a direction[1], aby som zistil o aky pohyb sa jedna
-
-            if(abs(direction[0]) > abs(direction[1])){ // ak plati toto jedna sa o horizontalny pohyb
-                if(direction[0] > 0)
-                    qDebug() << "SwipeGesture - right";
-                else if(direction[0] < 0)
-                    qDebug() << "SwipeGesture - left";
-            }else{ // inak sa jedna o vertikalny pohyb
-                if(direction[1] > 0)
-                    qDebug() << "SwipeGesture - up";
-                else if(direction[1] < 0)
-                    qDebug() << "SwipeGesture - down";
-            }
+            leapActions.onSwipe(gesture);
             break;
           }
           case Gesture::TYPE_KEY_TAP:
           {
-            // key tap gesture
-            qDebug() << "KeyTapGesture";
+            leapActions.onKeyTap(gesture);
             break;
           }
           case Gesture::TYPE_SCREEN_TAP:
           {
-            // screen tap gesture
-            qDebug() << "ScreenTapGesture";
+            leapActions.onScreenTap(gesture);
             break;
           }
           default:
