@@ -2,6 +2,8 @@
 #define LEAPLISTENER_H
 #include "Leap.h"
 
+#include "math.h"
+
 namespace Leap {
 
 class LeapListener;

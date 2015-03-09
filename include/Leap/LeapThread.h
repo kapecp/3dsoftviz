@@ -22,6 +22,8 @@ public:
     ~LeapThread( void );
     void run();
 
+    LeapController leapController;
+
 };
 }
 #endif // LEAPTHREAD_H

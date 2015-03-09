@@ -7,12 +7,13 @@ Leap::LeapThread::LeapThread( QObject* parent ) : QThread( parent )
 
 Leap::LeapThread::~LeapThread( void )
 {
+    leapController.stopListening();
     qDebug() << "LeapThread::~LeapThread, destroyed";
 }
 
 void Leap::LeapThread::run()
 {
     qDebug() << "[Leap::LeapThread::run()]";
-    LeapController leapController;
+   // LeapController leapController;
     leapController.startListening();
 }
