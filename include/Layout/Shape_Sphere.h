@@ -16,7 +16,8 @@ namespace Layout {
  * RANDOM_DISTANCE_FROM_CENTER - distance of the new position from the sphere center is random
  * SURFACE - the new position is a point on the sphere surface
  */
-class Shape_Sphere : public Shape_AbstractSphere {
+class Shape_Sphere : public Shape_AbstractSphere
+{
 
 public:
 
@@ -25,23 +26,23 @@ public:
 		SURFACE
 	};
 
-	Shape_Sphere (
-			const osg::Vec3f center,
-			const float radius,
-			RestrictionPolicy restrictionPolicy
-			);
+	Shape_Sphere(
+		const osg::Vec3f center,
+		const float radius,
+		RestrictionPolicy restrictionPolicy
+	);
 
 	/***/
-	virtual ~Shape_Sphere (void) {}
+	virtual ~Shape_Sphere( void ) {}
 
 	/**
 	 * [visitor pattern]
 	 */
-	virtual void accept (
-			ShapeVisitor & visitor
-			);
+	virtual void accept(
+		ShapeVisitor& visitor
+	);
 
-	RestrictionPolicy getRestrictionPolicy ();
+	RestrictionPolicy getRestrictionPolicy();
 
 private:
 

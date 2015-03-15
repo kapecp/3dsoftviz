@@ -2,21 +2,23 @@
 
 namespace Layout {
 
-Shape_AbstractSphere::Shape_AbstractSphere (
-		const osg::Vec3f center,
-		const float radius
-		) :	center_ (center),
-	radius_ (radius)
+Shape_AbstractSphere::Shape_AbstractSphere(
+	const osg::Vec3f center,
+	const float radius
+) :	center_( center ),
+	radius_( radius )
 {
-	// nothing
-
+	setAlpha( 0.2f );
+	setRenderType( SOLID );
 }
 
-osg::Vec3f & Shape_AbstractSphere::getCenter () {
+osg::Vec3f& Shape_AbstractSphere::getCenter()
+{
 	return center_;
 }
 
-float Shape_AbstractSphere::getRadius () {
+float Shape_AbstractSphere::getRadius()
+{
 	return radius_;
 }
 

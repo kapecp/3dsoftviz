@@ -11,24 +11,28 @@ namespace Importer {
  * Each method does nothing.
  */
 class ImportInfoHandlerEmpty
-		: public ImportInfoHandler {
+	: public ImportInfoHandler
+{
 
 public:
 
 	/***/
-	virtual ~ImportInfoHandlerEmpty (void) {}
+	virtual ~ImportInfoHandlerEmpty( void ) {}
 
 	/***/
 
-	virtual void addMessage () {
+	virtual void addMessage()
+	{
 	}
 
 	/***/
-	virtual void reportError () {
+	virtual void reportError()
+	{
 	}
 
 	/***/
-	virtual void setProgress () {
+	virtual void setProgress()
+	{
 	}
 
 }; // class

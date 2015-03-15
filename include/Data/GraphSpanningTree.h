@@ -10,7 +10,8 @@
 namespace Data {
 
 
-class GraphSpanningTree {
+class GraphSpanningTree
+{
 public:
 
 	/**
@@ -21,7 +22,7 @@ public:
 	*   \param      parentId ID of parent node of siblings. If is set, then is used as groupId.
 	*/
 
-	void addGroup(QList<qlonglong> nodes, int depth, qlonglong parentId=-1);
+	void addGroup( QList<qlonglong> nodes, int depth, qlonglong parentId=-1 );
 
 	/**
 	*  \fn public  getMaxDepth()
@@ -43,7 +44,7 @@ public:
 	*   \param       depth   graph depth
 	*  \return  list of group IDs
 	*/
-	QList<qlonglong> getGroupsInDepth(int depth);
+	QList<qlonglong> getGroupsInDepth( int depth );
 
 	/**
 	*  \fn public  getNodesInGroup(qlonglong groupId)
@@ -51,7 +52,7 @@ public:
 	*   \param       groupId   id of group of siblings
 	*  \return  list of node IDs
 	*/
-	QList<qlonglong> getNodesInGroup(qlonglong groupId);
+	QList<qlonglong> getNodesInGroup( qlonglong groupId );
 
 	/**
 	*  \fn public  getRandomNodeInGroup(qlonglong groupId)
@@ -59,7 +60,7 @@ public:
 	*   \param       groupId   id of group of siblings
 	*  \return  node ID
 	*/
-	qlonglong getRandomNodeInGroup(qlonglong groupId);
+	qlonglong getRandomNodeInGroup( qlonglong groupId );
 
 private:
 	/**

@@ -9,7 +9,9 @@
 
 #include "Viewer/RestrictionVisualizationsGroup.h"
 #include "Viewer/RestrictionManipulatorsGroup.h"
+#include "Viewer/EdgeGroup.h"
 #include "Viewer/NodeGroup.h"
+#include "Viewer/BrowserGroup.h"
 #include "Data/Edge.h"
 #include "Data/Node.h"
 
@@ -21,41 +23,39 @@
 #include <QObject>
 #include <QTime>
 
-namespace Data
-{
-	class Graph;
+#include "OsgQtBrowser/QWebViewImage.h"
+
+namespace Data {
+class Graph;
 }
 
-namespace Vwr
-{
-	class EdgeGroup;
-	//class CameraStream;
+namespace Vwr {
+class EdgeGroup;
+//class CameraStream;
 //	class NodeGroup;
 
-    osg::ref_ptr<osg::AutoTransform> getSphere(qlonglong id, osg::Vec3 position, float radius, osg::Vec4 color);
-    osg::ref_ptr<osg::AutoTransform> getCube(qlonglong id, osg::Vec3 position, float width, osg::Vec4 color);
-    osg::ref_ptr<osg::AutoTransform> getCone(qlonglong id, osg::Vec3 position, float radius, osg::Vec4 color);
-    osg::ref_ptr<osg::AutoTransform> getCylinder(qlonglong id, osg::Vec3 position, float radius, osg::Vec4 color);
-    osg::Geode* test();
-    osg::Vec4 getNewColor(int colorCounter);
-    osg::Vec3f getMidPoint(QSet<Data::Node *> nodes);
-    float getRadius(QSet<Data::Node *> nodes, osg::Vec3f midPoint);
+osg::ref_ptr<osg::AutoTransform> getSphere( qlonglong id, osg::Vec3 position, float radius, osg::Vec4 color );
+osg::ref_ptr<osg::AutoTransform> getCube( qlonglong id, osg::Vec3 position, float width, osg::Vec4 color );
+osg::ref_ptr<osg::AutoTransform> getCone( qlonglong id, osg::Vec3 position, float radius, osg::Vec4 color );
+osg::ref_ptr<osg::AutoTransform> getCylinder( qlonglong id, osg::Vec3 position, float radius, osg::Vec4 color );
+osg::Geode* test();
+osg::Vec4 getNewColor( int colorCounter );
+osg::Vec3f getMidPoint( QSet<Data::Node*> nodes );
+float getRadius( QSet<Data::Node*> nodes, osg::Vec3f midPoint );
 }
 
-namespace Util
-{
-	class ApplicationConfig;
+namespace Util {
+class ApplicationConfig;
 }
 
-namespace OpenCV{
+namespace OpenCV {
 #ifdef OPENCV_FOUND
-	class CameraStream;
+class CameraStream;
 #endif
 
 }
 
-namespace Vwr
-{
+namespace Vwr {
 /*!
 	 * \brief
 	 * Trieda vykreslujuca aktualny graf.
@@ -68,7 +68,7 @@ namespace Vwr
 	 * 7.12.2009
 	 */
 class CoreGraph : public QObject
-	{
+{
 	Q_OBJECT
 
 public:
@@ -86,14 +86,14 @@ public:
 		 * Konstruktor triedy.
 		 *
 		 */
-	CoreGraph(Data::Graph * graph = 0, osg::ref_ptr<osg::Camera> camera = 0);
+	CoreGraph( Data::Graph* graph = 0, osg::ref_ptr<osg::Camera> camera = 0 );
 	/*!
 		 *
 		 *
 		 * Destruktor.
 		 *
 		 */
-	~CoreGraph(void);
+	~CoreGraph( void );
 
 
 	/**
@@ -101,7 +101,7 @@ public:
 		*  \brief
 		*  \param   graph
 		*/
-	void reload(Data::Graph * graph = 0);
+	void reload( Data::Graph* graph = 0 );
 
 	/**
 		*  \fn public  reloadConfig
@@ -124,7 +124,10 @@ public:
 		*  \brief
 		*  \return QLinkedList<osg::ref_ptr<osg::Node> > *
 		*/
-	QLinkedList<osg::ref_ptr<osg::Node> > * getCustomNodeList() { return &customNodeList; }
+	QLinkedList<osg::ref_ptr<osg::Node> >* getCustomNodeList()
+	{
+		return &customNodeList;
+	}
 
 
 	/*!
@@ -135,7 +138,10 @@ public:
 		 * vrati odkaz na scenu
 		 *
 		 */
-	osg::ref_ptr<osg::Group> const getScene()  { return root; }
+	osg::ref_ptr<osg::Group> const getScene()
+	{
+		return root;
+	}
 
 
 	/**
@@ -143,37 +149,39 @@ public:
 		*  \brief Sets current viewing camera to all edges
 		*  \param     camera     current camera
 		*/
-	void setCamera(osg::ref_ptr<osg::Camera> camera)
+	void setCamera( osg::ref_ptr<osg::Camera> camera )
 	{
 		this->camera = camera;
 
-		QMapIterator<qlonglong, osg::ref_ptr<Data::Edge> > i(*in_edges);
+		QMapIterator<qlonglong, osg::ref_ptr<Data::Edge> > i( *in_edges );
 
 
-		while (i.hasNext())
-		{
+		while ( i.hasNext() ) {
 			i.next();
-			i.value()->setCamera(camera);
+			i.value()->setCamera( camera );
 		}
 	}
 
-	osg::ref_ptr<osg::Camera> getCamera() { return camera; }
+	osg::ref_ptr<osg::Camera> getCamera()
+	{
+		return camera;
+	}
 
-    osg::ref_ptr<osg::AutoTransform> dodecahedron(qlonglong id, osg::Vec3 midpoint, float radius, osg::Vec4 color);
+	osg::ref_ptr<osg::AutoTransform> dodecahedron( qlonglong id, osg::Vec3 midpoint, float radius, osg::Vec4 color );
 
 	/**
 		*  \fn public  setEdgeLabelsVisible(bool visible)
 		*  \brief If true, edge labels will be visible
 		*  \param      visible     edge label visibility
 		*/
-	void setEdgeLabelsVisible(bool visible);
+	void setEdgeLabelsVisible( bool visible );
 
 	/**
 		*  \fn public  setNodeLabelsVisible(bool visible)
 		*  \brief If true, node labels will be visible
 		*  \param       visible     node label visibility
 		*/
-	void setNodeLabelsVisible(bool visible);
+	void setNodeLabelsVisible( bool visible );
 
 
 	/**
@@ -181,29 +189,48 @@ public:
 		*  \brief True, if nodes are freezed
 		*  \return bool nodes freeze state
 		*/
-	bool getNodesFreezed() const { return nodesFreezed; }
+	bool getNodesFreezed() const
+	{
+		return nodesFreezed;
+	}
 
 	/**
 		*  \fn inline public  setNodesFreezed(bool val)
 		*  \brief Sets nodes freeze state
 		*  \param      val     nodes freeze state
 		*/
-	void setNodesFreezed(bool val);
+	void setNodesFreezed( bool val );
 
-    void setClustersOpacityAutomatic(bool automatic);
-    void setClustersOpacitySelected(bool selected);
-    void setClustersOpacity(double opacity);
-    void setClustersShapeBoundary(int value);
-    void setCameraManipulator(CameraManipulator * cameraManipulator);
-    void createClusterGroup(QMap<qlonglong, osg::ref_ptr<Data::Cluster> > clusters);
+	void setClustersOpacityAutomatic( bool automatic );
+	void setClustersOpacitySelected( bool selected );
+	void setClustersOpacity( double opacity );
+	void setClustersShapeBoundary( int value );
+	void setCameraManipulator( CameraManipulator* cameraManipulator );
+	void createClusterGroup( QMap<qlonglong, osg::ref_ptr<Data::Cluster> > clusters );
 
-	Vwr::NodeGroup * getNodesGroup() { return nodesGroup; }
-	Vwr::NodeGroup * getMetaNodesGroup() { return qmetaNodesGroup; }
-	Vwr::EdgeGroup * getEdgesGroup() { return edgesGroup; }
-	Vwr::EdgeGroup * getMetaEdgesGroup() { return qmetaEdgesGroup; }
+	Vwr::NodeGroup* getNodesGroup()
+	{
+		return nodesGroup;
+	}
+	Vwr::NodeGroup* getMetaNodesGroup()
+	{
+		return qmetaNodesGroup;
+	}
+	Vwr::EdgeGroup* getEdgesGroup()
+	{
+		return edgesGroup;
+	}
+	Vwr::EdgeGroup* getMetaEdgesGroup()
+	{
+		return qmetaEdgesGroup;
+	}
+	Vwr::BrowserGroup* getBrowsersGroup()
+	{
+		return browsersGroup;
+	}
 
 #ifdef OPENCV_FOUND
-	OpenCV::CameraStream *getCameraStream() const;
+	OpenCV::CameraStream* getCameraStream() const;
 #endif
 
 public slots:
@@ -241,26 +268,26 @@ private:
 		*  Vwr::EdgeGroup * edgesGroup
 		*  \brief edge group
 		*/
-	Vwr::EdgeGroup * edgesGroup;
+	Vwr::EdgeGroup* edgesGroup;
 
 	/**
 		*  Vwr::EdgeGroup * qmetaEdgesGroup
 		*  \brief metaedge group
 		*/
-	Vwr::EdgeGroup * qmetaEdgesGroup;
+	Vwr::EdgeGroup* qmetaEdgesGroup;
 
 
 	/**
 		*  Vwr::NodeGroup * nodesGroup
 		*  \brief node group
 		*/
-	Vwr::NodeGroup * nodesGroup;
+	Vwr::NodeGroup* nodesGroup;
 
 	/**
 		*  Vwr::NodeGroup * qmetaNodesGroup
 		*  \brief metanode group
 		*/
-	Vwr::NodeGroup * qmetaNodesGroup;
+	Vwr::NodeGroup* qmetaNodesGroup;
 
 	/**
 		 * \brief Contains part of OSG visualizing current restrictions.
@@ -273,34 +300,40 @@ private:
 	QSharedPointer<Vwr::RestrictionManipulatorsGroup> restrictionManipulatorsGroup;
 
 	/**
+		*  Vwr::BrowserGroup * browsersGroup
+		*  \brief browser group
+		*/
+	Vwr::BrowserGroup* browsersGroup;
+
+	/**
 		*  Data::Graph * graph
 		*  \brief current graph
 		*/
-	Data::Graph * graph;
+	Data::Graph* graph;
 
 	/**
 		*  QMap<qlonglong,osg::ref_ptr<Data::Node> > * in_nodes
 		*  \brief graph nodes map
 		*/
-	QMap<qlonglong, osg::ref_ptr<Data::Node> > *in_nodes;
+	QMap<qlonglong, osg::ref_ptr<Data::Node> >* in_nodes;
 
 	/**
 		*  QMap<qlonglong,osg::ref_ptr<Data::Edge> > * in_edges
 		*  \brief graph edges map
 		*/
-	QMap<qlonglong, osg::ref_ptr<Data::Edge> > *in_edges;
+	QMap<qlonglong, osg::ref_ptr<Data::Edge> >* in_edges;
 
 	/**
 		*  QMap<qlonglong,osg::ref_ptr<Data::Node> > * qmetaNodes
 		*  \brief graph metanodes map
 		*/
-	QMap<qlonglong, osg::ref_ptr<Data::Node> > *qmetaNodes;
+	QMap<qlonglong, osg::ref_ptr<Data::Node> >* qmetaNodes;
 
 	/**
 		*  QMap<qlonglong,osg::ref_ptr<Data::Edge> > * qmetaEdges
 		*  \brief graph metaedges map
 		*/
-	QMap<qlonglong, osg::ref_ptr<Data::Edge> > *qmetaEdges;
+	QMap<qlonglong, osg::ref_ptr<Data::Edge> >* qmetaEdges;
 
 	/**
 		*  Util::ApplicationConfig * appConf
@@ -308,11 +341,11 @@ private:
 		*/
 	Util::ApplicationConfig* appConf;
 
-	/**
-		*  \fn private  initEdgeLabels
-		*  \brief inits edge labels
-		*  \return osg::ref_ptr
-		*/
+//	/**
+//		*  \fn private  initEdgeLabels
+//		*  \brief inits edge labels
+//		*  \return osg::ref_ptr
+//		*/
 	osg::ref_ptr<osg::Group> initEdgeLabels();
 
 	/**
@@ -364,9 +397,9 @@ private:
 		*/
 	osg::ref_ptr<osg::Group> root;
 
-        osg::ref_ptr<osg::Group> testGroup;
+	osg::ref_ptr<osg::Group> testGroup;
 
-        osg::ref_ptr<osg::Group> test2();
+	osg::ref_ptr<osg::Group> test2();
 
 	/**
 		*  osg::ref_ptr graphGroup
@@ -464,9 +497,15 @@ private:
 	int restrictionVisualizationsPosition;
 
 	/**
-				 * \brief Index of restrictionManipulatorsGroup in the root group.
-				 */
+		 * \brief Index of restrictionManipulatorsGroup in the root group.
+		 */
 	int restrictionManipulatorsPosition;
+
+	/**
+		*  int groupsPosition
+		*  \brief browsers group position
+		*/
+	int browsersPosition;
 
 	/**
 		*  int customNodesPosition
@@ -480,20 +519,20 @@ private:
 	osg::ref_ptr<OpenCV::CameraStream> mCameraStream;
 #endif
 
-    bool clustersOpacityAutomatic;
-    bool clustersOpacitySelected;
-    double clustersOpacity;
-    int clustersShapeBoundary;
+	bool clustersOpacityAutomatic;
+	bool clustersOpacitySelected;
+	double clustersOpacity;
+	int clustersShapeBoundary;
 
-    osg::ref_ptr<osg::Group> clustersGroup;
+	osg::ref_ptr<osg::Group> clustersGroup;
 
-    CameraManipulator * cameraManipulator;
+	CameraManipulator* cameraManipulator;
 
-    void updateClustersCoords();
+	void updateClustersCoords();
 
-    double computeOpacity(osg::Vec3 clusterPosition);
-    bool cameraInsideSphere(osg::Vec3d midPoint, float radius);
-    bool cameraInsideCube(osg::Vec3d lowerPoint, osg::Vec3d upperPoint);
+	double computeOpacity( osg::Vec3 clusterPosition );
+	bool cameraInsideSphere( osg::Vec3d midPoint, float radius );
+	bool cameraInsideCube( osg::Vec3d lowerPoint, osg::Vec3d upperPoint );
 };
 
 }

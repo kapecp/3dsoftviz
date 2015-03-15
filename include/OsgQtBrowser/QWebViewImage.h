@@ -17,16 +17,37 @@
 #include <osgWidget/Browser>
 #include <QtWebKit/QWebSettings>
 #include <QtWebKit/QtWebKit>
+
 #include "OsgQtBrowser/QGraphicsViewAdapter.h"
-namespace OsgQtBrowser{
+#include "LuaGraph/LuaGraphTreeModel.h"
+namespace OsgQtBrowser {
 /**
 *  \class QWebViewImage
 *  \brief
 *  \author Adam Pazitnaj
 *  \date 29. 4. 2010
 */
-class QWebViewImage : public osgWidget::BrowserImage
+class QWebViewImage : public QObject, public osgWidget::BrowserImage
 {
+
+	Q_OBJECT
+private slots:
+	/**
+		*  \fn private  loadFinished
+		*  \brief Called when webPage load was finished. Used to assign qData and call js qDataReady function
+		*/
+	void loadFinished( bool ok );
+
+private:
+	/**
+		*  \fn private  addChildrenToJsModel
+		*  \brief Called when adding passing models to javascript.
+		*  For each model called initially with parentItem and calls itself recursively for each child having at least one children.
+		* \param       item - current tree item
+		* \param       path - current path to item (to which js object value will be assigned)
+		*/
+	void addChildrenToJsModel( Lua::LuaGraphTreeItem* item, QString path );
+
 public:
 
 
@@ -42,7 +63,7 @@ public:
 		*  \brief
 		*  \param [in]       url const std::string &
 		*/
-	virtual void navigateTo(const std::string& url);
+	virtual void navigateTo( const std::string& url );
 
 
 	/**
@@ -50,14 +71,20 @@ public:
 		*  \brief
 		*  \return QWebView *
 		*/
-	QWebView* getQWebView() { return _webView; }
+	QWebView* getQWebView()
+	{
+		return _webView;
+	}
 
 	/**
 		*  \fn inline public  getQWebPage
 		*  \brief
 		*  \return QWebPage *
 		*/
-	QWebPage* getQWebPage() { return _webPage; }
+	QWebPage* getQWebPage()
+	{
+		return _webPage;
+	}
 
 	/**
 
@@ -66,7 +93,10 @@ public:
 		*  \brief
 		*  \return QGraphicsViewAdapter *
 		*/
-	QGraphicsViewAdapter* getQGraphicsViewAdapter() { return _adapter; }
+	QGraphicsViewAdapter* getQGraphicsViewAdapter()
+	{
+		return _adapter;
+	}
 
 
 	/**
@@ -74,7 +104,7 @@ public:
 		*  \brief
 		*  \param [in]       focus bool
 		*/
-	void focusBrowser(bool focus);
+	void focusBrowser( bool focus );
 
 
 	/**
@@ -96,7 +126,7 @@ public:
 		*  \brief
 		*  \param [in]       frameStamp const osg::FrameStamp *
 		*/
-	virtual void setFrameLastRendered(const osg::FrameStamp* frameStamp);
+	virtual void setFrameLastRendered( const osg::FrameStamp* frameStamp );
 
 
 	/**
@@ -107,7 +137,7 @@ public:
 		*  \param [in]       buttonMask int
 		*  \return bool
 		*/
-	virtual bool sendPointerEvent(int x, int y, int buttonMask);
+	virtual bool sendPointerEvent( int x, int y, int buttonMask );
 
 
 	/**
@@ -117,7 +147,15 @@ public:
 		*  \param [in]       keyDown bool
 		*  \return bool
 		*/
-	virtual bool sendKeyEvent(int key, bool keyDown);
+	virtual bool sendKeyEvent( int key, bool keyDown );
+
+	/**
+		*  \fn public inline setModels
+		*/
+	inline void setModels( QList<Lua::LuaGraphTreeModel*>* models )
+	{
+		this->_models = models;
+	}
 
 protected:
 
@@ -139,6 +177,12 @@ protected:
 		*  \brief
 		*/
 	QPointer<QWebPage>              _webPage;
+
+	/**
+		*  QList<Lua::LuaGraphTreeModel*> *_models
+		*  \brief Lua models array to be passed into "qData" window js variable upon page load
+		*/
+	QList<Lua::LuaGraphTreeModel*>*  _models;
 };
 }
 #endif

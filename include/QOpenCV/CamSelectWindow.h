@@ -11,8 +11,7 @@ class QTreeView;
 class QPushButton;
 
 
-namespace OpenCV
-{
+namespace OpenCV {
 /**
 	 * @author Autor: Marek Jakab
 	 * @brief Class CamSelectWindow
@@ -28,7 +27,7 @@ public:
 		 * @param parent Parent Widget
 		 * @param app QApplication
 		 */
-	CamSelectWindow(QWidget *parent, QApplication *app, QString stringdata);
+	CamSelectWindow( QWidget* parent, QApplication* app, QString stringdata );
 
 signals:
 	/**
@@ -38,7 +37,7 @@ signals:
 	 * @param width Selected width of Camera
 	 * @param heigth Selected height of Camera
 	 */
-	void setCam(int devid, int width, int heigth);
+	void setCam( int devid, int width, int heigth );
 
 public slots:
 	/**
@@ -51,28 +50,28 @@ private:
 		 * @author Autor: Marek Jakab
 		 * @brief configureWindow Sets window properties
 		 */
-	void configureWindow(QString stringdata);
+	void configureWindow( QString stringdata );
 	/**
 		 * @author Autor: Marek Jakab
 		 * @brief createTableModel Create gui model and fill data
 		 * @param stringdata Data from cameras
 		 */
-	void createTableModel(QString stringdata);
+	void createTableModel( QString stringdata );
 
-	QApplication * app;
+	QApplication* app;
 
 	/**
 	 * @brief model Model used for QT gui
 	 */
-	QStandardItemModel * model;
+	QStandardItemModel* model;
 	/**
 	 * @brief view Tree view used in gui model
 	 */
-	QTreeView * view;
+	QTreeView* view;
 	/**
 	 * @brief applyButton Confirmation button
 	 */
-	QPushButton * applyButton;
+	QPushButton* applyButton;
 
 };
 }

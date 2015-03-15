@@ -5,7 +5,7 @@
 
 #include "opencv2/highgui/highgui.hpp"
 
-namespace OpenCV{
+namespace OpenCV {
 class CapVideo;
 class FaceRecognizer;
 }
@@ -21,13 +21,13 @@ class FaceRecognitionWindow;
 	 * @date 18.11.2013
 	 */
 class FaceRecognitionThread : public QThread
-	{
+{
 	Q_OBJECT
 
 public:
 
-	FaceRecognitionThread( QObject *parent = 0);
-	~FaceRecognitionThread(void);
+	FaceRecognitionThread( QObject* parent = 0 );
+	~FaceRecognitionThread( void );
 
 	/**
 		 * @author Autor: Marek Jakab
@@ -50,7 +50,7 @@ signals:
 			 * @param x % distance from middle on X axis
 			 * @param y % distance from middle on Y axis
 			 */
-	void sendEyesCoords( float x, float y, float distance);
+	void sendEyesCoords( float x, float y, float distance );
 
 public slots:
 	/**
@@ -77,13 +77,13 @@ public slots:
 			* @brief setCapVideo Set member mCapVideo.
 			* @param capVideo
 	*/
-	void setCapVideo( OpenCV::CapVideo *capVideo);
+	void setCapVideo( OpenCV::CapVideo* capVideo );
 
 private:
 	/**
 		 * @brief mCapVideo CapVideo object representing camera
 		 */
-	OpenCV::CapVideo		*mCapVideo;
+	OpenCV::CapVideo*		mCapVideo;
 	/**
 		 * @brief mCancel if the thread was canceled
 		 */
@@ -91,7 +91,7 @@ private:
 	bool					mSendImgEnabled;
 	bool					mSendBackgrImgEnabled;
 
-	};
+};
 }
 
 #endif //FACERECOGNIZERTHREAD_H

@@ -8,22 +8,24 @@
 #include <osg/Depth>
 #include <osg/BlendFunc>
 
-Cube::Cube(osg::Vec3d position, float radius) {
-    Cube(position, radius, osg::Vec4d(0,0,0,1));
+Cube::Cube( osg::Vec3d position, float radius )
+{
+	Cube( position, radius, osg::Vec4d( 0,0,0,1 ) );
 }
 
-Cube::Cube(osg::Vec3d position, float radius, osg::Vec4d color) {
-    geode = new osg::Geode();
-    geometry = new osg::Geometry();
-    vertices = new osg::Vec3Array;
-    normals = new osg::Vec3Array;
-    texCoords = new osg::Vec2Array;
-    primitiveSets = new std::vector<osg::DrawElementsUInt *>;
-    at = new osg::AutoTransform;
+Cube::Cube( osg::Vec3d position, float radius, osg::Vec4d color )
+{
+	geode = new osg::Geode();
+	geometry = new osg::Geometry();
+	vertices = new osg::Vec3Array;
+	normals = new osg::Vec3Array;
+	texCoords = new osg::Vec2Array;
+	primitiveSets = new std::vector<osg::DrawElementsUInt*>;
+	at = new osg::AutoTransform;
 
-    computeGeode();
-    transform(position, osg::Vec3d(radius,radius,radius), color);
-    at->addChild(geode);
+	computeGeode();
+	transform( position, osg::Vec3d( radius,radius,radius ), color );
+	at->addChild( geode );
 }
 
 //void Cube::computeGeode() {
@@ -173,131 +175,131 @@ Cube::Cube(osg::Vec3d position, float radius, osg::Vec4d color) {
 
 void Cube::computeGeode()
 {
-    // define normals for each face
-    osg::ref_ptr<osg::Vec3Array> cube_normals = new osg::Vec3Array;
-    cube_normals->push_back(osg::Vec3( 0.0f,-1.0f, 0.0f));
-    cube_normals->push_back(osg::Vec3( 0.0f,-1.0f, 0.0f));
-    cube_normals->push_back(osg::Vec3( 0.0f,-1.0f, 0.0f));
-    cube_normals->push_back(osg::Vec3( 0.0f,-1.0f, 0.0f));
+	// define normals for each face
+	osg::ref_ptr<osg::Vec3Array> cube_normals = new osg::Vec3Array;
+	cube_normals->push_back( osg::Vec3( 0.0f,-1.0f, 0.0f ) );
+	cube_normals->push_back( osg::Vec3( 0.0f,-1.0f, 0.0f ) );
+	cube_normals->push_back( osg::Vec3( 0.0f,-1.0f, 0.0f ) );
+	cube_normals->push_back( osg::Vec3( 0.0f,-1.0f, 0.0f ) );
 
-    cube_normals->push_back(osg::Vec3( 0.0f,+1.0f, 0.0f));
-    cube_normals->push_back(osg::Vec3( 0.0f,+1.0f, 0.0f));
-    cube_normals->push_back(osg::Vec3( 0.0f,+1.0f, 0.0f));
-    cube_normals->push_back(osg::Vec3( 0.0f,+1.0f, 0.0f));
+	cube_normals->push_back( osg::Vec3( 0.0f,+1.0f, 0.0f ) );
+	cube_normals->push_back( osg::Vec3( 0.0f,+1.0f, 0.0f ) );
+	cube_normals->push_back( osg::Vec3( 0.0f,+1.0f, 0.0f ) );
+	cube_normals->push_back( osg::Vec3( 0.0f,+1.0f, 0.0f ) );
 
-    cube_normals->push_back(osg::Vec3(+1.0f,+0.0f, 0.0f));
-    cube_normals->push_back(osg::Vec3(+1.0f,+0.0f, 0.0f));
-    cube_normals->push_back(osg::Vec3(+1.0f,+0.0f, 0.0f));
-    cube_normals->push_back(osg::Vec3(+1.0f,+0.0f, 0.0f));
+	cube_normals->push_back( osg::Vec3( +1.0f,+0.0f, 0.0f ) );
+	cube_normals->push_back( osg::Vec3( +1.0f,+0.0f, 0.0f ) );
+	cube_normals->push_back( osg::Vec3( +1.0f,+0.0f, 0.0f ) );
+	cube_normals->push_back( osg::Vec3( +1.0f,+0.0f, 0.0f ) );
 
-    cube_normals->push_back(osg::Vec3(-1.0f,+0.0f, 0.0f));
-    cube_normals->push_back(osg::Vec3(-1.0f,+0.0f, 0.0f));
-    cube_normals->push_back(osg::Vec3(-1.0f,+0.0f, 0.0f));
-    cube_normals->push_back(osg::Vec3(-1.0f,+0.0f, 0.0f));
+	cube_normals->push_back( osg::Vec3( -1.0f,+0.0f, 0.0f ) );
+	cube_normals->push_back( osg::Vec3( -1.0f,+0.0f, 0.0f ) );
+	cube_normals->push_back( osg::Vec3( -1.0f,+0.0f, 0.0f ) );
+	cube_normals->push_back( osg::Vec3( -1.0f,+0.0f, 0.0f ) );
 
-    cube_normals->push_back(osg::Vec3( 0.0f,+0.0f,-1.0f));
-    cube_normals->push_back(osg::Vec3( 0.0f,+0.0f,-1.0f));
-    cube_normals->push_back(osg::Vec3( 0.0f,+0.0f,-1.0f));
-    cube_normals->push_back(osg::Vec3( 0.0f,+0.0f,-1.0f));
+	cube_normals->push_back( osg::Vec3( 0.0f,+0.0f,-1.0f ) );
+	cube_normals->push_back( osg::Vec3( 0.0f,+0.0f,-1.0f ) );
+	cube_normals->push_back( osg::Vec3( 0.0f,+0.0f,-1.0f ) );
+	cube_normals->push_back( osg::Vec3( 0.0f,+0.0f,-1.0f ) );
 
-    cube_normals->push_back(osg::Vec3( 0.0f,+0.0f,+1.0f));
-    cube_normals->push_back(osg::Vec3( 0.0f,+0.0f,+1.0f));
-    cube_normals->push_back(osg::Vec3( 0.0f,+0.0f,+1.0f));
-    cube_normals->push_back(osg::Vec3( 0.0f,+0.0f,+1.0f));
+	cube_normals->push_back( osg::Vec3( 0.0f,+0.0f,+1.0f ) );
+	cube_normals->push_back( osg::Vec3( 0.0f,+0.0f,+1.0f ) );
+	cube_normals->push_back( osg::Vec3( 0.0f,+0.0f,+1.0f ) );
+	cube_normals->push_back( osg::Vec3( 0.0f,+0.0f,+1.0f ) );
 
-    osg::Vec3 vPosition = osg::Vec3(0, 0, 0);
+	osg::Vec3 vPosition = osg::Vec3( 0, 0, 0 );
 
-    float fRadius = 1.0f;
+	float fRadius = 1.0f;
 
-    // note, counterclockwise winding order with respect to normals
-    osg::Vec3 myCoords[] =
-    {
-    // bottom face
-    osg::Vec3(-fRadius, -fRadius, -fRadius) + vPosition,
-    osg::Vec3(+fRadius, -fRadius, -fRadius) + vPosition,
-    osg::Vec3(+fRadius, -fRadius, +fRadius) + vPosition,
-    osg::Vec3(-fRadius, -fRadius, +fRadius) + vPosition,
+	// note, counterclockwise winding order with respect to normals
+	osg::Vec3 myCoords[] = {
+		// bottom face
+		osg::Vec3( -fRadius, -fRadius, -fRadius ) + vPosition,
+		osg::Vec3( +fRadius, -fRadius, -fRadius ) + vPosition,
+		osg::Vec3( +fRadius, -fRadius, +fRadius ) + vPosition,
+		osg::Vec3( -fRadius, -fRadius, +fRadius ) + vPosition,
 
-    // top face
-    osg::Vec3(-fRadius, +fRadius, +fRadius) + vPosition,
-    osg::Vec3(+fRadius, +fRadius, +fRadius) + vPosition,
-    osg::Vec3(+fRadius, +fRadius, -fRadius) + vPosition,
-    osg::Vec3(-fRadius, +fRadius, -fRadius) + vPosition,
+		// top face
+		osg::Vec3( -fRadius, +fRadius, +fRadius ) + vPosition,
+		osg::Vec3( +fRadius, +fRadius, +fRadius ) + vPosition,
+		osg::Vec3( +fRadius, +fRadius, -fRadius ) + vPosition,
+		osg::Vec3( -fRadius, +fRadius, -fRadius ) + vPosition,
 
-    // right face
-    osg::Vec3(+fRadius, -fRadius, -fRadius) + vPosition,
-    osg::Vec3(+fRadius, +fRadius, -fRadius) + vPosition,
-    osg::Vec3(+fRadius, +fRadius, +fRadius) + vPosition,
-    osg::Vec3(+fRadius, -fRadius, +fRadius) + vPosition,
+		// right face
+		osg::Vec3( +fRadius, -fRadius, -fRadius ) + vPosition,
+		osg::Vec3( +fRadius, +fRadius, -fRadius ) + vPosition,
+		osg::Vec3( +fRadius, +fRadius, +fRadius ) + vPosition,
+		osg::Vec3( +fRadius, -fRadius, +fRadius ) + vPosition,
 
-    // left face
-    osg::Vec3(-fRadius, -fRadius, +fRadius) + vPosition,
-    osg::Vec3(-fRadius, +fRadius, +fRadius) + vPosition,
-    osg::Vec3(-fRadius, +fRadius, -fRadius) + vPosition,
-    osg::Vec3(-fRadius, -fRadius, -fRadius) + vPosition,
+		// left face
+		osg::Vec3( -fRadius, -fRadius, +fRadius ) + vPosition,
+		osg::Vec3( -fRadius, +fRadius, +fRadius ) + vPosition,
+		osg::Vec3( -fRadius, +fRadius, -fRadius ) + vPosition,
+		osg::Vec3( -fRadius, -fRadius, -fRadius ) + vPosition,
 
-    // front face
-    osg::Vec3(-fRadius, +fRadius, -fRadius) + vPosition,
-    osg::Vec3(+fRadius, +fRadius, -fRadius) + vPosition,
-    osg::Vec3(+fRadius, -fRadius, -fRadius) + vPosition,
-    osg::Vec3(-fRadius, -fRadius, -fRadius) + vPosition,
+		// front face
+		osg::Vec3( -fRadius, +fRadius, -fRadius ) + vPosition,
+		osg::Vec3( +fRadius, +fRadius, -fRadius ) + vPosition,
+		osg::Vec3( +fRadius, -fRadius, -fRadius ) + vPosition,
+		osg::Vec3( -fRadius, -fRadius, -fRadius ) + vPosition,
 
-    // back face
-    osg::Vec3(-fRadius, -fRadius, +fRadius) + vPosition,
-    osg::Vec3(+fRadius, -fRadius, +fRadius) + vPosition,
-    osg::Vec3(+fRadius, +fRadius, +fRadius) + vPosition,
-    osg::Vec3(-fRadius, +fRadius, +fRadius) + vPosition
-    };
+		// back face
+		osg::Vec3( -fRadius, -fRadius, +fRadius ) + vPosition,
+		osg::Vec3( +fRadius, -fRadius, +fRadius ) + vPosition,
+		osg::Vec3( +fRadius, +fRadius, +fRadius ) + vPosition,
+		osg::Vec3( -fRadius, +fRadius, +fRadius ) + vPosition
+	};
 
-    int numCoords = int(sizeof(myCoords)/sizeof(osg::Vec3));
-    osg::Vec3Array* vertices = new osg::Vec3Array(numCoords,myCoords);
-    geometry->setVertexArray(vertices);
+	int numCoords = static_cast<int>( sizeof( myCoords )/sizeof( osg::Vec3 ) );
+	osg::Vec3Array* vertices = new osg::Vec3Array( numCoords,myCoords );
+	geometry->setVertexArray( vertices );
 
-    geometry->addPrimitiveSet(new
-    osg::DrawArrays(osg::PrimitiveSet::QUADS,0,numCoords));
+	geometry->addPrimitiveSet( new
+							   osg::DrawArrays( osg::PrimitiveSet::QUADS,0,numCoords ) );
 
-    geometry->setNormalArray(cube_normals.get());
-    geometry->setNormalBinding(osg::Geometry::BIND_PER_VERTEX);
+	geometry->setNormalArray( cube_normals.get() );
+	geometry->setNormalBinding( osg::Geometry::BIND_PER_VERTEX );
 
-    geode->addDrawable(geometry);
+	geode->addDrawable( geometry );
 }
 
-void Cube::transform(osg::Vec3d position, osg::Vec3d scale, osg::Vec4d color) {
-    osg::StateSet * ss = geometry->getOrCreateStateSet();
-/*
-// only wireframe (outline / contour)
-    osg::ref_ptr<osg::PolygonMode> pm = new osg::PolygonMode(osg::PolygonMode::FRONT_AND_BACK, osg::PolygonMode::LINE);
-    ss->setAttributeAndModes(pm.get(), osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE);
+void Cube::transform( osg::Vec3d position, osg::Vec3d scale, osg::Vec4d color )
+{
+	osg::StateSet* ss = geometry->getOrCreateStateSet();
+	/*
+	// only wireframe (outline / contour)
+	    osg::ref_ptr<osg::PolygonMode> pm = new osg::PolygonMode(osg::PolygonMode::FRONT_AND_BACK, osg::PolygonMode::LINE);
+	    ss->setAttributeAndModes(pm.get(), osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE);
 
-// line width
-    osg::LineWidth* linewidth = new osg::LineWidth();
-    linewidth->setWidth(20.0f);
-    ss->setAttributeAndModes(linewidth, osg::StateAttribute::ON);
-*/
+	// line width
+	    osg::LineWidth* linewidth = new osg::LineWidth();
+	    linewidth->setWidth(20.0f);
+	    ss->setAttributeAndModes(linewidth, osg::StateAttribute::ON);
+	*/
 // transparent
 
 //    ss->setMode( GL_BLEND, osg::StateAttribute::ON );
 //    ss->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
 
-    osg::Material* material = new osg::Material();
-    material->setAmbient(osg::Material::FRONT,color);
-    material->setDiffuse(osg::Material::FRONT,color);
-    material->setSpecular(osg::Material::FRONT,color);
-    material->setAlpha(osg::Material::FRONT,(float)color.a());
+	osg::Material* material = new osg::Material();
+	material->setAmbient( osg::Material::FRONT,color );
+	material->setDiffuse( osg::Material::FRONT,color );
+	material->setSpecular( osg::Material::FRONT,color );
+	material->setAlpha( osg::Material::FRONT,static_cast<float>( color.a() ) );
 
-    ss->setAttribute(material,osg::StateAttribute::OVERRIDE);
-    ss->setMode(GL_DEPTH_TEST,osg::StateAttribute::ON);
-    ss->setMode(GL_LIGHTING,osg::StateAttribute::OFF);
-    ss->setMode(GL_BLEND,osg::StateAttribute::ON);
-    ss->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
+	ss->setAttribute( material,osg::StateAttribute::OVERRIDE );
+	ss->setMode( GL_DEPTH_TEST,osg::StateAttribute::ON );
+	ss->setMode( GL_LIGHTING,osg::StateAttribute::OFF );
+	ss->setMode( GL_BLEND,osg::StateAttribute::ON );
+	ss->setRenderingHint( osg::StateSet::TRANSPARENT_BIN );
 
-    osg::ref_ptr<osg::Depth> depth = new osg::Depth;
-    depth->setWriteMask(false);
-    ss->setAttributeAndModes(depth, osg::StateAttribute::ON);
-    ss->setAttributeAndModes(new osg::BlendFunc, osg::StateAttribute::ON);
+	osg::ref_ptr<osg::Depth> depth = new osg::Depth;
+	depth->setWriteMask( false );
+	ss->setAttributeAndModes( depth, osg::StateAttribute::ON );
+	ss->setAttributeAndModes( new osg::BlendFunc, osg::StateAttribute::ON );
 
-    at->setPosition(position * 1);
-    at->setScale(scale);
+	at->setPosition( position * 1 );
+	at->setScale( scale );
 
 //    dodecahedronGeode->setUserValue("id", QString::number(id).toStdString());
 

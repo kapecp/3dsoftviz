@@ -7,13 +7,14 @@
 
 namespace Network {
 
-    class IncommingUserExecutor : public AbstractExecutor {
+class IncommingUserExecutor : public AbstractExecutor
+{
 
-    public:
-        void execute_server();
-        void execute_client();
-        static const quint8 INSTRUCTION_NUMBER = 1;
-    };
+public:
+	void execute_server();
+	void execute_client();
+	static const quint8 INSTRUCTION_NUMBER = 1;
+};
 
 }
 

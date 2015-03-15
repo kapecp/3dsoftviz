@@ -13,8 +13,7 @@
 
 #include <QtGui>
 
-namespace QOSG
-{
+namespace QOSG {
 
 /**
 	*  \class MessageWindows
@@ -29,13 +28,13 @@ public:
 		*  \fn public constructor  MessageWindows
 		*  \brief Constructor
 		*/
-	MessageWindows(void);
+	MessageWindows( void );
 
 	/**
 		*  \fn public destructor  ~MessageWindows
 		*  \brief Destructor
 		*/
-	~MessageWindows(void);
+	~MessageWindows( void );
 
 	/**
 		*  \fn public  showProgressBar
@@ -54,7 +53,7 @@ public:
 		*  \brief Set the actual value for progress bar
 		*  \param  value
 		*/
-	void setProgressBarValue(int value);
+	void setProgressBarValue( int value );
 
 	/**
 		*  \fn public  showMessageBox(QString title, QString message, bool isError)
@@ -63,14 +62,14 @@ public:
 		*  \param  message message of the dialog
 		*  \param  isError flag if the dialog is message or error
 		*/
-	void showMessageBox(QString title, const QString &message, bool isError);
+	void showMessageBox( QString title, const QString& message, bool isError );
 
 	/**
 		*  \fn public  showLoadingDialog(QString message)
 		*  \brief Show user loading dialog
 		*  \param message QString    message of the dialog
 		*/
-	void showLoadingDialog(QString message);
+	void showLoadingDialog( QString message );
 
 	/**
 		*  \fn public  closeLoadingDialog
@@ -83,13 +82,13 @@ private:
 		*  QProgressDialog * progressBar
 		*  \brief  Poninter to progress bar
 		*/
-	QProgressDialog * progressBar;
+	QProgressDialog* progressBar;
 
 	/**
 		*  QMessageBox * loadingDialog
 		*  \brief Pointer to loading dialog
 		*/
-	QMessageBox * loadingDialog;
+	QMessageBox* loadingDialog;
 
 };
 }

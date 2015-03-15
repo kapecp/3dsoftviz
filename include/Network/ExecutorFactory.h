@@ -3,7 +3,6 @@
 
 #include "Network/executors/AbstractExecutor.h"
 
-#include "Network/executors/AbstractExecutor.h"
 #include "Network/executors/UsersExecutor.h"
 #include "Network/executors/MoveNodeExecutor.h"
 #include "Network/executors/GraphStartExecutor.h"
@@ -34,15 +33,16 @@
 
 namespace Network {
 
-class ExecutorFactory {
+class ExecutorFactory
+{
 
 public:
 	ExecutorFactory();
-	AbstractExecutor* getExecutor(QDataStream * stream);
+	AbstractExecutor* getExecutor( QDataStream* stream );
 
 private:
 
-	QMap<quint8, AbstractExecutor *> executorList;
+	QMap<quint8, AbstractExecutor*> executorList;
 };
 
 }

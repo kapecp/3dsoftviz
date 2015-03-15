@@ -11,8 +11,7 @@
 #include <QDebug>
 #include <QtSql>
 
-namespace Data
-{
+namespace Data {
 class Graph;
 
 /**
@@ -141,20 +140,23 @@ public:
 		*  \param   name  name of the GraphLayout
 		*  \param   conn  connection to the database
 		*/
-	GraphLayout(qlonglong layout_id, Data::Graph* graph, QString name, QSqlDatabase* conn);
+	GraphLayout( qlonglong layout_id, Data::Graph* graph, QString name, QSqlDatabase* conn );
 
 	/**
 		*  \fn public destructor  ~GraphLayout
 		*  \brief Destroys the GraphLayout object
 		*/
-	~GraphLayout(void);
+	~GraphLayout( void );
 
 	/**
 		*  \fn inline public  getName
 		*  \brief Returns name of the GraphLayout
 		*  \return QString name of the GraphLayout
 		*/
-	QString getName() { return name; }
+	QString getName()
+	{
+		return name;
+	}
 
 	/**
 		*  \fn public  setName(QString name)
@@ -162,7 +164,7 @@ public:
 		*  \param       name     new name
 		*  \return QString resultant name of the GraphLayout
 		*/
-	QString setName(QString name);
+	QString setName( QString name );
 
 
 	/**
@@ -170,7 +172,10 @@ public:
 		*  \brief Returns Graph to which the GraphLayout belongs
 		*  \return Data::Graph * Graph object
 		*/
-	Data::Graph* getGraph() { return graph; }
+	Data::Graph* getGraph()
+	{
+		return graph;
+	}
 
 	/**
 		*  \fn public  getGraphId
@@ -188,7 +193,10 @@ public:
 		*  \brief Returns ID of the GraphLayout
 		*  \return qlonglong ID of the GraphLayout
 		*/
-	qlonglong getId() { return layout_id; }
+	qlonglong getId()
+	{
+		return layout_id;
+	}
 
 
 	/**
@@ -196,13 +204,19 @@ public:
 		*  \brief Returns true if the GraphLayout is already in database
 		*  \return bool true, if the GraphLayout is in database
 		*/
-	bool isInDB() { return inDB; }
+	bool isInDB()
+	{
+		return inDB;
+	}
 
 	/**
 		*  \fn inline public  setIsInDB
 		*  \brief Sets this GraphLayout inDB flag to true, meaning that the GraphLayout is in database
 		*/
-	void setIsInDB() { inDB = true; };
+	void setIsInDB()
+	{
+		inDB = true;
+	}
 
 
 	/**
@@ -229,7 +243,7 @@ public:
 		*  \param     key     key of the setting
 		*  \param     value     value of the setting
 		*/
-	void setMetaSetting(QString key, QString value);
+	void setMetaSetting( QString key, QString value );
 
 	/**
 		*  \fn public  getMetaSetting(QString key)
@@ -237,14 +251,14 @@ public:
 		*  \param       key     key of the setting
 		*  \return QString value of the setting associated with the key
 		*/
-	QString getMetaSetting(QString key);
+	QString getMetaSetting( QString key );
 
 	/**
 		*  \fn public  getMetaSetting(QString key)
 		*  \brief Removes meta setting associated with the key
 		*  \param     key     key of the setting
 		*/
-	void removeMetaSetting(QString key);
+	void removeMetaSetting( QString key );
 };
 }
 
