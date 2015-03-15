@@ -3,6 +3,8 @@
 #include "Leap.h"
 #include "math.h"
 
+#include "Viewer/MouseControl.h"
+
 namespace Leap {
 
 class LeapActions;
@@ -15,12 +17,16 @@ class LeapActions;
 class LeapActions
 {
   public:
+    LeapActions();
     // These methods should not have names onSwipe, onXXX. They are placeholders for further functionality.
     // The names should correspond to the functionality provided by the method i.e. moveGraph();
     void Leap::LeapActions::onSwipe(Gesture gesture);
     void Leap::LeapActions::onCircle(Gesture gesture);
     void Leap::LeapActions::onKeyTap(Gesture gesture);
     void Leap::LeapActions::onScreenTap(Gesture gesture);
+  private:
+    Vwr::MouseControl* mouse;
+    int mouseCounter;
 };
 }
 #endif // LEAPACTIONS_H

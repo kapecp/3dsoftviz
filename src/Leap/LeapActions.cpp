@@ -1,5 +1,11 @@
 #include "Leap/LeapActions.h"
 
+Leap::LeapActions::LeapActions(){
+    mouse = new Vwr::MouseControl();
+    mouseCounter = 0;
+    qDebug() << "LeapActions() Constructor";
+}
+
 void Leap::LeapActions::onSwipe(Gesture gesture)
 {
     // swipe gesture
@@ -24,10 +30,18 @@ void Leap::LeapActions::onCircle(Gesture gesture)
 {
     CircleGesture circle = gesture;
 
-    if (circle.pointable().direction().angleTo(circle.normal()) <= PI/2) {
-      qDebug() << "[onFrame()::CircleGesture - clockwise]";
-    } else {
-        qDebug() << "[onFrame()::CircleGesture - counterclockwise]";
+    if(mouseCounter++ == 12){
+        mouseCounter = 0;
+
+        if (circle.pointable().direction().angleTo(circle.normal()) <= PI/2) {
+              qDebug() << "[onFrame()::CircleGesture - clockwise]";
+              //mouse->clickPressMouse(300,300,Qt::MouseButton::mi);
+              mouse->scrollMouse(osgGA::GUIEventAdapter::SCROLL_DOWN);
+        } else {
+            qDebug() << "[onFrame()::CircleGesture - counterclockwise]";
+            mouse->scrollMouse(osgGA::GUIEventAdapter::SCROLL_UP);
+        }
+
     }
 }
 
