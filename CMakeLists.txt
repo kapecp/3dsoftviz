@@ -516,17 +516,17 @@ if( APPLE )
 	set( MACOSX_BUNDLE_LONG_VERSION_STRING "${3DSOFTVIZ_NAME} ${3DSOFTVIZ_VERSION}" )
 	set( MACOSX_BUNDLE_SHORT_VERSION_STRING "${3DSOFTVIZ_VERSION}" )
 	set( MACOSX_BUNDLE_COPYRIGHT "${3DSOFTVIZ_COPYRIGHT_YEAR} ${3DSOFTVIZ_VENDOR}" )
-	set( MACOSX_BUNDLE_ICON_FILE "3DSOFTVIZ_app.icns" )
+	set( MACOSX_BUNDLE_ICON_FILE "3DSOFTVIZ_app.icns" )# use http://iconverticons.com/legacy/ for icon converting
 	set( MACOSX_BUNDLE_GUI_IDENTIFIER "${3DSOFTVIZ_DOMAIN_SECOND}.${3DSOFTVIZ_DOMAIN_FIRST}.${3DSOFTVIZ_NAME}" )
 	set( MACOSX_BUNDLE_BUNDLE_NAME "${3DSOFTVIZ_NAME}" )
 
 	# CPack settings
 	set( CPACK_GENERATOR "DragNDrop" )
-	set( CPACK_PACKAGE_ICON "${CMAKE_CURRENT_SOURCE_DIR}/res/3DSOFTVIZ_pkg.icns" )
+	set( CPACK_PACKAGE_ICON "${CMAKE_CURRENT_SOURCE_DIR}/resources/3DSOFTVIZ_pkg.icns" )
 	set( CPACK_PACKAGE_FILE_NAME "${3DSOFTVIZ_NAME}-${3DSOFTVIZ_VERSION}" )
 
 	# OSX Specific resources
-	install( FILES res/3DSOFTVIZ_app.icns DESTINATION ${INSTALL_RES} )
+	install( FILES "resources/${MACOSX_BUNDLE_ICON_FILE}" DESTINATION ${INSTALL_RES} )
 endif()
 
 # Windows specific overrides
@@ -937,9 +937,10 @@ if( USE_BUILTIN_DEPENDENCIES )
 endif()
 
 # Include QT4 libraries in Apple bundle and on Windows
-if( WIN32 OR APPLE )
+option( OSX_BUNDLE "Create an app bundle on OSX." OFF ) # TODO: disabled, because currently it does not work...
+if( WIN32 OR APPLE AND OSX_BUNDLE )
 	# On Apple plugins need to be bundled
-	if( APPLE )
+	if( APPLE AND OSX_BUNDLE )
 		# Install Qt Plugins
 		install( DIRECTORY "${QT_PLUGINS_DIR}/imageformats"
 			DESTINATION ${INSTALL_PLUGIN}/plugins
