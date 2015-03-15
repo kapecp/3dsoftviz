@@ -19,7 +19,7 @@ void LayoutExecutor::execute_client() {
         return;
     }
 
-    client->thread->pause();
+    client->thread->pauseAllAlg();
 
     Data::Graph * currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
     if (currentGraph != NULL) {

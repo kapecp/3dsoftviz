@@ -120,6 +120,12 @@ public:
 		*/
 	void RunAlgEdgeBundling();
 
+	/**
+		*  \fn public  StopAlgEdgeBundling
+		*  \brief stop edge bundling algorithm
+		*/
+	void StopAlgEdgeBundling();
+
 private:
 
 	/**

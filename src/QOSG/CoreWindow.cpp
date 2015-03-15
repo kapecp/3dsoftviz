@@ -58,6 +58,7 @@ CoreWindow::CoreWindow(QWidget *parent, Vwr::CoreGraph* coreGraph, QApplication*
 {
 	//inicializacia premennych
 	isPlaying = true;
+	isEBPlaying = false;
 	application = app;
 	layout = thread;
 
@@ -924,8 +925,8 @@ void CoreWindow::loadFile()
 	QFileDialog dialog;
 	dialog.setDirectory( "../share/3dsoftviz" );
 
-	//treba overit
-	layout->pause();
+	//treba overit //Brndiarova: funguje
+	layout->pauseAllAlg();
 	coreGraph->setNodesFreezed(true);
 
 	QString fileName =NULL;
@@ -1547,22 +1548,32 @@ void CoreWindow::unsetRestrictionFromAll() {
 }
 
 void CoreWindow::startEdgeBundling() {
-	Data::Graph * currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
+	if (isEBPlaying){
+		isEBPlaying = false;
 
-	//select all nodes and fix them
-	QMap<qlonglong, osg::ref_ptr<Data::Node> >::iterator iNode = currentGraph->getNodes()->begin();
-	while (iNode != currentGraph->getNodes()->end()){
-		viewerWidget->getPickHandler()->addPickedNode(*iNode);
-		iNode++;
+		layout->stopEdgeBundling();
 	}
-	fixNodes();
+	else
+	{
+		isEBPlaying = true;
 
-	//split edges
-	if (currentGraph != NULL) {
-		currentGraph->splitAllEdges(3);
+		Data::Graph * currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
+
+		//select all nodes and fix them
+		QMap<qlonglong, osg::ref_ptr<Data::Node> >::iterator iNode = currentGraph->getNodes()->begin();
+		while (iNode != currentGraph->getNodes()->end()){
+			viewerWidget->getPickHandler()->addPickedNode(*iNode);
+			iNode++;
+		}
+		fixNodes();
+
+		//split edges
+		if (currentGraph != NULL) {
+			currentGraph->splitAllEdges(3);
+		}
+
+		layout->playEdgeBundling();
 	}
-
-	layout->playEdgeBundling();
 }
 
 void CoreWindow::switch2Dand3D() {

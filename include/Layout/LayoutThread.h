@@ -84,6 +84,18 @@ public:
 		*/
 	void playEdgeBundling();
 
+	/**
+		*  \fn public  stopEdgeBundling
+		*  \brief stop edge bundling algorithm
+		*/
+	void stopEdgeBundling();
+
+	/**
+		*  \fn public  pauseAllAlg
+		*  \brief pause all running algorithms
+		*/
+	void pauseAllAlg();
+
 protected:
 
 	/**

@@ -161,7 +161,7 @@ void OptionsWindow::commitChanges()
 	bool running = thr->isRunning();
 
 	if (running)
-		thr->pause();
+		thr->pauseAllAlg();
 
 	viewer->reloadConfig();
 	cg->reloadConfig();

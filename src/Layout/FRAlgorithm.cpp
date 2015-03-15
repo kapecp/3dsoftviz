@@ -606,3 +606,12 @@ void FRAlgorithm::RunAlgEdgeBundling()
 		stateEdgeBundling = RUNNING;
 	}
 }
+
+void FRAlgorithm::StopAlgEdgeBundling()
+{
+	if(graph != NULL)
+	{
+		graph->setFrozen(true);
+		stateEdgeBundling = PAUSED;
+	}
+}

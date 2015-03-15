@@ -666,6 +666,12 @@ private:
 	int isPlaying;
 
 	/**
+		*  int isEBPlaying
+		*  \brief Flag if edge bundling is running
+		*/
+	int isEBPlaying;
+
+	/**
 		*  \fn private  createActions
 		*  \brief Initialize all actions of aplication
 		*/
@@ -770,6 +776,7 @@ public:
 		*/
 	Layout::LayoutThread * getLayoutThread() const { return layout; }
 	bool playing() { return isPlaying; }
+	bool playingEB() { return isEBPlaying; }
 	Vwr::CameraManipulator * getCameraManipulator();
 
 	QOSG::ViewerQT * GetViewerQt();
