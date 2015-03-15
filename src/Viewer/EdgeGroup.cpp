@@ -41,9 +41,6 @@ void EdgeGroup::initEdges()
 	osg::ref_ptr<osg::Vec3Array> coordinates = new osg::Vec3Array;
 	osg::ref_ptr<osg::Vec4Array> colors = new osg::Vec4Array;
 	osg::ref_ptr<osg::Vec4Array> orientedEdgeColors = new osg::Vec4Array;
-	double length = 0;
-	double degreeX = 0;
-	double degreeY = 0;
 
 	geometry = new osg::Geometry;
 	orientedGeometry = new osg::Geometry;
@@ -54,9 +51,15 @@ void EdgeGroup::initEdges()
 
 	while (i != edges->end())
 	{
+		float length = 0;
+		float radius = 0;
+		double angle = 0;
+		osg::ref_ptr<osg::Vec3Array> rotation = new osg::Vec3Array;
 		osg::ref_ptr<osg::Vec3Array> center = new osg::Vec3Array;
-		getEdgeCoordinatesAndColors(i.value(), edgePos, coordinates, edgeTexCoords, colors, orientedEdgeColors,&length, center, &degreeX, &degreeY);
+		getEdgeCoordinatesAndColors(i.value(), edgePos, coordinates, edgeTexCoords, colors, orientedEdgeColors,&length, &radius, center, &angle, rotation);
 		edgePos += 4;
+
+		drawableList.push_back(new osg::ShapeDrawable());
 
 		if (i.value()->isOriented())
 			orientedGeometry->addPrimitiveSet(i.value());
@@ -88,6 +91,26 @@ void EdgeGroup::initEdges()
 	orientedGeometry->getOrCreateStateSet()->setMode(GL_BLEND, osg::StateAttribute::ON);
 	//orientedGeometry->getStateSet()->setRenderingHint(osg::StateSet::OPAQUE_BIN);
 
+	QList<osg::ref_ptr<osg::ShapeDrawable> >::iterator il = drawableList.begin();
+
+	while (il != drawableList.end())
+	{
+		osg::ref_ptr<osg::Geode> geode = new osg::Geode;
+		osg::ref_ptr<osg::Cylinder> c = new osg::Cylinder(osg::Vec3(0,0,0), 1.0, 1.0);
+		(*il)->setShape(c);
+		(*il)->setColor(osg::Vec4 (1.0f, 1.0f, 1.0f, 0.5f));
+		(*il)->getOrCreateStateSet()->setMode(GL_BLEND, osg::StateAttribute::ON);
+		(*il)->getStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
+		(*il)->getStateSet()->setMode(GL_DEPTH_TEST, osg::StateAttribute::ON);
+		(*il)->getStateSet()->setMode(GL_LIGHTING, osg::StateAttribute::ON);
+		(*il)->getStateSet()->setAttributeAndModes(new osg::BlendFunc, osg::StateAttribute::ON);
+		(*il)->getStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
+		(*il)->getStateSet()->setRenderBinDetails(11, "RenderBin");
+		geode->addDrawable((*il));
+		allEdges->addChild(geode);
+		il++;
+	}
+
 		osg::ref_ptr<osg::Geode> g1 = new osg::Geode;
 		g1->addDrawable(geometry);
 		g1->setStateSet(edgeStateSet);
@@ -108,9 +131,6 @@ void EdgeGroup::updateEdgeCoords()
 	osg::ref_ptr<osg::Vec3Array> coordinates = new osg::Vec3Array;
 	osg::ref_ptr<osg::Vec4Array> colors = new osg::Vec4Array;
 	osg::ref_ptr<osg::Vec4Array> orientedEdgeColors = new osg::Vec4Array;
-	double length = 0;
-	double degreeX = 0;
-	double degreeY = 0;
 
 	QMap<qlonglong, osg::ref_ptr<Data::Edge> >::iterator i = edges->begin();
 	QList<osg::ref_ptr<osg::ShapeDrawable> >::iterator ic = drawableList.begin();
@@ -119,15 +139,26 @@ void EdgeGroup::updateEdgeCoords()
 
 	while (i != edges->end())
 	{
-		osg::ref_ptr<osg::Vec3Array> center = new osg::Vec3Array;
-		getEdgeCoordinatesAndColors(i.value(), edgePos, coordinates, edgeTexCoords, colors, orientedEdgeColors, &length, center, &degreeX, &degreeY);
+		float length = 0;
+		float radius = 0;
+		double angle = 0;
 
-		if (i.value()->getGraph()->getIs3D()){
-			edgePos += 20;
-		}
+		osg::ref_ptr<osg::Vec3Array> rotation = new osg::Vec3Array;
+		osg::ref_ptr<osg::Vec3Array> center = new osg::Vec3Array;
+		getEdgeCoordinatesAndColors(i.value(), edgePos, coordinates, edgeTexCoords, colors, orientedEdgeColors,&length, &radius, center, &angle, rotation);
+
+		((osg::Cylinder*)((*ic)->getShape()))->setHeight(length);
+		((osg::Cylinder*)((*ic)->getShape()))->setRadius(radius);
+		((osg::Cylinder*)((*ic)->getShape()))->setCenter(center->at(0));
+		((osg::Cylinder*)((*ic)->getShape()))->setRotation(osg::Quat(angle, osg::Vec3(rotation->at(0).x(), rotation->at(0).y(), rotation->at(0).z())));
+		(*ic)->dirtyDisplayList();
+
 		edgePos += 4;
+
+		ic++;
 		i++;
 	}
+
 
 	geometry->setVertexArray(coordinates);
 	geometry->setTexCoordArray(0, edgeTexCoords);
@@ -143,10 +174,11 @@ void EdgeGroup::getEdgeCoordinatesAndColors(osg::ref_ptr<Data::Edge> edge, int f
 											osg::ref_ptr<osg::Vec2Array> edgeTexCoords,
 											osg::ref_ptr<osg::Vec4Array> colors,
 											osg::ref_ptr<osg::Vec4Array> orientedEdgeColors,
-											double* length,
+											float* length,
+											float* radius,
 											osg::ref_ptr<osg::Vec3Array> center,
-											double* degreeX,
-											double* degreeY)
+											double* angle,
+											osg::ref_ptr<osg::Vec3Array> rotation)
 {
 	osg::Vec3 srcNodePosition = edge->getSrcNode()->getCurrentPosition();
 	osg::Vec3 dstNodePosition = edge->getDstNode()->getCurrentPosition();
@@ -154,75 +186,54 @@ void EdgeGroup::getEdgeCoordinatesAndColors(osg::ref_ptr<Data::Edge> edge, int f
 	edge->updateCoordinates(srcNodePosition, dstNodePosition, edge->getGraph()->getIs3D());
 	edge->setFirst(first);
 
+	//calculation of properties of cylinder
+	osg::Vec3 cor1 = edge->getCooridnates()->at(0);
+	osg::Vec3 cor2 = edge->getCooridnates()->at(1);
+	osg::Vec3 cor3 = edge->getCooridnates()->at(2);
+	osg::Vec3 cor4 = edge->getCooridnates()->at(3);
+
+	//center between coordinates 1 and 2 / 3 and 4
+	osg::Vec3 cor12 = osg::Vec3((cor1.x() + cor2.x())/2, (cor1.y() + cor2.y())/2, (cor1.z() + cor2.z())/2);
+	osg::Vec3 cor34 = osg::Vec3((cor3.x() + cor4.x())/2, (cor3.y() + cor4.y())/2, (cor3.z() + cor4.z())/2);
+
+	//center of cylinder as center between coordinates 1-4
+	center->push_back(osg::Vec3((cor12.x() + cor34.x())/2, (cor12.y() + cor34.y())/2, (cor12.z() + cor34.z())/2));
+
+	//length of cylinder as length between cor12 and cor34
 	if (edge->getGraph()->getIs3D())
 	{
-		coordinates->push_back(edge->getCooridnates()->at(0));
-		coordinates->push_back(edge->getCooridnates()->at(1));
-		coordinates->push_back(edge->getCooridnates()->at(2));
-		coordinates->push_back(edge->getCooridnates()->at(3));
-		coordinates->push_back(edge->getCooridnates()->at(4));
-		coordinates->push_back(edge->getCooridnates()->at(5));
-		coordinates->push_back(edge->getCooridnates()->at(6));
-		coordinates->push_back(edge->getCooridnates()->at(7));
-		coordinates->push_back(edge->getCooridnates()->at(8));
-		coordinates->push_back(edge->getCooridnates()->at(9));
-		coordinates->push_back(edge->getCooridnates()->at(10));
-		coordinates->push_back(edge->getCooridnates()->at(11));
-		coordinates->push_back(edge->getCooridnates()->at(12));
-		coordinates->push_back(edge->getCooridnates()->at(13));
-		coordinates->push_back(edge->getCooridnates()->at(14));
-		coordinates->push_back(edge->getCooridnates()->at(15));
-		coordinates->push_back(edge->getCooridnates()->at(16));
-		coordinates->push_back(edge->getCooridnates()->at(17));
-		coordinates->push_back(edge->getCooridnates()->at(18));
-		coordinates->push_back(edge->getCooridnates()->at(19));
-		coordinates->push_back(edge->getCooridnates()->at(20));
-		coordinates->push_back(edge->getCooridnates()->at(21));
-		coordinates->push_back(edge->getCooridnates()->at(22));
-		coordinates->push_back(edge->getCooridnates()->at(23));
-
-		edgeTexCoords->push_back(edge->getEdgeTexCoords()->at(0));
-		edgeTexCoords->push_back(edge->getEdgeTexCoords()->at(1));
-		edgeTexCoords->push_back(edge->getEdgeTexCoords()->at(2));
-		edgeTexCoords->push_back(edge->getEdgeTexCoords()->at(3));
-		edgeTexCoords->push_back(edge->getEdgeTexCoords()->at(0));
-		edgeTexCoords->push_back(edge->getEdgeTexCoords()->at(1));
-		edgeTexCoords->push_back(edge->getEdgeTexCoords()->at(2));
-		edgeTexCoords->push_back(edge->getEdgeTexCoords()->at(3));
-		edgeTexCoords->push_back(edge->getEdgeTexCoords()->at(0));
-		edgeTexCoords->push_back(edge->getEdgeTexCoords()->at(1));
-		edgeTexCoords->push_back(edge->getEdgeTexCoords()->at(2));
-		edgeTexCoords->push_back(edge->getEdgeTexCoords()->at(3));
-		edgeTexCoords->push_back(edge->getEdgeTexCoords()->at(0));
-		edgeTexCoords->push_back(edge->getEdgeTexCoords()->at(1));
-		edgeTexCoords->push_back(edge->getEdgeTexCoords()->at(2));
-		edgeTexCoords->push_back(edge->getEdgeTexCoords()->at(3));
-		edgeTexCoords->push_back(edge->getEdgeTexCoords()->at(0));
-		edgeTexCoords->push_back(edge->getEdgeTexCoords()->at(1));
-		edgeTexCoords->push_back(edge->getEdgeTexCoords()->at(2));
-		edgeTexCoords->push_back(edge->getEdgeTexCoords()->at(3));
-		edgeTexCoords->push_back(edge->getEdgeTexCoords()->at(0));
-		edgeTexCoords->push_back(edge->getEdgeTexCoords()->at(1));
-		edgeTexCoords->push_back(edge->getEdgeTexCoords()->at(2));
-		edgeTexCoords->push_back(edge->getEdgeTexCoords()->at(3));
-
-	} else
-	{
-		coordinates->push_back(edge->getCooridnates()->at(0));
-		coordinates->push_back(edge->getCooridnates()->at(1));
-		coordinates->push_back(edge->getCooridnates()->at(2));
-		coordinates->push_back(edge->getCooridnates()->at(3));
-
-		edgeTexCoords->push_back(edge->getEdgeTexCoords()->at(0));
-		edgeTexCoords->push_back(edge->getEdgeTexCoords()->at(1));
-		edgeTexCoords->push_back(edge->getEdgeTexCoords()->at(2));
-		edgeTexCoords->push_back(edge->getEdgeTexCoords()->at(3));
+		(*length) = (float) sqrt(pow((cor34.x() - cor12.x()),2) + pow((cor34.y() - cor12.y()),2) + pow((cor34.z() - cor12.z()),2));
+		(*radius) = 2;
+	} else {
+		(*length) = 0;
+		(*radius) = 0;
 	}
+
+	//default direction for the cylinders
+	osg::Vec3 direction = osg::Vec3(0,0,1);
+
+	// diff between cor12 and cor34
+	osg::Vec3 diff = (cor34 - cor12);
+
+	// CROSS product (the axis of rotation)
+	rotation->push_back (direction ^ diff);
+	(*angle) = acos( (direction * diff)/ diff.length());
+
+	coordinates->push_back(edge->getCooridnates()->at(0));
+	coordinates->push_back(edge->getCooridnates()->at(1));
+	coordinates->push_back(edge->getCooridnates()->at(2));
+	coordinates->push_back(edge->getCooridnates()->at(3));
+
+	edgeTexCoords->push_back(edge->getEdgeTexCoords()->at(0));
+	edgeTexCoords->push_back(edge->getEdgeTexCoords()->at(1));
+	edgeTexCoords->push_back(edge->getEdgeTexCoords()->at(2));
+	edgeTexCoords->push_back(edge->getEdgeTexCoords()->at(3));
 
 	if (edge->isOriented())
 		orientedEdgeColors->push_back(edge->getEdgeColor());
 	else
 		colors->push_back(edge->getEdgeColor());
+
 }
 
 void EdgeGroup::synchronizeEdges()

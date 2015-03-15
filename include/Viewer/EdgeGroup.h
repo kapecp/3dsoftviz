@@ -120,7 +120,8 @@ private:
 	void initEdges();
 
 	/**
-		*  \fn private  getEdgeCoordinatesAndColors(osg::ref_ptr<Data::Edge> edge, int first, osg::ref_ptr<osg::Vec3Array> coordinates,osg::ref_ptr<osg::Vec2Array> edgeTexCoords,osg::ref_ptr<osg::Vec4Array> colors,osg::ref_ptr<osg::Vec4Array> orientedEdgeColors)
+		*  \fn private  getEdgeCoordinatesAndColors(osg::ref_ptr<Data::Edge> edge, int first, osg::ref_ptr<osg::Vec3Array> coordinates,osg::ref_ptr<osg::Vec2Array> edgeTexCoords,osg::ref_ptr<osg::Vec4Array> colors,osg::ref_ptr<osg::Vec4Array> orientedEdgeColors,
+float* length, float* radius, osg::ref_ptr<osg::Vec3Array> center, double* angle, osg::ref_ptr<osg::Vec3Array> rotation)
 		*  \brief Adds coordinates to coordinates array, texture coordinates and colors for given edge
 		*  \param      edge     edge
 		*  \param      first     first coordinate position in array
@@ -128,19 +129,22 @@ private:
 		*  \param      edgeTexCoords     texture coordinates array
 		*  \param      colors    color array
 		*  \param      orientedEdgeColors   oriented edge color array
-		*  \param	  length   length of edge
-		*  \param	  length   center of edge
-		*  \param	  degreeX   roation for cylinder around X axis
-		*  \param	  degreeY   roation for cylinder around Y axis
+		*  \param	  length   length of edge cylinder
+		*  \param	  radius   radius of edge cylinder
+		*  \param	  center   center between source and destination node
+		*  \param	  angle   angle for rotation of cylinder
+		*  \param	  rotation   roation of cylinder
 		*/
 	void getEdgeCoordinatesAndColors(osg::ref_ptr<Data::Edge> edge, int first,
 									 osg::ref_ptr<osg::Vec3Array> coordinates,
 									 osg::ref_ptr<osg::Vec2Array> edgeTexCoords,
 									 osg::ref_ptr<osg::Vec4Array> colors,
 									 osg::ref_ptr<osg::Vec4Array> orientedEdgeColors,
-									 double* length,
-									 osg::ref_ptr<osg::Vec3Array>center,
-									 double* degreeX, double* degreeY);
+									 float* length,
+									 float* radius,
+									 osg::ref_ptr<osg::Vec3Array> center,
+									 double* angle,
+									 osg::ref_ptr<osg::Vec3Array> rotation);
 
 	/**
 		*  \fn private  createEdgeStateSets
