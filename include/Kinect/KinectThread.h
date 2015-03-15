@@ -12,7 +12,7 @@
 
 #include <opencv2/core/core.hpp>
 
-namespace Kinect{
+namespace Kinect {
 
 class KinectThread;
 class KinectHandTracker;
@@ -29,9 +29,9 @@ class KinectThread : public QThread
 
 public:
 
-	KinectThread(QObject *parent=0);
+	KinectThread( QObject* parent=0 );
 
-	~KinectThread(void);
+	~KinectThread( void );
 
 	void run();
 
@@ -53,20 +53,20 @@ signals:
 	 * @param y y coordinate of hand
 	 * @param distance distance from Kinect
 	 */
-	void sendSliderCoords( float x, float y, float distance);
+	void sendSliderCoords( float x, float y, float distance );
 
 	/**
 	 * @brief send picture for Kinect window
 	 * @param image picture from Kinect
 	 */
-	void pushImage(cv::Mat image);
+	void pushImage( cv::Mat image );
 
 
 	/**
 	 * @brief send picture for Kinect window
 	 * @param image picture from Kinect
 	 */
-	void pushImageQ(QImage qimage);
+	void pushImageQ( QImage qimage );
 
 public slots:
 
@@ -74,13 +74,13 @@ public slots:
 	 * @brief start funkcionality Kinect thread
 	 * @param set true if start, false for stop
 	 */
-	void setCancel(bool set);
+	void setCancel( bool set );
 
 	/**
 	 * @brief function for start,pause calculate HandTracking
 	 * @param set true for calculate and sending picture, false for pause
 	 */
-	void setImageSend(bool set);
+	void setImageSend( bool set );
 
 	void pause();
 
@@ -88,19 +88,19 @@ public slots:
 	 * @brief control for mouse movement
 	 * @param set true for start,false for stop
 	 */
-	void setCursorMovement(bool set);
+	void setCursorMovement( bool set );
 
 	/**
 	 * @brief control for graph zoom
 	 * @param set true for start,false for stop
 	 */
-	void setZoomUpdate(bool set);
+	void setZoomUpdate( bool set );
 
 	/**
 	 * @brief speed of reaction from Kinect gesture
 	 * @param set base 1.0 for normal speed, <1 slower, >1 faster
 	 */
-	void setSpeedKinect(double set);
+	void setSpeedKinect( double set );
 
 private:
 
@@ -139,14 +139,14 @@ private:
 	 * @brief base class for Hand Recognition
 	 */
 #ifdef NITE2_FOUND
-	KinectHandTracker *kht;
+	KinectHandTracker* kht;
 #endif
 
 
 	/**
 	 * @brief base class for open Kinect a converted
 	 */
-	KinectRecognition *mKinect;
+	KinectRecognition* mKinect;
 
 	/**
 	 * @brief video stream data for save

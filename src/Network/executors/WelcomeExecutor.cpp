@@ -3,18 +3,20 @@
 
 namespace Network {
 
-void WelcomeExecutor::execute_client() {
+void WelcomeExecutor::execute_client()
+{
 
-    Client * client = Client::getInstance();
-    int id;
-    *stream >> id;
-    client->setMyId(id);
-    client->requestGraph();
+	Client* client = Client::getInstance();
+	int id;
+	*stream >> id;
+	client->setMyId( id );
+	client->requestGraph();
 
 }
 
-void WelcomeExecutor::execute_server() {
-    return;
+void WelcomeExecutor::execute_server()
+{
+	return;
 }
 
 } // namespace Network

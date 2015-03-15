@@ -12,27 +12,28 @@ namespace Layout {
  * \brief Notified by the RestrictionsManager.
  * [observer pattern]
  */
-class RestrictionsObserver {
+class RestrictionsObserver
+{
 
 public:
 
 	/***/
-	virtual ~RestrictionsObserver (void) {}
+	virtual ~RestrictionsObserver( void ) {}
 
 public:
 
-	virtual void restrictionAdded (
-			QSharedPointer<ShapeGetter> shapeGetter
-			) = 0;
+	virtual void restrictionAdded(
+		QSharedPointer<ShapeGetter> shapeGetter
+	) = 0;
 
-	virtual void shapeChanged (
-			QSharedPointer<ShapeGetter> shapeGetter,
-			QSharedPointer<Shape> shape
-			) = 0;
+	virtual void shapeChanged(
+		QSharedPointer<ShapeGetter> shapeGetter,
+		QSharedPointer<Shape> shape
+	) = 0;
 
-	virtual void restrictionRemoved (
-			QSharedPointer<ShapeGetter> shapeGetter
-			) = 0;
+	virtual void restrictionRemoved(
+		QSharedPointer<ShapeGetter> shapeGetter
+	) = 0;
 
 }; // class
 

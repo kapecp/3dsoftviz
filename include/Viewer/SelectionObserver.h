@@ -4,7 +4,7 @@
 class SelectionObserver
 {
 public:
-    virtual void onChange() = 0;
+	virtual void onChange() = 0;
 };
 
 #endif // SELECTIONOBSERVER_H

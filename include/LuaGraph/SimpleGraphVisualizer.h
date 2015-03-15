@@ -17,18 +17,18 @@ namespace Lua {
 class SimpleGraphVisualizer : public Lua::LuaGraphVisualizer
 {
 public:
-    /**
-         * \fn HyperGraphVisualizer
-         * \brief constructor
-         *
-         * \params graph    Data::Graph object to fill
-         * \params camera   camera for edges to face
-         */
-    SimpleGraphVisualizer(Data::Graph *graph, osg::ref_ptr<osg::Camera> camera = 0);
+	/**
+	     * \fn HyperGraphVisualizer
+	     * \brief constructor
+	     *
+	     * \params graph    Data::Graph object to fill
+	     * \params camera   camera for edges to face
+	     */
+	SimpleGraphVisualizer( Data::Graph* graph, osg::ref_ptr<osg::Camera> camera = 0 );
 
-    void visualize();
+	void visualize();
 
-    void onUpdate();
+	void onUpdate();
 };
 
 }

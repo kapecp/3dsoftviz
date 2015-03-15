@@ -17,26 +17,26 @@ namespace Layout {
 class Shape_CylinderSurface : public Shape
 {
 public:
-    Shape_CylinderSurface(const QOSG::ViewerQT *viewerWidget, const QSpinBox &baseRadiusSpinBox);
-    virtual ~Shape_CylinderSurface() {}
+	Shape_CylinderSurface( const QOSG::ViewerQT* viewerWidget, const QSpinBox& baseRadiusSpinBox );
+	virtual ~Shape_CylinderSurface() {}
 
-    /**
-     * [visitor pattern]
-     */
-    virtual void accept(ShapeVisitor &visitor);
+	/**
+	 * [visitor pattern]
+	 */
+	virtual void accept( ShapeVisitor& visitor );
 
-    osg::Vec3f firstBaseCenter() const;
-    osg::Vec3f secondBaseCenter() const;
-    float baseRadius() const;
+	osg::Vec3f firstBaseCenter() const;
+	osg::Vec3f secondBaseCenter() const;
+	float baseRadius() const;
 
 private:
-    /**
-     * A pointer to viewer widget from which we can get first and second base
-     * center points of a cylinder.
-     */
-    const QOSG::ViewerQT *mViewerWidget;
+	/**
+	 * A pointer to viewer widget from which we can get first and second base
+	 * center points of a cylinder.
+	 */
+	const QOSG::ViewerQT* mViewerWidget;
 
-    const QSpinBox &mBaseRadiusSpinBox;
+	const QSpinBox& mBaseRadiusSpinBox;
 };
 
 } // namespace

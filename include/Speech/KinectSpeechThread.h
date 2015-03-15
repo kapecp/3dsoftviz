@@ -21,7 +21,7 @@ class KinectSpeechThread : public QThread
 
 public:
 	KinectSpeechThread();
-	~KinectSpeechThread(void);
+	~KinectSpeechThread( void );
 	/**
 		 * @brief initializeSpeech
 		 * @author Autor: Marek Jakab
@@ -31,7 +31,7 @@ public:
 	/**
 		 * @brief m_SpeechClass Object which holds basic functions for speech recognition
 		 */
-	SpeechSDK::SpeechSDKClass *m_SpeechClass;
+	SpeechSDK::SpeechSDKClass* m_SpeechClass;
 	/**
 		 * @brief isConnected Used to store information if the kinect device have been initialized
 		 */

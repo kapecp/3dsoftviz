@@ -11,8 +11,7 @@
 #include "LuaGraph/LuaNode.h"
 #include "LuaGraph/LuaGraphTreeModel.h"
 
-namespace Vwr
-{
+namespace Vwr {
 /**
 	*  \class BrowserGroup
 	*  \brief
@@ -32,20 +31,20 @@ public:
 		*  \fn public destructor  ~BrowserGroup
 		*  \brief destructor
 		*/
-	~BrowserGroup(void);
+	~BrowserGroup( void );
 
 	/**
 		*  \fn public  setSelectedNodes
 		*  \brief Adds only nodes not previously added to selectedNodesModels map
 		*  \param  selected
 		*/
-	void setSelectedNodes(QLinkedList<osg::ref_ptr<Data::Node> > *selected);
+	void setSelectedNodes( QLinkedList<osg::ref_ptr<Data::Node> >* selected );
 
 	/**
 		*  \fn public  setBrowsersGrouping
 		*  \brief Changes browsersGrouping value
 		*/
-	void setBrowsersGrouping(bool browsersGrouping);
+	void setBrowsersGrouping( bool browsersGrouping );
 
 	/**
 		*  \fn public  updateBrowsers
@@ -58,13 +57,19 @@ public:
 		*  \brief Returns wrapped browsers group
 		*  \return osg::ref_ptr browsers group
 		*/
-	osg::ref_ptr<osg::Group> getGroup()	{return group;}
+	osg::ref_ptr<osg::Group> getGroup()
+	{
+		return group;
+	}
 
 	/**
 		*  \fn public  getSelectedNodesModels
 		*  \return Selected nodes models map
 		*/
-	inline QMap<qlonglong, Lua::LuaGraphTreeModel * > * getSelectedNodesModels() {return selectedNodesModels;}
+	inline QMap<qlonglong, Lua::LuaGraphTreeModel* >* getSelectedNodesModels()
+	{
+		return selectedNodesModels;
+	}
 
 private:
 
@@ -74,7 +79,7 @@ private:
 		*  \param  position
 		*  \param  *models
 		*/
-	void addBrowser(osg::Vec3 position, QList<Lua::LuaGraphTreeModel*> *models);
+	void addBrowser( osg::Vec3 position, QList<Lua::LuaGraphTreeModel*>* models );
 
 	/**
 		*  \fn private  initBrowsers
@@ -115,17 +120,17 @@ private:
 	/**
 		*  \brief List of browsers transforms
 		*/
-	QList<osg::ref_ptr<osg::AutoTransform> > *browsersTransforms;
+	QList<osg::ref_ptr<osg::AutoTransform> >* browsersTransforms;
 
 	/**
 		*  \brief Map of Data::Node ids to Data::Node containing all selected nodes
 		*/
-	QMap<qlonglong, osg::ref_ptr<Data::Node> > *selectedNodes;
+	QMap<qlonglong, osg::ref_ptr<Data::Node> >* selectedNodes;
 
 	/**
 		*  \brief Map of Data::Node ids to Lua::LuaGraphTreeModel(s) containing all selected nodes
 		*/
-	QMap<qlonglong, Lua::LuaGraphTreeModel*> *selectedNodesModels;
+	QMap<qlonglong, Lua::LuaGraphTreeModel*>* selectedNodesModels;
 
 	/**
 		*  \fn public  interpolate
@@ -136,7 +141,7 @@ private:
 		*  \param  endValue
 		*  \return Caculated interpolation value
 		*/
-	double interpolate(long currentFrame, long endFrame, double startValue, double endValue);
+	double interpolate( long currentFrame, long endFrame, double startValue, double endValue );
 };
 }
 

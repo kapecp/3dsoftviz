@@ -14,24 +14,21 @@
 #include "osg/PositionAttitudeTransform"
 #include "QtGui/QListWidgetItem"
 
-namespace Data
-{
-	class Graph;
+namespace Data {
+class Graph;
 }
 
-namespace Vwr
-{
-	class CoreGraph;
+namespace Vwr {
+class CoreGraph;
 }
 
-namespace Layout
-{
-	class LayoutThread;
+namespace Layout {
+class LayoutThread;
 }
 
-namespace Network{
+namespace Network {
 
-	class ExecutorFactory;
+class ExecutorFactory;
 
 
 class Client : public QObject
@@ -40,82 +37,115 @@ class Client : public QObject
 
 public:
 
-	Client(QObject *parent=0);
+	Client( QObject* parent=0 );
 
 	static Client* getInstance();
 
-	void ServerConnect(QString nick, QString address);
+	void ServerConnect( QString nick, QString address );
 
-	void send_message(QString message);
+	void send_message( QString message );
 	void requestGraph();
 
-	void setLayoutThread(Layout::LayoutThread * layoutThread);
-	void setCoreGraph(Vwr::CoreGraph * cg) { coreGraph = cg; }
+	void setLayoutThread( Layout::LayoutThread* layoutThread );
+	void setCoreGraph( Vwr::CoreGraph* cg )
+	{
+		coreGraph = cg;
+	}
 
 	bool isConnected();
 
 	void disconnect();
 
-	void setNodesExcludedFromUpdate(QLinkedList<osg::ref_ptr<Data::Node> > nodes) { selected_nodes = nodes; }
+	void setNodesExcludedFromUpdate( QLinkedList<osg::ref_ptr<Data::Node> > nodes )
+	{
+		selected_nodes = nodes;
+	}
 	void sendMovedNodesPosition();
 	void updateUserList();
 
-	void addClient(int id, QString nick);
-	void removeAvatar(int id);
-	void showClientAvatar(int id);
+	void addClient( int id, QString nick );
+	void removeAvatar( int id );
+	void showClientAvatar( int id );
 
-	void spyUser(int user);
-	int userToSpy() { return user_to_spy; }
-	bool isSpying() { return user_to_spy > -1; }
+	void spyUser( int user );
+	int userToSpy()
+	{
+		return user_to_spy;
+	}
+	bool isSpying()
+	{
+		return user_to_spy > -1;
+	}
 	void unSpyUser();
 
-	void centerUser(int id_user);
+	void centerUser( int id_user );
 	void unCenterUser();
-	int getCenterUser() { return user_to_center; }
-	bool isCenteringUser() { return user_to_center > -1; }
+	int getCenterUser()
+	{
+		return user_to_center;
+	}
+	bool isCenteringUser()
+	{
+		return user_to_center > -1;
+	}
 
-	void sendMyView(osg::Vec3d center, osg::Quat rotation, float distance);
+	void sendMyView( osg::Vec3d center, osg::Quat rotation, float distance );
 	void sendMyView();
-	void setMyView(osg::Vec3d center, osg::Quat rotation, float distance);
-	void lookAt(osg::Vec3d coord);
+	void setMyView( osg::Vec3d center, osg::Quat rotation, float distance );
+	void lookAt( osg::Vec3d coord );
 
-	void sendNewNode(QString name, osg::Vec3f position);
+	void sendNewNode( QString name, osg::Vec3f position );
 
-	void sendNewEdge(QString name, qlonglong id_from, qlonglong id_to, bool oriented = false);
-	void sendRemoveNode(qlonglong id);
-	void sendRemoveEdge(qlonglong id);
-	void sendNodeColor(qlonglong id, float r, float g, float b, float alpha);
-	void sendEdgeColor(int id, float r, float g, float b, float alpha);
-	void sendNodeLabel(qlonglong id, QString label);
-	void sendFixNodeState(qlonglong id, bool state);
-	void sendMergeNodes(QLinkedList<osg::ref_ptr<Data::Node> > * selectedNodes, osg::Vec3f position);
-	void sendSeparateNodes(QLinkedList<osg::ref_ptr<Data::Node> > * selectedNodes);
-	void sendAddMetaNode(QString name, QLinkedList<osg::ref_ptr<Data::Node> > * selectedNodes, QString edgeName, osg::Vec3f position);
-	void sendSetRestriction(quint8 type, QString name_node1, osg::Vec3 position_node1, QString name_node2, osg::Vec3 position_node2, QLinkedList<osg::ref_ptr<Data::Node> > * nodes, QString name_node3 = "", osg::Vec3 * position_node3 = NULL);
-	void sendSetRestriction(quint8 type, QLinkedList<osg::ref_ptr<Data::Node> > * nodes,Layout::RestrictionRemovalHandler_RestrictionNodesRemover::NodesListType* restrictionNodes);
-	void sendUnSetRestriction(QLinkedList<osg::ref_ptr<Data::Node> > * nodes);
-	void sendAttractAttention(bool attention);
+	void sendNewEdge( QString name, qlonglong id_from, qlonglong id_to, bool oriented = false );
+	void sendRemoveNode( qlonglong id );
+	void sendRemoveEdge( qlonglong id );
+	void sendNodeColor( qlonglong id, float r, float g, float b, float alpha );
+	void sendEdgeColor( int id, float r, float g, float b, float alpha );
+	void sendNodeLabel( qlonglong id, QString label );
+	void sendFixNodeState( qlonglong id, bool state );
+	void sendMergeNodes( QLinkedList<osg::ref_ptr<Data::Node> >* selectedNodes, osg::Vec3f position );
+	void sendSeparateNodes( QLinkedList<osg::ref_ptr<Data::Node> >* selectedNodes );
+	void sendAddMetaNode( QString name, QLinkedList<osg::ref_ptr<Data::Node> >* selectedNodes, QString edgeName, osg::Vec3f position );
+	void sendSetRestriction( quint8 type, QString name_node1, osg::Vec3 position_node1, QString name_node2, osg::Vec3 position_node2, QLinkedList<osg::ref_ptr<Data::Node> >* nodes, QString name_node3 = "", osg::Vec3* position_node3 = NULL );
+	void sendSetRestriction( quint8 type, QLinkedList<osg::ref_ptr<Data::Node> >* nodes,Layout::RestrictionRemovalHandler_RestrictionNodesRemover::NodesListType* restrictionNodes );
+	void sendUnSetRestriction( QLinkedList<osg::ref_ptr<Data::Node> >* nodes );
+	void sendAttractAttention( bool attention );
 
-	void setAttention(int user);
-	void unSetAttention(int user);
+	void setAttention( int user );
+	void unSetAttention( int user );
 
-	void setMyId(int id) { my_id = id; }
-	int getMyId() { return my_id; }
-	void ignoreLayout(bool ignore) { layoutIgnore = ignore; }
-	bool ignoreLayout() { return layoutIgnore; }
+	void setMyId( int id )
+	{
+		my_id = id;
+	}
+	int getMyId()
+	{
+		return my_id;
+	}
+	void ignoreLayout( bool ignore )
+	{
+		layoutIgnore = ignore;
+	}
+	bool ignoreLayout()
+	{
+		return layoutIgnore;
+	}
 
-	void setAvatarScale(int scale);
+	void setAvatarScale( int scale );
 
-	QObject* getCoreWindowReference() { return cw; }
+	QObject* getCoreWindowReference()
+	{
+		return cw;
+	}
 
 	//todo: encapsulate!
 	QMap<int,QString> userList;
 	QMap<int,osg::PositionAttitudeTransform*> avatarList;
-	Vwr::CoreGraph * coreGraph;
-	Layout::LayoutThread * thread;
-	Data::Graph * currentGraph;
-	Data::Type *nodeType;
-	Data::Type *edgeType;
+	Vwr::CoreGraph* coreGraph;
+	Layout::LayoutThread* thread;
+	Data::Graph* currentGraph;
+	Data::Type* nodeType;
+	Data::Type* edgeType;
 	QLinkedList<osg::ref_ptr<Data::Node> > selected_nodes;
 
 private slots:
@@ -131,7 +161,7 @@ private slots:
 	void disconnected();
 
 private:
-	static Client *instance;
+	static Client* instance;
 
 	QString clientNick;
 	int user_to_spy;
@@ -143,17 +173,17 @@ private:
 	osg::Quat original_rotation;
 	float original_distance;
 
-	ExecutorFactory *executorFactory;
+	ExecutorFactory* executorFactory;
 
-	QObject * cw;
+	QObject* cw;
 
 	// This is the socket that will let us communitate with the server.
-	QTcpSocket *socket;
+	QTcpSocket* socket;
 
-	void addAvatar(int id, QString nick);
+	void addAvatar( int id, QString nick );
 
-	void sendColor(quint8 instruction, qlonglong id, float r, float g, float b, float alpha);
-	QListWidgetItem * getItemById(int id);
+	void sendColor( quint8 instruction, qlonglong id, float r, float g, float b, float alpha );
+	QListWidgetItem* getItemById( int id );
 
 	quint16 blockSize;
 	int avatarScale;

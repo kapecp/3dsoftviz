@@ -5,13 +5,14 @@
 
 namespace Network {
 
-    class SpyUserExecutor : public AbstractExecutor {
+class SpyUserExecutor : public AbstractExecutor
+{
 
-    public:
-        void execute_client();
-        void execute_server();
-        static const quint8 INSTRUCTION_NUMBER = 12;
-    };
+public:
+	void execute_client();
+	void execute_server();
+	static const quint8 INSTRUCTION_NUMBER = 12;
+};
 
 }
 

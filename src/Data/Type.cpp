@@ -9,7 +9,7 @@
 
 #include <QTextStream>
 
-Data::Type::Type(qlonglong id, QString name,Data::Graph* graph, QMap<QString, QString> * settings)
+Data::Type::Type( qlonglong id, QString name,Data::Graph* graph, QMap<QString, QString>* settings )
 {
 	//konstruktor
 	this->id = id;
@@ -18,21 +18,21 @@ Data::Type::Type(qlonglong id, QString name,Data::Graph* graph, QMap<QString, QS
 	this->graph = graph;
 	this->meta = false;
 
-	Util::ApplicationConfig * appConf = Util::ApplicationConfig::get();
+	Util::ApplicationConfig* appConf = Util::ApplicationConfig::get();
 
-	if (settings == NULL)
-	{
+	if ( settings == NULL ) {
 		this->settings = new QMap<QString, QString>;
 
-		this->settings->insert("scale", appConf->getValue("Viewer.Textures.DefaultNodeScale"));
-		this->settings->insert("textureFile", appConf->getValue("Viewer.Textures.Node"));
-		this->settings->insert("color.R", "1");
-		this->settings->insert("color.G", "1");
-		this->settings->insert("color.B", "1");
-		this->settings->insert("color.A", "1");
+		this->settings->insert( "scale", appConf->getValue( "Viewer.Textures.DefaultNodeScale" ) );
+		this->settings->insert( "textureFile", appConf->getValue( "Viewer.Textures.Node" ) );
+		this->settings->insert( "color.R", "1" );
+		this->settings->insert( "color.G", "1" );
+		this->settings->insert( "color.B", "1" );
+		this->settings->insert( "color.A", "1" );
 	}
-	else
+	else {
 		this->settings = settings;
+	}
 
 	loadConfig();
 }
@@ -40,13 +40,13 @@ Data::Type::Type(qlonglong id, QString name,Data::Graph* graph, QMap<QString, QS
 void Data::Type::loadConfig()
 {
 	//nacitame nastavenia zo suboru
-	typeTexture = Vwr::DataHelper::readTextureFromFile(settings->value("textureFile"));
-	scale = settings->value("scale").toFloat();
+	typeTexture = Vwr::DataHelper::readTextureFromFile( settings->value( "textureFile" ) );
+	scale = settings->value( "scale" ).toFloat();
 }
 
-Data::Type::~Type(void)
+Data::Type::~Type( void )
 {
-	if(settings!=NULL) {
+	if ( settings!=NULL ) {
 		settings->clear();
 	}
 
@@ -55,9 +55,10 @@ Data::Type::~Type(void)
 
 }
 
-QString Data::Type::toString() const {
+QString Data::Type::toString() const
+{
 	QString str;
-	QTextStream(&str) << "type id:" << id << " name:" << name << " meta:" << static_cast<int>(this->isMeta());
+	QTextStream( &str ) << "type id:" << id << " name:" << name << " meta:" << static_cast<int>( this->isMeta() );
 	return str;
 }
 

@@ -5,27 +5,26 @@
 
 class QApplication;
 
-namespace ArucoModul{
-	class ArucoThread;
+namespace ArucoModul {
+class ArucoThread;
 }
 
 namespace QOpenCV {
-	class FaceRecognitionThread;
-	class FaceRecognitionWindow;
+class FaceRecognitionThread;
+class FaceRecognitionWindow;
 }
-namespace OpenCV{
-	class FaceRecognizer;
+namespace OpenCV {
+class FaceRecognizer;
 }
 
-namespace OpenCV
-{
+namespace OpenCV {
 /**
 	*@brief Class OpenCVCore Controller for Face detection and Aruco functionality.
 	*@author Autor: Marek Jakab, David Durcak
 	*@date 18.11.2013
 	*/
 class OpenCVCore
-	{
+{
 
 public:
 
@@ -35,13 +34,13 @@ public:
 		 * @param app QApplication
 		 * @return OpenCVCore instance
 		 */
-	static OpenCVCore	*getInstance( QApplication* app, QWidget *parent);
+	static OpenCVCore*	getInstance( QApplication* app, QWidget* parent );
 
 	/**
 		 * @author Autor: Marek Jakab
 		 * @brief ~OpenCVCore Destructor, that Stops thread, close Window, free memory
 		 */
-	~OpenCVCore(void);
+	~OpenCVCore( void );
 
 	/**
 		 * @author Autor: David Durcak
@@ -56,7 +55,7 @@ private:
 		 * @brief OpenCVCore Costructor
 		 * @param app QApplication
 		 */
-	OpenCVCore( QApplication* app, QWidget *parent);
+	OpenCVCore( QApplication* app, QWidget* parent );
 
 	/**
 		 * @author Autor: David Durcak
@@ -77,16 +76,16 @@ private:
 	void createConnectionAruco();
 
 
-	static OpenCVCore	*mOpenCVCore;	// static singleton instance
+	static OpenCVCore*	mOpenCVCore;	// static singleton instance
 	bool				mThrsCreated;	// if false, threads were not initialized yet
 
-	QWidget							*mParent;
-	QApplication					*mApp;
-	ArucoModul::ArucoThread			*mThrAruco;
-	QOpenCV::FaceRecognitionThread	*mThrFaceRec;
+	QWidget*							mParent;
+	QApplication*					mApp;
+	ArucoModul::ArucoThread*			mThrAruco;
+	QOpenCV::FaceRecognitionThread*	mThrFaceRec;
 	QPointer<QOpenCV::FaceRecognitionWindow> mOpencvDialog;
 
-	};
+};
 }
 
 #endif // OPENCVCORE_H

@@ -11,8 +11,7 @@
 
 #include <QString>
 
-namespace Data
-{
+namespace Data {
 class Graph;
 class GraphLayout;
 class Type;
@@ -39,13 +38,13 @@ public:
 		*  \param  settings     settings of the MetaType
 		*/
 	//MetaType(qlonglong id, QString name, Data::Graph* graph, Data::GraphLayout* layout, QMap<QString, QString> * settings = 0):Data::Type(id,name,graph,settings) { this->layout = layout; this->meta = true; }
-	MetaType(qlonglong id, QString name, Data::Graph* graph, Data::GraphLayout* layout, QMap<QString, QString> * settings = 0);
+	MetaType( qlonglong id, QString name, Data::Graph* graph, Data::GraphLayout* layout, QMap<QString, QString>* settings = 0 );
 
 	/**
 		*  \fn public destructor  ~MetaType
 		*  \brief Destroys MetaType object
 		*/
-	~MetaType(void);
+	~MetaType( void );
 
 
 	/**
@@ -53,7 +52,10 @@ public:
 		*  \brief Returns GraphLayout to which the MetaType belongs
 		*  \return Data::GraphLayout *
 		*/
-	Data::GraphLayout* getLayout() { return layout; }
+	Data::GraphLayout* getLayout()
+	{
+		return layout;
+	}
 private:
 
 	/**

@@ -12,32 +12,33 @@ namespace Manager {
  * \brief Reports import status using the QT application GUI.
  */
 class ImportInfoHandlerImpl
-		: public Importer::ImportInfoHandler {
+	: public Importer::ImportInfoHandler
+{
 
 public:
 
 	/***/
-	virtual ~ImportInfoHandlerImpl (void) {}
+	virtual ~ImportInfoHandlerImpl( void ) {}
 
 	/***/
 
-	virtual void addMessage ();
+	virtual void addMessage();
 
 	/**
 	 * \brief Shows message box with error text.
 	 * \param[] text Error text.
 	 */
-	virtual void reportError (
-			const QString &text
-			);
+	virtual void reportError(
+		const QString& text
+	);
 
 	/**
 	 * \brief Updates progress bar position.
 	 * \param[in] value Progress value <0, 100>.
 	 */
-	virtual void setProgress (
-			const unsigned int value
-			);
+	virtual void setProgress(
+		const unsigned int value
+	);
 
 }; // class
 

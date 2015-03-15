@@ -4,88 +4,93 @@
 
 namespace Network {
 
-void MoveAvatarExecutor::execute_client() {
+void MoveAvatarExecutor::execute_client()
+{
 
-    Client *client = Client::getInstance();
+	Client* client = Client::getInstance();
 
-    float x,y,z,a,b,c,d,distance;
-    int id;
+	float x,y,z,a,b,c,d,distance;
+	int id;
 
-    *stream >> x >> y >> z >> a >> b >> c >> d >> distance >> id;
+	*stream >> x >> y >> z >> a >> b >> c >> d >> distance >> id;
 
-    osg::Vec3d center = osg::Vec3d(x-5,y,z);
-    osg::Quat rotation = osg::Quat(a,b,c,d);
+	osg::Vec3d center = osg::Vec3d( x-5,y,z );
+	osg::Quat rotation = osg::Quat( a,b,c,d );
 
-    osg::Vec3 direction = rotation * osg::Vec3(0, 0, 1);
-    direction *= distance;
+	osg::Vec3 direction = rotation * osg::Vec3( 0, 0, 1 );
+	direction *= distance;
 
-    if (client->userToSpy() != id) {
-        osg::PositionAttitudeTransform * PAtransform = client->avatarList[id];
-        if (PAtransform != NULL) {
-            PAtransform->setAttitude(rotation);
-            PAtransform->setPosition(center+direction);
-        } else {
-            //qDebug() << "Nepoznam avatar" << id;
-        }
-    }
+	if ( client->userToSpy() != id ) {
+		osg::PositionAttitudeTransform* PAtransform = client->avatarList[id];
+		if ( PAtransform != NULL ) {
+			PAtransform->setAttitude( rotation );
+			PAtransform->setPosition( center+direction );
+		}
+		else {
+			//qDebug() << "Nepoznam avatar" << id;
+		}
+	}
 
-    if (client->userToSpy() == id) {
-        client->setMyView(center,rotation,distance);
-    }
+	if ( client->userToSpy() == id ) {
+		client->setMyView( center,rotation,distance );
+	}
 
-    if (client->getCenterUser() == id) {
-        client->lookAt(center+direction);
-    }
+	if ( client->getCenterUser() == id ) {
+		client->lookAt( center+direction );
+	}
 
 }
 
-void MoveAvatarExecutor::execute_server() {
+void MoveAvatarExecutor::execute_server()
+{
 
-    Server * server = Server::getInstance();
+	Server* server = Server::getInstance();
 
-    QTcpSocket * out_socket = (QTcpSocket*) stream->device();
+	QTcpSocket* out_socket = ( QTcpSocket* ) stream->device();
 
-    float x,y,z,a,b,c,d,distance;
-    *stream >> x >> y >> z >> a >> b >> c >> d >> distance;
+	float x,y,z,a,b,c,d,distance;
+	*stream >> x >> y >> z >> a >> b >> c >> d >> distance;
 
-    QSet<QTcpSocket*> clients = server->getClients();
+	QSet<QTcpSocket*> clients = server->getClients();
 
-    QByteArray block;
-    QDataStream out(&block,QIODevice::WriteOnly);
-    out.setFloatingPointPrecision(QDataStream::SinglePrecision);
+	QByteArray block;
+	QDataStream out( &block,QIODevice::WriteOnly );
+	out.setFloatingPointPrecision( QDataStream::SinglePrecision );
 
-    int sender_id = server->getUserId(out_socket);
+	int sender_id = server->getUserId( out_socket );
 
-    out << (quint16)0 << MoveAvatarExecutor::INSTRUCTION_NUMBER << x << y << z << a << b << c << d << distance << sender_id;
+	out << ( quint16 )0 << MoveAvatarExecutor::INSTRUCTION_NUMBER << x << y << z << a << b << c << d << distance << sender_id;
 
-    out.device()->seek(0);
-    out << (quint16)(block.size() - sizeof(quint16));
+	out.device()->seek( 0 );
+	out << ( quint16 )( block.size() - sizeof( quint16 ) );
 
-    foreach(QTcpSocket *client, clients) { // append sender ID and resend to all other clients except sender
-        if (client == out_socket) continue;
-        client->write(block);
-    }
+	foreach ( QTcpSocket* client, clients ) { // append sender ID and resend to all other clients except sender
+		if ( client == out_socket ) {
+			continue;
+		}
+		client->write( block );
+	}
 
-    osg::Vec3d center = osg::Vec3d(x-5,y,z);
-    osg::Quat rotation = osg::Quat(a,b,c,d);
+	osg::Vec3d center = osg::Vec3d( x-5,y,z );
+	osg::Quat rotation = osg::Quat( a,b,c,d );
 
-    osg::Vec3 direction = rotation * osg::Vec3(0, 0, 1);
-    direction *= distance;
+	osg::Vec3 direction = rotation * osg::Vec3( 0, 0, 1 );
+	direction *= distance;
 
-    osg::PositionAttitudeTransform * PAtransform = server->getAvatarTransform(out_socket);
+	osg::PositionAttitudeTransform* PAtransform = server->getAvatarTransform( out_socket );
 
-    if (PAtransform != NULL) {
-        PAtransform->setAttitude(rotation);
-        PAtransform->setPosition(center+direction);
-    }
+	if ( PAtransform != NULL ) {
+		PAtransform->setAttitude( rotation );
+		PAtransform->setPosition( center+direction );
+	}
 
-    if (server->userToSpy() == out_socket) {
-        server->setMyView(center,rotation,distance);
-    }
+	if ( server->userToSpy() == out_socket ) {
+		server->setMyView( center,rotation,distance );
+	}
 
-    if (server->getCenterUser() == out_socket) {
-        server->lookAt(center+direction);
-    }
+	if ( server->getCenterUser() == out_socket ) {
+		server->lookAt( center+direction );
+	}
 
 }
 

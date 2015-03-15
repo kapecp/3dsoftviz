@@ -38,61 +38,62 @@
  **
  ****************************************************************************/
 
- /*
-    LuaGraphTreeItem.cpp
+/*
+   LuaGraphTreeItem.cpp
 
-     A container for items of data supplied by the simple tree model.
- */
+    A container for items of data supplied by the simple tree model.
+*/
 
- #include <QStringList>
+#include <QStringList>
 
- #include "LuaGraph/LuaGraphTreeItem.h"
+#include "LuaGraph/LuaGraphTreeItem.h"
 
- Lua::LuaGraphTreeItem::LuaGraphTreeItem(const QList<QVariant> &data,LuaGraphTreeItem *parent)
- {
-     parentItem = parent;
-     itemData = data;
- }
+Lua::LuaGraphTreeItem::LuaGraphTreeItem( const QList<QVariant>& data,LuaGraphTreeItem* parent )
+{
+	parentItem = parent;
+	itemData = data;
+}
 
 Lua::LuaGraphTreeItem::~LuaGraphTreeItem()
- {
-     qDeleteAll(childItems);
- }
+{
+	qDeleteAll( childItems );
+}
 
- void Lua::LuaGraphTreeItem::appendChild(LuaGraphTreeItem *item)
- {
-     childItems.append(item);
- }
+void Lua::LuaGraphTreeItem::appendChild( LuaGraphTreeItem* item )
+{
+	childItems.append( item );
+}
 
-Lua::LuaGraphTreeItem *Lua::LuaGraphTreeItem::child(int row)
- {
-     return childItems.value(row);
- }
+Lua::LuaGraphTreeItem* Lua::LuaGraphTreeItem::child( int row )
+{
+	return childItems.value( row );
+}
 
- int Lua::LuaGraphTreeItem::childCount() const
- {
-     return childItems.count();
- }
+int Lua::LuaGraphTreeItem::childCount() const
+{
+	return childItems.count();
+}
 
- int Lua::LuaGraphTreeItem::columnCount() const
- {
-     return itemData.count();
- }
+int Lua::LuaGraphTreeItem::columnCount() const
+{
+	return itemData.count();
+}
 
- QVariant Lua::LuaGraphTreeItem::data(int column) const
- {
-     return itemData.value(column);
- }
+QVariant Lua::LuaGraphTreeItem::data( int column ) const
+{
+	return itemData.value( column );
+}
 
-Lua::LuaGraphTreeItem *Lua::LuaGraphTreeItem::parent()
- {
-     return parentItem;
- }
+Lua::LuaGraphTreeItem* Lua::LuaGraphTreeItem::parent()
+{
+	return parentItem;
+}
 
- int Lua::LuaGraphTreeItem::row() const
- {
-     if (parentItem)
-         return parentItem->childItems.indexOf(const_cast<LuaGraphTreeItem*>(this));
+int Lua::LuaGraphTreeItem::row() const
+{
+	if ( parentItem ) {
+		return parentItem->childItems.indexOf( const_cast<LuaGraphTreeItem*>( this ) );
+	}
 
-     return 0;
- }
+	return 0;
+}

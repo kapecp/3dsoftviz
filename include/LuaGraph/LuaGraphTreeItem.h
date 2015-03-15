@@ -38,11 +38,11 @@
  **
  ****************************************************************************/
 
- #ifndef LUAGRAPHTREEITEM_H
- #define LUAGRAPHTREEITEM_H
+#ifndef LUAGRAPHTREEITEM_H
+#define LUAGRAPHTREEITEM_H
 
- #include <QList>
- #include <QVariant>
+#include <QList>
+#include <QVariant>
 
 namespace Lua {
 
@@ -52,26 +52,26 @@ namespace Lua {
   * @author Frantisek Nagy
   * @date 19.5.2014
   */
- class LuaGraphTreeItem
- {
- public:
-     LuaGraphTreeItem(const QList<QVariant> &data, LuaGraphTreeItem *parent = 0);
-     ~LuaGraphTreeItem();
+class LuaGraphTreeItem
+{
+public:
+	LuaGraphTreeItem( const QList<QVariant>& data, LuaGraphTreeItem* parent = 0 );
+	~LuaGraphTreeItem();
 
-     void appendChild(LuaGraphTreeItem *child);
+	void appendChild( LuaGraphTreeItem* child );
 
-     LuaGraphTreeItem *child(int row);
-     int childCount() const;
-     int columnCount() const;
-     QVariant data(int column) const;
-     int row() const;
-     LuaGraphTreeItem *parent();
+	LuaGraphTreeItem* child( int row );
+	int childCount() const;
+	int columnCount() const;
+	QVariant data( int column ) const;
+	int row() const;
+	LuaGraphTreeItem* parent();
 
- private:
-     QList<LuaGraphTreeItem*> childItems;
-     QList<QVariant> itemData;
-     LuaGraphTreeItem *parentItem;
- };
+private:
+	QList<LuaGraphTreeItem*> childItems;
+	QList<QVariant> itemData;
+	LuaGraphTreeItem* parentItem;
+};
 
- }
- #endif // LUAGRAPHTREEITEM_H
+}
+#endif // LUAGRAPHTREEITEM_H

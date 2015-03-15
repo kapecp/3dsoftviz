@@ -3,9 +3,9 @@
 // lua development
 extern "C"
 {
-    #include "lua.h"
-    #include "lualib.h"
-    #include "lauxlib.h"
+#include "lua.h"
+#include "lualib.h"
+#include "lauxlib.h"
 }
 
 // include diluculum header files
@@ -14,95 +14,97 @@ extern "C"
 
 #include <sstream>
 
-Lua::LuaInterface *Lua::LuaInterface::instance;
+Lua::LuaInterface* Lua::LuaInterface::instance;
 
-Lua::LuaInterface *Lua::LuaInterface::getInstance(){
-    if (instance == NULL)
-        instance = new LuaInterface;
-    return instance;
+Lua::LuaInterface* Lua::LuaInterface::getInstance()
+{
+	if ( instance == NULL ) {
+		instance = new LuaInterface;
+	}
+	return instance;
 }
 
 Lua::LuaInterface::~LuaInterface()
 {
-    delete luaState;
-    if (instance != NULL){
-        instance = NULL;
-    }
+	delete luaState;
+	if ( instance != NULL ) {
+		instance = NULL;
+	}
 }
 
 Lua::LuaInterface::LuaInterface()
 {
-    luaState = new Diluculum::LuaState;
+	luaState = new Diluculum::LuaState;
 }
 
-Diluculum::LuaState *Lua::LuaInterface::getLuaState() const
+Diluculum::LuaState* Lua::LuaInterface::getLuaState() const
 {
-    return luaState;
+	return luaState;
 }
 
 
-void Lua::LuaInterface::executeFile(QString path)
+void Lua::LuaInterface::executeFile( QString path )
 {
-    std::stringstream sstm;
-    sstm << "../share/3dsoftviz/scripts/" << path.toStdString();
-    luaState->doFile(sstm.str());
+	std::stringstream sstm;
+	sstm << "../share/3dsoftviz/scripts/" << path.toStdString();
+	luaState->doFile( sstm.str() );
 }
 
-QString Lua::LuaInterface::getString(QString name)
+QString Lua::LuaInterface::getString( QString name )
 {
-    Diluculum::LuaVariable var = (*luaState)[name.toStdString()];
-    return QString::fromStdString(var.value().asString());
+	Diluculum::LuaVariable var = ( *luaState )[name.toStdString()];
+	return QString::fromStdString( var.value().asString() );
 }
 
-QString Lua::LuaInterface::getString(unsigned int length, QString args[])
+QString Lua::LuaInterface::getString( unsigned int length, QString args[] )
 {
-    Diluculum::LuaVariable var = (*luaState)[args[0].toStdString()];
-    for(unsigned int i = 1; i < length; i++) {
-        var = var[args[i].toStdString()];
-    }
-    return QString::fromStdString(var.value().asString());
+	Diluculum::LuaVariable var = ( *luaState )[args[0].toStdString()];
+	for ( unsigned int i = 1; i < length; i++ ) {
+		var = var[args[i].toStdString()];
+	}
+	return QString::fromStdString( var.value().asString() );
 }
 
-long int Lua::LuaInterface::getInt(QString name)
+long int Lua::LuaInterface::getInt( QString name )
 {
-    Diluculum::LuaVariable var = (*luaState)[name.toStdString()];
-    return var.value().asInteger();
+	Diluculum::LuaVariable var = ( *luaState )[name.toStdString()];
+	return var.value().asInteger();
 }
 
-long int Lua::LuaInterface::getInt(unsigned int length,QString args[])
+long int Lua::LuaInterface::getInt( unsigned int length,QString args[] )
 {
-    Diluculum::LuaVariable var = (*luaState)[args[0].toStdString()];
-    for(unsigned int i = 1; i < length; i++) {
-        var = var[args[i].toStdString()];
-    }
-    return var.value().asInteger();
+	Diluculum::LuaVariable var = ( *luaState )[args[0].toStdString()];
+	for ( unsigned int i = 1; i < length; i++ ) {
+		var = var[args[i].toStdString()];
+	}
+	return var.value().asInteger();
 }
 
-double Lua::LuaInterface::getDouble(QString name)
+double Lua::LuaInterface::getDouble( QString name )
 {
-    Diluculum::LuaVariable var = (*luaState)[name.toStdString()];
-    return var.value().asNumber();
+	Diluculum::LuaVariable var = ( *luaState )[name.toStdString()];
+	return var.value().asNumber();
 }
 
-double Lua::LuaInterface::getDouble(unsigned int length, QString args[])
+double Lua::LuaInterface::getDouble( unsigned int length, QString args[] )
 {
-    Diluculum::LuaVariable var = (*luaState)[args[0].toStdString()];
-    for(unsigned int i = 1; i < length; i++) {
-        var = var[args[i].toStdString()];
-    }
-    return var.value().asNumber();
+	Diluculum::LuaVariable var = ( *luaState )[args[0].toStdString()];
+	for ( unsigned int i = 1; i < length; i++ ) {
+		var = var[args[i].toStdString()];
+	}
+	return var.value().asNumber();
 }
 
-Diluculum::LuaValueList Lua::LuaInterface::callFunction(QString funcName, Diluculum::LuaValueList params)
+Diluculum::LuaValueList Lua::LuaInterface::callFunction( QString funcName, Diluculum::LuaValueList params )
 {
-    return (*luaState)[funcName.toStdString()](params);
+	return ( *luaState )[funcName.toStdString()]( params );
 }
 
-Diluculum::LuaValueList Lua::LuaInterface::callFunction(unsigned int length, QString args[], Diluculum::LuaValueList params)
+Diluculum::LuaValueList Lua::LuaInterface::callFunction( unsigned int length, QString args[], Diluculum::LuaValueList params )
 {
-    Diluculum::LuaVariable var = (*luaState)[args[0].toStdString()];
-    for(unsigned int i = 1; i < length; i++) {
-        var = var[args[i].toStdString()];
-    }
-    return var(params);
+	Diluculum::LuaVariable var = ( *luaState )[args[0].toStdString()];
+	for ( unsigned int i = 1; i < length; i++ ) {
+		var = var[args[i].toStdString()];
+	}
+	return var( params );
 }

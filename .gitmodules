@@ -22,3 +22,6 @@
 [submodule "dependencies/luafilesystem"]
 	path = dependencies/luafilesystem
 	url = https://github.com/LuaDist/luafilesystem.git
+[submodule "dependencies/lua"]
+	path = dependencies/lua
+	url = https://github.com/LuaDist/lua.git

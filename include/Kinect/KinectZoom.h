@@ -9,7 +9,7 @@
 
 #include "Core/Core.h"
 
-namespace Kinect{
+namespace Kinect {
 /**
  * @brief The KinectZoom class
  * @author autor: Marek Jakab
@@ -34,13 +34,13 @@ public:
 	 * @param y world coordinate Y of hand
 	 * @param z world coordinate Z of hand
 	 */
-	void zoom(cv::Mat handImage, openni::VideoStream  *m_depth, float x, float y, float z);
+	void zoom( cv::Mat handImage, openni::VideoStream*  m_depth, float x, float y, float z );
 	/**
 	 * @brief DetectContour find contours of segmented hand image
 	 * @param img image to find contour on
 	 * @return number of fingers found (if the hand is open)
 	 */
-	int DetectContour(cv::Mat img);
+	int DetectContour( cv::Mat img );
 
 	/**
 	 * @brief previousZ depth of hand from previous frame
@@ -62,7 +62,7 @@ public:
 	/**
 	 * @brief viewer QT Viewer to simulate mouse scroll
 	 */
-	QOSG::ViewerQT *viewer;
+	QOSG::ViewerQT* viewer;
 };
 }
 

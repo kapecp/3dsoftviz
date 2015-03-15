@@ -1,11 +1,11 @@
 if( WIN32 )
 	find_path( KINECTSDK_INCLUDE_DIR
 		NAMES NuiApi.h NuiImageCamera.h NuiSensor.h NuiSkeleton.h
-		PATHS $ENV{KINECTSDK10_DIR}inc
+		PATHS $ENV{KINECTSDK10_DIR}/inc
 	)
 	find_library( KINECTSDK_LIBRARY
 		NAMES Kinect10
-		PATHS $ENV{KINECTSDK10_DIR}lib/x86
+		PATHS $ENV{KINECTSDK10_DIR}/lib/x86
 	)
 endif()
 

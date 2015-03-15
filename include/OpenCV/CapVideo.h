@@ -4,14 +4,14 @@
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 
-namespace OpenCV
-{
+namespace OpenCV {
 /**
 	*@brief Class CapVideo
 	*@author Autor: Marek Jakab
 	*@date 18.11.2013
 	*/
-class CapVideo{
+class CapVideo
+{
 
 public:
 	/**
@@ -20,7 +20,7 @@ public:
 		 * @param width Camera device width
 		 * @param height Camera device height
 		 */
-	CapVideo(int device_id, int width, int height);
+	CapVideo( int device_id, int width, int height );
 	~CapVideo();
 	/**
 		 * @author Autor: Marek Jakab
@@ -28,7 +28,7 @@ public:
 		 * @param width Camera device width
 		 * @param height Camera device height
 		 */
-	void setCaptureProperties(int width, int height);
+	void setCaptureProperties( int width, int height );
 
 
 	/**
@@ -64,7 +64,7 @@ public:
 		 * @param width Camera width
 		 * @param height Camera height
 		 */
-	void startCamera(int width, int height);
+	void startCamera( int width, int height );
 	/**
 		 * @author Autor: Marek Jakab
 		 * @brief getWidth Return width of the camera used by this object
