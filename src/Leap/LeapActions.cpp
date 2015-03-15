@@ -2,7 +2,7 @@
 
 Leap::LeapActions::LeapActions(){
     mouse = new Vwr::MouseControl();
-    mouseCounter = 0;
+    zoomCounter = 0;
     qDebug() << "LeapActions() Constructor";
 }
 
@@ -26,17 +26,17 @@ void Leap::LeapActions::onSwipe(Gesture gesture)
     }
 }
 
-void Leap::LeapActions::onCircle(Gesture gesture)
+void Leap::LeapActions::zoomGraph(Gesture gesture)
 {
     CircleGesture circle = gesture;
 
-    if(mouseCounter++ == 12){
-        mouseCounter = 0;
+    if(zoomCounter++ == ZOOM_READY){
+        zoomCounter = 0;
 
-        if (circle.pointable().direction().angleTo(circle.normal()) <= PI/2) {
-              qDebug() << "[onFrame()::CircleGesture - clockwise]";
-              //mouse->clickPressMouse(300,300,Qt::MouseButton::mi);
-              mouse->scrollMouse(osgGA::GUIEventAdapter::SCROLL_DOWN);
+        if (circle.pointable().direction().angleTo(circle.normal()) <= PI/2)
+        {
+            qDebug() << "[onFrame()::CircleGesture - clockwise]";
+            mouse->scrollMouse(osgGA::GUIEventAdapter::SCROLL_DOWN);
         } else {
             qDebug() << "[onFrame()::CircleGesture - counterclockwise]";
             mouse->scrollMouse(osgGA::GUIEventAdapter::SCROLL_UP);

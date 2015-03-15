@@ -37,7 +37,7 @@ void Leap::LeapListener::onFrame(const Controller& controller)
         switch (gesture.type()) {
           case Gesture::TYPE_CIRCLE:
           {
-            leapActions.onCircle(gesture);
+            leapActions.zoomGraph(gesture);
             break;
           }
           case Gesture::TYPE_SWIPE:

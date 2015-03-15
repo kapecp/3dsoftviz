@@ -86,6 +86,10 @@ public:
      */
     void setSpeedUpMoving( double speed );
 
+    /**
+     * @brief Uses the mouse scroll button to either scroll up or scroll down.
+     * @param scrollMotion - specifies if we want SCROLL_DOWN or SCROLL_UP -- use these constants.
+     */
     void scrollMouse(osgGA::GUIEventAdapter::ScrollingMotion scrollMotion);
 
 private:
