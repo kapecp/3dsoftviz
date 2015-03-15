@@ -188,7 +188,7 @@ include_directories( SYSTEM
 
 # ------------------------------ OpenCV -------------------------------
 # Find OpenCV
-#find_package( OpenCV )
+find_package( OpenCV )
 if( OpenCV_FOUND )
 	if( WIN32 )
 		add_definitions( -DNOMINMAX )
@@ -478,17 +478,17 @@ if( APPLE )
 	set( MACOSX_BUNDLE_LONG_VERSION_STRING "${3DSOFTVIZ_NAME} ${3DSOFTVIZ_VERSION}" )
 	set( MACOSX_BUNDLE_SHORT_VERSION_STRING "${3DSOFTVIZ_VERSION}" )
 	set( MACOSX_BUNDLE_COPYRIGHT "${3DSOFTVIZ_COPYRIGHT_YEAR} ${3DSOFTVIZ_VENDOR}" )
-	#set( MACOSX_BUNDLE_ICON_FILE "3DSOFTVIZ_app.icns" )
+	set( MACOSX_BUNDLE_ICON_FILE "3DSOFTVIZ_app.icns" )
 	set( MACOSX_BUNDLE_GUI_IDENTIFIER "${3DSOFTVIZ_DOMAIN_SECOND}.${3DSOFTVIZ_DOMAIN_FIRST}.${3DSOFTVIZ_NAME}" )
 	set( MACOSX_BUNDLE_BUNDLE_NAME "${3DSOFTVIZ_NAME}" )
 
 	# CPack settings
 	set( CPACK_GENERATOR "DragNDrop" )
-	#set( CPACK_PACKAGE_ICON "${CMAKE_CURRENT_SOURCE_DIR}/res/3DSOFTVIZ_pkg.icns" )
+	set( CPACK_PACKAGE_ICON "${CMAKE_CURRENT_SOURCE_DIR}/res/3DSOFTVIZ_pkg.icns" )
 	set( CPACK_PACKAGE_FILE_NAME "${3DSOFTVIZ_NAME}-${3DSOFTVIZ_VERSION}" )
 
 	# OSX Specific resources
-	#install( FILES res/3DSOFTVIZ_app.icns DESTINATION ${INSTALL_RES} )
+	install( FILES res/3DSOFTVIZ_app.icns DESTINATION ${INSTALL_RES} )
 endif()
 
 # Windows specific overrides
@@ -744,7 +744,7 @@ add_library( qtcolorpicker STATIC dependencies/qtcolorpicker/qtcolorpicker.cpp )
 add_executable( ${3DSOFTVIZ_NAME} ${INCL} ${SRC} )
 
 # set compile flags only for our code ( suppresses warnigns on system headers )
-#set_target_properties( ${3DSOFTVIZ_NAME} PROPERTIES COMPILE_FLAGS "${FLAGS_FOR_DEBUG}" )
+set_target_properties( ${3DSOFTVIZ_NAME} PROPERTIES COMPILE_FLAGS "${FLAGS_FOR_DEBUG}" )
 
 target_link_libraries( ${3DSOFTVIZ_NAME}
 	${QT_LIBRARIES}
@@ -860,7 +860,7 @@ if( USE_BUILTIN_DEPENDENCIES )
 endif()
 
 # Include QT4 libraries in Apple bundle and on Windows
-if( WIN32 ) #OR APPLE 
+if( WIN32 OR APPLE )
 	# On Apple plugins need to be bundled
 	if( APPLE )
 		# Install Qt Plugins
