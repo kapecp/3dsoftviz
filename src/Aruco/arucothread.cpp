@@ -244,8 +244,14 @@ void ArucoThread::imagesSending( ArucoCore& aCore, const cv::Mat frame ) const
 
         emit pushBackgrImage( frame.clone() );
     }
+    cv::Mat image;
+    if(mMultiMarkerEnabled) {
+        image = aCore.getDetectedTriangleImage();
+    } else {
+        image = aCore.getDetImage();
+    }
 
-    cv::Mat image = aCore.getDetImage();
+
 
     if ( mSendImgEnabled ) {
         if( ! mMarkerIsBehind){
