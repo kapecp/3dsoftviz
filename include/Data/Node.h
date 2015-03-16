@@ -6,11 +6,13 @@
 #define DATA_NODE_DEF 1
 
 #include <osg/Vec3f>
-#include <osg/Geode>
 #include <osg/AutoTransform>
 
 #include <QMap>
 #include <QString>
+
+#include <Data/OsgNode.h>
+
 
 //volovar_zac
 namespace Layout {
@@ -33,7 +35,7 @@ typedef osg::TemplateIndexArray<unsigned int, osg::Array::UIntArrayType,4,1> Col
 	*  \author Aurel Paulovic, Michal Paprcka
 	*  \date 29. 4. 2010
 	*/
-class Node : public osg::Geode
+class Node : public OsgNode
 {
 public:
 
@@ -229,15 +231,16 @@ public:
 		 */
 	void setRestrictedTargetPosition( const osg::Vec3f& position );
 
-	/**
-		*  \fn public  getCurrentPosition(bool calculateNew = false, float interpolationSpeed = 1.0f)
-		*  \brief Returns node actual position
-		*  \param      calculateNew    If true, new position will be calculated through interpolation
-		*  \param      float   interpolation speed
-		*  \return osg::Vec3f actual position
-		*  returned currentPosition IS already multiplied by the graph scale
-		*/
-	osg::Vec3f getCurrentPosition( bool calculateNew = false, float interpolationSpeed = 1.0f );
+    /**
+        *  \fn public  getCurrentPosition(bool calculateNew = false, float interpolationSpeed = 1.0f)
+        *  \brief Returns node actual position
+        *  \param      calculateNew    If true, new position will be calculated through interpolation
+        *  \param      float   interpolation speed
+        *  \return osg::Vec3f actual position
+        *  returned currentPosition IS already multiplied by the graph scale
+        */
+    osg::Vec3f getCurrentPosition( bool calculateNew = false, float interpolationSpeed = 1.0f );
+
 
 	/**
 		*  \fn inline public  setCurrentPosition(osg::Vec3f val)
@@ -264,7 +267,7 @@ public:
 		*
 		*
 		*/
-	Data::Node* getParentNode();
+    Data::Node* getParentNode();
 
 	/**
 		*	\fn public setParentNode
@@ -273,6 +276,22 @@ public:
 		*
 		*/
 	void setParentNode( Node* parent );
+
+    /**
+        *	Node parent
+        *	\brief parent node of current node in nested graphs, in top level graph is null
+        */
+    osg::ref_ptr<Data::Node> nested_parent;
+
+    /**
+        *  \fn inline public  getNestedParent
+        *  \brief Return node parent, if no parent then return NULL
+            *  \return QString name of the Node
+        */
+    osg::ref_ptr<Data::OsgNode> getNestedParent()
+    {
+        return nested_parent;
+    }
 
 
 	/**
@@ -487,15 +506,7 @@ public:
 		velocity = osg::Vec3( 0,0,0 );
 	}
 
-	/**
-		*  \fn inline public constant  getVelocity
-		*  \brief Sets node force for next iteration.
-		*  \return osg::Vec3f Node force
-		*/
-	osg::Vec3f getVelocity() const
-	{
-		return velocity;
-	}
+
 
 
 	/**
@@ -538,15 +549,7 @@ public:
 	}
 
 
-	/**
-		*  \fn inline public constant  getColor
-		*  \brief Returns color of the Node
-		*  \return osg::Vec4 color of the Node
-		*/
-	osg::Vec4 getColor() const
-	{
-		return color;
-	}
+
 
 
 	/**
@@ -611,10 +614,7 @@ public:
 		ball = val;
 	}
 
-	osg::Geode* getBall()
-	{
-		return ball;
-	}
+
 
 	osg::ref_ptr<osg::AutoTransform> getOutBall()
 	{
@@ -643,15 +643,6 @@ public:
 		nested_parent = val;
 	}
 
-	/**
-		*  \fn inline public  getNestedParent
-		*  \brief Return node parent, if no parent then return NULL
-			*  \return QString name of the Node
-		*/
-	osg::ref_ptr<Data::Node> getNestedParent()
-	{
-		return nested_parent;
-	}
 
 	/**
 		*  \fn inline public  getName
@@ -759,11 +750,6 @@ private:
 		*/
 	float scale;
 
-	/**
-		*	Node parent
-		*	\brief parent node of current node in nested graphs, in top level graph is null
-		*/
-	osg::ref_ptr<Data::Node> nested_parent;
 
 	/**
 		*  QString name
@@ -795,27 +781,6 @@ private:
 		 */
 	osg::Vec3f mTargetPosition;
 
-	/**
-		 * osg::Vec3f mRestrictedTargetPosition
-		 * \brief Restricted target position of a node.
-		 */
-	osg::Vec3f mRestrictedTargetPosition;
-
-	/**
-		*  osg::Vec3f currentPosition
-		*  \brief node current position
-		*/
-	osg::Vec3f currentPosition;
-
-	/**
-		*  osg::Sphere nested ball
-		*  \brief
-		*/
-	osg::Sphere* parentBall;
-
-	osg::Geode* ball;
-
-	osg::ref_ptr<osg::AutoTransform> outBall;
 
 	/**
 		*  QMap<qlonglong, osg::ref_ptr<Data::Edge> > * edges
@@ -829,11 +794,6 @@ private:
 	  */
 	osg::Vec3f force;
 
-	/**
-		*  osg::Vec3f velocity
-		*  \brief Size of node force in previous iteration
-		*/
-	osg::Vec3f velocity;
 
 	/**
 		*  bool fixed
@@ -876,48 +836,18 @@ private:
 	bool usingInterpolation;
 
 
-	/**
-		*  \fn private static  createNode(const float & scale, osg::StateSet* bbState)
-		*  \brief Creates node drawable
-		*  \param      scale    node scale
-		*  \param  bbState    node stateset
-		*  \return osg::ref_ptr node drawable
-		*/
-	static osg::ref_ptr<osg::Drawable> createNode( const float& scale, osg::StateSet* bbState );
-
-	/**
-		*  \fn private static  createStateSet(Data::Type * type = 0)
-		*  \brief Creates node stateset
-		*  \param   type     node type
-		*  \return osg::ref_ptr node stateset
-		*/
-	static osg::ref_ptr<osg::StateSet> createStateSet( Data::Type* type = 0 );
-
-	/**
-		*  \fn private static  createLabel(const float & scale, QString name)
-		*  \brief Creates node label from name
-		*  \param      scale     label scale
-		*  \param       name     label text
-		*  \return osg::ref_ptr node label
-		*/
-	static osg::ref_ptr<osg::Drawable> createLabel( const float& scale, QString name );
-
-	/**
-		*  \fn private static  createSquare
-		*  \brief Creates square around node
-		*  \param  scale   square scale
-		*  \param  bbState     square stateset
-		*  \return osg::ref_ptr square drawable
-		*/
-	static osg::ref_ptr<osg::Drawable> createSquare( const float& scale, osg::StateSet* bbState );
+    /**
+         * osg::Vec3f mRestrictedTargetPosition
+         * \brief Restricted target position of a node.
+         */
+    osg::Vec3f mRestrictedTargetPosition;
 
 
-	/**
-		*  osg::Vec4 color
-		*  \brief Color of the Node
-		*/
-	osg::Vec4 color;
-
+    /**
+        *  osg::Vec3f currentPosition
+        *  \brief node current position
+        */
+    osg::Vec3f currentPosition;
 
 	/**
 		*  \fn private  setDrawableColor(int pos, osg::Vec4 color)
@@ -933,24 +863,6 @@ private:
 		*/
 	QString labelText;
 
-
-	/**
-		*  osg::ref_ptr label
-		*  \brief Label drawable
-		*/
-	osg::ref_ptr<osg::Drawable> label;
-
-	/**
-		*  osg::ref_ptr square
-		*  \brief Square drawable
-		*/
-	osg::ref_ptr<osg::Drawable> square;
-
-	/**
-		*  osg::ref_ptr focusedSquare
-		*  \brief Focused square drawable
-		*/
-	osg::ref_ptr<osg::Drawable> focusedSquare;
 
 	float nodeDegree;
 	float nodeCloseness;
