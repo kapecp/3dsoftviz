@@ -27,6 +27,7 @@ FRAlgorithm::FRAlgorithm()
 	MIN_MOVEMENT = 0.05f;
 	MAX_MOVEMENT = 30;
 	MAX_DISTANCE = 400;
+	MIN_MOVEMENT_EDGEBUNDLING = 0.75f;
 	state = RUNNING;
 	stateEdgeBundling = PAUSED;
 	notEnd = true;
@@ -50,6 +51,7 @@ FRAlgorithm::FRAlgorithm(Data::Graph *graph)
 	MIN_MOVEMENT = 0.05f;
 	MAX_MOVEMENT = 30;
 	MAX_DISTANCE = 400;
+	MIN_MOVEMENT_EDGEBUNDLING = 0.75f;
 	state = RUNNING;
 	stateEdgeBundling = PAUSED;
 	notEnd = true;
@@ -174,7 +176,7 @@ void FRAlgorithm::Run()
 		{
 			// slucka pozastavenia - ak je pauza
 			// alebo je graf zmrazeny (spravidla pocas editacie)
-			while (notEnd && (state != RUNNING || graph->isFrozen()) && (stateEdgeBundling != RUNNING))
+			while (notEnd && (state != RUNNING || graph->isFrozen()) && (stateEdgeBundling != RUNNING || graph->isFrozen()))
 			{
 				// [GrafIT][!] not 100% OK (e.g. msleep(100) remains here), but we have fixed the most obvious multithreading issues of the original code
 				isIterating_mutex.unlock();
@@ -221,7 +223,7 @@ bool FRAlgorithm::iterate()
 				//pritazlive sily medzi meta uzlom a jeho susedmi
 				QMap<qlonglong, osg::ref_ptr<Data::Edge> >::iterator iEdge = j.value()->getEdges()->begin();
 				while (iEdge != j.value()->getEdges()->end())
-				{				
+				{
 					if (!j.value()->equals((*iEdge)->getSrcNode()))
 						addNeighbourAttractive(j.value(), (*iEdge)->getSrcNode(), Data::Graph::getMetaStrength());
 					else
@@ -229,7 +231,7 @@ bool FRAlgorithm::iterate()
 					iEdge++;
 				}
 
-				//pritazliva sila medzi meta uzlom a ostatnymi metauzlami s rovnakym cislom
+				//pritazliva sila medzi meta uzlom a ostatnymi metauzlami s rovnakym indexom
 				QString jName = (*j)->getName();
 				jName = jName.right(jName.length() - jName.indexOf(' ') - 1);
 				k = graph->getMetaNodes()->begin();
@@ -310,7 +312,7 @@ bool FRAlgorithm::iterate()
 			addAttractive(j.value(), 1);
 		}
 	}
-	if(state == PAUSED)
+	if(state == PAUSED && stateEdgeBundling == PAUSED)
 	{
 		return false;
 	}
@@ -376,6 +378,7 @@ bool FRAlgorithm::iterate()
 				changed = changed || fo;
 			}
 		}
+
 	}
 
 	// Vracia true ak sa ma pokracovat dalsou iteraciou
@@ -398,7 +401,8 @@ bool FRAlgorithm::applyForces(Data::Node* node)
 	// zmensenie
 	fv *= ALPHA;
 	float l = fv.length();
-	if (l > MIN_MOVEMENT)
+	if ((l > MIN_MOVEMENT && stateEdgeBundling == PAUSED) ||
+			(l > MIN_MOVEMENT_EDGEBUNDLING && stateEdgeBundling == RUNNING))
 	{ // nie je sila primala?
 		if (l > MAX_MOVEMENT)
 		{ // je sila privelka?
@@ -410,8 +414,8 @@ bool FRAlgorithm::applyForces(Data::Node* node)
 		fv += node->getVelocity();
 	} else {
 		// [GrafIT][.] this has been a separate case when resetVelocity() has been called and nothing with the target position has been done;
-		//             we needed to compute and maybe restrict the target position even if this case; setting the velocity to null vector
-		//             and setting it as a velocity has the same effect as resetVelocity()
+		//			 we needed to compute and maybe restrict the target position even if this case; setting the velocity to null vector
+		//			 and setting it as a velocity has the same effect as resetVelocity()
 		// reset velocity
 		fv = osg::Vec3(0,0,0);
 		// [GrafIT]
@@ -419,7 +423,7 @@ bool FRAlgorithm::applyForces(Data::Node* node)
 
 	// [GrafIT][.] using restrictions (modified and optimized for speed by Peter Sivak)
 	node->setTargetPosition( node->targetPositionConstRef() + fv );   // Compute target position
-	graph->getRestrictionsManager().applyRestriction(*node);          // Compute restricted target position
+	graph->getRestrictionsManager().applyRestriction(*node);		  // Compute restricted target position
 
 	for (edgeIt=node->getEdges()->begin();edgeIt!=node->getEdges()->end(); edgeIt++){
 		if ((*edgeIt)->isShared_X()){
@@ -602,7 +606,6 @@ void FRAlgorithm::RunAlgEdgeBundling()
 	if(graph != NULL)
 	{
 		graph->setFrozen(false);
-		state = RUNNING;
 		stateEdgeBundling = RUNNING;
 	}
 }
@@ -611,7 +614,6 @@ void FRAlgorithm::StopAlgEdgeBundling()
 {
 	if(graph != NULL)
 	{
-		graph->setFrozen(true);
 		stateEdgeBundling = PAUSED;
 	}
 }

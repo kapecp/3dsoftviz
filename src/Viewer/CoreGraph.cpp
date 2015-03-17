@@ -534,6 +534,18 @@ void CoreGraph::computeGraphRotTransf()
 	graphRotTransf->setMatrix(graphTransfMat);
 }
 
+void CoreGraph::set2D(){
+	edgesGroup->getGroup()->asSwitch()->setValue(0, true);
+	edgesGroup->getGroup()->asSwitch()->setValue(1, true);
+	edgesGroup->getGroup()->asSwitch()->setValue(2, false);
+}
+
+void CoreGraph::set3D(){
+	edgesGroup->getGroup()->asSwitch()->setValue(0, false);
+	edgesGroup->getGroup()->asSwitch()->setValue(1, false);
+	edgesGroup->getGroup()->asSwitch()->setValue(2, true);
+}
+
 #ifdef OPENCV_FOUND
 OpenCV::CameraStream* CoreGraph::getCameraStream() const
 {

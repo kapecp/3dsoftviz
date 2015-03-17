@@ -59,6 +59,7 @@ CoreWindow::CoreWindow(QWidget *parent, Vwr::CoreGraph* coreGraph, QApplication*
 	//inicializacia premennych
 	isPlaying = true;
 	isEBPlaying = false;
+	is3D = false;
 	application = app;
 	layout = thread;
 
@@ -322,7 +323,7 @@ void CoreWindow::createActions()
 	connect(b_StartEdgeBundling, SIGNAL(clicked()), this, SLOT(startEdgeBundling()));
 
 	b_switch2Dand3D = new QPushButton();
-	b_switch2Dand3D->setText("3D/2D");
+	b_switch2Dand3D->setText("3D");
 	b_switch2Dand3D->setToolTip("&Turn to 3D or 2D");
 	b_switch2Dand3D->setFocusPolicy(Qt::NoFocus);
 	connect(b_switch2Dand3D, SIGNAL(clicked()), this, SLOT(switch2Dand3D()));
@@ -448,40 +449,40 @@ void CoreWindow::createLeftToolBar()
 	toolBar->addSeparator();
 
 	// layout restrictions
-	frame = createHorizontalFrame();
-	toolBar->addWidget(frame);
-	frame->layout()->addWidget(b_SetRestriction_SphereSurface);
-	frame->layout()->addWidget(b_SetRestriction_Sphere);
+//	frame = createHorizontalFrame();
+//	toolBar->addWidget(frame);
+//	frame->layout()->addWidget(b_SetRestriction_SphereSurface);
+//	frame->layout()->addWidget(b_SetRestriction_Sphere);
 
-	frame = createHorizontalFrame();
-	toolBar->addWidget(frame);
-	frame->layout()->addWidget(b_SetRestriction_Plane);
-	frame->layout()->addWidget(b_SetRestriction_SpherePlane);
+//	frame = createHorizontalFrame();
+//	toolBar->addWidget(frame);
+//	frame->layout()->addWidget(b_SetRestriction_Plane);
+//	frame->layout()->addWidget(b_SetRestriction_SpherePlane);
 
-	frame = createHorizontalFrame();
-	toolBar->addWidget(frame);
-	frame->layout()->addWidget(b_SetRestriction_Circle);
-	frame->layout()->addWidget(b_SetRestriction_Cone);
+//	frame = createHorizontalFrame();
+//	toolBar->addWidget(frame);
+//	frame->layout()->addWidget(b_SetRestriction_Circle);
+//	frame->layout()->addWidget(b_SetRestriction_Cone);
 
 
-	frame = createHorizontalFrame();
-	toolBar->addWidget(frame);
-	frame->layout()->addWidget(b_SetRestriction_ConeTree);
-	frame->layout()->addWidget(b_UnsetRestriction);
+//	frame = createHorizontalFrame();
+//	toolBar->addWidget(frame);
+//	frame->layout()->addWidget(b_SetRestriction_ConeTree);
+//	frame->layout()->addWidget(b_UnsetRestriction);
 
-	toolBar->addSeparator();
+//	toolBar->addSeparator();
 
-	frame = createHorizontalFrame();
-	toolBar->addWidget(frame);
-	frame->layout()->addWidget(b_SetRestriction_CylinderSurface);
-	frame->layout()->addWidget(b_SetRestriction_CylinderSurface_Slider);
+//	frame = createHorizontalFrame();
+//	toolBar->addWidget(frame);
+//	frame->layout()->addWidget(b_SetRestriction_CylinderSurface);
+//	frame->layout()->addWidget(b_SetRestriction_CylinderSurface_Slider);
 
-	frame = createHorizontalFrame();
-	toolBar->addWidget(frame);
-	frame->layout()->addWidget(b_SetRestriction_ConeSurface);
-	frame->layout()->addWidget(b_SetRestriction_ConeSurface_Slider);
+//	frame = createHorizontalFrame();
+//	toolBar->addWidget(frame);
+//	frame->layout()->addWidget(b_SetRestriction_ConeSurface);
+//	frame->layout()->addWidget(b_SetRestriction_ConeSurface_Slider);
 
-	toolBar->addWidget(b_UnsetRestrictionFromAll);
+//	toolBar->addWidget(b_UnsetRestrictionFromAll);
 	toolBar->addWidget(b_StartEdgeBundling);
 	toolBar->addWidget(b_switch2Dand3D);
 
@@ -1110,7 +1111,7 @@ void CoreWindow::setRestriction_SphereSurface ()
 	if (currentGraph != NULL)
 	{
 		osg::Vec3 position = viewerWidget->getPickHandler()->getSelectionCenter(true);
-        if( qFuzzyCompare((float)position.length(),0.0f) ) return;
+		if( qFuzzyCompare((float)position.length(),0.0f) ) return;
 		osg::ref_ptr<Data::Node> centerNode;
 		osg::ref_ptr<Data::Node> surfaceNode;
 
@@ -1572,15 +1573,36 @@ void CoreWindow::startEdgeBundling() {
 			currentGraph->splitAllEdges(3);
 		}
 
+		if(!isPlaying)
+		{
+			play->setIcon(QIcon("../share/3dsoftviz/img/gui/pause.png"));
+			isPlaying = 1;
+			coreGraph->setNodesFreezed(false);
+			layout->play();
+		}
+
 		layout->playEdgeBundling();
 	}
+
 }
 
 void CoreWindow::switch2Dand3D() {
-	Data::Graph * currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
+//	Data::Graph * currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
 
-	if (currentGraph != NULL) {
-		currentGraph->switch2Dand3D();
+//	if (currentGraph != NULL) {
+//		currentGraph->switch2Dand3D();
+//	}
+	if(is3D)
+	{
+		b_switch2Dand3D->setText("3D");
+		is3D = 0;
+		coreGraph->set2D();
+	}
+	else
+	{
+		b_switch2Dand3D->setText("2D");
+		is3D = 1;
+		coreGraph->set3D();
 	}
 }
 

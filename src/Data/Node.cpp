@@ -13,6 +13,7 @@
 
 #include <osg/Geometry>
 #include <osg/Depth>
+#include <osg/BlendFunc>
 #include <osg/CullFace>
 #include <osgText/FadeText>
 #include <osg/ShapeDrawable>
@@ -61,14 +62,22 @@ Data::Node::Node(qlonglong id, QString name, Data::Type* type, float scaling, Da
 	if (graph->getIs3D()){
 		this->square  = new osg::ShapeDrawable;
 		osg::Sphere * sphere = new osg::Sphere;
-		if (type->isMeta())
+		if (type->isMeta()){
 			sphere->setRadius(this->scale*0.25);
+			(dynamic_cast<osg::ShapeDrawable*>(square.get()))->setColor(osg::Vec4(1.0f, 1.0f, 1.0f, 0.5f));
+		}
 		else
 			sphere->setRadius(this->scale*0.5);
 		this->square->setShape(sphere);
 
 		this->square->getOrCreateStateSet()->setMode(GL_BLEND, osg::StateAttribute::ON);
 		this->square->getStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
+
+		this->square->getStateSet()->setMode(GL_DEPTH_TEST, osg::StateAttribute::ON);
+		this->square->getStateSet()->setMode(GL_LIGHTING, osg::StateAttribute::ON);
+		this->square->getStateSet()->setAttributeAndModes(new osg::BlendFunc, osg::StateAttribute::ON);
+		this->square->getStateSet()->setRenderBinDetails(11, "RenderBin");
+
 		addDrawable(this->square);
   } else{
 
@@ -408,15 +417,23 @@ QString Data::Node::toString() const
 void Data::Node::turnTo3D(){
 	square  = new osg::ShapeDrawable;
 	osg::Sphere * sphere = new osg::Sphere;
-	if (type->isMeta())
+	if (type->isMeta()){
 		sphere->setRadius(this->scale*0.25);
+		(dynamic_cast<osg::ShapeDrawable*>(square.get()))->setColor(osg::Vec4(1.0f, 1.0f, 1.0f, 0.5f));
+	}
 	else
 		sphere->setRadius(this->scale*0.5);
 	square->setShape(sphere);
 
 	square->getOrCreateStateSet()->setMode(GL_BLEND, osg::StateAttribute::ON);
 	square->getStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
-	setColor( osg::Vec4(1.0f,1.0f,1.0f,1.0f) );
+	this->square->getStateSet()->setMode(GL_DEPTH_TEST, osg::StateAttribute::ON);
+	this->square->getStateSet()->setMode(GL_LIGHTING, osg::StateAttribute::ON);
+	this->square->getStateSet()->setAttributeAndModes(new osg::BlendFunc, osg::StateAttribute::ON);
+	this->square->getStateSet()->setRenderBinDetails(11, "RenderBin");
+
+	//(dynamic_cast<osg::ref_ptr<osg::ShapeDrawable> > (square));
+	//->setColor( osg::Vec4(1.0f,1.0f,1.0f,1.0f) );
 
 	setDrawable(0, square);
 }

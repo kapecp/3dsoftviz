@@ -672,6 +672,12 @@ private:
 	int isEBPlaying;
 
 	/**
+		*  int is3D
+		*  \brief Flag if 3D representation is on
+		*/
+	int is3D;
+
+	/**
 		*  \fn private  createActions
 		*  \brief Initialize all actions of aplication
 		*/

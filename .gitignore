@@ -1,5 +1,7 @@
+/_qt-creator-build
 /.project
 _build
 _install
 CMakeLists.txt.user
 qtcreator-build
+_qt-creator-build

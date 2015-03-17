@@ -114,6 +114,24 @@ private:
 	QList<osg::ref_ptr<osg::ShapeDrawable> > drawableList;
 
 	/**
+		*  int INDEX_GEOMETRY
+		*  \brief index of geometry node in edgeGroup
+		*/
+	static const int INDEX_GEOMETRY = 0;
+
+	/**
+		*  int INDEX_ORIENTED_GEOMETRY
+		*  \brief index of oriented geometry node in edgeGroup
+		*/
+	static const int INDEX_ORIENTED_GEOMETRY = 1;
+
+	/**
+		*  int INDEX_CYLINDERS
+		*  \brief index of group of cylinders in edgeGroup
+		*/
+	static const int INDEX_CYLINDERS = 2;
+
+	/**
 		*  \fn private  initEdges
 		*  \brief inits geometry
 		*/

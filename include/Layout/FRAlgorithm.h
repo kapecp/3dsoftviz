@@ -165,6 +165,12 @@ private:
 	float MAX_DISTANCE;
 
 	/**
+		*  float MIN_MOVEMENT_EDGEBUNDLING
+		*  \brief minimal distance between two meta nodes during edge bundling alg, when forces are aplified
+		*/
+	float MIN_MOVEMENT_EDGEBUNDLING;
+
+	/**
 		*  enum State
 		*  \brief maximal distance of nodes, when repulsive force is aplied
 		*/

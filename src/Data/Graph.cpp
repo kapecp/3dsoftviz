@@ -1324,23 +1324,23 @@ osg::ref_ptr<Data::Node> Data::Graph::addFloatingRestrictionNode(QString name, o
 void Data::Graph::switch2Dand3D(){
 	is3D = !is3D;
 
-	//switch all edges
-	for (QMap<qlonglong, osg::ref_ptr<Data::Edge> >::iterator it = edges->begin (); it != edges->end (); ++it) {
-		osg::ref_ptr<Data::Edge> edge = it.value ();
-		if (is3D)
-			edge->turnTo3D();
-	   else
-			edge->turnTo2D();
-	}
+//	//switch all edges
+//	for (QMap<qlonglong, osg::ref_ptr<Data::Edge> >::iterator it = edges->begin (); it != edges->end (); ++it) {
+//		osg::ref_ptr<Data::Edge> edge = it.value ();
+//		if (is3D)
+//			edge->turnTo3D();
+//	   else
+//			edge->turnTo2D();
+//	}
 
-	//switch all meta edges
-	for (QMap<qlonglong, osg::ref_ptr<Data::Edge> >::iterator it = metaEdges->begin (); it != metaEdges->end (); ++it) {
-		osg::ref_ptr<Data::Edge> metaEdge = it.value ();
-		if (is3D)
-			metaEdge->turnTo3D();
-	   else
-			metaEdge->turnTo2D();
-	}
+//	//switch all meta edges
+//	for (QMap<qlonglong, osg::ref_ptr<Data::Edge> >::iterator it = metaEdges->begin (); it != metaEdges->end (); ++it) {
+//		osg::ref_ptr<Data::Edge> metaEdge = it.value ();
+//		if (is3D)
+//			metaEdge->turnTo3D();
+//	   else
+//			metaEdge->turnTo2D();
+//	}
 
 	//switch all nodes
 	for (QMap<qlonglong, osg::ref_ptr<Data::Node> >::iterator it = nodes->begin (); it != nodes->end (); ++it) {

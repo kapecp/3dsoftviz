@@ -35,7 +35,7 @@ EdgeGroup::~EdgeGroup(void)
  */
 void EdgeGroup::initEdges()
 {
-	osg::ref_ptr<osg::Group> allEdges = new osg::Group;
+	osg::ref_ptr<osg::Switch> allEdges = new osg::Switch;
 
 	osg::ref_ptr<osg::Vec2Array> edgeTexCoords = new osg::Vec2Array;
 	osg::ref_ptr<osg::Vec3Array> coordinates = new osg::Vec3Array;
@@ -99,20 +99,20 @@ void EdgeGroup::initEdges()
 		g2->addDrawable(orientedGeometry);
 		g2->setStateSet(orientedEdgeStateSet);
 
-		allEdges->addChild(g1);
-		allEdges->addChild(g2);
-
-
 		QList<osg::ref_ptr<osg::ShapeDrawable> >::iterator il = drawableList.begin();
-
+		osg::ref_ptr<osg::Group> cylinders = new osg::Group;
 		while (il != drawableList.end())
 		{
 			osg::ref_ptr<osg::Geode> geode = new osg::Geode;
 			setCylinder(*il);
 			geode->addDrawable(*il);
-			allEdges->addChild(geode);
+			cylinders->addChild(geode);
 			il++;
 		}
+
+		allEdges->insertChild(INDEX_GEOMETRY, g1, true);
+		allEdges->insertChild(INDEX_ORIENTED_GEOMETRY, g2, true);
+		allEdges->insertChild(INDEX_CYLINDERS, cylinders, false);
 
 	this->edgeGroup = allEdges;
 }
@@ -175,7 +175,7 @@ void EdgeGroup::getEdgeCoordinatesAndColors(osg::ref_ptr<Data::Edge> edge, int f
 	osg::Vec3 srcNodePosition = edge->getSrcNode()->getCurrentPosition();
 	osg::Vec3 dstNodePosition = edge->getDstNode()->getCurrentPosition();
 
-	edge->updateCoordinates(srcNodePosition, dstNodePosition, edge->getGraph()->getIs3D());
+	edge->updateCoordinates(srcNodePosition, dstNodePosition);
 	edge->setFirst(first);
 
 	//calculation of properties of cylinder
@@ -192,14 +192,8 @@ void EdgeGroup::getEdgeCoordinatesAndColors(osg::ref_ptr<Data::Edge> edge, int f
 	center->push_back(osg::Vec3((cor12.x() + cor34.x())/2, (cor12.y() + cor34.y())/2, (cor12.z() + cor34.z())/2));
 
 	//length of cylinder as length between cor12 and cor34
-	if (edge->getGraph()->getIs3D())
-	{
-		(*length) = (float) sqrt(pow((cor34.x() - cor12.x()),2) + pow((cor34.y() - cor12.y()),2) + pow((cor34.z() - cor12.z()),2));
-		(*radius) = 2;
-	} else {
-		(*length) = 0;
-		(*radius) = 0;
-	}
+	(*length) = (float) sqrt(pow((cor34.x() - cor12.x()),2) + pow((cor34.y() - cor12.y()),2) + pow((cor34.z() - cor12.z()),2));
+	(*radius) = 2;
 
 	//default direction for the cylinders
 	osg::Vec3 direction = osg::Vec3(0,0,1);
@@ -266,11 +260,10 @@ void EdgeGroup::synchronizeEdges()
 		drawableList.push_back(new osg::ShapeDrawable());
 
 		osg::ref_ptr<osg::Geode> geode = new osg::Geode;
-		osg::ref_ptr<osg::Cylinder> c = new osg::Cylinder(osg::Vec3(0,0,0), 1.0, 1.0);
 		osg::ref_ptr<osg::ShapeDrawable> drawable = drawableList.last();
 		setCylinder(drawable);
 		geode->addDrawable(drawable);
-		edgeGroup->addChild(geode);
+		edgeGroup->getChild(INDEX_CYLINDERS)->asGroup()->addChild(geode);
 	}
 
 }
@@ -306,7 +299,6 @@ void EdgeGroup::setCylinder(osg::ref_ptr<osg::ShapeDrawable> drawable){
 	drawable->setShape(c);
 	drawable->setColor(osg::Vec4 (1.0f, 1.0f, 1.0f, 0.5f));
 	drawable->getOrCreateStateSet()->setMode(GL_BLEND, osg::StateAttribute::ON);
-	drawable->getStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
 	drawable->getStateSet()->setMode(GL_DEPTH_TEST, osg::StateAttribute::ON);
 	drawable->getStateSet()->setMode(GL_LIGHTING, osg::StateAttribute::ON);
 	drawable->getStateSet()->setAttributeAndModes(new osg::BlendFunc, osg::StateAttribute::ON);

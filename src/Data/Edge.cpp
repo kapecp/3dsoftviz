@@ -31,10 +31,11 @@ Data::Edge::Edge(qlonglong id, QString name, Data::Graph* graph, osg::ref_ptr<Da
 	coordinates = new osg::Vec3Array();
 	edgeTexCoords = new osg::Vec2Array();
 
-	if (graph->getIs3D())
-		turnTo3D();
-	else
-		turnTo2D();
+	setCount(4);
+	float r = type->getSettings()->value("color.R").toFloat();
+	float g = type->getSettings()->value("color.G").toFloat();
+	float b = type->getSettings()->value("color.B").toFloat();
+	this->edgeColor = osg::Vec4(r, g, b, /*a*/0.5);
 }
 
 
@@ -75,7 +76,7 @@ void Data::Edge::unlinkNodesAndRemoveFromGraph() {
 	this->graph->removeEdge(this);
 }
 
-void Data::Edge::updateCoordinates(osg::Vec3 srcPos, osg::Vec3 dstPos, bool is3D)
+void Data::Edge::updateCoordinates(osg::Vec3 srcPos, osg::Vec3 dstPos)
 {
 	coordinates->clear();
 	edgeTexCoords->clear();
@@ -130,18 +131,6 @@ void Data::Edge::updateCoordinates(osg::Vec3 srcPos, osg::Vec3 dstPos, bool is3D
 
 	if (label != NULL)
 		label->setPosition((srcPos + dstPos) / 2 );
-}
-
-void Data::Edge::turnTo3D(){
-	setCount(0);
-}
-
-void Data::Edge::turnTo2D(){
-	setCount(4);
-	float r = type->getSettings()->value("color.R").toFloat();
-	float g = type->getSettings()->value("color.G").toFloat();
-	float b = type->getSettings()->value("color.B").toFloat();
-	this->edgeColor = osg::Vec4(r, g, b, /*a*/0.5);
 }
 
 osg::ref_ptr<osg::Drawable> Data::Edge::createLabel(QString name)
