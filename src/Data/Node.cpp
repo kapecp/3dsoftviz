@@ -65,15 +65,15 @@ Data::Node::Node( qlonglong id, QString name, Data::Type* type, float scaling, D
 
 	// MERGE BEGIN
 	// toto bolo u pleska/zelera
-    //	this->addDrawable(createNode(this->scale, Node::createStateSet(this->type)));
+	//	this->addDrawable(createNode(this->scale, Node::createStateSet(this->type)));
 
 	//	//vytvorenie grafickeho zobrazenia ako label
 	//	this->square = createSquare(this->type->getScale(), Node::createStateSet());
 	//	this->label = createLabel(this->type->getScale(), labelText);
 
 	// toto bolo u sivaka
-    this->square = createNode( this->scale * 4, OsgNode::createStateSet( this->type ) );
-    this->focusedSquare = createNode( this->scale * 16, OsgNode::createStateSet( this->type ) );
+	this->square = createNode( this->scale * 4, OsgNode::createStateSet( this->type ) );
+	this->focusedSquare = createNode( this->scale * 16, OsgNode::createStateSet( this->type ) );
 	this->addDrawable( square );
 	this->label = createLabel( this->type->getScale(), labelText );
 
@@ -189,16 +189,16 @@ void Data::Node::setParentNode( Node* parent )
 
 osg::Vec3f Data::Node::getCurrentPosition( bool calculateNew, float interpolationSpeed )
 {
-    //zisime aktualnu poziciu uzla v danom okamihu
-    if ( calculateNew ) {
-        float graphScale = Util::ApplicationConfig::get()->getValue( "Viewer.Display.NodeDistanceScale" ).toFloat();
+	//zisime aktualnu poziciu uzla v danom okamihu
+	if ( calculateNew ) {
+		float graphScale = Util::ApplicationConfig::get()->getValue( "Viewer.Display.NodeDistanceScale" ).toFloat();
 
-        //osg::Vec3 directionVector = osg::Vec3(targetPosition.x(), targetPosition.y(), targetPosition.z()) * graphScale - currentPosition;
-        osg::Vec3 directionVector = osg::Vec3( mRestrictedTargetPosition.x(), mRestrictedTargetPosition.y(), mRestrictedTargetPosition.z() ) * graphScale - currentPosition;
-        this->currentPosition = osg::Vec3( directionVector * ( usingInterpolation ? interpolationSpeed : 1 ) + this->currentPosition );
-    }
+		//osg::Vec3 directionVector = osg::Vec3(targetPosition.x(), targetPosition.y(), targetPosition.z()) * graphScale - currentPosition;
+		osg::Vec3 directionVector = osg::Vec3( mRestrictedTargetPosition.x(), mRestrictedTargetPosition.y(), mRestrictedTargetPosition.z() ) * graphScale - currentPosition;
+		this->currentPosition = osg::Vec3( directionVector * ( usingInterpolation ? interpolationSpeed : 1 ) + this->currentPosition );
+	}
 
-    return osg::Vec3( this->currentPosition );
+	return osg::Vec3( this->currentPosition );
 }
 
 void Data::Node::removeAllEdges()
@@ -260,10 +260,10 @@ void Data::Node::showLabel( bool visible )
 
 void Data::Node::reloadConfig()
 {
-    this->setDrawable( 0, createNode( this->scale, OsgNode::createStateSet( this->type ) ) );
+	this->setDrawable( 0, createNode( this->scale, OsgNode::createStateSet( this->type ) ) );
 	setSelected( selected );
 
-    osg::ref_ptr<osg::Drawable> newRect = createSquare( this->type->getScale(), OsgNode::createStateSet() );
+	osg::ref_ptr<osg::Drawable> newRect = createSquare( this->type->getScale(), OsgNode::createStateSet() );
 	osg::ref_ptr<osg::Drawable> newLabel = createLabel( this->type->getScale(), labelText );
 
 	if ( this->containsDrawable( label ) ) {
