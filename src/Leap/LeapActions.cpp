@@ -1,8 +1,10 @@
 #include "Leap/LeapActions.h"
+#include "Core/Core.h"
 
 Leap::LeapActions::LeapActions(){
     mouse = new Vwr::MouseControl();
     zoomCounter = 0;
+    cmrManipulator = AppCore::Core::getInstance( NULL )->getCoreWindow()->getCameraManipulator();
     qDebug() << "LeapActions() Constructor";
 }
 
@@ -12,17 +14,33 @@ void Leap::LeapActions::onSwipe(Gesture gesture)
     SwipeGesture swipe = gesture;
     Vector direction = swipe.direction();
     // najprv porovnam direction[0] a direction[1], aby som zistil o aky pohyb sa jedna
+    float duration = gesture.duration()/1000;
 
     if(abs(direction[0]) > abs(direction[1])){ // ak plati toto jedna sa o horizontalny pohyb
-        if(direction[0] > 0)
+        if(direction[0] > 0){
+            cmrManipulator->enableMovement(Vwr::CameraManipulator::Movement::RIGHT);
+            Sleep(duration);
+            cmrManipulator->disableMovement();
             qDebug() << "SwipeGesture - right";
-        else if(direction[0] < 0)
+        }else if(direction[0] < 0){
+            cmrManipulator->enableMovement(Vwr::CameraManipulator::Movement::LEFT);
+            Sleep(duration);
+            cmrManipulator->disableMovement();
             qDebug() << "SwipeGesture - left";
+        }
     }else{ // inak sa jedna o vertikalny pohyb
-        if(direction[1] > 0)
+        if(direction[1] > 0){
+            cmrManipulator->enableMovement(Vwr::CameraManipulator::UP);
+            Sleep(duration);
+            cmrManipulator->disableMovement();
             qDebug() << "SwipeGesture - up";
-        else if(direction[1] < 0)
+        }
+        else if(direction[1] < 0){
+            cmrManipulator->enableMovement(Vwr::CameraManipulator::DOWN);
+            Sleep(duration);
+            cmrManipulator->disableMovement();
             qDebug() << "SwipeGesture - down";
+        }
     }
 }
 

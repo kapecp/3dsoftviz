@@ -4,6 +4,7 @@
 #include "math.h"
 
 #include "Viewer/MouseControl.h"
+#include "Viewer/CameraManipulator.h"
 
 namespace Leap {
 
@@ -34,7 +35,7 @@ class LeapActions
     void Leap::LeapActions::onSwipe(Gesture gesture);
     void Leap::LeapActions::onKeyTap(Gesture gesture);
     void Leap::LeapActions::onScreenTap(Gesture gesture);
-  private:   
+  private:
     /**
      * @brief Constant that says how many iteration of a gesture should be called before zooming is executed
      */
@@ -49,6 +50,8 @@ class LeapActions
      * @brief Used to count how many iterations of zoomGraph were already called
      */
     int zoomCounter;
+
+    Vwr::CameraManipulator* cmrManipulator;
 };
 }
 #endif // LEAPACTIONS_H
