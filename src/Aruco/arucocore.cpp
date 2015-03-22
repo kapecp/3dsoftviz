@@ -171,19 +171,20 @@ void ArucoCore::drawTriangle(cv::Mat &Image, vector<aruco::Marker> &m,const aruc
         cv::projectPoints(objectPoints, m[i].Rvec, m[i].Tvec, CP.CameraMatrix, CP.Distorsion, imagePoint);
         pointArray[i] = imagePoint[0];
     }
-
+/*
     for(unsigned int j = 0; j < m.size(); j++ ) {
         cv::circle(Image, pointArray[j], 50, cv::Scalar(255,0,0), 3);
     }
-
+*/
     if( m.size() == 2 ) {
         cv::line(Image, pointArray[0], pointArray[1], cv::Scalar(0,255,255), 2, CV_AA);
     }
 
     if( m.size() == 3 ) {
-        cv::line(Image, pointArray[0], pointArray[1], cv::Scalar(0,255,255), 2, CV_AA);
-        cv::line(Image, pointArray[1], pointArray[2], cv::Scalar(0,255,255), 2, CV_AA);
-        cv::line(Image, pointArray[2], pointArray[0], cv::Scalar(0,255,255), 2, CV_AA);
+        cv::rectangle(Image, pointArray[2], pointArray[0], cv::Scalar(0,255,255), CV_FILLED,8,0);
+        cv::line(Image, pointArray[0], pointArray[1], cv::Scalar(0,0,255), 2, CV_AA);
+        cv::line(Image, pointArray[1], pointArray[2], cv::Scalar(0,0,255), 2, CV_AA);
+        cv::line(Image, pointArray[2], pointArray[0], cv::Scalar(0,0,255), 2, CV_AA);
     }
 }
 

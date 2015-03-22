@@ -122,11 +122,13 @@ void ArucoThread::run()
 
             frame = mCapVideo->queryFrame();		// get image from camera
 
-            if(mMultiMarkerEnabled) {
 
-                // add image to aruco and get position vector and rotation quaternion
-                //markerDetected = aCore.getDetectedPosAndQuat( frame, actPosArray, actQuatArray );
-                aCore.detect(frame.clone() );
+
+            if(mMultiMarkerEnabled) {
+                //TODO funkcionalita ku detekcii viacerych markerov
+                frame = cv::imread("C:\\Users\\Leachim\\Dropbox (Personal)\\Tim 9 - 2014-15\\Work\\KinectAruco\\pokus0\\frame1.jpg");
+                aCore.detect(frame.clone());
+
             } else {
                 // graph controll
                 markerDetected = aCore.getPosAndQuat( mGrM, actPosArray, actQuatArray );

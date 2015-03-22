@@ -6,6 +6,7 @@
 #include "Aruco/arucothread.h"
 #include "QOpenCV/FaceRecognitionThread.h"
 #include "QOpenCV/FaceRecognitionWindow.h"
+#include "QOpenCV/OpenCVWindow.h"
 #include "Viewer/CameraManipulator.h"
 #include "OpenCV/CamSelectCore.h"
 #include "OpenCV/CapVideo.h"
@@ -22,6 +23,7 @@ OpenCV::OpenCVCore::OpenCVCore( QApplication* app, QWidget* parent )
 
     mThrsCreated	= false;
     mOpencvDialog	= NULL;
+    mOpencvWindow   = NULL;
     mThrFaceRec		= NULL;
     mThrAruco		= NULL;
 
@@ -30,20 +32,41 @@ OpenCV::OpenCVCore::OpenCVCore( QApplication* app, QWidget* parent )
 OpenCV::OpenCVCore::~OpenCVCore( void )
 {
     if( mThrsCreated ) {
+        if(mThrFaceRec != NULL)
+        {
+            mThrFaceRec->setCancel(true);
+            mThrFaceRec->setSendImgEnabled(false);
+        }
 
-        mThrFaceRec->setCancel(true);
-        mThrAruco->setCancel(true);
-        mThrFaceRec->setSendImgEnabled(false);
-        mThrAruco->setSendImgEnabling(false);
+        if(mThrAruco != NULL)
+        {
+            mThrAruco->setCancel(true);
+            mThrAruco->setSendImgEnabling(false);
+        }
 
-        mOpencvDialog->disconnect();
-        mOpencvDialog->deleteLater();
+        if(mOpencvDialog != NULL)
+        {
+            mOpencvDialog->disconnect();
+            mOpencvDialog->deleteLater();
+        }
 
-        mThrFaceRec->wait();
-        mThrAruco->wait();
+        if(mOpencvWindow != NULL)
+        {
+            mOpencvWindow->disconnect();
+            mOpencvWindow->deleteLater();
+        }
 
-        mThrFaceRec->deleteLater();
-        mThrAruco->deleteLater();
+        if(mThrFaceRec != NULL)
+        {
+            mThrFaceRec->wait();
+            mThrFaceRec->deleteLater();
+        }
+
+        if(mThrAruco != NULL)
+        {
+            mThrAruco->wait();
+            mThrAruco->deleteLater();
+        }
 
         delete OpenCV::CamSelectCore::getInstance();
     }
@@ -71,6 +94,26 @@ void OpenCV::OpenCVCore::faceRecognition()
         createConnectionAruco();
     }
     mOpencvDialog->show();
+}
+
+void OpenCV::OpenCVCore::opencvInit()
+{
+    if( !mOpencvWindow ) {
+        if( !mThrsCreated ) {
+            //create Threads
+            mThrsCreated = true;
+            mThrAruco = new ArucoModul::ArucoThread();
+        }
+        qDebug() << "Creating OpenCV Window";
+        mOpencvWindow =  new QOpenCV::OpenCVWindow(mParent, mApp);
+    }
+
+    if( mOpencvWindow->isHidden() )
+    {
+        createConnectionMultiAruco();
+    }
+
+    mOpencvWindow->show();
 }
 
 void  OpenCV::OpenCVCore::createPermanentConnection(){
@@ -229,6 +272,28 @@ void OpenCV::OpenCVCore::createConnectionAruco(){
                       mThrAruco,
                       SLOT(interchangeMarkers()) );
 
+}
+
+void OpenCV::OpenCVCore::createConnectionMultiAruco()
+{
+    QObject::connect( mOpencvWindow,
+                      SIGNAL(startMultiMarker()),
+                      mThrAruco,
+                      SLOT(start()));
+    QObject::connect( mOpencvWindow,
+                      SIGNAL(setMultiMarker(bool)),
+                      mThrAruco,
+                      SLOT(setMultiMarker(bool)) );
+
+    QObject::connect( mOpencvWindow,
+                      SIGNAL(setCapVideoMarker( OpenCV::CapVideo *)),
+                      mThrAruco,
+                      SLOT(setCapVideo(OpenCV::CapVideo*)) );
+
+    QObject::connect( mThrAruco,
+                      SIGNAL(pushImagemMat(cv::Mat)),
+                      mOpencvWindow,
+                      SLOT(setLabel(cv::Mat)) );
 }
 
 OpenCV::OpenCVCore* OpenCV::OpenCVCore::getInstance( QApplication* app, QWidget* parent )
