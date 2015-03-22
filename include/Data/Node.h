@@ -27,7 +27,7 @@ class Graph;
 class GraphLayout;
 class Cluster;
 
-typedef osg::TemplateIndexArray<unsigned int, osg::Array::UIntArrayType,4,1> ColorIndexArray;
+
 
 /**
 	*  \class Node
@@ -56,7 +56,6 @@ public:
 		*/
 	~Node( void );
 
-
 	/**
 		*  \fn inline public constant  getId
 		*  \brief Returns ID of the Node
@@ -76,7 +75,6 @@ public:
 	{
 		return graph;
 	}
-
 
 	/**
 		*  \fn inline public constant  getName
@@ -184,76 +182,6 @@ public:
 	void setIsFocused( bool value );
 
 	/**
-		 * \fn public constant targetPosition
-		 * \brief Gets target position of a node.
-		 * \return target position
-		 * Returned target position IS NOT multiplied by the graph scale.
-		 */
-	osg::Vec3f targetPosition() const;
-	osg::Vec3f getTargetPosition() const;
-	/**
-		 * \fn public constant targetPositionConstRef
-		 * \brief Gets target position of a node.
-		 * \return target position
-		 * Returned target position IS NOT multiplied by the graph scale.
-		 */
-	const osg::Vec3f& targetPositionConstRef() const;
-
-	/**
-		 * \fn public setTargetPosition(const osg::Vec3f &position)
-		 * \brief Sets target position of a node.
-		 * \param position target position
-		 * Target position being set MUST NOT BE multiplied by the graph scale.
-		 */
-	void setTargetPosition( const osg::Vec3f& position );
-
-	/**
-		 * \fn public constant restrictedTargetPosition
-		 * \brief Gets restricted target position of a node.
-		 * \return restricted target position
-		 * Returned restricted target position IS NOT multiplied by the graph scale.
-		 */
-	osg::Vec3f restrictedTargetPosition() const;
-
-	/**
-		 * \fn public constant restrictedTargetPositionConstRef
-		 * \brief Gets restricted target position of a node.
-		 * \return restricted target position
-		 * Returned restricted target position IS NOT multiplied by the graph scale.
-		 */
-	const osg::Vec3f& restrictedTargetPositionConstRef() const;
-
-	/**
-		 * \fn public setRestrictedTargetPosition(const osg::Vec3f &position)
-		 * \brief Sets restricted target position of a node.
-		 * \param position restricted target position
-		 * Restricted target position being set MUST NOT BE multiplied by the graph scale.
-		 */
-	void setRestrictedTargetPosition( const osg::Vec3f& position );
-
-	/**
-	    *  \fn public  getCurrentPosition(bool calculateNew = false, float interpolationSpeed = 1.0f)
-	    *  \brief Returns node actual position
-	    *  \param      calculateNew    If true, new position will be calculated through interpolation
-	    *  \param      float   interpolation speed
-	    *  \return osg::Vec3f actual position
-	    *  returned currentPosition IS already multiplied by the graph scale
-	    */
-	osg::Vec3f getCurrentPosition( bool calculateNew = false, float interpolationSpeed = 1.0f );
-
-
-	/**
-		*  \fn inline public  setCurrentPosition(osg::Vec3f val)
-		*  \brief Sets current node position
-		*  \param   val  current node position
-		*  currentPosition being set MUST BE multiplied by the graph scale
-		*/
-	void setCurrentPosition( osg::Vec3f val )
-	{
-		currentPosition.set( val );
-	}
-
-	/**
 		*	\fn public removeAllEdges
 		*	\brief Removes all Edges which connect to the Node
 		*
@@ -293,7 +221,6 @@ public:
 		return nested_parent;
 	}
 
-
 	/**
 		*  \fn inline public constant  getEdges
 		*  \brief Returns all Edges connected to the Node
@@ -314,55 +241,14 @@ public:
 		edges = val;
 	}
 
-
 	/**
 		*  \fn public  addEdge(osg::ref_ptr<Data::Edge> edge)
 		*  \brief Adds new Edge to the Node
 		*  \param    edge   new Edge
 		*/
 	void addEdge( osg::ref_ptr<Data::Edge> edge );
+
 	void removeEdge( osg::ref_ptr<Data::Edge> edge );
-
-
-	/**
-		*  \fn inline public  setForce(osg::Vec3f v)
-		*  \brief Sets force of node
-		*  \param      v  Force vector
-		*/
-	void setForce( osg::Vec3f v )
-	{
-		force = v;
-	}
-
-	/**
-		*  \fn inline public constant  getForce
-		*  \brief Gets force of node
-		*  \return osg::Vec3f Force vector
-		*/
-	osg::Vec3f getForce() const
-	{
-		return force;
-	}
-
-	/**
-		*  \fn inline public  addForce(bool fixed)
-		*  \brief Adds force V to node force
-		*  \param       v  Force V
-		*/
-	void addForce( osg::Vec3f v )
-	{
-		force += v;
-	}
-
-	/**
-		*  \fn inline public  resetForce
-		*  \brief Sets nodes force to zero value.
-		*/
-	void resetForce()
-	{
-		force = osg::Vec3f( 0,0,0 );
-	}
-
 
 	/**
 		*  \fn inline public  setFixed(bool fixed)
@@ -406,34 +292,6 @@ public:
 	void setCluster( Cluster* cluster );
 
 	virtual QSet<Node*> getIncidentNodes() const;
-
-	/**
-		*  \fn inline public  setSelected(bool selected) and  color of selected node
-		*  \brief Sets node picked state
-		*  \param     selected     picked state
-		*/
-	void setSelected( bool selected )
-	{
-		if ( selected ) {
-			setDrawableColor( 0, osg::Vec4( 0.0f, 0.1f, 1.0f, 1.0f ) );    // color of selected node
-		}
-		else {
-			setDrawableColor( 0, color );
-		}
-
-		this->selected = selected;
-	}
-
-	/**
-		*  \fn inline public constant  isSelected
-		*  \brief Returns if the Node is selected
-		*  \return bool true, if the Node is selected
-		*/
-	bool isSelected() const
-	{
-		return selected;
-	}
-
 
 	/**
 		*  \fn inline public  setIgnored(bool b)
@@ -488,28 +346,6 @@ public:
 	}
 
 	/**
-		*  \fn inline public  setVelocity(osg::Vec3f v)
-		*  \brief Sets node force for next iteration
-		*  \param    v  Force in actual iteration
-		*/
-	void setVelocity( osg::Vec3f v )
-	{
-		velocity = v;
-	}
-
-	/**
-		*  \fn inline public  resetVelocity
-		*  \brief Reset node force for next iteration
-		*/
-	void resetVelocity()
-	{
-		velocity = osg::Vec3( 0,0,0 );
-	}
-
-
-
-
-	/**
 		*  \fn public  equals(Node* node)
 		*  \brief Checks if the node and this object is the same object
 		*  \param   node     Node to compare
@@ -524,33 +360,6 @@ public:
 		*  \return QString
 		*/
 	QString toString() const;
-
-
-
-	/**
-		*  \fn inline public  setColor(osg::Vec4 color)
-		*  \brief Sets default node color
-		*  \param     color   default color
-		*/
-	void setColor( osg::Vec4 color )
-	{
-		this->color = color;
-
-		if ( !selected ) {
-			setDrawableColor( 0, color );
-		}
-	}
-
-	void setDefaultColor();
-
-	void setInvisible()
-	{
-		setColor( osg::Vec4( 0,0,0,0 ) );
-	}
-
-
-
-
 
 	/**
 		*  \fn public  showLabel(bool visible)
@@ -578,54 +387,7 @@ public:
 		inDB = true;
 	}
 
-
-	/**
-		*  \fn inline public constant  isUsingInterpolation
-		*  \brief Returns if the Node is using interpolation or not
-		*  \return bool true, if the Node is using interpolation
-		*/
-	bool isUsingInterpolation() const
-	{
-		return usingInterpolation;
-	}
-
-	/**
-		*  \fn inline public  setUsingInterpolation(bool val)
-		*  \brief Sets if the Node is using interpolation or not
-		*  \param      val
-		*/
-	void setUsingInterpolation( bool val )
-	{
-		usingInterpolation = val;
-	}
-
-	void setParentBall( osg::Sphere* val )
-	{
-		parentBall = val;
-	}
-
-	osg::Sphere* getParentBall()
-	{
-		return parentBall;
-	}
-
-	void setBall( osg::Geode* val )
-	{
-		ball = val;
-	}
-
-
-
-	osg::ref_ptr<osg::AutoTransform> getOutBall()
-	{
-		return outBall;
-	}
-
-	void setOutBall( osg::ref_ptr<osg::AutoTransform> val )
-	{
-		outBall = val;
-	}
-
+    void setDefaultColor();
 
 	/**
 		*  \fn public  reloadConfig
@@ -642,7 +404,6 @@ public:
 	{
 		nested_parent = val;
 	}
-
 
 	/**
 		*  \fn inline public  getName
@@ -683,6 +444,7 @@ public:
 	{
 		return nodeDegree;
 	}
+
 	void setNodeDegree( float nodeDegree )
 	{
 		this->nodeDegree = nodeDegree;
@@ -692,6 +454,7 @@ public:
 	{
 		return nodeCloseness;
 	}
+
 	void setNodeCloseness( float nodeCloseness )
 	{
 		this->nodeCloseness = nodeCloseness;
@@ -731,7 +494,6 @@ public:
 	//volovar_kon
 private:
 
-
 	/**
 		*	bool inDB
 		*	\brief Flag if the Type is in database
@@ -749,7 +511,6 @@ private:
 		*	\brief scaling of the Node
 		*/
 	float scale;
-
 
 	/**
 		*  QString name
@@ -776,24 +537,10 @@ private:
 	bool mIsFocused;
 
 	/**
-		 * osg::Vec3f mTargetPosition
-		 * \brief Target position of a node.
-		 */
-	osg::Vec3f mTargetPosition;
-
-
-	/**
 		*  QMap<qlonglong, osg::ref_ptr<Data::Edge> > * edges
 		*  \brief Edges connected to the Node
 		*/
 	QMap<qlonglong, osg::ref_ptr<Data::Edge> >* edges;
-
-	/**
-	  *  osg::Vec3f force
-	  *  \brief Node force
-	  */
-	osg::Vec3f force;
-
 
 	/**
 		*  bool fixed
@@ -830,39 +577,10 @@ private:
 	bool removableByUser;
 
 	/**
-		*  bool usingInterpolation
-		*  \brief node interpolation usage
-		*/
-	bool usingInterpolation;
-
-
-	/**
-	     * osg::Vec3f mRestrictedTargetPosition
-	     * \brief Restricted target position of a node.
-	     */
-	osg::Vec3f mRestrictedTargetPosition;
-
-
-	/**
-	    *  osg::Vec3f currentPosition
-	    *  \brief node current position
-	    */
-	osg::Vec3f currentPosition;
-
-	/**
-		*  \fn private  setDrawableColor(int pos, osg::Vec4 color)
-		*  \brief Sets drawble color
-		*  \param     pos     drawable position
-		*  \param     color     drawable color
-		*/
-	void setDrawableColor( int pos, osg::Vec4 color );
-
-	/**
 		*  QString labelText
 		*  \brief Text show in the label
 		*/
 	QString labelText;
-
 
 	float nodeDegree;
 	float nodeCloseness;
@@ -882,13 +600,6 @@ protected:
 		*  \brief Settings of the Node
 		*/
 	QMap<QString, QString>* settings;
-	osg::Vec4 colorOfNode;
-
-	/**
-	    *  bool selected
-	    *  \brief node picked state
-	    */
-	bool selected;
 };
 }
 

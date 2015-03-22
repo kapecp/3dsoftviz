@@ -134,34 +134,7 @@ void Data::Node::setIsFocused( bool value )
 		setColor( osg::Vec4( 1.0f, 1.0f, 1.0f, 1.0 ) );
 	}
 }
-osg::Vec3f Data::Node::getTargetPosition() const
-{
-	return mTargetPosition;
-}
-osg::Vec3f Data::Node::targetPosition() const
-{
-	return mTargetPosition;
-}
-const osg::Vec3f& Data::Node::targetPositionConstRef() const
-{
-	return mTargetPosition;
-}
-void Data::Node::setTargetPosition( const osg::Vec3f& position )
-{
-	mTargetPosition = position;
-}
-osg::Vec3f Data::Node::restrictedTargetPosition() const
-{
-	return mRestrictedTargetPosition;
-}
-const osg::Vec3f& Data::Node::restrictedTargetPositionConstRef() const
-{
-	return mRestrictedTargetPosition;
-}
-void Data::Node::setRestrictedTargetPosition( const osg::Vec3f& position )
-{
-	mRestrictedTargetPosition = position;
-}
+
 
 void Data::Node::addEdge( osg::ref_ptr<Data::Edge> edge )
 {
@@ -187,19 +160,7 @@ void Data::Node::setParentNode( Node* parent )
 	this->nested_parent = parent;
 }
 
-osg::Vec3f Data::Node::getCurrentPosition( bool calculateNew, float interpolationSpeed )
-{
-	//zisime aktualnu poziciu uzla v danom okamihu
-	if ( calculateNew ) {
-		float graphScale = Util::ApplicationConfig::get()->getValue( "Viewer.Display.NodeDistanceScale" ).toFloat();
 
-		//osg::Vec3 directionVector = osg::Vec3(targetPosition.x(), targetPosition.y(), targetPosition.z()) * graphScale - currentPosition;
-		osg::Vec3 directionVector = osg::Vec3( mRestrictedTargetPosition.x(), mRestrictedTargetPosition.y(), mRestrictedTargetPosition.z() ) * graphScale - currentPosition;
-		this->currentPosition = osg::Vec3( directionVector * ( usingInterpolation ? interpolationSpeed : 1 ) + this->currentPosition );
-	}
-
-	return osg::Vec3( this->currentPosition );
-}
 
 void Data::Node::removeAllEdges()
 {
@@ -234,18 +195,7 @@ bool Data::Node::equals( Node* node )
 	return true;
 }
 
-void Data::Node::setDrawableColor( int pos, osg::Vec4 color )
-{
-	//nastavenie farby uzla
-	osg::Geometry* geometry  = dynamic_cast<osg::Geometry*>( this->getDrawable( pos ) );
 
-	if ( geometry != NULL ) {
-		osg::Vec4Array* colorArray =  dynamic_cast<osg::Vec4Array*>( geometry->getColorArray() );
-
-		colorArray->pop_back();
-		colorArray->push_back( color );
-	}
-}
 
 void Data::Node::showLabel( bool visible )
 {
@@ -312,12 +262,12 @@ QSet<Data::Node*> Data::Node::getIncidentNodes() const
 
 void Data::Node::setDefaultColor()
 {
-	float r = type->getSettings()->value( "color.R" ).toFloat();
-	float g = type->getSettings()->value( "color.G" ).toFloat();
-	float b = type->getSettings()->value( "color.B" ).toFloat();
-	float a = type->getSettings()->value( "color.A" ).toFloat();
+    float r = type->getSettings()->value( "color.R" ).toFloat();
+    float g = type->getSettings()->value( "color.G" ).toFloat();
+    float b = type->getSettings()->value( "color.B" ).toFloat();
+    float a = type->getSettings()->value( "color.A" ).toFloat();
 
-	this->setColor( osg::Vec4( r, g, b, a ) );
+    this->setColor( osg::Vec4( r, g, b, a ) );
 }
 
 // Duransky start - Funkcie na nastavenie a ziskanie cisla vertigo roviny, na ktorej sa uzol nachadza

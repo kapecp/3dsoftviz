@@ -50,7 +50,6 @@ Data::Edge::Edge( qlonglong id, QString name, Data::Graph* graph, osg::ref_ptr<D
 	updateCoordinates( getSrcNode()->restrictedTargetPosition(), getDstNode()->restrictedTargetPosition() );
 }
 
-
 Data::Edge::~Edge( void )
 {
 	this->graph = NULL;
@@ -89,72 +88,6 @@ void Data::Edge::unlinkNodesAndRemoveFromGraph()
 	this->graph->removeEdge( this );
 }
 
-void Data::Edge::updateCoordinates( osg::Vec3 srcPos, osg::Vec3 dstPos )
-{
-	coordinates->clear();
-	edgeTexCoords->clear();
-
-	osg::Vec3d viewVec( 0, 0, 1 );
-	osg::Vec3d up;
-
-	if ( camera != 0 ) {
-		osg::Vec3d eye;
-		osg::Vec3d center;
-
-		camera->getViewMatrixAsLookAt( eye,center,up );
-
-		viewVec = eye - center;
-
-		//	std::cout << eye.x() << " " << eye.y() << " " << eye.z() << "\n";
-		//	std::cout << center.x() << " " << center.y() << " " << center.z() << "\n";
-	}
-
-	viewVec.normalize();
-
-	//getting setting for edge scale
-
-	osg::Vec3 x, y;
-	x.set( srcPos );
-	y.set( dstPos );
-
-	osg::Vec3d edgeDir = x - y;
-	length = edgeDir.length();
-
-	up = edgeDir ^ viewVec;
-	up.normalize();
-
-	up *= this->scale;
-
-	//updating edge coordinates due to scale
-	coordinates->push_back( osg::Vec3d( x.x() + up.x(), x.y() + up.y(), x.z() + up.z() ) );
-	coordinates->push_back( osg::Vec3d( x.x() - up.x(), x.y() - up.y(), x.z() - up.z() ) );
-	coordinates->push_back( osg::Vec3d( y.x() - up.x(), y.y() - up.y(), y.z() - up.z() ) );
-	coordinates->push_back( osg::Vec3d( y.x() + up.x(), y.y() + up.y(), y.z() + up.z() ) );
-
-	float repeatCnt = static_cast<float>( length / ( 2.f * this->scale ) );
-
-	//init edge-text (label) coordinates
-	edgeTexCoords->push_back( osg::Vec2( 0,1.0f ) );
-	edgeTexCoords->push_back( osg::Vec2( 0,0.0f ) );
-	edgeTexCoords->push_back( osg::Vec2( repeatCnt,0.0f ) );
-	edgeTexCoords->push_back( osg::Vec2( repeatCnt,1.0f ) );
-
-	if ( label != NULL ) {
-		label->setPosition( ( srcPos + dstPos ) / 2 );
-	}
-
-	osg::Geometry* geometry = getDrawable( 0 )->asGeometry();
-	if ( geometry != NULL ) {
-		geometry->setVertexArray( coordinates );
-		geometry->setTexCoordArray( 0, edgeTexCoords );
-
-		osg::Vec4Array* colorArray =  dynamic_cast<osg::Vec4Array*>( geometry->getColorArray() );
-
-		colorArray->pop_back();
-		colorArray->push_back( getEdgeColor() );
-	}
-}
-
 float Data::Edge::getEdgeStrength() const
 {
 	return edgeStrength;
@@ -164,7 +97,6 @@ void Data::Edge::setEdgeStrength( float value )
 {
 	edgeStrength = value;
 }
-
 
 osg::ref_ptr<Data::Node> Data::Edge::getSecondNode( osg::ref_ptr<Data::Node> firstNode )
 {
@@ -176,7 +108,6 @@ osg::ref_ptr<Data::Node> Data::Edge::getSecondNode( osg::ref_ptr<Data::Node> fir
 	}
 
 }
-
 
 QString Data::Edge::toString() const
 {

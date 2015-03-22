@@ -35,7 +35,6 @@ public:
 	/**
 	    * \fn public constructor Edge(qlonglong id, QString name, Data::Graph* graph, osg::ref_ptr<Data::Node> srcNode, osg::ref_ptr<Data::Node> dstNode, Data::Type* type, bool isOriented, int pos = 0, osg::ref_ptr<osg::Camera> camera = 0)
 	    * \brief  Creates new Edge object connecting two Nodes
-	    *
 	    * \param id	ID of the Edge
 	    * \param name 		name of the Edge
 	    * \param graph 	Graph to which the Edge belongs
@@ -86,76 +85,10 @@ public:
 	}
 
 	/**
-	    *  \fn inline public  getScale()
-	    *  \brief Gets edge scale
-	    *  \return float size of the scale
-	    */
-	float getScale()
-	{
-		return scale;
-	}
-
-	/**
-	    *  \fn inline public  setScale(float val)
-	    *  \brief Sets new scale
-	    *  \param   val   new scale for the Edge
-	    */
-	void setScale( float val )
-	{
-		scale = val;
-	}
-
-	/**
-	    * \fn inline public constant getSrcNode
-	    * \brief  Returns the starting Node of the Edge
-	    * \return osg::ref_ptr<Data::Node> starting Node of the Edge
-	    */
-	osg::ref_ptr<Data::Node> getSrcNode() const
-	{
-		return srcNode;
-	}
-
-	/**
-	    * \fn inline public constant setSrcNode
-	    * \brief  Sets new starting Node of the Edge
-	    *
-	    * OBSOLETE - DO NOT USE IT
-	    *
-	    * \param val new starting Node of the Edge
-	    */
-	void setSrcNode( osg::ref_ptr<Data::Node> val )
-	{
-		srcNode = val;
-	}
-
-	/**
-	    * \fn inline public constant getDstNode
-	    * \brief  Returns ending Node of the Edge
-	    * \return osg::ref_ptr<Data::Node> ending Node of the Edge
-	    */
-	osg::ref_ptr<Data::Node> getDstNode() const
-	{
-		return dstNode;
-	}
-
-	/**
-	    * \fn inline public setDstNode(osg::ref_ptr<Data::Node> val)
-	    * \brief Sets new ending Node of the Edge
-	    *
-	    * OBSOLETE - DO NOT USE IT
-	    *
-	    * \param val new ending Node of the Edge
-	    */
-	void setDstNode( osg::ref_ptr<Data::Node> val )
-	{
-		dstNode = val;
-	}
-
-	/**
-	            * \fn public getSecondNode(osg::ref_ptr<Data::Node> firstNode)
-	            * \brief  Returns the second ending Node of the Edge
-	            * \return osg::ref_ptr<Data::Node> the second ending Node of the Edge
-	            */
+        * \fn public getSecondNode(osg::ref_ptr<Data::Node> firstNode)
+        * \brief  Returns the second ending Node of the Edge
+        * \return osg::ref_ptr<Data::Node> the second ending Node of the Edge
+    */
 	osg::ref_ptr<Data::Node> getSecondNode( osg::ref_ptr<Data::Node> firstNode );
 
 	/**
@@ -225,10 +158,7 @@ public:
 	    * \brief  Returns human-readable string representation of the Edge
 	    * \return QString
 	    */
-
 	QString toString() const ;
-
-
 
 	/**
 	    *  \fn inline public constant  getCooridnates
@@ -241,54 +171,6 @@ public:
 	}
 
 	/**
-	    *  \fn inline public constant  getLength
-	    *  \brief Returns length of the Edge
-	    *  \return float length of the Edge
-	    */
-
-	double getLength() const
-	{
-		return length;
-	}
-
-
-	/**
-	    *  \fn public  updateCoordinates(osg::Vec3 srcPos, osg::Vec3 dstNode)
-	    *  \brief Updates coordinates of the Edge
-	    *  \param    srcPos    new coordinates of the starting Node
-	    *  \param   dstNode    new coordinates of the ending Node
-	    */
-	void updateCoordinates( osg::Vec3 srcPos, osg::Vec3 dstNode );
-
-
-	/**
-	    *  \fn inline public constant  getEdgeColor
-	    *  \brief Returns the color of the Edge
-	    *  \return osg::Vec4 color of the Edge
-	    */
-	osg::Vec4 getEdgeColor() const
-	{
-		if ( selected ) {
-			return osg::Vec4( 0.0f, 0.0f, 1.0f, 1.0f );    // color of selected node
-		}
-		else {
-			return edgeColor;
-		}
-	}
-
-
-	/**
-	    *  \fn inline public  setEdgeColor(osg::Vec4 val)
-	    *  \brief Sets the color of the Edge
-	    *  \param     val   new color
-	    */
-	void setEdgeColor( osg::Vec4 val )
-	{
-		edgeColor = val;
-	}
-
-
-	/**
 	    *  \fn inline public constant  getEdgeTexCoords
 	    *  \brief Returns Texture coordinates array.
 	    *  \return osg::ref_ptr<osg::Vec2Array>
@@ -296,49 +178,6 @@ public:
 	osg::ref_ptr<osg::Vec2Array> getEdgeTexCoords() const
 	{
 		return edgeTexCoords;
-	}
-
-
-	/**
-	    *  \fn inline public constant  getCamera
-	    *  \brief returns current camera looking at edge
-	    *  \return osg::ref_ptr<osg::Camera>
-	    */
-	osg::ref_ptr<osg::Camera> getCamera() const
-	{
-		return camera;
-	}
-
-
-	/**
-	    *  \fn inline public  setCamera(osg::ref_ptr<osg::Camera> val)
-	    *  \brief sets current camera used in viewer.
-	    *  \param       val
-	    */
-	void setCamera( osg::ref_ptr<osg::Camera> val )
-	{
-		camera = val;
-	}
-
-	/**
-	    *  \fn inline public constant  isSelected
-	    *  \brief Returns selected flag
-	    *  \return bool true, if the Edge is selected
-	    */
-	bool isSelected() const
-	{
-		return selected;
-	}
-
-
-	/**
-	    *  \fn inline public  setSelected(bool val)
-	    *  \brief Sets the selected flag of the Edge
-	    *  \param       val   true, if the Edge is selected
-	    */
-	void setSelected( bool val )
-	{
-		selected = val;
 	}
 
 	/**
@@ -360,7 +199,6 @@ public:
 		inDB = true;
 	}
 
-
 	/**
 	    *  \fn inline public  getGraph
 	    *  \brief Returns the Graph to which is the Edge assigned
@@ -370,7 +208,6 @@ public:
 	{
 		return graph;
 	}
-
 
 	/**
 	    *  \fn inline public constant  getSettings
@@ -462,16 +299,17 @@ public:
 		return isInvisible;
 	}
 
-
 	float getEdgeStrength() const;
 	void setEdgeStrength( float value );
 
 	void reloadLabel();
 	void showLabel( bool visible );
+
 private:
 
 	bool isInvisible;
-	/**
+
+    /**
 	    *  Data::Graph * graph
 	    *  \brief Graph to which the Edge belongs
 	    */
@@ -497,26 +335,6 @@ private:
 	QString name;
 
 	/**
-	    *  float length
-	    *  \brief Length of the Edge
-	    */
-
-	double length;
-
-
-	/**
-	    *  bool selected
-	    *  \brief True, if edge is picked
-	    */
-	bool selected;
-
-	/**
-	    *  float scale
-	    *  \brief scale of edge
-	    */
-	float scale;
-
-	/**
 	            *  bool shared_X
 	            *  \brief if true, then nodes of edge have shared X coordinate
 	            */
@@ -535,23 +353,10 @@ private:
 	bool shared_Z;
 
 	/**
-	    *  osg::ref_ptr camera
-	    *  \brief Current camera used in viewer. It is used for billboarding purposes.
-	    */
-	osg::ref_ptr<osg::Camera> camera;
-
-	/**
 	    *  Util::ApplicationConfig * appConf
 	    *  \brief ApplicationConfig
 	    */
 	Util::ApplicationConfig* appConf;
-
-
-	/**
-	    *  osg::Vec4 edgeColor
-	    *  \brief Color of the Edge
-	    */
-	osg::Vec4 edgeColor;
 
 	float edgeStrength;
 
