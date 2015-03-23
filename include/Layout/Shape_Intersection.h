@@ -10,14 +10,22 @@ namespace Layout {
 /**
  * Shape which is intersection of more shapes of various types.
  */
-class Shape_Intersection : public Shape_Composite {
+class Shape_Intersection : public Shape_Composite
+{
 
 	/**
 	 * [visitor pattern]
 	 */
-	virtual void accept (
-			ShapeVisitor & visitor
-			);
+	virtual void accept(
+		ShapeVisitor& visitor
+	);
+public:
+	//volovar_zac
+	Shape_Intersection()
+	{
+		setAlpha( 0.06f );   //shapu bola pridaná vlastnosť alphy, kvoli manipulácii s aplhou pri radial layoute
+	}
+	//volovar_kon
 
 }; // class
 

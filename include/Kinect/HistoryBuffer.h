@@ -8,6 +8,8 @@
 #ifndef _HISTORY_BUFFER_H_
 #define _HISTORY_BUFFER_H_
 
+#ifdef NITE2_FOUND
+
 #include "NiTE.h"
 
 
@@ -19,36 +21,41 @@ template <int BufferSize>
 class HistoryBuffer
 {
 public:
-	HistoryBuffer() : m_currentHead(-1), m_size(0)
+	HistoryBuffer() : m_currentHead( -1 ), m_size( 0 )
 	{}
 	/**
 	 * @brief add point to history buffer
 	 * @param point representation of point in 3D space - float type
 	 */
-	void AddPoint(const nite::Point3f& point)
+	void AddPoint( const nite::Point3f& point )
 	{
 		++m_currentHead;
-		if (m_currentHead == BufferSize)
+		if ( m_currentHead == BufferSize ) {
 			m_currentHead = 0;
+		}
 		m_points[m_currentHead] = point;
-		if (m_size < BufferSize)
+		if ( m_size < BufferSize ) {
 			++m_size;
+		}
 	}
 
 	/**
 	 * @brief get count of point in history buffer
 	 * @return size of history buffer
 	 */
-	int GetSize() {return m_size;}
+	int GetSize()
+	{
+		return m_size;
+	}
 
 	/**
 	 * @brief operator []
 	 * @param index
 	 * @return Point
 	 */
-	const nite::Point3f& operator[](int index)
+	const nite::Point3f& operator[]( int index )
 	{
-		return m_points[(m_currentHead - index + BufferSize) % BufferSize];
+		return m_points[( m_currentHead - index + BufferSize ) % BufferSize];
 	}
 
 private:
@@ -75,5 +82,6 @@ private:
 	int m_size;
 };
 
+#endif // NITE2_FOUND
 
 #endif

@@ -13,35 +13,39 @@ namespace Layout {
  * center and radius defined).
  * [immutable]
  */
-class Shape_AbstractSphere : public Shape {
+class Shape_AbstractSphere : public Shape
+{
 
 public:
 
-	Shape_AbstractSphere (
-			const osg::Vec3f center_,
-			const float radius_
-			);
+	Shape_AbstractSphere(
+		const osg::Vec3f center_,
+		const float radius_
+	);
 
-	osg::Vec3f & getCenter ();
+	osg::Vec3f& getCenter();
 
-	float getRadius ();
+	float getRadius();
 
 	/**
 	 * [visitor pattern]
 	 */
-	virtual void accept (
-			ShapeVisitor & visitor
-			) = 0;
+	virtual void accept(
+		ShapeVisitor& visitor
+	) = 0;
+
+
 
 protected:
 
 	/***/
-	virtual ~Shape_AbstractSphere (void) {};
+	virtual ~Shape_AbstractSphere( void ) {}
 
 private:
 
 	osg::Vec3f center_;
 	float radius_;
+
 
 }; // class
 

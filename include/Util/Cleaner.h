@@ -22,7 +22,7 @@
 #include <qobject.h>
 #include <qapplication.h>
 
-namespace Util{
+namespace Util {
 
 class Cleaner : public QObject
 {
@@ -55,7 +55,7 @@ public:
 	*
 	*  \date 27. 4. 2010
 	*/
-	Cleaner(QApplication * app);
+	Cleaner( QApplication* app );
 
 
 };

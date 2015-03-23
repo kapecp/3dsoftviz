@@ -13,14 +13,11 @@
 
 #include "Util/SizedQueue.h"
 
-
-using namespace Util;
-
 namespace ArucoModul {
 class ArucoCore;
 }
 
-namespace OpenCV{
+namespace OpenCV {
 class CapVideo;
 }
 
@@ -33,12 +30,12 @@ namespace ArucoModul {
 	*@note This class provides a thread for tracking Aruco.
 	*/
 class ArucoThread : public QThread
-	{
+{
 	Q_OBJECT
 
 public:
-	ArucoThread( QObject *parent = 0);
-	~ArucoThread(void);
+	ArucoThread( QObject* parent = 0 );
+	~ArucoThread( void );
 
 	/**
 	*@author Dávid Durčák
@@ -54,21 +51,21 @@ signals:
 	* @brief pushArucoMVMat signal that emit ModelViewMatrix that represent position and rotation of detected marker
 	* @param mat ModelView matrix from aruco
 	*/
-	void pushArucoMVMat( QMatrix4x4 mat);
+	void pushArucoMVMat( QMatrix4x4 mat );
 
 	/**
 	* @author Dávid Durčák
 	* @brief sendArucoPosVec signal that emit vector that represent position of detected marker
 	* @param pos Position vector
 	*/
-	void sendArucoPosVec( osg::Vec3d pos);
+	void sendArucoPosVec( osg::Vec3d pos );
 
 	/**
 	* @author Dávid Durčák
 	* @brief sendArucoRorQuat signal that emit Quaternion that represent rotation of detected marker
 	* @param quat Quaternion
 	*/
-	void sendArucoRorQuat( const osg::Quat quat);
+	void sendArucoRorQuat( const osg::Quat quat );
 
 	/**
 	* @author Dávid Durčák
@@ -94,7 +91,7 @@ signals:
 	* @author Dávid Durčák
 	* @brief moveMouseArucoSignal Signal for sending parameters to control mouse
 	*/
-	void moveMouseArucoSignal(double positionX,double positionY,bool isClick, Qt::MouseButton button );
+	void moveMouseArucoSignal( double positionX,double positionY,bool isClick, Qt::MouseButton button );
 
 
 public slots:
@@ -103,7 +100,7 @@ public slots:
 	* @brief setCancel sets cancel=true
 	* @param set Cancel thread if set == true
 	*/
-	void setCancel(bool set);
+	void setCancel( bool set );
 
 	/**
 	* @author Dávid Durčák
@@ -150,7 +147,7 @@ public slots:
 	* @brief setCapVideo Set member mCapVideo.
 	* @param capVideo
 	*/
-	void setCapVideo( OpenCV::CapVideo *capVideo);
+	void setCapVideo( OpenCV::CapVideo* capVideo );
 
 	/**
 	* @author Dávid Durčák
@@ -166,7 +163,7 @@ private:
 	* @param actPosArray[3] const array that describe position of marker by vector (x,y,z)
 	* @param actQuatArray[4] const array that describe orientation of marker by quaternion (w,x,y,z)
 	*/
-	void graphControlling(const double actPosArray[3], const double actQuatArray[4]);
+	void graphControlling( const double actPosArray[3], const double actQuatArray[4] );
 
 	/**
 	* @author Dávid Durčák
@@ -174,13 +171,13 @@ private:
 	* @param actPosArray[3] const array that describe position of marker by vector (x,y,z)
 	* @param actQuatArray[4] const array that describe orientation of marker by quaternion (w,x,y,z)
 	*/
-	void mouseControlling(const double actPosArray[3], const double actQuatArray[4]);
+	void mouseControlling( const double actPosArray[3], const double actQuatArray[4] );
 
 	/**
 	* @author Dávid Durčák
 	* @brief imagesSending Pripare images for sending and emiting them
 	*/
-	void imagesSending(ArucoCore &aCore, const cv::Mat frame) const;
+	void imagesSending( ArucoCore& aCore, const cv::Mat frame ) const;
 
 	/**
 	* @author Dávid Durčák
@@ -197,7 +194,7 @@ private:
 	* @param actPos input vector that  array that describe actual position of marker by vector (x,y,z)
 	* @param actQuat array that describe actual orientation of marker by quaternion (w,x,y,z)
 	*/
-	void correctQuatAndPos( osg::Vec3d &actPos, osg::Quat &actQuat ) const;
+	void correctQuatAndPos( osg::Vec3d& actPos, osg::Quat& actQuat ) const;
 
 	/**
 	* @author Dávid Durčák
@@ -215,7 +212,7 @@ private:
 	* @param mat Printed matrix
 	* @param name Optional name of printed matrix
 	*/
-	void printMat( const osg::Matrixd mat, const QString name = "Matrix: ") const;
+	void printMat( const osg::Matrixd mat, const QString name = "Matrix: " ) const;
 
 	/**
 	* @author Dávid Durčák
@@ -223,8 +220,8 @@ private:
 	* @param v Printed vector
 	* @param name Optional name of printed vector
 	*/
-	void printVec( const osg::Vec3d v, const QString name = "Vector:  ") const;
-	void printVec( const osg::Vec4d v, const QString name = "Vector:  ") const;
+	void printVec( const osg::Vec3d v, const QString name = "Vector:  " ) const;
+	void printVec( const osg::Vec4d v, const QString name = "Vector:  " ) const;
 
 
 	bool		mCancel;			// thread is running if false
@@ -245,10 +242,10 @@ private:
 	double		mCamDistRatio;
 	double		mHalfRatioCoef;
 
-	OpenCV::CapVideo	*mCapVideo; // Cap video instanc, that managed camera and provides frames
-	SizedQueue *boolQueue;
+	OpenCV::CapVideo*	mCapVideo; // Cap video instanc, that managed camera and provides frames
+	Util::SizedQueue* boolQueue;
 
 
-	};
+};
 } // ArucoModul namespace
 #endif //ARUCOTHREAD_H

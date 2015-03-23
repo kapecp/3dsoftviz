@@ -9,19 +9,23 @@
 
 namespace Network {
 
-    class AbstractExecutor {
+class AbstractExecutor
+{
 
-    protected:
-        QDataStream *stream;
+protected:
+	QDataStream* stream;
 
-    public:
+public:
 
-        virtual void execute_client() = 0;
-        virtual void execute_server() = 0;
-        void setDataStream(QDataStream *ds) {stream=ds;}
-        static const quint8 INSTRUCTION_NUMBER;
+	virtual void execute_client() = 0;
+	virtual void execute_server() = 0;
+	void setDataStream( QDataStream* ds )
+	{
+		stream=ds;
+	}
+	static const quint8 INSTRUCTION_NUMBER;
 
-    };
+};
 
 }
 

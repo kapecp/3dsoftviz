@@ -28,29 +28,29 @@ public:
 	RestrictionManipulatorsGroup();
 
 	/***/
-	virtual ~RestrictionManipulatorsGroup (void) {};
+	virtual ~RestrictionManipulatorsGroup( void ) {}
 
 	/**
 	 * [getter].
 	 */
 	osg::ref_ptr<osg::Group> getGroup();
 
-	virtual void restrictionAdded (
-			QSharedPointer<Layout::ShapeGetter> shapeGetter
-			);
+	virtual void restrictionAdded(
+		QSharedPointer<Layout::ShapeGetter> shapeGetter
+	);
 
 
-	virtual void shapeChanged (
-			QSharedPointer<Layout::ShapeGetter> shapeGetter,
-			QSharedPointer<Layout::Shape> shape
-			);
+	virtual void shapeChanged(
+		QSharedPointer<Layout::ShapeGetter> shapeGetter,
+		QSharedPointer<Layout::Shape> shape
+	);
 
 
-	virtual void restrictionRemoved (
-			QSharedPointer<Layout::ShapeGetter> shapeGetter
-			);
+	virtual void restrictionRemoved(
+		QSharedPointer<Layout::ShapeGetter> shapeGetter
+	);
 
-	void addNodeToSelection(QSharedPointer<Layout::ShapeGetter> shapeGetter, osg::Node* node);
+	void addNodeToSelection( QSharedPointer<Layout::ShapeGetter> shapeGetter, osg::Node* node );
 
 	osg::Geode* test();
 

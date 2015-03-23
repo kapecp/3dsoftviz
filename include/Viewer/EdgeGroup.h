@@ -13,8 +13,7 @@
 
 #include "Data/Edge.h"
 
-namespace Vwr
-{
+namespace Vwr {
 /**
 	*  \class EdgeGroup
 	*  \brief Edge group wrapper
@@ -31,13 +30,13 @@ public:
 		*  \param edges     edges to wrap
 		*  \param scale     edges scale
 		*/
-	EdgeGroup(QMap<qlonglong, osg::ref_ptr<Data::Edge> > *edges, float scale);
+	EdgeGroup( QMap<qlonglong, osg::ref_ptr<Data::Edge> >* edges, float scale );
 
 	/**
 		*  \fn public destructor  ~EdgeGroup
 		*  \brief destructor
 		*/
-	~EdgeGroup(void);
+	~EdgeGroup( void );
 
 
 	/**
@@ -58,7 +57,10 @@ public:
 		*  \brief returns edges group
 		*  \return osg::ref_ptr edges group
 		*/
-	osg::ref_ptr<osg::Group> getGroup() {return edgeGroup;}
+	osg::ref_ptr<osg::Group> getGroup()
+	{
+		return edgeGroup;
+	}
 
 private:
 
@@ -66,7 +68,7 @@ private:
 		*  QMap<qlonglong,osg::ref_ptr<Data::Edge> > * edges
 		*  \brief Wrpped edges
 		*/
-	QMap<qlonglong, osg::ref_ptr<Data::Edge> > *edges;
+	QMap<qlonglong, osg::ref_ptr<Data::Edge> >* edges;
 
 
 	/**

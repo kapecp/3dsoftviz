@@ -7,15 +7,15 @@
 
 namespace Layout {
 
-Shape_ConeSurface::Shape_ConeSurface(const QOSG::ViewerQT *viewerWidget, const QSlider &baseRadiusSlider) :
-	mViewerWidget(viewerWidget),
-	mBaseRadiusSlider(baseRadiusSlider)
+Shape_ConeSurface::Shape_ConeSurface( const QOSG::ViewerQT* viewerWidget, const QSpinBox& baseRadiusSpinBox ) :
+	mViewerWidget( viewerWidget ),
+	mBaseRadiusSpinBox( baseRadiusSpinBox )
 {
 }
 
-void Shape_ConeSurface::accept(ShapeVisitor &visitor)
+void Shape_ConeSurface::accept( ShapeVisitor& visitor )
 {
-	visitor.visit(*this);
+	visitor.visit( *this );
 }
 
 osg::Vec3f Shape_ConeSurface::baseCenter() const
@@ -23,7 +23,7 @@ osg::Vec3f Shape_ConeSurface::baseCenter() const
 	osg::Vec3f eye;
 	osg::Vec3f center;
 	osg::Vec3f up;
-	mViewerWidget->getCamera()->getViewMatrixAsLookAt(eye, center, up);
+	mViewerWidget->getCamera()->getViewMatrixAsLookAt( eye, center, up );
 
 	return eye;
 }
@@ -41,7 +41,7 @@ osg::Vec3f Shape_ConeSurface::spike() const
 float Shape_ConeSurface::baseRadius() const
 {
 
-	return ((float)mBaseRadiusSlider.value() / 100.0f) * 250.f;
+	return ( static_cast<float>( mBaseRadiusSpinBox.value() ) / 100.0f ) * 250.f;
 }
 
 }

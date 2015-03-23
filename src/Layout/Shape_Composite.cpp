@@ -5,20 +5,23 @@
 
 namespace Layout {
 
-void Shape_Composite::addShape (
-		QSharedPointer<Shape> shape
-		) {
-	shapes_.push_back (shape);
+void Shape_Composite::addShape(
+	QSharedPointer<Shape> shape
+)
+{
+	shapes_.push_back( shape );
 }
 
-Shape_Composite::ShapesListType & Shape_Composite::getShapes (void) {
+Shape_Composite::ShapesListType& Shape_Composite::getShapes( void )
+{
 	return shapes_;
 }
 
-void Shape_Composite::accept (
-		ShapeVisitor & visitor
-		) {
-	visitor.visit (*this);
+void Shape_Composite::accept(
+	ShapeVisitor& visitor
+)
+{
+	visitor.visit( *this );
 }
 
 } // namespace

@@ -3,21 +3,21 @@
 #include "Layout/FRAlgorithm.h"
 #include "Util/ApplicationConfig.h"
 
-using namespace Layout;
+namespace Layout {
 
-LayoutThread::LayoutThread(Layout::FRAlgorithm* alg)
+LayoutThread::LayoutThread( Layout::FRAlgorithm* alg )
 {
 	this->alg = alg;
 	appConf = Util::ApplicationConfig::get();
 }
 
-LayoutThread::~LayoutThread(void)
+LayoutThread::~LayoutThread( void )
 {
 }
 
 void LayoutThread::run()
 {
-	this->sleep(appConf->getValue("Layout.Thread.StartSleepTime").toLong());
+	this->sleep( appConf->getValue( "Layout.Thread.StartSleepTime" ).toLong() );
 	alg->Run();
 }
 void LayoutThread::pause()
@@ -32,9 +32,9 @@ void LayoutThread::wakeUp()
 {
 	alg->WakeUpAlg();
 }
-void LayoutThread::setAlphaValue(float val)
+void LayoutThread::setAlphaValue( float val )
 {
-	alg->SetAlphaValue(val);
+	alg->SetAlphaValue( val );
 }
 bool LayoutThread::isRunning()
 {
@@ -43,6 +43,10 @@ bool LayoutThread::isRunning()
 void LayoutThread::requestEnd()
 {
 	alg->RequestEnd();
+}
+Layout::FRAlgorithm* LayoutThread::getAlg()
+{
+	return alg;
 }
 void LayoutThread::playEdgeBundling()
 {
@@ -58,3 +62,5 @@ void LayoutThread::pauseAllAlg()
 	alg->StopAlgEdgeBundling();
 	alg->PauseAlg();
 }
+
+} // namespace Layout

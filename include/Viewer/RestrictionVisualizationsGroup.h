@@ -21,10 +21,10 @@ class RestrictionVisualizationsGroup: public Layout::RestrictionsObserver
 
 public:
 
-	RestrictionVisualizationsGroup (void);
+	RestrictionVisualizationsGroup( void );
 
 	/***/
-	virtual ~RestrictionVisualizationsGroup (void) {};
+	virtual ~RestrictionVisualizationsGroup( void ) {}
 
 	/**
 	 * [getter].
@@ -34,27 +34,27 @@ public:
 	/**
 	 * [observer pattern]
 	 */
-	virtual void restrictionAdded (
-			QSharedPointer<Layout::ShapeGetter> shapeGetter
-			);
+	virtual void restrictionAdded(
+		QSharedPointer<Layout::ShapeGetter> shapeGetter
+	);
 
 	/**
 	 * [observer pattern]
 	 */
-	virtual void shapeChanged (
-			QSharedPointer<Layout::ShapeGetter> shapeGetter,
-			QSharedPointer<Layout::Shape> shape
-			);
+	virtual void shapeChanged(
+		QSharedPointer<Layout::ShapeGetter> shapeGetter,
+		QSharedPointer<Layout::Shape> shape
+	);
 
 	/**
 	 * [observer pattern]
 	 */
-	virtual void restrictionRemoved (
-			QSharedPointer<Layout::ShapeGetter> shapeGetter
-			);
+	virtual void restrictionRemoved(
+		QSharedPointer<Layout::ShapeGetter> shapeGetter
+	);
 
 
-	osg::Group* getVisualizer(QSharedPointer<Layout::ShapeGetter> shapeGetter);
+	osg::Group* getVisualizer( QSharedPointer<Layout::ShapeGetter> shapeGetter );
 private:
 
 	/**

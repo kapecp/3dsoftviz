@@ -9,11 +9,11 @@ namespace Kinect {
  * @brief The Vector3 struct
  * @brief data structure for 3D space in Int
  */
-struct Vector3
-{
+struct Vector3 {
 	int mX, mY, mZ;
-	Vector3(){}
-	Vector3(int mX,int mY,int mZ){
+	Vector3() {}
+	Vector3( int mX,int mY,int mZ )
+	{
 		this->mX=mX;
 		this->mY=mY;
 		this->mZ=mZ;
@@ -25,7 +25,8 @@ struct Vector3
  * @brief The PlaneAlgorithm class
  * @brief algoritm class for calculate
  */
-class PlaneAlgorithm{
+class PlaneAlgorithm
+{
 
 public:
 	PlaneAlgorithm();
@@ -39,7 +40,7 @@ public:
 	 * @param z z coordinate
 	 * @return 0 if set, else 1
 	 */
-	int setRandomPoint(int i,int x, int y, int z);
+	int setRandomPoint( int i,int x, int y, int z );
 
 	/**
 	 * @brief findIntersection
@@ -48,7 +49,7 @@ public:
 	 * @param z coordinate
 	 * @return if find intersection 0, else 1
 	 */
-	int findIntersection(int x, int y, int z);
+	int findIntersection( int x, int y, int z );
 
 	/**
 	 * @brief calculate Plane equation
@@ -69,7 +70,7 @@ private:
 	 * @param second Vector3
 	 * @return Vector3
 	 */
-	Vector3 subtract(Vector3 first, Vector3 second);
+	Vector3 subtract( Vector3 first, Vector3 second );
 
 	Vector3 points[3];
 	Vector3 w;

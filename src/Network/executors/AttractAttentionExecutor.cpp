@@ -2,45 +2,51 @@
 #include "Network/Server.h"
 #include "Network/Client.h"
 
-using namespace Network;
+namespace Network {
 
-void AttractAttentionExecutor::execute_client() {
+void AttractAttentionExecutor::execute_client()
+{
 
-    bool attract;
-    int id_user;
+	bool attract;
+	int id_user;
 
-    *stream >> attract >> id_user;
+	*stream >> attract >> id_user;
 
-    Client * client= Client::getInstance();
+	Client* client= Client::getInstance();
 
-    if (attract) {
-        client->setAttention(id_user);
-    } else {
-        client->unSetAttention(id_user);
-    }
+	if ( attract ) {
+		client->setAttention( id_user );
+	}
+	else {
+		client->unSetAttention( id_user );
+	}
 }
 
-void AttractAttentionExecutor::execute_server() {
+void AttractAttentionExecutor::execute_server()
+{
 
-    QTcpSocket * sender = (QTcpSocket*) stream->device();
-    bool attract;
-    *stream >> attract;
+	QTcpSocket* sender = ( QTcpSocket* ) stream->device();
+	bool attract;
+	*stream >> attract;
 
-    Server * server = Server::getInstance();
-    int id = server->getUserId(sender);
+	Server* server = Server::getInstance();
+	int id = server->getUserId( sender );
 
-    if (attract) {
-        server->setAttention(id);
-    } else {
-        server->unSetAttention(id);
-    }
+	if ( attract ) {
+		server->setAttention( id );
+	}
+	else {
+		server->unSetAttention( id );
+	}
 
-    QSet<QTcpSocket*> clients = server->getClients();
-    foreach (QTcpSocket *client, clients) {
-        if (client == sender) {
-            continue;
-        }
-        server->sendAttractAttention(attract,id,client);
-    }
+	QSet<QTcpSocket*> clients = server->getClients();
+	foreach ( QTcpSocket* client, clients ) {
+		if ( client == sender ) {
+			continue;
+		}
+		server->sendAttractAttention( attract,id,client );
+	}
+
+}
 
 }

@@ -6,14 +6,15 @@
 
 #include <opencv2/opencv.hpp>
 
-namespace Kinect{
+namespace Kinect {
 
 /**
  * @author Matej Marconak
  * @brief Kinect class for start recognition and conversion of VideoFrame
  * @brief //TODO divide class for open and for converted cv:Mat - Strategy
  */
-class KinectRecognition{
+class KinectRecognition
+{
 
 public:
 
@@ -36,28 +37,28 @@ public:
 	 * @param colorFrame depth videoframe
 	 * @return converted gray cv::Mat
 	 */
-	cv::Mat depthImageCvMat(openni::VideoFrameRef &colorFrame);
+	cv::Mat depthImageCvMat( openni::VideoFrameRef& colorFrame );
 
 	/**
 	 * @brief convert videoframe getting from classing frame
 	 * @param colorFrame color videoframe
 	 * @return converted RGB cv::Mat
 	 */
-	cv::Mat colorImageCvMat(openni::VideoFrameRef& colorFrame);
+	cv::Mat colorImageCvMat( openni::VideoFrameRef& colorFrame );
 
 	/**
 	 * @brief convert videoframe getting from classing frame
 	 * @param colorFrame color videoframe
 	 * @return converterd QImage
 	 */
-	QImage colorImageQImage(openni::VideoFrameRef& colorFrame);
+	QImage colorImageQImage( openni::VideoFrameRef& colorFrame );
 
 	/**
 	 * @brief convert depth videoframe to QImage
 	 * @param colorFrame depth videoframe
 	 * @return coverted colofrmae to QImage
 	 */
-	QImage deptImageQImage(openni::VideoFrameRef& colorFrame);
+	QImage deptImageQImage( openni::VideoFrameRef& colorFrame );
 
 	/**
 	 * @brief open status of openni

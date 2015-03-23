@@ -5,15 +5,15 @@
 
 namespace Layout {
 
-Shape_CylinderSurface::Shape_CylinderSurface(const QOSG::ViewerQT *viewerWidget, const QSlider &baseRadiusSlider) :
-	mViewerWidget(viewerWidget),
-	mBaseRadiusSlider(baseRadiusSlider)
+Shape_CylinderSurface::Shape_CylinderSurface( const QOSG::ViewerQT* viewerWidget, const QSpinBox& baseRadiusSpinBox ) :
+	mViewerWidget( viewerWidget ),
+	mBaseRadiusSpinBox( baseRadiusSpinBox )
 {
 }
 
-void Shape_CylinderSurface::accept(ShapeVisitor &visitor)
+void Shape_CylinderSurface::accept( ShapeVisitor& visitor )
 {
-	visitor.visit(*this);
+	visitor.visit( *this );
 }
 
 osg::Vec3f Shape_CylinderSurface::firstBaseCenter() const
@@ -21,7 +21,7 @@ osg::Vec3f Shape_CylinderSurface::firstBaseCenter() const
 	osg::Vec3f eye;
 	osg::Vec3f center;
 	osg::Vec3f up;
-	mViewerWidget->getCamera()->getViewMatrixAsLookAt(eye, center, up);
+	mViewerWidget->getCamera()->getViewMatrixAsLookAt( eye, center, up );
 
 	return eye;
 }
@@ -31,7 +31,7 @@ osg::Vec3f Shape_CylinderSurface::secondBaseCenter() const
 	osg::Vec3f eye;
 	osg::Vec3f center;
 	osg::Vec3f up;
-	mViewerWidget->getCamera()->getViewMatrixAsLookAt(eye, center, up);
+	mViewerWidget->getCamera()->getViewMatrixAsLookAt( eye, center, up );
 
 	return center;
 }
@@ -39,7 +39,7 @@ osg::Vec3f Shape_CylinderSurface::secondBaseCenter() const
 float Shape_CylinderSurface::baseRadius() const
 {
 
-	return ((float) mBaseRadiusSlider.value() / 100.0f) * 250.f;
+	return ( static_cast<float>( mBaseRadiusSpinBox.value() ) / 100.0f ) * 250.f;
 }
 
 }

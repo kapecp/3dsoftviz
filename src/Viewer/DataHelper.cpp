@@ -7,61 +7,58 @@
 #include <sstream>
 #include <iostream>
 
-using namespace Vwr;
-using namespace Data;
+namespace Vwr {
 
-osg::ref_ptr<osg::Geode> DataHelper::getSphereGeode(osg::Vec3 center, float radius)
+osg::ref_ptr<osg::Geode> DataHelper::getSphereGeode( osg::Vec3 center, float radius )
 {
 	osg::ref_ptr<osg::Geode> sphereGeode = new osg::Geode;
 
-	osg::ref_ptr<osg::Sphere> unitSphere = new osg::Sphere(center, radius);
-	osg::ref_ptr<osg::ShapeDrawable> unitSphereDrawable = new osg::ShapeDrawable(unitSphere);
+	osg::ref_ptr<osg::Sphere> unitSphere = new osg::Sphere( center, radius );
+	osg::ref_ptr<osg::ShapeDrawable> unitSphereDrawable = new osg::ShapeDrawable( unitSphere );
 
-	sphereGeode->addDrawable(unitSphereDrawable);
+	sphereGeode->addDrawable( unitSphereDrawable );
 
 	return sphereGeode.get();
 }
 
-osg::ref_ptr<osg::Vec3Array> DataHelper::getInitialVectors(int count)
+osg::ref_ptr<osg::Vec3Array> DataHelper::getInitialVectors( int count )
 {
-	float x, y, z;
 	float lowest = 1.f;
 	float highest = 100.f;
-	float range = (highest - lowest) + 1.f;
+	float range = ( highest - lowest ) + 1.f;
 
 	osg::ref_ptr<osg::Vec3Array> positions = new osg::Vec3Array();
 
-	srand((unsigned)time(0));
+	srand( ( unsigned )time( 0 ) );
 
-	for(int index = 0; index < count; index++)
-	{
+	for ( int index = 0; index < count; index++ ) {
+		float x, y, z;
+		x = lowest + static_cast<float>( range * static_cast<float>( rand() ) / ( static_cast<float>( RAND_MAX ) + 1.0f ) );
+		y = lowest + static_cast<float>( range * static_cast<float>( rand() ) / ( static_cast<float>( RAND_MAX ) + 1.0f ) );
+		z = lowest + static_cast<float>( range * static_cast<float>( rand() ) / ( static_cast<float>( RAND_MAX ) + 1.0f ) );
 
-		x = lowest + (float)(range * (float)rand() / ((float)RAND_MAX + 1.0f));
-		y = lowest + (float)(range * (float)rand() / ((float)RAND_MAX + 1.0f));
-		z = lowest + (float)(range * (float)rand() / ((float)RAND_MAX + 1.0f));
-
-		positions->push_back(osg::Vec3(x, y, z));
+		positions->push_back( osg::Vec3( x, y, z ) );
 	}
 
 	return positions;
 }
 
-int DataHelper::getRandomNumber(int lowest, int highest)
+int DataHelper::getRandomNumber( int lowest, int highest )
 {
-	int range = (highest - lowest) + 1;
+	int range = ( highest - lowest ) + 1;
 
-	return lowest + int(range * rand() / (RAND_MAX + 1.0));
+	return lowest + static_cast<int>( range * rand() / ( RAND_MAX + 1.0 ) );
 }
 
-osg::ref_ptr<osg::Vec3Array> DataHelper::getEdgeVectors(osg::ref_ptr<Data::Node> inNode, osg::ref_ptr<Data::Node> outNode)
+osg::ref_ptr<osg::Vec3Array> DataHelper::getEdgeVectors( osg::ref_ptr<Data::Node> inNode, osg::ref_ptr<Data::Node> outNode )
 {
 	osg::ref_ptr<osg::Vec3Array> edgeVectors = new osg::Vec3Array;
 
-	edgeVectors->push_back(osg::Vec3(inNode->restrictedTargetPosition()));
+	edgeVectors->push_back( osg::Vec3( inNode->restrictedTargetPosition() ) );
 
-	edgeVectors->push_back(osg::Vec3(inNode->restrictedTargetPosition().x() - 0.5f, inNode->restrictedTargetPosition().y(), inNode->restrictedTargetPosition().z()));
-	edgeVectors->push_back(osg::Vec3(outNode->restrictedTargetPosition().x() - 0.5f, outNode->restrictedTargetPosition().y(), outNode->restrictedTargetPosition().z()));
-	edgeVectors->push_back(osg::Vec3(outNode->restrictedTargetPosition()));
+	edgeVectors->push_back( osg::Vec3( inNode->restrictedTargetPosition().x() - 0.5f, inNode->restrictedTargetPosition().y(), inNode->restrictedTargetPosition().z() ) );
+	edgeVectors->push_back( osg::Vec3( outNode->restrictedTargetPosition().x() - 0.5f, outNode->restrictedTargetPosition().y(), outNode->restrictedTargetPosition().z() ) );
+	edgeVectors->push_back( osg::Vec3( outNode->restrictedTargetPosition() ) );
 
 	return edgeVectors;
 }
@@ -124,31 +121,31 @@ void DataHelper::generatePyramid(std::vector<Data::Node*> *nodes, std::vector<Da
 
 }
 */
-void DataHelper::generateCylinder(QMap<qlonglong, osg::ref_ptr<Data::Node> > *nodes, QMap<qlonglong, osg::ref_ptr<Data::Edge> > *edges,QMap<qlonglong, Data::Type*> *types, int pocetUzlovNaPodstave, int pocetUzlovNaVysku)
+void DataHelper::generateCylinder( QMap<qlonglong, osg::ref_ptr<Data::Node> >* nodes, QMap<qlonglong, osg::ref_ptr<Data::Edge> >* edges,QMap<qlonglong, Data::Type*>* types, int pocetUzlovNaPodstave, int pocetUzlovNaVysku )
 {
 	int startN = nodes->count();
 	int startE = edges->count();
 
 	// budeme pridavat oba typy objektov - hrany aj vrcholy
-	QString tVStr ("vrchol");
-	QString tEStr ("hrana");
-	Data::Type* vType = new Data::Type(1,tVStr,0);
-	Data::Type* eType = new Data::Type(2,tEStr,0);
-	types->insert(1, vType);
-	types->insert(2, eType);
+	QString tVStr( "vrchol" );
+	QString tEStr( "hrana" );
+	Data::Type* vType = new Data::Type( 1,tVStr,0 );
+	Data::Type* eType = new Data::Type( 2,tEStr,0 );
+	types->insert( 1, vType );
+	types->insert( 2, eType );
 
 	// pridame N uzlov
-	for(int i = startN; i < startN + pocetUzlovNaVysku*pocetUzlovNaPodstave; i++)
-	{
+	for ( int i = startN; i < startN + pocetUzlovNaVysku*pocetUzlovNaPodstave; i++ ) {
 		// ziskame meno uzla
-		std::stringstream out; out << i;
+		std::stringstream out;
+		out << i;
 		// kazdy uzol ma na zaciatku prazdnu mnozinu hran - toto je nejaka blbost FIXME!
 		//QMap<long, Data::Edge*> edges;
 		// vytvorime novy uzol a pridame ho medzi ostatne
-		osg::ref_ptr<Data::Node> node = new Data::Node(i, QString::fromStdString(out.str()), types->value(1), 0, NULL, osg::Vec3f(0,0,0));
+		osg::ref_ptr<Data::Node> node = new Data::Node( i, QString::fromStdString( out.str() ), types->value( 1 ), 0, NULL, osg::Vec3f( 0,0,0 ) );
 		//std::cout << nodes->capacity();
 		//std::cout << "\n";
-		nodes->insert(i, node);
+		nodes->insert( i, node );
 	}
 
 	// ID hrany
@@ -160,18 +157,18 @@ void DataHelper::generateCylinder(QMap<qlonglong, osg::ref_ptr<Data::Node> > *no
 	//std::cout << "\n";
 
 	// pre kazdu podstavu
-	for(int j = 0; j < pocetUzlovNaVysku; j++)
-	{
+	for ( int j = 0; j < pocetUzlovNaVysku; j++ ) {
 		// pridame hrany pre podstavu
-		for(int i = 0; i < pocetUzlovNaPodstave; i++)
-		{
+		for ( int i = 0; i < pocetUzlovNaPodstave; i++ ) {
 			// ziskame meno hrany
-			std::stringstream out; out << id;
+			std::stringstream out;
+			out << id;
 
 			int to;
-			if(i == (pocetUzlovNaPodstave - 1)){
+			if ( i == ( pocetUzlovNaPodstave - 1 ) ) {
 				to = j*pocetUzlovNaPodstave + startN;
-			} else {
+			}
+			else {
 				to = j*pocetUzlovNaPodstave + i+1 + startN;
 			}
 
@@ -179,14 +176,14 @@ void DataHelper::generateCylinder(QMap<qlonglong, osg::ref_ptr<Data::Node> > *no
 			//std::cout << "\n";
 
 			// spravime hranu medzi dvoma uzlami podstavy
-			osg::ref_ptr<Data::Edge> edge = new Data::Edge(id, QString::fromStdString(out.str()), NULL, nodes->value(j*pocetUzlovNaPodstave + i + startN), nodes->value(to), types->value(2), getRandomNumber(0,1), 2);
-			edge->linkNodes(edges);
+			osg::ref_ptr<Data::Edge> edge = new Data::Edge( id, QString::fromStdString( out.str() ), NULL, nodes->value( j*pocetUzlovNaPodstave + i + startN ), nodes->value( to ), types->value( 2 ), getRandomNumber( 0,1 ), 2 );
+			edge->linkNodes( edges );
 			id++;
 
 			// ak nejde o spodnu podstavu, tak kazdy vrchol spojime s dalsim ktory je nizsie
-			if(j > 0){
-				osg::ref_ptr<Data::Edge> edge0 = new Data::Edge(id, QString::fromStdString(out.str()), NULL, nodes->value(j*pocetUzlovNaPodstave + i + startN), nodes->value((j-1)*pocetUzlovNaPodstave + i + startN), types->value(2), true, 2);
-				edge0->linkNodes(edges);
+			if ( j > 0 ) {
+				osg::ref_ptr<Data::Edge> edge0 = new Data::Edge( id, QString::fromStdString( out.str() ), NULL, nodes->value( j*pocetUzlovNaPodstave + i + startN ), nodes->value( ( j-1 )*pocetUzlovNaPodstave + i + startN ), types->value( 2 ), true, 2 );
+				edge0->linkNodes( edges );
 				id++;
 			}
 		}
@@ -499,40 +496,40 @@ void DataHelper::generateCube(std::vector<Data::Node*> *nodes,std::vector<Data::
 }
 */
 
-osg::ref_ptr<osg::Texture2D> DataHelper::readTextureFromFile(QString path)
+osg::ref_ptr<osg::Texture2D> DataHelper::readTextureFromFile( QString path )
 {
 	osg::ref_ptr<osg::Texture2D> texture = NULL;
 
-	if (path != NULL)
-	{
+	if ( path != NULL ) {
 		texture = new osg::Texture2D;
-		texture->setImage(osgDB::readImageFile(path.toStdString()));
+		texture->setImage( osgDB::readImageFile( path.toStdString() ) );
 
-		texture->setDataVariance(osg::Object::DYNAMIC);
-		texture->setWrap(osg::Texture::WRAP_S, osg::Texture::REPEAT);
-		texture->setWrap(osg::Texture::WRAP_T, osg::Texture::REPEAT);
+		texture->setDataVariance( osg::Object::DYNAMIC );
+		texture->setWrap( osg::Texture::WRAP_S, osg::Texture::REPEAT );
+		texture->setWrap( osg::Texture::WRAP_T, osg::Texture::REPEAT );
 	}
 
-	if (path == NULL || texture == NULL)
+	if ( path == NULL || texture == NULL ) {
 		std::cout << "Unable to read texture from file.";
+	}
 
 	return texture;
 }
 
-osg::ref_ptr<osg::Texture2D> DataHelper::createTexture(osg::ref_ptr<osg::Image> image)
+osg::ref_ptr<osg::Texture2D> DataHelper::createTexture( osg::ref_ptr<osg::Image> image )
 {
 	osg::ref_ptr<osg::Texture2D> texture = new osg::Texture2D;
 
-	texture->setImage(image);
+	texture->setImage( image );
 
-	texture->setDataVariance(osg::Object::DYNAMIC);
-	texture->setWrap(osg::Texture::WRAP_S, osg::Texture::REPEAT);
-	texture->setWrap(osg::Texture::WRAP_T, osg::Texture::REPEAT);
+	texture->setDataVariance( osg::Object::DYNAMIC );
+	texture->setWrap( osg::Texture::WRAP_S, osg::Texture::REPEAT );
+	texture->setWrap( osg::Texture::WRAP_T, osg::Texture::REPEAT );
 
 	return texture;
 }
 
-osg::Vec3f DataHelper::getMassCenter(osg::ref_ptr<osg::Vec3Array> coordinates)
+osg::Vec3f DataHelper::getMassCenter( osg::ref_ptr<osg::Vec3Array> coordinates )
 {
 	float x,y,z;
 	x = y = z = 0;
@@ -542,17 +539,18 @@ osg::Vec3f DataHelper::getMassCenter(osg::ref_ptr<osg::Vec3Array> coordinates)
 
 	long unsigned int num = coordinates->size();
 
-	for (long unsigned int i = 0; i < num; i++)
-	{
-		x += coordinates->at(i).x();
-		y += coordinates->at(i).y();
-		z += coordinates->at(i).z();
+	for ( long unsigned int i = 0; i < num; i++ ) {
+		x += coordinates->at( i ).x();
+		y += coordinates->at( i ).y();
+		z += coordinates->at( i ).z();
 	}
 
-	if(num==0){
-		return osg::Vec3f(0.f,0.f,0.f);
-	}else
-	{
-		return osg::Vec3f(x/(float)num, y/(float)num, z/(float)num);
+	if ( num==0 ) {
+		return osg::Vec3f( 0.f,0.f,0.f );
+	}
+	else {
+		return osg::Vec3f( x/static_cast<float>( num ), y/static_cast<float>( num ), z/static_cast<float>( num ) );
 	}
 }
+
+} // namespace Vwr
