@@ -153,6 +153,10 @@ bool PickHandler::handleMove( const osgGA::GUIEventAdapter& ea, osgGA::GUIAction
 
 bool PickHandler::handleDoubleclick( const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& aa )
 {
+	if (pickedNodes.count() == 1 || pickedEdges.count() == 1)
+	{
+		AppCore::Core::getInstance()->getCoreWindow()->centerView(false);
+	}
 	return false;
 }
 
