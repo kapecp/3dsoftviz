@@ -406,6 +406,17 @@ public:
 	}
 
 	/**
+		*  \fn inline public  setSelectedWith(osg::Vec4 selColor) and  color of selected node
+		*  \brief Select node with specific color
+		*  \param     selColor     selected node color
+		*/
+	void setSelectedWith( osg::Vec4 selColor )
+	{
+		setDrawableColor(0, selColor);    // color of selected node
+		this->selected = true;
+	}
+
+	/**
 		*  \fn inline public constant  isSelected
 		*  \brief Returns if the Node is selected
 		*  \return bool true, if the Node is selected

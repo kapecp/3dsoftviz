@@ -286,6 +286,11 @@ private:
 		*/
 	Util::ApplicationConfig* appConf;
 
+		/**
+		*  osg::ref_ptr<Data::Node> lastAutoMovementNode
+		*  \brief the last approaching node in automatic camera movement
+		*/
+	osg::ref_ptr<Data::Node> lastAutoMovementNode;
 
 	/**
 		*  QLinkedList<osg::ref_ptr<Data::Node> > pickedNodes

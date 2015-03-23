@@ -449,6 +449,11 @@ bool PickHandler::handlePush( const osgGA::GUIEventAdapter& ea, osgGA::GUIAction
 			unselectPickedClusters();
 			unselectPickedNodes();
 			unselectPickedEdges();
+			
+			if(this->lastAutoMovementNode != NULL)
+			{
+				this->lastAutoMovementNode->setSelected(false);
+			}
 		}
 
 		osgViewer::Viewer* viewer = dynamic_cast<osgViewer::Viewer*>( &aa );
@@ -582,6 +587,15 @@ bool PickHandler::doNodePick( osg::NodePath nodePath )
 			if ( appConf->getValue( "Viewer.Display.CameraPositions" ).toInt() == 1 ) {
 				n->setColor( osg::Vec4( 0, 1, 0, 1 ) );
 			}
+
+			if(this->lastAutoMovementNode != NULL)
+			{
+				this->lastAutoMovementNode->setSelected(false);
+			}
+
+			// select new approaching node in automatic camera movement as yellow node 
+			this->lastAutoMovementNode = n;
+			this->lastAutoMovementNode->setSelectedWith(osg::Vec4(1, 1, 0, 1));
 
 			cameraManipulator->setNewPosition( n->getCurrentPosition(), getSelectionCenter( false ), getSelectedNodes()->toStdList(), getSelectedEdges()->toStdList() );
 
