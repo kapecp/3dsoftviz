@@ -103,6 +103,8 @@ void OpenCV::OpenCVCore::opencvInit()
             //create Threads
             mThrsCreated = true;
             mThrAruco = new ArucoModul::ArucoThread();
+            mThrFaceRec	= new QOpenCV::FaceRecognitionThread();
+            createPermanentConnection();
         }
         qDebug() << "Creating OpenCV Window";
         mOpencvWindow =  new QOpenCV::OpenCVWindow(mParent, mApp);
@@ -110,7 +112,9 @@ void OpenCV::OpenCVCore::opencvInit()
 
     if( mOpencvWindow->isHidden() )
     {
-        createConnectionMultiAruco();
+        //createConnectionMultiAruco();
+        createConnectionFaceRec();
+        createConnectionAruco();
     }
 
     mOpencvWindow->show();
@@ -155,16 +159,16 @@ void  OpenCV::OpenCVCore::createPermanentConnection(){
 
 void OpenCV::OpenCVCore::createConnectionFaceRec(){
     // send actual image
-    QObject::connect( mOpencvDialog,
+    QObject::connect( mOpencvWindow,
                       SIGNAL(sendImgFaceRec(bool)),
                       mThrFaceRec,
                       SLOT(setSendImgEnabled(bool)) );
     QObject::connect( mThrFaceRec,
                       SIGNAL(pushImage(cv::Mat)),
-                      mOpencvDialog,
+                      mOpencvWindow,
                       SLOT(setLabel(cv::Mat)) );
     // send actual image to background
-    QObject::connect( mOpencvDialog,
+    QObject::connect( mOpencvWindow,
                       SIGNAL(sendBackgrImgFaceRec(bool)),
                       mThrFaceRec,
                       SLOT(setSendBackgrImgEnabled(bool)) );
@@ -172,19 +176,19 @@ void OpenCV::OpenCVCore::createConnectionFaceRec(){
 
 
     // start, stop
-    QObject::connect( mOpencvDialog,
+    QObject::connect( mOpencvWindow,
                       SIGNAL(startFaceRec()),
                       mThrFaceRec,
                       SLOT(start()) );
-    QObject::connect( mOpencvDialog,
+    QObject::connect( mOpencvWindow,
                       SIGNAL(stopFaceRec(bool)),
                       mThrFaceRec,
                       SLOT(setCancel(bool)) );
     QObject::connect( mThrFaceRec,
                       SIGNAL(finished()),
-                      mOpencvDialog,
+                      mOpencvWindow,
                       SLOT(onFaceRecThrFinished()) );
-    QObject::connect( mOpencvDialog,
+    QObject::connect( mOpencvWindow,
                       SIGNAL(setCapVideoFaceRec( OpenCV::CapVideo *)),
                       mThrFaceRec,
                       SLOT(setCapVideo(OpenCV::CapVideo*)) );
@@ -197,7 +201,7 @@ void OpenCV::OpenCVCore::createConnectionFaceRec(){
 
 void OpenCV::OpenCVCore::createConnectionAruco(){
     // send actual image
-    QObject::connect( mOpencvDialog,
+    QObject::connect( mOpencvWindow,
                       SIGNAL(sendImgMarker(bool)),
                       mThrAruco,
                       SLOT(setSendImgEnabling(bool)) );
@@ -207,67 +211,67 @@ void OpenCV::OpenCVCore::createConnectionAruco(){
                       SLOT(setLabelQ(QImage)) );*/
     QObject::connect( mThrAruco,
                       SIGNAL(pushImagemMat(cv::Mat)),
-                      mOpencvDialog,
+                      mOpencvWindow,
                       SLOT(setLabel(cv::Mat)) );
 
 
     // send actual image to background
-    QObject::connect( mOpencvDialog,
+    QObject::connect( mOpencvWindow,
                       SIGNAL(sendBackgrImgMarker(bool)),
                       mThrAruco,
                       SLOT(setSendBackgrImgEnabled(bool)) );
 
     // start, stop
-    QObject::connect( mOpencvDialog,
+    QObject::connect( mOpencvWindow,
                       SIGNAL(startMarker()),
                       mThrAruco,
                       SLOT(start()) );
-    QObject::connect( mOpencvDialog,
+    QObject::connect( mOpencvWindow,
                       SIGNAL(stopMarker(bool)),
                       mThrAruco,
                       SLOT(setCancel(bool)) );
     QObject::connect( mThrAruco,
                       SIGNAL(finished()),
-                      mOpencvDialog,
+                      mOpencvWindow,
                       SLOT(onMarkerThrFinished()) );
-    QObject::connect( mOpencvDialog,
+    QObject::connect( mOpencvWindow,
                       SIGNAL(setCapVideoMarker( OpenCV::CapVideo *)),
                       mThrAruco,
                       SLOT(setCapVideo(OpenCV::CapVideo*)) );
-    QObject::connect( mOpencvDialog,
+    QObject::connect( mOpencvWindow,
                       SIGNAL(startMultiMarker()),
                       mThrAruco,
                       SLOT(start()));
-    QObject::connect( mOpencvDialog,
+    QObject::connect( mOpencvWindow,
                       SIGNAL(stopMultiMarker(bool)),
                       mThrAruco,
                       SLOT(setCancel(bool)) );
 
 
     // other seting
-    QObject::connect( mOpencvDialog->getMarkerBehindCB(),
+    QObject::connect( mOpencvWindow->getMarkerBehindCB(),
                       SIGNAL(clicked(bool)),
                       mThrAruco,
                       SLOT(setPositionOfMarker(bool)) );
-    QObject::connect( mOpencvDialog->getCorEnabledCB(),
+    QObject::connect( mOpencvWindow->getCorEnabledCB(),
                       SIGNAL(clicked(bool)),
                       mThrAruco,
                       SLOT(setCorEnabling(bool)) );
-    QObject::connect( mOpencvDialog->getUpdateCorParPB(),
+    QObject::connect( mOpencvWindow->getUpdateCorParPB(),
                       SIGNAL(clicked()),
                       mThrAruco,
                       SLOT(updateCorectionPar()) );
     QObject::connect( mThrAruco,
                       SIGNAL(corParUpdated()),
-                      mOpencvDialog,
+                      mOpencvWindow,
                       SLOT(onCorParUpdated()) );
-    QObject::connect( mOpencvDialog,
+    QObject::connect( mOpencvWindow,
                       SIGNAL(setMultiMarker(bool)),
                       mThrAruco,
                       SLOT(setMultiMarker(bool)) );
 
     // aruco mouse Controll
-    QObject::connect( mOpencvDialog->getInterchangeMarkersPB(),
+    QObject::connect( mOpencvWindow->getInterchangeMarkersPB(),
                       SIGNAL(clicked()),
                       mThrAruco,
                       SLOT(interchangeMarkers()) );

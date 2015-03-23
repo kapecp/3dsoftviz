@@ -38,7 +38,84 @@ public:
          */
     QLabel		*getLabel() const;
 
+    /**
+         * @author Autor: David Durcak
+         * @brief getMarkerBehindCB Return mMarkerBehindCB
+         * @return QCheckBox*
+         */
+    QCheckBox	*getMarkerBehindCB() const;
+
+    /**
+         * @author Autor: David Durcak
+         * @brief getCorEnabledCB Return mCorEnabledCB
+         * @return QCheckBox*
+         */
+    QCheckBox	*getCorEnabledCB() const;
+
+    /**
+         * @author Autor: David Durcak
+         * @brief getUpdateCorParPB Return mUpdateCorParPB
+         * @return QPushButton*
+         */
+    QPushButton	*getUpdateCorParPB() const;
+
+    /**
+         * @author Autor: David Durcak
+         * @brief getInterchangeMarkersCB Return mInterchangeMarkersCB
+         * @return QCheckBox*
+         */
+    QPushButton	*getInterchangeMarkersPB() const;
+
 signals:
+    /**
+         * @author Autor: David Durcak
+         * @brief sendImgFaceRec Signal for enagling or disabling sending actual image from FaceDetection thread
+         * @param send
+         */
+    void sendImgFaceRec( bool send );
+
+    /**
+         * @author Autor: David Durcak
+         * @brief sendImgMarker Signal for enagling or disabling sending actual image from Aruco thread to this window
+         * @param send
+         */
+    void sendImgMarker( bool send );
+
+    /**
+         * @author Autor: David Durcak
+         * @brief sendBackgrImgFaceRec Signal for enagling or disabling sending actual image from FaceDetection thread to background
+         * @param send
+         */
+    void sendBackgrImgFaceRec( bool send );
+
+    /**
+         * @author Autor: David Durcak
+         * @brief sendBackgrImgMarker Signal for enagling or disabling sending actual image from Aruco thread thread to background
+         * @param send
+         */
+    void sendBackgrImgMarker( bool send );
+
+    /**
+         * @author Autor: David Durcak
+         * @brief stopMarker Signal for canceling Aruco thread
+         * @param set cancel if true
+         */
+    void stopMarker( bool set );
+
+
+    /**
+         * @author Autor: David Durcak
+         * @brief stopFaceRec Signal for canceling FaceDetection thread
+         * @param set cancel if true
+         */
+    void stopFaceRec( bool set );
+
+    /**
+         * @author Autor: David Durcak
+         * @brief startMarker Signal for starting Aruco thread
+         */
+    void startMarker();
+
     /**
          * @author Autor: Michael Garaj
          * @brief startMultiMarker Signal for starting Aruco thread
@@ -53,11 +130,24 @@ signals:
     void stopMultiMarker( bool set );
 
     /**
+         * @author Autor: David Durcak
+         * @brief startFaceRec Signal for starting FaceDetection thread
+         */
+    void startFaceRec();
+
+    /**
          * @author Autor: Michael Garaj
          * @brief setMultiMarker Signal for setting MultiMarker in Aruco thread
          * @param set cancel if true
          */
     void setMultiMarker( bool set );
+
+    /**
+         * @author Autor: David Durcak
+         * @brief setCapVideoFaceRec Signal for setting camera in FaceRecognizationThread
+         * @param capVideo camera object
+         */
+    void setCapVideoFaceRec( OpenCV::CapVideo *capVideo);
 
     /**
          * @author Autor: Michael Garaj
@@ -67,6 +157,24 @@ signals:
     void setCapVideoMarker( OpenCV::CapVideo *capVideo );
 
 public slots:
+    /**
+         * @author Autor: David Durcak
+         * @brief onCorParUpdated When corection parameters were updated
+         */
+    void onCorParUpdated();
+
+    /**
+         * @author Autor: David Durcak
+         * @brief onFaceRecThrFinished When Face detection thread finished, enable mFaceRecStartCancelPB button
+         */
+    void onFaceRecThrFinished();
+
+    /**
+         * @author Autor: David Durcak
+         * @brief onMarkerThrFinished When Aruco thread finished, update mMarkerStartCancelPB button
+         */
+    void onMarkerThrFinished();
+
     /**
         * @author Autor: Michael Garaj
         * @brief setLabel Draw image on label
@@ -82,10 +190,50 @@ private slots:
 
     /**
          * @author Autor: Michael Garaj
+         * @brief onSelSubModulChange Switch between Aruco Sub modules
+         */
+    void onSelSubModulChange();
+
+    /**
+         * @author Autor: Michael Garaj
          * @brief onMultiMarkerStartCancel Start or stop Aruco thread
          * @param checked If true, thread will start
          */
     void onMultiMarkerStartCancel(bool checked);
+
+    /**
+         * @author Autor: David Durcak
+         * @brief onUpdateCorPar  Disabling mUpdateCorParPB, until corrections parameter are not updated
+         */
+    void onUpdateCorPar();
+
+    /**
+         * @author Autor: David Durcak
+         * @brief onFaceRecStartCancel Start or stop Face Detection thread
+         * @param checked If true, thread will start
+         */
+    void onFaceRecStartCancel(bool checked);
+
+    /**
+         * @author Autor: David Durcak
+         * @brief onMarkerStartCancel Start or stop Aruco thread
+         * @param checked If true, thread will start
+         */
+    void onMarkerStartCancel(bool checked);
+
+    /**
+         * @author Autor: David Durcak
+         * @brief onFaceDetBackgrCBClicked Slot for enabling video backgroung from FaceRecongition and disabling from Aruco
+         * @param checked
+         */
+    void onFaceDetBackgrCBClicked(bool checked);
+
+    /**
+         * @author Autor: David Durcak
+         * @brief onMarkerBackgrCBClicked Slot for enabling video backgroung from Aruco and disabling from FaceRecongition
+         * @param checked
+         */
+    void onMarkerBackgrCBClicked(bool checked);
 
 private:
     /**
@@ -106,18 +254,26 @@ private:
 
     QRadioButton	*mKinectRB;
     QRadioButton	*mArucoRB;
-
     QRadioButton    *mFaceRecRB;
     QRadioButton    *mMarkerRB;
     QRadioButton    *mMultiMarkerRB;
 
+    QPushButton     *mFaceRecPB;
+    QPushButton     *mMarkerPB;
+    QPushButton     *mMultiMarkerPB;
+    QPushButton     *mMultiMarkerStartCancelPB;
     QPushButton		*mKinectPB;
-    QPushButton		*mArucoPB;
+    QPushButton		*mUpdateCorParPB;
+    QPushButton		*mInterchangeMarkersPB;
 
     QStackedLayout  *mModulesStackL;
     QStackedLayout  *mSubmodulesStackL;
 
-    QPushButton     *mMultiMarkerStartCancelPB;
+    QCheckBox		*mNoVideo;
+    QCheckBox		*mMarkerBackgrCB;
+    QCheckBox		*mFaceDetBackgrCB;
+    QCheckBox		*mMarkerBehindCB;
+    QCheckBox		*mCorEnabledCB;
 };
 
 }

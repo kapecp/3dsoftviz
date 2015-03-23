@@ -122,7 +122,7 @@ void ArucoThread::run()
 
             frame = mCapVideo->queryFrame();		// get image from camera
 
-
+            aCore.detect(frame.clone());
 
             if(mMultiMarkerEnabled) {
                 //TODO funkcionalita ku detekcii viacerych markerov
