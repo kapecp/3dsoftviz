@@ -9,9 +9,13 @@ namespace ArucoModul {
 class ArucoThread;
 }
 
+namespace Kinect {
+class KinectThread;
+}
+
 namespace QOpenCV {
 class FaceRecognitionThread;
-class FaceRecognitionWindow;
+//class FaceRecognitionWindow;
 class OpenCVWindow;
 }
 namespace OpenCV {
@@ -48,6 +52,13 @@ public:
          * @brief faceRecognition Initialize Face Detection and Aruco threads and Face Detection Window
          */
     void faceRecognition();
+
+    /**
+     * @author Matej Marconak
+     * @brief kinectRecognition start
+     * @brief create thread and window for Kinect
+     */
+    void kinectRecognition();
 
     /**
          * @author Autor: Michael Garaj
@@ -88,15 +99,24 @@ private:
          */
     void createConnectionMultiAruco();
 
+    /**
+     * @author Matej Marconak
+     * @brief create Connection Kinect
+     * @brief create SLOT and SIGNAL for comunication between THREAD and Window,CameraManipulator
+     */
+    void createConnectionKinect();
+
 
     static OpenCVCore*	mOpenCVCore;	// static singleton instance
-    bool				mThrsCreated;	// if false, threads were not initialized yet
+    bool				mArucoThrsCreated;	// if false, threads were not initialized yet
+    bool                mKinectThrsCreated; // if false, threads were not initialized yet
 
     QWidget*							mParent;
     QApplication*					mApp;
     ArucoModul::ArucoThread*			mThrAruco;
     QOpenCV::FaceRecognitionThread*	mThrFaceRec;
-    QPointer<QOpenCV::FaceRecognitionWindow> mOpencvDialog;
+    Kinect::KinectThread* mThrKinect;
+    //QPointer<QOpenCV::FaceRecognitionWindow> mOpencvDialog;
     QPointer<QOpenCV::OpenCVWindow> mOpencvWindow;
 
 };

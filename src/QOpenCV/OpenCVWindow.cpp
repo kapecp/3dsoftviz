@@ -66,6 +66,15 @@ void QOpenCV::OpenCVWindow::configureWindow()
     mFaceDetBackgrCB = new QCheckBox( tr("Background") );
     mMarkerBehindCB	= new QCheckBox( tr("Marker is behind") );
     mCorEnabledCB = new QCheckBox( tr("Correction") );
+    mDisableCursorCB = new QCheckBox( tr("Turn off cursor") );
+    mDisableZoomCursorCB = new QCheckBox( tr("Turn off zoom") );
+
+    mSpeed =  new QSlider( Qt::Vertical );
+    mSpeed->setRange( 5,20 );
+    mSpeed->setValue( 10 );
+    mSpeed->setPageStep( 1 );
+    mSpeed->setFocusPolicy( Qt::NoFocus );
+    mSpeed->setToolTip( "Modify speed of movement" );
 
     mModulesStackL = new QStackedLayout;
     mSubmodulesStackL = new QStackedLayout;
@@ -73,8 +82,11 @@ void QOpenCV::OpenCVWindow::configureWindow()
     QHBoxLayout *mainLayout		= new QHBoxLayout;
     QVBoxLayout *buttonLayout	= new QVBoxLayout;
 
+#ifdef OPENNI2_FOUND
     mKinectRB->setChecked( true );
     buttonLayout->addWidget( mKinectRB );
+#endif
+
     buttonLayout->addWidget( mArucoRB );
     buttonLayout->addLayout( mModulesStackL );
 
@@ -119,6 +131,10 @@ void QOpenCV::OpenCVWindow::configureWindow()
     arucoMultiMarkerPageWid->setLayout( arucoMultiMarkerPageLayout );
     arucoSubPageWid->setLayout( arucoSubPageLayout );
 
+    //set up page layouts
+    kinectPageLayout->addWidget( mDisableCursorCB );
+    kinectPageLayout->addWidget( mDisableZoomCursorCB );
+    kinectPageLayout->addWidget( mSpeed );
     kinectPageLayout->addWidget( mKinectPB );
 
     arucoPageLayout->addWidget( mMultiMarkerPB );
@@ -147,8 +163,7 @@ void QOpenCV::OpenCVWindow::configureWindow()
     setLayout( mainLayout );
     adjustSize();
 
-
-
+    //set up Widgets
     mUpdateCorParPB->setEnabled( false );
 
     mFaceDetBackgrCB->setEnabled(false);
@@ -159,7 +174,9 @@ void QOpenCV::OpenCVWindow::configureWindow()
     mMultiMarkerPB->setCheckable( true );
     mFaceRecPB->setCheckable(true);
     mMarkerPB->setCheckable(true);
+    mKinectPB->setCheckable(true);
 
+    //set up signals to slots
     connect( mKinectRB, SIGNAL(clicked()), this, SLOT(onSelModulChange()) );
     connect( mArucoRB, SIGNAL(clicked()), this, SLOT(onSelModulChange()) );
     connect( mFaceRecRB, SIGNAL(clicked()), this, SLOT(onSelSubModulChange()) );
@@ -172,9 +189,81 @@ void QOpenCV::OpenCVWindow::configureWindow()
     connect( mMarkerPB,  SIGNAL(clicked(bool)), this, SLOT(onMarkerStartCancel(bool)) );
     connect( mFaceRecPB, SIGNAL(clicked(bool)), this, SLOT(onFaceRecStartCancel(bool)) );
     connect( mMultiMarkerPB, SIGNAL(clicked(bool)), this, SLOT(onMultiMarkerStartCancel(bool)) );
+    connect( mKinectPB, SIGNAL(clicked(bool)), this, SLOT(onKinectStartCancel(bool)) );
 
     connect( mMarkerBackgrCB, SIGNAL(clicked(bool)), this, SLOT(onMarkerBackgrCBClicked(bool)) );
     connect( mFaceDetBackgrCB, SIGNAL(clicked(bool)), this, SLOT(onFaceDetBackgrCBClicked(bool)) );
+}
+
+void QOpenCV::OpenCVWindow::stopMovingCursor()
+{
+    if ( mDisableCursorCB->isChecked() ) {
+        emit setMovementCursor( false );
+    }
+    else {
+        emit setMovementCursor( true );
+    }
+}
+
+void QOpenCV::OpenCVWindow::stopZoom()
+{
+    if ( mDisableZoomCursorCB->isChecked() ) {
+        emit setZoom( false );
+    }
+    else {
+        emit setZoom( true );
+    }
+}
+
+void QOpenCV::OpenCVWindow::setSpeedKinect( int speed )
+{
+    double _speed=( double )( ( double )( speed/10.0 ) );
+    emit sendSpeedKinect( _speed );
+}
+
+void QOpenCV::OpenCVWindow::onKinectStartCancel( bool checked )
+{
+    if( checked )
+    {
+        qDebug() << "Startujem Kinect Thread";
+        mKinectPB->setText( tr("Pause Kinect") );
+        emit inicializeKinect();
+        emit startKinect();
+        emit sendImageKinect( true );
+    } else {
+        qDebug() << "Pausujem Kinect Thread";
+        mKinectPB->setText( tr("Start Kinect") );
+        emit closeActionOpenni();
+        emit stopKinect( true );
+        emit sendImageKinect( false );
+    }
+    /*
+    bool start=false;
+    //check button name, based on that stop pause and start
+    if ( mKinectPB->text().toStdString().compare( tr( "Start" ).toStdString() )==0 ) {
+        //inicialize openni and start device
+        start = thr->inicializeKinect();
+        if ( start ) {
+            emit startKinect();
+
+            emit sendImageKinect( true );
+            mKinectPB->setText( tr( "Pause" ) );
+        }
+    }
+    else if ( mKinectPB->text().toStdString().compare( tr( "Pause" ).toStdString() )==0 ) {
+        mKinectPB->setText( tr( "Continue" ) );
+        emit sendImageKinect( false );
+        this->thr->closeActionOpenni();
+    }
+    else {
+        //inicialize openni and start device
+        start = thr->inicializeKinect();
+        if ( start ) {
+            mKinectPB->setText( tr( "Pause" ) );
+            emit sendImageKinect( true );
+        }
+    }
+    */
 }
 
 void QOpenCV::OpenCVWindow::onFaceDetBackgrCBClicked( bool checked )

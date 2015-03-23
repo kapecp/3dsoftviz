@@ -4,6 +4,7 @@
 
 #include "Core/Core.h"
 #include "Aruco/arucothread.h"
+#include "Kinect/KinectThread.h"
 #include "QOpenCV/FaceRecognitionThread.h"
 #include "QOpenCV/FaceRecognitionWindow.h"
 #include "QOpenCV/OpenCVWindow.h"
@@ -21,17 +22,19 @@ OpenCV::OpenCVCore::OpenCVCore( QApplication* app, QWidget* parent )
     mApp			= app;
     mParent			= parent;
 
-    mThrsCreated	= false;
-    mOpencvDialog	= NULL;
+    mArucoThrsCreated	= false;
+    mKinectThrsCreated = false;
+    //mOpencvDialog	= NULL;
     mOpencvWindow   = NULL;
     mThrFaceRec		= NULL;
     mThrAruco		= NULL;
+    mThrKinect      = NULL;
 
 
 }
 OpenCV::OpenCVCore::~OpenCVCore( void )
 {
-    if( mThrsCreated ) {
+    if( mArucoThrsCreated ) {
         if(mThrFaceRec != NULL)
         {
             mThrFaceRec->setCancel(true);
@@ -43,13 +46,13 @@ OpenCV::OpenCVCore::~OpenCVCore( void )
             mThrAruco->setCancel(true);
             mThrAruco->setSendImgEnabling(false);
         }
-
+/*
         if(mOpencvDialog != NULL)
         {
             mOpencvDialog->disconnect();
             mOpencvDialog->deleteLater();
         }
-
+*/
         if(mOpencvWindow != NULL)
         {
             mOpencvWindow->disconnect();
@@ -72,13 +75,14 @@ OpenCV::OpenCVCore::~OpenCVCore( void )
     }
 }
 
+/*
 void OpenCV::OpenCVCore::faceRecognition()
 {
     if( !mOpencvDialog ){
-        if( !mThrsCreated ){
+        if( !mArucoThrsCreated ){
             // create threads
             qDebug() << "creating threads";
-            mThrsCreated = true;
+            mArucoThrsCreated = true;
             mThrAruco		= new ArucoModul::ArucoThread();
             mThrFaceRec		= new QOpenCV::FaceRecognitionThread();
             createPermanentConnection();
@@ -95,29 +99,54 @@ void OpenCV::OpenCVCore::faceRecognition()
     }
     mOpencvDialog->show();
 }
+*/
 
 void OpenCV::OpenCVCore::opencvInit()
 {
+    if( !mArucoThrsCreated ) {
+        //create Threads
+        mArucoThrsCreated = true;
+        mThrAruco = new ArucoModul::ArucoThread();
+        mThrFaceRec	= new QOpenCV::FaceRecognitionThread();
+
+#ifdef OPENNI2_FOUND
+        mThrKinect = new Kinect::KinectThread();
+#endif
+
+        createPermanentConnection();
+    }
+
     if( !mOpencvWindow ) {
-        if( !mThrsCreated ) {
-            //create Threads
-            mThrsCreated = true;
-            mThrAruco = new ArucoModul::ArucoThread();
-            mThrFaceRec	= new QOpenCV::FaceRecognitionThread();
-            createPermanentConnection();
-        }
         qDebug() << "Creating OpenCV Window";
         mOpencvWindow =  new QOpenCV::OpenCVWindow(mParent, mApp);
     }
 
-    if( mOpencvWindow->isHidden() )
-    {
-        //createConnectionMultiAruco();
-        createConnectionFaceRec();
-        createConnectionAruco();
+    createConnectionFaceRec();
+    createConnectionAruco();
+
+#ifdef OPENNI2_FOUND
+    createConnectionKinect();
+#endif
+
+    mOpencvWindow->show();
+}
+
+void OpenCV::OpenCVCore::kinectRecognition()
+{
+    if ( !mKinectThrsCreated ) {
+        qDebug() << "Kinect Thread";
+        mKinectThrsCreated=true;
+        mThrKinect = new Kinect::KinectThread();
+    }
+
+    if ( !mOpencvWindow ) {
+        qDebug() << "create OpenCVWindow Window";
+        //mKinectDialog= new Kinect::KinectWindow( mParent,app,mThrKinect );
+        mOpencvWindow = new QOpenCV::OpenCVWindow( mParent, mApp );
     }
 
     mOpencvWindow->show();
+    createConnectionKinect();
 }
 
 void  OpenCV::OpenCVCore::createPermanentConnection(){
@@ -154,6 +183,71 @@ void  OpenCV::OpenCVCore::createPermanentConnection(){
                      SIGNAL(moveMouseArucoSignal(double,double,bool,Qt::MouseButton)),
                      AppCore::Core::getInstance()->getCoreWindow(),
                      SLOT(moveMouseAruco(double,double,bool,Qt::MouseButton)));
+
+}
+
+void OpenCV::OpenCVCore::createConnectionKinect()
+{
+
+    //for video sending
+    QObject::connect( mOpencvWindow,
+                      SIGNAL( sendImageKinect( bool ) ),
+                      mThrKinect,
+                      SLOT( setImageSend( bool ) ) );
+
+    //send image to label
+    QObject::connect( mThrKinect,
+                      SIGNAL( pushImage( cv::Mat ) ),
+                      mOpencvWindow,
+                      SLOT( setLabel( cv::Mat ) ) );
+
+    //start
+    QObject::connect( mOpencvWindow,
+                      SIGNAL( startKinect() ),
+                      mThrKinect,
+                      SLOT( start() ) );
+
+    //stop
+    QObject::connect( mOpencvWindow,
+                      SIGNAL( stopKinect( bool ) ),
+                      mThrKinect,
+                      SLOT( setCancel( bool ) ) );
+
+    // moving camera with gesture
+    QObject::connect( mThrKinect,
+                      SIGNAL( sendSliderCoords( float,float,float ) ),
+                      AppCore::Core::getInstance( NULL )->getCoreWindow()->getCameraManipulator(),
+                      SLOT( setRotationHeadKinect( float,float,float ) ) );
+
+    //enable/disable cursor movement
+    QObject::connect( mOpencvWindow,
+                      SIGNAL( setMovementCursor( bool ) ),
+                      mThrKinect,
+                      SLOT( setCursorMovement( bool ) ) );
+
+    //enable/disable zoom
+    QObject::connect( mOpencvWindow,
+                      SIGNAL( setZoom( bool ) ),
+                      mThrKinect,
+                      SLOT( setZoomUpdate( bool ) ) );
+
+    //edit for speed movement
+    QObject::connect( mOpencvWindow,
+                      SIGNAL( sendSpeedKinect( double ) ),
+                      mThrKinect,
+                      SLOT( setSpeedKinect( double ) ) );
+
+    //edit for speed movement
+    QObject::connect( mOpencvWindow,
+                      SIGNAL( inicializeKinect() ),
+                      mThrKinect,
+                      SLOT( inicializeKinect() ) );
+
+    //edit for speed movement
+    QObject::connect( mOpencvWindow,
+                      SIGNAL( closeActionOpenni() ),
+                      mThrKinect,
+                      SLOT( closeActionOpenni() ) );
 
 }
 

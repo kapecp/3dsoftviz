@@ -22,13 +22,13 @@ Kinect::KinectThread::~KinectThread( void )
 {
 }
 
-bool Kinect::KinectThread::inicializeKinect()
+void Kinect::KinectThread::inicializeKinect()
 {
     // create Openni connection
     mKinect = new Kinect::KinectRecognition();
     isOpen=mKinect->isOpenOpenni(); // checl if open
 
-    qDebug() <<isOpen ;
+    qDebug() << "Kinect Thread inicializeKinect isOpen=" << isOpen ;
     if ( isOpen ) {
         // color data for Kinect windows
         color.create( mKinect->device, openni::SENSOR_COLOR );
@@ -42,7 +42,7 @@ bool Kinect::KinectThread::inicializeKinect()
         kht = new KinectHandTracker( &mKinect->device,&m_depth );
 #endif
     }
-    return isOpen;
+    //return isOpen;
 }
 
 void Kinect::KinectThread::closeActionOpenni()

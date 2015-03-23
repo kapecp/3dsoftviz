@@ -35,16 +35,6 @@ public:
 
     void run();
 
-    /**
-     * @brief inicialize openni and nite for handtracking and add device
-     */
-    bool inicializeKinect();
-
-    /**
-     * @brief pause,stop calculate
-     */
-    void closeActionOpenni();
-
 signals:
 
     /**
@@ -101,6 +91,16 @@ public slots:
      * @param set base 1.0 for normal speed, <1 slower, >1 faster
      */
     void setSpeedKinect( double set );
+
+    /**
+     * @brief inicialize openni and nite for handtracking and add device
+     */
+    void inicializeKinect();
+
+    /**
+     * @brief pause,stop calculate
+     */
+    void closeActionOpenni();
 
 private:
 

@@ -156,6 +156,45 @@ signals:
          */
     void setCapVideoMarker( OpenCV::CapVideo *capVideo );
 
+    /**
+     * @brief startKinect
+     */
+    void startKinect();
+
+    /**
+     * @brief stopKinect
+     * @param true for stop, false to continue
+     */
+    void stopKinect( bool set );
+
+    /**
+     * @brief enable to view kinect video
+     * @param send true for enable, false for disable
+     */
+    void sendImageKinect( bool send );
+
+    /**
+     * @brief enable/disable for cursor move
+     * @param send true for stop, false for start
+     */
+    void setMovementCursor( bool send );
+
+    /**
+     * @brief enable/disable graph zoom
+     * @param send true for stop, false for start
+     */
+    void setZoom( bool send );
+
+    /**
+     * @brief change of speed movement for hand
+     * @param send speed for movement
+     */
+    void sendSpeedKinect( double send );
+
+    void inicializeKinect();
+
+    void closeActionOpenni();
+
 public slots:
     /**
          * @author Autor: David Durcak
@@ -181,6 +220,11 @@ public slots:
         */
     void setLabel( cv::Mat image );
 
+    /**
+     * @brief SLOT for stop Window
+     */
+    //void quitWindows();
+
 private slots:
     /**
          * @author Autor: Michael Garaj
@@ -200,6 +244,13 @@ private slots:
          * @param checked If true, thread will start
          */
     void onMultiMarkerStartCancel(bool checked);
+
+    /**
+         * @author Autor: Michael Garaj
+         * @brief onKinectStartCancel Start or stop Kinect thread
+         * @param checked If true, thread will start
+         */
+    void onKinectStartCancel(bool checked);
 
     /**
          * @author Autor: David Durcak
@@ -234,6 +285,18 @@ private slots:
          * @param checked
          */
     void onMarkerBackgrCBClicked(bool checked);
+
+    /**
+     * @brief private SLOT for turn OFF cursor
+     */
+    void stopMovingCursor();
+    void stopZoom();
+
+    /**
+     * @brief private SLOT set speed movements
+     * @param speed of movement
+     */
+    void setSpeedKinect( int speed );
 
 private:
     /**
@@ -274,6 +337,10 @@ private:
     QCheckBox		*mFaceDetBackgrCB;
     QCheckBox		*mMarkerBehindCB;
     QCheckBox		*mCorEnabledCB;
+    QCheckBox       *mDisableCursorCB;
+    QCheckBox       *mDisableZoomCursorCB;
+
+    QSlider         *mSpeed;
 };
 
 }
