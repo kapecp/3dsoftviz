@@ -159,7 +159,7 @@ cv::Mat ArucoCore::getDetectedTriangleImage() {
 
 void ArucoCore::drawTriangle(cv::Mat &Image, vector<aruco::Marker> &m,const aruco::CameraParameters &CP ) {
 
-    cv::Point2f *pointArray = (cv::Point2f *) malloc(m.size()*sizeof(cv::Point2f));
+    cv::Point2f *pointArray = (cv::Point2f *) malloc((m.size()+1)*sizeof(cv::Point2f));
 
     for( unsigned int i = 0; i < m.size(); i++ ) {
         cv::Mat objectPoints(1, 3, CV_32FC1);
@@ -181,10 +181,14 @@ void ArucoCore::drawTriangle(cv::Mat &Image, vector<aruco::Marker> &m,const aruc
     }
 
     if( m.size() == 3 ) {
+        pointArray[3].x = pointArray[2].x - (pointArray[1].x - pointArray[0].x);
+        pointArray[3].y = pointArray[0].y + (pointArray[2].y - pointArray[1].y);
         cv::rectangle(Image, pointArray[2], pointArray[0], cv::Scalar(0,255,255), CV_FILLED,8,0);
         cv::line(Image, pointArray[0], pointArray[1], cv::Scalar(0,0,255), 2, CV_AA);
         cv::line(Image, pointArray[1], pointArray[2], cv::Scalar(0,0,255), 2, CV_AA);
         cv::line(Image, pointArray[2], pointArray[0], cv::Scalar(0,0,255), 2, CV_AA);
+        cv::line(Image, pointArray[3], pointArray[0], cv::Scalar(0,0,255), 2, CV_AA);
+        cv::line(Image, pointArray[3], pointArray[2], cv::Scalar(0,0,255), 2, CV_AA);
     }
 }
 
