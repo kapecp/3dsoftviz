@@ -1341,7 +1341,7 @@ void Vwr::CameraManipulator::resetProjectionMatrixToDefault()
 }
 // Duransky end - Resetovanie projekcnej matice pri vypnuti vertigo modu
 
-void Vwr::CameraManipulator::enableMovement(Vwr::CameraManipulator::Movement movement){
+void Vwr::CameraManipulator::enableCameraMovement(Vwr::CameraManipulator::Movement movement){
     switch(movement){
         case Vwr::CameraManipulator::Movement::RIGHT :
         {
@@ -1375,7 +1375,7 @@ void Vwr::CameraManipulator::enableMovement(Vwr::CameraManipulator::Movement mov
     }
 }
 
-void Vwr::CameraManipulator::disableMovement(){
+void Vwr::CameraManipulator::disableCameraMovement(){
     decelerateSideRate = true;
     decelerateVerticalRate = true;
     decelerateForwardRate = true;

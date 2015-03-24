@@ -8,37 +8,37 @@ Leap::LeapActions::LeapActions(){
     qDebug() << "LeapActions() Constructor";
 }
 
-void Leap::LeapActions::onSwipe(Gesture gesture)
+void Leap::LeapActions::moveCamera(Gesture gesture)
 {
     // swipe gesture
     SwipeGesture swipe = gesture;
     Vector direction = swipe.direction();
-    // najprv porovnam direction[0] a direction[1], aby som zistil o aky pohyb sa jedna
-    float duration = gesture.duration()/1000;
 
-    if(abs(direction[0]) > abs(direction[1])){ // ak plati toto jedna sa o horizontalny pohyb
+    float gestureDuration = gesture.duration()/1000;
+    // compare direction[0] and direction[1] to find out what kind of movement are we working with
+    if(abs(direction[0]) > abs(direction[1])){ // horizontal movement
         if(direction[0] > 0){
-            cmrManipulator->enableMovement(Vwr::CameraManipulator::Movement::RIGHT);
-            Sleep(duration);
-            cmrManipulator->disableMovement();
+            cmrManipulator->enableCameraMovement(Vwr::CameraManipulator::Movement::RIGHT);
+            Sleep(gestureDuration);
+            cmrManipulator->disableCameraMovement();
             qDebug() << "SwipeGesture - right";
         }else if(direction[0] < 0){
-            cmrManipulator->enableMovement(Vwr::CameraManipulator::Movement::LEFT);
-            Sleep(duration);
-            cmrManipulator->disableMovement();
+            cmrManipulator->enableCameraMovement(Vwr::CameraManipulator::Movement::LEFT);
+            Sleep(gestureDuration);
+            cmrManipulator->disableCameraMovement();
             qDebug() << "SwipeGesture - left";
         }
-    }else{ // inak sa jedna o vertikalny pohyb
+    }else{ // vertical movement
         if(direction[1] > 0){
-            cmrManipulator->enableMovement(Vwr::CameraManipulator::UP);
-            Sleep(duration);
-            cmrManipulator->disableMovement();
+            cmrManipulator->enableCameraMovement(Vwr::CameraManipulator::UP);
+            Sleep(gestureDuration);
+            cmrManipulator->disableCameraMovement();
             qDebug() << "SwipeGesture - up";
         }
         else if(direction[1] < 0){
-            cmrManipulator->enableMovement(Vwr::CameraManipulator::DOWN);
-            Sleep(duration);
-            cmrManipulator->disableMovement();
+            cmrManipulator->enableCameraMovement(Vwr::CameraManipulator::DOWN);
+            Sleep(gestureDuration);
+            cmrManipulator->disableCameraMovement();
             qDebug() << "SwipeGesture - down";
         }
     }

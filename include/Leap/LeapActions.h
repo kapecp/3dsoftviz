@@ -30,9 +30,14 @@ class LeapActions
      */
     void Leap::LeapActions::zoomGraph(Gesture gesture);
 
+    /**
+     * @brief Moves the graph using swipe gesture. Possible directions are UP, DOWN, LEFT, RIGHT
+     * @param gesture - SwipeGesture to be used
+     */
+    void Leap::LeapActions::moveCamera(Gesture gesture);
+
     // These methods should not have names onSwipe, onXXX. They are placeholders for further functionality.
     // The names should correspond to the functionality provided by the method i.e. moveGraph();
-    void Leap::LeapActions::onSwipe(Gesture gesture);
     void Leap::LeapActions::onKeyTap(Gesture gesture);
     void Leap::LeapActions::onScreenTap(Gesture gesture);
   private:
