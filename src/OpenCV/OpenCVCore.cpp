@@ -249,6 +249,22 @@ void OpenCV::OpenCVCore::createConnectionKinect()
                       mThrKinect,
                       SLOT( closeActionOpenni() ) );
 
+    QObject::connect( mOpencvWindow,
+                      SIGNAL(setKinectMarkerDetection( bool ) ),
+                      mThrKinect,
+                      SLOT(setImageSendToMarkerDetection( bool ) ) );
+
+    //enable/disable sending picture to Marker Detection
+    QObject::connect( mThrKinect,
+                      SIGNAL( pushImageToMarkerDetection( cv::Mat ) ),
+                      mThrAruco,
+                      SLOT( detectMarkerFromImage( cv::Mat ) ) );
+
+    //send augmented Image created in Kinect
+    QObject::connect( mThrAruco,
+                      SIGNAL( pushImageFromKinect( cv::Mat ) ),
+                      mOpencvWindow,
+                      SLOT( setLabel( cv::Mat ) ) );
 }
 
 void OpenCV::OpenCVCore::createConnectionFaceRec(){

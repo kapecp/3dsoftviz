@@ -46,10 +46,16 @@ signals:
     void sendSliderCoords( float x, float y, float distance );
 
     /**
-     * @brief send picture for Kinect window
+     * @brief send picture for OpenCV window
      * @param image picture from Kinect
      */
     void pushImage( cv::Mat image );
+
+    /**
+     * @brief send picture to Aruco Marker Detection
+     * @param image picture from Kinect
+     */
+    void pushImageToMarkerDetection( cv::Mat image );
 
 
     /**
@@ -71,6 +77,12 @@ public slots:
      * @param set true for calculate and sending picture, false for pause
      */
     void setImageSend( bool set );
+
+    /**
+     * @brief function for enable sending picture to Aruco thread for Marker Detection
+     * @param set true for sending picture, false for pause
+     */
+    void setImageSendToMarkerDetection( bool set );
 
     void pause();
 
@@ -124,6 +136,7 @@ private:
      */
     bool isCursorEnable;
     bool isZoomEnable;
+    bool isMarkerDetectEnable;
 
     /**
      * @brief speed for reaction

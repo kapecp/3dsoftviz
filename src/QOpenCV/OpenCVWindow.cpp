@@ -68,6 +68,7 @@ void QOpenCV::OpenCVWindow::configureWindow()
     mCorEnabledCB = new QCheckBox( tr("Correction") );
     mDisableCursorCB = new QCheckBox( tr("Turn off cursor") );
     mDisableZoomCursorCB = new QCheckBox( tr("Turn off zoom") );
+    mEnableMarkerDetectCB = new QCheckBox( tr("Turn on Marker Detection") );
 
     mSpeed =  new QSlider( Qt::Vertical );
     mSpeed->setRange( 5,20 );
@@ -134,6 +135,7 @@ void QOpenCV::OpenCVWindow::configureWindow()
     //set up page layouts
     kinectPageLayout->addWidget( mDisableCursorCB );
     kinectPageLayout->addWidget( mDisableZoomCursorCB );
+    kinectPageLayout->addWidget( mEnableMarkerDetectCB );
     kinectPageLayout->addWidget( mSpeed );
     kinectPageLayout->addWidget( mKinectPB );
 
@@ -170,6 +172,7 @@ void QOpenCV::OpenCVWindow::configureWindow()
     mMarkerBackgrCB->setEnabled(false);
     mMarkerBehindCB->setEnabled(false);
     mCorEnabledCB->setEnabled(false);
+    mEnableMarkerDetectCB->setEnabled(true);
 
     mMultiMarkerPB->setCheckable( true );
     mFaceRecPB->setCheckable(true);
@@ -193,6 +196,7 @@ void QOpenCV::OpenCVWindow::configureWindow()
 
     connect( mMarkerBackgrCB, SIGNAL(clicked(bool)), this, SLOT(onMarkerBackgrCBClicked(bool)) );
     connect( mFaceDetBackgrCB, SIGNAL(clicked(bool)), this, SLOT(onFaceDetBackgrCBClicked(bool)) );
+    connect( mEnableMarkerDetectCB, SIGNAL(clicked(bool)), this, SLOT(setMarkerDetection(bool)) );
 }
 
 void QOpenCV::OpenCVWindow::stopMovingCursor()
@@ -213,6 +217,11 @@ void QOpenCV::OpenCVWindow::stopZoom()
     else {
         emit setZoom( true );
     }
+}
+
+void QOpenCV::OpenCVWindow::setMarkerDetection( bool set )
+{
+    emit setKinectMarkerDetection( set );
 }
 
 void QOpenCV::OpenCVWindow::setSpeedKinect( int speed )

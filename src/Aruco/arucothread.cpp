@@ -266,6 +266,14 @@ void ArucoThread::imagesSending( ArucoCore& aCore, const cv::Mat frame ) const
     }
 }
 
+void ArucoThread::detectMarkerFromImage( cv::Mat image ) {
+    ArucoCore aCore;
+    aCore.detect( image );
+    cv::Mat frame;
+    frame = aCore.getDetImage();
+    emit pushImageFromKinect( frame.clone() );
+}
+
 void ArucoThread::computeCorQuatAndPos(const double position[3], const double rotation[4] ){
     qDebug() << "ARUCO: comput cor par done>";
     // set corection translation

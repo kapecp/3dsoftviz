@@ -186,6 +186,12 @@ signals:
     void setZoom( bool send );
 
     /**
+     * @brief enable/disable marker detection from kinect camera
+     * @param send true for start, false for stop
+     */
+    void setKinectMarkerDetection( bool send );
+
+    /**
      * @brief change of speed movement for hand
      * @param send speed for movement
      */
@@ -298,6 +304,12 @@ private slots:
      */
     void setSpeedKinect( int speed );
 
+    /**
+     * @brief private SLOT set marker detection
+     * @param speed of movement
+     */
+    void setMarkerDetection( bool set );
+
 private:
     /**
          * @author Autor: Michael Garaj
@@ -339,6 +351,7 @@ private:
     QCheckBox		*mCorEnabledCB;
     QCheckBox       *mDisableCursorCB;
     QCheckBox       *mDisableZoomCursorCB;
+    QCheckBox       *mEnableMarkerDetectCB;
 
     QSlider         *mSpeed;
 };

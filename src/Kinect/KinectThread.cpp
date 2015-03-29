@@ -16,6 +16,7 @@ Kinect::KinectThread::KinectThread( QObject* parent ) : QThread( parent )
     isOpen=false;
     mSetImageEnable=true;
     isZoomEnable=true;
+    isMarkerDetectEnable=false;
 }
 
 Kinect::KinectThread::~KinectThread( void )
@@ -60,6 +61,11 @@ void Kinect::KinectThread::setImageSend( bool set )
     mSetImageEnable=set;
 }
 
+void Kinect::KinectThread::setImageSendToMarkerDetection( bool set )
+{
+    isMarkerDetectEnable = set;
+}
+
 void Kinect::KinectThread::pause()
 {
     mCancel=true;
@@ -95,7 +101,7 @@ void Kinect::KinectThread::run()
     /////////end////////////
     Kinect::KinectZoom* zoom = new Kinect::KinectZoom();
     cv::Mat frame, depth;
-    bool test = true;
+    bool test = false;
     // check if is close
     while ( !mCancel ) {
         //check if is sending image enabling
@@ -106,6 +112,8 @@ void Kinect::KinectThread::run()
             frame=mKinect->colorImageCvMat( colorFrame );
             cv::cvtColor( frame, frame, CV_BGR2RGB );
             m_depth.readFrame( &depthFrame);
+
+            //funkcionalita na vytvorenie screenshotu prveho snimku z kinectu
             if(test) {
                 depth = mKinect->depthImageCvMat(depthFrame);
 
@@ -206,8 +214,12 @@ void Kinect::KinectThread::run()
             }
 #endif
             // resize, send a msleep for next frame
-            cv::resize( frame, frame,cv::Size( 320,240 ),0,0,cv::INTER_LINEAR );
-            emit pushImage( frame );
+            //cv::resize( frame, frame,cv::Size( 320,240 ),0,0,cv::INTER_LINEAR );
+            if(isMarkerDetectEnable) {
+                emit pushImageToMarkerDetection( frame );
+            } else {
+                emit pushImage( frame );
+            }
             msleep( 20 );
         }
 
