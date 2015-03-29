@@ -229,13 +229,6 @@ public:
 		 */
 	void setCenterSmoothly( osg::Vec3 newCenter );
 
-	/**
-		 * @author Viktor Vinczler
-		 * @brief setFreeLookMode Setter for _freeLookMode
-		 * @param value Setter value
-		 */
-	void setFreeLookMode(bool value);
-
 	void setNewPosition( osg::Vec3d cameraTargetPoint, osg::Vec3d cameraInterestPoint, std::list<osg::ref_ptr<Data::Node> > selectedCluster, std::list<osg::ref_ptr<Data::Edge> > selectedEdges );
 
 	osg::Vec3d getCameraPosition();
@@ -304,7 +297,7 @@ protected:
 
 	/** For the give mouse movement calculate the movement of the camera.
 			Return true is camera has moved and a redraw is required.*/
-	bool calcMovement(osgGA::GUIActionAdapter& us);
+	bool calcMovement();
 
 	void trackball( osg::Vec3& axis,float& angle, float p1x, float p1y, float p2x, float p2y );
 	float tb_project_to_sphere( float r, float x, float y );
@@ -850,8 +843,6 @@ private:
 
 	bool ctrlPressed;
 	bool shiftPressed;
-
-	bool _freeLookMode;
 
 };
 

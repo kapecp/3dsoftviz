@@ -81,11 +81,6 @@ void Vwr::CameraManipulator::setVertigoMode( bool value )
 	_vertigo = value;
 }
 
-void Vwr::CameraManipulator::setFreeLookMode(bool value)
-{
-    _freeLookMode = value;
-}
-
 void Vwr::CameraManipulator::setNode( osg::Node* node )
 {
 	_node = node;
@@ -177,7 +172,7 @@ bool Vwr::CameraManipulator::handle( const GUIEventAdapter& ea, GUIActionAdapter
 		}
 		case ( GUIEventAdapter::FRAME ): {
 			if ( _thrown ) {
-				if ( calcMovement(us) ) {
+				if ( calcMovement() ) {
 					us.requestRedraw();
 				}
 			}
@@ -192,7 +187,7 @@ bool Vwr::CameraManipulator::handle( const GUIEventAdapter& ea, GUIActionAdapter
 bool Vwr::CameraManipulator::handleScroll( const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& us )
 {
 	addMouseEvent( ea );
-	if ( calcMovement(us) ) {
+	if ( calcMovement() ) {
 		us.requestRedraw();
 	}
 	us.requestContinuousUpdate( false );
@@ -210,7 +205,7 @@ bool Vwr::CameraManipulator::handleRelease( const osgGA::GUIEventAdapter& ea, os
 		}
 
 		if ( isMouseMoving() ) {
-			if ( calcMovement(us) ) {
+			if ( calcMovement() ) {
 				us.requestRedraw();
 				us.requestContinuousUpdate( true );
 				_thrown = _allowThrow;
@@ -219,7 +214,7 @@ bool Vwr::CameraManipulator::handleRelease( const osgGA::GUIEventAdapter& ea, os
 		else {
 			flushMouseEventStack();
 			addMouseEvent( ea );
-			if ( calcMovement(us) ) {
+			if ( calcMovement() ) {
 				us.requestRedraw();
 			}
 			us.requestContinuousUpdate( false );
@@ -230,7 +225,7 @@ bool Vwr::CameraManipulator::handleRelease( const osgGA::GUIEventAdapter& ea, os
 	else {
 		flushMouseEventStack();
 		addMouseEvent( ea );
-		if ( calcMovement(us) ) {
+		if ( calcMovement() ) {
 			us.requestRedraw();
 		}
 		us.requestContinuousUpdate( false );
@@ -270,7 +265,7 @@ bool Vwr::CameraManipulator::handlePush( const osgGA::GUIEventAdapter& ea, osgGA
 	else {
 		flushMouseEventStack();
 		addMouseEvent( ea );
-		if ( calcMovement(us) ) {
+		if ( calcMovement() ) {
 			us.requestRedraw();
 		}
 		us.requestContinuousUpdate( false );
@@ -287,7 +282,7 @@ bool Vwr::CameraManipulator::handleFrame( const osgGA::GUIEventAdapter& ea, osgG
 	_last_frame_time = current_frame_time;
 
 	if ( _thrown && _allowThrow ) {
-		if ( calcMovement(us) ) {
+		if ( calcMovement() ) {
 			us.requestRedraw();
 		}
 	}
@@ -373,7 +368,7 @@ void Vwr::CameraManipulator::computePosition( const osg::Vec3& eye,const osg::Ve
 }
 
 
-bool Vwr::CameraManipulator::calcMovement(osgGA::GUIActionAdapter& us)
+bool Vwr::CameraManipulator::calcMovement()
 {
 	// mouse scroll is only a single event
 	if ( _ga_t0.get()==NULL ) {
@@ -444,30 +439,17 @@ bool Vwr::CameraManipulator::calcMovement(osgGA::GUIActionAdapter& us)
 
 	if ( buttonMask==GUIEventAdapter::RIGHT_MOUSE_BUTTON ) {
 
+		// rotate camera.
+
+		osg::Vec3 axis;
+		float angle;
+
 		float px0 = _ga_t0->getXnormalized();
 		float py0 = _ga_t0->getYnormalized();
 
 		float px1 = _ga_t1->getXnormalized();
 		float py1 = _ga_t1->getYnormalized();
 
-		if(_freeLookMode == true && &us != 0){
-			// free look mode
-			osgViewer::Viewer* viewer = dynamic_cast<osgViewer::Viewer*>( &us );
-			osg::Vec3d eye;
-			osg::Vec3d center;
-			osg::Vec3d up;
-
-			viewer->getCamera()->getViewMatrixAsLookAt(eye, center, up);
-
-			eye.x() += (px1-px0);
-			eye.z() += (py1-py0);
-
-			computePosition(eye, center, up);
-			return true;
-		}
-		// rotate camera around center
-		osg::Vec3 axis;
-		float angle;
 
 		trackball( axis,angle,px1,py1,px0,py0 );
 
@@ -675,10 +657,6 @@ bool Vwr::CameraManipulator::handleKeyUp( const osgGA::GUIEventAdapter& ea, osgG
 			us.requestContinuousUpdate( false );
 
 			stop();
-			break;
-		}
-		case osgGA::GUIEventAdapter::KEY_F:{
-			_freeLookMode = true;
 			break;
 		}
 		case osgGA::GUIEventAdapter::KEY_Up:

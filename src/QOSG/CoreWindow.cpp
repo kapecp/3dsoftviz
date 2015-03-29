@@ -1148,7 +1148,7 @@ void CoreWindow::centerView( bool checked )
 	singleSelect->setChecked( false );
 	multiSelect->setChecked( false );
 	center->setChecked( checked );
-	viewerWidget->getCameraManipulator()->setFreeLookMode(false);
+
 	viewerWidget->getCameraManipulator()->setCenterSmoothly( viewerWidget->getPickHandler()->getSelectionCenterNnE() );
 }
 
