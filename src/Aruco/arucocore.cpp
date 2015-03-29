@@ -145,50 +145,73 @@ cv::Mat ArucoCore::getDetImage()
     return mCamImage;	// return image with augmented information
 }
 
-cv::Mat ArucoCore::getDetectedTriangleImage() {
+cv::Mat ArucoCore::getDetectedRectangleImage() {
+    //for each marker, draw info and cube from markers
     for( unsigned int i = 0; i < mMarkers.size(); i++ ) {
         mMarkers[i].draw( mCamImage, cv::Scalar( 0,0,255 ), 2 );
 
+        //draw a 3d rectangle from markers if there is 3d info
         if ( mCamParam.isValid() &&  !qFuzzyCompare( mMarkerSize,-1.0f ) ) {
-            drawTriangle( mCamImage, mMarkers, mCamParam );
+            drawCube( mCamImage, mMarkers, mCamParam );
         }
     }
 
-    return mCamImage;
+    return mCamImage; //return image with augmented information
 }
 
-void ArucoCore::drawTriangle(cv::Mat &Image, vector<aruco::Marker> &m,const aruco::CameraParameters &CP ) {
+void ArucoCore::drawCube(cv::Mat &Image, vector<aruco::Marker> &m,const aruco::CameraParameters &CP ) {
 
     cv::Point2f *pointArray = (cv::Point2f *) malloc((m.size()+1)*sizeof(cv::Point2f));
+    cv::Point2f *pointArray2 = (cv::Point2f *) malloc((m.size()+1)*sizeof(cv::Point2f));
 
+    //for each marker  compute his 2d representation on frame
     for( unsigned int i = 0; i < m.size(); i++ ) {
-        cv::Mat objectPoints(1, 3, CV_32FC1);
+        cv::Mat objectPoints(2, 3, CV_32FC1);
         objectPoints.at<float>(0,0)=0;
         objectPoints.at<float>(0,1)=0;
         objectPoints.at<float>(0,2)=0;
 
+        objectPoints.at<float>(1,0)=0;
+        objectPoints.at<float>(1,1)=0;
+        objectPoints.at<float>(1,2)=0.05;
+
         vector<cv::Point2f> imagePoint;
         cv::projectPoints(objectPoints, m[i].Rvec, m[i].Tvec, CP.CameraMatrix, CP.Distorsion, imagePoint);
         pointArray[i] = imagePoint[0];
+        pointArray2[i] = imagePoint[1];
     }
-/*
-    for(unsigned int j = 0; j < m.size(); j++ ) {
-        cv::circle(Image, pointArray[j], 50, cv::Scalar(255,0,0), 3);
-    }
-*/
+
+    //if we detect 2 markers, draw a line
     if( m.size() == 2 ) {
         cv::line(Image, pointArray[0], pointArray[1], cv::Scalar(0,255,255), 2, CV_AA);
     }
 
+    //if we detect 3 markers, compute the 4th point and draw a rectangle
     if( m.size() == 3 ) {
-        pointArray[3].x = pointArray[2].x - (pointArray[1].x - pointArray[0].x);
+        //compute the 4th point
+        pointArray[3].x = pointArray[2].x + (pointArray[0].x - pointArray[1].x);
         pointArray[3].y = pointArray[0].y + (pointArray[2].y - pointArray[1].y);
-        cv::rectangle(Image, pointArray[2], pointArray[0], cv::Scalar(0,255,255), CV_FILLED,8,0);
-        cv::line(Image, pointArray[0], pointArray[1], cv::Scalar(0,0,255), 2, CV_AA);
-        cv::line(Image, pointArray[1], pointArray[2], cv::Scalar(0,0,255), 2, CV_AA);
-        cv::line(Image, pointArray[2], pointArray[0], cv::Scalar(0,0,255), 2, CV_AA);
-        cv::line(Image, pointArray[3], pointArray[0], cv::Scalar(0,0,255), 2, CV_AA);
-        cv::line(Image, pointArray[3], pointArray[2], cv::Scalar(0,0,255), 2, CV_AA);
+
+        pointArray2[3].x = pointArray2[2].x + (pointArray2[0].x - pointArray2[1].x);
+        pointArray2[3].y = pointArray2[0].y + (pointArray2[2].y - pointArray2[1].y);
+
+
+        //cv::rectangle(Image, pointArray[2], pointArray[0], cv::Scalar(0,255,255), CV_FILLED,8,0);
+
+        cv::line(Image, pointArray[0], pointArray[1], cv::Scalar(0,0,255), 1, CV_AA);
+        cv::line(Image, pointArray[1], pointArray[2], cv::Scalar(0,0,255), 1, CV_AA);
+        cv::line(Image, pointArray[3], pointArray[0], cv::Scalar(0,0,255), 1, CV_AA);
+        cv::line(Image, pointArray[3], pointArray[2], cv::Scalar(0,0,255), 1, CV_AA);
+
+        cv::line(Image, pointArray2[0], pointArray2[1], cv::Scalar(0,255,255), 1, CV_AA);
+        cv::line(Image, pointArray2[1], pointArray2[2], cv::Scalar(0,255,255), 1, CV_AA);
+        cv::line(Image, pointArray2[3], pointArray2[0], cv::Scalar(0,255,255), 1, CV_AA);
+        cv::line(Image, pointArray2[3], pointArray2[2], cv::Scalar(0,255,255), 1, CV_AA);
+
+        cv::line(Image, pointArray[0], pointArray2[0], cv::Scalar(255,0,255), 1, CV_AA);
+        cv::line(Image, pointArray[1], pointArray2[1], cv::Scalar(255,0,255), 1, CV_AA);
+        cv::line(Image, pointArray[2], pointArray2[2], cv::Scalar(255,0,255), 1, CV_AA);
+        cv::line(Image, pointArray[3], pointArray2[3], cv::Scalar(255,0,255), 1, CV_AA);
     }
 }
 

@@ -122,8 +122,17 @@ signals:
          */
     void startMarker();
 
+    /**
+     * @author Autor: Michael Garaj
+     * @brief startMultiMarker Signal to start multi marker detection in Aruco thread
+     */
     void startMultiMarker();
 
+    /**
+     * @author Autor: Michael Garaj
+     * @brief stopMultiMarker Signal to stop multi marker detection in Aruco thread
+     * @param set
+     */
     void stopMultiMarker( bool set );
 
     /**
@@ -146,6 +155,11 @@ signals:
          */
     void setCapVideoMarker( OpenCV::CapVideo *capVideo);
 
+    /**
+     * @author Autor: Michael Garaj
+     * @brief setMultiMarker Signal to set multi marker detection in Aruco thread
+     * @param set
+     */
     void setMultiMarker( bool set );
 
 
@@ -203,6 +217,11 @@ private slots:
          */
     void onMarkerStartCancel(bool checked);
 
+    /**
+     * @author Autor: Michael Garaj
+     * @brief onMultiMarkerStartCancel Start or stop
+     * @param checked
+     */
     void onMultiMarkerStartCancel(bool checked);
 
     /**
@@ -243,16 +262,13 @@ private:
     // switching the camera,
     QRadioButton	*mFaceRecRB;
     QRadioButton	*mMarkerRB;
-    //Garaj start
     QRadioButton    *mMultiMarkerRB;
-    //Garaj end
+
     QCheckBox		*mNoVideo;
     QStackedLayout	*mModulesStackL;
     QPushButton		*mFaceRecStartCancelPB;
     QPushButton		*mMarkerStartCancelPB;
-    //Garaj start
     QPushButton     *mMultiMarkerStartCancelPB;
-    //Garaj end
 
     QCheckBox		*mMarkerBackgrCB;
     QCheckBox		*mFaceDetBackgrCB;

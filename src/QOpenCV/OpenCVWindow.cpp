@@ -246,33 +246,6 @@ void QOpenCV::OpenCVWindow::onKinectStartCancel( bool checked )
         emit stopKinect( true );
         emit sendImageKinect( false );
     }
-    /*
-    bool start=false;
-    //check button name, based on that stop pause and start
-    if ( mKinectPB->text().toStdString().compare( tr( "Start" ).toStdString() )==0 ) {
-        //inicialize openni and start device
-        start = thr->inicializeKinect();
-        if ( start ) {
-            emit startKinect();
-
-            emit sendImageKinect( true );
-            mKinectPB->setText( tr( "Pause" ) );
-        }
-    }
-    else if ( mKinectPB->text().toStdString().compare( tr( "Pause" ).toStdString() )==0 ) {
-        mKinectPB->setText( tr( "Continue" ) );
-        emit sendImageKinect( false );
-        this->thr->closeActionOpenni();
-    }
-    else {
-        //inicialize openni and start device
-        start = thr->inicializeKinect();
-        if ( start ) {
-            mKinectPB->setText( tr( "Pause" ) );
-            emit sendImageKinect( true );
-        }
-    }
-    */
 }
 
 void QOpenCV::OpenCVWindow::onFaceDetBackgrCBClicked( bool checked )

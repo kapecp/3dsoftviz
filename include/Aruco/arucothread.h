@@ -253,9 +253,8 @@ private:
     bool		mUpdCorPar;			// if true, correction can be setted
     bool		mSendImgEnabled;	// if true, of emiting actual frame is enabled
     bool		mSendBackgrImgEnabled;
-    //Garaj start
     bool        mMultiMarkerEnabled;
-    //Garaj end
+
     unsigned int	mGrM;				// number of marker for graph controll
     unsigned int	mMoM;				// number of marker for mouse controll
 

@@ -29,7 +29,7 @@ void Kinect::KinectThread::inicializeKinect()
     mKinect = new Kinect::KinectRecognition();
     isOpen=mKinect->isOpenOpenni(); // checl if open
 
-    qDebug() << "Kinect Thread inicializeKinect isOpen=" << isOpen ;
+    qDebug() << "Kinect Thread inicialize. Kinect isOpen=" << isOpen ;
     if ( isOpen ) {
         // color data for Kinect windows
         color.create( mKinect->device, openni::SENSOR_COLOR );
@@ -43,7 +43,6 @@ void Kinect::KinectThread::inicializeKinect()
         kht = new KinectHandTracker( &mKinect->device,&m_depth );
 #endif
     }
-    //return isOpen;
 }
 
 void Kinect::KinectThread::closeActionOpenni()
@@ -101,6 +100,8 @@ void Kinect::KinectThread::run()
     /////////end////////////
     Kinect::KinectZoom* zoom = new Kinect::KinectZoom();
     cv::Mat frame, depth;
+
+    //if set true, it will capture first frame of kinect stream and save color frame, depth frame and depth matrix in to specific location
     bool test = false;
     // check if is close
     while ( !mCancel ) {
@@ -113,15 +114,14 @@ void Kinect::KinectThread::run()
             cv::cvtColor( frame, frame, CV_BGR2RGB );
             m_depth.readFrame( &depthFrame);
 
-            //funkcionalita na vytvorenie screenshotu prveho snimku z kinectu
+            //if set true, it will capture the first frame of kinect stream and save color frame, depth frame and depth matrix in to specific location
             if(test) {
                 depth = mKinect->depthImageCvMat(depthFrame);
 
+                //save color frame
                 cv::imwrite("C:\\Users\\Leachim\\Pictures\\frame1.jpg", frame);
-                //cv::FileStorage file("C:\\Users\\Leachim\\Pictures\\depth.xml", cv::FileStorage::WRITE);
-                //file << "matName" << depth;
-                qDebug() << "Matrix row " << depth.rows << " and cols " << depth.cols;
 
+                //save depth matrix
                 std::ofstream fout("C:\\Users\\Leachim\\Pictures\\depth1.txt");
                 if(!fout)
                 {
@@ -138,6 +138,7 @@ void Kinect::KinectThread::run()
                 }
 
                 cv::normalize(depth, depth, 0,255, CV_MINMAX, CV_8UC1);
+                //save depth frame
                 cv::imwrite("C:\\Users\\Leachim\\Pictures\\depth1.jpg", depth);
 
                 fout.close();
@@ -154,9 +155,6 @@ void Kinect::KinectThread::run()
 #endif
 
             //////////////End/////////////
-
-            //	cap >> frame; // get a new frame from camera
-
 
 #ifdef NITE2_FOUND
             if ( kht->isTwoHands == true ) { //TODO must be two hands for green square mark hand in frame
@@ -213,8 +211,7 @@ void Kinect::KinectThread::run()
                 }
             }
 #endif
-            // resize, send a msleep for next frame
-            //cv::resize( frame, frame,cv::Size( 320,240 ),0,0,cv::INTER_LINEAR );
+            //if true it will send frame to aruco to detect markers, else show image in window
             if(isMarkerDetectEnable) {
                 emit pushImageToMarkerDetection( frame );
             } else {

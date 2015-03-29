@@ -24,7 +24,6 @@ OpenCV::OpenCVCore::OpenCVCore( QApplication* app, QWidget* parent )
 
     mArucoThrsCreated	= false;
     mKinectThrsCreated = false;
-    //mOpencvDialog	= NULL;
     mOpencvWindow   = NULL;
     mThrFaceRec		= NULL;
     mThrAruco		= NULL;
@@ -46,13 +45,7 @@ OpenCV::OpenCVCore::~OpenCVCore( void )
             mThrAruco->setCancel(true);
             mThrAruco->setSendImgEnabling(false);
         }
-/*
-        if(mOpencvDialog != NULL)
-        {
-            mOpencvDialog->disconnect();
-            mOpencvDialog->deleteLater();
-        }
-*/
+
         if(mOpencvWindow != NULL)
         {
             mOpencvWindow->disconnect();
@@ -74,32 +67,6 @@ OpenCV::OpenCVCore::~OpenCVCore( void )
         delete OpenCV::CamSelectCore::getInstance();
     }
 }
-
-/*
-void OpenCV::OpenCVCore::faceRecognition()
-{
-    if( !mOpencvDialog ){
-        if( !mArucoThrsCreated ){
-            // create threads
-            qDebug() << "creating threads";
-            mArucoThrsCreated = true;
-            mThrAruco		= new ArucoModul::ArucoThread();
-            mThrFaceRec		= new QOpenCV::FaceRecognitionThread();
-            createPermanentConnection();
-        }
-        // create window
-        qDebug() << "creating windows";
-        mOpencvDialog = new QOpenCV::FaceRecognitionWindow(
-                    mParent, mApp );
-    }
-    // if window was hidden, there no connection to threads
-    if( mOpencvDialog->isHidden() ){
-        createConnectionFaceRec();
-        createConnectionAruco();
-    }
-    mOpencvDialog->show();
-}
-*/
 
 void OpenCV::OpenCVCore::opencvInit()
 {
@@ -129,24 +96,6 @@ void OpenCV::OpenCVCore::opencvInit()
 #endif
 
     mOpencvWindow->show();
-}
-
-void OpenCV::OpenCVCore::kinectRecognition()
-{
-    if ( !mKinectThrsCreated ) {
-        qDebug() << "Kinect Thread";
-        mKinectThrsCreated=true;
-        mThrKinect = new Kinect::KinectThread();
-    }
-
-    if ( !mOpencvWindow ) {
-        qDebug() << "create OpenCVWindow Window";
-        //mKinectDialog= new Kinect::KinectWindow( mParent,app,mThrKinect );
-        mOpencvWindow = new QOpenCV::OpenCVWindow( mParent, mApp );
-    }
-
-    mOpencvWindow->show();
-    createConnectionKinect();
 }
 
 void  OpenCV::OpenCVCore::createPermanentConnection(){

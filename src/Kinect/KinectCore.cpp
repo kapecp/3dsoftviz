@@ -16,7 +16,6 @@ Kinect::KinectCore::KinectCore( QApplication* app,QWidget* parent )
     mParent=parent;
     this->app=app;
 
-    mKinectDialog=NULL;
     mOpencvWindow=NULL;
 
     mThrsCreated=false;
@@ -29,30 +28,10 @@ Kinect::KinectCore::~KinectCore()
         mThrKinect->setCancel( true );
         mThrKinect->setImageSend( false );
 
-        mKinectDialog->disconnect();
-        mKinectDialog->deleteLater();
-
         mThrKinect->wait();
         mThrKinect->deleteLater();
     }
 }
-
-void Kinect::KinectCore::kinectRecognition()
-{
-    if ( !mKinectDialog ) {
-        if ( !mThrsCreated ) {
-            qDebug() << "Kinect Thread";
-            mThrsCreated=true;
-            mThrKinect = new Kinect::KinectThread();
-        }
-        qDebug()<< "create Kinect Window";
-        //mKinectDialog= new Kinect::KinectWindow( mParent,app,mThrKinect );
-        mOpencvWindow = new QOpenCV::OpenCVWindow( mParent, app );
-    }
-    mKinectDialog->show();
-    createConnectionKinect();
-}
-
 
 Kinect::KinectCore* Kinect::KinectCore::getInstance( QApplication* app,QWidget* parent )
 {

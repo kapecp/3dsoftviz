@@ -74,7 +74,11 @@ public:
          */
     cv::Mat getDetImage();
 
-    cv::Mat getDetectedTriangleImage();
+    /**
+         * @author Autor:Michael Garaj
+         * @brief  getDetImage return image with drawed rectangle(3) or line(2) between multiple markers
+         */
+    cv::Mat getDetectedRectangleImage();
 
 private:
     /**
@@ -97,7 +101,14 @@ private:
          */
     void detectMarkers();
 
-    void drawTriangle( cv::Mat &Image, vector<aruco::Marker> &m, const aruco::CameraParameters &CP );
+    /**
+     * @author Autor: Michael Garaj
+     * @brief drawCube draw Trin
+     * @param Image image on which the rectangle or line will be drawn
+     * @param m vector of detected markers
+     * @param CP default camera parameters
+     */
+    void drawCube( cv::Mat &Image, vector<aruco::Marker> &m, const aruco::CameraParameters &CP );
 
     /**
      * @brief frame

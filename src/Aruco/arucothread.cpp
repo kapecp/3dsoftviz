@@ -126,8 +126,6 @@ void ArucoThread::run()
 
             if(mMultiMarkerEnabled) {
                 //TODO funkcionalita ku detekcii viacerych markerov
-                frame = cv::imread("C:\\Users\\Leachim\\Dropbox (Personal)\\Tim 9 - 2014-15\\Work\\KinectAruco\\pokus0\\frame1.jpg");
-                aCore.detect(frame.clone());
 
             } else {
                 // graph controll
@@ -238,6 +236,7 @@ void ArucoThread::mouseControlling( const double actPosArray[3], const double ac
 void ArucoThread::imagesSending( ArucoCore& aCore, const cv::Mat frame ) const
 {
 
+
     if( mSendBackgrImgEnabled && !frame.empty() ){
         if( ! mMarkerIsBehind){
             cv::flip( frame, frame, 1);
@@ -246,20 +245,25 @@ void ArucoThread::imagesSending( ArucoCore& aCore, const cv::Mat frame ) const
 
         emit pushBackgrImage( frame.clone() );
     }
+
     cv::Mat image;
     if(mMultiMarkerEnabled) {
-        image = aCore.getDetectedTriangleImage();
+        image = aCore.getDetectedRectangleImage();
     } else {
         image = aCore.getDetImage();
     }
-
-
 
     if ( mSendImgEnabled ) {
         if( ! mMarkerIsBehind){
             cv::flip( image, image, 1);
         }
         cv::cvtColor(image, image, CV_BGR2RGB);
+
+
+        if( mSendBackgrImgEnabled) {
+            //if you comment this, background image will be without the augmented reality
+            emit pushBackgrImage( image.clone() );
+        }
 
         emit pushImagemMat( image.clone() );
 
@@ -271,7 +275,7 @@ void ArucoThread::detectMarkerFromImage( cv::Mat image ) {
     aCore.detect( image );
     cv::Mat frame;
     frame = aCore.getDetImage();
-    emit pushImageFromKinect( frame.clone() );
+    emit pushImageFromKinect( frame.clone());
 }
 
 void ArucoThread::computeCorQuatAndPos(const double position[3], const double rotation[4] ){

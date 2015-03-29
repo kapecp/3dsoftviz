@@ -48,19 +48,6 @@ public:
     ~OpenCVCore( void );
 
     /**
-         * @author Autor: David Durcak
-         * @brief faceRecognition Initialize Face Detection and Aruco threads and Face Detection Window
-         */
-    void faceRecognition();
-
-    /**
-     * @author Matej Marconak
-     * @brief kinectRecognition start
-     * @brief create thread and window for Kinect
-     */
-    void kinectRecognition();
-
-    /**
          * @author Autor: Michael Garaj
          * @brief faceRecognition Initialize OpenCV Window for Aruco and Kinect
          */

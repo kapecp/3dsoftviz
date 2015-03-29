@@ -135,7 +135,15 @@ private:
      * @brief status of cursor
      */
     bool isCursorEnable;
+
+    /**
+     * @brief isZoomEnable status of zoom
+     */
     bool isZoomEnable;
+
+    /**
+     * @brief isMarkerDetectEnable status of marker detection
+     */
     bool isMarkerDetectEnable;
 
     /**
@@ -147,6 +155,10 @@ private:
      * @brief base colorframe enity for save data
      */
     openni::VideoFrameRef colorFrame;
+
+    /**
+     * @brief depthFrame depthframe entity for save data
+     */
     openni::VideoFrameRef depthFrame;
 
     /**

@@ -34,14 +34,6 @@ public:
          */
     static KinectCore* getInstance( QApplication* app, QWidget* parent );
 
-
-    /**
-     * @author Matej Marconak
-     * @brief kinectRecognition start
-     * @brief create thread and window for Kinect
-     */
-    void kinectRecognition();
-
 private:
 
     /**
@@ -83,11 +75,6 @@ private:
      * @brief is Thread created
      */
     bool	mThrsCreated;
-
-    /**
-     * @brief Kinect Window
-     */
-    QPointer<Kinect::KinectWindow> mKinectDialog;
 
     /**
      * @brief OpenCV Window

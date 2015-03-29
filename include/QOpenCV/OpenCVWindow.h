@@ -197,8 +197,16 @@ signals:
      */
     void sendSpeedKinect( double send );
 
+    /**
+     * @author Autor: Michael Garaj
+     * @brief inicializeKinect Signal to inicialize the kinect
+     */
     void inicializeKinect();
 
+    /**
+     * @author Autor: Michael Garaj
+     * @brief closeActionOpenni Signal to close Openni stream
+     */
     void closeActionOpenni();
 
 public slots:
@@ -225,11 +233,6 @@ public slots:
         * @brief setLabel Draw image on label
         */
     void setLabel( cv::Mat image );
-
-    /**
-     * @brief SLOT for stop Window
-     */
-    //void quitWindows();
 
 private slots:
     /**
