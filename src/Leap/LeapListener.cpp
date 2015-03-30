@@ -42,7 +42,10 @@ void Leap::LeapListener::onFrame(const Controller& controller)
           }
           case Gesture::TYPE_SWIPE:
           {
-            leapActions.moveCamera(gesture);
+            if(leapActions.isCameraMoving)
+                leapActions.moveCamera(gesture);
+            else
+              leapActions.rotateGraph(gesture);
             break;
           }
           case Gesture::TYPE_KEY_TAP:

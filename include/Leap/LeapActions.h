@@ -36,10 +36,21 @@ class LeapActions
      */
     void Leap::LeapActions::moveCamera(Gesture gesture);
 
+    /**
+     * @brief Leap::LeapActions::rotateGraph
+     * @param gesture
+     */
+    void Leap::LeapActions::rotateGraph(Gesture gesture);
+
     // These methods should not have names onSwipe, onXXX. They are placeholders for further functionality.
     // The names should correspond to the functionality provided by the method i.e. moveGraph();
     void Leap::LeapActions::onKeyTap(Gesture gesture);
     void Leap::LeapActions::onScreenTap(Gesture gesture);
+
+    /**
+     * @brief isCameraMoving is variable to decide whether to move camera or rotate graph
+     */
+    bool isCameraMoving;
   private:
     /**
      * @brief Constant that says how many iteration of a gesture should be called before zooming is executed

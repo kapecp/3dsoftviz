@@ -5,6 +5,7 @@ Leap::LeapActions::LeapActions(){
     mouse = new Vwr::MouseControl();
     zoomCounter = 0;
     cmrManipulator = AppCore::Core::getInstance( NULL )->getCoreWindow()->getCameraManipulator();
+    isCameraMoving = true;
     qDebug() << "LeapActions() Constructor";
 }
 
@@ -65,7 +66,10 @@ void Leap::LeapActions::zoomGraph(Gesture gesture)
 
 void Leap::LeapActions::onKeyTap(Gesture gesture)
 {
-    // key tap gesture
+    if(isCameraMoving)
+        isCameraMoving = false;
+    else
+        isCameraMoving = true;
     qDebug() << "KeyTapGesture";
 }
 
@@ -73,4 +77,8 @@ void Leap::LeapActions::onScreenTap(Gesture gesture)
 {
     // screen tap gesture
     qDebug() << "ScreenTapGesture";
+}
+
+void Leap::LeapActions::rotateGraph(Gesture gesture){
+    qDebug() << "rotateGraph()";
 }
