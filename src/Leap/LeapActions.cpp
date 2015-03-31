@@ -80,5 +80,23 @@ void Leap::LeapActions::onScreenTap(Gesture gesture)
 }
 
 void Leap::LeapActions::rotateGraph(Gesture gesture){
-    qDebug() << "rotateGraph()";
+
+    // swipe gesture
+    SwipeGesture swipe = gesture;
+    Vector direction = swipe.direction();
+
+    if(abs(direction[0]) > abs(direction[1])){ // horizontal movement
+        if(direction[0] > 0){
+              cmrManipulator->rotateCamera(0, 0, 1, 0, 0.05);
+        }else if(direction[0] < 0){
+              cmrManipulator->rotateCamera(0, 0, 1, 0, -0.05);
+        }
+    }else{ // vertical movement
+        if(direction[1] > 0){
+               cmrManipulator->rotateCamera(0, 0 ,1, 0.05, 0);
+        }
+        else if(direction[1] < 0){
+             cmrManipulator->rotateCamera(0, 0, 1, -0.05, 0);
+        }
+    }
 }
