@@ -274,7 +274,7 @@ void ArucoThread::detectMarkerFromImage( cv::Mat image ) {
     ArucoCore aCore;
     aCore.detect( image );
     cv::Mat frame;
-    frame = aCore.getDetImage();
+    frame = aCore.getDetectedRectangleImage();
     emit pushImageFromKinect( frame.clone());
 }
 

@@ -78,6 +78,7 @@ void OpenCV::OpenCVCore::opencvInit()
 
 #ifdef OPENNI2_FOUND
         mThrKinect = new Kinect::KinectThread();
+        mThrKinect->inicializeKinect();
 #endif
 
         createPermanentConnection();

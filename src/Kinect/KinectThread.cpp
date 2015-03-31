@@ -47,6 +47,7 @@ void Kinect::KinectThread::inicializeKinect()
 
 void Kinect::KinectThread::closeActionOpenni()
 {
+    qDebug() << "Close Openni";
     mKinect->closeOpenni();
 }
 
@@ -105,7 +106,7 @@ void Kinect::KinectThread::run()
     bool test = false;
     // check if is close
     while ( !mCancel ) {
-        //check if is sending image enabling
+        //check if is sending image enablinge
         if ( mSetImageEnable ) {
             // read frame data
             color.readFrame( &colorFrame );
@@ -212,6 +213,7 @@ void Kinect::KinectThread::run()
             }
 #endif
             //if true it will send frame to aruco to detect markers, else show image in window
+            cv::cvtColor( frame, frame, CV_BGR2RGB );
             if(isMarkerDetectEnable) {
                 emit pushImageToMarkerDetection( frame );
             } else {

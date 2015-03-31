@@ -236,14 +236,11 @@ void QOpenCV::OpenCVWindow::onKinectStartCancel( bool checked )
     {
         qDebug() << "Startujem Kinect Thread";
         mKinectPB->setText( tr("Pause Kinect") );
-        emit inicializeKinect();
         emit startKinect();
         emit sendImageKinect( true );
     } else {
         qDebug() << "Pausujem Kinect Thread";
         mKinectPB->setText( tr("Start Kinect") );
-        emit closeActionOpenni();
-        emit stopKinect( true );
         emit sendImageKinect( false );
     }
 }
