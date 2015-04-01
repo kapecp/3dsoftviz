@@ -12,33 +12,33 @@ Kinect::KinectCore* Kinect::KinectCore::mKinectCore;
 
 Kinect::KinectCore::KinectCore( QApplication* app,QWidget* parent )
 {
-    mKinectCore = this;
-    mParent=parent;
-    this->app=app;
+	mKinectCore = this;
+	mParent=parent;
+	this->app=app;
 
-    mOpencvWindow=NULL;
+	mOpencvWindow=NULL;
 
-    mThrsCreated=false;
-    mThrKinect=NULL;
+	mThrsCreated=false;
+	mThrKinect=NULL;
 }
 
 Kinect::KinectCore::~KinectCore()
 {
-    if ( mThrsCreated ) {
-        mThrKinect->setCancel( true );
-        mThrKinect->setImageSend( false );
+	if ( mThrsCreated ) {
+		mThrKinect->setCancel( true );
+		mThrKinect->setImageSend( false );
 
-        mThrKinect->wait();
-        mThrKinect->deleteLater();
-    }
+		mThrKinect->wait();
+		mThrKinect->deleteLater();
+	}
 }
 
 Kinect::KinectCore* Kinect::KinectCore::getInstance( QApplication* app,QWidget* parent )
 {
-    // if Kinect exists
-    if ( mKinectCore == NULL ) {
-        mKinectCore = new Kinect::KinectCore( app,parent );
-    }
-    return mKinectCore;
+	// if Kinect exists
+	if ( mKinectCore == NULL ) {
+		mKinectCore = new Kinect::KinectCore( app,parent );
+	}
+	return mKinectCore;
 }
 

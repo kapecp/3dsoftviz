@@ -25,61 +25,61 @@ class KinectCore
 
 public:
 
-    ~KinectCore( void );
-    /**
-         * @author Autor: Patrik Hlavac
-         * @brief getInstance Return instance of KinectCore class
-         * @param app QApplication
-         * @return KinectCore instance
-         */
-    static KinectCore* getInstance( QApplication* app, QWidget* parent );
+	~KinectCore( void );
+	/**
+	     * @author Autor: Patrik Hlavac
+	     * @brief getInstance Return instance of KinectCore class
+	     * @param app QApplication
+	     * @return KinectCore instance
+	     */
+	static KinectCore* getInstance( QApplication* app, QWidget* parent );
 
 private:
 
-    /**
-     * @author Matej Marconak
-     * @brief create Connection Kinect
-     * @brief create SLOT and SIGNAL for comunication between THREAD and Window,CameraManipulator
-     */
-    void createConnectionKinect();
+	/**
+	 * @author Matej Marconak
+	 * @brief create Connection Kinect
+	 * @brief create SLOT and SIGNAL for comunication between THREAD and Window,CameraManipulator
+	 */
+	void createConnectionKinect();
 
-    /**
-     * @brief KinectCore
-     * @param app link to QApplication
-     * @param parent link to parent QWidget
-     * @brief Singleton
-     */
-    KinectCore( QApplication* app, QWidget* parent );
+	/**
+	 * @brief KinectCore
+	 * @param app link to QApplication
+	 * @param parent link to parent QWidget
+	 * @brief Singleton
+	 */
+	KinectCore( QApplication* app, QWidget* parent );
 
-    /**
-     * @brief Singleton Kinect core
-     */
-    static KinectCore* mKinectCore;
+	/**
+	 * @brief Singleton Kinect core
+	 */
+	static KinectCore* mKinectCore;
 
-    /**
-     * @brief link to Qaplication
-     */
-    QApplication* app;
+	/**
+	 * @brief link to Qaplication
+	 */
+	QApplication* app;
 
-    /**
-     * @brief link to QWidget parent
-     */
-    QWidget*	mParent;
+	/**
+	 * @brief link to QWidget parent
+	 */
+	QWidget*	mParent;
 
-    /**
-     * @brief Kinect thread
-     */
-    Kinect::KinectThread* mThrKinect;
+	/**
+	 * @brief Kinect thread
+	 */
+	Kinect::KinectThread* mThrKinect;
 
-    /**
-     * @brief is Thread created
-     */
-    bool	mThrsCreated;
+	/**
+	 * @brief is Thread created
+	 */
+	bool	mThrsCreated;
 
-    /**
-     * @brief OpenCV Window
-     */
-    QPointer<QOpenCV::OpenCVWindow> mOpencvWindow;
+	/**
+	 * @brief OpenCV Window
+	 */
+	QPointer<QOpenCV::OpenCVWindow> mOpencvWindow;
 
 };
 }
