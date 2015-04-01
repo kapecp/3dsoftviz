@@ -40,11 +40,19 @@ public:
 	//const nite::Array<nite::GestureData>& gestures;
 	//const nite::Array<nite::GestureData>& hands;
 
+	/**
+	 * number of hands that are tracked
+	 */
+	//Marak starts
+
+	int numHandsTracking;
+	//Marak ends
+
 	float handZ[2];
 
 	// both hands position
 	float getArrayHands[NUM_HANDS][NUM_HANDS];
-	bool isTwoHands;
+	//bool isTwoHands;
 
 	float slidingHand_x;
 	float slidingHand_y;

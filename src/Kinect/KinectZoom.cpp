@@ -14,60 +14,17 @@ Kinect::KinectZoom::~KinectZoom()
 
 }
 
-// find contours of segmented hand
-int Kinect::KinectZoom::DetectContour( cv::Mat img )
+// zoom
+void Kinect::KinectZoom::zoom()
 {
-	cv::Mat drawing = cv::Mat::zeros( img.size(), CV_8UC3 );
-	cv::vector<cv::vector<cv::Point> > contours;
-	int numFingers=0;
-	cv::vector<cv::Vec4i> hierarchy;
-
-	findContours( img,contours, hierarchy, cv::RETR_LIST, cv::CHAIN_APPROX_SIMPLE, cv::Point() );
-
-	if ( contours.size()>0 ) {
-		cv::vector<std::vector<int> >hull( contours.size() );
-		cv::vector<cv::vector<cv::Vec4i> > convDef( contours.size() );
-		cv::vector<cv::vector<cv::Point> > hull_points( contours.size() );
-		cv::vector<cv::vector<cv::Point> > defect_points( contours.size() );
-
-		for ( int i = 0; i < contours.size(); i++ ) {
-			if ( contourArea( contours[i] )>500 ) {
-				convexHull( contours[i], hull[i], false );
-				convexityDefects( contours[i],hull[i], convDef[i] );
-
-				for ( int k=0; k<hull[i].size(); k++ ) {
-					int ind=hull[i][k];
-					hull_points[i].push_back( contours[i][ind] );
-				}
-
-				for ( int k=0; k<convDef[i].size(); k++ ) {
-					if ( convDef[i][k][3]>20*256 ) { // filter defects by depth
-						numFingers++;
-						int ind_0=convDef[i][k][0];
-						int ind_1=convDef[i][k][1];
-						int ind_2=convDef[i][k][2];
-						defect_points[i].push_back( contours[i][ind_2] );
-						cv::circle( drawing,contours[i][ind_0],5,cv::Scalar( 0,255,0 ),-1 );
-						cv::circle( drawing,contours[i][ind_1],5,cv::Scalar( 0,255,0 ),-1 );
-						cv::circle( drawing,contours[i][ind_2],5,cv::Scalar( 0,0,255 ),-1 );
-						cv::line( drawing,contours[i][ind_2],contours[i][ind_0],cv::Scalar( 0,0,255 ),1 );
-						cv::line( drawing,contours[i][ind_2],contours[i][ind_1],cv::Scalar( 0,0,255 ),1 );
-					}
-				}
-				// draw results
-				drawContours( drawing, contours, i, cv::Scalar( 0,255,0 ), 1, 8, cv::vector<cv::Vec4i>(), 0, cv::Point() );
-				drawContours( drawing, hull_points, i, cv::Scalar( 255,0,0 ), 1, 8, cv::vector<cv::Vec4i>(), 0, cv::Point() );
-			}
-		}
+	delta = ( previousZ-currentZ );
+	if ( abs( delta ) > zoomThreshold ) {
+		viewer->getEventQueue()->mouseScroll2D( 0,delta*5.0,0 );
 	}
-#ifdef QT_DEBUG
-	imshow( "Hull", drawing );
-#endif
-	return numFingers;
 }
 
-
-void Kinect::KinectZoom::zoom( cv::Mat frame,openni::VideoStream* m_depth, float x, float y, float z )
+// get depth image of hand and depth value
+void Kinect::KinectZoom::calcHandDepthFrame( cv::Mat frame,openni::VideoStream* m_depth, float x, float y, float z, bool mainHand )
 {
 	// convert coordinates of hand
 	openni::CoordinateConverter coordinateConverter;
@@ -79,8 +36,11 @@ void Kinect::KinectZoom::zoom( cv::Mat frame,openni::VideoStream* m_depth, float
 	coordinateConverter.convertWorldToDepth( *m_depth, x-150.0,y-150.0,z, &x1, &y1, &z1 );
 	coordinateConverter.convertWorldToDepth( *m_depth, x+200.0,y+200.0,z, &x2, &y2, &z1 );
 
-	// store current depth
-	currentZ=z1;
+	// store current and previous depth for main hand only
+	if ( mainHand ) {
+		previousZ = currentZ;
+		currentZ = z1;
+	}
 
 	openni::VideoFrameRef depthFrame;
 	m_depth->readFrame( &depthFrame );
@@ -124,26 +84,67 @@ void Kinect::KinectZoom::zoom( cv::Mat frame,openni::VideoStream* m_depth, float
 	depthImage.convertTo( depthImage2,CV_8UC1,255/maxVal );
 
 	// floodfill segmentation of hand from depth map
-	cv::Mat mask = cv::Mat::zeros( depthImage2.rows + 2, depthImage2.cols + 2, CV_8U );
+	mask = cv::Mat::zeros( depthImage2.rows + 2, depthImage2.cols + 2, CV_8U );
 	cv::floodFill( depthImage2, mask, cv::Point( depthImage2.cols/2,depthImage2.rows/2 ),
 				   255, 0, cv::Scalar( 4 ),
 				   cv::Scalar( 4 ),  4 + ( 255 << 8 ) + cv::FLOODFILL_MASK_ONLY + cv::FLOODFILL_FIXED_RANGE );
 #ifdef QT_DEBUG
 	// show images of segmented hand in debug mode only
-	cv::namedWindow( "floodfill", CV_WINDOW_AUTOSIZE );
-
-	cv::imshow( "floodfill", mask );
-	cv::waitKey( 33 );
+	//cv::namedWindow( "floodfill", CV_WINDOW_AUTOSIZE );
+	//cv::imshow( "floodfill", mask );
+	//cv::waitKey( 33 );
 #endif
-	int numFingers = DetectContour( mask );
-	delta = ( previousZ-currentZ );
-	// threshold for open hand to start zoom
-	if ( numFingers > 2 ) {
-		// threshold for movement to start zoom
-		if ( abs( delta ) > zoomThreshold ) {
-			viewer->getEventQueue()->mouseScroll2D( 0,delta*5.0,0 );
+}
+
+// find contours of segmented hand and count fingers
+int Kinect::KinectZoom::DetectContour( )
+{
+	int numFingers = 0;
+	cv::Mat drawing = cv::Mat::zeros( mask.size(), CV_8UC3 );
+	cv::vector<cv::vector<cv::Point> > contours;
+	cv::vector<cv::Vec4i> hierarchy;
+
+	findContours( mask,contours, hierarchy, cv::RETR_LIST, cv::CHAIN_APPROX_SIMPLE, cv::Point() );
+
+	if ( contours.size()>0 ) {
+		cv::vector<std::vector<int> >hull( contours.size() );
+		cv::vector<cv::vector<cv::Vec4i> > convDef( contours.size() );
+		cv::vector<cv::vector<cv::Point> > hull_points( contours.size() );
+		cv::vector<cv::vector<cv::Point> > defect_points( contours.size() );
+
+		for ( int i = 0; i < contours.size(); i++ ) {
+			if ( contourArea( contours[i] )>500 ) {
+				convexHull( contours[i], hull[i], false );
+				convexityDefects( contours[i],hull[i], convDef[i] );
+
+				for ( int k=0; k<hull[i].size(); k++ ) {
+					int ind=hull[i][k];
+					hull_points[i].push_back( contours[i][ind] );
+				}
+
+				for ( int k=0; k<convDef[i].size(); k++ ) {
+					if ( convDef[i][k][3]>20*256 ) { // filter defects by depth
+						numFingers++;
+						int ind_0=convDef[i][k][0];
+						int ind_1=convDef[i][k][1];
+						int ind_2=convDef[i][k][2];
+						defect_points[i].push_back( contours[i][ind_2] );
+						cv::circle( drawing,contours[i][ind_0],5,cv::Scalar( 0,255,0 ),-1 );
+						cv::circle( drawing,contours[i][ind_1],5,cv::Scalar( 0,255,0 ),-1 );
+						cv::circle( drawing,contours[i][ind_2],5,cv::Scalar( 0,0,255 ),-1 );
+						cv::line( drawing,contours[i][ind_2],contours[i][ind_0],cv::Scalar( 0,0,255 ),1 );
+						cv::line( drawing,contours[i][ind_2],contours[i][ind_1],cv::Scalar( 0,0,255 ),1 );
+					}
+				}
+				// draw results
+				drawContours( drawing, contours, i, cv::Scalar( 0,255,0 ), 1, 8, cv::vector<cv::Vec4i>(), 0, cv::Point() );
+				drawContours( drawing, hull_points, i, cv::Scalar( 255,0,0 ), 1, 8, cv::vector<cv::Vec4i>(), 0, cv::Point() );
+			}
 		}
 	}
-	// store previous value to compute next threshold
-	previousZ=z1;
+#ifdef QT_DEBUG
+	// imshow( "Hull", drawing );
+#endif
+
+	return numFingers;
 }
