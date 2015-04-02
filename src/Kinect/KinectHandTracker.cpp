@@ -17,6 +17,7 @@ Kinect::KinectHandTracker::KinectHandTracker( openni::Device* device, openni::Vi
 	mSpeed=1.0;
 	mouse = new Vwr::MouseControl();
 	mDepth=m_depth;
+	viewer = AppCore::Core::getInstance()->getCoreWindow()->GetViewerQt();
 }
 
 
@@ -110,7 +111,7 @@ void Kinect::KinectHandTracker::getAllHands()
 	}
 	// Set number of hands in tracking
 	this->numHandsTracking = hands.getSize();
-	printf( "%d hands\n", hands.getSize() );
+	//printf( "%d hands\n", hands.getSize() );
 }
 
 void Kinect::KinectHandTracker::getRotatingMove()
@@ -155,30 +156,26 @@ void Kinect::KinectHandTracker::getRotatingMove()
 				const nite::Point3f& position2 = pHistory->operator[]( 19 );
 				this->m_pHandTracker.convertHandCoordinatesToDepth( position2.x, position2.y, position2.z, &koordy[2], &koordy[3] );
 
-				bool gesto_dolava = false;
-				bool gesto_doprava = false;
-				bool gesto_hore = false;
-				bool gesto_dole = false;
+				gesto_dolava = false;
+				gesto_doprava = false;
+				gesto_hore = false;
+				gesto_dole = false;
 
 				//check for output
 				if ( abs( koordy[0] - koordy[2] ) > 100.0 ) {
 					if ( koordy[0] > koordy[2] ) {
-						gesto_dolava = false;
 						gesto_doprava = true;
 					}
 					else {
 						gesto_dolava = true;
-						gesto_doprava = false;
 					}
 				}
 				if ( abs( koordy[1] - koordy[3] ) > 100.0 ) {
 					if ( koordy[1] < koordy[3] ) {
-						gesto_dole = false;
 						gesto_hore = true;
 					}
 					else {
 						gesto_dole = true;
-						gesto_hore = false;
 					}
 				}
 				if ( gesto_dolava ) {
@@ -187,9 +184,49 @@ void Kinect::KinectHandTracker::getRotatingMove()
 				else if ( gesto_doprava ) {
 					this->slidingHand_type = "scroll right";
 				}
+				else if ( gesto_hore ) {
+					this->slidingHand_type = "scroll up";
+				}
+				else if ( gesto_dole ) {
+					this->slidingHand_type = "scroll down";
+				}
 			}
 		}
 	}
 }
 
+// set event for graph movement
+void Kinect::KinectHandTracker::moveGraphByHand( )
+{
+	if ( gesto_dolava ) {
+		viewer->getEventQueue()->keyPress( osgGA::GUIEventAdapter::KEY_Left );
+		viewer->getEventQueue()->keyRelease( osgGA::GUIEventAdapter::KEY_Left );
+	}
+	else if ( gesto_doprava ) {
+		viewer->getEventQueue()->keyPress( osgGA::GUIEventAdapter::KEY_Right );
+		viewer->getEventQueue()->keyRelease( osgGA::GUIEventAdapter::KEY_Right );
+	}
+	if ( gesto_hore ) {
+		viewer->getEventQueue()->keyPress( osgGA::GUIEventAdapter::KEY_Page_Up );
+		viewer->getEventQueue()->keyRelease( osgGA::GUIEventAdapter::KEY_Page_Up );
+	}
+	else if ( gesto_dole ) {
+		viewer->getEventQueue()->keyPress( osgGA::GUIEventAdapter::KEY_Page_Down );
+		viewer->getEventQueue()->keyRelease( osgGA::GUIEventAdapter::KEY_Page_Down );
+	}
+}
+void Kinect::KinectHandTracker::moveGraphByHandToDepth( float deltaZ )
+{
+	// trashold
+	if ( abs( deltaZ ) > 7.0f ) {
+		if ( deltaZ > 0 ) {
+			viewer->getEventQueue()->keyPress( osgGA::GUIEventAdapter::KEY_Up );
+			viewer->getEventQueue()->keyRelease( osgGA::GUIEventAdapter::KEY_Up );
+		}
+		else {
+			viewer->getEventQueue()->keyPress( osgGA::GUIEventAdapter::KEY_Down );
+			viewer->getEventQueue()->keyRelease( osgGA::GUIEventAdapter::KEY_Down );
+		}
+	}
+}
 #endif // NITE2_FOUND

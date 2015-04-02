@@ -3,6 +3,7 @@
 
 #include "Kinect/HistoryBuffer.h"
 #include "OpenNI.h"
+#include "Core/Core.h"
 
 #include <map>
 
@@ -46,6 +47,20 @@ public:
 	//Marak starts
 
 	int numHandsTracking;
+
+	/**
+	 * @brief void moveGraphByHand
+	 * @brief move graph folowing hand movement (X,Y coords)
+	 */
+	void moveGraphByHand();
+
+	/**
+	 * @brief void moveGraphByHandToDepth
+	 * @param deltaZ delta between previous and current Z value
+	 * @brief move graph folowing hand movement (Z coord)
+	 */
+	void moveGraphByHandToDepth( float deltaZ );
+
 	//Marak ends
 
 	float handZ[2];
@@ -101,6 +116,20 @@ public:
 	nite::HandTrackerFrameRef handTrackerFrame;
 
 private:
+
+	//Marak starts
+
+	bool gesto_dolava;
+	bool gesto_doprava;
+	bool gesto_hore;
+	bool gesto_dole;
+
+	/**
+	 * @brief viewer
+	 */
+	QOSG::ViewerQT* viewer;
+
+	//Marak ends
 
 	/**
 	 * @brief is Mouse pressed

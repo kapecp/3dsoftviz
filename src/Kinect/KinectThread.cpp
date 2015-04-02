@@ -84,15 +84,15 @@ void Kinect::KinectThread::run()
 	mCancel=false;
 
 	//real word convector
-	openni::CoordinateConverter coordinateConverter;
-	// convert milimeters to pixels
-	float pDepth_x;
-	float pDepth_y;
-	float pDepth_z;
-	float pDepth_x2;
-	float pDepth_y2;
-	float pDepth_z2;
-	/////////end////////////
+	/*	openni::CoordinateConverter coordinateConverter;
+		// convert milimeters to pixels
+		float pDepth_x;
+		float pDepth_y;
+		float pDepth_z;
+		float pDepth_x2;
+		float pDepth_y2;
+		float pDepth_z2;
+	    /////////end////////////*/
 	Kinect::KinectZoom* zoom = new Kinect::KinectZoom();
 	cv::Mat frame;
 
@@ -173,24 +173,42 @@ void Kinect::KinectThread::run()
 
 				// cursor disabled => move graph
 				if ( !isCursorEnable ) {
-					// if hand not closed - rotate
-					if ( numFingers[0] != 0 ) {
-						//sliding - calculate gesture
-						kht->getRotatingMove();
-						line( frame, cv::Point2i( 30, 30 ), cv::Point2i( 30, 30 ), cv::Scalar( 0, 0, 0 ), 5 ,8 );
+					//sliding - calculate main hand movement
+					kht->getRotatingMove();
 
-						if ( ( int )kht->slidingHand_x != 0 ) {
-							putText( frame, kht->slidingHand_type, cvPoint( ( int )kht->slidingHand_x,( int )kht->slidingHand_y ), cv::FONT_HERSHEY_COMPLEX_SMALL, 0.8, cvScalar( 0,0,250 ), 1, CV_AA );
-							emit sendSliderCoords( ( kht->slidingHand_x/kht->handTrackerFrame.getDepthFrame().getWidth()-0.5 )*( -200 ),
-												   ( kht->slidingHand_y/kht->handTrackerFrame.getDepthFrame().getHeight()-0.5 )*( 200 ),
-												   ( kht->slidingHand_z/kht->handTrackerFrame.getDepthFrame().getHeight()-0.5 )*200 );
+					// two hand gestures
+					if ( kht->numHandsTracking == 2 ) {
+						// if off hand is open -> move graph by main hand
+						if ( numFingers[1] != 0 ) {
+							// open main hand -> move by X/Y axis
+							if ( numFingers[0] != 0 ) {
+								kht->moveGraphByHand( );
+							}
+							// closed main hand -> move by Z axis
+							else {
+								kht->moveGraphByHandToDepth( zoom->previousZ - zoom->currentZ );
+							}
 						}
 					}
-					// compute zoom if enabled and hand is closed
-					else if ( isZoomEnable ) {
-						zoom->zoom();
+					// one hand gestures
+					else {
+						// if hand not closed - rotate
+						if ( numFingers[0] != 0 ) {
+							line( frame, cv::Point2i( 30, 30 ), cv::Point2i( 30, 30 ), cv::Scalar( 0, 0, 0 ), 5 ,8 );
+							if ( ( int )kht->slidingHand_x != 0 ) {
+								putText( frame, kht->slidingHand_type, cvPoint( ( int )kht->slidingHand_x,( int )kht->slidingHand_y ), cv::FONT_HERSHEY_COMPLEX_SMALL, 0.8, cvScalar( 0,0,250 ), 1, CV_AA );
+								emit sendSliderCoords( ( kht->slidingHand_x/kht->handTrackerFrame.getDepthFrame().getWidth()-0.5 )*( -200 ),
+													   ( kht->slidingHand_y/kht->handTrackerFrame.getDepthFrame().getHeight()-0.5 )*( 200 ),
+													   ( kht->slidingHand_z/kht->handTrackerFrame.getDepthFrame().getHeight()-0.5 )*200 );
+							}
+						}
+						// if hand is closed and zomm enabled - compute zoom
+						else if ( isZoomEnable ) {
+							zoom->zoom();
+						}
 					}
 				}
+				// cursor enabled => move cursor
 				else {
 
 				}
