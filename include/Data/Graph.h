@@ -390,7 +390,7 @@ public:
 		*  \param   splitCount   count of new edges instead of original one
 		*  \return  QList<osg::ref_ptr<Data::Edge> >	the added edges
 		*/
-	QList<osg::ref_ptr<Data::Edge> > splitEdge(QString name, osg::ref_ptr<Data::Node> srcNode, osg::ref_ptr<Data::Node> dstNode, bool isOriented, Data::Type* nodeType, Data::Type* edgeType, int splitCount);
+	QList<osg::ref_ptr<Data::Edge> > splitEdge( QString name, osg::ref_ptr<Data::Node> srcNode, osg::ref_ptr<Data::Node> dstNode, bool isOriented, Data::Type* nodeType, Data::Type* edgeType, int splitCount );
 
 	/**
 		*  \fn public isParralel(osg::ref_ptr<Data::Node> srcNode, osg::ref_ptr<Data::Node> dstNode)
@@ -599,15 +599,21 @@ public:
 		*  \brief Split every edge in graph using metanodes.
 		*  \param   splitCount   count of new edges instead of original one
 		*/
-	void splitAllEdges(int splitCount);
+	void splitAllEdges( int splitCount );
 
 	/**
 		*  \fn inline public  switch2Dand3D()
 		*  \brief Turn graph parts to 3D or 2D.
 		*/
-	void switch2Dand3D();
+	void setIs3D( bool value )
+	{
+		is3D = value;
+	}
 
-	bool getIs3D(){return is3D;}
+	bool getIs3D()
+	{
+		return is3D;
+	}
 
 
 private:

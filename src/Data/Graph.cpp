@@ -664,10 +664,9 @@ Data::Type* Data::Graph::getNestedMetaEdgeType()
 void Data::Graph::addMultiEdge( QString name, osg::ref_ptr<Data::Node> srcNode, osg::ref_ptr<Data::Node> dstNode, Data::Type* type, bool isOriented, osg::ref_ptr<Data::Edge> replacedSingleEdge )
 {
 	Data::Type* mNodeType;
-	QList<Data::Type*> mNodeTypes = getTypesByName(Data::GraphLayout::MULTI_NODE_TYPE);
+	QList<Data::Type*> mNodeTypes = getTypesByName( Data::GraphLayout::MULTI_NODE_TYPE );
 	//osetrime typ
-	if(mNodeTypes.isEmpty())
-	{
+	if ( mNodeTypes.isEmpty() ) {
 		//adding META_NODE_TYPE settings if necessary
 		QMap<QString, QString>* settings = new QMap<QString, QString>;
 
@@ -678,18 +677,16 @@ void Data::Graph::addMultiEdge( QString name, osg::ref_ptr<Data::Node> srcNode, 
 		settings->insert( "color.B", "1" );
 		settings->insert( "color.A", "1" );
 
-		mNodeType = this->addType(Data::GraphLayout::MULTI_NODE_TYPE, settings);
+		mNodeType = this->addType( Data::GraphLayout::MULTI_NODE_TYPE, settings );
 	}
-	else
-	{
+	else {
 		mNodeType = mNodeTypes[0];
 	}
 
 	Data::Type* mEdgeType;
-	QList<Data::Type*> mEdgetypes = getTypesByName(Data::GraphLayout::MULTI_EDGE_TYPE);
+	QList<Data::Type*> mEdgetypes = getTypesByName( Data::GraphLayout::MULTI_EDGE_TYPE );
 
-	if(mNodeTypes.isEmpty()) // really mNodeTypes?
-	{
+	if ( mNodeTypes.isEmpty() ) { // really mNodeTypes?
 		//adding META_EDGE_TYPE settings if necessary
 		QMap<QString, QString>* settings = new QMap<QString, QString>;
 
@@ -700,20 +697,18 @@ void Data::Graph::addMultiEdge( QString name, osg::ref_ptr<Data::Node> srcNode, 
 		settings->insert( "color.B", "1" );
 		settings->insert( "color.A", "1" );
 
-		mEdgeType = this->addType(Data::GraphLayout::MULTI_EDGE_TYPE, settings);
+		mEdgeType = this->addType( Data::GraphLayout::MULTI_EDGE_TYPE, settings );
 	}
-	else
-	{
+	else {
 		mEdgeType = mEdgetypes[0];
 	}
 
-	QList<osg::ref_ptr<Data::Edge> > newEdgeList = splitEdge(name, srcNode, dstNode, isOriented, mNodeType, mEdgeType, 2);
+	QList<osg::ref_ptr<Data::Edge> > newEdgeList = splitEdge( name, srcNode, dstNode, isOriented, mNodeType, mEdgeType, 2 );
 	QList<osg::ref_ptr<Data::Edge> >::iterator iEdge = newEdgeList.begin();
 
-	while (iEdge != newEdgeList.end())
-	{
-		(*iEdge)->linkNodes(edges);
-		edgesByType.insert(type->getId(),(*iEdge));
+	while ( iEdge != newEdgeList.end() ) {
+		( *iEdge )->linkNodes( edges );
+		edgesByType.insert( type->getId(),( *iEdge ) );
 		iEdge++;
 	}
 
@@ -722,54 +717,51 @@ void Data::Graph::addMultiEdge( QString name, osg::ref_ptr<Data::Node> srcNode, 
 	}
 }
 
-QList<osg::ref_ptr<Data::Edge> > Data::Graph::splitEdge(QString name, osg::ref_ptr<Data::Node> srcNode, osg::ref_ptr<Data::Node> dstNode, bool isOriented, Data::Type* nodeType, Data::Type* edgeType, int splitCount)
+QList<osg::ref_ptr<Data::Edge> > Data::Graph::splitEdge( QString name, osg::ref_ptr<Data::Node> srcNode, osg::ref_ptr<Data::Node> dstNode, bool isOriented, Data::Type* nodeType, Data::Type* edgeType, int splitCount )
 {
 	//creating meta nodes to split edge
 	QList<osg::ref_ptr<Data::Node> > splitNodeList;
-	splitNodeList.push_back(srcNode);
-	for (int i = 1; i < splitCount; i++)
-	{
-		splitNodeList.push_back(addNode("SNode " + QString::number(i), nodeType, srcNode->getTargetPosition()));
+	splitNodeList.push_back( srcNode );
+	for ( int i = 1; i < splitCount; i++ ) {
+		splitNodeList.push_back( addNode( "SNode " + QString::number( i ), nodeType, srcNode->getTargetPosition() ) );
 	}
-	splitNodeList.push_back(dstNode);
+	splitNodeList.push_back( dstNode );
 
-	if(this->parent_id.count()>0)
-	{
+	if ( this->parent_id.count()>0 ) {
 		edgeType = getNestedEdgeType();
 	}
 
 	QList<osg::ref_ptr<Data::Edge> > newEdgeList;
-	for (int i = 0; i < splitCount; i++)
-	{
-		newEdgeList.push_back(new Data::Edge(this->incEleIdCounter(), name, this, splitNodeList.at(i), splitNodeList.at(i+1), edgeType, isOriented, this->getEdgeScale()));
+	for ( int i = 0; i < splitCount; i++ ) {
+		newEdgeList.push_back( new Data::Edge( this->incEleIdCounter(), name, this, splitNodeList.at( i ), splitNodeList.at( i+1 ), edgeType, isOriented, this->getEdgeScale() ) );
 	}
 
 	return newEdgeList;
 }
 
-void Data::Graph::splitAllEdges(int splitCount){
+void Data::Graph::splitAllEdges( int splitCount )
+{
 	QMap<qlonglong, osg::ref_ptr<Data::Edge> >::iterator iEdge = edges->begin();
 
 	//create new edges
 	QList<osg::ref_ptr<Data::Edge> > newEdgeList;
-	while (iEdge != edges->end()){
-		newEdgeList.append(splitEdge((*iEdge)->getName(), (*iEdge)->getSrcNode(), (*iEdge)->getDstNode(), (*iEdge)->isOriented(), getNodeMetaType(), getEdgeMetaType(), splitCount));
+	while ( iEdge != edges->end() ) {
+		newEdgeList.append( splitEdge( ( *iEdge )->getName(), ( *iEdge )->getSrcNode(), ( *iEdge )->getDstNode(), ( *iEdge )->isOriented(), getNodeMetaType(), getEdgeMetaType(), splitCount ) );
 		iEdge ++;
 	}
 
 	//delete old edges
 	iEdge = edges->begin();
-	while (iEdge != edges->end()){
-	   removeEdge(*iEdge);
-	   iEdge ++;
+	while ( iEdge != edges->end() ) {
+		removeEdge( *iEdge );
+		iEdge ++;
 	}
 
 	//add new edges
 	QList<osg::ref_ptr<Data::Edge> >::iterator iNewEdge = newEdgeList.begin();
-	while (iNewEdge != newEdgeList.end())
-	{
-		(*iNewEdge)->linkNodes(edges);
-		edgesByType.insert((*iNewEdge)->getType()->getId(),(*iNewEdge));
+	while ( iNewEdge != newEdgeList.end() ) {
+		( *iNewEdge )->linkNodes( edges );
+		edgesByType.insert( ( *iNewEdge )->getType()->getId(),( *iNewEdge ) );
 		iNewEdge++;
 	}
 }
@@ -1326,45 +1318,5 @@ osg::ref_ptr<Data::Node> Data::Graph::addFloatingRestrictionNode( QString name, 
 	node->setRemovableByUser( false );
 
 	return node;
-}
-
-void Data::Graph::switch2Dand3D(){
-	is3D = !is3D;
-
-//	//switch all edges
-//	for (QMap<qlonglong, osg::ref_ptr<Data::Edge> >::iterator it = edges->begin (); it != edges->end (); ++it) {
-//		osg::ref_ptr<Data::Edge> edge = it.value ();
-//		if (is3D)
-//			edge->turnTo3D();
-//	   else
-//			edge->turnTo2D();
-//	}
-
-//	//switch all meta edges
-//	for (QMap<qlonglong, osg::ref_ptr<Data::Edge> >::iterator it = metaEdges->begin (); it != metaEdges->end (); ++it) {
-//		osg::ref_ptr<Data::Edge> metaEdge = it.value ();
-//		if (is3D)
-//			metaEdge->turnTo3D();
-//	   else
-//			metaEdge->turnTo2D();
-//	}
-
-	//switch all nodes
-	for (QMap<qlonglong, osg::ref_ptr<Data::Node> >::iterator it = nodes->begin (); it != nodes->end (); ++it) {
-		osg::ref_ptr<Data::Node> node = it.value ();
-	   if (is3D)
-		   node->turnTo3D();
-	   else
-		   node->turnTo2D();
-	}
-
-	//switch all meta nodes
-	for (QMap<qlonglong, osg::ref_ptr<Data::Node> >::iterator it = metaNodes->begin (); it != metaNodes->end (); ++it) {
-		osg::ref_ptr<Data::Node> metaNode = it.value ();
-	   if (is3D)
-		   metaNode->turnTo3D();
-	   else
-		   metaNode->turnTo2D();
-	}
 }
 

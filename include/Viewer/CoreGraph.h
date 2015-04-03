@@ -257,14 +257,9 @@ public slots:
 	void updateGraphRotByFaceDet( const osg::Quat quat );
 
 	/**
-		 * @brief set2D Set representation of nodes and edges to 2D objects.
+		 * @brief set3D Set representation of nodes and edges to 3D objects if param is true, else to 2D objects
 		 */
-	void set2D();
-
-	/**
-		 * @brief set3D Set representation of nodes and edges to 3D objects.
-		 */
-	void set3D();
+	void set3D( bool value );
 
 private:
 

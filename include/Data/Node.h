@@ -7,6 +7,7 @@
 
 #include <osg/Vec3f>
 #include <osg/Geode>
+#include <osg/Switch>
 #include <osg/AutoTransform>
 
 #include <QMap>
@@ -33,7 +34,7 @@ typedef osg::TemplateIndexArray<unsigned int, osg::Array::UIntArrayType,4,1> Col
 	*  \author Aurel Paulovic, Michal Paprcka
 	*  \date 29. 4. 2010
 	*/
-class Node : public osg::Geode
+class Node : public osg::Switch
 {
 public:
 
@@ -354,11 +355,11 @@ public:
 	{
 		this->fixed = fixed;
 
-		if ( fixed && this->containsDrawable( square ) ) {
-			this->setDrawableColor( 0, osg::Vec4( 1.0f, 0.0f, 0.0f, 1.0f ) );
+		if ( fixed ) {
+			this->setDrawableColor( osg::Vec4( 1.0f, 0.0f, 0.0f, 1.0f ) );
 		}
-		else if ( !fixed && this->containsDrawable( square ) ) {
-			this->setDrawableColor( 0, colorOfNode );
+		else if ( !fixed ) {
+			this->setDefaultColor();
 		}
 	}
 
@@ -396,10 +397,10 @@ public:
 	void setSelected( bool selected )
 	{
 		if ( selected ) {
-			setDrawableColor( 0, osg::Vec4( 0.0f, 0.1f, 1.0f, 1.0f ) );    // color of selected node
+			setDrawableColor( osg::Vec4( 0.0f, 0.1f, 1.0f, 1.0f ) );	// color of selected node
 		}
 		else {
-			setDrawableColor( 0, color );
+			setDefaultColor();
 		}
 
 		this->selected = selected;
@@ -513,20 +514,6 @@ public:
 		*  \return QString
 		*/
 	QString toString() const;
-
-	/**
-		*  \fn public  turnTo3D()
-		*  \brief Turn node representation to 3D object
-		*/
-	void turnTo3D();
-
-	/**
-		*  \fn public  turnTo2D()
-		*  \brief Turn node representation to 2D object
-		*/
-	void turnTo2D();
-
-
 
 	/**
 		*  \fn inline public  setColor(osg::Vec4 color)
@@ -744,6 +731,8 @@ public:
 	{
 		this->nodeMatched = nodeMatched;
 	}
+
+	void set3D( bool value );
 	//volovar_zac
 	void setLayerID( int id ); //get unique layer id of selected radial layout, 0 node has no radial layout
 	int getLayerID();
@@ -751,7 +740,9 @@ public:
 	void setRadialLayout( Layout::RadialLayout* rl );
 	//volovar_kon
 private:
-
+	static const int INDEX_LABEL = 0;
+	static const int INDEX_SQUARE = 1;
+	static const int INDEX_SPHERE = 2;
 
 	/**
 		*	bool inDB
@@ -889,13 +880,22 @@ private:
 
 
 	/**
-		*  \fn private static  createNode(const float & scale, osg::StateSet* bbState)
-		*  \brief Creates node drawable
-		*  \param      scale    node scale
-		*  \param  bbState    node stateset
-		*  \return osg::ref_ptr node drawable
+		*  \fn private static  createNodeSquare(const float & scale, osg::StateSet* bbState)
+		*  \brief Creates node drawable - square
+		*  \param	  scale	node scale
+		*  \param  bbState	node stateset
+		*  \return osg::ref_ptr node geode
 		*/
-	static osg::ref_ptr<osg::Drawable> createNode( const float& scale, osg::StateSet* bbState );
+	static osg::ref_ptr<osg::Geode> createNodeSquare( const float& scale, osg::StateSet* bbState );
+
+	/**
+		*  \fn private static  createNodeSphere(const float & scale, osg::StateSet* bbState)
+		*  \brief Creates node drawable - sphere
+		*  \param	  scale	node scale
+		*  \param  bbState	node stateset
+		*  \return osg::ref_ptr node geode
+		*/
+	static osg::ref_ptr<osg::Geode> createNodeSphere( const float& scale, osg::StateSet* bbState );
 
 	/**
 		*  \fn private static  createStateSet(Data::Type * type = 0)
@@ -912,7 +912,7 @@ private:
 		*  \param       name     label text
 		*  \return osg::ref_ptr node label
 		*/
-	static osg::ref_ptr<osg::Drawable> createLabel( const float& scale, QString name );
+	static osg::ref_ptr<osg::Geode> createLabel( const float& scale, QString name );
 
 	/**
 		*  \fn private static  createSquare
@@ -934,35 +934,15 @@ private:
 	/**
 		*  \fn private  setDrawableColor(int pos, osg::Vec4 color)
 		*  \brief Sets drawble color
-		*  \param     pos     drawable position
-		*  \param     color     drawable color
+		*  \param	 color	 drawable color
 		*/
-	void setDrawableColor( int pos, osg::Vec4 color );
+	void setDrawableColor( osg::Vec4 color );
 
 	/**
 		*  QString labelText
 		*  \brief Text show in the label
 		*/
 	QString labelText;
-
-
-	/**
-		*  osg::ref_ptr label
-		*  \brief Label drawable
-		*/
-	osg::ref_ptr<osg::Drawable> label;
-
-	/**
-		*  osg::ref_ptr square
-		*  \brief Square drawable
-		*/
-	osg::ref_ptr<osg::Drawable> square;
-
-	/**
-		*  osg::ref_ptr focusedSquare
-		*  \brief Focused square drawable
-		*/
-	osg::ref_ptr<osg::Drawable> focusedSquare;
 
 	float nodeDegree;
 	float nodeCloseness;

@@ -669,7 +669,7 @@ void CoreGraph::reload( Data::Graph* graph )
 	graphGroup->addChild( nodesGroup->getGroup() );
 	nodesPosition = currentPos++;
 
-	this->edgesGroup = new Vwr::EdgeGroup( in_edges, appConf->getValue( "Viewer.Textures.EdgeScale" ).toFloat() );
+	this->edgesGroup = new Vwr::EdgeGroup( in_edges );
 	//this->edgesGroup = new Vwr::EdgeGroup(in_edges, 10);
 	graphGroup->addChild( edgesGroup->getGroup() );
 	edgesPosition = currentPos++;
@@ -678,7 +678,7 @@ void CoreGraph::reload( Data::Graph* graph )
 	graphGroup->addChild( qmetaNodesGroup->getGroup() );
 	qmetaNodesPosition = currentPos++;
 
-	this->qmetaEdgesGroup = new Vwr::EdgeGroup( qmetaEdges, appConf->getValue( "Viewer.Textures.EdgeScale" ).toFloat() );
+	this->qmetaEdgesGroup = new Vwr::EdgeGroup( qmetaEdges );
 	//this->qmetaEdgesGroup = new Vwr::EdgeGroup(qmetaEdges, 10);
 	graphGroup->addChild( qmetaEdgesGroup->getGroup() );
 	qmetaEdgesPosition = currentPos++;
@@ -970,17 +970,15 @@ osg::ref_ptr<osg::Node> CoreGraph::createBackground()
 
 osg::ref_ptr<osg::Group> CoreGraph::initEdgeLabels()
 {
-	osg::ref_ptr<osg::Geode> geode = new osg::Geode;
+	osg::ref_ptr<osg::Group> labels = new osg::Group;
 
 	QMap<qlonglong, osg::ref_ptr<Data::Edge> >::iterator i = in_edges->begin();
 
 	while ( i != in_edges->end() ) {
-		geode->addDrawable( i.value()->createLabel( i.value()->getName() ) );
+		labels->addChild( i.value()->createLabel( i.value()->getName() ) );
 		++i;
 	}
 
-	osg::ref_ptr<osg::Group> labels = new osg::Group;
-	labels->addChild( geode );
 	labels->setNodeMask( 0 );
 
 	return labels;
@@ -1200,16 +1198,23 @@ void CoreGraph::computeGraphRotTransf()
 	graphRotTransf->setMatrix( graphTransfMat );
 }
 
-void CoreGraph::set2D(){
-	edgesGroup->getGroup()->asSwitch()->setValue(0, true);
-	edgesGroup->getGroup()->asSwitch()->setValue(1, true);
-	edgesGroup->getGroup()->asSwitch()->setValue(2, false);
-}
+void CoreGraph::set3D( bool value )
+{
+	QMap<qlonglong, osg::ref_ptr<Data::Edge> >::iterator ie = in_edges->begin();
 
-void CoreGraph::set3D(){
-	edgesGroup->getGroup()->asSwitch()->setValue(0, false);
-	edgesGroup->getGroup()->asSwitch()->setValue(1, false);
-	edgesGroup->getGroup()->asSwitch()->setValue(2, true);
+	while ( ie != in_edges->end() ) {
+		ie.value()->set3D( value );
+		ie++;
+	}
+
+	QMap<qlonglong, osg::ref_ptr<Data::Node> >::iterator in = in_nodes->begin();
+
+	while ( in != in_nodes->end() ) {
+		in.value()->set3D( value );
+		in++;
+	}
+
+	graph->setIs3D( value );
 }
 
 #ifdef OPENCV_FOUND
