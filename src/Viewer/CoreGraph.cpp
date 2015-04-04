@@ -1200,18 +1200,32 @@ void CoreGraph::computeGraphRotTransf()
 
 void CoreGraph::set3D( bool value )
 {
-	QMap<qlonglong, osg::ref_ptr<Data::Edge> >::iterator ie = in_edges->begin();
+	QMap<qlonglong, osg::ref_ptr<Data::Edge> >::iterator iEdge = in_edges->begin();
 
-	while ( ie != in_edges->end() ) {
-		ie.value()->set3D( value );
-		ie++;
+	while ( iEdge != in_edges->end() ) {
+		iEdge.value()->set3D( value );
+		iEdge++;
 	}
 
-	QMap<qlonglong, osg::ref_ptr<Data::Node> >::iterator in = in_nodes->begin();
+	QMap<qlonglong, osg::ref_ptr<Data::Edge> >::iterator iMetaEdge = qmetaEdges->begin();
 
-	while ( in != in_nodes->end() ) {
-		in.value()->set3D( value );
-		in++;
+	while ( iMetaEdge != qmetaEdges->end() ) {
+		iMetaEdge.value()->set3D( value );
+		iMetaEdge++;
+	}
+
+	QMap<qlonglong, osg::ref_ptr<Data::Node> >::iterator iNode = in_nodes->begin();
+
+	while ( iNode != in_nodes->end() ) {
+		iNode.value()->set3D( value );
+		iNode++;
+	}
+
+	QMap<qlonglong, osg::ref_ptr<Data::Node> >::iterator iMetaNode = qmetaNodes->begin();
+
+	while ( iMetaNode != qmetaNodes->end() ) {
+		iMetaNode.value()->set3D( value );
+		iMetaNode++;
 	}
 
 	graph->setIs3D( value );
