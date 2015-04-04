@@ -525,7 +525,7 @@ public:
 		this->color = color;
 
 		if ( !selected ) {
-			setDrawableColor( 0, color );
+			setDrawableColor( color );
 		}
 	}
 

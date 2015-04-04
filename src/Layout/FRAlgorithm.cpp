@@ -259,6 +259,7 @@ bool FRAlgorithm::iterate()
 						// odpudiva sila medzi metauzlami
 						addRepulsive( j.value(), k.value(), Data::Graph::getMetaStrength() );
 					}
+				}
 			}
 		}
 	}

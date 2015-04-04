@@ -12,6 +12,7 @@ EdgeGroup::EdgeGroup( QMap<qlonglong, osg::ref_ptr<Data::Edge> >* edges )
 {
 	this->edges = edges;
 
+	initEdges();
 }
 
 EdgeGroup::~EdgeGroup( void )
