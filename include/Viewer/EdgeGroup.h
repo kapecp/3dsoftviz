@@ -13,7 +13,8 @@
 
 #include "Data/Edge.h"
 
-namespace Vwr {
+namespace Vwr
+{
 /**
 	*  \class EdgeGroup
 	*  \brief Edge group wrapper

@@ -49,7 +49,6 @@ void EdgeGroup::initEdges()
 void EdgeGroup::updateEdgeCoords()
 {
 	QMap<qlonglong, osg::ref_ptr<Data::Edge> >::iterator i = edges->begin();
-	//QList<osg::ref_ptr<osg::ShapeDrawable> >::iterator ic = drawableList.begin();
 
 	while ( i != edges->end() ) {
 		osg::Vec3 srcNodePosition = i.value()->getSrcNode()->getCurrentPosition();
