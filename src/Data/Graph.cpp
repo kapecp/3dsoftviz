@@ -326,7 +326,7 @@ osg::ref_ptr<Data::Node> Data::Graph::addNode( QString name, Data::Type* type, o
 		type = metype;
 	}
 
-	osg::ref_ptr<Data::Node> node = new Data::Node( this->incEleIdCounter(), name, type, this->getNodeScale(), this, position );
+	osg::ref_ptr<Data::Node> node = new Data::Node( this->incEleIdCounter(), name, type, this->getNodeScaleByType( type ), this, position );
 
 	node->setNestedParent( NULL );
 
@@ -362,7 +362,7 @@ osg::ref_ptr<Data::Node> Data::Graph::addNode( QString name, Data::Type* type, o
 osg::ref_ptr<Data::Node> Data::Graph::addNode( qlonglong id, QString name, Data::Type* type, osg::Vec3f position )
 {
 	//vytvorime novy objekt uzla
-	osg::ref_ptr<Data::Node> node = new Data::Node( id, name, type, this->getNodeScale(), this, position );
+	osg::ref_ptr<Data::Node> node = new Data::Node( id, name, type, this->getNodeScaleByType( type ), this, position );
 
 	this->newNodes.insert( node->getId(),node );
 
@@ -746,7 +746,7 @@ void Data::Graph::splitAllEdges( int splitCount )
 	//create new edges
 	QList<osg::ref_ptr<Data::Edge> > newEdgeList;
 	while ( iEdge != edges->end() ) {
-		newEdgeList.append( splitEdge( ( *iEdge )->getName(), ( *iEdge )->getSrcNode(), ( *iEdge )->getDstNode(), ( *iEdge )->isOriented(), getNodeMetaType(), getEdgeMetaType(), splitCount ) );
+		newEdgeList.append( splitEdge( ( *iEdge )->getName(), ( *iEdge )->getSrcNode(), ( *iEdge )->getDstNode(), ( *iEdge )->isOriented(), getNodeSplitterType(), getEdgeMetaType(), splitCount ) );
 		iEdge ++;
 	}
 
@@ -1083,11 +1083,29 @@ Data::Type* Data::Graph::getNodeMultiType()
 	return type;
 }
 
+Data::Type* Data::Graph::getNodeSplitterType()
+{
+	//vraciame typ multi uzla s nastavenymi hodnotami
+	QMap<QString, QString>* settings = new QMap<QString, QString>;
+
+	float scale = Util::ApplicationConfig::get()->getValue( "Viewer.Textures.DefaultNodeScale" ).toFloat();
+	settings->insert( "scale", QString::number( scale / 4.0f ) );
+	settings->insert( "textureFile", Util::ApplicationConfig::get()->getValue( "Viewer.Textures.MetaNode" ) );
+	settings->insert( "color.R", "1.0" );
+	settings->insert( "color.G", "1.0" );
+	settings->insert( "color.B", "1.0" );
+	settings->insert( "color.A", "0.8" );
+
+	Data::MetaType* type = this->addMetaType( Data::GraphLayout::SPLITTER_NODE_TYPE, settings );
+	return type;
+}
+
 float Data::Graph::getNodeScale()
 {
 	//vraciame skalu grafu potrebnu pre vnorene grafy
 	int level;
 	level = this->parent_id.size();
+
 	float offset = Util::ApplicationConfig::get()->getValue( "Viewer.Textures.DefaultNodeScale" ).toFloat();
 
 	for ( int i=0; i<level; i++ ) {
@@ -1096,6 +1114,22 @@ float Data::Graph::getNodeScale()
 	}
 	return offset;
 }
+
+float Data::Graph::getNodeScaleByType( Data::Type* type )
+{
+	//vraciame skalu grafu potrebnu pre vnorene grafy
+	int level;
+	level = this->parent_id.size();
+
+	float offset = type->getSettings()->value( "scale" ).toFloat();
+
+	for ( int i=0; i<level; i++ ) {
+		//kazda dalsia uroven vnoreneho grafu je 3 krat mensia
+		offset = offset/3;
+	}
+	return offset;
+}
+
 
 float Data::Graph::getEdgeScale()
 {

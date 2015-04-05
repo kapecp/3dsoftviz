@@ -76,6 +76,12 @@ public:
 	static const QString MULTI_NODE_TYPE;
 
 	/**
+		*  const QString SPLITTER_NODE_TYPE
+		*  \brief Constant identifier of SplitterType name used for splitter-Nodes (they are used for splitting edges) as identified by MetaSettings of the GraphLayout
+		*/
+	static const QString SPLITTER_NODE_TYPE;
+
+	/**
 		*  const QString EDGE_TYPE
 		*  \brief Constant identifier of Type name used for Edges as identified by Settings of the GraphLayout
 		*/

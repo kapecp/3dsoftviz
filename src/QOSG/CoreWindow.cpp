@@ -431,6 +431,18 @@ void CoreWindow::createActions()
 	b_StartEdgeBundling->setFocusPolicy( Qt::NoFocus );
 	connect( b_StartEdgeBundling, SIGNAL( clicked() ), this, SLOT( startEdgeBundling() ) );
 
+	b_EdgeBundling_SpinBox = new QSpinBox();
+	b_EdgeBundling_SpinBox->setToolTip( "&Modify count of edge parts" );
+	b_EdgeBundling_SpinBox->setFocusPolicy( Qt::NoFocus );
+	b_EdgeBundling_SpinBox->setValue( 3 );
+
+	edgeBundlingSlider = new QSlider( Qt::Horizontal,this );
+	edgeBundlingSlider->setTickPosition( QSlider::TicksAbove );
+	edgeBundlingSlider->setTickInterval( 5 );
+	edgeBundlingSlider->setValue( 5 );
+	edgeBundlingSlider->setFocusPolicy( Qt::NoFocus );
+	connect( edgeBundlingSlider,SIGNAL( valueChanged( int ) ),this,SLOT( edgeBundlingSliderValueChanged( int ) ) );
+
 	b_switch2Dand3D = new QPushButton();
 	b_switch2Dand3D->setText( "3D" );
 	b_switch2Dand3D->setToolTip( "&Turn to 3D or 2D" );
@@ -916,7 +928,10 @@ QWidget* CoreWindow::createClusteringTab( QFrame* line )
 	line = createLine();
 	lClustering->addRow( line );
 	b_StartEdgeBundling->setMaximumWidth( 136 );
-	lClustering->addRow( b_StartEdgeBundling );
+	lClustering->addRow( b_StartEdgeBundling, b_EdgeBundling_SpinBox );
+	edgeBundlingSlider->setMaximumWidth( 136 );
+	lClustering->addRow( edgeBundlingSlider );
+	line = createLine();
 
 	wClustering->setLayout( lClustering );
 
@@ -2129,38 +2144,41 @@ void CoreWindow::unsetRestrictionFromAll()
 void CoreWindow::startEdgeBundling()
 {
 	if ( isEBPlaying ) {
-		isEBPlaying = false;
-
 		layout->stopEdgeBundling();
+		isEBPlaying = false;
 	}
 	else {
-		isEBPlaying = true;
-
 		Data::Graph* currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
 
-		//select all nodes and fix them
-		QMap<qlonglong, osg::ref_ptr<Data::Node> >::iterator iNode = currentGraph->getNodes()->begin();
-		while ( iNode != currentGraph->getNodes()->end() ) {
-			viewerWidget->getPickHandler()->addPickedNode( *iNode );
-			iNode++;
-		}
-		fixNodes();
-
-		//split edges
 		if ( currentGraph != NULL ) {
-			currentGraph->splitAllEdges( 3 );
-		}
+			//select all nodes and fix them
+			QMap<qlonglong, osg::ref_ptr<Data::Node> >::iterator iNode = currentGraph->getNodes()->begin();
+			while ( iNode != currentGraph->getNodes()->end() ) {
+				viewerWidget->getPickHandler()->addPickedNode( *iNode );
+				iNode++;
+			}
+			fixNodes();
 
-		if ( !isPlaying ) {
-			play->setIcon( QIcon( "../share/3dsoftviz/img/gui/pause.png" ) );
-			isPlaying = 1;
-			coreGraph->setNodesFreezed( false );
-			layout->play();
-		}
+			//split edges
+			int splitCount = static_cast<int>( b_EdgeBundling_SpinBox->value() );
+			currentGraph->splitAllEdges( splitCount );
 
-		layout->playEdgeBundling();
+			if ( !isPlaying ) {
+				play->setIcon( QIcon( "../share/3dsoftviz/img/gui/pause.png" ) );
+				isPlaying = 1;
+				coreGraph->setNodesFreezed( false );
+				layout->play();
+			}
+
+			layout->playEdgeBundling();
+			isEBPlaying = true;
+		}
 	}
+}
 
+void CoreWindow::edgeBundlingSliderValueChanged( int value )
+{
+	layout->setAlphaEdgeBundlingValue( static_cast<float>( value ) * 0.001f );
 }
 
 void CoreWindow::switch2Dand3D()

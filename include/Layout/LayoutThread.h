@@ -90,6 +90,13 @@ public:
 	void stopEdgeBundling();
 
 	/**
+		*  \fn public  setAlphaEdgeBundlingValue(float val)
+		*  \brief Sets multiplicity of forces in edge bundling algorithm
+		*  \param	  val  multipliciter of forces
+		*/
+	void setAlphaEdgeBundlingValue( float val );
+
+	/**
 		*  \fn public  pauseAllAlg
 		*  \brief pause all running algorithms
 		*/

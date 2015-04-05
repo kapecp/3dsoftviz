@@ -11,6 +11,7 @@
 //nastavenie konstantnych typov jednotlivych prvkov grafu
 const QString Data::GraphLayout::META_NODE_TYPE = QString( "META_NODE_TYPE" );
 const QString Data::GraphLayout::MULTI_NODE_TYPE = QString( "MULTI_NODE_TYPE" );
+const QString Data::GraphLayout::SPLITTER_NODE_TYPE = QString( "SPLITTER_NODE_TYPE" );
 const QString Data::GraphLayout::META_EDGE_TYPE = QString( "META_EDGE_TYPE" );
 const QString Data::GraphLayout::EDGE_TYPE = QString( "EDGE_TYPE" );
 const QString Data::GraphLayout::MULTI_EDGE_TYPE = QString( "MULTI_EDGE_TYPE" );

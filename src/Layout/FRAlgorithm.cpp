@@ -31,6 +31,7 @@ FRAlgorithm::FRAlgorithm()
 	MIN_MOVEMENT = 0.05f;
 	MAX_MOVEMENT = 30;
 	MAX_DISTANCE = 400;
+	ALPHA_EDGEBUNDLING = 0.005f;
 	MIN_MOVEMENT_EDGEBUNDLING = 0.75f;
 	state = RUNNING;
 	stateEdgeBundling = PAUSED;
@@ -59,6 +60,7 @@ FRAlgorithm::FRAlgorithm( Data::Graph* graph )
 	MIN_MOVEMENT = 0.05f;
 	MAX_MOVEMENT = 30;
 	MAX_DISTANCE = 400;
+	ALPHA_EDGEBUNDLING = 0.005f;
 	MIN_MOVEMENT_EDGEBUNDLING = 0.75f;
 	state = RUNNING;
 	stateEdgeBundling = PAUSED;
@@ -177,8 +179,7 @@ void FRAlgorithm::Run()
 		while ( notEnd ) {
 			// slucka pozastavenia - ak je pauza
 			// alebo je graf zmrazeny (spravidla pocas editacie)
-			while (notEnd && (state != RUNNING || graph->isFrozen()) && (stateEdgeBundling != RUNNING || graph->isFrozen()))
-			{
+			while ( notEnd && ( state != RUNNING || graph->isFrozen() ) && ( stateEdgeBundling != RUNNING || graph->isFrozen() ) ) {
 				// [GrafIT][!] not 100% OK (e.g. msleep(100) remains here), but we have fixed the most obvious multithreading issues of the original code
 				isIterating_mutex.unlock();
 				QThread::msleep( 100 );
@@ -219,39 +220,37 @@ bool FRAlgorithm::iterate()
 			// pre vsetky metauzly..
 			j.value()->resetForce(); // vynulovanie posobiacej sily
 
-			if (stateEdgeBundling == RUNNING)
-			{
+			if ( stateEdgeBundling == RUNNING ) {
 				//pritazlive sily medzi meta uzlom a jeho susedmi
 				QMap<qlonglong, osg::ref_ptr<Data::Edge> >::iterator iEdge = j.value()->getEdges()->begin();
-				while (iEdge != j.value()->getEdges()->end())
-				{
-					if (!j.value()->equals((*iEdge)->getSrcNode()))
-						addNeighbourAttractive(j.value(), (*iEdge)->getSrcNode(), Data::Graph::getMetaStrength());
-					else
-						addNeighbourAttractive(j.value(), (*iEdge)->getDstNode(), Data::Graph::getMetaStrength());
+				while ( iEdge != j.value()->getEdges()->end() ) {
+					if ( !j.value()->equals( ( *iEdge )->getSrcNode() ) ) {
+						addNeighbourAttractive( j.value(), ( *iEdge )->getSrcNode(), 1 );
+					}
+					else {
+						addNeighbourAttractive( j.value(), ( *iEdge )->getDstNode(), 1 );
+					}
 					iEdge++;
 				}
 
 				//pritazliva sila medzi meta uzlom a ostatnymi metauzlami s rovnakym indexom
-				QString jName = (*j)->getName();
-				jName = jName.right(jName.length() - jName.indexOf(' ') - 1);
+				QString jName = ( *j )->getName();
+				jName = jName.right( jName.length() - jName.indexOf( ' ' ) - 1 );
 				k = graph->getMetaNodes()->begin();
-				while (k != graph->getMetaNodes()->end()){
-					if (!j.value()->equals(k.value()))
-					{
-						QString kName = (*k)->getName();
-						kName = kName.right(kName.length() - kName.indexOf(' ') - 1);
+				while ( k != graph->getMetaNodes()->end() ) {
+					if ( !j.value()->equals( k.value() ) ) {
+						QString kName = ( *k )->getName();
+						kName = kName.right( kName.length() - kName.indexOf( ' ' ) - 1 );
 
-						if (QString::compare(jName, kName, Qt::CaseInsensitive) == 0)
-						{
-							addSameIndexAttractive(j.value(), k.value(), Data::Graph::getMetaStrength());
+						if ( QString::compare( jName, kName, Qt::CaseInsensitive ) == 0 ) {
+							addSameIndexAttractive( j.value(), k.value(), 1 );
 						}
 					}
-					 k++;
+					k++;
 				}
 
-			} else
-			{
+			}
+			else {
 				k = graph->getMetaNodes()->begin();
 				for ( int h = 0; h < graph->getMetaNodes()->count(); ++h,++k ) {
 					// pre vsetky metauzly..
@@ -315,8 +314,7 @@ bool FRAlgorithm::iterate()
 			addAttractive( j.value(), 1 );
 		}
 	}
-	if(state == PAUSED && stateEdgeBundling == PAUSED)
-	{
+	if ( state == PAUSED && stateEdgeBundling == PAUSED ) {
 		return false;
 	}
 
@@ -399,28 +397,44 @@ bool FRAlgorithm::applyForces( Data::Node* node )
 
 	// nakumulovana sila
 	osg::Vec3f fv = node->getForce();
-	// zmensenie
-	fv *= ALPHA;
-	float l = fv.length();
-	if ((l > MIN_MOVEMENT && stateEdgeBundling == PAUSED) ||
-			(l > MIN_MOVEMENT_EDGEBUNDLING && stateEdgeBundling == RUNNING)) {
-		// nie je sila primala?
-		if ( l > MAX_MOVEMENT ) {
-			// je sila privelka?
-			fv.normalize();
-			fv *= 5;
-		}
 
-		// pricitame aktualnu rychlost
-		fv += node->getVelocity();
-	}
+	// zmensenie pri edge bundlingu
+	if ( stateEdgeBundling == RUNNING ) {
+		fv *= ALPHA_EDGEBUNDLING;
+		float l = fv.length();
+		if ( l > MIN_MOVEMENT_EDGEBUNDLING ) {
+			if ( l > MAX_MOVEMENT ) {
+				fv.normalize();
+				fv *= 5;
+			}
+			fv += node->getVelocity();    // pricitame aktualnu rychlost
+		}
+		else {
+			fv = osg::Vec3( 0,0,0 );
+		}
+	} // zmensenie pri FRAlg
 	else {
-		// [GrafIT][.] this has been a separate case when resetVelocity() has been called and nothing with the target position has been done;
-		//             we needed to compute and maybe restrict the target position even if this case; setting the velocity to null vector
-		//             and setting it as a velocity has the same effect as resetVelocity()
-		// reset velocity
-		fv = osg::Vec3( 0,0,0 );
-		// [GrafIT]
+		fv *= ALPHA;
+		float l = fv.length();
+		if ( ( l > MIN_MOVEMENT && stateEdgeBundling == PAUSED ) ) {
+			// nie je sila primala?
+			if ( l > MAX_MOVEMENT ) {
+				// je sila privelka?
+				fv.normalize();
+				fv *= 5;
+			}
+
+			// pricitame aktualnu rychlost
+			fv += node->getVelocity();
+		}
+		else {
+			// [GrafIT][.] this has been a separate case when resetVelocity() has been called and nothing with the target position has been done;
+			//             we needed to compute and maybe restrict the target position even if this case; setting the velocity to null vector
+			//             and setting it as a velocity has the same effect as resetVelocity()
+			// reset velocity
+			fv = osg::Vec3( 0,0,0 );
+			// [GrafIT]
+		}
 	}
 
 	// [GrafIT][.] using restrictions (modified and optimized for speed by Peter Sivak)
@@ -509,45 +523,43 @@ void FRAlgorithm::addMetaAttractive( Data::Node* u, Data::Node* meta, float fact
 }
 
 /* Pricitanie pritazlivych sil medzi metauzlom a jeho susedom */
-void FRAlgorithm::addNeighbourAttractive(Data::Node* meta, Data::Node* neighbour, float factor)
+void FRAlgorithm::addNeighbourAttractive( Data::Node* meta, Data::Node* neighbour, float factor )
 {
 	// [GrafIT][+] forces are only between nodes which are in the same graph (or some of them is meta) AND are not ignored
-	if (!areForcesBetween (meta, neighbour)) {
+	if ( !areForcesBetween( meta, neighbour ) ) {
 		return;
 	}
 	// [GrafIT]
 	up = meta->targetPosition();
 	vp = neighbour->targetPosition();
-	dist = distance(up,vp);
-	if(qFuzzyCompare(dist,0.0))
-	{
+	dist = distance( up,vp );
+	if ( qFuzzyCompare( dist,0.0 ) ) {
 		return;
 	}
 	fv = vp - up;// smer sily
 	fv.normalize();
-	fv *= attr(dist) * factor;// velkost sily
-	meta->addForce(fv);
+	fv *= attr( dist ) * factor; // velkost sily
+	meta->addForce( fv );
 }
 
 /* Pricitanie pritazlivych sil medzi dvoma metauzlami s rovnakym indexom */
-void FRAlgorithm::addSameIndexAttractive(Data::Node* meta1, Data::Node* meta2, float factor)
+void FRAlgorithm::addSameIndexAttractive( Data::Node* meta1, Data::Node* meta2, float factor )
 {
 	// [GrafIT][+] forces are only between nodes which are in the same graph (or some of them is meta) AND are not ignored
-	if (!areForcesBetween (meta1, meta2)) {
+	if ( !areForcesBetween( meta1, meta2 ) ) {
 		return;
 	}
 	// [GrafIT]
 	up = meta1->targetPosition();
 	vp = meta2->targetPosition();
-	dist = distance(up,vp);
-	if(qFuzzyCompare(dist,0.0))
-	{
+	dist = distance( up,vp );
+	if ( qFuzzyCompare( dist,0.0 ) ) {
 		return;
 	}
 	fv = vp - up;// smer sily
 	fv.normalize();
-	fv *= (50/attr(dist))*factor;// velkost sily
-	meta1->addForce(fv);
+	fv *= ( 50/attr( dist ) )*factor; // velkost sily
+	meta1->addForce( fv );
 }
 
 /* Pricitanie odpudivych sil */
@@ -664,17 +676,15 @@ void FRAlgorithm::setRepulsiveForceVertigo( int value )
 
 void FRAlgorithm::RunAlgEdgeBundling()
 {
-	if(graph != NULL)
-	{
-		graph->setFrozen(false);
+	if ( graph != NULL ) {
+		graph->setFrozen( false );
 		stateEdgeBundling = RUNNING;
 	}
 }
 
 void FRAlgorithm::StopAlgEdgeBundling()
 {
-	if(graph != NULL)
-	{
+	if ( graph != NULL ) {
 		stateEdgeBundling = PAUSED;
 	}
 }

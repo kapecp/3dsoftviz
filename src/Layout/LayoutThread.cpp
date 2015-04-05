@@ -56,6 +56,10 @@ void LayoutThread::stopEdgeBundling()
 {
 	alg->StopAlgEdgeBundling();
 }
+void LayoutThread::setAlphaEdgeBundlingValue( float val )
+{
+	alg->SetAlphaEdgeBundlingValue( val );
+}
 void LayoutThread::pauseAllAlg()
 {
 	//order is important

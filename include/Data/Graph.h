@@ -347,6 +347,11 @@ public:
 	float getNodeScale();
 
 	/**
+		*  \return scale of node
+		*/
+	float getNodeScaleByType( Data::Type* type );
+
+	/**
 		*  \return scale of nested edge
 		*/
 	float getEdgeScale();
@@ -556,6 +561,13 @@ public:
 		*  \return Data::Type * MultiType for the Nodes
 		*/
 	Data::Type* getNodeMultiType();
+
+	/**
+		*  \fn public  getNodeSplitterType
+		*  \brief Returns SplitterType for splitter-Nodes (used for splitting edges)
+		*  \return Data::Type * SplitterType for the Nodes
+		*/
+	Data::Type* getNodeSplitterType();
 
 	/**
 		*  \fn public  getEdgeMetaType

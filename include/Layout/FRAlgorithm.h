@@ -129,8 +129,18 @@ public:
 	void StopAlgEdgeBundling();
 
 	/**
-	    *  \brief Sets the repulsive force multiplier between two nodes in one vertigo plane
-	    */
+		*  \fn inline public  SetAlphaEdgeBundlingValue(float val)
+		*  \brief Sets multiplicity of forces in edge bundling algorithm
+		*  \param	  val  multipliciter of forces
+		*/
+	void SetAlphaEdgeBundlingValue( float val )
+	{
+		ALPHA_EDGEBUNDLING = val;
+	}
+
+	/**
+		*  \brief Sets the repulsive force multiplier between two nodes in one vertigo plane
+		*/
 	void setRepulsiveForceVertigo( int value );
 
 private:
@@ -177,6 +187,12 @@ private:
 		*  \brief minimal distance between two meta nodes during edge bundling alg, when forces are aplified
 		*/
 	float MIN_MOVEMENT_EDGEBUNDLING;
+
+	/**
+		*  float ALPHA_EDGEBUNDLING
+		*  \brief multipliciter of forces
+		*/
+	float ALPHA_EDGEBUNDLING;
 
 	/**
 		*  enum State

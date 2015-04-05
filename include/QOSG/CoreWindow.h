@@ -397,6 +397,13 @@ public slots:
     void startEdgeBundling();
 
     /**
+                *  \fn public  edgeBundlingSliderValueChanged(int value)
+                *  \brief Slider value is changed
+                *  \param value actual value of slider
+                */
+    void edgeBundlingSliderValueChanged( int value );
+
+    /**
                  * \brief Turn graph parts from 2D to 3D and from 3D to 2D.
                  */
     void switch2Dand3D();
@@ -781,12 +788,24 @@ private:
     /**
          * \brief Button for starting edge bundling.
          */
-    QPushButton *b_StartEdgeBundling;
+    QPushButton* b_StartEdgeBundling;
+
+    /**
+         * \brief Spinbox for modifying edge bundling. It defines count of edge parts after edge splitting.
+         */
+    QSpinBox* b_EdgeBundling_SpinBox;
+
+
+    /**
+        *  QSlider * sliderEB
+        *  \brief Pointer to slider. It defines strength of edge bundling forces.
+        */
+    QSlider* edgeBundlingSlider;
 
     /**
          * \brief Button for switching 2D and 3D representation of graph parts.
          */
-    QPushButton *b_switch2Dand3D;
+    QPushButton* b_switch2Dand3D;
 
     /**
         *  QAction * create new Edge
@@ -922,7 +941,6 @@ private:
     int isPlaying;
 
     /**
-<<<<<<< HEAD
         *  int isEBPlaying
         *  \brief Flag if edge bundling is running
         */
@@ -1107,7 +1125,8 @@ public:
     {
         return isPlaying;
     }
-    bool playingEB() {
+    bool playingEB()
+    {
         return isEBPlaying;
     }
     Vwr::CameraManipulator* getCameraManipulator();
