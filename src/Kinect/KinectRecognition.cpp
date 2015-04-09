@@ -52,12 +52,17 @@ cv::Mat Kinect::KinectRecognition::colorImageCvMat( openni::VideoFrameRef& color
 	return frame;
 }
 
-cv::Mat Kinect::KinectRecognition::depthImageCvMat( openni::VideoFrameRef& colorFrame )
+cv::Mat Kinect::KinectRecognition::depthImageCvMat( openni::VideoFrameRef& depthFrame )
 {
-	//TODO check functionality
-	openni::VideoMode mode = colorFrame.getVideoMode();
-	cv::Mat image = cv::Mat( mode.getResolutionY(), mode.getResolutionX(), CV_8UC3, ( char* )colorFrame.getData() );
-	return image;
+	cv::Mat frame;
+	//read specific data from depth frame
+	const openni::DepthPixel* imageBuffer = ( const openni::DepthPixel* ) depthFrame.getData();
+	//create cv mat frame
+	frame.create( depthFrame.getHeight(), depthFrame.getWidth(), CV_16UC1 );
+	//copy data
+	memcpy( frame.data, imageBuffer, depthFrame.getHeight()*depthFrame.getWidth()*sizeof( uint16_t ) );
+
+	return frame;
 }
 
 QImage Kinect::KinectRecognition::colorImageQImage( openni::VideoFrameRef& colorFrame )

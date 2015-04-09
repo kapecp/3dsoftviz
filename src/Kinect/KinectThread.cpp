@@ -16,19 +16,20 @@ Kinect::KinectThread::KinectThread( QObject* parent ) : QThread( parent )
 	isOpen=false;
 	mSetImageEnable=true;
 	isZoomEnable=true;
+	isMarkerDetectEnable=false;
 }
 
 Kinect::KinectThread::~KinectThread( void )
 {
 }
 
-bool Kinect::KinectThread::inicializeKinect()
+void Kinect::KinectThread::inicializeKinect()
 {
 	// create Openni connection
 	mKinect = new Kinect::KinectRecognition();
 	isOpen=mKinect->isOpenOpenni(); // checl if open
 
-	qDebug() <<isOpen ;
+	qDebug() << "Kinect Thread inicialize. Kinect isOpen=" << isOpen ;
 	if ( isOpen ) {
 		// color data for Kinect windows
 		color.create( mKinect->device, openni::SENSOR_COLOR );
@@ -42,11 +43,11 @@ bool Kinect::KinectThread::inicializeKinect()
 		kht = new KinectHandTracker( &mKinect->device,&m_depth );
 #endif
 	}
-	return isOpen;
 }
 
 void Kinect::KinectThread::closeActionOpenni()
 {
+	qDebug() << "Close Openni";
 	mKinect->closeOpenni();
 }
 
@@ -58,6 +59,11 @@ void Kinect::KinectThread::setCancel( bool set )
 void Kinect::KinectThread::setImageSend( bool set )
 {
 	mSetImageEnable=set;
+}
+
+void Kinect::KinectThread::setImageSendToMarkerDetection( bool set )
+{
+	isMarkerDetectEnable = set;
 }
 
 void Kinect::KinectThread::pause()
@@ -94,16 +100,48 @@ void Kinect::KinectThread::run()
 	float pDepth_z2;
 	/////////end////////////
 	Kinect::KinectZoom* zoom = new Kinect::KinectZoom();
-	cv::Mat frame;
+	cv::Mat frame, depth;
 
+	//if set true, it will capture first frame of kinect stream and save color frame, depth frame and depth matrix in to specific location
+	bool test = false;
 	// check if is close
 	while ( !mCancel ) {
-		//check if is sending image enabling
+		//check if is sending image enablinge
 		if ( mSetImageEnable ) {
 			// read frame data
 			color.readFrame( &colorFrame );
 			//convert for sending
 			frame=mKinect->colorImageCvMat( colorFrame );
+			cv::cvtColor( frame, frame, CV_BGR2RGB );
+			m_depth.readFrame( &depthFrame );
+
+			//if set true, it will capture the first frame of kinect stream and save color frame, depth frame and depth matrix in to specific location
+			if ( test ) {
+				depth = mKinect->depthImageCvMat( depthFrame );
+
+				//save color frame
+				cv::imwrite( "C:\\Users\\Leachim\\Pictures\\frame1.jpg", frame );
+
+				//save depth matrix
+				std::ofstream fout( "C:\\Users\\Leachim\\Pictures\\depth1.txt" );
+				if ( !fout ) {
+					qDebug() <<"File Not Opened";
+				}
+
+				for ( int i=0; i<depth.rows; i++ ) {
+					for ( int j=0; j < depth.cols; j++ ) {
+						fout << depth.at<uint16_t>( i,j )<<"\t";
+					}
+					fout << "\n";
+				}
+
+				cv::normalize( depth, depth, 0,255, CV_MINMAX, CV_8UC1 );
+				//save depth frame
+				cv::imwrite( "C:\\Users\\Leachim\\Pictures\\depth1.jpg", depth );
+
+				fout.close();
+				test =  false;
+			}
 
 #ifdef NITE2_FOUND
 			//set parameters for changes movement and cursor
@@ -115,9 +153,6 @@ void Kinect::KinectThread::run()
 #endif
 
 			//////////////End/////////////
-
-			//	cap >> frame; // get a new frame from camera
-			cv::cvtColor( frame, frame, CV_BGR2RGB );
 
 #ifdef NITE2_FOUND
 			if ( kht->isTwoHands == true ) { //TODO must be two hands for green square mark hand in frame
@@ -174,9 +209,14 @@ void Kinect::KinectThread::run()
 				}
 			}
 #endif
-			// resize, send a msleep for next frame
-			cv::resize( frame, frame,cv::Size( 320,240 ),0,0,cv::INTER_LINEAR );
-			emit pushImage( frame );
+			//if true it will send frame to aruco to detect markers, else show image in window
+			cv::cvtColor( frame, frame, CV_BGR2RGB );
+			if ( isMarkerDetectEnable ) {
+				emit pushImageToMarkerDetection( frame );
+			}
+			else {
+				emit pushImage( frame );
+			}
 			msleep( 20 );
 		}
 

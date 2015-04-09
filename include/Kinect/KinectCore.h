@@ -8,14 +8,18 @@ class KinectThread;
 class KinectWindow;
 }
 
+namespace QOpenCV {
+class OpenCVWindow;
+}
+
 namespace Kinect {
 
 /**
-	* @brief Class KinectCore
-	* @author Autor: Patrik Hlavac
-	* @date 4.3.2014
-	* @brief Core class for create Window a Thread Kinect, here is create connection between Window and Thread based on SLOT a SIGNAL
-	*/
+    * @brief Class KinectCore
+    * @author Autor: Patrik Hlavac
+    * @date 4.3.2014
+    * @brief Core class for create Window a Thread Kinect, here is create connection between Window and Thread based on SLOT a SIGNAL
+    */
 class KinectCore
 {
 
@@ -23,20 +27,12 @@ public:
 
 	~KinectCore( void );
 	/**
-		 * @author Autor: Patrik Hlavac
-		 * @brief getInstance Return instance of KinectCore class
-		 * @param app QApplication
-		 * @return KinectCore instance
-		 */
+	     * @author Autor: Patrik Hlavac
+	     * @brief getInstance Return instance of KinectCore class
+	     * @param app QApplication
+	     * @return KinectCore instance
+	     */
 	static KinectCore* getInstance( QApplication* app, QWidget* parent );
-
-
-	/**
-	 * @author Matej Marconak
-	 * @brief kinectRecognition start
-	 * @brief create thread and window for Kinect
-	 */
-	void kinectRecognition();
 
 private:
 
@@ -81,9 +77,9 @@ private:
 	bool	mThrsCreated;
 
 	/**
-	 * @brief Kinect Window
+	 * @brief OpenCV Window
 	 */
-	QPointer<Kinect::KinectWindow> mKinectDialog;
+	QPointer<QOpenCV::OpenCVWindow> mOpencvWindow;
 
 };
 }

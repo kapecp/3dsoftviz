@@ -1,15 +1,16 @@
-#ifndef FACERECOGNITIONWINDOW_H
-#define FACERECOGNITIONWINDOW_H
+#ifndef OPENCVWINDOW_H
+#define OPENCVWINDOW_H
 
 #include <QDialog>
 #include <opencv2/core/core.hpp>
-
+#include <opencv2/imgproc/imgproc.hpp>
 
 class QLabel;
 class QPushButton;
 class QRadioButton;
 class QCheckBox;
 class QStackedLayout;
+class QSlider;
 
 namespace OpenCV {
 class CapVideo;
@@ -17,27 +18,21 @@ class CapVideo;
 
 namespace QOpenCV {
 
-/**
-     * @author Autor: Marek Jakab, David Durcak
-     * @brief Class FaceRecognitionWindow
-     */
-class FaceRecognitionWindow : public QDialog
+class OpenCVWindow : public QDialog
 {
 	Q_OBJECT
 
 public:
+	/**
+	 * @author Autor: Michael Garaj
+	 * @brief OpenCVWindow Constructor
+	 * @param parent Parent Widget
+	 * @param mApp QApplication
+	 */
+	OpenCVWindow( QWidget* parent, QApplication* mApp );
 
 	/**
-	     * @author Autor: Marek Jakab
-	     * @brief FaceRecognitionWindow Constructor
-	     * @param parent Parent Widget
-	     * @param app QApplication
-	     * @param thr Instance of thread
-	     */
-	FaceRecognitionWindow( QWidget* parent, QApplication* mApp );
-
-	/**
-	     * @author Autor: David Durcak
+	     * @author Autor: Michael Garaj
 	     * @brief getLabel Return mWindowLabel
 	     * @return QLabel*
 	     */
@@ -70,7 +65,6 @@ public:
 	     * @return QCheckBox*
 	     */
 	QPushButton*	getInterchangeMarkersPB() const;
-
 
 signals:
 	/**
@@ -123,16 +117,16 @@ signals:
 	void startMarker();
 
 	/**
-	 * @author Autor: Michael Garaj
-	 * @brief startMultiMarker Signal to start multi marker detection in Aruco thread
-	 */
+	     * @author Autor: Michael Garaj
+	     * @brief startMultiMarker Signal for starting Aruco thread
+	     */
 	void startMultiMarker();
 
 	/**
-	 * @author Autor: Michael Garaj
-	 * @brief stopMultiMarker Signal to stop multi marker detection in Aruco thread
-	 * @param set
-	 */
+	     * @author Autor: Michael Garaj
+	     * @brief stopMultiMarker Signal for canceling Aruco thread
+	     * @param set cancel if true
+	     */
 	void stopMultiMarker( bool set );
 
 	/**
@@ -142,6 +136,13 @@ signals:
 	void startFaceRec();
 
 	/**
+	     * @author Autor: Michael Garaj
+	     * @brief setMultiMarker Signal for setting MultiMarker in Aruco thread
+	     * @param set cancel if true
+	     */
+	void setMultiMarker( bool set );
+
+	/**
 	     * @author Autor: David Durcak
 	     * @brief setCapVideoFaceRec Signal for setting camera in FaceRecognizationThread
 	     * @param capVideo camera object
@@ -149,19 +150,64 @@ signals:
 	void setCapVideoFaceRec( OpenCV::CapVideo* capVideo );
 
 	/**
-	     * @author Autor: David Durcak
-	     * @brief setCapVideoMarker Signal for setting camera in ArucoThread
+	     * @author Autor: Michael Garaj
+	     * @brief setCapVideoFaceRec Signal for setting camera in ArucoThread
 	     * @param capVideo camera object
 	     */
 	void setCapVideoMarker( OpenCV::CapVideo* capVideo );
 
 	/**
-	 * @author Autor: Michael Garaj
-	 * @brief setMultiMarker Signal to set multi marker detection in Aruco thread
-	 * @param set
+	 * @brief startKinect
 	 */
-	void setMultiMarker( bool set );
+	void startKinect();
 
+	/**
+	 * @brief stopKinect
+	 * @param true for stop, false to continue
+	 */
+	void stopKinect( bool set );
+
+	/**
+	 * @brief enable to view kinect video
+	 * @param send true for enable, false for disable
+	 */
+	void sendImageKinect( bool send );
+
+	/**
+	 * @brief enable/disable for cursor move
+	 * @param send true for stop, false for start
+	 */
+	void setMovementCursor( bool send );
+
+	/**
+	 * @brief enable/disable graph zoom
+	 * @param send true for stop, false for start
+	 */
+	void setZoom( bool send );
+
+	/**
+	 * @brief enable/disable marker detection from kinect camera
+	 * @param send true for start, false for stop
+	 */
+	void setKinectMarkerDetection( bool send );
+
+	/**
+	 * @brief change of speed movement for hand
+	 * @param send speed for movement
+	 */
+	void sendSpeedKinect( double send );
+
+	/**
+	 * @author Autor: Michael Garaj
+	 * @brief inicializeKinect Signal to inicialize the kinect
+	 */
+	void inicializeKinect();
+
+	/**
+	 * @author Autor: Michael Garaj
+	 * @brief closeActionOpenni Signal to close Openni stream
+	 */
+	void closeActionOpenni();
 
 public slots:
 	/**
@@ -183,19 +229,37 @@ public slots:
 	void onMarkerThrFinished();
 
 	/**
-	    * @author Autor: Marek Jakab
+	    * @author Autor: Michael Garaj
 	    * @brief setLabel Draw image on label
 	    */
 	void setLabel( cv::Mat image );
-	void setLabelQ( QImage qimage );
 
 private slots:
-
 	/**
-	     * @author Autor: David Durcak
-	     * @brief onSelModulChange Switch between Aruco, Face Detection gui or any image sending
+	     * @author Autor: Michael Garaj
+	     * @brief onSelModulChange Switch between Aruco and Kinect layout
 	     */
 	void onSelModulChange();
+
+	/**
+	     * @author Autor: Michael Garaj
+	     * @brief onSelSubModulChange Switch between Aruco Sub modules
+	     */
+	void onSelSubModulChange();
+
+	/**
+	     * @author Autor: Michael Garaj
+	     * @brief onMultiMarkerStartCancel Start or stop Aruco thread
+	     * @param checked If true, thread will start
+	     */
+	void onMultiMarkerStartCancel( bool checked );
+
+	/**
+	     * @author Autor: Michael Garaj
+	     * @brief onKinectStartCancel Start or stop Kinect thread
+	     * @param checked If true, thread will start
+	     */
+	void onKinectStartCancel( bool checked );
 
 	/**
 	     * @author Autor: David Durcak
@@ -218,13 +282,6 @@ private slots:
 	void onMarkerStartCancel( bool checked );
 
 	/**
-	 * @author Autor: Michael Garaj
-	 * @brief onMultiMarkerStartCancel Start or stop
-	 * @param checked
-	 */
-	void onMultiMarkerStartCancel( bool checked );
-
-	/**
 	     * @author Autor: David Durcak
 	     * @brief onFaceDetBackgrCBClicked Slot for enabling video backgroung from FaceRecongition and disabling from Aruco
 	     * @param checked
@@ -238,48 +295,70 @@ private slots:
 	     */
 	void onMarkerBackgrCBClicked( bool checked );
 
+	/**
+	 * @brief private SLOT for turn OFF cursor
+	 */
+	void stopMovingCursor();
+	void stopZoom();
+
+	/**
+	 * @brief private SLOT set speed movements
+	 * @param speed of movement
+	 */
+	void setSpeedKinect( int speed );
+
+	/**
+	 * @brief private SLOT set marker detection
+	 * @param speed of movement
+	 */
+	void setMarkerDetection( bool set );
 
 private:
 	/**
-	     * @author Autor: David Durcak
+	     * @author Autor: Michael Garaj
 	     * @brief closeEvent Reimplement close event. Disconnect all conections
 	     * @param event Close event
 	     */
 	void closeEvent( QCloseEvent* event );
 
 	/**
-	     * @author Autor: David Durcak
+	     * @author Autor: Michael Garaj
 	     * @brief configureWindow Create dialog's gui,( all layouts, widgets and connection inside class)
 	     */
 	void configureWindow();
 
-
-
 	QApplication*	mApp;
 	QLabel*			mWindowLabel;
-	QImage			mqimage;
 
-	// switching the camera,
-	QRadioButton*	mFaceRecRB;
-	QRadioButton*	mMarkerRB;
+	QRadioButton*	mKinectRB;
+	QRadioButton*	mArucoRB;
+	QRadioButton*    mFaceRecRB;
+	QRadioButton*    mMarkerRB;
 	QRadioButton*    mMultiMarkerRB;
 
-	QCheckBox*		mNoVideo;
-	QStackedLayout*	mModulesStackL;
-	QPushButton*		mFaceRecStartCancelPB;
-	QPushButton*		mMarkerStartCancelPB;
+	QPushButton*     mFaceRecPB;
+	QPushButton*     mMarkerPB;
+	QPushButton*     mMultiMarkerPB;
 	QPushButton*     mMultiMarkerStartCancelPB;
-
-	QCheckBox*		mMarkerBackgrCB;
-	QCheckBox*		mFaceDetBackgrCB;
-
-	// aruco controll
-	QCheckBox*		mMarkerBehindCB;
-	QCheckBox*		mCorEnabledCB;
+	QPushButton*		mKinectPB;
 	QPushButton*		mUpdateCorParPB;
 	QPushButton*		mInterchangeMarkersPB;
 
+	QStackedLayout*  mModulesStackL;
+	QStackedLayout*  mSubmodulesStackL;
+
+	QCheckBox*		mNoVideo;
+	QCheckBox*		mMarkerBackgrCB;
+	QCheckBox*		mFaceDetBackgrCB;
+	QCheckBox*		mMarkerBehindCB;
+	QCheckBox*		mCorEnabledCB;
+	QCheckBox*       mDisableCursorCB;
+	QCheckBox*       mDisableZoomCursorCB;
+	QCheckBox*       mEnableMarkerDetectCB;
+
+	QSlider*         mSpeed;
 };
+
 }
 
-#endif //FACERECOGNITIONWINDOW_H
+#endif //OPENCVWINDOW_H

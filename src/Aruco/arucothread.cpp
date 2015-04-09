@@ -19,6 +19,7 @@ ArucoThread::ArucoThread( QObject* parent )
 	mUpdCorPar		= false;
 	mSendImgEnabled	= true;
 	mSendBackgrImgEnabled = false;
+	mMultiMarkerEnabled = false;
 	mRatioCamCoef	= 0;
 	mGrM			= 0;
 	mMoM			= 1;
@@ -49,6 +50,11 @@ void ArucoThread::setPositionOfMarker( bool behind )
 void ArucoThread::setCorEnabling( bool corEnabled )
 {
 	mCorEnabled = corEnabled;
+}
+
+void ArucoThread::setMultiMarker( bool set )
+{
+	mMultiMarkerEnabled = set;
 }
 
 void ArucoThread::setSendImgEnabling( bool sendImgEnabled )
@@ -88,6 +94,7 @@ void ArucoThread::run()
 		qDebug() << "[ArucoThread::run()]  Camera is not set";
 		return;
 	}
+
 	// prepare parameters for correction
 	const double width  = mCapVideo->getWidth();
 	const double height = mCapVideo->getHeight();
@@ -117,41 +124,45 @@ void ArucoThread::run()
 
 			frame = mCapVideo->queryFrame();		// get image from camera
 
-			// add image to aruco and get position vector and rotation quaternion
-			//markerDetected = aCore.getDetectedPosAndQuat( frame, actPosArray, actQuatArray );
 			aCore.detect( frame.clone() );
 
-			// graph controll
-			markerDetected = aCore.getPosAndQuat( mGrM, actPosArray, actQuatArray );
-			if ( markerDetected ) {
+			if ( mMultiMarkerEnabled ) {
+				//TODO funkcionalita ku detekcii viacerych markerov
 
-				// test if marker was detect (if not, all number in matrix are not range)
-				if ( actPosArray[2] > 0.0  &&  actPosArray[2] < 10.0
-						&&   actQuatArray[0] >= -1.0  &&  actQuatArray[0] <= 1.0 ) {
+			}
+			else {
+				// graph controll
+				markerDetected = aCore.getPosAndQuat( mGrM, actPosArray, actQuatArray );
+				if ( markerDetected ) {
 
-					graphControlling( actPosArray, actQuatArray );
+					// test if marker was detect (if not, all number in matrix are not range)
+					if ( actPosArray[2] > 0.0  &&  actPosArray[2] < 10.0
+							&&   actQuatArray[0] >= -1.0  &&  actQuatArray[0] <= 1.0 ) {
 
+						graphControlling( actPosArray, actQuatArray );
+
+					}
+				}
+
+				// mouse controll
+				markerDetected = aCore.getPosAndQuat( mMoM, actPosArray, actQuatArray );
+				if ( markerDetected ) {
+
+					// test if marker was detect (if not, all number in matrix are not range)
+					if ( actPosArray[2] > 0.0  &&  actPosArray[2] < 10.0
+							&&   actQuatArray[0] >= -1.0  &&  actQuatArray[0] <= 1.0 ) {
+
+						mouseControlling( actPosArray, actQuatArray );
+
+					}
 				}
 			}
-
-			// mouse controll
-			markerDetected = aCore.getPosAndQuat( mMoM, actPosArray, actQuatArray );
-			if ( markerDetected ) {
-
-				// test if marker was detect (if not, all number in matrix are not range)
-				if ( actPosArray[2] > 0.0  &&  actPosArray[2] < 10.0
-						&&   actQuatArray[0] >= -1.0  &&  actQuatArray[0] <= 1.0 ) {
-
-					mouseControlling( actPosArray, actQuatArray );
-
-				}
-			}
-
 			imagesSending( aCore, frame );
 
 			if ( ! mCancel ) {
 				msleep( 50 );
 			}
+
 
 		}
 	}
@@ -237,6 +248,7 @@ void ArucoThread::mouseControlling( const double actPosArray[3], const double ac
 void ArucoThread::imagesSending( ArucoCore& aCore, const cv::Mat frame ) const
 {
 
+
 	if ( mSendBackgrImgEnabled && !frame.empty() ) {
 		if ( ! mMarkerIsBehind ) {
 			cv::flip( frame, frame, 1 );
@@ -246,7 +258,13 @@ void ArucoThread::imagesSending( ArucoCore& aCore, const cv::Mat frame ) const
 		emit pushBackgrImage( frame.clone() );
 	}
 
-	cv::Mat image = aCore.getDetImage();
+	cv::Mat image;
+	if ( mMultiMarkerEnabled ) {
+		image = aCore.getDetectedRectangleImage();
+	}
+	else {
+		image = aCore.getDetImage();
+	}
 
 	if ( mSendImgEnabled ) {
 		if ( ! mMarkerIsBehind ) {
@@ -254,9 +272,24 @@ void ArucoThread::imagesSending( ArucoCore& aCore, const cv::Mat frame ) const
 		}
 		cv::cvtColor( image, image, CV_BGR2RGB );
 
+
+		if ( mSendBackgrImgEnabled ) {
+			//if you comment this, background image will be without the augmented reality
+			emit pushBackgrImage( image.clone() );
+		}
+
 		emit pushImagemMat( image.clone() );
 
 	}
+}
+
+void ArucoThread::detectMarkerFromImage( cv::Mat image )
+{
+	ArucoCore aCore;
+	aCore.detect( image );
+	cv::Mat frame;
+	frame = aCore.getDetectedRectangleImage();
+	emit pushImageFromKinect( frame.clone() );
 }
 
 void ArucoThread::computeCorQuatAndPos( const double position[3], const double rotation[4] )
@@ -356,115 +389,115 @@ void ArucoThread::printMat( const osg::Matrixd mat, const QString name ) const
 
 /*
 test(){
-	QMatrix4x4 origM( 1.00,  0.00,  0.00, -0.04,
-					  0.00,	-0.94,  0.33,  0.22,
-					  0.00,	 0.33,	0.94, -0.55,
-					  0.00,	 0.00,  0.00,  1.00 );
+    QMatrix4x4 origM( 1.00,  0.00,  0.00, -0.04,
+                      0.00,	-0.94,  0.33,  0.22,
+                      0.00,	 0.33,	0.94, -0.55,
+                      0.00,	 0.00,  0.00,  1.00 );
 
-	QMatrix4x4 mat( 1.00,  0.00,  0.00, -0.54,
-					0.00, -0.94,  0.33,  0.00,
-					0.00,  0.33,  0.94, -1.10,
-					0.00,  0.00,  0.00,  1.00 );
+    QMatrix4x4 mat( 1.00,  0.00,  0.00, -0.54,
+                    0.00, -0.94,  0.33,  0.00,
+                    0.00,  0.33,  0.94, -1.10,
+                    0.00,  0.00,  0.00,  1.00 );
 
-	QMatrix4x4 res1( 1.00, 0.00, 0.00, -0.54,
-					 0.00, 0.99, 0.00,  0.25,
-					 0.00, 0.00, 0.99, -1.14,
-					 0.00, 0.00, 0.00,  1.00 );
+    QMatrix4x4 res1( 1.00, 0.00, 0.00, -0.54,
+                     0.00, 0.99, 0.00,  0.25,
+                     0.00, 0.00, 0.99, -1.14,
+                     0.00, 0.00, 0.00,  1.00 );
 
-	computeCorMat(origM);
-	QMatrix4x4 res2 = corM * mat;
+    computeCorMat(origM);
+    QMatrix4x4 res2 = corM * mat;
 
-	qDebug( res1 == res2 );
+    qDebug( res1 == res2 );
 }
 */
 
 /*
 test(){
 
-			// original, nemenny------------
-			double xpos[3]	= {  0.0110871, -0.125618, 0.331737 };
-			double xor[4]	= { -0.0172416, -0.018111, 0.9853, -0.168995 };
-			QVector3D xposvk( xpos[0],  xpos[1],  xpos[2]);
-			QVector3D xposvz(-xpos[0], -xpos[1], -xpos[2]);
-			QVector4D xorv(   xor[0],   xor[1],   xor[2], xor[3] );
-			QQuaternion xquatQ(xorv);
-			QMatrix4x4 xrotM;
-			xrotM.rotate(xquatQ);
-			QMatrix4x4 xTk;
-			xTk.translate(xposvk);
-			xrotM = xTk * xrotM;
-			///printMat(xrotM, "xrotM  --- original");
-			// original matica podla ktrej sa bude robit
+            // original, nemenny------------
+            double xpos[3]	= {  0.0110871, -0.125618, 0.331737 };
+            double xor[4]	= { -0.0172416, -0.018111, 0.9853, -0.168995 };
+            QVector3D xposvk( xpos[0],  xpos[1],  xpos[2]);
+            QVector3D xposvz(-xpos[0], -xpos[1], -xpos[2]);
+            QVector4D xorv(   xor[0],   xor[1],   xor[2], xor[3] );
+            QQuaternion xquatQ(xorv);
+            QMatrix4x4 xrotM;
+            xrotM.rotate(xquatQ);
+            QMatrix4x4 xTk;
+            xTk.translate(xposvk);
+            xrotM = xTk * xrotM;
+            ///printMat(xrotM, "xrotM  --- original");
+            // original matica podla ktrej sa bude robit
 
-			// --------------------------
-			// priprava aktualnej matice
-			QVector3D posvk( pos[0],  pos[1],  pos[2]);
-			QVector3D posvz(-pos[0], -pos[1], -pos[2]);
-			///printVec(posvk, "aktual pos ");
-			///qDebug() <<		"aktual quat " << or[0] << " " << or[1] << " " << or[2] << " " << or[3];
-			QVector4D orv(   or[0],   or[1],   or[2], or[3] );
+            // --------------------------
+            // priprava aktualnej matice
+            QVector3D posvk( pos[0],  pos[1],  pos[2]);
+            QVector3D posvz(-pos[0], -pos[1], -pos[2]);
+            ///printVec(posvk, "aktual pos ");
+            ///qDebug() <<		"aktual quat " << or[0] << " " << or[1] << " " << or[2] << " " << or[3];
+            QVector4D orv(   or[0],   or[1],   or[2], or[3] );
 
-			QQuaternion quatQ(orv);
-			QMatrix4x4 rotM;
-			rotM.rotate(quatQ);
-			QMatrix4x4 Tk;
-			Tk.translate(posvk);
-			rotM = Tk * rotM;
-			printMat(rotM, "rotM  ---   aktual");
-
-
-
-			// ----------------------------
-			// vysledok podla matic
-			QMatrix4x4 orig = xrotM;
-			computeCorMat(orig);
-			QMatrix4x4 resM1 = corM * rotM;
-			//printMat(corM,  "corM   ---   1  medyivysledok");
-			///printMat(resM1, "resM1  ---   1  vysledok, podla matic");
-			// -----------------------
-			//=======================================
-			//=======================================
-
-			//musim vediet vypocitat 2 veci bod posunuty
-			// qatermion
-			QQuaternion corQ;		// xquatQ, xposvk, xposvz
-
-			corQ = xquatQ;
-			//corQ.slerp();
+            QQuaternion quatQ(orv);
+            QMatrix4x4 rotM;
+            rotM.rotate(quatQ);
+            QMatrix4x4 Tk;
+            Tk.translate(posvk);
+            rotM = Tk * rotM;
+            printMat(rotM, "rotM  ---   aktual");
 
 
-			//------------------
-			QMatrix4x4 corQM;
-			corQM.rotate(corQ);
-			//printMat(corQM, "corQM  ---  2 medyivysledok");
-			//-------------------------------------
+
+            // ----------------------------
+            // vysledok podla matic
+            QMatrix4x4 orig = xrotM;
+            computeCorMat(orig);
+            QMatrix4x4 resM1 = corM * rotM;
+            //printMat(corM,  "corM   ---   1  medyivysledok");
+            ///printMat(resM1, "resM1  ---   1  vysledok, podla matic");
+            // -----------------------
+            //=======================================
+            //=======================================
+
+            //musim vediet vypocitat 2 veci bod posunuty
+            // qatermion
+            QQuaternion corQ;		// xquatQ, xposvk, xposvz
+
+            corQ = xquatQ;
+            //corQ.slerp();
 
 
-			QQuaternion resQ;		// corQ, posvk, posvz, quatQ
-			QVector3D rposv;
-
-			rposv = posvk - xposvk;
-			printVec( rposv, "2 vysledok " );
-			rposv = corQ.rotatedVector(rposv);
-			//rposv = (corQM * QQuaternion(0, rposv) * corQM.conjugate()).vector();
-			printVec( rposv, "2 vysledok " );
-			rposv = rposv + xposvk;
-
-			printVec( rposv, "2 vysledok " );
-
-			resQ = corQ*quatQ;
-			//resQ = quatQ*corQ;
+            //------------------
+            QMatrix4x4 corQM;
+            corQM.rotate(corQ);
+            //printMat(corQM, "corQM  ---  2 medyivysledok");
+            //-------------------------------------
 
 
-			//------------------------------------
+            QQuaternion resQ;		// corQ, posvk, posvz, quatQ
+            QVector3D rposv;
 
-			QMatrix4x4 resQM;
-			resQM.rotate(resQ);
-			printMat(resM1, "resM1  ---   1  vysledok, podla matic");
-			QMatrix4x4 rTk;
-			rTk.translate(rposv);
-			resQM = rTk * resQM;
-			printMat(resQM, "resQM  ---   2 aktual pre qaternion");
+            rposv = posvk - xposvk;
+            printVec( rposv, "2 vysledok " );
+            rposv = corQ.rotatedVector(rposv);
+            //rposv = (corQM * QQuaternion(0, rposv) * corQM.conjugate()).vector();
+            printVec( rposv, "2 vysledok " );
+            rposv = rposv + xposvk;
+
+            printVec( rposv, "2 vysledok " );
+
+            resQ = corQ*quatQ;
+            //resQ = quatQ*corQ;
+
+
+            //------------------------------------
+
+            QMatrix4x4 resQM;
+            resQM.rotate(resQ);
+            printMat(resM1, "resM1  ---   1  vysledok, podla matic");
+            QMatrix4x4 rTk;
+            rTk.translate(rposv);
+            resQM = rTk * resQM;
+            printMat(resQM, "resQM  ---   2 aktual pre qaternion");
 
 
 }

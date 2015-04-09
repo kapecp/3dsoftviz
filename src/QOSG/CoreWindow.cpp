@@ -2585,7 +2585,7 @@ void CoreWindow::send_message()
 void CoreWindow::create_facewindow()
 {
 #ifdef OPENCV_FOUND
-	OpenCV::OpenCVCore::getInstance( NULL, this )->faceRecognition();
+	OpenCV::OpenCVCore::getInstance( NULL, this )->opencvInit();
 #endif
 }
 
@@ -2594,7 +2594,7 @@ void CoreWindow::create_facewindow()
 void CoreWindow::createKinectWindow()
 {
 
-	Kinect::KinectCore::getInstance( NULL,this )->kinectRecognition();
+	OpenCV::OpenCVCore::getInstance( NULL, this )->opencvInit();
 }
 
 void CoreWindow::calculateRansac()
