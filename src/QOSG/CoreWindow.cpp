@@ -66,6 +66,8 @@ CoreWindow::CoreWindow( QWidget* parent, Vwr::CoreGraph* coreGraph, QApplication
 {
 	//inicializacia premennych
 	isPlaying = true;
+	isEBPlaying = false;
+	is3D = false;
 	application = app;
 	layout = thread;
 
@@ -423,6 +425,18 @@ void CoreWindow::createActions()
 	b_UnsetRestrictionFromAll->setFocusPolicy( Qt::NoFocus );
 	connect( b_UnsetRestrictionFromAll, SIGNAL( clicked() ), this, SLOT( unsetRestrictionFromAll() ) );
 
+	b_StartEdgeBundling = new QPushButton();
+	b_StartEdgeBundling->setText( "Edge Bundling" );
+	b_StartEdgeBundling->setToolTip( "&Start edge bundling" );
+	b_StartEdgeBundling->setFocusPolicy( Qt::NoFocus );
+	connect( b_StartEdgeBundling, SIGNAL( clicked() ), this, SLOT( startEdgeBundling() ) );
+
+	b_switch2Dand3D = new QPushButton();
+	b_switch2Dand3D->setText( "3D" );
+	b_switch2Dand3D->setToolTip( "&Turn to 3D or 2D" );
+	b_switch2Dand3D->setFocusPolicy( Qt::NoFocus );
+	connect( b_switch2Dand3D, SIGNAL( clicked() ), this, SLOT( switch2Dand3D() ) );
+
 	b_start_server = new QPushButton();
 	b_start_server->setText( "Host session" );
 	connect( b_start_server, SIGNAL( clicked() ), this, SLOT( start_server() ) );
@@ -691,6 +705,10 @@ QWidget* CoreWindow::createGraphTab( QFrame* line )
 	lGraph->addRow( play );
 	slider->setMaximumWidth( 136 );
 	lGraph->addRow( slider );
+	line = createLine();
+	lGraph->addRow( line );
+	b_switch2Dand3D->setMaximumWidth( 136 );
+	lGraph->addRow( b_switch2Dand3D );
 
 	wGraph->setLayout( lGraph );
 
@@ -894,6 +912,11 @@ QWidget* CoreWindow::createClusteringTab( QFrame* line )
 	lClustering->addRow( l_repulsiveForceInsideCluster );
 	sb_repulsiveForceInsideCluster->setMaximumWidth( 136 );
 	lClustering->addRow( sb_repulsiveForceInsideCluster );
+
+	line = createLine();
+	lClustering->addRow( line );
+	b_StartEdgeBundling->setMaximumWidth( 136 );
+	lClustering->addRow( b_StartEdgeBundling );
 
 	wClustering->setLayout( lClustering );
 
@@ -1327,7 +1350,7 @@ void CoreWindow::loadFile()
 	// Duransky end - vynulovanie vertigo rovin pri nacitani noveho grafu
 
 	//treba overit
-	layout->pause();
+	layout->pauseAllAlg();
 	coreGraph->setNodesFreezed( true );
 
 	QString fileName =NULL;
@@ -2101,6 +2124,57 @@ void CoreWindow::unsetRestrictionFromAll()
 		}
 		//volovar_kon
 	}
+}
+
+void CoreWindow::startEdgeBundling()
+{
+	if ( isEBPlaying ) {
+		isEBPlaying = false;
+
+		layout->stopEdgeBundling();
+	}
+	else {
+		isEBPlaying = true;
+
+		Data::Graph* currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
+
+		//select all nodes and fix them
+		QMap<qlonglong, osg::ref_ptr<Data::Node> >::iterator iNode = currentGraph->getNodes()->begin();
+		while ( iNode != currentGraph->getNodes()->end() ) {
+			viewerWidget->getPickHandler()->addPickedNode( *iNode );
+			iNode++;
+		}
+		fixNodes();
+
+		//split edges
+		if ( currentGraph != NULL ) {
+			currentGraph->splitAllEdges( 3 );
+		}
+
+		if ( !isPlaying ) {
+			play->setIcon( QIcon( "../share/3dsoftviz/img/gui/pause.png" ) );
+			isPlaying = 1;
+			coreGraph->setNodesFreezed( false );
+			layout->play();
+		}
+
+		layout->playEdgeBundling();
+	}
+
+}
+
+void CoreWindow::switch2Dand3D()
+{
+	if ( is3D ) {
+		b_switch2Dand3D->setText( "3D" );
+		is3D = 0;
+	}
+	else {
+		b_switch2Dand3D->setText( "2D" );
+		is3D = 1;
+	}
+
+	coreGraph->set3D( is3D );
 }
 
 void CoreWindow::setRestrictionToSelectedNodes(

@@ -8,6 +8,7 @@
 #include "Data/Node.h"
 
 #include <QString>
+#include <osg/Switch>
 #include <QtCore/QMap>
 
 #include <osg/Camera>
@@ -28,7 +29,7 @@ class Type;
 	*  \author Aurel Paulovic, Michal Paprcka
 	*  \date 29. 4. 2010
 	*/
-class Edge : public osg::Geode
+class Edge : public osg::Switch
 {
 public:
 
@@ -348,7 +349,7 @@ public:
 		*  \param      name     new label
 		*  \return osg::ref_ptr added label
 		*/
-	osg::ref_ptr<osg::Drawable> createLabel( QString name );
+	osg::ref_ptr<osg::Geode> createLabel( QString name );
 
 
 	/**
@@ -478,7 +479,11 @@ public:
 
 	void reloadLabel();
 	void showLabel( bool visible );
+	void set3D( bool value );
 private:
+	static const int INDEX_LABEL = 0;
+	static const int INDEX_QUAD = 1;
+	static const int INDEX_CYLINDER = 2;
 
 	bool isInvisible;
 	/**
@@ -588,11 +593,22 @@ private:
 	osg::ref_ptr<osg::Vec2Array> edgeTexCoords;
 
 	/**
-		*  osg::ref_ptr label
-		*  \brief Label of the Edge
+		*  osg::Vec3 center
+		*  \brief Center of the Edge
 		*/
-	osg::ref_ptr<osgText::FadeText> label;
+	osg::ref_ptr<osg::Vec3Array> center;
 
+	/**
+		*  osg::Vec3 rotation
+		*  \brief Rotation of the cylinder
+		*/
+	osg::ref_ptr<osg::Vec3Array> rotation;
+
+	/**
+		*  double angle
+		*  \brief Angle of the rotation of the cylinder
+		*/
+	double angle;
 
 	/**
 		*  Util::ApplicationConfig * appConf
@@ -610,7 +626,8 @@ private:
 	float edgeStrength;
 
 	osg::ref_ptr<osg::StateSet> createStateSet( Data::Type* type );
-	osg::ref_ptr<osg::Drawable> createEdge( osg::StateSet* bbState );
+	osg::ref_ptr<osg::Geode> createEdgeQuad( osg::StateSet* bbState );
+	osg::ref_ptr<osg::Geode> createEdgeCylinder( osg::StateSet* bbState );
 protected:
 
 	/**
