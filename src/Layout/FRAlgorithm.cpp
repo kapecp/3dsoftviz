@@ -31,7 +31,9 @@ FRAlgorithm::FRAlgorithm()
 	MIN_MOVEMENT = 0.05f;
 	MAX_MOVEMENT = 30;
 	MAX_DISTANCE = 400;
+	MIN_MOVEMENT_EDGEBUNDLING = 0.75f;
 	state = RUNNING;
+	stateEdgeBundling = PAUSED;
 	notEnd = true;
 	center = osg::Vec3f( 0,0,0 );
 	fv = osg::Vec3f();
@@ -57,7 +59,9 @@ FRAlgorithm::FRAlgorithm( Data::Graph* graph )
 	MIN_MOVEMENT = 0.05f;
 	MAX_MOVEMENT = 30;
 	MAX_DISTANCE = 400;
+	MIN_MOVEMENT_EDGEBUNDLING = 0.75f;
 	state = RUNNING;
+	stateEdgeBundling = PAUSED;
 	notEnd = true;
 	osg::Vec3f p( 0,0,0 );
 	center = p;
@@ -173,7 +177,8 @@ void FRAlgorithm::Run()
 		while ( notEnd ) {
 			// slucka pozastavenia - ak je pauza
 			// alebo je graf zmrazeny (spravidla pocas editacie)
-			while ( notEnd && ( state != RUNNING || graph->isFrozen() ) ) {
+			while (notEnd && (state != RUNNING || graph->isFrozen()) && (stateEdgeBundling != RUNNING || graph->isFrozen()))
+			{
 				// [GrafIT][!] not 100% OK (e.g. msleep(100) remains here), but we have fixed the most obvious multithreading issues of the original code
 				isIterating_mutex.unlock();
 				QThread::msleep( 100 );
@@ -213,12 +218,47 @@ bool FRAlgorithm::iterate()
 		for ( int i = 0; i < graph->getMetaNodes()->count(); ++i,++j ) {
 			// pre vsetky metauzly..
 			j.value()->resetForce(); // vynulovanie posobiacej sily
-			k = graph->getMetaNodes()->begin();
-			for ( int h = 0; h < graph->getMetaNodes()->count(); ++h,++k ) {
-				// pre vsetky metauzly..
-				if ( !j.value()->equals( k.value() ) ) { //Duransky - Bug (j == null zapricini pad programu) pri pridani alebo odstraneni vertigo roviny
-					// odpudiva sila medzi metauzlami
-					addRepulsive( j.value(), k.value(), Data::Graph::getMetaStrength() );
+
+			if (stateEdgeBundling == RUNNING)
+			{
+				//pritazlive sily medzi meta uzlom a jeho susedmi
+				QMap<qlonglong, osg::ref_ptr<Data::Edge> >::iterator iEdge = j.value()->getEdges()->begin();
+				while (iEdge != j.value()->getEdges()->end())
+				{
+					if (!j.value()->equals((*iEdge)->getSrcNode()))
+						addNeighbourAttractive(j.value(), (*iEdge)->getSrcNode(), Data::Graph::getMetaStrength());
+					else
+						addNeighbourAttractive(j.value(), (*iEdge)->getDstNode(), Data::Graph::getMetaStrength());
+					iEdge++;
+				}
+
+				//pritazliva sila medzi meta uzlom a ostatnymi metauzlami s rovnakym indexom
+				QString jName = (*j)->getName();
+				jName = jName.right(jName.length() - jName.indexOf(' ') - 1);
+				k = graph->getMetaNodes()->begin();
+				while (k != graph->getMetaNodes()->end()){
+					if (!j.value()->equals(k.value()))
+					{
+						QString kName = (*k)->getName();
+						kName = kName.right(kName.length() - kName.indexOf(' ') - 1);
+
+						if (QString::compare(jName, kName, Qt::CaseInsensitive) == 0)
+						{
+							addSameIndexAttractive(j.value(), k.value(), Data::Graph::getMetaStrength());
+						}
+					}
+					 k++;
+				}
+
+			} else
+			{
+				k = graph->getMetaNodes()->begin();
+				for ( int h = 0; h < graph->getMetaNodes()->count(); ++h,++k ) {
+					// pre vsetky metauzly..
+					if ( !j.value()->equals( k.value() ) ) { //Duransky - Bug (j == null zapricini pad programu) pri pridani alebo odstraneni vertigo roviny
+						// odpudiva sila medzi metauzlami
+						addRepulsive( j.value(), k.value(), Data::Graph::getMetaStrength() );
+					}
 				}
 			}
 		}
@@ -275,7 +315,8 @@ bool FRAlgorithm::iterate()
 			addAttractive( j.value(), 1 );
 		}
 	}
-	if ( state == PAUSED ) {
+	if(state == PAUSED && stateEdgeBundling == PAUSED)
+	{
 		return false;
 	}
 
@@ -361,7 +402,8 @@ bool FRAlgorithm::applyForces( Data::Node* node )
 	// zmensenie
 	fv *= ALPHA;
 	float l = fv.length();
-	if ( l > MIN_MOVEMENT ) {
+	if ((l > MIN_MOVEMENT && stateEdgeBundling == PAUSED) ||
+			(l > MIN_MOVEMENT_EDGEBUNDLING && stateEdgeBundling == RUNNING)) {
 		// nie je sila primala?
 		if ( l > MAX_MOVEMENT ) {
 			// je sila privelka?
@@ -464,6 +506,48 @@ void FRAlgorithm::addMetaAttractive( Data::Node* u, Data::Node* meta, float fact
 	fv.normalize();
 	fv *= attr( dist ) * factor; // velkost sily
 	u->addForce( fv );
+}
+
+/* Pricitanie pritazlivych sil medzi metauzlom a jeho susedom */
+void FRAlgorithm::addNeighbourAttractive(Data::Node* meta, Data::Node* neighbour, float factor)
+{
+	// [GrafIT][+] forces are only between nodes which are in the same graph (or some of them is meta) AND are not ignored
+	if (!areForcesBetween (meta, neighbour)) {
+		return;
+	}
+	// [GrafIT]
+	up = meta->targetPosition();
+	vp = neighbour->targetPosition();
+	dist = distance(up,vp);
+	if(qFuzzyCompare(dist,0.0))
+	{
+		return;
+	}
+	fv = vp - up;// smer sily
+	fv.normalize();
+	fv *= attr(dist) * factor;// velkost sily
+	meta->addForce(fv);
+}
+
+/* Pricitanie pritazlivych sil medzi dvoma metauzlami s rovnakym indexom */
+void FRAlgorithm::addSameIndexAttractive(Data::Node* meta1, Data::Node* meta2, float factor)
+{
+	// [GrafIT][+] forces are only between nodes which are in the same graph (or some of them is meta) AND are not ignored
+	if (!areForcesBetween (meta1, meta2)) {
+		return;
+	}
+	// [GrafIT]
+	up = meta1->targetPosition();
+	vp = meta2->targetPosition();
+	dist = distance(up,vp);
+	if(qFuzzyCompare(dist,0.0))
+	{
+		return;
+	}
+	fv = vp - up;// smer sily
+	fv.normalize();
+	fv *= (50/attr(dist))*factor;// velkost sily
+	meta1->addForce(fv);
 }
 
 /* Pricitanie odpudivych sil */
@@ -576,6 +660,23 @@ void FRAlgorithm::setRepulsiveForceVertigo( int value )
 
 	repulsiveForceVertigo = value;
 
+}
+
+void FRAlgorithm::RunAlgEdgeBundling()
+{
+	if(graph != NULL)
+	{
+		graph->setFrozen(false);
+		stateEdgeBundling = RUNNING;
+	}
+}
+
+void FRAlgorithm::StopAlgEdgeBundling()
+{
+	if(graph != NULL)
+	{
+		stateEdgeBundling = PAUSED;
+	}
 }
 
 } // namespace Layout

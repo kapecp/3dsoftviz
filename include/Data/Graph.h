@@ -379,6 +379,20 @@ public:
 	void addMultiEdge( QString name, osg::ref_ptr<Data::Node> srcNode, osg::ref_ptr<Data::Node> dstNode, Data::Type* type, bool isOriented, osg::ref_ptr<Data::Edge> replacedSingleEdge );
 
 	/**
+		*  \fn public  splitEdge(QString name, osg::ref_ptr<Data::Node> srcNode, osg::ref_ptr<Data::Node> dstNode, bool isOriented, int splitCount)
+		*  \brief Split edge between source and destination node using meta nodes
+		*  \param   name	 name of the Edge
+		*  \param   srcNode	starting Node of the Edge
+		*  \param   dstNode	 ending Node of the Edge
+		*  \param   isOriented   true, if the Edge is oriented
+		*  \param   nodeType   type of nodes splitting edge
+		*  \param   edgeType   type of new edges
+		*  \param   splitCount   count of new edges instead of original one
+		*  \return  QList<osg::ref_ptr<Data::Edge> >	the added edges
+		*/
+	QList<osg::ref_ptr<Data::Edge> > splitEdge( QString name, osg::ref_ptr<Data::Node> srcNode, osg::ref_ptr<Data::Node> dstNode, bool isOriented, Data::Type* nodeType, Data::Type* edgeType, int splitCount );
+
+	/**
 		*  \fn public isParralel(osg::ref_ptr<Data::Node> srcNode, osg::ref_ptr<Data::Node> dstNode)
 		* brief tests if edge between srcNode and dstNode is MultiNode type
 		*  \param   srcNode    starting Node of the Edge
@@ -579,6 +593,28 @@ public:
 	{
 		ele_id_counter = number;
 	}
+
+	/**
+		*  \fn inline public  splitEdges
+		*  \brief Split every edge in graph using metanodes.
+		*  \param   splitCount   count of new edges instead of original one
+		*/
+	void splitAllEdges( int splitCount );
+
+	/**
+		*  \fn inline public  switch2Dand3D()
+		*  \brief Turn graph parts to 3D or 2D.
+		*/
+	void setIs3D( bool value )
+	{
+		is3D = value;
+	}
+
+	bool getIs3D()
+	{
+		return is3D;
+	}
+
 
 private:
 
@@ -782,6 +818,12 @@ private:
 		 * interface for setting restrictions and getting restricted positions).
 		 */
 	Layout::RestrictionsManager restrictionsManager_;
+
+	/**
+		*  bool is3D
+		*  \brief Flag if the Graph have 3D or 2D parts.
+		*/
+	bool is3D;
 
 };
 }
