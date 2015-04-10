@@ -7,6 +7,8 @@
 
 #include <math.h>
 
+#include "LuaInterface/LuaInterface.h"
+
 namespace Vwr {
 
 BrowserGroup::BrowserGroup()
@@ -35,6 +37,14 @@ void BrowserGroup::setSelectedNodes( QLinkedList<osg::ref_ptr<Data::Node> >* sel
 		// Nothing to do here
 		return;
 	}
+
+	// Template test
+	qDebug() << "Template test";
+	Lua::LuaInterface* lua = Lua::LuaInterface::getInstance();
+	QString renderer[] = {"slt2_renderer", "test"};
+	Diluculum::LuaValueList query;
+	std::string testValue = lua->callFunction(2, renderer, query)[0].asString();
+	qDebug() << testValue.c_str();
 
 	QLinkedList<osg::ref_ptr<Data::Node> >::iterator i;
 	Data::Node* node;

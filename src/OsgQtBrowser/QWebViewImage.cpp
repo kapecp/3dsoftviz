@@ -28,6 +28,7 @@ QWebViewImage::QWebViewImage()
 	_webPage->settings()->setAttribute( QWebSettings::PluginsEnabled, true );
 
 	_webView->setPage( _webPage );
+	//_webView->setHtml();
 
 	// Add loadFinished listener to ensure our page is loaded before assigning data objects
 	connect( _webPage->mainFrame(), SIGNAL( loadFinished( bool ) ), this, SLOT( loadFinished( bool ) ) );

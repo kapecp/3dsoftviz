@@ -1,7 +1,17 @@
-<span>
-#{ if user ~= nil then }#
-Hello, #{= user.name }#!
-#{ else }#
-<a href="/login">login</a>
-#{ end }#
-</span>
+<html>
+    <head>
+    </head>
+    <body>
+        <span>
+        #{ if user ~= nil then }#
+        Hello, #{= user.name }#!
+        #{ else }#
+        <a href="/login">login</a>
+        #{ end }#
+        </span>
+        <script type="text/javascript">
+            console.log("logtest");
+            consolee.log("errortest");
+        </script>
+    </body>
+</html>

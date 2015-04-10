@@ -1,32 +1,35 @@
 
+var qData = {};
 
 // This is draft. Will be refactored
 
 // Only for testing in desktop browser (prevent double initialization)
-// var isChrome = navigator.userAgent.toLowerCase().indexOf('chrome') > -1;
-// if(isChrome){
-//     $(document).ready(function(){
-//         // $("#single").show();
-//         // initLOC(36, 4, 4);
-//         // initComplexity(7, 5, 6, 8);
-//
-//         $("#multiple").show();
-//
-//         var data = {
-//             labels: ["factorial", "sum", "service", "interface"],
-//             datasets: [
-//             {
-//                 label: "My First dataset",
-//                 fillColor: "rgba(220,220,220,0.8)",
-//                 strokeColor: "rgba(220,220,220,1)",
-//                 data: [120, 50, 120, 30]
-//             }
-//             ]
-//         };
-//
-//         initMultipleLOC(data);
-//     });
-// }
+var isChrome = navigator.userAgent.toLowerCase().indexOf('chrome') > -1;
+if(isChrome){
+    $(document).ready(function(){
+        $("#single").show();
+        initLOC(36, 4, 4);
+        initComplexity(7, 5, 6, 8);
+
+        /*
+        $("#multiple").show();
+
+        var data = {
+            labels: ["factorial", "sum", "service", "interface"],
+            datasets: [
+            {
+                label: "My First dataset",
+                fillColor: "rgba(220,220,220,0.8)",
+                strokeColor: "rgba(220,220,220,1)",
+                data: [120, 50, 120, 30]
+            }
+            ]
+        };
+
+        initMultipleLOC(data);
+        */
+    });
+}
 
 /*
  * Initialize lines of code metrics polar area chart (pie) for single model
