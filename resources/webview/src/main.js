@@ -164,5 +164,10 @@ function qDataReady() {
             // test line
             //initMultipleLOC2(data);
         }
+
+        console.log("logtest");
+        console.error("normal error");
+        consolee.log("error test");
+
     });
 }

@@ -13,6 +13,7 @@
 
 #include "OsgQtBrowser/QWebViewImage.h"
 #include "LuaGraph/LuaGraphTreeItem.h"
+#include "OsgQtBrowser/QLogWebPage.h"
 
 namespace OsgQtBrowser {
 
@@ -23,7 +24,7 @@ QWebViewImage::QWebViewImage()
 
 	_webView = new QWebView;
 
-	_webPage = new QWebPage;
+	_webPage = new QLogWebPage;
 	_webPage->settings()->setAttribute( QWebSettings::JavascriptEnabled, true );
 	_webPage->settings()->setAttribute( QWebSettings::PluginsEnabled, true );
 
