@@ -38,14 +38,6 @@ void BrowserGroup::setSelectedNodes( QLinkedList<osg::ref_ptr<Data::Node> >* sel
 		return;
 	}
 
-	// Template test
-	qDebug() << "Template test";
-	Lua::LuaInterface* lua = Lua::LuaInterface::getInstance();
-	QString renderer[] = {"slt2_renderer", "test"};
-	Diluculum::LuaValueList query;
-	std::string testValue = lua->callFunction(2, renderer, query)[0].asString();
-	qDebug() << testValue.c_str();
-
 	QLinkedList<osg::ref_ptr<Data::Node> >::iterator i;
 	Data::Node* node;
 
@@ -61,6 +53,17 @@ void BrowserGroup::setSelectedNodes( QLinkedList<osg::ref_ptr<Data::Node> >* sel
 			Lua::LuaGraphTreeModel* luaModel = new Lua::LuaGraphTreeModel( luaNode );
 			selectedNodesModels->insert( node->getId(), luaModel );
 			//std::cout << "Selecting node: " << node->getId() << "\n" << std::flush;
+
+			// Template test
+			qDebug() << "Template test";
+			Lua::LuaInterface* lua = Lua::LuaInterface::getInstance();
+			QString renderer[] = {"slt2_renderer", "render"};
+			Diluculum::LuaValueList params;
+			params.push_back("template1");
+			params.push_back(luaNode->getParams());
+			std::string testValue = lua->callFunction(2, renderer, params)[0].asString();
+			qDebug() << testValue.c_str();
+			// \ Template test
 
 			// Remember node in nodes map
 			selectedNodes->insert( node->getId(), node );

@@ -4,16 +4,11 @@
 -----------------------------------------------
 local slt2 = require('slt2')
 
--- TODO just a test
-local user = {
-    name = 'world'
-}
-
-local function test()
-  local templateFile = assert(slt2.loadfile('../share/3DSOFTVIZ/webview/templates/template1.slt2'))
-  return slt2.render(templateFile, {user = user})
+local function render(template, data)
+  local templateFile = assert(slt2.loadfile('../share/3DSOFTVIZ/webview/templates/'..template..'.slt2'))
+  return slt2.render(templateFile, {data=data})
 end
 
 ----------------------------------------
 -- Public interface of module
-return {test = test}
+return {render = render}
