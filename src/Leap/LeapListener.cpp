@@ -10,8 +10,11 @@ void Leap::LeapListener::onConnect(const Controller& controller)
   // we put our gestures here to initialize them
   controller.enableGesture(Gesture::TYPE_CIRCLE);
   controller.enableGesture(Gesture::TYPE_KEY_TAP);
-  controller.enableGesture(Gesture::TYPE_SCREEN_TAP);
+  //controller.enableGesture(Gesture::TYPE_SCREEN_TAP);
   controller.enableGesture(Gesture::TYPE_SWIPE);
+
+  controller.config().setFloat("Gesture.Swipe.MinLength",60.0f);
+  controller.config().save();
 }
 
 void Leap::LeapListener::onDisconnect(const Controller& controller)
@@ -34,6 +37,10 @@ void Leap::LeapListener::onFrame(const Controller& controller)
       for (int g = 0; g < gestures.count(); ++g) {
         Gesture gesture = gestures[g];
 
+        HandList hands = gesture.hands();
+        Hand firstHand = hands[0];
+
+
         switch (gesture.type()) {
           case Gesture::TYPE_CIRCLE:
           {
@@ -50,7 +57,8 @@ void Leap::LeapListener::onFrame(const Controller& controller)
           }
           case Gesture::TYPE_KEY_TAP:
           {
-            leapActions.onKeyTap(gesture);
+            if(firstHand.isLeft())
+                leapActions.onKeyTap(gesture);
             break;
           }
           case Gesture::TYPE_SCREEN_TAP:
