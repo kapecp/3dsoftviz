@@ -157,8 +157,6 @@ private:
 	 * @brief video stream data for save
 	 */
 	openni::VideoStream  m_depth;
-
-
 };
 }
 
