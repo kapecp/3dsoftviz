@@ -4,7 +4,7 @@
 #include "Kinect/HistoryBuffer.h"
 #include "OpenNI.h"
 #include "Core/Core.h"
-
+#include "Math/CameraMath.h"
 #include <map>
 
 #ifdef NITE2_FOUND
@@ -45,6 +45,7 @@ public:
 	 * number of hands that are tracked
 	 */
 	//Marak starts
+    void Kinect::KinectHandTracker::visualSelection( );
 
 	int numHandsTracking;
 
@@ -118,7 +119,6 @@ public:
 private:
 
 	//Marak starts
-
 	bool gesto_dolava;
 	bool gesto_doprava;
 	bool gesto_hore;
@@ -129,7 +129,12 @@ private:
 	 */
 	QOSG::ViewerQT* viewer;
 
-	//Marak ends
+    // moze private
+    Data::Node* tempSelectedNode;
+    Data::Edge* tempSelectedEdge;
+
+    MathModule::CameraMath* camMath;
+    //Marak ends
 
 	/**
 	 * @brief is Mouse pressed
