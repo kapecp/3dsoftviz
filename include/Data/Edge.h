@@ -31,9 +31,9 @@ class Type;
 class Edge : public osg::Geode
 {
 public:
-    // Marak start
-    void setEdgeDefaultColor();
-    // Marak end
+	// Marak start
+	void setEdgeDefaultColor();
+	// Marak end
 
 	/**
 		* \fn public constructor Edge(qlonglong id, QString name, Data::Graph* graph, osg::ref_ptr<Data::Node> srcNode, osg::ref_ptr<Data::Node> dstNode, Data::Type* type, bool isOriented, int pos = 0, osg::ref_ptr<osg::Camera> camera = 0)

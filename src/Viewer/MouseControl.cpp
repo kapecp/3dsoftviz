@@ -36,7 +36,7 @@ Vwr::MouseControl::~MouseControl()
 void Vwr::MouseControl::moveMouse( float positionX, float positionY )
 {
 	// add event to Event Queue - osgGa eventy
-    viewer->getEventQueue()->mouseMotion( positionX,positionY );
+	viewer->getEventQueue()->mouseMotion( positionX,positionY );
 }
 
 void Vwr::MouseControl::clickPressMouse( Qt::MouseButton button )

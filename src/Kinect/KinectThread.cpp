@@ -6,6 +6,7 @@
 #include "Kinect/KinectZoom.h"
 
 #include "QDebug"
+#include "Viewer/GraphNavigation.h"
 
 Kinect::KinectThread::KinectThread( QObject* parent ) : QThread( parent )
 {
@@ -95,6 +96,7 @@ void Kinect::KinectThread::run()
 	    /////////end////////////*/
 	Kinect::KinectZoom* zoom = new Kinect::KinectZoom();
 	cv::Mat frame;
+	Vwr::GraphNavigation* nav = new Vwr::GraphNavigation();
 
 	// check if is close
 	while ( !mCancel ) {
@@ -112,9 +114,8 @@ void Kinect::KinectThread::run()
 			// cita handframe, najde gesto na snimke a vytvori mu "profil"
 			kht->getAllGestures();
 			kht->getAllHands();
-            //kht->visualSelection( );
 #endif
-
+			nav->navigate();
 			//////////////End/////////////
 
 			//	cap >> frame; // get a new frame from camera
@@ -169,7 +170,7 @@ void Kinect::KinectThread::run()
 					// calculate num of fingers
 					numFingers[i] = zoom->DetectContour();
 
-                    //printf( "H<%d> F<%d>\n",i,numFingers[i] );
+					//printf( "H<%d> F<%d>\n",i,numFingers[i] );
 				}
 
 				// cursor disabled => move graph
@@ -211,8 +212,6 @@ void Kinect::KinectThread::run()
 				}
 				// cursor enabled => move cursor
 				else {
-                    // change color of nearest node to mouse ( node is conected to last selected one )
-                    kht->visualSelection( );
 				}
 			}
 			//}

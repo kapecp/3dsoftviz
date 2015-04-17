@@ -45,7 +45,6 @@ public:
 	 * number of hands that are tracked
 	 */
 	//Marak starts
-    void Kinect::KinectHandTracker::visualSelection( );
 
 	int numHandsTracking;
 
@@ -128,13 +127,8 @@ private:
 	 * @brief viewer
 	 */
 	QOSG::ViewerQT* viewer;
-
-    // moze private
-    Data::Node* tempSelectedNode;
-    Data::Edge* tempSelectedEdge;
-
-    MathModule::CameraMath* camMath;
-    //Marak ends
+	Vwr::GraphNavigation* nav;
+	//Marak ends
 
 	/**
 	 * @brief is Mouse pressed
