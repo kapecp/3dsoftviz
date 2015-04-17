@@ -264,9 +264,9 @@ void OpenCV::OpenCVCore::createConnectionAruco()
 					  mThrAruco,
 					  SLOT( setSendImgEnabling( bool ) ) );
 	/*QObject::connect( mThrAruco,
-	                  SIGNAL(pushImage(QImage)),
-	                  mOpencvDialog,
-	                  SLOT(setLabelQ(QImage)) );*/
+					  SIGNAL(pushImage(QImage)),
+					  mOpencvDialog,
+					  SLOT(setLabelQ(QImage)) );*/
 	QObject::connect( mThrAruco,
 					  SIGNAL( pushImagemMat( cv::Mat ) ),
 					  mOpencvWindow,

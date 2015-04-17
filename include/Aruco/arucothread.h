@@ -24,11 +24,11 @@ class CapVideo;
 namespace ArucoModul {
 
 /**
-    *@brief Class ArucoThread
-    *@author Autor: David durcak
-    *@date 18.02.2014
-    *@note This class provides a thread for tracking Aruco.
-    */
+	*@brief Class ArucoThread
+	*@author Autor: David durcak
+	*@date 18.02.2014
+	*@note This class provides a thread for tracking Aruco.
+	*/
 class ArucoThread : public QThread
 
 {

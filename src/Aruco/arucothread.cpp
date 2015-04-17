@@ -389,115 +389,115 @@ void ArucoThread::printMat( const osg::Matrixd mat, const QString name ) const
 
 /*
 test(){
-    QMatrix4x4 origM( 1.00,  0.00,  0.00, -0.04,
-                      0.00,	-0.94,  0.33,  0.22,
-                      0.00,	 0.33,	0.94, -0.55,
-                      0.00,	 0.00,  0.00,  1.00 );
+	QMatrix4x4 origM( 1.00,  0.00,  0.00, -0.04,
+					  0.00,	-0.94,  0.33,  0.22,
+					  0.00,	 0.33,	0.94, -0.55,
+					  0.00,	 0.00,  0.00,  1.00 );
 
-    QMatrix4x4 mat( 1.00,  0.00,  0.00, -0.54,
-                    0.00, -0.94,  0.33,  0.00,
-                    0.00,  0.33,  0.94, -1.10,
-                    0.00,  0.00,  0.00,  1.00 );
+	QMatrix4x4 mat( 1.00,  0.00,  0.00, -0.54,
+					0.00, -0.94,  0.33,  0.00,
+					0.00,  0.33,  0.94, -1.10,
+					0.00,  0.00,  0.00,  1.00 );
 
-    QMatrix4x4 res1( 1.00, 0.00, 0.00, -0.54,
-                     0.00, 0.99, 0.00,  0.25,
-                     0.00, 0.00, 0.99, -1.14,
-                     0.00, 0.00, 0.00,  1.00 );
+	QMatrix4x4 res1( 1.00, 0.00, 0.00, -0.54,
+					 0.00, 0.99, 0.00,  0.25,
+					 0.00, 0.00, 0.99, -1.14,
+					 0.00, 0.00, 0.00,  1.00 );
 
-    computeCorMat(origM);
-    QMatrix4x4 res2 = corM * mat;
+	computeCorMat(origM);
+	QMatrix4x4 res2 = corM * mat;
 
-    qDebug( res1 == res2 );
+	qDebug( res1 == res2 );
 }
 */
 
 /*
 test(){
 
-            // original, nemenny------------
-            double xpos[3]	= {  0.0110871, -0.125618, 0.331737 };
-            double xor[4]	= { -0.0172416, -0.018111, 0.9853, -0.168995 };
-            QVector3D xposvk( xpos[0],  xpos[1],  xpos[2]);
-            QVector3D xposvz(-xpos[0], -xpos[1], -xpos[2]);
-            QVector4D xorv(   xor[0],   xor[1],   xor[2], xor[3] );
-            QQuaternion xquatQ(xorv);
-            QMatrix4x4 xrotM;
-            xrotM.rotate(xquatQ);
-            QMatrix4x4 xTk;
-            xTk.translate(xposvk);
-            xrotM = xTk * xrotM;
-            ///printMat(xrotM, "xrotM  --- original");
-            // original matica podla ktrej sa bude robit
+			// original, nemenny------------
+			double xpos[3]	= {  0.0110871, -0.125618, 0.331737 };
+			double xor[4]	= { -0.0172416, -0.018111, 0.9853, -0.168995 };
+			QVector3D xposvk( xpos[0],  xpos[1],  xpos[2]);
+			QVector3D xposvz(-xpos[0], -xpos[1], -xpos[2]);
+			QVector4D xorv(   xor[0],   xor[1],   xor[2], xor[3] );
+			QQuaternion xquatQ(xorv);
+			QMatrix4x4 xrotM;
+			xrotM.rotate(xquatQ);
+			QMatrix4x4 xTk;
+			xTk.translate(xposvk);
+			xrotM = xTk * xrotM;
+			///printMat(xrotM, "xrotM  --- original");
+			// original matica podla ktrej sa bude robit
 
-            // --------------------------
-            // priprava aktualnej matice
-            QVector3D posvk( pos[0],  pos[1],  pos[2]);
-            QVector3D posvz(-pos[0], -pos[1], -pos[2]);
-            ///printVec(posvk, "aktual pos ");
-            ///qDebug() <<		"aktual quat " << or[0] << " " << or[1] << " " << or[2] << " " << or[3];
-            QVector4D orv(   or[0],   or[1],   or[2], or[3] );
+			// --------------------------
+			// priprava aktualnej matice
+			QVector3D posvk( pos[0],  pos[1],  pos[2]);
+			QVector3D posvz(-pos[0], -pos[1], -pos[2]);
+			///printVec(posvk, "aktual pos ");
+			///qDebug() <<		"aktual quat " << or[0] << " " << or[1] << " " << or[2] << " " << or[3];
+			QVector4D orv(   or[0],   or[1],   or[2], or[3] );
 
-            QQuaternion quatQ(orv);
-            QMatrix4x4 rotM;
-            rotM.rotate(quatQ);
-            QMatrix4x4 Tk;
-            Tk.translate(posvk);
-            rotM = Tk * rotM;
-            printMat(rotM, "rotM  ---   aktual");
-
-
-
-            // ----------------------------
-            // vysledok podla matic
-            QMatrix4x4 orig = xrotM;
-            computeCorMat(orig);
-            QMatrix4x4 resM1 = corM * rotM;
-            //printMat(corM,  "corM   ---   1  medyivysledok");
-            ///printMat(resM1, "resM1  ---   1  vysledok, podla matic");
-            // -----------------------
-            //=======================================
-            //=======================================
-
-            //musim vediet vypocitat 2 veci bod posunuty
-            // qatermion
-            QQuaternion corQ;		// xquatQ, xposvk, xposvz
-
-            corQ = xquatQ;
-            //corQ.slerp();
+			QQuaternion quatQ(orv);
+			QMatrix4x4 rotM;
+			rotM.rotate(quatQ);
+			QMatrix4x4 Tk;
+			Tk.translate(posvk);
+			rotM = Tk * rotM;
+			printMat(rotM, "rotM  ---   aktual");
 
 
-            //------------------
-            QMatrix4x4 corQM;
-            corQM.rotate(corQ);
-            //printMat(corQM, "corQM  ---  2 medyivysledok");
-            //-------------------------------------
+
+			// ----------------------------
+			// vysledok podla matic
+			QMatrix4x4 orig = xrotM;
+			computeCorMat(orig);
+			QMatrix4x4 resM1 = corM * rotM;
+			//printMat(corM,  "corM   ---   1  medyivysledok");
+			///printMat(resM1, "resM1  ---   1  vysledok, podla matic");
+			// -----------------------
+			//=======================================
+			//=======================================
+
+			//musim vediet vypocitat 2 veci bod posunuty
+			// qatermion
+			QQuaternion corQ;		// xquatQ, xposvk, xposvz
+
+			corQ = xquatQ;
+			//corQ.slerp();
 
 
-            QQuaternion resQ;		// corQ, posvk, posvz, quatQ
-            QVector3D rposv;
-
-            rposv = posvk - xposvk;
-            printVec( rposv, "2 vysledok " );
-            rposv = corQ.rotatedVector(rposv);
-            //rposv = (corQM * QQuaternion(0, rposv) * corQM.conjugate()).vector();
-            printVec( rposv, "2 vysledok " );
-            rposv = rposv + xposvk;
-
-            printVec( rposv, "2 vysledok " );
-
-            resQ = corQ*quatQ;
-            //resQ = quatQ*corQ;
+			//------------------
+			QMatrix4x4 corQM;
+			corQM.rotate(corQ);
+			//printMat(corQM, "corQM  ---  2 medyivysledok");
+			//-------------------------------------
 
 
-            //------------------------------------
+			QQuaternion resQ;		// corQ, posvk, posvz, quatQ
+			QVector3D rposv;
 
-            QMatrix4x4 resQM;
-            resQM.rotate(resQ);
-            printMat(resM1, "resM1  ---   1  vysledok, podla matic");
-            QMatrix4x4 rTk;
-            rTk.translate(rposv);
-            resQM = rTk * resQM;
-            printMat(resQM, "resQM  ---   2 aktual pre qaternion");
+			rposv = posvk - xposvk;
+			printVec( rposv, "2 vysledok " );
+			rposv = corQ.rotatedVector(rposv);
+			//rposv = (corQM * QQuaternion(0, rposv) * corQM.conjugate()).vector();
+			printVec( rposv, "2 vysledok " );
+			rposv = rposv + xposvk;
+
+			printVec( rposv, "2 vysledok " );
+
+			resQ = corQ*quatQ;
+			//resQ = quatQ*corQ;
+
+
+			//------------------------------------
+
+			QMatrix4x4 resQM;
+			resQM.rotate(resQ);
+			printMat(resM1, "resM1  ---   1  vysledok, podla matic");
+			QMatrix4x4 rTk;
+			rTk.translate(rposv);
+			resQM = rTk * resQM;
+			printMat(resQM, "resQM  ---   2 aktual pre qaternion");
 
 
 }

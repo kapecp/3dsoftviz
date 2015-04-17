@@ -18,9 +18,9 @@ class CapVideo;
 namespace QOpenCV {
 
 /**
-     * @author Autor: Marek Jakab, David Durcak
-     * @brief Class FaceRecognitionWindow
-     */
+	 * @author Autor: Marek Jakab, David Durcak
+	 * @brief Class FaceRecognitionWindow
+	 */
 class FaceRecognitionWindow : public QDialog
 {
 	Q_OBJECT
@@ -28,98 +28,98 @@ class FaceRecognitionWindow : public QDialog
 public:
 
 	/**
-	     * @author Autor: Marek Jakab
-	     * @brief FaceRecognitionWindow Constructor
-	     * @param parent Parent Widget
-	     * @param app QApplication
-	     * @param thr Instance of thread
-	     */
+		 * @author Autor: Marek Jakab
+		 * @brief FaceRecognitionWindow Constructor
+		 * @param parent Parent Widget
+		 * @param app QApplication
+		 * @param thr Instance of thread
+		 */
 	FaceRecognitionWindow( QWidget* parent, QApplication* mApp );
 
 	/**
-	     * @author Autor: David Durcak
-	     * @brief getLabel Return mWindowLabel
-	     * @return QLabel*
-	     */
+		 * @author Autor: David Durcak
+		 * @brief getLabel Return mWindowLabel
+		 * @return QLabel*
+		 */
 	QLabel*		getLabel() const;
 
 	/**
-	     * @author Autor: David Durcak
-	     * @brief getMarkerBehindCB Return mMarkerBehindCB
-	     * @return QCheckBox*
-	     */
+		 * @author Autor: David Durcak
+		 * @brief getMarkerBehindCB Return mMarkerBehindCB
+		 * @return QCheckBox*
+		 */
 	QCheckBox*	getMarkerBehindCB() const;
 
 	/**
-	     * @author Autor: David Durcak
-	     * @brief getCorEnabledCB Return mCorEnabledCB
-	     * @return QCheckBox*
-	     */
+		 * @author Autor: David Durcak
+		 * @brief getCorEnabledCB Return mCorEnabledCB
+		 * @return QCheckBox*
+		 */
 	QCheckBox*	getCorEnabledCB() const;
 
 	/**
-	     * @author Autor: David Durcak
-	     * @brief getUpdateCorParPB Return mUpdateCorParPB
-	     * @return QPushButton*
-	     */
+		 * @author Autor: David Durcak
+		 * @brief getUpdateCorParPB Return mUpdateCorParPB
+		 * @return QPushButton*
+		 */
 	QPushButton*	getUpdateCorParPB() const;
 
 	/**
-	     * @author Autor: David Durcak
-	     * @brief getInterchangeMarkersCB Return mInterchangeMarkersCB
-	     * @return QCheckBox*
-	     */
+		 * @author Autor: David Durcak
+		 * @brief getInterchangeMarkersCB Return mInterchangeMarkersCB
+		 * @return QCheckBox*
+		 */
 	QPushButton*	getInterchangeMarkersPB() const;
 
 
 signals:
 	/**
-	     * @author Autor: David Durcak
-	     * @brief sendImgFaceRec Signal for enagling or disabling sending actual image from FaceDetection thread
-	     * @param send
-	     */
+		 * @author Autor: David Durcak
+		 * @brief sendImgFaceRec Signal for enagling or disabling sending actual image from FaceDetection thread
+		 * @param send
+		 */
 	void sendImgFaceRec( bool send );
 
 	/**
-	     * @author Autor: David Durcak
-	     * @brief sendImgMarker Signal for enagling or disabling sending actual image from Aruco thread to this window
-	     * @param send
-	     */
+		 * @author Autor: David Durcak
+		 * @brief sendImgMarker Signal for enagling or disabling sending actual image from Aruco thread to this window
+		 * @param send
+		 */
 	void sendImgMarker( bool send );
 
 	/**
-	     * @author Autor: David Durcak
-	     * @brief sendBackgrImgFaceRec Signal for enagling or disabling sending actual image from FaceDetection thread to background
-	     * @param send
-	     */
+		 * @author Autor: David Durcak
+		 * @brief sendBackgrImgFaceRec Signal for enagling or disabling sending actual image from FaceDetection thread to background
+		 * @param send
+		 */
 	void sendBackgrImgFaceRec( bool send );
 
 	/**
-	     * @author Autor: David Durcak
-	     * @brief sendBackgrImgMarker Signal for enagling or disabling sending actual image from Aruco thread thread to background
-	     * @param send
-	     */
+		 * @author Autor: David Durcak
+		 * @brief sendBackgrImgMarker Signal for enagling or disabling sending actual image from Aruco thread thread to background
+		 * @param send
+		 */
 	void sendBackgrImgMarker( bool send );
 
 	/**
-	     * @author Autor: David Durcak
-	     * @brief stopMarker Signal for canceling Aruco thread
-	     * @param set cancel if true
-	     */
+		 * @author Autor: David Durcak
+		 * @brief stopMarker Signal for canceling Aruco thread
+		 * @param set cancel if true
+		 */
 	void stopMarker( bool set );
 
 
 	/**
-	     * @author Autor: David Durcak
-	     * @brief stopFaceRec Signal for canceling FaceDetection thread
-	     * @param set cancel if true
-	     */
+		 * @author Autor: David Durcak
+		 * @brief stopFaceRec Signal for canceling FaceDetection thread
+		 * @param set cancel if true
+		 */
 	void stopFaceRec( bool set );
 
 	/**
-	     * @author Autor: David Durcak
-	     * @brief startMarker Signal for starting Aruco thread
-	     */
+		 * @author Autor: David Durcak
+		 * @brief startMarker Signal for starting Aruco thread
+		 */
 	void startMarker();
 
 	/**
@@ -136,23 +136,23 @@ signals:
 	void stopMultiMarker( bool set );
 
 	/**
-	     * @author Autor: David Durcak
-	     * @brief startFaceRec Signal for starting FaceDetection thread
-	     */
+	 * @author Autor: David Durcak
+		 * @brief startFaceRec Signal for starting FaceDetection thread
+		 */
 	void startFaceRec();
 
 	/**
-	     * @author Autor: David Durcak
-	     * @brief setCapVideoFaceRec Signal for setting camera in FaceRecognizationThread
-	     * @param capVideo camera object
-	     */
+		 * @author Autor: David Durcak
+		 * @brief setCapVideoFaceRec Signal for setting camera in FaceRecognizationThread
+		 * @param capVideo camera object
+		 */
 	void setCapVideoFaceRec( OpenCV::CapVideo* capVideo );
 
 	/**
-	     * @author Autor: David Durcak
-	     * @brief setCapVideoMarker Signal for setting camera in ArucoThread
-	     * @param capVideo camera object
-	     */
+		 * @author Autor: David Durcak
+		 * @brief setCapVideoMarker Signal for setting camera in ArucoThread
+		 * @param capVideo camera object
+		 */
 	void setCapVideoMarker( OpenCV::CapVideo* capVideo );
 
 	/**
@@ -165,56 +165,56 @@ signals:
 
 public slots:
 	/**
-	     * @author Autor: David Durcak
-	     * @brief onCorParUpdated When corection parameters were updated
-	     */
+		 * @author Autor: David Durcak
+		 * @brief onCorParUpdated When corection parameters were updated
+		 */
 	void onCorParUpdated();
 
 	/**
-	     * @author Autor: David Durcak
-	     * @brief onFaceRecThrFinished When Face detection thread finished, enable mFaceRecStartCancelPB button
-	     */
+		 * @author Autor: David Durcak
+		 * @brief onFaceRecThrFinished When Face detection thread finished, enable mFaceRecStartCancelPB button
+		 */
 	void onFaceRecThrFinished();
 
 	/**
-	     * @author Autor: David Durcak
-	     * @brief onMarkerThrFinished When Aruco thread finished, update mMarkerStartCancelPB button
-	     */
+		 * @author Autor: David Durcak
+		 * @brief onMarkerThrFinished When Aruco thread finished, update mMarkerStartCancelPB button
+		 */
 	void onMarkerThrFinished();
 
 	/**
-	    * @author Autor: Marek Jakab
-	    * @brief setLabel Draw image on label
-	    */
+		* @author Autor: Marek Jakab
+		* @brief setLabel Draw image on label
+		*/
 	void setLabel( cv::Mat image );
 	void setLabelQ( QImage qimage );
 
 private slots:
 
 	/**
-	     * @author Autor: David Durcak
-	     * @brief onSelModulChange Switch between Aruco, Face Detection gui or any image sending
-	     */
+		 * @author Autor: David Durcak
+		 * @brief onSelModulChange Switch between Aruco, Face Detection gui or any image sending
+		 */
 	void onSelModulChange();
 
 	/**
-	     * @author Autor: David Durcak
-	     * @brief onUpdateCorPar  Disabling mUpdateCorParPB, until corrections parameter are not updated
-	     */
+		 * @author Autor: David Durcak
+		 * @brief onUpdateCorPar  Disabling mUpdateCorParPB, until corrections parameter are not updated
+		 */
 	void onUpdateCorPar();
 
 	/**
-	     * @author Autor: David Durcak
-	     * @brief onFaceRecStartCancel Start or stop Face Detection thread
-	     * @param checked If true, thread will start
-	     */
+		 * @author Autor: David Durcak
+		 * @brief onFaceRecStartCancel Start or stop Face Detection thread
+		 * @param checked If true, thread will start
+		 */
 	void onFaceRecStartCancel( bool checked );
 
 	/**
-	     * @author Autor: David Durcak
-	     * @brief onMarkerStartCancel Start or stop Aruco thread
-	     * @param checked If true, thread will start
-	     */
+		 * @author Autor: David Durcak
+		 * @brief onMarkerStartCancel Start or stop Aruco thread
+		 * @param checked If true, thread will start
+		 */
 	void onMarkerStartCancel( bool checked );
 
 	/**
@@ -225,32 +225,32 @@ private slots:
 	void onMultiMarkerStartCancel( bool checked );
 
 	/**
-	     * @author Autor: David Durcak
-	     * @brief onFaceDetBackgrCBClicked Slot for enabling video backgroung from FaceRecongition and disabling from Aruco
-	     * @param checked
-	     */
+		 * @author Autor: David Durcak
+		 * @brief onFaceDetBackgrCBClicked Slot for enabling video backgroung from FaceRecongition and disabling from Aruco
+		 * @param checked
+		 */
 	void onFaceDetBackgrCBClicked( bool checked );
 
 	/**
-	     * @author Autor: David Durcak
-	     * @brief onMarkerBackgrCBClicked Slot for enabling video backgroung from Aruco and disabling from FaceRecongition
-	     * @param checked
-	     */
+		 * @author Autor: David Durcak
+		 * @brief onMarkerBackgrCBClicked Slot for enabling video backgroung from Aruco and disabling from FaceRecongition
+		 * @param checked
+		 */
 	void onMarkerBackgrCBClicked( bool checked );
 
 
 private:
 	/**
-	     * @author Autor: David Durcak
-	     * @brief closeEvent Reimplement close event. Disconnect all conections
-	     * @param event Close event
-	     */
+		 * @author Autor: David Durcak
+		 * @brief closeEvent Reimplement close event. Disconnect all conections
+		 * @param event Close event
+		 */
 	void closeEvent( QCloseEvent* event );
 
 	/**
-	     * @author Autor: David Durcak
-	     * @brief configureWindow Create dialog's gui,( all layouts, widgets and connection inside class)
-	     */
+		 * @author Autor: David Durcak
+		 * @brief configureWindow Create dialog's gui,( all layouts, widgets and connection inside class)
+		 */
 	void configureWindow();
 
 
@@ -262,13 +262,13 @@ private:
 	// switching the camera,
 	QRadioButton*	mFaceRecRB;
 	QRadioButton*	mMarkerRB;
-	QRadioButton*    mMultiMarkerRB;
+	QRadioButton*	mMultiMarkerRB;
 
 	QCheckBox*		mNoVideo;
 	QStackedLayout*	mModulesStackL;
 	QPushButton*		mFaceRecStartCancelPB;
 	QPushButton*		mMarkerStartCancelPB;
-	QPushButton*     mMultiMarkerStartCancelPB;
+	QPushButton*	mMultiMarkerStartCancelPB;
 
 	QCheckBox*		mMarkerBackgrCB;
 	QCheckBox*		mFaceDetBackgrCB;
