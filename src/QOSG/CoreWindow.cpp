@@ -3284,12 +3284,12 @@ void CoreWindow::filterGraph()
 
 void CoreWindow::onChange()
 {
-//	TODO release models from memory in browser group
-//	QAbstractItemModel *model = luaGraphTreeView->model();
-//	if (model != NULL){
-//		delete model;
-//		model = NULL;
-//	}
+	// Release previous last node model
+	QAbstractItemModel *model = luaGraphTreeView->model();
+	if (model != NULL){
+		delete model;
+		model = NULL;
+	}
 
 	// <Change> Gloger start: added support for multiple node selection using browser visualization
 	QLinkedList<osg::ref_ptr<Data::Node> >* selected = viewerWidget->getPickHandler()->getSelectedNodes();
@@ -3300,8 +3300,9 @@ void CoreWindow::onChange()
 	if ( selected->size() > 0 ) {
 		// Get last node model & display it in qt view
 		qlonglong lastNodeId = selected->last()->getId();
-		Lua::LuaGraphTreeModel* lastNodeModel = coreGraph->getBrowsersGroup()->getSelectedNodesModels()->value( lastNodeId );
-		luaGraphTreeView->setModel( lastNodeModel );
+		Lua::LuaNode* lastLuaNode = Lua::LuaGraph::getInstance()->getNodes()->value( lastNodeId );
+		Lua::LuaGraphTreeModel* lastLuaModel = new Lua::LuaGraphTreeModel( lastLuaNode );
+		luaGraphTreeView->setModel( lastLuaModel );
 	}
 
 	// Gloger end

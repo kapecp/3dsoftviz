@@ -7,7 +7,6 @@
 
 #include <math.h>
 
-#include "LuaInterface/LuaInterface.h"
 
 namespace Vwr {
 
@@ -16,8 +15,7 @@ BrowserGroup::BrowserGroup()
 	this->group = new osg::Group;
 	this->browsersTransforms = new QList<osg::ref_ptr<osg::AutoTransform> >;
 	this->browsersGrouping = false;
-	this->selectedNodesModels = new QMap<qlonglong, Lua::LuaGraphTreeModel*>;
-	this->selectedNodes = new QMap<qlonglong, osg::ref_ptr<Data::Node> >;
+	this->selectedNodes = new QLinkedList<osg::ref_ptr<Data::Node> >();
 }
 
 BrowserGroup::~BrowserGroup( void )
@@ -46,33 +44,20 @@ void BrowserGroup::setSelectedNodes( QLinkedList<osg::ref_ptr<Data::Node> >* sel
 		node = *i;
 
 		// If node was not already previously selected & its model initialized & node exists in lua model
-		if ( !selectedNodesModels->contains( node->getId() ) && Lua::LuaGraph::getInstance()->getNodes()->contains( node->getId() ) ) {
+		if ( !selectedNodes->contains( node ) && Lua::LuaGraph::getInstance()->getNodes()->contains( node->getId() ) ) {
+
+			selectedNodes->push_back(node);
 
 			// Get lua node model and add it to model map
 			Lua::LuaNode* luaNode = Lua::LuaGraph::getInstance()->getNodes()->value( node->getId() );
-			Lua::LuaGraphTreeModel* luaModel = new Lua::LuaGraphTreeModel( luaNode );
-			selectedNodesModels->insert( node->getId(), luaModel );
 			//std::cout << "Selecting node: " << node->getId() << "\n" << std::flush;
-
-			// Template test
-			qDebug() << "Template test";
-			Lua::LuaInterface* lua = Lua::LuaInterface::getInstance();
-			QString renderer[] = {"slt2_renderer", "render"};
-			Diluculum::LuaValueList params;
-			params.push_back("template1");
-			params.push_back(luaNode->getParams());
-			std::string testValue = lua->callFunction(2, renderer, params)[0].asString();
-			qDebug() << testValue.c_str();
-			// \ Template test
-
-			// Remember node in nodes map
-			selectedNodes->insert( node->getId(), node );
 
 			// If grouping is not enabled, then add browser for each newly selected node
 			if ( !browsersGrouping ) {
-				QList<Lua::LuaGraphTreeModel*>* models = new QList<Lua::LuaGraphTreeModel*>();
-				models->push_back( luaModel );
-				this->addBrowser( node->getCurrentPosition(), models );
+				Diluculum::LuaValueMap models;
+				models.insert(std::pair<Diluculum::LuaValue, Diluculum::LuaValue>((long)node->getId(), luaNode->getParams()));
+
+				this->addBrowser( "single", node->getCurrentPosition(), models );
 			}
 		}
 	}
@@ -108,43 +93,42 @@ void BrowserGroup::setBrowsersGrouping( bool browsersGrouping )
 
 void BrowserGroup::initBrowsers()
 {
-	QMapIterator<qlonglong, osg::ref_ptr<Data::Node> > i( *selectedNodes );
+
+	QLinkedList<osg::ref_ptr<Data::Node> >::iterator i;
 	Data::Node* node;
-	Lua::LuaGraphTreeModel* model;
 
 	// Iterate over all selected nodes and create sepparate browsers for each node
-	while ( i.hasNext() ) {
-		i.next();
+	for (i = selectedNodes->begin(); i != selectedNodes->end(); i++) {
+		node = *i;
 
-		node = i.value();
-		model = selectedNodesModels->value( i.key() );
-
-		QList<Lua::LuaGraphTreeModel*>* models = new QList<Lua::LuaGraphTreeModel*>();
-		models->push_back( model );
-		this->addBrowser( node->getCurrentPosition(), models );
+		Lua::LuaNode* luaNode = Lua::LuaGraph::getInstance()->getNodes()->value( node->getId() );
+		Diluculum::LuaValueMap models;
+		models.insert(std::pair<Diluculum::LuaValue, Diluculum::LuaValue>((long)node->getId(), luaNode->getParams()));
+		this->addBrowser( "single", node->getCurrentPosition(), models );
 	}
 }
 
 void BrowserGroup::initGroupedBrowser()
 {
-	QMapIterator<qlonglong, osg::ref_ptr<Data::Node> > i( *selectedNodes );
+	QLinkedList<osg::ref_ptr<Data::Node> >::iterator i;
 	Data::Node* node;
-	Lua::LuaGraphTreeModel* model;
 	float xSum = 0, ySum = 0, zSum = 0;
 	osg::Vec3f pos;
+	Diluculum::LuaValueMap models;
+	Lua::LuaNode* luaNode;
 
 	// Iterate over all selected nodes and show one browser in their center using list of all selected nodes models
-	while ( i.hasNext() ) {
-		i.next();
-
-		node = i.value();
-		model = selectedNodesModels->value( i.key() );
+	for (i = selectedNodes->begin(); i != selectedNodes->end(); i++) {
+		node = *i;
 
 		pos = node->getCurrentPosition();
 
 		xSum += pos.x();
 		ySum += pos.y();
 		zSum += pos.z();
+
+		luaNode = Lua::LuaGraph::getInstance()->getNodes()->value( node->getId() );
+		models.insert(std::pair<Diluculum::LuaValue, Diluculum::LuaValue>((long)node->getId(), luaNode->getParams()));
 	}
 
 	// Calculate centroid
@@ -154,18 +138,16 @@ void BrowserGroup::initGroupedBrowser()
 			  zSum / selectedNodes->size()
 		  );
 
-	QList<Lua::LuaGraphTreeModel*>* models = new QList<Lua::LuaGraphTreeModel*>( selectedNodesModels->values() );
-	this->addBrowser( pos, models );
+	this->addBrowser( "multi", pos, models );
 }
 
-void BrowserGroup::addBrowser( osg::Vec3 position, QList<Lua::LuaGraphTreeModel*>* models )
+void BrowserGroup::addBrowser(const std::string &templateType, osg::Vec3 position, Diluculum::LuaValueMap models )
 {
 	// qDebug() << "Adding browser";
 
 	// Create webView
 	osg::ref_ptr<OsgQtBrowser::QWebViewImage> webView = new OsgQtBrowser::QWebViewImage();
-	webView->navigateTo( "../share/3DSOFTVIZ/webview/index.html" );
-	webView->setModels( models );
+	webView->showTemplate("metrics_template", models, templateType);
 
 	// Add it to browser
 	osgWidget::GeometryHints hints( osg::Vec3( 0.0f,0.0f,0.0f ),
@@ -201,7 +183,6 @@ void BrowserGroup::clearBrowsers()
 
 void BrowserGroup::clearModels()
 {
-	this->selectedNodesModels->clear();
 	this->selectedNodes->clear();
 
 	// TODO make sure no memory is leaking ...

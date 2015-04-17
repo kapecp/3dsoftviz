@@ -13,5 +13,6 @@ void QLogWebPage::javaScriptConsoleMessage(const QString &message, int lineNumbe
 
 	// Log formatted message
 	qDebug("%s:%d %s", qPrintable(filename), lineNumber, qPrintable(message));
+	fflush(stderr);
 }
 

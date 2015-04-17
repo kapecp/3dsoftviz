@@ -1,0 +1,15 @@
+<script type="text/javascript">
+    #{local function printData(node)}#
+        {
+            #{for key, value in pairs(node) do}#
+                #{if type(value) == 'table' then}#
+                    '#{=key}#' : #{printData(value)}#,
+                #{else}#
+                    '#{=key}#' : '#{=value}#',
+                #{end}#
+            #{end}#
+        }
+    #{end}#
+
+    var data = #{printData(models)}#;
+</script>

@@ -9,7 +9,7 @@
 #include "OsgQtBrowser/QWebViewImage.h"
 #include "Data/Node.h"
 #include "LuaGraph/LuaNode.h"
-#include "LuaGraph/LuaGraphTreeModel.h"
+#include "Diluculum/Types.hpp"
 
 namespace Vwr {
 /**
@@ -66,9 +66,9 @@ public:
 		*  \fn public  getSelectedNodesModels
 		*  \return Selected nodes models map
 		*/
-	inline QMap<qlonglong, Lua::LuaGraphTreeModel* >* getSelectedNodesModels()
+	inline QLinkedList<osg::ref_ptr<Data::Node> >* getSelectedNodes()
 	{
-		return selectedNodesModels;
+		return selectedNodes;
 	}
 
 private:
@@ -76,10 +76,11 @@ private:
 	/**
 		*  \fn private  addBrowser
 		*  \brief Adds browser at position, passes supplied list of model data objects to js variable qData and calls js function qDataReady.
+		*  \param templateType type of the template route
 		*  \param  position
-		*  \param  *models
+		*  \param  models
 		*/
-	void addBrowser( osg::Vec3 position, QList<Lua::LuaGraphTreeModel*>* models );
+	void addBrowser( const std::string &templateType, osg::Vec3 position, Diluculum::LuaValueMap models );
 
 	/**
 		*  \fn private  initBrowsers
@@ -123,14 +124,9 @@ private:
 	QList<osg::ref_ptr<osg::AutoTransform> >* browsersTransforms;
 
 	/**
-		*  \brief Map of Data::Node ids to Data::Node containing all selected nodes
+		*  \brief List of selected nodes
 		*/
-	QMap<qlonglong, osg::ref_ptr<Data::Node> >* selectedNodes;
-
-	/**
-		*  \brief Map of Data::Node ids to Lua::LuaGraphTreeModel(s) containing all selected nodes
-		*/
-	QMap<qlonglong, Lua::LuaGraphTreeModel*>* selectedNodesModels;
+	QLinkedList<osg::ref_ptr<Data::Node> >* selectedNodes;
 
 	/**
 		*  \fn public  interpolate
