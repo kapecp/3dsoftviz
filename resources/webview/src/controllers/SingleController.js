@@ -13,7 +13,7 @@
 			model: model,
 
 			// Last two path elements from modulePath
-			filePath: model.modulePath.split('/').slice(-2),
+			file: model.modulePath.split('/').slice(-1)[0],
 
 			// Chart data
 			chart: {

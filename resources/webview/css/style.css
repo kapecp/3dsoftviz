@@ -6,6 +6,10 @@ body {
 	position: relative;
 }
 
+.single-loc-container h1 {
+	font-size: 50px;
+}
+
 .single-loc-container .centered {
 	height: 250px;
 	margin: auto;
@@ -14,40 +18,26 @@ body {
 	left: 0;
 	bottom: 0;
 	right: 0;
-
-	/* Fade in animation start */
-	transition: 1s linear all;
-	opacity: 0;
 }
 
 .single-loc-container .custom-legend {
-	width: 220px;
+	width: 150px;
 	margin: 0 auto;
 }
 
-.single-loc-container .custom-legend span.item {
-	margin-left: 15px;
+.single-loc-container .custom-legend div.item {
 	white-space: nowrap;
 }
 
 .single-loc-container .custom-legend span.marker {
 	display: inline-block;
-	width: 16px;
-	height: 16px;
+	width: 20px;
+	height: 20px;
 	border-radius: 5px
 }
 
 .single-loc-container .custom-legend span.text {
-	font-size: 16px;
-}
-
-/* Animation end */
-.single-loc-container .centered.fadein {
-	opacity: 1;
-}
-
-.single-loc-container .centered .breadcrumb {
-	background-color: transparent;
+	font-size: 25px;
 }
 
 .multi-container ul {
