@@ -32,11 +32,13 @@
 				// Chart.js options
 				options: {
 					bezierCurve: false,
-					datasetFill : false
+					datasetFill : false,
+					pointDotRadius : 6,
+					datasetStrokeWidth : 4
 				}
 			}
 		};
 
-		console.log($scope);
+		// console.log($scope);
 	}
 })();

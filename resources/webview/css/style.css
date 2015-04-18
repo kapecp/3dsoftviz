@@ -51,14 +51,15 @@ body {
 }
 
 .multi-container ul {
-	font-size: 18px;
+	font-size: 24px;
 }
 
 .multi-container ul li {
-	padding-left: 32px;
+	padding-left: 35px;
+	padding-right: 12px;
 }
 
 .multi-container ul li span {
-	width: 25px;
-	height: 25px;
+	width: 30px;
+	height: 30px;
 }
