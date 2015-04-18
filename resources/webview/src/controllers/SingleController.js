@@ -17,19 +17,18 @@
 
 			// Chart data
 			chart: {
-				labels: ["Total", "Blank", "Code", "Comment", "Non empty"],
+				labels: ["Blank", "Code", "Comment"],
 				data: [
-					model.metrics.LOC.lines,
 					model.metrics.LOC.lines_blank,
 					model.metrics.LOC.lines_code,
-					model.metrics.LOC.lines_comment,
-					model.metrics.LOC.lines_nonempty
+					model.metrics.LOC.lines_comment
 				],
 				colours: Chart.defaults.global.colours,
 
 				// Chart.js options
 				options: {
-					animateScale: true
+					animateRotate: false,
+					animateScale: false
 				}
 			}
 		};
