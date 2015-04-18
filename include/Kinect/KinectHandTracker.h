@@ -47,7 +47,7 @@ public:
 	//Marak starts
 
 	int numHandsTracking;
-
+	bool isGestureClick;
 	/**
 	 * @brief void moveGraphByHand
 	 * @brief move graph folowing hand movement (X,Y coords)
@@ -115,6 +115,10 @@ public:
 	// frame getting from Hand Tracker
 	nite::HandTrackerFrameRef handTrackerFrame;
 
+	/**
+	 * @brief is Mouse pressed
+	 */
+	bool isClick;
 private:
 
 	//Marak starts
@@ -129,11 +133,6 @@ private:
 	QOSG::ViewerQT* viewer;
 	Vwr::GraphNavigation* nav;
 	//Marak ends
-
-	/**
-	 * @brief is Mouse pressed
-	 */
-	bool isClick;
 
 	/**
 	 * @brief is mouse cursor movement enable

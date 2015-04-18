@@ -3,6 +3,7 @@
 
 Vwr::GraphNavigation::GraphNavigation()
 {
+	isNavEnabled = true;
 	tempSelectedNode = NULL;
 	tempSelectedEdge = NULL;
 	previousLastSelectedNode = NULL;
@@ -41,20 +42,15 @@ void Vwr::GraphNavigation::restoreColorConectedNodes( Data::Node* selectedNode )
 
 void Vwr::GraphNavigation::setColorNearestNode( Data::Node* selectedNode )
 {
-	float mouseX = viewer->cursor().pos().x();
-	float mouseY = viewer->cursor().pos().y();
+	osg::Vec3f mousePosition = getMouseScreenCoordinates( );
 
 	Data::Edge* closestEdge = NULL;
 	float minDistance = 0;
 	QMap<qlonglong, osg::ref_ptr<Data::Edge> >* nodeEdges = selectedNode->getEdges();
 	for ( QMap<qlonglong, osg::ref_ptr<Data::Edge> >::const_iterator iter = nodeEdges->begin(); iter != nodeEdges->end(); iter++ ) {
-		// get dest node and possition
 		Data::Node* dstNode = ( *iter )->getOtherNode( selectedNode );
-		// convert node coordinates to screen coordinates
-		osg::Vec3f nodePossition = camMath->projectOnScreen( viewer->getCamera(), dstNode->getCurrentPosition() );
-		// calculate distance between node and cursor
-		double distance = sqrt( pow( abs( nodePossition[0] - mouseX ), 2 )
-								+ pow( abs( nodePossition[1] - mouseY ), 2 ) );
+		osg::Vec3f nodePosition = getNodeScreenCoordinates( dstNode );
+		double distance = getDistance( mousePosition, nodePosition );
 
 		// first edge or nearer node
 		if ( ( minDistance == 0 ) || ( minDistance > distance ) ) {
@@ -62,8 +58,9 @@ void Vwr::GraphNavigation::setColorNearestNode( Data::Node* selectedNode )
 			closestEdge = ( *iter );
 		}
 	}
-	osg::Vec3f nodePossition = camMath->projectOnScreen( viewer->getCamera(), selectedNode->getCurrentPosition() );
-	printf( "[ %.3f - %.3f ]/[ %.3f - %.3f ]\n",mouseX,mouseY,nodePossition[0],nodePossition[1] );
+
+	//printf( "[ %.3f - %.3f ]/[ %.3f - %.3f ]\n",mousePossition[0],mousePossition[1],nodePossition[0],nodePossition[1] );
+
 	// get closest node
 	Data::Node* tmpNode = closestEdge->getOtherNode( selectedNode );
 	if ( !tmpNode->equals( tempSelectedNode ) ) {
@@ -104,9 +101,7 @@ void Vwr::GraphNavigation::navigate()
 		// if last selected node changed
 		if ( !lastSelectedNode->equals( previousLastSelectedNode ) ) {
 			// restore  default colors in case of extern select ( out of this class methods )
-			if ( previousLastSelectedNode != NULL ) {
-				restoreColorConectedNodes( previousLastSelectedNode );
-			}
+			clear();
 			// create new visualized node
 			setColorConectedNodes( lastSelectedNode );
 			previousLastSelectedNode = lastSelectedNode;
@@ -125,4 +120,58 @@ void Vwr::GraphNavigation::selectNearestNode()
 		tempSelectedNode->setSelected( true );
 		clear();
 	}
+}
+
+void Vwr::GraphNavigation::removeLastSelectedNode()
+{
+	// if there is no selected node, it can not be removed
+	if ( !viewer->getPickHandler()->getSelectedNodes()->isEmpty() ) {
+		Data::Node* lastSelectedNode = viewer->getPickHandler()->getSelectedNodes()->last();
+		lastSelectedNode->setSelected( false );
+		viewer->getPickHandler()->getSelectedNodes()->removeLast();
+	}
+}
+
+osg::Vec3f Vwr::GraphNavigation::getMouseScreenCoordinates( )
+{
+	// get mouse coordinates in viewer
+	float mouseX = viewer->cursor().pos().x() - viewer->window()->pos().x() - 10;
+	float mouseY = viewer->cursor().pos().y() - viewer->window()->pos().y() - 30;
+
+	// get coordinates inside viewer and invert y
+	float xN = static_cast<float>( mouseX - viewer->pos().x() );
+	float yN = static_cast<float>( viewer->height() + viewer->pos().y() - mouseY );
+
+	return osg::Vec3f( xN, yN, 0.0f );
+}
+
+osg::Vec3f Vwr::GraphNavigation::getNodeScreenCoordinates( Data::Node* node )
+{
+	// get matrices ... world->view->projection(device)->viewport(screen)
+	osg::Matrixd mwpv = ( viewer->getCamera()->getViewMatrix()
+						  * viewer->getCamera()->getProjectionMatrix()
+						  * viewer->getCamera()->getViewport()->computeWindowMatrix() );
+	// get node matrix ... local->world
+	osg::MatrixList ml = node->getWorldMatrices();
+
+	// get node bound position
+	osg::Vec3f nodePosition = node->getBound().center();
+
+	// convert node local to world
+	for ( osg::MatrixList::iterator iter = ml.begin(); iter != ml.end(); ++iter ) {
+		nodePosition = nodePosition*( *iter );
+	}
+	// convert node world to screen
+	nodePosition = ( nodePosition * mwpv );
+
+	return nodePosition;
+}
+
+double Vwr::GraphNavigation::getDistance( osg::Vec3f mouse, osg::Vec3f node )
+{
+	// in case of big space can overflow ... test divide by 1000
+	double distX = abs( node[0] - mouse[0] )/1000;
+	double distY = abs( node[1] - mouse[1] )/1000;
+
+	return sqrt( distX*distX + distY*distY );
 }

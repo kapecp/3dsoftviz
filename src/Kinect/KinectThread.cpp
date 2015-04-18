@@ -7,6 +7,8 @@
 
 #include "QDebug"
 #include "Viewer/GraphNavigation.h"
+#include "Viewer/MouseControl.h"
+
 
 Kinect::KinectThread::KinectThread( QObject* parent ) : QThread( parent )
 {
@@ -97,6 +99,7 @@ void Kinect::KinectThread::run()
 	Kinect::KinectZoom* zoom = new Kinect::KinectZoom();
 	cv::Mat frame;
 	Vwr::GraphNavigation* nav = new Vwr::GraphNavigation();
+	Vwr::MouseControl* mouse = new Vwr::MouseControl();
 
 	// check if is close
 	while ( !mCancel ) {
@@ -169,8 +172,6 @@ void Kinect::KinectThread::run()
 					zoom->calcHandDepthFrame( frame,&m_depth,kht->getArrayHands[i][0], kht->getArrayHands[i][1], kht->handZ[i], mainHand );
 					// calculate num of fingers
 					numFingers[i] = zoom->DetectContour();
-
-					//printf( "H<%d> F<%d>\n",i,numFingers[i] );
 				}
 
 				// cursor disabled => move graph
@@ -212,6 +213,22 @@ void Kinect::KinectThread::run()
 				}
 				// cursor enabled => move cursor
 				else {
+					// if gesture was click, do mouse click events
+					if ( kht->isGestureClick ) {
+						// if navigation is enabled, do navigation click
+						if ( nav->isNavEnabled ) {
+							nav->selectNearestNode();
+						}
+						// else do basic click
+						else {
+							if ( kht->isClick ) {
+								mouse->releasePressMouse( Qt::LeftButton );
+							}
+							else {
+								mouse->clickPressMouse( Qt::LeftButton );
+							}
+						}
+					}
 				}
 			}
 			//}

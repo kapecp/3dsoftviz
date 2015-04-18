@@ -19,7 +19,6 @@ Kinect::KinectHandTracker::KinectHandTracker( openni::Device* device, openni::Vi
 	mouse = new Vwr::MouseControl();
 	mDepth=m_depth;
 	viewer = AppCore::Core::getInstance()->getCoreWindow()->GetViewerQt();
-	nav = new Vwr::GraphNavigation();
 }
 
 
@@ -39,6 +38,7 @@ void Kinect::KinectHandTracker::setSpeedMovement( double set )
 
 void Kinect::KinectHandTracker::getAllGestures()
 {
+	isGestureClick = false;
 	// get frame - depth data
 	this->m_pHandTracker.readFrame( &this->handTrackerFrame );
 
@@ -53,14 +53,12 @@ void Kinect::KinectHandTracker::getAllGestures()
 				if ( isClick ) {
 					isClick=false;
 					printf( "Release\n" );
-					mouse->releasePressMouse( Qt::LeftButton );
 				}
 				else {
 					isClick=true;
 					printf( "Click\n" );
-					mouse->clickPressMouse( Qt::LeftButton );
 				}
-				nav->selectNearestNode();
+				isGestureClick = true;
 			}
 			const nite::Point3f& position = gestures[i].getCurrentPosition();
 			printf( "Gesture %d at (%f,%f,%f)\n", gestures[i].getType(), position.x, position.y, position.z );

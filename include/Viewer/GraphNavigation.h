@@ -22,14 +22,17 @@ public:
 	void clear();
 	void navigate();
 	void selectNearestNode();
+	void removeLastSelectedNode();
 
+	bool isNavEnabled;
 private:
 
 	void setColorConectedNodes( Data::Node* selectedNode );
 	void restoreColorConectedNodes( Data::Node* selectedNode );
 	void setColorNearestNode( Data::Node* selectedNode );
-
-
+	osg::Vec3f getMouseScreenCoordinates( );
+	osg::Vec3f getNodeScreenCoordinates( Data::Node* node );
+	double getDistance( osg::Vec3f mouse, osg::Vec3f node );
 	/**
 	 * @brief viewer
 	 */
