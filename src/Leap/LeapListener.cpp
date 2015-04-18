@@ -1,4 +1,5 @@
 #include "Leap/LeapListener.h"
+#include "Leap/DirectionDetector.h"
 
 void Leap::LeapListener::onInit(const Controller& controller)
 {
@@ -14,6 +15,7 @@ void Leap::LeapListener::onConnect(const Controller& controller)
   controller.enableGesture(Gesture::TYPE_SWIPE);
 
   controller.config().setFloat("Gesture.Swipe.MinLength",60.0f);
+  controller.config().setFloat("Gesture.Circle.MinArc", 6.28);
   controller.config().save();
 }
 
@@ -30,16 +32,24 @@ void Leap::LeapListener::onExit(const Controller& controller)
 void Leap::LeapListener::onFrame(const Controller& controller)
 {
     Frame frame = controller.frame();
-    //HandList hands = frame.hands();
-    //std::cout << "id: " << frame.id();
+    HandList hands = frame.hands();
 
+    Leap::DirectionDetector::Direction direction;
+    for(int i=0;i<frame.hands().count();i++){
+        if(hands[i].isRight()){
+            direction = Leap::DirectionDetector::getDirection(hands[i]);
+            leapActions.changeViewAngle(direction);
+        }
+    }
+
+    //std::cout << "id: " << frame.id();
+/*
     const GestureList gestures = frame.gestures();
       for (int g = 0; g < gestures.count(); ++g) {
         Gesture gesture = gestures[g];
 
         HandList hands = gesture.hands();
         Hand firstHand = hands[0];
-
 
         switch (gesture.type()) {
           case Gesture::TYPE_CIRCLE:
@@ -49,10 +59,12 @@ void Leap::LeapListener::onFrame(const Controller& controller)
           }
           case Gesture::TYPE_SWIPE:
           {
-            if(leapActions.isCameraMoving)
-                leapActions.moveCamera(gesture);
-            else
-              leapActions.rotateGraph(gesture);
+            if(firstHand.isRight()){
+                if(leapActions.isCameraMoving)
+                    leapActions.moveCamera(gesture);
+                else
+                  leapActions.rotateGraph(gesture);
+            }
             break;
           }
           case Gesture::TYPE_KEY_TAP:
@@ -70,7 +82,9 @@ void Leap::LeapListener::onFrame(const Controller& controller)
             qDebug() << "Unknown gesture type.";
             break;
         }
-      }
+      }*/
+
+
 }
 
 void Leap::LeapListener::onFocusGained(const Controller& controller)

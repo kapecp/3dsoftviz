@@ -1345,6 +1345,7 @@ void Vwr::CameraManipulator::resetProjectionMatrixToDefault()
 }
 // Duransky end - Resetovanie projekcnej matice pri vypnuti vertigo modu
 
+// pridame funkciu setSpeed, ktoru budeme volat na zaklade druhej ruky (pocet vystretych prstov napr)
 void Vwr::CameraManipulator::enableCameraMovement(Vwr::CameraManipulator::Movement movement){
     switch(movement){
         case Vwr::CameraManipulator::Movement::RIGHT :
@@ -1372,6 +1373,20 @@ void Vwr::CameraManipulator::enableCameraMovement(Vwr::CameraManipulator::Moveme
         {
             verticalSpeed = 2 * maxSpeed;;
             decelerateVerticalRate = false;
+            break;
+        }
+
+        case Vwr::CameraManipulator::Movement::FORWARD :
+        {
+            forwardSpeed = -2 * maxSpeed;
+            decelerateForwardRate = false;
+            break;
+        }
+
+        case Vwr::CameraManipulator::Movement::BACKWARD :
+        {
+            forwardSpeed = 2 * maxSpeed;
+            decelerateForwardRate = false;
             break;
         }
 

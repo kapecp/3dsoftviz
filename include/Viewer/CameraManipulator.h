@@ -57,7 +57,7 @@ public:
      * @brief Enum used to define what direction of movement we are using for camera movement
      */
     enum Movement{
-        RIGHT, LEFT, UP, DOWN
+        RIGHT, LEFT, UP, DOWN, FORWARD, BACKWARD
     };
 
     /**

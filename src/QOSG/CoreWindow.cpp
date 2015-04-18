@@ -953,6 +953,10 @@ QWidget* CoreWindow::createMoreFeaturesTab( QFrame* line )
     b_start_leap->setMaximumWidth( 136 );
     lMore->addRow( b_start_leap );
     connect( b_start_leap, SIGNAL( clicked() ), this, SLOT( startLeap() ) );
+
+    lb_leap_camera_move = new QLabel( tr( "Moving camera" ) );
+    lb_leap_camera_move->setMaximumWidth( 136 );
+    lMore->addRow( lb_leap_camera_move );
 #endif
 
 #ifdef SPEECHSDK_FOUND

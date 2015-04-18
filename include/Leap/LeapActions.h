@@ -2,7 +2,7 @@
 #define LEAPACTIONS_H
 #include "Leap.h"
 #include "math.h"
-
+#include "Leap/DirectionDetector.h"
 #include "Viewer/MouseControl.h"
 #include "Viewer/CameraManipulator.h"
 
@@ -46,6 +46,8 @@ class LeapActions
     // The names should correspond to the functionality provided by the method i.e. moveGraph();
     void Leap::LeapActions::onKeyTap(Gesture gesture);
     void Leap::LeapActions::onScreenTap(Gesture gesture);
+
+    void Leap::LeapActions::changeViewAngle(Leap::DirectionDetector::Direction direction);
 
     /**
      * @brief isCameraMoving is variable to decide whether to move camera or rotate graph
