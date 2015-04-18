@@ -21,21 +21,24 @@ body {
 }
 
 .single-loc-container .custom-legend {
-	width: 180px;
+	width: 220px;
 	margin: 0 auto;
 }
 
-.single-loc-container .custom-legend span {
-	padding: 3px;
-	margin: 3px;
-	line-height: 30px;
-	border-radius: 5px;
-	font-size: 18px;
+.single-loc-container .custom-legend span.item {
+	margin-left: 15px;
+	white-space: nowrap;
 }
 
-.single-loc-container .doughnut-legend li span {
-	width: 30px;
-	height: 30px;
+.single-loc-container .custom-legend span.marker {
+	display: inline-block;
+	width: 16px;
+	height: 16px;
+	border-radius: 5px
+}
+
+.single-loc-container .custom-legend span.text {
+	font-size: 16px;
 }
 
 /* Animation end */

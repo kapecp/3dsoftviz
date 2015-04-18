@@ -15,8 +15,11 @@
 
         <!-- Custom legend -->
         <div class="text-center custom-legend">
-            <span ng-repeat="label in vm.chart.labels" ng-style="{'background-color': vm.chart.colours[$index]}">
-                {{label}} {{vm.chart.data[$index]}}
+            <span class="item" ng-repeat="label in vm.chart.labels" >
+                <span class="marker" ng-style="{'background-color': vm.chart.colours[$index]}"></span> <span class="text">{{label}}: {{vm.chart.data[$index]}}</span>
+
+                <!-- Add line break after each 2 items -->
+                <br ng-if="$index % 2 == 1" />
             </span>
         </div>
     </div>
