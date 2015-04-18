@@ -1,30 +1,48 @@
-.page-header {
-    text-align: center;
+body {
+	padding: 10px;
 }
 
-.figures {
-    text-align: center;
+.single-loc-container {
+	position: relative;
 }
 
-figure {
-    display: inline-block;
-    vertical-align: top;
-    text-align: left;
+.single-loc-container .centered {
+	height: 250px;
+	margin: auto;
+	position: absolute;
+	top: 0;
+	left: 0;
+	bottom: 0;
+	right: 0;
+
+	/* Fade in animation start */
+	transition: 1s linear all;
+	opacity: 0;
 }
 
-figure figcaption {
-    text-align: center;
+.single-loc-container .custom-legend {
+	width: 180px;
+	margin: 0 auto;
 }
 
-.legend span {
-    margin-right: 10px
+.single-loc-container .custom-legend span {
+	padding: 3px;
+	margin: 3px;
+	line-height: 30px;
+	border-radius: 5px;
+	font-size: 18px;
 }
 
-.legend ul, .legend li {
-    margin: 0;
-    padding: 0;
+.single-loc-container .doughnut-legend li span {
+	width: 30px;
+	height: 30px;
 }
 
-.legend ul li {
-    list-style-type: none;
+/* Animation end */
+.single-loc-container .centered.fadein {
+	opacity: 1;
+}
+
+.single-loc-container .centered .breadcrumb {
+	background-color: transparent;
 }

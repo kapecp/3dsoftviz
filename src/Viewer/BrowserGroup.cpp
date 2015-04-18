@@ -147,7 +147,6 @@ void BrowserGroup::addBrowser(const std::string &templateType, osg::Vec3 positio
 
 	// Create webView
 	osg::ref_ptr<OsgQtBrowser::QWebViewImage> webView = new OsgQtBrowser::QWebViewImage();
-	webView->showTemplate("metrics_template", models, templateType);
 
 	// Add it to browser
 	osgWidget::GeometryHints hints( osg::Vec3( 0.0f,0.0f,0.0f ),
@@ -173,6 +172,9 @@ void BrowserGroup::addBrowser(const std::string &templateType, osg::Vec3 positio
 
 	// Remember transform
 	this->browsersTransforms->append( transform );
+
+	// Display template in webview
+	webView->showTemplate("metrics_template", models, templateType);
 }
 
 void BrowserGroup::clearBrowsers()

@@ -1,6 +1,23 @@
-<h1>{{model.test}}</h1>
+<div class="single-loc-container">
+    <canvas class="chart chart-doughnut" data-data="vm.chart.data" data-options="vm.chart.options"
+            data-labels="vm.chart.labels" width="800" height="590"></canvas>
 
-<canvas id="line" class="chart chart-line" data="data"
-        labels="labels" legend="true" series="series"
-        click="onClick">
-</canvas>
+    <div class="centered" ng-class="{'fadein' : true}">
+        <h2 class="text-center">Lines of code</h2>
+
+        <h3 class="text-center">{{vm.model.name}} <span class="text-muted">({{vm.model.type}})</span></h3>
+
+        <h4 class="text-center">
+            <ol class="breadcrumb">
+                <li ng-repeat="item in vm.filePath">{{item}}</li>
+            </ol>
+        </h4>
+
+        <!-- Custom legend -->
+        <div class="text-center custom-legend">
+            <span ng-repeat="label in vm.chart.labels" ng-style="{'background-color': vm.chart.colours[$index]}">
+                {{label}} {{vm.chart.data[$index]}}
+            </span>
+        </div>
+    </div>
+</div>

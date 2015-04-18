@@ -1,0 +1,320 @@
+<!-- Manually saved generated template for template debug in browser-->
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <!-- CSS Dependencies -->
+    <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="bower_components/angular-chart.js/dist/angular-chart.css">
+
+    <!-- Custom CSS Styles -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body ng-app="app">
+<div ui-view></div>
+
+<!-- JS Model -->
+<script type="text/javascript">
+    // Lua models converted to js
+    // Add another data conversion here
+    var models = {
+        '3': {
+            'colorA': '1',
+            'size': '100',
+            'metrics': {
+                'halstead': {
+                    'unique_operands': '4',
+                    'DIF': '11',
+                    'LTH': '23',
+                    'unique_operators': '11',
+                    'time': '54.913517816053',
+                    'VOL': '89.858483698996',
+                    'operators': {
+                        ')': '2',
+                        '-': '1',
+                        '==': '1',
+                        'else': '1',
+                        'then': '1',
+                        '*': '1',
+                        'return': '2',
+                        'if': '1',
+                        '(': '2',
+                        'end': '2',
+                        'function': '1',
+                    },
+                    'BUG': '0.029952827899665',
+                    'number_of_operands': '8',
+                    'number_of_operators': '15',
+                    'operands': {
+                        'n': '4',
+                        'fact(n-1)': '1',
+                        '1': '2',
+                        '0': '1',
+                    }
+                    ,
+                    'VOC': '15',
+                    'EFF': '988.44332068896',
+                },
+                'LOC': {
+                    'lines_blank': '0',
+                    'lines_comment': '0',
+                    'lines_code': '5',
+                    'lines': '5',
+                    'lines_nonempty': '5',
+                },
+                'cyclomatic': {
+                    'upperBound_all': '2',
+                    'upperBound': '2',
+                    'lowerBound_all': '2',
+                    'decisions_all': '1',
+                    'conditions': '1',
+                    'lowerBound': '2',
+                    'conditions_all': '1',
+                    'decisions': '1',
+                },
+                'infoflow': {
+                    'interface_complexity': '1',
+                    'arguments_out': '0',
+                    'arguments_in': '1',
+                    'information_flow': '0',
+                },
+            },
+            'modulePath': '/Users/Glogo/Documents/School/DP/3dsoftviz/_install/3DSoftviz.app/Contents/MacOS/factorial test/factorial.lua',
+            'type': 'function',
+            'colorB': '0',
+            'colorG': 'nan',
+            'colorR': 'nan',
+            'name': 'fact',
+            'origid': 'N3',
+        },
+        '164': {
+            'colorA': '1',
+            'size': '63.627906976744',
+            'metrics': {
+                'halstead': {
+                    'unique_operands': '33',
+                    'DIF': '28.575757575758',
+                    'LTH': '189',
+                    'unique_operators': '23',
+                    'time': '1742.4704472956',
+                    'VOL': '1097.5900802689',
+                    'operators': {
+                        'and': '3',
+                        'elseif': '3',
+                        'else': '1',
+                        '=': '11',
+                        'local': '2',
+                        'not': '2',
+                        'if': '2',
+                        'return': '1',
+                        '(': '15',
+                        ')': '15',
+                        'for': '1',
+                        'do': '1',
+                        '==': '4',
+                        '..': '15',
+                        '.': '3',
+                        '+': '1',
+                        'then': '5',
+                        'or': '5',
+                        'in': '1',
+                        'true': '1',
+                        'function': '1',
+                        'end': '4',
+                        ',': '10',
+                    },
+                    'BUG': '0.36586336008963',
+                    'number_of_operands': '82',
+                    'number_of_operators': '107',
+                    'operands': {
+                        '""': '2',
+                        '"boolean"': '1',
+                        'pairs(val)': '1',
+                        '"\n"': '2',
+                        '"table"': '1',
+                        '(not skipnewlines and "\n" or "")': '2',
+                        'string.format("%q", val)': '1',
+                        '"%q"': '1',
+                        'type(val)': '5',
+                        '"\"[inserializeable datatype:"': '1',
+                        'val': '10',
+                        'tostring(val)': '1',
+                        'v': '2',
+                        '"number"': '1',
+                        'string.rep(" ", depth)': '2',
+                        '","': '1',
+                        '0': '1',
+                        '"true"': '1',
+                        'skipnewlines': '6',
+                        '1': '1',
+                        'serializeTable(v, k, skipnewlines, depth + 1)': '1',
+                        '" "': '2',
+                        '(val and "true" or "false")': '1',
+                        'depth': '6',
+                        '" = "': '1',
+                        'tmp': '18',
+                        '"string"': '1',
+                        '"]\""': '1',
+                        '"{"': '1',
+                        'k': '2',
+                        '"false"': '1',
+                        'name': '3',
+                        '"}"': '1',
+                    },
+                    'VOC': '56',
+                    'EFF': '31364.46805132',
+                },
+                'LOC': {
+                    'lines_blank': '6',
+                    'lines_comment': '1',
+                    'lines_code': '20',
+                    'lines': '27',
+                    'lines_nonempty': '21',
+                },
+                'cyclomatic': {
+                    'upperBound_all': '7',
+                    'upperBound': '7',
+                    'lowerBound_all': '7',
+                    'decisions_all': '6',
+                    'conditions': '6',
+                    'lowerBound': '7',
+                    'conditions_all': '6',
+                    'decisions': '6',
+                }
+                ,
+                'infoflow': {
+                    'interface_complexity': '5',
+                    'arguments_out': '1',
+                    'arguments_in': '4',
+                    'information_flow': '0',
+                },
+            },
+            'modulePath': '/Users/Glogo/Documents/School/DP/3dsoftviz/_install/3DSoftviz.app/Contents/share/3DSOFTVIZ/scripts/luadb/utils.lua',
+            'type': 'function',
+            'colorB': '0',
+            'colorG': '0.33333333333333',
+            'colorR': '0.66666666666667',
+            'name': 'serializeTable',
+            'origid': 'N164',
+        },
+        '81': {
+            'colorA': '1',
+            'size': '80.744186046512',
+            'metrics': {
+                'halstead': {
+                    'unique_operands': '32',
+                    'DIF': '15.9375',
+                    'LTH': '176',
+                    'unique_operators': '17',
+                    'time': '874.95895070795',
+                    'VOL': '988.18893256428',
+                    'operators': {
+                        '.': '27',
+                        '[': '4',
+                        '=': '18',
+                        'local': '7',
+                        'not': '2',
+                        'then': '2',
+                        '{': '5',
+                        ']': '4',
+                        ')': '11',
+                        'or': '5',
+                        '}': '5',
+                        '(': '11',
+                        ',': '4',
+                        'end': '3',
+                        'function': '1',
+                        ':': '5',
+                        'if': '2',
+                    },
+                    'BUG': '0.32939631085476',
+                    'number_of_operands': '60',
+                    'number_of_operators': '116',
+                    'operands': {
+                        '"FunctionDeclaration"': '1',
+                        'getFunctionWithName(moduleNode.functionNodes, moduleFunctionCall)': '1',
+                        'newGlobalModuleNode.meta': '2',
+                        'hypergraph.node.new()': '2',
+                        'newFunctionNode': '4',
+                        'newFunctionNode.meta': '2',
+                        'newGlobalModuleNode.functionNodes': '2',
+                        'graph.globalModuleNodes': '3',
+                        'globalModuleNodes': '3',
+                        '"globalModule"': '1',
+                        'connection.label': '1',
+                        'newGlobalModuleNode.data.name': '1',
+                        'newGlobalModuleNode': '3',
+                        'graph:addNode(newFunctionNode)': '1',
+                        'connection:addTarget(functionNode)': '1',
+                        'newFunctionNode.data.type': '1',
+                        'moduleNode': '1',
+                        'functionNode': '4',
+                        'newFunctionNode.data.name': '1',
+                        'connection': '2',
+                        'moduleNode.functionNodes': '2',
+                        '"globalFunction"': '1',
+                        'globalModuleNodes[moduleName]': '4',
+                        'moduleFunctionCall': '3',
+                        'hypergraph.edge.new()': '1',
+                        'graph:addEdge(connection)': '1',
+                        'graph': '1',
+                        'moduleName': '6',
+                        'graph:addNode(newGlobalModuleNode)': '1',
+                        'table.insert(moduleNode.functionNodes, newFunctionNode)': '1',
+                        'newGlobalModuleNode.data.type': '1',
+                        'connection:addSource(globalModuleNodes[moduleName])': '1',
+                    },
+                    'VOC': '49',
+                    'EFF': '15749.261112743',
+                },
+                'LOC': {
+                    'lines_blank': '4',
+                    'lines_comment': '3',
+                    'lines_code': '28',
+                    'lines': '35',
+                    'lines_nonempty': '31',
+                },
+                'cyclomatic': {
+                    'upperBound_all': '3',
+                    'upperBound': '3',
+                    'lowerBound_all': '3',
+                    'decisions_all': '2',
+                    'conditions': '2',
+                    'lowerBound': '3',
+                    'conditions_all': '2',
+                    'decisions': '2',
+                },
+                'infoflow': {
+                    'interface_complexity': '3',
+                    'arguments_out': '0',
+                    'arguments_in': '3',
+                    'information_flow': '0',
+                },
+            },
+            'modulePath': '/Users/Glogo/Documents/School/DP/3dsoftviz/_install/3DSoftviz.app/Contents/share/3DSOFTVIZ/scripts/luadb/extraction/extractor.lua',
+            'type': 'function',
+            'colorB': '0',
+            'colorG': '0.77777777777778',
+            'colorR': '0.22222222222222',
+            'name': 'registerGlobalModule',
+            'origid': 'N81',
+        }
+    };
+</script>
+
+<!-- JS Dependencies -->
+<script src="bower_components/jquery/dist/jquery.min.js"></script>
+<script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="bower_components/Chart.js/Chart.min.js"></script>
+<script src="bower_components/angular/angular.min.js"></script>
+<script src="bower_components/angular-ui-router/release/angular-ui-router.min.js"></script>
+<script src="bower_components/angular-chart.js/dist/angular-chart.min.js"></script>
+
+<!-- JS Sources -->
+<script src="src/app.js"></script>
+<script src="src/services/Service.js"></script>
+<script src="src/controllers/SingleController.js"></script>
+<script src="src/controllers/MultiController.js"></script>
+</body>
+</html> 

@@ -1,11 +1,11 @@
 (function () {
     angular
         .module('app')
-        .controller('MultiController', ['$scope', MultiController]);
+        .controller('MultiController', ['$scope', '$window', MultiController]);
 
-    function MultiController($scope) {
-        $scope.model = {
+    function MultiController($scope, $window) {
+        $scope.vm = {
             test: "MULTI controller"
         };
     }
-})()
+})();

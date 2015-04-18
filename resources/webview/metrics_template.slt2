@@ -1,27 +1,33 @@
+<!DOCTYPE html>
 <html>
-    <head>
-        <!-- CSS Dependencies -->
-        <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
-        <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap-theme.min.css">
-        <link rel="stylesheet" href="bower_components/angular-chart.js/dist/angular-chart.css">
-    </head>
-    <body ng-app="app">
-        <div ui-view></div>
+<head lang="en">
+    <meta charset="UTF-8">
+    <!-- CSS Dependencies -->
+    <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="bower_components/angular-chart.js/dist/angular-chart.css">
 
-        <!-- JS Model -->
-        #{include: '../share/3DSOFTVIZ/webview/data.slt2'}#
+    <!-- Custom CSS Styles -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body ng-app="app">
+<div ui-view></div>
 
-        <!-- JS Dependencies -->
-        <script src="bower_components/jquery/dist/jquery.min.js"></script>
-        <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
-        <script src="bower_components/Chart.js/Chart.min.js"></script>
-        <script src="bower_components/angular/angular.min.js"></script>
-        <script src="bower_components/angular-ui-router/release/angular-ui-router.min.js"></script>
-        <script src="bower_components/angular-chart.js/dist/angular-chart.min.js"></script>
+<!-- JS Model -->
+#{include: '../share/3DSOFTVIZ/webview/data.slt2'}#
 
-        <!-- JS Sources -->
-        <script src="src/app.js"></script>
-        <script src="src/controllers/SingleController.js"></script>
-        <script src="src/controllers/MultiController.js"></script>
-    </body>
+<!-- JS Dependencies -->
+<script src="bower_components/jquery/dist/jquery.min.js"></script>
+<script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="bower_components/Chart.js/Chart.min.js"></script>
+<script src="bower_components/angular/angular.min.js"></script>
+<script src="bower_components/angular-ui-router/release/angular-ui-router.min.js"></script>
+<script src="bower_components/angular-chart.js/dist/angular-chart.min.js"></script>
+
+<!-- JS Sources -->
+<script src="src/app.js"></script>
+<script src="src/services/Service.js"></script>
+<script src="src/controllers/SingleController.js"></script>
+<script src="src/controllers/MultiController.js"></script>
+</body>
 </html>

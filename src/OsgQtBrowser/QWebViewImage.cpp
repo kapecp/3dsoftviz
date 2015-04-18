@@ -51,7 +51,7 @@ void QWebViewImage::showTemplate( const std::string &templateName, Diluculum::Lu
 
 	// Call slt2 renderer
 	std::string html = lua->callFunction(2, renderer, params)[0].asString();
-	qDebug() << html.c_str();
+	// qDebug() << html.c_str();
 
 	// Create relative webview dir url
 	QString appPath = QCoreApplication::applicationDirPath();
