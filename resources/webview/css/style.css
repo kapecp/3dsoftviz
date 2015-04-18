@@ -49,3 +49,16 @@ body {
 .single-loc-container .centered .breadcrumb {
 	background-color: transparent;
 }
+
+.multi-container ul {
+	font-size: 18px;
+}
+
+.multi-container ul li {
+	padding-left: 32px;
+}
+
+.multi-container ul li span {
+	width: 25px;
+	height: 25px;
+}
