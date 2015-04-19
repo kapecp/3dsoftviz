@@ -1,5 +1,6 @@
 #include "Leap/LeapListener.h"
 #include "Leap/DirectionDetector.h"
+#include "Leap/FingerPositionDetector.h"
 
 void Leap::LeapListener::onInit(const Controller& controller)
 {
@@ -33,12 +34,22 @@ void Leap::LeapListener::onFrame(const Controller& controller)
 {
     Frame frame = controller.frame();
     HandList hands = frame.hands();
-
     Leap::DirectionDetector::Direction direction;
+    bool handExtended;
+
+
     for(int i=0;i<frame.hands().count();i++){
         if(hands[i].isRight()){
             direction = Leap::DirectionDetector::getDirection(hands[i]);
             leapActions.changeViewAngle(direction);
+        }else{
+            handExtended = Leap::FingerPositionDetector::isHandExtended(hands[i]);
+            if(handExtended){
+                leapActions.startMovingForward();
+            }
+            else{
+                leapActions.stopMovingForward();
+            }
         }
     }
 

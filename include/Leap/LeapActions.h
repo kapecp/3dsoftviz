@@ -49,6 +49,9 @@ class LeapActions
 
     void Leap::LeapActions::changeViewAngle(Leap::DirectionDetector::Direction direction);
 
+    void Leap::LeapActions::startMovingForward();
+    void Leap::LeapActions::stopMovingForward();
+
     /**
      * @brief isCameraMoving is variable to decide whether to move camera or rotate graph
      */

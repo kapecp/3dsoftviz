@@ -62,7 +62,6 @@ void Leap::LeapActions::moveCamera(Gesture gesture)
 void Leap::LeapActions::zoomGraph(Gesture gesture)
 {
     CircleGesture circle = gesture;
-    float gestureDuration = gesture.duration()/1000;
 
     if (circle.pointable().direction().angleTo(circle.normal()) <= PI/2){
         qDebug() << "[onFrame()::CircleGesture - clockwise]";
@@ -152,4 +151,12 @@ void Leap::LeapActions::changeViewAngle(Leap::DirectionDetector::Direction direc
         break;
     }
 
+}
+
+void Leap::LeapActions::startMovingForward(){
+   cmrManipulator->enableCameraMovement(Vwr::CameraManipulator::FORWARD);
+}
+
+void Leap::LeapActions::stopMovingForward(){
+   cmrManipulator->disableCameraMovement();
 }

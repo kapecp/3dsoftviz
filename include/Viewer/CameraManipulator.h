@@ -252,6 +252,8 @@ public:
     osg::Vec3d getCameraPosition();
 
     void rotateCamera(float py0, float px0, double throwScale, float py1, float px1);
+    bool getDecelerateForwardRate() const;
+
 signals:
 
     /**

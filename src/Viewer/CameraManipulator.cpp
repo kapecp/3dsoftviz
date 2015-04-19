@@ -308,6 +308,11 @@ bool Vwr::CameraManipulator::isMouseMoving()
 
     return ( len>dt*velocity );
 }
+bool CameraManipulator::getDecelerateForwardRate() const
+{
+    return decelerateForwardRate;
+}
+
 
 
 void Vwr::CameraManipulator::flushMouseEventStack()
