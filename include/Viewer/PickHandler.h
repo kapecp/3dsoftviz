@@ -305,6 +305,18 @@ private:
 	QLinkedList<osg::ref_ptr<Data::Edge> > pickedEdges;
 
 	/**
+		*  QLinkedList<osg::ref_ptr<Data::Edge> > pickedNeighborsNodes
+		*  \brief picked neighbors nodes list
+		*/
+	QLinkedList<osg::ref_ptr<Data::Node> > pickedNeighborsNodes;
+
+	/**
+		*  QLinkedList<osg::ref_ptr<Data::Edge> > pickedNeighborsEdges
+		*  \brief picked neighbors edges list
+		*/
+	QLinkedList<osg::ref_ptr<Data::Edge> > pickedNeighborsEdges;
+
+	/**
 		*  osg::ref_ptr group
 		*  \brief custom node group
 		*/
@@ -347,6 +359,11 @@ private:
 		*/
 	bool isManipulatingNodes;
 
+	/**
+		*  bool isNeighborsSelection
+		*  \brief true, if are Neighbors selected
+		*/
+	bool isNeighborsSelection;
 
 	/**
 		*  osg::ref_ptr<osg::Geode> selectionQuad
@@ -382,6 +399,13 @@ private:
 	bool doEdgePick( osg::NodePath nodePath, unsigned int primitiveIndex );
 
 	bool doClusterPick( osg::NodePath nodePath );
+
+	/**
+		*  \fn private  selectAllNeighbors(QLinkedList<osg::ref_ptr<Data::Node>> nodes)
+		*  \brief Select all neighbors edges and theirs nodes of nodes collection in parameter
+		*  \param     nodes   nodes for neighbors selection
+		*/
+	void selectAllNeighbors(QLinkedList<osg::ref_ptr<Data::Node>> nodes);
 
 	/**
 		*  \fn private  dragNode(osgViewer::Viewer * viewer)

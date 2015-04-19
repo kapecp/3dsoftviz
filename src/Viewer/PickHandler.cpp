@@ -58,6 +58,7 @@ PickHandler::PickHandler( Vwr::CameraManipulator* cameraManipulator, Vwr::CoreGr
 	pickMode = PickMode::NONE;
 	selectionType = SelectionType::ALL;
 	selectionObserver = NULL;
+	isNeighborsSelection = false;
 }
 
 bool PickHandler::handle( const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& aa )
@@ -271,6 +272,9 @@ bool PickHandler::handleKeyDown( const osgGA::GUIEventAdapter& ea, GUIActionAdap
 	}
 	else if ( ea.getKey() == osgGA::GUIEventAdapter::KEY_Z ) {
 		isZPressed = true;
+	}
+	else if ( ea.getKey() == osgGA::GUIEventAdapter::KEY_N ) {
+		this->selectAllNeighbors(this->pickedNodes);	
 	}
 
 	// FULLSCREEN
@@ -722,6 +726,51 @@ bool PickHandler::doClusterPick( osg::NodePath nodePath )
 
 	return false;
 
+}
+
+void PickHandler::selectAllNeighbors(QLinkedList<osg::ref_ptr<Data::Node>> nodes){	
+	if(nodes.count() > 0 && !isNeighborsSelection){
+		QLinkedList<osg::ref_ptr<Data::Node> >::const_iterator i = nodes.constBegin();
+		while ( i != nodes.constEnd() ) {
+			QMap< qlonglong,osg::ref_ptr<Data::Edge> >::const_iterator iedge = ( *i )->getEdges()->constBegin();
+
+			while ( iedge != ( *i )->getEdges()->constEnd() ) {
+				(*iedge)->setEdgeColor(osg::Vec4(1, 1, 0, 1));
+				 pickedNeighborsEdges.append(*iedge);
+
+				// select as neighbors (yellow color) only nodes which are different from our selected nodes
+				if(!nodes.contains((*iedge)->getSrcNode())){
+					(*iedge)->getSrcNode()->setColor(osg::Vec4(1, 1, 0, 1));		
+					pickedNeighborsNodes.append((*iedge)->getSrcNode());
+				}
+				if(!nodes.contains((*iedge)->getDstNode())){		
+					(*iedge)->getDstNode()->setColor(osg::Vec4(1, 1, 0, 1));	
+					pickedNeighborsNodes.append((*iedge)->getDstNode());
+				}
+				++iedge;
+			}
+			++i;
+		}
+		isNeighborsSelection = true;
+	}
+	else{
+		if(pickedNeighborsNodes.count() > 0 || pickedNeighborsEdges.count() > 0){
+			QLinkedList<osg::ref_ptr<Data::Node> >::const_iterator n = pickedNeighborsNodes.constBegin();
+			while ( n != pickedNeighborsNodes.constEnd() ) {
+				(*n)->setDefaultColor();
+				++n;
+			}
+			pickedNeighborsNodes.clear();
+
+			QLinkedList<osg::ref_ptr<Data::Edge> >::const_iterator e = pickedNeighborsEdges.constBegin();
+			while ( e != pickedNeighborsEdges.constEnd() ) {
+				(*e)->setEdgeDefaultColor();
+				++e;
+			}
+			pickedNeighborsEdges.clear();
+		}
+		isNeighborsSelection = false;
+	}
 }
 
 bool PickHandler::dragNode( osgViewer::Viewer* viewer )

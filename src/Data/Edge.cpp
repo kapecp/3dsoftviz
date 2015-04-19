@@ -191,6 +191,15 @@ void Data::Edge::setEdgeStrength( float value )
 	edgeStrength = value;
 }
 
+void Data::Edge::setEdgeDefaultColor()
+{
+	float r = type->getSettings()->value( "color.R" ).toFloat();
+	float g = type->getSettings()->value( "color.G" ).toFloat();
+	float b = type->getSettings()->value( "color.B" ).toFloat();
+	float a = type->getSettings()->value( "color.A" ).toFloat();
+
+	this->setEdgeColor( osg::Vec4( r, g, b, a ) );
+}
 
 osg::ref_ptr<Data::Node> Data::Edge::getSecondNode( osg::ref_ptr<Data::Node> firstNode )
 {

@@ -287,6 +287,12 @@ public:
 		edgeColor = val;
 	}
 
+	/**
+		*  \fn inline public  setEdgeDefaultColor()
+		*  \brief Sets the default edge color
+		*  \param     val   new color
+		*/
+	void setEdgeDefaultColor();
 
 	/**
 		*  \fn inline public constant  getEdgeTexCoords
