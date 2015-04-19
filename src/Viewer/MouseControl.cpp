@@ -27,6 +27,7 @@ Vwr::MouseControl::MouseControl()
 	}
 
 	mIsClicAruco = false;
+	mouseHistory = new QList< osg::Vec2 >;
 }
 
 Vwr::MouseControl::~MouseControl()
@@ -126,7 +127,10 @@ void Vwr::MouseControl::moveCursorWorldCoordinates( double positionX, double pos
 {
 	int newPositionX= static_cast<int>( positionX*mRatioX*mSpeedMoving );
 	int newPositionY= static_cast<int>( positionY*mRatioY*mSpeedMoving );
-	viewer->cursor().setPos( newPositionX,newPositionY );
+	// get avg position from history buffer // smoother moving
+	osg::Vec2 newPos = getMouseAvgPosition( osg::Vec2( newPositionX, newPositionY ), 10 );
+
+	viewer->cursor().setPos( newPos[0],newPos[1] );
 	if ( isClick ) {
 		this->corectionMousePosition( viewer->cursor().pos().x(),viewer->cursor().pos().y() );
 		this->moveMouse( clickX,clickY );
@@ -137,4 +141,26 @@ void Vwr::MouseControl::moveCursorWorldCoordinates( double positionX, double pos
 void Vwr::MouseControl::setSpeedUpMoving( double speed )
 {
 	mSpeedMoving=speed;
+}
+
+osg::Vec2 Vwr::MouseControl::getMouseAvgPosition( osg::Vec2 lastPos, int max )
+{
+	// add last position
+	this->mouseHistory->append( lastPos );
+
+	// while history is larger than max positions, remove oldest
+	while ( this->mouseHistory->size() > max ) {
+		this->mouseHistory->removeFirst();
+	}
+
+	int avgX = 0;
+	int avgY = 0;
+	for ( QList<osg::Vec2>::const_iterator iter = mouseHistory->begin(); iter != mouseHistory->end(); iter++ ) {
+		avgX += ( *iter )[0];
+		avgY += ( *iter )[1];
+	}
+	avgX /= mouseHistory->size();
+	avgY /= mouseHistory->size();
+
+	return osg::Vec2( avgX, avgY );
 }
