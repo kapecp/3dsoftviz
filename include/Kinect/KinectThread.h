@@ -3,6 +3,7 @@
 
 #include <QThread>
 #include <QImage>
+#include <QTimer>
 
 #include "OpenNI.h"
 
@@ -46,7 +47,10 @@ public:
 	void closeActionOpenni();
 
 signals:
-
+	// Marak start
+	void signalTimerStart();
+	void signalTimerStop();
+	// Marak end
 	/**
 	 * @brief send coordinate for controlling graph
 	 * @param x x coordinate of hand
@@ -69,7 +73,15 @@ signals:
 	void pushImageQ( QImage qimage );
 
 public slots:
-
+	// Marak start
+	/**
+	 *	\fn public timerTimeout
+	 *	\brief called when timer for removeLastSelection gesture times out
+	 */
+	void timerStart();
+	void timerStop();
+	void timerTimeout();
+	// Marak end
 	/**
 	 * @brief start funkcionality Kinect thread
 	 * @param set true if start, false for stop
@@ -103,7 +115,9 @@ public slots:
 	void setSpeedKinect( double set );
 
 private:
-
+	// Marak start
+	QTimer* timer;
+	// Marak end
 	/**
 	 * @brief information about status thread
 	 */

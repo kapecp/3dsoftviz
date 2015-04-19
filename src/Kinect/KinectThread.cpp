@@ -19,6 +19,13 @@ Kinect::KinectThread::KinectThread( QObject* parent ) : QThread( parent )
 	isOpen=false;
 	mSetImageEnable=true;
 	isZoomEnable=true;
+
+	// timer setting
+	timer = new QTimer();
+	connect( timer ,SIGNAL( timeout() ), this, SLOT( timerTimeout() ) );
+	connect( this ,SIGNAL( signalTimerStop() ), this, SLOT( timerStop() ) );
+	connect( this ,SIGNAL( signalTimerStart() ), this, SLOT( timerStart() ) );
+
 }
 
 Kinect::KinectThread::~KinectThread( void )
@@ -81,9 +88,26 @@ void Kinect::KinectThread::setSpeedKinect( double set )
 	mSpeed=set;
 }
 
+void Kinect::KinectThread::timerTimeout()
+{
+	timer->stop();
+	printf( "Timer timedout, timer stop\n" );
+}
+void Kinect::KinectThread::timerStart()
+{
+	timer->start( 1000 );
+	printf( "Hand closed, timer start\n" );
+}
+void Kinect::KinectThread::timerStop()
+{
+	timer->stop();
+	printf( "Hand opened, timer stop\n" );
+}
+
 void Kinect::KinectThread::run()
 {
-
+	// flag for timer
+	bool wasTimerReset = true;
 	mCancel=false;
 
 	//real word convector
@@ -118,6 +142,7 @@ void Kinect::KinectThread::run()
 			kht->getAllGestures();
 			kht->getAllHands();
 #endif
+			// start highlighting neighbour nodes
 			nav->navigate();
 			//////////////End/////////////
 
@@ -167,7 +192,6 @@ void Kinect::KinectThread::run()
 					if ( i==0 ) {
 						mainHand = true;
 					}
-
 					// calculate depth frame
 					zoom->calcHandDepthFrame( frame,&m_depth,kht->getArrayHands[i][0], kht->getArrayHands[i][1], kht->handZ[i], mainHand );
 					// calculate num of fingers
@@ -213,14 +237,42 @@ void Kinect::KinectThread::run()
 				}
 				// cursor enabled => move cursor
 				else {
-					// if gesture was click, do mouse click events
-					if ( kht->isGestureClick ) {
-						// if navigation is enabled, do navigation click
-						if ( nav->isNavEnabled ) {
+					// if navigation is enabled, track navigation gestures
+					if ( nav->isNavEnabled ) {
+						// if gesture is click and navigation is enabled, do navigation click
+						if ( kht->isGestureClick ) {
 							nav->selectNearestNode();
 						}
-						// else do basic click
-						else {
+						// gesture for remove last selection require closed hand for less than 1s
+						// if timer is ready
+						else if ( wasTimerReset ) {
+							// if main hand closed and timer inactive, start timer
+							if ( numFingers[0] == 0 ) {
+								emit signalTimerStart();
+								// to prevent restart in cycle
+								wasTimerReset = false;
+							}
+						}
+						// if timer is not ready
+						else if ( !wasTimerReset ) {
+							// if main hand open
+							if ( numFingers[0] > 3 ) {
+								// if timer is active, stop timer and remove last selection
+								if ( timer->isActive() ) {
+									emit signalTimerStop();
+									nav->removeLastSelectedNode();
+								}
+								// gesture has ended, restart timer to enable next gesture
+								else {
+									wasTimerReset = true;
+								}
+							}
+						}
+					}
+					// else do basic mouse gestures
+					else {
+						// if gesture is click, do mouse click
+						if ( kht->isGestureClick ) {
 							if ( kht->isClick ) {
 								mouse->releasePressMouse( Qt::LeftButton );
 							}
