@@ -614,6 +614,12 @@ public:
 	void splitAllEdges( int splitCount );
 
 	/**
+		*  \fn inline public  restoreSplittedEdges
+		*  \brief Restore all splitted edges in graph. Splitted edges are substituted by  original edges.
+		*/
+	void restoreSplittedEdges();
+
+	/**
 		*  \fn inline public  switch2Dand3D()
 		*  \brief Turn graph parts to 3D or 2D.
 		*/

@@ -742,31 +742,43 @@ QList<osg::ref_ptr<Data::Edge> > Data::Graph::splitEdge( QString name, osg::ref_
 void Data::Graph::splitAllEdges( int splitCount )
 {
 	QMap<qlonglong, osg::ref_ptr<Data::Edge> >::iterator iEdge = edges->begin();
+	QList<osg::ref_ptr<Data::Edge> > createdEdgeList;
 
-	//create new edges
-	QList<osg::ref_ptr<Data::Edge> > newEdgeList;
-	while ( iEdge != edges->end() ) {
-		newEdgeList.append( splitEdge( ( *iEdge )->getName(), ( *iEdge )->getSrcNode(), ( *iEdge )->getDstNode(), ( *iEdge )->isOriented(), getNodeSplitterType(), getEdgeMetaType(), splitCount ) );
-		iEdge ++;
-	}
+	Data::Type* nodeType = getNodeSplitterType();
+	Data::Type* edgeType = getEdgeMetaType();
 
-	//delete old edges
-	iEdge = edges->begin();
+	//split edge
 	while ( iEdge != edges->end() ) {
-		removeEdge( *iEdge );
+		QList<osg::ref_ptr<Data::Edge> > edgePieces = splitEdge( ( *iEdge )->getName(), ( *iEdge )->getSrcNode(), ( *iEdge )->getDstNode(), ( *iEdge )->isOriented(), nodeType, edgeType, splitCount ) ;
+		createdEdgeList.append( edgePieces );
+		( *iEdge )->setEdgePieces( edgePieces );
 		iEdge ++;
 	}
 
 	//add new edges
-	QList<osg::ref_ptr<Data::Edge> >::iterator iNewEdge = newEdgeList.begin();
-	while ( iNewEdge != newEdgeList.end() ) {
+	QList<osg::ref_ptr<Data::Edge> >::iterator iNewEdge = createdEdgeList.begin();
+	while ( iNewEdge != createdEdgeList.end() ) {
 		( *iNewEdge )->linkNodes( edges );
-		edgesByType.insert( ( *iNewEdge )->getType()->getId(),( *iNewEdge ) );
+		edgesByType.insert( edgeType->getId(),( *iNewEdge ) );
 		iNewEdge++;
 	}
 }
 
-osg::ref_ptr<Data::Node> Data::Graph::getMultiEdgeNeighbour( osg::ref_ptr<Data::Edge> multiEdge )
+void Data::Graph::restoreSplittedEdges( )
+{
+	Data::Type* nodeType = typesByName->value( Data::GraphLayout::SPLITTER_NODE_TYPE );
+	removeAllNodesOfType( nodeType );
+
+	QMap<qlonglong, osg::ref_ptr<Data::Edge> >::iterator iEdge = edges->begin();
+
+	while ( iEdge != edges->end() ) {
+		( *iEdge )->clearEdgePieces();
+		iEdge++;
+	}
+}
+
+
+osg::ref_ptr<Data::Node> Data   ::Graph::getMultiEdgeNeighbour( osg::ref_ptr<Data::Edge> multiEdge )
 {
 	//zistujeme uzly pospajane multihranou
 	osg::ref_ptr<Data::Node> multiNode = NULL;
@@ -1308,6 +1320,9 @@ void Data::Graph::removeNode( osg::ref_ptr<Data::Node> node )
 			if ( this->types->contains( node->getId() ) ) {
 				this->removeType( this->types->value( node->getId() ) );
 			}
+
+			node->setInvisible( true );
+			//-spravit odstranovanie poriadne
 		}
 	}
 }

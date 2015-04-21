@@ -1951,7 +1951,7 @@ void CoreWindow::setRestriction_Circle( QLinkedList<osg::ref_ptr<Data::Node> >* 
 			}
 			node2 = currentGraph->addRestrictionNode( name_node2, positionNode2 );
 			node3 = currentGraph->addRestrictionNode( name_node3, positionNode3 );
-			node3->setInvisible();
+			node3->setInvisible( true );
 			restrictionNodes.push_back( node1 );
 			restrictionNodes.push_back( node2 );
 			restrictionNodes.push_back( node3 );
@@ -2078,9 +2078,9 @@ void CoreWindow::setRestriction_ConeTree()
 		osg::ref_ptr<Data::Node> node1 = currentGraph->addRestrictionNode( "plane_node_1", positionNode1 );
 		osg::ref_ptr<Data::Node> node2 = currentGraph->addRestrictionNode( "plane_node_2", positionNode2 );
 		osg::ref_ptr<Data::Node> node3 = currentGraph->addRestrictionNode( "plane_node_3", positionNode3 );
-		node1->setInvisible();
-		node2->setInvisible();
-		node3->setInvisible();
+		node1->setInvisible( true );
+		node2->setInvisible( true );
+		node3->setInvisible( true );
 		restrictionNodes.push_back( node1 );
 		restrictionNodes.push_back( node2 );
 		restrictionNodes.push_back( node3 );
@@ -2146,6 +2146,19 @@ void CoreWindow::startEdgeBundling()
 	if ( isEBPlaying ) {
 		layout->stopEdgeBundling();
 		isEBPlaying = false;
+
+		if ( isPlaying ) {
+			play->setIcon( QIcon( "../share/3dsoftviz/img/gui/play.png" ) );
+			isPlaying = 0;
+			layout->pause();
+			coreGraph->setNodesFreezed( true );
+		}
+
+		Data::Graph* currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
+
+		if ( currentGraph != NULL ) {
+			currentGraph->restoreSplittedEdges();
+		}
 	}
 	else {
 		Data::Graph* currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
@@ -2162,17 +2175,17 @@ void CoreWindow::startEdgeBundling()
 			//split edges
 			int splitCount = static_cast<int>( b_EdgeBundling_SpinBox->value() );
 			currentGraph->splitAllEdges( splitCount );
-
-			if ( !isPlaying ) {
-				play->setIcon( QIcon( "../share/3dsoftviz/img/gui/pause.png" ) );
-				isPlaying = 1;
-				coreGraph->setNodesFreezed( false );
-				layout->play();
-			}
-
-			layout->playEdgeBundling();
-			isEBPlaying = true;
 		}
+
+		if ( !isPlaying ) {
+			play->setIcon( QIcon( "../share/3dsoftviz/img/gui/pause.png" ) );
+			isPlaying = 1;
+			coreGraph->setNodesFreezed( false );
+			layout->play();
+		}
+
+		layout->playEdgeBundling();
+		isEBPlaying = true;
 	}
 }
 
@@ -2639,10 +2652,10 @@ void CoreWindow::setRestriction_Cube_Selected()
 		Layout::ShapeGetter_Cube* cube = new Layout::ShapeGetter_Cube( centerNode, surfaceNodeX, surfaceNodeY, surfaceNodeZ );
 
 		// schovaj kocku obmedzovaca a aj nody ktorymi je reprezentovany - pretoze samotny tvar clusteru predstavuje obmedzovac
-		centerNode->setInvisible();
-		surfaceNodeX->setInvisible();
-		surfaceNodeY->setInvisible();
-		surfaceNodeZ->setInvisible();
+		centerNode->setInvisible( true );
+		surfaceNodeX->setInvisible( true );
+		surfaceNodeY->setInvisible( true );
+		surfaceNodeZ->setInvisible( true );
 		cube->setInvisible( true );
 
 		QSharedPointer<Layout::ShapeGetter> shapeGetter = QSharedPointer<Layout::ShapeGetter> ( cube );
@@ -2888,7 +2901,7 @@ void CoreWindow::create_Vertigo_Planes( int numberOfPlanes, int nOfDepthsInOnePl
 		QSetIterator<Data::Node*> i( nodesOfPlane );
 		while ( i.hasNext() ) {
 			Data::Node* node = i.next();
-			node->setInvisible();
+			node->setInvisible( true );
 			// - vyriesit odstranovanie uzlov spravne
 		}
 	}
@@ -3030,7 +3043,7 @@ void CoreWindow::remove_PlanesClick()
 			QSetIterator<Data::Node*> i( nodesOfPlane );
 			while ( i.hasNext() ) {
 				Data::Node* node = i.next();
-				node->setInvisible();
+				node->setInvisible( true );
 				//node->Referenced.deleteUsingDeleteHandler();
 				/*osg::ref_ptr<Data::Node> nodeRefPtr = node;
 				node->setRemovableByUser(true);

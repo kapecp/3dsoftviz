@@ -63,8 +63,8 @@ Data::Node::Node( qlonglong id, QString name, Data::Type* type, float scaling, D
         }
     }
 
-    insertChild( INDEX_SQUARE, createNodeSquare( this->scale * 4, Node::createStateSet( this->type ) ) , !graph->getIs3D() );
-    insertChild( INDEX_SPHERE, createNodeSphere( this->scale * 4, Node::createStateSet( this->type ) ), graph->getIs3D() );
+    insertChild( INDEX_SQUARE, createNodeSquare( this->scale, Node::createStateSet( this->type ) ) , !graph->getIs3D() );
+    insertChild( INDEX_SPHERE, createNodeSphere( this->scale, Node::createStateSet( this->type ) ), graph->getIs3D() );
     insertChild( INDEX_LABEL, createLabel( this->type->getScale(), labelText ) , false );
 
 
@@ -117,19 +117,28 @@ void Data::Node::setIsFocused( bool value )
 
     if ( mIsFocused ) {
         removeChild( INDEX_SQUARE, 1 );
-        this->insertChild( INDEX_SQUARE, createNodeSquare( this->scale * 16, Node::createStateSet( this->type ) ) , !graph->getIs3D() );
+        this->insertChild( INDEX_SQUARE, createNodeSquare( this->scale, Node::createStateSet( this->type ) ) , !graph->getIs3D() );
         removeChild( INDEX_SPHERE, 1 );
-        this->insertChild( INDEX_SPHERE, createNodeSphere( this->scale * 16, Node::createStateSet( this->type ) ) , graph->getIs3D() );
+        this->insertChild( INDEX_SPHERE, createNodeSphere( this->scale , Node::createStateSet( this->type ) ) , graph->getIs3D() );
         setDrawableColor( osg::Vec4( 0.5f, 1.0f, 0.0f, 1.0 ) );
     }
     else {
         removeChild( INDEX_SQUARE, 1 );
-        this->insertChild( INDEX_SQUARE, createNodeSquare( this->scale * 4, Node::createStateSet( this->type ) ), !graph->getIs3D() );
+        this->insertChild( INDEX_SQUARE, createNodeSquare( this->scale , Node::createStateSet( this->type ) ), !graph->getIs3D() );
         removeChild( INDEX_SPHERE, 1 );
-        this->insertChild( INDEX_SPHERE, createNodeSphere( this->scale * 16, Node::createStateSet( this->type ) ) , graph->getIs3D() );
+        this->insertChild( INDEX_SPHERE, createNodeSphere( this->scale , Node::createStateSet( this->type ) ) , graph->getIs3D() );
         setDrawableColor( osg::Vec4( 1.0f, 1.0f, 1.0f, 1.0 ) );
     }
 }
+
+bool Data::Node::setInvisible( bool invisible )
+{
+    setValue( INDEX_SQUARE, ( !invisible ) && !( graph->getIs3D() ) );
+    setValue( INDEX_SPHERE, ( !invisible ) && ( graph->getIs3D() ) );
+    //-poriesit invisible pre label
+    return true;
+}
+
 osg::Vec3f Data::Node::getTargetPosition() const
 {
     return mTargetPosition;
@@ -376,8 +385,8 @@ void Data::Node::showLabel( bool visible )
 void Data::Node::reloadConfig()
 {
     removeChildren( 0, 3 );
-    this->insertChild( INDEX_SQUARE, createNodeSquare( this->scale * 4, Node::createStateSet( this->type ) ), !graph->getIs3D() );
-    this->insertChild( INDEX_SPHERE, createNodeSphere( this->scale * 4, Node::createStateSet( this->type ) ), graph->getIs3D() );
+    this->insertChild( INDEX_SQUARE, createNodeSquare( this->scale, Node::createStateSet( this->type ) ), !graph->getIs3D() );
+    this->insertChild( INDEX_SPHERE, createNodeSphere( this->scale, Node::createStateSet( this->type ) ), graph->getIs3D() );
     this->insertChild( INDEX_LABEL, createLabel( this->type->getScale(), labelText ) , true );
     setSelected( selected );
 }

@@ -531,10 +531,7 @@ public:
 
 	void setDefaultColor();
 
-	void setInvisible()
-	{
-		setColor( osg::Vec4( 0,0,0,0 ) );
-	}
+	bool setInvisible( bool invisible );
 
 
 	/**

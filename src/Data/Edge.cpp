@@ -94,6 +94,23 @@ void Data::Edge::unlinkNodesAndRemoveFromGraph()
 	this->graph->removeEdge( this );
 }
 
+void Data::Edge::setEdgePieces( QList<osg::ref_ptr<Data::Edge> > edgePieces )
+{
+	this->edgePieces = edgePieces;
+	setInvisible( true );
+}
+
+QList<osg::ref_ptr<Data::Edge> > Data::Edge::getEdgePieces()
+{
+	return edgePieces;
+}
+
+void Data::Edge::clearEdgePieces()
+{
+	this->edgePieces.clear();
+	setInvisible( false );
+}
+
 void Data::Edge::updateCoordinates( osg::Vec3 srcPos, osg::Vec3 dstPos )
 {
 	coordinates->clear();
@@ -129,7 +146,6 @@ void Data::Edge::updateCoordinates( osg::Vec3 srcPos, osg::Vec3 dstPos )
 
 	up = edgeDir ^ viewVec;
 	up.normalize();
-
 	up *= this->scale;
 
 	osg::Vec3 cor1 = osg::Vec3d( x.x() + up.x(), x.y() + up.y(), x.z() + up.z() );
@@ -229,6 +245,14 @@ void Data::Edge::setEdgeStrength( float value )
 	edgeStrength = value;
 }
 
+bool Data::Edge::setInvisible( bool invisible )
+{
+	setValue( INDEX_QUAD, ( !invisible ) && !( graph->getIs3D() ) );
+	setValue( INDEX_CYLINDER, ( !invisible ) && ( graph->getIs3D() ) );
+	isInvisible=invisible;
+	//-poriesit invisible pre label
+	return true;
+}
 
 osg::ref_ptr<Data::Node> Data::Edge::getSecondNode( osg::ref_ptr<Data::Node> firstNode )
 {
@@ -363,6 +387,6 @@ void Data::Edge::reloadLabel()
 
 void Data::Edge::set3D( bool value )
 {
-	setValue( INDEX_QUAD, !value );
-	setValue( INDEX_CYLINDER, value );
+	setValue( INDEX_QUAD, !isInvisible && !value );
+	setValue( INDEX_CYLINDER, !isInvisible && value );
 }

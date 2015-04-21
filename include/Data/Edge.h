@@ -222,6 +222,25 @@ public:
 	void unlinkNodesAndRemoveFromGraph();
 
 	/**
+		* \fn public setEdgePieces(QList<osg::ref_ptr<Data::Edge> > edgePieces)
+		* \brief  set pieces of splitted edge. the pieces are displayed instead of original edge
+		* \param  edgePieces list of edge pieces
+		*/
+	void setEdgePieces( QList<osg::ref_ptr<Data::Edge> > edgePieces );
+
+	/**
+		* \fn public hasEdgePieces()
+		* \return QList<osg::ref_ptr<Data::Edge> > edge pieces
+		*/
+	QList<osg::ref_ptr<Data::Edge> > getEdgePieces();
+
+	/**
+		* \fn public clearEdgePieces()
+		* \brief  remove pieces of splitted edge. the original edge is displayed
+		*/
+	void clearEdgePieces();
+
+	/**
 		* \fn inline public constant toString
 		* \brief  Returns human-readable string representation of the Edge
 		* \return QString
@@ -454,25 +473,11 @@ public:
 	/**
 				*  \fn public   setInvisible()
 				*/
-	bool setInvisible( bool invisible )
-	{
-
-		if ( invisible ) {
-			setScale( 0 );
-			isInvisible=true;
-		}
-		else {
-			setScale( 1 );
-			isInvisible=false;
-		}
-		return true;
-	}
-
+	bool setInvisible( bool invisible );
 	bool getIsInvisible()
 	{
 		return isInvisible;
 	}
-
 
 	float getEdgeStrength() const;
 	void setEdgeStrength( float value );
@@ -522,6 +527,12 @@ private:
 		*  \brief Ending Node of the Edge
 		*/
 	osg::ref_ptr<Data::Node> dstNode;
+
+	/**
+		*  QList<osg::ref_ptr<Data::Edge> > edgePieces
+		*  \brief list contians pieces of edge if edge is splitted
+		*/
+	QList<osg::ref_ptr<Data::Edge> > edgePieces;
 
 	/**
 		*  Data::Type * type
