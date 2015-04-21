@@ -12,6 +12,7 @@
 #include <QString>
 
 #include <Data/OsgNode.h>
+#include <Data/AbsNode.h>
 
 
 //volovar_zac
@@ -35,7 +36,7 @@ class Cluster;
 	*  \author Aurel Paulovic, Michal Paprcka
 	*  \date 29. 4. 2010
 	*/
-class Node : public OsgNode
+class Node : public OsgNode, public AbsNode
 {
 public:
 
@@ -48,23 +49,13 @@ public:
 		*  \param  graph   Graph to which the Node belongs
 		*  \param  position    Node position in space
 		*/
-	Node( qlonglong id, QString name, Data::Type* type, float scaling, Data::Graph* graph, osg::Vec3f position );
+    Node( qlonglong id, QString name, Data::Type* type, float scaling, Data::Graph* graph, osg::Vec3f position );
 
 	/**
 		*  \fn public virtual destructor  ~Node
 		*  \brief Destroys the Node object
 		*/
 	~Node( void );
-
-	/**
-		*  \fn inline public constant  getId
-		*  \brief Returns ID of the Node
-		*  \return qlonglong ID of the Node
-		*/
-	qlonglong getId() const
-	{
-		return id;
-	}
 
 	/**
 		*  \fn inline public  getGraph
@@ -106,16 +97,6 @@ public:
 	    *  \return  qlonglong value of the vertigo plane
 	    */
 	qlonglong getNumberOfVertigoPlane();
-
-	/**
-		*  \fn inline public  setName(QString val)
-		*  \brief Sets new name to the Node
-		*  \param   val    new name
-		*/
-	void setName( QString val )
-	{
-		name = val;
-	}
 
 	/**
 		*  \fn inline public  getScale()
@@ -406,16 +387,6 @@ public:
 	}
 
 	/**
-		*  \fn inline public  getName
-		*  \brief Return node name
-			*  \return QString name of the Node
-		*/
-	QString getName()
-	{
-		return name;
-	}
-
-	/**
 		*  \fn inline public constant  getSettings
 		*  \brief Returns settings of the Node
 		*  \return QMap<QString,QString> * settings of the Node
@@ -501,22 +472,10 @@ private:
 	bool inDB;
 
 	/**
-		*	qlonglong id
-		*	\brief ID of the Node
-		*/
-	qlonglong id;
-
-	/**
 		*	float scale
 		*	\brief scaling of the Node
 		*/
 	float scale;
-
-	/**
-		*  QString name
-		*  \brief Name of the Node
-		*/
-	QString name;
 
 	/**
 		*  Data::Type * type

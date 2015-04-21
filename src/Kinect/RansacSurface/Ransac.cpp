@@ -46,8 +46,8 @@ void Kinect::Ransac::calculate()
 
 	std::string line;
 	srand( time( NULL ) );
-	char cline[1000];
-	int numbers[3000];
+    char cline[1000];
+    int numbers[3000];
 	int i = 0;
 	char* pch;
 	char* context = NULL;

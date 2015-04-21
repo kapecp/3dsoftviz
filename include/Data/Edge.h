@@ -7,6 +7,7 @@
 
 #include "Data/Node.h"
 #include "Data/OsgEdge.h"
+#include "Data/AbsEdge.h"
 
 #include <QString>
 #include <QtCore/QMap>
@@ -28,7 +29,7 @@ class Type;
     *  \author Aurel Paulovic, Michal Paprcka
     *  \date 29. 4. 2010
     */
-class Edge : public OsgEdge
+class Edge : public OsgEdge, public AbsEdge
 {
 public:
 
@@ -52,37 +53,6 @@ public:
 	    *  \brief Destroys the Edge object
 	    */
 	~Edge( void );
-
-	/**
-	    *  \fn inline public  getId
-	    *  \brief Returns ID of the Edge
-	    *  \return qlonglong ID of the Edge
-	    */
-	qlonglong getId() const
-	{
-		return id;
-	}
-
-	/**
-	    *  \fn inline public  getName
-	    *  \brief Returns the name of the Edge
-	    *  \return QString name of the Edge
-	    */
-	QString getName() const
-	{
-		return name;
-	}
-
-	/**
-	    *  \fn inline public  setName(QString val)
-	    *  \brief Sets new name
-	    *  \param   name   new Name for the Edge
-	    *  \return QString resultant name of the Edge
-	    */
-	void setName( QString val )
-	{
-		name = val;
-	}
 
 	/**
         * \fn public getSecondNode(osg::ref_ptr<Data::Node> firstNode)
@@ -320,19 +290,6 @@ private:
 	    *  \brief Flag if the Edge is already added to database or not
 	    */
 	bool inDB;
-
-	/**
-	    *  qlonglong id
-	    *  \brief ID of the Edge
-	    */
-	qlonglong id;
-
-	//! Meno hrany.
-	/**
-	    *  QString name
-	    *  \brief Name of the Edge
-	    */
-	QString name;
 
 	/**
 	            *  bool shared_X

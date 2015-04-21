@@ -797,7 +797,7 @@ bool Data::Graph::isParralel( osg::ref_ptr<Data::Node> srcNode, osg::ref_ptr<Dat
 		if ( ( srcNode->getId() == ( *i )->getSrcNode()->getId() && dstNode->getId() == ( *i )->getDstNode()->getId() ) || ( srcNode->getId() == ( *i )->getDstNode()->getId() && dstNode->getId() == ( *i )->getSrcNode()->getId() ) ) {
 			isMulti= true;
 
-			this->addMultiEdge( ( *i )->getName(), ( *i )->getSrcNode(), ( *i )->getDstNode(), ( *i )->getType(), ( *i )->isOriented(), ( *i ) );
+            this->addMultiEdge( ((Data::AbsEdge*)( *i ))->getName(), ( *i )->getSrcNode(), ( *i )->getDstNode(), ( *i )->getType(), ( *i )->isOriented(), ( *i ) );
 
 			break;
 		}

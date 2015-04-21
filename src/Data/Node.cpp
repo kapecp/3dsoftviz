@@ -24,11 +24,12 @@
 
 
 Data::Node::Node( qlonglong id, QString name, Data::Type* type, float scaling, Data::Graph* graph, osg::Vec3f position )
+    :AbsNode(id,name)
 {
 	//konstruktor
 	//scaling je potrebne na zmensenie uzla ak je vnoreny
-	this->id = id;
-	this->name = name;
+    /*this->id = id;
+    this->name = name;*/
 	this->type = type;
 	this->mIsFocused = false;
 	this->mTargetPosition = position;

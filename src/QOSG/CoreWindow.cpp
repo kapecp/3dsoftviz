@@ -1533,7 +1533,7 @@ void CoreWindow::applyLabelClick()
 			client->sendNodeLabel( ( *ni )->getId(), newLabel );
 		}
 		else {
-			( *ni )->setName( newLabel );
+            ((Data::AbsNode*)( *ni ))->setName( newLabel );
 			( *ni )->setLabelText( newLabel );
 			( *ni )->reloadConfig();
 			server->sendNodeLabel( ( *ni )->getId(), newLabel );

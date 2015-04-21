@@ -18,9 +18,10 @@
 #include <QDebug>
 
 Data::Edge::Edge( qlonglong id, QString name, Data::Graph* graph, osg::ref_ptr<Data::Node> srcNode, osg::ref_ptr<Data::Node> dstNode, Data::Type* type, bool isOriented, float scaling, int pos, osg::ref_ptr<osg::Camera> camera )
+:AbsEdge(id,name)
 {
-	this->id = id;
-	this->name = name;
+    /*this->id = id;
+    this->name = name;*/
 	this->graph = graph;
 	this->srcNode = srcNode;
 	this->dstNode = dstNode;
