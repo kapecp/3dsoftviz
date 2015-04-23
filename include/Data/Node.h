@@ -13,6 +13,8 @@
 #include <QMap>
 #include <QString>
 
+#include "Util/ApplicationConfig.h"
+
 //volovar_zac
 namespace Layout {
 class RadialLayout;
@@ -397,7 +399,7 @@ public:
 	void setSelected( bool selected )
 	{
 		if ( selected ) {
-			setDrawableColor( colorSelected );	// color of selected node
+			setDrawableColor( Util::ApplicationConfig::get()->getColorValue("Node.Color.Selected") );	// color of selected node
 		}
 		else {
 			setDrawableColor( color );
@@ -742,9 +744,6 @@ private:
 	static const int INDEX_LABEL = 0;
 	static const int INDEX_SQUARE = 1;
 	static const int INDEX_SPHERE = 2;
-
-	osg::Vec4f colorNormal;
-	osg::Vec4f colorSelected;
 
 	/**
 		*	bool inDB
