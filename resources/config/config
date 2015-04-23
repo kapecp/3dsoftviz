@@ -28,6 +28,7 @@ Viewer.Textures.DefaultNodeScale=8
 Viewer.Textures.Edge=../share/3dsoftviz/img/Edge.png
 Viewer.Textures.EdgeScale=2
 Viewer.Textures.Node=../share/3dsoftviz/img/node.png
+Viewer.Textures.OrientedEdge=../share/3dsoftviz/img/OrientedEdge.png
 Viewer.Textures.OrientedEdgePrefix=../share/3dsoftviz/img/arrows/arrow
 Viewer.Textures.OrientedEdgeSuffix=.png
 Viewer.Textures.MetaNode=../share/3dsoftviz/img/MetaNode.png
