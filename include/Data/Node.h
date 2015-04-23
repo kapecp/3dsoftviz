@@ -397,7 +397,7 @@ public:
 	void setSelected( bool selected )
 	{
 		if ( selected ) {
-			setDrawableColor( osg::Vec4( 0.0f, 0.1f, 1.0f, 1.0f ) );	// color of selected node
+			setDrawableColor( colorSelected );	// color of selected node
 		}
 		else {
 			setDrawableColor( color );
@@ -546,7 +546,6 @@ public:
 	{
 		return color;
 	}
-
 
 	/**
 		*  \fn public  showLabel(bool visible)
@@ -743,6 +742,9 @@ private:
 	static const int INDEX_LABEL = 0;
 	static const int INDEX_SQUARE = 1;
 	static const int INDEX_SPHERE = 2;
+
+	osg::Vec4f colorNormal;
+	osg::Vec4f colorSelected;
 
 	/**
 		*	bool inDB
