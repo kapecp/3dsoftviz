@@ -293,7 +293,7 @@ osg::ref_ptr<osg::Geode> Data::Node::createLabel( const float& scale, QString na
     label->setDrawMode( osgText::Text::TEXT );
     label->setAlignment( osgText::Text::CENTER_BOTTOM_BASE_LINE );
     label->setPosition( osg::Vec3( 0, newScale, 0 ) );
-    label->setColor( osg::Vec4( 1.0f, 1.0f, 1.0f, 1.0f ) );
+    label->setColor( Util::ApplicationConfig::get()->getColorValue("Label.Color") );
     label->setUseDisplayList( false );
 
     osg::ref_ptr<osg::Geode> geode = new osg::Geode;
