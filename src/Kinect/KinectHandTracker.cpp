@@ -48,7 +48,8 @@ void Kinect::KinectHandTracker::getAllGestures()
 		// checking for complete gesture
 		if ( gestures[i].isComplete() ) {
 			printf( "completed gesture\n" );
-			if ( gestures[i].getType()==nite::GESTURE_CLICK ) {
+			/*
+			 * if ( gestures[i].getType()==nite::GESTURE_CLICK ) {
 				printf( "gesture click is on\n" );
 				if ( isClick ) {
 					isClick=false;
@@ -59,7 +60,8 @@ void Kinect::KinectHandTracker::getAllGestures()
 					printf( "Click\n" );
 				}
 				isGestureClick = true;
-			}
+
+			}*/
 			const nite::Point3f& position = gestures[i].getCurrentPosition();
 			printf( "Gesture %d at (%f,%f,%f)\n", gestures[i].getType(), position.x, position.y, position.z );
 
@@ -101,7 +103,7 @@ void Kinect::KinectHandTracker::getAllHands()
 			if ( i==0 && isCursorMovementEnable ) {
 				mouse->setSpeedUpMoving( mSpeed );
 				coordinateConverter.convertWorldToDepth( *mDepth, user.getPosition().x, user.getPosition().y, user.getPosition().z, &mDepthX, &mDepthY, &mDepthZ );
-				mouse->moveCursorWorldCoordinates( mDepthX,mDepthY,isClick );
+				mouse->moveCursorWorldCoordinates( mDepthX,mDepthY, true );
 			}
 
 			// TODO - further implementation should include depth information in pixels

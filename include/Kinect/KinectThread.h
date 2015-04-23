@@ -12,6 +12,8 @@
 #endif
 
 #include <opencv2/core/core.hpp>
+#include "Viewer/GraphNavigation.h"
+#include "Viewer/MouseControl.h"
 
 namespace Kinect {
 
@@ -48,8 +50,8 @@ public:
 
 signals:
 	// Marak start
-	void signalTimerStart();
-	void signalTimerStop();
+	void signalClickTimerStart();
+	void signalClickTimerStop();
 	// Marak end
 	/**
 	 * @brief send coordinate for controlling graph
@@ -78,9 +80,9 @@ public slots:
 	 *	\fn public timerTimeout
 	 *	\brief called when timer for removeLastSelection gesture times out
 	 */
-	void timerStart();
-	void timerStop();
-	void timerTimeout();
+	void clickTimerStart();
+	void clickTimerStop();
+	void clickTimerTimeout();
 	// Marak end
 	/**
 	 * @brief start funkcionality Kinect thread
@@ -116,7 +118,10 @@ public slots:
 
 private:
 	// Marak start
-	QTimer* timer;
+	QTimer* clickTimer;
+	bool clickTimerFirstRun;
+	Vwr::GraphNavigation* nav;
+	Vwr::MouseControl* mouse;
 	// Marak end
 	/**
 	 * @brief information about status thread

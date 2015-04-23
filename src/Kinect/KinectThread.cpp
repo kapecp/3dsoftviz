@@ -6,8 +6,6 @@
 #include "Kinect/KinectZoom.h"
 
 #include "QDebug"
-#include "Viewer/GraphNavigation.h"
-#include "Viewer/MouseControl.h"
 
 
 Kinect::KinectThread::KinectThread( QObject* parent ) : QThread( parent )
@@ -21,11 +19,14 @@ Kinect::KinectThread::KinectThread( QObject* parent ) : QThread( parent )
 	isZoomEnable=true;
 
 	// timer setting
-	timer = new QTimer();
-	connect( timer ,SIGNAL( timeout() ), this, SLOT( timerTimeout() ) );
-	connect( this ,SIGNAL( signalTimerStop() ), this, SLOT( timerStop() ) );
-	connect( this ,SIGNAL( signalTimerStart() ), this, SLOT( timerStart() ) );
+	clickTimer = new QTimer();
+	connect( clickTimer ,SIGNAL( timeout() ), this, SLOT( clickTimerTimeout() ) );
+	connect( this ,SIGNAL( signalClickTimerStop() ), this, SLOT( clickTimerStop() ) );
+	connect( this ,SIGNAL( signalClickTimerStart() ), this, SLOT( clickTimerStart() ) );
+	clickTimerFirstRun = true;
 
+	nav = new Vwr::GraphNavigation();
+	mouse = new Vwr::MouseControl();
 }
 
 Kinect::KinectThread::~KinectThread( void )
@@ -88,20 +89,45 @@ void Kinect::KinectThread::setSpeedKinect( double set )
 	mSpeed=set;
 }
 
-void Kinect::KinectThread::timerTimeout()
+void Kinect::KinectThread::clickTimerTimeout()
 {
-	timer->stop();
-	printf( "Timer timedout, timer stop\n" );
+	if ( clickTimerFirstRun ) {
+		clickTimerFirstRun = false;
+		clickTimer->start( 1500 );
+	}
+	else {
+		clickTimer->stop();
+	}
+	//printf( "Timer timedout, timer stop\n" );
 }
-void Kinect::KinectThread::timerStart()
+void Kinect::KinectThread::clickTimerStart()
 {
-	timer->start( 1000 );
-	printf( "Hand closed, timer start\n" );
+	clickTimerFirstRun = true;
+	clickTimer->start( 500 );
+
+	//printf( "Hand closed, timer start\n" );
 }
-void Kinect::KinectThread::timerStop()
+void Kinect::KinectThread::clickTimerStop()
 {
-	timer->stop();
-	printf( "Hand opened, timer stop\n" );
+	clickTimer->stop();
+
+	// if gesture is click ( less than 500ms )
+	if ( clickTimerFirstRun ) {
+		// if navigation is enabled, do navigation click
+		if ( nav->isNavEnabled ) {
+			nav->selectNearestNode();
+		}
+		// else do basic click
+		else {
+			mouse->clickMouseLeftButton();
+		}
+	}
+	// else gesture is remove ( less than 1000ms of second run )
+	else {
+		nav->removeLastSelectedNode();
+	}
+
+	//printf( "Hand opened, timer stop\n" );
 }
 
 void Kinect::KinectThread::run()
@@ -122,9 +148,6 @@ void Kinect::KinectThread::run()
 	    /////////end////////////*/
 	Kinect::KinectZoom* zoom = new Kinect::KinectZoom();
 	cv::Mat frame;
-	Vwr::GraphNavigation* nav = new Vwr::GraphNavigation();
-	Vwr::MouseControl* mouse = new Vwr::MouseControl();
-	// nav->isNavEnabled = false;
 
 	// check if is close
 	while ( !mCancel ) {
@@ -238,49 +261,34 @@ void Kinect::KinectThread::run()
 				}
 				// cursor enabled => move cursor
 				else {
-					// if navigation is enabled, track navigation gestures
-					if ( nav->isNavEnabled ) {
-						// if gesture is click and navigation is enabled, do navigation click
-						if ( kht->isGestureClick ) {
-							nav->selectNearestNode();
+					// detect click gesture
+					if ( wasTimerReset ) {
+						// if main hand closed and timer inactive, start timer
+						if ( numFingers[0] == 0 ) {
+							emit signalClickTimerStart();
+							// to prevent restart in cycle
+							wasTimerReset = false;
 						}
-						// gesture for remove last selection require closed hand for less than 1s
-						// if timer is ready
-						else if ( wasTimerReset ) {
-							// if main hand closed and timer inactive, start timer
-							if ( numFingers[0] == 0 ) {
-								emit signalTimerStart();
-								// to prevent restart in cycle
-								wasTimerReset = false;
+					}
+					// if timer is not ready
+					else if ( !wasTimerReset ) {
+						// if main hand open
+						if ( numFingers[0] > 3 ) {
+							// if timer is active, stop timer and do gesture
+							if ( clickTimer->isActive() ) {
+								wasTimerReset = true;
+								emit signalClickTimerStop();
 							}
-						}
-						// if timer is not ready
-						else if ( !wasTimerReset ) {
-							// if main hand open
-							if ( numFingers[0] > 3 ) {
-								// if timer is active, stop timer and remove last selection
-								if ( timer->isActive() ) {
-									emit signalTimerStop();
-									nav->removeLastSelectedNode();
-								}
-								// gesture has ended, restart timer to enable next gesture
-								else {
-									wasTimerReset = true;
-								}
+							// gesture has ended, restart timer to enable next gesture
+							else {
+								wasTimerReset = true;
 							}
 						}
 					}
+
 					// else do basic mouse gestures
 					else {
-						// if gesture is click, do mouse click
-						if ( kht->isGestureClick ) {
-							if ( kht->isClick ) {
-								mouse->releasePressMouse( Qt::LeftButton );
-							}
-							else {
-								mouse->clickPressMouse( Qt::LeftButton );
-							}
-						}
+
 					}
 				}
 			}
