@@ -94,10 +94,6 @@ Data::Node::Node( qlonglong id, QString name, Data::Type* type, float scaling, D
     radialLayout = NULL;  //node does not belong to radial layout
     //volovar_kon
 
-    // TODO for optimalization change these to static const and use one time initialization
-    this->colorNormal = Util::ApplicationConfig::get()->getColorValue("Node.Color.Normal");
-    this->colorSelected = Util::ApplicationConfig::get()->getColorValue("Node.Color.Selected");
-
 }
 
 Data::Node::~Node( void )
