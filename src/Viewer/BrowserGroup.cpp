@@ -43,14 +43,26 @@ void BrowserGroup::setSelectedNodes( QLinkedList<osg::ref_ptr<Data::Node> >* sel
 	for ( i = selected->begin(); i != selected->end(); i++ ) {
 		node = *i;
 
+		// Ignore meta nodes
+		if(node->getName() == "metaNode") {
+			continue;
+		}
+
 		// If node was not already previously selected & its model initialized & node exists in lua model
 		if ( !selectedNodes->contains( node ) && Lua::LuaGraph::getInstance()->getNodes()->contains( node->getId() ) ) {
 
-			selectedNodes->push_back(node);
-
 			// Get lua node model and add it to model map
 			Lua::LuaNode* luaNode = Lua::LuaGraph::getInstance()->getNodes()->value( node->getId() );
-			//std::cout << "Selecting node: " << node->getId() << "\n" << std::flush;
+			Diluculum::LuaValueMap paramsTable = luaNode->getParams().asTable();
+
+			// Ignore nodes without models
+			if(paramsTable.find("metrics") == paramsTable.end()) {
+				continue;
+			}
+
+			selectedNodes->push_back(node);
+
+			// qDebug() << "Selecting node: " << node->getId() << node->getName();
 
 			// If grouping is not enabled, then add browser for each newly selected node
 			if ( !browsersGrouping ) {
