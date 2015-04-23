@@ -124,6 +124,7 @@ void Kinect::KinectThread::run()
 	cv::Mat frame;
 	Vwr::GraphNavigation* nav = new Vwr::GraphNavigation();
 	Vwr::MouseControl* mouse = new Vwr::MouseControl();
+	// nav->isNavEnabled = false;
 
 	// check if is close
 	while ( !mCancel ) {
@@ -143,7 +144,7 @@ void Kinect::KinectThread::run()
 			kht->getAllHands();
 #endif
 			// start highlighting neighbour nodes
-			nav->navigate();
+			nav->navigate( 2 );
 			//////////////End/////////////
 
 			//	cap >> frame; // get a new frame from camera

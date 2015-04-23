@@ -20,19 +20,23 @@ public:
 	~GraphNavigation();
 
 	void clear();
-	void navigate();
+	void navigate( int selectionMode );
 	void selectNearestNode();
 	void removeLastSelectedNode();
 
 	bool isNavEnabled;
+
 private:
 
 	void setColorConectedNodes( Data::Node* selectedNode );
 	void restoreColorConectedNodes( Data::Node* selectedNode );
-	void setColorNearestNode( Data::Node* selectedNode );
+	// selectionMode 1=node 2=edge
+	void setColorNearestNode( Data::Node* selectedNode , int selectionMode );
 	osg::Vec3f getMouseScreenCoordinates( );
 	osg::Vec3f getNodeScreenCoordinates( Data::Node* node );
-	double getDistance( osg::Vec3f mouse, osg::Vec3f node );
+	double getDistanceToNode( osg::Vec3f mouse, osg::Vec3f node );
+	double getDistanceToEdge( osg::Vec3f mouse, osg::Vec3f line_s, osg::Vec3f line_e );
+
 	/**
 	 * @brief viewer
 	 */

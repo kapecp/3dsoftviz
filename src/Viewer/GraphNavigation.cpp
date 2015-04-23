@@ -40,9 +40,10 @@ void Vwr::GraphNavigation::restoreColorConectedNodes( Data::Node* selectedNode )
 	}
 }
 
-void Vwr::GraphNavigation::setColorNearestNode( Data::Node* selectedNode )
+void Vwr::GraphNavigation::setColorNearestNode( Data::Node* selectedNode, int selectionMode )
 {
 	osg::Vec3f mousePosition = getMouseScreenCoordinates( );
+	osg::Vec3f selectedPosition = getNodeScreenCoordinates( selectedNode );
 
 	Data::Edge* closestEdge = NULL;
 	float minDistance = 0;
@@ -50,16 +51,21 @@ void Vwr::GraphNavigation::setColorNearestNode( Data::Node* selectedNode )
 	for ( QMap<qlonglong, osg::ref_ptr<Data::Edge> >::const_iterator iter = nodeEdges->begin(); iter != nodeEdges->end(); iter++ ) {
 		Data::Node* dstNode = ( *iter )->getOtherNode( selectedNode );
 		osg::Vec3f nodePosition = getNodeScreenCoordinates( dstNode );
-		double distance = getDistance( mousePosition, nodePosition );
-
+		double distance;
+		// distance to node
+		if ( selectionMode == 1 ) {
+			distance = getDistanceToNode( mousePosition, nodePosition );
+		}
+		// distance to edge
+		else if ( selectionMode == 2 ) {
+			distance = getDistanceToEdge( mousePosition, selectedPosition ,nodePosition );
+		}
 		// first edge or nearer node
 		if ( ( minDistance == 0 ) || ( minDistance > distance ) ) {
 			minDistance = distance;
 			closestEdge = ( *iter );
 		}
 	}
-
-	//printf( "[ %.3f - %.3f ]/[ %.3f - %.3f ]\n",mousePossition[0],mousePossition[1],nodePossition[0],nodePossition[1] );
 
 	// get closest node
 	Data::Node* tmpNode = closestEdge->getOtherNode( selectedNode );
@@ -88,7 +94,7 @@ void Vwr::GraphNavigation::clear()
 	tempSelectedEdge = NULL;
 }
 
-void Vwr::GraphNavigation::navigate()
+void Vwr::GraphNavigation::navigate( int selectionMode )
 {
 	// if there is no selected node, restore default colors
 	if ( viewer->getPickHandler()->getSelectedNodes()->isEmpty() ) {
@@ -107,18 +113,18 @@ void Vwr::GraphNavigation::navigate()
 			previousLastSelectedNode = lastSelectedNode;
 		}
 
-		setColorNearestNode( lastSelectedNode );
-
-
+		setColorNearestNode( lastSelectedNode, selectionMode );
 	}
 }
 
 void Vwr::GraphNavigation::selectNearestNode()
 {
 	if ( tempSelectedNode!= NULL ) {
-		viewer->getPickHandler()->addPickedNode( tempSelectedNode );
-		tempSelectedNode->setSelected( true );
-		clear();
+		if ( !viewer->getPickHandler()->getSelectedNodes()->contains( tempSelectedNode ) ) {
+			viewer->getPickHandler()->addPickedNode( tempSelectedNode );
+			tempSelectedNode->setSelected( true );
+			clear();
+		}
 	}
 }
 
@@ -142,7 +148,7 @@ osg::Vec3f Vwr::GraphNavigation::getMouseScreenCoordinates( )
 	float xN = static_cast<float>( mouseX - viewer->pos().x() );
 	float yN = static_cast<float>( viewer->height() + viewer->pos().y() - mouseY );
 
-	return osg::Vec3f( xN, yN, 0.0f );
+	return osg::Vec3f( xN, yN, 1.0f );
 }
 
 osg::Vec3f Vwr::GraphNavigation::getNodeScreenCoordinates( Data::Node* node )
@@ -167,11 +173,34 @@ osg::Vec3f Vwr::GraphNavigation::getNodeScreenCoordinates( Data::Node* node )
 	return nodePosition;
 }
 
-double Vwr::GraphNavigation::getDistance( osg::Vec3f mouse, osg::Vec3f node )
+double Vwr::GraphNavigation::getDistanceToNode( osg::Vec3f mouse, osg::Vec3f node )
 {
 	// in case of big space can overflow ... test divide by 1000
-	double distX = abs( node[0] - mouse[0] )/1000;
-	double distY = abs( node[1] - mouse[1] )/1000;
+	double distX = abs( node[0] - mouse[0] );
+	double distY = abs( node[1] - mouse[1] );
 
-	return sqrt( distX*distX + distY*distY );
+	return distX*distX + distY*distY;
+}
+
+double Vwr::GraphNavigation::getDistanceToEdge( osg::Vec3f mouse, osg::Vec3f line_s, osg::Vec3f line_e )
+{
+	osg::Vec3f pToLs = ( mouse - line_s );
+	osg::Vec3f line = ( line_e - line_s );
+
+	float dot = ( pToLs[0] * line[0] + pToLs[1] * line[1] + pToLs[2] * line[2] );
+	float t = dot / line.length2();
+
+	// closest point is line start
+	if ( t < 0 ) {
+		return getDistanceToNode( mouse, line_s );
+	}
+	// closest point is line end
+	else if ( t > 1 ) {
+		return getDistanceToNode( mouse, line_e );
+	}
+	// closest point is on line
+	else {
+		osg::Vec3f tmp = ( line_s + line.operator *( t ) );
+		return getDistanceToNode( mouse, tmp );
+	}
 }
