@@ -450,7 +450,7 @@ void Data::Graph::separateNodes( QLinkedList<osg::ref_ptr<Data::Node> >* selecte
 	//zo zluceneho uzla extrahujeme v nom zahrnute uzly
 	while ( i != selectedNodes->constEnd() ) {
 		//TODO zatial merged node identifikujeme len podla nazvu nodu - "mergedNode" - treba dokoncit
-		if ( ( *i )->getType()->isMeta() && ( *i )->getName() == "mergedNode" ) {
+        if ( ( *i )->getType()->isMeta() && ((Data::AbsNode*)( *i ))->getName() == "mergedNode" ) {
 			//najdeme vsetky uzly a zrusime mask
 			//najdeme vsetky hrany spojene s tymto uzlom a nastavime im scale
 			//nastavime poziciu na mergeNode a zrusime tento uzol

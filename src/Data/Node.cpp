@@ -24,18 +24,14 @@
 
 
 Data::Node::Node( qlonglong id, QString name, Data::Type* type, float scaling, Data::Graph* graph, osg::Vec3f position )
-    :AbsNode(id,name)
+    :AbsNode(id,name,type,graph),DbNode()
 {
 	//konstruktor
 	//scaling je potrebne na zmensenie uzla ak je vnoreny
-    /*this->id = id;
-    this->name = name;*/
-	this->type = type;
 	this->mIsFocused = false;
 	this->mTargetPosition = position;
 	this->currentPosition = position * Util::ApplicationConfig::get()->getValue( "Viewer.Display.NodeDistanceScale" ).toFloat();
-	this->graph = graph;
-	this->inDB = false;
+    //this->inDB = false;
 	this->edges = new QMap<qlonglong, osg::ref_ptr<Data::Edge> >;
 	this->scale = scaling;
 	this->setBall( NULL );
@@ -172,32 +168,6 @@ void Data::Node::removeAllEdges()
 	edges->clear();
 }
 
-bool Data::Node::equals( Node* node )
-{
-	//porovnanie s inym uzlom
-	if ( this == node ) {
-		return true;
-	}
-	if ( node == NULL ) {
-		return false;
-	}
-	if ( id != node->getId() ) {
-		return false;
-	}
-	if ( ( graph==NULL && node->getGraph()!=NULL ) || ( graph!=NULL && node->getGraph()==NULL ) ) {
-		return false;
-	}
-	if ( graph==NULL && node->getGraph()==NULL ) {
-		return true;
-	}
-	if ( graph!=NULL && graph->getId() != node->getGraph()->getId() ) {
-		return false;
-	}
-	return true;
-}
-
-
-
 void Data::Node::showLabel( bool visible )
 {
 	//nastavenie zobrazenia popisku uzla
@@ -228,8 +198,6 @@ void Data::Node::reloadConfig()
 	label = newLabel;
 	square = newRect;
 }
-
-
 
 QSet<Data::Node*> Data::Node::getIncidentNodes() const
 {
@@ -290,7 +258,6 @@ QString Data::Node::toString() const
 	return str;
 }
 
-
 Data::Cluster* Data::Node::getCluster() const
 {
 	return cluster;
@@ -300,7 +267,6 @@ void Data::Node::setCluster( Data::Cluster* cluster )
 {
 	this->cluster = cluster;
 }
-
 
 //volovar_zac
 //pre potreby odpudivych sil v radialLayoute

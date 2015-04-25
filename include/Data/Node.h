@@ -13,6 +13,7 @@
 
 #include <Data/OsgNode.h>
 #include <Data/AbsNode.h>
+#include <Data/DbNode.h>
 
 
 //volovar_zac
@@ -36,7 +37,7 @@ class Cluster;
 	*  \author Aurel Paulovic, Michal Paprcka
 	*  \date 29. 4. 2010
 	*/
-class Node : public OsgNode, public AbsNode
+class Node : public OsgNode, public AbsNode, public DbNode
 {
 public:
 
@@ -56,26 +57,6 @@ public:
 		*  \brief Destroys the Node object
 		*/
 	~Node( void );
-
-	/**
-		*  \fn inline public  getGraph
-		*  \brief Returns Graph to which the Nodes belongs
-		*  \return Data::Graph * Graph
-		*/
-	Data::Graph* getGraph()
-	{
-		return graph;
-	}
-
-	/**
-		*  \fn inline public constant  getName
-		*  \brief Returns name of the Node
-		*  \return QString name of the Node
-		*/
-	QString getName() const
-	{
-		return name;
-	}
 
 	/**
 	    *  \fn inline public numberOfVertigoPlane
@@ -119,36 +100,6 @@ public:
 	}
 
 	/**
-		*  \fn inline public constant  getType
-		*  \brief Returns Type of the Node
-		*  \return Data::Type * Type of the Node
-		*/
-	Data::Type* getType() const
-	{
-		return type;
-	}
-
-	/**
-		*  \fn inline public  setType(Data::Type* val)
-		*  \brief Sets new Type of the Node
-		*  \param   val  new Type
-		*/
-	void setType( Data::Type* val )
-	{
-		type = val;
-	}
-
-	bool isParentNode()
-	{
-		return hasNestedNodes;
-	}
-
-	void setAsParentNode()
-	{
-		hasNestedNodes = true;
-	}
-
-	/**
 		 * \fn public constant isFocused
 		 * \brief Gets whether this node is focused at the moment.
 		 * \return whether this node is focused at the moment
@@ -176,7 +127,7 @@ public:
 		*
 		*
 		*/
-	Data::Node* getParentNode();
+    Data::Node* getParentNode();
 
 	/**
 		*	\fn public setParentNode
@@ -184,7 +135,7 @@ public:
 		*
 		*
 		*/
-	void setParentNode( Node* parent );
+    void setParentNode( Node* parent );
 
 	/**
 	    *	Node parent
@@ -311,31 +262,6 @@ public:
 	}
 
 	/**
-		 * \brief \link Node::removableByUser [setter] \endlink
-		 */
-	void setRemovableByUser( bool b )
-	{
-		removableByUser = b;
-	}
-
-	/**
-		 * \brief \link Node::removableByUser [getter] \endlink
-		 */
-	bool isRemovableByUser()
-	{
-		return removableByUser;
-	}
-
-	/**
-		*  \fn public  equals(Node* node)
-		*  \brief Checks if the node and this object is the same object
-		*  \param   node     Node to compare
-		*  \return bool true, if this object and node are the same object
-		*/
-	bool equals( Node* node );
-
-
-	/**
 		*  \fn inline public constant  toString
 		*  \brief Returns human-readable string representing the Node
 		*  \return QString
@@ -348,25 +274,6 @@ public:
 		*  \param     visible     node name shown
 		*/
 	void showLabel( bool visible );
-
-	/**
-		*  \fn inline public  isInDB
-		*  \brief Returns if the Node is already in database or not
-		*  \return bool true, if the Node is in database
-		*/
-	bool isInDB()
-	{
-		return inDB;
-	}
-
-	/**
-		*  \fn inline public  setIsInDB
-		*  \brief  Sets the inDB flag of the Node to true (meaning that the Node is in database)
-		*/
-	void setIsInDB()
-	{
-		inDB = true;
-	}
 
     void setDefaultColor();
 
@@ -386,58 +293,9 @@ public:
 		nested_parent = val;
 	}
 
-	/**
-		*  \fn inline public constant  getSettings
-		*  \brief Returns settings of the Node
-		*  \return QMap<QString,QString> * settings of the Node
-		*/
-	QMap<QString, QString>* getSettings() const
-	{
-		return settings;
-	}
-
-	/**
-		*  \fn inline public  setSettings(QMap<QString, QString> * val)
-		*  \brief Sets (overrides) new settings of the Node
-		*  \param   val    new settings
-		*/
-	void setSettings( QMap<QString, QString>* val )
-	{
-		settings = val;
-	}
-
 	void setLabelText( QString label )
 	{
 		labelText = label;
-	}
-
-	float getNodeDegree()
-	{
-		return nodeDegree;
-	}
-
-	void setNodeDegree( float nodeDegree )
-	{
-		this->nodeDegree = nodeDegree;
-	}
-
-	float getNodeCloseness()
-	{
-		return nodeCloseness;
-	}
-
-	void setNodeCloseness( float nodeCloseness )
-	{
-		this->nodeCloseness = nodeCloseness;
-	}
-
-	float getNodeBetweeness()
-	{
-		return nodeBetweeness;
-	}
-	void setNodeBetweeness( float nodeBetweeness )
-	{
-		this->nodeBetweeness = nodeBetweeness;
 	}
 
 	float getOverallWeight()
@@ -449,14 +307,6 @@ public:
 		this->overallWeight = overallWeight;
 	}
 
-	bool isNodeMatched()
-	{
-		return nodeMatched;
-	}
-	void setNodeMatched( bool nodeMatched )
-	{
-		this->nodeMatched = nodeMatched;
-	}
 	//volovar_zac
 	void setLayerID( int id ); //get unique layer id of selected radial layout, 0 node has no radial layout
 	int getLayerID();
@@ -466,28 +316,10 @@ public:
 private:
 
 	/**
-		*	bool inDB
-		*	\brief Flag if the Type is in database
-		*/
-	bool inDB;
-
-	/**
 		*	float scale
 		*	\brief scaling of the Node
 		*/
 	float scale;
-
-	/**
-		*  Data::Type * type
-		*  \brief Type of the Node
-		*/
-	Data::Type* type;
-
-	/**
-		*  Data::Graph * graph
-		*  \brief Graph object to which the Node belongs
-		*/
-	Data::Graph* graph;
 
 	/**
 		 * bool mIsFocused
@@ -513,8 +345,6 @@ private:
 	    */
 	Cluster* cluster;
 
-	bool hasNestedNodes;
-
 	/**
 		*  bool ignore
 		*  \brief node ignoring flag
@@ -528,37 +358,16 @@ private:
 	bool positionCanBeRestricted;
 
 	/**
-		 * \brief If the node is removable by the user (using GUI).
-		 * Used to make some nodes not removable (e.g. nodes used for manipulating layout restrictions - their
-		 * existence is bound to the existence of the layout restriction and their removal is managed
-		 * elsewhere, so they can not be removed by user).
-		 */
-	bool removableByUser;
-
-	/**
 		*  QString labelText
 		*  \brief Text show in the label
 		*/
 	QString labelText;
-
-	float nodeDegree;
-	float nodeCloseness;
-	float nodeBetweeness;
-	bool nodeMatched;
 
 	float overallWeight;
 	//volovar_zac pre repulzivne sily, ktore posobia iba na uzly nachadzajuce sa na guli
 	int layerID;
 	Layout::RadialLayout* radialLayout;
 	//volovak_kon
-
-protected:
-
-	/**
-		*  QMap<QString,QString> * settings
-		*  \brief Settings of the Node
-		*/
-	QMap<QString, QString>* settings;
 };
 }
 

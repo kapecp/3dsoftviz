@@ -1292,7 +1292,7 @@ void CoreWindow::removeMetaNodes()
 
 	while ( i != selectedNodes->constEnd() ) {
 		//treba este opravit - zatial kontrolujeme ci to nie je mergedNode len podla mena
-		if ( ( *i )->getType()->isMeta() && ( *i )->getName() != "mergedNode" ) {
+        if ( ( *i )->getType()->isMeta() && ((Data::AbsNode*)( *i ))->getName() != "mergedNode" ) {
 			Network::Server* server = Network::Server::getInstance();
 			Network::Client* client = Network::Client::getInstance();
 			if ( !client->isConnected() ) {
