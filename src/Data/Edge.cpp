@@ -317,37 +317,35 @@ osg::ref_ptr<osg::Geode> Data::Edge::createEdgeCylinder( osg::StateSet* bbState 
 
 osg::ref_ptr<osg::StateSet> Data::Edge::createStateSet( Data::Type* type )
 {
+	// Gloger: edge configuration refactored (removed duplicit code) & enabled antialiasing filter
+	osg::StateSet *edgeStateSet = new osg::StateSet;
+	osg::ref_ptr<osg::Texture2D> texture;
+
+	// Get texture for oriented or not oriented
 	if ( !oriented ) {
-		osg::StateSet* edgeStateSet = new osg::StateSet;
-
-		edgeStateSet->setMode( GL_LIGHTING, osg::StateAttribute::OFF );
-		edgeStateSet->setTextureAttributeAndModes( 0, Vwr::TextureWrapper::getEdgeTexture(), osg::StateAttribute::ON );
-		edgeStateSet->setAttributeAndModes( new osg::BlendFunc, osg::StateAttribute::ON );
-		edgeStateSet->setMode( GL_DEPTH_TEST, osg::StateAttribute::ON );
-
-		edgeStateSet->setRenderingHint( osg::StateSet::TRANSPARENT_BIN );
-
-		osg::ref_ptr<osg::Depth> depth = new osg::Depth;
-		depth->setWriteMask( false );
-		edgeStateSet->setAttributeAndModes( depth, osg::StateAttribute::ON );
-
-		return edgeStateSet;
+		texture = Vwr::TextureWrapper::getEdgeTexture();
+	}else{
+		texture = Vwr::TextureWrapper::getOrientedEdgeTexture();
 	}
-	else {
-		osg::StateSet* orientedEdgeStateSet = new osg::StateSet;
 
-		orientedEdgeStateSet->setMode( GL_LIGHTING, osg::StateAttribute::OFF );
-		orientedEdgeStateSet->setTextureAttributeAndModes( 0, Vwr::TextureWrapper::getOrientedEdgeTexture(), osg::StateAttribute::ON );
-		orientedEdgeStateSet->setMode( GL_BLEND, osg::StateAttribute::ON );
-		orientedEdgeStateSet->setMode( GL_DEPTH_TEST, osg::StateAttribute::ON );
+	// Common configuration
+	edgeStateSet->setMode( GL_LIGHTING, osg::StateAttribute::OFF );
+	edgeStateSet->setTextureAttributeAndModes( 0, texture, osg::StateAttribute::ON );
+	edgeStateSet->setAttributeAndModes( new osg::BlendFunc, osg::StateAttribute::ON );
+	edgeStateSet->setMode( GL_BLEND, osg::StateAttribute::ON );
+	edgeStateSet->setMode( GL_DEPTH_TEST, osg::StateAttribute::ON );
 
-		orientedEdgeStateSet->setRenderingHint( osg::StateSet::TRANSPARENT_BIN );
-		osg::ref_ptr<osg::Depth> depth = new osg::Depth;
-		depth->setWriteMask( false );
-		orientedEdgeStateSet->setAttributeAndModes( depth, osg::StateAttribute::ON );
+	edgeStateSet->setRenderingHint( osg::StateSet::TRANSPARENT_BIN );
 
-		return orientedEdgeStateSet;
-	}
+	osg::ref_ptr<osg::Depth> depth = new osg::Depth;
+	depth->setWriteMask( false );
+	edgeStateSet->setAttributeAndModes( depth, osg::StateAttribute::ON );
+
+	// Setup bilinear texture filtering (edges are smoother)
+	texture->setFilter(osg::Texture::MIN_FILTER,osg::Texture::LINEAR_MIPMAP_NEAREST);
+	texture->setFilter(osg::Texture::MAG_FILTER,osg::Texture::LINEAR);
+
+	return edgeStateSet;
 }
 
 void Data::Edge::showLabel( bool visible )
