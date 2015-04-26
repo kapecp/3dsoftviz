@@ -22,7 +22,6 @@
 
 #include <QTextStream>
 
-
 Data::Node::Node( qlonglong id, QString name, Data::Type* type, float scaling, Data::Graph* graph, osg::Vec3f position )
 {
     //konstruktor
@@ -65,7 +64,7 @@ Data::Node::Node( qlonglong id, QString name, Data::Type* type, float scaling, D
 
     insertChild( INDEX_SQUARE, createNodeSquare( this->scale, Node::createStateSet( this->type ) ) , !graph->getIs3D() );
     insertChild( INDEX_SPHERE, createNodeSphere( this->scale, Node::createStateSet( this->type ) ), graph->getIs3D() );
-    insertChild( INDEX_LABEL, createLabel( this->type->getScale(), labelText ) , false );
+    insertChild( INDEX_LABEL, createLabel( this->scale, labelText ) , false );
 
 
     this->force = osg::Vec3f();
@@ -277,11 +276,17 @@ osg::ref_ptr<osg::Geode> Data::Node::createLabel( const float& scale, QString na
     osg::ref_ptr<osgText::FadeText> label = new osgText::FadeText;
     label->setFadeSpeed( 0.03f );
 
+    // Gloger: added Open Sans font
     QString fontPath = Util::ApplicationConfig::get()->getValue( "Viewer.Labels.Font" );
 
-    // experimental value
-    float newScale = 1.375f * scale;
+    // Gloger: added small offset to make label positioning better
+    float yOffset = scale / 2 + 0.5f;
+    float zOffset = 0.1f;
 
+    // Calculate charSize from scale
+    float charSize = (float)log(scale) * 1.5f + 8;
+
+    // Gloger:
     if ( fontPath != NULL && !fontPath.isEmpty() ) {
         label->setFont( fontPath.toStdString() );
     }
@@ -289,12 +294,15 @@ osg::ref_ptr<osg::Geode> Data::Node::createLabel( const float& scale, QString na
     label->setText( name.toStdString() );
     label->setLineSpacing( 0 );
     label->setAxisAlignment( osgText::Text::SCREEN );
-    label->setCharacterSize( newScale );
+    label->setCharacterSize( charSize );
     label->setDrawMode( osgText::Text::TEXT );
     label->setAlignment( osgText::Text::CENTER_BOTTOM_BASE_LINE );
-    label->setPosition( osg::Vec3( 0, newScale, 0 ) );
+    label->setPosition( osg::Vec3( 0, yOffset, zOffset ) );
     label->setColor( Util::ApplicationConfig::get()->getColorValue("Label.Color") );
     label->setUseDisplayList( false );
+//    label->setBackdropType(osgText::Text::OUTLINE);
+//    label->setBackdropColor(Util::ApplicationConfig::get()->getColorValue( "Label.Outline.Color" ));
+//    label->setBackdropOffset(0.05f);
 
     osg::ref_ptr<osg::Geode> geode = new osg::Geode;
     geode->addDrawable( label );
@@ -378,7 +386,7 @@ void Data::Node::reloadConfig()
     removeChildren( 0, 3 );
     this->insertChild( INDEX_SQUARE, createNodeSquare( this->scale, Node::createStateSet( this->type ) ), !graph->getIs3D() );
     this->insertChild( INDEX_SPHERE, createNodeSphere( this->scale, Node::createStateSet( this->type ) ), graph->getIs3D() );
-    this->insertChild( INDEX_LABEL, createLabel( this->type->getScale(), labelText ) , true );
+    this->insertChild( INDEX_LABEL, createLabel( this->scale, labelText ) , true );
     setSelected( selected );
 }
 
