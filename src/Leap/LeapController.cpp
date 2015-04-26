@@ -2,10 +2,10 @@
 
 void Leap::LeapController::startListening()
 {
-    addListener(leapListener);
+	addListener( leapListener );
 }
 
 void Leap::LeapController::stopListening()
 {
-    removeListener(leapListener);
+	removeListener( leapListener );
 }
