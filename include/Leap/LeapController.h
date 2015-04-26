@@ -15,18 +15,18 @@ class LeapController;
  */
 class LeapController:Controller
 {
-  public:
-    LeapListener leapListener;
+public:
+	LeapListener leapListener;
 
-    /**
-     * @brief After this action is executed the leap sensor starts to listen on events
-     */
-    void startListening();
+	/**
+	 * @brief After this action is executed the leap sensor starts to listen on events
+	 */
+	void startListening();
 
-    /**
-     * @brief After this action is executed the leap sensor stops listening
-     */
-    void stopListening();
+	/**
+	 * @brief After this action is executed the leap sensor stops listening
+	 */
+	void stopListening();
 };
 }
 

@@ -15,14 +15,14 @@ class LeapThread;
  */
 class LeapThread : public QThread
 {
-    Q_OBJECT
+	Q_OBJECT
 
 public:
-    LeapThread( QObject* parent=NULL );
-    ~LeapThread( void );
-    void run();
+	LeapThread( QObject* parent=NULL );
+	~LeapThread( void );
+	void run();
 
-    LeapController leapController;
+	LeapController leapController;
 
 };
 }

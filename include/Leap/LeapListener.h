@@ -14,23 +14,23 @@ class LeapListener;
  */
 class LeapListener : public Listener
 {
-  public:
+public:
 
-    /**
-     * @brief Class that contains Actions that should be executed after a specific gesture
-     */
-    LeapActions leapActions;
+	/**
+	 * @brief Class that contains Actions that should be executed after a specific gesture
+	 */
+	LeapActions leapActions;
 
-    void onInit(const Controller&);
-    void onConnect(const Controller&);
-    void onDisconnect(const Controller&);
-    void onExit(const Controller&);
-    void onFrame(const Controller&);
-    void onFocusGained(const Controller&);
-    void onFocusLost(const Controller&);
-    void onDeviceChange(const Controller&);
-    void onServiceConnect(const Controller&);
-    void onServiceDisconnect(const Controller&);
+	void onInit( const Controller& );
+	void onConnect( const Controller& );
+	void onDisconnect( const Controller& );
+	void onExit( const Controller& );
+	void onFrame( const Controller& );
+	void onFocusGained( const Controller& );
+	void onFocusLost( const Controller& );
+	void onDeviceChange( const Controller& );
+	void onServiceConnect( const Controller& );
+	void onServiceDisconnect( const Controller& );
 };
 }
 
