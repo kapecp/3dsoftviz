@@ -1383,14 +1383,14 @@ void Vwr::CameraManipulator::enableCameraMovement(Vwr::CameraManipulator::Moveme
 
         case Vwr::CameraManipulator::Movement::FORWARD :
         {
-            forwardSpeed = -2 * maxSpeed;
+            forwardSpeed = 2 * maxSpeed;
             decelerateForwardRate = false;
             break;
         }
 
         case Vwr::CameraManipulator::Movement::BACKWARD :
         {
-            forwardSpeed = 2 * maxSpeed;
+            forwardSpeed = -2 * maxSpeed;
             decelerateForwardRate = false;
             break;
         }

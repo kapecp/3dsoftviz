@@ -54,7 +54,7 @@ bool Leap::DirectionDetector::isLeft(float pitch, float roll){
     return false;
 }
 
-Leap::DirectionDetector::Direction Leap::DirectionDetector::getDirection(Hand hand){
+Leap::DirectionDetector::Direction Leap::DirectionDetector::getPalmDirection(Hand hand){
 
     float pitch = getPitch(hand);
     float roll = getRoll(hand);

@@ -47,9 +47,21 @@ class LeapActions
     void Leap::LeapActions::onKeyTap(Gesture gesture);
     void Leap::LeapActions::onScreenTap(Gesture gesture);
 
+    /**
+     * @brief Leap::LeapActions::changeViewAngle
+     * Change angle of camera in flymode using leap sensor
+     * @param direction - Direction enum from DirectionDetector.
+     */
     void Leap::LeapActions::changeViewAngle(Leap::DirectionDetector::Direction direction);
-
+    /**
+     * @brief Leap::LeapActions::startMovingForward
+     * Starts the movement of camera forward.
+     */
     void Leap::LeapActions::startMovingForward();
+    /**
+     * @brief Leap::LeapActions::stopMovingForward
+     * Stops forward movement of camera.
+     */
     void Leap::LeapActions::stopMovingForward();
 
     /**
@@ -58,20 +70,9 @@ class LeapActions
     bool isCameraMoving;
   private:
     /**
-     * @brief Constant that says how many iteration of a gesture should be called before zooming is executed
-     */
-    static const int ZOOM_READY = 12;
-
-    /**
      * @brief Controls mouse actions
      */
     Vwr::MouseControl* mouse;
-
-    /**
-     * @brief Used to count how many iterations of zoomGraph were already called
-     */
-    int zoomCounter;
-
     Vwr::CameraManipulator* cmrManipulator;
 };
 }

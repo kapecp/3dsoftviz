@@ -1237,11 +1237,6 @@ public:
      */
     QGroupBox* radialLayoutGroup();
 
-    /**
-     * @brief chb_leap_camera_move to check if is camera moving or rotating
-     */
-    QLabel* lb_leap_camera_move;
-
 protected:
 
     /**

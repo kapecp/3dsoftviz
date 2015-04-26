@@ -3,7 +3,6 @@
 
 Leap::LeapActions::LeapActions(){
     mouse = new Vwr::MouseControl();
-    zoomCounter = 0;
     cmrManipulator = AppCore::Core::getInstance( NULL )->getCoreWindow()->getCameraManipulator();
     isCameraMoving = true;
     qDebug() << "LeapActions() Constructor";
@@ -88,16 +87,9 @@ void Leap::LeapActions::zoomGraph(Gesture gesture)
 
 void Leap::LeapActions::onKeyTap(Gesture gesture)
 {
-    //QOSG::CoreWindow cw = AppCore::Core::getInstance( NULL )->getCoreWindow();
     if(isCameraMoving){
-       // if(cw.lb_leap_camera_move != NULL){
-         //  cw.lb_leap_camera_move->setText("Camera rotating");
-       // }
         isCameraMoving = false;
     }else{
-       // if(cw.lb_leap_camera_move != NULL){
-       //     cw.lb_leap_camera_move->setText("Camera moving");
-      //  }
         isCameraMoving = true;
     }
     qDebug() << "KeyTapGesture";
