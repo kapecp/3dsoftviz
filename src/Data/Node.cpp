@@ -284,7 +284,7 @@ osg::ref_ptr<osg::Geode> Data::Node::createLabel( const float& scale, QString na
     float zOffset = 0.1f;
 
     // Calculate charSize from scale
-    float charSize = (float)log(scale) * 1.5f + 8;
+    float charSize = (float)log(scale) * 1.8f + 10;
 
     // Gloger:
     if ( fontPath != NULL && !fontPath.isEmpty() ) {
