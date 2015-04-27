@@ -239,20 +239,6 @@ void CoreWindow::createActions()
 	remove_all->setFocusPolicy( Qt::NoFocus );
 	connect( remove_all, SIGNAL( clicked() ), this, SLOT( removeClick() ) );
 
-	// <Change> Nagy+Gloger
-	loadFunctionCallButton = new QPushButton();
-	loadFunctionCallButton->setText( "Load function calls" );
-	loadFunctionCallButton->setToolTip( "Load function calls" );
-	loadFunctionCallButton->setFocusPolicy( Qt::NoFocus );
-	connect( loadFunctionCallButton, SIGNAL( clicked() ), this, SLOT( loadFunctionCall() ) );
-
-	browsersGroupingButton = new QPushButton();
-	browsersGroupingButton->setIcon( QIcon( "../share/3dsoftviz/img/gui/grouping.png" ) );
-	browsersGroupingButton->setToolTip( "Toggle browsers (webViews) grouping" );
-	browsersGroupingButton->setCheckable( true );
-	browsersGroupingButton->setFocusPolicy( Qt::NoFocus );
-	connect( browsersGroupingButton, SIGNAL( clicked( bool ) ), this, SLOT( browsersGroupingClicked( bool ) ) );
-
 	filterNodesEdit = new QLineEdit();
 	filterEdgesEdit = new QLineEdit();
 	connect( filterNodesEdit, SIGNAL( returnPressed() ), this, SLOT( filterGraph() ) );
@@ -436,6 +422,20 @@ void CoreWindow::createActions()
 	b_switch2Dand3D->setToolTip( "&Turn to 3D or 2D" );
 	b_switch2Dand3D->setFocusPolicy( Qt::NoFocus );
 	connect( b_switch2Dand3D, SIGNAL( clicked() ), this, SLOT( switch2Dand3D() ) );
+
+    // <Change> Nagy+Gloger
+    loadFunctionCallButton = new QPushButton();
+    loadFunctionCallButton->setIcon( QIcon( "../share/3dsoftviz/img/gui/load_function_calls.png" ) );
+    loadFunctionCallButton->setToolTip( "Load function calls" );
+    loadFunctionCallButton->setFocusPolicy( Qt::NoFocus );
+    connect( loadFunctionCallButton, SIGNAL( clicked() ), this, SLOT( loadFunctionCall() ) );
+
+    browsersGroupingButton = new QPushButton();
+    browsersGroupingButton->setIcon( QIcon( "../share/3dsoftviz/img/gui/grouping.png" ) );
+    browsersGroupingButton->setToolTip( "Toggle webviews grouping" );
+    browsersGroupingButton->setCheckable( true );
+    browsersGroupingButton->setFocusPolicy( Qt::NoFocus );
+    connect( browsersGroupingButton, SIGNAL( clicked( bool ) ), this, SLOT( browsersGroupingClicked( bool ) ) );
 
 	b_start_server = new QPushButton();
 	b_start_server->setText( "Host session" );
@@ -709,6 +709,10 @@ QWidget* CoreWindow::createGraphTab( QFrame* line )
 	lGraph->addRow( line );
 	b_switch2Dand3D->setMaximumWidth( 136 );
 	lGraph->addRow( b_switch2Dand3D );
+	lGraph->addRow( line );
+	loadFunctionCallButton->setMinimumWidth( 68 );
+	browsersGroupingButton->setMaximumWidth( 68 );
+	lGraph->addRow( loadFunctionCallButton,browsersGroupingButton );
 
 	wGraph->setLayout( lGraph );
 
@@ -3193,15 +3197,9 @@ void CoreWindow::createMetricsToolBar()
 {
 	toolBar = new QToolBar( "Metrics visualizations",this );
 
-	// <Change> Gloger start: added horizontal frame to support browser (webView) grouping toggling
-	QFrame* frame = createHorizontalFrame();
-	frame->layout()->addWidget( loadFunctionCallButton );
-	frame->layout()->addWidget( browsersGroupingButton );
-	toolBar->addWidget( frame );
-	// Gloger end
-
 	toolBar->addWidget( luaGraphTreeView );
 	toolBar->setMinimumWidth( 350 );
+	toolBar->setHidden(true);
 
 	addToolBar( Qt::RightToolBarArea,toolBar );
 	toolBar->setMovable( true );
