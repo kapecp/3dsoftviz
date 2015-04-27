@@ -73,8 +73,8 @@ void QWebViewImage::showTemplate( const std::string &templateName, Diluculum::Lu
 
 void QWebViewImage::focusBrowser( bool focus )
 {
-	QFocusEvent event( focus ? QEvent::FocusIn : QEvent::FocusOut, Qt::OtherFocusReason );
-	QCoreApplication::sendEvent( _webPage, &event );
+//	QFocusEvent event( focus ? QEvent::FocusIn : QEvent::FocusOut, Qt::OtherFocusReason );
+//	QCoreApplication::sendEvent( _webPage, &event );
 }
 
 void QWebViewImage::clearWriteBuffer()
