@@ -94,12 +94,14 @@ void QWebViewImage::setFrameLastRendered( const osg::FrameStamp* frameStamp )
 
 bool QWebViewImage::sendPointerEvent( int x, int y, int buttonMask )
 {
-	return _adapter->sendPointerEvent( x,y,buttonMask );
+	//return _adapter->sendPointerEvent( x,y,buttonMask );
+	return true;
 }
 
 bool QWebViewImage::sendKeyEvent( int key, bool keyDown )
 {
-	return QWebViewImage::_adapter->sendKeyEvent( key, keyDown );
+	//return QWebViewImage::_adapter->sendKeyEvent( key, keyDown );
+	return true;
 }
 
 }
