@@ -94,14 +94,16 @@ void QWebViewImage::setFrameLastRendered( const osg::FrameStamp* frameStamp )
 
 bool QWebViewImage::sendPointerEvent( int x, int y, int buttonMask )
 {
+	// TODO interaction could be enabled but we need to check if camera is rotating or moving
+	// (returned value indicates if we are going to handle this event here)
 	//return _adapter->sendPointerEvent( x,y,buttonMask );
-	return true;
+	return false;
 }
 
 bool QWebViewImage::sendKeyEvent( int key, bool keyDown )
 {
 	//return QWebViewImage::_adapter->sendKeyEvent( key, keyDown );
-	return true;
+	return false;
 }
 
 }
