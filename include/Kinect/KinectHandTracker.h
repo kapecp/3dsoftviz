@@ -45,10 +45,9 @@ public:
 	 * number of hands that are tracked
 	 */
 	//Marak starts
-    void Kinect::KinectHandTracker::visualSelection( );
 
 	int numHandsTracking;
-
+	bool isGestureClick;
 	/**
 	 * @brief void moveGraphByHand
 	 * @brief move graph folowing hand movement (X,Y coords)
@@ -116,6 +115,10 @@ public:
 	// frame getting from Hand Tracker
 	nite::HandTrackerFrameRef handTrackerFrame;
 
+	/**
+	 * @brief is Mouse pressed
+	 */
+	bool isClick;
 private:
 
 	//Marak starts
@@ -128,18 +131,8 @@ private:
 	 * @brief viewer
 	 */
 	QOSG::ViewerQT* viewer;
-
-    // moze private
-    Data::Node* tempSelectedNode;
-    Data::Edge* tempSelectedEdge;
-
-    MathModule::CameraMath* camMath;
-    //Marak ends
-
-	/**
-	 * @brief is Mouse pressed
-	 */
-	bool isClick;
+	Vwr::GraphNavigation* nav;
+	//Marak ends
 
 	/**
 	 * @brief is mouse cursor movement enable

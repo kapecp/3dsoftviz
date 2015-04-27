@@ -311,11 +311,11 @@ void Data::Edge::reloadLabel()
 //Marak start
 void Data::Edge::setEdgeDefaultColor()
 {
-    float r = type->getSettings()->value( "color.R" ).toFloat();
-    float g = type->getSettings()->value( "color.G" ).toFloat();
-    float b = type->getSettings()->value( "color.B" ).toFloat();
-    float a = type->getSettings()->value( "color.A" ).toFloat();
+	float r = type->getSettings()->value( "color.R" ).toFloat();
+	float g = type->getSettings()->value( "color.G" ).toFloat();
+	float b = type->getSettings()->value( "color.B" ).toFloat();
+	float a = type->getSettings()->value( "color.A" ).toFloat();
 
-    this->edgeColor = osg::Vec4( r, g, b, a );
+	this->edgeColor = osg::Vec4( r, g, b, a );
 }
 //Marak end

@@ -1,7 +1,7 @@
 #include "Kinect/KinectHandTracker.h"
 #include "Viewer/MouseControl.h"
-#include "Math/CameraMath.h"
 #include "QDebug"
+#include "Viewer/GraphNavigation.h"
 
 #ifdef NITE2_FOUND
 
@@ -19,7 +19,6 @@ Kinect::KinectHandTracker::KinectHandTracker( openni::Device* device, openni::Vi
 	mouse = new Vwr::MouseControl();
 	mDepth=m_depth;
 	viewer = AppCore::Core::getInstance()->getCoreWindow()->GetViewerQt();
-    tempSelectedNode = NULL;
 }
 
 
@@ -39,6 +38,7 @@ void Kinect::KinectHandTracker::setSpeedMovement( double set )
 
 void Kinect::KinectHandTracker::getAllGestures()
 {
+	isGestureClick = false;
 	// get frame - depth data
 	this->m_pHandTracker.readFrame( &this->handTrackerFrame );
 
@@ -48,35 +48,20 @@ void Kinect::KinectHandTracker::getAllGestures()
 		// checking for complete gesture
 		if ( gestures[i].isComplete() ) {
 			printf( "completed gesture\n" );
-			if ( gestures[i].getType()==nite::GESTURE_CLICK ) {
+			/*
+			 * if ( gestures[i].getType()==nite::GESTURE_CLICK ) {
 				printf( "gesture click is on\n" );
 				if ( isClick ) {
 					isClick=false;
 					printf( "Release\n" );
-					mouse->releasePressMouse( Qt::LeftButton );
 				}
 				else {
 					isClick=true;
 					printf( "Click\n" );
-					mouse->clickPressMouse( Qt::LeftButton );
 				}
+				isGestureClick = true;
 
-                // marak start
-                if ( tempSelectedNode != NULL ){
-                    // restore color settings
-                    tempSelectedNode->setDefaultColor();
-                    tempSelectedEdge->setEdgeDefaultColor();
-                    // add new picked node
-                    viewer->getPickHandler()->addPickedNode( tempSelectedNode );
-                    // set selected color
-                    tempSelectedNode->setSelected( true );
-                    // remove tmp node and edge
-                    printf("ADDED > %d\n",tempSelectedNode->getId());
-
-                    tempSelectedNode = NULL;
-                    tempSelectedEdge = NULL;
-                }
-			}
+			}*/
 			const nite::Point3f& position = gestures[i].getCurrentPosition();
 			printf( "Gesture %d at (%f,%f,%f)\n", gestures[i].getType(), position.x, position.y, position.z );
 
@@ -118,7 +103,7 @@ void Kinect::KinectHandTracker::getAllHands()
 			if ( i==0 && isCursorMovementEnable ) {
 				mouse->setSpeedUpMoving( mSpeed );
 				coordinateConverter.convertWorldToDepth( *mDepth, user.getPosition().x, user.getPosition().y, user.getPosition().z, &mDepthX, &mDepthY, &mDepthZ );
-				mouse->moveCursorWorldCoordinates( mDepthX,mDepthY,isClick );
+				mouse->moveCursorWorldCoordinates( mDepthX,mDepthY, true );
 			}
 
 			// TODO - further implementation should include depth information in pixels
@@ -248,69 +233,3 @@ void Kinect::KinectHandTracker::moveGraphByHandToDepth( float deltaZ )
 	}
 }
 #endif // NITE2_FOUND
-
-void Kinect::KinectHandTracker::visualSelection( )
-{
-    QLinkedList<osg::ref_ptr<Data::Node> >* selectedNodes = viewer->getPickHandler()->getSelectedNodes();
-
-    // if there is selected node
-    if ( selectedNodes->size() != 0 ){
-        // get coords of mouse
-        float mouseX = static_cast<float>( viewer->cursor().pos().x() - viewer->pos().x());
-        float mouseY = static_cast<float>( viewer->height() + viewer->pos().y() - viewer->cursor().pos().y() + 20 );
-      //  int mouseZ = 0;
-
-        Data::Node* lastSelectedNode = selectedNodes->last();
-
-       // printf("M > %.3f ; %.3f\n",mouseX, mouseY);
-
-        QMap<qlonglong, osg::ref_ptr<Data::Edge> >* nodeEdges = lastSelectedNode->getEdges();
-        Data::Edge* closestNodeEdge = NULL;
-        float minDistance = 0;
-        printf("L > %d\n",lastSelectedNode->getId());
-
-        for ( QMap<qlonglong, osg::ref_ptr<Data::Edge> >::const_iterator iter = nodeEdges->begin(); iter != nodeEdges->end(); iter++ ){
-            // get dest node and possition
-            Data::Node* dstNode = ( *iter)->getOtherNode( lastSelectedNode );
-            // convert node coordinates to screen coordinates
-            osg::Vec3f nodePossition = camMath->projectOnScreen( viewer->getCamera(), dstNode->getCurrentPosition());
-           // printf("NODE %d ",dstNode->getId());
-
-            // calculate distance between node and cursor
-            double distance;
-            distance = sqrt ( pow( abs( nodePossition[0] - mouseX ), 2)
-                            + pow( abs( nodePossition[1] - mouseY ), 2));
-                            //+ pow( abs( nodePossition[2] - mouseZ ), 2));
-
-            // first edge or nearer node
-            if( ( minDistance == 0) || ( minDistance > distance ) ){
-                minDistance = distance;
-                closestNodeEdge = ( *iter);
-            }
-
-           // printf("> %.3f ; %.3f\n", nodePossition[0], nodePossition[1]);
-        }
-
-        // get closest node
-        Data::Node* tmpNode = closestNodeEdge->getOtherNode( lastSelectedNode );
-        if ( !tmpNode->equals( tempSelectedNode ) ){
-            // remove previous temp select
-            if( tempSelectedNode != NULL ){
-                tempSelectedNode->setDefaultColor();
-                tempSelectedEdge->setEdgeDefaultColor();
-            }
-
-            // create new temp select for node and edge
-            tempSelectedNode = tmpNode;
-            tempSelectedNode->setColor( osg::Vec4(1.0f,1.0f,0.0f,0.5f) );
-            tempSelectedEdge = closestNodeEdge;
-            tempSelectedEdge->setEdgeColor(  osg::Vec4(1.0f,1.0f,0.0f,0.5f) );
-        }
-    }
-    else if( tempSelectedNode != NULL ){
-        tempSelectedNode->setDefaultColor();
-        tempSelectedNode = NULL;
-        tempSelectedEdge->setEdgeDefaultColor();
-        tempSelectedEdge = NULL;
-    }
-}

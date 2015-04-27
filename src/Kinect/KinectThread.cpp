@@ -7,6 +7,7 @@
 
 #include "QDebug"
 
+
 Kinect::KinectThread::KinectThread( QObject* parent ) : QThread( parent )
 {
 	//initialize based atributes
@@ -16,6 +17,16 @@ Kinect::KinectThread::KinectThread( QObject* parent ) : QThread( parent )
 	isOpen=false;
 	mSetImageEnable=true;
 	isZoomEnable=true;
+
+	// timer setting
+	clickTimer = new QTimer();
+	connect( clickTimer ,SIGNAL( timeout() ), this, SLOT( clickTimerTimeout() ) );
+	connect( this ,SIGNAL( signalClickTimerStop() ), this, SLOT( clickTimerStop() ) );
+	connect( this ,SIGNAL( signalClickTimerStart() ), this, SLOT( clickTimerStart() ) );
+	clickTimerFirstRun = true;
+
+	nav = new Vwr::GraphNavigation();
+	mouse = new Vwr::MouseControl();
 }
 
 Kinect::KinectThread::~KinectThread( void )
@@ -78,9 +89,51 @@ void Kinect::KinectThread::setSpeedKinect( double set )
 	mSpeed=set;
 }
 
+void Kinect::KinectThread::clickTimerTimeout()
+{
+	if ( clickTimerFirstRun ) {
+		clickTimerFirstRun = false;
+		clickTimer->start( 1500 );
+	}
+	else {
+		clickTimer->stop();
+	}
+	//printf( "Timer timedout, timer stop\n" );
+}
+void Kinect::KinectThread::clickTimerStart()
+{
+	clickTimerFirstRun = true;
+	clickTimer->start( 500 );
+
+	//printf( "Hand closed, timer start\n" );
+}
+void Kinect::KinectThread::clickTimerStop()
+{
+	clickTimer->stop();
+
+	// if gesture is click ( less than 500ms )
+	if ( clickTimerFirstRun ) {
+		// if navigation is enabled, do navigation click
+		if ( nav->isNavEnabled ) {
+			nav->selectNearestNode();
+		}
+		// else do basic click
+		else {
+			mouse->clickMouseLeftButton();
+		}
+	}
+	// else gesture is remove ( less than 1000ms of second run )
+	else {
+		nav->removeLastSelectedNode();
+	}
+
+	//printf( "Hand opened, timer stop\n" );
+}
+
 void Kinect::KinectThread::run()
 {
-
+	// flag for timer
+	bool wasTimerReset = true;
 	mCancel=false;
 
 	//real word convector
@@ -112,9 +165,9 @@ void Kinect::KinectThread::run()
 			// cita handframe, najde gesto na snimke a vytvori mu "profil"
 			kht->getAllGestures();
 			kht->getAllHands();
-            //kht->visualSelection( );
 #endif
-
+			// start highlighting neighbour nodes
+			nav->navigate( 2 );
 			//////////////End/////////////
 
 			//	cap >> frame; // get a new frame from camera
@@ -163,13 +216,10 @@ void Kinect::KinectThread::run()
 					if ( i==0 ) {
 						mainHand = true;
 					}
-
 					// calculate depth frame
 					zoom->calcHandDepthFrame( frame,&m_depth,kht->getArrayHands[i][0], kht->getArrayHands[i][1], kht->handZ[i], mainHand );
 					// calculate num of fingers
 					numFingers[i] = zoom->DetectContour();
-
-                    //printf( "H<%d> F<%d>\n",i,numFingers[i] );
 				}
 
 				// cursor disabled => move graph
@@ -211,8 +261,35 @@ void Kinect::KinectThread::run()
 				}
 				// cursor enabled => move cursor
 				else {
-                    // change color of nearest node to mouse ( node is conected to last selected one )
-                    kht->visualSelection( );
+					// detect click gesture
+					if ( wasTimerReset ) {
+						// if main hand closed and timer inactive, start timer
+						if ( numFingers[0] == 0 ) {
+							emit signalClickTimerStart();
+							// to prevent restart in cycle
+							wasTimerReset = false;
+						}
+					}
+					// if timer is not ready
+					else if ( !wasTimerReset ) {
+						// if main hand open
+						if ( numFingers[0] > 3 ) {
+							// if timer is active, stop timer and do gesture
+							if ( clickTimer->isActive() ) {
+								wasTimerReset = true;
+								emit signalClickTimerStop();
+							}
+							// gesture has ended, restart timer to enable next gesture
+							else {
+								wasTimerReset = true;
+							}
+						}
+					}
+
+					// else do basic mouse gestures
+					else {
+
+					}
 				}
 			}
 			//}
