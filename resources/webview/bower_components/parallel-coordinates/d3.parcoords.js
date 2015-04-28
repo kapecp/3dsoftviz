@@ -555,7 +555,7 @@ pc.createAxes = function() {
     .append("svg:text")
       .attr({
         "text-anchor": "middle",
-        "y": 0,
+        "y": -15, // Modified to support bigger label text
         "transform": "translate(0,-5) rotate(" + __.dimensionTitleRotation + ")",
         "x": 0,
         "class": "label"
