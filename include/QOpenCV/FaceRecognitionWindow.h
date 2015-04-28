@@ -123,7 +123,20 @@ signals:
 	void startMarker();
 
 	/**
-		 * @author Autor: David Durcak
+	 * @author Autor: Michael Garaj
+	 * @brief startMultiMarker Signal to start multi marker detection in Aruco thread
+	 */
+	void startMultiMarker();
+
+	/**
+	 * @author Autor: Michael Garaj
+	 * @brief stopMultiMarker Signal to stop multi marker detection in Aruco thread
+	 * @param set
+	 */
+	void stopMultiMarker( bool set );
+
+	/**
+	 * @author Autor: David Durcak
 		 * @brief startFaceRec Signal for starting FaceDetection thread
 		 */
 	void startFaceRec();
@@ -141,6 +154,13 @@ signals:
 		 * @param capVideo camera object
 		 */
 	void setCapVideoMarker( OpenCV::CapVideo* capVideo );
+
+	/**
+	 * @author Autor: Michael Garaj
+	 * @brief setMultiMarker Signal to set multi marker detection in Aruco thread
+	 * @param set
+	 */
+	void setMultiMarker( bool set );
 
 
 public slots:
@@ -198,6 +218,13 @@ private slots:
 	void onMarkerStartCancel( bool checked );
 
 	/**
+	 * @author Autor: Michael Garaj
+	 * @brief onMultiMarkerStartCancel Start or stop
+	 * @param checked
+	 */
+	void onMultiMarkerStartCancel( bool checked );
+
+	/**
 		 * @author Autor: David Durcak
 		 * @brief onFaceDetBackgrCBClicked Slot for enabling video backgroung from FaceRecongition and disabling from Aruco
 		 * @param checked
@@ -235,10 +262,13 @@ private:
 	// switching the camera,
 	QRadioButton*	mFaceRecRB;
 	QRadioButton*	mMarkerRB;
+	QRadioButton*	mMultiMarkerRB;
+
 	QCheckBox*		mNoVideo;
 	QStackedLayout*	mModulesStackL;
 	QPushButton*		mFaceRecStartCancelPB;
 	QPushButton*		mMarkerStartCancelPB;
+	QPushButton*	mMultiMarkerStartCancelPB;
 
 	QCheckBox*		mMarkerBackgrCB;
 	QCheckBox*		mFaceDetBackgrCB;

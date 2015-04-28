@@ -1,4 +1,6 @@
 #include "Viewer/GraphNavigation.h"
+#include "Viewer/PickHandler.h"
+
 #include "QDebug"
 
 Vwr::GraphNavigation::GraphNavigation()
