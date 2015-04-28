@@ -38,16 +38,6 @@ public:
 
 	void run();
 
-	/**
-	 * @brief inicialize openni and nite for handtracking and add device
-	 */
-	bool inicializeKinect();
-
-	/**
-	 * @brief pause,stop calculate
-	 */
-	void closeActionOpenni();
-
 signals:
 	// Marak start
 	void signalClickTimerStart();
@@ -62,10 +52,16 @@ signals:
 	void sendSliderCoords( float x, float y, float distance );
 
 	/**
-	 * @brief send picture for Kinect window
+	 * @brief send picture for OpenCV window
 	 * @param image picture from Kinect
 	 */
 	void pushImage( cv::Mat image );
+
+	/**
+	 * @brief send picture to Aruco Marker Detection
+	 * @param image picture from Kinect
+	 */
+	void pushImageToMarkerDetection( cv::Mat image );
 
 
 	/**
@@ -96,6 +92,12 @@ public slots:
 	 */
 	void setImageSend( bool set );
 
+	/**
+	 * @brief function for enable sending picture to Aruco thread for Marker Detection
+	 * @param set true for sending picture, false for pause
+	 */
+	void setImageSendToMarkerDetection( bool set );
+
 	void pause();
 
 	/**
@@ -115,6 +117,16 @@ public slots:
 	 * @param set base 1.0 for normal speed, <1 slower, >1 faster
 	 */
 	void setSpeedKinect( double set );
+
+	/**
+	 * @brief inicialize openni and nite for handtracking and add device
+	 */
+	void inicializeKinect();
+
+	/**
+	 * @brief pause,stop calculate
+	 */
+	void closeActionOpenni();
 
 private:
 	// Marak start
@@ -142,7 +154,16 @@ private:
 	 * @brief status of cursor
 	 */
 	bool isCursorEnable;
+
+	/**
+	 * @brief isZoomEnable status of zoom
+	 */
 	bool isZoomEnable;
+
+	/**
+	 * @brief isMarkerDetectEnable status of marker detection
+	 */
+	bool isMarkerDetectEnable;
 
 	/**
 	 * @brief speed for reaction
@@ -153,6 +174,11 @@ private:
 	 * @brief base colorframe enity for save data
 	 */
 	openni::VideoFrameRef colorFrame;
+
+	/**
+	 * @brief depthFrame depthframe entity for save data
+	 */
+	openni::VideoFrameRef depthFrame;
 
 	/**
 	 * @brief base class for Hand Recognition

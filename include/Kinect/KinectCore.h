@@ -8,6 +8,10 @@ class KinectThread;
 class KinectWindow;
 }
 
+namespace QOpenCV {
+class OpenCVWindow;
+}
+
 namespace Kinect {
 
 /**
@@ -29,14 +33,6 @@ public:
 		 * @return KinectCore instance
 		 */
 	static KinectCore* getInstance( QApplication* app, QWidget* parent );
-
-
-	/**
-	 * @author Matej Marconak
-	 * @brief kinectRecognition start
-	 * @brief create thread and window for Kinect
-	 */
-	void kinectRecognition();
 
 private:
 
@@ -81,9 +77,9 @@ private:
 	bool	mThrsCreated;
 
 	/**
-	 * @brief Kinect Window
+	 * @brief OpenCV Window
 	 */
-	QPointer<Kinect::KinectWindow> mKinectDialog;
+	QPointer<QOpenCV::OpenCVWindow> mOpencvWindow;
 
 };
 }

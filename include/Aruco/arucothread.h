@@ -75,6 +75,13 @@ signals:
 	void pushImagemMat( cv::Mat image ) const;
 
 	/**
+	* @author Michael Garaj
+	* @brief pushImageFromKinect signal that emit image with marked marker for debuging from Kinect
+	* @param image emited image matrix
+	*/
+	void pushImageFromKinect( cv::Mat image ) const;
+
+	/**
 	* @author Dávid Durčák
 	* @brief pushBackgrImage signal that emit image for background
 	* @param image emited image matrix
@@ -155,6 +162,20 @@ public slots:
 	*/
 	void interchangeMarkers();
 
+	/**
+	* @author Michael Garaj
+	* @brief setMultiMarker Set mMultiMarkerEnabled true to enable multi marker detection, false to disable
+	* @param set
+	*/
+	void setMultiMarker( bool set );
+
+	/**
+	* @author Michael Garaj
+	* @brief detectMarkerFromImage Detect markers from kinect image
+	* @param set
+	*/
+	void detectMarkerFromImage( cv::Mat image );
+
 private:
 
 	/**
@@ -231,6 +252,8 @@ private:
 	bool		mUpdCorPar;			// if true, correction can be setted
 	bool		mSendImgEnabled;	// if true, of emiting actual frame is enabled
 	bool		mSendBackgrImgEnabled;
+	bool		mMultiMarkerEnabled;
+
 	unsigned int	mGrM;				// number of marker for graph controll
 	unsigned int	mMoM;				// number of marker for mouse controll
 

@@ -137,7 +137,7 @@ void Kinect::KinectWindow::pausewindows()
 	//check button name, based on that stop pause and start
 	if ( mKinectPause->text().toStdString().compare( tr( "Start" ).toStdString() )==0 ) {
 		//inicialize openni and start device
-		start = thr->inicializeKinect();
+		//	start = thr->inicializeKinect();
 		if ( start ) {
 			emit startKinect();
 
@@ -148,11 +148,11 @@ void Kinect::KinectWindow::pausewindows()
 	else if ( mKinectPause->text().toStdString().compare( tr( "Pause" ).toStdString() )==0 ) {
 		mKinectPause->setText( tr( "Continue" ) );
 		emit sendImageKinect( false );
-		this->thr->closeActionOpenni();
+		//this->thr->closeActionOpenni();
 	}
 	else {
 		//inicialize openni and start device
-		start = thr->inicializeKinect();
+		//start = thr->inicializeKinect();
 		if ( start ) {
 			mKinectPause->setText( tr( "Pause" ) );
 			emit sendImageKinect( true );
