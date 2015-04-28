@@ -7,35 +7,19 @@
 
 		var models = Service.objectToArray($window.models);
 
-		// Translate array of models to array of module names
-		var modulePaths = $.map(models, function (model) {
-			return model.type + " " + model.name;
-		});
+		var data = d3.range(0, models.length, 1)
+			.map(function (i) {
+				return {
+					"LOC": models[i].metrics.LOC.lines,
+					"Cyclomatic": models[i].metrics.cyclomatic.upperBound_all,
+					"Infoflow": models[i].metrics.infoflow.interface_complexity
+				};
+			});
 
 		// Setup view model
 		$scope.vm = {
-			models: models,
-			modulePaths: modulePaths,
-
-			// Chart data
 			chart: {
-				labels: modulePaths,
-				series: ["LOC", "Cyclomatic", "Infoflow"],
-				data: $.map(models, function (model) {
-					return [[
-						model.metrics.LOC.lines,
-						model.metrics.cyclomatic.upperBound_all,
-						model.metrics.infoflow.interface_complexity
-					]];
-				}),
-
-				// Chart.js options
-				options: {
-					bezierCurve: false,
-					datasetFill : false,
-					pointDotRadius : 6,
-					datasetStrokeWidth : 4
-				}
+				data: data
 			}
 		};
 

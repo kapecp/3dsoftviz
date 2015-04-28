@@ -6,6 +6,7 @@
     <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap-theme.min.css">
     <link rel="stylesheet" href="bower_components/angular-chart.js/dist/angular-chart.css">
+    <link rel="stylesheet" href="bower_components/parallel-coordinates/d3.parcoords.css">
 
     <!-- Custom CSS Styles -->
     <link rel="stylesheet" href="css/style.css">
@@ -23,11 +24,14 @@
 <script src="bower_components/angular/angular.min.js"></script>
 <script src="bower_components/angular-ui-router/release/angular-ui-router.min.js"></script>
 <script src="bower_components/angular-chart.js/dist/angular-chart.min.js"></script>
+<script src="bower_components/d3/d3.min.js"></script>
+<script src="bower_components/parallel-coordinates/d3.parcoords.js"></script>
 
 <!-- JS Sources -->
 <script src="src/app.js"></script>
 <script src="src/services/Service.js"></script>
 <script src="src/controllers/SingleController.js"></script>
 <script src="src/controllers/MultiController.js"></script>
+<script src="src/directives/ParCoordsDirective.js"></script>
 </body>
 </html>

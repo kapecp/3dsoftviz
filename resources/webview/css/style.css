@@ -40,16 +40,15 @@ body {
 	font-size: 25px;
 }
 
-.multi-container ul {
-	font-size: 24px;
+.multi-container .parcoords {
+	width: 780px;
+	height: 580px;
 }
 
-.multi-container ul li {
-	padding-left: 35px;
-	padding-right: 12px;
+.parcoords > svg .label{
+	font: 34px sans-serif;
 }
 
-.multi-container ul li span {
-	width: 30px;
-	height: 30px;
+.parcoords > svg .tick{
+	font: 26px sans-serif;
 }
