@@ -711,6 +711,10 @@ void CoreGraph::reload( Data::Graph* graph )
 
 	osgUtil::Optimizer opt;
 	opt.optimize( edgesGroup->getGroup(), osgUtil::Optimizer::CHECK_GEOMETRY );
+
+	// Set browsers to be always on top
+	this->browsersGroup->getGroup()->getOrCreateStateSet()->setMode(GL_DEPTH_TEST, osg::StateAttribute::OFF);
+	this->browsersGroup->getGroup()->getOrCreateStateSet()->setRenderBinDetails(100,"RenderBin");
 }
 
 void CoreGraph::cleanUp()
