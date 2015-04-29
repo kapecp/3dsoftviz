@@ -5,6 +5,8 @@
 #include <osg/AutoTransform>
 #include <osg/Group>
 #include <QList>
+#include <osg/Geometry>
+#include <osg/Geode>
 
 #include "OsgQtBrowser/QWebViewImage.h"
 #include "Data/Node.h"
@@ -83,6 +85,38 @@ private:
 	void addBrowser( const std::string &templateType, osg::Vec3 position, Diluculum::LuaValueMap models );
 
 	/**
+		*  \fn private  createBorderGeode
+		*  \brief returns Geode containing line Geometry for webview border
+		*  \param  bl bottom left
+		*  \param  br bottom right
+		*  \param  tr top right
+		*  \param  tl top left
+		*/
+	osg::Geode* createBorderGeode(osg::Vec3 bl, osg::Vec3 br, osg::Vec3 tr, osg::Vec3 tl);
+
+	/**
+		*  \fn private  createConnectorsGeode
+		*  \brief returns Geode containing line geometries connecting webview center to all supplied nodes positions (targets)
+		*  \param  center center of the webview
+		*  \param  targets array of targets. There will be targets.size lines created
+		*/
+	osg::Geode* createConnectorsGeode(osg::Vec3 center, osg::Vec3Array* targets);
+
+	/**
+		*  \fn private  createLinesGeode
+		*  \brief returns geode created from supplied geometry
+		*  \param linesGeom lines geometry which will be added to geode
+		*/
+	osg::Geode* createLinesGeode(osg::Geometry* linesGeom);
+
+		/**
+		*  \fn public  updateTransforms
+		*  \brief Animates browser transform scale
+		*  \param transforms
+		*/
+	void updateTransforms(QList<osg::ref_ptr<osg::AutoTransform> >* transforms);
+
+	/**
 		*  \fn private  initBrowsers
 		*  \brief Initializes sepparate browser for all selected nodes models
 		*/
@@ -122,6 +156,11 @@ private:
 		*  \brief List of browsers transforms
 		*/
 	QList<osg::ref_ptr<osg::AutoTransform> >* browsersTransforms;
+
+	/**
+		*  \brief List of connectros transforms (lines connecting browser and node)
+		*/
+	QList<osg::ref_ptr<osg::AutoTransform> >* connectorsTransforms;
 
 	/**
 		*  \brief List of selected nodes
