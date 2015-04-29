@@ -13,6 +13,7 @@ namespace Vwr {
 BrowserGroup::BrowserGroup()
 {
 	this->group = new osg::Group;
+	this->group->getOrCreateStateSet()->setMode(GL_LIGHTING,osg::StateAttribute::OFF);
 	this->browsersTransforms = new QList<osg::ref_ptr<osg::AutoTransform> >;
 	this->browsersGrouping = false;
 	this->selectedNodes = new QLinkedList<osg::ref_ptr<Data::Node> >();
@@ -162,8 +163,8 @@ void BrowserGroup::addBrowser(const std::string &templateType, osg::Vec3 positio
 
 	// Add it to browser
 	osgWidget::GeometryHints hints( osg::Vec3( 0.0f,0.0f,0.0f ),
-									osg::Vec3( 150.0f,0.0f,0.0f ),
-									osg::Vec3( 0.0f,150.0f,0.0f ),
+									osg::Vec3( 180.0f,0.0f,0.0f ),
+									osg::Vec3( 0.0f,180.0f,0.0f ),
 									osg::Vec4( 0.0f,0.0f,0.0f,0.0f ) );
 
 	osg::ref_ptr<osgWidget::Browser> browser = new osgWidget::Browser;
