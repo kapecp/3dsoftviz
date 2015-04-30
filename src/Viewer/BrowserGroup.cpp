@@ -161,8 +161,9 @@ void BrowserGroup::addBrowser(const std::string &templateType, osg::Vec3 positio
 	// Create webView
 	osg::ref_ptr<OsgQtBrowser::QWebViewImage> webView = new OsgQtBrowser::QWebViewImage();
 
-	// Webview position/offset
-	float wh = 180;
+	// Webview position/offset (should have same aspect ratio as 800/600)
+	float width = 180;
+	float height = 135;
 	float offset;
 
 	// Create connectors targets depending on whether grouping is enabled & setup offset
@@ -188,22 +189,20 @@ void BrowserGroup::addBrowser(const std::string &templateType, osg::Vec3 positio
 	}
 
 	// Setup browser pos
-	osg::Vec3 bl = osg::Vec3( -wh/2, -wh/2, 0 ); // Bottom left
-	osg::Vec3 br = osg::Vec3(  wh/2, -wh/2, 0 ); // Bottom right
-	osg::Vec3 tr = osg::Vec3(  wh/2,  wh/2, 0 ); // Top right
-	osg::Vec3 tl = osg::Vec3( -wh/2,  wh/2, 0 ); // Top left
+	osg::Vec3 bl = osg::Vec3( -width/2, -height/2, 0 ); // Bottom left
+	osg::Vec3 br = osg::Vec3(  width/2, -height/2, 0 ); // Bottom right
+	osg::Vec3 tr = osg::Vec3(  width/2,  height/2, 0 ); // Top right
+	osg::Vec3 tl = osg::Vec3( -width/2,  height/2, 0 ); // Top left
 	osg::Vec3 center = osg::Vec3(
-				position.x() + offset + wh/2,
-				position.y() + offset + wh/2,
+				position.x() + offset + width/2,
+				position.y() + offset + height/2,
 				position.z()
 	);
 
 	osgWidget::GeometryHints hints( bl,
-									osg::Vec3( wh, 0,  0 ),
-									osg::Vec3( 0,  wh, 0 ),
-									osg::Vec4( 0,  0,  0, 0 ),
-									osgWidget::GeometryHints::IGNORE_DOCUMENT_ASPECT_RATIO
-									);
+									osg::Vec3( width, 0,  0 ),
+									osg::Vec3( 0,  width, 0 ), // Needs more experimenting
+									osg::Vec4( 0,  0,  0, 0 ));
 
 	osg::ref_ptr<osgWidget::Browser> browser = new osgWidget::Browser;
 	browser->assign( webView, hints );
@@ -277,15 +276,15 @@ osg::Geode* BrowserGroup::createLinesGeode(osg::Geometry* linesGeom)
 
 	// Set line width
 	osg::LineWidth* linewidth = new osg::LineWidth();
-	linewidth->setWidth(1.5f);
+	linewidth->setWidth(1.1f);
 
     // Modify state set
     osg::StateSet* stateSet = linesGeode->getOrCreateStateSet();
     stateSet->setMode( GL_LIGHTING, osg::StateAttribute::OFF );
     stateSet->setMode( GL_LINE_SMOOTH, osg::StateAttribute::ON );
     stateSet->setMode( GL_BLEND, osg::StateAttribute::ON );
-    stateSet->setMode( GL_DEPTH_TEST, osg::StateAttribute::ON );
-    stateSet->setAttributeAndModes(linewidth, osg::StateAttribute::ON); // test off
+//    stateSet->setMode( GL_DEPTH_TEST, osg::StateAttribute::ON ); // Causing issues with overlying lines & labels
+    stateSet->setAttributeAndModes(linewidth, osg::StateAttribute::ON);
 
     // Set geometry color
     osg::Vec4Array* colors = new osg::Vec4Array;
