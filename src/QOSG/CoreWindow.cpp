@@ -1,4 +1,4 @@
-#include "QOSG/CoreWindow.h"
+﻿#include "QOSG/CoreWindow.h"
 
 #include "QOSG/ViewerQT.h"
 #include "QOSG/OptionsWindow.h"
@@ -67,7 +67,6 @@ CoreWindow::CoreWindow( QWidget* parent, Vwr::CoreGraph* coreGraph, QApplication
 	//inicializacia premennych
 	isPlaying = true;
 	isEBPlaying = false;
-	is3D = false;
 	application = app;
 	layout = thread;
 
@@ -438,16 +437,20 @@ void CoreWindow::createActions()
 
 	edgeBundlingSlider = new QSlider( Qt::Horizontal,this );
 	edgeBundlingSlider->setTickPosition( QSlider::TicksAbove );
-	edgeBundlingSlider->setTickInterval( 5 );
-	edgeBundlingSlider->setValue( 5 );
+	edgeBundlingSlider->setTickInterval( 1 );
+	edgeBundlingSlider->setValue( 50 );
 	edgeBundlingSlider->setFocusPolicy( Qt::NoFocus );
 	connect( edgeBundlingSlider,SIGNAL( valueChanged( int ) ),this,SLOT( edgeBundlingSliderValueChanged( int ) ) );
 
-	b_switch2Dand3D = new QPushButton();
-	b_switch2Dand3D->setText( "3D" );
-	b_switch2Dand3D->setToolTip( "&Turn to 3D or 2D" );
-	b_switch2Dand3D->setFocusPolicy( Qt::NoFocus );
-	connect( b_switch2Dand3D, SIGNAL( clicked() ), this, SLOT( switch2Dand3D() ) );
+	nodeTypeComboBox = new QComboBox();
+	nodeTypeComboBox->insertItems( 0,( QStringList() << "Square" << "Sphere" ) );
+	nodeTypeComboBox->setFocusPolicy( Qt::NoFocus );
+	connect( nodeTypeComboBox,SIGNAL( currentIndexChanged( int ) ),this,SLOT( nodeTypeComboBoxChanged( int ) ) );
+
+	edgeTypeComboBox = new QComboBox();
+	edgeTypeComboBox->insertItems( 0,( QStringList() << "Quad" << "Cylinder" << "Line" ) );
+	edgeTypeComboBox->setFocusPolicy( Qt::NoFocus );
+	connect( edgeTypeComboBox,SIGNAL( currentIndexChanged( int ) ),this,SLOT( edgeTypeComboBoxChanged( int ) ) );
 
 	b_start_server = new QPushButton();
 	b_start_server->setText( "Host session" );
@@ -679,8 +682,8 @@ QWidget* CoreWindow::createGraphTab( QFrame* line )
 	lGraph->addRow( multiSelect,center );
 	multiSelect->setMinimumWidth( 68 );
 	center->setMaximumWidth( 68 );
-	lGraph->addRow( nodeTypeComboBox );
-	nodeTypeComboBox->setMaximumWidth( 136 );
+	lGraph->addRow( selectionTypeComboBox );
+	selectionTypeComboBox->setMaximumWidth( 136 );
 	line = createLine();
 	lGraph->addRow( line );
 	addMeta->setMinimumWidth( 68 );
@@ -719,8 +722,11 @@ QWidget* CoreWindow::createGraphTab( QFrame* line )
 	lGraph->addRow( slider );
 	line = createLine();
 	lGraph->addRow( line );
-	b_switch2Dand3D->setMaximumWidth( 136 );
-	lGraph->addRow( b_switch2Dand3D );
+
+	nodeTypeComboBox->setMaximumWidth( 136 );
+	lGraph->addRow( nodeTypeComboBox );
+	edgeTypeComboBox->setMaximumWidth( 136 );
+	lGraph->addRow( edgeTypeComboBox );
 
 	wGraph->setLayout( lGraph );
 
@@ -1021,10 +1027,10 @@ void CoreWindow::createGraphSlider()
 
 void CoreWindow::createSelectionComboBox()
 {
-	nodeTypeComboBox = new QComboBox();
-	nodeTypeComboBox->insertItems( 0,( QStringList() << "All" << "Node" << "Edge" << "Cluster" ) );
-	nodeTypeComboBox->setFocusPolicy( Qt::NoFocus );
-	connect( nodeTypeComboBox,SIGNAL( currentIndexChanged( int ) ),this,SLOT( nodeTypeComboBoxChanged( int ) ) );
+	selectionTypeComboBox = new QComboBox();
+	selectionTypeComboBox->insertItems( 0,( QStringList() << "All" << "Node" << "Edge" << "Cluster" ) );
+	selectionTypeComboBox->setFocusPolicy( Qt::NoFocus );
+	connect( selectionTypeComboBox,SIGNAL( currentIndexChanged( int ) ),this,SLOT( selectionTypeComboBoxChanged( int ) ) );
 }
 
 void CoreWindow::createLeftToolBar()
@@ -1488,7 +1494,7 @@ void CoreWindow::colorPickerChanged( const QColor& color )
 	this->color = color;
 }
 
-void CoreWindow::nodeTypeComboBoxChanged( int index )
+void CoreWindow::selectionTypeComboBoxChanged( int index )
 {
 	switch ( index ) {
 		case 0:
@@ -1508,7 +1514,42 @@ void CoreWindow::nodeTypeComboBoxChanged( int index )
 			label->setChecked( edgeLabelsVisible & nodeLabelsVisible );
 			break;
 		default:
+			qDebug() << "CoreWindow:selectionTypeComboBoxChanged do not suported index";
+			break;
+
+	}
+}
+
+void CoreWindow::nodeTypeComboBoxChanged( int index )
+{
+	switch ( index ) {
+		case 0:
+			coreGraph->setNodeVisual( Data::Node::INDEX_SQUARE );
+			break;
+		case 1:
+			coreGraph->setNodeVisual( Data::Node::INDEX_SPHERE );
+			break;
+		default:
 			qDebug() << "CoreWindow:nodeTypeComboBoxChanged do not suported index";
+			break;
+
+	}
+}
+
+void CoreWindow::edgeTypeComboBoxChanged( int index )
+{
+	switch ( index ) {
+		case 0:
+			coreGraph->setEdgeVisual( Data::Edge::INDEX_QUAD );
+			break;
+		case 1:
+			coreGraph->setEdgeVisual( Data::Edge::INDEX_CYLINDER );
+			break;
+		case 2:
+			coreGraph->setEdgeVisual( Data::Edge::INDEX_LINE );
+			break;
+		default:
+			qDebug() << "CoreWindow:edgeTypeComboBoxChanged do not suported index";
 			break;
 
 	}
@@ -2143,6 +2184,7 @@ void CoreWindow::unsetRestrictionFromAll()
 
 void CoreWindow::startEdgeBundling()
 {
+	//stop EB
 	if ( isEBPlaying ) {
 		layout->stopEdgeBundling();
 		isEBPlaying = false;
@@ -2160,10 +2202,17 @@ void CoreWindow::startEdgeBundling()
 			currentGraph->restoreSplittedEdges();
 		}
 	}
+	//start EB
 	else {
+		if ( isPlaying ) {
+			isPlaying = 0;
+			layout->pause();
+		}
+
 		Data::Graph* currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
 
 		if ( currentGraph != NULL ) {
+
 			//select all nodes and fix them
 			QMap<qlonglong, osg::ref_ptr<Data::Node> >::iterator iNode = currentGraph->getNodes()->begin();
 			while ( iNode != currentGraph->getNodes()->end() ) {
@@ -2175,6 +2224,7 @@ void CoreWindow::startEdgeBundling()
 			//split edges
 			int splitCount = static_cast<int>( b_EdgeBundling_SpinBox->value() );
 			currentGraph->splitAllEdges( splitCount );
+
 		}
 
 		if ( !isPlaying ) {
@@ -2191,21 +2241,7 @@ void CoreWindow::startEdgeBundling()
 
 void CoreWindow::edgeBundlingSliderValueChanged( int value )
 {
-	layout->setAlphaEdgeBundlingValue( static_cast<float>( value ) * 0.001f );
-}
-
-void CoreWindow::switch2Dand3D()
-{
-	if ( is3D ) {
-		b_switch2Dand3D->setText( "3D" );
-		is3D = 0;
-	}
-	else {
-		b_switch2Dand3D->setText( "2D" );
-		is3D = 1;
-	}
-
-	coreGraph->set3D( is3D );
+	layout->setAlphaEdgeBundlingValue( static_cast<float>( value ) );
 }
 
 void CoreWindow::setRestrictionToSelectedNodes(
@@ -2577,7 +2613,7 @@ void CoreWindow::cluster_nodes()
 	// show
 	setVisibleClusterSection( true );
 
-	nodeTypeComboBox->setCurrentIndex( 3 ); // selectionType zmen na CLUSTER
+	selectionTypeComboBox->setCurrentIndex( 3 ); // selectionType zmen na CLUSTER
 
 	//AppCore::Core::getInstance(NULL)->cg->reload(currentGraph);
 

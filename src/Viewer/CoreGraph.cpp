@@ -1198,37 +1198,42 @@ void CoreGraph::computeGraphRotTransf()
 	graphRotTransf->setMatrix( graphTransfMat );
 }
 
-void CoreGraph::set3D( bool value )
+void CoreGraph::setNodeVisual( int index )
 {
-	QMap<qlonglong, osg::ref_ptr<Data::Edge> >::iterator iEdge = in_edges->begin();
-
-	while ( iEdge != in_edges->end() ) {
-		iEdge.value()->set3D( value );
-		iEdge++;
-	}
-
-	QMap<qlonglong, osg::ref_ptr<Data::Edge> >::iterator iMetaEdge = qmetaEdges->begin();
-
-	while ( iMetaEdge != qmetaEdges->end() ) {
-		iMetaEdge.value()->set3D( value );
-		iMetaEdge++;
-	}
-
 	QMap<qlonglong, osg::ref_ptr<Data::Node> >::iterator iNode = in_nodes->begin();
 
 	while ( iNode != in_nodes->end() ) {
-		iNode.value()->set3D( value );
+		iNode.value()->setVisual( index );
 		iNode++;
 	}
 
 	QMap<qlonglong, osg::ref_ptr<Data::Node> >::iterator iMetaNode = qmetaNodes->begin();
 
 	while ( iMetaNode != qmetaNodes->end() ) {
-		iMetaNode.value()->set3D( value );
+		iMetaNode.value()->setVisual( index );
 		iMetaNode++;
 	}
 
-	graph->setIs3D( value );
+	graph->setNodeVisual( index );
+}
+
+void CoreGraph::setEdgeVisual( int index )
+{
+	QMap<qlonglong, osg::ref_ptr<Data::Edge> >::iterator iEdge = in_edges->begin();
+
+	while ( iEdge != in_edges->end() ) {
+		iEdge.value()->setVisual( index );
+		iEdge++;
+	}
+
+	QMap<qlonglong, osg::ref_ptr<Data::Edge> >::iterator iMetaEdge = qmetaEdges->begin();
+
+	while ( iMetaEdge != qmetaEdges->end() ) {
+		iMetaEdge.value()->setVisual( index );
+		iMetaEdge++;
+	}
+
+	graph->setEdgeVisual( index );
 }
 
 #ifdef OPENCV_FOUND

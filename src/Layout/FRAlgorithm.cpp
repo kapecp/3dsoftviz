@@ -31,8 +31,8 @@ FRAlgorithm::FRAlgorithm()
 	MIN_MOVEMENT = 0.05f;
 	MAX_MOVEMENT = 30;
 	MAX_DISTANCE = 400;
-	ALPHA_EDGEBUNDLING = 0.005f;
-	MIN_MOVEMENT_EDGEBUNDLING = 0.75f;
+	ALPHA_EDGEBUNDLING = 50;
+	MIN_MOVEMENT_EDGEBUNDLING = 0.05f;
 	state = RUNNING;
 	stateEdgeBundling = PAUSED;
 	notEnd = true;
@@ -60,8 +60,8 @@ FRAlgorithm::FRAlgorithm( Data::Graph* graph )
 	MIN_MOVEMENT = 0.05f;
 	MAX_MOVEMENT = 30;
 	MAX_DISTANCE = 400;
-	ALPHA_EDGEBUNDLING = 0.005f;
-	MIN_MOVEMENT_EDGEBUNDLING = 0.75f;
+	ALPHA_EDGEBUNDLING = 50;
+	MIN_MOVEMENT_EDGEBUNDLING = 1.0f;
 	state = RUNNING;
 	stateEdgeBundling = PAUSED;
 	notEnd = true;
@@ -400,7 +400,6 @@ bool FRAlgorithm::applyForces( Data::Node* node )
 
 	// zmensenie pri edge bundlingu
 	if ( stateEdgeBundling == RUNNING ) {
-		fv *= ALPHA_EDGEBUNDLING;
 		float l = fv.length();
 		if ( l > MIN_MOVEMENT_EDGEBUNDLING ) {
 			if ( l > MAX_MOVEMENT ) {
@@ -538,7 +537,7 @@ void FRAlgorithm::addNeighbourAttractive( Data::Node* meta, Data::Node* neighbou
 	}
 	fv = vp - up;// smer sily
 	fv.normalize();
-	fv *= attr( dist ) * factor; // velkost sily
+	fv *= attr( dist )* factor; // velkost sily
 	meta->addForce( fv );
 }
 
@@ -558,7 +557,7 @@ void FRAlgorithm::addSameIndexAttractive( Data::Node* meta1, Data::Node* meta2, 
 	}
 	fv = vp - up;// smer sily
 	fv.normalize();
-	fv *= ( 50/attr( dist ) )*factor; // velkost sily
+	fv *= ( 1/attr( dist ) )*2*ALPHA_EDGEBUNDLING*factor; // velkost sily
 	meta1->addForce( fv );
 }
 
