@@ -239,11 +239,16 @@ bool FRAlgorithm::iterate()
 				k = graph->getMetaNodes()->begin();
 				while ( k != graph->getMetaNodes()->end() ) {
 					if ( !j.value()->equals( k.value() ) ) {
+
+						//porovnanie ci maju rovnaky index
 						QString kName = ( *k )->getName();
 						kName = kName.right( kName.length() - kName.indexOf( ' ' ) - 1 );
-
 						if ( QString::compare( jName, kName, Qt::CaseInsensitive ) == 0 ) {
-							addSameIndexAttractive( j.value(), k.value(), 1 );
+
+							//uhol medzi hranami, na ktorych su pomocne uzly
+							if ( getAngle( j.value(), k.value() ) < 90.0 ) {
+								addSameIndexAttractive( j.value(), k.value(), 1 );
+							}
 						}
 					}
 					k++;
@@ -664,6 +669,24 @@ bool FRAlgorithm::areForcesBetween( Data::Node* u, Data::Node* v )
 			v->getType()->isMeta()
 		)
 		;
+}
+
+double FRAlgorithm::getAngle( Data::Node* u, Data::Node* v )
+{
+	osg::ref_ptr<Data::Edge> edge1 =  u->getEdges()->values().at( 0 );
+	osg::Vec3f srcPos1 = edge1->getSrcNode()->targetPosition();
+	osg::Vec3f dstPos1 = edge1->getDstNode()->targetPosition();
+	osg::Vec3f vector1 = dstPos1 - srcPos1;
+
+	osg::ref_ptr<Data::Edge> edge2 =  v->getEdges()->values().at( 0 );
+	osg::Vec3f srcPos2 = edge2->getSrcNode()->targetPosition();
+	osg::Vec3f dstPos2 = edge2->getDstNode()->targetPosition();
+	osg::Vec3f vector2 = dstPos2 - srcPos2;
+
+	double angle = acos( ( vector1 * vector2 )/ ( ( vector1.length() )*( vector2.length() ) ) );
+	angle =  osg::RadiansToDegrees( angle );
+
+	return angle;
 }
 
 void FRAlgorithm::setRepulsiveForceVertigo( int value )
