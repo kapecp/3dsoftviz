@@ -5,6 +5,7 @@
 
 Vwr::GraphNavigation::GraphNavigation()
 {
+	selectionMode = 2;
 	isNavEnabled = true;
 	tempSelectedNode = NULL;
 	tempSelectedEdge = NULL;
@@ -42,7 +43,7 @@ void Vwr::GraphNavigation::restoreColorConectedNodes( Data::Node* selectedNode )
 	}
 }
 
-void Vwr::GraphNavigation::setColorNearestNode( Data::Node* selectedNode, int selectionMode )
+void Vwr::GraphNavigation::setColorNearestNode( Data::Node* selectedNode )
 {
 	osg::Vec3f mousePosition = getMouseScreenCoordinates( );
 	osg::Vec3f selectedPosition = getNodeScreenCoordinates( selectedNode );
@@ -96,7 +97,7 @@ void Vwr::GraphNavigation::clear()
 	tempSelectedEdge = NULL;
 }
 
-void Vwr::GraphNavigation::navigate( int selectionMode )
+void Vwr::GraphNavigation::navigate( )
 {
 	// if there is no selected node, restore default colors
 	if ( viewer->getPickHandler()->getSelectedNodes()->isEmpty() ) {
@@ -115,7 +116,7 @@ void Vwr::GraphNavigation::navigate( int selectionMode )
 			previousLastSelectedNode = lastSelectedNode;
 		}
 
-		setColorNearestNode( lastSelectedNode, selectionMode );
+		setColorNearestNode( lastSelectedNode );
 	}
 }
 

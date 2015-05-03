@@ -204,8 +204,6 @@ void Kinect::KinectThread::run()
 			kht->getAllGestures();
 			kht->getAllHands();
 #endif
-			// start highlighting neighbour nodes
-			nav->navigate( 2 );
 			//////////////End/////////////
 
 			//	cap >> frame; // get a new frame from camera
@@ -299,6 +297,10 @@ void Kinect::KinectThread::run()
 				}
 				// cursor enabled => move cursor
 				else {
+					// start highlighting neighbour nodes
+					//nav->setSelectionMode( 2 );
+					nav->navigate();
+
 					// detect click gesture
 					if ( wasTimerReset ) {
 						// if main hand closed and timer inactive, start timer
