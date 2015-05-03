@@ -173,10 +173,10 @@ void Kinect::KinectThread::run()
 				depth = mKinect->depthImageCvMat( depthFrame );
 
 				//save color frame
-				cv::imwrite( "C:\\Users\\Leachim\\Pictures\\frame1.jpg", frame );
+				cv::imwrite( "C:\\DevTools\\Pictures\\frame1.jpg", frame );
 
 				//save depth matrix
-				std::ofstream fout( "C:\\Users\\Leachim\\Pictures\\depth1.txt" );
+				std::ofstream fout( "C:\\DevTools\\Pictures\\depth1.txt" );
 				if ( !fout ) {
 					qDebug() <<"File Not Opened";
 				}
@@ -190,7 +190,7 @@ void Kinect::KinectThread::run()
 
 				cv::normalize( depth, depth, 0,255, CV_MINMAX, CV_8UC1 );
 				//save depth frame
-				cv::imwrite( "C:\\Users\\Leachim\\Pictures\\depth1.jpg", depth );
+				cv::imwrite( "C:\\DevTools\\Pictures\\depth1.jpg", depth );
 
 				fout.close();
 				test =  false;
