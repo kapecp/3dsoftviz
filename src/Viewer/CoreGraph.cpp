@@ -1101,16 +1101,18 @@ void CoreGraph::update()
 		nodesGroup->updateNodeCoordinates( interpolationSpeed );
 		qmetaNodesGroup->updateNodeCoordinates( interpolationSpeed );
 	}
-	else {
+	else if ( !this->interpolationDenied ) {
 		nodesGroup->updateNodeCoordinates( 1 );
 		qmetaNodesGroup->updateNodeCoordinates( 1 );
 	}
 
-	edgesGroup->updateEdgeCoords();
-	qmetaEdgesGroup->updateEdgeCoords();
-	browsersGroup->updateBrowsers();
+	if ( !this->nodesFreezed || !this->interpolationDenied ) {
+		edgesGroup->updateEdgeCoords();
+		qmetaEdgesGroup->updateEdgeCoords();
+		browsersGroup->updateBrowsers();
 
-	updateClustersCoords();
+		updateClustersCoords();
+	}
 
 	graphGroup->addChild( initCustomNodes() );
 

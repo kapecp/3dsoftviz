@@ -201,6 +201,15 @@ public:
 	    */
 	void setNodesFreezed( bool val );
 
+	bool getInterpolationDenied() const
+	{
+		return interpolationDenied;
+	}
+	void setInterpolationDenied( bool val )
+	{
+		this->interpolationDenied = val;
+	}
+
 	void setClustersOpacityAutomatic( bool automatic );
 	void setClustersOpacitySelected( bool selected );
 	void setClustersOpacity( double opacity );
@@ -446,6 +455,12 @@ private:
 	    *  \brief true, if nodes are freezed
 	    */
 	bool nodesFreezed;
+
+	/**
+	    *  bool interpolationDenied
+	    *  \brief true, if interpolation is denied
+	    */
+	bool interpolationDenied;
 
 	/**
 	    *  QLinkedList<osg::ref_ptr<osg::Node> > customNodeList

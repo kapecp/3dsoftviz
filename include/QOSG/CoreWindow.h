@@ -411,6 +411,16 @@ public slots:
 	void startEdgeBundling();
 
 	/**
+	             * \brief Pause edge bundling.
+	             */
+	void pauseEdgeBundling();
+
+	/**
+	             * \brief Stop edge bundling.
+	             */
+	void stopEdgeBundling();
+
+	/**
 	            *  \fn public  edgeBundlingSliderValueChanged(int value)
 	            *  \brief Slider value is changed
 	            *  \param value actual value of slider
@@ -798,6 +808,16 @@ private:
 	     * \brief Button for starting edge bundling.
 	     */
 	QPushButton* b_StartEdgeBundling;
+
+	/**
+	     * \brief Button for pausing edge bundling.
+	     */
+	QPushButton* b_PauseEdgeBundling;
+
+	/**
+	     * \brief Button for stoping edge bundling.
+	     */
+	QPushButton* b_StopEdgeBundling;
 
 	/**
 	     * \brief Spinbox for modifying edge bundling. It defines count of edge parts after edge splitting.

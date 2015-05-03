@@ -425,10 +425,24 @@ void CoreWindow::createActions()
 	connect( b_UnsetRestrictionFromAll, SIGNAL( clicked() ), this, SLOT( unsetRestrictionFromAll() ) );
 
 	b_StartEdgeBundling = new QPushButton();
-	b_StartEdgeBundling->setText( "Edge Bundling" );
+	b_StartEdgeBundling->setIcon( QIcon( "../share/3dsoftviz/img/gui/play.png" ) );
 	b_StartEdgeBundling->setToolTip( "&Start edge bundling" );
 	b_StartEdgeBundling->setFocusPolicy( Qt::NoFocus );
 	connect( b_StartEdgeBundling, SIGNAL( clicked() ), this, SLOT( startEdgeBundling() ) );
+
+	b_PauseEdgeBundling = new QPushButton();
+	b_PauseEdgeBundling->setIcon( QIcon( "../share/3dsoftviz/img/gui/pause.png" ) );
+	b_PauseEdgeBundling->setToolTip( "&Pause edge bundling" );
+	b_PauseEdgeBundling->setFocusPolicy( Qt::NoFocus );
+	b_PauseEdgeBundling->setEnabled( false );
+	connect( b_PauseEdgeBundling, SIGNAL( clicked() ), this, SLOT( pauseEdgeBundling() ) );
+
+	b_StopEdgeBundling = new QPushButton();
+	b_StopEdgeBundling->setIcon( QIcon( "../share/3dsoftviz/img/gui/stop.png" ) );
+	b_StopEdgeBundling->setToolTip( "&Stop edge bundling" );
+	b_StopEdgeBundling->setFocusPolicy( Qt::NoFocus );
+	b_StopEdgeBundling->setEnabled( false );
+	connect( b_StopEdgeBundling, SIGNAL( clicked() ), this, SLOT( stopEdgeBundling() ) );
 
 	b_EdgeBundling_SpinBox = new QSpinBox();
 	b_EdgeBundling_SpinBox->setToolTip( "&Modify count of edge parts" );
@@ -933,11 +947,18 @@ QWidget* CoreWindow::createClusteringTab( QFrame* line )
 
 	line = createLine();
 	lClustering->addRow( line );
-	b_StartEdgeBundling->setMaximumWidth( 136 );
-	lClustering->addRow( b_StartEdgeBundling, b_EdgeBundling_SpinBox );
+	lClustering->addRow( new QLabel( "Edge Bundling" ) );
+	b_StartEdgeBundling->setMinimumWidth( 68 );
+	b_StartEdgeBundling->setMaximumWidth( 68 );
+	b_PauseEdgeBundling->setMinimumWidth( 68 );
+	b_PauseEdgeBundling->setMaximumWidth( 68 );
+	b_StopEdgeBundling->setMaximumWidth( 136 );
+	lClustering->addRow( b_StartEdgeBundling, b_PauseEdgeBundling );
+	lClustering->addRow( b_StopEdgeBundling );
 	edgeBundlingSlider->setMaximumWidth( 136 );
 	lClustering->addRow( edgeBundlingSlider );
 	line = createLine();
+	lClustering->addRow( line );
 
 	wClustering->setLayout( lClustering );
 
@@ -2187,35 +2208,17 @@ void CoreWindow::unsetRestrictionFromAll()
 
 void CoreWindow::startEdgeBundling()
 {
-	//stop EB
-	if ( isEBPlaying ) {
-		layout->stopEdgeBundling();
-		isEBPlaying = false;
-
-		if ( isPlaying ) {
-			play->setIcon( QIcon( "../share/3dsoftviz/img/gui/play.png" ) );
-			isPlaying = 0;
-			layout->pause();
-			coreGraph->setNodesFreezed( true );
-		}
-
-		Data::Graph* currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
-
-		if ( currentGraph != NULL ) {
-			currentGraph->restoreSplittedEdges();
-		}
+	//pause FRalg
+	if ( isPlaying ) {
+		isPlaying = 0;
+		layout->pause();
 	}
-	//start EB
-	else {
-		if ( isPlaying ) {
-			isPlaying = 0;
-			layout->pause();
-		}
 
+	//if edge bundling is not playing, then split edges
+	if ( !isEBPlaying ) {
 		Data::Graph* currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
 
 		if ( currentGraph != NULL ) {
-
 			//select all nodes and fix them
 			QMap<qlonglong, osg::ref_ptr<Data::Node> >::iterator iNode = currentGraph->getNodes()->begin();
 			while ( iNode != currentGraph->getNodes()->end() ) {
@@ -2227,19 +2230,79 @@ void CoreWindow::startEdgeBundling()
 			//split edges
 			int splitCount = static_cast<int>( b_EdgeBundling_SpinBox->value() );
 			currentGraph->splitAllEdges( splitCount );
-
 		}
-
-		if ( !isPlaying ) {
-			play->setIcon( QIcon( "../share/3dsoftviz/img/gui/pause.png" ) );
-			isPlaying = 1;
-			coreGraph->setNodesFreezed( false );
-			layout->play();
-		}
-
-		layout->playEdgeBundling();
-		isEBPlaying = true;
 	}
+
+	//play FRalg
+	if ( !isPlaying ) {
+		play->setIcon( QIcon( "../share/3dsoftviz/img/gui/pause.png" ) );
+		isPlaying = 1;
+		layout->play();
+	}
+
+	//play edge bundling
+	layout->playEdgeBundling();
+	isEBPlaying = true;
+
+	//set updating of node positions
+	coreGraph->setNodesFreezed( false );
+	coreGraph->setInterpolationDenied( false );
+
+	//set buttons
+	b_StartEdgeBundling->setEnabled( false );
+	b_PauseEdgeBundling->setEnabled( true );
+	b_StopEdgeBundling->setEnabled( true );
+}
+
+void CoreWindow::pauseEdgeBundling()
+{
+	//deny updating of node positions
+	coreGraph->setNodesFreezed( true );
+	coreGraph->setInterpolationDenied( true );
+
+	//pause edge bundling
+	layout->stopEdgeBundling();
+
+	//pause FRalg
+	if ( isPlaying ) {
+		play->setIcon( QIcon( "../share/3dsoftviz/img/gui/play.png" ) );
+		isPlaying = 0;
+		layout->pause();
+	}
+
+	//set buttons
+	b_StartEdgeBundling->setEnabled( true );
+	b_PauseEdgeBundling->setEnabled( false );
+	b_StopEdgeBundling->setEnabled( true );
+}
+
+void CoreWindow::stopEdgeBundling()
+{
+	//stop edge bundling
+	layout->stopEdgeBundling();
+	isEBPlaying = false;
+
+	//pause FRalg
+	if ( isPlaying ) {
+		play->setIcon( QIcon( "../share/3dsoftviz/img/gui/play.png" ) );
+		isPlaying = 0;
+		layout->pause();
+	}
+
+	//restore splitted edges
+	Data::Graph* currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
+	if ( currentGraph != NULL ) {
+		currentGraph->restoreSplittedEdges();
+	}
+
+	//set updating of node positions
+	coreGraph->setNodesFreezed( false );
+	coreGraph->setInterpolationDenied( false );
+
+	//set buttons
+	b_StartEdgeBundling->setEnabled( true );
+	b_PauseEdgeBundling->setEnabled( false );
+	b_StopEdgeBundling->setEnabled( false );
 }
 
 void CoreWindow::edgeBundlingSliderValueChanged( int value )
