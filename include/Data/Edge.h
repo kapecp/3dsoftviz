@@ -490,6 +490,7 @@ public:
 	static const int INDEX_QUAD = 1;
 	static const int INDEX_CYLINDER = 2;
 	static const int INDEX_LINE = 3;
+	static const int INDEX_CURVE = 4;
 private:
 	bool isInvisible;
 	/**
@@ -641,6 +642,7 @@ private:
 	osg::ref_ptr<osg::Geode> createEdgeQuad( osg::StateSet* bbState );
 	osg::ref_ptr<osg::Geode> createEdgeCylinder( osg::StateSet* bbState );
 	osg::ref_ptr<osg::Geode> createEdgeLine( osg::StateSet* bbState );
+	osg::ref_ptr<osg::Geode> createEdgeCurve( osg::StateSet* bbState );
 protected:
 
 	/**

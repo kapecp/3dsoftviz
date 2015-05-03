@@ -448,7 +448,7 @@ void CoreWindow::createActions()
 	connect( nodeTypeComboBox,SIGNAL( currentIndexChanged( int ) ),this,SLOT( nodeTypeComboBoxChanged( int ) ) );
 
 	edgeTypeComboBox = new QComboBox();
-	edgeTypeComboBox->insertItems( 0,( QStringList() << "Quad" << "Cylinder" << "Line" ) );
+	edgeTypeComboBox->insertItems( 0,( QStringList() << "Quad" << "Cylinder" << "Line" << "Curve" ) );
 	edgeTypeComboBox->setFocusPolicy( Qt::NoFocus );
 	connect( edgeTypeComboBox,SIGNAL( currentIndexChanged( int ) ),this,SLOT( edgeTypeComboBoxChanged( int ) ) );
 
@@ -1547,6 +1547,9 @@ void CoreWindow::edgeTypeComboBoxChanged( int index )
 			break;
 		case 2:
 			coreGraph->setEdgeVisual( Data::Edge::INDEX_LINE );
+			break;
+		case 3:
+			coreGraph->setEdgeVisual( Data::Edge::INDEX_CURVE );
 			break;
 		default:
 			qDebug() << "CoreWindow:edgeTypeComboBoxChanged do not suported index";
