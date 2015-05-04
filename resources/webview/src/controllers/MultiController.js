@@ -9,10 +9,15 @@
 
 		var data = d3.range(0, models.length, 1)
 			.map(function (i) {
+				//console.log(models[i])
 				return {
-					"LOC": models[i].metrics.LOC.lines,
-					"Cyclomatic": models[i].metrics.cyclomatic.upperBound_all,
-					"Infoflow": models[i].metrics.infoflow.interface_complexity
+					LOC: models[i].metrics.LOC.lines,
+					Cyclo: models[i].metrics.cyclomatic.upperBound,
+					Compl: models[i].metrics.infoflow.interface_complexity,
+					ON: models[i].metrics.halstead.number_of_operands,
+					OT: models[i].metrics.halstead.number_of_operators,
+					"UON": models[i].metrics.halstead.unique_operands,
+					"UOT": models[i].metrics.halstead.unique_operators
 				};
 			});
 
