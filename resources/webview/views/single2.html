@@ -1,0 +1,23 @@
+<div class="single2-container">
+    <div class="row">
+        <div class="col col-xs-6">
+            <span>LOC</span>
+            <span class="value">{{vm.model.metrics.LOC.lines}}</span>
+        </div>
+        <div class="col col-xs-6">
+            <span>Cyclo</span>
+            <span class="value">{{vm.model.metrics.cyclomatic.upperBound}}</span>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col col-xs-6">
+            <span>LEN</span>
+            <span class="value">{{vm.model.metrics.halstead.LTH}}</span>
+        </div>
+        <div class="col col-xs-6">
+            <span>COMP</span>
+            <span class="value">{{vm.model.metrics.infoflow.interface_complexity}}</span>
+        </div>
+    </div>
+</div>

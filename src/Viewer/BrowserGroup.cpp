@@ -162,8 +162,8 @@ void BrowserGroup::addBrowser(const std::string &templateType, osg::Vec3 positio
 	osg::ref_ptr<OsgQtBrowser::QWebViewImage> webView = new OsgQtBrowser::QWebViewImage();
 
 	// Webview position/offset (should have same aspect ratio as 800/600)
-	float width = 180;
-	float height = 135;
+	float width = 240;
+	float height = 180;
 	float offset;
 
 	// Create connectors targets depending on whether grouping is enabled & setup offset

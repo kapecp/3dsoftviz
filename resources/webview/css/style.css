@@ -2,6 +2,9 @@ body {
 	padding: 10px;
 }
 
+/**
+ * Single LOC template
+ */
 .single-loc-container {
 	position: relative;
 }
@@ -40,15 +43,60 @@ body {
 	font-size: 25px;
 }
 
-.multi-container .parcoords {
+.single2-container * {
+	font-size: 200%;
+	font-weight: bold;
+}
+
+/**
+ * Single2 template
+ */
+.single2-container {
+	width: 100%;
+	height: 100%;
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	padding: 20px;
+}
+
+.single2-container .row {
+	height: 50%;
+	text-align: center;
+}
+
+.single2-container .row:first-child {
+	border-bottom: 2px solid lightgray;
+}
+
+.single2-container .row .col {
+	height: 100%;
+}
+
+.single2-container .col:first-child {
+	border-right: 2px solid lightgray;
+}
+
+.single2-container .value {
+	color: #888;
+	line-height: 70px;
+	display: block;
+}
+
+/**
+ * Multi template
+ */
+.multi-container #multi-parcoords {
 	width: 780px;
 	height: 580px;
 }
 
-.parcoords > svg .label{
+.multi-container .parcoords > svg .label {
 	font: 34px sans-serif;
 }
 
-.parcoords > svg .tick{
+.multi-container .parcoords > svg .tick {
 	font: 26px sans-serif;
 }

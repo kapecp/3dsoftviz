@@ -15,10 +15,15 @@
                 templateUrl: "views/single.html",
                 controller: 'SingleController'
             })
+            .state('single2', {
+                url: "/single2",
+                templateUrl: "views/single2.html",
+                controller: 'Single2Controller'
+            })
             .state('multi', {
                 url: "/multi",
                 templateUrl: "views/multi.html",
                 controller: 'MultiController'
             })
     }
-})()
+})();

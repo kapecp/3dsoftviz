@@ -3219,7 +3219,7 @@ void CoreWindow::createMetricsToolBar()
 
 void CoreWindow::loadFunctionCall()
 {
-	QString file = QFileDialog::getExistingDirectory( this, "Select lua project folder", "." );
+	QString file = QFileDialog::getExistingDirectory( this, "Select lua project folder", "../share/3DSOFTVIZ/webview/tests" );
 	if ( file == "" ) {
 		return;
 	}
