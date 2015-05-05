@@ -27,9 +27,9 @@ osg::ref_ptr<osg::Texture2D> TextureWrapper::getOrientedEdgeTexture()
 	// Gloger: changed edge & oriented edge textures
 	// This is only for thesis images prettyfying. Do not merge or reuse at will
 	if ( orientedEdgeTexture == NULL ) {
-		orientedEdgeTexture = DataHelper::readTextureFromFile( Util::ApplicationConfig::get()->getValue( "Viewer.Textures.OrientedEdge" ) );
+		//orientedEdgeTexture = DataHelper::readTextureFromFile( Util::ApplicationConfig::get()->getValue( "Viewer.Textures.OrientedEdge" ) );
 	}
-	return orientedEdgeTexture;
+	//return orientedEdgeTexture;
 
 	if ( orientedEdgeTexture == NULL ) {
 		osg::ref_ptr<osg::ImageSequence> imageSequence = new osg::ImageSequence;

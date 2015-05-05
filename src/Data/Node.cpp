@@ -284,11 +284,11 @@ osg::ref_ptr<osg::Geode> Data::Node::createLabel( const float& scale, QString na
     float zOffset = 0.1f;
 
     // Calculate charSize from scale
-    float charSize = (float)log(scale) * 1.8f + 10;
+    float charSize = 10;//(float)log(scale) * 1.8f + 10;
 
     // Gloger:
     if ( fontPath != NULL && !fontPath.isEmpty() ) {
-        label->setFont( fontPath.toStdString() );
+        //label->setFont( fontPath.toStdString() );
     }
 
     label->setText( name.toStdString() );
@@ -298,7 +298,7 @@ osg::ref_ptr<osg::Geode> Data::Node::createLabel( const float& scale, QString na
     label->setDrawMode( osgText::Text::TEXT );
     label->setAlignment( osgText::Text::CENTER_BOTTOM_BASE_LINE );
     label->setPosition( osg::Vec3( 0, yOffset, zOffset ) );
-    label->setColor( Util::ApplicationConfig::get()->getColorValue("Label.Color") );
+   // label->setColor( Util::ApplicationConfig::get()->getColorValue("Label.Color") );
     label->setUseDisplayList( false );
 //    label->setBackdropType(osgText::Text::OUTLINE);
 //    label->setBackdropColor(Util::ApplicationConfig::get()->getColorValue( "Label.Outline.Color" ));
