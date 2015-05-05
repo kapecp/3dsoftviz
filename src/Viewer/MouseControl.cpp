@@ -138,3 +138,8 @@ void Vwr::MouseControl::setSpeedUpMoving( double speed )
 {
 	mSpeedMoving=speed;
 }
+
+void Vwr::MouseControl::scrollMouse( osgGA::GUIEventAdapter::ScrollingMotion scrollMotion )
+{
+	viewer->getEventQueue()->mouseScroll( scrollMotion,2 );
+}

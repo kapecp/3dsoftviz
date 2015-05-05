@@ -41,6 +41,10 @@
 #include "Fglove/FgloveThread.h"
 #endif
 
+#ifdef LEAP_FOUND
+#include "Leap/LeapThread.h"
+#endif
+
 #include "Clustering/Clusterer.h"
 
 namespace Layout {
@@ -80,6 +84,11 @@ private:
 #ifdef FGLOVE_FOUND
 	Fglove::FgloveThread* mGloveThr;
 #endif
+
+#ifdef LEAP_FOUND
+	Leap::LeapThread* mLeapThr;
+#endif
+
 public slots:
 
 	void moveMouseAruco( double positionX,double positionY,bool isClick, Qt::MouseButton button );
@@ -433,6 +442,10 @@ public slots:
 
 #ifdef SPEECHSDK_FOUND
 	void startSpeech();
+#endif
+
+#ifdef LEAP_FOUND
+	void startLeap();
 #endif
 
 #ifdef FGLOVE_FOUND
@@ -809,6 +822,12 @@ private:
 	 *@brief b_start_kinect
 	 */
 	QPushButton* b_start_kinect;
+
+	/**
+	 * QPushButton start leap senzor
+	 * @brief b_start_leap
+	 */
+	QPushButton* b_start_leap;
 
 	/**
 	 * @brief Button for start calculate Ransac Surface

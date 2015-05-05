@@ -3,6 +3,8 @@
 
 #include <QtGui/QKeyEvent>
 
+#include <osgGA/GUIEventAdapter>
+
 namespace QOSG {
 class ViewerQT;
 class CoreWindow;
@@ -11,8 +13,8 @@ class CoreWindow;
 namespace Vwr {
 
 /**
-	* @brief Control of mouse action and movement for other way of controling mouse
-	*@author Matej Marconak
+    * @brief Control of mouse action and movement for other way of controling mouse
+    *@author Matej Marconak
  */
 class MouseControl
 {
@@ -83,6 +85,12 @@ public:
 	 * @param speed speed up of movement
 	 */
 	void setSpeedUpMoving( double speed );
+
+	/**
+	 * @brief Uses the mouse scroll button to either scroll up or scroll down.
+	 * @param scrollMotion - specifies if we want SCROLL_DOWN or SCROLL_UP -- use these constants.
+	 */
+	void scrollMouse( osgGA::GUIEventAdapter::ScrollingMotion scrollMotion );
 
 private:
 
