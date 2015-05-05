@@ -4,13 +4,18 @@
 #include <osg/Geode>
 #include <Data/Type.h>
 
+#include "Data/DbNode.h"
+
 namespace Data {
 
 typedef osg::TemplateIndexArray<unsigned int, osg::Array::UIntArrayType,4,1> ColorIndexArray;
 
-class OsgNode : public osg::Geode
+class OsgNode : public osg::Geode, public DbNode
 {
 public:
+
+    OsgNode( qlonglong id, QString name, Data::Type* type, Data::Graph* graph, float scaling);
+
 	/**
 	    *  \fn private static  createLabel(const float & scale, QString name)
 	    *  \brief Creates node label from name
@@ -157,25 +162,6 @@ public:
     }
 
     /**
-        *  \fn inline public  setVelocity(osg::Vec3f v)
-        *  \brief Sets node force for next iteration
-        *  \param    v  Force in actual iteration
-        */
-    void setVelocity( osg::Vec3f v )
-    {
-        velocity = v;
-    }
-
-    /**
-        *  \fn inline public  resetVelocity
-        *  \brief Reset node force for next iteration
-        */
-    void resetVelocity()
-    {
-        velocity = osg::Vec3( 0,0,0 );
-    }
-
-    /**
         *  \fn inline public  setColor(osg::Vec4 color)
         *  \brief Sets default node color
         *  \param     color   default color
@@ -187,6 +173,16 @@ public:
         if ( !selected ) {
             setDrawableColor( 0, color );
         }
+    }
+
+    /**
+        *  \fn inline public constant  getColor
+        *  \brief Returns color of the Node
+        *  \return osg::Vec4 color of the Node
+        */
+    osg::Vec4 getColor() const
+    {
+        return color;
     }
 
     void setInvisible()
@@ -235,26 +231,6 @@ public:
     {
         return selected;
     }
-
-	/**
-	    *  \fn inline public constant  getColor
-	    *  \brief Returns color of the Node
-	    *  \return osg::Vec4 color of the Node
-	    */
-	osg::Vec4 getColor() const
-	{
-		return color;
-	}
-
-	/**
-	    *  \fn inline public constant  getVelocity
-	    *  \brief Sets node force for next iteration.
-	    *  \return osg::Vec3f Node force
-	    */
-	osg::Vec3f getVelocity() const
-	{
-		return velocity;
-	}
 
     osg::ref_ptr<osg::AutoTransform> getOutBall()
     {
@@ -312,7 +288,7 @@ protected:
         *  osg::Vec3f velocity
         *  \brief Size of node force in previous iteration
         */
-    osg::Vec3f velocity;
+  //  osg::Vec3f velocity;
 
     /**
         *  osg::Vec4 color

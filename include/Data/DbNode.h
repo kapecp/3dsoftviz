@@ -1,7 +1,7 @@
 #ifndef DBNODE_H
 #define DBNODE_H
 
-#endif // DBNODE_H
+#include "Data/VizNode.h"
 
 namespace Data {
 class Node;
@@ -9,9 +9,10 @@ class Graph;
 class Type;
 
 
-class DbNode
+class DbNode: public VizNode
 {
 public:
+    DbNode(qlonglong id, QString name, Data::Type* type, Data::Graph* graph, float scaling);
     /**
         *  \fn inline public  isInDB
         *  \brief Returns if the Node is already in database or not
@@ -38,3 +39,5 @@ public:
     bool inDB;
 };
 }
+
+#endif // DBNODE_H

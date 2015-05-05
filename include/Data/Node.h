@@ -12,8 +12,7 @@
 #include <QString>
 
 #include <Data/OsgNode.h>
-#include <Data/AbsNode.h>
-#include <Data/DbNode.h>
+
 
 
 //volovar_zac
@@ -37,7 +36,7 @@ class Cluster;
 	*  \author Aurel Paulovic, Michal Paprcka
 	*  \date 29. 4. 2010
 	*/
-class Node : public OsgNode, public AbsNode, public DbNode
+class Node : public OsgNode
 {
 public:
 
@@ -78,26 +77,6 @@ public:
 	    *  \return  qlonglong value of the vertigo plane
 	    */
 	qlonglong getNumberOfVertigoPlane();
-
-	/**
-		*  \fn inline public  getScale()
-		*  \brief Gets node scale
-		*  \return float size of the scale
-		*/
-	float getScale()
-	{
-		return scale;
-	}
-
-	/**
-		*  \fn inline public  setScale(float val)
-		*  \brief Sets new scale
-		*  \param   val   new scale for the Node
-		*/
-	void setScale( float val )
-	{
-		scale = val;
-	}
 
 	/**
 		 * \fn public constant isFocused
@@ -190,12 +169,11 @@ public:
 	void setFixed( bool fixed )
 	{
 		this->fixed = fixed;
-
 		if ( fixed && this->containsDrawable( square ) ) {
 			this->setDrawableColor( 0, osg::Vec4( 1.0f, 0.0f, 0.0f, 1.0f ) );
 		}
 		else if ( !fixed && this->containsDrawable( square ) ) {
-			this->setDrawableColor( 0, colorOfNode );
+            this->setDrawableColor( 0, colorOfNode );
 		}
 	}
 
@@ -224,26 +202,6 @@ public:
 	void setCluster( Cluster* cluster );
 
 	virtual QSet<Node*> getIncidentNodes() const;
-
-	/**
-		*  \fn inline public  setIgnored(bool b)
-		*  \brief Sets ignoring by layout algorithm.
-		*  \param       b  True, if node is ignored.
-		*/
-	void setIgnored( bool b )
-	{
-		ignore = b;
-	}
-
-	/**
-		*  \fn inline public constant  isIgnored
-		*  \brief Return if the Node is ignored
-		*  \return bool true, if the Node is ignored
-		*/
-	bool isIgnored() const
-	{
-		return ignore;
-	}
 
 	/**
 		 * \brief \link Node::positionCanBeRestricted [setter] \endlink
@@ -293,20 +251,6 @@ public:
 		nested_parent = val;
 	}
 
-	void setLabelText( QString label )
-	{
-		labelText = label;
-	}
-
-	float getOverallWeight()
-	{
-		return overallWeight;
-	}
-	void setOverallWeight( float overallWeight )
-	{
-		this->overallWeight = overallWeight;
-	}
-
 	//volovar_zac
 	void setLayerID( int id ); //get unique layer id of selected radial layout, 0 node has no radial layout
 	int getLayerID();
@@ -315,13 +259,7 @@ public:
 	//volovar_kon
 private:
 
-	/**
-		*	float scale
-		*	\brief scaling of the Node
-		*/
-	float scale;
-
-	/**
+    /**
 		 * bool mIsFocused
 		 * \brief Flag whether this node is focused at the moment.
 		 */
@@ -346,24 +284,11 @@ private:
 	Cluster* cluster;
 
 	/**
-		*  bool ignore
-		*  \brief node ignoring flag
-		*/
-	bool ignore;
-
-	/**
 		 * \brief If the node position can be restricted by layout restrictions.
 		 * RestrictionsManager uses this to determine if the restriction can be attached to this node.
 		 */
 	bool positionCanBeRestricted;
 
-	/**
-		*  QString labelText
-		*  \brief Text show in the label
-		*/
-	QString labelText;
-
-	float overallWeight;
 	//volovar_zac pre repulzivne sily, ktore posobia iba na uzly nachadzajuce sa na guli
 	int layerID;
 	Layout::RadialLayout* radialLayout;

@@ -389,7 +389,7 @@ osg::ref_ptr<Data::Node> Data::Graph::mergeNodes( QLinkedList<osg::ref_ptr<Data:
 
 	//vytvorime novy zluceny uzol
 	osg::ref_ptr<Data::Node> mergedNode = new Data::Node( ( mergeNodeId != -1 ) ? mergeNodeId : this->incEleIdCounter(), "mergedNode", this->getNodeMetaType(), scale, this, position );
-	mergedNode->setColor( osg::Vec4( 0, 0, 1, 1 ) );
+    mergedNode->setColor( osg::Vec4( 0, 0, 1, 1 ) );
 
 	QList<qlonglong> connectedNodes;
 

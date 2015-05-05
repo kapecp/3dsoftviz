@@ -13,40 +13,23 @@
 #include <osg/PrimitiveSet>
 #include <Viewer/TextureWrapper.h>
 
-#include <QTextStream>
+//#include <QTextStream>
 
 #include <QDebug>
 
 Data::Edge::Edge( qlonglong id, QString name, Data::Graph* graph, osg::ref_ptr<Data::Node> srcNode, osg::ref_ptr<Data::Node> dstNode, Data::Type* type, bool isOriented, float scaling, int pos, osg::ref_ptr<osg::Camera> camera )
-:AbsEdge(id,name)
+:OsgEdge(id,name, graph, isOriented, type, scaling)
 {
-    /*this->id = id;
-    this->name = name;*/
-	this->graph = graph;
 	this->srcNode = srcNode;
 	this->dstNode = dstNode;
-	this->type = type;
-	this->oriented = isOriented;
 	this->camera = camera;
-	this->selected = false;
-	this->setSharedCoordinates( false, false, false );
-	this->inDB = false;
-	this->scale = scaling;
-	float r = type->getSettings()->value( "color.R" ).toFloat();
-	float g = type->getSettings()->value( "color.G" ).toFloat();
-	float b = type->getSettings()->value( "color.B" ).toFloat();
-	float a = type->getSettings()->value( "color.A" ).toFloat();
-
-	this->edgeColor = osg::Vec4( r, g, b, a );
-
-	this->edgeStrength = 1;
 
 	this->appConf = Util::ApplicationConfig::get();
 	coordinates = new osg::Vec3Array();
 	edgeTexCoords = new osg::Vec2Array();
 
 	this->addDrawable( createEdge( createStateSet( this->type ) ) );
-	createLabel( name );
+    createLabel( name );
 	//updateCoordinates(getSrcNode()->getTargetPosition(), getDstNode()->getTargetPosition());
 	updateCoordinates( getSrcNode()->restrictedTargetPosition(), getDstNode()->restrictedTargetPosition() );
 }
@@ -89,16 +72,6 @@ void Data::Edge::unlinkNodesAndRemoveFromGraph()
 	this->graph->removeEdge( this );
 }
 
-float Data::Edge::getEdgeStrength() const
-{
-	return edgeStrength;
-}
-
-void Data::Edge::setEdgeStrength( float value )
-{
-	edgeStrength = value;
-}
-
 osg::ref_ptr<Data::Node> Data::Edge::getSecondNode( osg::ref_ptr<Data::Node> firstNode )
 {
 	if ( firstNode->getId() == srcNode->getId() ) {
@@ -108,13 +81,6 @@ osg::ref_ptr<Data::Node> Data::Edge::getSecondNode( osg::ref_ptr<Data::Node> fir
 		return srcNode;
 	}
 
-}
-
-QString Data::Edge::toString() const
-{
-	QString str;
-	QTextStream( &str ) << "edge id:" << id << " name:" << name;
-	return str;
 }
 
 Data::Node* Data::Edge::getOtherNode( const Data::Node* node ) const

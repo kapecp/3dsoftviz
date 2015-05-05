@@ -80,7 +80,7 @@ private:
 
 	qlonglong id;
 	QSet<Node*> clusteredNodes;
-	osg::Vec4 originalColor;
+    osg::Vec4 originalColor;
 
 	double repulsiveForceInside;
 

@@ -24,7 +24,7 @@
 
 
 Data::Node::Node( qlonglong id, QString name, Data::Type* type, float scaling, Data::Graph* graph, osg::Vec3f position )
-    :AbsNode(id,name,type,graph),DbNode()
+    :OsgNode(id,name,type,graph,scaling)
 {
 	//konstruktor
 	//scaling je potrebne na zmensenie uzla ak je vnoreny
@@ -33,7 +33,7 @@ Data::Node::Node( qlonglong id, QString name, Data::Type* type, float scaling, D
 	this->currentPosition = position * Util::ApplicationConfig::get()->getValue( "Viewer.Display.NodeDistanceScale" ).toFloat();
     //this->inDB = false;
 	this->edges = new QMap<qlonglong, osg::ref_ptr<Data::Edge> >;
-	this->scale = scaling;
+    //this->scale = scaling;
 	this->setBall( NULL );
 	this->setParentBall( NULL );
 	this->hasNestedNodes = false;
@@ -49,7 +49,7 @@ Data::Node::Node( qlonglong id, QString name, Data::Type* type, float scaling, D
 	settings->insert( "Farba","ruzova" );
 	//APA
 
-	int pos = 0;
+    /*int pos = 0;
 	int cnt = 0;
 
 	labelText = this->name;
@@ -57,8 +57,8 @@ Data::Node::Node( qlonglong id, QString name, Data::Type* type, float scaling, D
 	while ( ( pos = labelText.indexOf( QString( " " ), pos + 1 ) ) != -1 ) {
 		if ( ++cnt % 3 == 0 ) {
 			labelText = labelText.replace( pos, 1, "\n" );
-		}
-	}
+        }
+    }*/
 
 	// MERGE BEGIN
 	// toto bolo u pleska/zelera
@@ -76,9 +76,9 @@ Data::Node::Node( qlonglong id, QString name, Data::Type* type, float scaling, D
 
 	// MERGE END
 	this->force = osg::Vec3f();
-	this->velocity = osg::Vec3f( 0,0,0 );
+    this->velocity = QVector3D( 0,0,0 );
 	this->fixed = false;
-	this->ignore = false;
+    //this->ignore = false;
 	this->positionCanBeRestricted = true;
 	this->removableByUser = true;
 	this->selected = false;
@@ -90,7 +90,7 @@ Data::Node::Node( qlonglong id, QString name, Data::Type* type, float scaling, D
 	float b = type->getSettings()->value( "color.B" ).toFloat();
 	float a = type->getSettings()->value( "color.A" ).toFloat();
 
-	this->colorOfNode=osg::Vec4( r, g, b, a );
+    this->colorOfNode=osg::Vec4( r, g, b, a );
 	this->setColor( colorOfNode );
 
 	// merging Britvik: this was here

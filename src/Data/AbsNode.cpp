@@ -1,4 +1,6 @@
 #include "Data/AbsNode.h"
+#include "Data/Graph.h"
+
 #include <QString>
 
 Data::AbsNode::AbsNode( qlonglong id, QString name, Data::Type* type, Data::Graph* graph)
@@ -7,9 +9,10 @@ Data::AbsNode::AbsNode( qlonglong id, QString name, Data::Type* type, Data::Grap
     this->name=name;
     this->type=type;
     this->graph = graph;
+    this->type = type;
 }
 
-bool Data::AbsNode::equals( Node* node )
+bool Data::AbsNode::equals( AbsNode* node )
 {
     //porovnanie s inym uzlom
     if ( this == node ) {

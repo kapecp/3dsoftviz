@@ -14,6 +14,12 @@
 
 #include "Data/OsgNode.h"
 
+Data::OsgNode::OsgNode( qlonglong id, QString name, Data::Type* type, Data::Graph* graph, float scaling)
+    :DbNode(id,name,type,graph,scaling)
+{
+
+}
+
 osg::ref_ptr<osg::Drawable> Data::OsgNode::createLabel( const float& scale, QString name )
 {
 	//vytvorenie popisu uzla

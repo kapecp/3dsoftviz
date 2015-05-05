@@ -14,6 +14,12 @@
 
 #include <QDebug>
 
+Data::OsgEdge::OsgEdge(qlonglong id, QString name, Data::Graph* graph, bool isOriented, Data::Type* type, float scaling)
+:DbEdge(id, name, graph, isOriented, type, scaling)
+{
+    //createLabel( name );
+}
+
 osg::ref_ptr<osg::Drawable> Data::OsgEdge::createLabel( QString name )
 {
 	label = new osgText::FadeText;
@@ -165,6 +171,11 @@ void Data::OsgEdge::updateCoordinates( osg::Vec3 srcPos, osg::Vec3 dstPos )
         osg::Vec4Array* colorArray =  dynamic_cast<osg::Vec4Array*>( geometry->getColorArray() );
 
         colorArray->pop_back();
-        colorArray->push_back( getEdgeColor() );
+        osg::Vec4f color;
+        color.r()=getEdgeColor()[0];
+        color.g()=getEdgeColor()[1];
+        color.b()=getEdgeColor()[2];
+        color.a()=getEdgeColor()[3];
+        colorArray->push_back( color );
     }
 }

@@ -81,7 +81,7 @@ void Cluster::setSelected( bool selected, QLinkedList<osg::ref_ptr<Data::Node> >
 	this->selected = selected;
 	if ( selected ) {
 		originalColor = getColor();
-		setColor( osg::Vec4( 0,1,0,1 ) );
+        setColor( osg::Vec4( 0,1,0,1 ) );
 
 		foreach ( Node* node, clusteredNodes ) {
 			Cluster* c = dynamic_cast<Cluster*>( node );

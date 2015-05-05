@@ -370,7 +370,11 @@ bool FRAlgorithm::applyForces( Data::Node* node )
 		}
 
 		// pricitame aktualnu rychlost
-		fv += node->getVelocity();
+        osg::Vec3f velocity;
+        velocity.x()=node->getVelocity().x();
+        velocity.y()=node->getVelocity().y();
+        velocity.z()=node->getVelocity().z();
+        fv += velocity;
 	}
 	else {
 		// [GrafIT][.] this has been a separate case when resetVelocity() has been called and nothing with the target position has been done;
@@ -410,7 +414,13 @@ bool FRAlgorithm::applyForces( Data::Node* node )
 
 	// energeticka strata = 1-flexibilita
 	fv *= flexibility;
-	node->setVelocity( fv ); // ulozime novu rychlost
+
+    QVector3D velocity;
+    //velocity=(QVector3D) fv;
+    velocity.setX(fv.x());
+    velocity.setY(fv.y());
+    velocity.setZ(fv.z());
+    node->setVelocity( velocity ); // ulozime novu rychlost
 
 	return true;
 }

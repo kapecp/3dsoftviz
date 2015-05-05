@@ -1,7 +1,6 @@
 #ifndef ABSNODE_H
 #define ABSNODE_H
 
-
 #include <QString>
 
 namespace Data {
@@ -160,7 +159,7 @@ public:
         *  \param   node     Node to compare
         *  \return bool true, if this object and node are the same object
         */
-    bool equals( Node* node );
+    bool equals(AbsNode *node );
 
     float nodeBetweeness;
     float nodeCloseness;

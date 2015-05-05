@@ -4,13 +4,17 @@
 #include <osg/Geode>
 #include <osgText/FadeText>
 #include "Data/Node.h"
+#include "Data/DbEdge.h"
 
 namespace Data {
 
 
-class OsgEdge : public osg::Geode
+class OsgEdge : public osg::Geode, public DbEdge
 {
 public:
+
+     OsgEdge( qlonglong id, QString name, Data::Graph* graph, bool isOriented, Data::Type* type, float scaling);
+
 	/**
 	    *  \fn public  createLabel(QString name)
 	    *  \brief Creates new label
@@ -78,51 +82,6 @@ public:
     }
 
     /**
-        *  \fn inline public constant  getEdgeColor
-        *  \brief Returns the color of the Edge
-        *  \return osg::Vec4 color of the Edge
-        */
-    osg::Vec4 getEdgeColor() const
-    {
-        if ( selected ) {
-            return osg::Vec4( 0.0f, 0.0f, 1.0f, 1.0f );    // color of selected node
-        }
-        else {
-            return edgeColor;
-        }
-    }
-
-    /**
-        *  \fn inline public  setEdgeColor(osg::Vec4 val)
-        *  \brief Sets the color of the Edge
-        *  \param     val   new color
-        */
-    void setEdgeColor( osg::Vec4 val )
-    {
-        edgeColor = val;
-    }
-
-    /**
-        *  \fn inline public constant  isSelected
-        *  \brief Returns selected flag
-        *  \return bool true, if the Edge is selected
-        */
-    bool isSelected() const
-    {
-        return selected;
-    }
-
-    /**
-        *  \fn inline public  setSelected(bool val)
-        *  \brief Sets the selected flag of the Edge
-        *  \param       val   true, if the Edge is selected
-        */
-    void setSelected( bool val )
-    {
-        selected = val;
-    }
-
-    /**
         *  \fn inline public constant  getCamera
         *  \brief returns current camera looking at edge
         *  \return osg::ref_ptr<osg::Camera>
@@ -142,36 +101,6 @@ public:
         camera = val;
     }
 
-    /**
-        *  \fn inline public constant  getLength
-        *  \brief Returns length of the Edge
-        *  \return float length of the Edge
-        */
-
-    double getLength() const
-    {
-        return length;
-    }
-
-    /**
-        *  \fn inline public  getScale()
-        *  \brief Gets edge scale
-        *  \return float size of the scale
-        */
-    float getScale()
-    {
-        return scale;
-    }
-
-    /**
-        *  \fn inline public  setScale(float val)
-        *  \brief Sets new scale
-        *  \param   val   new scale for the Edge
-        */
-    void setScale( float val )
-    {
-        scale = val;
-    }
 
 protected:
 
@@ -180,12 +109,6 @@ protected:
 	    *  \brief Label of the Edge
 	    */
 	osg::ref_ptr<osgText::FadeText> label;
-
-	/**
-	    *  Data::Type * type
-	    *  \brief Type of the Edge
-	    */
-	Data::Type* type;
 
 	/**
 	    *  osg::ref_ptr<Data::Node> srcNode
@@ -211,41 +134,11 @@ protected:
 	    */
 	osg::ref_ptr<osg::Vec2Array> edgeTexCoords;
 
-	/**
-	    *  bool oriented
-	    *  \brief True, if the Edge is oriented
-	    */
-	bool oriented;
-
-    /**
-        *  osg::Vec4 edgeColor
-        *  \brief Color of the Edge
-        */
-    osg::Vec4 edgeColor;
-
-    /**
-        *  bool selected
-        *  \brief True, if edge is picked
-        */
-    bool selected;
-
     /**
         *  osg::ref_ptr camera
         *  \brief Current camera used in viewer. It is used for billboarding purposes.
         */
     osg::ref_ptr<osg::Camera> camera;
-
-    /**
-        *  float length
-        *  \brief Length of the Edge
-        */
-    double length;
-
-    /**
-        *  float scale
-        *  \brief scale of edge
-        */
-    float scale;
 };
 }
 #endif // OSGEDGE_H

@@ -29,7 +29,7 @@ class Type;
     *  \author Aurel Paulovic, Michal Paprcka
     *  \date 29. 4. 2010
     */
-class Edge : public OsgEdge, public AbsEdge
+class Edge : public OsgEdge
 {
 public:
 
@@ -62,49 +62,6 @@ public:
 	osg::ref_ptr<Data::Node> getSecondNode( osg::ref_ptr<Data::Node> firstNode );
 
 	/**
-	    * \fn inline public constant getType
-	    * \brief  Returns the Type of the Edge
-	    * \return Data::Type * Type of the Edge
-	    */
-	Data::Type* getType() const
-	{
-		return type;
-	}
-
-	/**
-	    * \fn void setType(Data::Type* val)
-	    * \brief  Sets new Type of the Edge
-	    *
-	    * OBSOLETE - DO NOT USE IT
-	    *
-	    * \param  val new Type of the Edge
-	    */
-	void setType( Data::Type* val )
-	{
-		type = val;
-	}
-
-	/**
-	    * \fn inline public constant isOriented
-	    * \brief Returns if the Edge is oriented or not
-	    * \return bool true, if the Edge is oriented
-	    */
-	bool isOriented() const
-	{
-		return oriented;
-	}
-
-	/**
-	    * \fn inline public setOriented(bool val)
-	    * \brief  Sets if the Edge is oriented
-	    * \param val 		true, if the Edge is oriented
-	    */
-	void setOriented( bool val )
-	{
-		oriented = val;
-	}
-
-	/**
 	    * \fn public linkNodes(QMap<qlonglong, osg::ref_ptr<Data::Edge> > *edges)
 	    * \brief  Links the Edge to it's Nodes and adds itself to the edges
 	    * \param  edges
@@ -122,13 +79,6 @@ public:
 	    * \brief Unlinks the Edge from the Nodes and removes the Edge from it's Graph
 	    */
 	void unlinkNodesAndRemoveFromGraph();
-
-	/**
-	    * \fn inline public constant toString
-	    * \brief  Returns human-readable string representation of the Edge
-	    * \return QString
-	    */
-	QString toString() const ;
 
 	/**
 	    *  \fn inline public constant  getCooridnates
@@ -150,180 +100,18 @@ public:
 		return edgeTexCoords;
 	}
 
-	/**
-	    *  \fn inline public  isInDB
-	    *  \brief Returns true, if the Edge is already in database
-	    *  \return bool
-	    */
-	bool isInDB()
-	{
-		return inDB;
-	}
-
-	/**
-	    *  \fn inline public  setIsInDB
-	    *  \brief Sets the inDB flag of the Edge to true (meaning that the Edge is in database)
-	    */
-	void setIsInDB()
-	{
-		inDB = true;
-	}
-
-	/**
-	    *  \fn inline public  getGraph
-	    *  \brief Returns the Graph to which is the Edge assigned
-	    *  \return Data::Graph * Edge's Graph
-	    */
-	Data::Graph* getGraph()
-	{
-		return graph;
-	}
-
-	/**
-	    *  \fn inline public constant  getSettings
-	    *  \brief Returns current settings of the Edge
-	    *  \return QMap<QString,QString> * settings of the Edge
-	    */
-	QMap<QString, QString>* getSettings() const
-	{
-		return settings;
-	}
-
-	/**
-	    *  \fn inline public  setSettings(QMap<QString, QString> * val)
-	    *  \brief Sets new settings to the Edge
-	    *  \param [in, out]  val QMap<QString,QString> *    new settings
-	    */
-	void setSettings( QMap<QString, QString>* val )
-	{
-		settings = val;
-	}
-
 	Data::Node* getOtherNode( const Data::Node* node ) const;
-
-	int getWeight()
-	{
-		return 1;
-	}
-
-	/**
-	            *  \fn public  setSharedCoordinates (bool x, bool y, bool z)
-	            *  \brief sets shared coordinates
-	            *  \param x true, if nodes share x coordinate
-	            *  \param y true, if nodes share y coordinate
-	            *  \param z true, if nodes share z coordinate
-	            */
-	void setSharedCoordinates( bool x, bool y, bool z )
-	{
-		this->shared_X = x;
-		this->shared_Y = y;
-		this->shared_Z = z;
-	}
-
-	/**
-	            *  \fn public   isShared_X()
-	            *  \return value of shared_X flag
-	            */
-	bool isShared_X()
-	{
-		return this->shared_X;
-	}
-
-	/**
-	            *  \fn public   isShared_Y()
-	            *  \return value of shared_Y flag
-	            */
-	bool isShared_Y()
-	{
-		return this->shared_Y;
-	}
-
-	/**
-	            *  \fn public   isShared_Z()
-	            *  \return value of shared_Z flag
-	            */
-	bool isShared_Z()
-	{
-		return this->shared_Z;
-	}
-
-	/**
-	            *  \fn public   setInvisible()
-	            */
-	bool setInvisible( bool invisible )
-	{
-
-		if ( invisible ) {
-			setScale( 0 );
-			isInvisible=true;
-		}
-		else {
-			setScale( 1 );
-			isInvisible=false;
-		}
-		return true;
-	}
-
-	bool getIsInvisible()
-	{
-		return isInvisible;
-	}
-
-	float getEdgeStrength() const;
-	void setEdgeStrength( float value );
 
 	void reloadLabel();
 	void showLabel( bool visible );
 
 private:
 
-	bool isInvisible;
-
-    /**
-	    *  Data::Graph * graph
-	    *  \brief Graph to which the Edge belongs
-	    */
-	Data::Graph* graph;
-
-	/**
-	    *  bool inDB
-	    *  \brief Flag if the Edge is already added to database or not
-	    */
-	bool inDB;
-
-	/**
-	            *  bool shared_X
-	            *  \brief if true, then nodes of edge have shared X coordinate
-	            */
-	bool shared_X;
-
-	/**
-	            *  bool shared_Y
-	            *  \brief if true, then nodes of edge have shared X coordinate
-	            */
-	bool shared_Y;
-
-	/**
-	            *  bool shared_Z
-	            *  \brief if true, then nodes of edge have shared X coordinate
-	            */
-	bool shared_Z;
-
 	/**
 	    *  Util::ApplicationConfig * appConf
 	    *  \brief ApplicationConfig
 	    */
 	Util::ApplicationConfig* appConf;
-
-	float edgeStrength;
-
-protected:
-
-	/**
-	    *  QMap<QString,QString> * settings
-	    *  \brief Settings of the Egde
-	    */
-	QMap<QString, QString>* settings;
 };
 }
 
