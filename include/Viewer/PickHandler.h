@@ -373,10 +373,9 @@ private:
 
 
 	/**
-		*  \fn private  doSinglePick(osg::NodePath nodePath, unsigned int primitiveIndex)
+		*  \fn private  doSinglePick(osg::NodePath nodePath)
 		*  \brief Picks single object on screen
 		*  \param    nodePath   pick nodepath
-		*  \param     primitiveIndex  picked primitive index
 		*  \return bool true, if object was picked
 		*/
 	bool doSinglePick( osg::NodePath nodePath );
@@ -390,10 +389,9 @@ private:
 	bool doNodePick( osg::NodePath nodePath );
 
 	/**
-		*  \fn private  doEdgePick(osg::NodePath nodePath, unsigned int primitiveIndex)
+		*  \fn private  doEdgePick(osg::NodePath nodePath)
 		*  \brief Picks single edge
 		*  \param     nodePath   pick nodepath
-		*  \param     primitiveIndex    picked primitive index
 		*  \return bool
 		*/
 	bool doEdgePick( osg::NodePath nodePath);
