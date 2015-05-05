@@ -852,12 +852,12 @@ endif()
 if( USE_BUILTIN_DEPENDENCIES )
 
 	# dependencies of non-unity build
-	add_dependencies( ${3DSOFTVIZ_NAME} libnoise dep_diluculum dep_luametrics dep_leg dep_lpeg dep_luafilesystem )
+	add_dependencies( ${3DSOFTVIZ_NAME} libnoise dep_luametrics dep_leg dep_lpeg dep_luafilesystem )
 
 	if( MSVC )
 		add_dependencies( ${3DSOFTVIZ_NAME} dep_lua )
 	else()
-		add_dependencies( ${3DSOFTVIZ_NAME} dep_luajit )
+		add_dependencies( ${3DSOFTVIZ_NAME} dep_diluculum dep_luajit )
 	endif()
 
 	if( OpenCV_FOUND )
@@ -866,12 +866,12 @@ if( USE_BUILTIN_DEPENDENCIES )
 
 	# dependencies of unity build
 	if (COMMAND cotire)
-		add_dependencies( ${3DSOFTVIZ_NAME}_unity libnoise dep_diluculum dep_luametrics dep_leg dep_lpeg dep_luafilesystem )
+		add_dependencies( ${3DSOFTVIZ_NAME}_unity libnoise dep_luametrics dep_leg dep_lpeg dep_luafilesystem )
 
 		if( MSVC )
 			add_dependencies( ${3DSOFTVIZ_NAME}_unity dep_lua )
 		else()
-			add_dependencies( ${3DSOFTVIZ_NAME}_unity dep_luajit )
+			add_dependencies( ${3DSOFTVIZ_NAME}_unity dep_diluculum dep_luajit )
 		endif()
 
 		if( OpenCV_FOUND )
