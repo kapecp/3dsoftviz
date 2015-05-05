@@ -6,8 +6,6 @@
 
 namespace Leap {
 
-class LeapController;
-
 /**
  * @author Filip Mikle
  * @brief The Leap controller class
