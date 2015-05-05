@@ -3,12 +3,13 @@
 #include "Leap.h"
 #include "math.h"
 #include "Leap/DirectionDetector.h"
-#include "Viewer/MouseControl.h"
-#include "Viewer/CameraManipulator.h"
+
+namespace Vwr {
+class CameraManipulator;
+class MouseControl;
+}
 
 namespace Leap {
-
-class LeapActions;
 
 /**
  * @author Filip Mikle
@@ -28,41 +29,41 @@ public:
 	 * @brief Clockwise - zooming out, Counterclockwise - zooming in
 	 * @param gesture - CircleGesture to be used
 	 */
-	void Leap::LeapActions::zoomGraph( Gesture gesture );
+	void zoomGraph( Gesture gesture );
 
 	/**
 	 * @brief Moves the graph using swipe gesture. Possible directions are UP, DOWN, LEFT, RIGHT
 	 * @param gesture - SwipeGesture to be used
 	 */
-	void Leap::LeapActions::moveCamera( Gesture gesture );
+	void moveCamera( Gesture gesture );
 
 	/**
 	 * @brief Leap::LeapActions::rotateGraph
 	 * @param gesture
 	 */
-	void Leap::LeapActions::rotateGraph( Gesture gesture );
+	void rotateGraph( Gesture gesture );
 
 	// These methods should not have names onSwipe, onXXX. They are placeholders for further functionality.
 	// The names should correspond to the functionality provided by the method i.e. moveGraph();
-	void Leap::LeapActions::onKeyTap( Gesture gesture );
-	void Leap::LeapActions::onScreenTap( Gesture gesture );
+	void onKeyTap( Gesture gesture );
+	//void onScreenTap( Gesture::gesture );
 
 	/**
 	 * @brief Leap::LeapActions::changeViewAngle
 	 * Change angle of camera in flymode using leap sensor
 	 * @param direction - Direction enum from DirectionDetector.
 	 */
-	void Leap::LeapActions::changeViewAngle( Leap::DirectionDetector::Direction direction );
+	void changeViewAngle( DirectionDetector::Direction direction );
 	/**
 	 * @brief Leap::LeapActions::startMovingForward
 	 * Starts the movement of camera forward.
 	 */
-	void Leap::LeapActions::startMovingForward();
+	void startMovingForward();
 	/**
 	 * @brief Leap::LeapActions::stopMovingForward
 	 * Stops forward movement of camera.
 	 */
-	void Leap::LeapActions::stopMovingForward();
+	void stopMovingForward();
 
 	/**
 	 * @brief isCameraMoving is variable to decide whether to move camera or rotate graph
@@ -76,4 +77,6 @@ private:
 	Vwr::CameraManipulator* cmrManipulator;
 };
 }
+
+
 #endif // LEAPACTIONS_H
