@@ -1,5 +1,7 @@
 #include "Leap/LeapActions.h"
 #include "Core/Core.h"
+#include "Viewer/CameraManipulator.h"
+#include "Viewer/MouseControl.h"
 
 Leap::LeapActions::LeapActions()
 {
