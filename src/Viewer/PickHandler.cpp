@@ -513,7 +513,7 @@ bool PickHandler::pick( const double xMin, const double yMin, const double xMax,
 
 				if ( nodePath.size() > 1 ) {
 					if ( !isDrawingSelectionQuad ) {
-						result = doSinglePick( nodePath, hitr->primitiveIndex );
+						result = doSinglePick( nodePath );
 						break;
 					}
 					else {
@@ -526,7 +526,7 @@ bool PickHandler::pick( const double xMin, const double yMin, const double xMax,
 						}
 						if ( !nodePicked ) {
 							if ( selectionType == SelectionType::EDGE || selectionType == SelectionType::ALL ) {
-								edgePicked = doEdgePick( nodePath, hitr->primitiveIndex );
+								edgePicked = doEdgePick( nodePath );
 							}
 						}
 						static int count = 0;
@@ -556,19 +556,19 @@ void PickHandler::setSelectionObserver( SelectionObserver* value )
 }
 
 
-bool PickHandler::doSinglePick( osg::NodePath nodePath, unsigned int primitiveIndex )
+bool PickHandler::doSinglePick( osg::NodePath nodePath )
 {
 	if ( selectionType == SelectionType::NODE ) {
 		return doNodePick( nodePath );
 	}
 	else if ( selectionType == SelectionType::EDGE ) {
-		return doEdgePick( nodePath, primitiveIndex );
+		return doEdgePick( nodePath);
 	}
 	else if ( selectionType == SelectionType::CLUSTER ) {
 		return doClusterPick( nodePath );
 	}
 	else {
-		return ( doNodePick( nodePath ) || doEdgePick( nodePath, primitiveIndex ) );
+		return ( doNodePick( nodePath ) || doEdgePick( nodePath) );
 	}
 }
 
@@ -631,25 +631,9 @@ bool PickHandler::doNodePick( osg::NodePath nodePath )
 	return false;
 }
 
-bool PickHandler::doEdgePick( osg::NodePath nodePath, unsigned int primitiveIndex )
+bool PickHandler::doEdgePick( osg::NodePath nodePath)
 {
-	osg::Geode* geode = dynamic_cast<osg::Geode*>( nodePath[nodePath.size() - 1] );
-
-	if ( geode != 0 ) {
-		osg::Drawable* d = geode->getDrawable( 0 );
-		osg::Geometry* geometry = d->asGeometry();
-
-		if ( geometry != NULL ) {
-			// zmena (plesko): ak vyber zachytil avatara, nastal segmentation fault,
-			// lebo sa vyberal neexistujuci primitiveSet
-			Data::Edge* e;
-			if ( geometry->getNumPrimitiveSets() > primitiveIndex ) {
-				e = dynamic_cast<Data::Edge*>( geometry->getPrimitiveSet( primitiveIndex ) );
-			}
-			else {
-				return false;
-			}
-			// koniec zmeny
+	Data::Edge* e = dynamic_cast<Data::Edge*>( nodePath[nodePath.size() - 1] );
 
 			if ( e != NULL ) {
 				if ( isAltPressed && pickMode == PickMode::NONE && !isShiftPressed ) {
@@ -693,10 +677,7 @@ bool PickHandler::doEdgePick( osg::NodePath nodePath, unsigned int primitiveInde
 
 				return true;
 			}
-		}
-	}
-
-	return false;
+			return false;
 }
 
 bool PickHandler::doClusterPick( osg::NodePath nodePath )

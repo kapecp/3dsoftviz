@@ -379,7 +379,7 @@ private:
 		*  \param     primitiveIndex  picked primitive index
 		*  \return bool true, if object was picked
 		*/
-	bool doSinglePick( osg::NodePath nodePath, unsigned int primitiveIndex );
+	bool doSinglePick( osg::NodePath nodePath );
 
 	/**
 		*  \fn private  doNodePick(osg::NodePath nodePath)
@@ -396,7 +396,7 @@ private:
 		*  \param     primitiveIndex    picked primitive index
 		*  \return bool
 		*/
-	bool doEdgePick( osg::NodePath nodePath, unsigned int primitiveIndex );
+	bool doEdgePick( osg::NodePath nodePath);
 
 	bool doClusterPick( osg::NodePath nodePath );
 
