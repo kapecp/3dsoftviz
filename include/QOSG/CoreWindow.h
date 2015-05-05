@@ -134,6 +134,8 @@ public slots:
 	            */
 	void sqlQuery();
 
+	void showMetrics();
+
 	/**
 	            *  \fn public  playPause
 	            *  \brief Play or pause the layout algorithm
@@ -507,6 +509,12 @@ private:
 	QToolBar* toolBar;
 
 	/**
+	    *  QToolBar * metricsToolBar
+	    *  \brief Pointer to toolbar
+	    */
+	QToolBar* metricsToolBar;
+
+	/**
 	    *  ToolBox * toolBox
 	    *  \brief Pointer to toolbox
 	    */
@@ -553,6 +561,8 @@ private:
 	    *  \brief Action for play/pause layout
 	    */
 	QPushButton* play;
+
+	QPushButton* showMetricsButton;
 
 	/**
 	    *  QPushButton * addMeta

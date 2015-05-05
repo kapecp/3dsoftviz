@@ -159,6 +159,13 @@ void CoreWindow::createActions()
 	play->setFocusPolicy( Qt::NoFocus );
 	connect( play, SIGNAL( clicked() ), this, SLOT( playPause() ) );
 
+	showMetricsButton = new QPushButton();
+	showMetricsButton->setToolTip( "Show metrics toolbar" );
+	showMetricsButton->setMaximumSize( 20, 614 );
+	showMetricsButton->setText( "<" );
+	showMetricsButton->setFocusPolicy( Qt::NoFocus );
+	connect( showMetricsButton, SIGNAL( clicked() ), this, SLOT( showMetrics() ) );
+
 	addMeta = new QPushButton();
 	addMeta->setIcon( QIcon( "../share/3dsoftviz/img/gui/meta.png" ) );
 	addMeta->setToolTip( "&Add meta node" );
@@ -1097,6 +1104,30 @@ void CoreWindow::saveLayoutToDB()
 void CoreWindow::sqlQuery()
 {
 	std::cout << lineEdit->text().toStdString() << endl;
+}
+
+void CoreWindow::showMetrics()
+{
+	if ( CoreWindow::loadFunctionCallButton->isHidden() ) {
+		metricsToolBar->setMinimumWidth( 350 );
+		metricsToolBar->setMaximumWidth( 350 );
+		CoreWindow::loadFunctionCallButton->show();
+		CoreWindow::browsersGroupingButton->show();
+		showMetricsButton->setToolTip( "Hide metrics toolbar" );
+		showMetricsButton->setText( ">" );
+		luaGraphTreeView->setMaximumWidth( 350 );
+
+	}
+	else {
+		CoreWindow::loadFunctionCallButton->hide();
+		CoreWindow::browsersGroupingButton->hide();
+		showMetricsButton->setToolTip( "Show metrics toolbar" );
+		showMetricsButton->setText( "<" );
+		luaGraphTreeView->setMaximumWidth( 0 );
+		luaGraphTreeView->setMinimumWidth( 0 );
+		metricsToolBar->setMaximumWidth( 20 );
+		metricsToolBar->setMinimumWidth( 20 );
+	}
 }
 
 void CoreWindow::playPause()
@@ -3117,20 +3148,21 @@ void CoreWindow::startGlovesRecognition()
 
 void CoreWindow::createMetricsToolBar()
 {
-	toolBar = new QToolBar( "Metrics visualizations",this );
-
+	metricsToolBar = new QToolBar( "Metrics visualizations",this );
 	// <Change> Gloger start: added horizontal frame to support browser (webView) grouping toggling
 	QFrame* frame = createHorizontalFrame();
 	frame->layout()->addWidget( loadFunctionCallButton );
 	frame->layout()->addWidget( browsersGroupingButton );
-	toolBar->addWidget( frame );
+	metricsToolBar->addWidget( frame );
 	// Gloger end
+	frame = createHorizontalFrame();
+	frame->layout()->addWidget( showMetricsButton );
+	frame->layout()->addWidget( luaGraphTreeView );
+	metricsToolBar->addWidget( frame );
+	metricsToolBar->setMovable( false );
+	showMetrics();
 
-	toolBar->addWidget( luaGraphTreeView );
-	toolBar->setMinimumWidth( 350 );
-
-	addToolBar( Qt::RightToolBarArea,toolBar );
-	toolBar->setMovable( true );
+	addToolBar( Qt::RightToolBarArea,metricsToolBar );
 
 	toolBar = new QToolBar( "Metrics filter",this );
 #if QT_VERSION >= 0x040700
