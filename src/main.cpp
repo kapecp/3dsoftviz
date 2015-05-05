@@ -24,12 +24,12 @@ Q_DECLARE_METATYPE( Qt::MouseButton )
 
 int main( int argc, char* argv[] )
 {
-    qRegisterMetaType< osg::Vec3d >( "osgVec3d" );
-    qRegisterMetaType< osg::Quat >( "osgQuat" );
+	qRegisterMetaType< osg::Vec3d >( "osgVec3d" );
+	qRegisterMetaType< osg::Quat >( "osgQuat" );
 #ifdef OPENCV_FOUND
-    qRegisterMetaType<cv::Mat>( "Mat" );
+	qRegisterMetaType<cv::Mat>( "Mat" );
 #endif
-    qRegisterMetaType<Qt::MouseButton>( "MouseButton" );
+	qRegisterMetaType<Qt::MouseButton>( "MouseButton" );
 
 //    DIR *dir;
 //    struct dirent *ent;
@@ -45,8 +45,8 @@ int main( int argc, char* argv[] )
 //      return EXIT_FAILURE;
 //    }
 
-    QApplication app( argc, argv );
-    new Util::Cleaner( &app );
-    AppCore::Core::getInstance( &app );
-    Manager::GraphManager::getInstance();
+	QApplication app( argc, argv );
+	new Util::Cleaner( &app );
+	AppCore::Core::getInstance( &app );
+	Manager::GraphManager::getInstance();
 }
