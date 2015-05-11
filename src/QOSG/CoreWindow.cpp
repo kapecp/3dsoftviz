@@ -1510,7 +1510,7 @@ void CoreWindow::applyColorClick()
 				client->sendNodeColor( ( *ei )->getId(), red, green, blue, alpha );
 			}
 			else {
-                ( *ei )->setEdgeColor( cv::Vec4f( red, green, blue, alpha ) );
+                ( *ei )->setEdgeColor( osg::Vec4( red, green, blue, alpha ) );
 				server->sendNodeColor( ( *ei )->getId(), red, green, blue, alpha );
 			}
 

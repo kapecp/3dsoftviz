@@ -1,7 +1,7 @@
 #ifndef VIZNODE_H
 #define VIZNODE_H
 
-#include "opencv/cv.h"
+//#include "opencv/cv.h"
 #include <Data/AbsNode.h>
 #include "QVector3D"
 
@@ -56,6 +56,7 @@ public:
     {
         return overallWeight;
     }
+
     void setOverallWeight( float overallWeight )
     {
         this->overallWeight = overallWeight;
@@ -111,26 +112,6 @@ public:
     }
 
     /**
-        *  \fn inline public constant  isSelected
-        *  \brief Returns if the Node is selected
-        *  \return bool true, if the Node is selected
-        */
-    bool isSelected() const
-    {
-        return selected;
-    }
-
-    /**
-        *  \fn inline public constant  getColor
-        *  \brief Returns color of the Node
-        *  \return osg::Vec4 color of the Node
-        */
-   /* cv::Vec4f getColor() const
-    {
-        return color;
-    }*/
-
-    /**
         *  QString labelText
         *  \brief Text show in the label
         */
@@ -155,19 +136,6 @@ public:
         *  \brief Size of node force in previous iteration
         */
     QVector3D velocity;
-
-    /**
-        *  osg::Vec4 color
-        *  \brief Color of the Node
-        */
-   //cv::Vec4f color;
-
-   /**
-       *  bool selected
-       *  \brief node picked state
-       */
-   bool selected;
-
 
 };
 }

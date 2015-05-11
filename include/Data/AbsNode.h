@@ -13,8 +13,6 @@ class AbsNode
 {
 public:
 
-    AbsNode(void){};
-
     AbsNode( qlonglong id, QString name, Data::Type* type,Data::Graph* graph);
 
    // ~AbsNode( void );

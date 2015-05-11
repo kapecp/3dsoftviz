@@ -58,13 +58,6 @@ public:
 	~Node( void );
 
 	/**
-	    *  \fn inline public numberOfVertigoPlane
-	    *  \brief Returns the value of the vertigo plane, which the node belongs to
-	    *  \return qlonglong value of the vertigo plane
-	    */
-	qlonglong  numberOfVertigoPlane;
-
-	/**
 	    *  \fn inline public  setNumberOfVertigoPlane(qlonglong value);
 	    *  \brief Sets the value of the vertigo plane, which the node belongs to
 	    *  \param  qlonglong value of the vertigo plane
@@ -115,12 +108,6 @@ public:
 		*
 		*/
     void setParentNode( Node* parent );
-
-	/**
-	    *	Node parent
-	    *	\brief parent node of current node in nested graphs, in top level graph is null
-	    */
-	osg::ref_ptr<Data::Node> nested_parent;
 
 	/**
 	    *  \fn inline public  getNestedParent
@@ -257,6 +244,21 @@ public:
 	Layout::RadialLayout* getRadialLayout(); //pointer to radial layout, NULL if node doesn't belong to radial layout
 	void setRadialLayout( Layout::RadialLayout* rl );
 	//volovar_kon
+
+public:
+    /**
+        *  \fn inline public numberOfVertigoPlane
+        *  \brief Returns the value of the vertigo plane, which the node belongs to
+        *  \return qlonglong value of the vertigo plane
+        */
+    qlonglong  numberOfVertigoPlane;
+
+    /**
+        *	Node parent
+        *	\brief parent node of current node in nested graphs, in top level graph is null
+        */
+    osg::ref_ptr<Data::Node> nested_parent;
+
 private:
 
     /**

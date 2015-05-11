@@ -13,7 +13,7 @@ class OsgEdge : public osg::Geode, public DbEdge
 {
 public:
 
-     OsgEdge( qlonglong id, QString name, Data::Graph* graph, bool isOriented, Data::Type* type, float scaling);
+     OsgEdge( qlonglong id, QString name, Data::Graph* graph, bool isOriented, Data::Type* type, float scaling, osg::ref_ptr<Data::Node> srcNode, osg::ref_ptr<Data::Node> dstNode, osg::ref_ptr<osg::Camera> camera);
 
 	/**
 	    *  \fn public  createLabel(QString name)
@@ -101,7 +101,30 @@ public:
         camera = val;
     }
 
+    /**
+        *  \fn inline public constant  getEdgeColor
+        *  \brief Returns the color of the Edge
+        *  \return osg::Vec4 color of the Edge
+        */
+    osg::Vec4 getEdgeColor() const
+    {
+        if ( selected ) {
+            return osg::Vec4( 0.0f, 0.0f, 1.0f, 1.0f );    // color of selected node
+        }
+        else {
+            return edgeColor;
+        }
+    }
 
+    /**
+        *  \fn inline public  setEdgeColor(osg::Vec4 val)
+        *  \brief Sets the color of the Edge
+        *  \param     val   new color
+        */
+    void setEdgeColor( osg::Vec4 val )
+    {
+        edgeColor = val;
+    }
 protected:
 
 	/**
@@ -139,6 +162,12 @@ protected:
         *  \brief Current camera used in viewer. It is used for billboarding purposes.
         */
     osg::ref_ptr<osg::Camera> camera;
+
+    /**
+        *  osg::Vec4 edgeColor
+        *  \brief Color of the Edge
+        */
+    osg::Vec4 edgeColor;
 };
 }
 #endif // OSGEDGE_H

@@ -37,7 +37,7 @@ void Lua::LuaGraphVisualizer::setEdgeParams( osg::ref_ptr<Data::Edge> edge, Lua:
 	float g = obj->getFloatParam( "colorG", defColor.g() );
 	float b = obj->getFloatParam( "colorB", defColor.b() );
 	float a = obj->getFloatParam( "colorA", defColor.a() );
-    edge->setEdgeColor( cv::Vec4f( r,g,b,a ) );
+    edge->setEdgeColor( osg::Vec4( r,g,b,a ) );
 	edge->setEdgeStrength( obj->getFloatParam( "edgeStrength", 1 ) );
 
 }

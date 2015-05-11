@@ -215,16 +215,11 @@ Data::Graph* Model::GraphDAO::getGraph( QSqlDatabase* conn, bool* error2, qlongl
 			newGraph->addEdge( edgeID, edgeName, iNodes1.value(), iNodes2.value(), type, isOriented );
 
 			if ( edgeColors.contains( edgeID ) ) {
-                cv::Vec4f color;
-                color[0]=edgeColors.value( edgeID ).r();
-                color[1]=edgeColors.value( edgeID ).g();
-                color[2]=edgeColors.value( edgeID ).b();
-                color[3]=edgeColors.value( edgeID ).a();
 				if ( newGraph->getEdges()->contains( edgeID ) ) {
-                    newGraph->getEdges()->find( edgeID ).value()->setEdgeColor( color );
+                    newGraph->getEdges()->find( edgeID ).value()->setEdgeColor( edgeColors.value( edgeID ) );
 				}
 				else {
-                    newGraph->getMetaEdges()->find( edgeID ).value()->setEdgeColor( color );
+                    newGraph->getMetaEdges()->find( edgeID ).value()->setEdgeColor( edgeColors.value( edgeID ) );
 				}
 			}
 

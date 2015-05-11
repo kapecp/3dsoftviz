@@ -5,7 +5,6 @@ Data::VizNode::VizNode(qlonglong id, QString name, Data::Type* type, Data::Graph
 {
     this->scale = scaling;
     this->velocity = QVector3D( 0,0,0 );
-    this->selected = false;
     int pos = 0;
     int cnt = 0;
 

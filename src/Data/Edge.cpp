@@ -18,20 +18,9 @@
 #include <QDebug>
 
 Data::Edge::Edge( qlonglong id, QString name, Data::Graph* graph, osg::ref_ptr<Data::Node> srcNode, osg::ref_ptr<Data::Node> dstNode, Data::Type* type, bool isOriented, float scaling, int pos, osg::ref_ptr<osg::Camera> camera )
-:OsgEdge(id,name, graph, isOriented, type, scaling)
+:OsgEdge(id,name, graph, isOriented, type, scaling, srcNode, dstNode, camera)
 {
-	this->srcNode = srcNode;
-	this->dstNode = dstNode;
-	this->camera = camera;
-
 	this->appConf = Util::ApplicationConfig::get();
-	coordinates = new osg::Vec3Array();
-	edgeTexCoords = new osg::Vec2Array();
-
-	this->addDrawable( createEdge( createStateSet( this->type ) ) );
-    createLabel( name );
-	//updateCoordinates(getSrcNode()->getTargetPosition(), getDstNode()->getTargetPosition());
-	updateCoordinates( getSrcNode()->restrictedTargetPosition(), getDstNode()->restrictedTargetPosition() );
 }
 
 Data::Edge::~Edge( void )

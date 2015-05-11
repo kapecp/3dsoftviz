@@ -14,10 +14,27 @@
 
 #include <QDebug>
 
-Data::OsgEdge::OsgEdge(qlonglong id, QString name, Data::Graph* graph, bool isOriented, Data::Type* type, float scaling)
+Data::OsgEdge::OsgEdge(qlonglong id, QString name, Data::Graph* graph, bool isOriented, Data::Type* type, float scaling, osg::ref_ptr<Data::Node> srcNode, osg::ref_ptr<Data::Node> dstNode,osg::ref_ptr<osg::Camera> camera)
 :DbEdge(id, name, graph, isOriented, type, scaling)
 {
-    //createLabel( name );
+    this->srcNode = srcNode;
+    this->dstNode = dstNode;
+    this->camera = camera;
+
+    coordinates = new osg::Vec3Array();
+    edgeTexCoords = new osg::Vec2Array();
+
+    this->addDrawable( createEdge( createStateSet( this->type ) ) );
+
+    createLabel( name );
+    //updateCoordinates(getSrcNode()->getTargetPosition(), getDstNode()->getTargetPosition());
+    updateCoordinates( getSrcNode()->restrictedTargetPosition(), getDstNode()->restrictedTargetPosition() );
+
+    float r = type->getSettings()->value( "color.R" ).toFloat();
+    float g = type->getSettings()->value( "color.G" ).toFloat();
+    float b = type->getSettings()->value( "color.B" ).toFloat();
+    float a = type->getSettings()->value( "color.A" ).toFloat();
+    this->edgeColor = osg::Vec4( r, g, b, a );
 }
 
 osg::ref_ptr<osg::Drawable> Data::OsgEdge::createLabel( QString name )
@@ -171,11 +188,11 @@ void Data::OsgEdge::updateCoordinates( osg::Vec3 srcPos, osg::Vec3 dstPos )
         osg::Vec4Array* colorArray =  dynamic_cast<osg::Vec4Array*>( geometry->getColorArray() );
 
         colorArray->pop_back();
-        osg::Vec4f color;
+        /*osg::Vec4f color;
         color.r()=getEdgeColor()[0];
         color.g()=getEdgeColor()[1];
         color.b()=getEdgeColor()[2];
-        color.a()=getEdgeColor()[3];
-        colorArray->push_back( color );
+        color.a()=getEdgeColor()[3];*/
+        colorArray->push_back( getEdgeColor() );
     }
 }

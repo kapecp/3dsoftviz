@@ -24,74 +24,18 @@
 
 
 Data::Node::Node( qlonglong id, QString name, Data::Type* type, float scaling, Data::Graph* graph, osg::Vec3f position )
-    :OsgNode(id,name,type,graph,scaling)
+    :OsgNode(id,name,type,graph,scaling, position)
 {
 	//konstruktor
-	//scaling je potrebne na zmensenie uzla ak je vnoreny
-	this->mIsFocused = false;
-	this->mTargetPosition = position;
-	this->currentPosition = position * Util::ApplicationConfig::get()->getValue( "Viewer.Display.NodeDistanceScale" ).toFloat();
-    //this->inDB = false;
+    this->mIsFocused = false;
 	this->edges = new QMap<qlonglong, osg::ref_ptr<Data::Edge> >;
-    //this->scale = scaling;
-	this->setBall( NULL );
-	this->setParentBall( NULL );
-	this->hasNestedNodes = false;
 	this->cluster = NULL;
 	// Duransky start - Pociatocne nastavenie roznych cisiel vertigo rovin pre uzly
 	this->numberOfVertigoPlane = id;
 	// Duransky end - Pociatocne nastavenie roznych cisiel vertigo rovin pre uzly
 
-	settings = new QMap<QString, QString>();
-	//APA
-
-	settings->insert( "Velkost","4242" );
-	settings->insert( "Farba","ruzova" );
-	//APA
-
-    /*int pos = 0;
-	int cnt = 0;
-
-	labelText = this->name;
-
-	while ( ( pos = labelText.indexOf( QString( " " ), pos + 1 ) ) != -1 ) {
-		if ( ++cnt % 3 == 0 ) {
-			labelText = labelText.replace( pos, 1, "\n" );
-        }
-    }*/
-
-	// MERGE BEGIN
-	// toto bolo u pleska/zelera
-	//	this->addDrawable(createNode(this->scale, Node::createStateSet(this->type)));
-
-	//	//vytvorenie grafickeho zobrazenia ako label
-	//	this->square = createSquare(this->type->getScale(), Node::createStateSet());
-	//	this->label = createLabel(this->type->getScale(), labelText);
-
-	// toto bolo u sivaka
-	this->square = createNode( this->scale * 4, OsgNode::createStateSet( this->type ) );
-	this->focusedSquare = createNode( this->scale * 16, OsgNode::createStateSet( this->type ) );
-	this->addDrawable( square );
-	this->label = createLabel( this->type->getScale(), labelText );
-
-	// MERGE END
-	this->force = osg::Vec3f();
-    this->velocity = QVector3D( 0,0,0 );
 	this->fixed = false;
-    //this->ignore = false;
 	this->positionCanBeRestricted = true;
-	this->removableByUser = true;
-	this->selected = false;
-	this->usingInterpolation = true;
-
-	//nastavenie farebneho typu
-	float r = type->getSettings()->value( "color.R" ).toFloat();
-	float g = type->getSettings()->value( "color.G" ).toFloat();
-	float b = type->getSettings()->value( "color.B" ).toFloat();
-	float a = type->getSettings()->value( "color.A" ).toFloat();
-
-    this->colorOfNode=osg::Vec4( r, g, b, a );
-	this->setColor( colorOfNode );
 
 	// merging Britvik: this was here
 	//setDefaultColor();
@@ -100,7 +44,6 @@ Data::Node::Node( qlonglong id, QString name, Data::Type* type, float scaling, D
 	layerID = 0;  //node is not on layer of radial layout
 	radialLayout = NULL;  //node does not belong to radial layout
 	//volovar_kon
-
 }
 
 Data::Node::~Node( void )

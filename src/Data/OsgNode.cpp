@@ -14,10 +14,32 @@
 
 #include "Data/OsgNode.h"
 
-Data::OsgNode::OsgNode( qlonglong id, QString name, Data::Type* type, Data::Graph* graph, float scaling)
+Data::OsgNode::OsgNode( qlonglong id, QString name, Data::Type* type, Data::Graph* graph, float scaling, osg::Vec3f position)
     :DbNode(id,name,type,graph,scaling)
 {
+    this->mTargetPosition = position;
+    this->currentPosition = position * Util::ApplicationConfig::get()->getValue( "Viewer.Display.NodeDistanceScale" ).toFloat();
 
+    this->setBall( NULL );
+    this->setParentBall( NULL );
+
+    this->square = createNode( this->scale * 4, OsgNode::createStateSet( this->type ) );
+    this->focusedSquare = createNode( this->scale * 16, OsgNode::createStateSet( this->type ) );
+    this->addDrawable( square );
+    this->label = createLabel( this->type->getScale(), labelText );
+    this->force = osg::Vec3f();
+    this->selected = false;
+
+    this->usingInterpolation = true;
+
+    //nastavenie farebneho typu
+    float r = type->getSettings()->value( "color.R" ).toFloat();
+    float g = type->getSettings()->value( "color.G" ).toFloat();
+    float b = type->getSettings()->value( "color.B" ).toFloat();
+    float a = type->getSettings()->value( "color.A" ).toFloat();
+
+    this->colorOfNode=osg::Vec4( r, g, b, a );
+    this->setColor( colorOfNode );
 }
 
 osg::ref_ptr<osg::Drawable> Data::OsgNode::createLabel( const float& scale, QString name )

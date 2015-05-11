@@ -14,7 +14,7 @@ class OsgNode : public osg::Geode, public DbNode
 {
 public:
 
-    OsgNode( qlonglong id, QString name, Data::Type* type, Data::Graph* graph, float scaling);
+    OsgNode( qlonglong id, QString name, Data::Type* type, Data::Graph* graph, float scaling, osg::Vec3f position);
 
 	/**
 	    *  \fn private static  createLabel(const float & scale, QString name)
@@ -283,12 +283,6 @@ protected:
         *  \brief Square drawable
         */
     osg::ref_ptr<osg::Drawable> square;
-
-    /**
-        *  osg::Vec3f velocity
-        *  \brief Size of node force in previous iteration
-        */
-  //  osg::Vec3f velocity;
 
     /**
         *  osg::Vec4 color

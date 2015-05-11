@@ -63,13 +63,13 @@ void Lua::SimpleGraphVisualizer::visualize()
 		if ( i.value()->getParams()["root"]== true ) {
 			osg::ref_ptr<Data::Node> root = currentGraph->getNodes()->value( i.key() );
 			osg::ref_ptr<Data::Edge> metaLink = currentGraph->addEdge( metaEdgeName, root, filesAnchor, currentGraph->getEdgeMetaType(), false );
-            metaLink->setEdgeColor( cv::Vec4f( 0,0,0,0 ) );
+            metaLink->setEdgeColor( osg::Vec4( 0,0,0,0 ) );
 			metaLink->setInvisible( true );
 		}
 		if ( i.value()->getParams()["type"] == "function" ) {
 			osg::ref_ptr<Data::Node> func = currentGraph->getNodes()->value( i.key() );
 			osg::ref_ptr<Data::Edge> metaLink = currentGraph->addEdge( metaEdgeName, func, functionsAnchor, currentGraph->getEdgeMetaType(), false );
-            metaLink->setEdgeColor( cv::Vec4f( 0,0,0,0 ) );
+            metaLink->setEdgeColor( osg::Vec4( 0,0,0,0 ) );
 			metaLink->setInvisible( true );
 			metaLink->setEdgeStrength( 0.1f );
 		}

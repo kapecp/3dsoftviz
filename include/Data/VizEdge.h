@@ -102,31 +102,6 @@ public:
         return this->shared_Z;
     }
 
-    /**
-        *  \fn inline public constant  getEdgeColor
-        *  \brief Returns the color of the Edge
-        *  \return osg::Vec4 color of the Edge
-        */
-    cv::Vec4f getEdgeColor() const
-    {
-        if ( selected ) {
-            return cv::Vec4f( 0.0f, 0.0f, 1.0f, 1.0f );    // color of selected node
-        }
-        else {
-            return edgeColor;
-        }
-    }
-
-    /**
-        *  \fn inline public  setEdgeColor(osg::Vec4 val)
-        *  \brief Sets the color of the Edge
-        *  \param     val   new color
-        */
-    void setEdgeColor( cv::Vec4f val )
-    {
-        edgeColor = val;
-    }
-
 protected:
     /**
         *  float scale
@@ -154,11 +129,6 @@ protected:
                 */
     bool shared_Z;
 
-    /**
-        *  osg::Vec4 edgeColor
-        *  \brief Color of the Edge
-        */
-    cv::Vec4f edgeColor;
 };
 }
 

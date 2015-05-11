@@ -10,6 +10,16 @@ Data::AbsNode::AbsNode( qlonglong id, QString name, Data::Type* type, Data::Grap
     this->type=type;
     this->graph = graph;
     this->type = type;
+    this->hasNestedNodes = false;
+
+    settings = new QMap<QString, QString>();
+    //APA
+
+    settings->insert( "Velkost","4242" );
+    settings->insert( "Farba","ruzova" );
+    //APA
+
+    this->removableByUser = true;
 }
 
 bool Data::AbsNode::equals( AbsNode* node )
