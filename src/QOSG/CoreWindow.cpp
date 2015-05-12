@@ -129,6 +129,9 @@ CoreWindow::CoreWindow( QWidget* parent, Vwr::CoreGraph* coreGraph, QApplication
     Lua::LuaInterface::getInstance()->executeFile( "main.lua" );
     viewerWidget->getPickHandler()->setSelectionObserver( this );
 
+    QObject::connect( viewerWidget->getCameraManipulator(), SIGNAL( sendTranslatePosition( osg::Vec3d ) ),
+                      this->coreGraph, SLOT( translateGraph( osg::Vec3d ) ) );
+
 }
 
 void CoreWindow::createActions()

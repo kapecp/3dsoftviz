@@ -246,6 +246,8 @@ public slots:
 
     void updateGraphPosAndRotByAruco( const osg::Quat quat, osg::Vec3d pos );
 
+    void translateGraph(osg::Vec3d pos);
+
     /**
          * @author Autor: David Durcak
          * @brief updateGraphRotByMouse Update graphRotTransf MatrixTransform node for rotating a graph by mouse

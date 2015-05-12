@@ -1233,6 +1233,16 @@ void CoreGraph::updateGraphPosAndRotByAruco(const osg::Quat quat, osg::Vec3d pos
     addTranslateToGraphRotTransf(pos);
 }
 
+void CoreGraph::translateGraph(osg::Vec3d pos) {
+    osg::Matrixd matrix = graphRotTransf->getMatrix();
+
+    qDebug() << "pos x,y,z " << pos.x() << "," << pos.y() << "," << pos.z();
+
+    matrix.preMultTranslate(pos);
+
+    graphRotTransf->setMatrix(matrix);
+}
+
 void CoreGraph::addTranslateToGraphRotTransf(osg::Vec3d pos) {
     osg::Matrixd matrix = graphRotTransf->getMatrix();
     osg::Vec3d pom = pos;

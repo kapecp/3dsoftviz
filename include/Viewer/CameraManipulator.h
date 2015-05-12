@@ -255,6 +255,8 @@ signals:
          */
     void sendFaceDetRotation( const osg::Quat quat );
 
+    void sendTranslatePosition( osg::Vec3d pos );
+
 
 
 public slots:
@@ -644,6 +646,8 @@ private:
         *  \return bool true, if handled
         */
     bool handleKeyUp( const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& us );
+
+    bool handleKeyDownGraph( const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& us );
 
     void notifyClients();
     void notifyServer();
