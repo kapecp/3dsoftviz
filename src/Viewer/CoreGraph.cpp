@@ -1237,8 +1237,8 @@ void CoreGraph::addTranslateToGraphRotTransf(osg::Vec3d pos) {
     osg::Matrixd matrix = graphRotTransf->getMatrix();
     osg::Vec3d pom = pos;
 
-    pos.x() = -pos.x() * 1000;
-    pos.y() = -pos.z() * 7000;
+    pos.x() = -pos.x() * 2000;
+    pos.y() = -pos.z() * 15000;
     pos.z() = -pom.y() * 3000;
 
     qDebug() << "pos x,y,z " << pos.x() << "," << pos.y() << "," << pos.z();

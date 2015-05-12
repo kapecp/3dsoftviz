@@ -70,6 +70,8 @@ Vwr::CameraManipulator::CameraManipulator( Vwr::CoreGraph* coreGraph )
         _cameraCanRot = true;
     }
 
+    _cameraActive = true;
+
 }
 
 Vwr::CameraManipulator::~CameraManipulator()
@@ -150,6 +152,8 @@ bool Vwr::CameraManipulator::handle( const GUIEventAdapter& ea, GUIActionAdapter
         return false;
     }
 
+    if(_cameraActive) {
+
     switch ( ea.getEventType() ) {
         case ( GUIEventAdapter::PUSH ): {
             return handlePush( ea, us );
@@ -181,6 +185,7 @@ bool Vwr::CameraManipulator::handle( const GUIEventAdapter& ea, GUIActionAdapter
         }
         default:
             return false;
+    }
     }
 }
 
