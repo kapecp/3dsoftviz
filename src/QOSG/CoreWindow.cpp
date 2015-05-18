@@ -1334,7 +1334,7 @@ void CoreWindow::removeMetaNodes()
 
 	while ( i != selectedNodes->constEnd() ) {
 		//treba este opravit - zatial kontrolujeme ci to nie je mergedNode len podla mena
-		if ( ( *i )->getType()->isMeta() && ( *i )->getName() != "mergedNode" ) {
+		if ( ( *i )->getType()->isMeta() && ( ( Data::AbsNode* )( *i ) )->getName() != "mergedNode" ) {
 			Network::Server* server = Network::Server::getInstance();
 			Network::Client* client = Network::Client::getInstance();
 			if ( !client->isConnected() ) {
@@ -1575,7 +1575,7 @@ void CoreWindow::applyLabelClick()
 			client->sendNodeLabel( ( *ni )->getId(), newLabel );
 		}
 		else {
-			( *ni )->setName( newLabel );
+			( ( Data::AbsNode* )( *ni ) )->setName( newLabel );
 			( *ni )->setLabelText( newLabel );
 			( *ni )->reloadConfig();
 			server->sendNodeLabel( ( *ni )->getId(), newLabel );

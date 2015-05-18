@@ -699,7 +699,7 @@ void Client::sendSetRestriction( quint8 type, QLinkedList<osg::ref_ptr<Data::Nod
 	Layout::RestrictionRemovalHandler_RestrictionNodesRemover::NodesListType::Iterator itRN;
 
 	for ( itRN = restrictionNodes->begin(); itRN!= restrictionNodes->end(); itRN++ ) {
-		out << ( QString )( *itRN )->getName() << ( float )( *itRN )->getTargetPosition().x()<< ( float )( *itRN )->getTargetPosition().y() << ( float )( *itRN )->getTargetPosition().z();
+		out << ( QString )( ( Data::AbsNode* )( *itRN ) )->getName() << ( float )( *itRN )->getTargetPosition().x()<< ( float )( *itRN )->getTargetPosition().y() << ( float )( *itRN )->getTargetPosition().z();
 	}
 
 	out << ( int ) nodes->count();

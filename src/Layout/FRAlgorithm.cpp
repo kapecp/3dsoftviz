@@ -410,6 +410,7 @@ bool FRAlgorithm::applyForces( Data::Node* node )
 
 	// energeticka strata = 1-flexibilita
 	fv *= flexibility;
+
 	node->setVelocity( fv ); // ulozime novu rychlost
 
 	return true;

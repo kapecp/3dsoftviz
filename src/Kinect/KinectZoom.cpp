@@ -30,17 +30,17 @@ int Kinect::KinectZoom::DetectContour( cv::Mat img )
 		cv::vector<cv::vector<cv::Point> > hull_points( contours.size() );
 		cv::vector<cv::vector<cv::Point> > defect_points( contours.size() );
 
-		for ( int i = 0; i < contours.size(); i++ ) {
+		for ( int i = 0; i < ( int )contours.size(); i++ ) {
 			if ( contourArea( contours[i] )>500 ) {
 				convexHull( contours[i], hull[i], false );
 				convexityDefects( contours[i],hull[i], convDef[i] );
 
-				for ( int k=0; k<hull[i].size(); k++ ) {
+				for ( int k=0; k<( int )hull[i].size(); k++ ) {
 					int ind=hull[i][k];
 					hull_points[i].push_back( contours[i][ind] );
 				}
 
-				for ( int k=0; k<convDef[i].size(); k++ ) {
+				for ( int k=0; k<( int )convDef[i].size(); k++ ) {
 					if ( convDef[i][k][3]>20*256 ) { // filter defects by depth
 						numFingers++;
 						int ind_0=convDef[i][k][0];

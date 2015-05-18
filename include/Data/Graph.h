@@ -10,6 +10,7 @@
 
 #include "Data/Type.h"
 #include "Data/Edge.h"
+#include "Data/Node.h"
 #include "Data/MetaType.h"
 
 #include "Layout/RestrictionsManager.h"
