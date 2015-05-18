@@ -16,7 +16,7 @@ void SetEdgeColorExecutor::execute_client()
 	QMap<qlonglong, osg::ref_ptr<Data::Edge> >* edges = currentGraph -> getEdges();
 	if ( edges->contains( id ) ) {
 		Data::Edge* edge = *edges->find( id );
-        edge->setEdgeColor( osg::Vec4( r,g,b,alpha ) );
+		edge->setEdgeColor( osg::Vec4( r,g,b,alpha ) );
 	}
 
 }
@@ -32,7 +32,7 @@ void SetEdgeColorExecutor::execute_server()
 	QMap<qlonglong, osg::ref_ptr<Data::Edge> >* edges = currentGraph -> getEdges();
 	if ( edges->contains( id ) ) {
 		Data::Edge* edge = *edges->find( id );
-        edge->setEdgeColor( osg::Vec4( r,g,b,alpha ) );
+		edge->setEdgeColor( osg::Vec4( r,g,b,alpha ) );
 	}
 
 	Server* server = Server::getInstance();

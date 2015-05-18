@@ -13,7 +13,7 @@ class OsgEdge : public osg::Geode, public DbEdge
 {
 public:
 
-     OsgEdge( qlonglong id, QString name, Data::Graph* graph, bool isOriented, Data::Type* type, float scaling, osg::ref_ptr<Data::Node> srcNode, osg::ref_ptr<Data::Node> dstNode, osg::ref_ptr<osg::Camera> camera);
+	OsgEdge( qlonglong id, QString name, Data::Graph* graph, bool isOriented, Data::Type* type, float scaling, osg::ref_ptr<Data::Node> srcNode, osg::ref_ptr<Data::Node> dstNode, osg::ref_ptr<osg::Camera> camera );
 
 	/**
 	    *  \fn public  createLabel(QString name)
@@ -27,104 +27,104 @@ public:
 
 	osg::ref_ptr<osg::Drawable> createEdge( osg::StateSet* bbState );
 
-    /**
-        *  \fn public  updateCoordinates(osg::Vec3 srcPos, osg::Vec3 dstNode)
-        *  \brief Updates coordinates of the Edge
-        *  \param    srcPos    new coordinates of the starting Node
-        *  \param   dstNode    new coordinates of the ending Node
-        */
-    void updateCoordinates( osg::Vec3 srcPos, osg::Vec3 dstNode );
+	/**
+	    *  \fn public  updateCoordinates(osg::Vec3 srcPos, osg::Vec3 dstNode)
+	    *  \brief Updates coordinates of the Edge
+	    *  \param    srcPos    new coordinates of the starting Node
+	    *  \param   dstNode    new coordinates of the ending Node
+	    */
+	void updateCoordinates( osg::Vec3 srcPos, osg::Vec3 dstNode );
 
-    /**
-        * \fn inline public constant getSrcNode
-        * \brief  Returns the starting Node of the Edge
-        * \return osg::ref_ptr<Data::Node> starting Node of the Edge
-        */
-    osg::ref_ptr<Data::Node> getSrcNode() const
-    {
-        return srcNode;
-    }
+	/**
+	    * \fn inline public constant getSrcNode
+	    * \brief  Returns the starting Node of the Edge
+	    * \return osg::ref_ptr<Data::Node> starting Node of the Edge
+	    */
+	osg::ref_ptr<Data::Node> getSrcNode() const
+	{
+		return srcNode;
+	}
 
-    /**
-        * \fn inline public constant setSrcNode
-        * \brief  Sets new starting Node of the Edge
-        *
-        * OBSOLETE - DO NOT USE IT
-        *
-        * \param val new starting Node of the Edge
-        */
-    void setSrcNode( osg::ref_ptr<Data::Node> val )
-    {
-        srcNode = val;
-    }
+	/**
+	    * \fn inline public constant setSrcNode
+	    * \brief  Sets new starting Node of the Edge
+	    *
+	    * OBSOLETE - DO NOT USE IT
+	    *
+	    * \param val new starting Node of the Edge
+	    */
+	void setSrcNode( osg::ref_ptr<Data::Node> val )
+	{
+		srcNode = val;
+	}
 
-    /**
-        * \fn inline public constant getDstNode
-        * \brief  Returns ending Node of the Edge
-        * \return osg::ref_ptr<Data::Node> ending Node of the Edge
-        */
-    osg::ref_ptr<Data::Node> getDstNode() const
-    {
-        return dstNode;
-    }
+	/**
+	    * \fn inline public constant getDstNode
+	    * \brief  Returns ending Node of the Edge
+	    * \return osg::ref_ptr<Data::Node> ending Node of the Edge
+	    */
+	osg::ref_ptr<Data::Node> getDstNode() const
+	{
+		return dstNode;
+	}
 
-    /**
-        * \fn inline public setDstNode(osg::ref_ptr<Data::Node> val)
-        * \brief Sets new ending Node of the Edge
-        *
-        * OBSOLETE - DO NOT USE IT
-        *
-        * \param val new ending Node of the Edge
-        */
-    void setDstNode( osg::ref_ptr<Data::Node> val )
-    {
-        dstNode = val;
-    }
+	/**
+	    * \fn inline public setDstNode(osg::ref_ptr<Data::Node> val)
+	    * \brief Sets new ending Node of the Edge
+	    *
+	    * OBSOLETE - DO NOT USE IT
+	    *
+	    * \param val new ending Node of the Edge
+	    */
+	void setDstNode( osg::ref_ptr<Data::Node> val )
+	{
+		dstNode = val;
+	}
 
-    /**
-        *  \fn inline public constant  getCamera
-        *  \brief returns current camera looking at edge
-        *  \return osg::ref_ptr<osg::Camera>
-        */
-    osg::ref_ptr<osg::Camera> getCamera() const
-    {
-        return camera;
-    }
+	/**
+	    *  \fn inline public constant  getCamera
+	    *  \brief returns current camera looking at edge
+	    *  \return osg::ref_ptr<osg::Camera>
+	    */
+	osg::ref_ptr<osg::Camera> getCamera() const
+	{
+		return camera;
+	}
 
-    /**
-        *  \fn inline public  setCamera(osg::ref_ptr<osg::Camera> val)
-        *  \brief sets current camera used in viewer.
-        *  \param       val
-        */
-    void setCamera( osg::ref_ptr<osg::Camera> val )
-    {
-        camera = val;
-    }
+	/**
+	    *  \fn inline public  setCamera(osg::ref_ptr<osg::Camera> val)
+	    *  \brief sets current camera used in viewer.
+	    *  \param       val
+	    */
+	void setCamera( osg::ref_ptr<osg::Camera> val )
+	{
+		camera = val;
+	}
 
-    /**
-        *  \fn inline public constant  getEdgeColor
-        *  \brief Returns the color of the Edge
-        *  \return osg::Vec4 color of the Edge
-        */
-    osg::Vec4 getEdgeColor() const
-    {
-        if ( selected ) {
-            return osg::Vec4( 0.0f, 0.0f, 1.0f, 1.0f );    // color of selected node
-        }
-        else {
-            return edgeColor;
-        }
-    }
+	/**
+	    *  \fn inline public constant  getEdgeColor
+	    *  \brief Returns the color of the Edge
+	    *  \return osg::Vec4 color of the Edge
+	    */
+	osg::Vec4 getEdgeColor() const
+	{
+		if ( selected ) {
+			return osg::Vec4( 0.0f, 0.0f, 1.0f, 1.0f );    // color of selected node
+		}
+		else {
+			return edgeColor;
+		}
+	}
 
-    /**
-        *  \fn inline public  setEdgeColor(osg::Vec4 val)
-        *  \brief Sets the color of the Edge
-        *  \param     val   new color
-        */
-    void setEdgeColor( osg::Vec4 val )
-    {
-        edgeColor = val;
-    }
+	/**
+	    *  \fn inline public  setEdgeColor(osg::Vec4 val)
+	    *  \brief Sets the color of the Edge
+	    *  \param     val   new color
+	    */
+	void setEdgeColor( osg::Vec4 val )
+	{
+		edgeColor = val;
+	}
 protected:
 
 	/**
@@ -157,17 +157,17 @@ protected:
 	    */
 	osg::ref_ptr<osg::Vec2Array> edgeTexCoords;
 
-    /**
-        *  osg::ref_ptr camera
-        *  \brief Current camera used in viewer. It is used for billboarding purposes.
-        */
-    osg::ref_ptr<osg::Camera> camera;
+	/**
+	    *  osg::ref_ptr camera
+	    *  \brief Current camera used in viewer. It is used for billboarding purposes.
+	    */
+	osg::ref_ptr<osg::Camera> camera;
 
-    /**
-        *  osg::Vec4 edgeColor
-        *  \brief Color of the Edge
-        */
-    osg::Vec4 edgeColor;
+	/**
+	    *  osg::Vec4 edgeColor
+	    *  \brief Color of the Edge
+	    */
+	osg::Vec4 edgeColor;
 };
 }
 #endif // OSGEDGE_H

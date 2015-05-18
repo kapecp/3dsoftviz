@@ -240,7 +240,7 @@ private:
 		*  osg::Vec3f fv
 		*  \brief force vector
 		*/
-    osg::Vec3f fv;
+	osg::Vec3f fv;
 
 	/**
 		*  osg::Vec3f last

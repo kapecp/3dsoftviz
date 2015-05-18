@@ -14,32 +14,33 @@
 
 #include "Data/OsgNode.h"
 
-Data::OsgNode::OsgNode( qlonglong id, QString name, Data::Type* type, Data::Graph* graph, float scaling, osg::Vec3f position)
-    :DbNode(id,name,type,graph,scaling)
+Data::OsgNode::OsgNode( qlonglong id, QString name, Data::Type* type, Data::Graph* graph, float scaling, osg::Vec3f position )
+	:DbNode( id,name,type,graph,scaling )
 {
-    this->mTargetPosition = position;
-    this->currentPosition = position * Util::ApplicationConfig::get()->getValue( "Viewer.Display.NodeDistanceScale" ).toFloat();
+	this->mTargetPosition = position;
+	this->currentPosition = position * Util::ApplicationConfig::get()->getValue( "Viewer.Display.NodeDistanceScale" ).toFloat();
 
-    this->setBall( NULL );
-    this->setParentBall( NULL );
+	this->setBall( NULL );
+	this->setParentBall( NULL );
 
-    this->square = createNode( this->scale * 4, OsgNode::createStateSet( this->type ) );
-    this->focusedSquare = createNode( this->scale * 16, OsgNode::createStateSet( this->type ) );
-    this->addDrawable( square );
-    this->label = createLabel( this->type->getScale(), labelText );
-    this->force = osg::Vec3f();
-    this->selected = false;
+	this->square = createNode( this->scale * 4, OsgNode::createStateSet( this->type ) );
+	this->focusedSquare = createNode( this->scale * 16, OsgNode::createStateSet( this->type ) );
+	this->addDrawable( square );
+	this->label = createLabel( this->type->getScale(), labelText );
+	this->force = osg::Vec3f();
+	this->velocity = osg::Vec3f( 0,0,0 );
+	this->selected = false;
 
-    this->usingInterpolation = true;
+	this->usingInterpolation = true;
 
-    //nastavenie farebneho typu
-    float r = type->getSettings()->value( "color.R" ).toFloat();
-    float g = type->getSettings()->value( "color.G" ).toFloat();
-    float b = type->getSettings()->value( "color.B" ).toFloat();
-    float a = type->getSettings()->value( "color.A" ).toFloat();
+	//nastavenie farebneho typu
+	float r = type->getSettings()->value( "color.R" ).toFloat();
+	float g = type->getSettings()->value( "color.G" ).toFloat();
+	float b = type->getSettings()->value( "color.B" ).toFloat();
+	float a = type->getSettings()->value( "color.A" ).toFloat();
 
-    this->colorOfNode=osg::Vec4( r, g, b, a );
-    this->setColor( colorOfNode );
+	this->colorOfNode=osg::Vec4( r, g, b, a );
+	this->setColor( colorOfNode );
 }
 
 osg::ref_ptr<osg::Drawable> Data::OsgNode::createLabel( const float& scale, QString name )
@@ -182,60 +183,60 @@ osg::ref_ptr<osg::StateSet> Data::OsgNode::createStateSet( Data::Type* type )
 
 osg::Vec3f Data::OsgNode::getCurrentPosition( bool calculateNew, float interpolationSpeed )
 {
-    //zisime aktualnu poziciu uzla v danom okamihu
-    if ( calculateNew ) {
-        float graphScale = Util::ApplicationConfig::get()->getValue( "Viewer.Display.NodeDistanceScale" ).toFloat();
+	//zisime aktualnu poziciu uzla v danom okamihu
+	if ( calculateNew ) {
+		float graphScale = Util::ApplicationConfig::get()->getValue( "Viewer.Display.NodeDistanceScale" ).toFloat();
 
-        //osg::Vec3 directionVector = osg::Vec3(targetPosition.x(), targetPosition.y(), targetPosition.z()) * graphScale - currentPosition;
-        osg::Vec3 directionVector = osg::Vec3( mRestrictedTargetPosition.x(), mRestrictedTargetPosition.y(), mRestrictedTargetPosition.z() ) * graphScale - currentPosition;
-        this->currentPosition = osg::Vec3( directionVector * ( usingInterpolation ? interpolationSpeed : 1 ) + this->currentPosition );
-    }
+		//osg::Vec3 directionVector = osg::Vec3(targetPosition.x(), targetPosition.y(), targetPosition.z()) * graphScale - currentPosition;
+		osg::Vec3 directionVector = osg::Vec3( mRestrictedTargetPosition.x(), mRestrictedTargetPosition.y(), mRestrictedTargetPosition.z() ) * graphScale - currentPosition;
+		this->currentPosition = osg::Vec3( directionVector * ( usingInterpolation ? interpolationSpeed : 1 ) + this->currentPosition );
+	}
 
-    return osg::Vec3( this->currentPosition );
+	return osg::Vec3( this->currentPosition );
 }
 
 void Data::OsgNode::setDrawableColor( int pos, osg::Vec4 color )
 {
-    //nastavenie farby uzla
-    osg::Geometry* geometry  = dynamic_cast<osg::Geometry*>( this->getDrawable( pos ) );
+	//nastavenie farby uzla
+	osg::Geometry* geometry  = dynamic_cast<osg::Geometry*>( this->getDrawable( pos ) );
 
-    if ( geometry != NULL ) {
-        osg::Vec4Array* colorArray =  dynamic_cast<osg::Vec4Array*>( geometry->getColorArray() );
+	if ( geometry != NULL ) {
+		osg::Vec4Array* colorArray =  dynamic_cast<osg::Vec4Array*>( geometry->getColorArray() );
 
-        colorArray->pop_back();
-        colorArray->push_back( color );
-    }
+		colorArray->pop_back();
+		colorArray->push_back( color );
+	}
 }
 
 
 
 osg::Vec3f Data::OsgNode::getTargetPosition() const
 {
-    return mTargetPosition;
+	return mTargetPosition;
 }
 osg::Vec3f Data::OsgNode::targetPosition() const
 {
-    return mTargetPosition;
+	return mTargetPosition;
 }
 const osg::Vec3f& Data::OsgNode::targetPositionConstRef() const
 {
-    return mTargetPosition;
+	return mTargetPosition;
 }
 void Data::OsgNode::setTargetPosition( const osg::Vec3f& position )
 {
-    mTargetPosition = position;
+	mTargetPosition = position;
 }
 osg::Vec3f Data::OsgNode::restrictedTargetPosition() const
 {
-    return mRestrictedTargetPosition;
+	return mRestrictedTargetPosition;
 }
 const osg::Vec3f& Data::OsgNode::restrictedTargetPositionConstRef() const
 {
-    return mRestrictedTargetPosition;
+	return mRestrictedTargetPosition;
 }
 void Data::OsgNode::setRestrictedTargetPosition( const osg::Vec3f& position )
 {
-    mRestrictedTargetPosition = position;
+	mRestrictedTargetPosition = position;
 }
 
 

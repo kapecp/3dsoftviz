@@ -216,10 +216,10 @@ Data::Graph* Model::GraphDAO::getGraph( QSqlDatabase* conn, bool* error2, qlongl
 
 			if ( edgeColors.contains( edgeID ) ) {
 				if ( newGraph->getEdges()->contains( edgeID ) ) {
-                    newGraph->getEdges()->find( edgeID ).value()->setEdgeColor( edgeColors.value( edgeID ) );
+					newGraph->getEdges()->find( edgeID ).value()->setEdgeColor( edgeColors.value( edgeID ) );
 				}
 				else {
-                    newGraph->getMetaEdges()->find( edgeID ).value()->setEdgeColor( edgeColors.value( edgeID ) );
+					newGraph->getMetaEdges()->find( edgeID ).value()->setEdgeColor( edgeColors.value( edgeID ) );
 				}
 			}
 

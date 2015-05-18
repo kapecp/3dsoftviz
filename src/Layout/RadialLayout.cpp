@@ -85,7 +85,7 @@ void RadialLayout::update()
 
 	mSphereCount = maxDepth; //sphere count is equal to max depth of spaning tree
 
-    osg::Vec4 color( 0.0, 0.0, 0.0, 1.0 ); //center node is black
+	osg::Vec4 color( 0.0, 0.0, 0.0, 1.0 ); //center node is black
 	osg::Vec4 d_color( static_cast<float>( 1.0/maxDepth ), static_cast<float>( 1.0/maxDepth ), 0.0, 1.0 );
 
 	//temporary variables
@@ -237,7 +237,7 @@ float RadialLayout::getVisibleSpheres()
 void RadialLayout::unselectNodes( QLinkedList<osg::ref_ptr<Data::Node> >* selectedNodes )
 {
 	//because default color of node is white and radial layout change this color
-    osg::Vec4 color( 1.0, 1.0, 1.0, 1.0 );
+	osg::Vec4 color( 1.0, 1.0, 1.0, 1.0 );
 	osg::ref_ptr<Data::Node> node;
 
 	//unselect nodes from argument
@@ -261,7 +261,7 @@ void RadialLayout::unselectNodes( QLinkedList<osg::ref_ptr<Data::Node> >* select
 
 void RadialLayout::unselectNodes() //unselect all nodes
 {
-    osg::Vec4 color( 1.0, 1.0, 1.0, 1.0 );
+	osg::Vec4 color( 1.0, 1.0, 1.0, 1.0 );
 	osg::ref_ptr<Data::Node> node;
 	for ( QSet<Data::Node*>::iterator it = mSelectedNodes.begin(); it != mSelectedNodes.end(); it = mSelectedNodes.erase( it ) ) {
 		node = *it;

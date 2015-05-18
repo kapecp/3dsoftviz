@@ -41,7 +41,7 @@ bool Model::EdgeDAO::addEdgesToDB( QSqlDatabase* conn, QMap<qlonglong, osg::ref_
 
 		query->prepare( "INSERT INTO edges (edge_id, name, type_id, n1, n2, oriented, meta, graph_id, nested) VALUES (:edge_id, :name, :type_id, :n1, :n2, :oriented, :meta, :graph_id, :nested) RETURNING  edge_id" );
 		query->bindValue( ":edge_id", iEdges.value()->getId() );
-        query->bindValue( ":name", ((Data::AbsEdge*)iEdges.value())->getName() );
+		query->bindValue( ":name", ( ( Data::AbsEdge* )iEdges.value() )->getName() );
 		query->bindValue( ":type_id", iEdges.value()->getType()->getId() );
 		query->bindValue( ":n1", iEdges.value()->getSrcNode()->getId() );
 		query->bindValue( ":n2", iEdges.value()->getDstNode()->getId() );
@@ -110,7 +110,7 @@ bool Model::EdgeDAO::addMetaEdgesToDB( QSqlDatabase* conn, QMap<qlonglong, osg::
 
 		query->prepare( "INSERT INTO edges (edge_id, name, type_id, n1, n2, oriented, meta, graph_id, layout_id, nested) VALUES (:edge_id, :name, :type_id, :n1, :n2, :oriented, :meta, :graph_id, :layout_id, :nested) RETURNING  edge_id" );
 		query->bindValue( ":edge_id", edgeID );
-        query->bindValue( ":name", ((Data::AbsEdge*)iEdges.value())->getName() );
+		query->bindValue( ":name", ( ( Data::AbsEdge* )iEdges.value() )->getName() );
 		query->bindValue( ":type_id", iEdges.value()->getType()->getId() );
 		query->bindValue( ":n1", nodeID1 );
 		query->bindValue( ":n2", nodeID2 );
@@ -140,7 +140,7 @@ bool Model::EdgeDAO::addEdgesColorToDB( QSqlDatabase* conn, QMap<qlonglong, osg:
 
 	while ( iEdges != edges->constEnd() ) {
 		//ulozime farbu len hranam, ktore maju farbu inu nez default
-        if ( iEdges.value()->getEdgeColor()[0] != 1.f || iEdges.value()->getEdgeColor()[1] != 1.f ||iEdges.value()->getEdgeColor()[2] != 1.f ||iEdges.value()->getEdgeColor()[3] != 1.f ) {
+		if ( iEdges.value()->getEdgeColor()[0] != 1.f || iEdges.value()->getEdgeColor()[1] != 1.f ||iEdges.value()->getEdgeColor()[2] != 1.f ||iEdges.value()->getEdgeColor()[3] != 1.f ) {
 			if ( meta ) {
 				if ( newMetaEdgeID.contains( iEdges.value()->getId() ) ) {
 					edgeIdIter = newMetaEdgeID.find( iEdges.value()->getId() );
@@ -154,10 +154,10 @@ bool Model::EdgeDAO::addEdgesColorToDB( QSqlDatabase* conn, QMap<qlonglong, osg:
 				edgeID = iEdges.value()->getId();
 			}
 
-            addSetings( conn, iEdges.value()->getGraph()->getId(), layout->getId(), edgeID, "color_r", iEdges.value()->getEdgeColor()[0]  );
-            addSetings( conn, iEdges.value()->getGraph()->getId(), layout->getId(), edgeID, "color_g", iEdges.value()->getEdgeColor()[1]  );
-            addSetings( conn, iEdges.value()->getGraph()->getId(), layout->getId(), edgeID, "color_b", iEdges.value()->getEdgeColor()[2]  );
-            addSetings( conn, iEdges.value()->getGraph()->getId(), layout->getId(), edgeID, "color_a", iEdges.value()->getEdgeColor()[3]  );
+			addSetings( conn, iEdges.value()->getGraph()->getId(), layout->getId(), edgeID, "color_r", iEdges.value()->getEdgeColor()[0] );
+			addSetings( conn, iEdges.value()->getGraph()->getId(), layout->getId(), edgeID, "color_g", iEdges.value()->getEdgeColor()[1] );
+			addSetings( conn, iEdges.value()->getGraph()->getId(), layout->getId(), edgeID, "color_b", iEdges.value()->getEdgeColor()[2] );
+			addSetings( conn, iEdges.value()->getGraph()->getId(), layout->getId(), edgeID, "color_a", iEdges.value()->getEdgeColor()[3] );
 		}
 
 		++iEdges;

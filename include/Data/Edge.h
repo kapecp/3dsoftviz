@@ -55,10 +55,10 @@ public:
 	~Edge( void );
 
 	/**
-        * \fn public getSecondNode(osg::ref_ptr<Data::Node> firstNode)
-        * \brief  Returns the second ending Node of the Edge
-        * \return osg::ref_ptr<Data::Node> the second ending Node of the Edge
-    */
+	    * \fn public getSecondNode(osg::ref_ptr<Data::Node> firstNode)
+	    * \brief  Returns the second ending Node of the Edge
+	    * \return osg::ref_ptr<Data::Node> the second ending Node of the Edge
+	*/
 	osg::ref_ptr<Data::Node> getSecondNode( osg::ref_ptr<Data::Node> firstNode );
 
 	/**

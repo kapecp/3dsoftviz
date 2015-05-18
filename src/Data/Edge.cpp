@@ -18,7 +18,7 @@
 #include <QDebug>
 
 Data::Edge::Edge( qlonglong id, QString name, Data::Graph* graph, osg::ref_ptr<Data::Node> srcNode, osg::ref_ptr<Data::Node> dstNode, Data::Type* type, bool isOriented, float scaling, int pos, osg::ref_ptr<osg::Camera> camera )
-:OsgEdge(id,name, graph, isOriented, type, scaling, srcNode, dstNode, camera)
+	:OsgEdge( id,name, graph, isOriented, type, scaling, srcNode, dstNode, camera )
 {
 	this->appConf = Util::ApplicationConfig::get();
 }

@@ -49,7 +49,7 @@ public:
 		*  \param  graph   Graph to which the Node belongs
 		*  \param  position    Node position in space
 		*/
-    Node( qlonglong id, QString name, Data::Type* type, float scaling, Data::Graph* graph, osg::Vec3f position );
+	Node( qlonglong id, QString name, Data::Type* type, float scaling, Data::Graph* graph, osg::Vec3f position );
 
 	/**
 		*  \fn public virtual destructor  ~Node
@@ -99,7 +99,7 @@ public:
 		*
 		*
 		*/
-    Data::Node* getParentNode();
+	Data::Node* getParentNode();
 
 	/**
 		*	\fn public setParentNode
@@ -107,7 +107,7 @@ public:
 		*
 		*
 		*/
-    void setParentNode( Node* parent );
+	void setParentNode( Node* parent );
 
 	/**
 	    *  \fn inline public  getNestedParent
@@ -160,7 +160,7 @@ public:
 			this->setDrawableColor( 0, osg::Vec4( 1.0f, 0.0f, 0.0f, 1.0f ) );
 		}
 		else if ( !fixed && this->containsDrawable( square ) ) {
-            this->setDrawableColor( 0, colorOfNode );
+			this->setDrawableColor( 0, colorOfNode );
 		}
 	}
 
@@ -220,7 +220,7 @@ public:
 		*/
 	void showLabel( bool visible );
 
-    void setDefaultColor();
+	void setDefaultColor();
 
 	/**
 		*  \fn public  reloadConfig
@@ -246,22 +246,22 @@ public:
 	//volovar_kon
 
 public:
-    /**
-        *  \fn inline public numberOfVertigoPlane
-        *  \brief Returns the value of the vertigo plane, which the node belongs to
-        *  \return qlonglong value of the vertigo plane
-        */
-    qlonglong  numberOfVertigoPlane;
+	/**
+	    *  \fn inline public numberOfVertigoPlane
+	    *  \brief Returns the value of the vertigo plane, which the node belongs to
+	    *  \return qlonglong value of the vertigo plane
+	    */
+	qlonglong  numberOfVertigoPlane;
 
-    /**
-        *	Node parent
-        *	\brief parent node of current node in nested graphs, in top level graph is null
-        */
-    osg::ref_ptr<Data::Node> nested_parent;
+	/**
+	    *	Node parent
+	    *	\brief parent node of current node in nested graphs, in top level graph is null
+	    */
+	osg::ref_ptr<Data::Node> nested_parent;
 
 private:
 
-    /**
+	/**
 		 * bool mIsFocused
 		 * \brief Flag whether this node is focused at the moment.
 		 */

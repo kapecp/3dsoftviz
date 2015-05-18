@@ -1046,7 +1046,7 @@ osg::ref_ptr<Data::Node> PickHandler::getPickedNodeWithMaxEdgeCount()
 //volovar zac
 osg::ref_ptr<Data::Node> PickHandler::getPickedNodeWithMinEdgeCount()
 {
-    int minEdges=1000;
+	int minEdges=1000;
 	int first = 1;
 	osg::ref_ptr<Data::Node> rootNode = NULL;
 	QLinkedList<osg::ref_ptr<Data::Node> >::const_iterator itNode;

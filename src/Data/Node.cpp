@@ -24,10 +24,10 @@
 
 
 Data::Node::Node( qlonglong id, QString name, Data::Type* type, float scaling, Data::Graph* graph, osg::Vec3f position )
-    :OsgNode(id,name,type,graph,scaling, position)
+	:OsgNode( id,name,type,graph,scaling, position )
 {
 	//konstruktor
-    this->mIsFocused = false;
+	this->mIsFocused = false;
 	this->edges = new QMap<qlonglong, osg::ref_ptr<Data::Edge> >;
 	this->cluster = NULL;
 	// Duransky start - Pociatocne nastavenie roznych cisiel vertigo rovin pre uzly
@@ -174,12 +174,12 @@ QSet<Data::Node*> Data::Node::getIncidentNodes() const
 
 void Data::Node::setDefaultColor()
 {
-    float r = type->getSettings()->value( "color.R" ).toFloat();
-    float g = type->getSettings()->value( "color.G" ).toFloat();
-    float b = type->getSettings()->value( "color.B" ).toFloat();
-    float a = type->getSettings()->value( "color.A" ).toFloat();
+	float r = type->getSettings()->value( "color.R" ).toFloat();
+	float g = type->getSettings()->value( "color.G" ).toFloat();
+	float b = type->getSettings()->value( "color.B" ).toFloat();
+	float a = type->getSettings()->value( "color.A" ).toFloat();
 
-    this->setColor( osg::Vec4( r, g, b, a ) );
+	this->setColor( osg::Vec4( r, g, b, a ) );
 }
 
 // Duransky start - Funkcie na nastavenie a ziskanie cisla vertigo roviny, na ktorej sa uzol nachadza
