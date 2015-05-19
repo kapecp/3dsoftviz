@@ -215,6 +215,10 @@ void OpenCV::OpenCVCore::createConnectionKinect()
                       SIGNAL( pushImageFromKinect( cv::Mat ) ),
                       mOpencvWindow,
                       SLOT( setLabel( cv::Mat ) ) );
+    QObject::connect( mOpencvWindow,
+                      SIGNAL( setKinectCaptureImage( bool ) ),
+                      mThrKinect,
+                      SLOT( setCaptureImage( bool ) ) );
 }
 
 void OpenCV::OpenCVCore::createConnectionFaceRec()
