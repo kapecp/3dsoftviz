@@ -49,6 +49,9 @@ Kinect.RegionRotationTreshold=0.65
 Kinect.RegionRotationStep=0.05
 
 Kinect.OutputFolder= ../../resources/kinectMaps
+Kinect.DepthImageName= depthImage
+Kinect.ColourImageName= Image
+Kinect.DepthInfoName= depthInfo
 
 FaceDecetion.EnableProjectionCorrection=0
 FaceDecetion.CameraDistancePar=3.5
