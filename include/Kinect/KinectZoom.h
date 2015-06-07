@@ -26,21 +26,29 @@ public:
 
 	~KinectZoom();
 
+	// added
+	cv::Mat mask;
+
 	/**
-	 * @brief zoom start scroll mouse based on hand depth
+	 * @brief calcHandDepthFrame calculate depth image of hand
 	 * @param handImage image of hand
 	 * @param m_depth depth image of hand
 	 * @param x world coordinate X of hand
 	 * @param y world coordinate Y of hand
 	 * @param z world coordinate Z of hand
+	 * @param mainHand define if this is main hand
 	 */
-	void zoom( cv::Mat handImage, openni::VideoStream*  m_depth, float x, float y, float z );
+	void calcHandDepthFrame( cv::Mat frame,openni::VideoStream* m_depth, float x, float y, float z, bool mainHand );
+
+	/**
+	 * @brief zoom start scroll mouse based on hand depth
+	 */
+	void zoom();
 	/**
 	 * @brief DetectContour find contours of segmented hand image
-	 * @param img image to find contour on
-	 * @return number of fingers found (if the hand is open)
+	 * @brief Return number of found fingers
 	 */
-	int DetectContour( cv::Mat img );
+	int DetectContour();
 
 	/**
 	 * @brief previousZ depth of hand from previous frame
