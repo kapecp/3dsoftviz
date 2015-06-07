@@ -2,6 +2,7 @@
 #define MOUSECONTROL_H
 
 #include <QtGui/QKeyEvent>
+#include <QList>
 
 #include <osgGA/GUIEventAdapter>
 
@@ -119,6 +120,11 @@ private:
 	float clickY;
 
 	bool mIsClicAruco;
+
+	// Marak start
+	QList< osg::Vec2 >* mouseHistory;
+	osg::Vec2 getMouseAvgPosition( osg::Vec2 lastPos , int max );
+	// Marak end
 
 };
 }
