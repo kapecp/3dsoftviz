@@ -140,9 +140,21 @@ public:
 
 	/**
 	    *  \fn inline public  getAngle
-	    *  \brief returns  angle between edges splitted by param nodes
+	    *  \brief returns  angle compatibility (0.0 - 1.0) of edges splitted by param nodes
 	    */
-	double getAngle( Data::Node* u, Data::Node* v );
+	double getAngleCompatibility( Data::Node* u, Data::Node* v );
+
+	/**
+	    *  \fn inline public  getScaleCompatibility
+	    *  \brief returns  scale compatibility (0.0 - 1.0) of edges splitted by param nodes (returns 1.0 if edges have equal length)
+	    */
+	double getScaleCompatibility( Data::Node* u, Data::Node* v );
+
+	/**
+	    *  \fn inline public  getPositionCompatibility
+	    *  \brief returns  position compatibility (0.0 - 1.0) of edges splitted by param nodes (returns 1.0 if edges have equal length)
+	    */
+	double getPositionCompatibility( Data::Node* u, Data::Node* v );
 
 	/**
 	    *  \brief Sets the repulsive force multiplier between two nodes in one vertigo plane

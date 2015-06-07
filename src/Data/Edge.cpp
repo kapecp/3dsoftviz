@@ -40,6 +40,7 @@ Data::Edge::Edge( qlonglong id, QString name, Data::Graph* graph, osg::ref_ptr<D
 	float a = type->getSettings()->value( "color.A" ).toFloat();
 
 	this->edgeColor = osg::Vec4( r, g, b, a );
+	this->isInvisible = false;
 
 	this->edgeStrength = 1;
 
@@ -106,6 +107,7 @@ void Data::Edge::setEdgePieces( QList<osg::ref_ptr<Data::Edge> > edgePieces )
 	QList<osg::ref_ptr<Data::Edge> >::iterator iEdge = edgePieces.begin();
 	while ( iEdge != edgePieces.end() ) {
 		( *iEdge )->setInvisible( true );
+		( *iEdge )->setEdgeParent( this );
 		( *iEdge )->getSrcNode()->setInvisible( true );
 		( *iEdge )->getDstNode()->setInvisible( true );
 		iEdge ++;
@@ -273,6 +275,11 @@ void Data::Edge::updateCoordinates( osg::Vec3 srcPos, osg::Vec3 dstPos )
 			}
 
 			geometryCurve->setVertexArray( pts );
+
+			osg::Vec4Array* colorArray =  dynamic_cast<osg::Vec4Array*>( geometryCurve->getColorArray() );
+
+			colorArray->pop_back();
+			colorArray->push_back( getEdgeColor() );
 		}
 	}
 
@@ -446,7 +453,7 @@ osg::ref_ptr<osg::Geode> Data::Edge::createEdgeCurve( osg::StateSet* bbState )
 	nodeCurve->setColorBinding( osg::Geometry::BIND_OVERALL );
 
 	osg::LineWidth* linewidth = new osg::LineWidth();
-	linewidth->setWidth( 2.0f );
+	linewidth->setWidth( 1.0f );
 
 	nodeCurve->dirtyDisplayList();
 
@@ -510,5 +517,5 @@ void Data::Edge::setVisual( int index )
 	setValue( INDEX_CYLINDER, false );
 	setValue( INDEX_LINE, false );
 	setValue( INDEX_CURVE, false );
-	setValue( index, true );
+	setValue( index, !isInvisible );
 }

@@ -83,8 +83,8 @@ Data::Node::Node( qlonglong id, QString name, Data::Type* type, float scaling, D
 	float b = type->getSettings()->value( "color.B" ).toFloat();
 	float a = type->getSettings()->value( "color.A" ).toFloat();
 
-	this->colorOfNode=osg::Vec4( r, g, b, a );
-	this->setDrawableColor( colorOfNode );
+	this->color=osg::Vec4( r, g, b, a );
+	this->setDrawableColor( color );
 
 	// merging Britvik: this was here
 	//setDefaultColor();
@@ -385,11 +385,12 @@ void Data::Node::showLabel( bool visible )
 void Data::Node::reloadConfig()
 {
 	removeChildren( 0, 3 );
+	this->insertChild( INDEX_LABEL, createLabel( this->type->getScale(), labelText ) , false );
 	this->insertChild( INDEX_SQUARE, createNodeSquare( this->scale, Node::createStateSet( this->type ) ), false );
 	this->insertChild( INDEX_SPHERE, createNodeSphere( this->scale, Node::createStateSet( this->type ) ), false );
-	setValue( graph->getNodeVisual(), true );
-	this->insertChild( INDEX_LABEL, createLabel( this->type->getScale(), labelText ) , true );
 	setSelected( selected );
+	setColor( color );
+	setValue( graph->getNodeVisual(), true );
 }
 
 osg::Vec3f Data::Node::getCurrentPosition( bool calculateNew, float interpolationSpeed )
@@ -438,12 +439,12 @@ QSet<Data::Node*> Data::Node::getIncidentNodes() const
 
 void Data::Node::setDefaultColor()
 {
-	float r = type->getSettings()->value( "color.R" ).toFloat();
-	float g = type->getSettings()->value( "color.G" ).toFloat();
-	float b = type->getSettings()->value( "color.B" ).toFloat();
-	float a = type->getSettings()->value( "color.A" ).toFloat();
+//   float r = type->getSettings()->value( "color.R" ).toFloat();
+//   float g = type->getSettings()->value( "color.G" ).toFloat();
+	//  float b = type->getSettings()->value( "color.B" ).toFloat();
+//  float a = type->getSettings()->value( "color.A" ).toFloat();
 
-	this->setDrawableColor( osg::Vec4( r, g, b, a ) );
+	this->setDrawableColor( color );
 }
 
 void Data::Node::setVisual( int index )

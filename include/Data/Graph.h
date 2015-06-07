@@ -596,6 +596,13 @@ public:
 	Data::Type* getEdgeMetaType();
 
 	/**
+	    *  \fn public  getEdgePieceType
+	    *  \brief Returns MetaType for piece of edge
+	    *  \return Data::Type * MetaType for the Edges
+	    */
+	Data::Type* getEdgePieceType();
+
+	/**
 	     * \brief Gets type of nodes used to manipulate the restrictions.
 	     * Creates if not exists.
 	     */

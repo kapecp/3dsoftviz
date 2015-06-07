@@ -229,7 +229,7 @@ public:
 	void setEdgePieces( QList<osg::ref_ptr<Data::Edge> > edgePieces );
 
 	/**
-	    * \fn public hasEdgePieces()
+	    * \fn public getEdgePieces()
 	    * \return QList<osg::ref_ptr<Data::Edge> > edge pieces
 	    */
 	QList<osg::ref_ptr<Data::Edge> > getEdgePieces();
@@ -239,6 +239,24 @@ public:
 	    * \brief  remove pieces of splitted edge. the original edge is displayed
 	    */
 	void clearEdgePieces();
+
+	/**
+	    * \fn public getEdgeParent()
+	    * \return osg::ref_ptr<Data::Edge> edgeParent
+	    */
+	osg::ref_ptr<Data::Edge> getEdgeParent()
+	{
+		return edgeParent;
+	}
+
+	/**
+	    * \fn setEdgeParent(osg::ref_ptr<Data::Edge> edgeParent)
+	    * \brief  set edge parent of which is this edge piece
+	    */
+	void setEdgeParent( osg::ref_ptr<Data::Edge> edgeParent )
+	{
+		this->edgeParent = edgeParent;
+	}
 
 	/**
 	    * \fn inline public constant toString
@@ -532,9 +550,15 @@ private:
 
 	/**
 	    *  QList<osg::ref_ptr<Data::Edge> > edgePieces
-	    *  \brief list contians pieces of edge if edge is splitted
+	    *  \brief list contains pieces of edge if edge is splitted
 	    */
 	QList<osg::ref_ptr<Data::Edge> > edgePieces;
+
+	/**
+	    *  osg::ref_ptr<Data::Edge> edgeParent
+	    *  \brief reference to original edge if edge is part of splitted edge
+	    */
+	osg::ref_ptr<Data::Edge> edgeParent;
 
 	/**
 	    *  Data::Type * type

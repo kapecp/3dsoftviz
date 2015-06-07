@@ -92,7 +92,7 @@ void osgModeling::BezierCurve::updateImplementation()
 		return;
 	}
 
-	unsigned int numCtrl = ctrlPts->size();
+	unsigned int numCtrl = _ctrlPts->size();
 	if ( !_numPath || _degree<=0 ) {
 		osg::notify( osg::WARN ) << "osgModeling: Invalid parameters to create a Bezier curve." << std::endl;
 		return;

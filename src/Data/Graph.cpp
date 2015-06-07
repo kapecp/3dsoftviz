@@ -601,6 +601,7 @@ osg::ref_ptr<Data::Edge> Data::Graph::addEdge( qlonglong id, QString name, osg::
 		}
 		else {
 			edge->linkNodes( this->edges );
+			this->edgesByType.insert( type->getId(),edge );
 		}
 
 		return edge;
@@ -748,15 +749,21 @@ QList<osg::ref_ptr<Data::Edge> > Data::Graph::splitEdge( QString name, osg::ref_
 
 void Data::Graph::splitAllEdges( int splitCount )
 {
-	QMap<qlonglong, osg::ref_ptr<Data::Edge> >::iterator iEdge = edges->begin();
+	ele_id_counter += 100000;
+
 	QList<osg::ref_ptr<Data::Edge> > createdEdgeList;
 
 	Data::Type* nodeType = getNodeSplitterType();
-	Data::Type* edgeType = getEdgeMetaType();
+	Data::Type* edgeType = getEdgePieceType();
 
-	//split edge
+	//split all visible edges
+	QMap<qlonglong, osg::ref_ptr<Data::Edge> >::iterator iEdge = edges->begin();
 	while ( iEdge != edges->end() ) {
-		QList<osg::ref_ptr<Data::Edge> > edgePieces = splitEdge( ( *iEdge )->getName(), ( *iEdge )->getSrcNode(), ( *iEdge )->getDstNode(), ( *iEdge )->isOriented(), nodeType, ( *iEdge )->getType(), splitCount ) ;
+		if ( ( *iEdge )->getIsInvisible() ) {
+			iEdge++;
+			continue;
+		}
+		QList<osg::ref_ptr<Data::Edge> > edgePieces = splitEdge( "", ( *iEdge )->getSrcNode(), ( *iEdge )->getDstNode(), ( *iEdge )->isOriented(), nodeType, ( *iEdge )->getType(), splitCount ) ;
 		createdEdgeList.append( edgePieces );
 		( *iEdge )->setEdgePieces( edgePieces );
 		iEdge ++;
@@ -767,6 +774,28 @@ void Data::Graph::splitAllEdges( int splitCount )
 	while ( iNewEdge != createdEdgeList.end() ) {
 		( *iNewEdge )->linkNodes( edges );
 		edgesByType.insert( edgeType->getId(),( *iNewEdge ) );
+		iNewEdge++;
+	}
+
+	//split all visible meta edges
+	createdEdgeList.clear();
+	iEdge = metaEdges->begin();
+	while ( iEdge != metaEdges->end() ) {
+		if ( ( *iEdge )->getIsInvisible() ) {
+			iEdge++;
+			continue;
+		}
+		QList<osg::ref_ptr<Data::Edge> > edgePieces = splitEdge( "", ( *iEdge )->getSrcNode(), ( *iEdge )->getDstNode(), ( *iEdge )->isOriented(), nodeType, ( *iEdge )->getType(), splitCount ) ;
+		createdEdgeList.append( edgePieces );
+		( *iEdge )->setEdgePieces( edgePieces );
+		iEdge ++;
+	}
+
+	//add new meta edges
+	iNewEdge = createdEdgeList.begin();
+	while ( iNewEdge != createdEdgeList.end() ) {
+		( *iNewEdge )->linkNodes( metaEdges );
+		metaEdgesByType.insert( edgeType->getId(),( *iNewEdge ) );
 		iNewEdge++;
 	}
 }
@@ -781,6 +810,12 @@ void Data::Graph::restoreSplittedEdges( )
 		( *iEdge )->clearEdgePieces();
 		iEdge++;
 	}
+
+//    iEdge = metaEdges->begin();
+//    while ( iEdge != metaEdges->end() ) {
+//        ( *iEdge )->clearEdgePieces();
+//        iEdge++;
+//    }
 }
 
 
@@ -1177,6 +1212,27 @@ Data::Type* Data::Graph::getEdgeMetaType()
 	}
 	else {
 		qlonglong typeId =  this->selectedLayout->getMetaSetting( Data::GraphLayout::META_EDGE_TYPE ).toLongLong();
+		if ( this->types->contains( typeId ) ) {
+			return this->types->value( typeId );
+		}
+		return NULL;
+	}
+}
+
+Data::Type* Data::Graph::getEdgePieceType()
+{
+	//vraciame typ pre meta hranu
+	if ( this->selectedLayout==NULL ) {
+		return NULL;
+	}
+
+	if ( this->selectedLayout->getMetaSetting( Data::GraphLayout::EDGE_PIECE_TYPE )==NULL ) {
+		Data::MetaType* type = this->addMetaType( Data::GraphLayout::EDGE_PIECE_TYPE );
+		this->selectedLayout->setMetaSetting( Data::GraphLayout::EDGE_PIECE_TYPE,QString::number( type->getId() ) );
+		return type;
+	}
+	else {
+		qlonglong typeId =  this->selectedLayout->getMetaSetting( Data::GraphLayout::EDGE_PIECE_TYPE ).toLongLong();
 		if ( this->types->contains( typeId ) ) {
 			return this->types->value( typeId );
 		}

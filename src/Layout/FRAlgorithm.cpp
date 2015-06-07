@@ -31,7 +31,7 @@ FRAlgorithm::FRAlgorithm()
 	MIN_MOVEMENT = 0.05f;
 	MAX_MOVEMENT = 30;
 	MAX_DISTANCE = 400;
-	ALPHA_EDGEBUNDLING = 50;
+	ALPHA_EDGEBUNDLING = 100;
 	MIN_MOVEMENT_EDGEBUNDLING = 0.05f;
 	state = RUNNING;
 	stateEdgeBundling = PAUSED;
@@ -60,7 +60,7 @@ FRAlgorithm::FRAlgorithm( Data::Graph* graph )
 	MIN_MOVEMENT = 0.05f;
 	MAX_MOVEMENT = 30;
 	MAX_DISTANCE = 400;
-	ALPHA_EDGEBUNDLING = 50;
+	ALPHA_EDGEBUNDLING = 100;
 	MIN_MOVEMENT_EDGEBUNDLING = 1.0f;
 	state = RUNNING;
 	stateEdgeBundling = PAUSED;
@@ -221,6 +221,9 @@ bool FRAlgorithm::iterate()
 			j.value()->resetForce(); // vynulovanie posobiacej sily
 
 			if ( stateEdgeBundling == RUNNING ) {
+				if ( j.value()->getName().compare( "metaNode" ) == 0 ) {
+					continue;
+				}
 				//pritazlive sily medzi meta uzlom a jeho susedmi
 				QMap<qlonglong, osg::ref_ptr<Data::Edge> >::iterator iEdge = j.value()->getEdges()->begin();
 				while ( iEdge != j.value()->getEdges()->end() ) {
@@ -234,19 +237,22 @@ bool FRAlgorithm::iterate()
 				}
 
 				//pritazliva sila medzi meta uzlom a ostatnymi metauzlami s rovnakym indexom
-				QString jName = ( *j )->getName();
-				jName = jName.right( jName.length() - jName.indexOf( ' ' ) - 1 );
+				QString jIndex = ( *j )->getName();
+				jIndex = jIndex.right( jIndex.length() - jIndex.indexOf( ' ' ) - 1 );
 				k = graph->getMetaNodes()->begin();
 				while ( k != graph->getMetaNodes()->end() ) {
-					if ( !j.value()->equals( k.value() ) ) {
+					if ( k.value()->getName().compare( "metaNode" ) != 0 && !j.value()->equals( k.value() ) ) {
 
 						//porovnanie ci maju rovnaky index
-						QString kName = ( *k )->getName();
-						kName = kName.right( kName.length() - kName.indexOf( ' ' ) - 1 );
-						if ( QString::compare( jName, kName, Qt::CaseInsensitive ) == 0 ) {
+						QString kIndex = ( *k )->getName();
+						kIndex = kIndex.right( kIndex.length() - kIndex.indexOf( ' ' ) - 1 );
+						if ( QString::compare( jIndex, kIndex, Qt::CaseInsensitive ) == 0 ) {
 
 							//uhol medzi hranami, na ktorych su pomocne uzly
-							if ( getAngle( j.value(), k.value() ) < 90.0 ) {
+							if ( ( getAngleCompatibility( j.value(), k.value() ) > 0.5 )
+									&& ( getScaleCompatibility( j.value(), k.value() ) > 0.5 )
+									&& ( getPositionCompatibility( j.value(), k.value() ) > 0.5 ) ) {
+
 								addSameIndexAttractive( j.value(), k.value(), 1 );
 							}
 						}
@@ -562,7 +568,7 @@ void FRAlgorithm::addSameIndexAttractive( Data::Node* meta1, Data::Node* meta2, 
 	}
 	fv = vp - up;// smer sily
 	fv.normalize();
-	fv *= ( 1/attr( dist ) )*2*ALPHA_EDGEBUNDLING*factor; // velkost sily
+	fv *= ( 1/attr( dist ) )*ALPHA_EDGEBUNDLING*factor; // velkost sily
 	meta1->addForce( fv );
 }
 
@@ -671,22 +677,53 @@ bool FRAlgorithm::areForcesBetween( Data::Node* u, Data::Node* v )
 		;
 }
 
-double FRAlgorithm::getAngle( Data::Node* u, Data::Node* v )
+double FRAlgorithm::getAngleCompatibility( Data::Node* u, Data::Node* v )
 {
-	osg::ref_ptr<Data::Edge> edge1 =  u->getEdges()->values().at( 0 );
-	osg::Vec3f srcPos1 = edge1->getSrcNode()->targetPosition();
-	osg::Vec3f dstPos1 = edge1->getDstNode()->targetPosition();
+	osg::ref_ptr<Data::Edge> edge1 =  u->getEdges()->values().at( 0 )->getEdgeParent();
+	osg::Vec3f srcPos1 = edge1->getSrcNode()->restrictedTargetPosition();
+	osg::Vec3f dstPos1 = edge1->getDstNode()->restrictedTargetPosition();
 	osg::Vec3f vector1 = dstPos1 - srcPos1;
 
-	osg::ref_ptr<Data::Edge> edge2 =  v->getEdges()->values().at( 0 );
-	osg::Vec3f srcPos2 = edge2->getSrcNode()->targetPosition();
-	osg::Vec3f dstPos2 = edge2->getDstNode()->targetPosition();
+	osg::ref_ptr<Data::Edge> edge2 =  v->getEdges()->values().at( 0 )->getEdgeParent();
+	osg::Vec3f srcPos2 = edge2->getSrcNode()->restrictedTargetPosition();
+	osg::Vec3f dstPos2 = edge2->getDstNode()->restrictedTargetPosition();
 	osg::Vec3f vector2 = dstPos2 - srcPos2;
 
 	double angle = acos( ( vector1 * vector2 )/ ( ( vector1.length() )*( vector2.length() ) ) );
-	angle =  osg::RadiansToDegrees( angle );
+	double angleCompatibility = fabs( cos( angle ) );
+	//angle =  osg::RadiansToDegrees( angle );
 
-	return angle;
+	return angleCompatibility;
+}
+
+double FRAlgorithm::getScaleCompatibility( Data::Node* u, Data::Node* v )
+{
+	osg::ref_ptr<Data::Edge> edge1 =  u->getEdges()->values().at( 0 )->getEdgeParent();
+	osg::ref_ptr<Data::Edge> edge2 =  v->getEdges()->values().at( 0 )->getEdgeParent();
+	double length1 = edge1->getLength();
+	double length2 = edge2->getLength();
+
+	double minLength = ( length1 < length2 ) ? length1 : length2;
+	double maxLength = ( length1 > length2 ) ? length1 : length2;
+
+	double scaleCompatibility = minLength/maxLength;
+
+	return scaleCompatibility;
+}
+
+double FRAlgorithm::getPositionCompatibility( Data::Node* u, Data::Node* v )
+{
+	osg::Vec3f pos1 = u->getCurrentPosition();
+	osg::Vec3f pos2 = v->getCurrentPosition();
+	double distance = ( pos2 - pos1 ).length();
+
+	osg::ref_ptr<Data::Edge> edge1 =  u->getEdges()->values().at( 0 )->getEdgeParent();
+	osg::ref_ptr<Data::Edge> edge2 =  v->getEdges()->values().at( 0 )->getEdgeParent();
+	double averageEdgeLength = ( edge1->getLength() + edge2->getLength() )/2;
+
+	double positionCompatibility = averageEdgeLength/( averageEdgeLength + distance );
+
+	return positionCompatibility;
 }
 
 void FRAlgorithm::setRepulsiveForceVertigo( int value )

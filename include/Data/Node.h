@@ -959,7 +959,6 @@ protected:
 	    *  \brief Settings of the Node
 	    */
 	QMap<QString, QString>* settings;
-	osg::Vec4 colorOfNode;
 
 	/**
 	    *  bool selected
