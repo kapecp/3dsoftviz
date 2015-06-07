@@ -11,6 +11,7 @@
 #include "Viewer/CoreGraph.h"
 #include "Viewer/CameraManipulator.h"
 #include "Viewer/PickHandler.h"
+#include "Viewer/DataHelper.h"
 
 #include "Manager/Manager.h"
 
@@ -2777,6 +2778,7 @@ void CoreWindow::setAvatarScale( int scale )
 void CoreWindow::setCameraEnable(bool enable) {
     qDebug() << "Nastavujem na " << enable;
     viewerWidget->getCameraManipulator()->setCameraActive(enable);
+    coreGraph->getGraphBorders();
 }
 
 // Duransky start - Akcia pri prepnuti checkboxu "Vertigo zoom"

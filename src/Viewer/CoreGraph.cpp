@@ -7,6 +7,7 @@
 #include "Viewer/PerlinNoiseTextureGenerator.h"
 #include "Viewer/SkyTransform.h"
 #include "Viewer/TextureWrapper.h"
+#include "Viewer/DataHelper.h"
 
 #include <QDebug>
 
@@ -1247,15 +1248,16 @@ void CoreGraph::addTranslateToGraphRotTransf(osg::Vec3d pos) {
     osg::Matrixd matrix = graphRotTransf->getMatrix();
     osg::Vec3d pom = pos;
 
-    pos.x() = -pos.x() * 2000;
-    pos.y() = -pos.z() * 15000;
-    pos.z() = -pom.y() * 3000;
+    pos.x() = -pos.x() * 1000;
+    pos.y() = -pos.z() * 1000;
+    pos.z() = -pom.y() * 1000;
 
     qDebug() << "pos x,y,z " << pos.x() << "," << pos.y() << "," << pos.z();
 
     matrix.makeTranslate(pos);
 
     graphRotTransf->setMatrix(matrix);
+
 
 }
 
@@ -1295,6 +1297,26 @@ bool CoreGraph::cameraInsideCube( osg::Vec3d lowerPoint, osg::Vec3d upperPoint )
 bool CoreGraph::cameraInsideSphere( osg::Vec3d midPoint, float radius )
 {
     return ( new osg::BoundingSphere( midPoint, radius ) )->contains( cameraManipulator->getCameraPosition() );
+}
+
+void CoreGraph::getGraphBorders() {
+    double fovy, ar, zNear, zFar, hNear, wNear;
+    osg::Vec3f eye, center, up;
+    Vwr::DataHelper::getBordersPoints(in_nodes);
+    camera->getProjectionMatrixAsPerspective(fovy, ar, zNear, zFar);
+    camera->getViewMatrixAsLookAt(eye, center, up);
+    hNear = 2*tan((fovy/2)*3.14159265 / 180.0)*abs(center.y());
+    wNear = hNear * ar;
+    qDebug() << "Fovy = " << fovy;
+    qDebug() << "Aspect Ratio = " << ar;
+    qDebug() << "zNear = " << zNear;
+    qDebug() << "zFar = " << zFar;
+    qDebug() << "hNear Computed = " << hNear;
+    qDebug() << "WNear Computed = " << wNear;
+    qDebug() << "eye = " << eye.x() << ", " << eye.y() << ", " << eye.z();
+    qDebug() << "center = " << center.x() << ", " << center.y() << ", " << center.z();
+    qDebug() << "up = " << up.x() << ", " << up.y() << ", " << up.z();
+
 }
 
 }
