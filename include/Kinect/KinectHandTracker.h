@@ -3,7 +3,8 @@
 
 #include "Kinect/HistoryBuffer.h"
 #include "OpenNI.h"
-
+#include "Core/Core.h"
+#include "Math/CameraMath.h"
 #include <map>
 
 #ifdef NITE2_FOUND
@@ -40,11 +41,33 @@ public:
 	//const nite::Array<nite::GestureData>& gestures;
 	//const nite::Array<nite::GestureData>& hands;
 
+	/**
+	 * number of hands that are tracked
+	 */
+	//Marak starts
+
+	int numHandsTracking;
+	bool isGestureClick;
+	/**
+	 * @brief void moveGraphByHand
+	 * @brief move graph folowing hand movement (X,Y coords)
+	 */
+	void moveGraphByHand();
+
+	/**
+	 * @brief void moveGraphByHandToDepth
+	 * @param deltaZ delta between previous and current Z value
+	 * @brief move graph folowing hand movement (Z coord)
+	 */
+	void moveGraphByHandToDepth( float deltaZ );
+
+	//Marak ends
+
 	float handZ[2];
 
 	// both hands position
 	float getArrayHands[NUM_HANDS][NUM_HANDS];
-	bool isTwoHands;
+	//bool isTwoHands;
 
 	float slidingHand_x;
 	float slidingHand_y;
@@ -92,12 +115,24 @@ public:
 	// frame getting from Hand Tracker
 	nite::HandTrackerFrameRef handTrackerFrame;
 
-private:
-
 	/**
 	 * @brief is Mouse pressed
 	 */
 	bool isClick;
+private:
+
+	//Marak starts
+	bool gesto_dolava;
+	bool gesto_doprava;
+	bool gesto_hore;
+	bool gesto_dole;
+
+	/**
+	 * @brief viewer
+	 */
+	QOSG::ViewerQT* viewer;
+	Vwr::GraphNavigation* nav;
+	//Marak ends
 
 	/**
 	 * @brief is mouse cursor movement enable
