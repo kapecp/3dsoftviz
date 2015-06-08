@@ -18,8 +18,16 @@ Lua::LuaGraphVisualizer::LuaGraphVisualizer( Data::Graph* graph, osg::ref_ptr<os
 
 void Lua::LuaGraphVisualizer::setNodeParams( osg::ref_ptr<Data::Node> node, Lua::LuaGraphObject* obj, osg::Vec4f defColor, float defSize )
 {
-	( ( Data::AbsNode* )node )->setName( obj->getLabel() );
-	node->setLabelText( obj->getLabel() );
+
+	node->setLabelText(obj->getLabel());
+
+//	if(obj->getLabel().isEmpty()) {
+//		node->setLabelText(obj->getLabel());
+//	}else{
+//		node->setLabelText(obj->getLabel() + "\n" + QString(obj->getParams().asTable().at("type").asString().c_str()));
+//	}
+
+	node->setName( obj->getLabel() );
 	float r = obj->getFloatParam( "colorR", defColor.r() );
 	float g = obj->getFloatParam( "colorG", defColor.g() );
 	float b = obj->getFloatParam( "colorB", defColor.b() );

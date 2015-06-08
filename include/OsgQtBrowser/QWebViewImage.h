@@ -19,35 +19,19 @@
 #include <QtWebKit/QtWebKit>
 
 #include "OsgQtBrowser/QGraphicsViewAdapter.h"
-#include "LuaGraph/LuaGraphTreeModel.h"
+#include "Diluculum/Types.hpp"
+
 namespace OsgQtBrowser {
 /**
 *  \class QWebViewImage
 *  \brief
-*  \author Adam Pazitnaj
-*  \date 29. 4. 2010
+*  \author Adam Pazitnaj, Michael Gloger
+*  \date 29. 4. 2010, 12.4.2015
 */
 class QWebViewImage : public QObject, public osgWidget::BrowserImage
 {
 
 	Q_OBJECT
-private slots:
-	/**
-		*  \fn private  loadFinished
-		*  \brief Called when webPage load was finished. Used to assign qData and call js qDataReady function
-		*/
-	void loadFinished( bool ok );
-
-private:
-	/**
-		*  \fn private  addChildrenToJsModel
-		*  \brief Called when adding passing models to javascript.
-		*  For each model called initially with parentItem and calls itself recursively for each child having at least one children.
-		* \param       item - current tree item
-		* \param       path - current path to item (to which js object value will be assigned)
-		*/
-	void addChildrenToJsModel( Lua::LuaGraphTreeItem* item, QString path );
-
 public:
 
 
@@ -65,6 +49,14 @@ public:
 		*/
 	virtual void navigateTo( const std::string& url );
 
+	/**
+		*  \fn public showTemplate
+		*  \brief
+		*  \param templateName name of the template file
+		*  \param models
+		*  \param templateType type of the template route
+		*/
+	void showTemplate( const std::string &templateName, Diluculum::LuaValueMap models, const std::string &templateType );
 
 	/**
 		*  \fn inline public  getQWebView
@@ -149,14 +141,6 @@ public:
 		*/
 	virtual bool sendKeyEvent( int key, bool keyDown );
 
-	/**
-		*  \fn public inline setModels
-		*/
-	inline void setModels( QList<Lua::LuaGraphTreeModel*>* models )
-	{
-		this->_models = models;
-	}
-
 protected:
 
 
@@ -177,12 +161,6 @@ protected:
 		*  \brief
 		*/
 	QPointer<QWebPage>              _webPage;
-
-	/**
-		*  QList<Lua::LuaGraphTreeModel*> *_models
-		*  \brief Lua models array to be passed into "qData" window js variable upon page load
-		*/
-	QList<Lua::LuaGraphTreeModel*>*  _models;
 };
 }
 #endif

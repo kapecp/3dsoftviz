@@ -52,7 +52,7 @@ Data::Graph* Manager::GraphManager::loadGraph( QString filepath )
 	//otvaranie suboru
 	bool ok = true;
 
-	AppCore::Core::getInstance()->thr->pause();
+	AppCore::Core::getInstance()->thr->pauseAllAlg();
 	AppCore::Core::getInstance()->messageWindows->showProgressBar();
 
 	// vytvorenie infoHandler
@@ -240,7 +240,7 @@ Data::Graph* Manager::GraphManager::createNewGraph( QString name )
 {
 	bool ok = true;
 
-	AppCore::Core::getInstance()->thr->pause();
+	AppCore::Core::getInstance()->thr->pauseAllAlg();
 
 	// vytvorenie infoHandler
 	std::auto_ptr<Importer::ImportInfoHandler> infoHandler( NULL );

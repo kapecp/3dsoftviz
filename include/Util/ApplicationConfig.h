@@ -13,6 +13,7 @@
 #include <Qt/qstringlist.h>
 #endif
 
+#include <osg/Vec4f>
 #include <QMap>
 #include <OpenThreads/Mutex>
 
@@ -110,12 +111,25 @@ public:
 	);
 
 	/**
+			 * \brief Gets color value in osg::Vec4f from settings.
+			 * Color is stored in 4 0-255 values divided by comma. Example:
+			 * 'My.Color.Value=200,128,5,6'
+			 * Where format is: 'R,G,B,A'
+			 * Value is then transformed to osg::Vec4f to 0-1 format
+			 *
+			 * \param[in] key Key to the value
+			 *
+			 * \returns Color value
+			 *
+			 */
+	osg::Vec4f getColorValue( QString key );
+
+	/**
 			*  \fn public  getList
 			*  \brief
 			*  \return QStringList
 			*/
 	QStringList getList();
-
 
 	/**
 			*  \fn public  saveConfig

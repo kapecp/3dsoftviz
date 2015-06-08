@@ -5,11 +5,13 @@
 #include <osg/AutoTransform>
 #include <osg/Group>
 #include <QList>
+#include <osg/Geometry>
+#include <osg/Geode>
 
 #include "OsgQtBrowser/QWebViewImage.h"
 #include "Data/Node.h"
 #include "LuaGraph/LuaNode.h"
-#include "LuaGraph/LuaGraphTreeModel.h"
+#include "Diluculum/Types.hpp"
 
 namespace Vwr {
 /**
@@ -66,9 +68,9 @@ public:
 		*  \fn public  getSelectedNodesModels
 		*  \return Selected nodes models map
 		*/
-	inline QMap<qlonglong, Lua::LuaGraphTreeModel* >* getSelectedNodesModels()
+	inline QLinkedList<osg::ref_ptr<Data::Node> >* getSelectedNodes()
 	{
-		return selectedNodesModels;
+		return selectedNodes;
 	}
 
 private:
@@ -76,10 +78,43 @@ private:
 	/**
 		*  \fn private  addBrowser
 		*  \brief Adds browser at position, passes supplied list of model data objects to js variable qData and calls js function qDataReady.
+		*  \param templateType type of the template route
 		*  \param  position
-		*  \param  *models
+		*  \param  models
 		*/
-	void addBrowser( osg::Vec3 position, QList<Lua::LuaGraphTreeModel*>* models );
+	void addBrowser( const std::string &templateType, osg::Vec3 position, Diluculum::LuaValueMap models );
+
+	/**
+		*  \fn private  createBorderGeode
+		*  \brief returns Geode containing line Geometry for webview border
+		*  \param  bl bottom left
+		*  \param  br bottom right
+		*  \param  tr top right
+		*  \param  tl top left
+		*/
+	osg::Geode* createBorderGeode(osg::Vec3 bl, osg::Vec3 br, osg::Vec3 tr, osg::Vec3 tl);
+
+	/**
+		*  \fn private  createConnectorsGeode
+		*  \brief returns Geode containing line geometries connecting webview center to all supplied nodes positions (targets)
+		*  \param  center center of the webview
+		*  \param  targets array of targets. There will be targets.size lines created
+		*/
+	osg::Geode* createConnectorsGeode(osg::Vec3 center, osg::Vec3Array* targets);
+
+	/**
+		*  \fn private  createLinesGeode
+		*  \brief returns geode created from supplied geometry
+		*  \param linesGeom lines geometry which will be added to geode
+		*/
+	osg::Geode* createLinesGeode(osg::Geometry* linesGeom);
+
+		/**
+		*  \fn public  updateTransforms
+		*  \brief Animates browser transform scale
+		*  \param transforms
+		*/
+	void updateTransforms(QList<osg::ref_ptr<osg::AutoTransform> >* transforms);
 
 	/**
 		*  \fn private  initBrowsers
@@ -123,14 +158,14 @@ private:
 	QList<osg::ref_ptr<osg::AutoTransform> >* browsersTransforms;
 
 	/**
-		*  \brief Map of Data::Node ids to Data::Node containing all selected nodes
+		*  \brief List of connectros transforms (lines connecting browser and node)
 		*/
-	QMap<qlonglong, osg::ref_ptr<Data::Node> >* selectedNodes;
+	QList<osg::ref_ptr<osg::AutoTransform> >* connectorsTransforms;
 
 	/**
-		*  \brief Map of Data::Node ids to Lua::LuaGraphTreeModel(s) containing all selected nodes
+		*  \brief List of selected nodes
 		*/
-	QMap<qlonglong, Lua::LuaGraphTreeModel*>* selectedNodesModels;
+	QLinkedList<osg::ref_ptr<Data::Node> >* selectedNodes;
 
 	/**
 		*  \fn public  interpolate

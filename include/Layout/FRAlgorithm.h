@@ -117,6 +117,18 @@ public:
 	void RequestEnd();
 
 	/**
+		*  \fn public  RunAlg
+		*  \brief Play edge bundling algorithm
+		*/
+	void RunAlgEdgeBundling();
+
+	/**
+		*  \fn public  StopAlgEdgeBundling
+		*  \brief stop edge bundling algorithm
+		*/
+	void StopAlgEdgeBundling();
+
+	/**
 	    *  \brief Sets the repulsive force multiplier between two nodes in one vertigo plane
 	    */
 	void setRepulsiveForceVertigo( int value );
@@ -161,6 +173,12 @@ private:
 	float MAX_DISTANCE;
 
 	/**
+		*  float MIN_MOVEMENT_EDGEBUNDLING
+		*  \brief minimal distance between two meta nodes during edge bundling alg, when forces are aplified
+		*/
+	float MIN_MOVEMENT_EDGEBUNDLING;
+
+	/**
 		*  enum State
 		*  \brief maximal distance of nodes, when repulsive force is aplied
 		*/
@@ -199,6 +217,13 @@ private:
 		*  \brief actual status of the algorithm
 		*/
 	FRAlgorithm::State state;
+
+	/**
+		*  FRAlgorithm::State stateEdgeBundling
+		*  \brief actual status of the edge bundling algorithm
+		*/
+	FRAlgorithm::State stateEdgeBundling;
+
 	/**
 		*  bool useMaxDistance
 		*  \brief constaint using maximal distance of nodes, when repulsive force is aplied
@@ -318,10 +343,27 @@ private:
 		*  \brief Adds attractive force between node U and meta node
 		*  \param   u  node U
 		*  \param   meta meta node
-		*  \param   factor  multiplicer of attaractive force
+		*  \param   factor  multiplicer of attractive force
 		*/
 	void addMetaAttractive( Data::Node* u, Data::Node* meta, float factor );
 
+	/**
+		*  \fn private  addNeighbourAttractive(Data::Node* meta, Data::Node* neighbour, float factor)
+		*  \brief Adds attractive force between meta node and his neighbour
+		*  \param   meta	meta node
+		*  \param   neighbour   neighbour node
+		*  \param   factor  multiplicer of attractive force
+		*/
+	void addNeighbourAttractive( Data::Node* meta, Data::Node* neighbour, float factor );
+
+	/**
+		*  \fn private  addSameIndexAttractive(Data::Node* meta1, Data::Node* meta2, float factor)
+		*  \brief Adds attractive force between two meta nodes with same index
+		*  \param   meta1	first meta node
+		*  \param   meta2   second meta node
+		*  \param   factor  multiplicer of attractive force
+		*/
+	void addSameIndexAttractive( Data::Node* meta1, Data::Node* meta2, float factor );
 	/**
 		*  \fn private  addRepulsive(Data::Node* u, Data::Node* v, float factor)
 		*  \brief Adds repulsive force between two nodes into node U
