@@ -129,9 +129,9 @@ void RadialLayout::update()
 			mNode2 = mCurrentGraph->addRestrictionNode( "plane_node_2", positionNode2 );
 			mNode3 = mCurrentGraph->addRestrictionNode( "plane_node_2", positionNode3 );
 
-			mNode1->setInvisible();
-			mNode2->setInvisible();
-			mNode3->setInvisible();
+			mNode1->setInvisible( true );
+			mNode2->setInvisible( true );
+			mNode3->setInvisible( true );
 
 			sphereSurfaceGetter = new Layout::ShapeGetter_Circle_ByThreeNodes( mNode1, mNode2, mNode3 );
 		}

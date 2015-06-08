@@ -15,7 +15,7 @@ void GraphStartExecutor::execute_client()
 	Importer::GraphOperations* operations = new Importer::GraphOperations( *client->currentGraph );
 	operations->addDefaultTypes( client->edgeType, client->nodeType );
 
-	client->thread->pause();
+	client->thread->pauseAllAlg();
 	client->coreGraph->setNodesFreezed( true );
 	client->currentGraph->setFrozen( true );
 

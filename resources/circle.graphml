@@ -18,6 +18,6 @@ xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdr
     <edge source="n4" target="n5"/>
     <edge source="n5" target="n6"/>
     <edge source="n6" target="n7"/>
-    <edge source="n0" target="n7"/>
+    <edge source="n7" target="n0"/>
   </graph>
 </graphml>

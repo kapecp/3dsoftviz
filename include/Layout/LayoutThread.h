@@ -77,6 +77,31 @@ public:
 
 	Layout::FRAlgorithm* getAlg();
 
+	/**
+		*  \fn public  playEdgeBundling
+		*  \brief Play edge bundling algorithm
+		*/
+	void playEdgeBundling();
+
+	/**
+		*  \fn public  stopEdgeBundling
+		*  \brief stop edge bundling algorithm
+		*/
+	void stopEdgeBundling();
+
+	/**
+		*  \fn public  setAlphaEdgeBundlingValue(float val)
+		*  \brief Sets multiplicity of forces in edge bundling algorithm
+		*  \param	  val  multipliciter of forces
+		*/
+	void setAlphaEdgeBundlingValue( float val );
+
+	/**
+		*  \fn public  pauseAllAlg
+		*  \brief pause all running algorithms
+		*/
+	void pauseAllAlg();
+
 protected:
 
 	/**
