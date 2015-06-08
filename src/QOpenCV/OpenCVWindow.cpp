@@ -12,416 +12,417 @@
 
 QOpenCV::OpenCVWindow::OpenCVWindow( QWidget* parent, QApplication* app ) : QDialog( parent )
 {
-    mApp = app;
-    configureWindow();
+	mApp = app;
+	configureWindow();
 }
 
 QLabel* QOpenCV::OpenCVWindow::getLabel() const
 {
-    return mWindowLabel;
+	return mWindowLabel;
 }
 
 QCheckBox*	QOpenCV::OpenCVWindow::getMarkerBehindCB() const
 {
-    return mMarkerBehindCB;
+	return mMarkerBehindCB;
 }
 
 QCheckBox*	QOpenCV::OpenCVWindow::getCorEnabledCB() const
 {
-    return mCorEnabledCB;
+	return mCorEnabledCB;
 }
 
 QPushButton*	QOpenCV::OpenCVWindow::getUpdateCorParPB() const
 {
-    return mUpdateCorParPB;
+	return mUpdateCorParPB;
 }
 
 QPushButton* QOpenCV::OpenCVWindow::getInterchangeMarkersPB() const
 {
-    return mInterchangeMarkersPB;
+	return mInterchangeMarkersPB;
 }
 
 void QOpenCV::OpenCVWindow::configureWindow()
 {
-    setModal( false );
-    setWindowTitle( tr( "Kinect and Aruco Window" ) );
+	setModal( false );
+	setWindowTitle( tr( "Kinect and Aruco Window" ) );
 
-    mWindowLabel = new QLabel( "", this, 0 );
+	mWindowLabel = new QLabel( "", this, 0 );
 
-    mKinectRB = new QRadioButton( tr( "Kinect" ) );
-    mArucoRB = new QRadioButton( tr( "Aruco" ) );
-    mFaceRecRB = new QRadioButton( tr( "Face Recognition" ) );
-    mMarkerRB = new QRadioButton( tr( "Marker" ) );
-    mMultiMarkerRB = new QRadioButton( tr( "Multi Marker" ) );
+	mKinectRB = new QRadioButton( tr( "Kinect" ) );
+	mArucoRB = new QRadioButton( tr( "Aruco" ) );
+	mFaceRecRB = new QRadioButton( tr( "Face Recognition" ) );
+	mMarkerRB = new QRadioButton( tr( "Marker" ) );
+	mMultiMarkerRB = new QRadioButton( tr( "Multi Marker" ) );
 
-    mFaceRecPB = new QPushButton( tr( "Start Face Recognition" ) );
-    mMarkerPB = new QPushButton( tr( "Start Marker Detection" ) );
-    mMultiMarkerPB = new QPushButton( tr( "Start MultiMarker" ) );
-    mKinectPB = new QPushButton( tr( "Start Kinect" ) );
-    mKinectSnapshotPB = new QPushButton( tr( "Kinect Snapshot" ) );
-    mUpdateCorParPB	= new QPushButton( tr( "Update cor. param." ) );
-    mInterchangeMarkersPB = new QPushButton( tr( "Change Markers" ) );
+	mFaceRecPB = new QPushButton( tr( "Start Face Recognition" ) );
+	mMarkerPB = new QPushButton( tr( "Start Marker Detection" ) );
+	mMultiMarkerPB = new QPushButton( tr( "Start MultiMarker" ) );
+	mKinectPB = new QPushButton( tr( "Start Kinect" ) );
+	mKinectSnapshotPB = new QPushButton( tr( "Kinect Snapshot" ) );
+	mUpdateCorParPB	= new QPushButton( tr( "Update cor. param." ) );
+	mInterchangeMarkersPB = new QPushButton( tr( "Change Markers" ) );
 
-    mNoVideo = new QCheckBox( tr( "NoVideo" ) );
-    mMarkerBackgrCB	= new QCheckBox( tr( "Background" ) );
-    mFaceDetBackgrCB = new QCheckBox( tr( "Background" ) );
-    mMarkerBehindCB	= new QCheckBox( tr( "Marker is behind" ) );
-    mCorEnabledCB = new QCheckBox( tr( "Correction" ) );
-    mDisableCursorCB = new QCheckBox( tr( "Turn off cursor" ) );
-    mDisableZoomCursorCB = new QCheckBox( tr( "Turn off zoom" ) );
-    mEnableMarkerDetectCB = new QCheckBox( tr( "Turn on Marker Detection" ) );
+	mNoVideo = new QCheckBox( tr( "NoVideo" ) );
+	mMarkerBackgrCB	= new QCheckBox( tr( "Background" ) );
+	mFaceDetBackgrCB = new QCheckBox( tr( "Background" ) );
+	mMarkerBehindCB	= new QCheckBox( tr( "Marker is behind" ) );
+	mCorEnabledCB = new QCheckBox( tr( "Correction" ) );
+	mDisableCursorCB = new QCheckBox( tr( "Turn off cursor" ) );
+	mDisableZoomCursorCB = new QCheckBox( tr( "Turn off zoom" ) );
+	mEnableMarkerDetectCB = new QCheckBox( tr( "Turn on Marker Detection" ) );
 
-    mSpeed =  new QSlider( Qt::Vertical );
-    mSpeed->setRange( 5,20 );
-    mSpeed->setValue( 10 );
-    mSpeed->setPageStep( 1 );
-    mSpeed->setFocusPolicy( Qt::NoFocus );
-    mSpeed->setToolTip( "Modify speed of movement" );
+	mSpeed =  new QSlider( Qt::Vertical );
+	mSpeed->setRange( 5,20 );
+	mSpeed->setValue( 10 );
+	mSpeed->setPageStep( 1 );
+	mSpeed->setFocusPolicy( Qt::NoFocus );
+	mSpeed->setToolTip( "Modify speed of movement" );
 
-    mModulesStackL = new QStackedLayout;
-    mSubmodulesStackL = new QStackedLayout;
+	mModulesStackL = new QStackedLayout;
+	mSubmodulesStackL = new QStackedLayout;
 
-    QHBoxLayout* mainLayout		= new QHBoxLayout;
-    QVBoxLayout* buttonLayout	= new QVBoxLayout;
+	QHBoxLayout* mainLayout		= new QHBoxLayout;
+	QVBoxLayout* buttonLayout	= new QVBoxLayout;
 
 #ifdef OPENNI2_FOUND
-    mKinectRB->setChecked( true );
-    buttonLayout->addWidget( mKinectRB );
+	mKinectRB->setChecked( true );
+	buttonLayout->addWidget( mKinectRB );
 #endif
 
-    buttonLayout->addWidget( mArucoRB );
-    buttonLayout->addLayout( mModulesStackL );
+	buttonLayout->addWidget( mArucoRB );
+	buttonLayout->addLayout( mModulesStackL );
 
-    QWidget* kinectPageWid =  new QWidget;
-    QWidget* arucoPageWid =  new QWidget;
-    QWidget* arucoFaceRecPageWid = new QWidget;
-    QWidget* arucoMarkerPageWid = new QWidget;
-    QWidget* arucoMultiMarkerPageWid = new QWidget;
-    QWidget* arucoSubPageWid = new QWidget;
+	QWidget* kinectPageWid =  new QWidget;
+	QWidget* arucoPageWid =  new QWidget;
+	QWidget* arucoFaceRecPageWid = new QWidget;
+	QWidget* arucoMarkerPageWid = new QWidget;
+	QWidget* arucoMultiMarkerPageWid = new QWidget;
+	QWidget* arucoSubPageWid = new QWidget;
 
-    QVBoxLayout*	kinectPageLayout	= new QVBoxLayout;
-    QVBoxLayout*	arucoPageLayout	= new QVBoxLayout;
-    QVBoxLayout* arucoFaceRecPageLayout = new QVBoxLayout;
-    QVBoxLayout* arucoMarkerPageLayout = new QVBoxLayout;
-    QVBoxLayout* arucoMultiMarkerPageLayout = new QVBoxLayout;
-    QVBoxLayout* arucoSubPageLayout = new QVBoxLayout;
+	QVBoxLayout*	kinectPageLayout	= new QVBoxLayout;
+	QVBoxLayout*	arucoPageLayout	= new QVBoxLayout;
+	QVBoxLayout* arucoFaceRecPageLayout = new QVBoxLayout;
+	QVBoxLayout* arucoMarkerPageLayout = new QVBoxLayout;
+	QVBoxLayout* arucoMultiMarkerPageLayout = new QVBoxLayout;
+	QVBoxLayout* arucoSubPageLayout = new QVBoxLayout;
 
-    mFaceRecRB->setChecked( true );
-    arucoSubPageLayout->addWidget( mFaceRecRB );
-    arucoSubPageLayout->addWidget( mMarkerRB );
-    //arucoSubPageLayout->addWidget( mMultiMarkerRB );
-    arucoSubPageLayout->addWidget( mNoVideo );
-    arucoSubPageLayout->addLayout( mSubmodulesStackL );
+	mFaceRecRB->setChecked( true );
+	arucoSubPageLayout->addWidget( mFaceRecRB );
+	arucoSubPageLayout->addWidget( mMarkerRB );
+	//arucoSubPageLayout->addWidget( mMultiMarkerRB );
+	arucoSubPageLayout->addWidget( mNoVideo );
+	arucoSubPageLayout->addLayout( mSubmodulesStackL );
 
-    kinectPageLayout->setAlignment( Qt::AlignBottom );
-    arucoPageLayout->setAlignment( Qt::AlignBottom );
-    arucoFaceRecPageLayout->setAlignment( Qt::AlignBottom );
-    arucoMarkerPageLayout->setAlignment( Qt::AlignBottom );
-    arucoMultiMarkerPageLayout->setAlignment( Qt::AlignBottom );
+	kinectPageLayout->setAlignment( Qt::AlignBottom );
+	arucoPageLayout->setAlignment( Qt::AlignBottom );
+	arucoFaceRecPageLayout->setAlignment( Qt::AlignBottom );
+	arucoMarkerPageLayout->setAlignment( Qt::AlignBottom );
+	arucoMultiMarkerPageLayout->setAlignment( Qt::AlignBottom );
 
-    mModulesStackL->addWidget( kinectPageWid );
-    mModulesStackL->addWidget( arucoSubPageWid );
+	mModulesStackL->addWidget( kinectPageWid );
+	mModulesStackL->addWidget( arucoSubPageWid );
 
-    mSubmodulesStackL->addWidget( arucoFaceRecPageWid );
-    mSubmodulesStackL->addWidget( arucoMarkerPageWid );
-    //mSubmodulesStackL->addWidget( arucoMultiMarkerPageWid );
+	mSubmodulesStackL->addWidget( arucoFaceRecPageWid );
+	mSubmodulesStackL->addWidget( arucoMarkerPageWid );
+	//mSubmodulesStackL->addWidget( arucoMultiMarkerPageWid );
 
-    kinectPageWid->setLayout( kinectPageLayout );
-    arucoPageWid->setLayout( arucoPageLayout );
-    arucoFaceRecPageWid->setLayout( arucoFaceRecPageLayout );
-    arucoMarkerPageWid->setLayout( arucoMarkerPageLayout );
-    arucoMultiMarkerPageWid->setLayout( arucoMultiMarkerPageLayout );
-    arucoSubPageWid->setLayout( arucoSubPageLayout );
+	kinectPageWid->setLayout( kinectPageLayout );
+	arucoPageWid->setLayout( arucoPageLayout );
+	arucoFaceRecPageWid->setLayout( arucoFaceRecPageLayout );
+	arucoMarkerPageWid->setLayout( arucoMarkerPageLayout );
+	arucoMultiMarkerPageWid->setLayout( arucoMultiMarkerPageLayout );
+	arucoSubPageWid->setLayout( arucoSubPageLayout );
 
-    //set up page layouts
-    kinectPageLayout->addWidget( mDisableCursorCB );
-    kinectPageLayout->addWidget( mDisableZoomCursorCB );
-    kinectPageLayout->addWidget( mEnableMarkerDetectCB );
-    kinectPageLayout->addWidget( mSpeed );
-    kinectPageLayout->addWidget( mKinectSnapshotPB );
-    kinectPageLayout->addWidget( mKinectPB );
+	//set up page layouts
+	kinectPageLayout->addWidget( mDisableCursorCB );
+	kinectPageLayout->addWidget( mDisableZoomCursorCB );
+	kinectPageLayout->addWidget( mEnableMarkerDetectCB );
+	kinectPageLayout->addWidget( mSpeed );
+	kinectPageLayout->addWidget( mKinectSnapshotPB );
+	kinectPageLayout->addWidget( mKinectPB );
 
-    //arucoPageLayout->addWidget( mMultiMarkerPB );
+	//arucoPageLayout->addWidget( mMultiMarkerPB );
 
-    arucoFaceRecPageLayout->addWidget( mFaceDetBackgrCB );
-    arucoFaceRecPageLayout->addWidget( mFaceRecPB );
+	arucoFaceRecPageLayout->addWidget( mFaceDetBackgrCB );
+	arucoFaceRecPageLayout->addWidget( mFaceRecPB );
 
-    arucoMarkerPageLayout->addWidget( mMarkerBackgrCB );
-    arucoMarkerPageLayout->addWidget( mMarkerBehindCB );
-    arucoMarkerPageLayout->addWidget( mCorEnabledCB );
-    arucoMarkerPageLayout->addWidget( mUpdateCorParPB );
-    arucoMarkerPageLayout->addWidget( mInterchangeMarkersPB );
-    arucoMarkerPageLayout->addWidget( mMarkerPB );
+	arucoMarkerPageLayout->addWidget( mMarkerBackgrCB );
+	arucoMarkerPageLayout->addWidget( mMarkerBehindCB );
+	arucoMarkerPageLayout->addWidget( mCorEnabledCB );
+	arucoMarkerPageLayout->addWidget( mUpdateCorParPB );
+	arucoMarkerPageLayout->addWidget( mInterchangeMarkersPB );
+	arucoMarkerPageLayout->addWidget( mMarkerPB );
 
-    //arucoMultiMarkerPageLayout->addWidget( mMultiMarkerPB );
+	//arucoMultiMarkerPageLayout->addWidget( mMultiMarkerPB );
 
-    if ( Util::ApplicationConfig::get()->getValue( "Viewer.SkyBox.Noise" ).toInt() < 2 ) {
-        mMarkerBackgrCB->setDisabled( true );
-    }
+	if ( Util::ApplicationConfig::get()->getValue( "Viewer.SkyBox.Noise" ).toInt() < 2 ) {
+		mMarkerBackgrCB->setDisabled( true );
+	}
 
-    //set layout
-    mainLayout->addLayout( buttonLayout );
-    mainLayout->addWidget( mWindowLabel, Qt::AlignCenter );
-    mainLayout->setSizeConstraint( QLayout::SetMinimumSize );
-    setLayout( mainLayout );
-    adjustSize();
+	//set layout
+	mainLayout->addLayout( buttonLayout );
+	mainLayout->addWidget( mWindowLabel, Qt::AlignCenter );
+	mainLayout->setSizeConstraint( QLayout::SetMinimumSize );
+	setLayout( mainLayout );
+	adjustSize();
 
-    //set up Widgets
-    mUpdateCorParPB->setEnabled( false );
+	//set up Widgets
+	mUpdateCorParPB->setEnabled( false );
 
-    mFaceDetBackgrCB->setEnabled( false );
-    mMarkerBackgrCB->setEnabled( false );
-    mMarkerBehindCB->setEnabled( false );
-    mCorEnabledCB->setEnabled( false );
-    mEnableMarkerDetectCB->setEnabled( true );
+	mFaceDetBackgrCB->setEnabled( false );
+	mMarkerBackgrCB->setEnabled( false );
+	mMarkerBehindCB->setEnabled( false );
+	mCorEnabledCB->setEnabled( false );
+	mEnableMarkerDetectCB->setEnabled( true );
 
-    mMultiMarkerPB->setCheckable( true );
-    mFaceRecPB->setCheckable( true );
-    mMarkerPB->setCheckable( true );
-    mKinectPB->setCheckable( true );
+	mMultiMarkerPB->setCheckable( true );
+	mFaceRecPB->setCheckable( true );
+	mMarkerPB->setCheckable( true );
+	mKinectPB->setCheckable( true );
 
-    //set up signals to slots
-    connect( mKinectRB, SIGNAL( clicked() ), this, SLOT( onSelModulChange() ) );
-    connect( mArucoRB, SIGNAL( clicked() ), this, SLOT( onSelModulChange() ) );
-    connect( mFaceRecRB, SIGNAL( clicked() ), this, SLOT( onSelSubModulChange() ) );
-    connect( mMarkerRB, SIGNAL( clicked() ), this, SLOT( onSelSubModulChange() ) );
-    connect( mMultiMarkerRB, SIGNAL( clicked() ), this, SLOT( onSelSubModulChange() ) );
+	//set up signals to slots
+	connect( mKinectRB, SIGNAL( clicked() ), this, SLOT( onSelModulChange() ) );
+	connect( mArucoRB, SIGNAL( clicked() ), this, SLOT( onSelModulChange() ) );
+	connect( mFaceRecRB, SIGNAL( clicked() ), this, SLOT( onSelSubModulChange() ) );
+	connect( mMarkerRB, SIGNAL( clicked() ), this, SLOT( onSelSubModulChange() ) );
+	connect( mMultiMarkerRB, SIGNAL( clicked() ), this, SLOT( onSelSubModulChange() ) );
 
-    connect( mNoVideo,	 SIGNAL( clicked() ), this, SLOT( onSelSubModulChange() ) );
+	connect( mNoVideo,	 SIGNAL( clicked() ), this, SLOT( onSelSubModulChange() ) );
 
-    connect( mUpdateCorParPB, SIGNAL( clicked() ), this, SLOT( onUpdateCorPar() ) );
-    connect( mMarkerPB,  SIGNAL( clicked( bool ) ), this, SLOT( onMarkerStartCancel( bool ) ) );
-    connect( mFaceRecPB, SIGNAL( clicked( bool ) ), this, SLOT( onFaceRecStartCancel( bool ) ) );
-    connect( mMultiMarkerPB, SIGNAL( clicked( bool ) ), this, SLOT( onMultiMarkerStartCancel( bool ) ) );
-    connect( mKinectPB, SIGNAL( clicked( bool ) ), this, SLOT( onKinectStartCancel( bool ) ) );
-    connect( mKinectSnapshotPB, SIGNAL( clicked() ), this, SLOT( onKinectSnapshotPBClicked() ) );
+	connect( mUpdateCorParPB, SIGNAL( clicked() ), this, SLOT( onUpdateCorPar() ) );
+	connect( mMarkerPB,  SIGNAL( clicked( bool ) ), this, SLOT( onMarkerStartCancel( bool ) ) );
+	connect( mFaceRecPB, SIGNAL( clicked( bool ) ), this, SLOT( onFaceRecStartCancel( bool ) ) );
+	connect( mMultiMarkerPB, SIGNAL( clicked( bool ) ), this, SLOT( onMultiMarkerStartCancel( bool ) ) );
+	connect( mKinectPB, SIGNAL( clicked( bool ) ), this, SLOT( onKinectStartCancel( bool ) ) );
+	connect( mKinectSnapshotPB, SIGNAL( clicked() ), this, SLOT( onKinectSnapshotPBClicked() ) );
 
-    connect( mMarkerBackgrCB, SIGNAL( clicked( bool ) ), this, SLOT( onMarkerBackgrCBClicked( bool ) ) );
-    connect( mFaceDetBackgrCB, SIGNAL( clicked( bool ) ), this, SLOT( onFaceDetBackgrCBClicked( bool ) ) );
-    connect( mEnableMarkerDetectCB, SIGNAL( clicked( bool ) ), this, SLOT( setMarkerDetection( bool ) ) );
+	connect( mMarkerBackgrCB, SIGNAL( clicked( bool ) ), this, SLOT( onMarkerBackgrCBClicked( bool ) ) );
+	connect( mFaceDetBackgrCB, SIGNAL( clicked( bool ) ), this, SLOT( onFaceDetBackgrCBClicked( bool ) ) );
+	connect( mEnableMarkerDetectCB, SIGNAL( clicked( bool ) ), this, SLOT( setMarkerDetection( bool ) ) );
 }
 
 void QOpenCV::OpenCVWindow::stopMovingCursor()
 {
-    if ( mDisableCursorCB->isChecked() ) {
-        emit setMovementCursor( false );
-    }
-    else {
-        emit setMovementCursor( true );
-    }
+	if ( mDisableCursorCB->isChecked() ) {
+		emit setMovementCursor( false );
+	}
+	else {
+		emit setMovementCursor( true );
+	}
 }
 
 void QOpenCV::OpenCVWindow::stopZoom()
 {
-    if ( mDisableZoomCursorCB->isChecked() ) {
-        emit setZoom( false );
-    }
-    else {
-        emit setZoom( true );
-    }
+	if ( mDisableZoomCursorCB->isChecked() ) {
+		emit setZoom( false );
+	}
+	else {
+		emit setZoom( true );
+	}
 }
 
 void QOpenCV::OpenCVWindow::setMarkerDetection( bool set )
 {
-    emit setKinectMarkerDetection( set );
+	emit setKinectMarkerDetection( set );
 }
 
 void QOpenCV::OpenCVWindow::setSpeedKinect( int speed )
 {
-    double _speed=( double )( ( double )( speed/10.0 ) );
-    emit sendSpeedKinect( _speed );
+	double _speed=( double )( ( double )( speed/10.0 ) );
+	emit sendSpeedKinect( _speed );
 }
 
 void QOpenCV::OpenCVWindow::onKinectStartCancel( bool checked )
 {
-    if ( checked ) {
-        qDebug() << "Startujem Kinect Thread";
-        mKinectPB->setText( tr( "Pause Kinect" ) );
-        emit startKinect();
-        emit sendImageKinect( true );
-    }
-    else {
-        qDebug() << "Pausujem Kinect Thread";
-        mKinectPB->setText( tr( "Start Kinect" ) );
-        emit sendImageKinect( false );
-    }
+	if ( checked ) {
+		qDebug() << "Startujem Kinect Thread";
+		mKinectPB->setText( tr( "Pause Kinect" ) );
+		emit startKinect();
+		emit sendImageKinect( true );
+	}
+	else {
+		qDebug() << "Pausujem Kinect Thread";
+		mKinectPB->setText( tr( "Start Kinect" ) );
+		emit sendImageKinect( false );
+	}
 }
 
-void QOpenCV::OpenCVWindow::onKinectSnapshotPBClicked() {
-    qDebug() << "Sending signal to Kinect to take snapshot";
-    emit setKinectCaptureImage( true );
+void QOpenCV::OpenCVWindow::onKinectSnapshotPBClicked()
+{
+	qDebug() << "Sending signal to Kinect to take snapshot";
+	emit setKinectCaptureImage( true );
 }
 
 void QOpenCV::OpenCVWindow::onFaceDetBackgrCBClicked( bool checked )
 {
-    qDebug() << "onFaceDetBackgrCBClicked " << checked;
-    emit sendBackgrImgFaceRec( checked );
-    if ( checked ) {
-        emit sendBackgrImgMarker( false );
-        mMarkerBackgrCB->setChecked( false );
-    }
+	qDebug() << "onFaceDetBackgrCBClicked " << checked;
+	emit sendBackgrImgFaceRec( checked );
+	if ( checked ) {
+		emit sendBackgrImgMarker( false );
+		mMarkerBackgrCB->setChecked( false );
+	}
 }
 void QOpenCV::OpenCVWindow::onMarkerBackgrCBClicked( bool checked )
 {
-    qDebug() << "onMarkerBackgrCBClicked " << checked;
-    emit sendBackgrImgMarker( checked );
-    if ( checked ) {
-        emit sendBackgrImgFaceRec( false );
-        mFaceDetBackgrCB->setChecked( false );
-    }
+	qDebug() << "onMarkerBackgrCBClicked " << checked;
+	emit sendBackgrImgMarker( checked );
+	if ( checked ) {
+		emit sendBackgrImgFaceRec( false );
+		mFaceDetBackgrCB->setChecked( false );
+	}
 }
 
 void QOpenCV::OpenCVWindow::onSelModulChange()
 {
-    if ( mKinectRB->isChecked() ) {
-        mModulesStackL->setCurrentIndex( 0 );
-    }
+	if ( mKinectRB->isChecked() ) {
+		mModulesStackL->setCurrentIndex( 0 );
+	}
 
-    if ( mArucoRB->isChecked() ) {
-        mModulesStackL->setCurrentIndex( 1 );
-    }
+	if ( mArucoRB->isChecked() ) {
+		mModulesStackL->setCurrentIndex( 1 );
+	}
 }
 
 void QOpenCV::OpenCVWindow::onSelSubModulChange()
 {
-    if ( mFaceRecRB->isChecked() ) {
-        mSubmodulesStackL->setCurrentIndex( 0 );
-    }
+	if ( mFaceRecRB->isChecked() ) {
+		mSubmodulesStackL->setCurrentIndex( 0 );
+	}
 
-    if ( mMarkerRB->isChecked() ) {
-        mSubmodulesStackL->setCurrentIndex( 1 );
-    }
-    /*
-    if ( mMultiMarkerRB->isChecked() ) {
-        mSubmodulesStackL->setCurrentIndex( 2 );
-    }
-*/
-    if ( mNoVideo->isChecked() ) {
-        emit sendImgFaceRec( false );
-        emit sendImgMarker( false );
-        emit setMultiMarker( false );
-    }
-    else {
-        // face recognition
-        if ( mFaceRecRB->isChecked() ) {
-            emit sendImgMarker( false );
-            emit sendImgFaceRec( true );
-        }
-        // marker
-        if ( mMarkerRB->isChecked() ) {
-            emit sendImgFaceRec( false );
-            emit sendImgMarker( true );
-        }
-    }
+	if ( mMarkerRB->isChecked() ) {
+		mSubmodulesStackL->setCurrentIndex( 1 );
+	}
+	/*
+	if ( mMultiMarkerRB->isChecked() ) {
+	    mSubmodulesStackL->setCurrentIndex( 2 );
+	}
+	*/
+	if ( mNoVideo->isChecked() ) {
+		emit sendImgFaceRec( false );
+		emit sendImgMarker( false );
+		emit setMultiMarker( false );
+	}
+	else {
+		// face recognition
+		if ( mFaceRecRB->isChecked() ) {
+			emit sendImgMarker( false );
+			emit sendImgFaceRec( true );
+		}
+		// marker
+		if ( mMarkerRB->isChecked() ) {
+			emit sendImgFaceRec( false );
+			emit sendImgMarker( true );
+		}
+	}
 }
 
 void QOpenCV::OpenCVWindow::onUpdateCorPar()
 {
-    mUpdateCorParPB->setEnabled( false );
+	mUpdateCorParPB->setEnabled( false );
 }
 
 void QOpenCV::OpenCVWindow::onCorParUpdated()
 {
-    mUpdateCorParPB->setEnabled( true );
-    mCorEnabledCB->setEnabled( true );
+	mUpdateCorParPB->setEnabled( true );
+	mCorEnabledCB->setEnabled( true );
 }
 
 void QOpenCV::OpenCVWindow::onFaceRecStartCancel( bool checked )
 {
-    if ( checked ) {
-        mFaceRecPB->setEnabled( false );
-        mFaceRecPB->setText( tr( "Stop FaceRec" ) );
-        emit setCapVideoFaceRec( OpenCV::CamSelectCore::getInstance()->selectCamera() );
-        emit startFaceRec();
-        mFaceRecPB->setEnabled( true );
+	if ( checked ) {
+		mFaceRecPB->setEnabled( false );
+		mFaceRecPB->setText( tr( "Stop FaceRec" ) );
+		emit setCapVideoFaceRec( OpenCV::CamSelectCore::getInstance()->selectCamera() );
+		emit startFaceRec();
+		mFaceRecPB->setEnabled( true );
 
-        if ( Util::ApplicationConfig::get()->getValue( "Viewer.SkyBox.Noise" ).toInt() >1 ) {
-            mFaceDetBackgrCB->setEnabled( true );
+		if ( Util::ApplicationConfig::get()->getValue( "Viewer.SkyBox.Noise" ).toInt() >1 ) {
+			mFaceDetBackgrCB->setEnabled( true );
 
-        }
-    }
-    else {
-        mFaceRecPB->setEnabled( false );
-        mFaceDetBackgrCB->setEnabled( false );
-        emit stopFaceRec( true );
+		}
+	}
+	else {
+		mFaceRecPB->setEnabled( false );
+		mFaceDetBackgrCB->setEnabled( false );
+		emit stopFaceRec( true );
 
-    }
+	}
 }
 
 void QOpenCV::OpenCVWindow::onMarkerStartCancel( bool checked )
 {
-    if ( checked ) {
-        mMarkerPB->setEnabled( false );
-        mMarkerPB->setText( tr( "Stop Marker" ) );
-        mMarkerBehindCB->setEnabled( true );
-        mUpdateCorParPB->setEnabled( true );
-        emit setCapVideoMarker( OpenCV::CamSelectCore::getInstance()->selectCamera() );
-        emit startMarker();
-        mMarkerPB->setEnabled( true );
+	if ( checked ) {
+		mMarkerPB->setEnabled( false );
+		mMarkerPB->setText( tr( "Stop Marker" ) );
+		mMarkerBehindCB->setEnabled( true );
+		mUpdateCorParPB->setEnabled( true );
+		emit setCapVideoMarker( OpenCV::CamSelectCore::getInstance()->selectCamera() );
+		emit startMarker();
+		mMarkerPB->setEnabled( true );
 
-        if ( Util::ApplicationConfig::get()->getValue( "Viewer.SkyBox.Noise" ).toInt() >1 ) {
-            mMarkerBackgrCB->setEnabled( true );
-        }
-    }
-    else {
-        mMarkerPB->setEnabled( false );
-        mMarkerBehindCB->setEnabled( false );
-        mCorEnabledCB->setEnabled( false );
-        mUpdateCorParPB->setEnabled( false );
-        mMarkerBackgrCB->setEnabled( false );
-        emit stopMarker( true );
+		if ( Util::ApplicationConfig::get()->getValue( "Viewer.SkyBox.Noise" ).toInt() >1 ) {
+			mMarkerBackgrCB->setEnabled( true );
+		}
+	}
+	else {
+		mMarkerPB->setEnabled( false );
+		mMarkerBehindCB->setEnabled( false );
+		mCorEnabledCB->setEnabled( false );
+		mUpdateCorParPB->setEnabled( false );
+		mMarkerBackgrCB->setEnabled( false );
+		emit stopMarker( true );
 
-    }
+	}
 }
 
 void QOpenCV::OpenCVWindow::onFaceRecThrFinished()
 {
-    mFaceRecPB->setText( tr( "Start FaceRec" ) );
-    mFaceRecPB->setEnabled( true );
+	mFaceRecPB->setText( tr( "Start FaceRec" ) );
+	mFaceRecPB->setEnabled( true );
 }
 
 void QOpenCV::OpenCVWindow::onMarkerThrFinished()
 {
-    mMarkerPB->setText( tr( "Start Marker" ) );
-    mMarkerPB->setEnabled( true );
+	mMarkerPB->setText( tr( "Start Marker" ) );
+	mMarkerPB->setEnabled( true );
 }
 
 void QOpenCV::OpenCVWindow::closeEvent( QCloseEvent* event )
 {
-    qDebug() << "Closing OpenCV Window";
+	qDebug() << "Closing OpenCV Window";
 
-    disconnect();
+	disconnect();
 
-    event->accept();
+	event->accept();
 }
 
 void QOpenCV::OpenCVWindow::onMultiMarkerStartCancel( bool checked )
 {
-    qDebug() << "checked = " << checked;
-    if ( checked ) {
-        mMultiMarkerPB->setText( tr( "Stop Aruco" ) );
-        emit setMultiMarker( true );
-        emit setCapVideoMarker( OpenCV::CamSelectCore::getInstance()->selectCamera() );
-        emit startMultiMarker();
-    }
-    else {
-        mMultiMarkerPB->setText( tr( "Start Aruco" ) );
-        emit stopMultiMarker( true );
-        emit setMultiMarker( false );
+	qDebug() << "checked = " << checked;
+	if ( checked ) {
+		mMultiMarkerPB->setText( tr( "Stop Aruco" ) );
+		emit setMultiMarker( true );
+		emit setCapVideoMarker( OpenCV::CamSelectCore::getInstance()->selectCamera() );
+		emit startMultiMarker();
+	}
+	else {
+		mMultiMarkerPB->setText( tr( "Start Aruco" ) );
+		emit stopMultiMarker( true );
+		emit setMultiMarker( false );
 
-    }
+	}
 }
 
 void QOpenCV::OpenCVWindow::setLabel( cv::Mat image )
 {
-    if ( image.empty() ) {
-        mWindowLabel->setText( tr( "Image empty" ) );
-        return;
-    }
+	if ( image.empty() ) {
+		mWindowLabel->setText( tr( "Image empty" ) );
+		return;
+	}
 
-    QImage qimage( reinterpret_cast<uchar*>( image.data ), image.cols, image.rows,static_cast<int>( image.step ), QImage::Format_RGB888 );
+	QImage qimage( reinterpret_cast<uchar*>( image.data ), image.cols, image.rows,static_cast<int>( image.step ), QImage::Format_RGB888 );
 
-    mWindowLabel->setPixmap( QPixmap::fromImage( qimage ) );
+	mWindowLabel->setPixmap( QPixmap::fromImage( qimage ) );
 
-    image.~Mat();
+	image.~Mat();
 }
