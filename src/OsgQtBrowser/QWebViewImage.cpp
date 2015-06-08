@@ -12,7 +12,8 @@
 */
 
 #include "OsgQtBrowser/QWebViewImage.h"
-#include "LuaGraph/LuaGraphTreeItem.h"
+#include "LuaInterface/LuaInterface.h"
+#include "OsgQtBrowser/QLogWebPage.h"
 
 namespace OsgQtBrowser {
 
@@ -23,78 +24,13 @@ QWebViewImage::QWebViewImage()
 
 	_webView = new QWebView;
 
-	_webPage = new QWebPage;
+	_webPage = new QLogWebPage;
 	_webPage->settings()->setAttribute( QWebSettings::JavascriptEnabled, true );
 	_webPage->settings()->setAttribute( QWebSettings::PluginsEnabled, true );
 
 	_webView->setPage( _webPage );
 
-	// Add loadFinished listener to ensure our page is loaded before assigning data objects
-	connect( _webPage->mainFrame(), SIGNAL( loadFinished( bool ) ), this, SLOT( loadFinished( bool ) ) );
-
 	_adapter = new QGraphicsViewAdapter( this, _webView.data() );
-}
-
-void QWebViewImage::loadFinished( bool ok )
-{
-	// Clear qData object with empty models array attribute
-	_webPage->mainFrame()->evaluateJavaScript( "var qData={models:[]};" );
-
-	// TODO pass variables via Q_PROPERTY and public slots (problems with data retrieving)
-	// - currently manually added via js evaluation
-
-	// Iterate over all models and add them one by one to models array
-	QList<Lua::LuaGraphTreeModel* >::iterator i;
-	Lua::LuaGraphTreeModel* model;
-
-	// Iterate over each selected node
-	for ( i = _models->begin(); i != _models->end(); i++ ) {
-		model = *i;
-
-		Lua::LuaGraphTreeItem* root = model->getRootItem();
-
-		// Call recursive function to travel through each tree model item
-		this->addChildrenToJsModel( root, "curModel" );
-
-		// Add curModel to array of models
-		_webPage->mainFrame()->evaluateJavaScript( "qData.models.push(curModel);" );
-	}
-
-	// Send signal to browser that qData is ready
-	_webPage->mainFrame()->evaluateJavaScript( "qDataReady();" );
-}
-
-void QWebViewImage::addChildrenToJsModel( Lua::LuaGraphTreeItem* item, QString path )
-{
-	// Clear current path variable (for example: "curModel = {};" if is root)
-	_webPage->mainFrame()->evaluateJavaScript( path + " = {};" );
-
-	Lua::LuaGraphTreeItem* child;
-	QVariant key, value;
-	QString escapedValue;
-
-	// Iterate over all item children
-	for ( int i=0; i<item->childCount(); i++ ) {
-		child = item->child( i );
-		key = child->data( 0 );
-		value = child->data( 1 );
-
-		// If has children, then append item key to path & call this function recursively
-		if ( child->childCount() > 0 ) {
-
-			// Concatenate current js variable path to tree item key
-			this->addChildrenToJsModel( child, path + "." + key.toString() );
-			// qDebug() << path << "." << key.toString();
-
-		}
-		else {
-			// Otherwise pass value to current path as model (we need to add strings between "")
-			escapedValue = "\"" + value.toString() + "\"";
-			QString js = path + "." + key.toString() + " = " + escapedValue + ";";
-			_webPage->mainFrame()->evaluateJavaScript( js );
-			// qDebug() << js;
-		}
-	}
 }
 
 void QWebViewImage::navigateTo( const std::string& url )
@@ -102,10 +38,43 @@ void QWebViewImage::navigateTo( const std::string& url )
 	_webView->load( QUrl( url.c_str() ) );
 }
 
+void QWebViewImage::showTemplate( const std::string &templateName, Diluculum::LuaValueMap models, const std::string &templateType )
+{
+	// Initialize lua interface to call slt2 renderer
+	Lua::LuaInterface* lua = Lua::LuaInterface::getInstance();
+	QString renderer[] = {"slt2_renderer", "render"};
+
+	// Prepare parameters to be passed to template renderer
+	Diluculum::LuaValueList params;
+	params.push_back(templateName);
+	params.push_back(models);
+
+	// Call slt2 renderer
+	std::string html = lua->callFunction(2, renderer, params)[0].asString();
+	// qDebug() << html.c_str();
+
+	// Create relative webview dir url
+	QString appPath = QCoreApplication::applicationDirPath();
+	QString webviewPath = appPath.append("/../share/3DSOFTVIZ/webview/index.html");
+	QUrl baseUrl = QUrl::fromLocalFile(webviewPath);
+
+	// Set angular template type using query string
+	if(!templateType.empty()) {
+
+		// Fragment represents value after # hash in url. For example: http://something/index.html#<fragment>
+		baseUrl.setFragment(QString::fromStdString(templateType));
+	}
+
+	// qDebug() << "Webview url: " << baseUrl;
+
+	// Set html and baseUrl working directory
+	_webView->setHtml(html.c_str(), baseUrl);
+}
+
 void QWebViewImage::focusBrowser( bool focus )
 {
-	QFocusEvent event( focus ? QEvent::FocusIn : QEvent::FocusOut, Qt::OtherFocusReason );
-	QCoreApplication::sendEvent( _webPage, &event );
+//	QFocusEvent event( focus ? QEvent::FocusIn : QEvent::FocusOut, Qt::OtherFocusReason );
+//	QCoreApplication::sendEvent( _webPage, &event );
 }
 
 void QWebViewImage::clearWriteBuffer()
@@ -125,12 +94,16 @@ void QWebViewImage::setFrameLastRendered( const osg::FrameStamp* frameStamp )
 
 bool QWebViewImage::sendPointerEvent( int x, int y, int buttonMask )
 {
-	return _adapter->sendPointerEvent( x,y,buttonMask );
+	// TODO interaction could be enabled but we need to check if camera is rotating or moving
+	// (returned value indicates if we are going to handle this event here)
+	//return _adapter->sendPointerEvent( x,y,buttonMask );
+	return false;
 }
 
 bool QWebViewImage::sendKeyEvent( int key, bool keyDown )
 {
-	return QWebViewImage::_adapter->sendKeyEvent( key, keyDown );
+	//return QWebViewImage::_adapter->sendKeyEvent( key, keyDown );
+	return false;
 }
 
 }

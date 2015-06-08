@@ -1,0 +1,22 @@
+<script type="text/javascript">
+
+    // Escape html: fixing key value having newlines or quotes in key
+    #{local function escapeHTML(str) return string.gsub(string.gsub(str, '\n', ''), '"', '`') end}#
+
+    // Lua models converted to js
+    #{local function printData(node)}#
+        {
+            #{for key, value in pairs(node) do}#
+                #{if type(value) == 'table' then}#
+                    "#{=key}#" : #{printData(value)}#,
+                #{else}#
+                    "#{=escapeHTML(key)}#": "#{=value}#",
+                #{end}#
+            #{end}#
+        }
+    #{end}#
+
+    // Add another data conversion here
+
+    var models = #{printData(models)}#;
+</script>

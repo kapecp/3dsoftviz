@@ -548,13 +548,13 @@ osg::ref_ptr<osg::AutoTransform> CoreGraph::dodecahedron( qlonglong id, osg::Vec
 	osg::ref_ptr<osg::StateSet> ss = dodecahedronGeometry->getOrCreateStateSet();
 	/*
 	// only wireframe (outline / contour)
-	    osg::ref_ptr<osg::PolygonMode> pm = new osg::PolygonMode(osg::PolygonMode::FRONT_AND_BACK, osg::PolygonMode::LINE);
-	    ss->setAttributeAndModes(pm.get(), osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE);
+		osg::ref_ptr<osg::PolygonMode> pm = new osg::PolygonMode(osg::PolygonMode::FRONT_AND_BACK, osg::PolygonMode::LINE);
+		ss->setAttributeAndModes(pm.get(), osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE);
 
 	// line width
-	    osg::LineWidth* linewidth = new osg::LineWidth();
-	    linewidth->setWidth(20.0f);
-	    ss->setAttributeAndModes(linewidth, osg::StateAttribute::ON);
+		osg::LineWidth* linewidth = new osg::LineWidth();
+		linewidth->setWidth(20.0f);
+		ss->setAttributeAndModes(linewidth, osg::StateAttribute::ON);
 	*/
 // transparent
 
@@ -627,6 +627,7 @@ Vwr::CoreGraph::CoreGraph( Data::Graph* graph, osg::ref_ptr<osg::Camera> camera 
 
 
 	// backgroung this must be last Node in root !!!  ( because of ortho2d background)
+	// Gloger: disabled skybox- using solid background (see setClearColor in ViewerQT)
 	root->addChild( createBackground() );
 	backgroundPosition = 1;
 
@@ -669,7 +670,7 @@ void CoreGraph::reload( Data::Graph* graph )
 	graphGroup->addChild( nodesGroup->getGroup() );
 	nodesPosition = currentPos++;
 
-	this->edgesGroup = new Vwr::EdgeGroup( in_edges, appConf->getValue( "Viewer.Textures.EdgeScale" ).toFloat() );
+	this->edgesGroup = new Vwr::EdgeGroup( in_edges );
 	//this->edgesGroup = new Vwr::EdgeGroup(in_edges, 10);
 	graphGroup->addChild( edgesGroup->getGroup() );
 	edgesPosition = currentPos++;
@@ -678,7 +679,7 @@ void CoreGraph::reload( Data::Graph* graph )
 	graphGroup->addChild( qmetaNodesGroup->getGroup() );
 	qmetaNodesPosition = currentPos++;
 
-	this->qmetaEdgesGroup = new Vwr::EdgeGroup( qmetaEdges, appConf->getValue( "Viewer.Textures.EdgeScale" ).toFloat() );
+	this->qmetaEdgesGroup = new Vwr::EdgeGroup( qmetaEdges );
 	//this->qmetaEdgesGroup = new Vwr::EdgeGroup(qmetaEdges, 10);
 	graphGroup->addChild( qmetaEdgesGroup->getGroup() );
 	qmetaEdgesPosition = currentPos++;
@@ -710,6 +711,10 @@ void CoreGraph::reload( Data::Graph* graph )
 
 	osgUtil::Optimizer opt;
 	opt.optimize( edgesGroup->getGroup(), osgUtil::Optimizer::CHECK_GEOMETRY );
+
+	// Set browsers to be always on top
+	this->browsersGroup->getGroup()->getOrCreateStateSet()->setMode(GL_DEPTH_TEST, osg::StateAttribute::OFF);
+	this->browsersGroup->getGroup()->getOrCreateStateSet()->setRenderBinDetails(100,"RenderBin");
 }
 
 void CoreGraph::cleanUp()
@@ -970,17 +975,15 @@ osg::ref_ptr<osg::Node> CoreGraph::createBackground()
 
 osg::ref_ptr<osg::Group> CoreGraph::initEdgeLabels()
 {
-	osg::ref_ptr<osg::Geode> geode = new osg::Geode;
+	osg::ref_ptr<osg::Group> labels = new osg::Group;
 
 	QMap<qlonglong, osg::ref_ptr<Data::Edge> >::iterator i = in_edges->begin();
 
 	while ( i != in_edges->end() ) {
-		geode->addDrawable( i.value()->createLabel( ( ( Data::AbsEdge* )i.value() )->getName() ) );
+		labels->addChild( i.value()->createLabel( i.value()->getName() ) );
 		++i;
 	}
 
-	osg::ref_ptr<osg::Group> labels = new osg::Group;
-	labels->addChild( geode );
 	labels->setNodeMask( 0 );
 
 	return labels;
@@ -1198,6 +1201,39 @@ void CoreGraph::computeGraphRotTransf()
 {
 	osg::Matrixd graphTransfMat( mRotMouse * mRotAruco * mRotFaceDet );
 	graphRotTransf->setMatrix( graphTransfMat );
+}
+
+void CoreGraph::set3D( bool value )
+{
+	QMap<qlonglong, osg::ref_ptr<Data::Edge> >::iterator iEdge = in_edges->begin();
+
+	while ( iEdge != in_edges->end() ) {
+		iEdge.value()->set3D( value );
+		iEdge++;
+	}
+
+	QMap<qlonglong, osg::ref_ptr<Data::Edge> >::iterator iMetaEdge = qmetaEdges->begin();
+
+	while ( iMetaEdge != qmetaEdges->end() ) {
+		iMetaEdge.value()->set3D( value );
+		iMetaEdge++;
+	}
+
+	QMap<qlonglong, osg::ref_ptr<Data::Node> >::iterator iNode = in_nodes->begin();
+
+	while ( iNode != in_nodes->end() ) {
+		iNode.value()->set3D( value );
+		iNode++;
+	}
+
+	QMap<qlonglong, osg::ref_ptr<Data::Node> >::iterator iMetaNode = qmetaNodes->begin();
+
+	while ( iMetaNode != qmetaNodes->end() ) {
+		iMetaNode.value()->set3D( value );
+		iMetaNode++;
+	}
+
+	graph->setIs3D( value );
 }
 
 #ifdef OPENCV_FOUND

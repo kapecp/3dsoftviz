@@ -32,7 +32,7 @@ void MoveNodeExecutor::execute_client()
 
 	//TODO: refactor
 	// Stupid way to fix restriction shape refreshing
-	( ( QOSG::CoreWindow* )Client::getInstance()->getCoreWindowReference() )->getLayoutThread()->pause();
+	( ( QOSG::CoreWindow* )Client::getInstance()->getCoreWindowReference() )->getLayoutThread()->pauseAllAlg();
 	( ( QOSG::CoreWindow* )Client::getInstance()->getCoreWindowReference() )->getLayoutThread()->play();
 }
 
