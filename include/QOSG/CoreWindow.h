@@ -86,7 +86,7 @@ private:
 #endif
 
 #ifdef LEAP_FOUND
-	Leap::LeapThread* mLeapThr;
+    Leap::LeapThread* mLeapThr;
 #endif
 
 public slots:
@@ -141,6 +141,8 @@ public slots:
                 *  \brief Commit the sql in sql input
                 */
     void sqlQuery();
+
+    void showMetrics();
 
     /**
                 *  \fn public  playPause
@@ -471,7 +473,7 @@ public slots:
 #endif
 
 #ifdef LEAP_FOUND
-	void startLeap();
+    void startLeap();
 #endif
 
 #ifdef FGLOVE_FOUND
@@ -548,6 +550,12 @@ private:
     QToolBar* toolBar;
 
     /**
+            *  QToolBar * metricsToolBar
+            *  \brief Pointer to toolbar
+            */
+    QToolBar* metricsToolBar;
+
+    /**
         *  ToolBox * toolBox
         *  \brief Pointer to toolbox
         */
@@ -564,6 +572,8 @@ private:
         *  \brief Pointer to option dialog
         */
     QAction* options;
+
+    QPushButton* showMetricsButton;
 
     /**
         *  QAction * loadGraph
@@ -828,6 +838,12 @@ private:
          * \brief LineEdit for modifying edge bundling. It defines strength of edge bundling forces.
          */
     QLineEdit* le_edgeBundlingalpha;
+
+    /**
+         * QPushButton start leap senzor
+         * @brief b_start_leap
+         */
+        QPushButton* b_start_leap;
 
     /**
         *  QAction * create new Edge
