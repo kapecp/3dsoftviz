@@ -286,10 +286,10 @@ private:
 		*/
 	Util::ApplicationConfig* appConf;
 
-		/**
-		*  osg::ref_ptr<Data::Node> lastAutoMovementNode
-		*  \brief the last approaching node in automatic camera movement
-		*/
+	/**
+	*  osg::ref_ptr<Data::Node> lastAutoMovementNode
+	*  \brief the last approaching node in automatic camera movement
+	*/
 	osg::ref_ptr<Data::Node> lastAutoMovementNode;
 
 	/**
@@ -394,7 +394,7 @@ private:
 		*  \param     nodePath   pick nodepath
 		*  \return bool
 		*/
-	bool doEdgePick( osg::NodePath nodePath);
+	bool doEdgePick( osg::NodePath nodePath );
 
 	bool doClusterPick( osg::NodePath nodePath );
 
@@ -403,7 +403,7 @@ private:
 		*  \brief Select all neighbors edges and theirs nodes of nodes collection in parameter
 		*  \param     nodes   nodes for neighbors selection
 		*/
-	void selectAllNeighbors(QLinkedList<osg::ref_ptr<Data::Node>> nodes);
+	void selectAllNeighbors( QLinkedList<osg::ref_ptr<Data::Node>> nodes );
 
 	/**
 		*  \fn private  dragNode(osgViewer::Viewer * viewer)

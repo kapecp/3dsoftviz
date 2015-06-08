@@ -412,7 +412,7 @@ public:
 		*/
 	void setSelectedWith( osg::Vec4 selColor )
 	{
-		setDrawableColor(0, selColor);    // color of selected node
+		setDrawableColor( 0, selColor );  // color of selected node
 		this->selected = true;
 	}
 
