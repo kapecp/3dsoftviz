@@ -556,46 +556,4 @@ osg::Vec3f DataHelper::getMassCenter( osg::ref_ptr<osg::Vec3Array> coordinates )
     }
 }
 
-void DataHelper::getBordersPoints(QMap<qlonglong, osg::ref_ptr<Data::Node>>* graph) {
-
-    osg::Vec3d top(0,-1000,0);
-    osg::Vec3d bottom(0,1000,0);
-    osg::Vec3d left(1000,0,0);
-    osg::Vec3d right(-1000,0,0);
-
-    long unsigned int count = graph->size();
-
-    QMapIterator<qlonglong, osg::ref_ptr<Data::Node>> i(*graph);
-
-    while(i.hasNext()) {
-        i.next();
-        osg::ref_ptr<Data::Node> node = i.value();
-        if(top.y() < node->targetPositionConstRef().y()) {
-            top.x() = node->targetPositionConstRef().x();
-            top.y() = node->targetPositionConstRef().y();
-            top.z() = node->targetPositionConstRef().z();
-        }
-        if(bottom.y() > node->targetPositionConstRef().y()) {
-            bottom.x() = node->targetPositionConstRef().x();
-            bottom.y() = node->targetPositionConstRef().y();
-            bottom.z() = node->targetPositionConstRef().z();
-        }
-        if(left.x() > node->targetPositionConstRef().x()) {
-            left.x() = node->targetPositionConstRef().x();
-            left.y() = node->targetPositionConstRef().y();
-            left.z() = node->targetPositionConstRef().z();
-        }
-        if(right.x() < node->targetPositionConstRef().x()) {
-            right.x() = node->targetPositionConstRef().x();
-            right.y() = node->targetPositionConstRef().y();
-            right.z() = node->targetPositionConstRef().z();
-        }
-    }
-
-    qDebug() << "Left bod: " << left.x() << ", " << left.y() << ", " << left.z();
-    qDebug() << "Top bod: " << top.x() << ", " << top.y() << ", " << top.z();
-    qDebug() << "Right bod: " << right.x() << ", " << right.y() << ", " << right.z();
-    qDebug() << "Bottom bod: " << bottom.x() << ", " << bottom.y() << ", " << bottom.z();
-}
-
 } // namespace Vwr

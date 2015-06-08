@@ -231,8 +231,6 @@ public:
         return browsersGroup;
     }
 
-    void getGraphBorders();
-
 #ifdef OPENCV_FOUND
     OpenCV::CameraStream* getCameraStream() const;
 #endif

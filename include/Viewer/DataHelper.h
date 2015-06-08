@@ -119,8 +119,6 @@ public:
         *  \return osg::Vec3f position of mass center
         */
     static osg::Vec3f getMassCenter( osg::ref_ptr<osg::Vec3Array> coordinates );
-
-    static void getBordersPoints(QMap<qlonglong, osg::ref_ptr<Data::Node> >* graph );
 };
 }
 

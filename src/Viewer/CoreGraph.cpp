@@ -625,7 +625,10 @@ Vwr::CoreGraph::CoreGraph( Data::Graph* graph, osg::ref_ptr<osg::Camera> camera 
     graphRotTransf = new osg::MatrixTransform();
     graphGroup = new osg::Group();
 
+    graphRotTransf->addChild( graphGroup );
+    root->addChild( graphRotTransf );
 
+ /*
     manipulatorGroup = new osg::Group();
 
     osg::ref_ptr<osgManipulator::TranslateAxisDragger> dragger = new osgManipulator::TranslateAxisDragger();
@@ -644,12 +647,8 @@ Vwr::CoreGraph::CoreGraph( Data::Graph* graph, osg::ref_ptr<osg::Camera> camera 
     dragger->setHandleEvents(false);
     // konec
 
-
-
-
-    graphRotTransf->addChild( graphGroup );
-    root->addChild( graphRotTransf );
-    root->addChild( geom1 );
+    //root->addChild( geom1 );
+ */
 
 
     // backgroung this must be last Node in root !!!  ( because of ortho2d background)
@@ -1288,6 +1287,7 @@ void CoreGraph::addTranslateToGraphRotTransf(osg::Vec3d pos) {
     osg::Vec3f eye, center, up;
     double fovy, ar, zNear, zFar;
     double ViewportWidth, ViewPortHeight;
+    int debug = 0;
 
     camera->getProjectionMatrixAsPerspective(fovy, ar, zNear, zFar);
     camera->getViewMatrixAsLookAt(eye, center, up);
@@ -1297,10 +1297,11 @@ void CoreGraph::addTranslateToGraphRotTransf(osg::Vec3d pos) {
     y = -pos.z() * 1000;
     z = -pos.y() * 1000;
 
-    vypis.x() = x;
-    vypis.y() = y;
-    vypis.z() = z;
-
+    if(debug) {
+        vypis.x() = x;
+        vypis.y() = y;
+        vypis.z() = z;
+    }
     osg::ref_ptr<osg::Vec3Array> coordinates = new osg::Vec3Array;
 
     QMap<qlonglong, osg::ref_ptr<Data::Node> >::const_iterator i = in_nodes->constBegin();
@@ -1317,13 +1318,12 @@ void CoreGraph::addTranslateToGraphRotTransf(osg::Vec3d pos) {
     ViewPortHeight = tan((fovy/2)*3.14159265 / 180.0)*abs(distance);
     ViewportWidth = ViewPortHeight * ar;
 
+    x = x * fabs(ViewportWidth/(950+y));
+    z = z * fabs(ViewPortHeight/(450+y));
 
-   // if(pos.z() >= 200 && pos.z() <= 500) {
-        x = x * fabs(ViewportWidth/(950+y));
-        z = z * fabs(ViewPortHeight/(450+y));
-   // }
-
-    qDebug() << "pos x,y,z " << x << "(" << vypis.x() << ")," << y << "(" << vypis.y() << ")," << z << "(" << vypis.z() << "), " << ViewportWidth << " x " << ViewPortHeight;
+    if(debug) {
+        qDebug() << "pos x,y,z " << x << "(" << vypis.x() << ")," << y << "(" << vypis.y() << ")," << z << "(" << vypis.z() << "), " << ViewportWidth << " x " << ViewPortHeight;
+    }
 
     osg::Vec3d result;
     result.x() = x;
@@ -1334,41 +1334,4 @@ void CoreGraph::addTranslateToGraphRotTransf(osg::Vec3d pos) {
 
     graphRotTransf->setMatrix(matrix);
 }
-
-void CoreGraph::getGraphBorders() {
-  /*  double fovy, ar, zNear, zFar, hNear, wNear;
-    osg::Vec3f eye, center, up;
-    osg::ref_ptr<osg::Vec3Array> coordinates = new osg::Vec3Array;
-    //Vwr::DataHelper::getBordersPoints(in_nodes);
-    camera->getProjectionMatrixAsPerspective(fovy, ar, zNear, zFar);
-    camera->getViewMatrixAsLookAt(eye, center, up);
-
-    qDebug() << "Fovy = " << fovy;
-    qDebug() << "Aspect Ratio = " << ar;
-    qDebug() << "zNear = " << zNear;
-    qDebug() << "zFar = " << zFar;
-
-    qDebug() << "eye = " << eye.x() << ", " << eye.y() << ", " << eye.z();
-    qDebug() << "center = " << center.x() << ", " << center.y() << ", " << center.z();
-    qDebug() << "up = " << up.x() << ", " << up.y() << ", " << up.z();
-
-    QMap<qlonglong, osg::ref_ptr<Data::Node> >::const_iterator i = in_nodes->constBegin();
-
-    while ( i != in_nodes->constEnd() ) {
-        coordinates->push_back(( *i )->targetPositionConstRef());
-        ++i;
-    }
-
-    osg::Vec3 massCenter = Vwr::DataHelper::getMassCenter(coordinates);
-    qDebug() << "Mass center = " << massCenter.x() << ", " << massCenter.y() << ", " << massCenter.z();
-
-    double distance = abs(center.y() - massCenter.z());
-    qDebug() << "Distance = " << distance;
-
-    hNear = 2*tan((fovy/2)*3.14159265 / 180.0)*abs(distance);
-    wNear = hNear * ar;
-    qDebug() << "hNear Computed = " << hNear;
-    qDebug() << "WNear Computed = " << wNear;*/
-}
-
 }

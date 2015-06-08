@@ -2778,7 +2778,6 @@ void CoreWindow::setAvatarScale( int scale )
 void CoreWindow::setCameraEnable(bool enable) {
     qDebug() << "Nastavujem na " << enable;
     viewerWidget->getCameraManipulator()->setCameraActive(enable);
-    coreGraph->getGraphBorders();
 }
 
 // Duransky start - Akcia pri prepnuti checkboxu "Vertigo zoom"

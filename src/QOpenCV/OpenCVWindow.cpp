@@ -109,7 +109,7 @@ void QOpenCV::OpenCVWindow::configureWindow()
     mFaceRecRB->setChecked( true );
     arucoSubPageLayout->addWidget( mFaceRecRB );
     arucoSubPageLayout->addWidget( mMarkerRB );
-    arucoSubPageLayout->addWidget( mMultiMarkerRB );
+    //arucoSubPageLayout->addWidget( mMultiMarkerRB );
     arucoSubPageLayout->addWidget( mNoVideo );
     arucoSubPageLayout->addLayout( mSubmodulesStackL );
 
@@ -124,7 +124,7 @@ void QOpenCV::OpenCVWindow::configureWindow()
 
     mSubmodulesStackL->addWidget( arucoFaceRecPageWid );
     mSubmodulesStackL->addWidget( arucoMarkerPageWid );
-    mSubmodulesStackL->addWidget( arucoMultiMarkerPageWid );
+    //mSubmodulesStackL->addWidget( arucoMultiMarkerPageWid );
 
     kinectPageWid->setLayout( kinectPageLayout );
     arucoPageWid->setLayout( arucoPageLayout );
@@ -141,7 +141,7 @@ void QOpenCV::OpenCVWindow::configureWindow()
     kinectPageLayout->addWidget( mKinectSnapshotPB );
     kinectPageLayout->addWidget( mKinectPB );
 
-    arucoPageLayout->addWidget( mMultiMarkerPB );
+    //arucoPageLayout->addWidget( mMultiMarkerPB );
 
     arucoFaceRecPageLayout->addWidget( mFaceDetBackgrCB );
     arucoFaceRecPageLayout->addWidget( mFaceRecPB );
@@ -153,7 +153,7 @@ void QOpenCV::OpenCVWindow::configureWindow()
     arucoMarkerPageLayout->addWidget( mInterchangeMarkersPB );
     arucoMarkerPageLayout->addWidget( mMarkerPB );
 
-    arucoMultiMarkerPageLayout->addWidget( mMultiMarkerPB );
+    //arucoMultiMarkerPageLayout->addWidget( mMultiMarkerPB );
 
     if ( Util::ApplicationConfig::get()->getValue( "Viewer.SkyBox.Noise" ).toInt() < 2 ) {
         mMarkerBackgrCB->setDisabled( true );
@@ -291,10 +291,11 @@ void QOpenCV::OpenCVWindow::onSelSubModulChange()
     if ( mMarkerRB->isChecked() ) {
         mSubmodulesStackL->setCurrentIndex( 1 );
     }
+    /*
     if ( mMultiMarkerRB->isChecked() ) {
         mSubmodulesStackL->setCurrentIndex( 2 );
     }
-
+*/
     if ( mNoVideo->isChecked() ) {
         emit sendImgFaceRec( false );
         emit sendImgMarker( false );
