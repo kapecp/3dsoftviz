@@ -33,7 +33,7 @@ Viewer.Textures.OrientedEdgeSuffix=.png
 Viewer.Textures.MetaNode=../share/3dsoftviz/img/MetaNode.png
 
 Viewer.Fullscreen=0
-Viewer.SkyBox.Noise=0
+Viewer.SkyBox.Noise=3
 Viewer.SkyBox.North=../share/3dsoftviz/img/skybox/rays_north.bmp
 Viewer.SkyBox.East=../share/3dsoftviz/img/skybox/rays_east.bmp
 Viewer.SkyBox.South=../share/3dsoftviz/img/skybox/rays_south.bmp
@@ -47,6 +47,11 @@ Kinect.Surface.DATA= ../share/3dsoftviz/kinectMaps/file4.txt
 
 Kinect.RegionRotationTreshold=0.65
 Kinect.RegionRotationStep=0.05
+
+Kinect.OutputFolder= ../../resources/kinectMaps
+Kinect.DepthImageName= depthImage
+Kinect.ColourImageName= Image
+Kinect.DepthInfoName= depthInfo
 
 FaceDecetion.EnableProjectionCorrection=0
 FaceDecetion.CameraDistancePar=3.5

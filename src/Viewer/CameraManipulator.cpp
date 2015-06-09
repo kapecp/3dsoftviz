@@ -70,6 +70,8 @@ Vwr::CameraManipulator::CameraManipulator( Vwr::CoreGraph* coreGraph )
 		_cameraCanRot = true;
 	}
 
+	_cameraActive = true;
+
 }
 
 Vwr::CameraManipulator::~CameraManipulator()
@@ -150,38 +152,104 @@ bool Vwr::CameraManipulator::handle( const GUIEventAdapter& ea, GUIActionAdapter
 		return false;
 	}
 
-	switch ( ea.getEventType() ) {
-		case ( GUIEventAdapter::PUSH ): {
-			return handlePush( ea, us );
-		}
-		case ( GUIEventAdapter::RELEASE ): {
-			return handleRelease( ea, us );
-		}
-		case ( GUIEventAdapter::DRAG ):
-		case ( GUIEventAdapter::SCROLL ): {
-			return handleScroll( ea, us );
-		}
-		case ( GUIEventAdapter::MOVE ): {
-			return false;
-		}
-		case ( GUIEventAdapter::KEYDOWN ): {
-			return handleKeyDown( ea, us );
-		}
-		case ( GUIEventAdapter::KEYUP ): {
-			return handleKeyUp( ea, us );
-		}
-		case ( GUIEventAdapter::FRAME ): {
-			if ( _thrown ) {
-				if ( calcMovement() ) {
-					us.requestRedraw();
-				}
-			}
+	if ( _cameraActive ) {
 
-			return false;
+		switch ( ea.getEventType() ) {
+			case ( GUIEventAdapter::PUSH ): {
+				return handlePush( ea, us );
+			}
+			case ( GUIEventAdapter::RELEASE ): {
+				return handleRelease( ea, us );
+			}
+			case ( GUIEventAdapter::DRAG ):
+			case ( GUIEventAdapter::SCROLL ): {
+				return handleScroll( ea, us );
+			}
+			case ( GUIEventAdapter::MOVE ): {
+				return false;
+			}
+			case ( GUIEventAdapter::KEYDOWN ): {
+				return handleKeyDown( ea, us );
+			}
+			case ( GUIEventAdapter::KEYUP ): {
+				return handleKeyUp( ea, us );
+			}
+			case ( GUIEventAdapter::FRAME ): {
+				if ( _thrown ) {
+					if ( calcMovement() ) {
+						us.requestRedraw();
+					}
+				}
+
+				return false;
+			}
+			default:
+				return false;
 		}
-		default:
-			return false;
 	}
+	else {
+		switch ( ea.getEventType() ) {
+			case ( GUIEventAdapter::KEYDOWN ): {
+				return handleKeyDownGraph( ea, us );
+			}
+			default:
+				return false;
+
+		}
+	}
+}
+
+bool Vwr::CameraManipulator::handleKeyDownGraph( const GUIEventAdapter& ea, GUIActionAdapter& us )
+{
+	osg::Vec3d pos;
+	int speed = 2;
+
+	switch ( ea.getKey() ) {
+		case osgGA::GUIEventAdapter::KEY_Control_R:
+		case osgGA::GUIEventAdapter::KEY_Control_L: {
+			ctrlPressed = true;
+			break;
+		}
+		case osgGA::GUIEventAdapter::KEY_Shift_R:
+		case osgGA::GUIEventAdapter::KEY_Shift_L: {
+			shiftPressed = true;
+			break;
+		}
+		case osgGA::GUIEventAdapter::KEY_Up: {
+			pos.y() = speed;
+			break;
+		}
+
+		case osgGA::GUIEventAdapter::KEY_Down: {
+			pos.y() = -speed;
+			break;
+		}
+
+		case osgGA::GUIEventAdapter::KEY_Right: {
+			pos.x() = speed;
+			break;
+		}
+
+		case osgGA::GUIEventAdapter::KEY_Left: {
+			pos.x() = -speed;
+			break;
+		}
+		case osgGA::GUIEventAdapter::KEY_Page_Up: {
+			pos.z() = speed;
+			break;
+		}
+		case osgGA::GUIEventAdapter::KEY_Page_Down: {
+			pos.z() = -speed;
+			break;
+		}
+
+		default:
+			break;
+	}
+
+	emit sendTranslatePosition( pos );
+
+	return true;
 }
 
 bool Vwr::CameraManipulator::handleScroll( const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& us )

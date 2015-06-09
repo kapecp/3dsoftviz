@@ -494,6 +494,8 @@ public slots:
 
 	void repulsive_Forces_ValueChanged();
 
+	void setCameraEnable( bool enable );
+
 
 private:
 
@@ -851,6 +853,12 @@ private:
 	 *@brief chb_camera_rot
 	 */
 	QCheckBox* chb_camera_rot;
+
+	/**
+	 *CheckBox for enabling camera
+	 *@brief chb_camera_enable
+	 */
+	QCheckBox* chb_camera_enable;
 
 	/**
 	    *  QAction * load

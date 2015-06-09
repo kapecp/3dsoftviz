@@ -113,6 +113,10 @@ void  OpenCV::OpenCVCore::createPermanentConnection()
 					  SIGNAL( sendArucoRorQuat( osg::Quat ) ),
 					  AppCore::Core::getInstance( mApp )->getCoreGraph(),
 					  SLOT( updateGraphRotByAruco( osg::Quat ) ) );
+	QObject::connect( mThrAruco,
+					  SIGNAL( sendArucoPosAndQuat( osg::Quat,osg::Vec3d ) ),
+					  AppCore::Core::getInstance( mApp )->getCoreGraph(),
+					  SLOT( updateGraphPosAndRotByAruco( osg::Quat, osg::Vec3d ) ) );
 
 
 	// updating background image
@@ -211,6 +215,10 @@ void OpenCV::OpenCVCore::createConnectionKinect()
 					  SIGNAL( pushImageFromKinect( cv::Mat ) ),
 					  mOpencvWindow,
 					  SLOT( setLabel( cv::Mat ) ) );
+	QObject::connect( mOpencvWindow,
+					  SIGNAL( setKinectCaptureImage( bool ) ),
+					  mThrKinect,
+					  SLOT( setCaptureImage( bool ) ) );
 }
 
 void OpenCV::OpenCVCore::createConnectionFaceRec()

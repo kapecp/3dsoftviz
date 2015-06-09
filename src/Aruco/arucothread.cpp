@@ -126,9 +126,11 @@ void ArucoThread::run()
 
 			aCore.detect( frame.clone() );
 
+			bool vypis = true;
 			if ( mMultiMarkerEnabled ) {
 				//TODO funkcionalita ku detekcii viacerych markerov
-
+				//if(vypis && aCore.detect(frame.clone()) != 0)
+				//qDebug() << aCore.getDetectedMatrix(frame.clone());
 			}
 			else {
 				// graph controll
@@ -198,6 +200,8 @@ void ArucoThread::graphControlling( const double actPosArray[3], const double ac
 		correctQuatAndPos( actPos, actQuat );
 	}
 
+
+
 	// normalizin from [0,0] in top left corner to [1,1] in roght bottom corner
 	double absZ		= actPosArray[2]  < 0.0 ? - actPosArray[2]	:  actPosArray[2];		// distance of marker
 	double halfSize = absZ / mCamDistRatio;
@@ -211,8 +215,11 @@ void ArucoThread::graphControlling( const double actPosArray[3], const double ac
 	actPos.x() = normX;
 	actPos.y() = normY;
 
-	emit sendArucoPosVec( actPos );
-	emit sendArucoRorQuat( actQuat );
+
+
+	//emit sendArucoPosVec( actPos );
+	//emit sendArucoRorQuat( actQuat );
+	emit sendArucoPosAndQuat( actQuat, actPos );
 }
 
 void ArucoThread::mouseControlling( const double actPosArray[3], const double actQuatArray[4] )

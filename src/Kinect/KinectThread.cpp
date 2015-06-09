@@ -94,6 +94,12 @@ void Kinect::KinectThread::setSpeedKinect( double set )
 	mSpeed=set;
 }
 
+void Kinect::KinectThread::setCaptureImage( bool set )
+{
+	qDebug() << "captureImage set to " << set;
+	captureImage = set;
+}
+
 void Kinect::KinectThread::clickTimerTimeout()
 {
 	if ( clickTimerFirstRun ) {
@@ -169,14 +175,17 @@ void Kinect::KinectThread::run()
 			m_depth.readFrame( &depthFrame );
 
 			//if set true, it will capture the first frame of kinect stream and save color frame, depth frame and depth matrix in to specific location
-			if ( test ) {
+			if ( captureImage ) {
 				depth = mKinect->depthImageCvMat( depthFrame );
 
+				std::string file = Util::ApplicationConfig::get()->getValue( "Kinect.OutputFolder" ).toStdString();
+
+
 				//save color frame
-				cv::imwrite( "C:\\DevTools\\Pictures\\frame1.jpg", frame );
+				cv::imwrite( file + "\\" + Util::ApplicationConfig::get()->getValue( "Kinect.ColourImageName" ).toStdString()  + ".jpeg", frame );
 
 				//save depth matrix
-				std::ofstream fout( "C:\\DevTools\\Pictures\\depth1.txt" );
+				std::ofstream fout( file + "\\" + Util::ApplicationConfig::get()->getValue( "Kinect.DepthInfoName" ).toStdString() + ".txt" );
 				if ( !fout ) {
 					qDebug() <<"File Not Opened";
 				}
@@ -190,10 +199,10 @@ void Kinect::KinectThread::run()
 
 				cv::normalize( depth, depth, 0,255, CV_MINMAX, CV_8UC1 );
 				//save depth frame
-				cv::imwrite( "C:\\DevTools\\Pictures\\depth1.jpg", depth );
+				cv::imwrite( file + "\\" + Util::ApplicationConfig::get()->getValue( "Kinect.DepthImageName" ).toStdString() + ".jpg", depth );
 
 				fout.close();
-				test =  false;
+				captureImage =  false;
 			}
 
 #ifdef NITE2_FOUND

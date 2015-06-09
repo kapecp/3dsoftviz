@@ -128,6 +128,8 @@ public slots:
 	 */
 	void closeActionOpenni();
 
+	void setCaptureImage( bool set );
+
 private:
 	// Marak start
 	QTimer* clickTimer;
@@ -139,6 +141,8 @@ private:
 	 * @brief information about status thread
 	 */
 	bool mCancel;
+
+	bool captureImage;
 
 	/**
 	 * @brief status for sending image and processing

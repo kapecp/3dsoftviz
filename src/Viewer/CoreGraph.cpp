@@ -7,7 +7,11 @@
 #include "Viewer/PerlinNoiseTextureGenerator.h"
 #include "Viewer/SkyTransform.h"
 #include "Viewer/TextureWrapper.h"
+#include "Viewer/DataHelper.h"
 
+#include <QDebug>
+
+#include <osgManipulator/TranslateAxisDragger>
 
 #include "Network/Server.h"
 #include "Data/Graph.h"
@@ -621,9 +625,30 @@ Vwr::CoreGraph::CoreGraph( Data::Graph* graph, osg::ref_ptr<osg::Camera> camera 
 	graphRotTransf = new osg::MatrixTransform();
 	graphGroup = new osg::Group();
 
-
 	graphRotTransf->addChild( graphGroup );
 	root->addChild( graphRotTransf );
+
+	/*
+	   manipulatorGroup = new osg::Group();
+
+	   osg::ref_ptr<osgManipulator::TranslateAxisDragger> dragger = new osgManipulator::TranslateAxisDragger();
+	   dragger->setupDefaultGeometry();
+	   manipulatorGroup->addChild(dragger.get());
+
+	   osg::ref_ptr<osg::MatrixTransform> geom1 = new osg::MatrixTransform(osg::Matrixd::scale(osg::Vec3f(25,25,25)));
+	   geom1->addChild(manipulatorGroup);
+
+	   qDebug() << dragger->getMatrix().getTrans().x() << " " << dragger->getMatrix().getTrans().y();
+
+	   float scale = geom1->getBound().radius() * 1.0f;
+	   osg::Matrix mat = osg::Matrix::scale(scale, scale, scale) ;
+	   dragger->setMatrix(mat);
+
+	   dragger->setHandleEvents(false);
+	   // konec
+
+	   //root->addChild( geom1 );
+	*/
 
 
 	// backgroung this must be last Node in root !!!  ( because of ortho2d background)
@@ -686,6 +711,25 @@ void CoreGraph::reload( Data::Graph* graph )
 	graphGroup->addChild( initEdgeLabels() );
 	labelsPosition = currentPos++;
 
+	//zaciatok
+
+	/*
+	    osg::ref_ptr<osgManipulator::TranslateAxisDragger> dragger = new osgManipulator::TranslateAxisDragger();
+	    dragger->setupDefaultGeometry();
+	    graphGroup->addChild(dragger.get());
+
+	    osg::ref_ptr<osg::MatrixTransform> geom1 = new osg::MatrixTransform(osg::Matrixd::scale(osg::Vec3f(1,1,1)));
+	    geom1->addChild(graphGroup);
+
+	    qDebug() << dragger->getMatrix().getTrans().x() << " " << dragger->getMatrix().getTrans().y();
+
+	    float scale = geom1->getBound().radius() * 1.0f;
+	    osg::Matrix mat = osg::Matrix::scale(scale, scale, scale) * osg::Matrix::translate(geom1->getBound().center());
+	    dragger->setMatrix(mat);
+
+	    dragger->setHandleEvents(true);
+	    // konec
+	*/
 	this->restrictionVisualizationsGroup = QSharedPointer<Vwr::RestrictionVisualizationsGroup> ( new Vwr::RestrictionVisualizationsGroup );
 	graphGroup->addChild( restrictionVisualizationsGroup->getGroup() );
 	restrictionVisualizationsPosition = currentPos++;
@@ -1182,6 +1226,24 @@ void CoreGraph::updateGraphRotByAruco( const osg::Quat quat )
 	computeGraphRotTransf();
 }
 
+void CoreGraph::updateGraphPosAndRotByAruco( const osg::Quat quat, osg::Vec3d pos )
+{
+	mRotAruco = quat;
+	//computeGraphRotTransf();
+	addTranslateToGraphRotTransf( pos );
+}
+
+void CoreGraph::translateGraph( osg::Vec3d pos )
+{
+	osg::Matrixd matrix = graphRotTransf->getMatrix();
+
+	qDebug() << "pos x,y,z " << pos.x() << "," << pos.y() << "," << pos.z();
+
+	matrix.preMultTranslate( pos );
+
+	graphRotTransf->setMatrix( matrix );
+}
+
 void CoreGraph::updateGraphRotByMouse( const osg::Quat quat )
 {
 	mRotMouse = mRotMouse * quat;
@@ -1220,4 +1282,58 @@ bool CoreGraph::cameraInsideSphere( osg::Vec3d midPoint, float radius )
 	return ( new osg::BoundingSphere( midPoint, radius ) )->contains( cameraManipulator->getCameraPosition() );
 }
 
+void CoreGraph::addTranslateToGraphRotTransf( osg::Vec3d pos )
+{
+	osg::Matrixd matrix = graphRotTransf->getMatrix();
+	osg::Vec3d vypis;
+	osg::Vec3f eye, center, up;
+	double fovy, ar, zNear, zFar;
+	double ViewportWidth, ViewPortHeight;
+	int debug = 0;
+
+	camera->getProjectionMatrixAsPerspective( fovy, ar, zNear, zFar );
+	camera->getViewMatrixAsLookAt( eye, center, up );
+
+	double x, y, z;
+	x = -pos.x() * 1000;
+	y = -pos.z() * 1000;
+	z = -pos.y() * 1000;
+
+	if ( debug ) {
+		vypis.x() = x;
+		vypis.y() = y;
+		vypis.z() = z;
+	}
+	osg::ref_ptr<osg::Vec3Array> coordinates = new osg::Vec3Array;
+
+	QMap<qlonglong, osg::ref_ptr<Data::Node> >::const_iterator i = in_nodes->constBegin();
+
+	while ( i != in_nodes->constEnd() ) {
+		coordinates->push_back( ( *i )->targetPositionConstRef() );
+		++i;
+	}
+
+	osg::Vec3 massCenter = Vwr::DataHelper::getMassCenter( coordinates );
+
+	double distance = fabs( center.y() - massCenter.z() );
+
+	ViewPortHeight = tan( ( fovy/2 )*3.14159265 / 180.0 )*abs( distance );
+	ViewportWidth = ViewPortHeight * ar;
+
+	x = x * fabs( ViewportWidth/( 950+y ) );
+	z = z * fabs( ViewPortHeight/( 450+y ) );
+
+	if ( debug ) {
+		qDebug() << "pos x,y,z " << x << "(" << vypis.x() << ")," << y << "(" << vypis.y() << ")," << z << "(" << vypis.z() << "), " << ViewportWidth << " x " << ViewPortHeight;
+	}
+
+	osg::Vec3d result;
+	result.x() = x;
+	result.y() = y;
+	result.z() = z;
+
+	matrix.makeTranslate( result );
+
+	graphRotTransf->setMatrix( matrix );
+}
 }

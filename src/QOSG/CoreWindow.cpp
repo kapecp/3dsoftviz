@@ -11,6 +11,7 @@
 #include "Viewer/CoreGraph.h"
 #include "Viewer/CameraManipulator.h"
 #include "Viewer/PickHandler.h"
+#include "Viewer/DataHelper.h"
 
 #include "Manager/Manager.h"
 
@@ -128,6 +129,9 @@ CoreWindow::CoreWindow( QWidget* parent, Vwr::CoreGraph* coreGraph, QApplication
 
 	Lua::LuaInterface::getInstance()->executeFile( "main.lua" );
 	viewerWidget->getPickHandler()->setSelectionObserver( this );
+
+	QObject::connect( viewerWidget->getCameraManipulator(), SIGNAL( sendTranslatePosition( osg::Vec3d ) ),
+					  this->coreGraph, SLOT( translateGraph( osg::Vec3d ) ) );
 
 }
 
@@ -932,6 +936,12 @@ QWidget* CoreWindow::createMoreFeaturesTab( QFrame* line )
 	else {
 		chb_camera_rot->setChecked( true );
 	}
+
+	chb_camera_enable = new QCheckBox( tr( "Camera enabled" ) );
+	chb_camera_enable->setChecked( true );
+	chb_camera_enable->setMaximumWidth( 136 );
+	lMore->addRow( chb_camera_enable );
+	connect( chb_camera_enable, SIGNAL( clicked( bool ) ), this, SLOT( setCameraEnable( bool ) ) );
 #ifdef OPENCV_FOUND
 
 #ifdef OPENNI2_FOUND
@@ -2824,6 +2834,12 @@ void CoreWindow::setAvatarScale( int scale )
 {
 	client->setAvatarScale( scale );
 	Network::Server::getInstance()->setAvatarScale( scale );
+}
+
+void CoreWindow::setCameraEnable( bool enable )
+{
+	qDebug() << "Nastavujem na " << enable;
+	viewerWidget->getCameraManipulator()->setCameraActive( enable );
 }
 
 // Duransky start - Akcia pri prepnuti checkboxu "Vertigo zoom"

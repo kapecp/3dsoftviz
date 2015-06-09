@@ -165,6 +165,12 @@ public:
 		_center = center;
 	}
 
+	/** Enable/disable camera functions. */
+	void setCameraActive( bool active )
+	{
+		_cameraActive = active;
+	}
+
 	/** Get the center of the trackball. */
 	const osg::Vec3d& getCenter() const
 	{
@@ -269,6 +275,8 @@ signals:
 	     * @param quat Quaternion that disribe rotation of face
 	     */
 	void sendFaceDetRotation( const osg::Quat quat );
+
+	void sendTranslatePosition( osg::Vec3d pos );
 
 
 
@@ -407,6 +415,13 @@ protected:
 	    *  \brief camera center
 	    */
 	osg::Vec3d   _center;
+
+	/**
+	 * bool _cameraActive
+	 * @brief enable/disable camera functions
+	 */
+
+	bool _cameraActive;
 
 	/**
 	    *  osg::Vec3d _centerArucoTrans
@@ -652,6 +667,8 @@ private:
 	    *  \return bool true, if handled
 	    */
 	bool handleKeyUp( const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& us );
+
+	bool handleKeyDownGraph( const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& us );
 
 	void notifyClients();
 	void notifyServer();

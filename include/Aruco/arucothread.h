@@ -68,6 +68,14 @@ signals:
 	void sendArucoRorQuat( const osg::Quat quat );
 
 	/**
+	* @author Michael Garaj
+	* @brief sendArucoPosAndQuat signal that emit Quaternion that represent rotation of detected marker and position Vector
+	* @param quat Quaternion
+	* @param pos Vec3d
+	*/
+	void sendArucoPosAndQuat( const osg::Quat quat, osg::Vec3d pos );
+
+	/**
 	* @author Dávid Durčák
 	* @brief pushImage signal that emit image with marked marker for debuging
 	* @param image emited image matrix
