@@ -22,8 +22,8 @@ osg::ref_ptr<Data::Node> RSFImporter::getHyperEdge(
 	for ( QMap<qlonglong, osg::ref_ptr<Data::Edge> >::iterator it = mapa->begin(); it != mapa->end(); ++it ) {
 		osg::ref_ptr<Data::Edge> existingEdge = it.value();
 		if (
-			existingEdge->getSrcNode()->getName() == srcNodeName &&
-			existingEdge->getDstNode()->getName() == edgeName
+			( ( Data::AbsNode* )existingEdge->getSrcNode() )->getName() == srcNodeName &&
+			( ( Data::AbsNode* )existingEdge->getDstNode() )->getName() == edgeName
 		) {
 			hyperEdgeNode1 = existingEdge->getDstNode();
 			break;

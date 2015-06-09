@@ -376,6 +376,11 @@ bool Vwr::CameraManipulator::isMouseMoving()
 
 	return ( len>dt*velocity );
 }
+bool CameraManipulator::getDecelerateForwardRate() const
+{
+	return decelerateForwardRate;
+}
+
 
 
 void Vwr::CameraManipulator::flushMouseEventStack()
@@ -435,6 +440,25 @@ void Vwr::CameraManipulator::computePosition( const osg::Vec3& eye,const osg::Ve
 
 }
 
+
+void CameraManipulator::rotateCamera( float py0, float px0, double throwScale, float py1, float px1 )
+{
+	osg::Vec3 axis;
+	float angle;
+
+	trackball( axis,angle,px1,py1,px0,py0 );
+
+	osg::Quat new_rotate;
+
+	new_rotate.makeRotate( angle * throwScale,axis );
+
+	if ( _cameraCanRot ) {
+		_rotation = _rotation*new_rotate;
+	}
+	else {
+		emit sendMouseRotation( new_rotate.inverse() );
+	}
+}
 
 bool Vwr::CameraManipulator::calcMovement()
 {
@@ -509,28 +533,13 @@ bool Vwr::CameraManipulator::calcMovement()
 
 		// rotate camera.
 
-		osg::Vec3 axis;
-		float angle;
-
 		float px0 = _ga_t0->getXnormalized();
 		float py0 = _ga_t0->getYnormalized();
 
 		float px1 = _ga_t1->getXnormalized();
 		float py1 = _ga_t1->getYnormalized();
 
-
-		trackball( axis,angle,px1,py1,px0,py0 );
-
-		osg::Quat new_rotate;
-
-		new_rotate.makeRotate( angle * throwScale,axis );
-
-		if ( _cameraCanRot ) {
-			_rotation = _rotation*new_rotate;
-		}
-		else {
-			emit sendMouseRotation( new_rotate.inverse() );
-		}
+		rotateCamera( py0, px0, throwScale, py1, px1 );
 
 
 		notifyServer();
@@ -1408,6 +1417,58 @@ void Vwr::CameraManipulator::resetProjectionMatrixToDefault()
 	this->coreGraph->getCamera()->setProjectionMatrixAsPerspective( 60, ratio, 0.01, appConf->getValue( "Viewer.Display.ViewDistance" ).toFloat() );
 }
 // Duransky end - Resetovanie projekcnej matice pri vypnuti vertigo modu
+
+// pridame funkciu setSpeed, ktoru budeme volat na zaklade druhej ruky (pocet vystretych prstov napr)
+void Vwr::CameraManipulator::enableCameraMovement( Vwr::CameraManipulator::Movement movement )
+{
+	switch ( movement ) {
+		case Vwr::CameraManipulator::Movement::RIGHT : {
+			sideSpeed = 2 * maxSpeed;;
+			decelerateSideRate = false;
+			break;
+		}
+
+		case Vwr::CameraManipulator::Movement::LEFT : {
+			sideSpeed = -2 * maxSpeed;;
+			decelerateSideRate = false;
+			break;
+		}
+
+		case Vwr::CameraManipulator::Movement::UP : {
+			verticalSpeed = -2 * maxSpeed;;
+			decelerateVerticalRate = false;
+			break;
+		}
+
+		case Vwr::CameraManipulator::Movement::DOWN : {
+			verticalSpeed = 2 * maxSpeed;;
+			decelerateVerticalRate = false;
+			break;
+		}
+
+		case Vwr::CameraManipulator::Movement::FORWARD : {
+			forwardSpeed = 2 * maxSpeed;
+			decelerateForwardRate = false;
+			break;
+		}
+
+		case Vwr::CameraManipulator::Movement::BACKWARD : {
+			forwardSpeed = -2 * maxSpeed;
+			decelerateForwardRate = false;
+			break;
+		}
+
+		default:
+			break;
+	}
+}
+
+void Vwr::CameraManipulator::disableCameraMovement()
+{
+	decelerateSideRate = true;
+	decelerateVerticalRate = true;
+	decelerateForwardRate = true;
+}
 
 } // namespace Vwr
 

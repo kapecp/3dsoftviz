@@ -56,7 +56,7 @@ if( USE_STRICT_COMPILE_WARNINGS )
 		set( FLAGS_FOR_DEBUG "-ansi -pedantic -Wall -Wcast-align -Wcast-qual -Wchar-subscripts -Wcomment -Wconversion -Wctor-dtor-privacy -Wdisabled-optimization -Wextra -Wfloat-equal  -Wformat  -Wformat-nonliteral -Wformat-security  -Wformat-y2k -Wformat=2  -Wimport  -Winit-self -Winline -Winvalid-pch -Wlogical-op -Wlong-long -Wmissing-braces -Wmissing-declarations -Wmissing-field-initializers -Wmissing-format-attribute   -Wmissing-include-dirs -Wmissing-noreturn -Wnoexcept  -Wpacked  -Wparentheses -Wpointer-arith -Wredundant-decls -Wreturn-type -Wsequence-point -Wsign-compare  -Wsign-promo -Wstack-protector -Wstrict-aliasing=2 -Wstrict-null-sentinel -Wstrict-overflow=5 -Wswitch -Wswitch-default -Wswitch-enum -Wtrigraphs -Wundef -Wuninitialized -Wunknown-pragmas -Wunreachable-code -Wunsafe-loop-optimizations -Wvariadic-macros -Wvolatile-register-var -Wwrite-strings  -Wno-unused-parameter -Wno-unused" )
 	elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR CMAKE_COMPILER_IS_GNUCXX)
 		# using GCC
-		set( FLAGS_FOR_DEBUG "-ansi -pedantic -Wall -Wcast-align -Wcast-qual -Wchar-subscripts -Wcomment -Wconversion -Wctor-dtor-privacy -Wdisabled-optimization -Wextra -Wfloat-equal -Wformat -Wformat-nonliteral -Wformat-security -Wformat-y2k -Wformat=2 -Wimport -Winit-self -Winline -Winvalid-pch -Wlogical-op -Wlong-long -Wmissing-braces -Wmissing-declarations -Wmissing-field-initializers -Wmissing-format-attribute -Wmissing-include-dirs -Wmissing-noreturn -Wnoexcept -Wpacked -Wparentheses -Wpointer-arith -Wredundant-decls -Wreturn-type -Wsequence-point -Wsign-compare -Wsign-promo -Wstack-protector -Wstrict-aliasing=2 -Wstrict-null-sentinel -Wstrict-overflow=5 -Wswitch -Wswitch-default -Wswitch-enum -Wtrigraphs -Wundef -Wuninitialized -Wunknown-pragmas -Wunreachable-code -Wunsafe-loop-optimizations -Wvariadic-macros -Wvolatile-register-var -Wwrite-strings -Wno-unused-parameter -Wno-unused" )
+		set( FLAGS_FOR_DEBUG "-std=c++11 -pedantic -Wall -Wcast-align -Wcast-qual -Wchar-subscripts -Wcomment -Wconversion -Wctor-dtor-privacy -Wdisabled-optimization -Wextra -Wfloat-equal -Wformat -Wformat-nonliteral -Wformat-security -Wformat-y2k -Wformat=2 -Wimport -Winit-self -Winline -Winvalid-pch -Wlogical-op -Wlong-long -Wmissing-braces -Wmissing-declarations -Wmissing-field-initializers -Wmissing-format-attribute -Wmissing-include-dirs -Wmissing-noreturn -Wnoexcept -Wpacked -Wparentheses -Wpointer-arith -Wredundant-decls -Wreturn-type -Wsequence-point -Wsign-compare -Wsign-promo -Wstack-protector -Wstrict-aliasing=2 -Wstrict-null-sentinel -Wstrict-overflow=5 -Wswitch -Wswitch-default -Wswitch-enum -Wtrigraphs -Wundef -Wuninitialized -Wunknown-pragmas -Wunreachable-code -Wunsafe-loop-optimizations -Wvariadic-macros -Wvolatile-register-var -Wwrite-strings -Wno-unused-parameter -Wno-unused" )
 
 		# to suppress warnings for unused stuff use: -Wno-unused-parameter -Wno-unused-result
 		# not used:
@@ -125,7 +125,7 @@ if(COMMAND cotire )
 
 	### Fix virtual memory range
 	if( MSVC )
-		set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Zm200" CACHE STRING "" FORCE )
+		set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Zm213" CACHE STRING "" FORCE )
 	endif()
 
 	# fix for Diluculum and LuaJIT on 64bit OSX: Lua new_state returned NULL, LuaJIT needs following flags
@@ -256,6 +256,16 @@ find_package( Boost 1.39 REQUIRED )
 
 # Include directories
 include_directories( SYSTEM ${Boost_INCLUDE_DIRS}  )
+
+# ------------------------------ LEAP -------------------------------
+# Find leap
+find_package( LEAP )
+if( LEAP_FOUND )
+	add_definitions( -DLEAP_FOUND )
+	message( STATUS "LEAP_LIB_DIR=${LEAP_LIBRARIES}" )
+else()
+	message( STATUS "LEAP Not Found" )
+endif()
 
 # ------------------------------ FGLOVE -------------------------------
 # Find fglove
@@ -571,6 +581,12 @@ include_directories( SYSTEM
 	${DEPENDENCIES_INCLUDE_DIR}/libnoise
 )
 
+if( LEAP_FOUND )
+	include_directories( SYSTEM
+		${LEAP_INCLUDE_DIRS}
+	)
+endif()
+
 #-------------------------------- Source files -------------------------------
 set( SRC_MAIN "src/main.cpp" )
 file( GLOB_RECURSE SRC_CORE		"src/Core/*.cpp" )
@@ -605,6 +621,9 @@ file( GLOB_RECURSE SRC_SPEECH	"src/Speech/*.cpp" )
 
 # FGlove
 # file ( GLOB_RECURSE SRC_FGLOVE "src/FGlove/*.cpp" )
+
+# Leap
+file ( GLOB_RECURSE SRC_LEAP "src/Leap/*.cpp" )
 
 
 # All source files
@@ -641,6 +660,12 @@ endif()
 #	list( APPEND SRC ${SRC_FGLOVE} )
 # endif()
 
+# add Leap
+if( LEAP_FOUND )
+	list( APPEND SRC ${SRC_LEAP} )
+endif()
+
+
 
 #-------------------------------- Header files -------------------------------
 file( GLOB_RECURSE HEADER_CORE		"include/Core/*.h" )
@@ -676,6 +701,9 @@ file( GLOB_RECURSE HEADER_SPEECH	"include/Speech/*.h" )
 # FGLOVE
 # file( GLOB_RECURSE HEADER_FGLOVE	"include/FGlove/*.h" )
 
+# LEAP
+file( GLOB_RECURSE HEADER_LEAP	"include/Leap/*.h" )
+
 # All header files
 set( INCL
 	${HEADER_MAIN} ${HEADER_CORE}
@@ -709,6 +737,11 @@ endif()
 # if( FGLOVE_FOUND )
 #	list( APPEND INCL ${HEADER_FGLOVE} )
 # endif()
+
+#LEAP
+if( LEAP_FOUND )
+	list( APPEND INCL ${HEADER_LEAP} )
+endif()
 
 #-------------------------------------- Group source files --------------------------------------
 source_group( \\src main.cpp )
@@ -768,6 +801,12 @@ endif()
 #	source_group( \\src\\Fglove "^.*Fglove/.*$" )
 #	source_group( \\headers\\Fglove "^.*Fglove/.*h$" )
 # endif()
+
+#leap
+if( LEAP_FOUND )
+	source_group( \\src\\Leap "^.*Leap/.*$" )
+	source_group( \\headers\\Leap "^.*Leap/.*h$" )
+endif()
 
 # add diluculum code directly due to MSVC problems
 if( MSVC )
@@ -840,6 +879,10 @@ endif()
 #	target_link_libraries( ${3DSOFTVIZ_NAME} ${FGLOVE_LIBRARIES} )
 # endif()
 
+if( LEAP_FOUND )
+	target_link_libraries( ${3DSOFTVIZ_NAME} ${LEAP_LIBRARIES} )
+endif()
+
 # 'cotire' the executable
 if( COMMAND cotire )
 	# link ${3DSOFTVIZ_NAME}_unity target to all libraries to which ${3DSOFTVIZ_NAME} links
@@ -852,12 +895,12 @@ endif()
 if( USE_BUILTIN_DEPENDENCIES )
 
 	# dependencies of non-unity build
-	add_dependencies( ${3DSOFTVIZ_NAME} libnoise dep_diluculum dep_luametrics dep_leg dep_lpeg dep_luafilesystem )
+	add_dependencies( ${3DSOFTVIZ_NAME} libnoise dep_luametrics dep_leg dep_lpeg dep_luafilesystem )
 
 	if( MSVC )
 		add_dependencies( ${3DSOFTVIZ_NAME} dep_lua )
 	else()
-		add_dependencies( ${3DSOFTVIZ_NAME} dep_luajit )
+		add_dependencies( ${3DSOFTVIZ_NAME} dep_diluculum dep_luajit )
 	endif()
 
 	if( OpenCV_FOUND )
@@ -866,12 +909,12 @@ if( USE_BUILTIN_DEPENDENCIES )
 
 	# dependencies of unity build
 	if (COMMAND cotire)
-		add_dependencies( ${3DSOFTVIZ_NAME}_unity libnoise dep_diluculum dep_luametrics dep_leg dep_lpeg dep_luafilesystem )
+		add_dependencies( ${3DSOFTVIZ_NAME}_unity libnoise dep_luametrics dep_leg dep_lpeg dep_luafilesystem )
 
 		if( MSVC )
 			add_dependencies( ${3DSOFTVIZ_NAME}_unity dep_lua )
 		else()
-			add_dependencies( ${3DSOFTVIZ_NAME}_unity dep_luajit )
+			add_dependencies( ${3DSOFTVIZ_NAME}_unity dep_diluculum dep_luajit )
 		endif()
 
 		if( OpenCV_FOUND )
@@ -925,6 +968,16 @@ endif()
 #			RUNTIME DESTINATION ${INSTALL_BIN}
 #			LIBRARY DESTINATION ${INSTALL_LIB} )
 # endif()
+
+# Install needed .dll files for leap
+if( LEAP_FOUND )
+
+	install( DIRECTORY ${LEAP_DRIVER_DIRS}/ DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/_install/bin )
+
+	#install( FILES ${LEAP_LIBRARIES} DESTINATION ${INSTALL_BIN}
+#			RUNTIME DESTINATION ${INSTALL_BIN}
+#   		LIBRARY DESTINATION ${INSTALL_LIB} )
+endif()
 
 # Install built in dependencies unless we are building an OSX Bundle
 if( USE_BUILTIN_DEPENDENCIES )

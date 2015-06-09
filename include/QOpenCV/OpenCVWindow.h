@@ -5,12 +5,12 @@
 #include <opencv2/core/core.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 
-class QLabel;
-class QPushButton;
-class QRadioButton;
-class QCheckBox;
-class QStackedLayout;
-class QSlider;
+#include <QLabel>
+#include <QPushButton>
+#include <QRadioButton>
+#include <QCheckBox>
+#include <QStackedLayout>
+#include <QSlider>
 
 namespace OpenCV {
 class CapVideo;

@@ -16,7 +16,7 @@ void SetNodeLabelExecutor::execute_client()
 	QMap<qlonglong, osg::ref_ptr<Data::Node> >* nodes = currentGraph -> getNodes();
 	if ( nodes->contains( id ) ) {
 		Data::Node* node = *nodes->find( id );
-		node->setName( label );
+		( ( Data::AbsNode* )node )->setName( label );
 		node->setLabelText( label );
 		node->reloadConfig();
 	}
@@ -35,7 +35,7 @@ void SetNodeLabelExecutor::execute_server()
 	QMap<qlonglong, osg::ref_ptr<Data::Node> >* nodes = currentGraph -> getNodes();
 	if ( nodes->contains( id ) ) {
 		Data::Node* node = *nodes->find( id );
-		node->setName( label );
+		( ( Data::AbsNode* )node )->setName( label );
 		node->setLabelText( label );
 		node->reloadConfig();
 	}

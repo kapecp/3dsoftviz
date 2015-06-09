@@ -163,6 +163,13 @@ void CoreWindow::createActions()
 	play->setFocusPolicy( Qt::NoFocus );
 	connect( play, SIGNAL( clicked() ), this, SLOT( playPause() ) );
 
+	showMetricsButton = new QPushButton();
+	showMetricsButton->setToolTip( "Show metrics toolbar" );
+	showMetricsButton->setMaximumSize( 20, 614 );
+	showMetricsButton->setText( "<" );
+	showMetricsButton->setFocusPolicy( Qt::NoFocus );
+	connect( showMetricsButton, SIGNAL( clicked() ), this, SLOT( showMetrics() ) );
+
 	addMeta = new QPushButton();
 	addMeta->setIcon( QIcon( "../share/3dsoftviz/img/gui/meta.png" ) );
 	addMeta->setToolTip( "&Add meta node" );
@@ -954,6 +961,17 @@ QWidget* CoreWindow::createMoreFeaturesTab( QFrame* line )
 #endif
 #endif
 
+#ifdef LEAP_FOUND
+	line = createLine();
+	lMore->addRow( line );
+	lMore->addRow( new QLabel( tr( "Leap" ) ) );
+	b_start_leap = new QPushButton();
+	b_start_leap->setText( "Start Leap" );
+	b_start_leap->setMaximumWidth( 136 );
+	lMore->addRow( b_start_leap );
+	connect( b_start_leap, SIGNAL( clicked() ), this, SLOT( startLeap() ) );
+#endif
+
 #ifdef SPEECHSDK_FOUND
 	line = createLine();
 	lMore->addRow( line );
@@ -1107,6 +1125,30 @@ void CoreWindow::saveLayoutToDB()
 void CoreWindow::sqlQuery()
 {
 	std::cout << lineEdit->text().toStdString() << endl;
+}
+
+void CoreWindow::showMetrics()
+{
+	if ( CoreWindow::loadFunctionCallButton->isHidden() ) {
+		metricsToolBar->setMinimumWidth( 350 );
+		metricsToolBar->setMaximumWidth( 350 );
+		CoreWindow::loadFunctionCallButton->show();
+		CoreWindow::browsersGroupingButton->show();
+		showMetricsButton->setToolTip( "Hide metrics toolbar" );
+		showMetricsButton->setText( ">" );
+		luaGraphTreeView->setMaximumWidth( 350 );
+
+	}
+	else {
+		CoreWindow::loadFunctionCallButton->hide();
+		CoreWindow::browsersGroupingButton->hide();
+		showMetricsButton->setToolTip( "Show metrics toolbar" );
+		showMetricsButton->setText( "<" );
+		luaGraphTreeView->setMaximumWidth( 0 );
+		luaGraphTreeView->setMinimumWidth( 0 );
+		metricsToolBar->setMaximumWidth( 20 );
+		metricsToolBar->setMinimumWidth( 20 );
+	}
 }
 
 void CoreWindow::playPause()
@@ -1302,7 +1344,7 @@ void CoreWindow::removeMetaNodes()
 
 	while ( i != selectedNodes->constEnd() ) {
 		//treba este opravit - zatial kontrolujeme ci to nie je mergedNode len podla mena
-		if ( ( *i )->getType()->isMeta() && ( *i )->getName() != "mergedNode" ) {
+		if ( ( *i )->getType()->isMeta() && ( ( Data::AbsNode* )( *i ) )->getName() != "mergedNode" ) {
 			Network::Server* server = Network::Server::getInstance();
 			Network::Client* client = Network::Client::getInstance();
 			if ( !client->isConnected() ) {
@@ -1543,7 +1585,7 @@ void CoreWindow::applyLabelClick()
 			client->sendNodeLabel( ( *ni )->getId(), newLabel );
 		}
 		else {
-			( *ni )->setName( newLabel );
+			( ( Data::AbsNode* )( *ni ) )->setName( newLabel );
 			( *ni )->setLabelText( newLabel );
 			( *ni )->reloadConfig();
 			server->sendNodeLabel( ( *ni )->getId(), newLabel );
@@ -2641,6 +2683,25 @@ void CoreWindow::startSpeech()
 }
 #endif
 
+#ifdef LEAP_FOUND
+void CoreWindow::startLeap()
+{
+	if ( mLeapThr!=NULL && b_start_leap->text()=="Stop Leap" ) {
+		//this->mLeapThr->cancel=true;
+		delete( this->mLeapThr );
+		b_start_leap->setText( "Start Leap" );
+		this->mLeapThr=NULL;
+		return;
+	}
+
+	this->mLeapThr = new Leap::LeapThread();
+	//CoUninitialize();
+
+	this->mLeapThr->start();
+	b_start_leap->setText( "Stop Leap" );
+}
+#endif
+
 
 
 void CoreWindow::toggleSpyWatch()
@@ -3133,20 +3194,21 @@ void CoreWindow::startGlovesRecognition()
 
 void CoreWindow::createMetricsToolBar()
 {
-	toolBar = new QToolBar( "Metrics visualizations",this );
-
+	metricsToolBar = new QToolBar( "Metrics visualizations",this );
 	// <Change> Gloger start: added horizontal frame to support browser (webView) grouping toggling
 	QFrame* frame = createHorizontalFrame();
 	frame->layout()->addWidget( loadFunctionCallButton );
 	frame->layout()->addWidget( browsersGroupingButton );
-	toolBar->addWidget( frame );
+	metricsToolBar->addWidget( frame );
 	// Gloger end
+	frame = createHorizontalFrame();
+	frame->layout()->addWidget( showMetricsButton );
+	frame->layout()->addWidget( luaGraphTreeView );
+	metricsToolBar->addWidget( frame );
+	metricsToolBar->setMovable( false );
+	showMetrics();
 
-	toolBar->addWidget( luaGraphTreeView );
-	toolBar->setMinimumWidth( 350 );
-
-	addToolBar( Qt::RightToolBarArea,toolBar );
-	toolBar->setMovable( true );
+	addToolBar( Qt::RightToolBarArea,metricsToolBar );
 
 	toolBar = new QToolBar( "Metrics filter",this );
 #if QT_VERSION >= 0x040700

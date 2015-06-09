@@ -24,13 +24,12 @@ class CapVideo;
 namespace ArucoModul {
 
 /**
-    *@brief Class ArucoThread
-    *@author Autor: David durcak
-    *@date 18.02.2014
-    *@note This class provides a thread for tracking Aruco.
-    */
+	*@brief Class ArucoThread
+	*@author Autor: David durcak
+	*@date 18.02.2014
+	*@note This class provides a thread for tracking Aruco.
+	*/
 class ArucoThread : public QThread
-
 {
 	Q_OBJECT
 
@@ -261,7 +260,7 @@ private:
 	bool		mUpdCorPar;			// if true, correction can be setted
 	bool		mSendImgEnabled;	// if true, of emiting actual frame is enabled
 	bool		mSendBackgrImgEnabled;
-	bool        mMultiMarkerEnabled;
+	bool		mMultiMarkerEnabled;
 
 	unsigned int	mGrM;				// number of marker for graph controll
 	unsigned int	mMoM;				// number of marker for mouse controll

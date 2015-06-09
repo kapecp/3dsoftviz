@@ -1,6 +1,7 @@
 #include "Kinect/KinectHandTracker.h"
 #include "Viewer/MouseControl.h"
 #include "QDebug"
+#include "Viewer/GraphNavigation.h"
 
 #ifdef NITE2_FOUND
 
@@ -17,6 +18,7 @@ Kinect::KinectHandTracker::KinectHandTracker( openni::Device* device, openni::Vi
 	mSpeed=1.0;
 	mouse = new Vwr::MouseControl();
 	mDepth=m_depth;
+	viewer = AppCore::Core::getInstance()->getCoreWindow()->GetViewerQt();
 }
 
 
@@ -36,6 +38,7 @@ void Kinect::KinectHandTracker::setSpeedMovement( double set )
 
 void Kinect::KinectHandTracker::getAllGestures()
 {
+	isGestureClick = false;
 	// get frame - depth data
 	this->m_pHandTracker.readFrame( &this->handTrackerFrame );
 
@@ -45,20 +48,20 @@ void Kinect::KinectHandTracker::getAllGestures()
 		// checking for complete gesture
 		if ( gestures[i].isComplete() ) {
 			printf( "completed gesture\n" );
-			if ( gestures[i].getType()==nite::GESTURE_CLICK ) {
+			/*
+			 * if ( gestures[i].getType()==nite::GESTURE_CLICK ) {
 				printf( "gesture click is on\n" );
 				if ( isClick ) {
 					isClick=false;
-					printf( "Release" );
-					mouse->releasePressMouse( Qt::LeftButton );
+					printf( "Release\n" );
 				}
 				else {
 					isClick=true;
-					printf( "Click" );
-					mouse->clickPressMouse( Qt::LeftButton );
+					printf( "Click\n" );
 				}
+				isGestureClick = true;
 
-			}
+			}*/
 			const nite::Point3f& position = gestures[i].getCurrentPosition();
 			printf( "Gesture %d at (%f,%f,%f)\n", gestures[i].getType(), position.x, position.y, position.z );
 
@@ -75,14 +78,13 @@ void Kinect::KinectHandTracker::getAllHands()
 	// If hand matches old positions, previous ID is assigned again
 	const nite::Array<nite::HandData>& hands= this->handTrackerFrame.getHands();
 
-	//printf("%d hands\n", hands.getSize());
-	this->isTwoHands = false;
+	//  printf("%d hands\n", hands.getSize());
 
 	for ( int i = 0; i < hands.getSize(); ++i ) {
 		const nite::HandData& user = hands[i];
 
 		if ( !user.isTracking() ) {
-			//printf("Lost hand %d\n", user.getId());
+			printf( "Lost hand %d\n", user.getId() );
 			nite::HandId id = user.getId();
 			HistoryBuffer<20>* pHistory = this->g_histories[id];
 			this->g_histories.erase( this->g_histories.find( id ) );
@@ -90,37 +92,29 @@ void Kinect::KinectHandTracker::getAllHands()
 		}
 		else {
 			if ( user.isNew() ) {
-				//printf("New hand id %d\n", user.getId());
+				printf( "New hand id %d\n", user.getId() );
 				this->g_histories[user.getId()] = new HistoryBuffer<20>;
 			}
 			// Hand evidence in Buffer
 			HistoryBuffer<20>* pHistory = this->g_histories[user.getId()];
 			pHistory->AddPoint( user.getPosition() );
 
-			// Data for mouse
 			//first find HAND = MOUSE
 			if ( i==0 && isCursorMovementEnable ) {
 				mouse->setSpeedUpMoving( mSpeed );
-				//mouse->moveCursorMouse(user.getPosition().x/2,-1.0*user.getPosition().y/2,isClick);
 				coordinateConverter.convertWorldToDepth( *mDepth, user.getPosition().x, user.getPosition().y, user.getPosition().z, &mDepthX, &mDepthY, &mDepthZ );
-				mouse->moveCursorWorldCoordinates( mDepthX,mDepthY,isClick );
+				mouse->moveCursorWorldCoordinates( mDepthX,mDepthY, true );
 			}
-			// TODO - further implementation should include depth information in pixels
-			this->handZ[i] = user.getPosition().z;
 
+			// TODO - further implementation should include depth information in pixels
 			this->getArrayHands[i][0] = user.getPosition().x;
 			this->getArrayHands[i][1] = 0 - user.getPosition().y;
-			// If two hands have been found get the position of the rectangle
-			if ( hands.getSize() == 2 ) {
-				printf( "two hands found\n" );
-				// get positions for both hands
-
-
-
-				this->isTwoHands = true;
-			}
+			this->handZ[i] = user.getPosition().z;
 		}
 	}
+	// Set number of hands in tracking
+	this->numHandsTracking = hands.getSize();
+	//printf( "%d hands\n", hands.getSize() );
 }
 
 void Kinect::KinectHandTracker::getRotatingMove()
@@ -135,9 +129,10 @@ void Kinect::KinectHandTracker::getRotatingMove()
 	this->slidingHand_type = "";
 	//strcpy(this->slidingHand_type, "");
 
-	for ( int i = 0; i < hands.getSize(); ++i ) {
-		const nite::HandData& user = hands[i];
-
+//	for ( int i = 0; i < hands.getSize(); ++i ) {
+	if ( hands.getSize() != 0 ) {
+		//const nite::HandData& user = hands[i];
+		const nite::HandData& user = hands[0];
 		if ( !user.isTracking() ) {
 			//printf("Lost hand %d\n", user.getId());
 			nite::HandId id = user.getId();
@@ -153,11 +148,7 @@ void Kinect::KinectHandTracker::getRotatingMove()
 			HistoryBuffer<20>* pHistory = this->g_histories[user.getId()];
 			pHistory->AddPoint( user.getPosition() );
 
-
 			coordinateConverter.convertWorldToDepth( *mDepth, user.getPosition().x, user.getPosition().y, user.getPosition().z, &this->slidingHand_x, &this->slidingHand_y, &this->slidingHand_z );
-
-			// printf("%lf %lf \n", this->slidingHand_x,this->slidingHand_y );
-
 
 			float koordy[60] = {0};
 
@@ -168,30 +159,26 @@ void Kinect::KinectHandTracker::getRotatingMove()
 				const nite::Point3f& position2 = pHistory->operator[]( 19 );
 				this->m_pHandTracker.convertHandCoordinatesToDepth( position2.x, position2.y, position2.z, &koordy[2], &koordy[3] );
 
-				bool gesto_dolava = false;
-				bool gesto_doprava = false;
-				bool gesto_hore = false;
-				bool gesto_dole = false;
+				gesto_dolava = false;
+				gesto_doprava = false;
+				gesto_hore = false;
+				gesto_dole = false;
 
 				//check for output
 				if ( abs( koordy[0] - koordy[2] ) > 100.0 ) {
 					if ( koordy[0] > koordy[2] ) {
-						gesto_dolava = false;
 						gesto_doprava = true;
 					}
 					else {
 						gesto_dolava = true;
-						gesto_doprava = false;
 					}
 				}
 				if ( abs( koordy[1] - koordy[3] ) > 100.0 ) {
 					if ( koordy[1] < koordy[3] ) {
-						gesto_dole = false;
 						gesto_hore = true;
 					}
 					else {
 						gesto_dole = true;
-						gesto_hore = false;
 					}
 				}
 				if ( gesto_dolava ) {
@@ -200,9 +187,49 @@ void Kinect::KinectHandTracker::getRotatingMove()
 				else if ( gesto_doprava ) {
 					this->slidingHand_type = "scroll right";
 				}
+				else if ( gesto_hore ) {
+					this->slidingHand_type = "scroll up";
+				}
+				else if ( gesto_dole ) {
+					this->slidingHand_type = "scroll down";
+				}
 			}
 		}
 	}
 }
 
+// set event for graph movement
+void Kinect::KinectHandTracker::moveGraphByHand( )
+{
+	if ( gesto_dolava ) {
+		viewer->getEventQueue()->keyPress( osgGA::GUIEventAdapter::KEY_Left );
+		viewer->getEventQueue()->keyRelease( osgGA::GUIEventAdapter::KEY_Left );
+	}
+	else if ( gesto_doprava ) {
+		viewer->getEventQueue()->keyPress( osgGA::GUIEventAdapter::KEY_Right );
+		viewer->getEventQueue()->keyRelease( osgGA::GUIEventAdapter::KEY_Right );
+	}
+	if ( gesto_hore ) {
+		viewer->getEventQueue()->keyPress( osgGA::GUIEventAdapter::KEY_Page_Up );
+		viewer->getEventQueue()->keyRelease( osgGA::GUIEventAdapter::KEY_Page_Up );
+	}
+	else if ( gesto_dole ) {
+		viewer->getEventQueue()->keyPress( osgGA::GUIEventAdapter::KEY_Page_Down );
+		viewer->getEventQueue()->keyRelease( osgGA::GUIEventAdapter::KEY_Page_Down );
+	}
+}
+void Kinect::KinectHandTracker::moveGraphByHandToDepth( float deltaZ )
+{
+	// trashold
+	if ( abs( deltaZ ) > 7.0f ) {
+		if ( deltaZ > 0 ) {
+			viewer->getEventQueue()->keyPress( osgGA::GUIEventAdapter::KEY_Up );
+			viewer->getEventQueue()->keyRelease( osgGA::GUIEventAdapter::KEY_Up );
+		}
+		else {
+			viewer->getEventQueue()->keyPress( osgGA::GUIEventAdapter::KEY_Down );
+			viewer->getEventQueue()->keyRelease( osgGA::GUIEventAdapter::KEY_Down );
+		}
+	}
+}
 #endif // NITE2_FOUND

@@ -534,7 +534,7 @@ void Server::sendNewNode( osg::ref_ptr<Data::Node> node, QTcpSocket* client )
 			<< ( float )( node->getCurrentPosition().x()/graphScale )
 			<< ( float )( node->getCurrentPosition().y()/graphScale )
 			<< ( float )( node->getCurrentPosition().z()/graphScale )
-			<< ( QString )( node->getName() )
+			<< ( QString )( ( ( Data::AbsNode* ) node )->getName() )
 			<< ( float ) color.x()
 			<< ( float ) color.y()
 			<< ( float ) color.z()
@@ -731,7 +731,7 @@ void Server::sendAddMetaNode( osg::ref_ptr<Data::Node> metaNode, QLinkedList<osg
 	QDataStream out( &block,QIODevice::WriteOnly );
 	out.setFloatingPointPrecision( QDataStream::SinglePrecision );
 
-	out << ( quint16 )0 << ( quint8 ) AddMetaNodeExecutor::INSTRUCTION_NUMBER << ( int ) metaNode->getId() << ( QString ) metaNode->getName();
+	out << ( quint16 )0 << ( quint8 ) AddMetaNodeExecutor::INSTRUCTION_NUMBER << ( int ) metaNode->getId() << ( QString )( ( Data::AbsNode* )metaNode )->getName();
 	out << ( float ) position.x() << ( float ) position.y() << ( float ) position.z();
 	out << ( QString ) edgeName;
 	out << ( int ) selectedNodes->count();
@@ -762,13 +762,13 @@ void Server::sendSetRestriction( quint8 type, osg::ref_ptr<Data::Node> node1, os
 	out.setFloatingPointPrecision( QDataStream::SinglePrecision );
 
 	out << ( quint16 )0 << ( quint8 ) SetRestrictionExecutor::INSTRUCTION_NUMBER << ( quint8 ) type;
-	out << ( int ) node1->getId() << ( QString ) node1->getName();
+	out << ( int ) node1->getId() << ( QString )( ( Data::AbsNode* ) node1 )->getName();
 	out << ( float ) position_node1.x() << ( float ) position_node1.y() << ( float ) position_node1.z();
-	out << ( int ) node2->getId() << ( QString ) node2->getName();
+	out << ( int ) node2->getId() << ( QString )( ( Data::AbsNode* ) node2 )->getName();
 	out << ( float ) position_node2.x() << ( float ) position_node2.y() << ( float ) position_node2.z();
 
 	if ( type == 3 && node3 != NULL && position_node3 != NULL ) {
-		out << ( int ) node3->getId() << ( QString ) node3->getName();
+		out << ( int ) node3->getId() << ( QString )( ( Data::AbsNode* ) node3 )->getName();
 		out << ( float ) position_node3->x() << ( float ) position_node3->y() << ( float ) position_node3->z();
 	}
 
@@ -805,7 +805,7 @@ void Server::sendSetRestriction( quint8 type, QLinkedList<osg::ref_ptr<Data::Nod
 	Layout::RestrictionRemovalHandler_RestrictionNodesRemover::NodesListType::Iterator itRN;
 
 	for ( itRN = restrictionNodes->begin(); itRN!= restrictionNodes->end(); itRN++ ) {
-		out << ( int )( *itRN )->getId() << ( QString )( *itRN )->getName();
+		out << ( int )( *itRN )->getId() << ( QString )( ( Data::AbsNode* )( *itRN ) )->getName();
 		out<< ( float )( *itRN )->getTargetPosition().x()<< ( float )( *itRN )->getTargetPosition().y() << ( float )( *itRN )->getTargetPosition().z();
 	}
 

@@ -3,6 +3,7 @@
 
 #include <QThread>
 #include <QImage>
+#include <QTimer>
 
 #include "OpenNI.h"
 
@@ -11,6 +12,8 @@
 #endif
 
 #include <opencv2/core/core.hpp>
+#include "Viewer/GraphNavigation.h"
+#include "Viewer/MouseControl.h"
 
 namespace Kinect {
 
@@ -36,7 +39,10 @@ public:
 	void run();
 
 signals:
-
+	// Marak start
+	void signalClickTimerStart();
+	void signalClickTimerStop();
+	// Marak end
 	/**
 	 * @brief send coordinate for controlling graph
 	 * @param x x coordinate of hand
@@ -65,7 +71,15 @@ signals:
 	void pushImageQ( QImage qimage );
 
 public slots:
-
+	// Marak start
+	/**
+	 *	\fn public timerTimeout
+	 *	\brief called when timer for removeLastSelection gesture times out
+	 */
+	void clickTimerStart();
+	void clickTimerStop();
+	void clickTimerTimeout();
+	// Marak end
 	/**
 	 * @brief start funkcionality Kinect thread
 	 * @param set true if start, false for stop
@@ -117,7 +131,12 @@ public slots:
 	void setCaptureImage( bool set );
 
 private:
-
+	// Marak start
+	QTimer* clickTimer;
+	bool clickTimerFirstRun;
+	Vwr::GraphNavigation* nav;
+	Vwr::MouseControl* mouse;
+	// Marak end
 	/**
 	 * @brief information about status thread
 	 */
@@ -187,8 +206,6 @@ private:
 	 * @brief video stream data for save
 	 */
 	openni::VideoStream  m_depth;
-
-
 };
 }
 

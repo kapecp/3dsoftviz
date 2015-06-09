@@ -1019,7 +1019,7 @@ osg::ref_ptr<osg::Group> CoreGraph::initEdgeLabels()
 	QMap<qlonglong, osg::ref_ptr<Data::Edge> >::iterator i = in_edges->begin();
 
 	while ( i != in_edges->end() ) {
-		geode->addDrawable( i.value()->createLabel( i.value()->getName() ) );
+		geode->addDrawable( i.value()->createLabel( ( ( Data::AbsEdge* )i.value() )->getName() ) );
 		++i;
 	}
 

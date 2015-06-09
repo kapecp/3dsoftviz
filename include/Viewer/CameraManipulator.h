@@ -53,6 +53,24 @@ class CameraManipulator : public QObject, public KeySwitchMatrixManipulator
 public:
 	CameraManipulator( Vwr::CoreGraph* coreGraph );
 
+	/**
+	 * @brief Enum used to define what direction of movement we are using for camera movement
+	 */
+	enum Movement {
+		RIGHT, LEFT, UP, DOWN, FORWARD, BACKWARD
+	};
+
+	/**
+	 * @brief Enables camera movement to a specific direction
+	 * @param movement - direction where we want to move camera(enum Movement)
+	 */
+	void enableCameraMovement( Vwr::CameraManipulator::Movement movement );
+
+	/**
+	 * @brief Disables all camera movements
+	 */
+	void disableCameraMovement();
+
 	virtual const char* className() const
 	{
 		return "Trackball";
@@ -238,6 +256,9 @@ public:
 	void setNewPosition( osg::Vec3d cameraTargetPoint, osg::Vec3d cameraInterestPoint, std::list<osg::ref_ptr<Data::Node> > selectedCluster, std::list<osg::ref_ptr<Data::Edge> > selectedEdges );
 
 	osg::Vec3d getCameraPosition();
+
+	void rotateCamera( float py0, float px0, double throwScale, float py1, float px1 );
+	bool getDecelerateForwardRate() const;
 
 signals:
 

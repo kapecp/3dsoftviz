@@ -55,7 +55,7 @@ void QOpenCV::FaceRecognitionWindow::configureWindow()
 	mWindowLabel			= new QLabel( "", this, 0 );
 	mFaceRecRB				= new QRadioButton( tr( "Face recognition" ) );
 	mMarkerRB				= new QRadioButton( tr( "Marker detection" ) );
-	mMultiMarkerRB          = new QRadioButton( tr( "MultiMarker recognition" ) );
+	mMultiMarkerRB			= new QRadioButton( tr( "MultiMarker recognition" ) );
 	mNoVideo				= new QCheckBox( tr( "NoVideo" ) );
 	mModulesStackL			= new QStackedLayout;
 	mFaceRecStartCancelPB	= new QPushButton( tr( "Start FaceRec" ) );
@@ -88,7 +88,7 @@ void QOpenCV::FaceRecognitionWindow::configureWindow()
 	// face detection and marker controll buttons
 	QWidget*		faceRecPageWid		= new QWidget;
 	QWidget*		markerPageWid		= new QWidget;
-	QWidget*     multimarkerPageWid = new QWidget;
+	QWidget*		multimarkerPageWid = new QWidget;
 
 	QVBoxLayout*	faceRecPageLayout	= new QVBoxLayout;
 	QVBoxLayout*	markerPageLayout	= new QVBoxLayout;
