@@ -201,7 +201,7 @@ osg::Vec3f Data::OsgNode::getCurrentPosition( bool calculateNew, float interpola
 void Data::OsgNode::setDrawableColor( int pos, osg::Vec4 color )
 {
     //nastavenie farby uzla
-    osg::Geometry* geometry;
+    osg::Geometry* geometry = NULL;
     //osg::Geometry* geometry  = dynamic_cast<osg::Geometry*>( this->getDrawable( pos ) );
 
     if ( geometry != NULL ) {

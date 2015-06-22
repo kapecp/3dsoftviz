@@ -160,6 +160,13 @@ void CoreWindow::createActions()
     play->setFocusPolicy( Qt::NoFocus );
     connect( play, SIGNAL( clicked() ), this, SLOT( playPause() ) );
 
+    showMetricsButton = new QPushButton();
+    showMetricsButton->setToolTip( "Show metrics toolbar" );
+    showMetricsButton->setMaximumSize( 20, 614 );
+    showMetricsButton->setText( "<" );
+    showMetricsButton->setFocusPolicy( Qt::NoFocus );
+    connect( showMetricsButton, SIGNAL( clicked() ), this, SLOT( showMetrics() ) );
+
     addMeta = new QPushButton();
     addMeta->setIcon( QIcon( "../share/3dsoftviz/img/gui/meta.png" ) );
     addMeta->setToolTip( "&Add meta node" );
@@ -1001,14 +1008,14 @@ QWidget* CoreWindow::createMoreFeaturesTab( QFrame* line )
 #endif
 
 #ifdef LEAP_FOUND
-	line = createLine();
-	lMore->addRow( line );
-	lMore->addRow( new QLabel( tr( "Leap" ) ) );
-	b_start_leap = new QPushButton();
-	b_start_leap->setText( "Start Leap" );
-	b_start_leap->setMaximumWidth( 136 );
-	lMore->addRow( b_start_leap );
-	connect( b_start_leap, SIGNAL( clicked() ), this, SLOT( startLeap() ) );
+    line = createLine();
+    lMore->addRow( line );
+    lMore->addRow( new QLabel( tr( "Leap" ) ) );
+    b_start_leap = new QPushButton();
+    b_start_leap->setText( "Start Leap" );
+    b_start_leap->setMaximumWidth( 136 );
+    lMore->addRow( b_start_leap );
+    connect( b_start_leap, SIGNAL( clicked() ), this, SLOT( startLeap() ) );
 #endif
 
 #ifdef SPEECHSDK_FOUND
@@ -1168,26 +1175,26 @@ void CoreWindow::sqlQuery()
 
 void CoreWindow::showMetrics()
 {
-	if ( CoreWindow::loadFunctionCallButton->isHidden() ) {
-		metricsToolBar->setMinimumWidth( 350 );
-		metricsToolBar->setMaximumWidth( 350 );
-		CoreWindow::loadFunctionCallButton->show();
-		CoreWindow::browsersGroupingButton->show();
-		showMetricsButton->setToolTip( "Hide metrics toolbar" );
-		showMetricsButton->setText( ">" );
-		luaGraphTreeView->setMaximumWidth( 350 );
+    if ( CoreWindow::loadFunctionCallButton->isHidden() ) {
+        metricsToolBar->setMinimumWidth( 350 );
+        metricsToolBar->setMaximumWidth( 350 );
+        CoreWindow::loadFunctionCallButton->show();
+        CoreWindow::browsersGroupingButton->show();
+        showMetricsButton->setToolTip( "Hide metrics toolbar" );
+        showMetricsButton->setText( ">" );
+        luaGraphTreeView->setMaximumWidth( 350 );
 
-	}
-	else {
-		CoreWindow::loadFunctionCallButton->hide();
-		CoreWindow::browsersGroupingButton->hide();
-		showMetricsButton->setToolTip( "Show metrics toolbar" );
-		showMetricsButton->setText( "<" );
-		luaGraphTreeView->setMaximumWidth( 0 );
-		luaGraphTreeView->setMinimumWidth( 0 );
-		metricsToolBar->setMaximumWidth( 20 );
-		metricsToolBar->setMinimumWidth( 20 );
-	}
+    }
+    else {
+        CoreWindow::loadFunctionCallButton->hide();
+        CoreWindow::browsersGroupingButton->hide();
+        showMetricsButton->setToolTip( "Show metrics toolbar" );
+        showMetricsButton->setText( "<" );
+        luaGraphTreeView->setMaximumWidth( 0 );
+        luaGraphTreeView->setMinimumWidth( 0 );
+        metricsToolBar->setMaximumWidth( 20 );
+        metricsToolBar->setMinimumWidth( 20 );
+    }
 }
 
 void CoreWindow::playPause()
@@ -2828,7 +2835,7 @@ void CoreWindow::send_message()
 void CoreWindow::create_facewindow()
 {
 #ifdef OPENCV_FOUND
-	OpenCV::OpenCVCore::getInstance( NULL, this )->opencvInit();
+    OpenCV::OpenCVCore::getInstance( NULL, this )->opencvInit();
 #endif
 }
 
@@ -2837,7 +2844,7 @@ void CoreWindow::create_facewindow()
 void CoreWindow::createKinectWindow()
 {
 
-	OpenCV::OpenCVCore::getInstance( NULL, this )->opencvInit();
+    OpenCV::OpenCVCore::getInstance( NULL, this )->opencvInit();
 }
 
 void CoreWindow::calculateRansac()
@@ -2877,19 +2884,19 @@ void CoreWindow::startSpeech()
 #ifdef LEAP_FOUND
 void CoreWindow::startLeap()
 {
-	if ( mLeapThr!=NULL && b_start_leap->text()=="Stop Leap" ) {
-		//this->mLeapThr->cancel=true;
-		delete( this->mLeapThr );
-		b_start_leap->setText( "Start Leap" );
-		this->mLeapThr=NULL;
-		return;
-	}
+    if ( mLeapThr!=NULL && b_start_leap->text()=="Stop Leap" ) {
+        //this->mLeapThr->cancel=true;
+        delete( this->mLeapThr );
+        b_start_leap->setText( "Start Leap" );
+        this->mLeapThr=NULL;
+        return;
+    }
 
-	this->mLeapThr = new Leap::LeapThread();
-	//CoUninitialize();
+    this->mLeapThr = new Leap::LeapThread();
+    //CoUninitialize();
 
-	this->mLeapThr->start();
-	b_start_leap->setText( "Stop Leap" );
+    this->mLeapThr->start();
+    b_start_leap->setText( "Stop Leap" );
 }
 #endif
 
@@ -3379,21 +3386,21 @@ void CoreWindow::startGlovesRecognition()
 
 void CoreWindow::createMetricsToolBar()
 {
-	metricsToolBar = new QToolBar( "Metrics visualizations",this );
-	// <Change> Gloger start: added horizontal frame to support browser (webView) grouping toggling
-	QFrame* frame = createHorizontalFrame();
-	frame->layout()->addWidget( loadFunctionCallButton );
-	frame->layout()->addWidget( browsersGroupingButton );
-	metricsToolBar->addWidget( frame );
-	// Gloger end
-	frame = createHorizontalFrame();
-	frame->layout()->addWidget( showMetricsButton );
-	frame->layout()->addWidget( luaGraphTreeView );
-	metricsToolBar->addWidget( frame );
-	metricsToolBar->setMovable( false );
-	showMetrics();
+    metricsToolBar = new QToolBar( "Metrics visualizations",this );
+    // <Change> Gloger start: added horizontal frame to support browser (webView) grouping toggling
+    QFrame* frame = createHorizontalFrame();
+    frame->layout()->addWidget( loadFunctionCallButton );
+    frame->layout()->addWidget( browsersGroupingButton );
+    metricsToolBar->addWidget( frame );
+    // Gloger end
+    frame = createHorizontalFrame();
+    frame->layout()->addWidget( showMetricsButton );
+    frame->layout()->addWidget( luaGraphTreeView );
+    metricsToolBar->addWidget( frame );
+    metricsToolBar->setMovable( false );
+    showMetrics();
 
-	addToolBar( Qt::RightToolBarArea,metricsToolBar );
+    addToolBar( Qt::RightToolBarArea,metricsToolBar );
 
     toolBar = new QToolBar( "Metrics filter",this );
 #if QT_VERSION >= 0x040700

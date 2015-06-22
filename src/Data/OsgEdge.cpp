@@ -179,7 +179,7 @@ void Data::OsgEdge::updateCoordinates( osg::Vec3 srcPos, osg::Vec3 dstPos )
     if ( label != NULL ) {
         label->setPosition( ( srcPos + dstPos ) / 2 );
     }
-    osg::Geometry* geometry;
+    osg::Geometry* geometry = NULL;
 //	osg::Geometry* geometry = getDrawable( 0 )->asGeometry();
     if ( geometry != NULL ) {
         geometry->setVertexArray( coordinates );

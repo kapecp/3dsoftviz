@@ -26,7 +26,7 @@
 
 
 Data::Node::Node( qlonglong id, QString name, Data::Type* type, float scaling, Data::Graph* graph, osg::Vec3f position )
-    :OsgNode( id,name,type,graph,scaling, position )
+    : OsgNode( id, name, type, graph, scaling, position )
 {
     //konstruktor
     this->mIsFocused = false;
@@ -53,6 +53,9 @@ Data::Node::Node( qlonglong id, QString name, Data::Type* type, float scaling, D
             labelText = labelText.replace( pos, 1, "\n" );
         }
     }
+
+    this->type = type;
+    this->scale = scaling;
 
     insertChild( INDEX_LABEL, createLabel( this->type->getScale(), labelText ) , false );
     insertChild( INDEX_SQUARE, createNodeSquare( this->scale, Node::createStateSet( this->type ) ) , false );

@@ -280,6 +280,8 @@ endif()
 #	message( STATUS "FGLOVE Not Found" )
 # endif()
 
+ADD_DEFINITIONS(-DOSG_LIBRARY_STATIC)
+
 # ------------------------------------------------------------
 # Dependencies - External projects
 # ------------------------------------------------------------
