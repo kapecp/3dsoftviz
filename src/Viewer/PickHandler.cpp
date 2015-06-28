@@ -58,6 +58,7 @@ PickHandler::PickHandler( Vwr::CameraManipulator* cameraManipulator, Vwr::CoreGr
 	pickMode = PickMode::NONE;
 	selectionType = SelectionType::ALL;
 	selectionObserver = NULL;
+	isNeighborsSelection = false;
 }
 
 bool PickHandler::handle( const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& aa )
@@ -153,6 +154,9 @@ bool PickHandler::handleMove( const osgGA::GUIEventAdapter& ea, osgGA::GUIAction
 
 bool PickHandler::handleDoubleclick( const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& aa )
 {
+	if ( pickedNodes.count() == 1 || pickedEdges.count() == 1 ) {
+		AppCore::Core::getInstance()->getCoreWindow()->centerView( false );
+	}
 	return false;
 }
 
@@ -267,6 +271,9 @@ bool PickHandler::handleKeyDown( const osgGA::GUIEventAdapter& ea, GUIActionAdap
 	}
 	else if ( ea.getKey() == osgGA::GUIEventAdapter::KEY_Z ) {
 		isZPressed = true;
+	}
+	else if ( ea.getKey() == osgGA::GUIEventAdapter::KEY_N ) {
+		this->selectAllNeighbors( this->pickedNodes );
 	}
 
 	// FULLSCREEN
@@ -449,6 +456,10 @@ bool PickHandler::handlePush( const osgGA::GUIEventAdapter& ea, osgGA::GUIAction
 			unselectPickedClusters();
 			unselectPickedNodes();
 			unselectPickedEdges();
+
+			if ( this->lastAutoMovementNode != NULL ) {
+				this->lastAutoMovementNode->setSelected( false );
+			}
 		}
 
 		osgViewer::Viewer* viewer = dynamic_cast<osgViewer::Viewer*>( &aa );
@@ -500,7 +511,7 @@ bool PickHandler::pick( const double xMin, const double yMin, const double xMax,
 
 				if ( nodePath.size() > 1 ) {
 					if ( !isDrawingSelectionQuad ) {
-						result = doSinglePick( nodePath, hitr->primitiveIndex );
+						result = doSinglePick( nodePath );
 						break;
 					}
 					else {
@@ -513,7 +524,7 @@ bool PickHandler::pick( const double xMin, const double yMin, const double xMax,
 						}
 						if ( !nodePicked ) {
 							if ( selectionType == SelectionType::EDGE || selectionType == SelectionType::ALL ) {
-								edgePicked = doEdgePick( nodePath, hitr->primitiveIndex );
+								edgePicked = doEdgePick( nodePath );
 							}
 						}
 						static int count = 0;
@@ -543,19 +554,19 @@ void PickHandler::setSelectionObserver( SelectionObserver* value )
 }
 
 
-bool PickHandler::doSinglePick( osg::NodePath nodePath, unsigned int primitiveIndex )
+bool PickHandler::doSinglePick( osg::NodePath nodePath )
 {
 	if ( selectionType == SelectionType::NODE ) {
 		return doNodePick( nodePath );
 	}
 	else if ( selectionType == SelectionType::EDGE ) {
-		return doEdgePick( nodePath, primitiveIndex );
+		return doEdgePick( nodePath );
 	}
 	else if ( selectionType == SelectionType::CLUSTER ) {
 		return doClusterPick( nodePath );
 	}
 	else {
-		return ( doNodePick( nodePath ) || doEdgePick( nodePath, primitiveIndex ) );
+		return ( doNodePick( nodePath ) || doEdgePick( nodePath ) );
 	}
 }
 
@@ -583,6 +594,14 @@ bool PickHandler::doNodePick( osg::NodePath nodePath )
 				n->setColor( osg::Vec4( 0, 1, 0, 1 ) );
 			}
 
+			if ( this->lastAutoMovementNode != NULL ) {
+				this->lastAutoMovementNode->setSelected( false );
+			}
+
+			// select new approaching node in automatic camera movement as yellow node
+			this->lastAutoMovementNode = n;
+			this->lastAutoMovementNode->setSelectedWith( osg::Vec4( 1, 1, 0, 1 ) );
+
 			cameraManipulator->setNewPosition( n->getCurrentPosition(), getSelectionCenter( false ), getSelectedNodes()->toStdList(), getSelectedEdges()->toStdList() );
 
 			if ( wasEmpty ) {
@@ -609,71 +628,52 @@ bool PickHandler::doNodePick( osg::NodePath nodePath )
 	return false;
 }
 
-bool PickHandler::doEdgePick( osg::NodePath nodePath, unsigned int primitiveIndex )
+bool PickHandler::doEdgePick( osg::NodePath nodePath )
 {
-	osg::Geode* geode = dynamic_cast<osg::Geode*>( nodePath[nodePath.size() - 1] );
+	Data::Edge* e = dynamic_cast<Data::Edge*>( nodePath[nodePath.size() - 1] );
 
-	if ( geode != 0 ) {
-		osg::Drawable* d = geode->getDrawable( 0 );
-		osg::Geometry* geometry = d->asGeometry();
+	if ( e != NULL ) {
+		if ( isAltPressed && pickMode == PickMode::NONE && !isShiftPressed ) {
+			osg::ref_ptr<osg::Vec3Array> coords = e->getCooridnates();
 
-		if ( geometry != NULL ) {
-			// zmena (plesko): ak vyber zachytil avatara, nastal segmentation fault,
-			// lebo sa vyberal neexistujuci primitiveSet
-			Data::Edge* e;
-			if ( geometry->getNumPrimitiveSets() > primitiveIndex ) {
-				e = dynamic_cast<Data::Edge*>( geometry->getPrimitiveSet( primitiveIndex ) );
+			cameraManipulator->setCenter( DataHelper::getMassCenter( coords ) );
+			cameraManipulator->setDistance( Util::ApplicationConfig::get()->getValue( "Viewer.PickHandler.PickedEdgeDistance" ).toFloat() );
+		}
+		else if ( isAltPressed && pickMode == PickMode::NONE && isShiftPressed ) {
+			if ( appConf->getValue( "Viewer.PickHandler.SelectInterestPoints" ).toInt() == 1 ) {
+				Data::Graph* currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
+				Util::ElementSelector::weightedElementSelector( currentGraph->getNodes(), appConf->getValue( "Viewer.PickHandler.AutopickedNodes" ).toInt(), this );
 			}
-			else {
-				return false;
+
+			bool wasEmpty = false;
+			if ( pickedEdges.isEmpty() ) {
+				pickedEdges.append( e );
+				wasEmpty = true;
 			}
-			// koniec zmeny
 
-			if ( e != NULL ) {
-				if ( isAltPressed && pickMode == PickMode::NONE && !isShiftPressed ) {
-					osg::ref_ptr<osg::Vec3Array> coords = e->getCooridnates();
+			osg::Vec3f edgeCenter = ( e->getSrcNode()->getCurrentPosition() + e->getDstNode()->getCurrentPosition() ) / 2;
 
-					cameraManipulator->setCenter( DataHelper::getMassCenter( coords ) );
-					cameraManipulator->setDistance( Util::ApplicationConfig::get()->getValue( "Viewer.PickHandler.PickedEdgeDistance" ).toFloat() );
-				}
-				else if ( isAltPressed && pickMode == PickMode::NONE && isShiftPressed ) {
-					if ( appConf->getValue( "Viewer.PickHandler.SelectInterestPoints" ).toInt() == 1 ) {
-						Data::Graph* currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
-						Util::ElementSelector::weightedElementSelector( currentGraph->getNodes(), appConf->getValue( "Viewer.PickHandler.AutopickedNodes" ).toInt(), this );
-					}
+			cameraManipulator->setNewPosition( edgeCenter, getSelectionCenter( false ), getSelectedNodes()->toStdList(), getSelectedEdges()->toStdList() );
 
-					bool wasEmpty = false;
-					if ( pickedEdges.isEmpty() ) {
-						pickedEdges.append( e );
-						wasEmpty = true;
-					}
-
-					osg::Vec3f edgeCenter = ( e->getSrcNode()->getCurrentPosition() + e->getDstNode()->getCurrentPosition() ) / 2;
-
-					cameraManipulator->setNewPosition( edgeCenter, getSelectionCenter( false ), getSelectedNodes()->toStdList(), getSelectedEdges()->toStdList() );
-
-					if ( wasEmpty ) {
-						pickedEdges.removeFirst();
-					}
-				}
-				else if ( pickMode != PickMode::NONE ) {
-					if ( !pickedEdges.contains( e ) ) {
-						pickedEdges.append( e );
-						e->setSelected( true );
-					}
-
-					if ( isCtrlPressed ) {
-						unselectPickedEdges( e );
-					}
-
-					return true;
-				}
-
-				return true;
+			if ( wasEmpty ) {
+				pickedEdges.removeFirst();
 			}
 		}
-	}
+		else if ( pickMode != PickMode::NONE ) {
+			if ( !pickedEdges.contains( e ) ) {
+				pickedEdges.append( e );
+				e->setSelected( true );
+			}
 
+			if ( isCtrlPressed ) {
+				unselectPickedEdges( e );
+			}
+
+			return true;
+		}
+
+		return true;
+	}
 	return false;
 }
 
@@ -704,6 +704,52 @@ bool PickHandler::doClusterPick( osg::NodePath nodePath )
 
 	return false;
 
+}
+
+void PickHandler::selectAllNeighbors( QLinkedList<osg::ref_ptr<Data::Node>> nodes )
+{
+	if ( nodes.count() > 0 && !isNeighborsSelection ) {
+		QLinkedList<osg::ref_ptr<Data::Node> >::const_iterator i = nodes.constBegin();
+		while ( i != nodes.constEnd() ) {
+			QMap< qlonglong,osg::ref_ptr<Data::Edge> >::const_iterator iedge = ( *i )->getEdges()->constBegin();
+
+			while ( iedge != ( *i )->getEdges()->constEnd() ) {
+				( *iedge )->setEdgeColor( osg::Vec4( 1, 1, 0, 1 ) );
+				pickedNeighborsEdges.append( *iedge );
+
+				// select as neighbors (yellow color) only nodes which are different from our selected nodes
+				if ( !nodes.contains( ( *iedge )->getSrcNode() ) ) {
+					( *iedge )->getSrcNode()->setColor( osg::Vec4( 1, 1, 0, 1 ) );
+					pickedNeighborsNodes.append( ( *iedge )->getSrcNode() );
+				}
+				if ( !nodes.contains( ( *iedge )->getDstNode() ) ) {
+					( *iedge )->getDstNode()->setColor( osg::Vec4( 1, 1, 0, 1 ) );
+					pickedNeighborsNodes.append( ( *iedge )->getDstNode() );
+				}
+				++iedge;
+			}
+			++i;
+		}
+		isNeighborsSelection = true;
+	}
+	else {
+		if ( pickedNeighborsNodes.count() > 0 || pickedNeighborsEdges.count() > 0 ) {
+			QLinkedList<osg::ref_ptr<Data::Node> >::const_iterator n = pickedNeighborsNodes.constBegin();
+			while ( n != pickedNeighborsNodes.constEnd() ) {
+				( *n )->setDefaultColor();
+				++n;
+			}
+			pickedNeighborsNodes.clear();
+
+			QLinkedList<osg::ref_ptr<Data::Edge> >::const_iterator e = pickedNeighborsEdges.constBegin();
+			while ( e != pickedNeighborsEdges.constEnd() ) {
+				( *e )->setEdgeDefaultColor();
+				++e;
+			}
+			pickedNeighborsEdges.clear();
+		}
+		isNeighborsSelection = false;
+	}
 }
 
 bool PickHandler::dragNode( osgViewer::Viewer* viewer )

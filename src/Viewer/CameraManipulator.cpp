@@ -852,8 +852,6 @@ void Vwr::CameraManipulator::frame( const osgGA::GUIEventAdapter& ea, osgGA::GUI
 
 	//if movingCenter flag is set and view is not centered
 	if ( movingCenter && points > 0 ) {
-		osg::Vec3 d = this->newCenter - this->originalCenter;
-		//int l = d.length();
 		float x = this->originalCenter.x() + d.x() * pointID/points;
 		float y = this->originalCenter.y() + d.y() * pointID/points;
 		float z = this->originalCenter.z() + d.z() * pointID/points;

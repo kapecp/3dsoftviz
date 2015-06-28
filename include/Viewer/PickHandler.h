@@ -286,6 +286,11 @@ private:
 		*/
 	Util::ApplicationConfig* appConf;
 
+	/**
+	*  osg::ref_ptr<Data::Node> lastAutoMovementNode
+	*  \brief the last approaching node in automatic camera movement
+	*/
+	osg::ref_ptr<Data::Node> lastAutoMovementNode;
 
 	/**
 		*  QLinkedList<osg::ref_ptr<Data::Node> > pickedNodes
@@ -298,6 +303,18 @@ private:
 		*  \brief picked edges list
 		*/
 	QLinkedList<osg::ref_ptr<Data::Edge> > pickedEdges;
+
+	/**
+		*  QLinkedList<osg::ref_ptr<Data::Edge> > pickedNeighborsNodes
+		*  \brief picked neighbors nodes list
+		*/
+	QLinkedList<osg::ref_ptr<Data::Node> > pickedNeighborsNodes;
+
+	/**
+		*  QLinkedList<osg::ref_ptr<Data::Edge> > pickedNeighborsEdges
+		*  \brief picked neighbors edges list
+		*/
+	QLinkedList<osg::ref_ptr<Data::Edge> > pickedNeighborsEdges;
 
 	/**
 		*  osg::ref_ptr group
@@ -342,6 +359,11 @@ private:
 		*/
 	bool isManipulatingNodes;
 
+	/**
+		*  bool isNeighborsSelection
+		*  \brief true, if are Neighbors selected
+		*/
+	bool isNeighborsSelection;
 
 	/**
 		*  osg::ref_ptr<osg::Geode> selectionQuad
@@ -351,13 +373,12 @@ private:
 
 
 	/**
-		*  \fn private  doSinglePick(osg::NodePath nodePath, unsigned int primitiveIndex)
+		*  \fn private  doSinglePick(osg::NodePath nodePath)
 		*  \brief Picks single object on screen
 		*  \param    nodePath   pick nodepath
-		*  \param     primitiveIndex  picked primitive index
 		*  \return bool true, if object was picked
 		*/
-	bool doSinglePick( osg::NodePath nodePath, unsigned int primitiveIndex );
+	bool doSinglePick( osg::NodePath nodePath );
 
 	/**
 		*  \fn private  doNodePick(osg::NodePath nodePath)
@@ -368,15 +389,21 @@ private:
 	bool doNodePick( osg::NodePath nodePath );
 
 	/**
-		*  \fn private  doEdgePick(osg::NodePath nodePath, unsigned int primitiveIndex)
+		*  \fn private  doEdgePick(osg::NodePath nodePath)
 		*  \brief Picks single edge
 		*  \param     nodePath   pick nodepath
-		*  \param     primitiveIndex    picked primitive index
 		*  \return bool
 		*/
-	bool doEdgePick( osg::NodePath nodePath, unsigned int primitiveIndex );
+	bool doEdgePick( osg::NodePath nodePath );
 
 	bool doClusterPick( osg::NodePath nodePath );
+
+	/**
+		*  \fn private  selectAllNeighbors(QLinkedList<osg::ref_ptr<Data::Node>> nodes)
+		*  \brief Select all neighbors edges and theirs nodes of nodes collection in parameter
+		*  \param     nodes   nodes for neighbors selection
+		*/
+	void selectAllNeighbors( QLinkedList<osg::ref_ptr<Data::Node>> nodes );
 
 	/**
 		*  \fn private  dragNode(osgViewer::Viewer * viewer)
