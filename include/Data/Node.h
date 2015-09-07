@@ -59,17 +59,6 @@ public:
         */
     ~Node( void );
 
-
-    /**
-        *  \fn inline public constant  getId
-        *  \brief Returns ID of the Node
-        *  \return qlonglong ID of the Node
-        */
-    qlonglong getId() const
-    {
-        return id;
-    }
-
     /**
         *  \fn inline public  getGraph
         *  \brief Returns Graph to which the Nodes belongs
@@ -79,7 +68,6 @@ public:
     {
         return graph;
     }
-
 
     /**
         *  \fn inline public constant  getName
@@ -367,7 +355,7 @@ public:
         this->fixed = fixed;
 
         if ( fixed ) {
-            this->setDrawableColor( osg::Vec4( 1.0f, 0.0f, 0.0f, 1.0f ) );
+            this->setDrawableColor( 0, osg::Vec4( 1.0f, 0.0f, 0.0f, 1.0f ) );
         }
         else if ( !fixed ) {
             this->setDefaultColor();
@@ -399,23 +387,6 @@ public:
     void setCluster( Cluster* cluster );
 
     virtual QSet<Node*> getIncidentNodes() const;
-
-    /**
-        *  \fn inline public  setSelected(bool selected) and  color of selected node
-        *  \brief Sets node picked state
-        *  \param     selected     picked state
-        */
-    void setSelected( bool selected )
-    {
-        if ( selected ) {
-            setDrawableColor( osg::Vec4( 0.0f, 0.1f, 1.0f, 1.0f ) );	// color of selected node
-        }
-        else {
-            setDefaultColor();
-        }
-
-        this->selected = selected;
-    }
 
     /**
         *  \fn inline public constant  isSelected
@@ -531,14 +502,14 @@ public:
         *  \brief Sets default node color
         *  \param     color   default color
         */
-    void setColor( osg::Vec4 color )
-    {
-        this->color = color;
+//    void setColor( osg::Vec4 color )
+//    {
+//        this->color = color;
 
-        if ( !selected ) {
-            setDrawableColor( color );
-        }
-    }
+//        if ( !selected ) {
+//            setDrawableColor( color );
+//        }
+//    }
 
     void setDefaultColor();
 
@@ -550,10 +521,10 @@ public:
         *  \brief Returns color of the Node
         *  \return osg::Vec4 color of the Node
         */
-    osg::Vec4 getColor() const
-    {
-        return color;
-    }
+//    osg::Vec4 getColor() const
+//    {
+//        return color;
+//    }
 
     /**
         *  \fn public  showLabel(bool visible)
@@ -612,15 +583,15 @@ public:
         return parentBall;
     }
 
-    void setBall( osg::Geode* val )
-    {
-        ball = val;
-    }
+//    void setBall( osg::Geode* val )
+//    {
+//        ball = val;
+//    }
 
-    osg::Geode* getBall()
-    {
-        return ball;
-    }
+//    osg::Geode* getBall()
+//    {
+//        return ball;
+//    }
 
     osg::ref_ptr<osg::AutoTransform> getOutBall()
     {
@@ -735,22 +706,16 @@ private:
         *	bool inDB
         *	\brief Flag if the Type is in database
         */
-    bool inDB;
+//    bool inDB;
 
     /**
         *	qlonglong id
         *	\brief ID of the Node
         */
-    qlonglong id;
+//    qlonglong id;
 
 
 public:
-
-    /**
-        *	float scale
-        *	\brief scaling of the Node
-        */
-    float scale;
 
     /**
         *	Node parent
@@ -759,74 +724,16 @@ public:
     osg::ref_ptr<Data::Node> nested_parent;
 
     /**
-        *  QString name
-        *  \brief Name of the Node
-        */
-    QString name;
-
-    /**
-        *  Data::Type * type
-        *  \brief Type of the Node
-        */
-    Data::Type* type;
-
-    /**
-        *  Data::Graph * graph
-        *  \brief Graph object to which the Node belongs
-        */
-    Data::Graph* graph;
-
-    /**
          * bool mIsFocused
          * \brief Flag whether this node is focused at the moment.
          */
     bool mIsFocused;
 
     /**
-         * osg::Vec3f mTargetPosition
-         * \brief Target position of a node.
-         */
-    osg::Vec3f mTargetPosition;
-
-    /**
-         * osg::Vec3f mRestrictedTargetPosition
-         * \brief Restricted target position of a node.
-         */
-    osg::Vec3f mRestrictedTargetPosition;
-
-    /**
-        *  osg::Vec3f currentPosition
-        *  \brief node current position
-        */
-    osg::Vec3f currentPosition;
-
-    /**
-        *  osg::Sphere nested ball
-        *  \brief
-        */
-    osg::Sphere* parentBall;
-
-    osg::Geode* ball;
-
-    osg::ref_ptr<osg::AutoTransform> outBall;
-
-    /**
         *  QMap<qlonglong, osg::ref_ptr<Data::Edge> > * edges
         *  \brief Edges connected to the Node
         */
     QMap<qlonglong, osg::ref_ptr<Data::Edge> >* edges;
-
-    /**
-      *  osg::Vec3f force
-      *  \brief Node force
-      */
-    osg::Vec3f force;
-
-    /**
-        *  osg::Vec3f velocity
-        *  \brief Size of node force in previous iteration
-        */
-    osg::Vec3f velocity;
 
     /**
         *  bool fixed
@@ -840,34 +747,11 @@ public:
         */
     Cluster* cluster;
 
-    bool hasNestedNodes;
-
-    /**
-        *  bool ignore
-        *  \brief node ignoring flag
-        */
-    bool ignore;
-
     /**
          * \brief If the node position can be restricted by layout restrictions.
          * RestrictionsManager uses this to determine if the restriction can be attached to this node.
          */
     bool positionCanBeRestricted;
-
-    /**
-         * \brief If the node is removable by the user (using GUI).
-         * Used to make some nodes not removable (e.g. nodes used for manipulating layout restrictions - their
-         * existence is bound to the existence of the layout restriction and their removal is managed
-         * elsewhere, so they can not be removed by user).
-         */
-    bool removableByUser;
-
-    /**
-        *  bool usingInterpolation
-        *  \brief node interpolation usage
-        */
-    bool usingInterpolation;
-
 
     /**
         *  \fn private static  createNodeSquare(const float & scale, osg::StateSet* bbState)
@@ -913,51 +797,16 @@ public:
         */
     static osg::ref_ptr<osg::Drawable> createSquare( const float& scale, osg::StateSet* bbState );
 
-
-    /**
-        *  osg::Vec4 color
-        *  \brief Color of the Node
-        */
-    osg::Vec4 color;
-
-
-    /**
-        *  \fn private  setDrawableColor(int pos, osg::Vec4 color)
-        *  \brief Sets drawble color
-        *  \param	 color	 drawable color
-        */
-    void setDrawableColor( osg::Vec4 color );
-
     /**
         *  QString labelText
         *  \brief Text show in the label
         */
     QString labelText;
 
-    float nodeDegree;
-    float nodeCloseness;
-    float nodeBetweeness;
-    bool nodeMatched;
-
-    float overallWeight;
     //volovar_zac pre repulzivne sily, ktore posobia iba na uzly nachadzajuce sa na guli
     int layerID;
     Layout::RadialLayout* radialLayout;
     //volovak_kon
-
-protected:
-
-    /**
-        *  QMap<QString,QString> * settings
-        *  \brief Settings of the Node
-        */
-    QMap<QString, QString>* settings;
-
-    /**
-        *  bool selected
-        *  \brief node picked state
-        */
-    bool selected;
 };
 }
 

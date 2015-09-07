@@ -77,7 +77,7 @@ Data::Node::Node( qlonglong id, QString name, Data::Type* type, float scaling, D
     float a = type->getSettings()->value( "color.A" ).toFloat();
 
     this->color=osg::Vec4( r, g, b, a );
-    this->setDrawableColor( color );
+    this->setDrawableColor( 0, color );
 
     // merging Britvik: this was here
     //setDefaultColor();
@@ -112,14 +112,14 @@ void Data::Node::setIsFocused( bool value )
         this->insertChild( INDEX_SQUARE, createNodeSquare( this->scale, Node::createStateSet( this->type ) ) , false );
         removeChild( INDEX_SPHERE, 1 );
         this->insertChild( INDEX_SPHERE, createNodeSphere( this->scale , Node::createStateSet( this->type ) ) , false );
-        setDrawableColor( osg::Vec4( 0.5f, 1.0f, 0.0f, 1.0 ) );
+        setDrawableColor(0, osg::Vec4( 0.5f, 1.0f, 0.0f, 1.0 ) );
     }
     else {
         removeChild( INDEX_SQUARE, 1 );
         this->insertChild( INDEX_SQUARE, createNodeSquare( this->scale , Node::createStateSet( this->type ) ), false );
         removeChild( INDEX_SPHERE, 1 );
         this->insertChild( INDEX_SPHERE, createNodeSphere( this->scale , Node::createStateSet( this->type ) ) , false );
-        setDrawableColor( osg::Vec4( 1.0f, 1.0f, 1.0f, 1.0 ) );
+        setDrawableColor(0, osg::Vec4( 1.0f, 1.0f, 1.0f, 1.0 ) );
     }
     setValue( graph->getNodeVisual(), true );
 }
@@ -356,20 +356,20 @@ bool Data::Node::equals( Node* node )
     return true;
 }
 
-void Data::Node::setDrawableColor( osg::Vec4 color )
-{
-    //nastavenie farby uzla
-    osg::Geometry* geometry  = getChild( INDEX_SQUARE )->asGeode()->getDrawable( 0 )->asGeometry();
+//void Data::Node::setDrawableColor( osg::Vec4 color )
+//{
+//    //nastavenie farby uzla
+//    osg::Geometry* geometry  = getChild( INDEX_SQUARE )->asGeode()->getDrawable( 0 )->asGeometry();
 
-    if ( geometry != NULL ) {
-        osg::Vec4Array* colorArray =  dynamic_cast<osg::Vec4Array*>( geometry->getColorArray() );
+//    if ( geometry != NULL ) {
+//        osg::Vec4Array* colorArray =  dynamic_cast<osg::Vec4Array*>( geometry->getColorArray() );
 
-        colorArray->pop_back();
-        colorArray->push_back( color );
-    }
+//        colorArray->pop_back();
+//        colorArray->push_back( color );
+//    }
 
-    ( dynamic_cast<osg::ShapeDrawable*>( getChild( INDEX_SPHERE )->asGeode()->getDrawable( 0 ) ) )->setColor( color );
-}
+//    ( dynamic_cast<osg::ShapeDrawable*>( getChild( INDEX_SPHERE )->asGeode()->getDrawable( 0 ) ) )->setColor( color );
+//}
 
 void Data::Node::showLabel( bool visible )
 {
@@ -438,7 +438,7 @@ void Data::Node::setDefaultColor()
     //  float b = type->getSettings()->value( "color.B" ).toFloat();
 //  float a = type->getSettings()->value( "color.A" ).toFloat();
 
-    this->setDrawableColor( color );
+    this->setDrawableColor(0, color );
 }
 
 void Data::Node::setVisual( int index )
