@@ -524,7 +524,6 @@ public slots:
 
 
 private:
-
     /**
         *  QApplication * application
         *  \brief Pointer to aplication

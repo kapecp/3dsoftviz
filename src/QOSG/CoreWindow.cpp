@@ -134,6 +134,7 @@ CoreWindow::CoreWindow( QWidget* parent, Vwr::CoreGraph* coreGraph, QApplication
 
 void CoreWindow::createActions()
 {
+
     quit = new QAction( "Quit", this );
     connect( quit, SIGNAL( triggered() ), application, SLOT( quit() ) );
 
@@ -248,13 +249,16 @@ void CoreWindow::createActions()
     // <Change> Nagy+Gloger
     loadFunctionCallButton = new QPushButton();
     loadFunctionCallButton->setText( "Load function calls" );
+
     loadFunctionCallButton->setToolTip( "Load function calls" );
     loadFunctionCallButton->setFocusPolicy( Qt::NoFocus );
     connect( loadFunctionCallButton, SIGNAL( clicked() ), this, SLOT( loadFunctionCall() ) );
 
     browsersGroupingButton = new QPushButton();
     browsersGroupingButton->setIcon( QIcon( "../share/3dsoftviz/img/gui/grouping.png" ) );
-    browsersGroupingButton->setToolTip( "Toggle browsers (webViews) grouping" );
+
+    browsersGroupingButton->setToolTip( "Toggle webviews grouping" );
+
     browsersGroupingButton->setCheckable( true );
     browsersGroupingButton->setFocusPolicy( Qt::NoFocus );
     connect( browsersGroupingButton, SIGNAL( clicked( bool ) ), this, SLOT( browsersGroupingClicked( bool ) ) );
@@ -3424,6 +3428,7 @@ void CoreWindow::loadFunctionCall()
     std::cout << "You selected " << file.toStdString() << std::endl;
     Lua::LuaInterface* lua = Lua::LuaInterface::getInstance();
 
+
     Diluculum::LuaValueList path;
     path.push_back( file.toStdString() );
     QString createGraph[] = {"function_call_graph", "extractGraph"};
@@ -3480,12 +3485,12 @@ void CoreWindow::filterGraph()
 
 void CoreWindow::onChange()
 {
-//	TODO release models from memory in browser group
-//	QAbstractItemModel *model = luaGraphTreeView->model();
-//	if (model != NULL){
-//		delete model;
-//		model = NULL;
-//	}
+	// Release previous last node model
+	QAbstractItemModel *model = luaGraphTreeView->model();
+	if (model != NULL){
+		delete model;
+		model = NULL;
+	}
 
     // <Change> Gloger start: added support for multiple node selection using browser visualization
     QLinkedList<osg::ref_ptr<Data::Node> >* selected = viewerWidget->getPickHandler()->getSelectedNodes();
@@ -3493,12 +3498,14 @@ void CoreWindow::onChange()
     coreGraph->getBrowsersGroup()->setSelectedNodes( selected );
     // qDebug() << "Selected nodes count: " << selected->size();
 
+
     if ( selected->size() > 0 ) {
         // Get last node model & display it in qt view
         qlonglong lastNodeId = selected->last()->getId();
         Lua::LuaGraphTreeModel* lastNodeModel = coreGraph->getBrowsersGroup()->getSelectedNodesModels()->value( lastNodeId );
         luaGraphTreeView->setModel( lastNodeModel );
     }
+
 
     // Gloger end
 }

@@ -21,9 +21,8 @@
 
 #include <QTextStream>
 
+
 #include "Data/OsgNode.h"
-
-
 
 Data::Node::Node( qlonglong id, QString name, Data::Type* type, float scaling, Data::Graph* graph, osg::Vec3f position )
     : OsgNode( id, name, type, graph, scaling, position )
@@ -53,9 +52,6 @@ Data::Node::Node( qlonglong id, QString name, Data::Type* type, float scaling, D
             labelText = labelText.replace( pos, 1, "\n" );
         }
     }
-
-    this->type = type;
-    this->scale = scaling;
 
     insertChild( INDEX_LABEL, createLabel( this->type->getScale(), labelText ) , false );
     insertChild( INDEX_SQUARE, createNodeSquare( this->scale, Node::createStateSet( this->type ) ) , false );
@@ -147,6 +143,7 @@ void Data::Node::setTargetPosition( const osg::Vec3f& position )
 {
     mTargetPosition = position;
 }
+
 osg::Vec3f Data::Node::restrictedTargetPosition() const
 {
     return mRestrictedTargetPosition;
@@ -154,10 +151,6 @@ osg::Vec3f Data::Node::restrictedTargetPosition() const
 const osg::Vec3f& Data::Node::restrictedTargetPositionConstRef() const
 {
     return mRestrictedTargetPosition;
-}
-void Data::Node::setRestrictedTargetPosition( const osg::Vec3f& position )
-{
-    mRestrictedTargetPosition = position;
 }
 
 void Data::Node::addEdge( osg::ref_ptr<Data::Edge> edge )
@@ -280,24 +273,33 @@ osg::ref_ptr<osg::Geode> Data::Node::createLabel( const float& scale, QString na
     osg::ref_ptr<osgText::FadeText> label = new osgText::FadeText;
     label->setFadeSpeed( 0.03f );
 
+    // Gloger: added Open Sans font
     QString fontPath = Util::ApplicationConfig::get()->getValue( "Viewer.Labels.Font" );
 
-    // experimental value
-    float newScale = 1.375f * scale;
+    // Gloger: added small offset to make label positioning better
+    float yOffset = scale / 2 + 0.5f;
+    float zOffset = 0.1f;
 
+    // Calculate charSize from scale
+    float charSize = 10;//(float)log(scale) * 1.8f + 10;
+
+    // Gloger:
     if ( fontPath != NULL && !fontPath.isEmpty() ) {
-        label->setFont( fontPath.toStdString() );
+        //label->setFont( fontPath.toStdString() );
     }
 
     label->setText( name.toStdString() );
     label->setLineSpacing( 0 );
     label->setAxisAlignment( osgText::Text::SCREEN );
-    label->setCharacterSize( newScale );
+    label->setCharacterSize( charSize );
     label->setDrawMode( osgText::Text::TEXT );
     label->setAlignment( osgText::Text::CENTER_BOTTOM_BASE_LINE );
-    label->setPosition( osg::Vec3( 0, newScale, 0 ) );
-    label->setColor( osg::Vec4( 1.0f, 1.0f, 1.0f, 1.0f ) );
+    label->setPosition( osg::Vec3( 0, yOffset, zOffset ) );
+   // label->setColor( Util::ApplicationConfig::get()->getColorValue("Label.Color") );
     label->setUseDisplayList( false );
+//    label->setBackdropType(osgText::Text::OUTLINE);
+//    label->setBackdropColor(Util::ApplicationConfig::get()->getColorValue( "Label.Outline.Color" ));
+//    label->setBackdropOffset(0.05f);
 
     osg::ref_ptr<osg::Geode> geode = new osg::Geode;
     geode->addDrawable( label );
@@ -356,20 +358,8 @@ bool Data::Node::equals( Node* node )
     return true;
 }
 
-//void Data::Node::setDrawableColor( osg::Vec4 color )
-//{
-//    //nastavenie farby uzla
-//    osg::Geometry* geometry  = getChild( INDEX_SQUARE )->asGeode()->getDrawable( 0 )->asGeometry();
 
-//    if ( geometry != NULL ) {
-//        osg::Vec4Array* colorArray =  dynamic_cast<osg::Vec4Array*>( geometry->getColorArray() );
 
-//        colorArray->pop_back();
-//        colorArray->push_back( color );
-//    }
-
-//    ( dynamic_cast<osg::ShapeDrawable*>( getChild( INDEX_SPHERE )->asGeode()->getDrawable( 0 ) ) )->setColor( color );
-//}
 
 void Data::Node::showLabel( bool visible )
 {

@@ -15,7 +15,7 @@
 
 #include <Data/OsgNode.h>
 
-
+#include "Util/ApplicationConfig.h"
 
 //volovar_zac
 namespace Layout {
@@ -198,6 +198,7 @@ public:
          */
     void setTargetPosition( const osg::Vec3f& position );
 
+
     /**
          * \fn public constant restrictedTargetPosition
          * \brief Gets restricted target position of a node.
@@ -213,14 +214,6 @@ public:
          * Returned restricted target position IS NOT multiplied by the graph scale.
          */
     const osg::Vec3f& restrictedTargetPositionConstRef() const;
-
-    /**
-         * \fn public setRestrictedTargetPosition(const osg::Vec3f &position)
-         * \brief Sets restricted target position of a node.
-         * \param position restricted target position
-         * Restricted target position being set MUST NOT BE multiplied by the graph scale.
-         */
-    void setRestrictedTargetPosition( const osg::Vec3f& position );
 
     /**
         *  \fn public  getCurrentPosition(bool calculateNew = false, float interpolationSpeed = 1.0f)
@@ -345,6 +338,7 @@ public:
         force = osg::Vec3f( 0,0,0 );
     }
 
+
     /**
         *  \fn inline public  setFixed(bool fixed)
         *  \brief Sets node fixed state
@@ -355,12 +349,14 @@ public:
         this->fixed = fixed;
 
         if ( fixed ) {
-            this->setDrawableColor( 0, osg::Vec4( 1.0f, 0.0f, 0.0f, 1.0f ) );
+            setDrawableColor( 0, osg::Vec4( 1.0f, 0.0f, 0.0f, 1.0f ) );
         }
         else if ( !fixed ) {
-            this->setDefaultColor();
+            setDefaultColor();
         }
     }
+
+    void setDefaultColor();
 
     /**
         *  \fn inline public constant  isFixed
@@ -397,6 +393,10 @@ public:
     {
         return selected;
     }
+
+    bool setInvisible( bool invisible );
+
+    bool equals( Node* node );
 
 
     /**
@@ -436,61 +436,6 @@ public:
     }
 
     /**
-         * \brief \link Node::removableByUser [setter] \endlink
-         */
-    void setRemovableByUser( bool b )
-    {
-        removableByUser = b;
-    }
-
-    /**
-         * \brief \link Node::removableByUser [getter] \endlink
-         */
-    bool isRemovableByUser()
-    {
-        return removableByUser;
-    }
-
-    /**
-        *  \fn inline public  setVelocity(osg::Vec3f v)
-        *  \brief Sets node force for next iteration
-        *  \param    v  Force in actual iteration
-        */
-    void setVelocity( osg::Vec3f v )
-    {
-        velocity = v;
-    }
-
-    /**
-        *  \fn inline public  resetVelocity
-        *  \brief Reset node force for next iteration
-        */
-    void resetVelocity()
-    {
-        velocity = osg::Vec3( 0,0,0 );
-    }
-
-    /**
-        *  \fn inline public constant  getVelocity
-        *  \brief Sets node force for next iteration.
-        *  \return osg::Vec3f Node force
-        */
-    osg::Vec3f getVelocity() const
-    {
-        return velocity;
-    }
-
-
-    /**
-        *  \fn public  equals(Node* node)
-        *  \brief Checks if the node and this object is the same object
-        *  \param   node     Node to compare
-        *  \return bool true, if this object and node are the same object
-        */
-    bool equals( Node* node );
-
-
-    /**
         *  \fn inline public constant  toString
         *  \brief Returns human-readable string representing the Node
         *  \return QString
@@ -502,29 +447,7 @@ public:
         *  \brief Sets default node color
         *  \param     color   default color
         */
-//    void setColor( osg::Vec4 color )
-//    {
-//        this->color = color;
 
-//        if ( !selected ) {
-//            setDrawableColor( color );
-//        }
-//    }
-
-    void setDefaultColor();
-
-    bool setInvisible( bool invisible );
-
-
-    /**
-        *  \fn inline public constant  getColor
-        *  \brief Returns color of the Node
-        *  \return osg::Vec4 color of the Node
-        */
-//    osg::Vec4 getColor() const
-//    {
-//        return color;
-//    }
 
     /**
         *  \fn public  showLabel(bool visible)
@@ -532,77 +455,6 @@ public:
         *  \param     visible     node name shown
         */
     void showLabel( bool visible );
-
-    /**
-        *  \fn inline public  isInDB
-        *  \brief Returns if the Node is already in database or not
-        *  \return bool true, if the Node is in database
-        */
-    bool isInDB()
-    {
-        return inDB;
-    }
-
-    /**
-        *  \fn inline public  setIsInDB
-        *  \brief  Sets the inDB flag of the Node to true (meaning that the Node is in database)
-        */
-    void setIsInDB()
-    {
-        inDB = true;
-    }
-
-
-    /**
-        *  \fn inline public constant  isUsingInterpolation
-        *  \brief Returns if the Node is using interpolation or not
-        *  \return bool true, if the Node is using interpolation
-        */
-    bool isUsingInterpolation() const
-    {
-        return usingInterpolation;
-    }
-
-    /**
-        *  \fn inline public  setUsingInterpolation(bool val)
-        *  \brief Sets if the Node is using interpolation or not
-        *  \param      val
-        */
-    void setUsingInterpolation( bool val )
-    {
-        usingInterpolation = val;
-    }
-
-    void setParentBall( osg::Sphere* val )
-    {
-        parentBall = val;
-    }
-
-    osg::Sphere* getParentBall()
-    {
-        return parentBall;
-    }
-
-//    void setBall( osg::Geode* val )
-//    {
-//        ball = val;
-//    }
-
-//    osg::Geode* getBall()
-//    {
-//        return ball;
-//    }
-
-    osg::ref_ptr<osg::AutoTransform> getOutBall()
-    {
-        return outBall;
-    }
-
-    void setOutBall( osg::ref_ptr<osg::AutoTransform> val )
-    {
-        outBall = val;
-    }
-
 
     /**
         *  \fn public  reloadConfig
@@ -690,7 +542,11 @@ public:
         this->nodeMatched = nodeMatched;
     }
 
+
     void setVisual( int index );
+
+    void set3D( bool value );
+
     //volovar_zac
     void setLayerID( int id ); //get unique layer id of selected radial layout, 0 node has no radial layout
     int getLayerID();
@@ -698,21 +554,17 @@ public:
     void setRadialLayout( Layout::RadialLayout* rl );
     //volovar_kon
 
+
     static const int INDEX_LABEL = 0;
     static const int INDEX_SQUARE = 1;
     static const int INDEX_SPHERE = 2;
 private:
+
     /**
         *	bool inDB
         *	\brief Flag if the Type is in database
         */
-//    bool inDB;
 
-    /**
-        *	qlonglong id
-        *	\brief ID of the Node
-        */
-//    qlonglong id;
 
 
 public:
@@ -722,6 +574,7 @@ public:
         *	\brief parent node of current node in nested graphs, in top level graph is null
         */
     osg::ref_ptr<Data::Node> nested_parent;
+
 
     /**
          * bool mIsFocused
@@ -797,12 +650,20 @@ public:
         */
     static osg::ref_ptr<osg::Drawable> createSquare( const float& scale, osg::StateSet* bbState );
 
+
     /**
         *  QString labelText
         *  \brief Text show in the label
         */
     QString labelText;
 
+
+    float nodeDegree;
+    float nodeCloseness;
+    float nodeBetweeness;
+    bool nodeMatched;
+
+    float overallWeight;
     //volovar_zac pre repulzivne sily, ktore posobia iba na uzly nachadzajuce sa na guli
     int layerID;
     Layout::RadialLayout* radialLayout;

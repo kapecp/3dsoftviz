@@ -9,6 +9,7 @@
 namespace Data {
 
 
+
 class OsgEdge : public DbEdge, public osg::Switch
 {
 public:

@@ -23,8 +23,7 @@ Data::OsgEdge::OsgEdge( qlonglong id, QString name, Data::Graph* graph, bool isO
 
     coordinates = new osg::Vec3Array();
     edgeTexCoords = new osg::Vec2Array();
-
-    //this->addDrawable( createEdge( createStateSet( this->type ) ) );
+    edgeTexCoords = new osg::Vec2Array();
 
     createLabel( name );
     //updateCoordinates(getSrcNode()->getTargetPosition(), getDstNode()->getTargetPosition());

@@ -15,6 +15,8 @@
 
 #include <osg/Camera>
 
+#include <QTextStream>
+
 namespace Util {
 class ApplicationConfig;
 }
@@ -96,25 +98,8 @@ public:
         name = val;
     }
 
-    /**
-        *  \fn inline public  getScale()
-        *  \brief Gets edge scale
-        *  \return float size of the scale
-        */
-    float getScale()
-    {
-        return scale;
-    }
 
-    /**
-        *  \fn inline public  setScale(float val)
-        *  \brief Sets new scale
-        *  \param   val   new scale for the Edge
-        */
-    void setScale( float val )
-    {
-        scale = val;
-    }
+
 
     /**
         * \fn inline public constant getSrcNode
@@ -160,29 +145,6 @@ public:
     void setDstNode( osg::ref_ptr<Data::Node> val )
     {
         dstNode = val;
-    }
-
-    /**
-        * \fn inline public constant getType
-        * \brief  Returns the Type of the Edge
-        * \return Data::Type * Type of the Edge
-        */
-    Data::Type* getType() const
-    {
-        return type;
-    }
-
-    /**
-        * \fn void setType(Data::Type* val)
-        * \brief  Sets new Type of the Edge
-        *
-        * OBSOLETE - DO NOT USE IT
-        *
-        * \param  val new Type of the Edge
-        */
-    void setType( Data::Type* val )
-    {
-        type = val;
     }
 
     /**
@@ -339,7 +301,6 @@ public:
         return edgeTexCoords;
     }
 
-
     /**
         *  \fn inline public constant  getCamera
         *  \brief returns current camera looking at edge
@@ -349,7 +310,6 @@ public:
     {
         return camera;
     }
-
 
     /**
         *  \fn inline public  setCamera(osg::ref_ptr<osg::Camera> val)
@@ -410,7 +370,6 @@ public:
     {
         inDB = true;
     }
-
 
     /**
         *  \fn inline public  getGraph
@@ -513,6 +472,7 @@ public:
     static const int INDEX_LINE = 3;
     static const int INDEX_CURVE = 4;
 private:
+
     bool isInvisible;
     /**
         *  Data::Graph * graph
@@ -564,12 +524,6 @@ private:
     osg::ref_ptr<Data::Edge> edgeParent;
 
     /**
-        *  Data::Type * type
-        *  \brief Type of the Edge
-        */
-    Data::Type* type;
-
-    /**
         *  bool oriented
         *  \brief True, if the Edge is oriented
         */
@@ -590,11 +544,6 @@ private:
         */
     bool selected;
 
-    /**
-        *  float scale
-        *  \brief scale of edge
-        */
-    float scale;
 
     /**
                 *  bool shared_X
@@ -670,6 +619,7 @@ private:
     osg::ref_ptr<osg::Geode> createEdgeCylinder( osg::StateSet* bbState );
     osg::ref_ptr<osg::Geode> createEdgeLine( osg::StateSet* bbState );
     osg::ref_ptr<osg::Geode> createEdgeCurve( osg::StateSet* bbState );
+
 protected:
 
     /**

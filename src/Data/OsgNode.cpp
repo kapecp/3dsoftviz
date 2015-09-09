@@ -25,7 +25,6 @@ Data::OsgNode::OsgNode( qlonglong id, QString name, Data::Type* type, Data::Grap
 
     this->square = createNode( this->scale * 4, OsgNode::createStateSet( this->type ) );
     this->focusedSquare = createNode( this->scale * 16, OsgNode::createStateSet( this->type ) );
-    //this->addDrawable( square );
     this->label = createLabel( this->type->getScale(), labelText );
     this->force = osg::Vec3f();
     this->velocity = osg::Vec3f( 0,0,0 );
@@ -41,6 +40,7 @@ Data::OsgNode::OsgNode( qlonglong id, QString name, Data::Type* type, Data::Grap
 
     this->colorOfNode=osg::Vec4( r, g, b, a );
     this->setColor( colorOfNode );
+
 }
 
 Data::OsgNode::~OsgNode( void ) {
@@ -202,7 +202,6 @@ void Data::OsgNode::setDrawableColor( int pos, osg::Vec4 color )
 {
     //nastavenie farby uzla
     osg::Geometry* geometry = NULL;
-    //osg::Geometry* geometry  = dynamic_cast<osg::Geometry*>( this->getDrawable( pos ) );
 
     if ( geometry != NULL ) {
         osg::Vec4Array* colorArray =  dynamic_cast<osg::Vec4Array*>( geometry->getColorArray() );
