@@ -83,6 +83,16 @@ public:
     }
 
     /**
+        *  \fn inline public constant  getCooridnates
+        *  \brief Returns coordinates of the Edge
+        *  \return osg::ref_ptr coordinates of the Edge
+        */
+    osg::ref_ptr<osg::Vec3Array> getCooridnates() const
+    {
+        return coordinates;
+    }
+
+    /**
         *  \fn inline public constant  getCamera
         *  \brief returns current camera looking at edge
         *  \return osg::ref_ptr<osg::Camera>
@@ -157,6 +167,24 @@ protected:
         *  \brief Texture coordinates array.
         */
     osg::ref_ptr<osg::Vec2Array> edgeTexCoords;
+
+    /**
+        *  osg::Vec3 center
+        *  \brief Center of the Edge
+        */
+    osg::ref_ptr<osg::Vec3Array> center;
+
+    /**
+        *  double angle
+        *  \brief Angle of the rotation of the cylinder
+        */
+    double angle;
+
+    /**
+        *  osg::Vec3 rotation
+        *  \brief Rotation of the cylinder
+        */
+    osg::ref_ptr<osg::Vec3Array> rotation;
 
     /**
         *  osg::ref_ptr camera

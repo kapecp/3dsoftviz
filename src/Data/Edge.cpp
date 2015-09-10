@@ -23,33 +23,7 @@
 Data::Edge::Edge( qlonglong id, QString name, Data::Graph* graph, osg::ref_ptr<Data::Node> srcNode, osg::ref_ptr<Data::Node> dstNode, Data::Type* type, bool isOriented, float scaling, int pos, osg::ref_ptr<osg::Camera> camera )
     :OsgEdge( id,name, graph, isOriented, type, scaling, srcNode, dstNode, camera )
 {
-    this->id = id;
-    this->name = name;
-    this->graph = graph;
-    this->srcNode = srcNode;
-    this->dstNode = dstNode;
-    this->type = type;
-    this->oriented = isOriented;
-    this->camera = camera;
-    this->selected = false;
-    this->setSharedCoordinates( false, false, false );
-    this->inDB = false;
-    this->scale = scaling;
-    float r = type->getSettings()->value( "color.R" ).toFloat();
-    float g = type->getSettings()->value( "color.G" ).toFloat();
-    float b = type->getSettings()->value( "color.B" ).toFloat();
-    float a = type->getSettings()->value( "color.A" ).toFloat();
-
-    this->edgeColor = osg::Vec4( r, g, b, a );
-    this->isInvisible = false;
-
-    this->edgeStrength = 1;
-
     this->appConf = Util::ApplicationConfig::get();
-    coordinates = new osg::Vec3Array();
-    edgeTexCoords = new osg::Vec2Array();
-    center = new osg::Vec3Array();
-    rotation = new osg::Vec3Array();
 
     this->insertChild( INDEX_LABEL, createLabel( name ) , false );
     this->insertChild( INDEX_QUAD, createEdgeQuad( createStateSet( this->type ) ), false );
@@ -128,19 +102,6 @@ void Data::Edge::clearEdgePieces()
     this->edgePieces.clear();
     setValue( INDEX_CURVE, false );
     setInvisible( false );
-}
-
-void Data::Edge::setEdgeStrength( float value )
-{
-    edgeStrength = value;
-}
-
-bool Data::Edge::setInvisible( bool invisible )
-{
-    setValue( graph->getEdgeVisual(), !invisible );
-    isInvisible=invisible;
-    //-poriesit invisible pre label
-    return true;
 }
 
 void Data::Edge::updateCoordinates( osg::Vec3 srcPos, osg::Vec3 dstPos )
