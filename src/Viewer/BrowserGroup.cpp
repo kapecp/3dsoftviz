@@ -290,7 +290,11 @@ osg::Geode* BrowserGroup::createLinesGeode(osg::Geometry* linesGeom)
     // Set geometry color
     osg::Vec4Array* colors = new osg::Vec4Array;
     colors->push_back(osg::Vec4(1.0f,0.0f,0.0f,1.0f)); // config
+#ifdef BIND_PER_PRIMITIVE
     linesGeom->setColorArray(colors, osg::Array::BIND_OVERALL);
+#else
+    linesGeom->setColorArray(colors);
+#endif
 
     // Add geometry to geode
     linesGeode->addDrawable(linesGeom);
