@@ -46,7 +46,7 @@ void BrowserGroup::setSelectedNodes( QLinkedList<osg::ref_ptr<Data::Node> >* sel
         node = *i;
 
         // Ignore meta nodes
-        if(node->getName() == "metaNode") {
+        if(node->Data::AbsNode::getName() == "metaNode") {
             continue;
         }
 

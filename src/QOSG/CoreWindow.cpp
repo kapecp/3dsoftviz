@@ -1394,7 +1394,7 @@ void CoreWindow::removeMetaNodes()
 
     while ( i != selectedNodes->constEnd() ) {
         //treba este opravit - zatial kontrolujeme ci to nie je mergedNode len podla mena
-        if ( ( *i )->getType()->isMeta() && ( *i )->getName() != "mergedNode" ) {
+        if ( ( *i )->getType()->isMeta() && ( *i )->Data::AbsNode::getName() != "mergedNode" ) {
             Network::Server* server = Network::Server::getInstance();
             Network::Client* client = Network::Client::getInstance();
             if ( !client->isConnected() ) {
@@ -1678,7 +1678,7 @@ void CoreWindow::applyLabelClick()
             client->sendNodeLabel( ( *ni )->getId(), newLabel );
         }
         else {
-            ( *ni )->setName( newLabel );
+            ( *ni )->Data::AbsNode::setName( newLabel );
             ( *ni )->setLabelText( newLabel );
             ( *ni )->reloadConfig();
             server->sendNodeLabel( ( *ni )->getId(), newLabel );
@@ -3485,12 +3485,12 @@ void CoreWindow::filterGraph()
 
 void CoreWindow::onChange()
 {
-	// Release previous last node model
-	QAbstractItemModel *model = luaGraphTreeView->model();
-	if (model != NULL){
-		delete model;
-		model = NULL;
-	}
+    // Release previous last node model
+    QAbstractItemModel *model = luaGraphTreeView->model();
+    if (model != NULL){
+        delete model;
+        model = NULL;
+    }
 
     // <Change> Gloger start: added support for multiple node selection using browser visualization
     QLinkedList<osg::ref_ptr<Data::Node> >* selected = viewerWidget->getPickHandler()->getSelectedNodes();

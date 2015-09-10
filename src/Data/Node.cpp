@@ -120,39 +120,6 @@ void Data::Node::setIsFocused( bool value )
     setValue( graph->getNodeVisual(), true );
 }
 
-bool Data::Node::setInvisible( bool invisible )
-{
-    setValue( graph->getNodeVisual(), !invisible );
-    //-poriesit invisible pre label
-    return true;
-}
-
-osg::Vec3f Data::Node::getTargetPosition() const
-{
-    return mTargetPosition;
-}
-osg::Vec3f Data::Node::targetPosition() const
-{
-    return mTargetPosition;
-}
-const osg::Vec3f& Data::Node::targetPositionConstRef() const
-{
-    return mTargetPosition;
-}
-void Data::Node::setTargetPosition( const osg::Vec3f& position )
-{
-    mTargetPosition = position;
-}
-
-osg::Vec3f Data::Node::restrictedTargetPosition() const
-{
-    return mRestrictedTargetPosition;
-}
-const osg::Vec3f& Data::Node::restrictedTargetPositionConstRef() const
-{
-    return mRestrictedTargetPosition;
-}
-
 void Data::Node::addEdge( osg::ref_ptr<Data::Edge> edge )
 {
     //pridanie napojenej hrany na uzol
@@ -375,20 +342,6 @@ void Data::Node::reloadConfig()
     setSelected( selected );
     setColor( color );
     setValue( graph->getNodeVisual(), true );
-}
-
-osg::Vec3f Data::Node::getCurrentPosition( bool calculateNew, float interpolationSpeed )
-{
-    //zisime aktualnu poziciu uzla v danom okamihu
-    if ( calculateNew ) {
-        float graphScale = Util::ApplicationConfig::get()->getValue( "Viewer.Display.NodeDistanceScale" ).toFloat();
-
-        //osg::Vec3 directionVector = osg::Vec3(targetPosition.x(), targetPosition.y(), targetPosition.z()) * graphScale - currentPosition;
-        osg::Vec3 directionVector = osg::Vec3( mRestrictedTargetPosition.x(), mRestrictedTargetPosition.y(), mRestrictedTargetPosition.z() ) * graphScale - currentPosition;
-        this->currentPosition = osg::Vec3( directionVector * ( usingInterpolation ? interpolationSpeed : 1 ) + this->currentPosition );
-    }
-
-    return osg::Vec3( this->currentPosition );
 }
 
 QSet<Data::Node*> Data::Node::getIncidentNodes() const

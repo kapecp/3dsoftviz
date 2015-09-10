@@ -21,7 +21,7 @@ Clusterer::Clusterer() {
     graph = NULL;
 }
 */
-void Clustering::Clusterer::cluster( Data::Graph* graph, QProgressDialog* clusteringProgressBar )
+void Clusterer::cluster( Data::Graph* graph, QProgressDialog* clusteringProgressBar )
 {
     this->progressBar = clusteringProgressBar;
     if ( graph == NULL ) {

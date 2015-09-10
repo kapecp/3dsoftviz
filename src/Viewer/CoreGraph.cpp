@@ -627,10 +627,10 @@ Vwr::CoreGraph::CoreGraph( Data::Graph* graph, osg::ref_ptr<osg::Camera> camera 
     graphRotTransf->addChild( graphGroup );
     root->addChild( graphRotTransf );
 
-	// backgroung this must be last Node in root !!!  ( because of ortho2d background)
-	// Gloger: disabled skybox- using solid background (see setClearColor in ViewerQT)
-	root->addChild( createBackground() );
-	backgroundPosition = 1;
+    // backgroung this must be last Node in root !!!  ( because of ortho2d background)
+    // Gloger: disabled skybox- using solid background (see setClearColor in ViewerQT)
+    root->addChild( createBackground() );
+    backgroundPosition = 1;
 
     reload( graph );
 }
@@ -710,12 +710,12 @@ void CoreGraph::reload( Data::Graph* graph )
 
     customNodesPosition = currentPos;
 
-	osgUtil::Optimizer opt;
-	opt.optimize( edgesGroup->getGroup(), osgUtil::Optimizer::CHECK_GEOMETRY );
+    osgUtil::Optimizer opt;
+    opt.optimize( edgesGroup->getGroup(), osgUtil::Optimizer::CHECK_GEOMETRY );
 
-	// Set browsers to be always on top
-	this->browsersGroup->getGroup()->getOrCreateStateSet()->setMode(GL_DEPTH_TEST, osg::StateAttribute::OFF);
-	this->browsersGroup->getGroup()->getOrCreateStateSet()->setRenderBinDetails(100,"RenderBin");
+    // Set browsers to be always on top
+    this->browsersGroup->getGroup()->getOrCreateStateSet()->setMode(GL_DEPTH_TEST, osg::StateAttribute::OFF);
+    this->browsersGroup->getGroup()->getOrCreateStateSet()->setRenderBinDetails(100,"RenderBin");
 }
 
 void CoreGraph::cleanUp()
@@ -980,10 +980,10 @@ osg::ref_ptr<osg::Group> CoreGraph::initEdgeLabels()
 
     QMap<qlonglong, osg::ref_ptr<Data::Edge> >::iterator i = in_edges->begin();
 
-	while ( i != in_edges->end() ) {
-		labels->addChild( i.value()->createLabel( i.value()->getName() ) );
-		++i;
-	}
+    while ( i != in_edges->end() ) {
+        labels->addChild( i.value()->createLabel( i.value()->Data::AbsEdge::getName() ) );
+        ++i;
+    }
 
     labels->setNodeMask( 0 );
 

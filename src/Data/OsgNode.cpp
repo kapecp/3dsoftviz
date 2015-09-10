@@ -25,7 +25,7 @@ Data::OsgNode::OsgNode( qlonglong id, QString name, Data::Type* type, Data::Grap
 
     this->square = createNode( this->scale * 4, OsgNode::createStateSet( this->type ) );
     this->focusedSquare = createNode( this->scale * 16, OsgNode::createStateSet( this->type ) );
-    this->label = createLabel( this->type->getScale(), labelText );
+//    this->label = createLabel( this->type->getScale(), labelText );
     this->force = osg::Vec3f();
     this->velocity = osg::Vec3f( 0,0,0 );
     this->selected = false;
@@ -45,7 +45,7 @@ Data::OsgNode::OsgNode( qlonglong id, QString name, Data::Type* type, Data::Grap
 
 Data::OsgNode::~OsgNode( void ) {
 }
-
+/*
 osg::ref_ptr<osg::Drawable> Data::OsgNode::createLabel( const float& scale, QString name )
 {
     //vytvorenie popisu uzla
@@ -71,7 +71,7 @@ osg::ref_ptr<osg::Drawable> Data::OsgNode::createLabel( const float& scale, QStr
     label->setColor( osg::Vec4( 1.0f, 1.0f, 1.0f, 1.0f ) );
 
     return label;
-}
+}*/
 
 osg::ref_ptr<osg::Drawable> Data::OsgNode::createNode( const float& scaling, osg::StateSet* bbState )
 {
@@ -211,7 +211,12 @@ void Data::OsgNode::setDrawableColor( int pos, osg::Vec4 color )
     }
 }
 
-
+bool Data::OsgNode::setInvisible( bool invisible )
+{
+    setValue( graph->getNodeVisual(), !invisible );
+    //-poriesit invisible pre label
+    return true;
+}
 
 osg::Vec3f Data::OsgNode::getTargetPosition() const
 {

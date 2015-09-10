@@ -25,7 +25,7 @@ public:
         *  \param       name     label text
         *  \return osg::ref_ptr node label
         */
-    static osg::ref_ptr<osg::Drawable> createLabel( const float& scale, QString name );
+//    static osg::ref_ptr<osg::Drawable> createLabel( const float& scale, QString name );
 
     /**
         *  \fn private static  createNode(const float & scale, osg::StateSet* bbState)
@@ -216,10 +216,7 @@ public:
         return color;
     }
 
-    void setInvisible()
-    {
-        setColor( osg::Vec4( 0,0,0,0 ) );
-    }
+    bool setInvisible( bool invisible);
 
     void setParentBall( osg::Sphere* val )
     {
@@ -307,7 +304,7 @@ protected:
         *  osg::ref_ptr label
         *  \brief Label drawable
         */
-    osg::ref_ptr<osg::Drawable> label;
+//    osg::ref_ptr<osg::Drawable> label;
 
     /**
         *  osg::ref_ptr square
