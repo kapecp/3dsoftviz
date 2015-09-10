@@ -3502,8 +3502,9 @@ void CoreWindow::onChange()
     if ( selected->size() > 0 ) {
         // Get last node model & display it in qt view
         qlonglong lastNodeId = selected->last()->getId();
-        Lua::LuaGraphTreeModel* lastNodeModel = coreGraph->getBrowsersGroup()->getSelectedNodesModels()->value( lastNodeId );
-        luaGraphTreeView->setModel( lastNodeModel );
+        Lua::LuaNode* lastLuaNode = Lua::LuaGraph::getInstance()->getNodes()->value( lastNodeId );
+        Lua::LuaGraphTreeModel* lastLuaModel = new Lua::LuaGraphTreeModel( lastLuaNode );
+        luaGraphTreeView->setModel( lastLuaModel );
     }
 
 
