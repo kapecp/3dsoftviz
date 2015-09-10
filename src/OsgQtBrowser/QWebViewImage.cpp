@@ -55,7 +55,7 @@ void QWebViewImage::showTemplate( const std::string &templateName, Diluculum::Lu
 
 	// Create relative webview dir url
 	QString appPath = QCoreApplication::applicationDirPath();
-	QString webviewPath = appPath.append("/../share/3DSOFTVIZ/webview/index.html");
+    QString webviewPath = appPath.append("/../share/3dsoftviz/webview/index.html");
 	QUrl baseUrl = QUrl::fromLocalFile(webviewPath);
 
 	// Set angular template type using query string
