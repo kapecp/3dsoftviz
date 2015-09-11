@@ -22,6 +22,7 @@
 #include <osg/ShapeDrawable>
 #include <osg/ValueObject>
 #include <osg/Geode>
+#include <osg/Switch>
 
 #include <string>
 
@@ -572,7 +573,13 @@ bool PickHandler::doSinglePick( osg::NodePath nodePath )
 
 bool PickHandler::doNodePick( osg::NodePath nodePath )
 {
-	Data::Node* n = dynamic_cast<Data::Node*>( nodePath[nodePath.size() - 1] );
+	Data::Node* n;
+	for ( unsigned int i = 0; i < nodePath.size(); i++ ) {
+		n = dynamic_cast<Data::Node*>( nodePath[i] );
+		if ( n != NULL ) {
+			break;
+		}
+	}
 
 	if ( n != NULL ) {
 		if ( isAltPressed && pickMode == PickMode::NONE && !isShiftPressed ) {
@@ -630,9 +637,30 @@ bool PickHandler::doNodePick( osg::NodePath nodePath )
 
 bool PickHandler::doEdgePick( osg::NodePath nodePath )
 {
-	Data::Edge* e = dynamic_cast<Data::Edge*>( nodePath[nodePath.size() - 1] );
+	Data::Edge* e;
+	for ( unsigned int i = 0; i < nodePath.size(); i++ ) {
+		e = dynamic_cast<Data::Edge*>( nodePath[i] );
+		if ( e != NULL ) {
+			break;
+		}
+	}
 
-	if ( e != NULL ) {
+	if ( e != 0 ) {
+		osg::Geometry* geometry = e->getChild( 0 )->asGeode()->getDrawable( 0 )->asGeometry();
+
+		if ( geometry != NULL ) {
+			// zmena (plesko): ak vyber zachytil avatara, nastal segmentation fault,
+			// lebo sa vyberal neexistujuci primitiveSet
+			Data::Edge* e;
+			if ( geometry->getNumPrimitiveSets() > primitiveIndex ) {
+				e = dynamic_cast<Data::Edge*>( geometry->getPrimitiveSet( primitiveIndex ) );
+			}
+			else {
+				return false;
+			}
+			// koniec zmeny
+		}
+
 		if ( isAltPressed && pickMode == PickMode::NONE && !isShiftPressed ) {
 			osg::ref_ptr<osg::Vec3Array> coords = e->getCooridnates();
 

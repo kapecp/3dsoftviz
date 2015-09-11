@@ -15,6 +15,8 @@
 
 #include "Util/ApplicationConfig.h"
 
+#include "osgViewer/Viewer"
+
 #include <osg/Notify>
 #include <osg/BoundsChecking>
 
@@ -689,7 +691,7 @@ void Vwr::CameraManipulator::trackball( osg::Vec3& axis,float& angle, float p1x,
  */
 float Vwr::CameraManipulator::tb_project_to_sphere( float r, float x, float y )
 {
-	float d, t, z;
+    float d, t, z;
 
 
 	d =( float ) sqrt( x*x + y*y );
@@ -750,6 +752,15 @@ bool Vwr::CameraManipulator::handleKeyUp( const osgGA::GUIEventAdapter& ea, osgG
 		case osgGA::GUIEventAdapter::KEY_Page_Down:
 			decelerateVerticalRate = true;
 			break;
+		case osgGA::GUIEventAdapter::KEY_C:
+			// Print camera position
+			qDebug() << "_center.set(" << _center.x() << "," << _center.y() << "," << _center.z() << ");\n_rotation.set(" << _rotation.x() << "," << _rotation.y() << "," << _rotation.z() << "," << _rotation.w() << ");";
+			break;
+		case osgGA::GUIEventAdapter::KEY_V:{
+			// Set camera position (use for debug & setting specific camera position)
+			_center.set( 15.9042 , -277.226 , -372.165 );_rotation.set( 0.467275 , -0.0320081 , 0.0985734 , 0.878017 );
+			break;
+		}
 		default:
 			break;
 	}

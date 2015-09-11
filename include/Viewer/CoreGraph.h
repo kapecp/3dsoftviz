@@ -203,6 +203,15 @@ public:
 	    */
 	void setNodesFreezed( bool val );
 
+	bool getInterpolationDenied() const
+	{
+		return interpolationDenied;
+	}
+	void setInterpolationDenied( bool val )
+	{
+		this->interpolationDenied = val;
+	}
+
 	void setClustersOpacityAutomatic( bool automatic );
 	void setClustersOpacitySelected( bool selected );
 	void setClustersOpacity( double opacity );
@@ -261,6 +270,16 @@ public slots:
 	     * @param quat Quaternion that desribe rotation of face
 	     */
 	void updateGraphRotByFaceDet( const osg::Quat quat );
+
+	/**
+	     * @brief setNodeType Set representation of nodes
+	     */
+	void setNodeVisual( int index );
+
+	/**
+	     * @brief setEdgeType Set representation of edges
+	     */
+	void setEdgeVisual( int index );
 
 private:
 
@@ -450,6 +469,12 @@ private:
 	    *  \brief true, if nodes are freezed
 	    */
 	bool nodesFreezed;
+
+	/**
+	    *  bool interpolationDenied
+	    *  \brief true, if interpolation is denied
+	    */
+	bool interpolationDenied;
 
 	/**
 	    *  QLinkedList<osg::ref_ptr<osg::Node> > customNodeList
