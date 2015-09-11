@@ -75,452 +75,452 @@ namespace QOSG {
     */
 class CoreWindow : public QMainWindow, public SelectionObserver
 {
-    Q_OBJECT
+	Q_OBJECT
 private:
 #ifdef SPEECHSDK_FOUND
-    Speech::KinectSpeechThread* mSpeechThr;
+	Speech::KinectSpeechThread* mSpeechThr;
 #endif
 
 #ifdef FGLOVE_FOUND
-    Fglove::FgloveThread* mGloveThr;
+	Fglove::FgloveThread* mGloveThr;
 #endif
 
 #ifdef LEAP_FOUND
-    Leap::LeapThread* mLeapThr;
+	Leap::LeapThread* mLeapThr;
 #endif
 
 public slots:
-    void moveMouseAruco( double positionX,double positionY,bool isClick, Qt::MouseButton button );
+	void moveMouseAruco( double positionX,double positionY,bool isClick, Qt::MouseButton button );
 
-    /**
-                *  \fn public  showOptions
-                *  \brief Show the options of aplication
-                */
-    void showOptions();
+	/**
+	            *  \fn public  showOptions
+	            *  \brief Show the options of aplication
+	            */
+	void showOptions();
 
-    /**
-                *  \fn public  showLoadGraph
-                *  \brief Show the dialog to load graph from database
-                */
-    void showLoadGraph();
+	/**
+	            *  \fn public  showLoadGraph
+	            *  \brief Show the dialog to load graph from database
+	            */
+	void showLoadGraph();
 
-    /**
-                *  \fn public  saveGraphToDB
-                *  \brief Save a current graph to database
-                */
-    void saveGraphToDB();
-
-
-    /**
-                *  \fn public  loadFunctionCall()
-                *  \brief load function call clicked
-                */
-    void loadFunctionCall();
-
-    /**
-                *  \fn public  browsersGroupingClicked()
-                *  \brief toggles between browsers grouping and sepparate browsers
-                *  \param checked    flag if button is checked
-                */
-    void browsersGroupingClicked( bool checked );
-
-    /**
-                *  \fn public  filterGraph()
-                *  \brief filter graph from query
-                */
-    void filterGraph();
-
-    /**
-                *  \fn public  saveLayoutToDB
-                *  \brief Save a current layout of current graph to database
-                */
-    void saveLayoutToDB();
-
-    /**
-                *  \fn public  sqlQuery
-                *  \brief Commit the sql in sql input
-                */
-    void sqlQuery();
-
-    void showMetrics();
-
-    /**
-                *  \fn public  playPause
-                *  \brief Play or pause the layout algorithm
-                */
-    void playPause();
-
-    /**
-                *  \fn public  noSelectClicked(bool checked
-                *  \brief No-select mode selected
-                *  \param checked    flag if button is checked
-                */
-    void noSelectClicked( bool checked );
-
-    /**
-                *  \fn public  singleSelectClicked(bool checked
-                *  \brief Single-select mode selected
-                *  \param checked   flag if button is checked
-                */
-    void singleSelectClicked( bool checked );
-
-    /**
-                *  \fn public  multiSelectClicked(bool checked
-                *  \brief Multi-select mode selected
-                *  \param  checked     flag if button is checked
-                */
-    void multiSelectClicked( bool checked );
-
-    /**
-                *  \fn public  addMetaNode
-                *  \brief Add meta node
-                */
-    void addMetaNode();
-
-    /**
-                *  \fn public  centerView(bool checked
-                *  \brief Center the view
-                *  \param   checked     flag if button is checked
-                */
-    void centerView( bool checked );
-
-    /**
-                *  \fn public  fixNodes
-                *  \brief Fix selected nodes
-                */
-    void fixNodes();
-
-    /**
-                *  \fn public  unFixNodes
-                *  \brief Unfix all nodes
-                */
-    void unFixNodes();
-
-    /**
-                *  \fn public  mergeNodes
-                *  \brief Merge selected nodes together
-                */
-    void mergeNodes();
-
-    /**
-                *  \fn public  separateNodes
-                *  \brief separate selected merged nodes
-                */
-    void separateNodes();
-
-    /**
-                *  \fn public  removeMetaNodes
-                *  \brief Remove all meta nodes
-                */
-    void removeMetaNodes();
-
-    /**
-                *  \fn public  loadFile
-                *  \brief Show dialog to select file which will be opened
-                */
-    void loadFile();
-
-    /**
-                *  \fn public  labelOnOff(bool checked)
-                *  \brief Show / hide labels
-                *  \param  checked flag if button is checked
-                */
-    void labelOnOff( bool checked );
-
-    /**
-                *  \fn public  sliderValueChanged(int value)
-                *  \brief Slider value is changed
-                *  \param value actual value of slider
-                */
-    void sliderValueChanged( int value );
-
-    void clusteringDepthChanged( const QString& );
-    void clusteringAlgorithmChanged( int value );
-    void clustersOpacityCheckboxValueChanged( bool checked );
-    void clusterSelectedOpacityCheckboxValueChanged( bool checked );
-    void clustersOpacitySliderValueChanged( int value );
-    void clustersShapeBoundarySliderValueChanged( int value );
-    void repulsiveForceInsideClusterValueChanged( double value );
-    void setRestriction_Cube_Selected();
-    void cluster_nodes();
-    // currentPosition nastavi na targetPosition - cim sposobi to, ze uzly vo vnutri obmedzovaca sa pekne nalayoutuju, pretoze uz nebudu tahane mimo neho kvoli targetPos
-    void restartLayouting();
-
-    //volovar_zac
-    /**
-                *  \fn public  RadialLayoutSizeChanged
-                *  \brief size of radial layout is changed
-                *  \param size const
-                */
-    void RadialLayoutSizeChanged( int value );
-
-    /**
-                *  \fn public  RadialLayoutAlphaChanged
-                *  \brief alpha of radial layout is changed
-                *  \param alpha const
-                */
-    void RadialLayoutAlphaChanged( int value );
-
-    /**
-                *  \fn public  RadialLayoutSetVisibleSpheres
-                *  \brief number of visible spheres is changed
-                *  \param visibility const
-                */
-    void RadialLayoutSetVisibleSpheres( int value );
+	/**
+	            *  \fn public  saveGraphToDB
+	            *  \brief Save a current graph to database
+	            */
+	void saveGraphToDB();
 
 
-    /**
-                *  \fn public  RadialLayoutSetForceScale
-                *  \brief multiplier of repulsive forces between two nodes in same radial layout and different layer
-                *  \param forceFactor const
-                */
-    void RadialLayoutSetForceScale( int value );
+	/**
+	            *  \fn public  loadFunctionCall()
+	            *  \brief load function call clicked
+	            */
+	void loadFunctionCall();
+
+	/**
+	            *  \fn public  browsersGroupingClicked()
+	            *  \brief toggles between browsers grouping and sepparate browsers
+	            *  \param checked    flag if button is checked
+	            */
+	void browsersGroupingClicked( bool checked );
+
+	/**
+	            *  \fn public  filterGraph()
+	            *  \brief filter graph from query
+	            */
+	void filterGraph();
+
+	/**
+	            *  \fn public  saveLayoutToDB
+	            *  \brief Save a current layout of current graph to database
+	            */
+	void saveLayoutToDB();
+
+	/**
+	            *  \fn public  sqlQuery
+	            *  \brief Commit the sql in sql input
+	            */
+	void sqlQuery();
+
+	void showMetrics();
+
+	/**
+	            *  \fn public  playPause
+	            *  \brief Play or pause the layout algorithm
+	            */
+	void playPause();
+
+	/**
+	            *  \fn public  noSelectClicked(bool checked
+	            *  \brief No-select mode selected
+	            *  \param checked    flag if button is checked
+	            */
+	void noSelectClicked( bool checked );
+
+	/**
+	            *  \fn public  singleSelectClicked(bool checked
+	            *  \brief Single-select mode selected
+	            *  \param checked   flag if button is checked
+	            */
+	void singleSelectClicked( bool checked );
+
+	/**
+	            *  \fn public  multiSelectClicked(bool checked
+	            *  \brief Multi-select mode selected
+	            *  \param  checked     flag if button is checked
+	            */
+	void multiSelectClicked( bool checked );
+
+	/**
+	            *  \fn public  addMetaNode
+	            *  \brief Add meta node
+	            */
+	void addMetaNode();
+
+	/**
+	            *  \fn public  centerView(bool checked
+	            *  \brief Center the view
+	            *  \param   checked     flag if button is checked
+	            */
+	void centerView( bool checked );
+
+	/**
+	            *  \fn public  fixNodes
+	            *  \brief Fix selected nodes
+	            */
+	void fixNodes();
+
+	/**
+	            *  \fn public  unFixNodes
+	            *  \brief Unfix all nodes
+	            */
+	void unFixNodes();
+
+	/**
+	            *  \fn public  mergeNodes
+	            *  \brief Merge selected nodes together
+	            */
+	void mergeNodes();
+
+	/**
+	            *  \fn public  separateNodes
+	            *  \brief separate selected merged nodes
+	            */
+	void separateNodes();
+
+	/**
+	            *  \fn public  removeMetaNodes
+	            *  \brief Remove all meta nodes
+	            */
+	void removeMetaNodes();
+
+	/**
+	            *  \fn public  loadFile
+	            *  \brief Show dialog to select file which will be opened
+	            */
+	void loadFile();
+
+	/**
+	            *  \fn public  labelOnOff(bool checked)
+	            *  \brief Show / hide labels
+	            *  \param  checked flag if button is checked
+	            */
+	void labelOnOff( bool checked );
+
+	/**
+	            *  \fn public  sliderValueChanged(int value)
+	            *  \brief Slider value is changed
+	            *  \param value actual value of slider
+	            */
+	void sliderValueChanged( int value );
+
+	void clusteringDepthChanged( const QString& );
+	void clusteringAlgorithmChanged( int value );
+	void clustersOpacityCheckboxValueChanged( bool checked );
+	void clusterSelectedOpacityCheckboxValueChanged( bool checked );
+	void clustersOpacitySliderValueChanged( int value );
+	void clustersShapeBoundarySliderValueChanged( int value );
+	void repulsiveForceInsideClusterValueChanged( double value );
+	void setRestriction_Cube_Selected();
+	void cluster_nodes();
+	// currentPosition nastavi na targetPosition - cim sposobi to, ze uzly vo vnutri obmedzovaca sa pekne nalayoutuju, pretoze uz nebudu tahane mimo neho kvoli targetPos
+	void restartLayouting();
+
+	//volovar_zac
+	/**
+	            *  \fn public  RadialLayoutSizeChanged
+	            *  \brief size of radial layout is changed
+	            *  \param size const
+	            */
+	void RadialLayoutSizeChanged( int value );
+
+	/**
+	            *  \fn public  RadialLayoutAlphaChanged
+	            *  \brief alpha of radial layout is changed
+	            *  \param alpha const
+	            */
+	void RadialLayoutAlphaChanged( int value );
+
+	/**
+	            *  \fn public  RadialLayoutSetVisibleSpheres
+	            *  \brief number of visible spheres is changed
+	            *  \param visibility const
+	            */
+	void RadialLayoutSetVisibleSpheres( int value );
 
 
-    /**
-                *  \fn public  RadialLayoutSetForceSphereScale
-                *  \brief multiplier of repulsive forces between two nodes in same radial layout and layer
-                *  \param forceFactor const
-                */
-    void RadialLayoutSetForceSphereScale( int value );
+	/**
+	            *  \fn public  RadialLayoutSetForceScale
+	            *  \brief multiplier of repulsive forces between two nodes in same radial layout and different layer
+	            *  \param forceFactor const
+	            */
+	void RadialLayoutSetForceScale( int value );
 
-    //volovar_kon
-    /**
-                *  \fn public  colorPickerChanged
-                *  \brief Color in colorpicker changed
-                *  \param color const    changed color
-                */
-    void colorPickerChanged( const QColor& color );
 
-    /**
-                *  \fn public  selectionTypeComboBoxChanged(int index)
-                *  \brief Type in combobox changed
-                *  \param  index
-                */
-    void selectionTypeComboBoxChanged( int index );
+	/**
+	            *  \fn public  RadialLayoutSetForceSphereScale
+	            *  \brief multiplier of repulsive forces between two nodes in same radial layout and layer
+	            *  \param forceFactor const
+	            */
+	void RadialLayoutSetForceSphereScale( int value );
 
-    /**
-                *  \fn public  nodeTypeComboBoxChanged(int index)
-                *  \brief Type in combobox changed
-                *  \param  index
-                */
-    void nodeTypeComboBoxChanged( int index );
+	//volovar_kon
+	/**
+	            *  \fn public  colorPickerChanged
+	            *  \brief Color in colorpicker changed
+	            *  \param color const    changed color
+	            */
+	void colorPickerChanged( const QColor& color );
 
-    /**
-                *  \fn public  nodeTypeComboBoxChanged(int index)
-                *  \brief Type in combobox changed
-                *  \param  index
-                */
-    void edgeTypeComboBoxChanged( int index );
+	/**
+	            *  \fn public  selectionTypeComboBoxChanged(int index)
+	            *  \brief Type in combobox changed
+	            *  \param  index
+	            */
+	void selectionTypeComboBoxChanged( int index );
 
-    /**
-                *  \fn public  applyColorClick
-                *  \brief Apply selected color in colorpicker to selected node
-                */
-    void applyColorClick();
+	/**
+	            *  \fn public  nodeTypeComboBoxChanged(int index)
+	            *  \brief Type in combobox changed
+	            *  \param  index
+	            */
+	void nodeTypeComboBoxChanged( int index );
 
-    /**
-                *  \fn public  applyLabelClick
-                *  \brief Apply selected label to selected node
-                */
-    void applyLabelClick();
+	/**
+	            *  \fn public  nodeTypeComboBoxChanged(int index)
+	            *  \brief Type in combobox changed
+	            *  \param  index
+	            */
+	void edgeTypeComboBoxChanged( int index );
 
-    /**
-                * \brief Creates a new CylinderSurface restriction (defined by positions of 2 nodes) and sets
-                * if to all selected nodes (replacing any previously attached restrictions to these nodes).
-                */
-    void setRestriction_CylinderSurface();
+	/**
+	            *  \fn public  applyColorClick
+	            *  \brief Apply selected color in colorpicker to selected node
+	            */
+	void applyColorClick();
 
-    /**
-                 * \brief Creates a new SphereSurface restriction (defined by positions of 2 nodes) and sets
-                 * if to all selected nodes (replacing any previously attached restrictions to these nodes).
-                 */
-    void setRestriction_SphereSurface();
+	/**
+	            *  \fn public  applyLabelClick
+	            *  \brief Apply selected label to selected node
+	            */
+	void applyLabelClick();
 
-    /**
-                 * \brief Creates a new Sphere restriction (defined by positions of 2 nodes) and sets
-                 * if to all selected nodes (replacing any previously attached restrictions to these nodes).
-                 */
-    void setRestriction_Sphere();
+	/**
+	            * \brief Creates a new CylinderSurface restriction (defined by positions of 2 nodes) and sets
+	            * if to all selected nodes (replacing any previously attached restrictions to these nodes).
+	            */
+	void setRestriction_CylinderSurface();
 
-    /**
-                 * \brief Creates a new ConeSurface restriction (defined by positions of 2 nodes) and sets
-                 * if to all selected nodes (replacing any previously attached restrictions to these nodes).
-                 */
-    void setRestriction_ConeSurface();
+	/**
+	             * \brief Creates a new SphereSurface restriction (defined by positions of 2 nodes) and sets
+	             * if to all selected nodes (replacing any previously attached restrictions to these nodes).
+	             */
+	void setRestriction_SphereSurface();
 
-    /**
-                 * \brief Creates a new Plane restriction (defined by positions of 3 nodes) and sets
-                 * if to all selected nodes (replacing any previously attached restrictions to these nodes).
-                 */
-    void setRestriction_Plane( QLinkedList<osg::ref_ptr<Data::Node> >* nodesToRestrict = NULL );
+	/**
+	             * \brief Creates a new Sphere restriction (defined by positions of 2 nodes) and sets
+	             * if to all selected nodes (replacing any previously attached restrictions to these nodes).
+	             */
+	void setRestriction_Sphere();
 
-    /**
-                                 * \brief Creates a new Plane restriction (defined by positions of 3 nodes) with position according to nOfPlane and sets
-                                 * it to all selected nodes (replacing any previously attached restrictions to these nodes).
-                                 */
-    Layout::ShapeGetter_Plane_ByThreeNodes* setRestriction_Plane_Vertigo( QLinkedList<osg::ref_ptr<Data::Node> >* nodesToRestrict = NULL, int nOfPlane = 0 );
-    /**
-                                 * \brief Creates a new restriction - composition sphere and plane (defined by positions of 3 nodes) and sets
-                                 * if to all selected nodes (replacing any previously attached restrictions to these nodes).
-                                 * \return Layout::ShapeGetter_Plane_ByThreeNodes *
-                                 */
-    void setRestriction_SpherePlane( QLinkedList<osg::ref_ptr<Data::Node> >* nodesToRestrict = NULL );
+	/**
+	             * \brief Creates a new ConeSurface restriction (defined by positions of 2 nodes) and sets
+	             * if to all selected nodes (replacing any previously attached restrictions to these nodes).
+	             */
+	void setRestriction_ConeSurface();
 
-    /**
-                                 * \brief Creates a new Circle restriction (defined by positions of 3 nodes) and sets
-                                 * if to all selected nodes (replacing any previously attached restrictions to these nodes).
-                                 */
-    void setRestriction_Circle( QLinkedList<osg::ref_ptr<Data::Node> >* nodesToRestrict = NULL, osg::ref_ptr<Data::Node> node1 = NULL );
+	/**
+	             * \brief Creates a new Plane restriction (defined by positions of 3 nodes) and sets
+	             * if to all selected nodes (replacing any previously attached restrictions to these nodes).
+	             */
+	void setRestriction_Plane( QLinkedList<osg::ref_ptr<Data::Node> >* nodesToRestrict = NULL );
 
-    /**
-                                 * \brief Creates a new Cone restriction with node with maximum edge count as root and sets
-                                 * if to all selected nodes (replacing any previously attached restrictions to these nodes).
-                                 */
-    void setRestriction_Cone( QLinkedList<osg::ref_ptr<Data::Node> >* nodesToRestrict = NULL,
-                              osg::ref_ptr<Data::Node> parentNode = NULL );
+	/**
+	                             * \brief Creates a new Plane restriction (defined by positions of 3 nodes) with position according to nOfPlane and sets
+	                             * it to all selected nodes (replacing any previously attached restrictions to these nodes).
+	                             */
+	Layout::ShapeGetter_Plane_ByThreeNodes* setRestriction_Plane_Vertigo( QLinkedList<osg::ref_ptr<Data::Node> >* nodesToRestrict = NULL, int nOfPlane = 0 );
+	/**
+	                             * \brief Creates a new restriction - composition sphere and plane (defined by positions of 3 nodes) and sets
+	                             * if to all selected nodes (replacing any previously attached restrictions to these nodes).
+	                             * \return Layout::ShapeGetter_Plane_ByThreeNodes *
+	                             */
+	void setRestriction_SpherePlane( QLinkedList<osg::ref_ptr<Data::Node> >* nodesToRestrict = NULL );
 
-    /**
-                                 * \brief Creates a new Cone Tree restriction with selected node as root (all previously
-                                 * attached restrictions are removed).
-                                 */
-    void setRestriction_ConeTree();
+	/**
+	                             * \brief Creates a new Circle restriction (defined by positions of 3 nodes) and sets
+	                             * if to all selected nodes (replacing any previously attached restrictions to these nodes).
+	                             */
+	void setRestriction_Circle( QLinkedList<osg::ref_ptr<Data::Node> >* nodesToRestrict = NULL, osg::ref_ptr<Data::Node> node1 = NULL );
 
-    /**
-                 * \brief Removes restrictions from all selected nodes (if any has been set). Destroys a
-                 * restriction (including manipulation nodes) if the last usage has been removed.
-                 */
-    //volovar_zac
-    /**
-                 * \brief Create a new Radial restriction for all selected nodes.
-     */
-    void setRestriction_RadialLayout();
+	/**
+	                             * \brief Creates a new Cone restriction with node with maximum edge count as root and sets
+	                             * if to all selected nodes (replacing any previously attached restrictions to these nodes).
+	                             */
+	void setRestriction_Cone( QLinkedList<osg::ref_ptr<Data::Node> >* nodesToRestrict = NULL,
+							  osg::ref_ptr<Data::Node> parentNode = NULL );
 
-    /**
-     * @brief changeDrawMethod_RadialLayout change Drawing method of radial layout (SOLID, WIREFRAME)
-     */
-    void changeDrawMethod_RadialLayout();
+	/**
+	                             * \brief Creates a new Cone Tree restriction with selected node as root (all previously
+	                             * attached restrictions are removed).
+	                             */
+	void setRestriction_ConeTree();
 
-    /**
-     * @brief changeMode_RadialLayout switch between 2D and 3D mode of radial layout
-     */
-    void changeMode_RadialLayout();
-    //volovar_kon
+	/**
+	             * \brief Removes restrictions from all selected nodes (if any has been set). Destroys a
+	             * restriction (including manipulation nodes) if the last usage has been removed.
+	             */
+	//volovar_zac
+	/**
+	             * \brief Create a new Radial restriction for all selected nodes.
+	 */
+	void setRestriction_RadialLayout();
 
-    void unsetRestriction();
+	/**
+	 * @brief changeDrawMethod_RadialLayout change Drawing method of radial layout (SOLID, WIREFRAME)
+	 */
+	void changeDrawMethod_RadialLayout();
 
-    /**
-                 * \brief Removes restrictions from all nodes (if any has been set). Destroys a
-                 * restriction (including manipulation nodes) if the last usage has been removed.
-                 */
-    void unsetRestrictionFromAll();
+	/**
+	 * @brief changeMode_RadialLayout switch between 2D and 3D mode of radial layout
+	 */
+	void changeMode_RadialLayout();
+	//volovar_kon
 
-    /**
-                 * \brief Start edge bundling.
-                 */
-    void startEdgeBundling();
+	void unsetRestriction();
 
-    /**
-                 * \brief Pause edge bundling.
-                 */
-    void pauseEdgeBundling();
+	/**
+	             * \brief Removes restrictions from all nodes (if any has been set). Destroys a
+	             * restriction (including manipulation nodes) if the last usage has been removed.
+	             */
+	void unsetRestrictionFromAll();
 
-    /**
-                 * \brief Stop edge bundling.
-                 */
-    void stopEdgeBundling();
+	/**
+	             * \brief Start edge bundling.
+	             */
+	void startEdgeBundling();
 
-    /**
-                *  \fn public  add_EdgeClick
-                *  \brief create edge between selected node
-                */
-    bool add_EdgeClick();
+	/**
+	             * \brief Pause edge bundling.
+	             */
+	void pauseEdgeBundling();
 
-    /**
-                *  \fn public  add_NodeClick
-                *  \brief create new Node in GUI
-                */
-    bool add_NodeClick();
+	/**
+	             * \brief Stop edge bundling.
+	             */
+	void stopEdgeBundling();
 
-    /**
-                *  \fn public  removeClick
-                *  \brief remove all selected nodes and edges
-                */
-    bool removeClick();
+	/**
+	            *  \fn public  add_EdgeClick
+	            *  \brief create edge between selected node
+	            */
+	bool add_EdgeClick();
 
-    void start_server();
-    void start_client();
-    void send_message();
-    void create_facewindow();
+	/**
+	            *  \fn public  add_NodeClick
+	            *  \brief create new Node in GUI
+	            */
+	bool add_NodeClick();
+
+	/**
+	            *  \fn public  removeClick
+	            *  \brief remove all selected nodes and edges
+	            */
+	bool removeClick();
+
+	void start_server();
+	void start_client();
+	void send_message();
+	void create_facewindow();
 
 #ifdef OPENCV_FOUND
 #ifdef OPENNI2_FOUND
-    /**
-        *
-        * @brief create Kinect Button
-     */
-    void createKinectWindow();
+	/**
+	    *
+	    * @brief create Kinect Button
+	 */
+	void createKinectWindow();
 
-    /**
-     * @brief calculateRansac
-     */
-    void calculateRansac();
+	/**
+	 * @brief calculateRansac
+	 */
+	void calculateRansac();
 #endif
 #endif
 
 #ifdef SPEECHSDK_FOUND
-    void startSpeech();
+	void startSpeech();
 #endif
 
 #ifdef LEAP_FOUND
-    void startLeap();
+	void startLeap();
 #endif
 
 #ifdef FGLOVE_FOUND
-    void startGlovesRecognition();
+	void startGlovesRecognition();
 #endif
 
-    void toggleSpyWatch();
-    void toggleAttention();
-    void setAvatarScale( int scale );
+	void toggleSpyWatch();
+	void toggleAttention();
+	void setAvatarScale( int scale );
 
-    /**
-                *  \fn public  toggleVertigo
-                *  \brief toggles between normal and vertigo camera mode
-                */
-    void toggleVertigo();
-    /**
-                *  \fn public  create_Vertigo_Planes
-                *  \brief creates planes and restricts the nodes of current graph nodes according to their depth of spanning tree
-                */
-    void create_Vertigo_Planes( int numberOfPlanes, int nOfDepthsInOnePlane, Data::GraphSpanningTree* spanningTree, int maxDepth, QMap<qlonglong, osg::ref_ptr<Data::Node> >* allNodes );
-    /**
-                *  \fn public  change_Vertigo_Planes_Distance
-                *  \brief changes the distance between the planes
-                */
-    void change_Vertigo_Planes_Distance( int value );
-    /**
-                *  \fn public  add_DistanceClick
-                *  \brief adds the distance between the planes
-                */
-    void add_DistanceClick();
-    /**
-                *  \fn public  subtract_DistanceClick
-                *  \brief subtracts the distance between the planes
-                */
-    void subtract_DistanceClick();
-    /**
-                *  \fn public  add_PlanesClick
-                *  \brief creates two more planes for vertigo mode
-                */
-    void add_PlanesClick();
-    /**
-                *  \fn public  remove_PlanesClick
-                *  \brief removes two planes for vertigo mode
-                */
-    void remove_PlanesClick();
+	/**
+	            *  \fn public  toggleVertigo
+	            *  \brief toggles between normal and vertigo camera mode
+	            */
+	void toggleVertigo();
+	/**
+	            *  \fn public  create_Vertigo_Planes
+	            *  \brief creates planes and restricts the nodes of current graph nodes according to their depth of spanning tree
+	            */
+	void create_Vertigo_Planes( int numberOfPlanes, int nOfDepthsInOnePlane, Data::GraphSpanningTree* spanningTree, int maxDepth, QMap<qlonglong, osg::ref_ptr<Data::Node> >* allNodes );
+	/**
+	            *  \fn public  change_Vertigo_Planes_Distance
+	            *  \brief changes the distance between the planes
+	            */
+	void change_Vertigo_Planes_Distance( int value );
+	/**
+	            *  \fn public  add_DistanceClick
+	            *  \brief adds the distance between the planes
+	            */
+	void add_DistanceClick();
+	/**
+	            *  \fn public  subtract_DistanceClick
+	            *  \brief subtracts the distance between the planes
+	            */
+	void subtract_DistanceClick();
+	/**
+	            *  \fn public  add_PlanesClick
+	            *  \brief creates two more planes for vertigo mode
+	            */
+	void add_PlanesClick();
+	/**
+	            *  \fn public  remove_PlanesClick
+	            *  \brief removes two planes for vertigo mode
+	            */
+	void remove_PlanesClick();
 
-    void repulsive_Forces_ValueChanged();
+	void repulsive_Forces_ValueChanged();
 
 	void setCameraEnable( bool enable );
 
@@ -1099,253 +1099,253 @@ private:
 
 	void setVisibleClusterSection( bool visible );
 
-    /**
-         * \brief Button for starting edge bundling.
-         */
-    QPushButton* b_StartEdgeBundling;
+	/**
+	     * \brief Button for starting edge bundling.
+	     */
+	QPushButton* b_StartEdgeBundling;
 
-    /**
-         * \brief Button for pausing edge bundling.
-         */
-    QPushButton* b_PauseEdgeBundling;
+	/**
+	     * \brief Button for pausing edge bundling.
+	     */
+	QPushButton* b_PauseEdgeBundling;
 
-    /**
-         * \brief Button for stoping edge bundling.
-         */
-    QPushButton* b_StopEdgeBundling;
+	/**
+	     * \brief Button for stoping edge bundling.
+	     */
+	QPushButton* b_StopEdgeBundling;
 
-    /**
-         * \brief LineEdit for modifying edge bundling. It defines strength of edge bundling forces.
-         */
-    QLineEdit* le_edgeBundlingalpha;
+	/**
+	     * \brief LineEdit for modifying edge bundling. It defines strength of edge bundling forces.
+	     */
+	QLineEdit* le_edgeBundlingalpha;
 
-    /**
-        *  QComboBox * selectionTypeComboBox
-        *  \brief Pointer to comobox of selection types
-        */
-    QComboBox* selectionTypeComboBox;
+	/**
+	    *  QComboBox * selectionTypeComboBox
+	    *  \brief Pointer to comobox of selection types
+	    */
+	QComboBox* selectionTypeComboBox;
 
-    /**
-        *  QComboBox * edgeTypeComboBox
-        *  \brief Pointer to comobox of edge types
-        */
-    QComboBox* edgeTypeComboBox;
+	/**
+	    *  QComboBox * edgeTypeComboBox
+	    *  \brief Pointer to comobox of edge types
+	    */
+	QComboBox* edgeTypeComboBox;
 
-    /**
-        *  int isEBPlaying
-        *  \brief Flag if edge bundling is running
-        */
-    int isEBPlaying;
+	/**
+	    *  int isEBPlaying
+	    *  \brief Flag if edge bundling is running
+	    */
+	int isEBPlaying;
 
 public:
 
-    void setRepulsiveForceInsideCluster( double repulsiveForceInsideCluster );
-    void hideRepulsiveForceSpinBox();
+	void setRepulsiveForceInsideCluster( double repulsiveForceInsideCluster );
+	void hideRepulsiveForceSpinBox();
 
-    /*!
-        *
-        * \param parent
-        * Rodic okna.
-        *
-        * \param coreGraph
-        * Graf, ktory bude zobrazovany.
-        *
-        * \param app
-        * Qt aplikacia.
-        *
-        * Constructor
-        *
-        */
-    CoreWindow( QWidget* parent = 0, Vwr::CoreGraph* coreGraph = 0, QApplication* app = 0, Layout::LayoutThread* thread = 0 );
+	/*!
+	    *
+	    * \param parent
+	    * Rodic okna.
+	    *
+	    * \param coreGraph
+	    * Graf, ktory bude zobrazovany.
+	    *
+	    * \param app
+	    * Qt aplikacia.
+	    *
+	    * Constructor
+	    *
+	    */
+	CoreWindow( QWidget* parent = 0, Vwr::CoreGraph* coreGraph = 0, QApplication* app = 0, Layout::LayoutThread* thread = 0 );
 
-    /**
-        *  \fn public  addSQLInput
-        *  \brief Show sql input
-        */
-    void addSQLInput();
+	/**
+	    *  \fn public  addSQLInput
+	    *  \brief Show sql input
+	    */
+	void addSQLInput();
 
-    /**
-        *  \fn inline public constant  getLayoutThread
-        *  \brief Get the layout thread
-        *  \return Layout::LayoutThread *
-        */
-    Layout::LayoutThread* getLayoutThread() const
-    {
-        return layout;
-    }
-    bool playing()
-    {
-        return isPlaying;
-    }
-    bool playingEB()
-    {
-        return isEBPlaying;
-    }
-    Vwr::CameraManipulator* getCameraManipulator();
+	/**
+	    *  \fn inline public constant  getLayoutThread
+	    *  \brief Get the layout thread
+	    *  \return Layout::LayoutThread *
+	    */
+	Layout::LayoutThread* getLayoutThread() const
+	{
+		return layout;
+	}
+	bool playing()
+	{
+		return isPlaying;
+	}
+	bool playingEB()
+	{
+		return isEBPlaying;
+	}
+	Vwr::CameraManipulator* getCameraManipulator();
 
-    QOSG::ViewerQT* GetViewerQt();
+	QOSG::ViewerQT* GetViewerQt();
 
 
-    /**
-        *  \fn inline public  setLayoutThread
-        *  \brief	Set the layout thread
-        *  \param  val layout thread
-        */
-    void setLayoutThread( Layout::LayoutThread* val )
-    {
-        layout = val;
-    }
+	/**
+	    *  \fn inline public  setLayoutThread
+	    *  \brief	Set the layout thread
+	    *  \param  val layout thread
+	    */
+	void setLayoutThread( Layout::LayoutThread* val )
+	{
+		layout = val;
+	}
 
-    QLineEdit* le_client_name;
-    QLineEdit* le_server_addr;
-    QPushButton* b_start_client;
-    QPushButton* b_start_server;
-    QListWidget* lw_users;
-    QCheckBox* chb_spy;
-    QCheckBox* chb_center;
-    QCheckBox* chb_attention;
-    QCheckBox* chb_vertigo;
-    QPushButton* add_Distance;
-    QPushButton* subtract_Distance;
-    QPushButton* add_Planes;
-    QPushButton* remove_Planes;
-    QSpinBox* change_Forces;
+	QLineEdit* le_client_name;
+	QLineEdit* le_server_addr;
+	QPushButton* b_start_client;
+	QPushButton* b_start_server;
+	QListWidget* lw_users;
+	QCheckBox* chb_spy;
+	QCheckBox* chb_center;
+	QCheckBox* chb_attention;
+	QCheckBox* chb_vertigo;
+	QPushButton* add_Distance;
+	QPushButton* subtract_Distance;
+	QPushButton* add_Planes;
+	QPushButton* remove_Planes;
+	QSpinBox* change_Forces;
 
-    static ViewerQT* getViewerWidget();
+	static ViewerQT* getViewerWidget();
 
-    QLinkedList<Layout::ShapeGetter_Plane_ByThreeNodes*> planes_Vertigo;
+	QLinkedList<Layout::ShapeGetter_Plane_ByThreeNodes*> planes_Vertigo;
 
-    /**
-         * \brief Gets selected nodes and sets the restriction defined by shapeGetter to these nodes.
-         */
-    void setRestrictionToSelectedNodes(
-        QSharedPointer<Layout::ShapeGetter> shapeGetter,
-        Data::Graph* currentGraph,
-        QSharedPointer<Layout::RestrictionRemovalHandler> removalHandler,
-        QLinkedList<osg::ref_ptr<Data::Node> >* nodesToRestrict = NULL
-    );
+	/**
+	     * \brief Gets selected nodes and sets the restriction defined by shapeGetter to these nodes.
+	     */
+	void setRestrictionToSelectedNodes(
+		QSharedPointer<Layout::ShapeGetter> shapeGetter,
+		Data::Graph* currentGraph,
+		QSharedPointer<Layout::RestrictionRemovalHandler> removalHandler,
+		QLinkedList<osg::ref_ptr<Data::Node> >* nodesToRestrict = NULL
+	);
 
-    void setRestrictionToShape(
-        QSharedPointer<Layout::ShapeGetter> shapeGetter,
-        Data::Graph* currentGraph,
-        QSharedPointer<Layout::RestrictionRemovalHandler> removalHandler,
-        QLinkedList<osg::ref_ptr<Data::Node> > nodesOfShapeGettersToRestrict
-    );
+	void setRestrictionToShape(
+		QSharedPointer<Layout::ShapeGetter> shapeGetter,
+		Data::Graph* currentGraph,
+		QSharedPointer<Layout::RestrictionRemovalHandler> removalHandler,
+		QLinkedList<osg::ref_ptr<Data::Node> > nodesOfShapeGettersToRestrict
+	);
 
-    /**
-         * @author Autor: David Durcak
-         * @brief getChbCameraRot Return chb_camera_rot
-         */
-    QCheckBox* getChbCameraRot() const;
+	/**
+	     * @author Autor: David Durcak
+	     * @brief getChbCameraRot Return chb_camera_rot
+	     */
+	QCheckBox* getChbCameraRot() const;
 
-    /**
-     * @author Peter Mendel
-     * @brief createGraphTab add elements to QWidget for graph functionality
-     * @param line pointer to add line
-     * @return QWidget for graph functionality
-     */
-    QWidget* createGraphTab( QFrame* line );
+	/**
+	 * @author Peter Mendel
+	 * @brief createGraphTab add elements to QWidget for graph functionality
+	 * @param line pointer to add line
+	 * @return QWidget for graph functionality
+	 */
+	QWidget* createGraphTab( QFrame* line );
 
-    /**
-     * @author Peter Mendel
-     * @brief createConstraintsTab add elements to QWidget for constraints functionality
-     * @param line pointer to add line
-     * @return QWidget for constraints functionality
-     */
-    QWidget* createConstraintsTab( QFrame* line );
+	/**
+	 * @author Peter Mendel
+	 * @brief createConstraintsTab add elements to QWidget for constraints functionality
+	 * @param line pointer to add line
+	 * @return QWidget for constraints functionality
+	 */
+	QWidget* createConstraintsTab( QFrame* line );
 
-    /**
-     * @author Peter Mendel
-     * @brief createConnectionsTab add elements to QWidget for connections functionality
-     * @param line pointer to add line
-     * @return QWidget for connections functionality
-     */
-    QWidget* createConnectionsTab( QFrame* line );
+	/**
+	 * @author Peter Mendel
+	 * @brief createConnectionsTab add elements to QWidget for connections functionality
+	 * @param line pointer to add line
+	 * @return QWidget for connections functionality
+	 */
+	QWidget* createConnectionsTab( QFrame* line );
 
-    /**
-     * @author Peter Mendel
-     * @brief createClusteringTab add elements to QWidget for clustering functionality
-     * @param line pointer to add line
-     * @return QWidget for clustering functionality
-     */
-    QWidget* createClusteringTab( QFrame* line );
+	/**
+	 * @author Peter Mendel
+	 * @brief createClusteringTab add elements to QWidget for clustering functionality
+	 * @param line pointer to add line
+	 * @return QWidget for clustering functionality
+	 */
+	QWidget* createClusteringTab( QFrame* line );
 
-    /**
-     * @author Peter Mendel
-     * @brief createMoreFeaturesTab add elements to QWidget for more features functionality
-     * @param line pointer to add line
-     * @return QWidget for clustering functionality
-     */
-    QWidget* createMoreFeaturesTab( QFrame* line );
+	/**
+	 * @author Peter Mendel
+	 * @brief createMoreFeaturesTab add elements to QWidget for more features functionality
+	 * @param line pointer to add line
+	 * @return QWidget for clustering functionality
+	 */
+	QWidget* createMoreFeaturesTab( QFrame* line );
 
-    /**
-     * @author Peter Mendel
-     * @brief createColorPicker initialize color picker
-     * @return pointer of color picker
-     */
-    QtColorPicker* createColorPicker();
+	/**
+	 * @author Peter Mendel
+	 * @brief createColorPicker initialize color picker
+	 * @return pointer of color picker
+	 */
+	QtColorPicker* createColorPicker();
 
-    /**
-     * @brief createGraphSlider initialize slider
-     */
-    void createGraphSlider();
+	/**
+	 * @brief createGraphSlider initialize slider
+	 */
+	void createGraphSlider();
 
-    /**
-     * @brief createSelectionComboBox initialize combobox for selecting parts of graph
-     * available options are node,edge, cluster, all
-     */
-    void createSelectionComboBox();
+	/**
+	 * @brief createSelectionComboBox initialize combobox for selecting parts of graph
+	 * available options are node,edge, cluster, all
+	 */
+	void createSelectionComboBox();
 
-    /**
-     * @brief circleAndConeGroup creates group for control elements for circle and cone
-     * and inserts these elements into the group
-     * @return created group
-     */
-    QGroupBox* circleAndConeGroup();
+	/**
+	 * @brief circleAndConeGroup creates group for control elements for circle and cone
+	 * and inserts these elements into the group
+	 * @return created group
+	 */
+	QGroupBox* circleAndConeGroup();
 
-    /**
-     * @brief sphereAndPlaneGroup creates group for control elements for sphere and plane
-     * and inserts these elements into the group
-     * @return created group
-     */
-    QGroupBox* sphereAndPlaneGroup();
+	/**
+	 * @brief sphereAndPlaneGroup creates group for control elements for sphere and plane
+	 * and inserts these elements into the group
+	 * @return created group
+	 */
+	QGroupBox* sphereAndPlaneGroup();
 
-    /**
-     * @brief cylinderAndConeSurfaceGroup creates group for control elements for cylinder and cone surface
-     * and inserts these elements into the group
-     * @return created group
-     */
-    QGroupBox* cylinderAndConeSurfaceGroup();
+	/**
+	 * @brief cylinderAndConeSurfaceGroup creates group for control elements for cylinder and cone surface
+	 * and inserts these elements into the group
+	 * @return created group
+	 */
+	QGroupBox* cylinderAndConeSurfaceGroup();
 
-    /**
-     * @brief radialLayoutGroup creates group for control elements for radial layout
-     * and inserts these elements into the group
-     * @return created group
-     */
-    QGroupBox* radialLayoutGroup();
+	/**
+	 * @brief radialLayoutGroup creates group for control elements for radial layout
+	 * and inserts these elements into the group
+	 * @return created group
+	 */
+	QGroupBox* radialLayoutGroup();
 
 protected:
 
-    /**
-         * @author Autor: David Durcak
-         * @brief closeEvent Reimplement close event. Call destructor on OpenCVCore
-         * @param event Close event
-         */
-    void closeEvent( QCloseEvent* event );
+	/**
+	     * @author Autor: David Durcak
+	     * @brief closeEvent Reimplement close event. Call destructor on OpenCVCore
+	     * @param event Close event
+	     */
+	void closeEvent( QCloseEvent* event );
 
 
 private:
 
-    /**
-         * \brief Gets all nodes and sets the restriction defined by shapeGetter to these nodes.
-         */
-    void setRestrictionToAllNodes(
-        QSharedPointer<Layout::ShapeGetter> shapeGetter,
-        Data::Graph* currentGraph,
-        QSharedPointer<Layout::RestrictionRemovalHandler> removalHandler
-    );
+	/**
+	     * \brief Gets all nodes and sets the restriction defined by shapeGetter to these nodes.
+	     */
+	void setRestrictionToAllNodes(
+		QSharedPointer<Layout::ShapeGetter> shapeGetter,
+		Data::Graph* currentGraph,
+		QSharedPointer<Layout::RestrictionRemovalHandler> removalHandler
+	);
 
-    void onChange();
+	void onChange();
 
 };
 }

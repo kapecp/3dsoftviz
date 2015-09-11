@@ -38,7 +38,7 @@ void QWebViewImage::navigateTo( const std::string& url )
 	_webView->load( QUrl( url.c_str() ) );
 }
 
-void QWebViewImage::showTemplate( const std::string &templateName, Diluculum::LuaValueMap models, const std::string &templateType )
+void QWebViewImage::showTemplate( const std::string& templateName, Diluculum::LuaValueMap models, const std::string& templateType )
 {
 	// Initialize lua interface to call slt2 renderer
 	Lua::LuaInterface* lua = Lua::LuaInterface::getInstance();
@@ -46,29 +46,29 @@ void QWebViewImage::showTemplate( const std::string &templateName, Diluculum::Lu
 
 	// Prepare parameters to be passed to template renderer
 	Diluculum::LuaValueList params;
-	params.push_back(templateName);
-	params.push_back(models);
+	params.push_back( templateName );
+	params.push_back( models );
 
 	// Call slt2 renderer
-	std::string html = lua->callFunction(2, renderer, params)[0].asString();
+	std::string html = lua->callFunction( 2, renderer, params )[0].asString();
 	// qDebug() << html.c_str();
 
 	// Create relative webview dir url
 	QString appPath = QCoreApplication::applicationDirPath();
-    QString webviewPath = appPath.append("/../share/3dsoftviz/webview/index.html");
-	QUrl baseUrl = QUrl::fromLocalFile(webviewPath);
+	QString webviewPath = appPath.append( "/../share/3dsoftviz/webview/index.html" );
+	QUrl baseUrl = QUrl::fromLocalFile( webviewPath );
 
 	// Set angular template type using query string
-	if(!templateType.empty()) {
+	if ( !templateType.empty() ) {
 
 		// Fragment represents value after # hash in url. For example: http://something/index.html#<fragment>
-		baseUrl.setFragment(QString::fromStdString(templateType));
+		baseUrl.setFragment( QString::fromStdString( templateType ) );
 	}
 
 	// qDebug() << "Webview url: " << baseUrl;
 
 	// Set html and baseUrl working directory
-	_webView->setHtml(html.c_str(), baseUrl);
+	_webView->setHtml( html.c_str(), baseUrl );
 }
 
 void QWebViewImage::focusBrowser( bool focus )

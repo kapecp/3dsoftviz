@@ -100,15 +100,15 @@ osg::Vec4f Util::ApplicationConfig::getColorValue( QString key )
 		qDebug() << "Error: key '" + key + "' is not present in application config. Caused by UtilApplicationConfig::getColorValue(key)";
 	}
 
-	QString value = this->getValue(key);
-	QStringList parts = value.split(",");
+	QString value = this->getValue( key );
+	QStringList parts = value.split( "," );
 
 	return osg::Vec4f(
-				parts[0].toFloat() / 255,
-				parts[1].toFloat() / 255,
-				parts[2].toFloat() / 255,
-				parts[3].toFloat() / 255
-	);
+			   parts[0].toFloat() / 255,
+			   parts[1].toFloat() / 255,
+			   parts[2].toFloat() / 255,
+			   parts[3].toFloat() / 255
+		   );
 }
 
 Util::ApplicationConfig* Util::ApplicationConfig::get()

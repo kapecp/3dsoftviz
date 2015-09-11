@@ -56,7 +56,7 @@ public:
 		*  \param models
 		*  \param templateType type of the template route
 		*/
-	void showTemplate( const std::string &templateName, Diluculum::LuaValueMap models, const std::string &templateType );
+	void showTemplate( const std::string& templateName, Diluculum::LuaValueMap models, const std::string& templateType );
 
 	/**
 		*  \fn inline public  getQWebView
