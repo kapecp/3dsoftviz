@@ -1,8 +1,7 @@
 #include "Util/Cleaner.h"
 #include <iostream>
 
-using namespace Util;
-using namespace std;
+namespace Util {
 
 void Cleaner::clean()
 {
@@ -10,7 +9,9 @@ void Cleaner::clean()
 	std::cout<< "About to quit\n";
 }
 
-Cleaner::Cleaner(QApplication* app)
+Cleaner::Cleaner( QApplication* app )
 {
-	connect(app,SIGNAL(aboutToQuit()),this,SLOT(clean()));
+	connect( app,SIGNAL( aboutToQuit() ),this,SLOT( clean() ) );
 }
+
+} // namespace Util

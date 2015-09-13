@@ -7,13 +7,13 @@
 
 #include <osg/ref_ptr>
 #include <osg/Group>
+#include <osg/ShapeDrawable>
 
 #include <QMap>
 
 #include "Data/Edge.h"
 
-namespace Vwr
-{
+namespace Vwr {
 /**
 	*  \class EdgeGroup
 	*  \brief Edge group wrapper
@@ -27,16 +27,15 @@ public:
 	/**
 		*  \fn public constructor  EdgeGroup(QMap<qlonglong, osg::ref_ptr<Data::Edge> > *edges, float scale)
 		*  \brief Creates edge group
-		*  \param edges     edges to wrap
-		*  \param scale     edges scale
+		*  \param edges	 edges to wrap
 		*/
-	EdgeGroup(QMap<qlonglong, osg::ref_ptr<Data::Edge> > *edges, float scale);
+	EdgeGroup( QMap<qlonglong, osg::ref_ptr<Data::Edge> >* edges );
 
 	/**
 		*  \fn public destructor  ~EdgeGroup
 		*  \brief destructor
 		*/
-	~EdgeGroup(void);
+	~EdgeGroup( void );
 
 
 	/**
@@ -57,7 +56,10 @@ public:
 		*  \brief returns edges group
 		*  \return osg::ref_ptr edges group
 		*/
-	osg::ref_ptr<osg::Group> getGroup() {return edgeGroup;}
+	osg::ref_ptr<osg::Group> getGroup()
+	{
+		return edgeGroup;
+	}
 
 private:
 
@@ -65,14 +67,7 @@ private:
 		*  QMap<qlonglong,osg::ref_ptr<Data::Edge> > * edges
 		*  \brief Wrpped edges
 		*/
-	QMap<qlonglong, osg::ref_ptr<Data::Edge> > *edges;
-
-
-	/**
-		*  float scale
-		*  \brief edge scale
-		*/
-	float scale;
+	QMap<qlonglong, osg::ref_ptr<Data::Edge> >* edges;
 
 
 	/**
@@ -81,31 +76,6 @@ private:
 		*/
 	osg::ref_ptr<osg::Group> edgeGroup;
 
-	/**
-		*  osg::ref_ptr edgeStateSet
-		*  \brief edges stateset
-		*/
-	osg::ref_ptr<osg::StateSet> edgeStateSet;
-
-	/**
-		*  osg::ref_ptr orientedEdgeStateSet
-		*  \brief oriented edges stateset
-		*/
-	osg::ref_ptr<osg::StateSet> orientedEdgeStateSet;
-
-
-	/**
-		*  osg::ref_ptr geometry
-		*  \brief edges geometry
-		*/
-	osg::ref_ptr<osg::Geometry> geometry;
-
-	/**
-		*  osg::ref_ptr orientedGeometry
-		*  \brief oriented edges geometry
-		*/
-	osg::ref_ptr<osg::Geometry> orientedGeometry;
-
 
 	/**
 		*  \fn private  initEdges
@@ -113,27 +83,6 @@ private:
 		*/
 	void initEdges();
 
-	/**
-		*  \fn private  getEdgeCoordinatesAndColors(osg::ref_ptr<Data::Edge> edge, int first, osg::ref_ptr<osg::Vec3Array> coordinates,osg::ref_ptr<osg::Vec2Array> edgeTexCoords,osg::ref_ptr<osg::Vec4Array> colors,osg::ref_ptr<osg::Vec4Array> orientedEdgeColors)
-		*  \brief Adds coordinates to coordinates array, texture coordinates and colors for given edge
-		*  \param      edge     edge
-		*  \param      first     first coordinate position in array
-		*  \param      coordinates   coordinates array
-		*  \param      edgeTexCoords     texture coordinates array
-		*  \param      colors    color array
-		*  \param      orientedEdgeColors   oriented edge color array
-		*/
-	void getEdgeCoordinatesAndColors(osg::ref_ptr<Data::Edge> edge, int first,
-									 osg::ref_ptr<osg::Vec3Array> coordinates,
-									 osg::ref_ptr<osg::Vec2Array> edgeTexCoords,
-									 osg::ref_ptr<osg::Vec4Array> colors,
-									 osg::ref_ptr<osg::Vec4Array> orientedEdgeColors);
-
-	/**
-		*  \fn private  createEdgeStateSets
-		*  \brief creates edge statesets
-		*/
-	void createEdgeStateSets();
 };
 }
 #endif

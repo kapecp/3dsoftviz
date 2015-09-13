@@ -5,8 +5,7 @@
 #ifndef VIEWER_SKY_TRANSFORM_DEF
 #define VIEWER_SKY_TRANSFORM_DEF 1
 
-namespace Vwr
-{
+namespace Vwr {
 /**
 	*  \class SkyTransform
 	*  \brief Handles sky transformations
@@ -24,13 +23,12 @@ public:
 		*  \param  nv     node visitor
 		*  \return bool always true
 		*/
-	virtual bool computeLocalToWorldMatrix(osg::Matrix& matrix,osg::NodeVisitor* nv) const
+	virtual bool computeLocalToWorldMatrix( osg::Matrix& matrix,osg::NodeVisitor* nv ) const
 	{
-		osgUtil::CullVisitor* cv = dynamic_cast<osgUtil::CullVisitor*>(nv);
-		if (cv)
-		{
+		osgUtil::CullVisitor* cv = dynamic_cast<osgUtil::CullVisitor*>( nv );
+		if ( cv ) {
 			osg::Vec3 eyePointLocal = cv->getEyeLocal();
-			matrix.preMultTranslate(eyePointLocal);
+			matrix.preMultTranslate( eyePointLocal );
 		}
 		return true;
 	}
@@ -43,13 +41,12 @@ public:
 		*  \param  nv     node visitor
 		*  \return bool always true
 		*/
-	virtual bool computeWorldToLocalMatrix(osg::Matrix& matrix,osg::NodeVisitor* nv) const
+	virtual bool computeWorldToLocalMatrix( osg::Matrix& matrix,osg::NodeVisitor* nv ) const
 	{
-		osgUtil::CullVisitor* cv = dynamic_cast<osgUtil::CullVisitor*>(nv);
-		if (cv)
-		{
+		osgUtil::CullVisitor* cv = dynamic_cast<osgUtil::CullVisitor*>( nv );
+		if ( cv ) {
 			osg::Vec3 eyePointLocal = cv->getEyeLocal();
-			matrix.postMultTranslate(-eyePointLocal);
+			matrix.postMultTranslate( -eyePointLocal );
 		}
 		return true;
 	}

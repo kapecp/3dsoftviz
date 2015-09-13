@@ -18,13 +18,11 @@ class QListWidget;
 class QListWidgetItem;
 class QStackedWidget;
 
-namespace Vwr
-{
-	class CoreGraph;
+namespace Vwr {
+class CoreGraph;
 }
 
-namespace QOSG
-{
+namespace QOSG {
 class TreeItem;
 class TreeModel;
 class ViewerQT;
@@ -50,7 +48,7 @@ public:
 		*  \param  cg	CoreGraph used for reloading of atributes
 		*  \param  viewer    ViewerQT used for reloading of atributes
 		*/
-	OptionsWindow(Vwr::CoreGraph *cg, QOSG::ViewerQT * viewer);
+	OptionsWindow( Vwr::CoreGraph* cg, QOSG::ViewerQT* viewer );
 
 public slots:
 	/**
@@ -59,7 +57,7 @@ public slots:
 			*
 			*  \param   index     Index of the group of atributes
 			*/
-	void itemClicked(QModelIndex index);
+	void itemClicked( QModelIndex index );
 
 	/**
 			*  \fn commitChanges
@@ -73,31 +71,31 @@ private:
 		*  QTreeView * view
 		*  \brief Tree view of the groups of atributes
 		*/
-	QTreeView * view;
+	QTreeView* view;
 
 	/**
 		*  QOSG::TreeModel * treeModel
 		*  \brief Model for the tree view
 		*/
-	QOSG::TreeModel * treeModel;
+	QOSG::TreeModel* treeModel;
 
 	/**
 		*  QStandardItemModel * model
 		*  \brief Model for the view of atributes of group in the right part of window
 		*/
-	QStandardItemModel * model;
+	QStandardItemModel* model;
 
 	/**
 		*  QList<QString> * changes
 		*  \brief List of changes which are made during the editation of atributes
 		*/
-	QList<QString> * changes;
+	QList<QString>* changes;
 
 	/**
 		*  QOSG::TreeItem * selectedItem
 		*  \brief Pointer to the selected group of atributes in tree view
 		*/
-	QOSG::TreeItem * selectedItem;
+	QOSG::TreeItem* selectedItem;
 
 	/**
 		*  \fn createTableModel(QString data)
@@ -105,7 +103,7 @@ private:
 		*
 		*  \param    data 	Atributes of the group in QString
 		*/
-	void createTableModel(QString data);
+	void createTableModel( QString data );
 
 	/**
 		*  \fn getModelData
@@ -122,7 +120,7 @@ private:
 		*  \param index    Actual index in tree model
 		*  \param path     Path to the group of atributes
 		*/
-	void treeSearch(TreeItem * index, QString path);
+	void treeSearch( TreeItem* index, QString path );
 	/**
 		*  \fn applyChanges(QString path, QString data)
 		*  \brief Function that commit the changes to the ApplicationConfig for actual group of atributes
@@ -130,13 +128,13 @@ private:
 		*  \param  path     Path of the group of atributes
 		*  \param  data     Atributes with their values
 		*/
-	void applyChanges(QString path, QString data);
+	void applyChanges( QString path, QString data );
 
 	/**
 		*  QPushButton * applyButton
 		*  \brief Apply button
 		*/
-	QPushButton * applyButton;
+	QPushButton* applyButton;
 
 	/**
 		*  \fn saveNodeTypes(TreeItem * index)
@@ -144,18 +142,18 @@ private:
 		*
 		*  \param  index   Root index in the tree model of node types
 		*/
-	void saveNodeTypes(TreeItem * index);
+	void saveNodeTypes( TreeItem* index );
 
 	/**
 		*  Vwr::CoreGraph * cg
 		*  \brief Pointer to the CoreGraph for reloading of changes
 		*/
-	Vwr::CoreGraph *cg;
+	Vwr::CoreGraph* cg;
 	/**
 		*  QOSG::ViewerQT * viewer
 		*  \brief Pointer to ViewerQT for reloading of changes
 		*/
-	QOSG::ViewerQT * viewer;
+	QOSG::ViewerQT* viewer;
 
 };
 }

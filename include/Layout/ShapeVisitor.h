@@ -9,6 +9,7 @@
 #include "Layout/Shape_SphereSurface.h"
 #include "Layout/Shape_CylinderSurface.h"
 #include "Layout/Shape_ConeSurface.h"
+#include "Layout/Shape_Cube.h"
 
 namespace Layout {
 
@@ -23,14 +24,15 @@ protected:
 
 public:
 
-	virtual void visit(Shape_Null /*&shape*/) = 0;
-	virtual void visit(Shape_Composite &shape) = 0;
-	virtual void visit(Shape_Intersection & shape) = 0;
-	virtual void visit(Shape_Plane &shape) = 0;
-	virtual void visit(Shape_Sphere &shape) = 0;
-	virtual void visit(Shape_SphereSurface &shape) = 0;
-	virtual void visit(Shape_CylinderSurface &shape) = 0;
-	virtual void visit(Shape_ConeSurface &shape) = 0;
+	virtual void visit( Shape_Null /*&shape*/ ) = 0;
+	virtual void visit( Shape_Composite& shape ) = 0;
+	virtual void visit( Shape_Intersection& shape ) = 0;
+	virtual void visit( Shape_Plane& shape ) = 0;
+	virtual void visit( Shape_Sphere& shape ) = 0;
+	virtual void visit( Shape_SphereSurface& shape ) = 0;
+	virtual void visit( Shape_CylinderSurface& shape ) = 0;
+	virtual void visit( Shape_ConeSurface& shape ) = 0;
+	virtual void visit( Shape_Cube& shape ) = 0;
 };
 
 } // namespace Layout

@@ -5,14 +5,15 @@
 
 namespace Network {
 
-    class ServerStopExecutor : public AbstractExecutor {
+class ServerStopExecutor : public AbstractExecutor
+{
 
-    public:
-        void execute_client();
-        void execute_server();
-        static const quint8 INSTRUCTION_NUMBER = 20;
+public:
+	void execute_client();
+	void execute_server();
+	static const quint8 INSTRUCTION_NUMBER = 20;
 
-    };
+};
 
 }
 

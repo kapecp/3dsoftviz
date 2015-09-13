@@ -4,62 +4,66 @@
 #include "Network/Server.h"
 #include "Network/Client.h"
 
-using namespace Network;
+namespace Network {
 
-void NewNodeExecutor::execute_client() {
+void NewNodeExecutor::execute_client()
+{
 
-    Client * client = Client::getInstance();
-    client->ignoreLayout(true);
+	Client* client = Client::getInstance();
+	client->ignoreLayout( true );
 
-    int id;
+	int id;
 
-    float x;
-    float y;
-    float z;
+	float x;
+	float y;
+	float z;
 
-    float color_x, color_y, color_z, color_w;
+	float color_x, color_y, color_z, color_w;
 
-    QString name;
+	QString name;
 
-    *stream >> id >> x >> y >> z >> name >> color_x >> color_y >> color_z >> color_w;
-    //qDebug()<< "[NEW NODE] id: " << id << " [" << x << "," << y << "," << z << "]";
+	*stream >> id >> x >> y >> z >> name >> color_x >> color_y >> color_z >> color_w;
+	//qDebug()<< "[NEW NODE] id: " << id << " [" << x << "," << y << "," << z << "]";
 
-    osg::Vec3 position(x,y,z);
-    osg::ref_ptr<Data::Node> newNode  = client->currentGraph->addNode(id,name, client->nodeType, position);
+	osg::Vec3 position( x,y,z );
+	osg::ref_ptr<Data::Node> newNode  = client->currentGraph->addNode( id,name, client->nodeType, position );
 
-    newNode->setColor(osg::Vec4(color_x, color_y, color_z, color_w));
-    client->ignoreLayout(false);
+	newNode->setColor( osg::Vec4( color_x, color_y, color_z, color_w ) );
+	client->ignoreLayout( false );
 }
 
-void NewNodeExecutor::execute_server() {
+void NewNodeExecutor::execute_server()
+{
 
-    Server * server = Server::getInstance();
+	Server* server = Server::getInstance();
 
-    float x;
-    float y;
-    float z;
+	float x;
+	float y;
+	float z;
 
-    QString name;
+	QString name;
 
-    *stream >> x >> y >> z >> name;
-    //qDebug()<< "[NEW NODE]" << "[" << x << "," << y << "," << z << "]";
+	*stream >> x >> y >> z >> name;
+	//qDebug()<< "[NEW NODE]" << "[" << x << "," << y << "," << z << "]";
 
-    osg::Vec3 position(x/server->getGraphScale(),y/server->getGraphScale(),z/server->getGraphScale());
-    Data::Graph * currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
-    if (currentGraph == NULL) {
-        currentGraph = Manager::GraphManager::getInstance()->createNewGraph("New graph");
-    }
+	osg::Vec3 position( x/server->getGraphScale(),y/server->getGraphScale(),z/server->getGraphScale() );
+	Data::Graph* currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
+	if ( currentGraph == NULL ) {
+		currentGraph = Manager::GraphManager::getInstance()->createNewGraph( "New graph" );
+	}
 
-    Data::Type *nodeType;
-    Data::Type *edgeType;
-    Importer::GraphOperations * operations = new Importer::GraphOperations(*currentGraph);
-    operations->addDefaultTypes(edgeType, nodeType);
+	Data::Type* nodeType;
+	Data::Type* edgeType;
+	Importer::GraphOperations* operations = new Importer::GraphOperations( *currentGraph );
+	operations->addDefaultTypes( edgeType, nodeType );
 
-    osg::ref_ptr<Data::Node> newNode  = currentGraph->addNode(name, nodeType, position);
+	osg::ref_ptr<Data::Node> newNode  = currentGraph->addNode( name, nodeType, position );
 
-    if (((QOSG::CoreWindow *)server->getCoreWindowReference())->playing()) {
-        server->getLayoutThread()->play();
-    }
+	if ( ( ( QOSG::CoreWindow* )server->getCoreWindowReference() )->playing() ) {
+		server->getLayoutThread()->play();
+	}
 
-    server->sendNewNode(newNode);
+	server->sendNewNode( newNode );
 }
+
+} // namespace Network

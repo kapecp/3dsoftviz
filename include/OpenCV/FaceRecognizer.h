@@ -7,8 +7,10 @@
 
 #include "Util/SizedQueue.h"
 
-namespace OpenCV
-{
+#include <string>
+#include <vector>
+
+namespace OpenCV {
 /**
 	 * @brief file Path to file with haar like features for face detection
 	 */
@@ -21,7 +23,8 @@ class FaceRecognizer;
 	*@author Autor: Marek Jakab
 	*@date 18.11.2013
 	*/
-class FaceRecognizer{
+class FaceRecognizer
+{
 
 public:
 
@@ -40,21 +43,21 @@ public:
 		 * @brief detectFaces Detect faces on selected image
 		 * @param gray cv::Mat image to detect on
 		 */
-	void detectFaces(cv::Mat gray);
+	void detectFaces( cv::Mat gray );
 
 	/**
 		 * @author Autor: Marek Jakab
 		 * @brief annotateFaces Draws rectangle around detected faces
 		 * @param frame cv::Mat image to use for face annotation
 		 */
-	void annotateFaces(cv::Mat frame);
+	void annotateFaces( cv::Mat frame );
 
 	/**
 		 * @author Autor: Marek Jakab
 		 * @brief computeEyesCoordinations Compute eyes position
 		 * @param face Rectangle of detected face
 		 */
-	void computeEyesCoordinations(cv::Rect face, cv::Size size);
+	void computeEyesCoordinations( cv::Rect face, cv::Size size );
 
 	/**
 		 * @author Autor: Marek Jakab
@@ -69,7 +72,7 @@ public:
 		 * @param screenWidth screen resolution - x axis
 		 * @return float head distance
 		 */
-	float getHeadDistance(double screenWidth);
+	float getHeadDistance( double screenWidth );
 	/**
 		 * @author Autor: Marek Jakab
 		 * @brief detected Find out the occurence of face in the image
@@ -102,11 +105,11 @@ private:
 	/**
 		 * @brief queue SizedQueue used to compute average width and height position of eyes
 		 */
-	Util::SizedQueue *queue;
+	Util::SizedQueue* queue;
 	/**
 		 * @brief queueDistance SizedQueue used to compute average depth distance of face
 		 */
-	Util::SizedQueue *queueDistance;
+	Util::SizedQueue* queueDistance;
 
 	/**
 		 * @author Autor: Marek Jakab

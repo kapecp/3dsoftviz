@@ -17,16 +17,21 @@
 #include <osgWidget/Browser>
 #include <QtWebKit/QWebSettings>
 #include <QtWebKit/QtWebKit>
+
 #include "OsgQtBrowser/QGraphicsViewAdapter.h"
-namespace OsgQtBrowser{
+#include "Diluculum/Types.hpp"
+
+namespace OsgQtBrowser {
 /**
 *  \class QWebViewImage
 *  \brief
-*  \author Adam Pazitnaj
-*  \date 29. 4. 2010
+*  \author Adam Pazitnaj, Michael Gloger
+*  \date 29. 4. 2010, 12.4.2015
 */
-class QWebViewImage : public osgWidget::BrowserImage
+class QWebViewImage : public QObject, public osgWidget::BrowserImage
 {
+
+	Q_OBJECT
 public:
 
 
@@ -42,22 +47,36 @@ public:
 		*  \brief
 		*  \param [in]       url const std::string &
 		*/
-	virtual void navigateTo(const std::string& url);
+	virtual void navigateTo( const std::string& url );
 
+	/**
+		*  \fn public showTemplate
+		*  \brief
+		*  \param templateName name of the template file
+		*  \param models
+		*  \param templateType type of the template route
+		*/
+	void showTemplate( const std::string& templateName, Diluculum::LuaValueMap models, const std::string& templateType );
 
 	/**
 		*  \fn inline public  getQWebView
 		*  \brief
 		*  \return QWebView *
 		*/
-	QWebView* getQWebView() { return _webView; }
+	QWebView* getQWebView()
+	{
+		return _webView;
+	}
 
 	/**
 		*  \fn inline public  getQWebPage
 		*  \brief
 		*  \return QWebPage *
 		*/
-	QWebPage* getQWebPage() { return _webPage; }
+	QWebPage* getQWebPage()
+	{
+		return _webPage;
+	}
 
 	/**
 
@@ -66,7 +85,10 @@ public:
 		*  \brief
 		*  \return QGraphicsViewAdapter *
 		*/
-	QGraphicsViewAdapter* getQGraphicsViewAdapter() { return _adapter; }
+	QGraphicsViewAdapter* getQGraphicsViewAdapter()
+	{
+		return _adapter;
+	}
 
 
 	/**
@@ -74,7 +96,7 @@ public:
 		*  \brief
 		*  \param [in]       focus bool
 		*/
-	void focusBrowser(bool focus);
+	void focusBrowser( bool focus );
 
 
 	/**
@@ -96,7 +118,7 @@ public:
 		*  \brief
 		*  \param [in]       frameStamp const osg::FrameStamp *
 		*/
-	virtual void setFrameLastRendered(const osg::FrameStamp* frameStamp);
+	virtual void setFrameLastRendered( const osg::FrameStamp* frameStamp );
 
 
 	/**
@@ -107,7 +129,7 @@ public:
 		*  \param [in]       buttonMask int
 		*  \return bool
 		*/
-	virtual bool sendPointerEvent(int x, int y, int buttonMask);
+	virtual bool sendPointerEvent( int x, int y, int buttonMask );
 
 
 	/**
@@ -117,7 +139,7 @@ public:
 		*  \param [in]       keyDown bool
 		*  \return bool
 		*/
-	virtual bool sendKeyEvent(int key, bool keyDown);
+	virtual bool sendKeyEvent( int key, bool keyDown );
 
 protected:
 

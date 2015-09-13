@@ -49,8 +49,7 @@
 #include <QVariant>
 
 
-namespace QOSG
-{
+namespace QOSG {
 class TreeItem;
 
 class TreeModel : public QAbstractItemModel
@@ -58,24 +57,24 @@ class TreeModel : public QAbstractItemModel
 	Q_OBJECT
 
 public:
-	TreeModel(const QStringList &data, QObject *parent = 0);
+	TreeModel( const QStringList& data, QObject* parent = 0 );
 	~TreeModel();
 
-	QVariant data(const QModelIndex &index, int role) const;
-	Qt::ItemFlags flags(const QModelIndex &index) const;
-	QVariant headerData(int section, Qt::Orientation orientation,
-						int role = Qt::DisplayRole) const;
-	QModelIndex index(int row, int column,
-					  const QModelIndex &parent = QModelIndex()) const;
-	QModelIndex parent(const QModelIndex &index) const;
-	int rowCount(const QModelIndex &parent = QModelIndex()) const;
-	int columnCount(const QModelIndex &parent = QModelIndex()) const;
-	QOSG::TreeItem * getRootItem();
+	QVariant data( const QModelIndex& index, int role ) const;
+	Qt::ItemFlags flags( const QModelIndex& index ) const;
+	QVariant headerData( int section, Qt::Orientation orientation,
+						 int role = Qt::DisplayRole ) const;
+	QModelIndex index( int row, int column,
+					   const QModelIndex& parent = QModelIndex() ) const;
+	QModelIndex parent( const QModelIndex& index ) const;
+	int rowCount( const QModelIndex& parent = QModelIndex() ) const;
+	int columnCount( const QModelIndex& parent = QModelIndex() ) const;
+	QOSG::TreeItem* getRootItem();
 private:
-	void setupModelData(const QStringList &lines, TreeItem *parent);
-	void createStruct(QStringList path, TreeItem * index, QString data);
-	void addNodesToList(QList<TreeItem*> * parents);
-	TreeItem * rootItem;
+	void setupModelData( const QStringList& lines, TreeItem* parent );
+	void createStruct( QStringList path, TreeItem* index, QString data );
+	void addNodesToList( QList<TreeItem*>* parents );
+	TreeItem* rootItem;
 };
 }
 

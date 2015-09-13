@@ -19,8 +19,7 @@ class QPushButton;
 class QTableWidget;
 class QTableWidgetItem;
 
-namespace QOSG
-{
+namespace QOSG {
 /**
 	*  \class LoadGraphWindow
 	*
@@ -37,7 +36,7 @@ public:
 		*
 		*  \param  parent	Parent window
 		*/
-	LoadGraphWindow(QWidget *parent);
+	LoadGraphWindow( QWidget* parent );
 
 private:
 	/**
@@ -47,7 +46,7 @@ private:
 		*  \param   text     Button name
 		*  \param   member   Member
 		*/
-	QPushButton *createButton(const QString &text, const char *member);
+	QPushButton* createButton( const QString& text, const char* member );
 
 	/**
 		*  \fn		createGraphTable()
@@ -59,25 +58,25 @@ private:
 		*  QPushButton *loadButton
 		*  \brief Load button
 		*/
-	QPushButton *loadButton;
+	QPushButton* loadButton;
 
 	/**
 		*  QPushButton *removeButton
 		*  \brief Remove button
 		*/
-	QPushButton *removeButton;
+	QPushButton* removeButton;
 
 	/**
 		*  QPushButton *renameButton
 		*  \brief Rename button
 		*/
-	QPushButton *renameButton;
+	QPushButton* renameButton;
 
 	/**
 		*  QLabel *numberOfGraphs
 		*  \brief Label which show number of graphs stored in database
 		*/
-	QLabel *numberOfGraphs;
+	QLabel* numberOfGraphs;
 
 	/**
 		*  QStringList graphList
@@ -89,7 +88,7 @@ private:
 		*  QTableWidget *graphsTable
 		*  \brief Table where are shown data about graphs stored in database
 		*/
-	QTableWidget *graphsTable;
+	QTableWidget* graphsTable;
 
 private slots:
 	/**

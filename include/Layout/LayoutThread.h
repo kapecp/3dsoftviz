@@ -4,18 +4,15 @@
 #include <QThread>
 
 
-namespace Layout
-{
-	class FRAlgorithm;
+namespace Layout {
+class FRAlgorithm;
 }
 
-namespace Util
-{
-	class ApplicationConfig;
+namespace Util {
+class ApplicationConfig;
 }
 
-namespace Layout
-{
+namespace Layout {
 /*!
 	 * \brief
 	 * Spusti generator layoutu v samostatnom threade.
@@ -34,7 +31,7 @@ public:
 		 * \brief Constructor of thread for layout algorithm.
 		 *
 		 */
-	LayoutThread(Layout::FRAlgorithm* alg);
+	LayoutThread( Layout::FRAlgorithm* alg );
 
 	/**
 		 *
@@ -42,7 +39,7 @@ public:
 		 * \brief Destructor
 		 *
 		 */
-	~LayoutThread(void);
+	~LayoutThread( void );
 
 	/**
 		*  \fn public  pause
@@ -67,7 +64,7 @@ public:
 		*  \brief Sets multiplicity of forces
 		*  \param      val  multipliciter of forces
 		*/
-	void setAlphaValue(float val);
+	void setAlphaValue( float val );
 
 	/**
 		*  \fn public  isRunning
@@ -77,6 +74,33 @@ public:
 	bool isRunning();
 
 	void requestEnd();
+
+	Layout::FRAlgorithm* getAlg();
+
+	/**
+		*  \fn public  playEdgeBundling
+		*  \brief Play edge bundling algorithm
+		*/
+	void playEdgeBundling();
+
+	/**
+		*  \fn public  stopEdgeBundling
+		*  \brief stop edge bundling algorithm
+		*/
+	void stopEdgeBundling();
+
+	/**
+		*  \fn public  setAlphaEdgeBundlingValue(float val)
+		*  \brief Sets multiplicity of forces in edge bundling algorithm
+		*  \param	  val  multipliciter of forces
+		*/
+	void setAlphaEdgeBundlingValue( float val );
+
+	/**
+		*  \fn public  pauseAllAlg
+		*  \brief pause all running algorithms
+		*/
+	void pauseAllAlg();
 
 protected:
 

@@ -24,26 +24,22 @@
 */
 
 
-namespace Vwr
-{
+namespace Vwr {
 class PickHandler;
 class CoreGraph;
 }
 
-namespace Util
-{
+namespace Util {
 class ApplicationConfig;
 }
 
 
-namespace Vwr
-{
+namespace Vwr {
 class CameraManipulator;
 }
 
 
-namespace QOSG
-{
+namespace QOSG {
 /**
 	*  \class ViewerQT
 	*  \brief
@@ -78,7 +74,7 @@ public:
 		*
 		*/
 
-	ViewerQT(QWidget * parent = 0, const char * name = 0, const QGLWidget * shareWidget = 0, WindowFlags f = 0, Vwr::CoreGraph* cg = 0);
+	ViewerQT( QWidget* parent = 0, const char* name = 0, const QGLWidget* shareWidget = 0, WindowFlags f = 0, Vwr::CoreGraph* cg = 0 );
 
 
 	/**
@@ -90,7 +86,7 @@ public:
 	 * @param isClick is position click
 	 * @param button which button click
 	 */
-	void moveMouseAruco(double positionX, double positionY, bool isClick, int windowX, int windowY, Qt::MouseButton button );
+	void moveMouseAruco( double positionX, double positionY, bool isClick, int windowX, int windowY, Qt::MouseButton button );
 
 	/**
 	 * @brief move and click Mouse based on Kinect
@@ -101,7 +97,7 @@ public:
 	 * @param windowY size of window y
 	 * @param button which button is clicked
 	 */
-	void moveMouseKinect(double positionX, double positionY,double speed, bool isClick, int windowX, int windowY, Qt::MouseButton button);
+	void moveMouseKinect( double positionX, double positionY,double speed, bool isClick, int windowX, int windowY, Qt::MouseButton button );
 
 
 	/**
@@ -109,7 +105,7 @@ public:
 		  *  \brief Returns pick handler
 		  *  \return Vwr::PickHandler * pick handler
 		  */
-	Vwr::PickHandler * getPickHandler() const ;
+	Vwr::PickHandler* getPickHandler() const ;
 
 
 	/**
@@ -117,7 +113,7 @@ public:
 		  *  \brief Returns camera manipulator
 		  *  \return Vwr::CameraManipulator * camera manipulator
 		  */
-	Vwr::CameraManipulator * getCameraManipulator() const;
+	Vwr::CameraManipulator* getCameraManipulator() const;
 
 
 
@@ -158,19 +154,19 @@ private:
 		*  Vwr::CameraManipulator * manipulator
 		*  \brief camera manipulator
 		*/
-	Vwr::CameraManipulator * manipulator;
+	Vwr::CameraManipulator* manipulator;
 
 	/**
 		*  Vwr::PickHandler * pickHandler
 		*  \brief pick handler
 		*/
-	Vwr::PickHandler * pickHandler;
+	Vwr::PickHandler* pickHandler;
 
 	/**
 		*  Util::ApplicationConfig * appConf
 		*  \brief application configuration
 		*/
-	Util::ApplicationConfig * appConf;
+	Util::ApplicationConfig* appConf;
 
 
 	bool mIsClicAruco;

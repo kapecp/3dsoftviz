@@ -11,10 +11,7 @@
 #include <QCloseEvent>
 #include "QDebug"
 
-using namespace Kinect;
-using namespace cv;
-
-Kinect::KinectWindow::KinectWindow(QWidget *parent, QApplication * app, KinectThread *thr): QDialog(parent)
+Kinect::KinectWindow::KinectWindow( QWidget* parent, QApplication* app, KinectThread* thr ): QDialog( parent )
 {
 	mApp=app;
 	this->thr=thr;
@@ -22,62 +19,62 @@ Kinect::KinectWindow::KinectWindow(QWidget *parent, QApplication * app, KinectTh
 	configureWindow();
 }
 
-QLabel *Kinect::KinectWindow::getLabel() const
+QLabel* Kinect::KinectWindow::getLabel() const
 {
 	return mWindowLabel;
 }
 
-void Kinect::KinectWindow::configureWindow(void)
+void Kinect::KinectWindow::configureWindow( void )
 {
 	setModal( false );
-	resize(400,260);
-	setWindowTitle( tr("Kinect Recognition"));
+	resize( 400,260 );
+	setWindowTitle( tr( "Kinect Recognition" ) );
 
-	mWindowLabel = new QLabel("",this,0);
-	mWindowLabel->setFixedWidth(320);
-	mWindowLabel->setFixedHeight(240);
+	mWindowLabel = new QLabel( "",this,0 );
+	mWindowLabel->setFixedWidth( 320 );
+	mWindowLabel->setFixedHeight( 240 );
 
-	mKinectPause=new QPushButton(tr("Start"));
-	connect(mKinectPause,SIGNAL(clicked()),this,SLOT(pausewindows()));
+	mKinectPause=new QPushButton( tr( "Start" ) );
+	connect( mKinectPause,SIGNAL( clicked() ),this,SLOT( pausewindows() ) );
 
-	mDisableCursor = new QCheckBox(tr("Turn off cursor"));
-	connect(mDisableCursor,SIGNAL(clicked()),this,SLOT(stopMovingCursor()));
-	mDisableZoomCursor = new QCheckBox(tr("Turn off zoom"));
-	connect(mDisableZoomCursor,SIGNAL(clicked()),this,SLOT(stopZoom()));
+	mDisableCursor = new QCheckBox( tr( "Turn off cursor" ) );
+	connect( mDisableCursor,SIGNAL( clicked() ),this,SLOT( stopMovingCursor() ) );
+	mDisableZoomCursor = new QCheckBox( tr( "Turn off zoom" ) );
+	connect( mDisableZoomCursor,SIGNAL( clicked() ),this,SLOT( stopZoom() ) );
 
-	mSpeed= new QSlider(Qt::Vertical);
-	mSpeed->setRange(5,20);
-	mSpeed->setValue(10);
-	mSpeed->setPageStep(1);
-	mSpeed->setFocusPolicy(Qt::NoFocus);
-	mSpeed->setToolTip("Modify speed of movement");
-	connect(mSpeed,SIGNAL(valueChanged(int)),this,SLOT(setSpeedKinect(int)));
+	mSpeed= new QSlider( Qt::Vertical );
+	mSpeed->setRange( 5,20 );
+	mSpeed->setValue( 10 );
+	mSpeed->setPageStep( 1 );
+	mSpeed->setFocusPolicy( Qt::NoFocus );
+	mSpeed->setToolTip( "Modify speed of movement" );
+	connect( mSpeed,SIGNAL( valueChanged( int ) ),this,SLOT( setSpeedKinect( int ) ) );
 
 
 	//TODO add two different options for view kinect video
-	mKinectColor = new QRadioButton( tr("Color Map"));
-	mKinectDepthMap = new QRadioButton( tr("Depth map"));
+	mKinectColor = new QRadioButton( tr( "Color Map" ) );
+	mKinectDepthMap = new QRadioButton( tr( "Depth map" ) );
 
 
-	QHBoxLayout *buttonsLayout = new QHBoxLayout;
-	QVBoxLayout *buttonsLayout_2 = new QVBoxLayout;
-	QHBoxLayout *frameLayout = new QHBoxLayout;
-	QHBoxLayout *mainLayout = new QHBoxLayout;
+	QHBoxLayout* buttonsLayout = new QHBoxLayout;
+	QVBoxLayout* buttonsLayout_2 = new QVBoxLayout;
+	QHBoxLayout* frameLayout = new QHBoxLayout;
+	QHBoxLayout* mainLayout = new QHBoxLayout;
 
 
-	buttonsLayout->setAlignment(Qt::AlignTop);
-	buttonsLayout->setAlignment(Qt::AlignTop);
-	buttonsLayout_2->addWidget(mKinectPause);
-	buttonsLayout_2->addWidget(mDisableCursor);
-	buttonsLayout_2->addWidget(mDisableZoomCursor);
-	buttonsLayout_2->addWidget(mSpeed);
-	frameLayout->setAlignment(Qt::AlignCenter);
-	frameLayout->addWidget(mWindowLabel);
+	buttonsLayout->setAlignment( Qt::AlignTop );
+	buttonsLayout->setAlignment( Qt::AlignTop );
+	buttonsLayout_2->addWidget( mKinectPause );
+	buttonsLayout_2->addWidget( mDisableCursor );
+	buttonsLayout_2->addWidget( mDisableZoomCursor );
+	buttonsLayout_2->addWidget( mSpeed );
+	frameLayout->setAlignment( Qt::AlignCenter );
+	frameLayout->addWidget( mWindowLabel );
 
-	buttonsLayout->addLayout(buttonsLayout_2);
-	mainLayout->addLayout(buttonsLayout);
-	mainLayout->addLayout(frameLayout);
-	setLayout(mainLayout);
+	buttonsLayout->addLayout( buttonsLayout_2 );
+	mainLayout->addLayout( buttonsLayout );
+	mainLayout->addLayout( frameLayout );
+	setLayout( mainLayout );
 
 	adjustSize();
 
@@ -85,89 +82,80 @@ void Kinect::KinectWindow::configureWindow(void)
 
 void Kinect::KinectWindow::stopMovingCursor()
 {
-	if(mDisableCursor->isChecked())
-	{
-		emit setMovementCursor(false);
+	if ( mDisableCursor->isChecked() ) {
+		emit setMovementCursor( false );
 	}
-	else
-	{
-		emit setMovementCursor(true);
+	else {
+		emit setMovementCursor( true );
 	}
 }
 
 void Kinect::KinectWindow::stopZoom()
 {
-	if(mDisableZoomCursor->isChecked())
-	{
-		emit setZoom(false);
+	if ( mDisableZoomCursor->isChecked() ) {
+		emit setZoom( false );
 	}
-	else
-	{
-		emit setZoom(true);
+	else {
+		emit setZoom( true );
 	}
 }
 
-void Kinect::KinectWindow::setSpeedKinect(int speed)
+void Kinect::KinectWindow::setSpeedKinect( int speed )
 {
-	double _speed=(double) ((double)(speed/10.0));
-	emit sendSpeedKinect(_speed);
+	double _speed=( double )( ( double )( speed/10.0 ) );
+	emit sendSpeedKinect( _speed );
 }
 
-void Kinect::KinectWindow::setLabel(cv::Mat image)
+void Kinect::KinectWindow::setLabel( cv::Mat image )
 {
-	if( image.empty() ) {
-		mWindowLabel->setText( tr("Image empty"));
+	if ( image.empty() ) {
+		mWindowLabel->setText( tr( "Image empty" ) );
 		return;
 	}
 	//convert to QImage - for Label
 	cv::cvtColor( image, image, CV_BGR2RGB );
-	QImage qimage( (uchar*) image.data, image.cols, image.rows,(int) image.step, QImage::Format_RGB888);
+	QImage qimage( ( uchar* ) image.data, image.cols, image.rows,( int ) image.step, QImage::Format_RGB888 );
 
-	mWindowLabel->setPixmap( QPixmap::fromImage(qimage));
+	mWindowLabel->setPixmap( QPixmap::fromImage( qimage ) );
 
 	image.~Mat();
 
 }
 void Kinect::KinectWindow::setLabelQ( QImage qimage )
 {
-	if( qimage.isNull() ) {
-		mWindowLabel->setText( tr("Image empty"));
+	if ( qimage.isNull() ) {
+		mWindowLabel->setText( tr( "Image empty" ) );
 		return;
 	}
 
-	mWindowLabel->setPixmap( QPixmap::fromImage(qimage) );
+	mWindowLabel->setPixmap( QPixmap::fromImage( qimage ) );
 }
 
 void Kinect::KinectWindow::pausewindows()
 {
 	bool start=false;
 	//check button name, based on that stop pause and start
-	if (mKinectPause->text().toStdString().compare(tr("Start").toStdString())==0)
-	{
+	if ( mKinectPause->text().toStdString().compare( tr( "Start" ).toStdString() )==0 ) {
 		//inicialize openni and start device
-		start = thr->inicializeKinect();
-		if(start)
-		{
+		//	start = thr->inicializeKinect();
+		if ( start ) {
 			emit startKinect();
 
-			emit sendImageKinect(true);
-			mKinectPause->setText(tr("Pause"));
+			emit sendImageKinect( true );
+			mKinectPause->setText( tr( "Pause" ) );
 		}
 	}
-	else if(mKinectPause->text().toStdString().compare(tr("Pause").toStdString())==0)
-	{
-		mKinectPause->setText(tr("Continue"));
-		emit sendImageKinect(false);
-		this->thr->closeActionOpenni();
+	else if ( mKinectPause->text().toStdString().compare( tr( "Pause" ).toStdString() )==0 ) {
+		mKinectPause->setText( tr( "Continue" ) );
+		emit sendImageKinect( false );
+		//this->thr->closeActionOpenni();
 	}
-	else
-	{
+	else {
 		//inicialize openni and start device
-		start = thr->inicializeKinect();
-		if(start)
-		{
-			mKinectPause->setText(tr("Pause"));
-			emit sendImageKinect(true);
+		//start = thr->inicializeKinect();
+		if ( start ) {
+			mKinectPause->setText( tr( "Pause" ) );
+			emit sendImageKinect( true );
 		}
 	}
 
@@ -176,9 +164,8 @@ void Kinect::KinectWindow::pausewindows()
 void Kinect::KinectWindow::quitWindows()
 {
 	// stop and destroy object //TODO use better closeEvent
-	if(this->thr->isRunning())
-	{
-		emit stopKinect(true);
+	if ( this->thr->isRunning() ) {
+		emit stopKinect( true );
 		this->thr->wait();
 	}
 	delete this->thr;
@@ -186,12 +173,12 @@ void Kinect::KinectWindow::quitWindows()
 
 }
 
-void Kinect::KinectWindow::closeEvent(QCloseEvent *event)
+void Kinect::KinectWindow::closeEvent( QCloseEvent* event )
 {
 	qDebug() << "Kinect close event";
 
-	emit sendImageKinect(false);
-	emit stopKinect(true);
+	emit sendImageKinect( false );
+	emit stopKinect( true );
 
 	disconnect();
 	event->accept();

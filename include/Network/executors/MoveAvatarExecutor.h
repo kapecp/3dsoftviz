@@ -5,13 +5,14 @@
 
 namespace Network {
 
-    class MoveAvatarExecutor : public AbstractExecutor {
+class MoveAvatarExecutor : public AbstractExecutor
+{
 
-    public:
-        void execute_client();
-        void execute_server();
-        static const quint8 INSTRUCTION_NUMBER = 10;
-    };
+public:
+	void execute_client();
+	void execute_server();
+	static const quint8 INSTRUCTION_NUMBER = 10;
+};
 
 }
 

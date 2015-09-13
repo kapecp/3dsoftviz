@@ -15,17 +15,18 @@ namespace Importer {
  * \brief Imports graph data from data in GXL format.
  */
 class GXLImporter
-		: public StreamImporter {
+	: public StreamImporter
+{
 
 public:
 
 	/***/
-	virtual ~GXLImporter (void) {};
+	virtual ~GXLImporter( void ) {}
 
 	/***/
-	virtual bool import (
-			ImporterContext &context
-			);
+	virtual bool import(
+		ImporterContext& context
+	);
 
 private:
 
@@ -35,14 +36,14 @@ private:
 	 * <graph> XML node must already have been processed
 	 * </graph> XML node is processed by this function
 	 */
-	bool parseGraph (void);
+	bool parseGraph( void );
 
 private:
 
 	/**
 	 * \brief Holds input (file stream) and output (graph structure and objects used for import process information reporting).
 	 */
-	ImporterContext *context_;
+	ImporterContext* context_;
 
 	// helpers
 	std::auto_ptr<QXmlStreamReader> xml_;
@@ -54,8 +55,8 @@ private:
 	std::auto_ptr<ReadNodesStore> readNodes_;
 
 	//default types
-	Data::Type *edgeType_;
-	Data::Type *nodeType_;
+	Data::Type* edgeType_;
+	Data::Type* nodeType_;
 
 }; // class
 

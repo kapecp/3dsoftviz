@@ -3,14 +3,16 @@
 
 #include <QPointer>
 
-namespace Kinect
-{
+namespace Kinect {
 class KinectThread;
 class KinectWindow;
 }
 
-namespace Kinect
-{
+namespace QOpenCV {
+class OpenCVWindow;
+}
+
+namespace Kinect {
 
 /**
 	* @brief Class KinectCore
@@ -23,22 +25,14 @@ class KinectCore
 
 public:
 
-	~KinectCore(void);
+	~KinectCore( void );
 	/**
 		 * @author Autor: Patrik Hlavac
 		 * @brief getInstance Return instance of KinectCore class
 		 * @param app QApplication
 		 * @return KinectCore instance
 		 */
-	static KinectCore *getInstance(QApplication* app, QWidget *parent);
-
-
-	/**
-	 * @author Matej Marconak
-	 * @brief kinectRecognition start
-	 * @brief create thread and window for Kinect
-	 */
-	void kinectRecognition();
+	static KinectCore* getInstance( QApplication* app, QWidget* parent );
 
 private:
 
@@ -55,27 +49,27 @@ private:
 	 * @param parent link to parent QWidget
 	 * @brief Singleton
 	 */
-	KinectCore(QApplication* app, QWidget *parent);
+	KinectCore( QApplication* app, QWidget* parent );
 
 	/**
 	 * @brief Singleton Kinect core
 	 */
-	static KinectCore *mKinectCore;
+	static KinectCore* mKinectCore;
 
 	/**
 	 * @brief link to Qaplication
 	 */
-	QApplication *app;
+	QApplication* app;
 
 	/**
 	 * @brief link to QWidget parent
 	 */
-	QWidget	*mParent;
+	QWidget*	mParent;
 
 	/**
 	 * @brief Kinect thread
 	 */
-	Kinect::KinectThread *mThrKinect;
+	Kinect::KinectThread* mThrKinect;
 
 	/**
 	 * @brief is Thread created
@@ -83,9 +77,9 @@ private:
 	bool	mThrsCreated;
 
 	/**
-	 * @brief Kinect Window
+	 * @brief OpenCV Window
 	 */
-	QPointer<Kinect::KinectWindow> mKinectDialog;
+	QPointer<QOpenCV::OpenCVWindow> mOpencvWindow;
 
 };
 }
