@@ -20,75 +20,67 @@
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wconversion"
 
-#define MYQKEYEVENT 2000
-#define MYQPOINTEREVENT 2001
 
-QCoreApplication* getOrCreateQApplication()
+namespace OsgQtBrowser {
+
+QCoreApplication* OsgQtBrowser::QGraphicsViewAdapter::getOrCreateQApplication()
 {
-	if (QApplication::instance()==0)
-	{
+	if ( QApplication::instance()==0 ) {
 		static char** argv = 0;
 		static int argc = 0;
-		static QApplication app(argc,argv);
+		static QApplication app( argc,argv );
 	}
 	return QApplication::instance();
 }
+
+
 
 class MyQKeyEvent : public QEvent
 {
 public:
 	MyQKeyEvent( int key, bool down ):
-		QEvent( QEvent::Type(MYQKEYEVENT) ),
-		_key(key), _down(down) {}
+		QEvent( QEvent::Type( MYQKEYEVENT ) ),
+		_key( key ), _down( down ) {}
 
 	int         _key;
 	bool        _down;
 };
 
-struct MyQPointerEvent : public QEvent
-{
-	MyQPointerEvent(int x, int y, unsigned int buttonMask):
-		QEvent( QEvent::Type(MYQPOINTEREVENT) ),
-		_x(x), _y(y),_buttonMask(buttonMask) {}
 
-	int _x, _y;
-	unsigned int _buttonMask;
-};
+QGraphicsViewAdapter::QGraphicsViewAdapter( osg::Image* image, QWidget* widget ):
+	_image( image ),
 
-QGraphicsViewAdapter::QGraphicsViewAdapter(osg::Image* image, QWidget* widget):
-	_image(image),
-
-	_qtKeyModifiers(Qt::NoModifier),
-	_backgroundColor(255,255,255)
+	_qtKeyModifiers( Qt::NoModifier ),
+	_backgroundColor( 255,255,255 )
 {
 	// make sure we have a valid QApplication before we start creating widgets.
-	getOrCreateQApplication();
+	this->getOrCreateQApplication();
 
 
 	setUpKeyMap();
 
 	_graphicsScene = new QGraphicsScene();
 	_graphicsView = new QGraphicsView;
-	_graphicsScene->addWidget(widget);
-	_graphicsView->setScene(_graphicsScene);
+	_graphicsScene->addWidget( widget );
+	_graphicsView->setScene( _graphicsScene );
 #if (QT_VERSION_CHECK(4, 5, 0) <= QT_VERSION)
-	_graphicsScene->setStickyFocus(true);
+	_graphicsScene->setStickyFocus( true );
 #endif
-	_graphicsView->viewport()->setParent(0);
+	_graphicsView->viewport()->setParent( 0 );
 
 
-	int width = (int) _graphicsScene->width();
-	int height = (int) _graphicsScene->height();
+	int width = ( int ) _graphicsScene->width();
+	int height = ( int ) _graphicsScene->height();
 
-	_qimages[0] = QImage(QSize(width, height), QImage::Format_ARGB32);
-	_qimages[0].fill(_backgroundColor.rgba());
-	_qimages[0] = QGLWidget::convertToGLFormat(_qimages[0]);
+	_qimages[0] = QImage( QSize( width, height ), QImage::Format_ARGB32 );
+	_qimages[0].fill( _backgroundColor.rgba() );
+	_qimages[0] = QGLWidget::convertToGLFormat( _qimages[0] );
 
-	_qimages[1] = QImage(QSize(width, height), QImage::Format_ARGB32);
-	_qimages[1].fill(_backgroundColor.rgba());
+	_qimages[1] = QImage( QSize( width, height ), QImage::Format_ARGB32 );
+	_qimages[1].fill( _backgroundColor.rgba() );
 
-	_qimages[2] = QImage(QSize(width, height), QImage::Format_ARGB32);
-	_qimages[2].fill(_backgroundColor.rgba());
+	_qimages[2] = QImage( QSize( width, height ), QImage::Format_ARGB32 );
+	_qimages[2].fill( _backgroundColor.rgba() );
 
 	_currentRead = 0;
 	_currentWrite = 1;
@@ -96,29 +88,27 @@ QGraphicsViewAdapter::QGraphicsViewAdapter(osg::Image* image, QWidget* widget):
 	_previousFrameNumber = 0;
 	_newImageAvailable = false;
 
-	connect(_graphicsScene, SIGNAL(changed(const QList<QRectF> &)),
-			this, SLOT(repaintRequestedSlot(const QList<QRectF> &)));
+	connect( _graphicsScene, SIGNAL( changed( const QList<QRectF>& ) ),
+			 this, SLOT( repaintRequestedSlot( const QList<QRectF>& ) ) );
 
-	assignImage(0);
+	assignImage( 0 );
 }
 
-void QGraphicsViewAdapter::repaintRequestedSlot(const QList<QRectF>&)
+void QGraphicsViewAdapter::repaintRequestedSlot( const QList<QRectF>& )
 {
 	// osg::notify(osg::NOTICE)<<"QGraphicsViewAdapter::repaintRequestedSlot"<<std::endl;
 	render();
 }
 
-void QGraphicsViewAdapter::customEvent ( QEvent * event )
+void QGraphicsViewAdapter::customEvent( QEvent* event )
 {
-	if (event->type()==MYQKEYEVENT)
-	{
-		MyQKeyEvent* keyEvent = (MyQKeyEvent*)event;
-		handleKeyEvent(keyEvent->_key, keyEvent->_down);
+	if ( event->type()==MYQKEYEVENT ) {
+		MyQKeyEvent* keyEvent = ( MyQKeyEvent* )event;
+		handleKeyEvent( keyEvent->_key, keyEvent->_down );
 	}
-	else if (event->type()==MYQPOINTEREVENT)
-	{
-		MyQPointerEvent* pointerEvent = (MyQPointerEvent*)event;
-		handlePointerEvent(pointerEvent->_x, pointerEvent->_y, pointerEvent->_buttonMask);
+	else if ( event->type()==MYQPOINTEREVENT ) {
+		MyQPointerEvent* pointerEvent = ( MyQPointerEvent* )event;
+		handlePointerEvent( pointerEvent->_x, pointerEvent->_y, pointerEvent->_buttonMask );
 	}
 }
 
@@ -256,73 +246,69 @@ void QGraphicsViewAdapter::setUpKeyMap()
 
 }
 
-bool QGraphicsViewAdapter::sendPointerEvent(int x, int y, int buttonMask)
+bool QGraphicsViewAdapter::sendPointerEvent( int x, int y, int buttonMask )
 {
-	QCoreApplication::postEvent(this, new MyQPointerEvent(x,y,buttonMask));
+	QCoreApplication::postEvent( this, new MyQPointerEvent( x,y,buttonMask ) );
 	return true;
 }
 
-bool QGraphicsViewAdapter::handlePointerEvent(int x, int y, int buttonMask)
+bool QGraphicsViewAdapter::handlePointerEvent( int x, int y, int buttonMask )
 {
-	osg::notify(osg::INFO)<<"dispatchPointerEvent("<<x<<", "<<y<<", "<<buttonMask<<")"<<std::endl;
+	osg::notify( osg::INFO )<<"dispatchPointerEvent("<<x<<", "<<y<<", "<<buttonMask<<")"<<std::endl;
 
 
-	y = (int) (_graphicsScene->height()-y);
+	y = ( int )( _graphicsScene->height()-y );
 
-	bool leftButtonPressed = (buttonMask & osgGA::GUIEventAdapter::LEFT_MOUSE_BUTTON)!=0;
-	bool middleButtonPressed = (buttonMask & osgGA::GUIEventAdapter::MIDDLE_MOUSE_BUTTON)!=0;
-	bool rightButtonPressed = (buttonMask & osgGA::GUIEventAdapter::RIGHT_MOUSE_BUTTON)!=0;
+	bool leftButtonPressed = ( buttonMask & osgGA::GUIEventAdapter::LEFT_MOUSE_BUTTON )!=0;
+	bool middleButtonPressed = ( buttonMask & osgGA::GUIEventAdapter::MIDDLE_MOUSE_BUTTON )!=0;
+	bool rightButtonPressed = ( buttonMask & osgGA::GUIEventAdapter::RIGHT_MOUSE_BUTTON )!=0;
 
-	bool prev_leftButtonPressed = (_previousButtonMask & osgGA::GUIEventAdapter::LEFT_MOUSE_BUTTON)!=0;
-	bool prev_middleButtonPressed = (_previousButtonMask & osgGA::GUIEventAdapter::MIDDLE_MOUSE_BUTTON)!=0;
-	bool prev_rightButtonPressed = (_previousButtonMask & osgGA::GUIEventAdapter::RIGHT_MOUSE_BUTTON)!=0;
+	bool prev_leftButtonPressed = ( _previousButtonMask & osgGA::GUIEventAdapter::LEFT_MOUSE_BUTTON )!=0;
+	bool prev_middleButtonPressed = ( _previousButtonMask & osgGA::GUIEventAdapter::MIDDLE_MOUSE_BUTTON )!=0;
+	bool prev_rightButtonPressed = ( _previousButtonMask & osgGA::GUIEventAdapter::RIGHT_MOUSE_BUTTON )!=0;
 
-	osg::notify(osg::INFO)<<"leftButtonPressed "<<leftButtonPressed<<std::endl;
-	osg::notify(osg::INFO)<<"middleButtonPressed "<<middleButtonPressed<<std::endl;
-	osg::notify(osg::INFO)<<"rightButtonPressed "<<rightButtonPressed<<std::endl;
+	osg::notify( osg::INFO )<<"leftButtonPressed "<<leftButtonPressed<<std::endl;
+	osg::notify( osg::INFO )<<"middleButtonPressed "<<middleButtonPressed<<std::endl;
+	osg::notify( osg::INFO )<<"rightButtonPressed "<<rightButtonPressed<<std::endl;
 
 	Qt::MouseButtons qtMouseButtons =
-			(leftButtonPressed ? Qt::LeftButton : Qt::NoButton) |
-			(middleButtonPressed ? Qt::MidButton : Qt::NoButton) |
-			(rightButtonPressed ? Qt::RightButton : Qt::NoButton);
+		( leftButtonPressed ? Qt::LeftButton : Qt::NoButton ) |
+		( middleButtonPressed ? Qt::MidButton : Qt::NoButton ) |
+		( rightButtonPressed ? Qt::RightButton : Qt::NoButton );
 
-	if (buttonMask != _previousButtonMask)
-	{
+	if ( buttonMask != _previousButtonMask ) {
 
 		Qt::MouseButton qtButton = Qt::NoButton;
 		QEvent::Type eventType = QEvent::None;
-		if (leftButtonPressed != prev_leftButtonPressed)
-		{
+		if ( leftButtonPressed != prev_leftButtonPressed ) {
 			qtButton = Qt::LeftButton;
 			eventType = leftButtonPressed ? QEvent::MouseButtonPress : QEvent::MouseButtonRelease ;
 		}
-		else if (middleButtonPressed != prev_middleButtonPressed)
-		{
+		else if ( middleButtonPressed != prev_middleButtonPressed ) {
 			qtButton = Qt::MidButton;
 			eventType = middleButtonPressed ? QEvent::MouseButtonPress : QEvent::MouseButtonRelease ;
 		}
-		else if (rightButtonPressed != prev_rightButtonPressed)
-		{
+		else if ( rightButtonPressed != prev_rightButtonPressed ) {
 			qtButton = Qt::RightButton;
 			eventType = rightButtonPressed ? QEvent::MouseButtonPress : QEvent::MouseButtonRelease ;
 		}
 
-		if (eventType==QEvent::MouseButtonPress)
-		{
-			QWebViewImage* qwebViewImage = dynamic_cast<QWebViewImage*>(_image.get());
-			if (qwebViewImage) qwebViewImage->focusBrowser(true);
+		if ( eventType==QEvent::MouseButtonPress ) {
+			QWebViewImage* qwebViewImage = dynamic_cast<QWebViewImage*>( _image.get() );
+			if ( qwebViewImage ) {
+				qwebViewImage->focusBrowser( true );
+			}
 		}
 
-		QMouseEvent event(eventType, QPoint(x, y), qtButton, qtMouseButtons, 0);
-		QCoreApplication::sendEvent(_graphicsView->viewport(), &event );
+		QMouseEvent event( eventType, QPoint( x, y ), qtButton, qtMouseButtons, 0 );
+		QCoreApplication::sendEvent( _graphicsView->viewport(), &event );
 
 		_previousButtonMask = buttonMask;
 	}
-	else if (x != _previousMouseX || y != _previousMouseY)
-	{
+	else if ( x != _previousMouseX || y != _previousMouseY ) {
 
-		QMouseEvent event(QEvent::MouseMove, QPoint(x, y), Qt::NoButton, qtMouseButtons, 0);
-		QCoreApplication::sendEvent(_graphicsView->viewport(), &event);
+		QMouseEvent event( QEvent::MouseMove, QPoint( x, y ), Qt::NoButton, qtMouseButtons, 0 );
+		QCoreApplication::sendEvent( _graphicsView->viewport(), &event );
 
 		_previousMouseX = x;
 		_previousMouseY = y;
@@ -331,135 +317,132 @@ bool QGraphicsViewAdapter::handlePointerEvent(int x, int y, int buttonMask)
 	return true;
 }
 
-bool QGraphicsViewAdapter::sendKeyEvent(int key, bool keyDown)
+bool QGraphicsViewAdapter::sendKeyEvent( int key, bool keyDown )
 {
-	QCoreApplication::postEvent(this, new MyQKeyEvent(key,keyDown));
+	QCoreApplication::postEvent( this, new MyQKeyEvent( key,keyDown ) );
 	return true;
 }
 
-bool QGraphicsViewAdapter::handleKeyEvent(int key, bool keyDown)
+bool QGraphicsViewAdapter::handleKeyEvent( int key, bool keyDown )
 {
 	QEvent::Type eventType = keyDown ? QEvent::KeyPress : QEvent::KeyRelease;
 
-	osg::notify(osg::INFO)<<"sendKeyEvent("<<key<<", "<<keyDown<<")"<<std::endl;
+	osg::notify( osg::INFO )<<"sendKeyEvent("<<key<<", "<<keyDown<<")"<<std::endl;
 
-	if (key==osgGA::GUIEventAdapter::KEY_Shift_L || key==osgGA::GUIEventAdapter::KEY_Shift_R)
-	{
-		_qtKeyModifiers = (_qtKeyModifiers & ~Qt::ShiftModifier) | (keyDown ? Qt::ShiftModifier : Qt::NoModifier);
+	if ( key==osgGA::GUIEventAdapter::KEY_Shift_L || key==osgGA::GUIEventAdapter::KEY_Shift_R ) {
+		_qtKeyModifiers = ( _qtKeyModifiers & ~Qt::ShiftModifier ) | ( keyDown ? Qt::ShiftModifier : Qt::NoModifier );
 	}
 
-	if (key==osgGA::GUIEventAdapter::KEY_Control_L || key==osgGA::GUIEventAdapter::KEY_Control_R)
-	{
-		_qtKeyModifiers = (_qtKeyModifiers & ~Qt::ControlModifier) | (keyDown ? Qt::ControlModifier : Qt::NoModifier);
+	if ( key==osgGA::GUIEventAdapter::KEY_Control_L || key==osgGA::GUIEventAdapter::KEY_Control_R ) {
+		_qtKeyModifiers = ( _qtKeyModifiers & ~Qt::ControlModifier ) | ( keyDown ? Qt::ControlModifier : Qt::NoModifier );
 	}
 
-	if (key==osgGA::GUIEventAdapter::KEY_Alt_L || key==osgGA::GUIEventAdapter::KEY_Alt_R)
-	{
-		_qtKeyModifiers = (_qtKeyModifiers & ~Qt::ControlModifier) | (keyDown ? Qt::ControlModifier : Qt::NoModifier);
+	if ( key==osgGA::GUIEventAdapter::KEY_Alt_L || key==osgGA::GUIEventAdapter::KEY_Alt_R ) {
+		_qtKeyModifiers = ( _qtKeyModifiers & ~Qt::ControlModifier ) | ( keyDown ? Qt::ControlModifier : Qt::NoModifier );
 	}
 
-	if (key==osgGA::GUIEventAdapter::KEY_Meta_L || key==osgGA::GUIEventAdapter::KEY_Meta_R)
-	{
-		_qtKeyModifiers = (_qtKeyModifiers & ~Qt::MetaModifier) | (keyDown ? Qt::MetaModifier : Qt::NoModifier);
+	if ( key==osgGA::GUIEventAdapter::KEY_Meta_L || key==osgGA::GUIEventAdapter::KEY_Meta_R ) {
+		_qtKeyModifiers = ( _qtKeyModifiers & ~Qt::MetaModifier ) | ( keyDown ? Qt::MetaModifier : Qt::NoModifier );
 	}
 
 	Qt::Key qtkey;
 	QChar input;
 
-	KeyMap::iterator itr = _keyMap.find(key);
-	if (itr != _keyMap.end())
-	{
+	KeyMap::iterator itr = _keyMap.find( key );
+	if ( itr != _keyMap.end() ) {
 		qtkey = itr->second;
 	}
-	else
-	{
-		qtkey = (Qt::Key)key;
-		input = QChar(key);
+	else {
+		qtkey = ( Qt::Key )key;
+		input = QChar( key );
 	}
 
-	QKeyEvent event(eventType, qtkey, _qtKeyModifiers, input);
-	QCoreApplication::sendEvent(_graphicsScene.data(), &event);
+	QKeyEvent event( eventType, qtkey, _qtKeyModifiers, input );
+	QCoreApplication::sendEvent( _graphicsScene.data(), &event );
 	return true;
 }
 
-void QGraphicsViewAdapter::setFrameLastRendered(const osg::FrameStamp* frameStamp)
+void QGraphicsViewAdapter::setFrameLastRendered( const osg::FrameStamp* frameStamp )
 {
-	osg::notify(osg::INFO)<<"setFrameLastRendered("<<frameStamp->getFrameNumber()<<")"<<std::endl;
+	osg::notify( osg::INFO )<<"setFrameLastRendered("<<frameStamp->getFrameNumber()<<")"<<std::endl;
 
-	if (_newImageAvailable && _previousFrameNumber!=frameStamp->getFrameNumber())
-	{
+	if ( _newImageAvailable && _previousFrameNumber!=frameStamp->getFrameNumber() ) {
 		{
-			OpenThreads::ScopedLock<OpenThreads::Mutex> lock(_qimagesMutex);
+			OpenThreads::ScopedLock<OpenThreads::Mutex> lock( _qimagesMutex );
 
 			// make sure that _previousFrameNumber hasn't been updated by another thread since we entered this branch.
-			if (_previousFrameNumber==frameStamp->getFrameNumber()) return;
+			if ( _previousFrameNumber==frameStamp->getFrameNumber() ) {
+				return;
+			}
 			_previousFrameNumber = frameStamp->getFrameNumber();
 
-			std::swap(_currentRead, _previousWrite);
+			std::swap( _currentRead, _previousWrite );
 			_newImageAvailable = false;
 		}
 
-		assignImage(_currentRead);
+		assignImage( _currentRead );
 	}
 }
 
 void QGraphicsViewAdapter::clearWriteBuffer()
 {
 	QImage& image = _qimages[_currentWrite];
-	image.fill(_backgroundColor.rgba ());
-	image = QGLWidget::convertToGLFormat(image);
+	image.fill( _backgroundColor.rgba() );
+	image = QGLWidget::convertToGLFormat( image );
 
 	// swap the write buffers in a thread safe way
-	OpenThreads::ScopedLock<OpenThreads::Mutex> lock(_qimagesMutex);
-	std::swap(_currentWrite, _previousWrite);
+	OpenThreads::ScopedLock<OpenThreads::Mutex> lock( _qimagesMutex );
+	std::swap( _currentWrite, _previousWrite );
 	_newImageAvailable = true;
 }
 
 void QGraphicsViewAdapter::render()
 {
-	osg::notify(osg::INFO)<<"Current write = "<<_currentWrite<<std::endl;
+	osg::notify( osg::INFO )<<"Current write = "<<_currentWrite<<std::endl;
 	QImage& image = _qimages[_currentWrite];
 
 #if 1
 	// paint the image with the graphics view
-	QPainter painter(&image);
-	QRectF destinationRect(0, 0, image.width(), image.height());
-	QRect sourceRect(0, 0, _graphicsScene->width(), _graphicsScene->height());
-	_graphicsView->render(&painter, destinationRect, sourceRect);
+	QPainter painter( &image );
+	QRectF destinationRect( 0, 0, image.width(), image.height() );
+	QRect sourceRect( 0, 0, _graphicsScene->width(), _graphicsScene->height() );
+	_graphicsView->render( &painter, destinationRect, sourceRect );
 	painter.end();
 #else
 	// paint the image with the graphics view
-	QPixmap pixmap(image.width(), image.height());
-	QPainter painter(&pixmap);
-	QRectF destinationRect(0, 0, image.width(), image.height());
-	QRect sourceRect(0, 0, _graphicsScene->width(), _graphicsScene->height());
-	_graphicsView->render(&painter, destinationRect, sourceRect);
+	QPixmap pixmap( image.width(), image.height() );
+	QPainter painter( &pixmap );
+	QRectF destinationRect( 0, 0, image.width(), image.height() );
+	QRect sourceRect( 0, 0, _graphicsScene->width(), _graphicsScene->height() );
+	_graphicsView->render( &painter, destinationRect, sourceRect );
 	painter.end();
 
 	image = pixmap.toImage();
 #endif
 
 	// convert into OpenGL format - flipping around the Y axis and swizzling the pixels
-	image = QGLWidget::convertToGLFormat(image);
+	image = QGLWidget::convertToGLFormat( image );
 
 	// swap the write buffers in a thread safe way
-	OpenThreads::ScopedLock<OpenThreads::Mutex> lock(_qimagesMutex);
-	std::swap(_currentWrite, _previousWrite);
+	OpenThreads::ScopedLock<OpenThreads::Mutex> lock( _qimagesMutex );
+	std::swap( _currentWrite, _previousWrite );
 	_newImageAvailable = true;
 }
 
-void QGraphicsViewAdapter::assignImage(unsigned int i)
+void QGraphicsViewAdapter::assignImage( unsigned int i )
 {
 	QImage& image = _qimages[i];
 	unsigned char* data = image.bits();
 
-	osg::notify(osg::INFO)<<"assigImage("<<i<<") image = "<<&image<<" data = "<<(void*)data<<std::endl;
+	osg::notify( osg::INFO )<<"assigImage("<<i<<") image = "<<&image<<" data = "<<( void* )data<<std::endl;
 
-	_image->setImage(image.width(),image.height(),1,
-					 4,
-					 GL_RGBA,GL_UNSIGNED_BYTE,
-					 data,
-					 osg::Image::NO_DELETE, 1);
+	_image->setImage( image.width(),image.height(),1,
+					  4,
+					  GL_RGBA,GL_UNSIGNED_BYTE,
+					  data,
+					  osg::Image::NO_DELETE, 1 );
+}
+
 }
 
 #pragma GCC diagnostic pop

@@ -9,10 +9,9 @@
 #include <QtSql>
 
 
-namespace Data
-{
-	class Graph;
-	class Type;
+namespace Data {
+class Graph;
+class Type;
 }
 
 namespace Model {
@@ -33,7 +32,7 @@ public:
 		*  \param conn     connection to the database
 		*  \return bool true, if the Type is in database
 		*/
-	static bool checkIfExists(Data::Type* type, QSqlDatabase* conn);
+	static bool checkIfExists( Data::Type* type, QSqlDatabase* conn );
 
 
 	/**
@@ -45,7 +44,7 @@ public:
 		*  \param  settings     settings of the Type
 		*  \return Data::Type * new Type
 		*/
-	static Data::Type* addType(QString type_name, Data::Graph* graph, QSqlDatabase* conn, QMap<QString, QString> * settings = 0);
+	static Data::Type* addType( QString type_name, Data::Graph* graph, QSqlDatabase* conn, QMap<QString, QString>* settings = 0 );
 
 
 	/**
@@ -55,7 +54,7 @@ public:
 		*  \param conn     connection to the database
 		*  \return bool true, if the Type was successfully added to the database
 		*/
-	static bool addType(Data::Type* type, QSqlDatabase* conn);
+	static bool addType( Data::Type* type, QSqlDatabase* conn );
 
 
 	/**
@@ -65,7 +64,7 @@ public:
 		*  \param   conn     connection to the database
 		*  \return bool true, if the Type was successfully removed from the database
 		*/
-	static bool removeType(Data::Type* type, QSqlDatabase* conn);
+	static bool removeType( Data::Type* type, QSqlDatabase* conn );
 
 	/**
 		* \fn public static getSettings(Data::Type* type, QSqlDatabase* conn, bool* error)
@@ -75,7 +74,7 @@ public:
 		* \param  error 	error flag, will be set to true, if the method encounters an error
 		* \return QMap<QString,QString> settings of the Type
 		*/
-	static QMap<QString,QString> getSettings(Data::Type* type, QSqlDatabase* conn, bool* error);
+	static QMap<QString,QString> getSettings( Data::Type* type, QSqlDatabase* conn, bool* error );
 
 private:
 
@@ -85,13 +84,13 @@ private:
 		*
 		* Only static members of the class should be used
 		*/
-	TypeDAO(void);
+	TypeDAO( void );
 
 	/**
 		*  \fn private destructor  ~TypeDAO
 		*  \brief Destroys TypeDAO object
 		*/
-	~TypeDAO(void);
+	~TypeDAO( void );
 };
 }
 #endif

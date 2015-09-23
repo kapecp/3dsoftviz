@@ -24,7 +24,24 @@
 #include <QPointer>
 
 
-extern QCoreApplication* getOrCreateQApplication();
+
+
+namespace OsgQtBrowser {
+
+#define MYQKEYEVENT 2000
+#define MYQPOINTEREVENT 2001
+
+struct MyQPointerEvent : public QEvent {
+	MyQPointerEvent( int x, int y, unsigned int buttonMask ):
+		QEvent( QEvent::Type( MYQPOINTEREVENT ) ),
+		_x( x ), _y( y ),_buttonMask( buttonMask ) {}
+
+	int _x, _y;
+	unsigned int _buttonMask;
+};
+
+
+
 
 /**
 *  \class QGraphicsViewAdapter
@@ -44,7 +61,9 @@ public:
 		*  \param [in, out]  image osg::Image *
 		*  \param [in, out]  widget QWidget *
 		*/
-	QGraphicsViewAdapter(osg::Image* image, QWidget* widget);
+	QGraphicsViewAdapter( osg::Image* image, QWidget* widget );
+
+	static QCoreApplication* getOrCreateQApplication();
 
 	/**
 		*  \fn public  setUpKeyMap
@@ -60,7 +79,7 @@ public:
 		*  \param [in]       buttonMask int
 		*  \return bool
 		*/
-	bool sendPointerEvent(int x, int y, int buttonMask);
+	bool sendPointerEvent( int x, int y, int buttonMask );
 
 	/**
 		*  \fn public  sendKeyEvent
@@ -69,7 +88,7 @@ public:
 		*  \param [in]       keyDown bool
 		*  \return bool
 		*/
-	bool sendKeyEvent(int key, bool keyDown);
+	bool sendKeyEvent( int key, bool keyDown );
 
 
 
@@ -78,7 +97,7 @@ public:
 		*  \brief
 		*  \param [in]       frameStamp const osg::FrameStamp *
 		*/
-	void setFrameLastRendered(const osg::FrameStamp* frameStamp);
+	void setFrameLastRendered( const osg::FrameStamp* frameStamp );
 
 
 	/**
@@ -100,7 +119,7 @@ public:
 		*  \brief
 		*  \param [in]       i unsigned int
 		*/
-	void assignImage(unsigned int i);
+	void assignImage( unsigned int i );
 
 protected:
 
@@ -113,7 +132,7 @@ protected:
 		*  \param [in]       buttonMask int
 		*  \return bool
 		*/
-	bool handlePointerEvent(int x, int y, int buttonMask);
+	bool handlePointerEvent( int x, int y, int buttonMask );
 
 	/**
 		*  \fn protected  handleKeyEvent
@@ -122,7 +141,7 @@ protected:
 		*  \param [in]       keyDown bool
 		*  \return bool
 		*/
-	bool handleKeyEvent(int key, bool keyDown);
+	bool handleKeyEvent( int key, bool keyDown );
 
 
 	/**
@@ -233,7 +252,7 @@ protected:
 		*  \brief
 		*  \param [in, out]  event QEvent *
 		*/
-	virtual void customEvent ( QEvent * event ) ;
+	virtual void customEvent( QEvent* event ) ;
 
 private slots:
 
@@ -243,8 +262,8 @@ private slots:
 		*  \brief
 		*  \param [in]       regions const QList<QRectF> &
 		*/
-	void repaintRequestedSlot(const QList<QRectF> &regions);
+	void repaintRequestedSlot( const QList<QRectF>& regions );
 
 };
-
+}
 #endif

@@ -1,59 +1,98 @@
 #include "QOpenCV/FaceRecognitionThread.h"
 
-using namespace QOpenCV;
 
-QOpenCV::FaceRecognitionThread::FaceRecognitionThread(OpenCV::FaceRecognizer* alg)
+#include "OpenCV/CapVideo.h"
+#include "OpenCV/FaceRecognizer.h"
+#include "opencv2/imgproc/imgproc.hpp"
+#include <QDebug>
+
+QOpenCV::FaceRecognitionThread::FaceRecognitionThread( QObject* parent )
+	: QThread( parent )
 {
-	this->mFaceRecognizer = alg;
-	this->mCapVideo = new OpenCV::CapVideo(0,320,240);
-	this->cancel=false;
-	qRegisterMetaType<cv::Mat>("Mat");
+	mCapVideo		= NULL;
+	mCancel			= false;
+	mSendImgEnabled	= true;
+	mSendBackgrImgEnabled = false;
 }
 
-QOpenCV::FaceRecognitionThread::~FaceRecognitionThread(void)
+
+QOpenCV::FaceRecognitionThread::~FaceRecognitionThread( void )
 {
-	delete this->mCapVideo;
-	delete this->mFaceRecognizer;
 }
 
-void QOpenCV::FaceRecognitionThread::setWindow(FaceRecognitionWindow *mFaceRecognitionWindow)
-{
-	this->mFaceRecognitionWindow = mFaceRecognitionWindow;
-	connect(this->mFaceRecognitionWindow,SIGNAL(cancelLoop(bool)),this,SLOT(setCancel(bool)));
-}
-
+// in a loop, capture frame from camera and detect faces
+// send eyes coordinates to change view
 void QOpenCV::FaceRecognitionThread::run()
 {
-	if (!this->mCapVideo->getCapture()){
-		qDebug() << "Camera is not opened";
+	mCancel = false;
+	cv::Mat image;
+	OpenCV::FaceRecognizer*	mFaceRecognizer = new OpenCV::FaceRecognizer();
+
+	if ( mCapVideo == NULL ) {
+		qDebug() << "[FaceRecognitionThread::run()]  Camera is not set";
 		return;
 	}
-	cv::Mat image;
-	while(!cancel) {
-		image=this->mCapVideo->queryFrame();
-		this->mCapVideo->createGray();
 
-		this->mFaceRecognizer->detectFaces(this->mCapVideo->getGrayframe());
-		this->mFaceRecognizer->annotateFaces(image);
-		cv::Mat im = image.clone();
-		emit this->pushImage(im);
-		if (this->mFaceRecognizer->detected)
-		{
-			emit this->sendEyesCoords((float)-this->mFaceRecognizer->getEyesCoords().x,
-									  (float)-this->mFaceRecognizer->getEyesCoords().y,
-									  -this->mFaceRecognizer->getHeadDistance(
-										  cvGetCaptureProperty(
-											  this->mCapVideo->getCapture(),
-											  CV_CAP_PROP_FRAME_WIDTH )));
+	while ( !mCancel ) {
+		// get image from camera
+		image = mCapVideo->queryFrame();
+
+		cv::cvtColor( image, image, CV_BGR2RGB );
+
+		// we detect faces on grayscale image
+		mFaceRecognizer->detectFaces( mCapVideo->getGrayframe() );
+		mFaceRecognizer->annotateFaces( image );
+
+		cv::flip( image, image, 1 );
+
+		// show image
+		if ( mSendImgEnabled && !image.empty() ) {
+			if ( image.data ) {
+				emit pushImage( image.clone() );    // ???
+			}
 		}
+		if ( mSendBackgrImgEnabled && !image.empty() ) {
+			emit pushBackgrImage( image.clone() );
+		}
+
+		// when face was detected along with movement (implemented with threshold)
+		// send eyes coordinate to change view
+		if ( mFaceRecognizer->detected ) { //&& mFaceRecognizer->isMovement
+			emit sendEyesCoords( static_cast<float>( -mFaceRecognizer->getEyesCoords().x ),
+								 static_cast<float>( -mFaceRecognizer->getEyesCoords().y ),
+								 -mFaceRecognizer->getHeadDistance( mCapVideo->getWidth() ) );
+		}
+		msleep( 80 );
 	}
+	mCapVideo->release();
+	mCapVideo = NULL;
+	delete mFaceRecognizer;
 }
 
 void QOpenCV::FaceRecognitionThread::pauseWindow()
 {
-	this->cancel=true;
+	mCancel = true;
 }
 
-void QOpenCV::FaceRecognitionThread::setCancel(bool set){
-	this->cancel=set;
+void QOpenCV::FaceRecognitionThread::setCancel( bool set )
+{
+	mCancel = set;
 }
+
+void QOpenCV::FaceRecognitionThread::setSendImgEnabled( bool sendImgEnabled )
+{
+	mSendImgEnabled = sendImgEnabled;
+}
+
+void QOpenCV::FaceRecognitionThread::setSendBackgrImgEnabled( bool sendBackgrImgEnabled )
+{
+	mSendBackgrImgEnabled = sendBackgrImgEnabled;
+}
+
+
+
+void QOpenCV::FaceRecognitionThread::setCapVideo( OpenCV::CapVideo* capVideo )
+{
+	mCapVideo = capVideo;
+}
+

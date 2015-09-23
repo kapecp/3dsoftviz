@@ -16,14 +16,15 @@
 #include <QMap>
 #include <QString>
 
-typedef QMap<QString, long> MapSL;
 
 
 
-namespace Data
-{
+namespace Data {
 class Node;
 class Edge;
+
+typedef QMap<QString, long> MapSL;
+
 /**
 	*  \class GraphSerializer
 	*  \brief Hypergraph serialzer
@@ -43,27 +44,27 @@ public:
 		*  \param  in_nodes  serialized edges storage
 		*  \param  in_nodes  serialized types storage
 		*/
-	GraphSerializer(std::vector<Data::Node*> *in_nodes,std::vector<Data::Edge*> *in_edges,std::vector<Data::Type*> *in_types);
+	GraphSerializer( std::vector<Data::Node*>* in_nodes,std::vector<Data::Edge*>* in_edges,std::vector<Data::Type*>* in_types );
 
 	/**
 		*  \fn public destructor  ~GraphSerializer
 		*  \brief
 		*/
-	~GraphSerializer(void);
+	~GraphSerializer( void );
 
 
 	/**
 		*  \fn public  addEntry
 		*  \brief Serializes new graph entry
 		*/
-	void addEntry(QString edgeId, QString edgeData, QString incId, QString incData, QString nodeId, QString nodeData);
+	void addEntry( QString edgeId, QString edgeData, QString incId, QString incData, QString nodeId, QString nodeData );
 
 private:
-	std::vector<Data::Node*> *nodes;
+	std::vector<Data::Node*>* nodes;
 
-	std::vector<Data::Edge*> *edges;
+	std::vector<Data::Edge*>* edges;
 
-	std::vector<Data::Type*> *types;
+	std::vector<Data::Type*>* types;
 
 
 	/**
@@ -104,7 +105,7 @@ private:
 		*  \brief Creates new node with given id and data
 		*  \return Data::Node * new node
 		*/
-	Data::Node* createNode(QString id, QString data);
+	Data::Node* createNode( QString id, QString data );
 
 	/**
 		*  \fn private  edgeExists(Data::Edge * e)
@@ -112,7 +113,7 @@ private:
 		*  \param  e  checked edge
 		*  \return bool True, if edge exists
 		*/
-	bool edgeExists(Data::Edge * e);
+	bool edgeExists( Data::Edge* e );
 };
 }
 

@@ -16,21 +16,22 @@
 
 #include "Data/Node.h"
 #include "Data/Edge.h"
+#include "Data/Cluster.h"
+
+#include "SelectionObserver.h"
 
 #include <QLinkedList>
 #include <QTimer>
 
-namespace Util
-{
-	class ApplicationConfig;
+namespace Util {
+class ApplicationConfig;
 }
 
 
-namespace Vwr
-{
+namespace Vwr {
 
-		class CoreGraph;
-		class CameraManipulator;
+class CoreGraph;
+class CameraManipulator;
 
 /**
 	*  \class PickHandler
@@ -100,6 +101,8 @@ public:
 			*  \brief picking edges
 			*/
 		static const int EDGE = 2;
+
+		static const int CLUSTER = 3;
 	};
 
 
@@ -109,7 +112,7 @@ public:
 		*  \param  cameraManipulator    camera manipulator
 		*  \param  coreGraph     core graph
 		*/
-	PickHandler(Vwr::CameraManipulator * cameraManipulator, Vwr::CoreGraph * coreGraph);
+	PickHandler( Vwr::CameraManipulator* cameraManipulator, Vwr::CoreGraph* coreGraph );
 
 
 	/**
@@ -127,7 +130,7 @@ public:
 		*  \brief Sets fixed state to picked nodes
 		*  \param     isFixed     fixed state
 		*/
-	void toggleSelectedNodesFixedState(bool isFixed);
+	void toggleSelectedNodesFixedState( bool isFixed );
 
 	/**
 				*  \fn public  getPickedNodeWithMaxEdgeCount()
@@ -136,13 +139,24 @@ public:
 				*/
 	osg::ref_ptr<Data::Node> getPickedNodeWithMaxEdgeCount();
 
+	//volovar zac
+	/**
+	 * @brief getPickedNodeWithMinEdgeCount
+	 *  Find picked node from pickedNodes with min edge count for radial layout purpose
+	 * @return
+	 */
+	osg::ref_ptr<Data::Node>  getPickedNodeWithMinEdgeCount();
+	//volovar kon
 
 	/**
 		*  \fn inline public  setPickMode( int pickMode )
 		*  \brief Sets pick mode
 		*  \param     pickMode
 		*/
-	void setPickMode( int pickMode ) { this->pickMode = pickMode; }
+	void setPickMode( int pickMode )
+	{
+		this->pickMode = pickMode;
+	}
 
 
 	/**
@@ -150,14 +164,20 @@ public:
 		*  \brief Sets selection type
 		*  \param      selectionType
 		*/
-	void setSelectionType( int selectionType ) { this->selectionType = selectionType; }
+	void setSelectionType( int selectionType )
+	{
+		this->selectionType = selectionType;
+	}
 
 	/**
 		*  \fn inline public constant  getSelectionType
 		*  \brief Returns selection type
 		*  \return int selection type
 		*/
-	int getSelectionType() const { return selectionType; }
+	int getSelectionType() const
+	{
+		return selectionType;
+	}
 
 
 	/**
@@ -166,39 +186,68 @@ public:
 		*  \param       nodesOnly     if true, mass will be calculated form nodes only
 		*  \return osg::Vec3
 		*/
-	osg::Vec3 getSelectionCenter(bool nodesOnly);
+	osg::Vec3 getSelectionCenter( bool nodesOnly );
 
+	/**
+		 * @author Viktor Vinczler
+		 * @brief getSelectionCenterNnE Computes center of nodes/edges selection.
+		 * @return osg::Vec3 Selection center,
+		 * if are all nodes and edges unselected, returns center of graph.
+		 */
+	osg::Vec3 getSelectionCenterNnE();
 
 	/**
 		*  \fn inline public  getSelectedNodes
 		*  \brief Returns selected nodes
 		*  \return QLinkedList<osg::ref_ptr<Data::Node> > * selected nodes
 		*/
-	QLinkedList<osg::ref_ptr<Data::Node> > * getSelectedNodes() { return &pickedNodes; }
+	QLinkedList<osg::ref_ptr<Data::Node> >* getSelectedNodes()
+	{
+		return &pickedNodes;
+	}
 
 	/**
 		*  \fn inline public  getSelectedEdges
 		*  \brief Returns selected edges
 		*  \return QLinkedList<osg::ref_ptr<Data::Edge> > * selected edges
 		*/
-	QLinkedList<osg::ref_ptr<Data::Edge> > * getSelectedEdges() { return &pickedEdges; }
+	QLinkedList<osg::ref_ptr<Data::Edge> >* getSelectedEdges()
+	{
+		return &pickedEdges;
+	}
 
 	/**
 		*  \fn public  unselectPickedNodes(osg::ref_ptr<Data::Node> node = 0)
 		*  \brief unselects picked nodes. If null, all nodes will be unselected.
 		*  \param     node     nodes to unselect
 		*/
-	void unselectPickedNodes(osg::ref_ptr<Data::Node> node = 0);
+	void unselectPickedNodes( osg::ref_ptr<Data::Node> node = 0 );
 
 	/**
 		*  \fn public  unselectPickedEdges(osg::ref_ptr<Data::Edge> edge = 0)
 		*  \brief unselects picked edges. If null, all edges will be unselected.
 		*  \param     edge   edges to unselect
 		*/
-	void unselectPickedEdges(osg::ref_ptr<Data::Edge> edge = 0);
+	void unselectPickedEdges( osg::ref_ptr<Data::Edge> edge = 0 );
 
-	void addPickedNode(osg::ref_ptr<Data::Node> node) { pickedNodes.append(node); }
-	void addPickedEdge(osg::ref_ptr<Data::Edge> edge) { pickedEdges.append(edge); }
+	void addPickedNode( osg::ref_ptr<Data::Node> node )
+	{
+		pickedNodes.append( node );
+	}
+	void addPickedEdge( osg::ref_ptr<Data::Edge> edge )
+	{
+		pickedEdges.append( edge );
+	}
+
+	void unselectPickedClusters();
+
+	QLinkedList<osg::ref_ptr<Data::Cluster> > getPickedClusters()
+	{
+		return pickedClusters;
+	}
+
+	SelectionObserver* getSelectionObserver() const;
+	void setSelectionObserver( SelectionObserver* value );
 
 protected:
 	// Store mouse xy location for button press & move events.
@@ -212,7 +261,9 @@ protected:
 	bool leftButtonPressed;
 
 	// Perform a pick operation.
-	bool pick(const double xMin, const double yMin, const double xMax, const double yMax, osgViewer::Viewer* viewer);
+	bool pick( const double xMin, const double yMin, const double xMax, const double yMax, osgViewer::Viewer* viewer );
+
+	SelectionObserver* selectionObserver;
 
 private:
 
@@ -220,21 +271,26 @@ private:
 		*  Vwr::CameraManipulator * cameraManipulator
 		*  \brief camera manipulator
 		*/
-	Vwr::CameraManipulator * cameraManipulator;
+	Vwr::CameraManipulator* cameraManipulator;
 
 	/**
 		*  Vwr::CoreGraph * coreGraph
 		*  \brief core graph
 		*/
-	Vwr::CoreGraph * coreGraph;
+	Vwr::CoreGraph* coreGraph;
 
 
 	/**
 		*  Util::ApplicationConfig * appConf
 		*  \brief application configuration
 		*/
-	Util::ApplicationConfig * appConf;
+	Util::ApplicationConfig* appConf;
 
+	/**
+	*  osg::ref_ptr<Data::Node> lastAutoMovementNode
+	*  \brief the last approaching node in automatic camera movement
+	*/
+	osg::ref_ptr<Data::Node> lastAutoMovementNode;
 
 	/**
 		*  QLinkedList<osg::ref_ptr<Data::Node> > pickedNodes
@@ -247,6 +303,18 @@ private:
 		*  \brief picked edges list
 		*/
 	QLinkedList<osg::ref_ptr<Data::Edge> > pickedEdges;
+
+	/**
+		*  QLinkedList<osg::ref_ptr<Data::Edge> > pickedNeighborsNodes
+		*  \brief picked neighbors nodes list
+		*/
+	QLinkedList<osg::ref_ptr<Data::Node> > pickedNeighborsNodes;
+
+	/**
+		*  QLinkedList<osg::ref_ptr<Data::Edge> > pickedNeighborsEdges
+		*  \brief picked neighbors edges list
+		*/
+	QLinkedList<osg::ref_ptr<Data::Edge> > pickedNeighborsEdges;
 
 	/**
 		*  osg::ref_ptr group
@@ -291,6 +359,11 @@ private:
 		*/
 	bool isManipulatingNodes;
 
+	/**
+		*  bool isNeighborsSelection
+		*  \brief true, if are Neighbors selected
+		*/
+	bool isNeighborsSelection;
 
 	/**
 		*  osg::ref_ptr<osg::Geode> selectionQuad
@@ -300,13 +373,12 @@ private:
 
 
 	/**
-		*  \fn private  doSinglePick(osg::NodePath nodePath, unsigned int primitiveIndex)
+		*  \fn private  doSinglePick(osg::NodePath nodePath)
 		*  \brief Picks single object on screen
 		*  \param    nodePath   pick nodepath
-		*  \param     primitiveIndex  picked primitive index
 		*  \return bool true, if object was picked
 		*/
-	bool doSinglePick(osg::NodePath nodePath, unsigned int primitiveIndex);
+	bool doSinglePick( osg::NodePath nodePath );
 
 	/**
 		*  \fn private  doNodePick(osg::NodePath nodePath)
@@ -314,16 +386,24 @@ private:
 		*  \param   nodePath     pick nodepath
 		*  \return bool true, if node was picked
 		*/
-	bool doNodePick(osg::NodePath nodePath);
+	bool doNodePick( osg::NodePath nodePath );
 
 	/**
-		*  \fn private  doEdgePick(osg::NodePath nodePath, unsigned int primitiveIndex)
+		*  \fn private  doEdgePick(osg::NodePath nodePath)
 		*  \brief Picks single edge
 		*  \param     nodePath   pick nodepath
-		*  \param     primitiveIndex    picked primitive index
 		*  \return bool
 		*/
-	bool doEdgePick(osg::NodePath nodePath, unsigned int primitiveIndex);
+	bool doEdgePick( osg::NodePath nodePath );
+
+	bool doClusterPick( osg::NodePath nodePath );
+
+	/**
+		*  \fn private  selectAllNeighbors(QLinkedList<osg::ref_ptr<Data::Node>> nodes)
+		*  \brief Select all neighbors edges and theirs nodes of nodes collection in parameter
+		*  \param     nodes   nodes for neighbors selection
+		*/
+	void selectAllNeighbors( QLinkedList<osg::ref_ptr<Data::Node>> nodes );
 
 	/**
 		*  \fn private  dragNode(osgViewer::Viewer * viewer)
@@ -331,7 +411,7 @@ private:
 		*  \param viewer  current viewer
 		*  \return bool true, if nodes were dragged
 		*/
-	bool dragNode(osgViewer::Viewer * viewer);
+	bool dragNode( osgViewer::Viewer* viewer );
 
 
 	/**
@@ -354,14 +434,14 @@ private:
 		*  \param   origin_mY     end position
 		*  \param   viewer    current viewer
 		*/
-	void drawSelectionQuad(float origin_mX, float origin_mY, osgViewer::Viewer * viewer);
+	void drawSelectionQuad( float origin_mX, float origin_mY, osgViewer::Viewer* viewer );
 
 	/**
 		*  \fn private  setSelectedNodesInterpolation(bool state)
 		*  \brief sets interpolation state to selected nodes
 		*  \param      state     interpolation state
 		*/
-	void setSelectedNodesInterpolation(bool state);
+	void setSelectedNodesInterpolation( bool state );
 
 	/**
 		*  \fn private  handlePush( const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& aa )
@@ -435,31 +515,39 @@ private:
 		*  const osgGA::GUIEventAdapter * eaPush
 		*  \brief	variable for storing event for detecting double click
 		*/
-	const osgGA::GUIEventAdapter * eaPush;
+	const osgGA::GUIEventAdapter* eaPush;
 
 	/**
 		*  const osgGA::GUIEventAdapter * eaRel
 		*  \brief	variable for storing event for detecting double click
 		*/
-	const osgGA::GUIEventAdapter * eaRel;
+	const osgGA::GUIEventAdapter* eaRel;
 
 	/**
 		*  osgGA::GUIActionAdapter * aaPush
 		*  \brief	variable for storing event for detecting double click
 		*/
-	osgGA::GUIActionAdapter * aaPush;
+	osgGA::GUIActionAdapter* aaPush;
 
 	/**
 		*  osgGA::GUIActionAdapter * aaRel
 		*  \brief	variable for storing event for detecting double click
 		*/
-	osgGA::GUIActionAdapter * aaRel;
+	osgGA::GUIActionAdapter* aaRel;
 
 	/**
 		*  QTimer timer
 		*  \brief timer for detecting double click
 		*/
-	QTimer * timer;
+	QTimer* timer;
+
+	QLinkedList<osg::ref_ptr<Data::Cluster> > pickedClusters;
+	bool dragCluster( osgViewer::Viewer* viewer );
+	bool handleScroll( const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& aa );
+
+	bool isXPressed;
+	bool isYPressed;
+	bool isZPressed;
 
 public slots:
 	/**

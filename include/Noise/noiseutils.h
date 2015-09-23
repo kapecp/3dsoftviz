@@ -33,11 +33,11 @@
 
 using namespace noise;
 
-namespace noise
-{
 
-namespace utils
-{
+
+namespace noise {
+
+namespace utils {
 
 /// @mainpage noiseutils
 ///
@@ -77,6 +77,16 @@ namespace utils
 /// address is jlbezigvins@gmzigail.com (For great email, take off every
 /// <a href=http://www.planettribes.com/allyourbase/story.shtml>zig</a>.)
 
+/// A pointer to a callback function used by the NoiseMapBuilder class.
+///
+/// The NoiseMapBuilder::Build() method calls this callback function each
+/// time it fills a row of the noise map with coherent-noise values.
+///
+/// This callback function has a single integer parameter that contains
+/// a count of the rows that have been completed.  It returns void.  Pass
+/// a function with this signature to the NoiseMapBuilder::SetCallback()
+/// method.
+
 /// The maximum width of a raster.
 const int RASTER_MAX_WIDTH = 32767;
 
@@ -88,16 +98,7 @@ const int RASTER_MAX_HEIGHT = 32767;
 const int RASTER_STRIDE_BOUNDARY = 4;
 #endif
 
-/// A pointer to a callback function used by the NoiseMapBuilder class.
-///
-/// The NoiseMapBuilder::Build() method calls this callback function each
-/// time it fills a row of the noise map with coherent-noise values.
-///
-/// This callback function has a single integer parameter that contains
-/// a count of the rows that have been completed.  It returns void.  Pass
-/// a function with this signature to the NoiseMapBuilder::SetCallback()
-/// method.
-typedef void(*NoiseMapCallback) (int row);
+typedef void( *NoiseMapCallback )( int row );
 
 /// Number of meters per point in a Terragen terrain (TER) file.
 const double DEFAULT_METERS_PER_POINT = 30.0;
@@ -120,7 +121,7 @@ class Color
 public:
 
 	/// Constructor.
-	Color ()
+	Color()
 	{
 	}
 
@@ -130,9 +131,9 @@ public:
 	/// @param g Value of the green channel.
 	/// @param b Value of the blue channel.
 	/// @param a Value of the alpha (transparency) channel.
-	Color (noise::uint8 r, noise::uint8 g, noise::uint8 b,
-		   noise::uint8 a):
-		red (r), green (g), blue (b), alpha (a)
+	Color( noise::uint8 r, noise::uint8 g, noise::uint8 b,
+		   noise::uint8 a ):
+		red( r ), green( g ), blue( b ), alpha( a )
 	{
 	}
 
@@ -159,8 +160,7 @@ public:
 ///
 /// The ColorGradient class defines a color gradient by a list of these
 /// objects.
-struct GradientPoint
-{
+struct GradientPoint {
 
 	/// The position of this gradient point.
 	double pos;
@@ -205,10 +205,10 @@ class GradientColor
 public:
 
 	/// Constructor.
-	GradientColor ();
+	GradientColor();
 
 	/// Destructor.
-	~GradientColor ();
+	~GradientColor();
 
 	/// Adds a gradient point to this gradient object.
 	///
@@ -220,20 +220,20 @@ public:
 	/// @throw noise::ExceptionInvalidParam See the precondition.
 	///
 	/// It does not matter which order these gradient points are added.
-	void AddGradientPoint (double gradientPos,
-						   const Color& gradientColor);
+	void AddGradientPoint( double gradientPos,
+						   const Color& gradientColor );
 
 	/// Deletes all the gradient points from this gradient object.
 	///
 	/// @post All gradient points from this gradient object are deleted.
-	void Clear ();
+	void Clear();
 
 	/// Returns the color at the specified position in the color gradient.
 	///
 	/// @param gradientPos The specified position.
 	///
 	/// @returns The color at that position.
-	const Color& GetColor (double gradientPos) const;
+	const Color& GetColor( double gradientPos ) const;
 
 	/// Returns a pointer to the array of gradient points in this object.
 	///
@@ -245,7 +245,7 @@ public:
 	/// It is recommended that an application does not store this pointer
 	/// for later use since the pointer to the array may change if the
 	/// application calls another method of this object.
-	const GradientPoint* GetGradientPointArray () const
+	const GradientPoint* GetGradientPointArray() const
 	{
 		return m_pGradientPoints;
 	}
@@ -253,7 +253,7 @@ public:
 	/// Returns the number of gradient points stored in this object.
 	///
 	/// @returns The number of gradient points stored in this object.
-	int GetGradientPointCount () const
+	int GetGradientPointCount() const
 	{
 		return m_gradientPointCount;
 	}
@@ -275,7 +275,7 @@ private:
 	/// object ensures that the gradient-point array is sorted by input
 	/// value.  The code that maps a value to a color requires a sorted
 	/// gradient-point array.
-	int FindInsertionPos (double gradientPos);
+	int FindInsertionPos( double gradientPos );
 
 	/// Inserts the gradient point at the specified position in the
 	/// internal gradient-point array.
@@ -292,8 +292,8 @@ private:
 	/// Because this object requires that all gradient points in the array
 	/// must be sorted by the position, the new gradient point should be
 	/// inserted at the position in which the order is still preserved.
-	void InsertAtPos (int insertionPos, double gradientPos,
-					  const Color& gradientColor);
+	void InsertAtPos( int insertionPos, double gradientPos,
+					  const Color& gradientColor );
 
 	/// Number of gradient points.
 	int m_gradientPointCount;
@@ -362,7 +362,7 @@ public:
 	/// Constructor.
 	///
 	/// Creates an empty noise map.
-	NoiseMap ();
+	NoiseMap();
 
 	/// Constructor.
 	///
@@ -380,17 +380,17 @@ public:
 	///
 	/// It is considered an error if the specified dimensions are not
 	/// positive.
-	NoiseMap (int width, int height);
+	NoiseMap( int width, int height );
 
 	/// Copy constructor.
 	///
 	/// @throw noise::ExceptionOutOfMemory Out of memory.
-	NoiseMap (const NoiseMap& rhs);
+	NoiseMap( const NoiseMap& rhs );
 
 	/// Destructor.
 	///
 	/// Frees the allocated memory for the noise map.
-	~NoiseMap ();
+	~NoiseMap();
 
 	/// Assignment operator.
 	///
@@ -399,13 +399,13 @@ public:
 	/// @returns Reference to self.
 	///
 	/// Creates a copy of the noise map.
-	NoiseMap& operator= (const NoiseMap& rhs);
+	NoiseMap& operator= ( const NoiseMap& rhs );
 
 	/// Clears the noise map to a specified value.
 	///
 	/// @param value The value that all positions within the noise map are
 	/// cleared to.
-	void Clear (float value);
+	void Clear( float value );
 
 	/// Returns the value used for all positions outside of the noise map.
 	///
@@ -414,7 +414,7 @@ public:
 	///
 	/// All positions outside of the noise map are assumed to have a
 	/// common value known as the <i>border value</i>.
-	float GetBorderValue () const
+	float GetBorderValue() const
 	{
 		return m_borderValue;
 	}
@@ -423,7 +423,7 @@ public:
 	///
 	/// @returns A const pointer to a slab at the position (0, 0), or
 	/// @a NULL if the noise map is empty.
-	const float* GetConstSlabPtr () const
+	const float* GetConstSlabPtr() const
 	{
 		return m_pNoiseMap;
 	}
@@ -440,9 +440,9 @@ public:
 	///
 	/// This method does not perform bounds checking so be careful when
 	/// calling it.
-	const float* GetConstSlabPtr (int row) const
+	const float* GetConstSlabPtr( int row ) const
 	{
-		return GetConstSlabPtr (0, row);
+		return GetConstSlabPtr( 0, row );
 	}
 
 	/// Returns a const pointer to a slab at the specified position.
@@ -458,15 +458,15 @@ public:
 	///
 	/// This method does not perform bounds checking so be careful when
 	/// calling it.
-	const float* GetConstSlabPtr (int x, int y) const
+	const float* GetConstSlabPtr( int x, int y ) const
 	{
-		return m_pNoiseMap + (size_t)x + (size_t)m_stride * (size_t)y;
+		return m_pNoiseMap + ( size_t )x + ( size_t )m_stride * ( size_t )y;
 	}
 
 	/// Returns the height of the noise map.
 	///
 	/// @returns The height of the noise map.
-	int GetHeight () const
+	int GetHeight() const
 	{
 		return m_height;
 	}
@@ -476,7 +476,7 @@ public:
 	/// @returns The amount of memory allocated for this noise map.
 	///
 	/// This method returns the number of @a float values allocated.
-	size_t GetMemUsed () const
+	size_t GetMemUsed() const
 	{
 		return m_memUsed;
 	}
@@ -485,7 +485,7 @@ public:
 	///
 	/// @returns A pointer to a slab at the position (0, 0), or @a NULL if
 	/// the noise map is empty.
-	float* GetSlabPtr ()
+	float* GetSlabPtr()
 	{
 		return m_pNoiseMap;
 	}
@@ -502,9 +502,9 @@ public:
 	///
 	/// This method does not perform bounds checking so be careful when
 	/// calling it.
-	float* GetSlabPtr (int row)
+	float* GetSlabPtr( int row )
 	{
-		return GetSlabPtr (0, row);
+		return GetSlabPtr( 0, row );
 	}
 
 	/// Returns a pointer to a slab at the specified position.
@@ -520,9 +520,9 @@ public:
 	///
 	/// This method does not perform bounds checking so be careful when
 	/// calling it.
-	float* GetSlabPtr (int x, int y)
+	float* GetSlabPtr( int x, int y )
 	{
-		return m_pNoiseMap + (size_t)x + (size_t)m_stride * (size_t)y;
+		return m_pNoiseMap + ( size_t )x + ( size_t )m_stride * ( size_t )y;
 	}
 
 	/// Returns the stride amount of the noise map.
@@ -533,7 +533,7 @@ public:
 	///   points of any two adjacent slabs in a noise map.
 	/// - The stride amount is measured by the number of @a float values
 	///   between these two points, not by the number of bytes.
-	int GetStride () const
+	int GetStride() const
 	{
 		return m_stride;
 	}
@@ -547,12 +547,12 @@ public:
 	///
 	/// This method returns the border value if the coordinates exist
 	/// outside of the noise map.
-	float GetValue (int x, int y) const;
+	float GetValue( int x, int y ) const;
 
 	/// Returns the width of the noise map.
 	///
 	/// @returns The width of the noise map.
-	int GetWidth () const
+	int GetWidth() const
 	{
 		return m_width;
 	}
@@ -564,7 +564,7 @@ public:
 	/// maps will temporarily exist in memory during this call.)
 	///
 	/// The contents of the noise map is unaffected.
-	void ReclaimMem ();
+	void ReclaimMem();
 
 	/// Sets the value to use for all positions outside of the noise map.
 	///
@@ -573,7 +573,7 @@ public:
 	///
 	/// All positions outside of the noise map are assumed to have a
 	/// common value known as the <i>border value</i>.
-	void SetBorderValue (float borderValue)
+	void SetBorderValue( float borderValue )
 	{
 		m_borderValue = borderValue;
 	}
@@ -597,7 +597,7 @@ public:
 	///
 	/// If the @a INVALID_PARAM exception occurs, the noise map is
 	/// unmodified.
-	void SetSize (int width, int height);
+	void SetSize( int width, int height );
 
 	/// Sets a value at a specified position in the noise map.
 	///
@@ -607,7 +607,7 @@ public:
 	///
 	/// This method does nothing if the noise map object is empty or the
 	/// position is outside the bounds of the noise map.
-	void SetValue (int x, int y, float value);
+	void SetValue( int x, int y, float value );
 
 	/// Takes ownership of the buffer within the source noise map.
 	///
@@ -617,7 +617,7 @@ public:
 	///
 	/// This method only moves the buffer pointer so this method is very
 	/// quick.
-	void TakeOwnership (NoiseMap& source);
+	void TakeOwnership( NoiseMap& source );
 
 private:
 
@@ -632,9 +632,9 @@ private:
 	///
 	/// The returned value is measured by the number of @a float values
 	/// required to store the noise map, not by the number of bytes.
-	size_t CalcMinMemUsage (int width, int height) const
+	size_t CalcMinMemUsage( int width, int height ) const
 	{
-		return CalcStride ((size_t)width) * (size_t)height;
+		return CalcStride( ( size_t )width ) * ( size_t )height;
 	}
 
 	/// Calculates the stride amount for a noise map.
@@ -647,10 +647,10 @@ private:
 	///   points of any two adjacent slabs in a noise map.
 	/// - The stride amount is measured by the number of @a float values
 	///   between these two points, not by the number of bytes.
-	size_t CalcStride (int width) const
+	size_t CalcStride( int width ) const
 	{
-		return (size_t)(((width + RASTER_STRIDE_BOUNDARY - 1)
-						 / RASTER_STRIDE_BOUNDARY) * RASTER_STRIDE_BOUNDARY);
+		return ( size_t )( ( ( width + RASTER_STRIDE_BOUNDARY - 1 )
+							 / RASTER_STRIDE_BOUNDARY ) * RASTER_STRIDE_BOUNDARY );
 	}
 
 	/// Copies the contents of the buffer in the source noise map into
@@ -667,19 +667,19 @@ private:
 	/// @a memcpy, which probably violates the DMCA because it can be used
 	//. to make a bitwise copy of anything, like, say, a DVD.  Don't call
 	/// this method if you live in the USA.
-	void CopyNoiseMap (const NoiseMap& source);
+	void CopyNoiseMap( const NoiseMap& source );
 
 	/// Resets the noise map object.
 	///
 	/// This method is similar to the InitObj() method, except this method
 	/// deletes the buffer in this noise map.
-	void DeleteNoiseMapAndReset ();
+	void DeleteNoiseMapAndReset();
 
 	/// Initializes the noise map object.
 	///
 	/// @pre Must be called during object construction.
 	/// @pre The noise map buffer must not exist.
-	void InitObj ();
+	void InitObj();
 
 	/// Value used for all positions outside of the noise map.
 	float m_borderValue;
@@ -759,7 +759,7 @@ public:
 	/// Constructor.
 	///
 	/// Creates an empty image.
-	Image ();
+	Image();
 
 	/// Constructor.
 	///
@@ -777,17 +777,17 @@ public:
 	///
 	/// It is considered an error if the specified dimensions are not
 	/// positive.
-	Image (int width, int height);
+	Image( int width, int height );
 
 	/// Copy constructor.
 	///
 	/// @throw noise::ExceptionOutOfMemory Out of memory.
-	Image  (const Image& rhs);
+	Image( const Image& rhs );
 
 	/// Destructor.
 	///
 	/// Frees the allocated memory for the image.
-	~Image ();
+	~Image();
 
 	/// Assignment operator.
 	///
@@ -796,13 +796,13 @@ public:
 	/// @returns Reference to self.
 	///
 	/// Creates a copy of the image.
-	Image& operator= (const Image& rhs);
+	Image& operator= ( const Image& rhs );
 
 	/// Clears the image to a specified color value.
 	///
 	/// @param value The color value that all positions within the image
 	/// are cleared to.
-	void Clear (const Color& value);
+	void Clear( const Color& value );
 
 	/// Returns the color value used for all positions outside of the
 	/// image.
@@ -812,7 +812,7 @@ public:
 	///
 	/// All positions outside of the image are assumed to have a common
 	/// color value known as the <i>border value</i>.
-	Color GetBorderValue () const
+	Color GetBorderValue() const
 	{
 		return m_borderValue;
 	}
@@ -821,7 +821,7 @@ public:
 	///
 	/// @returns A const pointer to a slab at the position (0, 0), or
 	/// @a NULL if the image is empty.
-	const Color* GetConstSlabPtr () const
+	const Color* GetConstSlabPtr() const
 	{
 		return m_pImage;
 	}
@@ -837,9 +837,9 @@ public:
 	///
 	/// This method does not perform bounds checking so be careful when
 	/// calling it.
-	const Color* GetConstSlabPtr (int row) const
+	const Color* GetConstSlabPtr( int row ) const
 	{
-		return GetConstSlabPtr (0, row);
+		return GetConstSlabPtr( 0, row );
 	}
 
 	/// Returns a const pointer to a slab at the specified position.
@@ -854,15 +854,15 @@ public:
 	///
 	/// This method does not perform bounds checking so be careful when
 	/// calling it.
-	const Color* GetConstSlabPtr (int x, int y) const
+	const Color* GetConstSlabPtr( int x, int y ) const
 	{
-		return m_pImage + (size_t)x + (size_t)m_stride * (size_t)y;
+		return m_pImage + ( size_t )x + ( size_t )m_stride * ( size_t )y;
 	}
 
 	/// Returns the height of the image.
 	///
 	/// @returns The height of the image.
-	int GetHeight () const
+	int GetHeight() const
 	{
 		return m_height;
 	}
@@ -872,7 +872,7 @@ public:
 	/// @returns The amount of memory allocated for this image.
 	///
 	/// This method returns the number of Color objects allocated.
-	size_t GetMemUsed () const
+	size_t GetMemUsed() const
 	{
 		return m_memUsed;
 	}
@@ -881,7 +881,7 @@ public:
 	///
 	/// @returns A pointer to a slab at the position (0, 0), or @a NULL if
 	/// the image is empty.
-	Color* GetSlabPtr ()
+	Color* GetSlabPtr()
 	{
 		return m_pImage;
 	}
@@ -897,9 +897,9 @@ public:
 	///
 	/// This method does not perform bounds checking so be careful when
 	/// calling it.
-	Color* GetSlabPtr (int row)
+	Color* GetSlabPtr( int row )
 	{
-		return GetSlabPtr (0, row);
+		return GetSlabPtr( 0, row );
 	}
 
 	/// Returns a pointer to a slab at the specified position.
@@ -914,9 +914,9 @@ public:
 	///
 	/// This method does not perform bounds checking so be careful when
 	/// calling it.
-	Color* GetSlabPtr (int x, int y)
+	Color* GetSlabPtr( int x, int y )
 	{
-		return m_pImage + (size_t)x + (size_t)m_stride * (size_t)y;
+		return m_pImage + ( size_t )x + ( size_t )m_stride * ( size_t )y;
 	}
 
 	/// Returns the stride amount of the image.
@@ -927,7 +927,7 @@ public:
 	///   points of any two adjacent slabs in an image.
 	/// - The stride amount is measured by the number of Color objects
 	///   between these two points, not by the number of bytes.
-	int GetStride () const
+	int GetStride() const
 	{
 		return m_stride;
 	}
@@ -941,12 +941,12 @@ public:
 	///
 	/// This method returns the border value if the coordinates exist
 	/// outside of the image.
-	Color GetValue (int x, int y) const;
+	Color GetValue( int x, int y ) const;
 
 	/// Returns the width of the image.
 	///
 	/// @returns The width of the image.
-	int GetWidth () const
+	int GetWidth() const
 	{
 		return m_width;
 	}
@@ -958,7 +958,7 @@ public:
 	/// will exist temporarily in memory during this call.)
 	///
 	/// The contents of the image is unaffected.
-	void ReclaimMem ();
+	void ReclaimMem();
 
 	/// Sets the color value to use for all positions outside of the
 	/// image.
@@ -968,7 +968,7 @@ public:
 	///
 	/// All positions outside of the image are assumed to have a common
 	/// color value known as the <i>border value</i>.
-	void SetBorderValue (const Color& borderValue)
+	void SetBorderValue( const Color& borderValue )
 	{
 		m_borderValue = borderValue;
 	}
@@ -991,7 +991,7 @@ public:
 	/// empty.
 	///
 	/// If the @a INVALID_PARAM exception occurs, the image is unmodified.
-	void SetSize (int width, int height);
+	void SetSize( int width, int height );
 
 	/// Sets a color value at a specified position in the image.
 	///
@@ -1001,7 +1001,7 @@ public:
 	///
 	/// This method does nothing if the image is empty or the position is
 	/// outside the bounds of the image.
-	void SetValue (int x, int y, const Color& value);
+	void SetValue( int x, int y, const Color& value );
 
 	/// Takes ownership of the buffer within the source image.
 	///
@@ -1011,7 +1011,7 @@ public:
 	///
 	/// This method only moves the buffer pointer so this method is very
 	/// quick.
-	void TakeOwnership (Image& source);
+	void TakeOwnership( Image& source );
 
 private:
 
@@ -1025,9 +1025,9 @@ private:
 	///
 	/// The returned color value is measured by the number of Color
 	/// objects required to store the image, not by the number of bytes.
-	size_t CalcMinMemUsage (int width, int height) const
+	size_t CalcMinMemUsage( int width, int height ) const
 	{
-		return CalcStride ((size_t)width) * (size_t)height;
+		return CalcStride( ( size_t )width ) * ( size_t )height;
 	}
 
 	/// Calculates the stride amount for an image.
@@ -1040,10 +1040,10 @@ private:
 	///   points of any two adjacent slabs in an image.
 	/// - The stride amount is measured by the number of Color objects
 	///   between these two points, not by the number of bytes.
-	size_t CalcStride (int width) const
+	size_t CalcStride( int width ) const
 	{
-		return (size_t)(((width + RASTER_STRIDE_BOUNDARY - 1)
-						 / RASTER_STRIDE_BOUNDARY) * RASTER_STRIDE_BOUNDARY);
+		return ( size_t )( ( ( width + RASTER_STRIDE_BOUNDARY - 1 )
+							 / RASTER_STRIDE_BOUNDARY ) * RASTER_STRIDE_BOUNDARY );
 	}
 
 	/// Copies the contents of the buffer in the source image into this
@@ -1060,19 +1060,19 @@ private:
 	/// @a memcpy, which probably violates the DMCA because it can be used
 	/// to make a bitwise copy of anything, like, say, a DVD.  Don't call
 	/// this method if you live in the USA.
-	void CopyImage (const Image& source);
+	void CopyImage( const Image& source );
 
 	/// Resets the image object.
 	///
 	/// This method is similar to the InitObj() method, except this method
 	/// deletes the memory allocated to the image.
-	void DeleteImageAndReset ();
+	void DeleteImageAndReset();
 
 	/// Initializes the image object.
 	///
 	/// @pre Must be called during object construction.
 	/// @pre The image buffer must not exist.
-	void InitObj ();
+	void InitObj();
 
 	/// The Color value used for all positions outside of the image.
 	Color m_borderValue;
@@ -1117,15 +1117,15 @@ class WriterBMP
 public:
 
 	/// Constructor.
-	WriterBMP ():
-		m_pSourceImage (NULL)
+	WriterBMP():
+		m_pSourceImage( NULL )
 	{
 	}
 
 	/// Returns the name of the file to write.
 	///
 	/// @returns The name of the file to write.
-	std::string GetDestFilename () const
+	std::string GetDestFilename() const
 	{
 		return m_destFilename;
 	}
@@ -1135,7 +1135,7 @@ public:
 	/// @param filename The name of the file to write.
 	///
 	/// Call this method before calling the WriteDestFile() method.
-	void SetDestFilename (const std::string& filename)
+	void SetDestFilename( const std::string& filename )
 	{
 		m_destFilename = filename;
 	}
@@ -1146,7 +1146,7 @@ public:
 	///
 	/// This object only stores a pointer to an image object, so make sure
 	/// this object exists before calling the WriteDestFile() method.
-	void SetSourceImage (Image& sourceImage)
+	void SetSourceImage( Image& sourceImage )
 	{
 		m_pSourceImage = &sourceImage;
 	}
@@ -1165,7 +1165,7 @@ public:
 	/// file.  Before calling this method, call the SetSourceImage()
 	/// method to specify the image, then call the SetDestFilename()
 	/// method to specify the name of the file to write.
-	void WriteDestFile ();
+	void WriteDestFile();
 
 protected:
 
@@ -1177,7 +1177,7 @@ protected:
 	///
 	/// Windows bitmap files require that the width of one horizontal line
 	/// must be aligned to a 32-bit boundary.
-	int CalcWidthByteCount (int width) const;
+	int CalcWidthByteCount( int width ) const;
 
 	/// Name of the file to write.
 	std::string m_destFilename;
@@ -1213,16 +1213,16 @@ class WriterTER
 public:
 
 	/// Constructor.
-	WriterTER ():
-		m_pSourceNoiseMap (NULL),
-		m_metersPerPoint ((float) DEFAULT_METERS_PER_POINT)
+	WriterTER():
+		m_pSourceNoiseMap( NULL ),
+		m_metersPerPoint( ( float ) DEFAULT_METERS_PER_POINT )
 	{
 	}
 
 	/// Returns the name of the file to write.
 	///
 	/// @returns The name of the file to write.
-	std::string GetDestFilename () const
+	std::string GetDestFilename() const
 	{
 		return m_destFilename;
 	}
@@ -1231,7 +1231,7 @@ public:
 	/// in meters.
 	///
 	/// @returns The distance separating adjacent points in the noise map.
-	float GetMetersPerPoint () const
+	float GetMetersPerPoint() const
 	{
 		return m_metersPerPoint;
 	}
@@ -1241,7 +1241,7 @@ public:
 	/// @param filename The name of the file to write.
 	///
 	/// Call this method before calling the WriteDestFile() method.
-	void SetDestFilename (const std::string& filename)
+	void SetDestFilename( const std::string& filename )
 	{
 		m_destFilename = filename;
 	}
@@ -1251,7 +1251,7 @@ public:
 	///
 	/// @param metersPerPoint The distance separating adjacent points in
 	/// the noise map.
-	void SetMetersPerPoint (float metersPerPoint)
+	void SetMetersPerPoint( float metersPerPoint )
 	{
 		m_metersPerPoint = metersPerPoint;
 	}
@@ -1262,7 +1262,7 @@ public:
 	///
 	/// This object only stores a pointer to a noise map object, so make
 	/// sure this object exists before calling the WriteDestFile() method.
-	void SetSourceNoiseMap (NoiseMap& sourceNoiseMap)
+	void SetSourceNoiseMap( NoiseMap& sourceNoiseMap )
 	{
 		m_pSourceNoiseMap = &sourceNoiseMap;
 	}
@@ -1284,7 +1284,7 @@ public:
 	///
 	/// This object assumes that the noise values represent elevations in
 	/// meters.
-	void WriteDestFile ();
+	void WriteDestFile();
 
 protected:
 
@@ -1293,7 +1293,7 @@ protected:
 	/// @param width The width of the noise map, in points.
 	///
 	/// @returns The width of one horizontal line in the file.
-	int CalcWidthByteCount (int width) const;
+	int CalcWidthByteCount( int width ) const;
 
 	/// Name of the file to write.
 	std::string m_destFilename;
@@ -1345,7 +1345,7 @@ class NoiseMapBuilder
 public:
 
 	/// Constructor.
-	NoiseMapBuilder ();
+	NoiseMapBuilder();
 
 	/// Builds the noise map.
 	///
@@ -1366,7 +1366,7 @@ public:
 	/// If this method is successful, the destination noise map contains
 	/// the coherent-noise values from the noise module specified by
 	/// SetSourceModule().
-	virtual void Build () = 0;
+	virtual void Build() = 0;
 
 	/// Returns the height of the destination noise map.
 	///
@@ -1374,7 +1374,7 @@ public:
 	///
 	/// This object does not change the height in the destination noise
 	/// map object until the Build() method is called.
-	double GetDestHeight () const
+	double GetDestHeight() const
 	{
 		return m_destHeight;
 	}
@@ -1385,7 +1385,7 @@ public:
 	///
 	/// This object does not change the height in the destination noise
 	/// map object until the Build() method is called.
-	double GetDestWidth () const
+	double GetDestWidth() const
 	{
 		return m_destWidth;
 	}
@@ -1399,7 +1399,7 @@ public:
 	/// contains a count of the rows that have been completed.  It returns
 	/// void.  Pass a function with this signature to the SetCallback()
 	/// method.
-	void SetCallback (NoiseMapCallback pCallback);
+	void SetCallback( NoiseMapCallback pCallback );
 
 	/// Sets the destination noise map.
 	///
@@ -1410,7 +1410,7 @@ public:
 	///
 	/// The destination noise map must exist throughout the lifetime of
 	/// this object unless another noise map replaces that noise map.
-	void SetDestNoiseMap (NoiseMap& destNoiseMap)
+	void SetDestNoiseMap( NoiseMap& destNoiseMap )
 	{
 		m_pDestNoiseMap = &destNoiseMap;
 	}
@@ -1424,7 +1424,7 @@ public:
 	///
 	/// The source module must exist throughout the lifetime of this
 	/// object unless another noise module replaces that noise module.
-	void SetSourceModule (const module::Module& sourceModule)
+	void SetSourceModule( const module::Module& sourceModule )
 	{
 		m_pSourceModule = &sourceModule;
 	}
@@ -1438,7 +1438,7 @@ public:
 	///
 	/// This method does not change the size of the destination noise map
 	/// until the Build() method is called.
-	void SetDestSize (int destWidth, int destHeight)
+	void SetDestSize( int destWidth, int destHeight )
 	{
 		m_destWidth  = destWidth ;
 		m_destHeight = destHeight;
@@ -1496,14 +1496,14 @@ class NoiseMapBuilderCylinder: public NoiseMapBuilder
 public:
 
 	/// Constructor.
-	NoiseMapBuilderCylinder ();
+	NoiseMapBuilderCylinder();
 
-	virtual void Build ();
+	virtual void Build();
 
 	/// Returns the lower angle boundary of the cylindrical noise map.
 	///
 	/// @returns The lower angle boundary of the noise map, in degrees.
-	double GetLowerAngleBound () const
+	double GetLowerAngleBound() const
 	{
 		return m_lowerAngleBound;
 	}
@@ -1513,7 +1513,7 @@ public:
 	/// @returns The lower height boundary of the noise map, in units.
 	///
 	/// One unit is equal to the radius of the cylinder.
-	double GetLowerHeightBound () const
+	double GetLowerHeightBound() const
 	{
 		return m_lowerHeightBound;
 	}
@@ -1521,7 +1521,7 @@ public:
 	/// Returns the upper angle boundary of the cylindrical noise map.
 	///
 	/// @returns The upper angle boundary of the noise map, in degrees.
-	double GetUpperAngleBound () const
+	double GetUpperAngleBound() const
 	{
 		return m_upperAngleBound;
 	}
@@ -1531,7 +1531,7 @@ public:
 	/// @returns The upper height boundary of the noise map, in units.
 	///
 	/// One unit is equal to the radius of the cylinder.
-	double GetUpperHeightBound () const
+	double GetUpperHeightBound() const
 	{
 		return m_upperHeightBound;
 	}
@@ -1555,12 +1555,12 @@ public:
 	/// @throw noise::ExceptionInvalidParam See the preconditions.
 	///
 	/// One unit is equal to the radius of the cylinder.
-	void SetBounds (double lowerAngleBound, double upperAngleBound,
-					double lowerHeightBound, double upperHeightBound)
+	void SetBounds( double lowerAngleBound, double upperAngleBound,
+					double lowerHeightBound, double upperHeightBound )
 	{
-		if (lowerAngleBound >= upperAngleBound
-				|| lowerHeightBound >= upperHeightBound) {
-			throw noise::ExceptionInvalidParam ();
+		if ( lowerAngleBound >= upperAngleBound
+				|| lowerHeightBound >= upperHeightBound ) {
+			throw noise::ExceptionInvalidParam();
 		}
 
 		m_lowerAngleBound  = lowerAngleBound ;
@@ -1605,9 +1605,9 @@ class NoiseMapBuilderPlane: public NoiseMapBuilder
 public:
 
 	/// Constructor.
-	NoiseMapBuilderPlane ();
+	NoiseMapBuilderPlane();
 
-	virtual void Build ();
+	virtual void Build();
 
 	/// Enables or disables seamless tiling.
 	///
@@ -1615,7 +1615,7 @@ public:
 	///
 	/// Enabling seamless tiling builds a noise map with no seams at the
 	/// edges.  This allows the noise map to be tileable.
-	void EnableSeamless (bool enable = true)
+	void EnableSeamless( bool enable = true )
 	{
 		m_isSeamlessEnabled = enable;
 	}
@@ -1623,7 +1623,7 @@ public:
 	/// Returns the lower x boundary of the planar noise map.
 	///
 	/// @returns The lower x boundary of the planar noise map, in units.
-	double GetLowerXBound () const
+	double GetLowerXBound() const
 	{
 		return m_lowerXBound;
 	}
@@ -1631,7 +1631,7 @@ public:
 	/// Returns the lower z boundary of the planar noise map.
 	///
 	/// @returns The lower z boundary of the noise map, in units.
-	double GetLowerZBound () const
+	double GetLowerZBound() const
 	{
 		return m_lowerZBound;
 	}
@@ -1639,7 +1639,7 @@ public:
 	/// Returns the upper x boundary of the planar noise map.
 	///
 	/// @returns The upper x boundary of the noise map, in units.
-	double GetUpperXBound () const
+	double GetUpperXBound() const
 	{
 		return m_upperXBound;
 	}
@@ -1647,7 +1647,7 @@ public:
 	/// Returns the upper z boundary of the planar noise map.
 	///
 	/// @returns The upper z boundary of the noise map, in units.
-	double GetUpperZBound () const
+	double GetUpperZBound() const
 	{
 		return m_upperZBound;
 	}
@@ -1660,7 +1660,7 @@ public:
 	///
 	/// Enabling seamless tiling builds a noise map with no seams at the
 	/// edges.  This allows the noise map to be tileable.
-	bool IsSeamlessEnabled () const
+	bool IsSeamlessEnabled() const
 	{
 		return m_isSeamlessEnabled;
 	}
@@ -1680,12 +1680,12 @@ public:
 	/// @pre The lower z boundary is less than the upper z boundary.
 	///
 	/// @throw noise::ExceptionInvalidParam See the preconditions.
-	void SetBounds (double lowerXBound, double upperXBound,
-					double lowerZBound, double upperZBound)
+	void SetBounds( double lowerXBound, double upperXBound,
+					double lowerZBound, double upperZBound )
 	{
-		if (lowerXBound >= upperXBound
-				|| lowerZBound >= upperZBound) {
-			throw noise::ExceptionInvalidParam ();
+		if ( lowerXBound >= upperXBound
+				|| lowerZBound >= upperZBound ) {
+			throw noise::ExceptionInvalidParam();
 		}
 
 		m_lowerXBound = lowerXBound;
@@ -1738,14 +1738,14 @@ class NoiseMapBuilderSphere: public NoiseMapBuilder
 public:
 
 	/// Constructor.
-	NoiseMapBuilderSphere ();
+	NoiseMapBuilderSphere();
 
-	virtual void Build ();
+	virtual void Build();
 
 	/// Returns the eastern boundary of the spherical noise map.
 	///
 	/// @returns The eastern boundary of the noise map, in degrees.
-	double GetEastLonBound () const
+	double GetEastLonBound() const
 	{
 		return m_eastLonBound;
 	}
@@ -1753,7 +1753,7 @@ public:
 	/// Returns the northern boundary of the spherical noise map
 	///
 	/// @returns The northern boundary of the noise map, in degrees.
-	double GetNorthLatBound () const
+	double GetNorthLatBound() const
 	{
 		return m_northLatBound;
 	}
@@ -1761,7 +1761,7 @@ public:
 	/// Returns the southern boundary of the spherical noise map
 	///
 	/// @returns The southern boundary of the noise map, in degrees.
-	double GetSouthLatBound () const
+	double GetSouthLatBound() const
 	{
 		return m_southLatBound;
 	}
@@ -1769,7 +1769,7 @@ public:
 	/// Returns the western boundary of the spherical noise map
 	///
 	/// @returns The western boundary of the noise map, in degrees.
-	double GetWestLonBound () const
+	double GetWestLonBound() const
 	{
 		return m_westLonBound;
 	}
@@ -1789,12 +1789,12 @@ public:
 	/// @pre The western boundary is less than the eastern boundary.
 	///
 	/// @throw noise::ExceptionInvalidParam See the preconditions.
-	void SetBounds (double southLatBound, double northLatBound,
-					double westLonBound, double eastLonBound)
+	void SetBounds( double southLatBound, double northLatBound,
+					double westLonBound, double eastLonBound )
 	{
-		if (southLatBound >= northLatBound
-				|| westLonBound >= eastLonBound) {
-			throw noise::ExceptionInvalidParam ();
+		if ( southLatBound >= northLatBound
+				|| westLonBound >= eastLonBound ) {
+			throw noise::ExceptionInvalidParam();
 		}
 
 		m_southLatBound = southLatBound;
@@ -1920,7 +1920,7 @@ class RendererImage
 public:
 
 	/// Constructor.
-	RendererImage ();
+	RendererImage();
 
 	/// Adds a gradient point to this gradient object.
 	///
@@ -1944,8 +1944,8 @@ public:
 	/// towards the calculated color, and if the alpha value is low, this
 	/// object weighs the blend towards the color from the corresponding
 	/// pixel in the background image.
-	void AddGradientPoint (double gradientPos,
-						   const Color& gradientColor);
+	void AddGradientPoint( double gradientPos,
+						   const Color& gradientColor );
 
 	/// Builds a grayscale gradient.
 	///
@@ -1955,7 +1955,7 @@ public:
 	/// This color gradient contains the following gradient points:
 	/// - -1.0 maps to black
 	/// - 1.0 maps to white
-	void BuildGrayscaleGradient ();
+	void BuildGrayscaleGradient();
 
 	/// Builds a color gradient suitable for terrain.
 	///
@@ -1965,13 +1965,13 @@ public:
 	/// This gradient color at position 0.0 is the "sea level".  Above
 	/// that value, the gradient contains greens, browns, and whites.
 	/// Below that value, the gradient contains various shades of blue.
-	void BuildTerrainGradient ();
+	void BuildTerrainGradient();
 
 	/// Clears the color gradient.
 	///
 	/// Before calling the Render() method, the application must specify a
 	/// new color gradient with at least two gradient points.
-	void ClearGradient ();
+	void ClearGradient();
 
 	/// Enables or disables the light source.
 	///
@@ -1979,7 +1979,7 @@ public:
 	///
 	/// If the light source is enabled, this object will interpret the
 	/// noise map as a bump map.
-	void EnableLight (bool enable = true)
+	void EnableLight( bool enable = true )
 	{
 		m_isLightEnabled = enable;
 	}
@@ -1997,7 +1997,7 @@ public:
 	///
 	/// Enabling wrapping is useful when creating spherical renderings and
 	/// tileable textures.
-	void EnableWrap (bool enable = true)
+	void EnableWrap( bool enable = true )
 	{
 		m_isWrapEnabled = enable;
 	}
@@ -2012,7 +2012,7 @@ public:
 	/// - 90.0 degrees is north.
 	/// - 180.0 degrees is west.
 	/// - 270.0 degrees is south.
-	double GetLightAzimuth () const
+	double GetLightAzimuth() const
 	{
 		return m_lightAzimuth;
 	}
@@ -2020,7 +2020,7 @@ public:
 	/// Returns the brightness of the light source.
 	///
 	/// @returns The brightness of the light source.
-	double GetLightBrightness () const
+	double GetLightBrightness() const
 	{
 		return m_lightBrightness;
 	}
@@ -2028,7 +2028,7 @@ public:
 	/// Returns the color of the light source.
 	///
 	/// @returns The color of the light source.
-	Color GetLightColor () const
+	Color GetLightColor() const
 	{
 		return m_lightColor;
 	}
@@ -2046,7 +2046,7 @@ public:
 	/// map as a height map that has a spatial resolution of @a h meters
 	/// and an elevation resolution of 1 meter, a good contrast amount to
 	/// use is ( 1.0 / @a h ).
-	double GetLightContrast () const
+	double GetLightContrast() const
 	{
 		return m_lightContrast;
 	}
@@ -2058,7 +2058,7 @@ public:
 	/// The elevation is the angle above the horizon:
 	/// - 0 degrees is on the horizon.
 	/// - 90 degrees is straight up.
-	double GetLightElev () const
+	double GetLightElev() const
 	{
 		return m_lightElev;
 	}
@@ -2066,7 +2066,7 @@ public:
 	/// Returns the intensity of the light source.
 	///
 	/// @returns The intensity of the light source.
-	double GetLightIntensity () const
+	double GetLightIntensity() const
 	{
 		return m_lightIntensity;
 	}
@@ -2076,7 +2076,7 @@ public:
 	/// @returns
 	/// - @a true if the light source is enabled.
 	/// - @a false if the light source is disabled.
-	bool IsLightEnabled () const
+	bool IsLightEnabled() const
 	{
 		return m_isLightEnabled;
 	}
@@ -2096,7 +2096,7 @@ public:
 	///
 	/// Enabling wrapping is useful when creating spherical renderings and
 	/// tileable textures
-	bool IsWrapEnabled () const
+	bool IsWrapEnabled() const
 	{
 		return m_isWrapEnabled;
 	}
@@ -2118,7 +2118,7 @@ public:
 	/// The background image and the destination image can safely refer to
 	/// the same image, although in this case, the destination image is
 	/// irretrievably blended into the background image.
-	void Render ();
+	void Render();
 
 	/// Sets the background image.
 	///
@@ -2132,7 +2132,7 @@ public:
 	///
 	/// The destination image must exist throughout the lifetime of this
 	/// object unless another image replaces that image.
-	void SetBackgroundImage (const Image& backgroundImage)
+	void SetBackgroundImage( const Image& backgroundImage )
 	{
 		m_pBackgroundImage = &backgroundImage;
 	}
@@ -2146,7 +2146,7 @@ public:
 	///
 	/// The destination image must exist throughout the lifetime of this
 	/// object unless another image replaces that image.
-	void SetDestImage (Image& destImage)
+	void SetDestImage( Image& destImage )
 	{
 		m_pDestImage = &destImage;
 	}
@@ -2164,7 +2164,7 @@ public:
 	///
 	/// Make sure the light source is enabled via a call to the
 	/// EnableLight() method before calling the Render() method.
-	void SetLightAzimuth (double lightAzimuth)
+	void SetLightAzimuth( double lightAzimuth )
 	{
 		m_lightAzimuth = lightAzimuth;
 		m_recalcLightValues = true;
@@ -2176,7 +2176,7 @@ public:
 	///
 	/// Make sure the light source is enabled via a call to the
 	/// EnableLight() method before calling the Render() method.
-	void SetLightBrightness (double lightBrightness)
+	void SetLightBrightness( double lightBrightness )
 	{
 		m_lightBrightness = lightBrightness;
 		m_recalcLightValues = true;
@@ -2188,7 +2188,7 @@ public:
 	///
 	/// Make sure the light source is enabled via a call to the
 	/// EnableLight() method before calling the Render() method.
-	void SetLightColor (const Color& lightColor)
+	void SetLightColor( const Color& lightColor )
 	{
 		m_lightColor = lightColor;
 	}
@@ -2213,10 +2213,10 @@ public:
 	///
 	/// Make sure the light source is enabled via a call to the
 	/// EnableLight() method before calling the Render() method.
-	void SetLightContrast (double lightContrast)
+	void SetLightContrast( double lightContrast )
 	{
-		if (lightContrast <= 0.0) {
-			throw noise::ExceptionInvalidParam ();
+		if ( lightContrast <= 0.0 ) {
+			throw noise::ExceptionInvalidParam();
 		}
 
 		m_lightContrast = lightContrast;
@@ -2233,7 +2233,7 @@ public:
 	///
 	/// Make sure the light source is enabled via a call to the
 	/// EnableLight() method before calling the Render() method.
-	void SetLightElev (double lightElev)
+	void SetLightElev( double lightElev )
 	{
 		m_lightElev = lightElev;
 		m_recalcLightValues = true;
@@ -2247,10 +2247,10 @@ public:
 	///
 	/// Make sure the light source is enabled via a call to the
 	/// EnableLight() method before calling the Render() method.
-	void SetLightIntensity (double lightIntensity)
+	void SetLightIntensity( double lightIntensity )
 	{
-		if (lightIntensity < 0.0) {
-			throw noise::ExceptionInvalidParam ();
+		if ( lightIntensity < 0.0 ) {
+			throw noise::ExceptionInvalidParam();
 		}
 
 		m_lightIntensity = lightIntensity;
@@ -2263,7 +2263,7 @@ public:
 	///
 	/// The destination image must exist throughout the lifetime of this
 	/// object unless another image replaces that image.
-	void SetSourceNoiseMap (const NoiseMap& sourceNoiseMap)
+	void SetSourceNoiseMap( const NoiseMap& sourceNoiseMap )
 	{
 		m_pSourceNoiseMap = &sourceNoiseMap;
 	}
@@ -2279,8 +2279,8 @@ private:
 	/// @param lightValue The intensity of the light at that position.
 	///
 	/// @returns The destination color.
-	Color CalcDestColor (const Color& sourceColor,
-						 const Color& backgroundColor, double lightValue) const;
+	Color CalcDestColor( const Color& sourceColor,
+						 const Color& backgroundColor, double lightValue ) const;
 
 	/// Calculates the intensity of the light given some elevation values.
 	///
@@ -2294,8 +2294,8 @@ private:
 	/// @param up Elevation of the point directly above the center point.
 	///
 	/// These values come directly from the noise map.
-	double CalcLightIntensity (double center, double left, double right,
-							   double down, double up) const;
+	double CalcLightIntensity( double center, double left, double right,
+							   double down, double up ) const;
 
 	/// The cosine of the azimuth of the light source.
 	mutable double m_cosAzimuth;
@@ -2386,7 +2386,7 @@ class RendererNormalMap
 public:
 
 	/// Constructor.
-	RendererNormalMap ();
+	RendererNormalMap();
 
 	/// Enables or disables noise-map wrapping.
 	///
@@ -2402,7 +2402,7 @@ public:
 	///
 	/// Enabling wrapping is useful when creating spherical and tileable
 	/// normal maps.
-	void EnableWrap (bool enable = true)
+	void EnableWrap( bool enable = true )
 	{
 		m_isWrapEnabled = enable;
 	}
@@ -2418,7 +2418,7 @@ public:
 	///
 	/// The spatial resolution and elevation resolution are determined by
 	/// the application.
-	double GetBumpHeight () const
+	double GetBumpHeight() const
 	{
 		return m_bumpHeight;
 	}
@@ -2439,7 +2439,7 @@ public:
 	///
 	/// Enabling wrapping is useful when creating spherical and tileable
 	/// normal maps.
-	bool IsWrapEnabled () const
+	bool IsWrapEnabled() const
 	{
 		return m_isWrapEnabled;
 	}
@@ -2452,7 +2452,7 @@ public:
 	/// @post The original contents of the destination image is destroyed.
 	///
 	/// @throw noise::ExceptionInvalidParam See the preconditions.
-	void Render ();
+	void Render();
 
 	/// Sets the bump height.
 	///
@@ -2465,7 +2465,7 @@ public:
 	///
 	/// The spatial resolution and elevation resolution are determined by
 	/// the application.
-	void SetBumpHeight (double bumpHeight)
+	void SetBumpHeight( double bumpHeight )
 	{
 		m_bumpHeight = bumpHeight;
 	}
@@ -2479,7 +2479,7 @@ public:
 	///
 	/// The destination image must exist throughout the lifetime of this
 	/// object unless another image replaces that image.
-	void SetDestImage (Image& destImage)
+	void SetDestImage( Image& destImage )
 	{
 		m_pDestImage = &destImage;
 	}
@@ -2490,7 +2490,7 @@ public:
 	///
 	/// The destination image must exist throughout the lifetime of this
 	/// object unless another image replaces that image.
-	void SetSourceNoiseMap (const NoiseMap& sourceNoiseMap)
+	void SetSourceNoiseMap( const NoiseMap& sourceNoiseMap )
 	{
 		m_pSourceNoiseMap = &sourceNoiseMap;
 	}
@@ -2518,8 +2518,8 @@ private:
 	///
 	/// The spatial resolution and elevation resolution are determined by
 	/// the application.
-	Color CalcNormalColor (double nc, double nr, double nu,
-						   double bumpHeight) const;
+	Color CalcNormalColor( double nc, double nr, double nu,
+						   double bumpHeight ) const;
 
 	/// The bump height for the normal map.
 	double m_bumpHeight;

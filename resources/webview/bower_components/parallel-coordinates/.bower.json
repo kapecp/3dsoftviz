@@ -1,0 +1,14 @@
+{
+  "name": "parallel-coordinates",
+  "homepage": "https://github.com/syntagmatic/parallel-coordinates",
+  "_release": "35cf292255",
+  "_resolution": {
+    "type": "branch",
+    "branch": "master",
+    "commit": "35cf292255a8a7493421821cdfddf9d3c711216a"
+  },
+  "_source": "git://github.com/syntagmatic/parallel-coordinates.git",
+  "_target": "*",
+  "_originalSource": "parallel-coordinates",
+  "_direct": true
+}

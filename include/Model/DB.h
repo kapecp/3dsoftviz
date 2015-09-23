@@ -9,13 +9,11 @@
 
 
 
-namespace Util
-{
-	class ApplicationConfig;
+namespace Util {
+class ApplicationConfig;
 }
 
-namespace Model
-{
+namespace Model {
 /**
 	*  \class DB
 	*  \brief Class represents connection to the database.
@@ -24,22 +22,8 @@ namespace Model
 	*/
 class DB
 {
-private:
-	/**
-		*	QSqlDatabase conn
-		*	\brief Database connection
-		*/
-	QSqlDatabase conn;
 
-
-	/**
-		*	Util::ApplicationConfig * appConf
-		*	\brief Application config
-		*/
-	Util::ApplicationConfig * appConf;
 public:
-
-	QSqlDatabase* tmpGetConn() { return &conn; }
 
 	/**
 		*  \fn public constructor  DB
@@ -63,13 +47,44 @@ public:
 		* \param  requireSSL 		force ssl
 		* \return bool true ak sa podarilo otvorit spojenie, false ak nie.
 		*/
-	bool openConnection(QString host_name, QString db_name, QString user_name, QString pass, bool requireSSL);
+	bool openConnection( QString host_name, QString db_name, QString user_name, QString pass, bool requireSSL );
 
 	/**
 		* \fn public closeConnection
 		* \brief Closes current database connection
 		*/
 	void closeConnection();
+
+	/**
+	 * @author Autor:Dávid Durčák
+	 * \fn createConnection
+	 * \brief Create connection only one time in first call.
+	 */
+	bool createConnection();
+
+	/**
+	 * @author Autor:Dávid Durčák
+	 * \fn tmpGetConn
+	 * \brief Create and return connection do database
+	 */
+	QSqlDatabase* tmpGetConn();
+
+private:
+	/**
+		*	QSqlDatabase conn
+		*	\brief Database connection
+		*/
+	QSqlDatabase conn;
+
+	/**
+		*	Util::ApplicationConfig * appConf
+		*	\brief Application config
+		*/
+	Util::ApplicationConfig* appConf;
+
+
+	bool mConneCreationTried;   // false if createConnection was not called yet
+
 };
 }
 

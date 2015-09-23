@@ -12,7 +12,8 @@ namespace Importer {
 /**
  * \brief Contains methods to create instances of importer implementations according to specified criteria.
  */
-class ImporterFactory {
+class ImporterFactory
+{
 
 public:
 
@@ -23,19 +24,19 @@ public:
 	 * \param[in] fileExtension File name extension.
 	 * \return ( = success)
 	 */
-	static bool createByFileExtension (
-			std::auto_ptr<StreamImporter> &importer,
-			bool &importerFound,
-			const QString &fileExtension
-			);
+	static bool createByFileExtension(
+		std::auto_ptr<StreamImporter>& importer,
+		bool& importerFound,
+		const QString& fileExtension
+	);
 
 private:
 
 	/***/
-	ImporterFactory (void) {};
+	ImporterFactory( void ) {}
 
 	/***/
-	virtual ~ImporterFactory (void) = 0;
+	virtual ~ImporterFactory( void ) = 0;
 
 
 }; // class

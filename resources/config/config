@@ -22,16 +22,18 @@ Viewer.Display.NodeDistanceScale=2
 Viewer.Display.NodesAlwaysOnTop=0
 Viewer.Display.Stereoscopic=0
 Viewer.Display.ViewDistance=10000.0
-Viewer.Labels.Font=
+Viewer.Labels.Font=../share/3dsoftviz/fonts/OpenSans-Regular.ttf
 Viewer.PickHandler.PickedEdgeDistance=200.0
 Viewer.Textures.DefaultNodeScale=8
-Viewer.Textures.Edge=../share/3dsoftviz/img/Edge.png
+Viewer.Textures.Edge=../share/3dsoftviz/img/Edge2.png
 Viewer.Textures.EdgeScale=2
-Viewer.Textures.Node=../share/3dsoftviz/img/node.png
+Viewer.Textures.Node=../share/3dsoftviz/img/node2.png
+Viewer.Textures.OrientedEdge=../share/3dsoftviz/img/OrientedEdge.png
 Viewer.Textures.OrientedEdgePrefix=../share/3dsoftviz/img/arrows/arrow
 Viewer.Textures.OrientedEdgeSuffix=.png
 Viewer.Textures.MetaNode=../share/3dsoftviz/img/MetaNode.png
 
+Viewer.Fullscreen=0
 Viewer.SkyBox.Noise=0
 Viewer.SkyBox.North=../share/3dsoftviz/img/skybox/rays_north.bmp
 Viewer.SkyBox.East=../share/3dsoftviz/img/skybox/rays_east.bmp
@@ -40,5 +42,27 @@ Viewer.SkyBox.West=../share/3dsoftviz/img/skybox/rays_west.bmp
 Viewer.SkyBox.Up=../share/3dsoftviz/img/skybox/rays_up.bmp
 Viewer.SkyBox.Down=../share/3dsoftviz/img/skybox/rays_down.bmp
 
-FaceDecetion.EnableProjectionCorrection=1
+
+Kinect.Surface.LOG= ../share/3dsoftviz/kinectMaps/log.txt
+Kinect.Surface.DATA= ../share/3dsoftviz/kinectMaps/file4.txt
+
+Kinect.RegionRotationTreshold=0.65
+Kinect.RegionRotationStep=0.05
+
+Kinect.OutputFolder= ../../resources/kinectMaps
+Kinect.DepthImageName= depthImage
+Kinect.ColourImageName= Image
+Kinect.DepthInfoName= depthInfo
+
+FaceDecetion.EnableProjectionCorrection=0
 FaceDecetion.CameraDistancePar=3.5
+Aruco.MarkerSize=0.06
+Aruco.CamDistancRatio=2.75
+Aruco.ConstDist=0.3
+Aruco.ConstHeightKoef=0.8
+Aruco.ConstHeigherScale=0.07
+
+Node.Color.Normal=255,255,255,255
+Node.Color.Selected=50,20,120,255
+Label.Color=51,102,153,255
+Label.Outline.Color=200,230,255,255
