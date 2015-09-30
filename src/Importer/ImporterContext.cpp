@@ -14,6 +14,18 @@ ImporterContext::ImporterContext(
 {
 }
 
+ImporterContext::ImporterContext (
+    QIODevice &stream,
+    Data::Graph &graph,
+        ImportInfoHandler &infoHandler,
+        QString &filePath
+) : stream_ (stream),
+    graph_ (graph),
+        infoHandler_ (infoHandler),
+        filePath_ (filePath)
+{
+}
+
 QIODevice& ImporterContext::getStream( void )
 {
 	return stream_;
@@ -27,6 +39,10 @@ Data::Graph& ImporterContext::getGraph( void )
 ImportInfoHandler& ImporterContext::getInfoHandler( void )
 {
 	return infoHandler_;
+}
+
+QString& ImporterContext::getFilePath() {
+    return filePath;
 }
 
 } // namespace
