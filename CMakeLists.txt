@@ -607,6 +607,7 @@ file( GLOB_RECURSE SRC_QOSG		"src/QOSG/*.cpp" )
 file( GLOB_RECURSE SRC_UTIL		"src/Util/*.cpp" )
 file( GLOB_RECURSE SRC_VIEWER	"src/Viewer/*.cpp" )
 file( GLOB_RECURSE SRC_CLUSTERING	"src/Clustering/*.cpp")
+file( GLOB_RECURSE SRC_GIT		"src/Git/*.cpp" )
 
 # OpenCV
 file( GLOB_RECURSE SRC_OPENCV	"src/OpenCV/*.cpp" )
@@ -642,6 +643,7 @@ set( SRC
 	${SRC_MODEL}
 	${SRC_OSGQTBROWSER} ${SRC_QOSG} ${SRC_VIEWER}
 	${SRC_UTIL}
+	${SRC_GIT}
 )
 
 if( OpenCV_FOUND )
@@ -686,6 +688,7 @@ file( GLOB_RECURSE HEADER_QOSG		"include/QOSG/*.h" )
 file( GLOB_RECURSE HEADER_UTIL		"include/Util/*.h" )
 file( GLOB_RECURSE HEADER_VIEWER	"include/Viewer/*.h" )
 file( GLOB_RECURSE HEADER_CLUSTERING	"include/Clustering/*.h")
+file( GLOB_RECURSE HEADER_GIT		"include/Git/*.h" )
 
 # OpenCV
 file( GLOB_RECURSE HEADER_OPENCV	"include/OpenCV/*.h" )
@@ -720,6 +723,7 @@ set( INCL
 	${HEADER_MODEL}
 	${HEADER_OSGQTBROWSER} ${HEADER_QOSG} ${HEADER_VIEWER}
 	${HEADER_UTIL}
+	${HEADER_GIT}
 )
 
 if( OpenCV_FOUND )
@@ -761,6 +765,7 @@ source_group( \\src\\OsgQtBrowser "^.*OsgQtBrowser/.*$" )
 source_group( \\src\\Noise "^.*Noise/.*$" )
 source_group( \\src\\LuaGraph "^.*LuaGraph/.*$")
 source_group( \\src\\LuaInterface "^.*LuaInterface/.*$")
+source_group( \\src\\Git "^.*Git/.*$" )
 
 # Group header files
 source_group( \\headers\\Clustering "^.*Clustering/.*h$")
@@ -778,6 +783,7 @@ source_group( \\headers\\Noise "^.*Noise/.*h$" )
 source_group( \\headers\\OsgQtBrowser "^.*OsgQtBrowser/.*h$" )
 source_group( \\headers\\LuaGraph "^.*LuaGraph/.*h$")
 source_group( \\headers\\LuaInterface "^.*LuaInterface/.*h$")
+source_group( \\headers\\Git "^.*Git/.*h$" )
 
 if( OpenCV_FOUND )
 	source_group( \\src\\QOpenCV "^.*QOpenCV/.*$" )

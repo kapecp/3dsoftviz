@@ -1,6 +1,7 @@
 #ifndef LEAPTHREAD_H
 #define LEAPTHREAD_H
 
+#include <QThread>
 #include "Leap.h"
 #include "Leap/LeapController.h"
 
