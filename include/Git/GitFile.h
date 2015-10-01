@@ -6,7 +6,8 @@
 namespace Git {
 
 class GitFileDiffBlock;
-enum class GitFileType {
+
+enum GitFileType {
     ADDED,
     REMOVED,
     MODIFIED
@@ -27,7 +28,7 @@ public:
         * \param filepath - path to Git file
         * \param type - type of Git file
      */
-    GitFile( QString filename, QString filepath, GitFileType type);
+    GitFile( QString filename, QString filepath, Git::GitFileType type);
 
     /**
         * \fn getFilename
@@ -49,16 +50,18 @@ public:
         * \fn getType
         * \brief Returns type of Git file
      */
-    GitFileType getType() {
+    Git::GitFileType getType() {
         return type;
     }
+
+    QString getTypeString();
 
     /**
         * \fn getGitFileDiffBlocks
         * \brief Returns list of diff blocks in the Git file
      */
-    QList<GitFileDiffBlock> getGitFileDiffBlocks() {
-        return GitFileDiffBlocks;
+    QList<Git::GitFileDiffBlock*> getGitFileDiffBlocks() {
+        return gitFileDiffBlocks;
     }
 
     /**
@@ -66,7 +69,7 @@ public:
         * \brief Set diff blocks in the Git file
         * \param gitFileDiffBlocks Diff blocks from Git file to be set
      */
-    void setGitFileDiffBlocks( QList<GitFileDiffBlock> gitFileDiffBlocks ) {
+    void setGitFileDiffBlocks( QList<Git::GitFileDiffBlock*> gitFileDiffBlocks ) {
         this->gitFileDiffBlocks = gitFileDiffBlocks;
     }
 
@@ -87,13 +90,13 @@ private:
         * GitFileType type
         * \brief Type of the Git file in version. Value can be ADDED for newly added file, REMOVED for removed file and MODIFIED for modified file
         */
-    GitFileType type;
+    Git::GitFileType type;
 
     /**
         * QList<GitFileDiffBlock> gitFileDiffBlocks
         * \brief List of diff blocks from the Git file
         */
-    QList<GitFileDiffBlock> gitFileDiffBlocks;
+    QList<Git::GitFileDiffBlock*> gitFileDiffBlocks;
 };
 }
 #endif // GITFILE_H

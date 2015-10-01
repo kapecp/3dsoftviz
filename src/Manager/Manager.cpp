@@ -334,10 +334,6 @@ Data::Graph* Manager::GraphManager::loadGraphFromGit( QString filepath ) {
         lGit = true;
     }
 
-    qDebug() << "Meno suboru/adresara " << lName;
-    qDebug() << "Extension " << lExtension;
-    qDebug() << "Absolut path " << lFileInfo.absolutePath();
-
     Git::GitFileLoader lGitFileLoader = Git::GitFileLoader::GitFileLoader( filepath ) ;
     lGitFileLoader.getDataAboutGit();
 

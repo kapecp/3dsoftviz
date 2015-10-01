@@ -1478,7 +1478,6 @@ void CoreWindow::loadFromGit() {
     QString lPath = QFileDialog::getExistingDirectory( this, tr("Select git dir") );
 
     if( lPath != "" ) {
-        qDebug() << "Cesta ku gitu " << lPath;
 
         Manager::GraphManager::getInstance()->loadGraphFromGit( lPath );
 
