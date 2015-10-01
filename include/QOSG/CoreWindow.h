@@ -22,6 +22,7 @@
 #include <QtGui>
 #include <QLineEdit>
 #include <QToolBox>
+#include <QString>
 
 #include <Viewer/SelectionObserver.h>
 
@@ -219,6 +220,12 @@ public slots:
 	            *  \brief Show dialog to select file which will be opened
 	            */
 	void loadFile();
+
+    /**
+                *  \fn public  loadFromGit
+                *  \brief Show dialog to write path to git repo which will be loaded
+                */
+    void loadFromGit();
 
 	/**
 	            *  \fn public  labelOnOff(bool checked)
@@ -893,6 +900,12 @@ private:
 	    *  \brief Action for loading file
 	    */
 	QAction* load;
+
+    /**
+        * QAction* laodGit
+        * \brief Action for loading from git
+        */
+    QAction* loadGit;
 
 	/**
 	    *  QPushButton * label

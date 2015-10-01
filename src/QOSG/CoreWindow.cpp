@@ -148,6 +148,9 @@ void CoreWindow::createActions()
 	load = new QAction( QIcon( "../share/3dsoftviz/img/gui/open.png" ),"&Load graph from file", this );
 	connect( load, SIGNAL( triggered() ), this, SLOT( loadFile() ) );
 
+    loadGit = new QAction( QIcon( "../share/3dsoftviz/img/gui/git_open.png" ), "&Load graph from git", this );
+    connect( loadGit, SIGNAL( triggered() ), this, SLOT( loadFromGit() ) );
+
 	loadGraph = new QAction( QIcon( "../share/3dsoftviz/img/gui/loadFromDB.png" ),"&Load graph from database", this );
 	connect( loadGraph, SIGNAL( triggered() ), this, SLOT( showLoadGraph() ) );
 
@@ -660,6 +663,7 @@ void CoreWindow::createMenus()
 	file = menuBar()->addMenu( "File" );
 	file->addAction( load );
 	file->addAction( loadGraph );
+    file->addAction( loadGit );
 	file->addSeparator();
 	file->addAction( saveGraph );
 	file->addAction( saveLayout );
@@ -1468,6 +1472,25 @@ void CoreWindow::loadFile()
 
 }
 
+void CoreWindow::loadFromGit() {
+    layout->pause();
+    coreGraph->setNodesFreezed( true );
+    QString lPath = QFileDialog::getExistingDirectory( this, tr("Select git dir") );
+
+    if( lPath != "" ) {
+        qDebug() << "Cesta ku gitu " << lPath;
+
+        Manager::GraphManager::getInstance()->loadGraphFromGit( lPath );
+
+        viewerWidget->getCameraManipulator()->home();
+    }
+
+    if( isPlaying ) {
+        layout->play();
+        coreGraph->setNodesFreezed( false );
+    }
+}
+
 void CoreWindow::labelOnOff( bool )
 {
 	if ( viewerWidget->getPickHandler()->getSelectionType() == Vwr::PickHandler::SelectionType::EDGE ) {
@@ -1508,7 +1531,7 @@ void CoreWindow::RadialLayoutAlphaChanged( int value )
 {
 	//notify radial layout that alpha channel was changed
 	Layout::RadialLayout* selectedRadialLayout = Layout::RadialLayout::getSelectedRadialLayout();
-	//qDebug()<<"Value: "<<value<<", selected: "<<selectedRadialLayout;
+    //qDebug()<<"Value: "<<value<<", selected: "<<selectedRadialLayout;
 	if ( selectedRadialLayout != NULL ) {
 		selectedRadialLayout->setAlpha( static_cast<float>( value )/500.0f );
 	}
