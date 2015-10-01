@@ -94,7 +94,7 @@ private:
     /**
      * \brief Path to git repo
      */
-    QString& filePath;
+    QString filePath;
 
 }; // class
 

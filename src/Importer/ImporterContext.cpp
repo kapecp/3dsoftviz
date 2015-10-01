@@ -12,6 +12,7 @@ ImporterContext::ImporterContext(
 	graph_( graph ),
 	infoHandler_( infoHandler )
 {
+    this->filePath = "";
 }
 
 ImporterContext::ImporterContext (
@@ -22,7 +23,7 @@ ImporterContext::ImporterContext (
 ) : stream_ (stream),
     graph_ (graph),
         infoHandler_ (infoHandler),
-        filePath_ (filePath)
+        filePath (filePath)
 {
 }
 

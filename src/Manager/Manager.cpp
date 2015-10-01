@@ -21,6 +21,8 @@
 #include "Data/Graph.h"
 #include "Data/GraphLayout.h"
 
+#include "Git/GitFileLoader.h"
+
 #include "Layout/LayoutThread.h"
 #include "QOSG/MessageWindows.h"
 
@@ -312,6 +314,37 @@ Data::Graph* Manager::GraphManager::loadGraphFromDB( qlonglong graphID, qlonglon
 	return this->activeGraph;
 }
 
+Data::Graph* Manager::GraphManager::loadGraphFromGit( QString filepath ) {
+    bool lGit = false;
+
+    AppCore::Core::getInstance()->messageWindows->showProgressBar();
+
+    std::auto_ptr<Importer::ImportInfoHandler> infoHandler ( NULL );
+    infoHandler.reset( new ImportInfoHandlerImpl );
+
+    QString lName = NULL;
+    QString lExtension = NULL;
+
+    QFileInfo lFileInfo ( filepath );
+    lName = lFileInfo.fileName();
+    lExtension = lFileInfo.suffix();
+
+    if( lExtension.length() == 0 ) {
+        lExtension = "git";
+        lGit = true;
+    }
+
+    qDebug() << "Meno suboru/adresara " << lName;
+    qDebug() << "Extension " << lExtension;
+    qDebug() << "Absolut path " << lFileInfo.absolutePath();
+
+    Git::GitFileLoader lGitFileLoader = Git::GitFileLoader::GitFileLoader( filepath ) ;
+    lGitFileLoader.getDataAboutGit();
+
+    AppCore::Core::getInstance()->messageWindows->closeProgressBar();
+
+    return NULL;
+}
 
 Data::Graph* Manager::GraphManager::createGraph( QString graphname )
 {

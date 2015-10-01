@@ -64,11 +64,19 @@ public:
 	 * \fn loadGraph
 	 * \brief Loads graph from GraphML file.
 	 */
+
 	Data::Graph* createNewGraph( QString name );
-	/**
+
+    /**
+     * \fn loadGraphFromGit
+     * \brief Loads graph from git repo.
+     */
+    Data::Graph* loadGraphFromGit( QString filepath );
+
+    /**
 	 * \fn loadGraphFromDB
 	 * \brief Loads selected graph from database.
-	 */
+	 */    
 	Data::Graph* loadGraphFromDB( qlonglong graphID, qlonglong layoutID );
 
 	/**
