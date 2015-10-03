@@ -1,6 +1,8 @@
 #include "Aruco/arucothread.h"
 #include "Aruco/arucocore.h"
 #include "Util/ApplicationConfig.h"
+#include "cv.h"
+
 #include <QDebug>
 #include <QFileInfo>
 

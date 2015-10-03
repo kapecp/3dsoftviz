@@ -1,3 +1,4 @@
+#include <QDebug>
 #include "QOpenCV/OpenCVWindow.h"
 
 #include <QtGui/QLabel>

@@ -108,17 +108,17 @@ endif ()
 # --------------
 # Build settings - COTIRE module
 # --------------
-include( cotire )
+#include( cotire )
 if(COMMAND cotire )
-	if( NOT COTIRE_MAXIMUM_NUMBER_OF_UNITY_INCLUDES )
-		include( ProcessorCount )
-		ProcessorCount( N )
+        if( NOT COTIRE_MAXIMUM_NUMBER_OF_UNITY_INCLUDES )
+                include( ProcessorCount )
+                ProcessorCount( N )
 
-		if( NOT N EQUAL 0 )
-			# set number of parallel unity builds to processor count
-			set( COTIRE_MAXIMUM_NUMBER_OF_UNITY_INCLUDES "-j${N}" )
-		endif()
-	endif()
+                if( NOT N EQUAL 0 )
+                        # set number of parallel unity builds to processor count
+                        #set( COTIRE_MAXIMUM_NUMBER_OF_UNITY_INCLUDES "-j${N}" )
+                endif()
+        endif()
 
 	set( COTIRE_VERBOSE FALSE )
 	set( COTIRE_DEBUG FALSE )
