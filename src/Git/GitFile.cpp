@@ -1,5 +1,7 @@
 #include "Git/GitFile.h"
 
+Git::GitFile::GitFile() {}
+
 Git::GitFile::GitFile(QString filename, QString filepath, GitFileType type) : filename(filename), filepath(filepath), type(type) {
 
 }

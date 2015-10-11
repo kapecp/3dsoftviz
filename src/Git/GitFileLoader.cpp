@@ -12,13 +12,12 @@
 
 Git::GitFileLoader::GitFileLoader( QString filepath ) {
     this->filePath = filepath;
-    this->versions = QList<Git::GitVersion*>();
 }
 
-bool Git::GitFileLoader::getDataAboutGit() {
+QList<Git::GitVersion*> Git::GitFileLoader::getDataAboutGit() {
 
     bool ok = true;
-
+    QList<Git::GitVersion*> versions = QList<Git::GitVersion*>();;
     QString lFilePath = this->filePath;
     QString lGitCommand = "git log --raw --name-status --reverse --date=short --pretty=format:\"%H%n%an%n%ad\"";
     QString lTmp = makeTmpFileFromCommand( lGitCommand, lFilePath );
@@ -69,7 +68,7 @@ bool Git::GitFileLoader::getDataAboutGit() {
                     read = false;
                 }
             }
-            this->addGitVersion( version );
+            versions.append(version);
         }
     }
 
@@ -79,13 +78,15 @@ bool Git::GitFileLoader::getDataAboutGit() {
         qDebug() << "Nepodarilo sa odstranit temp subor";
     }
 
-    getGitVersions().at(15)->printVersion();
+    versions.at(15)->printVersion();
 
-    return ok;
+    return versions;
 }
 
 QString Git::GitFileLoader::makeTmpFileFromCommand( QString command, QString filepath ) {
     bool ok = true;
+
+    QString cwd = QDir::currentPath();
 
     QTemporaryFile tempFile;
     tempFile.setFileTemplate( QDir::toNativeSeparators( QDir::tempPath() + "/" +  "qXXXXXX" ) );
@@ -110,6 +111,10 @@ QString Git::GitFileLoader::makeTmpFileFromCommand( QString command, QString fil
         process->waitForFinished();
         process->close();
         process->terminate();
+    }
+
+    if( !changeDir( cwd ) ) {
+        qDebug() << "Nepodarilo sa vratit na povodny current working directory";
     }
 
     return tempFile.fileName();

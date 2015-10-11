@@ -19,7 +19,7 @@ public:
         * GitFile
         * \brief Implicit constructor
         */
-    GitFile( void ) {};
+    GitFile( void );
 
     /**
         * \fn GitFile

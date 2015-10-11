@@ -13,23 +13,14 @@ public:
     GitFileLoader();
     GitFileLoader( QString filepath );
 
-    QList<Git::GitVersion*> getGitVersions() {
-        return this->versions;
-    }
-
-    void addGitVersion( Git::GitVersion* version ) {
-        this->versions.append( version );
-    }
-
     //bool getDiffInfo( QString filepath, QString currentCommitId, QString oldCommitId );
-    bool getDataAboutGit();
+    QList<Git::GitVersion*> getDataAboutGit();
 private:
     bool changeDir( QString path );
     bool existGit( QString path );
     QString makeTmpFileFromCommand( QString command, QString filepath );
 
     QString filePath;
-    QList<Git::GitVersion*> versions;
 
 };
 }
