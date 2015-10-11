@@ -2,15 +2,17 @@
 #define GITFILE_H
 
 #include <QString>
+#include <QList>
 
 namespace Git {
 
 class GitFileDiffBlock;
 
-enum GitFileType {
+enum GitType {
     ADDED,
     REMOVED,
-    MODIFIED
+    MODIFIED,
+    NONE
 };
 
 class GitFile {
@@ -28,7 +30,7 @@ public:
         * \param filepath - path to Git file
         * \param type - type of Git file
      */
-    GitFile( QString filename, QString filepath, Git::GitFileType type);
+    GitFile( QString filename, QString filepath, Git::GitType type);
 
     /**
         * \fn getFilename
@@ -50,11 +52,11 @@ public:
         * \fn getType
         * \brief Returns type of Git file
      */
-    Git::GitFileType getType() {
+    Git::GitType getType() {
         return type;
     }
 
-    QString getTypeString();
+    QString getTypeAsString();
 
     /**
         * \fn getGitFileDiffBlocks
@@ -62,6 +64,10 @@ public:
      */
     QList<Git::GitFileDiffBlock*> getGitFileDiffBlocks() {
         return gitFileDiffBlocks;
+    }
+
+    void addGitFileDiffBlock( Git::GitFileDiffBlock* block ) {
+        this->gitFileDiffBlocks.append( block );
     }
 
     /**
@@ -72,6 +78,8 @@ public:
     void setGitFileDiffBlocks( QList<Git::GitFileDiffBlock*> gitFileDiffBlocks ) {
         this->gitFileDiffBlocks = gitFileDiffBlocks;
     }
+
+    void printContent();
 
 private:
     /**
@@ -90,7 +98,7 @@ private:
         * GitFileType type
         * \brief Type of the Git file in version. Value can be ADDED for newly added file, REMOVED for removed file and MODIFIED for modified file
         */
-    Git::GitFileType type;
+    Git::GitType type;
 
     /**
         * QList<GitFileDiffBlock> gitFileDiffBlocks

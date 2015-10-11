@@ -22,6 +22,8 @@
 #include "Data/GraphLayout.h"
 
 #include "Git/GitFileLoader.h"
+#include "Git/GitVersion.h"
+#include "Git/GitFile.h"
 
 #include "Layout/LayoutThread.h"
 #include "QOSG/MessageWindows.h"
@@ -335,8 +337,19 @@ Data::Graph* Manager::GraphManager::loadGraphFromGit( QString filepath ) {
     }
 
     Git::GitFileLoader lGitFileLoader = Git::GitFileLoader::GitFileLoader( filepath ) ;
-    lGitFileLoader.getDataAboutGit();
-
+    QList<Git::GitVersion *> lVersions = lGitFileLoader.getDataAboutGit();
+/*
+    for( int i = 10; i < lVersions.size(); i++ ) {
+        qDebug() << i;
+        foreach( Git::GitFile* gitFile, lVersions.at( i )->getChangedFiles() ) {
+            if( i > 0 ) {
+                gitFile = lGitFileLoader.getDiffInfo( gitFile, lVersions.at( i )->getCommitId(), lVersions.at( i-1 )->getCommitId() );
+            } else {
+                gitFile = lGitFileLoader.getDiffInfo( gitFile, lVersions.at( i )->getCommitId(), NULL );
+            }
+        }
+    }
+*/
     AppCore::Core::getInstance()->messageWindows->closeProgressBar();
 
     return NULL;

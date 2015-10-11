@@ -16,6 +16,6 @@ void Git::GitVersion::printVersion() {
     qDebug() << "Date : " << this->getDate();
     qDebug() << "List size : " << this->getChangedFiles().size();
     foreach( Git::GitFile* file , this->getChangedFiles() ) {
-        qDebug() << file->getFilepath() << " " << file->getTypeString();
+        qDebug() << file->getFilename() <<  " " << file->getFilepath() << " " << file->getTypeAsString();
     }
 }

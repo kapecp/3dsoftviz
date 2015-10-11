@@ -1,20 +1,32 @@
 #include "Git/GitFile.h"
+#include "Git/GitFileDiffBlock.h"
 
-Git::GitFile::GitFile() {}
-
-Git::GitFile::GitFile(QString filename, QString filepath, GitFileType type) : filename(filename), filepath(filepath), type(type) {
-
+Git::GitFile::GitFile() {
+    this->gitFileDiffBlocks = QList<Git::GitFileDiffBlock*>();
 }
 
-QString Git::GitFile::getTypeString() {
+Git::GitFile::GitFile(QString filename, QString filepath, GitType type) : filename(filename), filepath(filepath), type(type) {
+    this->gitFileDiffBlocks = QList<Git::GitFileDiffBlock*>();
+}
+
+QString Git::GitFile::getTypeAsString() {
     switch (this->getType()) {
-    case Git::GitFileType::ADDED:
+    case Git::GitType::ADDED:
         return "Added";
-    case Git::GitFileType::MODIFIED:
+    case Git::GitType::MODIFIED:
         return "Modified";
-    case Git::GitFileType::REMOVED:
+    case Git::GitType::REMOVED:
         return "Removed";
     default:
-        return "Not set";
+        return "Wrong or Not set";
+    }
+}
+
+void Git::GitFile::printContent() {
+    qDebug() << "filename: " << getFilename();
+    qDebug() << "filepath: " << getFilepath();
+    qDebug() << "type: " << getTypeAsString();
+    foreach (GitFileDiffBlock* block, getGitFileDiffBlocks()) {
+        block->printInfo();
     }
 }
