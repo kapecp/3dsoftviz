@@ -17,6 +17,10 @@ namespace Model {
 class DB;
 }
 
+namespace Git {
+class GitEvolutionGraph;
+}
+
 namespace Data {
 class Graph;
 }
@@ -133,6 +137,10 @@ public:
 		return activeGraph;
 	}
 
+    Git::GitEvolutionGraph* getActiveEvolutionGraph() {
+        return this->activeEvolutionGraph;
+    }
+
 	/**
 	 * \fn getInstance
 	 * \brief Returns instance of class.
@@ -193,6 +201,7 @@ public:
 	 */
 	bool noDatabaseFind;
 
+    Git::GitEvolutionGraph* activeEvolutionGraph;
 };
 
 

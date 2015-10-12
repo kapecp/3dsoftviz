@@ -24,6 +24,7 @@
 #include "Git/GitFileLoader.h"
 #include "Git/GitVersion.h"
 #include "Git/GitFile.h"
+#include "Git/GitEvolutionGraph.h"
 
 #include "Layout/LayoutThread.h"
 #include "QOSG/MessageWindows.h"
@@ -318,6 +319,7 @@ Data::Graph* Manager::GraphManager::loadGraphFromDB( qlonglong graphID, qlonglon
 
 Data::Graph* Manager::GraphManager::loadGraphFromGit( QString filepath ) {
     bool lGit = false;
+    bool ok = true;
 
     AppCore::Core::getInstance()->messageWindows->showProgressBar();
 
@@ -336,8 +338,12 @@ Data::Graph* Manager::GraphManager::loadGraphFromGit( QString filepath ) {
         lGit = true;
     }
 
+    qDebug() << "Zaciatok vytvorenia verzii";
+
     Git::GitFileLoader lGitFileLoader = Git::GitFileLoader::GitFileLoader( filepath ) ;
     QList<Git::GitVersion *> lVersions = lGitFileLoader.getDataAboutGit();
+
+    qDebug() << "Koniec vytvorenia verzii";
 /*
     for( int i = 10; i < lVersions.size(); i++ ) {
         qDebug() << i;
@@ -350,6 +356,25 @@ Data::Graph* Manager::GraphManager::loadGraphFromGit( QString filepath ) {
         }
     }
 */
+
+    Git::GitEvolutionGraph* evolutionGraph = new Git::GitEvolutionGraph( filepath );
+    evolutionGraph->setVersions( lVersions );
+    this->activeEvolutionGraph = evolutionGraph;
+
+    qDebug() << "Vytvoril som evolutionGraph";
+
+    std::auto_ptr<Importer::StreamImporter> lImporter( NULL );
+    if( ok ) {
+        bool importerFound;
+
+        ok = Importer::ImporterFactory::createByFileExtension( lImporter, importerFound, lExtension) && importerFound;
+        infoHandler->reportError(ok, "No suitable importer has been found for the file extension.");
+    }
+
+    if( ok ) {
+        qDebug() << "Podarilo sa vytvorit streamImporter";
+    }
+
     AppCore::Core::getInstance()->messageWindows->closeProgressBar();
 
     return NULL;

@@ -7,6 +7,7 @@
 namespace Git {
 
 class GitFile;
+enum GitType;
 
 class GitVersion {
 public:
@@ -40,6 +41,8 @@ public:
     void addChangedFile( Git::GitFile* file ) {
         this->changedFiles.append( file );
     }
+
+    QList<Git::GitFile*> getGitFilesByType( Git::GitType gitType );
 
     void printVersion();
 
