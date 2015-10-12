@@ -371,13 +371,70 @@ Data::Graph* Manager::GraphManager::loadGraphFromGit( QString filepath ) {
         infoHandler->reportError(ok, "No suitable importer has been found for the file extension.");
     }
 
+    std::auto_ptr<QIODevice> lStream( NULL );
+    // mensi hack v podmienke, kde povodne bolo !lGit, pricom pri lStream( NULL ); sa nedalo zavolat context.reset( new Importer::ImporterContext( *lStream ,*lNewGraph, *infoHandler, *lFilepath ) )
+    if( ok && lGit ) {
+        lStream.reset( new QFile( "" ) );
+    }
+
+    // kvoli hacku vyssie vytvorim lStream, ale neotvaral ho
+    if( ok && !lGit ) {
+        ok = lStream->open( QIODevice::ReadOnly );
+        infoHandler->reportError(ok, "Unable to open the input file.");
+    }
+
+    std::auto_ptr<Data::Graph> lNewGraph( NULL );
     if( ok ) {
-        qDebug() << "Podarilo sa vytvorit streamImporter";
+        lNewGraph.reset( this->createGraph( lName ) );
+        ok = lNewGraph.get() != NULL;
+    }
+
+    std::auto_ptr<QString> lFilepath( NULL );
+    if( lGit ) {
+        lFilepath.reset( new QString( filepath ) );
+    }
+
+    std::auto_ptr<Importer::ImporterContext> context( NULL );
+    if( ok ) {
+        context.reset( new Importer::ImporterContext( *lStream ,*lNewGraph, *infoHandler, *lFilepath ) );
+    }
+
+    if( ok && lGit ) {
+        qDebug() << "Vsetky pripravy ukonecene, pripravene na import";
+    }
+
+    if( ok ) {
+        ok = lImporter->import( *context );
+    }
+
+    if( lStream.get() != NULL ) {
+        lStream->close();
+    }
+
+    if( ok ) {
+        Data::GraphLayout* lGraphLayout = lNewGraph->addLayout( "new Layout " );
+        lNewGraph->selectLayout( lGraphLayout );
+    }
+
+    if( ok ) {
+        if( this->activeGraph != NULL ) {
+            this->closeGraph( this->activeGraph );
+        }
+
+        this->activeGraph = lNewGraph.release();
+    }
+
+    if( ok ) {
+        AppCore::Core::getInstance()->restartLayout();
     }
 
     AppCore::Core::getInstance()->messageWindows->closeProgressBar();
 
-    return NULL;
+    if( ok ) {
+        qDebug() << "Vratil som active graph";
+    }
+
+    return ( ok ? this->activeGraph : NULL );
 }
 
 Data::Graph* Manager::GraphManager::createGraph( QString graphname )
