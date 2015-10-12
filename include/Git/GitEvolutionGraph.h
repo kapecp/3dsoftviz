@@ -37,6 +37,10 @@ public:
         return this->filePath;
     }
 
+    Git::GitVersion* getVersion( int position ) {
+        return this->versions.at( position );
+    }
+
 private:
     QList<Git::GitVersion*> versions;
     int order;

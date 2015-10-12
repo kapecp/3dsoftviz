@@ -51,15 +51,15 @@ QList<Git::GitVersion*> Git::GitFileLoader::getDataAboutGit() {
                 QRegExp D( "^D\\s" );
 
                 if( A.indexIn( line ) != -1 ) {
-                    line = line.replace(A, "");
+                    line = line.replace(A, "projekt/");
                     Git::GitFile* file = new Git::GitFile( line.mid( line.lastIndexOf("/") + 1 ), line, Git::GitType::ADDED );
                     version->addChangedFile( file );
                 } else if( M.indexIn( line ) != -1 ) {
-                    line = line.replace(M, "");
+                    line = line.replace(M, "projekt/");
                     Git::GitFile* file = new Git::GitFile( line.mid( line.lastIndexOf("/") + 1 ), line, Git::GitType::MODIFIED );
                     version->addChangedFile( file );
                 } else if( D.indexIn( line ) != -1 ) {
-                    line = line.replace(D, "");
+                    line = line.replace(D, "projekt/");
                     Git::GitFile* file = new Git::GitFile( line.mid( line.lastIndexOf("/") + 1 ), line, Git::GitType::REMOVED );
                     version->addChangedFile( file );
                 } else if( line.length() == 40 ) {

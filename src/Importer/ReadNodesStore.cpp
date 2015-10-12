@@ -23,7 +23,7 @@ osg::ref_ptr<Data::Node> ReadNodesStore::get(
 {
 	NodesMapType::iterator it = nodes_.find( name );
 	if ( it != nodes_.end() ) {
-		return it->second;
+        return it->second;
 	}
 	else {
 		return NULL;

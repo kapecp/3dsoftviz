@@ -3,10 +3,15 @@
 
 #include "Importer/StreamImporter.h"
 
+#include <QList>
 #include <QMap>
 
 namespace Data {
 class Type;
+}
+
+namespace Git {
+class GitFile;
 }
 
 namespace Importer {
@@ -19,9 +24,9 @@ public:
     virtual ~GitGraphImporter ( void ) {};
 
     virtual bool import( ImporterContext &context );
-/*
+
     virtual bool makeGraph (
-            QStringList &list
+            QList<Git::GitFile*> gitFiles
     );
 
     virtual bool addNode (
@@ -31,7 +36,7 @@ public:
     virtual bool addEdge (
             QStringList &list
     );
-
+/*
     virtual bool compare(
             QString &readEdges,
             QString &edgeName
