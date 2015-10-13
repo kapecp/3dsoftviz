@@ -47,6 +47,7 @@ Data::OsgNode::OsgNode( qlonglong id, QString name, Data::Type* type, Data::Grap
 	this->colorOfNode=osg::Vec4( r, g, b, a );
 	this->setColor( colorOfNode );
 
+    setScale( type->getSettings()->value( "scale" ).toFloat() );
 }
 
 Data::OsgNode::~OsgNode( void )
