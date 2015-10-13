@@ -2,11 +2,14 @@
 
 #include "Importer/GraphOperations.h"
 #include "Importer/ReadNodesStore.h"
+#include "Importer/ReadEdgesStore.h"
 #include "Manager/Manager.h"
 #include "Data/Graph.h"
 #include "Git/GitVersion.h"
 #include "Git/GitEvolutionGraph.h"
 #include "Git/GitFile.h"
+#include "Core/Core.h"
+#include "QOSG/MessageWindows.h"
 
 #include <QDebug>
 #include <QDir>
@@ -21,6 +24,7 @@ bool Importer::GitGraphImporter::import( ImporterContext &context ) {
     this->filepath = this->context->getFilePath();
     this->graphOp.reset( new GraphOperations( this->context->getGraph() ) );
     this->readNodes.reset( new Importer::ReadNodesStore() );
+    this->readEdges.reset( new Importer::ReadEdgesStore() );
     this->usedEdge;
     this->usedNode;
 
@@ -87,11 +91,90 @@ bool Importer::GitGraphImporter::import( ImporterContext &context ) {
 
     qDebug() << "Settings done";
 
-    QList<Git::GitFile*> lAddedGitFiles = Manager::GraphManager::getInstance()->getActiveEvolutionGraph()->getVersion( 10 )->getGitFilesByType( Git::GitType::ADDED );
-    QString author = Manager::GraphManager::getInstance()->activeEvolutionGraph->getVersion( 10 )->getAuthor();
-    int countVersions = Manager::GraphManager::getInstance()->activeEvolutionGraph->getVersions().size();
+    QList<Git::GitFile*> lAddedGitFiles = Manager::GraphManager::getInstance()->getActiveEvolutionGraph()->getVersion( 17 )->getChangedFiles();
+    QString lAuthor = Manager::GraphManager::getInstance()->activeEvolutionGraph->getVersion( 17 )->getAuthor();
+    int lCountVersions = Manager::GraphManager::getInstance()->activeEvolutionGraph->getVersions().size();
+
+//    for( int i = 0; i < 100; i++ ) {
+//        qDebug() << i << Manager::GraphManager::getInstance()->activeEvolutionGraph->getVersion( i )->getChangedFiles().size();
+//    }
 
     ok = makeGraph( lAddedGitFiles );
+
+    Data::Type* lType;
+    QList<Data::Type*> lTypes = this->context->getGraph().getTypesByName( "author" );
+    lType = lTypes.at( 0 );
+
+    Data::Node* lAuthorNode = this->context->getGraph().addNode( lAuthor, lType );
+
+    lAuthorNode->setLabelText( lAuthor );
+    lAuthorNode->showLabel( true );
+
+    // toto netusim co robi:D
+    int emptys = 5;
+    int pluss;
+    if( lCountVersions > 900 ) {
+        pluss = 40;
+    }
+    else if( lCountVersions > 300 ) {
+        pluss = 30;
+    }
+    else if( lCountVersions > 100 ) {
+        pluss = 20;
+    }
+    else {
+        pluss = 10;
+    }
+
+    lTypes = this->context->getGraph().getTypesByName( "author_edge" );
+    lType = lTypes.at( 0 );
+
+    QString lNodeName = "empty";
+    QString lEdgeName = "";
+
+    Data::Node* lNewFirst = this->context->getGraph().findNodeByName( "project" );
+
+    while( emptys > 0 ) {
+        lNodeName += "|";
+        Data::Node* lNewSecond = this->context->getGraph().addNode( lNodeName, lType );
+        lNewSecond->setLabelText("");
+
+        Data::Edge * edge = this->context->getGraph().addEdge(
+                    lEdgeName,
+                    lNewFirst,
+                    lNewSecond,
+                    lType,
+                    true
+                    );
+        emptys--;
+        lNewFirst = lNewSecond;
+    }
+
+    while( pluss > 0 ) {
+        lNodeName += "|";
+        Data::Node* lNewSecond = this->context->getGraph().addNode( lNodeName, lType );
+        lNewSecond->setLabelText("");
+
+        Data::Edge * edge = this->context->getGraph().addEdge(
+                    lEdgeName,
+                    lNewFirst,
+                    lNewSecond,
+                    lType,
+                    true
+                    );
+        pluss--;
+        lNewFirst = lNewSecond;
+    }
+
+    Data::Edge* lEdge;
+
+    lEdge = this->context->getGraph().addEdge(
+            lEdgeName,
+            lNewFirst,
+            lAuthorNode,
+            lType,
+            true
+    );
 
     return ok;
 }
@@ -111,9 +194,9 @@ bool Importer::GitGraphImporter::makeGraph( QList<Git::GitFile*> gitFiles ) {
         }
 
         ok = addNode( list );
-        qDebug() << "addNode vratilo" << ok;
-
         ok = addEdge( list );
+        AppCore::Core::getInstance()->messageWindows->setProgressBarValue( (int)( ( (double)( i + 1 ) / (double) gitFiles.size() ) * 100 ) );
+//        qDebug() << "Progress: " << (int)( ( (double)( i + 1 ) / (double) gitFiles.size() ) * 100 ) ;
     }
 
     return ok;
@@ -134,25 +217,25 @@ bool Importer::GitGraphImporter::addNode( QStringList &list ) {
 
         Data::Type* lType = NULL;
 
-        QString lPath = lNodeName;
-        QString val;
+//        QString lPath = lNodeName;
+        QString lVal;
         if( i == ( list.size() - 1 ) ) {
-            val = "file";
+            lVal = "file";
         } else {
-            val = "dir";
+            lVal = "dir";
             if( i == 0 ) {
-                val = "root";
+                lVal = "root";
             }
         }
 
-        QList<Data::Type*> lTypes = this->context->getGraph().getTypesByName( val );
+        QList<Data::Type*> lTypes = this->context->getGraph().getTypesByName( lVal );
         lType = lTypes.at( 0 );
 
         if( ok ) {
             lNode = this->context->getGraph().addNode( lNodeName, lType );
             //ToDo Data::Node->setPath( lNodeName ) a Data::Node->setNameFromPath()
 
-            if( QString::compare( val, "root" ) == 0 ) {
+            if( QString::compare( lVal, "root" ) == 0 ) {
                 lNode->setFixed( true );
             }
 
@@ -161,6 +244,8 @@ bool Importer::GitGraphImporter::addNode( QStringList &list ) {
         }
 
         if( ok ) {
+            lNode->setLabelText( lNodeName );
+            lNode->showLabel( true );
             this->readNodes->addNode( lNodeName, lNode );
         }
     }
@@ -170,10 +255,38 @@ bool Importer::GitGraphImporter::addNode( QStringList &list ) {
 bool Importer::GitGraphImporter::addEdge( QStringList &list ) {
     bool ok = true;
 
-    QString edgePath = "/project/";
     for( int i = 0; i < list.size() - 1; i++ ) {
         QString lNodeNameFrom = list.at( i );
         QString lNodeNameTo = list.at( i + 1 );
+        QString lEdgeName = lNodeNameFrom + lNodeNameTo;
+        osg::ref_ptr<Data::Edge> lEdge( NULL );
+        bool exist = true;
+
+        if( this->readEdges->get( lEdgeName ) ) {
+            exist = false;
+        }
+
+//        qDebug() << lEdgeName << exist;
+
+        if( exist && ok) {
+            ok = this->readNodes->contains( lNodeNameFrom );
+            this->context->getInfoHandler().reportError( ok, "Edge references invalid source node.");
+        }
+
+        if( exist && ok ) {
+            ok = this->readNodes->contains( lNodeNameTo );
+            this->context->getInfoHandler().reportError( ok, "Edge references invalid source node.");
+        }
+
+        bool oriented = false;
+
+        if( exist && ok ) {
+            lEdge = this->context->getGraph().addEdge( lEdgeName, this->readNodes->get( lNodeNameFrom ), this->readNodes->get( lNodeNameTo ), this->edgeType, oriented );
+        }
+
+        if( exist && ok ) {
+            this->readEdges->addEdge( lEdgeName, lEdge );
+        }
     }
     return ok;
 }

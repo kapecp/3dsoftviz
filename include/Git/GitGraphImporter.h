@@ -17,6 +17,7 @@ class GitFile;
 namespace Importer {
 
 class ReadNodesStore;
+class ReadEdgesStore;
 class GraphOperations;
 
 class GitGraphImporter : public StreamImporter {
@@ -48,6 +49,7 @@ private:
     QString filepath;
     std::auto_ptr<Importer::GraphOperations> graphOp;
     std::auto_ptr<Importer::ReadNodesStore> readNodes;
+    std::auto_ptr<Importer::ReadEdgesStore> readEdges;
     QMap<QString, bool> usedEdge;
     QMap<QString, bool> usedNode;
 

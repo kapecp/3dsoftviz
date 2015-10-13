@@ -646,6 +646,8 @@ public:
 	    */
 	void restoreSplittedEdges();
 
+    Data::Node * findNodeByName(QString nodeName);
+
 private:
 
 	/**

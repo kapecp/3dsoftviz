@@ -1431,3 +1431,19 @@ osg::ref_ptr<Data::Node> Data::Graph::addFloatingRestrictionNode( QString name, 
 	return node;
 }
 
+Data::Node* Data::Graph::findNodeByName( QString nodeName ) {
+    Data::Node* lNode;
+    QMap<qlonglong, osg::ref_ptr<Data::Node> >* lNodes = this->getNodes();
+    QMap<qlonglong, osg::ref_ptr<Data::Node> >::iterator it;
+    for ( it = lNodes->begin(); it != lNodes->end(); ++it )
+    {
+        lNode = it.value();
+
+        if( ( QString::compare( lNode->Data::AbsNode::getName(), nodeName ) ) == 0 )
+        {
+            break;
+        }
+    }
+    return lNode;
+}
+
