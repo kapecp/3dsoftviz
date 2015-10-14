@@ -2,6 +2,8 @@
 
 #include "Git/GitFileDiffBlockLine.h"
 
+#include <QDebug>
+
 Git::GitFileDiffBlock::GitFileDiffBlock() {
     this->addCount = 0;
     this->addStart = 1;

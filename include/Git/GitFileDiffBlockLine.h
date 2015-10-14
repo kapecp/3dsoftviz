@@ -1,11 +1,11 @@
 #ifndef GITFILEDIFFBLOCKLINE_H
 #define GITFILEDIFFBLOCKLINE_H
 
+#include "Git/GitType.h"
+
 #include <QString>
 
 namespace Git {
-
-enum GitType;
 
 class GitFileDiffBlockLine {
 public:

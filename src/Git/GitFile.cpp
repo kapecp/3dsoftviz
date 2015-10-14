@@ -1,6 +1,8 @@
 #include "Git/GitFile.h"
 #include "Git/GitFileDiffBlock.h"
 
+#include <QDebug>
+
 Git::GitFile::GitFile() {
     this->gitFileDiffBlocks = QList<Git::GitFileDiffBlock*>();
 }

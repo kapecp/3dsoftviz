@@ -2,6 +2,8 @@
 #define OSGNODE_H
 
 #include <osg/Geode>
+#include <osg/Switch>
+#include <osg/AutoTransform>
 #include <Data/Type.h>
 
 #include "Data/DbNode.h"

@@ -2,6 +2,7 @@
 #define ABSNODE_H
 
 #include <QString>
+#include <QMap>
 
 namespace Data {
 class Node;
@@ -77,7 +78,7 @@ public:
 	    *  \brief Returns settings of the Node
 	    *  \return QMap<QString,QString> * settings of the Node
 	    */
-	QMap<QString, QString>* getSettings() const
+    QMap<QString, QString>* getSettings() const
 	{
 		return settings;
 	}
@@ -87,7 +88,7 @@ public:
 	    *  \brief Sets (overrides) new settings of the Node
 	    *  \param   val    new settings
 	    */
-	void setSettings( QMap<QString, QString>* val )
+    void setSettings( QMap<QString, QString>* val )
 	{
 		settings = val;
 	}

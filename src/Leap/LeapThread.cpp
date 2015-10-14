@@ -1,5 +1,7 @@
 #include "Leap/LeapThread.h"
 
+#include <QDebug>
+
 Leap::LeapThread::LeapThread( QObject* parent ) : QThread( parent )
 {
 	qDebug() << "LeapThread::LeapThread, created";

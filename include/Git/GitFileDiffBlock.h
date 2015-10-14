@@ -1,6 +1,8 @@
 #ifndef GITFILEDIFFBLOCK_H
 #define GITFILEDIFFBLOCK_H
 
+#include "Git/GitType.h"
+
 #include <QList>
 
 namespace Git {

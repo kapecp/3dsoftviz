@@ -11,6 +11,8 @@
 #include "Git/GitFileDiffBlock.h"
 #include "Git/GitFileDiffBlockLine.h"
 
+#include <QDebug>
+
 Git::GitFileLoader::GitFileLoader( QString filepath ) {
     this->filePath = filepath;
 }

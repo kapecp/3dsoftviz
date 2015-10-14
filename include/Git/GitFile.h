@@ -4,16 +4,11 @@
 #include <QString>
 #include <QList>
 
+#include "Git/GitType.h"
+
 namespace Git {
 
 class GitFileDiffBlock;
-
-enum GitType {
-    ADDED,
-    REMOVED,
-    MODIFIED,
-    NONE
-};
 
 class GitFile {
 public:

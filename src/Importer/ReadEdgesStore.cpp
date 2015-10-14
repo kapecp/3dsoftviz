@@ -1,4 +1,5 @@
 #include "Importer/ReadEdgesStore.h"
+#include "Data/Edge.h"
 
 void Importer::ReadEdgesStore::addEdge(
 	const QString& name,

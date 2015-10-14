@@ -6,8 +6,10 @@
 #include "Util/ApplicationConfig.h"
 
 #include <osg/Geometry>
+#include <osg/ShapeDrawable>
 #include <osg/Depth>
 #include <osg/CullFace>
+#include <osg/BlendFunc>
 #include <osgText/FadeText>
 
 #include <QTextStream>
