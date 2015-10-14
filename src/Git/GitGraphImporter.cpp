@@ -77,7 +77,7 @@ bool Importer::GitGraphImporter::import( ImporterContext &context ) {
     settings->insert("color.B", "1");
     settings->insert("color.A", "0");
     settings->insert("scale", Util::ApplicationConfig::get()->getValue("Viewer.Textures.DefaultNodeScale"));
-    settings->insert("textureFile", Util::ApplicationConfig::get()->getValue("Viewer.Textures.AuthorEdge"));
+    settings->insert("textureFile", Util::ApplicationConfig::get()->getValue("Viewer.Textures.OrientedEdge"));
     this->context->getGraph().addType("author_edge", settings);
 
     settings = new QMap<QString, QString>;
@@ -100,13 +100,12 @@ bool Importer::GitGraphImporter::import( ImporterContext &context ) {
 //    }
 
     ok = makeGraph( lAddedGitFiles );
-
     Data::Type* lType;
     QList<Data::Type*> lTypes = this->context->getGraph().getTypesByName( "author" );
     lType = lTypes.at( 0 );
 
     Data::Node* lAuthorNode = this->context->getGraph().addNode( lAuthor, lType );
-
+/*
     lAuthorNode->setLabelText( lAuthor );
     lAuthorNode->showLabel( true );
 
@@ -128,11 +127,14 @@ bool Importer::GitGraphImporter::import( ImporterContext &context ) {
 
     lTypes = this->context->getGraph().getTypesByName( "author_edge" );
     lType = lTypes.at( 0 );
-
+*/
+    Data::Node* lRoot = this->context->getGraph().findNodeByName( "projekt" );
+    Data::Edge* lRootEdge = this->context->getGraph().addEdge( lAuthor + lRoot->Data::AbsNode::getName(), lAuthorNode, lRoot, this->edgeType, true );
+/*
     QString lNodeName = "empty";
     QString lEdgeName = "";
 
-    Data::Node* lNewFirst = this->context->getGraph().findNodeByName( "project" );
+    Data::Node* lNewFirst = this->context->getGraph().findNodeByName( "projekt" );
 
     while( emptys > 0 ) {
         lNodeName += "|";
@@ -175,6 +177,8 @@ bool Importer::GitGraphImporter::import( ImporterContext &context ) {
             lType,
             true
     );
+*/
+
 
     return ok;
 }
