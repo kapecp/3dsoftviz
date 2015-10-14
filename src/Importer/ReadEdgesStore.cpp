@@ -12,19 +12,18 @@ bool Importer::ReadEdgesStore::contains(
 	const QString& name
 )
 {
-    return edges.find( name ) != edges.end();
+    return edges.contains( name );
 }
 
 osg::ref_ptr<Data::Edge> Importer::ReadEdgesStore::get(
 	const QString& name
 )
 {
-    QMap<QString, osg::ref_ptr<Data::Edge>>::iterator it = edges.find( name );
-    if ( it != edges.end() ) {
-        return it.value();
-	}
-	else {
-		return NULL;
-	}
+   if( edges.contains( name ) ) {
+       return edges.value( name );
+   } else {
+       return nullptr;
+   }
+
 }
 

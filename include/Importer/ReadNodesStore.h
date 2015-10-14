@@ -6,7 +6,7 @@
 #include <osg/ref_ptr>
 #include <QString>
 //-----------------------------------------------------------------------------
-#include <map>
+#include <Qmap>
 
 namespace Importer {
 
@@ -53,12 +53,7 @@ public:
 
 private:
 
-	typedef std::map<QString, osg::ref_ptr<Data::Node> > NodesMapType;
-
-	/**
-	 * \brief Stored nodes.
-	 */
-	NodesMapType nodes_;
+    QMap<QString, osg::ref_ptr<Data::Node>> nodes;
 
 }; // class
 
