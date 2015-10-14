@@ -499,6 +499,10 @@ Manager::GraphManager* Manager::GraphManager::getInstance()
 	return manager;
 }
 
+void Manager::GraphManager::setProgressBarValue( int value ) {
+    AppCore::Core::getInstance()->messageWindows->setProgressBarValue( value );
+}
+
 void Manager::GraphManager::runTestCase( qint32 action )
 {
 	//testovaci pripad, vytvorenie grafu, inicializacia Debug, 7 testovacich vstupov grafu

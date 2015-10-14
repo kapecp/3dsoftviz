@@ -147,6 +147,8 @@ public:
 	 */
 	static Manager::GraphManager* getInstance();
 
+    void setProgressBarValue( int value );
+
 
 	/**
 	*  \fn private runTestCase(qint32 action)
