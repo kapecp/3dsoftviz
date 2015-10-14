@@ -8,6 +8,8 @@
 #include "Network/Server.h"
 #include "Network/Client.h"
 
+#include "Git/GitEvolutionGraph.h"
+
 #include "Viewer/CoreGraph.h"
 #include "Viewer/CameraManipulator.h"
 #include "Viewer/PickHandler.h"
@@ -78,7 +80,7 @@ CoreWindow::CoreWindow( QWidget* parent, Vwr::CoreGraph* coreGraph, QApplication
 	createActions();
 	createMenus();
 	createLeftToolBar();
-	createMetricsToolBar();
+    createMetricsToolBar();
 
 	viewerWidget = new ViewerQT( this, 0, 0, 0, coreGraph );
 	viewerWidget->setSceneData( coreGraph->getScene() );
@@ -639,6 +641,70 @@ void CoreWindow::createActions()
 	line3 = createLine();
 	// hide
 	setVisibleClusterSection( false );
+
+    // garaj start
+    b_previous_version = new QPushButton();
+    b_previous_version->setText( "<<" );
+    b_previous_version->setToolTip( "Previous version" );
+    b_previous_version->setFocusPolicy( Qt::NoFocus );
+    b_previous_version->setMaximumWidth( 30 );
+    b_previous_version->setDisabled( true );
+    connect( b_previous_version, SIGNAL( clicked() ), this, SLOT( previousVersino() ) );
+
+    b_next_version = new QPushButton();
+    b_next_version->setText( ">>" );
+    b_next_version->setToolTip( "Next version" );
+    b_next_version->setFocusPolicy( Qt::NoFocus );
+    b_next_version->setMaximumWidth( 30 );
+    b_next_version->setDisabled( true );
+    connect( b_next_version, SIGNAL( clicked() ), this, SLOT( nextVersion() ) );
+
+    b_run_evolution = new QPushButton();
+    b_run_evolution->setIcon( QIcon( "../share/3dsoftviz/img/gui/play.png" ) );
+    b_run_evolution->setToolTip( "&Run" );
+    b_run_evolution->setFocusPolicy( Qt::NoFocus );
+    b_run_evolution->setMaximumWidth( 30 );
+    b_run_evolution->setDisabled( true );
+    connect( b_run_evolution, SIGNAL( clicked() ), this, SLOT( runEvolution() ) );
+
+    b_faster_evolution = new QPushButton();
+    b_faster_evolution->setText( "+" );
+    b_faster_evolution->setToolTip( "Faster evolution" );
+    b_faster_evolution->setFocusPolicy( Qt::NoFocus );
+    b_faster_evolution->setMaximumWidth( 20 );
+    b_faster_evolution->setMaximumHeight( 20 );
+    connect( b_faster_evolution, SIGNAL( clicked() ), this, SLOT( fasterEvolution() ) );
+
+    b_slower_evolution = new QPushButton();
+    b_slower_evolution->setText( "-" );
+    b_slower_evolution->setToolTip( "Slower evolution" );
+    b_slower_evolution->setFocusPolicy( Qt::NoFocus );
+    b_slower_evolution->setMaximumWidth( 20 );
+    b_slower_evolution->setMaximumHeight( 20 );
+    connect( b_slower_evolution, SIGNAL( clicked() ), this, SLOT( slowerEvolution() ) );
+
+    b_info_version = new QPushButton();
+    b_info_version->setText( "i" );
+    b_info_version->setToolTip( "Show info" );
+    b_info_version->setFocusPolicy( Qt::NoFocus );
+    b_info_version->setMaximumWidth( 30 );
+    b_info_version->setDisabled( true );
+    connect( b_info_version, SIGNAL( clicked() ), this, SLOT( showInfo() ) );
+
+    evolutionSlider = new QSlider( Qt::Horizontal, this );
+    evolutionSlider->setRange( 1, 400 );
+    evolutionSlider->setTickPosition( QSlider::NoTicks );
+    evolutionSlider->setValue( 1 );
+    evolutionSlider->setFocusPolicy( Qt::NoFocus );
+    evolutionSlider->setDisabled( false );
+    connect( evolutionSlider, SIGNAL( valueChanged(int) ), this, SLOT( sliderVersionValueChanged( int ) ) );
+
+    labelEvolutionSlider =  new QLabel( this );
+    labelEvolutionSlider->setAlignment( Qt::AlignHCenter );
+
+    evolutionTimer = new QTimer( this );
+    connect( evolutionTimer, SIGNAL( timeout() ), this, SLOT( move() ) );
+    // garaj end
 }
 
 void CoreWindow::setVisibleClusterSection( bool visible )
@@ -1479,8 +1545,15 @@ void CoreWindow::loadFromGit() {
 
     if( lPath != "" ) {
 
-        Manager::GraphManager::getInstance()->loadGraphFromGit( lPath );
+        if( Manager::GraphManager::getInstance()->loadGraphFromGit( lPath ) ) {
+            evolutionSlider->setRange( 0, Manager::GraphManager::getInstance()->getActiveEvolutionGraph()->getVersions().size());
+            evolutionSlider->setValue( 0 );
+            QString pos = QString::number( evolutionSlider->value() + 1 );  // kedze list zacina od 0 treba pripocitat +1
+            labelEvolutionSlider->setText("  " + pos + " . verzia");
+            b_run_evolution->setDisabled( false );
+            b_next_version->setDisabled( false );
 
+        }
         viewerWidget->getCameraManipulator()->home();
     }
 
@@ -3442,19 +3515,55 @@ void CoreWindow::createMetricsToolBar()
 	metricsToolBar->setMovable( false );
 	showMetrics();
 
-	addToolBar( Qt::RightToolBarArea,metricsToolBar );
+    addToolBar( Qt::RightToolBarArea, metricsToolBar );
 
-	toolBar = new QToolBar( "Metrics filter",this );
+    QWidget* xGraph = new QWidget();
+
+    QFormLayout* lGraph = new QFormLayout( xGraph );
+    lGraph->setContentsMargins( 1,1,1,1 );
+    lGraph->setSpacing( 2 );
+    lGraph->setAlignment( Qt::AlignHCenter );
+
+    toolBar = new QToolBar( "Metrics filter", this );
 #if QT_VERSION >= 0x040700
-	filterNodesEdit->setPlaceholderText( "nodes filter" );
+    filterNodesEdit->setPlaceholderText( "nodes filter" );
 #endif
-	toolBar->addWidget( filterNodesEdit );
+    toolBar->addWidget( filterNodesEdit );
 #if QT_VERSION >= 0x040700
-	filterEdgesEdit->setPlaceholderText( "edges filter" );
+    filterEdgesEdit->setPlaceholderText( "edges filter" );
 #endif
-	toolBar->addWidget( filterEdgesEdit );
-	addToolBar( Qt::BottomToolBarArea, toolBar );
-	toolBar->setMovable( true );
+    toolBar->addWidget( filterEdgesEdit );
+    lGraph->addRow( toolBar );
+
+    // evolution part start
+    toolBar = new QToolBar( "Evolution graph controls", this );
+    QToolBar* toolBar1= new QToolBar( "Evolution graph controls" ,this );
+    toolBar1->addWidget( b_previous_version );
+    toolBar1->addWidget( b_next_version );
+    toolBar1->addWidget( b_info_version );
+    toolBar1->addWidget( b_run_evolution );
+
+    frame = createHorizontalFrame();
+    frame->setMinimumHeight( 50 );
+    frame->backgroundRole();
+    frame->layout()->setAlignment( Qt::AlignVCenter );
+
+    toolBar1->addWidget( frame );
+    frame->layout()->addWidget( evolutionSlider );
+    frame->layout()->addWidget( labelEvolutionSlider );
+
+    toolBar1->addWidget( b_slower_evolution );
+    toolBar1->addWidget( b_faster_evolution );
+    toolBar1->layout()->setAlignment( Qt::AlignHCenter );
+    lGraph->addRow( toolBar1 );
+    xGraph->setLayout( lGraph );
+    // evolution part end
+
+    toolBar->addWidget( xGraph );
+
+    addToolBar( Qt::BottomToolBarArea, toolBar );
+
+    isRunning = false;
 }
 
 void CoreWindow::loadFunctionCall()
@@ -3552,6 +3661,131 @@ void CoreWindow::onChange()
 void CoreWindow::browsersGroupingClicked( bool checked )
 {
 	this->coreGraph->getBrowsersGroup()->setBrowsersGrouping( checked );
+}
+
+bool CoreWindow::nextVersion() {
+
+    if( !isRunning ) {
+        b_previous_version->setDisabled( false );
+    }
+
+    bool ok = true;
+    int value = evolutionSlider->value();
+//    ok = Manager::GraphManager::getInstance()->nextVersion( layout );
+    value++;
+    QString pos =  QString::number( value + 1 );  // kedze list zacina od 0 treba pripocitat +1
+    labelEvolutionSlider->setText( "  " + pos + " . verzia" );
+    evolutionSlider->blockSignals( true );
+    evolutionSlider->setValue( value );
+    evolutionSlider->blockSignals( false  );
+
+    if( value == evolutionSlider->maximum()) {
+        b_next_version->setDisabled( true );
+    }
+
+    qDebug() << "Next";
+    return ok;
+}
+
+bool CoreWindow::previousVersino() {
+
+    if( !isRunning ) {
+        b_next_version->setDisabled( false );
+    }
+
+    bool ok = true;
+    int value = evolutionSlider->value();
+//    ok =  Manager::GraphManager::getInstance()->previousVersion( layout );
+    value--;
+    QString pos =  QString::number( value + 1 );  // kedze list zacina od 0 treba pripocitat +1
+    labelEvolutionSlider->setText( "  " + pos + " . verzia" );
+    evolutionSlider->blockSignals( true );
+    evolutionSlider->setValue( value );
+    evolutionSlider->blockSignals( false  );
+
+    if( value == evolutionSlider->minimum() ) {
+        b_previous_version->setDisabled( true );
+    }
+
+    qDebug() << "Previous";
+    return false;
+}
+void CoreWindow::runEvolution() {
+    if( isRunning ) {
+        // zastav evoluciu
+        b_run_evolution->setIcon( QIcon( "../share/3dsoftviz/img/gui/play.png" ) );
+        isRunning = false;
+        b_next_version->setDisabled( false );
+        b_previous_version->setDisabled( false );
+        evolutionTimer->stop();
+    } else {
+        evolutionSlider->setDisabled( false );
+        // zacni evoluciu
+        b_run_evolution->setIcon( QIcon( "../share/3dsoftviz/img/gui/pause.png" ) );
+        isRunning = true;
+        b_next_version->setDisabled( true );
+        b_previous_version->setDisabled( true );
+        evolutionTimer->start( 500 );
+    }
+
+    qDebug() << "Run";
+}
+
+void CoreWindow::move() {
+    int cursor = evolutionSlider->value();
+    int size = Manager::GraphManager::getInstance()->activeEvolutionGraph->getVersions().size();
+
+    if( cursor == ( size ) ) {
+        this->runEvolution();
+    } else {
+        evolutionSlider->blockSignals( true );
+        evolutionSlider->setValue( cursor + 1 );
+        evolutionSlider->blockSignals( false );
+        this->sliderVersionValueChanged( cursor + 1 );
+    }
+
+    if( isPlaying ) {
+        layout->play();
+    }
+    qDebug() << "Move";
+}
+
+void CoreWindow::fasterEvolution() {
+    int interval =  evolutionTimer->interval();
+    evolutionTimer->setInterval( interval - 100 );
+    qDebug() << "Faster";
+}
+
+void CoreWindow::slowerEvolution() {
+    int interval =  evolutionTimer->interval();
+    evolutionTimer->setInterval( interval + 100 );
+    qDebug() << "Slower";
+}
+
+void CoreWindow::showInfo() {
+    qDebug() << "Show info";
+}
+
+void CoreWindow::sliderVersionValueChanged( int value ) {
+    QString pos = QString::number( value + 1 );
+    labelEvolutionSlider->setText( "  " + pos + " . verzia" );
+
+//    Manager::GraphManager::getInstance()->changeToVersion( value, layout );
+
+    if( !isRunning ) {
+        b_next_version->setDisabled( false );
+        b_previous_version->setDisabled( false );
+    }
+
+    if( value == evolutionSlider->maximum() ) {
+        b_next_version->setDisabled( true );
+    }
+
+    if( value == evolutionSlider->minimum() ) {
+        b_previous_version->setDisabled( true );
+    }
+
+    qDebug() << "Slider version value changed" << value;
 }
 
 } // namespace QOSG

@@ -531,6 +531,15 @@ public slots:
 
 	void setCameraEnable( bool enable );
 
+    bool nextVersion();
+    bool previousVersino();
+    void runEvolution();
+    void move();
+    void fasterEvolution();
+    void slowerEvolution();
+    void showInfo();
+    void sliderVersionValueChanged( int value );
+
 
 private:
 
@@ -883,6 +892,16 @@ private:
 	 */
 	QPushButton* b_start_gloves;
 
+    QPushButton* b_previous_version;
+    QPushButton* b_next_version;
+    QPushButton* b_run_evolution;
+    QPushButton* b_info_version;
+    QPushButton* b_faster_evolution;
+    QPushButton* b_slower_evolution;
+    QLabel * labelEvolutionSlider;
+    QTimer * evolutionTimer;
+    bool isRunning;
+
 	/**
 	 *CheckBox for mapinulation camera or object
 	 *@brief chb_camera_rot
@@ -918,6 +937,9 @@ private:
 	    *  \brief Pointer to slider
 	    */
 	QSlider* slider;
+
+    QSlider* evolutionSlider;
+
 
 	/**
 	    *  QFrame * line1
@@ -995,7 +1017,7 @@ private:
 	    *  \fn private  createLeftToolBar
 	    *  \brief Create left toolBar
 	    */
-	void createLeftToolBar();
+    void createLeftToolBar();
 
 	/**
 	    *  \fn private  createMetricsToolBar
