@@ -3671,7 +3671,7 @@ bool CoreWindow::nextVersion() {
 
     bool ok = true;
     int value = evolutionSlider->value();
-//    ok = Manager::GraphManager::getInstance()->nextVersion( layout );
+    ok = Manager::GraphManager::getInstance()->nextVersion( layout, value );
     value++;
     QString pos =  QString::number( value + 1 );  // kedze list zacina od 0 treba pripocitat +1
     labelEvolutionSlider->setText( "  " + pos + " . verzia" );
@@ -3695,7 +3695,7 @@ bool CoreWindow::previousVersino() {
 
     bool ok = true;
     int value = evolutionSlider->value();
-//    ok =  Manager::GraphManager::getInstance()->previousVersion( layout );
+    ok =  Manager::GraphManager::getInstance()->previousVersion( layout, value );
     value--;
     QString pos =  QString::number( value + 1 );  // kedze list zacina od 0 treba pripocitat +1
     labelEvolutionSlider->setText( "  " + pos + " . verzia" );
@@ -3733,7 +3733,7 @@ void CoreWindow::runEvolution() {
 
 void CoreWindow::move() {
     int cursor = evolutionSlider->value();
-    int size = Manager::GraphManager::getInstance()->activeEvolutionGraph->getVersions().size();
+    int size = Manager::GraphManager::getInstance()->getActiveEvolutionGraph()->getVersions().size();
 
     if( cursor == ( size ) ) {
         this->runEvolution();

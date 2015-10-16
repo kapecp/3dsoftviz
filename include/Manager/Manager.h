@@ -13,6 +13,10 @@
 #include <qfileinfo.h>
 
 
+namespace Layout {
+class LayoutThread;
+}
+
 namespace Model {
 class DB;
 }
@@ -149,7 +153,11 @@ public:
 
     void setProgressBarValue( int value );
 
+    bool nextVersion( Layout::LayoutThread* layout, int currentVersion );
 
+    bool previousVersion( Layout::LayoutThread* layout, int currentVersion );
+
+private:
 	/**
 	*  \fn private runTestCase(qint32 action)
 	*  \brief Runs one of predefined Graph tests

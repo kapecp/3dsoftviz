@@ -25,6 +25,7 @@
 #include "Git/GitVersion.h"
 #include "Git/GitFile.h"
 #include "Git/GitEvolutionGraph.h"
+#include "Git/GitGraphImporter.h"
 
 #include "Layout/LayoutThread.h"
 #include "QOSG/MessageWindows.h"
@@ -501,6 +502,56 @@ Manager::GraphManager* Manager::GraphManager::getInstance()
 
 void Manager::GraphManager::setProgressBarValue( int value ) {
     AppCore::Core::getInstance()->messageWindows->setProgressBarValue( value );
+}
+
+bool Manager::GraphManager::nextVersion( Layout::LayoutThread* layout, int currentVersion ) {
+    bool ok = true;
+
+    Git::GitEvolutionGraph* lEvolutionGraph =  this->getInstance()->getActiveEvolutionGraph();
+
+    Data::Node* lAuthorNode = this->getInstance()->getActiveGraph()->findNodeByName( lEvolutionGraph->getVersion( currentVersion + 1 )->getAuthor() );
+    if( lAuthorNode ) {
+        qDebug() << currentVersion << " je autor: " << lAuthorNode->Data::AbsNode::getName();
+    }
+
+    qDebug() << "Pocet pridanych uzlov" << lEvolutionGraph->getVersion( currentVersion + 1 )->getGitFilesByTypeAndExtension( ".lua", Git::GitType::ADDED ).size();
+    qDebug() << "Pocet modifikovanych uzlov" << lEvolutionGraph->getVersion( currentVersion + 1 )->getGitFilesByTypeAndExtension( ".lua", Git::GitType::MODIFIED ).size();
+    qDebug() << "Pocet vymazanych uzlov" << lEvolutionGraph->getVersion( currentVersion + 1 )->getGitFilesByTypeAndExtension( ".lua", Git::GitType::REMOVED ).size();
+
+    qDebug() << "pred" << this->getInstance()->getActiveGraph()->getNodes()->size();
+    Importer::GitGraphImporter::updateGraph( lEvolutionGraph->getVersion( currentVersion + 1 )->getGitFilesByTypeAndExtension( ".lua", Git::GitType::ADDED ) );
+    if( !lAuthorNode ) {
+        lAuthorNode = this->getInstance()->getActiveGraph()->addNode( lEvolutionGraph->getVersion( currentVersion + 1 )->getAuthor(), this->getInstance()->getActiveGraph()->getTypesByName( "author").at( 0 ) );
+        lAuthorNode->setLabelText( lEvolutionGraph->getVersion( currentVersion + 1 )->getAuthor() );
+        lAuthorNode->showLabel( true );
+    }
+
+    foreach( Git::GitFile* file, lEvolutionGraph->getVersion( currentVersion + 1 )->getGitFilesByTypeAndExtension( ".lua", Git::GitType::ADDED ) ) {
+        Data::Node* lNode = this->getInstance()->getActiveGraph()->findNodeByName( file->getFilepath() );
+        if( lNode ) {
+            this->getInstance()->getActiveGraph()->addEdge( lAuthorNode->Data::AbsNode::getName() + file->getFilepath(), this->getInstance()->getActiveGraph()->findNodeByName( lAuthorNode->Data::AbsNode::getName() ), this->getInstance()->getActiveGraph()->findNodeByName( file->getFilepath() ), this->getInstance()->getActiveGraph()->getTypesByName( "authorEdge" ).at( 0 ), true );
+        }
+    }
+
+    qDebug() << "po" << this->getInstance()->getActiveGraph()->getNodes()->size();
+    layout->play();
+    return ok;
+}
+
+bool Manager::GraphManager::previousVersion( Layout::LayoutThread* layout, int currentVersion ) {
+    bool ok = true;
+
+    Git::GitEvolutionGraph* lEvolutionGraph =  this->getInstance()->getActiveEvolutionGraph();
+
+    Data::Node* lAuthorNode = this->getInstance()->getActiveGraph()->findNodeByName( lEvolutionGraph->getVersion( currentVersion - 1 )->getAuthor() );
+    if( lAuthorNode ) {
+       qDebug() << currentVersion << " je autor: " << lAuthorNode->Data::AbsNode::getName();
+    }
+    qDebug() << "Pocet pridanych uzlov" << lEvolutionGraph->getVersion( currentVersion - 1 )->getGitFilesByTypeAndExtension( ".lua", Git::GitType::ADDED ).size();
+    qDebug() << "Pocet modifikovanych uzlov" << lEvolutionGraph->getVersion( currentVersion - 1 )->getGitFilesByTypeAndExtension( ".lua", Git::GitType::MODIFIED ).size();
+    qDebug() << "Pocet vymazanych uzlov" << lEvolutionGraph->getVersion( currentVersion - 1 )->getGitFilesByTypeAndExtension( ".lua", Git::GitType::REMOVED ).size();
+
+    return ok;
 }
 
 void Manager::GraphManager::runTestCase( qint32 action )

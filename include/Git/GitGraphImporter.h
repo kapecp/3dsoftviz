@@ -43,6 +43,9 @@ public:
             QString &edgeName
     );
 */
+
+    static bool updateGraph( QList<Git::GitFile*> gitFiles );
+
 private:
     ImporterContext *context;
 

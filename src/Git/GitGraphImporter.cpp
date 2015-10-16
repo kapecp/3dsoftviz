@@ -3,8 +3,11 @@
 #include "Importer/GraphOperations.h"
 #include "Importer/ReadNodesStore.h"
 #include "Importer/ReadEdgesStore.h"
+
 #include "Manager/Manager.h"
+
 #include "Data/Graph.h"
+
 #include "Git/GitVersion.h"
 #include "Git/GitEvolutionGraph.h"
 #include "Git/GitFile.h"
@@ -32,70 +35,70 @@ bool Importer::GitGraphImporter::import( ImporterContext &context ) {
     bool ok = true;
 
     QMap<QString, QString> *settings = new QMap<QString, QString>;
-    settings->insert("color.R", "1");
-    settings->insert("color.G", "1");
-    settings->insert("color.B", "0");
-    settings->insert("color.A", "1");
-    settings->insert("scale", Util::ApplicationConfig::get()->getValue("Viewer.Textures.DefaultNodeScale"));
-    settings->insert("textureFile", Util::ApplicationConfig::get()->getValue("Viewer.Textures.Node"));
-    this->context->getGraph().addType("file", settings);
+    settings->insert( "color.R", "1" );
+    settings->insert( "color.G", "1" );
+    settings->insert( "color.B", "0" );
+    settings->insert( "color.A", "1" );
+    settings->insert( "scale", Util::ApplicationConfig::get()->getValue( "Viewer.Textures.DefaultNodeScale" ) );
+    settings->insert( "textureFile", Util::ApplicationConfig::get()->getValue( "Viewer.Textures.Node" ) );
+    this->context->getGraph().addType( "file", settings );
 
     settings = new QMap<QString, QString>;
-    settings->insert("color.R", "0");
-    settings->insert("color.G", "1");
-    settings->insert("color.B", "0");
-    settings->insert("color.A", "1");
-    settings->insert("scale", Util::ApplicationConfig::get()->getValue("Viewer.Textures.DefaultNodeScale"));
-    settings->insert("textureFile", Util::ApplicationConfig::get()->getValue("Viewer.Textures.Node"));
-    this->context->getGraph().addType("dir", settings);
+    settings->insert( "color.R", "0" );
+    settings->insert( "color.G", "1" );
+    settings->insert( "color.B", "0" );
+    settings->insert( "color.A", "1" );
+    settings->insert( "scale", Util::ApplicationConfig::get()->getValue( "Viewer.Textures.DefaultNodeScale" ) );
+    settings->insert( "textureFile", Util::ApplicationConfig::get()->getValue( "Viewer.Textures.Node" ) );
+    this->context->getGraph().addType( "dir", settings );
 
     settings = new QMap<QString, QString>;
-    settings->insert("color.R", "1");
-    settings->insert("color.G", "0");
-    settings->insert("color.B", "0");
-    settings->insert("color.A", "1");
-    settings->insert("scale", Util::ApplicationConfig::get()->getValue("Viewer.Textures.DefaultNodeScale"));
-    settings->insert("textureFile", Util::ApplicationConfig::get()->getValue("Viewer.Textures.Node"));
-    this->context->getGraph().addType("root", settings);
+    settings->insert( "color.R", "1" );
+    settings->insert( "color.G", "0" );
+    settings->insert( "color.B", "0" );
+    settings->insert( "color.A", "1" );
+    settings->insert( "scale", Util::ApplicationConfig::get()->getValue( "Viewer.Textures.DefaultNodeScale" ) );
+    settings->insert( "textureFile", Util::ApplicationConfig::get()->getValue( "Viewer.Textures.Node" ) );
+    this->context->getGraph().addType( "root", settings );
 
     settings = new QMap<QString, QString>;
-    settings->insert("color.R", "1");
-    settings->insert("color.G", "1");
-    settings->insert("color.B", "1");
-    settings->insert("color.A", "1");
-    settings->insert("scale", Util::ApplicationConfig::get()->getValue("Viewer.Textures.AuthorNodeScale"));
-    settings->insert("textureFile", Util::ApplicationConfig::get()->getValue("Viewer.Textures.Author"));
-    this->context->getGraph().addType("author", settings);
+    settings->insert( "color.R", "1" );
+    settings->insert( "color.G", "1" );
+    settings->insert( "color.B", "1" );
+    settings->insert( "color.A", "1" );
+    settings->insert( "scale", Util::ApplicationConfig::get()->getValue( "Viewer.Textures.AuthorNodeScale" ) );
+    settings->insert( "textureFile", Util::ApplicationConfig::get()->getValue( "Viewer.Textures.Author" ) );
+    this->context->getGraph().addType( "author", settings );
 
     settings = new QMap<QString, QString>;
-    settings->insert("color.R", "0");
-    settings->insert("color.G", "0");
-    settings->insert("color.B", "1");
-    settings->insert("color.A", "1");
-    settings->insert("scale", Util::ApplicationConfig::get()->getValue("Viewer.Textures.DefaultNodeScale"));
-    settings->insert("textureFile", Util::ApplicationConfig::get()->getValue("Viewer.Textures.OrientedEdge"));
-    this->context->getGraph().addType("authorEdge", settings);
+    settings->insert( "color.R", "0" );
+    settings->insert( "color.G", "0" );
+    settings->insert( "color.B", "1" );
+    settings->insert( "color.A", "1" );
+    settings->insert( "scale", Util::ApplicationConfig::get()->getValue( "Viewer.Textures.DefaultNodeScale" ) );
+    settings->insert( "textureFile", Util::ApplicationConfig::get()->getValue( "Viewer.Textures.OrientedEdge" ) );
+    this->context->getGraph().addType( "authorEdge", settings );
 
     settings = new QMap<QString, QString>;
-    settings->insert("color.R", "1");
-    settings->insert("color.G", "1");
-    settings->insert("color.B", "1");
-    settings->insert("color.A", "1");
-    settings->insert("scale", Util::ApplicationConfig::get()->getValue("Viewer.Textures.DefaultNodeScale"));
-    settings->insert("textureFile", Util::ApplicationConfig::get()->getValue("Viewer.Textures.Edge"));
-    this->context->getGraph().addType("Edge", settings);
+    settings->insert( "color.R", "1" );
+    settings->insert( "color.G", "1" );
+    settings->insert( "color.B", "1" );
+    settings->insert( "color.A", "1" );
+    settings->insert( "scale", Util::ApplicationConfig::get()->getValue( "Viewer.Textures.DefaultNodeScale" ) );
+    settings->insert( "textureFile", Util::ApplicationConfig::get()->getValue( "Viewer.Textures.Edge" ) );
+    this->context->getGraph().addType( "Edge", settings );
 
     settings = new QMap<QString, QString>;
-    settings->insert("color.R", "0");
-    settings->insert("color.G", "1");
-    settings->insert("color.B", "1");
-    settings->insert("color.A", "1");
-    settings->insert("scale", Util::ApplicationConfig::get()->getValue("Viewer.Textures.DefaultNodeScale"));
-    settings->insert("textureFile", Util::ApplicationConfig::get()->getValue("Viewer.Textures.Node"));
-    this->context->getGraph().addType("newE", settings);
+    settings->insert( "color.R", "0" );
+    settings->insert( "color.G", "1" );
+    settings->insert( "color.B", "1" );
+    settings->insert( "color.A", "1" );
+    settings->insert( "scale", Util::ApplicationConfig::get()->getValue( "Viewer.Textures.DefaultNodeScale" ) );
+    settings->insert( "textureFile", Util::ApplicationConfig::get()->getValue( "Viewer.Textures.Node" ) );
+    this->context->getGraph().addType( "newE", settings );
 
-    QList<Git::GitFile*> lAddedGitFiles = Manager::GraphManager::getInstance()->getActiveEvolutionGraph()->getVersion( 0 )->getGitFilesByExtension( ".lua" );
-    QString lAuthor = Manager::GraphManager::getInstance()->activeEvolutionGraph->getVersion( 0 )->getAuthor();
+    QList<Git::GitFile*> lAddedGitFiles = Manager::GraphManager::getInstance()->getActiveEvolutionGraph()->getVersion( 0 )->getGitFilesByTypeAndExtension( ".lua", Git::GitType::ADDED );
+    QString lAuthor = Manager::GraphManager::getInstance()->getActiveEvolutionGraph()->getVersion( 0 )->getAuthor();
 
     ok = makeGraph( lAddedGitFiles );
     Data::Type* lType;
@@ -127,7 +130,7 @@ bool Importer::GitGraphImporter::makeGraph( QList<Git::GitFile*> gitFiles ) {
     for( int i = 0; i < gitFiles.size();i++ ) {
         QString line = gitFiles.at( i )->getFilepath();
 
-        QStringList list = line.split("/");
+        QStringList list = line.split( "/" );
         QString pom = "";
         for( int k = 0; k < list.size(); k++ ) {
             pom += list.at( k );
@@ -223,6 +226,94 @@ bool Importer::GitGraphImporter::addEdge( QStringList &list ) {
                 this->readEdges->addEdge( lEdgeName, lEdge );
             }
         }
+    }
+    return ok;
+}
+
+bool Importer::GitGraphImporter::updateGraph( QList<Git::GitFile *> gitFiles ) {
+    bool ok = true;
+    Data::Graph* lGraph = Manager::GraphManager::getInstance()->getActiveGraph();
+    foreach( Git::GitFile* gitFile, gitFiles ) {
+        QString lFilepath = gitFile->getFilepath();
+        qDebug() << lFilepath;
+
+        QStringList lList = lFilepath.split( "/" );
+        QString lPom = "";
+        for( int i = 0; i < lList.size(); i++ ) {
+            lPom += lList.at( i );
+            lList.replace( i, lPom );
+            lPom += "/";
+        }
+
+        for( int i = 0; i < lList.size(); i++ ) {
+            bool exist = true;
+            QString lNodeName = lList.at( i );
+            ok =  !lNodeName.isEmpty();
+
+            osg::ref_ptr<Data::Node> lNode( nullptr );
+            if( lGraph->findNodeByName( lNodeName ) ) {
+                exist =  false;
+            }
+
+            if( exist ) {
+                Data::Type* lType = nullptr;
+                QString lVal;
+                if( i == lList.size() - 1 ) {
+                    lVal = "file";
+                } else {
+                    lVal = "dir";
+                    if( i == 0 ) {
+                        lVal = "root";
+                    }
+                }
+
+                QList<Data::Type*> lTypes = lGraph->getTypesByName( lVal );
+                lType = lTypes.at( 0 );
+
+                if( ok ) {
+                    qDebug() << "new Node";
+                    lNode = lGraph->addNode( lNodeName, lType );
+
+                    if( QString::compare( lVal, "root" ) == 0 ) {
+                        lNode->setFixed( true );
+                    }
+
+                    lNode->setLabelText( lNodeName );
+                    lNode->showLabel( true );
+                }
+            }
+        }
+
+        Data::Type* lType = lGraph->getTypesByName( "Edge" ).at( 0 );
+
+        for( int i = 0; i < lList.size() - 1; i++ ) {
+            QString lNodeNameFrom = lList.at( i );
+            QString lNodeNameTo = lList.at( i + 1 );
+            QString lEdgeName = lNodeNameFrom + lNodeNameTo;
+            osg::ref_ptr<Data::Edge> lEdge( NULL );
+            bool exist = true;
+
+            if( lGraph->findEdgeByName( lEdgeName ) ) {
+                exist = false;
+            }
+
+            if( exist ) {
+                if( ok ) {
+                    ok = lGraph->findNodeByName( lNodeNameFrom );
+                }
+
+                if( ok ) {
+                    ok = lGraph->findNodeByName( lNodeNameTo );
+                }
+
+                bool oriented = false;
+
+                if( ok ) {
+                    lEdge = lGraph->addEdge( lEdgeName, lGraph->findNodeByName( lNodeNameFrom ), lGraph->findNodeByName( lNodeNameTo ), lType, oriented );
+                }
+            }
+        }
+
     }
     return ok;
 }
