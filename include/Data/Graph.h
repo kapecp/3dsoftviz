@@ -646,7 +646,8 @@ public:
 	    */
 	void restoreSplittedEdges();
 
-    Data::Node * findNodeByName(QString nodeName);
+    Data::Node* findNodeByName( QString nodeName );
+    Data::Edge* findEdgeByName( QString edgeName );
 
 private:
 

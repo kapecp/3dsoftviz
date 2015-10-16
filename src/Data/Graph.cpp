@@ -1444,6 +1444,29 @@ Data::Node* Data::Graph::findNodeByName( QString nodeName ) {
             break;
         }
     }
+    if( it == lNodes->end() ) {
+        lNode = nullptr;
+    }
     return lNode;
+}
+
+Data::Edge* Data::Graph::findEdgeByName( QString edgeName ) {
+    Data::Edge* lEdge;
+    QMap<qlonglong, osg::ref_ptr<Data::Edge> >* lEdges = this->getEdges();
+    QMap<qlonglong, osg::ref_ptr<Data::Edge> >::iterator it;
+    for ( it = lEdges->begin(); it != lEdges->end(); ++it )
+    {
+        lEdge = it.value();
+
+        if( ( QString::compare( lEdge->Data::AbsEdge::getName(), edgeName ) ) == 0 )
+        {
+            break;
+        }
+    }
+
+    if( it == lEdges->end() ) {
+        lEdge = nullptr;
+    }
+    return lEdge;
 }
 
