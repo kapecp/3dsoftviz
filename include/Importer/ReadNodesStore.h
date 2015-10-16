@@ -6,7 +6,7 @@
 #include <osg/ref_ptr>
 #include <QString>
 //-----------------------------------------------------------------------------
-#include <Qmap>
+#include <QMap>
 
 namespace Importer {
 
