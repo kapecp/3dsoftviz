@@ -44,6 +44,7 @@ public:
 
     QList<Git::GitFile*> getGitFilesByType( Git::GitType gitType );
     QList<Git::GitFile*> getGitFilesByExtension( QString extension);
+    QList<Git::GitFile*> getGitFilesByTypeAndExtension( QString extension, Git::GitType type );
 
     void printVersion();
 

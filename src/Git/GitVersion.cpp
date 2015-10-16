@@ -43,3 +43,14 @@ QList<Git::GitFile*> Git::GitVersion::getGitFilesByExtension( QString extension 
 
     return result;
 }
+
+QList<Git::GitFile*> Git::GitVersion::getGitFilesByTypeAndExtension( QString extension, Git::GitType type ) {
+    QList<Git::GitFile*> result = QList<Git::GitFile*>();
+    foreach( Git::GitFile* gitFile, getChangedFiles() ) {
+        if( gitFile->getFilename().indexOf( extension, 0 ) >= 0  && gitFile->getType() == type ) {
+            result.append( gitFile );
+        }
+    }
+
+    return result;
+}
