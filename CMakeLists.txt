@@ -124,8 +124,8 @@ if(COMMAND cotire )
 	set( COTIRE_DEBUG FALSE )
 
 	### Fix virtual memory range
-	if( MSVC )
-		set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Zm216" CACHE STRING "" FORCE )
+	if( MSVC )		
+		set (COTIRE_PCH_MEMORY_SCALING_FACTOR "240")
 	endif()
 
 	# fix for Diluculum and LuaJIT on 64bit OSX: Lua new_state returned NULL, LuaJIT needs following flags
