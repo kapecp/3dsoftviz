@@ -16,6 +16,7 @@
 namespace Vwr {
 class GraphNavigation;
 class MouseControl;
+class GraphNavigation;
 }
 
 namespace Kinect {

@@ -7,6 +7,7 @@
 #include <QFileInfo>
 
 #include "OpenCV/CapVideo.h"
+#include "cv.h"
 
 namespace ArucoModul {
 

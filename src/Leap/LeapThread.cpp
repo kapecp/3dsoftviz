@@ -1,3 +1,4 @@
+#include <QDebug>
 #include "Leap/LeapThread.h"
 
 #include <QDebug>
