@@ -532,7 +532,7 @@ public slots:
 	void setCameraEnable( bool enable );
 
     bool nextVersion();
-    bool previousVersino();
+    bool previousVersion();
     void runEvolution();
     void move();
     void fasterEvolution();
