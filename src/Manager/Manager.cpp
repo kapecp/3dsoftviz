@@ -26,6 +26,7 @@
 #include "Git/GitFile.h"
 #include "Git/GitEvolutionGraph.h"
 #include "Git/GitGraphImporter.h"
+#include "Git/GitGraphUpdater.h"
 
 #include "Layout/LayoutThread.h"
 #include "QOSG/MessageWindows.h"
@@ -504,52 +505,66 @@ void Manager::GraphManager::setProgressBarValue( int value ) {
     AppCore::Core::getInstance()->messageWindows->setProgressBarValue( value );
 }
 
-bool Manager::GraphManager::nextVersion( Layout::LayoutThread* layout, int currentVersion ) {
+void Manager::GraphManager::showProgressBar() {
+    AppCore::Core::getInstance()->messageWindows->showProgressBar();
+}
+
+void Manager::GraphManager::closeProgressBar() {
+    AppCore::Core::getInstance()->messageWindows->closeProgressBar();
+}
+
+bool Manager::GraphManager::nextVersion( Layout::LayoutThread* layout ) {
     bool ok = true;
 
-    Git::GitEvolutionGraph* lEvolutionGraph =  this->getInstance()->getActiveEvolutionGraph();
+    Git::GitEvolutionGraph* lEvolutionGraph = Manager::GraphManager::getInstance()->getActiveEvolutionGraph();
+    Data::Graph* lActiveGraph = Manager::GraphManager::getInstance()->getActiveGraph();
 
-    Data::Node* lAuthorNode = this->getInstance()->getActiveGraph()->findNodeByName( lEvolutionGraph->getVersion( currentVersion + 1 )->getAuthor() );
-    if( lAuthorNode ) {
-        qDebug() << currentVersion << " je autor: " << lAuthorNode->Data::AbsNode::getName();
-    }
+    int currentVersion =  lActiveGraph->getCurrentVersion();
 
-    qDebug() << "Pocet pridanych uzlov" << lEvolutionGraph->getVersion( currentVersion + 1 )->getGitFilesByTypeAndExtension( ".lua", Git::GitType::ADDED ).size();
-    qDebug() << "Pocet modifikovanych uzlov" << lEvolutionGraph->getVersion( currentVersion + 1 )->getGitFilesByTypeAndExtension( ".lua", Git::GitType::MODIFIED ).size();
-    qDebug() << "Pocet vymazanych uzlov" << lEvolutionGraph->getVersion( currentVersion + 1 )->getGitFilesByTypeAndExtension( ".lua", Git::GitType::REMOVED ).size();
+    Git::GitGraphUpdater* lUpdater = new Git::GitGraphUpdater( currentVersion, lEvolutionGraph, lActiveGraph );
 
-    qDebug() << "pred" << this->getInstance()->getActiveGraph()->getNodes()->size();
-    Importer::GitGraphImporter::updateGraph( lEvolutionGraph->getVersion( currentVersion + 1 )->getGitFilesByTypeAndExtension( ".lua", Git::GitType::ADDED ) );
-    if( !lAuthorNode ) {
-        lAuthorNode = this->getInstance()->getActiveGraph()->addNode( lEvolutionGraph->getVersion( currentVersion + 1 )->getAuthor(), this->getInstance()->getActiveGraph()->getTypesByName( "author").at( 0 ) );
-        lAuthorNode->setLabelText( lEvolutionGraph->getVersion( currentVersion + 1 )->getAuthor() );
-        lAuthorNode->showLabel( true );
-    }
-
-    foreach( Git::GitFile* file, lEvolutionGraph->getVersion( currentVersion + 1 )->getGitFilesByTypeAndExtension( ".lua", Git::GitType::ADDED ) ) {
-        Data::Node* lNode = this->getInstance()->getActiveGraph()->findNodeByName( file->getFilepath() );
-        if( lNode ) {
-            this->getInstance()->getActiveGraph()->addEdge( lAuthorNode->Data::AbsNode::getName() + file->getFilepath(), this->getInstance()->getActiveGraph()->findNodeByName( lAuthorNode->Data::AbsNode::getName() ), this->getInstance()->getActiveGraph()->findNodeByName( file->getFilepath() ), this->getInstance()->getActiveGraph()->getTypesByName( "authorEdge" ).at( 0 ), true );
-        }
-    }
-
-    qDebug() << "po" << this->getInstance()->getActiveGraph()->getNodes()->size();
+    layout->pause();
+    lActiveGraph = lUpdater->nextVersion();
+    lActiveGraph->setCurrentVersion( currentVersion + 1 );
     layout->play();
+
+
     return ok;
 }
 
-bool Manager::GraphManager::previousVersion( Layout::LayoutThread* layout, int currentVersion ) {
+bool Manager::GraphManager::previousVersion( Layout::LayoutThread* layout ) {
     bool ok = true;
 
-    Git::GitEvolutionGraph* lEvolutionGraph =  this->getInstance()->getActiveEvolutionGraph();
+    Git::GitEvolutionGraph* lEvolutionGraph = Manager::GraphManager::getInstance()->getActiveEvolutionGraph();
+    Data::Graph* lActiveGraph = Manager::GraphManager::getInstance()->getActiveGraph();
 
-    Data::Node* lAuthorNode = this->getInstance()->getActiveGraph()->findNodeByName( lEvolutionGraph->getVersion( currentVersion - 1 )->getAuthor() );
-    if( lAuthorNode ) {
-       qDebug() << currentVersion << " je autor: " << lAuthorNode->Data::AbsNode::getName();
-    }
-    qDebug() << "Pocet pridanych uzlov" << lEvolutionGraph->getVersion( currentVersion - 1 )->getGitFilesByTypeAndExtension( ".lua", Git::GitType::ADDED ).size();
-    qDebug() << "Pocet modifikovanych uzlov" << lEvolutionGraph->getVersion( currentVersion - 1 )->getGitFilesByTypeAndExtension( ".lua", Git::GitType::MODIFIED ).size();
-    qDebug() << "Pocet vymazanych uzlov" << lEvolutionGraph->getVersion( currentVersion - 1 )->getGitFilesByTypeAndExtension( ".lua", Git::GitType::REMOVED ).size();
+    int currentVersion =  lActiveGraph->getCurrentVersion();
+
+    Git::GitGraphUpdater* lUpdater = new Git::GitGraphUpdater( currentVersion, lEvolutionGraph, lActiveGraph );
+
+    layout->pause();
+    lActiveGraph = lUpdater->previousVersion();
+    lActiveGraph->setCurrentVersion( currentVersion - 1 );
+    layout->play();
+
+    return ok;
+}
+
+bool Manager::GraphManager::changeToVersion( Layout::LayoutThread* layout, int toVersion ) {
+    bool ok = true;
+
+    Git::GitEvolutionGraph* lEvolutionGraph = Manager::GraphManager::getInstance()->getActiveEvolutionGraph();
+    Data::Graph* lActiveGraph = Manager::GraphManager::getInstance()->getActiveGraph();
+
+    int currentVersion =  lActiveGraph->getCurrentVersion();
+
+    Git::GitGraphUpdater* lUpdater = new Git::GitGraphUpdater( currentVersion, lEvolutionGraph, lActiveGraph );
+
+    layout->pause();
+    lActiveGraph = lUpdater->changeToVersion( toVersion );
+    lActiveGraph->setCurrentVersion( toVersion );
+    layout->play();
+
 
     return ok;
 }

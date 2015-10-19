@@ -97,7 +97,7 @@ bool Importer::GitGraphImporter::import( ImporterContext &context ) {
     settings->insert( "textureFile", Util::ApplicationConfig::get()->getValue( "Viewer.Textures.Node" ) );
     this->context->getGraph().addType( "newE", settings );
 
-    QList<Git::GitFile*> lAddedGitFiles = Manager::GraphManager::getInstance()->getActiveEvolutionGraph()->getVersion( 0 )->getGitFilesByTypeAndExtension( ".lua", Git::GitType::ADDED );
+    QList<Git::GitFile*> lAddedGitFiles = Manager::GraphManager::getInstance()->getActiveEvolutionGraph()->getVersion( 0 )->getGitFilesByType( Git::GitType::ADDED );
     QString lAuthor = Manager::GraphManager::getInstance()->getActiveEvolutionGraph()->getVersion( 0 )->getAuthor();
 
     ok = makeGraph( lAddedGitFiles );
@@ -177,6 +177,7 @@ bool Importer::GitGraphImporter::addNode( QStringList &list ) {
 
             if( ok ) {
                 lNode = this->context->getGraph().addNode( lNodeName, lType );
+//                qDebug() << "velkost nodes" << this->context->getGraph().getNodes()->size();
 
                 if( QString::compare( lVal, "root" ) == 0 ) {
                     lNode->setFixed( true );
@@ -203,6 +204,8 @@ bool Importer::GitGraphImporter::addEdge( QStringList &list ) {
         osg::ref_ptr<Data::Edge> lEdge( NULL );
         bool exist = true;
 
+        this->context->getGraph().addEdgeOccurence( lEdgeName );
+
         if( this->readEdges->contains( lEdgeName ) ) {
             exist = false;
         }
@@ -222,7 +225,7 @@ bool Importer::GitGraphImporter::addEdge( QStringList &list ) {
 
             if( ok ) {
                 lEdge = this->context->getGraph().addEdge( lEdgeName, this->readNodes->get( lNodeNameFrom ), this->readNodes->get( lNodeNameTo ), lType, oriented );
-
+//                qDebug() << "velkost edges" << this->context->getGraph().getEdges()->size();
                 this->readEdges->addEdge( lEdgeName, lEdge );
             }
         }

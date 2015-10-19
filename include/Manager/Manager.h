@@ -151,11 +151,15 @@ public:
 	 */
 	static Manager::GraphManager* getInstance();
 
+    void showProgressBar();
     void setProgressBarValue( int value );
+    void closeProgressBar();
 
-    bool nextVersion( Layout::LayoutThread* layout, int currentVersion );
+    bool nextVersion( Layout::LayoutThread* layout );
 
-    bool previousVersion( Layout::LayoutThread* layout, int currentVersion );
+    bool previousVersion( Layout::LayoutThread* layout );
+
+    bool changeToVersion( Layout::LayoutThread* layout, int toVersion );
 
 private:
 	/**
