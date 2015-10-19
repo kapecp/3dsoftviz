@@ -71,7 +71,10 @@ QList<Git::GitVersion*> Git::GitFileLoader::getDataAboutGit() {
                     read = false;
                 }
             }
-            versions.append( version );
+            if( version->getGitFilesByExtension( ".lua" ).size() ) {
+                version->setChangedFiles( version->getGitFilesByExtension( ".lua" ) );
+                versions.append( version );
+            }
         }
     }
 
