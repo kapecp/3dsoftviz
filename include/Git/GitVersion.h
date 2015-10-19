@@ -1,13 +1,14 @@
 #ifndef GITVERSION_H
 #define GITVERSION_H
 
+#include "Git/GitType.h"
+
 #include <QString>
 #include <QList>
 
 namespace Git {
 
 class GitFile;
-enum GitType;
 
 class GitVersion {
 public:
