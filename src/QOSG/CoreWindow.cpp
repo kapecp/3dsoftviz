@@ -649,7 +649,7 @@ void CoreWindow::createActions()
     b_previous_version->setFocusPolicy( Qt::NoFocus );
     b_previous_version->setMaximumWidth( 30 );
     b_previous_version->setDisabled( true );
-    connect( b_previous_version, SIGNAL( clicked() ), this, SLOT( previousVersino() ) );
+    connect( b_previous_version, SIGNAL( clicked() ), this, SLOT( previousVersion() ) );
 
     b_next_version = new QPushButton();
     b_next_version->setText( ">>" );
@@ -692,9 +692,9 @@ void CoreWindow::createActions()
     connect( b_info_version, SIGNAL( clicked() ), this, SLOT( showInfo() ) );
 
     evolutionSlider = new QSlider( Qt::Horizontal, this );
-    evolutionSlider->setRange( 1, 400 );
+    evolutionSlider->setRange( 0, 400 );
     evolutionSlider->setTickPosition( QSlider::NoTicks );
-    evolutionSlider->setValue( 1 );
+    evolutionSlider->setValue( 0 );
     evolutionSlider->setFocusPolicy( Qt::NoFocus );
     evolutionSlider->setDisabled( false );
     connect( evolutionSlider, SIGNAL( valueChanged(int) ), this, SLOT( sliderVersionValueChanged( int ) ) );
@@ -1546,12 +1546,12 @@ void CoreWindow::loadFromGit() {
     if( lPath != "" ) {
 
         if( Manager::GraphManager::getInstance()->loadGraphFromGit( lPath ) ) {
-            evolutionSlider->setRange( 0, Manager::GraphManager::getInstance()->getActiveEvolutionGraph()->getVersions().size());
-            evolutionSlider->setValue( 0 );
+            evolutionSlider->setRange( 0, Manager::GraphManager::getInstance()->getActiveEvolutionGraph()->getVersions().size() - 1 );
             QString pos = QString::number( evolutionSlider->value() + 1 );  // kedze list zacina od 0 treba pripocitat +1
             labelEvolutionSlider->setText("  " + pos + " . verzia");
             b_run_evolution->setDisabled( false );
             b_next_version->setDisabled( false );
+//            Manager::GraphManager::getInstance()->getActiveGraph()->setCurrentVersion( 0 );
 
         }
         viewerWidget->getCameraManipulator()->home();
@@ -3649,9 +3649,13 @@ void CoreWindow::onChange()
 	if ( selected->size() > 0 ) {
 		// Get last node model & display it in qt view
 		qlonglong lastNodeId = selected->last()->getId();
-		Lua::LuaNode* lastLuaNode = Lua::LuaGraph::getInstance()->getNodes()->value( lastNodeId );
-		Lua::LuaGraphTreeModel* lastLuaModel = new Lua::LuaGraphTreeModel( lastLuaNode );
-		luaGraphTreeView->setModel( lastLuaModel );
+        Lua::LuaNode* lastLuaNode = Lua::LuaGraph::getInstance()->getNodes()->value( lastNodeId );
+        // garaj start - ak nenaslo lastLuaNode, tak sposobovalo pad softveru
+        if( lastLuaNode ) {
+            Lua::LuaGraphTreeModel* lastLuaModel = new Lua::LuaGraphTreeModel( lastLuaNode );
+            luaGraphTreeView->setModel( lastLuaModel );
+        }
+        // garaj end
 	}
 
 
@@ -3671,7 +3675,7 @@ bool CoreWindow::nextVersion() {
 
     bool ok = true;
     int value = evolutionSlider->value();
-    ok = Manager::GraphManager::getInstance()->nextVersion( layout, value );
+    ok = Manager::GraphManager::getInstance()->nextVersion( layout );
     value++;
     QString pos =  QString::number( value + 1 );  // kedze list zacina od 0 treba pripocitat +1
     labelEvolutionSlider->setText( "  " + pos + " . verzia" );
@@ -3683,11 +3687,10 @@ bool CoreWindow::nextVersion() {
         b_next_version->setDisabled( true );
     }
 
-    qDebug() << "Next";
     return ok;
 }
 
-bool CoreWindow::previousVersino() {
+bool CoreWindow::previousVersion() {
 
     if( !isRunning ) {
         b_next_version->setDisabled( false );
@@ -3695,7 +3698,7 @@ bool CoreWindow::previousVersino() {
 
     bool ok = true;
     int value = evolutionSlider->value();
-    ok =  Manager::GraphManager::getInstance()->previousVersion( layout, value );
+    ok =  Manager::GraphManager::getInstance()->previousVersion( layout );
     value--;
     QString pos =  QString::number( value + 1 );  // kedze list zacina od 0 treba pripocitat +1
     labelEvolutionSlider->setText( "  " + pos + " . verzia" );
@@ -3707,8 +3710,7 @@ bool CoreWindow::previousVersino() {
         b_previous_version->setDisabled( true );
     }
 
-    qDebug() << "Previous";
-    return false;
+    return ok;
 }
 void CoreWindow::runEvolution() {
     if( isRunning ) {
@@ -3728,7 +3730,6 @@ void CoreWindow::runEvolution() {
         evolutionTimer->start( 500 );
     }
 
-    qDebug() << "Run";
 }
 
 void CoreWindow::move() {
@@ -3738,28 +3739,24 @@ void CoreWindow::move() {
     if( cursor == ( size ) ) {
         this->runEvolution();
     } else {
-        evolutionSlider->blockSignals( true );
-        evolutionSlider->setValue( cursor + 1 );
-        evolutionSlider->blockSignals( false );
-        this->sliderVersionValueChanged( cursor + 1 );
+        nextVersion();
     }
 
     if( isPlaying ) {
         layout->play();
     }
-    qDebug() << "Move";
 }
 
 void CoreWindow::fasterEvolution() {
     int interval =  evolutionTimer->interval();
-    evolutionTimer->setInterval( interval - 100 );
-    qDebug() << "Faster";
+    if( interval - 100 > 0) {
+        evolutionTimer->setInterval( interval - 100 );
+    }
 }
 
 void CoreWindow::slowerEvolution() {
     int interval =  evolutionTimer->interval();
     evolutionTimer->setInterval( interval + 100 );
-    qDebug() << "Slower";
 }
 
 void CoreWindow::showInfo() {
@@ -3769,8 +3766,10 @@ void CoreWindow::showInfo() {
 void CoreWindow::sliderVersionValueChanged( int value ) {
     QString pos = QString::number( value + 1 );
     labelEvolutionSlider->setText( "  " + pos + " . verzia" );
-
-//    Manager::GraphManager::getInstance()->changeToVersion( value, layout );
+    evolutionSlider->blockSignals( true );
+    Manager::GraphManager::getInstance()->changeToVersion( layout, value );
+    evolutionSlider->setValue( value );
+    evolutionSlider->blockSignals( false );
 
     if( !isRunning ) {
         b_next_version->setDisabled( false );
@@ -3784,8 +3783,6 @@ void CoreWindow::sliderVersionValueChanged( int value ) {
     if( value == evolutionSlider->minimum() ) {
         b_previous_version->setDisabled( true );
     }
-
-    qDebug() << "Slider version value changed" << value;
 }
 
 } // namespace QOSG
