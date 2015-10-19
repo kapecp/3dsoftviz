@@ -38,6 +38,10 @@ public:
         return this->changedFiles;
     }
 
+    void setChangedFiles( QList<Git::GitFile*> gitFiles ) {
+        this->changedFiles = gitFiles;
+    }
+
     void addChangedFile( Git::GitFile* file ) {
         this->changedFiles.append( file );
     }

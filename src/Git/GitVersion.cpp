@@ -36,7 +36,7 @@ QList<Git::GitFile*> Git::GitVersion::getGitFilesByType( Git::GitType gitType ) 
 QList<Git::GitFile*> Git::GitVersion::getGitFilesByExtension( QString extension ) {
     QList<Git::GitFile*> result = QList<Git::GitFile*>();
     foreach( Git::GitFile* gitFile, getChangedFiles() ) {
-        if( gitFile->getFilename().indexOf( extension, 0 ) >= 0 ) {
+        if( gitFile->getFilename().indexOf( extension, gitFile->getFilename().length() - extension.length() ) > -1 ) {
             result.append( gitFile );
         }
     }
@@ -47,7 +47,7 @@ QList<Git::GitFile*> Git::GitVersion::getGitFilesByExtension( QString extension 
 QList<Git::GitFile*> Git::GitVersion::getGitFilesByTypeAndExtension( QString extension, Git::GitType type ) {
     QList<Git::GitFile*> result = QList<Git::GitFile*>();
     foreach( Git::GitFile* gitFile, getChangedFiles() ) {
-        if( gitFile->getFilename().indexOf( extension, 0 ) >= 0  && gitFile->getType() == type ) {
+        if( gitFile->getFilename().indexOf( extension, gitFile->getFilename().length() - extension.length() ) > -1  && gitFile->getType() == type ) {
             result.append( gitFile );
         }
     }
