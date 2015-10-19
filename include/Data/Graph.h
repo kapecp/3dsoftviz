@@ -17,6 +17,7 @@
 
 #include <QString>
 #include <QSqlDatabase>
+#include <QMap>
 
 #define METASTRENGTH 1.0f
 
@@ -649,6 +650,25 @@ public:
     Data::Node* findNodeByName( QString nodeName );
     Data::Edge* findEdgeByName( QString edgeName );
 
+    QMap<QString, int> getEdgeOccurence() {
+        return this->edgeOccurence;
+    }
+
+    void setEdgeOccurence( QMap<QString, int> edgeOccurence ) {
+        this->edgeOccurence = edgeOccurence;
+    }
+
+    bool addEdgeOccurence( QString key );
+    bool removeEdgeOccurence( QString key );
+
+    int getCurrentVersion() {
+        return this->currentVersion;
+    }
+
+    void setCurrentVersion( int currentVersion ) {
+        this->currentVersion =  currentVersion;
+    }
+
 private:
 
 	/**
@@ -833,6 +853,9 @@ private:
 	    *  \brief index of visual representation of edge
 	    */
 	int edgeVisual;
+
+    QMap<QString, int> edgeOccurence;
+    int currentVersion;
 
 	/**
 	    *  QMap<qlonglong,osg::ref_ptr<Data::Edge> > edgesByType

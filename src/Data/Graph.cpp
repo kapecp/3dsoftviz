@@ -69,6 +69,9 @@ Data::Graph::Graph( qlonglong graph_id, QString name, QSqlDatabase* conn, QMap<q
 
 	this->nodeVisual = Data::Node::INDEX_SQUARE;
 	this->edgeVisual = Data::Edge::INDEX_QUAD;
+
+    this->edgeOccurence = QMap<QString, int>();
+    this->currentVersion = 0;
 }
 
 Data::Graph::Graph( qlonglong graph_id, QString name, qlonglong layout_id_counter, qlonglong ele_id_counter, QSqlDatabase* conn )
@@ -92,6 +95,9 @@ Data::Graph::Graph( qlonglong graph_id, QString name, qlonglong layout_id_counte
 
 	this->nodeVisual = Data::Node::INDEX_SQUARE;
 	this->edgeVisual = Data::Edge::INDEX_QUAD;
+
+    this->edgeOccurence = QMap<QString, int>();
+    this->currentVersion = 0;
 }
 
 Data::Graph::~Graph( void )
@@ -1351,7 +1357,7 @@ void Data::Graph::removeEdge( osg::ref_ptr<Data::Edge> edge )
 
 			edge->unlinkNodes();
 		}
-	}
+    }
 }
 
 void Data::Graph::removeNode( osg::ref_ptr<Data::Node> node )
@@ -1384,6 +1390,7 @@ void Data::Graph::removeNode( osg::ref_ptr<Data::Node> node )
 			}
 
 			node->setInvisible( true );
+            node->showLabel( false );
 			//-spravit odstranovanie poriadne
 		}
 	}
@@ -1468,5 +1475,34 @@ Data::Edge* Data::Graph::findEdgeByName( QString edgeName ) {
         lEdge = nullptr;
     }
     return lEdge;
+}
+
+bool Data::Graph::addEdgeOccurence( QString key ) {
+    bool exist = true;
+    int count = 0;
+    if( this->edgeOccurence.contains( key ) ) {
+        count = this->edgeOccurence.value( key );
+    }
+
+    count++;
+    this->edgeOccurence.insert( key, count );
+
+    return exist;
+}
+
+bool Data::Graph::removeEdgeOccurence( QString key ) {
+    if( this->edgeOccurence.contains( key ) ) {
+        int count  = this->edgeOccurence.value( key );
+        count--;
+        this->edgeOccurence.insert( key, count );
+        if( count != 0 ) {
+            return true;
+        } else {
+            return false;
+        }
+
+    }
+    qDebug() << "CHYBA V RAMCI Data::Graph::removeEdgeOccurence pre key" << key ;
+    return false;
 }
 
