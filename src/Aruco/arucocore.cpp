@@ -176,7 +176,7 @@ void ArucoCore::drawCube( cv::Mat& Image, vector<aruco::Marker>& m,const aruco::
 
 		objectPoints.at<float>( 1,0 )=0;
 		objectPoints.at<float>( 1,1 )=0;
-		objectPoints.at<float>( 1,2 )=0.05;
+		objectPoints.at<float>( 1,2 )=0.05f;
 
 		vector<cv::Point2f> imagePoint;
 		cv::projectPoints( objectPoints, m[i].Rvec, m[i].Tvec, CP.CameraMatrix, CP.Distorsion, imagePoint );

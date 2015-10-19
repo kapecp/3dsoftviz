@@ -16,7 +16,7 @@ void Leap::LeapListener::onConnect( const Controller& controller )
 	controller.enableGesture( Gesture::TYPE_SWIPE );
 
 	controller.config().setFloat( "Gesture.Swipe.MinLength",60.0f );
-	controller.config().setFloat( "Gesture.Circle.MinArc", 6.28 );
+	controller.config().setFloat( "Gesture.Circle.MinArc", 6.28f );
 	controller.config().save();
 }
 
