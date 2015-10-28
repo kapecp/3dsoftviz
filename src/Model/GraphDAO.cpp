@@ -236,7 +236,7 @@ Data::Graph* Model::GraphDAO::getGraph( QSqlDatabase* conn, bool* error2, qlongl
 	}
 	else {
 		qDebug() << "[Model::GraphDAO::getGraph] Error while loading data from database";
-		newGraph=null;
+		newGraph = NULL;
 	}
 
 	*error2 = error;

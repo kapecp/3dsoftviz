@@ -2276,7 +2276,7 @@ void CoreWindow::startEdgeBundling()
 			while ( iNode != currentGraph->getNodes()->end() ) {
 				( *iNode )->setFixed( true );
 				( *iNode )->setDefaultColor();
-				iNode++;
+				++iNode;
 			}
 
 			//select all meta nodes and fix them
@@ -2284,7 +2284,7 @@ void CoreWindow::startEdgeBundling()
 			while ( iNode != currentGraph->getMetaNodes()->end() ) {
 				( *iNode )->setFixed( true );
 				( *iNode )->setDefaultColor();
-				iNode++;
+				++iNode;
 			}
 
 			//split edges
