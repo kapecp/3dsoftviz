@@ -340,30 +340,12 @@ Data::Graph* Manager::GraphManager::loadGraphFromGit( QString filepath ) {
         lGit = true;
     }
 
-    qDebug() << "Zaciatok vytvorenia verzii";
-
-    Git::GitFileLoader lGitFileLoader = Git::GitFileLoader::GitFileLoader( filepath, "lua" ) ;
+    Git::GitFileLoader lGitFileLoader = Git::GitFileLoader::GitFileLoader( filepath, Util::ApplicationConfig::get()->getValue( "Git.ExtensionFilter") ) ;
     QList<Git::GitVersion *> lVersions = lGitFileLoader.getDataAboutGit();
-
-    qDebug() << "Koniec vytvorenia verzii";
-/*
-    for( int i = 10; i < lVersions.size(); i++ ) {
-        qDebug() << i;
-        foreach( Git::GitFile* gitFile, lVersions.at( i )->getChangedFiles() ) {
-            if( i > 0 ) {
-                gitFile = lGitFileLoader.getDiffInfo( gitFile, lVersions.at( i )->getCommitId(), lVersions.at( i-1 )->getCommitId() );
-            } else {
-                gitFile = lGitFileLoader.getDiffInfo( gitFile, lVersions.at( i )->getCommitId(), NULL );
-            }
-        }
-    }
-*/
 
     Git::GitEvolutionGraph* evolutionGraph = new Git::GitEvolutionGraph( filepath );
     evolutionGraph->setVersions( lVersions );
     this->activeEvolutionGraph = evolutionGraph;
-
-    qDebug() << "Vytvoril som evolutionGraph";
 
     std::auto_ptr<Importer::StreamImporter> lImporter( NULL );
     if( ok ) {
@@ -431,10 +413,6 @@ Data::Graph* Manager::GraphManager::loadGraphFromGit( QString filepath ) {
     }
 
     AppCore::Core::getInstance()->messageWindows->closeProgressBar();
-
-    if( ok ) {
-        qDebug() << "Vratil som active graph";
-    }
 
     return ( ok ? this->activeGraph : NULL );
 }

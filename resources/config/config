@@ -69,3 +69,5 @@ Node.Color.Normal=255,255,255,255
 Node.Color.Selected=50,20,120,255
 Label.Color=51,102,153,255
 Label.Outline.Color=200,230,255,255
+
+Git.ExtensionFilter= lua,swap
