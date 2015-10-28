@@ -116,7 +116,7 @@ if(COMMAND cotire )
 
                 if( NOT N EQUAL 0 )
                         # set number of parallel unity builds to processor count
-                        #set( COTIRE_MAXIMUM_NUMBER_OF_UNITY_INCLUDES "-j${N}" )
+                        set( COTIRE_MAXIMUM_NUMBER_OF_UNITY_INCLUDES "-j${N}" )
                 endif()
         endif()
 
