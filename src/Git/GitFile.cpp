@@ -4,6 +4,11 @@
 #include <QDebug>
 
 Git::GitFile::GitFile() {
+
+    // inicializacia premennych na defaultne hodnoty
+    this->filename = "";
+    this->filepath = "";
+    this->type = Git::GitType::NONE;
     this->gitFileDiffBlocks = QList<Git::GitFileDiffBlock*>();
 }
 
@@ -12,6 +17,8 @@ Git::GitFile::GitFile(QString filename, QString filepath, GitType type) : filena
 }
 
 QString Git::GitFile::getTypeAsString() {
+
+    // zoberie typ suboru a vrati ho ako QString
     switch (this->getType()) {
     case Git::GitType::ADDED:
         return "Added";
@@ -25,9 +32,13 @@ QString Git::GitFile::getTypeAsString() {
 }
 
 void Git::GitFile::printContent() {
+
+    // vypise informacie o subore
     qDebug() << "filename: " << getFilename();
     qDebug() << "filepath: " << getFilepath();
     qDebug() << "type: " << getTypeAsString();
+
+    // pre kazdy diff blok vypis informacie o danom bloku
     foreach (GitFileDiffBlock* block, getGitFileDiffBlocks()) {
         block->printInfo();
     }

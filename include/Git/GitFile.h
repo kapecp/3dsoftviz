@@ -51,6 +51,10 @@ public:
         return type;
     }
 
+    /**
+     * \fn getTypeAsString
+     * \brief Returns type of Git file as QString
+     */
     QString getTypeAsString();
 
     /**
@@ -61,6 +65,11 @@ public:
         return gitFileDiffBlocks;
     }
 
+    /**
+        * \fn addGitFileDiffBlock
+        * \brief Append diff block to the list
+        * \param block - Block to be added
+     */
     void addGitFileDiffBlock( Git::GitFileDiffBlock* block ) {
         this->gitFileDiffBlocks.append( block );
     }
@@ -74,6 +83,10 @@ public:
         this->gitFileDiffBlocks = gitFileDiffBlocks;
     }
 
+    /**
+     * \fn printContent
+     * \brief Prints out all info about file.
+     */
     void printContent();
 
 private:
@@ -100,6 +113,6 @@ private:
         * \brief List of diff blocks from the Git file
         */
     QList<Git::GitFileDiffBlock*> gitFileDiffBlocks;
-};
-}
+}; // class
+} // namespace
 #endif // GITFILE_H

@@ -1502,7 +1502,7 @@ bool Data::Graph::removeEdgeOccurence( QString key ) {
         }
 
     }
-    qDebug() << "CHYBA V RAMCI Data::Graph::removeEdgeOccurence pre key" << key ;
+    qDebug() << this->getCurrentVersion() << "CHYBA V RAMCI Data::Graph::removeEdgeOccurence pre key" << key ;
     return false;
 }
 

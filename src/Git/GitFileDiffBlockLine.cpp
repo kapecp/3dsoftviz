@@ -1,8 +1,11 @@
 #include "Git/GitFileDiffBlockLine.h"
 
 Git::GitFileDiffBlockLine::GitFileDiffBlockLine() {
+
+    // inicializacia premennych na defaultne hodnoty
     this->line = "";
     this->lineNumber = 0;
+    this->lineType = Git::GitType::MODIFIED;
 }
 
 Git::GitFileDiffBlockLine::GitFileDiffBlockLine( QString line, int lineNumber, Git::GitType lineType )
@@ -11,6 +14,8 @@ Git::GitFileDiffBlockLine::GitFileDiffBlockLine( QString line, int lineNumber, G
 }
 
 QString Git::GitFileDiffBlockLine::getLineTypeAsString() {
+
+    // zoberie typ riadku v diff bloku a vrati ho ako QString
     switch ( this->lineType ) {
     case Git::GitType::ADDED:
         return "Added";

@@ -8,6 +8,6 @@ enum GitType {
     REMOVED,
     MODIFIED,
     NONE
-};
-}
-#endif // GITFILE_H
+}; // enum
+} // namespace
+#endif // GITTYPE_H

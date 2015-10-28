@@ -342,7 +342,7 @@ Data::Graph* Manager::GraphManager::loadGraphFromGit( QString filepath ) {
 
     qDebug() << "Zaciatok vytvorenia verzii";
 
-    Git::GitFileLoader lGitFileLoader = Git::GitFileLoader::GitFileLoader( filepath ) ;
+    Git::GitFileLoader lGitFileLoader = Git::GitFileLoader::GitFileLoader( filepath, "lua" ) ;
     QList<Git::GitVersion *> lVersions = lGitFileLoader.getDataAboutGit();
 
     qDebug() << "Koniec vytvorenia verzii";
@@ -524,7 +524,7 @@ bool Manager::GraphManager::nextVersion( Layout::LayoutThread* layout ) {
     Git::GitGraphUpdater* lUpdater = new Git::GitGraphUpdater( currentVersion, lEvolutionGraph, lActiveGraph );
 
     layout->pause();
-    lActiveGraph = lUpdater->nextVersion();
+    lUpdater->nextVersion();
     lActiveGraph->setCurrentVersion( currentVersion + 1 );
     layout->play();
 
@@ -543,7 +543,7 @@ bool Manager::GraphManager::previousVersion( Layout::LayoutThread* layout ) {
     Git::GitGraphUpdater* lUpdater = new Git::GitGraphUpdater( currentVersion, lEvolutionGraph, lActiveGraph );
 
     layout->pause();
-    lActiveGraph = lUpdater->previousVersion();
+    lUpdater->previousVersion();
     lActiveGraph->setCurrentVersion( currentVersion - 1 );
     layout->play();
 
@@ -561,7 +561,7 @@ bool Manager::GraphManager::changeToVersion( Layout::LayoutThread* layout, int t
     Git::GitGraphUpdater* lUpdater = new Git::GitGraphUpdater( currentVersion, lEvolutionGraph, lActiveGraph );
 
     layout->pause();
-    lActiveGraph = lUpdater->changeToVersion( toVersion );
+    lUpdater->changeToVersion( toVersion );
     lActiveGraph->setCurrentVersion( toVersion );
     layout->play();
 
