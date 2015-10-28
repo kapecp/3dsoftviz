@@ -712,7 +712,7 @@ void Data::Graph::addMultiEdge( QString name, osg::ref_ptr<Data::Node> srcNode, 
 	while ( iEdge != newEdgeList.end() ) {
 		( *iEdge )->linkNodes( edges );
 		edgesByType.insert( type->getId(),( *iEdge ) );
-		iEdge++;
+		++iEdge;
 	}
 
 	if ( replacedSingleEdge!= NULL ) {
@@ -760,13 +760,13 @@ void Data::Graph::splitAllEdges( int splitCount )
 	QMap<qlonglong, osg::ref_ptr<Data::Edge> >::iterator iEdge = edges->begin();
 	while ( iEdge != edges->end() ) {
 		if ( ( *iEdge )->getIsInvisible() ) {
-			iEdge++;
+			++iEdge;
 			continue;
 		}
 		QList<osg::ref_ptr<Data::Edge> > edgePieces = splitEdge( "", ( *iEdge )->getSrcNode(), ( *iEdge )->getDstNode(), ( *iEdge )->isOriented(), nodeType, ( *iEdge )->getType(), splitCount ) ;
 		createdEdgeList.append( edgePieces );
 		( *iEdge )->setEdgePieces( edgePieces );
-		iEdge ++;
+		++iEdge;
 	}
 
 	//add new edges
@@ -774,7 +774,7 @@ void Data::Graph::splitAllEdges( int splitCount )
 	while ( iNewEdge != createdEdgeList.end() ) {
 		( *iNewEdge )->linkNodes( edges );
 		edgesByType.insert( edgeType->getId(),( *iNewEdge ) );
-		iNewEdge++;
+		++iNewEdge;
 	}
 
 	//split all visible meta edges
@@ -782,13 +782,13 @@ void Data::Graph::splitAllEdges( int splitCount )
 	iEdge = metaEdges->begin();
 	while ( iEdge != metaEdges->end() ) {
 		if ( ( *iEdge )->getIsInvisible() ) {
-			iEdge++;
+			++iEdge;
 			continue;
 		}
 		QList<osg::ref_ptr<Data::Edge> > edgePieces = splitEdge( "", ( *iEdge )->getSrcNode(), ( *iEdge )->getDstNode(), ( *iEdge )->isOriented(), nodeType, ( *iEdge )->getType(), splitCount ) ;
 		createdEdgeList.append( edgePieces );
 		( *iEdge )->setEdgePieces( edgePieces );
-		iEdge ++;
+		++iEdge;
 	}
 
 	//add new meta edges
@@ -796,7 +796,7 @@ void Data::Graph::splitAllEdges( int splitCount )
 	while ( iNewEdge != createdEdgeList.end() ) {
 		( *iNewEdge )->linkNodes( metaEdges );
 		metaEdgesByType.insert( edgeType->getId(),( *iNewEdge ) );
-		iNewEdge++;
+		++iNewEdge;
 	}
 }
 
@@ -808,7 +808,7 @@ void Data::Graph::restoreSplittedEdges( )
 	QMap<qlonglong, osg::ref_ptr<Data::Edge> >::iterator iEdge = edges->begin();
 	while ( iEdge != edges->end() ) {
 		( *iEdge )->clearEdgePieces();
-		iEdge++;
+		++iEdge;
 	}
 
 //    iEdge = metaEdges->begin();
@@ -902,7 +902,7 @@ bool Data::Graph::isParralel( osg::ref_ptr<Data::Node> srcNode, osg::ref_ptr<Dat
 				break;
 			}
 		}
-		i++;
+		++i;
 	}
 	return isMulti;
 }

@@ -24,11 +24,17 @@ Server::Server( QObject* parent ) : QTcpServer( parent )
 {
 	instance = this;
 	cw = parent;
-	Util::ApplicationConfig* conf = Util::ApplicationConfig::get();
-	graphScale = conf->getValue( "Viewer.Display.NodeDistanceScale" ).toFloat();
+	Util::ApplicationConfig* conf = Util::ApplicationConfig::get();	
+
+	thread = NULL;
+	coreGraph = NULL;
 	executorFactory = new ExecutorFactory();
+	graphScale = conf->getValue( "Viewer.Display.NodeDistanceScale" ).toFloat();
+
 	user_to_spy = NULL;
 	user_to_center = NULL;
+
+	original_distance = 0;
 
 	blockSize = 0;
 	avatarScale = 1;

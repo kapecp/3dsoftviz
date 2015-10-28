@@ -15,6 +15,9 @@ Vwr::MouseControl::MouseControl()
 		mWindowEndX=mWindowStartX+mWindowWidth;
 		mWindowEndY=mWindowStartX+mWindowHeight;
 
+		clickX = 0;
+		clickY = 0;
+
 		//primary speed of movement
 		mSpeedMoving=1.0;
 		//from Kinect World coordinates are 640x480
@@ -155,7 +158,7 @@ osg::Vec2 Vwr::MouseControl::getMouseAvgPosition( osg::Vec2 lastPos, int max )
 
 	int avgX = 0;
 	int avgY = 0;
-	for ( QList<osg::Vec2>::const_iterator iter = mouseHistory->begin(); iter != mouseHistory->end(); iter++ ) {
+	for ( QList<osg::Vec2>::const_iterator iter = mouseHistory->begin(); iter != mouseHistory->end(); ++iter ) {
 		avgX += ( *iter )[0];
 		avgY += ( *iter )[1];
 	}

@@ -23,7 +23,7 @@ public:
 	{
 		stream=ds;
 	}
-	static const quint8 INSTRUCTION_NUMBER;
+	//static const quint8 INSTRUCTION_NUMBER;
 
 };
 

@@ -43,6 +43,12 @@ FRAlgorithm::FRAlgorithm()
 	up = osg::Vec3f();
 	vp = osg::Vec3f();
 
+	rl = NULL;
+	flexibility = 0;
+	sizeFactor = 0;
+	K = 0;
+	dist = 0;
+
 	/* moznost odpudiveho posobenia limitovaneho vzdialenostou*/
 	useMaxDistance = false;
 	this->graph = NULL;
@@ -233,7 +239,7 @@ bool FRAlgorithm::iterate()
 					else {
 						addNeighbourAttractive( j.value(), ( *iEdge )->getDstNode(), 1 );
 					}
-					iEdge++;
+					++iEdge;
 				}
 
 				//pritazliva sila medzi meta uzlom a ostatnymi metauzlami s rovnakym indexom
@@ -257,7 +263,7 @@ bool FRAlgorithm::iterate()
 							}
 						}
 					}
-					k++;
+					++k;
 				}
 
 			}

@@ -7,6 +7,7 @@ Vwr::GraphNavigation::GraphNavigation()
 {
 	selectionMode = 2;
 	isNavEnabled = true;
+	camMath = NULL;
 	tempSelectedNode = NULL;
 	tempSelectedEdge = NULL;
 	previousLastSelectedNode = NULL;
@@ -22,7 +23,7 @@ Vwr::GraphNavigation::~GraphNavigation()
 void Vwr::GraphNavigation::setColorConectedNodes( Data::Node* selectedNode )
 {
 	QMap<qlonglong, osg::ref_ptr<Data::Edge> >* nodeEdges = selectedNode->getEdges();
-	for ( QMap<qlonglong, osg::ref_ptr<Data::Edge> >::const_iterator iter = nodeEdges->begin(); iter != nodeEdges->end(); iter++ ) {
+	for ( QMap<qlonglong, osg::ref_ptr<Data::Edge> >::const_iterator iter = nodeEdges->begin(); iter != nodeEdges->end(); ++iter ) {
 		// get dest node and possition
 		Data::Node* dstNode = ( *iter )->getOtherNode( selectedNode );
 		// set temp color for node and edge
@@ -34,7 +35,7 @@ void Vwr::GraphNavigation::setColorConectedNodes( Data::Node* selectedNode )
 void Vwr::GraphNavigation::restoreColorConectedNodes( Data::Node* selectedNode )
 {
 	QMap<qlonglong, osg::ref_ptr<Data::Edge> >* nodeEdges = selectedNode->getEdges();
-	for ( QMap<qlonglong, osg::ref_ptr<Data::Edge> >::const_iterator iter = nodeEdges->begin(); iter != nodeEdges->end(); iter++ ) {
+	for ( QMap<qlonglong, osg::ref_ptr<Data::Edge> >::const_iterator iter = nodeEdges->begin(); iter != nodeEdges->end(); ++iter ) {
 		// get dest node and possition
 		Data::Node* dstNode = ( *iter )->getOtherNode( selectedNode );
 		// restore default color for node and edge
@@ -51,7 +52,7 @@ void Vwr::GraphNavigation::setColorNearestNode( Data::Node* selectedNode )
 	Data::Edge* closestEdge = NULL;
 	float minDistance = 0;
 	QMap<qlonglong, osg::ref_ptr<Data::Edge> >* nodeEdges = selectedNode->getEdges();
-	for ( QMap<qlonglong, osg::ref_ptr<Data::Edge> >::const_iterator iter = nodeEdges->begin(); iter != nodeEdges->end(); iter++ ) {
+	for ( QMap<qlonglong, osg::ref_ptr<Data::Edge> >::const_iterator iter = nodeEdges->begin(); iter != nodeEdges->end(); ++iter ) {
 		Data::Node* dstNode = ( *iter )->getOtherNode( selectedNode );
 		osg::Vec3f nodePosition = getNodeScreenCoordinates( dstNode );
 		double distance = 0;

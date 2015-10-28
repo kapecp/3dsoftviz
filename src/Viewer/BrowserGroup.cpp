@@ -42,7 +42,7 @@ void BrowserGroup::setSelectedNodes( QLinkedList<osg::ref_ptr<Data::Node> >* sel
 	Data::Node* node;
 
 	// Iterate over each selected node
-	for ( i = selected->begin(); i != selected->end(); i++ ) {
+	for ( i = selected->begin(); i != selected->end(); ++i ) {
 		node = *i;
 
 		// Ignore meta nodes
@@ -112,7 +112,7 @@ void BrowserGroup::initBrowsers()
 	Data::Node* node;
 
 	// Iterate over all selected nodes and create sepparate browsers for each node
-	for ( i = selectedNodes->begin(); i != selectedNodes->end(); i++ ) {
+	for ( i = selectedNodes->begin(); i != selectedNodes->end(); ++i ) {
 		node = *i;
 
 		Lua::LuaNode* luaNode = Lua::LuaGraph::getInstance()->getNodes()->value( node->getId() );
@@ -132,7 +132,7 @@ void BrowserGroup::initGroupedBrowser()
 	Lua::LuaNode* luaNode;
 
 	// Iterate over all selected nodes and show one browser in their center using list of all selected nodes models
-	for ( i = selectedNodes->begin(); i != selectedNodes->end(); i++ ) {
+	for ( i = selectedNodes->begin(); i != selectedNodes->end(); ++i ) {
 		node = *i;
 
 		pos = node->getCurrentPosition();
@@ -178,7 +178,7 @@ void BrowserGroup::addBrowser( const std::string& templateType, osg::Vec3 positi
 		unsigned long pos = 0;
 
 		// Iterate over each selected node and add its position to array
-		for ( i = selectedNodes->begin(); i != selectedNodes->end(); i++ ) {
+		for ( i = selectedNodes->begin(); i != selectedNodes->end(); ++i ) {
 			node = *i;
 			( *targets )[pos++].set( node->getCurrentPosition() );
 		}
@@ -342,7 +342,7 @@ void BrowserGroup::updateTransforms( QList<osg::ref_ptr<osg::AutoTransform> >* t
 	int frame;
 
 	// Interpolate each transform and scale it using interpolation function
-	for ( i = transforms->begin(); i != transforms->end(); i++ ) {
+	for ( i = transforms->begin(); i != transforms->end(); ++i ) {
 
 		transform = *i;
 

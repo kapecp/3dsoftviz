@@ -108,7 +108,7 @@ endif ()
 # --------------
 # Build settings - COTIRE module
 # --------------
-#include( cotire )
+include( cotire )
 if(COMMAND cotire )
         if( NOT COTIRE_MAXIMUM_NUMBER_OF_UNITY_INCLUDES )
                 include( ProcessorCount )

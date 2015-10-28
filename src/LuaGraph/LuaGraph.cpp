@@ -55,17 +55,17 @@ void Lua::LuaGraph::clearGraph()
 void Lua::LuaGraph::printGraph()
 {
 	std::cout << "Incidences " << incidences->count() << std::endl;
-	for ( QMap<qlonglong, LuaIncidence*>::iterator i = incidences->begin(); i != incidences->end(); i++ ) {
+	for ( QMap<qlonglong, LuaIncidence*>::iterator i = incidences->begin(); i != incidences->end(); ++i ) {
 		std::cout << i.key() << " ";
 	}
 	std::cout << std::endl;
 	std::cout << "Nodes " << nodes->count() << std::endl;
-	for ( QMap<qlonglong, LuaNode*>::iterator i = nodes->begin(); i != nodes->end(); i++ ) {
+	for ( QMap<qlonglong, LuaNode*>::iterator i = nodes->begin(); i != nodes->end(); ++i ) {
 		std::cout << i.key() << " ";
 	}
 	std::cout << std::endl;
 	std::cout << "Edges " << edges->count() << std::endl;
-	for ( QMap<qlonglong, LuaEdge*>::iterator i = edges->begin(); i != edges->end(); i++ ) {
+	for ( QMap<qlonglong, LuaEdge*>::iterator i = edges->begin(); i != edges->end(); ++i ) {
 		std::cout << i.key() << " ";
 	}
 	std::cout << std::endl;
@@ -91,7 +91,7 @@ Lua::LuaGraph* Lua::LuaGraph::loadGraph()
 
 	Diluculum::LuaValueMap edges = ( *ls )["getGraph"]()[0].asTable();
 
-	for ( Diluculum::LuaValueMap::iterator iterator = edges.begin(); iterator != edges.end(); iterator++ ) {
+	for ( Diluculum::LuaValueMap::iterator iterator = edges.begin(); iterator != edges.end(); ++iterator ) {
 
 		qlonglong id = iterator->first.asTable()["id"].asInteger();
 
@@ -110,7 +110,7 @@ Lua::LuaGraph* Lua::LuaGraph::loadGraph()
 
 
 		Diluculum::LuaValueMap incidences = iterator->second.asTable();
-		for ( Diluculum::LuaValueMap::iterator iterator2 = incidences.begin(); iterator2 != incidences.end(); iterator2++ ) {
+		for ( Diluculum::LuaValueMap::iterator iterator2 = incidences.begin(); iterator2 != incidences.end(); ++iterator2 ) {
 			qlonglong id2 = iterator2->first.asTable()["id"].asInteger();
 			edge->addIncidence( id2 );
 			Lua::LuaIncidence* incidence = new Lua::LuaIncidence();
@@ -160,15 +160,15 @@ Lua::LuaGraph* Lua::LuaGraph::loadGraph()
 
 Lua::LuaGraph::~LuaGraph()
 {
-	for ( QMap<qlonglong, Lua::LuaNode*>::iterator i = nodes->begin(); i != nodes->end(); i++ ) {
+	for ( QMap<qlonglong, Lua::LuaNode*>::iterator i = nodes->begin(); i != nodes->end(); ++i ) {
 		delete( *i );
 	}
 
-	for ( QMap<qlonglong, Lua::LuaEdge*>::iterator i = edges->begin(); i != edges->end(); i++ ) {
+	for ( QMap<qlonglong, Lua::LuaEdge*>::iterator i = edges->begin(); i != edges->end(); ++i ) {
 		delete( *i );
 	}
 
-	for ( QMap<qlonglong, Lua::LuaIncidence*>::iterator i = incidences->begin(); i != incidences->end(); i++ ) {
+	for ( QMap<qlonglong, Lua::LuaIncidence*>::iterator i = incidences->begin(); i != incidences->end(); ++i ) {
 		delete( *i );
 	}
 	delete nodes;
