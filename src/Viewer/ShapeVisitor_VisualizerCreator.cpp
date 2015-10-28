@@ -42,7 +42,7 @@ void ShapeVisitor_VisualizerCreator::visit( Layout::Shape_Intersection& shape )
 	//osg::Vec3 normalVector;
 
 	if ( shape.getCompositeType() == Layout::Shape_Composite::CompositeType::CIRCLE ) {
-		float radius;
+		float radius = 0;
 
 		Layout::Shape_Composite::ShapesListType& shapes = shape.getShapes();
 		Layout::Shape_Composite::ShapesListType::iterator it = shapes.begin();
@@ -50,6 +50,9 @@ void ShapeVisitor_VisualizerCreator::visit( Layout::Shape_Intersection& shape )
 		if ( QSharedPointer<Layout::Shape_Sphere> sphere = qSharedPointerCast<Layout::Shape_Sphere>( *it ) ) {
 			radius = sphere->getRadius();
 			center = sphere->getCenter();
+		}
+		else {
+			// TODO: What if the first condition does not apply
 		}
 		++it;
 

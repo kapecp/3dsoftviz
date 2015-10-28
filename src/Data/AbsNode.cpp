@@ -5,6 +5,11 @@
 
 Data::AbsNode::AbsNode( qlonglong id, QString name, Data::Type* type, Data::Graph* graph )
 {
+	this->nodeBetweeness = 0;
+	this->nodeCloseness = 0;
+	this->nodeDegree = 0;
+	this->nodeMatched = false;
+
 	this->id=id;
 	this->name=name;
 	this->type=type;

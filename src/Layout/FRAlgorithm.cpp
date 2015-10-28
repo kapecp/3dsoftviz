@@ -652,13 +652,13 @@ bool FRAlgorithm::areForcesBetween( Data::Node* u, Data::Node* v )
 	// ak sa aspon 1 z nodov nachadza v zhluku, na ktorom je zaregistrovany obmedzovac, neposobia medzi nimi ziadne sily
 	if (
 		(
-			u->getCluster() != NULL && u->getCluster()->getShapeGetter() != NULL &&
-			( ( v->getCluster() == NULL || v->getCluster() != NULL ) && v->getCluster()->getShapeGetter() == NULL )
+			( u->getCluster() != NULL ) && ( u->getCluster()->getShapeGetter() != NULL )
+			//&& ( ( ( v->getCluster() == NULL ) || ( v->getCluster() != NULL ) ) && ( v->getCluster()->getShapeGetter() == NULL ) )
 		)
 		||
 		(
-			v->getCluster() != NULL && v->getCluster()->getShapeGetter() != NULL &&
-			( ( u->getCluster() == NULL || u->getCluster() != NULL ) && u->getCluster()->getShapeGetter() == NULL )
+			( v->getCluster() != NULL ) && ( v->getCluster()->getShapeGetter() != NULL )
+			//&& ( ( ( u->getCluster() == NULL ) || ( u->getCluster() != NULL ) ) && ( u->getCluster()->getShapeGetter() == NULL ) )
 		)
 	) {
 		return false;

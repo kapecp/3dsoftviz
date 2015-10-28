@@ -54,7 +54,7 @@ void Vwr::GraphNavigation::setColorNearestNode( Data::Node* selectedNode )
 	for ( QMap<qlonglong, osg::ref_ptr<Data::Edge> >::const_iterator iter = nodeEdges->begin(); iter != nodeEdges->end(); iter++ ) {
 		Data::Node* dstNode = ( *iter )->getOtherNode( selectedNode );
 		osg::Vec3f nodePosition = getNodeScreenCoordinates( dstNode );
-		double distance;
+		double distance = 0;
 		// distance to node
 		if ( selectionMode == 1 ) {
 			distance = getDistanceToNode( mousePosition, nodePosition );
@@ -62,6 +62,9 @@ void Vwr::GraphNavigation::setColorNearestNode( Data::Node* selectedNode )
 		// distance to edge
 		else if ( selectionMode == 2 ) {
 			distance = getDistanceToEdge( mousePosition, selectedPosition ,nodePosition );
+		}
+		else {
+			// TODO: Add extra conditions for "selectionMode"
 		}
 		// first edge or nearer node
 		if ( ( minDistance == 0 ) || ( minDistance > distance ) ) {
