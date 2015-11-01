@@ -341,12 +341,13 @@ void Git::GitFileLoader::readGitDiffFile( QString tmpFile, Git::GitFile* gitFile
 void Git::GitFileLoader::getDiffInfo( Git::GitFile* gitFile, QString currentCommitId, QString oldCommitId ) {
     QString lCommand;
     QString lFilePath = this->filePath;
+    QString lFile = gitFile->getFilepath().replace("projekt/", "");
 
     // Ak bol pridany subor pridany, nemame jeho predchadzajucu verziu, preto nacitame celu verziu suboru
     if( gitFile->getType() == Git::GitType::ADDED ) {
-        lCommand = QString( "git show " + currentCommitId + ":" + gitFile->getFilepath() );
+        lCommand = QString( "git show " + currentCommitId + ":" + lFile );
     } else {
-        lCommand = QString( "git diff -u " + oldCommitId + " " + currentCommitId + " -- " + gitFile->getFilepath() );
+        lCommand = QString( "git diff -u " + oldCommitId + " " + currentCommitId + " -- " + lFile );
     }
 
     // Vykona command, vystup ulozi do temp suboru a vrati cestu k temp suboru

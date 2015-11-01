@@ -23,6 +23,7 @@ class DB;
 
 namespace Git {
 class GitEvolutionGraph;
+class GitFile;
 }
 
 namespace Data {
@@ -161,6 +162,8 @@ public:
 
     bool changeToVersion( Layout::LayoutThread* layout, int toVersion );
 
+    void getDiffInfo( QString path, int version );
+
 private:
 	/**
 	*  \fn private runTestCase(qint32 action)
@@ -215,6 +218,10 @@ private:
 	 */
 	bool noDatabaseFind;
 
+    /**
+     * Git::GitEvolutionGraph* activeEvolutionGraph
+     * @brief Active evolution graph
+     */
     Git::GitEvolutionGraph* activeEvolutionGraph;
 };
 

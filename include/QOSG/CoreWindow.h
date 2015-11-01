@@ -529,7 +529,7 @@ public slots:
 
 	void repulsive_Forces_ValueChanged();
 
-	void setCameraEnable( bool enable );
+    void setCameraEnable( bool enable );
 
     bool nextVersion();
     bool previousVersion();
@@ -537,9 +537,10 @@ public slots:
     void move();
     void fasterEvolution();
     void slowerEvolution();
+    void getDiffInfo();
     void showInfo();
     void sliderVersionValueChanged( int value );
-
+    void changeLifespan( int value );
 
 private:
 
@@ -793,6 +794,11 @@ private:
 	     */
 	QSpinBox* b_SetRestriction_CylinderSurface_SpinBox;
 
+    /**
+     * @brief Spin box for changing evolution lifespan of removed nodes
+     */
+    QSpinBox* evolutionLifespanSpinBox;
+
 	//volovar_zac
 	/**
 	 * @brief slider for change size of radial layout
@@ -898,6 +904,7 @@ private:
     QPushButton* b_info_version;
     QPushButton* b_faster_evolution;
     QPushButton* b_slower_evolution;
+    QPushButton* b_git_diff;
     QLabel * labelEvolutionSlider;
     QTimer * evolutionTimer;
     bool isRunning;

@@ -43,6 +43,15 @@ bool Importer::GitGraphImporter::import( ImporterContext &context ) {
     this->context->getGraph().addType( "file", settings );
 
     settings = new QMap<QString, QString>;
+    settings->insert( "color.R", "1" );
+    settings->insert( "color.G", "1" );
+    settings->insert( "color.B", "1" );
+    settings->insert( "color.A", "1" );
+    settings->insert( "scale", Util::ApplicationConfig::get()->getValue( "Viewer.Textures.DefaultNodeScale" ) );
+    settings->insert( "textureFile", Util::ApplicationConfig::get()->getValue( "Viewer.Textures.RemoveNode" ) );
+    this->context->getGraph().addType( "removedFile", settings );
+
+    settings = new QMap<QString, QString>;
     settings->insert( "color.R", "0" );
     settings->insert( "color.G", "1" );
     settings->insert( "color.B", "0" );

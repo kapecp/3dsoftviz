@@ -2,7 +2,9 @@
 #define GITEVOLUTIONGRAPH_H
 
 #include <QString>
+#include <QStringList>
 #include <QList>
+#include <QMap>
 
 namespace Git {
 class GitVersion;
@@ -68,12 +70,63 @@ public:
         return this->versions.at( position );
     }
 
+    /**
+     * int getLifespan()
+     * @brief Returns lifespan of deleted files in graph
+     * @return lifespan of deleted files in graph
+     */
+    int getLifespan() {
+        return this->lifespan;
+    }
+
+    /**
+     * void setLifespan( int lifespan )
+     * @brief Sets a lifespan of deleted files in graph
+     * @param lifespan Lifespan of deleted files in graph
+     */
+    void setLifespan( int lifespan ) {
+        this->lifespan = lifespan;
+    }
+
+    /**
+     * QMap<QString, int> getRemovedFiles()
+     * @brief Returns map, where key is deleted file path in project and value version, in which was deleted
+     * @return map, where key is deleted file path in project and value version, in which was deleted
+     */
+    QMap<QString, int> getRemovedFiles() {
+        return this->removedFiles;
+    }
+
+    /**
+     * void addRemovedFiles( QStringList list, int version )
+     * @brief Adds removed files with version to map
+     * @param list List of files in path
+     * @param version Version where file was deleted
+     */
+    void addRemovedFiles( QStringList list, int version );
+
+    void removeRemovedFiles( QString name );
+
+    void printRemovedFiles();
+
 private:
     /**
      * QList<Git::GitVersion*> versions
      * @brief List of versions
      */
     QList<Git::GitVersion*> versions;
+
+    /**
+     * QMap<QString, int> removedFiles
+     * @brief Map of names of files which was deleted in Nth version
+     */
+    QMap<QString, int> removedFiles;
+
+    /**
+     * int lifespan
+     * @brief Lifespan of deleted files in graph
+     */
+    int lifespan;
 
     /**
      * QString filePath

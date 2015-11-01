@@ -12,6 +12,8 @@
 #include "Git/GitVersion.h"
 
 #include <QDebug>
+#include <QMapIterator>
+
 
 Git::GitGraphUpdater::GitGraphUpdater( int currentVersion, Git::GitEvolutionGraph *evolutionGraph, Data::Graph *activeGraph ) : currentVersion( currentVersion ), evolutionGraph( evolutionGraph ), activeGraph( activeGraph ) {
 
@@ -63,6 +65,7 @@ void Git::GitGraphUpdater::nextVersion() {
             break;
         // Ak bol vymazany v dalsej verzii, tak ho vymazeme z grafu
         case Git::GitType::REMOVED :
+            this->getEvolutionGraph()->addRemovedFiles( lList, this->getCurrentVersion() );
             removeEdgesFromGraph( lList );
             removeNodesFromGraph( lList );
             break;
@@ -71,6 +74,10 @@ void Git::GitGraphUpdater::nextVersion() {
             break;
         }
     }
+    this->evolutionGraph->printRemovedFiles();
+    processRemovedNodes();
+
+
 
     // Ak ide o zmenu len cez jednu verziu, tak pridam pre vsetky zmenene subory hrany od autora
     if( !moreVersionChanged ) {
@@ -118,6 +125,7 @@ void Git::GitGraphUpdater::previousVersion() {
         switch( gitFile->getType() ) {
         // Ak bol pridany v aktualnej verzii, tak ho vymazeme z grafu
         case Git::GitType::ADDED :
+//            this->getEvolutionGraph()->addRemovedFiles( lList, this->getCurrentVersion() - 1 );
             removeEdgesFromGraph( lList );
             removeNodesFromGraph( lList );
             break;
@@ -131,6 +139,8 @@ void Git::GitGraphUpdater::previousVersion() {
             break;
         }
     }
+
+    processRemovedNodes();
 
     // Ak ide o zmenu len cez jednu verziu, tak pridam pre vsetky zmenene subory hrany od autora
     if( !moreVersionChanged ) {
@@ -207,27 +217,28 @@ void Git::GitGraphUpdater::addNodesToGraph( QStringList list ) {
 
         osg::ref_ptr<Data::Node> lNode( nullptr );
         // Ak sa cesta v grafe uz nachadza, tak nastavim exist na true
-        if( this->getActiveGraph()->findNodeByName( lNodeName) ) {
+        if( this->getActiveGraph()->findNodeByName( lNodeName ) ) {
             exist = true;
         }
 
+        Data::Type* lType( nullptr );
+
+        QString lVal;
+        // Ak je ciastocna cesta z listu na pozicie n - 1, tak ide o subor, ak na pozici 0 tak ide o root ostatne su adresare
+        if( i == list.size() - 1 ) {
+            lVal = "file";
+        } else {
+            lVal = "dir";
+            if( i == 0 ) {
+                lVal = "root";
+            }
+        }
+
+        // Ziskam typ ulozeny v grafe so ziskanym nazvom typu
+        lType = this->getActiveGraph()->getTypesByName( lVal ).at( 0 );
+
         // Ak sa cesta v grafe nenachadzala, tak zistim typ ciastocnej cesty a pridam ho do grafu s jeho labelom.
         if( !exist ) {
-            Data::Type* lType( nullptr );
-
-            QString lVal;
-            // Ak je ciastocna cesta z listu na pozicie n - 1, tak ide o subor, ak na pozici 0 tak ide o root ostatne su adresare
-            if( i == list.size() - 1 ) {
-                lVal = "file";
-            } else {
-                lVal = "dir";
-                if( i == 0 ) {
-                    lVal = "root";
-                }
-            }
-
-            // Ziskam typ ulozeny v grafe so ziskanym nazvom typu
-            lType = this->getActiveGraph()->getTypesByName( lVal ).at( 0 );
 
             // Vytvorim uzol pre danu cestu s danym typom
             lNode = this->getActiveGraph()->addNode( lNodeName, lType );
@@ -240,6 +251,11 @@ void Git::GitGraphUpdater::addNodesToGraph( QStringList list ) {
             // Nastavim label a pridam do mnoziny uzlov v grafe
             lNode->setLabelText( lNodeName );
             lNode->showLabel( true );
+        } else {
+            Data::Node* node = this->getActiveGraph()->findNodeByName( lNodeName );
+            node->setType( lType );
+            node->reloadConfig();
+            node->showLabel( true );
         }
     }
 }
@@ -337,9 +353,26 @@ void Git::GitGraphUpdater::removeNodesFromGraph( QStringList list ) {
         // Vyskladam nazov hrany spojenim zdrojoveho a cieloveho uzla
         QString lEdgeName = lNodeNameFrom + lNodeNameTo;
 
+        // Ak je rozdiel sucasnej verzie a lifespanu vacsi alebo rovny verzii vymazania, tak zmenime type uzla
+        // a ponechame uzol v grafe
+        bool passedLifespan = false;
+        if( this->getEvolutionGraph()->getRemovedFiles().contains( lNodeNameTo ) ) {
+            int difference = this->getCurrentVersion() - this->getEvolutionGraph()->getRemovedFiles().value( lNodeNameTo );
+            if( difference < this->getEvolutionGraph()->getLifespan() ) {
+                passedLifespan = true;
+                if( i + 1 == list.size() - 1 ) {
+                    Data::Node* node = this->getActiveGraph()->findNodeByName( lNodeNameTo );
+                    node->setType( this->getActiveGraph()->getTypesByName( "removedFile" ).at( 0 ) );
+                    node->reloadConfig();
+                    node->showLabel( true );
+                }
+            }
+        }
+
         // Ak hrana v grafe uz neexistuje, tak vymaz cielovy uzol
-        if( !this->getActiveGraph()->getEdgeOccurence().value( lEdgeName ) ) {
+        if( !this->getActiveGraph()->getEdgeOccurence().value( lEdgeName ) && !passedLifespan ) {
             this->getActiveGraph()->removeNode( this->getActiveGraph()->findNodeByName( lNodeNameTo ) );
+            this->getEvolutionGraph()->getRemovedFiles().remove( lNodeNameTo );
         }
     }
 }
@@ -354,8 +387,16 @@ void Git::GitGraphUpdater::removeEdgesFromGraph( QStringList list ) {
         // Vyskladam nazov hrany spojenim zdrojoveho a cieloveho uzla
         QString lEdgeName =  lNodeNameFrom + lNodeNameTo;
 
+        // Ak je rozdiel sucasnej verzie a lifespanu vacsi alebo rovny verzii vymazania, tak zmenime type uzla
+        // a ponechame uzol v grafe
+        bool passedLifespan = false;
+        int difference = this->getCurrentVersion() - this->getEvolutionGraph()->getRemovedFiles().value( lNodeNameTo );
+        if( difference < this->getEvolutionGraph()->getLifespan() ) {
+            passedLifespan = true;
+        }
+
         // Ak hrana v grafe uz neexistuje, tak vymaz hranu
-        if( !this->getActiveGraph()->removeEdgeOccurence( lEdgeName ) ) {
+        if( !this->getActiveGraph()->removeEdgeOccurence( lEdgeName ) && !passedLifespan ) {
             this->getActiveGraph()->removeEdge( this->getActiveGraph()->findEdgeByName( lEdgeName ) );
         }
     }
@@ -363,4 +404,57 @@ void Git::GitGraphUpdater::removeEdgesFromGraph( QStringList list ) {
 
 void Git::GitGraphUpdater::modifyNodesInGraph( QStringList list ) {
 
+}
+
+void Git::GitGraphUpdater::processRemovedNodes() {
+    QMapIterator<QString, int> iter( this->getEvolutionGraph()->getRemovedFiles() );
+    // Prejdeme vsetky subory, ktore maju byt vymazane a zistime, ci ma uzol aj s hranami
+    // ostat v grafe, ak nie tak ho vymaz aj hranami.
+    while( iter.hasNext() ) {
+        iter.next();
+
+        QStringList lList = iter.key().split( "/" );
+        QString lPom = "";
+
+        // Ziskam vsetky ciastkove cesty v danej ceste suboru
+        for( int i = 0; i < lList.size(); i++ ) {
+            lPom += lList.at( i );
+            lList.replace( i, lPom );
+            lPom += "/";
+        }
+
+        for( int i = 0; i < lList.size() - 1; i++ ) {
+            // Ziskanie cesty zdrojoveho a cieloveho uzla
+            QString lNodeNameFrom = lList.at( i );
+            QString lNodeNameTo =  lList.at( i + 1 );
+
+            // Vyskladam nazov hrany spojenim zdrojoveho a cieloveho uzla
+            QString lEdgeName =  lNodeNameFrom + lNodeNameTo;
+
+            // Ak este doba zivota vymazaneho uzla neprekrocila lifespan, tak nastavim hodnotu passedLifespan na true,
+            // co oddiali vymazanie uzla z grafu
+            bool passedLifespan = false;
+            int difference = this->getCurrentVersion() - this->getEvolutionGraph()->getRemovedFiles().value( lNodeNameTo );
+            if( difference < this->getEvolutionGraph()->getLifespan() ) {
+                passedLifespan = true;
+            }
+
+            // Ak uz nie su naviazane ziadne hrany k danemu cielovemu uzlu, tak ho vymazem, ak je to povolene
+            if( !this->getActiveGraph()->getEdgeOccurence().value( lEdgeName ) ) {
+                // Ak je mozne ho vymazat, tak vymazeme hranu, uzol a odstranime uzol zo zoznamu uzlov na vymazanie
+                if( !passedLifespan ) {
+                    this->getActiveGraph()->removeEdge( this->getActiveGraph()->findEdgeByName( lEdgeName ) );
+                    this->getActiveGraph()->removeNode( this->getActiveGraph()->findNodeByName( lNodeNameTo ) );
+                    this->getEvolutionGraph()->removeRemovedFiles( lNodeNameTo );
+                    qDebug() << lNodeNameTo << difference << getCurrentVersion();
+                }
+            }
+            // V pripade, ze k danemu uzlu este smeruju nejake hrany, tak uzol odstranime zo zoznamu uzlov na vymazanie
+            else {
+                qDebug() << "odstranujem" << lNodeNameTo;
+                this->getEvolutionGraph()->removeRemovedFiles( lNodeNameTo );
+            }
+        }
+
+    }
 }

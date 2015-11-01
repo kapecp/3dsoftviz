@@ -45,5 +45,5 @@ void Git::GitFileDiffBlock::printPreviousInfo() {
 
 void Git::GitFileDiffBlock::printInfo() {
     qDebug() << "-" << removeStart << "," << removeCount << " +" << addStart << "," << addCount;
-    printCurrentInfo();
+    printDiffBlockLines();
 }

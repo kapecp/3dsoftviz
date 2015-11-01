@@ -89,6 +89,8 @@ public:
         return this->currentVersion;
     }
 
+    void processRemovedNodes();
+
     /**
      * void setCurrentVersion( int currentVersion )
      * @brief Setter of currently vizualized version index

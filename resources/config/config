@@ -31,6 +31,7 @@ Viewer.Textures.Author=../share/3dsoftviz/img/author.png
 Viewer.Textures.Edge=../share/3dsoftviz/img/Edge2.png
 Viewer.Textures.EdgeScale=2
 Viewer.Textures.Node=../share/3dsoftviz/img/node2.png
+Viewer.Textures.RemoveNode=../share/3dsoftviz/img/Redcross.png
 Viewer.Textures.OrientedEdge=../share/3dsoftviz/img/OrientedEdge.png
 Viewer.Textures.OrientedEdgePrefix=../share/3dsoftviz/img/arrows/arrow
 Viewer.Textures.OrientedEdgeSuffix=.png
@@ -70,4 +71,4 @@ Node.Color.Selected=50,20,120,255
 Label.Color=51,102,153,255
 Label.Outline.Color=200,230,255,255
 
-Git.ExtensionFilter= lua,swap
+Git.ExtensionFilter= lua

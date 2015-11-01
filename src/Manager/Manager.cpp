@@ -547,6 +547,36 @@ bool Manager::GraphManager::changeToVersion( Layout::LayoutThread* layout, int t
     return ok;
 }
 
+void Manager::GraphManager::getDiffInfo( QString path, int version ) {
+    Git::GitEvolutionGraph* lEvolutionGraph = Manager::GraphManager::getInstance()->getActiveEvolutionGraph();
+
+    Git::GitVersion* lVersion = lEvolutionGraph->getVersion( version );
+    Git::GitFile* gitFile = nullptr;
+
+    bool isFound = false;
+    for( int i = version; i >= 0; i-- ) {
+        foreach( Git::GitFile* file, lEvolutionGraph->getVersion( i )->getChangedFiles() ) {
+            if( file->getFilepath() == path ) {
+                gitFile = file;
+                isFound = true;
+                break;
+            }
+        }
+        if( isFound ) {
+            break;
+        }
+    }
+
+
+    Git::GitFileLoader loader = Git::GitFileLoader::GitFileLoader( lEvolutionGraph->getFilePath(), Util::ApplicationConfig::get()->getValue( "Git.ExtensionFilter" ) );
+
+    if( gitFile ) {
+        loader.getDiffInfo( gitFile, lVersion->getCommitId(), version - 1 < 0 ? NULL : lEvolutionGraph->getVersion( version - 1 )->getCommitId() );
+        gitFile->printContent();
+    }
+
+}
+
 void Manager::GraphManager::runTestCase( qint32 action )
 {
 	//testovaci pripad, vytvorenie grafu, inicializacia Debug, 7 testovacich vstupov grafu

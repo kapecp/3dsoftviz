@@ -9,6 +9,7 @@
 #include "Network/Client.h"
 
 #include "Git/GitEvolutionGraph.h"
+#include "Git/GitVersion.h"
 
 #include "Viewer/CoreGraph.h"
 #include "Viewer/CameraManipulator.h"
@@ -683,12 +684,18 @@ void CoreWindow::createActions()
     b_slower_evolution->setMaximumHeight( 20 );
     connect( b_slower_evolution, SIGNAL( clicked() ), this, SLOT( slowerEvolution() ) );
 
+    b_git_diff = new QPushButton();
+    b_git_diff->setText( "Diff info" );
+    b_git_diff->setToolTip( "Get node Diff info" );
+    b_git_diff->setFocusPolicy( Qt::NoFocus );
+    connect( b_git_diff, SIGNAL( clicked() ), this, SLOT( getDiffInfo() ) );
+
     b_info_version = new QPushButton();
     b_info_version->setText( "i" );
     b_info_version->setToolTip( "Show info" );
     b_info_version->setFocusPolicy( Qt::NoFocus );
     b_info_version->setMaximumWidth( 30 );
-    b_info_version->setDisabled( true );
+    b_info_version->setDisabled( false );
     connect( b_info_version, SIGNAL( clicked() ), this, SLOT( showInfo() ) );
 
     evolutionSlider = new QSlider( Qt::Horizontal, this );
@@ -701,6 +708,10 @@ void CoreWindow::createActions()
 
     labelEvolutionSlider =  new QLabel( this );
     labelEvolutionSlider->setAlignment( Qt::AlignHCenter );
+
+    evolutionLifespanSpinBox = new QSpinBox();
+    evolutionLifespanSpinBox->setMinimum( 0 );
+    connect( evolutionLifespanSpinBox, SIGNAL( valueChanged( int ) ), this, SLOT( changeLifespan( int ) ) );
 
     evolutionTimer = new QTimer( this );
     connect( evolutionTimer, SIGNAL( timeout() ), this, SLOT( move() ) );
@@ -1123,6 +1134,12 @@ QWidget* CoreWindow::createMoreFeaturesTab( QFrame* line )
 	lMore->addRow( b_start_gloves );
 	connect( b_start_gloves, SIGNAL( clicked() ), this, SLOT( startGlovesRecognition() ) );
 #endif
+
+    line = createLine();
+    lMore->addRow( line );
+    lMore->addRow( new QLabel( tr( "Evolution Graph" ) ) );
+    lMore->addRow( new QLabel( ( tr( "Life span:" ) ) ), evolutionLifespanSpinBox );
+    lMore->addRow( b_git_diff );
 
 	wMore->setLayout( lMore );
 
@@ -3673,6 +3690,7 @@ bool CoreWindow::nextVersion() {
         b_previous_version->setDisabled( false );
     }
 
+    evolutionLifespanSpinBox->setDisabled( true );
     bool ok = true;
     int value = evolutionSlider->value();
     ok = Manager::GraphManager::getInstance()->nextVersion( layout );
@@ -3707,6 +3725,7 @@ bool CoreWindow::previousVersion() {
     evolutionSlider->blockSignals( false  );
 
     if( value == evolutionSlider->minimum() ) {
+        evolutionLifespanSpinBox->setDisabled( false );
         b_previous_version->setDisabled( true );
     }
 
@@ -3760,7 +3779,7 @@ void CoreWindow::slowerEvolution() {
 }
 
 void CoreWindow::showInfo() {
-    qDebug() << "Show info";
+    Manager::GraphManager::getInstance()->getActiveEvolutionGraph()->getVersion( evolutionSlider->value() )->printVersion();
 }
 
 void CoreWindow::sliderVersionValueChanged( int value ) {
@@ -3781,8 +3800,25 @@ void CoreWindow::sliderVersionValueChanged( int value ) {
     }
 
     if( value == evolutionSlider->minimum() ) {
+        evolutionLifespanSpinBox->setDisabled( false );
         b_previous_version->setDisabled( true );
     }
+}
+
+void CoreWindow::changeLifespan( int value ) {
+    Manager::GraphManager::getInstance()->getActiveEvolutionGraph()->setLifespan( value );
+}
+
+void CoreWindow::getDiffInfo() {
+    QLinkedList<osg::ref_ptr<Data::Node>>* selectedNodes = viewerWidget->getPickHandler()->getSelectedNodes();
+
+    if( selectedNodes->size() != 0 ) {
+        foreach( osg::ref_ptr<Data::Node> node, *selectedNodes ) {
+            int version = evolutionSlider->value();
+            Manager::GraphManager::getInstance()->getDiffInfo( node.get()->Data::AbsNode::getName(), version );
+        }
+    }
+
 }
 
 } // namespace QOSG

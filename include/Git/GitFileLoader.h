@@ -22,7 +22,7 @@ public:
      * Explicit constructor with set up path to the file
      * @brief Create git file loader with set up path to the file
      * @param filepath Path to the file
-     * @param extensions Extensions separeted by comma.
+     * @param extensions Extensions separeted by dot.
      */
     GitFileLoader( QString filepath, QString extensions );
 
@@ -95,7 +95,7 @@ private:
 
     /**
      * QString extensions
-     * @brief Extensions separeted by comma.
+     * @brief Extensions separeted by dot.
      */
     QString extensions;
 
