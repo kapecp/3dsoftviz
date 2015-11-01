@@ -74,9 +74,8 @@ void Git::GitGraphUpdater::nextVersion() {
             break;
         }
     }
-    this->evolutionGraph->printRemovedFiles();
-    processRemovedNodes();
 
+    processRemovedNodes();
 
 
     // Ak ide o zmenu len cez jednu verziu, tak pridam pre vsetky zmenene subory hrany od autora
@@ -446,12 +445,10 @@ void Git::GitGraphUpdater::processRemovedNodes() {
                     this->getActiveGraph()->removeEdge( this->getActiveGraph()->findEdgeByName( lEdgeName ) );
                     this->getActiveGraph()->removeNode( this->getActiveGraph()->findNodeByName( lNodeNameTo ) );
                     this->getEvolutionGraph()->removeRemovedFiles( lNodeNameTo );
-                    qDebug() << lNodeNameTo << difference << getCurrentVersion();
                 }
             }
             // V pripade, ze k danemu uzlu este smeruju nejake hrany, tak uzol odstranime zo zoznamu uzlov na vymazanie
             else {
-                qDebug() << "odstranujem" << lNodeNameTo;
                 this->getEvolutionGraph()->removeRemovedFiles( lNodeNameTo );
             }
         }

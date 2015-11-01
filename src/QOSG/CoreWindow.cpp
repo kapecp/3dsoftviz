@@ -3790,6 +3790,8 @@ void CoreWindow::sliderVersionValueChanged( int value ) {
     evolutionSlider->setValue( value );
     evolutionSlider->blockSignals( false );
 
+    evolutionLifespanSpinBox->setDisabled( true );
+
     if( !isRunning ) {
         b_next_version->setDisabled( false );
         b_previous_version->setDisabled( false );

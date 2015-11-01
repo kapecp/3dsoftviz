@@ -21,13 +21,7 @@ Git::GitEvolutionGraph::GitEvolutionGraph( QString filePath ) : filePath(filePat
 void Git::GitEvolutionGraph::addRemovedFiles( QStringList list, int version ) {
     foreach( QString item, list ) {
         if( item != list.at( 0 ) ) {
-            if( this->removedFiles.contains( item ) ) {
-                this->removedFiles.remove( item );
-            }
             this->removedFiles.insert( item, version );
-            if( item == "projekt/lib" ) {
-                qDebug() << "Pocet" << this->removedFiles.count(item);
-            }
         }
     }
 }
@@ -38,7 +32,6 @@ void Git::GitEvolutionGraph::removeRemovedFiles( QString name ) {
 
 void Git::GitEvolutionGraph::printRemovedFiles() {
     QMapIterator<QString, int> iter( this->removedFiles );
-    qDebug() << "********************";
     while( iter.hasNext() ) {
         iter.next();
         qDebug() << iter.key() << iter.value();
