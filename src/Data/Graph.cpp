@@ -1477,8 +1477,7 @@ Data::Edge* Data::Graph::findEdgeByName( QString edgeName ) {
     return lEdge;
 }
 
-bool Data::Graph::addEdgeOccurence( QString key ) {
-    bool exist = true;
+void Data::Graph::addEdgeOccurence( QString key ) {
     int count = 0;
     if( this->edgeOccurence.contains( key ) ) {
         count = this->edgeOccurence.value( key );
@@ -1486,8 +1485,6 @@ bool Data::Graph::addEdgeOccurence( QString key ) {
 
     count++;
     this->edgeOccurence.insert( key, count );
-
-    return exist;
 }
 
 bool Data::Graph::removeEdgeOccurence( QString key ) {

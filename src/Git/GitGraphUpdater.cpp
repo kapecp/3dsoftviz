@@ -366,9 +366,11 @@ void Git::GitGraphUpdater::removeNodesFromGraph( QStringList list ) {
                 // Ak ide o subor, tak zmenime obrazok uzla.
                 if( i + 1 == list.size() - 1 ) {
                     Data::Node* node = this->getActiveGraph()->findNodeByName( lNodeNameTo );
-                    node->setType( this->getActiveGraph()->getTypesByName( "removedFile" ).at( 0 ) );
-                    node->reloadConfig();
-                    node->showLabel( true );
+                    if( node ) {
+                        node->setType( this->getActiveGraph()->getTypesByName( "removedFile" ).at( 0 ) );
+                        node->reloadConfig();
+                        node->showLabel( true );
+                    }
                 }
             }
         }
