@@ -105,8 +105,17 @@ public:
      */
     void addRemovedFiles( QStringList list, int version );
 
+    /**
+     * void removeRemovedFiles( QString name )
+     * @brief Removes file from map with specific key
+     * @param name Key of the file
+     */
     void removeRemovedFiles( QString name );
 
+    /**
+     * void printRemovedFiles()
+     * @brief Prints out all paths and versions of map
+     */
     void printRemovedFiles();
 
 private:

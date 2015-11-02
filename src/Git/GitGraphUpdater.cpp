@@ -75,6 +75,7 @@ void Git::GitGraphUpdater::nextVersion() {
         }
     }
 
+    // Vymaz subory, ktorych dlzka zivota prekrocila zadany lifespan
     processRemovedNodes();
 
 
@@ -139,6 +140,7 @@ void Git::GitGraphUpdater::previousVersion() {
         }
     }
 
+    // Vymaz subory, ktorych dlzka zivota prekrocila zadany lifespan
     processRemovedNodes();
 
     // Ak ide o zmenu len cez jednu verziu, tak pridam pre vsetky zmenene subory hrany od autora
@@ -236,7 +238,8 @@ void Git::GitGraphUpdater::addNodesToGraph( QStringList list ) {
         // Ziskam typ ulozeny v grafe so ziskanym nazvom typu
         lType = this->getActiveGraph()->getTypesByName( lVal ).at( 0 );
 
-        // Ak sa cesta v grafe nenachadzala, tak zistim typ ciastocnej cesty a pridam ho do grafu s jeho labelom.
+        // Ak sa cesta v grafe nenachadzala, tak zistim typ ciastocnej cesty a pridam ho do grafu s jeho labelom. Ak už existuje,
+        // tak zresetujem typ uzla na povodny typ
         if( !exist ) {
 
             // Vytvorim uzol pre danu cestu s danym typom
@@ -352,13 +355,15 @@ void Git::GitGraphUpdater::removeNodesFromGraph( QStringList list ) {
         // Vyskladam nazov hrany spojenim zdrojoveho a cieloveho uzla
         QString lEdgeName = lNodeNameFrom + lNodeNameTo;
 
-        // Ak je rozdiel sucasnej verzie a lifespanu vacsi alebo rovny verzii vymazania, tak zmenime type uzla
-        // a ponechame uzol v grafe
+        // Ak je rozdiel sucasnej verzie a verzie vymazania mensi ako lifespan, tak nastavime passedLifespan na true
+        // a uzol nemoze byt vymazany.
         bool passedLifespan = false;
         if( this->getEvolutionGraph()->getRemovedFiles().contains( lNodeNameTo ) ) {
             int difference = this->getCurrentVersion() - this->getEvolutionGraph()->getRemovedFiles().value( lNodeNameTo );
             if( difference < this->getEvolutionGraph()->getLifespan() ) {
                 passedLifespan = true;
+
+                // Ak ide o subor, tak zmenime obrazok uzla.
                 if( i + 1 == list.size() - 1 ) {
                     Data::Node* node = this->getActiveGraph()->findNodeByName( lNodeNameTo );
                     node->setType( this->getActiveGraph()->getTypesByName( "removedFile" ).at( 0 ) );
@@ -368,7 +373,7 @@ void Git::GitGraphUpdater::removeNodesFromGraph( QStringList list ) {
             }
         }
 
-        // Ak hrana v grafe uz neexistuje, tak vymaz cielovy uzol
+        // Ak hrana v grafe uz neexistuje a sucasne lifespan uzla prekrocil treshold, tak vymaz cielovy uzol
         if( !this->getActiveGraph()->getEdgeOccurence().value( lEdgeName ) && !passedLifespan ) {
             this->getActiveGraph()->removeNode( this->getActiveGraph()->findNodeByName( lNodeNameTo ) );
             this->getEvolutionGraph()->getRemovedFiles().remove( lNodeNameTo );
@@ -386,15 +391,15 @@ void Git::GitGraphUpdater::removeEdgesFromGraph( QStringList list ) {
         // Vyskladam nazov hrany spojenim zdrojoveho a cieloveho uzla
         QString lEdgeName =  lNodeNameFrom + lNodeNameTo;
 
-        // Ak je rozdiel sucasnej verzie a lifespanu vacsi alebo rovny verzii vymazania, tak zmenime type uzla
-        // a ponechame uzol v grafe
+        // Ak je rozdiel sucasnej verzie a verzie vymazania mensi ako lifespan, tak nastavime passedLifespan na true
+        // a uzol nemoze byt vymazany.
         bool passedLifespan = false;
         int difference = this->getCurrentVersion() - this->getEvolutionGraph()->getRemovedFiles().value( lNodeNameTo );
         if( difference < this->getEvolutionGraph()->getLifespan() ) {
             passedLifespan = true;
         }
 
-        // Ak hrana v grafe uz neexistuje, tak vymaz hranu
+        // Ak hrana v grafe uz neexistuje a sucasne lifespan uzla prekrocil treshold, tak vymaz hranu
         if( !this->getActiveGraph()->removeEdgeOccurence( lEdgeName ) && !passedLifespan ) {
             this->getActiveGraph()->removeEdge( this->getActiveGraph()->findEdgeByName( lEdgeName ) );
         }
@@ -430,8 +435,8 @@ void Git::GitGraphUpdater::processRemovedNodes() {
             // Vyskladam nazov hrany spojenim zdrojoveho a cieloveho uzla
             QString lEdgeName =  lNodeNameFrom + lNodeNameTo;
 
-            // Ak este doba zivota vymazaneho uzla neprekrocila lifespan, tak nastavim hodnotu passedLifespan na true,
-            // co oddiali vymazanie uzla z grafu
+            // Ak je rozdiel sucasnej verzie a verzie vymazania mensi ako lifespan, tak nastavime passedLifespan na true
+            // a uzol nemoze byt vymazany.
             bool passedLifespan = false;
             int difference = this->getCurrentVersion() - this->getEvolutionGraph()->getRemovedFiles().value( lNodeNameTo );
             if( difference < this->getEvolutionGraph()->getLifespan() ) {

@@ -383,10 +383,6 @@ Data::Graph* Manager::GraphManager::loadGraphFromGit( QString filepath ) {
         context.reset( new Importer::ImporterContext( *lStream ,*lNewGraph, *infoHandler, *lFilepath ) );
     }
 
-    if( ok && lGit ) {
-        qDebug() << "Vsetky pripravy ukonecene, pripravene na import";
-    }
-
     if( ok ) {
         ok = lImporter->import( *context );
     }
