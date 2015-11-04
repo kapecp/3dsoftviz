@@ -1,6 +1,12 @@
+*~
+/_qt-creator-build
 /.project
 _build
-_debug_build
 _install
+qtcreator-build
 CMakeLists.txt.user
-
+CMakeLists.txt.user.*
+qtcreator-build
+_qt-creator-build
+include/report-include.txt
+src/report-src.txt
