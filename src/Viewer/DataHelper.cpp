@@ -179,7 +179,7 @@ void DataHelper::generateCylinder( QMap<qlonglong, osg::ref_ptr<Data::Node> >* n
 			//std::cout << "\n";
 
 			// spravime hranu medzi dvoma uzlami podstavy
-			osg::ref_ptr<Data::Edge> edge = new Data::Edge( id, QString::fromStdString( out.str() ), NULL, nodes->value( j*pocetUzlovNaPodstave + i + startN ), nodes->value( to ), types->value( 2 ), getRandomNumber( 0,1 ), 2 );
+			osg::ref_ptr<Data::Edge> edge = new Data::Edge( id, QString::fromStdString( out.str() ), NULL, nodes->value( j*pocetUzlovNaPodstave + i + startN ), nodes->value( to ), types->value( 2 ), (getRandomNumber( 0,1 ) ? true : false), 2 );
 			edge->linkNodes( edges );
 			id++;
 

@@ -45,7 +45,7 @@ void Kinect::Ransac::calculate()
 {
 
 	std::string line;
-	srand( time( NULL ) );
+	srand((unsigned int)time(nullptr));
 	char cline[1000];
 	int numbers[3000];
 	int i = 0;

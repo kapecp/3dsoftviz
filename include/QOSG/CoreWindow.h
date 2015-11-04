@@ -961,10 +961,10 @@ private:
 	QComboBox* nodeTypeComboBox;
 
 	/**
-	    *  int isPlaying
-	    *  \brief Flag if layout is running
-	    */
-	int isPlaying;
+		*  bool isPlaying
+		*  \brief Flag if layout is running
+		*/
+	bool isPlaying;
 
 	/**
 	    *  \fn private  createActions
@@ -1132,10 +1132,10 @@ private:
 	QComboBox* edgeTypeComboBox;
 
 	/**
-	    *  int isEBPlaying
-	    *  \brief Flag if edge bundling is running
-	    */
-	int isEBPlaying;
+		*  bool isEBPlaying
+		*  \brief Flag if edge bundling is running
+		*/
+	bool isEBPlaying;
 
 public:
 

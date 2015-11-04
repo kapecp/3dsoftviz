@@ -2289,7 +2289,7 @@ void CoreWindow::startEdgeBundling()
 
 			//split edges
 			QString alpha = le_edgeBundlingalpha->text();
-			layout->setAlphaEdgeBundlingValue( alpha.toInt() );
+			layout->setAlphaEdgeBundlingValue(alpha.toFloat());
 			int splitCount = 3;
 			currentGraph->splitAllEdges( splitCount );
 		}

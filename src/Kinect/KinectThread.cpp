@@ -293,9 +293,9 @@ void Kinect::KinectThread::run()
 							line( frame, cv::Point2i( 30, 30 ), cv::Point2i( 30, 30 ), cv::Scalar( 0, 0, 0 ), 5 ,8 );
 							if ( ( int )kht->slidingHand_x != 0 ) {
 								putText( frame, kht->slidingHand_type, cvPoint( ( int )kht->slidingHand_x,( int )kht->slidingHand_y ), cv::FONT_HERSHEY_COMPLEX_SMALL, 0.8, cvScalar( 0,0,250 ), 1, CV_AA );
-								emit sendSliderCoords( ( kht->slidingHand_x/kht->handTrackerFrame.getDepthFrame().getWidth()-0.5 )*( -200 ),
-													   ( kht->slidingHand_y/kht->handTrackerFrame.getDepthFrame().getHeight()-0.5 )*( 200 ),
-													   ( kht->slidingHand_z/kht->handTrackerFrame.getDepthFrame().getHeight()-0.5 )*200 );
+								emit sendSliderCoords((kht->slidingHand_x / (float)(kht->handTrackerFrame.getDepthFrame().getWidth()) - 0.5f) * (-200.0f),
+													  (kht->slidingHand_y / (float)(kht->handTrackerFrame.getDepthFrame().getHeight()) - 0.5f) * (200.0f),
+													  (kht->slidingHand_z / (float)(kht->handTrackerFrame.getDepthFrame().getHeight()) - 0.5f) * (200.0f));
 							}
 						}
 						// if hand is closed and zomm enabled - compute zoom
