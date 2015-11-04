@@ -53,7 +53,7 @@ public:
 
 private:
 
-    QMap<QString, osg::ref_ptr<Data::Node>> nodes;
+	QMap<QString, osg::ref_ptr<Data::Node>> nodes;
 
 }; // class
 

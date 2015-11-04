@@ -36,19 +36,19 @@ public:
 		ImportInfoHandler& importInfoHandler
 	);
 
-    /**
-        * \brief Creates new context object containing provided references.
-        * \param[in] stream Input stream.
-        * \param[in] graph Graph root object.
-        * \param[in] importInfoHandler Import progress info handler.
-        * \param[in] filePath Input path to git repo.
-     */
-    ImporterContext (
-        QIODevice &stream,
-        Data::Graph &graph,
-        ImportInfoHandler &importInfoHandler,
-        QString &filePath
-    );
+	/**
+	    * \brief Creates new context object containing provided references.
+	    * \param[in] stream Input stream.
+	    * \param[in] graph Graph root object.
+	    * \param[in] importInfoHandler Import progress info handler.
+	    * \param[in] filePath Input path to git repo.
+	 */
+	ImporterContext(
+		QIODevice& stream,
+		Data::Graph& graph,
+		ImportInfoHandler& importInfoHandler,
+		QString& filePath
+	);
 
 	/***/
 	virtual ~ImporterContext( void ) {}
@@ -68,10 +68,10 @@ public:
 	 */
 	ImportInfoHandler& getInfoHandler( void );
 
-    /**
-     * \brief \link ImporterContext::filePath_ [getter] \endlink
-     */
-    QString& getFilePath();
+	/**
+	 * \brief \link ImporterContext::filePath_ [getter] \endlink
+	 */
+	QString& getFilePath();
 
 
 private:
@@ -91,10 +91,10 @@ private:
 	 */
 	ImportInfoHandler& infoHandler_;
 
-    /**
-     * \brief Path to git repo
-     */
-    QString filePath;
+	/**
+	 * \brief Path to git repo
+	 */
+	QString filePath;
 
 }; // class
 

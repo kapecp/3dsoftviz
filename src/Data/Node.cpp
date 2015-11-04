@@ -67,8 +67,8 @@ Data::Node::Node( qlonglong id, QString name, Data::Type* type, float scaling, D
 	float b = type->getSettings()->value( "color.B" ).toFloat();
 	float a = type->getSettings()->value( "color.A" ).toFloat();
 
-    color = osg::Vec4( r, g, b, a );
-    setDrawableColor( color );
+	color = osg::Vec4( r, g, b, a );
+	setDrawableColor( color );
 
 	// merging Britvik: this was here
 	//setDefaultColor();
@@ -185,7 +185,7 @@ void Data::Node::setDefaultColor()
 	//  float b = type->getSettings()->value( "color.B" ).toFloat();
 //  float a = type->getSettings()->value( "color.A" ).toFloat();
 
-    this->setDrawableColor( color );
+	this->setDrawableColor( color );
 }
 
 // Duransky start - Funkcie na nastavenie a ziskanie cisla vertigo roviny, na ktorej sa uzol nachadza

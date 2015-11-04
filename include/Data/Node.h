@@ -153,12 +153,12 @@ public:
 		this->fixed = fixed;
 
 		if ( fixed ) {
-            setDrawableColor( osg::Vec4( 1.0f, 0.0f, 0.0f, 1.0f ) );
+			setDrawableColor( osg::Vec4( 1.0f, 0.0f, 0.0f, 1.0f ) );
 		}
 		else if ( !fixed ) {
 			setDefaultColor();
 		}
-    }
+	}
 
 	void setDefaultColor();
 

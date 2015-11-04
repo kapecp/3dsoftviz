@@ -4,10 +4,10 @@
 namespace Git {
 
 enum GitType {
-    ADDED,
-    REMOVED,
-    MODIFIED,
-    NONE
+	ADDED,
+	REMOVED,
+	MODIFIED,
+	NONE
 }; // enum
 } // namespace
 #endif // GITTYPE_H

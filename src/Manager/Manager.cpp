@@ -319,110 +319,111 @@ Data::Graph* Manager::GraphManager::loadGraphFromDB( qlonglong graphID, qlonglon
 	return this->activeGraph;
 }
 
-Data::Graph* Manager::GraphManager::loadGraphFromGit( QString filepath ) {
-    bool lGit = false;
-    bool ok = true;
+Data::Graph* Manager::GraphManager::loadGraphFromGit( QString filepath )
+{
+	bool lGit = false;
+	bool ok = true;
 
-    AppCore::Core::getInstance()->messageWindows->showProgressBar();
+	AppCore::Core::getInstance()->messageWindows->showProgressBar();
 
-    std::auto_ptr<Importer::ImportInfoHandler> infoHandler ( NULL );
-    infoHandler.reset( new ImportInfoHandlerImpl );
+	std::auto_ptr<Importer::ImportInfoHandler> infoHandler( NULL );
+	infoHandler.reset( new ImportInfoHandlerImpl );
 
-    QString lName = NULL;
-    QString lExtension = NULL;
+	QString lName = NULL;
+	QString lExtension = NULL;
 
-    QFileInfo lFileInfo ( filepath );
-    lName = lFileInfo.fileName();
-    lExtension = lFileInfo.suffix();
+	QFileInfo lFileInfo( filepath );
+	lName = lFileInfo.fileName();
+	lExtension = lFileInfo.suffix();
 
-    if( lExtension.length() == 0 ) {
-        lExtension = "git";
-        lGit = true;
-    }
+	if ( lExtension.length() == 0 ) {
+		lExtension = "git";
+		lGit = true;
+	}
 
-    // Vytvor triedu na nacitanie dat o verziach, sparsuj informacie a vytvor verzie podla zadaneho filtera suborov
-    Git::GitFileLoader lGitFileLoader = Git::GitFileLoader::GitFileLoader( filepath, Util::ApplicationConfig::get()->getValue( "Git.ExtensionFilter") ) ;
-    QList<Git::GitVersion *> lVersions = lGitFileLoader.getDataAboutGit();
+	// Vytvor triedu na nacitanie dat o verziach, sparsuj informacie a vytvor verzie podla zadaneho filtera suborov
+	Git::GitFileLoader lGitFileLoader = Git::GitFileLoader::GitFileLoader( filepath, Util::ApplicationConfig::get()->getValue( "Git.ExtensionFilter" ) ) ;
+	QList<Git::GitVersion*> lVersions = lGitFileLoader.getDataAboutGit();
 
-    // Vytvor evolucny graf, napln ho ziskanymi verziami a nastav graf ako aktivny
-    Git::GitEvolutionGraph* evolutionGraph = new Git::GitEvolutionGraph( filepath );
-    evolutionGraph->setVersions( lVersions );
-    this->activeEvolutionGraph = evolutionGraph;
+	// Vytvor evolucny graf, napln ho ziskanymi verziami a nastav graf ako aktivny
+	Git::GitEvolutionGraph* evolutionGraph = new Git::GitEvolutionGraph( filepath );
+	evolutionGraph->setVersions( lVersions );
+	this->activeEvolutionGraph = evolutionGraph;
 
-    // Ziskaj importer na zaklade zistenej extension a inicializuj ho
-    std::auto_ptr<Importer::StreamImporter> lImporter( NULL );
-    if( ok ) {
-        bool importerFound;
+	// Ziskaj importer na zaklade zistenej extension a inicializuj ho
+	std::auto_ptr<Importer::StreamImporter> lImporter( NULL );
+	if ( ok ) {
+		bool importerFound;
 
-        ok = Importer::ImporterFactory::createByFileExtension( lImporter, importerFound, lExtension) && importerFound;
-        infoHandler->reportError(ok, "No suitable importer has been found for the file extension.");
-    }
+		ok = Importer::ImporterFactory::createByFileExtension( lImporter, importerFound, lExtension ) && importerFound;
+		infoHandler->reportError( ok, "No suitable importer has been found for the file extension." );
+	}
 
-    std::auto_ptr<QIODevice> lStream( NULL );
-    // mensi hack v podmienke, kde povodne bolo !lGit, pricom pri lStream( NULL ); sa nedalo zavolat context.reset( new Importer::ImporterContext( *lStream ,*lNewGraph, *infoHandler, *lFilepath ) )
-    if( ok && lGit ) {
-        lStream.reset( new QFile( "" ) );
-    }
+	std::auto_ptr<QIODevice> lStream( NULL );
+	// mensi hack v podmienke, kde povodne bolo !lGit, pricom pri lStream( NULL ); sa nedalo zavolat context.reset( new Importer::ImporterContext( *lStream ,*lNewGraph, *infoHandler, *lFilepath ) )
+	if ( ok && lGit ) {
+		lStream.reset( new QFile( "" ) );
+	}
 
-    // kvoli hacku vyssie vytvorim lStream, ale neotvarim ho
-    if( ok && !lGit ) {
-        ok = lStream->open( QIODevice::ReadOnly );
-        infoHandler->reportError(ok, "Unable to open the input file.");
-    }
+	// kvoli hacku vyssie vytvorim lStream, ale neotvarim ho
+	if ( ok && !lGit ) {
+		ok = lStream->open( QIODevice::ReadOnly );
+		infoHandler->reportError( ok, "Unable to open the input file." );
+	}
 
-    // Vytvorim graf
-    std::auto_ptr<Data::Graph> lNewGraph( NULL );
-    if( ok ) {
-        lNewGraph.reset( this->createGraph( lName ) );
-        ok = lNewGraph.get() != NULL;
-    }
+	// Vytvorim graf
+	std::auto_ptr<Data::Graph> lNewGraph( NULL );
+	if ( ok ) {
+		lNewGraph.reset( this->createGraph( lName ) );
+		ok = lNewGraph.get() != NULL;
+	}
 
-    // Vytvorim nazov projektu
-    std::auto_ptr<QString> lFilepath( NULL );
-    if( lGit ) {
-        lFilepath.reset( new QString( filepath ) );
-    }
+	// Vytvorim nazov projektu
+	std::auto_ptr<QString> lFilepath( NULL );
+	if ( lGit ) {
+		lFilepath.reset( new QString( filepath ) );
+	}
 
-    // Vytvorim import context, naplnim ho streamom, grafom, infohandlerom a cestou k projektu
-    std::auto_ptr<Importer::ImporterContext> context( NULL );
-    if( ok ) {
-        context.reset( new Importer::ImporterContext( *lStream ,*lNewGraph, *infoHandler, *lFilepath ) );
-    }
+	// Vytvorim import context, naplnim ho streamom, grafom, infohandlerom a cestou k projektu
+	std::auto_ptr<Importer::ImporterContext> context( NULL );
+	if ( ok ) {
+		context.reset( new Importer::ImporterContext( *lStream ,*lNewGraph, *infoHandler, *lFilepath ) );
+	}
 
-    // Ak sa ziadny krok nepokazil, tak naimportujem uzly do grafu
-    if( ok ) {
-        ok = lImporter->import( *context );
-    }
+	// Ak sa ziadny krok nepokazil, tak naimportujem uzly do grafu
+	if ( ok ) {
+		ok = lImporter->import( *context );
+	}
 
-    // Zatvorim stream
-    if( lStream.get() != NULL ) {
-        lStream->close();
-    }
+	// Zatvorim stream
+	if ( lStream.get() != NULL ) {
+		lStream->close();
+	}
 
-    // Vytvorim layout a pridam ho grafu
-    if( ok ) {
-        Data::GraphLayout* lGraphLayout = lNewGraph->addLayout( "new Layout " );
-        lNewGraph->selectLayout( lGraphLayout );
-    }
+	// Vytvorim layout a pridam ho grafu
+	if ( ok ) {
+		Data::GraphLayout* lGraphLayout = lNewGraph->addLayout( "new Layout " );
+		lNewGraph->selectLayout( lGraphLayout );
+	}
 
-    // Ak existoval aktivny graf, tak ho zavrem a vratim nami vytvoreny graf ako aktivny
-    if( ok ) {
-        if( this->activeGraph != NULL ) {
-            this->closeGraph( this->activeGraph );
-        }
+	// Ak existoval aktivny graf, tak ho zavrem a vratim nami vytvoreny graf ako aktivny
+	if ( ok ) {
+		if ( this->activeGraph != NULL ) {
+			this->closeGraph( this->activeGraph );
+		}
 
-        this->activeGraph = lNewGraph.release();
-    }
+		this->activeGraph = lNewGraph.release();
+	}
 
-    // Restartnem layout
-    if( ok ) {
-        AppCore::Core::getInstance()->restartLayout();
-    }
+	// Restartnem layout
+	if ( ok ) {
+		AppCore::Core::getInstance()->restartLayout();
+	}
 
-    AppCore::Core::getInstance()->messageWindows->closeProgressBar();
+	AppCore::Core::getInstance()->messageWindows->closeProgressBar();
 
-    // Ak nenastala ziadna chyba, tak vratim aktivny graf, inak NULL
-    return ( ok ? this->activeGraph : NULL );
+	// Ak nenastala ziadna chyba, tak vratim aktivny graf, inak NULL
+	return ( ok ? this->activeGraph : NULL );
 }
 
 Data::Graph* Manager::GraphManager::createGraph( QString graphname )
@@ -487,117 +488,124 @@ Manager::GraphManager* Manager::GraphManager::getInstance()
 	return manager;
 }
 
-void Manager::GraphManager::setProgressBarValue( int value ) {
-    AppCore::Core::getInstance()->messageWindows->setProgressBarValue( value );
+void Manager::GraphManager::setProgressBarValue( int value )
+{
+	AppCore::Core::getInstance()->messageWindows->setProgressBarValue( value );
 }
 
-void Manager::GraphManager::showProgressBar() {
-    AppCore::Core::getInstance()->messageWindows->showProgressBar();
+void Manager::GraphManager::showProgressBar()
+{
+	AppCore::Core::getInstance()->messageWindows->showProgressBar();
 }
 
-void Manager::GraphManager::closeProgressBar() {
-    AppCore::Core::getInstance()->messageWindows->closeProgressBar();
+void Manager::GraphManager::closeProgressBar()
+{
+	AppCore::Core::getInstance()->messageWindows->closeProgressBar();
 }
 
-bool Manager::GraphManager::nextVersion( Layout::LayoutThread* layout ) {
-    bool ok = true;
+bool Manager::GraphManager::nextVersion( Layout::LayoutThread* layout )
+{
+	bool ok = true;
 
-    // Ziskam aktivny evolucny graf a graf s uzlami.
-    Git::GitEvolutionGraph* lEvolutionGraph = Manager::GraphManager::getInstance()->getActiveEvolutionGraph();
-    Data::Graph* lActiveGraph = Manager::GraphManager::getInstance()->getActiveGraph();
+	// Ziskam aktivny evolucny graf a graf s uzlami.
+	Git::GitEvolutionGraph* lEvolutionGraph = Manager::GraphManager::getInstance()->getActiveEvolutionGraph();
+	Data::Graph* lActiveGraph = Manager::GraphManager::getInstance()->getActiveGraph();
 
-    // Ziskam aktualnu verziu grafu
-    int currentVersion =  lActiveGraph->getCurrentVersion();
+	// Ziskam aktualnu verziu grafu
+	int currentVersion =  lActiveGraph->getCurrentVersion();
 
-    // Vytvorim updater
-    Git::GitGraphUpdater* lUpdater = new Git::GitGraphUpdater( currentVersion, lEvolutionGraph, lActiveGraph );
+	// Vytvorim updater
+	Git::GitGraphUpdater* lUpdater = new Git::GitGraphUpdater( currentVersion, lEvolutionGraph, lActiveGraph );
 
-    // Zastavim layout, updatnem graf, zmenim verziu a spustim layout
-    layout->pause();
-    lUpdater->nextVersion();
-    lActiveGraph->setCurrentVersion( currentVersion + 1 );
-    layout->play();
+	// Zastavim layout, updatnem graf, zmenim verziu a spustim layout
+	layout->pause();
+	lUpdater->nextVersion();
+	lActiveGraph->setCurrentVersion( currentVersion + 1 );
+	layout->play();
 
 
-    return ok;
+	return ok;
 }
 
-bool Manager::GraphManager::previousVersion( Layout::LayoutThread* layout ) {
-    bool ok = true;
+bool Manager::GraphManager::previousVersion( Layout::LayoutThread* layout )
+{
+	bool ok = true;
 
-    // Ziskam aktivny evolucny graf a graf s uzlami.
-    Git::GitEvolutionGraph* lEvolutionGraph = Manager::GraphManager::getInstance()->getActiveEvolutionGraph();
-    Data::Graph* lActiveGraph = Manager::GraphManager::getInstance()->getActiveGraph();
+	// Ziskam aktivny evolucny graf a graf s uzlami.
+	Git::GitEvolutionGraph* lEvolutionGraph = Manager::GraphManager::getInstance()->getActiveEvolutionGraph();
+	Data::Graph* lActiveGraph = Manager::GraphManager::getInstance()->getActiveGraph();
 
-    // Ziskam aktualnu verziu grafu
-    int currentVersion =  lActiveGraph->getCurrentVersion();
+	// Ziskam aktualnu verziu grafu
+	int currentVersion =  lActiveGraph->getCurrentVersion();
 
-    // Vytvorim updater
-    Git::GitGraphUpdater* lUpdater = new Git::GitGraphUpdater( currentVersion, lEvolutionGraph, lActiveGraph );
+	// Vytvorim updater
+	Git::GitGraphUpdater* lUpdater = new Git::GitGraphUpdater( currentVersion, lEvolutionGraph, lActiveGraph );
 
-    // Zastavim layout, updatnem graf, zmenim verziu a spustim layout
-    layout->pause();
-    lUpdater->previousVersion();
-    lActiveGraph->setCurrentVersion( currentVersion - 1 );
-    layout->play();
+	// Zastavim layout, updatnem graf, zmenim verziu a spustim layout
+	layout->pause();
+	lUpdater->previousVersion();
+	lActiveGraph->setCurrentVersion( currentVersion - 1 );
+	layout->play();
 
-    return ok;
+	return ok;
 }
 
-bool Manager::GraphManager::changeToVersion( Layout::LayoutThread* layout, int toVersion ) {
-    bool ok = true;
+bool Manager::GraphManager::changeToVersion( Layout::LayoutThread* layout, int toVersion )
+{
+	bool ok = true;
 
-    // Ziskam aktivny evolucny graf a graf s uzlami.
-    Git::GitEvolutionGraph* lEvolutionGraph = Manager::GraphManager::getInstance()->getActiveEvolutionGraph();
-    Data::Graph* lActiveGraph = Manager::GraphManager::getInstance()->getActiveGraph();
+	// Ziskam aktivny evolucny graf a graf s uzlami.
+	Git::GitEvolutionGraph* lEvolutionGraph = Manager::GraphManager::getInstance()->getActiveEvolutionGraph();
+	Data::Graph* lActiveGraph = Manager::GraphManager::getInstance()->getActiveGraph();
 
-    // Ziskam aktualnu verziu grafu
-    int currentVersion =  lActiveGraph->getCurrentVersion();
+	// Ziskam aktualnu verziu grafu
+	int currentVersion =  lActiveGraph->getCurrentVersion();
 
-    // Vytvorim updater
-    Git::GitGraphUpdater* lUpdater = new Git::GitGraphUpdater( currentVersion, lEvolutionGraph, lActiveGraph );
+	// Vytvorim updater
+	Git::GitGraphUpdater* lUpdater = new Git::GitGraphUpdater( currentVersion, lEvolutionGraph, lActiveGraph );
 
-    // Zastavim layout, updatnem graf, zmenim verziu a spustim layout
-    layout->pause();
-    lUpdater->changeToVersion( toVersion );
-    lActiveGraph->setCurrentVersion( toVersion );
-    layout->play();
+	// Zastavim layout, updatnem graf, zmenim verziu a spustim layout
+	layout->pause();
+	lUpdater->changeToVersion( toVersion );
+	lActiveGraph->setCurrentVersion( toVersion );
+	layout->play();
 
 
-    return ok;
+	return ok;
 }
 
-void Manager::GraphManager::getDiffInfo( QString path, int version ) {
-    // Ziskam aktivny evolucny graf
-    Git::GitEvolutionGraph* lEvolutionGraph = Manager::GraphManager::getInstance()->getActiveEvolutionGraph();
+void Manager::GraphManager::getDiffInfo( QString path, int version )
+{
+	// Ziskam aktivny evolucny graf
+	Git::GitEvolutionGraph* lEvolutionGraph = Manager::GraphManager::getInstance()->getActiveEvolutionGraph();
 
-    // Ziskam info konkretnej verzie
-    Git::GitVersion* lVersion = lEvolutionGraph->getVersion( version );
-    Git::GitFile* gitFile = nullptr;
+	// Ziskam info konkretnej verzie
+	Git::GitVersion* lVersion = lEvolutionGraph->getVersion( version );
+	Git::GitFile* gitFile = nullptr;
 
-    // Najdem subor, ktory bol zvoleny v grafe vo verzii, kde bol posledne modifikovany
-    bool isFound = false;
-    for( int i = version; i >= 0; i-- ) {
-        foreach( Git::GitFile* file, lEvolutionGraph->getVersion( i )->getChangedFiles() ) {
-            if( file->getFilepath() == path ) {
-                gitFile = file;
-                isFound = true;
-                break;
-            }
-        }
-        if( isFound ) {
-            break;
-        }
-    }
+	// Najdem subor, ktory bol zvoleny v grafe vo verzii, kde bol posledne modifikovany
+	bool isFound = false;
+	for ( int i = version; i >= 0; i-- ) {
+		foreach ( Git::GitFile* file, lEvolutionGraph->getVersion( i )->getChangedFiles() ) {
+			if ( file->getFilepath() == path ) {
+				gitFile = file;
+				isFound = true;
+				break;
+			}
+		}
+		if ( isFound ) {
+			break;
+		}
+	}
 
-    // Vytvorim triedu na nacitanie diff pre subor
-    Git::GitFileLoader loader = Git::GitFileLoader::GitFileLoader( lEvolutionGraph->getFilePath(), Util::ApplicationConfig::get()->getValue( "Git.ExtensionFilter" ) );
+	// Vytvorim triedu na nacitanie diff pre subor
+	Git::GitFileLoader loader = Git::GitFileLoader::GitFileLoader( lEvolutionGraph->getFilePath(), Util::ApplicationConfig::get()->getValue( "Git.ExtensionFilter" ) );
 
-    // Ak sme nasli subor, tak nacitaj do suboru diff a vypis obsah do konzoly
-    if( gitFile ) {
-        loader.getDiffInfo( gitFile, lVersion->getCommitId(), version - 1 < 0 ? NULL : lEvolutionGraph->getVersion( version - 1 )->getCommitId() );
-        gitFile->printContent();
-    }
+	// Ak sme nasli subor, tak nacitaj do suboru diff a vypis obsah do konzoly
+	if ( gitFile ) {
+		loader.getDiffInfo( gitFile, lVersion->getCommitId(), version - 1 < 0 ? NULL : lEvolutionGraph->getVersion( version - 1 )->getCommitId() );
+		gitFile->printContent();
+	}
 
 }
 

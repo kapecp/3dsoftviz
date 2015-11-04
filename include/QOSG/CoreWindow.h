@@ -221,11 +221,11 @@ public slots:
 	            */
 	void loadFile();
 
-    /**
-                *  \fn public  loadFromGit
-                *  \brief Show dialog to write path to git repo which will be loaded
-                */
-    void loadFromGit();
+	/**
+	            *  \fn public  loadFromGit
+	            *  \brief Show dialog to write path to git repo which will be loaded
+	            */
+	void loadFromGit();
 
 	/**
 	            *  \fn public  labelOnOff(bool checked)
@@ -529,71 +529,77 @@ public slots:
 
 	void repulsive_Forces_ValueChanged();
 
-    void setCameraEnable( bool enable );
+	void setCameraEnable( bool enable );
 
-    /**
-     * bool nextVersion()
-     * @brief Updates graph to the next version
-     * @return Returns true, if update was successful, otherwise false.
-     */
-    bool nextVersion();
+	/**
+	 * bool nextVersion()
+	 * @brief Updates graph to the next version
+	 * @return Returns true, if update was successful, otherwise false.
+	 */
+	bool nextVersion();
 
-    /**
-     * bool previousVersion()
-     * @brief Updates graph to the previous version
-     * @return Returns true, if update was successful, otherwise false.
-     */
-    bool previousVersion();
+	/**
+	 * bool previousVersion()
+	 * @brief Updates graph to the previous version
+	 * @return Returns true, if update was successful, otherwise false.
+	 */
+	bool previousVersion();
 
-    /**
-     * void runEvolution()
-     * @brief Runs evolution of the graph
-     */
-    void runEvolution();
+	/**
+	 * void runEvolution()
+	 * @brief Runs evolution of the graph
+	 */
+	void runEvolution();
 
-    /**
-     * void move()
-     * @brief Moves the slider if evolution is running.
-     */
-    void move();
+	/**
+	 * void move()
+	 * @brief Moves the slider if evolution is running.
+	 */
+	void move();
 
-    /**
-     * void fasterEvolution()
-     * @brief Sets up faster evolution
-     */
-    void fasterEvolution();
+	/**
+	 * void fasterEvolution()
+	 * @brief Sets up faster evolution
+	 */
+	void fasterEvolution();
 
-    /**
-     * void slowerEvolution()
-     * @brief Sets up slower evolution
-     */
-    void slowerEvolution();
+	/**
+	 * void slowerEvolution()
+	 * @brief Sets up slower evolution
+	 */
+	void slowerEvolution();
 
-    /**
-     * void getDiffInfo()
-     * @brief Get diff info for selected nodes
-     */
-    void getDiffInfo();
+	/**
+	 * void getDiffInfo()
+	 * @brief Get diff info for selected nodes
+	 */
+	void getDiffInfo();
 
-    /**
-     * void showInfo()
-     * @brief Prints out info about current version in console
-     */
-    void showInfo();
+	/**
+	 * void showInfo()
+	 * @brief Prints out info about current version in console
+	 */
+	void showInfo();
 
-    /**
-     * void sliderVersionValueChanged( int value )
-     * @brief Changes graph version to the selected value on slider
-     * @param value Index of version to be vizualized
-     */
-    void sliderVersionValueChanged( int value );
+	/**
+	 * void createEvolutionLuaGraph()
+	 * @brief Creates evolution graph by using Lua graph
+	 */
+	void createEvolutionLuaGraph();
 
-    /**
-     * void changeLifespan( int value )
-     * @brief Changes lifespan of removed nodes
-     * @param value Number of version removed nodes lives after repository removal.
-     */
-    void changeLifespan( int value );
+	/**
+	 * void sliderVersionValueChanged( int value )
+	 * @brief Changes graph version to the selected value on slider
+	 * @param value Index of version to be vizualized
+	 */
+	void sliderVersionValueChanged( int value );
+
+	/**
+	 * void changeLifespan( int value )
+	 * @brief Changes lifespan of removed nodes
+	 * @param value Number of version removed nodes lives after repository removal.
+	 */
+	void changeLifespan( int value );
 
 private:
 
@@ -847,10 +853,10 @@ private:
 	     */
 	QSpinBox* b_SetRestriction_CylinderSurface_SpinBox;
 
-    /**
-     * @brief Spin box for changing evolution lifespan of removed nodes
-     */
-    QSpinBox* evolutionLifespanSpinBox;
+	/**
+	 * @brief Spin box for changing evolution lifespan of removed nodes
+	 */
+	QSpinBox* evolutionLifespanSpinBox;
 
 	//volovar_zac
 	/**
@@ -951,61 +957,67 @@ private:
 	 */
 	QPushButton* b_start_gloves;
 
-    /**
-     * QPushButton* b_previous_version
-     * @brief Button which graph update to previous version
-     */
-    QPushButton* b_previous_version;
+	/**
+	 * QPushButton* b_previous_version
+	 * @brief Button which graph update to previous version
+	 */
+	QPushButton* b_previous_version;
 
-    /**
-     * QPushButton* b_next_version
-     * @brief Button which signals graph update to next version
-     */
-    QPushButton* b_next_version;
+	/**
+	 * QPushButton* b_next_version
+	 * @brief Button which signals graph update to next version
+	 */
+	QPushButton* b_next_version;
 
-    /**
-     * QPushButton* b_run_evolution
-     * @brief Button which starts graph evolution
-     */
-    QPushButton* b_run_evolution;
+	/**
+	 * QPushButton* b_run_evolution
+	 * @brief Button which starts graph evolution
+	 */
+	QPushButton* b_run_evolution;
 
-    /**
-     * QPushButton* b_info_version
-     * @brief Button which prints out info about current version
-     */
-    QPushButton* b_info_version;
+	/**
+	 * QPushButton* b_info_version
+	 * @brief Button which prints out info about current version
+	 */
+	QPushButton* b_info_version;
 
-    /**
-     * QPushButton* b_faster_evolution
-     * @brief Button which sets up faster evolution
-     */
-    QPushButton* b_faster_evolution;
+	/**
+	 * QPushButton* b_faster_evolution
+	 * @brief Button which sets up faster evolution
+	 */
+	QPushButton* b_faster_evolution;
 
-    /**
-     * QPushButton* b_slower_evolution
-     * @brief Button which sets up slower evolution
-     */
-    QPushButton* b_slower_evolution;
+	/**
+	 * QPushButton* b_slower_evolution
+	 * @brief Button which sets up slower evolution
+	 */
+	QPushButton* b_slower_evolution;
 
-    /**
-     * QPushButton* b_git_diff;
-     * @brief Button which returns git diff about selected nodes
-     */
-    QPushButton* b_git_diff;
+	/**
+	 * QPushButton* b_git_diff;
+	 * @brief Button which returns git diff about selected nodes
+	 */
+	QPushButton* b_git_diff;
 
-    /**
-     * QLabel * labelEvolutionSlider
-     * @brief Shows current vizualized version
-     */
-    QLabel * labelEvolutionSlider;
+	/**
+	 * QPushButton* b_git_lua_graph;
+	 * @brief Button which creates git lua graph
+	 */
+	QPushButton* b_git_lua_graph;
 
-    /**
-     * QTimer * evolutionTimer
-     * @brief Timer which interval periodically invokes next version
-     */
-    QTimer * evolutionTimer;
+	/**
+	 * QLabel * labelEvolutionSlider
+	 * @brief Shows current vizualized version
+	 */
+	QLabel* labelEvolutionSlider;
 
-    bool isRunning;
+	/**
+	 * QTimer * evolutionTimer
+	 * @brief Timer which interval periodically invokes next version
+	 */
+	QTimer* evolutionTimer;
+
+	bool isRunning;
 
 	/**
 	 *CheckBox for mapinulation camera or object
@@ -1025,11 +1037,11 @@ private:
 	    */
 	QAction* load;
 
-    /**
-        * QAction* laodGit
-        * \brief Action for loading from git
-        */
-    QAction* loadGit;
+	/**
+	    * QAction* laodGit
+	    * \brief Action for loading from git
+	    */
+	QAction* loadGit;
 
 	/**
 	    *  QPushButton * label
@@ -1043,11 +1055,11 @@ private:
 	    */
 	QSlider* slider;
 
-    /**
-     * QSlider* evolutionSlider
-     * @brief Slider for evolution graph
-     */
-    QSlider* evolutionSlider;
+	/**
+	 * QSlider* evolutionSlider
+	 * @brief Slider for evolution graph
+	 */
+	QSlider* evolutionSlider;
 
 
 	/**
@@ -1126,7 +1138,7 @@ private:
 	    *  \fn private  createLeftToolBar
 	    *  \brief Create left toolBar
 	    */
-    void createLeftToolBar();
+	void createLeftToolBar();
 
 	/**
 	    *  \fn private  createMetricsToolBar

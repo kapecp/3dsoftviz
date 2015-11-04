@@ -24,16 +24,16 @@ class ReadEdgesStore
 public:
 
 	/***/
-    virtual ~ReadEdgesStore( void ) {}
+	virtual ~ReadEdgesStore( void ) {}
 
 	/**
 	 * \brief Adds a new node.
 	 * \param[in] name Node name.
 	 * \param[in] node Node to add.
 	 */
-    void addEdge(
+	void addEdge(
 		const QString& name,
-        osg::ref_ptr<Data::Edge> edge
+		osg::ref_ptr<Data::Edge> edge
 	);
 
 	/**
@@ -50,13 +50,13 @@ public:
 	 * \param[in] name Node name.
 	 * \return Node with the name or NULL, if it does not exist.
 	 */
-    osg::ref_ptr<Data::Edge> get(
+	osg::ref_ptr<Data::Edge> get(
 		const QString& name
 	);
 
 private:
 
-    QMap<QString, osg::ref_ptr<Data::Edge>> edges;
+	QMap<QString, osg::ref_ptr<Data::Edge>> edges;
 
 }; // class
 

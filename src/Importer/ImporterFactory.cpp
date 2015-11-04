@@ -23,10 +23,10 @@ bool ImporterFactory::createByFileExtension(
 		importerFound = true;
 	}
 
-    if( 0 == fileExtension.compare( "git", Qt::CaseInsensitive ) ) {
-        importer.reset( new GitGraphImporter );
-        importerFound = true;
-    }
+	if ( 0 == fileExtension.compare( "git", Qt::CaseInsensitive ) ) {
+		importer.reset( new GitGraphImporter );
+		importerFound = true;
+	}
 
 	if ( 0 == fileExtension.compare( "gxl", Qt::CaseInsensitive ) ) {
 		importer.reset( new GXLImporter );

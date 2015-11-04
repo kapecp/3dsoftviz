@@ -70,8 +70,8 @@ Data::Graph::Graph( qlonglong graph_id, QString name, QSqlDatabase* conn, QMap<q
 	this->nodeVisual = Data::Node::INDEX_SQUARE;
 	this->edgeVisual = Data::Edge::INDEX_QUAD;
 
-    this->edgeOccurence = QMap<QString, int>();
-    this->currentVersion = 0;
+	this->edgeOccurence = QMap<QString, int>();
+	this->currentVersion = 0;
 }
 
 Data::Graph::Graph( qlonglong graph_id, QString name, qlonglong layout_id_counter, qlonglong ele_id_counter, QSqlDatabase* conn )
@@ -96,8 +96,8 @@ Data::Graph::Graph( qlonglong graph_id, QString name, qlonglong layout_id_counte
 	this->nodeVisual = Data::Node::INDEX_SQUARE;
 	this->edgeVisual = Data::Edge::INDEX_QUAD;
 
-    this->edgeOccurence = QMap<QString, int>();
-    this->currentVersion = 0;
+	this->edgeOccurence = QMap<QString, int>();
+	this->currentVersion = 0;
 }
 
 Data::Graph::~Graph( void )
@@ -1357,7 +1357,7 @@ void Data::Graph::removeEdge( osg::ref_ptr<Data::Edge> edge )
 
 			edge->unlinkNodes();
 		}
-    }
+	}
 }
 
 void Data::Graph::removeNode( osg::ref_ptr<Data::Node> node )
@@ -1390,7 +1390,7 @@ void Data::Graph::removeNode( osg::ref_ptr<Data::Node> node )
 			}
 
 			node->setInvisible( true );
-            node->showLabel( false );
+			node->showLabel( false );
 			//-spravit odstranovanie poriadne
 		}
 	}
@@ -1438,68 +1438,69 @@ osg::ref_ptr<Data::Node> Data::Graph::addFloatingRestrictionNode( QString name, 
 	return node;
 }
 
-Data::Node* Data::Graph::findNodeByName( QString nodeName ) {
-    Data::Node* lNode;
-    QMap<qlonglong, osg::ref_ptr<Data::Node> >* lNodes = this->getNodes();
-    QMap<qlonglong, osg::ref_ptr<Data::Node> >::iterator it;
-    for ( it = lNodes->begin(); it != lNodes->end(); ++it )
-    {
-        lNode = it.value();
+Data::Node* Data::Graph::findNodeByName( QString nodeName )
+{
+	Data::Node* lNode;
+	QMap<qlonglong, osg::ref_ptr<Data::Node> >* lNodes = this->getNodes();
+	QMap<qlonglong, osg::ref_ptr<Data::Node> >::iterator it;
+	for ( it = lNodes->begin(); it != lNodes->end(); ++it ) {
+		lNode = it.value();
 
-        if( ( QString::compare( lNode->Data::AbsNode::getName(), nodeName ) ) == 0 )
-        {
-            break;
-        }
-    }
-    if( it == lNodes->end() ) {
-        lNode = nullptr;
-    }
-    return lNode;
+		if ( ( QString::compare( lNode->Data::AbsNode::getName(), nodeName ) ) == 0 ) {
+			break;
+		}
+	}
+	if ( it == lNodes->end() ) {
+		lNode = nullptr;
+	}
+	return lNode;
 }
 
-Data::Edge* Data::Graph::findEdgeByName( QString edgeName ) {
-    Data::Edge* lEdge;
-    QMap<qlonglong, osg::ref_ptr<Data::Edge> >* lEdges = this->getEdges();
-    QMap<qlonglong, osg::ref_ptr<Data::Edge> >::iterator it;
-    for ( it = lEdges->begin(); it != lEdges->end(); ++it )
-    {
-        lEdge = it.value();
+Data::Edge* Data::Graph::findEdgeByName( QString edgeName )
+{
+	Data::Edge* lEdge;
+	QMap<qlonglong, osg::ref_ptr<Data::Edge> >* lEdges = this->getEdges();
+	QMap<qlonglong, osg::ref_ptr<Data::Edge> >::iterator it;
+	for ( it = lEdges->begin(); it != lEdges->end(); ++it ) {
+		lEdge = it.value();
 
-        if( ( QString::compare( lEdge->Data::AbsEdge::getName(), edgeName ) ) == 0 )
-        {
-            break;
-        }
-    }
+		if ( ( QString::compare( lEdge->Data::AbsEdge::getName(), edgeName ) ) == 0 ) {
+			break;
+		}
+	}
 
-    if( it == lEdges->end() ) {
-        lEdge = nullptr;
-    }
-    return lEdge;
+	if ( it == lEdges->end() ) {
+		lEdge = nullptr;
+	}
+	return lEdge;
 }
 
-void Data::Graph::addEdgeOccurence( QString key ) {
-    int count = 0;
-    if( this->edgeOccurence.contains( key ) ) {
-        count = this->edgeOccurence.value( key );
-    }
+void Data::Graph::addEdgeOccurence( QString key )
+{
+	int count = 0;
+	if ( this->edgeOccurence.contains( key ) ) {
+		count = this->edgeOccurence.value( key );
+	}
 
-    count++;
-    this->edgeOccurence.insert( key, count );
+	count++;
+	this->edgeOccurence.insert( key, count );
 }
 
-bool Data::Graph::removeEdgeOccurence( QString key ) {
-    if( this->edgeOccurence.contains( key ) ) {
-        int count  = this->edgeOccurence.value( key );
-        count--;
-        this->edgeOccurence.insert( key, count );
-        if( count != 0 ) {
-            return true;
-        } else {
-            return false;
-        }
+bool Data::Graph::removeEdgeOccurence( QString key )
+{
+	if ( this->edgeOccurence.contains( key ) ) {
+		int count  = this->edgeOccurence.value( key );
+		count--;
+		this->edgeOccurence.insert( key, count );
+		if ( count != 0 ) {
+			return true;
+		}
+		else {
+			return false;
+		}
 
-    }
-    qDebug() << this->getCurrentVersion() << "CHYBA V RAMCI Data::Graph::removeEdgeOccurence pre key" << key ;
-    return false;
+	}
+	qDebug() << this->getCurrentVersion() << "CHYBA V RAMCI Data::Graph::removeEdgeOccurence pre key" << key ;
+	return false;
 }
 

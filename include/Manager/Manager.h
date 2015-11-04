@@ -76,16 +76,16 @@ public:
 
 	Data::Graph* createNewGraph( QString name );
 
-    /**
-     * \fn loadGraphFromGit
-     * \brief Loads graph from git repo.
-     */
-    Data::Graph* loadGraphFromGit( QString filepath );
+	/**
+	 * \fn loadGraphFromGit
+	 * \brief Loads graph from git repo.
+	 */
+	Data::Graph* loadGraphFromGit( QString filepath );
 
-    /**
+	/**
 	 * \fn loadGraphFromDB
 	 * \brief Loads selected graph from database.
-	 */    
+	 */
 	Data::Graph* loadGraphFromDB( qlonglong graphID, qlonglong layoutID );
 
 	/**
@@ -142,14 +142,15 @@ public:
 		return activeGraph;
 	}
 
-    /**
-     * Git::GitEvolutionGraph* getActiveEvolutionGraph()
-     * @brief Returns active evolution graph
-     * @return active evolution graph
-     */
-    Git::GitEvolutionGraph* getActiveEvolutionGraph() {
-        return this->activeEvolutionGraph;
-    }
+	/**
+	 * Git::GitEvolutionGraph* getActiveEvolutionGraph()
+	 * @brief Returns active evolution graph
+	 * @return active evolution graph
+	 */
+	Git::GitEvolutionGraph* getActiveEvolutionGraph()
+	{
+		return this->activeEvolutionGraph;
+	}
 
 	/**
 	 * \fn getInstance
@@ -157,54 +158,54 @@ public:
 	 */
 	static Manager::GraphManager* getInstance();
 
-    /**
-     * @brief showProgressBar
-     */
-    void showProgressBar();
+	/**
+	 * @brief showProgressBar
+	 */
+	void showProgressBar();
 
-    /**
-     * @brief setProgressBarValue
-     * @param value
-     */
-    void setProgressBarValue( int value );
+	/**
+	 * @brief setProgressBarValue
+	 * @param value
+	 */
+	void setProgressBarValue( int value );
 
-    /**
-     * @brief closeProgressBar
-     */
-    void closeProgressBar();
+	/**
+	 * @brief closeProgressBar
+	 */
+	void closeProgressBar();
 
-    /**
-     * bool nextVersion( Layout::LayoutThread* layout )
-     * @brief Update graph to the next version
-     * @param layout Layout
-     * @return Returns true, if update was successful, otherwise false.
-     */
-    bool nextVersion( Layout::LayoutThread* layout );
+	/**
+	 * bool nextVersion( Layout::LayoutThread* layout )
+	 * @brief Update graph to the next version
+	 * @param layout Layout
+	 * @return Returns true, if update was successful, otherwise false.
+	 */
+	bool nextVersion( Layout::LayoutThread* layout );
 
-    /**
-     * bool previousVersion( Layout::LayoutThread* layout )
-     * @brief Update graph to the previous version
-     * @param layout Layout
-     * @return Returns true, if update was successful, otherwise false.
-     */
-    bool previousVersion( Layout::LayoutThread* layout );
+	/**
+	 * bool previousVersion( Layout::LayoutThread* layout )
+	 * @brief Update graph to the previous version
+	 * @param layout Layout
+	 * @return Returns true, if update was successful, otherwise false.
+	 */
+	bool previousVersion( Layout::LayoutThread* layout );
 
-    /**
-     * bool changeToVersion( Layout::LayoutThread* layout, int toVersion )
-     * @brief Changes version to the selected index.
-     * @param layout Layout
-     * @param toVersion Selected version index
-     * @return
-     */
-    bool changeToVersion( Layout::LayoutThread* layout, int toVersion );
+	/**
+	 * bool changeToVersion( Layout::LayoutThread* layout, int toVersion )
+	 * @brief Changes version to the selected index.
+	 * @param layout Layout
+	 * @param toVersion Selected version index
+	 * @return
+	 */
+	bool changeToVersion( Layout::LayoutThread* layout, int toVersion );
 
-    /**
-     * void getDiffInfo( QString path, int version )
-     * @brief Finds git file for specific path and sets diff info to the file
-     * @param path Project path of the file
-     * @param version Index of currently vizualized version in graph
-     */
-    void getDiffInfo( QString path, int version );
+	/**
+	 * void getDiffInfo( QString path, int version )
+	 * @brief Finds git file for specific path and sets diff info to the file
+	 * @param path Project path of the file
+	 * @param version Index of currently vizualized version in graph
+	 */
+	void getDiffInfo( QString path, int version );
 
 private:
 	/**
@@ -259,11 +260,11 @@ private:
 	 */
 	bool noDatabaseFind;
 
-    /**
-     * Git::GitEvolutionGraph* activeEvolutionGraph
-     * @brief Active evolution graph
-     */
-    Git::GitEvolutionGraph* activeEvolutionGraph;
+	/**
+	 * Git::GitEvolutionGraph* activeEvolutionGraph
+	 * @brief Active evolution graph
+	 */
+	Git::GitEvolutionGraph* activeEvolutionGraph;
 }; // class
 } // namespace
 

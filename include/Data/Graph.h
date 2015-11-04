@@ -647,72 +647,76 @@ public:
 	    */
 	void restoreSplittedEdges();
 
-    /**
-     * Data::Node* findNodeByName( QString nodeName )
-     * @brief Finds node in graph by its path. Returns node, if it was found, otherwise NULL.
-     * @param nodeName Path of the file
-     * @return Returns node, if it was found, otherwise NULL.
-     */
-    Data::Node* findNodeByName( QString nodeName );
+	/**
+	 * Data::Node* findNodeByName( QString nodeName )
+	 * @brief Finds node in graph by its path. Returns node, if it was found, otherwise NULL.
+	 * @param nodeName Path of the file
+	 * @return Returns node, if it was found, otherwise NULL.
+	 */
+	Data::Node* findNodeByName( QString nodeName );
 
-    /**
-     * Data::Edge* findEdgeByName( QString edgeName )
-     * @brief Finds edge in graph by its name. Returns node, if it was found, otherwise NULL.
-     * @param edgeName Name of edge
-     * @return Returns edge, if it was found, otherwise NULL.
-     */
-    Data::Edge* findEdgeByName( QString edgeName );
+	/**
+	 * Data::Edge* findEdgeByName( QString edgeName )
+	 * @brief Finds edge in graph by its name. Returns node, if it was found, otherwise NULL.
+	 * @param edgeName Name of edge
+	 * @return Returns edge, if it was found, otherwise NULL.
+	 */
+	Data::Edge* findEdgeByName( QString edgeName );
 
-    /**
-     * QMap<QString, int> getEdgeOccurence()
-     * @brief Getter for map of edge occurences in the graph.
-     * @return Map of edge occurences in the graph.
-     */
-    QMap<QString, int> getEdgeOccurence() {
-        return this->edgeOccurence;
-    }
+	/**
+	 * QMap<QString, int> getEdgeOccurence()
+	 * @brief Getter for map of edge occurences in the graph.
+	 * @return Map of edge occurences in the graph.
+	 */
+	QMap<QString, int> getEdgeOccurence()
+	{
+		return this->edgeOccurence;
+	}
 
-    /**
-     * void setEdgeOccurence( QMap<QString, int> edgeOccurence )
-     * @brief Setter of map of edge occurences in the graph.
-     * @param edgeOccurence Map of edge occurences in the graph
-     */
-    void setEdgeOccurence( QMap<QString, int> edgeOccurence ) {
-        this->edgeOccurence = edgeOccurence;
-    }
+	/**
+	 * void setEdgeOccurence( QMap<QString, int> edgeOccurence )
+	 * @brief Setter of map of edge occurences in the graph.
+	 * @param edgeOccurence Map of edge occurences in the graph
+	 */
+	void setEdgeOccurence( QMap<QString, int> edgeOccurence )
+	{
+		this->edgeOccurence = edgeOccurence;
+	}
 
-    /**
-     * bool addEdgeOccurence( QString key )
-     * @brief Icrements the count of specific edge name occurence
-     * @param key Name of edge
-     */
-    void addEdgeOccurence( QString key );
+	/**
+	 * bool addEdgeOccurence( QString key )
+	 * @brief Icrements the count of specific edge name occurence
+	 * @param key Name of edge
+	 */
+	void addEdgeOccurence( QString key );
 
-    /**
-     * bool removeEdgeOccurence( QString key )
-     * @brief Decrements the count of specific edge name occurence
-     * @param key Name of edge
-     * @return Returns true, if edge count not equals 0, otherwise false.
-     */
-    bool removeEdgeOccurence( QString key );
+	/**
+	 * bool removeEdgeOccurence( QString key )
+	 * @brief Decrements the count of specific edge name occurence
+	 * @param key Name of edge
+	 * @return Returns true, if edge count not equals 0, otherwise false.
+	 */
+	bool removeEdgeOccurence( QString key );
 
-    /**
-     * int getCurrentVersion()
-     * @brief Getter of current index of vizualized version in graph
-     * @return current index of vizualized version in graph
-     */
-    int getCurrentVersion() {
-        return this->currentVersion;
-    }
+	/**
+	 * int getCurrentVersion()
+	 * @brief Getter of current index of vizualized version in graph
+	 * @return current index of vizualized version in graph
+	 */
+	int getCurrentVersion()
+	{
+		return this->currentVersion;
+	}
 
-    /**
-     * void setCurrentVersion( int currentVersion )
-     * @brief Setter of current index of vizualized version in graph
-     * @param currentVersion Current index of vizualized version in graph
-     */
-    void setCurrentVersion( int currentVersion ) {
-        this->currentVersion =  currentVersion;
-    }
+	/**
+	 * void setCurrentVersion( int currentVersion )
+	 * @brief Setter of current index of vizualized version in graph
+	 * @param currentVersion Current index of vizualized version in graph
+	 */
+	void setCurrentVersion( int currentVersion )
+	{
+		this->currentVersion =  currentVersion;
+	}
 
 private:
 
@@ -899,17 +903,17 @@ private:
 	    */
 	int edgeVisual;
 
-    /**
-     * QMap<QString, int> edgeOccurence
-     * @brief Map of edge names as keys and value is edge occurence in graph
-     */
-    QMap<QString, int> edgeOccurence;
+	/**
+	 * QMap<QString, int> edgeOccurence
+	 * @brief Map of edge names as keys and value is edge occurence in graph
+	 */
+	QMap<QString, int> edgeOccurence;
 
-    /**
-     * int currentVersion
-     * @brief Index of currently vizualized version
-     */
-    int currentVersion;
+	/**
+	 * int currentVersion
+	 * @brief Index of currently vizualized version
+	 */
+	int currentVersion;
 
 	/**
 	    *  QMap<qlonglong,osg::ref_ptr<Data::Edge> > edgesByType
