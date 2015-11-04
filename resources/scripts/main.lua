@@ -1,4 +1,4 @@
-package.path = package.path .. ";../share/3dsoftviz/scripts/?.lua;../share/3dsoftviz/scripts/?/init.lua"
+package.path = package.path .. ";../lib/scripts/?.lua;../lib/scripts/?/init.lua"
 
 function_call_graph = require "softviz/function_call_graph"
 logical_filter = require "softviz/logical_filter"

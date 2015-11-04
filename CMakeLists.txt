@@ -949,6 +949,7 @@ if( COMMAND cotire )
 endif()
 
 # install resources
+install( DIRECTORY resources/scripts/ DESTINATION ${INSTALL_LIB}/scripts COMPONENT Data )
 install( DIRECTORY resources/ DESTINATION ${INSTALL_DATA} COMPONENT Data )
 
 # Install needed .dll files for OpenNI2
