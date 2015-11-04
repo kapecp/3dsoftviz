@@ -165,7 +165,7 @@ bool PickHandler::handleScroll( const osgGA::GUIEventAdapter& ea, GUIActionAdapt
 {
 	if ( selectionType == SelectionType::CLUSTER && !pickedClusters.empty() ) {
 		QLinkedList<osg::ref_ptr<Data::Cluster> >::const_iterator i = pickedClusters.constBegin();
-		float scale = appConf->getValue( "Viewer.Display.NodeDistanceScale" ).toFloat();
+//		float scale = appConf->getValue( "Viewer.Display.NodeDistanceScale" ).toFloat();
 		while ( i != pickedClusters.constEnd() ) {
 			Layout::ShapeGetter_Cube* shapeGetter = ( *i )->getShapeGetter();
 			if ( shapeGetter != NULL ) {
