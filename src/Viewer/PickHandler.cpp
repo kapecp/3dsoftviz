@@ -713,7 +713,7 @@ bool PickHandler::doClusterPick( osg::NodePath nodePath )
 
 }
 
-void PickHandler::selectAllNeighbors( QLinkedList<osg::ref_ptr<Data::Node>> nodes )
+void PickHandler::selectAllNeighbors( QLinkedList<osg::ref_ptr<Data::Node > > nodes )
 {
 	if ( nodes.count() > 0 && !isNeighborsSelection ) {
 		QLinkedList<osg::ref_ptr<Data::Node> >::const_iterator i = nodes.constBegin();
