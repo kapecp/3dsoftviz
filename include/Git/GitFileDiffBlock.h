@@ -155,25 +155,25 @@ private:
 	 * int addStart
 	 * @brief Line positino, where block addition starts
 	 */
-	int addStart;
+    int addStart = 1;
 
 	/**
 	 * int addCount
 	 * @brief Number of lines affected from block addition start position.
 	 */
-	int addCount;
+    int addCount = 0;
 
 	/**
 	 * int removeStart
 	 * @brief Line position, where block removal starts.
 	 */
-	int removeStart;
+    int removeStart = 1;
 
 	/**
 	 * int removeCount
 	 * @brief Number of lines affected from block removal start position.
 	 */
-	int removeCount;
+    int removeCount = 0;
 
 	/**
 	 * QList<Git::GitFileDiffBlockLine*> gitFileDiffBlockLines

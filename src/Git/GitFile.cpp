@@ -4,18 +4,16 @@
 #include <QDebug>
 
 Git::GitFile::GitFile()
+    : filename{""}, filepath{""}, type{Git::GitType::NONE}, gitFileDiffBlocks{QList<Git::GitFileDiffBlock*>{}}
 {
 
-	// inicializacia premennych na defaultne hodnoty
-	this->filename = "";
-	this->filepath = "";
-	this->type = Git::GitType::NONE;
-	this->gitFileDiffBlocks = QList<Git::GitFileDiffBlock*>();
 }
 
-Git::GitFile::GitFile( QString filename, QString filepath, GitType type ) : filename( filename ), filepath( filepath ), type( type )
+Git::GitFile::GitFile( QString filename, QString filepath, GitType type ) : filename( filename ), filepath( filepath ), type( type ),
+    gitFileDiffBlocks{QList<Git::GitFileDiffBlock*>{}}
+
 {
-	this->gitFileDiffBlocks = QList<Git::GitFileDiffBlock*>();
+
 }
 
 QString Git::GitFile::getTypeAsString()
@@ -29,6 +27,8 @@ QString Git::GitFile::getTypeAsString()
 			return "Modified";
 		case Git::GitType::REMOVED:
 			return "Removed";
+        case Git::GitType::NONE:
+            return "NONE";
 		default:
 			return "Wrong or Not set";
 	}

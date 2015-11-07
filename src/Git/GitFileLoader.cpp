@@ -13,11 +13,9 @@
 #include <QDebug>
 
 Git::GitFileLoader::GitFileLoader()
+    : filePath{""}, extensions{""}
 {
 
-	// Inicializacia premennych na defaultne hodnoty
-	this->filePath = "";
-	this->extensions = "";
 }
 
 Git::GitFileLoader::GitFileLoader( QString filepath, QString extensions ) : filePath( filepath ), extensions( extensions )
@@ -152,9 +150,9 @@ QString Git::GitFileLoader::makeTmpFileFromCommand( QString command, QString fil
 	if ( ok ) {
 		QProcess* process = new QProcess;
 		process->setStandardOutputFile( QDir::toNativeSeparators( tempFile.fileName() ) );
-		QString lCommand = QString( command );
+        QString lCommand = QString( command );
 		process->start( lCommand );
-		process->waitForFinished();
+        process->waitForFinished();
 		process->close();
 		process->terminate();
 	}
@@ -276,10 +274,10 @@ void Git::GitFileLoader::readGitDiffFile( QString tmpFile, Git::GitFile* gitFile
 					endSpace = lLine.indexOf( " ", middleSpace + 1 );
 
 					// Nastavenie zaciatkov a poctu riadko oblasti
-					diffBlock->setRemoveStart( lLine.mid( 4, firstComma - 4 ).toInt( false, 10 ) );
-					diffBlock->setRemoveCount( lLine.mid( firstComma + 1, middleSpace - ( firstComma + 1 ) ).toInt( false, 10 ) );
-					diffBlock->setAddStart( lLine.mid( middleSpace + 2, secondComma - ( middleSpace + 2 ) ).toInt( false, 10 ) );
-					diffBlock->setAddCount( lLine.mid( secondComma + 1, endSpace - ( secondComma + 1 ) ).toInt( false, 10 ) );
+                    diffBlock->setRemoveStart( lLine.mid( 4, firstComma - 4 ).toInt() );
+                    diffBlock->setRemoveCount( lLine.mid( firstComma + 1, middleSpace - ( firstComma + 1 ) ).toInt() );
+                    diffBlock->setAddStart( lLine.mid( middleSpace + 2, secondComma - ( middleSpace + 2 ) ).toInt() );
+                    diffBlock->setAddCount( lLine.mid( secondComma + 1, endSpace - ( secondComma + 1 ) ).toInt() );
 
 					// Inicializacia pocitadiel pozicie pre pridanie a odstranenie
 					addPos = diffBlock->getAddStart();
@@ -358,10 +356,10 @@ void Git::GitFileLoader::getDiffInfo( Git::GitFile* gitFile, QString currentComm
 
 	// Ak bol pridany subor pridany, nemame jeho predchadzajucu verziu, preto nacitame celu verziu suboru
 	if ( gitFile->getType() == Git::GitType::ADDED ) {
-		lCommand = QString( "git show " + currentCommitId + ":" + lFile );
+        lCommand = "git show " + currentCommitId + ":" + lFile;
 	}
 	else {
-		lCommand = QString( "git diff -u " + oldCommitId + " " + currentCommitId + " -- " + lFile );
+        lCommand = "git diff -u " + oldCommitId + " " + currentCommitId + " -- " + lFile;
 	}
 
 	// Vykona command, vystup ulozi do temp suboru a vrati cestu k temp suboru

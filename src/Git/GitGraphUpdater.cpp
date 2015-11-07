@@ -15,11 +15,10 @@
 #include <QMapIterator>
 
 
-Git::GitGraphUpdater::GitGraphUpdater( int currentVersion, Git::GitEvolutionGraph* evolutionGraph, Data::Graph* activeGraph ) : currentVersion( currentVersion ), evolutionGraph( evolutionGraph ), activeGraph( activeGraph )
+Git::GitGraphUpdater::GitGraphUpdater( int currentVersion, Git::GitEvolutionGraph* evolutionGraph, Data::Graph* activeGraph )
+    : moreVersionChanged(false), currentVersion( currentVersion ), evolutionGraph( evolutionGraph ), activeGraph( activeGraph )
 {
 
-	// Inicializacia spracovanie cez viacere verzie
-	this->moreVersionChanged = false;
 }
 
 void Git::GitGraphUpdater::nextVersion()
@@ -200,7 +199,7 @@ void Git::GitGraphUpdater::changeToVersion( int toVersion )
 		// Nastavenie aktualnej verzie grafu a aktualizacia progressbaru
 		this->setCurrentVersion( this->getCurrentVersion() + inc );
 		this->getActiveGraph()->setCurrentVersion( this->getCurrentVersion() );
-		Manager::GraphManager::getInstance()->setProgressBarValue( ( int )( ( ( double )( abs( i - startVersion ) ) / ( double ) abs( toVersion - startVersion ) ) * 100 ) );
+        Manager::GraphManager::getInstance()->setProgressBarValue( int( ( double( abs( i - startVersion ) ) / double(abs( toVersion - startVersion )) ) * 100 ) );
 	}
 
 	// Nastavime na false, aby sa pre dalsie spracovanie mohol pridat autor a jeho hrany k zmenenych uzlom.
