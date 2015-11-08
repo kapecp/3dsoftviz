@@ -4,7 +4,7 @@
  */
 #include "Data/Edge.h"
 #include "Data/Graph.h"
-#include "Math/Bezier.h"
+#include "Bezier"
 
 #include "Util/ApplicationConfig.h"
 
