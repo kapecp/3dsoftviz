@@ -1,6 +1,7 @@
 #include "Clustering/Figures/Sphere.h"
 
 #include <vector>
+#include <algorithm>
 #include <QDebug>
 #include <osg/Depth>
 #include <osg/BlendFunc>
