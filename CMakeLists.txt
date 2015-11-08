@@ -124,7 +124,7 @@ if(COMMAND cotire )
 	set( COTIRE_DEBUG FALSE )
 
 	### Fix virtual memory range
-	if( MSVC )		
+	if( MSVC )
 		set (COTIRE_PCH_MEMORY_SCALING_FACTOR "240")
 	endif()
 
@@ -345,7 +345,7 @@ if( USE_BUILTIN_DEPENDENCIES )
 		ExternalProject_Add( dep_aruco
 			PREFIX aruco
 			SOURCE_DIR ${DEP_SOURCE}/aruco
-			BINARY_DIR aruco
+			BINARY_DIR arucoosgModeling
 			CMAKE_ARGS
 				-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
 				-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
@@ -364,6 +364,31 @@ if( USE_BUILTIN_DEPENDENCIES )
 		endif()
 	endif() # OpenCV_FOUND
 
+
+	# Build osgModeling
+	ExternalProject_Add( dep_osgModeling
+		PREFIX aruco
+		SOURCE_DIR ${DEP_SOURCE}/osgModeling
+		BINARY_DIR osgModeling
+		CMAKE_ARGS
+			-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
+			-DCMAKE_BUILD_TYPE:STRING=Release	# should be ${CMAKE_BUILD_TYPE}, but on Linux it searches for OSG libs with "d" suffix, which do not exist
+			-DBUILD_PLUGINS=ON
+			-C ${CMAKE_CURRENT_BINARY_DIR}/config.cmake
+	)
+
+	add_library( osgModeling SHARED IMPORTED )
+	add_dependencies( osgModeling dep_osgModeling )
+	set_target_properties( osgModeling PROPERTIES
+		IMPORTED_LOCATION ${DEP_BIN}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}osgModeling${CMAKE_SHARED_LIBRARY_SUFFIX} )
+
+	if( WIN32 AND MSVC )
+		set_target_properties( osgModeling PROPERTIES
+			IMPORTED_LOCATION ${DEP_BIN}/bin/${CMAKE_SHARED_LIBRARY_PREFIX}osgModeling${CMAKE_SHARED_LIBRARY_SUFFIX}
+			IMPORTED_IMPLIB ${DEP_BIN}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}osgModeling${CMAKE_STATIC_LIBRARY_SUFFIX} )
+	endif()
+
+	# Building Lua or LuaJIT
 	if ( MSVC )
 		# Build Lua
 		ExternalProject_Add ( dep_lua
@@ -582,6 +607,7 @@ endif()
 include_directories( SYSTEM
 	${DEPENDENCIES_INCLUDE_DIR}
 	${DEPENDENCIES_INCLUDE_DIR}/libnoise
+	${DEPENDENCIES_INCLUDE_DIR}/osgModeling
 )
 
 if( LEAP_FOUND )
@@ -849,6 +875,7 @@ target_link_libraries( ${3DSOFTVIZ_NAME}
 	${OSGVIEWER_LIBRARIES}
 	lua
 	libnoise
+	osgModeling
 )
 
 if( NOT MSVC )
@@ -898,7 +925,7 @@ endif()
 if( USE_BUILTIN_DEPENDENCIES )
 
 	# dependencies of non-unity build
-	add_dependencies( ${3DSOFTVIZ_NAME} libnoise dep_luametrics dep_leg dep_lpeg dep_luafilesystem )
+	add_dependencies( ${3DSOFTVIZ_NAME} libnoise osgModeling dep_luametrics dep_leg dep_lpeg dep_luafilesystem )
 
 	if( MSVC )
 		add_dependencies( ${3DSOFTVIZ_NAME} dep_lua )
@@ -912,7 +939,7 @@ if( USE_BUILTIN_DEPENDENCIES )
 
 	# dependencies of unity build
 	if (COMMAND cotire)
-		add_dependencies( ${3DSOFTVIZ_NAME}_unity libnoise dep_luametrics dep_leg dep_lpeg dep_luafilesystem )
+		add_dependencies( ${3DSOFTVIZ_NAME}_unity libnoise osgModeling dep_luametrics dep_leg dep_lpeg dep_luafilesystem )
 
 		if( MSVC )
 			add_dependencies( ${3DSOFTVIZ_NAME}_unity dep_lua )
