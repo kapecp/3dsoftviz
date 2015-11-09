@@ -17,7 +17,7 @@
 
 #include "Math/Curve.h"
 
-using namespace osgModeling;
+using osgModeling;
 
 Curve::Curve():
 	osg::Object(),

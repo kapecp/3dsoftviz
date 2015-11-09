@@ -18,7 +18,7 @@
 #include <osg/Notify>
 #include "Math/Utilities.h"
 
-using namespace osgModeling;
+using osgModeling;
 
 bool osgModeling::calcBoundAndCenter( osg::Vec3* ptr, unsigned int size, osg::Vec3* center, osg::BoundingBox* bound )
 {
