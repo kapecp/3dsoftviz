@@ -222,9 +222,12 @@ Data::GraphLayout* Data::Graph::addLayout( QString layout_name )
 {
 	//Vytvarame novy layout pre graf
 
-	/*if(this->layouts.isEmpty()) { //na zaciatok ak ziadne ine layouty nemame, sa pokusime nacitat layouty z DB
-	    this->layouts = this->getLayouts(&error);
-	}*/ // nie je to potrebne a zdrziava to a pouzivatel to nemusi chciet, na to je funkcionalita v menu pre loadovanie grafu z databazy pri starte.
+    // nie je to potrebne a zdrziava to a pouzivatel to nemusi chciet, na to je funkcionalita v menu pre loadovanie grafu z databazy pri starte.
+    /*
+    if(this->layouts.isEmpty()) { //na zaciatok ak ziadne ine layouty nemame, sa pokusime nacitat layouty z DB
+        this->layouts = this->getLayouts(&error);
+    }
+    */
 
 
 	//layouty bude do DB pridavat user, nebudu sa pridavat automaticky

@@ -1,5 +1,7 @@
 #include "Kinect/KinectZoom.h"
 
+#include <vector>
+
 Kinect::KinectZoom::KinectZoom()
 {
 	previousZ = 0.0f;
