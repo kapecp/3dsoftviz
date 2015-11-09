@@ -5,14 +5,8 @@
 #include <QDebug>
 
 Git::GitFileDiffBlock::GitFileDiffBlock()
+    : gitFileDiffBlockLines{QList<Git::GitFileDiffBlockLine*>{}}
 {
-
-	// Inicializacia premennych na default hodnoty
-	this->addCount = 0;
-	this->addStart = 1;
-	this->removeCount = 0;
-	this->removeStart = 1;
-	this->gitFileDiffBlockLines = QList<Git::GitFileDiffBlockLine*>();
 }
 
 Git::GitFileDiffBlock::~GitFileDiffBlock() {

@@ -4,24 +4,19 @@
 #include <QMapIterator>
 
 Git::GitEvolutionGraph::GitEvolutionGraph()
+    : versions{QList<Git::GitVersion*>{}}, removedFiles{QMap<QString, int>{}}, lifespan{0}, filePath{""}
 {
 
-	// inicializacia premmenych na defaultne hodnoty
-	this->getVersions() = QList<Git::GitVersion*>();
-	this->filePath = "";
-	this->lifespan = 0;
-	this->getRemovedFiles() = QMap<QString, int>();
 }
 
 Git::GitEvolutionGraph::~GitEvolutionGraph() {
     qDeleteAll(this->getVersions());
 }
 
-Git::GitEvolutionGraph::GitEvolutionGraph( QString filePath ) : filePath( filePath )
+Git::GitEvolutionGraph::GitEvolutionGraph( QString filePath )
+    : versions{QList<Git::GitVersion*>{}}, removedFiles{QMap<QString, int>{}}, lifespan{0}, filePath( filePath )
 {
-	this->getVersions() = QList<Git::GitVersion*>();
-	this->lifespan = 0;
-	this->getRemovedFiles() = QMap<QString, int>();
+
 }
 
 void Git::GitEvolutionGraph::addRemovedFiles( QStringList list, int version )

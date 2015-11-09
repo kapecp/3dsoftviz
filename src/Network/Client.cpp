@@ -17,6 +17,10 @@
 #include "Viewer/CoreGraph.h"
 #include "QDebug"
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wold-style-cast"
+#pragma GCC diagnostic ignored "-Wuseless-cast"
+#pragma GCC diagnostic ignored "-Wsign-conversion"
 
 namespace Network {
 
@@ -794,3 +798,5 @@ void Client::setAvatarScale( int scale )
 }
 
 } // namespace Network
+
+#pragma GCC diagnostic pop

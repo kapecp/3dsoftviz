@@ -174,7 +174,7 @@ bool Importer::GitGraphImporter::makeGraph( QList<Git::GitFile*> gitFiles )
 		ok = addEdge( list );
 
 		// Aktualizujem percento spracovania
-		Manager::GraphManager::getInstance()->setProgressBarValue( ( int )( ( ( double )( i + 1 ) / ( double ) gitFiles.size() ) * 100 ) );
+        Manager::GraphManager::getInstance()->setProgressBarValue( int( (  double( i + 1 ) /  double(gitFiles.size()) ) * 100 ) );
 	}
 
 	return ok;
