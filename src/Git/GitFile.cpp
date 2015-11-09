@@ -4,7 +4,7 @@
 #include <QDebug>
 
 Git::GitFile::GitFile()
-    : filename{""}, filepath{""}, type{Git::GitType::NONE}, gitFileDiffBlocks{QList<Git::GitFileDiffBlock*>{}}
+    : filename(""), filepath(""), type(Git::GitType::NONE), gitFileDiffBlocks(QList<Git::GitFileDiffBlock*>())
 {
 
 }
@@ -15,7 +15,7 @@ Git::GitFile::~GitFile() {
 }
 
 Git::GitFile::GitFile( QString filename, QString filepath, GitType type ) : filename( filename ), filepath( filepath ), type( type ),
-    gitFileDiffBlocks{QList<Git::GitFileDiffBlock*>{}}
+    gitFileDiffBlocks(QList<Git::GitFileDiffBlock*>())
 {
 
 }

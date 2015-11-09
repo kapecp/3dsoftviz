@@ -1,7 +1,7 @@
 #include "Git/GitFileDiffBlockLine.h"
 
 Git::GitFileDiffBlockLine::GitFileDiffBlockLine()
-    : line{""}, lineNumber{0}, lineType{Git::GitType::MODIFIED}
+    : line(""), lineNumber(0), lineType(Git::GitType::MODIFIED)
 {
 
 }

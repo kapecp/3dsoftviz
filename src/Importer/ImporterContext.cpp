@@ -27,6 +27,10 @@ ImporterContext::ImporterContext(
 {
 }
 
+ImporterContext::~ImporterContext() {
+
+}
+
 QIODevice& ImporterContext::getStream( void )
 {
 	return stream_;

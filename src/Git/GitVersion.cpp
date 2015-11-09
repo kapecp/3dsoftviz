@@ -5,13 +5,13 @@
 #include <QDebug>
 
 Git::GitVersion::GitVersion()
-    : commitId{""}, author{""}, date{""}, changedFiles{QList<Git::GitFile*>{}}
+    : commitId(""), author(""), date(""), changedFiles(QList<Git::GitFile*>())
 {
 	this->changedFiles =  QList<Git::GitFile*>();
 }
 
 Git::GitVersion::GitVersion( QString commitId )
-    : commitId{commitId}, author{""}, date{""}, changedFiles{QList<Git::GitFile*>{}}
+    : commitId(commitId), author(""), date(""), changedFiles(QList<Git::GitFile*>())
 {
 
 }

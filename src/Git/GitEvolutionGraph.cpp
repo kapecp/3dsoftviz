@@ -4,7 +4,7 @@
 #include <QMapIterator>
 
 Git::GitEvolutionGraph::GitEvolutionGraph()
-    : versions{QList<Git::GitVersion*>{}}, removedFiles{QMap<QString, int>{}}, lifespan{0}, filePath{""}
+    : versions(QList<Git::GitVersion*>()), removedFiles(QMap<QString, int>()), lifespan(0), filePath("")
 {
 
 }
@@ -14,7 +14,7 @@ Git::GitEvolutionGraph::~GitEvolutionGraph() {
 }
 
 Git::GitEvolutionGraph::GitEvolutionGraph( QString filePath )
-    : versions{QList<Git::GitVersion*>{}}, removedFiles{QMap<QString, int>{}}, lifespan{0}, filePath( filePath )
+    : versions(QList<Git::GitVersion*>()), removedFiles(QMap<QString, int>()), lifespan(0), filePath( filePath )
 {
 
 }

@@ -13,7 +13,7 @@
 #include <QDebug>
 
 Git::GitFileLoader::GitFileLoader()
-    : filePath{""}, extensions{""}
+    : filePath(""), extensions("")
 {
 
 }
@@ -148,7 +148,6 @@ QString Git::GitFileLoader::makeTmpFileFromCommand( QString command, QString fil
 
 	// Ak existuje na danej ceste git repozitar, tak vykonam command a vystup ulozim do temp suboru
 	if ( ok ) {
-<<<<<<< HEAD
         QProcess process;
         process.setStandardOutputFile( QDir::toNativeSeparators( tempFile.fileName() ) );
 		QString lCommand = QString( command );
@@ -156,15 +155,7 @@ QString Git::GitFileLoader::makeTmpFileFromCommand( QString command, QString fil
         process.waitForFinished();
         process.close();
         process.terminate();
-=======
-		QProcess* process = new QProcess;
-		process->setStandardOutputFile( QDir::toNativeSeparators( tempFile.fileName() ) );
-        QString lCommand = QString( command );
-		process->start( lCommand );
-        process->waitForFinished();
-		process->close();
-		process->terminate();
->>>>>>> a15c45020884a79fadcbef58e5ebe3945be6036a
+
 	}
 
 	// Vratim povodny current working directory, ak sa nepodari zmenit, vypisem do konzoly

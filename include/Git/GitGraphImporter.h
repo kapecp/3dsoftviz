@@ -27,7 +27,7 @@ public:
 	 * Explicit default destructor
 	 * @brief ~GitGraphImporter
 	 */
-	virtual ~GitGraphImporter() {};
+    virtual ~GitGraphImporter();
 
 	/**
 	 * virtual bool import( ImporterContext &context )
