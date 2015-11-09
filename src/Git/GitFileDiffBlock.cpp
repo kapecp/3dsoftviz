@@ -15,6 +15,10 @@ Git::GitFileDiffBlock::GitFileDiffBlock()
 	this->gitFileDiffBlockLines = QList<Git::GitFileDiffBlockLine*>();
 }
 
+Git::GitFileDiffBlock::~GitFileDiffBlock() {
+    qDeleteAll(this->gitFileDiffBlockLines);
+}
+
 void Git::GitFileDiffBlock::printDiffBlockLines()
 {
 	// Vsetky diff block lines vypis do konzoly

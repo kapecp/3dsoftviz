@@ -18,6 +18,8 @@ public:
 	 */
 	GitEvolutionGraph();
 
+    ~GitEvolutionGraph();
+
 	/**
 	 * Explicit default constructor
 	 * @brief Creates evolution graph with set up filepath

@@ -17,6 +17,8 @@ public:
 	 */
 	GitFileDiffBlock();
 
+    ~GitFileDiffBlock();
+
 	/**
 	 * void setAddStart( int addStart )
 	 * @brief Setter of block addition start position

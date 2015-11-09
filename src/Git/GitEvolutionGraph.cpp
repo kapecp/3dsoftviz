@@ -13,6 +13,10 @@ Git::GitEvolutionGraph::GitEvolutionGraph()
 	this->getRemovedFiles() = QMap<QString, int>();
 }
 
+Git::GitEvolutionGraph::~GitEvolutionGraph() {
+    qDeleteAll(this->getVersions());
+}
+
 Git::GitEvolutionGraph::GitEvolutionGraph( QString filePath ) : filePath( filePath )
 {
 	this->getVersions() = QList<Git::GitVersion*>();

@@ -25,6 +25,8 @@ public:
 	 */
 	GitGraphUpdater( int currentVersion, Git::GitEvolutionGraph* evolutionGraph, Data::Graph* activeGraph );
 
+    ~GitGraphUpdater();
+
 	// public methods
 	/**
 	 * Data::Graph* previousVersion()

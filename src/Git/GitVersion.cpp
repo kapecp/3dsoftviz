@@ -14,6 +14,10 @@ Git::GitVersion::GitVersion( QString commitId ) : commitId( commitId )
 	this->changedFiles =  QList<Git::GitFile*>();
 }
 
+Git::GitVersion::~GitVersion() {
+    qDeleteAll(this->changedFiles);
+}
+
 void Git::GitVersion::printVersion()
 {
 	// Vypis vseobecnych informacii o verzii

@@ -150,13 +150,13 @@ QString Git::GitFileLoader::makeTmpFileFromCommand( QString command, QString fil
 
 	// Ak existuje na danej ceste git repozitar, tak vykonam command a vystup ulozim do temp suboru
 	if ( ok ) {
-		QProcess* process = new QProcess;
-		process->setStandardOutputFile( QDir::toNativeSeparators( tempFile.fileName() ) );
+        QProcess process;
+        process.setStandardOutputFile( QDir::toNativeSeparators( tempFile.fileName() ) );
 		QString lCommand = QString( command );
-		process->start( lCommand );
-		process->waitForFinished();
-		process->close();
-		process->terminate();
+        process.start( lCommand );
+        process.waitForFinished();
+        process.close();
+        process.terminate();
 	}
 
 	// Vratim povodny current working directory, ak sa nepodari zmenit, vypisem do konzoly

@@ -13,6 +13,10 @@ Git::GitFile::GitFile()
 	this->gitFileDiffBlocks = QList<Git::GitFileDiffBlock*>();
 }
 
+Git::GitFile::~GitFile() {
+    qDeleteAll(this->gitFileDiffBlocks);
+}
+
 Git::GitFile::GitFile( QString filename, QString filepath, GitType type ) : filename( filename ), filepath( filepath ), type( type )
 {
 	this->gitFileDiffBlocks = QList<Git::GitFileDiffBlock*>();

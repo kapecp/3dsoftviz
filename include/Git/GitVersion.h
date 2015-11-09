@@ -19,6 +19,9 @@ public:
 	 */
 	GitVersion();
 
+
+    ~GitVersion();
+
 	/**
 	 * Explicit constructor with set up commit ID
 	 * @brief Creates git version with set up commit ID

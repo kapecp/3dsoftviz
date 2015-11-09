@@ -22,6 +22,11 @@ Git::GitGraphUpdater::GitGraphUpdater( int currentVersion, Git::GitEvolutionGrap
 	this->moreVersionChanged = false;
 }
 
+Git::GitGraphUpdater::~GitGraphUpdater() {
+    delete this->activeGraph;
+    delete this->evolutionGraph;
+}
+
 void Git::GitGraphUpdater::nextVersion()
 {
 	// zistime zmenene subory v dalsej verzii, s ktorymi budeme dalej pracovat

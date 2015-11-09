@@ -1,13 +1,12 @@
 #ifndef GITFILE_H
 #define GITFILE_H
 
+#include "Git/GitType.h"
+
 #include <QString>
 #include <QList>
 
-#include "Git/GitType.h"
-
 namespace Git {
-
 class GitFileDiffBlock;
 
 class GitFile
@@ -18,6 +17,8 @@ public:
 	    * \brief Implicit constructor
 	    */
 	GitFile( void );
+
+    ~GitFile( void );
 
 	/**
 	    * \fn GitFile
