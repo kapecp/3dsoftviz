@@ -18,7 +18,6 @@
 Importer::GitGraphImporter::~GitGraphImporter() {
     delete this->edgeType;
     delete this->nodeType;
-//    delete this->context;
 }
 
 bool Importer::GitGraphImporter::import( ImporterContext& context )
