@@ -279,12 +279,12 @@ endif()
 # else()
 #	message( STATUS "FGLOVE Not Found" )
 # endif()
-# ------------------------------ 3DMOUSE -------------------------------
-# Find 3DMouse
-find_package( 3DMOUSE )
-if( 3DMOUSE_FOUND )
-	include_directories( SYSTEM ${3DMOUSE_INCLUDE_DIRS} )
-	add_definitions( -D3DMOUSE_FOUND )
+# ------------------------------ MOUSE3D -------------------------------
+# Find MOUSE3D
+find_package( MOUSE3D )
+if( MOUSE3D_FOUND )
+	include_directories( SYSTEM ${MOUSE3D_INCLUDE_DIRS} )
+	add_definitions( -DMOUSE3D_FOUND )
 	message( STATUS "3DMouse FOUND" )
 else()
 	message( STATUS "3DMouse NOT FOUND" )
@@ -636,8 +636,8 @@ file( GLOB_RECURSE SRC_SPEECH	"src/Speech/*.cpp" )
 
 # Leap
 file ( GLOB_RECURSE SRC_LEAP "src/Leap/*.cpp" )
-# 3DMouse
-file ( GLOB_RECURSE SRC_3DMOUSE "src/3Dmouse/*.cpp" )
+# MOUSE3D
+file ( GLOB_RECURSE SRC_MOUSE3D "src/Mouse3D/*.cpp" )
 
 
 # All source files
@@ -679,9 +679,9 @@ if( LEAP_FOUND )
 	list( APPEND SRC ${SRC_LEAP} )
 endif()
 
-# add 3DMouse if found
-if( 3DMOUSE_FOUND )
-	list( APPEND SRC ${SRC_3DMOUSE} )
+# add MOUSE3D if found
+if( MOUSE3D_FOUND )
+	list( APPEND SRC ${SRC_MOUSE3D} )
 endif()
 
 
@@ -723,8 +723,8 @@ file( GLOB_RECURSE HEADER_SPEECH	"include/Speech/*.h" )
 # LEAP
 file( GLOB_RECURSE HEADER_LEAP	"include/Leap/*.h" )
 
-# 3DMOUSE
-file( GLOB_RECURSE HEADER_3DMOUSE	"include/3DMouse/*.h" )
+# MOUSE3D
+file( GLOB_RECURSE HEADER_MOUSE3D	"include/Mouse3D/*.h" )
 
 # All header files
 set( INCL
@@ -765,9 +765,9 @@ if( LEAP_FOUND )
 	list( APPEND INCL ${HEADER_LEAP} )
 endif()
 
-#3DMOUSE
-if( 3DMOUSE_FOUND )
-	list( APPEND INCL ${HEADER_3DMOUSE} )
+#MOUSE3D
+if( MOUSE3D_FOUND )
+	list( APPEND INCL ${HEADER_MOUSE3D} )
 endif()
 
 #-------------------------------------- Group source files --------------------------------------
@@ -835,10 +835,10 @@ if( LEAP_FOUND )
 	source_group( \\headers\\Leap "^.*Leap/.*h$" )
 endif()
 
-#3DMOUSE
-if( 3DMOUSE_FOUND )
-	source_group( \\src\\3DMouse "^.*3DMouse/.*$" )
-	source_group( \\headers\\3DMouse "^.*3DMouse/.*h$" )
+#MOUSE3D
+if( MOUSE3D_FOUND )
+	source_group( \\src\\Mouse3D "^.*Mouse3D/.*$" )
+	source_group( \\headers\\Mouse3D "^.*Mouse3D/.*h$" )
 endif()
 
 # add diluculum code directly due to MSVC problems
@@ -916,8 +916,8 @@ if( LEAP_FOUND )
 	target_link_libraries( ${3DSOFTVIZ_NAME} ${LEAP_LIBRARIES} )
 endif()
 
-if( 3DMOUSE_FOUND )
-	target_link_libraries( ${3DSOFTVIZ_NAME} ${3DMOUSE_LIBRARIES} )
+if( MOUSE3D_FOUND )
+	target_link_libraries( ${3DSOFTVIZ_NAME} ${MOUSE3D_LIBRARIES} )
 endif()
 
 # 'cotire' the executable
