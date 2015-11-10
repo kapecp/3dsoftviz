@@ -77,19 +77,13 @@ end
 
 local function isDir(dir)
     if type(dir)~="string" then return false end
-    local cd = lfs.currentdir()
-    local is = lfs.chdir(dir) and true or false
-    lfs.chdir(cd)
-    return is
+	if lfs.attributes(dir, 'mode') == "directory" then return true end    
+    return false
 end
 
 local function isFile(file)
     if type(file)~="string" then return false end
-    if not isDir(file) then
-        return os.rename(file,file) and true or false
-        -- note that the short evaluation is to
-        -- return false instead of a possible nil
-    end
+	if lfs.attributes(file, 'mode') == "file" then return true end    
     return false
 end
 
