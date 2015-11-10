@@ -126,7 +126,7 @@ void osgModeling::BezierCurve::useBernstein( osg::Vec3Array* result )
 	for ( j=0; j<segments; ++j ) {
 		if ( _cont && j>0 ) {
 			// Adjust relative control points.
-			( *_ctrlPts )[j*k+1] = ( *_ctrlPts )[j*k] + ( ( *_ctrlPts )[j*k]-( *_ctrlPts )[j*k-1] )/_cont;
+			( *_ctrlPts )[j*k+1] = ( *_ctrlPts )[j*k] + ( ( *_ctrlPts )[j*k]-( *_ctrlPts )[j*k-1] )/(osg::Vec3f::value_type)_cont;
 		}
 
 		for ( n=0; n<numEachPath; ++n ) {
@@ -134,7 +134,7 @@ void osgModeling::BezierCurve::useBernstein( osg::Vec3Array* result )
 
 			osg::Vec3 pathPoint;
 			for ( i=0; i<=k; ++i ) {
-				pathPoint += ( *_ctrlPts )[j*k+i] * bernstein( k, i, u );
+				pathPoint += ( *_ctrlPts )[j*k+i] * ( osg::Vec3f::value_type )bernstein( k, i, u );
 			}
 			result->push_back( pathPoint );
 		}
@@ -150,7 +150,7 @@ void osgModeling::BezierCurve::useDeCasteljau( osg::Vec3Array* result )
 	for ( j=0; j<segments; ++j ) {
 		if ( _cont && j>0 ) {
 			// Adjust relative control points.
-			( *_ctrlPts )[j*k+1] = ( *_ctrlPts )[j*k] + ( ( *_ctrlPts )[j*k]-( *_ctrlPts )[j*k-1] )/_cont;
+			( *_ctrlPts )[j*k+1] = ( *_ctrlPts )[j*k] + ( ( *_ctrlPts )[j*k]-( *_ctrlPts )[j*k-1] )/(osg::Vec3f::value_type)_cont;
 		}
 
 		for ( n=0; n<numEachPath; ++n ) {
