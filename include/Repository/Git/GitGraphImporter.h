@@ -9,11 +9,11 @@
 namespace Data {
 class Type;
 }
-
+namespace Repository {
 namespace Git {
 class GitFile;
 }
-
+}
 namespace Importer {
 class ReadNodesStore;
 class ReadEdgesStore;
@@ -38,12 +38,12 @@ public:
 	virtual bool import( ImporterContext& context );
 
 	/**
-	 * virtual bool makeGraph( QList<Git::GitFile*> gitFiles )
+     * virtual bool makeGraph( QList<Repository::Git::GitFile*> gitFiles )
 	 * @brief Creates nodes and edges and appends them to the Data::Graph
 	 * @param gitFiles List of files in first version of git repository
 	 * @return Returns true, if import of nodes and edges was successful, otherwise returns false.
 	 */
-	virtual bool makeGraph( QList<Git::GitFile*> gitFiles );
+    virtual bool makeGraph( QList<Repository::Git::GitFile*> gitFiles );
 
 	/**
 	 * virtual bool addNode( QStringList &list )

@@ -20,10 +20,11 @@ class LayoutThread;
 namespace Model {
 class DB;
 }
-
+namespace Repository {
 namespace Git {
 class GitEvolutionGraph;
 class GitFile;
+}
 }
 
 namespace Data {
@@ -143,11 +144,11 @@ public:
 	}
 
 	/**
-	 * Git::GitEvolutionGraph* getActiveEvolutionGraph()
+     * Repository::Git::GitEvolutionGraph* getActiveEvolutionGraph()
 	 * @brief Returns active evolution graph
 	 * @return active evolution graph
 	 */
-	Git::GitEvolutionGraph* getActiveEvolutionGraph()
+    Repository::Git::GitEvolutionGraph* getActiveEvolutionGraph()
 	{
 		return this->activeEvolutionGraph;
 	}
@@ -261,10 +262,10 @@ private:
 	bool noDatabaseFind;
 
 	/**
-	 * Git::GitEvolutionGraph* activeEvolutionGraph
+     * Repository::Git::GitEvolutionGraph* activeEvolutionGraph
 	 * @brief Active evolution graph
 	 */
-	Git::GitEvolutionGraph* activeEvolutionGraph;
+    Repository::Git::GitEvolutionGraph* activeEvolutionGraph;
 }; // class
 } // namespace
 

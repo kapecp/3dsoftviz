@@ -3,42 +3,42 @@
 
 #include <QDebug>
 
-Git::GitFile::GitFile()
-    : filename(""), filepath(""), type(Git::GitType::NONE), gitFileDiffBlocks(QList<Git::GitFileDiffBlock*>())
+Repository::Git::GitFile::GitFile()
+    : filename(""), filepath(""), type(Repository::Git::GitType::NONE), gitFileDiffBlocks(QList<Repository::Git::GitFileDiffBlock*>())
 {
 
 }
 
 
-Git::GitFile::~GitFile() {
+Repository::Git::GitFile::~GitFile() {
     qDeleteAll(this->gitFileDiffBlocks);
 }
 
-Git::GitFile::GitFile( QString filename, QString filepath, GitType type ) : filename( filename ), filepath( filepath ), type( type ),
-    gitFileDiffBlocks(QList<Git::GitFileDiffBlock*>())
+Repository::Git::GitFile::GitFile( QString filename, QString filepath, GitType type ) : filename( filename ), filepath( filepath ), type( type ),
+    gitFileDiffBlocks(QList<Repository::Git::GitFileDiffBlock*>())
 {
 
 }
 
-QString Git::GitFile::getTypeAsString()
+QString Repository::Git::GitFile::getTypeAsString()
 {
 
 	// zoberie typ suboru a vrati ho ako QString
 	switch ( this->getType() ) {
-		case Git::GitType::ADDED:
+        case Repository::Git::GitType::ADDED:
 			return "Added";
-		case Git::GitType::MODIFIED:
+        case Repository::Git::GitType::MODIFIED:
 			return "Modified";
-		case Git::GitType::REMOVED:
+        case Repository::Git::GitType::REMOVED:
 			return "Removed";
-        case Git::GitType::NONE:
+        case Repository::Git::GitType::NONE:
             return "NONE";
 		default:
 			return "Wrong or Not set";
 	}
 }
 
-void Git::GitFile::printContent()
+void Repository::Git::GitFile::printContent()
 {
 
 	// vypise informacie o subore

@@ -6,6 +6,8 @@
 
 #include <QString>
 
+namespace Repository {
+
 namespace Git {
 
 class GitFileDiffBlockLine
@@ -24,7 +26,7 @@ public:
 	 * @param lineNumber
 	 * @param lineType
 	 */
-	GitFileDiffBlockLine( QString line, int lineNumber, Git::GitType lineType );
+    GitFileDiffBlockLine( QString line, int lineNumber, Repository::Git::GitType lineType );
 
 	/**
 	 * void setLine( QString line )
@@ -67,21 +69,21 @@ public:
 	}
 
 	/**
-	 * void setLineType( Git::GitType lineType )
+     * void setLineType( Repository::Git::GitType lineType )
 	 * @brief Setter for line type
 	 * @param lineType type of line
 	 */
-	void setLineType( Git::GitType lineType )
+    void setLineType( Repository::Git::GitType lineType )
 	{
 		this->lineType = lineType;
 	}
 
 	/**
-	 * Git::GitType getLineType()
+     * Repository::Git::GitType getLineType()
 	 * @brief Returns enum type value
 	 * @return enum type value
 	 */
-	Git::GitType getLineType()
+    Repository::Git::GitType getLineType()
 	{
 		return this->lineType;
 	}
@@ -108,10 +110,11 @@ private:
 	int lineNumber;
 
 	/**
-	 * Git::GitType lineType
+     * Repository::Git::GitType lineType
 	 * @brief Type of line in diff. Contains enum values: ADDED, REMOVED, NONE.
 	 */
-	Git::GitType lineType;
+    Repository::Git::GitType lineType;
 }; // class
 } // namespace
+}
 #endif // GITFILEDIFFBLOCKLINE_H

@@ -6,6 +6,7 @@
 
 #include <QList>
 
+namespace Repository {
 namespace Git {
 class GitFileDiffBlockLine;
 
@@ -110,21 +111,21 @@ public:
 	}
 
 	/**
-	 * QList<Git::GitFileDiffBlockLine*> getGitFileDiffBlockLines()
+     * QList<Repository::Git::GitFileDiffBlockLine*> getGitFileDiffBlockLines()
 	 * @brief Getter of list of diff block lines
 	 * @return List of diff block lines
 	 */
-	QList<Git::GitFileDiffBlockLine*> getGitFileDiffBlockLines()
+    QList<Repository::Git::GitFileDiffBlockLine*> getGitFileDiffBlockLines()
 	{
 		return this->gitFileDiffBlockLines;
 	}
 
 	/**
-	 * void addGitFileDiffBlockLine( Git::GitFileDiffBlockLine* line )
+     * void addGitFileDiffBlockLine( Repository::Git::GitFileDiffBlockLine* line )
 	 * @brief Append diff block line to the list of diff block lines
 	 * @param line Diff block line, which will be appended
 	 */
-	void addGitFileDiffBlockLine( Git::GitFileDiffBlockLine* line )
+    void addGitFileDiffBlockLine( Repository::Git::GitFileDiffBlockLine* line )
 	{
 		this->gitFileDiffBlockLines.append( line );
 	}
@@ -179,10 +180,11 @@ private:
     int removeCount;
 
 	/**
-	 * QList<Git::GitFileDiffBlockLine*> gitFileDiffBlockLines
+     * QList<Repository::Git::GitFileDiffBlockLine*> gitFileDiffBlockLines
 	 * @brief List of diff block lines.
 	 */
-	QList<Git::GitFileDiffBlockLine*> gitFileDiffBlockLines;
+    QList<Repository::Git::GitFileDiffBlockLine*> gitFileDiffBlockLines;
 }; // class
 } // namespace
+}
 #endif // GITFILEDIFFBLOCK_H

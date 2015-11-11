@@ -3,6 +3,8 @@
 
 #include "Repository/Git/GitLib/GitExport.h"
 
+namespace Repository {
+
 namespace Git {
 
 enum GitType {
@@ -12,4 +14,5 @@ enum GitType {
 	NONE
 }; // enum
 } // namespace
+}
 #endif // GITTYPE_H

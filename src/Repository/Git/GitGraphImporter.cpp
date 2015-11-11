@@ -112,7 +112,7 @@ bool Importer::GitGraphImporter::import( ImporterContext& context )
 	this->context->getGraph().addType( "newE", settings );
 
 	// Ziskame pridane subory a meno autora prve verzie
-	QList<Git::GitFile*> lAddedGitFiles = Manager::GraphManager::getInstance()->getActiveEvolutionGraph()->getVersion( 0 )->getGitFilesByType( Git::GitType::ADDED );
+    QList<Repository::Git::GitFile*> lAddedGitFiles = Manager::GraphManager::getInstance()->getActiveEvolutionGraph()->getVersion( 0 )->getGitFilesByType( Repository::Git::GitType::ADDED );
 	QString lAuthor = Manager::GraphManager::getInstance()->getActiveEvolutionGraph()->getVersion( 0 )->getAuthor();
 
 	// Vytvorime graf za pomoci pridanych suborov prvej verzie
@@ -134,7 +134,7 @@ bool Importer::GitGraphImporter::import( ImporterContext& context )
 	lType = lTypes.at( 0 );
 
 	// Pre kazdy pridany subor vytvorime orientovanu hranu od autora k uzlu suboru
-	foreach ( Git::GitFile* file, lAddedGitFiles ) {
+    foreach ( Repository::Git::GitFile* file, lAddedGitFiles ) {
 
 		// Ziskame uzol pre odpovedajucu cestu suboru z mnoziny vlozenych uzlov
 		osg::ref_ptr<Data::Node> osgNode = readNodes->get( file->getFilepath() );
@@ -149,7 +149,7 @@ bool Importer::GitGraphImporter::import( ImporterContext& context )
 	return ok;
 }
 
-bool Importer::GitGraphImporter::makeGraph( QList<Git::GitFile*> gitFiles )
+bool Importer::GitGraphImporter::makeGraph( QList<Repository::Git::GitFile*> gitFiles )
 {
 	bool ok = true;
 

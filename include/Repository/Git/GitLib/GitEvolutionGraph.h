@@ -7,7 +7,7 @@
 #include <QList>
 #include <QMap>
 
-
+namespace Repository {
 namespace Git {
 class GitVersion;
 
@@ -30,21 +30,21 @@ public:
 	GitEvolutionGraph( QString filePath );
 
 	/**
-	 * void setVersions( QList<Git::GitVersion*> versions )
+     * void setVersions( QList<Repository::Git::GitVersion*> versions )
 	 * @brief Setter of list of versions
 	 * @param versions list of versions
 	 */
-	void setVersions( QList<Git::GitVersion*> versions )
+    void setVersions( QList<Repository::Git::GitVersion*> versions )
 	{
 		this->versions = versions;
 	}
 
 	/**
-	 * QList<Git::GitVersion*> getVersions()
+     * QList<Repository::Git::GitVersion*> getVersions()
 	 * @brief Getter of list of versions
 	 * @return list of versions
 	 */
-	QList<Git::GitVersion*> getVersions()
+    QList<Repository::Git::GitVersion*> getVersions()
 	{
 		return this->versions;
 	}
@@ -70,12 +70,12 @@ public:
 	}
 
 	/**
-	 * Git::GitVersion* getVersion( int position )
+     * Repository::Git::GitVersion* getVersion( int position )
 	 * @brief Getter of specific version in list of versions
 	 * @param position Index of version in list of versions
 	 * @return Specific versions from list
 	 */
-	Git::GitVersion* getVersion( int position )
+    Repository::Git::GitVersion* getVersion( int position )
 	{
 		return this->versions.at( position );
 	}
@@ -133,10 +133,10 @@ public:
 
 private:
 	/**
-	 * QList<Git::GitVersion*> versions
+     * QList<Repository::Git::GitVersion*> versions
 	 * @brief List of versions
 	 */
-	QList<Git::GitVersion*> versions;
+    QList<Repository::Git::GitVersion*> versions;
 
 	/**
 	 * QMap<QString, int> removedFiles
@@ -158,5 +158,5 @@ private:
 
 }; // class
 } // namespace
-
+}
 #endif // GITEVOLUTIONGRAPH_H
