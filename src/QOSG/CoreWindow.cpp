@@ -49,6 +49,7 @@
 
 #include <iostream>
 #include <osg/ref_ptr>
+#include <string>
 
 #ifdef OPENCV_FOUND
 #include "OpenCV/OpenCVCore.h"

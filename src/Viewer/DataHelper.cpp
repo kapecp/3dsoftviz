@@ -540,9 +540,9 @@ osg::Vec3f DataHelper::getMassCenter( osg::ref_ptr<osg::Vec3Array> coordinates )
 
 
 
-	long unsigned int num = coordinates->size();
+    unsigned int num = coordinates->size();
 
-	for ( long unsigned int i = 0; i < num; i++ ) {
+    for ( unsigned int i = 0; i < num; i++ ) {
 		x += coordinates->at( i ).x();
 		y += coordinates->at( i ).y();
 		z += coordinates->at( i ).z();

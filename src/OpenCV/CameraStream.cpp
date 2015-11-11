@@ -36,7 +36,12 @@ void CameraStream::updateBackgroundImage( cv::Mat cvImg )
 		mWidth	= cvImg.cols;
 		mHeight = cvImg.rows;
 #ifdef WIN32
-		iplImg = cvCloneImage( &( IplImage )cvImg );
+        /* Edited address taking:
+         * [before]  &( IplImage )cvImg
+         * Reason: cpplint> This is dangerous: could be a temp var.  Take the address before doing the cast, rather than after  [runtime/casting]
+        */
+        int cvImgAddr = &cvImg;
+        iplImg = cvCloneImage( ( IplImage )cvImgAddr );
 #endif
 		// update geometry coordinates if thare are different dimensions of image,
 		// becasuse probebly changed it ratio of sides
@@ -48,7 +53,8 @@ void CameraStream::updateBackgroundImage( cv::Mat cvImg )
 
 	// There will be probably needed refactoring on MAC OS
 #ifdef WIN32
-	cvCopy( &( IplImage )cvImg, iplImg, NULL );
+    int cvImgAddr = &cvImg;
+    cvCopy( ( IplImage )cvImgAddr, iplImg, NULL );
 
 	setImage( iplImg->width, iplImg->height,
 			  3, GL_RGB, GL_RGB,
