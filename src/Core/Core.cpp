@@ -33,17 +33,17 @@ AppCore::Core::Core( QApplication* app )
 	this->cg = new Vwr::CoreGraph();
 	this->cw = new QOSG::CoreWindow( 0, this->cg, app, this->thr );
 
-	long width =appConf->getNumericValue(
+    int width =appConf->getNumericValue(
 					"UI.MainWindow.DefaultWidth",
-					std::auto_ptr<long> ( new long( 200 ) ),
-					std::auto_ptr<long> ( NULL ),
-					( long ( 1024 ) )
+                    std::auto_ptr<int> ( new int( 200 ) ),
+                    std::auto_ptr<int> ( NULL ),
+                    ( int ( 1024 ) )
 				);
-	long height= appConf->getNumericValue(
+    int height= appConf->getNumericValue(
 					 "UI.MainWindow.DefaultHeight",
-					 std::auto_ptr<long> ( new long( 200 ) ),
-					 std::auto_ptr<long> ( NULL ),
-					 ( long ( 768 ) )
+                     std::auto_ptr<int> ( new int( 200 ) ),
+                     std::auto_ptr<int> ( NULL ),
+                     ( int ( 768 ) )
 				 );
 
 

@@ -1,6 +1,7 @@
 #include "Clustering/Figures/Cube.h"
 
 #include <vector>
+#include <algorithm>
 #include <QDebug>
 #include <osg/PolygonMode>
 #include <osg/LineWidth>
