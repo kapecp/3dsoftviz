@@ -7,6 +7,8 @@
 #include <LuaGraph/LuaGraph.h>
 
 #include <math.h>
+#include <utility>
+#include <string>
 
 namespace Vwr {
 
@@ -261,7 +263,7 @@ osg::Geode* BrowserGroup::createConnectorsGeode( osg::Vec3 center, osg::Vec3Arra
 	osg::Vec3Array* vertices = new osg::Vec3Array( ( unsigned int )( targets->size() * 2 ) ); // 2 points for each line
 
 	// Iterate over each target node and create corresponding connector line geometry
-	for ( unsigned long i=0; i<targets->size(); i++ ) {
+	for ( std::size_t i=0; i< targets->size(); i++ ) {
 		( *vertices )[i*2  ].set( center );
 		( *vertices )[i*2+1].set( targets->at( i ) );
 	}

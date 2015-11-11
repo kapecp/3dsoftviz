@@ -16,7 +16,7 @@ void Leap::LeapActions::moveCamera( Leap::Gesture gesture )
 	// swipe gesture
 	SwipeGesture swipe = gesture;
 	Vector direction = swipe.direction();
-	float gestureDuration = (float)(gesture.duration())/1000.0f;
+    float gestureDuration = static_cast<float>(gesture.duration())/1000.0f;
 
 	// compare direction[0] and direction[1] to find out what kind of movement are we working with
 	if ( abs( direction[0] ) > abs( direction[1] ) ) { // horizontal movement

@@ -133,7 +133,7 @@ void Vwr::MouseControl::moveCursorWorldCoordinates( double positionX, double pos
 	// get avg position from history buffer // smoother moving
 	osg::Vec2 newPos = getMouseAvgPosition(osg::Vec2( (osg::Vec2f::value_type)newPositionX, (osg::Vec2f::value_type)newPositionY ), 10);
 
-	viewer->cursor().setPos((int)newPos[0], (int)newPos[1]);
+    viewer->cursor().setPos(static_cast<int>(newPos[0]), static_cast<int>(newPos[1]));
 	if ( isClick ) {
 		this->corectionMousePosition( viewer->cursor().pos().x(),viewer->cursor().pos().y() );
 		this->moveMouse( clickX,clickY );

@@ -2,6 +2,7 @@
 #include "Util/ApplicationConfig.h"
 
 #include "QDebug"
+#include <string>
 
 Kinect::PlaneAlgorithm::PlaneAlgorithm()
 {
