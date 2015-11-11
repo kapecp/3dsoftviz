@@ -1,6 +1,6 @@
-#include "Git/GitFileDiffBlock.h"
+#include "Repository/Git/GitLib/GitFileDiffBlock.h"
 
-#include "Git/GitFileDiffBlockLine.h"
+#include "Repository/Git/GitLib/GitFileDiffBlockLine.h"
 
 #include <QDebug>
 

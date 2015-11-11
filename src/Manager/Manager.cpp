@@ -21,12 +21,12 @@
 #include "Data/Graph.h"
 #include "Data/GraphLayout.h"
 
-#include "Git/GitFileLoader.h"
-#include "Git/GitVersion.h"
-#include "Git/GitFile.h"
-#include "Git/GitEvolutionGraph.h"
-#include "Git/GitGraphImporter.h"
-#include "Git/GitGraphUpdater.h"
+#include "Repository/Git/GitLib/GitFileLoader.h"
+#include "Repository/Git/GitLib/GitVersion.h"
+#include "Repository/Git/GitLib/GitFile.h"
+#include "Repository/Git/GitLib/GitEvolutionGraph.h"
+#include "Repository/Git/GitGraphImporter.h"
+#include "Repository/Git/GitGraphUpdater.h"
 
 #include "Layout/LayoutThread.h"
 #include "QOSG/MessageWindows.h"
@@ -346,7 +346,7 @@ Data::Graph* Manager::GraphManager::loadGraphFromGit( QString filepath )
 	QList<Git::GitVersion*> lVersions = lGitFileLoader.getDataAboutGit();
 
 	// Vytvor evolucny graf, napln ho ziskanymi verziami a nastav graf ako aktivny
-	Git::GitEvolutionGraph* evolutionGraph = new Git::GitEvolutionGraph( filepath );
+    Git::GitEvolutionGraph* evolutionGraph = new Git::GitEvolutionGraph( filepath );
 	evolutionGraph->setVersions( lVersions );
 	this->activeEvolutionGraph = evolutionGraph;
 

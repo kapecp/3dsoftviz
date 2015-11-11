@@ -1,9 +1,9 @@
-#include "Git/GitFileLoader.h"
+#include "Repository/Git/GitLib/GitFileLoader.h"
 
-#include "Git/GitVersion.h"
-#include "Git/GitFile.h"
-#include "Git/GitFileDiffBlock.h"
-#include "Git/GitFileDiffBlockLine.h"
+#include "Repository/Git/GitLib/GitVersion.h"
+#include "Repository/Git/GitLib/GitFile.h"
+#include "Repository/Git/GitLib/GitFileDiffBlock.h"
+#include "Repository/Git/GitLib/GitFileDiffBlockLine.h"
 
 #include <QTemporaryFile>
 #include <QDir>

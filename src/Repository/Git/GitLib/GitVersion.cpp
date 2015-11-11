@@ -1,6 +1,6 @@
-#include "Git/GitVersion.h"
+#include "Repository/Git/GitLib/GitVersion.h"
 
-#include "Git/GitFile.h"
+#include "Repository/Git/GitLib/GitFile.h"
 
 #include <QDebug>
 

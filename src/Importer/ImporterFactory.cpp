@@ -3,7 +3,7 @@
 #include "Importer/GraphMLImporter.h"
 #include "Importer/GXLImporter.h"
 #include "Importer/RSFImporter.h"
-#include "Git/GitGraphImporter.h"
+#include "Repository/Git/GitGraphImporter.h"
 //-----------------------------------------------------------------------------
 
 namespace Importer {

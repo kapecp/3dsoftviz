@@ -1,4 +1,4 @@
-#include "Git/GitGraphUpdater.h"
+#include "Repository/Git/GitGraphUpdater.h"
 
 #include "Data/Graph.h"
 #include "Data/Node.h"
@@ -6,10 +6,10 @@
 
 #include "Manager/Manager.h"
 
-#include "Git/GitEvolutionGraph.h"
-#include "Git/GitFile.h"
-#include "Git/GitType.h"
-#include "Git/GitVersion.h"
+#include "Repository/Git/GitLib/GitEvolutionGraph.h"
+#include "Repository/Git/GitLib/GitFile.h"
+#include "Repository/Git/GitLib/GitType.h"
+#include "Repository/Git/GitLib/GitVersion.h"
 
 #include <QDebug>
 #include <QMapIterator>

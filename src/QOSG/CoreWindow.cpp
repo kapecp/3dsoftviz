@@ -8,8 +8,8 @@
 #include "Network/Server.h"
 #include "Network/Client.h"
 
-#include "Git/GitEvolutionGraph.h"
-#include "Git/GitVersion.h"
+#include "Repository/Git/GitLib/GitEvolutionGraph.h"
+#include "Repository/Git/GitLib/GitVersion.h"
 
 #include "Viewer/CoreGraph.h"
 #include "Viewer/CameraManipulator.h"

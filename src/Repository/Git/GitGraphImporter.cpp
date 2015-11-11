@@ -1,4 +1,4 @@
-#include "Git/GitGraphImporter.h"
+#include "Repository/Git/GitGraphImporter.h"
 
 #include "Importer/GraphOperations.h"
 #include "Importer/ReadNodesStore.h"
@@ -8,9 +8,9 @@
 
 #include "Data/Graph.h"
 
-#include "Git/GitVersion.h"
-#include "Git/GitEvolutionGraph.h"
-#include "Git/GitFile.h"
+#include "Repository/Git/GitLib/GitVersion.h"
+#include "Repository/Git/GitLib/GitEvolutionGraph.h"
+#include "Repository/Git/GitLib/GitFile.h"
 
 #include <QDebug>
 #include <QDir>

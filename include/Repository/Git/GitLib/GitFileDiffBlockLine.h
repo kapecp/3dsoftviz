@@ -1,7 +1,8 @@
 #ifndef GITFILEDIFFBLOCKLINE_H
 #define GITFILEDIFFBLOCKLINE_H
 
-#include "Git/GitType.h"
+#include "Repository/Git/GitLib/GitType.h"
+#include "Repository/Git/GitLib/GitExport.h"
 
 #include <QString>
 

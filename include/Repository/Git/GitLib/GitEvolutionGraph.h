@@ -1,10 +1,12 @@
 #ifndef GITEVOLUTIONGRAPH_H
 #define GITEVOLUTIONGRAPH_H
 
+#include "Repository/Git/GitLib/GitExport.h"
 #include <QString>
 #include <QStringList>
 #include <QList>
 #include <QMap>
+
 
 namespace Git {
 class GitVersion;
@@ -156,4 +158,5 @@ private:
 
 }; // class
 } // namespace
+
 #endif // GITEVOLUTIONGRAPH_H
