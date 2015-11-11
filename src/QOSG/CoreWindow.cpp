@@ -57,7 +57,6 @@
 #ifdef OPENCV_FOUND
 #ifdef OPENNI2_FOUND
 #include "Kinect/KinectCore.h"
-#include "Kinect/RansacSurface/Ransac.h"
 #endif
 #endif
 
@@ -1013,11 +1012,6 @@ QWidget* CoreWindow::createMoreFeaturesTab( QFrame* line )
 	b_start_kinect->setMaximumWidth( 136 );
 	lMore->addRow( b_start_kinect );
 	connect( b_start_kinect, SIGNAL( clicked() ), this, SLOT( createKinectWindow() ) );
-	b_start_ransac = new QPushButton();
-	b_start_ransac->setText( "Start calculate surface" );
-	b_start_ransac->setMaximumWidth( 136 );
-	lMore->addRow( b_start_ransac );
-	connect( b_start_ransac, SIGNAL( clicked() ), this, SLOT( calculateRansac() ) );
 #endif
 #endif
 
@@ -2859,12 +2853,6 @@ void CoreWindow::createKinectWindow()
 {
 
 	OpenCV::OpenCVCore::getInstance( NULL, this )->opencvInit();
-}
-
-void CoreWindow::calculateRansac()
-{
-	Kinect::Ransac* ransac= new Kinect::Ransac();
-	ransac->calculate();
 }
 #endif
 #endif
