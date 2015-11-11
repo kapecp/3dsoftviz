@@ -71,27 +71,17 @@ Data::Graph::Graph( qlonglong graph_id, QString name, QSqlDatabase* conn, QMap<q
 	this->edgeVisual = Data::Edge::INDEX_QUAD;
 }
 
-Data::Graph::Graph( qlonglong graph_id, QString name, qlonglong layout_id_counter, qlonglong ele_id_counter, QSqlDatabase* conn )
+Data::Graph::Graph( qlonglong graph_id, QString name, qlonglong layout_id_counter, qlonglong ele_id_counter, QSqlDatabase* conn ) :
+	graph_id(graph_id),	name(name), ele_id_counter(ele_id_counter), layout_id_counter(layout_id_counter),
+	inDB(false), selectedLayout(nullptr), conn(conn),
+	typesByName(new QMultiMap<QString, Data::Type*>()),
+	nodes(new QMap<qlonglong,osg::ref_ptr<Data::Node> >()),
+	edges(new QMap<qlonglong,osg::ref_ptr<Data::Edge> >()),
+	metaNodes(new QMap<qlonglong,osg::ref_ptr<Data::Node> >()),
+	metaEdges(new QMap<qlonglong,osg::ref_ptr<Data::Edge> >()),
+	types(new QMap<qlonglong,Data::Type*>()), frozen(false),
+	nodeVisual(Data::Node::INDEX_SQUARE), edgeVisual(Data::Edge::INDEX_QUAD)
 {
-	this->inDB = false;
-
-	this->graph_id = graph_id;
-	this->name = name;
-	this->ele_id_counter = ele_id_counter;
-	this->layout_id_counter = layout_id_counter;
-	this->conn = conn;
-	this->selectedLayout = NULL;
-
-	this->nodes = new QMap<qlonglong,osg::ref_ptr<Data::Node> >();
-	this->edges = new QMap<qlonglong,osg::ref_ptr<Data::Edge> >();
-	this->types = new QMap<qlonglong,Data::Type*>();
-	this->metaEdges = new QMap<qlonglong,osg::ref_ptr<Data::Edge> >();
-	this->metaNodes = new QMap<qlonglong,osg::ref_ptr<Data::Node> >();
-	this->frozen = false;
-	this->typesByName = new QMultiMap<QString, Data::Type*>();
-
-	this->nodeVisual = Data::Node::INDEX_SQUARE;
-	this->edgeVisual = Data::Edge::INDEX_QUAD;
 }
 
 Data::Graph::~Graph( void )

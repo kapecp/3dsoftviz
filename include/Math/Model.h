@@ -43,7 +43,8 @@ public:
 
 	Model( const osg::Geometry& copy, const osg::CopyOp& copyop=osg::CopyOp::SHALLOW_COPY ):
 		osg::Geometry( copy,copyop ),
-		_updated( true ), _funcs( 0 )
+		_updated( true ),
+		_partsToGenerate( 0 ), _coordsToGenerate(0), _funcs( 0 )
 	{
 	}
 
