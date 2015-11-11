@@ -87,6 +87,10 @@ local function isFile(file)
     return false
 end
 
+local function isDirEmpty(dir)
+	if lfs.dir(dir) == nil then return false else return true end
+end
+
 
 local function trim(str)
   return str:gsub("%s+", "")
