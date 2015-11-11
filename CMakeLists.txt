@@ -608,7 +608,8 @@ file( GLOB_RECURSE SRC_QOSG		"src/QOSG/*.cpp" )
 file( GLOB_RECURSE SRC_UTIL		"src/Util/*.cpp" )
 file( GLOB_RECURSE SRC_VIEWER	"src/Viewer/*.cpp" )
 file( GLOB_RECURSE SRC_CLUSTERING	"src/Clustering/*.cpp")
-file( GLOB_RECURSE SRC_REPOSITORY		"src/Repository/**.cpp" )
+file( GLOB SRC_REPOSITORY		"src/Repository/Git/*.cpp" )
+file( GLOB_RECURSE SRC_GITLIB   "src/Repository/Git/GitLib/*.cpp" )
 
 # OpenCV
 file( GLOB_RECURSE SRC_OPENCV	"src/OpenCV/*.cpp" )
@@ -689,7 +690,8 @@ file( GLOB_RECURSE HEADER_QOSG		"include/QOSG/*.h" )
 file( GLOB_RECURSE HEADER_UTIL		"include/Util/*.h" )
 file( GLOB_RECURSE HEADER_VIEWER	"include/Viewer/*.h" )
 file( GLOB_RECURSE HEADER_CLUSTERING	"include/Clustering/*.h")
-file( GLOB_RECURSE HEADER_REPOSITORY		"include/Repository/**.h" )
+file( GLOB HEADER_REPOSITORY		"include/Repository/Git/*.h" )
+file( GLOB_RECURSE HEADER_GITLIB		"include/Repository/Git/GitLib/*.h" )
 
 # OpenCV
 file( GLOB_RECURSE HEADER_OPENCV	"include/OpenCV/*.h" )
@@ -835,6 +837,12 @@ endif()
 #include_directories( SYSTEM dependencies/qtcolorpicker )
 #add_library( qtcolorpicker STATIC dependencies/qtcolorpicker/qtcolorpicker.cpp )
 
+
+add_library( gitlib SHARED ${SRC_GITLIB} )
+target_include_directories( gitlib SYSTEM PUBLIC include/Repository/Git/GitLib } )
+target_link_libraries( gitlib ${QT_LIBRARIES} )
+target_compile_options( gitlib PUBLIC "-DGITLIB_LIBRARY" )
+
 # ---------------------------------------------------------------
 # Build and link 3Dsoftviz
 # ---------------------------------------------------------------
@@ -853,7 +861,8 @@ target_link_libraries( ${3DSOFTVIZ_NAME}
 	${QT_LIBRARIES}
 	${OPENSCENEGRAPH_LIBRARIES}
 	${OSGVIEWER_LIBRARIES}
-	lua
+    gitlib
+    lua
 	libnoise
 )
 
@@ -904,7 +913,7 @@ endif()
 if( USE_BUILTIN_DEPENDENCIES )
 
 	# dependencies of non-unity build
-	add_dependencies( ${3DSOFTVIZ_NAME} libnoise dep_luametrics dep_leg dep_lpeg dep_luafilesystem )
+    add_dependencies( ${3DSOFTVIZ_NAME} libnoise gitlib dep_luametrics dep_leg dep_lpeg dep_luafilesystem )
 
 	if( MSVC )
 		add_dependencies( ${3DSOFTVIZ_NAME} dep_lua )
@@ -918,7 +927,7 @@ if( USE_BUILTIN_DEPENDENCIES )
 
 	# dependencies of unity build
 	if (COMMAND cotire)
-		add_dependencies( ${3DSOFTVIZ_NAME}_unity libnoise dep_luametrics dep_leg dep_lpeg dep_luafilesystem )
+        add_dependencies( ${3DSOFTVIZ_NAME}_unity libnoise gitlib dep_luametrics dep_leg dep_lpeg dep_luafilesystem )
 
 		if( MSVC )
 			add_dependencies( ${3DSOFTVIZ_NAME}_unity dep_lua )
@@ -933,11 +942,11 @@ if( USE_BUILTIN_DEPENDENCIES )
 endif()
 
 # Ensure correct dependencies
-add_dependencies( ${3DSOFTVIZ_NAME} libnoise )
-
-if( OpenCV_FOUND )
-	add_dependencies( ${3DSOFTVIZ_NAME} aruco )
-endif()
+#add_dependencies( ${3DSOFTVIZ_NAME} libnoise )
+#
+#if( OpenCV_FOUND )
+    #add_dependencies( ${3DSOFTVIZ_NAME} aruco )
+#endif()
 
 # -------------------------------------------------------
 # Install
@@ -945,8 +954,12 @@ endif()
 
 # 3DSoftviz and data
 install( TARGETS ${3DSOFTVIZ_NAME}
-	BUNDLE DESTINATION ${INSTALL_BUNDLE} COMPONENT Runtime
+    BUNDLE DESTINATION ${INSTALL_BUNDLE} COMPONENT Runtime
 	RUNTIME DESTINATION ${INSTALL_BIN} COMPONENT Runtime )
+
+install( TARGETS gitlib
+    RUNTIME DESTINATION ${INSTALL_BIN} COMPONENT Runtime
+    LIBRARY DESTINATION ${INSTALL_LIB} COMPONENT Runtime )
 
 # add custom install_unity target
 if( COMMAND cotire )

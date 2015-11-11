@@ -13,7 +13,7 @@ namespace Git {
 class GitVersion;
 class GitFile;
 
-class GitFileLoader
+class GITLIB_EXPORT GitFileLoader
 {
 public:
 	// Constructors

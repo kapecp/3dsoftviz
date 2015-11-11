@@ -11,7 +11,7 @@ namespace Repository {
 namespace Git {
 class GitVersion;
 
-class GitEvolutionGraph
+class GITLIB_EXPORT GitEvolutionGraph
 {
 public:
 	/**

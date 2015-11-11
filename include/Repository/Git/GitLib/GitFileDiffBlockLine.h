@@ -10,7 +10,7 @@ namespace Repository {
 
 namespace Git {
 
-class GitFileDiffBlockLine
+class GITLIB_EXPORT GitFileDiffBlockLine
 {
 public:
 	/**

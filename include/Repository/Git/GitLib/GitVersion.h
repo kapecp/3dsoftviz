@@ -12,7 +12,7 @@ namespace Repository {
 namespace Git {
 class GitFile;
 
-class GitVersion
+class GITLIB_EXPORT GitVersion
 {
 public:
 	// constructors
