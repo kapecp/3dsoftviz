@@ -279,6 +279,16 @@ endif()
 # else()
 #	message( STATUS "FGLOVE Not Found" )
 # endif()
+# ------------------------------ MOUSE3D -------------------------------
+# Find MOUSE3D
+find_package( MOUSE3D )
+if( MOUSE3D_FOUND )
+	include_directories( SYSTEM ${MOUSE3D_INCLUDE_DIRS} )
+	add_definitions( -DMOUSE3D_FOUND )
+	message( STATUS "3DMouse FOUND" )
+else()
+	message( STATUS "3DMouse NOT FOUND" )
+endif()
 
 ADD_DEFINITIONS(-DOSG_LIBRARY_STATIC)
 
@@ -627,6 +637,8 @@ file( GLOB_RECURSE SRC_SPEECH	"src/Speech/*.cpp" )
 
 # Leap
 file ( GLOB_RECURSE SRC_LEAP "src/Leap/*.cpp" )
+# MOUSE3D
+file ( GLOB_RECURSE SRC_MOUSE3D "src/Mouse3D/*.cpp" )
 
 
 # All source files
@@ -668,6 +680,11 @@ if( LEAP_FOUND )
 	list( APPEND SRC ${SRC_LEAP} )
 endif()
 
+# add MOUSE3D if found
+if( MOUSE3D_FOUND )
+	list( APPEND SRC ${SRC_MOUSE3D} )
+endif()
+
 
 
 #-------------------------------- Header files -------------------------------
@@ -707,6 +724,9 @@ file( GLOB_RECURSE HEADER_SPEECH	"include/Speech/*.h" )
 # LEAP
 file( GLOB_RECURSE HEADER_LEAP	"include/Leap/*.h" )
 
+# MOUSE3D
+file( GLOB_RECURSE HEADER_MOUSE3D	"include/Mouse3D/*.h" )
+
 # All header files
 set( INCL
 	${HEADER_MAIN} ${HEADER_CORE}
@@ -744,6 +764,11 @@ endif()
 #LEAP
 if( LEAP_FOUND )
 	list( APPEND INCL ${HEADER_LEAP} )
+endif()
+
+#MOUSE3D
+if( MOUSE3D_FOUND )
+	list( APPEND INCL ${HEADER_MOUSE3D} )
 endif()
 
 #-------------------------------------- Group source files --------------------------------------
@@ -809,6 +834,12 @@ endif()
 if( LEAP_FOUND )
 	source_group( \\src\\Leap "^.*Leap/.*$" )
 	source_group( \\headers\\Leap "^.*Leap/.*h$" )
+endif()
+
+#MOUSE3D
+if( MOUSE3D_FOUND )
+	source_group( \\src\\Mouse3D "^.*Mouse3D/.*$" )
+	source_group( \\headers\\Mouse3D "^.*Mouse3D/.*h$" )
 endif()
 
 # add diluculum code directly due to MSVC problems
@@ -884,6 +915,10 @@ endif()
 
 if( LEAP_FOUND )
 	target_link_libraries( ${3DSOFTVIZ_NAME} ${LEAP_LIBRARIES} )
+endif()
+
+if( MOUSE3D_FOUND )
+	target_link_libraries( ${3DSOFTVIZ_NAME} ${MOUSE3D_LIBRARIES} )
 endif()
 
 # 'cotire' the executable
