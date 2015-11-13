@@ -3,15 +3,15 @@
 
 #include "QDebug"
 
-Vwr::GraphNavigation::GraphNavigation()
+Vwr::GraphNavigation::GraphNavigation() :
+	isNavEnabled(true),
+	viewer(AppCore::Core::getInstance()->getCoreWindow()->GetViewerQt()),
+	camMath(nullptr),
+	tempSelectedNode(nullptr),
+	tempSelectedEdge(nullptr),
+	previousLastSelectedNode(nullptr),
+	selectionMode(2)
 {
-	selectionMode = 2;
-	isNavEnabled = true;
-	camMath = NULL;
-	tempSelectedNode = NULL;
-	tempSelectedEdge = NULL;
-	previousLastSelectedNode = NULL;
-	viewer = AppCore::Core::getInstance()->getCoreWindow()->GetViewerQt();
 }
 
 Vwr::GraphNavigation::~GraphNavigation()

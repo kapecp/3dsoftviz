@@ -3,34 +3,32 @@
 
 #include  "QDebug"
 
-Vwr::MouseControl::MouseControl()
+Vwr::MouseControl::MouseControl() :
+	// Primary speed of movement
+	mSpeedMoving(1.0),
+	clickX(0),
+	clickY(0),
+	mIsClicAruco(false),
+	mouseHistory(new QList< osg::Vec2 >)
+
 {
 	window = AppCore::Core::getInstance()->getCoreWindow();
 	viewer = AppCore::Core::getInstance()->getCoreWindow()->GetViewerQt();
-	if ( viewer!=NULL ) {
-		mWindowStartX=viewer->pos().x();
-		mWindowStartY=viewer->pos().y();
-		mWindowWidth=viewer->width();
-		mWindowHeight=viewer->height();
-		mWindowEndX=mWindowStartX+mWindowWidth;
-		mWindowEndY=mWindowStartX+mWindowHeight;
+	if ( viewer ) {
+		mWindowStartX = viewer->pos().x();
+		mWindowStartY = viewer->pos().y();
+		mWindowWidth = viewer->width();
+		mWindowHeight = viewer->height();
+		mWindowEndX = mWindowStartX+mWindowWidth;
+		mWindowEndY = mWindowStartX+mWindowHeight;
 
-		clickX = 0;
-		clickY = 0;
-
-		//primary speed of movement
-		mSpeedMoving=1.0;
 		//from Kinect World coordinates are 640x480
 		mRatioX = mWindowEndX/640.0;
-		mRatioY=mWindowEndY/480.0;
-
+		mRatioY = mWindowEndY/480.0;
 	}
 	else {
 		qDebug() << "[MouseControl] viewer is not open";
 	}
-
-	mIsClicAruco = false;
-	mouseHistory = new QList< osg::Vec2 >;
 }
 
 Vwr::MouseControl::~MouseControl()
