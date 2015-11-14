@@ -103,11 +103,11 @@ void QGraphicsViewAdapter::repaintRequestedSlot( const QList<QRectF>& )
 void QGraphicsViewAdapter::customEvent( QEvent* event )
 {
 	if ( event->type()==MYQKEYEVENT ) {
-		MyQKeyEvent* keyEvent = ( MyQKeyEvent* )event;
+		MyQKeyEvent* keyEvent = static_cast<MyQKeyEvent*>(event);
 		handleKeyEvent( keyEvent->_key, keyEvent->_down );
 	}
 	else if ( event->type()==MYQPOINTEREVENT ) {
-		MyQPointerEvent* pointerEvent = ( MyQPointerEvent* )event;
+		MyQPointerEvent* pointerEvent = static_cast<MyQPointerEvent*>(event);
 		handlePointerEvent( pointerEvent->_x, pointerEvent->_y, pointerEvent->_buttonMask );
 	}
 }
