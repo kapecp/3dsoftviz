@@ -6,10 +6,10 @@
 
 #include "Manager/Manager.h"
 
-#include "Repository/Git/GitLib/GitEvolutionGraph.h"
-#include "Repository/Git/GitLib/GitFile.h"
-#include "Repository/Git/GitLib/GitType.h"
-#include "Repository/Git/GitLib/GitVersion.h"
+#include "GitLib/GitEvolutionGraph.h"
+#include "GitLib/GitFile.h"
+#include "GitLib/GitType.h"
+#include "GitLib/GitVersion.h"
 
 #include <QDebug>
 #include <QMapIterator>

@@ -1,7 +1,7 @@
 #ifndef GITFILELOADER_H
 #define GITFILELOADER_H
 
-#include "Repository/Git/GitLib/GitExport.h"
+#include "GitLib/GitExport.h"
 
 #include <QString>
 #include <QList>

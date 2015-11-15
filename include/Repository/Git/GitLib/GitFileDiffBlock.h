@@ -1,8 +1,8 @@
 #ifndef GITFILEDIFFBLOCK_H
 #define GITFILEDIFFBLOCK_H
 
-#include "Repository/Git/GitLib/GitType.h"
-#include "Repository/Git/GitLib/GitExport.h"
+#include "GitLib/GitType.h"
+#include "GitLib/GitExport.h"
 
 #include <QList>
 

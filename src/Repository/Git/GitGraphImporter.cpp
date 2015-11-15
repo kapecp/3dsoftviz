@@ -8,9 +8,9 @@
 
 #include "Data/Graph.h"
 
-#include "Repository/Git/GitLib/GitVersion.h"
-#include "Repository/Git/GitLib/GitEvolutionGraph.h"
-#include "Repository/Git/GitLib/GitFile.h"
+#include "GitLib/GitVersion.h"
+#include "GitLib/GitEvolutionGraph.h"
+#include "GitLib/GitFile.h"
 
 #include <QDebug>
 #include <QDir>

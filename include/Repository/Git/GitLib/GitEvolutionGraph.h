@@ -1,7 +1,7 @@
 #ifndef GITEVOLUTIONGRAPH_H
 #define GITEVOLUTIONGRAPH_H
 
-#include "Repository/Git/GitLib/GitExport.h"
+#include "GitLib/GitExport.h"
 #include <QString>
 #include <QStringList>
 #include <QList>

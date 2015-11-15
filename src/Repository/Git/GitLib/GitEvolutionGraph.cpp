@@ -1,4 +1,4 @@
-#include "Repository/Git/GitLib/GitEvolutionGraph.h"
+#include "GitLib/GitEvolutionGraph.h"
 
 #include <QDebug>
 #include <QMapIterator>

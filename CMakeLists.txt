@@ -838,8 +838,8 @@ endif()
 #add_library( qtcolorpicker STATIC dependencies/qtcolorpicker/qtcolorpicker.cpp )
 
 
-add_library( gitlib SHARED ${SRC_GITLIB} )
-target_include_directories( gitlib SYSTEM PUBLIC include/Repository/Git/GitLib } )
+add_library( gitlib SHARED ${SRC_GITLIB} ${HEADER_GITLIB} )
+target_include_directories( gitlib SYSTEM PUBLIC include/Repository/Git } )
 target_link_libraries( gitlib ${QT_LIBRARIES} )
 target_compile_options( gitlib PUBLIC "-DGITLIB_LIBRARY" )
 

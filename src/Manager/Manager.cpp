@@ -21,10 +21,10 @@
 #include "Data/Graph.h"
 #include "Data/GraphLayout.h"
 
-#include "Repository/Git/GitLib/GitFileLoader.h"
-#include "Repository/Git/GitLib/GitVersion.h"
-#include "Repository/Git/GitLib/GitFile.h"
-#include "Repository/Git/GitLib/GitEvolutionGraph.h"
+#include "GitLib/GitFileLoader.h"
+#include "GitLib/GitVersion.h"
+#include "GitLib/GitFile.h"
+#include "GitLib/GitEvolutionGraph.h"
 #include "Repository/Git/GitGraphImporter.h"
 #include "Repository/Git/GitGraphUpdater.h"
 

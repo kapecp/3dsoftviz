@@ -1,8 +1,8 @@
 #ifndef GITVERSION_H
 #define GITVERSION_H
 
-#include "Repository/Git/GitLib/GitType.h"
-#include "Repository/Git/GitLib/GitExport.h"
+#include "GitLib/GitType.h"
+#include "GitLib/GitExport.h"
 
 #include <QString>
 #include <QList>

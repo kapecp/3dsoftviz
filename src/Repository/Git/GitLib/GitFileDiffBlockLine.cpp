@@ -1,4 +1,4 @@
-#include "Repository/Git/GitLib/GitFileDiffBlockLine.h"
+#include "GitLib/GitFileDiffBlockLine.h"
 
 Repository::Git::GitFileDiffBlockLine::GitFileDiffBlockLine()
     : line(""), lineNumber(0), lineType(Repository::Git::GitType::MODIFIED)
