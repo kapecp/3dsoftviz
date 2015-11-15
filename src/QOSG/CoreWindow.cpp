@@ -3508,8 +3508,12 @@ void CoreWindow::onChange()
 		// Get last node model & display it in qt view
 		qlonglong lastNodeId = selected->last()->getId();
 		Lua::LuaNode* lastLuaNode = Lua::LuaGraph::getInstance()->getNodes()->value( lastNodeId );
-		Lua::LuaGraphTreeModel* lastLuaModel = new Lua::LuaGraphTreeModel( lastLuaNode );
-		luaGraphTreeView->setModel( lastLuaModel );
+		// garaj start - ak nenaslo lastLuaNode, tak sposobovalo pad softveru
+		if ( lastLuaNode ) {
+			Lua::LuaGraphTreeModel* lastLuaModel = new Lua::LuaGraphTreeModel( lastLuaNode );
+			luaGraphTreeView->setModel( lastLuaModel );
+		}
+		// garaj end
 	}
 
 
