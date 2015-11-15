@@ -76,19 +76,20 @@ local function fileExists(file)
 end
 
 local function isDir(dir)
-    if type(dir)~="string" then return false end
-	if lfs.attributes(dir, 'mode') == "directory" then return true end    
-    return false
+  if type(dir)~="string" then return false end
+  if lfs.attributes(dir, 'mode') == "directory" then return true end    
+  return false
 end
 
 local function isFile(file)
-    if type(file)~="string" then return false end
-	if lfs.attributes(file, 'mode') == "file" then return true end    
-    return false
+  if type(file)~="string" then return false end
+  if lfs.attributes(file, 'mode') == "file" then return true end    
+  return false
 end
 
 local function isDirEmpty(dir)
-	if lfs.dir(dir) == nil then return false else return true end
+  if lfs.dir(dir) == nil then return true end
+  return false
 end
 
 
@@ -246,6 +247,7 @@ return
   fileExists = fileExists,
   isDir = isDir,
   isFile = isFile,
+  isDirEmpty = isDirEmpty,
   tblPrint = tblPrint,
   printStructure = printStructure,
   printKey = printKey,
