@@ -460,11 +460,6 @@ public slots:
 	    * @brief create Kinect Button
 	 */
 	void createKinectWindow();
-
-	/**
-	 * @brief calculateRansac
-	 */
-	void calculateRansac();
 #endif
 #endif
 
@@ -860,11 +855,6 @@ private:
 	QPushButton* b_start_leap;
 
 	/**
-	 * @brief Button for start calculate Ransac Surface
-	 */
-	QPushButton* b_start_ransac;
-
-	/**
 	 * QPushButton start speech recognition
 	 *@brief b_start_speech
 	 */
@@ -961,10 +951,10 @@ private:
 	QComboBox* nodeTypeComboBox;
 
 	/**
-	    *  int isPlaying
-	    *  \brief Flag if layout is running
-	    */
-	int isPlaying;
+		*  bool isPlaying
+		*  \brief Flag if layout is running
+		*/
+	bool isPlaying;
 
 	/**
 	    *  \fn private  createActions
@@ -1132,10 +1122,10 @@ private:
 	QComboBox* edgeTypeComboBox;
 
 	/**
-	    *  int isEBPlaying
-	    *  \brief Flag if edge bundling is running
-	    */
-	int isEBPlaying;
+		*  bool isEBPlaying
+		*  \brief Flag if edge bundling is running
+		*/
+	bool isEBPlaying;
 
 public:
 

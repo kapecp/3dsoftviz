@@ -1274,14 +1274,14 @@ void CoreGraph::setNodeVisual( int index )
 
 	while ( iNode != in_nodes->end() ) {
 		iNode.value()->setVisual( index );
-		iNode++;
+		++iNode;
 	}
 
 	QMap<qlonglong, osg::ref_ptr<Data::Node> >::iterator iMetaNode = qmetaNodes->begin();
 
 	while ( iMetaNode != qmetaNodes->end() ) {
 		iMetaNode.value()->setVisual( index );
-		iMetaNode++;
+		++iMetaNode;
 	}
 
 	graph->setNodeVisual( index );
@@ -1293,14 +1293,14 @@ void CoreGraph::setEdgeVisual( int index )
 
 	while ( iEdge != in_edges->end() ) {
 		iEdge.value()->setVisual( index );
-		iEdge++;
+		++iEdge;
 	}
 
 	QMap<qlonglong, osg::ref_ptr<Data::Edge> >::iterator iMetaEdge = qmetaEdges->begin();
 
 	while ( iMetaEdge != qmetaEdges->end() ) {
 		iMetaEdge.value()->setVisual( index );
-		iMetaEdge++;
+		++iMetaEdge;
 	}
 
 	graph->setEdgeVisual( index );

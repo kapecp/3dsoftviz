@@ -308,14 +308,15 @@ QSqlQuery* Model::NodeDAO::getNodesQuery( QSqlDatabase* conn, bool* error, qlong
 {
 	*error = FALSE;
 	QSqlQuery* query;
-	query = new QSqlQuery( *conn );
 
 	//check if we have connection
 	if ( conn==NULL || !conn->isOpen() ) {
 		qDebug() << "[Model::NodeDAO::getNodes] Connection to DB not opened.";
 		*error = TRUE;
-		return query;
+		return NULL;
 	}
+
+	query = new QSqlQuery( *conn );
 
 	//vyberame z databazy vsetky uzly podla ID grafu, layoutu a nadradeneho uzla
 	query->prepare( "SELECT * "
@@ -341,7 +342,6 @@ QMap<qlonglong, osg::Vec3f> Model::NodeDAO::getNodesPositions( QSqlDatabase* con
 	QMap<qlonglong, osg::Vec3f> positions;
 	*error = FALSE;
 	QSqlQuery* query;
-	query = new QSqlQuery( *conn );
 	osg::Vec3f position;
 	qlonglong nodeId;
 
@@ -351,6 +351,8 @@ QMap<qlonglong, osg::Vec3f> Model::NodeDAO::getNodesPositions( QSqlDatabase* con
 		*error = TRUE;
 		return positions;
 	}
+
+	query = new QSqlQuery( *conn );
 
 	//vyberame z databazy pozicie uzlov podla ID grafu a layoutu
 	query->prepare( "SELECT * "

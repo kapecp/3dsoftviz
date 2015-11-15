@@ -1,6 +1,7 @@
 #include "Clustering/Figures/Cube.h"
 
 #include <vector>
+#include <algorithm>
 #include <QDebug>
 #include <osg/PolygonMode>
 #include <osg/LineWidth>
@@ -8,12 +9,7 @@
 #include <osg/Depth>
 #include <osg/BlendFunc>
 
-Cube::Cube( osg::Vec3d position, float radius )
-{
-	Cube( position, radius, osg::Vec4d( 0,0,0,1 ) );
-}
-
-Cube::Cube( osg::Vec3d position, float radius, osg::Vec4d color )
+Cube::Cube( osg::Vec3d position, float radius, osg::Vec4d color = osg::Vec4d( 0,0,0,1 ))
 {
 	geode = new osg::Geode();
 	geometry = new osg::Geometry();

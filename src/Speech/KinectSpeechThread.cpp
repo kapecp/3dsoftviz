@@ -1,8 +1,8 @@
 #include "Core/Core.h"
 #include "Speech/KinectSpeechThread.h"
 
-using namespace Speech;
-using namespace SpeechSDK;
+using Speech;
+using SpeechSDK
 
 // constructor loads grammar file with speech commands
 // DLL

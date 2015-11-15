@@ -165,7 +165,7 @@ bool PickHandler::handleScroll( const osgGA::GUIEventAdapter& ea, GUIActionAdapt
 {
 	if ( selectionType == SelectionType::CLUSTER && !pickedClusters.empty() ) {
 		QLinkedList<osg::ref_ptr<Data::Cluster> >::const_iterator i = pickedClusters.constBegin();
-		float scale = appConf->getValue( "Viewer.Display.NodeDistanceScale" ).toFloat();
+//		float scale = appConf->getValue( "Viewer.Display.NodeDistanceScale" ).toFloat();
 		while ( i != pickedClusters.constEnd() ) {
 			Layout::ShapeGetter_Cube* shapeGetter = ( *i )->getShapeGetter();
 			if ( shapeGetter != NULL ) {
@@ -279,7 +279,7 @@ bool PickHandler::handleKeyDown( const osgGA::GUIEventAdapter& ea, GUIActionAdap
 
 	// FULLSCREEN
 	else if ( ea.getKey() == 'l' || ea.getKey() == 'L' ) {
-		bool hideToolbars = appConf->getValue( "Viewer.Fullscreen" ).toInt();
+		bool hideToolbars = (appConf->getValue( "Viewer.Fullscreen" ).toInt() == 0 ? false : true);
 
 		if ( AppCore::Core::getInstance()->getCoreWindow()->isFullScreen() ) {
 			AppCore::Core::getInstance()->getCoreWindow()->menuBar()->show();
@@ -637,8 +637,13 @@ bool PickHandler::doNodePick( osg::NodePath nodePath )
 
 bool PickHandler::doEdgePick( osg::NodePath nodePath )
 {
-	Data::Edge* e = dynamic_cast<Data::Edge*>( nodePath[nodePath.size() - 1] );
-
+	Data::Edge* e;
+	for ( unsigned int i = 0; i < nodePath.size(); i++ ) {
+		e = dynamic_cast<Data::Edge*>( nodePath[i] );
+		if ( e != NULL ) {
+			break;
+		}
+	}
 	if ( e != NULL ) {
 		if ( isAltPressed && pickMode == PickMode::NONE && !isShiftPressed ) {
 			osg::ref_ptr<osg::Vec3Array> coords = e->getCooridnates();
@@ -713,7 +718,7 @@ bool PickHandler::doClusterPick( osg::NodePath nodePath )
 
 }
 
-void PickHandler::selectAllNeighbors( QLinkedList<osg::ref_ptr<Data::Node>> nodes )
+void PickHandler::selectAllNeighbors( QLinkedList<osg::ref_ptr<Data::Node > > nodes )
 {
 	if ( nodes.count() > 0 && !isNeighborsSelection ) {
 		QLinkedList<osg::ref_ptr<Data::Node> >::const_iterator i = nodes.constBegin();

@@ -4,6 +4,7 @@ Data::VizNode::VizNode( qlonglong id, QString name, Data::Type* type, Data::Grap
 	:AbsNode( id,name,type,graph )
 {
 	this->scale = scaling;
+	this->overallWeight = 0;
 	int pos = 0;
 	int cnt = 0;
 

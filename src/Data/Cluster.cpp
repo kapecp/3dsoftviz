@@ -10,8 +10,10 @@ Cluster::Cluster( qlonglong id, QString name, Data::Type* type, float scaling, D
 {
 
 	this->id = id;
-	this->shapeGetter = NULL;
 	this->repulsiveForceInside = 1;
+	this->cube = NULL;
+	this->sphere = NULL;
+	this->shapeGetter = NULL;
 }
 
 QSet<Node*> Cluster::getIncidentNodes() const

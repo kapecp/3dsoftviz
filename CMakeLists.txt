@@ -53,7 +53,7 @@ option( USE_STRICT_COMPILE_WARNINGS "Use strict compilation warnings in debug mo
 if( USE_STRICT_COMPILE_WARNINGS )
 	if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang" OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "AppleClang")
 		# using Clang
-		set( FLAGS_FOR_DEBUG "-ansi -pedantic -Wall -Wcast-align -Wcast-qual -Wchar-subscripts -Wcomment -Wconversion -Wctor-dtor-privacy -Wdisabled-optimization -Wextra -Wfloat-equal  -Wformat  -Wformat-nonliteral -Wformat-security  -Wformat-y2k -Wformat=2  -Wimport  -Winit-self -Winline -Winvalid-pch -Wlogical-op -Wlong-long -Wmissing-braces -Wmissing-declarations -Wmissing-field-initializers -Wmissing-format-attribute   -Wmissing-include-dirs -Wmissing-noreturn -Wnoexcept  -Wpacked  -Wparentheses -Wpointer-arith -Wredundant-decls -Wreturn-type -Wsequence-point -Wsign-compare  -Wsign-promo -Wstack-protector -Wstrict-aliasing=2 -Wstrict-null-sentinel -Wstrict-overflow=5 -Wswitch -Wswitch-default -Wswitch-enum -Wtrigraphs -Wundef -Wuninitialized -Wunknown-pragmas -Wunreachable-code -Wunsafe-loop-optimizations -Wvariadic-macros -Wvolatile-register-var -Wwrite-strings  -Wno-unused-parameter -Wno-unused" )
+		set( FLAGS_FOR_DEBUG "-std=c++11 -pedantic -Wall -Wcast-align -Wcast-qual -Wchar-subscripts -Wcomment -Wconversion -Wctor-dtor-privacy -Wdisabled-optimization -Wextra -Wfloat-equal  -Wformat  -Wformat-nonliteral -Wformat-security  -Wformat-y2k -Wformat=2  -Wimport  -Winit-self -Winline -Winvalid-pch -Wlong-long -Wmissing-braces -Wmissing-declarations -Wmissing-field-initializers -Wmissing-format-attribute -Wmissing-include-dirs -Wmissing-noreturn -Wpacked  -Wparentheses -Wpointer-arith -Wredundant-decls -Wreturn-type -Wsequence-point -Wsign-compare  -Wsign-promo -Wstack-protector -Wstrict-aliasing=2 -Wstrict-overflow=5 -Wswitch -Wswitch-default -Wswitch-enum -Wtrigraphs -Wundef -Wuninitialized -Wunknown-pragmas -Wunreachable-code -Wvariadic-macros -Wvolatile-register-var -Wwrite-strings  -Wno-unused-parameter -Wno-unused" )
 	elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR CMAKE_COMPILER_IS_GNUCXX)
 		# using GCC
 		set( FLAGS_FOR_DEBUG "-std=c++11 -pedantic -Wall -Wcast-align -Wcast-qual -Wchar-subscripts -Wcomment -Wconversion -Wctor-dtor-privacy -Wdisabled-optimization -Wextra -Wfloat-equal -Wformat -Wformat-nonliteral -Wformat-security -Wformat-y2k -Wformat=2 -Wimport -Winit-self -Winline -Winvalid-pch -Wlogical-op -Wlong-long -Wmissing-braces -Wmissing-declarations -Wmissing-field-initializers -Wmissing-format-attribute -Wmissing-include-dirs -Wmissing-noreturn -Wnoexcept -Wpacked -Wparentheses -Wpointer-arith -Wredundant-decls -Wreturn-type -Wsequence-point -Wsign-compare -Wsign-promo -Wstack-protector -Wstrict-aliasing=2 -Wstrict-null-sentinel -Wstrict-overflow=5 -Wswitch -Wswitch-default -Wswitch-enum -Wtrigraphs -Wundef -Wuninitialized -Wunknown-pragmas -Wunreachable-code -Wunsafe-loop-optimizations -Wvariadic-macros -Wvolatile-register-var -Wwrite-strings -Wno-unused-parameter -Wno-unused" )
@@ -110,22 +110,22 @@ endif ()
 # --------------
 include( cotire )
 if(COMMAND cotire )
-	if( NOT COTIRE_MAXIMUM_NUMBER_OF_UNITY_INCLUDES )
-		include( ProcessorCount )
-		ProcessorCount( N )
+        if( NOT COTIRE_MAXIMUM_NUMBER_OF_UNITY_INCLUDES )
+                include( ProcessorCount )
+                ProcessorCount( N )
 
-		if( NOT N EQUAL 0 )
-			# set number of parallel unity builds to processor count
-			set( COTIRE_MAXIMUM_NUMBER_OF_UNITY_INCLUDES "-j${N}" )
-		endif()
-	endif()
+                if( NOT N EQUAL 0 )
+                        # set number of parallel unity builds to processor count
+                        set( COTIRE_MAXIMUM_NUMBER_OF_UNITY_INCLUDES "-j${N}" )
+                endif()
+        endif()
 
 	set( COTIRE_VERBOSE FALSE )
 	set( COTIRE_DEBUG FALSE )
 
 	### Fix virtual memory range
-	if( MSVC )
-		set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Zm216" CACHE STRING "" FORCE )
+	if( MSVC )		
+		set (COTIRE_PCH_MEMORY_SCALING_FACTOR "240")
 	endif()
 
 	# fix for Diluculum and LuaJIT on 64bit OSX: Lua new_state returned NULL, LuaJIT needs following flags
@@ -279,6 +279,16 @@ endif()
 # else()
 #	message( STATUS "FGLOVE Not Found" )
 # endif()
+# ------------------------------ MOUSE3D -------------------------------
+# Find MOUSE3D
+find_package( MOUSE3D )
+if( MOUSE3D_FOUND )
+	include_directories( SYSTEM ${MOUSE3D_INCLUDE_DIRS} )
+	add_definitions( -DMOUSE3D_FOUND )
+	message( STATUS "3DMouse FOUND" )
+else()
+	message( STATUS "3DMouse NOT FOUND" )
+endif()
 
 ADD_DEFINITIONS(-DOSG_LIBRARY_STATIC)
 
@@ -508,7 +518,8 @@ endif()
 # -----------------------------------------------------------------
 
 # Apple specific overrides, we build and app bundle
-if( APPLE )
+option( OSX_BUNDLE "Create an app bundle on OSX." OFF ) # TODO: disabled, because currently it does not work...
+if( APPLE AND OSX_BUNDLE )
 	# Executable settings
 	set( 3DSOFTVIZ_EXECUTABLE_TYPE MACOSX_BUNDLE )
 	set( BUNDLE_APP "\${CMAKE_INSTALL_PREFIX}/${3DSOFTVIZ_NAME}.app" )
@@ -626,6 +637,8 @@ file( GLOB_RECURSE SRC_SPEECH	"src/Speech/*.cpp" )
 
 # Leap
 file ( GLOB_RECURSE SRC_LEAP "src/Leap/*.cpp" )
+# MOUSE3D
+file ( GLOB_RECURSE SRC_MOUSE3D "src/Mouse3D/*.cpp" )
 
 
 # All source files
@@ -667,6 +680,11 @@ if( LEAP_FOUND )
 	list( APPEND SRC ${SRC_LEAP} )
 endif()
 
+# add MOUSE3D if found
+if( MOUSE3D_FOUND )
+	list( APPEND SRC ${SRC_MOUSE3D} )
+endif()
+
 
 
 #-------------------------------- Header files -------------------------------
@@ -706,6 +724,9 @@ file( GLOB_RECURSE HEADER_SPEECH	"include/Speech/*.h" )
 # LEAP
 file( GLOB_RECURSE HEADER_LEAP	"include/Leap/*.h" )
 
+# MOUSE3D
+file( GLOB_RECURSE HEADER_MOUSE3D	"include/Mouse3D/*.h" )
+
 # All header files
 set( INCL
 	${HEADER_MAIN} ${HEADER_CORE}
@@ -743,6 +764,11 @@ endif()
 #LEAP
 if( LEAP_FOUND )
 	list( APPEND INCL ${HEADER_LEAP} )
+endif()
+
+#MOUSE3D
+if( MOUSE3D_FOUND )
+	list( APPEND INCL ${HEADER_MOUSE3D} )
 endif()
 
 #-------------------------------------- Group source files --------------------------------------
@@ -808,6 +834,12 @@ endif()
 if( LEAP_FOUND )
 	source_group( \\src\\Leap "^.*Leap/.*$" )
 	source_group( \\headers\\Leap "^.*Leap/.*h$" )
+endif()
+
+#MOUSE3D
+if( MOUSE3D_FOUND )
+	source_group( \\src\\Mouse3D "^.*Mouse3D/.*$" )
+	source_group( \\headers\\Mouse3D "^.*Mouse3D/.*h$" )
 endif()
 
 # add diluculum code directly due to MSVC problems
@@ -883,6 +915,10 @@ endif()
 
 if( LEAP_FOUND )
 	target_link_libraries( ${3DSOFTVIZ_NAME} ${LEAP_LIBRARIES} )
+endif()
+
+if( MOUSE3D_FOUND )
+	target_link_libraries( ${3DSOFTVIZ_NAME} ${MOUSE3D_LIBRARIES} )
 endif()
 
 # 'cotire' the executable
@@ -992,7 +1028,6 @@ if( USE_BUILTIN_DEPENDENCIES )
 endif()
 
 # Include QT4 libraries in Apple bundle and on Windows
-option( OSX_BUNDLE "Create an app bundle on OSX." OFF ) # TODO: disabled, because currently it does not work...
 if( WIN32 OR APPLE AND OSX_BUNDLE )
 	# On Apple plugins need to be bundled
 	if( APPLE AND OSX_BUNDLE )

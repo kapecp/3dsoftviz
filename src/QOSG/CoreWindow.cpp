@@ -49,6 +49,7 @@
 
 #include <iostream>
 #include <osg/ref_ptr>
+#include <string>
 
 #ifdef OPENCV_FOUND
 #include "OpenCV/OpenCVCore.h"
@@ -57,7 +58,6 @@
 #ifdef OPENCV_FOUND
 #ifdef OPENNI2_FOUND
 #include "Kinect/KinectCore.h"
-#include "Kinect/RansacSurface/Ransac.h"
 #endif
 #endif
 
@@ -1013,11 +1013,6 @@ QWidget* CoreWindow::createMoreFeaturesTab( QFrame* line )
 	b_start_kinect->setMaximumWidth( 136 );
 	lMore->addRow( b_start_kinect );
 	connect( b_start_kinect, SIGNAL( clicked() ), this, SLOT( createKinectWindow() ) );
-	b_start_ransac = new QPushButton();
-	b_start_ransac->setText( "Start calculate surface" );
-	b_start_ransac->setMaximumWidth( 136 );
-	lMore->addRow( b_start_ransac );
-	connect( b_start_ransac, SIGNAL( clicked() ), this, SLOT( calculateRansac() ) );
 #endif
 #endif
 
@@ -2276,7 +2271,7 @@ void CoreWindow::startEdgeBundling()
 			while ( iNode != currentGraph->getNodes()->end() ) {
 				( *iNode )->setFixed( true );
 				( *iNode )->setDefaultColor();
-				iNode++;
+				++iNode;
 			}
 
 			//select all meta nodes and fix them
@@ -2284,12 +2279,12 @@ void CoreWindow::startEdgeBundling()
 			while ( iNode != currentGraph->getMetaNodes()->end() ) {
 				( *iNode )->setFixed( true );
 				( *iNode )->setDefaultColor();
-				iNode++;
+				++iNode;
 			}
 
 			//split edges
 			QString alpha = le_edgeBundlingalpha->text();
-			layout->setAlphaEdgeBundlingValue( alpha.toInt() );
+			layout->setAlphaEdgeBundlingValue(alpha.toFloat());
 			int splitCount = 3;
 			currentGraph->splitAllEdges( splitCount );
 		}
@@ -2859,12 +2854,6 @@ void CoreWindow::createKinectWindow()
 {
 
 	OpenCV::OpenCVCore::getInstance( NULL, this )->opencvInit();
-}
-
-void CoreWindow::calculateRansac()
-{
-	Kinect::Ransac* ransac= new Kinect::Ransac();
-	ransac->calculate();
 }
 #endif
 #endif
@@ -3519,8 +3508,12 @@ void CoreWindow::onChange()
 		// Get last node model & display it in qt view
 		qlonglong lastNodeId = selected->last()->getId();
 		Lua::LuaNode* lastLuaNode = Lua::LuaGraph::getInstance()->getNodes()->value( lastNodeId );
-		Lua::LuaGraphTreeModel* lastLuaModel = new Lua::LuaGraphTreeModel( lastLuaNode );
-		luaGraphTreeView->setModel( lastLuaModel );
+		// garaj start - ak nenaslo lastLuaNode, tak sposobovalo pad softveru
+		if ( lastLuaNode ) {
+			Lua::LuaGraphTreeModel* lastLuaModel = new Lua::LuaGraphTreeModel( lastLuaNode );
+			luaGraphTreeView->setModel( lastLuaModel );
+		}
+		// garaj end
 	}
 
 

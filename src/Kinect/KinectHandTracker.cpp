@@ -19,6 +19,23 @@ Kinect::KinectHandTracker::KinectHandTracker( openni::Device* device, openni::Vi
 	mouse = new Vwr::MouseControl();
 	mDepth=m_depth;
 	viewer = AppCore::Core::getInstance()->getCoreWindow()->GetViewerQt();
+
+	numHandsTracking = 0;
+	isGestureClick = false;
+	//handZ[2] = {0, 0};
+	//getArrayHands[NUM_HANDS][NUM_HANDS] = {{0, 0}, {0, 0}};
+	slidingHand_x = 0;
+	slidingHand_y = 0;
+	slidingHand_z = 0;
+	slidingHand_type = NULL;
+	gesto_dolava = false;
+	gesto_doprava = false;
+	gesto_hore = false;
+	gesto_dole = false;
+	nav = NULL;
+	mDepthX = 0;
+	mDepthY = 0;
+	mDepthZ = 0;
 }
 
 
