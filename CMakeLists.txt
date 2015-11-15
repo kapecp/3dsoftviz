@@ -345,7 +345,7 @@ if( USE_BUILTIN_DEPENDENCIES )
 		ExternalProject_Add( dep_aruco
 			PREFIX aruco
 			SOURCE_DIR ${DEP_SOURCE}/aruco
-			BINARY_DIR arucoosgModeling
+			BINARY_DIR aruco
 			CMAKE_ARGS
 				-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
 				-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
