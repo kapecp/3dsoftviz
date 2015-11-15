@@ -637,8 +637,13 @@ bool PickHandler::doNodePick( osg::NodePath nodePath )
 
 bool PickHandler::doEdgePick( osg::NodePath nodePath )
 {
-	Data::Edge* e = dynamic_cast<Data::Edge*>( nodePath[nodePath.size() - 1] );
-
+	Data::Edge* e;
+	for ( unsigned int i = 0; i < nodePath.size(); i++ ) {
+		e = dynamic_cast<Data::Edge*>( nodePath[i] );
+		if ( e != NULL ) {
+			break;
+		}
+	}
 	if ( e != NULL ) {
 		if ( isAltPressed && pickMode == PickMode::NONE && !isShiftPressed ) {
 			osg::ref_ptr<osg::Vec3Array> coords = e->getCooridnates();
