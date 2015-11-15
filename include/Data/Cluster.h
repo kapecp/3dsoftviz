@@ -42,20 +42,20 @@ public:
 	void setSelected( bool selected, QLinkedList<osg::ref_ptr<Data::Node> >* pickedNodes );
 	Node* getRandomNode();
 
-	void setCube( Cube* cube )
+	void setCube( Clustering::Cube* cube )
 	{
 		this->cube = cube;
 	}
-	Cube* getCube()
+	Clustering::Cube* getCube()
 	{
 		return cube;
 	}
 
-	void setSphere( Sphere* sphere )
+	void setSphere( Clustering::Sphere* sphere )
 	{
 		this->sphere = sphere;
 	}
-	Sphere* getSphere()
+	Clustering::Sphere* getSphere()
 	{
 		return sphere;
 	}
@@ -84,8 +84,8 @@ private:
 
 	double repulsiveForceInside;
 
-	Cube* cube;
-	Sphere* sphere;
+	Clustering::Cube* cube;
+	Clustering::Sphere* sphere;
 
 	Layout::ShapeGetter_Cube* shapeGetter;
 

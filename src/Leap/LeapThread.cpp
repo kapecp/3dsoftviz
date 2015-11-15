@@ -1,3 +1,4 @@
+#include <QDebug>
 #include "Leap/LeapThread.h"
 
 Leap::LeapThread::LeapThread( QObject* parent ) : QThread( parent )

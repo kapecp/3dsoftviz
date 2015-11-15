@@ -232,12 +232,12 @@ Data::Graph* Model::GraphDAO::getGraph( QSqlDatabase* conn, bool* error2, qlongl
 				}
 			}
 		}
+		newGraph->setEleIdCounter( maxIdEleUsed );
 	}
 	else {
 		qDebug() << "[Model::GraphDAO::getGraph] Error while loading data from database";
+		newGraph = NULL;
 	}
-
-	newGraph->setEleIdCounter( maxIdEleUsed );
 
 	*error2 = error;
 	return newGraph;

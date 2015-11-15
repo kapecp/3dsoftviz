@@ -84,7 +84,7 @@ void Data::Edge::setEdgePieces( QList<osg::ref_ptr<Data::Edge> > edgePieces )
 		( *iEdge )->setEdgeParent( this );
 		( *iEdge )->getSrcNode()->setInvisible( true );
 		( *iEdge )->getDstNode()->setInvisible( true );
-		iEdge ++;
+		++iEdge;
 	}
 
 	getSrcNode()->setInvisible( false );

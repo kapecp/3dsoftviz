@@ -1056,11 +1056,11 @@ void CoreGraph::createClusterGroup( QMap<qlonglong, osg::ref_ptr<Data::Cluster> 
 		osg::Vec3f midPoint = getMidPoint( cluster->getALLClusteredNodes() );
 		float radius = getRadius( cluster->getALLClusteredNodes(), midPoint );
 
-		Cube* cube = new Cube( midPoint, radius, osg::Vec4d( 1,1,1,0.5 ) );
+		Clustering::Cube* cube = new Clustering::Cube( midPoint, radius, osg::Vec4d( 1,1,1,0.5 ) );
 		cube->getGeode()->setUserValue( "id", QString::number( cluster->getId() ).toStdString() );
 		cluster->setCube( cube );
 
-		::Sphere* sphere = new ::Sphere( midPoint, radius, osg::Vec4d( 1,1,1,0.5 ) );
+		Clustering::Sphere* sphere = new Clustering::Sphere( midPoint, radius, osg::Vec4d( 1,1,1,0.5 ) );
 		sphere->getGeode()->setUserValue( "id", QString::number( cluster->getId() ).toStdString() );
 		cluster->setSphere( sphere );
 
@@ -1274,14 +1274,14 @@ void CoreGraph::setNodeVisual( int index )
 
 	while ( iNode != in_nodes->end() ) {
 		iNode.value()->setVisual( index );
-		iNode++;
+		++iNode;
 	}
 
 	QMap<qlonglong, osg::ref_ptr<Data::Node> >::iterator iMetaNode = qmetaNodes->begin();
 
 	while ( iMetaNode != qmetaNodes->end() ) {
 		iMetaNode.value()->setVisual( index );
-		iMetaNode++;
+		++iMetaNode;
 	}
 
 	graph->setNodeVisual( index );
@@ -1293,14 +1293,14 @@ void CoreGraph::setEdgeVisual( int index )
 
 	while ( iEdge != in_edges->end() ) {
 		iEdge.value()->setVisual( index );
-		iEdge++;
+		++iEdge;
 	}
 
 	QMap<qlonglong, osg::ref_ptr<Data::Edge> >::iterator iMetaEdge = qmetaEdges->begin();
 
 	while ( iMetaEdge != qmetaEdges->end() ) {
 		iMetaEdge.value()->setVisual( index );
-		iMetaEdge++;
+		++iMetaEdge;
 	}
 
 	graph->setEdgeVisual( index );

@@ -4,6 +4,9 @@
 #include "Leap.h"
 #include "Leap/LeapController.h"
 
+#include <QObject>
+#include <QThread>
+
 namespace Leap {
 
 /**

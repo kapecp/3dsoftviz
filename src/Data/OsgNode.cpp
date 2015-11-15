@@ -12,7 +12,6 @@
 
 #include <QTextStream>
 
-#include "Data/OsgNode.h"
 
 Data::OsgNode::OsgNode( qlonglong id, QString name, Data::Type* type, Data::Graph* graph, float scaling, osg::Vec3f position )
 	:DbNode( id,name,type,graph,scaling )
