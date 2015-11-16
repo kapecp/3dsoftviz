@@ -157,8 +157,8 @@ osg::Vec2 Vwr::MouseControl::getMouseAvgPosition( osg::Vec2 lastPos, int max )
 	int avgX = 0;
 	int avgY = 0;
 	for ( QList<osg::Vec2>::const_iterator iter = mouseHistory->begin(); iter != mouseHistory->end(); ++iter ) {
-		avgX += (int)( *iter )[0];
-		avgY += (int)( *iter )[1];
+		avgX += static_cast<int>(( *iter )[0]);
+		avgY += static_cast<int>(( *iter )[1]);
 	}
 	avgX /= mouseHistory->size();
 	avgY /= mouseHistory->size();
