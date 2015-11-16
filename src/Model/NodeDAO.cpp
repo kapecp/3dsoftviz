@@ -627,9 +627,29 @@ QMap<qlonglong, osg::Vec4f> Model::NodeDAO::getColors( QSqlDatabase* conn, bool*
 	QMap<qlonglong, QString>::iterator iter_a;
 
 	nodeColorR = getSettings( conn, &error2, graphID, layoutID, "color_r" );
+	if ( error2 ) {
+		qDebug() << "[Model::NodeDAO::getColors] Could not get color_r setting";
+		*error = error2;
+		return colors;
+	}
 	nodeColorG = getSettings( conn, &error2, graphID, layoutID, "color_g" );
+	if ( error2 ) {
+		qDebug() << "[Model::NodeDAO::getColors] Could not get color_g setting";
+		*error = error2;
+		return colors;
+	}
 	nodeColorB = getSettings( conn, &error2, graphID, layoutID, "color_b" );
+	if ( error2 ) {
+		qDebug() << "[Model::NodeDAO::getColors] Could not get color_b setting";
+		*error = error2;
+		return colors;
+	}
 	nodeColorA = getSettings( conn, &error2, graphID, layoutID, "color_a" );
+	if ( error2 ) {
+		qDebug() << "[Model::NodeDAO::getColors] Could not get color_a setting";
+		*error = error2;
+		return colors;
+	}
 
 	//nacitavame z databazy farby podla ID grafu a layoutu
 	for ( iter_r = nodeColorR.begin(); iter_r != nodeColorR.end(); ++iter_r ) {
@@ -658,15 +678,17 @@ QMap<qlonglong, float> Model::NodeDAO::getScales( QSqlDatabase* conn, bool* erro
 	QMap<qlonglong, QString>::iterator iter;
 
 	nodeScale = getSettings( conn, &error2, graphID, layoutID, "scale" );
+	if ( !error2 ) {
+		//nacitavame z databazy velkost layoutu a rozlozenia grafu
+		for ( iter = nodeScale.begin(); iter != nodeScale.end(); ++iter ) {
+			id = iter.key();
 
-	//nacitavame z databazy velkost layoutu a rozlozenia grafu
-	for ( iter = nodeScale.begin(); iter != nodeScale.end(); ++iter ) {
-		id = iter.key();
-
-		float scale = iter.value().toFloat();
-		scales.insert( id, scale );
+			float scale = iter.value().toFloat();
+			scales.insert( id, scale );
+		}
+	} else {
+		qDebug() << "[Model::NodeDAO::getScales] Could not get scale setting";
 	}
-
 	*error = error2;
 
 	return scales;
@@ -683,13 +705,16 @@ QMap<qlonglong, int> Model::NodeDAO::getMasks( QSqlDatabase* conn, bool* error, 
 	QMap<qlonglong, QString>::iterator iter;
 
 	nodeMask = getSettings( conn, &error2, graphID, layoutID, "mask" );
+	if ( !error2 ) {
+		//nacitavame z databazy masky uzlov
+		for ( iter = nodeMask.begin(); iter != nodeMask.end(); ++iter ) {
+			id = iter.key();
 
-	//nacitavame z databazy masky uzlov
-	for ( iter = nodeMask.begin(); iter != nodeMask.end(); ++iter ) {
-		id = iter.key();
-
-		int mask = iter.value().toInt();
-		masks.insert( id, mask );
+			int mask = iter.value().toInt();
+			masks.insert( id, mask );
+		}
+	} else {
+		qDebug() << "[Model::NodeDAO::getMasks] Could not get mask setting";
 	}
 
 	*error = error2;
@@ -709,11 +734,14 @@ QList<qlonglong> Model::NodeDAO::getParents( QSqlDatabase* conn, bool* error, ql
 	QMap<qlonglong, QString>::iterator iter;
 
 	nodeParents = getSettings( conn, &error2, graphID, layoutID, "is_parent" );
-
-	//nacitavame z databazy rodicovske/nadradene uzly
-	for ( iter = nodeParents.begin(); iter != nodeParents.end(); ++iter ) {
-		id = iter.key();
-		parents << id;
+	if ( !error2 ) {
+		//nacitavame z databazy rodicovske/nadradene uzly
+		for ( iter = nodeParents.begin(); iter != nodeParents.end(); ++iter ) {
+			id = iter.key();
+			parents << id;
+		}
+	} else {
+		qDebug() << "[Model::NodeDAO::getParents] Could not get is_parent setting";
 	}
 
 	*error = error2;
