@@ -9,7 +9,7 @@
 #include <osg/Depth>
 #include <osg/BlendFunc>
 
-Cube::Cube( osg::Vec3d position, float radius, osg::Vec4d color = osg::Vec4d( 0,0,0,1 ))
+Clustering::Cube::Cube( osg::Vec3d position, float radius, osg::Vec4d color = osg::Vec4d( 0,0,0,1 ))
 {
 	geode = new osg::Geode();
 	geometry = new osg::Geometry();
@@ -169,7 +169,7 @@ Cube::Cube( osg::Vec3d position, float radius, osg::Vec4d color = osg::Vec4d( 0,
 //    geometry->setColorBinding(osg::Geometry::BIND_OVERALL);
 //}
 
-void Cube::computeGeode()
+void Clustering::Cube::computeGeode()
 {
 	// define normals for each face
 	osg::ref_ptr<osg::Vec3Array> cube_normals = new osg::Vec3Array;
@@ -259,7 +259,7 @@ void Cube::computeGeode()
 	geode->addDrawable( geometry );
 }
 
-void Cube::transform( osg::Vec3d position, osg::Vec3d scale, osg::Vec4d color )
+void Clustering::Cube::transform( osg::Vec3d position, osg::Vec3d scale, osg::Vec4d color )
 {
 	osg::StateSet* ss = geometry->getOrCreateStateSet();
 	/*

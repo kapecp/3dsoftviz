@@ -1056,11 +1056,11 @@ void CoreGraph::createClusterGroup( QMap<qlonglong, osg::ref_ptr<Data::Cluster> 
 		osg::Vec3f midPoint = getMidPoint( cluster->getALLClusteredNodes() );
 		float radius = getRadius( cluster->getALLClusteredNodes(), midPoint );
 
-		Cube* cube = new Cube( midPoint, radius, osg::Vec4d( 1,1,1,0.5 ) );
+		Clustering::Cube* cube = new Clustering::Cube( midPoint, radius, osg::Vec4d( 1,1,1,0.5 ) );
 		cube->getGeode()->setUserValue( "id", QString::number( cluster->getId() ).toStdString() );
 		cluster->setCube( cube );
 
-		::Sphere* sphere = new ::Sphere( midPoint, radius, osg::Vec4d( 1,1,1,0.5 ) );
+		Clustering::Sphere* sphere = new Clustering::Sphere( midPoint, radius, osg::Vec4d( 1,1,1,0.5 ) );
 		sphere->getGeode()->setUserValue( "id", QString::number( cluster->getId() ).toStdString() );
 		cluster->setSphere( sphere );
 
