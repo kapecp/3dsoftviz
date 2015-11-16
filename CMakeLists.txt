@@ -838,10 +838,14 @@ endif()
 #add_library( qtcolorpicker STATIC dependencies/qtcolorpicker/qtcolorpicker.cpp )
 
 
-add_library( gitlib SHARED ${SRC_GITLIB} ${HEADER_GITLIB} )
+add_library( gitlib SHARED ${SRC_GITLIB} ${HEADER_GITLIB})
 target_include_directories( gitlib SYSTEM PUBLIC include/Repository/Git } )
 target_link_libraries( gitlib ${QT_LIBRARIES} )
-target_compile_options( gitlib PUBLIC "-DGITLIB_LIBRARY" )
+
+set(FLAGS_FOR_DEBUG2 ${FLAGS_FOR_DEBUG})
+list(APPEND FLAGS_FOR_DEBUG2 " -DGITLIB_LIBRARY")
+string(REPLACE " " ";" REPLACED_FLAGS ${FLAGS_FOR_DEBUG2})
+target_compile_options( gitlib PUBLIC ${REPLACED_FLAGS} )
 
 # ---------------------------------------------------------------
 # Build and link 3Dsoftviz
@@ -905,8 +909,10 @@ endif()
 if( COMMAND cotire )
 	# link ${3DSOFTVIZ_NAME}_unity target to all libraries to which ${3DSOFTVIZ_NAME} links
 	set_target_properties( ${3DSOFTVIZ_NAME} PROPERTIES COTIRE_UNITY_LINK_LIBRARIES_INIT "COPY" )
+	set_target_properties( gitlib PROPERTIES COTIRE_UNITY_LINK_LIBRARIES_INIT "COPY" )
 
 	cotire( ${3DSOFTVIZ_NAME} CONFIGURATIONS Debug Release )
+	cotire( gitlib CONFIGURATIONS Debug Release )
 endif()
 
 # Ensure correct dependencies
@@ -927,7 +933,7 @@ if( USE_BUILTIN_DEPENDENCIES )
 
 	# dependencies of unity build
 	if (COMMAND cotire)
-        add_dependencies( ${3DSOFTVIZ_NAME}_unity libnoise gitlib dep_luametrics dep_leg dep_lpeg dep_luafilesystem )
+		add_dependencies( ${3DSOFTVIZ_NAME}_unity libnoise gitlib_unity dep_luametrics dep_leg dep_lpeg dep_luafilesystem )
 
 		if( MSVC )
 			add_dependencies( ${3DSOFTVIZ_NAME}_unity dep_lua )
@@ -966,6 +972,7 @@ if( COMMAND cotire )
 	add_custom_target( install_unity
 		COMMAND ${CMAKE_COMMAND} -P "cmake_install.cmake" )
 	add_dependencies( install_unity ${3DSOFTVIZ_NAME}_unity )
+	add_dependencies( install_unity gitlib_unity )
 endif()
 
 # install resources
