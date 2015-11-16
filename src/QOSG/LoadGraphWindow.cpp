@@ -72,7 +72,7 @@ void LoadGraphWindow::createGraphTable()
 	QMap<qlonglong, Data::Graph*>::iterator iterGraph;
 
 	QMap<qlonglong, Data::Graph*> graphs = Model::GraphDAO::getGraphs( db->tmpGetConn(), &error );
-	if ( error ){
+	if ( error ) {
 		qDebug() << "[QOSG::LoadGraphWindow::createGraphTable] Failed getting graphs.";
 		return;
 	}
@@ -81,17 +81,17 @@ void LoadGraphWindow::createGraphTable()
 	numberOfGraphs->setText( tr( "%1 graph(s) found" ).arg( graphsCount ) );
 	graphsTable->setRowCount( graphsCount );
 	nodes = Model::NodeDAO::getListOfNodes( db->tmpGetConn(), &error );
-	if ( error ){
+	if ( error ) {
 		qDebug() << "[QOSG::LoadGraphWindow::createGraphTable] Failed getting list of nodes.";
 		return;
 	}
 	edges = Model::EdgeDAO::getListOfEdges( db->tmpGetConn(), &error );
-	if ( error ){
+	if ( error ) {
 		qDebug() << "[QOSG::LoadGraphWindow::createGraphTable] Failed getting list of edges.";
 		return;
 	}
 	layouts = Model::GraphLayoutDAO::getListOfLayouts( db->tmpGetConn(), &error );
-	if ( error ){
+	if ( error ) {
 		qDebug() << "[QOSG::LoadGraphWindow::createGraphTable] Failed getting list of layouts.";
 		return;
 	}
