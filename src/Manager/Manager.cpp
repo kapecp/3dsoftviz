@@ -342,7 +342,7 @@ Data::Graph* Manager::GraphManager::loadGraphFromGit( QString filepath )
 	}
 
 	// Vytvor triedu na nacitanie dat o verziach, sparsuj informacie a vytvor verzie podla zadaneho filtera suborov
-    Repository::Git::GitFileLoader lGitFileLoader = Repository::Git::GitFileLoader::GitFileLoader( filepath, Util::ApplicationConfig::get()->getValue( "Git.ExtensionFilter" ) ) ;
+    Repository::Git::GitFileLoader lGitFileLoader = Repository::Git::GitFileLoader( filepath, Util::ApplicationConfig::get()->getValue( "Git.ExtensionFilter" ) ) ;
     QList<Repository::Git::GitVersion*> lVersions = lGitFileLoader.getDataAboutGit();
 
 	// Vytvor evolucny graf, napln ho ziskanymi verziami a nastav graf ako aktivny
@@ -599,7 +599,7 @@ void Manager::GraphManager::getDiffInfo( QString path, int version )
 	}
 
 	// Vytvorim triedu na nacitanie diff pre subor
-    Repository::Git::GitFileLoader loader = Repository::Git::GitFileLoader::GitFileLoader( lEvolutionGraph->getFilePath(), Util::ApplicationConfig::get()->getValue( "Git.ExtensionFilter" ) );
+    Repository::Git::GitFileLoader loader = Repository::Git::GitFileLoader( lEvolutionGraph->getFilePath(), Util::ApplicationConfig::get()->getValue( "Git.ExtensionFilter" ) );
 
 	// Ak sme nasli subor, tak nacitaj do suboru diff a vypis obsah do konzoly
 	if ( gitFile ) {
