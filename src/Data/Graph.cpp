@@ -21,77 +21,67 @@
 #include <QTextStream>
 #include <QDebug>
 
-
-Data::Graph::Graph( qlonglong graph_id, QString name, QSqlDatabase* conn, QMap<qlonglong,osg::ref_ptr<Data::Node> >* nodes, QMap<qlonglong,osg::ref_ptr<Data::Edge> >* edges,QMap<qlonglong,osg::ref_ptr<Data::Node> >* metaNodes, QMap<qlonglong,osg::ref_ptr<Data::Edge> >* metaEdges, QMap<qlonglong,Data::Type*>* types )
+// Tento konstruktor je uz zastaraly a neda sa realne pouzit - uzly musia mat priradeny graph, ktory sa prave vytvarat, rovnako edge, type, metatype (ten musi mat naviac aj layout, ktory opat musi mat graph)
+Data::Graph::Graph( qlonglong graph_id, QString name, QSqlDatabase* conn, QMap<qlonglong,osg::ref_ptr<Data::Node> >* nodes, QMap<qlonglong,osg::ref_ptr<Data::Edge> >* edges,QMap<qlonglong,osg::ref_ptr<Data::Node> >* metaNodes, QMap<qlonglong,osg::ref_ptr<Data::Edge> >* metaEdges, QMap<qlonglong,Data::Type*>* types ) :
+	graph_id(graph_id),
+	name(name),
+	ele_id_counter(this->getMaxEleIdFromElements()),
+	//POZOR toto asi treba inak poriesit, teraz to predpoklada ze ziadne layouty nemame co je spravne, lenze bacha na metatypy, ktore layout mat musia !
+	layout_id_counter(0),
+	inDB(false),
+	selectedLayout(nullptr),
+	conn(conn),
+	typesByName(new QMultiMap<QString, Data::Type*>()),
+	nodes(nodes),
+	edges(edges),
+	metaNodes(metaNodes),
+	metaEdges(metaEdges),
+	types(types),
+	frozen(false),
+	nodeVisual(Data::Node::INDEX_SQUARE),
+	edgeVisual(Data::Edge::INDEX_QUAD)
 {
-	//tento konstruktor je uz zastaraly a neda sa realne pouzit - uzly musia mat priradeny graph, ktory sa prave vytvarat, rovnako edge, type, metatype (ten musi mat naviac aj layout, ktory opat musi mat graph)
-	this->inDB = false;
-
-	this->graph_id = graph_id;
-	this->name = name;
-	this->conn = conn;
-
-	this->nodes = nodes;
 	foreach ( qlonglong i,nodes->keys() ) {
 		this->nodesByType.insert( nodes->value( i )->getType()->getId(),nodes->value( i ) );
 	}
 
-	this->edges = edges;
 	foreach ( qlonglong i,edges->keys() ) {
 		this->edgesByType.insert( edges->value( i )->getType()->getId(),edges->value( i ) );
 	}
 
-	this->types = types;
-
-	this->metaEdges = metaEdges;
 	foreach ( qlonglong i,metaEdges->keys() ) {
 		this->metaEdgesByType.insert( metaEdges->value( i )->getType()->getId(),metaEdges->value( i ) );
 	}
 
-	this->metaNodes = metaNodes;
 	foreach ( qlonglong i,metaNodes->keys() ) {
 		this->metaNodesByType.insert( metaNodes->value( i )->getType()->getId(),metaNodes->value( i ) );
 	}
 
-	this->selectedLayout = NULL;
-	this->ele_id_counter = this->getMaxEleIdFromElements();
-	this->layout_id_counter = 0; //POZOR toto asi treba inak poriesit, teraz to predpoklada ze ziadne layouty nemame co je spravne, lenze bacha na metatypy, ktore layout mat musia !
-
-	this->frozen = false;
-
-	this->typesByName = new QMultiMap<QString, Data::Type*>();
-
-	if ( this->types!=NULL && this->types->size()>0 ) {
+	if ( this->types!=nullptr && this->types->size()>0 ) {
 		foreach ( qlonglong i, this->types->keys() ) {
 			this->typesByName->insert( this->types->value( i )->getName(), this->types->value( i ) );
 		}
 	}
-
-	this->nodeVisual = Data::Node::INDEX_SQUARE;
-	this->edgeVisual = Data::Edge::INDEX_QUAD;
 }
 
-Data::Graph::Graph( qlonglong graph_id, QString name, qlonglong layout_id_counter, qlonglong ele_id_counter, QSqlDatabase* conn )
+Data::Graph::Graph( qlonglong graph_id, QString name, qlonglong layout_id_counter, qlonglong ele_id_counter, QSqlDatabase* conn ) :
+	graph_id(graph_id),
+	name(name),
+	ele_id_counter(ele_id_counter),
+	layout_id_counter(layout_id_counter),
+	inDB(false),
+	selectedLayout(nullptr),
+	conn(conn),
+	typesByName(new QMultiMap<QString, Data::Type*>()),
+	nodes(new QMap<qlonglong,osg::ref_ptr<Data::Node> >()),
+	edges(new QMap<qlonglong,osg::ref_ptr<Data::Edge> >()),
+	metaNodes(new QMap<qlonglong,osg::ref_ptr<Data::Node> >()),
+	metaEdges(new QMap<qlonglong,osg::ref_ptr<Data::Edge> >()),
+	types(new QMap<qlonglong,Data::Type*>()),
+	frozen(false),
+	nodeVisual(Data::Node::INDEX_SQUARE),
+	edgeVisual(Data::Edge::INDEX_QUAD)
 {
-	this->inDB = false;
-
-	this->graph_id = graph_id;
-	this->name = name;
-	this->ele_id_counter = ele_id_counter;
-	this->layout_id_counter = layout_id_counter;
-	this->conn = conn;
-	this->selectedLayout = NULL;
-
-	this->nodes = new QMap<qlonglong,osg::ref_ptr<Data::Node> >();
-	this->edges = new QMap<qlonglong,osg::ref_ptr<Data::Edge> >();
-	this->types = new QMap<qlonglong,Data::Type*>();
-	this->metaEdges = new QMap<qlonglong,osg::ref_ptr<Data::Edge> >();
-	this->metaNodes = new QMap<qlonglong,osg::ref_ptr<Data::Node> >();
-	this->frozen = false;
-	this->typesByName = new QMultiMap<QString, Data::Type*>();
-
-	this->nodeVisual = Data::Node::INDEX_SQUARE;
-	this->edgeVisual = Data::Edge::INDEX_QUAD;
 }
 
 Data::Graph::~Graph( void )

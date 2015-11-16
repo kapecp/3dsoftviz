@@ -6,13 +6,15 @@
 
 namespace OpenCV {
 
-CameraStream::CameraStream( osg::Geometry* geom ) : QObject(), osg::Image()
-{
-	mWidth	= 0;
-	mHeight = 0;
-	mGeom	= geom;
-	iplImg	= NULL;
+CameraStream::CameraStream( osg::Geometry* geom ) :
+	QObject(),
+	osg::Image(),
 
+	mWidth(0),
+	mHeight(0),
+	mGeom(geom),
+	iplImg(nullptr)
+{
 #ifdef WIN32
 	cv::Mat cvImg( 480,640, CV_8UC3, CV_RGB( 0,0,0 ) ); // Black on Win
 #else

@@ -20,24 +20,21 @@ namespace Network {
 
 Server* Server::instance;
 
-Server::Server( QObject* parent ) : QTcpServer( parent )
+Server::Server( QObject* parent ) :
+	QTcpServer( parent ),
+
+	cw(parent),
+	thread(nullptr),
+	coreGraph(nullptr),
+	executorFactory(new ExecutorFactory()),
+	graphScale(Util::ApplicationConfig::get()->getValue( "Viewer.Display.NodeDistanceScale" ).toFloat()),
+	user_to_spy(nullptr),
+	user_to_center(nullptr),
+	original_distance(0),
+	blockSize(0),
+	avatarScale(1)
 {
 	instance = this;
-	cw = parent;
-	Util::ApplicationConfig* conf = Util::ApplicationConfig::get();	
-
-	thread = NULL;
-	coreGraph = NULL;
-	executorFactory = new ExecutorFactory();
-	graphScale = conf->getValue( "Viewer.Display.NodeDistanceScale" ).toFloat();
-
-	user_to_spy = NULL;
-	user_to_center = NULL;
-
-	original_distance = 0;
-
-	blockSize = 0;
-	avatarScale = 1;
 }
 
 Server* Server::getInstance()

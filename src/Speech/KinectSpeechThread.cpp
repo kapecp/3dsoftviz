@@ -6,10 +6,11 @@ using SpeechSDK
 
 // constructor loads grammar file with speech commands
 // DLL
-Speech::KinectSpeechThread::KinectSpeechThread()
+Speech::KinectSpeechThread::KinectSpeechThread() :
+	m_SpeechClass(new SpeechSDKClass( L"../share/3dsoftviz/SpeechGrammarFile.grxml" )),
+	isConnected(false),
+	cancel(false)
 {
-	this->m_SpeechClass = new SpeechSDKClass( L"../share/3dsoftviz/SpeechGrammarFile.grxml" );
-	this->cancel=false;
 }
 
 
