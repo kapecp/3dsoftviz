@@ -524,7 +524,7 @@ QColor ColorPickerPopup::color( int index ) const
 		return QColor();
 	}
 
-	ColorPickerPopup* that = const_cast<ColorPickerPopup*>(this);
+	ColorPickerPopup* that = ( ColorPickerPopup* )this;
 	return that->items.at( index )->color();
 }
 
@@ -560,7 +560,7 @@ void ColorPickerPopup::updateSelected()
 	}
 
 	if ( sender() && sender()->inherits( "ColorPickerItem" ) ) {
-		ColorPickerItem* item = static_cast<ColorPickerItem*>(sender());
+		ColorPickerItem* item = ( ColorPickerItem* )sender();
 		lastSel = item->color();
 		emit selected( item->color() );
 	}
@@ -737,7 +737,7 @@ void ColorPickerPopup::showEvent( QShowEvent* )
 		for ( int j = 0; j < grid->rowCount(); ++j ) {
 			QWidget* w = widgetAt[j][i];
 			if ( w && w->inherits( "ColorPickerItem" ) ) {
-				if ( ( static_cast<ColorPickerItem*>(w) )->isSelected() ) {
+				if ( ( ( ColorPickerItem* )w )->isSelected() ) {
 					w->setFocus();
 					foundSelected = true;
 					break;

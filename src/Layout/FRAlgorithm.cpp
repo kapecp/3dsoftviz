@@ -26,7 +26,7 @@ namespace Layout {
 FRAlgorithm::FRAlgorithm() :
 	rl(nullptr),
 	graph(nullptr),
-	PI(acos(static_cast<double>(-1))),
+	PI(acos(-1)),
 	ALPHA(0.005f),
 	MIN_MOVEMENT(0.05f),
 	MAX_MOVEMENT(30),
@@ -58,7 +58,7 @@ FRAlgorithm::FRAlgorithm() :
 
 FRAlgorithm::FRAlgorithm( Data::Graph* graph ) :
 	graph(graph),
-	PI(acos( static_cast<double>( -1 ) )),
+	PI(acos(-1)),
 	ALPHA(0.005f),
 	MIN_MOVEMENT(0.05f),
 	MAX_MOVEMENT(30),
