@@ -984,8 +984,11 @@ if( COMMAND cotire )
 	add_dependencies( install_unity ${3DSOFTVIZ_NAME}_unity )
 endif()
 
+# install lua modules
+install( DIRECTORY resources/scripts/module/ DESTINATION ${INSTALL_LIB}/lua COMPONENT Data )
+
 # install resources
-install( DIRECTORY resources/ DESTINATION ${INSTALL_DATA} COMPONENT Data )
+install( DIRECTORY resources/ DESTINATION ${INSTALL_DATA} COMPONENT Data PATTERN resources/scripts/module EXCLUDE)
 
 # Install needed .dll files for OpenNI2
 if( NITE2_FOUND AND OPENNI2_FOUND )
