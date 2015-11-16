@@ -7,8 +7,12 @@ namespace Repository {
 
 namespace Git {
 
+#if defined(_MSC_VER)
 enum GitType {
-	ADDED,
+#else
+enum class GitType {
+#endif
+    ADDED,
 	REMOVED,
 	MODIFIED,
 	NONE
