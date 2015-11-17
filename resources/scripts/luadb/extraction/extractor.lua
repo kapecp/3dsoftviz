@@ -178,7 +178,7 @@ end
 -----------------------------------------------
 
 local function extract(sourcePath)
-  assert(sourcePath and utils.fileExists(sourcePath), "wrong path passed")
+  --assert(sourcePath and utils.fileExists(sourcePath), "wrong path passed")
   
   local label = "ExtractionGraph"
   local description = "hierarchical function calls graph"

@@ -4,6 +4,8 @@
 #include <QDebug>
 #include <QFileInfo>
 
+#include <opencv2/imgproc/imgproc.hpp>
+
 #include "OpenCV/CapVideo.h"
 
 namespace ArucoModul {

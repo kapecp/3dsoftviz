@@ -2,6 +2,7 @@
 #define ABSNODE_H
 
 #include <QString>
+#include <QMap>
 
 namespace Data {
 class Node;

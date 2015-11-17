@@ -7,6 +7,7 @@
 #include <QtGui/QStackedLayout>
 #include <QCloseEvent>
 #include "OpenCV/CamSelectCore.h"
+#include <QDebug>
 
 #include "Util/ApplicationConfig.h"
 
