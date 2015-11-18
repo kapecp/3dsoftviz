@@ -247,7 +247,7 @@ void Clustering::Cube::computeGeode()
 	};
 
 	int numCoords = static_cast<int>( sizeof( myCoords )/sizeof( osg::Vec3 ) );
-	osg::Vec3Array* vertices = new osg::Vec3Array( numCoords,myCoords );
+	osg::Vec3Array* vertices = new osg::Vec3Array( static_cast<unsigned int>(numCoords), myCoords );
 	geometry->setVertexArray( vertices );
 
 	geometry->addPrimitiveSet( new
@@ -264,13 +264,13 @@ void Clustering::Cube::transform( osg::Vec3d position, osg::Vec3d scale, osg::Ve
 	osg::StateSet* ss = geometry->getOrCreateStateSet();
 	/*
 	// only wireframe (outline / contour)
-	    osg::ref_ptr<osg::PolygonMode> pm = new osg::PolygonMode(osg::PolygonMode::FRONT_AND_BACK, osg::PolygonMode::LINE);
-	    ss->setAttributeAndModes(pm.get(), osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE);
+		osg::ref_ptr<osg::PolygonMode> pm = new osg::PolygonMode(osg::PolygonMode::FRONT_AND_BACK, osg::PolygonMode::LINE);
+		ss->setAttributeAndModes(pm.get(), osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE);
 
 	// line width
-	    osg::LineWidth* linewidth = new osg::LineWidth();
-	    linewidth->setWidth(20.0f);
-	    ss->setAttributeAndModes(linewidth, osg::StateAttribute::ON);
+		osg::LineWidth* linewidth = new osg::LineWidth();
+		linewidth->setWidth(20.0f);
+		ss->setAttributeAndModes(linewidth, osg::StateAttribute::ON);
 	*/
 // transparent
 

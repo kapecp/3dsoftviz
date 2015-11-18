@@ -56,7 +56,7 @@ Data::Node::Node( qlonglong id, QString name, Data::Type* type, float scaling, D
 	insertChild( INDEX_LABEL, createLabel( this->type->getScale(), labelText ) , false );
 	insertChild( INDEX_SQUARE, createNodeSquare( this->scale, Node::createStateSet( this->type ) ) , false );
 	insertChild( INDEX_SPHERE, createNodeSphere( this->scale, Node::createStateSet( this->type ) ), false );
-	setValue( graph->getNodeVisual(), true );
+	setValue( static_cast<unsigned int>(graph->getNodeVisual()), true );
 
 	this->force = osg::Vec3f();
 	this->velocity = osg::Vec3f( 0,0,0 );
@@ -117,7 +117,7 @@ void Data::Node::setIsFocused( bool value )
 		this->insertChild( INDEX_SPHERE, createNodeSphere( this->scale , Node::createStateSet( this->type ) ) , false );
 		setDrawableColor( 0, osg::Vec4( 1.0f, 1.0f, 1.0f, 1.0 ) );
 	}
-	setValue( graph->getNodeVisual(), true );
+	setValue( static_cast<unsigned int>(graph->getNodeVisual()), true );
 }
 
 void Data::Node::addEdge( osg::ref_ptr<Data::Edge> edge )
@@ -341,7 +341,7 @@ void Data::Node::reloadConfig()
 	this->insertChild( INDEX_SPHERE, createNodeSphere( this->scale, Node::createStateSet( this->type ) ), false );
 	setSelected( selected );
 	setColor( color );
-	setValue( graph->getNodeVisual(), true );
+	setValue( static_cast<unsigned int>(graph->getNodeVisual()), true );
 }
 
 QSet<Data::Node*> Data::Node::getIncidentNodes() const
@@ -355,23 +355,23 @@ QSet<Data::Node*> Data::Node::getIncidentNodes() const
 	}
 	return nodes;
 	/*
-	    if (ignoreClusters) {
-	        return nodes;
-	    } else {
-	        QSet<Node*> visibleNodes;
-	        QSetIterator<Node*> nodeIt(nodes);
-	        while (nodeIt.hasNext()) {
-	            Node* node = nodeIt.next();
-	            Node* cluster = node->getTopCluster();
-	            if (cluster != NULL && cluster != this) {
-	                visibleNodes.insert(cluster);
-	            } else {
-	                visibleNodes.insert(node);
-	            }
-	        }
-	        return visibleNodes;
-	    }
-	    */
+		if (ignoreClusters) {
+			return nodes;
+		} else {
+			QSet<Node*> visibleNodes;
+			QSetIterator<Node*> nodeIt(nodes);
+			while (nodeIt.hasNext()) {
+				Node* node = nodeIt.next();
+				Node* cluster = node->getTopCluster();
+				if (cluster != NULL && cluster != this) {
+					visibleNodes.insert(cluster);
+				} else {
+					visibleNodes.insert(node);
+				}
+			}
+			return visibleNodes;
+		}
+		*/
 }
 
 void Data::Node::setDefaultColor()
@@ -388,7 +388,7 @@ void Data::Node::setVisual( int index )
 {
 	setValue( INDEX_SQUARE, false );
 	setValue( INDEX_SPHERE, false );
-	setValue( index, true );
+	setValue( static_cast<unsigned int>(index), true );
 }
 
 // Duransky start - Funkcie na nastavenie a ziskanie cisla vertigo roviny, na ktorej sa uzol nachadza
