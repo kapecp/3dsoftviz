@@ -479,9 +479,29 @@ QMap<qlonglong, osg::Vec4f> Model::EdgeDAO::getColors( QSqlDatabase* conn, bool*
 	QMap<qlonglong, QString>::iterator iter_a;
 
 	edgeColorR = getSettings( conn, &error2, graphID, layoutID, "color_r" );
+	if ( error2 ) {
+		qDebug() << "[Model::EdgeDAO::getColors] Could not get color_r setting";
+		*error = error2;
+		return colors;
+	}
 	edgeColorG = getSettings( conn, &error2, graphID, layoutID, "color_g" );
+	if ( error2 ) {
+		qDebug() << "[Model::EdgeDAO::getColors] Could not get color_g setting";
+		*error = error2;
+		return colors;
+	}
 	edgeColorB = getSettings( conn, &error2, graphID, layoutID, "color_b" );
+	if ( error2 ) {
+		qDebug() << "[Model::EdgeDAO::getColors] Could not get color_b setting";
+		*error = error2;
+		return colors;
+	}
 	edgeColorA = getSettings( conn, &error2, graphID, layoutID, "color_a" );
+	if ( error2 ) {
+		qDebug() << "[Model::NodeDAO::getColors] Could not get color_a setting";
+		*error = error2;
+		return colors;
+	}
 
 	//nacitavame ulozene farby v databaze
 	for ( iter_r = edgeColorR.begin(); iter_r != edgeColorR.end(); ++iter_r ) {
@@ -508,6 +528,11 @@ QMap<qlonglong, float> Model::EdgeDAO::getScales( QSqlDatabase* conn, bool* erro
 	QMap<qlonglong, QString>::iterator iter;
 
 	edgeScale = getSettings( conn, &error2, graphID, layoutID, "scale" );
+	if ( error2 ) {
+		qDebug() << "[Model::EdgeDAO::getScales] Could not get scale setting";
+		*error = error2;
+		return scales;
+	}
 
 	//nacitavame z databazy velkosti jednotlivych prvkov
 	for ( iter = edgeScale.begin(); iter != edgeScale.end(); ++iter ) {

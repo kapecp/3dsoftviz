@@ -46,7 +46,7 @@ Diluculum::LuaState* Lua::LuaInterface::getLuaState() const
 void Lua::LuaInterface::executeFile( QString path )
 {
 	std::stringstream sstm;
-	sstm << "../share/3dsoftviz/scripts/" << path.toStdString();
+	sstm << "../share/3dsoftviz/scripts/app/" << path.toStdString();
 	luaState->doFile( sstm.str() );
 }
 
@@ -65,13 +65,13 @@ QString Lua::LuaInterface::getString( unsigned int length, QString args[] )
 	return QString::fromStdString( var.value().asString() );
 }
 
-long int Lua::LuaInterface::getInt( QString name )
+int Lua::LuaInterface::getInt( QString name )
 {
 	Diluculum::LuaVariable var = ( *luaState )[name.toStdString()];
 	return var.value().asInteger();
 }
 
-long int Lua::LuaInterface::getInt( unsigned int length,QString args[] )
+int Lua::LuaInterface::getInt( unsigned int length,QString args[] )
 {
 	Diluculum::LuaVariable var = ( *luaState )[args[0].toStdString()];
 	for ( unsigned int i = 1; i < length; i++ ) {

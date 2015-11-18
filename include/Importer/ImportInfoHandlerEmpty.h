@@ -15,7 +15,8 @@ class ImportInfoHandlerEmpty
 {
 
 public:
-
+	using ImportInfoHandler::reportError;
+	using ImportInfoHandler::setProgress;
 	/***/
 	virtual ~ImportInfoHandlerEmpty( void ) {}
 

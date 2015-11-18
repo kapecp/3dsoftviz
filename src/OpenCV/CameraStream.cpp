@@ -6,13 +6,15 @@
 
 namespace OpenCV {
 
-CameraStream::CameraStream( osg::Geometry* geom ) : QObject(), osg::Image()
-{
-	mWidth	= 0;
-	mHeight = 0;
-	mGeom	= geom;
-	iplImg	= NULL;
+CameraStream::CameraStream( osg::Geometry* geom ) :
+	QObject(),
+	osg::Image(),
 
+	mWidth(0),
+	mHeight(0),
+	mGeom(geom),
+	iplImg(nullptr)
+{
 #ifdef WIN32
 	cv::Mat cvImg( 480,640, CV_8UC3, CV_RGB( 0,0,0 ) ); // Black on Win
 #else
@@ -35,8 +37,8 @@ void CameraStream::updateBackgroundImage( cv::Mat cvImg )
 	if ( cvImg.cols != mWidth || mHeight != cvImg.rows ) {
 		mWidth	= cvImg.cols;
 		mHeight = cvImg.rows;
-#ifdef WIN32
-		iplImg = cvCloneImage( &( IplImage )cvImg );
+#ifdef WIN32      
+        iplImg = cvCloneImage( ( IplImage* )&cvImg );
 #endif
 		// update geometry coordinates if thare are different dimensions of image,
 		// becasuse probebly changed it ratio of sides
@@ -47,8 +49,8 @@ void CameraStream::updateBackgroundImage( cv::Mat cvImg )
 
 
 	// There will be probably needed refactoring on MAC OS
-#ifdef WIN32
-	cvCopy( &( IplImage )cvImg, iplImg, NULL );
+#ifdef WIN32    
+    cvCopy( ( IplImage* )&cvImg, iplImg, NULL );
 
 	setImage( iplImg->width, iplImg->height,
 			  3, GL_RGB, GL_RGB,

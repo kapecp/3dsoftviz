@@ -30,7 +30,7 @@ Data::Edge::Edge( qlonglong id, QString name, Data::Graph* graph, osg::ref_ptr<D
 	this->insertChild( INDEX_CYLINDER, createEdgeCylinder( NULL ), false );
 	this->insertChild( INDEX_LINE, createEdgeLine( NULL ), false );
 	this->insertChild( INDEX_CURVE, createEdgeCurve( NULL ), false );
-	setValue( graph->getEdgeVisual(), true );
+	setValue( static_cast<unsigned int>(graph->getEdgeVisual()), true );
 
 	//updateCoordinates(getSrcNode()->getTargetPosition(), getDstNode()->getTargetPosition());
 	updateCoordinates( getSrcNode()->restrictedTargetPosition(), getDstNode()->restrictedTargetPosition() );
@@ -292,12 +292,12 @@ osg::ref_ptr<osg::Geode> Data::Edge::createLabel( QString name )
 /*
 float Data::Edge::getEdgeStrength() const
 {
-    return edgeStrength;
+	return edgeStrength;
 }
 
 void Data::Edge::setEdgeStrength( float value )
 {
-    edgeStrength = value;
+	edgeStrength = value;
 }
 */
 osg::ref_ptr<Data::Node> Data::Edge::getSecondNode( osg::ref_ptr<Data::Node> firstNode )
@@ -477,7 +477,7 @@ void Data::Edge::setVisual( int index )
 	setValue( INDEX_CYLINDER, false );
 	setValue( INDEX_LINE, false );
 	setValue( INDEX_CURVE, false );
-	setValue( index, !isInvisible );
+	setValue( static_cast<unsigned int>(index), !isInvisible );
 }
 
 //Marak start

@@ -3,6 +3,7 @@
 -- @release 2013/12/03, Tomas Filcak
 -----------------------------------------------
 
+local lfs           = require "lfs"
 require "logging"
 
 -----------------------------------------------
@@ -72,6 +73,23 @@ local function fileExists(file)
   local f = io.open(file, "rb")
   if f then f:close() end
   return f ~= nil
+end
+
+local function isDir(dir)
+  if type(dir)~="string" then return false end
+  if lfs.attributes(dir, 'mode') == "directory" then return true end    
+  return false
+end
+
+local function isFile(file)
+  if type(file)~="string" then return false end
+  if lfs.attributes(file, 'mode') == "file" then return true end    
+  return false
+end
+
+local function isDirEmpty(dir)
+  if lfs.dir(dir) == nil then return true end
+  return false
 end
 
 
@@ -227,6 +245,9 @@ return
   isHidden = isHidden,
   isLuaFile = isLuaFile,
   fileExists = fileExists,
+  isDir = isDir,
+  isFile = isFile,
+  isDirEmpty = isDirEmpty,
   tblPrint = tblPrint,
   printStructure = printStructure,
   printKey = printKey,

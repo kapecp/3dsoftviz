@@ -6,6 +6,8 @@
 #include "opencv2/highgui/highgui.hpp"
 #include "opencv2/calib3d/calib3d.hpp"
 
+#include <vector>
+
 namespace ArucoModul {
 
 ArucoCore::ArucoCore()
@@ -67,7 +69,7 @@ bool ArucoCore::getDetectedPosAndQuat( cv::Mat inputImage, double position[3], d
 
 }
 
-long ArucoCore::detect( cv::Mat inputImage )
+std::size_t ArucoCore::detect( cv::Mat inputImage )
 {
 	//mCamParam.resize( inputImage.size() );
 

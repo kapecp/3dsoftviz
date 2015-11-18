@@ -5,15 +5,15 @@
 
 namespace Data {
 
-Cluster::Cluster( qlonglong id, QString name, Data::Type* type, float scaling, Data::Graph* graph, osg::Vec3f position )
-	: Node( id, name, type, scaling, graph, position )
-{
+Cluster::Cluster( qlonglong id, QString name, Data::Type* type, float scaling, Data::Graph* graph, osg::Vec3f position ) :
+	Node( id, name, type, scaling, graph, position ),
 
-	this->id = id;
-	this->repulsiveForceInside = 1;
-	this->cube = NULL;
-	this->sphere = NULL;
-	this->shapeGetter = NULL;
+	id(id),
+	repulsiveForceInside(1),
+	cube(nullptr),
+	sphere(nullptr),
+	shapeGetter(nullptr)
+{
 }
 
 QSet<Node*> Cluster::getIncidentNodes() const

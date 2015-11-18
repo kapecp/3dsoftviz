@@ -7,17 +7,20 @@
 #include <LuaGraph/LuaGraph.h>
 
 #include <math.h>
+#include <utility>
+#include <string>
 
 namespace Vwr {
 
-BrowserGroup::BrowserGroup()
+BrowserGroup::BrowserGroup() :
+	group(new osg::Group),
+	browsersGrouping(false),
+	browsersTransforms(new QList<osg::ref_ptr<osg::AutoTransform> >),
+	connectorsTransforms(new QList<osg::ref_ptr<osg::AutoTransform> >),
+	selectedNodes(new QLinkedList<osg::ref_ptr<Data::Node> >),
+	selectedNodesModels(nullptr)
 {
-	this->group = new osg::Group;
 	this->group->getOrCreateStateSet()->setMode( GL_LIGHTING,osg::StateAttribute::OFF );
-	this->browsersTransforms = new QList<osg::ref_ptr<osg::AutoTransform> >;
-	this->connectorsTransforms = new QList<osg::ref_ptr<osg::AutoTransform> >;
-	this->browsersGrouping = false;
-	this->selectedNodes = new QLinkedList<osg::ref_ptr<Data::Node> >();
 }
 
 BrowserGroup::~BrowserGroup( void )
@@ -261,7 +264,7 @@ osg::Geode* BrowserGroup::createConnectorsGeode( osg::Vec3 center, osg::Vec3Arra
 	osg::Vec3Array* vertices = new osg::Vec3Array( ( unsigned int )( targets->size() * 2 ) ); // 2 points for each line
 
 	// Iterate over each target node and create corresponding connector line geometry
-	for ( unsigned long i=0; i<targets->size(); i++ ) {
+	for ( std::size_t i=0; i< targets->size(); i++ ) {
 		( *vertices )[i*2  ].set( center );
 		( *vertices )[i*2+1].set( targets->at( i ) );
 	}
