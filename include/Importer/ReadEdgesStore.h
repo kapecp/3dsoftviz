@@ -1,12 +1,15 @@
-#ifndef Importer_ReadNodesStore_H
-#define Importer_ReadNodesStore_H
-//-----------------------------------------------------------------------------
-#include "Data/Node.h"
+#ifndef Importer_ReadEdgesStore_H
+#define Importer_ReadEdgesStore_H
+
 //-----------------------------------------------------------------------------
 #include <osg/ref_ptr>
 #include <QString>
 //-----------------------------------------------------------------------------
 #include <QMap>
+
+namespace Data {
+class Edge;
+}
 
 namespace Importer {
 
@@ -15,22 +18,22 @@ namespace Importer {
  * Used by the importers to store imported nodes and search them by name when the
  * edges reference them.
  */
-class ReadNodesStore
+class ReadEdgesStore
 {
 
 public:
 
 	/***/
-	virtual ~ReadNodesStore( void ) {}
+	virtual ~ReadEdgesStore( void ) {}
 
 	/**
 	 * \brief Adds a new node.
 	 * \param[in] name Node name.
 	 * \param[in] node Node to add.
 	 */
-	void addNode(
+	void addEdge(
 		const QString& name,
-		osg::ref_ptr<Data::Node> node
+		osg::ref_ptr<Data::Edge> edge
 	);
 
 	/**
@@ -47,16 +50,16 @@ public:
 	 * \param[in] name Node name.
 	 * \return Node with the name or NULL, if it does not exist.
 	 */
-	osg::ref_ptr<Data::Node> get(
+	osg::ref_ptr<Data::Edge> get(
 		const QString& name
 	);
 
 private:
 
-	QMap<QString, osg::ref_ptr<Data::Node>> nodes;
+	QMap<QString, osg::ref_ptr<Data::Edge>> edges;
 
 }; // class
 
 } // namespace
 
-#endif // Importer_ReadNodesStore_H
+#endif // Importer_ReadEdgesStore_H

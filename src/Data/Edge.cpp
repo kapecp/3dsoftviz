@@ -442,7 +442,13 @@ osg::ref_ptr<osg::StateSet> Data::Edge::createStateSet( Data::Type* type )
 
 	// Common configuration
 	edgeStateSet->setMode( GL_LIGHTING, osg::StateAttribute::OFF );
-	edgeStateSet->setTextureAttributeAndModes( 0, texture, osg::StateAttribute::ON );
+	if ( type->getName() != "edge" ) {
+		edgeStateSet->setTextureAttributeAndModes( 0, type->getTypeTexture(), osg::StateAttribute::ON );
+	}
+	else {
+		edgeStateSet->setTextureAttributeAndModes( 0, texture, osg::StateAttribute::ON );
+	}
+
 	edgeStateSet->setAttributeAndModes( new osg::BlendFunc, osg::StateAttribute::ON );
 	edgeStateSet->setMode( GL_BLEND, osg::StateAttribute::ON );
 	edgeStateSet->setMode( GL_DEPTH_TEST, osg::StateAttribute::ON );
