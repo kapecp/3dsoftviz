@@ -17,7 +17,7 @@ LayoutThread::~LayoutThread( void )
 
 void LayoutThread::run()
 {
-	this->sleep( appConf->getValue( "Layout.Thread.StartSleepTime" ).toLong() );
+	this->sleep( static_cast<unsigned long>( appConf->getValue( "Layout.Thread.StartSleepTime" ).toLong() ) );
 	alg->Run();
 }
 void LayoutThread::pause()
