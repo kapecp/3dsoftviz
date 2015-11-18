@@ -48,29 +48,29 @@ Data::OsgNode::~OsgNode( void )
 /*
 osg::ref_ptr<osg::Drawable> Data::OsgNode::createLabel( const float& scale, QString name )
 {
-    //vytvorenie popisu uzla
-    osg::ref_ptr<osgText::FadeText> label = new osgText::FadeText;
-    label->setFadeSpeed( 0.03f );
+	//vytvorenie popisu uzla
+	osg::ref_ptr<osgText::FadeText> label = new osgText::FadeText;
+	label->setFadeSpeed( 0.03f );
 
-    QString fontPath = Util::ApplicationConfig::get()->getValue( "Viewer.Labels.Font" );
+	QString fontPath = Util::ApplicationConfig::get()->getValue( "Viewer.Labels.Font" );
 
-    // experimental value
-    float newScale = 1.375f * scale;
+	// experimental value
+	float newScale = 1.375f * scale;
 
-    if ( fontPath != NULL && !fontPath.isEmpty() ) {
-        label->setFont( fontPath.toStdString() );
-    }
+	if ( fontPath != NULL && !fontPath.isEmpty() ) {
+		label->setFont( fontPath.toStdString() );
+	}
 
-    label->setText( name.toStdString() );
-    label->setLineSpacing( 0 );
-    label->setAxisAlignment( osgText::Text::SCREEN );
-    label->setCharacterSize( newScale );
-    label->setDrawMode( osgText::Text::TEXT );
-    label->setAlignment( osgText::Text::CENTER_BOTTOM_BASE_LINE );
-    label->setPosition( osg::Vec3( 0, newScale, 0 ) );
-    label->setColor( osg::Vec4( 1.0f, 1.0f, 1.0f, 1.0f ) );
+	label->setText( name.toStdString() );
+	label->setLineSpacing( 0 );
+	label->setAxisAlignment( osgText::Text::SCREEN );
+	label->setCharacterSize( newScale );
+	label->setDrawMode( osgText::Text::TEXT );
+	label->setAlignment( osgText::Text::CENTER_BOTTOM_BASE_LINE );
+	label->setPosition( osg::Vec3( 0, newScale, 0 ) );
+	label->setColor( osg::Vec4( 1.0f, 1.0f, 1.0f, 1.0f ) );
 
-    return label;
+	return label;
 }*/
 
 osg::ref_ptr<osg::Drawable> Data::OsgNode::createNode( const float& scaling, osg::StateSet* bbState )
@@ -213,7 +213,7 @@ void Data::OsgNode::setDrawableColor( int pos, osg::Vec4 color )
 
 bool Data::OsgNode::setInvisible( bool invisible )
 {
-	setValue( graph->getNodeVisual(), !invisible );
+	setValue( static_cast<unsigned int>(graph->getNodeVisual()), !invisible );
 	//-poriesit invisible pre label
 	return true;
 }

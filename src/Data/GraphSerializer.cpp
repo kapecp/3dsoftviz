@@ -67,12 +67,12 @@ void GraphSerializer::addEntry( QString edgeId, QString edgeData, QString incId,
 		nodes->push_back( createNode( nodeId, nodeData ) );
 	}
 
-	Data::Edge* edge1 = new Data::Edge( edgeIdSeq, "edge data", NULL, nodes->at( nodeIdMap.value( edgeId ) ), nodes->at( nodeIdMap.value( incId ) ), types->at( 1 ), true, 2 );
+	Data::Edge* edge1 = new Data::Edge( edgeIdSeq, "edge data", NULL, nodes->at( static_cast<std::size_t >( nodeIdMap.value( edgeId ) ) ), nodes->at( static_cast<std::size_t >( nodeIdMap.value( incId ) ) ), types->at( 1 ), true, 2 );
 	if ( !edgeExists( edge1 ) ) {
 		edgeIdSeq++;
 	}
 
-	Data::Edge* edge2 = new Data::Edge( edgeIdSeq, "edge data", NULL, nodes->at( nodeIdMap.value( incId ) ), nodes->at( nodeIdMap.value( nodeId ) ), types->at( 1 ), true, 2 );
+	Data::Edge* edge2 = new Data::Edge( edgeIdSeq, "edge data", NULL, nodes->at( static_cast<std::size_t >( nodeIdMap.value( incId ) ) ), nodes->at( static_cast<std::size_t >( nodeIdMap.value( nodeId ) ) ), types->at( 1 ), true, 2 );
 	if ( !edgeExists( edge2 ) ) {
 		edgeIdSeq++;
 	}

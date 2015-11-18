@@ -212,12 +212,12 @@ Data::GraphLayout* Data::Graph::addLayout( QString layout_name )
 {
 	//Vytvarame novy layout pre graf
 
-    // nie je to potrebne a zdrziava to a pouzivatel to nemusi chciet, na to je funkcionalita v menu pre loadovanie grafu z databazy pri starte.
-    /*
-    if(this->layouts.isEmpty()) { //na zaciatok ak ziadne ine layouty nemame, sa pokusime nacitat layouty z DB
-        this->layouts = this->getLayouts(&error);
-    }
-    */
+	// nie je to potrebne a zdrziava to a pouzivatel to nemusi chciet, na to je funkcionalita v menu pre loadovanie grafu z databazy pri starte.
+	/*
+	if(this->layouts.isEmpty()) { //na zaciatok ak ziadne ine layouty nemame, sa pokusime nacitat layouty z DB
+		this->layouts = this->getLayouts(&error);
+	}
+	*/
 
 
 	//layouty bude do DB pridavat user, nebudu sa pridavat automaticky
@@ -467,7 +467,7 @@ void Data::Graph::separateNodes( QLinkedList<osg::ref_ptr<Data::Node> >* selecte
 				if ( connectedNode->getNodeMask() == 0 ) {
 					connectedNode->setCurrentPosition( position );
 					connectedNode->setFixed( false );
-					connectedNode->setNodeMask( ~0 );
+					connectedNode->setNodeMask( static_cast<unsigned int>(~0) );
 
 					QMap< qlonglong,osg::ref_ptr<Data::Edge> >::const_iterator iedgeIn = connectedNode->getEdges()->constBegin();
 
