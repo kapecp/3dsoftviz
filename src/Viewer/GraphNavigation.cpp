@@ -4,13 +4,13 @@
 #include "QDebug"
 
 Vwr::GraphNavigation::GraphNavigation() :
-	isNavEnabled(true),
-	viewer(AppCore::Core::getInstance()->getCoreWindow()->GetViewerQt()),
-	camMath(nullptr),
-	tempSelectedNode(nullptr),
-	tempSelectedEdge(nullptr),
-	previousLastSelectedNode(nullptr),
-	selectionMode(2)
+	isNavEnabled( true ),
+	viewer( AppCore::Core::getInstance()->getCoreWindow()->GetViewerQt() ),
+	camMath( nullptr ),
+	tempSelectedNode( nullptr ),
+	tempSelectedEdge( nullptr ),
+	previousLastSelectedNode( nullptr ),
+	selectionMode( 2 )
 {
 }
 
@@ -69,7 +69,7 @@ void Vwr::GraphNavigation::setColorNearestNode( Data::Node* selectedNode )
 		}
 		// first edge or nearer node
 		if ( ( minDistance == 0 ) || ( minDistance > distance ) ) {
-            minDistance = static_cast<float>(distance);
+			minDistance = static_cast<float>( distance );
 			closestEdge = ( *iter );
 		}
 	}
@@ -148,8 +148,8 @@ void Vwr::GraphNavigation::removeLastSelectedNode()
 osg::Vec3f Vwr::GraphNavigation::getMouseScreenCoordinates( )
 {
 	// get mouse coordinates in viewer
-    float mouseX = static_cast<float>(viewer->cursor().pos().x()) - static_cast<float>(viewer->window()->pos().x()) - 10.0f;
-    float mouseY = static_cast<float>(viewer->cursor().pos().y()) - static_cast<float>(viewer->window()->pos().y()) - 30.0f;
+	float mouseX = static_cast<float>( viewer->cursor().pos().x() ) - static_cast<float>( viewer->window()->pos().x() ) - 10.0f;
+	float mouseY = static_cast<float>( viewer->cursor().pos().y() ) - static_cast<float>( viewer->window()->pos().y() ) - 30.0f;
 
 	// get coordinates inside viewer and invert y
 	float xN = static_cast<float>( mouseX - viewer->pos().x() );

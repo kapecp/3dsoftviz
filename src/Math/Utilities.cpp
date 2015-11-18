@@ -41,11 +41,11 @@ bool osgModeling::calcBoundAndCenter( osg::Vec3* ptr, unsigned int size, osg::Ve
 		}
 		if ( first!=*ptr ) {
 			centerPoint += *ptr;
-			centerPoint /= (osg::Vec3f::value_type)pNum;
+			centerPoint /= ( osg::Vec3f::value_type )pNum;
 			boundRect.expandBy( *ptr );
 		}
 		else {
-			centerPoint /= (osg::Vec3f::value_type)pNum-1;
+			centerPoint /= ( osg::Vec3f::value_type )pNum-1;
 		}
 	}
 
@@ -90,7 +90,7 @@ osg::Vec3 osgModeling::calcProjection( const osg::Vec3 v, const osg::Vec3 target
 
 	double k = v * target;
 	k /= target.length2();
-	return target * (osg::Vec3f::value_type)k;
+	return target * ( osg::Vec3f::value_type )k;
 }
 
 osg::Vec3 osgModeling::calcProjection( const osg::Vec3 v, const osg::Plane target )
@@ -99,7 +99,7 @@ osg::Vec3 osgModeling::calcProjection( const osg::Vec3 v, const osg::Plane targe
 	normal.normalize();
 
 	double distance = v*normal + target[3];
-	return v - normal * (osg::Vec3f::value_type)distance;
+	return v - normal * ( osg::Vec3f::value_type )distance;
 }
 
 double osgModeling::calcAngle( const osg::Vec3 v1, const osg::Vec3 v2 )
@@ -216,7 +216,7 @@ osg::Vec3 osgModeling::calcIntersect( const osg::Vec3 p1, const osg::Vec3 v1, co
 	if ( pos ) {
 		*pos = s;
 	}
-	return p1 + v1*(osg::Vec3f::value_type)s;
+	return p1 + v1*( osg::Vec3f::value_type )s;
 }
 
 osg::Vec3 osgModeling::calcIntersect( const osg::Vec3 p, const osg::Vec3 v, const osg::Plane plane,
@@ -250,7 +250,7 @@ osg::Vec3 osgModeling::calcIntersect( const osg::Vec3 p, const osg::Vec3 v, cons
 	if ( pos ) {
 		*pos = t;
 	}
-	return osg::Vec3(p.x() + (osg::Vec3f::value_type)t * v.x(), p.y() + (osg::Vec3f::value_type)t * v.y(), p.z() + (osg::Vec3f::value_type)t * v.z());
+	return osg::Vec3( p.x() + ( osg::Vec3f::value_type )t * v.x(), p.y() + ( osg::Vec3f::value_type )t * v.y(), p.z() + ( osg::Vec3f::value_type )t * v.z() );
 }
 
 osg::Plane osgModeling::calcPlane( const osg::Vec3 p1, const osg::Vec3 p2, const osg::Vec3 p3, bool* ok )

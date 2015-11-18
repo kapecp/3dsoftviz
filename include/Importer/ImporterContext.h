@@ -51,7 +51,7 @@ public:
 	);
 
 	/***/
-    virtual ~ImporterContext( void );
+	virtual ~ImporterContext( void );
 
 	/**
 	 * \brief \link ImporterContext::stream_ [getter] \endlink

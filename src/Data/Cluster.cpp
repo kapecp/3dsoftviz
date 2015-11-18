@@ -8,11 +8,11 @@ namespace Data {
 Cluster::Cluster( qlonglong id, QString name, Data::Type* type, float scaling, Data::Graph* graph, osg::Vec3f position ) :
 	Node( id, name, type, scaling, graph, position ),
 
-	id(id),
-	repulsiveForceInside(1),
-	cube(nullptr),
-	sphere(nullptr),
-	shapeGetter(nullptr)
+	id( id ),
+	repulsiveForceInside( 1 ),
+	cube( nullptr ),
+	sphere( nullptr ),
+	shapeGetter( nullptr )
 {
 }
 

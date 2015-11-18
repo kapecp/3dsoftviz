@@ -150,13 +150,13 @@ osg::Geometry* ShapeVisitor_VisualizerCreator::createGridGeometry( int size, int
 	geom->setVertexArray( positionsOfLines );
 
 	// position of borders
-	osg::Vec3f dif1((osg::Vec3f::value_type)(-size/2), (osg::Vec3f::value_type)(size/2), -10); // top left
-	osg::Vec3f dif2((osg::Vec3f::value_type)(-size/2), (osg::Vec3f::value_type)(-size/2), -10);
-	osg::Vec3f dif3((osg::Vec3f::value_type)(size/2), (osg::Vec3f::value_type)(size/2), -10);
+	osg::Vec3f dif1( ( osg::Vec3f::value_type )( -size/2 ), ( osg::Vec3f::value_type )( size/2 ), -10 ); // top left
+	osg::Vec3f dif2( ( osg::Vec3f::value_type )( -size/2 ), ( osg::Vec3f::value_type )( -size/2 ), -10 );
+	osg::Vec3f dif3( ( osg::Vec3f::value_type )( size/2 ), ( osg::Vec3f::value_type )( size/2 ), -10 );
 
 	// increment for creating points of mesh at border
-	osg::Vec3f incrementX((osg::Vec3f::value_type)(size/noOfLines), 0, 0);
-	osg::Vec3f incrementY(0, (osg::Vec3f::value_type)(-size/noOfLines), 0);
+	osg::Vec3f incrementX( ( osg::Vec3f::value_type )( size/noOfLines ), 0, 0 );
+	osg::Vec3f incrementY( 0, ( osg::Vec3f::value_type )( -size/noOfLines ), 0 );
 
 	// computing and saving positions of points at border of mesh
 	for ( int i=0; i<2; i++ ) {

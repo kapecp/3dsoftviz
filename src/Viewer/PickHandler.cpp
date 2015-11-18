@@ -279,7 +279,7 @@ bool PickHandler::handleKeyDown( const osgGA::GUIEventAdapter& ea, GUIActionAdap
 
 	// FULLSCREEN
 	else if ( ea.getKey() == 'l' || ea.getKey() == 'L' ) {
-		bool hideToolbars = (appConf->getValue( "Viewer.Fullscreen" ).toInt() == 0 ? false : true);
+		bool hideToolbars = ( appConf->getValue( "Viewer.Fullscreen" ).toInt() == 0 ? false : true );
 
 		if ( AppCore::Core::getInstance()->getCoreWindow()->isFullScreen() ) {
 			AppCore::Core::getInstance()->getCoreWindow()->menuBar()->show();

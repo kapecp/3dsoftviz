@@ -13,7 +13,7 @@
 #include <QDebug>
 
 Repository::Git::GitFileLoader::GitFileLoader()
-    : filePath(""), extensions("")
+	: filePath( "" ), extensions( "" )
 {
 
 }
@@ -27,7 +27,7 @@ QList<Repository::Git::GitVersion*> Repository::Git::GitFileLoader::getDataAbout
 
 	// Inicializacia lokalnych premmenych
 	bool ok = true;
-    QList<Repository::Git::GitVersion*> versions = QList<Repository::Git::GitVersion*>();;
+	QList<Repository::Git::GitVersion*> versions = QList<Repository::Git::GitVersion*>();;
 	QString lFilePath = this->filePath;
 	QString lGitCommand = "git log --raw --name-status --reverse --date=short --pretty=format:\"%H%n%an%n%ad\"";
 
@@ -51,7 +51,7 @@ QList<Repository::Git::GitVersion*> Repository::Git::GitFileLoader::getDataAbout
 
 			// Prvy riadok vstupnu je vzdy commit identifikator
 			line = reader.readLine();
-            Repository::Git::GitVersion* version = new Repository::Git::GitVersion( line );
+			Repository::Git::GitVersion* version = new Repository::Git::GitVersion( line );
 
 			// Druhy riadok je meno autora
 			line = reader.readLine();
@@ -77,17 +77,17 @@ QList<Repository::Git::GitVersion*> Repository::Git::GitFileLoader::getDataAbout
 				// o viacnasobne uvedenie identifikatoru a autora, vtedy precitame a zahodime. Ak nie je rovny 40, skonci vytvaranie verzie.
 				if ( A.indexIn( line ) != -1 ) {
 					line = line.replace( A, "projekt/" );
-                    Repository::Git::GitFile* file = new Repository::Git::GitFile( line.mid( line.lastIndexOf( "/" ) + 1 ), line, Repository::Git::GitType::ADDED );
+					Repository::Git::GitFile* file = new Repository::Git::GitFile( line.mid( line.lastIndexOf( "/" ) + 1 ), line, Repository::Git::GitType::ADDED );
 					version->addChangedFile( file );
 				}
 				else if ( M.indexIn( line ) != -1 ) {
 					line = line.replace( M, "projekt/" );
-                    Repository::Git::GitFile* file = new Repository::Git::GitFile( line.mid( line.lastIndexOf( "/" ) + 1 ), line, Repository::Git::GitType::MODIFIED );
+					Repository::Git::GitFile* file = new Repository::Git::GitFile( line.mid( line.lastIndexOf( "/" ) + 1 ), line, Repository::Git::GitType::MODIFIED );
 					version->addChangedFile( file );
 				}
 				else if ( D.indexIn( line ) != -1 ) {
 					line = line.replace( D, "projekt/" );
-                    Repository::Git::GitFile* file = new Repository::Git::GitFile( line.mid( line.lastIndexOf( "/" ) + 1 ), line, Repository::Git::GitType::REMOVED );
+					Repository::Git::GitFile* file = new Repository::Git::GitFile( line.mid( line.lastIndexOf( "/" ) + 1 ), line, Repository::Git::GitType::REMOVED );
 					version->addChangedFile( file );
 				}
 				else if ( line.length() == 40 ) {
@@ -148,13 +148,13 @@ QString Repository::Git::GitFileLoader::makeTmpFileFromCommand( QString command,
 
 	// Ak existuje na danej ceste git repozitar, tak vykonam command a vystup ulozim do temp suboru
 	if ( ok ) {
-        QProcess process;
-        process.setStandardOutputFile( QDir::toNativeSeparators( tempFile.fileName() ) );
+		QProcess process;
+		process.setStandardOutputFile( QDir::toNativeSeparators( tempFile.fileName() ) );
 		QString lCommand = QString( command );
-        process.start( lCommand );
-        process.waitForFinished();
-        process.close();
-        process.terminate();
+		process.start( lCommand );
+		process.waitForFinished();
+		process.close();
+		process.terminate();
 
 	}
 
@@ -191,12 +191,12 @@ void Repository::Git::GitFileLoader::readGitShowFile( QString tmpFile, Repositor
 	if ( ok && lFile.open( QIODevice::ReadOnly ) ) {
 		QTextStream lReader( &lFile );
 		int lLineNumber = 1;
-        Repository::Git::GitFileDiffBlock* diffBlock = new Repository::Git::GitFileDiffBlock();
+		Repository::Git::GitFileDiffBlock* diffBlock = new Repository::Git::GitFileDiffBlock();
 
 		// Citam do konca a pridavam jednotlive riadky typu ADDED
 		while ( !lReader.atEnd() ) {
 			QString lLine = lReader.readLine();
-            Repository::Git::GitFileDiffBlockLine* lDiffBlockLine = new Repository::Git::GitFileDiffBlockLine( lLine, lLineNumber++, Repository::Git::GitType::ADDED );
+			Repository::Git::GitFileDiffBlockLine* lDiffBlockLine = new Repository::Git::GitFileDiffBlockLine( lLine, lLineNumber++, Repository::Git::GitType::ADDED );
 			diffBlock->incAddCount();
 			diffBlock->addGitFileDiffBlockLine( lDiffBlockLine );
 		}
@@ -226,7 +226,7 @@ void Repository::Git::GitFileLoader::readGitDiffFile( QString tmpFile, Repositor
 		QTextStream lReader( &lFile );
 		QString lLine;
 
-        Repository::Git::GitFileDiffBlock* diffBlock = NULL;
+		Repository::Git::GitFileDiffBlock* diffBlock = NULL;
 
 		// Defaultny pocet riadkov diff hlavicky
 		int iter = 4;
@@ -251,7 +251,7 @@ void Repository::Git::GitFileLoader::readGitDiffFile( QString tmpFile, Repositor
 		while ( !lReader.atEnd() ) {
 			lLine = lReader.readLine();
 			QRegExp regex;
-            Repository::Git::GitFileDiffBlockLine* blockLine;
+			Repository::Git::GitFileDiffBlockLine* blockLine;
 
 			// Podla hodnoty prveho znaku z nacitaneho riadku rozhodujem, ako dalej spracujem dany riadok
 			switch ( lLine.at( 0 ).toAscii() ) {
@@ -266,7 +266,7 @@ void Repository::Git::GitFileLoader::readGitDiffFile( QString tmpFile, Repositor
 
 					int firstComma, secondComma, middleSpace, endSpace;
 
-                    diffBlock = new Repository::Git::GitFileDiffBlock();
+					diffBlock = new Repository::Git::GitFileDiffBlock();
 
 					// zistenie pozicii pre ciarky a medzery pre @@ -0,0 +0,0
 					firstComma = lLine.indexOf( ",", 4 );
@@ -275,10 +275,10 @@ void Repository::Git::GitFileLoader::readGitDiffFile( QString tmpFile, Repositor
 					endSpace = lLine.indexOf( " ", middleSpace + 1 );
 
 					// Nastavenie zaciatkov a poctu riadko oblasti
-                    diffBlock->setRemoveStart( lLine.mid( 4, firstComma - 4 ).toInt() );
-                    diffBlock->setRemoveCount( lLine.mid( firstComma + 1, middleSpace - ( firstComma + 1 ) ).toInt() );
-                    diffBlock->setAddStart( lLine.mid( middleSpace + 2, secondComma - ( middleSpace + 2 ) ).toInt() );
-                    diffBlock->setAddCount( lLine.mid( secondComma + 1, endSpace - ( secondComma + 1 ) ).toInt() );
+					diffBlock->setRemoveStart( lLine.mid( 4, firstComma - 4 ).toInt() );
+					diffBlock->setRemoveCount( lLine.mid( firstComma + 1, middleSpace - ( firstComma + 1 ) ).toInt() );
+					diffBlock->setAddStart( lLine.mid( middleSpace + 2, secondComma - ( middleSpace + 2 ) ).toInt() );
+					diffBlock->setAddCount( lLine.mid( secondComma + 1, endSpace - ( secondComma + 1 ) ).toInt() );
 
 					// Inicializacia pocitadiel pozicie pre pridanie a odstranenie
 					addPos = diffBlock->getAddStart();
@@ -296,7 +296,7 @@ void Repository::Git::GitFileLoader::readGitDiffFile( QString tmpFile, Repositor
 						lLine = lLine.replace( regex, "" );
 					}
 
-                    blockLine = new Repository::Git::GitFileDiffBlockLine( lLine, addPos++ , Repository::Git::GitType::ADDED );
+					blockLine = new Repository::Git::GitFileDiffBlockLine( lLine, addPos++ , Repository::Git::GitType::ADDED );
 					diffBlock->addGitFileDiffBlockLine( blockLine );
 
 					break;
@@ -311,7 +311,7 @@ void Repository::Git::GitFileLoader::readGitDiffFile( QString tmpFile, Repositor
 						lLine = lLine.replace( regex, "" );
 					}
 
-                    blockLine = new Repository::Git::GitFileDiffBlockLine( lLine, removePos++ , Repository::Git::GitType::REMOVED );
+					blockLine = new Repository::Git::GitFileDiffBlockLine( lLine, removePos++ , Repository::Git::GitType::REMOVED );
 					diffBlock->addGitFileDiffBlockLine( blockLine );
 
 					break;
@@ -327,7 +327,7 @@ void Repository::Git::GitFileLoader::readGitDiffFile( QString tmpFile, Repositor
 					}
 
 					removePos++;
-                    blockLine = new Repository::Git::GitFileDiffBlockLine( lLine, addPos++ , Repository::Git::GitType::NONE );
+					blockLine = new Repository::Git::GitFileDiffBlockLine( lLine, addPos++ , Repository::Git::GitType::NONE );
 					diffBlock->addGitFileDiffBlockLine( blockLine );
 
 					break;
@@ -356,11 +356,11 @@ void Repository::Git::GitFileLoader::getDiffInfo( Repository::Git::GitFile* gitF
 	QString lFile = gitFile->getFilepath().replace( "projekt/", "" );
 
 	// Ak bol pridany subor pridany, nemame jeho predchadzajucu verziu, preto nacitame celu verziu suboru
-    if ( gitFile->getType() == Repository::Git::GitType::ADDED ) {
-        lCommand = "git show " + currentCommitId + ":" + lFile;
+	if ( gitFile->getType() == Repository::Git::GitType::ADDED ) {
+		lCommand = "git show " + currentCommitId + ":" + lFile;
 	}
 	else {
-        lCommand = "git diff -u " + oldCommitId + " " + currentCommitId + " -- " + lFile;
+		lCommand = "git diff -u " + oldCommitId + " " + currentCommitId + " -- " + lFile;
 	}
 
 	// Vykona command, vystup ulozi do temp suboru a vrati cestu k temp suboru
@@ -368,7 +368,7 @@ void Repository::Git::GitFileLoader::getDiffInfo( Repository::Git::GitFile* gitF
 
 	// Ak je typ suboru ADDED, tak nema predchadzajucu verziu a nacitam celu verziu suboru.
 	// Ak nie, tak nacitam diff bloky daneho suboru
-    if ( gitFile->getType() == Repository::Git::GitType::ADDED ) {
+	if ( gitFile->getType() == Repository::Git::GitType::ADDED ) {
 		readGitShowFile( lTmp, gitFile );
 	}
 	else {

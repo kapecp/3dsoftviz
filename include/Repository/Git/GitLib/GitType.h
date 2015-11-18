@@ -12,7 +12,7 @@ enum GitType {
 #else
 enum class GitType {
 #endif
-    ADDED,
+	ADDED,
 	REMOVED,
 	MODIFIED,
 	NONE

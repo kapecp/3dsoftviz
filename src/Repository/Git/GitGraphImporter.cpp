@@ -15,9 +15,10 @@
 #include <QDebug>
 #include <QDir>
 
-Importer::GitGraphImporter::~GitGraphImporter() {
-    delete this->edgeType;
-    delete this->nodeType;
+Importer::GitGraphImporter::~GitGraphImporter()
+{
+	delete this->edgeType;
+	delete this->nodeType;
 }
 
 bool Importer::GitGraphImporter::import( ImporterContext& context )
@@ -112,7 +113,7 @@ bool Importer::GitGraphImporter::import( ImporterContext& context )
 	this->context->getGraph().addType( "newE", settings );
 
 	// Ziskame pridane subory a meno autora prve verzie
-    QList<Repository::Git::GitFile*> lAddedGitFiles = Manager::GraphManager::getInstance()->getActiveEvolutionGraph()->getVersion( 0 )->getGitFilesByType( Repository::Git::GitType::ADDED );
+	QList<Repository::Git::GitFile*> lAddedGitFiles = Manager::GraphManager::getInstance()->getActiveEvolutionGraph()->getVersion( 0 )->getGitFilesByType( Repository::Git::GitType::ADDED );
 	QString lAuthor = Manager::GraphManager::getInstance()->getActiveEvolutionGraph()->getVersion( 0 )->getAuthor();
 
 	// Vytvorime graf za pomoci pridanych suborov prvej verzie
@@ -134,7 +135,7 @@ bool Importer::GitGraphImporter::import( ImporterContext& context )
 	lType = lTypes.at( 0 );
 
 	// Pre kazdy pridany subor vytvorime orientovanu hranu od autora k uzlu suboru
-    foreach ( Repository::Git::GitFile* file, lAddedGitFiles ) {
+	foreach ( Repository::Git::GitFile* file, lAddedGitFiles ) {
 
 		// Ziskame uzol pre odpovedajucu cestu suboru z mnoziny vlozenych uzlov
 		osg::ref_ptr<Data::Node> osgNode = readNodes->get( file->getFilepath() );
@@ -173,7 +174,7 @@ bool Importer::GitGraphImporter::makeGraph( QList<Repository::Git::GitFile*> git
 		ok = addEdge( list );
 
 		// Aktualizujem percento spracovania
-        Manager::GraphManager::getInstance()->setProgressBarValue( int( (  double( i + 1 ) /  double(gitFiles.size()) ) * 100 ) );
+		Manager::GraphManager::getInstance()->setProgressBarValue( int( ( double( i + 1 ) /  double( gitFiles.size() ) ) * 100 ) );
 	}
 
 	return ok;

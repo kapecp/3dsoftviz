@@ -19,7 +19,7 @@ public:
 	 */
 	GitFileDiffBlock();
 
-    ~GitFileDiffBlock();
+	~GitFileDiffBlock();
 
 	/**
 	 * void setAddStart( int addStart )
@@ -111,21 +111,21 @@ public:
 	}
 
 	/**
-     * QList<Repository::Git::GitFileDiffBlockLine*> getGitFileDiffBlockLines()
+	 * QList<Repository::Git::GitFileDiffBlockLine*> getGitFileDiffBlockLines()
 	 * @brief Getter of list of diff block lines
 	 * @return List of diff block lines
 	 */
-    QList<Repository::Git::GitFileDiffBlockLine*> getGitFileDiffBlockLines()
+	QList<Repository::Git::GitFileDiffBlockLine*> getGitFileDiffBlockLines()
 	{
 		return this->gitFileDiffBlockLines;
 	}
 
 	/**
-     * void addGitFileDiffBlockLine( Repository::Git::GitFileDiffBlockLine* line )
+	 * void addGitFileDiffBlockLine( Repository::Git::GitFileDiffBlockLine* line )
 	 * @brief Append diff block line to the list of diff block lines
 	 * @param line Diff block line, which will be appended
 	 */
-    void addGitFileDiffBlockLine( Repository::Git::GitFileDiffBlockLine* line )
+	void addGitFileDiffBlockLine( Repository::Git::GitFileDiffBlockLine* line )
 	{
 		this->gitFileDiffBlockLines.append( line );
 	}
@@ -159,31 +159,31 @@ private:
 	 * int addStart
 	 * @brief Line positino, where block addition starts
 	 */
-    int addStart;
+	int addStart;
 
 	/**
 	 * int addCount
 	 * @brief Number of lines affected from block addition start position.
 	 */
-    int addCount;
+	int addCount;
 
 	/**
 	 * int removeStart
 	 * @brief Line position, where block removal starts.
 	 */
-    int removeStart;
+	int removeStart;
 
 	/**
 	 * int removeCount
 	 * @brief Number of lines affected from block removal start position.
 	 */
-    int removeCount;
+	int removeCount;
 
 	/**
-     * QList<Repository::Git::GitFileDiffBlockLine*> gitFileDiffBlockLines
+	 * QList<Repository::Git::GitFileDiffBlockLine*> gitFileDiffBlockLines
 	 * @brief List of diff block lines.
 	 */
-    QList<Repository::Git::GitFileDiffBlockLine*> gitFileDiffBlockLines;
+	QList<Repository::Git::GitFileDiffBlockLine*> gitFileDiffBlockLines;
 }; // class
 } // namespace
 }

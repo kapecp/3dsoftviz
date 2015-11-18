@@ -30,7 +30,7 @@ Data::Edge::Edge( qlonglong id, QString name, Data::Graph* graph, osg::ref_ptr<D
 	this->insertChild( INDEX_CYLINDER, createEdgeCylinder( NULL ), false );
 	this->insertChild( INDEX_LINE, createEdgeLine( NULL ), false );
 	this->insertChild( INDEX_CURVE, createEdgeCurve( NULL ), false );
-	setValue( static_cast<unsigned int>(graph->getEdgeVisual()), true );
+	setValue( static_cast<unsigned int>( graph->getEdgeVisual() ), true );
 
 	//updateCoordinates(getSrcNode()->getTargetPosition(), getDstNode()->getTargetPosition());
 	updateCoordinates( getSrcNode()->restrictedTargetPosition(), getDstNode()->restrictedTargetPosition() );
@@ -483,7 +483,7 @@ void Data::Edge::setVisual( int index )
 	setValue( INDEX_CYLINDER, false );
 	setValue( INDEX_LINE, false );
 	setValue( INDEX_CURVE, false );
-	setValue( static_cast<unsigned int>(index), !isInvisible );
+	setValue( static_cast<unsigned int>( index ), !isInvisible );
 }
 
 //Marak start

@@ -4,17 +4,18 @@
 #include <QMapIterator>
 
 Repository::Git::GitEvolutionGraph::GitEvolutionGraph()
-    : versions(QList<Repository::Git::GitVersion*>()), removedFiles(QMap<QString, int>()), lifespan(0), filePath("")
+	: versions( QList<Repository::Git::GitVersion*>() ), removedFiles( QMap<QString, int>() ), lifespan( 0 ), filePath( "" )
 {
 
 }
 
-Repository::Git::GitEvolutionGraph::~GitEvolutionGraph() {
-    qDeleteAll(this->getVersions());
+Repository::Git::GitEvolutionGraph::~GitEvolutionGraph()
+{
+	qDeleteAll( this->getVersions() );
 }
 
 Repository::Git::GitEvolutionGraph::GitEvolutionGraph( QString filePath )
-    : versions(QList<Repository::Git::GitVersion*>()), removedFiles(QMap<QString, int>()), lifespan(0), filePath( filePath )
+	: versions( QList<Repository::Git::GitVersion*>() ), removedFiles( QMap<QString, int>() ), lifespan( 0 ), filePath( filePath )
 {
 
 }

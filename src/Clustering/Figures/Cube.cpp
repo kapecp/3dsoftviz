@@ -9,7 +9,7 @@
 #include <osg/Depth>
 #include <osg/BlendFunc>
 
-Clustering::Cube::Cube( osg::Vec3d position, float radius, osg::Vec4d color = osg::Vec4d( 0,0,0,1 ))
+Clustering::Cube::Cube( osg::Vec3d position, float radius, osg::Vec4d color = osg::Vec4d( 0,0,0,1 ) )
 {
 	geode = new osg::Geode();
 	geometry = new osg::Geometry();
@@ -247,7 +247,7 @@ void Clustering::Cube::computeGeode()
 	};
 
 	int numCoords = static_cast<int>( sizeof( myCoords )/sizeof( osg::Vec3 ) );
-	osg::Vec3Array* vertices = new osg::Vec3Array( static_cast<unsigned int>(numCoords), myCoords );
+	osg::Vec3Array* vertices = new osg::Vec3Array( static_cast<unsigned int>( numCoords ), myCoords );
 	geometry->setVertexArray( vertices );
 
 	geometry->addPrimitiveSet( new

@@ -23,7 +23,7 @@ public:
 	GitVersion();
 
 
-    ~GitVersion();
+	~GitVersion();
 
 	/**
 	 * Explicit constructor with set up commit ID
@@ -84,59 +84,59 @@ public:
 	}
 
 	/**
-     * QList<Repository::Git::GitFile*> getChangedFiles()
+	 * QList<Repository::Git::GitFile*> getChangedFiles()
 	 * @brief Getter of changed files in commit
 	 * @return List of changed files in commmit
 	 */
-    QList<Repository::Git::GitFile*> getChangedFiles()
+	QList<Repository::Git::GitFile*> getChangedFiles()
 	{
 		return this->changedFiles;
 	}
 
 	/**
-     * void setChangedFiles( QList<Repository::Git::GitFile*> gitFiles )
+	 * void setChangedFiles( QList<Repository::Git::GitFile*> gitFiles )
 	 * @brief Setter of changed files list
 	 * @param gitFiles List of changed files
 	 */
-    void setChangedFiles( QList<Repository::Git::GitFile*> gitFiles )
+	void setChangedFiles( QList<Repository::Git::GitFile*> gitFiles )
 	{
 		this->changedFiles = gitFiles;
 	}
 
 	/**
-     * void addChangedFile( Repository::Git::GitFile* file )
+	 * void addChangedFile( Repository::Git::GitFile* file )
 	 * @brief Append git file to list of git files
 	 * @param file File to be appended to the list
 	 */
-    void addChangedFile( Repository::Git::GitFile* file )
+	void addChangedFile( Repository::Git::GitFile* file )
 	{
 		this->changedFiles.append( file );
 	}
 
 	/**
-     * QList<Repository::Git::GitFile*> getGitFilesByType( Repository::Git::GitType gitType )
+	 * QList<Repository::Git::GitFile*> getGitFilesByType( Repository::Git::GitType gitType )
 	 * @brief Returns list of files with the specifig type
 	 * @param gitType Type of files
 	 * @return list of files with specifig type
 	 */
-    QList<Repository::Git::GitFile*> getGitFilesByType( Repository::Git::GitType gitType );
+	QList<Repository::Git::GitFile*> getGitFilesByType( Repository::Git::GitType gitType );
 
 	/**
-     * QList<Repository::Git::GitFile*> getGitFilesByExtension( QString extension)
+	 * QList<Repository::Git::GitFile*> getGitFilesByExtension( QString extension)
 	 * @brief Return list of files with specific file extension
 	 * @param extensions File extensions
 	 * @return List of files with specific file extension
 	 */
-    QList<Repository::Git::GitFile*> getGitFilesByExtension( QString extensions );
+	QList<Repository::Git::GitFile*> getGitFilesByExtension( QString extensions );
 
 	/**
-     * QList<Repository::Git::GitFile*> getGitFilesByTypeAndExtension( QString extension, Repository::Git::GitType type )
+	 * QList<Repository::Git::GitFile*> getGitFilesByTypeAndExtension( QString extension, Repository::Git::GitType type )
 	 * @brief Returns list of files with specific type and file extension
 	 * @param extension File extension
 	 * @param type Type of files
 	 * @return List of files with specific type and file extension
 	 */
-    QList<Repository::Git::GitFile*> getGitFilesByTypeAndExtension( QString extensions, Repository::Git::GitType type );
+	QList<Repository::Git::GitFile*> getGitFilesByTypeAndExtension( QString extensions, Repository::Git::GitType type );
 
 	/**
 	 * void printVersion()
@@ -165,10 +165,10 @@ private:
 	QString date;
 
 	/**
-     * QList<Repository::Git::GitFile*> changedFiles
+	 * QList<Repository::Git::GitFile*> changedFiles
 	 * @brief List of changed files in commit
 	 */
-    QList<Repository::Git::GitFile*> changedFiles;
+	QList<Repository::Git::GitFile*> changedFiles;
 }; // class
 } // namespace
 }

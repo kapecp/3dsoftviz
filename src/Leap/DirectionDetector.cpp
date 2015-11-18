@@ -79,6 +79,7 @@ Leap::DirectionDetector::Direction Leap::DirectionDetector::getPalmDirection( Ha
 	else if ( isLeft( pitch,roll ) ) {
 		return Leap::DirectionDetector::Direction::LEFT;
 	}
-	else
+	else {
 		return Leap::DirectionDetector::Direction::STEADY;
+	}
 }

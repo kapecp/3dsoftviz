@@ -197,7 +197,7 @@ void Data::OsgNode::setDrawableColor( osg::Vec4 color )
 
 bool Data::OsgNode::setInvisible( bool invisible )
 {
-	setValue( static_cast<unsigned int>(graph->getNodeVisual()), !invisible );
+	setValue( static_cast<unsigned int>( graph->getNodeVisual() ), !invisible );
 	//-poriesit invisible pre label
 	return true;
 }

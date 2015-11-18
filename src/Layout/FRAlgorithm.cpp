@@ -24,32 +24,32 @@ namespace Layout {
 
 //Konstruktor pre vlakno s algoritmom
 FRAlgorithm::FRAlgorithm() :
-	rl(nullptr),
-	graph(nullptr),
-	PI(acos(-1.0)),
-	ALPHA(0.005f),
-	MIN_MOVEMENT(0.05f),
-	MAX_MOVEMENT(30),
-	MAX_DISTANCE(400),
-	MIN_MOVEMENT_EDGEBUNDLING(0.05f),
-	ALPHA_EDGEBUNDLING(100),
-	flexibility(0),
-	sizeFactor(0),
-	K(0),
-	center(osg::Vec3f(0, 0, 0)),
-	state(RUNNING),
-	stateEdgeBundling(PAUSED),
+	rl( nullptr ),
+	graph( nullptr ),
+	PI( acos( -1.0 ) ),
+	ALPHA( 0.005f ),
+	MIN_MOVEMENT( 0.05f ),
+	MAX_MOVEMENT( 30 ),
+	MAX_DISTANCE( 400 ),
+	MIN_MOVEMENT_EDGEBUNDLING( 0.05f ),
+	ALPHA_EDGEBUNDLING( 100 ),
+	flexibility( 0 ),
+	sizeFactor( 0 ),
+	K( 0 ),
+	center( osg::Vec3f( 0, 0, 0 ) ),
+	state( RUNNING ),
+	stateEdgeBundling( PAUSED ),
 	// Moznost odpudiveho posobenia limitovaneho vzdialenostou
-	useMaxDistance(false),
-	notEnd(true),
-	fv(osg::Vec3f()),
-	last(osg::Vec3f()),
-	newLoc(osg::Vec3f()),
-	up(osg::Vec3f()),
-	vp(osg::Vec3f()),
-	dist(0),
+	useMaxDistance( false ),
+	notEnd( true ),
+	fv( osg::Vec3f() ),
+	last( osg::Vec3f() ),
+	newLoc( osg::Vec3f() ),
+	up( osg::Vec3f() ),
+	vp( osg::Vec3f() ),
+	dist( 0 ),
 	// No node is focused on the beginning
-	mLastFocusedNode(0)
+	mLastFocusedNode( 0 )
 {
 	// Duransky start - pociatocne nastavenie nasobica odpudivych sil na rovnakej rovine na hodnotu 1
 	setRepulsiveForceVertigo( 1 );
@@ -57,25 +57,25 @@ FRAlgorithm::FRAlgorithm() :
 }
 
 FRAlgorithm::FRAlgorithm( Data::Graph* graph ) :
-	graph(graph),
-	PI(acos(-1.0)),
-	ALPHA(0.005f),
-	MIN_MOVEMENT(0.05f),
-	MAX_MOVEMENT(30),
-	MAX_DISTANCE(400),
-	MIN_MOVEMENT_EDGEBUNDLING(1.0f),
-	ALPHA_EDGEBUNDLING(100),
-	center(osg::Vec3f(0, 0, 0)),
-	state(RUNNING),
-	stateEdgeBundling(PAUSED),
+	graph( graph ),
+	PI( acos( -1.0 ) ),
+	ALPHA( 0.005f ),
+	MIN_MOVEMENT( 0.05f ),
+	MAX_MOVEMENT( 30 ),
+	MAX_DISTANCE( 400 ),
+	MIN_MOVEMENT_EDGEBUNDLING( 1.0f ),
+	ALPHA_EDGEBUNDLING( 100 ),
+	center( osg::Vec3f( 0, 0, 0 ) ),
+	state( RUNNING ),
+	stateEdgeBundling( PAUSED ),
 	// Moznost odpudiveho posobenia limitovaneho vzdialenostou
-	useMaxDistance(false),
-	notEnd(true),
-	fv(osg::Vec3f()),
-	last(osg::Vec3f()),
-	newLoc(osg::Vec3f()),
-	up(osg::Vec3f()),
-	vp(osg::Vec3f())
+	useMaxDistance( false ),
+	notEnd( true ),
+	fv( osg::Vec3f() ),
+	last( osg::Vec3f() ),
+	newLoc( osg::Vec3f() ),
+	up( osg::Vec3f() ),
+	vp( osg::Vec3f() )
 {
 	this->Randomize();
 }
