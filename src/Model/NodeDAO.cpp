@@ -686,7 +686,8 @@ QMap<qlonglong, float> Model::NodeDAO::getScales( QSqlDatabase* conn, bool* erro
 			float scale = iter.value().toFloat();
 			scales.insert( id, scale );
 		}
-	} else {
+	}
+	else {
 		qDebug() << "[Model::NodeDAO::getScales] Could not get scale setting";
 	}
 	*error = error2;
@@ -713,7 +714,8 @@ QMap<qlonglong, int> Model::NodeDAO::getMasks( QSqlDatabase* conn, bool* error, 
 			int mask = iter.value().toInt();
 			masks.insert( id, mask );
 		}
-	} else {
+	}
+	else {
 		qDebug() << "[Model::NodeDAO::getMasks] Could not get mask setting";
 	}
 
@@ -740,7 +742,8 @@ QList<qlonglong> Model::NodeDAO::getParents( QSqlDatabase* conn, bool* error, ql
 			id = iter.key();
 			parents << id;
 		}
-	} else {
+	}
+	else {
 		qDebug() << "[Model::NodeDAO::getParents] Could not get is_parent setting";
 	}
 

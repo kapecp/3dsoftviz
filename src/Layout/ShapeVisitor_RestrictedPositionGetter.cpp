@@ -35,7 +35,7 @@ void ShapeVisitor_RestrictedPositionGetter::visit( Shape_Composite& shape )
 
 			float currentDistance = ( mOriginalPosition - mRestrictedPosition ).length();
 
-			if ( (it == shapes.begin()) || (( currentDistance < minDistanceFound ) || ( it == shapes.begin() )) ) {
+			if ( ( it == shapes.begin() ) || ( ( currentDistance < minDistanceFound ) || ( it == shapes.begin() ) ) ) {
 				restrictedPositionWithMinDistance = mRestrictedPosition;
 				minDistanceFound = currentDistance;
 			}

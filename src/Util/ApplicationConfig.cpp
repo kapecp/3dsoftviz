@@ -4,6 +4,7 @@
 
 #include <QDebug>
 #include <QFile>
+#include <QDebug>
 
 Util::ApplicationConfig* Util::ApplicationConfig::_instance;
 OpenThreads::Mutex Util::ApplicationConfig::_mutex;
@@ -45,9 +46,9 @@ QString Util::ApplicationConfig::getValue( QString key )
 
 int Util::ApplicationConfig::getNumericValue(
 	QString key,
-    std::auto_ptr<int> minValue,
-    std::auto_ptr<int> maxValue,
-    const int defaultValue
+	std::auto_ptr<int> minValue,
+	std::auto_ptr<int> maxValue,
+	const int defaultValue
 )
 {
 	if ( !_map.contains( key ) ) {
@@ -56,7 +57,7 @@ int Util::ApplicationConfig::getNumericValue(
 
 	QString value = getValue( key );
 	bool ok = true;
-    int result = value.toInt( &ok );
+	int result = value.toInt( &ok );
 
 	if ( !ok ) {
 		return defaultValue;

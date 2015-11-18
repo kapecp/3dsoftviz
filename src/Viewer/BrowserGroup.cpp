@@ -13,12 +13,12 @@
 namespace Vwr {
 
 BrowserGroup::BrowserGroup() :
-	group(new osg::Group),
-	browsersGrouping(false),
-	browsersTransforms(new QList<osg::ref_ptr<osg::AutoTransform> >),
-	connectorsTransforms(new QList<osg::ref_ptr<osg::AutoTransform> >),
-	selectedNodes(new QLinkedList<osg::ref_ptr<Data::Node> >),
-	selectedNodesModels(nullptr)
+	group( new osg::Group ),
+	browsersGrouping( false ),
+	browsersTransforms( new QList<osg::ref_ptr<osg::AutoTransform> > ),
+	connectorsTransforms( new QList<osg::ref_ptr<osg::AutoTransform> > ),
+	selectedNodes( new QLinkedList<osg::ref_ptr<Data::Node> > ),
+	selectedNodesModels( nullptr )
 {
 	this->group->getOrCreateStateSet()->setMode( GL_LIGHTING,osg::StateAttribute::OFF );
 }

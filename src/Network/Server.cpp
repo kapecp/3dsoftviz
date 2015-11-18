@@ -16,6 +16,11 @@
 
 #include "Util/ApplicationConfig.h"
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wold-style-cast"
+#pragma GCC diagnostic ignored "-Wuseless-cast"
+#pragma GCC diagnostic ignored "-Wsign-conversion"
+
 namespace Network {
 
 Server* Server::instance;
@@ -23,16 +28,16 @@ Server* Server::instance;
 Server::Server( QObject* parent ) :
 	QTcpServer( parent ),
 
-	cw(parent),
-	thread(nullptr),
-	coreGraph(nullptr),
-	executorFactory(new ExecutorFactory()),
-	graphScale(Util::ApplicationConfig::get()->getValue( "Viewer.Display.NodeDistanceScale" ).toFloat()),
-	user_to_spy(nullptr),
-	user_to_center(nullptr),
-	original_distance(0),
-	blockSize(0),
-	avatarScale(1)
+	cw( parent ),
+	thread( nullptr ),
+	coreGraph( nullptr ),
+	executorFactory( new ExecutorFactory() ),
+	graphScale( Util::ApplicationConfig::get()->getValue( "Viewer.Display.NodeDistanceScale" ).toFloat() ),
+	user_to_spy( nullptr ),
+	user_to_center( nullptr ),
+	original_distance( 0 ),
+	blockSize( 0 ),
+	avatarScale( 1 )
 {
 	instance = this;
 }
@@ -932,3 +937,5 @@ void Server::setAvatarScale( int scale )
 }
 
 } // namespace Network
+
+#pragma GCC diagnostic pop

@@ -8,6 +8,7 @@
 #include <QCloseEvent>
 #include <QDebug>
 #include "OpenCV/CamSelectCore.h"
+#include <QDebug>
 
 #include "Util/ApplicationConfig.h"
 
