@@ -10,6 +10,9 @@
 #include <string>
 #include <memory>
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wold-style-cast"
+
 namespace Importer {
 
 osg::ref_ptr<Data::Node> RSFImporter::getHyperEdge(
@@ -22,7 +25,7 @@ osg::ref_ptr<Data::Node> RSFImporter::getHyperEdge(
 	for ( QMap<qlonglong, osg::ref_ptr<Data::Edge> >::iterator it = mapa->begin(); it != mapa->end(); ++it ) {
 		osg::ref_ptr<Data::Edge> existingEdge = it.value();
 		if (
-			( ( Data::AbsNode* )existingEdge->getSrcNode() )->getName() == srcNodeName &&
+            ( ( Data::AbsNode* )existingEdge->getSrcNode() )->getName() == srcNodeName &&
 			( ( Data::AbsNode* )existingEdge->getDstNode() )->getName() == edgeName
 		) {
 			hyperEdgeNode1 = existingEdge->getDstNode();
@@ -107,3 +110,5 @@ bool RSFImporter::import(
 }
 
 } // namespace
+
+#pragma GCC diagnostic pop

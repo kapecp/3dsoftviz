@@ -234,7 +234,7 @@ void QOpenCV::OpenCVWindow::setMarkerDetection( bool set )
 
 void QOpenCV::OpenCVWindow::setSpeedKinect( int speed )
 {
-	double _speed=( double )( ( double )( speed/10.0 ) );
+    double _speed= speed/10.0 ;
 	emit sendSpeedKinect( _speed );
 }
 

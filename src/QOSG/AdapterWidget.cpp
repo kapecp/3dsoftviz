@@ -122,7 +122,7 @@ void AdapterWidget::keyReleaseEvent( QKeyEvent* event )
 void AdapterWidget::mousePressEvent( QMouseEvent* event )
 {
 	//odchytavanie udalosti mysi
-	int button = 0;
+    unsigned int button = 0;
 	switch ( event->button() ) {
 		case ( Qt::LeftButton ):
 			button = 1;
@@ -147,7 +147,7 @@ void AdapterWidget::mousePressEvent( QMouseEvent* event )
 void AdapterWidget::mouseDoubleClickEvent( QMouseEvent* event )
 {
 	//odchytavanie udalosti mysi
-	int button = 0;
+    unsigned int button = 0;
 	switch ( event->button() ) {
 		case ( Qt::LeftButton ):
 			button = 1;
@@ -173,7 +173,7 @@ void AdapterWidget::mouseDoubleClickEvent( QMouseEvent* event )
 void AdapterWidget::mouseReleaseEvent( QMouseEvent* event )
 {
 	//odchytavanie udalosti mysi
-	int button = 0;
+    unsigned int button = 0;
 	switch ( event->button() ) {
 		case ( Qt::LeftButton ):
 			button = 1;

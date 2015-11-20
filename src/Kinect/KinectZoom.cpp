@@ -50,10 +50,10 @@ void Kinect::KinectZoom::calcHandDepthFrame( cv::Mat frame,openni::VideoStream* 
 	cv::Mat depthImage( depthFrame.getHeight(), depthFrame.getWidth(), CV_16UC1, depthPixels );
 
 	cv::Rect rect;
-	rect.x = ( int ) x1;
-	rect.y = frame.rows - ( int ) y1;
-	rect.width = abs( ( int )( x1-x2 ) );
-	rect.height = abs( ( int )( y1-y2 ) );
+    rect.x = static_cast<int>(x1);
+    rect.y = frame.rows - static_cast<int>(y1);
+    rect.width = abs( static_cast<int>( x1-x2 ) );
+    rect.height = abs( static_cast<int>( y1-y2 ) );
 
 	if ( rect.x<0 ) {
 		rect.x=0;
@@ -120,7 +120,7 @@ int Kinect::KinectZoom::DetectContour( )
 				convexityDefects( contours[i],hull[i], convDef[i] );
 
 				for ( size_t k=0; k<hull[i].size(); k++ ) {
-					int ind=hull[i][k];
+                    int ind=hull[i][k];
 					hull_points[i].push_back( contours[i][ind] );
 				}
 

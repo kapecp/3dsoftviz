@@ -168,7 +168,7 @@ float getRadius( QSet<Data::Node*> nodes, osg::Vec3f midPoint )
 		Data::Node* v = *i;
 		osg::Vec3f pos = v->getCurrentPosition();
 
-		float newDistance = sqrt( pow( pos.x()-midPoint.x(),2 ) + pow( pos.y()-midPoint.y(),2 ) + pow( pos.z()-midPoint.z(),2 ) );
+        float newDistance = static_cast<float>( sqrt( pow( pos.x()-midPoint.x(),2 ) + pow( pos.y()-midPoint.y(),2 ) + pow( pos.z()-midPoint.z(),2 ) ) );
 
 		if ( newDistance > maxDistance ) {
 			maxDistance = newDistance;
@@ -664,7 +664,7 @@ void CoreGraph::reload( Data::Graph* graph )
 {
 	cleanUp();
 
-	int currentPos = 0;
+    unsigned int currentPos = 0;
 
 	while ( graphGroup->getNumChildren() > 0 ) {
 		graphGroup->removeChildren( 0, 1 );
@@ -939,9 +939,9 @@ osg::ref_ptr<osg::Node> CoreGraph::createOrtho2dBackground()
 
 osg::ref_ptr<osg::Node> CoreGraph::createSkyNoiseBox()
 {
-	unsigned char red = ( unsigned char ) appConf->getValue( "Viewer.Display.BackGround.R" ).toInt();
-	unsigned char green = ( unsigned char ) appConf->getValue( "Viewer.Display.BackGround.G" ).toInt();
-	unsigned char blue =( unsigned char ) appConf->getValue( "Viewer.Display.BackGround.B" ).toInt() ;
+    unsigned char red = static_cast<unsigned char>( appConf->getValue( "Viewer.Display.BackGround.R" ).toInt() );
+    unsigned char green = static_cast<unsigned char>( appConf->getValue( "Viewer.Display.BackGround.G" ).toInt() );
+    unsigned char blue = static_cast<unsigned char>( appConf->getValue( "Viewer.Display.BackGround.B" ).toInt() );
 	osg::ref_ptr<osg::Texture2D> skymap =
 		PerlinNoiseTextureGenerator::getCoudTexture( 2048, 1024,
 				red,
@@ -1142,7 +1142,7 @@ void CoreGraph::updateClustersCoords()
  */
 void CoreGraph::update()
 {
-	graphGroup->removeChildren( customNodesPosition,1 );
+    graphGroup->removeChildren( customNodesPosition, 1u );
 
 	synchronize();
 
@@ -1268,7 +1268,7 @@ void CoreGraph::computeGraphRotTransf()
 	graphRotTransf->setMatrix( graphTransfMat );
 }
 
-void CoreGraph::setNodeVisual( int index )
+void CoreGraph::setNodeVisual( unsigned int index )
 {
 	QMap<qlonglong, osg::ref_ptr<Data::Node> >::iterator iNode = in_nodes->begin();
 
@@ -1361,7 +1361,7 @@ void CoreGraph::addTranslateToGraphRotTransf( osg::Vec3d pos )
 
 	double distance = fabs( center.y() - massCenter.z() );
 
-	ViewPortHeight = tan( ( fovy/2 )*3.14159265 / 180.0 )*abs( distance );
+    ViewPortHeight = tan( ( fovy/2 )*3.14159265 / 180.0 )*fabs( distance );
 	ViewportWidth = ViewPortHeight * ar;
 
 	x = x * fabs( ViewportWidth/( 950+y ) );

@@ -34,9 +34,9 @@ OpenCV::CapVideo* OpenCV::CamSelectCore::selectCamera()
 		if ( camlist[i]->isOpened() ) {
 			data.append( "yes" );
 			data.append( "," );
-			data.append( QString::number( static_cast<int>( camlist[i]->getWidth() ) ) );
+            data.append( QString::number( camlist[i]->getWidth() ) );
 			data.append( "," );
-			data.append( QString::number( static_cast<int>( camlist[i]->getHeight() ) ) );
+            data.append( QString::number( camlist[i]->getHeight() ) );
 		}
 		else {
 			data.append( "no" );

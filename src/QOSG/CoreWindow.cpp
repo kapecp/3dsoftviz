@@ -1273,7 +1273,7 @@ void CoreWindow::saveLayoutToDB()
 
 void CoreWindow::sqlQuery()
 {
-	std::cout << lineEdit->text().toStdString() << endl;
+    std::cout << lineEdit->text().toStdString() << std::endl;
 }
 
 void CoreWindow::showMetrics()
@@ -1846,7 +1846,7 @@ void CoreWindow::setRestriction_SphereSurface()
 
 	if ( currentGraph != NULL ) {
 		osg::Vec3 position = viewerWidget->getPickHandler()->getSelectionCenter( true );
-		if ( qFuzzyCompare( static_cast<float>( position.length() ),0.0f ) ) {
+        if ( qFuzzyCompare( position.length(),0.0f ) ) {
 			return;
 		}
 		osg::ref_ptr<Data::Node> centerNode;

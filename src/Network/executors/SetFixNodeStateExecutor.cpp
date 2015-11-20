@@ -4,6 +4,11 @@
 #include "Network/Server.h"
 #include "Data/Node.h"
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wold-style-cast"
+#pragma GCC diagnostic ignored "-Wuseless-cast"
+#pragma GCC diagnostic ignored "-Wsign-conversion"
+
 namespace Network {
 
 void SetFixNodeStateExecutor::execute_client()
@@ -74,3 +79,5 @@ void SetFixNodeStateExecutor::SetFixNodeState( Data::Node* node, bool state )
 }
 
 } // namespace Network
+
+#pragma GCC diagnostic pop

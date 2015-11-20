@@ -102,7 +102,7 @@ void Kinect::KinectWindow::stopZoom()
 
 void Kinect::KinectWindow::setSpeedKinect( int speed )
 {
-	double _speed=( double )( ( double )( speed/10.0 ) );
+    double _speed= speed/10.0;
 	emit sendSpeedKinect( _speed );
 }
 

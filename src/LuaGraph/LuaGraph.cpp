@@ -23,7 +23,13 @@ Diluculum::LuaValueList luaCallback( const Diluculum::LuaValueList& params )
 	Lua::LuaGraph::getInstance()->getObserver()->onUpdate();
 	return Diluculum::LuaValueList();
 }
+
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wconversion"
+
 DILUCULUM_WRAP_FUNCTION( luaCallback )
+
+#pragma GCC diagnostic pop
 
 Lua::LuaGraph::LuaGraph()
 {

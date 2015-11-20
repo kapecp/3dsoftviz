@@ -4,6 +4,10 @@
 #include "Network/Client.h"
 #include "QOSG/CoreWindow.h"
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wold-style-cast"
+#pragma GCC diagnostic ignored "-Wuseless-cast"
+#pragma GCC diagnostic ignored "-Wsign-conversion"
 
 namespace Network {
 
@@ -60,3 +64,5 @@ void UsersExecutor::execute_server()
 }
 
 } // namespace Network
+
+#pragma GCC diagnostic pop
