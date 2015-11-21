@@ -108,7 +108,7 @@ endif ()
 # --------------
 # Build settings - COTIRE module
 # --------------
-#include( cotire )
+include( cotire )
 if(COMMAND cotire )
         if( NOT COTIRE_MAXIMUM_NUMBER_OF_UNITY_INCLUDES )
                 include( ProcessorCount )
@@ -609,7 +609,7 @@ endif()
 include_directories( SYSTEM
 	${DEPENDENCIES_INCLUDE_DIR}
 	${DEPENDENCIES_INCLUDE_DIR}/libnoise
-	${DEPENDENCIES_INCLUDE_DIR}/osgModeling
+#	${DEPENDENCIES_INCLUDE_DIR}/osgModeling
 )
 
 if( LEAP_FOUND )
