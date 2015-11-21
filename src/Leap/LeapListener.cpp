@@ -37,8 +37,7 @@ void Leap::LeapListener::onFrame( const Controller& controller )
 	Leap::DirectionDetector::Direction direction;
 	bool handExtended;
 
-
-	for ( int i=0; i<frame.hands().count(); i++ ) {
+	for ( int i=0; i< hands.count(); ++i ) {
 		if ( hands[i].isRight() ) {
 			direction = Leap::DirectionDetector::getPalmDirection( hands[i] );
 			leapActions.changeViewAngle( direction );
