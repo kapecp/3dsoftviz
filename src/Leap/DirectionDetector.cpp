@@ -20,7 +20,7 @@ Leap::DirectionDetector::Direction Leap::DirectionDetector::getPalmDirection( Ha
 
 	if ( absRoll < Leap::DirectionDetector::ANGLE_LIMIT ) {
 		if ( pitch > Leap::DirectionDetector::ANGLE_LIMIT ) {
-			return Leap::DirectionDetector::Direction::UP
+			return Leap::DirectionDetector::Direction::UP;
 		}
 		if ( -pitch > Leap::DirectionDetector::ANGLE_LIMIT ) {
 			return Leap::DirectionDetector::Direction::DOWN;
