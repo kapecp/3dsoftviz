@@ -108,7 +108,7 @@ endif ()
 # --------------
 # Build settings - COTIRE module
 # --------------
-include( cotire )
+#include( cotire )
 if(COMMAND cotire )
         if( NOT COTIRE_MAXIMUM_NUMBER_OF_UNITY_INCLUDES )
                 include( ProcessorCount )
@@ -367,13 +367,15 @@ if( USE_BUILTIN_DEPENDENCIES )
 
 	# Build osgModeling
 	ExternalProject_Add( dep_osgModeling
-		PREFIX aruco
+		PREFIX osgModeling
 		SOURCE_DIR ${DEP_SOURCE}/osgModeling
 		BINARY_DIR osgModeling
 		CMAKE_ARGS
 			-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
-			-DCMAKE_BUILD_TYPE:STRING=Release	# should be ${CMAKE_BUILD_TYPE}, but on Linux it searches for OSG libs with "d" suffix, which do not exist
-			-DBUILD_PLUGINS=ON
+			#-DCMAKE_BUILD_TYPE:STRING=Release	# should be ${CMAKE_BUILD_TYPE}, but on Linux it searches for OSG libs with "d" suffix, which do not exist
+			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
+			-DBUILD_PLUGINS=OFF
+			#-DOSGMODELING_LIBRARY=TRUE
 			-C ${CMAKE_CURRENT_BINARY_DIR}/config.cmake
 	)
 
@@ -384,8 +386,8 @@ if( USE_BUILTIN_DEPENDENCIES )
 
 	if( WIN32 AND MSVC )
 		set_target_properties( osgModeling PROPERTIES
-			IMPORTED_LOCATION ${DEP_BIN}/bin/${CMAKE_SHARED_LIBRARY_PREFIX}osgModeling${CMAKE_SHARED_LIBRARY_SUFFIX}
-			IMPORTED_IMPLIB ${DEP_BIN}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}osgModeling${CMAKE_STATIC_LIBRARY_SUFFIX} )
+			IMPORTED_LOCATION ${DEP_BIN}/bin/${CMAKE_SHARED_LIBRARY_PREFIX}osgModelingd${CMAKE_SHARED_LIBRARY_SUFFIX}
+			IMPORTED_IMPLIB ${DEP_BIN}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}osgModelingd${CMAKE_STATIC_LIBRARY_SUFFIX} )
 	endif()
 
 	# Building Lua or LuaJIT
