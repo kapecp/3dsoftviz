@@ -92,6 +92,10 @@ void Repository::Git::GitGraphUpdater::nextVersion()
 				}
 				modifyNodesInGraph( lList );
 				break;
+
+            case Repository::Git::GitType::NONE:
+            default:
+                break;
 		}
 	}
 
@@ -158,6 +162,9 @@ void Repository::Git::GitGraphUpdater::previousVersion()
 			case Repository::Git::GitType::MODIFIED :
 				modifyNodesInGraph( lList );
 				break;
+            case Repository::Git::GitType::NONE :
+            default:
+                break;
 		}
 	}
 

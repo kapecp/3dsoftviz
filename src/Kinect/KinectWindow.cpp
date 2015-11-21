@@ -114,7 +114,7 @@ void Kinect::KinectWindow::setLabel( cv::Mat image )
 	}
 	//convert to QImage - for Label
 	cv::cvtColor( image, image, CV_BGR2RGB );
-	QImage qimage( ( uchar* ) image.data, image.cols, image.rows,( int ) image.step, QImage::Format_RGB888 );
+    QImage qimage( image.data, image.cols, image.rows, static_cast<int>(image.step), QImage::Format_RGB888 );
 
 	mWindowLabel->setPixmap( QPixmap::fromImage( qimage ) );
 

@@ -46,7 +46,7 @@ void Kinect::KinectZoom::calcHandDepthFrame( cv::Mat frame,openni::VideoStream* 
 
 	openni::VideoFrameRef depthFrame;
 	m_depth->readFrame( &depthFrame );
-	openni::DepthPixel* depthPixels = ( openni::DepthPixel* )depthFrame.getData();
+    openni::DepthPixel* depthPixels = ( openni::DepthPixel* )depthFrame.getData();
 	cv::Mat depthImage( depthFrame.getHeight(), depthFrame.getWidth(), CV_16UC1, depthPixels );
 
 	cv::Rect rect;

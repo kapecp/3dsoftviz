@@ -89,7 +89,7 @@ int OpenCV::CamSelectCore::countCameras()
 	return max;
 }
 
-void OpenCV::CamSelectCore::setCam( int dev_id, int width, int height )
+void OpenCV::CamSelectCore::setCam( std::vector<OpenCV::CapVideo*>::size_type dev_id, int width, int height )
 {
 	camlist[dev_id]->startCamera( width,height );
 	this->device_id=dev_id;
