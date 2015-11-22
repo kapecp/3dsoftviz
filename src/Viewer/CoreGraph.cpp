@@ -609,7 +609,7 @@ void CoreGraph::setClustersShapeBoundary( int value )
 Vwr::CoreGraph::CoreGraph( Data::Graph* graph, osg::ref_ptr<osg::Camera> camera )
 {
 	this->graph = graph;
-	this->camera = ( ( camera == 0 ) ? ( ( osg::ref_ptr<osg::Camera> ) new osg::Camera ) : ( camera ) );
+	this->camera = ( ( camera == 0 ) ? ( static_cast<osg::ref_ptr<osg::Camera> >(new osg::Camera) ) : ( camera ) );
 
 	this->in_nodes = NULL;
 	this->in_edges = NULL;
