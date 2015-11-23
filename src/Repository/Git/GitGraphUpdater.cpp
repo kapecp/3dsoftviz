@@ -11,6 +11,8 @@
 #include "GitLib/GitType.h"
 #include "GitLib/GitVersion.h"
 
+#include "Importer/GraphOperations.h"
+
 #include <QDebug>
 #include <QMapIterator>
 
@@ -23,8 +25,132 @@ Repository::Git::GitGraphUpdater::GitGraphUpdater( int currentVersion, Repositor
 
 Repository::Git::GitGraphUpdater::~GitGraphUpdater()
 {
+    /*
 	delete this->activeGraph;
 	delete this->evolutionGraph;
+    */
+}
+
+bool Repository::Git::GitGraphUpdater::import() {
+    bool ok = true;
+
+    // inicializiacia default typov
+    this->getActiveGraph()->addType( "edge" );
+    this->getActiveGraph()->addType( "node" );
+
+    // inicializacia a pridanie typov hran a uzlov do aktivneho grafu
+    QMap<QString, QString>* settings = new QMap<QString, QString>;
+    settings->insert( "color.R", "1" );
+    settings->insert( "color.G", "1" );
+    settings->insert( "color.B", "0" );
+    settings->insert( "color.A", "1" );
+    settings->insert( "scale", Util::ApplicationConfig::get()->getValue( "Viewer.Textures.DefaultNodeScale" ) );
+    settings->insert( "textureFile", Util::ApplicationConfig::get()->getValue( "Viewer.Textures.Node" ) );
+    this->getActiveGraph()->addType( "file", settings );
+
+    settings = new QMap<QString, QString>;
+    settings->insert( "color.R", "1" );
+    settings->insert( "color.G", "1" );
+    settings->insert( "color.B", "1" );
+    settings->insert( "color.A", "1" );
+    settings->insert( "scale", Util::ApplicationConfig::get()->getValue( "Viewer.Textures.DefaultNodeScale" ) );
+    settings->insert( "textureFile", Util::ApplicationConfig::get()->getValue( "Viewer.Textures.RemoveNode" ) );
+    this->getActiveGraph()->addType( "removedFile", settings );
+
+    settings = new QMap<QString, QString>;
+    settings->insert( "color.R", "0" );
+    settings->insert( "color.G", "1" );
+    settings->insert( "color.B", "0" );
+    settings->insert( "color.A", "1" );
+    settings->insert( "scale", Util::ApplicationConfig::get()->getValue( "Viewer.Textures.DefaultNodeScale" ) );
+    settings->insert( "textureFile", Util::ApplicationConfig::get()->getValue( "Viewer.Textures.Node" ) );
+    this->getActiveGraph()->addType( "dir", settings );
+
+    settings = new QMap<QString, QString>;
+    settings->insert( "color.R", "1" );
+    settings->insert( "color.G", "0" );
+    settings->insert( "color.B", "0" );
+    settings->insert( "color.A", "1" );
+    settings->insert( "scale", Util::ApplicationConfig::get()->getValue( "Viewer.Textures.DefaultNodeScale" ) );
+    settings->insert( "textureFile", Util::ApplicationConfig::get()->getValue( "Viewer.Textures.Node" ) );
+    this->getActiveGraph()->addType( "root", settings );
+
+    settings = new QMap<QString, QString>;
+    settings->insert( "color.R", "1" );
+    settings->insert( "color.G", "1" );
+    settings->insert( "color.B", "1" );
+    settings->insert( "color.A", "1" );
+    settings->insert( "scale", Util::ApplicationConfig::get()->getValue( "Viewer.Textures.AuthorNodeScale" ) );
+    settings->insert( "textureFile", Util::ApplicationConfig::get()->getValue( "Viewer.Textures.Author" ) );
+    this->getActiveGraph()->addType( "author", settings );
+
+    settings = new QMap<QString, QString>;
+    settings->insert( "color.R", "0" );
+    settings->insert( "color.G", "0" );
+    settings->insert( "color.B", "1" );
+    settings->insert( "color.A", "1" );
+    settings->insert( "scale", Util::ApplicationConfig::get()->getValue( "Viewer.Textures.DefaultNodeScale" ) );
+    settings->insert( "textureFile", Util::ApplicationConfig::get()->getValue( "Viewer.Textures.OrientedEdge" ) );
+    this->getActiveGraph()->addType( "authorEdge", settings );
+
+    settings = new QMap<QString, QString>;
+    settings->insert( "color.R", "1" );
+    settings->insert( "color.G", "1" );
+    settings->insert( "color.B", "1" );
+    settings->insert( "color.A", "1" );
+    settings->insert( "scale", Util::ApplicationConfig::get()->getValue( "Viewer.Textures.DefaultNodeScale" ) );
+    settings->insert( "textureFile", Util::ApplicationConfig::get()->getValue( "Viewer.Textures.Edge" ) );
+    this->getActiveGraph()->addType( "Edge", settings );
+
+    settings = new QMap<QString, QString>;
+    settings->insert( "color.R", "0" );
+    settings->insert( "color.G", "1" );
+    settings->insert( "color.B", "1" );
+    settings->insert( "color.A", "1" );
+    settings->insert( "scale", Util::ApplicationConfig::get()->getValue( "Viewer.Textures.DefaultNodeScale" ) );
+    settings->insert( "textureFile", Util::ApplicationConfig::get()->getValue( "Viewer.Textures.Node" ) );
+    this->getActiveGraph()->addType( "newE", settings );
+
+    // Ziskame pridane subory a meno autora prve verzie
+    QList<Repository::Git::GitFile*> lAddedGitFiles = this->getEvolutionGraph()->getVersion( 0 )->getGitFilesByType( Repository::Git::GitType::ADDED );
+    QString lAuthor = this->getEvolutionGraph()->getVersion( 0 )->getAuthor();
+
+    // Pre kazdu cestu suboru pridam uzly a hrany na zaklade separatora '/'
+    for( int i = 0; i < lAddedGitFiles.size(); i++ ) {
+        QString line = lAddedGitFiles.at( i )->getFilepath();
+
+        // Rozlozim cestu suboru na tokeny podla separatora '/'
+        QStringList list = line.split( "/" );
+        QString pom = "";
+
+        // Pre kazdy token vytvorim jeho celu cestu od korena projektu. Prva polozka v liste bude project, druha project/nieco, atd.
+        for ( int k = 0; k < list.size(); k++ ) {
+            pom += list.at( k );
+            list.replace( k, pom );
+            pom += "/";
+        }
+
+        // Pridam cesty od korena projektu ako uzly a hrany do grafu
+        addNodesToGraph( list );
+        addEdgesToGraph( list );
+
+        // Aktualizujem percento spracovania
+        Manager::GraphManager::getInstance()->setProgressBarValue( int( ( double( i + 1 ) /  double( lAddedGitFiles.size() ) ) * 100 ) );
+    }
+
+    Data::Node* lAuthorNode = nullptr;
+
+    lAuthorNode = this->getActiveGraph()->findNodeByName( lAuthor );
+    // Ak autor neexistuje v grafe, tak ho vytvorim
+    if ( !lAuthorNode ) {
+        lAuthorNode = this->getActiveGraph()->addNode( lAuthor, this->getActiveGraph()->getTypesByName( "author" ).at( 0 ) );
+        lAuthorNode->setLabelText( lAuthorNode->Data::AbsNode::getName() );
+        lAuthorNode->showLabel( true );
+    }
+
+    addAuthorEdgesToGraph( lAuthor, lAddedGitFiles );
+
+    return ok;
 }
 
 void Repository::Git::GitGraphUpdater::nextVersion()

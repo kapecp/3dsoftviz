@@ -3,7 +3,6 @@
 #include "Importer/GraphMLImporter.h"
 #include "Importer/GXLImporter.h"
 #include "Importer/RSFImporter.h"
-#include "Repository/Git/GitGraphImporter.h"
 //-----------------------------------------------------------------------------
 
 namespace Importer {
@@ -20,11 +19,6 @@ bool ImporterFactory::createByFileExtension(
 
 	if ( 0 == fileExtension.compare( "graphml", Qt::CaseInsensitive ) ) {
 		importer.reset( new GraphMLImporter );
-		importerFound = true;
-	}
-
-	if ( 0 == fileExtension.compare( "git", Qt::CaseInsensitive ) ) {
-		importer.reset( new GitGraphImporter );
 		importerFound = true;
 	}
 

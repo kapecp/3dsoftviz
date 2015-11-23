@@ -3736,7 +3736,9 @@ void CoreWindow::runEvolution()
 		// zastav evoluciu
 		b_run_evolution->setIcon( QIcon( "../share/3dsoftviz/img/gui/play.png" ) );
 		isRunning = false;
-		b_next_version->setDisabled( false );
+        if( evolutionSlider->value() != evolutionSlider->maximum() ) {
+            b_next_version->setDisabled( false );
+        }
 		b_previous_version->setDisabled( false );
 		evolutionTimer->stop();
 	}
@@ -3755,7 +3757,7 @@ void CoreWindow::runEvolution()
 void CoreWindow::move()
 {
 	int cursor = evolutionSlider->value();
-	int size = Manager::GraphManager::getInstance()->getActiveEvolutionGraph()->getVersions().size();
+    int size = evolutionSlider->maximum();
 
 	if ( cursor == ( size ) ) {
 		this->runEvolution();

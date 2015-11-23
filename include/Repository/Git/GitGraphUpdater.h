@@ -28,20 +28,27 @@ public:
 	~GitGraphUpdater();
 
 	// public methods
+    /**
+     * void import()
+     * @brief Import data to graph
+     * @return Returns true if import was successfull, otherwise false.
+     */
+    bool import();
+
 	/**
-	 * Data::Graph* previousVersion()
+     * void previousVersion()
 	 * @brief Sets up vizualized graph to the previous version.
 	 */
 	void previousVersion();
 
 	/**
-	 * Data::Graph* nextVersion()
+     * void nextVersion()
 	 * @brief Sets up vizualized graph to the next version.
 	 */
 	void nextVersion();
 
 	/**
-	 * Data::Graph* changeToVersion( int toVersion )
+     * void changeToVersion( int toVersion )
 	 * @brief Sets up vizualized graph to the specific version
 	 * @param toVersion Index of version to be vizualized
 	 */

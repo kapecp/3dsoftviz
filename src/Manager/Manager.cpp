@@ -25,7 +25,6 @@
 #include "GitLib/GitVersion.h"
 #include "GitLib/GitFile.h"
 #include "GitLib/GitEvolutionGraph.h"
-#include "Repository/Git/GitGraphImporter.h"
 #include "Repository/Git/GitGraphUpdater.h"
 
 #include "Layout/LayoutThread.h"
@@ -325,10 +324,10 @@ Data::Graph* Manager::GraphManager::loadGraphFromGit( QString filepath )
 	bool ok = true;
 
 	AppCore::Core::getInstance()->messageWindows->showProgressBar();
-
+/*
 	std::auto_ptr<Importer::ImportInfoHandler> infoHandler( NULL );
 	infoHandler.reset( new ImportInfoHandlerImpl );
-
+*/
 	QString lName = NULL;
 	QString lExtension = NULL;
 
@@ -348,8 +347,8 @@ Data::Graph* Manager::GraphManager::loadGraphFromGit( QString filepath )
 	// Vytvor evolucny graf, napln ho ziskanymi verziami a nastav graf ako aktivny
 	Repository::Git::GitEvolutionGraph* evolutionGraph = new Repository::Git::GitEvolutionGraph( filepath );
 	evolutionGraph->setVersions( lVersions );
-	this->activeEvolutionGraph = evolutionGraph;
-
+    this->activeEvolutionGraph = evolutionGraph;
+/*
 	// Ziskaj importer na zaklade zistenej extension a inicializuj ho
 	std::auto_ptr<Importer::StreamImporter> lImporter( NULL );
 	if ( ok ) {
@@ -370,14 +369,21 @@ Data::Graph* Manager::GraphManager::loadGraphFromGit( QString filepath )
 		ok = lStream->open( QIODevice::ReadOnly );
 		infoHandler->reportError( ok, "Unable to open the input file." );
 	}
-
+*/
+    /*
 	// Vytvorim graf
 	std::auto_ptr<Data::Graph> lNewGraph( NULL );
 	if ( ok ) {
 		lNewGraph.reset( this->createGraph( lName ) );
 		ok = lNewGraph.get() != NULL;
 	}
+    */
+    Data::Graph* lNewGraph = this->createGraph( lName );
 
+    Repository::Git::GitGraphUpdater updater = Repository::Git::GitGraphUpdater( 0, evolutionGraph, lNewGraph );
+    updater.import();
+
+/*
 	// Vytvorim nazov projektu
 	std::auto_ptr<QString> lFilepath( NULL );
 	if ( lGit ) {
@@ -389,17 +395,21 @@ Data::Graph* Manager::GraphManager::loadGraphFromGit( QString filepath )
 	if ( ok ) {
 		context.reset( new Importer::ImporterContext( *lStream ,*lNewGraph, *infoHandler, *lFilepath ) );
 	}
-
+*/
+    /*
 	// Ak sa ziadny krok nepokazil, tak naimportujem uzly do grafu
 	if ( ok ) {
 		ok = lImporter->import( *context );
 	}
+    */
 
+
+/*
 	// Zatvorim stream
 	if ( lStream.get() != NULL ) {
 		lStream->close();
 	}
-
+*/
 	// Vytvorim layout a pridam ho grafu
 	if ( ok ) {
 		Data::GraphLayout* lGraphLayout = lNewGraph->addLayout( "new Layout " );
@@ -412,7 +422,7 @@ Data::Graph* Manager::GraphManager::loadGraphFromGit( QString filepath )
 			this->closeGraph( this->activeGraph );
 		}
 
-		this->activeGraph = lNewGraph.release();
+        this->activeGraph = updater.getActiveGraph();
 	}
 
 	// Restartnem layout
