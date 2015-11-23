@@ -159,23 +159,23 @@ QSet<Data::Node*> Data::Node::getIncidentNodes() const
 	}
 	return nodes;
 	/*
-	    if (ignoreClusters) {
-	        return nodes;
-	    } else {
-	        QSet<Node*> visibleNodes;
-	        QSetIterator<Node*> nodeIt(nodes);
-	        while (nodeIt.hasNext()) {
-	            Node* node = nodeIt.next();
-	            Node* cluster = node->getTopCluster();
-	            if (cluster != NULL && cluster != this) {
-	                visibleNodes.insert(cluster);
-	            } else {
-	                visibleNodes.insert(node);
-	            }
-	        }
-	        return visibleNodes;
-	    }
-	    */
+		if (ignoreClusters) {
+			return nodes;
+		} else {
+			QSet<Node*> visibleNodes;
+			QSetIterator<Node*> nodeIt(nodes);
+			while (nodeIt.hasNext()) {
+				Node* node = nodeIt.next();
+				Node* cluster = node->getTopCluster();
+				if (cluster != NULL && cluster != this) {
+					visibleNodes.insert(cluster);
+				} else {
+					visibleNodes.insert(node);
+				}
+			}
+			return visibleNodes;
+		}
+		*/
 }
 
 void Data::Node::setDefaultColor()

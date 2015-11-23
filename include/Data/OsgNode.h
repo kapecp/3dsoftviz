@@ -1,9 +1,9 @@
 #ifndef OSGNODE_H
 #define OSGNODE_H
 
+#include <osg/AutoTransform>
 #include <osg/Geode>
 #include <osg/Switch>
-#include <osg/AutoTransform>
 #include <Data/Type.h>
 
 #include "Data/DbNode.h"

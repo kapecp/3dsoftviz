@@ -22,6 +22,7 @@
 
 #include <iostream>
 #include <cmath>
+#include <list>
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wswitch-enum"
@@ -858,7 +859,7 @@ void Vwr::CameraManipulator::frame( const osgGA::GUIEventAdapter& ea, osgGA::GUI
 	//and camera movement speed is higher
 	int v = 5; //speed 5 for not too fast and not too slow camera movement
 	osg::Vec3 d = this->newCenter - this->originalCenter;
-	int points = d.length()/v;
+	int points = static_cast<int>( d.length() )/v;
 
 	//if camera moved through all points, stop camera movement
 	if ( pointID > points ) {
@@ -1335,7 +1336,7 @@ void Vwr::CameraManipulator::setRotationHead( float x, float y, float distance, 
 
 		// will we correct projection according face position
 		bool projectionConrrection;
-		projectionConrrection = this->appConf->getValue( "FaceDecetion.EnableProjectionCorrection" ).toInt();
+		projectionConrrection = ( this->appConf->getValue( "FaceDecetion.EnableProjectionCorrection" ).toInt() ? true : false );
 
 		if ( projectionConrrection && caller == 0 ) {
 			updateProjectionAccordingFace( x, y, -distance );

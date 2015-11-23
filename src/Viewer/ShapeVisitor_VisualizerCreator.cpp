@@ -42,7 +42,7 @@ void ShapeVisitor_VisualizerCreator::visit( Layout::Shape_Intersection& shape )
 	//osg::Vec3 normalVector;
 
 	if ( shape.getCompositeType() == Layout::Shape_Composite::CompositeType::CIRCLE ) {
-		float radius;
+		float radius = 0;
 
 		Layout::Shape_Composite::ShapesListType& shapes = shape.getShapes();
 		Layout::Shape_Composite::ShapesListType::iterator it = shapes.begin();
@@ -50,6 +50,9 @@ void ShapeVisitor_VisualizerCreator::visit( Layout::Shape_Intersection& shape )
 		if ( QSharedPointer<Layout::Shape_Sphere> sphere = qSharedPointerCast<Layout::Shape_Sphere>( *it ) ) {
 			radius = sphere->getRadius();
 			center = sphere->getCenter();
+		}
+		else {
+			// TODO: What if the first condition does not apply
 		}
 		++it;
 
@@ -147,13 +150,13 @@ osg::Geometry* ShapeVisitor_VisualizerCreator::createGridGeometry( int size, int
 	geom->setVertexArray( positionsOfLines );
 
 	// position of borders
-	osg::Vec3f dif1( -size/2, size/2, -10 ); // top left
-	osg::Vec3f dif2( -size/2, -size/2, -10 );
-	osg::Vec3f dif3( size/2, size/2, -10 );
+	osg::Vec3f dif1( ( osg::Vec3f::value_type )( -size/2 ), ( osg::Vec3f::value_type )( size/2 ), -10 ); // top left
+	osg::Vec3f dif2( ( osg::Vec3f::value_type )( -size/2 ), ( osg::Vec3f::value_type )( -size/2 ), -10 );
+	osg::Vec3f dif3( ( osg::Vec3f::value_type )( size/2 ), ( osg::Vec3f::value_type )( size/2 ), -10 );
 
 	// increment for creating points of mesh at border
-	osg::Vec3f incrementX( size/noOfLines, 0, 0 );
-	osg::Vec3f incrementY( 0,-size/noOfLines,0 );
+	osg::Vec3f incrementX( ( osg::Vec3f::value_type )( size/noOfLines ), 0, 0 );
+	osg::Vec3f incrementY( 0, ( osg::Vec3f::value_type )( -size/noOfLines ), 0 );
 
 	// computing and saving positions of points at border of mesh
 	for ( int i=0; i<2; i++ ) {

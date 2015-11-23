@@ -3,14 +3,15 @@
 
 #include "QDebug"
 
-Vwr::GraphNavigation::GraphNavigation()
+Vwr::GraphNavigation::GraphNavigation() :
+	isNavEnabled( true ),
+	viewer( AppCore::Core::getInstance()->getCoreWindow()->GetViewerQt() ),
+	camMath( nullptr ),
+	tempSelectedNode( nullptr ),
+	tempSelectedEdge( nullptr ),
+	previousLastSelectedNode( nullptr ),
+	selectionMode( 2 )
 {
-	selectionMode = 2;
-	isNavEnabled = true;
-	tempSelectedNode = NULL;
-	tempSelectedEdge = NULL;
-	previousLastSelectedNode = NULL;
-	viewer = AppCore::Core::getInstance()->getCoreWindow()->GetViewerQt();
 }
 
 Vwr::GraphNavigation::~GraphNavigation()
@@ -22,7 +23,7 @@ Vwr::GraphNavigation::~GraphNavigation()
 void Vwr::GraphNavigation::setColorConectedNodes( Data::Node* selectedNode )
 {
 	QMap<qlonglong, osg::ref_ptr<Data::Edge> >* nodeEdges = selectedNode->getEdges();
-	for ( QMap<qlonglong, osg::ref_ptr<Data::Edge> >::const_iterator iter = nodeEdges->begin(); iter != nodeEdges->end(); iter++ ) {
+	for ( QMap<qlonglong, osg::ref_ptr<Data::Edge> >::const_iterator iter = nodeEdges->begin(); iter != nodeEdges->end(); ++iter ) {
 		// get dest node and possition
 		Data::Node* dstNode = ( *iter )->getOtherNode( selectedNode );
 		// set temp color for node and edge
@@ -34,7 +35,7 @@ void Vwr::GraphNavigation::setColorConectedNodes( Data::Node* selectedNode )
 void Vwr::GraphNavigation::restoreColorConectedNodes( Data::Node* selectedNode )
 {
 	QMap<qlonglong, osg::ref_ptr<Data::Edge> >* nodeEdges = selectedNode->getEdges();
-	for ( QMap<qlonglong, osg::ref_ptr<Data::Edge> >::const_iterator iter = nodeEdges->begin(); iter != nodeEdges->end(); iter++ ) {
+	for ( QMap<qlonglong, osg::ref_ptr<Data::Edge> >::const_iterator iter = nodeEdges->begin(); iter != nodeEdges->end(); ++iter ) {
 		// get dest node and possition
 		Data::Node* dstNode = ( *iter )->getOtherNode( selectedNode );
 		// restore default color for node and edge
@@ -51,10 +52,10 @@ void Vwr::GraphNavigation::setColorNearestNode( Data::Node* selectedNode )
 	Data::Edge* closestEdge = NULL;
 	float minDistance = 0;
 	QMap<qlonglong, osg::ref_ptr<Data::Edge> >* nodeEdges = selectedNode->getEdges();
-	for ( QMap<qlonglong, osg::ref_ptr<Data::Edge> >::const_iterator iter = nodeEdges->begin(); iter != nodeEdges->end(); iter++ ) {
+	for ( QMap<qlonglong, osg::ref_ptr<Data::Edge> >::const_iterator iter = nodeEdges->begin(); iter != nodeEdges->end(); ++iter ) {
 		Data::Node* dstNode = ( *iter )->getOtherNode( selectedNode );
 		osg::Vec3f nodePosition = getNodeScreenCoordinates( dstNode );
-		double distance;
+		double distance = 0;
 		// distance to node
 		if ( selectionMode == 1 ) {
 			distance = getDistanceToNode( mousePosition, nodePosition );
@@ -63,9 +64,12 @@ void Vwr::GraphNavigation::setColorNearestNode( Data::Node* selectedNode )
 		else if ( selectionMode == 2 ) {
 			distance = getDistanceToEdge( mousePosition, selectedPosition ,nodePosition );
 		}
+		else {
+			// TODO: Add extra conditions for "selectionMode"
+		}
 		// first edge or nearer node
 		if ( ( minDistance == 0 ) || ( minDistance > distance ) ) {
-			minDistance = distance;
+			minDistance = static_cast<float>( distance );
 			closestEdge = ( *iter );
 		}
 	}
@@ -144,8 +148,8 @@ void Vwr::GraphNavigation::removeLastSelectedNode()
 osg::Vec3f Vwr::GraphNavigation::getMouseScreenCoordinates( )
 {
 	// get mouse coordinates in viewer
-	float mouseX = viewer->cursor().pos().x() - viewer->window()->pos().x() - 10;
-	float mouseY = viewer->cursor().pos().y() - viewer->window()->pos().y() - 30;
+	float mouseX = static_cast<float>( viewer->cursor().pos().x() ) - static_cast<float>( viewer->window()->pos().x() ) - 10.0f;
+	float mouseY = static_cast<float>( viewer->cursor().pos().y() ) - static_cast<float>( viewer->window()->pos().y() ) - 30.0f;
 
 	// get coordinates inside viewer and invert y
 	float xN = static_cast<float>( mouseX - viewer->pos().x() );

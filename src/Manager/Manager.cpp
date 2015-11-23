@@ -342,11 +342,11 @@ Data::Graph* Manager::GraphManager::loadGraphFromGit( QString filepath )
 	}
 
 	// Vytvor triedu na nacitanie dat o verziach, sparsuj informacie a vytvor verzie podla zadaneho filtera suborov
-    Repository::Git::GitFileLoader lGitFileLoader = Repository::Git::GitFileLoader( filepath, Util::ApplicationConfig::get()->getValue( "Git.ExtensionFilter" ) ) ;
-    QList<Repository::Git::GitVersion*> lVersions = lGitFileLoader.getDataAboutGit();
+	Repository::Git::GitFileLoader lGitFileLoader = Repository::Git::GitFileLoader( filepath, Util::ApplicationConfig::get()->getValue( "Git.ExtensionFilter" ) ) ;
+	QList<Repository::Git::GitVersion*> lVersions = lGitFileLoader.getDataAboutGit();
 
 	// Vytvor evolucny graf, napln ho ziskanymi verziami a nastav graf ako aktivny
-    Repository::Git::GitEvolutionGraph* evolutionGraph = new Repository::Git::GitEvolutionGraph( filepath );
+	Repository::Git::GitEvolutionGraph* evolutionGraph = new Repository::Git::GitEvolutionGraph( filepath );
 	evolutionGraph->setVersions( lVersions );
 	this->activeEvolutionGraph = evolutionGraph;
 
@@ -508,14 +508,14 @@ bool Manager::GraphManager::nextVersion( Layout::LayoutThread* layout )
 	bool ok = true;
 
 	// Ziskam aktivny evolucny graf a graf s uzlami.
-    Repository::Git::GitEvolutionGraph* lEvolutionGraph = Manager::GraphManager::getInstance()->getActiveEvolutionGraph();
+	Repository::Git::GitEvolutionGraph* lEvolutionGraph = Manager::GraphManager::getInstance()->getActiveEvolutionGraph();
 	Data::Graph* lActiveGraph = Manager::GraphManager::getInstance()->getActiveGraph();
 
 	// Ziskam aktualnu verziu grafu
 	int currentVersion =  lActiveGraph->getCurrentVersion();
 
 	// Vytvorim updater
-    Repository::Git::GitGraphUpdater* lUpdater = new Repository::Git::GitGraphUpdater( currentVersion, lEvolutionGraph, lActiveGraph );
+	Repository::Git::GitGraphUpdater* lUpdater = new Repository::Git::GitGraphUpdater( currentVersion, lEvolutionGraph, lActiveGraph );
 
 	// Zastavim layout, updatnem graf, zmenim verziu a spustim layout
 	layout->pause();
@@ -532,14 +532,14 @@ bool Manager::GraphManager::previousVersion( Layout::LayoutThread* layout )
 	bool ok = true;
 
 	// Ziskam aktivny evolucny graf a graf s uzlami.
-    Repository::Git::GitEvolutionGraph* lEvolutionGraph = Manager::GraphManager::getInstance()->getActiveEvolutionGraph();
+	Repository::Git::GitEvolutionGraph* lEvolutionGraph = Manager::GraphManager::getInstance()->getActiveEvolutionGraph();
 	Data::Graph* lActiveGraph = Manager::GraphManager::getInstance()->getActiveGraph();
 
 	// Ziskam aktualnu verziu grafu
 	int currentVersion =  lActiveGraph->getCurrentVersion();
 
 	// Vytvorim updater
-    Repository::Git::GitGraphUpdater* lUpdater = new Repository::Git::GitGraphUpdater( currentVersion, lEvolutionGraph, lActiveGraph );
+	Repository::Git::GitGraphUpdater* lUpdater = new Repository::Git::GitGraphUpdater( currentVersion, lEvolutionGraph, lActiveGraph );
 
 	// Zastavim layout, updatnem graf, zmenim verziu a spustim layout
 	layout->pause();
@@ -555,14 +555,14 @@ bool Manager::GraphManager::changeToVersion( Layout::LayoutThread* layout, int t
 	bool ok = true;
 
 	// Ziskam aktivny evolucny graf a graf s uzlami.
-    Repository::Git::GitEvolutionGraph* lEvolutionGraph = Manager::GraphManager::getInstance()->getActiveEvolutionGraph();
+	Repository::Git::GitEvolutionGraph* lEvolutionGraph = Manager::GraphManager::getInstance()->getActiveEvolutionGraph();
 	Data::Graph* lActiveGraph = Manager::GraphManager::getInstance()->getActiveGraph();
 
 	// Ziskam aktualnu verziu grafu
 	int currentVersion =  lActiveGraph->getCurrentVersion();
 
 	// Vytvorim updater
-    Repository::Git::GitGraphUpdater* lUpdater = new Repository::Git::GitGraphUpdater( currentVersion, lEvolutionGraph, lActiveGraph );
+	Repository::Git::GitGraphUpdater* lUpdater = new Repository::Git::GitGraphUpdater( currentVersion, lEvolutionGraph, lActiveGraph );
 
 	// Zastavim layout, updatnem graf, zmenim verziu a spustim layout
 	layout->pause();
@@ -577,16 +577,16 @@ bool Manager::GraphManager::changeToVersion( Layout::LayoutThread* layout, int t
 void Manager::GraphManager::getDiffInfo( QString path, int version )
 {
 	// Ziskam aktivny evolucny graf
-    Repository::Git::GitEvolutionGraph* lEvolutionGraph = Manager::GraphManager::getInstance()->getActiveEvolutionGraph();
+	Repository::Git::GitEvolutionGraph* lEvolutionGraph = Manager::GraphManager::getInstance()->getActiveEvolutionGraph();
 
 	// Ziskam info konkretnej verzie
-    Repository::Git::GitVersion* lVersion = lEvolutionGraph->getVersion( version );
-    Repository::Git::GitFile* gitFile = nullptr;
+	Repository::Git::GitVersion* lVersion = lEvolutionGraph->getVersion( version );
+	Repository::Git::GitFile* gitFile = nullptr;
 
 	// Najdem subor, ktory bol zvoleny v grafe vo verzii, kde bol posledne modifikovany
 	bool isFound = false;
 	for ( int i = version; i >= 0; i-- ) {
-        foreach ( Repository::Git::GitFile* file, lEvolutionGraph->getVersion( i )->getChangedFiles() ) {
+		foreach ( Repository::Git::GitFile* file, lEvolutionGraph->getVersion( i )->getChangedFiles() ) {
 			if ( file->getFilepath() == path ) {
 				gitFile = file;
 				isFound = true;
@@ -599,7 +599,7 @@ void Manager::GraphManager::getDiffInfo( QString path, int version )
 	}
 
 	// Vytvorim triedu na nacitanie diff pre subor
-    Repository::Git::GitFileLoader loader = Repository::Git::GitFileLoader( lEvolutionGraph->getFilePath(), Util::ApplicationConfig::get()->getValue( "Git.ExtensionFilter" ) );
+	Repository::Git::GitFileLoader loader = Repository::Git::GitFileLoader( lEvolutionGraph->getFilePath(), Util::ApplicationConfig::get()->getValue( "Git.ExtensionFilter" ) );
 
 	// Ak sme nasli subor, tak nacitaj do suboru diff a vypis obsah do konzoly
 	if ( gitFile ) {

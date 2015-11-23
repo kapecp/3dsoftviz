@@ -1,12 +1,14 @@
 #include "Aruco/arucothread.h"
 #include "Aruco/arucocore.h"
 #include "Util/ApplicationConfig.h"
+
 #include <QDebug>
 #include <QFileInfo>
 
 #include <opencv2/imgproc/imgproc.hpp>
 
 #include "OpenCV/CapVideo.h"
+#include <cv.h>
 
 namespace ArucoModul {
 
@@ -23,6 +25,8 @@ ArucoThread::ArucoThread( QObject* parent )
 	mSendBackgrImgEnabled = false;
 	mMultiMarkerEnabled = false;
 	mRatioCamCoef	= 0;
+	mCamDistRatio = 0;
+	mHalfRatioCoef = 0;
 	mGrM			= 0;
 	mMoM			= 1;
 	boolQueue = new Util::SizedQueue( 5, 0.0 );
@@ -128,7 +132,7 @@ void ArucoThread::run()
 
 			aCore.detect( frame.clone() );
 
-			bool vypis = true;
+//			bool vypis = true;
 			if ( mMultiMarkerEnabled ) {
 				//TODO funkcionalita ku detekcii viacerych markerov
 				//if(vypis && aCore.detect(frame.clone()) != 0)

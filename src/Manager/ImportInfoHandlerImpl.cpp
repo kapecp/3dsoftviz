@@ -33,7 +33,7 @@ void ImportInfoHandlerImpl::setProgress(
 	const unsigned int value
 )
 {
-	AppCore::Core::getInstance()->messageWindows->setProgressBarValue( value );
+	AppCore::Core::getInstance()->messageWindows->setProgressBarValue( static_cast<int>( value ) );
 }
 
 } // namespace

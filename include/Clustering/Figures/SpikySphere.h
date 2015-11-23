@@ -3,7 +3,9 @@
 
 #include "Clustering/Figures/Sphere.h"
 
-class SpikySphere : public ::Sphere
+namespace Clustering {
+
+class SpikySphere : public Clustering::Sphere
 {
 
 public:
@@ -15,5 +17,7 @@ private:
 	void addSpikes();
 
 };
+
+}
 
 #endif  /*SPIKYSPHERE_H*/

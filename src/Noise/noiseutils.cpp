@@ -127,6 +127,7 @@ using namespace noise::utils;
 
 GradientColor::GradientColor()
 {
+	m_gradientPointCount = 0;
 	m_pGradientPoints = NULL;
 }
 
@@ -987,7 +988,11 @@ RendererImage::RendererImage():
 	m_pBackgroundImage( NULL ),
 	m_pDestImage( NULL ),
 	m_pSourceNoiseMap( NULL ),
-	m_recalcLightValues( true )
+	m_recalcLightValues( true ),
+	m_cosAzimuth( 0 ),
+	m_cosElev( 0 ),
+	m_sinAzimuth( 0 ),
+	m_sinElev( 0 )
 {
 	BuildGrayscaleGradient();
 };

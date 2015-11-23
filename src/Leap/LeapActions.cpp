@@ -16,19 +16,19 @@ void Leap::LeapActions::moveCamera( Leap::Gesture gesture )
 	// swipe gesture
 	SwipeGesture swipe = gesture;
 	Vector direction = swipe.direction();
-	float gestureDuration = gesture.duration()/1000;
+	float gestureDuration = static_cast<float>( gesture.duration() )/1000.0f;
 
 	// compare direction[0] and direction[1] to find out what kind of movement are we working with
 	if ( abs( direction[0] ) > abs( direction[1] ) ) { // horizontal movement
 		if ( direction[0] > 0 ) {
 			cmrManipulator->enableCameraMovement( Vwr::CameraManipulator::Movement::RIGHT );
-			Sleep( gestureDuration );
+			Sleep( ( DWORD )gestureDuration );
 			cmrManipulator->disableCameraMovement();
 			qDebug() << "SwipeGesture - right";
 		}
 		else if ( direction[0] < 0 ) {
 			cmrManipulator->enableCameraMovement( Vwr::CameraManipulator::Movement::LEFT );
-			Sleep( gestureDuration );
+			Sleep( ( DWORD )gestureDuration );
 			cmrManipulator->disableCameraMovement();
 			qDebug() << "SwipeGesture - left";
 		}
@@ -36,13 +36,13 @@ void Leap::LeapActions::moveCamera( Leap::Gesture gesture )
 	else if ( abs( direction[0] ) < abs( direction[1] ) ) { // vertical movement
 		if ( direction[1] > 0 ) {
 			cmrManipulator->enableCameraMovement( Vwr::CameraManipulator::DOWN );
-			Sleep( gestureDuration );
+			Sleep( ( DWORD )gestureDuration );
 			cmrManipulator->disableCameraMovement();
 			qDebug() << "SwipeGesture - up";
 		}
 		else if ( direction[1] < 0 ) {
 			cmrManipulator->enableCameraMovement( Vwr::CameraManipulator::UP );
-			Sleep( gestureDuration );
+			Sleep( ( DWORD )gestureDuration );
 			cmrManipulator->disableCameraMovement();
 			qDebug() << "SwipeGesture - down";
 		}
@@ -50,13 +50,13 @@ void Leap::LeapActions::moveCamera( Leap::Gesture gesture )
 	else {
 		if ( direction[2] > 0 ) {
 			cmrManipulator->enableCameraMovement( Vwr::CameraManipulator::BACKWARD );
-			Sleep( gestureDuration );
+			Sleep( ( DWORD )gestureDuration );
 			cmrManipulator->disableCameraMovement();
 			qDebug() << "SwipeGesture - up";
 		}
 		else if ( direction[2] < 0 ) {
 			cmrManipulator->enableCameraMovement( Vwr::CameraManipulator::FORWARD );
-			Sleep( gestureDuration );
+			Sleep( ( DWORD )gestureDuration );
 			cmrManipulator->disableCameraMovement();
 			qDebug() << "SwipeGesture - down";
 
@@ -118,18 +118,18 @@ void Leap::LeapActions::rotateGraph( Leap::Gesture gesture )
 
 	if ( abs( direction[0] ) > abs( direction[1] ) ) { // horizontal movement
 		if ( direction[0] > 0 ) {
-			cmrManipulator->rotateCamera( 0, 0, 1, 0, 0.05 );
+			cmrManipulator->rotateCamera( 0, 0, 1, 0, 0.05f );
 		}
 		else if ( direction[0] < 0 ) {
-			cmrManipulator->rotateCamera( 0, 0, 1, 0, -0.05 );
+			cmrManipulator->rotateCamera( 0, 0, 1, 0, -0.05f );
 		}
 	}
 	else { // vertical movement
 		if ( direction[1] > 0 ) {
-			cmrManipulator->rotateCamera( 0, 0 ,1, 0.05, 0 );
+			cmrManipulator->rotateCamera( 0, 0 ,1, 0.05f, 0 );
 		}
 		else if ( direction[1] < 0 ) {
-			cmrManipulator->rotateCamera( 0, 0, 1, -0.05, 0 );
+			cmrManipulator->rotateCamera( 0, 0, 1, -0.05f, 0 );
 		}
 	}
 }
@@ -139,16 +139,16 @@ void Leap::LeapActions::changeViewAngle( Leap::DirectionDetector::Direction dire
 
 	switch ( direction ) {
 		case Leap::DirectionDetector::Direction::LEFT :
-			cmrManipulator->rotateCamera( 0, 0, 1, 0, -0.01 );
+			cmrManipulator->rotateCamera( 0, 0, 1, 0, -0.01f );
 			break;
 		case Leap::DirectionDetector::Direction::RIGHT :
-			cmrManipulator->rotateCamera( 0, 0, 1, 0, 0.01 );
+			cmrManipulator->rotateCamera( 0, 0, 1, 0, 0.01f );
 			break;
 		case Leap::DirectionDetector::Direction::UP :
-			cmrManipulator->rotateCamera( 0, 0, 1, -0.01, 0 );
+			cmrManipulator->rotateCamera( 0, 0, 1, -0.01f, 0 );
 			break;
 		case Leap::DirectionDetector::Direction::DOWN :
-			cmrManipulator->rotateCamera( 0, 0, 1, 0.01, 0 );
+			cmrManipulator->rotateCamera( 0, 0, 1, 0.01f, 0 );
 			break;
 		case Leap::DirectionDetector::Direction::STEADY :
 			// stuff

@@ -7,6 +7,8 @@
 
 #include <vector>
 
+namespace Clustering {
+
 class Cube
 {
 
@@ -65,5 +67,7 @@ protected:
 	void computeGeode();
 
 };
+
+}
 
 #endif  /*CUBE_H*/

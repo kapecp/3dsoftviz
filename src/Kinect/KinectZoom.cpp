@@ -1,5 +1,7 @@
 #include "Kinect/KinectZoom.h"
 
+#include <vector>
+
 Kinect::KinectZoom::KinectZoom()
 {
 	previousZ = 0.0f;
@@ -19,7 +21,7 @@ void Kinect::KinectZoom::zoom()
 {
 	delta = ( previousZ-currentZ );
 	if ( abs( delta ) > zoomThreshold ) {
-		viewer->getEventQueue()->mouseScroll2D( 0,delta*5.0,0 );
+		viewer->getEventQueue()->mouseScroll2D( 0, delta*5.0f, 0 );
 	}
 }
 
@@ -33,8 +35,8 @@ void Kinect::KinectZoom::calcHandDepthFrame( cv::Mat frame,openni::VideoStream* 
 	float x2;
 	float y2;
 	float z1;
-	coordinateConverter.convertWorldToDepth( *m_depth, x-150.0,y-150.0,z, &x1, &y1, &z1 );
-	coordinateConverter.convertWorldToDepth( *m_depth, x+200.0,y+200.0,z, &x2, &y2, &z1 );
+	coordinateConverter.convertWorldToDepth( *m_depth, x-150.0f, y-150.0f, z, &x1, &y1, &z1 );
+	coordinateConverter.convertWorldToDepth( *m_depth, x+200.0f, y+200.0f, z, &x2, &y2, &z1 );
 
 	// store current and previous depth for main hand only
 	if ( mainHand ) {
@@ -112,17 +114,17 @@ int Kinect::KinectZoom::DetectContour( )
 		cv::vector<cv::vector<cv::Point> > hull_points( contours.size() );
 		cv::vector<cv::vector<cv::Point> > defect_points( contours.size() );
 
-		for ( int i = 0; i < contours.size(); i++ ) {
+		for ( size_t i = 0; i < contours.size(); i++ ) {
 			if ( contourArea( contours[i] )>500 ) {
 				convexHull( contours[i], hull[i], false );
 				convexityDefects( contours[i],hull[i], convDef[i] );
 
-				for ( int k=0; k<hull[i].size(); k++ ) {
+				for ( size_t k=0; k<hull[i].size(); k++ ) {
 					int ind=hull[i][k];
 					hull_points[i].push_back( contours[i][ind] );
 				}
 
-				for ( int k=0; k<convDef[i].size(); k++ ) {
+				for ( size_t k=0; k<convDef[i].size(); k++ ) {
 					if ( convDef[i][k][3]>20*256 ) { // filter defects by depth
 						numFingers++;
 						int ind_0=convDef[i][k][0];

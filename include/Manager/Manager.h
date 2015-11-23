@@ -144,11 +144,11 @@ public:
 	}
 
 	/**
-     * Repository::Git::GitEvolutionGraph* getActiveEvolutionGraph()
+	 * Repository::Git::GitEvolutionGraph* getActiveEvolutionGraph()
 	 * @brief Returns active evolution graph
 	 * @return active evolution graph
 	 */
-    Repository::Git::GitEvolutionGraph* getActiveEvolutionGraph()
+	Repository::Git::GitEvolutionGraph* getActiveEvolutionGraph()
 	{
 		return this->activeEvolutionGraph;
 	}
@@ -262,10 +262,10 @@ private:
 	bool noDatabaseFind;
 
 	/**
-     * Repository::Git::GitEvolutionGraph* activeEvolutionGraph
+	 * Repository::Git::GitEvolutionGraph* activeEvolutionGraph
 	 * @brief Active evolution graph
 	 */
-    Repository::Git::GitEvolutionGraph* activeEvolutionGraph;
+	Repository::Git::GitEvolutionGraph* activeEvolutionGraph;
 }; // class
 } // namespace
 

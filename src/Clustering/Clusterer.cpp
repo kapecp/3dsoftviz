@@ -18,7 +18,7 @@ namespace Clustering {
 
 /*
 Clusterer::Clusterer() {
-    graph = NULL;
+	graph = NULL;
 }
 */
 void Clusterer::cluster( Data::Graph* graph, QProgressDialog* clusteringProgressBar )
@@ -247,14 +247,14 @@ void Clusterer::clusterAdjacency( QMap<qlonglong, osg::ref_ptr<Data::Node> >* so
 	QMap<qlonglong, Data::Type*>* types = manager->getActiveGraph()->getTypes();
 	Data::Type* type = types->value( 1 );
 
-	int n = someNodes->size();
+	std::size_t n = static_cast<std::size_t>( someNodes->size() );
 	std::vector<bool> p( 7 );
-	std::vector<std::vector<bool> > matrix( n, std::vector<bool>( n, false ) );
-	std::vector<std::vector<unsigned char> > w( n, std::vector<unsigned char>( n, 0 ) );
+	std::vector<std::vector<bool> > matrix( static_cast<std::size_t>( n ), std::vector<bool>( static_cast<std::size_t>( n ), false ) );
+	std::vector<std::vector<unsigned char> > w( static_cast<std::size_t>( n ), std::vector<unsigned char>( static_cast<std::size_t>( n ), 0 ) );
 
 	unsigned char K = 100;
 
-	int i = 0, j = 0;
+	std::size_t i = 0, j = 0;
 	QMap<qlonglong, osg::ref_ptr<Data::Node> >::iterator iterator;
 	QMap<qlonglong, osg::ref_ptr<Data::Node> >::iterator iterator2;
 
@@ -288,14 +288,14 @@ void Clusterer::clusterAdjacency( QMap<qlonglong, osg::ref_ptr<Data::Node> >* so
 		}
 		osg::ref_ptr<Data::Node> nodeU = iterator.value();
 		w[i][i] = 0;
-		int degU = nodeU->getIncidentNodes().size();
+		std::size_t degU = static_cast<std::size_t>( nodeU->getIncidentNodes().size() );
 		j = i+1;
 		for ( iterator2 = iterator + 1; iterator2 != someNodes->end(); ++iterator2, j++ ) {
 			osg::ref_ptr<Data::Node> nodeV = iterator2.value();
-			int degV = nodeV->getIncidentNodes().size();
+			std::size_t degV = static_cast<std::size_t>( nodeV->getIncidentNodes().size() );
 
-			int sum = 0;
-			for ( int k = 0; k < n; k++ ) {
+			std::size_t sum = 0;
+			for ( std::size_t k = 0; k < n; k++ ) {
 				sum += matrix[i][k] && matrix[j][k] ? 1 : 0;
 			}
 			// apply Pearson
@@ -344,10 +344,10 @@ void Clusterer::clusterAdjacency( QMap<qlonglong, osg::ref_ptr<Data::Node> >* so
 				clustered.insert( v->getId() );
 
 				int link = -1;
-				for ( int k = 0; k < n; k++ ) {
+				for ( std::size_t k = 0; k < n; k++ ) {
 					if ( matrix[i][k] && matrix[j][k] ) {
-						if ( link < 0 && link != i && link != j ) {
-							link = k;
+						if ( link < 0 && link != static_cast<int>( i ) && link != static_cast<int>( j ) ) {
+							link = static_cast<int>( k );
 						}
 						else if ( link >= 0 ) {
 							link = -1;

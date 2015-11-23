@@ -403,7 +403,7 @@ private:
 		*  \brief Select all neighbors edges and theirs nodes of nodes collection in parameter
 		*  \param     nodes   nodes for neighbors selection
 		*/
-	void selectAllNeighbors( QLinkedList<osg::ref_ptr<Data::Node>> nodes );
+	void selectAllNeighbors( QLinkedList<osg::ref_ptr<Data::Node > > nodes );
 
 	/**
 		*  \fn private  dragNode(osgViewer::Viewer * viewer)

@@ -21,7 +21,7 @@ public:
 	    */
 	GitFile( void );
 
-    ~GitFile( void );
+	~GitFile( void );
 
 	/**
 	    * \fn GitFile
@@ -30,7 +30,7 @@ public:
 	    * \param filepath - path to Git file
 	    * \param type - type of Git file
 	 */
-    GitFile( QString filename, QString filepath, Repository::Git::GitType type );
+	GitFile( QString filename, QString filepath, Repository::Git::GitType type );
 
 	/**
 	    * \fn getFilename
@@ -54,7 +54,7 @@ public:
 	    * \fn getType
 	    * \brief Returns type of Git file
 	 */
-    Repository::Git::GitType getType()
+	Repository::Git::GitType getType()
 	{
 		return type;
 	}
@@ -69,7 +69,7 @@ public:
 	    * \fn getGitFileDiffBlocks
 	    * \brief Returns list of diff blocks in the Git file
 	 */
-    QList<Repository::Git::GitFileDiffBlock*> getGitFileDiffBlocks()
+	QList<Repository::Git::GitFileDiffBlock*> getGitFileDiffBlocks()
 	{
 		return gitFileDiffBlocks;
 	}
@@ -79,7 +79,7 @@ public:
 	    * \brief Append diff block to the list
 	    * \param block - Block to be added
 	 */
-    void addGitFileDiffBlock( Repository::Git::GitFileDiffBlock* block )
+	void addGitFileDiffBlock( Repository::Git::GitFileDiffBlock* block )
 	{
 		this->gitFileDiffBlocks.append( block );
 	}
@@ -89,7 +89,7 @@ public:
 	    * \brief Set diff blocks in the Git file
 	    * \param gitFileDiffBlocks Diff blocks from Git file to be set
 	 */
-    void setGitFileDiffBlocks( QList<Repository::Git::GitFileDiffBlock*> gitFileDiffBlocks )
+	void setGitFileDiffBlocks( QList<Repository::Git::GitFileDiffBlock*> gitFileDiffBlocks )
 	{
 		this->gitFileDiffBlocks = gitFileDiffBlocks;
 	}
@@ -117,13 +117,13 @@ private:
 	    * GitFileType type
 	    * \brief Type of the Git file in version. Value can be ADDED for newly added file, REMOVED for removed file and MODIFIED for modified file
 	    */
-    Repository::Git::GitType type;
+	Repository::Git::GitType type;
 
 	/**
 	    * QList<GitFileDiffBlock> gitFileDiffBlocks
 	    * \brief List of diff blocks from the Git file
 	    */
-    QList<Repository::Git::GitFileDiffBlock*> gitFileDiffBlocks;
+	QList<Repository::Git::GitFileDiffBlock*> gitFileDiffBlocks;
 }; // class
 } // namespace
 }

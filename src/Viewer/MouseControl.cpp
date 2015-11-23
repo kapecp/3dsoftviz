@@ -3,31 +3,32 @@
 
 #include  "QDebug"
 
-Vwr::MouseControl::MouseControl()
+Vwr::MouseControl::MouseControl() :
+	// Primary speed of movement
+	mSpeedMoving( 1.0 ),
+	clickX( 0 ),
+	clickY( 0 ),
+	mIsClicAruco( false ),
+	mouseHistory( new QList< osg::Vec2 > )
+
 {
 	window = AppCore::Core::getInstance()->getCoreWindow();
 	viewer = AppCore::Core::getInstance()->getCoreWindow()->GetViewerQt();
-	if ( viewer!=NULL ) {
-		mWindowStartX=viewer->pos().x();
-		mWindowStartY=viewer->pos().y();
-		mWindowWidth=viewer->width();
-		mWindowHeight=viewer->height();
-		mWindowEndX=mWindowStartX+mWindowWidth;
-		mWindowEndY=mWindowStartX+mWindowHeight;
+	if ( viewer ) {
+		mWindowStartX = viewer->pos().x();
+		mWindowStartY = viewer->pos().y();
+		mWindowWidth = viewer->width();
+		mWindowHeight = viewer->height();
+		mWindowEndX = mWindowStartX+mWindowWidth;
+		mWindowEndY = mWindowStartX+mWindowHeight;
 
-		//primary speed of movement
-		mSpeedMoving=1.0;
 		//from Kinect World coordinates are 640x480
 		mRatioX = mWindowEndX/640.0;
-		mRatioY=mWindowEndY/480.0;
-
+		mRatioY = mWindowEndY/480.0;
 	}
 	else {
 		qDebug() << "[MouseControl] viewer is not open";
 	}
-
-	mIsClicAruco = false;
-	mouseHistory = new QList< osg::Vec2 >;
 }
 
 Vwr::MouseControl::~MouseControl()
@@ -128,9 +129,9 @@ void Vwr::MouseControl::moveCursorWorldCoordinates( double positionX, double pos
 	int newPositionX= static_cast<int>( positionX*mRatioX*mSpeedMoving );
 	int newPositionY= static_cast<int>( positionY*mRatioY*mSpeedMoving );
 	// get avg position from history buffer // smoother moving
-	osg::Vec2 newPos = getMouseAvgPosition( osg::Vec2( newPositionX, newPositionY ), 10 );
+	osg::Vec2 newPos = getMouseAvgPosition( osg::Vec2( ( osg::Vec2f::value_type )newPositionX, ( osg::Vec2f::value_type )newPositionY ), 10 );
 
-	viewer->cursor().setPos( newPos[0],newPos[1] );
+	viewer->cursor().setPos( static_cast<int>( newPos[0] ), static_cast<int>( newPos[1] ) );
 	if ( isClick ) {
 		this->corectionMousePosition( viewer->cursor().pos().x(),viewer->cursor().pos().y() );
 		this->moveMouse( clickX,clickY );
@@ -155,12 +156,12 @@ osg::Vec2 Vwr::MouseControl::getMouseAvgPosition( osg::Vec2 lastPos, int max )
 
 	int avgX = 0;
 	int avgY = 0;
-	for ( QList<osg::Vec2>::const_iterator iter = mouseHistory->begin(); iter != mouseHistory->end(); iter++ ) {
-		avgX += ( *iter )[0];
-		avgY += ( *iter )[1];
+	for ( QList<osg::Vec2>::const_iterator iter = mouseHistory->begin(); iter != mouseHistory->end(); ++iter ) {
+		avgX += static_cast<int>( ( *iter )[0] );
+		avgY += static_cast<int>( ( *iter )[1] );
 	}
 	avgX /= mouseHistory->size();
 	avgY /= mouseHistory->size();
 
-	return osg::Vec2( avgX, avgY );
+	return osg::Vec2( ( osg::Vec2f::value_type )avgX, ( osg::Vec2f::value_type )avgY );
 }

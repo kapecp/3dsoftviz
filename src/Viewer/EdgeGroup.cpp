@@ -55,7 +55,7 @@ void EdgeGroup::updateEdgeCoords()
 		osg::Vec3 dstNodePosition = i.value()->getDstNode()->getCurrentPosition();
 
 		i.value()->updateCoordinates( srcNodePosition, dstNodePosition );
-		i++;
+		++i;
 	}
 }
 
@@ -74,7 +74,7 @@ void EdgeGroup::synchronizeEdges()
 			edgeGroup->addChild( ie.value() );
 		}
 
-		ie++;
+		++ie;
 	}
 }
 

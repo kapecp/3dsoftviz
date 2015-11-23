@@ -179,7 +179,7 @@ void DataHelper::generateCylinder( QMap<qlonglong, osg::ref_ptr<Data::Node> >* n
 			//std::cout << "\n";
 
 			// spravime hranu medzi dvoma uzlami podstavy
-			osg::ref_ptr<Data::Edge> edge = new Data::Edge( id, QString::fromStdString( out.str() ), NULL, nodes->value( j*pocetUzlovNaPodstave + i + startN ), nodes->value( to ), types->value( 2 ), getRandomNumber( 0,1 ), 2 );
+			osg::ref_ptr<Data::Edge> edge = new Data::Edge( id, QString::fromStdString( out.str() ), NULL, nodes->value( j*pocetUzlovNaPodstave + i + startN ), nodes->value( to ), types->value( 2 ), ( getRandomNumber( 0,1 ) ? true : false ), 2 );
 			edge->linkNodes( edges );
 			id++;
 
@@ -540,9 +540,9 @@ osg::Vec3f DataHelper::getMassCenter( osg::ref_ptr<osg::Vec3Array> coordinates )
 
 
 
-	long unsigned int num = coordinates->size();
+	std::size_t num = coordinates->size();
 
-	for ( long unsigned int i = 0; i < num; i++ ) {
+	for ( std::size_t i = 0; i < num; i++ ) {
 		x += coordinates->at( i ).x();
 		y += coordinates->at( i ).y();
 		z += coordinates->at( i ).z();

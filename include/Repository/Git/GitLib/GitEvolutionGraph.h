@@ -20,7 +20,7 @@ public:
 	 */
 	GitEvolutionGraph();
 
-    ~GitEvolutionGraph();
+	~GitEvolutionGraph();
 
 	/**
 	 * Explicit default constructor
@@ -30,21 +30,21 @@ public:
 	GitEvolutionGraph( QString filePath );
 
 	/**
-     * void setVersions( QList<Repository::Git::GitVersion*> versions )
+	 * void setVersions( QList<Repository::Git::GitVersion*> versions )
 	 * @brief Setter of list of versions
 	 * @param versions list of versions
 	 */
-    void setVersions( QList<Repository::Git::GitVersion*> versions )
+	void setVersions( QList<Repository::Git::GitVersion*> versions )
 	{
 		this->versions = versions;
 	}
 
 	/**
-     * QList<Repository::Git::GitVersion*> getVersions()
+	 * QList<Repository::Git::GitVersion*> getVersions()
 	 * @brief Getter of list of versions
 	 * @return list of versions
 	 */
-    QList<Repository::Git::GitVersion*> getVersions()
+	QList<Repository::Git::GitVersion*> getVersions()
 	{
 		return this->versions;
 	}
@@ -70,12 +70,12 @@ public:
 	}
 
 	/**
-     * Repository::Git::GitVersion* getVersion( int position )
+	 * Repository::Git::GitVersion* getVersion( int position )
 	 * @brief Getter of specific version in list of versions
 	 * @param position Index of version in list of versions
 	 * @return Specific versions from list
 	 */
-    Repository::Git::GitVersion* getVersion( int position )
+	Repository::Git::GitVersion* getVersion( int position )
 	{
 		return this->versions.at( position );
 	}
@@ -133,10 +133,10 @@ public:
 
 private:
 	/**
-     * QList<Repository::Git::GitVersion*> versions
+	 * QList<Repository::Git::GitVersion*> versions
 	 * @brief List of versions
 	 */
-    QList<Repository::Git::GitVersion*> versions;
+	QList<Repository::Git::GitVersion*> versions;
 
 	/**
 	 * QMap<QString, int> removedFiles

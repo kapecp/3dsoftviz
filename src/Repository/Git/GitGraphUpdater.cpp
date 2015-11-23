@@ -16,20 +16,21 @@
 
 
 Repository::Git::GitGraphUpdater::GitGraphUpdater( int currentVersion, Repository::Git::GitEvolutionGraph* evolutionGraph, Data::Graph* activeGraph )
-    : moreVersionChanged(false), currentVersion( currentVersion ), evolutionGraph( evolutionGraph ), activeGraph( activeGraph )
+	: moreVersionChanged( false ), currentVersion( currentVersion ), evolutionGraph( evolutionGraph ), activeGraph( activeGraph )
 {
 
 }
 
-Repository::Git::GitGraphUpdater::~GitGraphUpdater() {
-    delete this->activeGraph;
-    delete this->evolutionGraph;
+Repository::Git::GitGraphUpdater::~GitGraphUpdater()
+{
+	delete this->activeGraph;
+	delete this->evolutionGraph;
 }
 
 void Repository::Git::GitGraphUpdater::nextVersion()
 {
 	// zistime zmenene subory v dalsej verzii, s ktorymi budeme dalej pracovat
-    QList<Repository::Git::GitFile*> gitFiles = this->getEvolutionGraph()->getVersion( this->getCurrentVersion() + 1 )->getChangedFiles();
+	QList<Repository::Git::GitFile*> gitFiles = this->getEvolutionGraph()->getVersion( this->getCurrentVersion() + 1 )->getChangedFiles();
 	Data::Node* lAuthorNode = nullptr;
 	QString lAuthorName = nullptr;
 
@@ -54,7 +55,7 @@ void Repository::Git::GitGraphUpdater::nextVersion()
 	bool ok = true;
 
 	// Pre kazdy zmeneny subor vo verzii, zistim jeho ciastocne cesty a podla typu suboru, vykonam akciu nad tymito cestami
-    foreach ( Repository::Git::GitFile* gitFile, gitFiles ) {
+	foreach ( Repository::Git::GitFile* gitFile, gitFiles ) {
 		QStringList lList = gitFile->getFilepath().split( "/" );
 		QString lPom = "";
 		bool debug = false;
@@ -69,7 +70,7 @@ void Repository::Git::GitGraphUpdater::nextVersion()
 		}
 		switch ( gitFile->getType() ) {
 			// Ak bol pridany v dalsej verzii, tak ho pridame do grafu
-            case Repository::Git::GitType::ADDED :
+			case Repository::Git::GitType::ADDED :
 				if ( debug ) {
 					qDebug() << "Added version" << getCurrentVersion() << getEvolutionGraph()->getVersion( getCurrentVersion() + 1 )->getCommitId();
 				}
@@ -77,7 +78,7 @@ void Repository::Git::GitGraphUpdater::nextVersion()
 				addEdgesToGraph( lList );
 				break;
 			// Ak bol vymazany v dalsej verzii, tak ho vymazeme z grafu
-            case Repository::Git::GitType::REMOVED :
+			case Repository::Git::GitType::REMOVED :
 				if ( debug ) {
 					qDebug() << "Removed version" << getCurrentVersion() << getEvolutionGraph()->getVersion( getCurrentVersion() + 1 )->getCommitId();
 				}
@@ -85,7 +86,7 @@ void Repository::Git::GitGraphUpdater::nextVersion()
 				removeEdgesFromGraph( lList );
 				removeNodesFromGraph( lList );
 				break;
-            case Repository::Git::GitType::MODIFIED :
+			case Repository::Git::GitType::MODIFIED :
 				if ( debug ) {
 					qDebug() << "Modified version" << getCurrentVersion() << getEvolutionGraph()->getVersion( getCurrentVersion() + 1 )->getCommitId();
 				}
@@ -107,7 +108,7 @@ void Repository::Git::GitGraphUpdater::nextVersion()
 void Repository::Git::GitGraphUpdater::previousVersion()
 {
 	// zistime si zmenene subory v aktualnej verzii, s ktorymi budeme dalej pracovat
-    QList<Repository::Git::GitFile*> gitFiles = this->getEvolutionGraph()->getVersion( this->getCurrentVersion() )->getChangedFiles();
+	QList<Repository::Git::GitFile*> gitFiles = this->getEvolutionGraph()->getVersion( this->getCurrentVersion() )->getChangedFiles();
 	Data::Node* lAuthorNode = nullptr;
 	QString lAuthorName = nullptr;
 
@@ -132,7 +133,7 @@ void Repository::Git::GitGraphUpdater::previousVersion()
 	bool ok = true;
 
 	// Pre kazdy zmeneny subor vo verzii, zistim jeho ciastocne cesty a podla typu suboru, vykonam akciu nad tymito cestami
-    foreach ( Repository::Git::GitFile* gitFile, gitFiles ) {
+	foreach ( Repository::Git::GitFile* gitFile, gitFiles ) {
 		QStringList lList = gitFile->getFilepath().split( "/" );
 		QString lPom = "";
 
@@ -144,17 +145,17 @@ void Repository::Git::GitGraphUpdater::previousVersion()
 
 		switch ( gitFile->getType() ) {
 			// Ak bol pridany v aktualnej verzii, tak ho vymazeme z grafu
-            case Repository::Git::GitType::ADDED :
+			case Repository::Git::GitType::ADDED :
 //            this->getEvolutionGraph()->addRemovedFiles( lList, this->getCurrentVersion() - 1 );
 				removeEdgesFromGraph( lList );
 				removeNodesFromGraph( lList );
 				break;
 			// Ak bol vymazany v aktualnej verzii, tak ho pridame do grafu
-            case Repository::Git::GitType::REMOVED :
+			case Repository::Git::GitType::REMOVED :
 				addNodesToGraph( lList );
 				addEdgesToGraph( lList );
 				break;
-            case Repository::Git::GitType::MODIFIED :
+			case Repository::Git::GitType::MODIFIED :
 				modifyNodesInGraph( lList );
 				break;
 		}
@@ -204,7 +205,7 @@ void Repository::Git::GitGraphUpdater::changeToVersion( int toVersion )
 		// Nastavenie aktualnej verzie grafu a aktualizacia progressbaru
 		this->setCurrentVersion( this->getCurrentVersion() + inc );
 		this->getActiveGraph()->setCurrentVersion( this->getCurrentVersion() );
-        Manager::GraphManager::getInstance()->setProgressBarValue( int( ( double( abs( i - startVersion ) ) / double(abs( toVersion - startVersion )) ) * 100 ) );
+		Manager::GraphManager::getInstance()->setProgressBarValue( int( ( double( abs( i - startVersion ) ) / double( abs( toVersion - startVersion ) ) ) * 100 ) );
 	}
 
 	// Nastavime na false, aby sa pre dalsie spracovanie mohol pridat autor a jeho hrany k zmenenych uzlom.
@@ -344,7 +345,7 @@ void Repository::Git::GitGraphUpdater::addEdgesToGraph( QStringList list )
 void Repository::Git::GitGraphUpdater::addAuthorEdgesToGraph( QString authorName, QList<Repository::Git::GitFile*> gitFiles )
 {
 	// Pre kazdy subor zisti, ci existuje hrana medzi autorom a uzlom, ak nie, tak pridam hranu do grafu
-    foreach ( Repository::Git::GitFile* gitFile, gitFiles ) {
+	foreach ( Repository::Git::GitFile* gitFile, gitFiles ) {
 		// Vyskladam nazov hrany spojenim mena autora a cesty k uzlu
 		QString lEdgeName = authorName + gitFile->getFilepath();
 		bool exist = true;
@@ -365,7 +366,7 @@ void Repository::Git::GitGraphUpdater::addAuthorEdgesToGraph( QString authorName
 void Repository::Git::GitGraphUpdater::removeAuthorEdgesFromGraph( QString authorName, QList<Repository::Git::GitFile*> gitFiles )
 {
 	// Pre kazdy subor zisti, odstran hranu medzi autorom a uzlov, ak existuje v grafe
-    foreach ( Repository::Git::GitFile* gitFile, gitFiles ) {
+	foreach ( Repository::Git::GitFile* gitFile, gitFiles ) {
 		// Vyskladam nazov hrany spojenim mena autora a cesty k uzlu
 		QString lEdgeName = authorName + gitFile->getFilepath();
 

@@ -33,20 +33,20 @@ public:
 
 	// public methods
 	/**
-     * Repository::Git::GitFile* getDiffInfo( Repository::Git::GitFile* gitFile, QString currentCommitId, QString oldCommitId )
+	 * Repository::Git::GitFile* getDiffInfo( Repository::Git::GitFile* gitFile, QString currentCommitId, QString oldCommitId )
 	 * @brief Reads difference between current commit and previous one, creates git diff blocks for git file and saves it in the git file.
 	 * @param gitFile Git file, which git difference will be stored in git file
 	 * @param currentCommitId Hash identifier of commit, which I want to be a HEAD
 	 * @param oldCommitId Hash identifier of commit which I want to be compared with(It should be older than current commit)
 	 */
-    void getDiffInfo( Repository::Git::GitFile* gitFile, QString currentCommitId, QString oldCommitId );
+	void getDiffInfo( Repository::Git::GitFile* gitFile, QString currentCommitId, QString oldCommitId );
 
 	/**
-     * QList<Repository::Git::GitVersion*> getDataAboutGit()
+	 * QList<Repository::Git::GitVersion*> getDataAboutGit()
 	 * @brief Reads log of git repository and creates git versions based on information from git log command.
 	 * @return List of versions, which are part of the repository
 	 */
-    QList<Repository::Git::GitVersion*> getDataAboutGit();
+	QList<Repository::Git::GitVersion*> getDataAboutGit();
 
 private:
 	// private methods
@@ -67,20 +67,20 @@ private:
 	bool existGit( QString path );
 
 	/**
-     * Repository::Git::GitFile* readGitShowFile( QString tmpFile, Repository::Git::GitFile* gitFile )
+	 * Repository::Git::GitFile* readGitShowFile( QString tmpFile, Repository::Git::GitFile* gitFile )
 	 * @brief Reads info of git show command for newly added file to the repository and stores the information into the git file
 	 * @param tmpFile Temporary file where the data are stored from git show command
 	 * @param gitFile Git file where the data will be stored
 	 */
-    void readGitShowFile( QString tmpFile, Repository::Git::GitFile* gitFile );
+	void readGitShowFile( QString tmpFile, Repository::Git::GitFile* gitFile );
 
 	/**
-     * void readGitDiffFile( QString tmpFile, Repository::Git::GitFile* gitFile )
+	 * void readGitDiffFile( QString tmpFile, Repository::Git::GitFile* gitFile )
 	 * @brief Reads info of git diff command for modified or removed file in the repository and stores informaction into the git file
 	 * @param tmpFile Temporary file where the data are stored from git diff command
 	 * @param gitFile Git file where the data will be stored
 	 */
-    void readGitDiffFile( QString tmpFile, Repository::Git::GitFile* gitFile );
+	void readGitDiffFile( QString tmpFile, Repository::Git::GitFile* gitFile );
 
 	/**
 	 * QString makeTmpFileFromCommand( QString command, QString filepath )

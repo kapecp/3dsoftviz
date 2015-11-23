@@ -92,11 +92,11 @@ public:
 			 * \param[in] defaultValue Default value (if the value does not exist or is not valid).
 			 * \return Numeric value for the specified key (defaultValue if the key does not exist or the value is not a valid number).
 			 */
-	long getNumericValue(
+	int getNumericValue(
 		QString key,
-		std::auto_ptr<long> minValue,
-		std::auto_ptr<long> maxValue,
-		const long defaultValue
+		std::auto_ptr<int> minValue,
+		std::auto_ptr<int> maxValue,
+		const int defaultValue
 	);
 
 	/**

@@ -27,15 +27,15 @@ void ShapeVisitor_RestrictedPositionGetter::visit( Shape_Composite& shape )
 {
 	Shape_Composite::ShapesListType& shapes = shape.getShapes();
 
-	if ( shapes.size() > 0 ) {
+	if ( !shapes.empty() ) {
 		osg::Vec3f restrictedPositionWithMinDistance;
-		float minDistanceFound;
+		float minDistanceFound = 0;
 		for ( Shape_Composite::ShapesListType::const_iterator it = shapes.begin(); it != shapes.end(); ++it ) {
 			( *it )->accept( *this ); // restrictedPosition_ changes here
 
 			float currentDistance = ( mOriginalPosition - mRestrictedPosition ).length();
 
-			if ( ( currentDistance < minDistanceFound ) || ( it == shapes.begin() ) ) {
+			if ( ( it == shapes.begin() ) || ( ( currentDistance < minDistanceFound ) || ( it == shapes.begin() ) ) ) {
 				restrictedPositionWithMinDistance = mRestrictedPosition;
 				minDistanceFound = currentDistance;
 			}
@@ -52,7 +52,7 @@ void ShapeVisitor_RestrictedPositionGetter::visit( Shape_Intersection& shape )
 {
 	Shape_Intersection::ShapesListType& shapes = shape.getShapes();
 
-	if ( shapes.size() > 0 ) {
+	if ( !shapes.empty() ) {
 		float currentDistance = 1.0;
 		while ( currentDistance > 0.05 ) {
 			Shape_Intersection::ShapesListType::const_iterator it;
