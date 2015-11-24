@@ -5,25 +5,6 @@
 #ifndef QOSG_CORE_WINDOW
 #define QOSG_CORE_WINDOW 1
 
-#ifdef __APPLE__
-#include <qstringlist.h>
-#else
-#include <Qt/qstringlist.h>
-#endif
-#include <QOSG/qtcolorpicker.h>
-
-#include <QMainWindow>
-#include <QToolBar>
-#include <QApplication>
-#include <QIcon>
-#include <QAction>
-#include <QMenu>
-#include <QMenuBar>
-#include <QtGui>
-#include <QLineEdit>
-#include <QToolBox>
-#include <QString>
-
 #include <Viewer/SelectionObserver.h>
 
 #include "Layout/ShapeGetter.h"
@@ -32,6 +13,8 @@
 #include "Layout/ShapeGetter_Circle_ByThreeNodes.h"
 #include "Layout/ShapeGetter_SpherePlane_ByThreeNodes.h"
 //#include "Viewer/CameraManipulator.h"
+
+#include "Clustering/Clusterer.h"
 
 #ifdef SPEECHSDK_FOUND
 #include "Speech/KinectSpeechThread.h"
@@ -46,7 +29,24 @@
 #include "Leap/LeapThread.h"
 #endif
 
-#include "Clustering/Clusterer.h"
+#include <qtcolorpicker.h>
+
+#ifdef __APPLE__
+#include <qstringlist.h>
+#else
+#include <Qt/qstringlist.h>
+#endif
+#include <QMainWindow>
+#include <QToolBar>
+#include <QApplication>
+#include <QIcon>
+#include <QAction>
+#include <QMenu>
+#include <QMenuBar>
+#include <QtGui>
+#include <QLineEdit>
+#include <QToolBox>
+#include <QString>
 
 namespace Layout {
 class LayoutThread;

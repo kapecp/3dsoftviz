@@ -885,9 +885,12 @@ endif()
 add_library( noiseutils STATIC dependencies/noiseutils/noiseutils.cpp )
 target_include_directories( noiseutils SYSTEM PUBLIC dependencies/noiseutils  )
 
-#include_directories( SYSTEM dependencies/qtcolorpicker )
-#add_library( qtcolorpicker STATIC dependencies/qtcolorpicker/qtcolorpicker.cpp )
+add_library( qtcolorpicker STATIC dependencies/qtcolorpicker/qtcolorpicker.cpp )
+target_include_directories( noiseutils SYSTEM PUBLIC dependencies/qtcolorpicker )
 
+# ---------------------------------------------------------------
+# Build modules as libraries
+# ---------------------------------------------------------------
 
 add_library( gitlib SHARED ${SRC_GITLIB} ${HEADER_GITLIB})
 target_include_directories( gitlib SYSTEM PUBLIC include/Repository/Git )
@@ -913,19 +916,19 @@ add_executable( ${3DSOFTVIZ_NAME} ${INCL}  ${SRC} )
 set_target_properties( ${3DSOFTVIZ_NAME} PROPERTIES COMPILE_FLAGS "${FLAGS_FOR_DEBUG}" )
 
 target_link_libraries( ${3DSOFTVIZ_NAME}
-	${QT_LIBRARIES}
-	${OPENSCENEGRAPH_LIBRARIES}
-	${OSGVIEWER_LIBRARIES}
     gitlib
     lua
 	noiseutils
 	libnoise
 	osgModeling
+	qtcolorpicker
+	${QT_LIBRARIES}
+	${OPENSCENEGRAPH_LIBRARIES}
+	${OSGVIEWER_LIBRARIES}
 )
 
 if( NOT MSVC )
 	target_link_libraries( ${3DSOFTVIZ_NAME} diluculum
-		#qtcolorpicker
 	)
 endif()
 
