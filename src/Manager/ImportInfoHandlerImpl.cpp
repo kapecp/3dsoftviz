@@ -13,7 +13,7 @@ namespace Manager {
 #define NORETURN __declspec(noreturn)
 #endif
 
-void ImportInfoHandlerImpl::addMessage()
+void NORETURN ImportInfoHandlerImpl::addMessage()
 {
 	throw "not implemented";
 }

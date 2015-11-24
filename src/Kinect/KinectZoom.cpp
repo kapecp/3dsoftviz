@@ -120,7 +120,7 @@ int Kinect::KinectZoom::DetectContour( )
 				convexityDefects( contours[i],hull[i], convDef[i] );
 
 				for ( size_t k=0; k<hull[i].size(); k++ ) {
-                    int ind=hull[i][k];
+					auto ind=hull[i][k];
 					hull_points[i].push_back( contours[i][ind] );
 				}
 
@@ -139,8 +139,8 @@ int Kinect::KinectZoom::DetectContour( )
 					}
 				}
 				// draw results
-				drawContours( drawing, contours, i, cv::Scalar( 0,255,0 ), 1, 8, cv::vector<cv::Vec4i>(), 0, cv::Point() );
-				drawContours( drawing, hull_points, i, cv::Scalar( 255,0,0 ), 1, 8, cv::vector<cv::Vec4i>(), 0, cv::Point() );
+				cv::drawContours( drawing, contours, static_cast<int>(i), cv::Scalar( 0,255,0 ), 1, 8, cv::vector<cv::Vec4i>(), 0, cv::Point() );
+				drawContours( drawing, hull_points, static_cast<int>(i), cv::Scalar( 255,0,0 ), 1, 8, cv::vector<cv::Vec4i>(), 0, cv::Point() );
 			}
 		}
 	}
