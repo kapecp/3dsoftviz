@@ -1,12 +1,13 @@
 #include "Viewer/PerlinNoiseTextureGenerator.h"
 
 #include "Viewer/DataHelper.h"
-#include <Noise/noiseutils.h>
 
 #include <osg/Image>
 
-#include <iostream>
+#include <noiseutils.h>
 #include <noise.h>
+
+#include <iostream>
 
 namespace Vwr {
 
