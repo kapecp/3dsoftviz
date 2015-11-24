@@ -125,7 +125,7 @@ if(COMMAND cotire )
 	set( COTIRE_DEBUG FALSE )
 
 	### Fix virtual memory range
-	if( MSVC )		
+	if( MSVC )
 		set (COTIRE_PCH_MEMORY_SCALING_FACTOR "240")
 	endif()
 
@@ -375,6 +375,31 @@ if( USE_BUILTIN_DEPENDENCIES )
 		endif()
 	endif() # OpenCV_FOUND
 
+
+	# Build osgModeling
+	ExternalProject_Add( dep_osgModeling
+		PREFIX osgModeling
+		SOURCE_DIR ${DEP_SOURCE}/osgModeling
+		BINARY_DIR osgModeling
+		CMAKE_ARGS
+			-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
+			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
+			-DBUILD_PLUGINS=ON
+			-C ${CMAKE_CURRENT_BINARY_DIR}/config.cmake
+	)
+
+	add_library( osgModeling SHARED IMPORTED )
+	add_dependencies( osgModeling dep_osgModeling )
+	set_target_properties( osgModeling PROPERTIES
+		IMPORTED_LOCATION ${DEP_BIN}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}osgModeling${CMAKE_SHARED_LIBRARY_SUFFIX} )
+
+	if( WIN32 AND MSVC )
+		set_target_properties( osgModeling PROPERTIES
+			IMPORTED_LOCATION ${DEP_BIN}/bin/${CMAKE_SHARED_LIBRARY_PREFIX}osgModeling${CMAKE_SHARED_LIBRARY_SUFFIX}
+			IMPORTED_IMPLIB ${DEP_BIN}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}osgModeling${CMAKE_STATIC_LIBRARY_SUFFIX} )
+	endif()
+
+	# Building Lua or LuaJIT
 	if ( MSVC )
 		# Build Lua
 		ExternalProject_Add ( dep_lua
@@ -900,6 +925,7 @@ target_link_libraries( ${3DSOFTVIZ_NAME}
     gitlib
     lua
 	libnoise
+	osgModeling
 )
 
 if( NOT MSVC )
@@ -955,7 +981,7 @@ endif()
 if( USE_BUILTIN_DEPENDENCIES )
 
 	# dependencies of non-unity build
-    add_dependencies( ${3DSOFTVIZ_NAME} libnoise gitlib dep_luametrics dep_leg dep_lpeg dep_luafilesystem )
+    add_dependencies( ${3DSOFTVIZ_NAME} libnoise gitlib osgModeling dep_luametrics dep_leg dep_lpeg dep_luafilesystem )
 
 	if( MSVC )
 		add_dependencies( ${3DSOFTVIZ_NAME} dep_lua )
@@ -969,7 +995,7 @@ if( USE_BUILTIN_DEPENDENCIES )
 
 	# dependencies of unity build
 	if (COMMAND cotire)
-		add_dependencies( ${3DSOFTVIZ_NAME}_unity libnoise gitlib_unity dep_luametrics dep_leg dep_lpeg dep_luafilesystem )
+		add_dependencies( ${3DSOFTVIZ_NAME}_unity libnoise gitlib_unity osgModeling dep_luametrics dep_leg dep_lpeg dep_luafilesystem )
 
 		if( MSVC )
 			add_dependencies( ${3DSOFTVIZ_NAME}_unity dep_lua )
@@ -996,7 +1022,7 @@ endif()
 
 # 3DSoftviz and data
 install( TARGETS ${3DSOFTVIZ_NAME}
-    BUNDLE DESTINATION ${INSTALL_BUNDLE} COMPONENT Runtime
+	BUNDLE DESTINATION ${INSTALL_BUNDLE} COMPONENT Runtime
 	RUNTIME DESTINATION ${INSTALL_BIN} COMPONENT Runtime )
 
 install( TARGETS gitlib

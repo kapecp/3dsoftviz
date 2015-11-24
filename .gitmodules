@@ -25,3 +25,6 @@
 [submodule "dependencies/lua"]
 	path = dependencies/lua
 	url = https://github.com/LuaDist/lua.git
+[submodule "dependencies/osgModeling"]
+	path = dependencies/osgModeling
+	url = git@github.com:kapecp/osgmodeling.git
