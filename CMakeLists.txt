@@ -618,7 +618,6 @@ endif()
 include_directories( SYSTEM
 	${DEPENDENCIES_INCLUDE_DIR}
 	${DEPENDENCIES_INCLUDE_DIR}/libnoise
-#	${DEPENDENCIES_INCLUDE_DIR}/osgModeling
 )
 
 if( LEAP_FOUND )
@@ -639,7 +638,6 @@ file( GLOB_RECURSE SRC_MANAGER	"src/Manager/*.cpp" )
 file( GLOB_RECURSE SRC_MATH		"src/Math/*.cpp" )
 file( GLOB_RECURSE SRC_MODEL	"src/Model/*.cpp" )
 file( GLOB_RECURSE SRC_NETWORK	"src/Network/*.cpp" )
-file( GLOB_RECURSE SRC_NOISE	"src/Noise/*.cpp" )
 file( GLOB_RECURSE SRC_OSGQTBROWSER	"src/OsgQtBrowser/*.cpp" )
 file( GLOB_RECURSE SRC_QOSG		"src/QOSG/*.cpp" )
 file( GLOB_RECURSE SRC_UTIL		"src/Util/*.cpp" )
@@ -680,7 +678,6 @@ set( SRC
 	${SRC_LUAGRAPH} ${SRC_LUAINTERFACE}
 	${SRC_MATH}
 	${SRC_NETWORK}
-	${SRC_NOISE}
 	${SRC_MODEL}
 	${SRC_OSGQTBROWSER} ${SRC_QOSG} ${SRC_VIEWER}
 	${SRC_UTIL}
@@ -728,7 +725,6 @@ file( GLOB_RECURSE HEADER_MANAGER	"include/Manager/*.h" )
 file( GLOB_RECURSE HEADER_MATH		"include/Math/*.h" )
 file( GLOB_RECURSE HEADER_MODEL		"include/Model/*.h" )
 file( GLOB_RECURSE HEADER_NETWORK	"include/Network/*.h" )
-file( GLOB_RECURSE HEADER_NOISE		"include/Noise/*.h" )
 file( GLOB_RECURSE HEADER_OSGQTBROWSER	"include/OsgQtBrowser/*.h" )
 file( GLOB_RECURSE HEADER_QOSG		"include/QOSG/*.h" )
 file( GLOB_RECURSE HEADER_UTIL		"include/Util/*.h" )
@@ -769,7 +765,6 @@ set( INCL
 	${HEADER_LUAGRAPH} ${HEADER_LUAINTERFACE}
 	${HEADER_MATH}
 	${HEADER_NETWORK}
-	${HEADER_NOISE}
 	${HEADER_MODEL}
 	${HEADER_OSGQTBROWSER} ${HEADER_QOSG} ${HEADER_VIEWER}
 	${HEADER_UTIL}
@@ -817,7 +812,6 @@ source_group( \\src\\Util "^.*Util/.*$" )
 source_group( \\src\\Layout "^.*Layout/.*$" )
 source_group( \\src\\QOSG "^.*QOSG/.*$" )
 source_group( \\src\\OsgQtBrowser "^.*OsgQtBrowser/.*$" )
-source_group( \\src\\Noise "^.*Noise/.*$" )
 source_group( \\src\\LuaGraph "^.*LuaGraph/.*$")
 source_group( \\src\\LuaInterface "^.*LuaInterface/.*$")
 source_group( \\src\\Git "^.*Git/.*$" )
@@ -834,7 +828,6 @@ source_group( \\headers\\Model "^.*Model/.*h$" )
 source_group( \\headers\\Util "^.*Util/.*h$" )
 source_group( \\headers\\Layout "^.*Layout/.*h$" )
 source_group( \\headers\\QOSG "^.*QOSG/.*h$" )
-source_group( \\headers\\Noise "^.*Noise/.*h$" )
 source_group( \\headers\\OsgQtBrowser "^.*OsgQtBrowser/.*h$" )
 source_group( \\headers\\LuaGraph "^.*LuaGraph/.*h$")
 source_group( \\headers\\LuaInterface "^.*LuaInterface/.*h$")
@@ -889,15 +882,15 @@ endif()
 # 3rd party sources
 # ---------------------------------------------------------------
 
-#include_directories( SYSTEM dependencies/noiseutils )
-#add_library( noiseutils STATIC dependencies/noiseutils/noiseutils.cpp )
+add_library( noiseutils STATIC dependencies/noiseutils/noiseutils.cpp )
+target_include_directories( noiseutils SYSTEM PUBLIC dependencies/noiseutils  )
 
 #include_directories( SYSTEM dependencies/qtcolorpicker )
 #add_library( qtcolorpicker STATIC dependencies/qtcolorpicker/qtcolorpicker.cpp )
 
 
 add_library( gitlib SHARED ${SRC_GITLIB} ${HEADER_GITLIB})
-target_include_directories( gitlib SYSTEM PUBLIC include/Repository/Git } )
+target_include_directories( gitlib SYSTEM PUBLIC include/Repository/Git )
 target_link_libraries( gitlib ${QT_LIBRARIES} )
 
 set(FLAGS_FOR_DEBUG2 ${FLAGS_FOR_DEBUG})
@@ -925,13 +918,13 @@ target_link_libraries( ${3DSOFTVIZ_NAME}
 	${OSGVIEWER_LIBRARIES}
     gitlib
     lua
+	noiseutils
 	libnoise
 	osgModeling
 )
 
 if( NOT MSVC )
 	target_link_libraries( ${3DSOFTVIZ_NAME} diluculum
-		#noiseutils
 		#qtcolorpicker
 	)
 endif()
