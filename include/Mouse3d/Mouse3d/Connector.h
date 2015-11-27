@@ -20,6 +20,8 @@ public:
     //destructor
     ~Connector();
 
+    void StartMouse3d();
+
 private:
 
 };

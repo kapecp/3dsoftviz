@@ -41,6 +41,11 @@
 #include "Fglove/FgloveThread.h"
 #endif
 
+#ifdef MOUSE3D_FOUND
+#include "Mouse3d/Mouse3d/Connector.h"
+#include "Mouse3d/Mouse3d/ActionProcessor.h"
+#endif
+
 #ifdef LEAP_FOUND
 #include "Leap/LeapThread.h"
 #endif
@@ -471,6 +476,15 @@ public slots:
 #ifdef SPEECHSDK_FOUND
 	void startSpeech();
 #endif
+    /**
+        *@brief create 3d mouse connection
+        *
+        *
+        *
+     */
+#ifdef MOUSE3D_FOUND
+    void startMouse3d();
+#endif
 
 #ifdef LEAP_FOUND
 	void startLeap();
@@ -875,6 +889,12 @@ private:
 	 *@brief b_start_gloves
 	 */
 	QPushButton* b_start_gloves;
+
+    /**
+     * QPushButton start 3d mouse recognition
+     *@brief b_start_mouse3d
+     */
+    QPushButton* b_start_mouse3d;
 
 	/**
 	 *CheckBox for mapinulation camera or object

@@ -1054,6 +1054,17 @@ QWidget* CoreWindow::createMoreFeaturesTab( QFrame* line )
 	connect( b_start_gloves, SIGNAL( clicked() ), this, SLOT( startGlovesRecognition() ) );
 #endif
 
+#ifdef MOUSE3D_FOUND
+    line = createLine();
+    lMore->addRow( line );
+    lMore->addRow( new QLabel( tr( "3D Mouse" ) ) );
+    b_start_mouse3d = new QPushButton();
+    b_start_mouse3d->setText( "Start Mouse" );
+    b_start_mouse3d->setMaximumWidth( 136 );
+    lMore->addRow( b_start_mouse3d );
+    connect( b_start_mouse3d, SIGNAL( clicked() ), this, SLOT( startMouse3d() ) );
+#endif
+
 	wMore->setLayout( lMore );
 
 	return wMore;
@@ -3403,6 +3414,31 @@ void CoreWindow::startGlovesRecognition()
 }
 
 #endif
+
+
+#ifdef MOUSE3D_FOUND
+void CoreWindow::startMouse3d()
+{
+/*
+    // terminating fgloveThread
+    if ( this->mGloveThr!=NULL && ( b_start_gloves->text()=="Stop Gloves" ) ) {
+        this->mGloveThr->terminate();
+        delete( this->mGloveThr );
+
+        b_start_gloves->setText( "Start Gloves" );
+        this->mGloveThr=NULL;
+        return;
+    }
+
+    // starting fgloveThread
+    this->mGloveThr = new Fglove::FgloveThread();
+    this->mGloveThr->start();
+    b_start_gloves->setText( "Stop Gloves" );
+*/
+}
+
+#endif
+
 
 void CoreWindow::createMetricsToolBar()
 {

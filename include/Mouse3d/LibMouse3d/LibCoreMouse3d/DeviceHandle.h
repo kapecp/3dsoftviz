@@ -5,6 +5,8 @@
 #include <si.h>
 #include <siapp.h>
 
+using std::string;
+
 namespace LibMouse3d{
 namespace LibCoreMouse3d{
 
@@ -17,20 +19,43 @@ class DeviceHandle{
 
 public:
 
-    //constructor
-    DeviceHandle();
+    void InitDevice();
+
+    /**
+     * @brief TerminateDevice
+     * @param hndl
+     * @author Michal Fasanek
+     * @brief Terminate connection to a device passed by parameter
+     */
+    static void TerminateDevice(SiHdl device);
+
+    /**
+     * @brief isInitialized
+     * @return
+     * @brief Returns TRUE if device handle is initialized, else FALSE
+     */
+    bool isInitialized();
+
+    //method for registering device
+    static DeviceHandle* getInstance();
+
+    SiHdl getDeviceRef();
 
     //destructor
     ~DeviceHandle();
 
-    //handle
-    //TODO ERROR DEVICEHANDLE is being defined
-    DeviceHandle *hndl;
-
-    //method for registering device
-    DeviceHandle *GetInstance();
 
 private:
+    //constructor
+    DeviceHandle();
+
+    //reference to device returned by SiOpen
+    SiHdl deviceRef;
+
+    //singleton object - device
+    static DeviceHandle* device;
+
+    const std::shared_ptr<SiOpenData> initData;
 
 };
 
