@@ -20,35 +20,60 @@ class DeviceHandle{
 
 public:
 
+     //destructor
+    ~DeviceHandle();
+
     void InitDevice();
+
+
+    /**
+     * @brief MouseCanceled
+     * @return
+     * @brief check if mouse is flagged (as/to) cancel
+     */
+    bool MouseCanceled();
+
+    /**
+     * @brief SetMouseCancel
+     * @param set
+     * @brief Set cancel flag on mouse as requested by parameter
+     */
+    void SetMouseCancel(bool set);
 
     /**
      * @brief TerminateDevice
-     * @param hndl
      * @author Michal Fasanek
-     * @brief Terminate connection to a device passed by parameter
+     * @brief Terminate connection, terminate thread, terminate handle
+     * @brief Called from library interface
      */
-    static void TerminateDevice(SiHdl device);
+    void TerminateDevice();
 
     /**
      * @brief isInitialized
      * @return
      * @brief Returns TRUE if device handle is initialized, else FALSE
      */
-    bool isInitialized();
+    bool IsInitialized();
 
-    //method for registering device
-    static DeviceHandle* getInstance();
+    /**
+     * @brief GetInstance
+     * @return Returns DeviceHandle Singleton instance
+     * @brief This is core Singleton method of DeviceHandle class. It checks whether DeviceHandle already exists.
+     * @brief If exists, returns existing instance, else initializes instance and returns it.
+     */
+    static DeviceHandle* GetInstance();
 
-    SiHdl getDeviceRef();
+    //getter method for deviceRef parameter of instance
+    SiHdl GetDeviceRef();
 
-    //destructor
-    ~DeviceHandle();
+    //setter method for deviceRef parameter of instance
+    void SetDeviceRef(SiHdl ref);
 
-
-private:
     //constructor
     DeviceHandle();
+
+private:
+
 
     //reference to device returned by SiOpen
     SiHdl deviceRef;
@@ -57,6 +82,8 @@ private:
 
     //singleton object - device
     static DeviceHandle* device;
+
+    bool mouseCancel;
 
     const std::shared_ptr<SiOpenData> initData;
 

@@ -22,6 +22,8 @@ public:
     //destructor
     ~ConnectionInterface();
 
+    static void CreateConnection();
+
 private:
 
 };

@@ -3419,6 +3419,7 @@ void CoreWindow::startGlovesRecognition()
 #ifdef MOUSE3D_FOUND
 void CoreWindow::startMouse3d()
 {
+
 /*
     // terminating fgloveThread
     if ( this->mGloveThr!=NULL && ( b_start_gloves->text()=="Stop Gloves" ) ) {

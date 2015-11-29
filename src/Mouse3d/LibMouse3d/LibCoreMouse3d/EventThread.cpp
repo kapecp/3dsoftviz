@@ -9,43 +9,65 @@ LibMouse3d::LibCoreMouse3d::EventThread::~EventThread() {
 
 }
 
+/**
+ * @author Michal Fasanek
+ * @brief LibMouse3d::LibCoreMouse3d::EventThread::TerminateThread
+ * @brief Called from application - terminates thread and connection to the device
+ */
+
+
 void LibMouse3d::LibCoreMouse3d::EventThread::run(){
 
+    LibMouse3d::LibCoreMouse3d::DeviceHandle* instance = LibMouse3d::LibCoreMouse3d::DeviceHandle::GetInstance();
 
-    //initialization for platform dependent SiGetEvent
-    SiGetEventWinInit(eData.get(), msg, wParam, lParam);
-
-    //get a message from message front of device
-    while(true)//(GetMessage(msg, NULL, 0, 0))
+    //get message posted by device
+    //Considered using PeekMessage() instead, staying with GetMessage for now
+    while(GetMessage(msg, NULL, 0, 0))
     {
+        //initialization for platform dependent SiGetEvent
+        SiGetEventWinInit(eData.get(), msg->message, msg->wParam, msg->lParam);
 
-        //Considered using PeekMessage() instead, staying with GetMessage for now
-        if (SiGetEvent(LibMouse3d::LibCoreMouse3d::DeviceHandle::getInstance()->getDeviceRef(),
-                       0, eData.get(), siEvent.get()) == SI_IS_EVENT){
-          //events use interface class to trigger action in main window
-          switch (siEvent.get()->type)
+        //get message from message front]
+        //if SI_NOT_EVENT, ignore
+        if (SiGetEvent(instance->GetDeviceRef(),
+                       0, eData.get(), siEvent.get()) == SI_IS_EVENT)
+        {
+            //events use interface class to trigger action in main window
+            switch (siEvent.get()->type)
             {
-            case SI_MOTION_EVENT:
-              break;
+                //mouse moved event
+                case SI_MOTION_EVENT:
+                    qDebug() << "Captured MOTION event";
+                    break;
 
-            case SI_ZERO_EVENT:
-              break;
+                //zero event
+                case SI_ZERO_EVENT:
+                    break;
 
-            case SI_APP_EVENT:
-              break;
+                //mouse application event
+                case SI_APP_EVENT:
+                    qDebug() << "Captured APP event";
+                    break;
 
-            case SI_CMD_EVENT:
-              break;
+                //command event
+                case SI_CMD_EVENT:
+                    qDebug() << "Captured CMD event";
+                    break;
 
-            case SI_DEVICE_CHANGE_EVENT:
-              break;
+                //shouldn't happen
+                case SI_DEVICE_CHANGE_EVENT:
+                    qDebug() << "Captured DEV event";
+                    break;
 
-            default:
-              break;
+                default:
+                    DispatchMessage(msg);
+                    break;
             }
-          }
         }
 
-     LibMouse3d::LibCoreMouse3d::DeviceHandle::TerminateDevice(LibCoreMouse3d::DeviceHandle::getInstance()->getDeviceRef());
+        //until mouse is flagged to cancel in main window
+        if(!(instance->MouseCanceled()))
+            break;
+    }
 }
 

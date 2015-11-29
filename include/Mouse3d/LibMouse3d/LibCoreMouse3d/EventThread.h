@@ -24,6 +24,7 @@ class EventThread : public QThread{
 
 public:
 
+
     //constructor
     EventThread(QObject* parent=0);
 
@@ -34,14 +35,16 @@ public:
 
 private:
     //received message -unsigned integer-
-    UINT msg;
+    LPMSG msg;
 
     //storage of received data - platform dependent - probably front
     const std::shared_ptr<SiGetEventData> eData;
 
+    /*
     //message windows-specific parameters
     WPARAM wParam;
     LPARAM lParam;
+    */
 
     //incoming mouse event
     std::shared_ptr<SiSpwEvent> siEvent;

@@ -9,3 +9,7 @@ LibMouse3d::ConnectionInterface::ConnectionInterface() {
 LibMouse3d::ConnectionInterface::~ConnectionInterface() {
 
 }
+
+static void CreateConnection(){
+
+}
