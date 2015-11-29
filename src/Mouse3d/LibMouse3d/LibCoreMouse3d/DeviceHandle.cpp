@@ -8,8 +8,9 @@ LibMouse3d::LibCoreMouse3d::DeviceHandle::DeviceHandle() {
 
     device = this;
 
-    //get device driver version
     this->InitDevice();
+
+    //get device driver version
     if(SiGetDriverInfo(this->driverVersion.get()) == SPW_ERROR)
          qDebug() << "Could not retrieve version info \n";
     else{

@@ -15,6 +15,7 @@ namespace LibCoreMouse3d{
 *@date 23.11.2015
 *@brief LibCore class responsible for monitoring device.
 */
+// TODO class MOUSE3DLIB_EXPORT DeviceHandle{
 class DeviceHandle{
 
 public:
