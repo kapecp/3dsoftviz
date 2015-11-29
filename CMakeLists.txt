@@ -639,7 +639,8 @@ file( GLOB_RECURSE SRC_SPEECH	"src/Speech/*.cpp" )
 # file ( GLOB_RECURSE SRC_FGLOVE "src/FGlove/*.cpp" )
 
 # Leap
-file ( GLOB_RECURSE SRC_LEAP "src/Leap/*.cpp" )
+file ( GLOB SRC_LEAP "src/Leap/*.cpp" )
+file ( GLOB_RECURSE SRC_LEAPLIB "src/Leap/LeapLib/*.cpp" )
 # MOUSE3D
 file ( GLOB_RECURSE SRC_MOUSE3D "src/Mouse3D/*.cpp" )
 
@@ -728,7 +729,8 @@ file( GLOB_RECURSE HEADER_SPEECH	"include/Speech/*.h" )
 # file( GLOB_RECURSE HEADER_FGLOVE	"include/FGlove/*.h" )
 
 # LEAP
-file( GLOB_RECURSE HEADER_LEAP	"include/Leap/*.h" )
+file( GLOB HEADER_LEAP	"include/Leap/*.h" )
+file( GLOB_RECURSE HEADER_LEAPLIB	"include/Leap/LeapLib/*.h" )
 
 # MOUSE3D
 file( GLOB_RECURSE HEADER_MOUSE3D	"include/Mouse3D/*.h" )
@@ -874,10 +876,24 @@ add_library( gitlib SHARED ${SRC_GITLIB} ${HEADER_GITLIB})
 target_include_directories( gitlib SYSTEM PUBLIC include/Repository/Git } )
 target_link_libraries( gitlib ${QT_LIBRARIES} )
 
+#leap
+if( LEAP_FOUND )
+add_library( leaplib SHARED ${SRC_LEAPLIB} ${HEADER_LEAPLIB})
+target_include_directories( leaplib SYSTEM PUBLIC ${LEAP_INCLUDE_DIRS} include/Leap } )
+target_link_libraries( leaplib ${QT_LIBRARIES} ${LEAP_LIBRARIES})
+endif()
+
 set(FLAGS_FOR_DEBUG2 ${FLAGS_FOR_DEBUG})
 list(APPEND FLAGS_FOR_DEBUG2 " -DGITLIB_LIBRARY")
 string(REPLACE " " ";" REPLACED_FLAGS ${FLAGS_FOR_DEBUG2})
 target_compile_options( gitlib PUBLIC ${REPLACED_FLAGS} )
+
+if( LEAP_FOUND )
+set(FLAGS_FOR_DEBUG3 ${FLAGS_FOR_DEBUG})
+list(APPEND FLAGS_FOR_DEBUG3 " -DLEAPLIB_LIBRARY")
+string(REPLACE " " ";" REPLACED_FLAGS2 ${FLAGS_FOR_DEBUG3})
+target_compile_options( leaplib PUBLIC ${REPLACED_FLAGS2} )
+endif()
 
 # ---------------------------------------------------------------
 # Build and link 3Dsoftviz
@@ -934,7 +950,7 @@ endif()
 # endif()
 
 if( LEAP_FOUND )
-	target_link_libraries( ${3DSOFTVIZ_NAME} ${LEAP_LIBRARIES} )
+	target_link_libraries( ${3DSOFTVIZ_NAME} leaplib )
 endif()
 
 if( MOUSE3D_FOUND )
@@ -946,9 +962,15 @@ if( COMMAND cotire )
 	# link ${3DSOFTVIZ_NAME}_unity target to all libraries to which ${3DSOFTVIZ_NAME} links
 	set_target_properties( ${3DSOFTVIZ_NAME} PROPERTIES COTIRE_UNITY_LINK_LIBRARIES_INIT "COPY" )
 	set_target_properties( gitlib PROPERTIES COTIRE_UNITY_LINK_LIBRARIES_INIT "COPY" )
+if( LEAP_FOUND )
+	set_target_properties( leaplib PROPERTIES COTIRE_UNITY_LINK_LIBRARIES_INIT "COPY" )
+endif()
 
 	cotire( ${3DSOFTVIZ_NAME} CONFIGURATIONS Debug Release )
 	cotire( gitlib CONFIGURATIONS Debug Release )
+if( LEAP_FOUND )
+	cotire( leaplib CONFIGURATIONS Debug Release )
+endif()
 endif()
 
 # Ensure correct dependencies
@@ -967,6 +989,10 @@ if( USE_BUILTIN_DEPENDENCIES )
 		add_dependencies( ${3DSOFTVIZ_NAME} aruco )
 	endif()
 
+	if( LEAP_FOUND )
+		add_dependencies( ${3DSOFTVIZ_NAME} leaplib )
+	endif()
+
 	# dependencies of unity build
 	if (COMMAND cotire)
 		add_dependencies( ${3DSOFTVIZ_NAME}_unity libnoise gitlib_unity dep_luametrics dep_leg dep_lpeg dep_luafilesystem )
@@ -980,6 +1006,10 @@ if( USE_BUILTIN_DEPENDENCIES )
 		if( OpenCV_FOUND )
 			add_dependencies( ${3DSOFTVIZ_NAME}_unity aruco )
 		endif()
+		if( LEAP_FOUND )
+			add_dependencies( ${3DSOFTVIZ_NAME}_unity leaplib )
+		endif()
+
 	endif()
 endif()
 
@@ -1002,6 +1032,10 @@ install( TARGETS ${3DSOFTVIZ_NAME}
 install( TARGETS gitlib
     RUNTIME DESTINATION ${INSTALL_BIN} COMPONENT Runtime
     LIBRARY DESTINATION ${INSTALL_LIB} COMPONENT Runtime )
+install( TARGETS leaplib
+	RUNTIME DESTINATION ${INSTALL_BIN} COMPONENT Runtime
+	LIBRARY DESTINATION ${INSTALL_LIB} COMPONENT Runtime )
+
 
 # add custom install_unity target
 if( COMMAND cotire )
@@ -1009,6 +1043,9 @@ if( COMMAND cotire )
 		COMMAND ${CMAKE_COMMAND} -P "cmake_install.cmake" )
 	add_dependencies( install_unity ${3DSOFTVIZ_NAME}_unity )
 	add_dependencies( install_unity gitlib_unity )
+	if( LEAP_FOUND )
+	add_dependencies( install_unity leaplib )
+	endif()
 endif()
 
 # install lua modules

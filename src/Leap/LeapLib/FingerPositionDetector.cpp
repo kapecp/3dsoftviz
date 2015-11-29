@@ -1,4 +1,4 @@
-#include "Leap/FingerPositionDetector.h"
+#include "LeapLib/FingerPositionDetector.h"
 
 bool Leap::FingerPositionDetector::isHandExtended( Hand hand )
 {

@@ -2,7 +2,9 @@
 #define LEAPCONTROLLER_H
 
 #include "Leap.h"
-#include "Leap/LeapListener.h"
+#include "LeapLib/LeapListener.h"
+#include "LeapLib/LeapCameraManipulator.h"
+#include "LeapLib/LeapExport.h"
 
 namespace Leap {
 
@@ -11,10 +13,13 @@ namespace Leap {
  * @brief The Leap controller class
  * @brief Controls when the leap sensor starts and stops
  */
-class LeapController:Controller
+class LEAPLIB_EXPORT LeapController:Controller
 {
 public:
-	LeapListener leapListener;
+	LeapListener* leapListener;
+
+	LeapController(LeapCameraManipulator* cameraManipulator);
+	~LeapController( void );
 
 	/**
 	 * @brief After this action is executed the leap sensor starts to listen on events

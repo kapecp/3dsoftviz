@@ -1,5 +1,6 @@
 #ifndef DIRECTIONDETECTOR_H
 #define DIRECTIONDETECTOR_H
+#include "LeapLib/LeapExport.h"
 
 #include "Leap.h"
 
@@ -9,7 +10,7 @@ namespace Leap {
  * @brief The DirectionDetector class
  * Detector containing methods that define the direction the palm is facing.
  */
-class DirectionDetector
+class LEAPLIB_EXPORT DirectionDetector
 {
 public:
 	/**

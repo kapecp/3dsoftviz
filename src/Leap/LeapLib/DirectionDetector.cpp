@@ -1,4 +1,4 @@
-#include "Leap/DirectionDetector.h"
+#include "LeapLib/DirectionDetector.h"
 #include "LeapMath.h"
 
 float Leap::DirectionDetector::getPitch( Hand hand )
