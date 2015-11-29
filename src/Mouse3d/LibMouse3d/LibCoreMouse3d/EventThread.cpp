@@ -19,6 +19,7 @@ void LibMouse3d::LibCoreMouse3d::EventThread::run(){
     while(true)//(GetMessage(msg, NULL, 0, 0))
     {
 
+        //Considered using PeekMessage() instead, staying with GetMessage for now
         if (SiGetEvent(LibMouse3d::LibCoreMouse3d::DeviceHandle::getInstance()->getDeviceRef(),
                        0, eData.get(), siEvent.get()) == SI_IS_EVENT){
           //events use interface class to trigger action in main window

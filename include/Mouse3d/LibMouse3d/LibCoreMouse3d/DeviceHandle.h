@@ -52,6 +52,8 @@ private:
     //reference to device returned by SiOpen
     SiHdl deviceRef;
 
+    std::shared_ptr<SiVerInfo> driverVersion;
+
     //singleton object - device
     static DeviceHandle* device;
 

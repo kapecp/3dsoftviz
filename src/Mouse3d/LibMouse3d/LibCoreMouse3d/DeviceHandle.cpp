@@ -7,7 +7,16 @@ LibMouse3d::LibCoreMouse3d::DeviceHandle* LibMouse3d::LibCoreMouse3d::DeviceHand
 LibMouse3d::LibCoreMouse3d::DeviceHandle::DeviceHandle() {
 
     device = this;
+
+    //get device driver version
     this->InitDevice();
+    if(SiGetDriverInfo(this->driverVersion.get()) == SPW_ERROR)
+         qDebug() << "Could not retrieve version info \n";
+    else{
+         qDebug() << "Version: ";
+         qDebug() << this->driverVersion.get()->version;
+         qDebug() << "\n";
+    }
 }
 
 LibMouse3d::LibCoreMouse3d::DeviceHandle::~DeviceHandle() {
@@ -50,11 +59,11 @@ void LibMouse3d::LibCoreMouse3d::DeviceHandle::InitDevice(){
     SiInitialize();
     if((deviceRef = SiOpen("3dSoftviz", SI_ANY_DEVICE, SI_NO_MASK, SI_EVENT, initData.get())) == SI_NO_HANDLE)
 
-        qDebug() << "Failed to open 3DxWare device";
+        qDebug() << "Failed to open 3DxWare device \n";
 
     else
 
-        qDebug() << "Success opening 3DxWare device";
+        qDebug() << "Success opening 3DxWare device \n";
 }
 
 bool LibMouse3d::LibCoreMouse3d::DeviceHandle::isInitialized(){
