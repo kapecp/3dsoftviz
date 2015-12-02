@@ -2,9 +2,11 @@
 #include <string.h>
 #include <QDebug>
 
-LibMouse3d::LibCoreMouse3d::DeviceHandle* LibMouse3d::LibCoreMouse3d::DeviceHandle::device;
+using namespace LibMouse3d::LibCoreMouse3d;
 
-LibMouse3d::LibCoreMouse3d::DeviceHandle::DeviceHandle() {
+DeviceHandle* DeviceHandle::device;
+
+DeviceHandle::DeviceHandle(){
 
     //initialize
     this->InitDevice();
@@ -21,24 +23,21 @@ LibMouse3d::LibCoreMouse3d::DeviceHandle::DeviceHandle() {
     }
 }
 
-LibMouse3d::LibCoreMouse3d::DeviceHandle::~DeviceHandle() {
-
-}
 
 /**
 *@author Michal Fasanek
 *@date 23.11.2015
 *@brief DeviceHandle method responsible for binding device to object if not bound yet.
 */
-LibMouse3d::LibCoreMouse3d::DeviceHandle* LibMouse3d::LibCoreMouse3d::DeviceHandle::GetInstance(){
+DeviceHandle* DeviceHandle::GetInstance(){
 
-    if(LibMouse3d::LibCoreMouse3d::DeviceHandle::device == NULL){
+    if(device == NULL){
 
         //call constructor
-        LibMouse3d::LibCoreMouse3d::DeviceHandle::device = new LibMouse3d::LibCoreMouse3d::DeviceHandle();
+        device = new DeviceHandle();
     }
 
-    return LibMouse3d::LibCoreMouse3d::DeviceHandle::device;
+    return device;
 }
 
 /**
@@ -46,23 +45,23 @@ LibMouse3d::LibCoreMouse3d::DeviceHandle* LibMouse3d::LibCoreMouse3d::DeviceHand
  * @return bool
  * @brief return true if mouse was set to cancel in main window, else false
  */
-bool LibMouse3d::LibCoreMouse3d::DeviceHandle::MouseCanceled(){
-    return LibCoreMouse3d::DeviceHandle::mouseCancel;
+bool DeviceHandle::MouseCanceled(){
+    return mouseCancel;
 }
 
-void LibMouse3d::LibCoreMouse3d::DeviceHandle::TerminateDevice(){
+void DeviceHandle::TerminateDevice(){
 
     //terminate thread
     this->SetMouseCancel(true);
 
     //terminate handle
-    SiClose(this->GetDeviceRef());
+    SiClose(this->deviceRef);
 
     //terminate connection to device;
     SiTerminate();
 }
 
-void LibMouse3d::LibCoreMouse3d::DeviceHandle::SetMouseCancel(bool set){
+void DeviceHandle::SetMouseCancel(bool set){
 
     this->mouseCancel = set;
 }
@@ -74,20 +73,24 @@ void LibMouse3d::LibCoreMouse3d::DeviceHandle::SetMouseCancel(bool set){
  * @author Michal Fasanek
  * @brief creates a connection to the hardware device using SI functions that should be passed to thread receiving events
  */
-void LibMouse3d::LibCoreMouse3d::DeviceHandle::InitDevice(){
+void DeviceHandle::InitDevice(){
 
-
+    //initializing internal states
     SiInitialize();
 
-    this->SetDeviceRef(SiOpen("3dSoftviz", SI_ANY_DEVICE, SI_NO_MASK, SI_EVENT, this->initData.get()));
-    if(this->GetDeviceRef() == SI_NO_HANDLE)
+    //trying to grab device handle
+    if ( (this->deviceRef = SiOpen ("3dSoftviz", SI_ANY_DEVICE, SI_NO_MASK,
+                           SI_EVENT, &initData)) == SI_NO_HANDLE)
+
         qDebug() << "Failed to open 3DxWare device \n";
 
     else
+
         qDebug() << "Success opening 3DxWare device \n";
+
 }
 
-bool LibMouse3d::LibCoreMouse3d::DeviceHandle::IsInitialized(){
+bool DeviceHandle::IsInitialized(){
     if(this->deviceRef != NULL)
         return true;
 
@@ -95,10 +98,10 @@ bool LibMouse3d::LibCoreMouse3d::DeviceHandle::IsInitialized(){
         return false;
 }
 
-SiHdl LibMouse3d::LibCoreMouse3d::DeviceHandle::GetDeviceRef(){
+SiHdl DeviceHandle::GetDeviceRef(){
         return this->deviceRef;
 }
 
-void LibMouse3d::LibCoreMouse3d::DeviceHandle::SetDeviceRef(SiHdl ref){
+void DeviceHandle::SetDeviceRef(SiHdl &ref){
     this->deviceRef = ref;
 }

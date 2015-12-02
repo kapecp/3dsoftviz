@@ -1,12 +1,14 @@
 #include "Mouse3d/LibMouse3d/LibCoreMouse3d/EventThread.h"
 #include "Mouse3d/LibMouse3d/LibCoreMouse3d/DeviceHandle.h"
 
-LibMouse3d::LibCoreMouse3d::EventThread::EventThread( QObject* parent ) : QThread( parent ) {
+using namespace LibMouse3d::LibCoreMouse3d;
 
+EventThread::EventThread( QObject* parent ) : QThread( parent ) {
+    qDebug() << "Mouse3d thread created";
 }
 
-LibMouse3d::LibCoreMouse3d::EventThread::~EventThread() {
-
+EventThread::~EventThread() {
+    qDebug() << "Mouse3d thread destroyed";
 }
 
 /**
@@ -16,24 +18,25 @@ LibMouse3d::LibCoreMouse3d::EventThread::~EventThread() {
  */
 
 
-void LibMouse3d::LibCoreMouse3d::EventThread::run(){
+void EventThread::run(){
 
-    LibMouse3d::LibCoreMouse3d::DeviceHandle* instance = LibMouse3d::LibCoreMouse3d::DeviceHandle::GetInstance();
+    qDebug() << "Create connection call - EventThread" ;
+
+    DeviceHandle* instance = DeviceHandle::GetInstance();
 
     //get message posted by device
     //Considered using PeekMessage() instead, staying with GetMessage for now
-    while(GetMessage(msg, NULL, 0, 0))
+    while(GetMessage(this->msg, NULL, 0, 0))
     {
         //initialization for platform dependent SiGetEvent
-        SiGetEventWinInit(eData.get(), msg->message, msg->wParam, msg->lParam);
+        SiGetEventWinInit(this->eData.get(), this->msg->message, this->msg->wParam, this->msg->lParam);
 
         //get message from message front]
         //if SI_NOT_EVENT, ignore
-        if (SiGetEvent(instance->GetDeviceRef(),
-                       0, eData.get(), siEvent.get()) == SI_IS_EVENT)
+        if (SiGetEvent(instance->GetDeviceRef(), 0, this->eData.get(), this->siEvent.get()) == SI_IS_EVENT)
         {
             //events use interface class to trigger action in main window
-            switch (siEvent.get()->type)
+            switch (this->siEvent.get()->type)
             {
                 //mouse moved event
                 case SI_MOTION_EVENT:
@@ -60,7 +63,7 @@ void LibMouse3d::LibCoreMouse3d::EventThread::run(){
                     break;
 
                 default:
-                    DispatchMessage(msg);
+                    DispatchMessage(this->msg);
                     break;
             }
         }

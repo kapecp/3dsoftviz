@@ -26,7 +26,7 @@ public:
 
 
     //constructor
-    EventThread(QObject* parent=0);
+    EventThread(QObject* parent = NULL);
 
     //destructor
     ~EventThread(void);
@@ -45,6 +45,12 @@ private:
     WPARAM wParam;
     LPARAM lParam;
     */
+
+    /**
+     * @brief Mouse3d thread
+     */
+    LibMouse3d::LibCoreMouse3d::EventThread* mThrMouse3d;
+
 
     //incoming mouse event
     std::shared_ptr<SiSpwEvent> siEvent;

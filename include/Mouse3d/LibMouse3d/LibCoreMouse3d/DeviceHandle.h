@@ -20,8 +20,10 @@ class DeviceHandle{
 
 public:
 
-     //destructor
-    ~DeviceHandle();
+    //constructor
+    DeviceHandle();
+
+
 
     void InitDevice();
 
@@ -67,13 +69,15 @@ public:
     SiHdl GetDeviceRef();
 
     //setter method for deviceRef parameter of instance
-    void SetDeviceRef(SiHdl ref);
+    void SetDeviceRef(SiHdl &ref);
 
-    //constructor
-    DeviceHandle();
+
+
 
 private:
 
+    //destructor
+    ~DeviceHandle();
 
     //reference to device returned by SiOpen
     SiHdl deviceRef;
@@ -85,7 +89,7 @@ private:
 
     bool mouseCancel;
 
-    const std::shared_ptr<SiOpenData> initData;
+    SiOpenData initData;
 
 };
 

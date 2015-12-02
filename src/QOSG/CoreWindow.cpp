@@ -3420,22 +3420,21 @@ void CoreWindow::startGlovesRecognition()
 void CoreWindow::startMouse3d()
 {
 
-/*
-    // terminating fgloveThread
-    if ( this->mGloveThr!=NULL && ( b_start_gloves->text()=="Stop Gloves" ) ) {
-        this->mGloveThr->terminate();
-        delete( this->mGloveThr );
+    if ( b_start_mouse3d->text()=="Stop Mouse") {
+        //this->mGloveThr->terminate();
+        //delete( this->mGloveThr );
 
-        b_start_gloves->setText( "Start Gloves" );
-        this->mGloveThr=NULL;
+        b_start_mouse3d->setText( "Start Mouse" );
         return;
     }
 
-    // starting fgloveThread
-    this->mGloveThr = new Fglove::FgloveThread();
-    this->mGloveThr->start();
-    b_start_gloves->setText( "Stop Gloves" );
-*/
+    // starting Mouse
+    qDebug() << "Create connection call - CoreWindow";
+    Mouse3d::Connector::ConnectMouse3d();
+    //this->mGloveThr = new Fglove::FgloveThread();
+    //this->b_start_mouse3d->start();
+    b_start_mouse3d->setText( "Stop Mouse" );
+
 }
 
 #endif

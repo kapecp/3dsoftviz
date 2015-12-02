@@ -3,7 +3,7 @@
 
 
 //TODO zistit ako v QtC includovat path nezavisle na strukture projektu
-#include "LibCoreMouse3d/DeviceHandle.h"
+#include "LibCoreMouse3d/EventThread.h"
 
 namespace LibMouse3d{
 
