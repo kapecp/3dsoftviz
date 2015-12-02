@@ -38,14 +38,14 @@ void QWebViewImage::navigateTo( const std::string& url )
 	_webView->load( QUrl( url.c_str() ) );
 }
 
-void QWebViewImage::showTemplate( const std::string& templateName, Diluculum::LuaValueMap models, const std::string& templateType )
+void QWebViewImage::showTemplate( const std::string& templateName, Lua::LuaTypes::LuaValueMap models, const std::string& templateType )
 {
 	// Initialize lua interface to call slt2 renderer
 	Lua::LuaInterface* lua = Lua::LuaInterface::getInstance();
 	QString renderer[] = {"slt2_renderer", "render"};
 
 	// Prepare parameters to be passed to template renderer
-	Diluculum::LuaValueList params;
+	Lua::LuaTypes::LuaValueList params;
 	params.push_back( templateName );
 	params.push_back( models );
 

@@ -47,8 +47,8 @@
 #include "LuaGraph/HyperGraphVisualizer.h"
 #include "LuaGraph/SimpleGraphVisualizer.h"
 
-#include "Diluculum/LuaState.hpp"
-#include <LuaGraph/LuaGraphTreeModel.h>
+#include "LuaTypes/LuaTypes.h"
+#include "LuaGraph/LuaGraphTreeModel.h"
 
 #include <iostream>
 #include <osg/ref_ptr>
@@ -3590,12 +3590,12 @@ void CoreWindow::loadFunctionCall()
 	Lua::LuaInterface* lua = Lua::LuaInterface::getInstance();
 
 
-	Diluculum::LuaValueList path;
+	Lua::LuaTypes::LuaValueList path;
 	path.push_back( file.toStdString() );
 	QString createGraph[] = {"function_call_graph", "extractGraph"};
 	lua->callFunction( 2, createGraph, path );
-	lua->getLuaState()->doString( "getGraph = function_call_graph.getGraph" );
-	Lua::LuaInterface::getInstance()->getLuaState()->doString( "getFullGraph = getGraph" );
+	lua->doString( "getGraph = function_call_graph.getGraph" );
+	Lua::LuaInterface::getInstance()->doString( "getFullGraph = getGraph" );
 
 	Data::Graph* currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
 
@@ -3624,7 +3624,7 @@ void CoreWindow::filterGraph()
 
 	Lua::LuaInterface* lua = Lua::LuaInterface::getInstance();
 
-	Diluculum::LuaValueList query;
+	Lua::LuaTypes::LuaValueList query;
 	query.push_back( nodesQueryText );
 	QString validNodesQuery[] = {"logical_filter", "validNodeQuery"};
 	if ( lua->callFunction( 2, validNodesQuery, query )[0] == false ) {
@@ -3639,7 +3639,7 @@ void CoreWindow::filterGraph()
 	}
 	query[0] = nodesQueryText;
 	query.push_back( edgesQueryText );
-	lua->getLuaState()->doString( "getGraph = logical_filter.getGraph" );
+	lua->doString( "getGraph = logical_filter.getGraph" );
 	QString filterGraph[] = {"logical_filter", "filterGraph"};
 	lua->callFunction( 2, filterGraph, query );
 }

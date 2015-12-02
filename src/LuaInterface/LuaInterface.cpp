@@ -108,3 +108,8 @@ Diluculum::LuaValueList Lua::LuaInterface::callFunction( unsigned int length, QS
 	}
 	return var( params );
 }
+
+Diluculum::LuaValueList Lua::LuaInterface::doString( QString what )
+{
+	return luaState->Diluculum::LuaState::doString(what.toStdString());
+}

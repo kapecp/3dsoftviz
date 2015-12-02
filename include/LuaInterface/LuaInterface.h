@@ -126,6 +126,13 @@ public:
 	     */
 	Diluculum::LuaState* getLuaState() const;
 
+	/**
+		 * \fn doString
+		 * \brief returns Diluculum::LuaValueList, performs Diluculum::doString with LuaInterface, instead of LuaState
+		 * \return Diluculum::LuaValueList from Diluculum library
+		 */
+	Diluculum::LuaValueList Lua::LuaInterface::doString( QString what );
+
 
 
 private:

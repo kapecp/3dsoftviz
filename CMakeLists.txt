@@ -635,6 +635,7 @@ file( GLOB_RECURSE SRC_IMPORTER	"src/Importer/*.cpp" )
 file( GLOB_RECURSE SRC_LAYOUT	"src/Layout/*.cpp" )
 file( GLOB_RECURSE SRC_LUAGRAPH  "src/LuaGraph/*.cpp")
 file( GLOB_RECURSE SRC_LUAINTERFACE  "src/LuaInterface/*.cpp")
+file( GLOB_RECURSE SRC_LUATYPES  "src/LuaTypes/*.cpp")
 file( GLOB_RECURSE SRC_MANAGER	"src/Manager/*.cpp" )
 file( GLOB_RECURSE SRC_MATH		"src/Math/*.cpp" )
 file( GLOB_RECURSE SRC_MODEL	"src/Model/*.cpp" )
@@ -724,6 +725,7 @@ file( GLOB_RECURSE HEADER_IMPORTER	"include/Importer/*.h" )
 file( GLOB_RECURSE HEADER_LAYOUT	"include/Layout/*.h" )
 file( GLOB_RECURSE HEADER_LUAGRAPH  "include/LuaGraph/*.h")
 file( GLOB_RECURSE HEADER_LUAINTERFACE  "include/LuaInterface/*.h")
+file( GLOB_RECURSE HEADER_LUATYPES  "include/LuaTypes/*.h")
 file( GLOB_RECURSE HEADER_MANAGER	"include/Manager/*.h" )
 file( GLOB_RECURSE HEADER_MATH		"include/Math/*.h" )
 file( GLOB_RECURSE HEADER_MODEL		"include/Model/*.h" )
@@ -767,6 +769,7 @@ set( INCL
 	${HEADER_IMPORTER}
 	${HEADER_LAYOUT}
 	${HEADER_LUAGRAPH} ${HEADER_LUAINTERFACE}
+	${HEADER_LUATYPES}
 	${HEADER_MATH}
 	${HEADER_NETWORK}
 	${HEADER_NOISE}
@@ -820,6 +823,7 @@ source_group( \\src\\OsgQtBrowser "^.*OsgQtBrowser/.*$" )
 source_group( \\src\\Noise "^.*Noise/.*$" )
 source_group( \\src\\LuaGraph "^.*LuaGraph/.*$")
 source_group( \\src\\LuaInterface "^.*LuaInterface/.*$")
+source_group( \\src\\LuaTypes "^.*LuaTypes/.*$")
 source_group( \\src\\Git "^.*Git/.*$" )
 
 # Group header files
@@ -838,6 +842,7 @@ source_group( \\headers\\Noise "^.*Noise/.*h$" )
 source_group( \\headers\\OsgQtBrowser "^.*OsgQtBrowser/.*h$" )
 source_group( \\headers\\LuaGraph "^.*LuaGraph/.*h$")
 source_group( \\headers\\LuaInterface "^.*LuaInterface/.*h$")
+source_group( \\headers\\LuaTypes "^.*LuaTypes/.*h$")
 source_group( \\headers\\Git "^.*Git/.*h$" )
 
 if( OpenCV_FOUND )
