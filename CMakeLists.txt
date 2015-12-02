@@ -876,17 +876,17 @@ add_library( gitlib SHARED ${SRC_GITLIB} ${HEADER_GITLIB})
 target_include_directories( gitlib SYSTEM PUBLIC include/Repository/Git } )
 target_link_libraries( gitlib ${QT_LIBRARIES} )
 
+set(FLAGS_FOR_DEBUG2 ${FLAGS_FOR_DEBUG})
+list(APPEND FLAGS_FOR_DEBUG2 " -DGITLIB_LIBRARY")
+string(REPLACE " " ";" REPLACED_FLAGS ${FLAGS_FOR_DEBUG2})
+target_compile_options( gitlib PUBLIC ${REPLACED_FLAGS} )
+
 #leap
 if( LEAP_FOUND )
 add_library( leaplib SHARED ${SRC_LEAPLIB} ${HEADER_LEAPLIB})
 target_include_directories( leaplib SYSTEM PUBLIC ${LEAP_INCLUDE_DIRS} include/Leap } )
 target_link_libraries( leaplib ${QT_LIBRARIES} ${LEAP_LIBRARIES})
 endif()
-
-set(FLAGS_FOR_DEBUG2 ${FLAGS_FOR_DEBUG})
-list(APPEND FLAGS_FOR_DEBUG2 " -DGITLIB_LIBRARY")
-string(REPLACE " " ";" REPLACED_FLAGS ${FLAGS_FOR_DEBUG2})
-target_compile_options( gitlib PUBLIC ${REPLACED_FLAGS} )
 
 if( LEAP_FOUND )
 set(FLAGS_FOR_DEBUG3 ${FLAGS_FOR_DEBUG})

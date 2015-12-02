@@ -19,7 +19,7 @@ namespace Leap {
 class LEAPLIB_EXPORT LeapThread : public QThread
 {
 	//Q_OBJECT
-
+	//TODO resolve
 public:
 	LeapThread( QObject* parent=NULL, LeapCameraManipulator* cameraManipulator=NULL);
 	~LeapThread( void );
