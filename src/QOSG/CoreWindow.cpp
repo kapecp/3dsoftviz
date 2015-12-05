@@ -47,7 +47,7 @@
 #include "LuaGraph/HyperGraphVisualizer.h"
 #include "LuaGraph/SimpleGraphVisualizer.h"
 
-#include "LuaTypes/LuaTypes.h"
+#include "LuaTypes/LuaValueList.h"
 #include "LuaGraph/LuaGraphTreeModel.h"
 
 #include <iostream>
@@ -3590,10 +3590,10 @@ void CoreWindow::loadFunctionCall()
 	Lua::LuaInterface* lua = Lua::LuaInterface::getInstance();
 
 
-	Lua::LuaTypes::LuaValueList path;
+	Lua::LuaValueList path;
 	path.push_back( file.toStdString() );
 	QString createGraph[] = {"function_call_graph", "extractGraph"};
-	lua->callFunction( 2, createGraph, path );
+	lua->callFunction( 2, createGraph, path.getValue() );
 	lua->doString( "getGraph = function_call_graph.getGraph" );
 	Lua::LuaInterface::getInstance()->doString( "getFullGraph = getGraph" );
 
@@ -3624,24 +3624,24 @@ void CoreWindow::filterGraph()
 
 	Lua::LuaInterface* lua = Lua::LuaInterface::getInstance();
 
-	Lua::LuaTypes::LuaValueList query;
-	query.push_back( nodesQueryText );
+	Lua::LuaValueList query;
+	query.push_back ( nodesQueryText );
 	QString validNodesQuery[] = {"logical_filter", "validNodeQuery"};
-	if ( lua->callFunction( 2, validNodesQuery, query )[0] == false ) {
+	if ( lua->callFunction( 2, validNodesQuery, query.getValue() )[0] == false ) {
 		AppCore::Core::getInstance()->messageWindows->showMessageBox( "Upozornenie","Neplatny vyraz filtra vrcholov",false );
 		return;
 	}
 	query[0] = edgesQueryText;
 	QString validEdgesQuery[] = {"logical_filter", "validEdgeQuery"};
-	if ( lua->callFunction( 2, validEdgesQuery, query )[0] == false ) {
+	if ( lua->callFunction( 2, validEdgesQuery, query.getValue() )[0] == false ) {
 		AppCore::Core::getInstance()->messageWindows->showMessageBox( "Upozornenie","Neplatny vyraz filtra hran",false );
 		return;
 	}
 	query[0] = nodesQueryText;
-	query.push_back( edgesQueryText );
+	query.push_back ( edgesQueryText );
 	lua->doString( "getGraph = logical_filter.getGraph" );
 	QString filterGraph[] = {"logical_filter", "filterGraph"};
-	lua->callFunction( 2, filterGraph, query );
+	lua->callFunction( 2, filterGraph, query.getValue() );
 }
 
 void CoreWindow::onChange()

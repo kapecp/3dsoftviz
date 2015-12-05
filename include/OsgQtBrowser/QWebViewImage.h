@@ -19,7 +19,7 @@
 #include <QtWebKit/QtWebKit>
 
 #include "OsgQtBrowser/QGraphicsViewAdapter.h"
-#include "LuaTypes/LuaTypes.h"
+#include "LuaTypes/LuaValueMap.h"
 
 namespace OsgQtBrowser {
 /**
@@ -56,7 +56,7 @@ public:
 		*  \param models
 		*  \param templateType type of the template route
 		*/
-	void showTemplate( const std::string& templateName, Lua::LuaTypes::LuaValueMap models, const std::string& templateType );
+	void showTemplate( const std::string& templateName, Lua::LuaValueMap models, const std::string& templateType );
 
 	/**
 		*  \fn inline public  getQWebView
