@@ -22,7 +22,7 @@ public:
 
 	void push_back( const Diluculum::LuaValue& val );
 
-	Diluculum::LuaValue operator[]( int index );
+	Diluculum::LuaValue& operator[]( int index );
 
 private:
 	Diluculum::LuaValueList val;

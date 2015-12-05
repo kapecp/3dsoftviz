@@ -26,6 +26,6 @@ void Lua::LuaValueList::push_back( const Diluculum::LuaValue& val ){
 	this->val.push_back( val );
 }
 
-Diluculum::LuaValue Lua::LuaValueList::operator []( int index ){
+Diluculum::LuaValue& Lua::LuaValueList::operator []( int index ){
 	 return val[index];
 }

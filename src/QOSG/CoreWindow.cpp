@@ -3625,7 +3625,7 @@ void CoreWindow::filterGraph()
 	Lua::LuaInterface* lua = Lua::LuaInterface::getInstance();
 
 	Lua::LuaValueList query;
-	query.push_back ( nodesQueryText );
+	query.push_back( nodesQueryText );
 	QString validNodesQuery[] = {"logical_filter", "validNodeQuery"};
 	if ( lua->callFunction( 2, validNodesQuery, query.getValue() )[0] == false ) {
 		AppCore::Core::getInstance()->messageWindows->showMessageBox( "Upozornenie","Neplatny vyraz filtra vrcholov",false );
@@ -3638,7 +3638,7 @@ void CoreWindow::filterGraph()
 		return;
 	}
 	query[0] = nodesQueryText;
-	query.push_back ( edgesQueryText );
+	query.push_back( edgesQueryText );
 	lua->doString( "getGraph = logical_filter.getGraph" );
 	QString filterGraph[] = {"logical_filter", "filterGraph"};
 	lua->callFunction( 2, filterGraph, query.getValue() );
