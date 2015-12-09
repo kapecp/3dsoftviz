@@ -1,0 +1,1505 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns"  
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns
+     http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
+  <key id="url" for="node" attr.name="url" attr.type="string" />
+  <key id="color" for="node,edge" attr.name="color" attr.type="string" />
+  <key id="strokecolor" for="node" attr.name="strokecolor" attr.type="string" />
+  <key id="label" for="node" attr.name="label" attr.type="string" />
+  <key id="weight" for="edge" attr.name="weight" attr.type="int" />
+  <key id="width" for="node" attr.name="width" attr.type="double" />
+  <key id="height" for="node" attr.name="height" attr.type="double" />
+  <key id="style" for="node" attr.name="style" attr.type="int" />
+  <graph id="G" edgedefault="directed">
+    <node id="0">
+      <data key="label">http://www.ens-lyon.fr</data>
+      <data key="url">http://www.ens-lyon.fr</data>
+    </node>
+    <node id="1">
+      <data key="label">http://www.webometrics.info</data>
+      <data key="url">http://www.webometrics.info</data>
+    </node>
+    <node id="2">
+      <data key="label">http://www.ens-lyon.eu</data>
+      <data key="url">http://www.ens-lyon.eu</data>
+    </node>
+    <node id="3">
+      <data key="label">http://culturesciencesphysique.ens-lyon.fr</data>
+      <data key="url">http://culturesciencesphysique.ens-lyon.fr</data>
+    </node>
+    <node id="4">
+      <data key="label">http://math-doc.ujf-grenoble.fr</data>
+      <data key="url">http://math-doc.ujf-grenoble.fr</data>
+    </node>
+    <node id="5">
+      <data key="label">http://geologie.ens-lyon.fr</data>
+      <data key="url">http://geologie.ens-lyon.fr</data>
+    </node>
+    <node id="6">
+      <data key="label">http://hvd.ens-lyon.fr</data>
+      <data key="url">http://hvd.ens-lyon.fr</data>
+    </node>
+    <node id="7">
+      <data key="label">http://www.pps.jussieu.fr/~hym</data>
+      <data key="url">http://www.pps.jussieu.fr/~hym</data>
+    </node>
+    <node id="8">
+      <data key="label">http://planet-terre.ens-lyon.fr</data>
+      <data key="url">http://planet-terre.ens-lyon.fr</data>
+    </node>
+    <node id="9">
+      <data key="label">http://www.inrialpes.fr</data>
+      <data key="url">http://www.inrialpes.fr</data>
+    </node>
+    <node id="10">
+      <data key="label">http://www.universite-lyon.fr</data>
+      <data key="url">http://www.universite-lyon.fr</data>
+    </node>
+    <node id="11">
+      <data key="label">http://ec.europa.eu</data>
+      <data key="url">http://ec.europa.eu</data>
+    </node>
+    <node id="12">
+      <data key="label">http://www.ens.fr</data>
+      <data key="url">http://www.ens.fr</data>
+    </node>
+    <node id="13">
+      <data key="label">http://www.auf.org</data>
+      <data key="url">http://www.auf.org</data>
+    </node>
+    <node id="14">
+      <data key="label">http://echanges-etudiants.crepuq.qc.ca</data>
+      <data key="url">http://echanges-etudiants.crepuq.qc.ca</data>
+    </node>
+    <node id="15">
+      <data key="label">http://www.yorku.ca</data>
+      <data key="url">http://www.yorku.ca</data>
+    </node>
+    <node id="16">
+      <data key="label">http://www.jeunes-ambassadeurs.com</data>
+      <data key="url">http://www.jeunes-ambassadeurs.com</data>
+    </node>
+    <node id="17">
+      <data key="label">http://perso.ens-lyon.fr</data>
+      <data key="url">http://perso.ens-lyon.fr</data>
+    </node>
+    <node id="18">
+      <data key="label">http://intralip.ens-lyon.fr</data>
+      <data key="url">http://intralip.ens-lyon.fr</data>
+    </node>
+    <node id="19">
+      <data key="label">http://www.cnrs.fr</data>
+      <data key="url">http://www.cnrs.fr</data>
+    </node>
+    <node id="20">
+      <data key="label">http://www.inria.fr</data>
+      <data key="url">http://www.inria.fr</data>
+    </node>
+    <node id="21">
+      <data key="label">http://www.univ-lyon1.fr</data>
+      <data key="url">http://www.univ-lyon1.fr</data>
+    </node>
+    <node id="22">
+      <data key="label">http://graal.ens-lyon.fr</data>
+      <data key="url">http://graal.ens-lyon.fr</data>
+    </node>
+    <node id="23">
+      <data key="label">http://www.ens-lyon.frLIP</data>
+      <data key="url">http://www.ens-lyon.frLIP</data>
+    </node>
+    <node id="24">
+      <data key="label">http://blogs.univ-paris5.fr</data>
+      <data key="url">http://blogs.univ-paris5.fr</data>
+    </node>
+    <node id="25">
+      <data key="label">http://internetlab.blogspot.com</data>
+      <data key="url">http://internetlab.blogspot.com</data>
+    </node>
+    <node id="26">
+      <data key="label">http://my.statcounter.com</data>
+      <data key="url">http://my.statcounter.com</data>
+    </node>
+    <node id="27">
+      <data key="label">http://internetlab.cindoc.csic.es</data>
+      <data key="url">http://internetlab.cindoc.csic.es</data>
+    </node>
+    <node id="28">
+      <data key="label">http://www.mavir.net</data>
+      <data key="url">http://www.mavir.net</data>
+    </node>
+    <node id="29">
+      <data key="label">http://www.jussieu.fr</data>
+      <data key="url">http://www.jussieu.fr</data>
+    </node>
+    <node id="30">
+      <data key="label">http://www.unice.fr</data>
+      <data key="url">http://www.unice.fr</data>
+    </node>
+    <node id="31">
+      <data key="label">http://www.ensmp.fr</data>
+      <data key="url">http://www.ensmp.fr</data>
+    </node>
+    <node id="32">
+      <data key="label">http://www.ujf-grenoble.fr</data>
+      <data key="url">http://www.ujf-grenoble.fr</data>
+    </node>
+    <node id="33">
+      <data key="label">http://www.polytechnique.fr</data>
+      <data key="url">http://www.polytechnique.fr</data>
+    </node>
+    <node id="34">
+      <data key="label">http://www.univ-rennes1.fr</data>
+      <data key="url">http://www.univ-rennes1.fr</data>
+    </node>
+    <node id="35">
+      <data key="label">http://www.cnam.fr</data>
+      <data key="url">http://www.cnam.fr</data>
+    </node>
+    <node id="36">
+      <data key="label">http://www.univ-lyon2.fr</data>
+      <data key="url">http://www.univ-lyon2.fr</data>
+    </node>
+    <node id="37">
+      <data key="label">http://www.enst.fr</data>
+      <data key="url">http://www.enst.fr</data>
+    </node>
+    <node id="38">
+      <data key="label">http://www.univ-paris5.fr</data>
+      <data key="url">http://www.univ-paris5.fr</data>
+    </node>
+    <node id="39">
+      <data key="label">http://www.u-psud.fr</data>
+      <data key="url">http://www.u-psud.fr</data>
+    </node>
+    <node id="40">
+      <data key="label">http://www.unicaen.fr</data>
+      <data key="url">http://www.unicaen.fr</data>
+    </node>
+    <node id="41">
+      <data key="label">http://www.univ-paris1.fr</data>
+      <data key="url">http://www.univ-paris1.fr</data>
+    </node>
+    <node id="42">
+      <data key="label">http://www.uvsq.fr</data>
+      <data key="url">http://www.uvsq.fr</data>
+    </node>
+    <node id="43">
+      <data key="label">http://www.inpg.fr</data>
+      <data key="url">http://www.inpg.fr</data>
+    </node>
+    <node id="44">
+      <data key="label">http://www.univ-nantes.fr</data>
+      <data key="url">http://www.univ-nantes.fr</data>
+    </node>
+    <node id="45">
+      <data key="label">http://www.upmf-grenoble.fr</data>
+      <data key="url">http://www.upmf-grenoble.fr</data>
+    </node>
+    <node id="46">
+      <data key="label">http://www.univ-lille1.fr</data>
+      <data key="url">http://www.univ-lille1.fr</data>
+    </node>
+    <node id="47">
+      <data key="label">http://www.univ-poitiers.fr</data>
+      <data key="url">http://www.univ-poitiers.fr</data>
+    </node>
+    <node id="48">
+      <data key="label">http://www.ups-tlse.fr</data>
+      <data key="url">http://www.ups-tlse.fr</data>
+    </node>
+    <node id="49">
+      <data key="label">http://www.univ-fcomte.fr</data>
+      <data key="url">http://www.univ-fcomte.fr</data>
+    </node>
+    <node id="50">
+      <data key="label">http://www.upmc.fr</data>
+      <data key="url">http://www.upmc.fr</data>
+    </node>
+    <node id="51">
+      <data key="label">http://www.utc.fr</data>
+      <data key="url">http://www.utc.fr</data>
+    </node>
+    <node id="52">
+      <data key="label">http://www.univ-montp2.fr</data>
+      <data key="url">http://www.univ-montp2.fr</data>
+    </node>
+    <node id="53">
+      <data key="label">http://www.univ-tours.fr</data>
+      <data key="url">http://www.univ-tours.fr</data>
+    </node>
+    <node id="54">
+      <data key="label">http://www.enst-bretagne.fr</data>
+      <data key="url">http://www.enst-bretagne.fr</data>
+    </node>
+    <node id="55">
+      <data key="label">http://www.up.univ-mrs.fr</data>
+      <data key="url">http://www.up.univ-mrs.fr</data>
+    </node>
+    <node id="56">
+      <data key="label">http://www.u-paris10.fr</data>
+      <data key="url">http://www.u-paris10.fr</data>
+    </node>
+    <node id="57">
+      <data key="label">http://www.insa-lyon.fr</data>
+      <data key="url">http://www.insa-lyon.fr</data>
+    </node>
+    <node id="58">
+      <data key="label">http://www.enssib.fr</data>
+      <data key="url">http://www.enssib.fr</data>
+    </node>
+    <node id="59">
+      <data key="label">http://www.univ-paris8.fr</data>
+      <data key="url">http://www.univ-paris8.fr</data>
+    </node>
+    <node id="60">
+      <data key="label">http://www.univ-paris3.fr</data>
+      <data key="url">http://www.univ-paris3.fr</data>
+    </node>
+    <node id="61">
+      <data key="label">http://www.univ-tlse2.fr</data>
+      <data key="url">http://www.univ-tlse2.fr</data>
+    </node>
+    <node id="62">
+      <data key="label">http://www.ehess.fr</data>
+      <data key="url">http://www.ehess.fr</data>
+    </node>
+    <node id="63">
+      <data key="label">http://www.dauphine.fr</data>
+      <data key="url">http://www.dauphine.fr</data>
+    </node>
+    <node id="64">
+      <data key="label">http://www.u-bourgogne.fr</data>
+      <data key="url">http://www.u-bourgogne.fr</data>
+    </node>
+    <node id="65">
+      <data key="label">http://www.univ-lille3.fr</data>
+      <data key="url">http://www.univ-lille3.fr</data>
+    </node>
+    <node id="66">
+      <data key="label">http://www.univ-mlv.fr</data>
+      <data key="url">http://www.univ-mlv.fr</data>
+    </node>
+    <node id="67">
+      <data key="label">http://www.sciences-po.fr</data>
+      <data key="url">http://www.sciences-po.fr</data>
+    </node>
+    <node id="68">
+      <data key="label">http://www.ecp.fr</data>
+      <data key="url">http://www.ecp.fr</data>
+    </node>
+    <node id="69">
+      <data key="label">http://www.univ-bpclermont.fr</data>
+      <data key="url">http://www.univ-bpclermont.fr</data>
+    </node>
+    <node id="70">
+      <data key="label">http://www.univ-brest.fr</data>
+      <data key="url">http://www.univ-brest.fr</data>
+    </node>
+    <node id="71">
+      <data key="label">http://www.univ-angers.fr</data>
+      <data key="url">http://www.univ-angers.fr</data>
+    </node>
+    <node id="72">
+      <data key="label">http://www.ens-cachan.fr</data>
+      <data key="url">http://www.ens-cachan.fr</data>
+    </node>
+    <node id="73">
+      <data key="label">http://www.int-evry.fr</data>
+      <data key="url">http://www.int-evry.fr</data>
+    </node>
+    <node id="74">
+      <data key="label">http://www.archi.fr</data>
+      <data key="url">http://www.archi.fr</data>
+    </node>
+    <node id="75">
+      <data key="label">http://www.univ-pau.fr</data>
+      <data key="url">http://www.univ-pau.fr</data>
+    </node>
+    <node id="76">
+      <data key="label">http://www.w3.org</data>
+      <data key="url">http://www.w3.org</data>
+    </node>
+    <node id="77">
+      <data key="label">http://www.statcounter.com</data>
+      <data key="url">http://www.statcounter.com</data>
+    </node>
+    <node id="78">
+      <data key="label">http://creativecommons.org</data>
+      <data key="url">http://creativecommons.org</data>
+    </node>
+    <node id="79">
+      <data key="label">http://www.cindoc.csic.es</data>
+      <data key="url">http://www.cindoc.csic.es</data>
+    </node>
+    <node id="80">
+      <data key="label">http://rdp@ens-lyon.fr</data>
+      <data key="url">http://rdp@ens-lyon.fr</data>
+    </node>
+    <node id="81">
+      <data key="label">http://www.umpa.ens-lyon.fr/~ghys</data>
+      <data key="url">http://www.umpa.ens-lyon.fr/~ghys</data>
+    </node>
+    <node id="82">
+      <data key="label">http://validator.w3.org</data>
+      <data key="url">http://validator.w3.org</data>
+    </node>
+    <node id="83">
+      <data key="label">http://jigsaw.w3.org</data>
+      <data key="url">http://jigsaw.w3.org</data>
+    </node>
+    <node id="84">
+      <data key="label">http://www.mozilla.com</data>
+      <data key="url">http://www.mozilla.com</data>
+    </node>
+    <node id="85">
+      <data key="label">http://www.umpa.ens-lyon.fr</data>
+      <data key="url">http://www.umpa.ens-lyon.fr</data>
+    </node>
+    <node id="86">
+      <data key="label">http://www.info-veille-biotech.com</data>
+      <data key="url">http://www.info-veille-biotech.com</data>
+    </node>
+    <node id="87">
+      <data key="label">http://www.eduscol.education.fr</data>
+      <data key="url">http://www.eduscol.education.fr</data>
+    </node>
+    <node id="88">
+      <data key="label">http://persos.estat.com</data>
+      <data key="url">http://persos.estat.com</data>
+    </node>
+    <node id="89">
+      <data key="label">http://www.rnbm.org</data>
+      <data key="url">http://www.rnbm.org</data>
+    </node>
+    <node id="90">
+      <data key="label">http://bib-mathematiques.univ-lyon1.fr</data>
+      <data key="url">http://bib-mathematiques.univ-lyon1.fr</data>
+    </node>
+    <node id="91">
+      <data key="label">http://hola.univ-lyon1.fr</data>
+      <data key="url">http://hola.univ-lyon1.fr</data>
+    </node>
+    <node id="92">
+      <data key="label">http://www2.cnrs.fr</data>
+      <data key="url">http://www2.cnrs.fr</data>
+    </node>
+    <node id="93">
+      <data key="label">http://www.inserm.fr</data>
+      <data key="url">http://www.inserm.fr</data>
+    </node>
+    <node id="94">
+      <data key="label">http://www.ifr128.prd.fr</data>
+      <data key="url">http://www.ifr128.prd.fr</data>
+    </node>
+    <node id="95">
+      <data key="label">http://ieea.univ-lille1.fr</data>
+      <data key="url">http://ieea.univ-lille1.fr</data>
+    </node>
+    <node id="96">
+      <data key="label">http://www.fil.univ-lille1.fr</data>
+      <data key="url">http://www.fil.univ-lille1.fr</data>
+    </node>
+    <node id="97">
+      <data key="label">http://www.lifl.fr</data>
+      <data key="url">http://www.lifl.fr</data>
+    </node>
+    <node id="98">
+      <data key="label">http://www2.lifl.fr</data>
+      <data key="url">http://www2.lifl.fr</data>
+    </node>
+    <node id="99">
+      <data key="label">http://sardes.inrialpes.fr</data>
+      <data key="url">http://sardes.inrialpes.fr</data>
+    </node>
+    <node id="100">
+      <data key="label">http://www.cl.cam.ac.uk/~tgg22</data>
+      <data key="url">http://www.cl.cam.ac.uk/~tgg22</data>
+    </node>
+    <node id="101">
+      <data key="label">http://www.cam.ac.uk</data>
+      <data key="url">http://www.cam.ac.uk</data>
+    </node>
+    <node id="102">
+      <data key="label">http://www.pps.jussieu.fr</data>
+      <data key="url">http://www.pps.jussieu.fr</data>
+    </node>
+    <node id="103">
+      <data key="label">http://www.univ-paris7.fr</data>
+      <data key="url">http://www.univ-paris7.fr</data>
+    </node>
+    <node id="104">
+      <data key="label">http://www.informatics.sussex.ac.uk</data>
+      <data key="url">http://www.informatics.sussex.ac.uk</data>
+    </node>
+    <node id="105">
+      <data key="label">http://www.pps.jussieu.fr/~danos</data>
+      <data key="url">http://www.pps.jussieu.fr/~danos</data>
+    </node>
+    <node id="106">
+      <data key="label">http://move.to</data>
+      <data key="url">http://move.to</data>
+    </node>
+    <node id="107">
+      <data key="label">http://nosoftwarepatents.com</data>
+      <data key="url">http://nosoftwarepatents.com</data>
+    </node>
+    <node id="108">
+      <data key="label">http://cinematic.ens-lyon.fr</data>
+      <data key="url">http://cinematic.ens-lyon.fr</data>
+    </node>
+    <node id="109">
+      <data key="label">http://inria.loria.fr</data>
+      <data key="url">http://inria.loria.fr</data>
+    </node>
+    <node id="110">
+      <data key="label">http://www.irisa.fr</data>
+      <data key="url">http://www.irisa.fr</data>
+    </node>
+    <node id="111">
+      <data key="label">http://www-sop.inria.fr</data>
+      <data key="url">http://www-sop.inria.fr</data>
+    </node>
+    <node id="112">
+      <data key="label">http://www.grenoble-inp.fr</data>
+      <data key="url">http://www.grenoble-inp.fr</data>
+    </node>
+    <node id="113">
+      <data key="label">http://www-obs.univ-lyon1.fr</data>
+      <data key="url">http://www-obs.univ-lyon1.fr</data>
+    </node>
+    <node id="114">
+      <data key="label">http://igfl.ens-lyon.fr</data>
+      <data key="url">http://igfl.ens-lyon.fr</data>
+    </node>
+    <node id="115">
+      <data key="label">http://www.futura-sciences.com</data>
+      <data key="url">http://www.futura-sciences.com</data>
+    </node>
+    <node id="116">
+      <data key="label">https://formation.ens-lyon.fr</data>
+      <data key="url">https://formation.ens-lyon.fr</data>
+    </node>
+    <node id="117">
+      <data key="label">http://intranet.ens-lyon.fr</data>
+      <data key="url">http://intranet.ens-lyon.fr</data>
+    </node>
+    <node id="118">
+      <data key="label">http://www.academie-sciences.fr</data>
+      <data key="url">http://www.academie-sciences.fr</data>
+    </node>
+    <node id="119">
+      <data key="label">http://www.education.gouv.fr</data>
+      <data key="url">http://www.education.gouv.fr</data>
+    </node>
+    <node id="120">
+      <data key="label">http://dl.ens-lyon.fr</data>
+      <data key="url">http://dl.ens-lyon.fr</data>
+    </node>
+    <node id="121">
+      <data key="label">http://doc-iep.univ-lyon2.fr</data>
+      <data key="url">http://doc-iep.univ-lyon2.fr</data>
+    </node>
+    <node id="122">
+      <data key="label">http://www.lyon-sciences.fr</data>
+      <data key="url">http://www.lyon-sciences.fr</data>
+    </node>
+    <node id="123">
+      <data key="label">http://www.ddl.ish-lyon.cnrs.fr</data>
+      <data key="url">http://www.ddl.ish-lyon.cnrs.fr</data>
+    </node>
+    <node id="124">
+      <data key="label">http://lettreinformation.ens-lsh.fr</data>
+      <data key="url">http://lettreinformation.ens-lsh.fr</data>
+    </node>
+    <node id="125">
+      <data key="label">http://edbmic.univ-lyon1.fr</data>
+      <data key="url">http://edbmic.univ-lyon1.fr</data>
+    </node>
+    <node id="126">
+      <data key="label">http://www.unoceandavance.com</data>
+      <data key="url">http://www.unoceandavance.com</data>
+    </node>
+    <node id="127">
+      <data key="label">http://liris.cnrs.fr/~cnriut08</data>
+      <data key="url">http://liris.cnrs.fr/~cnriut08</data>
+    </node>
+    <node id="128">
+      <data key="label">http://math.univ-lyon1.fr/~hyp2006</data>
+      <data key="url">http://math.univ-lyon1.fr/~hyp2006</data>
+    </node>
+    <node id="129">
+      <data key="label">http://biologie.ens-lyon.fr</data>
+      <data key="url">http://biologie.ens-lyon.fr</data>
+    </node>
+    <node id="130">
+      <data key="label">http://lyon.udppc.asso.fr</data>
+      <data key="url">http://lyon.udppc.asso.fr</data>
+    </node>
+    <node id="131">
+      <data key="label">http://prixroberval.utc.fr</data>
+      <data key="url">http://prixroberval.utc.fr</data>
+    </node>
+    <node id="132">
+      <data key="label">http://www.mc-bimamosi.cecam.org</data>
+      <data key="url">http://www.mc-bimamosi.cecam.org</data>
+    </node>
+    <node id="133">
+      <data key="label">http://www.cme-emulsion.com</data>
+      <data key="url">http://www.cme-emulsion.com</data>
+    </node>
+    <node id="134">
+      <data key="label">http://cme-emulsion.com</data>
+      <data key="url">http://cme-emulsion.com</data>
+    </node>
+    <node id="135">
+      <data key="label">http://www.maailmalle.net</data>
+      <data key="url">http://www.maailmalle.net</data>
+    </node>
+    <node id="136">
+      <data key="label">http://www.rsu.lv</data>
+      <data key="url">http://www.rsu.lv</data>
+    </node>
+    <node id="137">
+      <data key="label">http://extranet.hea.ie</data>
+      <data key="url">http://extranet.hea.ie</data>
+    </node>
+    <node id="138">
+      <data key="label">http://effervescienze.disi.unige.it</data>
+      <data key="url">http://effervescienze.disi.unige.it</data>
+    </node>
+    <node id="139">
+      <data key="label">http://med.kuleuven.be</data>
+      <data key="url">http://med.kuleuven.be</data>
+    </node>
+    <node id="140">
+      <data key="label">http://www.ub.es</data>
+      <data key="url">http://www.ub.es</data>
+    </node>
+    <node id="141">
+      <data key="label">http://letteren.leidenuniv.nl</data>
+      <data key="url">http://letteren.leidenuniv.nl</data>
+    </node>
+    <node id="142">
+      <data key="label">http://www.vng.nl</data>
+      <data key="url">http://www.vng.nl</data>
+    </node>
+    <node id="143">
+      <data key="label">http://www.euractiv.cz</data>
+      <data key="url">http://www.euractiv.cz</data>
+    </node>
+    <node id="144">
+      <data key="label">http://www.upce.cz</data>
+      <data key="url">http://www.upce.cz</data>
+    </node>
+    <node id="145">
+      <data key="label">http://www.provincia.perugia.it</data>
+      <data key="url">http://www.provincia.perugia.it</data>
+    </node>
+    <node id="146">
+      <data key="label">http://munteanuk.blogspot.com</data>
+      <data key="url">http://munteanuk.blogspot.com</data>
+    </node>
+    <node id="147">
+      <data key="label">http://eur-lex.europa.eu</data>
+      <data key="url">http://eur-lex.europa.eu</data>
+    </node>
+    <node id="148">
+      <data key="label">http://eacea.ec.europa.eu</data>
+      <data key="url">http://eacea.ec.europa.eu</data>
+    </node>
+    <node id="149">
+      <data key="label">http://eacea.cec.eu.int</data>
+      <data key="url">http://eacea.cec.eu.int</data>
+    </node>
+    <node id="150">
+      <data key="label">http://www.fundacionprincipedeasturias.org</data>
+      <data key="url">http://www.fundacionprincipedeasturias.org</data>
+    </node>
+    <node id="151">
+      <data key="label">http://www.international.unina.it</data>
+      <data key="url">http://www.international.unina.it</data>
+    </node>
+    <node id="152">
+      <data key="label">http://heterologies-perpi.blogspot.com</data>
+      <data key="url">http://heterologies-perpi.blogspot.com</data>
+    </node>
+    <node id="153">
+      <data key="label">http://www.egovmonitor.com</data>
+      <data key="url">http://www.egovmonitor.com</data>
+    </node>
+    <node id="154">
+      <data key="label">http://www.open.ac.uk</data>
+      <data key="url">http://www.open.ac.uk</data>
+    </node>
+    <node id="155">
+      <data key="label">http://eportal-ch.pwr.wroc.pl</data>
+      <data key="url">http://eportal-ch.pwr.wroc.pl</data>
+    </node>
+    <node id="156">
+      <data key="label">http://www.esa.int</data>
+      <data key="url">http://www.esa.int</data>
+    </node>
+    <node id="157">
+      <data key="label">http://www.anu.edu.au</data>
+      <data key="url">http://www.anu.edu.au</data>
+    </node>
+    <node id="158">
+      <data key="label">http://www.uneca.org</data>
+      <data key="url">http://www.uneca.org</data>
+    </node>
+    <node id="159">
+      <data key="label">http://www.europa-nu.nl</data>
+      <data key="url">http://www.europa-nu.nl</data>
+    </node>
+    <node id="160">
+      <data key="label">http://eumi-chat.blogspot.com</data>
+      <data key="url">http://eumi-chat.blogspot.com</data>
+    </node>
+    <node id="161">
+      <data key="label">http://www.uv.es</data>
+      <data key="url">http://www.uv.es</data>
+    </node>
+    <node id="162">
+      <data key="label">http://www.bib.ens.fr</data>
+      <data key="url">http://www.bib.ens.fr</data>
+    </node>
+    <node id="163">
+      <data key="label">http://www.presses.ens.fr</data>
+      <data key="url">http://www.presses.ens.fr</data>
+    </node>
+    <node id="164">
+      <data key="label">http://www.agenda.ens.fr</data>
+      <data key="url">http://www.agenda.ens.fr</data>
+    </node>
+    <node id="165">
+      <data key="label">http://www.intranet.ens.fr</data>
+      <data key="url">http://www.intranet.ens.fr</data>
+    </node>
+    <node id="166">
+      <data key="label">http://www.inra.fr</data>
+      <data key="url">http://www.inra.fr</data>
+    </node>
+    <node id="167">
+      <data key="label">http://www.ens-lsh.fr</data>
+      <data key="url">http://www.ens-lsh.fr</data>
+    </node>
+    <node id="168">
+      <data key="label">http://www.bulletin.auf.org</data>
+      <data key="url">http://www.bulletin.auf.org</data>
+    </node>
+    <node id="169">
+      <data key="label">http://www.crue.org</data>
+      <data key="url">http://www.crue.org</data>
+    </node>
+    <node id="170">
+      <data key="label">http://www.infotheque.info</data>
+      <data key="url">http://www.infotheque.info</data>
+    </node>
+    <node id="171">
+      <data key="label">http://www.moyen-orient.auf.org</data>
+      <data key="url">http://www.moyen-orient.auf.org</data>
+    </node>
+    <node id="172">
+      <data key="label">http://www.sciencepresse.qc.ca</data>
+      <data key="url">http://www.sciencepresse.qc.ca</data>
+    </node>
+    <node id="173">
+      <data key="label">http://www.ifgcar.auf.org</data>
+      <data key="url">http://www.ifgcar.auf.org</data>
+    </node>
+    <node id="174">
+      <data key="label">http://foad.refer.org</data>
+      <data key="url">http://foad.refer.org</data>
+    </node>
+    <node id="175">
+      <data key="label">http://www.ifmt.auf.org</data>
+      <data key="url">http://www.ifmt.auf.org</data>
+    </node>
+    <node id="176">
+      <data key="label">http://portal.unesco.org</data>
+      <data key="url">http://portal.unesco.org</data>
+    </node>
+    <node id="177">
+      <data key="label">http://smf.emath.fr</data>
+      <data key="url">http://smf.emath.fr</data>
+    </node>
+    <node id="178">
+      <data key="label">http://www.fabula.org</data>
+      <data key="url">http://www.fabula.org</data>
+    </node>
+    <node id="179">
+      <data key="label">http://www.aidenligne-francais-universite.auf.org</data>
+      <data key="url">http://www.aidenligne-francais-universite.auf.org</data>
+    </node>
+    <node id="180">
+      <data key="label">http://def.auf.org</data>
+      <data key="url">http://def.auf.org</data>
+    </node>
+    <node id="181">
+      <data key="label">http://www.chercheurs.auf.org</data>
+      <data key="url">http://www.chercheurs.auf.org</data>
+    </node>
+    <node id="182">
+      <data key="label">http://www.nipissingu.ca</data>
+      <data key="url">http://www.nipissingu.ca</data>
+    </node>
+    <node id="183">
+      <data key="label">http://www.uwindsor.ca</data>
+      <data key="url">http://www.uwindsor.ca</data>
+    </node>
+    <node id="184">
+      <data key="label">http://www.arts.yorku.ca</data>
+      <data key="url">http://www.arts.yorku.ca</data>
+    </node>
+    <node id="185">
+      <data key="label">http://facdephilo.univ-lyon3.fr</data>
+      <data key="url">http://facdephilo.univ-lyon3.fr</data>
+    </node>
+    <node id="186">
+      <data key="label">http://www.sdc.uwo.ca</data>
+      <data key="url">http://www.sdc.uwo.ca</data>
+    </node>
+    <node id="187">
+      <data key="label">http://yannick.marcerou.free.fr</data>
+      <data key="url">http://yannick.marcerou.free.fr</data>
+    </node>
+    <node id="188">
+      <data key="label">http://www.esc-saint-etienne.fr</data>
+      <data key="url">http://www.esc-saint-etienne.fr</data>
+    </node>
+    <node id="189">
+      <data key="label">http://www.entreprendre.grandlyon.com</data>
+      <data key="url">http://www.entreprendre.grandlyon.com</data>
+    </node>
+    <node id="190">
+      <data key="label">http://portail.univ-st-etienne.fr</data>
+      <data key="url">http://portail.univ-st-etienne.fr</data>
+    </node>
+    <node id="191">
+      <data key="label">http://www.lyon.cci.fr</data>
+      <data key="url">http://www.lyon.cci.fr</data>
+    </node>
+    <node id="192">
+      <data key="label">http://francu.free.fr</data>
+      <data key="url">http://francu.free.fr</data>
+    </node>
+    <node id="193">
+      <data key="label">http://appliweb.ens-lyon.fr</data>
+      <data key="url">http://appliweb.ens-lyon.fr</data>
+    </node>
+    <node id="194">
+      <data key="label">http://www.unisciel.fr</data>
+      <data key="url">http://www.unisciel.fr</data>
+    </node>
+    <node id="195">
+      <data key="label">http://www.uved.fr</data>
+      <data key="url">http://www.uved.fr</data>
+    </node>
+    <node id="196">
+      <data key="label">http://eduscol.education.fr</data>
+      <data key="url">http://eduscol.education.fr</data>
+    </node>
+    <node id="197">
+      <data key="label">http://formaterre.fr</data>
+      <data key="url">http://formaterre.fr</data>
+    </node>
+    <node id="198">
+      <data key="label">http://isheyevo.ens-lyon.fr</data>
+      <data key="url">http://isheyevo.ens-lyon.fr</data>
+    </node>
+    <node id="199">
+      <data key="label">http://pratic.ens-lyon.fr</data>
+      <data key="url">http://pratic.ens-lyon.fr</data>
+    </node> 
+
+<edge source="199" target="198" />
+<edge source="197" target="198" />
+<edge source="197" target="198" />
+<edge source="195" target="198" />
+<edge source="196" target="198" />
+<edge source="197" target="195" />
+<edge source="197" target="194" />
+<edge source="197" target="193" />
+<edge source="192" target="198" />
+
+<edge source="165" target="155" />
+<edge source="165" target="154" />
+<edge source="165" target="153" />
+<edge source="161" target="152" />
+<edge source="161" target="1" />
+
+    <edge source="0" target="0">
+      <data key="weight">4374</data>
+    </edge>
+    <edge source="1" target="0">
+      <data key="weight">6</data>
+    </edge>
+    <edge source="2" target="0">
+      <data key="weight">68</data>
+    </edge>
+    <edge source="3" target="0">
+      <data key="weight">45</data>
+    </edge>
+    <edge source="4" target="0">
+      <data key="weight">11</data>
+    </edge>
+    <edge source="5" target="0">
+      <data key="weight">28</data>
+    </edge>
+    <edge source="6" target="0">
+      <data key="weight">61</data>
+    </edge>
+    <edge source="7" target="0">
+      <data key="weight">8</data>
+    </edge>
+    <edge source="8" target="0">
+      <data key="weight">6</data>
+    </edge>
+    <edge source="9" target="0">
+      <data key="weight">14</data>
+    </edge>
+    <edge source="0" target="10">
+      <data key="weight">23</data>
+    </edge>
+    <edge source="0" target="2">
+      <data key="weight">103</data>
+    </edge>
+    <edge source="0" target="11">
+      <data key="weight">18</data>
+    </edge>
+    <edge source="0" target="12">
+      <data key="weight">9</data>
+    </edge>
+    <edge source="0" target="13">
+      <data key="weight">9</data>
+    </edge>
+    <edge source="0" target="14">
+      <data key="weight">9</data>
+    </edge>
+    <edge source="0" target="15">
+      <data key="weight">9</data>
+    </edge>
+    <edge source="0" target="16">
+      <data key="weight">9</data>
+    </edge>
+    <edge source="0" target="17">
+      <data key="weight">150</data>
+    </edge>
+    <edge source="0" target="18">
+      <data key="weight">16</data>
+    </edge>
+    <edge source="0" target="19">
+      <data key="weight">20</data>
+    </edge>
+    <edge source="0" target="20">
+      <data key="weight">8</data>
+    </edge>
+    <edge source="0" target="21">
+      <data key="weight">10</data>
+    </edge>
+    <edge source="0" target="22">
+      <data key="weight">5</data>
+    </edge>
+    <edge source="0" target="23">
+      <data key="weight">4</data>
+    </edge>
+    <edge source="24" target="1">
+      <data key="weight">22</data>
+    </edge>
+    <edge source="1" target="1">
+      <data key="weight">1698</data>
+    </edge>
+    <edge source="1" target="25">
+      <data key="weight">45</data>
+    </edge>
+    <edge source="1" target="26">
+      <data key="weight">67</data>
+    </edge>
+    <edge source="1" target="27">
+      <data key="weight">48</data>
+    </edge>
+    <edge source="1" target="28">
+      <data key="weight">40</data>
+    </edge>
+    <edge source="1" target="29">
+      <data key="weight">6</data>
+    </edge>
+    <edge source="1" target="12">
+      <data key="weight">6</data>
+    </edge>
+    <edge source="1" target="30">
+      <data key="weight">4</data>
+    </edge>
+    <edge source="1" target="21">
+      <data key="weight">6</data>
+    </edge>
+    <edge source="1" target="31">
+      <data key="weight">4</data>
+    </edge>
+    <edge source="1" target="32">
+      <data key="weight">6</data>
+    </edge>
+    <edge source="1" target="33">
+      <data key="weight">4</data>
+    </edge>
+    <edge source="1" target="34">
+      <data key="weight">4</data>
+    </edge>
+    <edge source="1" target="35">
+      <data key="weight">4</data>
+    </edge>
+    <edge source="1" target="36">
+      <data key="weight">4</data>
+    </edge>
+    <edge source="1" target="37">
+      <data key="weight">4</data>
+    </edge>
+    <edge source="1" target="38">
+      <data key="weight">4</data>
+    </edge>
+    <edge source="1" target="39">
+      <data key="weight">4</data>
+    </edge>
+    <edge source="1" target="40">
+      <data key="weight">4</data>
+    </edge>
+    <edge source="1" target="41">
+      <data key="weight">4</data>
+    </edge>
+    <edge source="1" target="42">
+      <data key="weight">4</data>
+    </edge>
+    <edge source="1" target="43">
+      <data key="weight">4</data>
+    </edge>
+    <edge source="1" target="44">
+      <data key="weight">4</data>
+    </edge>
+    <edge source="1" target="45">
+      <data key="weight">6</data>
+    </edge>
+    <edge source="1" target="46">
+      <data key="weight">6</data>
+    </edge>
+    <edge source="1" target="47">
+      <data key="weight">4</data>
+    </edge>
+    <edge source="1" target="48">
+      <data key="weight">4</data>
+    </edge>
+    <edge source="1" target="49">
+      <data key="weight">4</data>
+    </edge>
+    <edge source="1" target="50">
+      <data key="weight">4</data>
+    </edge>
+    <edge source="1" target="51">
+      <data key="weight">4</data>
+    </edge>
+    <edge source="1" target="52">
+      <data key="weight">4</data>
+    </edge>
+    <edge source="1" target="53">
+      <data key="weight">4</data>
+    </edge>
+    <edge source="1" target="54">
+      <data key="weight">4</data>
+    </edge>
+    <edge source="1" target="55">
+      <data key="weight">4</data>
+    </edge>
+    <edge source="1" target="56">
+      <data key="weight">4</data>
+    </edge>
+    <edge source="1" target="57">
+      <data key="weight">6</data>
+    </edge>
+    <edge source="1" target="58">
+      <data key="weight">4</data>
+    </edge>
+    <edge source="1" target="59">
+      <data key="weight">4</data>
+    </edge>
+    <edge source="1" target="60">
+      <data key="weight">4</data>
+    </edge>
+    <edge source="1" target="61">
+      <data key="weight">4</data>
+    </edge>
+    <edge source="1" target="62">
+      <data key="weight">4</data>
+    </edge>
+    <edge source="1" target="63">
+      <data key="weight">4</data>
+    </edge>
+    <edge source="1" target="64">
+      <data key="weight">4</data>
+    </edge>
+    <edge source="1" target="65">
+      <data key="weight">4</data>
+    </edge>
+    <edge source="1" target="66">
+      <data key="weight">4</data>
+    </edge>
+    <edge source="1" target="67">
+      <data key="weight">4</data>
+    </edge>
+    <edge source="1" target="68">
+      <data key="weight">4</data>
+    </edge>
+    <edge source="1" target="69">
+      <data key="weight">4</data>
+    </edge>
+    <edge source="1" target="70">
+      <data key="weight">4</data>
+    </edge>
+    <edge source="1" target="71">
+      <data key="weight">4</data>
+    </edge>
+    <edge source="1" target="72">
+      <data key="weight">4</data>
+    </edge>
+    <edge source="1" target="73">
+      <data key="weight">4</data>
+    </edge>
+    <edge source="1" target="74">
+      <data key="weight">4</data>
+    </edge>
+    <edge source="1" target="75">
+      <data key="weight">4</data>
+    </edge>
+    <edge source="1" target="76">
+      <data key="weight">38</data>
+    </edge>
+    <edge source="1" target="77">
+      <data key="weight">33</data>
+    </edge>
+    <edge source="1" target="78">
+      <data key="weight">36</data>
+    </edge>
+    <edge source="1" target="79">
+      <data key="weight">44</data>
+    </edge>
+    <edge source="4" target="90">
+      <data key="weight">12</data>
+    </edge>
+    <edge source="4" target="21">
+      <data key="weight">3</data>
+    </edge>
+    <edge source="4" target="91">
+      <data key="weight">3</data>
+    </edge>
+    <edge source="5" target="5">
+      <data key="weight">974</data>
+    </edge>
+    <edge source="5" target="92">
+      <data key="weight">48</data>
+    </edge>
+    <edge source="5" target="21">
+      <data key="weight">25</data>
+    </edge>
+    <edge source="6" target="6">
+      <data key="weight">3473</data>
+    </edge>
+    <edge source="6" target="93">
+      <data key="weight">58</data>
+    </edge>
+    <edge source="6" target="94">
+      <data key="weight">66</data>
+    </edge>
+    <edge source="7" target="7">
+      <data key="weight">68</data>
+    </edge>
+    <edge source="7" target="95">
+      <data key="weight">3</data>
+    </edge>
+    <edge source="7" target="96">
+      <data key="weight">8</data>
+    </edge>
+    <edge source="7" target="97">
+      <data key="weight">7</data>
+    </edge>
+    <edge source="7" target="46">
+      <data key="weight">7</data>
+    </edge>
+    <edge source="7" target="98">
+      <data key="weight">6</data>
+    </edge>
+    <edge source="7" target="20">
+      <data key="weight">8</data>
+    </edge>
+    <edge source="7" target="99">
+      <data key="weight">2</data>
+    </edge>
+    <edge source="7" target="17">
+      <data key="weight">6</data>
+    </edge>
+    <edge source="7" target="100">
+      <data key="weight">8</data>
+    </edge>
+    <edge source="7" target="101">
+      <data key="weight">2</data>
+    </edge>
+    <edge source="7" target="102">
+      <data key="weight">4</data>
+    </edge>
+    <edge source="7" target="103">
+      <data key="weight">3</data>
+    </edge>
+    <edge source="7" target="104">
+      <data key="weight">4</data>
+    </edge>
+    <edge source="7" target="105">
+      <data key="weight">4</data>
+    </edge>
+    <edge source="7" target="106">
+      <data key="weight">4</data>
+    </edge>
+    <edge source="7" target="107">
+      <data key="weight">6</data>
+    </edge>
+    <edge source="7" target="82">
+      <data key="weight">4</data>
+    </edge>
+    <edge source="7" target="83">
+      <data key="weight">4</data>
+    </edge>
+    <edge source="108" target="8">
+      <data key="weight">12</data>
+    </edge>
+    <edge source="8" target="8">
+      <data key="weight">66</data>
+    </edge>
+    <edge source="9" target="9">
+      <data key="weight">1018</data>
+    </edge>
+    <edge source="9" target="20">
+      <data key="weight">150</data>
+    </edge>
+    <edge source="9" target="109">
+      <data key="weight">27</data>
+    </edge>
+    <edge source="9" target="110">
+      <data key="weight">21</data>
+    </edge>
+    <edge source="9" target="111">
+      <data key="weight">23</data>
+    </edge>
+    <edge source="9" target="19">
+      <data key="weight">12</data>
+    </edge>
+    <edge source="9" target="112">
+      <data key="weight">13</data>
+    </edge>
+    <edge source="9" target="57">
+      <data key="weight">14</data>
+    </edge>
+    <edge source="9" target="21">
+      <data key="weight">12</data>
+    </edge>
+    <edge source="9" target="32">
+      <data key="weight">14</data>
+    </edge>
+    <edge source="9" target="45">
+      <data key="weight">14</data>
+    </edge>
+    <edge source="113" target="0">
+      <data key="weight">7</data>
+    </edge>
+    <edge source="114" target="0">
+      <data key="weight">6</data>
+    </edge>
+    <edge source="115" target="0">
+      <data key="weight">4</data>
+    </edge>
+    <edge source="0" target="116">
+      <data key="weight">9</data>
+    </edge>
+    <edge source="0" target="117">
+      <data key="weight">2</data>
+    </edge>
+    <edge source="0" target="118">
+      <data key="weight">2</data>
+    </edge>
+    <edge source="0" target="119">
+      <data key="weight">2</data>
+    </edge>
+    <edge source="0" target="120">
+      <data key="weight">2</data>
+    </edge>
+    <edge source="0" target="94">
+      <data key="weight">4</data>
+    </edge>
+    <edge source="114" target="10">
+      <data key="weight">7</data>
+    </edge>
+    <edge source="121" target="10">
+      <data key="weight">8</data>
+    </edge>
+    <edge source="10" target="10">
+      <data key="weight">1408</data>
+    </edge>
+    <edge source="122" target="10">
+      <data key="weight">9</data>
+    </edge>
+    <edge source="123" target="10">
+      <data key="weight">12</data>
+    </edge>
+    <edge source="124" target="10">
+      <data key="weight">3</data>
+    </edge>
+    <edge source="125" target="10">
+      <data key="weight">3</data>
+    </edge>
+    <edge source="126" target="10">
+      <data key="weight">7</data>
+    </edge>
+    <edge source="127" target="10">
+      <data key="weight">3</data>
+    </edge>
+    <edge source="0" target="128">
+      <data key="weight">1</data>
+    </edge>
+    <edge source="10" target="0">
+      <data key="weight">3</data>
+    </edge>
+    <edge source="129" target="0">
+      <data key="weight">2</data>
+    </edge>
+    <edge source="0" target="130">
+      <data key="weight">2</data>
+    </edge>
+    <edge source="0" target="131">
+      <data key="weight">1</data>
+    </edge>
+    <edge source="0" target="132">
+      <data key="weight">1</data>
+    </edge>
+    <edge source="0" target="133">
+      <data key="weight">1</data>
+    </edge>
+    <edge source="0" target="134">
+      <data key="weight">1</data>
+    </edge>
+    <edge source="1" target="2">
+      <data key="weight">4</data>
+    </edge>
+    <edge source="3" target="2">
+      <data key="weight">2</data>
+    </edge>
+    <edge source="4" target="2">
+      <data key="weight">2</data>
+    </edge>
+    <edge source="5" target="2">
+      <data key="weight">2</data>
+    </edge>
+    <edge source="6" target="2">
+      <data key="weight">2</data>
+    </edge>
+    <edge source="7" target="2">
+      <data key="weight">2</data>
+    </edge>
+    <edge source="8" target="2">
+      <data key="weight">2</data>
+    </edge>
+    <edge source="9" target="2">
+      <data key="weight">2</data>
+    </edge>
+    <edge source="2" target="10">
+      <data key="weight">4</data>
+    </edge>
+    <edge source="135" target="11">
+      <data key="weight">2</data>
+    </edge>
+    <edge source="136" target="11">
+      <data key="weight">2</data>
+    </edge>
+    <edge source="11" target="11">
+      <data key="weight">135</data>
+    </edge>
+    <edge source="137" target="11">
+      <data key="weight">1</data>
+    </edge>
+    <edge source="138" target="11">
+      <data key="weight">1</data>
+    </edge>
+    <edge source="139" target="11">
+      <data key="weight">1</data>
+    </edge>
+    <edge source="140" target="11">
+      <data key="weight">1</data>
+    </edge>
+    <edge source="141" target="11">
+      <data key="weight">1</data>
+    </edge>
+    <edge source="142" target="11">
+      <data key="weight">1</data>
+    </edge>
+    <edge source="143" target="11">
+      <data key="weight">1</data>
+    </edge>
+    <edge source="144" target="11">
+      <data key="weight">1</data>
+    </edge>
+    <edge source="145" target="11">
+      <data key="weight">1</data>
+    </edge>
+    <edge source="146" target="11">
+      <data key="weight">1</data>
+    </edge>
+    <edge source="11" target="147">
+      <data key="weight">42</data>
+    </edge>
+    <edge source="11" target="148">
+      <data key="weight">1</data>
+    </edge>
+    <edge source="11" target="149">
+      <data key="weight">1</data>
+    </edge>
+    <edge source="11" target="150">
+      <data key="weight">1</data>
+    </edge>
+    <edge source="151" target="11">
+      <data key="weight">2</data>
+    </edge>
+    <edge source="152" target="11">
+      <data key="weight">2</data>
+    </edge>
+    <edge source="153" target="11">
+      <data key="weight">2</data>
+    </edge>
+    <edge source="154" target="11">
+      <data key="weight">1</data>
+    </edge>
+    <edge source="155" target="11">
+      <data key="weight">1</data>
+    </edge>
+    <edge source="156" target="11">
+      <data key="weight">1</data>
+    </edge>
+    <edge source="157" target="11">
+      <data key="weight">1</data>
+    </edge>
+    <edge source="158" target="11">
+      <data key="weight">1</data>
+    </edge>
+    <edge source="159" target="11">
+      <data key="weight">1</data>
+    </edge>
+    <edge source="160" target="11">
+      <data key="weight">1</data>
+    </edge>
+    <edge source="161" target="11">
+      <data key="weight">2</data>
+    </edge>
+    <edge source="12" target="12">
+      <data key="weight">33</data>
+    </edge>
+    <edge source="12" target="162">
+      <data key="weight">2</data>
+    </edge>
+    <edge source="12" target="163">
+      <data key="weight">2</data>
+    </edge>
+    <edge source="12" target="164">
+      <data key="weight">2</data>
+    </edge>
+    <edge source="12" target="165">
+      <data key="weight">1</data>
+    </edge>
+    <edge source="12" target="19">
+      <data key="weight">1</data>
+    </edge>
+    <edge source="12" target="93">
+      <data key="weight">1</data>
+    </edge>
+    <edge source="12" target="20">
+      <data key="weight">1</data>
+    </edge>
+    <edge source="12" target="166">
+      <data key="weight">1</data>
+    </edge>
+    <edge source="12" target="87">
+      <data key="weight">1</data>
+    </edge>
+    <edge source="12" target="72">
+      <data key="weight">1</data>
+    </edge>
+    <edge source="12" target="167">
+      <data key="weight">2</data>
+    </edge>
+    <edge source="12" target="0">
+      <data key="weight">1</data>
+    </edge>
+    <edge source="13" target="13">
+      <data key="weight">102</data>
+    </edge>
+    <edge source="168" target="13">
+      <data key="weight">2</data>
+    </edge>
+    <edge source="169" target="13">
+      <data key="weight">2</data>
+    </edge>
+    <edge source="170" target="13">
+      <data key="weight">1</data>
+    </edge>
+    <edge source="171" target="13">
+      <data key="weight">1</data>
+    </edge>
+    <edge source="172" target="13">
+      <data key="weight">1</data>
+    </edge>
+    <edge source="173" target="13">
+      <data key="weight">1</data>
+    </edge>
+    <edge source="174" target="13">
+      <data key="weight">3</data>
+    </edge>
+    <edge source="175" target="13">
+      <data key="weight">1</data>
+    </edge>
+    <edge source="176" target="13">
+      <data key="weight">1</data>
+    </edge>
+    <edge source="177" target="13">
+      <data key="weight">1</data>
+    </edge>
+    <edge source="178" target="13">
+      <data key="weight">1</data>
+    </edge>
+    <edge source="41" target="13">
+      <data key="weight">1</data>
+    </edge>
+    <edge source="13" target="170">
+      <data key="weight">1</data>
+    </edge>
+    <edge source="13" target="179">
+      <data key="weight">1</data>
+    </edge>
+    <edge source="13" target="180">
+      <data key="weight">1</data>
+    </edge>
+    <edge source="10" target="58">
+      <data key="weight">1</data>
+    </edge>
+    <edge source="10" target="121">
+      <data key="weight">1</data>
+    </edge>
+    <edge source="126" target="118">
+      <data key="weight">1</data>
+    </edge>
+    <edge source="114" target="19">
+      <data key="weight">3</data>
+    </edge>
+    <edge source="114" target="166">
+      <data key="weight">3</data>
+    </edge>
+    <edge source="114" target="21">
+      <data key="weight">3</data>
+    </edge>
+    <edge source="115" target="115">
+      <data key="weight">130</data>
+    </edge>
+  </graph>
+</graphml>
