@@ -4,6 +4,7 @@
 #include <spwmacro.h>
 #include <si.h>
 #include <siapp.h>
+#include <spwerror.h>
 
 using std::string;
 
@@ -20,8 +21,6 @@ class DeviceHandle{
 
 public:
 
-    //constructor
-    DeviceHandle();
 
 
 
@@ -71,10 +70,11 @@ public:
     //setter method for deviceRef parameter of instance
     void SetDeviceRef(SiHdl &ref);
 
-
-
-
 private:
+
+
+    //constructor
+    DeviceHandle();
 
     //destructor
     ~DeviceHandle();
@@ -90,6 +90,8 @@ private:
     bool mouseCancel;
 
     SiOpenData initData;
+
+
 
 };
 

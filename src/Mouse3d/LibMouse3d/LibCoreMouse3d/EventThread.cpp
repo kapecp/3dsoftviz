@@ -24,10 +24,15 @@ void EventThread::run(){
 
     DeviceHandle* instance = DeviceHandle::GetInstance();
 
+    qDebug() << "Got instance of handle";
     //get message posted by device
     //Considered using PeekMessage() instead, staying with GetMessage for now
+
+
     while(GetMessage(this->msg, NULL, 0, 0))
     {
+        qDebug() << "Entered while cycle";
+
         //initialization for platform dependent SiGetEvent
         SiGetEventWinInit(this->eData.get(), this->msg->message, this->msg->wParam, this->msg->lParam);
 
@@ -35,6 +40,12 @@ void EventThread::run(){
         //if SI_NOT_EVENT, ignore
         if (SiGetEvent(instance->GetDeviceRef(), 0, this->eData.get(), this->siEvent.get()) == SI_IS_EVENT)
         {
+            //until mouse is flagged to cancel in main window
+            if(instance->MouseCanceled())
+                qDebug() << "Canceling mouse thread";
+                break;
+
+
             //events use interface class to trigger action in main window
             switch (this->siEvent.get()->type)
             {
@@ -68,9 +79,8 @@ void EventThread::run(){
             }
         }
 
-        //until mouse is flagged to cancel in main window
-        if(!(instance->MouseCanceled()))
-            break;
+
     }
+    qDebug() << "Out of mouse thread";
 }
 

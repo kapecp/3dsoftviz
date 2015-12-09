@@ -4,16 +4,25 @@
 
 using namespace LibMouse3d::LibCoreMouse3d;
 
+SpwRetVal SpwErrorVal;
+
 DeviceHandle* DeviceHandle::device;
 
-DeviceHandle::DeviceHandle(){
 
-    //initialize
-    this->InitDevice();
+
+DeviceHandle::DeviceHandle(){
+    qDebug() << "Entered constructor";
 
     this->SetMouseCancel(false);
 
+    //initialize
+    this->InitDevice();
+    qDebug() << "InitDevice successful";
+
+
+
     //get device driver version
+    /*
     if(SiGetDriverInfo(driverVersion.get()) == SPW_ERROR)
          qDebug() << "Could not retrieve version info \n";
     else{
@@ -21,6 +30,11 @@ DeviceHandle::DeviceHandle(){
          qDebug() << driverVersion.get()->version;
          qDebug() << "\n";
     }
+    */
+}
+
+DeviceHandle::~DeviceHandle(){
+    qDebug() << "Entered destructor";
 }
 
 
@@ -33,6 +47,7 @@ DeviceHandle* DeviceHandle::GetInstance(){
 
     if(device == NULL){
 
+        qDebug() << "Get instance: NULL handle -> going to grab handle";
         //call constructor
         device = new DeviceHandle();
     }
@@ -75,18 +90,20 @@ void DeviceHandle::SetMouseCancel(bool set){
  */
 void DeviceHandle::InitDevice(){
 
+
     //initializing internal states
     SiInitialize();
 
     //trying to grab device handle
-    if ( (this->deviceRef = SiOpen ("3dSoftviz", SI_ANY_DEVICE, SI_NO_MASK,
-                           SI_EVENT, &initData)) == SI_NO_HANDLE)
+    this->deviceRef = SiOpen ("3dSoftviz", SI_ANY_DEVICE, SI_NO_MASK, SI_EVENT, &initData);
 
+    if(this->deviceRef == NULL){
         qDebug() << "Failed to open 3DxWare device \n";
+        qDebug() << deviceRef;
+        this->SetMouseCancel(true);
+    }
 
-    else
-
-        qDebug() << "Success opening 3DxWare device \n";
+    qDebug() << SpwErrorString(SpwErrorVal);
 
 }
 
