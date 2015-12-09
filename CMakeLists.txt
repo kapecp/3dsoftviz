@@ -111,15 +111,15 @@ endif ()
 # --------------
 include( cotire )
 if(COMMAND cotire )
-        if( NOT COTIRE_MAXIMUM_NUMBER_OF_UNITY_INCLUDES )
-                include( ProcessorCount )
-                ProcessorCount( N )
+		if( NOT COTIRE_MAXIMUM_NUMBER_OF_UNITY_INCLUDES )
+				include( ProcessorCount )
+				ProcessorCount( N )
 
-                if( NOT N EQUAL 0 )
-                        # set number of parallel unity builds to processor count
-                        set( COTIRE_MAXIMUM_NUMBER_OF_UNITY_INCLUDES "-j${N}" )
-                endif()
-        endif()
+				if( NOT N EQUAL 0 )
+						# set number of parallel unity builds to processor count
+						set( COTIRE_MAXIMUM_NUMBER_OF_UNITY_INCLUDES "-j${N}" )
+				endif()
+		endif()
 
 	set( COTIRE_VERBOSE FALSE )
 	set( COTIRE_DEBUG FALSE )
@@ -130,9 +130,9 @@ if(COMMAND cotire )
 	endif()
 
 	# fix for Diluculum and LuaJIT on 64bit OSX: Lua new_state returned NULL, LuaJIT needs following flags
-	if( APPLE )
-		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pagezero_size 10000 -image_base 100000000" CACHE STRING "" FORCE)
-	endif()
+	#if( APPLE )
+	#	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pagezero_size 10000 -image_base 100000000" CACHE STRING "" FORCE)
+	#endif()
 endif()
 
 # ------------------------------------------------------------
@@ -400,7 +400,7 @@ if( USE_BUILTIN_DEPENDENCIES )
 	endif()
 
 	# Building Lua or LuaJIT
-	if ( MSVC )
+	if ( MSVC OR APPLE )
 		# Build Lua
 		ExternalProject_Add ( dep_lua
 			PREFIX lua
@@ -516,7 +516,7 @@ if( USE_BUILTIN_DEPENDENCIES )
 			-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
 			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
 	)
-	
+
 		# Build lualogging
 	ExternalProject_Add ( dep_lualogging
 		PREFIX lualogging
@@ -528,7 +528,7 @@ if( USE_BUILTIN_DEPENDENCIES )
 	)
 
 	# Ensure correct order of build (dependencies between external dependencies)
-	if( MSVC )
+	if( MSVC OR APPLE )
 		add_dependencies( dep_lpeg dep_lua )
 		add_dependencies( dep_leg dep_lpeg )
 		add_dependencies( dep_luametrics dep_leg )
@@ -926,8 +926,8 @@ add_executable( ${3DSOFTVIZ_NAME} ${INCL}  ${SRC} )
 set_target_properties( ${3DSOFTVIZ_NAME} PROPERTIES COMPILE_FLAGS "${FLAGS_FOR_DEBUG}" )
 
 target_link_libraries( ${3DSOFTVIZ_NAME}
-    gitlib
-    lua
+	gitlib
+	lua
 	noiseutils
 	libnoise
 	osgModeling
@@ -988,9 +988,9 @@ endif()
 if( USE_BUILTIN_DEPENDENCIES )
 
 	# dependencies of non-unity build
-    add_dependencies( ${3DSOFTVIZ_NAME} libnoise osgModeling gitlib dep_luametrics dep_leg dep_lpeg dep_luafilesystem dep_lualogging )
+	add_dependencies( ${3DSOFTVIZ_NAME} libnoise osgModeling gitlib dep_luametrics dep_leg dep_lpeg dep_luafilesystem dep_lualogging )
 
-	if( MSVC )
+	if( MSVC OR APPLE )
 		add_dependencies( ${3DSOFTVIZ_NAME} dep_lua )
 	else()
 		add_dependencies( ${3DSOFTVIZ_NAME} dep_diluculum dep_luajit )
@@ -1004,7 +1004,7 @@ if( USE_BUILTIN_DEPENDENCIES )
 	if (COMMAND cotire)
 		add_dependencies( ${3DSOFTVIZ_NAME}_unity libnoise osgModeling gitlib_unity dep_luametrics dep_leg dep_lpeg dep_luafilesystem dep_lualogging )
 
-		if( MSVC )
+		if( MSVC OR APPLE )
 			add_dependencies( ${3DSOFTVIZ_NAME}_unity dep_lua )
 		else()
 			add_dependencies( ${3DSOFTVIZ_NAME}_unity dep_diluculum dep_luajit )
@@ -1020,7 +1020,7 @@ endif()
 #add_dependencies( ${3DSOFTVIZ_NAME} libnoise )
 #
 #if( OpenCV_FOUND )
-    #add_dependencies( ${3DSOFTVIZ_NAME} aruco )
+	#add_dependencies( ${3DSOFTVIZ_NAME} aruco )
 #endif()
 
 # -------------------------------------------------------
@@ -1029,12 +1029,12 @@ endif()
 
 # 3DSoftviz and data
 install( TARGETS ${3DSOFTVIZ_NAME}
-    BUNDLE DESTINATION ${INSTALL_BUNDLE} COMPONENT Runtime
+	BUNDLE DESTINATION ${INSTALL_BUNDLE} COMPONENT Runtime
 	RUNTIME DESTINATION ${INSTALL_BIN} COMPONENT Runtime )
 
 install( TARGETS gitlib
-    RUNTIME DESTINATION ${INSTALL_BIN} COMPONENT Runtime
-    LIBRARY DESTINATION ${INSTALL_LIB} COMPONENT Runtime )
+	RUNTIME DESTINATION ${INSTALL_BIN} COMPONENT Runtime
+	LIBRARY DESTINATION ${INSTALL_LIB} COMPONENT Runtime )
 
 # add custom install_unity target
 if( COMMAND cotire )
