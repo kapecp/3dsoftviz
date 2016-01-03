@@ -47,7 +47,7 @@ cv::Mat Kinect::KinectRecognition::colorImageCvMat( openni::VideoFrameRef& color
 	// create cv mat frame
 	frame.create( colorFrame.getHeight(), colorFrame.getWidth(), CV_8UC3 );
 	// copy data
-	memcpy( frame.data, imageBuffer, 3*colorFrame.getHeight()*colorFrame.getWidth()*sizeof( uint8_t ) );
+	memcpy( frame.data, imageBuffer, static_cast<size_t>(3*colorFrame.getHeight()*colorFrame.getWidth())*sizeof( uint8_t ) );
 
 	return frame;
 }
@@ -60,7 +60,7 @@ cv::Mat Kinect::KinectRecognition::depthImageCvMat( openni::VideoFrameRef& depth
 	//create cv mat frame
 	frame.create( depthFrame.getHeight(), depthFrame.getWidth(), CV_16UC1 );
 	//copy data
-	memcpy( frame.data, imageBuffer, depthFrame.getHeight()*depthFrame.getWidth()*sizeof( uint16_t ) );
+	memcpy( frame.data, imageBuffer, static_cast<size_t>(depthFrame.getHeight()*depthFrame.getWidth())*sizeof( uint16_t ) );
 
 	return frame;
 }
