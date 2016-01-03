@@ -301,7 +301,7 @@ Data::Graph* Manager::GraphManager::loadGraphFromDB( qlonglong graphID, qlonglon
 	bool error;
 
 	Data::Graph* newGraphRaw = Model::GraphDAO::getGraph( db->tmpGetConn(), &error, graphID, layoutID );
-	std::shared_ptr<Data::Graph> newGraph(newGraphRaw);
+	std::shared_ptr<Data::Graph> newGraph( newGraphRaw );
 
 	if ( !error ) {
 		qDebug() << "[Manager::GraphManager::loadGraphFromDB] Graph loaded from database successfully";

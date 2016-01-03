@@ -725,7 +725,7 @@ QList<osg::ref_ptr<Data::Edge> > Data::Graph::splitEdge( QString name, osg::ref_
 	splitNodeList.push_back( srcNode );
 	osg::Vec3f srcPosition = srcNode->getTargetPosition();
 	osg::Vec3f dstPosition = dstNode->getTargetPosition();
-    osg::Vec3f diffPosition = ( dstPosition - srcPosition )/static_cast<osg::Vec3f::value_type>(splitCount);
+	osg::Vec3f diffPosition = ( dstPosition - srcPosition )/static_cast<osg::Vec3f::value_type>( splitCount );
 	osg::Vec3f metaPosition = srcPosition + diffPosition;
 	for ( int i = 1; i < splitCount; i++ ) {
 		splitNodeList.push_back( addNode( "SNode " + QString::number( i ), nodeType, metaPosition ) );
@@ -946,7 +946,7 @@ Data::GraphLayout* Data::Graph::selectLayout( Data::GraphLayout* layout )
 			while ( it!=this->types->end() ) {
 				Data::Type* t;
 				t=it.value();
-                if ( t->isMeta() && ( static_cast<Data::MetaType*>(t) )->getLayout()!=layout ) {
+				if ( t->isMeta() && ( static_cast<Data::MetaType*>( t ) )->getLayout()!=layout ) {
 					it = this->types->erase( it );
 					this->newTypes.remove( t->getId() );
 					delete t;
@@ -981,7 +981,7 @@ Data::GraphSpanningTree* Data::Graph::getSpanningTree( qlonglong rootId )
 	depthQueue.push_front( rootDepth );
 	pickedNodes.append( rootId );
 
-    spanningTree->addGroup( pickedNodes,rootDepth, static_cast<qlonglong>(0) );
+	spanningTree->addGroup( pickedNodes,rootDepth, static_cast<qlonglong>( 0 ) );
 
 
 	while ( !queue.empty() ) {

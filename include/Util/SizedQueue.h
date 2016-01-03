@@ -17,7 +17,7 @@ class SizedQueue
 
 public:
 
-    SizedQueue( unsigned int size, float threshold );
+	SizedQueue( unsigned int size, float threshold );
 	~SizedQueue();
 
 	/**

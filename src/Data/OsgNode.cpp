@@ -174,10 +174,10 @@ osg::Vec3f Data::OsgNode::getCurrentPosition( bool calculateNew, float interpola
 
 		//osg::Vec3 directionVector = osg::Vec3(targetPosition.x(), targetPosition.y(), targetPosition.z()) * graphScale - currentPosition;
 		osg::Vec3 directionVector = osg::Vec3( mRestrictedTargetPosition.x(), mRestrictedTargetPosition.y(), mRestrictedTargetPosition.z() ) * graphScale - currentPosition;
-        this->currentPosition = directionVector * ( usingInterpolation ? interpolationSpeed : 1 ) + this->currentPosition;
+		this->currentPosition = directionVector * ( usingInterpolation ? interpolationSpeed : 1 ) + this->currentPosition;
 	}
 
-    return this->currentPosition;
+	return this->currentPosition;
 }
 
 void Data::OsgNode::setDrawableColor( osg::Vec4 color )
@@ -197,7 +197,7 @@ void Data::OsgNode::setDrawableColor( osg::Vec4 color )
 
 bool Data::OsgNode::setInvisible( bool invisible )
 {
-    setValue( graph->getNodeVisual(), !invisible );
+	setValue( graph->getNodeVisual(), !invisible );
 	//-poriesit invisible pre label
 	return true;
 }

@@ -37,18 +37,18 @@ AppCore::Core::Core( QApplication* app )
 				   "UI.MainWindow.DefaultWidth",
 				   std::shared_ptr<int> ( new int( 200 ) ),
 				   std::shared_ptr<int> ( NULL ),
-                   1024
+				   1024
 			   );
 	int height= appConf->getNumericValue(
 					"UI.MainWindow.DefaultHeight",
 					std::shared_ptr<int> ( new int( 200 ) ),
 					std::shared_ptr<int> ( NULL ),
-                    768
+					768
 				);
 
 
 
-    this->cw->resize( width, height );
+	this->cw->resize( width, height );
 	this->cw->show();
 
 	app->exec();

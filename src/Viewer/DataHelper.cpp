@@ -26,21 +26,21 @@ osg::ref_ptr<osg::Geode> DataHelper::getSphereGeode( osg::Vec3 center, float rad
 
 osg::ref_ptr<osg::Vec3Array> DataHelper::getInitialVectors( int count )
 {
-    double lowest = 1.0;
-    double highest = 100.0;
-    double range = ( highest - lowest ) + 1.0;
+	double lowest = 1.0;
+	double highest = 100.0;
+	double range = ( highest - lowest ) + 1.0;
 
 	osg::ref_ptr<osg::Vec3Array> positions = new osg::Vec3Array();
 
-    srand( static_cast<unsigned int>(time( 0 )) );
+	srand( static_cast<unsigned int>( time( 0 ) ) );
 
 	for ( int index = 0; index < count; index++ ) {
-        double x, y, z;
-        x = lowest + ( range * static_cast<double>( rand() ) / ( RAND_MAX + 1.0 ) );
-        y = lowest + ( range * static_cast<double>( rand() ) / ( RAND_MAX + 1.0 ) );
-        z = lowest + ( range * static_cast<double>( rand() ) / ( RAND_MAX + 1.0 ) );
+		double x, y, z;
+		x = lowest + ( range * static_cast<double>( rand() ) / ( RAND_MAX + 1.0 ) );
+		y = lowest + ( range * static_cast<double>( rand() ) / ( RAND_MAX + 1.0 ) );
+		z = lowest + ( range * static_cast<double>( rand() ) / ( RAND_MAX + 1.0 ) );
 
-        positions->push_back( osg::Vec3( static_cast<float>(x), static_cast<float>(y), static_cast<float>(z) ) );
+		positions->push_back( osg::Vec3( static_cast<float>( x ), static_cast<float>( y ), static_cast<float>( z ) ) );
 	}
 
 	return positions;
@@ -57,11 +57,11 @@ osg::ref_ptr<osg::Vec3Array> DataHelper::getEdgeVectors( osg::ref_ptr<Data::Node
 {
 	osg::ref_ptr<osg::Vec3Array> edgeVectors = new osg::Vec3Array;
 
-    edgeVectors->push_back( inNode->restrictedTargetPosition() );
+	edgeVectors->push_back( inNode->restrictedTargetPosition() );
 
 	edgeVectors->push_back( osg::Vec3( inNode->restrictedTargetPosition().x() - 0.5f, inNode->restrictedTargetPosition().y(), inNode->restrictedTargetPosition().z() ) );
 	edgeVectors->push_back( osg::Vec3( outNode->restrictedTargetPosition().x() - 0.5f, outNode->restrictedTargetPosition().y(), outNode->restrictedTargetPosition().z() ) );
-    edgeVectors->push_back( outNode->restrictedTargetPosition() );
+	edgeVectors->push_back( outNode->restrictedTargetPosition() );
 
 	return edgeVectors;
 }

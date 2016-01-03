@@ -46,8 +46,8 @@ QString Util::ApplicationConfig::getValue( QString key )
 
 int Util::ApplicationConfig::getNumericValue(
 	QString key,
-    std::shared_ptr<int> minValue,
-    std::shared_ptr<int> maxValue,
+	std::shared_ptr<int> minValue,
+	std::shared_ptr<int> maxValue,
 	const int defaultValue
 )
 {

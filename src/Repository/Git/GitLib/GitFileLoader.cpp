@@ -150,7 +150,7 @@ QString Repository::Git::GitFileLoader::makeTmpFileFromCommand( QString command,
 	if ( ok ) {
 		QProcess process;
 		process.setStandardOutputFile( QDir::toNativeSeparators( tempFile.fileName() ) );
-        QString lCommand = command;
+		QString lCommand = command;
 		process.start( lCommand );
 		process.waitForFinished();
 		process.close();

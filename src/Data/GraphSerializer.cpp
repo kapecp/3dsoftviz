@@ -8,18 +8,18 @@ namespace Data {
 osg::Vec3f GraphSerializer::getRandomPosition()
 {
 	//nastavime nahodne inicializnacne suradnice v 3D
-    double x, y, z;
-    double lowest = 1.0;
-    double highest = 100.0;
-    double range = ( highest - lowest ) + 1.0;
+	double x, y, z;
+	double lowest = 1.0;
+	double highest = 100.0;
+	double range = ( highest - lowest ) + 1.0;
 
-    srand( static_cast<unsigned>(time( 0 )) );
+	srand( static_cast<unsigned>( time( 0 ) ) );
 
-    x = lowest + ( range * static_cast<double>( rand() ) / ( RAND_MAX + 1.0 ) );
-    y = lowest + ( range * static_cast<double>( rand() ) / ( RAND_MAX + 1.0 ) );
-    z = lowest + ( range * static_cast<double>( rand() ) / ( RAND_MAX + 1.0 ) );
+	x = lowest + ( range * static_cast<double>( rand() ) / ( RAND_MAX + 1.0 ) );
+	y = lowest + ( range * static_cast<double>( rand() ) / ( RAND_MAX + 1.0 ) );
+	z = lowest + ( range * static_cast<double>( rand() ) / ( RAND_MAX + 1.0 ) );
 
-    return osg::Vec3f( static_cast<float>(x), static_cast<float>(y), static_cast<float>(z) );
+	return osg::Vec3f( static_cast<float>( x ), static_cast<float>( y ), static_cast<float>( z ) );
 }
 
 GraphSerializer::GraphSerializer( std::vector<Data::Node*>* in_nodes,std::vector<Data::Edge*>* in_edges,std::vector<Data::Type*>* in_types )
