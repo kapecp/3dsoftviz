@@ -31,3 +31,7 @@
 [submodule "dependencies/igloo"]
 	path = dependencies/igloo
 	url = git@github.com:kapecp/igloo.git
+[submodule "dependencies/lualogging"]	
+	path = dependencies/lualogging	
+	url = https://github.com/LuaDist/lualogging.git
+

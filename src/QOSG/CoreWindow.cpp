@@ -1519,7 +1519,7 @@ void CoreWindow::loadFile()
 {
 
 	QFileDialog dialog;
-	dialog.setDirectory( "../share/3dsoftviz" );
+	dialog.setDirectory( "../share/3dsoftviz/graphExamples" );
 
 
 	// Duransky start - vynulovanie vertigo rovin pri nacitani noveho grafu
