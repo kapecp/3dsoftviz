@@ -34,4 +34,3 @@
 [submodule "dependencies/lualogging"]	
 	path = dependencies/lualogging	
 	url = https://github.com/LuaDist/lualogging.git
-
