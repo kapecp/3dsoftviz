@@ -415,7 +415,7 @@ if( USE_BUILTIN_DEPENDENCIES )
 			# prevent building the default target (make install)
 		BUILD_COMMAND ""
 			# force building the install_unity target
-		INSTALL_COMMAND "${CMAKE_COMMAND}" --build . --target install_unity -- "-j${N}"
+        INSTALL_COMMAND "${CMAKE_COMMAND}" --build . --target install_unity# -- "-j${N}"
 	)
 
 	add_library( igloo INTERFACE IMPORTED )
@@ -1167,13 +1167,16 @@ set_target_properties( all_bdd_tests
 	)
 target_include_directories( all_bdd_tests
 	SYSTEM PUBLIC
-		include/Repository/Git
+        include/Repository/Git
 	)
 
 target_link_libraries( all_bdd_tests
 	${QT_LIBRARIES}
     gitlib
 )
+
+add_dependencies( all_bdd_tests igloo)
+
 
 enable_testing()
 add_test(all_bdd_tests all_bdd_tests)
