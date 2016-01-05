@@ -4,6 +4,7 @@
 #include "GitLib/GitFile.h"
 #include "GitLib/GitFileDiffBlock.h"
 #include "GitLib/GitFileDiffBlockLine.h"
+#include "GitLib/GitUtils.h"
 
 #include <QTemporaryFile>
 #include <QDir>
@@ -32,7 +33,7 @@ QList<Repository::Git::GitVersion*> Repository::Git::GitFileLoader::getDataAbout
 	QString lGitCommand = "git log --raw --name-status --reverse --date=short --pretty=format:\"%H%n%an%n%ad\"";
 
 	// Vykona command, vystup ulozi do temp suboru a vrati cestu k temp suboru
-	QString lTmp = makeTmpFileFromCommand( lGitCommand, lFilePath );
+    QString lTmp = Git::GitUtils::makeTmpFileFromCommand( lGitCommand, lFilePath );
 
 	QFile file( lTmp );
 
@@ -116,65 +117,6 @@ QList<Repository::Git::GitVersion*> Repository::Git::GitFileLoader::getDataAbout
 
 	// Vratim list verzii, ktore splnaju filtrovacie kriteria
 	return versions;
-}
-
-QString Repository::Git::GitFileLoader::makeTmpFileFromCommand( QString command, QString filepath )
-{
-	bool ok = true;
-
-	// Ulozim si current working directory
-	QString cwd = QDir::currentPath();
-
-	// Nastavim absolutnu cestu k  temp file ako template a zakazem automaticke mazanie
-	QTemporaryFile tempFile;
-	tempFile.setFileTemplate( QDir::toNativeSeparators( QDir::tempPath() + "/" +  "qXXXXXX" ) );
-	tempFile.setAutoRemove( false );
-
-	// Ak sa nepodarilo vytvorit temp subor, tak nastavim flag "ok" na false a vypisem chybu
-	if ( !tempFile.open() ) {
-		qDebug() << "Nepodarilo sa vytvorit tmp subor";
-		ok = false;
-	}
-
-	// Ak sa podarilo vytvorit temp subor, tak zmenim current working directory
-	if ( ok ) {
-		ok = changeDir( filepath );
-	}
-
-	// Ak sa podarilo zmenit current working directory, tak skontroluje existenciu git repozitara
-	if ( ok ) {
-		ok = existGit( filepath );
-	}
-
-	// Ak existuje na danej ceste git repozitar, tak vykonam command a vystup ulozim do temp suboru
-	if ( ok ) {
-		QProcess process;
-		process.setStandardOutputFile( QDir::toNativeSeparators( tempFile.fileName() ) );
-		QString lCommand = QString( command );
-		process.start( lCommand );
-		process.waitForFinished();
-		process.close();
-		process.terminate();
-
-	}
-
-	// Vratim povodny current working directory, ak sa nepodari zmenit, vypisem do konzoly
-	if ( !changeDir( cwd ) ) {
-		qDebug() << "Nepodarilo sa vratit na povodny current working directory";
-	}
-
-	// Vratim absolutnu cestu k temp suboru
-	return tempFile.fileName();
-}
-
-bool Repository::Git::GitFileLoader::changeDir( QString path )
-{
-	return QDir::setCurrent( path );
-}
-
-bool Repository::Git::GitFileLoader::existGit( QString path )
-{
-	return QDir( QDir::toNativeSeparators( path + "/.git" ) ).exists();
 }
 
 void Repository::Git::GitFileLoader::readGitShowFile( QString tmpFile, Repository::Git::GitFile* gitFile )
@@ -364,7 +306,7 @@ void Repository::Git::GitFileLoader::getDiffInfo( Repository::Git::GitFile* gitF
 	}
 
 	// Vykona command, vystup ulozi do temp suboru a vrati cestu k temp suboru
-	QString lTmp = makeTmpFileFromCommand( lCommand, lFilePath );
+    QString lTmp = Git::GitUtils::makeTmpFileFromCommand( lCommand, lFilePath );
 
 	// Ak je typ suboru ADDED, tak nema predchadzajucu verziu a nacitam celu verziu suboru.
 	// Ak nie, tak nacitam diff bloky daneho suboru
