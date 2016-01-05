@@ -139,6 +139,11 @@ CoreWindow::CoreWindow( QWidget* parent, Vwr::CoreGraph* coreGraph, QApplication
 
 }
 
+CoreWindow::~CoreWindow() {
+    qDebug() << "Volam destruktor CoreWindow";
+    delete Manager::GraphManager::getInstance();
+}
+
 void CoreWindow::createActions()
 {
 
@@ -709,7 +714,7 @@ void CoreWindow::createActions()
 	evolutionSlider->setTickPosition( QSlider::NoTicks );
 	evolutionSlider->setValue( 0 );
 	evolutionSlider->setFocusPolicy( Qt::NoFocus );
-	evolutionSlider->setDisabled( false );
+    evolutionSlider->setDisabled( true );
 	connect( evolutionSlider, SIGNAL( valueChanged( int ) ), this, SLOT( sliderVersionValueChanged( int ) ) );
 
 	labelEvolutionSlider =  new QLabel( this );
@@ -721,6 +726,10 @@ void CoreWindow::createActions()
 
 	evolutionTimer = new QTimer( this );
 	connect( evolutionTimer, SIGNAL( timeout() ), this, SLOT( move() ) );
+
+    chb_git_changeCommits = new QCheckBox( tr( "Change commits" ) );
+    chb_git_changeCommits->setChecked( false );
+    connect( chb_git_changeCommits, SIGNAL( clicked( bool ) ), this, SLOT( changeCommits( bool ) ) );
 	// garaj end
 }
 
@@ -1142,6 +1151,7 @@ QWidget* CoreWindow::createMoreFeaturesTab( QFrame* line )
 	lMore->addRow( new QLabel( ( tr( "Life span:" ) ) ), evolutionLifespanSpinBox );
 	lMore->addRow( b_git_diff );
 	lMore->addRow( b_git_lua_graph );
+    lMore->addRow( chb_git_changeCommits );
 
 	wMore->setLayout( lMore );
 
@@ -1563,15 +1573,21 @@ void CoreWindow::loadFromGit()
 	coreGraph->setNodesFreezed( true );
 	QString lPath = QFileDialog::getExistingDirectory( this, tr( "Select git dir" ) );
 
+    if( Manager::GraphManager::getInstance()->getActiveEvolutionGraph() != NULL ) {
+        delete Manager::GraphManager::getInstance()->getActiveEvolutionGraph();
+    }
+
 	if ( lPath != "" ) {
 
 		if ( Manager::GraphManager::getInstance()->loadGraphFromGit( lPath ) ) {
+            evolutionSlider->setEnabled( true );
+            evolutionSlider->setValue( 0 );
 			evolutionSlider->setRange( 0, Manager::GraphManager::getInstance()->getActiveEvolutionGraph()->getVersions().size() - 1 );
 			QString pos = QString::number( evolutionSlider->value() + 1 );  // kedze list zacina od 0 treba pripocitat +1
 			labelEvolutionSlider->setText( "  " + pos + " . verzia" );
 			b_run_evolution->setDisabled( false );
 			b_next_version->setDisabled( false );
-//            Manager::GraphManager::getInstance()->getActiveGraph()->setCurrentVersion( 0 );
+            Manager::GraphManager::getInstance()->getActiveGraph()->setCurrentVersion( 0 );
 
 		}
 		viewerWidget->getCameraManipulator()->home();
@@ -3461,7 +3477,7 @@ QOSG::ViewerQT* CoreWindow::GetViewerQt()
 
 void CoreWindow::closeEvent( QCloseEvent* event )
 {
-
+    delete Manager::GraphManager::getInstance()->getActiveEvolutionGraph();
 #ifdef OPENCV_FOUND
 	delete OpenCV::OpenCVCore::getInstance( NULL, this );
 #endif
@@ -3831,6 +3847,20 @@ void CoreWindow::getDiffInfo()
 			Manager::GraphManager::getInstance()->getDiffInfo( node.get()->Data::AbsNode::getName(), version );
 		}
 	}
+}
+
+// zatial neviem ci je potrebne:D ale asi bude
+void CoreWindow::changeCommits( bool value ) {
+    qDebug() << chb_git_changeCommits->isChecked();
+    if( value ) {
+        b_run_evolution->setEnabled( false );
+        evolutionSlider->setEnabled( false );
+        b_faster_evolution->setEnabled( false );
+        b_slower_evolution->setEnabled( false );
+    } else {
+        b_faster_evolution->setEnabled( true );
+        b_slower_evolution->setEnabled( true );
+    }
 }
 
 void CoreWindow::createEvolutionLuaGraph()

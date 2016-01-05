@@ -1,5 +1,7 @@
 #include "GitLib/GitEvolutionGraph.h"
 
+#include "GitLib/GitUtils.h"
+
 #include <QDebug>
 #include <QMapIterator>
 
@@ -11,6 +13,8 @@ Repository::Git::GitEvolutionGraph::GitEvolutionGraph()
 
 Repository::Git::GitEvolutionGraph::~GitEvolutionGraph()
 {
+    qDebug() << "Destruktor GitEvolutionGraph";
+    Git::GitUtils::changeCommit( QString( "origin" ), this->getFilePath() );
 	qDeleteAll( this->getVersions() );
 }
 

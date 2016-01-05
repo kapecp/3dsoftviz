@@ -552,6 +552,13 @@ public slots:
 	 */
 	void move();
 
+    /**
+     * void changeCommits( bool change );
+     * @brief Change repository commit when changing versions
+     * @param change True, if repository should change, otherwise false
+     */
+    void changeCommits( bool change );
+
 	/**
 	 * void fasterEvolution()
 	 * @brief Sets up faster evolution
@@ -1006,6 +1013,12 @@ private:
 	 * @brief Timer which interval periodically invokes next version
 	 */
 	QTimer* evolutionTimer;
+
+    /**
+     *CheckBox for changes repository's commits
+     *@brief chb_git_changeCommits
+     */
+    QCheckBox* chb_git_changeCommits;
 
 	bool isRunning;
 

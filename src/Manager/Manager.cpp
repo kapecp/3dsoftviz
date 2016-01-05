@@ -43,12 +43,15 @@ Manager::GraphManager::GraphManager()
 
 	//konfiguracia/vytvorenie DB
 	this->activeGraph = NULL;
+    this->activeEvolutionGraph = NULL;
 	this->db = new Model::DB();
 	noDatabaseFind=false;
 }
 
 Manager::GraphManager::~GraphManager()
 {
+    delete this->getActiveEvolutionGraph();
+    this->activeEvolutionGraph = NULL;
 	delete this->db;
 	this->db = NULL;
 }
