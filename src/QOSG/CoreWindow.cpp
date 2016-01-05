@@ -10,6 +10,7 @@
 
 #include "GitLib/GitEvolutionGraph.h"
 #include "GitLib/GitVersion.h"
+#include "GitLib/GitUtils.h"
 
 #include "Viewer/CoreGraph.h"
 #include "Viewer/CameraManipulator.h"
@@ -139,11 +140,6 @@ CoreWindow::CoreWindow( QWidget* parent, Vwr::CoreGraph* coreGraph, QApplication
 
 }
 
-CoreWindow::~CoreWindow() {
-    qDebug() << "Volam destruktor CoreWindow";
-    delete Manager::GraphManager::getInstance();
-}
-
 void CoreWindow::createActions()
 {
 
@@ -267,7 +263,8 @@ void CoreWindow::createActions()
 
 	loadFunctionCallButton->setToolTip( "Load function calls" );
 	loadFunctionCallButton->setFocusPolicy( Qt::NoFocus );
-	connect( loadFunctionCallButton, SIGNAL( clicked() ), this, SLOT( loadFunctionCall() ) );
+//    QString empty = "";
+    connect( loadFunctionCallButton, SIGNAL( clicked() ), this, SLOT( loadFunctionCall( ) ) );
 
 	browsersGroupingButton = new QPushButton();
 	browsersGroupingButton->setIcon( QIcon( "../share/3dsoftviz/img/gui/grouping.png" ) );
@@ -276,7 +273,7 @@ void CoreWindow::createActions()
 
 	browsersGroupingButton->setCheckable( true );
 	browsersGroupingButton->setFocusPolicy( Qt::NoFocus );
-	connect( browsersGroupingButton, SIGNAL( clicked( bool ) ), this, SLOT( browsersGroupingClicked( bool ) ) );
+    connect( browsersGroupingButton, SIGNAL( clicked( bool ) ), this, SLOT( browsersGroupingClicked( bool ) ) );
 
 	filterNodesEdit = new QLineEdit();
 	filterEdgesEdit = new QLineEdit();
@@ -1571,6 +1568,7 @@ void CoreWindow::loadFromGit()
 {
 	layout->pause();
 	coreGraph->setNodesFreezed( true );
+    chb_git_changeCommits->setDisabled( true );
 	QString lPath = QFileDialog::getExistingDirectory( this, tr( "Select git dir" ) );
 
     if( Manager::GraphManager::getInstance()->getActiveEvolutionGraph() != NULL ) {
@@ -1578,17 +1576,21 @@ void CoreWindow::loadFromGit()
     }
 
 	if ( lPath != "" ) {
-
 		if ( Manager::GraphManager::getInstance()->loadGraphFromGit( lPath ) ) {
-            evolutionSlider->setEnabled( true );
             evolutionSlider->setValue( 0 );
 			evolutionSlider->setRange( 0, Manager::GraphManager::getInstance()->getActiveEvolutionGraph()->getVersions().size() - 1 );
 			QString pos = QString::number( evolutionSlider->value() + 1 );  // kedze list zacina od 0 treba pripocitat +1
 			labelEvolutionSlider->setText( "  " + pos + " . verzia" );
-			b_run_evolution->setDisabled( false );
+            if( !chb_git_changeCommits->isChecked() ) {
+                b_run_evolution->setDisabled( false );
+                evolutionSlider->setEnabled( true );
+            }
 			b_next_version->setDisabled( false );
             Manager::GraphManager::getInstance()->getActiveGraph()->setCurrentVersion( 0 );
-
+            if( chb_git_changeCommits->isChecked() ) {
+                Repository::Git::GitUtils::changeCommit( Manager::GraphManager::getInstance()->getActiveEvolutionGraph()->getVersion( 0 )->getCommitId(), lPath );
+                loadFunctionCall();
+            }
 		}
 		viewerWidget->getCameraManipulator()->home();
 	}
@@ -3598,10 +3600,15 @@ void CoreWindow::createMetricsToolBar()
 
 void CoreWindow::loadFunctionCall()
 {
-	QString file = QFileDialog::getExistingDirectory( this, "Select lua project folder", "." );
-	if ( file == "" ) {
-		return;
-	}
+    QString file = "";
+    if( !chb_git_changeCommits->isChecked() ) {
+        file = QFileDialog::getExistingDirectory( this, "Select lua project folder", "." );
+        if ( file == "" ) {
+            return;
+        }
+    } else {
+        file = Manager::GraphManager::getInstance()->getActiveEvolutionGraph()->getFilePath();
+    }
 	std::cout << "You selected " << file.toStdString() << std::endl;
 	Lua::LuaInterface* lua = Lua::LuaInterface::getInstance();
 
@@ -3704,16 +3711,25 @@ bool CoreWindow::nextVersion()
 		b_previous_version->setDisabled( false );
 	}
 
-	evolutionLifespanSpinBox->setDisabled( true );
-	bool ok = true;
-	int value = evolutionSlider->value();
-	ok = Manager::GraphManager::getInstance()->nextVersion( layout );
-	value++;
-	QString pos =  QString::number( value + 1 );  // kedze list zacina od 0 treba pripocitat +1
-	labelEvolutionSlider->setText( "  " + pos + " . verzia" );
-	evolutionSlider->blockSignals( true );
-	evolutionSlider->setValue( value );
-	evolutionSlider->blockSignals( false );
+    bool ok = true;
+    int value = evolutionSlider->value();
+    evolutionLifespanSpinBox->setDisabled( true );
+    value++;
+    QString pos =  QString::number( value + 1 );  // kedze list zacina od 0 treba pripocitat +1
+    labelEvolutionSlider->setText( "  " + pos + " . verzia" );
+    evolutionSlider->blockSignals( true );
+    evolutionSlider->setValue( value );
+    evolutionSlider->blockSignals( false );
+
+    if( !chb_git_changeCommits->isChecked() ) {
+        ok = Manager::GraphManager::getInstance()->nextVersion( layout );
+    } else {
+        qDebug() << "Treba zavolat dalsi lua stromcek";
+        QString lPath =  Manager::GraphManager::getInstance()->getActiveEvolutionGraph()->getFilePath();
+        QString commitId = Manager::GraphManager::getInstance()->getActiveEvolutionGraph()->getVersion( value )->getCommitId();
+        Repository::Git::GitUtils::changeCommit( commitId, lPath );
+        loadFunctionCall();
+    }
 
 	if ( value == evolutionSlider->maximum() ) {
 		b_next_version->setDisabled( true );
@@ -3730,17 +3746,28 @@ bool CoreWindow::previousVersion()
 	}
 
 	bool ok = true;
-	int value = evolutionSlider->value();
-	ok =  Manager::GraphManager::getInstance()->previousVersion( layout );
-	value--;
-	QString pos =  QString::number( value + 1 );  // kedze list zacina od 0 treba pripocitat +1
-	labelEvolutionSlider->setText( "  " + pos + " . verzia" );
-	evolutionSlider->blockSignals( true );
-	evolutionSlider->setValue( value );
-	evolutionSlider->blockSignals( false );
+    int value = evolutionSlider->value();
+    value--;
+    QString pos =  QString::number( value + 1 );  // kedze list zacina od 0 treba pripocitat +1
+    labelEvolutionSlider->setText( "  " + pos + " . verzia" );
+    evolutionSlider->blockSignals( true );
+    evolutionSlider->setValue( value );
+    evolutionSlider->blockSignals( false );
+
+    if( !chb_git_changeCommits->isChecked() ) {
+        ok =  Manager::GraphManager::getInstance()->previousVersion( layout );
+    } else {
+        qDebug() << "Treba zavolat predchadzajuci lua stromcek";
+        QString lPath =  Manager::GraphManager::getInstance()->getActiveEvolutionGraph()->getFilePath();
+        QString commitId = Manager::GraphManager::getInstance()->getActiveEvolutionGraph()->getVersion( value )->getCommitId();
+        Repository::Git::GitUtils::changeCommit( commitId, lPath );
+        loadFunctionCall();
+    }
 
 	if ( value == evolutionSlider->minimum() ) {
-		evolutionLifespanSpinBox->setDisabled( false );
+        if( !chb_git_changeCommits->isChecked() ) {
+            evolutionLifespanSpinBox->setDisabled( false );
+        }
 		b_previous_version->setDisabled( true );
 	}
 
@@ -3857,9 +3884,6 @@ void CoreWindow::changeCommits( bool value ) {
         evolutionSlider->setEnabled( false );
         b_faster_evolution->setEnabled( false );
         b_slower_evolution->setEnabled( false );
-    } else {
-        b_faster_evolution->setEnabled( true );
-        b_slower_evolution->setEnabled( true );
     }
 }
 
