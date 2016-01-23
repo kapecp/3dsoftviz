@@ -47,6 +47,7 @@
 #include "LuaGraph/FullHyperGraphVisualizer.h"
 #include "LuaGraph/HyperGraphVisualizer.h"
 #include "LuaGraph/SimpleGraphVisualizer.h"
+#include "LuaGraph/GitGraphVisualizer.h"
 
 #include "Diluculum/LuaState.hpp"
 #include <LuaGraph/LuaGraphTreeModel.h>
@@ -3601,14 +3602,21 @@ void CoreWindow::createMetricsToolBar()
 void CoreWindow::loadFunctionCall()
 {
     QString file = "";
-    if( !chb_git_changeCommits->isChecked() ) {
+
+    Repository::Git::GitEvolutionGraph* evolutionGraph = Manager::GraphManager::getInstance()->getActiveEvolutionGraph();
+
+    if( !chb_git_changeCommits->isChecked() || evolutionGraph == NULL ) {
         file = QFileDialog::getExistingDirectory( this, "Select lua project folder", "." );
-        if ( file == "" ) {
-            return;
-        }
     } else {
-        file = Manager::GraphManager::getInstance()->getActiveEvolutionGraph()->getFilePath();
+        if( evolutionGraph != NULL ) {
+            file = evolutionGraph->getFilePath();
+        }
     }
+
+    if( file == "" ) {
+        return;
+    }
+
 	std::cout << "You selected " << file.toStdString() << std::endl;
 	Lua::LuaInterface* lua = Lua::LuaInterface::getInstance();
 
@@ -3623,14 +3631,25 @@ void CoreWindow::loadFunctionCall()
 	Data::Graph* currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
 
 	if ( currentGraph != NULL ) {
-		Manager::GraphManager::getInstance()->closeGraph( currentGraph );
+        if( !chb_git_changeCommits->isChecked() ) {
+            Manager::GraphManager::getInstance()->closeGraph( currentGraph );
+        }
 	}
-	currentGraph = Manager::GraphManager::getInstance()->createNewGraph( "LuaGraph" );
+
+    if( !chb_git_changeCommits->isChecked() ) {
+        currentGraph = Manager::GraphManager::getInstance()->createNewGraph( "LuaGraph" );
+    }
 
 	layout->pause();
 	coreGraph->setNodesFreezed( true );
 
-	Lua::LuaGraphVisualizer* visualizer = new Lua::SimpleGraphVisualizer( currentGraph, coreGraph->getCamera() );
+    Lua::LuaGraphVisualizer* visualizer = NULL;
+    if( chb_git_changeCommits->isChecked() ) {
+        visualizer = new Lua::GitGraphVisualizer( currentGraph, coreGraph->getCamera() );
+    } else {
+        visualizer = new Lua::SimpleGraphVisualizer( currentGraph, coreGraph->getCamera() );
+    }
+
 	visualizer->visualize();
 
 	coreGraph->reloadConfig();
