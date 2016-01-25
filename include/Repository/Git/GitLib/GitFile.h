@@ -11,6 +11,7 @@ namespace Repository {
 
 namespace Git {
 class GitFileDiffBlock;
+class GitFunction;
 
 class GITLIB_EXPORT GitFile
 {
@@ -94,6 +95,35 @@ public:
 		this->gitFileDiffBlocks = gitFileDiffBlocks;
 	}
 
+    /**
+        * \fn getGitFunctions()
+        * \brief Returns list of functions in the Git file
+     */
+    QList<Repository::Git::GitFunction*> getGitFunctions()
+    {
+        return gitFunctions;
+    }
+
+    /**
+        * \fn addGitFunction
+        * \brief Append function to the list
+        * \param block - Function to be added
+     */
+    void addGitFunction( Repository::Git::GitFunction* function )
+    {
+        this->gitFunctions.append( function );
+    }
+
+    /**
+        * \fn setGitFileDiffBlocks
+        * \brief Set diff blocks in the Git file
+        * \param gitFileDiffBlocks Diff blocks from Git file to be set
+     */
+    void setGitFunctions( QList<Repository::Git::GitFunction*> gitFunctions )
+    {
+        this->gitFunctions = gitFunctions;
+    }
+
 	/**
 	 * \fn printContent
 	 * \brief Prints out all info about file.
@@ -124,6 +154,12 @@ private:
 	    * \brief List of diff blocks from the Git file
 	    */
 	QList<Repository::Git::GitFileDiffBlock*> gitFileDiffBlocks;
+
+    /**
+     * QList<Repository::Git::GitFunction*> gitFunctions
+     * @brief List of functions in Git file
+     */
+    QList<Repository::Git::GitFunction*> gitFunctions;
 }; // class
 } // namespace
 }
