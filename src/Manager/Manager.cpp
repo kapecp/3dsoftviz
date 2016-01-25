@@ -321,16 +321,10 @@ Data::Graph* Manager::GraphManager::loadGraphFromDB( qlonglong graphID, qlonglon
 	return this->activeGraph;
 }
 
-Data::Graph* Manager::GraphManager::loadGraphFromGit( QString filepath )
+bool Manager::GraphManager::loadEvolutionGraphFromGit( QString filepath )
 {
 	bool lGit = false;
-	bool ok = true;
 
-	AppCore::Core::getInstance()->messageWindows->showProgressBar();
-/*
-	std::auto_ptr<Importer::ImportInfoHandler> infoHandler( NULL );
-	infoHandler.reset( new ImportInfoHandlerImpl );
-*/
 	QString lName = NULL;
 	QString lExtension = NULL;
 
@@ -351,92 +345,49 @@ Data::Graph* Manager::GraphManager::loadGraphFromGit( QString filepath )
 	Repository::Git::GitEvolutionGraph* evolutionGraph = new Repository::Git::GitEvolutionGraph( filepath );
 	evolutionGraph->setVersions( lVersions );
     this->activeEvolutionGraph = evolutionGraph;
-/*
-	// Ziskaj importer na zaklade zistenej extension a inicializuj ho
-	std::auto_ptr<Importer::StreamImporter> lImporter( NULL );
-	if ( ok ) {
-		bool importerFound;
 
-		ok = Importer::ImporterFactory::createByFileExtension( lImporter, importerFound, lExtension ) && importerFound;
-		infoHandler->reportError( ok, "No suitable importer has been found for the file extension." );
-	}
+    return lGit;
+}
 
-	std::auto_ptr<QIODevice> lStream( NULL );
-	// mensi hack v podmienke, kde povodne bolo !lGit, pricom pri lStream( NULL ); sa nedalo zavolat context.reset( new Importer::ImporterContext( *lStream ,*lNewGraph, *infoHandler, *lFilepath ) )
-	if ( ok && lGit ) {
-		lStream.reset( new QFile( "" ) );
-	}
+Data::Graph* Manager::GraphManager::importEvolutionGraph( QString filepath ) {
+    QString lName = NULL;
+    bool ok = true;
 
-	// kvoli hacku vyssie vytvorim lStream, ale neotvarim ho
-	if ( ok && !lGit ) {
-		ok = lStream->open( QIODevice::ReadOnly );
-		infoHandler->reportError( ok, "Unable to open the input file." );
-	}
-*/
-    /*
-	// Vytvorim graf
-	std::auto_ptr<Data::Graph> lNewGraph( NULL );
-	if ( ok ) {
-		lNewGraph.reset( this->createGraph( lName ) );
-		ok = lNewGraph.get() != NULL;
-	}
-    */
+    QFileInfo lFileInfo( filepath );
+    lName = lFileInfo.fileName();
+
+    Repository::Git::GitEvolutionGraph* evolutionGraph = this->getActiveEvolutionGraph();
     Data::Graph* lNewGraph = this->createGraph( lName );
+
+    AppCore::Core::getInstance()->messageWindows->showProgressBar();
 
     Repository::Git::GitGraphUpdater updater = Repository::Git::GitGraphUpdater( 0, evolutionGraph, lNewGraph );
     updater.import();
 
-/*
-	// Vytvorim nazov projektu
-	std::auto_ptr<QString> lFilepath( NULL );
-	if ( lGit ) {
-		lFilepath.reset( new QString( filepath ) );
-	}
+    // Vytvorim layout a pridam ho grafu
+    if ( ok ) {
+        Data::GraphLayout* lGraphLayout = lNewGraph->addLayout( "new Layout " );
+        lNewGraph->selectLayout( lGraphLayout );
+    }
 
-	// Vytvorim import context, naplnim ho streamom, grafom, infohandlerom a cestou k projektu
-	std::auto_ptr<Importer::ImporterContext> context( NULL );
-	if ( ok ) {
-		context.reset( new Importer::ImporterContext( *lStream ,*lNewGraph, *infoHandler, *lFilepath ) );
-	}
-*/
-    /*
-	// Ak sa ziadny krok nepokazil, tak naimportujem uzly do grafu
-	if ( ok ) {
-		ok = lImporter->import( *context );
-	}
-    */
-
-
-/*
-	// Zatvorim stream
-	if ( lStream.get() != NULL ) {
-		lStream->close();
-	}
-*/
-	// Vytvorim layout a pridam ho grafu
-	if ( ok ) {
-		Data::GraphLayout* lGraphLayout = lNewGraph->addLayout( "new Layout " );
-		lNewGraph->selectLayout( lGraphLayout );
-	}
-
-	// Ak existoval aktivny graf, tak ho zavrem a vratim nami vytvoreny graf ako aktivny
-	if ( ok ) {
-		if ( this->activeGraph != NULL ) {
-			this->closeGraph( this->activeGraph );
-		}
+    // Ak existoval aktivny graf, tak ho zavrem a vratim nami vytvoreny graf ako aktivny
+    if ( ok ) {
+        if ( this->activeGraph != NULL ) {
+            this->closeGraph( this->activeGraph );
+        }
 
         this->activeGraph = updater.getActiveGraph();
-	}
+    }
 
-	// Restartnem layout
-	if ( ok ) {
-		AppCore::Core::getInstance()->restartLayout();
-	}
+    // Restartnem layout
+    if ( ok ) {
+        AppCore::Core::getInstance()->restartLayout();
+    }
 
-	AppCore::Core::getInstance()->messageWindows->closeProgressBar();
+    AppCore::Core::getInstance()->messageWindows->closeProgressBar();
 
-	// Ak nenastala ziadna chyba, tak vratim aktivny graf, inak NULL
-	return ( ok ? this->activeGraph : NULL );
+    // Ak nenastala ziadna chyba, tak vratim aktivny graf, inak NULL
+    return ( ok ? this->activeGraph : NULL );
 }
 
 Data::Graph* Manager::GraphManager::createGraph( QString graphname )

@@ -6,6 +6,9 @@
 
 #include "Data/Graph.h"
 
+#include "Manager/Manager.h"
+#include "GitLib/GitEvolutionGraph.h"
+
 #include <QMap>
 
 #include "limits"
@@ -22,10 +25,54 @@ void Lua::GitGraphVisualizer::visualize()
 	Lua::LuaGraph* g = Lua::LuaGraph::loadGraph();
 	g->printGraph();
 
+    QString filepath =  Manager::GraphManager::getInstance()->getActiveEvolutionGraph()->getFilePath();
+    int countNode = 0;
+    int luaCount = 0;
+    int globalCount = 0;
+
 	for ( QMap<qlonglong, Lua::LuaNode*>::iterator i = g->getNodes()->begin(); i != g->getNodes()->end(); ++i ) {
-		osg::ref_ptr<Data::Node> n = currentGraph->addNode( i.key() , i.value()->getLabel(), nodeType );
-		setNodeParams( n, i.value(), osg::Vec4f( 1,1,1,1 ), 8 );
+        QString uniqueTextId = QString::fromStdString( i.value()->getParams()["type"].asString() ) + "/" + i.value()->getLabel();
+        QString type = QString::fromStdString(i.value()->getParams()["type"].asString());
+//        qDebug() << uniqueTextId;
+        osg::ref_ptr<Data::Node> n = currentGraph->findLuaNodeByIdentifier( uniqueTextId );
+
+        luaCount++;
+
+        if( QString::compare( type, "globalFunction" ) && QString::compare( type, "globalModule" ) ) {
+
+            if( !QString::compare( type, "directory" ) || !QString::compare( type, "file" ) ) {
+
+                QString label = QString::fromStdString( i.value()->getParams()["path"].asString() ).replace( filepath + "/", "" );
+
+                qDebug() << label;
+                if( !n ) {
+                    n = currentGraph->addNode( i.key() , label, nodeType );
+                    countNode++;
+                } else {
+                    n->setId( i.key() );
+                }
+                setNodeParams( n, i.value(), osg::Vec4f( 1,1,1,1 ), 8 );
+                n->setLabelText( label );
+                n->reloadConfig();
+            } else {
+                qDebug() << "function: " << i.value()->getLabel();
+                if( !n ) {
+                    countNode++;
+                    n = currentGraph->addNode( i.key() , i.value()->getLabel(), nodeType );
+                } else {
+                    n->setId( i.key() );
+                }
+                setNodeParams( n, i.value(), osg::Vec4f( 1,1,1,1 ), 8 );
+
+            }
+
+        } else {
+            globalCount++;
+        }
+
 	}
+
+    qDebug() << "Pocet pridanych uzlov do grafu" << countNode << " a pocet z Lua " << luaCount << " a global " << globalCount;
 
 	for ( QMap<qlonglong, Lua::LuaEdge*>::iterator i = g->getEdges()->begin(); i != g->getEdges()->end(); ++i ) {
 		if ( i.value()->getIncidences().size() != 2 ) {
@@ -36,6 +83,14 @@ void Lua::GitGraphVisualizer::visualize()
 		osg::ref_ptr<Data::Node> srcNode = currentGraph->getNodes()->value( incid1->getEdgeNodePair().second );
 		osg::ref_ptr<Data::Node> dstNode = currentGraph->getNodes()->value( incid2->getEdgeNodePair().second );
 		osg::ref_ptr<Data::Edge> newEdge;
+
+        if( srcNode.get() && dstNode.get() ) {
+
+        } else {
+//            qDebug() << "Prazdny uzol";
+            continue;
+        }
+
 		if ( incid1->getOriented() ) {
 			if ( incid1->getOutGoing() ) {
 				newEdge = currentGraph->addEdge( i.key(), i.value()->getLabel(), dstNode, srcNode, edgeType, true );
@@ -49,33 +104,6 @@ void Lua::GitGraphVisualizer::visualize()
 		}
 		newEdge->setCamera( camera );
 		setEdgeParams( newEdge, i.value(), osg::Vec4f( 1,1,1,1 ) );
-	}
-	g->setObserver( this );
-
-	QString metaNodeName = "metaNode";
-	QString metaEdgeName = "metaEdge";
-	osg::ref_ptr<Data::Node> filesAnchor = currentGraph->addNode( std::numeric_limits<qlonglong>::max(), metaNodeName, currentGraph->getNodeMetaType(), osg::Vec3( 0, 0, 500 ) );
-	osg::ref_ptr<Data::Node> functionsAnchor = currentGraph->addNode( std::numeric_limits<qlonglong>::max() - 1, metaNodeName, currentGraph->getNodeMetaType(), osg::Vec3( 0, 0, -500 ) );
-	filesAnchor->setColor( osg::Vec4( 0,0,0,0 ) );
-	functionsAnchor->setColor( osg::Vec4( 0,0,0,0 ) );
-
-	for ( QMap<qlonglong, Lua::LuaNode*>::iterator i = g->getNodes()->begin(); i != g->getNodes()->end(); ++i ) {
-		if ( i.value()->getParams().type() == 0 ) {
-			continue;
-		}
-		if ( i.value()->getParams()["root"]== true ) {
-			osg::ref_ptr<Data::Node> root = currentGraph->getNodes()->value( i.key() );
-			osg::ref_ptr<Data::Edge> metaLink = currentGraph->addEdge( metaEdgeName, root, filesAnchor, currentGraph->getEdgeMetaType(), false );
-			metaLink->setEdgeColor( osg::Vec4( 0,0,0,0 ) );
-			metaLink->setInvisible( true );
-		}
-		if ( i.value()->getParams()["type"] == "function" ) {
-			osg::ref_ptr<Data::Node> func = currentGraph->getNodes()->value( i.key() );
-			osg::ref_ptr<Data::Edge> metaLink = currentGraph->addEdge( metaEdgeName, func, functionsAnchor, currentGraph->getEdgeMetaType(), false );
-			metaLink->setEdgeColor( osg::Vec4( 0,0,0,0 ) );
-			metaLink->setInvisible( true );
-			metaLink->setEdgeStrength( 0.1f );
-		}
 	}
 }
 

@@ -726,7 +726,7 @@ void CoreWindow::createActions()
 	connect( evolutionTimer, SIGNAL( timeout() ), this, SLOT( move() ) );
 
     chb_git_changeCommits = new QCheckBox( tr( "Change commits" ) );
-    chb_git_changeCommits->setChecked( false );
+    chb_git_changeCommits->setChecked( true );
     connect( chb_git_changeCommits, SIGNAL( clicked( bool ) ), this, SLOT( changeCommits( bool ) ) );
 	// garaj end
 }
@@ -1577,7 +1577,15 @@ void CoreWindow::loadFromGit()
     }
 
 	if ( lPath != "" ) {
-		if ( Manager::GraphManager::getInstance()->loadGraphFromGit( lPath ) ) {
+        if ( Manager::GraphManager::getInstance()->loadEvolutionGraphFromGit( lPath ) ) {
+            qDebug() << Manager::GraphManager::getInstance()->getActiveEvolutionGraph()->getFilePath();
+            if( chb_git_changeCommits->isChecked() ) {
+                Repository::Git::GitUtils::changeCommit( Manager::GraphManager::getInstance()->getActiveEvolutionGraph()->getVersion( 0 )->getCommitId(), lPath );
+                loadFunctionCall();
+            } else {
+                Manager::GraphManager::getInstance()->importEvolutionGraph( lPath );
+            }
+
             evolutionSlider->setValue( 0 );
 			evolutionSlider->setRange( 0, Manager::GraphManager::getInstance()->getActiveEvolutionGraph()->getVersions().size() - 1 );
 			QString pos = QString::number( evolutionSlider->value() + 1 );  // kedze list zacina od 0 treba pripocitat +1
@@ -1588,10 +1596,7 @@ void CoreWindow::loadFromGit()
             }
 			b_next_version->setDisabled( false );
             Manager::GraphManager::getInstance()->getActiveGraph()->setCurrentVersion( 0 );
-            if( chb_git_changeCommits->isChecked() ) {
-                Repository::Git::GitUtils::changeCommit( Manager::GraphManager::getInstance()->getActiveEvolutionGraph()->getVersion( 0 )->getCommitId(), lPath );
-                loadFunctionCall();
-            }
+
 		}
 		viewerWidget->getCameraManipulator()->home();
 	}
@@ -3603,16 +3608,22 @@ void CoreWindow::loadFunctionCall()
 {
     QString file = "";
 
+    // ziskam evolucny graf, v pripade, ze nebol este nacitany, tak sa vrati NULL
     Repository::Git::GitEvolutionGraph* evolutionGraph = Manager::GraphManager::getInstance()->getActiveEvolutionGraph();
 
+    // ak je evolucny graf neinicializovany alebo nie je zaskrtnuta volba zmeny commitu, tak poskytneme vyber projektu,
+    // inak skontrolujeme, ci je evolucny graf inicializovany a vyuzijeme cestu z evolucneho grafu
     if( !chb_git_changeCommits->isChecked() || evolutionGraph == NULL ) {
         file = QFileDialog::getExistingDirectory( this, "Select lua project folder", "." );
     } else {
+
+        // ak je evolucny graf inicializovany, tak vyuzijeme cestu k projektu
         if( evolutionGraph != NULL ) {
             file = evolutionGraph->getFilePath();
         }
     }
 
+    // ak sa predchadzajucou volbou neziskala cesta ku projektu, tak ukonci metodu
     if( file == "" ) {
         return;
     }
@@ -3630,12 +3641,19 @@ void CoreWindow::loadFunctionCall()
 
 	Data::Graph* currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
 
+    // ak bol vytvoreny graf a zmena commitu nie je zaskrtnuta, tak vymazem aktualny graf,
+    // v opacnom pripade sa graf ponecha
 	if ( currentGraph != NULL ) {
+
+        // ak zmena commitu nie je zaskrtnuta, tak vymaz aktualny graf
         if( !chb_git_changeCommits->isChecked() ) {
             Manager::GraphManager::getInstance()->closeGraph( currentGraph );
         }
-	}
+    } else {
+        currentGraph = Manager::GraphManager::getInstance()->createNewGraph( "LuaGraph" );
+    }
 
+    // ak nie je zmena commitu zaskrtnuta, tak vytvor novy graf
     if( !chb_git_changeCommits->isChecked() ) {
         currentGraph = Manager::GraphManager::getInstance()->createNewGraph( "LuaGraph" );
     }

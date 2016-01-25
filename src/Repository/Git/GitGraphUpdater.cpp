@@ -382,9 +382,6 @@ void Repository::Git::GitGraphUpdater::addNodesToGraph( QStringList list )
 		}
 		else {
 			lVal = "dir";
-			if ( i == 0 ) {
-				lVal = "root";
-			}
 		}
 
 		// Ziskam typ ulozeny v grafe so ziskanym nazvom typu
@@ -413,6 +410,15 @@ void Repository::Git::GitGraphUpdater::addNodesToGraph( QStringList list )
 			node->showLabel( true );
 		}
 	}
+
+    // prepoj novo vzniknute uzly s rootom
+    osg::ref_ptr<Data::Node> lRoot = this->getActiveGraph()->findNodeByName( this->getEvolutionGraph()->getFilePath() );
+    if( !lRoot ) {
+        lRoot = this->activeGraph->addNode( this->getEvolutionGraph()->getFilePath(), this->getActiveGraph()->getTypesByName( "root" ).at( 0 ) );
+        lRoot->setFixed( true );
+        lRoot->setLabelText( this->getEvolutionGraph()->getFilePath() );
+        lRoot->showLabel( true );
+    }
 }
 
 void Repository::Git::GitGraphUpdater::addEdgesToGraph( QStringList list )
@@ -466,6 +472,30 @@ void Repository::Git::GitGraphUpdater::addEdgesToGraph( QStringList list )
 			}
 		}
 	}
+
+    // prepojim root s prvym uzlom
+    QString lEdgeName = "root" + list.at( 0 );
+    this->getActiveGraph()->addEdgeOccurence( lEdgeName );
+    if( !this->getActiveGraph()->findEdgeByName( lEdgeName ) ) {
+        bool ok = true;
+
+        if ( ok ) {
+            // Ak sa uzol nenachadza v grafe, tak skonci dalsie spracovanie
+            ok = this->getActiveGraph()->findNodeByName( this->getEvolutionGraph()->getFilePath() );
+        }
+
+        if ( ok ) {
+            // Ak sa uzol nenachadza v grafe, tak skonci dalsie spracovanie
+            ok = this->getActiveGraph()->findNodeByName( list.at( 0 ) );
+        }
+
+        bool oriented =  false;
+
+        // Ak sa obidva uzly nachadzaju v grafe, tak vytvor medzi nimi hranu.
+        if ( ok ) {
+            this->getActiveGraph()->addEdge( lEdgeName, this->getActiveGraph()->findNodeByName( this->getEvolutionGraph()->getFilePath() ), this->getActiveGraph()->findNodeByName( list.at( 0 ) ), lType, oriented );
+        }
+    }
 }
 
 void Repository::Git::GitGraphUpdater::addAuthorEdgesToGraph( QString authorName, QList<Repository::Git::GitFile*> gitFiles )
@@ -542,6 +572,35 @@ void Repository::Git::GitGraphUpdater::removeNodesFromGraph( QStringList list )
 			this->getEvolutionGraph()->getRemovedFiles().remove( lNodeNameTo );
 		}
 	}
+
+    QString lEdgeName = "root" + list.at( 0 );
+
+    // Ak je rozdiel sucasnej verzie a verzie vymazania mensi ako lifespan, tak nastavime passedLifespan na true
+    // a uzol nemoze byt vymazany.
+    bool passedLifespan = false;
+    if ( this->getEvolutionGraph()->getRemovedFiles().contains( list.at( 0 ) ) ) {
+        int difference = this->getCurrentVersion() - this->getEvolutionGraph()->getRemovedFiles().value( list.at( 0 ) );
+        if ( difference < this->getEvolutionGraph()->getLifespan() ) {
+            passedLifespan = true;
+
+            // Ak ide o subor, tak zmenime obrazok uzla.
+            if ( 1 == list.size() - 1 ) {
+                Data::Node* node = this->getActiveGraph()->findNodeByName( list.at( 0 ) );
+                if ( node ) {
+                    node->setType( this->getActiveGraph()->getTypesByName( "removedFile" ).at( 0 ) );
+                    node->reloadConfig();
+                    node->showLabel( true );
+                }
+            }
+        }
+    }
+
+    // Ak hrana v grafe uz neexistuje a sucasne lifespan uzla prekrocil treshold, tak vymaz cielovy uzol
+    if ( this->getActiveGraph()->getEdgeOccurence().value( lEdgeName ) <= 0 && !passedLifespan ) {
+        this->getActiveGraph()->removeNode( this->getActiveGraph()->findNodeByName( list.at( 0 ) ) );
+        this->getEvolutionGraph()->getRemovedFiles().remove( list.at( 0 ) );
+    }
+
 }
 
 void Repository::Git::GitGraphUpdater::removeEdgesFromGraph( QStringList list )
@@ -568,6 +627,23 @@ void Repository::Git::GitGraphUpdater::removeEdgesFromGraph( QStringList list )
 			this->getActiveGraph()->removeEdge( this->getActiveGraph()->findEdgeByName( lEdgeName ) );
 		}
 	}
+
+    QString lEdgeName = "root" + list.at( 0 );
+    if( this->getActiveGraph()->findEdgeByName( lEdgeName ) ) {
+
+        // Ak je rozdiel sucasnej verzie a verzie vymazania mensi ako lifespan, tak nastavime passedLifespan na true
+        // a uzol nemoze byt vymazany.
+        bool passedLifespan = false;
+        int difference = this->getCurrentVersion() - this->getEvolutionGraph()->getRemovedFiles().value( list.at( 0 ) );
+        if ( difference < this->getEvolutionGraph()->getLifespan() ) {
+            passedLifespan = true;
+        }
+
+        // Ak hrana v grafe uz neexistuje a sucasne lifespan uzla prekrocil treshold, tak vymaz hranu
+        if ( !this->getActiveGraph()->removeEdgeOccurence( lEdgeName ) && !passedLifespan ) {
+            this->getActiveGraph()->removeEdge( this->getActiveGraph()->findEdgeByName( lEdgeName ) );
+        }
+    }
 }
 
 void Repository::Git::GitGraphUpdater::modifyNodesInGraph( QStringList list )

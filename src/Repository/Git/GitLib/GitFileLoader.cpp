@@ -77,17 +77,17 @@ QList<Repository::Git::GitVersion*> Repository::Git::GitFileLoader::getDataAbout
 				// V pripade, ze sa nenasiel ani jeden regex, tak skontrolujeme dlzku nacitaneho riadku. Ak je rovny 40, tak ide
 				// o viacnasobne uvedenie identifikatoru a autora, vtedy precitame a zahodime. Ak nie je rovny 40, skonci vytvaranie verzie.
 				if ( A.indexIn( line ) != -1 ) {
-					line = line.replace( A, "projekt/" );
+                    line = line.replace( A, "" );
 					Repository::Git::GitFile* file = new Repository::Git::GitFile( line.mid( line.lastIndexOf( "/" ) + 1 ), line, Repository::Git::GitType::ADDED );
 					version->addChangedFile( file );
 				}
 				else if ( M.indexIn( line ) != -1 ) {
-					line = line.replace( M, "projekt/" );
+                    line = line.replace( M, "" );
 					Repository::Git::GitFile* file = new Repository::Git::GitFile( line.mid( line.lastIndexOf( "/" ) + 1 ), line, Repository::Git::GitType::MODIFIED );
 					version->addChangedFile( file );
 				}
 				else if ( D.indexIn( line ) != -1 ) {
-					line = line.replace( D, "projekt/" );
+                    line = line.replace( D, "" );
 					Repository::Git::GitFile* file = new Repository::Git::GitFile( line.mid( line.lastIndexOf( "/" ) + 1 ), line, Repository::Git::GitType::REMOVED );
 					version->addChangedFile( file );
 				}
@@ -295,7 +295,7 @@ void Repository::Git::GitFileLoader::getDiffInfo( Repository::Git::GitFile* gitF
 {
 	QString lCommand;
 	QString lFilePath = this->filePath;
-	QString lFile = gitFile->getFilepath().replace( "projekt/", "" );
+    QString lFile = gitFile->getFilepath();
 
 	// Ak bol pridany subor pridany, nemame jeho predchadzajucu verziu, preto nacitame celu verziu suboru
 	if ( gitFile->getType() == Repository::Git::GitType::ADDED ) {
