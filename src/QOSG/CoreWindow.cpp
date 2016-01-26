@@ -1579,6 +1579,7 @@ void CoreWindow::loadFromGit()
 	if ( lPath != "" ) {
         if ( Manager::GraphManager::getInstance()->loadEvolutionGraphFromGit( lPath ) ) {
             qDebug() << Manager::GraphManager::getInstance()->getActiveEvolutionGraph()->getFilePath();
+            Manager::GraphManager::getInstance()->importEvolutionGraph( lPath );
             if( chb_git_changeCommits->isChecked() ) {
                 Repository::Git::GitUtils::changeCommit( Manager::GraphManager::getInstance()->getActiveEvolutionGraph()->getVersion( 0 )->getCommitId(), lPath );
                 loadFunctionCall();
@@ -1622,7 +1623,7 @@ void CoreWindow::labelOnOff( bool )
 
 		nodeLabelsVisible = edgeLabelsVisible = !state;
 
-		coreGraph->setEdgeLabelsVisible( !state );
+//		coreGraph->setEdgeLabelsVisible( !state );
 		coreGraph->setNodeLabelsVisible( !state );
 	}
 }

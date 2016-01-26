@@ -120,6 +120,8 @@ public:
 		return graph_id;
 	}
 
+    osg::ref_ptr<Data::Node> replaceNodeId( int oldId, int newId );
+
 	/**
 	    * \fn qlonglong setId(qlonglong graph_id)
 	    * \brief Sets new ID of Graph unless it is already in DB

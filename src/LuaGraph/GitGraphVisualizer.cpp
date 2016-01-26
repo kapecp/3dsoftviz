@@ -23,7 +23,7 @@ void Lua::GitGraphVisualizer::visualize()
 {
     qDebug() << "GitGraphVisualizer visualization";
 	Lua::LuaGraph* g = Lua::LuaGraph::loadGraph();
-	g->printGraph();
+//	g->printGraph();
 
     QString filepath =  Manager::GraphManager::getInstance()->getActiveEvolutionGraph()->getFilePath();
     int countNode = 0;
@@ -31,41 +31,49 @@ void Lua::GitGraphVisualizer::visualize()
     int globalCount = 0;
 
 	for ( QMap<qlonglong, Lua::LuaNode*>::iterator i = g->getNodes()->begin(); i != g->getNodes()->end(); ++i ) {
-        QString uniqueTextId = QString::fromStdString( i.value()->getParams()["type"].asString() ) + "/" + i.value()->getLabel();
-        QString type = QString::fromStdString(i.value()->getParams()["type"].asString());
-//        qDebug() << uniqueTextId;
-        osg::ref_ptr<Data::Node> n = currentGraph->findLuaNodeByIdentifier( uniqueTextId );
-
         luaCount++;
+        QString type = QString::fromStdString( i.value()->getParams()["type"].asString() );
 
         if( QString::compare( type, "globalFunction" ) && QString::compare( type, "globalModule" ) ) {
+            QString nodeName = "";
 
             if( !QString::compare( type, "directory" ) || !QString::compare( type, "file" ) ) {
-
-                QString label = QString::fromStdString( i.value()->getParams()["path"].asString() ).replace( filepath + "/", "" );
-
-                qDebug() << label;
-                if( !n ) {
-                    n = currentGraph->addNode( i.key() , label, nodeType );
-                    countNode++;
-                } else {
-                    n->setId( i.key() );
-                }
-                setNodeParams( n, i.value(), osg::Vec4f( 1,1,1,1 ), 8 );
-                n->setLabelText( label );
-                n->reloadConfig();
+                nodeName = QString::fromStdString( i.value()->getParams()["path"].asString() ).replace( filepath + "/", "" );
             } else {
-                qDebug() << "function: " << i.value()->getLabel();
-                if( !n ) {
-                    countNode++;
-                    n = currentGraph->addNode( i.key() , i.value()->getLabel(), nodeType );
-                } else {
-                    n->setId( i.key() );
-                }
-                setNodeParams( n, i.value(), osg::Vec4f( 1,1,1,1 ), 8 );
-
+                nodeName = i.value()->getLabel();
             }
 
+            osg::ref_ptr<Data::Node> n = this->currentGraph->findNodeByName( nodeName );
+
+
+            if( !n ) {
+                qDebug() << nodeName << "not found";
+                countNode++;
+//                if( !QString::compare( type, "function") ) {
+//                    qDebug() << "Pridavam funkciu" << nodeName;
+//                    n = this->currentGraph->addNode( i.key() , nodeName, nodeType );
+//                }
+
+            } else {
+                qDebug() << nodeName << "found";
+                n = currentGraph->replaceNodeId( n->getId(), i.key() );
+
+                if( n ) {
+                    n->setId( i.key() );
+                    setNodeParams( n, i.value(), osg::Vec4f( 1,1,1,1 ), 8 );
+                    n->Data::AbsNode::setName( nodeName );
+                    n->setLabelText( nodeName );
+                    n->showLabel( true );
+                    n->reloadConfig();
+                } else {
+                    return;
+                }
+            }
+            /*
+            setNodeParams( n, i.value(), osg::Vec4f( 1,1,1,1 ), 8 );
+            n->Data::AbsNode::setName( nodeName );
+            n->setLabelText( nodeName );
+            n->reloadConfig();*/
         } else {
             globalCount++;
         }
@@ -104,7 +112,7 @@ void Lua::GitGraphVisualizer::visualize()
 		}
 		newEdge->setCamera( camera );
 		setEdgeParams( newEdge, i.value(), osg::Vec4f( 1,1,1,1 ) );
-	}
+    }
 }
 
 void Lua::GitGraphVisualizer::onUpdate()

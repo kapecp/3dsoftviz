@@ -339,7 +339,7 @@ osg::ref_ptr<Data::Node> Data::Graph::addNode( QString name, Data::Type* type, o
 	//pridame vnoreny uzol
 	this->addNestedNode( node );
 
-	this->newNodes.insert( node->getId(),node );
+    this->newNodes.insert( node->getId(),node );
 	if ( type!=NULL && type->isMeta() ) {
 		//pridame meta uzol do zoznamu
 		this->metaNodes->insert( node->getId(),node );
@@ -359,12 +359,33 @@ osg::ref_ptr<Data::Node> Data::Graph::addNode( QString name, Data::Type* type, o
 	return node;
 }
 
+osg::ref_ptr<Data::Node> Data::Graph::replaceNodeId( int oldId, int newId ) {
+    osg::ref_ptr<Data::Node> node = this->nodes->value( oldId );
+    Data::Node* newNode = nullptr;
+    if( this->nodes->remove( oldId ) ) {
+        newNode = node.release();
+    } else {
+        return nullptr;
+    }
+
+//    this->nodes->
+
+
+    if( this->nodes->contains( newId ) ) {
+        return nullptr;
+    } else {
+        osg::ref_ptr<Data::Node> result = newNode;
+        this->nodes->insert( newId, result );
+        return result;
+    }
+}
+
 osg::ref_ptr<Data::Node> Data::Graph::addNode( qlonglong id, QString name, Data::Type* type, osg::Vec3f position )
 {
 	//vytvorime novy objekt uzla
 	osg::ref_ptr<Data::Node> node = new Data::Node( id, name, type, this->getNodeScaleByType( type ), this, position );
 
-	this->newNodes.insert( node->getId(),node );
+    this->newNodes.insert( node->getId(), node );
 
 	//podla typu ho priradime danemu zoznamu
 	if ( type!=NULL && type->isMeta() ) {
