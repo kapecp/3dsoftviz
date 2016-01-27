@@ -33,6 +33,8 @@ public:
 	 */
 	static LuaGraph* loadGraph();
 
+    static LuaGraph* loadEvoGraph( QString repoFilepath );
+
 	/**
 	 * @brief destructor
 	 */
@@ -113,7 +115,6 @@ private:
 	 * @brief incidences map of id => LuaIncidence
 	 */
 	QMap<qlonglong, LuaIncidence*>* incidences;
-
 
 };
 

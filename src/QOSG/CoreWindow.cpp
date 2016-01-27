@@ -1579,7 +1579,7 @@ void CoreWindow::loadFromGit()
 	if ( lPath != "" ) {
         if ( Manager::GraphManager::getInstance()->loadEvolutionGraphFromGit( lPath ) ) {
             qDebug() << Manager::GraphManager::getInstance()->getActiveEvolutionGraph()->getFilePath();
-            Manager::GraphManager::getInstance()->importEvolutionGraph( lPath );
+//            Manager::GraphManager::getInstance()->importEvolutionGraph( lPath );
             if( chb_git_changeCommits->isChecked() ) {
                 Repository::Git::GitUtils::changeCommit( Manager::GraphManager::getInstance()->getActiveEvolutionGraph()->getVersion( 0 )->getCommitId(), lPath );
                 loadFunctionCall();
@@ -3927,6 +3927,32 @@ void CoreWindow::changeCommits( bool value ) {
 
 void CoreWindow::createEvolutionLuaGraph()
 {
+    QString file = Manager::GraphManager::getInstance()->getActiveEvolutionGraph()->getFilePath();
+
+    Repository::Git::GitUtils::changeCommit( Manager::GraphManager::getInstance()->getActiveEvolutionGraph()->getVersion( 0 )->getCommitId(), file );
+
+    std::cout << "You selected " << file.toStdString() << std::endl;
+    Lua::LuaInterface* lua = Lua::LuaInterface::getInstance();
+
+
+    Diluculum::LuaValueList path;
+    path.push_back( file.toStdString() );
+    QString createGraph[] = {"function_call_graph", "extractGraph"};
+    lua->callFunction( 2, createGraph, path );
+    lua->getLuaState()->doString( "getGraph = function_call_graph.getGraph" );
+    Lua::LuaInterface::getInstance()->getLuaState()->doString( "getFullGraph = getGraph" );
+
+    Data::Graph* currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
+
+
+
+
+    Lua::LuaGraphVisualizer* visualizer = new Lua::GitGraphVisualizer( currentGraph, coreGraph->getCamera() );
+    visualizer->visualize();
+
+
+
+   /*
 	Lua::LuaInterface* lua = Lua::LuaInterface::getInstance();
 
 	Data::Graph* currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
@@ -4044,6 +4070,7 @@ void CoreWindow::createEvolutionLuaGraph()
 		layout->play();
 		coreGraph->setNodesFreezed( false );
 	}
+    */
 }
 
 } // namespace QOSG

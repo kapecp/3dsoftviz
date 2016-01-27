@@ -6,7 +6,7 @@
 #include <QMapIterator>
 
 Repository::Git::GitEvolutionGraph::GitEvolutionGraph()
-	: versions( QList<Repository::Git::GitVersion*>() ), removedFiles( QMap<QString, int>() ), lifespan( 0 ), filePath( "" )
+    : versions( QList<Repository::Git::GitVersion*>() ), removedFiles( QMap<QString, int>() ), luaNodesMapping( QMap<QString, int>() ), lifespan( 0 ), filePath( "" )
 {
 
 }
@@ -45,4 +45,20 @@ void Repository::Git::GitEvolutionGraph::printRemovedFiles()
 		iter.next();
 		qDebug() << iter.key() << iter.value();
 	}
+}
+
+void Repository::Git::GitEvolutionGraph::addLuaNodesMapping( QString identifier, int luaNodeId ) {
+    if( this->luaNodesMapping.contains( identifier ) ) {
+        int previousId = this->luaNodesMapping.find( identifier ).value();
+        this->luaNodesMapping.insert( identifier, luaNodeId );
+        int newId = this->luaNodesMapping.find( identifier ).value();
+
+        qDebug() << identifier << "from" << previousId << "to" << newId << "/" << luaNodeId;
+    } else {
+        this->luaNodesMapping.insert( identifier, luaNodeId );
+        int storedId = this->luaNodesMapping.find( identifier ).value();
+
+        qDebug() << "Inserted" << identifier << "to" << storedId << "/" << luaNodeId;
+    }
+
 }

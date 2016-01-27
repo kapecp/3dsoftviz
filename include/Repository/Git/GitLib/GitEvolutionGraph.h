@@ -118,6 +118,25 @@ public:
 	 */
 	void addRemovedFiles( QStringList list, int version );
 
+    /**
+     * void addLuaNodeMapping( QString identifier, int luaNodeId )
+     * @brief Add mapping of lua node indetifier to actual lua node id
+     * @param identifier Unique identifier of lua node
+     * @param luaNodeId Unique id of current loaded lua node
+     */
+    void addLuaNodesMapping( QString identifier, int luaNodeId ); //{
+//        this->luaNodesMapping.insert( identifier, luaNodeId );
+//    }
+
+    /**
+     * QMap<QString, int> getLuaNodeMapping()
+     * @brief Returns map, where key is unique identifier of lua node and value is unique id of current loaded lua node
+     * @return map, where key is unique identifier of lua node and value is unique id of current loaded lua node
+     */
+    QMap<QString, int> getLuaNodesMapping() {
+        return this->luaNodesMapping;
+    }
+
 	/**
 	 * void removeRemovedFiles( QString name )
 	 * @brief Removes file from map with specific key
@@ -143,6 +162,12 @@ private:
 	 * @brief Map of names of files which was deleted in Nth version
 	 */
 	QMap<QString, int> removedFiles;
+
+    /**
+     * QMap<QString, int> luaNodesMapping
+     * @brief Maps identifier to current lua node id
+     */
+    QMap<QString, int> luaNodesMapping;
 
 	/**
 	 * int lifespan

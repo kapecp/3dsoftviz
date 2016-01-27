@@ -12,6 +12,8 @@
 #include <sstream>
 #include <iostream>
 
+#include <QDebug>
+
 Lua::LuaGraph* Lua::LuaGraph::instance;
 
 Diluculum::LuaValueList luaCallback( const Diluculum::LuaValueList& params )
@@ -30,6 +32,7 @@ Lua::LuaGraph::LuaGraph()
 	nodes = new QMap<qlonglong, Lua::LuaNode*>();
 	edges = new QMap<qlonglong, Lua::LuaEdge*>();
 	incidences = new QMap<qlonglong, Lua::LuaIncidence*>();
+    evoNodes = new QMap<QString, Lua::LuaNode*>();
 	observer = NULL;
 	Lua::LuaInterface* lua = Lua::LuaInterface::getInstance();
 	Diluculum::LuaState* ls = lua->getLuaState();
@@ -156,6 +159,171 @@ Lua::LuaGraph* Lua::LuaGraph::loadGraph()
 
 	std::cout << "Node count: " << result->nodes->count() << std::endl;
 	return result;
+}
+
+Lua::LuaGraph* Lua::LuaGraph::loadEvoGraph( QString repoFilepath )
+{
+    std::cout << "loading evo graph" << std::endl;
+    Lua::LuaInterface* lua = Lua::LuaInterface::getInstance();
+
+    Lua::LuaGraph* result = Lua::LuaGraph::getInstance();
+    result->clearGraph();
+
+    Diluculum::LuaState* ls = lua->getLuaState();
+
+    Diluculum::LuaValueMap edges = ( *ls )["getGraph"]()[0].asTable();
+
+    QList<qlonglong> unusedNodes = QList<qlonglong>();
+
+    for ( Diluculum::LuaValueMap::iterator iterator = edges.begin(); iterator != edges.end(); ++iterator ) {
+        // cast nastavenia Edge
+        qlonglong edgeId = iterator->first.asTable()["id"].asInteger();
+        Lua::LuaEdge* edge = new Lua::LuaEdge();
+        edge->setId( edgeId );
+        edge->setParams( iterator->first.asTable()["params"] );
+
+        if ( iterator->first.asTable()["label"].type() != 0 ) {
+            edge->setLabel( QString::fromStdString( iterator->first.asTable()["label"].asString() ) );
+        } else {
+            qDebug() << "Edge" << edgeId << "neobsahuje LABEL";
+        }
+
+        result->edges->insert( edgeId, edge );
+
+        Diluculum::LuaValueMap incidences = iterator->second.asTable();
+        for ( Diluculum::LuaValueMap::iterator iterator2 = incidences.begin(); iterator2 != incidences.end(); ++iterator2 ) {
+
+            // cast nastavenia Incidence
+            qlonglong incidenceId = iterator2->first.asTable()["id"].asInteger();
+            Lua::LuaIncidence* incidence = new Lua::LuaIncidence();
+            incidence->setId(incidenceId );
+            incidence->setParams( iterator2->first.asTable()["params"] );
+            if ( iterator2->first.asTable()["label"].type() != 0 ) {
+                incidence->setLabel( QString::fromStdString( iterator2->first.asTable()["label"].asString() ) );
+            }
+            else {
+                qDebug() << "Incidence" << incidenceId << "neobsahuje LABEL";
+            }
+
+            incidence->setOriented( iterator2->first.asTable()["direction"].type() != 0 );
+            if ( incidence->getOriented() ) {
+                incidence->setOutGoing( iterator2->first.asTable()["direction"].asString() == "out" );
+            }
+
+            edge->addIncidence( incidenceId );
+
+            // cast nastavenia Node
+            qlonglong nodeId = iterator2->second.asTable()["id"].asInteger();
+
+            QString type = QString::fromStdString( iterator2->second.asTable()["params"].asTable()["type"].asString() );
+
+            QString identifier = "";
+
+            if( !QString::compare( type, "directory" ) || !QString::compare( type, "file" ) ) {
+                identifier = type + ":" + QString::fromStdString( iterator2->second.asTable()["params"].asTable()["path"].asString() ).replace( repoFilepath + "/", "" );
+//                qDebug() << "directory/file =" << identifier;
+            }
+
+            if( !QString::compare( type, "globalModule" ) ) {
+                if ( iterator2->second.asTable()["label"].type() != 0 ) {
+                    identifier = type + ":" + QString::fromStdString( iterator2->second.asTable()["label"].asString() );
+//                    qDebug() << "globalModule =" << identifier;
+                } else {
+                    qDebug() << "Uzol" << nodeId << "neobsahuje LABEL";
+                    return NULL;
+                }
+            }
+
+            if( !QString::compare( type, "function" ) ) {
+                QString modulePath = QString::fromStdString( iterator2->second.asTable()["params"].asTable()["modulePath"].asString() ).replace( repoFilepath + "/", "" );
+                if ( iterator2->second.asTable()["label"].type() != 0 ) {
+                    identifier = type + ":" + modulePath + ":" + QString::fromStdString( iterator2->second.asTable()["label"].asString() );
+//                    qDebug() << "function =" << identifier;
+                } else {
+                    qDebug() << "Uzol" << nodeId << "neobsahuje LABEL";
+                    return NULL;
+                }
+            }
+            Lua::LuaNode* node = new Lua::LuaNode();
+            node->setId( nodeId );
+            node->setParams( iterator2->second.asTable()["params"] );
+            node->setLabel( QString::fromStdString( iterator2->second.asTable()["label"].asString() ) );
+
+
+            if( result->nodes->contains( nodeId ) ) {
+                result->nodes->value( nodeId )->addIncidence( incidenceId );
+            } else {
+                node->setIdentifier( identifier );
+
+//                qDebug() << identifier;
+                result->nodes->insert( nodeId, node );
+                node->addIncidence( incidenceId );
+
+                if( identifier == "" ) {
+                    unusedNodes.append( nodeId );
+                }
+            }
+
+
+            incidence->setEdgeNode( edgeId, nodeId );
+            result->incidences->insert( incidenceId, incidence );
+
+            /*
+            if( identifier != "" ) {
+                if( result->nodes->contains( identifier ) ) {
+                    result->nodes->value( identifier )->addIncidence( incidenceId );
+                } else {
+                    node->setIdentifier( identifier );
+
+                    qDebug() << identifier;
+                    result->nodes->insert( identifier, node );
+                }
+            } else {
+                unusedNodes.append( node );
+            }
+
+            incidence->setEdgeNode( edgeId, nodeId );
+            result->incidences->insert( incidenceId, incidence );
+            */
+        }
+    }
+
+    foreach( qlonglong nodeId, unusedNodes ) {
+        Lua::LuaNode* node = result->nodes->find( nodeId ).value();
+        QString nodeType = QString::fromStdString( node->getParams()["type"].asString() );
+        bool isPartOfModule = false;
+        foreach( qlonglong incidenceId, node->getIncidences() ) {
+            Lua::LuaEdge* edge = result->edges->find( result->incidences->value( incidenceId )->getEdgeNodePair().first ).value();
+
+            Lua::LuaIncidence* incidence = nullptr;
+            if( edge->getIncidences().at( 0 ) != incidenceId ) {
+                incidence = result->incidences->find( edge->getIncidences().at( 0 ) ).value();
+            } else {
+                incidence = result->incidences->find( edge->getIncidences().at( 1 ) ).value();
+            }
+
+            Lua::LuaNode* otherNode = result->nodes->find( incidence->getEdgeNodePair().second ).value();
+            QString type = QString::fromStdString( otherNode->getParams()["type"].asString() );
+            if( !QString::compare( type, "globalModule") ) {
+                QString identifier = nodeType + ":" + otherNode->getLabel() + ":" + node->getLabel();
+                node->setIdentifier( identifier );
+                qDebug() << node->getIdentifier() << "found";
+                isPartOfModule = true;
+                break;
+            }
+        }
+
+        if( !isPartOfModule ) {
+            QString identifier = nodeType + ":" + node->getLabel();
+            node->setIdentifier( identifier );
+            qDebug() << node->getIdentifier() << "not found";
+        }
+    }
+
+
+
+    qDebug() << "EvoNode count: " << result->nodes->count();
+    return result;
 }
 
 Lua::LuaGraph::~LuaGraph()

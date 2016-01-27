@@ -132,14 +132,14 @@ bool Repository::Git::GitGraphUpdater::import() {
 
         // Pridam cesty od korena projektu ako uzly a hrany do grafu
         addNodesToGraph( list );
-//        addEdgesToGraph( list );
+        addEdgesToGraph( list );
 
         // Aktualizujem percento spracovania
         Manager::GraphManager::getInstance()->setProgressBarValue( int( ( double( i + 1 ) /  double( lAddedGitFiles.size() ) ) * 100 ) );
     }
 
     Data::Node* lAuthorNode = nullptr;
-/*
+///*
     lAuthorNode = this->getActiveGraph()->findNodeByName( lAuthor );
     // Ak autor neexistuje v grafe, tak ho vytvorim
     if ( !lAuthorNode ) {
@@ -149,7 +149,7 @@ bool Repository::Git::GitGraphUpdater::import() {
     }
 
     addAuthorEdgesToGraph( lAuthor, lAddedGitFiles );
-*/
+//*/
     return ok;
 }
 
