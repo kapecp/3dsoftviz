@@ -657,6 +657,22 @@ public:
 	 */
 	Data::Node* findNodeByName( QString nodeName );
 
+    /**
+     * Data::Node* findNodeByLuaIdentifier( QString identifier )
+     * @brief Finds node in graph by its lua identifier. Returns node, if it was found, otherwise NULL.
+     * @param identifier Lua node identifier
+     * @return Returns node, if it was found, otherwise NULL.
+     */
+    Data::Node* findNodeByLuaIdentifier( QString identifier );
+
+    /**
+     * Data::Node* findEdgeByLuaIdentifier( QString identifier )
+     * @brief Finds edge in graph by its lua identifier. Returns edge, if it was found, otherwise NULL.
+     * @param identifier Lua edge identifier
+     * @return Returns edge, if it was found, otherwise NULL.
+     */
+    Data::Edge* findEdgeByLuaIdentifier( QString identifier );
+
 	/**
 	 * Data::Edge* findEdgeByName( QString edgeName )
 	 * @brief Finds edge in graph by its name. Returns node, if it was found, otherwise NULL.

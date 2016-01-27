@@ -32,7 +32,6 @@ Lua::LuaGraph::LuaGraph()
 	nodes = new QMap<qlonglong, Lua::LuaNode*>();
 	edges = new QMap<qlonglong, Lua::LuaEdge*>();
 	incidences = new QMap<qlonglong, Lua::LuaIncidence*>();
-    evoNodes = new QMap<QString, Lua::LuaNode*>();
 	observer = NULL;
 	Lua::LuaInterface* lua = Lua::LuaInterface::getInstance();
 	Diluculum::LuaState* ls = lua->getLuaState();
@@ -264,27 +263,8 @@ Lua::LuaGraph* Lua::LuaGraph::loadEvoGraph( QString repoFilepath )
                 }
             }
 
-
             incidence->setEdgeNode( edgeId, nodeId );
             result->incidences->insert( incidenceId, incidence );
-
-            /*
-            if( identifier != "" ) {
-                if( result->nodes->contains( identifier ) ) {
-                    result->nodes->value( identifier )->addIncidence( incidenceId );
-                } else {
-                    node->setIdentifier( identifier );
-
-                    qDebug() << identifier;
-                    result->nodes->insert( identifier, node );
-                }
-            } else {
-                unusedNodes.append( node );
-            }
-
-            incidence->setEdgeNode( edgeId, nodeId );
-            result->incidences->insert( incidenceId, incidence );
-            */
         }
     }
 
@@ -307,7 +287,7 @@ Lua::LuaGraph* Lua::LuaGraph::loadEvoGraph( QString repoFilepath )
             if( !QString::compare( type, "globalModule") ) {
                 QString identifier = nodeType + ":" + otherNode->getLabel() + ":" + node->getLabel();
                 node->setIdentifier( identifier );
-                qDebug() << node->getIdentifier() << "found";
+//                qDebug() << node->getIdentifier() << "found";
                 isPartOfModule = true;
                 break;
             }
@@ -316,11 +296,18 @@ Lua::LuaGraph* Lua::LuaGraph::loadEvoGraph( QString repoFilepath )
         if( !isPartOfModule ) {
             QString identifier = nodeType + ":" + node->getLabel();
             node->setIdentifier( identifier );
-            qDebug() << node->getIdentifier() << "not found";
+//            qDebug() << node->getIdentifier() << "not found";
         }
     }
 
-
+    for( QMap<qlonglong, Lua::LuaEdge*>::iterator iterator =  result->getEdges()->begin(); iterator != result->getEdges()->end(); ++iterator ) {
+        Lua::LuaEdge* edge = iterator.value();
+        Lua::LuaNode* node1 =  result->getNodes()->value( result->getIncidences()->value( edge->getIncidences().at( 0 ) )->getEdgeNodePair().second );
+        Lua::LuaNode* node2 =  result->getNodes()->value( result->getIncidences()->value( edge->getIncidences().at( 1 ) )->getEdgeNodePair().second );
+        QString identifier = node1->getIdentifier() + "+" + node2->getIdentifier();
+        edge->setIdentifier( identifier );
+//        qDebug() << identifier;
+    }
 
     qDebug() << "EvoNode count: " << result->nodes->count();
     return result;

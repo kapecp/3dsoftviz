@@ -1469,6 +1469,24 @@ Data::Node* Data::Graph::findNodeByName( QString nodeName )
 	return lNode;
 }
 
+Data::Node* Data::Graph::findNodeByLuaIdentifier( QString identifier ) {
+    Data::Node* lNode;
+    QMap<qlonglong, osg::ref_ptr<Data::Node> >* lNodes = this->getNodes();
+    QMap<qlonglong, osg::ref_ptr<Data::Node> >::iterator it;
+    for ( it = lNodes->begin(); it != lNodes->end(); ++it ) {
+        lNode = it.value();
+
+        if( !QString::compare( lNode->getLuaIdentifier(), identifier ) ) {
+            break;
+        }
+    }
+    if( it == lNodes->end() ) {
+        lNode =  nullptr;
+    }
+
+    return lNode;
+}
+
 Data::Edge* Data::Graph::findEdgeByName( QString edgeName )
 {
 	Data::Edge* lEdge;
@@ -1486,6 +1504,31 @@ Data::Edge* Data::Graph::findEdgeByName( QString edgeName )
 		lEdge = nullptr;
 	}
 	return lEdge;
+}
+
+Data::Edge* Data::Graph::findEdgeByLuaIdentifier( QString identifier )
+{
+    QStringList nodes = identifier.split("+");
+    QString newIdentifier = nodes.at( 1 ) + "+" + nodes.at( 0 );
+
+    Data::Edge* lEdge;
+    QMap<qlonglong, osg::ref_ptr<Data::Edge> >* lEdges = this->getEdges();
+    QMap<qlonglong, osg::ref_ptr<Data::Edge> >::iterator it;
+    for ( it = lEdges->begin(); it != lEdges->end(); ++it ) {
+        lEdge = it.value();
+
+        if( !QString::compare( lEdge->getLuaIdentifier(), identifier ) ) {
+            break;
+        }
+        if( !QString::compare( lEdge->getLuaIdentifier(), newIdentifier ) ) {
+            break;
+        }
+    }
+
+    if ( it == lEdges->end() ) {
+        lEdge = nullptr;
+    }
+    return lEdge;
 }
 
 void Data::Graph::addEdgeOccurence( QString key )

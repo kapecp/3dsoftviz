@@ -134,7 +134,7 @@ CoreWindow::CoreWindow( QWidget* parent, Vwr::CoreGraph* coreGraph, QApplication
 					  viewerWidget->getCameraManipulator(), SLOT( setCameraCanRot( bool ) ) );
 
 	Lua::LuaInterface::getInstance()->executeFile( "main.lua" );
-	viewerWidget->getPickHandler()->setSelectionObserver( this );
+    viewerWidget->getPickHandler()->setSelectionObserver( this );
 
 	QObject::connect( viewerWidget->getCameraManipulator(), SIGNAL( sendTranslatePosition( osg::Vec3d ) ),
 					  this->coreGraph, SLOT( translateGraph( osg::Vec3d ) ) );
@@ -3723,13 +3723,26 @@ void CoreWindow::onChange()
 
 	if ( selected->size() > 0 ) {
 		// Get last node model & display it in qt view
-		qlonglong lastNodeId = selected->last()->getId();
-		Lua::LuaNode* lastLuaNode = Lua::LuaGraph::getInstance()->getNodes()->value( lastNodeId );
-		// garaj start - ak nenaslo lastLuaNode, tak sposobovalo pad softveru
-		if ( lastLuaNode ) {
-			Lua::LuaGraphTreeModel* lastLuaModel = new Lua::LuaGraphTreeModel( lastLuaNode );
-			luaGraphTreeView->setModel( lastLuaModel );
-		}
+        qlonglong lastNodeId = 0;
+        Repository::Git::GitEvolutionGraph* evolutionGraph = Manager::GraphManager::getInstance()->getActiveEvolutionGraph();
+        if( evolutionGraph ) {
+            QString identifier = selected->last()->getLuaIdentifier();
+            if( evolutionGraph->getLuaNodesMapping().contains( identifier ) ) {
+                lastNodeId = evolutionGraph->getLuaNodesMapping().value( identifier );
+            }
+
+        } else {
+            lastNodeId = selected->last()->getId();
+        }
+
+        if( lastNodeId != 0 ) {
+            Lua::LuaNode* lastLuaNode = Lua::LuaGraph::getInstance()->getNodes()->value( lastNodeId );
+            // garaj start - ak nenaslo lastLuaNode, tak sposobovalo pad softveru
+            if ( lastLuaNode ) {
+                Lua::LuaGraphTreeModel* lastLuaModel = new Lua::LuaGraphTreeModel( lastLuaNode );
+                luaGraphTreeView->setModel( lastLuaModel );
+            }
+        }
 		// garaj end
 	}
 

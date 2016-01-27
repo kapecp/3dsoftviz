@@ -124,9 +124,7 @@ public:
      * @param identifier Unique identifier of lua node
      * @param luaNodeId Unique id of current loaded lua node
      */
-    void addLuaNodesMapping( QString identifier, int luaNodeId ); //{
-//        this->luaNodesMapping.insert( identifier, luaNodeId );
-//    }
+    void addLuaNodesMapping( QString identifier, int luaNodeId );
 
     /**
      * QMap<QString, int> getLuaNodeMapping()
@@ -135,6 +133,23 @@ public:
      */
     QMap<QString, int> getLuaNodesMapping() {
         return this->luaNodesMapping;
+    }
+
+    /**
+     * void addLuaEdgesMapping( QString identifier, int luaEdgeId )
+     * @brief Add mapping of lua edge indetifier to actual lua edge id
+     * @param identifier Unique identifier of lua edge
+     * @param luaNodeId Unique id of current loaded lua edge
+     */
+    void addLuaEdgesMapping( QString identifier, int luaEdgeeId );
+
+    /**
+     * QMap<QString, int> getLuaEdgesMapping()
+     * @brief Returns map, where key is unique identifier of lua edge and value is unique id of current loaded lua edge
+     * @return map, where key is unique identifier of lua edge and value is unique id of current loaded lua edge
+     */
+    QMap<QString, int> getLuaEdgesMapping() {
+        return this->luaEdgesMapping;
     }
 
 	/**
@@ -168,6 +183,12 @@ private:
      * @brief Maps identifier to current lua node id
      */
     QMap<QString, int> luaNodesMapping;
+
+    /**
+     * QMap<QString, int> luaEdgesMapping
+     * @brief Maps identifier to current lua edge id
+     */
+    QMap<QString, int> luaEdgesMapping;
 
 	/**
 	 * int lifespan
