@@ -73,17 +73,17 @@ void Repository::Git::GitEvolutionGraph::addLuaEdgesMapping( QString identifier,
         this->luaEdgesMapping.insert( identifier, luaEdgeId );
         int newId = this->luaEdgesMapping.find( identifier ).value();
 
-        qDebug() << identifier << "from" << previousId << "to" << newId << "/" << luaEdgeId;
+//        qDebug() << identifier << "from" << previousId << "to" << newId << "/" << luaEdgeId;
     } else if( this->luaEdgesMapping.contains( newIdentifier ) ) {
         int previousId = this->luaEdgesMapping.find( identifier ).value();
         this->luaEdgesMapping.insert( identifier, luaEdgeId );
         int newId = this->luaEdgesMapping.find( identifier ).value();
 
-        qDebug() << identifier << "from" << previousId << "to" << newId << "/" << luaEdgeId;
+//        qDebug() << identifier << "from" << previousId << "to" << newId << "/" << luaEdgeId;
     } else {
         this->luaEdgesMapping.insert( identifier, luaEdgeId );
         int storedId = this->luaEdgesMapping.find( identifier ).value();
 
-        qDebug() << "Inserted" << identifier << "to" << storedId << "/" << luaEdgeId;
+//        qDebug() << "Inserted" << identifier << "to" << storedId << "/" << luaEdgeId;
     }
 }
