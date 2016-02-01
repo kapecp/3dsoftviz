@@ -28,9 +28,9 @@ QString Repository::Git::GitFunction::getFunctionTypeAsString() {
     // zoberie typ funkcie a vrati ho ako QString
     switch(getFunctionType()) {
     case Repository::Git::GitFunctionType::GLOBALFUNCTION:
-        return "Global Function";
+        return "globalFunction";
     case Repository::Git::GitFunctionType::LOCALFUNCTION:
-        return "Local Function";
+        return "function";
     default:
         return "Not set";
     }
@@ -51,6 +51,14 @@ QString Repository::Git::GitFunction::getTypeAsString() {
             return "NONE";
         default:
             return "Wrong or Not set";
+    }
+}
+
+QString Repository::Git::GitFunction::printContent() {
+    if( this->module != "" ) {
+        return this->getFunctionTypeAsString() + ":" + this->module + ":" + this->name;
+    } else {
+        return this->getFunctionTypeAsString() + ":" + this->name;
     }
 }
 

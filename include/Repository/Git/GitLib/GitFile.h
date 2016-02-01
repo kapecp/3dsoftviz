@@ -124,6 +124,22 @@ public:
         this->gitFunctions = gitFunctions;
     }
 
+    /**
+     * bool containsFunction( QString functionName )
+     * @brief Find out if list of functions contain function name
+     * @param functionName Name of function
+     * @return Return true, if function name is in list, otherwise false;
+     */
+//    bool containsFunction( QString functionName );
+
+    /**
+     * Repository::Git::GitFunction* findFunction( QString functionName )
+     * @brief Find the function by choosen function name
+     * @param functionName Name of function
+     * @return Return GitFunction if function name exists in list, otherwise NULL
+     */
+    Repository::Git::GitFunction* findFunction( QString functionName );
+
 	/**
 	 * \fn printContent
 	 * \brief Prints out all info about file.

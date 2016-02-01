@@ -94,6 +94,8 @@ public:
         this->module = module;
     }
 
+    QString printContent();
+
     QString getModule() {
         return this->module;
     }

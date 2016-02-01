@@ -1,5 +1,6 @@
 #include "GitLib/GitFile.h"
 #include "GitLib/GitFileDiffBlock.h"
+#include "GitLib/GitFunction.h"
 
 #include <QDebug>
 
@@ -37,6 +38,26 @@ QString Repository::Git::GitFile::getTypeAsString()
 		default:
 			return "Wrong or Not set";
 	}
+}
+/*
+bool Repository::Git::GitFile::containsFunction( QString functionName ) {
+    foreach( Repository::Git::GitFunction* function, this->getGitFunctions() ) {
+        if( !QString::compare( function->getName(), functionName ) ) {
+            return true;
+        }
+    }
+
+    return false;
+}
+*/
+Repository::Git::GitFunction* Repository::Git::GitFile::findFunction( QString functionName ) {
+    foreach( Repository::Git::GitFunction* function, this->getGitFunctions() ) {
+        if( !QString::compare( function->getName(), functionName ) ) {
+            return function;
+        }
+    }
+
+    return nullptr;
 }
 
 void Repository::Git::GitFile::printContent()

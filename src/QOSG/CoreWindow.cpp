@@ -3779,6 +3779,7 @@ bool CoreWindow::nextVersion()
         QString lPath =  Manager::GraphManager::getInstance()->getActiveEvolutionGraph()->getFilePath();
         QString commitId = Manager::GraphManager::getInstance()->getActiveEvolutionGraph()->getVersion( value )->getCommitId();
         Repository::Git::GitUtils::changeCommit( commitId, lPath );
+        Manager::GraphManager::getInstance()->getActiveGraph()->setCurrentVersion( value );
         loadFunctionCall();
     }
 
@@ -3812,6 +3813,7 @@ bool CoreWindow::previousVersion()
         QString lPath =  Manager::GraphManager::getInstance()->getActiveEvolutionGraph()->getFilePath();
         QString commitId = Manager::GraphManager::getInstance()->getActiveEvolutionGraph()->getVersion( value )->getCommitId();
         Repository::Git::GitUtils::changeCommit( commitId, lPath );
+        Manager::GraphManager::getInstance()->getActiveGraph()->setCurrentVersion( value );
         loadFunctionCall();
     }
 

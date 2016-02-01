@@ -162,7 +162,7 @@ Lua::LuaGraph* Lua::LuaGraph::loadGraph()
 
 Lua::LuaGraph* Lua::LuaGraph::loadEvoGraph( QString repoFilepath )
 {
-    std::cout << "loading evo graph" << std::endl;
+//    qDebug() << "loading evo graph";
     Lua::LuaInterface* lua = Lua::LuaInterface::getInstance();
 
     Lua::LuaGraph* result = Lua::LuaGraph::getInstance();
@@ -309,7 +309,7 @@ Lua::LuaGraph* Lua::LuaGraph::loadEvoGraph( QString repoFilepath )
 //        qDebug() << identifier;
     }
 
-    qDebug() << "EvoNode count: " << result->nodes->count();
+//    qDebug() << "EvoNode count: " << result->nodes->count();
     return result;
 }
 
