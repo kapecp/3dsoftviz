@@ -3,9 +3,6 @@
 #include "LuaGraph/LuaGraphObserver.h"
 #include "LuaInterface/LuaInterface.h"
 
-#include "Data/Graph.h"
-#include "Importer/GraphOperations.h"
-
 #include <Diluculum/LuaWrappers.hpp>
 #include "Diluculum/LuaState.hpp"
 
