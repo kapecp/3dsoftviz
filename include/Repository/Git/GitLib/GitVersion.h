@@ -138,6 +138,24 @@ public:
 	 */
 	QList<Repository::Git::GitFile*> getGitFilesByTypeAndExtension( QString extensions, Repository::Git::GitType type );
 
+    /**
+     * void setIsLoaded( bool isLoaded )
+     * @brief Sets whether version was loaded from Lua
+     * @param isLoaded Status of version loading
+     */
+    void setIsLoaded( bool isLoaded ) {
+        this->isLoaded = isLoaded;
+    }
+
+    /**
+     * bool getIsLoaded()
+     * @brief Returns true if version was loaded from Lua, otherwise false
+     * @return True if version was loaded from Lua, otherwise false
+     */
+    bool getIsLoaded() {
+        return this->isLoaded;
+    }
+
 	/**
 	 * void printVersion()
 	 * @brief Prints out all info about the version
@@ -163,6 +181,12 @@ private:
 	 * @brief Date of commit
 	 */
 	QString date;
+
+    /**
+     * bool isLoaded
+     * @brief True if version was processed from Lua, otherwise false
+     */
+    bool isLoaded;
 
 	/**
 	 * QList<Repository::Git::GitFile*> changedFiles
