@@ -151,7 +151,7 @@ QList<QString> Repository::Git::GitUtils::getIdentifiersOfChangedItems( Reposito
         identifiers += compareTwoFunctions( file->getGitFunctions()->find( iterator.value()->getIdentifier() ).value(), iterator.value(), functions, file->getFilename() );
     }
 
-    qDebug() << "Velkost indetifiers " << identifiers.size();
+    qDebug() << "Velkost identifiers " << identifiers.size();
 
     delete functions;
 
@@ -163,15 +163,19 @@ QList<QString> Repository::Git::GitUtils::compareTwoFunctions( Repository::Git::
 
     QMap<QString, Repository::Git::GitFunction*> i;
 
-    // ak existuju referencie na obe funkcie, tak skontrolujeme, ci
+    // ak existuju referencie na obe funkcie, tak skontrolujeme, ci neexistuju v subore zmeny, ktore sa dotykaju nejak z metod v subore
+    // ak existuje referencia len na sucasnu funkciu, tak funkcia a jej volania by mali byt pridane do grafu
+    // ak existuje referencia na predchadzajucu funkciu, tak funkcia a jej volania boli mali byt vymazane z grafu
     if( function != i.end().value()  && otherFunction != i.end().value() ) {
+        // ak ide o funkciu, ktora je typu globalFunction, tak uz nic dalej nevola a koncime spracovanie
         if( function->getFunctionType() == Repository::Git::GitFunctionType::GLOBALFUNCTION ) {
-            if( masterIdentifier.indexOf( ".lua") < 0 ) {
-                qDebug() << "End" << function->getIdentifier() << "in master" << masterIdentifier;
-            }
+//            qDebug() << "End" << function->getIdentifier() << "in master" << masterIdentifier;
+        } else {
+            // TODO - ak sa vyskytne LOCALFUNCTION, tak prejdi uzly, ktore vola (mapu caller) a pritom su typom GLOBALFUNCTION - lokalne netreba tie sa skontroluju samostatne pri
+            //        prechadzany funkcii v subore
         }
 
-        // TODO - tu bude treba doplnit kod, na priradenie zmeny v riadku k metode
+        // TODO - tu bude treba doplnit kod, na priradenie zmeny riadku v subore k funkcii
 
     } else if( function == i.end().value() ) {
         qDebug() << "REMOVED ->" << otherFunction->getIdentifier() << "from" << masterIdentifier;
