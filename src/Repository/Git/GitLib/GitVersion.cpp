@@ -92,3 +92,13 @@ QList<Repository::Git::GitFile*> Repository::Git::GitVersion::getGitFilesByTypeA
 
 	return result;
 }
+
+Repository::Git::GitFile* Repository::Git::GitVersion::getGitFileByName( QString fileName ) {
+    foreach( Repository::Git::GitFile* file, this->getChangedFiles() ) {
+        if( !QString::compare( fileName, file->getFilename() ) ){
+            return file;
+        }
+    }
+
+    return nullptr;
+}

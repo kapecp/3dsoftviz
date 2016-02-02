@@ -6,6 +6,7 @@
 
 #include <QString>
 #include <QList>
+#include <QMap>
 
 namespace Repository {
 
@@ -99,7 +100,7 @@ public:
         * \fn getGitFunctions()
         * \brief Returns list of functions in the Git file
      */
-    QList<Repository::Git::GitFunction*> getGitFunctions()
+    QMap<QString, Repository::Git::GitFunction*>* getGitFunctions()
     {
         return gitFunctions;
     }
@@ -109,17 +110,14 @@ public:
         * \brief Append function to the list
         * \param block - Function to be added
      */
-    void addGitFunction( Repository::Git::GitFunction* function )
-    {
-        this->gitFunctions.append( function );
-    }
+    void addGitFunction( Repository::Git::GitFunction* function );
 
     /**
         * \fn setGitFileDiffBlocks
         * \brief Set diff blocks in the Git file
         * \param gitFileDiffBlocks Diff blocks from Git file to be set
      */
-    void setGitFunctions( QList<Repository::Git::GitFunction*> gitFunctions )
+    void setGitFunctions( QMap<QString, Repository::Git::GitFunction*>* gitFunctions )
     {
         this->gitFunctions = gitFunctions;
     }
@@ -175,7 +173,7 @@ private:
      * QList<Repository::Git::GitFunction*> gitFunctions
      * @brief List of functions in Git file
      */
-    QList<Repository::Git::GitFunction*> gitFunctions;
+    QMap<QString, Repository::Git::GitFunction*>* gitFunctions;
 }; // class
 } // namespace
 }

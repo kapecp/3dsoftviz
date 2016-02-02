@@ -4,10 +4,15 @@
 #include "GitLib/GitExport.h"
 
 #include <QString>
+#include <QList>
+#include <QMap>
 
 namespace Repository {
 
 namespace Git {
+class GitEvolutionGraph;
+class GitFile;
+class GitFunction;
 
 class GITLIB_EXPORT GitUtils
 {
@@ -45,6 +50,15 @@ public:
      * @return Returns true on success, otherwise false.
      */
     bool static changeCommit( QString commitId, QString filePath );
+
+    void static getModifiedLuaNodesFromVersion( Repository::Git::GitEvolutionGraph* evolutionGraph, int versionNumber );
+
+    QList<QString> static getIdentifiersOfChangedItems( Repository::Git::GitFile* file, Repository::Git::GitFile* otherFile );
+    QList<QString> static compareTwoFunctions( Repository::Git::GitFunction* function, Repository::Git::GitFunction* otherFunction, QMap<QString, bool>* functions, QString masterIdentifier );
+
+private:
+
+    int static getLastModifiedVersionIndex( QString fileName, int fromIndex, Repository::Git::GitEvolutionGraph* evolutionGraph );
 
 }; // class
 } // namespace

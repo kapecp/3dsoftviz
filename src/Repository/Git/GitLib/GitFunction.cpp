@@ -9,8 +9,8 @@ Repository::Git::GitFunction::GitFunction() {
     this->functionType = Repository::Git::GitFunctionType::LOCALFUNCTION;
     this->module = "";
 
-    this->functionCallees = QList<Repository::Git::GitFunction*>();
-    this->functionCallers = QList<Repository::Git::GitFunction*>();
+    this->functionCallees = new QMap<QString, Repository::Git::GitFunction*>();
+    this->functionCallers = new QMap<QString, Repository::Git::GitFunction*>();
 }
 
 Repository::Git::GitFunction::GitFunction( QString name ) : name( name ) {
@@ -19,8 +19,8 @@ Repository::Git::GitFunction::GitFunction( QString name ) : name( name ) {
     this->functionType = Repository::Git::GitFunctionType::LOCALFUNCTION;
     this->module = "";
 
-    this->functionCallees = QList<Repository::Git::GitFunction*>();
-    this->functionCallers = QList<Repository::Git::GitFunction*>();
+    this->functionCallees = new QMap<QString, Repository::Git::GitFunction*>();
+    this->functionCallers = new QMap<QString, Repository::Git::GitFunction*>();
 }
 
 QString Repository::Git::GitFunction::getFunctionTypeAsString() {
@@ -54,7 +54,7 @@ QString Repository::Git::GitFunction::getTypeAsString() {
     }
 }
 
-QString Repository::Git::GitFunction::printContent() {
+QString Repository::Git::GitFunction::getIdentifier() {
     if( this->module != "" ) {
         return this->getFunctionTypeAsString() + ":" + this->module + ":" + this->name;
     } else {

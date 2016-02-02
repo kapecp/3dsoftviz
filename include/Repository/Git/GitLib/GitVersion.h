@@ -156,6 +156,14 @@ public:
         return this->isLoaded;
     }
 
+    /**
+     * Repository::Git::GitFile* getGitFileByName( QString fileName )
+     * @brief Get the git file by its name
+     * @param fileName Name of file
+     * @return Git file with specific file name
+     */
+    Repository::Git::GitFile* getGitFileByName( QString fileName );
+
 	/**
 	 * void printVersion()
 	 * @brief Prints out all info about the version

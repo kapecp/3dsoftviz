@@ -4,9 +4,10 @@
 #include "GitLib/GitType.h"
 #include "GitLib/GitFunctionType.h"
 #include "GitLib/GitExport.h"
+#include "GitLib/GitFunction.h"
 
 #include <QString>
-#include <QList>
+#include <QMap>
 
 namespace Repository {
 
@@ -21,19 +22,19 @@ public:
     GitFunction( QString name );
 
     void addFunctionCallee( GitFunction* callee ) {
-        this->functionCallees.append( callee );
+        this->functionCallees->insert( callee->getIdentifier(), callee );
     }
 
     bool removeFunctionCallee( GitFunction* callee ) {
-        return this->functionCallees.removeOne( callee );
+        return this->functionCallees->remove( callee->getIdentifier() );
     }
 
     void addFunctionCaller( GitFunction* caller ) {
-        this->functionCallers.append( caller );
+        this->functionCallers->insert( caller->getIdentifier(), caller );
     }
 
     bool removeFunctionCaller( GitFunction* caller ) {
-        return this->functionCallers.removeOne( caller );
+        return this->functionCallers->remove( caller->getIdentifier() );
     }
 
     QString getTypeAsString();
@@ -74,19 +75,19 @@ public:
         return this->functionType;
     }
 
-    void setFunctionCallees( QList<GitFunction*> functionCallees ) {
+    void setFunctionCallees( QMap<QString, GitFunction*>* functionCallees ) {
         this->functionCallees =  functionCallees;
     }
 
-    QList<GitFunction*> getFunctionCallees() {
+    QMap<QString, GitFunction*>* getFunctionCallees() {
         return this->functionCallees;
     }
 
-    void setFunctionCallers( QList<GitFunction*> functionCallers ) {
+    void setFunctionCallers( QMap<QString, GitFunction*>* functionCallers ) {
         this->functionCallers =  functionCallers;
     }
 
-    QList<GitFunction*> getFunctionCallers() {
+    QMap<QString, GitFunction*>* getFunctionCallers() {
         return this->functionCallers;
     }
 
@@ -94,7 +95,7 @@ public:
         this->module = module;
     }
 
-    QString printContent();
+    QString getIdentifier();
 
     QString getModule() {
         return this->module;
@@ -110,9 +111,9 @@ private:
 
     Repository::Git::GitFunctionType functionType;
 
-    QList<GitFunction*> functionCallees;
+    QMap<QString, GitFunction*>* functionCallees;
 
-    QList<GitFunction*> functionCallers;
+    QMap<QString, GitFunction*>* functionCallers;
 
     QString module;
 

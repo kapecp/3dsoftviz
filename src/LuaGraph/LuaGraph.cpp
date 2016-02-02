@@ -181,7 +181,7 @@ Lua::LuaGraph* Lua::LuaGraph::loadEvoGraph( QString repoFilepath )
         if ( iterator->first.asTable()["label"].type() != 0 ) {
             edge->setLabel( QString::fromStdString( iterator->first.asTable()["label"].asString() ) );
         } else {
-            qDebug() << "Edge" << edgeId << "neobsahuje LABEL";
+//            qDebug() << "Edge" << edgeId << "neobsahuje LABEL";
         }
 
         result->edges->insert( edgeId, edge );
@@ -198,7 +198,7 @@ Lua::LuaGraph* Lua::LuaGraph::loadEvoGraph( QString repoFilepath )
                 incidence->setLabel( QString::fromStdString( iterator2->first.asTable()["label"].asString() ) );
             }
             else {
-                qDebug() << "Incidence" << incidenceId << "neobsahuje LABEL";
+//                qDebug() << "Incidence" << incidenceId << "neobsahuje LABEL";
             }
 
             incidence->setOriented( iterator2->first.asTable()["direction"].type() != 0 );

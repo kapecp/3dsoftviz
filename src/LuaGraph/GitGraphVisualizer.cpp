@@ -12,6 +12,7 @@
 #include "GitLib/GitVersion.h"
 #include "GitLib/GitFile.h"
 #include "GitLib/GitFunction.h"
+#include "GitLib/GitUtils.h"
 
 #include <QMap>
 
@@ -32,7 +33,7 @@ void Lua::GitGraphVisualizer::visualize()
 
     Lua::LuaGraph* g = Lua::LuaGraph::loadEvoGraph( evolutionGraph->getFilePath() );
     //    g->printGraph();
-    QMap<QString, Repository::Git::GitFunction*>* functions = new QMap<QString, Repository::Git::GitFunction*>();
+    QMap<QString, Repository::Git::GitFunction*> functions = QMap<QString, Repository::Git::GitFunction*>();
 
 
     //    qDebug() << "Zaciatok vykreslovania GitLuaGraphu";
@@ -65,7 +66,7 @@ void Lua::GitGraphVisualizer::visualize()
             foreach( Repository::Git::GitFile* currentFile, versionFiles ) {
                 if( !QString::compare( currentFile->getFilepath(), file ) ) {
                     // ziskame referenciu na funkciu alebo NULL
-                    Repository::Git::GitFunction* function = functions->value( node->getIdentifier() );
+                    Repository::Git::GitFunction* function = functions.value( node->getIdentifier() );
 
                     // ak funkcia este nie je vytvorena, tak ju vytvorime
                     if( !function ) {
@@ -83,7 +84,8 @@ void Lua::GitGraphVisualizer::visualize()
 
                         // pridame vytvorenu funkciu do funkcii v subore
                         currentFile->addGitFunction( function );
-                        functions->insert(node->getIdentifier(), function);
+//                        qDebug() << currentFile->getFilename() << "->" << function->getIdentifier();
+                        functions.insert(node->getIdentifier(), function);
 
                         // zistime vsetky orientovane hrany z LuaNode
                         foreach( qlonglong id, node->getIncidences() ) {
@@ -97,18 +99,16 @@ void Lua::GitGraphVisualizer::visualize()
                                 Lua::LuaIncidence* incid = g->getIncidences()->value( edge->getIncidences().at( 0 ) );
                                 if( incid == incidence ) {
                                     incid = g->getIncidences()->value( edge->getIncidences().at( 1 ) );
-                                    otherNode = g->getNodes()->value( incid->getEdgeNodePair().second );
-                                } else {
-                                    otherNode = g->getNodes()->value( incid->getEdgeNodePair().second );
                                 }
 
+                                otherNode = g->getNodes()->value( incid->getEdgeNodePair().second );
 
                                 QString functionIdentifier = edge->getIdentifier().replace( "+", "" ).replace( node->getIdentifier(), "" );
-                                Repository::Git::GitFunction* funct = functions->value( functionIdentifier );
-                                //                                qDebug() << node->getIdentifier() << "->" << functionIdentifier << " - " << edge->getIdentifier();
+                                Repository::Git::GitFunction* funct = functions.value( functionIdentifier );
+//                                qDebug() << node->getIdentifier() << "->" << functionIdentifier << " - " << edge->getIdentifier();
 
                                 if( !funct ) {
-                                    //                                    qDebug() << "Vytvaram" << functionIdentifier;
+//                                    qDebug() << "Vytvaram" << functionIdentifier;
                                     funct = new Repository::Git::GitFunction();
                                     QStringList split = functionIdentifier.split( ":" );
                                     if( split.size() == 2 ) {
@@ -122,38 +122,35 @@ void Lua::GitGraphVisualizer::visualize()
                                     if( !QString::compare( QString::fromStdString( otherNode->getParams()["type"].asString() ), "function" ) ) {
                                         funct->setFunctionType( Repository::Git::GitFunctionType::LOCALFUNCTION );
                                     } else {
+                                        funct->setFunctionType( Repository::Git::GitFunctionType::GLOBALFUNCTION );
+
+                                        foreach( qlonglong incId, otherNode->getIncidences() ) {
+                                            Lua::LuaIncidence* moduleInc = g->getIncidences()->value( incId );
+
+                                            if( !moduleInc->getOriented() ) {
+                                                Lua::LuaEdge* moduleEdge = g->getEdges()->value( moduleInc->getEdgeNodePair().first );
+                                                Lua::LuaNode* moduleNode = nullptr;
+                                                Lua::LuaIncidence* otherIncidence = g->getIncidences()->value( moduleEdge->getIncidences().at( 0 ) );
+                                                if( moduleInc == otherIncidence ) {
+                                                    otherIncidence = g->getIncidences()->value( moduleEdge->getIncidences().at( 1 ) );
+                                                }
+
+                                                moduleNode = g->getNodes()->value( otherIncidence->getEdgeNodePair().second );
+                                                funct->setModule( moduleNode->getLabel() );
+                                            }
+                                        }
                                     }
-                                    funct->setFunctionType( Repository::Git::GitFunctionType::GLOBALFUNCTION );
+
                                 }
 
                                 function->addFunctionCaller( funct );
                                 funct->addFunctionCallee( function );
-                                functions->insert( otherNode->getIdentifier(), funct );
+                                functions.insert( otherNode->getIdentifier(), funct );
                             }
                         }
                     } else {
                         function->setId( node->getId() );
                     }
-                }
-            }
-        }
-
-        if( !QString::compare( QString::fromStdString( node->getParams()["type"].asString() ), "globalModule" ) ) {
-            foreach( qlonglong id ,node->getIncidences() ) {
-                Lua::LuaIncidence* incidence = g->getIncidences()->value( id );
-                Lua::LuaEdge* edge =  g->getEdges()->value( incidence->getEdgeNodePair().first );
-                Lua::LuaNode* otherNode = nullptr;
-                Lua::LuaIncidence* incid = g->getIncidences()->value( edge->getIncidences().at( 0 ) );
-                if( incid == incidence ) {
-                    incid = g->getIncidences()->value( edge->getIncidences().at( 1 ) );
-                    otherNode = g->getNodes()->value( incid->getEdgeNodePair().second );
-                } else {
-                    otherNode = g->getNodes()->value( incid->getEdgeNodePair().second );
-                }
-
-                Repository::Git::GitFunction* function = functions->value( otherNode->getIdentifier() );
-                if( function ) {
-                    function->setModule( node->getLabel() );
                 }
             }
         }
@@ -178,7 +175,7 @@ void Lua::GitGraphVisualizer::visualize()
 
 
                             QString functionIdentifier = edge->getIdentifier().replace( "+", "" ).replace( node->getIdentifier(), "" );
-                            Repository::Git::GitFunction* funct = functions->value( functionIdentifier );
+                            Repository::Git::GitFunction* funct = functions.value( functionIdentifier );
 //                            qDebug() << node->getIdentifier() << "->" << functionIdentifier << " - " << edge->getIdentifier();
 
                             if( !funct ) {
@@ -196,11 +193,28 @@ void Lua::GitGraphVisualizer::visualize()
                                 if( !QString::compare( QString::fromStdString( otherNode->getParams()["type"].asString() ), "function" ) ) {
                                     funct->setFunctionType( Repository::Git::GitFunctionType::LOCALFUNCTION );
                                 } else {
+                                    funct->setFunctionType( Repository::Git::GitFunctionType::GLOBALFUNCTION );
+
+                                    foreach( qlonglong incId, otherNode->getIncidences() ) {
+                                            Lua::LuaIncidence* moduleInc = g->getIncidences()->value( incId );
+
+                                            if( !moduleInc->getOriented() ) {
+                                                Lua::LuaEdge* moduleEdge = g->getEdges()->value( moduleInc->getEdgeNodePair().first );
+                                                Lua::LuaNode* moduleNode = nullptr;
+                                                Lua::LuaIncidence* otherIncidence = g->getIncidences()->value( moduleEdge->getIncidences().at( 0 ) );
+                                                if( moduleInc == otherIncidence ) {
+                                                    otherIncidence = g->getIncidences()->value( moduleEdge->getIncidences().at( 1 ) );
+                                                }
+
+                                                moduleNode = g->getNodes()->value( otherIncidence->getEdgeNodePair().second );
+                                                funct->setModule( moduleNode->getLabel() );
+                                            }
+                                        }
                                 }
-                                funct->setFunctionType( Repository::Git::GitFunctionType::GLOBALFUNCTION );
                             }
 
-                            functions->insert( otherNode->getIdentifier(), funct );
+                            functions.insert( otherNode->getIdentifier(), funct );
+//                            qDebug() << currentFile->getFilename() << "->" << funct->getIdentifier();
                             currentFile->addGitFunction( funct );
                         }
                     }
@@ -209,8 +223,39 @@ void Lua::GitGraphVisualizer::visualize()
                 }
             }
         }
+
+        /*
+        if( !QString::compare( QString::fromStdString( node->getParams()["type"].asString() ), "globalModule" ) ) {
+            foreach( qlonglong id ,node->getIncidences() ) {
+                Lua::LuaIncidence* incidence = g->getIncidences()->value( id );
+                Lua::LuaEdge* edge =  g->getEdges()->value( incidence->getEdgeNodePair().first );
+                Lua::LuaNode* otherNode = nullptr;
+                Lua::LuaIncidence* incid = g->getIncidences()->value( edge->getIncidences().at( 0 ) );
+                if( incid == incidence ) {
+                    incid = g->getIncidences()->value( edge->getIncidences().at( 1 ) );
+                    otherNode = g->getNodes()->value( incid->getEdgeNodePair().second );
+                } else {
+                    otherNode = g->getNodes()->value( incid->getEdgeNodePair().second );
+                }
+
+                Repository::Git::GitFunction* function = functions.value( otherNode->getIdentifier() );
+                if( !function ) {
+                    function = new Repository::Git::GitFunction();
+                    function->setName( otherNode->getLabel() );
+                    function->setFunctionType(  Repository::Git::GitFunctionType::GLOBALFUNCTION );
+                    function->setId( otherNode->getId() );
+                    function->setModule( node->getLabel() );
+                    function->setType( Repository::Git::GitType::NONE );
+                } else {
+                    function->setModule( node->getLabel() );
+
+                }
+            }
+        }
+*/
     }
 
+    Repository::Git::GitUtils::getModifiedLuaNodesFromVersion( evolutionGraph, currentVersion );
 
 
 /*
@@ -284,6 +329,7 @@ void Lua::GitGraphVisualizer::visualize()
             metaLink->setEdgeStrength( 0.1f );
         }
     }*/
+    version->setIsLoaded( true );
 }
 
 void Lua::GitGraphVisualizer::onUpdate()
