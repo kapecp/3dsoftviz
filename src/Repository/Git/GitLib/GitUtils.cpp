@@ -169,25 +169,16 @@ QList<QString> Repository::Git::GitUtils::compareTwoFunctions( Repository::Git::
             if( masterIdentifier.indexOf( ".lua") < 0 ) {
                 qDebug() << "End" << function->getIdentifier() << "in master" << masterIdentifier;
             }
-        } else {
-            if( !functions->contains( function->getIdentifier() ) ) {
-                qDebug() << "Continue" << function->getIdentifier() << "in master" << function->getIdentifier();
-                for( QMap<QString, Repository::Git::GitFunction*>::iterator iterator = function->getFunctionCallers()->begin(); iterator != function->getFunctionCallers()->end(); ++iterator ) {
-                    identifiers += compareTwoFunctions( iterator.value(), otherFunction->getFunctionCallers()->find( iterator.value()->getIdentifier() ).value(), functions, iterator.value()->getIdentifier());
-                }
-
-                for( QMap<QString, Repository::Git::GitFunction*>::iterator iterator = otherFunction->getFunctionCallers()->begin(); iterator != otherFunction->getFunctionCallers()->end(); ++iterator ) {
-                    identifiers += compareTwoFunctions( function->getFunctionCallers()->find( iterator.value()->getIdentifier() ).value(), iterator.value(), functions, iterator.value()->getIdentifier() );
-                }
-            }
         }
 
+        // TODO - tu bude treba doplnit kod, na priradenie zmeny v riadku k metode
 
     } else if( function == i.end().value() ) {
         qDebug() << "REMOVED ->" << otherFunction->getIdentifier() << "from" << masterIdentifier;
         identifiers.append( otherFunction->getIdentifier() );
         if( otherFunction->getFunctionType() == Repository::Git::GitFunctionType::LOCALFUNCTION && otherFunction->getFunctionCallers()->size() > 0 ) {
             for( QMap<QString, Repository::Git::GitFunction*>::iterator iterator = otherFunction->getFunctionCallers()->begin(); iterator != otherFunction->getFunctionCallers()->end(); ++iterator ) {
+                identifiers.append( iterator.value()->getIdentifier() );
                 qDebug() << "REMOVED ->" << iterator.value()->getIdentifier() << "from" << otherFunction->getIdentifier();
             }
         }
@@ -196,6 +187,7 @@ QList<QString> Repository::Git::GitUtils::compareTwoFunctions( Repository::Git::
         identifiers.append( function->getIdentifier() );
         if( function->getFunctionType() == Repository::Git::GitFunctionType::LOCALFUNCTION && function->getFunctionCallers()->size() > 0 ) {
             for( QMap<QString, Repository::Git::GitFunction*>::iterator iterator = function->getFunctionCallers()->begin(); iterator != function->getFunctionCallers()->end(); ++iterator ) {
+                identifiers.append( iterator.value()->getIdentifier() );
                 qDebug() << "ADDED ->" << iterator.value()->getIdentifier() << "from" << function->getIdentifier();
             }
         }
