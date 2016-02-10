@@ -11,6 +11,7 @@
 #include "GitLib/GitEvolutionGraph.h"
 #include "GitLib/GitVersion.h"
 #include "GitLib/GitUtils.h"
+#include "Repository/Git/GitLuaGraphAnalyzer.h"
 
 #include "Viewer/CoreGraph.h"
 #include "Viewer/CameraManipulator.h"
@@ -1583,6 +1584,13 @@ void CoreWindow::loadFromGit()
             if( chb_git_changeCommits->isChecked() ) {
                 Repository::Git::GitUtils::changeCommit( Manager::GraphManager::getInstance()->getActiveEvolutionGraph()->getVersion( 0 )->getCommitId(), lPath );
                 loadFunctionCall();
+
+                // ak este dana verzia nebola zanalyzovana, tak ju zanalyzuj a uloz do evolution grafu
+                if( !Manager::GraphManager::getInstance()->getActiveEvolutionGraph()->getVersion( 0 )->getIsLoaded() ) {
+                    Repository::Git::GitLuaGraphAnalyzer analyzer = Repository::Git::GitLuaGraphAnalyzer( Lua::LuaGraph::getInstance(), Manager::GraphManager::getInstance()->getActiveEvolutionGraph() );
+                    analyzer.setVersionNumber( 0 );
+                    analyzer.analyze();
+                }
             } else {
                 Manager::GraphManager::getInstance()->importEvolutionGraph( lPath );
             }
@@ -3781,6 +3789,12 @@ bool CoreWindow::nextVersion()
         Repository::Git::GitUtils::changeCommit( commitId, lPath );
         Manager::GraphManager::getInstance()->getActiveGraph()->setCurrentVersion( value );
         loadFunctionCall();
+
+        if( !Manager::GraphManager::getInstance()->getActiveEvolutionGraph()->getVersion( value )->getIsLoaded() ) {
+            Repository::Git::GitLuaGraphAnalyzer analyzer = Repository::Git::GitLuaGraphAnalyzer( Lua::LuaGraph::getInstance(), Manager::GraphManager::getInstance()->getActiveEvolutionGraph() );
+            analyzer.setVersionNumber( value );
+            analyzer.analyze();
+        }
     }
 
 	if ( value == evolutionSlider->maximum() ) {

@@ -90,21 +90,25 @@ bool Repository::Git::GitUtils::changeCommit( QString commitId, QString filePath
 
 void Repository::Git::GitUtils::getModifiedLuaNodesFromVersion( Repository::Git::GitEvolutionGraph* evolutionGraph, int versionNumber ) {
     Repository::Git::GitVersion* version = evolutionGraph->getVersion( versionNumber );
-    QList<Repository::Git::GitFile*> modifiedFiles = version->getGitFilesByType( Repository::Git::GitType::MODIFIED );
+//    QList<Repository::Git::GitFile*> modifiedFiles = version->getGitFilesByType( Repository::Git::GitType::MODIFIED );
+    QList<Repository::Git::GitFile*> modifiedFiles = version->getChangedFiles();
 
     // pre kazdy zmeneny subor, ktory je typu MODIFIED najdeme uzly, ktore sa zmenili
     foreach( Repository::Git::GitFile* file, modifiedFiles ) {
         // zistime si v ktorej verzii, bol posledne zmeneny dany subor
         int nearestVersionNumber = getLastModifiedVersionIndex( file->getFilename(), versionNumber, evolutionGraph );
 
-        qDebug() << "Subor" << file->getFilename() << "sa zmenil v " << nearestVersionNumber << " from " << versionNumber;
-
         // ak je hodnota zmenenej verzie
         if( nearestVersionNumber > -1 ) {
+            qDebug() << "Subor" << file->getIndetifier() << "sa zmenil v " << nearestVersionNumber << " from " << versionNumber;
+
             // ziskame subor oproti ktoremu budem porovnavat
             Repository::Git::GitFile* otherFile = evolutionGraph->getVersion( nearestVersionNumber )->getGitFileByName( file->getFilename() );
 
             QList<QString> identifiers = getIdentifiersOfChangedItems( file, otherFile );
+        } else {
+            qDebug() << "Subor" << file->getIndetifier() << "ma stav" << file->getTypeAsString();
+            QList<QString> identifiers = getIdentifiersOfChangedItems( file, NULL );
         }
     }
 }
@@ -135,20 +139,25 @@ QList<QString> Repository::Git::GitUtils::getIdentifiersOfChangedItems( Reposito
                 functions->insert( iterator.value()->getIdentifier(), true );
             }
         }
-
-        identifiers += compareTwoFunctions( iterator.value(), otherFile->getGitFunctions()->find( iterator.value()->getIdentifier() ).value(), functions, file->getFilename() );
+        if( otherFile != NULL ) {
+            identifiers += compareTwoFunctions( iterator.value(), otherFile->getGitFunctions()->find( iterator.value()->getIdentifier() ).value(), functions, file->getIndetifier() );
+        } else {
+            identifiers += compareTwoFunctions( iterator.value(), file->getGitFunctions()->end().value(), functions, file->getIndetifier() );
+        }
     }
 
-    for( QMap<QString, Repository::Git::GitFunction*>::iterator iterator = otherFile->getGitFunctions()->begin(); iterator != otherFile->getGitFunctions()->end(); ++iterator ) {
-        if( iterator.value()->getFunctionType() == Repository::Git::GitFunctionType::LOCALFUNCTION ) {
-            if( functions->contains( iterator.value()->getIdentifier() ) ) {
-                continue;
-            } else {
-                functions->insert( iterator.value()->getIdentifier(), true );
+    if( otherFile != NULL ) {
+        for( QMap<QString, Repository::Git::GitFunction*>::iterator iterator = otherFile->getGitFunctions()->begin(); iterator != otherFile->getGitFunctions()->end(); ++iterator ) {
+            if( iterator.value()->getFunctionType() == Repository::Git::GitFunctionType::LOCALFUNCTION ) {
+                if( functions->contains( iterator.value()->getIdentifier() ) ) {
+                    continue;
+                } else {
+                    functions->insert( iterator.value()->getIdentifier(), true );
+                }
             }
-        }
 
-        identifiers += compareTwoFunctions( file->getGitFunctions()->find( iterator.value()->getIdentifier() ).value(), iterator.value(), functions, file->getFilename() );
+            identifiers += compareTwoFunctions( file->getGitFunctions()->find( iterator.value()->getIdentifier() ).value(), iterator.value(), functions, file->getIndetifier() );
+        }
     }
 
     qDebug() << "Velkost identifiers " << identifiers.size();
