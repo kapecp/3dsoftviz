@@ -138,6 +138,13 @@ public:
      */
     Repository::Git::GitFunction* findFunction( QString functionName );
 
+    /**
+     * QString getIndetifier()
+     * @brief Get the indetifier of Git file
+     * @return Identifier of Git file
+     */
+    QString getIndetifier();
+
 	/**
 	 * \fn printContent
 	 * \brief Prints out all info about file.

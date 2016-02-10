@@ -63,7 +63,9 @@ void Repository::Git::GitFile::addGitFunction( Repository::Git::GitFunction *fun
     this->gitFunctions->insert( function->getIdentifier(), function );
 }
 
-
+QString Repository::Git::GitFile::getIndetifier() {
+    return "file:" + this->getFilepath();
+}
 
 void Repository::Git::GitFile::printContent()
 {
