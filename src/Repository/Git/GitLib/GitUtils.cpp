@@ -88,10 +88,12 @@ bool Repository::Git::GitUtils::changeCommit( QString commitId, QString filePath
     return ok;
 }
 
-void Repository::Git::GitUtils::getModifiedLuaNodesFromVersion( Repository::Git::GitEvolutionGraph* evolutionGraph, int versionNumber ) {
+QList<QString> Repository::Git::GitUtils::getModifiedLuaNodesFromVersion( Repository::Git::GitEvolutionGraph* evolutionGraph, int versionNumber ) {
     Repository::Git::GitVersion* version = evolutionGraph->getVersion( versionNumber );
 //    QList<Repository::Git::GitFile*> modifiedFiles = version->getGitFilesByType( Repository::Git::GitType::MODIFIED );
     QList<Repository::Git::GitFile*> modifiedFiles = version->getChangedFiles();
+
+    QList<QString> identifiers = QList<QString>();
 
     // pre kazdy zmeneny subor, ktory je typu MODIFIED najdeme uzly, ktore sa zmenili
     foreach( Repository::Git::GitFile* file, modifiedFiles ) {
@@ -100,17 +102,26 @@ void Repository::Git::GitUtils::getModifiedLuaNodesFromVersion( Repository::Git:
 
         // ak je hodnota zmenenej verzie
         if( nearestVersionNumber > -1 ) {
-            qDebug() << "Subor" << file->getIndetifier() << "sa zmenil v " << nearestVersionNumber << " from " << versionNumber;
+//            qDebug() << "Subor" << file->getIndetifier() << "sa zmenil v " << nearestVersionNumber << " from " << versionNumber;
 
             // ziskame subor oproti ktoremu budem porovnavat
             Repository::Git::GitFile* otherFile = evolutionGraph->getVersion( nearestVersionNumber )->getGitFileByName( file->getFilename() );
 
-            QList<QString> identifiers = getIdentifiersOfChangedItems( file, otherFile );
+            identifiers += getIdentifiersOfChangedItems( file, otherFile );
         } else {
-            qDebug() << "Subor" << file->getIndetifier() << "ma stav" << file->getTypeAsString();
-            QList<QString> identifiers = getIdentifiersOfChangedItems( file, NULL );
+//            qDebug() << "Subor" << file->getIndetifier() << "ma stav" << file->getTypeAsString();
+            identifiers += getIdentifiersOfChangedItems( file, NULL );
         }
     }
+
+    foreach( QString string, identifiers ) {
+        QStringList list = string.split(";");
+        qDebug() << list.at( 0 ) << "->" << list.at( 1 ) << "from" << list.at( 2 );
+    }
+
+    qDebug() << "Velkost vsetkych zmien = " << identifiers.size();
+
+    return identifiers;
 }
 
 int Repository::Git::GitUtils::getLastModifiedVersionIndex( QString fileName, int fromIndex, Repository::Git::GitEvolutionGraph* evolutionGraph ) {
@@ -160,7 +171,7 @@ QList<QString> Repository::Git::GitUtils::getIdentifiersOfChangedItems( Reposito
         }
     }
 
-    qDebug() << "Velkost identifiers " << identifiers.size();
+//    qDebug() << "Velkost identifiers " << identifiers.size();
 
     delete functions;
 
@@ -187,21 +198,21 @@ QList<QString> Repository::Git::GitUtils::compareTwoFunctions( Repository::Git::
         // TODO - tu bude treba doplnit kod, na priradenie zmeny riadku v subore k funkcii
 
     } else if( function == i.end().value() ) {
-        qDebug() << "REMOVED ->" << otherFunction->getIdentifier() << "from" << masterIdentifier;
-        identifiers.append( otherFunction->getIdentifier() );
+//        qDebug() << "REMOVED ->" << otherFunction->getIdentifier() << "from" << masterIdentifier;
+        identifiers.append( "REMOVED;" + otherFunction->getIdentifier() + ";" + masterIdentifier );
         if( otherFunction->getFunctionType() == Repository::Git::GitFunctionType::LOCALFUNCTION && otherFunction->getFunctionCallers()->size() > 0 ) {
             for( QMap<QString, Repository::Git::GitFunction*>::iterator iterator = otherFunction->getFunctionCallers()->begin(); iterator != otherFunction->getFunctionCallers()->end(); ++iterator ) {
-                identifiers.append( iterator.value()->getIdentifier() );
-                qDebug() << "REMOVED ->" << iterator.value()->getIdentifier() << "from" << otherFunction->getIdentifier();
+                identifiers.append( "REMOVED;" +  iterator.value()->getIdentifier() + ";" + otherFunction->getIdentifier() );
+//                qDebug() << "REMOVED ->" << iterator.value()->getIdentifier() << "from" << otherFunction->getIdentifier();
             }
         }
     } else {
-        qDebug() << "ADDED ->" << function->getIdentifier() << "from" << masterIdentifier;
-        identifiers.append( function->getIdentifier() );
+//        qDebug() << "ADDED ->" << function->getIdentifier() << "from" << masterIdentifier;
+        identifiers.append( "ADDED;" + function->getIdentifier() + ";" + masterIdentifier );
         if( function->getFunctionType() == Repository::Git::GitFunctionType::LOCALFUNCTION && function->getFunctionCallers()->size() > 0 ) {
             for( QMap<QString, Repository::Git::GitFunction*>::iterator iterator = function->getFunctionCallers()->begin(); iterator != function->getFunctionCallers()->end(); ++iterator ) {
-                identifiers.append( iterator.value()->getIdentifier() );
-                qDebug() << "ADDED ->" << iterator.value()->getIdentifier() << "from" << function->getIdentifier();
+                identifiers.append( "ADDED;" + iterator.value()->getIdentifier() + ";" + function->getIdentifier() );
+//                qDebug() << "ADDED ->" << iterator.value()->getIdentifier() << "from" << function->getIdentifier();
             }
         }
     }

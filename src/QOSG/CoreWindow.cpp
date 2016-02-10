@@ -1583,7 +1583,10 @@ void CoreWindow::loadFromGit()
 //            Manager::GraphManager::getInstance()->importEvolutionGraph( lPath );
             if( chb_git_changeCommits->isChecked() ) {
                 Repository::Git::GitUtils::changeCommit( Manager::GraphManager::getInstance()->getActiveEvolutionGraph()->getVersion( 0 )->getCommitId(), lPath );
-                loadFunctionCall();
+//                loadFunctionCall();
+                loadLuaGraph();
+
+                Lua::LuaGraph::getInstance()->loadEvoGraph( lPath );
 
                 // ak este dana verzia nebola zanalyzovana, tak ju zanalyzuj a uloz do evolution grafu
                 if( !Manager::GraphManager::getInstance()->getActiveEvolutionGraph()->getVersion( 0 )->getIsLoaded() ) {
@@ -1591,6 +1594,10 @@ void CoreWindow::loadFromGit()
                     analyzer.setVersionNumber( 0 );
                     analyzer.analyze();
                 }
+
+                Lua::LuaGraphVisualizer* visualizer = visualizer = new Lua::GitGraphVisualizer( Manager::GraphManager::getInstance()->getActiveGraph(), coreGraph->getCamera() );
+                visualizer->visualize();
+
             } else {
                 Manager::GraphManager::getInstance()->importEvolutionGraph( lPath );
             }
@@ -1611,9 +1618,38 @@ void CoreWindow::loadFromGit()
 	}
 
 	if ( isPlaying ) {
+        labelOnOff( true );
 		layout->play();
 		coreGraph->setNodesFreezed( false );
 	}
+}
+
+void CoreWindow::loadLuaGraph() {
+    QString file = "";
+
+    Repository::Git::GitEvolutionGraph* evolutionGraph = Manager::GraphManager::getInstance()->getActiveEvolutionGraph();
+
+    if( evolutionGraph != NULL ) {
+        file = evolutionGraph->getFilePath();
+    } else {
+        return;
+    }
+
+    Lua::LuaInterface* lua = Lua::LuaInterface::getInstance();
+
+    Diluculum::LuaValueList path;
+    path.push_back( file.toStdString() );
+    QString createGraph[] = {"function_call_graph", "extractGraph"};
+    lua->callFunction( 2, createGraph, path );
+    lua->getLuaState()->doString( "getGraph = function_call_graph.getGraph" );
+    Lua::LuaInterface::getInstance()->getLuaState()->doString( "getFullGraph = getGraph" );
+
+    Data::Graph* currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
+
+    if( currentGraph == NULL ) {
+        currentGraph = Manager::GraphManager::getInstance()->createNewGraph( "LuaGraph" );
+    }
+
 }
 
 void CoreWindow::labelOnOff( bool )
@@ -3783,23 +3819,31 @@ bool CoreWindow::nextVersion()
     if( !chb_git_changeCommits->isChecked() ) {
         ok = Manager::GraphManager::getInstance()->nextVersion( layout );
     } else {
-        qDebug() << "Treba zavolat dalsi lua stromcek";
+//        qDebug() << "Treba zavolat dalsi lua stromcek";
         QString lPath =  Manager::GraphManager::getInstance()->getActiveEvolutionGraph()->getFilePath();
         QString commitId = Manager::GraphManager::getInstance()->getActiveEvolutionGraph()->getVersion( value )->getCommitId();
         Repository::Git::GitUtils::changeCommit( commitId, lPath );
         Manager::GraphManager::getInstance()->getActiveGraph()->setCurrentVersion( value );
-        loadFunctionCall();
+//        loadFunctionCall();
+        loadLuaGraph();
+
+        Lua::LuaGraph::getInstance()->loadEvoGraph( lPath );
 
         if( !Manager::GraphManager::getInstance()->getActiveEvolutionGraph()->getVersion( value )->getIsLoaded() ) {
             Repository::Git::GitLuaGraphAnalyzer analyzer = Repository::Git::GitLuaGraphAnalyzer( Lua::LuaGraph::getInstance(), Manager::GraphManager::getInstance()->getActiveEvolutionGraph() );
             analyzer.setVersionNumber( value );
             analyzer.analyze();
         }
+
+        Lua::LuaGraphVisualizer* visualizer = visualizer = new Lua::GitGraphVisualizer( Manager::GraphManager::getInstance()->getActiveGraph(), coreGraph->getCamera() );
+        visualizer->visualize();
     }
 
 	if ( value == evolutionSlider->maximum() ) {
 		b_next_version->setDisabled( true );
 	}
+
+//    labelOnOff( true );
 
 	return ok;
 }
@@ -3823,7 +3867,7 @@ bool CoreWindow::previousVersion()
     if( !chb_git_changeCommits->isChecked() ) {
         ok =  Manager::GraphManager::getInstance()->previousVersion( layout );
     } else {
-        qDebug() << "Treba zavolat predchadzajuci lua stromcek";
+//        qDebug() << "Treba zavolat predchadzajuci lua stromcek";
         QString lPath =  Manager::GraphManager::getInstance()->getActiveEvolutionGraph()->getFilePath();
         QString commitId = Manager::GraphManager::getInstance()->getActiveEvolutionGraph()->getVersion( value )->getCommitId();
         Repository::Git::GitUtils::changeCommit( commitId, lPath );

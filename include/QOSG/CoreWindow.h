@@ -227,6 +227,12 @@ public slots:
 	            */
 	void loadFromGit();
 
+    /**
+     * void loadLuaGraph()
+     * @brief Load lua graph without visualization
+     */
+    void loadLuaGraph();
+
 	/**
 	            *  \fn public  labelOnOff(bool checked)
 	            *  \brief Show / hide labels

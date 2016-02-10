@@ -212,7 +212,7 @@ void Repository::Git::GitLuaGraphAnalyzer::analyze() {
         }
     }
 
-    Repository::Git::GitUtils::getModifiedLuaNodesFromVersion( this->evolutionGraph, this->versionNumber );
+//    Repository::Git::GitUtils::getModifiedLuaNodesFromVersion( this->evolutionGraph, this->versionNumber );
     version->setIsLoaded( true );
 }
 

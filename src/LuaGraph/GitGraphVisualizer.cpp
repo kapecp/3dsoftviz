@@ -27,14 +27,11 @@ Lua::GitGraphVisualizer::GitGraphVisualizer( Data::Graph* graph, osg::ref_ptr<os
 void Lua::GitGraphVisualizer::visualize()
 {
     Repository::Git::GitEvolutionGraph* evolutionGraph =  Manager::GraphManager::getInstance()->getActiveEvolutionGraph();
-    int currentVersion = Manager::GraphManager::getInstance()->getActiveGraph()->getCurrentVersion();
-    Repository::Git::GitVersion* version = evolutionGraph->getVersion( currentVersion );
-    QList<Repository::Git::GitFile*> versionFiles = version->getChangedFiles();
 
     Lua::LuaGraph* g = Lua::LuaGraph::loadEvoGraph( evolutionGraph->getFilePath() );
     //    g->printGraph();
-    QMap<QString, Repository::Git::GitFunction*> functions = QMap<QString, Repository::Git::GitFunction*>();
 
+    Repository::Git::GitUtils::getModifiedLuaNodesFromVersion( evolutionGraph, currentGraph->getCurrentVersion() );
 
     //    qDebug() << "Zaciatok vykreslovania GitLuaGraphu";
     for ( QMap<qlonglong, Lua::LuaNode*>::iterator i = g->getNodes()->begin(); i != g->getNodes()->end(); ++i ) {
@@ -50,8 +47,6 @@ void Lua::GitGraphVisualizer::visualize()
         setNodeParams( n, i.value(), osg::Vec4f( 1,1,1,1 ), 8 );
         evolutionGraph->addLuaNodesMapping( i.value()->getIdentifier(), i.value()->getId() );        
     }
-
-//    Repository::Git::GitUtils::getModifiedLuaNodesFromVersion( evolutionGraph, currentVersion );
 
     for ( QMap<qlonglong, Lua::LuaEdge*>::iterator i = g->getEdges()->begin(); i != g->getEdges()->end(); ++i ) {
         Lua::LuaEdge* edge = i.value();
