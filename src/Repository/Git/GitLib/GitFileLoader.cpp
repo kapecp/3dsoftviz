@@ -79,17 +79,17 @@ QList<Repository::Git::GitVersion*> Repository::Git::GitFileLoader::getDataAbout
 				if ( A.indexIn( line ) != -1 ) {
                     line = line.replace( A, "" );
 					Repository::Git::GitFile* file = new Repository::Git::GitFile( line.mid( line.lastIndexOf( "/" ) + 1 ), line, Repository::Git::GitType::ADDED );
-					version->addChangedFile( file );
+                    version->addChangedFile( file );
 				}
 				else if ( M.indexIn( line ) != -1 ) {
                     line = line.replace( M, "" );
 					Repository::Git::GitFile* file = new Repository::Git::GitFile( line.mid( line.lastIndexOf( "/" ) + 1 ), line, Repository::Git::GitType::MODIFIED );
-					version->addChangedFile( file );
+                    version->addChangedFile( file );
 				}
 				else if ( D.indexIn( line ) != -1 ) {
                     line = line.replace( D, "" );
 					Repository::Git::GitFile* file = new Repository::Git::GitFile( line.mid( line.lastIndexOf( "/" ) + 1 ), line, Repository::Git::GitType::REMOVED );
-					version->addChangedFile( file );
+                    version->addChangedFile( file );
 				}
 				else if ( line.length() == 40 ) {
 					reader.readLine();

@@ -5,13 +5,13 @@
 #include <QDebug>
 
 Repository::Git::GitVersion::GitVersion()
-    : commitId( "" ), author( "" ), date( "" ), isLoaded( false ), changedFiles( QList<Repository::Git::GitFile*>() )
+    : commitId( "" ), author( "" ), date( "" ), isLoaded( false ), changedFiles( QMap<QString, Repository::Git::GitFile*>() )
 {
 
 }
 
 Repository::Git::GitVersion::GitVersion( QString commitId )
-    : commitId( commitId ), author( "" ), date( "" ), isLoaded( false ), changedFiles( QList<Repository::Git::GitFile*>() )
+    : commitId( commitId ), author( "" ), date( "" ), isLoaded( false ), changedFiles( QMap<QString, Repository::Git::GitFile*>() )
 {
 
 }
@@ -30,52 +30,56 @@ void Repository::Git::GitVersion::printVersion()
 	qDebug() << "List size : " << this->getChangedFiles().size();
 
 	// Pre kazdy subor v ramci verzii vypisem jeho nazov, systemovu cestu a typ
-	foreach ( Repository::Git::GitFile* file , this->getChangedFiles() ) {
+    for( QMap<QString, Repository::Git::GitFile*>::iterator iterator = this->changedFiles.begin(); iterator != this->changedFiles.end(); ++iterator ) {
+        Repository::Git::GitFile* file = iterator.value();
 		qDebug() << file->getFilename() <<  " " << file->getFilepath() << " " << file->getTypeAsString();
 	}
 }
 
-QList<Repository::Git::GitFile*> Repository::Git::GitVersion::getGitFilesByType( Repository::Git::GitType gitType )
+QMap<QString, Repository::Git::GitFile*> Repository::Git::GitVersion::getGitFilesByType( Repository::Git::GitType gitType )
 {
-	QList<Repository::Git::GitFile*> result = QList<Repository::Git::GitFile*>();
+    QMap<QString, Repository::Git::GitFile*> result = QMap<QString, Repository::Git::GitFile*>();
 
 	// Pre kazdy git file skontrolujem, ci splna uvedany typ
-	foreach ( Repository::Git::GitFile* gitFile, getChangedFiles() ) {
+    for( QMap<QString, Repository::Git::GitFile*>::iterator iterator = this->changedFiles.begin(); iterator != this->changedFiles.end(); ++iterator ) {
+        Repository::Git::GitFile* gitFile = iterator.value();
 
 		// Ak typ suboru sa zhoduje z uvedanym typom, tak subor pridam do vysledku
 		if ( gitFile->getType() == gitType ) {
-			result.append( gitFile );
+            result.insert( gitFile->getIndetifier(), gitFile );
 		}
 	}
 
 	return result;
 }
 
-QList<Repository::Git::GitFile*> Repository::Git::GitVersion::getGitFilesByExtension( QString extensions )
+QMap<QString, Repository::Git::GitFile*> Repository::Git::GitVersion::getGitFilesByExtension( QString extensions )
 {
-	QList<Repository::Git::GitFile*> result = QList<Repository::Git::GitFile*>();
+    QMap<QString, Repository::Git::GitFile*> result = QMap<QString, Repository::Git::GitFile*>();
 
 	// Pre kazdy git file skontrolujem, ci ma jednu z extensions
-	foreach ( Repository::Git::GitFile* gitFile, getChangedFiles() ) {
+    for( QMap<QString, Repository::Git::GitFile*>::iterator iterator = this->changedFiles.begin(); iterator != this->changedFiles.end(); ++iterator ) {
+        Repository::Git::GitFile* gitFile = iterator.value();
 
 		// Zistim extension
 		QString extension = gitFile->getFilename().mid( gitFile->getFilename().lastIndexOf( "." ) + 1 );
 
 		// Ak sa extension nachadza v extensions, tak do vysledku pridam git file
 		if ( extensions.indexOf( extension ) > -1 ) {
-			result.append( gitFile );
+            result.insert( gitFile->getIndetifier(), gitFile );
 		}
 	}
 
 	return result;
 }
 
-QList<Repository::Git::GitFile*> Repository::Git::GitVersion::getGitFilesByTypeAndExtension( QString extensions, Repository::Git::GitType type )
+QMap<QString, Repository::Git::GitFile*> Repository::Git::GitVersion::getGitFilesByTypeAndExtension( QString extensions, Repository::Git::GitType type )
 {
-	QList<Repository::Git::GitFile*> result = QList<Repository::Git::GitFile*>();
+    QMap<QString, Repository::Git::GitFile*> result = QMap<QString, Repository::Git::GitFile*>();
 
 	// Pre kazdy git file skontrolujem, ci ma jednu z extensions a zaroven uvedeny typ
-	foreach ( Repository::Git::GitFile* gitFile, getChangedFiles() ) {
+    for( QMap<QString, Repository::Git::GitFile*>::iterator iterator = this->changedFiles.begin(); iterator != this->changedFiles.end(); ++iterator ) {
+        Repository::Git::GitFile* gitFile = iterator.value();
 
 		// Ak sa zhoduje typ, tak skontrolujem extension
 		if ( gitFile->getType() == type ) {
@@ -85,7 +89,7 @@ QList<Repository::Git::GitFile*> Repository::Git::GitVersion::getGitFilesByTypeA
 
 			// Ak sa extension nachadza v extensions, tak do vysledku pridam git file
 			if ( extensions.indexOf( extension ) > -1 ) {
-				result.append( gitFile );
+                result.insert( gitFile->getIndetifier(), gitFile );
 			}
 		}
 	}
@@ -94,11 +98,16 @@ QList<Repository::Git::GitFile*> Repository::Git::GitVersion::getGitFilesByTypeA
 }
 
 Repository::Git::GitFile* Repository::Git::GitVersion::getGitFileByName( QString fileName ) {
-    foreach( Repository::Git::GitFile* file, this->getChangedFiles() ) {
+    for( QMap<QString, Repository::Git::GitFile*>::iterator iterator = this->changedFiles.begin(); iterator != this->changedFiles.end(); ++iterator ) {
+        Repository::Git::GitFile* file = iterator.value();
         if( !QString::compare( fileName, file->getFilename() ) ){
             return file;
         }
     }
 
     return nullptr;
+}
+
+void Repository::Git::GitVersion::addChangedFile( Repository::Git::GitFile *file ) {
+    this->changedFiles.insert( file->getIndetifier(), file );
 }

@@ -31,10 +31,33 @@ Repository::Git::GitLuaGraphAnalyzer::~GitLuaGraphAnalyzer() {
 }
 
 void Repository::Git::GitLuaGraphAnalyzer::analyze() {
-    Repository::Git::GitVersion* version = this->evolutionGraph->getVersion( this->versionNumber );
-    QList<Repository::Git::GitFile*> versionFiles = version->getChangedFiles();
+    Repository::Git::GitVersion* version =  this->evolutionGraph->getVersion( this->versionNumber );
+    QMap<QString, Repository::Git::GitFile*> versionFiles = version->getChangedFiles();
 
-    QMap<QString, Repository::Git::GitFunction*> functions = QMap<QString, Repository::Git::GitFunction*>();
+    for( QMap<qlonglong, Lua::LuaNode*>::iterator iterator = this->luaGraph->getNodes()->begin(); iterator != this->luaGraph->getNodes()->end(); ++iterator ) {
+        if( versionFiles.contains( iterator.value()->getIdentifier()  ) ) {
+            Lua::LuaNode* node = iterator.value();
+
+            // ToDo Vytvorit GitFile, do ktoreho ulozim call tree
+
+            int counter = 0;
+            foreach( qlonglong incidenceId, node->getIncidences() ) {
+                Lua::LuaIncidence* incidence = this->luaGraph->getIncidences()->value( incidenceId );
+                if( incidence->getOriented() ) {
+                    //ToDo Orientovane smeruju na globalFunction, treba pridat
+                } else {
+                    //ToDo Tie, ktore nie su orientovane, treba skontrolovat dalsi edge a druhy node, ak je rovny function tak ho dalej spracuj, inak nespracuj dany node
+                }
+
+            }
+
+            qDebug() << node->getIdentifier() << "s poctom incidence" << node->getIncidences().size() << "/" << counter;
+        }
+    }
+
+    /*
+    Repository::Git::GitVersion* version = this->evolutionGraph->getVersion( this->versionNumber );
+    QMap<QString, Repository::Git::GitFile*> versionFiles = version->getChangedFiles();
 
     for( QMap<qlonglong, Lua::LuaNode*>::iterator i = this->luaGraph->getNodes()->begin(); i != this->luaGraph->getNodes()->end(); ++i ) {
         // ziskam LuaNode pre sucasnu hodnotu iteratora nad vsetkymi LuaNodes v Lua grafe
@@ -50,10 +73,12 @@ void Repository::Git::GitLuaGraphAnalyzer::analyze() {
 
             // Najdeme subor z aktualnej verzie evolucneho grafu, ktory sa rovna zistenemu suboru z identifikatora
             // a vytvorime/aktualizujeme funkciu
-            foreach( Repository::Git::GitFile* currentFile, versionFiles ) {
+            for( QMap<QString, Repository::Git::GitFile*>::iterator iterator = versionFiles.begin(); iterator != versionFiles.end(); ++iterator ) {
+                Repository::Git::GitFile* currentFile = iterator.value();
+
                 if( !QString::compare( currentFile->getFilepath(), file ) ) {
                     // ziskame referenciu na funkciu alebo NULL
-                    Repository::Git::GitFunction* function = functions.value( node->getIdentifier() );
+                    Repository::Git::GitFunction* function = nullptr;
 
                     // ak funkcia este nie je vytvorena, tak ju vytvorime
                     if( !function ) {
@@ -72,7 +97,6 @@ void Repository::Git::GitLuaGraphAnalyzer::analyze() {
                         // pridame vytvorenu funkciu do funkcii v subore
                         currentFile->addGitFunction( function );
 //                        qDebug() << currentFile->getFilename() << "->" << function->getIdentifier();
-                        functions.insert(node->getIdentifier(), function);
 
                         // zistime vsetky orientovane hrany z LuaNode
                         foreach( qlonglong id, node->getIncidences() ) {
@@ -91,7 +115,7 @@ void Repository::Git::GitLuaGraphAnalyzer::analyze() {
                                 otherNode = this->luaGraph->getNodes()->value( incid->getEdgeNodePair().second );
 
                                 QString functionIdentifier = edge->getIdentifier().replace( "+", "" ).replace( node->getIdentifier(), "" );
-                                Repository::Git::GitFunction* funct = functions.value( functionIdentifier );
+                                Repository::Git::GitFunction* funct = nullptr;
 //                                qDebug() << node->getIdentifier() << "->" << functionIdentifier << " - " << edge->getIdentifier();
 
                                 if( !funct ) {
@@ -132,7 +156,6 @@ void Repository::Git::GitLuaGraphAnalyzer::analyze() {
 
                                 function->addFunctionCaller( funct );
                                 funct->addFunctionCallee( function );
-                                functions.insert( otherNode->getIdentifier(), funct );
                             }
                         }
                     } else {
@@ -162,7 +185,7 @@ void Repository::Git::GitLuaGraphAnalyzer::analyze() {
 
 
                             QString functionIdentifier = edge->getIdentifier().replace( "+", "" ).replace( node->getIdentifier(), "" );
-                            Repository::Git::GitFunction* funct = functions.value( functionIdentifier );
+                            Repository::Git::GitFunction* funct = nullptr;
 //                            qDebug() << node->getIdentifier() << "->" << functionIdentifier << " - " << edge->getIdentifier();
 
                             if( !funct ) {
@@ -200,7 +223,6 @@ void Repository::Git::GitLuaGraphAnalyzer::analyze() {
                                 }
                             }
 
-                            functions.insert( otherNode->getIdentifier(), funct );
 //                            qDebug() << currentFile->getFilename() << "->" << funct->getIdentifier();
                             currentFile->addGitFunction( funct );
                         }
@@ -214,6 +236,7 @@ void Repository::Git::GitLuaGraphAnalyzer::analyze() {
 
 //    Repository::Git::GitUtils::getModifiedLuaNodesFromVersion( this->evolutionGraph, this->versionNumber );
     version->setIsLoaded( true );
+    */
 }
 
 

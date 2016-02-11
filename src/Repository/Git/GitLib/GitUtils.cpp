@@ -89,12 +89,12 @@ bool Repository::Git::GitUtils::changeCommit( QString commitId, QString filePath
 }
 
 QList<QString> Repository::Git::GitUtils::getModifiedLuaNodesFromVersion( Repository::Git::GitEvolutionGraph* evolutionGraph, int versionNumber ) {
+    /*
     Repository::Git::GitVersion* version = evolutionGraph->getVersion( versionNumber );
-//    QList<Repository::Git::GitFile*> modifiedFiles = version->getGitFilesByType( Repository::Git::GitType::MODIFIED );
-    QList<Repository::Git::GitFile*> modifiedFiles = version->getChangedFiles();
-
+    QMap<QString, Repository::Git::GitFile*> modifiedFiles = version->getChangedFiles();
+*/
     QList<QString> identifiers = QList<QString>();
-
+/*
     // pre kazdy zmeneny subor, ktory je typu MODIFIED najdeme uzly, ktore sa zmenili
     foreach( Repository::Git::GitFile* file, modifiedFiles ) {
         // zistime si v ktorej verzii, bol posledne zmeneny dany subor
@@ -113,20 +113,20 @@ QList<QString> Repository::Git::GitUtils::getModifiedLuaNodesFromVersion( Reposi
             identifiers += getIdentifiersOfChangedItems( file, NULL );
         }
     }
-/*
+*//*
     foreach( QString string, identifiers ) {
         QStringList list = string.split(";");
         qDebug() << list.at( 0 ) << "->" << list.at( 1 ) << "from" << list.at( 2 );
     }
-*/
+*//*
     qDebug() << "Velkost vsetkych zmien = " << identifiers.size();
-
+*/
     return identifiers;
 }
-
+/*
 int Repository::Git::GitUtils::getLastModifiedVersionIndex( QString fileName, int fromIndex, Repository::Git::GitEvolutionGraph* evolutionGraph ) {
     for( int i = fromIndex - 1; i >= 0; i-- ) {
-        QList<Repository::Git::GitFile*> changedFiles = evolutionGraph->getVersion( i )->getChangedFiles();
+        QMap<QString, Repository::Git::GitFile*> changedFiles = evolutionGraph->getVersion( i )->getChangedFiles();
         foreach( Repository::Git::GitFile* file, changedFiles ) {
             if( !QString::compare( fileName, file->getFilename() ) ) {
                 return i;
@@ -135,7 +135,7 @@ int Repository::Git::GitUtils::getLastModifiedVersionIndex( QString fileName, in
     }
 
     return -1;
-}
+}*/
 
 QList<QString> Repository::Git::GitUtils::getIdentifiersOfChangedItems( Repository::Git::GitFile *file, Repository::Git::GitFile *otherFile ) {
     QList<QString> identifiers = QList<QString>();

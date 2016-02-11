@@ -2,7 +2,7 @@
 #define GITGRAPHUPDATER_H
 
 #include <QStringList>
-#include <QList>
+#include <QMap>
 
 namespace Data {
 class Graph;
@@ -138,7 +138,7 @@ private:
 	 * @param authorName Name of the version author
 	 * @param gitFiles List of changed git files
 	 */
-	void addAuthorEdgesToGraph( QString authorName, QList<Repository::Git::GitFile*> gitFiles );
+    void addAuthorEdgesToGraph( QString authorName, QMap<QString, Repository::Git::GitFile*> gitFiles );
 
 	/**
 	 * void removeAuthorEdgesFromGraph( QString authorName, QList<Repository::Git::GitFile*> gitFiles )
@@ -146,7 +146,7 @@ private:
 	 * @param authorName Name of the version author
 	 * @param gitFiles List of changed git files
 	 */
-	void removeAuthorEdgesFromGraph( QString authorName, QList<Repository::Git::GitFile*> gitFiles );
+    void removeAuthorEdgesFromGraph( QString authorName, QMap<QString, Repository::Git::GitFile*> gitFiles );
 
 	/**
 	 * void removeNodesFromGraph( QStringList list )

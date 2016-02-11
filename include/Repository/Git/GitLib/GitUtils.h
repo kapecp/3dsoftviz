@@ -58,7 +58,7 @@ public:
 
 private:
 
-    int static getLastModifiedVersionIndex( QString fileName, int fromIndex, Repository::Git::GitEvolutionGraph* evolutionGraph );
+//    int static getLastModifiedVersionIndex( QString fileName, int fromIndex, Repository::Git::GitEvolutionGraph* evolutionGraph );
 
 }; // class
 } // namespace
