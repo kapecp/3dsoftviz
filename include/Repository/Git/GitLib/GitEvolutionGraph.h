@@ -10,6 +10,7 @@
 namespace Repository {
 namespace Git {
 class GitVersion;
+class GitFile;
 
 class GITLIB_EXPORT GitEvolutionGraph
 {
@@ -152,6 +153,25 @@ public:
         return this->luaEdgesMapping;
     }
 
+    /**
+     * void addLatestGitFileCallTree( QString identifier, Repository::Git::GitFile* gitFile )
+     * @brief Add latest version of git file call tree with specific identifier
+     * @param identifier Identifier of git file
+     * @param gitFile Reference to git file which consists only with call tree
+     */
+    void addLatestGitFileCallTree( QString identifier, Repository::Git::GitFile* gitFile ) {
+        this->latestGitFileCallTree.insert( identifier, gitFile );
+    }
+
+    /**
+     * QMap<QString, Repository::Git::GitFile*> getLatestGitFileCallTree()
+     * @brief Returns map of latest version of stored git files, which consists only with file call tree
+     * @return Map of latest version of stored git files, which consists only with file call tree
+     */
+    QMap<QString, Repository::Git::GitFile*> getLatestGitFileCallTree() {
+        return this->latestGitFileCallTree;
+    }
+
 	/**
 	 * void removeRemovedFiles( QString name )
 	 * @brief Removes file from map with specific key
@@ -189,6 +209,12 @@ private:
      * @brief Maps identifier to current lua edge id
      */
     QMap<QString, int> luaEdgesMapping;
+
+    /**
+     * QMap<QString, Repository::Git::GitFile*> latestGitFileCallTree
+     * @brief Map which contain key as git file identifier and reference of git file which consists only with file call tree.
+     */
+    QMap<QString, Repository::Git::GitFile*> latestGitFileCallTree;
 
 	/**
 	 * int lifespan

@@ -6,7 +6,7 @@
 #include <QMapIterator>
 
 Repository::Git::GitEvolutionGraph::GitEvolutionGraph()
-    : versions( QList<Repository::Git::GitVersion*>() ), removedFiles( QMap<QString, int>() ), luaNodesMapping( QMap<QString, int>() ), lifespan( 0 ), filePath( "" )
+    : versions( QList<Repository::Git::GitVersion*>() ), removedFiles( QMap<QString, int>() ), luaNodesMapping( QMap<QString, int>() ), latestGitFileCallTree( QMap<QString, Repository::Git::GitFile*>() ), lifespan( 0 ), filePath( "" )
 {
 
 }
