@@ -31,11 +31,12 @@ void Lua::GitGraphVisualizer::visualize()
     Lua::LuaGraph* g = Lua::LuaGraph::loadEvoGraph( evolutionGraph->getFilePath() );
     //    g->printGraph();
 
-    Repository::Git::GitUtils::getModifiedLuaNodesFromVersion( evolutionGraph, currentGraph->getCurrentVersion() );
+    QList<QString> changedNodes = Repository::Git::GitUtils::getModifiedLuaNodesFromVersion( evolutionGraph, currentGraph->getCurrentVersion() );
 
     //    qDebug() << "Zaciatok vykreslovania GitLuaGraphu";
     for ( QMap<qlonglong, Lua::LuaNode*>::iterator i = g->getNodes()->begin(); i != g->getNodes()->end(); ++i ) {
         // ziskame referenciu na existujuci uzol v grafe alebo NULL
+
         osg::ref_ptr<Data::Node> n = currentGraph->findNodeByLuaIdentifier( i.value()->getIdentifier() );
 
         // ak sa uzol v grafe nenachadza, tak ho pridame do grafu a nastavime mu LuaIdentifier
@@ -44,6 +45,7 @@ void Lua::GitGraphVisualizer::visualize()
             n->setLuaIdentifier( i.value()->getIdentifier() );
         }
 
+        n->setType( nodeType );
         setNodeParams( n, i.value(), osg::Vec4f( 1,1,1,1 ), 8 );
         evolutionGraph->addLuaNodesMapping( i.value()->getIdentifier(), i.value()->getId() );        
     }
@@ -77,6 +79,7 @@ void Lua::GitGraphVisualizer::visualize()
 
         newEdge->setCamera( camera );
         setEdgeParams( newEdge, i.value(), osg::Vec4f( 1,1,1,1 ) );
+        newEdge->setEdgeColor( osg::Vec4f( 1,1,1,1 ) );
         evolutionGraph->addLuaEdgesMapping( i.value()->getIdentifier(), i.value()->getId() );
     }
     g->setObserver( this );
@@ -106,6 +109,36 @@ void Lua::GitGraphVisualizer::visualize()
             metaLink->setEdgeStrength( 0.1f );
         }
     }*/
+
+    setUpGraphTypes();
+
+    qDebug() << "From git graph visualizer";
+    foreach( QString string, changedNodes ) {
+        QStringList list = string.split( ";" );
+//        qDebug() << list.at( 1 );
+        osg::ref_ptr<Data::Node> node = currentGraph->findNodeByLuaIdentifier( list.at( 1 ) );
+        if( node ) {
+//            qDebug() << "Set up removed Node" << node->getLuaIdentifier();
+            if( !QString::compare( "ADDED", list.at( 0 ) ) ) {
+                node->setType( currentGraph->getTypesByName( "addedNode" ).at( 0 ) );
+            } else {
+                node->setType( currentGraph->getTypesByName( "removedNode" ).at( 0 ) );
+            }
+            node->reloadConfig();
+            node->showLabel( true );
+        }
+
+        osg::ref_ptr<Data::Edge> edge = currentGraph->findEdgeByLuaIdentifier( list.at( 2 ) + "+" + list.at( 1 ) );
+        if( edge ) {
+
+            if( !QString::compare( "ADDED", list.at( 0 ) ) ) {
+                edge->setEdgeColor( osg::Vec4f( 0,1,0,1 ) );
+            } else {
+                edge->setEdgeColor( osg::Vec4f( 1,0,0,1 ) );
+            }
+
+        }
+    }
 }
 
 void Lua::GitGraphVisualizer::onUpdate()
@@ -123,5 +156,42 @@ void Lua::GitGraphVisualizer::onUpdate()
     }
 }
 
+void Lua::GitGraphVisualizer::setUpGraphTypes() {
+    QMap<QString, QString>* settings = new QMap<QString, QString>;
+    settings->insert( "color.R", "1" );
+    settings->insert( "color.G", "1" );
+    settings->insert( "color.B", "1" );
+    settings->insert( "color.A", "1" );
+    settings->insert( "scale", Util::ApplicationConfig::get()->getValue( "Viewer.Textures.DefaultNodeScale" ) );
+    settings->insert( "textureFile", Util::ApplicationConfig::get()->getValue( "Viewer.Textures.AddedNode" ) );;
+    this->currentGraph->addType( "addedNode", settings );
+
+    settings = new QMap<QString, QString>;
+    settings->insert( "color.R", "1" );
+    settings->insert( "color.G", "1" );
+    settings->insert( "color.B", "1" );
+    settings->insert( "color.A", "1" );
+    settings->insert( "scale", Util::ApplicationConfig::get()->getValue( "Viewer.Textures.DefaultNodeScale" ) );
+    settings->insert( "textureFile", Util::ApplicationConfig::get()->getValue( "Viewer.Textures.RemoveNode" ) );;
+    this->currentGraph->addType( "removedNode", settings );
+
+    settings = new QMap<QString, QString>;
+    settings->insert( "color.R", "1" );
+    settings->insert( "color.G", "1" );
+    settings->insert( "color.B", "1" );
+    settings->insert( "color.A", "1" );
+    settings->insert( "scale", Util::ApplicationConfig::get()->getValue( "Viewer.Textures.AuthorNodeScale" ) );
+    settings->insert( "textureFile", Util::ApplicationConfig::get()->getValue( "Viewer.Textures.Author" ) );
+    this->currentGraph->addType( "author", settings );
+
+    settings = new QMap<QString, QString>;
+    settings->insert( "color.R", "0" );
+    settings->insert( "color.G", "0" );
+    settings->insert( "color.B", "1" );
+    settings->insert( "color.A", "1" );
+    settings->insert( "scale", Util::ApplicationConfig::get()->getValue( "Viewer.Textures.DefaultNodeScale" ) );
+    settings->insert( "textureFile", Util::ApplicationConfig::get()->getValue( "Viewer.Textures.OrientedEdge" ) );
+    this->currentGraph->addType( "authorEdge", settings );
+}
 
 

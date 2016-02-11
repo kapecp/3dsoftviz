@@ -29,6 +29,9 @@ public:
 	void visualize();
 
 	void onUpdate();
+
+private:
+    void setUpGraphTypes();
 };
 
 }

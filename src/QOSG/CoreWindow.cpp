@@ -1595,7 +1595,7 @@ void CoreWindow::loadFromGit()
                     analyzer.analyze();
                 }
 
-                Lua::LuaGraphVisualizer* visualizer = visualizer = new Lua::GitGraphVisualizer( Manager::GraphManager::getInstance()->getActiveGraph(), coreGraph->getCamera() );
+                Lua::LuaGraphVisualizer* visualizer = new Lua::GitGraphVisualizer( Manager::GraphManager::getInstance()->getActiveGraph(), coreGraph->getCamera() );
                 visualizer->visualize();
 
             } else {
