@@ -12,6 +12,7 @@ namespace Repository {
 namespace Git {
 class GitEvolutionGraph;
 class GitFunction;
+class GitFile;
 
 class GitLuaGraphAnalyzer {
 public:
@@ -39,6 +40,10 @@ public:
      * @brief Main function to analyze given Lua graph and create evolution graph representation of specific version
      */
     void analyze();
+
+    void compareFilesAndSaveToEvolutionGraph( Repository::Git::GitFile* newFile, Repository::Git::GitFile* oldFile );
+
+    void compareFunctions( Repository::Git::GitFunction* newFunction, Repository::Git::GitFunction* oldFunction, QMap<QString, bool>* functions, QString masterIdentifier, Repository::Git::GitFile* masterFile );
 
     void setLuaGraph( Lua::LuaGraph* luaGraph ) {
         this->luaGraph = luaGraph;

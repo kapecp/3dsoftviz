@@ -154,12 +154,12 @@ public:
     }
 
     /**
-     * Repository::Git::GitFile* getGitFileByName( QString fileName )
-     * @brief Get the git file by its name
-     * @param fileName Name of file
-     * @return Git file with specific file name
+     * Repository::Git::GitFile* getGitFileByIdentifier( QString identifier )
+     * @brief Get the git file by its identifier
+     * @param identifier Identifier of file
+     * @return Git file with specific file identifier
      */
-    Repository::Git::GitFile* getGitFileByName( QString fileName );
+    Repository::Git::GitFile* getGitFileByIdentifier( QString identifier );
 
 	/**
 	 * void printVersion()

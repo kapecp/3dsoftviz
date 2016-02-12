@@ -97,10 +97,10 @@ QMap<QString, Repository::Git::GitFile*> Repository::Git::GitVersion::getGitFile
 	return result;
 }
 
-Repository::Git::GitFile* Repository::Git::GitVersion::getGitFileByName( QString fileName ) {
+Repository::Git::GitFile* Repository::Git::GitVersion::getGitFileByIdentifier( QString identifier ) {
     for( QMap<QString, Repository::Git::GitFile*>::iterator iterator = this->changedFiles.begin(); iterator != this->changedFiles.end(); ++iterator ) {
         Repository::Git::GitFile* file = iterator.value();
-        if( !QString::compare( fileName, file->getFilename() ) ){
+        if( !QString::compare( identifier, file->getIndetifier() ) ){
             return file;
         }
     }
