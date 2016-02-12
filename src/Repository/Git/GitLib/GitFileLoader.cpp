@@ -92,8 +92,9 @@ QList<Repository::Git::GitVersion*> Repository::Git::GitFileLoader::getDataAbout
                     version->addChangedFile( file );
 				}
 				else if ( line.length() == 40 ) {
-					reader.readLine();
-					reader.readLine();
+                    version->setCommitId( line );
+                    version->setAuthor( reader.readLine() );
+                    version->setDate( reader.readLine() );
 				}
 				else {
 					read = false;
