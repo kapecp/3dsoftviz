@@ -40,7 +40,7 @@ void Repository::Git::GitLuaGraphAnalyzer::analyze() {
 
             QMap<QString, Repository::Git::GitFunction*> functions = QMap<QString, Repository::Git::GitFunction*>();
 
-            Repository::Git::GitFile* file = new Repository::Git::GitFile( node->getIdentifier(), node->getIdentifier().split(":").at( 1 ), Repository::Git::GitType::MODIFIED );
+            Repository::Git::GitFile* file = new Repository::Git::GitFile( node->getIdentifier(), node->getIdentifier().split(";").at( 1 ), Repository::Git::GitType::MODIFIED );
 
             int counter = 0;
             foreach( qlonglong incidenceId, node->getIncidences() ) {
@@ -73,7 +73,7 @@ void Repository::Git::GitLuaGraphAnalyzer::analyze() {
                     if( !function ) {
 
                         function = new Repository::Git::GitFunction();
-                        QStringList list = functionIdentifier.split( ":" );
+                        QStringList list = functionIdentifier.split( ";" );
 
                         // Ak sa pocet tokenov z identifikatora rovna 2, tak globalna funkcia nema global modul
                         // inak nenastavim modul
@@ -127,9 +127,9 @@ void Repository::Git::GitLuaGraphAnalyzer::analyze() {
                         if( !function ) {
                             function = new Repository::Git::GitFunction();
 
-                            QStringList list = functionIdentifier.split( ":" );
+                            QStringList list = functionIdentifier.split( ";" );
 
-                            function->setName( list.at( 1 ) + ":" + list.at( 2 ) );
+                            function->setName( list.at( 1 ) + ";" + list.at( 2 ) );
 
                             function->setType( Repository::Git::GitType::NONE );
                             function->setId( pairNode->getId() );
@@ -167,10 +167,10 @@ void Repository::Git::GitLuaGraphAnalyzer::analyze() {
 
                                 if( !innerFunction ) {
                                     innerFunction = new Repository::Git::GitFunction();
-                                    QStringList list = innerFunctionIdentifier.split( ":" );
+                                    QStringList list = innerFunctionIdentifier.split( ";" );
 
                                     if( !QString::compare( QString::fromStdString( functionPairNode->getParams()["type"].asString() ), "function" ) ) {
-                                        innerFunction->setName( list.at( 1 ) + ":" + list.at( 2 ) );
+                                        innerFunction->setName( list.at( 1 ) + ";" + list.at( 2 ) );
                                         innerFunction->setFunctionType( Repository::Git::GitFunctionType::LOCALFUNCTION );
                                     } else {
                                         if( list.size() == 2 ) {

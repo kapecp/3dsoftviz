@@ -27,7 +27,7 @@ void Repository::Git::GitLuaGraphVisualizer::visualize() {
     Repository::Git::GitVersion* version = this->evolutionGraph->getVersion( currentVersion );
     QMap<QString, Repository::Git::GitFile*> changedFiles = version->getChangedFiles();
 
-    QString rootIdentifier = "directory:" + this->evolutionGraph->getFilePath();
+    QString rootIdentifier = "directory;" + this->evolutionGraph->getFilePath();
 
     Lua::LuaNode* luaRoot = luaGraph->findNodeByLuaIdentifier( rootIdentifier );
 
@@ -81,9 +81,9 @@ bool Repository::Git::GitLuaGraphVisualizer::addFileToGraph( Repository::Git::Gi
     for( int i = 0; i < list.size(); i++ ) {
         QString newIdentifier = "";
         if( i < list.size() - 1 ) {
-            newIdentifier = "directory:" + list.at( i );
+            newIdentifier = "directory;" + list.at( i );
         } else {
-            newIdentifier = "file:" + list.at( i );
+            newIdentifier = "file;" + list.at( i );
         }
 
         Lua::LuaNode* luaNode = this->luaGraph->findNodeByLuaIdentifier( newIdentifier );
@@ -173,6 +173,9 @@ bool Repository::Git::GitLuaGraphVisualizer::addFunctionToGraph( Repository::Git
     Lua::LuaNode* luaNode = this->luaGraph->findNodeByLuaIdentifier( function->getIdentifier() );
     osg::ref_ptr<Data::Node> node = this->currentGraph->findNodeByLuaIdentifier( function->getIdentifier() );
     if( !node ) {
+        if( !luaNode ) {
+            qDebug() << "id" << function->getId() << function->getIdentifier() << function->getTypeAsString() << function->getFunctionTypeAsString();
+        }
         node =  this->currentGraph->addNode( luaNode->getId(), luaNode->getLabel(), this->currentGraph->getTypesByName( "node" ).at( 0 ) );
         node->setLuaIdentifier( luaNode->getIdentifier() );
     }
@@ -218,7 +221,7 @@ bool Repository::Git::GitLuaGraphVisualizer::addModuleFromGlobalFunction( Reposi
         return false;
     }
 
-    QString moduleIdentifier =  "globalModule:" + function->getModule();
+    QString moduleIdentifier =  "globalModule;" + function->getModule();
 
     Lua::LuaNode* luaModuleNode = this->luaGraph->findNodeByLuaIdentifier( moduleIdentifier );
     osg::ref_ptr<Data::Node> moduleNode = this->currentGraph->findNodeByLuaIdentifier( moduleIdentifier );
@@ -260,9 +263,9 @@ bool Repository::Git::GitLuaGraphVisualizer::removeFileFromGraph( Repository::Gi
     for( int i = 0; i < list.size(); i++ ) {
         QString newIdentifier = "";
         if( i < list.size() - 1 ) {
-            newIdentifier = "directory:" + list.at( i );
+            newIdentifier = "directory;" + list.at( i );
         } else {
-            newIdentifier = "file:" + list.at( i );
+            newIdentifier = "file;" + list.at( i );
         }
 
         if( this->evolutionGraph->removeNodeOccurence( newIdentifier ) <= 0 ) {
@@ -291,7 +294,7 @@ bool Repository::Git::GitLuaGraphVisualizer::removeFunctionFromGraph( Repository
 
 bool Repository::Git::GitLuaGraphVisualizer::removeModuleFromGlobalFunction( Repository::Git::GitFunction *function ) {
 
-    QString moduleIdentifier =  "globalModule:" + function->getModule();
+    QString moduleIdentifier =  "globalModule;" + function->getModule();
 
     if( this->evolutionGraph->removeNodeOccurence( moduleIdentifier ) <= 0 ) {
         qDebug() << moduleIdentifier << "stored to removedFiles";

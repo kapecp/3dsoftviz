@@ -56,9 +56,9 @@ QString Repository::Git::GitFunction::getTypeAsString() {
 
 QString Repository::Git::GitFunction::getIdentifier() {
     if( this->module != "" ) {
-        return this->getFunctionTypeAsString() + ":" + this->module + ":" + this->name;
+        return this->getFunctionTypeAsString() + ";" + this->module + ";" + this->name;
     } else {
-        return this->getFunctionTypeAsString() + ":" + this->name;
+        return this->getFunctionTypeAsString() + ";" + this->name;
     }
 }
 

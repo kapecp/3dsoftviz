@@ -217,13 +217,13 @@ Lua::LuaGraph* Lua::LuaGraph::loadEvoGraph( QString repoFilepath )
             QString identifier = "";
 
             if( !QString::compare( type, "directory" ) || !QString::compare( type, "file" ) ) {
-                identifier = type + ":" + QString::fromStdString( iterator2->second.asTable()["params"].asTable()["path"].asString() ).replace( repoFilepath + "/", "" );
+                identifier = type + ";" + QString::fromStdString( iterator2->second.asTable()["params"].asTable()["path"].asString() ).replace( repoFilepath + "/", "" );
 //                qDebug() << "directory/file =" << identifier;
             }
 
             if( !QString::compare( type, "globalModule" ) ) {
                 if ( iterator2->second.asTable()["label"].type() != 0 ) {
-                    identifier = type + ":" + QString::fromStdString( iterator2->second.asTable()["label"].asString() );
+                    identifier = type + ";" + QString::fromStdString( iterator2->second.asTable()["label"].asString() );
 //                    qDebug() << "globalModule =" << identifier;
                 } else {
                     qDebug() << "Uzol" << nodeId << "neobsahuje LABEL";
@@ -234,7 +234,7 @@ Lua::LuaGraph* Lua::LuaGraph::loadEvoGraph( QString repoFilepath )
             if( !QString::compare( type, "function" ) ) {
                 QString modulePath = QString::fromStdString( iterator2->second.asTable()["params"].asTable()["modulePath"].asString() ).replace( repoFilepath + "/", "" );
                 if ( iterator2->second.asTable()["label"].type() != 0 ) {
-                    identifier = type + ":" + modulePath + ":" + QString::fromStdString( iterator2->second.asTable()["label"].asString() );
+                    identifier = type + ";" + modulePath + ";" + QString::fromStdString( iterator2->second.asTable()["label"].asString() );
 //                    qDebug() << "function =" << identifier;
                 } else {
                     qDebug() << "Uzol" << nodeId << "neobsahuje LABEL";
@@ -283,7 +283,7 @@ Lua::LuaGraph* Lua::LuaGraph::loadEvoGraph( QString repoFilepath )
             Lua::LuaNode* otherNode = result->nodes->find( incidence->getEdgeNodePair().second ).value();
             QString type = QString::fromStdString( otherNode->getParams()["type"].asString() );
             if( !QString::compare( type, "globalModule") ) {
-                QString identifier = nodeType + ":" + otherNode->getLabel() + ":" + node->getLabel();
+                QString identifier = nodeType + ";" + otherNode->getLabel() + ";" + node->getLabel();
                 node->setIdentifier( identifier );
 //                qDebug() << node->getIdentifier() << "found";
                 isPartOfModule = true;
@@ -292,7 +292,7 @@ Lua::LuaGraph* Lua::LuaGraph::loadEvoGraph( QString repoFilepath )
         }
 
         if( !isPartOfModule ) {
-            QString identifier = nodeType + ":" + node->getLabel();
+            QString identifier = nodeType + ";" + node->getLabel();
             node->setIdentifier( identifier );
 //            qDebug() << node->getIdentifier() << "not found";
         }

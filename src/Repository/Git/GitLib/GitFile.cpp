@@ -64,7 +64,7 @@ void Repository::Git::GitFile::addGitFunction( Repository::Git::GitFunction *fun
 }
 
 QString Repository::Git::GitFile::getIndetifier() {
-    return "file:" + this->getFilepath();
+    return "file;" + this->getFilepath();
 }
 
 void Repository::Git::GitFile::printContent()
