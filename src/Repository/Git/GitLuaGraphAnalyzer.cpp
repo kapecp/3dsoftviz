@@ -221,7 +221,7 @@ void Repository::Git::GitLuaGraphAnalyzer::analyze() {
                 }
             }
 */
-            qDebug() << node->getIdentifier() << "s poctom incidence" << node->getIncidences().size() << "/" << counter << "/" << file->getGitFunctions()->size();
+//            qDebug() << node->getIdentifier() << "s poctom incidence" << node->getIncidences().size() << "/" << counter << "/" << file->getGitFunctions()->size();
         }
     }
 
@@ -265,7 +265,7 @@ void Repository::Git::GitLuaGraphAnalyzer::compareFilesAndSaveToEvolutionGraph( 
             compareFunctions( newFile->getGitFunctions()->value( iterator.value()->getIdentifier() ), iterator.value(), functions, newFile->getIndetifier(), file );
         }
     }
-
+/*
     for( QMap<QString, Repository::Git::GitFunction*>::iterator  iterator = file->getGitFunctions()->begin(); iterator != file->getGitFunctions()->end(); ++iterator ) {
         Repository::Git::GitFunction* function = iterator.value();
 
@@ -281,7 +281,7 @@ void Repository::Git::GitLuaGraphAnalyzer::compareFilesAndSaveToEvolutionGraph( 
             qDebug() << "Callee ->" << innerFunction->getIdentifier() << innerFunction->getTypeAsString();
         }
     }
-
+*/
     delete functions;
 }
 

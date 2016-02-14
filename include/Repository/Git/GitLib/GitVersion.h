@@ -43,6 +43,15 @@ public:
 		return this->commitId;
 	}
 
+    /**
+     * void setCommitId( QString commitId )
+     * @brief Setter of version identifier
+     * @param commitId version identifier
+     */
+    void setCommitId( QString commitId ) {
+        this->commitId = commitId;
+    }
+
 	/**
 	 * void setAuthor( QString author )
 	 * @brief Setter of commit author

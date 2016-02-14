@@ -6,7 +6,7 @@
 #include <QMapIterator>
 
 Repository::Git::GitEvolutionGraph::GitEvolutionGraph()
-    : versions( QList<Repository::Git::GitVersion*>() ), removedFiles( QMap<QString, int>() ), luaNodesMapping( QMap<QString, int>() ), latestGitFileCallTree( QMap<QString, Repository::Git::GitFile*>() ), lifespan( 0 ), filePath( "" )
+    : versions( QList<Repository::Git::GitVersion*>() ), removedFiles( QMap<QString, int>() ), removedNodesAndEdges( new QMap<QString, int>() ), nodesOccurence( QMap<QString, int>() ), luaNodesMapping( QMap<QString, int>() ), latestGitFileCallTree( QMap<QString, Repository::Git::GitFile*>() ), lifespan( 0 ), filePath( "" )
 {
 
 }
@@ -19,7 +19,7 @@ Repository::Git::GitEvolutionGraph::~GitEvolutionGraph()
 }
 
 Repository::Git::GitEvolutionGraph::GitEvolutionGraph( QString filePath )
-	: versions( QList<Repository::Git::GitVersion*>() ), removedFiles( QMap<QString, int>() ), lifespan( 0 ), filePath( filePath )
+    : versions( QList<Repository::Git::GitVersion*>() ), removedFiles( QMap<QString, int>() ), removedNodesAndEdges( new QMap<QString, int>() ), nodesOccurence( QMap<QString, int>() ), luaNodesMapping( QMap<QString, int>() ), latestGitFileCallTree( QMap<QString, Repository::Git::GitFile*>() ), lifespan( 0 ), filePath( filePath )
 {
 
 }
@@ -85,5 +85,30 @@ void Repository::Git::GitEvolutionGraph::addLuaEdgesMapping( QString identifier,
         int storedId = this->luaEdgesMapping.find( identifier ).value();
 
 //        qDebug() << "Inserted" << identifier << "to" << storedId << "/" << luaEdgeId;
+    }
+}
+
+int Repository::Git::GitEvolutionGraph::addNodeOccurence( QString identifier ) {
+    int value = 1;
+    if( this->nodesOccurence.contains( identifier ) ) {
+        value = this->nodesOccurence.value( identifier );
+        value++;
+    }
+
+    this->nodesOccurence.insert( identifier, value );
+
+    return value;
+}
+
+int Repository::Git::GitEvolutionGraph::removeNodeOccurence( QString identifier ) {
+    int value;
+    if( this->nodesOccurence.contains( identifier ) ) {
+        value = this->nodesOccurence.value( identifier );
+        value--;
+        this->nodesOccurence.insert( identifier, value );
+        return value;
+    } else {
+        qDebug() << "removeNodeOccurence of" << identifier << "doesnt exist in node occurence";
+        return -1;
     }
 }

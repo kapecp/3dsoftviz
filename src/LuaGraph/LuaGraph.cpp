@@ -9,6 +9,7 @@
 #include <sstream>
 #include <iostream>
 
+#include <QStringList>
 #include <QDebug>
 
 Lua::LuaGraph* Lua::LuaGraph::instance;
@@ -348,5 +349,33 @@ QMap<qlonglong, Lua::LuaEdge*>* Lua::LuaGraph::getEdges() const
 QMap<qlonglong, Lua::LuaNode*>* Lua::LuaGraph::getNodes() const
 {
 	return nodes;
+}
+
+Lua::LuaNode* Lua::LuaGraph::findNodeByLuaIdentifier( QString identifier ) {
+    for( QMap<qlonglong, Lua::LuaNode*>::iterator iterator = this->getNodes()->begin(); iterator != this->getNodes()->end(); ++iterator ) {
+        if( !QString::compare( identifier, iterator.value()->getIdentifier() ) ) {
+            return iterator.value();
+        }
+    }
+
+    return nullptr;
+}
+
+Lua::LuaEdge* Lua::LuaGraph::findEdgeByLuaIdentifier( QString identifier ) {
+
+    QStringList nodes = identifier.split("+");
+    QString newIdentifier = nodes.at( 1 ) + "+" + nodes.at( 0 );
+
+    for( QMap<qlonglong, Lua::LuaEdge*>::iterator iterator = this->getEdges()->begin(); iterator != this->getEdges()->end(); ++iterator ) {
+        if( !QString::compare( identifier, iterator.value()->getIdentifier() ) ) {
+            return iterator.value();
+        }
+
+        if( !QString::compare( newIdentifier, iterator.value()->getIdentifier() ) ) {
+            return iterator.value();
+        }
+    }
+
+    return nullptr;
 }
 

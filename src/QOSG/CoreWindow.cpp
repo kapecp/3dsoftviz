@@ -12,6 +12,7 @@
 #include "GitLib/GitVersion.h"
 #include "GitLib/GitUtils.h"
 #include "Repository/Git/GitLuaGraphAnalyzer.h"
+#include "Repository/Git/GitLuaGraphVisualizer.h"
 
 #include "Viewer/CoreGraph.h"
 #include "Viewer/CameraManipulator.h"
@@ -1568,14 +1569,14 @@ void CoreWindow::loadFile()
 
 void CoreWindow::loadFromGit()
 {
-	layout->pause();
-	coreGraph->setNodesFreezed( true );
     chb_git_changeCommits->setDisabled( true );
 	QString lPath = QFileDialog::getExistingDirectory( this, tr( "Select git dir" ) );
 
     if( Manager::GraphManager::getInstance()->getActiveEvolutionGraph() != NULL ) {
         delete Manager::GraphManager::getInstance()->getActiveEvolutionGraph();
     }
+
+    Manager::GraphManager::getInstance()->createNewGraph( "new graph" );
 
 	if ( lPath != "" ) {
         if ( Manager::GraphManager::getInstance()->loadEvolutionGraphFromGit( lPath ) ) {
@@ -1595,8 +1596,13 @@ void CoreWindow::loadFromGit()
                     analyzer.analyze();
                 }
 
-                Lua::LuaGraphVisualizer* visualizer = new Lua::GitGraphVisualizer( Manager::GraphManager::getInstance()->getActiveGraph(), coreGraph->getCamera() );
-                visualizer->visualize();
+                layout->pause();
+                coreGraph->setNodesFreezed( true );
+
+                Repository::Git::GitLuaGraphVisualizer visualizer = Repository::Git::GitLuaGraphVisualizer( Manager::GraphManager::getInstance()->getActiveGraph(), Manager::GraphManager::getInstance()->getActiveEvolutionGraph(), this->coreGraph->getCamera() );
+                visualizer.visualize();
+//                Lua::LuaGraphVisualizer* visualizer = new Lua::GitGraphVisualizer( Manager::GraphManager::getInstance()->getActiveGraph(), coreGraph->getCamera() );
+//                visualizer->visualize();
 
             } else {
                 Manager::GraphManager::getInstance()->importEvolutionGraph( lPath );
@@ -3835,8 +3841,20 @@ bool CoreWindow::nextVersion()
             analyzer.analyze();
         }
 
-        Lua::LuaGraphVisualizer* visualizer = visualizer = new Lua::GitGraphVisualizer( Manager::GraphManager::getInstance()->getActiveGraph(), coreGraph->getCamera() );
-        visualizer->visualize();
+        layout->pause();
+        coreGraph->setNodesFreezed( true );
+
+        Repository::Git::GitLuaGraphVisualizer visualizer = Repository::Git::GitLuaGraphVisualizer( Manager::GraphManager::getInstance()->getActiveGraph(), Manager::GraphManager::getInstance()->getActiveEvolutionGraph(), this->coreGraph->getCamera() );
+        visualizer.visualize();
+
+        coreGraph->reloadConfig();
+        if ( isPlaying ) {
+            layout->play();
+            coreGraph->setNodesFreezed( false );
+        }
+
+//        Lua::LuaGraphVisualizer* visualizer = visualizer = new Lua::GitGraphVisualizer( Manager::GraphManager::getInstance()->getActiveGraph(), coreGraph->getCamera() );
+//        visualizer->visualize();
     }
 
 	if ( value == evolutionSlider->maximum() ) {

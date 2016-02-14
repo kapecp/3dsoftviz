@@ -179,6 +179,48 @@ public:
 	 */
 	void removeRemovedFiles( QString name );
 
+    /**
+     * void addRemovedFile( QString identifier )
+     * @brief Add removed file by its identifier
+     * @param identifier Node identifier
+     */
+    void addRemovedNodeOrEdge( QString identifier, int version ) {
+        this->removedNodesAndEdges->insert( identifier, version );
+    }
+
+    void removeRemovedNodeOrEdge( QString identifier ) {
+        this->removedNodesAndEdges->remove( identifier );
+    }
+
+    /**
+     * int addNodeOccurence( QString identifier )
+     * @brief Add node occurence in map by incrementing the stored value
+     * @param identifier Key of node in map
+     * @return Newly set value for identifier
+     */
+    int addNodeOccurence( QString identifier );
+
+    /**
+     * int removeNodeOccurence( QString identifier )
+     * @brief Remove node occurence in map by decrementing the stored value
+     * @param identifier Key of node in map
+     * @return Newly set value for identifier
+     */
+    int removeNodeOccurence( QString identifier );
+
+    /**
+     * QMap<QString, int> getNodeOccurence()
+     * @brief Getter of node occurence
+     * @return Map of node occurence where key is node identifier and value is node occurence in graph
+     */
+    QMap<QString, int> getNodeOccurence() {
+        return this->nodesOccurence;
+    }
+
+    QMap<QString, int>* getRemovedNodesAndEdge() {
+        return this->removedNodesAndEdges;
+    }
+
 	/**
 	 * void printRemovedFiles()
 	 * @brief Prints out all paths and versions of map
@@ -197,6 +239,14 @@ private:
 	 * @brief Map of names of files which was deleted in Nth version
 	 */
 	QMap<QString, int> removedFiles;
+
+    QMap<QString, int>* removedNodesAndEdges;
+
+    /**
+     * QMap<QString, int> nodesOccurence
+     * @brief Map of occurences of nodes in graph, where key is the node identifier
+     */
+    QMap<QString, int> nodesOccurence;
 
     /**
      * QMap<QString, int> luaNodesMapping
