@@ -1389,7 +1389,13 @@ void Data::Graph::removeNode( osg::ref_ptr<Data::Node> node )
 				);
 			}
 
-			this->nodes->remove( node->getId() );
+            if( !this->nodes->remove( node->getId() ) ) {
+                if( !removeNodeByLuaIdentifier( node->getLuaIdentifier() ) ) {
+                    qDebug() << "Nepodarilo sa z grafu odstanit node ->" << node->getLuaIdentifier();
+                }
+
+            }
+
 			this->metaNodes->remove( node->getId() );
 			this->newNodes.remove( node->getId() );
 			this->nodesByType.remove( node->getType()->getId(),node );
@@ -1560,3 +1566,19 @@ bool Data::Graph::removeEdgeOccurence( QString key )
 	return false;
 }
 
+int Data::Graph::removeNodeByLuaIdentifier( QString identifier ) {
+    int count = 0;
+    QList<qlonglong> nodes = QList<qlonglong>();
+    for( QMap<qlonglong, osg::ref_ptr<Data::Node>>::iterator iterator = this->nodes->begin(); iterator != this->nodes->end(); ++iterator ) {
+        if( !QString::compare( iterator.value()->getLuaIdentifier(), identifier ) ) {
+            nodes.append( iterator.key() );
+            count++;
+        }
+    }
+
+    foreach( qlonglong id, nodes ) {
+        this->nodes->remove( id );
+    }
+
+    return count;
+}

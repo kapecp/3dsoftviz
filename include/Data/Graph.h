@@ -367,6 +367,14 @@ public:
 	    */
 	void removeNode( osg::ref_ptr<Data::Node> node );
 
+    /**
+     * int removeNodeByLuaIdentifier( QString identifier )
+     * @brief Remove node find by Lua Identifier
+     * @param identifier Lua identifier of node
+     * @return Count of affected objects
+     */
+    int removeNodeByLuaIdentifier( QString identifier );
+
 	/**
 	    *  \fn public  isInSameGraph(osg::ref_ptr<Data::Node> nodeA, osg::ref_ptr<Data::Node> nodeB)
 	    *  \brief recognize if nodes are in same graph
