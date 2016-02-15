@@ -43,7 +43,7 @@ private:
 
     bool addFunctionToGraph( Repository::Git::GitFunction* function, QString masterIdentifier );
 
-    bool removeFunctionFromGraph( Repository::Git::GitFunction* function, bool next );
+    bool removeFunctionFromGraph( Repository::Git::GitFunction* function, QString masterIdentifier, bool next );
 
     bool removeFileFromGraph( Repository::Git::GitFile* file, bool next );
 
@@ -55,7 +55,7 @@ private:
 
     void addCustomTypes();
 
-    void processRemovedNodes();
+    void processRemovedNodesAndEdges();
 
     /**
      * Data::Graph* currentGraph
