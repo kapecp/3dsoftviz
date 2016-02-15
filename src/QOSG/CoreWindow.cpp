@@ -1576,7 +1576,7 @@ void CoreWindow::loadFromGit()
         delete Manager::GraphManager::getInstance()->getActiveEvolutionGraph();
     }
 
-    Manager::GraphManager::getInstance()->createNewGraph( "new graph" );
+//    Manager::GraphManager::getInstance()->createNewGraph( "new graph" );
 
 	if ( lPath != "" ) {
         if ( Manager::GraphManager::getInstance()->loadEvolutionGraphFromGit( lPath ) ) {
@@ -1600,7 +1600,7 @@ void CoreWindow::loadFromGit()
                 coreGraph->setNodesFreezed( true );
 
                 Repository::Git::GitLuaGraphVisualizer visualizer = Repository::Git::GitLuaGraphVisualizer( Manager::GraphManager::getInstance()->getActiveGraph(), Manager::GraphManager::getInstance()->getActiveEvolutionGraph(), this->coreGraph->getCamera() );
-                visualizer.visualize();
+                visualizer.visualize( true );
 //                Lua::LuaGraphVisualizer* visualizer = new Lua::GitGraphVisualizer( Manager::GraphManager::getInstance()->getActiveGraph(), coreGraph->getCamera() );
 //                visualizer->visualize();
 
@@ -3829,13 +3829,14 @@ bool CoreWindow::nextVersion()
         QString lPath =  Manager::GraphManager::getInstance()->getActiveEvolutionGraph()->getFilePath();
         QString commitId = Manager::GraphManager::getInstance()->getActiveEvolutionGraph()->getVersion( value )->getCommitId();
         Repository::Git::GitUtils::changeCommit( commitId, lPath );
-        Manager::GraphManager::getInstance()->getActiveGraph()->setCurrentVersion( value );
-//        loadFunctionCall();
+        //        loadFunctionCall();
         loadLuaGraph();
 
         Lua::LuaGraph::getInstance()->loadEvoGraph( lPath );
 
+        Manager::GraphManager::getInstance()->getActiveGraph()->setCurrentVersion( value );
         if( !Manager::GraphManager::getInstance()->getActiveEvolutionGraph()->getVersion( value )->getIsLoaded() ) {
+
             Repository::Git::GitLuaGraphAnalyzer analyzer = Repository::Git::GitLuaGraphAnalyzer( Lua::LuaGraph::getInstance(), Manager::GraphManager::getInstance()->getActiveEvolutionGraph() );
             analyzer.setVersionNumber( value );
             analyzer.analyze();
@@ -3845,7 +3846,7 @@ bool CoreWindow::nextVersion()
         coreGraph->setNodesFreezed( true );
 
         Repository::Git::GitLuaGraphVisualizer visualizer = Repository::Git::GitLuaGraphVisualizer( Manager::GraphManager::getInstance()->getActiveGraph(), Manager::GraphManager::getInstance()->getActiveEvolutionGraph(), this->coreGraph->getCamera() );
-        visualizer.visualize();
+        visualizer.visualize( true );
 
         coreGraph->reloadConfig();
         if ( isPlaying ) {
@@ -3886,11 +3887,30 @@ bool CoreWindow::previousVersion()
         ok =  Manager::GraphManager::getInstance()->previousVersion( layout );
     } else {
 //        qDebug() << "Treba zavolat predchadzajuci lua stromcek";
+        Manager::GraphManager::getInstance()->getActiveGraph()->setCurrentVersion( value );
         QString lPath =  Manager::GraphManager::getInstance()->getActiveEvolutionGraph()->getFilePath();
         QString commitId = Manager::GraphManager::getInstance()->getActiveEvolutionGraph()->getVersion( value )->getCommitId();
         Repository::Git::GitUtils::changeCommit( commitId, lPath );
-        Manager::GraphManager::getInstance()->getActiveGraph()->setCurrentVersion( value );
-        loadFunctionCall();
+        loadLuaGraph();
+        Lua::LuaGraph::getInstance()->loadEvoGraph( lPath );
+
+        if( !Manager::GraphManager::getInstance()->getActiveEvolutionGraph()->getVersion( value )->getIsLoaded() ) {
+            Repository::Git::GitLuaGraphAnalyzer analyzer = Repository::Git::GitLuaGraphAnalyzer( Lua::LuaGraph::getInstance(), Manager::GraphManager::getInstance()->getActiveEvolutionGraph() );
+            analyzer.setVersionNumber( value );
+            analyzer.analyze();
+        }
+
+        layout->pause();
+        coreGraph->setNodesFreezed( true );
+
+        Repository::Git::GitLuaGraphVisualizer visualizer = Repository::Git::GitLuaGraphVisualizer( Manager::GraphManager::getInstance()->getActiveGraph(), Manager::GraphManager::getInstance()->getActiveEvolutionGraph(), this->coreGraph->getCamera() );
+        visualizer.visualize( false );
+
+        coreGraph->reloadConfig();
+        if ( isPlaying ) {
+            layout->play();
+            coreGraph->setNodesFreezed( false );
+        }
     }
 
 	if ( value == evolutionSlider->minimum() ) {

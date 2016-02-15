@@ -20,9 +20,14 @@ Repository::Git::GitLuaGraphVisualizer::GitLuaGraphVisualizer( Data::Graph *curr
         }
 }
 
-void Repository::Git::GitLuaGraphVisualizer::visualize() {
-    // create file structure
+void Repository::Git::GitLuaGraphVisualizer::visualize( bool next ) {
+    // ziskame verziu nastavenu vo vizualizovanom grafe
     int currentVersion = this->currentGraph->getCurrentVersion();
+
+    // ak je next false, tak zvysime verziu ( potrebujeme dalsiu verziu o sucasnej, aby sme vedeli, co vymanazat/pridat )
+    if( !next ) {
+        currentVersion++;
+    }
 
     Repository::Git::GitVersion* version = this->evolutionGraph->getVersion( currentVersion );
     QMap<QString, Repository::Git::GitFile*> changedFiles = version->getChangedFiles();
@@ -45,10 +50,18 @@ void Repository::Git::GitLuaGraphVisualizer::visualize() {
 
         switch( iterator.value()->getType() ) {
         case Repository::Git::GitType::ADDED:
-            addFileToGraph( iterator.value(), rootIdentifier );
+            if( next ) {
+                addFileToGraph( iterator.value(), rootIdentifier );
+            } else {
+                removeFileFromGraph( iterator.value(), next );
+            }
             break;
         case Repository::Git::GitType::REMOVED:
-            removeFileFromGraph( iterator.value(), rootIdentifier );
+            if( next ) {
+                removeFileFromGraph( iterator.value(), next );
+            } else {
+                addFileToGraph( iterator.value(), rootIdentifier );
+            }
             break;
         case Repository::Git::GitType::MODIFIED:
 //            qDebug() << "MODIFYING" << iterator.value()->getIndetifier();
@@ -58,7 +71,7 @@ void Repository::Git::GitLuaGraphVisualizer::visualize() {
             break;
         }
 
-        processFunctionsFromFile( iterator.value() );
+        processFunctionsFromFile( iterator.value(), next );
     }
 
     processRemovedFiles();
@@ -92,6 +105,9 @@ bool Repository::Git::GitLuaGraphVisualizer::addFileToGraph( Repository::Git::Gi
 //            qDebug() << "ADDING node to Graph" << newIdentifier;
             newNode = this->currentGraph->addNode( luaNode->getId(), luaNode->getLabel(), this->currentGraph->getTypesByName( "node" ).at( 0 ) );
             newNode->setLuaIdentifier( newIdentifier );    
+        } else {
+            newNode->setType( this->currentGraph->getTypesByName( "node" ).at( 0 ) );
+            this->evolutionGraph->removeRemovedNodeOrEdge( newIdentifier );
         }
         this->evolutionGraph->addLuaNodesMapping( newIdentifier, luaNode->getId() );
 
@@ -117,20 +133,32 @@ bool Repository::Git::GitLuaGraphVisualizer::addFileToGraph( Repository::Git::Gi
     return true;
 }
 
-bool Repository::Git::GitLuaGraphVisualizer::processFunctionsFromFile( Repository::Git::GitFile* file ) {
+bool Repository::Git::GitLuaGraphVisualizer::processFunctionsFromFile( Repository::Git::GitFile* file, bool next ) {
 
     for( QMap<QString, Repository::Git::GitFunction*>::iterator iterator =  file->getGitFunctions()->begin(); iterator != file->getGitFunctions()->end(); ++iterator ) {
         Repository::Git::GitFunction* function = iterator.value();
 
         switch( function->getType() ) {
         case Repository::Git::GitType::ADDED :
-//            qDebug() << "ADDED" << file->getIndetifier() << "->" << function->getIdentifier();
-            addFunctionToGraph( function, file->getIndetifier() );
+
+            if( next ) {
+                qDebug() << "ADDED" << file->getIndetifier() << "->" << function->getIdentifier();
+                addFunctionToGraph( function, file->getIndetifier() );
+            } else {
+                qDebug() << "REMOVED" << file->getIndetifier() << "->" << function->getIdentifier();
+                removeFunctionFromGraph( function, next );
+            }
             break;
 
         case Repository::Git::GitType::REMOVED :
-            qDebug() << "REMOVED" << file->getIndetifier() << "->" << function->getIdentifier();
-            removeFunctionFromGraph( function, file->getIndetifier() );
+
+            if( next ) {
+                qDebug() << "REMOVED" << file->getIndetifier() << "->" << function->getIdentifier();
+                removeFunctionFromGraph( function, next );
+            } else {
+                qDebug() << "ADDED" << file->getIndetifier() << "->" << function->getIdentifier();
+                addFunctionToGraph( function, file->getIndetifier() );
+            }
             break;
 
         case Repository::Git::GitType::MODIFIED :
@@ -146,12 +174,24 @@ bool Repository::Git::GitLuaGraphVisualizer::processFunctionsFromFile( Repositor
 
             switch( innerFunction->getType() ) {
             case Repository::Git::GitType::ADDED :
-//                qDebug() << "ADDED" << file->getIndetifier() << "->" << function->getIdentifier() << "->" << innerFunction->getIdentifier();
-                addFunctionToGraph( innerFunction, function->getIdentifier() );
+
+                if( next ) {
+                    qDebug() << "ADDED" << file->getIndetifier() << "->" << function->getIdentifier() << "->" << innerFunction->getIdentifier();
+                    addFunctionToGraph( innerFunction, function->getIdentifier() );
+                } else {
+                    qDebug() << "REMOVED" << file->getIndetifier() << "->" << function->getIdentifier() << "->" << innerFunction->getIdentifier();
+                    removeFunctionFromGraph( innerFunction, next );
+                }
                 break;
             case Repository::Git::GitType::REMOVED :
-                qDebug() << "REMOVED" << file->getIndetifier() << "->" << function->getIdentifier() << "->" << innerFunction->getIdentifier();
-                removeFunctionFromGraph( innerFunction, function->getIdentifier() );
+
+                if( next ) {
+                    qDebug() << "REMOVED" << file->getIndetifier() << "->" << function->getIdentifier() << "->" << innerFunction->getIdentifier();
+                    removeFunctionFromGraph( innerFunction, next );
+                } else {
+                    qDebug() << "ADDED" << file->getIndetifier() << "->" << function->getIdentifier() << "->" << innerFunction->getIdentifier();
+                    addFunctionToGraph( innerFunction, function->getIdentifier() );
+                }
                 break;
             case Repository::Git::GitType::MODIFIED :
 //                qDebug() << "MODIFIED" << file->getIndetifier() << "->" << function->getIdentifier() << "->" << innerFunction->getIdentifier();
@@ -178,6 +218,9 @@ bool Repository::Git::GitLuaGraphVisualizer::addFunctionToGraph( Repository::Git
         }
         node =  this->currentGraph->addNode( luaNode->getId(), luaNode->getLabel(), this->currentGraph->getTypesByName( "node" ).at( 0 ) );
         node->setLuaIdentifier( luaNode->getIdentifier() );
+    } else {
+        node->setType( this->currentGraph->getTypesByName( "node" ).at( 0 ) );
+        this->evolutionGraph->removeRemovedNodeOrEdge( function->getIdentifier() );
     }
     this->evolutionGraph->addLuaNodesMapping( luaNode->getIdentifier(), luaNode->getId() );
 
@@ -228,6 +271,9 @@ bool Repository::Git::GitLuaGraphVisualizer::addModuleFromGlobalFunction( Reposi
     if( !moduleNode ) {
         moduleNode = this->currentGraph->addNode( luaModuleNode->getId(), luaModuleNode->getLabel(), this->currentGraph->getTypesByName( "node" ).at( 0 ) );
         moduleNode->setLuaIdentifier( luaModuleNode->getIdentifier() );
+    } else {
+        moduleNode->setType( this->currentGraph->getTypesByName( "node" ).at( 0 ) );
+        this->evolutionGraph->removeRemovedNodeOrEdge( moduleIdentifier );
     }
 
     this->evolutionGraph->addLuaNodesMapping( luaModuleNode->getIdentifier(), luaModuleNode->getId() );
@@ -250,7 +296,7 @@ bool Repository::Git::GitLuaGraphVisualizer::addModuleFromGlobalFunction( Reposi
     return true;
 }
 
-bool Repository::Git::GitLuaGraphVisualizer::removeFileFromGraph( Repository::Git::GitFile* file, QString rootIdentifier ) {
+bool Repository::Git::GitLuaGraphVisualizer::removeFileFromGraph( Repository::Git::GitFile* file, bool next ) {
     QStringList list = file->getFilepath().split( "/" );
 
     QString string = "";
@@ -269,36 +315,48 @@ bool Repository::Git::GitLuaGraphVisualizer::removeFileFromGraph( Repository::Gi
         }
 
         if( this->evolutionGraph->removeNodeOccurence( newIdentifier ) <= 0 ) {
-            qDebug() << newIdentifier << "stored to removedFiles";
-            this->evolutionGraph->addRemovedNodeOrEdge( newIdentifier, this->currentGraph->getCurrentVersion() );
+//            qDebug() << newIdentifier << "stored to removedFiles";
+            if( next ) {
+                this->evolutionGraph->addRemovedNodeOrEdge( newIdentifier, this->currentGraph->getCurrentVersion() );
+            } else {
+                this->evolutionGraph->addRemovedNodeOrEdge( newIdentifier, -1 );
+            }
         }
     }
 
     return true;
 }
 
-bool Repository::Git::GitLuaGraphVisualizer::removeFunctionFromGraph( Repository::Git::GitFunction *function, QString masterIdentifier ) {
+bool Repository::Git::GitLuaGraphVisualizer::removeFunctionFromGraph( Repository::Git::GitFunction *function, bool next ) {
 
     if( function->getFunctionType() == Repository::Git::GitFunctionType::GLOBALFUNCTION && function->getModule() != "" ) {
-        removeModuleFromGlobalFunction( function );
+        removeModuleFromGlobalFunction( function, next );
     }
 
     if( this->evolutionGraph->removeNodeOccurence( function->getIdentifier() ) <= 0 ) {
-        qDebug() << function->getIdentifier() << "stored to removedFiles";
-        this->evolutionGraph->addRemovedNodeOrEdge( function->getIdentifier(), this->currentGraph->getCurrentVersion() );
+//        qDebug() << function->getIdentifier() << "stored to removedFiles";
+        if( next ) {
+            this->evolutionGraph->addRemovedNodeOrEdge( function->getIdentifier(), this->currentGraph->getCurrentVersion() );
+        } else {
+            this->evolutionGraph->addRemovedNodeOrEdge( function->getIdentifier(), -1 );
+        }
     }
 
 
     return true;
 }
 
-bool Repository::Git::GitLuaGraphVisualizer::removeModuleFromGlobalFunction( Repository::Git::GitFunction *function ) {
+bool Repository::Git::GitLuaGraphVisualizer::removeModuleFromGlobalFunction( Repository::Git::GitFunction *function, bool next ) {
 
     QString moduleIdentifier =  "globalModule;" + function->getModule();
 
     if( this->evolutionGraph->removeNodeOccurence( moduleIdentifier ) <= 0 ) {
-        qDebug() << moduleIdentifier << "stored to removedFiles";
-        this->evolutionGraph->addRemovedNodeOrEdge( moduleIdentifier, this->currentGraph->getCurrentVersion() );
+//        qDebug() << moduleIdentifier << "stored to removedFiles";
+        if( next ) {
+            this->evolutionGraph->addRemovedNodeOrEdge( moduleIdentifier, this->currentGraph->getCurrentVersion() );
+        } else {
+            this->evolutionGraph->addRemovedNodeOrEdge( moduleIdentifier, -1 );
+        }
     }
 
     return true;
@@ -310,8 +368,11 @@ void Repository::Git::GitLuaGraphVisualizer::processRemovedFiles() {
 //            qDebug() << iterator.key();
             bool passedLifespan = false;
             int difference = this->currentGraph->getCurrentVersion() - iterator.value();
-
-            if( difference >= this->evolutionGraph->getLifespan() ) {
+            if( iterator.value() != -1 ) {
+                if( difference >= this->evolutionGraph->getLifespan() ) {
+                    passedLifespan = true;
+                }
+            } else {
                 passedLifespan = true;
             }
 //            qDebug() << "passedLifespan" << passedLifespan;

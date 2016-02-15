@@ -30,7 +30,7 @@ class GitLuaGraphVisualizer
 public:
     GitLuaGraphVisualizer( Data::Graph* currentGraph, Repository::Git::GitEvolutionGraph* evolutionGraph, osg::ref_ptr<osg::Camera> camera );
 
-    void visualize();
+    void visualize( bool next );
 private:
     void setNodeParams( osg::ref_ptr<Data::Node> node, Lua::LuaGraphObject* obj, osg::Vec4f defColor, float defSize );
     void setEdgeParams( osg::ref_ptr<Data::Edge> edge, Lua::LuaGraphObject* obj, osg::Vec4f defColor );
@@ -39,17 +39,17 @@ private:
 
     bool addFileToGraph( Repository::Git::GitFile* file, QString rootIdentifier );
 
-    bool processFunctionsFromFile( Repository::Git::GitFile* file );
+    bool processFunctionsFromFile( Repository::Git::GitFile* file, bool next );
 
     bool addFunctionToGraph( Repository::Git::GitFunction* function, QString masterIdentifier );
 
-    bool removeFunctionFromGraph( Repository::Git::GitFunction* function, QString masterIdentifier );
+    bool removeFunctionFromGraph( Repository::Git::GitFunction* function, bool next );
 
-    bool removeFileFromGraph( Repository::Git::GitFile* file, QString rootIdentifier );
+    bool removeFileFromGraph( Repository::Git::GitFile* file, bool next );
 
     bool addModuleFromGlobalFunction( Repository::Git::GitFunction* function );
 
-    bool removeModuleFromGlobalFunction( Repository::Git::GitFunction* function );
+    bool removeModuleFromGlobalFunction( Repository::Git::GitFunction* function, bool next );
 
     void addDefaultTypes();
 
