@@ -55,7 +55,7 @@ private:
 
     void addCustomTypes();
 
-    void processRemovedFiles();
+    void processRemovedNodes();
 
     /**
      * Data::Graph* currentGraph

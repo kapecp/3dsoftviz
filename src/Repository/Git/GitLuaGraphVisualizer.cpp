@@ -362,7 +362,7 @@ bool Repository::Git::GitLuaGraphVisualizer::removeModuleFromGlobalFunction( Rep
     return true;
 }
 
-void Repository::Git::GitLuaGraphVisualizer::processRemovedFiles() {
+void Repository::Git::GitLuaGraphVisualizer::processRemovedNodes() {
     QList<QString> removedNodes = QList<QString>();
     for( QMap<QString, int>::iterator iterator = this->evolutionGraph->getRemovedNodesAndEdge()->begin(); iterator != this->evolutionGraph->getRemovedNodesAndEdge()->end(); ++iterator ) {
 //            qDebug() << iterator.key();
@@ -390,7 +390,7 @@ void Repository::Git::GitLuaGraphVisualizer::processRemovedFiles() {
                 }
             } else {
 //                qDebug() << "occurence >0" << iterator.key();
-                this->evolutionGraph->removeRemovedFiles( iterator.key() );
+                removedNodes.append( iterator.key() );
             }
 
     }
