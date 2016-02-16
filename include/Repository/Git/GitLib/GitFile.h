@@ -139,11 +139,11 @@ public:
     Repository::Git::GitFunction* findFunction( QString functionName );
 
     /**
-     * QString getIndetifier()
+     * QString getIdentifier()
      * @brief Get the indetifier of Git file
      * @return Identifier of Git file
      */
-    QString getIndetifier();
+    QString getIdentifier();
 
 	/**
 	 * \fn printContent

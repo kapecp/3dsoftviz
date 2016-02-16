@@ -102,14 +102,14 @@ QList<QString> Repository::Git::GitUtils::getModifiedLuaNodesFromVersion( Reposi
 
         // ak je hodnota zmenenej verzie
         if( nearestVersionNumber > -1 ) {
-//            qDebug() << "Subor" << file->getIndetifier() << "sa zmenil v " << nearestVersionNumber << " from " << versionNumber;
+//            qDebug() << "Subor" << file->getIdentifier() << "sa zmenil v " << nearestVersionNumber << " from " << versionNumber;
 
             // ziskame subor oproti ktoremu budem porovnavat
             Repository::Git::GitFile* otherFile = evolutionGraph->getVersion( nearestVersionNumber )->getGitFileByName( file->getFilename() );
 
             identifiers += getIdentifiersOfChangedItems( file, otherFile );
         } else {
-//            qDebug() << "Subor" << file->getIndetifier() << "ma stav" << file->getTypeAsString();
+//            qDebug() << "Subor" << file->getIdentifier() << "ma stav" << file->getTypeAsString();
             identifiers += getIdentifiersOfChangedItems( file, NULL );
         }
     }
@@ -151,9 +151,9 @@ QList<QString> Repository::Git::GitUtils::getIdentifiersOfChangedItems( Reposito
             }
         }
         if( otherFile != NULL ) {
-            identifiers += compareTwoFunctions( iterator.value(), otherFile->getGitFunctions()->find( iterator.value()->getIdentifier() ).value(), functions, file->getIndetifier() );
+            identifiers += compareTwoFunctions( iterator.value(), otherFile->getGitFunctions()->find( iterator.value()->getIdentifier() ).value(), functions, file->getIdentifier() );
         } else {
-            identifiers += compareTwoFunctions( iterator.value(), file->getGitFunctions()->end().value(), functions, file->getIndetifier() );
+            identifiers += compareTwoFunctions( iterator.value(), file->getGitFunctions()->end().value(), functions, file->getIdentifier() );
         }
     }
 
@@ -167,7 +167,7 @@ QList<QString> Repository::Git::GitUtils::getIdentifiersOfChangedItems( Reposito
                 }
             }
 
-            identifiers += compareTwoFunctions( file->getGitFunctions()->find( iterator.value()->getIdentifier() ).value(), iterator.value(), functions, file->getIndetifier() );
+            identifiers += compareTwoFunctions( file->getGitFunctions()->find( iterator.value()->getIdentifier() ).value(), iterator.value(), functions, file->getIdentifier() );
         }
     }
 

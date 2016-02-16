@@ -46,7 +46,7 @@ QMap<QString, Repository::Git::GitFile*> Repository::Git::GitVersion::getGitFile
 
 		// Ak typ suboru sa zhoduje z uvedanym typom, tak subor pridam do vysledku
 		if ( gitFile->getType() == gitType ) {
-            result.insert( gitFile->getIndetifier(), gitFile );
+            result.insert( gitFile->getIdentifier(), gitFile );
 		}
 	}
 
@@ -66,7 +66,7 @@ QMap<QString, Repository::Git::GitFile*> Repository::Git::GitVersion::getGitFile
 
 		// Ak sa extension nachadza v extensions, tak do vysledku pridam git file
 		if ( extensions.indexOf( extension ) > -1 ) {
-            result.insert( gitFile->getIndetifier(), gitFile );
+            result.insert( gitFile->getIdentifier(), gitFile );
 		}
 	}
 
@@ -89,7 +89,7 @@ QMap<QString, Repository::Git::GitFile*> Repository::Git::GitVersion::getGitFile
 
 			// Ak sa extension nachadza v extensions, tak do vysledku pridam git file
 			if ( extensions.indexOf( extension ) > -1 ) {
-                result.insert( gitFile->getIndetifier(), gitFile );
+                result.insert( gitFile->getIdentifier(), gitFile );
 			}
 		}
 	}
@@ -100,7 +100,7 @@ QMap<QString, Repository::Git::GitFile*> Repository::Git::GitVersion::getGitFile
 Repository::Git::GitFile* Repository::Git::GitVersion::getGitFileByIdentifier( QString identifier ) {
     for( QMap<QString, Repository::Git::GitFile*>::iterator iterator = this->changedFiles.begin(); iterator != this->changedFiles.end(); ++iterator ) {
         Repository::Git::GitFile* file = iterator.value();
-        if( !QString::compare( identifier, file->getIndetifier() ) ){
+        if( !QString::compare( identifier, file->getIdentifier() ) ){
             return file;
         }
     }
@@ -109,5 +109,5 @@ Repository::Git::GitFile* Repository::Git::GitVersion::getGitFileByIdentifier( Q
 }
 
 void Repository::Git::GitVersion::addChangedFile( Repository::Git::GitFile *file ) {
-    this->changedFiles.insert( file->getIndetifier(), file );
+    this->changedFiles.insert( file->getIdentifier(), file );
 }
