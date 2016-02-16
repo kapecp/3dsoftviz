@@ -102,10 +102,10 @@ QList<Repository::Git::GitVersion*> Repository::Git::GitFileLoader::getDataAbout
 			}
 
 			// Nastavim zmenene subory podla zadanych filtrovacich kriterii z appConfig
-			version->setChangedFiles( version->getGitFilesByExtension( this->extensions ) );
+//			version->setChangedFiles( version->getGitFilesByExtension( this->extensions ) );
 
 			// Ak je velkost zmenenych suborov vacsia ako 0, tak pridam verziu
-			if ( version->getChangedFiles().size() ) {
+            if ( version->getChangedFiles()->size() ) {
 				versions.append( version );
 			}
 		}

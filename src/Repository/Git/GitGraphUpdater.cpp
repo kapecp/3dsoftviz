@@ -112,7 +112,7 @@ bool Repository::Git::GitGraphUpdater::import() {
     this->getActiveGraph()->addType( "newE", settings );
 
     // Ziskame pridane subory a meno autora prve verzie
-    QMap<QString, Repository::Git::GitFile*> lAddedGitFiles = this->getEvolutionGraph()->getVersion( 0 )->getGitFilesByType( Repository::Git::GitType::ADDED );
+    QMap<QString, Repository::Git::GitFile*> lAddedGitFiles = *this->getEvolutionGraph()->getVersion( 0 )->getGitFilesByType( Repository::Git::GitType::ADDED );
     QString lAuthor = this->getEvolutionGraph()->getVersion( 0 )->getAuthor();
 
     int i = 0;
@@ -158,14 +158,14 @@ bool Repository::Git::GitGraphUpdater::import() {
 void Repository::Git::GitGraphUpdater::nextVersion()
 {
 	// zistime zmenene subory v dalsej verzii, s ktorymi budeme dalej pracovat
-    QMap<QString, Repository::Git::GitFile*> gitFiles = this->getEvolutionGraph()->getVersion( this->getCurrentVersion() + 1 )->getChangedFiles();
+    QMap<QString, Repository::Git::GitFile*> gitFiles = *this->getEvolutionGraph()->getVersion( this->getCurrentVersion() + 1 )->getChangedFiles();
 	Data::Node* lAuthorNode = nullptr;
 	QString lAuthorName = nullptr;
 
 	// Ak ide o zmenu len cez jednu verziu, tak vymazem hrany od autora a uzol autora z grafu a pridam autora dalsej verzie
 	if ( !moreVersionChanged ) {
 		// Vymazanie hran od autora a vymazanie autorovho uzla
-		removeAuthorEdgesFromGraph( this->getEvolutionGraph()->getVersion( this->getCurrentVersion() )->getAuthor(), this->getEvolutionGraph()->getVersion( this->getCurrentVersion() )->getChangedFiles() );
+        removeAuthorEdgesFromGraph( this->getEvolutionGraph()->getVersion( this->getCurrentVersion() )->getAuthor(), *this->getEvolutionGraph()->getVersion( this->getCurrentVersion() )->getChangedFiles() );
 		this->getActiveGraph()->removeNode( this->getActiveGraph()->findNodeByName( this->getEvolutionGraph()->getVersion( this->getCurrentVersion() )->getAuthor() ) );
 
 		// Ziskame meno autora
@@ -231,21 +231,21 @@ void Repository::Git::GitGraphUpdater::nextVersion()
 
 	// Ak ide o zmenu len cez jednu verziu, tak pridam pre vsetky zmenene subory hrany od autora
 	if ( !moreVersionChanged ) {
-		addAuthorEdgesToGraph( lAuthorName, this->getEvolutionGraph()->getVersion( this->getCurrentVersion() + 1 )->getChangedFiles() );
+        addAuthorEdgesToGraph( lAuthorName, *this->getEvolutionGraph()->getVersion( this->getCurrentVersion() + 1 )->getChangedFiles() );
 	}
 }
 
 void Repository::Git::GitGraphUpdater::previousVersion()
 {
 	// zistime si zmenene subory v aktualnej verzii, s ktorymi budeme dalej pracovat
-    QMap<QString, Repository::Git::GitFile*> gitFiles = this->getEvolutionGraph()->getVersion( this->getCurrentVersion() )->getChangedFiles();
+    QMap<QString, Repository::Git::GitFile*> gitFiles = *this->getEvolutionGraph()->getVersion( this->getCurrentVersion() )->getChangedFiles();
 	Data::Node* lAuthorNode = nullptr;
 	QString lAuthorName = nullptr;
 
 	// Ak ide o zmenu len cez jednu verziu, tak vymazem hrany od autora a uzol autora z grafu a pridam autora dalsej verzie
 	if ( !moreVersionChanged ) {
 		// Vymazanie hran od autora a vymazanie autorovho uzla
-		removeAuthorEdgesFromGraph( this->getEvolutionGraph()->getVersion( this->getCurrentVersion() )->getAuthor(), this->getEvolutionGraph()->getVersion( this->getCurrentVersion() )->getChangedFiles() );
+        removeAuthorEdgesFromGraph( this->getEvolutionGraph()->getVersion( this->getCurrentVersion() )->getAuthor(), *this->getEvolutionGraph()->getVersion( this->getCurrentVersion() )->getChangedFiles() );
 		this->getActiveGraph()->removeNode( this->getActiveGraph()->findNodeByName( this->getEvolutionGraph()->getVersion( this->getCurrentVersion() )->getAuthor() ) );
 
 		// Ziskame meno autora
@@ -299,7 +299,7 @@ void Repository::Git::GitGraphUpdater::previousVersion()
 
 	// Ak ide o zmenu len cez jednu verziu, tak pridam pre vsetky zmenene subory hrany od autora
 	if ( !moreVersionChanged ) {
-		addAuthorEdgesToGraph( lAuthorName, this->getEvolutionGraph()->getVersion( this->getCurrentVersion() - 1 )->getChangedFiles() );
+        addAuthorEdgesToGraph( lAuthorName, *this->getEvolutionGraph()->getVersion( this->getCurrentVersion() - 1 )->getChangedFiles() );
 	}
 }
 
@@ -319,7 +319,7 @@ void Repository::Git::GitGraphUpdater::changeToVersion( int toVersion )
 	Manager::GraphManager::getInstance()->showProgressBar();
 
 	// Vymazanie hran od autora a uzla autora zaciatocnej verzie
-	removeAuthorEdgesFromGraph( this->getEvolutionGraph()->getVersion( this->getCurrentVersion() )->getAuthor(), this->getEvolutionGraph()->getVersion( this->getCurrentVersion() )->getChangedFiles() );
+    removeAuthorEdgesFromGraph( this->getEvolutionGraph()->getVersion( this->getCurrentVersion() )->getAuthor(), *this->getEvolutionGraph()->getVersion( this->getCurrentVersion() )->getChangedFiles() );
 	this->getActiveGraph()->removeNode( this->getActiveGraph()->findNodeByName( this->getEvolutionGraph()->getVersion( this->getCurrentVersion() )->getAuthor() ) );
 
 	// Nastavime na true, aby sa pre kazdu verziu nevytvarali autory a ich hrany ku zmenenym uzlov
@@ -356,7 +356,7 @@ void Repository::Git::GitGraphUpdater::changeToVersion( int toVersion )
 	}
 
 	// Pridam hrany od autora k zmenenych uzlom vo vyslednej verzii
-	addAuthorEdgesToGraph( lAuthorName, this->getEvolutionGraph()->getVersion( this->getCurrentVersion() )->getChangedFiles() );
+    addAuthorEdgesToGraph( lAuthorName, *this->getEvolutionGraph()->getVersion( this->getCurrentVersion() )->getChangedFiles() );
 
 	Manager::GraphManager::getInstance()->closeProgressBar();
 }

@@ -28,13 +28,28 @@ Repository::Git::GitEvolutionGraphManager* Repository::Git::GitEvolutionGraphMan
 }
 
 void Repository::Git::GitEvolutionGraphManager::setEvolutionGraph( Repository::Git::GitEvolutionGraph *evolutionGraph ) {
-    if( this->masterEvolutionGraph == nullptr ) {
-        this->masterEvolutionGraph = evolutionGraph;
-    }
+    this->masterEvolutionGraph = evolutionGraph;
 }
 
-Repository::Git::GitEvolutionGraph* Repository::Git::GitEvolutionGraphManager::getEvolutionGraphByExtension( QString extension ) {
+Repository::Git::GitEvolutionGraph* Repository::Git::GitEvolutionGraphManager::getEvolutionGraphByExtension( QString extensions ) {
     Repository::Git::GitEvolutionGraph* result = cloneEvolutionGraph();
+    QList<int> remove = QList<int>();
+
+    for( int i = 0; i < result->getVersions().size(); i++) {
+        Repository::Git::GitVersion* version = result->getVersions().at( i );
+        QMap<QString, Repository::Git::GitFile*>* changedFiles = filterVersionByExtensions( version, extensions );
+        if( changedFiles->size() > 0 ){
+            version->setChangedFiles( changedFiles );
+        } else {
+            remove.append( i );
+        }
+    }
+
+    if( remove.size() > 0 ) {
+        for( int i = remove.size() - 1; i >= 0; i-- ) {
+            result->removeVersionAt( remove.at( i ) );
+        }
+    }
 
     return result;
 }
@@ -42,7 +57,42 @@ Repository::Git::GitEvolutionGraph* Repository::Git::GitEvolutionGraphManager::g
 Repository::Git::GitEvolutionGraph* Repository::Git::GitEvolutionGraphManager::getEvolutionGraphByAuthor( QString authorName ) {
     Repository::Git::GitEvolutionGraph* result = cloneEvolutionGraph();
 
+    result->setVersions( filterVersionByAuthor( result, authorName ) );
+
+    qDebug() << "Pocet verzii s autorom" << authorName << result->getVersions().size();
+
     return result;
+}
+
+QMap<QString, Repository::Git::GitFile*>* Repository::Git::GitEvolutionGraphManager::filterVersionByExtensions( Repository::Git::GitVersion *version, QString extensions ){
+    QMap<QString, Repository::Git::GitFile*>* result = new QMap<QString, Repository::Git::GitFile*>();
+
+        // Pre kazdy git file skontrolujem, ci ma jednu z extensions
+    for( QMap<QString, Repository::Git::GitFile*>::iterator iterator = version->getChangedFiles()->begin(); iterator != version->getChangedFiles()->end(); ++iterator ) {
+        Repository::Git::GitFile* gitFile = iterator.value();
+
+        // Zistim extension
+        QString extension = gitFile->getFilename().mid( gitFile->getFilename().lastIndexOf( "." ) + 1 );
+
+        // Ak sa extension nachadza v extensions, tak do vysledku pridam git file
+        if ( extensions.indexOf( extension ) > -1 ) {
+            result->insert( gitFile->getIdentifier(), gitFile );
+        }
+    }
+
+    return result;
+}
+
+QList<Repository::Git::GitVersion*> Repository::Git::GitEvolutionGraphManager::filterVersionByAuthor( Repository::Git::GitEvolutionGraph* evolutionGraph, QString author ) {
+    QList<Repository::Git::GitVersion*> versions = QList<Repository::Git::GitVersion*>();
+
+    foreach( Repository::Git::GitVersion* version , evolutionGraph->getVersions() ) {
+        if( !QString::compare( version->getAuthor(), author ) ) {
+            versions.append( version );
+        }
+    }
+
+    return versions;
 }
 
 Repository::Git::GitFileDiffBlockLine* Repository::Git::GitEvolutionGraphManager::cloneDiffBlockLine( Repository::Git::GitFileDiffBlockLine *line ) {
@@ -84,8 +134,11 @@ Repository::Git::GitVersion* Repository::Git::GitEvolutionGraphManager::cloneVer
     result->setAuthor( version->getAuthor() );
     result->setDate( version->getDate() );
 
-    for( QMap<QString, Repository::Git::GitFile*>::iterator iterator = version->getChangedFiles().begin(); iterator != version->getChangedFiles().end(); ++iterator ) {
-        result->addChangedFile( cloneFile( iterator.value() ) );
+    int count = 0;
+    for( QMap<QString, Repository::Git::GitFile*>::iterator iterator = version->getChangedFiles()->begin(); iterator != version->getChangedFiles()->end(); ++iterator ) {
+        count++;
+        Repository::Git::GitFile* file = iterator.value();
+        result->addChangedFile( cloneFile( file ) );
     }
 
     return result;

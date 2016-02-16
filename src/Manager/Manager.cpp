@@ -25,6 +25,7 @@
 #include "GitLib/GitVersion.h"
 #include "GitLib/GitFile.h"
 #include "GitLib/GitEvolutionGraph.h"
+#include "GitLib/GitEvolutionGraphManager.h"
 #include "Repository/Git/GitGraphUpdater.h"
 
 #include "Layout/LayoutThread.h"
@@ -344,7 +345,11 @@ bool Manager::GraphManager::loadEvolutionGraphFromGit( QString filepath )
 	// Vytvor evolucny graf, napln ho ziskanymi verziami a nastav graf ako aktivny
 	Repository::Git::GitEvolutionGraph* evolutionGraph = new Repository::Git::GitEvolutionGraph( filepath );
 	evolutionGraph->setVersions( lVersions );
-    this->activeEvolutionGraph = evolutionGraph;
+
+    Repository::Git::GitEvolutionGraphManager::getInstance()->setEvolutionGraph( evolutionGraph );
+
+    this->activeEvolutionGraph = Repository::Git::GitEvolutionGraphManager::getInstance()->getEvolutionGraphByExtension( Util::ApplicationConfig::get()->getValue( "Git.ExtensionFilter" ) );
+//    this->activeEvolutionGraph = Repository::Git::GitEvolutionGraphManager::getInstance()->getEvolutionGraphByAuthor( "Jack Lawson" );
 
     return lGit;
 }
@@ -550,7 +555,7 @@ void Manager::GraphManager::getDiffInfo( QString path, int version )
 	// Najdem subor, ktory bol zvoleny v grafe vo verzii, kde bol posledne modifikovany
 	bool isFound = false;
 	for ( int i = version; i >= 0; i-- ) {
-		foreach ( Repository::Git::GitFile* file, lEvolutionGraph->getVersion( i )->getChangedFiles() ) {
+        foreach ( Repository::Git::GitFile* file, *lEvolutionGraph->getVersion( i )->getChangedFiles() ) {
 			if ( file->getFilepath() == path ) {
 				gitFile = file;
 				isFound = true;

@@ -97,7 +97,7 @@ public:
 	 * @brief Getter of changed files in commit
 	 * @return List of changed files in commmit
 	 */
-    QMap<QString, Repository::Git::GitFile*> getChangedFiles()
+    QMap<QString, Repository::Git::GitFile*>* getChangedFiles()
 	{
 		return this->changedFiles;
 	}
@@ -107,7 +107,7 @@ public:
 	 * @brief Setter of changed files list
 	 * @param gitFiles List of changed files
 	 */
-    void setChangedFiles( QMap<QString, Repository::Git::GitFile*> gitFiles )
+    void setChangedFiles( QMap<QString, Repository::Git::GitFile*>* gitFiles )
 	{
 		this->changedFiles = gitFiles;
 	}
@@ -125,7 +125,7 @@ public:
 	 * @param gitType Type of files
 	 * @return list of files with specifig type
 	 */
-    QMap<QString, Repository::Git::GitFile*> getGitFilesByType( Repository::Git::GitType gitType );
+    QMap<QString, Repository::Git::GitFile*>* getGitFilesByType( Repository::Git::GitType gitType );
 
 	/**
 	 * QList<Repository::Git::GitFile*> getGitFilesByExtension( QString extension)
@@ -133,7 +133,7 @@ public:
 	 * @param extensions File extensions
 	 * @return List of files with specific file extension
 	 */
-    QMap<QString, Repository::Git::GitFile*> getGitFilesByExtension( QString extensions );
+    QMap<QString, Repository::Git::GitFile*>* getGitFilesByExtension( QString extensions );
 
 	/**
 	 * QList<Repository::Git::GitFile*> getGitFilesByTypeAndExtension( QString extension, Repository::Git::GitType type )
@@ -142,7 +142,7 @@ public:
 	 * @param type Type of files
 	 * @return List of files with specific type and file extension
 	 */
-    QMap<QString, Repository::Git::GitFile*> getGitFilesByTypeAndExtension( QString extensions, Repository::Git::GitType type );
+    QMap<QString, Repository::Git::GitFile*>* getGitFilesByTypeAndExtension( QString extensions, Repository::Git::GitType type );
 
     /**
      * void setIsLoaded( bool isLoaded )
@@ -206,7 +206,7 @@ private:
 	 * QList<Repository::Git::GitFile*> changedFiles
 	 * @brief List of changed files in commit
 	 */
-    QMap<QString, Repository::Git::GitFile*> changedFiles;
+    QMap<QString, Repository::Git::GitFile*>* changedFiles;
 }; // class
 } // namespace
 }

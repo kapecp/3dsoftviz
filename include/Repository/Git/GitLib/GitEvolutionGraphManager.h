@@ -4,6 +4,7 @@
 #include "GitLib/GitExport.h"
 
 #include <QString>
+#include <QMap>
 
 namespace Repository {
 namespace Git {
@@ -24,7 +25,7 @@ public:
 
     virtual Repository::Git::GitEvolutionGraph* getEvolutionGraphByAuthor( QString authorName );
 
-    virtual Repository::Git::GitEvolutionGraph* getEvolutionGraphByExtension( QString extension );
+    virtual Repository::Git::GitEvolutionGraph* getEvolutionGraphByExtension( QString extensions );
 
 private:
 
@@ -44,9 +45,10 @@ private:
 
     static Repository::Git::GitEvolutionGraph* masterEvolutionGraph;
 
+    QMap<QString, Repository::Git::GitFile*>* filterVersionByExtensions( Repository::Git::GitVersion* version, QString extensions );
 
 
-
+    QList<Repository::Git::GitVersion*> filterVersionByAuthor( Repository::Git::GitEvolutionGraph* evolutionGraph, QString author );
 
 }; // class
 } // namespace

@@ -25,7 +25,8 @@
 Data::Graph::Graph( qlonglong graph_id, QString name, QSqlDatabase* conn, QMap<qlonglong,osg::ref_ptr<Data::Node> >* nodes, QMap<qlonglong,osg::ref_ptr<Data::Edge> >* edges,QMap<qlonglong,osg::ref_ptr<Data::Node> >* metaNodes, QMap<qlonglong,osg::ref_ptr<Data::Edge> >* metaEdges, QMap<qlonglong,Data::Type*>* types ) :
 	graph_id( graph_id ),
 	name( name ),
-	ele_id_counter( this->getMaxEleIdFromElements() ),
+    ele_id_counter( this->getMaxEleIdFromElements() ),
+//    ele_id_counter( std::numeric_limits<qlonglong>::max() - 2 ),
 	//POZOR toto asi treba inak poriesit, teraz to predpoklada ze ziadne layouty nemame co je spravne, lenze bacha na metatypy, ktore layout mat musia !
 	layout_id_counter( 0 ),
 	inDB( false ),

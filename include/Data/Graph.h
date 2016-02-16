@@ -753,7 +753,7 @@ private:
 	    */
 	qlonglong incEleIdCounter()
 	{
-		return ++ele_id_counter;
+        return ++ele_id_counter;
 	}
 
 	/**

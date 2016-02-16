@@ -32,7 +32,7 @@ Repository::Git::GitLuaGraphAnalyzer::~GitLuaGraphAnalyzer() {
 
 void Repository::Git::GitLuaGraphAnalyzer::analyze() {
     Repository::Git::GitVersion* version =  this->evolutionGraph->getVersion( this->versionNumber );
-    QMap<QString, Repository::Git::GitFile*> versionFiles = version->getChangedFiles();
+    QMap<QString, Repository::Git::GitFile*> versionFiles = *version->getChangedFiles();
 
     // Prejdem kazdy nacitani LuaNode a skontrolujem, ci sa nenachadza medzi zmenenymi subormi v danej verzii
     for( QMap<qlonglong, Lua::LuaNode*>::iterator iterator = this->luaGraph->getNodes()->begin(); iterator != this->luaGraph->getNodes()->end(); ++iterator ) {
@@ -283,8 +283,8 @@ void Repository::Git::GitLuaGraphAnalyzer::analyze() {
     }
 
     // Spracovanie suborov, ktore maju typ REMOVED
-    QMap<QString, Repository::Git::GitFile*> removedFiles = this->evolutionGraph->getVersion( this->getVersionNumber() )->getGitFilesByType( Repository::Git::GitType::REMOVED );
-    for( QMap<QString, Repository::Git::GitFile*>::iterator iterator = removedFiles.begin(); iterator != removedFiles.end(); ++iterator ) {
+    QMap<QString, Repository::Git::GitFile*>* removedFiles = this->evolutionGraph->getVersion( this->getVersionNumber() )->getGitFilesByType( Repository::Git::GitType::REMOVED );
+    for( QMap<QString, Repository::Git::GitFile*>::iterator iterator = removedFiles->begin(); iterator != removedFiles->end(); ++iterator ) {
         Repository::Git::GitFile* oldFile = this->evolutionGraph->getLatestGitFileCallTree().value( iterator.value()->getIdentifier() );
         compareFilesAndSaveToEvolutionGraph( nullptr, oldFile );
     }

@@ -11,6 +11,7 @@
 #include "GitLib/GitEvolutionGraph.h"
 #include "GitLib/GitVersion.h"
 #include "GitLib/GitUtils.h"
+#include "GitLib/GitEvolutionGraphManager.h"
 #include "Repository/Git/GitLuaGraphAnalyzer.h"
 #include "Repository/Git/GitLuaGraphVisualizer.h"
 

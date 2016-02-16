@@ -50,6 +50,10 @@ public:
 		return this->versions;
 	}
 
+    void removeVersionAt( int position ) {
+        this->versions.removeAt( position );
+    }
+
 	/**
 	 * void setFilePath( QString filePath )
 	 * @brief Setter of path to the git repository on file system
