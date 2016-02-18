@@ -58,7 +58,7 @@ void BrowserGroup::setSelectedNodes( QLinkedList<osg::ref_ptr<Data::Node> >* sel
 
 			// Get lua node model and add it to model map
 			Lua::LuaNode* luaNode = Lua::LuaGraph::getInstance()->getNodes()->value( node->getId() );
-			Diluculum::LuaValueMap paramsTable = luaNode->getParams().asTable();
+			Lua::LuaValueMap paramsTable(luaNode->getParams().asTable());
 
 			// Ignore nodes without models
 			if ( paramsTable.find( "metrics" ) == paramsTable.end() ) {
@@ -71,8 +71,8 @@ void BrowserGroup::setSelectedNodes( QLinkedList<osg::ref_ptr<Data::Node> >* sel
 
 			// If grouping is not enabled, then add browser for each newly selected node
 			if ( !browsersGrouping ) {
-				Diluculum::LuaValueMap models;
-				models.insert( std::pair<Diluculum::LuaValue, Diluculum::LuaValue>( ( long )node->getId(), luaNode->getParams() ) );
+				Lua::LuaValueMap models;
+				models.insertPair( ( long )node->getId(), luaNode->getParams() );
 
 				this->addBrowser( "single", node->getCurrentPosition(), models );
 			}
@@ -119,8 +119,8 @@ void BrowserGroup::initBrowsers()
 		node = *i;
 
 		Lua::LuaNode* luaNode = Lua::LuaGraph::getInstance()->getNodes()->value( node->getId() );
-		Diluculum::LuaValueMap models;
-		models.insert( std::pair<Diluculum::LuaValue, Diluculum::LuaValue>( ( long )node->getId(), luaNode->getParams() ) );
+		Lua::LuaValueMap models;
+		models.insertPair( ( long )node->getId(), luaNode->getParams() );
 		this->addBrowser( "single", node->getCurrentPosition(), models );
 	}
 }
@@ -131,7 +131,7 @@ void BrowserGroup::initGroupedBrowser()
 	Data::Node* node;
 	float xSum = 0, ySum = 0, zSum = 0;
 	osg::Vec3f pos;
-	Diluculum::LuaValueMap models;
+	Lua::LuaValueMap models;
 	Lua::LuaNode* luaNode;
 
 	// Iterate over all selected nodes and show one browser in their center using list of all selected nodes models
@@ -145,7 +145,7 @@ void BrowserGroup::initGroupedBrowser()
 		zSum += pos.z();
 
 		luaNode = Lua::LuaGraph::getInstance()->getNodes()->value( node->getId() );
-		models.insert( std::pair<Diluculum::LuaValue, Diluculum::LuaValue>( ( long )node->getId(), luaNode->getParams() ) );
+		models.insertPair( ( long )node->getId(), luaNode->getParams() );
 	}
 
 	// Calculate centroid
@@ -158,7 +158,7 @@ void BrowserGroup::initGroupedBrowser()
 	this->addBrowser( "multi", pos, models );
 }
 
-void BrowserGroup::addBrowser( const std::string& templateType, osg::Vec3 position, Diluculum::LuaValueMap models )
+void BrowserGroup::addBrowser( const std::string& templateType, osg::Vec3 position, Lua::LuaValueMap models )
 {
 	// qDebug() << "Adding browser";
 
