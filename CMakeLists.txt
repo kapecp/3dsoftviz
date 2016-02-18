@@ -893,10 +893,10 @@ endif()
 # ---------------------------------------------------------------
 
 add_library( noiseutils STATIC dependencies/noiseutils/noiseutils.cpp )
-target_include_directories( noiseutils SYSTEM PUBLIC dependencies/noiseutils  )
+target_include_directories( noiseutils SYSTEM PUBLIC ${DEPENDENCIES_INCLUDE_DIR}/libnoise dependencies/noiseutils  )
 
 add_library( qtcolorpicker STATIC dependencies/qtcolorpicker/qtcolorpicker.cpp )
-target_include_directories( noiseutils SYSTEM PUBLIC dependencies/qtcolorpicker )
+target_include_directories( qtcolorpicker SYSTEM PUBLIC dependencies/qtcolorpicker )
 
 # ---------------------------------------------------------------
 # Build modules as libraries
