@@ -1,6 +1,7 @@
 #ifndef LUAVALUEMAP_H
 #define LUAVALUEMAP_H
 
+#include "Diluculum/LuaValue.hpp"
 #include "Diluculum/Types.hpp"
 
 namespace Lua {
