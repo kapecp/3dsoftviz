@@ -56,7 +56,7 @@ private:
 	 * @param path Path to the requested working directory
 	 * @return Returns true if current working directory was successfully changed, otherwise returns false
 	 */
-	bool changeDir( QString path );
+//	bool changeDir( QString path );
 
 	/**
 	 * bool existGit( QString path )
@@ -64,7 +64,7 @@ private:
 	 * @param path Path to the git repository stored on file system
 	 * @return Returns true, if chosen folder contains .git folder, otherwise returns false
 	 */
-	bool existGit( QString path );
+//	bool existGit( QString path );
 
 	/**
 	 * Repository::Git::GitFile* readGitShowFile( QString tmpFile, Repository::Git::GitFile* gitFile )
@@ -89,7 +89,7 @@ private:
 	 * @param filepath Path to the git repository in file system
 	 * @return path to the temporary file
 	 */
-	QString makeTmpFileFromCommand( QString command, QString filepath );
+//	QString makeTmpFileFromCommand( QString command, QString filepath );
 
 	// private variables
 	/**

@@ -1,10 +1,11 @@
 #include "GitLib/GitFile.h"
 #include "GitLib/GitFileDiffBlock.h"
+#include "GitLib/GitFunction.h"
 
 #include <QDebug>
 
 Repository::Git::GitFile::GitFile()
-	: filename( "" ), filepath( "" ), type( Repository::Git::GitType::NONE ), gitFileDiffBlocks( QList<Repository::Git::GitFileDiffBlock*>() )
+    : filename( "" ), filepath( "" ), type( Repository::Git::GitType::NONE ), gitFileDiffBlocks( QList<Repository::Git::GitFileDiffBlock*>() ), gitFunctions( new QMap<QString, Repository::Git::GitFunction*>() )
 {
 
 }
@@ -16,7 +17,7 @@ Repository::Git::GitFile::~GitFile()
 }
 
 Repository::Git::GitFile::GitFile( QString filename, QString filepath, GitType type ) : filename( filename ), filepath( filepath ), type( type ),
-	gitFileDiffBlocks( QList<Repository::Git::GitFileDiffBlock*>() )
+    gitFileDiffBlocks( QList<Repository::Git::GitFileDiffBlock*>() ), gitFunctions( new QMap<QString, Repository::Git::GitFunction*>() )
 {
 
 }
@@ -37,6 +38,33 @@ QString Repository::Git::GitFile::getTypeAsString()
 		default:
 			return "Wrong or Not set";
 	}
+}
+/*
+bool Repository::Git::GitFile::containsFunction( QString functionName ) {
+    foreach( Repository::Git::GitFunction* function, this->getGitFunctions() ) {
+        if( !QString::compare( function->getName(), functionName ) ) {
+            return true;
+        }
+    }
+
+    return false;
+}
+*/
+Repository::Git::GitFunction* Repository::Git::GitFile::findFunction( QString functionName ) {
+    if( this->gitFunctions->contains( functionName ) ) {
+        return this->gitFunctions->find( functionName ).value();
+    } else {
+        return nullptr;
+    }
+}
+
+void Repository::Git::GitFile::addGitFunction( Repository::Git::GitFunction *function ) {
+//    qDebug() << this->getFilename() << " -> " << function->getIdentifier();
+    this->gitFunctions->insert( function->getIdentifier(), function );
+}
+
+QString Repository::Git::GitFile::getIdentifier() {
+    return "file;" + this->getFilepath();
 }
 
 void Repository::Git::GitFile::printContent()

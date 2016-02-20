@@ -227,6 +227,12 @@ public slots:
 	            */
 	void loadFromGit();
 
+    /**
+     * void loadLuaGraph()
+     * @brief Load lua graph without visualization
+     */
+    void loadLuaGraph();
+
 	/**
 	            *  \fn public  labelOnOff(bool checked)
 	            *  \brief Show / hide labels
@@ -551,6 +557,13 @@ public slots:
 	 * @brief Moves the slider if evolution is running.
 	 */
 	void move();
+
+    /**
+     * void changeCommits( bool change );
+     * @brief Change repository commit when changing versions
+     * @param change True, if repository should change, otherwise false
+     */
+    void changeCommits( bool change );
 
 	/**
 	 * void fasterEvolution()
@@ -1006,6 +1019,12 @@ private:
 	 * @brief Timer which interval periodically invokes next version
 	 */
 	QTimer* evolutionTimer;
+
+    /**
+     *CheckBox for changes repository's commits
+     *@brief chb_git_changeCommits
+     */
+    QCheckBox* chb_git_changeCommits;
 
 	bool isRunning;
 

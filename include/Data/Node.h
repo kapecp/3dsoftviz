@@ -238,6 +238,24 @@ public:
 	void setRadialLayout( Layout::RadialLayout* rl );
 	//volovar_kon
 
+    /**
+     * void setLuaIdentifier( QString identifier )
+     * @brief Sets lua identifier
+     * @param lua identifier
+     */
+    void setLuaIdentifier( QString identifier ) {
+        this->luaIdentifier = identifier;
+    }
+
+    /**
+     * QString getLuaIdentifier()
+     * @brief Gets lua identifer
+     * @return lua identifier
+     */
+    QString getLuaIdentifier() {
+        return this->luaIdentifier;
+    }
+
 private:
 
 	/**
@@ -246,7 +264,11 @@ private:
 	    */
 	osg::ref_ptr<Data::Node> nested_parent;
 
-
+    /**
+     * QString luaIdentifier
+     * @brief lua identifier
+     */
+    QString luaIdentifier;
 
 
 	/**

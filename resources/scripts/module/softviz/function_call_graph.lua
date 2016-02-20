@@ -55,7 +55,7 @@ end
 -- @return minComplexity, maxComplexity, minLines, maxLines
 local function extractNode(v, nodes, minComplexity, maxComplexity, minLines, maxLines)
   local origname = v.data.name or v.id
-  local newnode = {type = "node", id = inc(), label = origname, params={size = 8, name = origname, origid = v.id, type = v.data.type, path = v.data.path, modulePath = v.data.modulePath, colorA = 1, colorR = 1, colorG = 1, colorB = 1}}
+  local newnode = {type = "node", id = inc(), label = origname, params={size = 8, name = origname, origid = v.id, type = v.data.type, path = v.data.path, modulePath = v.data.modulePath, colorA = 1, colorR = 1, colorG = 1, colorB = 1, position = v.data.position}}
   if newnode.id == 1 then newnode.params.root = true end
   nodes[v] = newnode
   setNodeColor(newnode)
@@ -174,8 +174,8 @@ local function extractGraph(absolutePath)
   local extractedGraph = artifactsExtractor.extract(absolutePath)
   utils.logger:info("extraction successfully finished")
 
-  extractedGraph:printNodes()
-  extractedGraph:printEdges()
+  --extractedGraph:printNodes()
+  --extractedGraph:printEdges()
 
   local nodes = {}
   local minComplexity, maxComplexity

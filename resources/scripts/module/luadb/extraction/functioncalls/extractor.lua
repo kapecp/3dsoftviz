@@ -19,6 +19,7 @@ local function extractFunctions(AST, graph, path)
     local newNode = hypergraph.node.new()
     newNode.data.metrics = func.metrics
     newNode.data.name = func.name
+	newNode.data.position = func.position
     newNode.data.type = "function"
     newNode.data.modulePath = path
     graph:addNode(newNode)
