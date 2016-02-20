@@ -25,7 +25,7 @@ public:
 	 * \return ( = success)
 	 */
 	static bool createByFileExtension(
-		std::auto_ptr<StreamImporter>& importer,
+		std::shared_ptr<StreamImporter>& importer,
 		bool& importerFound,
 		const QString& fileExtension
 	);

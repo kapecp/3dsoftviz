@@ -42,7 +42,7 @@ bool Model::NodeDAO::addNodesToDB( QSqlDatabase* conn, QMap<qlonglong, osg::ref_
 
 		query->prepare( "INSERT INTO nodes (node_id, name, type_id, graph_id, meta, fixed, parent_id) VALUES (:node_id, :name, :type_id, :graph_id, :meta, :fixed, :parent_id)" );
 		query->bindValue( ":node_id", iNodes.value()->getId() );
-		query->bindValue( ":name", ( ( Data::AbsNode* )iNodes.value() )->getName() );
+		query->bindValue( ":name", ( static_cast<Data::AbsNode*>( iNodes.value() ) )->getName() );
 		query->bindValue( ":type_id", iNodes.value()->getType()->getId() );
 		query->bindValue( ":graph_id", iNodes.value()->getGraph()->getId() );
 		query->bindValue( ":meta", false );
@@ -101,7 +101,7 @@ bool Model::NodeDAO::addMetaNodesToDB( QSqlDatabase* conn, QMap<qlonglong, osg::
 
 		query->prepare( "INSERT INTO nodes (node_id, name, type_id, graph_id, meta, fixed, layout_id, parent_id) VALUES (:node_id, :name, :type_id, :graph_id, :meta, :fixed, :layout_id, :parent_id)" );
 		query->bindValue( ":node_id", nodeID );
-		query->bindValue( ":name", ( ( Data::AbsNode* )iNodes.value() )->getName() );
+		query->bindValue( ":name", ( static_cast<Data::AbsNode*>( iNodes.value() ) )->getName() );
 		query->bindValue( ":type_id", iNodes.value()->getType()->getId() );
 		query->bindValue( ":graph_id", iNodes.value()->getGraph()->getId() );
 		query->bindValue( ":meta", true );

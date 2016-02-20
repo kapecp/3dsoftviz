@@ -166,8 +166,8 @@ void ArucoCore::drawCube( cv::Mat& Image, vector<aruco::Marker>& m,const aruco::
 
 	qDebug() << "Velkost vektora markerov " << m.size();
 
-	cv::Point2f* pointArray = ( cv::Point2f* ) malloc( ( m.size()+1 )*sizeof( cv::Point2f ) );
-	cv::Point2f* pointArray2 = ( cv::Point2f* ) malloc( ( m.size()+1 )*sizeof( cv::Point2f ) );
+	cv::Point2f* pointArray = static_cast<cv::Point2f*>( malloc( ( m.size()+1 )*sizeof( cv::Point2f ) ) );
+	cv::Point2f* pointArray2 = static_cast<cv::Point2f*>( malloc( ( m.size()+1 )*sizeof( cv::Point2f ) ) );
 
 	//for each marker  compute his 2d representation on frame
 	for ( unsigned int i = 0; i < m.size(); i++ ) {

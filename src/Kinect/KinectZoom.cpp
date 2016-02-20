@@ -46,14 +46,19 @@ void Kinect::KinectZoom::calcHandDepthFrame( cv::Mat frame,openni::VideoStream* 
 
 	openni::VideoFrameRef depthFrame;
 	m_depth->readFrame( &depthFrame );
-	openni::DepthPixel* depthPixels = ( openni::DepthPixel* )depthFrame.getData();
+	//PK mod:
+	// original:
+	//openni::DepthPixel* depthPixels = ( openni::DepthPixel* )depthFrame.getData();
+	// new:
+	openni::DepthPixel* depthPixels = const_cast<openni::DepthPixel*>( reinterpret_cast<const openni::DepthPixel*>( depthFrame.getData() ) );
+	//PK end
 	cv::Mat depthImage( depthFrame.getHeight(), depthFrame.getWidth(), CV_16UC1, depthPixels );
 
 	cv::Rect rect;
-	rect.x = ( int ) x1;
-	rect.y = frame.rows - ( int ) y1;
-	rect.width = abs( ( int )( x1-x2 ) );
-	rect.height = abs( ( int )( y1-y2 ) );
+	rect.x = static_cast<int>( x1 );
+	rect.y = frame.rows - static_cast<int>( y1 );
+	rect.width = abs( static_cast<int>( x1-x2 ) );
+	rect.height = abs( static_cast<int>( y1-y2 ) );
 
 	if ( rect.x<0 ) {
 		rect.x=0;
@@ -109,7 +114,7 @@ int Kinect::KinectZoom::DetectContour( )
 	findContours( mask,contours, hierarchy, cv::RETR_LIST, cv::CHAIN_APPROX_SIMPLE, cv::Point() );
 
 	if ( contours.size()>0 ) {
-		cv::vector<std::vector<int> >hull( contours.size() );
+		cv::vector<std::vector<size_t> >hull( contours.size() );
 		cv::vector<cv::vector<cv::Vec4i> > convDef( contours.size() );
 		cv::vector<cv::vector<cv::Point> > hull_points( contours.size() );
 		cv::vector<cv::vector<cv::Point> > defect_points( contours.size() );
@@ -120,27 +125,27 @@ int Kinect::KinectZoom::DetectContour( )
 				convexityDefects( contours[i],hull[i], convDef[i] );
 
 				for ( size_t k=0; k<hull[i].size(); k++ ) {
-					int ind=hull[i][k];
+					auto ind=hull[i][k];
 					hull_points[i].push_back( contours[i][ind] );
 				}
 
 				for ( size_t k=0; k<convDef[i].size(); k++ ) {
 					if ( convDef[i][k][3]>20*256 ) { // filter defects by depth
 						numFingers++;
-						int ind_0=convDef[i][k][0];
-						int ind_1=convDef[i][k][1];
-						int ind_2=convDef[i][k][2];
+						size_t ind_0=static_cast<size_t>( convDef[i][k][0] );
+						size_t ind_1=static_cast<size_t>( convDef[i][k][1] );
+						size_t ind_2=static_cast<size_t>( convDef[i][k][2] );
 						defect_points[i].push_back( contours[i][ind_2] );
 						cv::circle( drawing,contours[i][ind_0],5,cv::Scalar( 0,255,0 ),-1 );
 						cv::circle( drawing,contours[i][ind_1],5,cv::Scalar( 0,255,0 ),-1 );
 						cv::circle( drawing,contours[i][ind_2],5,cv::Scalar( 0,0,255 ),-1 );
-						cv::line( drawing,contours[i][ind_2],contours[i][ind_0],cv::Scalar( 0,0,255 ),1 );
+						cv::line( drawing,contours[i][ind_2],contours[i][ind_0],cv::Scalar( 0,0,255 ),1 );// filter defects by depth
 						cv::line( drawing,contours[i][ind_2],contours[i][ind_1],cv::Scalar( 0,0,255 ),1 );
 					}
 				}
 				// draw results
-				drawContours( drawing, contours, i, cv::Scalar( 0,255,0 ), 1, 8, cv::vector<cv::Vec4i>(), 0, cv::Point() );
-				drawContours( drawing, hull_points, i, cv::Scalar( 255,0,0 ), 1, 8, cv::vector<cv::Vec4i>(), 0, cv::Point() );
+				cv::drawContours( drawing, contours, static_cast<int>( i ), cv::Scalar( 0,255,0 ), 1, 8, cv::vector<cv::Vec4i>(), 0, cv::Point() );
+				drawContours( drawing, hull_points, static_cast<int>( i ), cv::Scalar( 255,0,0 ), 1, 8, cv::vector<cv::Vec4i>(), 0, cv::Point() );
 			}
 		}
 	}

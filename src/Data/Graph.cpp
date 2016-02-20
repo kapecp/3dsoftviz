@@ -454,7 +454,7 @@ void Data::Graph::separateNodes( QLinkedList<osg::ref_ptr<Data::Node> >* selecte
 	//zo zluceneho uzla extrahujeme v nom zahrnute uzly
 	while ( i != selectedNodes->constEnd() ) {
 		//TODO zatial merged node identifikujeme len podla nazvu nodu - "mergedNode" - treba dokoncit
-		if ( ( *i )->getType()->isMeta() && ( ( Data::AbsNode* )( *i ) )->getName() == "mergedNode" ) {
+		if ( ( *i )->getType()->isMeta() && ( static_cast<Data::AbsNode*>( *i ) )->getName() == "mergedNode" ) {
 			//najdeme vsetky uzly a zrusime mask
 			//najdeme vsetky hrany spojene s tymto uzlom a nastavime im scale
 			//nastavime poziciu na mergeNode a zrusime tento uzol
@@ -725,7 +725,7 @@ QList<osg::ref_ptr<Data::Edge> > Data::Graph::splitEdge( QString name, osg::ref_
 	splitNodeList.push_back( srcNode );
 	osg::Vec3f srcPosition = srcNode->getTargetPosition();
 	osg::Vec3f dstPosition = dstNode->getTargetPosition();
-	osg::Vec3f diffPosition = ( dstPosition - srcPosition )/( osg::Vec3f::value_type )splitCount;
+	osg::Vec3f diffPosition = ( dstPosition - srcPosition )/static_cast<osg::Vec3f::value_type>( splitCount );
 	osg::Vec3f metaPosition = srcPosition + diffPosition;
 	for ( int i = 1; i < splitCount; i++ ) {
 		splitNodeList.push_back( addNode( "SNode " + QString::number( i ), nodeType, metaPosition ) );
@@ -889,7 +889,7 @@ bool Data::Graph::isParralel( osg::ref_ptr<Data::Node> srcNode, osg::ref_ptr<Dat
 		if ( ( srcNode->getId() == ( *i )->getSrcNode()->getId() && dstNode->getId() == ( *i )->getDstNode()->getId() ) || ( srcNode->getId() == ( *i )->getDstNode()->getId() && dstNode->getId() == ( *i )->getSrcNode()->getId() ) ) {
 			isMulti= true;
 
-			this->addMultiEdge( ( ( Data::AbsEdge* )( *i ) )->getName(), ( *i )->getSrcNode(), ( *i )->getDstNode(), ( *i )->getType(), ( *i )->isOriented(), ( *i ) );
+			this->addMultiEdge( ( static_cast<Data::AbsEdge*>( *i ) )->getName(), ( *i )->getSrcNode(), ( *i )->getDstNode(), ( *i )->getType(), ( *i )->isOriented(), ( *i ) );
 
 			break;
 		}
@@ -946,7 +946,7 @@ Data::GraphLayout* Data::Graph::selectLayout( Data::GraphLayout* layout )
 			while ( it!=this->types->end() ) {
 				Data::Type* t;
 				t=it.value();
-				if ( t->isMeta() && ( ( Data::MetaType* ) t )->getLayout()!=layout ) {
+				if ( t->isMeta() && ( static_cast<Data::MetaType*>( t ) )->getLayout()!=layout ) {
 					it = this->types->erase( it );
 					this->newTypes.remove( t->getId() );
 					delete t;
@@ -981,7 +981,7 @@ Data::GraphSpanningTree* Data::Graph::getSpanningTree( qlonglong rootId )
 	depthQueue.push_front( rootDepth );
 	pickedNodes.append( rootId );
 
-	spanningTree->addGroup( pickedNodes,rootDepth, ( qlonglong ) 0 );
+	spanningTree->addGroup( pickedNodes,rootDepth, static_cast<qlonglong>( 0 ) );
 
 
 	while ( !queue.empty() ) {

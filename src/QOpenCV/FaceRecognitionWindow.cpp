@@ -312,7 +312,7 @@ void QOpenCV::FaceRecognitionWindow::setLabel( cv::Mat image )
 		return;
 	}
 
-	QImage qimage( reinterpret_cast<uchar*>( image.data ), image.cols, image.rows,static_cast<int>( image.step ), QImage::Format_RGB888 );
+	QImage qimage( image.data, image.cols, image.rows,static_cast<int>( image.step ), QImage::Format_RGB888 );
 
 	mWindowLabel->setPixmap( QPixmap::fromImage( qimage ) );
 

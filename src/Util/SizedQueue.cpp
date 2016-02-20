@@ -5,7 +5,7 @@
 
 namespace Util {
 
-SizedQueue::SizedQueue( int size, float threshold )
+SizedQueue::SizedQueue( unsigned int size, float threshold )
 {
 	this->size = size;
 	this->threshold = threshold;

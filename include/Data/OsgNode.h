@@ -288,7 +288,7 @@ public:
 		this->selected = true;
 	}
 
-	void setVisual( int index );
+	void setVisual( unsigned int index );
 
 
 	/**
@@ -354,9 +354,9 @@ public:
 	    */
 	static osg::ref_ptr<osg::Geode> createLabel( const float& scale, QString name );
 
-	static const int INDEX_LABEL = 0;
-	static const int INDEX_SQUARE = 1;
-	static const int INDEX_SPHERE = 2;
+	static const unsigned int INDEX_LABEL = 0;
+	static const unsigned int INDEX_SQUARE = 1;
+	static const unsigned int INDEX_SPHERE = 2;
 
 protected:
 	/**

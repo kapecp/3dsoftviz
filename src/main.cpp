@@ -50,3 +50,4 @@ int main( int argc, char* argv[] )
 	AppCore::Core::getInstance( &app );
 	Manager::GraphManager::getInstance();
 }
+

@@ -12,6 +12,7 @@
 #include <QFile>
 #include <qfileinfo.h>
 
+#include <memory>
 
 namespace Layout {
 class LayoutThread;
@@ -140,7 +141,7 @@ public:
 	 */
 	Data::Graph* getActiveGraph()
 	{
-		return activeGraph;
+		return activeGraph.get();
 	}
 
 	/**
@@ -254,7 +255,7 @@ private:
 	*  Data::Graph * activeGraph
 	*  \brief active graph
 	*/
-	Data::Graph* activeGraph;
+	std::shared_ptr<Data::Graph> activeGraph;
 
 	/**
 	 * @brief if no database connection find, set to true

@@ -249,8 +249,8 @@ void Clusterer::clusterAdjacency( QMap<qlonglong, osg::ref_ptr<Data::Node> >* so
 
 	std::size_t n = static_cast<std::size_t>( someNodes->size() );
 	std::vector<bool> p( 7 );
-	std::vector<std::vector<bool> > matrix( static_cast<std::size_t>( n ), std::vector<bool>( static_cast<std::size_t>( n ), false ) );
-	std::vector<std::vector<unsigned char> > w( static_cast<std::size_t>( n ), std::vector<unsigned char>( static_cast<std::size_t>( n ), 0 ) );
+	std::vector<std::vector<bool> > matrix( n, std::vector<bool>( n, false ) );
+	std::vector<std::vector<unsigned char> > w( n, std::vector<unsigned char>( n, 0 ) );
 
 	unsigned char K = 100;
 
@@ -296,13 +296,13 @@ void Clusterer::clusterAdjacency( QMap<qlonglong, osg::ref_ptr<Data::Node> >* so
 
 			std::size_t sum = 0;
 			for ( std::size_t k = 0; k < n; k++ ) {
-				sum += matrix[i][k] && matrix[j][k] ? 1 : 0;
+				sum += matrix[i][k] && matrix[j][k] ? 1u : 0u;
 			}
 			// apply Pearson
 			float wij = ( static_cast<float>( ( n * sum ) - ( degU * degV ) ) ) /
 						static_cast<float>( sqrt( static_cast<float>( degU * degV * ( n - degU ) * ( n - degV ) ) ) );
 			// ignore negative values
-			w[j][i] = w[i][j] = ( unsigned char )qMax( 0.0f, wij * K ); // K is used to store 0-1 floats in uchar matrix
+			w[j][i] = w[i][j] = static_cast<unsigned char>( qMax( 0.0f, wij * K ) ); // K is used to store 0-1 floats in uchar matrix
 			if ( w[j][i] > maxW ) { // remember largest weight
 				maxW = w[j][i];
 			}

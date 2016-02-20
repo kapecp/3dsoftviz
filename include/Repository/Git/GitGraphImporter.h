@@ -76,22 +76,22 @@ private:
 	QString filepath;
 
 	/**
-	 * std::auto_ptr<Importer::GraphOperations> graphOp
+	 * std::shared_ptr<Importer::GraphOperations> graphOp
 	 * @brief Pointer to class, which sets up default edge and node type
 	 */
-	std::auto_ptr<Importer::GraphOperations> graphOp;
+	std::shared_ptr<Importer::GraphOperations> graphOp;
 
 	/**
-	 * std::auto_ptr<Importer::ReadNodesStore> readNodes
+	 * std::shared_ptr<Importer::ReadNodesStore> readNodes
 	 * @brief Pointer to store of processed nodes, which restrains appearance of node duplicity
 	 */
-	std::auto_ptr<Importer::ReadNodesStore> readNodes;
+	std::shared_ptr<Importer::ReadNodesStore> readNodes;
 
 	/**
-	 * std::auto_ptr<Importer::ReadEdgesStore> readEdges
+	 * std::shared_ptr<Importer::ReadEdgesStore> readEdges
 	 * @brief Pointer to store of processed edges, which restrains appearance of edge duplicity
 	 */
-	std::auto_ptr<Importer::ReadEdgesStore> readEdges;
+	std::shared_ptr<Importer::ReadEdgesStore> readEdges;
 
 	// default types
 	/**

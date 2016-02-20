@@ -150,9 +150,9 @@ void BrowserGroup::initGroupedBrowser()
 
 	// Calculate centroid
 	pos = osg::Vec3f(
-			  xSum / selectedNodes->size(),
-			  ySum / selectedNodes->size(),
-			  zSum / selectedNodes->size()
+			  xSum / static_cast<float>( selectedNodes->size() ),
+			  ySum / static_cast<float>( selectedNodes->size() ),
+			  zSum / static_cast<float>( selectedNodes->size() )
 		  );
 
 	this->addBrowser( "multi", pos, models );
@@ -174,7 +174,7 @@ void BrowserGroup::addBrowser( const std::string& templateType, osg::Vec3 positi
 	osg::Vec3Array* targets;
 	if ( this->browsersGrouping ) {
 		offset = 0;
-		targets = new osg::Vec3Array( ( unsigned int )selectedNodes->size() );
+		targets = new osg::Vec3Array( static_cast<unsigned int>( selectedNodes->size() ) );
 
 		QLinkedList<osg::ref_ptr<Data::Node> >::iterator i;
 		Data::Node* node;
@@ -253,7 +253,7 @@ osg::Geode* BrowserGroup::createBorderGeode( osg::Vec3 bl, osg::Vec3 br, osg::Ve
 	( *vertices )[3].set( tl );
 
 	linesGeom->setVertexArray( vertices );
-	linesGeom->addPrimitiveSet( new osg::DrawArrays( osg::PrimitiveSet::LINE_LOOP,0,( int )vertices->size() ) );
+	linesGeom->addPrimitiveSet( new osg::DrawArrays( osg::PrimitiveSet::LINE_LOOP,0,static_cast<int>( vertices->size() ) ) );
 
 	return this->createLinesGeode( linesGeom );
 }
@@ -261,7 +261,7 @@ osg::Geode* BrowserGroup::createBorderGeode( osg::Vec3 bl, osg::Vec3 br, osg::Ve
 osg::Geode* BrowserGroup::createConnectorsGeode( osg::Vec3 center, osg::Vec3Array* targets )
 {
 	osg::Geometry* linesGeom = new osg::Geometry();
-	osg::Vec3Array* vertices = new osg::Vec3Array( ( unsigned int )( targets->size() * 2 ) ); // 2 points for each line
+	osg::Vec3Array* vertices = new osg::Vec3Array( static_cast<unsigned int>( targets->size() * 2 ) ); // 2 points for each line
 
 	// Iterate over each target node and create corresponding connector line geometry
 	for ( std::size_t i=0; i< targets->size(); i++ ) {
@@ -270,7 +270,7 @@ osg::Geode* BrowserGroup::createConnectorsGeode( osg::Vec3 center, osg::Vec3Arra
 	}
 
 	linesGeom->setVertexArray( vertices );
-	linesGeom->addPrimitiveSet( new osg::DrawArrays( osg::PrimitiveSet::LINES,0,( int )vertices->size() ) );
+	linesGeom->addPrimitiveSet( new osg::DrawArrays( osg::PrimitiveSet::LINES,0,static_cast<int>( vertices->size() ) ) );
 
 	return this->createLinesGeode( linesGeom );
 }
@@ -323,7 +323,7 @@ void BrowserGroup::clearModels()
 
 double BrowserGroup::interpolate( long currentFrame, long endFrame, double startValue, double endValue )
 {
-	double value = endValue * ( pow( ( currentFrame / ( float )endFrame ) - 1, 5 ) + 1 + startValue );
+	double value = endValue * ( pow( ( static_cast<double>( currentFrame ) / static_cast<double>( endFrame ) ) - 1.0, 5.0 ) + 1.0 + startValue );
 
 	// std::cout << value << " " << currentFrame << " " << endFrame << " " << startValue << " " << endValue << endl;
 	// std::cout << flush;

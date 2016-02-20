@@ -66,7 +66,7 @@ void CameraStream::updateBackgroundImage( cv::Mat cvImg )
 	setImage( img.cols, img.rows,
 			  8, img.channels(), GL_RGB,
 			  GL_UNSIGNED_BYTE,
-			  ( unsigned char* )( img.data ),
+			  img.data,
 			  NO_DELETE, 1 );
 
 	//cvImg.~Mat();  // must be tested on linux for memory leaks
@@ -81,7 +81,7 @@ void CameraStream::updateGeometryCoords( int width, int height )
 	float x;
 	x = static_cast<float>( width ) / static_cast<float>( height );
 
-	osg::Vec3Array* coords = ( osg::Vec3Array* ) mGeom->getVertexArray();
+	osg::Vec3Array* coords = static_cast<osg::Vec3Array*>( mGeom->getVertexArray() );
 	( *coords )[0].set( -x, 1.5f, -1.0f );
 	( *coords )[1].set( x, 1.5f, -1.0f );
 	( *coords )[2].set( x, 1.5f,  1.0f );

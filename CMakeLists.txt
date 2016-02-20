@@ -62,7 +62,6 @@ if( USE_STRICT_COMPILE_WARNINGS )
 		# not used:
 			# too much warnings in Qt headers: NULL vs 0 pointers: -Wzero-as-null-pointer-constant
 			# too much warnings: -Wshadow -Waggregate-return
-			# too much warnings, but should be used: -Wold-style-cast -Woverloaded-virtual -Wuseless-cast -Wsign-conversion
 			# class size optimizations ( not really needed ): -Wpadded
 			# style guidelines from Scott Meyers' Effective C++ books: -Weffc++
 			# only for C: -Wold-style-definition -Wstrict-prototypes -Wmissing-prototypes
@@ -902,7 +901,7 @@ add_library( noiseutils STATIC dependencies/noiseutils/noiseutils.cpp )
 target_include_directories( noiseutils SYSTEM PUBLIC ${DEPENDENCIES_INCLUDE_DIR}/libnoise dependencies/noiseutils  )
 
 add_library( qtcolorpicker STATIC dependencies/qtcolorpicker/qtcolorpicker.cpp )
-target_include_directories( qtcolorpicker SYSTEM PUBLIC dependencies/qtcolorpicker )
+target_include_directories( noiseutils SYSTEM PUBLIC dependencies/qtcolorpicker )
 
 # ---------------------------------------------------------------
 # Build modules as libraries

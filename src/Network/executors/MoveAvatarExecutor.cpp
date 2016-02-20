@@ -2,6 +2,11 @@
 #include "Network/Server.h"
 #include "Network/Client.h"
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wold-style-cast"
+#pragma GCC diagnostic ignored "-Wuseless-cast"
+#pragma GCC diagnostic ignored "-Wsign-conversion"
+
 namespace Network {
 
 void MoveAvatarExecutor::execute_client()
@@ -95,3 +100,5 @@ void MoveAvatarExecutor::execute_server()
 }
 
 } // namespace Network
+
+#pragma GCC diagnostic pop

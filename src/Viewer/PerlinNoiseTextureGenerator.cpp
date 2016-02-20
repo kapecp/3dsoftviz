@@ -38,7 +38,7 @@ osg::ref_ptr<osg::Texture2D> PerlinNoiseTextureGenerator::getCoudTexture( int w,
 
 	renderer.Render();
 
-	char* data = new char[w * h * 3];
+	unsigned char* data = new unsigned char[w * h * 3];
 
 	int index = 0;
 
@@ -51,7 +51,7 @@ osg::ref_ptr<osg::Texture2D> PerlinNoiseTextureGenerator::getCoudTexture( int w,
 	}
 
 	osg::ref_ptr<osg::Image> i = new( std::nothrow ) osg::Image;
-	i->setImage( w, h, 1,  GL_RGB, GL_RGB, GL_UNSIGNED_BYTE, ( unsigned char* ) data, osg::Image::USE_NEW_DELETE );
+	i->setImage( w, h, 1,  GL_RGB, GL_RGB, GL_UNSIGNED_BYTE, data, osg::Image::USE_NEW_DELETE );
 
 	osg::ref_ptr<osg::Texture2D> tex = DataHelper::createTexture( i );
 

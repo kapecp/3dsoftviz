@@ -234,7 +234,7 @@ void QOpenCV::OpenCVWindow::setMarkerDetection( bool set )
 
 void QOpenCV::OpenCVWindow::setSpeedKinect( int speed )
 {
-	double _speed=( double )( ( double )( speed/10.0 ) );
+	double _speed= speed/10.0 ;
 	emit sendSpeedKinect( _speed );
 }
 
@@ -426,7 +426,7 @@ void QOpenCV::OpenCVWindow::setLabel( cv::Mat image )
 		return;
 	}
 
-	QImage qimage( reinterpret_cast<uchar*>( image.data ), image.cols, image.rows,static_cast<int>( image.step ), QImage::Format_RGB888 );
+	QImage qimage( image.data, image.cols, image.rows,static_cast<int>( image.step ), QImage::Format_RGB888 );
 
 	mWindowLabel->setPixmap( QPixmap::fromImage( qimage ) );
 

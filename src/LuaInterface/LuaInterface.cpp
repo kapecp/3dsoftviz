@@ -68,7 +68,7 @@ QString Lua::LuaInterface::getString( unsigned int length, QString args[] )
 int Lua::LuaInterface::getInt( QString name )
 {
 	Diluculum::LuaVariable var = ( *luaState )[name.toStdString()];
-	return var.value().asInteger();
+	return static_cast<int>( var.value().asInteger() );
 }
 
 int Lua::LuaInterface::getInt( unsigned int length,QString args[] )
@@ -77,7 +77,7 @@ int Lua::LuaInterface::getInt( unsigned int length,QString args[] )
 	for ( unsigned int i = 1; i < length; i++ ) {
 		var = var[args[i].toStdString()];
 	}
-	return var.value().asInteger();
+	return static_cast<int>( var.value().asInteger() );
 }
 
 double Lua::LuaInterface::getDouble( QString name )

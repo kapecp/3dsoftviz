@@ -111,9 +111,9 @@ void ShapeVisitor_VisualizerCreator::visit( Layout::Shape_Plane& shape )
 	//qDebug() << "center: " << center.z();
 
 	// size of grid
-	int size = 1000;
+	unsigned int size = 1000;
 	// number of lines on one side of grid
-	int noOfLines = 10;
+	unsigned int noOfLines = 10;
 
 	// compute 4 corners of grid based on center point
 	// osg::Vec3Array* gridVertices = new osg::Vec3Array;
@@ -141,7 +141,7 @@ void ShapeVisitor_VisualizerCreator::visit( Layout::Shape_Plane& shape )
 	createdVisualizer_ = geode;
 }
 
-osg::Geometry* ShapeVisitor_VisualizerCreator::createGridGeometry( int size, int noOfLines, osg::Vec3f center )
+osg::Geometry* ShapeVisitor_VisualizerCreator::createGridGeometry( unsigned int size, unsigned int noOfLines, osg::Vec3f center )
 {
 
 	osg::Geometry* geom = new osg::Geometry();
@@ -150,13 +150,13 @@ osg::Geometry* ShapeVisitor_VisualizerCreator::createGridGeometry( int size, int
 	geom->setVertexArray( positionsOfLines );
 
 	// position of borders
-	osg::Vec3f dif1( ( osg::Vec3f::value_type )( -size/2 ), ( osg::Vec3f::value_type )( size/2 ), -10 ); // top left
-	osg::Vec3f dif2( ( osg::Vec3f::value_type )( -size/2 ), ( osg::Vec3f::value_type )( -size/2 ), -10 );
-	osg::Vec3f dif3( ( osg::Vec3f::value_type )( size/2 ), ( osg::Vec3f::value_type )( size/2 ), -10 );
+	osg::Vec3f dif1( static_cast<osg::Vec3f::value_type>( -size/2 ), static_cast<osg::Vec3f::value_type>( size/2 ), -10 ); // top left
+	osg::Vec3f dif2( static_cast<osg::Vec3f::value_type>( -size/2 ), static_cast<osg::Vec3f::value_type>( -size/2 ), -10 );
+	osg::Vec3f dif3( static_cast<osg::Vec3f::value_type>( size/2 ), static_cast<osg::Vec3f::value_type>( size/2 ), -10 );
 
 	// increment for creating points of mesh at border
-	osg::Vec3f incrementX( ( osg::Vec3f::value_type )( size/noOfLines ), 0, 0 );
-	osg::Vec3f incrementY( 0, ( osg::Vec3f::value_type )( -size/noOfLines ), 0 );
+	osg::Vec3f incrementX( static_cast<osg::Vec3f::value_type>( size/noOfLines ), 0, 0 );
+	osg::Vec3f incrementY( 0, static_cast<osg::Vec3f::value_type>( -size/noOfLines ), 0 );
 
 	// computing and saving positions of points at border of mesh
 	for ( int i=0; i<2; i++ ) {
@@ -165,7 +165,7 @@ osg::Geometry* ShapeVisitor_VisualizerCreator::createGridGeometry( int size, int
 		osg::Vec3f base2 = center + dif2;
 
 		// computing positions at x axis
-		for ( int j=0; j<noOfLines; j++ ) {
+		for ( unsigned int j=0; j<noOfLines; j++ ) {
 			positionsOfLines->push_back( base1 + incrementX );
 			base1 += incrementX;
 			positionsOfLines->push_back( base2 + incrementX + incrementY );
@@ -176,7 +176,7 @@ osg::Geometry* ShapeVisitor_VisualizerCreator::createGridGeometry( int size, int
 		base2 = center + dif3;
 
 		// computing positions at y axis
-		for ( int j=0; j<noOfLines; j++ ) {
+		for ( unsigned int j=0; j<noOfLines; j++ ) {
 			positionsOfLines->push_back( base1 + incrementY );
 			base1 += incrementY;
 			positionsOfLines->push_back( base2 + incrementY + incrementX );
@@ -184,7 +184,7 @@ osg::Geometry* ShapeVisitor_VisualizerCreator::createGridGeometry( int size, int
 		}
 
 		// connecting two corresponding points at border of mesh
-		for ( int k=0; k<noOfLines*4; k=k+2 ) {
+		for ( unsigned int k=0; k<noOfLines*4; k=k+2 ) {
 			osg::DrawElementsUInt* line = new osg::DrawElementsUInt( osg::PrimitiveSet::LINES, 0 );
 			line->push_back( k );
 			line->push_back( k+1 );
