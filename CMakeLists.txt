@@ -85,7 +85,7 @@ endif()
 set( CMAKE_SKIP_BUILD_RPATH FALSE CACHE STRING "" FORCE )
 # next line adds "$ORIGIN/../lib" to RPath:
 set( CMAKE_BUILD_WITH_INSTALL_RPATH TRUE CACHE STRING "" FORCE )
-set( CMAKE_INSTALL_RPATH "$ORIGIN/../lib" CACHE STRING "" FORCE )
+set( CMAKE_INSTALL_RPATH "$ORIGIN/../lib;$ORIGIN" CACHE STRING "" FORCE )
 # next line adds additional link paths to RPath (e.g. for qscintilla when not in system):
 set( CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE CACHE STRING "" FORCE )
 set( CMAKE_INSTALL_NAME_DIR "@executable_path/../lib" CACHE STRING "" FORCE )
@@ -397,6 +397,29 @@ if( USE_BUILTIN_DEPENDENCIES )
 			IMPORTED_LOCATION ${DEP_BIN}/bin/${CMAKE_SHARED_LIBRARY_PREFIX}osgModeling${CMAKE_SHARED_LIBRARY_SUFFIX}
 			IMPORTED_IMPLIB ${DEP_BIN}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}osgModeling${CMAKE_STATIC_LIBRARY_SUFFIX} )
 	endif()
+
+
+	# Build igloo
+	ExternalProject_Add( dep_igloo
+		PREFIX igloo
+		SOURCE_DIR ${DEP_SOURCE}/igloo
+		BINARY_DIR igloo
+		CMAKE_ARGS
+			-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
+			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
+			-DBUILD_TESTS=ON
+			-C ${CMAKE_CURRENT_BINARY_DIR}/config.cmake
+		# little trick:
+			# this solves building igloo twice (building normal target and building unity target)
+			# prevent building the default target (make install)
+		BUILD_COMMAND ""
+			# force building the install_unity target
+        INSTALL_COMMAND "${CMAKE_COMMAND}" --build . --target install_unity# -- "-j${N}"
+	)
+
+	add_library( igloo INTERFACE IMPORTED )
+	add_dependencies( igloo dep_igloo )
+
 
 	# Building Lua or LuaJIT
 	if ( MSVC OR APPLE )
@@ -993,7 +1016,7 @@ endif()
 if( USE_BUILTIN_DEPENDENCIES )
 
 	# dependencies of non-unity build
-	add_dependencies( ${3DSOFTVIZ_NAME} libnoise osgModeling gitlib dep_luametrics dep_leg dep_lpeg dep_luafilesystem dep_lualogging )
+    add_dependencies( ${3DSOFTVIZ_NAME} libnoise osgModeling gitlib dep_luametrics dep_leg dep_lpeg dep_luafilesystem igloo dep_lualogging)
 
 	if( MSVC OR APPLE )
 		add_dependencies( ${3DSOFTVIZ_NAME} dep_lua )
@@ -1007,7 +1030,7 @@ if( USE_BUILTIN_DEPENDENCIES )
 
 	# dependencies of unity build
 	if (COMMAND cotire)
-		add_dependencies( ${3DSOFTVIZ_NAME}_unity libnoise osgModeling gitlib_unity dep_luametrics dep_leg dep_lpeg dep_luafilesystem dep_lualogging )
+		add_dependencies( ${3DSOFTVIZ_NAME}_unity libnoise osgModeling gitlib_unity dep_luametrics dep_leg dep_lpeg dep_luafilesystem igloo dep_lualogging)
 
 		if( MSVC OR APPLE )
 			add_dependencies( ${3DSOFTVIZ_NAME}_unity dep_lua )
@@ -1141,4 +1164,31 @@ set( CPACK_PACKAGE_VENDOR "${3DSOFTVIZ_VENDOR}" )
 set( CPACK_RESOURCE_FILE_README "${CMAKE_SOURCE_DIR}/${3DSOFTVIZ_README}" )
 #set( CPACK_COMPONENTS_ALL Runtime Dependencies Data )
 include( CPack )
+
+
+# -------------------------------------------------------
+# BDD Igloo tests
+# -------------------------------------------------------
+
+file( GLOB_RECURSE SRC_TESTS	"tests/*.cpp" )
+add_executable(all_bdd_tests ${SRC_TESTS})
+set_target_properties( all_bdd_tests
+	PROPERTIES
+		COMPILE_FLAGS "${FLAGS_FOR_DEBUG}"
+	)
+target_include_directories( all_bdd_tests
+	SYSTEM PUBLIC
+        include/Repository/Git
+	)
+
+target_link_libraries( all_bdd_tests
+	${QT_LIBRARIES}
+    gitlib
+)
+
+add_dependencies( all_bdd_tests igloo)
+
+
+enable_testing()
+add_test(all_bdd_tests all_bdd_tests)
 

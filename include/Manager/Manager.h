@@ -82,13 +82,15 @@ public:
 	 * \fn loadGraphFromGit
 	 * \brief Loads graph from git repo.
 	 */
-	Data::Graph* loadGraphFromGit( QString filepath );
+    bool loadEvolutionGraphFromGit( QString filepath );
 
 	/**
 	 * \fn loadGraphFromDB
 	 * \brief Loads selected graph from database.
 	 */
-	Data::Graph* loadGraphFromDB( qlonglong graphID, qlonglong layoutID );
+    Data::Graph* loadGraphFromDB( qlonglong graphID, qlonglong layoutID );
+
+    Data::Graph* importEvolutionGraph( QString filepath );
 
 	/**
 	 * \fn simpleGraph

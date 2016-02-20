@@ -28,9 +28,9 @@
 [submodule "dependencies/osgModeling"]
 	path = dependencies/osgModeling
 	url = git@github.com:kapecp/osgmodeling.git
-
-[submodule "dependencies/lualogging"]
-	
-	path = dependencies/lualogging
-	
+[submodule "dependencies/igloo"]
+	path = dependencies/igloo
+	url = git@github.com:kapecp/igloo.git
+[submodule "dependencies/lualogging"]	
+	path = dependencies/lualogging	
 	url = https://github.com/LuaDist/lualogging.git
