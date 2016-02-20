@@ -10,9 +10,14 @@
 #include "GitLib/GitFunction.h"
 #include "GitLib/GitEvolutionGraph.h"
 #include "GitLib/GitUtils.h"
+#include "GitLib/GitFileLoader.h"
+#include "GitLib/GitFileDiffBlock.h"
+#include "GitLib/GitFileDiffBlockLine.h"
 
 #include <QDebug>
+#include <QFile>
 #include <QList>
+#include <QTextStream>
 
 Repository::Git::GitLuaGraphAnalyzer::GitLuaGraphAnalyzer()
     : luaGraph( Lua::LuaGraph::getInstance() ), evolutionGraph( nullptr ), versionNumber( -1 ), functions( new QMap<QString, Repository::Git::GitFunction*>() )
@@ -252,6 +257,8 @@ void Repository::Git::GitLuaGraphAnalyzer::analyze() {
 
             }
 
+            findFunctionRowsFromFile( file );
+
             // Ziskam starsiu verziu daneho suboru
             Repository::Git::GitFile* oldFile = evolutionGraph->getLatestGitFileCallTree().value( file->getIdentifier() );
 
@@ -259,7 +266,8 @@ void Repository::Git::GitLuaGraphAnalyzer::analyze() {
             compareFilesAndSaveToEvolutionGraph( file, oldFile );
 
             // Nahradim predoslu verziu sucasnou v mape verzii suborov a ich podstromov
-            evolutionGraph->addLatestGitFileCallTree( file->getIdentifier(), file );
+            this->evolutionGraph->addLatestGitFileCallTree( file->getIdentifier(), file );
+            this->evolutionGraph->addLastVersionDiff( file->getIdentifier(), version->getCommitId() );
 
 /*
             for( QMap<QString, Repository::Git::GitFunction*>::iterator  iterator = file->getGitFunctions()->begin(); iterator != file->getGitFunctions()->end(); ++iterator ) {
@@ -301,6 +309,16 @@ void Repository::Git::GitLuaGraphAnalyzer::compareFilesAndSaveToEvolutionGraph( 
         file = this->evolutionGraph->getVersion( this->versionNumber )->getGitFileByIdentifier( newFile->getIdentifier() );
     } else {
         file = this->evolutionGraph->getVersion( this->versionNumber )->getGitFileByIdentifier( oldFile->getIdentifier() );
+    }
+
+    if( file->getType() == Repository::Git::GitType::MODIFIED ) {
+        Repository::Git::GitFileLoader loader = Repository::Git::GitFileLoader( this->evolutionGraph->getFilePath(), "" );
+        loader.getDiffInfo( file, this->evolutionGraph->getVersion( this->versionNumber )->getCommitId(), this->evolutionGraph->getLastVersionDiff().value( file->getIdentifier() ) );
+//        foreach( Repository::Git::GitFileDiffBlock* block, file->getGitFileDiffBlocks() ) {
+//            block->printInfo();
+//            qDebug() << "Previous";
+//            block->printPreviousInfo();
+//        }
     }
 
     // Vytvorim mapu lokalnych funkcii na ulozenie uz spracovanych lokalnych funkcii
@@ -454,9 +472,93 @@ void Repository::Git::GitLuaGraphAnalyzer::compareFunctions( Repository::Git::Gi
                 }
             }
 
-            if( !isChanged ) {
-//                qDebug() << newFunction->getIdentifier() << "MAY BE MODIFIED OR AFFECTED!!!";
+            // Ak obsahuje tak musime skontrolovat, ci sa nemodifikovala nejaka lokalna funkcia
+            int result = calculateRealResult( newFunction->getId() );
+
+            int functionStart = newFunction->getFunctionRowNumber();
+            int functionEnd = functionStart + result;
+//            qDebug() << luaFunction->getIdentifier() << functionStart << "-" << functionEnd << "(" << result << ")";
+
+            bool isFound = false;
+
+            int oldFunctionStart = -1;
+            int oldFunctionEnd = -1;
+
+            QString oldFunctionInterval = this->evolutionGraph->getLastFunctionInterval().value( newFunction->getIdentifier() );
+            if( oldFunctionInterval != nullptr && oldFunctionInterval != "" ) {
+                oldFunctionStart = oldFunctionInterval.split( "-" ).at( 0 ).toInt();
+                oldFunctionEnd = oldFunctionInterval.split( "-" ).at( 1 ).toInt();
             }
+
+            foreach( Repository::Git::GitFileDiffBlock* block, masterFile->getGitFileDiffBlocks() ) {
+                int blockStart = block->getAddStart();
+                int blockEnd = block->getAddStart() + block->getAddCount();
+                if( intervalsIntersects( functionStart, functionEnd, blockStart, blockEnd ) ) {
+//                    qDebug() << "-" << block->getRemoveStart() << "," << block->getRemoveCount() << " +" << block->getAddStart() << "," << block->getAddStart();
+                    foreach( Repository::Git::GitFileDiffBlockLine* line, block->getGitFileDiffBlockLines() ) {
+                        if( line->getLineType() == Repository::Git::GitType::ADDED ) {
+                            if( line->getLineNumber() <= functionEnd && line->getLineNumber() >= functionStart ) {
+                                Repository::Git::GitFunction* function = masterFile->getGitFunctions()->value( newFunction->getIdentifier() );
+
+                                if( !function ) {
+                                    function = new Repository::Git::GitFunction();
+                                    function->setId( newFunction->getId() );
+                                    function->setModule( newFunction->getModule() );
+                                    function->setName( newFunction->getName() );
+                                    function->setType( Repository::Git::GitType::MODIFIED );
+                                    function->setFunctionType( newFunction->getFunctionType() );
+                                    function->setFunctionRowNumber( newFunction->getFunctionRowNumber() );
+
+                                    masterFile->addGitFunction( function );
+                                } else {
+                                    if( function->getFunctionType() != Repository::Git::MODIFIED ) {
+                                        qDebug() << function->getIdentifier() << "je ulozeny inak ako MODIFIED";
+                                    }
+                                }
+
+                                qDebug() << newFunction->getIdentifier() << "was MODIFIED!!!!!!!!!!!";
+                                isFound = true;
+                                break;
+                            }
+                        }
+
+                        if( line->getLineType() == Repository::Git::GitType::REMOVED ) {
+                            if( oldFunctionStart > -1 && oldFunctionEnd > -1 ) {
+                                if( line->getLineNumber() <= oldFunctionEnd && line->getLineNumber() >= oldFunctionStart ) {
+                                    Repository::Git::GitFunction* function = masterFile->getGitFunctions()->value( newFunction->getIdentifier() );
+
+                                if( !function ) {
+                                    function = new Repository::Git::GitFunction();
+                                    function->setId( newFunction->getId() );
+                                    function->setModule( newFunction->getModule() );
+                                    function->setName( newFunction->getName() );
+                                    function->setType( Repository::Git::GitType::MODIFIED );
+                                    function->setFunctionType( newFunction->getFunctionType() );
+                                    function->setFunctionRowNumber( newFunction->getFunctionRowNumber() );
+
+                                    masterFile->addGitFunction( function );
+                                } else {
+                                    if( function->getFunctionType() != Repository::Git::MODIFIED ) {
+                                        qDebug() << function->getIdentifier() << "je ulozeny inak ako MODIFIED";
+                                    }
+                                }
+
+                                qDebug() << newFunction->getIdentifier() << "was MODIFIED!!!!!!!!!!!";
+                                isFound = true;
+                                break;
+                                }
+                            }
+
+                        }
+                    }
+                }
+
+                if( isFound ) {
+                    break;
+                }
+            }
+
+            this->evolutionGraph->addLastFunctionInterval( newFunction->getIdentifier(), functionStart + "-" + functionEnd );
 
         }
     }
@@ -488,6 +590,12 @@ void Repository::Git::GitLuaGraphAnalyzer::compareFunctions( Repository::Git::Gi
                 innerFunction->addFunctionCallee( masterFileFunction );
             }
         }
+
+        if( oldFunction->getFunctionType() == Repository::Git::GitFunctionType::LOCALFUNCTION ) {
+            if( this->evolutionGraph->getLastFunctionInterval().contains( oldFunction->getIdentifier() ) ) {
+                this->evolutionGraph->getLastFunctionInterval().remove( oldFunction->getIdentifier() );
+            }
+        }
     } else {
 //        qDebug() << "ADDED ->" << newFunction->getIdentifier() << "from" << masterIdentifier;
         Repository::Git::GitFunction* masterFileFunction = new Repository::Git::GitFunction();
@@ -515,7 +623,99 @@ void Repository::Git::GitLuaGraphAnalyzer::compareFunctions( Repository::Git::Gi
                 innerFunction->addFunctionCallee( masterFileFunction );
             }
         }
+
+        if( newFunction->getFunctionType() == Repository::Git::GitFunctionType::LOCALFUNCTION ) {
+            int result = calculateRealResult( newFunction->getId() );
+            QString interval = QString::number( newFunction->getFunctionRowNumber() ) + "-" + QString::number( newFunction->getFunctionRowNumber() + result );
+            this->evolutionGraph->addLastFunctionInterval( newFunction->getIdentifier(), interval );
+        }
     }
+}
+
+bool Repository::Git::GitLuaGraphAnalyzer::intervalsIntersects( int firstStart, int firstEnd, int secondStart, int secondEnd ) {
+
+    if( firstStart < secondStart ) {
+        if( firstEnd >= secondStart || firstEnd >= secondEnd ) {
+//            qDebug() << "intervalsIntersects" << firstStart << firstEnd << secondStart << secondEnd;
+            return true;
+        }
+    } else if( secondStart < firstStart ) {
+        if( secondEnd >= firstStart || secondEnd >= firstEnd ) {
+//            qDebug() << "intervalsIntersects" << firstStart << firstEnd << secondStart << secondEnd;
+            return true;
+        }
+    } else {
+//        qDebug() << "intervalsIntersects" << firstStart << firstEnd << secondStart << secondEnd;
+        return true;
+    }
+
+    return false;
+}
+
+int Repository::Git::GitLuaGraphAnalyzer::calculateRealResult( qlonglong luaId ) {
+    Lua::LuaNode* node = this->luaGraph->getNodes()->value( luaId );
+    int blank = node->getParams()["metrics"].asTable()["LOC"].asTable()["lines_blank"].asNumber();
+    int nonempty = node->getParams()["metrics"].asTable()["LOC"].asTable()["lines_nonempty"].asNumber();
+
+    int realBlank = ( blank - nonempty - 1 ) / 2;
+    return nonempty + realBlank + 1;
+}
+
+void Repository::Git::GitLuaGraphAnalyzer::findFunctionRowsFromFile( Repository::Git::GitFile *file ) {
+    QMap<QString, int> functionToByte = QMap<QString, int>();
+    int min = std::numeric_limits<int>::max();
+    for( QMap<QString, Repository::Git::GitFunction*>::iterator iterator = file->getGitFunctions()->begin(); iterator != file->getGitFunctions()->end(); ++iterator ) {
+        Repository::Git::GitFunction* function = iterator.value();
+        if( function->getFunctionType() == Repository::Git::GitFunctionType::LOCALFUNCTION ) {
+            Lua::LuaNode* node = this->luaGraph->getNodes()->value( function->getId() );
+            int position = node->getParams()["position"].asNumber();
+            min = position < min ? position : min;
+            functionToByte.insert( function->getIdentifier(), position );
+//            qDebug() << function->getIdentifier() << position;
+        }
+    }
+
+    QString filepath = this->evolutionGraph->getFilePath().replace( '\\' , '/') + "/" + file->getFilepath();
+
+//    qDebug() << filepath;
+
+    QFile ioFile ( filepath );
+
+    if( ioFile.open( QIODevice::ReadOnly ) ) {
+        QTextStream reader( &ioFile );
+        QString line;
+        long count = 0;
+        long row = 0;
+
+        while( !reader.atEnd() ) {
+            line = reader.readLine();
+            row++;
+            count += line.size() + 2;
+
+            if( min <= count ) {
+                QList<QString> remove = QList<QString>();
+                min = std::numeric_limits<int>::max();
+                for(QMap<QString,int>::iterator i = functionToByte.begin(); i != functionToByte.end(); ++i ) {
+                    if( i.value() <= count ) {
+                        file->getGitFunctions()->value( i.key() )->setFunctionRowNumber( row );
+//                        qDebug() << file->getGitFunctions()->value( i.key() )->getIdentifier() << row;
+                        remove.append( i.key() );
+                    } else {
+                        min = i.value() < min ? i.value() : min;
+                    }
+                }
+
+                foreach( QString string, remove ) {
+                    functionToByte.remove( string );
+                }
+            }
+        }
+
+//        qDebug() << filepath << count;
+    }
+
+    ioFile.close();
+
 }
 
 

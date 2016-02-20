@@ -225,6 +225,22 @@ public:
         return this->removedNodesAndEdges;
     }
 
+    void addLastVersionDiff( QString identifier, QString commitId ) {
+        this->lastVersionDiff.insert( identifier, commitId );
+    }
+
+    QMap<QString, QString> getLastVersionDiff() {
+        return this->lastVersionDiff;
+    }
+
+    void addLastFunctionInterval( QString identifier, QString interval ) {
+        this->lastFunctionInterval.insert( identifier, interval );
+    }
+
+    QMap<QString, QString> getLastFunctionInterval() {
+        return this->lastFunctionInterval;
+    }
+
 	/**
 	 * void printRemovedFiles()
 	 * @brief Prints out all paths and versions of map
@@ -244,7 +260,11 @@ private:
 	 */
 	QMap<QString, int> removedFiles;
 
+    QMap<QString, QString> lastVersionDiff;
+
     QMap<QString, int>* removedNodesAndEdges;
+
+    QMap<QString, QString> lastFunctionInterval;
 
     /**
      * QMap<QString, int> nodesOccurence

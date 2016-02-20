@@ -31,6 +31,11 @@ public:
     GitLuaGraphVisualizer( Data::Graph* currentGraph, Repository::Git::GitEvolutionGraph* evolutionGraph, osg::ref_ptr<osg::Camera> camera );
 
     void visualize( bool next );
+
+    void setShowLuaStats( bool show ) {
+        this->showLuaStats = show;
+    }
+
 private:
     void setNodeParams( osg::ref_ptr<Data::Node> node, Lua::LuaGraphObject* obj, osg::Vec4f defColor, float defSize );
     void setEdgeParams( osg::ref_ptr<Data::Edge> edge, Lua::LuaGraphObject* obj, osg::Vec4f defColor );
@@ -74,6 +79,8 @@ private:
      * @brief Lua graph
      */
     Lua::LuaGraph* luaGraph;
+
+    bool showLuaStats;
 
     osg::ref_ptr<osg::Camera> camera;
 

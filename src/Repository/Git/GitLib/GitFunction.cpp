@@ -2,9 +2,12 @@
 
 #include <QDebug>
 
+// TODO zmenit konstruktory
+
 Repository::Git::GitFunction::GitFunction() {
     this->name = "";
     this->id = -1;
+    this->functionRowNumber = -1;
     this->type = Repository::Git::GitType::ADDED;
     this->functionType = Repository::Git::GitFunctionType::LOCALFUNCTION;
     this->module = "";
@@ -15,6 +18,7 @@ Repository::Git::GitFunction::GitFunction() {
 
 Repository::Git::GitFunction::GitFunction( QString name ) : name( name ) {
     this->id = -1;
+    this->functionRowNumber = -1;
     this->type = Repository::Git::GitType::ADDED;
     this->functionType = Repository::Git::GitFunctionType::LOCALFUNCTION;
     this->module = "";

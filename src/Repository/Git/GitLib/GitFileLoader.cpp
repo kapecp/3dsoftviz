@@ -306,6 +306,8 @@ void Repository::Git::GitFileLoader::getDiffInfo( Repository::Git::GitFile* gitF
 		lCommand = "git diff -u " + oldCommitId + " " + currentCommitId + " -- " + lFile;
 	}
 
+//    qDebug() << lCommand;
+
 	// Vykona command, vystup ulozi do temp suboru a vrati cestu k temp suboru
     QString lTmp = Git::GitUtils::makeTmpFileFromCommand( lCommand, lFilePath );
 

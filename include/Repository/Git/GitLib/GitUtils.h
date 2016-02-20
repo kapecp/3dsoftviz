@@ -53,6 +53,8 @@ public:
 
     QList<QString> static getModifiedLuaNodesFromVersion( Repository::Git::GitEvolutionGraph* evolutionGraph, int versionNumber );
 
+
+
     QList<QString> static getIdentifiersOfChangedItems( Repository::Git::GitFile* file, Repository::Git::GitFile* otherFile );
     QList<QString> static compareTwoFunctions( Repository::Git::GitFunction* function, Repository::Git::GitFunction* otherFunction, QMap<QString, bool>* functions, QString masterIdentifier );
 

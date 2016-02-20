@@ -101,11 +101,21 @@ public:
         return this->module;
     }
 
+    int getFunctionRowNumber() {
+        return this->functionRowNumber;
+    }
+
+    void setFunctionRowNumber( int number ) {
+        this->functionRowNumber = number;
+    }
+
 private:
 
     QString name;
 
     int id;
+
+    int functionRowNumber;
 
     GitType type;
 

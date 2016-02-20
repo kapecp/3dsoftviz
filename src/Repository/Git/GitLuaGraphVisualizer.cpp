@@ -13,7 +13,7 @@
 #include <QStringList>
 
 Repository::Git::GitLuaGraphVisualizer::GitLuaGraphVisualizer( Data::Graph *currentGraph, Repository::Git::GitEvolutionGraph *evolutionGraph, osg::ref_ptr<osg::Camera> camera )
-        : currentGraph( currentGraph ), evolutionGraph( evolutionGraph ), luaGraph( Lua::LuaGraph::getInstance() ), camera( camera ) {
+        : currentGraph( currentGraph ), evolutionGraph( evolutionGraph ), luaGraph( Lua::LuaGraph::getInstance() ), showLuaStats( false ), camera( camera ) {
         if( this->currentGraph->getTypes()->size() == 0 ) {
             addDefaultTypes();
             addCustomTypes();
@@ -159,7 +159,9 @@ bool Repository::Git::GitLuaGraphVisualizer::addFileToGraph( Repository::Git::Gi
         }
         if( luaEdge ) {
             this->evolutionGraph->addLuaEdgesMapping( edgeIdentifier, luaEdge->getId() );
-            setEdgeParams( newEdge, luaEdge, osg::Vec4f( 1, 1, 1, 1 ) );
+            if( showLuaStats ) {
+                setEdgeParams( newEdge, luaEdge, osg::Vec4f( 1, 1, 1, 1 ) );
+            }
         } else {
             this->evolutionGraph->addLuaEdgesMapping( edgeIdentifier, newEdge->getId() );
         }
@@ -298,7 +300,9 @@ bool Repository::Git::GitLuaGraphVisualizer::addFunctionToGraph( Repository::Git
         this->evolutionGraph->removeRemovedNodeOrEdge( edgeIdentifier );
     }
 
-    setEdgeParams( edge, luaEdge, osg::Vec4f( 1, 1, 1, 1 ) );
+    if( showLuaStats ) {
+        setEdgeParams( edge, luaEdge, osg::Vec4f( 1, 1, 1, 1 ) );
+    }
 
     this->evolutionGraph->addLuaEdgesMapping( edgeIdentifier, luaEdge->getId() );
 
@@ -346,8 +350,9 @@ bool Repository::Git::GitLuaGraphVisualizer::addModuleFromGlobalFunction( Reposi
         this->evolutionGraph->removeRemovedNodeOrEdge( edgeIdentifier );
     }
 
-    setEdgeParams( edge, luaEdge, osg::Vec4f( 1, 1, 1, 1 ) );
-
+    if( showLuaStats ) {
+        setEdgeParams( edge, luaEdge, osg::Vec4f( 1, 1, 1, 1 ) );
+    }
     this->evolutionGraph->addLuaEdgesMapping( edgeIdentifier, luaEdge->getId() );
 
     return true;
@@ -486,7 +491,9 @@ void Repository::Git::GitLuaGraphVisualizer::updateCurrentGraphNodesId() {
         Lua::LuaNode* node = this->luaGraph->findNodeByLuaIdentifier( iterator.value()->getLuaIdentifier() );
         if( node ) {
             iterator.value()->setId( node->getId() );
-            setNodeParams( iterator.value(), node, osg::Vec4f( 1, 1, 1, 1 ), 8 );
+            if( showLuaStats ) {
+                setNodeParams( iterator.value(), node, osg::Vec4f( 1, 1, 1, 1 ), 8 );
+            }
             this->evolutionGraph->addLuaNodesMapping( node->getIdentifier(), node->getId() );
         }
     }

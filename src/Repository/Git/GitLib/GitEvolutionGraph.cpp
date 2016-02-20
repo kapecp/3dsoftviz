@@ -6,7 +6,7 @@
 #include <QMapIterator>
 
 Repository::Git::GitEvolutionGraph::GitEvolutionGraph()
-    : versions( QList<Repository::Git::GitVersion*>() ), removedFiles( QMap<QString, int>() ), removedNodesAndEdges( new QMap<QString, int>() ), nodesOccurence( QMap<QString, int>() ), luaNodesMapping( QMap<QString, int>() ), latestGitFileCallTree( QMap<QString, Repository::Git::GitFile*>() ), lifespan( 0 ), filePath( "" )
+    : versions( QList<Repository::Git::GitVersion*>() ), removedFiles( QMap<QString, int>() ), lastVersionDiff( QMap<QString, QString>() ), removedNodesAndEdges( new QMap<QString, int>() ), lastFunctionInterval( QMap<QString, QString>() ), nodesOccurence( QMap<QString, int>() ), luaNodesMapping( QMap<QString, int>() ), latestGitFileCallTree( QMap<QString, Repository::Git::GitFile*>() ), lifespan( 0 ), filePath( "" )
 {
 
 }
@@ -19,7 +19,7 @@ Repository::Git::GitEvolutionGraph::~GitEvolutionGraph()
 }
 
 Repository::Git::GitEvolutionGraph::GitEvolutionGraph( QString filePath )
-    : versions( QList<Repository::Git::GitVersion*>() ), removedFiles( QMap<QString, int>() ), removedNodesAndEdges( new QMap<QString, int>() ), nodesOccurence( QMap<QString, int>() ), luaNodesMapping( QMap<QString, int>() ), latestGitFileCallTree( QMap<QString, Repository::Git::GitFile*>() ), lifespan( 0 ), filePath( filePath )
+    : versions( QList<Repository::Git::GitVersion*>() ), removedFiles( QMap<QString, int>() ), lastVersionDiff( QMap<QString, QString>() ), removedNodesAndEdges( new QMap<QString, int>() ), lastFunctionInterval( QMap<QString, QString>() ), nodesOccurence( QMap<QString, int>() ), luaNodesMapping( QMap<QString, int>() ), latestGitFileCallTree( QMap<QString, Repository::Git::GitFile*>() ), lifespan( 0 ), filePath( filePath )
 {
 
 }

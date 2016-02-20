@@ -41,9 +41,13 @@ public:
      */
     void analyze();
 
+    void findFunctionRowsFromFile( Repository::Git::GitFile* file );
+
     void compareFilesAndSaveToEvolutionGraph( Repository::Git::GitFile* newFile, Repository::Git::GitFile* oldFile );
 
     void compareFunctions( Repository::Git::GitFunction* newFunction, Repository::Git::GitFunction* oldFunction, QMap<QString, bool>* functions, QString masterIdentifier, Repository::Git::GitFile* masterFile );
+
+    int calculateRealResult( qlonglong luaId );
 
     void setLuaGraph( Lua::LuaGraph* luaGraph ) {
         this->luaGraph = luaGraph;
@@ -80,6 +84,9 @@ public:
     }
 
 private:
+
+    bool intervalsIntersects( int firstStart, int firstEnd, int secondStart, int secondEnd );
+
     /**
      * Lua::LuaGraph* luaGraph
      * @brief Lua graph
