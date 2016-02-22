@@ -44,15 +44,15 @@ Manager::GraphManager::GraphManager()
 
 	//konfiguracia/vytvorenie DB
 	this->activeGraph = NULL;
-    this->activeEvolutionGraph = NULL;
+	this->activeEvolutionGraph = NULL;
 	this->db = new Model::DB();
 	noDatabaseFind=false;
 }
 
 Manager::GraphManager::~GraphManager()
 {
-    delete this->getActiveEvolutionGraph();
-    this->activeEvolutionGraph = NULL;
+	delete this->getActiveEvolutionGraph();
+	this->activeEvolutionGraph = NULL;
 	delete this->db;
 	this->db = NULL;
 }
@@ -350,53 +350,53 @@ bool Manager::GraphManager::loadEvolutionGraphFromGit( QString filepath )
 	Repository::Git::GitEvolutionGraph* evolutionGraph = new Repository::Git::GitEvolutionGraph( filepath );
 	evolutionGraph->setVersions( lVersions );
 
-    Repository::Git::GitEvolutionGraphManager::getInstance()->setEvolutionGraph( evolutionGraph );
+	Repository::Git::GitEvolutionGraphManager::getInstance()->setEvolutionGraph( evolutionGraph );
 
-    this->activeEvolutionGraph = Repository::Git::GitEvolutionGraphManager::getInstance()->getEvolutionGraphByExtension( Util::ApplicationConfig::get()->getValue( "Git.ExtensionFilter" ) );
+	this->activeEvolutionGraph = Repository::Git::GitEvolutionGraphManager::getInstance()->getEvolutionGraphByExtension( Util::ApplicationConfig::get()->getValue( "Git.ExtensionFilter" ) );
 //    this->activeEvolutionGraph = Repository::Git::GitEvolutionGraphManager::getInstance()->getEvolutionGraphByAuthor( "Jack Lawson" );
 
-    return lGit;
+	return lGit;
 }
 
 Data::Graph* Manager::GraphManager::importEvolutionGraph( QString filepath ) {
-    QString lName = NULL;
-    bool ok = true;
+	QString lName = NULL;
+	bool ok = true;
 
-    QFileInfo lFileInfo( filepath );
-    lName = lFileInfo.fileName();
+	QFileInfo lFileInfo( filepath );
+	lName = lFileInfo.fileName();
 
-    Repository::Git::GitEvolutionGraph* evolutionGraph = this->getActiveEvolutionGraph();
-    Data::Graph* lNewGraph = this->createGraph( lName );
+	Repository::Git::GitEvolutionGraph* evolutionGraph = this->getActiveEvolutionGraph();
+	Data::Graph* lNewGraph = this->createGraph( lName );
 
-    AppCore::Core::getInstance()->messageWindows->showProgressBar();
+	AppCore::Core::getInstance()->messageWindows->showProgressBar();
 
-    Repository::Git::GitGraphUpdater updater = Repository::Git::GitGraphUpdater( 0, evolutionGraph, lNewGraph );
-    updater.import();
+	Repository::Git::GitGraphUpdater updater = Repository::Git::GitGraphUpdater( 0, evolutionGraph, lNewGraph );
+	updater.import();
 
-    // Vytvorim layout a pridam ho grafu
-    if ( ok ) {
-        Data::GraphLayout* lGraphLayout = lNewGraph->addLayout( "new Layout " );
-        lNewGraph->selectLayout( lGraphLayout );
-    }
+	// Vytvorim layout a pridam ho grafu
+	if ( ok ) {
+		Data::GraphLayout* lGraphLayout = lNewGraph->addLayout( "new Layout " );
+		lNewGraph->selectLayout( lGraphLayout );
+	}
 
-    // Ak existoval aktivny graf, tak ho zavrem a vratim nami vytvoreny graf ako aktivny
-    if ( ok ) {
-        if ( this->activeGraph != NULL ) {
-            this->closeGraph( this->activeGraph );
-        }
+	// Ak existoval aktivny graf, tak ho zavrem a vratim nami vytvoreny graf ako aktivny
+	if ( ok ) {
+		if ( this->activeGraph != NULL ) {
+			this->closeGraph( this->activeGraph.get() );
+		}
 
-        this->activeGraph = updater.getActiveGraph();
-    }
+		this->activeGraph = updater.getActiveGraph();
+	}
 
-    // Restartnem layout
-    if ( ok ) {
-        AppCore::Core::getInstance()->restartLayout();
-    }
+	// Restartnem layout
+	if ( ok ) {
+		AppCore::Core::getInstance()->restartLayout();
+	}
 
-    AppCore::Core::getInstance()->messageWindows->closeProgressBar();
+	AppCore::Core::getInstance()->messageWindows->closeProgressBar();
 
-    // Ak nenastala ziadna chyba, tak vratim aktivny graf, inak NULL
-    return ( ok ? this->activeGraph : NULL );
+	// Ak nenastala ziadna chyba, tak vratim aktivny graf, inak NULL
+	return ( ok ? this->activeGraph.get() : NULL );
 }
 
 Data::Graph* Manager::GraphManager::createGraph( QString graphname )
@@ -559,7 +559,7 @@ void Manager::GraphManager::getDiffInfo( QString path, int version )
 	// Najdem subor, ktory bol zvoleny v grafe vo verzii, kde bol posledne modifikovany
 	bool isFound = false;
 	for ( int i = version; i >= 0; i-- ) {
-        foreach ( Repository::Git::GitFile* file, *lEvolutionGraph->getVersion( i )->getChangedFiles() ) {
+		foreach ( Repository::Git::GitFile* file, *lEvolutionGraph->getVersion( i )->getChangedFiles() ) {
 			if ( file->getFilepath() == path ) {
 				gitFile = file;
 				isFound = true;
