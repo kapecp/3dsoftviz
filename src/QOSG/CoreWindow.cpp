@@ -55,8 +55,6 @@
 #include "LuaTypes/LuaValueList.h"
 #include "LuaGraph/LuaGraphTreeModel.h"
 
-#include "Diluculum/LuaState.hpp"
-
 #include <iostream>
 #include <osg/ref_ptr>
 #include <string>
@@ -1646,13 +1644,13 @@ void CoreWindow::loadLuaGraph() {
 
 	Lua::LuaInterface* lua = Lua::LuaInterface::getInstance();
 
-	Diluculum::LuaValueList path;
+	Lua::LuaValueList path;
 	path.push_back( file.toStdString() );
 	QString createGraph[] = {"function_call_graph", "extractGraph"};
 	lua->callFunction( 2, createGraph, path );
-	lua->getLuaState()->doString( "getGraph = function_call_graph.getGraph" );
+	lua->doString( "getGraph = function_call_graph.getGraph" );
 
-	Lua::LuaInterface::getInstance()->getLuaState()->doString( "getFullGraph = getGraph" );
+	Lua::LuaInterface::getInstance()->doString( "getFullGraph = getGraph" );
 
 	Data::Graph* currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
 
@@ -4050,12 +4048,12 @@ void CoreWindow::createEvolutionLuaGraph()
 	Lua::LuaInterface* lua = Lua::LuaInterface::getInstance();
 
 
-	Diluculum::LuaValueList path;
+	Lua::LuaValueList path;
 	path.push_back( file.toStdString() );
 	QString createGraph[] = {"function_call_graph", "extractGraph"};
 	lua->callFunction( 2, createGraph, path );
-	lua->getLuaState()->doString( "getGraph = function_call_graph.getGraph" );
-	Lua::LuaInterface::getInstance()->getLuaState()->doString( "getFullGraph = getGraph" );
+	lua->doString( "getGraph = function_call_graph.getGraph" );
+	Lua::LuaInterface::getInstance()->doString( "getFullGraph = getGraph" );
 
 	Data::Graph* currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
 
