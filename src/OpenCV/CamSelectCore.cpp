@@ -34,9 +34,9 @@ OpenCV::CapVideo* OpenCV::CamSelectCore::selectCamera()
 		if ( camlist[i]->isOpened() ) {
 			data.append( "yes" );
 			data.append( "," );
-			data.append( QString::number( static_cast<int>( camlist[i]->getWidth() ) ) );
+			data.append( QString::number( camlist[i]->getWidth() ) );
 			data.append( "," );
-			data.append( QString::number( static_cast<int>( camlist[i]->getHeight() ) ) );
+			data.append( QString::number( camlist[i]->getHeight() ) );
 		}
 		else {
 			data.append( "no" );
@@ -89,7 +89,7 @@ int OpenCV::CamSelectCore::countCameras()
 	return max;
 }
 
-void OpenCV::CamSelectCore::setCam( int dev_id, int width, int height )
+void OpenCV::CamSelectCore::setCam( std::vector<OpenCV::CapVideo*>::size_type dev_id, int width, int height )
 {
 	camlist[dev_id]->startCamera( width,height );
 	this->device_id=dev_id;

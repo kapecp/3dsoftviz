@@ -110,7 +110,7 @@ void RadialLayout::update()
 				if ( mSelectedNodes.contains( node ) ) { //set attributes of current node
 					node->setColor( color ); //for debugging
 					node->setLayerID( lastLayerID ); //because repulsive forces
-					node->setRadialLayout( reinterpret_cast<RadialLayout*>( this ) ); //because repulsive forces
+					node->setRadialLayout( this ); //because repulsive forces
 					pickedNodes.insert( node );
 				}
 			}

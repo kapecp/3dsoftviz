@@ -165,7 +165,7 @@ bool PickHandler::handleScroll( const osgGA::GUIEventAdapter& ea, GUIActionAdapt
 {
 	if ( selectionType == SelectionType::CLUSTER && !pickedClusters.empty() ) {
 		QLinkedList<osg::ref_ptr<Data::Cluster> >::const_iterator i = pickedClusters.constBegin();
-		float scale = appConf->getValue( "Viewer.Display.NodeDistanceScale" ).toFloat();
+//		float scale = appConf->getValue( "Viewer.Display.NodeDistanceScale" ).toFloat();
 		while ( i != pickedClusters.constEnd() ) {
 			Layout::ShapeGetter_Cube* shapeGetter = ( *i )->getShapeGetter();
 			if ( shapeGetter != NULL ) {
@@ -279,7 +279,7 @@ bool PickHandler::handleKeyDown( const osgGA::GUIEventAdapter& ea, GUIActionAdap
 
 	// FULLSCREEN
 	else if ( ea.getKey() == 'l' || ea.getKey() == 'L' ) {
-		bool hideToolbars = appConf->getValue( "Viewer.Fullscreen" ).toInt();
+		bool hideToolbars = ( appConf->getValue( "Viewer.Fullscreen" ).toInt() == 0 ? false : true );
 
 		if ( AppCore::Core::getInstance()->getCoreWindow()->isFullScreen() ) {
 			AppCore::Core::getInstance()->getCoreWindow()->menuBar()->show();
@@ -637,7 +637,13 @@ bool PickHandler::doNodePick( osg::NodePath nodePath )
 
 bool PickHandler::doEdgePick( osg::NodePath nodePath )
 {
-	Data::Edge* e = dynamic_cast<Data::Edge*>( nodePath[nodePath.size() - 1] );
+	Data::Edge* e;
+	for ( unsigned int i = 0; i < nodePath.size(); i++ ) {
+		e = dynamic_cast<Data::Edge*>( nodePath[i] );
+		if ( e != NULL ) {
+			break;
+		}
+	}
 
 	if ( e != NULL ) {
 		if ( isAltPressed && pickMode == PickMode::NONE && !isShiftPressed ) {
@@ -713,7 +719,7 @@ bool PickHandler::doClusterPick( osg::NodePath nodePath )
 
 }
 
-void PickHandler::selectAllNeighbors( QLinkedList<osg::ref_ptr<Data::Node>> nodes )
+void PickHandler::selectAllNeighbors( QLinkedList<osg::ref_ptr<Data::Node > > nodes )
 {
 	if ( nodes.count() > 0 && !isNeighborsSelection ) {
 		QLinkedList<osg::ref_ptr<Data::Node> >::const_iterator i = nodes.constBegin();
@@ -1029,7 +1035,7 @@ osg::Vec3 PickHandler::getSelectionCenterNnE()
 			z += ( *i )->getCurrentPosition().z();
 			++i;
 		}
-		return osg::Vec3( x/pickedNodesCount,y/pickedNodesCount,z/pickedNodesCount );
+		return osg::Vec3( x/static_cast<float>( pickedNodesCount ),y/static_cast<float>( pickedNodesCount ),z/static_cast<float>( pickedNodesCount ) );
 	}
 
 	//only edges selection - computes and returns center of edges selection
@@ -1040,7 +1046,7 @@ osg::Vec3 PickHandler::getSelectionCenterNnE()
 			z += ( ( *j )->getSrcNode()->getCurrentPosition().z() + ( *j )->getDstNode()->getCurrentPosition().z() )/2;
 			++j;
 		}
-		return osg::Vec3( x/pickedEdgesCount,y/pickedEdgesCount,z/pickedEdgesCount );
+		return osg::Vec3( x/static_cast<float>( pickedNodesCount ),y/static_cast<float>( pickedNodesCount ),z/static_cast<float>( pickedNodesCount ) );
 	}
 
 	//nodes and edges selection - computes and returns center of this selection
@@ -1057,7 +1063,7 @@ osg::Vec3 PickHandler::getSelectionCenterNnE()
 			z += ( *i )->getCurrentPosition().z();
 			++i;
 		}
-		return osg::Vec3( x/( pickedEdgesCount+pickedNodesCount ),y/( pickedEdgesCount+pickedNodesCount ),z/( pickedEdgesCount+pickedNodesCount ) );
+		return osg::Vec3( x/static_cast<float>( pickedEdgesCount+pickedNodesCount ),y/static_cast<float>( pickedEdgesCount+pickedNodesCount ),z/static_cast<float>( pickedEdgesCount+pickedNodesCount ) );
 	}
 
 	//if are all nodes and edges unselected, returns center of graph

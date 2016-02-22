@@ -1,7 +1,7 @@
-![Arvis](http://team05-13.ucebne.fiit.stuba.sk/gfx/arvis_logo.png)
-## Arvis (Augmented reality and Data Visualization)
+![Team #4, alphaReach](http://labss2.fiit.stuba.sk/TeamProject/2015/team04is-si/img/portfolio/preview-poster.jpg)
+## αReach
 
-* Website: www.arvis.sk
+* Website: www.http://labss2.fiit.stuba.sk/TeamProject/2015/team04is-si/
 
 ### Requirements and Setup
 

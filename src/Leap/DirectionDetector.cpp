@@ -67,10 +67,7 @@ Leap::DirectionDetector::Direction Leap::DirectionDetector::getPalmDirection( Ha
 	float pitch = getPitch( hand );
 	float roll = getRoll( hand );
 
-	if ( isSteady( pitch,roll ) ) {
-		return Leap::DirectionDetector::Direction::STEADY;
-	}
-	else if ( isUp( pitch,roll ) ) {
+	if ( isUp( pitch,roll ) ) {
 		return Leap::DirectionDetector::Direction::UP;
 	}
 	else if ( isDown( pitch,roll ) ) {
@@ -81,5 +78,8 @@ Leap::DirectionDetector::Direction Leap::DirectionDetector::getPalmDirection( Ha
 	}
 	else if ( isLeft( pitch,roll ) ) {
 		return Leap::DirectionDetector::Direction::LEFT;
+	}
+	else {
+		return Leap::DirectionDetector::Direction::STEADY;
 	}
 }

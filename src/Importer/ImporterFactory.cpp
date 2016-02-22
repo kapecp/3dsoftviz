@@ -8,7 +8,7 @@
 namespace Importer {
 
 bool ImporterFactory::createByFileExtension(
-	std::auto_ptr<StreamImporter>& importer,
+	std::shared_ptr<StreamImporter>& importer,
 	bool& importerFound,
 	const QString& fileExtension
 )

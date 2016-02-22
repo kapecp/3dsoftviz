@@ -40,7 +40,9 @@ void Lua::LuaGraphVisualizer::setNodeParams( osg::ref_ptr<Data::Node> node, Lua:
 
 void Lua::LuaGraphVisualizer::setEdgeParams( osg::ref_ptr<Data::Edge> edge, Lua::LuaGraphObject* obj, osg::Vec4f defColor )
 {
-	( ( Data::AbsEdge* )edge )->setName( obj->getLabel() );
+	//( ( Data::AbsEdge* )edge )->setName( obj->getLabel() );
+	( dynamic_cast<Data::AbsEdge*>( edge.get() ) )->setName( obj->getLabel() );
+
 	float r = obj->getFloatParam( "colorR", defColor.r() );
 	float g = obj->getFloatParam( "colorG", defColor.g() );
 	float b = obj->getFloatParam( "colorB", defColor.b() );

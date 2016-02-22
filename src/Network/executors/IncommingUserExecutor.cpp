@@ -2,6 +2,11 @@
 #include "Network/executors/WelcomeExecutor.h"
 #include "Network/Server.h"
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wold-style-cast"
+#pragma GCC diagnostic ignored "-Wuseless-cast"
+#pragma GCC diagnostic ignored "-Wsign-conversion"
+
 namespace Network {
 
 void IncommingUserExecutor::execute_server()
@@ -45,3 +50,5 @@ void IncommingUserExecutor::execute_client()
 }
 
 } // namespace Network
+
+#pragma GCC diagnostic pop

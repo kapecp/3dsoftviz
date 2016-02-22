@@ -13,7 +13,7 @@ namespace Manager {
 #define NORETURN __declspec(noreturn)
 #endif
 
-void ImportInfoHandlerImpl::addMessage()
+void NORETURN ImportInfoHandlerImpl::addMessage()
 {
 	throw "not implemented";
 }
@@ -33,7 +33,7 @@ void ImportInfoHandlerImpl::setProgress(
 	const unsigned int value
 )
 {
-	AppCore::Core::getInstance()->messageWindows->setProgressBarValue( value );
+	AppCore::Core::getInstance()->messageWindows->setProgressBarValue( static_cast<int>( value ) );
 }
 
 } // namespace

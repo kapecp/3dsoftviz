@@ -177,7 +177,7 @@ void Lua::LuaGraphTreeModel::loadLuaModel( QString name, const Diluculum::LuaVal
 		LuaGraphTreeItem* newParent = new LuaGraphTreeItem( QList<QVariant>() << name << "", parent );
 		parent->appendChild( newParent );
 		Diluculum::LuaValueMap tableValue = value.asTable();
-		for ( Diluculum::LuaValueMap::iterator i = tableValue.begin(); i != tableValue.end(); i++ ) {
+		for ( Diluculum::LuaValueMap::iterator i = tableValue.begin(); i != tableValue.end(); ++i ) {
 			loadLuaModel( QString::fromStdString( i->first.asString() ), i->second, newParent );
 		}
 	}
