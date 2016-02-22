@@ -12,6 +12,7 @@
 #include "GitLib/GitVersion.h"
 #include "GitLib/GitUtils.h"
 #include "GitLib/GitEvolutionGraphManager.h"
+#include "GitLib/GitMetaData.h"
 #include "Repository/Git/GitLuaGraphAnalyzer.h"
 #include "Repository/Git/GitLuaGraphVisualizer.h"
 
@@ -3778,8 +3779,10 @@ void CoreWindow::onChange()
         Repository::Git::GitEvolutionGraph* evolutionGraph = Manager::GraphManager::getInstance()->getActiveEvolutionGraph();
         if( evolutionGraph ) {
             QString identifier = selected->last()->getLuaIdentifier();
-            if( evolutionGraph->getLuaNodesMapping().contains( identifier ) ) {
-                lastNodeId = evolutionGraph->getLuaNodesMapping().value( identifier );
+//            if( evolutionGraph->getLuaNodesMapping().contains( identifier ) ) {
+            if( evolutionGraph->getMetaDataFromIdentifier( identifier )->getLuaMapping() != -1 ) {
+//                lastNodeId = evolutionGraph->getLuaNodesMapping().value( identifier );
+                lastNodeId = evolutionGraph->getMetaDataFromIdentifier( identifier )->getLuaMapping();
             }
 
         } else {

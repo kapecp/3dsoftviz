@@ -13,6 +13,7 @@
 #include "GitLib/GitFileLoader.h"
 #include "GitLib/GitFileDiffBlock.h"
 #include "GitLib/GitFileDiffBlockLine.h"
+#include "GitLib/GitMetaData.h"
 
 #include <QDebug>
 #include <QFile>
@@ -202,7 +203,7 @@ void Repository::Git::GitLuaGraphAnalyzer::analyze() {
                                 functionPairNode = this->luaGraph->getNodes()->value( functionOtherIncidence->getEdgeNodePair().second );
 
                                 // Ziskam identifikator funkcie(moze ist o lokalnu, aj globalnu)
-                                QString innerFunctionIdentifier =  functionPairNode->getIdentifier();
+                                QString innerFunctionIdentifier = functionPairNode->getIdentifier();
                                 /*QString innerFunctionIdentifier =  functionEdge->getIdentifier().replace( "+", "" ).replace( pairNode->getIdentifier(), "" );
                                 // pri ojedinelych pripadoch sa stane pripad, kedy ide hrana do tohto isteho uzla
                                 // zatial work around
@@ -260,14 +261,14 @@ void Repository::Git::GitLuaGraphAnalyzer::analyze() {
             findFunctionRowsFromFile( file );
 
             // Ziskam starsiu verziu daneho suboru
-            Repository::Git::GitFile* oldFile = evolutionGraph->getLatestGitFileCallTree().value( file->getIdentifier() );
+            Repository::Git::GitFile* oldFile = evolutionGraph->getMetaDataFromIdentifier( file->getIdentifier() )->getCallTree();
 
             // Porovnam aktualnu verziu suboru s predoslou verziou
             compareFilesAndSaveToEvolutionGraph( file, oldFile );
 
             // Nahradim predoslu verziu sucasnou v mape verzii suborov a ich podstromov
-            this->evolutionGraph->addLatestGitFileCallTree( file->getIdentifier(), file );
-            this->evolutionGraph->addLastVersionDiff( file->getIdentifier(), version->getCommitId() );
+            this->evolutionGraph->getMetaDataFromIdentifier( file->getIdentifier() )->setCallTree( file );
+            this->evolutionGraph->getMetaDataFromIdentifier( file->getIdentifier() )->setLastDiffVersion( version->getCommitId() );
 
 /*
             for( QMap<QString, Repository::Git::GitFunction*>::iterator  iterator = file->getGitFunctions()->begin(); iterator != file->getGitFunctions()->end(); ++iterator ) {
@@ -293,7 +294,7 @@ void Repository::Git::GitLuaGraphAnalyzer::analyze() {
     // Spracovanie suborov, ktore maju typ REMOVED
     QMap<QString, Repository::Git::GitFile*>* removedFiles = this->evolutionGraph->getVersion( this->getVersionNumber() )->getGitFilesByType( Repository::Git::GitType::REMOVED );
     for( QMap<QString, Repository::Git::GitFile*>::iterator iterator = removedFiles->begin(); iterator != removedFiles->end(); ++iterator ) {
-        Repository::Git::GitFile* oldFile = this->evolutionGraph->getLatestGitFileCallTree().value( iterator.value()->getIdentifier() );
+        Repository::Git::GitFile* oldFile = this->evolutionGraph->getMetaDataFromIdentifier( iterator.value()->getIdentifier() )->getCallTree();
         compareFilesAndSaveToEvolutionGraph( nullptr, oldFile );
     }
 
@@ -313,7 +314,7 @@ void Repository::Git::GitLuaGraphAnalyzer::compareFilesAndSaveToEvolutionGraph( 
 
     if( file->getType() == Repository::Git::GitType::MODIFIED ) {
         Repository::Git::GitFileLoader loader = Repository::Git::GitFileLoader( this->evolutionGraph->getFilePath(), "" );
-        loader.getDiffInfo( file, this->evolutionGraph->getVersion( this->versionNumber )->getCommitId(), this->evolutionGraph->getLastVersionDiff().value( file->getIdentifier() ) );
+        loader.getDiffInfo( file, this->evolutionGraph->getVersion( this->versionNumber )->getCommitId(), this->evolutionGraph->getMetaDataFromIdentifier( file->getIdentifier() )->getLastDiffVersion() );
 //        foreach( Repository::Git::GitFileDiffBlock* block, file->getGitFileDiffBlocks() ) {
 //            block->printInfo();
 //            qDebug() << "Previous";
@@ -484,7 +485,7 @@ void Repository::Git::GitLuaGraphAnalyzer::compareFunctions( Repository::Git::Gi
             int oldFunctionStart = -1;
             int oldFunctionEnd = -1;
 
-            QString oldFunctionInterval = this->evolutionGraph->getLastFunctionInterval().value( newFunction->getIdentifier() );
+            QString oldFunctionInterval = this->evolutionGraph->getMetaDataFromIdentifier( newFunction->getIdentifier() )->getLastFunctionInterval();
             if( oldFunctionInterval != nullptr && oldFunctionInterval != "" ) {
                 oldFunctionStart = oldFunctionInterval.split( "-" ).at( 0 ).toInt();
                 oldFunctionEnd = oldFunctionInterval.split( "-" ).at( 1 ).toInt();
@@ -558,7 +559,7 @@ void Repository::Git::GitLuaGraphAnalyzer::compareFunctions( Repository::Git::Gi
                 }
             }
 
-            this->evolutionGraph->addLastFunctionInterval( newFunction->getIdentifier(), functionStart + "-" + functionEnd );
+            this->evolutionGraph->getMetaDataFromIdentifier( newFunction->getIdentifier() )->setLastFunctionInterval( QString::number( functionStart ) + "-" + QString::number( functionEnd ) );
 
         }
     }
@@ -592,8 +593,8 @@ void Repository::Git::GitLuaGraphAnalyzer::compareFunctions( Repository::Git::Gi
         }
 
         if( oldFunction->getFunctionType() == Repository::Git::GitFunctionType::LOCALFUNCTION ) {
-            if( this->evolutionGraph->getLastFunctionInterval().contains( oldFunction->getIdentifier() ) ) {
-                this->evolutionGraph->getLastFunctionInterval().remove( oldFunction->getIdentifier() );
+            if( this->evolutionGraph->getMetaDataFromIdentifier( oldFunction->getIdentifier() )->getLastFunctionInterval() != "" ) {
+                this->evolutionGraph->getMetaDataFromIdentifier( oldFunction->getIdentifier() )->setLastFunctionInterval( "" );
             }
         }
     } else {
@@ -627,7 +628,7 @@ void Repository::Git::GitLuaGraphAnalyzer::compareFunctions( Repository::Git::Gi
         if( newFunction->getFunctionType() == Repository::Git::GitFunctionType::LOCALFUNCTION ) {
             int result = calculateRealResult( newFunction->getId() );
             QString interval = QString::number( newFunction->getFunctionRowNumber() ) + "-" + QString::number( newFunction->getFunctionRowNumber() + result );
-            this->evolutionGraph->addLastFunctionInterval( newFunction->getIdentifier(), interval );
+            this->evolutionGraph->getMetaDataFromIdentifier( newFunction->getIdentifier() )->setLastFunctionInterval( interval );
         }
     }
 }
