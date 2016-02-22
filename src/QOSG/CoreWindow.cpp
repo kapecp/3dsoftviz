@@ -729,7 +729,7 @@ void CoreWindow::createActions()
 	connect( evolutionTimer, SIGNAL( timeout() ), this, SLOT( move() ) );
 
 	chb_git_changeCommits = new QCheckBox( tr( "Change commits" ) );
-	chb_git_changeCommits->setChecked( true );
+	chb_git_changeCommits->setChecked( false );
 	connect( chb_git_changeCommits, SIGNAL( clicked( bool ) ), this, SLOT( changeCommits( bool ) ) );
 	// garaj end
 }
