@@ -1647,7 +1647,7 @@ void CoreWindow::loadLuaGraph() {
 	Lua::LuaValueList path;
 	path.push_back( file.toStdString() );
 	QString createGraph[] = {"function_call_graph", "extractGraph"};
-	lua->callFunction( 2, createGraph, path );
+	lua->callFunction( 2, createGraph, path.getValue() );
 	lua->doString( "getGraph = function_call_graph.getGraph" );
 
 	Lua::LuaInterface::getInstance()->doString( "getFullGraph = getGraph" );
@@ -4051,7 +4051,7 @@ void CoreWindow::createEvolutionLuaGraph()
 	Lua::LuaValueList path;
 	path.push_back( file.toStdString() );
 	QString createGraph[] = {"function_call_graph", "extractGraph"};
-	lua->callFunction( 2, createGraph, path );
+	lua->callFunction( 2, createGraph, path.getValue() );
 	lua->doString( "getGraph = function_call_graph.getGraph" );
 	Lua::LuaInterface::getInstance()->doString( "getFullGraph = getGraph" );
 
