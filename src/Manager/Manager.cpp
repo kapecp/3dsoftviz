@@ -385,7 +385,10 @@ Data::Graph* Manager::GraphManager::importEvolutionGraph( QString filepath ) {
 			this->closeGraph( this->activeGraph.get() );
 		}
 
-		this->activeGraph = updater.getActiveGraph();
+		// TEMPFIX
+		std::shared_ptr<Data::Graph> newGraph( updater.getActiveGraph() );
+		this->activeGraph = newGraph;
+//		this->activeGraph = updater.getActiveGraph();
 	}
 
 	// Restartnem layout
