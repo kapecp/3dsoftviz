@@ -3706,13 +3706,17 @@ void CoreWindow::loadFunctionCall()
 		currentGraph = Manager::GraphManager::getInstance()->createNewGraph( "LuaGraph" );
 	}
 
+	/*
+	 * TEMPFIX: fix due to crashing program after load function call
+	 *
+
 	// ak nie je zmena commitu zaskrtnuta, tak vytvor novy graf
 	if( !chb_git_changeCommits->isChecked() ) {
 		currentGraph = Manager::GraphManager::getInstance()->createNewGraph( "LuaGraph" );
 	}
-
 	layout->pause();
 	coreGraph->setNodesFreezed( true );
+	*/
 
 	Lua::LuaGraphVisualizer* visualizer = NULL;
 	if( chb_git_changeCommits->isChecked() ) {
