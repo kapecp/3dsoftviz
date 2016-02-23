@@ -512,7 +512,7 @@ void Repository::Git::GitLuaGraphAnalyzer::compareFunctions( Repository::Git::Gi
 
                                     masterFile->addGitFunction( function );
                                 } else {
-                                    if( function->getFunctionType() != Repository::Git::MODIFIED ) {
+                                    if( function->getType() != Repository::Git::GitType::MODIFIED ) {
                                         qDebug() << function->getIdentifier() << "je ulozeny inak ako MODIFIED";
                                     }
                                 }
@@ -539,7 +539,7 @@ void Repository::Git::GitLuaGraphAnalyzer::compareFunctions( Repository::Git::Gi
 
                                     masterFile->addGitFunction( function );
                                 } else {
-                                    if( function->getFunctionType() != Repository::Git::MODIFIED ) {
+                                    if( function->getType() != Repository::Git::GitType::MODIFIED ) {
                                         qDebug() << function->getIdentifier() << "je ulozeny inak ako MODIFIED";
                                     }
                                 }
