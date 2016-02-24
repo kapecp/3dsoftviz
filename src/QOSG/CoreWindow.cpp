@@ -12,6 +12,7 @@
 #include "GitLib/GitVersion.h"
 #include "GitLib/GitUtils.h"
 #include "GitLib/GitEvolutionGraphManager.h"
+#include "GitLib/GitMetaData.h"
 #include "Repository/Git/GitLuaGraphAnalyzer.h"
 #include "Repository/Git/GitLuaGraphVisualizer.h"
 
@@ -137,7 +138,7 @@ CoreWindow::CoreWindow( QWidget* parent, Vwr::CoreGraph* coreGraph, QApplication
 					  viewerWidget->getCameraManipulator(), SLOT( setCameraCanRot( bool ) ) );
 
 	Lua::LuaInterface::getInstance()->executeFile( "main.lua" );
-	viewerWidget->getPickHandler()->setSelectionObserver( this );
+    viewerWidget->getPickHandler()->setSelectionObserver( this );
 
 	QObject::connect( viewerWidget->getCameraManipulator(), SIGNAL( sendTranslatePosition( osg::Vec3d ) ),
 					  this->coreGraph, SLOT( translateGraph( osg::Vec3d ) ) );
@@ -728,9 +729,9 @@ void CoreWindow::createActions()
 	evolutionTimer = new QTimer( this );
 	connect( evolutionTimer, SIGNAL( timeout() ), this, SLOT( move() ) );
 
-	chb_git_changeCommits = new QCheckBox( tr( "Change commits" ) );
-	chb_git_changeCommits->setChecked( false );
-	connect( chb_git_changeCommits, SIGNAL( clicked( bool ) ), this, SLOT( changeCommits( bool ) ) );
+    chb_git_changeCommits = new QCheckBox( tr( "Change commits" ) );
+    chb_git_changeCommits->setChecked( true );
+    connect( chb_git_changeCommits, SIGNAL( clicked( bool ) ), this, SLOT( changeCommits( bool ) ) );
 	// garaj end
 }
 
@@ -3659,22 +3660,7 @@ void CoreWindow::createMetricsToolBar()
 
 void CoreWindow::loadFunctionCall()
 {
-	QString file = "";
-
-	// ziskam evolucny graf, v pripade, ze nebol este nacitany, tak sa vrati NULL
-	Repository::Git::GitEvolutionGraph* evolutionGraph = Manager::GraphManager::getInstance()->getActiveEvolutionGraph();
-
-	// ak je evolucny graf neinicializovany alebo nie je zaskrtnuta volba zmeny commitu, tak poskytneme vyber projektu,
-	// inak skontrolujeme, ci je evolucny graf inicializovany a vyuzijeme cestu z evolucneho grafu
-	if( !chb_git_changeCommits->isChecked() || evolutionGraph == NULL ) {
-		file = QFileDialog::getExistingDirectory( this, "Select lua project folder", "." );
-	} else {
-
-		// ak je evolucny graf inicializovany, tak vyuzijeme cestu k projektu
-		if( evolutionGraph != NULL ) {
-			file = evolutionGraph->getFilePath();
-		}
-	}
+    QString file = QFileDialog::getExistingDirectory( this, "Select lua project folder", "." );
 
 	// ak sa predchadzajucou volbou neziskala cesta ku projektu, tak ukonci metodu
 	if( file == "" ) {
@@ -3694,37 +3680,16 @@ void CoreWindow::loadFunctionCall()
 
 	Data::Graph* currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
 
-	// ak bol vytvoreny graf a zmena commitu nie je zaskrtnuta, tak vymazem aktualny graf,
-	// v opacnom pripade sa graf ponecha
 	if ( currentGraph != NULL ) {
+        Manager::GraphManager::getInstance()->closeGraph( currentGraph );
+    }
+    currentGraph = Manager::GraphManager::getInstance()->createNewGraph( "LuaGraph" );
 
-		// ak zmena commitu nie je zaskrtnuta, tak vymaz aktualny graf
-		if( !chb_git_changeCommits->isChecked() ) {
-			Manager::GraphManager::getInstance()->closeGraph( currentGraph );
-		}
-	} else {
-		currentGraph = Manager::GraphManager::getInstance()->createNewGraph( "LuaGraph" );
-	}
 
-	/*
-	 * TEMPFIX: fix due to crashing program after load function call
-	 *
-
-	// ak nie je zmena commitu zaskrtnuta, tak vytvor novy graf
-	if( !chb_git_changeCommits->isChecked() ) {
-		currentGraph = Manager::GraphManager::getInstance()->createNewGraph( "LuaGraph" );
-	}
 	layout->pause();
 	coreGraph->setNodesFreezed( true );
-	*/
 
-	Lua::LuaGraphVisualizer* visualizer = NULL;
-	if( chb_git_changeCommits->isChecked() ) {
-		visualizer = new Lua::GitGraphVisualizer( currentGraph, coreGraph->getCamera() );
-	} else {
-		visualizer = new Lua::SimpleGraphVisualizer( currentGraph, coreGraph->getCamera() );
-	}
-
+    Lua::LuaGraphVisualizer* visualizer = visualizer = new Lua::SimpleGraphVisualizer( currentGraph, coreGraph->getCamera() );
 	visualizer->visualize();
 
 	coreGraph->reloadConfig();
@@ -3779,26 +3744,28 @@ void CoreWindow::onChange()
 
 	if ( selected->size() > 0 ) {
 		// Get last node model & display it in qt view
-		qlonglong lastNodeId = 0;
-		Repository::Git::GitEvolutionGraph* evolutionGraph = Manager::GraphManager::getInstance()->getActiveEvolutionGraph();
-		if( evolutionGraph ) {
-			QString identifier = selected->last()->getLuaIdentifier();
-			if( evolutionGraph->getLuaNodesMapping().contains( identifier ) ) {
-				lastNodeId = evolutionGraph->getLuaNodesMapping().value( identifier );
-			}
+        qlonglong lastNodeId = 0;
+        Repository::Git::GitEvolutionGraph* evolutionGraph = Manager::GraphManager::getInstance()->getActiveEvolutionGraph();
+        if( evolutionGraph ) {
+            QString identifier = selected->last()->getLuaIdentifier();
+//            if( evolutionGraph->getLuaNodesMapping().contains( identifier ) ) {
+            if( evolutionGraph->getMetaDataFromIdentifier( identifier )->getLuaMapping() != -1 ) {
+//                lastNodeId = evolutionGraph->getLuaNodesMapping().value( identifier );
+                lastNodeId = evolutionGraph->getMetaDataFromIdentifier( identifier )->getLuaMapping();
+            }
 
-		} else {
-			lastNodeId = selected->last()->getId();
-		}
+        } else {
+            lastNodeId = selected->last()->getId();
+        }
 
-		if( lastNodeId != 0 ) {
-			Lua::LuaNode* lastLuaNode = Lua::LuaGraph::getInstance()->getNodes()->value( lastNodeId );
-			// garaj start - ak nenaslo lastLuaNode, tak sposobovalo pad softveru
-			if ( lastLuaNode ) {
-				Lua::LuaGraphTreeModel* lastLuaModel = new Lua::LuaGraphTreeModel( lastLuaNode );
-				luaGraphTreeView->setModel( lastLuaModel );
-			}
-		}
+        if( lastNodeId != 0 ) {
+            Lua::LuaNode* lastLuaNode = Lua::LuaGraph::getInstance()->getNodes()->value( lastNodeId );
+            // garaj start - ak nenaslo lastLuaNode, tak sposobovalo pad softveru
+            if ( lastLuaNode ) {
+                Lua::LuaGraphTreeModel* lastLuaModel = new Lua::LuaGraphTreeModel( lastLuaNode );
+                luaGraphTreeView->setModel( lastLuaModel );
+            }
+        }
 		// garaj end
 	}
 
