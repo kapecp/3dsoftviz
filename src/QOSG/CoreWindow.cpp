@@ -3659,22 +3659,7 @@ void CoreWindow::createMetricsToolBar()
 
 void CoreWindow::loadFunctionCall()
 {
-    QString file = "";
-
-    // ziskam evolucny graf, v pripade, ze nebol este nacitany, tak sa vrati NULL
-    Repository::Git::GitEvolutionGraph* evolutionGraph = Manager::GraphManager::getInstance()->getActiveEvolutionGraph();
-
-    // ak je evolucny graf neinicializovany alebo nie je zaskrtnuta volba zmeny commitu, tak poskytneme vyber projektu,
-    // inak skontrolujeme, ci je evolucny graf inicializovany a vyuzijeme cestu z evolucneho grafu
-    if( !chb_git_changeCommits->isChecked() || evolutionGraph == NULL ) {
-        file = QFileDialog::getExistingDirectory( this, "Select lua project folder", "." );
-    } else {
-
-        // ak je evolucny graf inicializovany, tak vyuzijeme cestu k projektu
-        if( evolutionGraph != NULL ) {
-            file = evolutionGraph->getFilePath();
-        }
-    }
+    QString file = QFileDialog::getExistingDirectory( this, "Select lua project folder", "." );
 
     // ak sa predchadzajucou volbou neziskala cesta ku projektu, tak ukonci metodu
     if( file == "" ) {
@@ -3694,33 +3679,16 @@ void CoreWindow::loadFunctionCall()
 
 	Data::Graph* currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
 
-    // ak bol vytvoreny graf a zmena commitu nie je zaskrtnuta, tak vymazem aktualny graf,
-    // v opacnom pripade sa graf ponecha
 	if ( currentGraph != NULL ) {
-
-        // ak zmena commitu nie je zaskrtnuta, tak vymaz aktualny graf
-        if( !chb_git_changeCommits->isChecked() ) {
-            Manager::GraphManager::getInstance()->closeGraph( currentGraph );
-        }
-    } else {
-        currentGraph = Manager::GraphManager::getInstance()->createNewGraph( "LuaGraph" );
+        Manager::GraphManager::getInstance()->closeGraph( currentGraph );
     }
+    currentGraph = Manager::GraphManager::getInstance()->createNewGraph( "LuaGraph" );
 
-    // ak nie je zmena commitu zaskrtnuta, tak vytvor novy graf
-    if( !chb_git_changeCommits->isChecked() ) {
-        currentGraph = Manager::GraphManager::getInstance()->createNewGraph( "LuaGraph" );
-    }
 
 	layout->pause();
 	coreGraph->setNodesFreezed( true );
 
-    Lua::LuaGraphVisualizer* visualizer = NULL;
-    if( chb_git_changeCommits->isChecked() ) {
-        visualizer = new Lua::GitGraphVisualizer( currentGraph, coreGraph->getCamera() );
-    } else {
-        visualizer = new Lua::SimpleGraphVisualizer( currentGraph, coreGraph->getCamera() );
-    }
-
+    Lua::LuaGraphVisualizer* visualizer = visualizer = new Lua::SimpleGraphVisualizer( currentGraph, coreGraph->getCamera() );
 	visualizer->visualize();
 
 	coreGraph->reloadConfig();
