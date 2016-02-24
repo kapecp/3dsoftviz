@@ -414,7 +414,7 @@ if( USE_BUILTIN_DEPENDENCIES )
 			# prevent building the default target (make install)
 		BUILD_COMMAND ""
 			# force building the install_unity target
-        INSTALL_COMMAND "${CMAKE_COMMAND}" --build . --target install_unity# -- "-j${N}"
+		INSTALL_COMMAND "${CMAKE_COMMAND}" --build . --target install_unity# -- "-j${N}"
 	)
 
 	add_library( igloo INTERFACE IMPORTED )
@@ -924,7 +924,7 @@ add_library( noiseutils STATIC dependencies/noiseutils/noiseutils.cpp )
 target_include_directories( noiseutils SYSTEM PUBLIC ${DEPENDENCIES_INCLUDE_DIR}/libnoise dependencies/noiseutils  )
 
 add_library( qtcolorpicker STATIC dependencies/qtcolorpicker/qtcolorpicker.cpp )
-target_include_directories( noiseutils SYSTEM PUBLIC dependencies/qtcolorpicker )
+target_include_directories( qtcolorpicker SYSTEM PUBLIC dependencies/qtcolorpicker )
 
 # ---------------------------------------------------------------
 # Build modules as libraries
@@ -1016,7 +1016,7 @@ endif()
 if( USE_BUILTIN_DEPENDENCIES )
 
 	# dependencies of non-unity build
-    add_dependencies( ${3DSOFTVIZ_NAME} libnoise osgModeling gitlib dep_luametrics dep_leg dep_lpeg dep_luafilesystem igloo dep_lualogging)
+	add_dependencies( ${3DSOFTVIZ_NAME} libnoise osgModeling gitlib dep_luametrics dep_leg dep_lpeg dep_luafilesystem igloo dep_lualogging)
 
 	if( MSVC OR APPLE )
 		add_dependencies( ${3DSOFTVIZ_NAME} dep_lua )
@@ -1178,12 +1178,12 @@ set_target_properties( all_bdd_tests
 	)
 target_include_directories( all_bdd_tests
 	SYSTEM PUBLIC
-        include/Repository/Git
+		include/Repository/Git
 	)
 
 target_link_libraries( all_bdd_tests
 	${QT_LIBRARIES}
-    gitlib
+	gitlib
 )
 
 add_dependencies( all_bdd_tests igloo)
