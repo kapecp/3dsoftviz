@@ -13,6 +13,7 @@
 #include "GitLib/GitFile.h"
 #include "GitLib/GitFunction.h"
 #include "GitLib/GitUtils.h"
+#include "GitLib/GitMetaData.h"
 
 #include <QMap>
 
@@ -47,7 +48,8 @@ void Lua::GitGraphVisualizer::visualize()
 
         n->setType( nodeType );
         setNodeParams( n, i.value(), osg::Vec4f( 1,1,1,1 ), 8 );
-        evolutionGraph->addLuaNodesMapping( i.value()->getIdentifier(), i.value()->getId() );        
+//        evolutionGraph->addLuaNodesMapping( i.value()->getIdentifier(), i.value()->getId() );
+        evolutionGraph->getMetaDataFromIdentifier( i.value()->getIdentifier() )->setLuaMapping( i.value()->getId() );
     }
 
     for ( QMap<qlonglong, Lua::LuaEdge*>::iterator i = g->getEdges()->begin(); i != g->getEdges()->end(); ++i ) {
@@ -80,7 +82,8 @@ void Lua::GitGraphVisualizer::visualize()
         newEdge->setCamera( camera );
         setEdgeParams( newEdge, i.value(), osg::Vec4f( 1,1,1,1 ) );
         newEdge->setEdgeColor( osg::Vec4f( 1,1,1,1 ) );
-        evolutionGraph->addLuaEdgesMapping( i.value()->getIdentifier(), i.value()->getId() );
+//        evolutionGraph->addLuaEdgesMapping( i.value()->getIdentifier(), i.value()->getId() );
+        evolutionGraph->getMetaDataFromIdentifier( i.value()->getIdentifier() )->setLuaMapping( i.value()->getId() );
     }
     g->setObserver( this );
     /*

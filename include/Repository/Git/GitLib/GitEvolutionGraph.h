@@ -2,6 +2,7 @@
 #define GITEVOLUTIONGRAPH_H
 
 #include "GitLib/GitExport.h"
+#include "GitLib/GitType.h"
 #include <QString>
 #include <QStringList>
 #include <QList>
@@ -11,6 +12,7 @@ namespace Repository {
 namespace Git {
 class GitVersion;
 class GitFile;
+class GitMetaData;
 
 class GITLIB_EXPORT GitEvolutionGraph
 {
@@ -129,16 +131,16 @@ public:
      * @param identifier Unique identifier of lua node
      * @param luaNodeId Unique id of current loaded lua node
      */
-    void addLuaNodesMapping( QString identifier, int luaNodeId );
+//    void addLuaNodesMapping( QString identifier, int luaNodeId );
 
     /**
      * QMap<QString, int> getLuaNodeMapping()
      * @brief Returns map, where key is unique identifier of lua node and value is unique id of current loaded lua node
      * @return map, where key is unique identifier of lua node and value is unique id of current loaded lua node
      */
-    QMap<QString, int> getLuaNodesMapping() {
-        return this->luaNodesMapping;
-    }
+//    QMap<QString, int> getLuaNodesMapping() {
+//        return this->luaNodesMapping;
+//    }
 
     /**
      * void addLuaEdgesMapping( QString identifier, int luaEdgeId )
@@ -146,16 +148,16 @@ public:
      * @param identifier Unique identifier of lua edge
      * @param luaNodeId Unique id of current loaded lua edge
      */
-    void addLuaEdgesMapping( QString identifier, int luaEdgeeId );
+//    void addLuaEdgesMapping( QString identifier, int luaEdgeeId );
 
     /**
      * QMap<QString, int> getLuaEdgesMapping()
      * @brief Returns map, where key is unique identifier of lua edge and value is unique id of current loaded lua edge
      * @return map, where key is unique identifier of lua edge and value is unique id of current loaded lua edge
      */
-    QMap<QString, int> getLuaEdgesMapping() {
-        return this->luaEdgesMapping;
-    }
+//    QMap<QString, int> getLuaEdgesMapping() {
+//        return this->luaEdgesMapping;
+//    }
 
     /**
      * void addLatestGitFileCallTree( QString identifier, Repository::Git::GitFile* gitFile )
@@ -163,18 +165,18 @@ public:
      * @param identifier Identifier of git file
      * @param gitFile Reference to git file which consists only with call tree
      */
-    void addLatestGitFileCallTree( QString identifier, Repository::Git::GitFile* gitFile ) {
-        this->latestGitFileCallTree.insert( identifier, gitFile );
-    }
+//    void addLatestGitFileCallTree( QString identifier, Repository::Git::GitFile* gitFile ) {
+//        this->latestGitFileCallTree.insert( identifier, gitFile );
+//    }
 
     /**
      * QMap<QString, Repository::Git::GitFile*> getLatestGitFileCallTree()
      * @brief Returns map of latest version of stored git files, which consists only with file call tree
      * @return Map of latest version of stored git files, which consists only with file call tree
      */
-    QMap<QString, Repository::Git::GitFile*> getLatestGitFileCallTree() {
-        return this->latestGitFileCallTree;
-    }
+//    QMap<QString, Repository::Git::GitFile*> getLatestGitFileCallTree() {
+//        return this->latestGitFileCallTree;
+//    }
 
 	/**
 	 * void removeRemovedFiles( QString name )
@@ -188,12 +190,12 @@ public:
      * @brief Add removed file by its identifier
      * @param identifier Node identifier
      */
-    void addRemovedNodeOrEdge( QString identifier, int version ) {
-        this->removedNodesAndEdges->insert( identifier, version );
+    void addChangedNodeOrEdge( QString identifier, Repository::Git::GitType type ) {
+        this->changedNodesAndEdges->insert( identifier, type );
     }
 
-    void removeRemovedNodeOrEdge( QString identifier ) {
-        this->removedNodesAndEdges->remove( identifier );
+    void removeChangedNodeOrEdge( QString identifier ) {
+        this->changedNodesAndEdges->remove( identifier );
     }
 
     /**
@@ -202,7 +204,7 @@ public:
      * @param identifier Key of node in map
      * @return Newly set value for identifier
      */
-    int addNodeOccurence( QString identifier );
+//    int addNodeOccurence( QString identifier );
 
     /**
      * int removeNodeOccurence( QString identifier )
@@ -210,36 +212,42 @@ public:
      * @param identifier Key of node in map
      * @return Newly set value for identifier
      */
-    int removeNodeOccurence( QString identifier );
+//    int removeNodeOccurence( QString identifier );
 
     /**
      * QMap<QString, int> getNodeOccurence()
      * @brief Getter of node occurence
      * @return Map of node occurence where key is node identifier and value is node occurence in graph
      */
-    QMap<QString, int> getNodeOccurence() {
-        return this->nodesOccurence;
+//    QMap<QString, int> getNodeOccurence() {
+//        return this->nodesOccurence;
+//    }
+
+    QMap<QString, Repository::Git::GitType>* getChangedNodesAndEdge() {
+        return this->changedNodesAndEdges;
     }
 
-    QMap<QString, int>* getRemovedNodesAndEdge() {
-        return this->removedNodesAndEdges;
-    }
+//    void addLastVersionDiff( QString identifier, QString commitId ) {
+//        this->lastVersionDiff.insert( identifier, commitId );
+//    }
 
-    void addLastVersionDiff( QString identifier, QString commitId ) {
-        this->lastVersionDiff.insert( identifier, commitId );
-    }
+//    QMap<QString, QString> getLastVersionDiff() {
+//        return this->lastVersionDiff;
+//    }
 
-    QMap<QString, QString> getLastVersionDiff() {
-        return this->lastVersionDiff;
-    }
+//    void addLastFunctionInterval( QString identifier, QString interval ) {
+//        this->lastFunctionInterval.insert( identifier, interval );
+//    }
 
-    void addLastFunctionInterval( QString identifier, QString interval ) {
-        this->lastFunctionInterval.insert( identifier, interval );
-    }
+//    QMap<QString, QString> getLastFunctionInterval() {
+//        return this->lastFunctionInterval;
+//    }
 
-    QMap<QString, QString> getLastFunctionInterval() {
-        return this->lastFunctionInterval;
-    }
+    Repository::Git::GitMetaData* getMetaDataFromIdentifier( QString identifier );
+
+//    QMap<QString, Repository::Git::GitMetaData*> getMetaData() {
+//        return this->metaData;
+//    }
 
 	/**
 	 * void printRemovedFiles()
@@ -260,35 +268,37 @@ private:
 	 */
 	QMap<QString, int> removedFiles;
 
-    QMap<QString, QString> lastVersionDiff;
+//    QMap<QString, QString> lastVersionDiff;
 
-    QMap<QString, int>* removedNodesAndEdges;
+    QMap<QString, Repository::Git::GitType>* changedNodesAndEdges;
 
-    QMap<QString, QString> lastFunctionInterval;
+//    QMap<QString, QString> lastFunctionInterval;
 
     /**
      * QMap<QString, int> nodesOccurence
      * @brief Map of occurences of nodes in graph, where key is the node identifier
      */
-    QMap<QString, int> nodesOccurence;
+//    QMap<QString, int> nodesOccurence;
 
     /**
      * QMap<QString, int> luaNodesMapping
      * @brief Maps identifier to current lua node id
      */
-    QMap<QString, int> luaNodesMapping;
+//    QMap<QString, int> luaNodesMapping;
 
     /**
      * QMap<QString, int> luaEdgesMapping
      * @brief Maps identifier to current lua edge id
      */
-    QMap<QString, int> luaEdgesMapping;
+//    QMap<QString, int> luaEdgesMapping;
 
     /**
      * QMap<QString, Repository::Git::GitFile*> latestGitFileCallTree
      * @brief Map which contain key as git file identifier and reference of git file which consists only with file call tree.
      */
-    QMap<QString, Repository::Git::GitFile*> latestGitFileCallTree;
+//    QMap<QString, Repository::Git::GitFile*> latestGitFileCallTree;
+
+    QMap<QString, Repository::Git::GitMetaData*> metaData;
 
 	/**
 	 * int lifespan
