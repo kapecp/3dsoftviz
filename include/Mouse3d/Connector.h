@@ -20,7 +20,7 @@ public:
     //destructor
     ~Connector();
 
-    static void ConnectMouse3d();
+    void ConnectMouse3d(HWND hWnd);
 
 private:
 

@@ -26,7 +26,7 @@ public:
 
 
     //constructor
-    EventThread(QObject* parent = NULL);
+    EventThread(HWND hWndl, QObject* parent = NULL);
 
     //destructor
     ~EventThread(void);
@@ -36,6 +36,8 @@ public:
 private:
     //received message -unsigned integer-
     LPMSG msg;
+
+    HWND windowHandle;
 
     //storage of received data - platform dependent - probably front
     const std::shared_ptr<SiGetEventData> eData;

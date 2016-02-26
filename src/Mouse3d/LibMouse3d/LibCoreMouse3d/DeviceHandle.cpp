@@ -4,22 +4,18 @@
 
 using namespace LibMouse3d::LibCoreMouse3d;
 
-SpwRetVal SpwErrorVal;
 
 DeviceHandle* DeviceHandle::device;
-
-
+HWND DeviceHandle::hWnd;
 
 DeviceHandle::DeviceHandle(){
-    qDebug() << "Entered constructor";
+    qDebug() << "Entered constructor of DeviceHandle";
 
     this->SetMouseCancel(false);
 
     //initialize
     this->InitDevice();
-    qDebug() << "InitDevice successful";
-
-
+    qDebug() << "InitDevice finished";
 
     //get device driver version
     /*
@@ -37,17 +33,17 @@ DeviceHandle::~DeviceHandle(){
     qDebug() << "Entered destructor";
 }
 
-
 /**
 *@author Michal Fasanek
 *@date 23.11.2015
 *@brief DeviceHandle method responsible for binding device to object if not bound yet.
 */
-DeviceHandle* DeviceHandle::GetInstance(){
+DeviceHandle* DeviceHandle::GetInstance(HWND windowHandle){
 
     if(device == NULL){
-
-        qDebug() << "Get instance: NULL handle -> going to grab handle";
+        hWnd = windowHandle;
+        qDebug() << "windowHandle ID:" << windowHandle;
+        qDebug() << "Device instance not found --> going to grab handle";
         //call constructor
         device = new DeviceHandle();
     }
@@ -92,18 +88,29 @@ void DeviceHandle::InitDevice(){
 
 
     //initializing internal states
-    SiInitialize();
+    /*init the SpaceWare input library */
+    if (SiInitialize() == SPW_DLL_LOAD_ERROR)
+    {
+      qDebug() << "Error: Could not load SiAppDll dll files";
+    }
 
-    //trying to grab device handle
-    this->deviceRef = SiOpen ("3dSoftviz", SI_ANY_DEVICE, SI_NO_MASK, SI_EVENT, &initData);
+    //trying to grab window handle, device handle
+    //In Qt4 on Windows WId was just a typedef for HWND *taken from Qt documentation*
+    qDebug() << hWnd;
+    SiOpenWinInit(&initData, hWnd);
+    qDebug() << "Calling initialized handle data from initData " << initData.hWnd;
+    this->deviceRef = SiOpen("3DSoftviz", SI_ANY_DEVICE, SI_NO_MASK, SI_EVENT, &initData);
+
+    //qDebug() << *SpwErrorString(SpwErrorVal);
 
     if(this->deviceRef == NULL){
-        qDebug() << "Failed to open 3DxWare device \n";
+        qDebug() << "Failed to open 3DxWare device";
         qDebug() << deviceRef;
         this->SetMouseCancel(true);
     }
-
-    qDebug() << SpwErrorString(SpwErrorVal);
+    else{
+        qDebug() << "When you get what you want but not what you need";
+    }
 
 }
 

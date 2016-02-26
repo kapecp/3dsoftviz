@@ -3,8 +3,9 @@
 
 using namespace LibMouse3d::LibCoreMouse3d;
 
-EventThread::EventThread( QObject* parent ) : QThread( parent ) {
+EventThread::EventThread(HWND wHndl, QObject* parent ) : QThread( parent ) {
     qDebug() << "Mouse3d thread created";
+    this->windowHandle = wHndl;
 }
 
 EventThread::~EventThread() {
@@ -20,15 +21,18 @@ EventThread::~EventThread() {
 
 void EventThread::run(){
 
-    qDebug() << "Create connection call - EventThread" ;
+    DeviceHandle* instance = DeviceHandle::GetInstance(this->windowHandle);
+    if(instance->GetDeviceRef() != NULL){
+        qDebug() << "Device for signal thread acquired";\
+    }
+    else{
+        qDebug() << "Failed to acquire device for thread";
+        instance->SetMouseCancel(true);
+        return;
+    }
 
-    DeviceHandle* instance = DeviceHandle::GetInstance();
-
-    qDebug() << "Got instance of handle";
     //get message posted by device
     //Considered using PeekMessage() instead, staying with GetMessage for now
-
-
     while(GetMessage(this->msg, NULL, 0, 0))
     {
         qDebug() << "Entered while cycle";
@@ -36,13 +40,13 @@ void EventThread::run(){
         //initialization for platform dependent SiGetEvent
         SiGetEventWinInit(this->eData.get(), this->msg->message, this->msg->wParam, this->msg->lParam);
 
-        //get message from message front]
+        //get message from message front
         //if SI_NOT_EVENT, ignore
         if (SiGetEvent(instance->GetDeviceRef(), 0, this->eData.get(), this->siEvent.get()) == SI_IS_EVENT)
         {
             //until mouse is flagged to cancel in main window
             if(instance->MouseCanceled())
-                qDebug() << "Canceling mouse thread";
+                qDebug() << "Mouse thread flagged to cancel";
                 break;
 
 
@@ -81,6 +85,6 @@ void EventThread::run(){
 
 
     }
-    qDebug() << "Out of mouse thread";
+    qDebug() << "Mouse3d thread finished";
 }
 

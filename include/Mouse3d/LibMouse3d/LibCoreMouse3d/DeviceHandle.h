@@ -62,13 +62,16 @@ public:
      * @brief This is core Singleton method of DeviceHandle class. It checks whether DeviceHandle already exists.
      * @brief If exists, returns existing instance, else initializes instance and returns it.
      */
-    static DeviceHandle* GetInstance();
+    static DeviceHandle* GetInstance(HWND hWndl);
 
     //getter method for deviceRef parameter of instance
     SiHdl GetDeviceRef();
 
     //setter method for deviceRef parameter of instance
     void SetDeviceRef(SiHdl &ref);
+
+    //windows-specific window handle for SiOpenWinInit
+    static HWND hWnd;
 
 private:
 
@@ -90,9 +93,6 @@ private:
     bool mouseCancel;
 
     SiOpenData initData;
-
-
-
 };
 
 }

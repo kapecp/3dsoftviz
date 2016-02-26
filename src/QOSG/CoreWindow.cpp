@@ -3428,9 +3428,13 @@ void CoreWindow::startMouse3d()
         return;
     }
 
+    Mouse3d::Connector conn = Mouse3d::Connector();
+
     // starting Mouse
     qDebug() << "Create connection call - CoreWindow";
-    Mouse3d::Connector::ConnectMouse3d();
+    qDebug() << this->winId();
+
+    conn.ConnectMouse3d(this->winId());
     //this->mGloveThr = new Fglove::FgloveThread();
     //this->b_start_mouse3d->start();
     b_start_mouse3d->setText( "Stop Mouse" );
