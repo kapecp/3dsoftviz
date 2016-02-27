@@ -1,4 +1,4 @@
-# Copyright ( C ) 2013-2015 3DSoftviz.
+# Copyright ( C ) 2013-2016 3DSoftviz.
 # Created by Peter Kapec
 # Redistribution and use of this file is allowed
 # according to the terms of the MIT license.
@@ -19,7 +19,7 @@ set( 3DSOFTVIZ_VERSION_PATCH "0" )
 set( 3DSOFTVIZ_VERSION_BUILD "1" )
 set( 3DSOFTVIZ_VERSION "${3DSOFTVIZ_VERSION_MAJOR}.${3DSOFTVIZ_VERSION_MINOR}.${3DSOFTVIZ_VERSION_PATCH}" )
 set( 3DSOFTVIZ_VENDOR "3DSoftviz Dev Team" )
-set( 3DSOFTVIZ_COPYRIGHT_YEAR "2013" )
+set( 3DSOFTVIZ_COPYRIGHT_YEAR "2016" )
 set( 3DSOFTVIZ_DOMAIN_FIRST "stuba" )
 set( 3DSOFTVIZ_DOMAIN_SECOND "sk" )
 set( 3DSOFTVIZ_DOMAIN "${3DSOFTVIZ_DOMAIN_FIRST}.${3DSOFTVIZ_DOMAIN_SECOND}" )
@@ -27,21 +27,6 @@ set( 3DSOFTVIZ_DOMAIN "${3DSOFTVIZ_DOMAIN_FIRST}.${3DSOFTVIZ_DOMAIN_SECOND}" )
 # --------------
 # Build settings
 # --------------
-
-# Install destinations
-set( INSTALL_BIN bin CACHE PATH "Where to install binaries to." )
-set( INSTALL_LIB lib CACHE PATH "Where to install lib to." )
-set( INSTALL_DATA share/3dsoftviz CACHE PATH "Directory for shared data." )
-set( INSTALL_DEPS . )
-set( INSTALL_PLUGIN bin )
-set( INSTALL_QTCONF bin )
-
-set( INSTALL_INC include CACHE PATH "Directory for library headers." )
-set( INSTALL_DATA . CACHE PATH "Directory the package can store documentation, tests or other data in." )
-set( INSTALL_DOC ${INSTALL_DATA}/doc CACHE PATH "Recommended directory to install documentation into." )
-set( INSTALL_ETC ${INSTALL_DATA}/etc CACHE PATH "Other files." )
-set( INSTALL_TEST ${INSTALL_DATA}/test CACHE PATH "Test files." )
-set( INSTALL_EXAMPLE ${INSTALL_DATA}/example CACHE PATH "Recommended directory to install examples into." )
 
 # Additional CMake scripts
 set( CMAKE_MODULE_PATH
@@ -74,11 +59,6 @@ endif()
 # Default build type
 if( NOT CMAKE_BUILD_TYPE )
 	set( CMAKE_BUILD_TYPE "Debug" CACHE STRING "" FORCE )
-endif()
-
-# Default install destination
-if( CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT )
-	set( CMAKE_INSTALL_PREFIX ${CMAKE_CURRENT_SOURCE_DIR}/_install CACHE PATH "Installation Destination" FORCE )
 endif()
 
 # RPath functionality
@@ -571,68 +551,6 @@ else()
 	#find_package( Lua51 REQUIRED )
 endif()
 
-# -----------------------------------------------------------------
-# Platform settings
-# -----------------------------------------------------------------
-
-# Apple specific overrides, we build and app bundle
-option( OSX_BUNDLE "Create an app bundle on OSX." OFF ) # TODO: disabled, because currently it does not work...
-if( APPLE AND OSX_BUNDLE )
-	# Executable settings
-	set( 3DSOFTVIZ_EXECUTABLE_TYPE MACOSX_BUNDLE )
-	set( BUNDLE_APP "\${CMAKE_INSTALL_PREFIX}/${3DSOFTVIZ_NAME}.app" )
-
-	# Override default install destinations into the bundle
-	set( INSTALL_BUNDLE . )
-	set( INSTALL_BIN	${3DSOFTVIZ_NAME}.app/Contents/MacOS )
-	set( INSTALL_DATA	${3DSOFTVIZ_NAME}.app/Contents/share/3DSOFTVIZ )
-	set( INSTALL_RES	${3DSOFTVIZ_NAME}.app/Contents/Resources )
-	set( INSTALL_DEPS	${3DSOFTVIZ_NAME}.app/Contents )
-	set( INSTALL_PLUGIN	${3DSOFTVIZ_NAME}.app/Contents/MacOS )
-	set( INSTALL_QTCONF	${3DSOFTVIZ_NAME}.app/Contents/Resources )
-
-	# Bundle settings
-	set( MACOSX_BUNDLE_INFO_STRING "${3DSOFTVIZ_NAME} ${3DSOFTVIZ_VERSION}" )
-	set( MACOSX_BUNDLE_BUNDLE_VERSION "${3DSOFTVIZ_NAME} ${3DSOFTVIZ_VERSION}" )
-	set( MACOSX_BUNDLE_LONG_VERSION_STRING "${3DSOFTVIZ_NAME} ${3DSOFTVIZ_VERSION}" )
-	set( MACOSX_BUNDLE_SHORT_VERSION_STRING "${3DSOFTVIZ_VERSION}" )
-	set( MACOSX_BUNDLE_COPYRIGHT "${3DSOFTVIZ_COPYRIGHT_YEAR} ${3DSOFTVIZ_VENDOR}" )
-	set( MACOSX_BUNDLE_ICON_FILE "3DSOFTVIZ_app.icns" )# use http://iconverticons.com/legacy/ for icon converting
-	set( MACOSX_BUNDLE_GUI_IDENTIFIER "${3DSOFTVIZ_DOMAIN_SECOND}.${3DSOFTVIZ_DOMAIN_FIRST}.${3DSOFTVIZ_NAME}" )
-	set( MACOSX_BUNDLE_BUNDLE_NAME "${3DSOFTVIZ_NAME}" )
-
-	# CPack settings
-	set( CPACK_GENERATOR "DragNDrop" )
-	set( CPACK_PACKAGE_ICON "${CMAKE_CURRENT_SOURCE_DIR}/resources/3DSOFTVIZ_pkg.icns" )
-	set( CPACK_PACKAGE_FILE_NAME "${3DSOFTVIZ_NAME}-${3DSOFTVIZ_VERSION}" )
-
-	# OSX Specific resources
-	install( FILES "resources/${MACOSX_BUNDLE_ICON_FILE}" DESTINATION ${INSTALL_RES} )
-endif()
-
-# Windows specific overrides
-if( WIN32 )
-	# Executable settings
-	set( 3DSOFTVIZ_EXECUTABLE_TYPE WIN32 )
-	set( BUNDLE_APP "\${CMAKE_INSTALL_PREFIX}/${INSTALL_BIN}/${3DSOFTVIZ_NAME}.exe" )
-
-	# CPack settings
-	set( CPACK_GENERATOR "NSIS" )
-	set( CPACK_PACKAGE_INSTALL_DIRECTORY "${3DSOFTVIZ_NAME}" )
-	set( CPACK_PACKAGE_FILE_NAME "${3DSOFTVIZ_NAME}-${3DSOFTVIZ_VERSION}" )
-	set( CPACK_PACKAGE_EXECUTABLES "${3DSOFTVIZ_NAME}" "${3DSOFTVIZ_NAME}" )
-	set( CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}\\\\LICENSE.txt" )
-
-	# NSIS branding
-	set( CPACK_NSIS_INSTALLED_ICON_NAME "${INSTALL_BIN}\\\\${3DSOFTVIZ_NAME}${CMAKE_EXECUTABLE_SUFFIX}" )
-	set( CPACK_NSIS_DISPLAY_NAME "${3DSOFTVIZ_NAME}" )
-	set( CPACK_NSIS_HELP_LINK "http:\\\\\\\\${3DSOFTVIZ_DOMAIN}" )
-	set( CPACK_NSIS_URL_INFO_ABOUT "http:\\\\\\\\${3DSOFTVIZ_DOMAIN}" )
-	set( CPACK_NSIS_CONTACT "http:\\\\\\\\${3DSOFTVIZ_DOMAIN}" )
-	set( CPACK_NSIS_MUI_ICON "${CMAKE_CURRENT_SOURCE_DIR}\\\\res\\\\3DSOFTVIZ_pkg.ico" )
-	set( CPACK_NSIS_MUI_UNIICON "${CMAKE_CURRENT_SOURCE_DIR}\\\\res\\\\3DSOFTVIZ_rmv.ico" )
-	set( CPACK_PACKAGE_ICON "${CMAKE_CURRENT_SOURCE_DIR}\\\\res\\\\logo2.bmp" )
-endif()
 
 # ---------------------------------------------------------------
 # 3DSoftviz sources
@@ -1055,6 +973,27 @@ endif()
 # Install
 # -------------------------------------------------------
 
+# Install destinations
+set( INSTALL_BIN bin CACHE PATH "Where to install binaries to." )
+set( INSTALL_LIB lib CACHE PATH "Where to install lib to." )
+set( INSTALL_DATA share/3dsoftviz CACHE PATH "Directory for shared data." )
+set( INSTALL_DEPS . )
+set( INSTALL_PLUGIN bin )
+set( INSTALL_QTCONF bin )
+
+set( INSTALL_INC include CACHE PATH "Directory for library headers." )
+set( INSTALL_DATA . CACHE PATH "Directory the package can store documentation, tests or other data in." )
+set( INSTALL_DOC ${INSTALL_DATA}/doc CACHE PATH "Recommended directory to install documentation into." )
+set( INSTALL_ETC ${INSTALL_DATA}/etc CACHE PATH "Other files." )
+set( INSTALL_TEST ${INSTALL_DATA}/test CACHE PATH "Test files." )
+set( INSTALL_EXAMPLE ${INSTALL_DATA}/example CACHE PATH "Recommended directory to install examples into." )
+
+# Default install destination
+if( CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT )
+	set( CMAKE_INSTALL_PREFIX ${CMAKE_CURRENT_SOURCE_DIR}/_install CACHE PATH "Installation Destination" FORCE )
+endif()
+
+
 # 3DSoftviz and data
 install( TARGETS ${3DSOFTVIZ_NAME}
 	BUNDLE DESTINATION ${INSTALL_BUNDLE} COMPONENT Runtime
@@ -1152,6 +1091,70 @@ endif()
 # -------------------------------------------------------
 # Packing
 # -------------------------------------------------------
+
+# -----------------------------------------------------------------
+# Platform settings
+# -----------------------------------------------------------------
+
+# Apple specific overrides, we build and app bundle
+option( OSX_BUNDLE "Create an app bundle on OSX." OFF ) # TODO: disabled, because currently it does not work...
+if( APPLE AND OSX_BUNDLE )
+	# Executable settings
+	set( 3DSOFTVIZ_EXECUTABLE_TYPE MACOSX_BUNDLE )
+	set( BUNDLE_APP "\${CMAKE_INSTALL_PREFIX}/${3DSOFTVIZ_NAME}.app" )
+
+	# Override default install destinations into the bundle
+	set( INSTALL_BUNDLE . )
+	set( INSTALL_BIN	${3DSOFTVIZ_NAME}.app/Contents/MacOS )
+	set( INSTALL_DATA	${3DSOFTVIZ_NAME}.app/Contents/share/3DSOFTVIZ )
+	set( INSTALL_RES	${3DSOFTVIZ_NAME}.app/Contents/Resources )
+	set( INSTALL_DEPS	${3DSOFTVIZ_NAME}.app/Contents )
+	set( INSTALL_PLUGIN	${3DSOFTVIZ_NAME}.app/Contents/MacOS )
+	set( INSTALL_QTCONF	${3DSOFTVIZ_NAME}.app/Contents/Resources )
+
+	# Bundle settings
+	set( MACOSX_BUNDLE_INFO_STRING "${3DSOFTVIZ_NAME} ${3DSOFTVIZ_VERSION}" )
+	set( MACOSX_BUNDLE_BUNDLE_VERSION "${3DSOFTVIZ_NAME} ${3DSOFTVIZ_VERSION}" )
+	set( MACOSX_BUNDLE_LONG_VERSION_STRING "${3DSOFTVIZ_NAME} ${3DSOFTVIZ_VERSION}" )
+	set( MACOSX_BUNDLE_SHORT_VERSION_STRING "${3DSOFTVIZ_VERSION}" )
+	set( MACOSX_BUNDLE_COPYRIGHT "${3DSOFTVIZ_COPYRIGHT_YEAR} ${3DSOFTVIZ_VENDOR}" )
+	set( MACOSX_BUNDLE_ICON_FILE "3DSOFTVIZ_app.icns" )# use http://iconverticons.com/legacy/ for icon converting
+	set( MACOSX_BUNDLE_GUI_IDENTIFIER "${3DSOFTVIZ_DOMAIN_SECOND}.${3DSOFTVIZ_DOMAIN_FIRST}.${3DSOFTVIZ_NAME}" )
+	set( MACOSX_BUNDLE_BUNDLE_NAME "${3DSOFTVIZ_NAME}" )
+
+	# CPack settings
+	set( CPACK_GENERATOR "DragNDrop" )
+	set( CPACK_PACKAGE_ICON "${CMAKE_CURRENT_SOURCE_DIR}/resources/3DSOFTVIZ_pkg.icns" )
+	set( CPACK_PACKAGE_FILE_NAME "${3DSOFTVIZ_NAME}-${3DSOFTVIZ_VERSION}" )
+
+	# OSX Specific resources
+	install( FILES "resources/${MACOSX_BUNDLE_ICON_FILE}" DESTINATION ${INSTALL_RES} )
+endif()
+
+# Windows specific overrides
+if( WIN32 )
+	# Executable settings
+	set( 3DSOFTVIZ_EXECUTABLE_TYPE WIN32 )
+	set( BUNDLE_APP "\${CMAKE_INSTALL_PREFIX}/${INSTALL_BIN}/${3DSOFTVIZ_NAME}.exe" )
+
+	# CPack settings
+	set( CPACK_GENERATOR "NSIS" )
+	set( CPACK_PACKAGE_INSTALL_DIRECTORY "${3DSOFTVIZ_NAME}" )
+	set( CPACK_PACKAGE_FILE_NAME "${3DSOFTVIZ_NAME}-${3DSOFTVIZ_VERSION}" )
+	set( CPACK_PACKAGE_EXECUTABLES "${3DSOFTVIZ_NAME}" "${3DSOFTVIZ_NAME}" )
+	set( CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}\\\\LICENSE.txt" )
+
+	# NSIS branding
+	set( CPACK_NSIS_INSTALLED_ICON_NAME "${INSTALL_BIN}\\\\${3DSOFTVIZ_NAME}${CMAKE_EXECUTABLE_SUFFIX}" )
+	set( CPACK_NSIS_DISPLAY_NAME "${3DSOFTVIZ_NAME}" )
+	set( CPACK_NSIS_HELP_LINK "http:\\\\\\\\${3DSOFTVIZ_DOMAIN}" )
+	set( CPACK_NSIS_URL_INFO_ABOUT "http:\\\\\\\\${3DSOFTVIZ_DOMAIN}" )
+	set( CPACK_NSIS_CONTACT "http:\\\\\\\\${3DSOFTVIZ_DOMAIN}" )
+	set( CPACK_NSIS_MUI_ICON "${CMAKE_CURRENT_SOURCE_DIR}\\\\res\\\\3DSOFTVIZ_pkg.ico" )
+	set( CPACK_NSIS_MUI_UNIICON "${CMAKE_CURRENT_SOURCE_DIR}\\\\res\\\\3DSOFTVIZ_rmv.ico" )
+	set( CPACK_PACKAGE_ICON "${CMAKE_CURRENT_SOURCE_DIR}\\\\res\\\\logo2.bmp" )
+endif()
+
 
 set( CPACK_MONOLITHIC_INSTALL 1 )
 set( CPACK_STRIP_FILES ON )
