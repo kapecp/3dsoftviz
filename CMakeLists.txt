@@ -118,6 +118,9 @@ endif()
 # Dependencies - Searching external dependencies
 # ------------------------------------------------------------
 
+set( ALL_SYSTEM_HEADERS )
+set( ALL_COMPILE_DEFINITIONS )
+
 # ------------------------------ Qt4 -------------------------------
 # Find Qt4
 find_package( Qt4 REQUIRED )
@@ -161,7 +164,7 @@ find_package( OpenSceneGraph COMPONENTS
  )
 find_package( osgViewer )
 
-include_directories( SYSTEM
+list( APPEND ALL_SYSTEM_HEADERS
 	${OPENSCENEGRAPH_INCLUDE_DIRS}
 	${OSGVIEWER_INCLUDE_DIR}
 )
@@ -171,11 +174,14 @@ include_directories( SYSTEM
 find_package( OpenCV )
 if( OpenCV_FOUND )
 	if( WIN32 )
-		add_definitions( -DNOMINMAX )
+		list( APPEND ALL_COMPILE_DEFINITIONS -DNOMINMAX )
 	endif()
 
-	include_directories( SYSTEM ${OpenCV_INCLUDE_DIRS} )
-	add_definitions( -DOPENCV_FOUND )
+	list( APPEND ALL_SYSTEM_HEADERS	${OpenCV_INCLUDE_DIRS} )
+
+	list( APPEND ALL_SYSTEM_HEADERS	${DEPENDENCIES_INCLUDE_DIR}/aruco )
+
+	list( APPEND ALL_COMPILE_DEFINITIONS -DOPENCV_FOUND )
 
 	message( STATUS "OpenCV_LIB_DIR=${OpenCV_LIB_DIR}" )
 	message( STATUS "OpenCV_LIB_DIR=${OpenCV_LIBS}" )
@@ -187,8 +193,10 @@ endif()
 # Find OPENNI2
 find_package( OPENNI2 )
 if( OPENNI2_FOUND )
-	include_directories( SYSTEM ${OPENNI2_INCLUDE_DIRS} )
-	add_definitions( -DOPENNI2_FOUND )
+
+	list( APPEND ALL_SYSTEM_HEADERS	${OPENNI2_INCLUDE_DIRS} )
+
+	list( APPEND ALL_COMPILE_DEFINITIONS  -DOPENNI2_FOUND )
 	message( STATUS "OpenNI2 FOUND" )
 else( OPENNI2_FOUND )
 	message( STATUS "OpenNI2 NOT FOUND" )
@@ -197,8 +205,10 @@ endif()
 # Find NITE2
 find_package( NITE2 )
 if( NITE2_FOUND )
-	include_directories( SYSTEM ${NITE2_INCLUDE_DIRS} ${NITE2_OPENNI2_DRIVER_DIRS} )
-	add_definitions( -DNITE2_FOUND )
+
+	list( APPEND ALL_SYSTEM_HEADERS	${NITE2_INCLUDE_DIRS} ${NITE2_OPENNI2_DRIVER_DIRS} )
+
+	list( APPEND ALL_COMPILE_DEFINITIONS -DNITE2_FOUND )
 	message ( STATUS "NITE2 FOUND" )
 else( NITE2_FOUND )
 	message ( STATUS "NITE2 NOT FOUND" )
@@ -210,8 +220,10 @@ if( WIN32 AND MSVC )
 
 	find_package( KINECTSDK )
 	if( KINECTSDK_FOUND )
-		include_directories( SYSTEM ${KINECTSDK_INCLUDE_DIRS} )
-		add_definitions( -DKINECTSDK_FOUND )
+
+		list( APPEND ALL_SYSTEM_HEADERS	${KINECTSDK_INCLUDE_DIRS} )
+
+		list( APPEND ALL_COMPILE_DEFINITIONS -DKINECTSDK_FOUND )
 
 		# find_package( SPEECHSDK )
 		# if( SPEECHSDK_FOUND )
@@ -235,13 +247,17 @@ find_package( Boost 1.39 REQUIRED )
 #add_definitions( -DBOOST_ALL_DYN_LINK )
 
 # Include directories
-include_directories( SYSTEM ${Boost_INCLUDE_DIRS}  )
+list( APPEND ALL_SYSTEM_HEADERS	${Boost_INCLUDE_DIRS}  )
 
 # ------------------------------ LEAP -------------------------------
 # Find leap
 find_package( LEAP )
 if( LEAP_FOUND )
-	add_definitions( -DLEAP_FOUND )
+
+	list( APPEND ALL_COMPILE_DEFINITIONS -DLEAP_FOUND )
+
+	list( APPEND ALL_SYSTEM_HEADERS	${LEAP_INCLUDE_DIRS} )
+
 	message( STATUS "LEAP_LIB_DIR=${LEAP_LIBRARIES}" )
 else()
 	message( STATUS "LEAP Not Found" )
@@ -263,14 +279,16 @@ endif()
 # Find MOUSE3D
 find_package( MOUSE3D )
 if( MOUSE3D_FOUND )
-	include_directories( SYSTEM ${MOUSE3D_INCLUDE_DIRS} )
-	add_definitions( -DMOUSE3D_FOUND )
+
+	list( APPEND ALL_SYSTEM_HEADERS	${MOUSE3D_INCLUDE_DIRS} )
+
+	list( APPEND ALL_COMPILE_DEFINITIONS -DMOUSE3D_FOUND )
 	message( STATUS "3DMouse FOUND" )
 else()
 	message( STATUS "3DMouse NOT FOUND" )
 endif()
 
-ADD_DEFINITIONS(-DOSG_LIBRARY_STATIC)
+list( APPEND ALL_COMPILE_DEFINITIONS -DOSG_LIBRARY_STATIC)
 
 # ------------------------------------------------------------
 # Dependencies - External projects
@@ -556,26 +574,6 @@ endif()
 # 3DSoftviz sources
 # ---------------------------------------------------------------
 
-# Include Paths
-include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/include )
-
-if( OpenCV_FOUND )
-	include_directories( SYSTEM
-		${DEPENDENCIES_INCLUDE_DIR}/aruco
-	)
-endif()
-
-include_directories( SYSTEM
-	${DEPENDENCIES_INCLUDE_DIR}
-	${DEPENDENCIES_INCLUDE_DIR}/libnoise
-)
-
-if( LEAP_FOUND )
-	include_directories( SYSTEM
-		${LEAP_INCLUDE_DIRS}
-	)
-endif()
-
 #-------------------------------- Source files -------------------------------
 set( SRC_MAIN "src/main.cpp" )
 file( GLOB_RECURSE SRC_CORE		"src/Core/*.cpp" )
@@ -829,7 +827,6 @@ endif()
 # add diluculum code directly due to MSVC problems
 if( MSVC )
 	include_directories( SYSTEM dependencies/diluculum/include )
-	#include_directories( SYSTEM $ENV{CMAKE_INCLUDE_PATH} )
 
 	file( GLOB_RECURSE SRC_DILUCULUM	"dependencies/diluculum/Sources/*.cpp" )
 endif()
@@ -849,7 +846,11 @@ target_include_directories( qtcolorpicker SYSTEM PUBLIC dependencies/qtcolorpick
 # ---------------------------------------------------------------
 
 add_library( gitlib SHARED ${SRC_GITLIB} ${HEADER_GITLIB})
-target_include_directories( gitlib SYSTEM PUBLIC include/Repository/Git )
+target_include_directories( gitlib
+	PUBLIC
+		${CMAKE_CURRENT_SOURCE_DIR}/include
+		include/Repository/Git
+)
 target_link_libraries( gitlib ${QT_LIBRARIES} )
 
 set(FLAGS_FOR_DEBUG2 ${FLAGS_FOR_DEBUG})
@@ -870,6 +871,24 @@ add_executable( ${3DSOFTVIZ_NAME} ${INCL}  ${SRC} )
 
 # set compile flags only for our code ( suppresses warnigns on system headers )
 set_target_properties( ${3DSOFTVIZ_NAME} PROPERTIES COMPILE_FLAGS "${FLAGS_FOR_DEBUG}" )
+
+target_compile_definitions( ${3DSOFTVIZ_NAME}
+	PUBLIC
+	${ALL_COMPILE_DEFINITIONS}
+)
+
+target_include_directories( ${3DSOFTVIZ_NAME}
+	PUBLIC
+	${CMAKE_CURRENT_SOURCE_DIR}/include
+)
+
+target_include_directories( ${3DSOFTVIZ_NAME}
+	SYSTEM
+	PUBLIC
+		${DEPENDENCIES_INCLUDE_DIR}
+		${DEPENDENCIES_INCLUDE_DIR}/libnoise
+		${ALL_SYSTEM_HEADERS}
+)
 
 target_link_libraries( ${3DSOFTVIZ_NAME}
 	gitlib
@@ -1180,7 +1199,8 @@ set_target_properties( all_bdd_tests
 		COMPILE_FLAGS "${FLAGS_FOR_DEBUG}"
 	)
 target_include_directories( all_bdd_tests
-	SYSTEM PUBLIC
+	PUBLIC
+		${CMAKE_CURRENT_SOURCE_DIR}/include
 		include/Repository/Git
 	)
 
