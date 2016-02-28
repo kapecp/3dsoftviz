@@ -1219,26 +1219,28 @@ include( CPack )
 # BDD Igloo tests
 # -------------------------------------------------------
 
-file( GLOB_RECURSE SRC_TESTS	"tests/*.cpp" )
-add_executable(all_bdd_tests ${SRC_TESTS})
-set_target_properties( all_bdd_tests
-	PROPERTIES
-		COMPILE_FLAGS "${FLAGS_FOR_DEBUG}"
-	)
-target_include_directories( all_bdd_tests
-	PUBLIC
+set( TEST_RUNNER tests/all_tests.cpp )
+
+#-------------------------------- gitlib module tests -------------------------------
+file( GLOB_RECURSE SRC_GITLIB_TESTS	"tests/Repository/Git/GitLib/*.cpp" )
+
+add_executable( test_gitlib_module ${TEST_RUNNER} ${SRC_GITLIB_TESTS} )
+add_dependencies( test_gitlib_module igloo )
+
+target_include_directories( test_gitlib_module 	PUBLIC
 		${CMAKE_CURRENT_SOURCE_DIR}/include
-		include/Repository/Git
-	)
+		include/Repository/Git 	)
+target_compile_options( test_gitlib_module PUBLIC ${FLAGS_FOR_DEBUG} )
+target_link_libraries( test_gitlib_module ${QT_LIBRARIES} gitlib )
 
-target_link_libraries( all_bdd_tests
-	${QT_LIBRARIES}
-	gitlib
-)
+# 'cotire' the executable
+if( COMMAND cotire )
+	set_target_properties( test_gitlib_module PROPERTIES COTIRE_UNITY_LINK_LIBRARIES_INIT "COPY_UNITY" )
+	cotire( test_gitlib_module CONFIGURATIONS Debug Release )
+endif()
 
-add_dependencies( all_bdd_tests igloo)
 
-
+#-------------------------------- run all tests -------------------------------
 enable_testing()
-add_test(all_bdd_tests all_bdd_tests)
+add_test( testing_gitlib_module test_gitlib_module )
 
