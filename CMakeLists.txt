@@ -181,10 +181,11 @@ if( OpenCV_FOUND )
 
 	list( APPEND ALL_COMPILE_DEFINITIONS -DOPENCV_FOUND )
 
+	message( STATUS "OpenCV Found:" )
 	message( STATUS "OpenCV_LIB_DIR=${OpenCV_LIB_DIR}" )
 	message( STATUS "OpenCV_LIB_DIR=${OpenCV_LIBS}" )
 else()
-	message( STATUS "OpenCV Not Found" )
+	message( STATUS "OpenCV NOT FOUND" )
 endif()
 
 # ------------------------------ OpenNI2 and Nite -------------------------------
@@ -195,7 +196,10 @@ if( OPENNI2_FOUND )
 	list( APPEND ALL_SYSTEM_HEADERS	${OPENNI2_INCLUDE_DIRS} )
 
 	list( APPEND ALL_COMPILE_DEFINITIONS  -DOPENNI2_FOUND )
-	message( STATUS "OpenNI2 FOUND" )
+
+	message( STATUS "OpenNI2 Found:" )
+	message( STATUS "OPENNI2_INCLUDE_DIRS=${OPENNI2_INCLUDE_DIRS}" )
+	message( STATUS "OPENNI2_LIBRARIES=${OPENNI2_LIBRARIES}" )
 else( OPENNI2_FOUND )
 	message( STATUS "OpenNI2 NOT FOUND" )
 endif()
@@ -207,7 +211,9 @@ if( NITE2_FOUND )
 	list( APPEND ALL_SYSTEM_HEADERS	${NITE2_INCLUDE_DIRS} ${NITE2_OPENNI2_DRIVER_DIRS} )
 
 	list( APPEND ALL_COMPILE_DEFINITIONS -DNITE2_FOUND )
-	message ( STATUS "NITE2 FOUND" )
+	message( STATUS "NITE2 Found:" )
+	message( STATUS "NITE2_INCLUDE_DIRS=${NITE2_INCLUDE_DIRS}" )
+	message( STATUS "NITE2_LIBRARIES=${NITE2_LIBRARIES}" )
 else( NITE2_FOUND )
 	message ( STATUS "NITE2 NOT FOUND" )
 endif()
@@ -232,7 +238,9 @@ if( WIN32 AND MSVC )
 			# message ( STATUS "SPEECHSDK NOT FOUND" )
 		# endif()
 
-		message ( STATUS "KINECTSDK FOUND" )
+		message( STATUS "KINECTSDK Found:" )
+		message( STATUS "KINECTSDK_INCLUDE_DIRS=${KINECTSDK_INCLUDE_DIRS}" )
+		message( STATUS "KINECTSDK_LIBRARIES=${KINECTSDK_LIBRARIES}" )
 	else( KINECTSDK_FOUND )
 		message ( STATUS "KINECTSDK NOT FOUND" )
 	endif()
@@ -256,7 +264,10 @@ if( LEAP_FOUND )
 
 	list( APPEND ALL_SYSTEM_HEADERS	${LEAP_INCLUDE_DIRS} )
 
+	message( STATUS "LEAP Found:" )
+	message( STATUS "LEAP_INCLUDE_DIRS=${LEAP_INCLUDE_DIRS}" )
 	message( STATUS "LEAP_LIB_DIR=${LEAP_LIBRARIES}" )
+	message( STATUS "FGLOVE_DRIVER_DIRS=${FGLOVE_DRIVER_DIRS}" )
 else()
 	message( STATUS "LEAP Not Found" )
 endif()
@@ -273,6 +284,7 @@ endif()
 # else()
 #	message( STATUS "FGLOVE Not Found" )
 # endif()
+
 # ------------------------------ MOUSE3D -------------------------------
 # Find MOUSE3D
 find_package( MOUSE3D )
@@ -281,12 +293,14 @@ if( MOUSE3D_FOUND )
 	list( APPEND ALL_SYSTEM_HEADERS	${MOUSE3D_INCLUDE_DIRS} )
 
 	list( APPEND ALL_COMPILE_DEFINITIONS -DMOUSE3D_FOUND )
-	message( STATUS "3DMouse FOUND" )
+	message( STATUS "3DMouse Found:" )
+	message( STATUS "MOUSE3D_INCLUDE_DIRS=${MOUSE3D_INCLUDE_DIRS}" )
+	message( STATUS "MOUSE3D_LIBRARIES=${MOUSE3D_LIBRARIES}" )
 else()
 	message( STATUS "3DMouse NOT FOUND" )
 endif()
 
-list( APPEND ALL_COMPILE_DEFINITIONS -DOSG_LIBRARY_STATIC)
+
 
 # ------------------------------------------------------------
 # Dependencies - External projects
@@ -535,7 +549,7 @@ if( USE_BUILTIN_DEPENDENCIES )
 			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
 	)
 
-		# Build lualogging
+	# Build lualogging
 	ExternalProject_Add ( dep_lualogging
 		PREFIX lualogging
 		SOURCE_DIR ${DEP_SOURCE}/lualogging
@@ -617,7 +631,8 @@ file ( GLOB_RECURSE SRC_MOUSE3D "src/Mouse3D/*.cpp" )
 
 # All source files
 set( SRC
-	${SRC_MAIN} ${SRC_CORE}
+	${SRC_MAIN}
+	${SRC_CORE}
 	${SRC_MANAGER}
 	${SRC_DATA} ${SRC_CLUSTERING}
 	${SRC_IMPORTER}
@@ -660,7 +675,14 @@ if( MOUSE3D_FOUND )
 	list( APPEND SRC ${SRC_MOUSE3D} )
 endif()
 
+# add diluculum code directly due to MSVC problems
+if( MSVC )
+	include_directories( SYSTEM dependencies/diluculum/include )
 
+	file( GLOB_RECURSE SRC_DILUCULUM	"dependencies/diluculum/Sources/*.cpp" )
+
+	list( APPEND SRC ${SRC_DILUCULUM} )
+endif()
 
 #-------------------------------- Header files -------------------------------
 file( GLOB_RECURSE HEADER_CORE		"include/Core/*.h" )
@@ -725,7 +747,7 @@ if( OpenCV_FOUND )
 	list( APPEND INCL ${HEADER_OPENCV} ${HEADER_QOPENCV} ${HEADER_ARUCO} )
 endif()
 
-#Kinect use Nite, Openni and OpenCV
+# Kinect uses Nite, Openni and OpenCV
 if( OPENNI2_FOUND AND OpenCV_FOUND )
 	list( APPEND INCL ${HEADER_KINECT} )
 endif()
@@ -739,12 +761,12 @@ endif()
 #	list( APPEND INCL ${HEADER_FGLOVE} )
 # endif()
 
-#LEAP
+# LEAP
 if( LEAP_FOUND )
 	list( APPEND INCL ${HEADER_LEAP} )
 endif()
 
-#MOUSE3D
+# MOUSE3D
 if( MOUSE3D_FOUND )
 	list( APPEND INCL ${HEADER_MOUSE3D} )
 endif()
@@ -810,23 +832,16 @@ endif()
 #	source_group( \\headers\\Fglove "^.*Fglove/.*h$" )
 # endif()
 
-#leap
+# Leap
 if( LEAP_FOUND )
 	source_group( \\src\\Leap "^.*Leap/.*$" )
 	source_group( \\headers\\Leap "^.*Leap/.*h$" )
 endif()
 
-#MOUSE3D
+# MOUSE3D
 if( MOUSE3D_FOUND )
 	source_group( \\src\\Mouse3D "^.*Mouse3D/.*$" )
 	source_group( \\headers\\Mouse3D "^.*Mouse3D/.*h$" )
-endif()
-
-# add diluculum code directly due to MSVC problems
-if( MSVC )
-	include_directories( SYSTEM dependencies/diluculum/include )
-
-	file( GLOB_RECURSE SRC_DILUCULUM	"dependencies/diluculum/Sources/*.cpp" )
 endif()
 
 # ---------------------------------------------------------------
@@ -834,43 +849,50 @@ endif()
 # ---------------------------------------------------------------
 
 add_library( noiseutils STATIC dependencies/noiseutils/noiseutils.cpp )
-target_include_directories( noiseutils SYSTEM PUBLIC ${DEPENDENCIES_INCLUDE_DIR}/libnoise
+target_include_directories( noiseutils SYSTEM PUBLIC
+	${DEPENDENCIES_INCLUDE_DIR}/libnoise
 	${CMAKE_CURRENT_SOURCE_DIR}/dependencies/noiseutils  )
 
-add_library( qtcolorpicker STATIC 	dependencies/qtcolorpicker/qtcolorpicker.cpp )
+add_library( qtcolorpicker STATIC dependencies/qtcolorpicker/qtcolorpicker.cpp )
 target_include_directories( qtcolorpicker SYSTEM PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/qtcolorpicker )
 
 # ---------------------------------------------------------------
 # Build modules as libraries
 # ---------------------------------------------------------------
 
+#-------------------------------- gitlib module -------------------------------
 add_library( gitlib SHARED ${SRC_GITLIB} ${HEADER_GITLIB})
+
 target_include_directories( gitlib
 	SYSTEM PUBLIC
 		include
 		include/Repository/Git
 )
-target_link_libraries( gitlib ${QT_LIBRARIES} )
 
 target_compile_definitions( gitlib
 	PUBLIC -DGITLIB_LIBRARY )
 
 target_compile_options( gitlib PUBLIC ${FLAGS_FOR_DEBUG} )
 
+target_link_libraries( gitlib ${QT_LIBRARIES} )
+
+# 'cotire' the module
+if( COMMAND cotire )
+	# link gitlib_unity target to all libraries to which gitlib links
+	set_target_properties( gitlib PROPERTIES COTIRE_UNITY_LINK_LIBRARIES_INIT "COPY_UNITY" )
+	cotire( gitlib CONFIGURATIONS Debug Release )
+endif()
+
+
 # ---------------------------------------------------------------
 # Build and link 3Dsoftviz
 # ---------------------------------------------------------------
 
-if( MSVC )
-	list( APPEND SRC ${SRC_DILUCULUM} )
-endif()
-
-# Build and link
+# Build 3Dsoftviz
 add_executable( ${3DSOFTVIZ_NAME} ${INCL}  ${SRC} )
 
 # set compile flags only for our code ( suppresses warnings on system headers )
 #set_target_properties( ${3DSOFTVIZ_NAME} PROPERTIES COMPILE_FLAGS "${FLAGS_FOR_DEBUG}" )
-
 target_compile_options( ${3DSOFTVIZ_NAME} PUBLIC ${FLAGS_FOR_DEBUG} )
 
 target_compile_definitions( ${3DSOFTVIZ_NAME}
@@ -878,7 +900,7 @@ target_compile_definitions( ${3DSOFTVIZ_NAME}
 )
 
 if( OpenCV_FOUND )
-	list( APPEND ALL_SYSTEM_HEADERS 		${DEPENDENCIES_INCLUDE_DIR}/aruco )
+	list( APPEND ALL_SYSTEM_HEADERS ${DEPENDENCIES_INCLUDE_DIR}/aruco )
 endif()
 
 list( APPEND ALL_SYSTEM_HEADERS ${DEPENDENCIES_INCLUDE_DIR})
@@ -914,8 +936,7 @@ target_link_libraries( ${3DSOFTVIZ_NAME}
 )
 
 if( NOT MSVC )
-	target_link_libraries( ${3DSOFTVIZ_NAME} diluculum
-	)
+	target_link_libraries( ${3DSOFTVIZ_NAME} diluculum )
 endif()
 
 if( OpenCV_FOUND )
@@ -929,7 +950,6 @@ endif()
 if( NITE2_FOUND )
 	target_link_libraries( ${3DSOFTVIZ_NAME} ${NITE2_LIBRARIES} )
 endif()
-
 
 if( KINECTSDK_FOUND )
 	target_link_libraries( ${3DSOFTVIZ_NAME} ${KINECTSDK_LIBRARIES} )
@@ -953,19 +973,15 @@ endif()
 # 'cotire' the executable
 if( COMMAND cotire )
 	# link ${3DSOFTVIZ_NAME}_unity target to all libraries to which ${3DSOFTVIZ_NAME} links
-	set_target_properties( ${3DSOFTVIZ_NAME} PROPERTIES COTIRE_UNITY_LINK_LIBRARIES_INIT "COPY" )
-	set_target_properties( gitlib PROPERTIES COTIRE_UNITY_LINK_LIBRARIES_INIT "COPY" )
+	set_target_properties( ${3DSOFTVIZ_NAME} PROPERTIES COTIRE_UNITY_LINK_LIBRARIES_INIT "COPY_UNITY" )
 
 	cotire( ${3DSOFTVIZ_NAME} CONFIGURATIONS Debug Release )
-	cotire( gitlib CONFIGURATIONS Debug Release )
 
 	# Work in progress:
 	# get_target_property(UVAR ${3DSOFTVIZ_NAME}_unity INCLUDE_DIRECTORIES)
 	# get_target_property(UVAR2 ${3DSOFTVIZ_NAME}_unity INTERFACE_SYSTEM_INCLUDE_DIRECTORIES)
 	# message("U1<<<<${VAR}")
 	# message("U2<<<<${VAR2}")
-
-
 endif()
 
 # Ensure correct dependencies
@@ -999,13 +1015,6 @@ if( USE_BUILTIN_DEPENDENCIES )
 		endif()
 	endif()
 endif()
-
-# Ensure correct dependencies
-#add_dependencies( ${3DSOFTVIZ_NAME} libnoise )
-#
-#if( OpenCV_FOUND )
-	#add_dependencies( ${3DSOFTVIZ_NAME} aruco )
-#endif()
 
 # -------------------------------------------------------
 # Install
@@ -1192,7 +1201,6 @@ if( WIN32 )
 	set( CPACK_NSIS_MUI_UNIICON "${CMAKE_CURRENT_SOURCE_DIR}\\\\res\\\\3DSOFTVIZ_rmv.ico" )
 	set( CPACK_PACKAGE_ICON "${CMAKE_CURRENT_SOURCE_DIR}\\\\res\\\\logo2.bmp" )
 endif()
-
 
 set( CPACK_MONOLITHIC_INSTALL 1 )
 set( CPACK_STRIP_FILES ON )
