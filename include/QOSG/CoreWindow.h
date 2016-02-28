@@ -221,15 +221,15 @@ public slots:
 	            */
 	void loadFile();
 /**
-    *  \fn public  loadTestGraphBasic
+    *  \fn public  loadexampleGraphBasic
     *  \brief Load basic 500 node graph
     */
-void loadTestGraphBasic();
+void loadExampleGraphBasic();
 /**
-    *  \fn public  loadTestGraphLua
+    *  \fn public  loadexampleGraphLua
     *  \brief Load basic lua graph
     */
-void loadTestGraphLua();
+void loadExampleGraphLua();
 	/**
 	            *  \fn public  loadFromGit
 	            *  \brief Show dialog to write path to git repo which will be loaded
@@ -693,16 +693,16 @@ private:
 	QAction* about;
 
     /**
-         *  QAction * testGraphBasic
+         *  QAction * exampleGraphBasic
         *  \brief Pointer to load basic graph from file
         */
-    QAction* testGraphBasic;
+    QAction* exampleGraphBasic;
 
     /**
-         *  QAction * testGraphLua
+         *  QAction * exampleGraphLua
         *  \brief Pointer to load basic lua graph from file
         */
-    QAction* testGraphLua;
+    QAction* exampleGraphLua;
 
 	/**
 	    *  QPushButton * play
@@ -1132,7 +1132,7 @@ private:
         *  QMenu * test
         *  \brief Pointer to menu of tests
         */
-    QMenu* test;
+    QMenu* examples;
 
 	/**
 	    *  QOSG::ViewerQT * viewerWidget

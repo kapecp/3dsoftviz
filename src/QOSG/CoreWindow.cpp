@@ -171,11 +171,11 @@ void CoreWindow::createActions()
 
 	about = new QAction( "About", this );
 
-    testGraphBasic = new QAction( "Test Basic", this );
-    connect( testGraphBasic, SIGNAL( triggered() ), this, SLOT( loadTestGraphBasic() ) );
+    exampleGraphBasic = new QAction( "Basic Example", this );
+    connect( exampleGraphBasic, SIGNAL( triggered() ), this, SLOT( loadExampleGraphBasic() ) );
 
-    testGraphLua = new QAction( "Test Lua", this );
-    connect( testGraphLua, SIGNAL( triggered() ), this, SLOT( loadTestGraphLua() ) );
+    exampleGraphLua = new QAction( "Lua Example", this );
+    connect( exampleGraphLua, SIGNAL( triggered() ), this, SLOT( loadExampleGraphLua() ) );
 
 	play = new QPushButton();
 	play->setIcon( QIcon( "../share/3dsoftviz/img/gui/pause.png" ) );
@@ -776,9 +776,9 @@ void CoreWindow::createMenus()
 	help = menuBar()->addMenu( "Help" );
 	help->addAction( about );
 
-    test = menuBar()->addMenu( "Test" );
-    test->addAction( testGraphBasic );
-    test->addAction( testGraphLua );
+    examples = menuBar()->addMenu( "Test" );
+    examples->addAction( exampleGraphBasic );
+    examples->addAction( exampleGraphLua );
 }
 
 QtColorPicker* CoreWindow::createColorPicker()
@@ -1579,7 +1579,7 @@ void CoreWindow::loadFile()
 
 }
 
-void CoreWindow::loadTestGraphBasic()
+void CoreWindow::loadExampleGraphBasic()
 {
     // Duransky start - vynulovanie vertigo rovin pri nacitani noveho grafu
     planes_Vertigo.clear();
@@ -1606,7 +1606,7 @@ void CoreWindow::loadTestGraphBasic()
     edgeTypeComboBoxChanged( edgeTypeComboBox->currentIndex() );
 
 }
-void CoreWindow::loadTestGraphLua()
+void CoreWindow::loadExampleGraphLua()
 {
 
     // Duransky start - vynulovanie vertigo rovin pri nacitani noveho grafu
