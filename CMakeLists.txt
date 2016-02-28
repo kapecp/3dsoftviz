@@ -38,10 +38,10 @@ option( USE_STRICT_COMPILE_WARNINGS "Use strict compilation warnings in debug mo
 if( USE_STRICT_COMPILE_WARNINGS )
 	if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang" OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "AppleClang")
 		# using Clang
-		set( FLAGS_FOR_DEBUG "-std=c++11 -pedantic -Wall -Wcast-align -Wcast-qual -Wchar-subscripts -Wcomment -Wconversion -Wctor-dtor-privacy -Wdisabled-optimization -Wextra -Wfloat-equal  -Wformat  -Wformat-nonliteral -Wformat-security  -Wformat-y2k -Wformat=2  -Wimport  -Winit-self -Winline -Winvalid-pch -Wlong-long -Wmissing-braces -Wmissing-declarations -Wmissing-field-initializers -Wmissing-format-attribute -Wmissing-include-dirs -Wmissing-noreturn -Wpacked  -Wparentheses -Wpointer-arith -Wredundant-decls -Wreturn-type -Wsequence-point -Wsign-compare  -Wsign-promo -Wstack-protector -Wstrict-aliasing=2 -Wstrict-overflow=5 -Wswitch -Wswitch-default -Wswitch-enum -Wtrigraphs -Wundef -Wuninitialized -Wunknown-pragmas -Wunreachable-code -Wvariadic-macros -Wvolatile-register-var -Wwrite-strings  -Wno-unused-parameter -Wno-unused" )
+		set( FLAGS_FOR_DEBUG -std=c++11 -pedantic -Wall -Wcast-align -Wcast-qual -Wchar-subscripts -Wcomment -Wconversion -Wctor-dtor-privacy -Wdisabled-optimization -Wextra -Wfloat-equal  -Wformat  -Wformat-nonliteral -Wformat-security  -Wformat-y2k -Wformat=2  -Wimport  -Winit-self -Winline -Winvalid-pch -Wlong-long -Wmissing-braces -Wmissing-declarations -Wmissing-field-initializers -Wmissing-format-attribute -Wmissing-include-dirs -Wmissing-noreturn -Wpacked  -Wparentheses -Wpointer-arith -Wredundant-decls -Wreturn-type -Wsequence-point -Wsign-compare  -Wsign-promo -Wstack-protector -Wstrict-aliasing=2 -Wstrict-overflow=5 -Wswitch -Wswitch-default -Wswitch-enum -Wtrigraphs -Wundef -Wuninitialized -Wunknown-pragmas -Wunreachable-code -Wvariadic-macros -Wvolatile-register-var -Wwrite-strings  -Wno-unused-parameter -Wno-unused )
 	elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR CMAKE_COMPILER_IS_GNUCXX)
 		# using GCC
-		set( FLAGS_FOR_DEBUG "-std=c++11 -pedantic -Wall -Wcast-align -Wcast-qual -Wchar-subscripts -Wcomment -Wconversion -Wctor-dtor-privacy -Wdisabled-optimization -Wextra -Wfloat-equal -Wformat -Wformat-nonliteral -Wformat-security -Wformat-y2k -Wformat=2 -Wimport -Winit-self -Winline -Winvalid-pch -Wlogical-op -Wlong-long -Wmissing-braces -Wmissing-declarations -Wmissing-field-initializers -Wmissing-format-attribute -Wmissing-include-dirs -Wmissing-noreturn -Wnoexcept -Wpacked -Wparentheses -Wpointer-arith -Wredundant-decls -Wreturn-type -Wsequence-point -Wsign-compare -Wsign-promo -Wstack-protector -Wstrict-aliasing=2 -Wstrict-null-sentinel -Wstrict-overflow=5 -Wswitch -Wswitch-default -Wswitch-enum -Wtrigraphs -Wundef -Wuninitialized -Wunknown-pragmas -Wunreachable-code -Wunsafe-loop-optimizations -Wvariadic-macros -Wvolatile-register-var -Wwrite-strings -Wold-style-cast -Woverloaded-virtual -Wuseless-cast -Wsign-conversion -Wno-unused-parameter -Wno-unused" )
+		set( FLAGS_FOR_DEBUG -std=c++11 -pedantic -Wall -Wcast-align -Wcast-qual -Wchar-subscripts -Wcomment -Wconversion -Wctor-dtor-privacy -Wdisabled-optimization -Wextra -Wfloat-equal -Wformat -Wformat-nonliteral -Wformat-security -Wformat-y2k -Wformat=2 -Wimport -Winit-self -Winline -Winvalid-pch -Wlogical-op -Wlong-long -Wmissing-braces -Wmissing-declarations -Wmissing-field-initializers -Wmissing-format-attribute -Wmissing-include-dirs -Wmissing-noreturn -Wnoexcept -Wpacked -Wparentheses -Wpointer-arith -Wredundant-decls -Wreturn-type -Wsequence-point -Wsign-compare -Wsign-promo -Wstack-protector -Wstrict-aliasing=2 -Wstrict-null-sentinel -Wstrict-overflow=5 -Wswitch -Wswitch-default -Wswitch-enum -Wtrigraphs -Wundef -Wuninitialized -Wunknown-pragmas -Wunreachable-code -Wunsafe-loop-optimizations -Wvariadic-macros -Wvolatile-register-var -Wwrite-strings -Wold-style-cast -Woverloaded-virtual -Wuseless-cast -Wsign-conversion -Wno-unused-parameter -Wno-unused )
 
 		# to suppress warnings for unused stuff use: -Wno-unused-parameter -Wno-unused-result
 		# not used:
@@ -177,9 +177,7 @@ if( OpenCV_FOUND )
 		list( APPEND ALL_COMPILE_DEFINITIONS -DNOMINMAX )
 	endif()
 
-	list( APPEND ALL_SYSTEM_HEADERS	${OpenCV_INCLUDE_DIRS} )
-
-	list( APPEND ALL_SYSTEM_HEADERS	${DEPENDENCIES_INCLUDE_DIR}/aruco )
+	#list( APPEND ALL_SYSTEM_HEADERS	${OpenCV_INCLUDE_DIRS} )
 
 	list( APPEND ALL_COMPILE_DEFINITIONS -DOPENCV_FOUND )
 
@@ -836,10 +834,11 @@ endif()
 # ---------------------------------------------------------------
 
 add_library( noiseutils STATIC dependencies/noiseutils/noiseutils.cpp )
-target_include_directories( noiseutils SYSTEM PUBLIC ${DEPENDENCIES_INCLUDE_DIR}/libnoise dependencies/noiseutils  )
+target_include_directories( noiseutils SYSTEM PUBLIC ${DEPENDENCIES_INCLUDE_DIR}/libnoise
+	${CMAKE_CURRENT_SOURCE_DIR}/dependencies/noiseutils  )
 
-add_library( qtcolorpicker STATIC dependencies/qtcolorpicker/qtcolorpicker.cpp )
-target_include_directories( qtcolorpicker SYSTEM PUBLIC dependencies/qtcolorpicker )
+add_library( qtcolorpicker STATIC 	dependencies/qtcolorpicker/qtcolorpicker.cpp )
+target_include_directories( qtcolorpicker SYSTEM PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/qtcolorpicker )
 
 # ---------------------------------------------------------------
 # Build modules as libraries
@@ -847,16 +846,16 @@ target_include_directories( qtcolorpicker SYSTEM PUBLIC dependencies/qtcolorpick
 
 add_library( gitlib SHARED ${SRC_GITLIB} ${HEADER_GITLIB})
 target_include_directories( gitlib
-	PUBLIC
-		${CMAKE_CURRENT_SOURCE_DIR}/include
+	SYSTEM PUBLIC
+		include
 		include/Repository/Git
 )
 target_link_libraries( gitlib ${QT_LIBRARIES} )
 
-set(FLAGS_FOR_DEBUG2 ${FLAGS_FOR_DEBUG})
-list(APPEND FLAGS_FOR_DEBUG2 " -DGITLIB_LIBRARY")
-string(REPLACE " " ";" REPLACED_FLAGS ${FLAGS_FOR_DEBUG2})
-target_compile_options( gitlib PUBLIC ${REPLACED_FLAGS} )
+target_compile_definitions( gitlib
+	PUBLIC -DGITLIB_LIBRARY )
+
+target_compile_options( gitlib PUBLIC ${FLAGS_FOR_DEBUG} )
 
 # ---------------------------------------------------------------
 # Build and link 3Dsoftviz
@@ -869,26 +868,38 @@ endif()
 # Build and link
 add_executable( ${3DSOFTVIZ_NAME} ${INCL}  ${SRC} )
 
-# set compile flags only for our code ( suppresses warnigns on system headers )
-set_target_properties( ${3DSOFTVIZ_NAME} PROPERTIES COMPILE_FLAGS "${FLAGS_FOR_DEBUG}" )
+# set compile flags only for our code ( suppresses warnings on system headers )
+#set_target_properties( ${3DSOFTVIZ_NAME} PROPERTIES COMPILE_FLAGS "${FLAGS_FOR_DEBUG}" )
+
+target_compile_options( ${3DSOFTVIZ_NAME} PUBLIC ${FLAGS_FOR_DEBUG} )
 
 target_compile_definitions( ${3DSOFTVIZ_NAME}
-	PUBLIC
-	${ALL_COMPILE_DEFINITIONS}
+	PUBLIC ${ALL_COMPILE_DEFINITIONS}
 )
 
-target_include_directories( ${3DSOFTVIZ_NAME}
-	PUBLIC
-	${CMAKE_CURRENT_SOURCE_DIR}/include
-)
+if( OpenCV_FOUND )
+	list( APPEND ALL_SYSTEM_HEADERS 		${DEPENDENCIES_INCLUDE_DIR}/aruco )
+endif()
 
-target_include_directories( ${3DSOFTVIZ_NAME}
-	SYSTEM
-	PUBLIC
-		${DEPENDENCIES_INCLUDE_DIR}
-		${DEPENDENCIES_INCLUDE_DIR}/libnoise
-		${ALL_SYSTEM_HEADERS}
-)
+list( APPEND ALL_SYSTEM_HEADERS ${DEPENDENCIES_INCLUDE_DIR})
+list( APPEND ALL_SYSTEM_HEADERS ${DEPENDENCIES_INCLUDE_DIR}/libnoise )
+
+# works:
+include_directories(SYSTEM ${ALL_SYSTEM_HEADERS})
+# does not work:
+#list(REMOVE_DUPLICATES ALL_SYSTEM_HEADERS)
+# target_include_directories( ${3DSOFTVIZ_NAME}
+# 	SYSTEM INTERFACE ${ALL_SYSTEM_HEADERS}
+# )
+# target_include_directories( ${3DSOFTVIZ_NAME}
+# 	PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
+# )
+# message(">>>${ALL_SYSTEM_HEADERS}")
+# get_target_property(VAR ${3DSOFTVIZ_NAME} INCLUDE_DIRECTORIES)
+# get_target_property(VAR2 ${3DSOFTVIZ_NAME} INTERFACE_SYSTEM_INCLUDE_DIRECTORIES)
+# message("1<<<<${VAR}")
+# message("2<<<<${VAR2}")
+
 
 target_link_libraries( ${3DSOFTVIZ_NAME}
 	gitlib
@@ -947,6 +958,14 @@ if( COMMAND cotire )
 
 	cotire( ${3DSOFTVIZ_NAME} CONFIGURATIONS Debug Release )
 	cotire( gitlib CONFIGURATIONS Debug Release )
+
+	# Work in progress:
+	# get_target_property(UVAR ${3DSOFTVIZ_NAME}_unity INCLUDE_DIRECTORIES)
+	# get_target_property(UVAR2 ${3DSOFTVIZ_NAME}_unity INTERFACE_SYSTEM_INCLUDE_DIRECTORIES)
+	# message("U1<<<<${VAR}")
+	# message("U2<<<<${VAR2}")
+
+
 endif()
 
 # Ensure correct dependencies
