@@ -220,7 +220,16 @@ public slots:
 	            *  \brief Show dialog to select file which will be opened
 	            */
 	void loadFile();
-
+/**
+    *  \fn public  loadTestGraphBasic
+    *  \brief Load basic 500 node graph
+    */
+void loadTestGraphBasic();
+/**
+    *  \fn public  loadTestGraphLua
+    *  \brief Load basic lua graph
+    */
+void loadTestGraphLua();
 	/**
 	            *  \fn public  loadFromGit
 	            *  \brief Show dialog to write path to git repo which will be loaded
@@ -683,6 +692,18 @@ private:
 	    */
 	QAction* about;
 
+    /**
+         *  QAction * testGraphBasic
+        *  \brief Pointer to load basic graph from file
+        */
+    QAction* testGraphBasic;
+
+    /**
+         *  QAction * testGraphLua
+        *  \brief Pointer to load basic lua graph from file
+        */
+    QAction* testGraphLua;
+
 	/**
 	    *  QPushButton * play
 	    *  \brief Action for play/pause layout
@@ -1106,6 +1127,12 @@ private:
 	    *  \brief Pointer to edit menu
 	    */
 	QMenu* help;
+
+    /**
+        *  QMenu * test
+        *  \brief Pointer to menu of tests
+        */
+    QMenu* test;
 
 	/**
 	    *  QOSG::ViewerQT * viewerWidget
