@@ -82,6 +82,8 @@ void Repository::Git::GitLuaGraphVisualizer::visualize( bool next ) {
             break;
         case Repository::Git::GitType::MODIFIED:
 //            qDebug() << "MODIFYING" << iterator.value()->getIdentifier();
+            this->evolutionGraph->addChangedNodeOrEdge( iterator.value()->getIdentifier(), Repository::Git::GitType::MODIFIED );
+            this->evolutionGraph->getMetaDataFromIdentifier( iterator.value()->getIdentifier() )->setChangedVersion( this->currentGraph->getCurrentVersion() );
             break;
         default:
             qDebug() << "CHYBNY TYP PRE SUBOR" << iterator.value()->getIdentifier();
@@ -91,7 +93,7 @@ void Repository::Git::GitLuaGraphVisualizer::visualize( bool next ) {
         processFunctionsFromFile( iterator.value(), next );
     }
 
-    processRemovedNodesAndEdges();
+    processChangedNodesAndEdges();
     updateCurrentGraphNodesId();
 }
 
@@ -126,11 +128,14 @@ bool Repository::Git::GitLuaGraphVisualizer::addFileToGraph( Repository::Git::Gi
             } else {
                 newNode = this->currentGraph->addNode( list.at( i ), this->currentGraph->getTypesByName( "node" ).at( 0 ) );
             }
-            newNode->setLuaIdentifier( newIdentifier );    
+            newNode->setLuaIdentifier( newIdentifier );
         } else {
             newNode->setType( this->currentGraph->getTypesByName( "node" ).at( 0 ) );
             this->evolutionGraph->removeChangedNodeOrEdge( newIdentifier );
         }
+
+        this->evolutionGraph->addChangedNodeOrEdge( newIdentifier, Repository::Git::GitType::ADDED );
+        this->evolutionGraph->getMetaDataFromIdentifier( newIdentifier )->setChangedVersion( this->currentGraph->getCurrentVersion() );
 
         if( luaNode ) {
             this->evolutionGraph->getMetaDataFromIdentifier( newIdentifier )->setLuaMapping( luaNode->getId() );
@@ -158,6 +163,10 @@ bool Repository::Git::GitLuaGraphVisualizer::addFileToGraph( Repository::Git::Gi
             this->evolutionGraph->removeChangedNodeOrEdge( edgeIdentifier );
 
         }
+
+        this->evolutionGraph->addChangedNodeOrEdge( edgeIdentifier, Repository::Git::GitType::ADDED );
+        this->evolutionGraph->getMetaDataFromIdentifier( edgeIdentifier )->setChangedVersion( this->currentGraph->getCurrentVersion() );
+
         if( luaEdge ) {
             this->evolutionGraph->getMetaDataFromIdentifier( edgeIdentifier )->setLuaMapping( luaEdge->getId() );
             if( showLuaStats ) {
@@ -204,6 +213,8 @@ bool Repository::Git::GitLuaGraphVisualizer::processFunctionsFromFile( Repositor
 
         case Repository::Git::GitType::MODIFIED :
 //            qDebug() << "MODIFIED" << file->getIdentifier() << "->" << function->getIdentifier();
+            this->evolutionGraph->addChangedNodeOrEdge( function->getIdentifier(), Repository::Git::GitType::MODIFIED );
+            this->evolutionGraph->getMetaDataFromIdentifier( function->getIdentifier() )->setChangedVersion( this->currentGraph->getCurrentVersion() );
             break;
         default:
             qDebug() << "CHYBA V" << file->getIdentifier() << "->" << function->getIdentifier();
@@ -236,6 +247,8 @@ bool Repository::Git::GitLuaGraphVisualizer::processFunctionsFromFile( Repositor
                 break;
             case Repository::Git::GitType::MODIFIED :
 //                qDebug() << "MODIFIED" << file->getIdentifier() << "->" << function->getIdentifier() << "->" << innerFunction->getIdentifier();
+                this->evolutionGraph->addChangedNodeOrEdge( innerFunction->getIdentifier(), Repository::Git::GitType::MODIFIED );
+            this->evolutionGraph->getMetaDataFromIdentifier( innerFunction->getIdentifier() )->setChangedVersion( this->currentGraph->getCurrentVersion() );
                 break;
             default:
                 qDebug() << "CHYBA V" << file->getIdentifier() << "->" << function->getIdentifier() << "->"  << innerFunction->getIdentifier();
@@ -273,6 +286,10 @@ bool Repository::Git::GitLuaGraphVisualizer::addFunctionToGraph( Repository::Git
         node->setType( this->currentGraph->getTypesByName( "node" ).at( 0 ) );
         this->evolutionGraph->removeChangedNodeOrEdge( function->getIdentifier() );
     }
+
+    this->evolutionGraph->addChangedNodeOrEdge( luaNode->getIdentifier(), Repository::Git::GitType::ADDED );
+    this->evolutionGraph->getMetaDataFromIdentifier( luaNode->getIdentifier() )->setChangedVersion( this->currentGraph->getCurrentVersion() );
+
     this->evolutionGraph->getMetaDataFromIdentifier( luaNode->getIdentifier() )->setLuaMapping( luaNode->getId() );
 
     this->evolutionGraph->getMetaDataFromIdentifier( luaNode->getIdentifier() )->increaseOccurence();
@@ -296,10 +313,13 @@ bool Repository::Git::GitLuaGraphVisualizer::addFunctionToGraph( Repository::Git
 //            edge = this->currentGraph->addEdge( luaEdge->getLabel(), masterNode, node, this->currentGraph->getTypesByName( "edge" ).at( 0 ), false );
         }
         edge->setLuaIdentifier( edgeIdentifier );
-        edge->setCamera( this->camera );
+        edge->setCamera( this->camera );       
     } else {
         this->evolutionGraph->removeChangedNodeOrEdge( edgeIdentifier );
     }
+
+    this->evolutionGraph->addChangedNodeOrEdge( edgeIdentifier, Repository::Git::GitType::ADDED );
+    this->evolutionGraph->getMetaDataFromIdentifier( edgeIdentifier )->setChangedVersion( this->currentGraph->getCurrentVersion() );
 
     if( showLuaStats ) {
         setEdgeParams( edge, luaEdge, osg::Vec4f( 1, 1, 1, 1 ) );
@@ -335,6 +355,9 @@ bool Repository::Git::GitLuaGraphVisualizer::addModuleFromGlobalFunction( Reposi
         this->evolutionGraph->removeChangedNodeOrEdge( moduleIdentifier );
     }
 
+    this->evolutionGraph->addChangedNodeOrEdge( luaModuleNode->getIdentifier(), Repository::Git::GitType::ADDED );
+    this->evolutionGraph->getMetaDataFromIdentifier( luaModuleNode->getIdentifier() )->setChangedVersion( this->currentGraph->getCurrentVersion() );
+
     this->evolutionGraph->getMetaDataFromIdentifier( luaModuleNode->getIdentifier() )->setLuaMapping( luaModuleNode->getId() );
     this->evolutionGraph->getMetaDataFromIdentifier( luaModuleNode->getIdentifier() )->increaseOccurence();
 
@@ -350,6 +373,9 @@ bool Repository::Git::GitLuaGraphVisualizer::addModuleFromGlobalFunction( Reposi
     } else {
         this->evolutionGraph->removeChangedNodeOrEdge( edgeIdentifier );
     }
+
+    this->evolutionGraph->addChangedNodeOrEdge( edgeIdentifier, Repository::Git::GitType::ADDED );
+    this->evolutionGraph->getMetaDataFromIdentifier( edgeIdentifier )->setChangedVersion( this->currentGraph->getCurrentVersion() );
 
     if( showLuaStats ) {
         setEdgeParams( edge, luaEdge, osg::Vec4f( 1, 1, 1, 1 ) );
@@ -380,11 +406,11 @@ bool Repository::Git::GitLuaGraphVisualizer::removeFileFromGraph( Repository::Gi
         if( this->evolutionGraph->getMetaDataFromIdentifier( newIdentifier )->decreaseOccurence() <= 0 ) {
 //            qDebug() << newIdentifier << "stored to removedFiles";
             if( next ) {
-                this->evolutionGraph->getMetaDataFromIdentifier( newIdentifier )->setRemovedVersion( this->currentGraph->getCurrentVersion() );
+                this->evolutionGraph->getMetaDataFromIdentifier( newIdentifier )->setChangedVersion( this->currentGraph->getCurrentVersion() );
                 this->evolutionGraph->addChangedNodeOrEdge( newIdentifier, Repository::Git::GitType::REMOVED );
             } else {
-                this->evolutionGraph->getMetaDataFromIdentifier( newIdentifier )->setRemovedVersion( -1 );
-                this->evolutionGraph->addChangedNodeOrEdge( newIdentifier, Repository::Git::GitType::NONE );
+                this->evolutionGraph->getMetaDataFromIdentifier( newIdentifier )->clearChangedVersion();
+                this->evolutionGraph->addChangedNodeOrEdge( newIdentifier, Repository::Git::GitType::REMOVED );
             }
         }
     }
@@ -400,17 +426,17 @@ bool Repository::Git::GitLuaGraphVisualizer::removeFunctionFromGraph( Repository
 
     if( next ){
         QString edgeIdentifier = masterIdentifier + "+" + function->getIdentifier();
-        this->evolutionGraph->getMetaDataFromIdentifier( edgeIdentifier )->setRemovedVersion( this->currentGraph->getCurrentVersion() );
+        this->evolutionGraph->getMetaDataFromIdentifier( edgeIdentifier )->setChangedVersion( this->currentGraph->getCurrentVersion() );
         this->evolutionGraph->addChangedNodeOrEdge( edgeIdentifier, Repository::Git::GitType::REMOVED );
     }
     if( this->evolutionGraph->getMetaDataFromIdentifier( function->getIdentifier() )->decreaseOccurence() <= 0 ) {
 //        qDebug() << function->getIdentifier() << "stored to removedFiles";
         if( next ) {
-            this->evolutionGraph->getMetaDataFromIdentifier( function->getIdentifier() )->setRemovedVersion( this->currentGraph->getCurrentVersion() );
+            this->evolutionGraph->getMetaDataFromIdentifier( function->getIdentifier() )->setChangedVersion( this->currentGraph->getCurrentVersion() );
             this->evolutionGraph->addChangedNodeOrEdge( function->getIdentifier(), Repository::Git::GitType::REMOVED );
         } else {
-            this->evolutionGraph->getMetaDataFromIdentifier( function->getIdentifier() )->setRemovedVersion( -1 );
-            this->evolutionGraph->addChangedNodeOrEdge( function->getIdentifier(), Repository::Git::GitType::NONE );
+            this->evolutionGraph->getMetaDataFromIdentifier( function->getIdentifier() )->clearChangedVersion();
+            this->evolutionGraph->addChangedNodeOrEdge( function->getIdentifier(), Repository::Git::GitType::REMOVED );
         }
     }
 
@@ -424,31 +450,89 @@ bool Repository::Git::GitLuaGraphVisualizer::removeModuleFromGlobalFunction( Rep
 
     if( next ) {
         QString edgeIdentifier = function->getIdentifier() + "+" + moduleIdentifier;
-        this->evolutionGraph->getMetaDataFromIdentifier( edgeIdentifier )->setRemovedVersion( this->currentGraph->getCurrentVersion() );
+        this->evolutionGraph->getMetaDataFromIdentifier( edgeIdentifier )->setChangedVersion( this->currentGraph->getCurrentVersion() );
         this->evolutionGraph->addChangedNodeOrEdge( edgeIdentifier, Repository::Git::GitType::REMOVED );
     }
         if( this->evolutionGraph->getMetaDataFromIdentifier( moduleIdentifier )->decreaseOccurence() <= 0 ) {
 //        qDebug() << moduleIdentifier << "stored to removedFiles";
         if( next ) {
-            this->evolutionGraph->getMetaDataFromIdentifier( moduleIdentifier )->setRemovedVersion( this->currentGraph->getCurrentVersion() );
+            this->evolutionGraph->getMetaDataFromIdentifier( moduleIdentifier )->setChangedVersion( this->currentGraph->getCurrentVersion() );
             this->evolutionGraph->addChangedNodeOrEdge( moduleIdentifier, Repository::Git::GitType::REMOVED );
         } else {
-            this->evolutionGraph->getMetaDataFromIdentifier( moduleIdentifier )->setRemovedVersion( -1 );
-            this->evolutionGraph->addChangedNodeOrEdge( moduleIdentifier, Repository::Git::GitType::NONE );
+            this->evolutionGraph->getMetaDataFromIdentifier( moduleIdentifier )->clearChangedVersion();
+            this->evolutionGraph->addChangedNodeOrEdge( moduleIdentifier, Repository::Git::GitType::REMOVED );
         }
     }
 
     return true;
 }
 
-void Repository::Git::GitLuaGraphVisualizer::processRemovedNodesAndEdges() {
+void Repository::Git::GitLuaGraphVisualizer::processChangedNodesAndEdges() {
     QList<QString> removedNodesAndEdges = QList<QString>();
 
-for( QMap<QString, Repository::Git::GitType>::iterator iterator = this->evolutionGraph->getChangedNodesAndEdge()->begin(); iterator != this->evolutionGraph->getChangedNodesAndEdge()->end(); ++iterator ) {
-            QString identifier = iterator.key();
-            bool passedLifespan = false;
-            int difference = this->currentGraph->getCurrentVersion() - this->evolutionGraph->getMetaDataFromIdentifier( identifier )->getRemovedVersion();
-            if( this->evolutionGraph->getMetaDataFromIdentifier( identifier )->getRemovedVersion() != -1 ) {
+    for( QMap<QString, Repository::Git::GitType>::iterator iterator = this->evolutionGraph->getChangedNodesAndEdge()->begin(); iterator != this->evolutionGraph->getChangedNodesAndEdge()->end(); ++iterator ) {
+        QString identifier = iterator.key();
+        bool passedLifespan = false;
+        int difference;
+
+        switch( iterator.value() ) {
+        case Repository::Git::GitType::ADDED:
+            // Ak ide o identifikator uzla, tak sa index rovna -1, inak ide o hranu
+            if( identifier.indexOf( "+" ) == -1 ) {
+                osg::ref_ptr<Data::Node> node = this->currentGraph->findNodeByLuaIdentifier( identifier );
+
+                // Ak sa nemaju zobrazovat Lua udaje v grafe, upravim zobrazenie uzla
+                if( !this->showLuaStats ) {
+                    // Ak sa zmenena verzia rovna sucasnej verzii, tak zmenim tvar node na +, inak vratim povodnu reprezentaciu uzla
+                    if( this->evolutionGraph->getMetaDataFromIdentifier( identifier )->getChangedVersion() == this->currentGraph->getCurrentVersion() ) {
+                        node->setType( this->currentGraph->getTypesByName( "addedNode" ).at( 0 ) );
+                        node->setColor( osg::Vec4f( 0, 1, 0, 1 ) );
+                    } else {
+                        node->setType( this->currentGraph->getTypesByName( "node" ).at( 0 ) );
+                        node->setColor( osg::Vec4f( 1, 1, 1, 1 ) );
+
+                        removedNodesAndEdges.append( identifier );
+                    }
+
+                    node->reloadConfig();
+                    node->showLabel( true );
+                }
+
+            } else {
+                osg::ref_ptr<Data::Edge> edge = this->currentGraph->findEdgeByLuaIdentifier( identifier );
+                if( !this->showLuaStats && edge ) {
+                    if( this->evolutionGraph->getMetaDataFromIdentifier( identifier )->getChangedVersion() == this->currentGraph->getCurrentVersion() ) {
+                        edge->setEdgeColor( osg::Vec4f( 0, 1, 0, 1 ) );
+                    } else {
+                        edge->setEdgeColor( osg::Vec4f( 1, 1, 1, 1 ) );
+                        removedNodesAndEdges.append( identifier );
+                    }
+                }
+            }
+
+            break;
+        case Repository::Git::GitType::MODIFIED:
+
+            if( identifier.indexOf( "+" ) == -1 ) {
+                osg::ref_ptr<Data::Node> node =  this->currentGraph->findNodeByLuaIdentifier( identifier );
+                if( !this->showLuaStats && node ) {
+                    if( this->evolutionGraph->getMetaDataFromIdentifier( identifier )->getChangedVersion() == this->currentGraph->getCurrentVersion() ) {
+                        node->setType( this->currentGraph->getTypesByName( "modifiedNode" ).at( 0 ) );
+                        node->setColor( osg::Vec4f( 1, 1, 0, 1 ) );
+                    } else {
+                        node->setType( this->currentGraph->getTypesByName( "node" ).at( 0 ) );
+                        node->setColor( osg::Vec4f( 1, 1, 1, 1 ) );
+                        removedNodesAndEdges.append( identifier );
+                    }
+                    node->reloadConfig();
+                    node->showLabel( true );
+                }
+            }
+
+            break;
+        case Repository::Git::GitType::REMOVED:
+            difference = this->currentGraph->getCurrentVersion() - this->evolutionGraph->getMetaDataFromIdentifier( identifier )->getChangedVersion();
+            if( this->evolutionGraph->getMetaDataFromIdentifier( identifier )->getChangedVersion() != -1 ) {
                 if( difference >= this->evolutionGraph->getLifespan() ) {
                     passedLifespan = true;
                 }
@@ -461,35 +545,43 @@ for( QMap<QString, Repository::Git::GitType>::iterator iterator = this->evolutio
                 osg::ref_ptr<Data::Node> node = this->currentGraph->findNodeByLuaIdentifier( iterator.key() );
 
                 if( this->evolutionGraph->getMetaDataFromIdentifier( identifier )->getOccurence() <= 0 ) {
-//                    qDebug() << "Occurence 0" << iterator.key();
+                    //                        qDebug() << "Occurence 0" << iterator.key();
                     if( passedLifespan ) {
                         this->currentGraph->removeNode( node );
                         removedNodesAndEdges.append( identifier );
                     } else {
                         node->setType( this->currentGraph->getTypesByName( "removedNode" ).at( 0 ) );
+                        node->setColor( osg::Vec4f( 1, 1, 1, 1 ) );
                         node->reloadConfig();
                         node->showLabel( true );
                     }
                 } else {
-//                    qDebug() << "occurence >0" << iterator.key();
+                    //                        qDebug() << "occurence >0" << iterator.key();
                     removedNodesAndEdges.append( identifier );
                 }
             } else {
+                osg::ref_ptr<Data::Edge> edge = this->currentGraph->findEdgeByLuaIdentifier( identifier );
                 if( !passedLifespan ) {
-                    osg::ref_ptr<Data::Edge> edge = this->currentGraph->findEdgeByLuaIdentifier( identifier );
                     edge->setEdgeColor( osg::Vec4f( 1, 0, 0, 1 ) );
                 } else {
+                    this->currentGraph->removeEdge( edge);
                     removedNodesAndEdges.append( identifier );
                 }
             }
 
+            break;
+        case Repository::Git::GitType::NONE:
 
-
+            break;
+        default:
+            qDebug() << "Unknown GitType";
+            return;
+        }
     }
 
     foreach( QString identifier, removedNodesAndEdges ) {
         this->evolutionGraph->removeChangedNodeOrEdge( identifier );
-        this->evolutionGraph->getMetaDataFromIdentifier( identifier )->setRemovedVersion( -1 );
+        this->evolutionGraph->getMetaDataFromIdentifier( identifier )->clearChangedVersion();
     }
 
 }
@@ -544,16 +636,34 @@ void Repository::Git::GitLuaGraphVisualizer::addCustomTypes() {
     settings->insert( "color.G", "1" );
     settings->insert( "color.B", "1" );
     settings->insert( "color.A", "1" );
-    settings->insert( "scale", Util::ApplicationConfig::get()->getValue( "Viewer.Textures.DefaultNodeScale" ) );
-    settings->insert( "textureFile", Util::ApplicationConfig::get()->getValue( "Viewer.Textures.RemoveNode" ) );;
+    settings->insert( "scale", Util::ApplicationConfig::get()->getValue( "Viewer.Textures.EvolutionNodeScale" ) );
+    settings->insert( "textureFile", Util::ApplicationConfig::get()->getValue( "Viewer.Textures.RemoveNode" ) );
     this->currentGraph->addType( "removedNode", settings );
 
     settings = new QMap<QString, QString>;
     settings->insert( "color.R", "1" );
-    settings->insert( "color.G", "0" );
-    settings->insert( "color.B", "0" );
+    settings->insert( "color.G", "1" );
+    settings->insert( "color.B", "1" );
     settings->insert( "color.A", "1" );
-    settings->insert( "scale", Util::ApplicationConfig::get()->getValue( "Viewer.Textures.DefaultEdgeScale" ) );
+    settings->insert( "scale", Util::ApplicationConfig::get()->getValue( "Viewer.Textures.EvolutionEdgeScale" ) );
     settings->insert( "textureFile", Util::ApplicationConfig::get()->getValue( "Viewer.Textures.Edge" ) );;
     this->currentGraph->addType( "removedEdge", settings );
+
+    settings = new QMap<QString, QString>;
+    settings->insert( "color.R", "0" );
+    settings->insert( "color.G", "1" );
+    settings->insert( "color.B", "0" );
+    settings->insert( "color.A", "1" );
+    settings->insert( "scale", Util::ApplicationConfig::get()->getValue( "Viewer.Textures.EvolutionNodeScale" ) );
+    settings->insert( "textureFile", Util::ApplicationConfig::get()->getValue( "Viewer.Textures.AddedNode" ) );
+    this->currentGraph->addType( "addedNode", settings );
+
+    settings = new QMap<QString, QString>;
+    settings->insert( "color.R", "1" );
+    settings->insert( "color.G", "1" );
+    settings->insert( "color.B", "0" );
+    settings->insert( "color.A", "1" );
+    settings->insert( "scale", Util::ApplicationConfig::get()->getValue( "Viewer.Textures.EvolutionNodeScale" ) );
+    settings->insert( "textureFile", Util::ApplicationConfig::get()->getValue( "Viewer.Textures.Node" ) );
+    this->currentGraph->addType( "modifiedNode", settings );
 }

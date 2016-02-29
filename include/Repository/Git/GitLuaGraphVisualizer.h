@@ -60,7 +60,7 @@ private:
 
     void addCustomTypes();
 
-    void processRemovedNodesAndEdges();
+    void processChangedNodesAndEdges();
 
     /**
      * Data::Graph* currentGraph

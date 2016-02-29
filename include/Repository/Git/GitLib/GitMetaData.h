@@ -52,16 +52,16 @@ public:
         return this->luaMapping;
     }
 
-    void setRemovedVersion( int version ) {
-        this->removedVersion = version;
+    void setChangedVersion( int version ) {
+        this->changedVersion = version;
     }
 
-    int getRemovedVersion() {
-        return this->removedVersion;
+    int getChangedVersion() {
+        return this->changedVersion;
     }
 
-    void clearRemovedVersion() {
-        this->removedVersion = -1;
+    void clearChangedVersion() {
+        this->changedVersion = -1;
     }
 
     void setCallTree( Repository::Git::GitFile* file );
@@ -79,7 +79,7 @@ private:
 
     qlonglong luaMapping;
 
-    int removedVersion;
+    int changedVersion;
 
     Repository::Git::GitFile* callTree;
 
