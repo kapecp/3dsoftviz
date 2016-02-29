@@ -849,9 +849,7 @@ endif()
 # ---------------------------------------------------------------
 
 add_library( noiseutils STATIC dependencies/noiseutils/noiseutils.cpp )
-target_include_directories( noiseutils SYSTEM PUBLIC
-	${DEPENDENCIES_INCLUDE_DIR}/libnoise
-	${CMAKE_CURRENT_SOURCE_DIR}/dependencies/noiseutils  )
+target_include_directories( noiseutils SYSTEM PUBLIC ${DEPENDENCIES_INCLUDE_DIR}/libnoise dependencies/noiseutils )
 
 add_library( qtcolorpicker STATIC dependencies/qtcolorpicker/qtcolorpicker.cpp )
 target_include_directories( qtcolorpicker SYSTEM PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/qtcolorpicker )
@@ -905,7 +903,7 @@ endif()
 
 list( APPEND ALL_SYSTEM_HEADERS ${DEPENDENCIES_INCLUDE_DIR})
 list( APPEND ALL_SYSTEM_HEADERS ${DEPENDENCIES_INCLUDE_DIR}/libnoise )
-list( APPEND ALL_SYSTEM_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/easyloggingpp )
+list( APPEND ALL_SYSTEM_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/easyloggingpp/src )
 
 # works:
 include_directories(SYSTEM ${ALL_SYSTEM_HEADERS})
