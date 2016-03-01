@@ -212,11 +212,7 @@ QMap<QString, Repository::Git::GitFile*>* Repository::Git::GitEvolutionGraphMana
 
         if( !exclude ) {
             result->insert( gitFile->getIdentifier(), gitFile );
-        } else {
-            qDebug() << "Exclude" << gitFile->getIdentifier();
         }
-
-
     }
     return result;
 }

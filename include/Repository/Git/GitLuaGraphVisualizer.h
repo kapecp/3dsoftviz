@@ -28,13 +28,11 @@ class GitFunction;
 class GitLuaGraphVisualizer
 {
 public:
-    GitLuaGraphVisualizer( Data::Graph* currentGraph, Repository::Git::GitEvolutionGraph* evolutionGraph, osg::ref_ptr<osg::Camera> camera );
+    GitLuaGraphVisualizer( Data::Graph* currentGraph, Repository::Git::GitEvolutionGraph* evolutionGraph, osg::ref_ptr<osg::Camera> camera, bool showLuaStats );
 
     void visualize( bool next );
 
-    void setShowLuaStats( bool show ) {
-        this->showLuaStats = show;
-    }
+    void changeNodeRepresentation( bool showLuaStats );
 
 private:
     void setNodeParams( osg::ref_ptr<Data::Node> node, Lua::LuaGraphObject* obj, osg::Vec4f defColor, float defSize );
@@ -81,6 +79,8 @@ private:
     Lua::LuaGraph* luaGraph;
 
     bool showLuaStats;
+
+    bool isChangingRepresentation;
 
     osg::ref_ptr<osg::Camera> camera;
 

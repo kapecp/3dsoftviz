@@ -32,7 +32,7 @@ Repository::Git::GitLuaGraphAnalyzer::GitLuaGraphAnalyzer( Lua::LuaGraph *luaGra
 }
 
 Repository::Git::GitLuaGraphAnalyzer::~GitLuaGraphAnalyzer() {
-    qDebug() << "Destruktor GitLuaGraphAnalyzer";
+//    qDebug() << "Destruktor GitLuaGraphAnalyzer";
     delete functions;
 }
 
@@ -517,7 +517,7 @@ void Repository::Git::GitLuaGraphAnalyzer::compareFunctions( Repository::Git::Gi
                                     }
                                 }
 
-                                qDebug() << newFunction->getIdentifier() << "was MODIFIED!!!!!!!!!!!";
+//                                qDebug() << newFunction->getIdentifier() << "was MODIFIED!!!!!!!!!!!";
                                 isFound = true;
                                 break;
                             }
@@ -544,7 +544,7 @@ void Repository::Git::GitLuaGraphAnalyzer::compareFunctions( Repository::Git::Gi
                                     }
                                 }
 
-                                qDebug() << newFunction->getIdentifier() << "was MODIFIED!!!!!!!!!!!";
+//                                qDebug() << newFunction->getIdentifier() << "was MODIFIED!!!!!!!!!!!";
                                 isFound = true;
                                 break;
                                 }

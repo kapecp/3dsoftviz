@@ -208,7 +208,7 @@ public:
 	 * @param path Project path of the file
 	 * @param version Index of currently vizualized version in graph
 	 */
-	void getDiffInfo( QString path, int version );
+    void getDiffInfo( QString path, int version );
 
 private:
 	/**
