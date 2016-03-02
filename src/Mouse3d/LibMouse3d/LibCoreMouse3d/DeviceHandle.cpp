@@ -18,15 +18,13 @@ DeviceHandle::DeviceHandle(){
     qDebug() << "InitDevice finished";
 
     //get device driver version
-    /*
-    if(SiGetDriverInfo(driverVersion.get()) == SPW_ERROR)
+    if(SiGetDriverInfo(&driverVersion) == SPW_ERROR)
          qDebug() << "Could not retrieve version info \n";
     else{
-         qDebug() << "Version: ";
-         qDebug() << driverVersion.get()->version;
+         qDebug() << "Driver version: ";
+         qDebug() << driverVersion.version;
          qDebug() << "\n";
     }
-    */
 }
 
 DeviceHandle::~DeviceHandle(){
@@ -42,9 +40,8 @@ DeviceHandle* DeviceHandle::GetInstance(HWND windowHandle){
 
     if(device == NULL){
         hWnd = windowHandle;
-        qDebug() << "windowHandle ID:" << windowHandle;
         qDebug() << "Device instance not found --> going to grab handle";
-        //call constructor
+
         device = new DeviceHandle();
     }
 
@@ -99,18 +96,17 @@ void DeviceHandle::InitDevice(){
     qDebug() << hWnd;
     SiOpenWinInit(&initData, hWnd);
     qDebug() << "Calling initialized handle data from initData " << initData.hWnd;
-    this->deviceRef = SiOpen("3DSoftviz", SI_ANY_DEVICE, SI_NO_MASK, SI_EVENT, &initData);
 
+    /*
+    if((this->deviceRef =
+            SiOpen("3DSoftviz", SI_ANY_DEVICE, SI_NO_MASK, SI_EVENT, &initData)
+            ) == SI_NO_HANDLE){
+        qDebug() << "Opening device FAILED!";
+    }
+    */
+    qDebug() << (this->deviceRef =
+                SiOpen("3DSoftviz", SI_ANY_DEVICE, SI_NO_MASK, SI_EVENT, &initData));
     //qDebug() << *SpwErrorString(SpwErrorVal);
-
-    if(this->deviceRef == NULL){
-        qDebug() << "Failed to open 3DxWare device";
-        qDebug() << deviceRef;
-        this->SetMouseCancel(true);
-    }
-    else{
-        qDebug() << "When you get what you want but not what you need";
-    }
 
 }
 
