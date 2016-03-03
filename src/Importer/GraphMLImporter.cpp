@@ -108,7 +108,7 @@ bool GraphMLImporter::processGraph_Nodes(
 		newNodeType = NULL;
 		QDomNodeList nodeDataList = nodeElement.elementsByTagName( "data" );
 		for ( unsigned int j = 0; j < nodeDataList.length(); j++ ) {
-			QDomNode nodeData = nodeDataList.item( j );
+			QDomNode nodeData = nodeDataList.item( static_cast<int>( j ) );
 			if ( !nodeData.isNull() && nodeData.isElement() ) {
 				QDomElement nodeDataElement = nodeData.toElement();
 				QString dataName = nodeDataElement.attribute( "key" );
@@ -183,7 +183,7 @@ bool GraphMLImporter::processGraph_Nodes(
 		}
 
 		entitiesProcessed_++;
-		context_->getInfoHandler().setProgress( entitiesProcessed_ * 100 / entitiesCount_ );
+		context_->getInfoHandler().setProgress( static_cast<unsigned int>( entitiesProcessed_ * 100 / entitiesCount_ ) );
 	}
 
 	return ok;
@@ -239,7 +239,7 @@ bool GraphMLImporter::processGraph_Edges(
 		newEdgeType = NULL;
 		QDomNodeList edgeDataList = edgeElement.elementsByTagName( "data" );
 		for ( unsigned int j = 0; j < edgeDataList.length(); j++ ) {
-			QDomNode edgeData = edgeDataList.item( j );
+			QDomNode edgeData = edgeDataList.item( static_cast<int>( j ) );
 			if ( !edgeData.isNull() && edgeData.isElement() ) {
 				QDomElement edgeDataElement = edgeData.toElement();
 				QString dataName = edgeDataElement.attribute( "key" );
@@ -308,7 +308,7 @@ bool GraphMLImporter::processGraph_Edges(
 		}
 
 		entitiesProcessed_++;
-		context_->getInfoHandler().setProgress( entitiesProcessed_ * 100 / entitiesCount_ );
+		context_->getInfoHandler().setProgress( static_cast<unsigned int>( entitiesProcessed_ * 100 / entitiesCount_ ) );
 	}
 
 	return ok;

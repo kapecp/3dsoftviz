@@ -69,8 +69,8 @@ private:
 	ImporterContext* context_;
 
 	// helpers
-	std::auto_ptr<GraphOperations> graphOp_;
-	std::auto_ptr<ReadNodesStore> readNodes_;
+	std::shared_ptr<GraphOperations> graphOp_;
+	std::shared_ptr<ReadNodesStore> readNodes_;
 
 	//default types
 	Data::Type* edgeType_;

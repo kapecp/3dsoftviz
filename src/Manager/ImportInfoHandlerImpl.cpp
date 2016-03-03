@@ -5,14 +5,6 @@
 
 namespace Manager {
 
-//chybove hlasky
-
-#if defined(__GNUC__)
-#define NORETURN __attribute__ ((noreturn))
-#elif defined(_MSC_VER)
-#define NORETURN __declspec(noreturn)
-#endif
-
 void ImportInfoHandlerImpl::addMessage()
 {
 	throw "not implemented";
@@ -33,7 +25,7 @@ void ImportInfoHandlerImpl::setProgress(
 	const unsigned int value
 )
 {
-	AppCore::Core::getInstance()->messageWindows->setProgressBarValue( value );
+	AppCore::Core::getInstance()->messageWindows->setProgressBarValue( static_cast<int>( value ) );
 }
 
 } // namespace

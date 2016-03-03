@@ -33,22 +33,22 @@ AppCore::Core::Core( QApplication* app )
 	this->cg = new Vwr::CoreGraph();
 	this->cw = new QOSG::CoreWindow( 0, this->cg, app, this->thr );
 
-	long width =appConf->getNumericValue(
-					"UI.MainWindow.DefaultWidth",
-					std::auto_ptr<long> ( new long( 200 ) ),
-					std::auto_ptr<long> ( NULL ),
-					( long ( 1024 ) )
+	int width =appConf->getNumericValue(
+				   "UI.MainWindow.DefaultWidth",
+				   std::shared_ptr<int> ( new int( 200 ) ),
+				   std::shared_ptr<int> ( NULL ),
+				   1024
+			   );
+	int height= appConf->getNumericValue(
+					"UI.MainWindow.DefaultHeight",
+					std::shared_ptr<int> ( new int( 200 ) ),
+					std::shared_ptr<int> ( NULL ),
+					768
 				);
-	long height= appConf->getNumericValue(
-					 "UI.MainWindow.DefaultHeight",
-					 std::auto_ptr<long> ( new long( 200 ) ),
-					 std::auto_ptr<long> ( NULL ),
-					 ( long ( 768 ) )
-				 );
 
 
 
-	this->cw->resize( static_cast<int>( width ), static_cast<int>( height ) );
+	this->cw->resize( width, height );
 	this->cw->show();
 
 	app->exec();

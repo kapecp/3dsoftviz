@@ -8,8 +8,10 @@ Fglove::FgloveThread::FgloveThread( QObject* parent ) : QThread( parent )
 {
 
 	// variable for last recognized gesture
+	pGlove = NULL;
 	mLastGesture = -2;
 	mNodeSelected = false;
+
 
 	qDebug() << "fgloveThread created";
 }

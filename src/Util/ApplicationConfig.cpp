@@ -2,7 +2,9 @@
 
 #include "OpenThreads/Mutex"
 
+#include <QDebug>
 #include <QFile>
+#include <QDebug>
 
 Util::ApplicationConfig* Util::ApplicationConfig::_instance;
 OpenThreads::Mutex Util::ApplicationConfig::_mutex;
@@ -42,11 +44,11 @@ QString Util::ApplicationConfig::getValue( QString key )
 }
 
 
-long Util::ApplicationConfig::getNumericValue(
+int Util::ApplicationConfig::getNumericValue(
 	QString key,
-	std::auto_ptr<long> minValue,
-	std::auto_ptr<long> maxValue,
-	const long defaultValue
+	std::shared_ptr<int> minValue,
+	std::shared_ptr<int> maxValue,
+	const int defaultValue
 )
 {
 	if ( !_map.contains( key ) ) {
@@ -55,7 +57,7 @@ long Util::ApplicationConfig::getNumericValue(
 
 	QString value = getValue( key );
 	bool ok = true;
-	long result = value.toLong( &ok );
+	int result = value.toInt( &ok );
 
 	if ( !ok ) {
 		return defaultValue;

@@ -123,7 +123,7 @@ public:
 		*  \return bool true, if event was handled
 		*/
 	bool handle( const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& aa );
-
+	using osgGA::GUIEventHandler::handle;
 
 	/**
 		*  \fn public  toggleSelectedNodesFixedState(bool isFixed)
@@ -403,7 +403,7 @@ private:
 		*  \brief Select all neighbors edges and theirs nodes of nodes collection in parameter
 		*  \param     nodes   nodes for neighbors selection
 		*/
-	void selectAllNeighbors( QLinkedList<osg::ref_ptr<Data::Node>> nodes );
+	void selectAllNeighbors( QLinkedList<osg::ref_ptr<Data::Node > > nodes );
 
 	/**
 		*  \fn private  dragNode(osgViewer::Viewer * viewer)

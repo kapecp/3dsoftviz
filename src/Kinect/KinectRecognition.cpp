@@ -43,11 +43,11 @@ cv::Mat Kinect::KinectRecognition::colorImageCvMat( openni::VideoFrameRef& color
 {
 	cv::Mat frame;
 	// read specific data from color frame
-	const openni::RGB888Pixel* imageBuffer = ( const openni::RGB888Pixel* )colorFrame.getData();
+	const openni::RGB888Pixel* imageBuffer = static_cast<const openni::RGB888Pixel*>( colorFrame.getData() );
 	// create cv mat frame
 	frame.create( colorFrame.getHeight(), colorFrame.getWidth(), CV_8UC3 );
 	// copy data
-	memcpy( frame.data, imageBuffer, 3*colorFrame.getHeight()*colorFrame.getWidth()*sizeof( uint8_t ) );
+	memcpy( frame.data, imageBuffer, static_cast<size_t>( 3*colorFrame.getHeight()*colorFrame.getWidth() )*sizeof( uint8_t ) );
 
 	return frame;
 }
@@ -56,11 +56,11 @@ cv::Mat Kinect::KinectRecognition::depthImageCvMat( openni::VideoFrameRef& depth
 {
 	cv::Mat frame;
 	//read specific data from depth frame
-	const openni::DepthPixel* imageBuffer = ( const openni::DepthPixel* ) depthFrame.getData();
+	const openni::DepthPixel* imageBuffer = static_cast<const openni::DepthPixel*>( depthFrame.getData() );
 	//create cv mat frame
 	frame.create( depthFrame.getHeight(), depthFrame.getWidth(), CV_16UC1 );
 	//copy data
-	memcpy( frame.data, imageBuffer, depthFrame.getHeight()*depthFrame.getWidth()*sizeof( uint16_t ) );
+	memcpy( frame.data, imageBuffer, static_cast<size_t>( depthFrame.getHeight()*depthFrame.getWidth() )*sizeof( uint16_t ) );
 
 	return frame;
 }
@@ -68,7 +68,7 @@ cv::Mat Kinect::KinectRecognition::depthImageCvMat( openni::VideoFrameRef& depth
 QImage Kinect::KinectRecognition::colorImageQImage( openni::VideoFrameRef& colorFrame )
 {
 	// create QImage from videframeref
-	QImage image = QImage( ( uchar* )colorFrame.getData(),
+	QImage image = QImage( static_cast<const uchar*>( colorFrame.getData() ),
 						   colorFrame.getWidth(), colorFrame.getHeight(),
 						   QImage::Format_RGB888 ); // format color
 	// rgb swapped

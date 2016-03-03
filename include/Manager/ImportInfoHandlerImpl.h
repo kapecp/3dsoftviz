@@ -8,6 +8,14 @@
 
 namespace Manager {
 
+//chybove hlasky
+
+#if defined(__GNUC__)
+#define NORETURN __attribute__ ((noreturn))
+#elif defined(_MSC_VER)
+#define NORETURN __declspec(noreturn)
+#endif
+
 /**
  * \brief Reports import status using the QT application GUI.
  */
@@ -22,7 +30,7 @@ public:
 
 	/***/
 
-	virtual void addMessage();
+	virtual void NORETURN addMessage();
 
 	/**
 	 * \brief Shows message box with error text.

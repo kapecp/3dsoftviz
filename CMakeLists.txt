@@ -53,17 +53,17 @@ option( USE_STRICT_COMPILE_WARNINGS "Use strict compilation warnings in debug mo
 if( USE_STRICT_COMPILE_WARNINGS )
 	if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang" OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "AppleClang")
 		# using Clang
-		set( FLAGS_FOR_DEBUG "-ansi -pedantic -Wall -Wcast-align -Wcast-qual -Wchar-subscripts -Wcomment -Wconversion -Wctor-dtor-privacy -Wdisabled-optimization -Wextra -Wfloat-equal  -Wformat  -Wformat-nonliteral -Wformat-security  -Wformat-y2k -Wformat=2  -Wimport  -Winit-self -Winline -Winvalid-pch -Wlogical-op -Wlong-long -Wmissing-braces -Wmissing-declarations -Wmissing-field-initializers -Wmissing-format-attribute   -Wmissing-include-dirs -Wmissing-noreturn -Wnoexcept  -Wpacked  -Wparentheses -Wpointer-arith -Wredundant-decls -Wreturn-type -Wsequence-point -Wsign-compare  -Wsign-promo -Wstack-protector -Wstrict-aliasing=2 -Wstrict-null-sentinel -Wstrict-overflow=5 -Wswitch -Wswitch-default -Wswitch-enum -Wtrigraphs -Wundef -Wuninitialized -Wunknown-pragmas -Wunreachable-code -Wunsafe-loop-optimizations -Wvariadic-macros -Wvolatile-register-var -Wwrite-strings  -Wno-unused-parameter -Wno-unused" )
+		set( FLAGS_FOR_DEBUG "-std=c++11 -pedantic -Wall -Wcast-align -Wcast-qual -Wchar-subscripts -Wcomment -Wconversion -Wctor-dtor-privacy -Wdisabled-optimization -Wextra -Wfloat-equal  -Wformat  -Wformat-nonliteral -Wformat-security  -Wformat-y2k -Wformat=2  -Wimport  -Winit-self -Winline -Winvalid-pch -Wlong-long -Wmissing-braces -Wmissing-declarations -Wmissing-field-initializers -Wmissing-format-attribute -Wmissing-include-dirs -Wmissing-noreturn -Wpacked  -Wparentheses -Wpointer-arith -Wredundant-decls -Wreturn-type -Wsequence-point -Wsign-compare  -Wsign-promo -Wstack-protector -Wstrict-aliasing=2 -Wstrict-overflow=5 -Wswitch -Wswitch-default -Wswitch-enum -Wtrigraphs -Wundef -Wuninitialized -Wunknown-pragmas -Wunreachable-code -Wvariadic-macros -Wvolatile-register-var -Wwrite-strings  -Wno-unused-parameter -Wno-unused" )
 	elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR CMAKE_COMPILER_IS_GNUCXX)
 		# using GCC
-		set( FLAGS_FOR_DEBUG "-std=c++11 -pedantic -Wall -Wcast-align -Wcast-qual -Wchar-subscripts -Wcomment -Wconversion -Wctor-dtor-privacy -Wdisabled-optimization -Wextra -Wfloat-equal -Wformat -Wformat-nonliteral -Wformat-security -Wformat-y2k -Wformat=2 -Wimport -Winit-self -Winline -Winvalid-pch -Wlogical-op -Wlong-long -Wmissing-braces -Wmissing-declarations -Wmissing-field-initializers -Wmissing-format-attribute -Wmissing-include-dirs -Wmissing-noreturn -Wnoexcept -Wpacked -Wparentheses -Wpointer-arith -Wredundant-decls -Wreturn-type -Wsequence-point -Wsign-compare -Wsign-promo -Wstack-protector -Wstrict-aliasing=2 -Wstrict-null-sentinel -Wstrict-overflow=5 -Wswitch -Wswitch-default -Wswitch-enum -Wtrigraphs -Wundef -Wuninitialized -Wunknown-pragmas -Wunreachable-code -Wunsafe-loop-optimizations -Wvariadic-macros -Wvolatile-register-var -Wwrite-strings -Wno-unused-parameter -Wno-unused" )
+		set( FLAGS_FOR_DEBUG "-std=c++11 -pedantic -Wall -Wcast-align -Wcast-qual -Wchar-subscripts -Wcomment -Wconversion -Wctor-dtor-privacy -Wdisabled-optimization -Wextra -Wfloat-equal -Wformat -Wformat-nonliteral -Wformat-security -Wformat-y2k -Wformat=2 -Wimport -Winit-self -Winline -Winvalid-pch -Wlogical-op -Wlong-long -Wmissing-braces -Wmissing-declarations -Wmissing-field-initializers -Wmissing-format-attribute -Wmissing-include-dirs -Wmissing-noreturn -Wnoexcept -Wpacked -Wparentheses -Wpointer-arith -Wredundant-decls -Wreturn-type -Wsequence-point -Wsign-compare -Wsign-promo -Wstack-protector -Wstrict-aliasing=2 -Wstrict-null-sentinel -Wstrict-overflow=5 -Wswitch -Wswitch-default -Wswitch-enum -Wtrigraphs -Wundef -Wuninitialized -Wunknown-pragmas -Wunreachable-code -Wunsafe-loop-optimizations -Wvariadic-macros -Wvolatile-register-var -Wwrite-strings -Wold-style-cast -Woverloaded-virtual -Wuseless-cast -Wsign-conversion -Wno-unused-parameter -Wno-unused" )
 
 		# to suppress warnings for unused stuff use: -Wno-unused-parameter -Wno-unused-result
 		# not used:
 			# too much warnings in Qt headers: NULL vs 0 pointers: -Wzero-as-null-pointer-constant
 			# too much warnings: -Wshadow -Waggregate-return
-			# too much warnings, but should be used: -Wold-style-cast -Woverloaded-virtual -Wuseless-cast -Wsign-conversion
 			# class size optimizations ( not really needed ): -Wpadded
+			# style guidelines from Scott Meyers' Effective C++ books: -Weffc++
 			# only for C: -Wold-style-definition -Wstrict-prototypes -Wmissing-prototypes
 	elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
 		# using Visual Studio C++
@@ -85,7 +85,7 @@ endif()
 set( CMAKE_SKIP_BUILD_RPATH FALSE CACHE STRING "" FORCE )
 # next line adds "$ORIGIN/../lib" to RPath:
 set( CMAKE_BUILD_WITH_INSTALL_RPATH TRUE CACHE STRING "" FORCE )
-set( CMAKE_INSTALL_RPATH "$ORIGIN/../lib" CACHE STRING "" FORCE )
+set( CMAKE_INSTALL_RPATH "$ORIGIN/../lib;$ORIGIN" CACHE STRING "" FORCE )
 # next line adds additional link paths to RPath (e.g. for qscintilla when not in system):
 set( CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE CACHE STRING "" FORCE )
 set( CMAKE_INSTALL_NAME_DIR "@executable_path/../lib" CACHE STRING "" FORCE )
@@ -110,28 +110,28 @@ endif ()
 # --------------
 include( cotire )
 if(COMMAND cotire )
-	if( NOT COTIRE_MAXIMUM_NUMBER_OF_UNITY_INCLUDES )
-		include( ProcessorCount )
-		ProcessorCount( N )
+		if( NOT COTIRE_MAXIMUM_NUMBER_OF_UNITY_INCLUDES )
+				include( ProcessorCount )
+				ProcessorCount( N )
 
-		if( NOT N EQUAL 0 )
-			# set number of parallel unity builds to processor count
-			set( COTIRE_MAXIMUM_NUMBER_OF_UNITY_INCLUDES "-j${N}" )
+				if( NOT N EQUAL 0 )
+						# set number of parallel unity builds to processor count
+						set( COTIRE_MAXIMUM_NUMBER_OF_UNITY_INCLUDES "-j${N}" )
+				endif()
 		endif()
-	endif()
 
 	set( COTIRE_VERBOSE FALSE )
 	set( COTIRE_DEBUG FALSE )
 
 	### Fix virtual memory range
 	if( MSVC )
-		set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Zm216" CACHE STRING "" FORCE )
+		set (COTIRE_PCH_MEMORY_SCALING_FACTOR "240")
 	endif()
 
 	# fix for Diluculum and LuaJIT on 64bit OSX: Lua new_state returned NULL, LuaJIT needs following flags
-	if( APPLE )
-		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pagezero_size 10000 -image_base 100000000" CACHE STRING "" FORCE)
-	endif()
+	#if( APPLE )
+	#	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pagezero_size 10000 -image_base 100000000" CACHE STRING "" FORCE)
+	#endif()
 endif()
 
 # ------------------------------------------------------------
@@ -279,6 +279,16 @@ endif()
 # else()
 #	message( STATUS "FGLOVE Not Found" )
 # endif()
+# ------------------------------ MOUSE3D -------------------------------
+# Find MOUSE3D
+find_package( MOUSE3D )
+if( MOUSE3D_FOUND )
+	include_directories( SYSTEM ${MOUSE3D_INCLUDE_DIRS} )
+	add_definitions( -DMOUSE3D_FOUND )
+	message( STATUS "3DMouse FOUND" )
+else()
+	message( STATUS "3DMouse NOT FOUND" )
+endif()
 
 ADD_DEFINITIONS(-DOSG_LIBRARY_STATIC)
 
@@ -364,7 +374,55 @@ if( USE_BUILTIN_DEPENDENCIES )
 		endif()
 	endif() # OpenCV_FOUND
 
-	if ( MSVC )
+
+	# Build osgModeling
+	ExternalProject_Add( dep_osgModeling
+		PREFIX osgModeling
+		SOURCE_DIR ${DEP_SOURCE}/osgModeling
+		BINARY_DIR osgModeling
+		CMAKE_ARGS
+			-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
+			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
+			-DBUILD_PLUGINS=ON
+			-C ${CMAKE_CURRENT_BINARY_DIR}/config.cmake
+	)
+
+	add_library( osgModeling SHARED IMPORTED )
+	add_dependencies( osgModeling dep_osgModeling )
+	set_target_properties( osgModeling PROPERTIES
+		IMPORTED_LOCATION ${DEP_BIN}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}osgModeling${CMAKE_SHARED_LIBRARY_SUFFIX} )
+
+	if( WIN32 AND MSVC )
+		set_target_properties( osgModeling PROPERTIES
+			IMPORTED_LOCATION ${DEP_BIN}/bin/${CMAKE_SHARED_LIBRARY_PREFIX}osgModeling${CMAKE_SHARED_LIBRARY_SUFFIX}
+			IMPORTED_IMPLIB ${DEP_BIN}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}osgModeling${CMAKE_STATIC_LIBRARY_SUFFIX} )
+	endif()
+
+
+	# Build igloo
+	ExternalProject_Add( dep_igloo
+		PREFIX igloo
+		SOURCE_DIR ${DEP_SOURCE}/igloo
+		BINARY_DIR igloo
+		CMAKE_ARGS
+			-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
+			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
+			-DBUILD_TESTS=ON
+			-C ${CMAKE_CURRENT_BINARY_DIR}/config.cmake
+		# little trick:
+			# this solves building igloo twice (building normal target and building unity target)
+			# prevent building the default target (make install)
+		BUILD_COMMAND ""
+			# force building the install_unity target
+		INSTALL_COMMAND "${CMAKE_COMMAND}" --build . --target install_unity# -- "-j${N}"
+	)
+
+	add_library( igloo INTERFACE IMPORTED )
+	add_dependencies( igloo dep_igloo )
+
+
+	# Building Lua or LuaJIT
+	if ( MSVC OR APPLE )
 		# Build Lua
 		ExternalProject_Add ( dep_lua
 			PREFIX lua
@@ -481,8 +539,18 @@ if( USE_BUILTIN_DEPENDENCIES )
 			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
 	)
 
+		# Build lualogging
+	ExternalProject_Add ( dep_lualogging
+		PREFIX lualogging
+		SOURCE_DIR ${DEP_SOURCE}/lualogging
+		BINARY_DIR lualogging
+		CMAKE_ARGS
+			-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
+			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
+	)
+
 	# Ensure correct order of build (dependencies between external dependencies)
-	if( MSVC )
+	if( MSVC OR APPLE )
 		add_dependencies( dep_lpeg dep_lua )
 		add_dependencies( dep_leg dep_lpeg )
 		add_dependencies( dep_luametrics dep_leg )
@@ -508,7 +576,8 @@ endif()
 # -----------------------------------------------------------------
 
 # Apple specific overrides, we build and app bundle
-if( APPLE )
+option( OSX_BUNDLE "Create an app bundle on OSX." OFF ) # TODO: disabled, because currently it does not work...
+if( APPLE AND OSX_BUNDLE )
 	# Executable settings
 	set( 3DSOFTVIZ_EXECUTABLE_TYPE MACOSX_BUNDLE )
 	set( BUNDLE_APP "\${CMAKE_INSTALL_PREFIX}/${3DSOFTVIZ_NAME}.app" )
@@ -597,16 +666,18 @@ file( GLOB_RECURSE SRC_IMPORTER	"src/Importer/*.cpp" )
 file( GLOB_RECURSE SRC_LAYOUT	"src/Layout/*.cpp" )
 file( GLOB_RECURSE SRC_LUAGRAPH  "src/LuaGraph/*.cpp")
 file( GLOB_RECURSE SRC_LUAINTERFACE  "src/LuaInterface/*.cpp")
+file( GLOB_RECURSE SRC_LUATYPES  "src/LuaTypes/*.cpp")
 file( GLOB_RECURSE SRC_MANAGER	"src/Manager/*.cpp" )
 file( GLOB_RECURSE SRC_MATH		"src/Math/*.cpp" )
 file( GLOB_RECURSE SRC_MODEL	"src/Model/*.cpp" )
 file( GLOB_RECURSE SRC_NETWORK	"src/Network/*.cpp" )
-file( GLOB_RECURSE SRC_NOISE	"src/Noise/*.cpp" )
 file( GLOB_RECURSE SRC_OSGQTBROWSER	"src/OsgQtBrowser/*.cpp" )
 file( GLOB_RECURSE SRC_QOSG		"src/QOSG/*.cpp" )
 file( GLOB_RECURSE SRC_UTIL		"src/Util/*.cpp" )
 file( GLOB_RECURSE SRC_VIEWER	"src/Viewer/*.cpp" )
 file( GLOB_RECURSE SRC_CLUSTERING	"src/Clustering/*.cpp")
+file( GLOB SRC_REPOSITORY		"src/Repository/Git/*.cpp" )
+file( GLOB_RECURSE SRC_GITLIB   "src/Repository/Git/GitLib/*.cpp" )
 
 # OpenCV
 file( GLOB_RECURSE SRC_OPENCV	"src/OpenCV/*.cpp" )
@@ -626,6 +697,8 @@ file( GLOB_RECURSE SRC_SPEECH	"src/Speech/*.cpp" )
 
 # Leap
 file ( GLOB_RECURSE SRC_LEAP "src/Leap/*.cpp" )
+# MOUSE3D
+file ( GLOB_RECURSE SRC_MOUSE3D "src/Mouse3D/*.cpp" )
 
 
 # All source files
@@ -636,12 +709,13 @@ set( SRC
 	${SRC_IMPORTER}
 	${SRC_LAYOUT}
 	${SRC_LUAGRAPH} ${SRC_LUAINTERFACE}
+	${SRC_LUATYPES}
 	${SRC_MATH}
 	${SRC_NETWORK}
-	${SRC_NOISE}
 	${SRC_MODEL}
 	${SRC_OSGQTBROWSER} ${SRC_QOSG} ${SRC_VIEWER}
 	${SRC_UTIL}
+	${SRC_REPOSITORY}
 )
 
 if( OpenCV_FOUND )
@@ -667,6 +741,11 @@ if( LEAP_FOUND )
 	list( APPEND SRC ${SRC_LEAP} )
 endif()
 
+# add MOUSE3D if found
+if( MOUSE3D_FOUND )
+	list( APPEND SRC ${SRC_MOUSE3D} )
+endif()
+
 
 
 #-------------------------------- Header files -------------------------------
@@ -676,16 +755,18 @@ file( GLOB_RECURSE HEADER_IMPORTER	"include/Importer/*.h" )
 file( GLOB_RECURSE HEADER_LAYOUT	"include/Layout/*.h" )
 file( GLOB_RECURSE HEADER_LUAGRAPH  "include/LuaGraph/*.h")
 file( GLOB_RECURSE HEADER_LUAINTERFACE  "include/LuaInterface/*.h")
+file( GLOB_RECURSE HEADER_LUATYPES  "include/LuaTypes/*.h")
 file( GLOB_RECURSE HEADER_MANAGER	"include/Manager/*.h" )
 file( GLOB_RECURSE HEADER_MATH		"include/Math/*.h" )
 file( GLOB_RECURSE HEADER_MODEL		"include/Model/*.h" )
 file( GLOB_RECURSE HEADER_NETWORK	"include/Network/*.h" )
-file( GLOB_RECURSE HEADER_NOISE		"include/Noise/*.h" )
 file( GLOB_RECURSE HEADER_OSGQTBROWSER	"include/OsgQtBrowser/*.h" )
 file( GLOB_RECURSE HEADER_QOSG		"include/QOSG/*.h" )
 file( GLOB_RECURSE HEADER_UTIL		"include/Util/*.h" )
 file( GLOB_RECURSE HEADER_VIEWER	"include/Viewer/*.h" )
 file( GLOB_RECURSE HEADER_CLUSTERING	"include/Clustering/*.h")
+file( GLOB HEADER_REPOSITORY		"include/Repository/Git/*.h" )
+file( GLOB_RECURSE HEADER_GITLIB		"include/Repository/Git/GitLib/*.h" )
 
 # OpenCV
 file( GLOB_RECURSE HEADER_OPENCV	"include/OpenCV/*.h" )
@@ -706,6 +787,9 @@ file( GLOB_RECURSE HEADER_SPEECH	"include/Speech/*.h" )
 # LEAP
 file( GLOB_RECURSE HEADER_LEAP	"include/Leap/*.h" )
 
+# MOUSE3D
+file( GLOB_RECURSE HEADER_MOUSE3D	"include/Mouse3D/*.h" )
+
 # All header files
 set( INCL
 	${HEADER_MAIN} ${HEADER_CORE}
@@ -714,12 +798,13 @@ set( INCL
 	${HEADER_IMPORTER}
 	${HEADER_LAYOUT}
 	${HEADER_LUAGRAPH} ${HEADER_LUAINTERFACE}
+	${HEADER_LUATYPES}
 	${HEADER_MATH}
 	${HEADER_NETWORK}
-	${HEADER_NOISE}
 	${HEADER_MODEL}
 	${HEADER_OSGQTBROWSER} ${HEADER_QOSG} ${HEADER_VIEWER}
 	${HEADER_UTIL}
+	${HEADER_REPOSITORY}
 )
 
 if( OpenCV_FOUND )
@@ -745,6 +830,11 @@ if( LEAP_FOUND )
 	list( APPEND INCL ${HEADER_LEAP} )
 endif()
 
+#MOUSE3D
+if( MOUSE3D_FOUND )
+	list( APPEND INCL ${HEADER_MOUSE3D} )
+endif()
+
 #-------------------------------------- Group source files --------------------------------------
 source_group( \\src main.cpp )
 source_group( \\src\\Network "^.*Network/.*$" )
@@ -758,9 +848,10 @@ source_group( \\src\\Util "^.*Util/.*$" )
 source_group( \\src\\Layout "^.*Layout/.*$" )
 source_group( \\src\\QOSG "^.*QOSG/.*$" )
 source_group( \\src\\OsgQtBrowser "^.*OsgQtBrowser/.*$" )
-source_group( \\src\\Noise "^.*Noise/.*$" )
 source_group( \\src\\LuaGraph "^.*LuaGraph/.*$")
 source_group( \\src\\LuaInterface "^.*LuaInterface/.*$")
+source_group( \\src\\LuaTypes "^.*LuaTypes/.*$")
+source_group( \\src\\Git "^.*Git/.*$" )
 
 # Group header files
 source_group( \\headers\\Clustering "^.*Clustering/.*h$")
@@ -774,10 +865,11 @@ source_group( \\headers\\Model "^.*Model/.*h$" )
 source_group( \\headers\\Util "^.*Util/.*h$" )
 source_group( \\headers\\Layout "^.*Layout/.*h$" )
 source_group( \\headers\\QOSG "^.*QOSG/.*h$" )
-source_group( \\headers\\Noise "^.*Noise/.*h$" )
 source_group( \\headers\\OsgQtBrowser "^.*OsgQtBrowser/.*h$" )
 source_group( \\headers\\LuaGraph "^.*LuaGraph/.*h$")
 source_group( \\headers\\LuaInterface "^.*LuaInterface/.*h$")
+source_group( \\headers\\LuaTypes "^.*LuaTypes/.*h$")
+source_group( \\headers\\Git "^.*Git/.*h$" )
 
 if( OpenCV_FOUND )
 	source_group( \\src\\QOpenCV "^.*QOpenCV/.*$" )
@@ -810,6 +902,12 @@ if( LEAP_FOUND )
 	source_group( \\headers\\Leap "^.*Leap/.*h$" )
 endif()
 
+#MOUSE3D
+if( MOUSE3D_FOUND )
+	source_group( \\src\\Mouse3D "^.*Mouse3D/.*$" )
+	source_group( \\headers\\Mouse3D "^.*Mouse3D/.*h$" )
+endif()
+
 # add diluculum code directly due to MSVC problems
 if( MSVC )
 	include_directories( SYSTEM dependencies/diluculum/include )
@@ -822,11 +920,24 @@ endif()
 # 3rd party sources
 # ---------------------------------------------------------------
 
-#include_directories( SYSTEM dependencies/noiseutils )
-#add_library( noiseutils STATIC dependencies/noiseutils/noiseutils.cpp )
+add_library( noiseutils STATIC dependencies/noiseutils/noiseutils.cpp )
+target_include_directories( noiseutils SYSTEM PUBLIC ${DEPENDENCIES_INCLUDE_DIR}/libnoise dependencies/noiseutils  )
 
-#include_directories( SYSTEM dependencies/qtcolorpicker )
-#add_library( qtcolorpicker STATIC dependencies/qtcolorpicker/qtcolorpicker.cpp )
+add_library( qtcolorpicker STATIC dependencies/qtcolorpicker/qtcolorpicker.cpp )
+target_include_directories( qtcolorpicker SYSTEM PUBLIC dependencies/qtcolorpicker )
+
+# ---------------------------------------------------------------
+# Build modules as libraries
+# ---------------------------------------------------------------
+
+add_library( gitlib SHARED ${SRC_GITLIB} ${HEADER_GITLIB})
+target_include_directories( gitlib SYSTEM PUBLIC include/Repository/Git )
+target_link_libraries( gitlib ${QT_LIBRARIES} )
+
+set(FLAGS_FOR_DEBUG2 ${FLAGS_FOR_DEBUG})
+list(APPEND FLAGS_FOR_DEBUG2 " -DGITLIB_LIBRARY")
+string(REPLACE " " ";" REPLACED_FLAGS ${FLAGS_FOR_DEBUG2})
+target_compile_options( gitlib PUBLIC ${REPLACED_FLAGS} )
 
 # ---------------------------------------------------------------
 # Build and link 3Dsoftviz
@@ -843,17 +954,19 @@ add_executable( ${3DSOFTVIZ_NAME} ${INCL}  ${SRC} )
 set_target_properties( ${3DSOFTVIZ_NAME} PROPERTIES COMPILE_FLAGS "${FLAGS_FOR_DEBUG}" )
 
 target_link_libraries( ${3DSOFTVIZ_NAME}
+	gitlib
+	lua
+	noiseutils
+	libnoise
+	osgModeling
+	qtcolorpicker
 	${QT_LIBRARIES}
 	${OPENSCENEGRAPH_LIBRARIES}
 	${OSGVIEWER_LIBRARIES}
-	lua
-	libnoise
 )
 
 if( NOT MSVC )
 	target_link_libraries( ${3DSOFTVIZ_NAME} diluculum
-		#noiseutils
-		#qtcolorpicker
 	)
 endif()
 
@@ -885,21 +998,27 @@ if( LEAP_FOUND )
 	target_link_libraries( ${3DSOFTVIZ_NAME} ${LEAP_LIBRARIES} )
 endif()
 
+if( MOUSE3D_FOUND )
+	target_link_libraries( ${3DSOFTVIZ_NAME} ${MOUSE3D_LIBRARIES} )
+endif()
+
 # 'cotire' the executable
 if( COMMAND cotire )
 	# link ${3DSOFTVIZ_NAME}_unity target to all libraries to which ${3DSOFTVIZ_NAME} links
 	set_target_properties( ${3DSOFTVIZ_NAME} PROPERTIES COTIRE_UNITY_LINK_LIBRARIES_INIT "COPY" )
+	set_target_properties( gitlib PROPERTIES COTIRE_UNITY_LINK_LIBRARIES_INIT "COPY" )
 
 	cotire( ${3DSOFTVIZ_NAME} CONFIGURATIONS Debug Release )
+	cotire( gitlib CONFIGURATIONS Debug Release )
 endif()
 
 # Ensure correct dependencies
 if( USE_BUILTIN_DEPENDENCIES )
 
 	# dependencies of non-unity build
-	add_dependencies( ${3DSOFTVIZ_NAME} libnoise dep_luametrics dep_leg dep_lpeg dep_luafilesystem )
+	add_dependencies( ${3DSOFTVIZ_NAME} libnoise osgModeling gitlib dep_luametrics dep_leg dep_lpeg dep_luafilesystem igloo dep_lualogging)
 
-	if( MSVC )
+	if( MSVC OR APPLE )
 		add_dependencies( ${3DSOFTVIZ_NAME} dep_lua )
 	else()
 		add_dependencies( ${3DSOFTVIZ_NAME} dep_diluculum dep_luajit )
@@ -911,9 +1030,9 @@ if( USE_BUILTIN_DEPENDENCIES )
 
 	# dependencies of unity build
 	if (COMMAND cotire)
-		add_dependencies( ${3DSOFTVIZ_NAME}_unity libnoise dep_luametrics dep_leg dep_lpeg dep_luafilesystem )
+		add_dependencies( ${3DSOFTVIZ_NAME}_unity libnoise osgModeling gitlib_unity dep_luametrics dep_leg dep_lpeg dep_luafilesystem igloo dep_lualogging)
 
-		if( MSVC )
+		if( MSVC OR APPLE )
 			add_dependencies( ${3DSOFTVIZ_NAME}_unity dep_lua )
 		else()
 			add_dependencies( ${3DSOFTVIZ_NAME}_unity dep_diluculum dep_luajit )
@@ -926,11 +1045,11 @@ if( USE_BUILTIN_DEPENDENCIES )
 endif()
 
 # Ensure correct dependencies
-add_dependencies( ${3DSOFTVIZ_NAME} libnoise )
-
-if( OpenCV_FOUND )
-	add_dependencies( ${3DSOFTVIZ_NAME} aruco )
-endif()
+#add_dependencies( ${3DSOFTVIZ_NAME} libnoise )
+#
+#if( OpenCV_FOUND )
+	#add_dependencies( ${3DSOFTVIZ_NAME} aruco )
+#endif()
 
 # -------------------------------------------------------
 # Install
@@ -941,15 +1060,23 @@ install( TARGETS ${3DSOFTVIZ_NAME}
 	BUNDLE DESTINATION ${INSTALL_BUNDLE} COMPONENT Runtime
 	RUNTIME DESTINATION ${INSTALL_BIN} COMPONENT Runtime )
 
+install( TARGETS gitlib
+	RUNTIME DESTINATION ${INSTALL_BIN} COMPONENT Runtime
+	LIBRARY DESTINATION ${INSTALL_LIB} COMPONENT Runtime )
+
 # add custom install_unity target
 if( COMMAND cotire )
 	add_custom_target( install_unity
 		COMMAND ${CMAKE_COMMAND} -P "cmake_install.cmake" )
 	add_dependencies( install_unity ${3DSOFTVIZ_NAME}_unity )
+	add_dependencies( install_unity gitlib_unity )
 endif()
 
+# install lua modules
+install( DIRECTORY resources/scripts/module/ DESTINATION ${INSTALL_LIB}/lua COMPONENT Data )
+
 # install resources
-install( DIRECTORY resources/ DESTINATION ${INSTALL_DATA} COMPONENT Data )
+install( DIRECTORY resources/ DESTINATION ${INSTALL_DATA} COMPONENT Data PATTERN resources/scripts/module EXCLUDE)
 
 # Install needed .dll files for OpenNI2
 if( NITE2_FOUND AND OPENNI2_FOUND )
@@ -992,7 +1119,6 @@ if( USE_BUILTIN_DEPENDENCIES )
 endif()
 
 # Include QT4 libraries in Apple bundle and on Windows
-option( OSX_BUNDLE "Create an app bundle on OSX." OFF ) # TODO: disabled, because currently it does not work...
 if( WIN32 OR APPLE AND OSX_BUNDLE )
 	# On Apple plugins need to be bundled
 	if( APPLE AND OSX_BUNDLE )
@@ -1038,4 +1164,31 @@ set( CPACK_PACKAGE_VENDOR "${3DSOFTVIZ_VENDOR}" )
 set( CPACK_RESOURCE_FILE_README "${CMAKE_SOURCE_DIR}/${3DSOFTVIZ_README}" )
 #set( CPACK_COMPONENTS_ALL Runtime Dependencies Data )
 include( CPack )
+
+
+# -------------------------------------------------------
+# BDD Igloo tests
+# -------------------------------------------------------
+
+file( GLOB_RECURSE SRC_TESTS	"tests/*.cpp" )
+add_executable(all_bdd_tests ${SRC_TESTS})
+set_target_properties( all_bdd_tests
+	PROPERTIES
+		COMPILE_FLAGS "${FLAGS_FOR_DEBUG}"
+	)
+target_include_directories( all_bdd_tests
+	SYSTEM PUBLIC
+		include/Repository/Git
+	)
+
+target_link_libraries( all_bdd_tests
+	${QT_LIBRARIES}
+	gitlib
+)
+
+add_dependencies( all_bdd_tests igloo)
+
+
+enable_testing()
+add_test(all_bdd_tests all_bdd_tests)
 

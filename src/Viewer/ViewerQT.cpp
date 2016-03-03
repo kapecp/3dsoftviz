@@ -16,7 +16,7 @@ QOSG::ViewerQT::ViewerQT( QWidget* parent , const char* name , const QGLWidget* 
 
 	appConf = Util::ApplicationConfig::get();
 
-	osg::DisplaySettings::instance()->setStereo( appConf->getValue( "Viewer.Display.Stereoscopic" ).toInt() );
+	osg::DisplaySettings::instance()->setStereo( ( appConf->getValue( "Viewer.Display.Stereoscopic" ).toInt() ? true : false ) );
 	osg::DisplaySettings::instance()->setStereoMode( osg::DisplaySettings::ANAGLYPHIC );
 
 	getCamera()->setViewport( new osg::Viewport( 0,0,width(),height() ) );
@@ -62,7 +62,7 @@ void QOSG::ViewerQT::reloadConfig()
 	manipulator->setMaxSpeed( appConf->getValue( "Viewer.CameraManipulator.MaxSpeed" ).toFloat() );
 	manipulator->setTrackballSize( appConf->getValue( "Viewer.CameraManipulator.Sensitivity" ).toFloat() );
 
-	osg::DisplaySettings::instance()->setStereo( appConf->getValue( "Viewer.Display.Stereoscopic" ).toInt() );
+	osg::DisplaySettings::instance()->setStereo( ( appConf->getValue( "Viewer.Display.Stereoscopic" ).toInt() ? true : false ) );
 }
 
 void QOSG::ViewerQT::paintGL()
