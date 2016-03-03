@@ -42,14 +42,14 @@ Describe( a_git_version ) {
 
     It( changed_files_should_be_empty )
     {
-        Assert::That( version.getChangedFiles().isEmpty(), IsTrue() );
+		Assert::That( version.getChangedFiles()->isEmpty(), IsTrue() );
     }
 
     It( changed_files_should_contain_item )
     {
         Repository::Git::GitFile *file = new Repository::Git::GitFile();
         version.addChangedFile( file );
-        Assert::That( version.getChangedFiles().isEmpty(), IsFalse() );
+		Assert::That( version.getChangedFiles()->isEmpty(), IsFalse() );
     }
 
     It( changed_files_should_contain_file_with_type )
@@ -62,10 +62,10 @@ Describe( a_git_version ) {
         version.addChangedFile( file2 );
         version.addChangedFile( file3 );
 
-        Assert::That( version.getGitFilesByType( Repository::Git::GitType::ADDED ).size(), Equals( 1 ) );
-        Assert::That( version.getGitFilesByType( Repository::Git::GitType::REMOVED ).size(), Equals( 1 ) );
-        Assert::That( version.getGitFilesByType( Repository::Git::GitType::MODIFIED ).size(), Equals( 1 ) );
-        Assert::That( version.getGitFilesByType( Repository::Git::GitType::NONE ).size(), Equals( 0 ) );
+		Assert::That( version.getGitFilesByType( Repository::Git::GitType::ADDED )->size(), Equals( 1 ) );
+		Assert::That( version.getGitFilesByType( Repository::Git::GitType::REMOVED )->size(), Equals( 1 ) );
+		Assert::That( version.getGitFilesByType( Repository::Git::GitType::MODIFIED )->size(), Equals( 1 ) );
+		Assert::That( version.getGitFilesByType( Repository::Git::GitType::NONE )->size(), Equals( 0 ) );
     }
 
     It( changed_files_should_contain_file_with_extension )
@@ -78,14 +78,14 @@ Describe( a_git_version ) {
         version.addChangedFile( file2 );
         version.addChangedFile( file3 );
 
-        Assert::That( version.getGitFilesByExtension( "lua" ).size(), Equals( 1 ) );
-        Assert::That( version.getGitFilesByExtension( "cpp" ).size(), Equals( 1 ) );
-        Assert::That( version.getGitFilesByExtension( "h" ).size(), Equals( 1 ) );
-        Assert::That( version.getGitFilesByExtension( "lua,cpp" ).size(), Equals( 2 ) );
-        Assert::That( version.getGitFilesByExtension( "lua,h" ).size(), Equals( 2 ) );
-        Assert::That( version.getGitFilesByExtension( "h,cpp" ).size(), Equals( 2 ) );
-        Assert::That( version.getGitFilesByExtension( "lua,cpp,h" ).size(), Equals( 3 ) );
-        Assert::That( version.getGitFilesByExtension( "xml" ).size(), Equals( 0 ) );
+		Assert::That( version.getGitFilesByExtension( "lua" )->size(), Equals( 1 ) );
+		Assert::That( version.getGitFilesByExtension( "cpp" )->size(), Equals( 1 ) );
+		Assert::That( version.getGitFilesByExtension( "h" )->size(), Equals( 1 ) );
+		Assert::That( version.getGitFilesByExtension( "lua,cpp" )->size(), Equals( 2 ) );
+		Assert::That( version.getGitFilesByExtension( "lua,h" )->size(), Equals( 2 ) );
+		Assert::That( version.getGitFilesByExtension( "h,cpp" )->size(), Equals( 2 ) );
+		Assert::That( version.getGitFilesByExtension( "lua,cpp,h" )->size(), Equals( 3 ) );
+		Assert::That( version.getGitFilesByExtension( "xml" )->size(), Equals( 0 ) );
     }
 
     It( changed_files_should_cotain_file_with_type_and_extension )
@@ -98,20 +98,20 @@ Describe( a_git_version ) {
         version.addChangedFile( file2 );
         version.addChangedFile( file3 );
 
-        Assert::That( version.getGitFilesByTypeAndExtension( "lua", Repository::Git::GitType::ADDED ).size(), Equals( 1 ) );
-        Assert::That( version.getGitFilesByTypeAndExtension( "cpp,h", Repository::Git::GitType::ADDED ).size(), Equals( 0 ) );
-        Assert::That( version.getGitFilesByTypeAndExtension( "lua,cpp,h", Repository::Git::GitType::ADDED ).size(), Equals( 1 ) );
-        Assert::That( version.getGitFilesByTypeAndExtension( "xml", Repository::Git::GitType::ADDED ).size(), Equals( 0 ) );
+		Assert::That( version.getGitFilesByTypeAndExtension( "lua", Repository::Git::GitType::ADDED )->size(), Equals( 1 ) );
+		Assert::That( version.getGitFilesByTypeAndExtension( "cpp,h", Repository::Git::GitType::ADDED )->size(), Equals( 0 ) );
+		Assert::That( version.getGitFilesByTypeAndExtension( "lua,cpp,h", Repository::Git::GitType::ADDED )->size(), Equals( 1 ) );
+		Assert::That( version.getGitFilesByTypeAndExtension( "xml", Repository::Git::GitType::ADDED )->size(), Equals( 0 ) );
 
-        Assert::That( version.getGitFilesByTypeAndExtension( "lua", Repository::Git::GitType::REMOVED ).size(), Equals( 0 ) );
-        Assert::That( version.getGitFilesByTypeAndExtension( "cpp,h", Repository::Git::GitType::REMOVED ).size(), Equals( 1 ) );
-        Assert::That( version.getGitFilesByTypeAndExtension( "lua,cpp,h", Repository::Git::GitType::REMOVED ).size(), Equals( 1 ) );
-        Assert::That( version.getGitFilesByTypeAndExtension( "xml", Repository::Git::GitType::REMOVED ).size(), Equals( 0 ) );
+		Assert::That( version.getGitFilesByTypeAndExtension( "lua", Repository::Git::GitType::REMOVED )->size(), Equals( 0 ) );
+		Assert::That( version.getGitFilesByTypeAndExtension( "cpp,h", Repository::Git::GitType::REMOVED )->size(), Equals( 1 ) );
+		Assert::That( version.getGitFilesByTypeAndExtension( "lua,cpp,h", Repository::Git::GitType::REMOVED )->size(), Equals( 1 ) );
+		Assert::That( version.getGitFilesByTypeAndExtension( "xml", Repository::Git::GitType::REMOVED )->size(), Equals( 0 ) );
 
-        Assert::That( version.getGitFilesByTypeAndExtension( "lua", Repository::Git::GitType::MODIFIED).size(), Equals( 0 ) );
-        Assert::That( version.getGitFilesByTypeAndExtension( "cpp,h", Repository::Git::GitType::MODIFIED).size(), Equals( 1 ) );
-        Assert::That( version.getGitFilesByTypeAndExtension( "lua,cpp,h", Repository::Git::GitType::MODIFIED ).size(), Equals( 1 ) );
-        Assert::That( version.getGitFilesByTypeAndExtension( "xml", Repository::Git::GitType::MODIFIED ).size(), Equals( 0 ) );
+		Assert::That( version.getGitFilesByTypeAndExtension( "lua", Repository::Git::GitType::MODIFIED)->size(), Equals( 0 ) );
+		Assert::That( version.getGitFilesByTypeAndExtension( "cpp,h", Repository::Git::GitType::MODIFIED)->size(), Equals( 1 ) );
+		Assert::That( version.getGitFilesByTypeAndExtension( "lua,cpp,h", Repository::Git::GitType::MODIFIED )->size(), Equals( 1 ) );
+		Assert::That( version.getGitFilesByTypeAndExtension( "xml", Repository::Git::GitType::MODIFIED )->size(), Equals( 0 ) );
     }
 
     Repository::Git::GitVersion version;

@@ -171,6 +171,12 @@ void CoreWindow::createActions()
 
 	about = new QAction( "About", this );
 
+    exampleGraphBasic = new QAction( "Basic Example", this );
+    connect( exampleGraphBasic, SIGNAL( triggered() ), this, SLOT( loadExampleGraphBasic() ) );
+
+    exampleGraphLua = new QAction( "Lua Example", this );
+    connect( exampleGraphLua, SIGNAL( triggered() ), this, SLOT( loadExampleGraphLua() ) );
+
 	play = new QPushButton();
 	play->setIcon( QIcon( "../share/3dsoftviz/img/gui/pause.png" ) );
 	play->setToolTip( "&Play" );
@@ -769,6 +775,10 @@ void CoreWindow::createMenus()
 
 	help = menuBar()->addMenu( "Help" );
 	help->addAction( about );
+
+    examples = menuBar()->addMenu( "Test" );
+    examples->addAction( exampleGraphBasic );
+    examples->addAction( exampleGraphLua );
 }
 
 QtColorPicker* CoreWindow::createColorPicker()
@@ -1567,6 +1577,82 @@ void CoreWindow::loadFile()
 	nodeTypeComboBoxChanged( nodeTypeComboBox->currentIndex() );
 	edgeTypeComboBoxChanged( edgeTypeComboBox->currentIndex() );
 
+}
+
+void CoreWindow::loadExampleGraphBasic()
+{
+    // Duransky start - vynulovanie vertigo rovin pri nacitani noveho grafu
+    planes_Vertigo.clear();
+    numberOfPlanes = 0;
+    // Duransky end - vynulovanie vertigo rovin pri nacitani noveho grafu
+
+    //treba overit
+    layout->pauseAllAlg();
+    coreGraph->setNodesFreezed( true );
+    coreGraph->setInterpolationDenied( false );
+
+        Manager::GraphManager::getInstance()->loadGraph( "../share/3dsoftviz/graphExamples/tree500.graphml" );
+
+        viewerWidget->getCameraManipulator()->home();
+
+    //treba overit ci funguje
+    if ( isPlaying ) {
+        layout->play();
+        coreGraph->setNodesFreezed( false );
+    }
+
+    //reprezentacie na default
+    nodeTypeComboBoxChanged( nodeTypeComboBox->currentIndex() );
+    edgeTypeComboBoxChanged( edgeTypeComboBox->currentIndex() );
+
+}
+void CoreWindow::loadExampleGraphLua()
+{
+
+    // Duransky start - vynulovanie vertigo rovin pri nacitani noveho grafu
+    planes_Vertigo.clear();
+    numberOfPlanes = 0;
+    // Duransky end - vynulovanie vertigo rovin pri nacitani noveho grafu
+
+    //treba overit
+    layout->pauseAllAlg();
+    coreGraph->setNodesFreezed( true );
+    coreGraph->setInterpolationDenied( false );
+
+    QString file = "../lib/lua/leg";
+
+    Lua::LuaInterface* lua = Lua::LuaInterface::getInstance();
+
+    Lua::LuaValueList path;
+    path.push_back( file.toStdString() );
+    QString createGraph[] = {"function_call_graph", "extractGraph"};
+
+    lua->callFunction( 2, createGraph, path.getValue() );
+    lua->doString( "getGraph = function_call_graph.getGraph" );
+    Lua::LuaInterface::getInstance()->doString( "getFullGraph = getGraph" );
+
+    Data::Graph* currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
+
+    if ( currentGraph != NULL ) {
+        Manager::GraphManager::getInstance()->closeGraph( currentGraph );
+    }
+    currentGraph = Manager::GraphManager::getInstance()->createNewGraph( "LuaGraph" );
+
+
+    layout->pause();
+    coreGraph->setNodesFreezed( true );
+
+    Lua::LuaGraphVisualizer* visualizer = visualizer = new Lua::SimpleGraphVisualizer( currentGraph, coreGraph->getCamera() );
+    visualizer->visualize();
+
+    coreGraph->reloadConfig();
+    if ( isPlaying ) {
+        layout->play();
+        coreGraph->setNodesFreezed( false );
+    }
+    //reprezentacie na default
+    nodeTypeComboBoxChanged( nodeTypeComboBox->currentIndex() );
+    edgeTypeComboBoxChanged( edgeTypeComboBox->currentIndex() );
 }
 
 void CoreWindow::loadFromGit()
