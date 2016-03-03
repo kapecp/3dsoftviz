@@ -171,8 +171,14 @@ void CoreWindow::createActions()
 
 	about = new QAction( "About", this );
 
-    exampleGraphBasic = new QAction( "Basic Example", this );
-    connect( exampleGraphBasic, SIGNAL( triggered() ), this, SLOT( loadExampleGraphBasic() ) );
+    exampleGraphBasic100 = new QAction( "Basic Example (100 nodes)", this );
+    connect( exampleGraphBasic100, SIGNAL( triggered() ), this, SLOT( loadExampleGraphBasic100() ) );
+
+    exampleGraphBasic500 = new QAction( "Basic Example (500 nodes)", this );
+    connect( exampleGraphBasic500, SIGNAL( triggered() ), this, SLOT( loadExampleGraphBasic500() ) );
+
+    exampleGraphVeolia = new QAction( "Veolia Example", this );
+    connect( exampleGraphVeolia, SIGNAL( triggered() ), this, SLOT( loadExampleGraphVeolia() ) );
 
     exampleGraphLua = new QAction( "Lua Example", this );
     connect( exampleGraphLua, SIGNAL( triggered() ), this, SLOT( loadExampleGraphLua() ) );
@@ -777,7 +783,9 @@ void CoreWindow::createMenus()
 	help->addAction( about );
 
     examples = menuBar()->addMenu( "Test" );
-    examples->addAction( exampleGraphBasic );
+    examples->addAction( exampleGraphBasic100 );
+    examples->addAction( exampleGraphBasic500 );
+    examples->addAction( exampleGraphVeolia );
     examples->addAction( exampleGraphLua );
 }
 
@@ -1579,7 +1587,7 @@ void CoreWindow::loadFile()
 
 }
 
-void CoreWindow::loadExampleGraphBasic()
+void CoreWindow::loadExampleGraphBasic100()
 {
     // Duransky start - vynulovanie vertigo rovin pri nacitani noveho grafu
     planes_Vertigo.clear();
@@ -1591,7 +1599,61 @@ void CoreWindow::loadExampleGraphBasic()
     coreGraph->setNodesFreezed( true );
     coreGraph->setInterpolationDenied( false );
 
-        Manager::GraphManager::getInstance()->loadGraph( "../share/3dsoftviz/graphExamples/tree500.graphml" );
+    Manager::GraphManager::getInstance()->loadGraph( "../share/3dsoftviz/graphExamples/tree100.graphml" );
+
+        viewerWidget->getCameraManipulator()->home();
+
+    //treba overit ci funguje
+    if ( isPlaying ) {
+        layout->play();
+        coreGraph->setNodesFreezed( false );
+    }
+
+    //reprezentacie na default
+    nodeTypeComboBoxChanged( nodeTypeComboBox->currentIndex() );
+    edgeTypeComboBoxChanged( edgeTypeComboBox->currentIndex() );
+
+}
+void CoreWindow::loadExampleGraphBasic500()
+{
+    // Duransky start - vynulovanie vertigo rovin pri nacitani noveho grafu
+    planes_Vertigo.clear();
+    numberOfPlanes = 0;
+    // Duransky end - vynulovanie vertigo rovin pri nacitani noveho grafu
+
+    //treba overit
+    layout->pauseAllAlg();
+    coreGraph->setNodesFreezed( true );
+    coreGraph->setInterpolationDenied( false );
+
+    Manager::GraphManager::getInstance()->loadGraph( "../share/3dsoftviz/graphExamples/tree500.graphml" );
+
+        viewerWidget->getCameraManipulator()->home();
+
+    //treba overit ci funguje
+    if ( isPlaying ) {
+        layout->play();
+        coreGraph->setNodesFreezed( false );
+    }
+
+    //reprezentacie na default
+    nodeTypeComboBoxChanged( nodeTypeComboBox->currentIndex() );
+    edgeTypeComboBoxChanged( edgeTypeComboBox->currentIndex() );
+
+}
+void CoreWindow::loadExampleGraphVeolia()
+{
+    // Duransky start - vynulovanie vertigo rovin pri nacitani noveho grafu
+    planes_Vertigo.clear();
+    numberOfPlanes = 0;
+    // Duransky end - vynulovanie vertigo rovin pri nacitani noveho grafu
+
+    //treba overit
+    layout->pauseAllAlg();
+    coreGraph->setNodesFreezed( true );
+    coreGraph->setInterpolationDenied( false );
+
+    Manager::GraphManager::getInstance()->loadGraph( "../share/3dsoftviz/graphExamples/veolia.graphml" );
 
         viewerWidget->getCameraManipulator()->home();
 
