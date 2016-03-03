@@ -221,10 +221,20 @@ public slots:
 	            */
 	void loadFile();
 /**
-    *  \fn public  loadexampleGraphBasic
+     *  \fn public  loadexampleGraphBasic500
+     *  \brief Load basic 100 node graph
+     */
+void loadExampleGraphBasic100();
+/**
+    *  \fn public  loadexampleGraphBasic500
     *  \brief Load basic 500 node graph
     */
-void loadExampleGraphBasic();
+void loadExampleGraphBasic500();
+/**
+    *  \fn public  loadexampleGraphVeolia
+    *  \brief Load Veolia graph
+    */
+void loadExampleGraphVeolia();
 /**
     *  \fn public  loadexampleGraphLua
     *  \brief Load basic lua graph
@@ -693,13 +703,23 @@ private:
 	QAction* about;
 
     /**
-         *  QAction * exampleGraphBasic
-        *  \brief Pointer to load basic graph from file
+        *  QAction * exampleGraphBasic100
+        *  \brief Pointer to load basic graph (100) from file
         */
-    QAction* exampleGraphBasic;
+    QAction* exampleGraphBasic100;
+    /**
+        *  QAction * exampleGraphBasic
+        *  \brief Pointer to load basic graph (500) from file
+        */
+    QAction* exampleGraphBasic500;
 
     /**
-         *  QAction * exampleGraphLua
+        *  QAction * exampleGraphVeolia
+        *  \brief Pointer to load Veolia graph from file
+        */
+    QAction* exampleGraphVeolia;
+    /**
+        *  QAction * exampleGraphLua
         *  \brief Pointer to load basic lua graph from file
         */
     QAction* exampleGraphLua;
