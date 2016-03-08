@@ -15,12 +15,12 @@ LibMouse3d::ConnectionInterface::~ConnectionInterface() {
  * @param wHndl window handle ID passed ad int32_t -> Windows platform-specific
  * Pass connection call to device library
  */
-void LibMouse3d::ConnectionInterface::CreateConnection(HWND wHndl){
+void LibMouse3d::ConnectionInterface::CreateConnection(){
 
     qDebug() << "Create connection call - ConnectionInterface";
 
-    LibMouse3d::LibCoreMouse3d::EventThread* thread;// = new LibMouse3d::LibCoreMouse3d::EventThread::EventThread();
-    thread = new LibMouse3d::LibCoreMouse3d::EventThread(wHndl);
+    LibMouse3d::LibCoreMouse3d::EventThread* thread;
+    thread = new LibMouse3d::LibCoreMouse3d::EventThread();
     thread->start();
 
 }

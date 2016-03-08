@@ -22,7 +22,7 @@ public:
     //destructor
     ~ConnectionInterface();
 
-    void CreateConnection(HWND hWnd);
+    void CreateConnection();
 
 private:
 

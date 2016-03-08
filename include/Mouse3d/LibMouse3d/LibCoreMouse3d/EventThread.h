@@ -1,9 +1,6 @@
 #ifndef EVEBTTHREAH_H
 #define EVEBTTHREAH_H
 
-#include "DeviceHandle.h"
-#include <si.h>
-#include <siapp.h>
 #include <QThread>
 
 //using namespace System::Windows::Forms;
@@ -26,36 +23,13 @@ public:
 
 
     //constructor
-    EventThread(HWND hWndl, QObject* parent = NULL);
+    EventThread(QObject* parent = NULL);
 
     //destructor
     ~EventThread(void);
 
     void run();
 
-private:
-    //received message -unsigned integer-
-    LPMSG msg;
-
-    HWND windowHandle;
-
-    //storage of received data - platform dependent - probably front
-    const std::shared_ptr<SiGetEventData> eData;
-
-    /*
-    //message windows-specific parameters
-    WPARAM wParam;
-    LPARAM lParam;
-    */
-
-    /**
-     * @brief Mouse3d thread
-     */
-    LibMouse3d::LibCoreMouse3d::EventThread* mThrMouse3d;
-
-
-    //incoming mouse event
-    std::shared_ptr<SiSpwEvent> siEvent;
 };
 
 }
