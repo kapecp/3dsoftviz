@@ -1,8 +1,11 @@
 #include "Mouse3d/Connector.h"
 #include <QDebug>
-Mouse3d::Connector::Connector(){
+#include "QOSG/CoreWindow.h"
 
+Mouse3d::Connector::Connector(QOSG::CoreWindow* window){
+    this->win = window;
 }
+
 
 Mouse3d::Connector::~Connector(){
 
@@ -15,7 +18,7 @@ Mouse3d::Connector::~Connector(){
 void Mouse3d::Connector::ConnectMouse3d(){
 
     qDebug() << "Create connection call - Connector";
-    LibMouse3d::ConnectionInterface conInt = LibMouse3d::ConnectionInterface();
+    LibMouse3d::ConnectionInterface conInt = LibMouse3d::ConnectionInterface(win);
     conInt.CreateConnection();
 
 }

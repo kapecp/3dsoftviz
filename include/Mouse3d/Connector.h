@@ -2,7 +2,7 @@
 #define CONNECTOR_H
 
 #include "Mouse3d/LibMouse3d/ConnectionInterface.h"
-
+#include "QOSG/CoreWindow.h"
 namespace Mouse3d{
 
 /**
@@ -13,9 +13,10 @@ namespace Mouse3d{
 class Connector{
 
 public:
+    QOSG::CoreWindow* win;
 
     //constructor
-    Connector();
+    Connector(QOSG::CoreWindow* win);
 
     //destructor
     ~Connector();

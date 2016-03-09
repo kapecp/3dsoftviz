@@ -5,23 +5,7 @@
 #ifndef QOSG_CORE_WINDOW
 #define QOSG_CORE_WINDOW 1
 
-#ifdef __APPLE__
-#include <qstringlist.h>
-#else
-#include <Qt/qstringlist.h>
-#endif
-#include <QOSG/qtcolorpicker.h>
 
-#include <QMainWindow>
-#include <QToolBar>
-#include <QApplication>
-#include <QIcon>
-#include <QAction>
-#include <QMenu>
-#include <QMenuBar>
-#include <QtGui>
-#include <QLineEdit>
-#include <QToolBox>
 
 #include <Viewer/SelectionObserver.h>
 
@@ -51,6 +35,25 @@
 #endif
 
 #include "Clustering/Clusterer.h"
+
+#ifdef __APPLE__
+#include <qstringlist.h>
+#else
+#include <Qt/qstringlist.h>
+#endif
+#include <QOSG/qtcolorpicker.h>
+
+#include <QMainWindow>
+#include <QToolBar>
+#include <QApplication>
+#include <QIcon>
+#include <QAction>
+#include <QMenu>
+#include <QMenuBar>
+#include <QtGui>
+#include <QLineEdit>
+#include <QToolBox>
+#include <QDebug>
 
 namespace Layout {
 class LayoutThread;
@@ -95,6 +98,8 @@ private:
 #endif
 
 public slots:
+    void onMove(std::vector<float>& motionData);
+
 	void moveMouseAruco( double positionX,double positionY,bool isClick, Qt::MouseButton button );
 
 	/**

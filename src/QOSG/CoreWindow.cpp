@@ -3370,6 +3370,11 @@ void CoreWindow::closeEvent( QCloseEvent* event )
 	//QApplication::closeAllWindows();   // ????
 }
 
+void QOSG::CoreWindow::onMove(std::vector<float>& motionData){
+    qDebug() << "pohyb" << QString::number(motionData[0]) << "\n";
+
+};
+
 void QOSG::CoreWindow::moveMouseAruco( double positionX,double positionY,bool isClick, Qt::MouseButton button )
 {
 	this->viewerWidget->moveMouseAruco( positionX,positionY,isClick,this->x(),this->y(),button );
@@ -3428,13 +3433,9 @@ void CoreWindow::startMouse3d()
         return;
     }
 
-    Mouse3d::Connector conn = Mouse3d::Connector();
-
-    // starting Mouse
-    qDebug() << "Create connection call - CoreWindow";
-    qDebug() << this->winId();
-
+    Mouse3d::Connector conn = Mouse3d::Connector(this);
     conn.ConnectMouse3d();
+
     //this->mGloveThr = new Fglove::FgloveThread();
     //this->b_start_mouse3d->start();
     b_start_mouse3d->setText( "Stop Mouse" );

@@ -1,9 +1,15 @@
 #include "Mouse3d/LibMouse3d/LibCoreMouse3d/EventThread.h"
+#include "QOSG/CoreWindow.h"
 
+namespace LibMouse3d{
+namespace LibCoreMouse3d{
 
-using namespace LibMouse3d::LibCoreMouse3d;
+EventThread::EventThread(QOSG::CoreWindow* window, QObject* parent) : QThread( parent ) {
+    this->win = window;
+    this->mouse = new Mouse3DInput(win);
 
-EventThread::EventThread(QObject* parent ) : QThread( parent ) {
+    QObject::connect(mouse, SIGNAL(Move3d(std::vector<float>&)), window, SLOT(OnMove(std::vector<float>&)));
+
 
 }
 
@@ -24,3 +30,5 @@ void EventThread::run(){
     qDebug() << "Mouse3d thread finished";
 }
 
+}
+}
