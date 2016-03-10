@@ -220,7 +220,26 @@ public slots:
 	            *  \brief Show dialog to select file which will be opened
 	            */
 	void loadFile();
-
+/**
+     *  \fn public  loadexampleGraphBasic500
+     *  \brief Load basic 100 node graph
+     */
+void loadExampleGraphBasic100();
+/**
+    *  \fn public  loadexampleGraphBasic500
+    *  \brief Load basic 500 node graph
+    */
+void loadExampleGraphBasic500();
+/**
+    *  \fn public  loadexampleGraphVeolia
+    *  \brief Load Veolia graph
+    */
+void loadExampleGraphVeolia();
+/**
+    *  \fn public  loadexampleGraphLua
+    *  \brief Load basic lua graph
+    */
+void loadExampleGraphLua();
 	/**
 	            *  \fn public  loadFromGit
 	            *  \brief Show dialog to write path to git repo which will be loaded
@@ -683,6 +702,28 @@ private:
 	    */
 	QAction* about;
 
+    /**
+        *  QAction * exampleGraphBasic100
+        *  \brief Pointer to load basic graph (100) from file
+        */
+    QAction* exampleGraphBasic100;
+    /**
+        *  QAction * exampleGraphBasic
+        *  \brief Pointer to load basic graph (500) from file
+        */
+    QAction* exampleGraphBasic500;
+
+    /**
+        *  QAction * exampleGraphVeolia
+        *  \brief Pointer to load Veolia graph from file
+        */
+    QAction* exampleGraphVeolia;
+    /**
+        *  QAction * exampleGraphLua
+        *  \brief Pointer to load basic lua graph from file
+        */
+    QAction* exampleGraphLua;
+
 	/**
 	    *  QPushButton * play
 	    *  \brief Action for play/pause layout
@@ -1106,6 +1147,12 @@ private:
 	    *  \brief Pointer to edit menu
 	    */
 	QMenu* help;
+
+    /**
+        *  QMenu * test
+        *  \brief Pointer to menu of tests
+        */
+    QMenu* examples;
 
 	/**
 	    *  QOSG::ViewerQT * viewerWidget
