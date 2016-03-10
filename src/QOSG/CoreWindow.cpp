@@ -3370,6 +3370,11 @@ void CoreWindow::closeEvent( QCloseEvent* event )
 	//QApplication::closeAllWindows();   // ????
 }
 
+void QOSG::CoreWindow::onMove(std::vector<float>& motionData){
+    qDebug() << "pohyb" << QString::number(motionData[0]) << "\n";
+
+};
+
 void QOSG::CoreWindow::moveMouseAruco( double positionX,double positionY,bool isClick, Qt::MouseButton button )
 {
 	this->viewerWidget->moveMouseAruco( positionX,positionY,isClick,this->x(),this->y(),button );
@@ -3419,22 +3424,22 @@ void CoreWindow::startGlovesRecognition()
 #ifdef MOUSE3D_FOUND
 void CoreWindow::startMouse3d()
 {
-/*
-    // terminating fgloveThread
-    if ( this->mGloveThr!=NULL && ( b_start_gloves->text()=="Stop Gloves" ) ) {
-        this->mGloveThr->terminate();
-        delete( this->mGloveThr );
 
-        b_start_gloves->setText( "Start Gloves" );
-        this->mGloveThr=NULL;
+    if ( b_start_mouse3d->text()=="Stop Mouse") {
+        //this->mGloveThr->terminate();
+        //delete( this->mGloveThr );
+
+        b_start_mouse3d->setText( "Start Mouse" );
         return;
     }
 
-    // starting fgloveThread
-    this->mGloveThr = new Fglove::FgloveThread();
-    this->mGloveThr->start();
-    b_start_gloves->setText( "Stop Gloves" );
-*/
+    Mouse3d::Connector conn = Mouse3d::Connector(this);
+    conn.ConnectMouse3d();
+
+    //this->mGloveThr = new Fglove::FgloveThread();
+    //this->b_start_mouse3d->start();
+    b_start_mouse3d->setText( "Stop Mouse" );
+
 }
 
 #endif

@@ -1,13 +1,18 @@
 #ifndef EVEBTTHREAH_H
 #define EVEBTTHREAH_H
 
-#include "DeviceHandle.h"
-#include <si.h>
-#include <siapp.h>
+#include "Mouse3d/LibMouse3d/LibCoreMouse3d/EventThread.h"
+#include "Mouse3d/LibMouse3d/LibCoreMouse3d/Mouse3DInput.h"
+#include "Mouse3d/LibMouse3d/LibCoreMouse3d/MouseParameters.h"
+
 #include <QThread>
 
-//using namespace System::Windows::Forms;
 
+
+//using namespace System::Windows::Forms;
+namespace QOSG{
+    class CoreWindow;
+}
 namespace LibMouse3d{
 namespace LibCoreMouse3d{
 
@@ -17,33 +22,22 @@ namespace LibCoreMouse3d{
 *@date 23.11.2015
 *@brief LibCore class responsible for catching device activity.
 */
+//TODO class MOUSE3DLIB_EXPORT EventThread : public QThread{
 class EventThread : public QThread{
 
     Q_OBJECT
 
 public:
-
+    Mouse3DInput* mouse;
+    QOSG::CoreWindow* win;
     //constructor
-    EventThread(QObject* parent=0);
+    EventThread(QOSG::CoreWindow* window, QObject* parent = NULL);
 
     //destructor
     ~EventThread(void);
 
     void run();
 
-private:
-    //received message -unsigned integer-
-    UINT msg;
-
-    //storage of received data - platform dependent - probably front
-    const std::shared_ptr<SiGetEventData> eData;
-
-    //message windows-specific parameters
-    WPARAM wParam;
-    LPARAM lParam;
-
-    //incoming mouse event
-    std::shared_ptr<SiSpwEvent> siEvent;
 };
 
 }

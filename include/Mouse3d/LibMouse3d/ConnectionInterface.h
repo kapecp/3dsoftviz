@@ -3,7 +3,11 @@
 
 
 //TODO zistit ako v QtC includovat path nezavisle na strukture projektu
-#include "LibCoreMouse3d/DeviceHandle.h"
+#include "LibCoreMouse3d/EventThread.h"
+
+namespace QOSG{
+    class CoreWindow;
+}
 
 namespace LibMouse3d{
 
@@ -16,11 +20,18 @@ class ConnectionInterface{
 
 public:
 
+    LibMouse3d::LibCoreMouse3d::EventThread* thread;
+
+    //passed pointer to the main window
+    QOSG::CoreWindow* win;
+
     //constructor
-    ConnectionInterface();
+    ConnectionInterface(QOSG::CoreWindow* win);
 
     //destructor
     ~ConnectionInterface();
+
+    void CreateConnection();
 
 private:
 

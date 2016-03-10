@@ -3,6 +3,7 @@
 
 #include "Mouse3d/LibMouse3d/SignalInterface.h"
 #include "QOSG/CoreWindow.h"
+#include "Core/Core.h"
 
 namespace Mouse3d{
 
@@ -21,8 +22,10 @@ public:
     //destructor
     ~ActionProcessor();
 
-private:
+    void AlterScene(int);
 
+private:
+     QOSG::ViewerQT* viewer;
 };
 
 }
