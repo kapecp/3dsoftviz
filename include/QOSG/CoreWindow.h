@@ -98,7 +98,7 @@ private:
 #endif
 
 public slots:
-    void onMove(std::vector<float>& motionData);
+    void OnMove(std::vector<float>& motionData);
 
 	void moveMouseAruco( double positionX,double positionY,bool isClick, Qt::MouseButton button );
 

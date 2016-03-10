@@ -3370,10 +3370,80 @@ void CoreWindow::closeEvent( QCloseEvent* event )
 	//QApplication::closeAllWindows();   // ????
 }
 
-void QOSG::CoreWindow::onMove(std::vector<float>& motionData){
+void QOSG::CoreWindow::OnMove(std::vector<float>& motionData){
     qDebug() << "pohyb" << QString::number(motionData[0]) << "\n";
 
-};
+    QOSG::ViewerQT* moveViewer = this->GetViewerQt();
+    int it;
+    float dominant = 0;
+    int dominantPosition = -1;
+
+    for(it = 0; it < 6; it++){
+        if(abs(motionData[it]) > abs(dominant)){
+            dominant = motionData[it];
+            dominantPosition = it;
+        }
+    }
+
+
+    switch(dominantPosition){
+        case 0:
+            //pohyb doprava
+            if(motionData[0] > 0){
+                moveViewer->getEventQueue()->keyPress( osgGA::GUIEventAdapter::KEY_Right );
+                moveViewer->getEventQueue()->keyRelease( osgGA::GUIEventAdapter::KEY_Right );
+            }
+            //pohyb dolava
+            else {
+                moveViewer->getEventQueue()->keyPress( osgGA::GUIEventAdapter::KEY_Left );
+                moveViewer->getEventQueue()->keyRelease( osgGA::GUIEventAdapter::KEY_Left );
+            }
+
+            break;
+
+        case 1:
+            //pohyb dozadu
+            if(motionData[1] > 0) {
+                moveViewer->getEventQueue()->keyPress( osgGA::GUIEventAdapter::KEY_Down );
+                moveViewer->getEventQueue()->keyRelease( osgGA::GUIEventAdapter::KEY_Down );
+            }
+            //pohyb dopredu
+            else {
+                moveViewer->getEventQueue()->keyPress( osgGA::GUIEventAdapter::KEY_Up );
+                moveViewer->getEventQueue()->keyRelease( osgGA::GUIEventAdapter::KEY_Up );
+            }
+
+            break;
+
+        case 2:
+
+            //pohyb nahor
+            if(motionData[2] < 0) {
+                moveViewer->getEventQueue()->keyPress( osgGA::GUIEventAdapter::KEY_Page_Up );
+                moveViewer->getEventQueue()->keyRelease( osgGA::GUIEventAdapter::KEY_Page_Up );
+            }
+            //pohyb nadol
+            else {
+                moveViewer->getEventQueue()->keyPress( osgGA::GUIEventAdapter::KEY_Page_Down );
+                moveViewer->getEventQueue()->keyRelease( osgGA::GUIEventAdapter::KEY_Page_Down );
+            }
+
+        case 3:
+                moveViewer->getCameraManipulator()->rotateCamera(0.0, 0.0, 1.0, (-1)*motionData[3], 0.0);
+                break;
+        case 4:
+                moveViewer->getCameraManipulator()->rotateCamera(0.0, 0.0, 1.0, (-1)*motionData[4], (-1)*motionData[4]);
+                break;
+        case 5:
+                moveViewer->getCameraManipulator()->rotateCamera(0.0, 0.0, 1.0, 0.0, (-1)*motionData[5]);
+                break;
+
+
+        default:
+            break;
+    }
+
+}
 
 void QOSG::CoreWindow::moveMouseAruco( double positionX,double positionY,bool isClick, Qt::MouseButton button )
 {

@@ -36,9 +36,10 @@ public:
     //destructor
     ~EventThread(void);
 
-    void run();
 
 };
+
+
 
 }
 }
