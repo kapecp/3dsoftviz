@@ -130,7 +130,7 @@ void ArucoThread::run()
 
 			aCore.detect( frame.clone() );
 
-			bool vypis = true;
+//			bool vypis = true;
 			if ( mMultiMarkerEnabled ) {
 				//TODO funkcionalita ku detekcii viacerych markerov
 				//if(vypis && aCore.detect(frame.clone()) != 0)

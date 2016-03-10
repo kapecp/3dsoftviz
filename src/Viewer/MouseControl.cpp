@@ -131,9 +131,9 @@ void Vwr::MouseControl::moveCursorWorldCoordinates( double positionX, double pos
 	int newPositionX= static_cast<int>( positionX*mRatioX*mSpeedMoving );
 	int newPositionY= static_cast<int>( positionY*mRatioY*mSpeedMoving );
 	// get avg position from history buffer // smoother moving
-	osg::Vec2 newPos = getMouseAvgPosition( osg::Vec2( newPositionX, newPositionY ), 10 );
+	osg::Vec2 newPos = getMouseAvgPosition(osg::Vec2( (osg::Vec2f::value_type)newPositionX, (osg::Vec2f::value_type)newPositionY ), 10);
 
-	viewer->cursor().setPos( newPos[0],newPos[1] );
+	viewer->cursor().setPos((int)newPos[0], (int)newPos[1]);
 	if ( isClick ) {
 		this->corectionMousePosition( viewer->cursor().pos().x(),viewer->cursor().pos().y() );
 		this->moveMouse( clickX,clickY );
@@ -165,5 +165,5 @@ osg::Vec2 Vwr::MouseControl::getMouseAvgPosition( osg::Vec2 lastPos, int max )
 	avgX /= mouseHistory->size();
 	avgY /= mouseHistory->size();
 
-	return osg::Vec2( avgX, avgY );
+	return osg::Vec2((osg::Vec2f::value_type)avgX, (osg::Vec2f::value_type)avgY);
 }

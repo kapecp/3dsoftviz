@@ -727,7 +727,7 @@ QList<osg::ref_ptr<Data::Edge> > Data::Graph::splitEdge( QString name, osg::ref_
 	splitNodeList.push_back( srcNode );
 	osg::Vec3f srcPosition = srcNode->getTargetPosition();
 	osg::Vec3f dstPosition = dstNode->getTargetPosition();
-	osg::Vec3f diffPosition = ( dstPosition - srcPosition )/splitCount;
+	osg::Vec3f diffPosition = (dstPosition - srcPosition)/(osg::Vec3f::value_type)splitCount;
 	osg::Vec3f metaPosition = srcPosition + diffPosition;
 	for ( int i = 1; i < splitCount; i++ ) {
 		splitNodeList.push_back( addNode( "SNode " + QString::number( i ), nodeType, metaPosition ) );
