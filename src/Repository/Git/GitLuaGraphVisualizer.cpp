@@ -22,6 +22,9 @@ Repository::Git::GitLuaGraphVisualizer::GitLuaGraphVisualizer( Data::Graph *curr
 }
 
 void Repository::Git::GitLuaGraphVisualizer::visualize( bool next ) {
+
+    reloadNodeRepresentation( this->showLuaStats );
+
     // ziskame verziu nastavenu vo vizualizovanom grafe
     int currentVersion = this->currentGraph->getCurrentVersion();
 
@@ -59,7 +62,7 @@ void Repository::Git::GitLuaGraphVisualizer::visualize( bool next ) {
     // ak je next false, tak zvysime verziu ( potrebujeme dalsiu verziu o sucasnej, aby sme vedeli, co vymanazat/pridat )
     if( !next ) {
         int rollBackVersion = currentVersion + 1;
-        this->currentGraph->setCurrentVersion( rollBackVersion );
+//        this->currentGraph->setCurrentVersion( rollBackVersion );
 
         Repository::Git::GitVersion* version = this->evolutionGraph->getVersion( rollBackVersion );
         QMap<QString, Repository::Git::GitFile*> addedFiles = *version->getChangedFiles();
@@ -74,9 +77,7 @@ void Repository::Git::GitLuaGraphVisualizer::visualize( bool next ) {
             }
 
             processFunctionsFromFile( iterator.value(), next );
-        }
-
-        this->currentGraph->setCurrentVersion( rollBackVersion - 1 );
+        }        
     }
 
 
@@ -112,8 +113,8 @@ void Repository::Git::GitLuaGraphVisualizer::visualize( bool next ) {
         processFunctionsFromFile( iterator.value(), true );
     }
 
-    processChangedNodesAndEdges();
     updateCurrentGraphNodesId();
+    processChangedNodesAndEdges();
 }
 
 bool Repository::Git::GitLuaGraphVisualizer::addFileToGraph( Repository::Git::GitFile *file, QString rootIdentifier ) {
@@ -148,6 +149,7 @@ bool Repository::Git::GitLuaGraphVisualizer::addFileToGraph( Repository::Git::Gi
                 newNode = this->currentGraph->addNode( list.at( i ), this->currentGraph->getTypesByName( "node" ).at( 0 ) );
             }
             newNode->setLuaIdentifier( newIdentifier );
+            this->evolutionGraph->getMetaDataFromIdentifier( newIdentifier )->setFirstOccurence( this->currentGraph->getCurrentVersion() );
         } else {
             newNode->setType( this->currentGraph->getTypesByName( "node" ).at( 0 ) );
             this->evolutionGraph->removeChangedNodeOrEdge( newIdentifier );
@@ -180,6 +182,7 @@ bool Repository::Git::GitLuaGraphVisualizer::addFileToGraph( Repository::Git::Gi
             }
             newEdge->setLuaIdentifier( edgeIdentifier );
             newEdge->setCamera( this->camera );
+            this->evolutionGraph->getMetaDataFromIdentifier( edgeIdentifier )->setFirstOccurence( this->currentGraph->getCurrentVersion() );
         } else {
             this->evolutionGraph->removeChangedNodeOrEdge( edgeIdentifier );
 
@@ -293,7 +296,8 @@ bool Repository::Git::GitLuaGraphVisualizer::addFunctionToGraph( Repository::Git
         }
         node =  this->currentGraph->addNode( luaNode->getId(), luaNode->getLabel(), this->currentGraph->getTypesByName( "node" ).at( 0 ) );
 //        node =  this->currentGraph->addNode( luaNode->getLabel(), this->currentGraph->getTypesByName( "node" ).at( 0 ) );
-        node->setLuaIdentifier( luaNode->getIdentifier() );
+        node->setLuaIdentifier( function->getIdentifier() );
+        this->evolutionGraph->getMetaDataFromIdentifier( function->getIdentifier() )->setFirstOccurence( this->currentGraph->getCurrentVersion() );
 
         if( !QString::compare( QString::fromStdString( luaNode->getParams()["type"].asString() ), "function" ) ) {
             QString metaEdge = "meta+" + luaNode->getIdentifier();
@@ -335,7 +339,8 @@ bool Repository::Git::GitLuaGraphVisualizer::addFunctionToGraph( Repository::Git
 //            edge = this->currentGraph->addEdge( luaEdge->getLabel(), masterNode, node, this->currentGraph->getTypesByName( "edge" ).at( 0 ), false );
         }
         edge->setLuaIdentifier( edgeIdentifier );
-        edge->setCamera( this->camera );       
+        edge->setCamera( this->camera );
+        this->evolutionGraph->getMetaDataFromIdentifier( edgeIdentifier )->setFirstOccurence( this->currentGraph->getCurrentVersion() );
     } else {
         this->evolutionGraph->removeChangedNodeOrEdge( edgeIdentifier );
     }
@@ -371,7 +376,8 @@ bool Repository::Git::GitLuaGraphVisualizer::addModuleFromGlobalFunction( Reposi
     if( !moduleNode ) {
         moduleNode = this->currentGraph->addNode( luaModuleNode->getId(), luaModuleNode->getLabel(), this->currentGraph->getTypesByName( "node" ).at( 0 ) );
 //        moduleNode = this->currentGraph->addNode( luaModuleNode->getLabel(), this->currentGraph->getTypesByName( "node" ).at( 0 ) );
-        moduleNode->setLuaIdentifier( luaModuleNode->getIdentifier() );
+        moduleNode->setLuaIdentifier( moduleIdentifier );
+        this->evolutionGraph->getMetaDataFromIdentifier( moduleIdentifier )->setFirstOccurence( this->currentGraph->getCurrentVersion() );
     } else {
         moduleNode->setType( this->currentGraph->getTypesByName( "node" ).at( 0 ) );
         this->evolutionGraph->removeChangedNodeOrEdge( moduleIdentifier );
@@ -434,7 +440,7 @@ bool Repository::Git::GitLuaGraphVisualizer::removeFileFromGraph( Repository::Gi
 
         int occurence = this->evolutionGraph->getMetaDataFromIdentifier( newIdentifier )->decreaseOccurence();
 
-//        qDebug() << occurence << newIdentifier;
+//        qDcd ebug() << occurence << newIdentifier;
 
         if( occurence <= 0 ) {
 //            qDebug() << newIdentifier << "stored to removedFiles";
@@ -538,17 +544,26 @@ void Repository::Git::GitLuaGraphVisualizer::processChangedNodesAndEdges() {
                 if( !this->showLuaStats ) {
                     // Ak sa zmenena verzia rovna sucasnej verzii, tak zmenim tvar node na +, inak vratim povodnu reprezentaciu uzla
                     if( this->evolutionGraph->getMetaDataFromIdentifier( identifier )->getChangedVersion() == this->currentGraph->getCurrentVersion() ) {
-                        node->setType( this->currentGraph->getTypesByName( "addedNode" ).at( 0 ) );
-                        node->setColor( osg::Vec4f( 0, 1, 0, 1 ) );
+                        if( this->evolutionGraph->getMetaDataFromIdentifier( identifier )->getFirstOccurence() == this->currentGraph->getCurrentVersion() ) {
+                            node->setType( this->currentGraph->getTypesByName( "addedNode" ).at( 0 ) );
+                            node->setColor( osg::Vec4f( 0, 1, 0, 1 ) );
+                        } else {
+                            node->setType( this->currentGraph->getTypesByName( "clearNode" ).at( 0 ) );
+                            node->setColor( osg::Vec4f( 1, 1, 1, 1 ) );
+                        }
                     } else {
-                        node->setType( this->currentGraph->getTypesByName( "node" ).at( 0 ) );
+                        node->setType( this->currentGraph->getTypesByName( "clearNode" ).at( 0 ) );
                         node->setColor( osg::Vec4f( 1, 1, 1, 1 ) );
-
                         removedNodesAndEdges.append( identifier );
                     }
 
                     node->reloadConfig();
                     node->showLabel( true );
+                } else {
+                    Lua::LuaNode* luaNode = this->luaGraph->findNodeByLuaIdentifier( identifier );
+                    if( luaNode ) {
+                        setNodeParams( node, luaNode, osg::Vec4f( 1, 1, 1, 1 ), 8 );
+                    }
                 }
 
             } else {
@@ -573,12 +588,17 @@ void Repository::Git::GitLuaGraphVisualizer::processChangedNodesAndEdges() {
                         node->setType( this->currentGraph->getTypesByName( "modifiedNode" ).at( 0 ) );
                         node->setColor( osg::Vec4f( 1, 1, 0, 1 ) );
                     } else {
-                        node->setType( this->currentGraph->getTypesByName( "node" ).at( 0 ) );
+                        node->setType( this->currentGraph->getTypesByName( "clearNode" ).at( 0 ) );
                         node->setColor( osg::Vec4f( 1, 1, 1, 1 ) );
                         removedNodesAndEdges.append( identifier );
                     }
                     node->reloadConfig();
                     node->showLabel( true );
+                } else {
+                    Lua::LuaNode* luaNode = this->luaGraph->findNodeByLuaIdentifier( identifier );
+                    if( luaNode ) {
+                        setNodeParams( node, luaNode, osg::Vec4f( 1, 1, 1, 1 ), 8 );
+                    }
                 }
             }
 
@@ -644,12 +664,21 @@ void Repository::Git::GitLuaGraphVisualizer::processChangedNodesAndEdges() {
 
 void Repository::Git::GitLuaGraphVisualizer::changeNodeRepresentation( bool showLuaStats ) {
 
+//    reloadNodeRepresentation( showLuaStats );
+
+    this->isChangingRepresentation = true;
+    visualize( true );
+    this->isChangingRepresentation = false;
+
+}
+
+void Repository::Git::GitLuaGraphVisualizer::reloadNodeRepresentation( bool showLuaStats ) {
     for( QMap<qlonglong, osg::ref_ptr<Data::Node>>::iterator iterator = this->currentGraph->getNodes()->begin(); iterator != this->currentGraph->getNodes()->end(); ++iterator ) {
         if( showLuaStats ) {
             Lua::LuaNode* luaNode = this->luaGraph->getNodes()->value( iterator.value()->getId() );
             if( luaNode ) {
                 setNodeParams( iterator.value(), luaNode, osg::Vec4f( 1, 1, 1, 1 ), 8 );
-                iterator.value()->reloadConfig();
+//                iterator.value()->reloadConfig();
             }
         } else {
             iterator.value()->setColor( osg::Vec4f( 1, 1, 1, 1 ) );
@@ -667,29 +696,30 @@ void Repository::Git::GitLuaGraphVisualizer::changeNodeRepresentation( bool show
 //            iterator.value()->reloadConfig();
         }
     }
-
-    this->isChangingRepresentation = true;
-    visualize( true );
-    this->isChangingRepresentation = false;
-
 }
 
 void Repository::Git::GitLuaGraphVisualizer::updateCurrentGraphNodesId() {
 //    qDebug() << "UPDATE current graph Nodes";
     for( QMap<qlonglong, osg::ref_ptr<Data::Node>>::iterator iterator = this->currentGraph->getNodes()->begin(); iterator != this->currentGraph->getNodes()->end(); ++iterator ) {
-//        qDebug() << "UPDATING Node" << iterator.value()->getLuaIdentifier();
         Lua::LuaNode* node = this->luaGraph->findNodeByLuaIdentifier( iterator.value()->getLuaIdentifier() );
-        if( node ) {
-            iterator.value()->setId( node->getId() );
-            if( showLuaStats ) {
+        if( this->showLuaStats ) {
+            if( node ) {
                 setNodeParams( iterator.value(), node, osg::Vec4f( 1, 1, 1, 1 ), 8 );
             }
+        } else {
+            iterator.value()->setType( this->currentGraph->getTypesByName( "clearNode" ).at( 0 ) );
+            iterator.value()->reloadConfig();
+        }
+
+        if( node ) {
+            iterator.value()->setId( node->getId() );
             this->evolutionGraph->getMetaDataFromIdentifier( node->getIdentifier() )->setLuaMapping( node->getId() );
         }
     }
 }
 
 void Repository::Git::GitLuaGraphVisualizer::setNodeParams( osg::ref_ptr<Data::Node> node, Lua::LuaGraphObject *obj, osg::Vec4f defColor, float defSize ) {
+    node->setType( this->currentGraph->getTypesByName( "node" ).at( 0 ) );
     node->setLabelText( obj->getLabel() );
     node->Data::AbsNode::setName( obj->getLabel() );
     float r = obj->getFloatParam( "colorR", defColor.r() );
@@ -756,4 +786,22 @@ void Repository::Git::GitLuaGraphVisualizer::addCustomTypes() {
     settings->insert( "scale", Util::ApplicationConfig::get()->getValue( "Viewer.Textures.EvolutionNodeScale" ) );
     settings->insert( "textureFile", Util::ApplicationConfig::get()->getValue( "Viewer.Textures.Node" ) );
     this->currentGraph->addType( "modifiedNode", settings );
+
+    settings = new QMap<QString, QString>;
+    settings->insert( "color.R", "1" );
+    settings->insert( "color.G", "1" );
+    settings->insert( "color.B", "1" );
+    settings->insert( "color.A", "1" );
+    settings->insert( "scale", Util::ApplicationConfig::get()->getValue( "Viewer.Textures.DefaultNodeScale" ) );
+    settings->insert( "textureFile", Util::ApplicationConfig::get()->getValue( "Viewer.Textures.Node" ) );
+    this->currentGraph->addType( "clearNode", settings );
+
+    settings = new QMap<QString, QString>;
+    settings->insert( "color.R", "1" );
+    settings->insert( "color.G", "1" );
+    settings->insert( "color.B", "1" );
+    settings->insert( "color.A", "1" );
+    settings->insert( "scale", Util::ApplicationConfig::get()->getValue( "Viewer.Textures.DefaultNodeScale" ) );
+    settings->insert( "textureFile", Util::ApplicationConfig::get()->getValue( "Viewer.Textures.Node" ) );
+    this->currentGraph->addType( "clearNode", settings );
 }

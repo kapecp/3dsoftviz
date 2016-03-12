@@ -243,8 +243,10 @@ void Data::OsgNode::setVisual( int index )
 void Data::OsgNode::reloadConfig()
 {
 	removeChildren( 0, 3 );
-    setScale( type->getScale() );
-	this->insertChild( INDEX_LABEL, createLabel( this->type->getScale(), labelText ) , false );
+    if(	type->getName() != "node" ) {
+        setScale( type->getScale() );
+    }
+    this->insertChild( INDEX_LABEL, createLabel( this->scale, labelText ) , false );
 	this->insertChild( INDEX_SQUARE, createNodeSquare( this->scale, OsgNode::createStateSet( this->type ) ), false );
 	this->insertChild( INDEX_SPHERE, createNodeSphere( this->scale, OsgNode::createStateSet( this->type ) ), false );
 	setSelected( selected );

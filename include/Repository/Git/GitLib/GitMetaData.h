@@ -70,6 +70,14 @@ public:
         return this->callTree;
     }
 
+    void setFirstOccurence( int firstOccurence ) {
+        this->firstOccurenceInGraph = firstOccurence;
+    }
+
+    int getFirstOccurence() {
+        return this->firstOccurenceInGraph;
+    }
+
 private:
     int occurence;
 
@@ -78,6 +86,8 @@ private:
     QString lastFunctionInterval;
 
     qlonglong luaMapping;
+
+    int firstOccurenceInGraph;
 
     int changedVersion;
 

@@ -369,7 +369,7 @@ void Repository::Git::GitLuaGraphAnalyzer::compareFilesAndSaveToEvolutionGraph( 
             }
         }
     }
-/*
+
     for( QMap<QString, Repository::Git::GitFunction*>::iterator  iterator = file->getGitFunctions()->begin(); iterator != file->getGitFunctions()->end(); ++iterator ) {
         Repository::Git::GitFunction* function = iterator.value();
 
@@ -385,7 +385,7 @@ void Repository::Git::GitLuaGraphAnalyzer::compareFilesAndSaveToEvolutionGraph( 
             qDebug() << "Callee ->" << innerFunction->getIdentifier() << innerFunction->getTypeAsString();
         }
     }
-*/
+
 //    qDebug() << file->getIdentifier();
     if( file->getType() == Repository::Git::GitType::REMOVED ) {
         qDebug() << "VYMAZANY SUBOR" << file->getIdentifier();

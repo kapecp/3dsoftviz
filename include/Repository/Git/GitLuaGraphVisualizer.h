@@ -60,6 +60,8 @@ private:
 
     void processChangedNodesAndEdges();
 
+    void reloadNodeRepresentation( bool showLuaStats );
+
     /**
      * Data::Graph* currentGraph
      * @brief Visualized graph
