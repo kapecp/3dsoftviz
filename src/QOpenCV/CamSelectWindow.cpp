@@ -1,9 +1,9 @@
 #include "QOpenCV/CamSelectWindow.h"
 
-#include <QtGui/QLabel>
-#include <QtGui/QTreeView>
-#include <QtGui/QVBoxLayout>
-#include <QtGui/QPushButton>
+#include <QtWidgets/QLabel>
+#include <QtWidgets/QTreeView>
+#include <QtWidgets/QVBoxLayout>
+#include <QtWidgets/QPushButton>
 #include <QtGui/QStandardItemModel>
 #include <QDebug>
 

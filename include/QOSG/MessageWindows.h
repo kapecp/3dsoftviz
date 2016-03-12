@@ -8,7 +8,7 @@
 #ifdef __APPLE__
 #include <qstring.h>
 #else
-#include <Qt/qstring.h>
+#include <QString>
 #endif
 
 #include <QtGui>

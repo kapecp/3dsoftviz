@@ -1,12 +1,10 @@
 #include "Aruco/arucocore.h"
 #include "Util/ApplicationConfig.h"
-#include "QDebug"
+#include <QDebug>
 #include "opencv2/imgproc/imgproc.hpp"
 
 #include "opencv2/highgui/highgui.hpp"
 #include "opencv2/calib3d/calib3d.hpp"
-
-#include <vector>
 
 namespace ArucoModul {
 
@@ -37,7 +35,7 @@ bool ArucoCore::setCameraParameters( const QString markerDesFile )
 
 const QMatrix4x4 ArucoCore::getDetectedMatrix( cv::Mat inputImage )
 {
-	double modelViewMatrix[16];
+	qreal modelViewMatrix[16];
 
 	mCamParam.resize( inputImage.size() );
 	mCamImage = inputImage;		//updateImage( inputImage );
@@ -46,7 +44,11 @@ const QMatrix4x4 ArucoCore::getDetectedMatrix( cv::Mat inputImage )
 	this->detectMarkers();
 	this->getMatrix( modelViewMatrix );
 
-	QMatrix4x4 matrix( modelViewMatrix );
+	QMatrix4x4 matrix( modelViewMatrix[ 0], modelViewMatrix[ 1], modelViewMatrix[ 2], modelViewMatrix[ 3],
+					   modelViewMatrix[ 4], modelViewMatrix[ 5], modelViewMatrix[ 6], modelViewMatrix[ 7],
+					   modelViewMatrix[ 8], modelViewMatrix[ 9], modelViewMatrix[10], modelViewMatrix[11],
+					   modelViewMatrix[12], modelViewMatrix[13], modelViewMatrix[14], modelViewMatrix[15]);
+
 	return matrix;
 }
 

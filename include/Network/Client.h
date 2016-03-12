@@ -12,7 +12,7 @@
 #include "Layout/RestrictionRemovalHandler_RestrictionNodesRemover.h"
 
 #include "osg/PositionAttitudeTransform"
-#include "QtGui/QListWidgetItem"
+#include <QtWidgets/QListWidgetItem>
 
 namespace Data {
 class Graph;

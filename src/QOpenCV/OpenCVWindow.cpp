@@ -1,10 +1,10 @@
 #include "QOpenCV/OpenCVWindow.h"
 
-#include <QtGui/QLabel>
-#include <QtGui/QRadioButton>
-#include <QtGui/QPushButton>
-#include <QtGui/QVBoxLayout>
-#include <QtGui/QStackedLayout>
+#include <QtWidgets/QLabel>
+#include <QtWidgets/QRadioButton>
+#include <QtWidgets/QPushButton>
+#include <QtWidgets/QVBoxLayout>
+#include <QtWidgets/QStackedLayout>
 #include <QCloseEvent>
 #include <QDebug>
 #include "OpenCV/CamSelectCore.h"

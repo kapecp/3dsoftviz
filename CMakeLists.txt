@@ -138,16 +138,18 @@ endif()
 # Dependencies - Searching external dependencies
 # ------------------------------------------------------------
 
-# ------------------------------ Qt4 -------------------------------
-# Find Qt4
-find_package( Qt4 REQUIRED )
-set( QT_USE_QTOPENGL 1 )
-set( QT_USE_QTSQL 1 )
-set( QT_USE_QTWEBKIT 1 )
-set( QT_USE_QTXML 1 )
-set( QT_USE_QTNETWORK 1 )
-include( ${QT_USE_FILE} )
+# ------------------------------ Qt5 -------------------------------
+# Find Qt5
+find_package( Qt5Core REQUIRED )
+find_package( Qt5Widgets REQUIRED )
+find_package( Qt5OpenGL REQUIRED )
+find_package( Qt5Sql REQUIRED )
+find_package( Qt5WebEngine REQUIRED )
+find_package( Qt5WebEngineWidgets REQUIRED )
+find_package( Qt5Xml REQUIRED )
+find_package( Qt5Network REQUIRED )
 
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
 # autogenerate all moc files
 set( CMAKE_AUTOMOC TRUE )
 
@@ -925,6 +927,7 @@ target_include_directories( noiseutils SYSTEM PUBLIC ${DEPENDENCIES_INCLUDE_DIR}
 
 add_library( qtcolorpicker STATIC dependencies/qtcolorpicker/qtcolorpicker.cpp )
 target_include_directories( qtcolorpicker SYSTEM PUBLIC dependencies/qtcolorpicker )
+qt5_use_modules( qtcolorpicker Core Widgets OpenGL Sql WebEngine WebEngineWidgets Xml Network )
 
 # ---------------------------------------------------------------
 # Build modules as libraries
@@ -932,7 +935,7 @@ target_include_directories( qtcolorpicker SYSTEM PUBLIC dependencies/qtcolorpick
 
 add_library( gitlib SHARED ${SRC_GITLIB} ${HEADER_GITLIB})
 target_include_directories( gitlib SYSTEM PUBLIC include/Repository/Git )
-target_link_libraries( gitlib ${QT_LIBRARIES} )
+qt5_use_modules( gitlib Core Widgets OpenGL Sql WebEngine WebEngineWidgets Xml Network )
 
 set(FLAGS_FOR_DEBUG2 ${FLAGS_FOR_DEBUG})
 list(APPEND FLAGS_FOR_DEBUG2 " -DGITLIB_LIBRARY")
@@ -950,6 +953,8 @@ endif()
 # Build and link
 add_executable( ${3DSOFTVIZ_NAME} ${INCL}  ${SRC} )
 
+qt5_use_modules( ${3DSOFTVIZ_NAME} Core Widgets OpenGL Sql WebEngine WebEngineWidgets Xml Network )
+
 # set compile flags only for our code ( suppresses warnigns on system headers )
 set_target_properties( ${3DSOFTVIZ_NAME} PROPERTIES COMPILE_FLAGS "${FLAGS_FOR_DEBUG}" )
 
@@ -960,7 +965,6 @@ target_link_libraries( ${3DSOFTVIZ_NAME}
 	libnoise
 	osgModeling
 	qtcolorpicker
-	${QT_LIBRARIES}
 	${OPENSCENEGRAPH_LIBRARIES}
 	${OSGVIEWER_LIBRARIES}
 )
@@ -1118,7 +1122,7 @@ if( USE_BUILTIN_DEPENDENCIES )
 	)
 endif()
 
-# Include QT4 libraries in Apple bundle and on Windows
+# Include QT5 libraries in Apple bundle and on Windows
 if( WIN32 OR APPLE AND OSX_BUNDLE )
 	# On Apple plugins need to be bundled
 	if( APPLE AND OSX_BUNDLE )

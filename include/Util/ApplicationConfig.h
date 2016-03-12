@@ -9,8 +9,8 @@
 #include <qstring.h>
 #include <qstringlist.h>
 #else
-#include <Qt/qstring.h>
-#include <Qt/qstringlist.h>
+#include <QString.h>
+#include <QStringList>
 #endif
 
 #include <osg/Vec4f>

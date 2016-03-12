@@ -17,9 +17,9 @@
 #include <osg/Image>
 #include <osg/observer_ptr>
 
-#include <QtGui/QGraphicsScene>
-#include <QtGui/QGraphicsView>
-#include <QtGui/QApplication>
+#include <QtWidgets/QGraphicsScene>
+#include <QtWidgets/QGraphicsView>
+#include <QtWidgets/QApplication>
 #include <QtGui/QPainter>
 #include <QPointer>
 

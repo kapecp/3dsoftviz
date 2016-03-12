@@ -12,6 +12,7 @@
 #include <QDialog>
 #include <QtGui>
 #include <QMap>
+#include <QHeaderView>
 
 class QComboBox;
 class QLabel;

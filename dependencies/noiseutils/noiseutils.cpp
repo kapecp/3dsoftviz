@@ -22,7 +22,7 @@
 
 #include <fstream>
 
-#include <interp.h>
+#include "interp.h"
 #include <mathconsts.h>
 
 #include "noiseutils.h"

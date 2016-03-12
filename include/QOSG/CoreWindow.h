@@ -31,22 +31,19 @@
 
 #include <qtcolorpicker.h>
 
-#ifdef __APPLE__
-#include <qstringlist.h>
-#else
-#include <Qt/qstringlist.h>
-#endif
-#include <QMainWindow>
-#include <QToolBar>
+#include <QAction>
 #include <QApplication>
 #include <QIcon>
-#include <QAction>
+#include <QLineEdit>
+#include <QMainWindow>
 #include <QMenu>
 #include <QMenuBar>
-#include <QtGui>
-#include <QLineEdit>
-#include <QToolBox>
 #include <QString>
+#include <QStringList>
+#include <QToolBar>
+#include <QToolBox>
+#include <QtGui>
+#include <QtWidgets>
 
 namespace Layout {
 class LayoutThread;

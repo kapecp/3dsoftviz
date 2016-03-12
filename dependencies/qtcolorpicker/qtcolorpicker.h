@@ -46,28 +46,28 @@
 
 #ifndef QTCOLORPICKER_H
 #define QTCOLORPICKER_H
-#include <QtGui/QPushButton>
-#include <QtCore/QString>
+#include <QtWidgets/QPushButton>
+#include <QString>
 #include <QtGui/QColor>
 
-#include <QtGui/QLabel>
-#include <QtCore/QEvent>
+#include <QtWidgets/QLabel>
+#include <QEvent>
 #include <QtGui/QFocusEvent>
 
-#include <QtGui/QApplication>
-#include <QtGui/QDesktopWidget>
+#include <QtWidgets/QApplication>
+#include <QtWidgets/QDesktopWidget>
 #include <QtGui/QPainter>
-#include <QtGui/QPushButton>
-#include <QtGui/QColorDialog>
+#include <QtWidgets/QPushButton>
+#include <QtWidgets/QColorDialog>
 #include <QtCore/QMap>
-#include <QtGui/QLayout>
-#include <QtGui/QStyle>
-#include <QtGui/QLabel>
-#include <QtGui/QToolTip>
+#include <QtWidgets/QLayout>
+#include <QtWidgets/QStyle>
+#include <QtWidgets/QLabel>
+#include <QtWidgets/QToolTip>
 #include <QtGui/QPixmap>
 #include <QtGui/QFocusEvent>
 #include <QtGui/QPaintEvent>
-#include <QtGui/QGridLayout>
+#include <QtWidgets/QGridLayout>
 #include <QtGui/QHideEvent>
 #include <QtGui/QKeyEvent>
 #include <QtGui/QShowEvent>

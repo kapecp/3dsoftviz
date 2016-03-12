@@ -1,14 +1,15 @@
 #ifndef QLOGWEBPAGE_H
 #define QLOGWEBPAGE_H
 
-#include <QWebPage>
+#include <QtWebEngine>
+#include <QtWebEngineWidgets/QWebEnginePage>
 
 /**
 *  \class QLogWebPage
 *  \brief Simple subclass of QWebPage supporting console logging
 *  \author Michael Gloger
 */
-class QLogWebPage : public QWebPage
+class QLogWebPage : public QWebEnginePage
 {
 protected:
 	/**

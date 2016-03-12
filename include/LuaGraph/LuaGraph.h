@@ -5,8 +5,6 @@
 #include "LuaGraph/LuaEdge.h"
 #include "LuaGraph/LuaIncidence.h"
 
-#include "Q_LONG"
-
 namespace Lua {
 
 class LuaGraphObserver;

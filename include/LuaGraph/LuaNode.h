@@ -4,7 +4,6 @@
 #include "LuaGraphObject.h"
 
 #include "QList"
-#include "Q_LONG"
 
 namespace Lua {
 

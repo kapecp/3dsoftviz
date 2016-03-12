@@ -15,8 +15,9 @@
 #define QWEBVIEWIMAGE
 
 #include <osgWidget/Browser>
-#include <QtWebKit/QWebSettings>
-#include <QtWebKit/QtWebKit>
+#include <QtWebEngine>
+#include <QtWebEngineWidgets/QWebEngineView>
+#include <QtWebEngineWidgets/QWebEngineSettings>
 
 #include "OsgQtBrowser/QGraphicsViewAdapter.h"
 #include "LuaTypes/LuaValueMap.h"
@@ -63,7 +64,7 @@ public:
 		*  \brief
 		*  \return QWebView *
 		*/
-	QWebView* getQWebView()
+	QWebEngineView* getQWebView()
 	{
 		return _webView;
 	}
@@ -73,7 +74,7 @@ public:
 		*  \brief
 		*  \return QWebPage *
 		*/
-	QWebPage* getQWebPage()
+	QWebEnginePage* getQWebPage()
 	{
 		return _webPage;
 	}
@@ -154,13 +155,13 @@ protected:
 		*  QPointer<QWebView> _webView
 		*  \brief
 		*/
-	QPointer<QWebView>              _webView;
+	QPointer<QWebEngineView>              _webView;
 
 	/**
 		*  QPointer<QWebPage> _webPage
 		*  \brief
 		*/
-	QPointer<QWebPage>              _webPage;
+	QPointer<QWebEnginePage>              _webPage;
 };
 }
 #endif
