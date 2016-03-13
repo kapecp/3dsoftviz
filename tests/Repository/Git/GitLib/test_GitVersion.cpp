@@ -5,6 +5,7 @@ using namespace igloo;
 #include "GitLib/GitVersion.h"
 
 #include <QList>
+#include <QMap>
 
 Describe( a_git_version ) {
     It( commit_id_should_be_empty )
@@ -50,6 +51,15 @@ Describe( a_git_version ) {
         Repository::Git::GitFile *file = new Repository::Git::GitFile();
         version.addChangedFile( file );
         Assert::That( version.getChangedFiles()->isEmpty(), IsFalse() );
+    }
+
+    It( changed_files_should_be_set ) {
+        QMap<QString, Repository::Git::GitFile*> *map = new QMap<QString, Repository::Git::GitFile*>();
+        Repository::Git::GitFile *file = new Repository::Git::GitFile( "filename.lua", "/path/to/the/filename.lua", Repository::Git::GitType::ADDED );
+        map->insert( file->getIdentifier(), file );
+        Assert::That( version.getChangedFiles()->size(), Equals( 0 ) );
+        version.setChangedFiles( map );
+        Assert::That( version.getChangedFiles()->size(), Equals( 1 ) );
     }
 
     It( changed_files_should_contain_file_with_type )
@@ -112,6 +122,33 @@ Describe( a_git_version ) {
         Assert::That( version.getGitFilesByTypeAndExtension( "cpp,h", Repository::Git::GitType::MODIFIED)->size(), Equals( 1 ) );
         Assert::That( version.getGitFilesByTypeAndExtension( "lua,cpp,h", Repository::Git::GitType::MODIFIED )->size(), Equals( 1 ) );
         Assert::That( version.getGitFilesByTypeAndExtension( "xml", Repository::Git::GitType::MODIFIED )->size(), Equals( 0 ) );
+    }
+
+    It( version_should_contain_file_with_identifier )
+    {
+        Repository::Git::GitFile *file1 = new Repository::Git::GitFile( "filename.lua", "/path/to/the/filename.lua", Repository::Git::GitType::ADDED );
+
+        version.addChangedFile( file1 );
+
+        Assert::That( version.getGitFileByIdentifier( "file;/path/to/the/filename.lua" )->getFilename().toStdString(), Equals( "filename.lua" ) );
+    }
+
+    It( version_should_not_contain_file_with_identifier )
+    {
+        if( !version.getGitFileByIdentifier( "file;/path/to/the/filename.lua" ) ) {
+            Assert::That( true );
+        } else {
+            Assert::That( false );
+        }
+    }
+
+    It( version_is_analyzed ) {
+        version.setIsLoaded( true );
+        Assert::That( version.getIsLoaded(), Is().True() );
+    }
+
+    It( version_is_not_analyzed ) {
+        Assert::That( version.getIsLoaded(), Is().False() );
     }
 
     Repository::Git::GitVersion version;

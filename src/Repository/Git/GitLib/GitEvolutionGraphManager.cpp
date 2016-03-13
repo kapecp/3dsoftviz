@@ -62,7 +62,7 @@ Repository::Git::GitEvolutionGraphManager* Repository::Git::GitEvolutionGraphMan
 
     this->clonedEvolutionGraph->setVersions( filterVersionByAuthor( this->clonedEvolutionGraph, authorName ) );
 
-    qDebug() << "Pocet verzii s autorom" << authorName << this->clonedEvolutionGraph->getVersions().size();
+//    qDebug() << "Pocet verzii s autorom" << authorName << this->clonedEvolutionGraph->getVersions().size();
 
 //    return result;
     return instance;
