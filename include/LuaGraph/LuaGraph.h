@@ -5,6 +5,8 @@
 #include "LuaGraph/LuaEdge.h"
 #include "LuaGraph/LuaIncidence.h"
 
+#include <QMap>
+
 namespace Lua {
 
 class LuaGraphObserver;
