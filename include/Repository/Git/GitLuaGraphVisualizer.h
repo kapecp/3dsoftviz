@@ -32,7 +32,7 @@ public:
 
     void visualize( bool next );
 
-    void changeNodeRepresentation( bool showLuaStats );
+    void changeNodeRepresentation();
 
 private:
     void setNodeParams( osg::ref_ptr<Data::Node> node, Lua::LuaGraphObject* obj, osg::Vec4f defColor, float defSize );
@@ -81,8 +81,6 @@ private:
     Lua::LuaGraph* luaGraph;
 
     bool showLuaStats;
-
-    bool isChangingRepresentation;
 
     osg::ref_ptr<osg::Camera> camera;
 

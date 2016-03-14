@@ -220,3 +220,7 @@ QList<QString> Repository::Git::GitUtils::compareTwoFunctions( Repository::Git::
     return identifiers;
 }
 
+QString Repository::Git::GitUtils::getBooleanAsString( bool value ) {
+    return ( value == true ? QString( "true" ) : QString( "false") );
+}
+
