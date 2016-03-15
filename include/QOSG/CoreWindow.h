@@ -16,6 +16,8 @@
 #include "Layout/ShapeGetter_SpherePlane_ByThreeNodes.h"
 //#include "Viewer/CameraManipulator.h"
 
+#include "Clustering/Clusterer.h"
+
 #ifdef SPEECHSDK_FOUND
 #include "Speech/KinectSpeechThread.h"
 #endif
@@ -34,14 +36,14 @@
 #include "Leap/LeapThread.h"
 #endif
 
-#include "Clustering/Clusterer.h"
+#include <QOSG/qtcolorpicker.h>
 
 #ifdef __APPLE__
 #include <qstringlist.h>
 #else
 #include <Qt/qstringlist.h>
 #endif
-#include <QOSG/qtcolorpicker.h>
+
 
 #include <QMainWindow>
 #include <QToolBar>
