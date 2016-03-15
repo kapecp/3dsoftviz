@@ -921,7 +921,7 @@ endif()
 # ---------------------------------------------------------------
 
 add_library( noiseutils STATIC dependencies/noiseutils/noiseutils.cpp )
-target_include_directories( noiseutils SYSTEM PUBLIC ${DEPENDENCIES_INCLUDE_DIR}/libnoise dependencies/noiseutils  )
+target_include_directories( noiseutils SYSTEM PUBLIC ${DEPENDENCIES_INCLUDE_DIR}/libnoise dependencies/noiseutils dependencies/libnoise/src )
 
 add_library( qtcolorpicker STATIC dependencies/qtcolorpicker/qtcolorpicker.cpp )
 target_include_directories( qtcolorpicker SYSTEM PUBLIC dependencies/qtcolorpicker )
@@ -1013,6 +1013,12 @@ if( COMMAND cotire )
 endif()
 
 # Ensure correct dependencies
+add_dependencies( ${3DSOFTVIZ_NAME} noiseutils qtcolorpicker)
+# dependencies of unity build
+if (COMMAND cotire)
+	add_dependencies( ${3DSOFTVIZ_NAME} noiseutils qtcolorpicker)
+endif()
+
 if( USE_BUILTIN_DEPENDENCIES )
 
 	# dependencies of non-unity build
