@@ -1043,6 +1043,18 @@ QWidget* CoreWindow::createMoreFeaturesTab( QFrame* line )
 	connect( b_start_speech, SIGNAL( clicked() ), this, SLOT( startSpeech() ) );
 #endif
 
+#ifdef MOUSE3D_FOUND
+    line = createLine();
+    lMore->addRow( line );
+    lMore->addRow( new QLabel( tr( "3D Mouse" ) ) );
+    b_start_mouse3d = new QPushButton();
+    b_start_mouse3d->setText( "Start Mouse" );
+    b_start_mouse3d->setMaximumWidth( 136 );
+    lMore->addRow( b_start_mouse3d );
+    connect( b_start_mouse3d, SIGNAL( clicked() ), this, SLOT( startMouse3d() ) );
+#endif
+
+
 #ifdef FGLOVE_FOUND
 	line = createLine();
 	lMore->addRow( line );
@@ -1054,16 +1066,6 @@ QWidget* CoreWindow::createMoreFeaturesTab( QFrame* line )
 	connect( b_start_gloves, SIGNAL( clicked() ), this, SLOT( startGlovesRecognition() ) );
 #endif
 
-#ifdef MOUSE3D_FOUND
-    line = createLine();
-    lMore->addRow( line );
-    lMore->addRow( new QLabel( tr( "3D Mouse" ) ) );
-    b_start_mouse3d = new QPushButton();
-    b_start_mouse3d->setText( "Start Mouse" );
-    b_start_mouse3d->setMaximumWidth( 136 );
-    lMore->addRow( b_start_mouse3d );
-    connect( b_start_mouse3d, SIGNAL( clicked() ), this, SLOT( startMouse3d() ) );
-#endif
 
 	wMore->setLayout( lMore );
 
