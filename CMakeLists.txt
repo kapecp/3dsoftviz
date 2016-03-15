@@ -300,7 +300,9 @@ else()
 	message( STATUS "3DMouse NOT FOUND" )
 endif()
 
-
+if( MSVC )
+	list( APPEND ALL_COMPILE_DEFINITIONS -DOSG_LIBRARY_STATIC )
+endif()
 
 # ------------------------------------------------------------
 # Dependencies - External projects
