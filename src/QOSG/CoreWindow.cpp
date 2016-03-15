@@ -8,6 +8,14 @@
 #include "Network/Server.h"
 #include "Network/Client.h"
 
+#include "GitLib/GitEvolutionGraph.h"
+#include "GitLib/GitVersion.h"
+#include "GitLib/GitUtils.h"
+#include "GitLib/GitEvolutionGraphManager.h"
+#include "GitLib/GitMetaData.h"
+#include "Repository/Git/GitLuaGraphAnalyzer.h"
+#include "Repository/Git/GitLuaGraphVisualizer.h"
+
 #include "Viewer/CoreGraph.h"
 #include "Viewer/CameraManipulator.h"
 #include "Viewer/PickHandler.h"
@@ -43,12 +51,14 @@
 #include "LuaGraph/FullHyperGraphVisualizer.h"
 #include "LuaGraph/HyperGraphVisualizer.h"
 #include "LuaGraph/SimpleGraphVisualizer.h"
+#include "LuaGraph/GitGraphVisualizer.h"
 
-#include "Diluculum/LuaState.hpp"
-#include <LuaGraph/LuaGraphTreeModel.h>
+#include "LuaTypes/LuaValueList.h"
+#include "LuaGraph/LuaGraphTreeModel.h"
 
 #include <iostream>
 #include <osg/ref_ptr>
+#include <string>
 
 #ifdef OPENCV_FOUND
 #include "OpenCV/OpenCVCore.h"
@@ -57,7 +67,6 @@
 #ifdef OPENCV_FOUND
 #ifdef OPENNI2_FOUND
 #include "Kinect/KinectCore.h"
-#include "Kinect/RansacSurface/Ransac.h"
 #endif
 #endif
 
@@ -129,7 +138,7 @@ CoreWindow::CoreWindow( QWidget* parent, Vwr::CoreGraph* coreGraph, QApplication
 					  viewerWidget->getCameraManipulator(), SLOT( setCameraCanRot( bool ) ) );
 
 	Lua::LuaInterface::getInstance()->executeFile( "main.lua" );
-	viewerWidget->getPickHandler()->setSelectionObserver( this );
+    viewerWidget->getPickHandler()->setSelectionObserver( this );
 
 	QObject::connect( viewerWidget->getCameraManipulator(), SIGNAL( sendTranslatePosition( osg::Vec3d ) ),
 					  this->coreGraph, SLOT( translateGraph( osg::Vec3d ) ) );
@@ -148,6 +157,9 @@ void CoreWindow::createActions()
 	load = new QAction( QIcon( "../share/3dsoftviz/img/gui/open.png" ),"&Load graph from file", this );
 	connect( load, SIGNAL( triggered() ), this, SLOT( loadFile() ) );
 
+	loadGit = new QAction( QIcon( "../share/3dsoftviz/img/gui/git_open.png" ), "&Load graph from git", this );
+	connect( loadGit, SIGNAL( triggered() ), this, SLOT( loadFromGit() ) );
+
 	loadGraph = new QAction( QIcon( "../share/3dsoftviz/img/gui/loadFromDB.png" ),"&Load graph from database", this );
 	connect( loadGraph, SIGNAL( triggered() ), this, SLOT( showLoadGraph() ) );
 
@@ -158,6 +170,18 @@ void CoreWindow::createActions()
 	connect( saveLayout, SIGNAL( triggered() ), this, SLOT( saveLayoutToDB() ) );
 
 	about = new QAction( "About", this );
+
+    exampleGraphBasic100 = new QAction( "Basic Example (100 nodes)", this );
+    connect( exampleGraphBasic100, SIGNAL( triggered() ), this, SLOT( loadExampleGraphBasic100() ) );
+
+    exampleGraphBasic500 = new QAction( "Basic Example (500 nodes)", this );
+    connect( exampleGraphBasic500, SIGNAL( triggered() ), this, SLOT( loadExampleGraphBasic500() ) );
+
+    exampleGraphVeolia = new QAction( "Veolia Example", this );
+    connect( exampleGraphVeolia, SIGNAL( triggered() ), this, SLOT( loadExampleGraphVeolia() ) );
+
+    exampleGraphLua = new QAction( "Lua Example", this );
+    connect( exampleGraphLua, SIGNAL( triggered() ), this, SLOT( loadExampleGraphLua() ) );
 
 	play = new QPushButton();
 	play->setIcon( QIcon( "../share/3dsoftviz/img/gui/pause.png" ) );
@@ -256,7 +280,8 @@ void CoreWindow::createActions()
 
 	loadFunctionCallButton->setToolTip( "Load function calls" );
 	loadFunctionCallButton->setFocusPolicy( Qt::NoFocus );
-	connect( loadFunctionCallButton, SIGNAL( clicked() ), this, SLOT( loadFunctionCall() ) );
+//    QString empty = "";
+	connect( loadFunctionCallButton, SIGNAL( clicked() ), this, SLOT( loadFunctionCall( ) ) );
 
 	browsersGroupingButton = new QPushButton();
 	browsersGroupingButton->setIcon( QIcon( "../share/3dsoftviz/img/gui/grouping.png" ) );
@@ -636,6 +661,90 @@ void CoreWindow::createActions()
 	line3 = createLine();
 	// hide
 	setVisibleClusterSection( false );
+
+	// garaj start
+	b_previous_version = new QPushButton();
+	b_previous_version->setText( "<<" );
+	b_previous_version->setToolTip( "Previous version" );
+	b_previous_version->setFocusPolicy( Qt::NoFocus );
+	b_previous_version->setMaximumWidth( 30 );
+	b_previous_version->setDisabled( true );
+	connect( b_previous_version, SIGNAL( clicked() ), this, SLOT( previousVersion() ) );
+
+	b_next_version = new QPushButton();
+	b_next_version->setText( ">>" );
+	b_next_version->setToolTip( "Next version" );
+	b_next_version->setFocusPolicy( Qt::NoFocus );
+	b_next_version->setMaximumWidth( 30 );
+	b_next_version->setDisabled( true );
+	connect( b_next_version, SIGNAL( clicked() ), this, SLOT( nextVersion() ) );
+
+	b_run_evolution = new QPushButton();
+	b_run_evolution->setIcon( QIcon( "../share/3dsoftviz/img/gui/play.png" ) );
+	b_run_evolution->setToolTip( "&Run" );
+	b_run_evolution->setFocusPolicy( Qt::NoFocus );
+	b_run_evolution->setMaximumWidth( 30 );
+	b_run_evolution->setDisabled( true );
+	connect( b_run_evolution, SIGNAL( clicked() ), this, SLOT( runEvolution() ) );
+
+	b_faster_evolution = new QPushButton();
+	b_faster_evolution->setText( "+" );
+	b_faster_evolution->setToolTip( "Faster evolution" );
+	b_faster_evolution->setFocusPolicy( Qt::NoFocus );
+	b_faster_evolution->setMaximumWidth( 20 );
+	b_faster_evolution->setMaximumHeight( 20 );
+	connect( b_faster_evolution, SIGNAL( clicked() ), this, SLOT( fasterEvolution() ) );
+
+	b_slower_evolution = new QPushButton();
+	b_slower_evolution->setText( "-" );
+	b_slower_evolution->setToolTip( "Slower evolution" );
+	b_slower_evolution->setFocusPolicy( Qt::NoFocus );
+	b_slower_evolution->setMaximumWidth( 20 );
+	b_slower_evolution->setMaximumHeight( 20 );
+	connect( b_slower_evolution, SIGNAL( clicked() ), this, SLOT( slowerEvolution() ) );
+
+	b_git_diff = new QPushButton();
+	b_git_diff->setText( "Diff info" );
+	b_git_diff->setToolTip( "Get node Diff info" );
+	b_git_diff->setFocusPolicy( Qt::NoFocus );
+	connect( b_git_diff, SIGNAL( clicked() ), this, SLOT( getDiffInfo() ) );
+
+	b_git_lua_graph = new QPushButton();
+	b_git_lua_graph->setText( "Create lua evoGraph" );
+	b_git_lua_graph->setToolTip( "Creates evolution graph from lua" );
+	b_git_lua_graph->setFocusPolicy( Qt::NoFocus );
+	connect( b_git_lua_graph, SIGNAL( clicked() ), this, SLOT( createEvolutionLuaGraph() ) );
+
+	b_info_version = new QPushButton();
+	b_info_version->setText( "i" );
+	b_info_version->setToolTip( "Show info" );
+	b_info_version->setFocusPolicy( Qt::NoFocus );
+	b_info_version->setMaximumWidth( 30 );
+	b_info_version->setDisabled( false );
+	connect( b_info_version, SIGNAL( clicked() ), this, SLOT( showInfo() ) );
+
+	evolutionSlider = new QSlider( Qt::Horizontal, this );
+	evolutionSlider->setRange( 0, 400 );
+	evolutionSlider->setTickPosition( QSlider::NoTicks );
+	evolutionSlider->setValue( 0 );
+	evolutionSlider->setFocusPolicy( Qt::NoFocus );
+	evolutionSlider->setDisabled( true );
+	connect( evolutionSlider, SIGNAL( valueChanged( int ) ), this, SLOT( sliderVersionValueChanged( int ) ) );
+
+	labelEvolutionSlider =  new QLabel( this );
+	labelEvolutionSlider->setAlignment( Qt::AlignHCenter );
+
+	evolutionLifespanSpinBox = new QSpinBox();
+	evolutionLifespanSpinBox->setMinimum( 0 );
+	connect( evolutionLifespanSpinBox, SIGNAL( valueChanged( int ) ), this, SLOT( changeLifespan( int ) ) );
+
+	evolutionTimer = new QTimer( this );
+	connect( evolutionTimer, SIGNAL( timeout() ), this, SLOT( move() ) );
+
+    chb_git_changeCommits = new QCheckBox( tr( "Change commits" ) );
+    chb_git_changeCommits->setChecked( true );
+    connect( chb_git_changeCommits, SIGNAL( clicked( bool ) ), this, SLOT( changeCommits( bool ) ) );
+	// garaj end
 }
 
 void CoreWindow::setVisibleClusterSection( bool visible )
@@ -660,6 +769,7 @@ void CoreWindow::createMenus()
 	file = menuBar()->addMenu( "File" );
 	file->addAction( load );
 	file->addAction( loadGraph );
+	file->addAction( loadGit );
 	file->addSeparator();
 	file->addAction( saveGraph );
 	file->addAction( saveLayout );
@@ -671,6 +781,12 @@ void CoreWindow::createMenus()
 
 	help = menuBar()->addMenu( "Help" );
 	help->addAction( about );
+
+    examples = menuBar()->addMenu( "Test" );
+    examples->addAction( exampleGraphBasic100 );
+    examples->addAction( exampleGraphBasic500 );
+    examples->addAction( exampleGraphVeolia );
+    examples->addAction( exampleGraphLua );
 }
 
 QtColorPicker* CoreWindow::createColorPicker()
@@ -1013,11 +1129,6 @@ QWidget* CoreWindow::createMoreFeaturesTab( QFrame* line )
 	b_start_kinect->setMaximumWidth( 136 );
 	lMore->addRow( b_start_kinect );
 	connect( b_start_kinect, SIGNAL( clicked() ), this, SLOT( createKinectWindow() ) );
-	b_start_ransac = new QPushButton();
-	b_start_ransac->setText( "Start calculate surface" );
-	b_start_ransac->setMaximumWidth( 136 );
-	lMore->addRow( b_start_ransac );
-	connect( b_start_ransac, SIGNAL( clicked() ), this, SLOT( calculateRansac() ) );
 #endif
 #endif
 
@@ -1066,13 +1177,13 @@ QWidget* CoreWindow::createMoreFeaturesTab( QFrame* line )
 	connect( b_start_gloves, SIGNAL( clicked() ), this, SLOT( startGlovesRecognition() ) );
 #endif
 
-    line = createLine();
-    lMore->addRow( line );
-    lMore->addRow( new QLabel( tr( "Evolution Graph" ) ) );
-    lMore->addRow( new QLabel( ( tr( "Life span:" ) ) ), evolutionLifespanSpinBox );
-    lMore->addRow( b_git_diff );
-    lMore->addRow( b_git_lua_graph );
-    lMore->addRow( chb_git_changeCommits );
+	line = createLine();
+	lMore->addRow( line );
+	lMore->addRow( new QLabel( tr( "Evolution Graph" ) ) );
+	lMore->addRow( new QLabel( ( tr( "Life span:" ) ) ), evolutionLifespanSpinBox );
+	lMore->addRow( b_git_diff );
+	lMore->addRow( b_git_lua_graph );
+	lMore->addRow( chb_git_changeCommits );
 
 	wMore->setLayout( lMore );
 
@@ -1204,7 +1315,7 @@ void CoreWindow::saveLayoutToDB()
 
 void CoreWindow::sqlQuery()
 {
-	std::cout << lineEdit->text().toStdString() << endl;
+	std::cout << lineEdit->text().toStdString() << std::endl;
 }
 
 void CoreWindow::showMetrics()
@@ -1450,7 +1561,7 @@ void CoreWindow::loadFile()
 {
 
 	QFileDialog dialog;
-	dialog.setDirectory( "../share/3dsoftviz" );
+	dialog.setDirectory( "../share/3dsoftviz/graphExamples" );
 
 
 	// Duransky start - vynulovanie vertigo rovin pri nacitani noveho grafu
@@ -1488,6 +1599,228 @@ void CoreWindow::loadFile()
 
 }
 
+void CoreWindow::loadExampleGraphBasic100()
+{
+    // Duransky start - vynulovanie vertigo rovin pri nacitani noveho grafu
+    planes_Vertigo.clear();
+    numberOfPlanes = 0;
+    // Duransky end - vynulovanie vertigo rovin pri nacitani noveho grafu
+
+    //treba overit
+    layout->pauseAllAlg();
+    coreGraph->setNodesFreezed( true );
+    coreGraph->setInterpolationDenied( false );
+
+    Manager::GraphManager::getInstance()->loadGraph( "../share/3dsoftviz/graphExamples/tree100.graphml" );
+
+        viewerWidget->getCameraManipulator()->home();
+
+    //treba overit ci funguje
+    if ( isPlaying ) {
+        layout->play();
+        coreGraph->setNodesFreezed( false );
+    }
+
+    //reprezentacie na default
+    nodeTypeComboBoxChanged( nodeTypeComboBox->currentIndex() );
+    edgeTypeComboBoxChanged( edgeTypeComboBox->currentIndex() );
+
+}
+void CoreWindow::loadExampleGraphBasic500()
+{
+    // Duransky start - vynulovanie vertigo rovin pri nacitani noveho grafu
+    planes_Vertigo.clear();
+    numberOfPlanes = 0;
+    // Duransky end - vynulovanie vertigo rovin pri nacitani noveho grafu
+
+    //treba overit
+    layout->pauseAllAlg();
+    coreGraph->setNodesFreezed( true );
+    coreGraph->setInterpolationDenied( false );
+
+    Manager::GraphManager::getInstance()->loadGraph( "../share/3dsoftviz/graphExamples/tree500.graphml" );
+
+        viewerWidget->getCameraManipulator()->home();
+
+    //treba overit ci funguje
+    if ( isPlaying ) {
+        layout->play();
+        coreGraph->setNodesFreezed( false );
+    }
+
+    //reprezentacie na default
+    nodeTypeComboBoxChanged( nodeTypeComboBox->currentIndex() );
+    edgeTypeComboBoxChanged( edgeTypeComboBox->currentIndex() );
+
+}
+void CoreWindow::loadExampleGraphVeolia()
+{
+    // Duransky start - vynulovanie vertigo rovin pri nacitani noveho grafu
+    planes_Vertigo.clear();
+    numberOfPlanes = 0;
+    // Duransky end - vynulovanie vertigo rovin pri nacitani noveho grafu
+
+    //treba overit
+    layout->pauseAllAlg();
+    coreGraph->setNodesFreezed( true );
+    coreGraph->setInterpolationDenied( false );
+
+    Manager::GraphManager::getInstance()->loadGraph( "../share/3dsoftviz/graphExamples/veolia.graphml" );
+
+        viewerWidget->getCameraManipulator()->home();
+
+    //treba overit ci funguje
+    if ( isPlaying ) {
+        layout->play();
+        coreGraph->setNodesFreezed( false );
+    }
+
+    //reprezentacie na default
+    nodeTypeComboBoxChanged( nodeTypeComboBox->currentIndex() );
+    edgeTypeComboBoxChanged( edgeTypeComboBox->currentIndex() );
+
+}
+void CoreWindow::loadExampleGraphLua()
+{
+
+    // Duransky start - vynulovanie vertigo rovin pri nacitani noveho grafu
+    planes_Vertigo.clear();
+    numberOfPlanes = 0;
+    // Duransky end - vynulovanie vertigo rovin pri nacitani noveho grafu
+
+    //treba overit
+    layout->pauseAllAlg();
+    coreGraph->setNodesFreezed( true );
+    coreGraph->setInterpolationDenied( false );
+
+    QString file = "../lib/lua/leg";
+
+    Lua::LuaInterface* lua = Lua::LuaInterface::getInstance();
+
+    Lua::LuaValueList path;
+    path.push_back( file.toStdString() );
+    QString createGraph[] = {"function_call_graph", "extractGraph"};
+
+    lua->callFunction( 2, createGraph, path.getValue() );
+    lua->doString( "getGraph = function_call_graph.getGraph" );
+    Lua::LuaInterface::getInstance()->doString( "getFullGraph = getGraph" );
+
+    Data::Graph* currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
+
+    if ( currentGraph != NULL ) {
+        Manager::GraphManager::getInstance()->closeGraph( currentGraph );
+    }
+    currentGraph = Manager::GraphManager::getInstance()->createNewGraph( "LuaGraph" );
+
+
+    layout->pause();
+    coreGraph->setNodesFreezed( true );
+
+    Lua::LuaGraphVisualizer* visualizer = visualizer = new Lua::SimpleGraphVisualizer( currentGraph, coreGraph->getCamera() );
+    visualizer->visualize();
+
+    coreGraph->reloadConfig();
+    if ( isPlaying ) {
+        layout->play();
+        coreGraph->setNodesFreezed( false );
+    }
+    //reprezentacie na default
+    nodeTypeComboBoxChanged( nodeTypeComboBox->currentIndex() );
+    edgeTypeComboBoxChanged( edgeTypeComboBox->currentIndex() );
+}
+
+void CoreWindow::loadFromGit()
+{
+	chb_git_changeCommits->setDisabled( true );
+	QString lPath = QFileDialog::getExistingDirectory( this, tr( "Select git dir" ) );
+
+	if( Manager::GraphManager::getInstance()->getActiveEvolutionGraph() != NULL ) {
+		delete Manager::GraphManager::getInstance()->getActiveEvolutionGraph();
+	}
+
+//    Manager::GraphManager::getInstance()->createNewGraph( "new graph" );
+
+	if ( lPath != "" ) {
+		if ( Manager::GraphManager::getInstance()->loadEvolutionGraphFromGit( lPath ) ) {
+			qDebug() << Manager::GraphManager::getInstance()->getActiveEvolutionGraph()->getFilePath();
+//            Manager::GraphManager::getInstance()->importEvolutionGraph( lPath );
+			if( chb_git_changeCommits->isChecked() ) {
+				Repository::Git::GitUtils::changeCommit( Manager::GraphManager::getInstance()->getActiveEvolutionGraph()->getVersion( 0 )->getCommitId(), lPath );
+//                loadFunctionCall();
+				loadLuaGraph();
+
+				Lua::LuaGraph::getInstance()->loadEvoGraph( lPath );
+
+				// ak este dana verzia nebola zanalyzovana, tak ju zanalyzuj a uloz do evolution grafu
+				if( !Manager::GraphManager::getInstance()->getActiveEvolutionGraph()->getVersion( 0 )->getIsLoaded() ) {
+					Repository::Git::GitLuaGraphAnalyzer analyzer = Repository::Git::GitLuaGraphAnalyzer( Lua::LuaGraph::getInstance(), Manager::GraphManager::getInstance()->getActiveEvolutionGraph() );
+					analyzer.setVersionNumber( 0 );
+					analyzer.analyze();
+				}
+
+				layout->pause();
+				coreGraph->setNodesFreezed( true );
+
+				Repository::Git::GitLuaGraphVisualizer visualizer = Repository::Git::GitLuaGraphVisualizer( Manager::GraphManager::getInstance()->getActiveGraph(), Manager::GraphManager::getInstance()->getActiveEvolutionGraph(), this->coreGraph->getCamera() );
+				visualizer.visualize( true );
+//                Lua::LuaGraphVisualizer* visualizer = new Lua::GitGraphVisualizer( Manager::GraphManager::getInstance()->getActiveGraph(), coreGraph->getCamera() );
+//                visualizer->visualize();
+
+			} else {
+				Manager::GraphManager::getInstance()->importEvolutionGraph( lPath );
+			}
+
+			evolutionSlider->setValue( 0 );
+			evolutionSlider->setRange( 0, Manager::GraphManager::getInstance()->getActiveEvolutionGraph()->getVersions().size() - 1 );
+			QString pos = QString::number( evolutionSlider->value() + 1 );  // kedze list zacina od 0 treba pripocitat +1
+			labelEvolutionSlider->setText( "  " + pos + " . verzia" );
+			if( !chb_git_changeCommits->isChecked() ) {
+				b_run_evolution->setDisabled( false );
+				evolutionSlider->setEnabled( true );
+			}
+			b_next_version->setDisabled( false );
+			Manager::GraphManager::getInstance()->getActiveGraph()->setCurrentVersion( 0 );
+
+		}
+		viewerWidget->getCameraManipulator()->home();
+	}
+
+	if ( isPlaying ) {
+		labelOnOff( true );
+		layout->play();
+		coreGraph->setNodesFreezed( false );
+	}
+}
+
+void CoreWindow::loadLuaGraph() {
+	QString file = "";
+
+	Repository::Git::GitEvolutionGraph* evolutionGraph = Manager::GraphManager::getInstance()->getActiveEvolutionGraph();
+
+	if( evolutionGraph != NULL ) {
+		file = evolutionGraph->getFilePath();
+	} else {
+		return;
+	}
+
+	Lua::LuaInterface* lua = Lua::LuaInterface::getInstance();
+
+	Lua::LuaValueList path;
+	path.push_back( file.toStdString() );
+	QString createGraph[] = {"function_call_graph", "extractGraph"};
+	lua->callFunction( 2, createGraph, path.getValue() );
+	lua->doString( "getGraph = function_call_graph.getGraph" );
+
+	Lua::LuaInterface::getInstance()->doString( "getFullGraph = getGraph" );
+
+	Data::Graph* currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
+
+	if( currentGraph == NULL ) {
+		currentGraph = Manager::GraphManager::getInstance()->createNewGraph( "LuaGraph" );
+	}
+
+}
+
 void CoreWindow::labelOnOff( bool )
 {
 	if ( viewerWidget->getPickHandler()->getSelectionType() == Vwr::PickHandler::SelectionType::EDGE ) {
@@ -1503,7 +1836,7 @@ void CoreWindow::labelOnOff( bool )
 
 		nodeLabelsVisible = edgeLabelsVisible = !state;
 
-		coreGraph->setEdgeLabelsVisible( !state );
+//		coreGraph->setEdgeLabelsVisible( !state );
 		coreGraph->setNodeLabelsVisible( !state );
 	}
 }
@@ -1751,7 +2084,7 @@ void CoreWindow::setRestriction_SphereSurface()
 
 	if ( currentGraph != NULL ) {
 		osg::Vec3 position = viewerWidget->getPickHandler()->getSelectionCenter( true );
-		if ( qFuzzyCompare( static_cast<float>( position.length() ),0.0f ) ) {
+		if ( qFuzzyCompare( position.length(),0.0f ) ) {
 			return;
 		}
 		osg::ref_ptr<Data::Node> centerNode;
@@ -2309,7 +2642,7 @@ void CoreWindow::startEdgeBundling()
 
 			//split edges
 			QString alpha = le_edgeBundlingalpha->text();
-			layout->setAlphaEdgeBundlingValue(alpha.toFloat());
+			layout->setAlphaEdgeBundlingValue( alpha.toFloat() );
 			int splitCount = 3;
 			currentGraph->splitAllEdges( splitCount );
 		}
@@ -2880,12 +3213,6 @@ void CoreWindow::createKinectWindow()
 
 	OpenCV::OpenCVCore::getInstance( NULL, this )->opencvInit();
 }
-
-void CoreWindow::calculateRansac()
-{
-	Kinect::Ransac* ransac= new Kinect::Ransac();
-	ransac->calculate();
-}
 #endif
 #endif
 
@@ -3372,7 +3699,7 @@ QOSG::ViewerQT* CoreWindow::GetViewerQt()
 
 void CoreWindow::closeEvent( QCloseEvent* event )
 {
-
+	delete Manager::GraphManager::getInstance()->getActiveEvolutionGraph();
 #ifdef OPENCV_FOUND
 	delete OpenCV::OpenCVCore::getInstance( NULL, this );
 #endif
@@ -3539,9 +3866,16 @@ void CoreWindow::createMetricsToolBar()
 	metricsToolBar->setMovable( false );
 	showMetrics();
 
-	addToolBar( Qt::RightToolBarArea,metricsToolBar );
+	addToolBar( Qt::RightToolBarArea, metricsToolBar );
 
-	toolBar = new QToolBar( "Metrics filter",this );
+	QWidget* xGraph = new QWidget();
+
+	QFormLayout* lGraph = new QFormLayout( xGraph );
+	lGraph->setContentsMargins( 1,1,1,1 );
+	lGraph->setSpacing( 2 );
+	lGraph->setAlignment( Qt::AlignHCenter );
+
+	toolBar = new QToolBar( "Metrics filter", this );
 #if QT_VERSION >= 0x040700
 	filterNodesEdit->setPlaceholderText( "nodes filter" );
 #endif
@@ -3550,38 +3884,71 @@ void CoreWindow::createMetricsToolBar()
 	filterEdgesEdit->setPlaceholderText( "edges filter" );
 #endif
 	toolBar->addWidget( filterEdgesEdit );
+	lGraph->addRow( toolBar );
+
+	// evolution part start
+	toolBar = new QToolBar( "Evolution graph controls", this );
+	QToolBar* toolBar1= new QToolBar( "Evolution graph controls" ,this );
+	toolBar1->addWidget( b_previous_version );
+	toolBar1->addWidget( b_next_version );
+	toolBar1->addWidget( b_info_version );
+	toolBar1->addWidget( b_run_evolution );
+
+	frame = createHorizontalFrame();
+	frame->setMinimumHeight( 50 );
+	frame->backgroundRole();
+	frame->layout()->setAlignment( Qt::AlignVCenter );
+
+	toolBar1->addWidget( frame );
+	frame->layout()->addWidget( evolutionSlider );
+	frame->layout()->addWidget( labelEvolutionSlider );
+
+	toolBar1->addWidget( b_slower_evolution );
+	toolBar1->addWidget( b_faster_evolution );
+	toolBar1->layout()->setAlignment( Qt::AlignHCenter );
+	lGraph->addRow( toolBar1 );
+	xGraph->setLayout( lGraph );
+	// evolution part end
+
+	toolBar->addWidget( xGraph );
+
 	addToolBar( Qt::BottomToolBarArea, toolBar );
-	toolBar->setMovable( true );
+
+	isRunning = false;
 }
 
 void CoreWindow::loadFunctionCall()
 {
-	QString file = QFileDialog::getExistingDirectory( this, "Select lua project folder", "." );
-	if ( file == "" ) {
+    QString file = QFileDialog::getExistingDirectory( this, "Select lua project folder", "." );
+
+	// ak sa predchadzajucou volbou neziskala cesta ku projektu, tak ukonci metodu
+	if( file == "" ) {
 		return;
 	}
+
 	std::cout << "You selected " << file.toStdString() << std::endl;
 	Lua::LuaInterface* lua = Lua::LuaInterface::getInstance();
 
 
-	Diluculum::LuaValueList path;
+	Lua::LuaValueList path;
 	path.push_back( file.toStdString() );
 	QString createGraph[] = {"function_call_graph", "extractGraph"};
-	lua->callFunction( 2, createGraph, path );
-	lua->getLuaState()->doString( "getGraph = function_call_graph.getGraph" );
-	Lua::LuaInterface::getInstance()->getLuaState()->doString( "getFullGraph = getGraph" );
+	lua->callFunction( 2, createGraph, path.getValue() );
+	lua->doString( "getGraph = function_call_graph.getGraph" );
+	Lua::LuaInterface::getInstance()->doString( "getFullGraph = getGraph" );
 
 	Data::Graph* currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
 
 	if ( currentGraph != NULL ) {
-		Manager::GraphManager::getInstance()->closeGraph( currentGraph );
-	}
-	currentGraph = Manager::GraphManager::getInstance()->createNewGraph( "LuaGraph" );
+        Manager::GraphManager::getInstance()->closeGraph( currentGraph );
+    }
+    currentGraph = Manager::GraphManager::getInstance()->createNewGraph( "LuaGraph" );
+
 
 	layout->pause();
 	coreGraph->setNodesFreezed( true );
 
-	Lua::LuaGraphVisualizer* visualizer = new Lua::SimpleGraphVisualizer( currentGraph, coreGraph->getCamera() );
+    Lua::LuaGraphVisualizer* visualizer = visualizer = new Lua::SimpleGraphVisualizer( currentGraph, coreGraph->getCamera() );
 	visualizer->visualize();
 
 	coreGraph->reloadConfig();
@@ -3598,24 +3965,24 @@ void CoreWindow::filterGraph()
 
 	Lua::LuaInterface* lua = Lua::LuaInterface::getInstance();
 
-	Diluculum::LuaValueList query;
+	Lua::LuaValueList query;
 	query.push_back( nodesQueryText );
 	QString validNodesQuery[] = {"logical_filter", "validNodeQuery"};
-	if ( lua->callFunction( 2, validNodesQuery, query )[0] == false ) {
+	if ( lua->callFunction( 2, validNodesQuery, query.getValue() )[0] == false ) {
 		AppCore::Core::getInstance()->messageWindows->showMessageBox( "Upozornenie","Neplatny vyraz filtra vrcholov",false );
 		return;
 	}
 	query[0] = edgesQueryText;
 	QString validEdgesQuery[] = {"logical_filter", "validEdgeQuery"};
-	if ( lua->callFunction( 2, validEdgesQuery, query )[0] == false ) {
+	if ( lua->callFunction( 2, validEdgesQuery, query.getValue() )[0] == false ) {
 		AppCore::Core::getInstance()->messageWindows->showMessageBox( "Upozornenie","Neplatny vyraz filtra hran",false );
 		return;
 	}
 	query[0] = nodesQueryText;
 	query.push_back( edgesQueryText );
-	lua->getLuaState()->doString( "getGraph = logical_filter.getGraph" );
+	lua->doString( "getGraph = logical_filter.getGraph" );
 	QString filterGraph[] = {"logical_filter", "filterGraph"};
-	lua->callFunction( 2, filterGraph, query );
+	lua->callFunction( 2, filterGraph, query.getValue() );
 }
 
 void CoreWindow::onChange()
@@ -3636,10 +4003,29 @@ void CoreWindow::onChange()
 
 	if ( selected->size() > 0 ) {
 		// Get last node model & display it in qt view
-		qlonglong lastNodeId = selected->last()->getId();
-		Lua::LuaNode* lastLuaNode = Lua::LuaGraph::getInstance()->getNodes()->value( lastNodeId );
-		Lua::LuaGraphTreeModel* lastLuaModel = new Lua::LuaGraphTreeModel( lastLuaNode );
-		luaGraphTreeView->setModel( lastLuaModel );
+        qlonglong lastNodeId = 0;
+        Repository::Git::GitEvolutionGraph* evolutionGraph = Manager::GraphManager::getInstance()->getActiveEvolutionGraph();
+        if( evolutionGraph ) {
+            QString identifier = selected->last()->getLuaIdentifier();
+//            if( evolutionGraph->getLuaNodesMapping().contains( identifier ) ) {
+            if( evolutionGraph->getMetaDataFromIdentifier( identifier )->getLuaMapping() != -1 ) {
+//                lastNodeId = evolutionGraph->getLuaNodesMapping().value( identifier );
+                lastNodeId = evolutionGraph->getMetaDataFromIdentifier( identifier )->getLuaMapping();
+            }
+
+        } else {
+            lastNodeId = selected->last()->getId();
+        }
+
+        if( lastNodeId != 0 ) {
+            Lua::LuaNode* lastLuaNode = Lua::LuaGraph::getInstance()->getNodes()->value( lastNodeId );
+            // garaj start - ak nenaslo lastLuaNode, tak sposobovalo pad softveru
+            if ( lastLuaNode ) {
+                Lua::LuaGraphTreeModel* lastLuaModel = new Lua::LuaGraphTreeModel( lastLuaNode );
+                luaGraphTreeView->setModel( lastLuaModel );
+            }
+        }
+		// garaj end
 	}
 
 
@@ -3649,6 +4035,385 @@ void CoreWindow::onChange()
 void CoreWindow::browsersGroupingClicked( bool checked )
 {
 	this->coreGraph->getBrowsersGroup()->setBrowsersGrouping( checked );
+}
+
+bool CoreWindow::nextVersion()
+{
+
+	if ( !isRunning ) {
+		b_previous_version->setDisabled( false );
+	}
+
+	bool ok = true;
+	int value = evolutionSlider->value();
+	evolutionLifespanSpinBox->setDisabled( true );
+	value++;
+	QString pos =  QString::number( value + 1 );  // kedze list zacina od 0 treba pripocitat +1
+	labelEvolutionSlider->setText( "  " + pos + " . verzia" );
+	evolutionSlider->blockSignals( true );
+	evolutionSlider->setValue( value );
+	evolutionSlider->blockSignals( false );
+
+	if( !chb_git_changeCommits->isChecked() ) {
+		ok = Manager::GraphManager::getInstance()->nextVersion( layout );
+	} else {
+//        qDebug() << "Treba zavolat dalsi lua stromcek";
+		QString lPath =  Manager::GraphManager::getInstance()->getActiveEvolutionGraph()->getFilePath();
+		QString commitId = Manager::GraphManager::getInstance()->getActiveEvolutionGraph()->getVersion( value )->getCommitId();
+		Repository::Git::GitUtils::changeCommit( commitId, lPath );
+		//        loadFunctionCall();
+		loadLuaGraph();
+
+		Lua::LuaGraph::getInstance()->loadEvoGraph( lPath );
+
+		Manager::GraphManager::getInstance()->getActiveGraph()->setCurrentVersion( value );
+		if( !Manager::GraphManager::getInstance()->getActiveEvolutionGraph()->getVersion( value )->getIsLoaded() ) {
+
+			Repository::Git::GitLuaGraphAnalyzer analyzer = Repository::Git::GitLuaGraphAnalyzer( Lua::LuaGraph::getInstance(), Manager::GraphManager::getInstance()->getActiveEvolutionGraph() );
+			analyzer.setVersionNumber( value );
+			analyzer.analyze();
+		}
+
+		layout->pause();
+		coreGraph->setNodesFreezed( true );
+
+		Repository::Git::GitLuaGraphVisualizer visualizer = Repository::Git::GitLuaGraphVisualizer( Manager::GraphManager::getInstance()->getActiveGraph(), Manager::GraphManager::getInstance()->getActiveEvolutionGraph(), this->coreGraph->getCamera() );
+		visualizer.visualize( true );
+
+		coreGraph->reloadConfig();
+		if ( isPlaying ) {
+			layout->play();
+			coreGraph->setNodesFreezed( false );
+		}
+
+//        Lua::LuaGraphVisualizer* visualizer = visualizer = new Lua::GitGraphVisualizer( Manager::GraphManager::getInstance()->getActiveGraph(), coreGraph->getCamera() );
+//        visualizer->visualize();
+	}
+
+	if ( value == evolutionSlider->maximum() ) {
+		b_next_version->setDisabled( true );
+	}
+
+//    labelOnOff( true );
+
+	return ok;
+}
+
+bool CoreWindow::previousVersion()
+{
+
+	if ( !isRunning ) {
+		b_next_version->setDisabled( false );
+	}
+
+	bool ok = true;
+	int value = evolutionSlider->value();
+	value--;
+	QString pos =  QString::number( value + 1 );  // kedze list zacina od 0 treba pripocitat +1
+	labelEvolutionSlider->setText( "  " + pos + " . verzia" );
+	evolutionSlider->blockSignals( true );
+	evolutionSlider->setValue( value );
+	evolutionSlider->blockSignals( false );
+
+	if( !chb_git_changeCommits->isChecked() ) {
+		ok =  Manager::GraphManager::getInstance()->previousVersion( layout );
+	} else {
+//        qDebug() << "Treba zavolat predchadzajuci lua stromcek";
+		Manager::GraphManager::getInstance()->getActiveGraph()->setCurrentVersion( value );
+		QString lPath =  Manager::GraphManager::getInstance()->getActiveEvolutionGraph()->getFilePath();
+		QString commitId = Manager::GraphManager::getInstance()->getActiveEvolutionGraph()->getVersion( value )->getCommitId();
+		Repository::Git::GitUtils::changeCommit( commitId, lPath );
+		loadLuaGraph();
+		Lua::LuaGraph::getInstance()->loadEvoGraph( lPath );
+
+		if( !Manager::GraphManager::getInstance()->getActiveEvolutionGraph()->getVersion( value )->getIsLoaded() ) {
+			Repository::Git::GitLuaGraphAnalyzer analyzer = Repository::Git::GitLuaGraphAnalyzer( Lua::LuaGraph::getInstance(), Manager::GraphManager::getInstance()->getActiveEvolutionGraph() );
+			analyzer.setVersionNumber( value );
+			analyzer.analyze();
+		}
+
+		layout->pause();
+		coreGraph->setNodesFreezed( true );
+
+		Repository::Git::GitLuaGraphVisualizer visualizer = Repository::Git::GitLuaGraphVisualizer( Manager::GraphManager::getInstance()->getActiveGraph(), Manager::GraphManager::getInstance()->getActiveEvolutionGraph(), this->coreGraph->getCamera() );
+		visualizer.visualize( false );
+
+		coreGraph->reloadConfig();
+		if ( isPlaying ) {
+			layout->play();
+			coreGraph->setNodesFreezed( false );
+		}
+	}
+
+	if ( value == evolutionSlider->minimum() ) {
+		if( !chb_git_changeCommits->isChecked() ) {
+			evolutionLifespanSpinBox->setDisabled( false );
+		}
+		b_previous_version->setDisabled( true );
+	}
+
+	return ok;
+}
+void CoreWindow::runEvolution()
+{
+	if ( isRunning ) {
+		// zastav evoluciu
+		b_run_evolution->setIcon( QIcon( "../share/3dsoftviz/img/gui/play.png" ) );
+		isRunning = false;
+		if( evolutionSlider->value() != evolutionSlider->maximum() ) {
+			b_next_version->setDisabled( false );
+		}
+		b_previous_version->setDisabled( false );
+		evolutionTimer->stop();
+	}
+	else {
+		evolutionSlider->setDisabled( false );
+		// zacni evoluciu
+		b_run_evolution->setIcon( QIcon( "../share/3dsoftviz/img/gui/pause.png" ) );
+		isRunning = true;
+		b_next_version->setDisabled( true );
+		b_previous_version->setDisabled( true );
+		evolutionTimer->start( 500 );
+	}
+
+}
+
+void CoreWindow::move()
+{
+	int cursor = evolutionSlider->value();
+	int size = evolutionSlider->maximum();
+
+	if ( cursor == ( size ) ) {
+		this->runEvolution();
+	}
+	else {
+		nextVersion();
+	}
+
+	if ( isPlaying ) {
+		layout->play();
+	}
+}
+
+void CoreWindow::fasterEvolution()
+{
+	int interval =  evolutionTimer->interval();
+	if ( interval - 100 > 0 ) {
+		evolutionTimer->setInterval( interval - 100 );
+	}
+}
+
+void CoreWindow::slowerEvolution()
+{
+	int interval =  evolutionTimer->interval();
+	evolutionTimer->setInterval( interval + 100 );
+}
+
+void CoreWindow::showInfo()
+{
+	Manager::GraphManager::getInstance()->getActiveEvolutionGraph()->getVersion( evolutionSlider->value() )->printVersion();
+}
+
+void CoreWindow::sliderVersionValueChanged( int value )
+{
+	QString pos = QString::number( value + 1 );
+	labelEvolutionSlider->setText( "  " + pos + " . verzia" );
+	evolutionSlider->blockSignals( true );
+	Manager::GraphManager::getInstance()->changeToVersion( layout, value );
+	evolutionSlider->setValue( value );
+	evolutionSlider->blockSignals( false );
+
+	evolutionLifespanSpinBox->setDisabled( true );
+
+	if ( !isRunning ) {
+		b_next_version->setDisabled( false );
+		b_previous_version->setDisabled( false );
+	}
+
+	if ( value == evolutionSlider->maximum() ) {
+		b_next_version->setDisabled( true );
+	}
+
+	if ( value == evolutionSlider->minimum() ) {
+		evolutionLifespanSpinBox->setDisabled( false );
+		b_previous_version->setDisabled( true );
+	}
+}
+
+void CoreWindow::changeLifespan( int value )
+{
+	Manager::GraphManager::getInstance()->getActiveEvolutionGraph()->setLifespan( value );
+}
+
+void CoreWindow::getDiffInfo()
+{
+	QLinkedList<osg::ref_ptr<Data::Node>>* selectedNodes = viewerWidget->getPickHandler()->getSelectedNodes();
+
+	if ( selectedNodes->size() != 0 ) {
+		foreach ( osg::ref_ptr<Data::Node> node, *selectedNodes ) {
+			int version = evolutionSlider->value();
+			Manager::GraphManager::getInstance()->getDiffInfo( node.get()->Data::AbsNode::getName(), version );
+		}
+	}
+}
+
+// zatial neviem ci je potrebne:D ale asi bude
+void CoreWindow::changeCommits( bool value ) {
+	qDebug() << chb_git_changeCommits->isChecked();
+	if( value ) {
+		b_run_evolution->setEnabled( false );
+		evolutionSlider->setEnabled( false );
+		b_faster_evolution->setEnabled( false );
+		b_slower_evolution->setEnabled( false );
+	}
+}
+
+void CoreWindow::createEvolutionLuaGraph()
+{
+	QString file = Manager::GraphManager::getInstance()->getActiveEvolutionGraph()->getFilePath();
+
+	Repository::Git::GitUtils::changeCommit( Manager::GraphManager::getInstance()->getActiveEvolutionGraph()->getVersion( 0 )->getCommitId(), file );
+
+	std::cout << "You selected " << file.toStdString() << std::endl;
+	Lua::LuaInterface* lua = Lua::LuaInterface::getInstance();
+
+
+	Lua::LuaValueList path;
+	path.push_back( file.toStdString() );
+	QString createGraph[] = {"function_call_graph", "extractGraph"};
+	lua->callFunction( 2, createGraph, path.getValue() );
+	lua->doString( "getGraph = function_call_graph.getGraph" );
+	Lua::LuaInterface::getInstance()->doString( "getFullGraph = getGraph" );
+
+	Data::Graph* currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
+
+
+
+
+	Lua::LuaGraphVisualizer* visualizer = new Lua::GitGraphVisualizer( currentGraph, coreGraph->getCamera() );
+	visualizer->visualize();
+
+
+
+   /*
+	Lua::LuaInterface* lua = Lua::LuaInterface::getInstance();
+
+	Data::Graph* currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
+
+	if ( currentGraph != NULL ) {
+		Manager::GraphManager::getInstance()->closeGraph( currentGraph );
+	}
+
+	currentGraph = Manager::GraphManager::getInstance()->createNewGraph( "LuaGraph" );
+
+	layout->pause();
+	coreGraph->setNodesFreezed( true );
+
+	Lua::LuaGraph* graph = Lua::LuaGraph::getInstance();
+
+	Lua::LuaEdge* edge = new Lua::LuaEdge();
+	edge->setId( 12 );
+	edge->setLabel( "hrana" );
+	graph->getEdges()->insert( 12, edge );
+	edge->addIncidence( 21 );
+	edge->addIncidence( 22 );
+
+	Lua::LuaIncidence* incidence1 = new Lua::LuaIncidence();
+	incidence1->setId( 21 );
+	incidence1->setLabel( "incidence1" );
+
+	Lua::LuaIncidence* incidence2 = new Lua::LuaIncidence();
+	incidence2->setId( 22 );
+	incidence2->setLabel( "incidence2" );
+
+	Lua::LuaNode* node1 = new Lua::LuaNode();
+	node1->setId( 1 );
+	node1->setLabel( "Ahoj" );
+	graph->getNodes()->insert( 1, node1 );
+	node1->addIncidence( 21 );
+
+	Lua::LuaNode* node2 = new Lua::LuaNode();
+	node2->setId( 2 );
+	node2->setLabel( "Hallo" );
+	graph->getNodes()->insert( 2, node2 );
+	node2->addIncidence( 22 );
+
+	incidence1->setEdgeNode( 12, 1 );
+	incidence2->setEdgeNode( 12, 2 );
+	graph->getIncidences()->insert( 21, incidence1 );
+	graph->getIncidences()->insert( 22, incidence2 );
+
+	Data::Type* nodeType;
+	Data::Type* edgeType;
+
+	Importer::GraphOperations* operations = new Importer::GraphOperations( *currentGraph );
+	operations->addDefaultTypes( edgeType, nodeType );
+
+	for ( QMap<qlonglong, Lua::LuaNode*>::iterator i = graph->getNodes()->begin(); i != graph->getNodes()->end(); ++i ) {
+		osg::ref_ptr<Data::Node> n = currentGraph->addNode( i.key() , i.value()->getLabel(), nodeType );
+//        setNodeParams( n, i.value(), osg::Vec4f( 1,1,1,1 ), 8 );
+	}
+
+	for ( QMap<qlonglong, Lua::LuaEdge*>::iterator i = graph->getEdges()->begin(); i != graph->getEdges()->end(); ++i ) {
+		if ( i.value()->getIncidences().size() != 2 ) {
+			throw new std::runtime_error( "Not a simple graph" );
+		}
+		Lua::LuaIncidence* const incid1 = graph->getIncidences()->value( i.value()->getIncidences()[0] );
+		Lua::LuaIncidence* const incid2 = graph->getIncidences()->value( i.value()->getIncidences()[1] );
+		osg::ref_ptr<Data::Node> srcNode = currentGraph->getNodes()->value( incid1->getEdgeNodePair().second );
+		osg::ref_ptr<Data::Node> dstNode = currentGraph->getNodes()->value( incid2->getEdgeNodePair().second );
+		osg::ref_ptr<Data::Edge> newEdge;
+		if ( incid1->getOriented() ) {
+			if ( incid1->getOutGoing() ) {
+				newEdge = currentGraph->addEdge( i.key(), i.value()->getLabel(), dstNode, srcNode, edgeType, true );
+			}
+			else {
+				newEdge = currentGraph->addEdge( i.key(), i.value()->getLabel(), srcNode, dstNode, edgeType, true );
+			}
+		}
+		else {
+			newEdge = currentGraph->addEdge( i.key(), i.value()->getLabel(), srcNode, dstNode, edgeType, false );
+		}
+		newEdge->setCamera( coreGraph->getCamera() );
+//        setEdgeParams( newEdge, i.value(), osg::Vec4f( 1,1,1,1 ) );
+	}
+//    graph->setObserver( this );
+
+	QString metaNodeName = "metaNode";
+	QString metaEdgeName = "metaEdge";
+	osg::ref_ptr<Data::Node> filesAnchor = currentGraph->addNode( std::numeric_limits<qlonglong>::max(), metaNodeName, currentGraph->getNodeMetaType(), osg::Vec3( 0, 0, 500 ) );
+	osg::ref_ptr<Data::Node> functionsAnchor = currentGraph->addNode( std::numeric_limits<qlonglong>::max() - 1, metaNodeName, currentGraph->getNodeMetaType(), osg::Vec3( 0, 0, -500 ) );
+	filesAnchor->setColor( osg::Vec4( 0,0,0,0 ) );
+	functionsAnchor->setColor( osg::Vec4( 0,0,0,0 ) );
+
+//    for ( QMap<qlonglong, Lua::LuaNode*>::iterator i = graph->getNodes()->begin(); i != graph->getNodes()->end(); ++i ) {
+//        if ( i.value()->getParams().type() == 0 ) {
+//            continue;
+//        }
+//        if ( i.value()->getParams()["root"]== true ) {
+//            osg::ref_ptr<Data::Node> root = currentGraph->getNodes()->value( i.key() );
+//            osg::ref_ptr<Data::Edge> metaLink = currentGraph->addEdge( metaEdgeName, root, filesAnchor, currentGraph->getEdgeMetaType(), false );
+//            metaLink->setEdgeColor( osg::Vec4( 0,0,0,0 ) );
+//            metaLink->setInvisible( true );
+//        }
+//        if ( i.value()->getParams()["type"] == "function" ) {
+//            osg::ref_ptr<Data::Node> func = currentGraph->getNodes()->value( i.key() );
+//            osg::ref_ptr<Data::Edge> metaLink = currentGraph->addEdge( metaEdgeName, func, functionsAnchor, currentGraph->getEdgeMetaType(), false );
+//            metaLink->setEdgeColor( osg::Vec4( 0,0,0,0 ) );
+//            metaLink->setInvisible( true );
+//            metaLink->setEdgeStrength( 0.1f );
+//        }
+//    }
+
+//    Lua::LuaGraphVisualizer* visualizer = new Lua::SimpleGraphVisualizer( currentGraph, coreGraph->getCamera() );
+//    visualizer->visualize();
+
+	coreGraph->reloadConfig();
+	if ( isPlaying ) {
+		layout->play();
+		coreGraph->setNodesFreezed( false );
+	}
+	*/
 }
 
 } // namespace QOSG

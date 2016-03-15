@@ -85,7 +85,7 @@ void OpenCV::CamSelectWindow::commitChanges()
 		return;
 	}
 	int row = view->currentIndex().row();
-	OpenCV::CamSelectCore::getInstance()->setCam( row,
+	OpenCV::CamSelectCore::getInstance()->setCam( static_cast<std::vector<OpenCV::CapVideo*>::size_type>( row ),
 			model->item( row, 2 )->text().toInt(),
 			model->item( row, 2 )->text().toInt() );
 	this->close();

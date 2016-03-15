@@ -274,7 +274,7 @@ public slots:
 	/**
 	     * @brief setNodeType Set representation of nodes
 	     */
-	void setNodeVisual( int index );
+	void setNodeVisual( unsigned int index );
 
 	/**
 	     * @brief setEdgeType Set representation of edges
@@ -498,59 +498,59 @@ private:
 	    *  int backgroundPosition
 	    *  \brief background node position
 	    */
-	int backgroundPosition;
+	unsigned int backgroundPosition;
 
 	/**
 	    *  int nodesPosition
 	    *  \brief nodes group position
 	    */
-	int nodesPosition;
+	unsigned int nodesPosition;
 
 	/**
 	    *  int edgesPosition
 	    *  \brief edges group position
 	    */
-	int edgesPosition;
+	unsigned int edgesPosition;
 
 	/**
 	    *  int qmetaNodesPosition
 	    *  \brief metanodes group position
 	    */
-	int qmetaNodesPosition;
+	unsigned int qmetaNodesPosition;
 
 	/**
 	    *  int qmetaEdgesPosition
 	    *  \brief metaedges groups position
 	    */
-	int qmetaEdgesPosition;
+	unsigned int qmetaEdgesPosition;
 
 	/**
 	    *  int labelsPosition
 	    *  \brief labels group position
 	    */
-	int labelsPosition;
+	unsigned int labelsPosition;
 
 	/**
 	     * \brief Index of restrictionVisualisationsGroup in the root group.
 	     */
-	int restrictionVisualizationsPosition;
+	unsigned int restrictionVisualizationsPosition;
 
 	/**
 	     * \brief Index of restrictionManipulatorsGroup in the root group.
 	     */
-	int restrictionManipulatorsPosition;
+	unsigned int restrictionManipulatorsPosition;
 
 	/**
 	    *  int groupsPosition
 	    *  \brief browsers group position
 	    */
-	int browsersPosition;
+	unsigned int browsersPosition;
 
 	/**
 	    *  int customNodesPosition
 	    *  \brief custom nodes group position
 	    */
-	int customNodesPosition;
+	unsigned int customNodesPosition;
 
 	int prevTime;
 

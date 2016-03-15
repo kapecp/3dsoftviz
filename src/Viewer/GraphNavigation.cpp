@@ -3,15 +3,15 @@
 
 #include "QDebug"
 
-Vwr::GraphNavigation::GraphNavigation()
+Vwr::GraphNavigation::GraphNavigation() :
+	isNavEnabled( true ),
+	viewer( AppCore::Core::getInstance()->getCoreWindow()->GetViewerQt() ),
+	camMath( nullptr ),
+	tempSelectedNode( nullptr ),
+	tempSelectedEdge( nullptr ),
+	previousLastSelectedNode( nullptr ),
+	selectionMode( 2 )
 {
-	selectionMode = 2;
-	isNavEnabled = true;
-	camMath = NULL;
-	tempSelectedNode = NULL;
-	tempSelectedEdge = NULL;
-	previousLastSelectedNode = NULL;
-	viewer = AppCore::Core::getInstance()->getCoreWindow()->GetViewerQt();
 }
 
 Vwr::GraphNavigation::~GraphNavigation()
@@ -68,8 +68,8 @@ void Vwr::GraphNavigation::setColorNearestNode( Data::Node* selectedNode )
 			// TODO: Add extra conditions for "selectionMode"
 		}
 		// first edge or nearer node
-		if ( ( minDistance == 0 ) || ( minDistance > distance ) ) {
-			minDistance = (float)distance;
+		if ( qFuzzyCompare( minDistance, 0.0f )  || ( minDistance > distance ) ) {
+			minDistance = static_cast<float>( distance );
 			closestEdge = ( *iter );
 		}
 	}
@@ -148,12 +148,12 @@ void Vwr::GraphNavigation::removeLastSelectedNode()
 osg::Vec3f Vwr::GraphNavigation::getMouseScreenCoordinates( )
 {
 	// get mouse coordinates in viewer
-	float mouseX = (float)(viewer->cursor().pos().x()) - (float)(viewer->window()->pos().x()) - 10.0f;
-	float mouseY = (float)(viewer->cursor().pos().y()) - (float)(viewer->window()->pos().y()) - 30.0f;
+	float mouseX = static_cast<float>( viewer->cursor().pos().x() ) - static_cast<float>( viewer->window()->pos().x() ) - 10.0f;
+	float mouseY = static_cast<float>( viewer->cursor().pos().y() ) - static_cast<float>( viewer->window()->pos().y() ) - 30.0f;
 
 	// get coordinates inside viewer and invert y
-	float xN = static_cast<float>( mouseX - viewer->pos().x() );
-	float yN = static_cast<float>( viewer->height() + viewer->pos().y() - mouseY );
+	float xN = mouseX - static_cast<float>( viewer->pos().x() );
+	float yN = static_cast<float>( viewer->height() ) + static_cast<float>( viewer->pos().y() ) - mouseY ;
 
 	return osg::Vec3f( xN, yN, 1.0f );
 }
@@ -183,8 +183,8 @@ osg::Vec3f Vwr::GraphNavigation::getNodeScreenCoordinates( Data::Node* node )
 double Vwr::GraphNavigation::getDistanceToNode( osg::Vec3f mouse, osg::Vec3f node )
 {
 	// in case of big space can overflow ... test divide by 1000
-	double distX = abs( node[0] - mouse[0] );
-	double distY = abs( node[1] - mouse[1] );
+	double distX = fabs( node[0] - mouse[0] );
+	double distY = fabs( node[1] - mouse[1] );
 
 	return distX*distX + distY*distY;
 }

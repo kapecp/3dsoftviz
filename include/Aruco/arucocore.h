@@ -56,7 +56,7 @@ public:
 		 * @param inputImage Image from cammera, where markers should be detected
 		 * @param[out] number of detected markers
 		 */
-	long detect( cv::Mat inputImage );
+	std::size_t detect( cv::Mat inputImage );
 
 	/**
 			 * @author Autor:Dávid Durcák

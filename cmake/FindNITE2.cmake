@@ -26,7 +26,9 @@ find_library( NITE2_LIBRARY
 	HINTS
 		/home/kapec/Desktop/work-in-progress/NiTE-Linux-x64-2.2/Redist
 		/home/kapecp/Desktop/Kinect/NiTE-Linux-x64-2.2/Redist/
-	PATHS $ENV{NITE2_LIB}
+	PATHS 
+		$ENV{NITE2_LIB}
+		$ENV{NITE2_REDIST64}
 	)
 
 
@@ -34,7 +36,7 @@ find_library( NITE2_LIBRARY
 # handle the QUIETLY and REQUIRED arguments and set NITE2_FOUND to TRUE if
 # all listed variables are TRUE
 include( FindPackageHandleStandardArgs )
-FIND_PACKAGE_HANDLE_STANDARD_ARGS( NITE2 REQUIRED_VARS NITE2_LIBRARY NITE2_INCLUDE_DIR OPENNI2_DLL
+FIND_PACKAGE_HANDLE_STANDARD_ARGS( NITE2 REQUIRED_VARS NITE2_LIBRARY NITE2_INCLUDE_DIR
  )
 
 # Copy the results to the output variables.

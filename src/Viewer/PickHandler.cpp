@@ -279,7 +279,7 @@ bool PickHandler::handleKeyDown( const osgGA::GUIEventAdapter& ea, GUIActionAdap
 
 	// FULLSCREEN
 	else if ( ea.getKey() == 'l' || ea.getKey() == 'L' ) {
-		bool hideToolbars = (appConf->getValue( "Viewer.Fullscreen" ).toInt() == 0 ? false : true);
+		bool hideToolbars = ( appConf->getValue( "Viewer.Fullscreen" ).toInt() == 0 ? false : true );
 
 		if ( AppCore::Core::getInstance()->getCoreWindow()->isFullScreen() ) {
 			AppCore::Core::getInstance()->getCoreWindow()->menuBar()->show();
@@ -637,7 +637,13 @@ bool PickHandler::doNodePick( osg::NodePath nodePath )
 
 bool PickHandler::doEdgePick( osg::NodePath nodePath )
 {
-	Data::Edge* e = dynamic_cast<Data::Edge*>( nodePath[nodePath.size() - 1] );
+	Data::Edge* e;
+	for ( unsigned int i = 0; i < nodePath.size(); i++ ) {
+		e = dynamic_cast<Data::Edge*>( nodePath[i] );
+		if ( e != NULL ) {
+			break;
+		}
+	}
 
 	if ( e != NULL ) {
 		if ( isAltPressed && pickMode == PickMode::NONE && !isShiftPressed ) {
@@ -1029,7 +1035,7 @@ osg::Vec3 PickHandler::getSelectionCenterNnE()
 			z += ( *i )->getCurrentPosition().z();
 			++i;
 		}
-		return osg::Vec3( x/pickedNodesCount,y/pickedNodesCount,z/pickedNodesCount );
+		return osg::Vec3( x/static_cast<float>( pickedNodesCount ),y/static_cast<float>( pickedNodesCount ),z/static_cast<float>( pickedNodesCount ) );
 	}
 
 	//only edges selection - computes and returns center of edges selection
@@ -1040,7 +1046,7 @@ osg::Vec3 PickHandler::getSelectionCenterNnE()
 			z += ( ( *j )->getSrcNode()->getCurrentPosition().z() + ( *j )->getDstNode()->getCurrentPosition().z() )/2;
 			++j;
 		}
-		return osg::Vec3( x/pickedEdgesCount,y/pickedEdgesCount,z/pickedEdgesCount );
+		return osg::Vec3( x/static_cast<float>( pickedNodesCount ),y/static_cast<float>( pickedNodesCount ),z/static_cast<float>( pickedNodesCount ) );
 	}
 
 	//nodes and edges selection - computes and returns center of this selection
@@ -1057,7 +1063,7 @@ osg::Vec3 PickHandler::getSelectionCenterNnE()
 			z += ( *i )->getCurrentPosition().z();
 			++i;
 		}
-		return osg::Vec3( x/( pickedEdgesCount+pickedNodesCount ),y/( pickedEdgesCount+pickedNodesCount ),z/( pickedEdgesCount+pickedNodesCount ) );
+		return osg::Vec3( x/static_cast<float>( pickedEdgesCount+pickedNodesCount ),y/static_cast<float>( pickedEdgesCount+pickedNodesCount ),z/static_cast<float>( pickedEdgesCount+pickedNodesCount ) );
 	}
 
 	//if are all nodes and edges unselected, returns center of graph

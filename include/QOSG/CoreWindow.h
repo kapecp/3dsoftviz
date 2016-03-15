@@ -5,8 +5,6 @@
 #ifndef QOSG_CORE_WINDOW
 #define QOSG_CORE_WINDOW 1
 
-
-
 #include <Viewer/SelectionObserver.h>
 
 #include "Layout/ShapeGetter.h"
@@ -36,15 +34,13 @@
 #include "Leap/LeapThread.h"
 #endif
 
-#include <QOSG/qtcolorpicker.h>
+#include <qtcolorpicker.h>
 
 #ifdef __APPLE__
 #include <qstringlist.h>
 #else
 #include <Qt/qstringlist.h>
 #endif
-
-
 #include <QMainWindow>
 #include <QToolBar>
 #include <QApplication>
@@ -55,7 +51,7 @@
 #include <QtGui>
 #include <QLineEdit>
 #include <QToolBox>
-#include <QDebug>
+#include <QString>
 
 namespace Layout {
 class LayoutThread;
@@ -231,6 +227,37 @@ public slots:
 	            *  \brief Show dialog to select file which will be opened
 	            */
 	void loadFile();
+/**
+     *  \fn public  loadexampleGraphBasic500
+     *  \brief Load basic 100 node graph
+     */
+void loadExampleGraphBasic100();
+/**
+    *  \fn public  loadexampleGraphBasic500
+    *  \brief Load basic 500 node graph
+    */
+void loadExampleGraphBasic500();
+/**
+    *  \fn public  loadexampleGraphVeolia
+    *  \brief Load Veolia graph
+    */
+void loadExampleGraphVeolia();
+/**
+    *  \fn public  loadexampleGraphLua
+    *  \brief Load basic lua graph
+    */
+void loadExampleGraphLua();
+	/**
+	            *  \fn public  loadFromGit
+	            *  \brief Show dialog to write path to git repo which will be loaded
+	            */
+	void loadFromGit();
+
+    /**
+     * void loadLuaGraph()
+     * @brief Load lua graph without visualization
+     */
+    void loadLuaGraph();
 
 	/**
 	            *  \fn public  labelOnOff(bool checked)
@@ -472,11 +499,6 @@ public slots:
 	    * @brief create Kinect Button
 	 */
 	void createKinectWindow();
-
-	/**
-	 * @brief calculateRansac
-	 */
-	void calculateRansac();
 #endif
 #endif
 
@@ -545,6 +567,82 @@ public slots:
 
 	void setCameraEnable( bool enable );
 
+	/**
+	 * bool nextVersion()
+	 * @brief Updates graph to the next version
+	 * @return Returns true, if update was successful, otherwise false.
+	 */
+	bool nextVersion();
+
+	/**
+	 * bool previousVersion()
+	 * @brief Updates graph to the previous version
+	 * @return Returns true, if update was successful, otherwise false.
+	 */
+	bool previousVersion();
+
+	/**
+	 * void runEvolution()
+	 * @brief Runs evolution of the graph
+	 */
+	void runEvolution();
+
+	/**
+	 * void move()
+	 * @brief Moves the slider if evolution is running.
+	 */
+	void move();
+
+    /**
+     * void changeCommits( bool change );
+     * @brief Change repository commit when changing versions
+     * @param change True, if repository should change, otherwise false
+     */
+    void changeCommits( bool change );
+
+	/**
+	 * void fasterEvolution()
+	 * @brief Sets up faster evolution
+	 */
+	void fasterEvolution();
+
+	/**
+	 * void slowerEvolution()
+	 * @brief Sets up slower evolution
+	 */
+	void slowerEvolution();
+
+	/**
+	 * void getDiffInfo()
+	 * @brief Get diff info for selected nodes
+	 */
+	void getDiffInfo();
+
+	/**
+	 * void showInfo()
+	 * @brief Prints out info about current version in console
+	 */
+	void showInfo();
+
+	/**
+	 * void createEvolutionLuaGraph()
+	 * @brief Creates evolution graph by using Lua graph
+	 */
+	void createEvolutionLuaGraph();
+
+	/**
+	 * void sliderVersionValueChanged( int value )
+	 * @brief Changes graph version to the selected value on slider
+	 * @param value Index of version to be vizualized
+	 */
+	void sliderVersionValueChanged( int value );
+
+	/**
+	 * void changeLifespan( int value )
+	 * @brief Changes lifespan of removed nodes
+	 * @param value Number of version removed nodes lives after repository removal.
+	 */
+	void changeLifespan( int value );
 
 private:
 
@@ -619,6 +717,28 @@ private:
 	    *  \brief Pointer to show info about software
 	    */
 	QAction* about;
+
+    /**
+        *  QAction * exampleGraphBasic100
+        *  \brief Pointer to load basic graph (100) from file
+        */
+    QAction* exampleGraphBasic100;
+    /**
+        *  QAction * exampleGraphBasic
+        *  \brief Pointer to load basic graph (500) from file
+        */
+    QAction* exampleGraphBasic500;
+
+    /**
+        *  QAction * exampleGraphVeolia
+        *  \brief Pointer to load Veolia graph from file
+        */
+    QAction* exampleGraphVeolia;
+    /**
+        *  QAction * exampleGraphLua
+        *  \brief Pointer to load basic lua graph from file
+        */
+    QAction* exampleGraphLua;
 
 	/**
 	    *  QPushButton * play
@@ -798,6 +918,11 @@ private:
 	     */
 	QSpinBox* b_SetRestriction_CylinderSurface_SpinBox;
 
+	/**
+	 * @brief Spin box for changing evolution lifespan of removed nodes
+	 */
+	QSpinBox* evolutionLifespanSpinBox;
+
 	//volovar_zac
 	/**
 	 * @brief slider for change size of radial layout
@@ -881,11 +1006,6 @@ private:
 	QPushButton* b_start_leap;
 
 	/**
-	 * @brief Button for start calculate Ransac Surface
-	 */
-	QPushButton* b_start_ransac;
-
-	/**
 	 * QPushButton start speech recognition
 	 *@brief b_start_speech
 	 */
@@ -902,6 +1022,74 @@ private:
      *@brief b_start_mouse3d
      */
     QPushButton* b_start_mouse3d;
+
+	/**
+	 * QPushButton* b_previous_version
+	 * @brief Button which graph update to previous version
+	 */
+	QPushButton* b_previous_version;
+
+	/**
+	 * QPushButton* b_next_version
+	 * @brief Button which signals graph update to next version
+	 */
+	QPushButton* b_next_version;
+
+	/**
+	 * QPushButton* b_run_evolution
+	 * @brief Button which starts graph evolution
+	 */
+	QPushButton* b_run_evolution;
+
+	/**
+	 * QPushButton* b_info_version
+	 * @brief Button which prints out info about current version
+	 */
+	QPushButton* b_info_version;
+
+	/**
+	 * QPushButton* b_faster_evolution
+	 * @brief Button which sets up faster evolution
+	 */
+	QPushButton* b_faster_evolution;
+
+	/**
+	 * QPushButton* b_slower_evolution
+	 * @brief Button which sets up slower evolution
+	 */
+	QPushButton* b_slower_evolution;
+
+	/**
+	 * QPushButton* b_git_diff;
+	 * @brief Button which returns git diff about selected nodes
+	 */
+	QPushButton* b_git_diff;
+
+	/**
+	 * QPushButton* b_git_lua_graph;
+	 * @brief Button which creates git lua graph
+	 */
+	QPushButton* b_git_lua_graph;
+
+	/**
+	 * QLabel * labelEvolutionSlider
+	 * @brief Shows current vizualized version
+	 */
+	QLabel* labelEvolutionSlider;
+
+	/**
+	 * QTimer * evolutionTimer
+	 * @brief Timer which interval periodically invokes next version
+	 */
+	QTimer* evolutionTimer;
+
+    /**
+     *CheckBox for changes repository's commits
+     *@brief chb_git_changeCommits
+     */
+    QCheckBox* chb_git_changeCommits;
+
+	bool isRunning;
 
 	/**
 	 *CheckBox for mapinulation camera or object
@@ -922,6 +1110,12 @@ private:
 	QAction* load;
 
 	/**
+	    * QAction* laodGit
+	    * \brief Action for loading from git
+	    */
+	QAction* loadGit;
+
+	/**
 	    *  QPushButton * label
 	    *  \brief Pointer to labelOn/labelOff button
 	    */
@@ -932,6 +1126,13 @@ private:
 	    *  \brief Pointer to slider
 	    */
 	QSlider* slider;
+
+	/**
+	 * QSlider* evolutionSlider
+	 * @brief Slider for evolution graph
+	 */
+	QSlider* evolutionSlider;
+
 
 	/**
 	    *  QFrame * line1
@@ -968,6 +1169,12 @@ private:
 	    *  \brief Pointer to edit menu
 	    */
 	QMenu* help;
+
+    /**
+        *  QMenu * test
+        *  \brief Pointer to menu of tests
+        */
+    QMenu* examples;
 
 	/**
 	    *  QOSG::ViewerQT * viewerWidget

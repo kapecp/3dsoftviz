@@ -7,26 +7,25 @@ void ReadNodesStore::addNode(
 	osg::ref_ptr<Data::Node> node
 )
 {
-	nodes_[name] = node;
+	nodes[name] = node;
 }
 
 bool ReadNodesStore::contains(
 	const QString& name
 )
 {
-	return nodes_.find( name ) != nodes_.end();
+	return nodes.contains( name );
 }
 
 osg::ref_ptr<Data::Node> ReadNodesStore::get(
 	const QString& name
 )
 {
-	NodesMapType::iterator it = nodes_.find( name );
-	if ( it != nodes_.end() ) {
-		return it->second;
+	if ( nodes.contains( name ) ) {
+		return nodes.value( name );
 	}
 	else {
-		return NULL;
+		return nullptr;
 	}
 }
 

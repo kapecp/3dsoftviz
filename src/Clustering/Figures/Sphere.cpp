@@ -1,6 +1,7 @@
 #include "Clustering/Figures/Sphere.h"
 
 #include <vector>
+#include <algorithm>
 #include <QDebug>
 #include <osg/Depth>
 #include <osg/BlendFunc>
@@ -15,7 +16,7 @@
 
 #include <math.h>
 
-::Sphere::Sphere( osg::Vec3d position, float radius, osg::Vec4d color )
+Clustering::Sphere::Sphere( osg::Vec3d position, float radius, osg::Vec4d color )
 {
 	init();
 	computeGeode( 20, 20 );
@@ -23,7 +24,7 @@
 	at->addChild( sphereGeode );
 }
 
-void ::Sphere::init()
+void Clustering::Sphere::init()
 {
 	midPoint = osg::Vec3d( 0,0,0 );
 	sphereGeode = new osg::Geode();
@@ -35,7 +36,7 @@ void ::Sphere::init()
 	at = new osg::AutoTransform;
 }
 
-void ::Sphere::computeGeode( unsigned int rings, unsigned int sectors )
+void Clustering::Sphere::computeGeode( unsigned int rings, unsigned int sectors )
 {
 	float radius = 1;
 	float const R = 1.0f/static_cast<float>( rings-1 );
@@ -83,7 +84,7 @@ void ::Sphere::computeGeode( unsigned int rings, unsigned int sectors )
 	sphereGeometry->setColorArray( colors );
 }
 
-void ::Sphere::transform( osg::Vec3d position, osg::Vec3d scale, osg::Vec4d color )
+void Clustering::Sphere::transform( osg::Vec3d position, osg::Vec3d scale, osg::Vec4d color )
 {
 	osg::StateSet* ss = sphereGeometry->getOrCreateStateSet();
 

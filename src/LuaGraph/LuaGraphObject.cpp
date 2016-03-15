@@ -1,5 +1,7 @@
 #include "LuaGraph/LuaGraphObject.h"
 
+#include <string>
+
 qlonglong Lua::LuaGraphObject::getId() const
 {
 	return id;

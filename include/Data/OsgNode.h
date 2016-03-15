@@ -39,14 +39,6 @@ public:
 	static osg::ref_ptr<osg::Drawable> createSquare( const float& scale, osg::StateSet* bbState );
 
 	/**
-	    *  \fn private static  createStateSet(Data::Type * type = 0)
-	    *  \brief Creates node stateset
-	    *  \param   type     node type
-	    *  \return osg::ref_ptr node stateset
-	    */
-	static osg::ref_ptr<osg::StateSet> createStateSet( Data::Type* type = 0 );
-
-	/**
 	     * \fn public constant targetPosition
 	     * \brief Gets target position of a node.
 	     * \return target position
@@ -195,7 +187,7 @@ public:
 		this->color = color;
 
 		if ( !selected ) {
-			setDrawableColor( 0, color );
+			setDrawableColor( color );
 		}
 	}
 
@@ -234,10 +226,10 @@ public:
 	void setSelected( bool selected )
 	{
 		if ( selected ) {
-			setDrawableColor( 0, osg::Vec4( 0.0f, 0.1f, 1.0f, 1.0f ) );    // color of selected node
+			setDrawableColor( osg::Vec4( 0.0f, 0.1f, 1.0f, 1.0f ) );    // color of selected node
 		}
 		else {
-			setDrawableColor( 0, color );
+			setDrawableColor( color );
 		}
 
 		this->selected = selected;
@@ -271,10 +263,9 @@ public:
 	/**
 	    *  \fn private  setDrawableColor(int pos, osg::Vec4 color)
 	    *  \brief Sets drawble color
-	    *  \param     pos     drawable position
 	    *  \param     color     drawable color
 	    */
-	void setDrawableColor( int pos, osg::Vec4 color );
+	void setDrawableColor( osg::Vec4 color );
 
 	/**
 	    *  \fn inline public  setUsingInterpolation(bool val)
@@ -293,9 +284,79 @@ public:
 	    */
 	void setSelectedWith( osg::Vec4 selColor )
 	{
-		setDrawableColor( 0, selColor );  // color of selected node
+		setDrawableColor( selColor );  // color of selected node
 		this->selected = true;
 	}
+
+	void setVisual( unsigned int index );
+
+
+	/**
+	    *  \fn public  reloadConfig
+	    *  \brief Reloads node configuration
+	    */
+	void reloadConfig();
+
+	/**
+	    *  \fn public  showLabel(bool visible)
+	    *  \brief If true, node name will be shown.
+	    *  \param     visible     node name shown
+	    */
+	void showLabel( bool visible );
+
+	/**
+	     * \fn public constant isFocused
+	     * \brief Gets whether this node is focused at the moment.
+	     * \return whether this node is focused at the moment
+	     */
+	bool isFocused() const;
+
+	/**
+	     * \fn public setIsFocused(bool value)
+	     * \brief Sets whether this node is focused at the moment.
+	     * \param value whether this node is focused at the moment
+	     */
+	void setIsFocused( bool value );
+
+
+	/**
+	    *  \fn private static  createNodeSquare(const float & scale, osg::StateSet* bbState)
+	    *  \brief Creates node drawable - square
+	    *  \param	  scale	node scale
+	    *  \param  bbState	node stateset
+	    *  \return osg::ref_ptr node geode
+	    */
+	static osg::ref_ptr<osg::Geode> createNodeSquare( const float& scale, osg::StateSet* bbState );
+
+	/**
+	    *  \fn private static  createNodeSphere(const float & scale, osg::StateSet* bbState)
+	    *  \brief Creates node drawable - sphere
+	    *  \param	  scale	node scale
+	    *  \param  bbState	node stateset
+	    *  \return osg::ref_ptr node geode
+	    */
+	static osg::ref_ptr<osg::Geode> createNodeSphere( const float& scale, osg::StateSet* bbState );
+
+	/**
+	    *  \fn private static  createStateSet(Data::Type * type = 0)
+	    *  \brief Creates node stateset
+	    *  \param   type     node type
+	    *  \return osg::ref_ptr node stateset
+	    */
+	static osg::ref_ptr<osg::StateSet> createStateSet( Data::Type* type = 0 );
+
+	/**
+	    *  \fn private static  createLabel(const float & scale, QString name)
+	    *  \brief Creates node label from name
+	    *  \param      scale     label scale
+	    *  \param       name     label text
+	    *  \return osg::ref_ptr node label
+	    */
+	static osg::ref_ptr<osg::Geode> createLabel( const float& scale, QString name );
+
+	static const unsigned int INDEX_LABEL = 0;
+	static const unsigned int INDEX_SQUARE = 1;
+	static const unsigned int INDEX_SPHERE = 2;
 
 protected:
 	/**
@@ -369,6 +430,12 @@ protected:
 	osg::Geode* ball;
 
 	osg::ref_ptr<osg::AutoTransform> outBall;
+
+	/**
+	     * bool mIsFocused
+	     * \brief Flag whether this node is focused at the moment.
+	     */
+	bool mIsFocused;
 
 };
 }
