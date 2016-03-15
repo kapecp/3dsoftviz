@@ -3764,13 +3764,14 @@ void QOSG::CoreWindow::OnMove(std::vector<float>& motionData){
             }
 
         case 3:
-                moveViewer->getCameraManipulator()->rotateCamera(0.0, 0.0, 1.0, (-1)*motionData[3], 0.0);
+                //negative multiplier for correct rotation path, double for faster rotation
+                moveViewer->getCameraManipulator()->rotateCamera(0.0, 0.0, 1.0, (-2)*motionData[3], 0.0);
                 break;
         case 4:
-                moveViewer->getCameraManipulator()->rotateCamera(0.0, 0.0, 1.0, (-1)*motionData[4], (-1)*motionData[4]);
+                moveViewer->getCameraManipulator()->rotateCamera(1.0, 0.00, (2)*motionData[4], -1, -1);
                 break;
         case 5:
-                moveViewer->getCameraManipulator()->rotateCamera(0.0, 0.0, 1.0, 0.0, (-1)*motionData[5]);
+                moveViewer->getCameraManipulator()->rotateCamera(0.0, 0.0, 1.0, 0.0, (-2)*motionData[5]);
                 break;
 
 
