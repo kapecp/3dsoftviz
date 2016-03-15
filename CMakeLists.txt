@@ -161,13 +161,17 @@ find_package( OpenSceneGraph COMPONENTS
 	osgText
 	osgVolume
 	osgWidget
- )
+)
 find_package( osgViewer )
 
 list( APPEND ALL_SYSTEM_HEADERS
 	${OPENSCENEGRAPH_INCLUDE_DIRS}
 	${OSGVIEWER_INCLUDE_DIR}
 )
+
+if( MSVC )
+	list( APPEND ALL_COMPILE_DEFINITIONS -DOSG_LIBRARY_STATIC )
+endif()
 
 # ------------------------------ OpenCV -------------------------------
 # Find OpenCV
@@ -300,9 +304,6 @@ else()
 	message( STATUS "3DMouse NOT FOUND" )
 endif()
 
-if( MSVC )
-	list( APPEND ALL_COMPILE_DEFINITIONS -DOSG_LIBRARY_STATIC )
-endif()
 
 # ------------------------------------------------------------
 # Dependencies - External projects
