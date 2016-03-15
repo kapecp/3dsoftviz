@@ -1066,6 +1066,13 @@ QWidget* CoreWindow::createMoreFeaturesTab( QFrame* line )
 	connect( b_start_gloves, SIGNAL( clicked() ), this, SLOT( startGlovesRecognition() ) );
 #endif
 
+    line = createLine();
+    lMore->addRow( line );
+    lMore->addRow( new QLabel( tr( "Evolution Graph" ) ) );
+    lMore->addRow( new QLabel( ( tr( "Life span:" ) ) ), evolutionLifespanSpinBox );
+    lMore->addRow( b_git_diff );
+    lMore->addRow( b_git_lua_graph );
+    lMore->addRow( chb_git_changeCommits );
 
 	wMore->setLayout( lMore );
 
