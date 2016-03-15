@@ -3371,7 +3371,6 @@ void CoreWindow::closeEvent( QCloseEvent* event )
 }
 
 void QOSG::CoreWindow::OnMove(std::vector<float>& motionData){
-    qDebug() << "pohyb" << QString::number(motionData[0]) << "\n";
 
     QOSG::ViewerQT* moveViewer = this->GetViewerQt();
     int it;
