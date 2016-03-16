@@ -285,6 +285,7 @@ osg::ref_ptr<osg::Geode> Data::Edge::createLabel( QString name )
 	label->setColor( osg::Vec4( 1.0f, 1.0f, 1.0f, 1.0f ) );
 
 	osg::ref_ptr<osg::Geode> geode = new osg::Geode;
+    geode->setNodeMask(geode->getNodeMask() & ~0x2);
 	geode->addDrawable( label );
 
 	return geode;
@@ -350,6 +351,7 @@ osg::ref_ptr<osg::Geode> Data::Edge::createEdgeQuad( osg::StateSet* bbState )
 	nodeQuad->setStateSet( bbState );
 
 	osg::ref_ptr<osg::Geode> geode = new osg::Geode;
+    geode->setNodeMask(geode->getNodeMask() & ~0x2);
 	geode->addDrawable( nodeQuad );
 
 	return geode;
@@ -373,6 +375,7 @@ osg::ref_ptr<osg::Geode> Data::Edge::createEdgeCylinder( osg::StateSet* bbState 
 	nodeCylinder->getStateSet()->setRenderBinDetails( 11, "RenderBin" );
 
 	osg::ref_ptr<osg::Geode> geode = new osg::Geode;
+    geode->setNodeMask(geode->getNodeMask() & ~0x2);
 	geode->addDrawable( nodeCylinder );
 
 	return geode;
