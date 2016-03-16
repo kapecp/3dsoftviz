@@ -27,6 +27,8 @@
 
 #include "OsgQtBrowser/QWebViewImage.h"
 
+#include <osgShadow/ShadowedScene>
+
 namespace Data {
 class Graph;
 }
@@ -243,6 +245,24 @@ public:
 #ifdef OPENCV_FOUND
 	OpenCV::CameraStream* getCameraStream() const;
 #endif
+
+    //jurik
+    /**
+        *  \fn public  set shadow technique to shadowMap
+        *  \brief
+        */
+    void turnOnShadows();
+
+    /**
+        *  \fn public  set shadow technique to NULL
+        *  \brief
+        */
+    void turnOffShadows();
+
+    void turnOnBase();
+    void turnOffBase();
+    void createBase();
+    //*****
 
 public slots:
 
@@ -574,8 +594,22 @@ private:
 	bool cameraInsideCube( osg::Vec3d lowerPoint, osg::Vec3d upperPoint );
 
 	osgManipulator::Translate2DDragger* manipulator;
-};
 
+    //jurik
+    /**
+        *  osg::ref_ptr<osgShadow::ShadowedScene> shadowedScene
+        *  \brief node for shadows definition
+        */
+        osg::ref_ptr<osgShadow::ShadowedScene> shadowedScene;
+
+    /**
+        * osg::Geode* baseGeode
+        *  \brief node base
+        */
+    osg::Geode* baseGeode;
+
+    //*****
+};
 }
 
 #endif

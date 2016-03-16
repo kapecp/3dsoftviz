@@ -1173,6 +1173,27 @@ QWidget* CoreWindow::createMoreFeaturesTab( QFrame* line )
 	lMore->addRow( b_git_lua_graph );
 	lMore->addRow( chb_git_changeCommits );
 
+    //jurik
+    line = createLine();
+    lMore->addRow( line );
+    lMore->addRow( new QLabel( tr( "Light and Shadow" ) ) );
+
+    chb_light = new QCheckBox( "&Custom light" );
+    chb_light->setChecked( false );
+    lMore->addRow( chb_light );
+    connect( chb_light, SIGNAL( clicked() ), this, SLOT( lightClicked() ) );
+
+    chb_shadow = new QCheckBox( "&Shadow" );
+    chb_shadow->setChecked( false );
+    lMore->addRow( chb_shadow );
+    connect( chb_shadow, SIGNAL( clicked() ), this, SLOT( shadowClicked() ) );
+/*
+    chb_base = new QCheckBox( "&Base" );
+    chb_base->setChecked( false );
+    lMore->addRow( chb_base );
+    connect( chb_base, SIGNAL( clicked() ), this, SLOT( baseClicked() ) );*/
+    //*****
+
 	wMore->setLayout( lMore );
 
 	return wMore;
@@ -4304,5 +4325,48 @@ void CoreWindow::createEvolutionLuaGraph()
 	}
 	*/
 }
+
+//jurik
+void CoreWindow::lightClicked()
+{
+    // chb_light is checked
+    if ( chb_light->isChecked() ) {
+
+        this->coreGraph->getScene()->getOrCreateStateSet()->setMode( GL_LIGHT0,osg::StateAttribute::OFF );
+        this->coreGraph->getScene()->getOrCreateStateSet()->setMode( GL_LIGHT1,osg::StateAttribute::ON );
+     }
+    else {
+
+        this->coreGraph->getScene()->getOrCreateStateSet()->setMode( GL_LIGHT0,osg::StateAttribute::ON );
+        this->coreGraph->getScene()->getOrCreateStateSet()->setMode( GL_LIGHT1,osg::StateAttribute::OFF );
+    }
+}
+
+void CoreWindow::shadowClicked()
+{
+    // chb_light is checked
+    if ( chb_shadow->isChecked() ) {
+
+        this->coreGraph->turnOnShadows();
+     }
+    else {
+
+        this->coreGraph->turnOffShadows();
+    }
+}
+
+/*void CoreWindow::baseClicked()
+{
+    // chb_light is checked
+    if ( chb_base->isChecked() ) {
+
+        this->coreGraph->turnOnBase();
+     }
+    else {
+
+        this->coreGraph->turnOffBase();
+    }
+}*/
+//*****
 
 } // namespace QOSG

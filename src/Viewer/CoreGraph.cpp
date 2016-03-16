@@ -35,6 +35,8 @@
 
 #include <math.h>
 
+#include <osgShadow/ShadowedScene>
+#include <osgShadow/ShadowMap>
 
 namespace Vwr {
 
@@ -660,10 +662,19 @@ Vwr::CoreGraph::CoreGraph( Data::Graph* graph, osg::ref_ptr<osg::Camera> camera 
     osg::LightSource* pLightSource = new osg::LightSource;
     pLightSource->setLight( pLight );
     root->addChild( pLightSource );
-    //*****
 
-	graphRotTransf->addChild( graphGroup );
-	root->addChild( graphRotTransf );
+    //UMBRA
+    shadowedScene = new osgShadow::ShadowedScene;
+    shadowedScene->setReceivesShadowTraversalMask(0x1);
+    shadowedScene->setCastsShadowTraversalMask(0x2);
+    root->addChild(shadowedScene);
+
+    //CoreGraph::createBase();
+
+
+    graphRotTransf->addChild( graphGroup );
+    shadowedScene->addChild( graphRotTransf );
+    //******
 
 	// backgroung this must be last Node in root !!!  ( because of ortho2d background)
 	// Gloger: disabled skybox- using solid background (see setClearColor in ViewerQT)
@@ -1393,4 +1404,56 @@ void CoreGraph::addTranslateToGraphRotTransf( osg::Vec3d pos )
 
 	graphRotTransf->setMatrix( matrix );
 }
+
+//jurik
+void CoreGraph::turnOnShadows()
+{
+    osg::ref_ptr<osgShadow::ShadowMap> sm = new osgShadow::ShadowMap;
+    shadowedScene->setShadowTechnique(sm.get());
+}
+
+void CoreGraph::turnOffShadows()
+{
+    shadowedScene->setShadowTechnique(NULL);
+}
+
+void CoreGraph::turnOnBase()
+{
+    baseGeode->setNodeMask(0x1);
+}
+
+void CoreGraph::turnOffBase()
+{
+    baseGeode->setNodeMask(0x0);
+}
+
+void CoreGraph::createBase()
+{
+    baseGeode = new osg::Geode();
+    osg::Geometry* baseGeometry = new osg::Geometry();
+
+    baseGeode->addDrawable(baseGeometry);
+    baseGeode->setNodeMask(0x0);
+    osg::Material *material = new osg::Material();
+    material->setDiffuse(osg::Material::FRONT,  osg::Vec4(0.5, 0.5, 0.8, 1.0));
+    material->setEmission(osg::Material::FRONT, osg::Vec4(0.5, 0.5, 0.8, 1.0));
+    baseGeode->getOrCreateStateSet()->setAttribute(material);
+    shadowedScene->addChild(baseGeode);
+   //back
+   osg::Vec3Array* vertices = new osg::Vec3Array;
+   vertices->push_back( osg::Vec3( -1000, -1000, -50) ); // lb
+   vertices->push_back( osg::Vec3(  1000, -1000, -50) ); // rb
+   vertices->push_back( osg::Vec3(  1000,  1000, -50) ); // rt
+   vertices->push_back( osg::Vec3( -1000,  1000, -50) ); // lt
+   baseGeometry->setVertexArray( vertices );
+
+   osg::DrawElementsUInt* base = new osg::DrawElementsUInt(osg::PrimitiveSet::QUADS, 0);
+   base->push_back(3);
+   base->push_back(2);
+   base->push_back(1);
+   base->push_back(0);
+
+   baseGeometry->addPrimitiveSet(base);
+}
+//*****
 }
