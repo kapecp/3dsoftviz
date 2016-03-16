@@ -649,6 +649,19 @@ Vwr::CoreGraph::CoreGraph( Data::Graph* graph, osg::ref_ptr<osg::Camera> camera 
 	   //root->addChild( geom1 );
 	*/
 
+    //jurik
+    //lighting
+    osg::Light* pLight = new osg::Light;
+    pLight->setLightNum( 1 );
+    pLight->setDiffuse( osg::Vec4(0.5f, 0.5f, 0.5f, 1.0f) );
+    pLight->setPosition( osg::Vec4(0,0,1,0) );		// w = 0 directional light
+                                                    // w = 1 point light (position)
+    // light source
+    osg::LightSource* pLightSource = new osg::LightSource;
+    pLightSource->setLight( pLight );
+    root->addChild( pLightSource );
+    //*****
+
 	graphRotTransf->addChild( graphGroup );
 	root->addChild( graphRotTransf );
 

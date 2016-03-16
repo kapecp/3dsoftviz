@@ -1348,7 +1348,6 @@ private:
 		*  \brief Flag if edge bundling is running
 		*/
 	bool isEBPlaying;
-
 public:
 
 	void setRepulsiveForceInsideCluster( double repulsiveForceInsideCluster );
