@@ -631,7 +631,7 @@ void loadExampleGraphLua();
     //jurik
     void lightClicked();
     void shadowClicked();
-    //void baseClicked();
+    void baseClicked();
     //*****
 
 private:

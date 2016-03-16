@@ -1187,11 +1187,11 @@ QWidget* CoreWindow::createMoreFeaturesTab( QFrame* line )
     chb_shadow->setChecked( false );
     lMore->addRow( chb_shadow );
     connect( chb_shadow, SIGNAL( clicked() ), this, SLOT( shadowClicked() ) );
-/*
+
     chb_base = new QCheckBox( "&Base" );
     chb_base->setChecked( false );
     lMore->addRow( chb_base );
-    connect( chb_base, SIGNAL( clicked() ), this, SLOT( baseClicked() ) );*/
+    connect( chb_base, SIGNAL( clicked() ), this, SLOT( baseClicked() ) );
     //*****
 
 	wMore->setLayout( lMore );
@@ -4355,7 +4355,7 @@ void CoreWindow::shadowClicked()
     }
 }
 
-/*void CoreWindow::baseClicked()
+void CoreWindow::baseClicked()
 {
     // chb_light is checked
     if ( chb_base->isChecked() ) {
@@ -4366,7 +4366,7 @@ void CoreWindow::shadowClicked()
 
         this->coreGraph->turnOffBase();
     }
-}*/
+}
 //*****
 
 } // namespace QOSG

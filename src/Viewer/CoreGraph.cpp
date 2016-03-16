@@ -669,7 +669,7 @@ Vwr::CoreGraph::CoreGraph( Data::Graph* graph, osg::ref_ptr<osg::Camera> camera 
     shadowedScene->setCastsShadowTraversalMask(0x2);
     root->addChild(shadowedScene);
 
-    //CoreGraph::createBase();
+    CoreGraph::createBase();
 
 
     graphRotTransf->addChild( graphGroup );
