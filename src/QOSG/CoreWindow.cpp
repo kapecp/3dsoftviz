@@ -3709,74 +3709,46 @@ void CoreWindow::closeEvent( QCloseEvent* event )
 void QOSG::CoreWindow::OnMove(std::vector<float>& motionData){
 
     QOSG::ViewerQT* moveViewer = this->GetViewerQt();
-    int it;
-    float dominant = 0;
-    int dominantPosition = -1;
 
-    for(it = 0; it < 6; it++){
-        if(abs(motionData[it]) > abs(dominant)){
-            dominant = motionData[it];
-            dominantPosition = it;
-        }
+    //right & left
+    if(motionData[0] >  0.003){
+        moveViewer->getEventQueue()->keyPress( osgGA::GUIEventAdapter::KEY_Right );
+        moveViewer->getEventQueue()->keyRelease( osgGA::GUIEventAdapter::KEY_Right );
     }
+    if(motionData[0] < -0.003){
+        moveViewer->getEventQueue()->keyPress( osgGA::GUIEventAdapter::KEY_Left );
+        moveViewer->getEventQueue()->keyRelease( osgGA::GUIEventAdapter::KEY_Left );
+    }
+    //forward & back
+    if(motionData[1] >  0.003){
+        moveViewer->getEventQueue()->keyPress( osgGA::GUIEventAdapter::KEY_Down );
+        moveViewer->getEventQueue()->keyRelease( osgGA::GUIEventAdapter::KEY_Down );
+    }
+    if(motionData[1] < -0.003){
+        moveViewer->getEventQueue()->keyPress( osgGA::GUIEventAdapter::KEY_Up );
+        moveViewer->getEventQueue()->keyRelease( osgGA::GUIEventAdapter::KEY_Up );
+    }
+    //up & down
+    //keydown has higher threshhold because user is more likely to press it accidentaly due to weight of own hand
+    //keyup has lower threshhold because user is less likely to press it accidentaly due to weight of own hand
+    if(motionData[2] >  0.004){
+        moveViewer->getEventQueue()->keyPress( osgGA::GUIEventAdapter::KEY_Page_Down );
+        moveViewer->getEventQueue()->keyRelease( osgGA::GUIEventAdapter::KEY_Page_Down );
+    }
+    if(motionData[2] < -0.002){
+        moveViewer->getEventQueue()->keyPress( osgGA::GUIEventAdapter::KEY_Page_Up );
+        moveViewer->getEventQueue()->keyRelease( osgGA::GUIEventAdapter::KEY_Page_Up );
+    }
+    //rotations
 
-
-    switch(dominantPosition){
-        case 0:
-            //pohyb doprava
-            if(motionData[0] > 0){
-                moveViewer->getEventQueue()->keyPress( osgGA::GUIEventAdapter::KEY_Right );
-                moveViewer->getEventQueue()->keyRelease( osgGA::GUIEventAdapter::KEY_Right );
-            }
-            //pohyb dolava
-            else {
-                moveViewer->getEventQueue()->keyPress( osgGA::GUIEventAdapter::KEY_Left );
-                moveViewer->getEventQueue()->keyRelease( osgGA::GUIEventAdapter::KEY_Left );
-            }
-
-            break;
-
-        case 1:
-            //pohyb dozadu
-            if(motionData[1] > 0) {
-                moveViewer->getEventQueue()->keyPress( osgGA::GUIEventAdapter::KEY_Down );
-                moveViewer->getEventQueue()->keyRelease( osgGA::GUIEventAdapter::KEY_Down );
-            }
-            //pohyb dopredu
-            else {
-                moveViewer->getEventQueue()->keyPress( osgGA::GUIEventAdapter::KEY_Up );
-                moveViewer->getEventQueue()->keyRelease( osgGA::GUIEventAdapter::KEY_Up );
-            }
-
-            break;
-
-        case 2:
-
-            //pohyb nahor
-            if(motionData[2] < 0) {
-                moveViewer->getEventQueue()->keyPress( osgGA::GUIEventAdapter::KEY_Page_Up );
-                moveViewer->getEventQueue()->keyRelease( osgGA::GUIEventAdapter::KEY_Page_Up );
-            }
-            //pohyb nadol
-            else {
-                moveViewer->getEventQueue()->keyPress( osgGA::GUIEventAdapter::KEY_Page_Down );
-                moveViewer->getEventQueue()->keyRelease( osgGA::GUIEventAdapter::KEY_Page_Down );
-            }
-
-        case 3:
-                //negative multiplier for correct rotation path, double for faster rotation
-                moveViewer->getCameraManipulator()->rotateCamera(0.0, 0.0, 1.0, (-2)*motionData[3], 0.0);
-                break;
-        case 4:
-                moveViewer->getCameraManipulator()->rotateCamera(1.0, 0.00, (2)*motionData[4], -1, -1);
-                break;
-        case 5:
-                moveViewer->getCameraManipulator()->rotateCamera(0.0, 0.0, 1.0, 0.0, (-2)*motionData[5]);
-                break;
-
-
-        default:
-            break;
+    if(abs(motionData[3]) > 0.001){
+         moveViewer->getCameraManipulator()->rotateCamera(0.0, 0.0, 1.0, (-1.5)*motionData[3], 0.0);
+    }
+    if(abs(motionData[4]) > 0.001){
+        moveViewer->getCameraManipulator()->rotateCamera(1.0, 0.00, (1.2)*motionData[4], -1, -1);
+    }
+    if(abs(motionData[5]) > 0.001){
+        moveViewer->getCameraManipulator()->rotateCamera(0.0, 0.0, 1.0, 0.0, (-1.5)*motionData[5]);
     }
 
 }
