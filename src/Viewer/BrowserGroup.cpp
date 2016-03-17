@@ -58,7 +58,7 @@ void BrowserGroup::setSelectedNodes( QLinkedList<osg::ref_ptr<Data::Node> >* sel
 
 			// Get lua node model and add it to model map
 			Lua::LuaNode* luaNode = Lua::LuaGraph::getInstance()->getNodes()->value( node->getId() );
-			Diluculum::LuaValueMap paramsTable = luaNode->getParams().asTable();
+			Lua::LuaValueMap paramsTable(luaNode->getParams().asTable());
 
 			// Ignore nodes without models
 			if ( paramsTable.find( "metrics" ) == paramsTable.end() ) {
@@ -71,8 +71,8 @@ void BrowserGroup::setSelectedNodes( QLinkedList<osg::ref_ptr<Data::Node> >* sel
 
 			// If grouping is not enabled, then add browser for each newly selected node
 			if ( !browsersGrouping ) {
-				Diluculum::LuaValueMap models;
-				models.insert( std::pair<Diluculum::LuaValue, Diluculum::LuaValue>( ( long )node->getId(), luaNode->getParams() ) );
+				Lua::LuaValueMap models;
+				models.insertPair( ( long )node->getId(), luaNode->getParams() );
 
 				this->addBrowser( "single", node->getCurrentPosition(), models );
 			}
@@ -119,8 +119,8 @@ void BrowserGroup::initBrowsers()
 		node = *i;
 
 		Lua::LuaNode* luaNode = Lua::LuaGraph::getInstance()->getNodes()->value( node->getId() );
-		Diluculum::LuaValueMap models;
-		models.insert( std::pair<Diluculum::LuaValue, Diluculum::LuaValue>( ( long )node->getId(), luaNode->getParams() ) );
+		Lua::LuaValueMap models;
+		models.insertPair( ( long )node->getId(), luaNode->getParams() );
 		this->addBrowser( "single", node->getCurrentPosition(), models );
 	}
 }
@@ -131,7 +131,7 @@ void BrowserGroup::initGroupedBrowser()
 	Data::Node* node;
 	float xSum = 0, ySum = 0, zSum = 0;
 	osg::Vec3f pos;
-	Diluculum::LuaValueMap models;
+	Lua::LuaValueMap models;
 	Lua::LuaNode* luaNode;
 
 	// Iterate over all selected nodes and show one browser in their center using list of all selected nodes models
@@ -145,20 +145,20 @@ void BrowserGroup::initGroupedBrowser()
 		zSum += pos.z();
 
 		luaNode = Lua::LuaGraph::getInstance()->getNodes()->value( node->getId() );
-		models.insert( std::pair<Diluculum::LuaValue, Diluculum::LuaValue>( ( long )node->getId(), luaNode->getParams() ) );
+		models.insertPair( ( long )node->getId(), luaNode->getParams() );
 	}
 
 	// Calculate centroid
 	pos = osg::Vec3f(
-			  xSum / selectedNodes->size(),
-			  ySum / selectedNodes->size(),
-			  zSum / selectedNodes->size()
+			  xSum / static_cast<float>( selectedNodes->size() ),
+			  ySum / static_cast<float>( selectedNodes->size() ),
+			  zSum / static_cast<float>( selectedNodes->size() )
 		  );
 
 	this->addBrowser( "multi", pos, models );
 }
 
-void BrowserGroup::addBrowser( const std::string& templateType, osg::Vec3 position, Diluculum::LuaValueMap models )
+void BrowserGroup::addBrowser( const std::string& templateType, osg::Vec3 position, Lua::LuaValueMap models )
 {
 	// qDebug() << "Adding browser";
 
@@ -174,7 +174,7 @@ void BrowserGroup::addBrowser( const std::string& templateType, osg::Vec3 positi
 	osg::Vec3Array* targets;
 	if ( this->browsersGrouping ) {
 		offset = 0;
-		targets = new osg::Vec3Array( ( unsigned int )selectedNodes->size() );
+		targets = new osg::Vec3Array( static_cast<unsigned int>( selectedNodes->size() ) );
 
 		QLinkedList<osg::ref_ptr<Data::Node> >::iterator i;
 		Data::Node* node;
@@ -253,7 +253,7 @@ osg::Geode* BrowserGroup::createBorderGeode( osg::Vec3 bl, osg::Vec3 br, osg::Ve
 	( *vertices )[3].set( tl );
 
 	linesGeom->setVertexArray( vertices );
-	linesGeom->addPrimitiveSet( new osg::DrawArrays( osg::PrimitiveSet::LINE_LOOP,0,( int )vertices->size() ) );
+	linesGeom->addPrimitiveSet( new osg::DrawArrays( osg::PrimitiveSet::LINE_LOOP,0,static_cast<int>( vertices->size() ) ) );
 
 	return this->createLinesGeode( linesGeom );
 }
@@ -261,7 +261,7 @@ osg::Geode* BrowserGroup::createBorderGeode( osg::Vec3 bl, osg::Vec3 br, osg::Ve
 osg::Geode* BrowserGroup::createConnectorsGeode( osg::Vec3 center, osg::Vec3Array* targets )
 {
 	osg::Geometry* linesGeom = new osg::Geometry();
-	osg::Vec3Array* vertices = new osg::Vec3Array( ( unsigned int )( targets->size() * 2 ) ); // 2 points for each line
+	osg::Vec3Array* vertices = new osg::Vec3Array( static_cast<unsigned int>( targets->size() * 2 ) ); // 2 points for each line
 
 	// Iterate over each target node and create corresponding connector line geometry
 	for ( std::size_t i=0; i< targets->size(); i++ ) {
@@ -270,7 +270,7 @@ osg::Geode* BrowserGroup::createConnectorsGeode( osg::Vec3 center, osg::Vec3Arra
 	}
 
 	linesGeom->setVertexArray( vertices );
-	linesGeom->addPrimitiveSet( new osg::DrawArrays( osg::PrimitiveSet::LINES,0,( int )vertices->size() ) );
+	linesGeom->addPrimitiveSet( new osg::DrawArrays( osg::PrimitiveSet::LINES,0,static_cast<int>( vertices->size() ) ) );
 
 	return this->createLinesGeode( linesGeom );
 }
@@ -323,7 +323,7 @@ void BrowserGroup::clearModels()
 
 double BrowserGroup::interpolate( long currentFrame, long endFrame, double startValue, double endValue )
 {
-	double value = endValue * ( pow( ( currentFrame / ( float )endFrame ) - 1, 5 ) + 1 + startValue );
+	double value = endValue * ( pow( ( static_cast<double>( currentFrame ) / static_cast<double>( endFrame ) ) - 1.0, 5.0 ) + 1.0 + startValue );
 
 	// std::cout << value << " " << currentFrame << " " << endFrame << " " << startValue << " " << endValue << endl;
 	// std::cout << flush;

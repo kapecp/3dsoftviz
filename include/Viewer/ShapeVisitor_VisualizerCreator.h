@@ -94,7 +94,7 @@ private: // common visualizers
 	/**
 	 * \brief Creating geomtetry of grid
 	 */
-	osg::Geometry* createGridGeometry( int size, int noOfLines, osg::Vec3f center );
+	osg::Geometry* createGridGeometry( unsigned int size, unsigned int noOfLines, osg::Vec3f center );
 
 private: // positions and distances
 

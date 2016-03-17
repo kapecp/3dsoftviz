@@ -281,7 +281,7 @@ void TreeModel::addNodesToList( QList<TreeItem*>* parents )
 		columnData->append( name );
 
 		//nacitaju sa data typu uzla
-		Data::Type* node = static_cast<Data::Type*>( iterator.value() );
+		Data::Type* node = iterator.value();
 		QMap<QString, QString>* settings = node->getSettings();
 		QMap<QString, QString>::iterator settingsIterator;
 

@@ -123,7 +123,7 @@ public:
 		*  \return bool true, if event was handled
 		*/
 	bool handle( const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& aa );
-
+	using osgGA::GUIEventHandler::handle;
 
 	/**
 		*  \fn public  toggleSelectedNodesFixedState(bool isFixed)

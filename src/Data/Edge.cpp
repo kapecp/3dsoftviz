@@ -4,7 +4,7 @@
  */
 #include "Data/Edge.h"
 #include "Data/Graph.h"
-#include "Math/Bezier.h"
+#include "osgModeling/Bezier"
 
 #include "Util/ApplicationConfig.h"
 
@@ -187,10 +187,10 @@ void Data::Edge::updateCoordinates( osg::Vec3 srcPos, osg::Vec3 dstPos )
 			rotation->push_back( direction ^ diff );
 			angle = acos( ( direction * diff )/ diff.length() );
 
-			( ( osg::Cylinder* )( ( drawableCylinder )->getShape() ) )->setHeight( ( float )( length ) );
-			( ( osg::Cylinder* )( ( drawableCylinder )->getShape() ) )->setRadius( 2 );
-			( ( osg::Cylinder* )( ( drawableCylinder )->getShape() ) )->setCenter( center->at( 0 ) );
-			( ( osg::Cylinder* )( ( drawableCylinder )->getShape() ) )->setRotation( osg::Quat( angle, osg::Vec3( rotation->at( 0 ).x(), rotation->at( 0 ).y(), rotation->at( 0 ).z() ) ) );
+			( dynamic_cast<osg::Cylinder*>( ( drawableCylinder )->getShape() ) )->setHeight( static_cast<float>( length ) );
+			( dynamic_cast<osg::Cylinder*>( ( drawableCylinder )->getShape() ) )->setRadius( 2 );
+			( dynamic_cast<osg::Cylinder*>( ( drawableCylinder )->getShape() ) )->setCenter( center->at( 0 ) );
+			( dynamic_cast<osg::Cylinder*>( ( drawableCylinder )->getShape() ) )->setRotation( osg::Quat( angle, osg::Vec3( rotation->at( 0 ).x(), rotation->at( 0 ).y(), rotation->at( 0 ).z() ) ) );
 			drawableCylinder->setColor( getEdgeColor() );
 			drawableCylinder->dirtyDisplayList();
 		}
@@ -236,7 +236,7 @@ void Data::Edge::updateCoordinates( osg::Vec3 srcPos, osg::Vec3 dstPos )
 
 			osg::ref_ptr<osg::Vec3Array> pts = bezCurve->getPath();
 
-			unsigned int profileSize = ( unsigned int ) pts->size();
+			unsigned int profileSize = static_cast<unsigned int>( pts->size() );
 			unsigned int i, j;
 
 

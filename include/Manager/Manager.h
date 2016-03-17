@@ -12,6 +12,7 @@
 #include <QFile>
 #include <qfileinfo.h>
 
+#include <memory>
 
 namespace Layout {
 class LayoutThread;
@@ -81,13 +82,15 @@ public:
 	 * \fn loadGraphFromGit
 	 * \brief Loads graph from git repo.
 	 */
-	Data::Graph* loadGraphFromGit( QString filepath );
+    bool loadEvolutionGraphFromGit( QString filepath );
 
 	/**
 	 * \fn loadGraphFromDB
 	 * \brief Loads selected graph from database.
 	 */
-	Data::Graph* loadGraphFromDB( qlonglong graphID, qlonglong layoutID );
+    Data::Graph* loadGraphFromDB( qlonglong graphID, qlonglong layoutID );
+
+    Data::Graph* importEvolutionGraph( QString filepath );
 
 	/**
 	 * \fn simpleGraph
@@ -140,7 +143,7 @@ public:
 	 */
 	Data::Graph* getActiveGraph()
 	{
-		return activeGraph;
+		return activeGraph.get();
 	}
 
 	/**
@@ -254,7 +257,7 @@ private:
 	*  Data::Graph * activeGraph
 	*  \brief active graph
 	*/
-	Data::Graph* activeGraph;
+	std::shared_ptr<Data::Graph> activeGraph;
 
 	/**
 	 * @brief if no database connection find, set to true

@@ -4,6 +4,7 @@
 #include "GitLib/GitFile.h"
 #include "GitLib/GitFileDiffBlock.h"
 #include "GitLib/GitFileDiffBlockLine.h"
+#include "GitLib/GitUtils.h"
 
 #include <QTemporaryFile>
 #include <QDir>
@@ -32,7 +33,7 @@ QList<Repository::Git::GitVersion*> Repository::Git::GitFileLoader::getDataAbout
 	QString lGitCommand = "git log --raw --name-status --reverse --date=short --pretty=format:\"%H%n%an%n%ad\"";
 
 	// Vykona command, vystup ulozi do temp suboru a vrati cestu k temp suboru
-	QString lTmp = makeTmpFileFromCommand( lGitCommand, lFilePath );
+	QString lTmp = Git::GitUtils::makeTmpFileFromCommand( lGitCommand, lFilePath );
 
 	QFile file( lTmp );
 
@@ -76,23 +77,24 @@ QList<Repository::Git::GitVersion*> Repository::Git::GitFileLoader::getDataAbout
 				// V pripade, ze sa nenasiel ani jeden regex, tak skontrolujeme dlzku nacitaneho riadku. Ak je rovny 40, tak ide
 				// o viacnasobne uvedenie identifikatoru a autora, vtedy precitame a zahodime. Ak nie je rovny 40, skonci vytvaranie verzie.
 				if ( A.indexIn( line ) != -1 ) {
-					line = line.replace( A, "projekt/" );
+					line = line.replace( A, "" );
 					Repository::Git::GitFile* file = new Repository::Git::GitFile( line.mid( line.lastIndexOf( "/" ) + 1 ), line, Repository::Git::GitType::ADDED );
 					version->addChangedFile( file );
 				}
 				else if ( M.indexIn( line ) != -1 ) {
-					line = line.replace( M, "projekt/" );
+					line = line.replace( M, "" );
 					Repository::Git::GitFile* file = new Repository::Git::GitFile( line.mid( line.lastIndexOf( "/" ) + 1 ), line, Repository::Git::GitType::MODIFIED );
 					version->addChangedFile( file );
 				}
 				else if ( D.indexIn( line ) != -1 ) {
-					line = line.replace( D, "projekt/" );
+					line = line.replace( D, "" );
 					Repository::Git::GitFile* file = new Repository::Git::GitFile( line.mid( line.lastIndexOf( "/" ) + 1 ), line, Repository::Git::GitType::REMOVED );
 					version->addChangedFile( file );
 				}
 				else if ( line.length() == 40 ) {
-					reader.readLine();
-					reader.readLine();
+					version->setCommitId( line );
+					version->setAuthor( reader.readLine() );
+					version->setDate( reader.readLine() );
 				}
 				else {
 					read = false;
@@ -100,10 +102,10 @@ QList<Repository::Git::GitVersion*> Repository::Git::GitFileLoader::getDataAbout
 			}
 
 			// Nastavim zmenene subory podla zadanych filtrovacich kriterii z appConfig
-			version->setChangedFiles( version->getGitFilesByExtension( this->extensions ) );
+//			version->setChangedFiles( version->getGitFilesByExtension( this->extensions ) );
 
 			// Ak je velkost zmenenych suborov vacsia ako 0, tak pridam verziu
-			if ( version->getChangedFiles().size() ) {
+			if ( version->getChangedFiles()->size() ) {
 				versions.append( version );
 			}
 		}
@@ -116,65 +118,6 @@ QList<Repository::Git::GitVersion*> Repository::Git::GitFileLoader::getDataAbout
 
 	// Vratim list verzii, ktore splnaju filtrovacie kriteria
 	return versions;
-}
-
-QString Repository::Git::GitFileLoader::makeTmpFileFromCommand( QString command, QString filepath )
-{
-	bool ok = true;
-
-	// Ulozim si current working directory
-	QString cwd = QDir::currentPath();
-
-	// Nastavim absolutnu cestu k  temp file ako template a zakazem automaticke mazanie
-	QTemporaryFile tempFile;
-	tempFile.setFileTemplate( QDir::toNativeSeparators( QDir::tempPath() + "/" +  "qXXXXXX" ) );
-	tempFile.setAutoRemove( false );
-
-	// Ak sa nepodarilo vytvorit temp subor, tak nastavim flag "ok" na false a vypisem chybu
-	if ( !tempFile.open() ) {
-		qDebug() << "Nepodarilo sa vytvorit tmp subor";
-		ok = false;
-	}
-
-	// Ak sa podarilo vytvorit temp subor, tak zmenim current working directory
-	if ( ok ) {
-		ok = changeDir( filepath );
-	}
-
-	// Ak sa podarilo zmenit current working directory, tak skontroluje existenciu git repozitara
-	if ( ok ) {
-		ok = existGit( filepath );
-	}
-
-	// Ak existuje na danej ceste git repozitar, tak vykonam command a vystup ulozim do temp suboru
-	if ( ok ) {
-		QProcess process;
-		process.setStandardOutputFile( QDir::toNativeSeparators( tempFile.fileName() ) );
-		QString lCommand = QString( command );
-		process.start( lCommand );
-		process.waitForFinished();
-		process.close();
-		process.terminate();
-
-	}
-
-	// Vratim povodny current working directory, ak sa nepodari zmenit, vypisem do konzoly
-	if ( !changeDir( cwd ) ) {
-		qDebug() << "Nepodarilo sa vratit na povodny current working directory";
-	}
-
-	// Vratim absolutnu cestu k temp suboru
-	return tempFile.fileName();
-}
-
-bool Repository::Git::GitFileLoader::changeDir( QString path )
-{
-	return QDir::setCurrent( path );
-}
-
-bool Repository::Git::GitFileLoader::existGit( QString path )
-{
-	return QDir( QDir::toNativeSeparators( path + "/.git" ) ).exists();
 }
 
 void Repository::Git::GitFileLoader::readGitShowFile( QString tmpFile, Repository::Git::GitFile* gitFile )
@@ -353,7 +296,7 @@ void Repository::Git::GitFileLoader::getDiffInfo( Repository::Git::GitFile* gitF
 {
 	QString lCommand;
 	QString lFilePath = this->filePath;
-	QString lFile = gitFile->getFilepath().replace( "projekt/", "" );
+	QString lFile = gitFile->getFilepath();
 
 	// Ak bol pridany subor pridany, nemame jeho predchadzajucu verziu, preto nacitame celu verziu suboru
 	if ( gitFile->getType() == Repository::Git::GitType::ADDED ) {
@@ -363,8 +306,10 @@ void Repository::Git::GitFileLoader::getDiffInfo( Repository::Git::GitFile* gitF
 		lCommand = "git diff -u " + oldCommitId + " " + currentCommitId + " -- " + lFile;
 	}
 
+//    qDebug() << lCommand;
+
 	// Vykona command, vystup ulozi do temp suboru a vrati cestu k temp suboru
-	QString lTmp = makeTmpFileFromCommand( lCommand, lFilePath );
+	QString lTmp = Git::GitUtils::makeTmpFileFromCommand( lCommand, lFilePath );
 
 	// Ak je typ suboru ADDED, tak nema predchadzajucu verziu a nacitam celu verziu suboru.
 	// Ak nie, tak nacitam diff bloky daneho suboru

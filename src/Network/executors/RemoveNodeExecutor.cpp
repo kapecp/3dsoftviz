@@ -2,6 +2,11 @@
 #include "Manager/Manager.h"
 #include "Network/Server.h"
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wold-style-cast"
+#pragma GCC diagnostic ignored "-Wuseless-cast"
+#pragma GCC diagnostic ignored "-Wsign-conversion"
+
 namespace Network {
 
 void RemoveNodeExecutor::execute_client()
@@ -64,3 +69,5 @@ void RemoveNodeExecutor::execute_server()
 }
 
 } // namespace Network
+
+#pragma GCC diagnostic pop

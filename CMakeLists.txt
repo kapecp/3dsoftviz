@@ -62,7 +62,6 @@ if( USE_STRICT_COMPILE_WARNINGS )
 		# not used:
 			# too much warnings in Qt headers: NULL vs 0 pointers: -Wzero-as-null-pointer-constant
 			# too much warnings: -Wshadow -Waggregate-return
-			# too much warnings, but should be used: -Wold-style-cast -Woverloaded-virtual -Wuseless-cast -Wsign-conversion
 			# class size optimizations ( not really needed ): -Wpadded
 			# style guidelines from Scott Meyers' Effective C++ books: -Weffc++
 			# only for C: -Wold-style-definition -Wstrict-prototypes -Wmissing-prototypes
@@ -86,7 +85,7 @@ endif()
 set( CMAKE_SKIP_BUILD_RPATH FALSE CACHE STRING "" FORCE )
 # next line adds "$ORIGIN/../lib" to RPath:
 set( CMAKE_BUILD_WITH_INSTALL_RPATH TRUE CACHE STRING "" FORCE )
-set( CMAKE_INSTALL_RPATH "$ORIGIN/../lib" CACHE STRING "" FORCE )
+set( CMAKE_INSTALL_RPATH "$ORIGIN/../lib;$ORIGIN" CACHE STRING "" FORCE )
 # next line adds additional link paths to RPath (e.g. for qscintilla when not in system):
 set( CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE CACHE STRING "" FORCE )
 set( CMAKE_INSTALL_NAME_DIR "@executable_path/../lib" CACHE STRING "" FORCE )
@@ -111,28 +110,28 @@ endif ()
 # --------------
 include( cotire )
 if(COMMAND cotire )
-        if( NOT COTIRE_MAXIMUM_NUMBER_OF_UNITY_INCLUDES )
-                include( ProcessorCount )
-                ProcessorCount( N )
+		if( NOT COTIRE_MAXIMUM_NUMBER_OF_UNITY_INCLUDES )
+				include( ProcessorCount )
+				ProcessorCount( N )
 
-                if( NOT N EQUAL 0 )
-                        # set number of parallel unity builds to processor count
-                        set( COTIRE_MAXIMUM_NUMBER_OF_UNITY_INCLUDES "-j${N}" )
-                endif()
-        endif()
+				if( NOT N EQUAL 0 )
+						# set number of parallel unity builds to processor count
+						set( COTIRE_MAXIMUM_NUMBER_OF_UNITY_INCLUDES "-j${N}" )
+				endif()
+		endif()
 
 	set( COTIRE_VERBOSE FALSE )
 	set( COTIRE_DEBUG FALSE )
 
 	### Fix virtual memory range
-	if( MSVC )		
+	if( MSVC )
 		set (COTIRE_PCH_MEMORY_SCALING_FACTOR "240")
 	endif()
 
 	# fix for Diluculum and LuaJIT on 64bit OSX: Lua new_state returned NULL, LuaJIT needs following flags
-	if( APPLE )
-		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pagezero_size 10000 -image_base 100000000" CACHE STRING "" FORCE)
-	endif()
+	#if( APPLE )
+	#	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pagezero_size 10000 -image_base 100000000" CACHE STRING "" FORCE)
+	#endif()
 endif()
 
 # ------------------------------------------------------------
@@ -375,7 +374,55 @@ if( USE_BUILTIN_DEPENDENCIES )
 		endif()
 	endif() # OpenCV_FOUND
 
-	if ( MSVC )
+
+	# Build osgModeling
+	ExternalProject_Add( dep_osgModeling
+		PREFIX osgModeling
+		SOURCE_DIR ${DEP_SOURCE}/osgModeling
+		BINARY_DIR osgModeling
+		CMAKE_ARGS
+			-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
+			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
+			-DBUILD_PLUGINS=ON
+			-C ${CMAKE_CURRENT_BINARY_DIR}/config.cmake
+	)
+
+	add_library( osgModeling SHARED IMPORTED )
+	add_dependencies( osgModeling dep_osgModeling )
+	set_target_properties( osgModeling PROPERTIES
+		IMPORTED_LOCATION ${DEP_BIN}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}osgModeling${CMAKE_SHARED_LIBRARY_SUFFIX} )
+
+	if( WIN32 AND MSVC )
+		set_target_properties( osgModeling PROPERTIES
+			IMPORTED_LOCATION ${DEP_BIN}/bin/${CMAKE_SHARED_LIBRARY_PREFIX}osgModeling${CMAKE_SHARED_LIBRARY_SUFFIX}
+			IMPORTED_IMPLIB ${DEP_BIN}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}osgModeling${CMAKE_STATIC_LIBRARY_SUFFIX} )
+	endif()
+
+
+	# Build igloo
+	ExternalProject_Add( dep_igloo
+		PREFIX igloo
+		SOURCE_DIR ${DEP_SOURCE}/igloo
+		BINARY_DIR igloo
+		CMAKE_ARGS
+			-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
+			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
+			-DBUILD_TESTS=ON
+			-C ${CMAKE_CURRENT_BINARY_DIR}/config.cmake
+		# little trick:
+			# this solves building igloo twice (building normal target and building unity target)
+			# prevent building the default target (make install)
+		BUILD_COMMAND ""
+			# force building the install_unity target
+		INSTALL_COMMAND "${CMAKE_COMMAND}" --build . --target install_unity# -- "-j${N}"
+	)
+
+	add_library( igloo INTERFACE IMPORTED )
+	add_dependencies( igloo dep_igloo )
+
+
+	# Building Lua or LuaJIT
+	if ( MSVC OR APPLE )
 		# Build Lua
 		ExternalProject_Add ( dep_lua
 			PREFIX lua
@@ -492,8 +539,18 @@ if( USE_BUILTIN_DEPENDENCIES )
 			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
 	)
 
+		# Build lualogging
+	ExternalProject_Add ( dep_lualogging
+		PREFIX lualogging
+		SOURCE_DIR ${DEP_SOURCE}/lualogging
+		BINARY_DIR lualogging
+		CMAKE_ARGS
+			-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
+			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
+	)
+
 	# Ensure correct order of build (dependencies between external dependencies)
-	if( MSVC )
+	if( MSVC OR APPLE )
 		add_dependencies( dep_lpeg dep_lua )
 		add_dependencies( dep_leg dep_lpeg )
 		add_dependencies( dep_luametrics dep_leg )
@@ -609,11 +666,11 @@ file( GLOB_RECURSE SRC_IMPORTER	"src/Importer/*.cpp" )
 file( GLOB_RECURSE SRC_LAYOUT	"src/Layout/*.cpp" )
 file( GLOB_RECURSE SRC_LUAGRAPH  "src/LuaGraph/*.cpp")
 file( GLOB_RECURSE SRC_LUAINTERFACE  "src/LuaInterface/*.cpp")
+file( GLOB_RECURSE SRC_LUATYPES  "src/LuaTypes/*.cpp")
 file( GLOB_RECURSE SRC_MANAGER	"src/Manager/*.cpp" )
 file( GLOB_RECURSE SRC_MATH		"src/Math/*.cpp" )
 file( GLOB_RECURSE SRC_MODEL	"src/Model/*.cpp" )
 file( GLOB_RECURSE SRC_NETWORK	"src/Network/*.cpp" )
-file( GLOB_RECURSE SRC_NOISE	"src/Noise/*.cpp" )
 file( GLOB_RECURSE SRC_OSGQTBROWSER	"src/OsgQtBrowser/*.cpp" )
 file( GLOB_RECURSE SRC_QOSG		"src/QOSG/*.cpp" )
 file( GLOB_RECURSE SRC_UTIL		"src/Util/*.cpp" )
@@ -653,9 +710,9 @@ set( SRC
 	${SRC_IMPORTER}
 	${SRC_LAYOUT}
 	${SRC_LUAGRAPH} ${SRC_LUAINTERFACE}
+	${SRC_LUATYPES}
 	${SRC_MATH}
 	${SRC_NETWORK}
-	${SRC_NOISE}
 	${SRC_MODEL}
 	${SRC_OSGQTBROWSER} ${SRC_QOSG} ${SRC_VIEWER}
 	${SRC_UTIL}
@@ -699,11 +756,11 @@ file( GLOB_RECURSE HEADER_IMPORTER	"include/Importer/*.h" )
 file( GLOB_RECURSE HEADER_LAYOUT	"include/Layout/*.h" )
 file( GLOB_RECURSE HEADER_LUAGRAPH  "include/LuaGraph/*.h")
 file( GLOB_RECURSE HEADER_LUAINTERFACE  "include/LuaInterface/*.h")
+file( GLOB_RECURSE HEADER_LUATYPES  "include/LuaTypes/*.h")
 file( GLOB_RECURSE HEADER_MANAGER	"include/Manager/*.h" )
 file( GLOB_RECURSE HEADER_MATH		"include/Math/*.h" )
 file( GLOB_RECURSE HEADER_MODEL		"include/Model/*.h" )
 file( GLOB_RECURSE HEADER_NETWORK	"include/Network/*.h" )
-file( GLOB_RECURSE HEADER_NOISE		"include/Noise/*.h" )
 file( GLOB_RECURSE HEADER_OSGQTBROWSER	"include/OsgQtBrowser/*.h" )
 file( GLOB_RECURSE HEADER_QOSG		"include/QOSG/*.h" )
 file( GLOB_RECURSE HEADER_UTIL		"include/Util/*.h" )
@@ -743,9 +800,9 @@ set( INCL
 	${HEADER_IMPORTER}
 	${HEADER_LAYOUT}
 	${HEADER_LUAGRAPH} ${HEADER_LUAINTERFACE}
+	${HEADER_LUATYPES}
 	${HEADER_MATH}
 	${HEADER_NETWORK}
-	${HEADER_NOISE}
 	${HEADER_MODEL}
 	${HEADER_OSGQTBROWSER} ${HEADER_QOSG} ${HEADER_VIEWER}
 	${HEADER_UTIL}
@@ -793,9 +850,9 @@ source_group( \\src\\Util "^.*Util/.*$" )
 source_group( \\src\\Layout "^.*Layout/.*$" )
 source_group( \\src\\QOSG "^.*QOSG/.*$" )
 source_group( \\src\\OsgQtBrowser "^.*OsgQtBrowser/.*$" )
-source_group( \\src\\Noise "^.*Noise/.*$" )
 source_group( \\src\\LuaGraph "^.*LuaGraph/.*$")
 source_group( \\src\\LuaInterface "^.*LuaInterface/.*$")
+source_group( \\src\\LuaTypes "^.*LuaTypes/.*$")
 source_group( \\src\\Git "^.*Git/.*$" )
 
 # Group header files
@@ -810,10 +867,10 @@ source_group( \\headers\\Model "^.*Model/.*h$" )
 source_group( \\headers\\Util "^.*Util/.*h$" )
 source_group( \\headers\\Layout "^.*Layout/.*h$" )
 source_group( \\headers\\QOSG "^.*QOSG/.*h$" )
-source_group( \\headers\\Noise "^.*Noise/.*h$" )
 source_group( \\headers\\OsgQtBrowser "^.*OsgQtBrowser/.*h$" )
 source_group( \\headers\\LuaGraph "^.*LuaGraph/.*h$")
 source_group( \\headers\\LuaInterface "^.*LuaInterface/.*h$")
+source_group( \\headers\\LuaTypes "^.*LuaTypes/.*h$")
 source_group( \\headers\\Git "^.*Git/.*h$" )
 
 if( OpenCV_FOUND )
@@ -865,15 +922,18 @@ endif()
 # 3rd party sources
 # ---------------------------------------------------------------
 
-#include_directories( SYSTEM dependencies/noiseutils )
-#add_library( noiseutils STATIC dependencies/noiseutils/noiseutils.cpp )
+add_library( noiseutils STATIC dependencies/noiseutils/noiseutils.cpp )
+target_include_directories( noiseutils SYSTEM PUBLIC ${DEPENDENCIES_INCLUDE_DIR}/libnoise dependencies/noiseutils  )
 
-#include_directories( SYSTEM dependencies/qtcolorpicker )
-#add_library( qtcolorpicker STATIC dependencies/qtcolorpicker/qtcolorpicker.cpp )
+add_library( qtcolorpicker STATIC dependencies/qtcolorpicker/qtcolorpicker.cpp )
+target_include_directories( qtcolorpicker SYSTEM PUBLIC dependencies/qtcolorpicker )
 
+# ---------------------------------------------------------------
+# Build modules as libraries
+# ---------------------------------------------------------------
 
 add_library( gitlib SHARED ${SRC_GITLIB} ${HEADER_GITLIB})
-target_include_directories( gitlib SYSTEM PUBLIC include/Repository/Git } )
+target_include_directories( gitlib SYSTEM PUBLIC include/Repository/Git )
 target_link_libraries( gitlib ${QT_LIBRARIES} )
 
 set(FLAGS_FOR_DEBUG2 ${FLAGS_FOR_DEBUG})
@@ -910,18 +970,19 @@ add_executable( ${3DSOFTVIZ_NAME} ${INCL}  ${SRC} )
 set_target_properties( ${3DSOFTVIZ_NAME} PROPERTIES COMPILE_FLAGS "${FLAGS_FOR_DEBUG}" )
 
 target_link_libraries( ${3DSOFTVIZ_NAME}
+	gitlib
+	lua
+	noiseutils
+	libnoise
+	osgModeling
+	qtcolorpicker
 	${QT_LIBRARIES}
 	${OPENSCENEGRAPH_LIBRARIES}
 	${OSGVIEWER_LIBRARIES}
-    gitlib
-    lua
-	libnoise
 )
 
 if( NOT MSVC )
 	target_link_libraries( ${3DSOFTVIZ_NAME} diluculum
-		#noiseutils
-		#qtcolorpicker
 	)
 endif()
 
@@ -977,9 +1038,9 @@ endif()
 if( USE_BUILTIN_DEPENDENCIES )
 
 	# dependencies of non-unity build
-    add_dependencies( ${3DSOFTVIZ_NAME} libnoise gitlib dep_luametrics dep_leg dep_lpeg dep_luafilesystem )
+	add_dependencies( ${3DSOFTVIZ_NAME} libnoise osgModeling gitlib dep_luametrics dep_leg dep_lpeg dep_luafilesystem igloo dep_lualogging)
 
-	if( MSVC )
+	if( MSVC OR APPLE )
 		add_dependencies( ${3DSOFTVIZ_NAME} dep_lua )
 	else()
 		add_dependencies( ${3DSOFTVIZ_NAME} dep_diluculum dep_luajit )
@@ -995,9 +1056,9 @@ if( USE_BUILTIN_DEPENDENCIES )
 
 	# dependencies of unity build
 	if (COMMAND cotire)
-		add_dependencies( ${3DSOFTVIZ_NAME}_unity libnoise gitlib_unity dep_luametrics dep_leg dep_lpeg dep_luafilesystem )
+		add_dependencies( ${3DSOFTVIZ_NAME}_unity libnoise osgModeling gitlib_unity dep_luametrics dep_leg dep_lpeg dep_luafilesystem igloo dep_lualogging)
 
-		if( MSVC )
+		if( MSVC OR APPLE )
 			add_dependencies( ${3DSOFTVIZ_NAME}_unity dep_lua )
 		else()
 			add_dependencies( ${3DSOFTVIZ_NAME}_unity dep_diluculum dep_luajit )
@@ -1017,7 +1078,7 @@ endif()
 #add_dependencies( ${3DSOFTVIZ_NAME} libnoise )
 #
 #if( OpenCV_FOUND )
-    #add_dependencies( ${3DSOFTVIZ_NAME} aruco )
+	#add_dependencies( ${3DSOFTVIZ_NAME} aruco )
 #endif()
 
 # -------------------------------------------------------
@@ -1026,7 +1087,7 @@ endif()
 
 # 3DSoftviz and data
 install( TARGETS ${3DSOFTVIZ_NAME}
-    BUNDLE DESTINATION ${INSTALL_BUNDLE} COMPONENT Runtime
+	BUNDLE DESTINATION ${INSTALL_BUNDLE} COMPONENT Runtime
 	RUNTIME DESTINATION ${INSTALL_BIN} COMPONENT Runtime )
 
 install( TARGETS gitlib
@@ -1035,7 +1096,6 @@ install( TARGETS gitlib
 install( TARGETS leaplib
 	RUNTIME DESTINATION ${INSTALL_BIN} COMPONENT Runtime
 	LIBRARY DESTINATION ${INSTALL_LIB} COMPONENT Runtime )
-
 
 # add custom install_unity target
 if( COMMAND cotire )
@@ -1140,4 +1200,31 @@ set( CPACK_PACKAGE_VENDOR "${3DSOFTVIZ_VENDOR}" )
 set( CPACK_RESOURCE_FILE_README "${CMAKE_SOURCE_DIR}/${3DSOFTVIZ_README}" )
 #set( CPACK_COMPONENTS_ALL Runtime Dependencies Data )
 include( CPack )
+
+
+# -------------------------------------------------------
+# BDD Igloo tests
+# -------------------------------------------------------
+
+file( GLOB_RECURSE SRC_TESTS	"tests/*.cpp" )
+add_executable(all_bdd_tests ${SRC_TESTS})
+set_target_properties( all_bdd_tests
+	PROPERTIES
+		COMPILE_FLAGS "${FLAGS_FOR_DEBUG}"
+	)
+target_include_directories( all_bdd_tests
+	SYSTEM PUBLIC
+		include/Repository/Git
+	)
+
+target_link_libraries( all_bdd_tests
+	${QT_LIBRARIES}
+	gitlib
+)
+
+add_dependencies( all_bdd_tests igloo)
+
+
+enable_testing()
+add_test(all_bdd_tests all_bdd_tests)
 

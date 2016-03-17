@@ -152,15 +152,15 @@ bool Model::TypeDAO::addType( Data::Type* type, QSqlDatabase* conn )
 	//pridame do databazy typ
 	QSqlQuery* query = new QSqlQuery( *conn );
 	if ( type->isMeta() ) {
-		if ( !( ( Data::MetaType* )type )->getLayout()->isInDB() ) {
-			if ( !Model::GraphLayoutDAO::addLayout( ( ( Data::MetaType* )type )->getLayout(),conn ) ) {
+		if ( !( static_cast<Data::MetaType*>( type ) )->getLayout()->isInDB() ) {
+			if ( !Model::GraphLayoutDAO::addLayout( ( static_cast<Data::MetaType*>( type ) )->getLayout(),conn ) ) {
 				qDebug() << "[Model::TypeDAO::addType] Could not insert metatype in DB. Layout is not in DB.";
 				return NULL;
 			}
 		}
 		query->prepare( "INSERT INTO nodes (\"name\", graph_id, meta, layout_id) VALUES (:type_name,:graph_id,:meta,:layout_id) RETURNING node_id" );
 		query->bindValue( ":meta", true );
-		query->bindValue( ":layout_id", ( ( Data::MetaType* )type )->getLayout()->getId() );
+		query->bindValue( ":layout_id", ( static_cast<Data::MetaType*>( type ) )->getLayout()->getId() );
 	}
 	else {
 		query->prepare( "INSERT INTO nodes (\"name\", graph_id) VALUES (:type_name,:graph_id) RETURNING node_id" );

@@ -5,25 +5,6 @@
 #ifndef QOSG_CORE_WINDOW
 #define QOSG_CORE_WINDOW 1
 
-#ifdef __APPLE__
-#include <qstringlist.h>
-#else
-#include <Qt/qstringlist.h>
-#endif
-#include <QOSG/qtcolorpicker.h>
-
-#include <QMainWindow>
-#include <QToolBar>
-#include <QApplication>
-#include <QIcon>
-#include <QAction>
-#include <QMenu>
-#include <QMenuBar>
-#include <QtGui>
-#include <QLineEdit>
-#include <QToolBox>
-#include <QString>
-
 #include <Viewer/SelectionObserver.h>
 
 #include "Layout/ShapeGetter.h"
@@ -32,6 +13,8 @@
 #include "Layout/ShapeGetter_Circle_ByThreeNodes.h"
 #include "Layout/ShapeGetter_SpherePlane_ByThreeNodes.h"
 //#include "Viewer/CameraManipulator.h"
+
+#include "Clustering/Clusterer.h"
 
 #ifdef SPEECHSDK_FOUND
 #include "Speech/KinectSpeechThread.h"
@@ -47,7 +30,24 @@
 #include "Leap/CustomCameraManipulator.h"
 #endif
 
-#include "Clustering/Clusterer.h"
+#include <qtcolorpicker.h>
+
+#ifdef __APPLE__
+#include <qstringlist.h>
+#else
+#include <Qt/qstringlist.h>
+#endif
+#include <QMainWindow>
+#include <QToolBar>
+#include <QApplication>
+#include <QIcon>
+#include <QAction>
+#include <QMenu>
+#include <QMenuBar>
+#include <QtGui>
+#include <QLineEdit>
+#include <QToolBox>
+#include <QString>
 
 namespace Layout {
 class LayoutThread;
@@ -221,12 +221,37 @@ public slots:
 	            *  \brief Show dialog to select file which will be opened
 	            */
 	void loadFile();
-
+/**
+     *  \fn public  loadexampleGraphBasic500
+     *  \brief Load basic 100 node graph
+     */
+void loadExampleGraphBasic100();
+/**
+    *  \fn public  loadexampleGraphBasic500
+    *  \brief Load basic 500 node graph
+    */
+void loadExampleGraphBasic500();
+/**
+    *  \fn public  loadexampleGraphVeolia
+    *  \brief Load Veolia graph
+    */
+void loadExampleGraphVeolia();
+/**
+    *  \fn public  loadexampleGraphLua
+    *  \brief Load basic lua graph
+    */
+void loadExampleGraphLua();
 	/**
 	            *  \fn public  loadFromGit
 	            *  \brief Show dialog to write path to git repo which will be loaded
 	            */
 	void loadFromGit();
+
+    /**
+     * void loadLuaGraph()
+     * @brief Load lua graph without visualization
+     */
+    void loadLuaGraph();
 
 	/**
 	            *  \fn public  labelOnOff(bool checked)
@@ -553,6 +578,13 @@ public slots:
 	 */
 	void move();
 
+    /**
+     * void changeCommits( bool change );
+     * @brief Change repository commit when changing versions
+     * @param change True, if repository should change, otherwise false
+     */
+    void changeCommits( bool change );
+
 	/**
 	 * void fasterEvolution()
 	 * @brief Sets up faster evolution
@@ -670,6 +702,28 @@ private:
 	    *  \brief Pointer to show info about software
 	    */
 	QAction* about;
+
+    /**
+        *  QAction * exampleGraphBasic100
+        *  \brief Pointer to load basic graph (100) from file
+        */
+    QAction* exampleGraphBasic100;
+    /**
+        *  QAction * exampleGraphBasic
+        *  \brief Pointer to load basic graph (500) from file
+        */
+    QAction* exampleGraphBasic500;
+
+    /**
+        *  QAction * exampleGraphVeolia
+        *  \brief Pointer to load Veolia graph from file
+        */
+    QAction* exampleGraphVeolia;
+    /**
+        *  QAction * exampleGraphLua
+        *  \brief Pointer to load basic lua graph from file
+        */
+    QAction* exampleGraphLua;
 
 	/**
 	    *  QPushButton * play
@@ -1008,6 +1062,12 @@ private:
 	 */
 	QTimer* evolutionTimer;
 
+    /**
+     *CheckBox for changes repository's commits
+     *@brief chb_git_changeCommits
+     */
+    QCheckBox* chb_git_changeCommits;
+
 	bool isRunning;
 
 	/**
@@ -1088,6 +1148,12 @@ private:
 	    *  \brief Pointer to edit menu
 	    */
 	QMenu* help;
+
+    /**
+        *  QMenu * test
+        *  \brief Pointer to menu of tests
+        */
+    QMenu* examples;
 
 	/**
 	    *  QOSG::ViewerQT * viewerWidget

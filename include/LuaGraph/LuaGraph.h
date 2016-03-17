@@ -33,6 +33,8 @@ public:
 	 */
 	static LuaGraph* loadGraph();
 
+    static LuaGraph* loadEvoGraph( QString repoFilepath );
+
 	/**
 	 * @brief destructor
 	 */
@@ -83,6 +85,10 @@ public:
 	 * @brief printGraph print graph in text form
 	 */
 	void printGraph();
+
+    Lua::LuaNode* findNodeByLuaIdentifier( QString identifier );
+
+    Lua::LuaEdge* findEdgeByLuaIdentifier( QString identifier );
 private:
 	/**
 	 * @brief LuaGraph private constructor as in Singleton
@@ -113,6 +119,7 @@ private:
 	 * @brief incidences map of id => LuaIncidence
 	 */
 	QMap<qlonglong, LuaIncidence*>* incidences;
+
 
 
 };

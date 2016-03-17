@@ -46,13 +46,13 @@ private:
 	ImporterContext* context_;
 
 	// helpers
-	std::auto_ptr<QXmlStreamReader> xml_;
-	std::auto_ptr<GraphOperations> graphOp_;
+	std::shared_ptr<QXmlStreamReader> xml_;
+	std::shared_ptr<GraphOperations> graphOp_;
 
 	/**
 	 * \brief Used for searching for a node when an edge references it.
 	 */
-	std::auto_ptr<ReadNodesStore> readNodes_;
+	std::shared_ptr<ReadNodesStore> readNodes_;
 
 	//default types
 	Data::Type* edgeType_;

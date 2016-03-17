@@ -68,7 +68,7 @@ void Vwr::GraphNavigation::setColorNearestNode( Data::Node* selectedNode )
 			// TODO: Add extra conditions for "selectionMode"
 		}
 		// first edge or nearer node
-		if ( ( minDistance == 0 ) || ( minDistance > distance ) ) {
+		if ( qFuzzyCompare( minDistance, 0.0f )  || ( minDistance > distance ) ) {
 			minDistance = static_cast<float>( distance );
 			closestEdge = ( *iter );
 		}
@@ -152,8 +152,8 @@ osg::Vec3f Vwr::GraphNavigation::getMouseScreenCoordinates( )
 	float mouseY = static_cast<float>( viewer->cursor().pos().y() ) - static_cast<float>( viewer->window()->pos().y() ) - 30.0f;
 
 	// get coordinates inside viewer and invert y
-	float xN = static_cast<float>( mouseX - viewer->pos().x() );
-	float yN = static_cast<float>( viewer->height() + viewer->pos().y() - mouseY );
+	float xN = mouseX - static_cast<float>( viewer->pos().x() );
+	float yN = static_cast<float>( viewer->height() ) + static_cast<float>( viewer->pos().y() ) - mouseY ;
 
 	return osg::Vec3f( xN, yN, 1.0f );
 }
@@ -183,8 +183,8 @@ osg::Vec3f Vwr::GraphNavigation::getNodeScreenCoordinates( Data::Node* node )
 double Vwr::GraphNavigation::getDistanceToNode( osg::Vec3f mouse, osg::Vec3f node )
 {
 	// in case of big space can overflow ... test divide by 1000
-	double distX = abs( node[0] - mouse[0] );
-	double distY = abs( node[1] - mouse[1] );
+	double distX = fabs( node[0] - mouse[0] );
+	double distY = fabs( node[1] - mouse[1] );
 
 	return distX*distX + distY*distY;
 }

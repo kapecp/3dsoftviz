@@ -106,7 +106,7 @@ public:
 	    */
 	static float getMetaStrength()
 	{
-		return static_cast<float>( METASTRENGTH );
+		return METASTRENGTH;
 	}
 
 
@@ -119,6 +119,8 @@ public:
 	{
 		return graph_id;
 	}
+
+    osg::ref_ptr<Data::Node> replaceNodeId( int oldId, int newId );
 
 	/**
 	    * \fn qlonglong setId(qlonglong graph_id)
@@ -365,6 +367,14 @@ public:
 	    */
 	void removeNode( osg::ref_ptr<Data::Node> node );
 
+    /**
+     * int removeNodeByLuaIdentifier( QString identifier )
+     * @brief Remove node find by Lua Identifier
+     * @param identifier Lua identifier of node
+     * @return Count of affected objects
+     */
+    int removeNodeByLuaIdentifier( QString identifier );
+
 	/**
 	    *  \fn public  isInSameGraph(osg::ref_ptr<Data::Node> nodeA, osg::ref_ptr<Data::Node> nodeB)
 	    *  \brief recognize if nodes are in same graph
@@ -509,12 +519,12 @@ public:
 		frozen = val;
 	}
 
-	int getNodeVisual()
+	unsigned int getNodeVisual()
 	{
 		return nodeVisual;
 	}
 
-	void setNodeVisual( int index )
+	void setNodeVisual( unsigned int index )
 	{
 		nodeVisual = index;
 	}
@@ -655,6 +665,22 @@ public:
 	 */
 	Data::Node* findNodeByName( QString nodeName );
 
+    /**
+     * Data::Node* findNodeByLuaIdentifier( QString identifier )
+     * @brief Finds node in graph by its lua identifier. Returns node, if it was found, otherwise NULL.
+     * @param identifier Lua node identifier
+     * @return Returns node, if it was found, otherwise NULL.
+     */
+    Data::Node* findNodeByLuaIdentifier( QString identifier );
+
+    /**
+     * Data::Node* findEdgeByLuaIdentifier( QString identifier )
+     * @brief Finds edge in graph by its lua identifier. Returns edge, if it was found, otherwise NULL.
+     * @param identifier Lua edge identifier
+     * @return Returns edge, if it was found, otherwise NULL.
+     */
+    Data::Edge* findEdgeByLuaIdentifier( QString identifier );
+
 	/**
 	 * Data::Edge* findEdgeByName( QString edgeName )
 	 * @brief Finds edge in graph by its name. Returns node, if it was found, otherwise NULL.
@@ -727,7 +753,7 @@ private:
 	    */
 	qlonglong incEleIdCounter()
 	{
-		return ++ele_id_counter;
+        return ++ele_id_counter;
 	}
 
 	/**
@@ -895,7 +921,7 @@ private:
 	    *  int nodeVisual
 	    *  \brief index of visual representation of node
 	    */
-	int nodeVisual;
+	unsigned int nodeVisual;
 
 	/**
 	    *  int edgeVisual

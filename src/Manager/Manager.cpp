@@ -25,7 +25,7 @@
 #include "GitLib/GitVersion.h"
 #include "GitLib/GitFile.h"
 #include "GitLib/GitEvolutionGraph.h"
-#include "Repository/Git/GitGraphImporter.h"
+#include "GitLib/GitEvolutionGraphManager.h"
 #include "Repository/Git/GitGraphUpdater.h"
 
 #include "Layout/LayoutThread.h"
@@ -44,12 +44,15 @@ Manager::GraphManager::GraphManager()
 
 	//konfiguracia/vytvorenie DB
 	this->activeGraph = NULL;
+	this->activeEvolutionGraph = NULL;
 	this->db = new Model::DB();
 	noDatabaseFind=false;
 }
 
 Manager::GraphManager::~GraphManager()
 {
+	delete this->getActiveEvolutionGraph();
+	this->activeEvolutionGraph = NULL;
 	delete this->db;
 	this->db = NULL;
 }
@@ -63,7 +66,7 @@ Data::Graph* Manager::GraphManager::loadGraph( QString filepath )
 	AppCore::Core::getInstance()->messageWindows->showProgressBar();
 
 	// vytvorenie infoHandler
-	std::auto_ptr<Importer::ImportInfoHandler> infoHandler( NULL );
+	std::shared_ptr<Importer::ImportInfoHandler> infoHandler( NULL );
 	if ( ok ) {
 		infoHandler.reset( new ImportInfoHandlerImpl );
 	}
@@ -79,7 +82,7 @@ Data::Graph* Manager::GraphManager::loadGraph( QString filepath )
 	}
 
 	// nastavenie importera
-	std::auto_ptr<Importer::StreamImporter> importer( NULL );
+	std::shared_ptr<Importer::StreamImporter> importer( NULL );
 	if ( ok ) {
 		bool importerFound;
 
@@ -97,7 +100,7 @@ Data::Graph* Manager::GraphManager::loadGraph( QString filepath )
 	}
 
 	// vytvorenie nacitavaneho streamu
-	std::auto_ptr<QIODevice> stream( NULL );
+	std::shared_ptr<QIODevice> stream( NULL );
 	if ( ok ) {
 		stream.reset( new QFile( filepath ) );
 	}
@@ -109,7 +112,7 @@ Data::Graph* Manager::GraphManager::loadGraph( QString filepath )
 	}
 
 	// vytvorenie noveho grafu
-	std::auto_ptr<Data::Graph> newGraph( NULL );
+	std::shared_ptr<Data::Graph> newGraph( NULL );
 	if ( ok ) {
 		newGraph.reset( this->createGraph( name ) );
 		ok = ( newGraph.get() != NULL );
@@ -118,7 +121,7 @@ Data::Graph* Manager::GraphManager::loadGraph( QString filepath )
 
 
 	// vytvorenie kontextu
-	std::auto_ptr<Importer::ImporterContext> context( NULL );
+	std::shared_ptr<Importer::ImporterContext> context( NULL );
 	if ( ok ) {
 		context.reset(
 			new Importer::ImporterContext(
@@ -155,9 +158,11 @@ Data::Graph* Manager::GraphManager::loadGraph( QString filepath )
 		// ak uz nejaky graf mame, tak ho najprv sejvneme a zavrieme
 		if ( this->activeGraph != NULL ) {
 			//this->saveGraph(this->activeGraph);
-			this->closeGraph( this->activeGraph );
+			this->closeGraph( this->activeGraph.get() );
 		}
-		this->activeGraph = newGraph.release();
+		//this->activeGraph = newGraph.release();
+		this->activeGraph = newGraph;
+		newGraph = nullptr;
 	}
 
 
@@ -171,7 +176,7 @@ Data::Graph* Manager::GraphManager::loadGraph( QString filepath )
 	Network::Server* server = Network::Server::getInstance();
 	server -> sendGraph();
 
-	return ( ok ? this->activeGraph : NULL );
+	return ( ok ? this->activeGraph.get() : NULL );
 }
 
 
@@ -196,14 +201,14 @@ void Manager::GraphManager::saveActiveGraphToDB()
 		Model::GraphDAO::addGraph( this->getActiveGraph(), this->db->tmpGetConn() );
 
 		//ulozime obycajne uzly a hrany
-		this->activeGraph->saveGraphToDB( db->tmpGetConn(), this->activeGraph );
+		this->activeGraph->saveGraphToDB( db->tmpGetConn(), this->activeGraph.get() );
 		//nastavime meno grafu podla nazvu suboru
 		Model::GraphDAO::setGraphName( this->activeGraph->getId(), this->activeGraph->getName(), db->tmpGetConn() );
 		//ulozime a nastavime default layout
-		Data::GraphLayout* layout = Model::GraphLayoutDAO::addLayout( "original layout", this->activeGraph, db->tmpGetConn() );
+		Data::GraphLayout* layout = Model::GraphLayoutDAO::addLayout( "original layout", this->activeGraph.get(), db->tmpGetConn() );
 		this->activeGraph->selectLayout( layout );
 		//este ulozit meta uzly, hrany a pozicie vsetkych uzlov
-		this->activeGraph->saveLayoutToDB( db->tmpGetConn(), this->activeGraph );
+		this->activeGraph->saveLayoutToDB( db->tmpGetConn(), this->activeGraph.get() );
 
 	}
 	else {
@@ -250,7 +255,7 @@ Data::Graph* Manager::GraphManager::createNewGraph( QString name )
 	AppCore::Core::getInstance()->thr->pauseAllAlg();
 
 	// vytvorenie infoHandler
-	std::auto_ptr<Importer::ImportInfoHandler> infoHandler( NULL );
+	std::shared_ptr<Importer::ImportInfoHandler> infoHandler( NULL );
 	if ( ok ) {
 		infoHandler.reset( new ImportInfoHandlerImpl );
 	}
@@ -260,7 +265,7 @@ Data::Graph* Manager::GraphManager::createNewGraph( QString name )
 
 
 	// vytvor graf
-	std::auto_ptr<Data::Graph> newGraph( NULL );
+	std::shared_ptr<Data::Graph> newGraph( NULL );
 	if ( ok ) {
 		newGraph.reset( this->createGraph( name ) );
 		ok = ( newGraph.get() != NULL );
@@ -277,9 +282,11 @@ Data::Graph* Manager::GraphManager::createNewGraph( QString name )
 		// ak uz nejaky graf mame, tak ho najprv sejvneme a zavrieme
 		if ( this->activeGraph != NULL ) {
 			//this->saveGraph(this->activeGraph);
-			this->closeGraph( this->activeGraph );
+			this->closeGraph( this->activeGraph.get() );
 		}
-		this->activeGraph = newGraph.release();
+		//this->activeGraph = newGraph.release();
+		this->activeGraph = newGraph;
+		newGraph = nullptr;
 	}
 
 	if ( ok ) {
@@ -287,24 +294,24 @@ Data::Graph* Manager::GraphManager::createNewGraph( QString name )
 		AppCore::Core::getInstance()->restartLayout();
 	}
 
-	return ( ok ? this->activeGraph : NULL );
+	return ( ok ? this->activeGraph.get() : NULL );
 }
 
 
 
 Data::Graph* Manager::GraphManager::loadGraphFromDB( qlonglong graphID, qlonglong layoutID )
 {
-	Data::Graph* newGraph;
 	bool error;
 
-	newGraph = Model::GraphDAO::getGraph( db->tmpGetConn(), &error, graphID, layoutID );
+	Data::Graph* newGraphRaw = Model::GraphDAO::getGraph( db->tmpGetConn(), &error, graphID, layoutID );
+	std::shared_ptr<Data::Graph> newGraph( newGraphRaw );
 
 	if ( !error ) {
 		qDebug() << "[Manager::GraphManager::loadGraphFromDB] Graph loaded from database successfully";
 
 		// ak uz nejaky graf mame, tak ho zavrieme
 		if ( this->activeGraph != NULL ) {
-			this->closeGraph( this->activeGraph );
+			this->closeGraph( this->activeGraph.get() );
 		}
 
 		this->activeGraph = newGraph;
@@ -316,18 +323,12 @@ Data::Graph* Manager::GraphManager::loadGraphFromDB( qlonglong graphID, qlonglon
 		qDebug() << "[Manager::GraphManager::loadGraphFromDB] Error while loading graph from database";
 	}
 
-	return this->activeGraph;
+	return this->activeGraph.get();
 }
 
-Data::Graph* Manager::GraphManager::loadGraphFromGit( QString filepath )
+bool Manager::GraphManager::loadEvolutionGraphFromGit( QString filepath )
 {
 	bool lGit = false;
-	bool ok = true;
-
-	AppCore::Core::getInstance()->messageWindows->showProgressBar();
-
-	std::auto_ptr<Importer::ImportInfoHandler> infoHandler( NULL );
-	infoHandler.reset( new ImportInfoHandlerImpl );
 
 	QString lName = NULL;
 	QString lExtension = NULL;
@@ -348,57 +349,29 @@ Data::Graph* Manager::GraphManager::loadGraphFromGit( QString filepath )
 	// Vytvor evolucny graf, napln ho ziskanymi verziami a nastav graf ako aktivny
 	Repository::Git::GitEvolutionGraph* evolutionGraph = new Repository::Git::GitEvolutionGraph( filepath );
 	evolutionGraph->setVersions( lVersions );
-	this->activeEvolutionGraph = evolutionGraph;
 
-	// Ziskaj importer na zaklade zistenej extension a inicializuj ho
-	std::auto_ptr<Importer::StreamImporter> lImporter( NULL );
-	if ( ok ) {
-		bool importerFound;
+	Repository::Git::GitEvolutionGraphManager::getInstance()->setEvolutionGraph( evolutionGraph );
 
-		ok = Importer::ImporterFactory::createByFileExtension( lImporter, importerFound, lExtension ) && importerFound;
-		infoHandler->reportError( ok, "No suitable importer has been found for the file extension." );
-	}
+	this->activeEvolutionGraph = Repository::Git::GitEvolutionGraphManager::getInstance()->getEvolutionGraphByExtension( Util::ApplicationConfig::get()->getValue( "Git.ExtensionFilter" ) );
+//    this->activeEvolutionGraph = Repository::Git::GitEvolutionGraphManager::getInstance()->getEvolutionGraphByAuthor( "Jack Lawson" );
 
-	std::auto_ptr<QIODevice> lStream( NULL );
-	// mensi hack v podmienke, kde povodne bolo !lGit, pricom pri lStream( NULL ); sa nedalo zavolat context.reset( new Importer::ImporterContext( *lStream ,*lNewGraph, *infoHandler, *lFilepath ) )
-	if ( ok && lGit ) {
-		lStream.reset( new QFile( "" ) );
-	}
+	return lGit;
+}
 
-	// kvoli hacku vyssie vytvorim lStream, ale neotvarim ho
-	if ( ok && !lGit ) {
-		ok = lStream->open( QIODevice::ReadOnly );
-		infoHandler->reportError( ok, "Unable to open the input file." );
-	}
+Data::Graph* Manager::GraphManager::importEvolutionGraph( QString filepath ) {
+	QString lName = NULL;
+	bool ok = true;
 
-	// Vytvorim graf
-	std::auto_ptr<Data::Graph> lNewGraph( NULL );
-	if ( ok ) {
-		lNewGraph.reset( this->createGraph( lName ) );
-		ok = lNewGraph.get() != NULL;
-	}
+	QFileInfo lFileInfo( filepath );
+	lName = lFileInfo.fileName();
 
-	// Vytvorim nazov projektu
-	std::auto_ptr<QString> lFilepath( NULL );
-	if ( lGit ) {
-		lFilepath.reset( new QString( filepath ) );
-	}
+	Repository::Git::GitEvolutionGraph* evolutionGraph = this->getActiveEvolutionGraph();
+	Data::Graph* lNewGraph = this->createGraph( lName );
 
-	// Vytvorim import context, naplnim ho streamom, grafom, infohandlerom a cestou k projektu
-	std::auto_ptr<Importer::ImporterContext> context( NULL );
-	if ( ok ) {
-		context.reset( new Importer::ImporterContext( *lStream ,*lNewGraph, *infoHandler, *lFilepath ) );
-	}
+	AppCore::Core::getInstance()->messageWindows->showProgressBar();
 
-	// Ak sa ziadny krok nepokazil, tak naimportujem uzly do grafu
-	if ( ok ) {
-		ok = lImporter->import( *context );
-	}
-
-	// Zatvorim stream
-	if ( lStream.get() != NULL ) {
-		lStream->close();
-	}
+	Repository::Git::GitGraphUpdater updater = Repository::Git::GitGraphUpdater( 0, evolutionGraph, lNewGraph );
+	updater.import();
 
 	// Vytvorim layout a pridam ho grafu
 	if ( ok ) {
@@ -409,10 +382,13 @@ Data::Graph* Manager::GraphManager::loadGraphFromGit( QString filepath )
 	// Ak existoval aktivny graf, tak ho zavrem a vratim nami vytvoreny graf ako aktivny
 	if ( ok ) {
 		if ( this->activeGraph != NULL ) {
-			this->closeGraph( this->activeGraph );
+			this->closeGraph( this->activeGraph.get() );
 		}
 
-		this->activeGraph = lNewGraph.release();
+		// TEMPFIX
+		std::shared_ptr<Data::Graph> newGraph( updater.getActiveGraph() );
+		this->activeGraph = newGraph;
+//		this->activeGraph = updater.getActiveGraph();
 	}
 
 	// Restartnem layout
@@ -423,7 +399,7 @@ Data::Graph* Manager::GraphManager::loadGraphFromGit( QString filepath )
 	AppCore::Core::getInstance()->messageWindows->closeProgressBar();
 
 	// Ak nenastala ziadna chyba, tak vratim aktivny graf, inak NULL
-	return ( ok ? this->activeGraph : NULL );
+	return ( ok ? this->activeGraph.get() : NULL );
 }
 
 Data::Graph* Manager::GraphManager::createGraph( QString graphname )
@@ -586,7 +562,7 @@ void Manager::GraphManager::getDiffInfo( QString path, int version )
 	// Najdem subor, ktory bol zvoleny v grafe vo verzii, kde bol posledne modifikovany
 	bool isFound = false;
 	for ( int i = version; i >= 0; i-- ) {
-		foreach ( Repository::Git::GitFile* file, lEvolutionGraph->getVersion( i )->getChangedFiles() ) {
+		foreach ( Repository::Git::GitFile* file, *lEvolutionGraph->getVersion( i )->getChangedFiles() ) {
 			if ( file->getFilepath() == path ) {
 				gitFile = file;
 				isFound = true;

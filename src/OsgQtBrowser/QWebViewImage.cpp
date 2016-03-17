@@ -13,6 +13,7 @@
 
 #include "OsgQtBrowser/QWebViewImage.h"
 #include "LuaInterface/LuaInterface.h"
+#include "LuaTypes/LuaValueList.h"
 #include "OsgQtBrowser/QLogWebPage.h"
 
 namespace OsgQtBrowser {
@@ -38,19 +39,19 @@ void QWebViewImage::navigateTo( const std::string& url )
 	_webView->load( QUrl( url.c_str() ) );
 }
 
-void QWebViewImage::showTemplate( const std::string& templateName, Diluculum::LuaValueMap models, const std::string& templateType )
+void QWebViewImage::showTemplate( const std::string& templateName, Lua::LuaValueMap models, const std::string& templateType )
 {
 	// Initialize lua interface to call slt2 renderer
 	Lua::LuaInterface* lua = Lua::LuaInterface::getInstance();
 	QString renderer[] = {"slt2_renderer", "render"};
 
 	// Prepare parameters to be passed to template renderer
-	Diluculum::LuaValueList params;
+	Lua::LuaValueList params;
 	params.push_back( templateName );
-	params.push_back( models );
+	params.push_back( models.getValue() );
 
 	// Call slt2 renderer
-	std::string html = lua->callFunction( 2, renderer, params )[0].asString();
+	std::string html = lua->callFunction( 2, renderer, params.getValue() )[0].asString();
 	// qDebug() << html.c_str();
 
 	// Create relative webview dir url

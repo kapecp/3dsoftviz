@@ -203,9 +203,9 @@ void ShapeVisitor_RestrictedPositionGetter::visit( Shape_Cube& shape )
 
 bool ShapeVisitor_RestrictedPositionGetter::insideCube( const osg::Vec3f& center, const osg::Vec3f& surfaceX, const osg::Vec3f& surfaceY, const osg::Vec3f& surfaceZ, osg::Vec3f& point )
 {
-	double distanceX = abs( ( center - surfaceX ).x() );
-	double distanceY = abs( ( center - surfaceY ).y() );
-	double distanceZ = abs( ( center - surfaceZ ).z() );
+	double distanceX = fabs( ( center - surfaceX ).x() );
+	double distanceY = fabs( ( center - surfaceY ).y() );
+	double distanceZ = fabs( ( center - surfaceZ ).z() );
 
 	return ( point.x() > center.x() - distanceX && point.x() < center.x() + distanceX &&
 			 point.y() > center.y() - distanceY && point.y() < center.y() + distanceY &&
@@ -256,9 +256,9 @@ float median( float A, float B, float C )
 
 osg::Vec3f ShapeVisitor_RestrictedPositionGetter::toCube( const osg::Vec3f& center, const osg::Vec3f& surfaceX, const osg::Vec3f& surfaceY, const osg::Vec3f& surfaceZ, const osg::Vec3f& point )
 {
-	float distanceX = abs( ( center - surfaceX ).x() );
-	float distanceY = abs( ( center - surfaceY ).y() );
-	float distanceZ = abs( ( center - surfaceZ ).z() );
+	float distanceX = std::fabs( ( center - surfaceX ).x() );
+	float distanceY = std::fabs( ( center - surfaceY ).y() );
+	float distanceZ = std::fabs( ( center - surfaceZ ).z() );
 
 	//  nearest_point_on_box(x, y, z, box_min_x, box_min_y, box_min_z, box_max_x, box_max_y, box_max_z)
 	float x = /*point.x() -*/ median( point.x(), center.x() - distanceX, center.x() + distanceX );

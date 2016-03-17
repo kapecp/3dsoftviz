@@ -2,7 +2,7 @@
 #define GITGRAPHUPDATER_H
 
 #include <QStringList>
-#include <QList>
+#include <QMap>
 
 namespace Data {
 class Graph;
@@ -29,19 +29,26 @@ public:
 
 	// public methods
 	/**
-	 * Data::Graph* previousVersion()
+	 * void import()
+	 * @brief Import data to graph
+	 * @return Returns true if import was successfull, otherwise false.
+	 */
+	bool import();
+
+	/**
+	 * void previousVersion()
 	 * @brief Sets up vizualized graph to the previous version.
 	 */
 	void previousVersion();
 
 	/**
-	 * Data::Graph* nextVersion()
+	 * void nextVersion()
 	 * @brief Sets up vizualized graph to the next version.
 	 */
 	void nextVersion();
 
 	/**
-	 * Data::Graph* changeToVersion( int toVersion )
+	 * void changeToVersion( int toVersion )
 	 * @brief Sets up vizualized graph to the specific version
 	 * @param toVersion Index of version to be vizualized
 	 */
@@ -131,7 +138,7 @@ private:
 	 * @param authorName Name of the version author
 	 * @param gitFiles List of changed git files
 	 */
-	void addAuthorEdgesToGraph( QString authorName, QList<Repository::Git::GitFile*> gitFiles );
+	void addAuthorEdgesToGraph( QString authorName, QMap<QString, Repository::Git::GitFile*> gitFiles );
 
 	/**
 	 * void removeAuthorEdgesFromGraph( QString authorName, QList<Repository::Git::GitFile*> gitFiles )
@@ -139,7 +146,7 @@ private:
 	 * @param authorName Name of the version author
 	 * @param gitFiles List of changed git files
 	 */
-	void removeAuthorEdgesFromGraph( QString authorName, QList<Repository::Git::GitFile*> gitFiles );
+	void removeAuthorEdgesFromGraph( QString authorName, QMap<QString, Repository::Git::GitFile*> gitFiles );
 
 	/**
 	 * void removeNodesFromGraph( QStringList list )
