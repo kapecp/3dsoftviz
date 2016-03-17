@@ -9,6 +9,7 @@
 find_path( OPENNI2_INCLUDE_DIR
 	NAMES OpenNI.h
 	HINTS 
+                /home/mikajel/Downloads/OpenNI-Linux-x64-2.2/Include
 		/home/kapec/Desktop/work-in-progress/OpenNI2/Include
 		/home/kapecp/Desktop/Kinect/OpenNI2/Include
 		PATHS 
@@ -18,6 +19,7 @@ find_path( OPENNI2_INCLUDE_DIR
 find_library( OPENNI2_LIBRARY
 	NAMES OpenNI2
 	HINTS 
+                /home/mikajel/Downloads/OpenNI-Linux-x64-2.2/Redist
 		/home/kapec/Desktop/work-in-progress/OpenNI2/Bin/x64-Release
 		/home/kapecp/Desktop/Kinect/OpenNI2/Bin/x64-Release/
 		PATHS 

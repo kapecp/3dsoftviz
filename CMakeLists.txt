@@ -921,7 +921,7 @@ endif()
 # ---------------------------------------------------------------
 
 add_library( noiseutils STATIC dependencies/noiseutils/noiseutils.cpp )
-target_include_directories( noiseutils SYSTEM PUBLIC ${DEPENDENCIES_INCLUDE_DIR}/libnoise dependencies/noiseutils  )
+target_include_directories( noiseutils SYSTEM PUBLIC ${DEPENDENCIES_INCLUDE_DIR}/libnoise dependencies/noiseutils dependecies/libnoise/src  )
 
 add_library( qtcolorpicker STATIC dependencies/qtcolorpicker/qtcolorpicker.cpp )
 target_include_directories( qtcolorpicker SYSTEM PUBLIC dependencies/qtcolorpicker )
