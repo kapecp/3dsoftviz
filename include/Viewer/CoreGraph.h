@@ -262,6 +262,7 @@ public:
     void turnOnBase();
     void turnOffBase();
     void createBase();
+    float CoreGraph::compare(float a, float b);
     //*****
 
 public slots:
@@ -606,7 +607,8 @@ private:
         * osg::Geode* baseGeode
         *  \brief node base
         */
-    osg::Geode* baseGeode;
+    osg::ref_ptr<osg::Geode> baseGeode;
+    osg::ref_ptr<osg::PositionAttitudeTransform> baseTransform;
 
     //*****
 };

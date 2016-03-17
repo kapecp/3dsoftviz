@@ -669,11 +669,12 @@ Vwr::CoreGraph::CoreGraph( Data::Graph* graph, osg::ref_ptr<osg::Camera> camera 
     shadowedScene->setCastsShadowTraversalMask(0x2);
     root->addChild(shadowedScene);
 
-    CoreGraph::createBase();
-
-
     graphRotTransf->addChild( graphGroup );
     shadowedScene->addChild( graphRotTransf );
+
+    baseGeode = new osg::Geode();
+    baseTransform = new osg::PositionAttitudeTransform();
+    CoreGraph::createBase();
     //******
 
 	// backgroung this must be last Node in root !!!  ( because of ortho2d background)
@@ -784,6 +785,21 @@ void CoreGraph::reload( Data::Graph* graph )
 	// Set browsers to be always on top
 	this->browsersGroup->getGroup()->getOrCreateStateSet()->setMode( GL_DEPTH_TEST, osg::StateAttribute::OFF );
 	this->browsersGroup->getGroup()->getOrCreateStateSet()->setRenderBinDetails( 100,"RenderBin" );
+
+    float maxPosition = 1500;
+    /*QMapIterator<qlonglong, osg::ref_ptr<Data::Node> > it( *in_nodes );
+
+    //get the farest node from center
+    while ( it.hasNext() ) {
+        it.next();
+
+        maxPosition = compare(it.value()->getTargetPosition().x(),maxPosition);
+        maxPosition = compare(it.value()->getTargetPosition().y(),maxPosition);
+        maxPosition = compare(it.value()->getTargetPosition().z(),maxPosition);
+    }
+    qDebug()<< "maxPosition";
+    qDebug()<< maxPosition;*/
+    baseTransform->setScale(osg::Vec3(maxPosition,maxPosition,maxPosition));
 }
 
 void CoreGraph::cleanUp()
@@ -1429,7 +1445,7 @@ void CoreGraph::turnOffBase()
 
 void CoreGraph::createBase()
 {
-    baseGeode = new osg::Geode();
+
     osg::Geometry* baseGeometry = new osg::Geometry();
 
     baseGeode->addDrawable(baseGeometry);
@@ -1438,13 +1454,18 @@ void CoreGraph::createBase()
     material->setDiffuse(osg::Material::FRONT,  osg::Vec4(0.5, 0.5, 0.8, 1.0));
     material->setEmission(osg::Material::FRONT, osg::Vec4(0.5, 0.5, 0.8, 1.0));
     baseGeode->getOrCreateStateSet()->setAttribute(material);
-    shadowedScene->addChild(baseGeode);
-   //back
+
+    baseTransform->addChild(baseGeode);
+    shadowedScene->addChild(baseTransform);
+
+   //base
    osg::Vec3Array* vertices = new osg::Vec3Array;
-   vertices->push_back( osg::Vec3( -1000, -1000, -50) ); // lb
-   vertices->push_back( osg::Vec3(  1000, -1000, -50) ); // rb
-   vertices->push_back( osg::Vec3(  1000,  1000, -50) ); // rt
-   vertices->push_back( osg::Vec3( -1000,  1000, -50) ); // lt
+   vertices->push_back( osg::Vec3( -1, -1, -1) ); // lb
+   vertices->push_back( osg::Vec3(  1, -1, -1) ); // rb
+   vertices->push_back( osg::Vec3(  1,  1, -1) ); // rt
+   vertices->push_back( osg::Vec3( -1,  1, -1) ); // lt
+   vertices->push_back( osg::Vec3(  1,  1,  1) ); // rt1
+   vertices->push_back( osg::Vec3( -1,  1,  1) ); // lt1
    baseGeometry->setVertexArray( vertices );
 
    osg::DrawElementsUInt* base = new osg::DrawElementsUInt(osg::PrimitiveSet::QUADS, 0);
@@ -1454,6 +1475,27 @@ void CoreGraph::createBase()
    base->push_back(0);
 
    baseGeometry->addPrimitiveSet(base);
+
+   osg::DrawElementsUInt* baseBehind = new osg::DrawElementsUInt(osg::PrimitiveSet::QUADS, 0);
+   base->push_back(5);
+   base->push_back(4);
+   base->push_back(2);
+   base->push_back(3);
+
+   baseGeometry->addPrimitiveSet(baseBehind);
+}
+
+float CoreGraph::compare(float a, float b)
+{
+    if(a < 0)
+        a = a* -1;
+
+    qDebug() << a;
+
+    if(a > b)
+        return a;
+    else
+        return b;
 }
 //*****
 }
