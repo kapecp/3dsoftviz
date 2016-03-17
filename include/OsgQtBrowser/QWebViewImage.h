@@ -15,9 +15,11 @@
 #define QWEBVIEWIMAGE
 
 #include <osgWidget/Browser>
+
 #include <QtWebEngine>
-#include <QtWebEngineWidgets/QWebEngineView>
-#include <QtWebEngineWidgets/QWebEngineSettings>
+
+#include <QWebEngineView>
+#include <QWebEngineSettings>
 
 #include "OsgQtBrowser/QGraphicsViewAdapter.h"
 #include "LuaTypes/LuaValueMap.h"

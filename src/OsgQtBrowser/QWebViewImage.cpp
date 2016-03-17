@@ -28,8 +28,9 @@ QWebViewImage::QWebViewImage()
 	_webPage = new QLogWebPage;
 	_webPage->settings()->setAttribute( QWebEngineSettings::JavascriptEnabled, true );
 #if defined(QTWEBENGINE_PLUGINS)
-	// missing in Qt 5.5 - http://doc.qt.io/qt-5/qwebenginesettings.html
-	// should be reintroduced in Qt 5.6 - https://doc-snapshots.qt.io/qt5-5.6/qwebenginesettings.html
+	// missing in Qt 5.5
+	// reintroduced in Qt 5.6
+	// http://doc.qt.io/qt-5/qwebenginesettings.html
 	_webPage->settings()->setAttribute( QWebEngineSettings::PluginsEnabled, true );
 #endif
 

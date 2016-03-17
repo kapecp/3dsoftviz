@@ -2,7 +2,8 @@
 #define QLOGWEBPAGE_H
 
 #include <QtWebEngine>
-#include <QtWebEngineWidgets/QWebEnginePage>
+
+#include <QWebEnginePage>
 
 /**
 *  \class QLogWebPage

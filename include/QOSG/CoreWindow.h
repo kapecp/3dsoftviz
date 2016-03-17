@@ -31,6 +31,9 @@
 
 #include <qtcolorpicker.h>
 
+#include <QtGui>
+#include <QtWidgets>
+
 #include <QAction>
 #include <QApplication>
 #include <QIcon>
@@ -42,8 +45,6 @@
 #include <QStringList>
 #include <QToolBar>
 #include <QToolBox>
-#include <QtGui>
-#include <QtWidgets>
 
 namespace Layout {
 class LayoutThread;

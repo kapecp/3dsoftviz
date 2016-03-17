@@ -1,18 +1,9 @@
 #include "QOpenCV/FaceRecognitionWindow.h"
 
-#include <QtWidgets/QPushButton>
-#include <QtWidgets/QLabel>
-#include <QtWidgets/QRadioButton>
-#include <QtWidgets/QCheckBox>
-#include <QtWidgets/QVBoxLayout>
-#include <QtWidgets/QStackedLayout>
-#include <QCloseEvent>
 #include "OpenCV/CamSelectCore.h"
 
 #include "Util/ApplicationConfig.h"
 #include <opencv2/imgproc/imgproc.hpp>
-#include <QDebug>
-
 
 QOpenCV::FaceRecognitionWindow::FaceRecognitionWindow( QWidget* parent, QApplication* app )
 	: QDialog( parent )

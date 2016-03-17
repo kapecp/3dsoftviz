@@ -125,7 +125,7 @@ if(COMMAND cotire )
 
 	### Fix virtual memory range
 	if( MSVC )
-		set (COTIRE_PCH_MEMORY_SCALING_FACTOR "240")
+		set (COTIRE_PCH_MEMORY_SCALING_FACTOR "280")
 	endif()
 
 	# fix for Diluculum and LuaJIT on 64bit OSX: Lua new_state returned NULL, LuaJIT needs following flags
@@ -927,7 +927,7 @@ target_include_directories( noiseutils SYSTEM PUBLIC ${DEPENDENCIES_INCLUDE_DIR}
 
 add_library( qtcolorpicker STATIC dependencies/qtcolorpicker/qtcolorpicker.cpp )
 target_include_directories( qtcolorpicker SYSTEM PUBLIC dependencies/qtcolorpicker )
-qt5_use_modules( qtcolorpicker Core Widgets OpenGL Sql WebEngine WebEngineWidgets Xml Network )
+qt5_use_modules( qtcolorpicker Core Widgets )
 
 # ---------------------------------------------------------------
 # Build modules as libraries
@@ -935,7 +935,7 @@ qt5_use_modules( qtcolorpicker Core Widgets OpenGL Sql WebEngine WebEngineWidget
 
 add_library( gitlib SHARED ${SRC_GITLIB} ${HEADER_GITLIB})
 target_include_directories( gitlib SYSTEM PUBLIC include/Repository/Git )
-qt5_use_modules( gitlib Core Widgets OpenGL Sql WebEngine WebEngineWidgets Xml Network )
+qt5_use_modules( gitlib Core )
 
 set(FLAGS_FOR_DEBUG2 ${FLAGS_FOR_DEBUG})
 list(APPEND FLAGS_FOR_DEBUG2 " -DGITLIB_LIBRARY")

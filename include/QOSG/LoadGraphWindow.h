@@ -9,10 +9,11 @@
 #ifndef QOSG_LOAD_GRAPH_WINDOW_H
 #define QOSG_LOAD_GRAPH_WINDOW_H 1
 
-#include <QDialog>
 #include <QtGui>
-#include <QMap>
+
+#include <QDialog>
 #include <QHeaderView>
+#include <QMap>
 
 class QComboBox;
 class QLabel;

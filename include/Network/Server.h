@@ -5,13 +5,14 @@
 #ifndef __3DVisualServer_H__
 #define __3DVisualServer_H__
 
+#include <QByteArray>
+#include <QLinkedList>
+#include <QListWidgetItem>
+#include <QMap>
+#include <QSet>
 #include <QStringList>
 #include <QTcpServer>
 #include <QTcpSocket>
-#include <QMap>
-#include <QSet>
-#include <QListWidgetItem>
-#include <QLinkedList>
 
 #include "osg/PositionAttitudeTransform"
 

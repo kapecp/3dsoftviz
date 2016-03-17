@@ -17,14 +17,11 @@
 #include <osg/Image>
 #include <osg/observer_ptr>
 
-#include <QtWidgets/QGraphicsScene>
-#include <QtWidgets/QGraphicsView>
-#include <QtWidgets/QApplication>
-#include <QtGui/QPainter>
+#include <QApplication>
+#include <QGraphicsScene>
+#include <QGraphicsView>
+#include <QPainter>
 #include <QPointer>
-
-
-
 
 namespace OsgQtBrowser {
 

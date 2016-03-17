@@ -1,16 +1,19 @@
 #ifndef OPENCVWINDOW_H
 #define OPENCVWINDOW_H
 
-#include <QDialog>
 #include <opencv2/core/core.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 
+#include <QCheckBox>
+#include <QCloseEvent>
+#include <QDebug>
+#include <QDialog>
 #include <QLabel>
 #include <QPushButton>
 #include <QRadioButton>
-#include <QCheckBox>
-#include <QStackedLayout>
 #include <QSlider>
+#include <QStackedLayout>
+#include <QVBoxLayout>
 
 namespace OpenCV {
 class CapVideo;

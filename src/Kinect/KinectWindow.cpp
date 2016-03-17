@@ -1,16 +1,6 @@
 #include "Kinect/KinectWindow.h"
 #include "Kinect/KinectThread.h"
 
-#include <QtWidgets/QPushButton>
-#include <QtWidgets/QLabel>
-#include <QtWidgets/QRadioButton>
-#include <QtWidgets/QCheckBox>
-#include <QtWidgets/QVBoxLayout>
-#include <QtWidgets/QStackedLayout>
-#include <QtWidgets/QSlider>
-#include <QCloseEvent>
-#include "QDebug"
-
 Kinect::KinectWindow::KinectWindow( QWidget* parent, QApplication* app, KinectThread* thr ): QDialog( parent )
 {
 	mApp=app;

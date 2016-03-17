@@ -1,8 +1,14 @@
 #ifndef CAMSELECTWINDOW_H
 #define CAMSELECTWINDOW_H
 
+#include <QDebug>
 #include <QDialog>
+#include <QLabel>
 #include <QModelIndex>
+#include <QPushButton>
+#include <QStandardItemModel>
+#include <QTreeView>
+#include <QVBoxLayout>
 
 class QApplication;
 class QLabel;
