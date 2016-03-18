@@ -247,6 +247,8 @@ bool PickHandler::handleKeyUp( const osgGA::GUIEventAdapter& ea, GUIActionAdapte
 
 bool PickHandler::handleKeyDown( const osgGA::GUIEventAdapter& ea, GUIActionAdapter& aa )
 {
+	static bool splitview = false;
+
 	if ( ea.getKey() == osgGA::GUIEventAdapter::KEY_Control_R || ea.getKey() == osgGA::GUIEventAdapter::KEY_Control_L ) {
 		isCtrlPressed = true;
 	}
@@ -332,7 +334,46 @@ bool PickHandler::handleKeyDown( const osgGA::GUIEventAdapter& ea, GUIActionAdap
 		}
 
 	}
+	//split stereo 3D
+	else if ( ea.getKey() == osgGA::GUIEventAdapter::KEY_G){
+		if (!splitview){
+			//turn on
+			osg::DisplaySettings::instance()->setStereoMode(osg::DisplaySettings::VERTICAL_SPLIT);
+			osg::DisplaySettings::instance()->setStereo(TRUE);
+			//set vuzix config TODO move to config file
+			osg::DisplaySettings::instance()->setScreenDistance(3.048f);
+			osg::DisplaySettings::instance()->setScreenHeight(0.93f);
+			osg::DisplaySettings::instance()->setScreenWidth(1.66f);
 
+			qDebug() << "Turned on split stereo 3D";
+		}else{
+			//turn off
+			osg::DisplaySettings::instance()->setStereo(FALSE);
+			//reset to default config
+			osg::DisplaySettings::instance()->setScreenDistance(0.5f);
+			osg::DisplaySettings::instance()->setScreenHeight(0.26f);
+			osg::DisplaySettings::instance()->setScreenWidth(0.325f);
+			osg::DisplaySettings::instance()->setEyeSeparation(0.06f);
+
+			qDebug() << "Turned off split stereo 3D";
+		}
+		splitview = !splitview;
+	}
+	//adjust eye distance, 0.001m change
+	else if (ea.getKey() == osgGA::GUIEventAdapter::KEY_H && splitview){
+		//-
+		float distance = osg::DisplaySettings::instance()->getEyeSeparation();
+		distance = distance - 0.001f;
+		osg::DisplaySettings::instance()->setEyeSeparation(distance);
+		qDebug() << "Eye distance : " << distance;
+	}
+	else if (ea.getKey() == osgGA::GUIEventAdapter::KEY_J && splitview){
+		//+
+		float distance = osg::DisplaySettings::instance()->getEyeSeparation();
+		distance = distance + 0.001f;
+		osg::DisplaySettings::instance()->setEyeSeparation(distance);
+		qDebug() << "Eye distance : " << distance;
+	}
 
 	return false;
 }
