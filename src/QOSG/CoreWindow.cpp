@@ -4169,6 +4169,14 @@ void CoreWindow::showLuaStats( bool show ) {
     }
 }
 
+void CoreWindow::showLuaStats( bool show ) {
+    chb_git_showLuaStats->setChecked( show );
+    if( Manager::GraphManager::getInstance()->getActiveEvolutionGraph() ) {
+        Repository::Git::GitLuaGraphVisualizer visualizer = Repository::Git::GitLuaGraphVisualizer( Manager::GraphManager::getInstance()->getActiveGraph(), Manager::GraphManager::getInstance()->getActiveEvolutionGraph(), this->coreGraph->getCamera(), show );
+        visualizer.changeNodeRepresentation();
+    }
+}
+
 void CoreWindow::createEvolutionLuaGraph()
 {
 	QString file = Manager::GraphManager::getInstance()->getActiveEvolutionGraph()->getFilePath();

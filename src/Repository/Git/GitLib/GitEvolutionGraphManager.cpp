@@ -9,6 +9,8 @@
 
 #include <QStringList>
 
+#include <QStringList>
+
 Repository::Git::GitEvolutionGraphManager* Repository::Git::GitEvolutionGraphManager::instance;
 Repository::Git::GitEvolutionGraph* Repository::Git::GitEvolutionGraphManager::masterEvolutionGraph;
 
