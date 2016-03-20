@@ -33,15 +33,18 @@ set( CMAKE_MODULE_PATH
 	"${CMAKE_CURRENT_SOURCE_DIR}/cmake"
 	${CMAKE_MODULE_PATH} )
 
+# Enable C++11 features
+set(CMAKE_CXX_STANDARD 11)
+
 # Warnings for Debug mode
 option( USE_STRICT_COMPILE_WARNINGS "Use strict compilation warnings in debug mode." ON )
 if( USE_STRICT_COMPILE_WARNINGS )
 	if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang" OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "AppleClang")
 		# using Clang
-		set( FLAGS_FOR_DEBUG -std=c++11 -pedantic -Wall -Wcast-align -Wcast-qual -Wchar-subscripts -Wcomment -Wconversion -Wctor-dtor-privacy -Wdisabled-optimization -Wextra -Wfloat-equal  -Wformat  -Wformat-nonliteral -Wformat-security  -Wformat-y2k -Wformat=2  -Wimport  -Winit-self -Winline -Winvalid-pch -Wlong-long -Wmissing-braces -Wmissing-declarations -Wmissing-field-initializers -Wmissing-format-attribute -Wmissing-include-dirs -Wmissing-noreturn -Wpacked  -Wparentheses -Wpointer-arith -Wredundant-decls -Wreturn-type -Wsequence-point -Wsign-compare  -Wsign-promo -Wstack-protector -Wstrict-aliasing=2 -Wstrict-overflow=5 -Wswitch -Wswitch-default -Wswitch-enum -Wtrigraphs -Wundef -Wuninitialized -Wunknown-pragmas -Wunreachable-code -Wvariadic-macros -Wvolatile-register-var -Wwrite-strings  -Wno-unused-parameter -Wno-unused )
+		set( FLAGS_FOR_DEBUG -pedantic -Wall -Wcast-align -Wcast-qual -Wchar-subscripts -Wcomment -Wconversion -Wctor-dtor-privacy -Wdisabled-optimization -Wextra -Wfloat-equal  -Wformat  -Wformat-nonliteral -Wformat-security  -Wformat-y2k -Wformat=2  -Wimport  -Winit-self -Winline -Winvalid-pch -Wlong-long -Wmissing-braces -Wmissing-declarations -Wmissing-field-initializers -Wmissing-format-attribute -Wmissing-include-dirs -Wmissing-noreturn -Wpacked  -Wparentheses -Wpointer-arith -Wredundant-decls -Wreturn-type -Wsequence-point -Wsign-compare  -Wsign-promo -Wstack-protector -Wstrict-aliasing=2 -Wstrict-overflow=5 -Wswitch -Wswitch-default -Wswitch-enum -Wtrigraphs -Wundef -Wuninitialized -Wunknown-pragmas -Wunreachable-code -Wvariadic-macros -Wvolatile-register-var -Wwrite-strings  -Wno-unused-parameter -Wno-unused )
 	elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR CMAKE_COMPILER_IS_GNUCXX)
 		# using GCC
-		set( FLAGS_FOR_DEBUG -std=c++11 -pedantic -Wall -Wcast-align -Wcast-qual -Wchar-subscripts -Wcomment -Wconversion -Wctor-dtor-privacy -Wdisabled-optimization -Wextra -Wfloat-equal -Wformat -Wformat-nonliteral -Wformat-security -Wformat-y2k -Wformat=2 -Wimport -Winit-self -Winline -Winvalid-pch -Wlogical-op -Wlong-long -Wmissing-braces -Wmissing-declarations -Wmissing-field-initializers -Wmissing-format-attribute -Wmissing-include-dirs -Wmissing-noreturn -Wnoexcept -Wpacked -Wparentheses -Wpointer-arith -Wredundant-decls -Wreturn-type -Wsequence-point -Wsign-compare -Wsign-promo -Wstack-protector -Wstrict-aliasing=2 -Wstrict-null-sentinel -Wstrict-overflow=5 -Wswitch -Wswitch-default -Wswitch-enum -Wtrigraphs -Wundef -Wuninitialized -Wunknown-pragmas -Wunreachable-code -Wunsafe-loop-optimizations -Wvariadic-macros -Wvolatile-register-var -Wwrite-strings -Wold-style-cast -Woverloaded-virtual -Wuseless-cast -Wsign-conversion -Wno-unused-parameter -Wno-unused )
+		set( FLAGS_FOR_DEBUG -pedantic -Wall -Wcast-align -Wcast-qual -Wchar-subscripts -Wcomment -Wconversion -Wctor-dtor-privacy -Wdisabled-optimization -Wextra -Wfloat-equal -Wformat -Wformat-nonliteral -Wformat-security -Wformat-y2k -Wformat=2 -Wimport -Winit-self -Winline -Winvalid-pch -Wlogical-op -Wlong-long -Wmissing-braces -Wmissing-declarations -Wmissing-field-initializers -Wmissing-format-attribute -Wmissing-include-dirs -Wmissing-noreturn -Wnoexcept -Wpacked -Wparentheses -Wpointer-arith -Wredundant-decls -Wreturn-type -Wsequence-point -Wsign-compare -Wsign-promo -Wstack-protector -Wstrict-aliasing=2 -Wstrict-null-sentinel -Wstrict-overflow=5 -Wswitch -Wswitch-default -Wswitch-enum -Wtrigraphs -Wundef -Wuninitialized -Wunknown-pragmas -Wunreachable-code -Wunsafe-loop-optimizations -Wvariadic-macros -Wvolatile-register-var -Wwrite-strings -Wold-style-cast -Woverloaded-virtual -Wuseless-cast -Wsign-conversion -Wno-unused-parameter -Wno-unused )
 
 		# to suppress warnings for unused stuff use: -Wno-unused-parameter -Wno-unused-result
 		# not used:
@@ -634,18 +637,21 @@ file ( GLOB_RECURSE SRC_MOUSE3D "src/Mouse3D/*.cpp" )
 
 # All source files
 set( SRC
-	${SRC_MAIN}
 	${SRC_CORE}
 	${SRC_MANAGER}
-	${SRC_DATA} ${SRC_CLUSTERING}
+	${SRC_DATA}
+	${SRC_CLUSTERING}
 	${SRC_IMPORTER}
 	${SRC_LAYOUT}
-	${SRC_LUAGRAPH} ${SRC_LUAINTERFACE}
+	${SRC_LUAGRAPH}
+	${SRC_LUAINTERFACE}
 	${SRC_LUATYPES}
 	${SRC_MATH}
 	${SRC_NETWORK}
 	${SRC_MODEL}
-	${SRC_OSGQTBROWSER} ${SRC_QOSG} ${SRC_VIEWER}
+	${SRC_OSGQTBROWSER}
+	${SRC_QOSG}
+	${SRC_VIEWER}
 	${SRC_UTIL}
 	${SRC_REPOSITORY}
 )
@@ -731,17 +737,21 @@ file( GLOB_RECURSE HEADER_MOUSE3D	"include/Mouse3D/*.h" )
 
 # All header files
 set( INCL
-	${HEADER_MAIN} ${HEADER_CORE}
+	${HEADER_CORE}
 	${HEADER_MANAGER}
-	${HEADER_DATA} ${HEADER_CLUSTERING}
+	${HEADER_DATA}
+	${HEADER_CLUSTERING}
 	${HEADER_IMPORTER}
 	${HEADER_LAYOUT}
-	${HEADER_LUAGRAPH} ${HEADER_LUAINTERFACE}
+	${HEADER_LUAGRAPH}
+	${HEADER_LUAINTERFACE}
 	${HEADER_LUATYPES}
 	${HEADER_MATH}
 	${HEADER_NETWORK}
 	${HEADER_MODEL}
-	${HEADER_OSGQTBROWSER} ${HEADER_QOSG} ${HEADER_VIEWER}
+	${HEADER_OSGQTBROWSER}
+	${HEADER_QOSG}
+	${HEADER_VIEWER}
 	${HEADER_UTIL}
 	${HEADER_REPOSITORY}
 )
@@ -870,8 +880,7 @@ target_include_directories( gitlib
 		include/Repository/Git
 )
 
-target_compile_definitions( gitlib
-	PUBLIC -DGITLIB_LIBRARY )
+target_compile_definitions( gitlib PUBLIC -DGITLIB_LIBRARY )
 
 target_compile_options( gitlib PUBLIC ${FLAGS_FOR_DEBUG} )
 
@@ -889,11 +898,10 @@ endif()
 # Build and link 3Dsoftviz
 # ---------------------------------------------------------------
 
-# Build 3Dsoftviz
-add_executable( ${3DSOFTVIZ_NAME} ${INCL}  ${SRC} )
+# 3Dsoftviz library
+add_library( ${3DSOFTVIZ_NAME} STATIC ${INCL}  ${SRC} )
 
 # set compile flags only for our code ( suppresses warnings on system headers )
-#set_target_properties( ${3DSOFTVIZ_NAME} PROPERTIES COMPILE_FLAGS "${FLAGS_FOR_DEBUG}" )
 target_compile_options( ${3DSOFTVIZ_NAME} PUBLIC ${FLAGS_FOR_DEBUG} )
 
 target_compile_definitions( ${3DSOFTVIZ_NAME}
@@ -904,7 +912,7 @@ if( OpenCV_FOUND )
 	list( APPEND ALL_SYSTEM_HEADERS ${DEPENDENCIES_INCLUDE_DIR}/aruco )
 endif()
 
-list( APPEND ALL_SYSTEM_HEADERS ${DEPENDENCIES_INCLUDE_DIR})
+list( APPEND ALL_SYSTEM_HEADERS ${DEPENDENCIES_INCLUDE_DIR} )
 list( APPEND ALL_SYSTEM_HEADERS ${DEPENDENCIES_INCLUDE_DIR}/libnoise )
 list( APPEND ALL_SYSTEM_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/easyloggingpp/src )
 
@@ -913,16 +921,11 @@ include_directories(SYSTEM ${ALL_SYSTEM_HEADERS})
 # does not work:
 #list(REMOVE_DUPLICATES ALL_SYSTEM_HEADERS)
 # target_include_directories( ${3DSOFTVIZ_NAME}
-# 	SYSTEM INTERFACE ${ALL_SYSTEM_HEADERS}
+# 	SYSTEM PUBLIC ${ALL_SYSTEM_HEADERS}
 # )
 # target_include_directories( ${3DSOFTVIZ_NAME}
 # 	PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
 # )
-# message(">>>${ALL_SYSTEM_HEADERS}")
-# get_target_property(VAR ${3DSOFTVIZ_NAME} INCLUDE_DIRECTORIES)
-# get_target_property(VAR2 ${3DSOFTVIZ_NAME} INTERFACE_SYSTEM_INCLUDE_DIRECTORIES)
-# message("1<<<<${VAR}")
-# message("2<<<<${VAR2}")
 
 
 target_link_libraries( ${3DSOFTVIZ_NAME}
@@ -1018,6 +1021,21 @@ if( USE_BUILTIN_DEPENDENCIES )
 	endif()
 endif()
 
+# 3Dsoftviz executable
+add_executable( ${3DSOFTVIZ_NAME}_app ${INCL}  ${SRC_MAIN} )
+
+set_target_properties( ${3DSOFTVIZ_NAME}_app PROPERTIES OUTPUT_NAME ${3DSOFTVIZ_NAME} )
+target_compile_options( ${3DSOFTVIZ_NAME}_app PUBLIC ${FLAGS_FOR_DEBUG} )
+target_compile_definitions( ${3DSOFTVIZ_NAME}_app PUBLIC ${ALL_COMPILE_DEFINITIONS} )
+target_link_libraries( ${3DSOFTVIZ_NAME}_app ${3DSOFTVIZ_NAME} )
+
+if( COMMAND cotire )
+	set_target_properties( ${3DSOFTVIZ_NAME}_app PROPERTIES COTIRE_UNITY_LINK_LIBRARIES_INIT "COPY_UNITY" )
+
+	cotire( ${3DSOFTVIZ_NAME}_app CONFIGURATIONS Debug Release )
+endif()
+
+
 # -------------------------------------------------------
 # Install
 # -------------------------------------------------------
@@ -1044,7 +1062,7 @@ endif()
 
 
 # 3DSoftviz and data
-install( TARGETS ${3DSOFTVIZ_NAME}
+install( TARGETS ${3DSOFTVIZ_NAME}_app
 	BUNDLE DESTINATION ${INSTALL_BUNDLE} COMPONENT Runtime
 	RUNTIME DESTINATION ${INSTALL_BIN} COMPONENT Runtime )
 
@@ -1056,7 +1074,7 @@ install( TARGETS gitlib
 if( COMMAND cotire )
 	add_custom_target( install_unity
 		COMMAND ${CMAKE_COMMAND} -P "cmake_install.cmake" )
-	add_dependencies( install_unity ${3DSOFTVIZ_NAME}_unity )
+	add_dependencies( install_unity ${3DSOFTVIZ_NAME}_app_unity )
 	add_dependencies( install_unity gitlib_unity )
 endif()
 
