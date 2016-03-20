@@ -1093,9 +1093,12 @@ install( TARGETS ${3DSOFTVIZ_NAME}
 install( TARGETS gitlib
     RUNTIME DESTINATION ${INSTALL_BIN} COMPONENT Runtime
     LIBRARY DESTINATION ${INSTALL_LIB} COMPONENT Runtime )
-install( TARGETS leaplib
+
+if( LEAP_FOUND )
+	install( TARGETS leaplib
 	RUNTIME DESTINATION ${INSTALL_BIN} COMPONENT Runtime
 	LIBRARY DESTINATION ${INSTALL_LIB} COMPONENT Runtime )
+endif()
 
 # add custom install_unity target
 if( COMMAND cotire )
