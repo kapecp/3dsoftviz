@@ -636,6 +636,12 @@ void loadExampleGraphLua();
 	 */
 	void changeLifespan( int value );
 
+    //jurik
+    void lightClicked();
+    void shadowClicked();
+    void baseClicked();
+    //*****
+
 private:
 
 	/**
@@ -1362,6 +1368,26 @@ private:
 		*  \brief Flag if edge bundling is running
 		*/
 	bool isEBPlaying;
+
+    //jurik
+    /**
+     *CheckBox for turning on custom light
+     *@brief chb_light
+     */
+    QCheckBox* chb_light;
+
+    /**
+     *CheckBox for casting shadows of graph
+     *@brief chb_shadow
+     */
+    QCheckBox* chb_shadow;
+
+    /**
+     *CheckBox for showing base
+     *@brief chb_base
+     */
+    QCheckBox* chb_base;
+    //*****
 
 public:
 
