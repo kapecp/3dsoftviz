@@ -26,7 +26,8 @@
 #endif
 
 #ifdef LEAP_FOUND
-#include "Leap/LeapThread.h"
+#include "LeapLib/LeapThread.h"
+#include "Leap/CustomCameraManipulator.h"
 #endif
 
 #include <qtcolorpicker.h>

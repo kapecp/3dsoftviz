@@ -630,7 +630,8 @@ file( GLOB_RECURSE SRC_SPEECH	"src/Speech/*.cpp" )
 # file ( GLOB_RECURSE SRC_FGLOVE "src/FGlove/*.cpp" )
 
 # Leap
-file ( GLOB_RECURSE SRC_LEAP "src/Leap/*.cpp" )
+file ( GLOB SRC_LEAP "src/Leap/*.cpp" )
+file ( GLOB_RECURSE SRC_LEAPLIB "src/Leap/LeapLib/*.cpp" )
 # MOUSE3D
 file ( GLOB_RECURSE SRC_MOUSE3D "src/Mouse3D/*.cpp" )
 
@@ -730,7 +731,8 @@ file( GLOB_RECURSE HEADER_SPEECH	"include/Speech/*.h" )
 # file( GLOB_RECURSE HEADER_FGLOVE	"include/FGlove/*.h" )
 
 # LEAP
-file( GLOB_RECURSE HEADER_LEAP	"include/Leap/*.h" )
+file( GLOB HEADER_LEAP	"include/Leap/*.h" )
+file( GLOB_RECURSE HEADER_LEAPLIB	"include/Leap/LeapLib/*.h" )
 
 # MOUSE3D
 file( GLOB_RECURSE HEADER_MOUSE3D	"include/Mouse3D/*.h" )
@@ -894,6 +896,20 @@ if( COMMAND cotire )
 endif()
 
 
+#leap
+if( LEAP_FOUND )
+add_library( leaplib SHARED ${SRC_LEAPLIB} ${HEADER_LEAPLIB})
+target_include_directories( leaplib SYSTEM PUBLIC ${LEAP_INCLUDE_DIRS} include/Leap } )
+target_link_libraries( leaplib ${QT_LIBRARIES} ${LEAP_LIBRARIES})
+endif()
+
+if( LEAP_FOUND )
+set(FLAGS_FOR_DEBUG3 ${FLAGS_FOR_DEBUG})
+list(APPEND FLAGS_FOR_DEBUG3 " -DLEAPLIB_LIBRARY")
+string(REPLACE " " ";" REPLACED_FLAGS2 ${FLAGS_FOR_DEBUG3})
+target_compile_options( leaplib PUBLIC ${REPLACED_FLAGS2} )
+endif()
+
 # ---------------------------------------------------------------
 # Build and link 3Dsoftviz
 # ---------------------------------------------------------------
@@ -992,6 +1008,12 @@ if( COMMAND cotire )
 	# get_target_property(UVAR2 ${3DSOFTVIZ_NAME}_unity INTERFACE_SYSTEM_INCLUDE_DIRECTORIES)
 	# message("U1<<<<${VAR}")
 	# message("U2<<<<${VAR2}")
+if( LEAP_FOUND )
+	set_target_properties( leaplib PROPERTIES COTIRE_UNITY_LINK_LIBRARIES_INIT "COPY" )
+endif()
+if( LEAP_FOUND )
+	cotire( leaplib CONFIGURATIONS Debug Release )
+endif()
 endif()
 
 # Ensure correct dependencies
@@ -1016,6 +1038,10 @@ if( USE_BUILTIN_DEPENDENCIES )
 		add_dependencies( ${3DSOFTVIZ_NAME} aruco )
 	endif()
 
+	if( LEAP_FOUND )
+		add_dependencies( ${3DSOFTVIZ_NAME} leaplib )
+	endif()
+
 	# dependencies of unity build
 	if (COMMAND cotire)
 		add_dependencies( ${3DSOFTVIZ_NAME}_unity libnoise osgModeling gitlib_unity dep_luametrics dep_leg dep_lpeg dep_luafilesystem igloo dep_lualogging)
@@ -1029,6 +1055,10 @@ if( USE_BUILTIN_DEPENDENCIES )
 		if( OpenCV_FOUND )
 			add_dependencies( ${3DSOFTVIZ_NAME}_unity aruco )
 		endif()
+		if( LEAP_FOUND )
+			add_dependencies( ${3DSOFTVIZ_NAME}_unity leaplib )
+		endif()
+
 	endif()
 endif()
 
@@ -1081,12 +1111,21 @@ install( TARGETS gitlib
 	RUNTIME DESTINATION ${INSTALL_BIN} COMPONENT Runtime
 	LIBRARY DESTINATION ${INSTALL_LIB} COMPONENT Runtime )
 
+if( LEAP_FOUND )
+	install( TARGETS leaplib
+	RUNTIME DESTINATION ${INSTALL_BIN} COMPONENT Runtime
+	LIBRARY DESTINATION ${INSTALL_LIB} COMPONENT Runtime )
+endif()
+
 # add custom install_unity target
 if( COMMAND cotire )
 	add_custom_target( install_unity
 		COMMAND ${CMAKE_COMMAND} -P "cmake_install.cmake" )
 	add_dependencies( install_unity ${3DSOFTVIZ_NAME}_app_unity )
 	add_dependencies( install_unity gitlib_unity )
+	if( LEAP_FOUND )
+	add_dependencies( install_unity leaplib )
+	endif()
 endif()
 
 # install lua modules
