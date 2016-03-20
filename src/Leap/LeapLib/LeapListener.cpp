@@ -1,6 +1,18 @@
-#include "Leap/LeapListener.h"
-#include "Leap/DirectionDetector.h"
-#include "Leap/FingerPositionDetector.h"
+#include "LeapLib//LeapListener.h"
+#include "LeapLib/DirectionDetector.h"
+#include "LeapLib/FingerPositionDetector.h"
+
+Leap::LeapListener::LeapListener(LeapCameraManipulator* cameraManipulator)
+{
+	leapActions = new Leap::LeapActions(cameraManipulator);
+}
+
+Leap::LeapListener::~LeapListener(void)
+{
+	if (leapActions != NULL){
+		delete(leapActions);
+	}
+}
 
 void Leap::LeapListener::onInit( const Controller& controller )
 {
@@ -37,19 +49,18 @@ void Leap::LeapListener::onFrame( const Controller& controller )
 	Leap::DirectionDetector::Direction direction;
 	bool handExtended;
 
-
-	for ( int i=0; i<frame.hands().count(); i++ ) {
+	for ( int i=0; i< hands.count(); ++i ) {
 		if ( hands[i].isRight() ) {
 			direction = Leap::DirectionDetector::getPalmDirection( hands[i] );
-			leapActions.changeViewAngle( direction );
+			leapActions->changeViewAngle( direction );
 		}
 		else {
 			handExtended = Leap::FingerPositionDetector::isHandExtended( hands[i] );
 			if ( handExtended ) {
-				leapActions.startMovingForward();
+				leapActions->startMovingForward();
 			}
 			else {
-				leapActions.stopMovingForward();
+				leapActions->stopMovingForward();
 			}
 		}
 	}
@@ -66,28 +77,28 @@ void Leap::LeapListener::onFrame( const Controller& controller )
 	        switch (gesture.type()) {
 	          case Gesture::TYPE_CIRCLE:
 	          {
-	            leapActions.zoomGraph(gesture);
+				leapActions->zoomGraph(gesture);
 	            break;
 	          }
 	          case Gesture::TYPE_SWIPE:
 	          {
 	            if(firstHand.isRight()){
-	                if(leapActions.isCameraMoving)
-	                    leapActions.moveCamera(gesture);
+					if(leapActions->isCameraMoving)
+						leapActions->moveCamera(gesture);
 	                else
-	                  leapActions.rotateGraph(gesture);
+					  leapActions->rotateGraph(gesture);
 	            }
 	            break;
 	          }
 	          case Gesture::TYPE_KEY_TAP:
 	          {
 	            if(firstHand.isLeft())
-	                leapActions.onKeyTap(gesture);
+					leapActions->onKeyTap(gesture);
 	            break;
 	          }
 	          case Gesture::TYPE_SCREEN_TAP:
 	          {
-	            leapActions.onScreenTap(gesture);
+				leapActions->onScreenTap(gesture);
 	            break;
 	          }
 	          default:

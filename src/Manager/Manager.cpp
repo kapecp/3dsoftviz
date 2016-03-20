@@ -352,7 +352,7 @@ bool Manager::GraphManager::loadEvolutionGraphFromGit( QString filepath )
 
 	Repository::Git::GitEvolutionGraphManager::getInstance()->setEvolutionGraph( evolutionGraph );
 
-	this->activeEvolutionGraph = Repository::Git::GitEvolutionGraphManager::getInstance()->getEvolutionGraphByExtension( Util::ApplicationConfig::get()->getValue( "Git.ExtensionFilter" ) );
+	this->activeEvolutionGraph = Repository::Git::GitEvolutionGraphManager::getInstance()->createEvolutionGraphClone()->filterByExtension( Util::ApplicationConfig::get()->getValue( "Git.ExtensionFilter" ) )->excludeDirectories( Util::ApplicationConfig::get()->getValue( "Git.ExcludeDirectories" ) )->getFilteredEvolutionGraph();
 //    this->activeEvolutionGraph = Repository::Git::GitEvolutionGraphManager::getInstance()->getEvolutionGraphByAuthor( "Jack Lawson" );
 
 	return lGit;
@@ -385,10 +385,11 @@ Data::Graph* Manager::GraphManager::importEvolutionGraph( QString filepath ) {
 			this->closeGraph( this->activeGraph.get() );
 		}
 
-		// TEMPFIX
+		/* FIX
+		 * old code: this->activeGraph = updater.getActiveGraph();
+		 */
 		std::shared_ptr<Data::Graph> newGraph( updater.getActiveGraph() );
 		this->activeGraph = newGraph;
-//		this->activeGraph = updater.getActiveGraph();
 	}
 
 	// Restartnem layout
