@@ -1,4 +1,4 @@
-# Copyright ( C ) 2013-2015 3DSoftviz.
+# Copyright ( C ) 2013-2016 3DSoftviz.
 # Created by Peter Kapec
 # Redistribution and use of this file is allowed
 # according to the terms of the MIT license.
@@ -19,7 +19,7 @@ set( 3DSOFTVIZ_VERSION_PATCH "0" )
 set( 3DSOFTVIZ_VERSION_BUILD "1" )
 set( 3DSOFTVIZ_VERSION "${3DSOFTVIZ_VERSION_MAJOR}.${3DSOFTVIZ_VERSION_MINOR}.${3DSOFTVIZ_VERSION_PATCH}" )
 set( 3DSOFTVIZ_VENDOR "3DSoftviz Dev Team" )
-set( 3DSOFTVIZ_COPYRIGHT_YEAR "2013" )
+set( 3DSOFTVIZ_COPYRIGHT_YEAR "2016" )
 set( 3DSOFTVIZ_DOMAIN_FIRST "stuba" )
 set( 3DSOFTVIZ_DOMAIN_SECOND "sk" )
 set( 3DSOFTVIZ_DOMAIN "${3DSOFTVIZ_DOMAIN_FIRST}.${3DSOFTVIZ_DOMAIN_SECOND}" )
@@ -28,35 +28,23 @@ set( 3DSOFTVIZ_DOMAIN "${3DSOFTVIZ_DOMAIN_FIRST}.${3DSOFTVIZ_DOMAIN_SECOND}" )
 # Build settings
 # --------------
 
-# Install destinations
-set( INSTALL_BIN bin CACHE PATH "Where to install binaries to." )
-set( INSTALL_LIB lib CACHE PATH "Where to install lib to." )
-set( INSTALL_DATA share/3dsoftviz CACHE PATH "Directory for shared data." )
-set( INSTALL_DEPS . )
-set( INSTALL_PLUGIN bin )
-set( INSTALL_QTCONF bin )
-
-set( INSTALL_INC include CACHE PATH "Directory for library headers." )
-set( INSTALL_DATA . CACHE PATH "Directory the package can store documentation, tests or other data in." )
-set( INSTALL_DOC ${INSTALL_DATA}/doc CACHE PATH "Recommended directory to install documentation into." )
-set( INSTALL_ETC ${INSTALL_DATA}/etc CACHE PATH "Other files." )
-set( INSTALL_TEST ${INSTALL_DATA}/test CACHE PATH "Test files." )
-set( INSTALL_EXAMPLE ${INSTALL_DATA}/example CACHE PATH "Recommended directory to install examples into." )
-
 # Additional CMake scripts
 set( CMAKE_MODULE_PATH
 	"${CMAKE_CURRENT_SOURCE_DIR}/cmake"
 	${CMAKE_MODULE_PATH} )
+
+# Enable C++11 features
+set(CMAKE_CXX_STANDARD 11)
 
 # Warnings for Debug mode
 option( USE_STRICT_COMPILE_WARNINGS "Use strict compilation warnings in debug mode." ON )
 if( USE_STRICT_COMPILE_WARNINGS )
 	if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang" OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "AppleClang")
 		# using Clang
-		set( FLAGS_FOR_DEBUG "-std=c++11 -pedantic -Wall -Wcast-align -Wcast-qual -Wchar-subscripts -Wcomment -Wconversion -Wctor-dtor-privacy -Wdisabled-optimization -Wextra -Wfloat-equal  -Wformat  -Wformat-nonliteral -Wformat-security  -Wformat-y2k -Wformat=2  -Wimport  -Winit-self -Winline -Winvalid-pch -Wlong-long -Wmissing-braces -Wmissing-declarations -Wmissing-field-initializers -Wmissing-format-attribute -Wmissing-include-dirs -Wmissing-noreturn -Wpacked  -Wparentheses -Wpointer-arith -Wredundant-decls -Wreturn-type -Wsequence-point -Wsign-compare  -Wsign-promo -Wstack-protector -Wstrict-aliasing=2 -Wstrict-overflow=5 -Wswitch -Wswitch-default -Wswitch-enum -Wtrigraphs -Wundef -Wuninitialized -Wunknown-pragmas -Wunreachable-code -Wvariadic-macros -Wvolatile-register-var -Wwrite-strings  -Wno-unused-parameter -Wno-unused" )
+		set( FLAGS_FOR_DEBUG -pedantic -Wall -Wcast-align -Wcast-qual -Wchar-subscripts -Wcomment -Wconversion -Wctor-dtor-privacy -Wdisabled-optimization -Wextra -Wfloat-equal  -Wformat  -Wformat-nonliteral -Wformat-security  -Wformat-y2k -Wformat=2  -Wimport  -Winit-self -Winline -Winvalid-pch -Wlong-long -Wmissing-braces -Wmissing-declarations -Wmissing-field-initializers -Wmissing-format-attribute -Wmissing-include-dirs -Wmissing-noreturn -Wpacked  -Wparentheses -Wpointer-arith -Wredundant-decls -Wreturn-type -Wsequence-point -Wsign-compare  -Wsign-promo -Wstack-protector -Wstrict-aliasing=2 -Wstrict-overflow=5 -Wswitch -Wswitch-default -Wswitch-enum -Wtrigraphs -Wundef -Wuninitialized -Wunknown-pragmas -Wunreachable-code -Wvariadic-macros -Wvolatile-register-var -Wwrite-strings  -Wno-unused-parameter -Wno-unused )
 	elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR CMAKE_COMPILER_IS_GNUCXX)
 		# using GCC
-		set( FLAGS_FOR_DEBUG "-std=c++11 -pedantic -Wall -Wcast-align -Wcast-qual -Wchar-subscripts -Wcomment -Wconversion -Wctor-dtor-privacy -Wdisabled-optimization -Wextra -Wfloat-equal -Wformat -Wformat-nonliteral -Wformat-security -Wformat-y2k -Wformat=2 -Wimport -Winit-self -Winline -Winvalid-pch -Wlogical-op -Wlong-long -Wmissing-braces -Wmissing-declarations -Wmissing-field-initializers -Wmissing-format-attribute -Wmissing-include-dirs -Wmissing-noreturn -Wnoexcept -Wpacked -Wparentheses -Wpointer-arith -Wredundant-decls -Wreturn-type -Wsequence-point -Wsign-compare -Wsign-promo -Wstack-protector -Wstrict-aliasing=2 -Wstrict-null-sentinel -Wstrict-overflow=5 -Wswitch -Wswitch-default -Wswitch-enum -Wtrigraphs -Wundef -Wuninitialized -Wunknown-pragmas -Wunreachable-code -Wunsafe-loop-optimizations -Wvariadic-macros -Wvolatile-register-var -Wwrite-strings -Wold-style-cast -Woverloaded-virtual -Wuseless-cast -Wsign-conversion -Wno-unused-parameter -Wno-unused" )
+		set( FLAGS_FOR_DEBUG -pedantic -Wall -Wcast-align -Wcast-qual -Wchar-subscripts -Wcomment -Wconversion -Wctor-dtor-privacy -Wdisabled-optimization -Wextra -Wfloat-equal -Wformat -Wformat-nonliteral -Wformat-security -Wformat-y2k -Wformat=2 -Wimport -Winit-self -Winline -Winvalid-pch -Wlogical-op -Wlong-long -Wmissing-braces -Wmissing-declarations -Wmissing-field-initializers -Wmissing-format-attribute -Wmissing-include-dirs -Wmissing-noreturn -Wnoexcept -Wpacked -Wparentheses -Wpointer-arith -Wredundant-decls -Wreturn-type -Wsequence-point -Wsign-compare -Wsign-promo -Wstack-protector -Wstrict-aliasing=2 -Wstrict-null-sentinel -Wstrict-overflow=5 -Wswitch -Wswitch-default -Wswitch-enum -Wtrigraphs -Wundef -Wuninitialized -Wunknown-pragmas -Wunreachable-code -Wunsafe-loop-optimizations -Wvariadic-macros -Wvolatile-register-var -Wwrite-strings -Wold-style-cast -Woverloaded-virtual -Wuseless-cast -Wsign-conversion -Wno-unused-parameter -Wno-unused )
 
 		# to suppress warnings for unused stuff use: -Wno-unused-parameter -Wno-unused-result
 		# not used:
@@ -74,11 +62,6 @@ endif()
 # Default build type
 if( NOT CMAKE_BUILD_TYPE )
 	set( CMAKE_BUILD_TYPE "Debug" CACHE STRING "" FORCE )
-endif()
-
-# Default install destination
-if( CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT )
-	set( CMAKE_INSTALL_PREFIX ${CMAKE_CURRENT_SOURCE_DIR}/_install CACHE PATH "Installation Destination" FORCE )
 endif()
 
 # RPath functionality
@@ -138,6 +121,9 @@ endif()
 # Dependencies - Searching external dependencies
 # ------------------------------------------------------------
 
+set( ALL_SYSTEM_HEADERS )
+set( ALL_COMPILE_DEFINITIONS )
+
 # ------------------------------ Qt4 -------------------------------
 # Find Qt4
 find_package( Qt4 REQUIRED )
@@ -178,38 +164,49 @@ find_package( OpenSceneGraph COMPONENTS
 	osgText
 	osgVolume
 	osgWidget
- )
+)
 find_package( osgViewer )
 
-include_directories( SYSTEM
+list( APPEND ALL_SYSTEM_HEADERS
 	${OPENSCENEGRAPH_INCLUDE_DIRS}
 	${OSGVIEWER_INCLUDE_DIR}
 )
+
+if( MSVC )
+	list( APPEND ALL_COMPILE_DEFINITIONS -DOSG_LIBRARY_STATIC )
+endif()
 
 # ------------------------------ OpenCV -------------------------------
 # Find OpenCV
 find_package( OpenCV )
 if( OpenCV_FOUND )
 	if( WIN32 )
-		add_definitions( -DNOMINMAX )
+		list( APPEND ALL_COMPILE_DEFINITIONS -DNOMINMAX )
 	endif()
 
-	include_directories( SYSTEM ${OpenCV_INCLUDE_DIRS} )
-	add_definitions( -DOPENCV_FOUND )
+	#list( APPEND ALL_SYSTEM_HEADERS	${OpenCV_INCLUDE_DIRS} )
 
+	list( APPEND ALL_COMPILE_DEFINITIONS -DOPENCV_FOUND )
+
+	message( STATUS "OpenCV Found:" )
 	message( STATUS "OpenCV_LIB_DIR=${OpenCV_LIB_DIR}" )
 	message( STATUS "OpenCV_LIB_DIR=${OpenCV_LIBS}" )
 else()
-	message( STATUS "OpenCV Not Found" )
+	message( STATUS "OpenCV NOT FOUND" )
 endif()
 
 # ------------------------------ OpenNI2 and Nite -------------------------------
 # Find OPENNI2
 find_package( OPENNI2 )
 if( OPENNI2_FOUND )
-	include_directories( SYSTEM ${OPENNI2_INCLUDE_DIRS} )
-	add_definitions( -DOPENNI2_FOUND )
-	message( STATUS "OpenNI2 FOUND" )
+
+	list( APPEND ALL_SYSTEM_HEADERS	${OPENNI2_INCLUDE_DIRS} )
+
+	list( APPEND ALL_COMPILE_DEFINITIONS  -DOPENNI2_FOUND )
+
+	message( STATUS "OpenNI2 Found:" )
+	message( STATUS "OPENNI2_INCLUDE_DIRS=${OPENNI2_INCLUDE_DIRS}" )
+	message( STATUS "OPENNI2_LIBRARIES=${OPENNI2_LIBRARIES}" )
 else( OPENNI2_FOUND )
 	message( STATUS "OpenNI2 NOT FOUND" )
 endif()
@@ -217,9 +214,13 @@ endif()
 # Find NITE2
 find_package( NITE2 )
 if( NITE2_FOUND )
-	include_directories( SYSTEM ${NITE2_INCLUDE_DIRS} ${NITE2_OPENNI2_DRIVER_DIRS} )
-	add_definitions( -DNITE2_FOUND )
-	message ( STATUS "NITE2 FOUND" )
+
+	list( APPEND ALL_SYSTEM_HEADERS	${NITE2_INCLUDE_DIRS} ${NITE2_OPENNI2_DRIVER_DIRS} )
+
+	list( APPEND ALL_COMPILE_DEFINITIONS -DNITE2_FOUND )
+	message( STATUS "NITE2 Found:" )
+	message( STATUS "NITE2_INCLUDE_DIRS=${NITE2_INCLUDE_DIRS}" )
+	message( STATUS "NITE2_LIBRARIES=${NITE2_LIBRARIES}" )
 else( NITE2_FOUND )
 	message ( STATUS "NITE2 NOT FOUND" )
 endif()
@@ -230,8 +231,10 @@ if( WIN32 AND MSVC )
 
 	find_package( KINECTSDK )
 	if( KINECTSDK_FOUND )
-		include_directories( SYSTEM ${KINECTSDK_INCLUDE_DIRS} )
-		add_definitions( -DKINECTSDK_FOUND )
+
+		list( APPEND ALL_SYSTEM_HEADERS	${KINECTSDK_INCLUDE_DIRS} )
+
+		list( APPEND ALL_COMPILE_DEFINITIONS -DKINECTSDK_FOUND )
 
 		# find_package( SPEECHSDK )
 		# if( SPEECHSDK_FOUND )
@@ -242,7 +245,9 @@ if( WIN32 AND MSVC )
 			# message ( STATUS "SPEECHSDK NOT FOUND" )
 		# endif()
 
-		message ( STATUS "KINECTSDK FOUND" )
+		message( STATUS "KINECTSDK Found:" )
+		message( STATUS "KINECTSDK_INCLUDE_DIRS=${KINECTSDK_INCLUDE_DIRS}" )
+		message( STATUS "KINECTSDK_LIBRARIES=${KINECTSDK_LIBRARIES}" )
 	else( KINECTSDK_FOUND )
 		message ( STATUS "KINECTSDK NOT FOUND" )
 	endif()
@@ -255,14 +260,21 @@ find_package( Boost 1.39 REQUIRED )
 #add_definitions( -DBOOST_ALL_DYN_LINK )
 
 # Include directories
-include_directories( SYSTEM ${Boost_INCLUDE_DIRS}  )
+list( APPEND ALL_SYSTEM_HEADERS	${Boost_INCLUDE_DIRS}  )
 
 # ------------------------------ LEAP -------------------------------
 # Find leap
 find_package( LEAP )
 if( LEAP_FOUND )
-	add_definitions( -DLEAP_FOUND )
+
+	list( APPEND ALL_COMPILE_DEFINITIONS -DLEAP_FOUND )
+
+	list( APPEND ALL_SYSTEM_HEADERS	${LEAP_INCLUDE_DIRS} )
+
+	message( STATUS "LEAP Found:" )
+	message( STATUS "LEAP_INCLUDE_DIRS=${LEAP_INCLUDE_DIRS}" )
 	message( STATUS "LEAP_LIB_DIR=${LEAP_LIBRARIES}" )
+	message( STATUS "FGLOVE_DRIVER_DIRS=${FGLOVE_DRIVER_DIRS}" )
 else()
 	message( STATUS "LEAP Not Found" )
 endif()
@@ -279,18 +291,22 @@ endif()
 # else()
 #	message( STATUS "FGLOVE Not Found" )
 # endif()
+
 # ------------------------------ MOUSE3D -------------------------------
 # Find MOUSE3D
 find_package( MOUSE3D )
 if( MOUSE3D_FOUND )
-	include_directories( SYSTEM ${MOUSE3D_INCLUDE_DIRS} )
-	add_definitions( -DMOUSE3D_FOUND )
-	message( STATUS "3DMouse FOUND" )
+
+	list( APPEND ALL_SYSTEM_HEADERS	${MOUSE3D_INCLUDE_DIRS} )
+
+	list( APPEND ALL_COMPILE_DEFINITIONS -DMOUSE3D_FOUND )
+	message( STATUS "3DMouse Found:" )
+	message( STATUS "MOUSE3D_INCLUDE_DIRS=${MOUSE3D_INCLUDE_DIRS}" )
+	message( STATUS "MOUSE3D_LIBRARIES=${MOUSE3D_LIBRARIES}" )
 else()
 	message( STATUS "3DMouse NOT FOUND" )
 endif()
 
-ADD_DEFINITIONS(-DOSG_LIBRARY_STATIC)
 
 # ------------------------------------------------------------
 # Dependencies - External projects
@@ -539,7 +555,7 @@ if( USE_BUILTIN_DEPENDENCIES )
 			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
 	)
 
-		# Build lualogging
+	# Build lualogging
 	ExternalProject_Add ( dep_lualogging
 		PREFIX lualogging
 		SOURCE_DIR ${DEP_SOURCE}/lualogging
@@ -571,92 +587,10 @@ else()
 	#find_package( Lua51 REQUIRED )
 endif()
 
-# -----------------------------------------------------------------
-# Platform settings
-# -----------------------------------------------------------------
-
-# Apple specific overrides, we build and app bundle
-option( OSX_BUNDLE "Create an app bundle on OSX." OFF ) # TODO: disabled, because currently it does not work...
-if( APPLE AND OSX_BUNDLE )
-	# Executable settings
-	set( 3DSOFTVIZ_EXECUTABLE_TYPE MACOSX_BUNDLE )
-	set( BUNDLE_APP "\${CMAKE_INSTALL_PREFIX}/${3DSOFTVIZ_NAME}.app" )
-
-	# Override default install destinations into the bundle
-	set( INSTALL_BUNDLE . )
-	set( INSTALL_BIN	${3DSOFTVIZ_NAME}.app/Contents/MacOS )
-	set( INSTALL_DATA	${3DSOFTVIZ_NAME}.app/Contents/share/3DSOFTVIZ )
-	set( INSTALL_RES	${3DSOFTVIZ_NAME}.app/Contents/Resources )
-	set( INSTALL_DEPS	${3DSOFTVIZ_NAME}.app/Contents )
-	set( INSTALL_PLUGIN	${3DSOFTVIZ_NAME}.app/Contents/MacOS )
-	set( INSTALL_QTCONF	${3DSOFTVIZ_NAME}.app/Contents/Resources )
-
-	# Bundle settings
-	set( MACOSX_BUNDLE_INFO_STRING "${3DSOFTVIZ_NAME} ${3DSOFTVIZ_VERSION}" )
-	set( MACOSX_BUNDLE_BUNDLE_VERSION "${3DSOFTVIZ_NAME} ${3DSOFTVIZ_VERSION}" )
-	set( MACOSX_BUNDLE_LONG_VERSION_STRING "${3DSOFTVIZ_NAME} ${3DSOFTVIZ_VERSION}" )
-	set( MACOSX_BUNDLE_SHORT_VERSION_STRING "${3DSOFTVIZ_VERSION}" )
-	set( MACOSX_BUNDLE_COPYRIGHT "${3DSOFTVIZ_COPYRIGHT_YEAR} ${3DSOFTVIZ_VENDOR}" )
-	set( MACOSX_BUNDLE_ICON_FILE "3DSOFTVIZ_app.icns" )# use http://iconverticons.com/legacy/ for icon converting
-	set( MACOSX_BUNDLE_GUI_IDENTIFIER "${3DSOFTVIZ_DOMAIN_SECOND}.${3DSOFTVIZ_DOMAIN_FIRST}.${3DSOFTVIZ_NAME}" )
-	set( MACOSX_BUNDLE_BUNDLE_NAME "${3DSOFTVIZ_NAME}" )
-
-	# CPack settings
-	set( CPACK_GENERATOR "DragNDrop" )
-	set( CPACK_PACKAGE_ICON "${CMAKE_CURRENT_SOURCE_DIR}/resources/3DSOFTVIZ_pkg.icns" )
-	set( CPACK_PACKAGE_FILE_NAME "${3DSOFTVIZ_NAME}-${3DSOFTVIZ_VERSION}" )
-
-	# OSX Specific resources
-	install( FILES "resources/${MACOSX_BUNDLE_ICON_FILE}" DESTINATION ${INSTALL_RES} )
-endif()
-
-# Windows specific overrides
-if( WIN32 )
-	# Executable settings
-	set( 3DSOFTVIZ_EXECUTABLE_TYPE WIN32 )
-	set( BUNDLE_APP "\${CMAKE_INSTALL_PREFIX}/${INSTALL_BIN}/${3DSOFTVIZ_NAME}.exe" )
-
-	# CPack settings
-	set( CPACK_GENERATOR "NSIS" )
-	set( CPACK_PACKAGE_INSTALL_DIRECTORY "${3DSOFTVIZ_NAME}" )
-	set( CPACK_PACKAGE_FILE_NAME "${3DSOFTVIZ_NAME}-${3DSOFTVIZ_VERSION}" )
-	set( CPACK_PACKAGE_EXECUTABLES "${3DSOFTVIZ_NAME}" "${3DSOFTVIZ_NAME}" )
-	set( CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}\\\\LICENSE.txt" )
-
-	# NSIS branding
-	set( CPACK_NSIS_INSTALLED_ICON_NAME "${INSTALL_BIN}\\\\${3DSOFTVIZ_NAME}${CMAKE_EXECUTABLE_SUFFIX}" )
-	set( CPACK_NSIS_DISPLAY_NAME "${3DSOFTVIZ_NAME}" )
-	set( CPACK_NSIS_HELP_LINK "http:\\\\\\\\${3DSOFTVIZ_DOMAIN}" )
-	set( CPACK_NSIS_URL_INFO_ABOUT "http:\\\\\\\\${3DSOFTVIZ_DOMAIN}" )
-	set( CPACK_NSIS_CONTACT "http:\\\\\\\\${3DSOFTVIZ_DOMAIN}" )
-	set( CPACK_NSIS_MUI_ICON "${CMAKE_CURRENT_SOURCE_DIR}\\\\res\\\\3DSOFTVIZ_pkg.ico" )
-	set( CPACK_NSIS_MUI_UNIICON "${CMAKE_CURRENT_SOURCE_DIR}\\\\res\\\\3DSOFTVIZ_rmv.ico" )
-	set( CPACK_PACKAGE_ICON "${CMAKE_CURRENT_SOURCE_DIR}\\\\res\\\\logo2.bmp" )
-endif()
 
 # ---------------------------------------------------------------
 # 3DSoftviz sources
 # ---------------------------------------------------------------
-
-# Include Paths
-include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/include )
-
-if( OpenCV_FOUND )
-	include_directories( SYSTEM
-		${DEPENDENCIES_INCLUDE_DIR}/aruco
-	)
-endif()
-
-include_directories( SYSTEM
-	${DEPENDENCIES_INCLUDE_DIR}
-	${DEPENDENCIES_INCLUDE_DIR}/libnoise
-)
-
-if( LEAP_FOUND )
-	include_directories( SYSTEM
-		${LEAP_INCLUDE_DIRS}
-	)
-endif()
 
 #-------------------------------- Source files -------------------------------
 set( SRC_MAIN "src/main.cpp" )
@@ -703,17 +637,21 @@ file ( GLOB_RECURSE SRC_MOUSE3D "src/Mouse3D/*.cpp" )
 
 # All source files
 set( SRC
-	${SRC_MAIN} ${SRC_CORE}
+	${SRC_CORE}
 	${SRC_MANAGER}
-	${SRC_DATA} ${SRC_CLUSTERING}
+	${SRC_DATA}
+	${SRC_CLUSTERING}
 	${SRC_IMPORTER}
 	${SRC_LAYOUT}
-	${SRC_LUAGRAPH} ${SRC_LUAINTERFACE}
+	${SRC_LUAGRAPH}
+	${SRC_LUAINTERFACE}
 	${SRC_LUATYPES}
 	${SRC_MATH}
 	${SRC_NETWORK}
 	${SRC_MODEL}
-	${SRC_OSGQTBROWSER} ${SRC_QOSG} ${SRC_VIEWER}
+	${SRC_OSGQTBROWSER}
+	${SRC_QOSG}
+	${SRC_VIEWER}
 	${SRC_UTIL}
 	${SRC_REPOSITORY}
 )
@@ -746,7 +684,14 @@ if( MOUSE3D_FOUND )
 	list( APPEND SRC ${SRC_MOUSE3D} )
 endif()
 
+# add diluculum code directly due to MSVC problems
+if( MSVC )
+	include_directories( SYSTEM dependencies/diluculum/include )
 
+	file( GLOB_RECURSE SRC_DILUCULUM	"dependencies/diluculum/Sources/*.cpp" )
+
+	list( APPEND SRC ${SRC_DILUCULUM} )
+endif()
 
 #-------------------------------- Header files -------------------------------
 file( GLOB_RECURSE HEADER_CORE		"include/Core/*.h" )
@@ -792,17 +737,21 @@ file( GLOB_RECURSE HEADER_MOUSE3D	"include/Mouse3D/*.h" )
 
 # All header files
 set( INCL
-	${HEADER_MAIN} ${HEADER_CORE}
+	${HEADER_CORE}
 	${HEADER_MANAGER}
-	${HEADER_DATA} ${HEADER_CLUSTERING}
+	${HEADER_DATA}
+	${HEADER_CLUSTERING}
 	${HEADER_IMPORTER}
 	${HEADER_LAYOUT}
-	${HEADER_LUAGRAPH} ${HEADER_LUAINTERFACE}
+	${HEADER_LUAGRAPH}
+	${HEADER_LUAINTERFACE}
 	${HEADER_LUATYPES}
 	${HEADER_MATH}
 	${HEADER_NETWORK}
 	${HEADER_MODEL}
-	${HEADER_OSGQTBROWSER} ${HEADER_QOSG} ${HEADER_VIEWER}
+	${HEADER_OSGQTBROWSER}
+	${HEADER_QOSG}
+	${HEADER_VIEWER}
 	${HEADER_UTIL}
 	${HEADER_REPOSITORY}
 )
@@ -811,7 +760,7 @@ if( OpenCV_FOUND )
 	list( APPEND INCL ${HEADER_OPENCV} ${HEADER_QOPENCV} ${HEADER_ARUCO} )
 endif()
 
-#Kinect use Nite, Openni and OpenCV
+# Kinect uses Nite, Openni and OpenCV
 if( OPENNI2_FOUND AND OpenCV_FOUND )
 	list( APPEND INCL ${HEADER_KINECT} )
 endif()
@@ -825,12 +774,12 @@ endif()
 #	list( APPEND INCL ${HEADER_FGLOVE} )
 # endif()
 
-#LEAP
+# LEAP
 if( LEAP_FOUND )
 	list( APPEND INCL ${HEADER_LEAP} )
 endif()
 
-#MOUSE3D
+# MOUSE3D
 if( MOUSE3D_FOUND )
 	list( APPEND INCL ${HEADER_MOUSE3D} )
 endif()
@@ -896,24 +845,16 @@ endif()
 #	source_group( \\headers\\Fglove "^.*Fglove/.*h$" )
 # endif()
 
-#leap
+# Leap
 if( LEAP_FOUND )
 	source_group( \\src\\Leap "^.*Leap/.*$" )
 	source_group( \\headers\\Leap "^.*Leap/.*h$" )
 endif()
 
-#MOUSE3D
+# MOUSE3D
 if( MOUSE3D_FOUND )
 	source_group( \\src\\Mouse3D "^.*Mouse3D/.*$" )
 	source_group( \\headers\\Mouse3D "^.*Mouse3D/.*h$" )
-endif()
-
-# add diluculum code directly due to MSVC problems
-if( MSVC OR APPLE )
-	include_directories( SYSTEM dependencies/diluculum/include )
-	#include_directories( SYSTEM $ENV{CMAKE_INCLUDE_PATH} )
-
-	file( GLOB_RECURSE SRC_DILUCULUM	"dependencies/diluculum/Sources/*.cpp" )
 endif()
 
 # ---------------------------------------------------------------
@@ -924,34 +865,72 @@ add_library( noiseutils STATIC dependencies/noiseutils/noiseutils.cpp )
 target_include_directories( noiseutils SYSTEM PUBLIC ${DEPENDENCIES_INCLUDE_DIR}/libnoise dependencies/noiseutils dependencies/libnoise/src )
 
 add_library( qtcolorpicker STATIC dependencies/qtcolorpicker/qtcolorpicker.cpp )
-target_include_directories( qtcolorpicker SYSTEM PUBLIC dependencies/qtcolorpicker )
+target_include_directories( qtcolorpicker SYSTEM PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/qtcolorpicker )
 
 # ---------------------------------------------------------------
 # Build modules as libraries
 # ---------------------------------------------------------------
 
+#-------------------------------- gitlib module -------------------------------
 add_library( gitlib SHARED ${SRC_GITLIB} ${HEADER_GITLIB})
-target_include_directories( gitlib SYSTEM PUBLIC include/Repository/Git )
+
+target_include_directories( gitlib
+	SYSTEM PUBLIC
+		include
+		include/Repository/Git
+)
+
+target_compile_definitions( gitlib PUBLIC -DGITLIB_LIBRARY )
+
+target_compile_options( gitlib PUBLIC ${FLAGS_FOR_DEBUG} )
+
 target_link_libraries( gitlib ${QT_LIBRARIES} )
 
-set(FLAGS_FOR_DEBUG2 ${FLAGS_FOR_DEBUG})
-list(APPEND FLAGS_FOR_DEBUG2 " -DGITLIB_LIBRARY")
-string(REPLACE " " ";" REPLACED_FLAGS ${FLAGS_FOR_DEBUG2})
-target_compile_options( gitlib PUBLIC ${REPLACED_FLAGS} )
+# 'cotire' the module
+if( COMMAND cotire )
+	# link gitlib_unity target to all libraries to which gitlib links
+	set_target_properties( gitlib PROPERTIES COTIRE_UNITY_LINK_LIBRARIES_INIT "COPY_UNITY" )
+	cotire( gitlib CONFIGURATIONS Debug Release )
+endif()
+
 
 # ---------------------------------------------------------------
 # Build and link 3Dsoftviz
 # ---------------------------------------------------------------
 
+
 if( MSVC OR APPLE )
 	list( APPEND SRC ${SRC_DILUCULUM} )
 endif()
+# 3Dsoftviz library
+add_library( ${3DSOFTVIZ_NAME} STATIC ${INCL}  ${SRC} )
 
-# Build and link
-add_executable( ${3DSOFTVIZ_NAME} ${INCL}  ${SRC} )
+# set compile flags only for our code ( suppresses warnings on system headers )
+target_compile_options( ${3DSOFTVIZ_NAME} PUBLIC ${FLAGS_FOR_DEBUG} )
 
-# set compile flags only for our code ( suppresses warnigns on system headers )
-set_target_properties( ${3DSOFTVIZ_NAME} PROPERTIES COMPILE_FLAGS "${FLAGS_FOR_DEBUG}" )
+target_compile_definitions( ${3DSOFTVIZ_NAME}
+	PUBLIC ${ALL_COMPILE_DEFINITIONS}
+)
+
+if( OpenCV_FOUND )
+	list( APPEND ALL_SYSTEM_HEADERS ${DEPENDENCIES_INCLUDE_DIR}/aruco )
+endif()
+
+list( APPEND ALL_SYSTEM_HEADERS ${DEPENDENCIES_INCLUDE_DIR} )
+list( APPEND ALL_SYSTEM_HEADERS ${DEPENDENCIES_INCLUDE_DIR}/libnoise )
+list( APPEND ALL_SYSTEM_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/easyloggingpp/src )
+
+# works:
+include_directories(SYSTEM ${ALL_SYSTEM_HEADERS})
+# does not work:
+#list(REMOVE_DUPLICATES ALL_SYSTEM_HEADERS)
+# target_include_directories( ${3DSOFTVIZ_NAME}
+# 	SYSTEM PUBLIC ${ALL_SYSTEM_HEADERS}
+# )
+# target_include_directories( ${3DSOFTVIZ_NAME}
+# 	PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
+# )
+
 
 target_link_libraries( ${3DSOFTVIZ_NAME}
 	gitlib
@@ -982,7 +961,6 @@ if( NITE2_FOUND )
 	target_link_libraries( ${3DSOFTVIZ_NAME} ${NITE2_LIBRARIES} )
 endif()
 
-
 if( KINECTSDK_FOUND )
 	target_link_libraries( ${3DSOFTVIZ_NAME} ${KINECTSDK_LIBRARIES} )
 	if( SPEECHSDK_FOUND )
@@ -1005,11 +983,15 @@ endif()
 # 'cotire' the executable
 if( COMMAND cotire )
 	# link ${3DSOFTVIZ_NAME}_unity target to all libraries to which ${3DSOFTVIZ_NAME} links
-	set_target_properties( ${3DSOFTVIZ_NAME} PROPERTIES COTIRE_UNITY_LINK_LIBRARIES_INIT "COPY" )
-	set_target_properties( gitlib PROPERTIES COTIRE_UNITY_LINK_LIBRARIES_INIT "COPY" )
+	set_target_properties( ${3DSOFTVIZ_NAME} PROPERTIES COTIRE_UNITY_LINK_LIBRARIES_INIT "COPY_UNITY" )
 
 	cotire( ${3DSOFTVIZ_NAME} CONFIGURATIONS Debug Release )
-	cotire( gitlib CONFIGURATIONS Debug Release )
+
+	# Work in progress:
+	# get_target_property(UVAR ${3DSOFTVIZ_NAME}_unity INCLUDE_DIRECTORIES)
+	# get_target_property(UVAR2 ${3DSOFTVIZ_NAME}_unity INTERFACE_SYSTEM_INCLUDE_DIRECTORIES)
+	# message("U1<<<<${VAR}")
+	# message("U2<<<<${VAR2}")
 endif()
 
 # Ensure correct dependencies
@@ -1050,19 +1032,48 @@ if( USE_BUILTIN_DEPENDENCIES )
 	endif()
 endif()
 
-# Ensure correct dependencies
-#add_dependencies( ${3DSOFTVIZ_NAME} libnoise )
-#
-#if( OpenCV_FOUND )
-	#add_dependencies( ${3DSOFTVIZ_NAME} aruco )
-#endif()
+# 3Dsoftviz executable
+add_executable( ${3DSOFTVIZ_NAME}_app ${INCL}  ${SRC_MAIN} )
+
+set_target_properties( ${3DSOFTVIZ_NAME}_app PROPERTIES OUTPUT_NAME ${3DSOFTVIZ_NAME} )
+target_compile_options( ${3DSOFTVIZ_NAME}_app PUBLIC ${FLAGS_FOR_DEBUG} )
+target_compile_definitions( ${3DSOFTVIZ_NAME}_app PUBLIC ${ALL_COMPILE_DEFINITIONS} )
+target_link_libraries( ${3DSOFTVIZ_NAME}_app ${3DSOFTVIZ_NAME} )
+
+if( COMMAND cotire )
+	set_target_properties( ${3DSOFTVIZ_NAME}_app PROPERTIES COTIRE_UNITY_LINK_LIBRARIES_INIT "COPY_UNITY" )
+
+	cotire( ${3DSOFTVIZ_NAME}_app CONFIGURATIONS Debug Release )
+endif()
+
 
 # -------------------------------------------------------
 # Install
 # -------------------------------------------------------
 
+# Install destinations
+set( INSTALL_BIN bin CACHE PATH "Where to install binaries to." )
+set( INSTALL_LIB lib CACHE PATH "Where to install lib to." )
+set( INSTALL_DATA share/3dsoftviz CACHE PATH "Directory for shared data." )
+set( INSTALL_DEPS . )
+set( INSTALL_PLUGIN bin )
+set( INSTALL_QTCONF bin )
+
+set( INSTALL_INC include CACHE PATH "Directory for library headers." )
+set( INSTALL_DATA . CACHE PATH "Directory the package can store documentation, tests or other data in." )
+set( INSTALL_DOC ${INSTALL_DATA}/doc CACHE PATH "Recommended directory to install documentation into." )
+set( INSTALL_ETC ${INSTALL_DATA}/etc CACHE PATH "Other files." )
+set( INSTALL_TEST ${INSTALL_DATA}/test CACHE PATH "Test files." )
+set( INSTALL_EXAMPLE ${INSTALL_DATA}/example CACHE PATH "Recommended directory to install examples into." )
+
+# Default install destination
+if( CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT )
+	set( CMAKE_INSTALL_PREFIX ${CMAKE_CURRENT_SOURCE_DIR}/_install CACHE PATH "Installation Destination" FORCE )
+endif()
+
+
 # 3DSoftviz and data
-install( TARGETS ${3DSOFTVIZ_NAME}
+install( TARGETS ${3DSOFTVIZ_NAME}_app
 	BUNDLE DESTINATION ${INSTALL_BUNDLE} COMPONENT Runtime
 	RUNTIME DESTINATION ${INSTALL_BIN} COMPONENT Runtime )
 
@@ -1074,7 +1085,7 @@ install( TARGETS gitlib
 if( COMMAND cotire )
 	add_custom_target( install_unity
 		COMMAND ${CMAKE_COMMAND} -P "cmake_install.cmake" )
-	add_dependencies( install_unity ${3DSOFTVIZ_NAME}_unity )
+	add_dependencies( install_unity ${3DSOFTVIZ_NAME}_app_unity )
 	add_dependencies( install_unity gitlib_unity )
 endif()
 
@@ -1159,6 +1170,69 @@ endif()
 # Packing
 # -------------------------------------------------------
 
+# -----------------------------------------------------------------
+# Platform settings
+# -----------------------------------------------------------------
+
+# Apple specific overrides, we build and app bundle
+option( OSX_BUNDLE "Create an app bundle on OSX." OFF ) # TODO: disabled, because currently it does not work...
+if( APPLE AND OSX_BUNDLE )
+	# Executable settings
+	set( 3DSOFTVIZ_EXECUTABLE_TYPE MACOSX_BUNDLE )
+	set( BUNDLE_APP "\${CMAKE_INSTALL_PREFIX}/${3DSOFTVIZ_NAME}.app" )
+
+	# Override default install destinations into the bundle
+	set( INSTALL_BUNDLE . )
+	set( INSTALL_BIN	${3DSOFTVIZ_NAME}.app/Contents/MacOS )
+	set( INSTALL_DATA	${3DSOFTVIZ_NAME}.app/Contents/share/3DSOFTVIZ )
+	set( INSTALL_RES	${3DSOFTVIZ_NAME}.app/Contents/Resources )
+	set( INSTALL_DEPS	${3DSOFTVIZ_NAME}.app/Contents )
+	set( INSTALL_PLUGIN	${3DSOFTVIZ_NAME}.app/Contents/MacOS )
+	set( INSTALL_QTCONF	${3DSOFTVIZ_NAME}.app/Contents/Resources )
+
+	# Bundle settings
+	set( MACOSX_BUNDLE_INFO_STRING "${3DSOFTVIZ_NAME} ${3DSOFTVIZ_VERSION}" )
+	set( MACOSX_BUNDLE_BUNDLE_VERSION "${3DSOFTVIZ_NAME} ${3DSOFTVIZ_VERSION}" )
+	set( MACOSX_BUNDLE_LONG_VERSION_STRING "${3DSOFTVIZ_NAME} ${3DSOFTVIZ_VERSION}" )
+	set( MACOSX_BUNDLE_SHORT_VERSION_STRING "${3DSOFTVIZ_VERSION}" )
+	set( MACOSX_BUNDLE_COPYRIGHT "${3DSOFTVIZ_COPYRIGHT_YEAR} ${3DSOFTVIZ_VENDOR}" )
+	set( MACOSX_BUNDLE_ICON_FILE "3DSOFTVIZ_app.icns" )# use http://iconverticons.com/legacy/ for icon converting
+	set( MACOSX_BUNDLE_GUI_IDENTIFIER "${3DSOFTVIZ_DOMAIN_SECOND}.${3DSOFTVIZ_DOMAIN_FIRST}.${3DSOFTVIZ_NAME}" )
+	set( MACOSX_BUNDLE_BUNDLE_NAME "${3DSOFTVIZ_NAME}" )
+
+	# CPack settings
+	set( CPACK_GENERATOR "DragNDrop" )
+	set( CPACK_PACKAGE_ICON "${CMAKE_CURRENT_SOURCE_DIR}/resources/3DSOFTVIZ_pkg.icns" )
+	set( CPACK_PACKAGE_FILE_NAME "${3DSOFTVIZ_NAME}-${3DSOFTVIZ_VERSION}" )
+
+	# OSX Specific resources
+	install( FILES "resources/${MACOSX_BUNDLE_ICON_FILE}" DESTINATION ${INSTALL_RES} )
+endif()
+
+# Windows specific overrides
+if( WIN32 )
+	# Executable settings
+	set( 3DSOFTVIZ_EXECUTABLE_TYPE WIN32 )
+	set( BUNDLE_APP "\${CMAKE_INSTALL_PREFIX}/${INSTALL_BIN}/${3DSOFTVIZ_NAME}.exe" )
+
+	# CPack settings
+	set( CPACK_GENERATOR "NSIS" )
+	set( CPACK_PACKAGE_INSTALL_DIRECTORY "${3DSOFTVIZ_NAME}" )
+	set( CPACK_PACKAGE_FILE_NAME "${3DSOFTVIZ_NAME}-${3DSOFTVIZ_VERSION}" )
+	set( CPACK_PACKAGE_EXECUTABLES "${3DSOFTVIZ_NAME}" "${3DSOFTVIZ_NAME}" )
+	set( CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}\\\\LICENSE.txt" )
+
+	# NSIS branding
+	set( CPACK_NSIS_INSTALLED_ICON_NAME "${INSTALL_BIN}\\\\${3DSOFTVIZ_NAME}${CMAKE_EXECUTABLE_SUFFIX}" )
+	set( CPACK_NSIS_DISPLAY_NAME "${3DSOFTVIZ_NAME}" )
+	set( CPACK_NSIS_HELP_LINK "http:\\\\\\\\${3DSOFTVIZ_DOMAIN}" )
+	set( CPACK_NSIS_URL_INFO_ABOUT "http:\\\\\\\\${3DSOFTVIZ_DOMAIN}" )
+	set( CPACK_NSIS_CONTACT "http:\\\\\\\\${3DSOFTVIZ_DOMAIN}" )
+	set( CPACK_NSIS_MUI_ICON "${CMAKE_CURRENT_SOURCE_DIR}\\\\res\\\\3DSOFTVIZ_pkg.ico" )
+	set( CPACK_NSIS_MUI_UNIICON "${CMAKE_CURRENT_SOURCE_DIR}\\\\res\\\\3DSOFTVIZ_rmv.ico" )
+	set( CPACK_PACKAGE_ICON "${CMAKE_CURRENT_SOURCE_DIR}\\\\res\\\\logo2.bmp" )
+endif()
+
 set( CPACK_MONOLITHIC_INSTALL 1 )
 set( CPACK_STRIP_FILES ON )
 set( CPACK_BINARY_DRAGNDROP ON )
@@ -1176,25 +1250,28 @@ include( CPack )
 # BDD Igloo tests
 # -------------------------------------------------------
 
-file( GLOB_RECURSE SRC_TESTS	"tests/*.cpp" )
-add_executable(all_bdd_tests ${SRC_TESTS})
-set_target_properties( all_bdd_tests
-	PROPERTIES
-		COMPILE_FLAGS "${FLAGS_FOR_DEBUG}"
-	)
-target_include_directories( all_bdd_tests
-	SYSTEM PUBLIC
-		include/Repository/Git
-	)
+set( TEST_RUNNER tests/all_tests.cpp )
 
-target_link_libraries( all_bdd_tests
-	${QT_LIBRARIES}
-	gitlib
-)
+#-------------------------------- gitlib module tests -------------------------------
+file( GLOB_RECURSE SRC_GITLIB_TESTS	"tests/Repository/Git/GitLib/*.cpp" )
 
-add_dependencies( all_bdd_tests igloo)
+add_executable( test_gitlib_module ${TEST_RUNNER} ${SRC_GITLIB_TESTS} )
+add_dependencies( test_gitlib_module igloo )
+
+target_include_directories( test_gitlib_module 	PUBLIC
+		${CMAKE_CURRENT_SOURCE_DIR}/include
+		include/Repository/Git 	)
+target_compile_options( test_gitlib_module PUBLIC ${FLAGS_FOR_DEBUG} )
+target_link_libraries( test_gitlib_module ${QT_LIBRARIES} gitlib )
+
+# 'cotire' the executable
+if( COMMAND cotire )
+	set_target_properties( test_gitlib_module PROPERTIES COTIRE_UNITY_LINK_LIBRARIES_INIT "COPY_UNITY" )
+	cotire( test_gitlib_module CONFIGURATIONS Debug Release )
+endif()
 
 
+#-------------------------------- run all tests -------------------------------
 enable_testing()
-add_test(all_bdd_tests all_bdd_tests)
+add_test( testing_gitlib_module test_gitlib_module )
 

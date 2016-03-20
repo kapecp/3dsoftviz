@@ -34,3 +34,6 @@
 [submodule "dependencies/lualogging"]	
 	path = dependencies/lualogging	
 	url = https://github.com/LuaDist/lualogging.git
+[submodule "dependencies/easyloggingpp"]
+	path = dependencies/easyloggingpp
+	url = git@github.com:easylogging/easyloggingpp.git
