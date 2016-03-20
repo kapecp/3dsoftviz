@@ -35,6 +35,8 @@
 
 #include <math.h>
 
+#include <osgShadow/ShadowedScene>
+#include <osgShadow/ShadowMap>
 
 namespace Vwr {
 
@@ -649,8 +651,31 @@ Vwr::CoreGraph::CoreGraph( Data::Graph* graph, osg::ref_ptr<osg::Camera> camera 
 	   //root->addChild( geom1 );
 	*/
 
-	graphRotTransf->addChild( graphGroup );
-	root->addChild( graphRotTransf );
+    //jurik
+    //lighting
+    osg::Light* pLight = new osg::Light;
+    pLight->setLightNum( 1 );
+    pLight->setDiffuse( osg::Vec4(0.5f, 0.5f, 0.5f, 1.0f) );
+    pLight->setPosition( osg::Vec4(0,0,1,0) );		// w = 0 directional light
+                                                    // w = 1 point light (position)
+    // light source
+    osg::LightSource* pLightSource = new osg::LightSource;
+    pLightSource->setLight( pLight );
+    root->addChild( pLightSource );
+
+    //UMBRA
+    shadowedScene = new osgShadow::ShadowedScene;
+    shadowedScene->setReceivesShadowTraversalMask(0x1);
+    shadowedScene->setCastsShadowTraversalMask(0x2);
+    root->addChild(shadowedScene);
+
+    graphRotTransf->addChild( graphGroup );
+    shadowedScene->addChild( graphRotTransf );
+
+    baseGeode = new osg::Geode();
+    baseTransform = new osg::PositionAttitudeTransform();
+    CoreGraph::createBase();
+    //******
 
 	// backgroung this must be last Node in root !!!  ( because of ortho2d background)
 	// Gloger: disabled skybox- using solid background (see setClearColor in ViewerQT)
@@ -760,6 +785,21 @@ void CoreGraph::reload( Data::Graph* graph )
 	// Set browsers to be always on top
 	this->browsersGroup->getGroup()->getOrCreateStateSet()->setMode( GL_DEPTH_TEST, osg::StateAttribute::OFF );
 	this->browsersGroup->getGroup()->getOrCreateStateSet()->setRenderBinDetails( 100,"RenderBin" );
+
+    float maxPosition = 1500;
+    /*QMapIterator<qlonglong, osg::ref_ptr<Data::Node> > it( *in_nodes );
+
+    //get the farest node from center
+    while ( it.hasNext() ) {
+        it.next();
+
+        maxPosition = compare(it.value()->getTargetPosition().x(),maxPosition);
+        maxPosition = compare(it.value()->getTargetPosition().y(),maxPosition);
+        maxPosition = compare(it.value()->getTargetPosition().z(),maxPosition);
+    }
+    qDebug()<< "maxPosition";
+    qDebug()<< maxPosition;*/
+    baseTransform->setScale(osg::Vec3(maxPosition,maxPosition,maxPosition));
 }
 
 void CoreGraph::cleanUp()
@@ -1380,4 +1420,82 @@ void CoreGraph::addTranslateToGraphRotTransf( osg::Vec3d pos )
 
 	graphRotTransf->setMatrix( matrix );
 }
+
+//jurik
+void CoreGraph::turnOnShadows()
+{
+    osg::ref_ptr<osgShadow::ShadowMap> sm = new osgShadow::ShadowMap;
+    shadowedScene->setShadowTechnique(sm.get());
+}
+
+void CoreGraph::turnOffShadows()
+{
+    shadowedScene->setShadowTechnique(NULL);
+}
+
+void CoreGraph::turnOnBase()
+{
+    baseGeode->setNodeMask(0x1);
+}
+
+void CoreGraph::turnOffBase()
+{
+    baseGeode->setNodeMask(0x0);
+}
+
+void CoreGraph::createBase()
+{
+
+    osg::Geometry* baseGeometry = new osg::Geometry();
+
+    baseGeode->addDrawable(baseGeometry);
+    baseGeode->setNodeMask(0x0);
+    osg::Material *material = new osg::Material();
+    material->setDiffuse(osg::Material::FRONT,  osg::Vec4(0.5, 0.5, 0.8, 1.0));
+    material->setEmission(osg::Material::FRONT, osg::Vec4(0.5, 0.5, 0.8, 1.0));
+    baseGeode->getOrCreateStateSet()->setAttribute(material);
+
+    baseTransform->addChild(baseGeode);
+    shadowedScene->addChild(baseTransform);
+
+   //base
+   osg::Vec3Array* vertices = new osg::Vec3Array;
+   vertices->push_back( osg::Vec3( -1, -1, -1) ); // lb
+   vertices->push_back( osg::Vec3(  1, -1, -1) ); // rb
+   vertices->push_back( osg::Vec3(  1,  1, -1) ); // rt
+   vertices->push_back( osg::Vec3( -1,  1, -1) ); // lt
+   vertices->push_back( osg::Vec3(  1,  1,  1) ); // rt1
+   vertices->push_back( osg::Vec3( -1,  1,  1) ); // lt1
+   baseGeometry->setVertexArray( vertices );
+
+   osg::DrawElementsUInt* base = new osg::DrawElementsUInt(osg::PrimitiveSet::QUADS, 0);
+   base->push_back(3);
+   base->push_back(2);
+   base->push_back(1);
+   base->push_back(0);
+
+   baseGeometry->addPrimitiveSet(base);
+
+   osg::DrawElementsUInt* baseBehind = new osg::DrawElementsUInt(osg::PrimitiveSet::QUADS, 0);
+   base->push_back(5);
+   base->push_back(4);
+   base->push_back(2);
+   base->push_back(3);
+
+   baseGeometry->addPrimitiveSet(baseBehind);
+}
+
+float CoreGraph::compare(float a, float b)
+{
+    if(a < 0)
+        a = a* -1;
+
+    qDebug() << a;
+
+    if(a > b)
+        return a;
+    else
+        return b;
+}
+//*****
 }

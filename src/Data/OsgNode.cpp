@@ -329,6 +329,7 @@ osg::ref_ptr<osg::Geode> Data::OsgNode::createNodeSquare( const float& scaling, 
 	nodeQuad->setStateSet( bbState );
 
 	osg::ref_ptr<osg::Geode> geode = new osg::Geode;
+    geode->setNodeMask(geode->getNodeMask() & ~0x2);
 	geode->addDrawable( nodeQuad );
 
 	return geode;
@@ -360,7 +361,7 @@ osg::ref_ptr<osg::Geode> Data::OsgNode::createNodeSphere( const float& scaling, 
 	nodeSphere->setUseDisplayList( false );
 
 	osg::ref_ptr<osg::Geode> geode = new osg::Geode;
-	geode->addDrawable( nodeSphere );
+    geode->addDrawable( nodeSphere );
 
 	return geode;
 }
@@ -400,6 +401,7 @@ osg::ref_ptr<osg::Geode> Data::OsgNode::createLabel( const float& scale, QString
 //    label->setBackdropOffset(0.05f);
 
 	osg::ref_ptr<osg::Geode> geode = new osg::Geode;
+    geode->setNodeMask(geode->getNodeMask() & ~0x2);
 	geode->addDrawable( label );
 
 	return geode;
