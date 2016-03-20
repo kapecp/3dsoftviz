@@ -42,7 +42,7 @@ Viewer.Textures.OrientedEdgeSuffix=.png
 Viewer.Textures.MetaNode=../share/3dsoftviz/img/textures/MetaNode.png
 
 Viewer.Fullscreen=0
-Viewer.SkyBox.Noise=3
+Viewer.SkyBox.Noise=0
 Viewer.SkyBox.North=../share/3dsoftviz/img/skybox/default/rays_north.bmp
 Viewer.SkyBox.East=../share/3dsoftviz/img/skybox/default/rays_east.bmp
 Viewer.SkyBox.South=../share/3dsoftviz/img/skybox/default/rays_south.bmp
