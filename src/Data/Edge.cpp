@@ -486,6 +486,19 @@ void Data::Edge::setVisual( int index )
 	setValue( static_cast<unsigned int>( index ), !isInvisible );
 }
 
+void Data::Edge::reloadColor() {
+    osg::Geometry* geometry  = getChild( INDEX_QUAD )->asGeode()->getDrawable( 0 )->asGeometry();
+    if( geometry != nullptr) {
+        osg::Vec4Array* colorArray =  dynamic_cast<osg::Vec4Array*>( geometry->getColorArray() );
+        colorArray->pop_back();
+        colorArray->push_back( this->edgeColor );
+    }
+
+//    ( dynamic_cast<osg::ShapeDrawable*>( getChild( INDEX_CURVE )->asGeode()->getDrawable( 0 ) ) )->setColor( this->edgeColor );
+//    ( dynamic_cast<osg::ShapeDrawable*>( getChild( INDEX_CYLINDER )->asGeode()->getDrawable( 0 ) ) )->setColor( this->edgeColor );
+//    ( dynamic_cast<osg::ShapeDrawable*>( getChild( INDEX_LINE )->asGeode()->getDrawable( 0 ) ) )->setColor( this->edgeColor );
+}
+
 //Marak start
 void Data::Edge::setEdgeDefaultColor()
 {

@@ -565,6 +565,13 @@ public slots:
      */
     void changeCommits( bool change );
 
+    /**
+     * void showLuaStats( bool show )
+     * @brief Determine if lua metrics should be visualized
+     * @param True, if lua metrics should be visualized, otherwise false
+     */
+    void showLuaStats( bool show );
+
 	/**
 	 * void fasterEvolution()
 	 * @brief Sets up faster evolution
@@ -1025,6 +1032,12 @@ private:
      *@brief chb_git_changeCommits
      */
     QCheckBox* chb_git_changeCommits;
+
+    /**
+     * QCheckBox* chb_git_showLuaStats
+     * @brief CheckBox for visualizing lua metrics
+     */
+    QCheckBox* chb_git_showLuaStats;
 
 	bool isRunning;
 

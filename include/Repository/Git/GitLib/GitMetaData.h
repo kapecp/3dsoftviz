@@ -52,22 +52,30 @@ public:
         return this->luaMapping;
     }
 
-    void setRemovedVersion( int version ) {
-        this->removedVersion = version;
+    void setChangedVersion( int version ) {
+        this->changedVersion = version;
     }
 
-    int getRemovedVersion() {
-        return this->removedVersion;
+    int getChangedVersion() {
+        return this->changedVersion;
     }
 
-    void clearRemovedVersion() {
-        this->removedVersion = -1;
+    void clearChangedVersion() {
+        this->changedVersion = -1;
     }
 
     void setCallTree( Repository::Git::GitFile* file );
 
     Repository::Git::GitFile* getCallTree() {
         return this->callTree;
+    }
+
+    void setFirstOccurence( int firstOccurence ) {
+        this->firstOccurenceInGraph = firstOccurence;
+    }
+
+    int getFirstOccurence() {
+        return this->firstOccurenceInGraph;
     }
 
 private:
@@ -79,7 +87,9 @@ private:
 
     qlonglong luaMapping;
 
-    int removedVersion;
+    int firstOccurenceInGraph;
+
+    int changedVersion;
 
     Repository::Git::GitFile* callTree;
 
