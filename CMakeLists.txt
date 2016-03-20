@@ -473,7 +473,7 @@ if( USE_BUILTIN_DEPENDENCIES )
 		endif()
 	endif()
 
-	if( NOT MSVC )
+	if( NOT MSVC AND NOT APPLE )
 		# NOTE: on MSVC Diluculum code is directly inserted
 
 		# Build Diluculum
@@ -909,7 +909,7 @@ if( MOUSE3D_FOUND )
 endif()
 
 # add diluculum code directly due to MSVC problems
-if( MSVC )
+if( MSVC OR APPLE )
 	include_directories( SYSTEM dependencies/diluculum/include )
 	#include_directories( SYSTEM $ENV{CMAKE_INCLUDE_PATH} )
 
@@ -943,7 +943,7 @@ target_compile_options( gitlib PUBLIC ${REPLACED_FLAGS} )
 # Build and link 3Dsoftviz
 # ---------------------------------------------------------------
 
-if( MSVC )
+if( MSVC OR APPLE )
 	list( APPEND SRC ${SRC_DILUCULUM} )
 endif()
 
@@ -965,7 +965,7 @@ target_link_libraries( ${3DSOFTVIZ_NAME}
 	${OSGVIEWER_LIBRARIES}
 )
 
-if( NOT MSVC )
+if( NOT MSVC AND NOT APPLE )
 	target_link_libraries( ${3DSOFTVIZ_NAME} diluculum
 	)
 endif()
