@@ -3689,7 +3689,7 @@ void CoreWindow::loadFunctionCall()
 	layout->pause();
 	coreGraph->setNodesFreezed( true );
 
-    Lua::LuaGraphVisualizer* visualizer = visualizer = new Lua::SimpleGraphVisualizer( currentGraph, coreGraph->getCamera() );
+	Lua::LuaGraphVisualizer* visualizer = new Lua::SimpleGraphVisualizer( currentGraph, coreGraph->getCamera() );
 	visualizer->visualize();
 
 	coreGraph->reloadConfig();
