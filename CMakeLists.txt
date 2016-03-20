@@ -489,7 +489,7 @@ if( USE_BUILTIN_DEPENDENCIES )
 		endif()
 	endif()
 
-	if( NOT MSVC AND NOT APPLE )
+	if( NOT MSVC )
 		# NOTE: on MSVC Diluculum code is directly inserted
 
 		# Build Diluculum
@@ -899,7 +899,7 @@ endif()
 # ---------------------------------------------------------------
 
 
-if( MSVC OR APPLE )
+if( MSVC )
 	list( APPEND SRC ${SRC_DILUCULUM} )
 endif()
 # 3Dsoftviz library
@@ -944,7 +944,7 @@ target_link_libraries( ${3DSOFTVIZ_NAME}
 	${OSGVIEWER_LIBRARIES}
 )
 
-if( NOT MSVC AND NOT APPLE )
+if( NOT MSVC )
 	target_link_libraries( ${3DSOFTVIZ_NAME} diluculum
 	)
 endif()
