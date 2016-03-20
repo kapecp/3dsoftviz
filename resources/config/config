@@ -25,6 +25,9 @@ Viewer.Display.ViewDistance=10000.0
 Viewer.Labels.Font=../share/3dsoftviz/fonts/OpenSans-Regular.ttf
 Viewer.PickHandler.PickedEdgeDistance=200.0
 Viewer.Textures.DefaultNodeScale=8
+Viewer.Textures.DefaultEdgeScale=8
+Viewer.Textures.EvolutionEdgeScale=30
+Viewer.Textures.EvolutionNodeScale=50
 Viewer.Textures.AuthorNodeScale=15
 Viewer.Textures.AuthorEdge=../share/3dsoftviz/img/textures/AuthorEdge.bmp
 Viewer.Textures.Author=../share/3dsoftviz/img/textures/author.png
@@ -73,3 +76,4 @@ Label.Color=51,102,153,255
 Label.Outline.Color=200,230,255,255
 
 Git.ExtensionFilter= lua
+Git.ExcludeDirectories=spec

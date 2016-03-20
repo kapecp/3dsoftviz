@@ -32,8 +32,8 @@ Repository::Git::GitLuaGraphAnalyzer::GitLuaGraphAnalyzer( Lua::LuaGraph *luaGra
 }
 
 Repository::Git::GitLuaGraphAnalyzer::~GitLuaGraphAnalyzer() {
-	qDebug() << "Destruktor GitLuaGraphAnalyzer";
-	delete functions;
+//    qDebug() << "Destruktor GitLuaGraphAnalyzer";
+    delete functions;
 }
 
 void Repository::Git::GitLuaGraphAnalyzer::analyze() {
@@ -73,17 +73,9 @@ void Repository::Git::GitLuaGraphAnalyzer::analyze() {
 					// LuaNode, ku ktoremu smeruje hrana zo suboru
 					pairNode = this->luaGraph->getNodes()->value( otherIncidence->getEdgeNodePair().second );
 
-					// Ziskam identifikator globalnej funkcie
-					QString functionIdentifier =  pairNode->getIdentifier();
-/*                    QString functionIdentifier =  edge->getIdentifier().replace( "+", "" ).replace( node->getIdentifier(), "" );
+                    // Ziskam identifikator globalnej funkcie
+                    QString functionIdentifier =  pairNode->getIdentifier();
 
-					// pri ojedinelych pripadoch sa stane pripad, kedy ide hrana do tohto isteho uzla
-					// zatial work around
-					if( functionIdentifier == "" ) {
-						functionIdentifier = node->getIdentifier();
-					}
-//                    qDebug() << "Identifikator" << functionIdentifier;
-*/
                     // Zistim, ci sa identifikator globalnej funkcie nachadza uz v ulozenych funkciach pre dany subor
                     Repository::Git::GitFunction* function = functions.value( functionIdentifier );
 
@@ -143,14 +135,6 @@ void Repository::Git::GitLuaGraphAnalyzer::analyze() {
                         // Ziskam identifikator lokalnej funkcie
                         QString functionIdentifier = pairNode->getIdentifier();
 
-                        /*QString functionIdentifier = edge->getIdentifier().replace( "+", "" ).replace( node->getIdentifier(), "" );
-
-                        // pri ojedinelych pripadoch sa stane pripad, kedy ide hrana do tohto isteho uzla
-                        // zatial work around
-                        if( functionIdentifier == "" ) {
-                            functionIdentifier = node->getIdentifier();
-                        }*/
-
                         // Zistim, ci sa identifikator lokalnej funkcie nachadza uz v ulozenych funkciach pre dany subor
                         Repository::Git::GitFunction* function =  functions.value( functionIdentifier );
 
@@ -204,12 +188,6 @@ void Repository::Git::GitLuaGraphAnalyzer::analyze() {
 
                                 // Ziskam identifikator funkcie(moze ist o lokalnu, aj globalnu)
                                 QString innerFunctionIdentifier = functionPairNode->getIdentifier();
-                                /*QString innerFunctionIdentifier =  functionEdge->getIdentifier().replace( "+", "" ).replace( pairNode->getIdentifier(), "" );
-                                // pri ojedinelych pripadoch sa stane pripad, kedy ide hrana do tohto isteho uzla
-                                // zatial work around
-                                if( innerFunctionIdentifier == "" ) {
-                                    innerFunctionIdentifier = pairNode->getIdentifier();
-                                }*/
 
                                 // Zistim, ci sa identifikator funkcie nachadza uz v ulozenych funkciach pre dany subor
                                 Repository::Git::GitFunction* innerFunction = functions.value( innerFunctionIdentifier );
@@ -287,9 +265,8 @@ void Repository::Git::GitLuaGraphAnalyzer::analyze() {
 				}
 			}
 */
-//            qDebug() << node->getIdentifier() << "s poctom incidence" << node->getIncidences().size() << "/" << counter << "/" << file->getGitFunctions()->size();
-		}
-	}
+        }
+    }
 
     // Spracovanie suborov, ktore maju typ REMOVED
     QMap<QString, Repository::Git::GitFile*>* removedFiles = this->evolutionGraph->getVersion( this->getVersionNumber() )->getGitFilesByType( Repository::Git::GitType::REMOVED );
@@ -398,22 +375,18 @@ void Repository::Git::GitLuaGraphAnalyzer::compareFilesAndSaveToEvolutionGraph( 
 
 void Repository::Git::GitLuaGraphAnalyzer::compareFunctions( Repository::Git::GitFunction *newFunction, Repository::Git::GitFunction *oldFunction, QMap<QString, bool> *functions, QString masterIdentifier, Repository::Git::GitFile* masterFile ) {
 
-	// Ak su obe funkcie rozdielne od nullptr
-	if( newFunction != nullptr && oldFunction != nullptr ) {
-		if( newFunction->getFunctionType() == Repository::Git::GitFunctionType::GLOBALFUNCTION ) {
-			// ToDo Tu sme uz asi skoncili, lebo zmeny v globalnych funkciach nevieme dohladat ani pomocou inspekcie AST
-		} else {
-			// ToDo Ide o lokalnu funkciu, ktoru treba porovnat s jej predchadzajucou verziou
-			// Zistit viem zatial len rozdiel, stav MODIFIED este nedokazem zistit, bez zaciatkov jednotlivych lokalnych funkcii
+    // Ak su obe funkcie rozdielne od nullptr
+    if( newFunction != nullptr && oldFunction != nullptr ) {
+        if( !newFunction->getFunctionType() == Repository::Git::GitFunctionType::GLOBALFUNCTION ) {
 
-			// pomocna premenna na zistenie, ci sa lokalna funkcia zmenila
-			bool isChanged = false;
+            // Spracujeme vsetky funkcie, ktore vola nova funkcia
+            for( QMap<QString, Repository::Git::GitFunction*>::iterator iterator =  newFunction->getFunctionCallers()->begin(); iterator != newFunction->getFunctionCallers()->end(); ++iterator ) {
 
-			for( QMap<QString, Repository::Git::GitFunction*>::iterator iterator =  newFunction->getFunctionCallers()->begin(); iterator != newFunction->getFunctionCallers()->end(); ++iterator ) {
-				if( !oldFunction->getFunctionCallers()->contains( iterator.value()->getIdentifier() ) ) {
-//                    qDebug() << iterator.value()->getIdentifier() << "sa nenachadza v" << oldFunction->getIdentifier() << "IS ADDED!!!";
+                // Ak sa nova funkcia nenachadza v zozname volanych funkcii starej funkcie, tak spravime klon tejto funkcie do evolucneho grafu
+                if( !oldFunction->getFunctionCallers()->contains( iterator.value()->getIdentifier() ) ) {
 
-					Repository::Git::GitFunction* addedFunction = new Repository::Git::GitFunction();
+                    // Spravime kopiu novej funkcie
+                    Repository::Git::GitFunction* addedFunction = new Repository::Git::GitFunction();
 
 					addedFunction->setName( iterator.value()->getName() );
 					addedFunction->setModule( iterator.value()->getModule() );
@@ -421,25 +394,27 @@ void Repository::Git::GitLuaGraphAnalyzer::compareFunctions( Repository::Git::Gi
 					addedFunction->setType( Repository::Git::GitType::ADDED );
 					addedFunction->setFunctionType( iterator.value()->getFunctionType() );
 
-					Repository::Git::GitFunction* cloneNewFunction = masterFile->getGitFunctions()->value( newFunction->getIdentifier() );
+                    // Ziskame lokalnu funkciu, z ktore bola nova funkcia volana, ak existuje
+                    Repository::Git::GitFunction* cloneNewFunction = masterFile->getGitFunctions()->value( newFunction->getIdentifier() );
 
-					if( !cloneNewFunction ) {
-						cloneNewFunction = new Repository::Git::GitFunction();
-						cloneNewFunction->setName( newFunction->getName() );
-						cloneNewFunction->setId( newFunction->getId() );
-						cloneNewFunction->setModule( newFunction->getModule() );
-						cloneNewFunction->setType( Repository::Git::GitType::MODIFIED );
-						cloneNewFunction->setFunctionType( newFunction->getFunctionType() );
+                    // Ak neexistuje, tak spravime klon tejto funkcie
+                    if( !cloneNewFunction ) {
+                        cloneNewFunction = new Repository::Git::GitFunction();
+                        cloneNewFunction->setName( newFunction->getName() );
+                        cloneNewFunction->setId( newFunction->getId() );
+                        cloneNewFunction->setModule( newFunction->getModule() );
+                        cloneNewFunction->setType( Repository::Git::GitType::MODIFIED );
+                        cloneNewFunction->setFunctionType( newFunction->getFunctionType() );
 
 						masterFile->addGitFunction( cloneNewFunction );
 					}
 
-					cloneNewFunction->addFunctionCaller( addedFunction );
-					addedFunction->addFunctionCallee( cloneNewFunction );
+                    // Prepojime dane funkcie
+                    cloneNewFunction->addFunctionCaller( addedFunction );
+                    addedFunction->addFunctionCallee( cloneNewFunction );
 
-					isChanged = true;
-				}
-			}
+                }
+            }
 
 			for( QMap<QString, Repository::Git::GitFunction*>::iterator iterator = oldFunction->getFunctionCallers()->begin(); iterator != oldFunction->getFunctionCallers()->end(); ++iterator ) {
 				if( !newFunction->getFunctionCallers()->contains( iterator.value()->getIdentifier() ) ) {
@@ -469,9 +444,8 @@ void Repository::Git::GitLuaGraphAnalyzer::compareFunctions( Repository::Git::Gi
 					cloneNewFunction->addFunctionCaller( removedFunction );
 					removedFunction->addFunctionCallee( cloneNewFunction );
 
-					isChanged = true;
-				}
-			}
+                }
+            }
 
 			// Ak obsahuje tak musime skontrolovat, ci sa nemodifikovala nejaka lokalna funkcia
 			int result = calculateRealResult( newFunction->getId() );
@@ -517,7 +491,7 @@ void Repository::Git::GitLuaGraphAnalyzer::compareFunctions( Repository::Git::Gi
                                     }
                                 }
 
-                                qDebug() << newFunction->getIdentifier() << "was MODIFIED!!!!!!!!!!!";
+//                                qDebug() << newFunction->getIdentifier() << "was MODIFIED!!!!!!!!!!!";
                                 isFound = true;
                                 break;
                             }
@@ -544,7 +518,7 @@ void Repository::Git::GitLuaGraphAnalyzer::compareFunctions( Repository::Git::Gi
                                     }
                                 }
 
-                                qDebug() << newFunction->getIdentifier() << "was MODIFIED!!!!!!!!!!!";
+//                                qDebug() << newFunction->getIdentifier() << "was MODIFIED!!!!!!!!!!!";
                                 isFound = true;
                                 break;
                                 }

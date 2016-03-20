@@ -744,6 +744,10 @@ void CoreWindow::createActions()
     chb_git_changeCommits = new QCheckBox( tr( "Change commits" ) );
     chb_git_changeCommits->setChecked( true );
     connect( chb_git_changeCommits, SIGNAL( clicked( bool ) ), this, SLOT( changeCommits( bool ) ) );
+
+    chb_git_showLuaStats = new QCheckBox( tr( "Show lua metrics" ) );
+    chb_git_showLuaStats->setChecked( false );
+    connect( chb_git_showLuaStats, SIGNAL( clicked( bool ) ), this, SLOT( showLuaStats( bool ) ) );
 	// garaj end
 }
 
@@ -1171,7 +1175,8 @@ QWidget* CoreWindow::createMoreFeaturesTab( QFrame* line )
 	lMore->addRow( new QLabel( ( tr( "Life span:" ) ) ), evolutionLifespanSpinBox );
 	lMore->addRow( b_git_diff );
 	lMore->addRow( b_git_lua_graph );
-	lMore->addRow( chb_git_changeCommits );
+    lMore->addRow( chb_git_changeCommits );
+    lMore->addRow( chb_git_showLuaStats );
 
 	wMore->setLayout( lMore );
 
@@ -1749,8 +1754,8 @@ void CoreWindow::loadFromGit()
 				layout->pause();
 				coreGraph->setNodesFreezed( true );
 
-				Repository::Git::GitLuaGraphVisualizer visualizer = Repository::Git::GitLuaGraphVisualizer( Manager::GraphManager::getInstance()->getActiveGraph(), Manager::GraphManager::getInstance()->getActiveEvolutionGraph(), this->coreGraph->getCamera() );
-				visualizer.visualize( true );
+                Repository::Git::GitLuaGraphVisualizer visualizer = Repository::Git::GitLuaGraphVisualizer( Manager::GraphManager::getInstance()->getActiveGraph(), Manager::GraphManager::getInstance()->getActiveEvolutionGraph(), this->coreGraph->getCamera(), this->chb_git_showLuaStats->isChecked() );
+                visualizer.visualize( true );
 //                Lua::LuaGraphVisualizer* visualizer = new Lua::GitGraphVisualizer( Manager::GraphManager::getInstance()->getActiveGraph(), coreGraph->getCamera() );
 //                visualizer->visualize();
 
@@ -1798,7 +1803,6 @@ void CoreWindow::loadLuaGraph() {
 	QString createGraph[] = {"function_call_graph", "extractGraph"};
 	lua->callFunction( 2, createGraph, path.getValue() );
 	lua->doString( "getGraph = function_call_graph.getGraph" );
-
 	Lua::LuaInterface::getInstance()->doString( "getFullGraph = getGraph" );
 
 	Data::Graph* currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
@@ -3966,8 +3970,8 @@ bool CoreWindow::nextVersion()
 		layout->pause();
 		coreGraph->setNodesFreezed( true );
 
-		Repository::Git::GitLuaGraphVisualizer visualizer = Repository::Git::GitLuaGraphVisualizer( Manager::GraphManager::getInstance()->getActiveGraph(), Manager::GraphManager::getInstance()->getActiveEvolutionGraph(), this->coreGraph->getCamera() );
-		visualizer.visualize( true );
+        Repository::Git::GitLuaGraphVisualizer visualizer = Repository::Git::GitLuaGraphVisualizer( Manager::GraphManager::getInstance()->getActiveGraph(), Manager::GraphManager::getInstance()->getActiveEvolutionGraph(), this->coreGraph->getCamera(), this->chb_git_showLuaStats->isChecked() );
+        visualizer.visualize( true );
 
 		coreGraph->reloadConfig();
 		if ( isPlaying ) {
@@ -4024,8 +4028,8 @@ bool CoreWindow::previousVersion()
 		layout->pause();
 		coreGraph->setNodesFreezed( true );
 
-		Repository::Git::GitLuaGraphVisualizer visualizer = Repository::Git::GitLuaGraphVisualizer( Manager::GraphManager::getInstance()->getActiveGraph(), Manager::GraphManager::getInstance()->getActiveEvolutionGraph(), this->coreGraph->getCamera() );
-		visualizer.visualize( false );
+        Repository::Git::GitLuaGraphVisualizer visualizer = Repository::Git::GitLuaGraphVisualizer( Manager::GraphManager::getInstance()->getActiveGraph(), Manager::GraphManager::getInstance()->getActiveEvolutionGraph(), this->coreGraph->getCamera(), this->chb_git_showLuaStats->isChecked() );
+        visualizer.visualize( false );
 
 		coreGraph->reloadConfig();
 		if ( isPlaying ) {
@@ -4155,6 +4159,14 @@ void CoreWindow::changeCommits( bool value ) {
 		b_faster_evolution->setEnabled( false );
 		b_slower_evolution->setEnabled( false );
 	}
+}
+
+void CoreWindow::showLuaStats( bool show ) {
+    chb_git_showLuaStats->setChecked( show );
+    if( Manager::GraphManager::getInstance()->getActiveEvolutionGraph() ) {
+        Repository::Git::GitLuaGraphVisualizer visualizer = Repository::Git::GitLuaGraphVisualizer( Manager::GraphManager::getInstance()->getActiveGraph(), Manager::GraphManager::getInstance()->getActiveEvolutionGraph(), this->coreGraph->getCamera(), show );
+        visualizer.changeNodeRepresentation();
+    }
 }
 
 void CoreWindow::createEvolutionLuaGraph()
