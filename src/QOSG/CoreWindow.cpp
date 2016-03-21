@@ -183,6 +183,9 @@ void CoreWindow::createActions()
 	exampleGraphLua = new QAction( "Lua Example", this );
 	connect( exampleGraphLua, SIGNAL( triggered() ), this, SLOT( loadExampleGraphLua() ) );
 
+	switchBackgroundAction = new QAction( "Change background", this );
+	connect( switchBackgroundAction, SIGNAL( triggered() ), this, SLOT( switchBackground() ) );
+
 	play = new QPushButton();
 	play->setIcon( QIcon( "../share/3dsoftviz/img/gui/pause.png" ) );
 	play->setToolTip( "&Play" );
@@ -791,6 +794,9 @@ void CoreWindow::createMenus()
 	examples->addAction( exampleGraphBasic500 );
 	examples->addAction( exampleGraphVeolia );
 	examples->addAction( exampleGraphLua );
+
+	backgroundMenu = menuBar()->addMenu("Change background");
+	backgroundMenu->addAction( switchBackgroundAction );
 }
 
 QtColorPicker* CoreWindow::createColorPicker()
@@ -1831,6 +1837,12 @@ void CoreWindow::loadLuaGraph() {
 	if( currentGraph == NULL ) {
 		currentGraph = Manager::GraphManager::getInstance()->createNewGraph( "LuaGraph" );
 	}
+
+}
+
+void CoreWindow::switchBackground() {
+	qDebug() << "[INFO] Switch background menu selected";
+
 
 }
 

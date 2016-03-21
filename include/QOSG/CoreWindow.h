@@ -261,6 +261,13 @@ void loadExampleGraphLua();
 	void labelOnOff( bool checked );
 
 	/**
+	 * void switchBackground(  )
+	 * @brief TODO
+	 * @param TODO
+	 */
+	void switchBackground();
+
+	/**
 				*  \fn public  sliderValueChanged(int value)
 				*  \brief Slider value is changed
 				*  \param value actual value of slider
@@ -742,6 +749,13 @@ private:
 		*  QPushButton * play
 		*  \brief Action for play/pause layout
 		*/
+
+	/**
+	 * QAction * switchBackgroundAction
+	 *@brief Action to switch/change background
+	 */
+	QAction* switchBackgroundAction;
+
 	QPushButton* play;
 
 	QPushButton* showMetricsButton;
@@ -1173,6 +1187,12 @@ private:
 		*  \brief Pointer to menu of tests
 		*/
 	QMenu* examples;
+
+	/**
+		*  QMenu * backgroundMenu
+		*  \brief Pointer to menu for switching/changing background in app
+		*/
+	QMenu* backgroundMenu;
 
 	/**
 		*  QOSG::ViewerQT * viewerWidget
