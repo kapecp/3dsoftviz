@@ -746,16 +746,15 @@ private:
 	QAction* exampleGraphLua;
 
 	/**
-		*  QPushButton * play
-		*  \brief Action for play/pause layout
-		*/
-
-	/**
 	 * QAction * switchBackgroundAction
 	 *@brief Action to switch/change background
 	 */
 	QAction* switchBackgroundAction;
 
+	/**
+		*  QPushButton * play
+		*  \brief Action for play/pause layout
+		*/
 	QPushButton* play;
 
 	QPushButton* showMetricsButton;
