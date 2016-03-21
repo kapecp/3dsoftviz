@@ -914,10 +914,6 @@ endif()
 # Build and link 3Dsoftviz
 # ---------------------------------------------------------------
 
-
-if( MSVC )
-	list( APPEND SRC ${SRC_DILUCULUM} )
-endif()
 # 3Dsoftviz library
 add_library( ${3DSOFTVIZ_NAME} STATIC ${INCL}  ${SRC} )
 
@@ -935,6 +931,8 @@ endif()
 list( APPEND ALL_SYSTEM_HEADERS ${DEPENDENCIES_INCLUDE_DIR} )
 list( APPEND ALL_SYSTEM_HEADERS ${DEPENDENCIES_INCLUDE_DIR}/libnoise )
 list( APPEND ALL_SYSTEM_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/easyloggingpp/src )
+
+list( APPEND ALL_SYSTEM_HEADERS include/Leap )
 
 # works:
 include_directories(SYSTEM ${ALL_SYSTEM_HEADERS})
