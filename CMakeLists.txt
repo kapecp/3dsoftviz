@@ -874,7 +874,7 @@ target_include_directories( qtcolorpicker SYSTEM PUBLIC ${CMAKE_CURRENT_SOURCE_D
 # ---------------------------------------------------------------
 
 #-------------------------------- gitlib module -------------------------------
-add_library( gitlib SHARED ${SRC_GITLIB} ${HEADER_GITLIB})
+add_library( gitlib STATIC ${SRC_GITLIB} ${HEADER_GITLIB})
 
 target_include_directories( gitlib
 	SYSTEM PUBLIC
@@ -882,7 +882,7 @@ target_include_directories( gitlib
 		include/Repository/Git
 )
 
-target_compile_definitions( gitlib PUBLIC -DGITLIB_LIBRARY )
+target_compile_definitions( gitlib PUBLIC -DGITLIB_LIBRARY_STATIC )
 
 target_compile_options( gitlib PUBLIC ${FLAGS_FOR_DEBUG} )
 
@@ -898,14 +898,14 @@ endif()
 
 #leap
 if( LEAP_FOUND )
-add_library( leaplib SHARED ${SRC_LEAPLIB} ${HEADER_LEAPLIB})
+add_library( leaplib STATIC ${SRC_LEAPLIB} ${HEADER_LEAPLIB})
 target_include_directories( leaplib SYSTEM PUBLIC ${LEAP_INCLUDE_DIRS} include/Leap } )
-target_link_libraries( leaplib ${QT_LIBRARIES} ${LEAP_LIBRARIES})
+# target_link_libraries( leaplib ${QT_LIBRARIES} ${LEAP_LIBRARIES})
 endif()
 
 if( LEAP_FOUND )
 set(FLAGS_FOR_DEBUG3 ${FLAGS_FOR_DEBUG})
-list(APPEND FLAGS_FOR_DEBUG3 " -DLEAPLIB_LIBRARY")
+list(APPEND FLAGS_FOR_DEBUG3 " -DLEAPLIB_LIBRARY_STATIC")
 string(REPLACE " " ";" REPLACED_FLAGS2 ${FLAGS_FOR_DEBUG3})
 target_compile_options( leaplib PUBLIC ${REPLACED_FLAGS2} )
 endif()
@@ -987,7 +987,7 @@ endif()
 # endif()
 
 if( LEAP_FOUND )
-	target_link_libraries( ${3DSOFTVIZ_NAME} ${LEAP_LIBRARIES} )
+	target_link_libraries( ${3DSOFTVIZ_NAME} leaplib ${LEAP_LIBRARIES} )
 endif()
 
 if( MOUSE3D_FOUND )
@@ -1106,12 +1106,12 @@ install( TARGETS ${3DSOFTVIZ_NAME}_app
 	RUNTIME DESTINATION ${INSTALL_BIN} COMPONENT Runtime )
 
 install( TARGETS gitlib
-	RUNTIME DESTINATION ${INSTALL_BIN} COMPONENT Runtime
+	ARCHIVE DESTINATION ${INSTALL_BIN} COMPONENT Runtime
 	LIBRARY DESTINATION ${INSTALL_LIB} COMPONENT Runtime )
 
 if( LEAP_FOUND )
 	install( TARGETS leaplib
-	RUNTIME DESTINATION ${INSTALL_BIN} COMPONENT Runtime
+	ARCHIVE DESTINATION ${INSTALL_BIN} COMPONENT Runtime
 	LIBRARY DESTINATION ${INSTALL_LIB} COMPONENT Runtime )
 endif()
 
