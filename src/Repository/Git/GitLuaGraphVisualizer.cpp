@@ -834,6 +834,7 @@ void Repository::Git::GitLuaGraphVisualizer::reloadNodeRepresentation( bool show
         } else {
 
             // Nastavime default farbu a zresetujeme uzol
+            iterator.value()->setType( this->currentGraph->getTypesByName( "clearNode" ).at( 0 ) );
             iterator.value()->setColor( osg::Vec4f( 1, 1, 1, 1 ) );
             iterator.value()->reloadConfig();
         }
