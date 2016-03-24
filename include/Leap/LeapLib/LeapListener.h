@@ -1,7 +1,9 @@
 #ifndef LEAPLISTENER_H
 #define LEAPLISTENER_H
 #include "Leap.h"
-#include "Leap/LeapActions.h"
+#include "LeapLib/LeapActions.h"
+#include "LeapLib/LeapCameraManipulator.h"
+#include "LeapLib/LeapExport.h"
 
 namespace Leap {
 
@@ -12,14 +14,17 @@ class LeapListener;
  * @brief The Leap listener class
  * @brief Overrides listener actions from default Listener with custom code
  */
-class LeapListener : public Listener
+class LEAPLIB_EXPORT LeapListener : public Listener
 {
 public:
 
 	/**
 	 * @brief Class that contains Actions that should be executed after a specific gesture
 	 */
-	LeapActions leapActions;
+	LeapActions* leapActions;
+
+	LeapListener(LeapCameraManipulator* cameraManipulator);
+	~LeapListener(void);
 
 	void onInit( const Controller& );
 	void onConnect( const Controller& );

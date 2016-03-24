@@ -3,6 +3,7 @@
 
 #include "GitLib/GitExport.h"
 #include "GitLib/GitType.h"
+
 #include <QString>
 #include <QStringList>
 #include <QList>

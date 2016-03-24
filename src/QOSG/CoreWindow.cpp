@@ -138,7 +138,7 @@ CoreWindow::CoreWindow( QWidget* parent, Vwr::CoreGraph* coreGraph, QApplication
 					  viewerWidget->getCameraManipulator(), SLOT( setCameraCanRot( bool ) ) );
 
 	Lua::LuaInterface::getInstance()->executeFile( "main.lua" );
-    viewerWidget->getPickHandler()->setSelectionObserver( this );
+	viewerWidget->getPickHandler()->setSelectionObserver( this );
 
 	QObject::connect( viewerWidget->getCameraManipulator(), SIGNAL( sendTranslatePosition( osg::Vec3d ) ),
 					  this->coreGraph, SLOT( translateGraph( osg::Vec3d ) ) );
@@ -171,17 +171,17 @@ void CoreWindow::createActions()
 
 	about = new QAction( "About", this );
 
-    exampleGraphBasic100 = new QAction( "Basic Example (100 nodes)", this );
-    connect( exampleGraphBasic100, SIGNAL( triggered() ), this, SLOT( loadExampleGraphBasic100() ) );
+	exampleGraphBasic100 = new QAction( "Basic Example (100 nodes)", this );
+	connect( exampleGraphBasic100, SIGNAL( triggered() ), this, SLOT( loadExampleGraphBasic100() ) );
 
-    exampleGraphBasic500 = new QAction( "Basic Example (500 nodes)", this );
-    connect( exampleGraphBasic500, SIGNAL( triggered() ), this, SLOT( loadExampleGraphBasic500() ) );
+	exampleGraphBasic500 = new QAction( "Basic Example (500 nodes)", this );
+	connect( exampleGraphBasic500, SIGNAL( triggered() ), this, SLOT( loadExampleGraphBasic500() ) );
 
-    exampleGraphVeolia = new QAction( "Veolia Example", this );
-    connect( exampleGraphVeolia, SIGNAL( triggered() ), this, SLOT( loadExampleGraphVeolia() ) );
+	exampleGraphVeolia = new QAction( "Veolia Example", this );
+	connect( exampleGraphVeolia, SIGNAL( triggered() ), this, SLOT( loadExampleGraphVeolia() ) );
 
-    exampleGraphLua = new QAction( "Lua Example", this );
-    connect( exampleGraphLua, SIGNAL( triggered() ), this, SLOT( loadExampleGraphLua() ) );
+	exampleGraphLua = new QAction( "Lua Example", this );
+	connect( exampleGraphLua, SIGNAL( triggered() ), this, SLOT( loadExampleGraphLua() ) );
 
 	play = new QPushButton();
 	play->setIcon( QIcon( "../share/3dsoftviz/img/gui/pause.png" ) );
@@ -741,9 +741,13 @@ void CoreWindow::createActions()
 	evolutionTimer = new QTimer( this );
 	connect( evolutionTimer, SIGNAL( timeout() ), this, SLOT( move() ) );
 
-    chb_git_changeCommits = new QCheckBox( tr( "Change commits" ) );
-    chb_git_changeCommits->setChecked( true );
-    connect( chb_git_changeCommits, SIGNAL( clicked( bool ) ), this, SLOT( changeCommits( bool ) ) );
+	chb_git_changeCommits = new QCheckBox( tr( "Change commits" ) );
+	chb_git_changeCommits->setChecked( true );
+	connect( chb_git_changeCommits, SIGNAL( clicked( bool ) ), this, SLOT( changeCommits( bool ) ) );
+
+	chb_git_showLuaStats = new QCheckBox( tr( "Show lua metrics" ) );
+	chb_git_showLuaStats->setChecked( false );
+	connect( chb_git_showLuaStats, SIGNAL( clicked( bool ) ), this, SLOT( showLuaStats( bool ) ) );
 	// garaj end
 }
 
@@ -782,11 +786,11 @@ void CoreWindow::createMenus()
 	help = menuBar()->addMenu( "Help" );
 	help->addAction( about );
 
-    examples = menuBar()->addMenu( "Test" );
-    examples->addAction( exampleGraphBasic100 );
-    examples->addAction( exampleGraphBasic500 );
-    examples->addAction( exampleGraphVeolia );
-    examples->addAction( exampleGraphLua );
+	examples = menuBar()->addMenu( "Test" );
+	examples->addAction( exampleGraphBasic100 );
+	examples->addAction( exampleGraphBasic500 );
+	examples->addAction( exampleGraphVeolia );
+	examples->addAction( exampleGraphLua );
 }
 
 QtColorPicker* CoreWindow::createColorPicker()
@@ -1172,6 +1176,28 @@ QWidget* CoreWindow::createMoreFeaturesTab( QFrame* line )
 	lMore->addRow( b_git_diff );
 	lMore->addRow( b_git_lua_graph );
 	lMore->addRow( chb_git_changeCommits );
+	lMore->addRow( chb_git_showLuaStats );
+
+    //jurik
+    line = createLine();
+    lMore->addRow( line );
+    lMore->addRow( new QLabel( tr( "Light and Shadow" ) ) );
+
+    chb_light = new QCheckBox( "&Custom light" );
+    chb_light->setChecked( false );
+    lMore->addRow( chb_light );
+    connect( chb_light, SIGNAL( clicked() ), this, SLOT( lightClicked() ) );
+
+    chb_shadow = new QCheckBox( "&Shadow" );
+    chb_shadow->setChecked( false );
+    lMore->addRow( chb_shadow );
+    connect( chb_shadow, SIGNAL( clicked() ), this, SLOT( shadowClicked() ) );
+
+    chb_base = new QCheckBox( "&Base" );
+    chb_base->setChecked( false );
+    lMore->addRow( chb_base );
+    connect( chb_base, SIGNAL( clicked() ), this, SLOT( baseClicked() ) );
+    //*****
 
 	wMore->setLayout( lMore );
 
@@ -1589,132 +1615,132 @@ void CoreWindow::loadFile()
 
 void CoreWindow::loadExampleGraphBasic100()
 {
-    // Duransky start - vynulovanie vertigo rovin pri nacitani noveho grafu
-    planes_Vertigo.clear();
-    numberOfPlanes = 0;
-    // Duransky end - vynulovanie vertigo rovin pri nacitani noveho grafu
+	// Duransky start - vynulovanie vertigo rovin pri nacitani noveho grafu
+	planes_Vertigo.clear();
+	numberOfPlanes = 0;
+	// Duransky end - vynulovanie vertigo rovin pri nacitani noveho grafu
 
-    //treba overit
-    layout->pauseAllAlg();
-    coreGraph->setNodesFreezed( true );
-    coreGraph->setInterpolationDenied( false );
+	//treba overit
+	layout->pauseAllAlg();
+	coreGraph->setNodesFreezed( true );
+	coreGraph->setInterpolationDenied( false );
 
-    Manager::GraphManager::getInstance()->loadGraph( "../share/3dsoftviz/graphExamples/tree100.graphml" );
+	Manager::GraphManager::getInstance()->loadGraph( "../share/3dsoftviz/graphExamples/tree100.graphml" );
 
-        viewerWidget->getCameraManipulator()->home();
+		viewerWidget->getCameraManipulator()->home();
 
-    //treba overit ci funguje
-    if ( isPlaying ) {
-        layout->play();
-        coreGraph->setNodesFreezed( false );
-    }
+	//treba overit ci funguje
+	if ( isPlaying ) {
+		layout->play();
+		coreGraph->setNodesFreezed( false );
+	}
 
-    //reprezentacie na default
-    nodeTypeComboBoxChanged( nodeTypeComboBox->currentIndex() );
-    edgeTypeComboBoxChanged( edgeTypeComboBox->currentIndex() );
+	//reprezentacie na default
+	nodeTypeComboBoxChanged( nodeTypeComboBox->currentIndex() );
+	edgeTypeComboBoxChanged( edgeTypeComboBox->currentIndex() );
 
 }
 void CoreWindow::loadExampleGraphBasic500()
 {
-    // Duransky start - vynulovanie vertigo rovin pri nacitani noveho grafu
-    planes_Vertigo.clear();
-    numberOfPlanes = 0;
-    // Duransky end - vynulovanie vertigo rovin pri nacitani noveho grafu
+	// Duransky start - vynulovanie vertigo rovin pri nacitani noveho grafu
+	planes_Vertigo.clear();
+	numberOfPlanes = 0;
+	// Duransky end - vynulovanie vertigo rovin pri nacitani noveho grafu
 
-    //treba overit
-    layout->pauseAllAlg();
-    coreGraph->setNodesFreezed( true );
-    coreGraph->setInterpolationDenied( false );
+	//treba overit
+	layout->pauseAllAlg();
+	coreGraph->setNodesFreezed( true );
+	coreGraph->setInterpolationDenied( false );
 
-    Manager::GraphManager::getInstance()->loadGraph( "../share/3dsoftviz/graphExamples/tree500.graphml" );
+	Manager::GraphManager::getInstance()->loadGraph( "../share/3dsoftviz/graphExamples/tree500.graphml" );
 
-        viewerWidget->getCameraManipulator()->home();
+		viewerWidget->getCameraManipulator()->home();
 
-    //treba overit ci funguje
-    if ( isPlaying ) {
-        layout->play();
-        coreGraph->setNodesFreezed( false );
-    }
+	//treba overit ci funguje
+	if ( isPlaying ) {
+		layout->play();
+		coreGraph->setNodesFreezed( false );
+	}
 
-    //reprezentacie na default
-    nodeTypeComboBoxChanged( nodeTypeComboBox->currentIndex() );
-    edgeTypeComboBoxChanged( edgeTypeComboBox->currentIndex() );
+	//reprezentacie na default
+	nodeTypeComboBoxChanged( nodeTypeComboBox->currentIndex() );
+	edgeTypeComboBoxChanged( edgeTypeComboBox->currentIndex() );
 
 }
 void CoreWindow::loadExampleGraphVeolia()
 {
-    // Duransky start - vynulovanie vertigo rovin pri nacitani noveho grafu
-    planes_Vertigo.clear();
-    numberOfPlanes = 0;
-    // Duransky end - vynulovanie vertigo rovin pri nacitani noveho grafu
+	// Duransky start - vynulovanie vertigo rovin pri nacitani noveho grafu
+	planes_Vertigo.clear();
+	numberOfPlanes = 0;
+	// Duransky end - vynulovanie vertigo rovin pri nacitani noveho grafu
 
-    //treba overit
-    layout->pauseAllAlg();
-    coreGraph->setNodesFreezed( true );
-    coreGraph->setInterpolationDenied( false );
+	//treba overit
+	layout->pauseAllAlg();
+	coreGraph->setNodesFreezed( true );
+	coreGraph->setInterpolationDenied( false );
 
-    Manager::GraphManager::getInstance()->loadGraph( "../share/3dsoftviz/graphExamples/veolia.graphml" );
+	Manager::GraphManager::getInstance()->loadGraph( "../share/3dsoftviz/graphExamples/veolia.graphml" );
 
-        viewerWidget->getCameraManipulator()->home();
+		viewerWidget->getCameraManipulator()->home();
 
-    //treba overit ci funguje
-    if ( isPlaying ) {
-        layout->play();
-        coreGraph->setNodesFreezed( false );
-    }
+	//treba overit ci funguje
+	if ( isPlaying ) {
+		layout->play();
+		coreGraph->setNodesFreezed( false );
+	}
 
-    //reprezentacie na default
-    nodeTypeComboBoxChanged( nodeTypeComboBox->currentIndex() );
-    edgeTypeComboBoxChanged( edgeTypeComboBox->currentIndex() );
+	//reprezentacie na default
+	nodeTypeComboBoxChanged( nodeTypeComboBox->currentIndex() );
+	edgeTypeComboBoxChanged( edgeTypeComboBox->currentIndex() );
 
 }
 void CoreWindow::loadExampleGraphLua()
 {
 
-    // Duransky start - vynulovanie vertigo rovin pri nacitani noveho grafu
-    planes_Vertigo.clear();
-    numberOfPlanes = 0;
-    // Duransky end - vynulovanie vertigo rovin pri nacitani noveho grafu
+	// Duransky start - vynulovanie vertigo rovin pri nacitani noveho grafu
+	planes_Vertigo.clear();
+	numberOfPlanes = 0;
+	// Duransky end - vynulovanie vertigo rovin pri nacitani noveho grafu
 
-    //treba overit
-    layout->pauseAllAlg();
-    coreGraph->setNodesFreezed( true );
-    coreGraph->setInterpolationDenied( false );
+	//treba overit
+	layout->pauseAllAlg();
+	coreGraph->setNodesFreezed( true );
+	coreGraph->setInterpolationDenied( false );
 
-    QString file = "../lib/lua/leg";
+	QString file = "../lib/lua/leg";
 
-    Lua::LuaInterface* lua = Lua::LuaInterface::getInstance();
+	Lua::LuaInterface* lua = Lua::LuaInterface::getInstance();
 
-    Lua::LuaValueList path;
-    path.push_back( file.toStdString() );
-    QString createGraph[] = {"function_call_graph", "extractGraph"};
+	Lua::LuaValueList path;
+	path.push_back( file.toStdString() );
+	QString createGraph[] = {"function_call_graph", "extractGraph"};
 
-    lua->callFunction( 2, createGraph, path.getValue() );
-    lua->doString( "getGraph = function_call_graph.getGraph" );
-    Lua::LuaInterface::getInstance()->doString( "getFullGraph = getGraph" );
+	lua->callFunction( 2, createGraph, path.getValue() );
+	lua->doString( "getGraph = function_call_graph.getGraph" );
+	Lua::LuaInterface::getInstance()->doString( "getFullGraph = getGraph" );
 
-    Data::Graph* currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
+	Data::Graph* currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
 
-    if ( currentGraph != NULL ) {
-        Manager::GraphManager::getInstance()->closeGraph( currentGraph );
-    }
-    currentGraph = Manager::GraphManager::getInstance()->createNewGraph( "LuaGraph" );
+	if ( currentGraph != NULL ) {
+		Manager::GraphManager::getInstance()->closeGraph( currentGraph );
+	}
+	currentGraph = Manager::GraphManager::getInstance()->createNewGraph( "LuaGraph" );
 
 
-    layout->pause();
-    coreGraph->setNodesFreezed( true );
+	layout->pause();
+	coreGraph->setNodesFreezed( true );
 
-    Lua::LuaGraphVisualizer* visualizer = visualizer = new Lua::SimpleGraphVisualizer( currentGraph, coreGraph->getCamera() );
-    visualizer->visualize();
+	Lua::LuaGraphVisualizer* visualizer = visualizer = new Lua::SimpleGraphVisualizer( currentGraph, coreGraph->getCamera() );
+	visualizer->visualize();
 
-    coreGraph->reloadConfig();
-    if ( isPlaying ) {
-        layout->play();
-        coreGraph->setNodesFreezed( false );
-    }
-    //reprezentacie na default
-    nodeTypeComboBoxChanged( nodeTypeComboBox->currentIndex() );
-    edgeTypeComboBoxChanged( edgeTypeComboBox->currentIndex() );
+	coreGraph->reloadConfig();
+	if ( isPlaying ) {
+		layout->play();
+		coreGraph->setNodesFreezed( false );
+	}
+	//reprezentacie na default
+	nodeTypeComboBoxChanged( nodeTypeComboBox->currentIndex() );
+	edgeTypeComboBoxChanged( edgeTypeComboBox->currentIndex() );
 }
 
 void CoreWindow::loadFromGit()
@@ -1749,7 +1775,7 @@ void CoreWindow::loadFromGit()
 				layout->pause();
 				coreGraph->setNodesFreezed( true );
 
-				Repository::Git::GitLuaGraphVisualizer visualizer = Repository::Git::GitLuaGraphVisualizer( Manager::GraphManager::getInstance()->getActiveGraph(), Manager::GraphManager::getInstance()->getActiveEvolutionGraph(), this->coreGraph->getCamera() );
+				Repository::Git::GitLuaGraphVisualizer visualizer = Repository::Git::GitLuaGraphVisualizer( Manager::GraphManager::getInstance()->getActiveGraph(), Manager::GraphManager::getInstance()->getActiveEvolutionGraph(), this->coreGraph->getCamera(), this->chb_git_showLuaStats->isChecked() );
 				visualizer.visualize( true );
 //                Lua::LuaGraphVisualizer* visualizer = new Lua::GitGraphVisualizer( Manager::GraphManager::getInstance()->getActiveGraph(), coreGraph->getCamera() );
 //                visualizer->visualize();
@@ -1798,7 +1824,6 @@ void CoreWindow::loadLuaGraph() {
 	QString createGraph[] = {"function_call_graph", "extractGraph"};
 	lua->callFunction( 2, createGraph, path.getValue() );
 	lua->doString( "getGraph = function_call_graph.getGraph" );
-
 	Lua::LuaInterface::getInstance()->doString( "getFullGraph = getGraph" );
 
 	Data::Graph* currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
@@ -3241,7 +3266,7 @@ void CoreWindow::startLeap()
 		return;
 	}
 
-	this->mLeapThr = new Leap::LeapThread();
+	this->mLeapThr = new Leap::LeapThread(this,new Leap::CustomCameraManipulator(getCameraManipulator()));
 	//CoUninitialize();
 
 	this->mLeapThr->start();
@@ -3808,7 +3833,7 @@ void CoreWindow::createMetricsToolBar()
 
 void CoreWindow::loadFunctionCall()
 {
-    QString file = QFileDialog::getExistingDirectory( this, "Select lua project folder", "." );
+	QString file = QFileDialog::getExistingDirectory( this, "Select lua project folder", "." );
 
 	// ak sa predchadzajucou volbou neziskala cesta ku projektu, tak ukonci metodu
 	if( file == "" ) {
@@ -3829,15 +3854,15 @@ void CoreWindow::loadFunctionCall()
 	Data::Graph* currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
 
 	if ( currentGraph != NULL ) {
-        Manager::GraphManager::getInstance()->closeGraph( currentGraph );
-    }
-    currentGraph = Manager::GraphManager::getInstance()->createNewGraph( "LuaGraph" );
+		Manager::GraphManager::getInstance()->closeGraph( currentGraph );
+	}
+	currentGraph = Manager::GraphManager::getInstance()->createNewGraph( "LuaGraph" );
 
 
 	layout->pause();
 	coreGraph->setNodesFreezed( true );
 
-    Lua::LuaGraphVisualizer* visualizer = visualizer = new Lua::SimpleGraphVisualizer( currentGraph, coreGraph->getCamera() );
+	Lua::LuaGraphVisualizer* visualizer = visualizer = new Lua::SimpleGraphVisualizer( currentGraph, coreGraph->getCamera() );
 	visualizer->visualize();
 
 	coreGraph->reloadConfig();
@@ -3892,28 +3917,28 @@ void CoreWindow::onChange()
 
 	if ( selected->size() > 0 ) {
 		// Get last node model & display it in qt view
-        qlonglong lastNodeId = 0;
-        Repository::Git::GitEvolutionGraph* evolutionGraph = Manager::GraphManager::getInstance()->getActiveEvolutionGraph();
-        if( evolutionGraph ) {
-            QString identifier = selected->last()->getLuaIdentifier();
+		qlonglong lastNodeId = 0;
+		Repository::Git::GitEvolutionGraph* evolutionGraph = Manager::GraphManager::getInstance()->getActiveEvolutionGraph();
+		if( evolutionGraph ) {
+			QString identifier = selected->last()->getLuaIdentifier();
 //            if( evolutionGraph->getLuaNodesMapping().contains( identifier ) ) {
-            if( evolutionGraph->getMetaDataFromIdentifier( identifier )->getLuaMapping() != -1 ) {
+			if( evolutionGraph->getMetaDataFromIdentifier( identifier )->getLuaMapping() != -1 ) {
 //                lastNodeId = evolutionGraph->getLuaNodesMapping().value( identifier );
-                lastNodeId = evolutionGraph->getMetaDataFromIdentifier( identifier )->getLuaMapping();
-            }
+				lastNodeId = evolutionGraph->getMetaDataFromIdentifier( identifier )->getLuaMapping();
+			}
 
-        } else {
-            lastNodeId = selected->last()->getId();
-        }
+		} else {
+			lastNodeId = selected->last()->getId();
+		}
 
-        if( lastNodeId != 0 ) {
-            Lua::LuaNode* lastLuaNode = Lua::LuaGraph::getInstance()->getNodes()->value( lastNodeId );
-            // garaj start - ak nenaslo lastLuaNode, tak sposobovalo pad softveru
-            if ( lastLuaNode ) {
-                Lua::LuaGraphTreeModel* lastLuaModel = new Lua::LuaGraphTreeModel( lastLuaNode );
-                luaGraphTreeView->setModel( lastLuaModel );
-            }
-        }
+		if( lastNodeId != 0 ) {
+			Lua::LuaNode* lastLuaNode = Lua::LuaGraph::getInstance()->getNodes()->value( lastNodeId );
+			// garaj start - ak nenaslo lastLuaNode, tak sposobovalo pad softveru
+			if ( lastLuaNode ) {
+				Lua::LuaGraphTreeModel* lastLuaModel = new Lua::LuaGraphTreeModel( lastLuaNode );
+				luaGraphTreeView->setModel( lastLuaModel );
+			}
+		}
 		// garaj end
 	}
 
@@ -3966,7 +3991,7 @@ bool CoreWindow::nextVersion()
 		layout->pause();
 		coreGraph->setNodesFreezed( true );
 
-		Repository::Git::GitLuaGraphVisualizer visualizer = Repository::Git::GitLuaGraphVisualizer( Manager::GraphManager::getInstance()->getActiveGraph(), Manager::GraphManager::getInstance()->getActiveEvolutionGraph(), this->coreGraph->getCamera() );
+		Repository::Git::GitLuaGraphVisualizer visualizer = Repository::Git::GitLuaGraphVisualizer( Manager::GraphManager::getInstance()->getActiveGraph(), Manager::GraphManager::getInstance()->getActiveEvolutionGraph(), this->coreGraph->getCamera(), this->chb_git_showLuaStats->isChecked() );
 		visualizer.visualize( true );
 
 		coreGraph->reloadConfig();
@@ -4024,7 +4049,7 @@ bool CoreWindow::previousVersion()
 		layout->pause();
 		coreGraph->setNodesFreezed( true );
 
-		Repository::Git::GitLuaGraphVisualizer visualizer = Repository::Git::GitLuaGraphVisualizer( Manager::GraphManager::getInstance()->getActiveGraph(), Manager::GraphManager::getInstance()->getActiveEvolutionGraph(), this->coreGraph->getCamera() );
+		Repository::Git::GitLuaGraphVisualizer visualizer = Repository::Git::GitLuaGraphVisualizer( Manager::GraphManager::getInstance()->getActiveGraph(), Manager::GraphManager::getInstance()->getActiveEvolutionGraph(), this->coreGraph->getCamera(), this->chb_git_showLuaStats->isChecked() );
 		visualizer.visualize( false );
 
 		coreGraph->reloadConfig();
@@ -4154,6 +4179,14 @@ void CoreWindow::changeCommits( bool value ) {
 		evolutionSlider->setEnabled( false );
 		b_faster_evolution->setEnabled( false );
 		b_slower_evolution->setEnabled( false );
+	}
+}
+
+void CoreWindow::showLuaStats( bool show ) {
+	chb_git_showLuaStats->setChecked( show );
+	if( Manager::GraphManager::getInstance()->getActiveEvolutionGraph() ) {
+		Repository::Git::GitLuaGraphVisualizer visualizer = Repository::Git::GitLuaGraphVisualizer( Manager::GraphManager::getInstance()->getActiveGraph(), Manager::GraphManager::getInstance()->getActiveEvolutionGraph(), this->coreGraph->getCamera(), show );
+		visualizer.changeNodeRepresentation();
 	}
 }
 
@@ -4304,5 +4337,48 @@ void CoreWindow::createEvolutionLuaGraph()
 	}
 	*/
 }
+
+//jurik
+void CoreWindow::lightClicked()
+{
+    // chb_light is checked
+    if ( chb_light->isChecked() ) {
+
+        this->coreGraph->getScene()->getOrCreateStateSet()->setMode( GL_LIGHT0,osg::StateAttribute::OFF );
+        this->coreGraph->getScene()->getOrCreateStateSet()->setMode( GL_LIGHT1,osg::StateAttribute::ON );
+     }
+    else {
+
+        this->coreGraph->getScene()->getOrCreateStateSet()->setMode( GL_LIGHT0,osg::StateAttribute::ON );
+        this->coreGraph->getScene()->getOrCreateStateSet()->setMode( GL_LIGHT1,osg::StateAttribute::OFF );
+    }
+}
+
+void CoreWindow::shadowClicked()
+{
+    // chb_light is checked
+    if ( chb_shadow->isChecked() ) {
+
+        this->coreGraph->turnOnShadows();
+     }
+    else {
+
+        this->coreGraph->turnOffShadows();
+    }
+}
+
+void CoreWindow::baseClicked()
+{
+    // chb_light is checked
+    if ( chb_base->isChecked() ) {
+
+        this->coreGraph->turnOnBase();
+     }
+    else {
+
+        this->coreGraph->turnOffBase();
+    }
+}
+//*****
 
 } // namespace QOSG

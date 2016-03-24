@@ -2,12 +2,9 @@
 #define LEAPACTIONS_H
 #include "Leap.h"
 #include "math.h"
-#include "Leap/DirectionDetector.h"
-
-namespace Vwr {
-class CameraManipulator;
-class MouseControl;
-}
+#include "LeapLib/DirectionDetector.h"
+#include "LeapLib/LeapCameraManipulator.h"
+#include "LeapLib/LeapExport.h"
 
 namespace Leap {
 
@@ -16,13 +13,15 @@ namespace Leap {
  * @brief The Leap Action class
  * @brief All actions that will be executed on the leap sensor should be defined here and used in LeapListener
  */
-class LeapActions
+class LEAPLIB_EXPORT LeapActions
 {
+
 public:
 	/**
 	 * @brief Initializes MouseControl and sets zoomCounter to 0
 	 */
-	LeapActions();
+	LeapActions(LeapCameraManipulator* cameraManipulator);
+	~LeapActions();
 
 	/**
 	 * @brief Zooms the graph in or out depending on the hand movement(Circle gesture)
@@ -69,12 +68,8 @@ public:
 	 * @brief isCameraMoving is variable to decide whether to move camera or rotate graph
 	 */
 	bool isCameraMoving;
-private:
-	/**
-	 * @brief Controls mouse actions
-	 */
-	Vwr::MouseControl* mouse;
-	Vwr::CameraManipulator* cmrManipulator;
+
+	LeapCameraManipulator* cameraManipulator;
 };
 }
 

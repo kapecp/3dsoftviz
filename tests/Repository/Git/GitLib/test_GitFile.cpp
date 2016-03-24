@@ -2,9 +2,11 @@
 using namespace igloo;
 
 #include "GitLib/GitFile.h"
+#include "GitLib/GitFunction.h"
 #include "GitLib/GitFileDiffBlock.h"
 
 #include <QList>
+#include <QMap>
 
 Describe( a_git_file )
 {
@@ -78,6 +80,45 @@ Describe( a_git_file )
 
         file.setGitFileDiffBlocks( diffBlocks );
         Assert::That( file.getGitFileDiffBlocks().isEmpty(), IsFalse() );
+    }
+
+    It( functions_should_be_empty ) {
+        Assert::That( file.getGitFunctions()->size(), Equals( 0 ) );
+    }
+
+    It( functions_should_contain_function ) {
+        Repository::Git::GitFunction *function = new Repository::Git::GitFunction();
+        file.addGitFunction( function );
+        Assert::That( file.getGitFunctions()->size(), Equals( 1 ) );
+    }
+
+    It( functions_should_be_set ) {
+        QMap<QString, Repository::Git::GitFunction*>* functions = new QMap<QString, Repository::Git::GitFunction*>();
+        Repository::Git::GitFunction *function = new Repository::Git::GitFunction();
+        Assert::That( file.getGitFunctions()->size(), Equals( 0 ) );
+        functions->insert( function->getIdentifier(), function );
+        file.setGitFunctions( functions );
+        Assert::That( file.getGitFunctions()->size(), Equals( 1 ) );
+    }
+
+    It( function_should_be_found ) {
+        Repository::Git::GitFunction *function = new Repository::Git::GitFunction( "function" );
+        function->setFunctionType( Repository::Git::GitFunctionType::LOCALFUNCTION );
+        file.addGitFunction( function );
+        if( file.findFunction( function->getIdentifier() ) ) {
+            Assert::That( true );
+        } else {
+            Assert::That( false );
+        }
+    }
+
+    It( identifier_is_default ) {
+        Assert::That( file.getIdentifier().toStdString(), Equals( "file;" ) );
+    }
+
+    It( identifier_contain_filepath ) {
+        file = Repository::Git::GitFile( "filename.lua", "/path/to/the/filename.lua", Repository::Git::GitType::ADDED );
+        Assert::That( file.getIdentifier().toStdString(), Equals( "file;/path/to/the/filename.lua" ) );
     }
 
     Repository::Git::GitFile file;

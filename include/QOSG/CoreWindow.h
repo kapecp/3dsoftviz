@@ -26,7 +26,8 @@
 #endif
 
 #ifdef LEAP_FOUND
-#include "Leap/LeapThread.h"
+#include "LeapLib/LeapThread.h"
+#include "Leap/CustomCameraManipulator.h"
 #endif
 
 #include <qtcolorpicker.h>
@@ -584,6 +585,13 @@ void loadExampleGraphLua();
      */
     void changeCommits( bool change );
 
+    /**
+     * void showLuaStats( bool show )
+     * @brief Determine if lua metrics should be visualized
+     * @param True, if lua metrics should be visualized, otherwise false
+     */
+    void showLuaStats( bool show );
+
 	/**
 	 * void fasterEvolution()
 	 * @brief Sets up faster evolution
@@ -627,6 +635,12 @@ void loadExampleGraphLua();
 	 * @param value Number of version removed nodes lives after repository removal.
 	 */
 	void changeLifespan( int value );
+
+    //jurik
+    void lightClicked();
+    void shadowClicked();
+    void baseClicked();
+    //*****
 
 private:
 
@@ -1067,6 +1081,12 @@ private:
      */
     QCheckBox* chb_git_changeCommits;
 
+    /**
+     * QCheckBox* chb_git_showLuaStats
+     * @brief CheckBox for visualizing lua metrics
+     */
+    QCheckBox* chb_git_showLuaStats;
+
 	bool isRunning;
 
 	/**
@@ -1348,6 +1368,26 @@ private:
 		*  \brief Flag if edge bundling is running
 		*/
 	bool isEBPlaying;
+
+    //jurik
+    /**
+     *CheckBox for turning on custom light
+     *@brief chb_light
+     */
+    QCheckBox* chb_light;
+
+    /**
+     *CheckBox for casting shadows of graph
+     *@brief chb_shadow
+     */
+    QCheckBox* chb_shadow;
+
+    /**
+     *CheckBox for showing base
+     *@brief chb_base
+     */
+    QCheckBox* chb_base;
+    //*****
 
 public:
 
