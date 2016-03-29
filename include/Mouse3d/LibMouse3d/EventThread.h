@@ -1,7 +1,7 @@
 #ifndef EVEBTTHREAH_H
 #define EVEBTTHREAH_H
 
-#include "Mouse3d/LibMouse3d/LibCoreMouse3d/EventThread.h"
+#include "Mouse3d/LibMouse3d/EventThread.h"
 #include "Mouse3d/LibMouse3d/LibCoreMouse3d/Mouse3DInput.h"
 #include "Mouse3d/LibMouse3d/LibCoreMouse3d/MouseParameters.h"
 
@@ -14,7 +14,6 @@ namespace QOSG{
     class CoreWindow;
 }
 namespace LibMouse3d{
-namespace LibCoreMouse3d{
 
 
 /**
@@ -28,8 +27,10 @@ class EventThread : public QThread{
     Q_OBJECT
 
 public:
+
     Mouse3DInput* mouse;
     QOSG::CoreWindow* win;
+
     //constructor
     EventThread(QOSG::CoreWindow* window, QObject* parent = NULL);
 
@@ -38,9 +39,5 @@ public:
 
 
 };
-
-
-
-}
 }
 #endif

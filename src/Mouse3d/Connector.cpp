@@ -1,24 +1,27 @@
 #include "Mouse3d/Connector.h"
 #include <QDebug>
 #include "QOSG/CoreWindow.h"
+#include "Mouse3d/LibMouse3d/EventThread.h"
 
 Mouse3d::Connector::Connector(QOSG::CoreWindow* window){
     this->win = window;
 }
 
 
+
 Mouse3d::Connector::~Connector(){
 
 }
 
-/* @author Michal Fašánek
- * @date 22.11.2015
- * @brief Called to detect a device and start listening thread
+/**
+ * @brief LibMouse3d::ConnectionInterface::CreateConnection
+ * @param wHndl window handle ID passed ad int32_t -> Windows platform-specific
+ * Pass connection call to device library
  */
-void Mouse3d::Connector::ConnectMouse3d(){
+void Mouse3d::Connector::CreateConnection(){
 
-    qDebug() << "Create connection call - Connector";
-    LibMouse3d::ConnectionInterface conInt = LibMouse3d::ConnectionInterface(win);
-    conInt.CreateConnection();
-
+    //Create thread for signals from 3D mouse
+    thread = new LibMouse3d::EventThread(this->win);
+    thread->start();
 }
+

@@ -1,8 +1,7 @@
 #ifndef CONNECTOR_H
 #define CONNECTOR_H
 
-#include "Mouse3d/LibMouse3d/ConnectionInterface.h"
-#include "QOSG/CoreWindow.h"
+#include "Mouse3d/LibMouse3d/EventThread.h"
 namespace Mouse3d{
 
 /**
@@ -10,18 +9,23 @@ namespace Mouse3d{
 *@date 23.11.2015
 *@brief 3dSoftViz class responsible for establishing connection with LibMouse3d.
 */
+
+
 class Connector{
 
 public:
+
+    LibMouse3d::EventThread* thread;
+
     QOSG::CoreWindow* win;
 
     //constructor
-    Connector(QOSG::CoreWindow* win);
+    Connector(QOSG::CoreWindow* window);
 
     //destructor
     ~Connector();
 
-    void ConnectMouse3d();
+    void CreateConnection();
 
 private:
 

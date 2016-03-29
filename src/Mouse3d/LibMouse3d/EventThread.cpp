@@ -1,8 +1,7 @@
-#include "Mouse3d/LibMouse3d/LibCoreMouse3d/EventThread.h"
+#include "Mouse3d/LibMouse3d/EventThread.h"
 #include "QOSG/CoreWindow.h"
 
 namespace LibMouse3d{
-namespace LibCoreMouse3d{
 
 EventThread::EventThread(QOSG::CoreWindow* window, QObject* parent) : QThread( parent ) {
     this->win = window;
@@ -23,5 +22,4 @@ EventThread::~EventThread() {
  * @brief Called from application - terminates thread and connection to the device
  */
 
-}
 }

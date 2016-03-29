@@ -3812,7 +3812,7 @@ void CoreWindow::startMouse3d()
     }
 
     Mouse3d::Connector conn = Mouse3d::Connector(this);
-    conn.ConnectMouse3d();
+    conn.CreateConnection();
 
     //this->mGloveThr = new Fglove::FgloveThread();
     //this->b_start_mouse3d->start();

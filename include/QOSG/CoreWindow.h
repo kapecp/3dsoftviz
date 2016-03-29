@@ -27,7 +27,6 @@
 
 #ifdef MOUSE3D_FOUND
 #include "Mouse3d/Connector.h"
-#include "Mouse3d/ActionProcessor.h"
 #endif
 
 #ifdef LEAP_FOUND
