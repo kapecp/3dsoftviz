@@ -14,7 +14,7 @@ namespace QOSG{
     class CoreWindow;
 }
 namespace LibMouse3d{
-
+class Mouse3dDevice;
 
 /**
 *@author Michal Fasanek
@@ -28,8 +28,7 @@ class EventThread : public QThread{
 
 public:
 
-    Mouse3DInput* mouse;
-    QOSG::CoreWindow* win;
+    Mouse3dDevice* mouseDevice;
 
     //constructor
     EventThread(QOSG::CoreWindow* window, QObject* parent = NULL);

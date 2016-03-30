@@ -1,13 +1,13 @@
 #include "Mouse3d/LibMouse3d/EventThread.h"
 #include "QOSG/CoreWindow.h"
+#include "Mouse3d/LibMouse3d/Mouse3d.h"
 
 namespace LibMouse3d{
 
 EventThread::EventThread(QOSG::CoreWindow* window, QObject* parent) : QThread( parent ) {
-    this->win = window;
-    this->mouse = new Mouse3DInput(window);
 
-    QObject::connect(mouse, SIGNAL(Move3d(std::vector<float>&)), window, SLOT(OnMove(std::vector<float>&)));
+    this->mouseDevice = new Mouse3dDevice(window);
+    //vetvenie pre platform independent build
 
 
 }
