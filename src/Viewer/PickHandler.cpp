@@ -247,7 +247,7 @@ bool PickHandler::handleKeyUp( const osgGA::GUIEventAdapter& ea, GUIActionAdapte
 
 bool PickHandler::handleKeyDown( const osgGA::GUIEventAdapter& ea, GUIActionAdapter& aa )
 {
-	static bool splitview = false;
+	static unsigned int splitviewMode = 0;
 
 	if ( ea.getKey() == osgGA::GUIEventAdapter::KEY_Control_R || ea.getKey() == osgGA::GUIEventAdapter::KEY_Control_L ) {
 		isCtrlPressed = true;
@@ -336,7 +336,7 @@ bool PickHandler::handleKeyDown( const osgGA::GUIEventAdapter& ea, GUIActionAdap
 	}
 	//split stereo 3D
 	else if ( ea.getKey() == osgGA::GUIEventAdapter::KEY_G){
-		if (!splitview){
+		if (splitviewMode == 0){
 			//turn on
 			osg::DisplaySettings::instance()->setStereoMode(osg::DisplaySettings::VERTICAL_SPLIT);
 			osg::DisplaySettings::instance()->setStereo(TRUE);
@@ -345,8 +345,12 @@ bool PickHandler::handleKeyDown( const osgGA::GUIEventAdapter& ea, GUIActionAdap
 			osg::DisplaySettings::instance()->setScreenHeight(0.93f);
 			osg::DisplaySettings::instance()->setScreenWidth(1.66f);
 
-			qDebug() << "Turned on split stereo 3D";
-		}else{
+			qDebug() << "Turned on split stereo 3D - vertical split";
+		} else if (splitviewMode == 1){
+			osg::DisplaySettings::instance()->setStereoMode(osg::DisplaySettings::HORIZONTAL_SPLIT);
+			qDebug() << "Turned on split stereo 3D - horizontal split";
+		}
+		else{
 			//turn off
 			osg::DisplaySettings::instance()->setStereo(FALSE);
 			//reset to default config
@@ -357,17 +361,17 @@ bool PickHandler::handleKeyDown( const osgGA::GUIEventAdapter& ea, GUIActionAdap
 
 			qDebug() << "Turned off split stereo 3D";
 		}
-		splitview = !splitview;
+		splitviewMode = (splitviewMode + 1) % 3;	//rotate modes : vertical / horizontal / off
 	}
 	//adjust eye distance, 0.001m change
-	else if (ea.getKey() == osgGA::GUIEventAdapter::KEY_H && splitview){
+	else if (ea.getKey() == osgGA::GUIEventAdapter::KEY_H && (splitviewMode != 0)){
 		//-
 		float distance = osg::DisplaySettings::instance()->getEyeSeparation();
 		distance = distance - 0.001f;
 		osg::DisplaySettings::instance()->setEyeSeparation(distance);
 		qDebug() << "Eye distance : " << distance;
 	}
-	else if (ea.getKey() == osgGA::GUIEventAdapter::KEY_J && splitview){
+	else if (ea.getKey() == osgGA::GUIEventAdapter::KEY_J && (splitviewMode != 0)){
 		//+
 		float distance = osg::DisplaySettings::instance()->getEyeSeparation();
 		distance = distance + 0.001f;
