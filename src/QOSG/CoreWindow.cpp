@@ -183,8 +183,17 @@ void CoreWindow::createActions()
 	exampleGraphLua = new QAction( "Lua Example", this );
 	connect( exampleGraphLua, SIGNAL( triggered() ), this, SLOT( loadExampleGraphLua() ) );
 
-	switchBackgroundAction = new QAction( "Change background", this );
-	connect( switchBackgroundAction, SIGNAL( triggered() ), this, SLOT( switchBackground() ) );
+    switchBackgroundSkyBoxAction = new QAction( "Sky Box", this );
+    connect( switchBackgroundSkyBoxAction, SIGNAL( triggered() ), this, SLOT( switchBackgroundSkyBox() ) );
+
+    switchBackgroundSkyNoiseBoxAction = new QAction( "Sky Noise Box", this );
+    connect( switchBackgroundSkyNoiseBoxAction, SIGNAL( triggered() ), this, SLOT( switchBackgroundSkyNoiseBox() ) );
+
+    switchBackgroundTextureAction = new QAction( "Texture", this );
+    connect( switchBackgroundTextureAction, SIGNAL( triggered() ), this, SLOT( switchBackgroundTexture() ) );
+
+    switchBackgroundOrtho2dAction = new QAction( "Ortho2d", this );
+    connect( switchBackgroundOrtho2dAction, SIGNAL( triggered() ), this, SLOT( switchBackgroundOrtho2d() ) );
 
 	play = new QPushButton();
 	play->setIcon( QIcon( "../share/3dsoftviz/img/gui/pause.png" ) );
@@ -795,8 +804,11 @@ void CoreWindow::createMenus()
 	examples->addAction( exampleGraphVeolia );
 	examples->addAction( exampleGraphLua );
 
-	backgroundMenu = menuBar()->addMenu("Change background");
-	backgroundMenu->addAction( switchBackgroundAction );
+    backgroundMenu = menuBar()->addMenu("Change Background");
+    backgroundMenu->addAction( switchBackgroundSkyBoxAction );
+    backgroundMenu->addAction( switchBackgroundSkyNoiseBoxAction );
+    backgroundMenu->addAction( switchBackgroundTextureAction );
+    backgroundMenu->addAction( switchBackgroundOrtho2dAction );
 }
 
 QtColorPicker* CoreWindow::createColorPicker()
@@ -1840,16 +1852,46 @@ void CoreWindow::loadLuaGraph() {
 
 }
 
-void CoreWindow::switchBackground() {
-	qDebug() << "[INFO] Switch background menu selected";
+void CoreWindow::switchBackgroundSkyBox() {
 
 	Data::Graph* currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
 
 	if ( currentGraph != NULL ) {
-		qDebug() << "[INFO] graph is loaded, changing background";
 
-		qDebug() << coreGraph->updateBackground(1, currentGraph);
+        coreGraph->updateBackground(0, currentGraph);
+
 	}
+}
+
+void CoreWindow::switchBackgroundSkyNoiseBox() {
+
+    Data::Graph* currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
+
+    if ( currentGraph != NULL ) {
+
+        coreGraph->updateBackground(1, currentGraph);
+
+    }
+}
+void CoreWindow::switchBackgroundTexture() {
+
+    Data::Graph* currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
+
+    if ( currentGraph != NULL ) {
+
+        coreGraph->updateBackground(2, currentGraph);
+
+    }
+}
+void CoreWindow::switchBackgroundOrtho2d() {
+
+    Data::Graph* currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
+
+    if ( currentGraph != NULL ) {
+
+        coreGraph->updateBackground(3, currentGraph);
+
+    }
 }
 
 void CoreWindow::labelOnOff( bool )

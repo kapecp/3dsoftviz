@@ -689,11 +689,23 @@ int CoreGraph::updateBackground(int bgVal, Data::Graph* currentGraph) {
 	qDebug() << "[INFO] updating background";
 	qDebug() << root->getNumChildren();
 
-	root->setChild(backgroundPosition, createSkyNoiseBox());
-
-	reload(currentGraph);
-
-	return 1; // background was not changed
+    if (bgVal == 0){
+        SkyBox* skyBox = new SkyBox;
+         root->setChild(root->getNumChildren()-1,  skyBox->createSkyBox());
+    }
+    else if (bgVal == 1){
+         root->setChild(root->getNumChildren()-1,  createSkyNoiseBox());
+    }
+     #ifdef OPENCV_FOUND
+    else if (bgVal == 2){
+         root->setChild(root->getNumChildren()-1,  createTextureBackground());
+    }
+    else if (bgVal == 3){
+         root->setChild(root->getNumChildren()-1,  createOrtho2dBackground());
+    }
+     #endif
+    reload(currentGraph);
+    return 0;
 }
 
 void CoreGraph::reload( Data::Graph* graph )
