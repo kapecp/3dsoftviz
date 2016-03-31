@@ -663,19 +663,19 @@ Vwr::CoreGraph::CoreGraph( Data::Graph* graph, osg::ref_ptr<osg::Camera> camera 
     pLightSource->setLight( pLight );
     root->addChild( pLightSource );
 
-    //UMBRA
+    //shadow scene
+    //http://trac.openscenegraph.org/projects/osg//wiki/Support/ProgrammingGuide/osgShadow
     shadowedScene = new osgShadow::ShadowedScene;
     shadowedScene->setReceivesShadowTraversalMask(0x1);
     shadowedScene->setCastsShadowTraversalMask(0x2);
     root->addChild(shadowedScene);
 
+    //node for base
     baseGeode = new osg::Geode();
     baseTransform = new osg::PositionAttitudeTransform();
 
     graphRotTransf->addChild( graphGroup );
     shadowedScene->addChild( graphRotTransf );
-    //root->addChild( graphRotTransf );
-
 
     CoreGraph::createBase();
     //******
@@ -1477,17 +1477,31 @@ void CoreGraph::createBase()
    baseTransform->setScale(osg::Vec3(1000,1000,1000));
 }
 
-float CoreGraph::compare(float a, float b)
+void CoreGraph::recievedMVMatrix(QMatrix4x4 modelViewMatrix)
 {
-    if(a < 0)
-        a = a* -1;
+    osg::Matrixd arucoMVM(  modelViewMatrix.operator()(0,0),modelViewMatrix.operator()(0,1),modelViewMatrix.operator()(0,2),modelViewMatrix.operator()(0,3),
+                            modelViewMatrix.operator()(1,0),modelViewMatrix.operator()(1,1),modelViewMatrix.operator()(1,2),modelViewMatrix.operator()(1,3),
+                            modelViewMatrix.operator()(2,0),modelViewMatrix.operator()(2,1),modelViewMatrix.operator()(2,2),modelViewMatrix.operator()(2,3),
+                            modelViewMatrix.operator()(3,0),modelViewMatrix.operator()(3,1),modelViewMatrix.operator()(3,2),modelViewMatrix.operator()(3,3));
 
-    qDebug() << a;
+    camera->setViewMatrix(arucoMVM);
 
-    if(a > b)
-        return a;
-    else
-        return b;
+    graphRotTransf->setMatrix(osg::Matrixd(0.0002,0,0,0,
+                                           0,0.0002,0,0,
+                                           0,0,0.0002,0,
+                                           0,0,0,1));
 }
+
+void CoreGraph::recievedPMatrix(QMatrix4x4 projectionMatrix)
+{
+    osg::Matrixd arucoPM(   projectionMatrix.operator()(0,0),projectionMatrix.operator()(0,1),projectionMatrix.operator()(0,2),projectionMatrix.operator()(0,3),
+                            projectionMatrix.operator()(1,0),projectionMatrix.operator()(1,1),projectionMatrix.operator()(1,2),projectionMatrix.operator()(1,3),
+                            projectionMatrix.operator()(2,0),projectionMatrix.operator()(2,1),projectionMatrix.operator()(2,2),projectionMatrix.operator()(2,3),
+                            projectionMatrix.operator()(3,0),projectionMatrix.operator()(3,1),projectionMatrix.operator()(3,2),projectionMatrix.operator()(3,3));
+
+    camera->setProjectionMatrix(arucoPM);
+}
+
+
 //*****
 }

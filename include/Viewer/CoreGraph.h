@@ -262,7 +262,6 @@ public:
     void turnOnBase();
     void turnOffBase();
     void createBase();
-    float CoreGraph::compare(float a, float b);
     //*****
 
 public slots:
@@ -301,6 +300,20 @@ public slots:
 	     * @brief setEdgeType Set representation of edges
 	     */
 	void setEdgeVisual( int index );
+
+    //jurik
+    /**
+         * @author Autor: Igor Jurík
+         * @brief update camera modelview matrix from aruco
+         */
+    void recievedMVMatrix(QMatrix4x4 modelViewMatrix);
+
+    /**
+         * @author Autor: Igor Jurík
+         * @brief update camera projection matrix from aruco
+         */
+    void recievedPMatrix(QMatrix4x4 modelViewMatrix);
+    //*****
 
 private:
 

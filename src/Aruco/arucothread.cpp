@@ -164,6 +164,15 @@ void ArucoThread::run()
 
 					}
 				}
+                //jurik
+                //set and send modelview matrix of detected marker
+                QMatrix4x4 modelviewmatrix = aCore.getDetectedMatrix(frame.clone());
+                emit sendModelViewMatrix(modelviewmatrix);
+
+                //set and send projection matrix of detected image
+                QMatrix4x4 projectionmatrix = aCore.getProjectionMatrix(frame.clone());
+                emit sendProjectionMatrix(projectionmatrix);
+                //*****
 			}
 			imagesSending( aCore, frame );
 
