@@ -4,6 +4,17 @@
 #  MOUSE3D_LIBRARIES    - List of libraries when using MOUSE3D.
 #  MOUSE3D_FOUND        - True if MOUSE3D found.
 #=============================================================================
+
+message("CMAKE_SYSTEM_FRAMEWORK_PATH = ${CMAKE_SYSTEM_FRAMEWORK_PATH}")
+if(APPLE) # The only platform it makes sense to check for 3DconnexionClient
+ find_library(3DconnexionClient 3DconnexionClient)
+ if(3DconnexionClient)
+  set(MOUSE3D_FOUND true)
+  set(MOUSE3D_INCLUDE_DIR ${3DconnexionClient})
+  set(MOUSE3D_LIBRARY ${3DconnexionClient})
+ endif()
+endif()
+
 find_path( MOUSE3D_INCLUDE_DIR
 	NAMES si.h
 	PATHS $ENV{MOUSE3D_DIR}/Inc
