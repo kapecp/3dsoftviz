@@ -1843,7 +1843,13 @@ void CoreWindow::loadLuaGraph() {
 void CoreWindow::switchBackground() {
 	qDebug() << "[INFO] Switch background menu selected";
 
+	Data::Graph* currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
 
+	if ( currentGraph != NULL ) {
+		qDebug() << "[INFO] graph is loaded, changing background";
+
+		qDebug() << coreGraph->updateBackground(1, currentGraph);
+	}
 }
 
 void CoreWindow::labelOnOff( bool )
