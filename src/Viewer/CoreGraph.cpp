@@ -669,11 +669,14 @@ Vwr::CoreGraph::CoreGraph( Data::Graph* graph, osg::ref_ptr<osg::Camera> camera 
     shadowedScene->setCastsShadowTraversalMask(0x2);
     root->addChild(shadowedScene);
 
-    graphRotTransf->addChild( graphGroup );
-    shadowedScene->addChild( graphRotTransf );
-
     baseGeode = new osg::Geode();
     baseTransform = new osg::PositionAttitudeTransform();
+
+    graphRotTransf->addChild( graphGroup );
+    shadowedScene->addChild( graphRotTransf );
+    //root->addChild( graphRotTransf );
+
+
     CoreGraph::createBase();
     //******
 
@@ -786,20 +789,6 @@ void CoreGraph::reload( Data::Graph* graph )
 	this->browsersGroup->getGroup()->getOrCreateStateSet()->setMode( GL_DEPTH_TEST, osg::StateAttribute::OFF );
 	this->browsersGroup->getGroup()->getOrCreateStateSet()->setRenderBinDetails( 100,"RenderBin" );
 
-    float maxPosition = 1500;
-    /*QMapIterator<qlonglong, osg::ref_ptr<Data::Node> > it( *in_nodes );
-
-    //get the farest node from center
-    while ( it.hasNext() ) {
-        it.next();
-
-        maxPosition = compare(it.value()->getTargetPosition().x(),maxPosition);
-        maxPosition = compare(it.value()->getTargetPosition().y(),maxPosition);
-        maxPosition = compare(it.value()->getTargetPosition().z(),maxPosition);
-    }
-    qDebug()<< "maxPosition";
-    qDebug()<< maxPosition;*/
-    baseTransform->setScale(osg::Vec3(maxPosition,maxPosition,maxPosition));
 }
 
 void CoreGraph::cleanUp()
@@ -1241,6 +1230,8 @@ void CoreGraph::setNodeLabelsVisible( bool visible )
 void CoreGraph::reloadConfig()
 {
 	root->setChild( backgroundPosition, createBackground() );
+    root->setChild( 2, shadowedScene);
+
 
 	QMap<qlonglong, osg::ref_ptr<Data::Node> >::const_iterator i = in_nodes->constBegin();
 
@@ -1460,12 +1451,12 @@ void CoreGraph::createBase()
 
    //base
    osg::Vec3Array* vertices = new osg::Vec3Array;
-   vertices->push_back( osg::Vec3( -1, -1, -1) ); // lb
-   vertices->push_back( osg::Vec3(  1, -1, -1) ); // rb
-   vertices->push_back( osg::Vec3(  1,  1, -1) ); // rt
-   vertices->push_back( osg::Vec3( -1,  1, -1) ); // lt
-   vertices->push_back( osg::Vec3(  1,  1,  1) ); // rt1
-   vertices->push_back( osg::Vec3( -1,  1,  1) ); // lt1
+   vertices->push_back( osg::Vec3( -1, -1, 0) ); // lb
+   vertices->push_back( osg::Vec3(  1, -1, 0) ); // rb
+   vertices->push_back( osg::Vec3(  1,  1, 0) ); // rt
+   vertices->push_back( osg::Vec3( -1,  1, 0) ); // lt
+   //vertices->push_back( osg::Vec3(  1,  1,  1) ); // rt1
+   //vertices->push_back( osg::Vec3( -1,  1,  1) ); // lt1
    baseGeometry->setVertexArray( vertices );
 
    osg::DrawElementsUInt* base = new osg::DrawElementsUInt(osg::PrimitiveSet::QUADS, 0);
@@ -1476,13 +1467,14 @@ void CoreGraph::createBase()
 
    baseGeometry->addPrimitiveSet(base);
 
-   osg::DrawElementsUInt* baseBehind = new osg::DrawElementsUInt(osg::PrimitiveSet::QUADS, 0);
+   /*osg::DrawElementsUInt* baseBehind = new osg::DrawElementsUInt(osg::PrimitiveSet::QUADS, 0);
    base->push_back(5);
    base->push_back(4);
    base->push_back(2);
    base->push_back(3);
 
-   baseGeometry->addPrimitiveSet(baseBehind);
+   baseGeometry->addPrimitiveSet(baseBehind);*/
+   baseTransform->setScale(osg::Vec3(1000,1000,1000));
 }
 
 float CoreGraph::compare(float a, float b)
