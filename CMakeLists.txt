@@ -697,8 +697,27 @@ file( GLOB_RECURSE SRC_SPEECH	"src/Speech/*.cpp" )
 
 # Leap
 file ( GLOB_RECURSE SRC_LEAP "src/Leap/*.cpp" )
+
 # MOUSE3D
-file ( GLOB_RECURSE SRC_MOUSE3D "src/Mouse3D/*.cpp" )
+if( UNIX )
+	set (SRC_MOUSE3D 
+		src/Mouse3d/LibMouse3d/Magellan/xdrvlib.c 
+)
+elseif( WIN32 )
+	set (SRC_MOUSE3D 
+		src/Mouse3d/LibMouse3d/LibCoreMouse3d/Mouse3DInput.cpp 
+		src/Mouse3d/LibMouse3d/LibCoreMouse3d/MouseParameters.cpp 
+)
+elseif( APPLE )
+	set (SRC_MOUSE3D
+)
+endif()
+
+set ( SRC_MOUSE3D 
+	src/Mouse3D/Connector.cpp 
+	src/Mouse3d/LibMouse3d/EventThread.cpp 
+	src/Mouse3d/LibMouse3d/Mouse3d.cpp 
+)
 
 
 # All source files
@@ -787,8 +806,28 @@ file( GLOB_RECURSE HEADER_SPEECH	"include/Speech/*.h" )
 # LEAP
 file( GLOB_RECURSE HEADER_LEAP	"include/Leap/*.h" )
 
+
 # MOUSE3D
-file( GLOB_RECURSE HEADER_MOUSE3D	"include/Mouse3D/*.h" )
+if( UNIX )
+	set (SRC_MOUSE3D 
+		src/Mouse3d/LibMouse3d/Magellan/xdrvlib.h 
+)
+elseif( WIN32 )
+	set (SRC_MOUSE3D 
+		src/Mouse3d/LibMouse3d/LibCoreMouse3d/Mouse3DInput.h
+		src/Mouse3d/LibMouse3d/LibCoreMouse3d/MouseParameters.h
+		src/Mouse3d/LibMouse3d/LibCoreMouse3d/l3dMouseParams.h
+)
+elseif( APPLE )
+	set (SRC_MOUSE3D
+)
+endif()
+
+set ( SRC_MOUSE3D 
+	src/Mouse3D/Connector.h 
+	src/Mouse3d/LibMouse3d/EventThread.h
+	src/Mouse3d/LibMouse3d/Mouse3d.h
+)
 
 # All header files
 set( INCL
