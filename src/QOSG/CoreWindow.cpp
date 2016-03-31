@@ -636,6 +636,7 @@ void CoreWindow::createActions()
 	clusteringProgressBar->setWindowFlags( flags );
 	clusteringProgressBar->setModal( true );
 	clusteringProgressBar->setMinimumDuration( 1000 );
+	clusteringProgressBar->reset();
 
 	b_SetRestriction_Cube_Selected = new QPushButton();
 	b_SetRestriction_Cube_Selected->setText( "Restrict" );
