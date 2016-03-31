@@ -30,8 +30,8 @@ SelectLayoutWindow::SelectLayoutWindow( QWidget* parent, qlonglong graphID )
 	layoutsTable->setRowCount( 0 );
 	layoutsTable->setColumnCount( 2 );
 	layoutsTable->setHorizontalHeaderLabels( layoutList );
-	layoutsTable->horizontalHeader()->setSectionResizeMode( 0, QHeaderView::Interactive );
-	layoutsTable->horizontalHeader()->setSectionResizeMode( 1, QHeaderView::Stretch );
+	layoutsTable->horizontalHeader()->SETRESIZEMODE( 0, QHeaderView::Interactive );
+	layoutsTable->horizontalHeader()->SETRESIZEMODE( 1, QHeaderView::Stretch );
 	layoutsTable->verticalHeader()->hide();
 	layoutsTable->setShowGrid( true );
 

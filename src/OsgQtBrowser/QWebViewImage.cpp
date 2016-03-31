@@ -23,15 +23,15 @@ QWebViewImage::QWebViewImage()
 	// make sure we have a valid QApplication before we start creating widgets.
 	OsgQtBrowser::QGraphicsViewAdapter::getOrCreateQApplication();
 
-	_webView = new QWebEngineView;
+	_webView = new QWEBVIEW;
 
 	_webPage = new QLogWebPage;
-	_webPage->settings()->setAttribute( QWebEngineSettings::JavascriptEnabled, true );
+	_webPage->settings()->setAttribute( QWEBSETTING::JavascriptEnabled, true );
 #if defined(QTWEBENGINE_PLUGINS)
 	// missing in Qt 5.5
 	// reintroduced in Qt 5.6
 	// http://doc.qt.io/qt-5/qwebenginesettings.html
-	_webPage->settings()->setAttribute( QWebEngineSettings::PluginsEnabled, true );
+	_webPage->settings()->setAttribute( QWEBSETTING::PluginsEnabled, true );
 #endif
 
 	_webView->setPage( _webPage );

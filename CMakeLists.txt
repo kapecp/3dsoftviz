@@ -138,20 +138,38 @@ endif()
 # Dependencies - Searching external dependencies
 # ------------------------------------------------------------
 
-# ------------------------------ Qt5 -------------------------------
-# Find Qt5
-find_package( Qt5Core REQUIRED )
-find_package( Qt5Widgets REQUIRED )
-find_package( Qt5OpenGL REQUIRED )
-find_package( Qt5Sql REQUIRED )
-find_package( Qt5WebEngine REQUIRED )
-find_package( Qt5WebEngineWidgets REQUIRED )
-find_package( Qt5Xml REQUIRED )
-find_package( Qt5Network REQUIRED )
-
+# ------------------------------ Qt -------------------------------
+set( CMAKE_AUTOMOC ON )
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
-# autogenerate all moc files
-set( CMAKE_AUTOMOC TRUE )
+
+# Find Qt5
+find_package( Qt5Core )
+find_package( Qt5Widgets )
+find_package( Qt5OpenGL )
+find_package( Qt5Sql )
+find_package( Qt5WebEngine )
+find_package( Qt5WebEngineWidgets )
+find_package( Qt5Xml )
+find_package( Qt5Network )
+
+if ( NOT Qt5Core_FOUND )
+	# Find Qt4
+	find_package( Qt4 )
+	set( QT_USE_QTOPENGL 1 )
+	set( QT_USE_QTSQL 1 )
+	set( QT_USE_QTWEBKIT 1 )
+	set( QT_USE_QTXML 1 )
+	set( QT_USE_QTNETWORK 1 )
+	include( ${QT_USE_FILE} )
+endif()
+
+if ( Qt5Core_FOUND )
+	message(STATUS "Qt5 found!")
+elseif( Qt4_FOUND )
+	message(STATUS "Qt4 found!")
+else()
+	message(STATUS "No suitable Qt found!")
+endif()
 
 # add special flag to GCC compiler when using Qt 4.6.x with GCC >4.6
 if( "${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" AND
@@ -927,7 +945,9 @@ target_include_directories( noiseutils SYSTEM PUBLIC ${DEPENDENCIES_INCLUDE_DIR}
 
 add_library( qtcolorpicker STATIC dependencies/qtcolorpicker/qtcolorpicker.cpp )
 target_include_directories( qtcolorpicker SYSTEM PUBLIC dependencies/qtcolorpicker )
-qt5_use_modules( qtcolorpicker Core Widgets )
+if ( Qt5Core_FOUND )
+	qt5_use_modules( qtcolorpicker Core Widgets )
+endif()
 
 # ---------------------------------------------------------------
 # Build modules as libraries
@@ -935,7 +955,11 @@ qt5_use_modules( qtcolorpicker Core Widgets )
 
 add_library( gitlib SHARED ${SRC_GITLIB} ${HEADER_GITLIB})
 target_include_directories( gitlib SYSTEM PUBLIC include/Repository/Git )
-qt5_use_modules( gitlib Core )
+if ( Qt5Core_FOUND )
+	qt5_use_modules( gitlib Core )
+elseif( Qt4_FOUND )
+	target_link_libraries( gitlib ${QT_LIBRARIES} )
+endif()
 
 set(FLAGS_FOR_DEBUG2 ${FLAGS_FOR_DEBUG})
 list(APPEND FLAGS_FOR_DEBUG2 " -DGITLIB_LIBRARY")
@@ -953,7 +977,18 @@ endif()
 # Build and link
 add_executable( ${3DSOFTVIZ_NAME} ${INCL}  ${SRC} )
 
-qt5_use_modules( ${3DSOFTVIZ_NAME} Core Widgets OpenGL Sql WebEngine WebEngineWidgets Xml Network )
+if ( Qt5Core_FOUND )
+	qt5_use_modules( ${3DSOFTVIZ_NAME} 
+		Core 
+		Widgets 
+		OpenGL 
+		Sql 
+		WebEngine 
+		WebEngineWidgets 
+		Xml 
+		Network 
+	)
+endif()
 
 # set compile flags only for our code ( suppresses warnigns on system headers )
 set_target_properties( ${3DSOFTVIZ_NAME} PROPERTIES COMPILE_FLAGS "${FLAGS_FOR_DEBUG}" )
@@ -968,6 +1003,12 @@ target_link_libraries( ${3DSOFTVIZ_NAME}
 	${OPENSCENEGRAPH_LIBRARIES}
 	${OSGVIEWER_LIBRARIES}
 )
+
+if ( Qt4_FOUND )
+	target_link_libraries( ${3DSOFTVIZ_NAME}
+		${QT_LIBRARIES}
+	)
+endif()
 
 if( NOT MSVC )
 	target_link_libraries( ${3DSOFTVIZ_NAME} diluculum
@@ -1122,7 +1163,7 @@ if( USE_BUILTIN_DEPENDENCIES )
 	)
 endif()
 
-# Include QT5 libraries in Apple bundle and on Windows
+# Include QT libraries in Apple bundle and on Windows
 if( WIN32 OR APPLE AND OSX_BUNDLE )
 	# On Apple plugins need to be bundled
 	if( APPLE AND OSX_BUNDLE )

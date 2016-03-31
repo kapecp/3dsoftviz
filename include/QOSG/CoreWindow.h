@@ -31,8 +31,12 @@
 
 #include <qtcolorpicker.h>
 
+#if QT_VERSION >= 0x050000
+	#include <QtWidgets>
+#else
+#endif
+
 #include <QtGui>
-#include <QtWidgets>
 
 #include <QAction>
 #include <QApplication>

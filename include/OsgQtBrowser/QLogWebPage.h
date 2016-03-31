@@ -1,16 +1,28 @@
 #ifndef QLOGWEBPAGE_H
 #define QLOGWEBPAGE_H
 
-#include <QtWebEngine>
+#include <QtGlobal>
 
-#include <QWebEnginePage>
+#if QT_VERSION >= 0x050000
+	#include <QtWebEngine>
+	#include <QWebEnginePage>
+
+	#define QWEBPAGE QWebEnginePage
+#else
+	#include <QWebPage>
+
+	#define QWEBPAGE QWebPage
+#endif
+
+
 
 /**
 *  \class QLogWebPage
 *  \brief Simple subclass of QWebPage supporting console logging
 *  \author Michael Gloger
 */
-class QLogWebPage : public QWebEnginePage
+
+class QLogWebPage : public QWEBPAGE
 {
 protected:
 	/**

@@ -16,10 +16,24 @@
 
 #include <osgWidget/Browser>
 
-#include <QtWebEngine>
+#include <QtGlobal>
 
-#include <QWebEngineView>
-#include <QWebEngineSettings>
+#if QT_VERSION >= 0x050000
+	#include <QtWebEngine>
+	#include <QWebEngineView>
+	#include <QWebEngineSettings>
+
+	#define QWEBVIEW QWebEngineView
+	#define QWEBPAGE QWebEnginePage
+	#define QWEBSETTING QWebEngineSettings
+#else
+	#include <QtWebKit>
+	#include <QWebSettings>
+
+	#define QWEBVIEW QWebView
+	#define QWEBPAGE QWebPage
+	#define QWEBSETTING QWebSettings
+#endif
 
 #include "OsgQtBrowser/QGraphicsViewAdapter.h"
 #include "LuaTypes/LuaValueMap.h"
@@ -66,7 +80,7 @@ public:
 		*  \brief
 		*  \return QWebView *
 		*/
-	QWebEngineView* getQWebView()
+	QWEBVIEW* getQWebView()
 	{
 		return _webView;
 	}
@@ -76,7 +90,7 @@ public:
 		*  \brief
 		*  \return QWebPage *
 		*/
-	QWebEnginePage* getQWebPage()
+	QWEBPAGE* getQWebPage()
 	{
 		return _webPage;
 	}
@@ -157,13 +171,13 @@ protected:
 		*  QPointer<QWebView> _webView
 		*  \brief
 		*/
-	QPointer<QWebEngineView>              _webView;
+	QPointer<QWEBVIEW>              _webView;
 
 	/**
 		*  QPointer<QWebPage> _webPage
 		*  \brief
 		*/
-	QPointer<QWebEnginePage>              _webPage;
+	QPointer<QWEBPAGE>              _webPage;
 };
 }
 #endif
