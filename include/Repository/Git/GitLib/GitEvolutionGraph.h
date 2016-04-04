@@ -269,35 +269,7 @@ private:
 	 */
 	QMap<QString, int> removedFiles;
 
-//    QMap<QString, QString> lastVersionDiff;
-
     QMap<QString, Repository::Git::GitType>* changedNodesAndEdges;
-
-//    QMap<QString, QString> lastFunctionInterval;
-
-    /**
-     * QMap<QString, int> nodesOccurence
-     * @brief Map of occurences of nodes in graph, where key is the node identifier
-     */
-//    QMap<QString, int> nodesOccurence;
-
-    /**
-     * QMap<QString, int> luaNodesMapping
-     * @brief Maps identifier to current lua node id
-     */
-//    QMap<QString, int> luaNodesMapping;
-
-    /**
-     * QMap<QString, int> luaEdgesMapping
-     * @brief Maps identifier to current lua edge id
-     */
-//    QMap<QString, int> luaEdgesMapping;
-
-    /**
-     * QMap<QString, Repository::Git::GitFile*> latestGitFileCallTree
-     * @brief Map which contain key as git file identifier and reference of git file which consists only with file call tree.
-     */
-//    QMap<QString, Repository::Git::GitFile*> latestGitFileCallTree;
 
     QMap<QString, Repository::Git::GitMetaData*> metaData;
 

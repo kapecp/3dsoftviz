@@ -28,7 +28,7 @@ class GitFunction;
 class GitLuaGraphVisualizer
 {
 public:
-    GitLuaGraphVisualizer( Data::Graph* currentGraph, Repository::Git::GitEvolutionGraph* evolutionGraph, osg::ref_ptr<osg::Camera> camera, bool showLuaStats );
+    GitLuaGraphVisualizer( Data::Graph* currentGraph, Repository::Git::GitEvolutionGraph* evolutionGraph, osg::ref_ptr<osg::Camera> camera, int showLuaStats );
 
     void visualize( bool next );
 
@@ -60,7 +60,7 @@ private:
 
     void processChangedNodesAndEdges();
 
-    void reloadNodeRepresentation( bool showLuaStats );
+    void reloadNodeRepresentation( int showLuaStats );
 
     /**
      * Data::Graph* currentGraph
@@ -80,9 +80,13 @@ private:
      */
     Lua::LuaGraph* luaGraph;
 
-    bool showLuaStats;
+    int showLuaStats;
 
     osg::ref_ptr<osg::Camera> camera;
+
+    static const int LUA_STATS = 0;
+    static const int DIFFERENCE_MAP = 1;
+    static const int CHANGES = 2;
 
 }; // class
 } // namespace

@@ -78,6 +78,21 @@ public:
         return this->firstOccurenceInGraph;
     }
 
+    void setChangedCount( int count ) {
+        this->changedCount = count;
+    }
+
+    int getChangedCount() {
+        return this->changedCount;
+    }
+
+    void increaseChangedCount() {
+        this->changedCount++;
+    }
+     void decreaseChangedCount() {
+        this->changedCount--;
+     }
+
 private:
     int occurence;
 
@@ -93,6 +108,7 @@ private:
 
     Repository::Git::GitFile* callTree;
 
+    int changedCount;
 }; // class
 } // namespace
 }

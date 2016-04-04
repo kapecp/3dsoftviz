@@ -105,6 +105,8 @@ public slots:
 	            */
 	void showLoadGraph();
 
+    void changeEvolutionVisualization( int  state );
+
 	/**
 	            *  \fn public  saveGraphToDB
 	            *  \brief Save a current graph to database
@@ -1038,6 +1040,12 @@ private:
      * @brief CheckBox for visualizing lua metrics
      */
     QCheckBox* chb_git_showLuaStats;
+
+    /**
+     * QComboBox* cb_git_evoVisualizeMethod
+     * @brief cb_git_evoVisualizeMethod
+     */
+    QComboBox* cb_git_evoVisualizeMethod;
 
 	bool isRunning;
 

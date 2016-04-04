@@ -736,6 +736,11 @@ void CoreWindow::createActions()
     chb_git_showLuaStats = new QCheckBox( tr( "Show lua metrics" ) );
     chb_git_showLuaStats->setChecked( false );
     connect( chb_git_showLuaStats, SIGNAL( clicked( bool ) ), this, SLOT( showLuaStats( bool ) ) );
+
+    cb_git_evoVisualizeMethod = new QComboBox();
+    cb_git_evoVisualizeMethod->insertItems(0, ( QStringList() << "LuaStats" << "Difference" << "Changes" ) );
+    cb_git_evoVisualizeMethod->setFocusPolicy( Qt::NoFocus );
+    connect( cb_git_evoVisualizeMethod, SIGNAL( currentIndexChanged( int ) ), this, SLOT( changeEvolutionVisualization( int ) ) );
 	// garaj end
 }
 
@@ -1159,6 +1164,7 @@ QWidget* CoreWindow::createMoreFeaturesTab( QFrame* line )
 	lMore->addRow( b_git_lua_graph );
     lMore->addRow( chb_git_changeCommits );
     lMore->addRow( chb_git_showLuaStats );
+    lMore->addRow( cb_git_evoVisualizeMethod );
 
 	wMore->setLayout( lMore );
 
@@ -1178,7 +1184,7 @@ void CoreWindow::createGraphSlider()
 void CoreWindow::createSelectionComboBox()
 {
 	selectionTypeComboBox = new QComboBox();
-	selectionTypeComboBox->insertItems( 0,( QStringList() << "All" << "Node" << "Edge" << "Cluster" ) );
+    selectionTypeComboBox->insertItems( 0, ( QStringList() << "All" << "Node" << "Edge" << "Cluster" ) );
 	selectionTypeComboBox->setFocusPolicy( Qt::NoFocus );
 	connect( selectionTypeComboBox,SIGNAL( currentIndexChanged( int ) ),this,SLOT( selectionTypeComboBoxChanged( int ) ) );
 }
@@ -4017,6 +4023,14 @@ void CoreWindow::showLuaStats( bool show ) {
     chb_git_showLuaStats->setChecked( show );
     if( Manager::GraphManager::getInstance()->getActiveEvolutionGraph() ) {
         Repository::Git::GitLuaGraphVisualizer visualizer = Repository::Git::GitLuaGraphVisualizer( Manager::GraphManager::getInstance()->getActiveGraph(), Manager::GraphManager::getInstance()->getActiveEvolutionGraph(), this->coreGraph->getCamera(), show );
+        visualizer.changeNodeRepresentation();
+    }
+}
+
+void CoreWindow::changeEvolutionVisualization( int state ) {
+    qDebug() << "STATE=" << state;
+    if( Manager::GraphManager::getInstance()->getActiveEvolutionGraph() ) {
+        Repository::Git::GitLuaGraphVisualizer visualizer = Repository::Git::GitLuaGraphVisualizer( Manager::GraphManager::getInstance()->getActiveGraph(), Manager::GraphManager::getInstance()->getActiveEvolutionGraph(), this->coreGraph->getCamera(), state );
         visualizer.changeNodeRepresentation();
     }
 }

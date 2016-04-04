@@ -2,7 +2,7 @@
 
 #include "GitLib/GitFile.h"
 
-Repository::Git::GitMetaData::GitMetaData() : occurence( 0 ), lastDiffVersion( "" ), lastFunctionInterval( "" ), luaMapping( -1 ), changedVersion( -1 ), callTree( nullptr ), firstOccurenceInGraph( -1 ) {
+Repository::Git::GitMetaData::GitMetaData() : occurence( 0 ), lastDiffVersion( "" ), lastFunctionInterval( "" ), luaMapping( -1 ), changedVersion( -1 ), callTree( nullptr ), firstOccurenceInGraph( -1 ), changedCount( 0 ) {
 
 }
 
