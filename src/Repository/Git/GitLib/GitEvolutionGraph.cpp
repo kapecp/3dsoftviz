@@ -15,7 +15,7 @@ Repository::Git::GitEvolutionGraph::GitEvolutionGraph()
 
 Repository::Git::GitEvolutionGraph::~GitEvolutionGraph()
 {
-    qDebug() << "Destruktor GitEvolutionGraph";
+//    qDebug() << "Destruktor GitEvolutionGraph";
     Git::GitUtils::changeCommit( QString( "origin" ), this->getFilePath() );
 	qDeleteAll( this->getVersions() );
 }
