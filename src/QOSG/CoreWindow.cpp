@@ -1858,6 +1858,13 @@ void CoreWindow::switchBackgroundSkyBox() {
 
 	if ( currentGraph != NULL ) {
 
+        if ( isPlaying ) {
+            play->setIcon( QIcon( "../share/3dsoftviz/img/gui/play.png" ) );
+            isPlaying = 0;
+            layout->pause();
+            coreGraph->setNodesFreezed( true );
+        }
+
         coreGraph->updateBackground(0, currentGraph);
 
 	}
@@ -1869,6 +1876,13 @@ void CoreWindow::switchBackgroundSkyNoiseBox() {
 
     if ( currentGraph != NULL ) {
 
+        if ( isPlaying ) {
+            play->setIcon( QIcon( "../share/3dsoftviz/img/gui/play.png" ) );
+            isPlaying = 0;
+            layout->pause();
+            coreGraph->setNodesFreezed( true );
+        }
+
         coreGraph->updateBackground(1, currentGraph);
 
     }
@@ -1878,6 +1892,12 @@ void CoreWindow::switchBackgroundTexture() {
     Data::Graph* currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
 
     if ( currentGraph != NULL ) {
+        if ( isPlaying ) {
+            play->setIcon( QIcon( "../share/3dsoftviz/img/gui/play.png" ) );
+            isPlaying = 0;
+            layout->pause();
+            coreGraph->setNodesFreezed( true );
+        }
 
         coreGraph->updateBackground(2, currentGraph);
 
@@ -1888,6 +1908,12 @@ void CoreWindow::switchBackgroundOrtho2d() {
     Data::Graph* currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
 
     if ( currentGraph != NULL ) {
+        if ( isPlaying ) {
+            play->setIcon( QIcon( "../share/3dsoftviz/img/gui/play.png" ) );
+            isPlaying = 0;
+            layout->pause();
+            coreGraph->setNodesFreezed( true );
+        }
 
         coreGraph->updateBackground(3, currentGraph);
 

@@ -687,21 +687,22 @@ Vwr::CoreGraph::CoreGraph( Data::Graph* graph, osg::ref_ptr<osg::Camera> camera 
 
 int CoreGraph::updateBackground(int bgVal, Data::Graph* currentGraph) {
 	qDebug() << "[INFO] updating background";
-	qDebug() << root->getNumChildren();
+
+    root->removeChild(root->getNumChildren()-1);
 
     if (bgVal == 0){
         SkyBox* skyBox = new SkyBox;
-         root->setChild(root->getNumChildren()-1,  skyBox->createSkyBox());
+         root->addChild(skyBox->createSkyBox());
     }
     else if (bgVal == 1){
-         root->setChild(root->getNumChildren()-1,  createSkyNoiseBox());
+         root->addChild(createSkyNoiseBox());
     }
      #ifdef OPENCV_FOUND
     else if (bgVal == 2){
-         root->setChild(root->getNumChildren()-1,  createTextureBackground());
+         root->addChild(createTextureBackground());
     }
     else if (bgVal == 3){
-         root->setChild(root->getNumChildren()-1,  createOrtho2dBackground());
+         root->addChild(createOrtho2dBackground());
     }
      #endif
     reload(currentGraph);
