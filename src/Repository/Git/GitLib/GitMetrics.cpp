@@ -5,12 +5,13 @@
 #include "GitLib/GitFile.h"
 
 #include <QDebug>
+#include <QSet>
 
 Repository::Git::GitMetrics::GitMetrics() {
 
 }
 
-Repository::Git::GitMetrics::GitMetrics( Repository::Git::GitEvolutionGraph *evolutionGraph, QString commitId ) : evolutionGraph( evolutionGraph ), commitId( commitId ) {
+Repository::Git::GitMetrics::GitMetrics( Repository::Git::GitEvolutionGraph *evolutionGraph, QString commitId ) : evolutionGraph( evolutionGraph )/*, commitId( commitId )*/ {
 }
 
 int Repository::Git::GitMetrics::getChangedCount( QString identifier ) {
@@ -28,15 +29,15 @@ int Repository::Git::GitMetrics::getChangedCount( QString identifier ) {
             // inak counter vynulujeme a pocitame od 0
             if( file->getType() != Repository::Git::GitType::REMOVED ) {
                 result++;
-                qDebug() << "Changed in version with commitId" << version->getCommitId();
+//                qDebug() << "Changed in version with commitId" << version->getCommitId();
             } else {
                 result = 0;
-                qDebug() << "Changed to 0 in version with commitId" << version->getCommitId();
+//                qDebug() << "Changed to 0 in version with commitId" << version->getCommitId();
             }
         }
     }
 
-    qDebug() << identifier << "was changed" << result << "times";
+//    qDebug() << identifier << "was changed" << result << "times";
 
     // vrat pocet modifikacii suboru
     return result;
@@ -48,23 +49,24 @@ int Repository::Git::GitMetrics::getChangedCount( QString identifier, int count,
 
     // Ak je startovaci index mensi ako 0 a vacsi alebo rovny ako pocet verzii alebo rozdiel start a count je mensi ako 0,
     // tak nevieme vypocitat pocet zmien
-    if( start < 0 || start > this->evolutionGraph->getVersions().size() || start + count < 0) {
+    if( start < 0 || start > this->evolutionGraph->getVersions().size() || start + count < 0 ) {
         return -1;
     }
 
+    // Definicia pomocnych premennych
     int end, begin;
 
     // Ak je count kladne cislo, tak dopocitam maximalny mozny end
     // inak posuniem end na start a begin na posunuty start o count
     if( count >= 0 ) {
-        end = ( start + count >= this->evolutionGraph->getVersions().size() ) ? this->evolutionGraph->getVersions().size() : start + count ;
+        end = ( start + count > this->evolutionGraph->getVersions().size() ) ? this->evolutionGraph->getVersions().size() : start + count ;
         begin = start;
     } else {
         end = start;
         begin = start + count;
     }
 
-    qDebug() << "Begin = " << begin << " and end = " << end;
+//    qDebug() << "Begin = " << begin << " and end = " << end;
 
     // Iteracia cez verzie v evolucnom grafe od zadaneho indexu
     for( int i = begin; i < end; i++ ) {
@@ -79,16 +81,217 @@ int Repository::Git::GitMetrics::getChangedCount( QString identifier, int count,
             // inak counter vynulujeme a pocitame od 0
             if( file->getType() != Repository::Git::GitType::REMOVED ) {
                 result++;
-                qDebug() << "Changed in version with commitId" << version->getCommitId();
+//                qDebug() << "Changed in version with commitId" << version->getCommitId();
             } else {
                 result = 0;
-                qDebug() << "Changed to 0 in version with commitId" << version->getCommitId();
+//                qDebug() << "Changed to 0 in version with commitId" << version->getCommitId();
             }
         }
     }
 
-    qDebug() << identifier << "was changed" << result << "times";
+//    qDebug() << identifier << "was changed" << result << "times";
 
     // vrat pocet modifikacii suboru
     return result;
+}
+
+int Repository::Git::GitMetrics::getChangedCount( QString identifier, int count, QString startCommitId ) {
+    // inicializacia vystupnej premennej
+    int result = -1;
+
+    int versionIndex = -1;
+
+    // Zistime poziciu verzie v zozname verzii evolucneho grafu
+    for( int i = 0; i < this->evolutionGraph->getVersions().size(); i++ ) {
+        if( this->evolutionGraph->getVersion( i )->getCommitId() == startCommitId ) {
+            versionIndex = i;
+            break;
+        }
+    }
+
+    // Ak sme nasli commitId vo verziach, tak vyhladame pocet zmien podla vstupnych parametrov ( moze vratit aj -1 )
+    // inak vrat nastavenu hodnotu
+    if( versionIndex != -1 ) {
+        result = getChangedCount( identifier, count, versionIndex );
+    }
+
+//    qDebug() << identifier << "was changed" << result << "times";
+
+    // vrat pocet modifikacii suboru
+    return result;
+}
+
+int Repository::Git::GitMetrics::getChangedCount( QString identifier, QString endCommitId, QString startCommitId ) {
+    // inicializacia vystupnej premennej
+    int result = -1;
+
+    int versionStartIndex = -1;
+    int versionEndIndex = -1;
+
+    for( int i = 0; i < this->evolutionGraph->getVersions().size(); i++ ) {
+        if( this->evolutionGraph->getVersion( i )->getCommitId() == endCommitId ) {
+            versionEndIndex = i;
+        }
+
+        if( this->evolutionGraph->getVersion( i )->getCommitId() == startCommitId ) {
+            versionStartIndex = i;
+        }
+
+        if( versionEndIndex != -1 && versionStartIndex != -1 ) {
+            break;
+        }
+    }
+
+//    qDebug() << "VersionStartIndex = " << versionStartIndex << " and VersionEndIndex = " << versionEndIndex;
+
+    if( versionEndIndex != -1 && versionStartIndex != -1 ) {
+        if( versionEndIndex - versionStartIndex > 0 ) {
+            result =  getChangedCount( identifier, versionEndIndex + 1 - versionStartIndex, versionStartIndex );
+        } else {
+            result =  getChangedCount( identifier, versionEndIndex - 1 - versionStartIndex, versionStartIndex + 1 );
+        }
+    }
+
+
+//    qDebug() << identifier << "was changed" << result << "times";
+
+    // vrat pocet modifikacii suboru
+    return result;
+}
+
+int Repository::Git::GitMetrics::getAuthorCount( QString author ) {
+    // inicializacia vystupnej premennej
+    int result = 0;
+
+    foreach( Repository::Git::GitVersion* version, this->evolutionGraph->getVersions() ) {
+        if( version->getAuthor() == author ) {
+            result++;
+//            qDebug() << author << " changed commitId " << version->getCommitId();
+        }
+    }
+
+//    qDebug() << author << "changed" << result << "versions";
+
+    // vrat pocet modifikacii verzie autorom
+    return result;
+}
+
+int Repository::Git::GitMetrics::getAuthorCount( QString author, int count, int start ) {
+    // inicializacia vystupnej premennej
+    int result = 0;
+
+    if( start < 0 || start > this->evolutionGraph->getVersions().size() || start + count < 0 ) {
+        return -1;
+    }
+
+    int begin, end;
+
+    if( count >= 0 ) {
+        end = ( start + count > this->evolutionGraph->getVersions().size() ) ? this->evolutionGraph->getVersions().size() : start + count ;
+        begin = start;
+    } else {
+        end = start;
+        begin = start + count;
+    }
+
+//    qDebug() << "Begin = " << begin << " and end = " << end;
+
+    for( int i = begin; i < end; i++ ) {
+        Repository::Git::GitVersion* version = this->evolutionGraph->getVersion( i );
+
+        if( version->getAuthor() == author ) {
+            result++;
+        }
+    }
+
+//    qDebug() << author << "changed" << result << "versions";
+
+    // vrat pocet modifikacii verzie autorom
+    return result;
+}
+
+int Repository::Git::GitMetrics::getAuthorCount( QString author, int count, QString startCommitId ) {
+    // inicializacia vystupnej premennej
+    int result = -1;
+
+    int versionIndex = -1;
+
+    // Zistime poziciu verzie v zozname verzii evolucneho grafu
+    for( int i = 0; i < this->evolutionGraph->getVersions().size(); i++ ) {
+        if( this->evolutionGraph->getVersion( i )->getCommitId() == startCommitId ) {
+            versionIndex = i;
+            break;
+        }
+    }
+
+    // Ak sme nasli commitId vo verziach, tak vyhladame pocet zmien podla vstupnych parametrov ( moze vratit aj -1 )
+    // inak vrat nastavenu hodnotu
+    if( versionIndex != -1 ) {
+        result = getAuthorCount( author, count, versionIndex );
+    }
+
+//    qDebug() << author << "changed" << result << "versions";
+
+    // vrat pocet modifikacii autorom
+    return result;
+}
+
+int Repository::Git::GitMetrics::getAuthorCount( QString author, QString endCommitId, QString startCommitId ) {
+    // inicializacia vystupnej premennej
+    int result = -1;
+
+    int versionStartIndex = -1;
+    int versionEndIndex = -1;
+
+    for( int i = 0; i < this->evolutionGraph->getVersions().size(); i++ ) {
+        if( this->evolutionGraph->getVersion( i )->getCommitId() == endCommitId ) {
+            versionEndIndex = i;
+        }
+
+        if( this->evolutionGraph->getVersion( i )->getCommitId() == startCommitId ) {
+            versionStartIndex = i;
+        }
+
+        if( versionEndIndex != -1 && versionStartIndex != -1 ) {
+            break;
+        }
+    }
+
+//    qDebug() << "VersionStartIndex = " << versionStartIndex << " and VersionEndIndex = " << versionEndIndex;
+
+    if( versionEndIndex != -1 && versionStartIndex != -1 ) {
+        if( versionEndIndex - versionStartIndex > 0 ) {
+            result =  getAuthorCount( author, versionEndIndex + 1 - versionStartIndex, versionStartIndex );
+        } else {
+            result =  getAuthorCount( author, versionEndIndex - 1 - versionStartIndex, versionStartIndex + 1 );
+        }
+    }
+
+
+//    qDebug() << author << "changed" << result << "versions";
+
+    // vrat pocet modifikacii autorom
+    return result;
+}
+
+QList<QString> Repository::Git::GitMetrics::getAuthorList() {
+    QSet<QString> authors = QSet<QString>();
+
+    foreach( Repository::Git::GitVersion* version, this->evolutionGraph->getVersions() ) {
+        authors.insert( version->getAuthor() );
+    }
+
+    return authors.toList();
+}
+
+QList<QString> Repository::Git::GitMetrics::getAuthorList( int position ) {
+    QSet<QString> authors = QSet<QString>();
+
+    int end =  ( position > this->evolutionGraph->getVersions().size() ) ? this->evolutionGraph->getVersions().size() : position;
+
+    for( int i = 0; i < end; i++ ) {
+        authors.insert( this->evolutionGraph->getVersion( i )->getAuthor() );
+    }
+
+    return authors.toList();
 }

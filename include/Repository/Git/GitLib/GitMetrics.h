@@ -4,6 +4,7 @@
 #include "GitLib/GitExport.h"
 
 #include <QString>
+#include <QList>
 
 namespace Repository {
 
@@ -21,6 +22,23 @@ public:
 
     int getChangedCount( QString identifier, int count, int start = 0 );
 
+    int getChangedCount( QString identifier, int count, QString startCommitId );
+
+    int getChangedCount( QString identifier, QString endCommitId, QString startCommitId );
+
+    int getAuthorCount( QString author );
+
+    int getAuthorCount( QString author, int count, int start = 0 );
+
+    int getAuthorCount( QString author, int count, QString startCommitId );
+
+    int getAuthorCount( QString author, QString endCommitId, QString startCommitId );
+
+    QList<QString> getAuthorList();
+
+    QList<QString> getAuthorList( int position );
+
+
     void setEvolutionGraph( Repository::Git::GitEvolutionGraph* evolutionGraph ) {
         this->evolutionGraph = evolutionGraph;
     }
@@ -28,20 +46,20 @@ public:
     Repository::Git::GitEvolutionGraph* getEvolutionGraph() {
         return this->evolutionGraph;
     }
-
+/*
     void setCommitId( QString commitId ) {
         this->commitId = commitId;
     }
 
     QString getCommitId() {
         return this->commitId;
-    }
+    }*/
 
 private:
 
     Repository::Git::GitEvolutionGraph* evolutionGraph;
 
-    QString commitId;
+//    QString commitId;
 }; // class
 } // namespace
 }

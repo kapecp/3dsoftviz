@@ -22,6 +22,8 @@ Describe( a_git_metrics ) {
         version1->addChangedFile( file12 );
         version1->addChangedFile( file13 );
 
+        version1->setAuthor( "me" );
+
         Repository::Git::GitVersion* version2 = new Repository::Git::GitVersion( "2" );
 
         Repository::Git::GitFile* file21 = new Repository::Git::GitFile("21", "/to/21", Repository::Git::GitType::ADDED );
@@ -34,6 +36,8 @@ Describe( a_git_metrics ) {
         version2->addChangedFile( file23 );
         version2->addChangedFile( file24 );
 
+        version2->setAuthor( "me" );
+
         Repository::Git::GitVersion* version3 = new Repository::Git::GitVersion( "3" );
 
         Repository::Git::GitFile* file31 = new Repository::Git::GitFile("13", "/to/13", Repository::Git::GitType::REMOVED );
@@ -43,6 +47,8 @@ Describe( a_git_metrics ) {
         version3->addChangedFile( file31 );
         version3->addChangedFile( file32 );
         version3->addChangedFile( file33 );
+
+        version3->setAuthor( "you" );
 
         Repository::Git::GitVersion* version4 = new Repository::Git::GitVersion( "4" );
 
@@ -55,6 +61,8 @@ Describe( a_git_metrics ) {
         version4->addChangedFile( file42 );
         version4->addChangedFile( file43 );
         version4->addChangedFile( file44 );
+
+        version4->setAuthor( "me" );
 
         QList<Repository::Git::GitVersion*> versions = QList<Repository::Git::GitVersion*>();
 
@@ -72,7 +80,7 @@ Describe( a_git_metrics ) {
         Assert::That( metrics.getEvolutionGraph()->getFilePath().toStdString(), Equals( "path" ) );
     }
 
-    It( metrics_should_returns_changed_count_for_files ) {
+    It( get_changed_count_for_whole_evolution_graph ) {
         evolution_graph_should_contains_versions();
 
         Assert::That( metrics.getChangedCount( "file;/to/11" ), Equals( 4 ) );
@@ -83,9 +91,10 @@ Describe( a_git_metrics ) {
         Assert::That( metrics.getChangedCount( "file;/to/41" ), Equals( 1 ) );
     }
 
-    It( metrics_should_returns_changed_count_for_files_from_start_and_count ) {
+    It( get_changed_count_for_count_and_start ) {
         evolution_graph_should_contains_versions();
 
+        Assert::That( metrics.getChangedCount( "file;/to/11", 4 ), Equals( 4 ) );
         Assert::That( metrics.getChangedCount( "file;/to/11", 3 ), Equals( 3 ) );
         Assert::That( metrics.getChangedCount( "file;/to/11", 2 ), Equals( 2 ) );
         Assert::That( metrics.getChangedCount( "file;/to/11", 1 ), Equals( 1 ) );
@@ -104,6 +113,113 @@ Describe( a_git_metrics ) {
         Assert::That( metrics.getChangedCount( "file;/to/11", -4, 3 ), Equals( -1 ) );
 
         Assert::That( metrics.getChangedCount( "file;/to/11", -1, 1 ), Equals( 1 ) );
+    }
+
+    It( get_changed_count_for_count_and_start_commit_id ) {
+        evolution_graph_should_contains_versions();
+
+        Assert::That( metrics.getChangedCount( "file;/to/11", 4, "1" ), Equals( 4 ) );
+        Assert::That( metrics.getChangedCount( "file;/to/11", 3, "2" ), Equals( 3 ) );
+        Assert::That( metrics.getChangedCount( "file;/to/11", 3, "3" ), Equals( 2 ) );
+        Assert::That( metrics.getChangedCount( "file;/to/11", 3, "4" ), Equals( 1 ) );
+
+        Assert::That( metrics.getChangedCount( "file;/to/11", 3, "-1" ), Equals( -1 ) );
+        Assert::That( metrics.getChangedCount( "file;/to/11", 3, "5" ), Equals( -1 ) );
+
+        Assert::That( metrics.getChangedCount( "file;/to/11", -3, "4" ), Equals( 3 ) );
+        Assert::That( metrics.getChangedCount( "file;/to/11", -3, "3" ), Equals( -1 ) );
+    }
+
+    It( get_changed_count_for_end_commit_id_and_start_commit_id ) {
+        evolution_graph_should_contains_versions();
+
+        Assert::That( metrics.getChangedCount( "file;/to/11", "1", "4" ), Equals( 4 ) );
+        Assert::That( metrics.getChangedCount( "file;/to/11", "1", "3" ), Equals( 3 ) );
+        Assert::That( metrics.getChangedCount( "file;/to/11", "1", "2" ), Equals( 2 ) );
+        Assert::That( metrics.getChangedCount( "file;/to/11", "1", "1" ), Equals( 1 ) );
+
+        Assert::That( metrics.getChangedCount( "file;/to/11", "4", "1" ), Equals( 4 ) );
+        Assert::That( metrics.getChangedCount( "file;/to/11", "4", "2" ), Equals( 3 ) );
+        Assert::That( metrics.getChangedCount( "file;/to/11", "4", "3" ), Equals( 2 ) );
+        Assert::That( metrics.getChangedCount( "file;/to/11", "4", "4" ), Equals( 1 ) );
+
+        Assert::That( metrics.getChangedCount( "file;/to/11", "4", "-1" ), Equals( -1 ) );
+        Assert::That( metrics.getChangedCount( "file;/to/11", "5", "2" ), Equals( -1 ) );
+    }
+
+    It( get_author_count_for_whole_evolution_graph ) {
+        evolution_graph_should_contains_versions();
+
+        Assert::That( metrics.getAuthorCount( "me" ), Equals( 3 ) );
+        Assert::That( metrics.getAuthorCount( "you" ), Equals( 1 ) );
+    }
+
+    It( get_author_count_for_count_and_start ) {
+        evolution_graph_should_contains_versions();
+
+        Assert::That( metrics.getAuthorCount( "me", 4 ), Equals( 3 ) );
+        Assert::That( metrics.getAuthorCount( "me", 3 ), Equals( 2 ) );
+        Assert::That( metrics.getAuthorCount( "me", 2 ), Equals( 2 ) );
+        Assert::That( metrics.getAuthorCount( "me", 1 ), Equals( 1 ) );
+        Assert::That( metrics.getAuthorCount( "me", 0 ), Equals( 0 ) );
+
+        Assert::That( metrics.getAuthorCount( "me", -1 ), Equals( -1 ) );
+        Assert::That( metrics.getAuthorCount( "me", 5 ), Equals( 3 ) );
+
+        Assert::That( metrics.getAuthorCount( "me", 3, 1 ), Equals( 2 ) );
+        Assert::That( metrics.getAuthorCount( "me", 1, 2 ), Equals( 0 ) );
+
+        Assert::That( metrics.getAuthorCount( "me", -4, 4 ), Equals( 3 ) );
+        Assert::That( metrics.getAuthorCount( "me", -3, 4 ), Equals( 2 ) );
+        Assert::That( metrics.getAuthorCount( "me", -2, 4 ), Equals( 1 ) );
+
+        Assert::That( metrics.getAuthorCount( "me", -3, 2 ), Equals( -1 ) );
+    }
+
+
+    It( get_author_count_for_count_and_start_commit_id ) {
+        evolution_graph_should_contains_versions();
+
+        Assert::That( metrics.getAuthorCount( "me", 4, "1" ), Equals( 3 ) );
+        Assert::That( metrics.getAuthorCount( "me", 4, "2" ), Equals( 2 ) );
+        Assert::That( metrics.getAuthorCount( "me", 4, "3" ), Equals( 1 ) );
+        Assert::That( metrics.getAuthorCount( "me", 4, "4" ), Equals( 1 ) );
+
+        Assert::That( metrics.getAuthorCount( "me", 4, "5" ), Equals( -1 ) );
+        Assert::That( metrics.getAuthorCount( "me", 4, "-1" ), Equals( -1 ) );
+
+        Assert::That( metrics.getAuthorCount( "me", -3, "4" ), Equals( 2 ) );
+        Assert::That( metrics.getAuthorCount( "me", -3, "3" ), Equals( -1 ) );
+    }
+
+    It( get_author_count_for_end_commit_id_and_start_commit_id ) {
+        evolution_graph_should_contains_versions();
+
+        Assert::That( metrics.getAuthorCount( "me", "1", "4" ), Equals( 3 ) );
+        Assert::That( metrics.getAuthorCount( "me", "1", "3" ), Equals( 2 ) );
+        Assert::That( metrics.getAuthorCount( "me", "1", "2" ), Equals( 2 ) );
+        Assert::That( metrics.getAuthorCount( "me", "1", "1" ), Equals( 1 ) );
+
+        Assert::That( metrics.getAuthorCount( "me", "4", "1" ), Equals( 3 ) );
+        Assert::That( metrics.getAuthorCount( "me", "4", "2" ), Equals( 2 ) );
+        Assert::That( metrics.getAuthorCount( "me", "4", "3" ), Equals( 1 ) );
+        Assert::That( metrics.getAuthorCount( "me", "4", "4" ), Equals( 1 ) );
+
+        Assert::That( metrics.getAuthorCount( "me", "4", "-1" ), Equals( -1 ) );
+        Assert::That( metrics.getAuthorCount( "me", "5", "2" ), Equals( -1 ) );
+    }
+
+    It( get_author_list_for_whole_evolution_graph ) {
+        evolution_graph_should_contains_versions();
+
+        Assert::That( metrics.getAuthorList().size(), Equals( 2 ) );
+    }
+
+    It( get_author_list_for_position ) {
+        evolution_graph_should_contains_versions();
+
+        Assert::That( metrics.getAuthorList( 2 ).size(), Equals( 1 ) );
+        Assert::That( metrics.getAuthorList( 3 ).size(), Equals( 2 ) );
     }
 
     Repository::Git::GitMetrics metrics;
