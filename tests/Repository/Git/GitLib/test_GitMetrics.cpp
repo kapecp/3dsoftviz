@@ -222,5 +222,19 @@ Describe( a_git_metrics ) {
         Assert::That( metrics.getAuthorList( 3 ).size(), Equals( 2 ) );
     }
 
+    It( get_files_from_author ) {
+        evolution_graph_should_contains_versions();
+
+        Assert::That( metrics.getFilesFromAuthor( "me" ).size(), Equals( 6 ) );
+        Assert::That( metrics.getFilesFromAuthor( "you" ).size(), Equals( 3 ) );
+    }
+
+    It( get_files_from_author_with_position ) {
+        evolution_graph_should_contains_versions();
+
+        Assert::That( metrics.getFilesFromAuthor( "me", 3 ).size(), Equals( 5 ) );
+        Assert::That( metrics.getFilesFromAuthor( "you", 2 ).size(), Equals( 0 ) );
+    }
+
     Repository::Git::GitMetrics metrics;
 };

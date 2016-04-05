@@ -295,3 +295,34 @@ QList<QString> Repository::Git::GitMetrics::getAuthorList( int position ) {
 
     return authors.toList();
 }
+
+QList<QString> Repository::Git::GitMetrics::getFilesFromAuthor( QString author ) {
+    QSet<QString> files =  QSet<QString>();
+
+    foreach( Repository::Git::GitVersion* version, this->evolutionGraph->getVersions() ) {
+        if( version->getAuthor() == author ) {
+            for( QMap<QString, Repository::Git::GitFile*>::iterator iterator = version->getChangedFiles()->begin(); iterator != version->getChangedFiles()->end(); ++iterator ) {
+                files.insert( iterator.value()->getIdentifier() );
+            }
+        }
+    }
+
+    return files.toList();
+}
+
+QList<QString> Repository::Git::GitMetrics::getFilesFromAuthor( QString author, int position ) {
+    QSet<QString> files =  QSet<QString>();
+
+    int end = ( position > this->evolutionGraph->getVersions().size() ) ? this->evolutionGraph->getVersions().size() : position;
+
+    for( int i = 0; i < end; i++ ) {
+        Repository::Git::GitVersion* version = this->evolutionGraph->getVersion( i );
+        if( version->getAuthor() == author ) {
+            for( QMap<QString, Repository::Git::GitFile*>::iterator iterator = version->getChangedFiles()->begin(); iterator != version->getChangedFiles()->end(); ++iterator ) {
+                files.insert( iterator.value()->getIdentifier() );
+            }
+        }
+    }
+
+    return files.toList();
+}

@@ -38,6 +38,9 @@ public:
 
     QList<QString> getAuthorList( int position );
 
+    QList<QString> getFilesFromAuthor( QString author );
+    QList<QString> getFilesFromAuthor( QString author, int position );
+
 
     void setEvolutionGraph( Repository::Git::GitEvolutionGraph* evolutionGraph ) {
         this->evolutionGraph = evolutionGraph;
