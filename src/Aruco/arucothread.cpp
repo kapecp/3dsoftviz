@@ -172,6 +172,9 @@ void ArucoThread::run()
                 //set and send projection matrix of detected image
                 QMatrix4x4 projectionmatrix = aCore.getProjectionMatrix(frame.clone());
                 emit sendProjectionMatrix(projectionmatrix);
+
+                //send marker size
+                emit sendMarkerSize(aCore.getMarkerSize());
                 //*****
 			}
 			imagesSending( aCore, frame );

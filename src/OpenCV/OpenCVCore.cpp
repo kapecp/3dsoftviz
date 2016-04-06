@@ -128,6 +128,12 @@ void  OpenCV::OpenCVCore::createPermanentConnection()
                       SIGNAL( sendModelViewMatrix(QMatrix4x4) ),
                       AppCore::Core::getInstance( mApp )->getCoreGraph(),
                       SLOT( recievedMVMatrix( QMatrix4x4 ) ));
+
+    //sending marker size
+    QObject::connect( mThrAruco,
+                      SIGNAL( sendMarkerSize(float) ),
+                      AppCore::Core::getInstance( mApp )->getCoreGraph(),
+                      SLOT( updateBase(float) ));
     //*****
 
 

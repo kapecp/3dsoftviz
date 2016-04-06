@@ -670,6 +670,19 @@ Vwr::CoreGraph::CoreGraph( Data::Graph* graph, osg::ref_ptr<osg::Camera> camera 
     shadowedScene->setCastsShadowTraversalMask(0x2);
     root->addChild(shadowedScene);
 
+    osg::Sphere* unitSphere = new osg::Sphere( osg::Vec3(0,0,0), 1);
+        osg::ShapeDrawable* unitSphereDrawable = new osg::ShapeDrawable(unitSphere);
+        osg::Geode* unitSphereGeode = new osg::Geode();
+
+        unitSphereGeode->addDrawable(unitSphereDrawable);
+       // graphRotTransf->addChild(unitSphereGeode);
+
+        osg::Sphere* unitSphere1 = new osg::Sphere(osg::Vec3(0,0,0), 5);
+        osg::ShapeDrawable* unitSphereDrawable1 = new osg::ShapeDrawable(unitSphere1);
+        osg::Geode* unitSphereGeode1 = new osg::Geode();
+        unitSphereGeode1->addDrawable(unitSphereDrawable1);
+       // graphRotTransf->addChild(unitSphereGeode1);
+
     //node for base
     baseGeode = new osg::Geode();
     baseTransform = new osg::PositionAttitudeTransform();
@@ -1191,7 +1204,7 @@ void CoreGraph::update()
 		browsersGroup->updateBrowsers();
 
 		updateClustersCoords();
-	}
+    }
 
 	graphGroup->addChild( initCustomNodes() );
 
@@ -1474,7 +1487,6 @@ void CoreGraph::createBase()
    base->push_back(3);
 
    baseGeometry->addPrimitiveSet(baseBehind);*/
-   baseTransform->setScale(osg::Vec3(1000,1000,1000));
 }
 
 void CoreGraph::recievedMVMatrix(QMatrix4x4 modelViewMatrix)
@@ -1485,11 +1497,6 @@ void CoreGraph::recievedMVMatrix(QMatrix4x4 modelViewMatrix)
                             modelViewMatrix.operator()(3,0),modelViewMatrix.operator()(3,1),modelViewMatrix.operator()(3,2),modelViewMatrix.operator()(3,3));
 
     camera->setViewMatrix(arucoMVM);
-
-    graphRotTransf->setMatrix(osg::Matrixd(0.0002,0,0,0,
-                                           0,0.0002,0,0,
-                                           0,0,0.0002,0,
-                                           0,0,0,1));
 }
 
 void CoreGraph::recievedPMatrix(QMatrix4x4 projectionMatrix)
@@ -1502,6 +1509,85 @@ void CoreGraph::recievedPMatrix(QMatrix4x4 projectionMatrix)
     camera->setProjectionMatrix(arucoPM);
 }
 
+void CoreGraph::updateBase(float size)
+{
+    baseTransform->setScale(osg::Vec3(size/2-0.05,size/2-0.05,0));
+}
+
+float CoreGraph::compare(float a, float b)
+{
+    if(a < 0.0)
+        a = a * -1.0;
+
+    if(a > b)
+        return a;
+    else
+        return b;
+}
+
+void CoreGraph::scaleGraphToBase()
+{
+    //half size of marker
+    float size = appConf->getValue("Aruco.MarkerSize").toFloat()/2;
+
+    float maxPositionX = 0;
+    float maxPositionY = 0;
+    float maxPositionZ = 0;
+
+    QMapIterator<qlonglong, osg::ref_ptr<Data::Node> > it( *in_nodes );
+
+    //get the farest node from center
+    while ( it.hasNext() ) {
+        it.next();
+
+        maxPositionX = compare(it.value()->getCurrentPosition().x(),maxPositionX);
+        maxPositionY = compare(it.value()->getCurrentPosition().y(),maxPositionY);
+        maxPositionZ = compare(it.value()->getCurrentPosition().z(),maxPositionZ);
+    }
+
+    //matrix to scale and translate graph
+    //using the farest node on axis and half of marker size
+    osg::Matrixd positionMatrix(size/maxPositionX,0,0,0,
+                                0,size/maxPositionY,0,0,
+                                0,0,size/maxPositionZ,0,
+                                0,0,size,1);
+
+    graphRotTransf->setMatrix(positionMatrix);
+}
+
+void CoreGraph::scaleGraph(int scale)
+{
+    osg::Matrixd scaleMatrix = graphRotTransf->getMatrix();
+    //outputMatrix( scaleMatrix);
+    switch (scale){
+        case 1:
+    {
+        graphRotTransf->setMatrix( scaleMatrix * scaleMatrix.scale(0.5,0.5,0.5) );
+            break;
+    }
+        case 2:
+            graphRotTransf->setMatrix( scaleMatrix * scaleMatrix.scale(2,2,2) );
+            break;
+    }
+}
+void CoreGraph::rotateGraph()
+{
+    osg::Matrixd scaleMatrix = graphRotTransf->getMatrix();
+    float translateBack = scaleMatrix.operator ()(3,2);
+
+    scaleMatrix.setTrans(0,0,0);
+    scaleMatrix = scaleMatrix * scaleMatrix.rotate(0.1,osg::Vec3f(0,0,1));
+    scaleMatrix.setTrans(0,0,translateBack);
+    graphRotTransf->setMatrix( scaleMatrix );
+}
+
+void CoreGraph::outputMatrix(osg::Matrixd matrix)
+{
+    qDebug() << matrix.operator()(0,0) << matrix.operator()(0,1) << matrix.operator()(0,2) << matrix.operator()(0,3);
+    qDebug() << matrix.operator()(1,0) << matrix.operator()(1,1) << matrix.operator()(1,2) << matrix.operator()(1,3);
+    qDebug() << matrix.operator()(2,0) << matrix.operator()(2,1) << matrix.operator()(2,2) << matrix.operator()(2,3);
+    qDebug() << matrix.operator()(3,0) << matrix.operator()(3,1) << matrix.operator()(3,2) << matrix.operator()(3,3);
+}
 
 //*****
 }

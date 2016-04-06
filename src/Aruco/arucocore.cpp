@@ -62,6 +62,11 @@ const QMatrix4x4 ArucoCore::getProjectionMatrix(cv::Mat inputImage)
     QMatrix4x4 matrix(projectionMatrix);
     return matrix;
 }
+
+float ArucoCore::getMarkerSize(){
+    return this->mMarkerSize;
+}
+
 //*****
 
 bool ArucoCore::getDetectedPosAndQuat( cv::Mat inputImage, double position[3], double quaternion[4] )

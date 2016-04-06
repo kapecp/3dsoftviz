@@ -48,6 +48,12 @@ public:
          * @param[out] result projection matrix
          */
     const QMatrix4x4 getProjectionMatrix(cv::Mat inputImage);
+
+    /**
+         * @author Autor:Igor Jurík
+         * @brief get real size of detected marker
+         */
+    float getMarkerSize();
     //*****
 
 	/**

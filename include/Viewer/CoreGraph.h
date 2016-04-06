@@ -262,6 +262,11 @@ public:
     void turnOnBase();
     void turnOffBase();
     void createBase();
+    float compare(float a, float b);
+    void scaleGraphToBase();
+    void scaleGraph(int scale);
+    void rotateGraph();
+    void outputMatrix(osg::Matrixd matrix);
     //*****
 
 public slots:
@@ -313,6 +318,8 @@ public slots:
          * @brief update camera projection matrix from aruco
          */
     void recievedPMatrix(QMatrix4x4 modelViewMatrix);
+
+    void updateBase (float size);
     //*****
 
 private:
@@ -622,7 +629,6 @@ private:
         */
     osg::ref_ptr<osg::Geode> baseGeode;
     osg::ref_ptr<osg::PositionAttitudeTransform> baseTransform;
-
     //*****
 };
 }

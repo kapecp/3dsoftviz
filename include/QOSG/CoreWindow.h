@@ -632,6 +632,10 @@ void loadExampleGraphLua();
     void lightClicked();
     void shadowClicked();
     void baseClicked();
+    void scaleArucoGraphToBase();
+    void scaleArucoGraphUp();
+    void scaleArucoGraphDown();
+    void rotateArucoGraph();
     //*****
 
 private:
@@ -1373,6 +1377,36 @@ private:
      *@brief chb_base
      */
     QCheckBox* chb_base;
+
+    /**
+     *CheckBox for showing base
+     *@brief chb_base
+     */
+    QCheckBox* chb_scale;
+
+    /**
+     *Button for scaling graph to ArUco base
+     *@brief b_default_scale
+     */
+    QPushButton* b_scale_default;
+
+    /**
+     *Button for scaling aruco graph up
+     *@brief b_default_scale
+     */
+    QPushButton* b_scale_up;
+
+    /**
+     *Button for scaling aruco graph down
+     *@brief b_default_scale
+     */
+    QPushButton* b_scale_down;
+
+    /**
+     *Button for rotating aruco graph
+     *@brief b_rotate_graph
+     */
+    QPushButton* b_rotate_graph;
     //*****
 
 public:

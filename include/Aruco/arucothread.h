@@ -120,6 +120,8 @@ signals:
     * @brief sendProjectionMatrix sending projection matrix of detected marker
     */
     void sendProjectionMatrix(QMatrix4x4 projectionmatrix);
+
+    void sendMarkerSize(float markerSize);
     //*****
 
 public slots:
