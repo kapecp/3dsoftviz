@@ -279,6 +279,13 @@ void loadExampleGraphLua();
 	 * @brief TODO
 	 * @param TODO
 	 */
+	void switchBackgroundBlack();
+
+	/**
+	 * void switchBackgroundSkyBox(  )
+	 * @brief TODO
+	 * @param TODO
+	 */
 	void switchBackgroundSkyBox();
 
 	/**
@@ -778,6 +785,12 @@ private:
 		*  \brief Pointer to load basic lua graph from file
 		*/
 	QAction* exampleGraphLua;
+
+	/**
+	 * QAction * switchBackgroundSkyBoxAction
+	 *@brief Action to switch/change background to SkyBox
+	 */
+	QAction* switchBackgroundBlackAction;
 
 	/**
 	 * QAction * switchBackgroundSkyBoxAction

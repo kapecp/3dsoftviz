@@ -185,6 +185,9 @@ void CoreWindow::createActions()
 	exampleGraphLua = new QAction( "Lua Example", this );
 	connect( exampleGraphLua, SIGNAL( triggered() ), this, SLOT( loadExampleGraphLua() ) );
 
+	switchBackgroundBlackAction = new QAction( "Black", this );
+	connect( switchBackgroundBlackAction, SIGNAL( triggered() ), this, SLOT( switchBackgroundBlack() ) );
+
 	switchBackgroundSkyBoxAction = new QAction( "Sky Box", this );
 	connect( switchBackgroundSkyBoxAction, SIGNAL( triggered() ), this, SLOT( switchBackgroundSkyBox() ) );
 
@@ -807,6 +810,7 @@ void CoreWindow::createMenus()
 	examples->addAction( exampleGraphLua );
 
 	backgroundMenu = menuBar()->addMenu("Change Background");
+	backgroundMenu->addAction( switchBackgroundBlackAction );
 	backgroundMenu->addAction( switchBackgroundSkyBoxAction );
 	backgroundMenu->addAction( switchBackgroundSkyNoiseBoxAction );
 	backgroundMenu->addAction( switchBackgroundTextureAction );
@@ -1866,6 +1870,20 @@ void CoreWindow::playLayout() {
 }
 
 // Dynamic background switching
+void CoreWindow::switchBackgroundBlack() {
+	LOG(INFO) << "CoreWindow::switchBackgroundBlack switching to black color bg";
+	Data::Graph* currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
+
+	pauseLayout();
+	if (coreGraph->updateBackground(-1, currentGraph) == 0) {
+		LOG(INFO) << "Background successfully updated";
+	}
+	else {
+		LOG(ERROR) << "Background bg update failed";
+	}
+	viewerWidget->getCamera()->setClearColor(osg::Vec4(0.0f,0.0f,0.0f,0.0f));
+	playLayout();
+}
 void CoreWindow::switchBackgroundSkyBox() {
 	LOG(INFO) << "CoreWindow::switchBackgroundSkyBox switching to SkyBox bg";
 	Data::Graph* currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
@@ -1873,6 +1891,9 @@ void CoreWindow::switchBackgroundSkyBox() {
 	pauseLayout();
 	if (coreGraph->updateBackground(0, currentGraph) == 0) {
 		LOG(INFO) << "Background successfully updated";
+	}
+	else {
+		LOG(ERROR) << "Background bg update failed";
 	}
 	playLayout();
 }
@@ -1884,6 +1905,9 @@ void CoreWindow::switchBackgroundSkyNoiseBox() {
 	if (coreGraph->updateBackground(1, currentGraph) == 0) {
 		LOG(INFO) << "Background successfully updated";
 	}
+	else {
+		LOG(ERROR) << "Background bg update failed";
+	}
 	playLayout();
 }
 void CoreWindow::switchBackgroundTexture() {
@@ -1894,6 +1918,9 @@ void CoreWindow::switchBackgroundTexture() {
 	if (coreGraph->updateBackground(2, currentGraph) == 0) {
 		LOG(INFO) << "Background successfully updated";
 	}
+	else {
+		LOG(ERROR) << "Background bg update failed";
+	}
 	playLayout();
 }
 void CoreWindow::switchBackgroundOrtho2d() {
@@ -1903,6 +1930,9 @@ void CoreWindow::switchBackgroundOrtho2d() {
 	pauseLayout();
 	if (coreGraph->updateBackground(3, currentGraph) == 0) {
 		LOG(INFO) << "Background successfully updated";
+	}
+	else {
+		LOG(ERROR) << "Background bg update failed";
 	}
 	playLayout();
 }

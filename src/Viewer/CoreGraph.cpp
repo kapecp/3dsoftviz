@@ -708,6 +708,9 @@ int CoreGraph::updateBackground(int bgVal, Data::Graph* currentGraph) {
 			root->addChild(createOrtho2dBackground());
 		}
 		#endif
+		else {
+			root->addChild(null); // add empty child
+		}
 
 		reload(currentGraph);
 		return 0;
