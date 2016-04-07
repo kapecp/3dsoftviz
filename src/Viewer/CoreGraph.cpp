@@ -38,6 +38,8 @@
 #include <osgShadow/ShadowedScene>
 #include <osgShadow/ShadowMap>
 
+#include "easylogging++.h"
+
 namespace Vwr {
 
 /*
@@ -686,27 +688,32 @@ Vwr::CoreGraph::CoreGraph( Data::Graph* graph, osg::ref_ptr<osg::Camera> camera 
 }
 
 int CoreGraph::updateBackground(int bgVal, Data::Graph* currentGraph) {
-	qDebug() << "[INFO] updating background";
+	LOG(INFO) << "CoreGraph::updateBackground - updating background";
 
-    root->removeChild(root->getNumChildren()-1);
+	osg::Group* root = this->getScene();
+	if (root->removeChild(root->getNumChildren()-1) == true) {
 
-    if (bgVal == 0){
-        SkyBox* skyBox = new SkyBox;
-         root->addChild(skyBox->createSkyBox());
-    }
-    else if (bgVal == 1){
-         root->addChild(createSkyNoiseBox());
-    }
-     #ifdef OPENCV_FOUND
-    else if (bgVal == 2){
-         root->addChild(createTextureBackground());
-    }
-    else if (bgVal == 3){
-         root->addChild(createOrtho2dBackground());
-    }
-     #endif
-    reload(currentGraph);
-    return 0;
+		if (bgVal == 0) {
+		SkyBox* skyBox = new SkyBox;
+		 root->addChild(skyBox->createSkyBox());
+		}
+		else if (bgVal == 1) {
+			root->addChild(createSkyNoiseBox());
+		}
+		#ifdef OPENCV_FOUND
+		else if (bgVal == 2) {
+			root->addChild(createTextureBackground());
+		}
+		else if (bgVal == 3) {
+			root->addChild(createOrtho2dBackground());
+		}
+		#endif
+
+		reload(currentGraph);
+		return 0;
+	}
+
+	return 1;
 }
 
 void CoreGraph::reload( Data::Graph* graph )

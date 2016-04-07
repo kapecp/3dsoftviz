@@ -261,32 +261,46 @@ void loadExampleGraphLua();
 	void labelOnOff( bool checked );
 
 	/**
-     * void switchBackgroundSkyBox(  )
+	 * void pauseLayout( )
 	 * @brief TODO
 	 * @param TODO
 	 */
-    void switchBackgroundSkyBox();
+	void pauseLayout();
 
-    /**
-     * void switchBackgroundSkyNoiseBox(  )
-     * @brief TODO
-     * @param TODO
-     */
-    void switchBackgroundSkyNoiseBox();
+	/**
+	 * void playLayout( )
+	 * @brief TODO
+	 * @param TODO
+	 */
+	void playLayout();
 
-    /**
-     * void switchBackgroundTexture(  )
-     * @brief TODO
-     * @param TODO
-     */
-    void switchBackgroundTexture();
+	/**
+	 * void switchBackgroundSkyBox(  )
+	 * @brief TODO
+	 * @param TODO
+	 */
+	void switchBackgroundSkyBox();
 
-    /**
-     * void switchBackgroundOrtho2d(  )
-     * @brief TODO
-     * @param TODO
-     */
-    void switchBackgroundOrtho2d();
+	/**
+	 * void switchBackgroundSkyNoiseBox(  )
+	 * @brief TODO
+	 * @param TODO
+	 */
+	void switchBackgroundSkyNoiseBox();
+
+	/**
+	 * void switchBackgroundTexture(  )
+	 * @brief TODO
+	 * @param TODO
+	 */
+	void switchBackgroundTexture();
+
+	/**
+	 * void switchBackgroundOrtho2d(  )
+	 * @brief TODO
+	 * @param TODO
+	 */
+	void switchBackgroundOrtho2d();
 	/**
 				*  \fn public  sliderValueChanged(int value)
 				*  \brief Slider value is changed
@@ -766,28 +780,28 @@ private:
 	QAction* exampleGraphLua;
 
 	/**
-     * QAction * switchBackgroundSkyBoxAction
-     *@brief Action to switch/change background to SkyBox
+	 * QAction * switchBackgroundSkyBoxAction
+	 *@brief Action to switch/change background to SkyBox
 	 */
-    QAction* switchBackgroundSkyBoxAction;
+	QAction* switchBackgroundSkyBoxAction;
 
-    /**
-     * QAction * switchBackgroundSkyNoiseBoxAction
-     *@brief Action to switch/change background to SkyNoiseBox
-     */
-    QAction* switchBackgroundSkyNoiseBoxAction;
+	/**
+	 * QAction * switchBackgroundSkyNoiseBoxAction
+	 *@brief Action to switch/change background to SkyNoiseBox
+	 */
+	QAction* switchBackgroundSkyNoiseBoxAction;
 
-    /**
-     * QAction * switchBackgroundTextureAction
-     *@brief Action to switch/change background to Texture background (only OpenCV)
-     */
-    QAction* switchBackgroundTextureAction;
+	/**
+	 * QAction * switchBackgroundTextureAction
+	 *@brief Action to switch/change background to Texture background (only OpenCV)
+	 */
+	QAction* switchBackgroundTextureAction;
 
-    /**
-     * QAction * switchBackgroundOrtho2dAction
-     *@brief Action to switch/change background to Ortho2d background (only OpenCV)
-     */
-    QAction* switchBackgroundOrtho2dAction;
+	/**
+	 * QAction * switchBackgroundOrtho2dAction
+	 *@brief Action to switch/change background to Ortho2d background (only OpenCV)
+	 */
+	QAction* switchBackgroundOrtho2dAction;
 
 	/**
 		*  QPushButton * play

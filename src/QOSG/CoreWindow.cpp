@@ -56,6 +56,8 @@
 #include "LuaTypes/LuaValueList.h"
 #include "LuaGraph/LuaGraphTreeModel.h"
 
+#include "easylogging++.h"
+
 #include <iostream>
 #include <osg/ref_ptr>
 #include <string>
@@ -183,17 +185,17 @@ void CoreWindow::createActions()
 	exampleGraphLua = new QAction( "Lua Example", this );
 	connect( exampleGraphLua, SIGNAL( triggered() ), this, SLOT( loadExampleGraphLua() ) );
 
-    switchBackgroundSkyBoxAction = new QAction( "Sky Box", this );
-    connect( switchBackgroundSkyBoxAction, SIGNAL( triggered() ), this, SLOT( switchBackgroundSkyBox() ) );
+	switchBackgroundSkyBoxAction = new QAction( "Sky Box", this );
+	connect( switchBackgroundSkyBoxAction, SIGNAL( triggered() ), this, SLOT( switchBackgroundSkyBox() ) );
 
-    switchBackgroundSkyNoiseBoxAction = new QAction( "Sky Noise Box", this );
-    connect( switchBackgroundSkyNoiseBoxAction, SIGNAL( triggered() ), this, SLOT( switchBackgroundSkyNoiseBox() ) );
+	switchBackgroundSkyNoiseBoxAction = new QAction( "Sky Noise Box", this );
+	connect( switchBackgroundSkyNoiseBoxAction, SIGNAL( triggered() ), this, SLOT( switchBackgroundSkyNoiseBox() ) );
 
-    switchBackgroundTextureAction = new QAction( "Texture", this );
-    connect( switchBackgroundTextureAction, SIGNAL( triggered() ), this, SLOT( switchBackgroundTexture() ) );
+	switchBackgroundTextureAction = new QAction( "Texture", this );
+	connect( switchBackgroundTextureAction, SIGNAL( triggered() ), this, SLOT( switchBackgroundTexture() ) );
 
-    switchBackgroundOrtho2dAction = new QAction( "Ortho2d", this );
-    connect( switchBackgroundOrtho2dAction, SIGNAL( triggered() ), this, SLOT( switchBackgroundOrtho2d() ) );
+	switchBackgroundOrtho2dAction = new QAction( "Ortho2d", this );
+	connect( switchBackgroundOrtho2dAction, SIGNAL( triggered() ), this, SLOT( switchBackgroundOrtho2d() ) );
 
 	play = new QPushButton();
 	play->setIcon( QIcon( "../share/3dsoftviz/img/gui/pause.png" ) );
@@ -804,11 +806,11 @@ void CoreWindow::createMenus()
 	examples->addAction( exampleGraphVeolia );
 	examples->addAction( exampleGraphLua );
 
-    backgroundMenu = menuBar()->addMenu("Change Background");
-    backgroundMenu->addAction( switchBackgroundSkyBoxAction );
-    backgroundMenu->addAction( switchBackgroundSkyNoiseBoxAction );
-    backgroundMenu->addAction( switchBackgroundTextureAction );
-    backgroundMenu->addAction( switchBackgroundOrtho2dAction );
+	backgroundMenu = menuBar()->addMenu("Change Background");
+	backgroundMenu->addAction( switchBackgroundSkyBoxAction );
+	backgroundMenu->addAction( switchBackgroundSkyNoiseBoxAction );
+	backgroundMenu->addAction( switchBackgroundTextureAction );
+	backgroundMenu->addAction( switchBackgroundOrtho2dAction );
 }
 
 QtColorPicker* CoreWindow::createColorPicker()
@@ -1377,16 +1379,10 @@ void CoreWindow::showMetrics()
 void CoreWindow::playPause()
 {
 	if ( isPlaying ) {
-		play->setIcon( QIcon( "../share/3dsoftviz/img/gui/play.png" ) );
-		isPlaying = 0;
-		layout->pause();
-		coreGraph->setNodesFreezed( true );
+		playLayout();
 	}
 	else {
-		play->setIcon( QIcon( "../share/3dsoftviz/img/gui/pause.png" ) );
-		isPlaying = 1;
-		coreGraph->setNodesFreezed( false );
-		layout->play();
+		pauseLayout();
 	}
 }
 
@@ -1852,72 +1848,63 @@ void CoreWindow::loadLuaGraph() {
 
 }
 
-void CoreWindow::switchBackgroundSkyBox() {
-
-	Data::Graph* currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
-
-	if ( currentGraph != NULL ) {
-
-        if ( isPlaying ) {
-            play->setIcon( QIcon( "../share/3dsoftviz/img/gui/play.png" ) );
-            isPlaying = 0;
-            layout->pause();
-            coreGraph->setNodesFreezed( true );
-        }
-
-        coreGraph->updateBackground(0, currentGraph);
-
+void CoreWindow::pauseLayout() {
+	if ( this-> isPlaying ) {
+		play->setIcon( QIcon( "../share/3dsoftviz/img/gui/play.png" ) );
+		isPlaying = 0;
+		layout->pause();
+		coreGraph->setNodesFreezed( true );
+	}
+}
+void CoreWindow::playLayout() {
+	if ( !this->isPlaying ) {
+		play->setIcon( QIcon( "../share/3dsoftviz/img/gui/pause.png" ) );
+		isPlaying = 1;
+		coreGraph->setNodesFreezed( false );
+		layout->play();
 	}
 }
 
+// Dynamic background switching
+void CoreWindow::switchBackgroundSkyBox() {
+	LOG(INFO) << "CoreWindow::switchBackgroundSkyBox switching to SkyBox bg";
+	Data::Graph* currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
+
+	pauseLayout();
+	if (coreGraph->updateBackground(0, currentGraph) == 0) {
+		LOG(INFO) << "Background successfully updated";
+	}
+	playLayout();
+}
 void CoreWindow::switchBackgroundSkyNoiseBox() {
+	LOG(INFO) << "CoreWindow::switchBackgroundSkyNoiseBox switching to SkyNoiseBox bg";
+	Data::Graph* currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
 
-    Data::Graph* currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
-
-    if ( currentGraph != NULL ) {
-
-        if ( isPlaying ) {
-            play->setIcon( QIcon( "../share/3dsoftviz/img/gui/play.png" ) );
-            isPlaying = 0;
-            layout->pause();
-            coreGraph->setNodesFreezed( true );
-        }
-
-        coreGraph->updateBackground(1, currentGraph);
-
-    }
+	pauseLayout();
+	if (coreGraph->updateBackground(1, currentGraph) == 0) {
+		LOG(INFO) << "Background successfully updated";
+	}
+	playLayout();
 }
 void CoreWindow::switchBackgroundTexture() {
+	LOG(INFO) << "CoreWindow::switchBackgroundTexture switching to Texture bg";
+	Data::Graph* currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
 
-    Data::Graph* currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
-
-    if ( currentGraph != NULL ) {
-        if ( isPlaying ) {
-            play->setIcon( QIcon( "../share/3dsoftviz/img/gui/play.png" ) );
-            isPlaying = 0;
-            layout->pause();
-            coreGraph->setNodesFreezed( true );
-        }
-
-        coreGraph->updateBackground(2, currentGraph);
-
-    }
+	pauseLayout();
+	if (coreGraph->updateBackground(2, currentGraph) == 0) {
+		LOG(INFO) << "Background successfully updated";
+	}
+	playLayout();
 }
 void CoreWindow::switchBackgroundOrtho2d() {
+	LOG(INFO) << "CoreWindow::switchBackgroundOrtho2d switching to Ortho2d bg";
+	Data::Graph* currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
 
-    Data::Graph* currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
-
-    if ( currentGraph != NULL ) {
-        if ( isPlaying ) {
-            play->setIcon( QIcon( "../share/3dsoftviz/img/gui/play.png" ) );
-            isPlaying = 0;
-            layout->pause();
-            coreGraph->setNodesFreezed( true );
-        }
-
-        coreGraph->updateBackground(3, currentGraph);
-
-    }
+	pauseLayout();
+	if (coreGraph->updateBackground(3, currentGraph) == 0) {
+		LOG(INFO) << "Background successfully updated";
+	}
+	playLayout();
 }
 
 void CoreWindow::labelOnOff( bool )
