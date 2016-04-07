@@ -15,6 +15,7 @@ if(APPLE) # The only platform it makes sense to check for 3DconnexionClient
  endif()
 endif()
 
+if ( WIN32)
 find_path( MOUSE3D_INCLUDE_DIR
 	NAMES si.h
 	PATHS $ENV{MOUSE3D_DIR}/Inc
@@ -23,6 +24,8 @@ find_library( MOUSE3D_LIBRARY
 	NAMES siapp
 	PATHS $ENV{MOUSE3D_DIR}/Lib/x86
 )
+
+endif()
 
 include( FindPackageHandleStandardArgs )
 FIND_PACKAGE_HANDLE_STANDARD_ARGS( MOUSE3D REQUIRED_VARS MOUSE3D_LIBRARY MOUSE3D_INCLUDE_DIR )

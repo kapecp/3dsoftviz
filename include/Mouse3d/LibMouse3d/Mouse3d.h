@@ -2,6 +2,7 @@
 #define MOUSE3D_H
 
 #include "Mouse3d/LibMouse3d/EventThread.h"
+#include <QtGlobal>
 
 namespace QOSG{
     class CoreWindow;
@@ -17,9 +18,9 @@ public:
 
 #ifdef Q_WS_WIN
     Mouse3DInput* mouse;
-#elif Q_WS_X11
+#elif defined (Q_WS_X11)
 
-#elif Q_WS_MAC
+#elif defined (Q_WS_MAC)
 
 #endif
     QOSG::CoreWindow* win;

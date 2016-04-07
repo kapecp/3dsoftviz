@@ -2,7 +2,6 @@
 #define EVEBTTHREAH_H
 
 #include "Mouse3d/LibMouse3d/EventThread.h"
-#include "Mouse3d/LibMouse3d/LibCoreMouse3d/Mouse3DInput.h"
 #include "Mouse3d/LibMouse3d/LibCoreMouse3d/MouseParameters.h"
 
 #include <QThread>

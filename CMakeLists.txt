@@ -281,13 +281,32 @@ endif()
 # endif()
 # ------------------------------ MOUSE3D -------------------------------
 # Find MOUSE3D
-find_package( MOUSE3D )
-if( MOUSE3D_FOUND )
-	include_directories( SYSTEM ${MOUSE3D_INCLUDE_DIRS} )
-	add_definitions( -DMOUSE3D_FOUND )
-	message( STATUS "3DMouse FOUND" )
-else()
-	message( STATUS "3DMouse NOT FOUND" )
+
+if( WIN32 )
+
+    find_package( MOUSE3D )
+    if( MOUSE3D_FOUND )
+            include_directories( SYSTEM ${MOUSE3D_INCLUDE_DIRS} )
+            add_definitions( -DMOUSE3D_FOUND )
+            message( STATUS "3DMouse FOUND" )
+    endif()
+
+elseif( APPLE )
+
+    add_definitions( -DMOUSE3D_FOUND )
+    message( STATUS "3DMouse FOUND" )
+elseif( UNIX )
+set (MOUSE3D_FOUND TRUE)
+   include_directories( SYSTEM include/Mouse3d/LibMouse3d/Magellan )
+    find_package( X11 REQUIRED )
+   include_directories( SYSTEM ${X11_INCLUDE_DIR} )
+
+
+    add_definitions( -DMOUSE3D_FOUND )
+    message( STATUS "3DMouse FOUND" )
+
+elseif()
+    message( STATUS "3DMouse NOT FOUND" )
 endif()
 
 ADD_DEFINITIONS(-DOSG_LIBRARY_STATIC)
@@ -699,25 +718,27 @@ file( GLOB_RECURSE SRC_SPEECH	"src/Speech/*.cpp" )
 file ( GLOB_RECURSE SRC_LEAP "src/Leap/*.cpp" )
 
 # MOUSE3D
+
+set ( SRC_MOUSE3D 
+	src/Mouse3d/Connector.cpp 
+	src/Mouse3d/LibMouse3d/EventThread.cpp 
+	src/Mouse3d/LibMouse3d/Mouse3d.cpp 
+)
+
 if( UNIX )
-	set (SRC_MOUSE3D 
-		src/Mouse3d/LibMouse3d/Magellan/xdrvlib.c 
+	list(APPEND SRC_MOUSE3D
+                src/Mouse3d/LibMouse3d/Magellan/xdrvlib.c
 )
 elseif( WIN32 )
-	set (SRC_MOUSE3D 
+	list(APPEND SRC_MOUSE3D
 		src/Mouse3d/LibMouse3d/LibCoreMouse3d/Mouse3DInput.cpp 
 		src/Mouse3d/LibMouse3d/LibCoreMouse3d/MouseParameters.cpp 
 )
 elseif( APPLE )
-	set (SRC_MOUSE3D
+	list(APPEND SRC_MOUSE3D
 )
 endif()
 
-set ( SRC_MOUSE3D 
-	src/Mouse3D/Connector.cpp 
-	src/Mouse3d/LibMouse3d/EventThread.cpp 
-	src/Mouse3d/LibMouse3d/Mouse3d.cpp 
-)
 
 
 # All source files
@@ -808,26 +829,29 @@ file( GLOB_RECURSE HEADER_LEAP	"include/Leap/*.h" )
 
 
 # MOUSE3D
+
+set ( HEADER_MOUSE3D 
+	include/Mouse3d/Connector.h 
+	include/Mouse3d/LibMouse3d/EventThread.h
+	include/Mouse3d/LibMouse3d/Mouse3d.h
+)
+
 if( UNIX )
-	set (SRC_MOUSE3D 
-		src/Mouse3d/LibMouse3d/Magellan/xdrvlib.h 
+	list(APPEND HEADER_MOUSE3D
+		include/Mouse3d/LibMouse3d/Magellan/xdrvlib.h 
 )
 elseif( WIN32 )
-	set (SRC_MOUSE3D 
-		src/Mouse3d/LibMouse3d/LibCoreMouse3d/Mouse3DInput.h
-		src/Mouse3d/LibMouse3d/LibCoreMouse3d/MouseParameters.h
-		src/Mouse3d/LibMouse3d/LibCoreMouse3d/l3dMouseParams.h
+	list(APPEND HEADER_MOUSE3D
+		include/Mouse3d/LibMouse3d/LibCoreMouse3d/Mouse3DInput.h
+		include/Mouse3d/LibMouse3d/LibCoreMouse3d/MouseParameters.h
+		include/Mouse3d/LibMouse3d/LibCoreMouse3d/l3dMouseParams.h
 )
 elseif( APPLE )
-	set (SRC_MOUSE3D
+	list(APPEND HEADER_MOUSE3D
 )
 endif()
 
-set ( SRC_MOUSE3D 
-	src/Mouse3D/Connector.h 
-	src/Mouse3d/LibMouse3d/EventThread.h
-	src/Mouse3d/LibMouse3d/Mouse3d.h
-)
+
 
 # All header files
 set( INCL
@@ -872,7 +896,7 @@ endif()
 #MOUSE3D
 if( MOUSE3D_FOUND )
 	list( APPEND INCL ${HEADER_MOUSE3D} )
-endif()
+endif() 
 
 #-------------------------------------- Group source files --------------------------------------
 source_group( \\src main.cpp )
@@ -1038,7 +1062,11 @@ if( LEAP_FOUND )
 endif()
 
 if( MOUSE3D_FOUND )
+    if ( WIN32 )
 	target_link_libraries( ${3DSOFTVIZ_NAME} ${MOUSE3D_LIBRARIES} )
+    elseif(UNIX)
+    target_link_libraries( ${3DSOFTVIZ_NAME} ${X11_LIBRARIES} )
+    endif()
 endif()
 
 # 'cotire' the executable
