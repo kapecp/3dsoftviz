@@ -340,10 +340,9 @@ bool PickHandler::handleKeyDown( const osgGA::GUIEventAdapter& ea, GUIActionAdap
 			//turn on
 			osg::DisplaySettings::instance()->setStereoMode(osg::DisplaySettings::VERTICAL_SPLIT);
 			osg::DisplaySettings::instance()->setStereo(TRUE);
-			//set vuzix config TODO move to config file
-			osg::DisplaySettings::instance()->setScreenDistance(3.048f);
-			osg::DisplaySettings::instance()->setScreenHeight(0.93f);
-			osg::DisplaySettings::instance()->setScreenWidth(1.66f);
+			osg::DisplaySettings::instance()->setScreenDistance(Util::ApplicationConfig::get()->getValue("Display.Settings.Vuzix.Distance").toFloat());
+			osg::DisplaySettings::instance()->setScreenHeight(Util::ApplicationConfig::get()->getValue("Display.Settings.Vuzix.Height").toFloat());
+			osg::DisplaySettings::instance()->setScreenWidth(Util::ApplicationConfig::get()->getValue("Display.Settings.Vuzix.Width").toFloat());
 
 			qDebug() << "Turned on split stereo 3D - vertical split";
 		} else if (splitviewMode == 1){
@@ -354,10 +353,10 @@ bool PickHandler::handleKeyDown( const osgGA::GUIEventAdapter& ea, GUIActionAdap
 			//turn off
 			osg::DisplaySettings::instance()->setStereo(FALSE);
 			//reset to default config
-			osg::DisplaySettings::instance()->setScreenDistance(0.5f);
-			osg::DisplaySettings::instance()->setScreenHeight(0.26f);
-			osg::DisplaySettings::instance()->setScreenWidth(0.325f);
-			osg::DisplaySettings::instance()->setEyeSeparation(0.06f);
+			osg::DisplaySettings::instance()->setScreenDistance(Util::ApplicationConfig::get()->getValue("Display.Settings.Default.Distance").toFloat());
+			osg::DisplaySettings::instance()->setScreenHeight(Util::ApplicationConfig::get()->getValue("Display.Settings.Default.Height").toFloat());
+			osg::DisplaySettings::instance()->setScreenWidth(Util::ApplicationConfig::get()->getValue("Display.Settings.Default.Width").toFloat());
+			osg::DisplaySettings::instance()->setEyeSeparation(Util::ApplicationConfig::get()->getValue("Display.Settings.Default.EyeSeparation").toFloat());
 
 			qDebug() << "Turned off split stereo 3D";
 		}
