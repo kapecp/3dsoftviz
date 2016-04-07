@@ -567,13 +567,6 @@ public slots:
      */
     void changeCommits( bool change );
 
-    /**
-     * void showLuaStats( bool show )
-     * @brief Determine if lua metrics should be visualized
-     * @param True, if lua metrics should be visualized, otherwise false
-     */
-    void showLuaStats( bool show );
-
 	/**
 	 * void fasterEvolution()
 	 * @brief Sets up faster evolution
@@ -1012,12 +1005,6 @@ private:
 	QPushButton* b_git_diff;
 
 	/**
-	 * QPushButton* b_git_lua_graph;
-	 * @brief Button which creates git lua graph
-	 */
-	QPushButton* b_git_lua_graph;
-
-	/**
 	 * QLabel * labelEvolutionSlider
 	 * @brief Shows current vizualized version
 	 */
@@ -1036,16 +1023,14 @@ private:
     QCheckBox* chb_git_changeCommits;
 
     /**
-     * QCheckBox* chb_git_showLuaStats
-     * @brief CheckBox for visualizing lua metrics
-     */
-    QCheckBox* chb_git_showLuaStats;
-
-    /**
      * QComboBox* cb_git_evoVisualizeMethod
      * @brief cb_git_evoVisualizeMethod
      */
     QComboBox* cb_git_evoVisualizeMethod;
+
+    QComboBox* cb_git_authors;
+
+    QComboBox* cb_git_files;
 
 	bool isRunning;
 

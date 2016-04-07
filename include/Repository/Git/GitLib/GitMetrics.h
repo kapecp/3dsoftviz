@@ -16,7 +16,7 @@ class GITLIB_EXPORT GitMetrics
 public:
     GitMetrics();
 
-    GitMetrics( Repository::Git::GitEvolutionGraph* evolutionGraph, QString commitId );
+    GitMetrics( Repository::Git::GitEvolutionGraph* evolutionGraph );
 
     int getChangedCount( QString identifier );
 
@@ -49,20 +49,11 @@ public:
     Repository::Git::GitEvolutionGraph* getEvolutionGraph() {
         return this->evolutionGraph;
     }
-/*
-    void setCommitId( QString commitId ) {
-        this->commitId = commitId;
-    }
-
-    QString getCommitId() {
-        return this->commitId;
-    }*/
 
 private:
 
     Repository::Git::GitEvolutionGraph* evolutionGraph;
 
-//    QString commitId;
 }; // class
 } // namespace
 }

@@ -697,11 +697,6 @@ void CoreWindow::createActions()
 	b_git_diff->setFocusPolicy( Qt::NoFocus );
 	connect( b_git_diff, SIGNAL( clicked() ), this, SLOT( getDiffInfo() ) );
 
-	b_git_lua_graph = new QPushButton();
-	b_git_lua_graph->setText( "Create lua evoGraph" );
-	b_git_lua_graph->setToolTip( "Creates evolution graph from lua" );
-	b_git_lua_graph->setFocusPolicy( Qt::NoFocus );
-	connect( b_git_lua_graph, SIGNAL( clicked() ), this, SLOT( createEvolutionLuaGraph() ) );
 
 	b_info_version = new QPushButton();
 	b_info_version->setText( "i" );
@@ -733,14 +728,18 @@ void CoreWindow::createActions()
     chb_git_changeCommits->setChecked( true );
     connect( chb_git_changeCommits, SIGNAL( clicked( bool ) ), this, SLOT( changeCommits( bool ) ) );
 
-    chb_git_showLuaStats = new QCheckBox( tr( "Show lua metrics" ) );
-    chb_git_showLuaStats->setChecked( false );
-    connect( chb_git_showLuaStats, SIGNAL( clicked( bool ) ), this, SLOT( showLuaStats( bool ) ) );
-
     cb_git_evoVisualizeMethod = new QComboBox();
-    cb_git_evoVisualizeMethod->insertItems(0, ( QStringList() << "LuaStats" << "Difference" << "Changes" ) );
+    cb_git_evoVisualizeMethod->insertItems( 0, ( QStringList() << "LuaStats" << "Difference" << "Changes" ) );
     cb_git_evoVisualizeMethod->setFocusPolicy( Qt::NoFocus );
     connect( cb_git_evoVisualizeMethod, SIGNAL( currentIndexChanged( int ) ), this, SLOT( changeEvolutionVisualization( int ) ) );
+
+    cb_git_authors = new QComboBox();
+    cb_git_authors->insertItems( 0, ( QStringList() << "All" ) );
+    cb_git_authors->setFocusPolicy( Qt::NoFocus );
+
+    cb_git_files = new QComboBox();
+    cb_git_files->insertItems( 0, ( QStringList() << "All" ) );
+    cb_git_files->setFocusPolicy( Qt::NoFocus );
 	// garaj end
 }
 
@@ -1161,10 +1160,10 @@ QWidget* CoreWindow::createMoreFeaturesTab( QFrame* line )
 	lMore->addRow( new QLabel( tr( "Evolution Graph" ) ) );
 	lMore->addRow( new QLabel( ( tr( "Life span:" ) ) ), evolutionLifespanSpinBox );
 	lMore->addRow( b_git_diff );
-	lMore->addRow( b_git_lua_graph );
     lMore->addRow( chb_git_changeCommits );
-    lMore->addRow( chb_git_showLuaStats );
     lMore->addRow( cb_git_evoVisualizeMethod );
+    lMore->addRow( cb_git_authors );
+    lMore->addRow( cb_git_files );
 
 	wMore->setLayout( lMore );
 
@@ -1612,7 +1611,8 @@ void CoreWindow::loadFromGit()
                 layout->pause();
                 coreGraph->setNodesFreezed( true );
 
-                Repository::Git::GitLuaGraphVisualizer visualizer = Repository::Git::GitLuaGraphVisualizer( Manager::GraphManager::getInstance()->getActiveGraph(), Manager::GraphManager::getInstance()->getActiveEvolutionGraph(), this->coreGraph->getCamera(), this->chb_git_showLuaStats->isChecked() );
+                qDebug() << "Current index = " << this->cb_git_evoVisualizeMethod->currentIndex() << this->cb_git_evoVisualizeMethod->itemText(this->cb_git_evoVisualizeMethod->currentIndex());
+                Repository::Git::GitLuaGraphVisualizer visualizer = Repository::Git::GitLuaGraphVisualizer( Manager::GraphManager::getInstance()->getActiveGraph(), Manager::GraphManager::getInstance()->getActiveEvolutionGraph(), this->coreGraph->getCamera(), this->cb_git_evoVisualizeMethod->currentIndex() );
                 visualizer.visualize( true );
 //                Lua::LuaGraphVisualizer* visualizer = new Lua::GitGraphVisualizer( Manager::GraphManager::getInstance()->getActiveGraph(), coreGraph->getCamera() );
 //                visualizer->visualize();
@@ -3827,8 +3827,8 @@ bool CoreWindow::nextVersion()
 
         layout->pause();
         coreGraph->setNodesFreezed( true );
-
-        Repository::Git::GitLuaGraphVisualizer visualizer = Repository::Git::GitLuaGraphVisualizer( Manager::GraphManager::getInstance()->getActiveGraph(), Manager::GraphManager::getInstance()->getActiveEvolutionGraph(), this->coreGraph->getCamera(), this->chb_git_showLuaStats->isChecked() );
+        qDebug() << "Current index = " << this->cb_git_evoVisualizeMethod->currentIndex() << this->cb_git_evoVisualizeMethod->itemText(this->cb_git_evoVisualizeMethod->currentIndex());
+        Repository::Git::GitLuaGraphVisualizer visualizer = Repository::Git::GitLuaGraphVisualizer( Manager::GraphManager::getInstance()->getActiveGraph(), Manager::GraphManager::getInstance()->getActiveEvolutionGraph(), this->coreGraph->getCamera(), this->cb_git_evoVisualizeMethod->currentIndex() );
         visualizer.visualize( true );
 
         coreGraph->reloadConfig();
@@ -3886,7 +3886,8 @@ bool CoreWindow::previousVersion()
         layout->pause();
         coreGraph->setNodesFreezed( true );
 
-        Repository::Git::GitLuaGraphVisualizer visualizer = Repository::Git::GitLuaGraphVisualizer( Manager::GraphManager::getInstance()->getActiveGraph(), Manager::GraphManager::getInstance()->getActiveEvolutionGraph(), this->coreGraph->getCamera(), this->chb_git_showLuaStats->isChecked() );
+        qDebug() << "Current index = " << this->cb_git_evoVisualizeMethod->currentIndex() << this->cb_git_evoVisualizeMethod->itemText(this->cb_git_evoVisualizeMethod->currentIndex());
+        Repository::Git::GitLuaGraphVisualizer visualizer = Repository::Git::GitLuaGraphVisualizer( Manager::GraphManager::getInstance()->getActiveGraph(), Manager::GraphManager::getInstance()->getActiveEvolutionGraph(), this->coreGraph->getCamera(), this->cb_git_evoVisualizeMethod->currentIndex() );
         visualizer.visualize( false );
 
         coreGraph->reloadConfig();
@@ -4016,14 +4017,6 @@ void CoreWindow::changeCommits( bool value ) {
         evolutionSlider->setEnabled( false );
         b_faster_evolution->setEnabled( false );
         b_slower_evolution->setEnabled( false );
-    }
-}
-
-void CoreWindow::showLuaStats( bool show ) {
-    chb_git_showLuaStats->setChecked( show );
-    if( Manager::GraphManager::getInstance()->getActiveEvolutionGraph() ) {
-        Repository::Git::GitLuaGraphVisualizer visualizer = Repository::Git::GitLuaGraphVisualizer( Manager::GraphManager::getInstance()->getActiveGraph(), Manager::GraphManager::getInstance()->getActiveEvolutionGraph(), this->coreGraph->getCamera(), show );
-        visualizer.changeNodeRepresentation();
     }
 }
 

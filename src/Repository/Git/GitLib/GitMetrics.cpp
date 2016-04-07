@@ -11,7 +11,7 @@ Repository::Git::GitMetrics::GitMetrics() {
 
 }
 
-Repository::Git::GitMetrics::GitMetrics( Repository::Git::GitEvolutionGraph *evolutionGraph, QString commitId ) : evolutionGraph( evolutionGraph )/*, commitId( commitId )*/ {
+Repository::Git::GitMetrics::GitMetrics( Repository::Git::GitEvolutionGraph *evolutionGraph ) : evolutionGraph( evolutionGraph ) {
 }
 
 int Repository::Git::GitMetrics::getChangedCount( QString identifier ) {
