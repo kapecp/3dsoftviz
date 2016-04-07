@@ -156,4 +156,53 @@ osg::Node* SkyBox::createSkyBox()
 	return clearNode;
 }
 
+osg::Node* SkyBox::createBlackBox()
+{
+	osg::StateSet* stateset = new osg::StateSet();
+
+	osg::TexEnv* te = new osg::TexEnv;
+	te->setMode( osg::TexEnv::REPLACE );
+	stateset->setTextureAttributeAndModes( 0, te, osg::StateAttribute::ON );
+
+	osg::TexGen* tg = new osg::TexGen;
+	tg->setMode( osg::TexGen::NORMAL_MAP );
+	stateset->setTextureAttributeAndModes( 0, tg, osg::StateAttribute::ON );
+
+	osg::TexMat* tm = new osg::TexMat;
+	stateset->setTextureAttribute( 0, tm );
+
+	osg::TextureCubeMap* skymap = readCubeMap();
+	stateset->setTextureAttributeAndModes( 0, skymap, osg::StateAttribute::ON );
+
+	stateset->setMode( GL_LIGHTING, osg::StateAttribute::OFF );
+	stateset->setMode( GL_CULL_FACE, osg::StateAttribute::OFF );
+
+	// clear the depth to the far plane.
+	osg::Depth* depth = new osg::Depth;
+	depth->setFunction( osg::Depth::ALWAYS );
+	depth->setRange( 1.0,1.0 );
+	stateset->setAttributeAndModes( depth, osg::StateAttribute::ON );
+
+	stateset->setRenderBinDetails( 6,"RenderBin" );
+
+	osg::Drawable* drawable = new osg::ShapeDrawable( new osg::Sphere( osg::Vec3( 0.0f,0.0f,0.0f ),100 ) );
+
+	osg::Geode* geode = new osg::Geode;
+	geode->setCullingActive( false );
+	geode->setStateSet( stateset );
+	geode->addDrawable( drawable );
+
+
+	osg::Transform* transform = new MoveEarthySkyWithEyePointTransform;
+	transform->setCullingActive( false );
+	transform->addChild( geode );
+
+	osg::ClearNode* clearNode = new osg::ClearNode;
+	//  clearNode->setRequiresClear(false);
+	clearNode->setCullCallback( new TexMatCallback( *tm ) );
+	clearNode->addChild( transform );
+
+	return clearNode;
+}
+
 } // namespace Vwr

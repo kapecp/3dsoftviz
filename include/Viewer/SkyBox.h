@@ -92,6 +92,7 @@ public:
 	SkyBox();
 	~SkyBox();
 	osg::Node* createSkyBox();
+	osg::Node* createBlackBox();
 
 private:
 	osg::TextureCubeMap* readCubeMap();

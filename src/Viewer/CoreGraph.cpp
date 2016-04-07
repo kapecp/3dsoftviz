@@ -694,8 +694,8 @@ int CoreGraph::updateBackground(int bgVal, Data::Graph* currentGraph) {
 	if (root->removeChild(root->getNumChildren()-1) == true) {
 
 		if (bgVal == 0) {
-		SkyBox* skyBox = new SkyBox;
-		 root->addChild(skyBox->createSkyBox());
+			SkyBox* skyBox = new SkyBox;
+			root->addChild(skyBox->createSkyBox());
 		}
 		else if (bgVal == 1) {
 			root->addChild(createSkyNoiseBox());
@@ -709,7 +709,8 @@ int CoreGraph::updateBackground(int bgVal, Data::Graph* currentGraph) {
 		}
 		#endif
 		else {
-			root->addChild(null); // add empty child
+			SkyBox* skyBox = new SkyBox;
+			root->addChild(skyBox->createBlackBox()); // add empty child
 		}
 
 		reload(currentGraph);
