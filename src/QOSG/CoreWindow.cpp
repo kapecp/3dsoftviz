@@ -1611,7 +1611,7 @@ void CoreWindow::loadFromGit()
                 layout->pause();
                 coreGraph->setNodesFreezed( true );
 
-                qDebug() << "Current index = " << this->cb_git_evoVisualizeMethod->currentIndex() << this->cb_git_evoVisualizeMethod->itemText(this->cb_git_evoVisualizeMethod->currentIndex());
+//                qDebug() << "Current index = " << this->cb_git_evoVisualizeMethod->currentIndex() << this->cb_git_evoVisualizeMethod->itemText(this->cb_git_evoVisualizeMethod->currentIndex());
                 Repository::Git::GitLuaGraphVisualizer visualizer = Repository::Git::GitLuaGraphVisualizer( Manager::GraphManager::getInstance()->getActiveGraph(), Manager::GraphManager::getInstance()->getActiveEvolutionGraph(), this->coreGraph->getCamera(), this->cb_git_evoVisualizeMethod->currentIndex() );
                 visualizer.visualize( true );
 //                Lua::LuaGraphVisualizer* visualizer = new Lua::GitGraphVisualizer( Manager::GraphManager::getInstance()->getActiveGraph(), coreGraph->getCamera() );
@@ -3827,7 +3827,7 @@ bool CoreWindow::nextVersion()
 
         layout->pause();
         coreGraph->setNodesFreezed( true );
-        qDebug() << "Current index = " << this->cb_git_evoVisualizeMethod->currentIndex() << this->cb_git_evoVisualizeMethod->itemText(this->cb_git_evoVisualizeMethod->currentIndex());
+//        qDebug() << "Current index = " << this->cb_git_evoVisualizeMethod->currentIndex() << this->cb_git_evoVisualizeMethod->itemText(this->cb_git_evoVisualizeMethod->currentIndex());
         Repository::Git::GitLuaGraphVisualizer visualizer = Repository::Git::GitLuaGraphVisualizer( Manager::GraphManager::getInstance()->getActiveGraph(), Manager::GraphManager::getInstance()->getActiveEvolutionGraph(), this->coreGraph->getCamera(), this->cb_git_evoVisualizeMethod->currentIndex() );
         visualizer.visualize( true );
 
@@ -3886,7 +3886,7 @@ bool CoreWindow::previousVersion()
         layout->pause();
         coreGraph->setNodesFreezed( true );
 
-        qDebug() << "Current index = " << this->cb_git_evoVisualizeMethod->currentIndex() << this->cb_git_evoVisualizeMethod->itemText(this->cb_git_evoVisualizeMethod->currentIndex());
+//        qDebug() << "Current index = " << this->cb_git_evoVisualizeMethod->currentIndex() << this->cb_git_evoVisualizeMethod->itemText(this->cb_git_evoVisualizeMethod->currentIndex());
         Repository::Git::GitLuaGraphVisualizer visualizer = Repository::Git::GitLuaGraphVisualizer( Manager::GraphManager::getInstance()->getActiveGraph(), Manager::GraphManager::getInstance()->getActiveEvolutionGraph(), this->coreGraph->getCamera(), this->cb_git_evoVisualizeMethod->currentIndex() );
         visualizer.visualize( false );
 
@@ -4022,6 +4022,14 @@ void CoreWindow::changeCommits( bool value ) {
 
 void CoreWindow::changeEvolutionVisualization( int state ) {
     qDebug() << "STATE=" << state;
+    if( state == 2 ) {
+       b_next_version->setDisabled( true );
+       b_previous_version->setDisabled( true );
+    } else {
+        b_next_version->setDisabled( false );
+       b_previous_version->setDisabled( false );
+    }
+
     if( Manager::GraphManager::getInstance()->getActiveEvolutionGraph() ) {
         Repository::Git::GitLuaGraphVisualizer visualizer = Repository::Git::GitLuaGraphVisualizer( Manager::GraphManager::getInstance()->getActiveGraph(), Manager::GraphManager::getInstance()->getActiveEvolutionGraph(), this->coreGraph->getCamera(), state );
         visualizer.changeNodeRepresentation();

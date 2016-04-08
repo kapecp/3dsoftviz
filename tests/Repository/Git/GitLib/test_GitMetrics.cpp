@@ -236,5 +236,11 @@ Describe( a_git_metrics ) {
         Assert::That( metrics.getFilesFromAuthor( "you", 2 ).size(), Equals( 0 ) );
     }
 
+    It( get_all_files ) {
+        evolution_graph_should_contains_versions();
+
+        Assert::That( metrics.getAllFiles().size(), Equals( 6 ) );
+    }
+
     Repository::Git::GitMetrics metrics;
 };

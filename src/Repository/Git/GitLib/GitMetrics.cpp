@@ -3,6 +3,7 @@
 #include "GitLib/GitVersion.h"
 #include "GitLib/GitEvolutionGraph.h"
 #include "GitLib/GitFile.h"
+#include "GitLib/GitFunction.h"
 
 #include <QDebug>
 #include <QSet>
@@ -325,4 +326,77 @@ QList<QString> Repository::Git::GitMetrics::getFilesFromAuthor( QString author, 
     }
 
     return files.toList();
+}
+
+QList<QString> Repository::Git::GitMetrics::getAllFiles() {
+    QSet<QString> files =  QSet<QString>();
+
+    foreach( Repository::Git::GitVersion* version, this->evolutionGraph->getVersions() ) {
+        for( QMap<QString, Repository::Git::GitFile*>::iterator iterator = version->getChangedFiles()->begin(); iterator != version->getChangedFiles()->end(); ++iterator ) {
+            files.insert( iterator.value()->getIdentifier() );
+        }
+    }
+
+    return files.toList();
+}
+
+QList<QString> Repository::Git::GitMetrics::getFunctionsFromFile( QString identifier ) {
+    QSet<QString> functions = QSet<QString>();
+
+    foreach( Repository::Git::GitVersion* version, this->evolutionGraph->getVersions() ) {
+        if( version->getIsLoaded() ) {
+            Repository::Git::GitFile* file = version->getGitFileByIdentifier( identifier );
+            if( file ) {
+                for( QMap<QString, Repository::Git::GitFunction*>::iterator it = file->getGitFunctions()->begin(); it != file->getGitFunctions()->end(); ++it ) {
+                    functions.insert( it.value()->getIdentifier() );
+
+                    if( it.value()->getFunctionType() == Repository::Git::GitFunctionType::LOCALFUNCTION ) {
+                        for( QMap<QString, Repository::Git::GitFunction*>::iterator iter = it.value()->getFunctionCallers()->begin(); iter != it.value()->getFunctionCallers()->end(); ++iter ) {
+                            functions.insert( iter.value()->getIdentifier() );
+                        }
+                    }
+
+                }
+            }
+        } else {
+            break;
+        }
+    }
+
+    return functions.toList();
+}
+
+QList<QString> Repository::Git::GitMetrics::getFunctionConnectorsFromFile( QString identifier ) {
+    QSet<QString> functionConnectors = QSet<QString>();
+
+    foreach( Repository::Git::GitVersion* version, this->evolutionGraph->getVersions() ) {
+        if( version->getIsLoaded() ) {
+            Repository::Git::GitFile* file = version->getGitFileByIdentifier( identifier );
+
+            if( file ) {
+                for( QMap<QString, Repository::Git::GitFunction*>::iterator it = file->getGitFunctions()->begin(); it != file->getGitFunctions()->end(); ++it ) {
+                    functionConnectors.insert( file->getIdentifier() + "+" + it.value()->getIdentifier() );
+
+                    if( it.value()->getFunctionType() == Repository::Git::GitFunctionType::LOCALFUNCTION ) {
+                        for( QMap<QString, Repository::Git::GitFunction*>::iterator iter = it.value()->getFunctionCallers()->begin(); iter != it.value()->getFunctionCallers()->end(); ++iter ) {
+                            functionConnectors.insert( it.value()->getIdentifier() + "+" + iter.value()->getIdentifier() );
+
+                            if( iter.value()->getFunctionType() == Repository::Git::GitFunctionType::GLOBALFUNCTION && iter.value()->getModule() != "" ) {
+                                functionConnectors.insert( iter.value()->getIdentifier() + "+module;" + iter.value()->getModule() );
+                            }
+                        }
+                    } else {
+                        if( it.value()->getModule() != "" ) {
+                            functionConnectors.insert( it.value()->getIdentifier() + "+module;" + it.value()->getModule() );
+                        }
+                    }
+
+                }
+            }
+        } else {
+            break;
+        }
+    }
+
+    return functionConnectors.toList();
 }

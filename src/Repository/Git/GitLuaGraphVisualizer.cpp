@@ -8,6 +8,7 @@
 #include "GitLib/GitFunction.h"
 #include "GitLib/GitMetaData.h"
 #include "GitLib/GitUtils.h"
+#include "GitLib/GitMetrics.h"
 
 #include "LuaGraph/LuaGraph.h"
 
@@ -25,9 +26,6 @@ Repository::Git::GitLuaGraphVisualizer::GitLuaGraphVisualizer( Data::Graph *curr
 }
 
 void Repository::Git::GitLuaGraphVisualizer::visualize( bool next ) {
-
-    // Znovu nacitaj reprezentaciu uzlov v grafe pre zvolenu vizualizaciu
-    reloadNodeRepresentation( this->showLuaStats );
 
     // ziskame verziu nastavenu vo vizualizovanom grafe
     int currentVersion = this->currentGraph->getCurrentVersion();
@@ -129,8 +127,19 @@ void Repository::Git::GitLuaGraphVisualizer::visualize( bool next ) {
     // Aktualizuj ID uzlov v grafe na aktualne hodnoty
     updateCurrentGraphNodesId();
 
+    // Znovu nacitaj reprezentaciu uzlov v grafe pre zvolenu vizualizaciu
+    if( this->showLuaStats != this->CHANGES ) {
+//    qDebug() << "PreReloadNodeRepresentation";
+        reloadNodeRepresentation( this->showLuaStats );
+    }
     // Spracuj vizualizaciu zmenenych uzlov v grafe
     processChangedNodesAndEdges();
+
+    if( this->showLuaStats == this->CHANGES ) {
+//        qDebug() << "PostReloadNodeRepresentation";
+        reloadNodeRepresentation( this->showLuaStats );
+        filterVisualizationByAuthor( "All" );
+    }
 
 }
 
@@ -676,8 +685,8 @@ void Repository::Git::GitLuaGraphVisualizer::processChangedNodesAndEdges() {
                     node->showLabel( true );
                     break;
                 case CHANGES:
-                    node->setType( this->currentGraph->getTypesByName( "clearNode" ).at( 0 ) );
-                    node->setColor( osg::Vec4f( 1, 0, 0, 1 ) );
+//                    node->setType( this->currentGraph->getTypesByName( "clearNode" ).at( 0 ) );
+//                    node->setColor( osg::Vec4f( 1, 0, 0, 1 ) );
                     break;
                 default:
                     qDebug() << "PROCESUJEM NEEXISTUJUCI STAV";
@@ -701,7 +710,7 @@ void Repository::Git::GitLuaGraphVisualizer::processChangedNodesAndEdges() {
                     }
                     break;
                 case CHANGES:
-                    edge->setEdgeColor( osg::Vec4f( 1, 1, 1, 1 ) );
+//                    edge->setEdgeColor( osg::Vec4f( 1, 1, 1, 1 ) );
                     break;
                 default:
                     qDebug() << "PROCESUJEM NEEXISTUJUCI STAV";
@@ -749,8 +758,8 @@ void Repository::Git::GitLuaGraphVisualizer::processChangedNodesAndEdges() {
 
                         break;
                     case CHANGES:
-                        node->setType( this->currentGraph->getTypesByName( "clearNode" ).at( 0 ) );
-                        node->setColor( osg::Vec4f( 1, 0, 1, 0 ) );
+//                        node->setType( this->currentGraph->getTypesByName( "clearNode" ).at( 0 ) );
+//                        node->setColor( osg::Vec4f( 1, 0, 1, 0 ) );
                         break;
                     }
                 }
@@ -863,29 +872,38 @@ void Repository::Git::GitLuaGraphVisualizer::reloadNodeRepresentation( int showL
 
         switch( showLuaStats ) {
         case LUA_STATS:
+//            qDebug() << "Setting lua_stats -" << iterator.value()->getLuaIdentifier();
+
             // Ak uzol existuje, zobrazime Lua udaje
             if( luaNode ) {
                 setNodeParams( iterator.value(), luaNode, osg::Vec4f( 1, 1, 1, 1 ), 8 );
             }
 
+            iterator.value()->setInvisible( false );
             break;
         case DIFFERENCE_MAP:
             // Nastavime default farbu a zresetujeme uzol
+//            qDebug() << "Setting difference_map -" << iterator.value()->getLuaIdentifier();
             iterator.value()->setType( this->currentGraph->getTypesByName( "clearNode" ).at( 0 ) );
             iterator.value()->setColor( osg::Vec4f( 1, 1, 1, 1 ) );
+            iterator.value()->setInvisible( false );
             iterator.value()->reloadConfig();
             break;
         case CHANGES:
-            iterator.value()->setType( this->currentGraph->getTypesByName( "clearNode" ).at( 0 ) );
-            if( this->evolutionGraph->getMetaDataFromIdentifier( iterator.value()->getLuaIdentifier() )->getChangedCount() ) {
-                iterator.value()->setColor( osg::Vec4f( 1, 0, 0, 1 ) );
-            } else {
-                iterator.value()->setColor( osg::Vec4f( 0, 0, 1, 1 ) );
-            }
-            iterator.value()->reloadConfig();
-
+//            iterator.value()->setType( this->currentGraph->getTypesByName( "clearNode" ).at( 0 ) );
+//            if( this->evolutionGraph->getMetaDataFromIdentifier( iterator.value()->getLuaIdentifier() )->getChangedCount() ) {
+//                iterator.value()->setColor( osg::Vec4f( 1, 0, 0, 1 ) );
+//            } else {
+//                iterator.value()->setColor( osg::Vec4f( 0, 0, 1, 1 ) );
+//            }
+//            iterator.value()->reloadConfig();
+//            qDebug() << "Setting invisible -" << iterator.value()->getLuaIdentifier();
+            iterator.value()->setInvisible( true );
+            iterator.value()->showLabel( false );
             break;
         }
+
+
     }
 
     // Pre kazdu hranu v grafe aktualizujeme reprezentaciu hrany
@@ -899,15 +917,113 @@ void Repository::Git::GitLuaGraphVisualizer::reloadNodeRepresentation( int showL
             if( luaEdge ) {
                 setEdgeParams( iterator.value(), luaEdge, osg::Vec4f( 1, 1, 1, 1 ) );
             }
+            iterator.value()->setInvisible( false );
             break;
         case DIFFERENCE_MAP:
             // Nastavime default farbu
+            iterator.value()->setInvisible( false );
             iterator.value()->setEdgeColor( osg::Vec4f( 1, 1, 1, 1 ) );
             break;
         case CHANGES:
+            iterator.value()->setInvisible( true );
             break;
         }
     }
+
+    // zobraz root
+    Data::Node* root = this->currentGraph->findNodeByLuaIdentifier( "directory;" + this->evolutionGraph->getFilePath() );
+    if( root ) {
+        root->setInvisible( false );
+    }
+}
+
+void Repository::Git::GitLuaGraphVisualizer::filterVisualizationByAuthor( QString author ) {
+    Repository::Git::GitMetrics metrics = Repository::Git::GitMetrics( this->evolutionGraph );
+    QList<QString> files;
+    if( !QString::compare( "All", author ) ) {
+        files = metrics.getAllFiles();
+    } else {
+        files = metrics.getFilesFromAuthor( author );
+    }
+
+    QSet<QString> nodeIdentifiers = QSet<QString>();
+    QSet<QString> edgeIdentifiers = QSet<QString>();
+
+    foreach( QString fileIdentifier, files ) {
+        QString identifier = fileIdentifier.replace( "file;", "" );
+        QStringList list = identifier.split( "/" );
+
+        QString previousIdentifier = "directory;" + this->evolutionGraph->getFilePath();
+
+        identifier = "";
+        for( int i = 0; i < list.size(); i++ ) {
+            identifier += list.at( i );
+
+            QString insertIdentifier = "";
+            // Vytvorime identifikator pre danu uroven cesty k suboru
+            if( i == list.size() - 1 ) {
+                insertIdentifier = "file;" + identifier;
+            } else {
+                insertIdentifier = "directory;" + identifier;
+            }
+
+            // pridame identifikator suboru/adresara
+            nodeIdentifiers.insert( insertIdentifier );
+
+            // pridame identifikator hrany
+            edgeIdentifiers.insert( previousIdentifier + "+" + insertIdentifier );
+
+            // nastavime sucasny identifikator suboru/adresara ako predchadzajuci
+            previousIdentifier = insertIdentifier;
+
+            identifier += "/";
+
+            if( insertIdentifier.contains( "file;" ) ) {
+                QList<QString> functions = metrics.getFunctionsFromFile( insertIdentifier );
+                foreach( QString functionIdentifier, functions ) {
+                    nodeIdentifiers.insert( functionIdentifier );
+                }
+
+                QList<QString> functionConnectors = metrics.getFunctionConnectorsFromFile( insertIdentifier );
+                foreach( QString connectorIdentifier, functionConnectors ) {
+                    edgeIdentifiers.insert( connectorIdentifier );
+                }
+            }
+        }
+    }
+
+    foreach( QString identifier, nodeIdentifiers ) {
+        Data::Node* node = this->currentGraph->findNodeByLuaIdentifier( identifier );
+        if( node ) {
+//            qDebug() << identifier;
+            node->setInvisible( false );
+            node->showLabel( true );
+        } else {
+            // ToDo mozno nejaky chybovy vypis :D a mozno nie
+        }
+    }
+
+    foreach( QString identifier, edgeIdentifiers ) {
+        Data::Edge* edge = this->currentGraph->findEdgeByLuaIdentifier( identifier );
+        if( edge ) {
+            edge->setInvisible( false );
+        } else {
+            // ToDo mozno nejaky chybovy vypis :D a mozno nie
+        }
+    }
+/*
+    qDebug() << "GetFunctionsFromFile arg file;busted.lua";
+    QList<QString> functions = metrics.getFunctionsFromFile( "file;busted.lua" );
+    foreach( QString function, functions ) {
+        qDebug() << function;
+    }
+*/
+/*
+    QList<QString> functionConnectors = metrics.getFunctionConnectorsFromFile( "file;busted.lua" );
+    foreach( QString connector, functionConnectors ) {
+        qDebug() << connector;
+    }
+*/
 }
 
 void Repository::Git::GitLuaGraphVisualizer::updateCurrentGraphNodesId() {

@@ -41,6 +41,12 @@ public:
     QList<QString> getFilesFromAuthor( QString author );
     QList<QString> getFilesFromAuthor( QString author, int position );
 
+    QList<QString> getFunctionsFromFile( QString identifier );
+
+    QList<QString> getFunctionConnectorsFromFile( QString identifier );
+
+    QList<QString> getAllFiles();
+
 
     void setEvolutionGraph( Repository::Git::GitEvolutionGraph* evolutionGraph ) {
         this->evolutionGraph = evolutionGraph;
@@ -51,6 +57,8 @@ public:
     }
 
 private:
+
+
 
     Repository::Git::GitEvolutionGraph* evolutionGraph;
 

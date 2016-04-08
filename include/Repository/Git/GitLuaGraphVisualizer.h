@@ -62,6 +62,8 @@ private:
 
     void reloadNodeRepresentation( int showLuaStats );
 
+    void filterVisualizationByAuthor( QString author );
+
     /**
      * Data::Graph* currentGraph
      * @brief Visualized graph
