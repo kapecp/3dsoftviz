@@ -34,6 +34,14 @@ public:
 
     void changeNodeRepresentation();
 
+    void setFilterAuthor( QString filterAuthor ) {
+        this->filterAuthor = filterAuthor;
+    }
+
+    void setFilterFile( QString filterFile ) {
+        this->filterFile = filterFile;
+    }
+
 private:
     void setNodeParams( osg::ref_ptr<Data::Node> node, Lua::LuaGraphObject* obj, osg::Vec4f defColor, float defSize );
     void setEdgeParams( osg::ref_ptr<Data::Edge> edge, Lua::LuaGraphObject* obj, osg::Vec4f defColor );
@@ -83,6 +91,10 @@ private:
     Lua::LuaGraph* luaGraph;
 
     int showLuaStats;
+
+    QString filterAuthor;
+
+    QString filterFile;
 
     osg::ref_ptr<osg::Camera> camera;
 

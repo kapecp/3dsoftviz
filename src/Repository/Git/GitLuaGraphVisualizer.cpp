@@ -135,12 +135,14 @@ void Repository::Git::GitLuaGraphVisualizer::visualize( bool next ) {
     // Spracuj vizualizaciu zmenenych uzlov v grafe
     processChangedNodesAndEdges();
 
-    if( this->showLuaStats == this->CHANGES ) {
-//        qDebug() << "PostReloadNodeRepresentation";
-        reloadNodeRepresentation( this->showLuaStats );
-        filterVisualizationByAuthor( "All" );
+    if( this->filterAuthor == "All" ) {
+        filterVisualizationByAuthor( this->filterAuthor );
     }
 
+    if( this->filterAuthor == "Authors" ) {
+        reloadNodeRepresentation( this->CHANGES );
+        filterVisualizationByAuthor( this->filterFile );
+    }
 }
 
 bool Repository::Git::GitLuaGraphVisualizer::addFileToGraph( Repository::Git::GitFile *file, QString rootIdentifier ) {
@@ -938,18 +940,24 @@ void Repository::Git::GitLuaGraphVisualizer::reloadNodeRepresentation( int showL
 }
 
 void Repository::Git::GitLuaGraphVisualizer::filterVisualizationByAuthor( QString author ) {
+    qDebug() << "filterVisualizationByAuthor" << author;
     Repository::Git::GitMetrics metrics = Repository::Git::GitMetrics( this->evolutionGraph );
     QList<QString> files;
     if( !QString::compare( "All", author ) ) {
+        qDebug() << "getAllFiles";
         files = metrics.getAllFiles();
     } else {
-        files = metrics.getFilesFromAuthor( author );
+        qDebug() << "getFilesFromAuthor" << author << "and position" << this->currentGraph->getCurrentVersion() + 1;
+        files = metrics.getFilesFromAuthor( author, this->currentGraph->getCurrentVersion() + 1 );
     }
+
+    qDebug() << "Metrics module returned" << files.size() << "files";
 
     QSet<QString> nodeIdentifiers = QSet<QString>();
     QSet<QString> edgeIdentifiers = QSet<QString>();
 
     foreach( QString fileIdentifier, files ) {
+        qDebug() << fileIdentifier;
         QString identifier = fileIdentifier.replace( "file;", "" );
         QStringList list = identifier.split( "/" );
 
@@ -979,12 +987,22 @@ void Repository::Git::GitLuaGraphVisualizer::filterVisualizationByAuthor( QStrin
             identifier += "/";
 
             if( insertIdentifier.contains( "file;" ) ) {
-                QList<QString> functions = metrics.getFunctionsFromFile( insertIdentifier );
+                QList<QString> functions;
+                QList<QString> functionConnectors;
+
+                if( this->filterFile == "All" ) {
+                    functions = metrics.getFunctionsFromFile( insertIdentifier );
+                    functionConnectors = metrics.getFunctionConnectorsFromFile( insertIdentifier );
+                } else {
+                    functions = metrics.getFunctionsFromFile( insertIdentifier, this->filterFile );
+                    functionConnectors = metrics.getFunctionConnectorsFromFile( insertIdentifier, this->filterFile );
+                }
+
                 foreach( QString functionIdentifier, functions ) {
                     nodeIdentifiers.insert( functionIdentifier );
                 }
 
-                QList<QString> functionConnectors = metrics.getFunctionConnectorsFromFile( insertIdentifier );
+
                 foreach( QString connectorIdentifier, functionConnectors ) {
                     edgeIdentifiers.insert( connectorIdentifier );
                 }
@@ -1011,19 +1029,6 @@ void Repository::Git::GitLuaGraphVisualizer::filterVisualizationByAuthor( QStrin
             // ToDo mozno nejaky chybovy vypis :D a mozno nie
         }
     }
-/*
-    qDebug() << "GetFunctionsFromFile arg file;busted.lua";
-    QList<QString> functions = metrics.getFunctionsFromFile( "file;busted.lua" );
-    foreach( QString function, functions ) {
-        qDebug() << function;
-    }
-*/
-/*
-    QList<QString> functionConnectors = metrics.getFunctionConnectorsFromFile( "file;busted.lua" );
-    foreach( QString connector, functionConnectors ) {
-        qDebug() << connector;
-    }
-*/
 }
 
 void Repository::Git::GitLuaGraphVisualizer::updateCurrentGraphNodesId() {

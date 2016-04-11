@@ -107,6 +107,10 @@ public slots:
 
     void changeEvolutionVisualization( int  state );
 
+    void changeEvolutionFilterOption( int state );
+
+    void changeEvolutionFilterSpecificOption( int state );
+
 	/**
 	            *  \fn public  saveGraphToDB
 	            *  \brief Save a current graph to database

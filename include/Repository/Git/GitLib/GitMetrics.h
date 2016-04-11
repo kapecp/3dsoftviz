@@ -45,6 +45,11 @@ public:
 
     QList<QString> getFunctionConnectorsFromFile( QString identifier );
 
+    QList<QString> getFunctionsFromFile( QString identifier, QString author );
+
+    QList<QString> getFunctionConnectorsFromFile( QString identifier, QString author );
+
+
     QList<QString> getAllFiles();
 
 
