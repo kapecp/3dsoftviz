@@ -40,6 +40,7 @@ void QWebViewImage::navigateTo( const std::string& url )
 
 void QWebViewImage::showTemplate( const std::string& templateName, Diluculum::LuaValueMap models, const std::string& templateType )
 {
+    qDebug() << templateName.c_str() << templateType.c_str();
 	// Initialize lua interface to call slt2 renderer
 	Lua::LuaInterface* lua = Lua::LuaInterface::getInstance();
 	QString renderer[] = {"slt2_renderer", "render"};
@@ -51,7 +52,7 @@ void QWebViewImage::showTemplate( const std::string& templateName, Diluculum::Lu
 
 	// Call slt2 renderer
 	std::string html = lua->callFunction( 2, renderer, params )[0].asString();
-	// qDebug() << html.c_str();
+//    qDebug() << html.c_str();
 
 	// Create relative webview dir url
 	QString appPath = QCoreApplication::applicationDirPath();
@@ -62,13 +63,17 @@ void QWebViewImage::showTemplate( const std::string& templateName, Diluculum::Lu
 	if ( !templateType.empty() ) {
 
 		// Fragment represents value after # hash in url. For example: http://something/index.html#<fragment>
-		baseUrl.setFragment( QString::fromStdString( templateType ) );
+//		baseUrl.setFragment( QString::fromStdString( templateType ) );
+        baseUrl.setFragment( "git" );
 	}
 
-	// qDebug() << "Webview url: " << baseUrl;
+    qDebug() << "Webview url: " << baseUrl;
 
 	// Set html and baseUrl working directory
-	_webView->setHtml( html.c_str(), baseUrl );
+//	_webView->setHtml( html.c_str(), baseUrl );
+    _webView->setHtml( createGitHtml(), baseUrl );
+
+//    qDebug() << _webView->page()->currentFrame()->toHtml();
 }
 
 void QWebViewImage::focusBrowser( bool focus )
@@ -104,6 +109,60 @@ bool QWebViewImage::sendKeyEvent( int key, bool keyDown )
 {
 	//return QWebViewImage::_adapter->sendKeyEvent( key, keyDown );
 	return false;
+}
+
+QString QWebViewImage::createGitHtml() {
+    QString html = "";
+    html += "<!DOCTYPE html>\n";
+    html += "<html>\n";
+    html += "<head lang='en'>\n";
+    html += "<meta charset='UTF-8'>\n";
+    html += "<!-- CSS Dependencies -->\n";
+    html += "<link rel='stylesheet' href='bower_components/bootstrap/dist/css/bootstrap.min.css'>\n";
+    html += "<link rel='stylesheet' href='bower_components/bootstrap/dist/css/bootstrap-theme.min.css'>\n";
+    html += "<link rel='stylesheet' href='bower_components/angular-chart.js/dist/angular-chart.css'>\n";
+    html += "<link rel='stylesheet' href='bower_components/parallel-coordinates/d3.parcoords.css'>\n";
+    html += "<link rel='stylesheet' href='css/style.css'>\n";
+    html += "</head>\n";
+    html += "<body ng-app='app'>\n";
+    html += "<div ui-view></div>\n";
+    html += "<script type='text/javascript'>\n";
+    html += "var models =\n";
+    html += "{\n";
+    html += "'22':\n";
+    html += "{\n";
+    html += "'metrics':\n";
+    html += "{\n";
+    html += "'changedLines': '22',\n";
+    html += "'changedLinesCode': '1',\n";
+    html += "'changedBlank': '0',\n";
+    html += "'changedLinesComment': '4',\n";
+    html += "'changedNonEmpty': '12'\n";
+    html += "}\n";
+    html += "}\n";
+    html += "}\n";
+    html += ";\n";
+    html += "</script>\n";
+    html += "<script src='bower_components/jquery/dist/jquery.min.js'></script>\n";
+    html += "<script src='bower_components/bootstrap/dist/js/bootstrap.min.js'></script>\n";
+    html += "<script src='bower_components/Chart.js/Chart.min.js'></script>\n";
+    html += "<script src='bower_components/angular/angular.min.js'></script>\n";
+    html += "<script src='bower_components/angular-ui-router/release/angular-ui-router.min.js'></script>\n";
+    html += "<script src='bower_components/angular-chart.js/dist/angular-chart.min.js'></script>\n";
+    html += "<script src='bower_components/d3/d3.min.js'></script>\n";
+    html += "<script src='bower_components/parallel-coordinates/d3.parcoords.js'></script>\n";
+    html += "<script src='src/app.js'></script>\n";
+    html += "<script src='src/services/Service.js'></script>\n";
+    html += "<script src='src/controllers/SingleController.js'></script>\n";
+    html += "<script src='src/controllers/Single2Controller.js'></script>\n";
+    html += "<script src='src/controllers/MultiController.js'></script>\n";
+    html += "<script src='src/controllers/GitController.js'></script>\n";
+    html += "<script src='src/directives/ParCoordsDirective.js'></script>\n";
+    html += "</body>\n";
+    html += "</html>\n";
+    html = html.replace("'", "\"");
+    qDebug() << html;
+    return html;
 }
 
 }

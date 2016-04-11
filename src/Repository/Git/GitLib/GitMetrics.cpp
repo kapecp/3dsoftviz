@@ -363,7 +363,7 @@ QList<QString> Repository::Git::GitMetrics::getFunctionsFromFile( QString identi
         }
     }
 
-    qDebug() << identifier << "pocet funkcii" << functions.size();
+//    qDebug() << identifier << "pocet funkcii" << functions.size();
 
     return functions.toList();
 }
@@ -394,7 +394,7 @@ QList<QString> Repository::Git::GitMetrics::getFunctionsFromFile( QString identi
         }
     }
 
-    qDebug() << identifier << author << "pocet funkcii" << functions.size();
+//    qDebug() << identifier << author << "pocet funkcii" << functions.size();
 
     return functions.toList();
 }
@@ -431,7 +431,7 @@ QList<QString> Repository::Git::GitMetrics::getFunctionConnectorsFromFile( QStri
         }
     }
 
-    qDebug() << identifier << "pocet konektorov" << functionConnectors.size();
+//    qDebug() << identifier << "pocet konektorov" << functionConnectors.size();
 
     return functionConnectors.toList();
 }
@@ -471,7 +471,7 @@ QList<QString> Repository::Git::GitMetrics::getFunctionConnectorsFromFile( QStri
         }
     }
 
-    qDebug() << identifier << author << "pocet konektorov" << functionConnectors.size();
+//    qDebug() << identifier << author << "pocet konektorov" << functionConnectors.size();
 
     return functionConnectors.toList();
 }

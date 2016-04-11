@@ -25,5 +25,10 @@
                 templateUrl: "views/multi.html",
                 controller: 'MultiController'
             })
+			.state('git', {
+				url: "/git",
+				templateUrl: "views/single.html",
+				controller: 'GitController'
+			})
     }
 })();

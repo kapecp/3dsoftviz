@@ -141,6 +141,8 @@ public:
 		*/
 	virtual bool sendKeyEvent( int key, bool keyDown );
 
+    QString createGitHtml();
+
 protected:
 
 
