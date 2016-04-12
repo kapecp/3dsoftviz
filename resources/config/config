@@ -77,5 +77,14 @@ Node.Color.Selected=50,20,120,255
 Label.Color=51,102,153,255
 Label.Outline.Color=200,230,255,255
 
+Display.Settings.Default.Distance=0.5
+Display.Settings.Default.Height=0.26
+Display.Settings.Default.Width=0.325
+Display.Settings.Default.EyeSeparation=0.06
+
+Display.Settings.Vuzix.Distance=3.048
+Display.Settings.Vuzix.Height=0.93
+Display.Settings.Vuzix.Width=1.66
+
 Git.ExtensionFilter= lua
 Git.ExcludeDirectories=spec
