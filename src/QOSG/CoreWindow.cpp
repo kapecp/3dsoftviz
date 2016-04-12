@@ -185,11 +185,14 @@ void CoreWindow::createActions()
 	exampleGraphLua = new QAction( "Lua Example", this );
 	connect( exampleGraphLua, SIGNAL( triggered() ), this, SLOT( loadExampleGraphLua() ) );
 
+	switchBackgroundSkyBoxAction = new QAction( "Sky Box", this );
+	connect( switchBackgroundSkyBoxAction, SIGNAL( triggered() ), this, SLOT( switchBackgroundSkyBox() ) );
+
 	switchBackgroundBlackAction = new QAction( "Black", this );
 	connect( switchBackgroundBlackAction, SIGNAL( triggered() ), this, SLOT( switchBackgroundBlack() ) );
 
-	switchBackgroundSkyBoxAction = new QAction( "Sky Box", this );
-	connect( switchBackgroundSkyBoxAction, SIGNAL( triggered() ), this, SLOT( switchBackgroundSkyBox() ) );
+	switchBackgroundWhiteAction = new QAction( "White", this );
+	connect( switchBackgroundWhiteAction, SIGNAL( triggered() ), this, SLOT( switchBackgroundWhite() ) );
 
 	switchBackgroundSkyNoiseBoxAction = new QAction( "Sky Noise Box", this );
 	connect( switchBackgroundSkyNoiseBoxAction, SIGNAL( triggered() ), this, SLOT( switchBackgroundSkyNoiseBox() ) );
@@ -810,8 +813,9 @@ void CoreWindow::createMenus()
 	examples->addAction( exampleGraphLua );
 
 	backgroundMenu = menuBar()->addMenu("Change Background");
-	backgroundMenu->addAction( switchBackgroundBlackAction );
 	backgroundMenu->addAction( switchBackgroundSkyBoxAction );
+	backgroundMenu->addAction( switchBackgroundBlackAction );
+	backgroundMenu->addAction( switchBackgroundWhiteAction );
 	backgroundMenu->addAction( switchBackgroundSkyNoiseBoxAction );
 	backgroundMenu->addAction( switchBackgroundTextureAction );
 	backgroundMenu->addAction( switchBackgroundOrtho2dAction );
@@ -1870,6 +1874,19 @@ void CoreWindow::playLayout() {
 }
 
 // Dynamic background switching
+void CoreWindow::switchBackgroundSkyBox() {
+	LOG(INFO) << "CoreWindow::switchBackgroundSkyBox switching to SkyBox bg";
+	Data::Graph* currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
+
+	pauseLayout();
+	if (coreGraph->updateBackground(0, currentGraph) == 0) {
+		LOG(INFO) << "Background successfully updated";
+	}
+	else {
+		LOG(ERROR) << "Background bg update failed";
+	}
+	playLayout();
+}
 void CoreWindow::switchBackgroundBlack() {
 	LOG(INFO) << "CoreWindow::switchBackgroundBlack switching to black color bg";
 	Data::Graph* currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
@@ -1881,15 +1898,14 @@ void CoreWindow::switchBackgroundBlack() {
 	else {
 		LOG(ERROR) << "Background bg update failed";
 	}
-	viewerWidget->getCamera()->setClearColor(osg::Vec4(0.0f,0.0f,0.0f,0.0f));
 	playLayout();
 }
-void CoreWindow::switchBackgroundSkyBox() {
-	LOG(INFO) << "CoreWindow::switchBackgroundSkyBox switching to SkyBox bg";
+void CoreWindow::switchBackgroundWhite() {
+	LOG(INFO) << "CoreWindow::switchBackgroundWhite switching to white color bg";
 	Data::Graph* currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
 
 	pauseLayout();
-	if (coreGraph->updateBackground(0, currentGraph) == 0) {
+	if (coreGraph->updateBackground(-2, currentGraph) == 0) {
 		LOG(INFO) << "Background successfully updated";
 	}
 	else {

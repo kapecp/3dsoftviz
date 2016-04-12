@@ -40,18 +40,42 @@ SkyBox::~SkyBox()
 
 }
 
-
-osg::TextureCubeMap* SkyBox::readCubeMap()
+osg::TextureCubeMap* SkyBox::readCubeMap(int cubeType)
 {
 	osg::TextureCubeMap* cubemap = new osg::TextureCubeMap;
 	try {
 		Util::ApplicationConfig* appConf = Util::ApplicationConfig::get();
-		osg::Image* imageEast = osgDB::readImageFile( appConf->getValue( "Viewer.SkyBox.East" ).toStdString() );
-		osg::Image* imageWest = osgDB::readImageFile( appConf->getValue( "Viewer.SkyBox.West" ).toStdString() );
-		osg::Image* imageNorth = osgDB::readImageFile( appConf->getValue( "Viewer.SkyBox.North" ).toStdString() );
-		osg::Image* imageSouth = osgDB::readImageFile( appConf->getValue( "Viewer.SkyBox.South" ).toStdString() );
-		osg::Image* imageUp = osgDB::readImageFile( appConf->getValue( "Viewer.SkyBox.Up" ).toStdString() );
-		osg::Image* imageDown = osgDB::readImageFile( appConf->getValue( "Viewer.SkyBox.Down" ).toStdString() );
+		osg::Image* imageEast = nullptr;
+		osg::Image* imageWest = nullptr;
+		osg::Image* imageSouth = nullptr;
+		osg::Image* imageNorth = nullptr;
+		osg::Image* imageUp = nullptr;
+		osg::Image* imageDown = nullptr;
+
+		if (cubeType == -1) { // Black skybox - black cube map
+			imageEast = osgDB::readImageFile( appConf->getValue( "Viewer.SkyBox.Black" ).toStdString() );
+			imageWest = osgDB::readImageFile( appConf->getValue( "Viewer.SkyBox.Black" ).toStdString() );
+			imageNorth = osgDB::readImageFile( appConf->getValue( "Viewer.SkyBox.Black" ).toStdString() );
+			imageSouth = osgDB::readImageFile( appConf->getValue( "Viewer.SkyBox.Black" ).toStdString() );
+			imageUp = osgDB::readImageFile( appConf->getValue( "Viewer.SkyBox.Black" ).toStdString() );
+			imageDown = osgDB::readImageFile( appConf->getValue( "Viewer.SkyBox.Black" ).toStdString() );
+		}
+		else if (cubeType == -2) { // White skybox - white cube map
+			imageEast = osgDB::readImageFile( appConf->getValue( "Viewer.SkyBox.White" ).toStdString() );
+			imageWest = osgDB::readImageFile( appConf->getValue( "Viewer.SkyBox.White" ).toStdString() );
+			imageNorth = osgDB::readImageFile( appConf->getValue( "Viewer.SkyBox.White" ).toStdString() );
+			imageSouth = osgDB::readImageFile( appConf->getValue( "Viewer.SkyBox.White" ).toStdString() );
+			imageUp = osgDB::readImageFile( appConf->getValue( "Viewer.SkyBox.White" ).toStdString() );
+			imageDown = osgDB::readImageFile( appConf->getValue( "Viewer.SkyBox.White" ).toStdString() );
+		}
+		else { // Default skybox
+			imageEast = osgDB::readImageFile( appConf->getValue( "Viewer.SkyBox.East" ).toStdString() );
+			imageWest = osgDB::readImageFile( appConf->getValue( "Viewer.SkyBox.West" ).toStdString() );
+			imageNorth = osgDB::readImageFile( appConf->getValue( "Viewer.SkyBox.North" ).toStdString() );
+			imageSouth = osgDB::readImageFile( appConf->getValue( "Viewer.SkyBox.South" ).toStdString() );
+			imageUp = osgDB::readImageFile( appConf->getValue( "Viewer.SkyBox.Up" ).toStdString() );
+			imageDown = osgDB::readImageFile( appConf->getValue( "Viewer.SkyBox.Down" ).toStdString() );
+		}
 
 		if ( imageWest && imageEast && imageDown && imageUp && imageSouth && imageNorth ) {
 			cubemap->setImage( osg::TextureCubeMap::POSITIVE_X, imageWest );
@@ -106,7 +130,7 @@ public:
 };
 
 
-osg::Node* SkyBox::createSkyBox()
+osg::Node* SkyBox::createSkyBox(int skyboxType)
 {
 
 	osg::StateSet* stateset = new osg::StateSet();
@@ -122,56 +146,7 @@ osg::Node* SkyBox::createSkyBox()
 	osg::TexMat* tm = new osg::TexMat;
 	stateset->setTextureAttribute( 0, tm );
 
-	osg::TextureCubeMap* skymap = readCubeMap();
-	stateset->setTextureAttributeAndModes( 0, skymap, osg::StateAttribute::ON );
-
-	stateset->setMode( GL_LIGHTING, osg::StateAttribute::OFF );
-	stateset->setMode( GL_CULL_FACE, osg::StateAttribute::OFF );
-
-	// clear the depth to the far plane.
-	osg::Depth* depth = new osg::Depth;
-	depth->setFunction( osg::Depth::ALWAYS );
-	depth->setRange( 1.0,1.0 );
-	stateset->setAttributeAndModes( depth, osg::StateAttribute::ON );
-
-	stateset->setRenderBinDetails( 6,"RenderBin" );
-
-	osg::Drawable* drawable = new osg::ShapeDrawable( new osg::Sphere( osg::Vec3( 0.0f,0.0f,0.0f ),100 ) );
-
-	osg::Geode* geode = new osg::Geode;
-	geode->setCullingActive( false );
-	geode->setStateSet( stateset );
-	geode->addDrawable( drawable );
-
-
-	osg::Transform* transform = new MoveEarthySkyWithEyePointTransform;
-	transform->setCullingActive( false );
-	transform->addChild( geode );
-
-	osg::ClearNode* clearNode = new osg::ClearNode;
-	//  clearNode->setRequiresClear(false);
-	clearNode->setCullCallback( new TexMatCallback( *tm ) );
-	clearNode->addChild( transform );
-
-	return clearNode;
-}
-
-osg::Node* SkyBox::createBlackBox()
-{
-	osg::StateSet* stateset = new osg::StateSet();
-
-	osg::TexEnv* te = new osg::TexEnv;
-	te->setMode( osg::TexEnv::REPLACE );
-	stateset->setTextureAttributeAndModes( 0, te, osg::StateAttribute::ON );
-
-	osg::TexGen* tg = new osg::TexGen;
-	tg->setMode( osg::TexGen::NORMAL_MAP );
-	stateset->setTextureAttributeAndModes( 0, tg, osg::StateAttribute::ON );
-
-	osg::TexMat* tm = new osg::TexMat;
-	stateset->setTextureAttribute( 0, tm );
-
-	osg::TextureCubeMap* skymap = readCubeMap();
+	osg::TextureCubeMap* skymap = readCubeMap(skyboxType);
 	stateset->setTextureAttributeAndModes( 0, skymap, osg::StateAttribute::ON );
 
 	stateset->setMode( GL_LIGHTING, osg::StateAttribute::OFF );

@@ -693,11 +693,11 @@ int CoreGraph::updateBackground(int bgVal, Data::Graph* currentGraph) {
 	osg::Group* root = this->getScene();
 	if (root->removeChild(root->getNumChildren()-1) == true) {
 
-		if (bgVal == 0) {
+		if (bgVal == 0) { // default skybox
 			SkyBox* skyBox = new SkyBox;
-			root->addChild(skyBox->createSkyBox());
+			root->addChild(skyBox->createSkyBox(0));
 		}
-		else if (bgVal == 1) {
+		else if (bgVal == 1) { // noise skybox
 			root->addChild(createSkyNoiseBox());
 		}
 		#ifdef OPENCV_FOUND
@@ -708,9 +708,13 @@ int CoreGraph::updateBackground(int bgVal, Data::Graph* currentGraph) {
 			root->addChild(createOrtho2dBackground());
 		}
 		#endif
-		else {
+		else if (bgVal == -1) {
 			SkyBox* skyBox = new SkyBox;
-			root->addChild(skyBox->createBlackBox()); // add empty child
+			root->addChild(skyBox->createSkyBox(-1)); // black skybox
+		}
+		else if (bgVal == -2) {
+			SkyBox* skyBox = new SkyBox;
+			root->addChild(skyBox->createSkyBox(-2)); // white skybox
 		}
 
 		reload(currentGraph);
@@ -1069,7 +1073,7 @@ osg::ref_ptr<osg::Node> CoreGraph::createBackground()
 
 	if ( background == 0 ) {
 		SkyBox* skyBox = new SkyBox;
-		return skyBox->createSkyBox();
+		return skyBox->createSkyBox(0);
 	}
 
 	// skynoise

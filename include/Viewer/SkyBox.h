@@ -91,11 +91,15 @@ class SkyBox
 public:
 	SkyBox();
 	~SkyBox();
-	osg::Node* createSkyBox();
-	osg::Node* createBlackBox();
+	osg::Node* createSkyBox(int skyboxType);
 
 private:
-	osg::TextureCubeMap* readCubeMap();
+	/**
+	 * @brief readCubeMap
+	 * @param cubeType, -1 = black, -2 = white, everything else will be skybox
+	 * @return TextureCubeMap
+	 */
+	osg::TextureCubeMap* readCubeMap(int cubeType);
 
 };
 }

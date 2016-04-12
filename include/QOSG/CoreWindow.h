@@ -281,6 +281,8 @@ void loadExampleGraphLua();
 	 */
 	void switchBackgroundBlack();
 
+	void switchBackgroundWhite();
+
 	/**
 	 * void switchBackgroundSkyBox(  )
 	 * @brief TODO
@@ -791,6 +793,8 @@ private:
 	 *@brief Action to switch/change background to SkyBox
 	 */
 	QAction* switchBackgroundBlackAction;
+
+	QAction* switchBackgroundWhiteAction;
 
 	/**
 	 * QAction * switchBackgroundSkyBoxAction
