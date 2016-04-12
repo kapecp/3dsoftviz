@@ -201,10 +201,7 @@ Atom MagellanCommandEvent;		/* CommandEvent */
 Window MagellanWindow = InputFocus;	/* Magellan Driver Window */ 
 int MagellanExist = FALSE; /* Magellan Exist Flag */
 
-int MagellanInit( display, window )
-Display *display;
-Window window; 
-{
+int MagellanInit( Display *display, Window window ){
 
 /* Define the Magellan Event types */
  MagellanMotionEvent       =XInternAtom( display, "MotionEvent", TRUE );
@@ -244,9 +241,7 @@ Window window;
 }
 
 
-static int MagellanErrorHandler( display, Error )
-Display *display;
-XErrorEvent *Error;
+static int MagellanErrorHandler( Display *display, XErrorEvent *Error )
 {
 char Buffer[ 128 ];
 
@@ -262,10 +257,7 @@ char Buffer[ 128 ];
 }
 
 
-int MagellanApplicationSensitivity( display, Sensitivity )
-Display *display;
-double Sensitivity;
-{
+int MagellanApplicationSensitivity( Display *display, double Sensitivity ){
 XWindowAttributes MagellanWindowAttributes;
 XTextProperty MagellanWindowName;
 XEvent CommandMessage;
@@ -283,7 +275,7 @@ XErrorEvent *
 MagellanTypeConversion MagellanType;
 int result;
 
- ApplicationErrorHandler = XSetErrorHandler( MagellanErrorHandler );
+ //ApplicationErrorHandler = XSetErrorHandler( MagellanErrorHandler );
  
 /* Read the window of the Magellan Driver */
  root = RootWindow( display, DefaultScreen(display) );
@@ -340,14 +332,12 @@ int result;
     };
   };
 
- XSetErrorHandler( ApplicationErrorHandler );
+ //XSetErrorHandler( ApplicationErrorHandler );
  return result;
 }
 
-int MagellanSetWindow( display, window )
-Display *display;
-Window window;
-{
+int MagellanSetWindow( Display *display, Window window ){
+
 XWindowAttributes MagellanWindowAttributes;
 XTextProperty MagellanWindowName;
 XEvent CommandMessage;
@@ -425,20 +415,14 @@ int result;
  return result;
 }
 
-int MagellanClose(display)
-Display *display;
-{
+int MagellanClose(Display *display){
  MagellanInit( display, (Window)InputFocus );
  MagellanExist = FALSE;
  
  return TRUE;
 }
 
-int MagellanInputEvent(display,Event,MagellanEvent)
-Display *display;
-XEvent *Event;
-MagellanIntEvent *MagellanEvent;
-{
+int MagellanInputEvent(Display *display,XEvent *Event, MagellanIntEvent *MagellanEvent){
  if ( MagellanExist == FALSE )
   return FALSE;
 
@@ -474,14 +458,8 @@ MagellanIntEvent *MagellanEvent;
  return display == NULL;
 }
 
-int MagellanTranslateEvent( display, Event, MagellanEvent,
-			       MagellanTranslationScale, MagellanRotationScale )
-Display *display;
-XEvent *Event;
-MagellanFloatEvent *MagellanEvent;
-double MagellanTranslationScale;
-double MagellanRotationScale;
-{
+int MagellanTranslateEvent( Display *display, XEvent *Event, MagellanFloatEvent *MagellanEvent,
+                   double MagellanTranslationScale, double MagellanRotationScale ){
  if ( MagellanExist == FALSE )
   return FALSE;
 
@@ -523,10 +501,8 @@ double MagellanRotationScale;
  return display == NULL;
 }
 
-int MagellanRotationMatrix( Rotate, c, b, a )
-double Rotate[4][4];
-double c, b, a;
-{
+int MagellanRotationMatrix( double Rotate[4][4], double c, double b, double a ){
+
 double ca,cb,cc,sa,sb,sc;
 
  ca = cos( a ); sa = sin( a );
@@ -557,9 +533,8 @@ double ca,cb,cc,sa,sb,sc;
  return TRUE;
 }
 
-int MagellanMultiplicationMatrix( MatrixA, MatrixB, MatrixC )
-double MatrixA[4][4], MatrixB[4][4], MatrixC[4][4];
-{
+int MagellanMultiplicationMatrix( double MatrixA[4][4], double MatrixB[4][4], double MatrixC[4][4] ){
+
 double MatrixR[4][4];
 
  MatrixR[0][0] = MatrixB[0][0]*MatrixC[0][0] + MatrixB[0][1]*MatrixC[1][0] + MatrixB[0][2]*MatrixC[2][0];
@@ -578,20 +553,16 @@ double MatrixR[4][4];
  return TRUE;
 }
 
-Bool MagellanCheckMotionEvent( display, event, arg )
-Display *display;
-XEvent *event;
-char *arg;
-{
+Bool MagellanCheckMotionEvent( Display *display, XEvent *event, char *arg ){
+
  if ( event->type == ClientMessage )
   if ( event->xclient.message_type == MagellanMotionEvent )
    return True;
  return False;
 }
 
-int MagellanRemoveMotionEvents( display )
-Display *display;
-{
+int MagellanRemoveMotionEvents( Display *display ){
+
 XEvent event;
 
  while( XCheckIfEvent(display,&event,MagellanCheckMotionEvent,NULL) == True )

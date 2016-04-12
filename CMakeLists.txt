@@ -727,7 +727,7 @@ set ( SRC_MOUSE3D
 
 if( UNIX )
 	list(APPEND SRC_MOUSE3D
-                src/Mouse3d/LibMouse3d/Magellan/xdrvlib.c
+                src/Mouse3d/LibMouse3d/Magellan/xdrvlib.cpp
 )
 elseif( WIN32 )
 	list(APPEND SRC_MOUSE3D
