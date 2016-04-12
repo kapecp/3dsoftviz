@@ -197,7 +197,7 @@ endif()
 
 # ------------------------------ OpenNI2 and Nite -------------------------------
 # Find OPENNI2
-#find_package( OPENNI2 )
+find_package( OPENNI2 )
 if( OPENNI2_FOUND )
 
 	list( APPEND ALL_SYSTEM_HEADERS	${OPENNI2_INCLUDE_DIRS} )
@@ -212,7 +212,7 @@ else( OPENNI2_FOUND )
 endif()
 
 # Find NITE2
-#find_package( NITE2 )
+find_package( NITE2 )
 if( NITE2_FOUND )
 
 	list( APPEND ALL_SYSTEM_HEADERS	${NITE2_INCLUDE_DIRS} ${NITE2_OPENNI2_DRIVER_DIRS} )
