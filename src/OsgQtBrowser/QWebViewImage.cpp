@@ -70,10 +70,29 @@ void QWebViewImage::showTemplate( const std::string& templateName, Diluculum::Lu
     qDebug() << "Webview url: " << baseUrl;
 
 	// Set html and baseUrl working directory
-//	_webView->setHtml( html.c_str(), baseUrl );
-    _webView->setHtml( createGitHtml(), baseUrl );
+    _webView->setHtml( html.c_str(), baseUrl );
 
 //    qDebug() << _webView->page()->currentFrame()->toHtml();
+}
+
+void QWebViewImage::showGitTemplate( const std::string& templateName, const std::string& templateType, QMap<QString, int>* changedMetrics ) {
+    // Create relative webview dir url
+    QString appPath = QCoreApplication::applicationDirPath();
+    QString webviewPath = appPath.append( "/../share/3dsoftviz/webview/index.html" );
+    QUrl baseUrl = QUrl::fromLocalFile( webviewPath );
+
+    // Set angular template type using query string
+    if ( !templateType.empty() ) {
+
+        // Fragment represents value after # hash in url. For example: http://something/index.html#<fragment>
+        baseUrl.setFragment( QString::fromStdString( templateType ) );
+    }
+
+    qDebug() << "Webview url: " << baseUrl;
+
+    // Set html and baseUrl working directory
+//	_webView->setHtml( html.c_str(), baseUrl );
+    _webView->setHtml( createGitHtml( changedMetrics ), baseUrl );
 }
 
 void QWebViewImage::focusBrowser( bool focus )
@@ -111,7 +130,7 @@ bool QWebViewImage::sendKeyEvent( int key, bool keyDown )
 	return false;
 }
 
-QString QWebViewImage::createGitHtml() {
+QString QWebViewImage::createGitHtml( QMap<QString, int> *changedMetrics ) {
     QString html = "";
     html += "<!DOCTYPE html>\n";
     html += "<html>\n";
@@ -133,11 +152,11 @@ QString QWebViewImage::createGitHtml() {
     html += "{\n";
     html += "'metrics':\n";
     html += "{\n";
-    html += "'changedLines': '22',\n";
-    html += "'changedLinesCode': '1',\n";
-    html += "'changedBlank': '0',\n";
-    html += "'changedLinesComment': '4',\n";
-    html += "'changedNonEmpty': '12'\n";
+    html += "'changedLines': '" + QString::number( changedMetrics->value( "lines" ) ) + "',\n";
+    html += "'changedLinesCode': '" + QString::number( changedMetrics->value( "linesCode" ) ) + "',\n";
+    html += "'changedBlank': '" + QString::number( changedMetrics->value( "linesBlank" ) ) + "',\n";
+    html += "'changedLinesComment': '" + QString::number( changedMetrics->value( "linesComment" ) ) + "',\n";
+    html += "'changedNonEmpty': '" + QString::number( changedMetrics->value( "linesNonEmpty" ) ) + "'\n";
     html += "}\n";
     html += "}\n";
     html += "}\n";
@@ -161,7 +180,7 @@ QString QWebViewImage::createGitHtml() {
     html += "</body>\n";
     html += "</html>\n";
     html = html.replace("'", "\"");
-    qDebug() << html;
+//    qDebug() << html;
     return html;
 }
 

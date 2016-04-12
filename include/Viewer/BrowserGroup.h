@@ -5,6 +5,7 @@
 #include <osg/AutoTransform>
 #include <osg/Group>
 #include <QList>
+#include <QMap>
 #include <osg/Geometry>
 #include <osg/Geode>
 
@@ -74,6 +75,10 @@ public:
 		return selectedNodesModels;
 	}
 
+    void setShowGit( bool value ) {
+        this->showGit = value;
+    }
+
 private:
 
 	/**
@@ -84,6 +89,7 @@ private:
 	    *  \param  models
 	    */
 	void addBrowser( const std::string& templateType, osg::Vec3 position, Diluculum::LuaValueMap models );
+    void addBrowser( const std::string& templateType, osg::Vec3 position, QMap<QString, int>* map );
 
 	/**
 	    *  \fn private  createBorderGeode
@@ -183,6 +189,8 @@ private:
 	    *  \return Caculated interpolation value
 	    */
 	double interpolate( long currentFrame, long endFrame, double startValue, double endValue );
+
+    bool showGit;
 };
 }
 

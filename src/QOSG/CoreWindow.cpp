@@ -16,6 +16,7 @@
 #include "GitLib/GitMetrics.h"
 #include "Repository/Git/GitLuaGraphAnalyzer.h"
 #include "Repository/Git/GitLuaGraphVisualizer.h"
+#include "Repository/Git/GitLuaGraphUtils.h"
 
 #include "Viewer/CoreGraph.h"
 #include "Viewer/CameraManipulator.h"
@@ -3837,6 +3838,9 @@ bool CoreWindow::nextVersion()
     if( !chb_git_changeCommits->isChecked() ) {
         ok = Manager::GraphManager::getInstance()->nextVersion( layout );
     } else {
+        // ulozim si udaje o metrikach zo stareho lua graphu
+        Repository::Git::GitLuaGraphUtils luaUtils = Repository::Git::GitLuaGraphUtils( Lua::LuaGraph::getInstance(), Manager::GraphManager::getInstance()->getActiveEvolutionGraph() );
+        luaUtils.fillMetricsMetaData();
 //        qDebug() << "Treba zavolat dalsi lua stromcek";
         QString lPath =  Manager::GraphManager::getInstance()->getActiveEvolutionGraph()->getFilePath();
         QString commitId = Manager::GraphManager::getInstance()->getActiveEvolutionGraph()->getVersion( value )->getCommitId();
@@ -3922,6 +3926,9 @@ bool CoreWindow::previousVersion()
     if( !chb_git_changeCommits->isChecked() ) {
         ok =  Manager::GraphManager::getInstance()->previousVersion( layout );
     } else {
+        // ulozim si udaje o metrikach zo stareho lua graphu
+        Repository::Git::GitLuaGraphUtils luaUtils = Repository::Git::GitLuaGraphUtils( Lua::LuaGraph::getInstance(), Manager::GraphManager::getInstance()->getActiveEvolutionGraph() );
+        luaUtils.fillMetricsMetaData();
 //        qDebug() << "Treba zavolat predchadzajuci lua stromcek";
         Manager::GraphManager::getInstance()->getActiveGraph()->setCurrentVersion( value );
         QString lPath =  Manager::GraphManager::getInstance()->getActiveEvolutionGraph()->getFilePath();

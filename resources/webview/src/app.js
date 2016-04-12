@@ -27,7 +27,7 @@
             })
 			.state('git', {
 				url: "/git",
-				templateUrl: "views/single.html",
+				templateUrl: "views/git.html",
 				controller: 'GitController'
 			})
     }

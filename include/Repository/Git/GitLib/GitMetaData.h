@@ -4,6 +4,7 @@
 #include "Repository/Git/GitLib/GitExport.h"
 
 #include <QString>
+#include <QMap>
 
 namespace Repository {
 
@@ -89,9 +90,24 @@ public:
     void increaseChangedCount() {
         this->changedCount++;
     }
-     void decreaseChangedCount() {
+
+    void decreaseChangedCount() {
         this->changedCount--;
-     }
+    }
+
+    void insertMetrics(QString key, int value ) {
+        this->metrics->insert( key, value );
+    }
+
+    int getMetricsValue( QString key );
+
+    bool metricsContains( QString key ) {
+        return this->metrics->contains( key );
+    }
+
+    QMap<QString, int>* getMetric() {
+        return this->metrics;
+    }
 
 private:
     int occurence;
@@ -107,6 +123,8 @@ private:
     int changedVersion;
 
     Repository::Git::GitFile* callTree;
+
+    QMap<QString, int>* metrics;
 
     int changedCount;
 }; // class

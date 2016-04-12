@@ -17,7 +17,7 @@
 
 			// Chart data
 			chart: {
-				labels: ["Blank1", "Code1", "Comment1"],
+				labels: ["Blank", "Code", "Comment"],
 				data: [
 					model.metrics.changedBlank,
 					model.metrics.changedLinesCode,
