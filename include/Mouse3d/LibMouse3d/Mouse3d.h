@@ -5,7 +5,7 @@
 #include <QtGlobal>
 #include <QDebug>
 
-#if defined(Q_WS_X11)
+#if defined(Q_OS_LINUX)
     #include <stdlib.h>
     #include <stdio.h>
 
@@ -30,23 +30,23 @@ public:
     Mouse3dDevice(QOSG::CoreWindow *window);
     ~Mouse3dDevice();
 
-#ifdef Q_WS_WIN
+#ifdef Q_OS_WIN
     Mouse3DInput* mouse;
-#elif defined(Q_WS_X11)
+#elif defined(Q_OS_LINUX)
 
-//virtual void Move3d(std::vector<float>& motionData);
+void Move3d(int lol, std::vector<float>& motionData);
+
 signals:
 
     void Move3d(std::vector<float>& motionData);
 
-#elif defined(Q_WS_MAC)
+#elif defined(Q_OS_MAC)
 
 #endif
     QOSG::CoreWindow* win;
 
-private:
-#if defined (Q_WS_X11)
-    void Mouse3DLinux();
+#if defined (Q_OS_LINUX)
+    void Mouse3DLinux(QOSG::CoreWindow* window);
     std::vector<float> signal_data;
 #endif
 

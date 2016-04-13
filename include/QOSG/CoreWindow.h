@@ -1580,6 +1580,9 @@ private:
 
 	void onChange();
 
+public:
+   bool x11Event(XEvent * event);
+
 };
 }
 

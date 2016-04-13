@@ -4389,4 +4389,9 @@ void CoreWindow::createEvolutionLuaGraph()
 	*/
 }
 
+   bool CoreWindow::x11Event(XEvent * event)
+   {
+       return false;
+   }
+
 } // namespace QOSG
