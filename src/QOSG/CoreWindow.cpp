@@ -1878,79 +1878,103 @@ void CoreWindow::switchBackgroundSkyBox() {
 	LOG(INFO) << "CoreWindow::switchBackgroundSkyBox switching to SkyBox bg";
 	Data::Graph* currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
 
-	pauseLayout();
+	int flagPlay = 0;
+	if (this->isPlaying) {
+		flagPlay = 1;
+		pauseLayout();
+	}
 	if (coreGraph->updateBackground(0, currentGraph) == 0) {
 		LOG(INFO) << "Background successfully updated";
 	}
 	else {
 		LOG(ERROR) << "Background bg update failed";
 	}
-	playLayout();
+	if (flagPlay == 1) playLayout();
 }
 void CoreWindow::switchBackgroundBlack() {
 	LOG(INFO) << "CoreWindow::switchBackgroundBlack switching to black color bg";
 	Data::Graph* currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
 
-	pauseLayout();
+	int flagPlay = 0;
+	if (this->isPlaying) {
+		flagPlay = 1;
+		pauseLayout();
+	}
 	if (coreGraph->updateBackground(-1, currentGraph) == 0) {
 		LOG(INFO) << "Background successfully updated";
 	}
 	else {
 		LOG(ERROR) << "Background bg update failed";
 	}
-	playLayout();
+	if (flagPlay == 1) playLayout();
 }
 void CoreWindow::switchBackgroundWhite() {
 	LOG(INFO) << "CoreWindow::switchBackgroundWhite switching to white color bg";
 	Data::Graph* currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
 
-	pauseLayout();
+	int flagPlay = 0;
+	if (this->isPlaying) {
+		flagPlay = 1;
+		pauseLayout();
+	}
 	if (coreGraph->updateBackground(-2, currentGraph) == 0) {
 		LOG(INFO) << "Background successfully updated";
 	}
 	else {
 		LOG(ERROR) << "Background bg update failed";
 	}
-	playLayout();
+	if (flagPlay == 1) playLayout();
 }
 void CoreWindow::switchBackgroundSkyNoiseBox() {
 	LOG(INFO) << "CoreWindow::switchBackgroundSkyNoiseBox switching to SkyNoiseBox bg";
 	Data::Graph* currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
 
-	pauseLayout();
+	int flagPlay = 0;
+	if (this->isPlaying) {
+		flagPlay = 1;
+		pauseLayout();
+	}
 	if (coreGraph->updateBackground(1, currentGraph) == 0) {
 		LOG(INFO) << "Background successfully updated";
 	}
 	else {
 		LOG(ERROR) << "Background bg update failed";
 	}
-	playLayout();
+	if (flagPlay == 1) playLayout();
 }
 void CoreWindow::switchBackgroundTexture() {
 	LOG(INFO) << "CoreWindow::switchBackgroundTexture switching to Texture bg";
 	Data::Graph* currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
 
-	pauseLayout();
+	int flagPlay = 0;
+	if (this->isPlaying) {
+		flagPlay = 1;
+		pauseLayout();
+	}
 	if (coreGraph->updateBackground(2, currentGraph) == 0) {
 		LOG(INFO) << "Background successfully updated";
 	}
 	else {
 		LOG(ERROR) << "Background bg update failed";
 	}
-	playLayout();
+	if (flagPlay == 1) playLayout();
 }
 void CoreWindow::switchBackgroundOrtho2d() {
 	LOG(INFO) << "CoreWindow::switchBackgroundOrtho2d switching to Ortho2d bg";
 	Data::Graph* currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
 
-	pauseLayout();
+	int flagPlay = 0;
+	if (this->isPlaying) {
+		flagPlay = 1;
+		pauseLayout();
+	}
 	if (coreGraph->updateBackground(3, currentGraph) == 0) {
 		LOG(INFO) << "Background successfully updated";
 	}
 	else {
 		LOG(ERROR) << "Background bg update failed";
 	}
-	playLayout();
+	if (flagPlay == 1) playLayout();
 }
 
 void CoreWindow::labelOnOff( bool )
