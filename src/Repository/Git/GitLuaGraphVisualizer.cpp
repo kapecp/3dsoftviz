@@ -957,7 +957,7 @@ void Repository::Git::GitLuaGraphVisualizer::filterVisualizationByAuthor( QStrin
     QSet<QString> edgeIdentifiers = QSet<QString>();
 
     foreach( QString fileIdentifier, files ) {
-        qDebug() << fileIdentifier;
+//        qDebug() << fileIdentifier;
         QString identifier = fileIdentifier.replace( "file;", "" );
         QStringList list = identifier.split( "/" );
 

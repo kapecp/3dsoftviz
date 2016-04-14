@@ -1453,6 +1453,14 @@ public:
 	 */
 	QWidget* createMoreFeaturesTab( QFrame* line );
 
+    /**
+     * @author Michael Garaj
+     * @brief createEvolutionTab add elements to QWidget for evolution functionality
+     * @param line pointer to add line
+     * @return QWidget for evolution functionality
+     */
+    QWidget* createEvolutionTab( QFrame* line );
+
 	/**
 	 * @author Peter Mendel
 	 * @brief createColorPicker initialize color picker

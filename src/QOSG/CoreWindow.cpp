@@ -1158,7 +1158,7 @@ QWidget* CoreWindow::createMoreFeaturesTab( QFrame* line )
 	lMore->addRow( b_start_gloves );
 	connect( b_start_gloves, SIGNAL( clicked() ), this, SLOT( startGlovesRecognition() ) );
 #endif
-
+/*
 	line = createLine();
 	lMore->addRow( line );
 	lMore->addRow( new QLabel( tr( "Evolution Graph" ) ) );
@@ -1168,10 +1168,29 @@ QWidget* CoreWindow::createMoreFeaturesTab( QFrame* line )
     lMore->addRow( cb_git_evoVisualizeMethod );
     lMore->addRow( cb_git_authors );
     lMore->addRow( cb_git_files );
-
+*/
 	wMore->setLayout( lMore );
 
 	return wMore;
+}
+
+QWidget* CoreWindow::createEvolutionTab( QFrame* line )
+{
+    QWidget* wMore = new QWidget();
+    QFormLayout* lMore = new QFormLayout( wMore );
+    lMore->setContentsMargins( 1,1,1,1 );
+    lMore->setSpacing( 2 );
+
+    lMore->addRow( new QLabel( ( tr( "Life span:" ) ) ), evolutionLifespanSpinBox );
+//    lMore->addRow( b_git_diff );
+    lMore->addRow( chb_git_changeCommits );
+    lMore->addRow( cb_git_evoVisualizeMethod );
+    lMore->addRow( cb_git_authors );
+    lMore->addRow( cb_git_files );
+
+    wMore->setLayout( lMore );
+
+    return wMore;
 }
 
 void CoreWindow::createGraphSlider()
@@ -1204,6 +1223,8 @@ void CoreWindow::createLeftToolBar()
 
 	QWidget* wClustering = createClusteringTab( line );
 
+    QWidget* wEvolution = createEvolutionTab( line );
+
 	QWidget* wMore = createMoreFeaturesTab( line );
 
 	toolBox = new QToolBox();
@@ -1213,6 +1234,7 @@ void CoreWindow::createLeftToolBar()
 	toolBox->addItem( wConstraints, tr( "Constraints" ) );
 	toolBox->addItem( wClustering, tr( "Clustering" ) );
 	toolBox->addItem( wManage, tr( "Connections" ) );
+    toolBox->addItem( wEvolution, tr( "Evolution" ) );
 	toolBox->addItem( wMore, tr( "More features" ) );
 	toolBar = new QToolBar( "Tools",this );
 
