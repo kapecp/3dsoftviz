@@ -65,6 +65,8 @@ Viewer.SkyBox.South=../share/3dsoftviz/img/skybox/default/rays_south.bmp
 Viewer.SkyBox.West=../share/3dsoftviz/img/skybox/default/rays_west.bmp
 Viewer.SkyBox.Up=../share/3dsoftviz/img/skybox/default/rays_up.bmp
 Viewer.SkyBox.Down=../share/3dsoftviz/img/skybox/default/rays_down.bmp
+Viewer.SkyBox.Black=../share/3dsoftviz/img/skybox/black/rays_all.bmp
+Viewer.SkyBox.White=../share/3dsoftviz/img/skybox/white/rays_all.bmp
 
 Kinect.Surface.LOG= ../share/3dsoftviz/kinectMaps/log.txt
 Kinect.Surface.DATA= ../share/3dsoftviz/kinectMaps/file4.txt
