@@ -90,7 +90,7 @@ CoreWindow::CoreWindow( QWidget* parent, Vwr::CoreGraph* coreGraph, QApplication
 	createMetricsToolBar();
 
 	viewerWidget = new ViewerQT( this, 0, 0, 0, coreGraph );
-	viewerWidget->setSceneData( coreGraph->getScene() );
+    //viewerWidget->setSceneData( coreGraph->getScene() );
 
 	setCentralWidget( viewerWidget );
 

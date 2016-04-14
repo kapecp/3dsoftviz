@@ -149,7 +149,7 @@ protected:
 
 
 private:
-
+    osg::Node* createModel();
 	/**
 		*  Vwr::CameraManipulator * manipulator
 		*  \brief camera manipulator
