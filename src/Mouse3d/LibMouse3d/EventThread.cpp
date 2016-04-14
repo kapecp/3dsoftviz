@@ -5,11 +5,13 @@
 namespace LibMouse3d{
 
 EventThread::EventThread(QOSG::CoreWindow* window, QObject* parent) : QThread( parent ) {
+    this->window = window;
+    qDebug() << window->winId();
+}
 
+void EventThread::run(){
+    qDebug() << window->winId();
     this->mouseDevice = new Mouse3dDevice(window);
-    //vetvenie pre platform independent build
-
-
 }
 
 EventThread::~EventThread() {

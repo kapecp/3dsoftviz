@@ -30,13 +30,14 @@ namespace LibMouse3d{
 
         The default implementation emits a Move3d signal with the motion data
     */
-    void Mouse3dDevice::Move3d(int lol, std::vector<float>& motionData)
+    void Mouse3dDevice::SendSignal(std::vector<float>& motionData)
     {
-        lol = 0;
-        emit Move3d(1, motionData);
+       // emit Mouse3dDevice::Move3d(motionData);
     }
 
     void Mouse3dDevice::Mouse3DLinux(QOSG::CoreWindow* window){
+
+        XInitThreads();
 
         double MagellanSensitivity = 1.0;
         Display *display;
@@ -65,15 +66,16 @@ namespace LibMouse3d{
 
 
          /************************* Main Loop ***************************************/
-         //XSelectInput( display, window, KeyPressMask | KeyReleaseMask );
+         XSelectInput( display, xwindow, KeyPressMask | KeyReleaseMask );
 
          while( MagellanDemoEnd == FALSE )
           {
-           //if(XCheckWindowEvent(display, window, KeyPressMask | KeyReleaseMask,  &report ))
-           if( ! window->x11Event( &report ) )
 
-           {
-           qDebug() << "Catching event, I guess?";
+           //if(XCheckWindowEvent(display, window, KeyPressMask | KeyReleaseMask,  &report ))
+           //if( ! window->x11Event( &report ) ) {
+           XNextEvent( display, &report );
+           if(report.type != 12001)
+               qDebug() << report.type << endl;
            switch( report.type )
            {
             case ClientMessage :
@@ -97,15 +99,19 @@ namespace LibMouse3d{
                              "b=" << signal_data[4] <<
                              "c=" << signal_data[5] << endl;
 
-                emit Move3d(1, signal_data);
+                //emit Mouse3dDevice::Move3d(signal_data);
+                //window->OnMove(signal_data);
+                sleep(500);
                 break;
-              default : /* another ClientMessage event */
+              default : //* another ClientMessage event
                 qDebug() << "Unrecognized mouse event in 2016 LOL";
             break;
               };
              break;
             };
-           }
+           //}
+
+
          };
    }
 #endif

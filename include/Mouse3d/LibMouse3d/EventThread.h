@@ -27,6 +27,7 @@ class EventThread : public QThread{
 
 public:
 
+    QOSG::CoreWindow* window;
     Mouse3dDevice* mouseDevice;
 
     //constructor
@@ -35,6 +36,8 @@ public:
     //destructor
     ~EventThread(void);
 
+    //run
+    void run();
 
 };
 }

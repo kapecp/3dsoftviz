@@ -24,7 +24,8 @@ namespace QOSG{
 
 namespace LibMouse3d{
 
-class Mouse3dDevice{
+class Mouse3dDevice : public QObject {
+
 
 public:
     Mouse3dDevice(QOSG::CoreWindow *window);
@@ -34,7 +35,7 @@ public:
     Mouse3DInput* mouse;
 #elif defined(Q_OS_LINUX)
 
-void Move3d(int lol, std::vector<float>& motionData);
+void SendSignal(std::vector<float>& motionData);
 
 signals:
 
