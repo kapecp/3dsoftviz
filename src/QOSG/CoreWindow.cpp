@@ -1387,10 +1387,10 @@ void CoreWindow::showMetrics()
 void CoreWindow::playPause()
 {
 	if ( isPlaying ) {
-		playLayout();
+		pauseLayout();
 	}
 	else {
-		pauseLayout();
+		playLayout();
 	}
 }
 

@@ -5,15 +5,15 @@
 #  LEAP_LIBRARIES    - List of libraries when using LEAP.
 #  LEAP_FOUND        - True if LEAP found.
 #=============================================================================
-if( WIN32 )
-	find_path( LEAP_INCLUDE_DIR NAMES leap.h 
+
+	find_path( LEAP_INCLUDE_DIR NAMES leap.h
 		PATHS
 				${CMAKE_CURRENT_SOURCE_DIR}/dependencies/leap/include )
 
-	find_library( LEAP_LIBRARY NAMES leap 
+	find_library( LEAP_LIBRARY NAMES leap
 		PATHS
 			${CMAKE_CURRENT_SOURCE_DIR}/dependencies/leap/lib )
-
+if( WIN32 )
 	find_path( LEAP_DLL
 		NAMES leap.dll
 		PATHS ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/leap/dist
@@ -23,11 +23,13 @@ endif()
 # handle the QUIETLY and REQUIRED arguments and set LEAP_FOUND to TRUE if
 # all listed variables are TRUE
 include( FindPackageHandleStandardArgs )
-FIND_PACKAGE_HANDLE_STANDARD_ARGS( LEAP REQUIRED_VARS LEAP_LIBRARY LEAP_INCLUDE_DIR LEAP_DLL )
+FIND_PACKAGE_HANDLE_STANDARD_ARGS( LEAP REQUIRED_VARS LEAP_LIBRARY LEAP_INCLUDE_DIR )
 
 # Copy the results to the output variables.
 if( LEAP_FOUND )
+if( WIN32 )
 	set( LEAP_DRIVER_DIRS ${LEAP_DLL} )
+endif()
 	set( LEAP_LIBRARIES ${LEAP_LIBRARY} )
 	set( LEAP_INCLUDE_DIRS ${LEAP_INCLUDE_DIR} )
 endif()
