@@ -150,7 +150,7 @@ bool PickHandler::handleMove( const osgGA::GUIEventAdapter& ea, osgGA::GUIAction
 	// and move events.
 	_mX = ea.getX();
 	_mY = ea.getY();
-	return false;
+    return false;
 }
 
 bool PickHandler::handleDoubleclick( const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& aa )
@@ -351,6 +351,9 @@ bool PickHandler::handleRelease( const osgGA::GUIEventAdapter& ea, osgGA::GUIAct
 	// manipulator will handle it.)
 
 	leftButtonPressed = false;
+    rightButtonPressed = false;
+    initialX = 0;
+    initialY = 0;
 
 	if ( pickMode == PickMode::MULTI && isDrawingSelectionQuad ) {
 		float x, y, w, h;
@@ -438,6 +441,16 @@ bool PickHandler::handleDrag( const osgGA::GUIEventAdapter& ea, osgGA::GUIAction
 
 		return dragNode( viewer );
 	}
+    //jurik
+    else if ( rightButtonPressed ) {
+
+        coreGraph->ratata(initialX,_mX,initialY,_mY);
+        if(_mX > initialX+5 || _mX < initialX-5)
+            initialX=_mX;
+        if(_mY > initialY+5 || _mY < initialY-5)
+            initialY=_mY;
+    }
+    //*****
 
 	return false;
 }
@@ -480,6 +493,12 @@ bool PickHandler::handlePush( const osgGA::GUIEventAdapter& ea, osgGA::GUIAction
 
 		}
 	}
+
+    if ( ea.getButtonMask() == osgGA::GUIEventAdapter::RIGHT_MOUSE_BUTTON ) {
+        rightButtonPressed = true;
+        initialX = origin_mX;
+        initialY = origin_mY;
+    }
 
 	_mX = ea.getX();
 	_mY = ea.getY();

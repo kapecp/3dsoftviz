@@ -628,6 +628,7 @@ Vwr::CoreGraph::CoreGraph( Data::Graph* graph, osg::ref_ptr<osg::Camera> camera 
 	root = new osg::Group();
 	graphRotTransf = new osg::MatrixTransform();
 	graphGroup = new osg::Group();
+    rotationMatrix = rotationMatrix.identity();
 
 	/*
 	   manipulatorGroup = new osg::Group();
@@ -685,7 +686,7 @@ Vwr::CoreGraph::CoreGraph( Data::Graph* graph, osg::ref_ptr<osg::Camera> camera 
 
     //node for base
     baseGeode = new osg::Geode();
-    baseTransform = new osg::PositionAttitudeTransform();
+    baseTransform = new osg::MatrixTransform();
 
     graphRotTransf->addChild( graphGroup );
     shadowedScene->addChild( graphRotTransf );
@@ -1487,6 +1488,41 @@ void CoreGraph::createBase()
    base->push_back(3);
 
    baseGeometry->addPrimitiveSet(baseBehind);*/
+/*
+   osg::Vec3 sp(0,0,0);
+   osg::Vec3 xp(1,0,0);
+   osg::Vec3 yp(0,1,0);
+   osg::Vec3 zp(0,0,1);
+
+   osg::ref_ptr<osg::Vec3Array> points = new osg::Vec3Array;
+   points->push_back(sp);
+   points->push_back(xp);
+    points->push_back(sp);
+   points->push_back(yp);
+    points->push_back(sp);
+   points->push_back(zp);
+
+   osg::ref_ptr<osg::Vec4Array> color = new osg::Vec4Array;
+   color->push_back(osg::Vec4(1.0,0.0,0.0,1.0));
+
+
+   baseGeometry->setVertexArray(points.get());
+   baseGeometry->setColorArray(color.get());
+   baseGeometry->setColorBinding(osg::Geometry::BIND_PER_PRIMITIVE_SET);
+   baseGeometry->addPrimitiveSet(new osg::DrawArrays(GL_LINES,0,2));
+
+   //color->push_back(osg::Vec4(0.0,0.1,0.0,1.0));
+   baseGeometry->setVertexArray(points.get());
+   baseGeometry->setColorArray(color.get());
+   baseGeometry->setColorBinding(osg::Geometry::BIND_PER_PRIMITIVE_SET);
+   baseGeometry->addPrimitiveSet(new osg::DrawArrays(GL_LINES,2,2));
+
+  // color->push_back(osg::Vec4(0.0,0.0,1.0,1.0));
+   baseGeometry->setVertexArray(points.get());
+   baseGeometry->setColorArray(color.get());
+   baseGeometry->setColorBinding(osg::Geometry::BIND_PER_PRIMITIVE_SET);
+   baseGeometry->addPrimitiveSet(new osg::DrawArrays(GL_LINES,4,2));*/
+
 }
 
 void CoreGraph::recievedMVMatrix(QMatrix4x4 modelViewMatrix)
@@ -1496,7 +1532,38 @@ void CoreGraph::recievedMVMatrix(QMatrix4x4 modelViewMatrix)
                             modelViewMatrix.operator()(2,0),modelViewMatrix.operator()(2,1),modelViewMatrix.operator()(2,2),modelViewMatrix.operator()(2,3),
                             modelViewMatrix.operator()(3,0),modelViewMatrix.operator()(3,1),modelViewMatrix.operator()(3,2),modelViewMatrix.operator()(3,3));
 
-    camera->setViewMatrix(arucoMVM);
+    osg::Vec3d translateBasic = arucoMVM.getTrans();
+    osg::Quat rotationBasic = arucoMVM.getRotate();
+
+   /* arucoMVM = arucoMVM * rotationMatrix;
+    arucoMVM.setTrans(translateBasic);
+
+    camera->setViewMatrix(arucoMVM);*/
+/*
+    osg::Matrix invertedArucoMVM = camera->getViewMatrix();
+    invertedArucoMVM.invert(invertedArucoMVM);
+
+    osg::Matrixd rotateGraph = invertedArucoMVM;
+    rotateGraph = rotateGraph * original;
+    outputMatrix(rotateGraph);
+    baseTransform->setMatrix(rotateGraph);*/
+
+   /* osg::Matrixd baseRotation;
+    baseRotation.setRotate(baseRotation.inverse(rotationMatrix).getRotate());
+    baseTransform->setMatrix(baseRotation);*/
+   // graphRotTransf->setMatrix(graphRotation);
+   // scaleGraphToBase();
+     camera->setViewMatrix(arucoMVM);
+
+    osg::Matrix invertedArucoMVM;
+     invertedArucoMVM.invert(invertedArucoMVM);
+
+     osg::Matrix graphRot = graphRotTransf->getMatrix();
+     graphRot.setRotate(invertedArucoMVM.getRotate());
+     graphRot = graphRot * rotationMatrix;
+
+     graphRotTransf->setMatrix(graphRot);
+     scaleGraphToBase();
 }
 
 void CoreGraph::recievedPMatrix(QMatrix4x4 projectionMatrix)
@@ -1511,7 +1578,8 @@ void CoreGraph::recievedPMatrix(QMatrix4x4 projectionMatrix)
 
 void CoreGraph::updateBase(float size)
 {
-    baseTransform->setScale(osg::Vec3(size/2-0.05,size/2-0.05,0));
+    //baseTransform->setScale(osg::Vec3(size/2-0.05,size/2-0.05,0));
+
 }
 
 float CoreGraph::compare(float a, float b)
@@ -1547,12 +1615,13 @@ void CoreGraph::scaleGraphToBase()
 
     //matrix to scale and translate graph
     //using the farest node on axis and half of marker size
+
     osg::Matrixd positionMatrix(size/maxPositionX,0,0,0,
                                 0,size/maxPositionY,0,0,
                                 0,0,size/maxPositionZ,0,
-                                0,0,size,1);
+                                0,0,0,1);
 
-    graphRotTransf->setMatrix(positionMatrix);
+    graphRotTransf->setMatrix(graphRotTransf->getMatrix() * positionMatrix);
 }
 
 void CoreGraph::scaleGraph(int scale)
@@ -1561,24 +1630,59 @@ void CoreGraph::scaleGraph(int scale)
     //outputMatrix( scaleMatrix);
     switch (scale){
         case 1:
-    {
-        graphRotTransf->setMatrix( scaleMatrix * scaleMatrix.scale(0.5,0.5,0.5) );
+        {
+            graphRotTransf->setMatrix( scaleMatrix * scaleMatrix.scale(0.5,0.5,0.5) );
             break;
-    }
+        }
         case 2:
+        {
             graphRotTransf->setMatrix( scaleMatrix * scaleMatrix.scale(2,2,2) );
             break;
+        }
     }
 }
 void CoreGraph::rotateGraph()
 {
-    osg::Matrixd scaleMatrix = graphRotTransf->getMatrix();
+    /*osg::Matrixd matrix = camera->getViewMatrix();
+    qDebug()<<"before";
+    outputMatrix(matrix);
+    matrix.invert(camera->getViewMatrix());
+    qDebug()<<"invert";
+    outputMatrix(matrix);*/
+
+    rotationMatrix = rotationMatrix * rotationMatrix.rotate(0.1,osg::Vec3f(0,1,0));
+    /*osg::Matrix matrix = graphRotTransf->getMatrix();
+   // matrix.setTrans(matrix.inverse(camera->getViewMatrix()).getTrans());
+    matrix.setRotate(matrix.inverse(camera->getViewMatrix()).getRotate());
+    matrix = matrix * rotationMatrix;
+    //matrix.setRotate(camera->getViewMatrix().getRotate());
+    //matrix.setTrans(camera->getViewMatrix().getTrans());
+    /*osg::Matrixd scaleMatrix = graphRotTransf->getMatrix();
     float translateBack = scaleMatrix.operator ()(3,2);
 
     scaleMatrix.setTrans(0,0,0);
-    scaleMatrix = scaleMatrix * scaleMatrix.rotate(0.1,osg::Vec3f(0,0,1));
+    scaleMatrix = scaleMatrix * scaleMatrix.rotate(0.1,osg::Vec3f(0,1,0));
     scaleMatrix.setTrans(0,0,translateBack);
-    graphRotTransf->setMatrix( scaleMatrix );
+    graphRotTransf->setMatrix( scaleMatrix );*/
+    //rotationMatrix = rotationMatrix * rotationMatrix.rotate(0.1,osg::Vec3f(0,1,0));
+
+   /* rotationMatrix = rotationMatrix * rotationMatrix.rotate(0.1,osg::Vec3f(0,1,0));
+    osg::Matrixd matrix = matrix.inverse(camera->getViewMatrix()) * rotationMatrix;
+    qDebug() << "BEFORE";
+    outputMatrix(matrix);
+
+    matrix = matrix.inverse(matrix);
+    qDebug() << "AFTER";
+    outputMatrix(matrix);
+
+
+    //osg::Matrixd matrix;
+  //  matrix.setRotate(osg::Quat(5.2,osg::Vec3f(0,1,0)));
+
+
+   graphRotTransf->setMatrix( matrix );
+   scaleGraphToBase();
+   // rotationMatrix = rotationMatrix * rotationMatrix.rotate(0.1,osg::Vec3f(0,1,0));*/
 }
 
 void CoreGraph::outputMatrix(osg::Matrixd matrix)
@@ -1587,6 +1691,29 @@ void CoreGraph::outputMatrix(osg::Matrixd matrix)
     qDebug() << matrix.operator()(1,0) << matrix.operator()(1,1) << matrix.operator()(1,2) << matrix.operator()(1,3);
     qDebug() << matrix.operator()(2,0) << matrix.operator()(2,1) << matrix.operator()(2,2) << matrix.operator()(2,3);
     qDebug() << matrix.operator()(3,0) << matrix.operator()(3,1) << matrix.operator()(3,2) << matrix.operator()(3,3);
+}
+
+void CoreGraph::ratata(double initialX,double actualX,double initialY, double actualY)
+{
+    qDebug()<<"x: "<<initialX;
+    qDebug()<<"x1: "<<actualX;
+    qDebug()<<"y: "<<initialY;
+    qDebug()<<"y1: "<<actualX;
+
+    if( actualX > initialX +5){
+        rotationMatrix = rotationMatrix * rotationMatrix.rotate(0.05,osg::Vec3f(0,0,1));
+    }
+
+    if(actualX < initialX -5){
+        rotationMatrix = rotationMatrix * rotationMatrix.rotate(-0.05,osg::Vec3f(0,0,1));
+    }
+
+    if(actualY > initialY +5){
+        rotationMatrix = rotationMatrix * rotationMatrix.rotate(-0.05,osg::Vec3f(1,0,0));
+    }
+    if(actualY < initialY -5){
+        rotationMatrix = rotationMatrix * rotationMatrix.rotate(0.05,osg::Vec3f(1,0,0));
+    }
 }
 
 //*****

@@ -196,7 +196,8 @@ void AdapterWidget::mouseReleaseEvent( QMouseEvent* event )
 
 void AdapterWidget::mouseMoveEvent( QMouseEvent* event )
 {
-	//odchytavanie udalosti mysi
+
+    //odchytavanie udalosti mysi
 	_gw->getEventQueue()->mouseMotion( static_cast<float>( event->x() ),static_cast<float>( event->y() ) );
 }
 

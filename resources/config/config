@@ -24,7 +24,7 @@ Viewer.Display.Stereoscopic=0
 Viewer.Display.ViewDistance=10000.0
 Viewer.Labels.Font=../share/3dsoftviz/fonts/OpenSans-Regular.ttf
 Viewer.PickHandler.PickedEdgeDistance=200.0
-Viewer.Textures.DefaultNodeScale=8
+Viewer.Textures.DefaultNodeScale=20
 Viewer.Textures.AuthorNodeScale=15
 Viewer.Textures.AuthorEdge=../share/3dsoftviz/img/textures/AuthorEdge.bmp
 Viewer.Textures.Author=../share/3dsoftviz/img/textures/author.png
@@ -39,7 +39,7 @@ Viewer.Textures.OrientedEdgeSuffix=.png
 Viewer.Textures.MetaNode=../share/3dsoftviz/img/textures/MetaNode.png
 
 Viewer.Fullscreen=0
-Viewer.SkyBox.Noise=3
+Viewer.SkyBox.Noise=0
 Viewer.SkyBox.North=../share/3dsoftviz/img/skybox/default/rays_north.bmp
 Viewer.SkyBox.East=../share/3dsoftviz/img/skybox/default/rays_east.bmp
 Viewer.SkyBox.South=../share/3dsoftviz/img/skybox/default/rays_south.bmp

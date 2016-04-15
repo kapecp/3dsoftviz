@@ -267,6 +267,7 @@ public:
     void scaleGraph(int scale);
     void rotateGraph();
     void outputMatrix(osg::Matrixd matrix);
+    void ratata(double initialX,double actualX,double initialY, double actualY);
     //*****
 
 public slots:
@@ -628,7 +629,9 @@ private:
         *  \brief node base
         */
     osg::ref_ptr<osg::Geode> baseGeode;
-    osg::ref_ptr<osg::PositionAttitudeTransform> baseTransform;
+    osg::ref_ptr<osg::MatrixTransform> baseTransform;
+    //osg::ref_ptr<osg::PositionAttitudeTransform> baseTransform;
+    osg::Matrixd rotationMatrix;
     //*****
 };
 }
