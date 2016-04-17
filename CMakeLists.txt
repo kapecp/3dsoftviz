@@ -1135,7 +1135,12 @@ install( DIRECTORY resources/ DESTINATION ${INSTALL_DATA} COMPONENT Data PATTERN
 
 # Install needed .dll files for OpenNI2
 if( NITE2_FOUND AND OPENNI2_FOUND )
-	install( DIRECTORY ${NITE2_OPENNI2_DRIVER_DIRS} DESTINATION ${INSTALL_BIN}/OpenNI2 )
+	if( WIN32 )
+		install( FILES ${OPENNI2_DLL} DESTINATION ${INSTALL_BIN}/ )
+	else()
+		install( FILES ${OPENNI2_LIBRARY} DESTINATION ${INSTALL_BIN}/ )
+		install( FILES ${NITE2_LIBRARY} DESTINATION ${INSTALL_BIN}/ )
+	endif()
 endif()
 
 # install .dll for speech recognition
@@ -1154,8 +1159,12 @@ endif()
 # endif()
 
 # Install needed .dll files for leap
-if( LEAP_FOUND AND WIN32 )
-	install( DIRECTORY ${LEAP_DRIVER_DIRS} DESTINATION ${INSTALL_BIN}/ )
+if( LEAP_FOUND )
+	if ( WIN32 )
+		install( FILES ${LEAP_DRIVER_DIRS} DESTINATION ${INSTALL_BIN}/ )
+	else()
+		install( FILES ${LEAP_LIBRARIES} DESTINATION ${INSTALL_BIN}/ )
+	endif()
 endif()
 
 # Install built in dependencies unless we are building an OSX Bundle
