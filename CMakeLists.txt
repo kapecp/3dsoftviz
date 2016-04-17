@@ -307,11 +307,6 @@ else()
 	message( STATUS "3DMouse NOT FOUND" )
 endif()
 
-# ------------------------------ DOXYGEN -------------------------------
-# Find DOXYGEN
-#find_package(DOXYGEN)
-#if ( DOXYGEN_FOUND )
-#option(BUILD_DOCUMENTATION "Create and install the HTML based API documentation (requires Doxygen)" ${DOXYGEN_FOUND})
 
 # ------------------------------------------------------------
 # Dependencies - External projects
@@ -1145,7 +1140,7 @@ endif()
 
 # install .dll for speech recognition
 if( SPEECHSDK_FOUND )
-	install( DIRECTORY ${SPEECHSDK_DRIVER_DIRS}/ DESTINATION ${INSTALL_BIN}/bin )
+	install( DIRECTORY ${SPEECHSDK_DRIVER_DIRS}/ DESTINATION ${INSTALL_BIN}/ )
 endif()
 
 # Install needed .dll files for fglove
