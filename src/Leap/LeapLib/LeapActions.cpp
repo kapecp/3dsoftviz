@@ -1,12 +1,13 @@
 #include "LeapLib/LeapActions.h"
-#include <QDebug>
-#include <QtCore/qt_windows.h>	//sleep include, TODO
+#include "easylogging++.h"
+//#include <QtCore/qt_windows.h>	//sleep include, TODO
+#include "Leap/LeapSleeper.h"
 
 Leap::LeapActions::LeapActions(LeapCameraManipulator* cameraManipulator)
 {
 	this->cameraManipulator = cameraManipulator;
 	isCameraMoving = true;
-	qDebug() << "LeapActions() Constructor";
+	LOG(INFO) << "LeapActions() Constructor";
 }
 
 Leap::LeapActions::~LeapActions()
@@ -14,7 +15,7 @@ Leap::LeapActions::~LeapActions()
 	if (cameraManipulator != NULL){
 		delete(cameraManipulator);
 	}
-	qDebug() << "~LeapActions() Destructor";
+	LOG(INFO) << "~LeapActions() Destructor";
 }
 
 void Leap::LeapActions::moveCamera( Leap::Gesture gesture )
@@ -36,36 +37,37 @@ void Leap::LeapActions::moveCamera( Leap::Gesture gesture )
 	// >= instead of > to avoid edge case, no camera movement would happen with absDir0 equal to absDir1
 	if ( absDir0 >= absDir1 ) { // horizontal movement
 		if ( direction[0] > 0 ) {
-			qDebug() << "SwipeGesture - right";
+			LOG(INFO) << "SwipeGesture - right";
 			cameraManipulator->enableCameraMovement( Leap::LeapCameraManipulator::Movement::RIGHT );
 		}
 		else if ( direction[0] < 0 ) {
-			qDebug() << "SwipeGesture - left";
+			LOG(INFO) << "SwipeGesture - left";
 			cameraManipulator->enableCameraMovement( Leap::LeapCameraManipulator::Movement::LEFT );
 		}
 	}
 	else if ( absDir0 < absDir1 ) { // vertical movement
 		if ( direction[1] > 0 ) {
-			qDebug() << "SwipeGesture - down";
+			LOG(INFO) << "SwipeGesture - down";
 			cameraManipulator->enableCameraMovement( Leap::LeapCameraManipulator::Movement::DOWN );
 		}
 		else if ( direction[1] < 0 ) {
-			qDebug() << "SwipeGesture - up";
+			LOG(INFO) << "SwipeGesture - up";
 			cameraManipulator->enableCameraMovement( Leap::LeapCameraManipulator::Movement::UP );
 		}
 	}
 	else {
 		if ( direction[2] > 0 ) {
-			qDebug() << "SwipeGesture - backward";
+			LOG(INFO) << "SwipeGesture - backward";
 			cameraManipulator->enableCameraMovement( Leap::LeapCameraManipulator::Movement::BACKWARD );
 		}
 		else if ( direction[2] < 0 ) {
-			qDebug() << "SwipeGesture - forward";
+			LOG(INFO) << "SwipeGesture - forward";
 			cameraManipulator->enableCameraMovement( Leap::LeapCameraManipulator::Movement::FORWARD );
 		}
 	}
 	//if we get here, the camera is moving
-	Sleep( ( DWORD )gestureDuration );
+//	Sleep( ( DWORD )gestureDuration );
+	LeapSleeper::sleep(gestureDuration);
 	cameraManipulator->disableCameraMovement();
 }
 
@@ -75,16 +77,16 @@ void Leap::LeapActions::zoomGraph( Leap::Gesture gesture )
 
 	if ( gesture.state() == Leap::Gesture::STATE_START ) {
 		if ( circle.pointable().direction().angleTo( circle.normal() ) <= PI/2 ) {
-			qDebug() << "[onFrame()::CircleGesture - clockwise start]";
+			LOG(INFO) << "[onFrame()::CircleGesture - clockwise start]";
 			cameraManipulator->enableCameraMovement( Leap::LeapCameraManipulator::Movement::FORWARD );
 		}
 		else {
-			qDebug() << "[onFrame()::CircleGesture - counterclockwise start]";
+			LOG(INFO) << "[onFrame()::CircleGesture - counterclockwise start]";
 			cameraManipulator->enableCameraMovement( Leap::LeapCameraManipulator::Movement::BACKWARD );
 		}
 	}
 	else if ( gesture.state() == Leap::Gesture::STATE_STOP ) {
-		qDebug() << "[onFrame()::CircleGesture - stop]";
+		LOG(INFO) << "[onFrame()::CircleGesture - stop]";
 		cameraManipulator->disableCameraMovement();
 	}
 }
@@ -92,13 +94,13 @@ void Leap::LeapActions::zoomGraph( Leap::Gesture gesture )
 void Leap::LeapActions::onKeyTap( Leap::Gesture gesture )
 {
 	isCameraMoving = !isCameraMoving;
-	qDebug() << "KeyTapGesture";
+	LOG(INFO) << "KeyTapGesture";
 }
 /*
 void LeapActions::onScreenTap( Leap::Gesture gesture )
 {
-    // screen tap gesture
-    qDebug() << "ScreenTapGesture";
+	// screen tap gesture
+	LOG(INFO) << "ScreenTapGesture";
 }
 */
 void Leap::LeapActions::rotateGraph( Leap::Gesture gesture )

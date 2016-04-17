@@ -6,18 +6,18 @@
 #  LEAP_FOUND        - True if LEAP found.
 #=============================================================================
 
-	find_path( LEAP_INCLUDE_DIR NAMES leap.h
-		PATHS
-				${CMAKE_CURRENT_SOURCE_DIR}/dependencies/leap/include )
+find_path( LEAP_INCLUDE_DIR NAMES leap.h
+	PATHS
+		${CMAKE_CURRENT_SOURCE_DIR}/dependencies/leap/include )
 
-	find_library( LEAP_LIBRARY NAMES leap
-		PATHS
-			${CMAKE_CURRENT_SOURCE_DIR}/dependencies/leap/lib )
+find_library( LEAP_LIBRARY NAMES leap
+	PATHS
+		${CMAKE_CURRENT_SOURCE_DIR}/dependencies/leap/lib )
 if( WIN32 )
 	find_path( LEAP_DLL
 		NAMES leap.dll
 		PATHS ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/leap/dist
-	)
+	)	
 endif()
 
 # handle the QUIETLY and REQUIRED arguments and set LEAP_FOUND to TRUE if

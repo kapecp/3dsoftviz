@@ -307,6 +307,11 @@ else()
 	message( STATUS "3DMouse NOT FOUND" )
 endif()
 
+# ------------------------------ DOXYGEN -------------------------------
+# Find DOXYGEN
+#find_package(DOXYGEN)
+#if ( DOXYGEN_FOUND )
+#option(BUILD_DOCUMENTATION "Create and install the HTML based API documentation (requires Doxygen)" ${DOXYGEN_FOUND})
 
 # ------------------------------------------------------------
 # Dependencies - External projects
@@ -895,19 +900,28 @@ if( COMMAND cotire )
 	cotire( gitlib CONFIGURATIONS Debug Release )
 endif()
 
-
-#leap
+#-------------------------------- leap module -------------------------------
 if( LEAP_FOUND )
-add_library( leaplib STATIC ${SRC_LEAPLIB} ${HEADER_LEAPLIB})
-target_include_directories( leaplib SYSTEM PUBLIC ${LEAP_INCLUDE_DIRS} include/Leap } )
-# target_link_libraries( leaplib ${QT_LIBRARIES} ${LEAP_LIBRARIES})
-endif()
+	add_library( leaplib STATIC ${SRC_LEAPLIB} ${HEADER_LEAPLIB})
 
-if( LEAP_FOUND )
-set(FLAGS_FOR_DEBUG3 ${FLAGS_FOR_DEBUG})
-list(APPEND FLAGS_FOR_DEBUG3 " -DLEAPLIB_LIBRARY_STATIC")
-string(REPLACE " " ";" REPLACED_FLAGS2 ${FLAGS_FOR_DEBUG3})
-target_compile_options( leaplib PUBLIC ${REPLACED_FLAGS2} )
+	target_include_directories( leaplib
+		SYSTEM PUBLIC
+		include
+		include/Leap
+		)
+
+	target_compile_definitions( leaplib PUBLIC -DLEAPLIB_LIBRARY_STATIC )
+
+	target_compile_options( leaplib PUBLIC ${FLAGS_FOR_DEBUG} )
+
+	target_link_libraries( leaplib ${QT_LIBRARIES} )
+
+	# 'leap' the module
+	if( COMMAND cotire )
+		# link leaplib_unity target to all libraries to which leaplib links
+		set_target_properties( leaplib PROPERTIES COTIRE_UNITY_LINK_LIBRARIES_INIT "COPY_UNITY" )
+		cotire( leaplib CONFIGURATIONS Debug Release )
+	endif()
 endif()
 
 # ---------------------------------------------------------------
@@ -1001,17 +1015,9 @@ if( COMMAND cotire )
 
 	cotire( ${3DSOFTVIZ_NAME} CONFIGURATIONS Debug Release )
 
-	# Work in progress:
-	# get_target_property(UVAR ${3DSOFTVIZ_NAME}_unity INCLUDE_DIRECTORIES)
-	# get_target_property(UVAR2 ${3DSOFTVIZ_NAME}_unity INTERFACE_SYSTEM_INCLUDE_DIRECTORIES)
-	# message("U1<<<<${VAR}")
-	# message("U2<<<<${VAR2}")
-if( LEAP_FOUND )
-	set_target_properties( leaplib PROPERTIES COTIRE_UNITY_LINK_LIBRARIES_INIT "COPY" )
-endif()
-if( LEAP_FOUND )
-	cotire( leaplib CONFIGURATIONS Debug Release )
-endif()
+	if( LEAP_FOUND )
+		target_link_libraries( ${3DSOFTVIZ_NAME}_unity leaplib_unity ${LEAP_LIBRARIES} )
+	endif()
 endif()
 
 # Ensure correct dependencies
@@ -1054,7 +1060,7 @@ if( USE_BUILTIN_DEPENDENCIES )
 			add_dependencies( ${3DSOFTVIZ_NAME}_unity aruco )
 		endif()
 		if( LEAP_FOUND )
-			add_dependencies( ${3DSOFTVIZ_NAME}_unity leaplib )
+			add_dependencies( ${3DSOFTVIZ_NAME}_unity leaplib_unity )
 		endif()
 
 	endif()
@@ -1122,7 +1128,7 @@ if( COMMAND cotire )
 	add_dependencies( install_unity ${3DSOFTVIZ_NAME}_app_unity )
 	add_dependencies( install_unity gitlib_unity )
 	if( LEAP_FOUND )
-	add_dependencies( install_unity leaplib )
+		add_dependencies( install_unity leaplib_unity )
 	endif()
 endif()
 
@@ -1139,7 +1145,7 @@ endif()
 
 # install .dll for speech recognition
 if( SPEECHSDK_FOUND )
-	install( DIRECTORY ${SPEECHSDK_DRIVER_DIRS}/ DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/_install/bin )
+	install( DIRECTORY ${SPEECHSDK_DRIVER_DIRS}/ DESTINATION ${INSTALL_BIN}/bin )
 endif()
 
 # Install needed .dll files for fglove
@@ -1153,13 +1159,8 @@ endif()
 # endif()
 
 # Install needed .dll files for leap
-if( LEAP_FOUND )
-
-	install( DIRECTORY ${LEAP_DRIVER_DIRS}/ DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/_install/bin )
-
-	#install( FILES ${LEAP_LIBRARIES} DESTINATION ${INSTALL_BIN}
-#			RUNTIME DESTINATION ${INSTALL_BIN}
-#   		LIBRARY DESTINATION ${INSTALL_LIB} )
+if( LEAP_FOUND AND WIN32 )
+	install( DIRECTORY ${LEAP_DRIVER_DIRS} DESTINATION ${INSTALL_BIN}/ )
 endif()
 
 # Install built in dependencies unless we are building an OSX Bundle
