@@ -1,7 +1,4 @@
 #include "Mouse3d/Connector.h"
-#include <QDebug>
-#include "QOSG/CoreWindow.h"
-#include "Mouse3d/LibMouse3d/EventThread.h"
 
 Mouse3d::Connector::Connector(QOSG::CoreWindow* window){
     this->win = window;
@@ -21,7 +18,8 @@ Mouse3d::Connector::~Connector(){
 void Mouse3d::Connector::CreateConnection(){
 
     //Create thread for signals from 3D mouse
-    qDebug() << this->win->winId();
+	qDebug() << "Connector::CreateConnection(): winId() = " << this->win->winId() << endl;
+	qDebug() << "Connector::CreateConnection(): CurrentThreadId() = " << QThread::currentThreadId() << endl;
     thread = new LibMouse3d::EventThread(this->win);
     thread->start();
 }

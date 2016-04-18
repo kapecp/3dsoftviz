@@ -1,13 +1,15 @@
 #ifndef MOUSE3D_H
 #define MOUSE3D_H
 
-#include "Mouse3d/LibMouse3d/EventThread.h"
 #include <QtGlobal>
 #include <QDebug>
 
-#if defined(Q_OS_LINUX)
-    #include <stdlib.h>
-    #include <stdio.h>
+#ifdef Q_OS_WIN
+	#include "Mouse3d/LibMouse3d/LibCoreMouse3d/Mouse3DInput.h"
+#elif defined(Q_OS_LINUX)
+	#include <QX11Info>
+
+	#include <vector>
 
     #include <X11/Xlib.h>
     #include <X11/Xutil.h>
@@ -17,6 +19,10 @@
 
     #include "xdrvlib.h"
 #endif
+
+#include "QOSG/CoreWindow.h"
+
+#include "Mouse3d/LibMouse3d/EventThread.h"
 
 namespace QOSG{
     class CoreWindow;

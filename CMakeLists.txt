@@ -844,7 +844,7 @@ elseif( WIN32 )
 	list(APPEND HEADER_MOUSE3D
 		include/Mouse3d/LibMouse3d/LibCoreMouse3d/Mouse3DInput.h
 		include/Mouse3d/LibMouse3d/LibCoreMouse3d/MouseParameters.h
-		include/Mouse3d/LibMouse3d/LibCoreMouse3d/l3dMouseParams.h
+		include/Mouse3d/LibMouse3d/LibCoreMouse3d/I3dMouseParams.h
 )
 elseif( APPLE )
 	list(APPEND HEADER_MOUSE3D
