@@ -1599,40 +1599,39 @@ void CoreWindow::loadFile()
 	QFileDialog dialog;
 	dialog.setDirectory( "../share/3dsoftviz/graphExamples" );
 
-
-	// Duransky start - vynulovanie vertigo rovin pri nacitani noveho grafu
-	planes_Vertigo.clear();
-	numberOfPlanes = 0;
-	// Duransky end - vynulovanie vertigo rovin pri nacitani noveho grafu
-
-	//treba overit
-	layout->pauseAllAlg();
-	coreGraph->setNodesFreezed( true );
-	coreGraph->setInterpolationDenied( false );
-
-	QString fileName =NULL;
+	QString fileName = NULL;
 
 	if ( dialog.exec() ) {
 		QStringList filenames = dialog.selectedFiles();
 		fileName = filenames.at( 0 );
+		QFileInfo check_file(fileName);
+		if ( check_file.exists() && check_file.isFile() ){
+			//do something only if valid file was selected
+
+			// Duransky start - vynulovanie vertigo rovin pri nacitani noveho grafu
+			planes_Vertigo.clear();
+			numberOfPlanes = 0;
+			// Duransky end - vynulovanie vertigo rovin pri nacitani noveho grafu
+
+			//treba overit
+			layout->pauseAllAlg();
+			coreGraph->setNodesFreezed( true );
+			coreGraph->setInterpolationDenied( false );
+
+			Manager::GraphManager::getInstance()->loadGraph( fileName );
+			viewerWidget->getCameraManipulator()->home();
+
+			//treba overit ci funguje
+			if ( isPlaying ) {
+				layout->play();
+				coreGraph->setNodesFreezed( false );
+			}
+
+			//reprezentacie na default
+			nodeTypeComboBoxChanged( nodeTypeComboBox->currentIndex() );
+			edgeTypeComboBoxChanged( edgeTypeComboBox->currentIndex() );
+		}
 	}
-
-	if ( fileName != NULL ) {
-		Manager::GraphManager::getInstance()->loadGraph( fileName );
-
-		viewerWidget->getCameraManipulator()->home();
-	}
-
-	//treba overit ci funguje
-	if ( isPlaying ) {
-		layout->play();
-		coreGraph->setNodesFreezed( false );
-	}
-
-	//reprezentacie na default
-	nodeTypeComboBoxChanged( nodeTypeComboBox->currentIndex() );
-	edgeTypeComboBoxChanged( edgeTypeComboBox->currentIndex() );
-
 }
 
 void CoreWindow::loadExampleGraphBasic100()
