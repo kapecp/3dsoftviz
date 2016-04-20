@@ -109,12 +109,12 @@ osg::Geode* createBase()
 
     //base
     osg::Vec3Array* vertices = new osg::Vec3Array;
-    vertices->push_back(osg::Vec3(-1.5, -2, 0)); // lb
-    vertices->push_back(osg::Vec3(1.5, -2, 0)); // rb
-    vertices->push_back(osg::Vec3(1.5, 0, 0)); // rt
+    vertices->push_back(osg::Vec3(-1.5, -1.345, 0)); // lb
+    vertices->push_back(osg::Vec3(0, -1.345, 0)); // rb
+    vertices->push_back(osg::Vec3(0, 0, 0)); // rt
     vertices->push_back(osg::Vec3(-1.5, 0, 0)); // lt
-    vertices->push_back(osg::Vec3(1.5, 0, 2)); // rt1
-    vertices->push_back(osg::Vec3(-1.5, 0, 2)); // lt1
+    vertices->push_back(osg::Vec3(0, 0, 2.1)); // rt1
+    vertices->push_back(osg::Vec3(-1.5, 0, 2.1)); // lt1
     baseGeometry->setVertexArray(vertices);
 
     osg::DrawElementsUInt* base = new osg::DrawElementsUInt(osg::PrimitiveSet::QUADS, 0);
@@ -203,8 +203,8 @@ void QOSG::ViewerQT::createProjectorScene() {
         zfar *= 1.1f;
 
         // set up projection.
-        renderCamera->setProjectionMatrixAsPerspective( 60, static_cast<double>( width() )/static_cast<double>( height() ), 0.01, 100/*appConf->getValue( "Viewer.Display.ViewDistance" ).toFloat()*/ );
-        //renderCamera->setProjectionMatrixAsFrustum(-proj_right, proj_right, -proj_top, proj_top, znear, zfar);
+        //renderCamera->setProjectionMatrixAsPerspective( 60, static_cast<double>( width() )/static_cast<double>( height() ), 0.01, 100/*appConf->getValue( "Viewer.Display.ViewDistance" ).toFloat()*/ );
+        renderCamera->setProjectionMatrixAsFrustum(-proj_right, proj_right, -proj_top, proj_top, znear, zfar);
         //camera->setProjectionMatrix(osg::Matrixd::perspective(110.0f, 1.0, 0.1, 100)/*identity()*/);
 
         // set view
@@ -237,8 +237,8 @@ void QOSG::ViewerQT::createProjectorScene() {
     projectorScene = new osg::Group;
     osg::Geode* base = createBase();
 
-    osg::Vec3 projectorPos = osg::Vec3(0.0f, -2.9f, 1.72f);
-    osg::Vec3 projectorDirection = osg::Vec3(0.0f, +2.9f, -1.72f);
+    osg::Vec3 projectorPos = osg::Vec3(-1.88, -0.95f, 1.72f);//osg::Vec3(0, -1.345f, 1.72f);
+    osg::Vec3 projectorDirection = osg::Vec3d( -0.75, 0, 0.238 )-projectorPos;
     float projectorAngle =90;
     /* Enable projective texturing for all objects of this node */
     //root->setStateSet(createProjectorState(texture, projectorPos, projectorDirection, projectorAngle));
@@ -299,7 +299,7 @@ QOSG::ViewerQT::ViewerQT( QWidget* parent , const char* name , const QGLWidget* 
 	osg::DisplaySettings::instance()->setStereoMode( osg::DisplaySettings::ANAGLYPHIC );
 
 	getCamera()->setViewport( new osg::Viewport( 0,0,width(),height() ) );
-	getCamera()->setProjectionMatrixAsPerspective( 60, static_cast<double>( width() )/static_cast<double>( height() ), 0.01, appConf->getValue( "Viewer.Display.ViewDistance" ).toFloat() );
+    getCamera()->setProjectionMatrixAsPerspective( 30, static_cast<double>( width() )/static_cast<double>( height() ), 0.01, appConf->getValue( "Viewer.Display.ViewDistance" ).toFloat() );
 	getCamera()->setGraphicsContext( getGraphicsWindow() );
 	getCamera()->setComputeNearFarMode( osg::CullSettings::DO_NOT_COMPUTE_NEAR_FAR );
 
@@ -317,7 +317,7 @@ QOSG::ViewerQT::ViewerQT( QWidget* parent , const char* name , const QGLWidget* 
 
 	// Gloger: background to white color after disabling skybox
     getCamera()->setClearColor( osg::Vec4( 0, 1, 0, 1 ) );
-    getCamera()->setViewMatrixAsLookAt( osg::Vec3d( -0.55, -3.4f, 0.53f), osg::Vec3d( 0, 0, 0.67 ), osg::Vec3d( 0, 0, 1 ) );
+    getCamera()->setViewMatrixAsLookAt( osg::Vec3d( -0.665, -1.345, 0.825f), osg::Vec3d( -0.75, 0, 0.238 ), osg::Vec3d( 0, 0, 1 ) );
 
 	setThreadingModel( osgViewer::ViewerBase::SingleThreaded );
 
