@@ -1,11 +1,6 @@
 #ifndef MOUSE3D_H
 #define MOUSE3D_H
 
-#include <QtGlobal>
-#include <QDebug>
-
-#include "QOSG/CoreWindow.h"
-
 #if defined(Q_OS_WIN)
 
 	#include "Mouse3d/LibMouse3d/LibCoreMouse3d/Mouse3DInput.h"

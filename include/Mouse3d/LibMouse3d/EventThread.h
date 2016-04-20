@@ -1,13 +1,7 @@
 #ifndef EVEBTTHREAH_H
 #define EVEBTTHREAH_H
 
-#include <QDebug>
 #include <QThread>
-
-#include "QOSG/CoreWindow.h"
-
-#include "Mouse3d/LibMouse3d/LibCoreMouse3d/MouseParameters.h"
-#include "Mouse3d/LibMouse3d/Mouse3d.h"
 
 //using namespace System::Windows::Forms;
 namespace QOSG{

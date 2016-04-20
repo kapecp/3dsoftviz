@@ -1,11 +1,6 @@
 #ifndef CONNECTOR_H
 #define CONNECTOR_H
 
-#include <QDebug>
-#include <QThread>
-
-#include "QOSG/CoreWindow.h"
-
 #include "Mouse3d/LibMouse3d/EventThread.h"
 
 namespace Mouse3d{

@@ -1,5 +1,10 @@
 #include "Mouse3d/LibMouse3d/Mouse3d.h"
 
+#include <QtGlobal>
+#include <QDebug>
+
+#include "QOSG/CoreWindow.h"
+
 namespace LibMouse3d{
 
     Mouse3dDevice::Mouse3dDevice(QOSG::CoreWindow* window){

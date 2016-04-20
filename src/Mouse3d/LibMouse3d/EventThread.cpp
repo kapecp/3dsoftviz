@@ -1,5 +1,11 @@
 #include "Mouse3d/LibMouse3d/EventThread.h"
 
+#include <QDebug>
+
+#include "QOSG/CoreWindow.h"
+
+#include "Mouse3d/LibMouse3d/Mouse3d.h"
+
 namespace LibMouse3d{
 
 EventThread::EventThread(QOSG::CoreWindow* window, QObject* parent) :

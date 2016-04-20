@@ -1,5 +1,10 @@
 #include "Mouse3d/Connector.h"
 
+#include <QDebug>
+#include <QThread>
+
+#include "QOSG/CoreWindow.h"
+
 Mouse3d::Connector::Connector(QOSG::CoreWindow* window):
 	window( window ) {
 
