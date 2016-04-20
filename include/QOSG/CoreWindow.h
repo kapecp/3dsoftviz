@@ -640,6 +640,9 @@ void loadExampleGraphLua();
     void lightClicked();
     void shadowClicked();
     void baseClicked();
+
+    // kostan
+    void toggleProjectorViewClicked();
     //*****
 
 private:
@@ -1387,6 +1390,15 @@ private:
      *@brief chb_base
      */
     QCheckBox* chb_base;
+
+    // kostan
+
+    /**
+     *CheckBox for showing base
+     *@brief chb_base
+     */
+    QCheckBox* chb_projectorViewToggle;
+
     //*****
 
 public:

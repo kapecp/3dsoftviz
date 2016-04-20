@@ -1497,5 +1497,26 @@ float CoreGraph::compare(float a, float b)
     else
         return b;
 }
+
+void CoreGraph::scaleNodes(bool scaleUp)
+{
+    QMapIterator<qlonglong, osg::ref_ptr<Data::Node> > it( *in_nodes );
+
+    while ( it.hasNext() ) {
+        it.next();
+
+         float actualScale = it.value()->getScale();
+
+         if(scaleUp){
+             it.value()->setScale(actualScale * 1.2);
+         }
+         else{
+             it.value()->setScale(actualScale * 0.8);
+         }
+         it.value()->reloadConfig();
+         //reload(graph);
+    }
+}
+
 //*****
 }

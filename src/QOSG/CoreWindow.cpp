@@ -1197,6 +1197,16 @@ QWidget* CoreWindow::createMoreFeaturesTab( QFrame* line )
     chb_base->setChecked( false );
     lMore->addRow( chb_base );
     connect( chb_base, SIGNAL( clicked() ), this, SLOT( baseClicked() ) );
+
+    //kostan
+    line = createLine();
+    lMore->addRow( line );
+    lMore->addRow( new QLabel( tr( "Projector view" ) ) );
+
+    chb_light = new QCheckBox( "&Custom light" );
+    chb_light->setChecked( false );
+    lMore->addRow( chb_light );
+    connect( chb_light, SIGNAL( clicked() ), this, SLOT( toggleProjectorViewClicked() ) );
     //*****
 
 	wMore->setLayout( lMore );
@@ -4379,6 +4389,22 @@ void CoreWindow::baseClicked()
         this->coreGraph->turnOffBase();
     }
 }
+
+// kostan
+void CoreWindow::toggleProjectorViewClicked()
+{
+    this->viewerWidget->toggleProjectorView();
+    /*// chb_projectorViewToggle is checked
+    if ( chb_projectorViewToggle->isChecked() ) {
+
+        //this->viewerWidget->toggleProjectorView();
+     }
+    else {
+
+        //this->viewerWidget->toggleProjectorView();
+    }*/
+}
+
 //*****
 
 } // namespace QOSG

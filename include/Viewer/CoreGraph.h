@@ -302,6 +302,8 @@ public slots:
 		 */
 	void setEdgeVisual( int index );
 
+    void scaleNodes(bool scaleUp);
+
 private:
 
 	/**
@@ -608,7 +610,7 @@ private:
 		*  \brief node base
 		*/
 	osg::ref_ptr<osg::Geode> baseGeode;
-	osg::ref_ptr<osg::PositionAttitudeTransform> baseTransform;
+    osg::ref_ptr<osg::PositionAttitudeTransform> baseTransform;
 
 	//*****
 };

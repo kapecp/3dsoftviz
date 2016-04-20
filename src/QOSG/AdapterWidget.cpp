@@ -58,7 +58,15 @@ void AdapterWidget::keyPressEvent( QKeyEvent* event )
 		case ( Qt::Key_Shift ): {
 			_gw->getEventQueue()->keyPress( osgGA::GUIEventAdapter::KEY_Shift_L );
 			break;
-		}
+        }
+        case ( Qt::Key_O ): {
+            _gw->getEventQueue()->keyPress( osgGA::GUIEventAdapter::KEY_O );
+            break;
+        }
+        case ( Qt::Key_P ): {
+            _gw->getEventQueue()->keyPress( osgGA::GUIEventAdapter::KEY_P );
+            break;
+        }
 		default: {
 			_gw->getEventQueue()->keyPress( static_cast<osgGA::GUIEventAdapter::KeySymbol>( *( event->text().toAscii().data() ) ) );
 			break;

@@ -123,6 +123,8 @@ public:
 		  */
 	void reloadConfig();
 
+    void toggleProjectorView();
+
 protected:
 
 
@@ -149,7 +151,23 @@ protected:
 
 
 private:
-    osg::Node* createModel();
+
+    bool projectorViewEnabled;
+    /**
+        *  osg::Node* createModel()
+        *  \brief camera that renders CoreGraph to texture
+        */
+    osg::Camera* renderCamera;
+    /**
+        *  osg::Node* projectorScene()
+        *  \brief scene used for projector view
+        */
+    osg::Group* projectorScene;
+    /**
+        *  osg::Node* createModel()
+        *  \brief create/initialize projectorScene
+        */
+    void createProjectorScene();
 	/**
 		*  Vwr::CameraManipulator * manipulator
 		*  \brief camera manipulator

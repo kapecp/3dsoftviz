@@ -13,6 +13,7 @@
 #include "Core/Core.h"
 #include "Layout/LayoutThread.h"
 #include "Layout/Shape_Cube.h"
+#include "Layout/FRAlgorithm.h"
 
 #include "Util/ApplicationConfig.h"
 
@@ -333,6 +334,29 @@ bool PickHandler::handleKeyDown( const osgGA::GUIEventAdapter& ea, GUIActionAdap
 
 	}
 
+    // skalovanie uzlov
+    else if ( ea.getKey() == osgGA::GUIEventAdapter::KEY_O ) {
+        if(isCtrlPressed){
+            //scale down
+            coreGraph->scaleNodes(false);
+        }
+        else{
+            //scale up
+            coreGraph->scaleNodes(true);
+        }
+    }
+    // skalovanie hran
+    else if ( ea.getKey() == osgGA::GUIEventAdapter::KEY_P ) {
+        Layout::LayoutThread* layout = AppCore::Core::getInstance()->getLayoutThread();
+        float distance = layout->getAlg()->getMaxDistance();
+
+        if(isCtrlPressed){
+            layout->getAlg()->setMaxDistance(distance * 0.8);
+        }
+        else{
+                layout->getAlg()->setMaxDistance(distance * 1.2);
+        }
+    }
 
 	return false;
 }
