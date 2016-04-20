@@ -16,6 +16,8 @@
 #include "Repository/Git/GitLuaGraphAnalyzer.h"
 #include "Repository/Git/GitLuaGraphVisualizer.h"
 
+#include "SpecialMatrix/MatrixViewer.h"
+
 #include "Viewer/CoreGraph.h"
 #include "Viewer/CameraManipulator.h"
 #include "Viewer/PickHandler.h"
@@ -182,6 +184,12 @@ void CoreWindow::createActions()
 
 	exampleGraphLua = new QAction( "Lua Example", this );
 	connect( exampleGraphLua, SIGNAL( triggered() ), this, SLOT( loadExampleGraphLua() ) );
+
+	loadSpecialMatrix = new QAction( QIcon( "../share/3dsoftviz/img/gui/matrix.png" ),"&Load Special Matrix from File", this );
+	connect( loadSpecialMatrix, SIGNAL( triggered() ), this, SLOT( loadSpecialMatrixFromFile() ) );
+
+	showSpecialMatrix = new QAction( QIcon( "../share/3dsoftviz/img/gui/matrix.png" ),"&Display Special Matrix", this );
+	connect( showSpecialMatrix, SIGNAL( triggered() ), this, SLOT( displaySpecialMatrix() ) );
 
 	play = new QPushButton();
 	play->setIcon( QIcon( "../share/3dsoftviz/img/gui/pause.png" ) );
@@ -775,6 +783,9 @@ void CoreWindow::createMenus()
 	file->addAction( loadGraph );
 	file->addAction( loadGit );
 	file->addSeparator();
+	file->addAction( loadSpecialMatrix );
+	file->addAction( showSpecialMatrix );
+	file->addSeparator();
 	file->addAction( saveGraph );
 	file->addAction( saveLayout );
 	file->addSeparator();
@@ -783,14 +794,14 @@ void CoreWindow::createMenus()
 	edit = menuBar()->addMenu( "Settings" );
 	edit->addAction( options );
 
-	help = menuBar()->addMenu( "Help" );
-	help->addAction( about );
-
 	examples = menuBar()->addMenu( "Test" );
 	examples->addAction( exampleGraphBasic100 );
 	examples->addAction( exampleGraphBasic500 );
 	examples->addAction( exampleGraphVeolia );
 	examples->addAction( exampleGraphLua );
+
+	help = menuBar()->addMenu( "Help" );
+	help->addAction( about );
 }
 
 QtColorPicker* CoreWindow::createColorPicker()
@@ -1307,6 +1318,29 @@ void CoreWindow::saveGraphToDB()
 	Manager::GraphManager::getInstance()->saveActiveGraphToDB();
 }
 
+void CoreWindow::loadSpecialMatrixFromFile()
+{
+	QFileDialog dialog;
+	dialog.setDirectory( "../share/3dsoftviz/matrixExamples" );
+
+	QString fileName = NULL;
+
+	if ( dialog.exec() ) {
+		QStringList filenames = dialog.selectedFiles();
+		fileName = filenames.at( 0 );
+	}
+
+	if ( fileName != NULL ) {
+		//send to parse
+	}
+}
+
+void CoreWindow::displaySpecialMatrix()
+{
+	SpecialMatrix::MatrixViewer* matrixViewer = new SpecialMatrix::MatrixViewer( 0, Qt::Widget );
+	matrixViewer->setGeometry( 100, 100, 800, 600 );
+	matrixViewer->show();
+}
 
 void CoreWindow::saveLayoutToDB()
 {
@@ -1588,7 +1622,7 @@ void CoreWindow::loadFile()
 	coreGraph->setNodesFreezed( true );
 	coreGraph->setInterpolationDenied( false );
 
-	QString fileName =NULL;
+	QString fileName = NULL;
 
 	if ( dialog.exec() ) {
 		QStringList filenames = dialog.selectedFiles();
