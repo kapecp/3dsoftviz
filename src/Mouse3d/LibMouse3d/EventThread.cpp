@@ -4,15 +4,14 @@ namespace LibMouse3d{
 
 EventThread::EventThread(QOSG::CoreWindow* window, QObject* parent) :
 	QThread( parent ),
-	window(window)
-{
+	window( window ) {
 	qDebug() << "EventThread::EventThread(): winId() = " << this->window->winId() << endl;
 }
 
 void EventThread::run(){
-	qDebug() << "EventThread::run(): winId() = " << this->window->winId() << endl;
+	qDebug() << "EventThread::run(): winId() = " << window->winId() << endl;
 	qDebug() << "EventThread::run(): CurrentThreadId() = " << QThread::currentThreadId() << endl;
-    this->mouseDevice = new Mouse3dDevice(window);
+	mouseDevice = new Mouse3dDevice(window);
 }
 
 EventThread::~EventThread() {

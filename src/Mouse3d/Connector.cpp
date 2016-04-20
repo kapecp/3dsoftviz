@@ -1,12 +1,11 @@
 #include "Mouse3d/Connector.h"
 
-Mouse3d::Connector::Connector(QOSG::CoreWindow* window){
-    this->win = window;
+Mouse3d::Connector::Connector(QOSG::CoreWindow* window):
+	window( window ) {
+
 }
 
-
-
-Mouse3d::Connector::~Connector(){
+Mouse3d::Connector::~Connector() {
 
 }
 
@@ -16,11 +15,10 @@ Mouse3d::Connector::~Connector(){
  * Pass connection call to device library
  */
 void Mouse3d::Connector::CreateConnection(){
-
     //Create thread for signals from 3D mouse
-	qDebug() << "Connector::CreateConnection(): winId() = " << this->win->winId() << endl;
+	qDebug() << "Connector::CreateConnection(): winId() = " << window->winId() << endl;
 	qDebug() << "Connector::CreateConnection(): CurrentThreadId() = " << QThread::currentThreadId() << endl;
-    thread = new LibMouse3d::EventThread(this->win);
+	thread = new LibMouse3d::EventThread(window);
     thread->start();
 }
 

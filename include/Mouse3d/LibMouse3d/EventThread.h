@@ -23,14 +23,9 @@ class Mouse3dDevice;
 */
 //TODO class MOUSE3DLIB_EXPORT EventThread : public QThread{
 class EventThread : public QThread{
-
     Q_OBJECT
 
 public:
-
-    QOSG::CoreWindow* window;
-    Mouse3dDevice* mouseDevice;
-
     //constructor
     EventThread(QOSG::CoreWindow* window, QObject* parent = NULL);
 
@@ -39,6 +34,10 @@ public:
 
     //run
     void run();
+
+private:
+	QOSG::CoreWindow* window;
+	Mouse3dDevice* mouseDevice;
 };
 }
 #endif

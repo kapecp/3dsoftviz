@@ -20,11 +20,6 @@ namespace Mouse3d{
 class Connector{
 
 public:
-
-    LibMouse3d::EventThread* thread;
-
-    QOSG::CoreWindow* win;
-
     //constructor
     Connector(QOSG::CoreWindow* window);
 
@@ -34,7 +29,8 @@ public:
     void CreateConnection();
 
 private:
-
+	QOSG::CoreWindow* window;
+	LibMouse3d::EventThread* thread;
 };
 
 }
