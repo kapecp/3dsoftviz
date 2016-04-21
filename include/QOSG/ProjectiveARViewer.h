@@ -1,9 +1,9 @@
 /**
-*  ViewerQT.h
+*  ProjectiveARViewer.h
 *  Projekt 3DVisual
 */
-#ifndef QOSG_VIEWER_QT_DEF
-#define QOSG_VIEWER_QT_DEF 1
+#ifndef QOSG_PROJECTIVE_AR_VIEWER_DEF
+#define QOSG_PROJECTIVE_AR_VIEWER_DEF 1
 
 #include "QOSG/AdapterWidget.h"
 #include <osgViewer/ViewerBase>
@@ -13,14 +13,14 @@
 
 /*!
 * \brief
-* Widget, ktoryzobrazuje OSG sceny.
+* Widget viewing OSG scene for projective augmented reality.
 *
 * \author
-* Michal Paprcka
+* Viktor Kostan
 * \version
 * 1.0
 * \date
-* 1.12.2009
+* 21.4.2016
 */
 
 
@@ -41,12 +41,12 @@ class CameraManipulator;
 
 namespace QOSG {
 /**
-    *  \class ViewerQT
+    *  \class ProjectiveARViewer
     *  \brief
-    *  \author Adam Pazitnaj
-    *  \date 29. 4. 2010
+    *  \author Viktor Kostan
+    *  \date 21. 4. 2016
     */
-class ViewerQT : public osgViewer::Viewer, public AdapterWidget
+class ProjectiveARViewer : public osgViewer::Viewer, public AdapterWidget
 {
 
 
@@ -74,7 +74,7 @@ public:
         *
         */
 
-    ViewerQT( QWidget* parent = 0, const char* name = 0, const QGLWidget* shareWidget = 0, WindowFlags f = 0, Vwr::CoreGraph* cg = 0 );
+    ProjectiveARViewer( QWidget* parent = 0, const char* name = 0, const QGLWidget* shareWidget = 0, WindowFlags f = 0, osgViewer::Viewer* viewerPerspective = 0 );
 
 
     /**
@@ -86,7 +86,7 @@ public:
      * @param isClick is position click
      * @param button which button click
      */
-    void moveMouseAruco( double positionX, double positionY, bool isClick, int windowX, int windowY, Qt::MouseButton button );
+    //void moveMouseAruco( double positionX, double positionY, bool isClick, int windowX, int windowY, Qt::MouseButton button );
 
     /**
      * @brief move and click Mouse based on Kinect
@@ -97,7 +97,7 @@ public:
      * @param windowY size of window y
      * @param button which button is clicked
      */
-    void moveMouseKinect( double positionX, double positionY,double speed, bool isClick, int windowX, int windowY, Qt::MouseButton button );
+    //void moveMouseKinect( double positionX, double positionY,double speed, bool isClick, int windowX, int windowY, Qt::MouseButton button );
 
 
     /**
@@ -105,7 +105,7 @@ public:
           *  \brief Returns pick handler
           *  \return Vwr::PickHandler * pick handler
           */
-    Vwr::PickHandler* getPickHandler() const ;
+    //Vwr::PickHandler* getPickHandler() const ;
 
 
     /**
@@ -113,7 +113,7 @@ public:
           *  \brief Returns camera manipulator
           *  \return Vwr::CameraManipulator * camera manipulator
           */
-    Vwr::CameraManipulator* getCameraManipulator() const;
+    //Vwr::CameraManipulator* getCameraManipulator() const;
 
 
 
@@ -133,10 +133,10 @@ protected:
     QTimer _timer;
 
     /**
-        *  Vwr::CoreGraph * cg
+        *  osgViewer::Viewer * cg
         *  \brief core graph
         */
-    Vwr::CoreGraph* cg;
+    osgViewer::Viewer* viewerPerspective;
 
 
     /**
@@ -151,16 +151,21 @@ protected:
 private:
 
     /**
+        *  osg::Node* createModel()
+        *  \brief camera that renders model to texture
+        */
+    osg::Camera* renderCamera;
+    /**
         *  Vwr::CameraManipulator * manipulator
         *  \brief camera manipulator
         */
-    Vwr::CameraManipulator* manipulator;
+    //Vwr::CameraManipulator* manipulator;
 
     /**
         *  Vwr::PickHandler * pickHandler
         *  \brief pick handler
         */
-    Vwr::PickHandler* pickHandler;
+    //Vwr::PickHandler* pickHandler;
 
     /**
         *  Util::ApplicationConfig * appConf
@@ -169,7 +174,7 @@ private:
     Util::ApplicationConfig* appConf;
 
 
-    bool mIsClicAruco;
+    //bool mIsClicAruco;
 
 
 };
