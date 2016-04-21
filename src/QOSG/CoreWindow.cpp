@@ -736,7 +736,7 @@ void CoreWindow::createActions()
     connect( cb_git_evoVisualizeMethod, SIGNAL( currentIndexChanged( int ) ), this, SLOT( changeEvolutionVisualization( int ) ) );
 
     cb_git_authors = new QComboBox();
-    cb_git_authors->insertItems( 0, ( QStringList() << "All" << "Authors" ) );
+    cb_git_authors->insertItems( 0, ( QStringList() << "All" << "Authors" << "Structure") );
     cb_git_authors->setFocusPolicy( Qt::NoFocus );
     connect( cb_git_authors, SIGNAL( currentIndexChanged( int ) ), this, SLOT( changeEvolutionFilterOption( int ) ) );
 
@@ -4103,7 +4103,6 @@ void CoreWindow::changeCommits( bool value ) {
 }
 
 void CoreWindow::changeEvolutionVisualization( int state ) {
-    qDebug() << "STATE=" << state;
     if( state == 2 ) {
        b_next_version->setDisabled( true );
        b_previous_version->setDisabled( true );
@@ -4116,22 +4115,40 @@ void CoreWindow::changeEvolutionVisualization( int state ) {
     if( Manager::GraphManager::getInstance()->getActiveEvolutionGraph() ) {
         if( state == 2 ) {
             if( cb_git_authors->currentText() != "All" ) {
-
                 QString currentText = cb_git_files->currentText();
-
-                Repository::Git::GitMetrics metrics = Repository::Git::GitMetrics( Manager::GraphManager::getInstance()->getActiveEvolutionGraph() );
-                QStringList list = QStringList( "All" );
-
+                QStringList list;
                 int newCurrentIndex = 0;
+                Repository::Git::GitMetrics metrics = Repository::Git::GitMetrics( Manager::GraphManager::getInstance()->getActiveEvolutionGraph() );
 
-                int iter = 1;
-                foreach( QString item ,metrics.getAuthorList( Manager::GraphManager::getInstance()->getActiveGraph()->getCurrentVersion() + 1 ) ) {
-                    list << item;
-                    if( item == currentText ) {
-                        newCurrentIndex = iter;
+                if( cb_git_authors->currentText() == "Authors" ) {
+
+                    list = QStringList( "All" );
+
+                    newCurrentIndex = 0;
+
+                    int iter = 1;
+                    foreach( QString item, metrics.getAuthorList( Manager::GraphManager::getInstance()->getActiveGraph()->getCurrentVersion() + 1 ) ) {
+                        list << item;
+                        if( item == currentText ) {
+                            newCurrentIndex = iter;
+                        }
+                        iter++;
                     }
-                    iter++;
+                } else if( cb_git_authors->currentText() == "Structure" ) {
+                    list = QStringList() << "Files" << "Local Functions" << "Global Functions" << "Modules";
+
+                    newCurrentIndex = 3;
+
+                    int iter = 0;
+                    foreach( QString item, list ) {
+                        if( item == currentText ) {
+                            newCurrentIndex = iter;
+                            break;
+                        }
+                        iter++;
+                    }
                 }
+
                 cb_git_files->clear();
                 cb_git_files->insertItems( 0, list );
                 cb_git_files->setCurrentIndex( newCurrentIndex );
@@ -4147,30 +4164,50 @@ void CoreWindow::changeEvolutionVisualization( int state ) {
 
 void CoreWindow::changeEvolutionFilterOption( int state ) {
     if( Manager::GraphManager::getInstance()->getActiveEvolutionGraph() ) {
+        if( state != 0 ) {
+            QString currentText = cb_git_files->currentText();
+            QStringList list;
+            int newCurrentIndex = 0;
+            Repository::Git::GitMetrics metrics = Repository::Git::GitMetrics( Manager::GraphManager::getInstance()->getActiveEvolutionGraph() );
 
-        QString currentText = cb_git_files->currentText();
+            if( state == 1 ) {
+                list = QStringList( "All" );
 
-        Repository::Git::GitMetrics metrics = Repository::Git::GitMetrics( Manager::GraphManager::getInstance()->getActiveEvolutionGraph() );
-        QStringList list = QStringList( "All" );
+                newCurrentIndex = 0;
 
-        int newCurrentIndex = 0;
+                int iter = 1;
+                foreach( QString item ,metrics.getAuthorList( Manager::GraphManager::getInstance()->getActiveGraph()->getCurrentVersion() + 1 ) ) {
+                    list << item;
+                    if( item == currentText ) {
+                        newCurrentIndex = iter;
+                    }
+                    iter++;
+                }
 
-        int iter = 1;
-        foreach( QString item ,metrics.getAuthorList( Manager::GraphManager::getInstance()->getActiveGraph()->getCurrentVersion() + 1 ) ) {
-            list << item;
-            if( item == currentText ) {
-                newCurrentIndex = iter;
+            } else if( state == 2 ) {
+                list = QStringList() << "Files" << "Local Functions" << "Global Functions" << "Modules";
+
+                newCurrentIndex = 3;
+
+                int iter = 0;
+                foreach( QString item, list ) {
+                    if( item == currentText ) {
+                        newCurrentIndex = iter;
+                        break;
+                    }
+                    iter++;
+                }
             }
-            iter++;
-        }
-        cb_git_files->clear();
-        cb_git_files->insertItems( 0, list );
-        cb_git_files->setCurrentIndex( newCurrentIndex );
 
-        Repository::Git::GitLuaGraphVisualizer visualizer = Repository::Git::GitLuaGraphVisualizer( Manager::GraphManager::getInstance()->getActiveGraph(), Manager::GraphManager::getInstance()->getActiveEvolutionGraph(), this->coreGraph->getCamera(), cb_git_evoVisualizeMethod->currentIndex() );
-        visualizer.setFilterAuthor( cb_git_authors->currentText() );
-        visualizer.setFilterFile( cb_git_files->currentText() );
-        visualizer.changeNodeRepresentation();
+            cb_git_files->clear();
+            cb_git_files->insertItems( 0, list );
+            cb_git_files->setCurrentIndex( newCurrentIndex );
+
+            Repository::Git::GitLuaGraphVisualizer visualizer = Repository::Git::GitLuaGraphVisualizer( Manager::GraphManager::getInstance()->getActiveGraph(), Manager::GraphManager::getInstance()->getActiveEvolutionGraph(), this->coreGraph->getCamera(), cb_git_evoVisualizeMethod->currentIndex() );
+            visualizer.setFilterAuthor( cb_git_authors->currentText() );
+            visualizer.setFilterFile( cb_git_files->currentText() );
+            visualizer.changeNodeRepresentation();
+        }
     }
 
 }

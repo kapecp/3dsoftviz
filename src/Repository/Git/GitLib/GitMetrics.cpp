@@ -340,6 +340,22 @@ QList<QString> Repository::Git::GitMetrics::getAllFiles() {
     return files.toList();
 }
 
+QList<QString> Repository::Git::GitMetrics::getFilesToPosition( int position ) {
+    QSet<QString> files =  QSet<QString>();
+
+    int end = ( position > this->evolutionGraph->getVersions().size() ) ? this->evolutionGraph->getVersions().size() : position;
+
+    for( int i = 0; i < end; i++ ) {
+        Repository::Git::GitVersion* version = this->evolutionGraph->getVersion( i );
+
+        for( QMap<QString, Repository::Git::GitFile*>::iterator iterator = version->getChangedFiles()->begin(); iterator != version->getChangedFiles()->end(); ++iterator ) {
+            files.insert( iterator.value()->getIdentifier() );
+        }
+    }
+
+    return files.toList();
+}
+
 QList<QString> Repository::Git::GitMetrics::getFunctionsFromFile( QString identifier ) {
     QSet<QString> functions = QSet<QString>();
 
@@ -353,6 +369,61 @@ QList<QString> Repository::Git::GitMetrics::getFunctionsFromFile( QString identi
                     if( it.value()->getFunctionType() == Repository::Git::GitFunctionType::LOCALFUNCTION ) {
                         for( QMap<QString, Repository::Git::GitFunction*>::iterator iter = it.value()->getFunctionCallers()->begin(); iter != it.value()->getFunctionCallers()->end(); ++iter ) {
                             functions.insert( iter.value()->getIdentifier() );
+
+                            if( iter.value()->getFunctionType() == Repository::Git::GitFunctionType::GLOBALFUNCTION && iter.value()->getModule() != "" ) {
+                                functions.insert( "globalModule;" + iter.value()->getModule() );
+                            }
+                        }
+                    } else {
+                        if( it.value()->getModule() != "" ) {
+                            functions.insert( "globalModule;" + it.value()->getModule() );
+                        }
+                    }
+
+                }
+            }
+        } else {
+            break;
+        }
+    }
+
+//    qDebug() << identifier << "pocet funkcii" << functions.size();
+
+    return functions.toList();
+}
+
+QList<QString> Repository::Git::GitMetrics::getFunctionsFromFile( QString identifier, int level ) {
+    QSet<QString> functions = QSet<QString>();
+
+    foreach( Repository::Git::GitVersion* version, this->evolutionGraph->getVersions() ) {
+        if( version->getIsLoaded() ) {
+            Repository::Git::GitFile* file = version->getGitFileByIdentifier( identifier );
+            if( file ) {
+                for( QMap<QString, Repository::Git::GitFunction*>::iterator it = file->getGitFunctions()->begin(); it != file->getGitFunctions()->end(); ++it ) {
+
+                    if( it.value()->getFunctionType() == Repository::Git::GitFunctionType::LOCALFUNCTION ) {
+                        if( level >= 0 ) {
+                            functions.insert( it.value()->getIdentifier() );
+                        }
+
+                        for( QMap<QString, Repository::Git::GitFunction*>::iterator iter = it.value()->getFunctionCallers()->begin(); iter != it.value()->getFunctionCallers()->end(); ++iter ) {
+                            if( iter.value()->getFunctionType() == Repository::Git::GitFunctionType::GLOBALFUNCTION ) {
+                                if( level >= 1 ) {
+                                    functions.insert( iter.value()->getIdentifier() );
+                                }
+
+                                if( iter.value()->getModule() != "" && level >= 2 ) {
+                                    functions.insert( "globalModule;" + iter.value()->getModule() );
+                                }
+                            }
+                        }
+                    } else {
+                        if( it.value()->getModule() != "" && level >= 2 ) {
+                            functions.insert( "globalModule;" + it.value()->getModule() );
+                        }
+
+                        if( level >= 1 ) {
+                            functions.insert( it.value()->getIdentifier() );
                         }
                     }
 
@@ -383,6 +454,13 @@ QList<QString> Repository::Git::GitMetrics::getFunctionsFromFile( QString identi
                             for( QMap<QString, Repository::Git::GitFunction*>::iterator iter = it.value()->getFunctionCallers()->begin(); iter != it.value()->getFunctionCallers()->end(); ++iter ) {
                                 functions.insert( iter.value()->getIdentifier() );
 
+                                if( iter.value()->getFunctionType() == Repository::Git::GitFunctionType::GLOBALFUNCTION && iter.value()->getModule() != "" ) {
+                                    functions.insert( "globalModule;" + iter.value()->getModule() );
+                                }
+                            }
+                        } else {
+                            if( it.value()->getModule() != "" ) {
+                                functions.insert( "globalModule;" + it.value()->getModule() );
                             }
                         }
 
@@ -415,12 +493,12 @@ QList<QString> Repository::Git::GitMetrics::getFunctionConnectorsFromFile( QStri
                             functionConnectors.insert( it.value()->getIdentifier() + "+" + iter.value()->getIdentifier() );
 
                             if( iter.value()->getFunctionType() == Repository::Git::GitFunctionType::GLOBALFUNCTION && iter.value()->getModule() != "" ) {
-                                functionConnectors.insert( iter.value()->getIdentifier() + "+module;" + iter.value()->getModule() );
+                                functionConnectors.insert( iter.value()->getIdentifier() + "+globalModule;" + iter.value()->getModule() );
                             }
                         }
                     } else {
                         if( it.value()->getModule() != "" ) {
-                            functionConnectors.insert( it.value()->getIdentifier() + "+module;" + it.value()->getModule() );
+                            functionConnectors.insert( it.value()->getIdentifier() + "+globalModule;" + it.value()->getModule() );
                         }
                     }
 
@@ -436,6 +514,57 @@ QList<QString> Repository::Git::GitMetrics::getFunctionConnectorsFromFile( QStri
     return functionConnectors.toList();
 }
 
+
+QList<QString> Repository::Git::GitMetrics::getFunctionConnectorsFromFile( QString identifier, int level ) {
+    QSet<QString> functionConnectors = QSet<QString>();
+
+    foreach( Repository::Git::GitVersion* version, this->evolutionGraph->getVersions() ) {
+        if( version->getIsLoaded() ) {
+            Repository::Git::GitFile* file = version->getGitFileByIdentifier( identifier );
+
+            if( file ) {
+                for( QMap<QString, Repository::Git::GitFunction*>::iterator it = file->getGitFunctions()->begin(); it != file->getGitFunctions()->end(); ++it ) {
+                    if( it.value()->getFunctionType() == Repository::Git::GitFunctionType::LOCALFUNCTION ) {
+                        if( level >= 0 ) {
+                            functionConnectors.insert( file->getIdentifier() + "+" + it.value()->getIdentifier() );
+                        }
+
+                        for( QMap<QString, Repository::Git::GitFunction*>::iterator iter = it.value()->getFunctionCallers()->begin(); iter != it.value()->getFunctionCallers()->end(); ++iter ) {
+                            if( iter.value()->getFunctionType() == Repository::Git::GitFunctionType::LOCALFUNCTION ) {
+                                if( level >= 0 ) {
+                                    functionConnectors.insert( it.value()->getIdentifier() + "+" + iter.value()->getIdentifier() );
+                                }
+                            } else {
+                                if( iter.value()->getModule() != "" && level >= 2 ) {
+                                    functionConnectors.insert( iter.value()->getIdentifier() + "+globalModule;" + iter.value()->getModule() );
+                                }
+
+                                if( level >= 1 ) {
+                                    functionConnectors.insert( it.value()->getIdentifier() + "+" + iter.value()->getIdentifier() );
+                                }
+                            }
+                        }
+                    } else {
+                        if( it.value()->getModule() != "" && level >= 2 ) {
+                            functionConnectors.insert( it.value()->getIdentifier() + "+globalModule;" + it.value()->getModule() );
+                        }
+
+                        if( level >= 1 ) {
+                            functionConnectors.insert( file->getIdentifier() + "+" + it.value()->getIdentifier() );
+                        }
+                    }
+
+                }
+            }
+        } else {
+            break;
+        }
+    }
+
+//    qDebug() << identifier << "pocet konektorov" << functionConnectors.size();
+
+    return functionConnectors.toList();
+}
 
 QList<QString> Repository::Git::GitMetrics::getFunctionConnectorsFromFile( QString identifier , QString author ) {
     QSet<QString> functionConnectors = QSet<QString>();
@@ -454,12 +583,12 @@ QList<QString> Repository::Git::GitMetrics::getFunctionConnectorsFromFile( QStri
                                 functionConnectors.insert( it.value()->getIdentifier() + "+" + iter.value()->getIdentifier() );
 
                                 if( iter.value()->getFunctionType() == Repository::Git::GitFunctionType::GLOBALFUNCTION && iter.value()->getModule() != "" ) {
-                                    functionConnectors.insert( iter.value()->getIdentifier() + "+module;" + iter.value()->getModule() );
+                                    functionConnectors.insert( iter.value()->getIdentifier() + "+globalModule;" + iter.value()->getModule() );
                                 }
                             }
                         } else {
                             if( it.value()->getModule() != "" ) {
-                                functionConnectors.insert( it.value()->getIdentifier() + "+module;" + it.value()->getModule() );
+                                functionConnectors.insert( it.value()->getIdentifier() + "+globalModule;" + it.value()->getModule() );
                             }
                         }
 

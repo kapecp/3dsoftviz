@@ -49,8 +49,13 @@ public:
 
     QList<QString> getFunctionConnectorsFromFile( QString identifier, QString author );
 
+    QList<QString> getFunctionConnectorsFromFile( QString identifier, int level );
+
+    QList<QString> getFunctionsFromFile( QString identifier, int level );
 
     QList<QString> getAllFiles();
+
+    QList<QString> getFilesToPosition( int position );
 
 
     void setEvolutionGraph( Repository::Git::GitEvolutionGraph* evolutionGraph ) {

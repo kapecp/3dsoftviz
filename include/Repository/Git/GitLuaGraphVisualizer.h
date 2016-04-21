@@ -72,6 +72,8 @@ private:
 
     void filterVisualizationByAuthor( QString author );
 
+    void filterVisualizationByStructure( QString structure );
+
     /**
      * Data::Graph* currentGraph
      * @brief Visualized graph

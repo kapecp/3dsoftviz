@@ -129,19 +129,25 @@ void Repository::Git::GitLuaGraphVisualizer::visualize( bool next ) {
 
     // Znovu nacitaj reprezentaciu uzlov v grafe pre zvolenu vizualizaciu
     if( this->showLuaStats != this->CHANGES ) {
-//    qDebug() << "PreReloadNodeRepresentation";
         reloadNodeRepresentation( this->showLuaStats );
     }
     // Spracuj vizualizaciu zmenenych uzlov v grafe
     processChangedNodesAndEdges();
 
-    if( this->filterAuthor == "All" ) {
-        filterVisualizationByAuthor( this->filterAuthor );
-    }
+    if( this->showLuaStats == this->CHANGES ) {
+        if( this->filterAuthor == "All" ) {
+            filterVisualizationByAuthor( this->filterAuthor );
+        }
 
-    if( this->filterAuthor == "Authors" ) {
-        reloadNodeRepresentation( this->CHANGES );
-        filterVisualizationByAuthor( this->filterFile );
+        if( this->filterAuthor == "Authors" ) {
+            reloadNodeRepresentation( this->CHANGES );
+            filterVisualizationByAuthor( this->filterFile );
+        }
+
+        if( this->filterAuthor == "Structure" ) {
+            reloadNodeRepresentation( this->CHANGES );
+            filterVisualizationByStructure( this->filterFile );
+        }
     }
 }
 
@@ -1029,6 +1035,98 @@ void Repository::Git::GitLuaGraphVisualizer::filterVisualizationByAuthor( QStrin
             // ToDo mozno nejaky chybovy vypis :D a mozno nie
         }
     }
+}
+
+void Repository::Git::GitLuaGraphVisualizer::filterVisualizationByStructure( QString structure ) {
+    qDebug() << "filterVisualizationByStructure" << structure;
+    Repository::Git::GitMetrics metrics = Repository::Git::GitMetrics( this->evolutionGraph );
+    QList<QString> files = metrics.getFilesToPosition( this->currentGraph->getCurrentVersion() + 1 );
+
+    qDebug() << "Metrics module returned" << files.size() << "files";
+
+    QSet<QString> nodeIdentifiers = QSet<QString>();
+    QSet<QString> edgeIdentifiers = QSet<QString>();
+
+    foreach( QString fileIdentifier, files ) {
+//        qDebug() << fileIdentifier;
+        QString identifier = fileIdentifier.replace( "file;", "" );
+        QStringList list = identifier.split( "/" );
+
+        QString previousIdentifier = "directory;" + this->evolutionGraph->getFilePath();
+
+        identifier = "";
+        for( int i = 0; i < list.size(); i++ ) {
+            identifier += list.at( i );
+
+            QString insertIdentifier = "";
+            // Vytvorime identifikator pre danu uroven cesty k suboru
+            if( i == list.size() - 1 ) {
+                insertIdentifier = "file;" + identifier;
+            } else {
+                insertIdentifier = "directory;" + identifier;
+            }
+
+            // pridame identifikator suboru/adresara
+            nodeIdentifiers.insert( insertIdentifier );
+
+            // pridame identifikator hrany
+            edgeIdentifiers.insert( previousIdentifier + "+" + insertIdentifier );
+
+            // nastavime sucasny identifikator suboru/adresara ako predchadzajuci
+            previousIdentifier = insertIdentifier;
+
+            identifier += "/";
+
+            if( insertIdentifier.contains( "file;" ) && QString::compare( "Files", structure ) ) {
+                QList<QString> functions;
+                QList<QString> functionConnectors;
+
+                int level = 0;
+
+                if( structure == "Modules" ) {
+                    level = 2;
+                } else if( structure == "Global Functions") {
+                    level = 1;
+                }
+
+                functions = metrics.getFunctionsFromFile( insertIdentifier, level );
+                functionConnectors = metrics.getFunctionConnectorsFromFile( insertIdentifier, level );
+
+
+                foreach( QString functionIdentifier, functions ) {
+                    nodeIdentifiers.insert( functionIdentifier );
+                }
+
+
+                foreach( QString connectorIdentifier, functionConnectors ) {
+                    edgeIdentifiers.insert( connectorIdentifier );
+                }
+            }
+        }
+    }
+
+    foreach( QString identifier, nodeIdentifiers ) {
+        Data::Node* node = this->currentGraph->findNodeByLuaIdentifier( identifier );
+        if( node ) {
+//            qDebug() << identifier;
+            node->setInvisible( false );
+            node->showLabel( true );
+        } else {
+            // ToDo mozno nejaky chybovy vypis :D a mozno nie
+        }
+    }
+
+    foreach( QString identifier, edgeIdentifiers ) {
+        Data::Edge* edge = this->currentGraph->findEdgeByLuaIdentifier( identifier );
+        if( edge ) {
+            edge->setInvisible( false );
+        } else {
+            // ToDo mozno nejaky chybovy vypis :D a mozno nie
+        }
+    }
+
+//    qDebug() << "Pocet node" << nodeIdentifiers.size();
+//    qDebug() << "Pocet edge" << edgeIdentifiers.size();
 }
 
 void Repository::Git::GitLuaGraphVisualizer::updateCurrentGraphNodesId() {
