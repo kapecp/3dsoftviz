@@ -7,7 +7,8 @@
 
 namespace LibMouse3d{
 
-    Mouse3dDevice::Mouse3dDevice(QOSG::CoreWindow* window){
+    Mouse3dDevice::Mouse3dDevice(int argc, char ** argv, QOSG::CoreWindow *window) :
+        QApplication(argc, argv){
 #if defined(Q_OS_WIN)
 
         this->mouse = new Mouse3DInput(window);
@@ -31,80 +32,112 @@ namespace LibMouse3d{
 #if defined(Q_OS_WIN)
 
 #elif defined(Q_OS_LINUX)
-	/*!
+    /*!
 		Called with the processed motion data when a 3D mouse event is received
 
 		The default implementation emits a Move3d signal with the motion data
 	*/
     void Mouse3dDevice::SendSignal(std::vector<float>& motionData)
     {
-       // emit Mouse3dDevice::Move3d(motionData);
+        //emit Mouse3dDevice::Move3d(motionData);
+    }
+
+    bool Mouse3dDevice::x11EventFilter(XEvent *event){
+        return false;
     }
 
 	void Mouse3dDevice::Mouse3DLinux(QOSG::CoreWindow* window){
-
-		//XInitThreads();
-
         Display *display;
         Window xwindow = window->winId();
-        std::vector<float> signal_data;
+        std::vector<float> motionData;
 
         XEvent report;
         MagellanFloatEvent MagellanEvent;
 
-		bool MagellanLoop = true;
+        bool MagellanLoop = true;
 
-		display = QX11Info::display();
+        float normAxis;
+
+        display = QX11Info::display();
+
+        //XLockDisplay(display);
+        /************************* Create 3D Event Types ***************************/
+        if ( !MagellanInit( display, xwindow ) ) {
+            qDebug() << "No driver is running. Exit ... " << endl;
+            exit(EXIT_FAILURE);
+        }
+        else {
+            qDebug() << "Mouse3dDevice::Mouse3DLinux: MagellanInit() = Success!" << endl;
+        }
+        qDebug() << "Mouse3dDevice::Mouse3DLinux: winId() = " << xwindow << endl;
+        //XUnlockDisClientMessageplay(display);
+
+        /************************* Main Loop ***************************************/
+        XSelectInput( display, xwindow, KeyPressMask | KeyReleaseMask );
+
+        while( MagellanLoop ) {
+            //if(XCheckWindowEvent(display, xwindow, KeyPressMask | KeyReleaseMask,  &report ))
+            //if( ! window->x11Event( &report ) )
+            if ( !x11EventFilter( & report) )
+                //XNextEvent( display, &report );
+                //if (XCheckMaskEvent(display, KeyPressMask | KeyReleaseMask, &report))
+                //if (report.type)
+                    //qDebug() << "EventType = " << report.type << endl;
+                if ( report.type == ClientMessage ) {
+                    if ( MagellanTranslateEvent( display, &report, &MagellanEvent, 1.0, 1.0 ) == MagellanInputMotionEvent) {
+                        MagellanRemoveMotionEvents( display );
+
+                        motionData.clear();
+                        motionData.push_back( MagellanEvent.MagellanData[ MagellanX ] );
+                        motionData.push_back( MagellanEvent.MagellanData[ MagellanY ] );
+                        motionData.push_back( MagellanEvent.MagellanData[ MagellanZ ] * -1.0);
+                        motionData.push_back( MagellanEvent.MagellanData[ MagellanA ] );
+                        motionData.push_back( MagellanEvent.MagellanData[ MagellanC ] * -1.0);
+                        motionData.push_back( MagellanEvent.MagellanData[ MagellanB ] * -1.0);
 
 
-		/************************* Create 3D Event Types ***************************/
-		if ( !MagellanInit( display, xwindow ) ) {
-			qDebug() << "No driver is running. Exit ... " << endl;
-			exit(EXIT_FAILURE);
-		}
-		else {
-			qDebug() << "Mouse3dDevice::Mouse3DLinux: MagellanInit() = Success!" << endl;
-		}
-		qDebug() << "Mouse3dDevice::Mouse3DLinux: winId() = " << xwindow << endl;
 
 
-		/************************* Main Loop ***************************************/
-		//XSelectInput( display, xwindow, KeyPressMask | KeyReleaseMask );
+                        motionData[0] /= 100.0;
+                        motionData[1] /= 100.0;
+                        motionData[2] /= 100.0;
 
-		while( MagellanLoop ) {
-			//if(XCheckWindowEvent(display, window, KeyPressMask | KeyReleaseMask,  &report ))
-			if( ! window->x11Event( &report ) ) {
-				//XNextEvent( display, &report );
-				qDebug() << "EventType = " << report.type << endl;
-				if ( report.type == ClientMessage ) {
-					if ( MagellanTranslateEvent( display, &report, &MagellanEvent, 1.0, 1.0 ) == MagellanInputMotionEvent) {
-						MagellanRemoveMotionEvents( display );
+                        /*
+                        normAxis = sqrt(motionData[3] * motionData[3] + motionData[4] * motionData[4] + motionData[5] * motionData[5]);
+                        if (normAxis == 0.0){
+                            motionData[3] = 0.0;
+                            motionData[4] = 0.0;
+                            motionData[5] = 1.0;
+                        }
+                        else{<<
+                            motionData[3] /= normAxis;
+                            motionData[4] /= normAxis;
+                            motionData[5] /= normAxis;
+                        }
 
-						signal_data.clear();
-						signal_data.push_back(MagellanEvent.MagellanData[ MagellanX ]);
-						signal_data.push_back(MagellanEvent.MagellanData[ MagellanY ]);
-						signal_data.push_back(MagellanEvent.MagellanData[ MagellanZ ]);
-						signal_data.push_back(MagellanEvent.MagellanData[ MagellanA ]);
-						signal_data.push_back(MagellanEvent.MagellanData[ MagellanB ]);
-						signal_data.push_back(MagellanEvent.MagellanData[ MagellanC ]);
+                        motionData[3] /= 10.0;
+                        motionData[4] /= 10.0;
+                        motionData[5] /= 10.0;
+                        */
 
-						qDebug() <<  "x=" << signal_data[0] <<
-									"y=" << signal_data[1] <<
-									"z=" << signal_data[2] <<
-									"a=" << signal_data[3] <<
-									"b=" << signal_data[4] <<
-									"c=" << signal_data[5] << endl;
+                        motionData[3] /= 7000.0;
+                        motionData[4] /= 7000.0;
+                        motionData[5] /= 7000.0;
 
-						//emit Mouse3dDevice::Move3d(signal_data);
-						//window->OnMove(signal_data);
-						//sleep(500);
-					}
-					else {
-						qDebug() << "Mouse3dDevice::Mouse3DLinux: Unrecognized ClientMessage Event - Not MagellanInputMotionEvent" << endl;
-					}
-				}
-			}
-		}
+                        qDebug() <<  "Mouse3d x=" << motionData[0] <<
+                                    "y=" << motionData[1] <<
+                                    "z=" << motionData[2] <<
+                                    "a=" << motionData[3] <<
+                                    "b=" << motionData[4] <<
+                                    "c=" << motionData[5] << endl;
+
+                        //emit Mouse3dDevice::Move3d(motionData);
+                        window->OnMove(motionData);
+                        EventThread::msleep(50);
+                    }
+                }
+
+        }
    }
 #elif defined(Q_OS_MAC)
 

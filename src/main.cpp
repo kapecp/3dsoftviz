@@ -45,6 +45,7 @@ int main( int argc, char* argv[] )
 //      return EXIT_FAILURE;
 //    }
 
+    QCoreApplication::setAttribute(Qt::AA_X11InitThreads);
 	QApplication app( argc, argv );
 	new Util::Cleaner( &app );
 	AppCore::Core::getInstance( &app );

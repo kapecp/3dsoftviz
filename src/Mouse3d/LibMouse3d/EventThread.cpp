@@ -17,11 +17,17 @@ EventThread::EventThread(QOSG::CoreWindow* window, QObject* parent) :
 void EventThread::run(){
 	qDebug() << "EventThread::run(): winId() = " << window->winId() << endl;
 	qDebug() << "EventThread::run(): CurrentThreadId() = " << QThread::currentThreadId() << endl;
-	mouseDevice = new Mouse3dDevice(window);
+    int argc = 0;
+    char **argv;
+    mouseDevice = new Mouse3dDevice(argc, argv, window);
 }
 
 EventThread::~EventThread() {
     qDebug() << "Mouse3d thread destroyed";
+}
+
+void EventThread::msleep(unsigned long msecs){
+    QThread::msleep(msecs);
 }
 
 /**
@@ -29,5 +35,6 @@ EventThread::~EventThread() {
  * @brief LibMouse3d::LibCoreMouse3d::EventThread::TerminateThread
  * @brief Called from application - terminates thread and connection to the device
  */
+
 
 }

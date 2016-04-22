@@ -74,7 +74,7 @@ namespace QOSG {
 
 CoreWindow::CoreWindow( QWidget* parent, Vwr::CoreGraph* coreGraph, QApplication* app, Layout::LayoutThread* thread ) : QMainWindow( parent )
 {
-	//inicializacia premennych
+    //inicializacia premennych
 	isPlaying = true;
 	isEBPlaying = false;
 	application = app;
@@ -3708,6 +3708,13 @@ void CoreWindow::closeEvent( QCloseEvent* event )
 
 void QOSG::CoreWindow::OnMove(std::vector<float>& motionData){
 
+    qDebug() <<  "CoreWindow x=" << motionData[0] <<
+                "y=" << motionData[1] <<
+                "z=" << motionData[2] <<
+                "a=" << motionData[3] <<
+                "b=" << motionData[4] <<
+                "c=" << motionData[5] << endl;
+
     QOSG::ViewerQT* moveViewer = this->GetViewerQt();
 
     //right & left
@@ -3741,14 +3748,24 @@ void QOSG::CoreWindow::OnMove(std::vector<float>& motionData){
     }
     //rotations
 
-    if(abs(motionData[3]) > 0.001){
+    float a = fabs(motionData[3]), b = fabs(motionData[4]), c = fabs(motionData[5]);
+
+    qDebug() <<  "Abs " <<
+                "a=" << a << (a > 0.001) <<
+                "b=" << b << (b > 0.001) <<
+                "c=" << c << (c > 0.001) << endl;
+
+    if(a > 0.001){
          moveViewer->getCameraManipulator()->rotateCamera(0.0, 0.0, 1.0, (-1.5)*motionData[3], 0.0);
+         qDebug() << "Moving A" << endl;
     }
-    if(abs(motionData[4]) > 0.001){
+    if(b > 0.001){
         moveViewer->getCameraManipulator()->rotateCamera(1.0, 0.00, (1.2)*motionData[4], -1, -1);
+        qDebug() << "Moving B" << endl;
     }
-    if(abs(motionData[5]) > 0.001){
+    if(c > 0.001){
         moveViewer->getCameraManipulator()->rotateCamera(0.0, 0.0, 1.0, 0.0, (-1.5)*motionData[5]);
+        qDebug() << "Moving C" << endl;
     }
 
 }

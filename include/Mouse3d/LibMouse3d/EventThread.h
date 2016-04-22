@@ -29,6 +29,8 @@ public:
     //run
     void run();
 
+    static void msleep(unsigned long msecs);
+
 private:
 	QOSG::CoreWindow* window;
 	Mouse3dDevice* mouseDevice;
