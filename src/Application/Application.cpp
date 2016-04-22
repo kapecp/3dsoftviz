@@ -1,28 +1,35 @@
 ﻿#include "Application/Application.h"
 
-#if defined(Q_OS_LINUX)
-
-	#include <X11/Xlib.h>
-
-#endif
-
 namespace App {
 
 Application::Application(int &argc, char **argv) : QApplication( argc, argv ) {
 #if defined(Q_OS_LINUX)
-
-	XInitThreads();
-
+    //XInitThreads();
+    evntDisp = QAbstractEventDispatcher::instance();
+    evntDisp->setEventFilter((QAbstractEventDispatcher::EventFilter)customEventFilter);
 #endif
 }
 
 Application::~Application() {
 }
 
-#if defined(Q_OS_LINUX)
+#ifdef Q_OS_LINUX
+
+bool Application::customEventFilter(void *message) {
+    XEvent *event;
+    event = (XEvent *) message;
+    return false;
+}
 
 bool Application::x11EventFilter(XEvent *event) {
-	return false;
+    //QApplication::x11EventFilter( event );
+    this->event = event;
+    return false;
+}
+
+bool Application::getMyEvent(XEvent *event){
+    event = this->event;
+    return false;
 }
 
 #endif

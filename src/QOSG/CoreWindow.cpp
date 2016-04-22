@@ -4408,7 +4408,7 @@ void CoreWindow::createEvolutionLuaGraph()
 
 #ifdef Q_OS_LINUX
    bool CoreWindow::x11Event(XEvent * event){
-       return false;
+       return QWidget::x11Event( event );
    }
 #endif
 

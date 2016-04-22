@@ -1,6 +1,8 @@
 #ifndef MOUSE3D_H
 #define MOUSE3D_H
 
+#include <QtGlobal>
+
 #if defined(Q_OS_WIN)
 
 	#include "Mouse3d/LibMouse3d/LibCoreMouse3d/Mouse3DInput.h"
@@ -62,7 +64,7 @@ private:
 
 #elif defined(Q_OS_LINUX)
 
-	void Mouse3DLinux(QOSG::CoreWindow* window);
+    void Mouse3DLinux();
 
 #elif defined(Q_OS_MAC)
 #endif

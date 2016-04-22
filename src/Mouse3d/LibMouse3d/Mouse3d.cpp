@@ -1,13 +1,16 @@
 #include "Mouse3d/LibMouse3d/Mouse3d.h"
 
-#include <QtGlobal>
 #include <QDebug>
 
 #include "QOSG/CoreWindow.h"
 
+#include "Application/Application.h"
+#include <QApplication>
+
 namespace LibMouse3d{
 
-	Mouse3dDevice::Mouse3dDevice( QOSG::CoreWindow *window ) {
+    Mouse3dDevice::Mouse3dDevice( QOSG::CoreWindow *window ) :
+    window( window ) {
 #if defined(Q_OS_WIN)
 
         this->mouse = new Mouse3DInput(window);
@@ -15,7 +18,7 @@ namespace LibMouse3d{
 
 #elif defined(Q_OS_LINUX)
 
-        Mouse3DLinux(window);
+        Mouse3DLinux();
 
 #elif defined(Q_OS_MAC)
 #endif
@@ -36,19 +39,21 @@ namespace LibMouse3d{
         //emit Mouse3dDevice::Move3d(motionData);
     }
 
-	void Mouse3dDevice::Mouse3DLinux(QOSG::CoreWindow* window) {
+    void Mouse3dDevice::Mouse3DLinux() {
         Display *display;
         Window xwindow = window->winId();
         std::vector<float> motionData;
-
-        XEvent report;
+        XEvent event;
         MagellanFloatEvent MagellanEvent;
-
         bool MagellanLoop = true;
-
         float normAxis;
 
+        int lastEventType = -1;
+
         display = QX11Info::display();
+
+        QCoreApplication *inst = QApplication::instance();
+        App::Application *app = qobject_cast<App::Application*>(inst);
 
         /************************* Create 3D Event Types ***************************/
         if ( !MagellanInit( display, xwindow ) ) {
@@ -61,18 +66,21 @@ namespace LibMouse3d{
 		qDebug() << "Mouse3dDevice::Mouse3DLinux: winId() = " << xwindow << endl;
 
         /************************* Main Loop ***************************************/
-        XSelectInput( display, xwindow, KeyPressMask | KeyReleaseMask );
+        //XSelectInput( display, xwindow, KeyPressMask | KeyReleaseMask );
+        //XSelectInput(QX11Info::display(), DefaultRootWindow(QX11Info::display()), SubstructureNotifyMask);
 
         while( MagellanLoop ) {
-            //if(XCheckWindowEvent(display, xwindow, KeyPressMask | KeyReleaseMask,  &report ))
-            //if( ! window->x11Event( &report ) )
-            if ( !x11EventFilter( & report) )
-                //XNextEvent( display, &report );
-                //if (XCheckMaskEvent(display, KeyPressMask | KeyReleaseMask, &report))
-                //if (report.type)
-                    //qDebug() << "EventType = " << report.type << endl;
-                if ( report.type == ClientMessage ) {
-                    if ( MagellanTranslateEvent( display, &report, &MagellanEvent, 1.0, 1.0 ) == MagellanInputMotionEvent) {
+            //if(XCheckWindowEvent(display, xwindow, KeyPressMask | KeyReleaseMask,  &event ))
+            //if( window->x11Event( &event ) ) continue;
+            if ( app->getMyEvent( &event ) )  continue;
+            //XNextEvent( display, &event );
+            //if (XCheckMaskEvent(display, KeyPressMask | KeyReleaseMask, &event))
+                if (lastEventType != event.type) {
+                    qDebug() << "EventType = " << event.type << endl;
+                    lastEventType = event.type;
+                }
+                if ( event.type == ClientMessage ) {
+                    if ( MagellanTranslateEvent( display, &event, &MagellanEvent, 1.0, 1.0 ) == MagellanInputMotionEvent) {
                         MagellanRemoveMotionEvents( display );
 
                         motionData.clear();
@@ -83,14 +91,13 @@ namespace LibMouse3d{
                         motionData.push_back( MagellanEvent.MagellanData[ MagellanC ] * -1.0);
                         motionData.push_back( MagellanEvent.MagellanData[ MagellanB ] * -1.0);
 
-
-
-
+                        // Axi X,Y,Z scaling
                         motionData[0] /= 100.0;
                         motionData[1] /= 100.0;
                         motionData[2] /= 100.0;
 
                         /*
+                        // Rotation A,B,C normalization to <0.0 - 1.0>
                         normAxis = sqrt(motionData[3] * motionData[3] + motionData[4] * motionData[4] + motionData[5] * motionData[5]);
                         if (normAxis == 0.0){
                             motionData[3] = 0.0;
@@ -108,6 +115,7 @@ namespace LibMouse3d{
                         motionData[5] /= 10.0;
                         */
 
+                        // Rotation A,B,C scaling
                         motionData[3] /= 7000.0;
                         motionData[4] /= 7000.0;
                         motionData[5] /= 7000.0;
