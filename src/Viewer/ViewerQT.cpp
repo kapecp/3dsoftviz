@@ -34,7 +34,7 @@ QOSG::ViewerQT::ViewerQT( QWidget* parent , const char* name , const QGLWidget* 
 
 	addEventHandler( new osgViewer::StatsHandler );
 	addEventHandler( pickHandler );
-    setCameraManipulator( manipulator );
+   // setCameraManipulator( manipulator );
 
 	// Gloger: background to white color after disabling skybox
 	getCamera()->setClearColor( osg::Vec4( 0, 0, 0, 1 ) );

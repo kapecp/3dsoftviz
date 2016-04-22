@@ -1481,47 +1481,6 @@ void CoreGraph::createBase()
 
    baseGeometry->addPrimitiveSet(base);
 
-   /*osg::DrawElementsUInt* baseBehind = new osg::DrawElementsUInt(osg::PrimitiveSet::QUADS, 0);
-   base->push_back(5);
-   base->push_back(4);
-   base->push_back(2);
-   base->push_back(3);
-
-   baseGeometry->addPrimitiveSet(baseBehind);*/
-/*
-   osg::Vec3 sp(0,0,0);
-   osg::Vec3 xp(1,0,0);
-   osg::Vec3 yp(0,1,0);
-   osg::Vec3 zp(0,0,1);
-
-   osg::ref_ptr<osg::Vec3Array> points = new osg::Vec3Array;
-   points->push_back(sp);
-   points->push_back(xp);
-    points->push_back(sp);
-   points->push_back(yp);
-    points->push_back(sp);
-   points->push_back(zp);
-
-   osg::ref_ptr<osg::Vec4Array> color = new osg::Vec4Array;
-   color->push_back(osg::Vec4(1.0,0.0,0.0,1.0));
-
-
-   baseGeometry->setVertexArray(points.get());
-   baseGeometry->setColorArray(color.get());
-   baseGeometry->setColorBinding(osg::Geometry::BIND_PER_PRIMITIVE_SET);
-   baseGeometry->addPrimitiveSet(new osg::DrawArrays(GL_LINES,0,2));
-
-   //color->push_back(osg::Vec4(0.0,0.1,0.0,1.0));
-   baseGeometry->setVertexArray(points.get());
-   baseGeometry->setColorArray(color.get());
-   baseGeometry->setColorBinding(osg::Geometry::BIND_PER_PRIMITIVE_SET);
-   baseGeometry->addPrimitiveSet(new osg::DrawArrays(GL_LINES,2,2));
-
-  // color->push_back(osg::Vec4(0.0,0.0,1.0,1.0));
-   baseGeometry->setVertexArray(points.get());
-   baseGeometry->setColorArray(color.get());
-   baseGeometry->setColorBinding(osg::Geometry::BIND_PER_PRIMITIVE_SET);
-   baseGeometry->addPrimitiveSet(new osg::DrawArrays(GL_LINES,4,2));*/
 
 }
 
@@ -1643,6 +1602,16 @@ void CoreGraph::scaleGraph(int scale)
 }
 void CoreGraph::rotateGraph()
 {
+    IplImage* image = this->getCameraStream()->getIplImage();
+    osg::Image* i= new osg::Image();
+
+    i->setImage( image->width, image->height,
+              3, GL_RGB, GL_RGB,
+              GL_UNSIGNED_BYTE,
+              ( unsigned char* ) image->imageData,
+              osg::Image::NO_DELETE, 1 );
+    qDebug()<< "halo";
+
     /*osg::Matrixd matrix = camera->getViewMatrix();
     qDebug()<<"before";
     outputMatrix(matrix);
@@ -1650,7 +1619,7 @@ void CoreGraph::rotateGraph()
     qDebug()<<"invert";
     outputMatrix(matrix);*/
 
-    rotationMatrix = rotationMatrix * rotationMatrix.rotate(0.1,osg::Vec3f(0,1,0));
+    //rotationMatrix = rotationMatrix * rotationMatrix.rotate(0.1,osg::Vec3f(0,1,0));
     /*osg::Matrix matrix = graphRotTransf->getMatrix();
    // matrix.setTrans(matrix.inverse(camera->getViewMatrix()).getTrans());
     matrix.setRotate(matrix.inverse(camera->getViewMatrix()).getRotate());
