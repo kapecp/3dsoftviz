@@ -12,14 +12,13 @@ EventThread::EventThread(QOSG::CoreWindow* window, QObject* parent) :
 	QThread( parent ),
 	window( window ) {
 	qDebug() << "EventThread::EventThread(): winId() = " << this->window->winId() << endl;
+	qDebug() << "EventThread::EventThread(): CurrentThreadId() = " << QThread::currentThreadId() << endl;
 }
 
 void EventThread::run(){
-	qDebug() << "EventThread::run(): winId() = " << window->winId() << endl;
+	qDebug() << "EventThread::run(): winId() = " << this->window->winId() << endl;
 	qDebug() << "EventThread::run(): CurrentThreadId() = " << QThread::currentThreadId() << endl;
-    int argc = 0;
-    char **argv;
-    mouseDevice = new Mouse3dDevice(argc, argv, window);
+	mouseDevice = new Mouse3dDevice( this->window );
 }
 
 EventThread::~EventThread() {

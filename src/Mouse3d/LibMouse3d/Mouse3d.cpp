@@ -7,8 +7,7 @@
 
 namespace LibMouse3d{
 
-    Mouse3dDevice::Mouse3dDevice(int argc, char ** argv, QOSG::CoreWindow *window) :
-        QApplication(argc, argv){
+	Mouse3dDevice::Mouse3dDevice( QOSG::CoreWindow *window ) {
 #if defined(Q_OS_WIN)
 
         this->mouse = new Mouse3DInput(window);
@@ -19,34 +18,25 @@ namespace LibMouse3d{
         Mouse3DLinux(window);
 
 #elif defined(Q_OS_MAC)
-
-		// Mac call mouse
-
 #endif
+
     }
 
     Mouse3dDevice::~Mouse3dDevice(){
-
     }
 
 #if defined(Q_OS_WIN)
-
 #elif defined(Q_OS_LINUX)
     /*!
 		Called with the processed motion data when a 3D mouse event is received
 
 		The default implementation emits a Move3d signal with the motion data
 	*/
-    void Mouse3dDevice::SendSignal(std::vector<float>& motionData)
-    {
+	void Mouse3dDevice::SendSignal(std::vector<float>& motionData) {
         //emit Mouse3dDevice::Move3d(motionData);
     }
 
-    bool Mouse3dDevice::x11EventFilter(XEvent *event){
-        return false;
-    }
-
-	void Mouse3dDevice::Mouse3DLinux(QOSG::CoreWindow* window){
+	void Mouse3dDevice::Mouse3DLinux(QOSG::CoreWindow* window) {
         Display *display;
         Window xwindow = window->winId();
         std::vector<float> motionData;
@@ -60,7 +50,6 @@ namespace LibMouse3d{
 
         display = QX11Info::display();
 
-        //XLockDisplay(display);
         /************************* Create 3D Event Types ***************************/
         if ( !MagellanInit( display, xwindow ) ) {
             qDebug() << "No driver is running. Exit ... " << endl;
@@ -69,8 +58,7 @@ namespace LibMouse3d{
         else {
             qDebug() << "Mouse3dDevice::Mouse3DLinux: MagellanInit() = Success!" << endl;
         }
-        qDebug() << "Mouse3dDevice::Mouse3DLinux: winId() = " << xwindow << endl;
-        //XUnlockDisClientMessageplay(display);
+		qDebug() << "Mouse3dDevice::Mouse3DLinux: winId() = " << xwindow << endl;
 
         /************************* Main Loop ***************************************/
         XSelectInput( display, xwindow, KeyPressMask | KeyReleaseMask );
@@ -139,9 +127,7 @@ namespace LibMouse3d{
 
         }
    }
+
 #elif defined(Q_OS_MAC)
-
-	// Mac custom methods here
-
 #endif
 }

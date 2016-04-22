@@ -3,6 +3,7 @@
 #include "Manager/Manager.h"
 #include "Core/Core.h"
 #include "Util/Cleaner.h"
+#include "Application/Application.h"
 
 #ifdef OPENCV_FOUND
 #include <opencv2/core/core.hpp>
@@ -45,8 +46,7 @@ int main( int argc, char* argv[] )
 //      return EXIT_FAILURE;
 //    }
 
-    QCoreApplication::setAttribute(Qt::AA_X11InitThreads);
-	QApplication app( argc, argv );
+	App::Application app( argc, argv );
 	new Util::Cleaner( &app );
 	AppCore::Core::getInstance( &app );
 	Manager::GraphManager::getInstance();

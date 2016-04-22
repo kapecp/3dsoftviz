@@ -679,6 +679,7 @@ endif()
 
 #-------------------------------- Source files -------------------------------
 set( SRC_MAIN "src/main.cpp" )
+file( GLOB_RECURSE SRC_APP		"src/Application/*.cpp" )
 file( GLOB_RECURSE SRC_CORE		"src/Core/*.cpp" )
 file( GLOB_RECURSE SRC_DATA		"src/Data/*.cpp" )
 file( GLOB_RECURSE SRC_IMPORTER	"src/Importer/*.cpp" )
@@ -743,7 +744,9 @@ endif()
 
 # All source files
 set( SRC
-	${SRC_MAIN} ${SRC_CORE}
+	${SRC_MAIN}
+	${SRC_APP}
+	${SRC_CORE}
 	${SRC_MANAGER}
 	${SRC_DATA} ${SRC_CLUSTERING}
 	${SRC_IMPORTER}
@@ -789,6 +792,7 @@ endif()
 
 
 #-------------------------------- Header files -------------------------------
+file( GLOB_RECURSE HEADER_APP		"include/Application/*.h" )
 file( GLOB_RECURSE HEADER_CORE		"include/Core/*.h" )
 file( GLOB_RECURSE HEADER_DATA		"include/Data/*.h" )
 file( GLOB_RECURSE HEADER_IMPORTER	"include/Importer/*.h" )
@@ -855,7 +859,9 @@ endif()
 
 # All header files
 set( INCL
-	${HEADER_MAIN} ${HEADER_CORE}
+	${HEADER_MAIN}
+	${HEADER_APP}
+	${HEADER_CORE}
 	${HEADER_MANAGER}
 	${HEADER_DATA} ${HEADER_CLUSTERING}
 	${HEADER_IMPORTER}
@@ -900,6 +906,7 @@ endif()
 
 #-------------------------------------- Group source files --------------------------------------
 source_group( \\src main.cpp )
+source_group( \\src\\Application "^.*Application/.*$" )
 source_group( \\src\\Network "^.*Network/.*$" )
 source_group( \\src\\Viewer "^.*Viewer/.*$" )
 source_group( \\src\\Core "^.*Core/.*$" )
@@ -917,6 +924,7 @@ source_group( \\src\\LuaTypes "^.*LuaTypes/.*$")
 source_group( \\src\\Git "^.*Git/.*$" )
 
 # Group header files
+source_group( \\headers\\Application "^.*Application/.*h$")
 source_group( \\headers\\Clustering "^.*Clustering/.*h$")
 source_group( \\headers\\Network "^.*Network/.*h$" )
 source_group( \\headers\\Viewer "^.*Viewer/.*h$" )
