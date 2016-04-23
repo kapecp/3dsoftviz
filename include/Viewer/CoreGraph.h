@@ -268,6 +268,8 @@ public:
     void rotateGraph();
     void outputMatrix(osg::Matrixd matrix);
     void ratata(double initialX,double actualX,double initialY, double actualY);
+    void scaleNodes(bool scaleUp);
+    float getFurthestPosition(osg::Vec3f max,osg::Vec3f min);
     //*****
 
 public slots:
@@ -629,9 +631,10 @@ private:
         *  \brief node base
         */
     osg::ref_ptr<osg::Geode> baseGeode;
-    osg::ref_ptr<osg::MatrixTransform> baseTransform;
-    //osg::ref_ptr<osg::PositionAttitudeTransform> baseTransform;
+    //osg::ref_ptr<osg::MatrixTransform> baseTransform;
+    osg::ref_ptr<osg::PositionAttitudeTransform> baseTransform;
     osg::Matrixd rotationMatrix;
+    float baseSize = 250;
     //*****
 };
 }

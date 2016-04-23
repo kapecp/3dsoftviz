@@ -4417,6 +4417,11 @@ void CoreWindow::rotateArucoGraph()
     this->coreGraph->rotateGraph();
 }
 
+//works only frmo softVis to ArUco
+void CoreWindow::swapManipulator()
+{
+    viewerWidget->setCameraManipulator(NULL);
+}
 //*****
 
 } // namespace QOSG

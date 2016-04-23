@@ -276,7 +276,39 @@ bool PickHandler::handleKeyDown( const osgGA::GUIEventAdapter& ea, GUIActionAdap
 	else if ( ea.getKey() == osgGA::GUIEventAdapter::KEY_N ) {
 		this->selectAllNeighbors( this->pickedNodes );
 	}
+    //jurik
+    else if ( ea.getKey() == osgGA::GUIEventAdapter::KEY_O ) {
+            if(isCtrlPressed){
+                //scale down
+                coreGraph->scaleNodes(false);
+            }
+            else{
+                //scale up
+                coreGraph->scaleNodes(true);
+            }
+        }
+        else if ( ea.getKey() == osgGA::GUIEventAdapter::KEY_P ) {
+            Layout::LayoutThread* layout = AppCore::Core::getInstance()->getLayoutThread();
+            float distance = layout->getAlg()->getMaxDistance();
 
+            if(isCtrlPressed){
+                layout->pause();
+                coreGraph->setNodesFreezed( true );
+                layout->getAlg()->setMaxDistance(distance * 0.8);
+                coreGraph->scaleGraphToBase();
+                coreGraph->setNodesFreezed( false );
+                layout->play();
+            }
+            else{
+                layout->pause();
+                coreGraph->setNodesFreezed( true );
+                layout->getAlg()->setMaxDistance(distance * 1.2);
+                coreGraph->scaleGraphToBase();
+                coreGraph->setNodesFreezed( false );
+                layout->play();
+            }
+        }
+    //*****
 	// FULLSCREEN
 	else if ( ea.getKey() == 'l' || ea.getKey() == 'L' ) {
 		bool hideToolbars = ( appConf->getValue( "Viewer.Fullscreen" ).toInt() == 0 ? false : true );

@@ -636,6 +636,7 @@ void loadExampleGraphLua();
     void scaleArucoGraphUp();
     void scaleArucoGraphDown();
     void rotateArucoGraph();
+    void swapManipulator();
     //*****
 
 private:

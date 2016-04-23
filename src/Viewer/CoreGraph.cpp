@@ -37,6 +37,7 @@
 
 #include <osgShadow/ShadowedScene>
 #include <osgShadow/ShadowMap>
+#include <osgShadow/SoftShadowMap>
 
 namespace Vwr {
 
@@ -656,7 +657,7 @@ Vwr::CoreGraph::CoreGraph( Data::Graph* graph, osg::ref_ptr<osg::Camera> camera 
     //lighting
     osg::Light* pLight = new osg::Light;
     pLight->setLightNum( 1 );
-    pLight->setDiffuse( osg::Vec4(0.5f, 0.5f, 0.5f, 1.0f) );
+    pLight->setDiffuse( osg::Vec4(1.0f, 1.0f, 1.0f, 1.0f) );
     pLight->setPosition( osg::Vec4(0,0,1,0) );		// w = 0 directional light
                                                     // w = 1 point light (position)
     // light source
@@ -686,7 +687,7 @@ Vwr::CoreGraph::CoreGraph( Data::Graph* graph, osg::ref_ptr<osg::Camera> camera 
 
     //node for base
     baseGeode = new osg::Geode();
-    baseTransform = new osg::MatrixTransform();
+    baseTransform = new osg::PositionAttitudeTransform();
 
     graphRotTransf->addChild( graphGroup );
     shadowedScene->addChild( graphRotTransf );
@@ -1429,7 +1430,9 @@ void CoreGraph::addTranslateToGraphRotTransf( osg::Vec3d pos )
 //jurik
 void CoreGraph::turnOnShadows()
 {
-    osg::ref_ptr<osgShadow::ShadowMap> sm = new osgShadow::ShadowMap;
+    osg::ref_ptr<osgShadow::SoftShadowMap> sm = new osgShadow::SoftShadowMap;
+    //sm->setBias(0.1);
+    //sm->setSoftnessWidth(0.1);
     shadowedScene->setShadowTechnique(sm.get());
 }
 
@@ -1456,8 +1459,8 @@ void CoreGraph::createBase()
     baseGeode->addDrawable(baseGeometry);
     baseGeode->setNodeMask(0x0);
     osg::Material *material = new osg::Material();
-    material->setDiffuse(osg::Material::FRONT,  osg::Vec4(0.5, 0.5, 0.8, 1.0));
-    material->setEmission(osg::Material::FRONT, osg::Vec4(0.5, 0.5, 0.8, 1.0));
+    material->setDiffuse(osg::Material::FRONT,  osg::Vec4(1, 1, 1, 0.2));
+    material->setEmission(osg::Material::FRONT, osg::Vec4(1, 1, 1, 0.2));
     baseGeode->getOrCreateStateSet()->setAttribute(material);
 
     baseTransform->addChild(baseGeode);
@@ -1469,8 +1472,6 @@ void CoreGraph::createBase()
    vertices->push_back( osg::Vec3(  1, -1, 0) ); // rb
    vertices->push_back( osg::Vec3(  1,  1, 0) ); // rt
    vertices->push_back( osg::Vec3( -1,  1, 0) ); // lt
-   //vertices->push_back( osg::Vec3(  1,  1,  1) ); // rt1
-   //vertices->push_back( osg::Vec3( -1,  1,  1) ); // lt1
    baseGeometry->setVertexArray( vertices );
 
    osg::DrawElementsUInt* base = new osg::DrawElementsUInt(osg::PrimitiveSet::QUADS, 0);
@@ -1481,7 +1482,25 @@ void CoreGraph::createBase()
 
    baseGeometry->addPrimitiveSet(base);
 
+   osg::Vec4Array* colors = new osg::Vec4Array;
+   colors->push_back(osg::Vec4(0.8f, 0.8f, 0.8f, 0.2f) ); //index 0 red
+   colors->push_back(osg::Vec4(0.8f, 0.8f, 0.8f, 0.2f) ); //index 1 green
+   colors->push_back(osg::Vec4(0.8f, 0.8f, 0.8f, 0.2f) ); //index 2 blue
+   colors->push_back(osg::Vec4(0.8f, 0.8f, 0.8f, 0.2f) ); //index 3 white
+   baseGeometry->setColorArray(colors);
+   baseGeometry->setColorBinding(osg::Geometry::BIND_PER_VERTEX);
 
+   baseGeode->getOrCreateStateSet()->setMode(GL_BLEND, osg::StateAttribute::ON);
+   baseGeode->getOrCreateStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
+   baseGeode->getOrCreateStateSet()->setRenderBinDetails(1, "DepthSortedBin");
+
+   /* TEXTURED BASE
+    * osg::Vec2Array* texcoords = new osg::Vec2Array(5);
+    * (*texcoords)[0].set(0.0f,1.0f); // tex coord for vertex 0
+    * (*texcoords)[1].set(0.0f,0.0f); // tex coord for vertex 1
+    * (*texcoords)[2].set(1.0f,0.0f); // ""
+    * (*texcoords)[3].set(1.0f,1.0f); // ""
+    * baseGeometry->setTexCoordArray(0,texcoords);*/
 }
 
 void CoreGraph::recievedMVMatrix(QMatrix4x4 modelViewMatrix)
@@ -1491,38 +1510,9 @@ void CoreGraph::recievedMVMatrix(QMatrix4x4 modelViewMatrix)
                             modelViewMatrix.operator()(2,0),modelViewMatrix.operator()(2,1),modelViewMatrix.operator()(2,2),modelViewMatrix.operator()(2,3),
                             modelViewMatrix.operator()(3,0),modelViewMatrix.operator()(3,1),modelViewMatrix.operator()(3,2),modelViewMatrix.operator()(3,3));
 
-    osg::Vec3d translateBasic = arucoMVM.getTrans();
-    osg::Quat rotationBasic = arucoMVM.getRotate();
-
-   /* arucoMVM = arucoMVM * rotationMatrix;
-    arucoMVM.setTrans(translateBasic);
-
-    camera->setViewMatrix(arucoMVM);*/
-/*
-    osg::Matrix invertedArucoMVM = camera->getViewMatrix();
-    invertedArucoMVM.invert(invertedArucoMVM);
-
-    osg::Matrixd rotateGraph = invertedArucoMVM;
-    rotateGraph = rotateGraph * original;
-    outputMatrix(rotateGraph);
-    baseTransform->setMatrix(rotateGraph);*/
-
-   /* osg::Matrixd baseRotation;
-    baseRotation.setRotate(baseRotation.inverse(rotationMatrix).getRotate());
-    baseTransform->setMatrix(baseRotation);*/
-   // graphRotTransf->setMatrix(graphRotation);
-   // scaleGraphToBase();
      camera->setViewMatrix(arucoMVM);
-
-    osg::Matrix invertedArucoMVM;
-     invertedArucoMVM.invert(invertedArucoMVM);
-
-     osg::Matrix graphRot = graphRotTransf->getMatrix();
-     graphRot.setRotate(invertedArucoMVM.getRotate());
-     graphRot = graphRot * rotationMatrix;
-
-     graphRotTransf->setMatrix(graphRot);
-     scaleGraphToBase();
+     updateBase(baseSize);
+     qDebug()<<baseSize;
 }
 
 void CoreGraph::recievedPMatrix(QMatrix4x4 projectionMatrix)
@@ -1537,7 +1527,7 @@ void CoreGraph::recievedPMatrix(QMatrix4x4 projectionMatrix)
 
 void CoreGraph::updateBase(float size)
 {
-    //baseTransform->setScale(osg::Vec3(size/2-0.05,size/2-0.05,0));
+    baseTransform->setScale(osg::Vec3(size,size,0));
 
 }
 
@@ -1554,33 +1544,48 @@ float CoreGraph::compare(float a, float b)
 
 void CoreGraph::scaleGraphToBase()
 {
-    //half size of marker
-    float size = appConf->getValue("Aruco.MarkerSize").toFloat()/2;
-
-    float maxPositionX = 0;
-    float maxPositionY = 0;
-    float maxPositionZ = 0;
+    osg::Vec3f maxPosition(0,0,0);
+    osg::Vec3f minPosition(1000,1000,1000);
 
     QMapIterator<qlonglong, osg::ref_ptr<Data::Node> > it( *in_nodes );
 
-    //get the farest node from center
+    //get maximum and minimum of each axis
     while ( it.hasNext() ) {
         it.next();
 
-        maxPositionX = compare(it.value()->getCurrentPosition().x(),maxPositionX);
-        maxPositionY = compare(it.value()->getCurrentPosition().y(),maxPositionY);
-        maxPositionZ = compare(it.value()->getCurrentPosition().z(),maxPositionZ);
+        if(it.value()->getCurrentPosition().x() > maxPosition.x())
+            maxPosition.x() = it.value()->getCurrentPosition().x();
+        if(it.value()->getCurrentPosition().x() < minPosition.x())
+            minPosition.x() = it.value()->getCurrentPosition().x();
+
+        if(it.value()->getCurrentPosition().y() > maxPosition.y())
+            maxPosition.y() = it.value()->getCurrentPosition().y();
+        if(it.value()->getCurrentPosition().y() < minPosition.y())
+            minPosition.y() = it.value()->getCurrentPosition().y();
+
+        // z minimum is to get graph over base
+        if(it.value()->getCurrentPosition().z() < minPosition.z())
+            minPosition.z() = it.value()->getCurrentPosition().z();
     }
 
-    //matrix to scale and translate graph
-    //using the farest node on axis and half of marker size
+    qDebug()<<maxPosition.x()<<maxPosition.y()<<maxPosition.z();
+    qDebug()<<minPosition.x()<<minPosition.y()<<minPosition.z();
 
-    osg::Matrixd positionMatrix(size/maxPositionX,0,0,0,
-                                0,size/maxPositionY,0,0,
-                                0,0,size/maxPositionZ,0,
-                                0,0,0,1);
+    // calculate translation to aruco marker center
+    // mid X and Y axis and minimal z axis value to get graph over base
+    osg::Vec3f centerGraph(
+                (maxPosition.x() - ((maxPosition.x() + (minPosition.x() * -1)) / 2)) * -1,
+                (maxPosition.y() - ((maxPosition.y() + (minPosition.y() * -1)) / 2)) * -1,
+                 minPosition.z() * -1);
 
-    graphRotTransf->setMatrix(graphRotTransf->getMatrix() * positionMatrix);
+    //translate to aruco center due graph size
+    osg::Matrixd positionMatrix = graphRotTransf->getMatrix();
+    positionMatrix.setTrans(centerGraph);
+    graphRotTransf->setMatrix(positionMatrix);
+
+    //scale aruco base
+    baseSize = getFurthestPosition(maxPosition,minPosition);
+
 }
 
 void CoreGraph::scaleGraph(int scale)
@@ -1602,56 +1607,7 @@ void CoreGraph::scaleGraph(int scale)
 }
 void CoreGraph::rotateGraph()
 {
-    IplImage* image = this->getCameraStream()->getIplImage();
-    osg::Image* i= new osg::Image();
 
-    i->setImage( image->width, image->height,
-              3, GL_RGB, GL_RGB,
-              GL_UNSIGNED_BYTE,
-              ( unsigned char* ) image->imageData,
-              osg::Image::NO_DELETE, 1 );
-    qDebug()<< "halo";
-
-    /*osg::Matrixd matrix = camera->getViewMatrix();
-    qDebug()<<"before";
-    outputMatrix(matrix);
-    matrix.invert(camera->getViewMatrix());
-    qDebug()<<"invert";
-    outputMatrix(matrix);*/
-
-    //rotationMatrix = rotationMatrix * rotationMatrix.rotate(0.1,osg::Vec3f(0,1,0));
-    /*osg::Matrix matrix = graphRotTransf->getMatrix();
-   // matrix.setTrans(matrix.inverse(camera->getViewMatrix()).getTrans());
-    matrix.setRotate(matrix.inverse(camera->getViewMatrix()).getRotate());
-    matrix = matrix * rotationMatrix;
-    //matrix.setRotate(camera->getViewMatrix().getRotate());
-    //matrix.setTrans(camera->getViewMatrix().getTrans());
-    /*osg::Matrixd scaleMatrix = graphRotTransf->getMatrix();
-    float translateBack = scaleMatrix.operator ()(3,2);
-
-    scaleMatrix.setTrans(0,0,0);
-    scaleMatrix = scaleMatrix * scaleMatrix.rotate(0.1,osg::Vec3f(0,1,0));
-    scaleMatrix.setTrans(0,0,translateBack);
-    graphRotTransf->setMatrix( scaleMatrix );*/
-    //rotationMatrix = rotationMatrix * rotationMatrix.rotate(0.1,osg::Vec3f(0,1,0));
-
-   /* rotationMatrix = rotationMatrix * rotationMatrix.rotate(0.1,osg::Vec3f(0,1,0));
-    osg::Matrixd matrix = matrix.inverse(camera->getViewMatrix()) * rotationMatrix;
-    qDebug() << "BEFORE";
-    outputMatrix(matrix);
-
-    matrix = matrix.inverse(matrix);
-    qDebug() << "AFTER";
-    outputMatrix(matrix);
-
-
-    //osg::Matrixd matrix;
-  //  matrix.setRotate(osg::Quat(5.2,osg::Vec3f(0,1,0)));
-
-
-   graphRotTransf->setMatrix( matrix );
-   scaleGraphToBase();
-   // rotationMatrix = rotationMatrix * rotationMatrix.rotate(0.1,osg::Vec3f(0,1,0));*/
 }
 
 void CoreGraph::outputMatrix(osg::Matrixd matrix)
@@ -1685,5 +1641,82 @@ void CoreGraph::ratata(double initialX,double actualX,double initialY, double ac
     }
 }
 
+void CoreGraph::scaleNodes(bool scaleUp)
+{
+    QMapIterator<qlonglong, osg::ref_ptr<Data::Node> > it( *in_nodes );
+
+    while ( it.hasNext() ) {
+        it.next();
+
+         float actualScale = it.value()->getScale();
+
+         if(scaleUp){
+             it.value()->setScale(actualScale * 1.2);
+         }
+         else{
+             it.value()->setScale(actualScale * 0.8);
+         }
+         it.value()->reloadConfig();
+         //reload(graph);
+    }
+}
+
+float CoreGraph::getFurthestPosition(osg::Vec3f max,osg::Vec3f min)
+{
+    float x;
+    float y;
+
+    if(max.x() > (min.x() * -1))
+        x = max.x();
+    else
+        x = min.x() * -1;
+
+    if(max.y() > (min.y() * -1))
+        y = max.y();
+    else
+        y = min.y() * -1;
+
+    if(x > y)
+        return x;
+    else
+        return y;
+}
+
+/*
+    IplImage* image = this->getCameraStream()->getIplImage();
+    osg::Image* i= new osg::Image();
+
+    i->setImage( image->width, image->height,
+              3, GL_RGB, GL_RGB,
+              GL_UNSIGNED_BYTE,
+              ( unsigned char* ) image->imageData,
+              osg::Image::NO_DELETE, 1 );
+
+    osg::Texture2D* texture = new osg::Texture2D;
+
+      // protect from being optimized away as static state:
+      texture->setDataVariance(osg::Object::DYNAMIC);
+
+      // load an image by reading a file:
+      osg::Image* klnFace = osgDB::readImageFile("../share/3dsoftviz/img/textures/author.png");
+      if (!klnFace)
+      {
+         std::cout << " couldn't find texture, quiting." << std::endl;
+
+      }
+
+      // Assign the texture to the image we read from file:
+      texture->setImage(i);
+
+      // Create a new StateSet with default settings:
+      osg::StateSet* stateOne = new osg::StateSet();
+
+      // Assign texture unit 0 of our new StateSet to the texture
+      // we just created and enable the texture.
+      stateOne->setTextureAttributeAndModes
+         (0,texture,osg::StateAttribute::ON);
+      // Associate this state set with the Geode that contains
+      // the pyramid:
+      baseGeode->setStateSet(stateOne);*/
 //*****
 }

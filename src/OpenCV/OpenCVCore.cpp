@@ -129,14 +129,6 @@ void  OpenCV::OpenCVCore::createPermanentConnection()
                       AppCore::Core::getInstance( mApp )->getCoreGraph(),
                       SLOT( recievedMVMatrix( QMatrix4x4 ) ));
 
-    //sending marker size
-    QObject::connect( mThrAruco,
-                      SIGNAL( sendMarkerSize(float) ),
-                      AppCore::Core::getInstance( mApp )->getCoreGraph(),
-                      SLOT( updateBase(float) ));
-    //*****
-
-
 	// updating background image
 	QObject::connect( mThrFaceRec,
 					  SIGNAL( pushBackgrImage( cv::Mat ) ),
@@ -330,6 +322,10 @@ void OpenCV::OpenCVCore::createConnectionAruco()
 					  SIGNAL( stopMultiMarker( bool ) ),
 					  mThrAruco,
 					  SLOT( setCancel( bool ) ) );
+    QObject::connect( mOpencvWindow,
+                      SIGNAL( startMarker() ),
+                      AppCore::Core::getInstance( mApp )->getCoreWindow(),
+                      SLOT( swapManipulator()) );
 
 
 	// other seting
