@@ -1579,11 +1579,6 @@ private:
 	);
 
 	void onChange();
-
-public:
-#ifdef Q_OS_LINUX
-   bool x11Event(XEvent * event);
-#endif
 };
 }
 

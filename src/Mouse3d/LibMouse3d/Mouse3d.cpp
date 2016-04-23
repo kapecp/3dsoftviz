@@ -1,12 +1,5 @@
 #include "Mouse3d/LibMouse3d/Mouse3d.h"
 
-#include <QDebug>
-
-#include "QOSG/CoreWindow.h"
-
-#include "Application/Application.h"
-#include <QApplication>
-
 namespace LibMouse3d{
 
     Mouse3dDevice::Mouse3dDevice( QOSG::CoreWindow *window ) :
@@ -18,7 +11,7 @@ namespace LibMouse3d{
 
 #elif defined(Q_OS_LINUX)
 
-        Mouse3DLinux();
+		x11Mouse3DInit();
 
 #elif defined(Q_OS_MAC)
 #endif
@@ -35,15 +28,22 @@ namespace LibMouse3d{
 
 		The default implementation emits a Move3d signal with the motion data
 	*/
-	void Mouse3dDevice::SendSignal(std::vector<float>& motionData) {
-        //emit Mouse3dDevice::Move3d(motionData);
+	void Mouse3dDevice::x11TranslateEvent( XEvent &event ) {
+		qDebug() << "Mouse3dDevice::Mouse3DLinux: event.type = " << event.type;
     }
+
+	void Mouse3dDevice::x11Mouse3DInit(){
+		QCoreApplication *inst = App::Application::instance();
+		App::Application *app = qobject_cast<App::Application*>(inst);
+
+		app->x11InitConnection( this );
+	}
 
     void Mouse3dDevice::Mouse3DLinux() {
         Display *display;
         Window xwindow = window->winId();
         std::vector<float> motionData;
-        XEvent event;
+		XEvent event;
         MagellanFloatEvent MagellanEvent;
         bool MagellanLoop = true;
         float normAxis;
@@ -52,7 +52,7 @@ namespace LibMouse3d{
 
         display = QX11Info::display();
 
-        QCoreApplication *inst = App::Application::instance();
+		QCoreApplication *inst = App::Application::instance();
         App::Application *app = qobject_cast<App::Application*>(inst);
 
         /************************* Create 3D Event Types ***************************/
@@ -66,21 +66,20 @@ namespace LibMouse3d{
 		qDebug() << "Mouse3dDevice::Mouse3DLinux: winId() = " << xwindow << endl;
 
         /************************* Main Loop ***************************************/
-        //XSelectInput( display, xwindow, KeyPressMask | KeyReleaseMask );
-        //XSelectInput(QX11Info::display(), DefaultRootWindow(QX11Info::display()), SubstructureNotifyMask);
+		//XSelectInput( display, xwindow, KeyPressMask | KeyReleaseMask );
+		//XSelectInput(QX11Info::display(), DefaultRootWindow(QX11Info::display()), SubstructureNotifyMask);
 
         while( MagellanLoop ) {
-            //if(XCheckWindowEvent(display, xwindow, KeyPressMask | KeyReleaseMask,  &event ))
-            //if( window->x11Event( &event ) ) continue;
-            app->getX11Event( event );
-            //XNextEvent( display, &event );
-            //if (XCheckMaskEvent(display, KeyPressMask | KeyReleaseMask, &event))
-                if (lastEventType != event.type) {
-                    qDebug() << "Mouse3dDevice::Mouse3DLinux: event.type = " << event.type;
-                    lastEventType = event.type;
-                }
-                if ( event.type == ClientMessage ) {
-                    if ( MagellanTranslateEvent( display, &event, &MagellanEvent, 1.0, 1.0 ) == MagellanInputMotionEvent) {
+			//if(XCheckWindowEvent(display, xwindow, KeyPressMask | KeyReleaseMask,  &event ))
+			//if( window->x11Event( &event ) ) continue;
+			//XNextEvent( display, &event );
+			//if (XCheckMaskEvent(display, KeyPressMask | KeyReleaseMask, &event))
+				if (lastEventType != event.type) {
+					qDebug() << "Mouse3dDevice::Mouse3DLinux: event.type = " << event.type;
+					lastEventType = event.type;
+				}
+				if ( event.type == ClientMessage ) {
+					if ( MagellanTranslateEvent( display, &event, &MagellanEvent, 1.0, 1.0 ) == MagellanInputMotionEvent) {
                         MagellanRemoveMotionEvents( display );
 
                         motionData.clear();
