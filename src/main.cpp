@@ -50,7 +50,7 @@ int main( int argc, char* argv[] )
     QCoreApplication::setAttribute(Qt::AA_X11InitThreads);
 #endif
 
-	App::Application app( argc, argv );
+    App::Application app( argc, argv );
 	new Util::Cleaner( &app );
 	AppCore::Core::getInstance( &app );
 	Manager::GraphManager::getInstance();

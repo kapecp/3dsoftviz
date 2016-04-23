@@ -5,8 +5,7 @@ namespace App {
 Application::Application(int &argc, char **argv) : QApplication( argc, argv ) {
 #if defined(Q_OS_LINUX)
     //XInitThreads();
-    evntDisp = QAbstractEventDispatcher::instance();
-    evntDisp->setEventFilter((QAbstractEventDispatcher::EventFilter)customEventFilter);
+    //XSelectInput(QX11Info::display(), DefaultRootWindow(QX11Info::display()), SubstructureNotifyMask);
 #endif
 }
 
@@ -15,21 +14,15 @@ Application::~Application() {
 
 #ifdef Q_OS_LINUX
 
-bool Application::customEventFilter(void *message) {
-    XEvent *event;
-    event = (XEvent *) message;
-    return false;
-}
-
 bool Application::x11EventFilter(XEvent *event) {
-    //QApplication::x11EventFilter( event );
-    this->event = event;
+    this->event = *event;
+    //qDebug() << "Event Type = " << this->event->type;
     return false;
 }
 
-bool Application::getMyEvent(XEvent *event){
+void Application::getX11Event(XEvent &event){
+    //qDebug() << "Event Type = " << this->event->type;
     event = this->event;
-    return false;
 }
 
 #endif

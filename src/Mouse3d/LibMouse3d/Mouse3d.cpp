@@ -52,7 +52,7 @@ namespace LibMouse3d{
 
         display = QX11Info::display();
 
-        QCoreApplication *inst = QApplication::instance();
+        QCoreApplication *inst = App::Application::instance();
         App::Application *app = qobject_cast<App::Application*>(inst);
 
         /************************* Create 3D Event Types ***************************/
@@ -72,11 +72,11 @@ namespace LibMouse3d{
         while( MagellanLoop ) {
             //if(XCheckWindowEvent(display, xwindow, KeyPressMask | KeyReleaseMask,  &event ))
             //if( window->x11Event( &event ) ) continue;
-            if ( app->getMyEvent( &event ) )  continue;
+            app->getX11Event( event );
             //XNextEvent( display, &event );
             //if (XCheckMaskEvent(display, KeyPressMask | KeyReleaseMask, &event))
                 if (lastEventType != event.type) {
-                    qDebug() << "EventType = " << event.type << endl;
+                    qDebug() << "Mouse3dDevice::Mouse3DLinux: event.type = " << event.type;
                     lastEventType = event.type;
                 }
                 if ( event.type == ClientMessage ) {
