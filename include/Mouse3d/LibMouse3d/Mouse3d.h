@@ -24,7 +24,7 @@
 
 	#undef Unsorted
 	#undef None
-	#undef Bool
+	//#undef Bool
 	#undef KeyPress
 	#undef KeyRelease
 	#undef Above

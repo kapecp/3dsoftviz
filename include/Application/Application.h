@@ -18,7 +18,7 @@
 
 	#undef Unsorted
 	#undef None
-	#undef Bool
+	//#undef Bool
 	#undef KeyPress
 	#undef KeyRelease
 	#undef Above
@@ -55,7 +55,7 @@ public:
 signals:
    void x11PassEvent( XEvent &event );
 
-   void testPass( int i );
+   void testPass();
 
 private:
    bool x11Connected;

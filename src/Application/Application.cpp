@@ -19,8 +19,9 @@ bool Application::x11EventFilter(XEvent *event) {
 	//qDebug() << "Event Type = " << this->event->type;
 	if ( this->x11Connected && event->type == ClientMessage ){
 		XEvent xev = *event;
-		emit x11PassEvent( xev );
-		//emit testPass( 5 );
+		// uncomment below to get error
+		//emit x11PassEvent( xev );
+		//emit testPass();
 	}
     return false;
 }
