@@ -685,14 +685,21 @@ Vwr::CoreGraph::CoreGraph( Data::Graph* graph, osg::ref_ptr<osg::Camera> camera 
         unitSphereGeode1->addDrawable(unitSphereDrawable1);
        // graphRotTransf->addChild(unitSphereGeode1);
 
-    //node for base
+    //node and transform for bas
     baseGeode = new osg::Geode();
-    baseTransform = new osg::PositionAttitudeTransform();
+    baseTransform = new osg::MatrixTransform();
+    //node and transform for axes
+    axesGeode = new osg::Geode();
+    axesTransform = new osg::MatrixTransform();
 
     graphRotTransf->addChild( graphGroup );
     shadowedScene->addChild( graphRotTransf );
 
-    CoreGraph::createBase();
+    createBase();
+    drawAxes();
+    if(!arucoRunning)
+        updateBase(2000);
+
     //******
 
 	// backgroung this must be last Node in root !!!  ( because of ortho2d background)
@@ -1451,12 +1458,21 @@ void CoreGraph::turnOffBase()
     baseGeode->setNodeMask(0x0);
 }
 
+void CoreGraph::turnAxes(bool turnOn)
+{
+    if(turnOn)
+        axesGeode->setNodeMask(0x1);
+    else
+        axesGeode->setNodeMask(0x0);
+}
+
 void CoreGraph::createBase()
 {
 
     osg::Geometry* baseGeometry = new osg::Geometry();
 
     baseGeode->addDrawable(baseGeometry);
+    //invisible untill checkbox clicked
     baseGeode->setNodeMask(0x0);
     osg::Material *material = new osg::Material();
     material->setDiffuse(osg::Material::FRONT,  osg::Vec4(1, 1, 1, 0.2));
@@ -1503,6 +1519,7 @@ void CoreGraph::createBase()
     * baseGeometry->setTexCoordArray(0,texcoords);*/
 }
 
+//set aruco modelView matrix
 void CoreGraph::recievedMVMatrix(QMatrix4x4 modelViewMatrix)
 {
     osg::Matrixd arucoMVM(  modelViewMatrix.operator()(0,0),modelViewMatrix.operator()(0,1),modelViewMatrix.operator()(0,2),modelViewMatrix.operator()(0,3),
@@ -1510,11 +1527,13 @@ void CoreGraph::recievedMVMatrix(QMatrix4x4 modelViewMatrix)
                             modelViewMatrix.operator()(2,0),modelViewMatrix.operator()(2,1),modelViewMatrix.operator()(2,2),modelViewMatrix.operator()(2,3),
                             modelViewMatrix.operator()(3,0),modelViewMatrix.operator()(3,1),modelViewMatrix.operator()(3,2),modelViewMatrix.operator()(3,3));
 
-     camera->setViewMatrix(arucoMVM);
-     updateBase(baseSize);
-     qDebug()<<baseSize;
+    camera->setViewMatrix(arucoMVM);
+    //update base size
+    baseTransform->setMatrix(osg::Matrixd::identity());
+    updateBase(baseSize);
 }
 
+//set aruco projection matrix
 void CoreGraph::recievedPMatrix(QMatrix4x4 projectionMatrix)
 {
     osg::Matrixd arucoPM(   projectionMatrix.operator()(0,0),projectionMatrix.operator()(0,1),projectionMatrix.operator()(0,2),projectionMatrix.operator()(0,3),
@@ -1525,66 +1544,85 @@ void CoreGraph::recievedPMatrix(QMatrix4x4 projectionMatrix)
     camera->setProjectionMatrix(arucoPM);
 }
 
+//scale base to comfort graph size
 void CoreGraph::updateBase(float size)
 {
-    baseTransform->setScale(osg::Vec3(size,size,0));
+    osg::Matrixd originalMatrix = baseTransform->getMatrix();
+    osg::Matrixd scaleMatrix(size,0,0,0,
+                             0,size,0,0,
+                             0,0,1,0,
+                             0,0,0,1);
+
+    baseTransform->setMatrix(originalMatrix * scaleMatrix);
 
 }
 
-float CoreGraph::compare(float a, float b)
-{
-    if(a < 0.0)
-        a = a * -1.0;
-
-    if(a > b)
-        return a;
-    else
-        return b;
-}
-
+//finds out graph size, position it over marker center and scale base
 void CoreGraph::scaleGraphToBase()
 {
-    osg::Vec3f maxPosition(0,0,0);
-    osg::Vec3f minPosition(1000,1000,1000);
 
-    QMapIterator<qlonglong, osg::ref_ptr<Data::Node> > it( *in_nodes );
+    //if aruco mode, we need to scale graph
+    //otherwise we need just to position base
+    if(arucoRunning){
+        osg::Vec3f maxPosition(0,0,0);
+        osg::Vec3f minPosition(1000,1000,1000);
 
-    //get maximum and minimum of each axis
-    while ( it.hasNext() ) {
-        it.next();
+        QMapIterator<qlonglong, osg::ref_ptr<Data::Node> > it( *in_nodes );
 
-        if(it.value()->getCurrentPosition().x() > maxPosition.x())
-            maxPosition.x() = it.value()->getCurrentPosition().x();
-        if(it.value()->getCurrentPosition().x() < minPosition.x())
-            minPosition.x() = it.value()->getCurrentPosition().x();
+        //get maximum and minimum of each axis
+        while ( it.hasNext() ) {
+            it.next();
 
-        if(it.value()->getCurrentPosition().y() > maxPosition.y())
-            maxPosition.y() = it.value()->getCurrentPosition().y();
-        if(it.value()->getCurrentPosition().y() < minPosition.y())
-            minPosition.y() = it.value()->getCurrentPosition().y();
+            if(it.value()->getCurrentPosition().x() > maxPosition.x())
+                maxPosition.x() = it.value()->getCurrentPosition().x();
+            if(it.value()->getCurrentPosition().x() < minPosition.x())
+                minPosition.x() = it.value()->getCurrentPosition().x();
 
-        // z minimum is to get graph over base
-        if(it.value()->getCurrentPosition().z() < minPosition.z())
-            minPosition.z() = it.value()->getCurrentPosition().z();
+            if(it.value()->getCurrentPosition().y() > maxPosition.y())
+                maxPosition.y() = it.value()->getCurrentPosition().y();
+            if(it.value()->getCurrentPosition().y() < minPosition.y())
+                minPosition.y() = it.value()->getCurrentPosition().y();
+
+            // z minimum is to get graph over base
+            if(it.value()->getCurrentPosition().z() < minPosition.z())
+                minPosition.z() = it.value()->getCurrentPosition().z();
+        }
+
+        // calculate translation to aruco marker center
+        // mid X and Y axis and minimal z axis value to get graph over base
+        osg::Vec3f centerGraph(
+                    (maxPosition.x() - ((maxPosition.x() + (minPosition.x() * -1)) / 2)) * -1,
+                    (maxPosition.y() - ((maxPosition.y() + (minPosition.y() * -1)) / 2)) * -1,
+                     (minPosition.z() * -1) + 50);
+
+        //translate to aruco center graph
+        osg::Matrixd positionMatrix = graphRotTransf->getMatrix();
+        positionMatrix.setTrans(centerGraph);
+        graphRotTransf->setMatrix(positionMatrix);
+
+        //scale aruco base
+        baseSize = getFurthestPosition(maxPosition,minPosition);
     }
+    else{
+        osg::Vec3f minPosition(1000,1000,1000);
 
-    qDebug()<<maxPosition.x()<<maxPosition.y()<<maxPosition.z();
-    qDebug()<<minPosition.x()<<minPosition.y()<<minPosition.z();
+        QMapIterator<qlonglong, osg::ref_ptr<Data::Node> > it( *in_nodes );
 
-    // calculate translation to aruco marker center
-    // mid X and Y axis and minimal z axis value to get graph over base
-    osg::Vec3f centerGraph(
-                (maxPosition.x() - ((maxPosition.x() + (minPosition.x() * -1)) / 2)) * -1,
-                (maxPosition.y() - ((maxPosition.y() + (minPosition.y() * -1)) / 2)) * -1,
-                 minPosition.z() * -1);
+        //get maximum and minimum of each axis
+        while ( it.hasNext() ) {
+            it.next();
+            // z minimum is to get graph over base
+            if(it.value()->getCurrentPosition().z() < minPosition.z())
+                minPosition.z() = it.value()->getCurrentPosition().z();
+        }
 
-    //translate to aruco center due graph size
-    osg::Matrixd positionMatrix = graphRotTransf->getMatrix();
-    positionMatrix.setTrans(centerGraph);
-    graphRotTransf->setMatrix(positionMatrix);
+        osg::Vec3f moveBase(0,0,minPosition.z() - 50);
 
-    //scale aruco base
-    baseSize = getFurthestPosition(maxPosition,minPosition);
+        //translate to aruco center graph
+        osg::Matrixd moveBaseMatrix = baseTransform->getMatrix();
+        moveBaseMatrix.setTrans(moveBase);
+        baseTransform->setMatrix(moveBaseMatrix);
+    }
 
 }
 
@@ -1605,8 +1643,28 @@ void CoreGraph::scaleGraph(int scale)
         }
     }
 }
-void CoreGraph::rotateGraph()
+
+//rotate aruco graph (NOT CAMERA) by Z axis (occasionaly Y)
+void CoreGraph::rotateGraph(int direction)
 {
+    osg::Matrixd transfGraph = graphRotTransf->getMatrix();
+    switch(direction){
+    case 1:
+        rotationMatrix = rotationMatrix.rotate(0.025,0,0,1);
+        break;
+    case -1:
+        rotationMatrix = rotationMatrix.rotate(-0.025,0,0,1);
+        break;
+    case 2:
+        rotationMatrix = rotationMatrix.rotate(0.025,0,1,0);
+        break;
+    case -2:
+        rotationMatrix = rotationMatrix.rotate(-0.025,0,1,0);
+        break;
+    }
+
+    outputMatrix(rotationMatrix);
+    graphRotTransf->setMatrix(transfGraph * rotationMatrix);
 
 }
 
@@ -1620,11 +1678,6 @@ void CoreGraph::outputMatrix(osg::Matrixd matrix)
 
 void CoreGraph::ratata(double initialX,double actualX,double initialY, double actualY)
 {
-    qDebug()<<"x: "<<initialX;
-    qDebug()<<"x1: "<<actualX;
-    qDebug()<<"y: "<<initialY;
-    qDebug()<<"y1: "<<actualX;
-
     if( actualX > initialX +5){
         rotationMatrix = rotationMatrix * rotationMatrix.rotate(0.05,osg::Vec3f(0,0,1));
     }
@@ -1641,6 +1694,7 @@ void CoreGraph::ratata(double initialX,double actualX,double initialY, double ac
     }
 }
 
+//scale nodeGroup nodes
 void CoreGraph::scaleNodes(bool scaleUp)
 {
     QMapIterator<qlonglong, osg::ref_ptr<Data::Node> > it( *in_nodes );
@@ -1659,8 +1713,10 @@ void CoreGraph::scaleNodes(bool scaleUp)
          it.value()->reloadConfig();
          //reload(graph);
     }
+    qDebug()<<arucoRunning;
 }
 
+//get furthest position in graph
 float CoreGraph::getFurthestPosition(osg::Vec3f max,osg::Vec3f min)
 {
     float x;
@@ -1680,6 +1736,65 @@ float CoreGraph::getFurthestPosition(osg::Vec3f max,osg::Vec3f min)
         return x;
     else
         return y;
+}
+
+void CoreGraph::setArucoRunning(bool isRunning){
+    this->arucoRunning = isRunning;
+}
+
+void CoreGraph::drawAxes(){
+
+    osg::Geometry* axesGeometry = new osg::Geometry();
+    axesGeode->addDrawable(axesGeometry);
+    axesGeode->setNodeMask(0x0);
+
+    osg::StateSet* stateset = new osg::StateSet;
+    osg::LineWidth* linewidth = new osg::LineWidth();
+    linewidth->setWidth(3.0f);
+    stateset->setAttributeAndModes(linewidth,osg::StateAttribute::ON);
+    stateset->setMode(GL_LIGHTING,osg::StateAttribute::OFF);
+    axesGeometry->setStateSet(stateset);
+
+    axesTransform->addChild(axesGeode);
+    root->addChild(axesTransform);
+
+   //base
+   osg::Vec3Array* vertices = new osg::Vec3Array;
+   vertices->push_back( osg::Vec3( 0, 0, 0) ); // base
+   vertices->push_back( osg::Vec3( 250, 0, 0) ); // x
+   vertices->push_back( osg::Vec3( 0, 0, 0) ); // base
+   vertices->push_back( osg::Vec3( 0, 250, 0) ); // y
+   vertices->push_back( osg::Vec3( 0, 0, 0) ); // base
+   vertices->push_back( osg::Vec3( 0, 0, 250) ); // z
+   axesGeometry->setVertexArray( vertices );
+
+   osg::Vec4Array* colors = new osg::Vec4Array;
+   colors->push_back(osg::Vec4(1.0f, 0.0f, 0.0f, 1.0f) ); //index 0 red
+   colors->push_back(osg::Vec4(1.0f, 0.0f, 0.0f, 1.0f) ); //index 0 red
+   colors->push_back(osg::Vec4(0.0f, 1.0f, 0.0f, 1.0f) ); //index 1 green
+   colors->push_back(osg::Vec4(0.0f, 1.0f, 0.0f, 1.0f) ); //index 0 red
+   colors->push_back(osg::Vec4(0.0f, 0.0f, 1.0f, 1.0f) ); //index 2 blue
+   colors->push_back(osg::Vec4(0.0f, 0.0f, 1.0f, 1.0f) ); //index 3 white
+   axesGeometry->setColorArray(colors);
+   axesGeometry->setColorBinding(osg::Geometry::BIND_PER_VERTEX);
+
+   osg::DrawElementsUInt* axisX = new osg::DrawElementsUInt(osg::PrimitiveSet::LINES, 0);
+   axisX->push_back(0);
+   axisX->push_back(1);
+
+   osg::DrawElementsUInt* axisY = new osg::DrawElementsUInt(osg::PrimitiveSet::LINES,0);
+   axisY->push_back(2);
+   axisY->push_back(3);
+
+   osg::DrawElementsUInt* axisZ = new osg::DrawElementsUInt(osg::PrimitiveSet::LINES, 0);
+   axisZ->push_back(4);
+   axisZ->push_back(5);
+
+
+   axesGeometry->addPrimitiveSet(axisX);
+   axesGeometry->addPrimitiveSet(axisY);
+   axesGeometry->addPrimitiveSet(axisZ);
+
 }
 
 /*

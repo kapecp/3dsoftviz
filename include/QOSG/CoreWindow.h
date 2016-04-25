@@ -632,6 +632,7 @@ void loadExampleGraphLua();
     void lightClicked();
     void shadowClicked();
     void baseClicked();
+    void axesClicked();
     void scaleArucoGraphToBase();
     void scaleArucoGraphUp();
     void scaleArucoGraphDown();
@@ -1378,6 +1379,8 @@ private:
      *@brief chb_base
      */
     QCheckBox* chb_base;
+
+    QCheckBox* chb_axes;
 
     /**
      *CheckBox for showing base

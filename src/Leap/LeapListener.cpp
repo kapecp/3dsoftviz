@@ -41,7 +41,37 @@ void Leap::LeapListener::onFrame( const Controller& controller )
 	for ( int i=0; i<frame.hands().count(); i++ ) {
 		if ( hands[i].isRight() ) {
 			direction = Leap::DirectionDetector::getPalmDirection( hands[i] );
-			leapActions.changeViewAngle( direction );
+        //	leapActions.changeViewAngle( direction );
+
+
+            GestureList gestures = frame.gestures();
+
+            for(int g=0; g<gestures.count();g++){
+
+                if(gestures[g].type() == Gesture::TYPE_SWIPE){
+                    Leap::SwipeGesture swipeGesture = gestures[g];
+                    Leap::Vector swipeDirection = swipeGesture.direction();
+
+                    if(swipeDirection.x > 0){
+                        leapActions.graphRotateSwipe(1);
+                    }
+                    else{
+                        leapActions.graphRotateSwipe(-1);
+                    }
+                }
+                else if(gestures[g].type() == Gesture::TYPE_CIRCLE){
+                    Leap::CircleGesture circle = gestures[g];
+
+                    if (circle.pointable().direction().angleTo(circle.normal()) <= Leap::PI/2) {
+                        leapActions.scaleGraph(true);
+                    }
+                    else
+                    {
+                        leapActions.scaleGraph(false);
+                    }
+                }
+            }
+
 		}
 		else {
 			handExtended = Leap::FingerPositionDetector::isHandExtended( hands[i] );
@@ -52,7 +82,8 @@ void Leap::LeapListener::onFrame( const Controller& controller )
 				leapActions.stopMovingForward();
 			}
 		}
-	}
+	} 
+
 
 	//std::cout << "id: " << frame.id();
 	/*

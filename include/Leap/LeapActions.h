@@ -69,6 +69,12 @@ public:
 	 * @brief isCameraMoving is variable to decide whether to move camera or rotate graph
 	 */
 	bool isCameraMoving;
+
+    //jurik
+    void graphRotateSwipe(int direction);
+    void scaleGraph(bool scaleUp);
+    //*****
+
 private:
 	/**
 	 * @brief Controls mouse actions

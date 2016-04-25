@@ -138,9 +138,9 @@ void Leap::LeapActions::changeViewAngle( Leap::DirectionDetector::Direction dire
 {
 
 	switch ( direction ) {
-		case Leap::DirectionDetector::Direction::LEFT :
+		case Leap::DirectionDetector::Direction::LEFT :       
 			cmrManipulator->rotateCamera( 0, 0, 1, 0, -0.01f );
-			break;
+            break;
 		case Leap::DirectionDetector::Direction::RIGHT :
 			cmrManipulator->rotateCamera( 0, 0, 1, 0, 0.01f );
 			break;
@@ -166,3 +166,43 @@ void Leap::LeapActions::stopMovingForward()
 {
 	cmrManipulator->disableCameraMovement();
 }
+
+//jurik
+void Leap::LeapActions::graphRotateSwipe(int direction){
+    //direction -1 = LEFT, 1 = RIGHT
+    switch(direction){
+    case -1:
+    {
+        AppCore::Core::getInstance( NULL )->getCoreGraph()->rotateGraph(direction);
+    }
+    case 1:
+    {
+        AppCore::Core::getInstance( NULL )->getCoreGraph()->rotateGraph(direction);
+    }
+}
+}
+
+void Leap::LeapActions::scaleGraph(bool scaleUp){
+    Layout::LayoutThread* layout = AppCore::Core::getInstance()->getLayoutThread();
+    Vwr::CoreGraph* coreGraph = AppCore::Core::getInstance( NULL )->getCoreGraph();
+    float distance = layout->getAlg()->getMaxDistance();
+
+    if(scaleUp){
+        layout->pause();
+        coreGraph->setNodesFreezed( true );
+        layout->getAlg()->setMaxDistance(distance + 2);
+        coreGraph->scaleGraphToBase();
+        coreGraph->setNodesFreezed( false );
+        layout->play();
+    }
+    else{
+        layout->pause();
+        coreGraph->setNodesFreezed( true );
+        layout->getAlg()->setMaxDistance(distance - 2 );
+        coreGraph->scaleGraphToBase();
+        coreGraph->setNodesFreezed( false );
+        layout->play();
+    }
+}
+
+//*****

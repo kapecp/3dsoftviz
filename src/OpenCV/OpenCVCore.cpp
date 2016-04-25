@@ -326,7 +326,10 @@ void OpenCV::OpenCVCore::createConnectionAruco()
                       SIGNAL( startMarker() ),
                       AppCore::Core::getInstance( mApp )->getCoreWindow(),
                       SLOT( swapManipulator()) );
-
+    QObject::connect( mOpencvWindow,
+                      SIGNAL( arucoRunning(bool) ),
+                      AppCore::Core::getInstance( mApp )->getCoreGraph(),
+                      SLOT( setArucoRunning(bool)) );
 
 	// other seting
 	QObject::connect( mOpencvWindow->getMarkerBehindCB(),

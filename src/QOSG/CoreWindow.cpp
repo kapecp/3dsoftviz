@@ -1193,6 +1193,12 @@ QWidget* CoreWindow::createMoreFeaturesTab( QFrame* line )
     lMore->addRow( chb_base );
     connect( chb_base, SIGNAL( clicked() ), this, SLOT( baseClicked() ) );
 
+    chb_axes = new QCheckBox( "&Axes" );
+    chb_axes->setChecked( false );
+    lMore->addRow( chb_axes );
+    connect( chb_axes, SIGNAL( clicked() ), this, SLOT( axesClicked() ) );
+
+
     line = createLine();
     lMore->addRow( line );
 
@@ -4389,7 +4395,11 @@ void CoreWindow::baseClicked()
     // chb_base is checked
     if ( chb_base->isChecked() ) {
 
+        this->layout->pause();
         this->coreGraph->turnOnBase();
+        this->coreGraph->scaleGraphToBase();
+        this->layout->play();
+
      }
     else {
 
@@ -4397,9 +4407,24 @@ void CoreWindow::baseClicked()
     }
 }
 
+void CoreWindow::axesClicked()
+{
+    // chb_axes is checked
+    if ( chb_axes->isChecked() ) {
+
+        this->coreGraph->turnAxes(true);
+     }
+    else {
+
+        this->coreGraph->turnAxes(false);
+    }
+}
+
 void CoreWindow::scaleArucoGraphToBase()
 {
+    this->layout->pause();
     this->coreGraph->scaleGraphToBase();
+    this->layout->play();
 }
 
 void CoreWindow::scaleArucoGraphUp()
@@ -4414,7 +4439,7 @@ void CoreWindow::scaleArucoGraphDown()
 
 void CoreWindow::rotateArucoGraph()
 {
-    this->coreGraph->rotateGraph();
+    this->coreGraph->rotateGraph(1);
 }
 
 //works only frmo softVis to ArUco
