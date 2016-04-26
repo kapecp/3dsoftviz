@@ -92,7 +92,7 @@ osg::StateSet* createProjectorState(osg::Texture2D* texture, osg::Vec3 projector
     osg::Matrix mat;
     osg::Vec3 up(0.0f, 0.0f, 1.0f);
     mat = osg::Matrixd::lookAt(projectorPos, projectorPos + projectorDirection, up)
-        * osg::Matrixd::perspective(projectorFOV, 1.0, 0.1, 100);
+        * osg::Matrixd::perspective(projectorFOV, 1.0, 0.1, 100/*SCENE_MAX_SIZE*/);
     texMat->setMatrix(mat);
     stateset->setTextureAttributeAndModes(1, texMat, osg::StateAttribute::ON);
 
@@ -138,7 +138,7 @@ osg::Geode* createBase()
 }
 
 
-osg::Group* QOSG::ProjectiveARViewer::createProjectorScene(osg::Node* model) {
+osg::Group* QOSG::ProjectiveARViewer::createProjectorScene() {
 
     unsigned int tex_width = 2048;
     unsigned int tex_height = 2048;
@@ -147,6 +147,8 @@ osg::Group* QOSG::ProjectiveARViewer::createProjectorScene(osg::Node* model) {
 
     osg::Camera::RenderTargetImplementation renderImplementation = osg::Camera::FRAME_BUFFER_OBJECT;
 
+    // load model to view
+    osg::Node* model = viewerPerspective->getSceneData();
     if(!model)
         model = osgDB::readNodeFile("cessna.osgt");
 
@@ -163,14 +165,17 @@ osg::Group* QOSG::ProjectiveARViewer::createProjectorScene(osg::Node* model) {
     texture->setFilter(osg::Texture2D::MAG_FILTER, osg::Texture2D::LINEAR);
 
 
+    // create the camera node to do the render to texture
     if (!renderCamera)
         renderCamera = new osg::Camera;
-    // then create the camera node to do the render to texture
-    {
-        // set up the background color and clear mask.
-        renderCamera->setClearColor(osg::Vec4(0.0f, 0.0f, 0.0f, 1.0f));
-        renderCamera->setClearMask(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+    // set up the background color and clear mask.
+    renderCamera->setClearColor(osg::Vec4(0.0f, 0.0f, 0.0f, 1.0f));
+    renderCamera->setClearMask(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    // if viewerPerspective has no camera, use default view and perspective matrix
+    //if(!viewerPerspective->getCamera())
+    {
         const osg::BoundingSphere& bs = model->getBound();
         if (!bs.valid())
         {
@@ -188,43 +193,42 @@ osg::Group* QOSG::ProjectiveARViewer::createProjectorScene(osg::Node* model) {
         zfar *= 1.1f;
 
         // set up projection.
-        //renderCamera->setProjectionMatrixAsPerspective( 60, static_cast<double>( width() )/static_cast<double>( height() ), 0.01, 100/*appConf->getValue( "Viewer.Display.ViewDistance" ).toFloat()*/ );
         renderCamera->setProjectionMatrixAsFrustum(-proj_right, proj_right, -proj_top, proj_top, znear, zfar);
-        //camera->setProjectionMatrix(osg::Matrixd::perspective(110.0f, 1.0, 0.1, 100)/*identity()*/);
 
         // set view
         renderCamera->setReferenceFrame(osg::Transform::ABSOLUTE_RF);
         renderCamera->setViewMatrixAsLookAt(bs.center() - osg::Vec3(0.0f, 2.0f, 0.0f)*bs.radius(), bs.center(), osg::Vec3(0.0f, 0.0f, 1.0f));
-        //camera->setViewMatrixAsLookAt(osg::Vec3(0.0f, -3.0f, 3.0f), osg::Vec3(0.0f, 0.0f, 0.0f), osg::Vec3(0.0f, 0.0f, 1.0f));
+    }
+    // else: set renderCamera's projection and view matrix from the viewerPerspective
+    /*else
+    {
+        renderCamera->setProjectionMatrix(viewerPerspective->getCamera()->getProjectionMatrix());
+        renderCamera->setViewMatrix(viewerPerspective->getCamera()->getViewMatrix());
+    }*/
 
-        // set viewport
-        renderCamera->setViewport(0, 0, tex_width, tex_height);
+    // set viewport
+    renderCamera->setViewport(0, 0, tex_width, tex_height);
 
-        // set the camera to render before the main camera.
-        renderCamera->setRenderOrder(osg::Camera::PRE_RENDER);
+    // set the camera to render before the main camera.
+    renderCamera->setRenderOrder(osg::Camera::PRE_RENDER);
 
-        // tell the camera to use OpenGL frame buffer object where supported.
-        renderCamera->setRenderTargetImplementation(renderImplementation);
+    // tell the camera to use OpenGL frame buffer object where supported.
+    renderCamera->setRenderTargetImplementation(renderImplementation);
 
-        {
-            // attach the texture and use it as the color buffer.
-            renderCamera->attach(osg::Camera::COLOR_BUFFER, texture,
-                0, 0, false,
-                samples, colorSamples);
-        }
-
-
-        // add subgraph to render
-        renderCamera->addChild(model);
+    {
+        // attach the texture and use it as the color buffer.
+        renderCamera->attach(osg::Camera::COLOR_BUFFER, texture,
+            0, 0, false,
+            samples, colorSamples);
     }
 
+    // add subgraph to render
+    renderCamera->addChild(model);
 
     osg::Group* projectorScene = new osg::Group;
     base = createBase();
 
-    /* Enable projective texturing for all objects of this node */
-    //root->setStateSet(createProjectorState(texture, projectorPos, projectorDirection, projectorAngle));
-
+    /* Enable projective texturing for all objects of base */
     base->setStateSet(createProjectorState(texture, viewerPos, viewerDir, viewerFOV));
 
     projectorScene->addChild(base);
@@ -236,46 +240,36 @@ osg::Group* QOSG::ProjectiveARViewer::createProjectorScene(osg::Node* model) {
 QOSG::ProjectiveARViewer::ProjectiveARViewer( QWidget* parent , const char* name , const QGLWidget* shareWidget , WindowFlags f , osgViewer::Viewer* viewerPerspective ):
     AdapterWidget( parent, name, shareWidget, f )
 {
-    // (Kostan) Projector view init
-
     this->viewerPerspective = viewerPerspective;
 
-    //this->mIsClicAruco=false;
-
-	appConf = Util::ApplicationConfig::get();
+    appConf = Util::ApplicationConfig::get();
 
     renderCamera = new osg::Camera;
-    //renderCamera->getDisplaySettings()->setStereo( ( appConf->getValue( "Viewer.Display.Stereoscopic" ).toInt() ? true : false ) );
-    //renderCamera->getDisplaySettings()->setStereoMode( osg::DisplaySettings::ANAGLYPHIC );
+
+    // setup Viewer
     viewerPos = osg::Vec3d(-1.88, -0.95, 1.72);
     viewerDir = osg::Vec3d( -0.75, 0, 0.238 ) - viewerPos;
     viewerFOV = 90;
 
-    this->setSceneData(createProjectorScene(viewerPerspective->getSceneData()));
+    this->setSceneData(createProjectorScene());
 
+    // setup Projector
     projectorPos = osg::Vec3d( -0.665, -1.345, 0.825);
     projectorDir = osg::Vec3d( -0.75, 0, 0.238 ) - projectorPos;
     projectorFOV = 30;
 
-	getCamera()->setViewport( new osg::Viewport( 0,0,width(),height() ) );
+    getCamera()->setViewport( new osg::Viewport( 0,0,width(),height() ) );
     getCamera()->setProjectionMatrixAsPerspective( projectorFOV, static_cast<double>( width() )/static_cast<double>( height() ), 0.01, appConf->getValue( "Viewer.Display.ViewDistance" ).toFloat() );
-	getCamera()->setGraphicsContext( getGraphicsWindow() );
+    getCamera()->setGraphicsContext( getGraphicsWindow() );
     getCamera()->setComputeNearFarMode( osg::CullSettings::DO_NOT_COMPUTE_NEAR_FAR );
-
-    //manipulator = new Vwr::CameraManipulator( cg );
-    //QObject::connect( manipulator, SIGNAL( sendMouseRotation( osg::Quat ) ),
-    //				  cg, SLOT( updateGraphRotByMouse( osg::Quat ) ) );
-    //QObject::connect( manipulator, SIGNAL( sendFaceDetRotation( osg::Quat ) ),
-    //				  cg, SLOT( updateGraphRotByFaceDet( osg::Quat ) ) );
-
-    //pickHandler = new Vwr::PickHandler( manipulator, cg );
-
-	addEventHandler( new osgViewer::StatsHandler );
 
     getCamera()->setClearColor( osg::Vec4( 0, 1, 0, 1 ) );
     getCamera()->setViewMatrixAsLookAt( projectorPos, projectorDir + projectorPos, osg::Vec3d( 0, 0, 1 ) );
 
-	setThreadingModel( osgViewer::ViewerBase::SingleThreaded );
+
+    addEventHandler( new osgViewer::StatsHandler );
+
+    setThreadingModel( osgViewer::ViewerBase::SingleThreaded );
 
     connect( &_timer, SIGNAL( timeout() ), this, SLOT( updateGL() ) );
 
@@ -284,18 +278,15 @@ QOSG::ProjectiveARViewer::ProjectiveARViewer( QWidget* parent , const char* name
 
 void QOSG::ProjectiveARViewer::reloadConfig()
 {
-    //manipulator->setMaxSpeed( appConf->getValue( "Viewer.CameraManipulator.MaxSpeed" ).toFloat() );
-    //manipulator->setTrackballSize( appConf->getValue( "Viewer.CameraManipulator.Sensitivity" ).toFloat() );
 
-    //osg::DisplaySettings::instance()->setStereo( ( appConf->getValue( "Viewer.Display.Stereoscopic" ).toInt() ? true : false ) );
 }
 
 void QOSG::ProjectiveARViewer::paintGL()
 {
+    frame();
     renderCamera->setProjectionMatrix(viewerPerspective->getCamera()->getProjectionMatrix());
     renderCamera->setViewMatrix(viewerPerspective->getCamera()->getViewMatrix());
     //renderCamera->setViewport(viewerPerspective->getCamera()->getViewport());
-    frame();
 }
 
 void QOSG::ProjectiveARViewer::updateScene()
@@ -306,14 +297,14 @@ void QOSG::ProjectiveARViewer::updateScene()
     osg::Matrix mat;
     osg::Vec3d up(0.0, 0.0, 1.0);
     mat = osg::Matrixd::lookAt(viewerPos, viewerDir + viewerPos, up)
-        * osg::Matrixd::perspective(viewerFOV, 1.0, 0.1, 100);
+        * osg::Matrixd::perspective(viewerFOV, 1.0, 0.1, SCENE_MAX_SIZE);
     texMat->setMatrix(mat);
     //getSceneData()->getStateSet()->setTextureAttribute(0, texMat, osg::StateAttribute::ON);
 
     //getSceneData()->getStateSet()->setTextureAttributeAndModes(1, texMat, osg::StateAttribute::ON);*/
 
     // update projector
-    getCamera()->setProjectionMatrixAsPerspective( projectorFOV, static_cast<double>( width() )/static_cast<double>( height() ), 0.01, appConf->getValue( "Viewer.Display.ViewDistance" ).toFloat() );
+    getCamera()->setProjectionMatrixAsPerspective( projectorFOV, static_cast<double>( width() )/static_cast<double>( height() ), 0.01, SCENE_MAX_SIZE );
     getCamera()->setViewMatrixAsLookAt( projectorPos, projectorDir + projectorPos, up );
 }
 

@@ -231,7 +231,7 @@ QWidget* QOSG::ProjectiveARWindow::createSceneTab( QFrame* line )
     lScene->addRow( new QLabel( "Dir Z:" ), dsb_projectorDirZ );
     lScene->addRow(createLine());
 
-    lScene->addRow( new QLabel( "Projector" ) );
+    lScene->addRow( new QLabel( "Viewer" ) );
     dsb_viewerFOV->setMaximumWidth(80);
     lScene->addRow( new QLabel( "FOV:" ), dsb_viewerFOV );
     dsb_viewerPosX->setMaximumWidth(80);

@@ -195,7 +195,7 @@ private:
         *  osg::Group* createProjectorScene()
         *  \brief function that creates projector scene, based on viewerPos, viewerDir, viewerFOV and viewerPerspective
         */
-    osg::Group* createProjectorScene(osg::Node* model);
+    osg::Group* createProjectorScene();
 };
 }
 
