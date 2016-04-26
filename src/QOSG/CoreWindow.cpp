@@ -1331,13 +1331,29 @@ void CoreWindow::loadSpecialMatrixFromFile()
 	}
 
 	if ( fileName != NULL ) {
-		//send to parse
+
+		QFile file(fileName);
+		if(!file.open(QIODevice::ReadOnly)) {
+			QMessageBox::information(0, "error", file.errorString());
+		}
+
+		QTextStream in(&file);
+
+		while(!in.atEnd()) {
+			QString line = in.readLine();
+			QStringList fields = line.split(",");
+			//model->appendRow(fields);
+		}
+
+		file.close();
 	}
 }
 
 void CoreWindow::displaySpecialMatrix()
 {
-	SpecialMatrix::MatrixViewer* matrixViewer = new SpecialMatrix::MatrixViewer( 0, Qt::Widget );
+	Vwr::CoreGraph* coreGraph = new Vwr::CoreGraph();
+
+	SpecialMatrix::MatrixViewer* matrixViewer = new SpecialMatrix::MatrixViewer( 0, Qt::Widget, coreGraph );
 	matrixViewer->setGeometry( 100, 100, 800, 600 );
 	matrixViewer->show();
 }
@@ -1688,7 +1704,7 @@ void CoreWindow::loadExampleGraphBasic500()
 
 	Manager::GraphManager::getInstance()->loadGraph( "../share/3dsoftviz/graphExamples/tree500.graphml" );
 
-		viewerWidget->getCameraManipulator()->home();
+	viewerWidget->getCameraManipulator()->home();
 
 	//treba overit ci funguje
 	if ( isPlaying ) {

@@ -10,6 +10,11 @@
 #include <QObject>
 #include <QGridLayout>
 
+#include "Data/Graph.h"
+#include "Data/Node.h"
+#include "Data/GraphLayout.h"
+#include "Viewer/CoreGraph.h"
+
 namespace SpecialMatrix {
 /**
 	*  \class SpacialMatrix
@@ -36,7 +41,7 @@ public:
 		*
 		*/
 
-	MatrixViewer( QWidget* parent = 0, Qt::WindowFlags f = 0 );
+	MatrixViewer( QWidget* parent = 0, Qt::WindowFlags f = 0, Vwr::CoreGraph* cg = 0 );
 
 	QWidget* addViewWidget( osgQt::GraphicsWindowQt* gwQt, osg::Group* scene );
 
@@ -54,6 +59,7 @@ protected:
 
 	osg::ref_ptr<osgQt::GraphicsWindowQt> _gwQt;
 
+	Data::Graph* simpleGraph;
 };
 }
 

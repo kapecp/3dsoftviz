@@ -1,20 +1,81 @@
 #include "SpecialMatrix/MatrixViewer.h"
-#include "osg/LineWidth"
 
-SpecialMatrix::MatrixViewer::MatrixViewer(QWidget* parent, Qt::WindowFlags f): QWidget(parent, f)
+#include "osg/LineWidth"
+#include "Importer/GraphOperations.h"
+
+
+#include <QDebug>
+
+SpecialMatrix::MatrixViewer::MatrixViewer(QWidget* parent, Qt::WindowFlags f, Vwr::CoreGraph* coreGraph): QWidget(parent, f)
 {
-	osgViewer::CompositeViewer::setThreadingModel(osgViewer::CompositeViewer::SingleThreaded);
+	osgViewer::CompositeViewer::setThreadingModel(osgViewer::CompositeViewer::SingleThreaded);	
+	simpleGraph = new Data::Graph( 1, "simple", 0, 0, NULL );
+
+	QMap<QString, QString>* settings = new QMap<QString, QString>;
+
+	settings = new QMap<QString, QString>;
+	settings->insert( "color.R", "1" );
+	settings->insert( "color.G", "1" );
+	settings->insert( "color.B", "0" );
+	settings->insert( "color.A", "1" );
+	settings->insert( "scale", Util::ApplicationConfig::get()->getValue( "Viewer.Textures.DefaultNodeScale" ) );
+	settings->insert( "textureFile", Util::ApplicationConfig::get()->getValue( "Viewer.Textures.SquareNode" ) );
+	Data::Type* type = simpleGraph->addType( "default1", settings );
+
+	settings = new QMap<QString, QString>;
+	settings->insert( "color.R", "1" );
+	settings->insert( "color.G", "1" );
+	settings->insert( "color.B", "1" );
+	settings->insert( "color.A", "1" );
+	settings->insert( "scale", Util::ApplicationConfig::get()->getValue( "Viewer.Textures.DefaultEdgeScale" ) );
+	settings->insert( "textureFile", Util::ApplicationConfig::get()->getValue( "Viewer.Textures.Edge" ) );
+	Data::Type* type2 = simpleGraph->addType( "default2", settings );
+
+	osg::ref_ptr<Data::Node> u1 = simpleGraph->addNode( 10, "u1", type, osg::Vec3f(0.0f, 0.0f, 0.0f) );
+	osg::ref_ptr<Data::Node> u2 = simpleGraph->addNode( 20, "u2", type, osg::Vec3f(5.0f, 5.0f, 5.0f) );
+	osg::ref_ptr<Data::Node> u3 = simpleGraph->addNode( 30, "u3", type, osg::Vec3f(10.0f, 10.0f, 10.0f) );
+
+	simpleGraph->addEdge( "e1", u1, u2, type2, false );
+	simpleGraph->addEdge( "e2", u1, u3, type2, false );
+	simpleGraph->addEdge( "e3", u2, u3, type2, false );
+
+	//coreGraph->reload(simpleGraph);
+
+
+	qDebug() << "nodes: " << simpleGraph->getNodes()->count() << "endl";
+
+	QMap<qlonglong, osg::ref_ptr<Data::Node> >* allNodes = simpleGraph->getNodes();
+
+	qDebug() << "0: " << allNodes->key(u1) ;
+	qDebug() << "1: " << allNodes->key(u2) ;
+	qDebug() << "2: " << allNodes->key(u3) ;
+
+
+
+
+
+	//Data::Type* edgeType;
+	//Data::Type* nodeType;
+	//Importer::GraphOperations* operations = new Importer::GraphOperations( *graph );
+	//operations->addDefaultTypes( edgeType, nodeType );
+
+	//osg::ref_ptr<Data::Node> node0 = graph->addNode(13, "center", nodeType, osg::Vec3f(0.0f, 0.0f, 0.0f));
+	//osg::ref_ptr<Data::Node> node1 = graph->addNode(17, "E63", nodeType, osg::Vec3f(2.0f, 0.0f, 0.0f));
+	//osg::ref_ptr<Data::Node> node2 = graph->addNode(22, "E63", nodeType, osg::Vec3f(10.0f, 10.0f, 10.0f));
+
+	//graph->addEdge(2,"edge1",node0,node1,edgeType, false );
+	//graph->addEdge(3,"edge2",node0,node2,edgeType, false );
 
 	// disable the default setting of viewer.done() by pressing Escape.
 	setKeyEventSetsDone(0);
+
 	_gwQt = createGraphicsWindow(0, 0, 100, 100, "Embedded Windows", false);
 
-	QWidget* popupWidget = addViewWidget( _gwQt, createScene() );
-
+	//QWidget* popupWidget = addViewWidget( _gwQt, createScene() );
+	QWidget* popupWidget = addViewWidget( _gwQt, coreGraph->getScene() );
 	QGridLayout* grid = new QGridLayout;
 	grid->addWidget( popupWidget, 0, 0 );
-	setLayout(grid);
-
+	setLayout(grid);	
 	connect( &_timer, SIGNAL(timeout()), this, SLOT(update()) );
 	_timer.start( 10 );
 }
