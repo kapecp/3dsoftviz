@@ -106,6 +106,8 @@ private:
      */
     QWidget* createSceneTab( QFrame* line );
 
+    QDoubleSpinBox* createCoordSpinBox(double value, const QString& text);
+
     /**
         *  \fn private  createHorizontalFrame
         *  \brief Crate frame with horizontal label

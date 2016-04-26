@@ -48,7 +48,7 @@ namespace QOSG {
     */
 class ProjectiveARViewer : public osgViewer::Viewer, public AdapterWidget
 {
-
+#define SCENE_MAX_SIZE (1000)
 
 public:
 
@@ -168,11 +168,13 @@ protected:
 
 private:
 
+    osg::Camera* renderCamera;
+
     /**
-        *  osg::Node* createModel()
+        *  osg::Geode* base
         *  \brief camera that renders model to texture
         */
-    osg::Camera* renderCamera;
+    osg::Geode* base;
 
 
     /**
@@ -189,7 +191,11 @@ private:
     osg::Vec3d viewerDir;
     double viewerFOV;
 
-
+    /**
+        *  osg::Group* createProjectorScene()
+        *  \brief function that creates projector scene, based on viewerPos, viewerDir, viewerFOV and viewerPerspective
+        */
+    osg::Group* createProjectorScene(osg::Node* model);
 };
 }
 
