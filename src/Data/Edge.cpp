@@ -375,7 +375,7 @@ osg::ref_ptr<osg::Geode> Data::Edge::createEdgeCylinder( osg::StateSet* bbState 
 	nodeCylinder->getStateSet()->setRenderBinDetails( 11, "RenderBin" );
 
 	osg::ref_ptr<osg::Geode> geode = new osg::Geode;
-    geode->setNodeMask(geode->getNodeMask() & ~0x2);
+    geode->setNodeMask(0x2);
 	geode->addDrawable( nodeCylinder );
 
 	return geode;

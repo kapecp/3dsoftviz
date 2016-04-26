@@ -182,7 +182,7 @@ void Leap::LeapActions::graphRotateSwipe(int direction){
 }
 }
 
-void Leap::LeapActions::scaleGraph(bool scaleUp){
+/*void Leap::LeapActions::scaleGraph(bool scaleUp){
     Layout::LayoutThread* layout = AppCore::Core::getInstance()->getLayoutThread();
     Vwr::CoreGraph* coreGraph = AppCore::Core::getInstance( NULL )->getCoreGraph();
     float distance = layout->getAlg()->getMaxDistance();
@@ -190,7 +190,7 @@ void Leap::LeapActions::scaleGraph(bool scaleUp){
     if(scaleUp){
         layout->pause();
         coreGraph->setNodesFreezed( true );
-        layout->getAlg()->setMaxDistance(distance + 2);
+        layout->getAlg()->setMaxDistance(distance * 1.05);
         coreGraph->scaleGraphToBase();
         coreGraph->setNodesFreezed( false );
         layout->play();
@@ -198,11 +198,63 @@ void Leap::LeapActions::scaleGraph(bool scaleUp){
     else{
         layout->pause();
         coreGraph->setNodesFreezed( true );
-        layout->getAlg()->setMaxDistance(distance - 2 );
+        layout->getAlg()->setMaxDistance(distance * 0.95 );
         coreGraph->scaleGraphToBase();
         coreGraph->setNodesFreezed( false );
         layout->play();
     }
+}*/
+
+void Leap::LeapActions::rotateAruco(Leap::DirectionDetector::Direction direction )
+{
+    switch ( direction ) {
+    case Leap::DirectionDetector::Direction::LEFT :
+        AppCore::Core::getInstance( NULL )->getCoreGraph()->rotateGraph(1);
+        break;
+    case Leap::DirectionDetector::Direction::RIGHT :
+        AppCore::Core::getInstance( NULL )->getCoreGraph()->rotateGraph(-1);
+        break;
+    case Leap::DirectionDetector::Direction::STEADY :
+        break;
+    }
+}
+
+void Leap::LeapActions::scaleEdges(Leap::DirectionDetector::Direction direction )
+{
+    Layout::LayoutThread* layout = AppCore::Core::getInstance()->getLayoutThread();
+    Vwr::CoreGraph* coreGraph = AppCore::Core::getInstance( NULL )->getCoreGraph();
+    float distance = layout->getAlg()->getMaxDistance();
+
+    switch ( direction ) {
+    case Leap::DirectionDetector::Direction::LEFT :
+        layout->pause();
+        coreGraph->setNodesFreezed( true );
+        layout->getAlg()->setMaxDistance(distance * 1.02);
+        coreGraph->scaleGraphToBase();
+        coreGraph->setNodesFreezed( false );
+        layout->play();
+        break;
+    case Leap::DirectionDetector::Direction::RIGHT :
+        layout->pause();
+        coreGraph->setNodesFreezed( true );
+        layout->getAlg()->setMaxDistance(distance * 0.98 );
+        coreGraph->scaleGraphToBase();
+        coreGraph->setNodesFreezed( false );
+        layout->play();
+        break;
+    case Leap::DirectionDetector::Direction::STEADY :
+        break;
+    }
+}
+
+void Leap::LeapActions::scaleNodes(bool scaleUp)
+{
+    Vwr::CoreGraph* coreGraph = AppCore::Core::getInstance( NULL )->getCoreGraph();
+
+    if(scaleUp)
+        coreGraph->scaleNodes(true);
+    else
+        coreGraph->scaleNodes(false);
 }
 
 //*****

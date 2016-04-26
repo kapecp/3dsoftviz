@@ -1663,7 +1663,6 @@ void CoreGraph::rotateGraph(int direction)
         break;
     }
 
-    outputMatrix(rotationMatrix);
     graphRotTransf->setMatrix(transfGraph * rotationMatrix);
 
 }
@@ -1705,15 +1704,21 @@ void CoreGraph::scaleNodes(bool scaleUp)
          float actualScale = it.value()->getScale();
 
          if(scaleUp){
-             it.value()->setScale(actualScale * 1.2);
+             if(actualScale < 60)
+                 it.value()->setScale(actualScale * 1.1);
+             else
+                 it.value()->setScale(actualScale);
          }
          else{
-             it.value()->setScale(actualScale * 0.8);
+             if(actualScale > 2)
+                 it.value()->setScale(actualScale * 0.9);
+             else
+                 it.value()->setScale(actualScale);
+
          }
          it.value()->reloadConfig();
          //reload(graph);
     }
-    qDebug()<<arucoRunning;
 }
 
 //get furthest position in graph

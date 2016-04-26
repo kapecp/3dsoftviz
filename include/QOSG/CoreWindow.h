@@ -1415,6 +1415,18 @@ private:
 
 public:
 
+    //jurik
+    void setPlaying(bool play)
+    {
+        this->isPlaying = play;
+    }
+
+    bool getPlaying()
+    {
+        return isPlaying;
+    }
+
+    //*****
 	void setRepulsiveForceInsideCluster( double repulsiveForceInsideCluster );
 	void hideRepulsiveForceSpinBox();
 

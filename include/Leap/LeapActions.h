@@ -73,6 +73,10 @@ public:
     //jurik
     void graphRotateSwipe(int direction);
     void scaleGraph(bool scaleUp);
+    void rotateAruco(Leap::DirectionDetector::Direction direction);
+    void scaleEdges(Leap::DirectionDetector::Direction direction);
+    void scaleNodes(bool scaleUp);
+    void playLayout();
     //*****
 
 private:
