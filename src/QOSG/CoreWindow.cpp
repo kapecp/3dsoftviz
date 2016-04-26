@@ -5,6 +5,10 @@
 #include "QOSG/LoadGraphWindow.h"
 #include "QOSG/MessageWindows.h"
 
+#include "QOSG/ProjectiveARViewer.h"
+#include "QOSG/ProjectiveARWindow.h"
+#include "QOSG/ProjectiveARCore.h"
+
 #include "Network/Server.h"
 #include "Network/Client.h"
 
@@ -90,7 +94,7 @@ CoreWindow::CoreWindow( QWidget* parent, Vwr::CoreGraph* coreGraph, QApplication
 	createMetricsToolBar();
 
 	viewerWidget = new ViewerQT( this, 0, 0, 0, coreGraph );
-    //viewerWidget->setSceneData( coreGraph->getScene() );
+    viewerWidget->setSceneData( coreGraph->getScene() );
 
 	setCentralWidget( viewerWidget );
 
@@ -1198,15 +1202,16 @@ QWidget* CoreWindow::createMoreFeaturesTab( QFrame* line )
     lMore->addRow( chb_base );
     connect( chb_base, SIGNAL( clicked() ), this, SLOT( baseClicked() ) );
 
-    //kostan
+    // kostan
     line = createLine();
     lMore->addRow( line );
-    lMore->addRow( new QLabel( tr( "Projector view" ) ) );
 
-    chb_light = new QCheckBox( "&Custom light" );
-    chb_light->setChecked( false );
-    lMore->addRow( chb_light );
-    connect( chb_light, SIGNAL( clicked() ), this, SLOT( toggleProjectorViewClicked() ) );
+    b_start_projective_ar = new QPushButton( tr( "Start projective AR view" ) );
+    lMore->addRow( new QLabel( tr( "Projector view" ) ) );
+    b_start_projective_ar->setMaximumWidth( 136 );
+    lMore->addRow( b_start_projective_ar );
+    connect( b_start_projective_ar, SIGNAL( clicked() ), this, SLOT( createARProjWindow() ) );
+
     //*****
 
 	wMore->setLayout( lMore );
@@ -4391,18 +4396,10 @@ void CoreWindow::baseClicked()
 }
 
 // kostan
-void CoreWindow::toggleProjectorViewClicked()
+
+void CoreWindow::createARProjWindow()
 {
-    this->viewerWidget->toggleProjectorView();
-    /*// chb_projectorViewToggle is checked
-    if ( chb_projectorViewToggle->isChecked() ) {
-
-        //this->viewerWidget->toggleProjectorView();
-     }
-    else {
-
-        //this->viewerWidget->toggleProjectorView();
-    }*/
+    QOSG::ProjectiveARCore::getInstance( NULL, this )->init(viewerWidget);
 }
 
 //*****

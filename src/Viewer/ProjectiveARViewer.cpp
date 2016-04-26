@@ -138,7 +138,8 @@ osg::Geode* createBase()
 }
 
 
-osg::Group* createProjectorScene(osg::Camera* renderCamera, osg::Node* model) {
+osg::Group* createProjectorScene(osg::Camera* renderCamera, osg::Node* model,
+                                 osg::Vec3 projectorPos, osg::Vec3 projectorDirection, float projectorAngle) {
 
     unsigned int tex_width = 2048;
     unsigned int tex_height = 2048;
@@ -222,9 +223,6 @@ osg::Group* createProjectorScene(osg::Camera* renderCamera, osg::Node* model) {
     osg::Group* projectorScene = new osg::Group;
     osg::Geode* base = createBase();
 
-    osg::Vec3 projectorPos = osg::Vec3(-1.88, -0.95f, 1.72f);//osg::Vec3(0, -1.345f, 1.72f);
-    osg::Vec3 projectorDirection = osg::Vec3d( -0.75, 0, 0.238 )-projectorPos;
-    float projectorAngle =90;
     /* Enable projective texturing for all objects of this node */
     //root->setStateSet(createProjectorState(texture, projectorPos, projectorDirection, projectorAngle));
 
@@ -250,11 +248,18 @@ QOSG::ProjectiveARViewer::ProjectiveARViewer( QWidget* parent , const char* name
     renderCamera = new osg::Camera;
     //renderCamera->getDisplaySettings()->setStereo( ( appConf->getValue( "Viewer.Display.Stereoscopic" ).toInt() ? true : false ) );
     //renderCamera->getDisplaySettings()->setStereoMode( osg::DisplaySettings::ANAGLYPHIC );
+    projectorPos = osg::Vec3d(-1.88, -0.95, 1.72);
+    projectorDir = osg::Vec3d( -0.75, 0, 0.238 )-projectorPos;
+    projectorFOV =90;
 
-    this->setSceneData(createProjectorScene(renderCamera, viewerPerspective->getSceneData()));
+    this->setSceneData(createProjectorScene(renderCamera, viewerPerspective->getSceneData(), projectorPos, projectorDir, projectorFOV));
+
+    viewerPos = osg::Vec3d( -0.665, -1.345, 0.825);
+    viewerDir = osg::Vec3d( -0.75, 0, 0.238 ) - viewerPos;
+    viewerFOV = 30;
 
 	getCamera()->setViewport( new osg::Viewport( 0,0,width(),height() ) );
-    getCamera()->setProjectionMatrixAsPerspective( 30, static_cast<double>( width() )/static_cast<double>( height() ), 0.01, appConf->getValue( "Viewer.Display.ViewDistance" ).toFloat() );
+    getCamera()->setProjectionMatrixAsPerspective( viewerFOV, static_cast<double>( width() )/static_cast<double>( height() ), 0.01, appConf->getValue( "Viewer.Display.ViewDistance" ).toFloat() );
 	getCamera()->setGraphicsContext( getGraphicsWindow() );
 	getCamera()->setComputeNearFarMode( osg::CullSettings::DO_NOT_COMPUTE_NEAR_FAR );
 
@@ -267,12 +272,9 @@ QOSG::ProjectiveARViewer::ProjectiveARViewer( QWidget* parent , const char* name
 	//pickHandler = new Vwr::PickHandler( manipulator, cg );
 
 	addEventHandler( new osgViewer::StatsHandler );
-	//addEventHandler( pickHandler );
-    //setCameraManipulator( manipulator );
 
-	// Gloger: background to white color after disabling skybox
     getCamera()->setClearColor( osg::Vec4( 0, 1, 0, 1 ) );
-    getCamera()->setViewMatrixAsLookAt( osg::Vec3d( -0.665, -1.345, 0.825f), osg::Vec3d( -0.75, 0, 0.238 ), osg::Vec3d( 0, 0, 1 ) );
+    getCamera()->setViewMatrixAsLookAt( viewerPos, viewerDir + viewerPos, osg::Vec3d( 0, 0, 1 ) );
 
 	setThreadingModel( osgViewer::ViewerBase::SingleThreaded );
 
@@ -280,16 +282,6 @@ QOSG::ProjectiveARViewer::ProjectiveARViewer( QWidget* parent , const char* name
 
     _timer.start( 10 );
 }
-
-/*Vwr::PickHandler* QOSG::ViewerQT::getPickHandler() const
-{
-    return pickHandler;
-}
-
-Vwr::CameraManipulator* QOSG::ViewerQT::getCameraManipulator() const
-{
-    return manipulator;
-}*/
 
 void QOSG::ProjectiveARViewer::reloadConfig()
 {
@@ -301,67 +293,26 @@ void QOSG::ProjectiveARViewer::reloadConfig()
 
 void QOSG::ProjectiveARViewer::paintGL()
 {
+    renderCamera->setProjectionMatrix(viewerPerspective->getCamera()->getProjectionMatrix());
+    renderCamera->setViewMatrix(viewerPerspective->getCamera()->getViewMatrix());
+    //renderCamera->setViewport(viewerPerspective->getCamera()->getViewport());
     frame();
 }
 
-/*void QOSG::ProjectiveARViewer::moveMouseAruco( double positionX,double positionY,bool isClick,int windowX,int windowY ,Qt::MouseButton button )
+void QOSG::ProjectiveARViewer::updateScene()
 {
-    //qDebug() << positionX << "  " << positionY << "         " << isClick;
+    // update viewer
+    osg::TexMat* texMat = new osg::TexMat;
+    osg::Matrix mat;
+    osg::Vec3d up(0.0, 0.0, 1.0);
+    mat = osg::Matrixd::lookAt(viewerPos, viewerPos + projectorDir, up)
+        * osg::Matrixd::perspective(viewerFOV, 1.0, 0.1, 100);
+    texMat->setMatrix(mat);
 
-    float wieverX = static_cast<float>( positionX * static_cast<float>( this->width() ) );
-    float wieverY = static_cast<float>( positionY * static_cast<float>( this->height() ) );
+    //getSceneData()->getStateSet()->setTextureAttributeAndModes(1, texMat, osg::StateAttribute::ON);*/
 
-    int screenX = static_cast<int>( positionX * this->width()  + this->x() + windowX + 8 );
-    int screenY = static_cast<int>( positionY * this->height() + this->y() + windowY + 28 );
-
-    this->cursor().setPos( screenX, screenY );
-
-    qDebug() << screenX << "  " << screenY ;
-    wieverY = ( static_cast<float>( this->height() ) - wieverY );
-
-    if ( isClick != mIsClicAruco ) {
-        mIsClicAruco = isClick;
-
-        if ( isClick ) {
-            this->getEventQueue()->mouseButtonPress( wieverX, wieverY,button );
-            this->getEventQueue()->mouseMotion( wieverX, wieverY );
-        }
-        else {
-            this->getEventQueue()->mouseButtonRelease( wieverX, wieverY, button );
-            return;
-        }
-    }
-    this->getEventQueue()->mouseMotion( wieverX, wieverY );
+    // update projector
+    getCamera()->setProjectionMatrixAsPerspective( viewerFOV, static_cast<double>( width() )/static_cast<double>( height() ), 0.01, appConf->getValue( "Viewer.Display.ViewDistance" ).toFloat() );
+    getCamera()->setViewMatrixAsLookAt( viewerPos, viewerDir + viewerPos, up );
 }
 
-void QOSG::ProjectiveARViewer::moveMouseKinect( double positionX,double positionY,double speed,bool isClick,int windowX,int windowY ,Qt::MouseButton button )
-{
-    //qDebug() << positionX << "  " << positionY << "         " << isClick;
-    positionX /=640.0;
-    positionY/=480.0;
-
-    float wieverX = static_cast<float>( positionX * static_cast<float>( this->width() ) );
-    float wieverY = static_cast<float>( positionY * static_cast<float>( this->height() ) );
-
-    int screenX = static_cast<int>( positionX * this->width()  + this->x() + windowX + 8 );
-    int screenY = static_cast<int>( positionY * this->height() + this->y() + windowY + 28 );
-
-    this->cursor().setPos( screenX, screenY );
-
-    qDebug() << screenX << "  " << screenY ;
-    wieverY = ( static_cast<float>( this->height() ) - wieverY );
-
-    if ( isClick != mIsClicAruco ) {
-        mIsClicAruco = isClick;
-
-        if ( isClick ) {
-            this->getEventQueue()->mouseButtonPress( wieverX, wieverY,button );
-            this->getEventQueue()->mouseMotion( wieverX, wieverY );
-        }
-        else {
-            this->getEventQueue()->mouseButtonRelease( wieverX, wieverY, button );
-            return;
-        }
-    }
-    this->getEventQueue()->mouseMotion( wieverX, wieverY );
-}*/

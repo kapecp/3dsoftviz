@@ -61,6 +61,7 @@ class CameraManipulator;
 namespace QOSG {
 
 class ViewerQT;
+class ProjectiveARViewer;
 }
 
 namespace Network {
@@ -642,7 +643,7 @@ void loadExampleGraphLua();
     void baseClicked();
 
     // kostan
-    void toggleProjectorViewClicked();
+    void createARProjWindow();
     //*****
 
 private:
@@ -1397,7 +1398,7 @@ private:
      *CheckBox for showing base
      *@brief chb_base
      */
-    QCheckBox* chb_projectorViewToggle;
+    QPushButton* b_start_projective_ar;
 
     //*****
 
