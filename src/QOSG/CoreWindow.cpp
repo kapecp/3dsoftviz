@@ -89,10 +89,7 @@ CoreWindow::CoreWindow( QWidget* parent, Vwr::CoreGraph* coreGraph, QApplication
 	createActions();
 	createMenus();
 	createLeftToolBar();
-	createMetricsToolBar();
-
-    //osg::DisplaySettings::instance()->setStereo( true );
-    //osg::DisplaySettings::instance()->setStereoMode( osg::DisplaySettings::StereoMode::QUAD_BUFFER );
+	createMetricsToolBar();    
 
 	viewerWidget = new ViewerQT( this, 0, 0, 0, coreGraph );
 	viewerWidget->setSceneData( coreGraph->getScene() );
