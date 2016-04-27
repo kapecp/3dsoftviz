@@ -47,7 +47,7 @@ int main( int argc, char* argv[] )
 //    }
 
 #ifdef Q_OS_LINUX
-    QCoreApplication::setAttribute(Qt::AA_X11InitThreads);
+	//QCoreApplication::setAttribute(Qt::AA_X11InitThreads);
 #endif
 
 	App::Application app( argc, argv );
