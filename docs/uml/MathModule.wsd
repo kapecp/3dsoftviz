@@ -1,0 +1,28 @@
+// Module MathModule
+// Autor: Team Reality Not Found
+
+@startuml
+scale 800 width
+
+!define cmrMth(x) CameraMath
+!define djkAlg(x) DjikstraAlg
+!define grMt(x) GraphMetrics
+!define osg(x) OSG.OSG
+!define nd(x) Data.Node
+!define eg(x) Data.Edge
+!define gr(x) Data.Graph
+
+package MathModule{
+	class osg() #red
+	cmrMth() -- osg()
+	cmrMth() -- nd()
+	
+	djkAlg() -- gr()
+	djkAlg() -- nd()
+	djkAlg() -- eg()
+	djkAlg() -- osg()
+	
+	grMt() -- gr()
+}
+
+@enduml

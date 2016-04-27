@@ -1,0 +1,38 @@
+// Module Data.Edge
+// Autor: Team Reality Not Found
+
+@startuml
+scale 800 width
+
+!define cl(x) Cluster
+!define eg(x) Edge
+!define gr(x) Graph
+!define grLo(x) GraphLayout
+!define grSer(x) GraphSerializer
+!define grSpTr(x) GraphSpanningTree
+!define mtTp(x) MetaType
+!define nd(x) Node
+!define osgNd(x) OsgNode
+!define osgEg(x) OsgEdge
+!define tp(x) Type
+!define osg(x) OSG.OSG
+!define cb(x) Figures.Cube
+!define sph(x) Figures.Sphere
+!define shpGetCb(x) Layout.ShapeGetter_Cube
+!define radLo(x) Layout.RadialLayout
+!define restrcMng(x) Layout.RestrictionManager
+!define appCfg(x) Util.ApplicationConfig
+
+package Data{
+	class osg() #red	
+	eg() --|> osgEg()
+	eg() "*" --* "1" gr()
+	eg() -- osg()
+	eg() -- nd()
+	eg() -- tp()
+	eg() -- appCfg()
+	eg() -- grSer()
+	
+	
+}
+@enduml

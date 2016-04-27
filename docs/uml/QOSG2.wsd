@@ -1,0 +1,55 @@
+// Module QOSG
+// Autor: Team Reality Not Found
+
+@startuml
+scale 800 width
+
+!define adpWdg(x) AdapterWidget
+!define chkBxLst(x) CheckBoxList
+!define clrPckBtn(x) ColorPickerButton
+!define clrPckIt(x) ColorPickerItem
+!define clrPckPu(x) ColorPickerPopup
+!define crWnd(x) CoreWindow
+!define ldGrWnd(x) LoadGraphWindow
+!define msgWnd(x) MessageWindows
+!define optWnd(x) OptionsWindow
+!define clrPck(x) QtColorPicker
+!define slcLoWnd(x) SelectLayoutWindow
+!define trIt(x) TreeItem
+!define trMd(x) TreeModel
+!define vwrQT(x) ViewerQT
+!define osg(x) OSG.OSG
+!define dtNd(x) Data.Node
+!define dtGr(x) Data.Graph
+!define shpGtPl(x) Layout.ShapeGetter_Plane_ByThreeNodes
+!define loThr(x) Layout.LayoutThread
+!define crGr(x) Vwr.CoreGraph
+!define clnt(x) Network.Client
+!define cmrMnp(x) Vwr.CameraManipulator
+!define pckHnd(x) Vwr.PickHandler
+!define shpGt(x) Layout.ShapeGetter
+!define rstRmvHnd(x) Layout.RestrictionRemovalHandler
+!define appCfg(x) Util.ApplicationConfig
+
+package QOSG{
+	class osg() #red
+	
+	adpWdg() -- osg()
+	
+	clrPckPu() -- clrPckIt()
+	clrPckPu() -- clrPckBtn()
+	clrPck() -- clrPckPu()
+	
+	optWnd() -- crGr()
+	optWnd() -- vwrQT()
+	optWnd() -- trIt()
+	
+	trMd() -- trIt()
+	
+	vwrQT() --|> adpWdg()
+	vwrQT() -- crGr()
+	vwrQT() o-- pckHnd()
+	vwrQT() o-- cmrMnp()
+	vwrQT() -- appCfg()
+	}
+@enduml

@@ -1,0 +1,42 @@
+// Module Model
+// Autor: Team Reality Not Found
+
+@startuml
+scale 800 width
+
+!define db(x) DB
+!define eg(x) EdgeDAO
+!define gr(x) GraphDAO
+!define grLo(x) GraphLayoutDAO
+!define nd(x) NodeDAO
+!define tp(x) TypeDAO
+!define osg(x) OSG.OSG
+!define dtNd(x) Data.Node
+!define dtEg(x) Data.Edge
+!define dtGr(x) Data.Graph
+!define dtTp(x) Data.Type
+!define dtGrLo(x) Data.GraphLayout
+
+package Model{
+	class osg() #red
+	eg() -- osg()
+	eg() -- dtGrLo()
+	eg() -- dtEg()
+	
+	gr() -- dtGr()
+	gr() -- osg()
+	gr() -- dtNd()
+	gr() -- dtTp()
+	
+	grLo() -- dtGrLo()
+	grLo() -- dtGr()
+	
+	nd() -- osg()
+	nd() -- dtNd()
+	nd() -- dtGrLo()
+	
+	tp() -- dtTp()
+	tp() -- dtGr()
+}
+
+@enduml
