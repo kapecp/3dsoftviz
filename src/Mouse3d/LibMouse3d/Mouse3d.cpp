@@ -41,7 +41,7 @@ namespace LibMouse3d{
 #elif defined(Q_OS_LINUX)
 
 	void Mouse3dDevice::translateX11Event( XEvent *event ) {
-		qDebug() << "Mouse3dDevice::Mouse3DLinux: eventType = " << event->type;
+		qDebug() << endl << "Mouse3dDevice: eventType = " << event->type;
 
 		MagellanFloatEvent MagellanEvent;
 		if ( MagellanTranslateEvent( this->display, event, &MagellanEvent, 1.0, 1.0 ) == MagellanInputMotionEvent) {
@@ -84,7 +84,7 @@ namespace LibMouse3d{
 			motionData[4] /= 7000.0;
 			motionData[5] /= 7000.0;
 
-			qDebug() <<  "Mouse3d x=" << motionData[0] <<
+			qDebug() <<  "Mouse3dDevice: x=" << motionData[0] <<
 						"y=" << motionData[1] <<
 						"z=" << motionData[2] <<
 						"a=" << motionData[3] <<
@@ -120,7 +120,7 @@ namespace LibMouse3d{
 
 		QCoreApplication *inst = App::ApplicationX11::instance();
 		App::ApplicationX11 *app = qobject_cast<App::ApplicationX11*>(inst);
-		QObject::connect( app, SIGNAL(passDummy()), this, SLOT(translateDummy()));
+		//QObject::connect( app, SIGNAL(passDummy()), this, SLOT(translateDummy()));
 		app->initConnection( this );
 
 		return 0;
