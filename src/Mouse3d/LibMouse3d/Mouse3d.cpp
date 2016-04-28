@@ -1,5 +1,19 @@
 #include "Mouse3d/LibMouse3d/Mouse3d.h"
 
+#ifdef Q_OS_LINUX
+	#include <QX11Info>
+
+	#include <X11/Xlib.h>
+	#include <X11/Xutil.h>
+	#include <X11/Xatom.h>
+	#include <X11/keysym.h>
+
+	#define SGI // Required by xdrvlib.h
+	extern "C" {
+		#include "xdrvlib.h"
+	}
+#endif
+
 namespace LibMouse3d{
 
     Mouse3dDevice::Mouse3dDevice( QOSG::CoreWindow *window ) :
