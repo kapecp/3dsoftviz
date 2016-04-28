@@ -47,12 +47,15 @@ int main( int argc, char* argv[] )
 //    }
 
 #ifdef Q_OS_LINUX
+	// may or may be not required for QObject::connect
+	//qRegisterMetaType<XEvent>( "XEvent" );
+
 	// doesn't work on Qt5 and higher, undefined in older Qts
 	// still, so far the only solution to auto-lock x11 display
 	QCoreApplication::setAttribute(Qt::AA_X11InitThreads);
 #endif
 
-	App::Application app( argc, argv );
+	App::ApplicationX11 app( argc, argv );
 	new Util::Cleaner( &app );
 	AppCore::Core::getInstance( &app );
 	Manager::GraphManager::getInstance();

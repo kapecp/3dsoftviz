@@ -21,8 +21,8 @@ Mouse3d::Connector::~Connector() {
  */
 void Mouse3d::Connector::CreateConnection(){
     //Create thread for signals from 3D mouse
-	qDebug() << "Connector::CreateConnection(): winId() = " << window->winId() << endl;
-	qDebug() << "Connector::CreateConnection(): CurrentThreadId() = " << QThread::currentThreadId() << endl;
+	//qDebug() << "Connector::CreateConnection(): winId() = " << window->winId() << endl;
+	//qDebug() << "Connector::CreateConnection(): CurrentThreadId() = " << QThread::currentThreadId() << endl;
 	thread = new LibMouse3d::EventThread(window);
     thread->start();
 }

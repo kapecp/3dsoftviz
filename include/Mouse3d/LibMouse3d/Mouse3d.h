@@ -23,7 +23,7 @@ namespace QOSG{
 namespace LibMouse3d{
 
 class Mouse3dDevice : public QObject {
-    //Q_OBJECT
+	Q_OBJECT
 
 public:
 	Mouse3dDevice( QOSG::CoreWindow *window );
@@ -35,13 +35,15 @@ public:
 #endif
 
 public slots:
-#if defined(Q_OS_WIN)
-#elif defined(Q_OS_LINUX)
+//#if defined(Q_OS_WIN)
+//#elif defined(Q_OS_LINUX)
 
-	void x11TranslateEvent( XEvent &event );
+	void translateX11Event( XEvent *event );
 
-#elif defined(Q_OS_MAC)
-#endif
+	void translateDummy();
+
+//#elif defined(Q_OS_MAC)
+//#endif
 
 
 private:
@@ -53,8 +55,8 @@ private:
 
 #elif defined(Q_OS_LINUX)
 
-    void Mouse3DLinux();
-	void x11Mouse3DInit();
+	Display *display;
+	int initMouse3DLinux();
 
 #elif defined(Q_OS_MAC)
 #endif
