@@ -5,7 +5,7 @@
 #include <QApplication>
 
 #ifdef Q_OS_LINUX
-	#include <QX11Info>
+	//#include <QX11Info>
 	#include "Mouse3d/LibMouse3d/Mouse3d.h"
 #endif
 

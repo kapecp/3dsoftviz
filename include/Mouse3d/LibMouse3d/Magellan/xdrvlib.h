@@ -21,7 +21,13 @@
 #define FALSE	(1==0)
 #endif
 
+#ifdef SGI
 #define ParameterCheck
+#endif
+
+#ifdef IBM
+#define ParameterCheck
+#endif
 
 /* Data Structure for CADDS5 implementation */
 #define MagellanInputMotionEvent 1
