@@ -843,6 +843,7 @@ set ( HEADER_MOUSE3D
 if( UNIX )
 	list(APPEND HEADER_MOUSE3D
 		include/Mouse3d/LibMouse3d/Magellan/xdrvlib.h 
+		include/Mouse3d/LibMouse3d/Magellan/fixx11.h
 )
 elseif( WIN32 )
 	list(APPEND HEADER_MOUSE3D

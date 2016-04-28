@@ -12,6 +12,8 @@
 	extern "C" {
 		#include "xdrvlib.h"
 	}
+
+	#include "fixx11.h"
 #endif
 
 namespace LibMouse3d{

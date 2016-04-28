@@ -4,6 +4,8 @@
 
 #ifdef Q_OS_LINUX
 	#include <X11/Xlib.h>
+
+	#include "fixx11.h"
 #endif
 
 namespace App {
