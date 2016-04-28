@@ -16,18 +16,18 @@ public:
 
    bool x11EventFilter( XEvent *event );
 
-   void sendX11Event( XEvent *event );
-
    void initConnection( LibMouse3d::Mouse3dDevice *mouse3d );
 
    void closeConnection();
 
 signals:
    void passX11Event( XEvent *event );
+
    void passDummy();
 
 private:
    bool isConnected;
+   LibMouse3d::Mouse3dDevice *device;
 
 };
 } //App

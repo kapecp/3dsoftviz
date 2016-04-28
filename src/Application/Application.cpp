@@ -18,16 +18,21 @@ ApplicationX11::~ApplicationX11() {
 }
 
 bool ApplicationX11::x11EventFilter( XEvent *event ) {
-	if ( this->isConnected /*&& event->type == ClientMessage*/ ){
+	if ( this->isConnected && event->type == ClientMessage ){
+		//qDebug() << "x11EventFilter : eventType = " << event->type;
 		//XEvent xev = *event;
 		//emit passX11Event( event );
-		emit passDummy();
+		//emit passDummy();
+
+		//Cheap, dirty but working solution
+		device->translateX11Event( event );
 	}
     return false;
 }
 
 void ApplicationX11::initConnection( LibMouse3d::Mouse3dDevice *device ){
-	QObject::connect( this, SIGNAL( passDummy( )), device, SLOT( translateDummy( )));
+	this->device = device;
+	//QObject::connect( this, SIGNAL( passDummy( )), device, SLOT( translateDummy( )));
 	//QObject::connect( this, SIGNAL( passX11Event( XEvent * )), device, SLOT( translateX11Event( XEvent * )));
 	this->isConnected = true;
 }
