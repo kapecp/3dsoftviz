@@ -48,7 +48,8 @@ int main( int argc, char* argv[] )
 
 #ifdef Q_OS_LINUX
 	// doesn't work on Qt5 and higher, undefined in older Qts
-	//QCoreApplication::setAttribute(Qt::AA_X11InitThreads);
+	// still, so far the only solution to auto-lock x11 display
+	QCoreApplication::setAttribute(Qt::AA_X11InitThreads);
 #endif
 
 	App::Application app( argc, argv );

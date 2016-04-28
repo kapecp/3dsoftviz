@@ -4,7 +4,6 @@
 
 #ifdef Q_OS_LINUX
 	#include <X11/Xlib.h>
-
 	#include "fixx11.h"
 #endif
 
@@ -13,7 +12,7 @@ namespace App {
 Application::Application(int &argc, char **argv) : QApplication( argc, argv ) {
 #if defined(Q_OS_LINUX)
 	this->x11Connected = false;
-	XInitThreads();
+	//XInitThreads(); //crashes app
 	//XSelectInput(QX11Info::display(), DefaultRootWindow(QX11Info::display()), SubstructureNotifyMask);
 #endif
 }

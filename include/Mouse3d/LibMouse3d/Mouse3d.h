@@ -12,24 +12,7 @@
 #if defined(Q_OS_WIN)
 	#include "Mouse3d/LibMouse3d/LibCoreMouse3d/Mouse3DInput.h"
 #elif defined(Q_OS_LINUX)
-	/*#undef Unsorted
-	#undef None
-	//#undef Bool
-	#undef KeyPress
-	#undef KeyRelease
-	#undef Above
-	#undef Below
-	#undef FocusIn
-	#undef FocusOut
-	#undef Always
-	#undef Success
-	#undef GrayScale
-	#undef Status
-	#undef CursorShape
-	#undef FontChange
-	#undef NormalState
-	#undef index
-	#undef rindex*/
+
 #elif defined(Q_OS_MAC)
 #endif
 
