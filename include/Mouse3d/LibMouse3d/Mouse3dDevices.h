@@ -37,7 +37,7 @@ private:
 
 #elif defined(Q_WS_X11) || defined(Q_OS_LINUX)
 
-	Mouse3DUnixDevice* mouse;
+	Mouse3dUnixDevice* mouse;
 
 #elif defined(Q_OS_MAC)
 #endif

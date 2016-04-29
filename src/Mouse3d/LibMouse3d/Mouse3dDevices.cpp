@@ -14,6 +14,7 @@ namespace LibMouse3d{
 #elif defined(Q_WS_X11) || defined(Q_OS_LINUX)
 
 		this->mouse = new Mouse3dUnixDevice( window );
+		mouse->initMouse3d();
 
 #elif defined(Q_OS_MAC)
 #endif

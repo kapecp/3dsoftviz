@@ -5,7 +5,7 @@
 #include <X11/Xlib.h>
 #include "fixx11.h"
 
-ApplicationEmitter::ApplicationEmitter( Mouse3DUnixDevice *device ) :
+ApplicationEmitter::ApplicationEmitter( Mouse3dUnixDevice *device ) :
 	QObject(),
 	device( device ) {
 	//QObject::connect( this, SIGNAL( signalDummy( )), device, SLOT( translateDummy( )));
@@ -15,7 +15,12 @@ ApplicationEmitter::ApplicationEmitter( Mouse3DUnixDevice *device ) :
 ApplicationEmitter::~ApplicationEmitter(){
 }
 
-emitX11Event( XEvent *event ){
+void ApplicationEmitter::emitX11Event( XEvent *event ){
+	//qDebug() << "emitX11Event : eventType = " << event->type;
+	//XEvent xev = *event;
 	//emit signalDummy();
-	emit signalX11Event( event );
+	//emit signalX11Event( event );
+
+	//Cheap, dirty but working solution
+	device->translateX11Event( event );
 }

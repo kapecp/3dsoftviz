@@ -19,30 +19,33 @@ Mouse3dUnixDevice::Mouse3dUnixDevice( /*QWidget *window*/ QOSG::CoreWindow *wind
 	window( window ) {
 		
 	this->display = QX11Info::display();
+}
+	
+Mouse3dUnixDevice::~Mouse3dUnixDevice(){
+	QCoreApplication *inst = App::Application::instance();
+	App::Application *app = qobject_cast<App::Application*>(inst);
+	app->stopEmitter();
+}
+
+void Mouse3dUnixDevice::initMouse3d(){
 	Window xwindow = this->window->winId();
 
 	if ( !MagellanInit( this->display, xwindow ) ) {
 		qDebug() << "No driver is running. Exit ... " << endl;
-		exit(EXIT_FAILURE)
+		exit(EXIT_FAILURE);
 	}
 	else {
 		qDebug() << "Mouse3dDevices::Mouse3DLinux: MagellanInit() = Success!" << endl;
 	}
 
-	QCoreApplication *inst = App::ApplicationX11::instance();
-	App::ApplicationX11 *app = qobject_cast<App::ApplicationX11*>(inst);
+	QCoreApplication *inst = App::Application::instance();
+	App::Application *app = qobject_cast<App::Application*>(inst);
 	//QObject::connect( app, SIGNAL(passDummy()), this, SLOT(translateDummy()));
 	app->startEmitter( this );
 }
-	
-~Mouse3dUnixDevice(){
-	QCoreApplication *inst = App::ApplicationX11::instance();
-	App::ApplicationX11 *app = qobject_cast<App::ApplicationX11*>(inst);
-	app->stopEmitter();
-}
 
-void Mouse3dDevices::translateX11Event( XEvent *event ) {
-		qDebug() << endl << "Mouse3dDevices: eventType = " << event->type;
+void Mouse3dUnixDevice::translateX11Event( XEvent *event ) {
+	qDebug() << endl << "Mouse3dDevices: eventType = " << event->type;
 
 	MagellanFloatEvent MagellanEvent;
 	if ( MagellanTranslateEvent( this->display, event, &MagellanEvent, 1.0, 1.0 ) == MagellanInputMotionEvent) {
@@ -97,13 +100,12 @@ void Mouse3dDevices::translateX11Event( XEvent *event ) {
 	}
 }
 
-	void Mouse3dDevices::translateDummy() {
-		int rand = qrand() % 3;
-		if (rand == 0)
-			qDebug() << "Yea, Yea, I'm a dummy!";
-		else if (rand == 1)
-			qDebug() << "Pretty mad dummy I am!";
-		else if (rand == 2)
-			qDebug() << "Also, I'm out of knives!";
-	}
+void Mouse3dUnixDevice::translateDummy() {
+	int rand = qrand() % 3;
+	if (rand == 0)
+		qDebug() << "Yea, Yea, I'm a dummy!";
+	else if (rand == 1)
+		qDebug() << "Pretty mad dummy I am!";
+	else if (rand == 2)
+		qDebug() << "Also, I'm out of knives!";
 }

@@ -8,11 +8,11 @@ class ApplicationEmitter : public QObject {
 	Q_OBJECT
 
 public:
-	ApplicationEmitter( Mouse3DUnixDevice *device );
+	ApplicationEmitter( Mouse3dUnixDevice *device );
 
 	~ApplicationEmitter();
 	
-	emitX11Event( XEvent *event );
+	void emitX11Event( XEvent *event );
 	
 signals:
 	 void signalX11Event( XEvent *event );
@@ -20,5 +20,5 @@ signals:
 	 void signalDummy();
 
 private:
-	 Mouse3DUnixDevice *device;
+	 Mouse3dUnixDevice *device;
 };

@@ -297,7 +297,7 @@ elseif( APPLE )
     message( STATUS "3DMouse FOUND" )
 elseif( UNIX )
 set (MOUSE3D_FOUND TRUE)
-   # include_directories( SYSTEM include/Mouse3d/LibMouse3d/Unix )
+   include_directories( SYSTEM include/Mouse3d/LibMouse3d/Unix )
     find_package( X11 REQUIRED )
    include_directories( SYSTEM ${X11_INCLUDE_DIR} )
 
