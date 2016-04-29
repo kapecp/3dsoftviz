@@ -11,7 +11,7 @@ Mouse3d::Connector::Connector(QOSG::CoreWindow* window):
 }
 
 Mouse3d::Connector::~Connector() {
-
+	delete thread;
 }
 
 /**

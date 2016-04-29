@@ -4,7 +4,7 @@
 
 #include "QOSG/CoreWindow.h"
 
-#include "Mouse3d/LibMouse3d/Mouse3d.h"
+#include "Mouse3d/LibMouse3d/Mouse3dDevices.h"
 
 namespace LibMouse3d{
 
@@ -18,10 +18,11 @@ EventThread::EventThread(QOSG::CoreWindow* window, QObject* parent) :
 void EventThread::run(){
 	//qDebug() << "EventThread::run(): winId() = " << this->window->winId() << endl;
 	//qDebug() << "EventThread::run(): CurrentThreadId() = " << QThread::currentThreadId() << endl;
-	mouseDevice = new Mouse3dDevice( this->window );
+	mouseDevice = new Mouse3dDevices( this->window );
 }
 
 EventThread::~EventThread() {
+	delete mouseDevice;
     qDebug() << "Mouse3d thread destroyed";
 }
 

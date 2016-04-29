@@ -1,3 +1,5 @@
+#include <QtGlobal>
+
 #include <QApplication>
 
 #include "Manager/Manager.h"
@@ -46,18 +48,17 @@ int main( int argc, char* argv[] )
 //      return EXIT_FAILURE;
 //    }
 
-#if defined(Q_OS_LINUX)
+#if defined(Q_WS_X11) || defined(Q_OS_LINUX)
 	// may or may be not required for QObject::connect
 	//qRegisterMetaType<XEvent>( "XEvent" );
 
-	// doesn't work on Qt5 and higher, undefined in older Qts
-	// still, so far the only solution to auto-lock x11 display
+	// Thi attribute doesn't work on Qt5 and higher, may be undefined in older Qt versions.
+	// Still, so far the only cappable solution to auto-lock x11 display resource.
+	// If you try to run the application without it, you're going to have a bad time... or segmentation faults whatever.
 	QCoreApplication::setAttribute(Qt::AA_X11InitThreads);
-	App::ApplicationX11 app( argc, argv );
-#else
-	QApplication app( argc, argv);
 #endif
 
+	App::Application app( argc, argv );
 	new Util::Cleaner( &app );
 	AppCore::Core::getInstance( &app );
 	Manager::GraphManager::getInstance();

@@ -1,5 +1,5 @@
 
-#include "Mouse3d/LibMouse3d/LibCoreMouse3d/Mouse3DInput.h"
+#include "Mouse3d/LibMouse3d/Windows/Mouse3DInput.h"
 
 #include <QApplication>
 

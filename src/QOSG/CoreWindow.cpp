@@ -3823,13 +3823,14 @@ void CoreWindow::startMouse3d()
     if ( b_start_mouse3d->text()=="Stop Mouse") {
         //this->mGloveThr->terminate();
         //delete( this->mGloveThr );
+		delete conn;
 
         b_start_mouse3d->setText( "Start Mouse" );
         return;
     }
 
-    Mouse3d::Connector conn = Mouse3d::Connector(this);
-    conn.CreateConnection();
+	conn = new Mouse3d::Connector(this);
+	conn->CreateConnection();
 
     //this->mGloveThr = new Fglove::FgloveThread();
     //this->b_start_mouse3d->start();

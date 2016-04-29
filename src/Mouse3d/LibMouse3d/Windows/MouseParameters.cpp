@@ -1,4 +1,4 @@
-#include "Mouse3d/LibMouse3d/LibCoreMouse3d/MouseParameters.h"
+#include "Mouse3d/LibMouse3d/Windows/MouseParameters.h"
 
 MouseParameters::MouseParameters(): fNavigation(kObjectMode)
 	  , fPivot(kAutoPivot)

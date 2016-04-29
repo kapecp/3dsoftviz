@@ -8,7 +8,7 @@ namespace QOSG{
     class CoreWindow;
 }
 namespace LibMouse3d{
-class Mouse3dDevice;
+class Mouse3dDevices;
 
 /**
 *@author Michal Fasanek
@@ -33,7 +33,7 @@ public:
 
 private:
 	QOSG::CoreWindow* window;
-	Mouse3dDevice* mouseDevice;
+	Mouse3dDevices* mouseDevice;
 };
 }
 #endif

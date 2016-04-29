@@ -1579,6 +1579,10 @@ private:
 	);
 
 	void onChange();
+
+#ifdef MOUSE3D_FOUND
+	Mouse3d::Connector *conn;
+#endif
 };
 }
 
