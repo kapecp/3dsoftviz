@@ -1475,8 +1475,8 @@ void CoreGraph::createBase()
     //invisible untill checkbox clicked
     baseGeode->setNodeMask(0x0);
     osg::Material *material = new osg::Material();
-    material->setDiffuse(osg::Material::FRONT,  osg::Vec4(1, 1, 1, 0.2));
-    material->setEmission(osg::Material::FRONT, osg::Vec4(1, 1, 1, 0.2));
+    material->setDiffuse(osg::Material::FRONT,  osg::Vec4(0.7, 0.7, 0.7, 0.2));
+   // material->setEmission(osg::Material::FRONT, osg::Vec4(0, 0, 0, 1));
     baseGeode->getOrCreateStateSet()->setAttribute(material);
 
     baseTransform->addChild(baseGeode);
@@ -1498,25 +1498,25 @@ void CoreGraph::createBase()
 
    baseGeometry->addPrimitiveSet(base);
 
-   osg::Vec4Array* colors = new osg::Vec4Array;
-   colors->push_back(osg::Vec4(0.8f, 0.8f, 0.8f, 0.2f) ); //index 0 red
-   colors->push_back(osg::Vec4(0.8f, 0.8f, 0.8f, 0.2f) ); //index 1 green
-   colors->push_back(osg::Vec4(0.8f, 0.8f, 0.8f, 0.2f) ); //index 2 blue
-   colors->push_back(osg::Vec4(0.8f, 0.8f, 0.8f, 0.2f) ); //index 3 white
+   /*osg::Vec4Array* colors = new osg::Vec4Array;
+   colors->push_back(osg::Vec4(0.0f, 0.0f, 0.0f, 0.1f) ); //index 0 red
+   colors->push_back(osg::Vec4(0.0f, 0.0f, 0.0f, 0.1f) ); //index 1 green
+   colors->push_back(osg::Vec4(0.0f, 0.0f, 0.0f, 0.1f) ); //index 2 blue
+   colors->push_back(osg::Vec4(0.0f, 0.0f, 0.0f, 0.1f) ); //index 3 white
    baseGeometry->setColorArray(colors);
-   baseGeometry->setColorBinding(osg::Geometry::BIND_PER_VERTEX);
+   baseGeometry->setColorBinding(osg::Geometry::BIND_PER_VERTEX);*/
 
    baseGeode->getOrCreateStateSet()->setMode(GL_BLEND, osg::StateAttribute::ON);
    baseGeode->getOrCreateStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
    baseGeode->getOrCreateStateSet()->setRenderBinDetails(1, "DepthSortedBin");
 
-   /* TEXTURED BASE
-    * osg::Vec2Array* texcoords = new osg::Vec2Array(5);
-    * (*texcoords)[0].set(0.0f,1.0f); // tex coord for vertex 0
-    * (*texcoords)[1].set(0.0f,0.0f); // tex coord for vertex 1
-    * (*texcoords)[2].set(1.0f,0.0f); // ""
-    * (*texcoords)[3].set(1.0f,1.0f); // ""
-    * baseGeometry->setTexCoordArray(0,texcoords);*/
+   // TEXTURED BASE
+   /*  osg::Vec2Array* texcoords = new osg::Vec2Array(5);
+     (*texcoords)[0].set(0.0f,1.0f); // tex coord for vertex 0
+     (*texcoords)[1].set(0.0f,0.0f); // tex coord for vertex 1
+     (*texcoords)[2].set(1.0f,0.0f); // ""
+     (*texcoords)[3].set(1.0f,1.0f); // ""
+     baseGeometry->setTexCoordArray(0,texcoords);*/
 }
 
 //set aruco modelView matrix
@@ -1531,6 +1531,42 @@ void CoreGraph::recievedMVMatrix(QMatrix4x4 modelViewMatrix)
     //update base size
     baseTransform->setMatrix(osg::Matrixd::identity());
     updateBase(baseSize);
+
+    /*IplImage* image = this->getCameraStream()->getIplImage();
+    osg::Image* i= new osg::Image();
+
+    i->setImage( image->width, image->height,
+              3, GL_RGB, GL_RGB,
+              GL_UNSIGNED_BYTE,
+              ( unsigned char* ) image->imageData,
+              osg::Image::NO_DELETE, 1 );
+
+    osg::Texture2D* texture = new osg::Texture2D;
+
+      // protect from being optimized away as static state:
+      texture->setDataVariance(osg::Object::DYNAMIC);
+
+      // load an image by reading a file:
+      osg::Image* klnFace = osgDB::readImageFile("../share/3dsoftviz/img/textures/author.png");
+      if (!klnFace)
+      {
+         std::cout << " couldn't find texture, quiting." << std::endl;
+
+      }
+
+      // Assign the texture to the image we read from file:
+      texture->setImage(i);
+
+      // Create a new StateSet with default settings:
+      osg::StateSet* stateOne = new osg::StateSet();
+
+      // Assign texture unit 0 of our new StateSet to the texture
+      // we just created and enable the texture.
+      stateOne->setTextureAttributeAndModes
+         (0,texture,osg::StateAttribute::ON);
+      // Associate this state set with the Geode that contains
+      // the pyramid:
+      baseGeode->setStateSet(stateOne);*/
 }
 
 //set aruco projection matrix
@@ -1648,6 +1684,10 @@ void CoreGraph::scaleGraph(int scale)
 void CoreGraph::rotateGraph(int direction)
 {
     osg::Matrixd transfGraph = graphRotTransf->getMatrix();
+    osg::Vec3f translate = transfGraph.getTrans();
+    osg::Matrixd inverted = inverted.inverse(transfGraph);
+    transfGraph.setTrans(inverted.getTrans());
+
     switch(direction){
     case 1:
         rotationMatrix = rotationMatrix.rotate(0.025,0,0,1);
@@ -1656,14 +1696,18 @@ void CoreGraph::rotateGraph(int direction)
         rotationMatrix = rotationMatrix.rotate(-0.025,0,0,1);
         break;
     case 2:
+    {
         rotationMatrix = rotationMatrix.rotate(0.025,0,1,0);
         break;
+    }
     case -2:
         rotationMatrix = rotationMatrix.rotate(-0.025,0,1,0);
         break;
     }
 
-    graphRotTransf->setMatrix(transfGraph * rotationMatrix);
+    transfGraph = transfGraph * rotationMatrix;
+    transfGraph.setTrans(translate);
+    graphRotTransf->setMatrix(transfGraph);
 
 }
 
@@ -1677,20 +1721,24 @@ void CoreGraph::outputMatrix(osg::Matrixd matrix)
 
 void CoreGraph::ratata(double initialX,double actualX,double initialY, double actualY)
 {
+    osg::Matrixd transfGraph = graphRotTransf->getMatrix();
     if( actualX > initialX +5){
-        rotationMatrix = rotationMatrix * rotationMatrix.rotate(0.05,osg::Vec3f(0,0,1));
+        rotationMatrix = rotationMatrix.rotate(0.05,0,0,1);
     }
 
     if(actualX < initialX -5){
-        rotationMatrix = rotationMatrix * rotationMatrix.rotate(-0.05,osg::Vec3f(0,0,1));
+        rotationMatrix = rotationMatrix.rotate(-0.025,0,0,1);
     }
 
-    if(actualY > initialY +5){
+    /*if(actualY > initialY +5){
         rotationMatrix = rotationMatrix * rotationMatrix.rotate(-0.05,osg::Vec3f(1,0,0));
     }
     if(actualY < initialY -5){
         rotationMatrix = rotationMatrix * rotationMatrix.rotate(0.05,osg::Vec3f(1,0,0));
-    }
+    }*/
+
+    graphRotTransf->setMatrix(transfGraph * rotationMatrix);
+
 }
 
 //scale nodeGroup nodes
@@ -1704,14 +1752,14 @@ void CoreGraph::scaleNodes(bool scaleUp)
          float actualScale = it.value()->getScale();
 
          if(scaleUp){
-             if(actualScale < 60)
-                 it.value()->setScale(actualScale * 1.1);
+             if(actualScale < 100)
+                 it.value()->setScale(actualScale * 1.2);
              else
                  it.value()->setScale(actualScale);
          }
          else{
-             if(actualScale > 2)
-                 it.value()->setScale(actualScale * 0.9);
+             if(actualScale > 1)
+                 it.value()->setScale(actualScale * 0.8);
              else
                  it.value()->setScale(actualScale);
 

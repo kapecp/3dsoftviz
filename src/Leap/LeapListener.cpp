@@ -48,23 +48,21 @@ void Leap::LeapListener::onFrame( const Controller& controller )
             //leapActions.changeViewAngle( direction );
             leapActions.rotateAruco( direction );
 
+            if(gesture.type() == Gesture::TYPE_KEY_TAP){
+                qDebug()<<"rightTap";
+                    leapActions.scaleNodes(true);
+            }
 		}
 		else {
             direction = Leap::DirectionDetector::getPalmDirection( hands[i] );
             //leapActions.changeViewAngle( direction );
             leapActions.scaleEdges( direction );
 
-            if(gesture.type() == Gesture::TYPE_SWIPE){
-                Leap::SwipeGesture swipeGesture = gesture;
-                Leap::Vector swipeDirection = swipeGesture.direction();
-
-                if(swipeDirection.x > 0){
-                    leapActions.scaleNodes(true);
-                }
-                else{
+            if(gesture.type() == Gesture::TYPE_KEY_TAP){
+                    qDebug()<<"leftTap";
                     leapActions.scaleNodes(false);
-                }
             }
+        }
 
             //extended hand action
            /* handExtended = Leap::FingerPositionDetector::isHandExtended( hands[i] );
@@ -76,8 +74,6 @@ void Leap::LeapListener::onFrame( const Controller& controller )
             }*/
 
 		}
-	} 
-
 
 	//std::cout << "id: " << frame.id();
 	/*

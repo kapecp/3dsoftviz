@@ -474,7 +474,7 @@ bool PickHandler::handleDrag( const osgGA::GUIEventAdapter& ea, osgGA::GUIAction
 		return dragNode( viewer );
 	}
     //jurik
-    else if ( rightButtonPressed ) {
+    else if ( rightButtonPressed && coreGraph->isArucoRunning()) {
 
         coreGraph->ratata(initialX,_mX,initialY,_mY);
         if(_mX > initialX+5 || _mX < initialX-5)
@@ -528,8 +528,8 @@ bool PickHandler::handlePush( const osgGA::GUIEventAdapter& ea, osgGA::GUIAction
 
     if ( ea.getButtonMask() == osgGA::GUIEventAdapter::RIGHT_MOUSE_BUTTON ) {
         rightButtonPressed = true;
-        initialX = origin_mX;
-        initialY = origin_mY;
+        initialX = ea.getX();
+        initialY = ea.getY();
     }
 
 	_mX = ea.getX();

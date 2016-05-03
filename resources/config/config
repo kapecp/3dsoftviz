@@ -61,7 +61,7 @@ Kinect.DepthInfoName= depthInfo
 
 FaceDecetion.EnableProjectionCorrection=0
 FaceDecetion.CameraDistancePar=3.5
-Aruco.MarkerSize=150
+Aruco.MarkerSize=200
 Aruco.CamDistancRatio=2.75
 Aruco.ConstDist=0.3
 Aruco.ConstHeightKoef=0.8

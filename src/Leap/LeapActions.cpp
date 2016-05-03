@@ -214,6 +214,12 @@ void Leap::LeapActions::rotateAruco(Leap::DirectionDetector::Direction direction
     case Leap::DirectionDetector::Direction::RIGHT :
         AppCore::Core::getInstance( NULL )->getCoreGraph()->rotateGraph(-1);
         break;
+    /*case Leap::DirectionDetector::Direction::DOWN :
+        AppCore::Core::getInstance( NULL )->getCoreGraph()->rotateGraph(2);
+        break;
+    case Leap::DirectionDetector::Direction::UP :
+        AppCore::Core::getInstance( NULL )->getCoreGraph()->rotateGraph(-2);
+        break;*/
     case Leap::DirectionDetector::Direction::STEADY :
         break;
     }
