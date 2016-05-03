@@ -334,33 +334,7 @@ bool PickHandler::handleKeyDown( const osgGA::GUIEventAdapter& ea, GUIActionAdap
 			}
 		}
 
-	}
-<<<<<<< HEAD
-
-    // skalovanie uzlov
-    else if ( ea.getKey() == osgGA::GUIEventAdapter::KEY_O ) {
-        if(isCtrlPressed){
-            //scale down
-            coreGraph->scaleNodes(false);
-        }
-        else{
-            //scale up
-            coreGraph->scaleNodes(true);
-        }
     }
-    // skalovanie hran
-    else if ( ea.getKey() == osgGA::GUIEventAdapter::KEY_P ) {
-        Layout::LayoutThread* layout = AppCore::Core::getInstance()->getLayoutThread();
-        float distance = layout->getAlg()->getMaxDistance();
-
-        if(isCtrlPressed){
-            layout->getAlg()->setMaxDistance(distance * 0.8);
-        }
-        else{
-                layout->getAlg()->setMaxDistance(distance * 1.2);
-        }
-    }
-=======
 	//split stereo 3D
 	else if ( ea.getKey() == osgGA::GUIEventAdapter::KEY_G){
 		if (splitviewMode == 0){
@@ -403,8 +377,7 @@ bool PickHandler::handleKeyDown( const osgGA::GUIEventAdapter& ea, GUIActionAdap
 		distance = distance + 0.001f;
 		osg::DisplaySettings::instance()->setEyeSeparation(distance);
 		qDebug() << "Eye distance : " << distance;
-	}
->>>>>>> refs/remotes/cimox/develop
+    }
 
 	return false;
 }

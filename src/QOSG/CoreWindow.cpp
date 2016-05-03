@@ -1225,7 +1225,6 @@ QWidget* CoreWindow::createMoreFeaturesTab( QFrame* line )
 	lMore->addRow( chb_shadow );
 	connect( chb_shadow, SIGNAL( clicked() ), this, SLOT( shadowClicked() ) );
 
-<<<<<<< HEAD
     chb_base = new QCheckBox( "&Base" );
     chb_base->setChecked( false );
     lMore->addRow( chb_base );
@@ -1242,13 +1241,6 @@ QWidget* CoreWindow::createMoreFeaturesTab( QFrame* line )
     connect( b_start_projective_ar, SIGNAL( clicked() ), this, SLOT( createARProjWindow() ) );
 
     //*****
-=======
-	chb_base = new QCheckBox( "&Base" );
-	chb_base->setChecked( false );
-	lMore->addRow( chb_base );
-	connect( chb_base, SIGNAL( clicked() ), this, SLOT( baseClicked() ) );
-	//*****
->>>>>>> refs/remotes/cimox/develop
 
 	wMore->setLayout( lMore );
 

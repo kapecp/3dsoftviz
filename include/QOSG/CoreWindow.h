@@ -687,7 +687,6 @@ void loadExampleGraphLua();
 	 */
 	void changeLifespan( int value );
 
-<<<<<<< HEAD
     //jurik
     void lightClicked();
     void shadowClicked();
@@ -695,14 +694,6 @@ void loadExampleGraphLua();
 
     // kostan
     void createARProjWindow();
-    //*****
-=======
-	//jurik
-	void lightClicked();
-	void shadowClicked();
-	void baseClicked();
-	//*****
->>>>>>> refs/remotes/cimox/develop
 
 private:
 
@@ -1469,7 +1460,6 @@ private:
 		*/
 	bool isEBPlaying;
 
-<<<<<<< HEAD
     //jurik
     /**
      *CheckBox for turning on custom light
@@ -1498,27 +1488,6 @@ private:
     QPushButton* b_start_projective_ar;
 
     //*****
-=======
-	//jurik
-	/**
-	 *CheckBox for turning on custom light
-	 *@brief chb_light
-	 */
-	QCheckBox* chb_light;
-
-	/**
-	 *CheckBox for casting shadows of graph
-	 *@brief chb_shadow
-	 */
-	QCheckBox* chb_shadow;
-
-	/**
-	 *CheckBox for showing base
-	 *@brief chb_base
-	 */
-	QCheckBox* chb_base;
-	//*****
->>>>>>> refs/remotes/cimox/develop
 
 public:
 

@@ -56,14 +56,8 @@ Viewer.Textures.OrientedEdgePrefix=../share/3dsoftviz/img/textures/arrows/arrow
 Viewer.Textures.OrientedEdgeSuffix=.png
 Viewer.Textures.MetaNode=../share/3dsoftviz/img/textures/MetaNode.png
 
-<<<<<<< HEAD
 Viewer.Fullscreen=1
-Viewer.SkyBox.Noise=0
-=======
-Viewer.Fullscreen=0
-
 Viewer.SkyBox.Noise=1
->>>>>>> refs/remotes/cimox/develop
 Viewer.SkyBox.North=../share/3dsoftviz/img/skybox/default/rays_north.bmp
 Viewer.SkyBox.East=../share/3dsoftviz/img/skybox/default/rays_east.bmp
 Viewer.SkyBox.South=../share/3dsoftviz/img/skybox/default/rays_south.bmp

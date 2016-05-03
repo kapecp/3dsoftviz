@@ -110,23 +110,23 @@ osg::Geode* createBase()
 
     //base
     osg::Vec3Array* vertices = new osg::Vec3Array;
-    vertices->push_back(osg::Vec3(-1.5, -1.345, 0));    // lb   floor
-    vertices->push_back(osg::Vec3(0, -1.345, 0));       // rb   floor
+    vertices->push_back(osg::Vec3(-1.5, -2.0, 0));    // lb   floor
+    vertices->push_back(osg::Vec3(0, -2.0, 0));       // rb   floor
     vertices->push_back(osg::Vec3(0, 0, 0));            // rb   screen
     vertices->push_back(osg::Vec3(-1.5, 0, 0));         // lb   screen
-    vertices->push_back(osg::Vec3(0, 0, 2.1));          // rt   screen
-    vertices->push_back(osg::Vec3(-1.5, 0, 2.1));       // lt   screen
+    vertices->push_back(osg::Vec3(0, 0, 2.07));          // rt   screen
+    vertices->push_back(osg::Vec3(-1.5, 0, 2.07));       // lt   screen
 
     //right side
     vertices->push_back(osg::Vec3(0.02, -0.08, 0));       // fb   rack
     vertices->push_back(osg::Vec3(0.02, -0.08, 0.02));    // fm   rack
-    vertices->push_back(osg::Vec3(0.02, -0.01, 0.07));    // ft   rack
-    vertices->push_back(osg::Vec3(0.02, -0.01, 0.00));    // sb   rack
+    vertices->push_back(osg::Vec3(0.02, -0.015, 0.065));    // ft   rack
+    vertices->push_back(osg::Vec3(0.02, -0.015, 0.00));    // sb   rack
     //left side
     vertices->push_back(osg::Vec3(-1.52, -0.08, 0));       // fb   rack
     vertices->push_back(osg::Vec3(-1.52, -0.08, 0.02));    // fm   rack
-    vertices->push_back(osg::Vec3(-1.52, -0.01, 0.07));    // ft   rack
-    vertices->push_back(osg::Vec3(-1.52, -0.01, 0.00));    // sb   rack
+    vertices->push_back(osg::Vec3(-1.52, -0.015, 0.065));    // ft   rack
+    vertices->push_back(osg::Vec3(-1.52, -0.015, 0.00));    // sb   rack
     baseGeometry->setVertexArray(vertices);
 
     // floor
@@ -331,9 +331,12 @@ void QOSG::ProjectiveARViewer::reloadConfig()
 
 void QOSG::ProjectiveARViewer::paintGL()
 {
-    frame();
-    renderCamera->setProjectionMatrix(viewerPerspective->getCamera()->getProjectionMatrix());
+    double fovy, aspectRatio, zNear, zFar;
+    viewerPerspective->getCamera()->getProjectionMatrixAsPerspective(fovy, aspectRatio, zNear, zFar);
+    //renderCamera->setProjectionMatrix(viewerPerspective->getCamera()->getProjectionMatrix());
     renderCamera->setViewMatrix(viewerPerspective->getCamera()->getViewMatrix());
+    renderCamera->setProjectionMatrixAsPerspective(viewerFOV, 1.0, zNear, zFar);
+    frame();
     //renderCamera->setViewport(viewerPerspective->getCamera()->getViewport());
 }
 
