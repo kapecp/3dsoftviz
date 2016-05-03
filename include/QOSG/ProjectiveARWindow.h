@@ -6,6 +6,7 @@
 #include <QLabel>
 //#include <QLineEdit>
 #include <QDoubleSpinBox>
+#include <QCheckBox>
 #include <QToolBar>
 #include <QToolBox>
 
@@ -89,6 +90,14 @@ private:
     QDoubleSpinBox* dsb_viewerDirX;
     QDoubleSpinBox* dsb_viewerDirY;
     QDoubleSpinBox* dsb_viewerDirZ;
+
+    QDoubleSpinBox* dsb_graphPosX;
+    QDoubleSpinBox* dsb_graphPosY;
+    QDoubleSpinBox* dsb_graphPosZ;
+
+    QDoubleSpinBox* dsb_graphRadius;
+
+    QCheckBox* chb_useMainViewer;
 
     QPushButton* b_applyScene;
 

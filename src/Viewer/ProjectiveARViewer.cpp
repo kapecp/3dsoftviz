@@ -221,10 +221,29 @@ osg::Group* QOSG::ProjectiveARViewer::createProjectorScene() {
     renderCamera->setClearColor(osg::Vec4(0.0f, 0.0f, 0.0f, 1.0f));
     renderCamera->setClearMask(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    // if viewerPerspective has no camera, use default view and perspective matrix
-    //if(!viewerPerspective->getCamera())
+
+    double fovy, aspectRatio, zNear, zFar;
+    viewerPerspective->getCamera()->getProjectionMatrixAsPerspective(fovy, aspectRatio, zNear, zFar);
+    renderCamera->setProjectionMatrixAsPerspective(viewerFOV, 1.0, zNear, zFar);
+
+    if(useGraph)
     {
         const osg::BoundingSphere& bs = model->getBound();
+        if (!bs.valid())
+        {
+            return NULL;
+        }
+        osg::Vec3d viewerRelPos(viewerPos - graphPos);
+
+        osg::Vec3d renderCameraRelPos(viewerRelPos * (bs.radius() / graphRadius));
+
+        renderCamera->setViewMatrixAsLookAt(renderCameraRelPos + bs.center(), bs.center(), osg::Vec3(0.0f, 0.0f, 1.0f));
+
+    }
+    else
+    {
+        renderCamera->setViewMatrix(viewerPerspective->getCamera()->getViewMatrix());
+        /*const osg::BoundingSphere& bs = model->getBound();
         if (!bs.valid())
         {
             return NULL;
@@ -244,9 +263,9 @@ osg::Group* QOSG::ProjectiveARViewer::createProjectorScene() {
         renderCamera->setProjectionMatrixAsFrustum(-proj_right, proj_right, -proj_top, proj_top, znear, zfar);
 
         // set view
-        renderCamera->setReferenceFrame(osg::Transform::ABSOLUTE_RF);
-        renderCamera->setViewMatrixAsLookAt(bs.center() - osg::Vec3(0.0f, 2.0f, 0.0f)*bs.radius(), bs.center(), osg::Vec3(0.0f, 0.0f, 1.0f));
+        renderCamera->setViewMatrixAsLookAt(bs.center() - osg::Vec3(0.0f, 2.0f, 0.0f)*bs.radius(), bs.center(), osg::Vec3(0.0f, 0.0f, 1.0f));*/
     }
+    renderCamera->setReferenceFrame(osg::Transform::ABSOLUTE_RF);
     // else: set renderCamera's projection and view matrix from the viewerPerspective
     /*else
     {
@@ -277,7 +296,12 @@ osg::Group* QOSG::ProjectiveARViewer::createProjectorScene() {
     base = createBase();
 
     /* Enable projective texturing for all objects of base */
-    base->setStateSet(createProjectorState(texture, viewerPos, viewerDir, viewerFOV));
+    if(useGraph){
+        base->setStateSet(createProjectorState(texture, viewerPos, graphPos - viewerPos, viewerFOV));
+    }
+    else{
+        base->setStateSet(createProjectorState(texture, viewerPos, viewerDir, viewerFOV));
+    }
 
     projectorScene->addChild(base);
     projectorScene->addChild(renderCamera);
@@ -293,6 +317,11 @@ QOSG::ProjectiveARViewer::ProjectiveARViewer( QWidget* parent , const char* name
     appConf = Util::ApplicationConfig::get();
 
     renderCamera = new osg::Camera;
+    useGraph = true;
+
+    // setup Graph (radius 0.5m)
+    graphPos = osg::Vec3d(-0.75, -0.25, 0.25);
+    graphRadius = 0.5;
 
     // setup Viewer
     viewerPos = osg::Vec3d(-1.88, -0.95, 1.72);
@@ -333,9 +362,36 @@ void QOSG::ProjectiveARViewer::paintGL()
 {
     double fovy, aspectRatio, zNear, zFar;
     viewerPerspective->getCamera()->getProjectionMatrixAsPerspective(fovy, aspectRatio, zNear, zFar);
-    //renderCamera->setProjectionMatrix(viewerPerspective->getCamera()->getProjectionMatrix());
-    renderCamera->setViewMatrix(viewerPerspective->getCamera()->getViewMatrix());
     renderCamera->setProjectionMatrixAsPerspective(viewerFOV, 1.0, zNear, zFar);
+
+    if(useGraph){
+        const osg::BoundingSphere& bs = viewerPerspective->getSceneData()->getBound();
+        if (!bs.valid())
+        {
+            return ;
+        }
+        osg::Vec3d viewerRelPos(viewerPos - graphPos);
+
+        osg::Vec3d renderCameraRelPos(viewerRelPos * (bs.radius()*0.50 / graphRadius));
+
+        renderCamera->setViewMatrixAsLookAt(renderCameraRelPos + bs.center(), bs.center(), osg::Vec3(0.0f, 0.0f, 1.0f));
+
+        /*osg::Vec3d prevCamPos, prevCenter, prevUp;
+        viewerPerspective->getCamera()->getViewMatrixAsLookAt(prevCamPos, prevCenter, prevUp);
+        qDebug() << "viewerRelPos[" << viewerRelPos.x() << ";" << viewerRelPos.y() << ";" << viewerRelPos.z() << "]";
+        qDebug() << "graphRadius = " << graphRadius;
+        qDebug() << "cameraRelPos[" << renderCameraRelPos.x() << ";" << renderCameraRelPos.y() << ";" << renderCameraRelPos.z() << "]";
+        qDebug() << "bsRadius = " << bs.radius();
+        qDebug() << "bs.center[" << bs.center().x() << ";" << bs.center().y() << ";" << bs.center().z() << "]";
+        qDebug() << "prevCamPos[" << prevCamPos.x() << ";" << prevCamPos.y() << ";" << prevCamPos.z() << "]";
+        qDebug() << "prevCenter[" << prevCenter.x() << ";" << prevCenter.y() << ";" << prevCenter.z() << "]";
+        qDebug() << "prevCamPos[" << prevUp.x() << ";" << prevUp.y() << ";" << prevUp.z() << "]";*/
+    }
+    else{
+        renderCamera->setViewMatrix(viewerPerspective->getCamera()->getViewMatrix());
+    }
+    //useSourceCamera = true;
+
     frame();
     //renderCamera->setViewport(viewerPerspective->getCamera()->getViewport());
 }
@@ -347,12 +403,20 @@ void QOSG::ProjectiveARViewer::updateScene()
     //osg::TexMat* texMat = new osg::TexMat();
     osg::Matrix mat;
     osg::Vec3d up(0.0, 0.0, 1.0);
-    mat = osg::Matrixd::lookAt(viewerPos, viewerDir + viewerPos, up)
-        * osg::Matrixd::perspective(viewerFOV, 1.0, 0.1, SCENE_MAX_SIZE);
+    if(useGraph){
+        mat = osg::Matrixd::lookAt(viewerPos, graphPos, up)
+            * osg::Matrixd::perspective(viewerFOV, 1.0, 0.1, SCENE_MAX_SIZE);
+    }
+    else{
+        mat = osg::Matrixd::lookAt(viewerPos, viewerDir + viewerPos, up)
+            * osg::Matrixd::perspective(viewerFOV, 1.0, 0.1, SCENE_MAX_SIZE);
+    }
     texMat->setMatrix(mat);
     //getSceneData()->getStateSet()->setTextureAttribute(0, texMat, osg::StateAttribute::ON);
 
     //getSceneData()->getStateSet()->setTextureAttributeAndModes(1, texMat, osg::StateAttribute::ON);*/
+
+    // update render
 
     // update projector
     getCamera()->setProjectionMatrixAsPerspective( projectorFOV, static_cast<double>( width() )/static_cast<double>( height() ), 0.01, SCENE_MAX_SIZE );

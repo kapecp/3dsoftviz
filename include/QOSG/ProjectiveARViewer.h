@@ -115,6 +115,18 @@ public:
     {
         return projectorFOV;
     }
+    osg::Vec3d getGraphPos()
+    {
+        return graphPos;
+    }
+    double getGraphRadius()
+    {
+        return graphRadius;
+    }
+    bool getUseGraph()
+    {
+        return useGraph;
+    }
     // setters
     void setViewerPos(double x, double y, double z)
     {
@@ -139,6 +151,18 @@ public:
     void setProjectorFOV(double fov)
     {
         projectorFOV = fov;
+    }
+    void setGraphPos(double x, double y, double z)
+    {
+        graphPos.set(x, y, z);
+    }
+    void setGraphRadius(double radius)
+    {
+        graphRadius = radius;
+    }
+    void setUseGraph(bool use)
+    {
+        useGraph = use;
     }
 
 protected:
@@ -190,6 +214,14 @@ private:
     osg::Vec3d viewerPos;
     osg::Vec3d viewerDir;
     double viewerFOV;
+
+    osg::Vec3d graphPos;
+    double graphRadius;
+
+    // option to use graphPos and graphRadius, to update render camera
+    // else use viewerPerspective's camera
+    bool useGraph;
+
 
     /**
         *  osg::Group* createProjectorScene()

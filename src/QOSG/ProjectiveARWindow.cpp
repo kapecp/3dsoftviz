@@ -87,6 +87,10 @@ QWidget* QOSG::ProjectiveARWindow::createSceneTab( QFrame* line )
     osg::Vec3d viewerDir = viewerWidget->getViewerDir();
     double viewerFOV = viewerWidget->getViewerFOV();
 
+    osg::Vec3d graphPos = viewerWidget->getGraphPos();
+    double graphRadius = viewerWidget->getGraphRadius();
+    bool useMainViewer = viewerWidget->getUseGraph();
+
     // init options
     dsb_projectorFOV = new QDoubleSpinBox();
     dsb_projectorFOV->setRange(0, 360);
@@ -99,47 +103,6 @@ QWidget* QOSG::ProjectiveARWindow::createSceneTab( QFrame* line )
     dsb_projectorDirX = createCoordSpinBox(projectorDir.x(), "Projector X direction");
     dsb_projectorDirY = createCoordSpinBox(projectorDir.y(), "Projector Y direction");
     dsb_projectorDirZ = createCoordSpinBox(projectorDir.z(), "Projector Z direction");
-    /*
-    dsb_projectorPosX = new QDoubleSpinBox();
-    dsb_projectorPosX->setRange(-20, 20);
-    dsb_projectorPosX->setDecimals(3);
-    dsb_projectorPosX->setSingleStep(0.01);
-    dsb_projectorPosX->setValue(projectorPos.x());
-    dsb_projectorPosX->setToolTip("Projector X position");
-    dsb_projectorPosX->setSuffix(" m");
-    dsb_projectorPosY = new QDoubleSpinBox();
-    dsb_projectorPosY->setRange(-20, 20);
-    dsb_projectorPosX->setDecimals(3);
-    dsb_projectorPosX->setSingleStep(0.01);
-    dsb_projectorPosY->setValue(projectorPos.y());
-    dsb_projectorPosY->setToolTip("Projector Y position");
-    dsb_projectorPosY->setSuffix(" m");
-    dsb_projectorPosZ = new QDoubleSpinBox();
-    dsb_projectorPosZ->setRange(-20, 20);
-    dsb_projectorPosZ->setDecimals(3);
-    dsb_projectorPosZ->setSingleStep(0.01);
-    dsb_projectorPosZ->setValue(projectorPos.z());
-    dsb_projectorPosZ->setToolTip("Projector Z position");
-    dsb_projectorPosZ->setSuffix(" m");
-    dsb_projectorDirX = new QDoubleSpinBox();
-    dsb_projectorDirX->setRange(-20, 20);
-    dsb_projectorDirX->setDecimals(3);
-    dsb_projectorDirX->setSingleStep(0.01);
-    dsb_projectorDirX->setValue(projectorDir.x());
-    dsb_projectorDirX->setToolTip("Projector X direction");
-    dsb_projectorDirX->setSuffix(" m");
-    dsb_projectorDirY = new QDoubleSpinBox();
-    dsb_projectorDirY->setRange(-20, 20);
-    dsb_projectorDirY->setDecimals(3);
-    dsb_projectorDirY->setSingleStep(0.01);
-    dsb_projectorDirY->setValue(projectorDir.y());
-    dsb_projectorDirY->setToolTip("Projector Y direction");
-    dsb_projectorDirY->setSuffix(" m");
-    dsb_projectorDirZ = new QDoubleSpinBox();
-    dsb_projectorDirZ->setRange(-20, 20);
-    dsb_projectorDirZ->setValue(projectorDir.z());
-    dsb_projectorDirZ->setToolTip("Projector Z direction");
-    dsb_projectorDirZ->setSuffix(" m");*/
 
     dsb_viewerFOV = new QDoubleSpinBox();
     dsb_viewerFOV->setRange(0, 360);
@@ -152,63 +115,16 @@ QWidget* QOSG::ProjectiveARWindow::createSceneTab( QFrame* line )
     dsb_viewerDirX = createCoordSpinBox(viewerDir.x(), "Viewer X direction");
     dsb_viewerDirY = createCoordSpinBox(viewerDir.y(), "Viewer Y direction");
     dsb_viewerDirZ = createCoordSpinBox(viewerDir.z(), "Viewer Z direction");
-    /*dsb_viewerPosX = new QDoubleSpinBox();
-    dsb_viewerPosX->setRange(-20, 20);
-    dsb_viewerPosX->setValue(viewerPos.x());
-    dsb_viewerPosX->setToolTip("Viewer X position");
-    dsb_viewerPosX->setSuffix(" m");
-    dsb_viewerPosY = new QDoubleSpinBox();
-    dsb_viewerPosY->setRange(-20, 20);
-    dsb_viewerPosY->setValue(viewerPos.y());
-    dsb_viewerPosY->setToolTip("Viewer Y position");
-    dsb_viewerPosY->setSuffix(" m");
-    dsb_viewerPosZ = new QDoubleSpinBox();
-    dsb_viewerPosZ->setRange(-20, 20);
-    dsb_viewerPosZ->setValue(viewerPos.z());
-    dsb_viewerPosZ->setToolTip("Viewer Z position");
-    dsb_viewerPosZ->setSuffix(" m");
-    dsb_viewerDirX = new QDoubleSpinBox();
-    dsb_viewerDirX->setRange(-20, 20);
-    dsb_viewerDirX->setValue(viewerDir.x());
-    dsb_viewerDirX->setToolTip("Viewer X direction");
-    dsb_viewerDirX->setSuffix(" m");
-    dsb_viewerDirY = new QDoubleSpinBox();
-    dsb_viewerDirY->setRange(-20, 20);
-    dsb_viewerDirY->setValue(viewerDir.y());
-    dsb_viewerDirY->setToolTip("Viewer Y direction");
-    dsb_viewerDirY->setSuffix(" m");
-    dsb_viewerDirZ = new QDoubleSpinBox();
-    dsb_viewerDirZ->setRange(-20, 20);
-    dsb_viewerDirZ->setValue(viewerDir.z());
-    dsb_viewerDirZ->setToolTip("Viewer Z direction");
-    dsb_viewerDirZ->setSuffix(" m");*/
 
-    // init options
-    /*dsb_projectorFOV = new QDoubleSpinBox();
-    dsb_projectorFOV->setRange(0, 360);
-    dsb_projectorFOV->setValue(projectorFOV);
-    dsb_projectorFOV->setToolTip("Projector field of view");
-    dsb_projectorFOV->setSuffix("°");
-    dsb_projectorPosX = createCoordSpinBox(projectorPos.x(), "Projector X position");
-    dsb_projectorPosY = createCoordSpinBox(projectorPos.y(), "Projector Y position");
-    dsb_projectorPosZ = createCoordSpinBox(projectorPos.z(), "Projector Z position");
-    dsb_projectorDirX = createCoordSpinBox(projectorDir.x(), "Projector X direction");
-    dsb_projectorDirX = createCoordSpinBox(projectorDir.y(), "Projector Y direction");
-    dsb_projectorDirZ = createCoordSpinBox(projectorDir.z(), "Projector Z direction");
+    dsb_graphPosX = createCoordSpinBox(graphPos.x(), "Graph X position");
+    dsb_graphPosY = createCoordSpinBox(graphPos.y(), "Graph Y position");
+    dsb_graphPosZ = createCoordSpinBox(graphPos.z(), "Graph Z position");
 
-    dsb_viewerFOV = new QDoubleSpinBox();
-    dsb_viewerFOV->setRange(0, 360);
-    dsb_viewerFOV->setValue(viewerFOV);
-    dsb_viewerFOV->setToolTip("Viewer field of view");
-    //dsb_viewerFOV->setSuffix("°");
+    dsb_graphRadius = createCoordSpinBox(graphRadius, "Graph radius");
 
-    dsb_viewerPosX = createCoordSpinBox(viewerPos.x(), "Viewer X position");
-    dsb_viewerPosY = createCoordSpinBox(viewerPos.y(), "Viewer Y position");
-    dsb_viewerPosZ = createCoordSpinBox(viewerPos.z(), "Viewer Z position");
-    dsb_viewerDirX = createCoordSpinBox(viewerDir.x(), "Viewer X direction");
-    dsb_viewerDirY = createCoordSpinBox(viewerDir.y(), "Viewer Y direction");
-    dsb_viewerDirZ = createCoordSpinBox(viewerDir.z(), "Viewer Z direction");*/
-
+    chb_useMainViewer = new QCheckBox();
+    chb_useMainViewer->setChecked(useMainViewer);
+    chb_useMainViewer->setToolTip("Opion to use graph position and radius");
 
     b_applyScene = new QPushButton(tr("Apply scene"));
 
@@ -246,6 +162,18 @@ QWidget* QOSG::ProjectiveARWindow::createSceneTab( QFrame* line )
     lScene->addRow( new QLabel( "Dir Y:" ), dsb_viewerDirY );
     dsb_viewerDirZ->setMaximumWidth(80);
     lScene->addRow( new QLabel( "Dir Z:" ), dsb_viewerDirZ );
+    lScene->addRow(createLine());
+
+    lScene->addRow( new QLabel( "Graph" ) );
+    lScene->addRow( new QLabel( "Pos X:" ), dsb_graphPosX );
+    dsb_graphPosX->setMaximumWidth(80);
+    lScene->addRow( new QLabel( "Pos Y:" ), dsb_graphPosY );
+    dsb_graphPosY->setMaximumWidth(80);
+    lScene->addRow( new QLabel( "Pos Z:" ), dsb_graphPosZ );
+    dsb_graphPosZ->setMaximumWidth(80);
+    lScene->addRow( new QLabel( "Radius:" ), dsb_graphRadius );
+    dsb_graphRadius->setMaximumWidth(80);
+    lScene->addRow( new QLabel( "Place graph:" ), chb_useMainViewer );
     lScene->addRow(createLine());
 
     lScene->addRow(b_applyScene);
@@ -346,6 +274,12 @@ void QOSG::ProjectiveARWindow::applySceneSettings()
                                dsb_viewerDirY->value(),
                                dsb_viewerDirZ->value());
     viewerWidget->setViewerFOV(dsb_viewerFOV->value());
+
+    viewerWidget->setGraphPos(dsb_graphPosX->value(),
+                              dsb_graphPosY->value(),
+                              dsb_graphPosZ->value());
+    viewerWidget->setGraphRadius(dsb_graphRadius->value());
+    viewerWidget->setUseGraph(chb_useMainViewer->isChecked());
 
     viewerWidget->updateScene();
 }
