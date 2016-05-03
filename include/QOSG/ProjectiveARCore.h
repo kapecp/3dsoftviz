@@ -6,68 +6,52 @@
 class QApplication;
 
 namespace QOSG {
-//class FaceRecognitionThread;
 class ProjectiveARWindow;
 }
 
 namespace QOSG {
 /**
-	*@brief Class OpenCVCore Controller for Face detection and Aruco functionality.
-	*@author Autor: Marek Jakab, David Durcak
-	*@date 18.11.2013
+    *@brief Class ProjectiveARCore Controller for projective AR functionality.
+    *@author Autor: Viktor Košťan
+    *@date 3.5.2016
 	*/
 class ProjectiveARCore
 {
 
 public:
 
-	/**
-		 * @author Autor: Marek Jakab
-		 * @brief getInstance Return instance of OpenCVCore class
+    /**
+         * @author Autor: Viktor Košťan
+         * @brief getInstance Return instance of ProjectiveARCore class
 		 * @param app QApplication
-		 * @return OpenCVCore instance
+         * @return ProjectiveARCore instance
 		 */
     static ProjectiveARCore*	getInstance( QApplication* app, QWidget* parent );
 
-	/**
-		 * @author Autor: Marek Jakab
-		 * @brief ~OpenCVCore Destructor, that Stops thread, close Window, free memory
+    /**
+         * @brief ~ProjectiveARCore Destructor
 		 */
     ~ProjectiveARCore( void );
 
-	/**
-		 * @author Autor: Michael Garaj
-		 * @brief faceRecognition Initialize OpenCV Window for Aruco and Kinect
+    /**
+         * @author Autor: Viktor Košťan
+         * @brief init Creates and shows ProjectiveARWindow
 		 */
     void init(ViewerQT* sourceViewer);
 
 
 private:
-	/**
-		 * @author Autor: David Durcak
-		 * @brief OpenCVCore Costructor
+    /**
+         * @author Autor: Viktor Košťan
+         * @brief ProjectiveARCore Costructor
 		 * @param app QApplication
 		 */
     ProjectiveARCore( QApplication* app, QWidget* parent );
-
-	/**
-		 * @author Autor: David Durcak
-		 * @brief createPermanentConnection Create conections for sending results from threads to Camera Manipulator and CoreGraph
-		 */
-	void createPermanentConnection();
-
-	/**
-		 * @author Autor: David Durcak
-		 * @brief createConnectionFaceRec Create conections for cotrollig Face Detection thread from Face Detection window
-		 */
-	void createConnectionFaceRec();
-
 
     static ProjectiveARCore*	mProjectiveARCore;	// static singleton instance
 
     QWidget*                                mParent;
     QApplication*                           mApp;
-    //QOpenCV::FaceRecognitionThread*         mThrFaceRec;
     QPointer<QOSG::ProjectiveARWindow>   mProjectiveARWindow;
 
 };

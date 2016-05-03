@@ -110,29 +110,77 @@ osg::Geode* createBase()
 
     //base
     osg::Vec3Array* vertices = new osg::Vec3Array;
-    vertices->push_back(osg::Vec3(-1.5, -1.345, 0)); // lb
-    vertices->push_back(osg::Vec3(0, -1.345, 0)); // rb
-    vertices->push_back(osg::Vec3(0, 0, 0)); // rt
-    vertices->push_back(osg::Vec3(-1.5, 0, 0)); // lt
-    vertices->push_back(osg::Vec3(0, 0, 2.1)); // rt1
-    vertices->push_back(osg::Vec3(-1.5, 0, 2.1)); // lt1
+    vertices->push_back(osg::Vec3(-1.5, -1.345, 0));    // lb   floor
+    vertices->push_back(osg::Vec3(0, -1.345, 0));       // rb   floor
+    vertices->push_back(osg::Vec3(0, 0, 0));            // rb   screen
+    vertices->push_back(osg::Vec3(-1.5, 0, 0));         // lb   screen
+    vertices->push_back(osg::Vec3(0, 0, 2.1));          // rt   screen
+    vertices->push_back(osg::Vec3(-1.5, 0, 2.1));       // lt   screen
+
+    //right side
+    vertices->push_back(osg::Vec3(0.02, -0.08, 0));       // fb   rack
+    vertices->push_back(osg::Vec3(0.02, -0.08, 0.02));    // fm   rack
+    vertices->push_back(osg::Vec3(0.02, -0.01, 0.07));    // ft   rack
+    vertices->push_back(osg::Vec3(0.02, -0.01, 0.00));    // sb   rack
+    //left side
+    vertices->push_back(osg::Vec3(-1.52, -0.08, 0));       // fb   rack
+    vertices->push_back(osg::Vec3(-1.52, -0.08, 0.02));    // fm   rack
+    vertices->push_back(osg::Vec3(-1.52, -0.01, 0.07));    // ft   rack
+    vertices->push_back(osg::Vec3(-1.52, -0.01, 0.00));    // sb   rack
     baseGeometry->setVertexArray(vertices);
 
-    osg::DrawElementsUInt* base = new osg::DrawElementsUInt(osg::PrimitiveSet::QUADS, 0);
-    base->push_back(3);
-    base->push_back(2);
-    base->push_back(1);
-    base->push_back(0);
+    // floor
+    osg::DrawElementsUInt* floor = new osg::DrawElementsUInt(osg::PrimitiveSet::QUADS, 0);
+    floor->push_back(3);
+    floor->push_back(2);
+    floor->push_back(1);
+    floor->push_back(0);
 
-    baseGeometry->addPrimitiveSet(base);
+    baseGeometry->addPrimitiveSet(floor);
 
-    osg::DrawElementsUInt* baseBehind = new osg::DrawElementsUInt(osg::PrimitiveSet::QUADS, 0);
-    baseBehind->push_back(5);
-    baseBehind->push_back(4);
-    baseBehind->push_back(2);
-    baseBehind->push_back(3);
+    // screen
+    osg::DrawElementsUInt* screen = new osg::DrawElementsUInt(osg::PrimitiveSet::QUADS, 0);
+    screen->push_back(5);
+    screen->push_back(4);
+    screen->push_back(2);
+    screen->push_back(3);
 
-    baseGeometry->addPrimitiveSet(baseBehind);
+    baseGeometry->addPrimitiveSet(screen);
+
+    // rack
+    osg::DrawElementsUInt* frontBotRack = new osg::DrawElementsUInt(osg::PrimitiveSet::QUADS, 0);
+    frontBotRack->push_back(6);
+    frontBotRack->push_back(7);
+    frontBotRack->push_back(11);
+    frontBotRack->push_back(10);
+
+    baseGeometry->addPrimitiveSet(frontBotRack);
+
+    osg::DrawElementsUInt* frontTopRack = new osg::DrawElementsUInt(osg::PrimitiveSet::QUADS, 0);
+    frontTopRack->push_back(7);
+    frontTopRack->push_back(8);
+    frontTopRack->push_back(12);
+    frontTopRack->push_back(11);
+
+    baseGeometry->addPrimitiveSet(frontTopRack);
+
+    osg::DrawElementsUInt* sideRightRack = new osg::DrawElementsUInt(osg::PrimitiveSet::QUADS, 0);
+    sideRightRack->push_back(6);
+    sideRightRack->push_back(7);
+    sideRightRack->push_back(8);
+    sideRightRack->push_back(9);
+
+    baseGeometry->addPrimitiveSet(sideRightRack);
+
+    osg::DrawElementsUInt* sideLeftRack = new osg::DrawElementsUInt(osg::PrimitiveSet::QUADS, 0);
+    sideLeftRack->push_back(10);
+    sideLeftRack->push_back(11);
+    sideLeftRack->push_back(12);
+    sideLeftRack->push_back(13);
+
+    baseGeometry->addPrimitiveSet(sideLeftRack);
+
+
 
     return baseGeode;
 }
@@ -263,7 +311,7 @@ QOSG::ProjectiveARViewer::ProjectiveARViewer( QWidget* parent , const char* name
     getCamera()->setGraphicsContext( getGraphicsWindow() );
     getCamera()->setComputeNearFarMode( osg::CullSettings::DO_NOT_COMPUTE_NEAR_FAR );
 
-    getCamera()->setClearColor( osg::Vec4( 0, 1, 0, 1 ) );
+    getCamera()->setClearColor( osg::Vec4( 0, 0, 0, 1 ) );
     getCamera()->setViewMatrixAsLookAt( projectorPos, projectorDir + projectorPos, osg::Vec3d( 0, 0, 1 ) );
 
 
