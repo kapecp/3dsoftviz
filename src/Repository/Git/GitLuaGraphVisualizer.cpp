@@ -713,7 +713,7 @@ void Repository::Git::GitLuaGraphVisualizer::processChangedNodesAndEdges() {
                     if( this->evolutionGraph->getMetaDataFromIdentifier( identifier )->getChangedVersion() == this->currentGraph->getCurrentVersion() ) {
                         edge->setEdgeColor( osg::Vec4f( 0, 1, 0, 1 ) );
                     } else {
-                        edge->setEdgeColor( osg::Vec4f( 1, 1, 1, 1 ) );
+//                        edge->setEdgeColor( osg::Vec4f( 1, 1, 1, 1 ) );
                         removedNodesAndEdges.append( identifier );
                     }
                     break;
@@ -893,7 +893,7 @@ void Repository::Git::GitLuaGraphVisualizer::reloadNodeRepresentation( int showL
             // Nastavime default farbu a zresetujeme uzol
 //            qDebug() << "Setting difference_map -" << iterator.value()->getLuaIdentifier();
             iterator.value()->setType( this->currentGraph->getTypesByName( "clearNode" ).at( 0 ) );
-            iterator.value()->setColor( osg::Vec4f( 1, 1, 1, 1 ) );
+            iterator.value()->setColor( osg::Vec4f( 0.75, 0.75, 0.75, 1 ) );
             iterator.value()->setInvisible( false );
             iterator.value()->reloadConfig();
             break;
@@ -930,7 +930,8 @@ void Repository::Git::GitLuaGraphVisualizer::reloadNodeRepresentation( int showL
         case DIFFERENCE_MAP:
             // Nastavime default farbu
             iterator.value()->setInvisible( false );
-            iterator.value()->setEdgeColor( osg::Vec4f( 1, 1, 1, 1 ) );
+            iterator.value()->setEdgeColor( osg::Vec4f( 0.2, 0.2, 0.2, 1 ) );
+            iterator.value()->reloadColor();
             break;
         case CHANGES:
             iterator.value()->setInvisible( true );
@@ -1166,9 +1167,9 @@ void Repository::Git::GitLuaGraphVisualizer::setEdgeParams( osg::ref_ptr<Data::E
 
     // Nastavenie Lua udajov pre hranu
     edge->Data::AbsEdge::setName( obj->getLabel() );
-    float r = obj->getFloatParam( "colorR", defColor.r() );
-    float g = obj->getFloatParam( "colorG", defColor.g() );
-    float b = obj->getFloatParam( "colorB", defColor.b() );
+    float r = obj->getFloatParam( "colorR", defColor.r() ) * 0.6;
+    float g = obj->getFloatParam( "colorG", defColor.g() ) * 0.6;
+    float b = obj->getFloatParam( "colorB", defColor.b() ) * 0.6;
     float a = obj->getFloatParam( "colorA", defColor.a() );
     edge->setEdgeColor( osg::Vec4( r,g,b,a ) );
     edge->setEdgeStrength( obj->getFloatParam( "edgeStrength", 1 ) );

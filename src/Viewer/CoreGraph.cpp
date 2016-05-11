@@ -654,7 +654,7 @@ Vwr::CoreGraph::CoreGraph( Data::Graph* graph, osg::ref_ptr<osg::Camera> camera 
 
 	// backgroung this must be last Node in root !!!  ( because of ortho2d background)
 	// Gloger: disabled skybox- using solid background (see setClearColor in ViewerQT)
-	root->addChild( createBackground() );
+//	root->addChild( createBackground() );
 	backgroundPosition = 1;
 
 	reload( graph );

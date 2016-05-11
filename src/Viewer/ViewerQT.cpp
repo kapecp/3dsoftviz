@@ -37,7 +37,9 @@ QOSG::ViewerQT::ViewerQT( QWidget* parent , const char* name , const QGLWidget* 
 	setCameraManipulator( manipulator );
 
 	// Gloger: background to white color after disabling skybox
-	getCamera()->setClearColor( osg::Vec4( 0, 0, 0, 1 ) );
+//	getCamera()->setClearColor( osg::Vec4( 0, 0, 0, 1 ) );
+//    getCamera()->setClearColor( osg::Vec4( 0.85, 0.85, 0.85, 1 ) );
+    getCamera()->setClearColor( osg::Vec4( 1, 1, 1, 1 ) );
 	getCamera()->setViewMatrixAsLookAt( osg::Vec3d( -10, 0, 0 ), osg::Vec3d( 0, 0, 0 ), osg::Vec3d( 0, 1, 0 ) );
 
 	setThreadingModel( osgViewer::ViewerBase::SingleThreaded );
