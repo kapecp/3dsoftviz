@@ -18,13 +18,13 @@ public:
 
     GitMetrics( Repository::Git::GitEvolutionGraph* evolutionGraph );
 
-    int getChangedCount( QString identifier );
+    int getFileChangedCount( QString identifier );
 
-    int getChangedCount( QString identifier, int count, int start = 0 );
+    int getFileChangedCount( QString identifier, int count, int start = 0 );
 
-    int getChangedCount( QString identifier, int count, QString startCommitId );
+    int getFileChangedCount( QString identifier, int count, QString startCommitId );
 
-    int getChangedCount( QString identifier, QString endCommitId, QString startCommitId );
+    int getFileChangedCount( QString identifier, QString endCommitId, QString startCommitId );
 
     int getAuthorCount( QString author );
 

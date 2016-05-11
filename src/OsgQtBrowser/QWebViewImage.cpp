@@ -63,8 +63,8 @@ void QWebViewImage::showTemplate( const std::string& templateName, Diluculum::Lu
 	if ( !templateType.empty() ) {
 
 		// Fragment represents value after # hash in url. For example: http://something/index.html#<fragment>
-//		baseUrl.setFragment( QString::fromStdString( templateType ) );
-        baseUrl.setFragment( "git" );
+        baseUrl.setFragment( QString::fromStdString( templateType ) );
+//        baseUrl.setFragment( "git" );
 	}
 
     qDebug() << "Webview url: " << baseUrl;

@@ -15,7 +15,7 @@ Repository::Git::GitMetrics::GitMetrics() {
 Repository::Git::GitMetrics::GitMetrics( Repository::Git::GitEvolutionGraph *evolutionGraph ) : evolutionGraph( evolutionGraph ) {
 }
 
-int Repository::Git::GitMetrics::getChangedCount( QString identifier ) {
+int Repository::Git::GitMetrics::getFileChangedCount( QString identifier ) {
     // inicializacia vystupnej premennej
     int result = 0;
 
@@ -44,7 +44,7 @@ int Repository::Git::GitMetrics::getChangedCount( QString identifier ) {
     return result;
 }
 
-int Repository::Git::GitMetrics::getChangedCount( QString identifier, int count, int start ) {
+int Repository::Git::GitMetrics::getFileChangedCount( QString identifier, int count, int start ) {
     // Inicializacia vystupnej premennej
     int result = 0;
 
@@ -96,7 +96,7 @@ int Repository::Git::GitMetrics::getChangedCount( QString identifier, int count,
     return result;
 }
 
-int Repository::Git::GitMetrics::getChangedCount( QString identifier, int count, QString startCommitId ) {
+int Repository::Git::GitMetrics::getFileChangedCount( QString identifier, int count, QString startCommitId ) {
     // inicializacia vystupnej premennej
     int result = -1;
 
@@ -113,7 +113,7 @@ int Repository::Git::GitMetrics::getChangedCount( QString identifier, int count,
     // Ak sme nasli commitId vo verziach, tak vyhladame pocet zmien podla vstupnych parametrov ( moze vratit aj -1 )
     // inak vrat nastavenu hodnotu
     if( versionIndex != -1 ) {
-        result = getChangedCount( identifier, count, versionIndex );
+        result = getFileChangedCount( identifier, count, versionIndex );
     }
 
 //    qDebug() << identifier << "was changed" << result << "times";
@@ -122,7 +122,7 @@ int Repository::Git::GitMetrics::getChangedCount( QString identifier, int count,
     return result;
 }
 
-int Repository::Git::GitMetrics::getChangedCount( QString identifier, QString endCommitId, QString startCommitId ) {
+int Repository::Git::GitMetrics::getFileChangedCount( QString identifier, QString endCommitId, QString startCommitId ) {
     // inicializacia vystupnej premennej
     int result = -1;
 
@@ -147,9 +147,9 @@ int Repository::Git::GitMetrics::getChangedCount( QString identifier, QString en
 
     if( versionEndIndex != -1 && versionStartIndex != -1 ) {
         if( versionEndIndex - versionStartIndex > 0 ) {
-            result =  getChangedCount( identifier, versionEndIndex + 1 - versionStartIndex, versionStartIndex );
+            result =  getFileChangedCount( identifier, versionEndIndex + 1 - versionStartIndex, versionStartIndex );
         } else {
-            result =  getChangedCount( identifier, versionEndIndex - 1 - versionStartIndex, versionStartIndex + 1 );
+            result =  getFileChangedCount( identifier, versionEndIndex - 1 - versionStartIndex, versionStartIndex + 1 );
         }
     }
 

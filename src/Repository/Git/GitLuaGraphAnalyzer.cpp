@@ -42,6 +42,7 @@ void Repository::Git::GitLuaGraphAnalyzer::analyze() {
 
     // Prejdem kazdy nacitani LuaNode a skontrolujem, ci sa nenachadza medzi zmenenymi subormi v danej verzii
     for( QMap<qlonglong, Lua::LuaNode*>::iterator iterator = this->luaGraph->getNodes()->begin(); iterator != this->luaGraph->getNodes()->end(); ++iterator ) {
+        qDebug() << iterator.value()->getIdentifier();
         // Ak sa LuaNode nachadza v zmenenych suborov, tak zistim rozdiel podstromu suboru voci predchadzajucej verzii suboru
         if( versionFiles.contains( iterator.value()->getIdentifier()  ) ) {
             Lua::LuaNode* node = iterator.value();

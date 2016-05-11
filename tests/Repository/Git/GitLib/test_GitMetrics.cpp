@@ -83,68 +83,68 @@ Describe( a_git_metrics ) {
     It( get_changed_count_for_whole_evolution_graph ) {
         evolution_graph_should_contains_versions();
 
-        Assert::That( metrics.getChangedCount( "file;/to/11" ), Equals( 4 ) );
-        Assert::That( metrics.getChangedCount( "file;/to/12" ), Equals( 1 ) );
-        Assert::That( metrics.getChangedCount( "file;/to/13" ), Equals( 0 ) );
-        Assert::That( metrics.getChangedCount( "file;/to/21" ), Equals( 0 ) );
-        Assert::That( metrics.getChangedCount( "file;/to/24" ), Equals( 1 ) );
-        Assert::That( metrics.getChangedCount( "file;/to/41" ), Equals( 1 ) );
+        Assert::That( metrics.getFileChangedCount( "file;/to/11" ), Equals( 4 ) );
+        Assert::That( metrics.getFileChangedCount( "file;/to/12" ), Equals( 1 ) );
+        Assert::That( metrics.getFileChangedCount( "file;/to/13" ), Equals( 0 ) );
+        Assert::That( metrics.getFileChangedCount( "file;/to/21" ), Equals( 0 ) );
+        Assert::That( metrics.getFileChangedCount( "file;/to/24" ), Equals( 1 ) );
+        Assert::That( metrics.getFileChangedCount( "file;/to/41" ), Equals( 1 ) );
     }
 
     It( get_changed_count_for_count_and_start ) {
         evolution_graph_should_contains_versions();
 
-        Assert::That( metrics.getChangedCount( "file;/to/11", 4 ), Equals( 4 ) );
-        Assert::That( metrics.getChangedCount( "file;/to/11", 3 ), Equals( 3 ) );
-        Assert::That( metrics.getChangedCount( "file;/to/11", 2 ), Equals( 2 ) );
-        Assert::That( metrics.getChangedCount( "file;/to/11", 1 ), Equals( 1 ) );
-        Assert::That( metrics.getChangedCount( "file;/to/11", 0 ), Equals( 0 ) );
-        Assert::That( metrics.getChangedCount( "file;/to/11", -1 ), Equals( -1 ) );
+        Assert::That( metrics.getFileChangedCount( "file;/to/11", 4 ), Equals( 4 ) );
+        Assert::That( metrics.getFileChangedCount( "file;/to/11", 3 ), Equals( 3 ) );
+        Assert::That( metrics.getFileChangedCount( "file;/to/11", 2 ), Equals( 2 ) );
+        Assert::That( metrics.getFileChangedCount( "file;/to/11", 1 ), Equals( 1 ) );
+        Assert::That( metrics.getFileChangedCount( "file;/to/11", 0 ), Equals( 0 ) );
+        Assert::That( metrics.getFileChangedCount( "file;/to/11", -1 ), Equals( -1 ) );
 
-        Assert::That( metrics.getChangedCount( "file;/to/11", 3, 1 ), Equals( 3 ) );
-        Assert::That( metrics.getChangedCount( "file;/to/11", 3, 2 ), Equals( 2 ) );
-        Assert::That( metrics.getChangedCount( "file;/to/11", 3, 3 ), Equals( 1 ) );
-        Assert::That( metrics.getChangedCount( "file;/to/11", 3, 4 ), Equals( 0 ) );
+        Assert::That( metrics.getFileChangedCount( "file;/to/11", 3, 1 ), Equals( 3 ) );
+        Assert::That( metrics.getFileChangedCount( "file;/to/11", 3, 2 ), Equals( 2 ) );
+        Assert::That( metrics.getFileChangedCount( "file;/to/11", 3, 3 ), Equals( 1 ) );
+        Assert::That( metrics.getFileChangedCount( "file;/to/11", 3, 4 ), Equals( 0 ) );
 
-        Assert::That( metrics.getChangedCount( "file;/to/11", 3, -1 ), Equals( -1 ) );
-        Assert::That( metrics.getChangedCount( "file;/to/11", 3, 5 ), Equals( -1 ) );
+        Assert::That( metrics.getFileChangedCount( "file;/to/11", 3, -1 ), Equals( -1 ) );
+        Assert::That( metrics.getFileChangedCount( "file;/to/11", 3, 5 ), Equals( -1 ) );
 
-        Assert::That( metrics.getChangedCount( "file;/to/11", -3, 3 ), Equals( 3 ) );
-        Assert::That( metrics.getChangedCount( "file;/to/11", -4, 3 ), Equals( -1 ) );
+        Assert::That( metrics.getFileChangedCount( "file;/to/11", -3, 3 ), Equals( 3 ) );
+        Assert::That( metrics.getFileChangedCount( "file;/to/11", -4, 3 ), Equals( -1 ) );
 
-        Assert::That( metrics.getChangedCount( "file;/to/11", -1, 1 ), Equals( 1 ) );
+        Assert::That( metrics.getFileChangedCount( "file;/to/11", -1, 1 ), Equals( 1 ) );
     }
 
     It( get_changed_count_for_count_and_start_commit_id ) {
         evolution_graph_should_contains_versions();
 
-        Assert::That( metrics.getChangedCount( "file;/to/11", 4, "1" ), Equals( 4 ) );
-        Assert::That( metrics.getChangedCount( "file;/to/11", 3, "2" ), Equals( 3 ) );
-        Assert::That( metrics.getChangedCount( "file;/to/11", 3, "3" ), Equals( 2 ) );
-        Assert::That( metrics.getChangedCount( "file;/to/11", 3, "4" ), Equals( 1 ) );
+        Assert::That( metrics.getFileChangedCount( "file;/to/11", 4, "1" ), Equals( 4 ) );
+        Assert::That( metrics.getFileChangedCount( "file;/to/11", 3, "2" ), Equals( 3 ) );
+        Assert::That( metrics.getFileChangedCount( "file;/to/11", 3, "3" ), Equals( 2 ) );
+        Assert::That( metrics.getFileChangedCount( "file;/to/11", 3, "4" ), Equals( 1 ) );
 
-        Assert::That( metrics.getChangedCount( "file;/to/11", 3, "-1" ), Equals( -1 ) );
-        Assert::That( metrics.getChangedCount( "file;/to/11", 3, "5" ), Equals( -1 ) );
+        Assert::That( metrics.getFileChangedCount( "file;/to/11", 3, "-1" ), Equals( -1 ) );
+        Assert::That( metrics.getFileChangedCount( "file;/to/11", 3, "5" ), Equals( -1 ) );
 
-        Assert::That( metrics.getChangedCount( "file;/to/11", -3, "4" ), Equals( 3 ) );
-        Assert::That( metrics.getChangedCount( "file;/to/11", -3, "3" ), Equals( -1 ) );
+        Assert::That( metrics.getFileChangedCount( "file;/to/11", -3, "4" ), Equals( 3 ) );
+        Assert::That( metrics.getFileChangedCount( "file;/to/11", -3, "3" ), Equals( -1 ) );
     }
 
     It( get_changed_count_for_end_commit_id_and_start_commit_id ) {
         evolution_graph_should_contains_versions();
 
-        Assert::That( metrics.getChangedCount( "file;/to/11", "1", "4" ), Equals( 4 ) );
-        Assert::That( metrics.getChangedCount( "file;/to/11", "1", "3" ), Equals( 3 ) );
-        Assert::That( metrics.getChangedCount( "file;/to/11", "1", "2" ), Equals( 2 ) );
-        Assert::That( metrics.getChangedCount( "file;/to/11", "1", "1" ), Equals( 1 ) );
+        Assert::That( metrics.getFileChangedCount( "file;/to/11", "1", "4" ), Equals( 4 ) );
+        Assert::That( metrics.getFileChangedCount( "file;/to/11", "1", "3" ), Equals( 3 ) );
+        Assert::That( metrics.getFileChangedCount( "file;/to/11", "1", "2" ), Equals( 2 ) );
+        Assert::That( metrics.getFileChangedCount( "file;/to/11", "1", "1" ), Equals( 1 ) );
 
-        Assert::That( metrics.getChangedCount( "file;/to/11", "4", "1" ), Equals( 4 ) );
-        Assert::That( metrics.getChangedCount( "file;/to/11", "4", "2" ), Equals( 3 ) );
-        Assert::That( metrics.getChangedCount( "file;/to/11", "4", "3" ), Equals( 2 ) );
-        Assert::That( metrics.getChangedCount( "file;/to/11", "4", "4" ), Equals( 1 ) );
+        Assert::That( metrics.getFileChangedCount( "file;/to/11", "4", "1" ), Equals( 4 ) );
+        Assert::That( metrics.getFileChangedCount( "file;/to/11", "4", "2" ), Equals( 3 ) );
+        Assert::That( metrics.getFileChangedCount( "file;/to/11", "4", "3" ), Equals( 2 ) );
+        Assert::That( metrics.getFileChangedCount( "file;/to/11", "4", "4" ), Equals( 1 ) );
 
-        Assert::That( metrics.getChangedCount( "file;/to/11", "4", "-1" ), Equals( -1 ) );
-        Assert::That( metrics.getChangedCount( "file;/to/11", "5", "2" ), Equals( -1 ) );
+        Assert::That( metrics.getFileChangedCount( "file;/to/11", "4", "-1" ), Equals( -1 ) );
+        Assert::That( metrics.getFileChangedCount( "file;/to/11", "5", "2" ), Equals( -1 ) );
     }
 
     It( get_author_count_for_whole_evolution_graph ) {

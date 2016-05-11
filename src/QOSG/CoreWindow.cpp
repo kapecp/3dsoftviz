@@ -3800,6 +3800,12 @@ void CoreWindow::onChange()
 	// <Change> Gloger start: added support for multiple node selection using browser visualization
 	QLinkedList<osg::ref_ptr<Data::Node> >* selected = viewerWidget->getPickHandler()->getSelectedNodes();
 
+    if( cb_git_evoVisualizeMethod->currentText() == "Difference" ) {
+        coreGraph->getBrowsersGroup()->setShowGit( true );
+    } else {
+        coreGraph->getBrowsersGroup()->setShowGit( false );
+    }
+
 	coreGraph->getBrowsersGroup()->setSelectedNodes( selected );
 	// qDebug() << "Selected nodes count: " << selected->size();
 

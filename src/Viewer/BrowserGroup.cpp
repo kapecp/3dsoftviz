@@ -24,7 +24,7 @@ BrowserGroup::BrowserGroup() :
 	connectorsTransforms( new QList<osg::ref_ptr<osg::AutoTransform> > ),
 	selectedNodes( new QLinkedList<osg::ref_ptr<Data::Node> > ),
     selectedNodesModels( nullptr ),
-    showGit( true )
+    showGit( false )
 {
 	this->group->getOrCreateStateSet()->setMode( GL_LIGHTING,osg::StateAttribute::OFF );
 }
