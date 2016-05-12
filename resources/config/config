@@ -1,19 +1,27 @@
+UI.MainWindow.DefaultWidth=1024
+UI.MainWindow.DefaultHeight=768
+
 Graph.Metrics.BetweennessWeigth=0.4
 Graph.Metrics.ClosenessWeigth=0.6
 Graph.Metrics.NodeDegreeWeigth=0.2
 Graph.Metrics.Regexp=*.com
 Graph.Metrics.RgexpWeigth=1
 Graph.Metrics.ViewMetrics=0
+
 GraphMLParser.edgeTypeAttribute=relation
 GraphMLParser.nodeTypeAttribute=type
+
 Layout.Thread.ProcessSleepTime=0
 Layout.Thread.StartSleepTime=1
+
 Model.DB.DbName=tp_db_paulovic_new
 Model.DB.HostName=niflheim.sdjls.uniba.sk
 Model.DB.Pass=aurel123456789
 Model.DB.UserName=aurel
+
 Viewer.CameraManipulator.MaxSpeed=500.0
 Viewer.CameraManipulator.Sensitivity=0.6
+
 Viewer.Display.BackGround.B=190
 Viewer.Display.BackGround.G=190
 Viewer.Display.BackGround.R=190
@@ -22,9 +30,19 @@ Viewer.Display.NodeDistanceScale=2
 Viewer.Display.NodesAlwaysOnTop=0
 Viewer.Display.Stereoscopic=0
 Viewer.Display.ViewDistance=10000.0
+Viewer.Display.Multiview=0
+Viewer.Display.ScreenNum=3
+Viewer.Display.MaxScreenWidth=1920
+Viewer.Display.MaxScreenHeight=1080
+
 Viewer.Labels.Font=../share/3dsoftviz/fonts/OpenSans-Regular.ttf
+
 Viewer.PickHandler.PickedEdgeDistance=200.0
+
 Viewer.Textures.DefaultNodeScale=8
+Viewer.Textures.DefaultEdgeScale=8
+Viewer.Textures.EvolutionEdgeScale=30
+Viewer.Textures.EvolutionNodeScale=50
 Viewer.Textures.AuthorNodeScale=15
 Viewer.Textures.AuthorEdge=../share/3dsoftviz/img/textures/AuthorEdge.bmp
 Viewer.Textures.Author=../share/3dsoftviz/img/textures/author.png
@@ -39,21 +57,22 @@ Viewer.Textures.OrientedEdgeSuffix=.png
 Viewer.Textures.MetaNode=../share/3dsoftviz/img/textures/MetaNode.png
 
 Viewer.Fullscreen=0
-Viewer.SkyBox.Noise=0
+
+Viewer.SkyBox.Noise=1
 Viewer.SkyBox.North=../share/3dsoftviz/img/skybox/default/rays_north.bmp
 Viewer.SkyBox.East=../share/3dsoftviz/img/skybox/default/rays_east.bmp
 Viewer.SkyBox.South=../share/3dsoftviz/img/skybox/default/rays_south.bmp
 Viewer.SkyBox.West=../share/3dsoftviz/img/skybox/default/rays_west.bmp
 Viewer.SkyBox.Up=../share/3dsoftviz/img/skybox/default/rays_up.bmp
 Viewer.SkyBox.Down=../share/3dsoftviz/img/skybox/default/rays_down.bmp
-
+Viewer.SkyBox.Black=../share/3dsoftviz/img/skybox/black/rays_all.bmp
+Viewer.SkyBox.White=../share/3dsoftviz/img/skybox/white/rays_all.bmp
 
 Kinect.Surface.LOG= ../share/3dsoftviz/kinectMaps/log.txt
 Kinect.Surface.DATA= ../share/3dsoftviz/kinectMaps/file4.txt
 
 Kinect.RegionRotationTreshold=0.65
 Kinect.RegionRotationStep=0.05
-
 Kinect.OutputFolder= ../../resources/kinectMaps
 Kinect.DepthImageName= depthImage
 Kinect.ColourImageName= Image
@@ -61,6 +80,7 @@ Kinect.DepthInfoName= depthInfo
 
 FaceDecetion.EnableProjectionCorrection=0
 FaceDecetion.CameraDistancePar=3.5
+
 Aruco.MarkerSize=0.06
 Aruco.CamDistancRatio=2.75
 Aruco.ConstDist=0.3
@@ -69,7 +89,18 @@ Aruco.ConstHeigherScale=0.07
 
 Node.Color.Normal=255,255,255,255
 Node.Color.Selected=50,20,120,255
+
 Label.Color=51,102,153,255
 Label.Outline.Color=200,230,255,255
 
+Display.Settings.Default.Distance=0.5
+Display.Settings.Default.Height=0.26
+Display.Settings.Default.Width=0.325
+Display.Settings.Default.EyeSeparation=0.06
+
+Display.Settings.Vuzix.Distance=3.048
+Display.Settings.Vuzix.Height=0.93
+Display.Settings.Vuzix.Width=1.66
+
 Git.ExtensionFilter= lua
+Git.ExcludeDirectories=spec

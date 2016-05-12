@@ -167,6 +167,8 @@ public:
         return this->luaIdentifier;
     }
 
+    void reloadColor();
+
 	void reloadLabel();
 	void showLabel( bool visible );
 	void setVisual( int index );

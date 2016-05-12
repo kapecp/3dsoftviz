@@ -43,6 +43,8 @@ public:
 	 */
     QString static makeTmpFileFromCommand( QString command, QString filepath );
 
+    QString static getBooleanAsString( bool value );
+
     /**
      * bool static changeCommit( QString commitId )
      * @brief Change Git repository folder to mirror state of specific commit

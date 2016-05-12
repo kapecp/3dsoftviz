@@ -3,6 +3,7 @@ using namespace igloo;
 
 #include "GitLib/GitEvolutionGraph.h"
 #include "GitLib/GitVersion.h"
+#include "GitLib/GitMetaData.h"
 
 #include <QList>
 #include <QStringList>
@@ -98,6 +99,30 @@ Describe( a_git_evolution_graph ) {
         Assert::That( graph.getVersion( 1 )->getCommitId().toStdString(), Equals( "2" ) );
         Assert::That( graph.getVersion( 2 )->getCommitId().toStdString(), Equals( "3" ) );
         Assert::That( graph.getVersion( 3 )->getCommitId().toStdString(), Equals( "4" ) );
+    }
+
+    It( meta_data_should_be_inicialized ) {
+        if( graph.getMetaDataFromIdentifier( "aa" ) ) {
+            Assert::That( true );
+        } else {
+            Assert::That( false );
+        }
+    }
+
+    It( changed_nodes_and_edges_should_be_empty ) {
+        Assert::That( graph.getChangedNodesAndEdge()->size(), Equals( 0 ) );
+    }
+
+    It( changed_nodes_and_edges_add_specific_entry ) {
+        graph.addChangedNodeOrEdge( "identifier", Repository::Git::GitType::ADDED );
+        Assert::That( graph.getChangedNodesAndEdge()->size(), Equals( 1 ) );
+    }
+
+    It( changed_nodes_and_edges_delete_specific_entry ) {
+        graph.addChangedNodeOrEdge( "identifier", Repository::Git::GitType::ADDED );
+        Assert::That( graph.getChangedNodesAndEdge()->size(), Equals( 1 ) );
+        graph.removeChangedNodeOrEdge( "identifier" );
+        Assert::That( graph.getChangedNodesAndEdge()->size(), Equals( 0 ) );
     }
 
     Repository::Git::GitEvolutionGraph graph;

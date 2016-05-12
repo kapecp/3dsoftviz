@@ -8,9 +8,12 @@
 
 find_path( NITE2_INCLUDE_DIR
 	NAMES NiTE.h
-	HINTS
+        HINTS
+                /home/mikajel/Downloads/NiTE-Linux-x64-2.2/Include
+
 		/home/kapec/Desktop/work-in-progress/NiTE-Linux-x64-2.2/Include
 		/home/kapecp/Desktop/Kinect/NiTE-Linux-x64-2.2/Include/
+		/Users/cimo/_TP/NiTE-MacOSX-x64-2.2/Include
 	PATHS $ENV{NITE2_INCLUDE}
 	)
 
@@ -24,9 +27,11 @@ endif()
 find_library( NITE2_LIBRARY
 	NAMES NiTE2
 	HINTS
+                /home/mikajel/Downloads/NiTE-Linux-x64-2.2/Redist
 		/home/kapec/Desktop/work-in-progress/NiTE-Linux-x64-2.2/Redist
 		/home/kapecp/Desktop/Kinect/NiTE-Linux-x64-2.2/Redist/
-	PATHS 
+		/Users/cimo/_TP/NiTE-MacOSX-x64-2.2/Redist
+	PATHS
 		$ENV{NITE2_LIB}
 		$ENV{NITE2_REDIST64}
 	)

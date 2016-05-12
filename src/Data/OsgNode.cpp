@@ -243,11 +243,14 @@ void Data::OsgNode::setVisual( unsigned int index )
 void Data::OsgNode::reloadConfig()
 {
 	removeChildren( 0, 3 );
-	this->insertChild( INDEX_LABEL, createLabel( this->type->getScale(), labelText ) , false );
+    if(	type->getName() != "node" ) {
+        setScale( type->getScale() );
+    }
+    this->insertChild( INDEX_LABEL, createLabel( this->scale, labelText ) , false );
 	this->insertChild( INDEX_SQUARE, createNodeSquare( this->scale, OsgNode::createStateSet( this->type ) ), false );
 	this->insertChild( INDEX_SPHERE, createNodeSphere( this->scale, OsgNode::createStateSet( this->type ) ), false );
 	setSelected( selected );
-	setColor( color );
+    setColor( color );
 	setValue( graph->getNodeVisual(), true );
 }
 
@@ -326,6 +329,7 @@ osg::ref_ptr<osg::Geode> Data::OsgNode::createNodeSquare( const float& scaling, 
 	nodeQuad->setStateSet( bbState );
 
 	osg::ref_ptr<osg::Geode> geode = new osg::Geode;
+    geode->setNodeMask(geode->getNodeMask() & ~0x2);
 	geode->addDrawable( nodeQuad );
 
 	return geode;
@@ -357,7 +361,7 @@ osg::ref_ptr<osg::Geode> Data::OsgNode::createNodeSphere( const float& scaling, 
 	nodeSphere->setUseDisplayList( false );
 
 	osg::ref_ptr<osg::Geode> geode = new osg::Geode;
-	geode->addDrawable( nodeSphere );
+    geode->addDrawable( nodeSphere );
 
 	return geode;
 }
@@ -397,6 +401,7 @@ osg::ref_ptr<osg::Geode> Data::OsgNode::createLabel( const float& scale, QString
 //    label->setBackdropOffset(0.05f);
 
 	osg::ref_ptr<osg::Geode> geode = new osg::Geode;
+    geode->setNodeMask(geode->getNodeMask() & ~0x2);
 	geode->addDrawable( label );
 
 	return geode;
