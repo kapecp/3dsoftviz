@@ -42,11 +42,11 @@ Sphinx
 
   a odpovedat na otazky. Vyberte si vsetky predvolene odpovede a po vyzve zadajte nazov, autorov a verziu projektu.
 
-* Tymto prikazom budu vygenerovane subory *Makefile*, *make.bat* a *conf.py*.
+* Tymto prikazom budu vygenerovane subory *Makefile*, *make.bat* a *conf.py.in*.
 
-   * Vsetky konfiguracie dokumentacie su v *conf.py*.
+   * Vsetky konfiguracie dokumentacie su v *conf.py.in*.
    
-.. attention:: *Sphinx-quickstart* a vytvaranie tychto suborov generuju novu dokumentaciu! Ak subory *index.rst*, *Makefile*, *make.bat* a *conf.py* uz existovali, tak sa prepisu!
+.. attention:: *Sphinx-quickstart* a vytvaranie tychto suborov generuju novu dokumentaciu! Ak subory *index.rst*, *Makefile*, *make.bat* a *conf.py.in* uz existovali, tak sa prepisu!
 
 * Sphinx dokumentacia generuje vystup v roznych formatoch zo suborov .rst. Podrobnejsie o `RestructuredText <http://www.sphinx-doc.org/en/stable/rest.html>`_.
 
@@ -78,6 +78,8 @@ Prikazom
   
 vygeneruje sa Latex dokumentacia, ktora nasledne sa moze konvertovat do PDF pomocou programu `TeXstudio <http://www.texstudio.org/>`_.
 
+.. note:: PDF dokumentacia generuje len pomocou prikazoveho riadku a externeho programu, neda sa spustat cez CMake!
+
 
 PlantUML
 --------
@@ -96,7 +98,7 @@ Pre pracu s PlantUML nastrojmi v Sphinx treba:
 
 .. note:: Hodnota premennej ma byt do *dot.exe*
 
-* pridat Graphviz do extensions v conf.py:
+* pridat Graphviz do extensions v conf.py.in:
   ::
   
     extensions = ['sphinx.ext.graphviz']
@@ -104,15 +106,18 @@ Pre pracu s PlantUML nastrojmi v Sphinx treba:
   ::
 
     pip install sphinxcontrib-plantuml
-* pridat pantuml do extensions v conf.py:
+* pridat pantuml do extensions v conf.py.in:
   ::
     
 	extensions = ['sphinxcontrib.plantuml']
 * stiahnut `plantuml.jar <http://plantuml.com/download.html>`_
-* pridat do conf.py prikaz
+* pridat do conf.py.in prikaz
   ::
   
     plantuml = 'java -jar /cesta/do/plantuml.jar'
+	
+  .. attention:: Dolezite je zmenit tuto cestu na spravnu, aku mate aktualnu na Vasom pocitaci!
+  
 * pridavat UML do dokumentacii je mozne pomocou 
   ::
    
@@ -135,7 +140,7 @@ Excel tabulky
 
   pip install sphinxcontrib-exceltable
   
-* Pridat *exceltable* do extensions v *conf.py*:
+* Pridat *exceltable* do extensions v *conf.py.in*:
 
 ::
 

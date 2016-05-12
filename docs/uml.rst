@@ -16,9 +16,10 @@ Class Diagrams
    network
    qosg
    viewer
+   3dmouse
    
 AppCore:
-   
+
    .. uml::
       
       !include \uml\AppCore.wsd
@@ -27,7 +28,7 @@ ArucoModul:
 
    .. uml::
       
-      !include \uml\ArucoModul.wsd
+      !include /uml/ArucoModul.wsd
 
 Clustering:
 
@@ -80,7 +81,7 @@ Noise:
 OpenCV:
 
    .. uml::
-     
+      
       !include /uml/OpenCV.wsd
 
 OsgQtBrowser:

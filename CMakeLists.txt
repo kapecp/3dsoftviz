@@ -1341,7 +1341,7 @@ configure_file(
     "${BINARY_BUILD_DIR}/conf.py"
     @ONLY)
 
-add_custom_target(3DSoftviz_html
+add_custom_target(Sphinx_html
     ${SPHINX_EXECUTABLE}
         -q -b html
         -c "${BINARY_BUILD_DIR}"
@@ -1349,4 +1349,3 @@ add_custom_target(3DSoftviz_html
         "${CMAKE_CURRENT_SOURCE_DIR}/docs"
         "${SPHINX_HTML_DIR}"
     COMMENT "Building HTML documentation with Sphinx")
-
