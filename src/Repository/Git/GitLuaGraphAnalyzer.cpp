@@ -378,7 +378,7 @@ void Repository::Git::GitLuaGraphAnalyzer::compareFunctions( Repository::Git::Gi
 
     // Ak su obe funkcie rozdielne od nullptr
     if( newFunction != nullptr && oldFunction != nullptr ) {
-        if( !newFunction->getFunctionType() == Repository::Git::GitFunctionType::GLOBALFUNCTION ) {
+        if( ! (newFunction->getFunctionType() == Repository::Git::GitFunctionType::GLOBALFUNCTION) ) {
 
             // Spracujeme vsetky funkcie, ktore vola nova funkcia
             for( QMap<QString, Repository::Git::GitFunction*>::iterator iterator =  newFunction->getFunctionCallers()->begin(); iterator != newFunction->getFunctionCallers()->end(); ++iterator ) {
