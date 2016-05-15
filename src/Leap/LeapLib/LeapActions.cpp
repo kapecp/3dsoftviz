@@ -1,6 +1,7 @@
 #include "LeapLib/LeapActions.h"
 #include <QDebug>
-#include <QtCore/qt_windows.h>	//sleep include, TODO
+//#include <QtCore/qt_windows.h>	//sleep include, TODO
+#include "Leap/LeapSleeper.h"
 
 Leap::LeapActions::LeapActions(LeapCameraManipulator* cameraManipulator)
 {
@@ -65,7 +66,8 @@ void Leap::LeapActions::moveCamera( Leap::Gesture gesture )
 		}
 	}
 	//if we get here, the camera is moving
-	Sleep( ( DWORD )gestureDuration );
+//	Sleep( ( DWORD )gestureDuration );
+	LeapSleeper::sleep(gestureDuration);
 	cameraManipulator->disableCameraMovement();
 }
 
