@@ -103,18 +103,18 @@ if(COMMAND cotire )
 				endif()
 		endif()
 
-        set( COTIRE_VERBOSE FALSE )
-        set( COTIRE_DEBUG FALSE )
+	set( COTIRE_VERBOSE FALSE )
+	set( COTIRE_DEBUG FALSE )
 
-        ### Fix virtual memory range
-        if( MSVC )
-                set (COTIRE_PCH_MEMORY_SCALING_FACTOR "280")
-        endif()
+	### Fix virtual memory range
+	if( MSVC )
+		set (COTIRE_PCH_MEMORY_SCALING_FACTOR "280")
+	endif()
 
-        # fix for Diluculum and LuaJIT on 64bit OSX: Lua new_state returned NULL, LuaJIT needs following flags
-        #if( APPLE )
-        #	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pagezero_size 10000 -image_base 100000000" CACHE STRING "" FORCE)
-        #endif()
+	# fix for Diluculum and LuaJIT on 64bit OSX: Lua new_state returned NULL, LuaJIT needs following flags
+	#if( APPLE )
+	#	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pagezero_size 10000 -image_base 100000000" CACHE STRING "" FORCE)
+	#endif()
 endif()
 
 # ------------------------------------------------------------
@@ -139,60 +139,60 @@ set( CMAKE_AUTOMOC TRUE )
 
 # add special flag to GCC compiler when using Qt 4.6.x with GCC >4.6
 if( "${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" AND
-        "${QT_VERSION_MAJOR}.${QT_VERSION_MINOR}" VERSION_LESS "4.7" AND
-        ${CMAKE_C_COMPILER_VERSION} VERSION_GREATER "4.6" )
+	"${QT_VERSION_MAJOR}.${QT_VERSION_MINOR}" VERSION_LESS "4.7" AND
+	${CMAKE_C_COMPILER_VERSION} VERSION_GREATER "4.6" )
 
-        set( CMAKE_CXX_FLAGS "-fpermissive" )
+	set( CMAKE_CXX_FLAGS "-fpermissive" )
 endif()
 
 # ------------------------------ OpenSceneGraph -------------------------------
 # Find OpenSceneGraph
 find_package( OpenSceneGraph COMPONENTS
-        osgGA
-        osgUtil
-        OpenThreads
-        osg
-        osgAnimation
-        osgDB
-        osgFX
-        #osgIntrospection
-        osgManipulator
-        osgParticle
-        osgShadow
-        osgSim
-        osgTerrain
-        osgText
-        osgVolume
-        osgWidget
+	osgGA
+	osgUtil
+	OpenThreads
+	osg
+	osgAnimation
+	osgDB
+	osgFX
+	#osgIntrospection
+	osgManipulator
+	osgParticle
+	osgShadow
+	osgSim
+	osgTerrain
+	osgText
+	osgVolume
+	osgWidget
 )
 find_package( osgViewer )
 
 list( APPEND ALL_SYSTEM_HEADERS
-        ${OPENSCENEGRAPH_INCLUDE_DIRS}
-        ${OSGVIEWER_INCLUDE_DIR}
+	${OPENSCENEGRAPH_INCLUDE_DIRS}
+	${OSGVIEWER_INCLUDE_DIR}
 )
 
 if( MSVC )
-        list( APPEND ALL_COMPILE_DEFINITIONS -DOSG_LIBRARY_STATIC )
+	list( APPEND ALL_COMPILE_DEFINITIONS -DOSG_LIBRARY_STATIC )
 endif()
 
 # ------------------------------ OpenCV -------------------------------
 # Find OpenCV
 find_package( OpenCV )
 if( OpenCV_FOUND )
-        if( WIN32 )
-                list( APPEND ALL_COMPILE_DEFINITIONS -DNOMINMAX )
-        endif()
+	if( WIN32 )
+		list( APPEND ALL_COMPILE_DEFINITIONS -DNOMINMAX )
+	endif()
 
-        #list( APPEND ALL_SYSTEM_HEADERS	${OpenCV_INCLUDE_DIRS} )
+	#list( APPEND ALL_SYSTEM_HEADERS	${OpenCV_INCLUDE_DIRS} )
 
-        list( APPEND ALL_COMPILE_DEFINITIONS -DOPENCV_FOUND )
+	list( APPEND ALL_COMPILE_DEFINITIONS -DOPENCV_FOUND )
 
-        message( STATUS "OpenCV Found:" )
-        message( STATUS "OpenCV_LIB_DIR=${OpenCV_LIB_DIR}" )
-        message( STATUS "OpenCV_LIB_DIR=${OpenCV_LIBS}" )
+	message( STATUS "OpenCV Found:" )
+	message( STATUS "OpenCV_LIB_DIR=${OpenCV_LIB_DIR}" )
+	message( STATUS "OpenCV_LIB_DIR=${OpenCV_LIBS}" )
 else()
-        message( STATUS "OpenCV NOT FOUND" )
+	message( STATUS "OpenCV NOT FOUND" )
 endif()
 
 # ------------------------------ OpenNI2 and Nite -------------------------------
@@ -200,57 +200,57 @@ endif()
 find_package( OPENNI2 )
 if( OPENNI2_FOUND )
 
-        list( APPEND ALL_SYSTEM_HEADERS	${OPENNI2_INCLUDE_DIRS} )
+	list( APPEND ALL_SYSTEM_HEADERS	${OPENNI2_INCLUDE_DIRS} )
 
-        list( APPEND ALL_COMPILE_DEFINITIONS  -DOPENNI2_FOUND )
+	list( APPEND ALL_COMPILE_DEFINITIONS  -DOPENNI2_FOUND )
 
-        message( STATUS "OpenNI2 Found:" )
-        message( STATUS "OPENNI2_INCLUDE_DIRS=${OPENNI2_INCLUDE_DIRS}" )
-        message( STATUS "OPENNI2_LIBRARIES=${OPENNI2_LIBRARIES}" )
+	message( STATUS "OpenNI2 Found:" )
+	message( STATUS "OPENNI2_INCLUDE_DIRS=${OPENNI2_INCLUDE_DIRS}" )
+	message( STATUS "OPENNI2_LIBRARIES=${OPENNI2_LIBRARIES}" )
 else( OPENNI2_FOUND )
-        message( STATUS "OpenNI2 NOT FOUND" )
+	message( STATUS "OpenNI2 NOT FOUND" )
 endif()
 
 # Find NITE2
 find_package( NITE2 )
 if( NITE2_FOUND )
 
-        list( APPEND ALL_SYSTEM_HEADERS	${NITE2_INCLUDE_DIRS} ${NITE2_OPENNI2_DRIVER_DIRS} )
+	list( APPEND ALL_SYSTEM_HEADERS	${NITE2_INCLUDE_DIRS} ${NITE2_OPENNI2_DRIVER_DIRS} )
 
-        list( APPEND ALL_COMPILE_DEFINITIONS -DNITE2_FOUND )
-        message( STATUS "NITE2 Found:" )
-        message( STATUS "NITE2_INCLUDE_DIRS=${NITE2_INCLUDE_DIRS}" )
-        message( STATUS "NITE2_LIBRARIES=${NITE2_LIBRARIES}" )
+	list( APPEND ALL_COMPILE_DEFINITIONS -DNITE2_FOUND )
+	message( STATUS "NITE2 Found:" )
+	message( STATUS "NITE2_INCLUDE_DIRS=${NITE2_INCLUDE_DIRS}" )
+	message( STATUS "NITE2_LIBRARIES=${NITE2_LIBRARIES}" )
 else( NITE2_FOUND )
-        message ( STATUS "NITE2 NOT FOUND" )
+	message ( STATUS "NITE2 NOT FOUND" )
 endif()
 
 
 # ------------------------------- KINECT SDK ----------------------------------
 if( WIN32 AND MSVC )
 
-        find_package( KINECTSDK )
-        if( KINECTSDK_FOUND )
+	find_package( KINECTSDK )
+	if( KINECTSDK_FOUND )
 
-                list( APPEND ALL_SYSTEM_HEADERS	${KINECTSDK_INCLUDE_DIRS} )
+		list( APPEND ALL_SYSTEM_HEADERS	${KINECTSDK_INCLUDE_DIRS} )
 
-                list( APPEND ALL_COMPILE_DEFINITIONS -DKINECTSDK_FOUND )
+		list( APPEND ALL_COMPILE_DEFINITIONS -DKINECTSDK_FOUND )
 
-                # find_package( SPEECHSDK )
-                # if( SPEECHSDK_FOUND )
-                        # include_directories( SYSTEM ${SPEECHSDK_INCLUDE_DIRS} )
-                        # add_definitions( -DSPEECHSDK_FOUND )
-                        # message( STATUS "SPEECHSDK FOUND" )
-                # else( SPEECHSDK_FOUND )
-                        # message ( STATUS "SPEECHSDK NOT FOUND" )
-                # endif()
+		# find_package( SPEECHSDK )
+		# if( SPEECHSDK_FOUND )
+			# include_directories( SYSTEM ${SPEECHSDK_INCLUDE_DIRS} )
+			# add_definitions( -DSPEECHSDK_FOUND )
+			# message( STATUS "SPEECHSDK FOUND" )
+		# else( SPEECHSDK_FOUND )
+			# message ( STATUS "SPEECHSDK NOT FOUND" )
+		# endif()
 
-                message( STATUS "KINECTSDK Found:" )
-                message( STATUS "KINECTSDK_INCLUDE_DIRS=${KINECTSDK_INCLUDE_DIRS}" )
-                message( STATUS "KINECTSDK_LIBRARIES=${KINECTSDK_LIBRARIES}" )
-        else( KINECTSDK_FOUND )
-                message ( STATUS "KINECTSDK NOT FOUND" )
-        endif()
+		message( STATUS "KINECTSDK Found:" )
+		message( STATUS "KINECTSDK_INCLUDE_DIRS=${KINECTSDK_INCLUDE_DIRS}" )
+		message( STATUS "KINECTSDK_LIBRARIES=${KINECTSDK_LIBRARIES}" )
+	else( KINECTSDK_FOUND )
+		message ( STATUS "KINECTSDK NOT FOUND" )
+	endif()
 endif()
 
 # ------------------------------ BOOST -------------------------------
@@ -267,16 +267,16 @@ list( APPEND ALL_SYSTEM_HEADERS	${Boost_INCLUDE_DIRS}  )
 find_package( LEAP )
 if( LEAP_FOUND )
 
-        list( APPEND ALL_COMPILE_DEFINITIONS -DLEAP_FOUND )
+	list( APPEND ALL_COMPILE_DEFINITIONS -DLEAP_FOUND )
 
-        list( APPEND ALL_SYSTEM_HEADERS	${LEAP_INCLUDE_DIRS} )
+	list( APPEND ALL_SYSTEM_HEADERS	${LEAP_INCLUDE_DIRS} )
 
-        message( STATUS "LEAP Found:" )
-        message( STATUS "LEAP_INCLUDE_DIRS=${LEAP_INCLUDE_DIRS}" )
-        message( STATUS "LEAP_LIB_DIR=${LEAP_LIBRARIES}" )
-        message( STATUS "FGLOVE_DRIVER_DIRS=${FGLOVE_DRIVER_DIRS}" )
+	message( STATUS "LEAP Found:" )
+	message( STATUS "LEAP_INCLUDE_DIRS=${LEAP_INCLUDE_DIRS}" )
+	message( STATUS "LEAP_LIB_DIR=${LEAP_LIBRARIES}" )
+	message( STATUS "FGLOVE_DRIVER_DIRS=${FGLOVE_DRIVER_DIRS}" )
 else()
-        message( STATUS "LEAP Not Found" )
+	message( STATUS "LEAP Not Found" )
 endif()
 
 # ------------------------------ FGLOVE -------------------------------
@@ -297,14 +297,40 @@ endif()
 find_package( MOUSE3D )
 if( MOUSE3D_FOUND )
 
-        list( APPEND ALL_SYSTEM_HEADERS	${MOUSE3D_INCLUDE_DIRS} )
+	list( APPEND ALL_SYSTEM_HEADERS	${MOUSE3D_INCLUDE_DIRS} )
 
-        list( APPEND ALL_COMPILE_DEFINITIONS -DMOUSE3D_FOUND )
-        message( STATUS "3DMouse Found:" )
-        message( STATUS "MOUSE3D_INCLUDE_DIRS=${MOUSE3D_INCLUDE_DIRS}" )
-        message( STATUS "MOUSE3D_LIBRARIES=${MOUSE3D_LIBRARIES}" )
+	list( APPEND ALL_COMPILE_DEFINITIONS -DMOUSE3D_FOUND )
+	message( STATUS "3DMouse Found:" )
+	message( STATUS "MOUSE3D_INCLUDE_DIRS=${MOUSE3D_INCLUDE_DIRS}" )
+	message( STATUS "MOUSE3D_LIBRARIES=${MOUSE3D_LIBRARIES}" )
 else()
-        message( STATUS "3DMouse NOT FOUND" )
+	message( STATUS "3DMouse NOT FOUND" )
+endif()
+
+
+# ------------------------------ DOXYGEN -------------------------------
+# Find Doxygen
+find_package(Doxygen)
+option(BUILD_DOCUMENTATION "Create and install the HTML based API documentation (requires Doxygen)" ${DOXYGEN_FOUND})
+#message( STATUS "Doxygen found: " ${DOXYGEN_EXECUTABLE} )
+
+if(BUILD_DOCUMENTATION)
+	if(NOT DOXYGEN_FOUND)
+		message(FATAL_ERROR "Doxygen is needed to build the documentation.")
+	endif()
+
+	set(doxyfile_in ${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in)
+	set(doxyfile ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile)
+
+	configure_file(${doxyfile_in} ${doxyfile} @ONLY)
+
+	add_custom_target(doxygen
+		COMMAND ${DOXYGEN_EXECUTABLE} ${doxyfile}
+		WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+		COMMENT "Generating API documentation with Doxygen"
+		VERBATIM)
+
+	install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/html DESTINATION share/doc)
 endif()
 
 
@@ -317,274 +343,274 @@ option( USE_BUILTIN_DEPENDENCIES "Use builtin dependencies." ON )
 
 # Build dependencies
 if( USE_BUILTIN_DEPENDENCIES )
-        # to use Gold linker add following flags to ExternalProject_Add command, to CMAKE_ARGS (TODO: needs more testing):
-                #-DCMAKE_EXE_LINKER_FLAGS:STRING=${CMAKE_EXE_LINKER_FLAGS}
-                #-DCMAKE_SHARED_LINKER_FLAGS:STRING=${CMAKE_SHARED_LINKER_FLAGS}
+	# to use Gold linker add following flags to ExternalProject_Add command, to CMAKE_ARGS (TODO: needs more testing):
+		#-DCMAKE_EXE_LINKER_FLAGS:STRING=${CMAKE_EXE_LINKER_FLAGS}
+		#-DCMAKE_SHARED_LINKER_FLAGS:STRING=${CMAKE_SHARED_LINKER_FLAGS}
 
-        include( ExternalProject )
+	include( ExternalProject )
 
-        # set search paths to the dependencies
-        set( DEP_SOURCE ${CMAKE_CURRENT_SOURCE_DIR}/dependencies )
-        set( DEP_BIN ${CMAKE_CURRENT_BINARY_DIR}/dependencies )
-        set( CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH} ${DEP_BIN}/lib ${DEP_BIN}/bin )
-        set( CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} ${DEP_BIN}/include )
+	# set search paths to the dependencies
+	set( DEP_SOURCE ${CMAKE_CURRENT_SOURCE_DIR}/dependencies )
+	set( DEP_BIN ${CMAKE_CURRENT_BINARY_DIR}/dependencies )
+	set( CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH} ${DEP_BIN}/lib ${DEP_BIN}/bin )
+	set( CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} ${DEP_BIN}/include )
 
-        # Generate cache
-        configure_file( config.cmake.in ${CMAKE_CURRENT_BINARY_DIR}/config.cmake )
+	# Generate cache
+	configure_file( config.cmake.in ${CMAKE_CURRENT_BINARY_DIR}/config.cmake )
 
-        # Build libnoise
-        ExternalProject_Add( dep_libnoise
-                PREFIX libnoise
-                SOURCE_DIR ${DEP_SOURCE}/libnoise
-                BINARY_DIR libnoise
-                CMAKE_ARGS
-                        -DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
-                        -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-                        -C ${CMAKE_CURRENT_BINARY_DIR}/config.cmake
-        )
+	# Build libnoise
+	ExternalProject_Add( dep_libnoise
+		PREFIX libnoise
+		SOURCE_DIR ${DEP_SOURCE}/libnoise
+		BINARY_DIR libnoise
+		CMAKE_ARGS
+			-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
+			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
+			-C ${CMAKE_CURRENT_BINARY_DIR}/config.cmake
+	)
 
-        # add libnoise library
-        add_library( libnoise SHARED IMPORTED )
-        add_dependencies( libnoise dep_libnoise )
-        set_target_properties( libnoise PROPERTIES
-                IMPORTED_LOCATION ${DEP_BIN}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}noise${CMAKE_SHARED_LIBRARY_SUFFIX} )
+	# add libnoise library
+	add_library( libnoise SHARED IMPORTED )
+	add_dependencies( libnoise dep_libnoise )
+	set_target_properties( libnoise PROPERTIES
+		IMPORTED_LOCATION ${DEP_BIN}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}noise${CMAKE_SHARED_LIBRARY_SUFFIX} )
 
-        if( WIN32 )
-                set_target_properties( libnoise PROPERTIES
-                        IMPORTED_LOCATION ${DEP_BIN}/bin/${CMAKE_SHARED_LIBRARY_PREFIX}noise${CMAKE_SHARED_LIBRARY_SUFFIX}
-                        IMPORTED_IMPLIB ${DEP_BIN}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}noise${CMAKE_STATIC_LIBRARY_SUFFIX} )
+	if( WIN32 )
+		set_target_properties( libnoise PROPERTIES
+			IMPORTED_LOCATION ${DEP_BIN}/bin/${CMAKE_SHARED_LIBRARY_PREFIX}noise${CMAKE_SHARED_LIBRARY_SUFFIX}
+			IMPORTED_IMPLIB ${DEP_BIN}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}noise${CMAKE_STATIC_LIBRARY_SUFFIX} )
 
-                if( MSVC )
-                        # set "lib" prefix for MSVC, because libnoise.def file requires that the library is named "libnoise"
-                        set( MISS_MSVC_PREFIX lib )
-                        set_target_properties( libnoise PROPERTIES
-                                IMPORTED_LOCATION ${DEP_BIN}/bin/${CMAKE_SHARED_LIBRARY_PREFIX}${MISS_MSVC_PREFIX}noise${CMAKE_SHARED_LIBRARY_SUFFIX}
-                                IMPORTED_IMPLIB ${DEP_BIN}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}${MISS_MSVC_PREFIX}noise${CMAKE_STATIC_LIBRARY_SUFFIX} )
+		if( MSVC )
+			# set "lib" prefix for MSVC, because libnoise.def file requires that the library is named "libnoise"
+			set( MISS_MSVC_PREFIX lib )
+			set_target_properties( libnoise PROPERTIES
+				IMPORTED_LOCATION ${DEP_BIN}/bin/${CMAKE_SHARED_LIBRARY_PREFIX}${MISS_MSVC_PREFIX}noise${CMAKE_SHARED_LIBRARY_SUFFIX}
+				IMPORTED_IMPLIB ${DEP_BIN}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}${MISS_MSVC_PREFIX}noise${CMAKE_STATIC_LIBRARY_SUFFIX} )
 
-                endif()
-        endif()
+		endif()
+	endif()
 
-        # Aruco
-        if( OpenCV_FOUND )
-                # Build aruco
-                include( ExternalProject )
-                ExternalProject_Add( dep_aruco
-                        PREFIX aruco
-                        SOURCE_DIR ${DEP_SOURCE}/aruco
-                        BINARY_DIR aruco
-                        CMAKE_ARGS
-                                -DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
-                                -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-                                -C ${CMAKE_CURRENT_BINARY_DIR}/config.cmake
-                )
+	# Aruco
+	if( OpenCV_FOUND )
+		# Build aruco
+		include( ExternalProject )
+		ExternalProject_Add( dep_aruco
+			PREFIX aruco
+			SOURCE_DIR ${DEP_SOURCE}/aruco
+			BINARY_DIR aruco
+			CMAKE_ARGS
+				-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
+				-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
+				-C ${CMAKE_CURRENT_BINARY_DIR}/config.cmake
+		)
 
-                add_library( aruco SHARED IMPORTED )
-                add_dependencies( aruco dep_aruco )
-                set_target_properties( aruco PROPERTIES
-                        IMPORTED_LOCATION ${DEP_BIN}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}aruco${CMAKE_SHARED_LIBRARY_SUFFIX} )
+		add_library( aruco SHARED IMPORTED )
+		add_dependencies( aruco dep_aruco )
+		set_target_properties( aruco PROPERTIES
+			IMPORTED_LOCATION ${DEP_BIN}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}aruco${CMAKE_SHARED_LIBRARY_SUFFIX} )
 
-                if( WIN32 AND MSVC )
-                        set_target_properties( aruco PROPERTIES
-                                IMPORTED_LOCATION ${DEP_BIN}/bin/${CMAKE_SHARED_LIBRARY_PREFIX}aruco${CMAKE_SHARED_LIBRARY_SUFFIX}
-                                IMPORTED_IMPLIB ${DEP_BIN}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}aruco${CMAKE_STATIC_LIBRARY_SUFFIX} )
-                endif()
-        endif() # OpenCV_FOUND
-
-
-        # Build osgModeling
-        ExternalProject_Add( dep_osgModeling
-                PREFIX osgModeling
-                SOURCE_DIR ${DEP_SOURCE}/osgModeling
-                BINARY_DIR osgModeling
-                CMAKE_ARGS
-                        -DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
-                        -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-                        -DBUILD_PLUGINS=ON
-                        -C ${CMAKE_CURRENT_BINARY_DIR}/config.cmake
-        )
-
-        add_library( osgModeling SHARED IMPORTED )
-        add_dependencies( osgModeling dep_osgModeling )
-        set_target_properties( osgModeling PROPERTIES
-                IMPORTED_LOCATION ${DEP_BIN}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}osgModeling${CMAKE_SHARED_LIBRARY_SUFFIX} )
-
-        if( WIN32 AND MSVC )
-                set_target_properties( osgModeling PROPERTIES
-                        IMPORTED_LOCATION ${DEP_BIN}/bin/${CMAKE_SHARED_LIBRARY_PREFIX}osgModeling${CMAKE_SHARED_LIBRARY_SUFFIX}
-                        IMPORTED_IMPLIB ${DEP_BIN}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}osgModeling${CMAKE_STATIC_LIBRARY_SUFFIX} )
-        endif()
+		if( WIN32 AND MSVC )
+			set_target_properties( aruco PROPERTIES
+				IMPORTED_LOCATION ${DEP_BIN}/bin/${CMAKE_SHARED_LIBRARY_PREFIX}aruco${CMAKE_SHARED_LIBRARY_SUFFIX}
+				IMPORTED_IMPLIB ${DEP_BIN}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}aruco${CMAKE_STATIC_LIBRARY_SUFFIX} )
+		endif()
+	endif() # OpenCV_FOUND
 
 
-        # Build igloo
-        ExternalProject_Add( dep_igloo
-                PREFIX igloo
-                SOURCE_DIR ${DEP_SOURCE}/igloo
-                BINARY_DIR igloo
-                CMAKE_ARGS
-                        -DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
-                        -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-                        -DBUILD_TESTS=ON
-                        -C ${CMAKE_CURRENT_BINARY_DIR}/config.cmake
-                # little trick:
-                        # this solves building igloo twice (building normal target and building unity target)
-                        # prevent building the default target (make install)
-                BUILD_COMMAND ""
-                        # force building the install_unity target
-                INSTALL_COMMAND "${CMAKE_COMMAND}" --build . --target install_unity# -- "-j${N}"
-        )
+	# Build osgModeling
+	ExternalProject_Add( dep_osgModeling
+		PREFIX osgModeling
+		SOURCE_DIR ${DEP_SOURCE}/osgModeling
+		BINARY_DIR osgModeling
+		CMAKE_ARGS
+			-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
+			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
+			-DBUILD_PLUGINS=ON
+			-C ${CMAKE_CURRENT_BINARY_DIR}/config.cmake
+	)
 
-        add_library( igloo INTERFACE IMPORTED )
-        add_dependencies( igloo dep_igloo )
+	add_library( osgModeling SHARED IMPORTED )
+	add_dependencies( osgModeling dep_osgModeling )
+	set_target_properties( osgModeling PROPERTIES
+		IMPORTED_LOCATION ${DEP_BIN}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}osgModeling${CMAKE_SHARED_LIBRARY_SUFFIX} )
+
+	if( WIN32 AND MSVC )
+		set_target_properties( osgModeling PROPERTIES
+			IMPORTED_LOCATION ${DEP_BIN}/bin/${CMAKE_SHARED_LIBRARY_PREFIX}osgModeling${CMAKE_SHARED_LIBRARY_SUFFIX}
+			IMPORTED_IMPLIB ${DEP_BIN}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}osgModeling${CMAKE_STATIC_LIBRARY_SUFFIX} )
+	endif()
 
 
-        # Building Lua or LuaJIT
-        if ( MSVC OR APPLE )
-                # Build Lua
-                ExternalProject_Add ( dep_lua
-                        PREFIX lua
-                        SOURCE_DIR ${DEP_SOURCE}/lua
-                        BINARY_DIR lua
-                        CMAKE_ARGS
-                                -DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
-                                -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-                                -C ${CMAKE_CURRENT_BINARY_DIR}/config.cmake
-                )
+	# Build igloo
+	ExternalProject_Add( dep_igloo
+		PREFIX igloo
+		SOURCE_DIR ${DEP_SOURCE}/igloo
+		BINARY_DIR igloo
+		CMAKE_ARGS
+			-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
+			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
+			-DBUILD_TESTS=ON
+			-C ${CMAKE_CURRENT_BINARY_DIR}/config.cmake
+		# little trick:
+			# this solves building igloo twice (building normal target and building unity target)
+			# prevent building the default target (make install)
+		BUILD_COMMAND ""
+			# force building the install_unity target
+		INSTALL_COMMAND "${CMAKE_COMMAND}" --build . --target install_unity# -- "-j${N}"
+	)
 
-                # add lua library
-                add_library( lua SHARED IMPORTED )
-                add_dependencies( lua dep_lua )
-                set_target_properties( lua PROPERTIES
-                        IMPORTED_LOCATION ${DEP_BIN}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}lua${CMAKE_SHARED_LIBRARY_SUFFIX} )
+	add_library( igloo INTERFACE IMPORTED )
+	add_dependencies( igloo dep_igloo )
 
-                if( WIN32 AND MSVC )
-                        set_target_properties( lua PROPERTIES
-                                IMPORTED_LOCATION ${DEP_BIN}/bin/${CMAKE_SHARED_LIBRARY_PREFIX}lua${CMAKE_SHARED_LIBRARY_SUFFIX}
-                                IMPORTED_IMPLIB ${DEP_BIN}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}lua${CMAKE_STATIC_LIBRARY_SUFFIX} )
-                endif()
 
-        else ()
-                # NOTE: Diluculum requires luaconf.h from original Lua, so original Lua headers must be available
+	# Building Lua or LuaJIT
+	if ( MSVC OR APPLE )
+		# Build Lua
+		ExternalProject_Add ( dep_lua
+			PREFIX lua
+			SOURCE_DIR ${DEP_SOURCE}/lua
+			BINARY_DIR lua
+			CMAKE_ARGS
+				-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
+				-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
+				-C ${CMAKE_CURRENT_BINARY_DIR}/config.cmake
+		)
 
-                # Build LuaJIT
-                ExternalProject_Add ( dep_luajit
-                        PREFIX luajit
-                        SOURCE_DIR ${DEP_SOURCE}/luajit
-                        BINARY_DIR luajit
-                        CMAKE_ARGS
-                                -DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
-                                -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-                                -C ${CMAKE_CURRENT_BINARY_DIR}/config.cmake
-                )
+		# add lua library
+		add_library( lua SHARED IMPORTED )
+		add_dependencies( lua dep_lua )
+		set_target_properties( lua PROPERTIES
+			IMPORTED_LOCATION ${DEP_BIN}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}lua${CMAKE_SHARED_LIBRARY_SUFFIX} )
 
-                # add lua library
-                add_library( lua SHARED IMPORTED )
-                add_dependencies( lua dep_luajit )
-                set_target_properties( lua PROPERTIES
-                        IMPORTED_LOCATION ${DEP_BIN}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}lua${CMAKE_SHARED_LIBRARY_SUFFIX} )
+		if( WIN32 AND MSVC )
+			set_target_properties( lua PROPERTIES
+				IMPORTED_LOCATION ${DEP_BIN}/bin/${CMAKE_SHARED_LIBRARY_PREFIX}lua${CMAKE_SHARED_LIBRARY_SUFFIX}
+				IMPORTED_IMPLIB ${DEP_BIN}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}lua${CMAKE_STATIC_LIBRARY_SUFFIX} )
+		endif()
 
-                if( WIN32 AND MSVC )
-                        set_target_properties( lua PROPERTIES
-                                IMPORTED_LOCATION ${DEP_BIN}/bin/${CMAKE_SHARED_LIBRARY_PREFIX}lua${CMAKE_SHARED_LIBRARY_SUFFIX}
-                                IMPORTED_IMPLIB ${DEP_BIN}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}lua${CMAKE_STATIC_LIBRARY_SUFFIX} )
-                endif()
-        endif()
+	else ()
+		# NOTE: Diluculum requires luaconf.h from original Lua, so original Lua headers must be available
 
-        if( NOT MSVC )
-                # NOTE: on MSVC Diluculum code is directly inserted
+		# Build LuaJIT
+		ExternalProject_Add ( dep_luajit
+			PREFIX luajit
+			SOURCE_DIR ${DEP_SOURCE}/luajit
+			BINARY_DIR luajit
+			CMAKE_ARGS
+				-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
+				-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
+				-C ${CMAKE_CURRENT_BINARY_DIR}/config.cmake
+		)
 
-                # Build Diluculum
-                ExternalProject_Add ( dep_diluculum
-                        PREFIX diluculum
-                        SOURCE_DIR ${DEP_SOURCE}/diluculum
-                        BINARY_DIR diluculum
-                        CMAKE_ARGS
-                                -DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
-                                -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-                )
+		# add lua library
+		add_library( lua SHARED IMPORTED )
+		add_dependencies( lua dep_luajit )
+		set_target_properties( lua PROPERTIES
+			IMPORTED_LOCATION ${DEP_BIN}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}lua${CMAKE_SHARED_LIBRARY_SUFFIX} )
 
-                # add diluculum library
-                add_library( diluculum SHARED IMPORTED )
-                add_dependencies( diluculum dep_diluculum )
-                set_target_properties( diluculum PROPERTIES
-                        IMPORTED_LOCATION ${DEP_BIN}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}diluculum${CMAKE_SHARED_LIBRARY_SUFFIX} )
+		if( WIN32 AND MSVC )
+			set_target_properties( lua PROPERTIES
+				IMPORTED_LOCATION ${DEP_BIN}/bin/${CMAKE_SHARED_LIBRARY_PREFIX}lua${CMAKE_SHARED_LIBRARY_SUFFIX}
+				IMPORTED_IMPLIB ${DEP_BIN}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}lua${CMAKE_STATIC_LIBRARY_SUFFIX} )
+		endif()
+	endif()
 
-                if( WIN32 AND MSVC )
-                        set_target_properties( diluculum PROPERTIES
-                                IMPORTED_LOCATION ${DEP_BIN}/bin/${CMAKE_SHARED_LIBRARY_PREFIX}diluculum${CMAKE_SHARED_LIBRARY_SUFFIX}
-                                IMPORTED_IMPLIB ${DEP_BIN}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}diluculum${CMAKE_STATIC_LIBRARY_SUFFIX} )
-                endif()
-        endif()
+	if( NOT MSVC )
+		# NOTE: on MSVC Diluculum code is directly inserted
 
-        # Build lpeg
-        ExternalProject_Add ( dep_lpeg
-                PREFIX lpeg
-                SOURCE_DIR ${DEP_SOURCE}/lpeg
-                BINARY_DIR lpeg
-                CMAKE_ARGS
-                        -DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
-                        -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-        )
+		# Build Diluculum
+		ExternalProject_Add ( dep_diluculum
+			PREFIX diluculum
+			SOURCE_DIR ${DEP_SOURCE}/diluculum
+			BINARY_DIR diluculum
+			CMAKE_ARGS
+				-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
+				-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
+		)
 
-        # Build leg
-        ExternalProject_Add ( dep_leg
-                PREFIX leg
-                SOURCE_DIR ${DEP_SOURCE}/leg
-                BINARY_DIR leg
-                CMAKE_ARGS
-                        -DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
-                        -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-        )
+		# add diluculum library
+		add_library( diluculum SHARED IMPORTED )
+		add_dependencies( diluculum dep_diluculum )
+		set_target_properties( diluculum PROPERTIES
+			IMPORTED_LOCATION ${DEP_BIN}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}diluculum${CMAKE_SHARED_LIBRARY_SUFFIX} )
 
-        # Build luametrics
-        ExternalProject_Add ( dep_luametrics
-                PREFIX luametrics
-                SOURCE_DIR ${DEP_SOURCE}/luametrics
-                BINARY_DIR luametrics
-                CMAKE_ARGS
-                        -DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
-                        -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-        )
+		if( WIN32 AND MSVC )
+			set_target_properties( diluculum PROPERTIES
+				IMPORTED_LOCATION ${DEP_BIN}/bin/${CMAKE_SHARED_LIBRARY_PREFIX}diluculum${CMAKE_SHARED_LIBRARY_SUFFIX}
+				IMPORTED_IMPLIB ${DEP_BIN}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}diluculum${CMAKE_STATIC_LIBRARY_SUFFIX} )
+		endif()
+	endif()
 
-        # Build luafilesystem
-        ExternalProject_Add ( dep_luafilesystem
-                PREFIX luafilesystem
-                SOURCE_DIR ${DEP_SOURCE}/luafilesystem
-                BINARY_DIR luafilesystem
-                CMAKE_ARGS
-                        -DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
-                        -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-        )
+	# Build lpeg
+	ExternalProject_Add ( dep_lpeg
+		PREFIX lpeg
+		SOURCE_DIR ${DEP_SOURCE}/lpeg
+		BINARY_DIR lpeg
+		CMAKE_ARGS
+			-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
+			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
+	)
 
-        # Build lualogging
-        ExternalProject_Add ( dep_lualogging
-                PREFIX lualogging
-                SOURCE_DIR ${DEP_SOURCE}/lualogging
-                BINARY_DIR lualogging
-                CMAKE_ARGS
-                        -DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
-                        -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-        )
+	# Build leg
+	ExternalProject_Add ( dep_leg
+		PREFIX leg
+		SOURCE_DIR ${DEP_SOURCE}/leg
+		BINARY_DIR leg
+		CMAKE_ARGS
+			-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
+			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
+	)
 
-        # Ensure correct order of build (dependencies between external dependencies)
-        if( MSVC OR APPLE )
-                add_dependencies( dep_lpeg dep_lua )
-                add_dependencies( dep_leg dep_lpeg )
-                add_dependencies( dep_luametrics dep_leg )
-                add_dependencies( dep_luafilesystem dep_lua )
-        else()
-                add_dependencies( dep_lpeg dep_luajit )
-                add_dependencies( dep_diluculum dep_luajit )
-                add_dependencies( dep_leg dep_lpeg )
-                add_dependencies( dep_luametrics dep_leg )
-                add_dependencies( dep_luafilesystem dep_luajit )
-        endif()
+	# Build luametrics
+	ExternalProject_Add ( dep_luametrics
+		PREFIX luametrics
+		SOURCE_DIR ${DEP_SOURCE}/luametrics
+		BINARY_DIR luametrics
+		CMAKE_ARGS
+			-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
+			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
+	)
 
-        # path to include directory where external dependencies deploy headers
-        set( DEPENDENCIES_INCLUDE_DIR ${DEP_BIN}/include )
+	# Build luafilesystem
+	ExternalProject_Add ( dep_luafilesystem
+		PREFIX luafilesystem
+		SOURCE_DIR ${DEP_SOURCE}/luafilesystem
+		BINARY_DIR luafilesystem
+		CMAKE_ARGS
+			-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
+			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
+	)
+
+	# Build lualogging
+	ExternalProject_Add ( dep_lualogging
+		PREFIX lualogging
+		SOURCE_DIR ${DEP_SOURCE}/lualogging
+		BINARY_DIR lualogging
+		CMAKE_ARGS
+			-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
+			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
+	)
+
+	# Ensure correct order of build (dependencies between external dependencies)
+	if( MSVC OR APPLE )
+		add_dependencies( dep_lpeg dep_lua )
+		add_dependencies( dep_leg dep_lpeg )
+		add_dependencies( dep_luametrics dep_leg )
+		add_dependencies( dep_luafilesystem dep_lua )
+	else()
+		add_dependencies( dep_lpeg dep_luajit )
+		add_dependencies( dep_diluculum dep_luajit )
+		add_dependencies( dep_leg dep_lpeg )
+		add_dependencies( dep_luametrics dep_leg )
+		add_dependencies( dep_luafilesystem dep_luajit )
+	endif()
+
+	# path to include directory where external dependencies deploy headers
+	set( DEPENDENCIES_INCLUDE_DIR ${DEP_BIN}/include )
 
 else()
-        # Find Lua implementation, assuming lpeg is installed by other means
-        #find_package( Lua51 REQUIRED )
+	# Find Lua implementation, assuming lpeg is installed by other means
+	#find_package( Lua51 REQUIRED )
 endif()
 
 
@@ -638,36 +664,36 @@ file ( GLOB_RECURSE SRC_MOUSE3D "src/Mouse3D/*.cpp" )
 
 # All source files
 set( SRC
-        ${SRC_CORE}
-        ${SRC_MANAGER}
-        ${SRC_DATA}
-        ${SRC_CLUSTERING}
-        ${SRC_IMPORTER}
-        ${SRC_LAYOUT}
-        ${SRC_LUAGRAPH}
-        ${SRC_LUAINTERFACE}
-        ${SRC_LUATYPES}
-        ${SRC_MATH}
-        ${SRC_NETWORK}
-        ${SRC_MODEL}
-        ${SRC_OSGQTBROWSER}
-        ${SRC_QOSG}
-        ${SRC_VIEWER}
-        ${SRC_UTIL}
-        ${SRC_REPOSITORY}
+	${SRC_CORE}
+	${SRC_MANAGER}
+	${SRC_DATA}
+	${SRC_CLUSTERING}
+	${SRC_IMPORTER}
+	${SRC_LAYOUT}
+	${SRC_LUAGRAPH}
+	${SRC_LUAINTERFACE}
+	${SRC_LUATYPES}
+	${SRC_MATH}
+	${SRC_NETWORK}
+	${SRC_MODEL}
+	${SRC_OSGQTBROWSER}
+	${SRC_QOSG}
+	${SRC_VIEWER}
+	${SRC_UTIL}
+	${SRC_REPOSITORY}
 )
 
 if( OpenCV_FOUND )
-        list( APPEND SRC ${SRC_OPENCV} ${SRC_QOPENCV} ${SRC_ARUCO} )
+	list( APPEND SRC ${SRC_OPENCV} ${SRC_QOPENCV} ${SRC_ARUCO} )
 endif()
 
 # add Kinect if Nite, Openni and Opencv
 if( OPENNI2_FOUND AND OpenCV_FOUND )
-        list( APPEND SRC ${SRC_KINECT} )
+	list( APPEND SRC ${SRC_KINECT} )
 endif()
 
 if( KINECTSDK_FOUND AND SPEECHSDK_FOUND )
-        list( APPEND SRC ${SRC_SPEECH} )
+	list( APPEND SRC ${SRC_SPEECH} )
 endif()
 
 # add Gloves if Fgloves
@@ -677,21 +703,21 @@ endif()
 
 # add Leap
 if( LEAP_FOUND )
-        list( APPEND SRC ${SRC_LEAP} )
+	list( APPEND SRC ${SRC_LEAP} )
 endif()
 
 # add MOUSE3D if found
 if( MOUSE3D_FOUND )
-        list( APPEND SRC ${SRC_MOUSE3D} )
+	list( APPEND SRC ${SRC_MOUSE3D} )
 endif()
 
 # add diluculum code directly due to MSVC problems
 if( MSVC )
-        include_directories( SYSTEM dependencies/diluculum/include )
+	include_directories( SYSTEM dependencies/diluculum/include )
 
-        file( GLOB_RECURSE SRC_DILUCULUM	"dependencies/diluculum/Sources/*.cpp" )
+	file( GLOB_RECURSE SRC_DILUCULUM	"dependencies/diluculum/Sources/*.cpp" )
 
-        list( APPEND SRC ${SRC_DILUCULUM} )
+	list( APPEND SRC ${SRC_DILUCULUM} )
 endif()
 
 #-------------------------------- Header files -------------------------------
@@ -739,36 +765,36 @@ file( GLOB_RECURSE HEADER_MOUSE3D	"include/Mouse3D/*.h" )
 
 # All header files
 set( INCL
-        ${HEADER_CORE}
-        ${HEADER_MANAGER}
-        ${HEADER_DATA}
-        ${HEADER_CLUSTERING}
-        ${HEADER_IMPORTER}
-        ${HEADER_LAYOUT}
-        ${HEADER_LUAGRAPH}
-        ${HEADER_LUAINTERFACE}
-        ${HEADER_LUATYPES}
-        ${HEADER_MATH}
-        ${HEADER_NETWORK}
-        ${HEADER_MODEL}
-        ${HEADER_OSGQTBROWSER}
-        ${HEADER_QOSG}
-        ${HEADER_VIEWER}
-        ${HEADER_UTIL}
-        ${HEADER_REPOSITORY}
+	${HEADER_CORE}
+	${HEADER_MANAGER}
+	${HEADER_DATA}
+	${HEADER_CLUSTERING}
+	${HEADER_IMPORTER}
+	${HEADER_LAYOUT}
+	${HEADER_LUAGRAPH}
+	${HEADER_LUAINTERFACE}
+	${HEADER_LUATYPES}
+	${HEADER_MATH}
+	${HEADER_NETWORK}
+	${HEADER_MODEL}
+	${HEADER_OSGQTBROWSER}
+	${HEADER_QOSG}
+	${HEADER_VIEWER}
+	${HEADER_UTIL}
+	${HEADER_REPOSITORY}
 )
 
 if( OpenCV_FOUND )
-        list( APPEND INCL ${HEADER_OPENCV} ${HEADER_QOPENCV} ${HEADER_ARUCO} )
+	list( APPEND INCL ${HEADER_OPENCV} ${HEADER_QOPENCV} ${HEADER_ARUCO} )
 endif()
 
 # Kinect uses Nite, Openni and OpenCV
 if( OPENNI2_FOUND AND OpenCV_FOUND )
-        list( APPEND INCL ${HEADER_KINECT} )
+	list( APPEND INCL ${HEADER_KINECT} )
 endif()
 
 if( KINECTSDK_FOUND AND SPEECHSDK_FOUND )
-        list( APPEND INCL ${HEADER_SPEECH} )
+	list( APPEND INCL ${HEADER_SPEECH} )
 endif()
 
 #FGLOVE
@@ -778,12 +804,12 @@ endif()
 
 # LEAP
 if( LEAP_FOUND )
-        list( APPEND INCL ${HEADER_LEAP} )
+	list( APPEND INCL ${HEADER_LEAP} )
 endif()
 
 # MOUSE3D
 if( MOUSE3D_FOUND )
-        list( APPEND INCL ${HEADER_MOUSE3D} )
+	list( APPEND INCL ${HEADER_MOUSE3D} )
 endif()
 
 #-------------------------------------- Group source files --------------------------------------
@@ -823,22 +849,22 @@ source_group( \\headers\\LuaTypes "^.*LuaTypes/.*h$")
 source_group( \\headers\\Git "^.*Git/.*h$" )
 
 if( OpenCV_FOUND )
-        source_group( \\src\\QOpenCV "^.*QOpenCV/.*$" )
-        source_group( \\src\\OpenCV "^.*OpenCV/.*$" )
-        source_group( \\headers\\QOpenCV "^.*QOpenCV/.*h$" )
-        source_group( \\headers\\OpenCV "^.*OpenCV/.*h$" )
-        source_group( \\src\\Aruco "^.*Aruco/.*$" )
-        source_group( \\headers\\Aruco "^.*Aruco/.*h$" )
+	source_group( \\src\\QOpenCV "^.*QOpenCV/.*$" )
+	source_group( \\src\\OpenCV "^.*OpenCV/.*$" )
+	source_group( \\headers\\QOpenCV "^.*QOpenCV/.*h$" )
+	source_group( \\headers\\OpenCV "^.*OpenCV/.*h$" )
+	source_group( \\src\\Aruco "^.*Aruco/.*$" )
+	source_group( \\headers\\Aruco "^.*Aruco/.*h$" )
 endif()
 
 if( NITE2_FOUND AND OPENNI2_FOUND AND OpenCV_FOUND )
-        source_group( \\src\\Kinect "^.*Kinect/.*$" )
-        source_group( \\headers\\Kinect "^.*Kinect/.*h$" )
+	source_group( \\src\\Kinect "^.*Kinect/.*$" )
+	source_group( \\headers\\Kinect "^.*Kinect/.*h$" )
 endif()
 
 if( KINECTSDK_FOUND AND SPEECHSDK_FOUND )
-        source_group( \\src\\Speech "^.*Speech/.*$" )
-        source_group( \\headers\\Speech "^.*Speech/.*h$" )
+	source_group( \\src\\Speech "^.*Speech/.*$" )
+	source_group( \\headers\\Speech "^.*Speech/.*h$" )
 endif()
 
 #fglove
@@ -849,14 +875,14 @@ endif()
 
 # Leap
 if( LEAP_FOUND )
-        source_group( \\src\\Leap "^.*Leap/.*$" )
-        source_group( \\headers\\Leap "^.*Leap/.*h$" )
+	source_group( \\src\\Leap "^.*Leap/.*$" )
+	source_group( \\headers\\Leap "^.*Leap/.*h$" )
 endif()
 
 # MOUSE3D
 if( MOUSE3D_FOUND )
-        source_group( \\src\\Mouse3D "^.*Mouse3D/.*$" )
-        source_group( \\headers\\Mouse3D "^.*Mouse3D/.*h$" )
+	source_group( \\src\\Mouse3D "^.*Mouse3D/.*$" )
+	source_group( \\headers\\Mouse3D "^.*Mouse3D/.*h$" )
 endif()
 
 # ---------------------------------------------------------------
@@ -877,9 +903,9 @@ target_include_directories( qtcolorpicker SYSTEM PUBLIC ${CMAKE_CURRENT_SOURCE_D
 add_library( gitlib STATIC ${SRC_GITLIB} ${HEADER_GITLIB})
 
 target_include_directories( gitlib
-        SYSTEM PUBLIC
-                include
-                include/Repository/Git
+	SYSTEM PUBLIC
+		include
+		include/Repository/Git
 )
 
 target_compile_definitions( gitlib PUBLIC -DGITLIB_LIBRARY_STATIC )
@@ -890,14 +916,14 @@ target_link_libraries( gitlib ${QT_LIBRARIES} )
 
 # 'cotire' the module
 if( COMMAND cotire )
-        # link gitlib_unity target to all libraries to which gitlib links
-        set_target_properties( gitlib PROPERTIES COTIRE_UNITY_LINK_LIBRARIES_INIT "COPY_UNITY" )
-        cotire( gitlib CONFIGURATIONS Debug Release )
+	# link gitlib_unity target to all libraries to which gitlib links
+	set_target_properties( gitlib PROPERTIES COTIRE_UNITY_LINK_LIBRARIES_INIT "COPY_UNITY" )
+	cotire( gitlib CONFIGURATIONS Debug Release )
 endif()
 
 #-------------------------------- leap module -------------------------------
 if( LEAP_FOUND )
-add_library( leaplib STATIC ${SRC_LEAPLIB} ${HEADER_LEAPLIB})
+	add_library( leaplib STATIC ${SRC_LEAPLIB} ${HEADER_LEAPLIB})
 
 	target_include_directories( leaplib
 		SYSTEM PUBLIC
@@ -907,7 +933,7 @@ add_library( leaplib STATIC ${SRC_LEAPLIB} ${HEADER_LEAPLIB})
 
 	target_compile_definitions( leaplib PUBLIC -DLEAPLIB_LIBRARY_STATIC )
 
-target_compile_options( leaplib PUBLIC ${FLAGS_FOR_DEBUG} )
+	target_compile_options( leaplib PUBLIC ${FLAGS_FOR_DEBUG} )
 
 	target_link_libraries( leaplib ${QT_LIBRARIES} )
 
@@ -930,11 +956,11 @@ add_library( ${3DSOFTVIZ_NAME} STATIC ${INCL}  ${SRC} )
 target_compile_options( ${3DSOFTVIZ_NAME} PUBLIC ${FLAGS_FOR_DEBUG} )
 
 target_compile_definitions( ${3DSOFTVIZ_NAME}
-        PUBLIC ${ALL_COMPILE_DEFINITIONS}
+	PUBLIC ${ALL_COMPILE_DEFINITIONS}
 )
 
 if( OpenCV_FOUND )
-        list( APPEND ALL_SYSTEM_HEADERS ${DEPENDENCIES_INCLUDE_DIR}/aruco )
+	list( APPEND ALL_SYSTEM_HEADERS ${DEPENDENCIES_INCLUDE_DIR}/aruco )
 endif()
 
 list( APPEND ALL_SYSTEM_HEADERS ${DEPENDENCIES_INCLUDE_DIR} )
@@ -956,39 +982,39 @@ include_directories(SYSTEM ${ALL_SYSTEM_HEADERS})
 
 
 target_link_libraries( ${3DSOFTVIZ_NAME}
-        gitlib
-        lua
-        noiseutils
-        libnoise
-        osgModeling
-        qtcolorpicker
-        ${QT_LIBRARIES}
-        ${OPENSCENEGRAPH_LIBRARIES}
-        ${OSGVIEWER_LIBRARIES}
+	gitlib
+	lua
+	noiseutils
+	libnoise
+	osgModeling
+	qtcolorpicker
+	${QT_LIBRARIES}
+	${OPENSCENEGRAPH_LIBRARIES}
+	${OSGVIEWER_LIBRARIES}
 )
 
 if( NOT MSVC )
-        target_link_libraries( ${3DSOFTVIZ_NAME} diluculum
-        )
+	target_link_libraries( ${3DSOFTVIZ_NAME} diluculum
+	)
 endif()
 
 if( OpenCV_FOUND )
-        target_link_libraries( ${3DSOFTVIZ_NAME} ${OpenCV_LIBS} aruco )
+	target_link_libraries( ${3DSOFTVIZ_NAME} ${OpenCV_LIBS} aruco )
 endif()
 
 if( OPENNI2_FOUND )
-        target_link_libraries( ${3DSOFTVIZ_NAME} ${OPENNI2_LIBRARIES} )
+	target_link_libraries( ${3DSOFTVIZ_NAME} ${OPENNI2_LIBRARIES} )
 endif()
 
 if( NITE2_FOUND )
-        target_link_libraries( ${3DSOFTVIZ_NAME} ${NITE2_LIBRARIES} )
+	target_link_libraries( ${3DSOFTVIZ_NAME} ${NITE2_LIBRARIES} )
 endif()
 
 if( KINECTSDK_FOUND )
-        target_link_libraries( ${3DSOFTVIZ_NAME} ${KINECTSDK_LIBRARIES} )
-        if( SPEECHSDK_FOUND )
-                target_link_libraries( ${3DSOFTVIZ_NAME} ${SPEECHSDK_LIBRARIES} )
-        endif()
+	target_link_libraries( ${3DSOFTVIZ_NAME} ${KINECTSDK_LIBRARIES} )
+	if( SPEECHSDK_FOUND )
+		target_link_libraries( ${3DSOFTVIZ_NAME} ${SPEECHSDK_LIBRARIES} )
+	endif()
 endif()
 
 # if( FGLOVE_FOUND )
@@ -996,19 +1022,19 @@ endif()
 # endif()
 
 if( LEAP_FOUND )
-        target_link_libraries( ${3DSOFTVIZ_NAME} leaplib ${LEAP_LIBRARIES} )
+	target_link_libraries( ${3DSOFTVIZ_NAME} leaplib ${LEAP_LIBRARIES} )
 endif()
 
 if( MOUSE3D_FOUND )
-        target_link_libraries( ${3DSOFTVIZ_NAME} ${MOUSE3D_LIBRARIES} )
+	target_link_libraries( ${3DSOFTVIZ_NAME} ${MOUSE3D_LIBRARIES} )
 endif()
 
 # 'cotire' the executable
 if( COMMAND cotire )
-        # link ${3DSOFTVIZ_NAME}_unity target to all libraries to which ${3DSOFTVIZ_NAME} links
-        set_target_properties( ${3DSOFTVIZ_NAME} PROPERTIES COTIRE_UNITY_LINK_LIBRARIES_INIT "COPY_UNITY" )
+	# link ${3DSOFTVIZ_NAME}_unity target to all libraries to which ${3DSOFTVIZ_NAME} links
+	set_target_properties( ${3DSOFTVIZ_NAME} PROPERTIES COTIRE_UNITY_LINK_LIBRARIES_INIT "COPY_UNITY" )
 
-        cotire( ${3DSOFTVIZ_NAME} CONFIGURATIONS Debug Release )
+	cotire( ${3DSOFTVIZ_NAME} CONFIGURATIONS Debug Release )
 
 	if( LEAP_FOUND )
 		target_link_libraries( ${3DSOFTVIZ_NAME}_unity leaplib_unity ${LEAP_LIBRARIES} )
@@ -1019,37 +1045,37 @@ endif()
 add_dependencies( ${3DSOFTVIZ_NAME} noiseutils qtcolorpicker)
 # dependencies of unity build
 if (COMMAND cotire)
-        add_dependencies( ${3DSOFTVIZ_NAME} noiseutils qtcolorpicker)
+	add_dependencies( ${3DSOFTVIZ_NAME} noiseutils qtcolorpicker)
 endif()
 
 if( USE_BUILTIN_DEPENDENCIES )
 
-        # dependencies of non-unity build
-        add_dependencies( ${3DSOFTVIZ_NAME} libnoise osgModeling gitlib dep_luametrics dep_leg dep_lpeg dep_luafilesystem igloo dep_lualogging)
+	# dependencies of non-unity build
+	add_dependencies( ${3DSOFTVIZ_NAME} libnoise osgModeling gitlib dep_luametrics dep_leg dep_lpeg dep_luafilesystem igloo dep_lualogging)
 
-        if( MSVC OR APPLE )
-                add_dependencies( ${3DSOFTVIZ_NAME} dep_lua )
-        else()
-                add_dependencies( ${3DSOFTVIZ_NAME} dep_diluculum dep_luajit )
-        endif()
+	if( MSVC OR APPLE )
+		add_dependencies( ${3DSOFTVIZ_NAME} dep_lua )
+	else()
+		add_dependencies( ${3DSOFTVIZ_NAME} dep_diluculum dep_luajit )
+	endif()
 
-        if( OpenCV_FOUND )
-                add_dependencies( ${3DSOFTVIZ_NAME} aruco )
-        endif()
+	if( OpenCV_FOUND )
+		add_dependencies( ${3DSOFTVIZ_NAME} aruco )
+	endif()
 
-        if( LEAP_FOUND )
-                add_dependencies( ${3DSOFTVIZ_NAME} leaplib )
-        endif()
+	if( LEAP_FOUND )
+		add_dependencies( ${3DSOFTVIZ_NAME} leaplib )
+	endif()
 
-        # dependencies of unity build
-        if (COMMAND cotire)
-                add_dependencies( ${3DSOFTVIZ_NAME}_unity libnoise osgModeling gitlib_unity dep_luametrics dep_leg dep_lpeg dep_luafilesystem igloo dep_lualogging)
+	# dependencies of unity build
+	if (COMMAND cotire)
+		add_dependencies( ${3DSOFTVIZ_NAME}_unity libnoise osgModeling gitlib_unity dep_luametrics dep_leg dep_lpeg dep_luafilesystem igloo dep_lualogging)
 
-                if( MSVC OR APPLE )
-                        add_dependencies( ${3DSOFTVIZ_NAME}_unity dep_lua )
-                else()
-                        add_dependencies( ${3DSOFTVIZ_NAME}_unity dep_diluculum dep_luajit )
-                endif()
+		if( MSVC OR APPLE )
+			add_dependencies( ${3DSOFTVIZ_NAME}_unity dep_lua )
+		else()
+			add_dependencies( ${3DSOFTVIZ_NAME}_unity dep_diluculum dep_luajit )
+		endif()
 
 		if( OpenCV_FOUND )
 			add_dependencies( ${3DSOFTVIZ_NAME}_unity aruco )
@@ -1058,7 +1084,7 @@ if( USE_BUILTIN_DEPENDENCIES )
 			add_dependencies( ${3DSOFTVIZ_NAME}_unity leaplib_unity )
 		endif()
 
-        endif()
+	endif()
 endif()
 
 # 3Dsoftviz executable
@@ -1070,9 +1096,9 @@ target_compile_definitions( ${3DSOFTVIZ_NAME}_app PUBLIC ${ALL_COMPILE_DEFINITIO
 target_link_libraries( ${3DSOFTVIZ_NAME}_app ${3DSOFTVIZ_NAME} )
 
 if( COMMAND cotire )
-        set_target_properties( ${3DSOFTVIZ_NAME}_app PROPERTIES COTIRE_UNITY_LINK_LIBRARIES_INIT "COPY_UNITY" )
+	set_target_properties( ${3DSOFTVIZ_NAME}_app PROPERTIES COTIRE_UNITY_LINK_LIBRARIES_INIT "COPY_UNITY" )
 
-        cotire( ${3DSOFTVIZ_NAME}_app CONFIGURATIONS Debug Release )
+	cotire( ${3DSOFTVIZ_NAME}_app CONFIGURATIONS Debug Release )
 endif()
 
 
@@ -1097,23 +1123,23 @@ set( INSTALL_EXAMPLE ${INSTALL_DATA}/example CACHE PATH "Recommended directory t
 
 # Default install destination
 if( CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT )
-        set( CMAKE_INSTALL_PREFIX ${CMAKE_CURRENT_SOURCE_DIR}/_install CACHE PATH "Installation Destination" FORCE )
+	set( CMAKE_INSTALL_PREFIX ${CMAKE_CURRENT_SOURCE_DIR}/_install CACHE PATH "Installation Destination" FORCE )
 endif()
 
 
 # 3DSoftviz and data
 install( TARGETS ${3DSOFTVIZ_NAME}_app
-        BUNDLE DESTINATION ${INSTALL_BUNDLE} COMPONENT Runtime
-        RUNTIME DESTINATION ${INSTALL_BIN} COMPONENT Runtime )
+	BUNDLE DESTINATION ${INSTALL_BUNDLE} COMPONENT Runtime
+	RUNTIME DESTINATION ${INSTALL_BIN} COMPONENT Runtime )
 
 install( TARGETS gitlib
-        ARCHIVE DESTINATION ${INSTALL_BIN} COMPONENT Runtime
-        LIBRARY DESTINATION ${INSTALL_LIB} COMPONENT Runtime )
+	ARCHIVE DESTINATION ${INSTALL_BIN} COMPONENT Runtime
+	LIBRARY DESTINATION ${INSTALL_LIB} COMPONENT Runtime )
 
 if( LEAP_FOUND )
-        install( TARGETS leaplib
-        ARCHIVE DESTINATION ${INSTALL_BIN} COMPONENT Runtime
-        LIBRARY DESTINATION ${INSTALL_LIB} COMPONENT Runtime )
+	install( TARGETS leaplib
+	ARCHIVE DESTINATION ${INSTALL_BIN} COMPONENT Runtime
+	LIBRARY DESTINATION ${INSTALL_LIB} COMPONENT Runtime )
 endif()
 
 # add custom install_unity target
@@ -1135,12 +1161,17 @@ install( DIRECTORY resources/ DESTINATION ${INSTALL_DATA} COMPONENT Data PATTERN
 
 # Install needed .dll files for OpenNI2
 if( NITE2_FOUND AND OPENNI2_FOUND )
-        install( DIRECTORY ${NITE2_OPENNI2_DRIVER_DIRS} DESTINATION ${INSTALL_BIN}/OpenNI2 )
+	if( WIN32 )
+		install( DIRECTORY ${OPENNI2_DLL}/ DESTINATION ${INSTALL_BIN}/ )
+	else()
+		install( FILES ${OPENNI2_LIBRARY} DESTINATION ${INSTALL_BIN}/ )
+		install( FILES ${NITE2_LIBRARY} DESTINATION ${INSTALL_BIN}/ )
+	endif()
 endif()
 
 # install .dll for speech recognition
 if( SPEECHSDK_FOUND )
-        install( DIRECTORY ${SPEECHSDK_DRIVER_DIRS}/ DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/_install/bin )
+	install( DIRECTORY ${SPEECHSDK_DRIVER_DIRS}/ DESTINATION ${INSTALL_BIN}/ )
 endif()
 
 # Install needed .dll files for fglove
@@ -1156,7 +1187,7 @@ endif()
 # Install needed .dll files for leap
 if( LEAP_FOUND )
 	if ( WIN32 )
-		install( FILES ${LEAP_DRIVER_DIRS} DESTINATION ${INSTALL_BIN}/ )
+		install( DIRECTORY ${LEAP_DRIVER_DIRS}/ DESTINATION ${INSTALL_BIN}/ )
 	else()
 		install( FILES ${LEAP_LIBRARIES} DESTINATION ${INSTALL_BIN}/ )
 	endif()
@@ -1164,43 +1195,43 @@ endif()
 
 # Install built in dependencies unless we are building an OSX Bundle
 if( USE_BUILTIN_DEPENDENCIES )
-        # Install all dependencies
-        install( DIRECTORY ${DEP_BIN}/
-                DESTINATION ${INSTALL_DEPS}
-                COMPONENT Dependencies
-                USE_SOURCE_PERMISSIONS
-        )
+	# Install all dependencies
+	install( DIRECTORY ${DEP_BIN}/
+		DESTINATION ${INSTALL_DEPS}
+		COMPONENT Dependencies
+		USE_SOURCE_PERMISSIONS
+	)
 endif()
 
 # Include QT4 libraries in Apple bundle and on Windows
 if( WIN32 OR APPLE AND OSX_BUNDLE )
-        # On Apple plugins need to be bundled
-        if( APPLE AND OSX_BUNDLE )
-                # Install Qt Plugins
-                install( DIRECTORY "${QT_PLUGINS_DIR}/imageformats"
-                        DESTINATION ${INSTALL_PLUGIN}/plugins
-                        COMPONENT Runtime )
+	# On Apple plugins need to be bundled
+	if( APPLE AND OSX_BUNDLE )
+		# Install Qt Plugins
+		install( DIRECTORY "${QT_PLUGINS_DIR}/imageformats"
+			DESTINATION ${INSTALL_PLUGIN}/plugins
+			COMPONENT Runtime )
 
-                # Install Qt Config
-                install( CODE "
-                        file( WRITE \"\${CMAKE_INSTALL_PREFIX}/${INSTALL_QTCONF}/qt.conf\" \"\" )
-                        " COMPONENT Runtime )
-        endif()
+		# Install Qt Config
+		install( CODE "
+			file( WRITE \"\${CMAKE_INSTALL_PREFIX}/${INSTALL_QTCONF}/qt.conf\" \"\" )
+			" COMPONENT Runtime )
+	endif()
 
-        # Search Dirs
-        string( REPLACE "/lib" "/bin" QT_RUNTIME_DIR ${QT_LIBRARY_DIR} )
-        set( BUNDLE_DIRS ${QT_LIBRARY_DIR} ${QT_RUNTIME_DIR} ${DEP_BIN}/bin ${DEP_BIN}/lib )
+	# Search Dirs
+	string( REPLACE "/lib" "/bin" QT_RUNTIME_DIR ${QT_LIBRARY_DIR} )
+	set( BUNDLE_DIRS ${QT_LIBRARY_DIR} ${QT_RUNTIME_DIR} ${DEP_BIN}/bin ${DEP_BIN}/lib )
 
 
-        # Bundle libraries
-        install( CODE "
-                file( GLOB_RECURSE LUA_PLUGINS
-                                \"\${CMAKE_INSTALL_PREFIX}/${INSTALL_DEPS}/lib/lua/*${CMAKE_SHARED_MODULE_SUFFIX}\" )
-                file( GLOB_RECURSE BUNDLE_PLUGINS
-                                \"\${CMAKE_INSTALL_PREFIX}/${INSTALL_BIN}/plugins/*${CMAKE_SHARED_LIBRARY_SUFFIX}\" )
-                include( BundleUtilities )
-                fixup_bundle( \"${BUNDLE_APP}\" \"\${BUNDLE_PLUGINS};\${LUA_PLUGINS}\" \"${BUNDLE_DIRS}\" )
-                " COMPONENT Runtime )
+	# Bundle libraries
+	install( CODE "
+		file( GLOB_RECURSE LUA_PLUGINS
+				\"\${CMAKE_INSTALL_PREFIX}/${INSTALL_DEPS}/lib/lua/*${CMAKE_SHARED_MODULE_SUFFIX}\" )
+		file( GLOB_RECURSE BUNDLE_PLUGINS
+				\"\${CMAKE_INSTALL_PREFIX}/${INSTALL_BIN}/plugins/*${CMAKE_SHARED_LIBRARY_SUFFIX}\" )
+		include( BundleUtilities )
+		fixup_bundle( \"${BUNDLE_APP}\" \"\${BUNDLE_PLUGINS};\${LUA_PLUGINS}\" \"${BUNDLE_DIRS}\" )
+		" COMPONENT Runtime )
 endif()
 
 # -------------------------------------------------------
@@ -1214,60 +1245,60 @@ endif()
 # Apple specific overrides, we build and app bundle
 option( OSX_BUNDLE "Create an app bundle on OSX." OFF ) # TODO: disabled, because currently it does not work...
 if( APPLE AND OSX_BUNDLE )
-        # Executable settings
-        set( 3DSOFTVIZ_EXECUTABLE_TYPE MACOSX_BUNDLE )
-        set( BUNDLE_APP "\${CMAKE_INSTALL_PREFIX}/${3DSOFTVIZ_NAME}.app" )
+	# Executable settings
+	set( 3DSOFTVIZ_EXECUTABLE_TYPE MACOSX_BUNDLE )
+	set( BUNDLE_APP "\${CMAKE_INSTALL_PREFIX}/${3DSOFTVIZ_NAME}.app" )
 
-        # Override default install destinations into the bundle
-        set( INSTALL_BUNDLE . )
-        set( INSTALL_BIN	${3DSOFTVIZ_NAME}.app/Contents/MacOS )
-        set( INSTALL_DATA	${3DSOFTVIZ_NAME}.app/Contents/share/3DSOFTVIZ )
-        set( INSTALL_RES	${3DSOFTVIZ_NAME}.app/Contents/Resources )
-        set( INSTALL_DEPS	${3DSOFTVIZ_NAME}.app/Contents )
-        set( INSTALL_PLUGIN	${3DSOFTVIZ_NAME}.app/Contents/MacOS )
-        set( INSTALL_QTCONF	${3DSOFTVIZ_NAME}.app/Contents/Resources )
+	# Override default install destinations into the bundle
+	set( INSTALL_BUNDLE . )
+	set( INSTALL_BIN	${3DSOFTVIZ_NAME}.app/Contents/MacOS )
+	set( INSTALL_DATA	${3DSOFTVIZ_NAME}.app/Contents/share/3DSOFTVIZ )
+	set( INSTALL_RES	${3DSOFTVIZ_NAME}.app/Contents/Resources )
+	set( INSTALL_DEPS	${3DSOFTVIZ_NAME}.app/Contents )
+	set( INSTALL_PLUGIN	${3DSOFTVIZ_NAME}.app/Contents/MacOS )
+	set( INSTALL_QTCONF	${3DSOFTVIZ_NAME}.app/Contents/Resources )
 
-        # Bundle settings
-        set( MACOSX_BUNDLE_INFO_STRING "${3DSOFTVIZ_NAME} ${3DSOFTVIZ_VERSION}" )
-        set( MACOSX_BUNDLE_BUNDLE_VERSION "${3DSOFTVIZ_NAME} ${3DSOFTVIZ_VERSION}" )
-        set( MACOSX_BUNDLE_LONG_VERSION_STRING "${3DSOFTVIZ_NAME} ${3DSOFTVIZ_VERSION}" )
-        set( MACOSX_BUNDLE_SHORT_VERSION_STRING "${3DSOFTVIZ_VERSION}" )
-        set( MACOSX_BUNDLE_COPYRIGHT "${3DSOFTVIZ_COPYRIGHT_YEAR} ${3DSOFTVIZ_VENDOR}" )
-        set( MACOSX_BUNDLE_ICON_FILE "3DSOFTVIZ_app.icns" )# use http://iconverticons.com/legacy/ for icon converting
-        set( MACOSX_BUNDLE_GUI_IDENTIFIER "${3DSOFTVIZ_DOMAIN_SECOND}.${3DSOFTVIZ_DOMAIN_FIRST}.${3DSOFTVIZ_NAME}" )
-        set( MACOSX_BUNDLE_BUNDLE_NAME "${3DSOFTVIZ_NAME}" )
+	# Bundle settings
+	set( MACOSX_BUNDLE_INFO_STRING "${3DSOFTVIZ_NAME} ${3DSOFTVIZ_VERSION}" )
+	set( MACOSX_BUNDLE_BUNDLE_VERSION "${3DSOFTVIZ_NAME} ${3DSOFTVIZ_VERSION}" )
+	set( MACOSX_BUNDLE_LONG_VERSION_STRING "${3DSOFTVIZ_NAME} ${3DSOFTVIZ_VERSION}" )
+	set( MACOSX_BUNDLE_SHORT_VERSION_STRING "${3DSOFTVIZ_VERSION}" )
+	set( MACOSX_BUNDLE_COPYRIGHT "${3DSOFTVIZ_COPYRIGHT_YEAR} ${3DSOFTVIZ_VENDOR}" )
+	set( MACOSX_BUNDLE_ICON_FILE "3DSOFTVIZ_app.icns" )# use http://iconverticons.com/legacy/ for icon converting
+	set( MACOSX_BUNDLE_GUI_IDENTIFIER "${3DSOFTVIZ_DOMAIN_SECOND}.${3DSOFTVIZ_DOMAIN_FIRST}.${3DSOFTVIZ_NAME}" )
+	set( MACOSX_BUNDLE_BUNDLE_NAME "${3DSOFTVIZ_NAME}" )
 
-        # CPack settings
-        set( CPACK_GENERATOR "DragNDrop" )
-        set( CPACK_PACKAGE_ICON "${CMAKE_CURRENT_SOURCE_DIR}/resources/3DSOFTVIZ_pkg.icns" )
-        set( CPACK_PACKAGE_FILE_NAME "${3DSOFTVIZ_NAME}-${3DSOFTVIZ_VERSION}" )
+	# CPack settings
+	set( CPACK_GENERATOR "DragNDrop" )
+	set( CPACK_PACKAGE_ICON "${CMAKE_CURRENT_SOURCE_DIR}/resources/3DSOFTVIZ_pkg.icns" )
+	set( CPACK_PACKAGE_FILE_NAME "${3DSOFTVIZ_NAME}-${3DSOFTVIZ_VERSION}" )
 
-        # OSX Specific resources
-        install( FILES "resources/${MACOSX_BUNDLE_ICON_FILE}" DESTINATION ${INSTALL_RES} )
+	# OSX Specific resources
+	install( FILES "resources/${MACOSX_BUNDLE_ICON_FILE}" DESTINATION ${INSTALL_RES} )
 endif()
 
 # Windows specific overrides
 if( WIN32 )
-        # Executable settings
-        set( 3DSOFTVIZ_EXECUTABLE_TYPE WIN32 )
-        set( BUNDLE_APP "\${CMAKE_INSTALL_PREFIX}/${INSTALL_BIN}/${3DSOFTVIZ_NAME}.exe" )
+	# Executable settings
+	set( 3DSOFTVIZ_EXECUTABLE_TYPE WIN32 )
+	set( BUNDLE_APP "\${CMAKE_INSTALL_PREFIX}/${INSTALL_BIN}/${3DSOFTVIZ_NAME}.exe" )
 
-        # CPack settings
-        set( CPACK_GENERATOR "NSIS" )
-        set( CPACK_PACKAGE_INSTALL_DIRECTORY "${3DSOFTVIZ_NAME}" )
-        set( CPACK_PACKAGE_FILE_NAME "${3DSOFTVIZ_NAME}-${3DSOFTVIZ_VERSION}" )
-        set( CPACK_PACKAGE_EXECUTABLES "${3DSOFTVIZ_NAME}" "${3DSOFTVIZ_NAME}" )
-        set( CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}\\\\LICENSE.txt" )
+	# CPack settings
+	set( CPACK_GENERATOR "NSIS" )
+	set( CPACK_PACKAGE_INSTALL_DIRECTORY "${3DSOFTVIZ_NAME}" )
+	set( CPACK_PACKAGE_FILE_NAME "${3DSOFTVIZ_NAME}-${3DSOFTVIZ_VERSION}" )
+	set( CPACK_PACKAGE_EXECUTABLES "${3DSOFTVIZ_NAME}" "${3DSOFTVIZ_NAME}" )
+	set( CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}\\\\LICENSE.txt" )
 
-        # NSIS branding
-        set( CPACK_NSIS_INSTALLED_ICON_NAME "${INSTALL_BIN}\\\\${3DSOFTVIZ_NAME}${CMAKE_EXECUTABLE_SUFFIX}" )
-        set( CPACK_NSIS_DISPLAY_NAME "${3DSOFTVIZ_NAME}" )
-        set( CPACK_NSIS_HELP_LINK "http:\\\\\\\\${3DSOFTVIZ_DOMAIN}" )
-        set( CPACK_NSIS_URL_INFO_ABOUT "http:\\\\\\\\${3DSOFTVIZ_DOMAIN}" )
-        set( CPACK_NSIS_CONTACT "http:\\\\\\\\${3DSOFTVIZ_DOMAIN}" )
-        set( CPACK_NSIS_MUI_ICON "${CMAKE_CURRENT_SOURCE_DIR}\\\\res\\\\3DSOFTVIZ_pkg.ico" )
-        set( CPACK_NSIS_MUI_UNIICON "${CMAKE_CURRENT_SOURCE_DIR}\\\\res\\\\3DSOFTVIZ_rmv.ico" )
-        set( CPACK_PACKAGE_ICON "${CMAKE_CURRENT_SOURCE_DIR}\\\\res\\\\logo2.bmp" )
+	# NSIS branding
+	set( CPACK_NSIS_INSTALLED_ICON_NAME "${INSTALL_BIN}\\\\${3DSOFTVIZ_NAME}${CMAKE_EXECUTABLE_SUFFIX}" )
+	set( CPACK_NSIS_DISPLAY_NAME "${3DSOFTVIZ_NAME}" )
+	set( CPACK_NSIS_HELP_LINK "http:\\\\\\\\${3DSOFTVIZ_DOMAIN}" )
+	set( CPACK_NSIS_URL_INFO_ABOUT "http:\\\\\\\\${3DSOFTVIZ_DOMAIN}" )
+	set( CPACK_NSIS_CONTACT "http:\\\\\\\\${3DSOFTVIZ_DOMAIN}" )
+	set( CPACK_NSIS_MUI_ICON "${CMAKE_CURRENT_SOURCE_DIR}\\\\res\\\\3DSOFTVIZ_pkg.ico" )
+	set( CPACK_NSIS_MUI_UNIICON "${CMAKE_CURRENT_SOURCE_DIR}\\\\res\\\\3DSOFTVIZ_rmv.ico" )
+	set( CPACK_PACKAGE_ICON "${CMAKE_CURRENT_SOURCE_DIR}\\\\res\\\\logo2.bmp" )
 endif()
 
 set( CPACK_MONOLITHIC_INSTALL 1 )
@@ -1296,15 +1327,15 @@ add_executable( test_gitlib_module ${TEST_RUNNER} ${SRC_GITLIB_TESTS} )
 add_dependencies( test_gitlib_module igloo )
 
 target_include_directories( test_gitlib_module 	PUBLIC
-                ${CMAKE_CURRENT_SOURCE_DIR}/include
-                include/Repository/Git 	)
+		${CMAKE_CURRENT_SOURCE_DIR}/include
+		include/Repository/Git 	)
 target_compile_options( test_gitlib_module PUBLIC ${FLAGS_FOR_DEBUG} )
 target_link_libraries( test_gitlib_module ${QT_LIBRARIES} gitlib )
 
 # 'cotire' the executable
 if( COMMAND cotire )
-        set_target_properties( test_gitlib_module PROPERTIES COTIRE_UNITY_LINK_LIBRARIES_INIT "COPY_UNITY" )
-        cotire( test_gitlib_module CONFIGURATIONS Debug Release )
+	set_target_properties( test_gitlib_module PROPERTIES COTIRE_UNITY_LINK_LIBRARIES_INIT "COPY_UNITY" )
+	cotire( test_gitlib_module CONFIGURATIONS Debug Release )
 endif()
 
 
