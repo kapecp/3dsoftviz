@@ -55,7 +55,7 @@ void GraphMetrics::computeGraphMetrics( Data::Graph* activeGraph )
 		i.value()->setNodeCloseness( static_cast<float>( pathSum ) / static_cast<float>( numVertices - 1 ) );
 
 		// check for regexp match
-		if ( re.exactMatch( ( ( Data::AbsNode* )i.value() )->getName() ) ) {
+		if ( re.exactMatch( ( static_cast<Data::AbsNode*>( i.value() ) )->getName() ) ) {
 			i.value()->setNodeMatched( true );
 		}
 

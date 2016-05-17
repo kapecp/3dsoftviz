@@ -11,7 +11,7 @@
 #include "OsgQtBrowser/QWebViewImage.h"
 #include "Data/Node.h"
 #include "LuaGraph/LuaNode.h"
-#include "Diluculum/Types.hpp"
+#include "LuaTypes/LuaValueMap.h"
 #include "LuaGraph/LuaGraphTreeModel.h"
 
 namespace Vwr {
@@ -83,7 +83,7 @@ private:
 	    *  \param  position
 	    *  \param  models
 	    */
-	void addBrowser( const std::string& templateType, osg::Vec3 position, Diluculum::LuaValueMap models );
+	void addBrowser( const std::string& templateType, osg::Vec3 position, Lua::LuaValueMap models );
 
 	/**
 	    *  \fn private  createBorderGeode

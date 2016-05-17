@@ -149,6 +149,26 @@ public:
 
 	Data::Node* getOtherNode( const Data::Node* node ) const;
 
+    /**
+     * void setLuaIdentifier( QString identifier )
+     * @brief Sets lua identifier
+     * @param lua identifier
+     */
+    void setLuaIdentifier( QString identifier ) {
+        this->luaIdentifier = identifier;
+    }
+
+    /**
+     * QString getLuaIdentifier()
+     * @brief Gets lua identifer
+     * @return lua identifier
+     */
+    QString getLuaIdentifier() {
+        return this->luaIdentifier;
+    }
+
+    void reloadColor();
+
 	void reloadLabel();
 	void showLabel( bool visible );
 	void setVisual( int index );
@@ -171,7 +191,11 @@ private:
 	    */
 	osg::ref_ptr<Data::Edge> edgeParent;
 
-
+    /**
+     * QString luaIdentifier
+     * @brief lua identifier
+     */
+    QString luaIdentifier;
 
 	/**
 	    *  Util::ApplicationConfig * appConf

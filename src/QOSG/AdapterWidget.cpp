@@ -58,9 +58,17 @@ void AdapterWidget::keyPressEvent( QKeyEvent* event )
 		case ( Qt::Key_Shift ): {
 			_gw->getEventQueue()->keyPress( osgGA::GUIEventAdapter::KEY_Shift_L );
 			break;
-		}
+        }
+        case ( Qt::Key_O ): {
+            _gw->getEventQueue()->keyPress( osgGA::GUIEventAdapter::KEY_O );
+            break;
+        }
+        case ( Qt::Key_P ): {
+            _gw->getEventQueue()->keyPress( osgGA::GUIEventAdapter::KEY_P );
+            break;
+        }
 		default: {
-			_gw->getEventQueue()->keyPress( ( osgGA::GUIEventAdapter::KeySymbol ) *( event->text().toAscii().data() ) );
+			_gw->getEventQueue()->keyPress( static_cast<osgGA::GUIEventAdapter::KeySymbol>( *( event->text().toAscii().data() ) ) );
 			break;
 		}
 	}
@@ -113,7 +121,7 @@ void AdapterWidget::keyReleaseEvent( QKeyEvent* event )
 			}
 		}
 		default: {
-			_gw->getEventQueue()->keyRelease( ( osgGA::GUIEventAdapter::KeySymbol ) *( event->text().toAscii().data() ) );
+			_gw->getEventQueue()->keyRelease( static_cast<osgGA::GUIEventAdapter::KeySymbol>( *( event->text().toAscii().data() ) ) );
 			break;
 		}
 	}
@@ -122,7 +130,7 @@ void AdapterWidget::keyReleaseEvent( QKeyEvent* event )
 void AdapterWidget::mousePressEvent( QMouseEvent* event )
 {
 	//odchytavanie udalosti mysi
-	int button = 0;
+	unsigned int button = 0;
 	switch ( event->button() ) {
 		case ( Qt::LeftButton ):
 			button = 1;
@@ -147,7 +155,7 @@ void AdapterWidget::mousePressEvent( QMouseEvent* event )
 void AdapterWidget::mouseDoubleClickEvent( QMouseEvent* event )
 {
 	//odchytavanie udalosti mysi
-	int button = 0;
+	unsigned int button = 0;
 	switch ( event->button() ) {
 		case ( Qt::LeftButton ):
 			button = 1;
@@ -173,7 +181,7 @@ void AdapterWidget::mouseDoubleClickEvent( QMouseEvent* event )
 void AdapterWidget::mouseReleaseEvent( QMouseEvent* event )
 {
 	//odchytavanie udalosti mysi
-	int button = 0;
+	unsigned int button = 0;
 	switch ( event->button() ) {
 		case ( Qt::LeftButton ):
 			button = 1;

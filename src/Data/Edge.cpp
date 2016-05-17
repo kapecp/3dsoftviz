@@ -4,7 +4,7 @@
  */
 #include "Data/Edge.h"
 #include "Data/Graph.h"
-#include "Math/Bezier.h"
+#include "osgModeling/Bezier"
 
 #include "Util/ApplicationConfig.h"
 
@@ -30,7 +30,7 @@ Data::Edge::Edge( qlonglong id, QString name, Data::Graph* graph, osg::ref_ptr<D
 	this->insertChild( INDEX_CYLINDER, createEdgeCylinder( NULL ), false );
 	this->insertChild( INDEX_LINE, createEdgeLine( NULL ), false );
 	this->insertChild( INDEX_CURVE, createEdgeCurve( NULL ), false );
-	setValue( graph->getEdgeVisual(), true );
+	setValue( static_cast<unsigned int>( graph->getEdgeVisual() ), true );
 
 	//updateCoordinates(getSrcNode()->getTargetPosition(), getDstNode()->getTargetPosition());
 	updateCoordinates( getSrcNode()->restrictedTargetPosition(), getDstNode()->restrictedTargetPosition() );
@@ -84,7 +84,7 @@ void Data::Edge::setEdgePieces( QList<osg::ref_ptr<Data::Edge> > edgePieces )
 		( *iEdge )->setEdgeParent( this );
 		( *iEdge )->getSrcNode()->setInvisible( true );
 		( *iEdge )->getDstNode()->setInvisible( true );
-		iEdge ++;
+		++iEdge;
 	}
 
 	getSrcNode()->setInvisible( false );
@@ -187,10 +187,10 @@ void Data::Edge::updateCoordinates( osg::Vec3 srcPos, osg::Vec3 dstPos )
 			rotation->push_back( direction ^ diff );
 			angle = acos( ( direction * diff )/ diff.length() );
 
-			( ( osg::Cylinder* )( ( drawableCylinder )->getShape() ) )->setHeight( ( float )( length ) );
-			( ( osg::Cylinder* )( ( drawableCylinder )->getShape() ) )->setRadius( 2 );
-			( ( osg::Cylinder* )( ( drawableCylinder )->getShape() ) )->setCenter( center->at( 0 ) );
-			( ( osg::Cylinder* )( ( drawableCylinder )->getShape() ) )->setRotation( osg::Quat( angle, osg::Vec3( rotation->at( 0 ).x(), rotation->at( 0 ).y(), rotation->at( 0 ).z() ) ) );
+			( dynamic_cast<osg::Cylinder*>( ( drawableCylinder )->getShape() ) )->setHeight( static_cast<float>( length ) );
+			( dynamic_cast<osg::Cylinder*>( ( drawableCylinder )->getShape() ) )->setRadius( 2 );
+			( dynamic_cast<osg::Cylinder*>( ( drawableCylinder )->getShape() ) )->setCenter( center->at( 0 ) );
+			( dynamic_cast<osg::Cylinder*>( ( drawableCylinder )->getShape() ) )->setRotation( osg::Quat( angle, osg::Vec3( rotation->at( 0 ).x(), rotation->at( 0 ).y(), rotation->at( 0 ).z() ) ) );
 			drawableCylinder->setColor( getEdgeColor() );
 			drawableCylinder->dirtyDisplayList();
 		}
@@ -236,7 +236,7 @@ void Data::Edge::updateCoordinates( osg::Vec3 srcPos, osg::Vec3 dstPos )
 
 			osg::ref_ptr<osg::Vec3Array> pts = bezCurve->getPath();
 
-			unsigned int profileSize = ( unsigned int ) pts->size();
+			unsigned int profileSize = static_cast<unsigned int>( pts->size() );
 			unsigned int i, j;
 
 
@@ -285,6 +285,7 @@ osg::ref_ptr<osg::Geode> Data::Edge::createLabel( QString name )
 	label->setColor( osg::Vec4( 1.0f, 1.0f, 1.0f, 1.0f ) );
 
 	osg::ref_ptr<osg::Geode> geode = new osg::Geode;
+    geode->setNodeMask(geode->getNodeMask() & ~0x2);
 	geode->addDrawable( label );
 
 	return geode;
@@ -292,12 +293,12 @@ osg::ref_ptr<osg::Geode> Data::Edge::createLabel( QString name )
 /*
 float Data::Edge::getEdgeStrength() const
 {
-    return edgeStrength;
+	return edgeStrength;
 }
 
 void Data::Edge::setEdgeStrength( float value )
 {
-    edgeStrength = value;
+	edgeStrength = value;
 }
 */
 osg::ref_ptr<Data::Node> Data::Edge::getSecondNode( osg::ref_ptr<Data::Node> firstNode )
@@ -350,6 +351,7 @@ osg::ref_ptr<osg::Geode> Data::Edge::createEdgeQuad( osg::StateSet* bbState )
 	nodeQuad->setStateSet( bbState );
 
 	osg::ref_ptr<osg::Geode> geode = new osg::Geode;
+    geode->setNodeMask(geode->getNodeMask() & ~0x2);
 	geode->addDrawable( nodeQuad );
 
 	return geode;
@@ -373,6 +375,7 @@ osg::ref_ptr<osg::Geode> Data::Edge::createEdgeCylinder( osg::StateSet* bbState 
 	nodeCylinder->getStateSet()->setRenderBinDetails( 11, "RenderBin" );
 
 	osg::ref_ptr<osg::Geode> geode = new osg::Geode;
+    geode->setNodeMask(geode->getNodeMask() & ~0x2);
 	geode->addDrawable( nodeCylinder );
 
 	return geode;
@@ -442,7 +445,13 @@ osg::ref_ptr<osg::StateSet> Data::Edge::createStateSet( Data::Type* type )
 
 	// Common configuration
 	edgeStateSet->setMode( GL_LIGHTING, osg::StateAttribute::OFF );
-	edgeStateSet->setTextureAttributeAndModes( 0, texture, osg::StateAttribute::ON );
+	if ( type->getName() != "edge" ) {
+		edgeStateSet->setTextureAttributeAndModes( 0, type->getTypeTexture(), osg::StateAttribute::ON );
+	}
+	else {
+		edgeStateSet->setTextureAttributeAndModes( 0, texture, osg::StateAttribute::ON );
+	}
+
 	edgeStateSet->setAttributeAndModes( new osg::BlendFunc, osg::StateAttribute::ON );
 	edgeStateSet->setMode( GL_BLEND, osg::StateAttribute::ON );
 	edgeStateSet->setMode( GL_DEPTH_TEST, osg::StateAttribute::ON );
@@ -477,7 +486,20 @@ void Data::Edge::setVisual( int index )
 	setValue( INDEX_CYLINDER, false );
 	setValue( INDEX_LINE, false );
 	setValue( INDEX_CURVE, false );
-	setValue( index, !isInvisible );
+	setValue( static_cast<unsigned int>( index ), !isInvisible );
+}
+
+void Data::Edge::reloadColor() {
+    osg::Geometry* geometry  = getChild( INDEX_QUAD )->asGeode()->getDrawable( 0 )->asGeometry();
+    if( geometry != nullptr) {
+        osg::Vec4Array* colorArray =  dynamic_cast<osg::Vec4Array*>( geometry->getColorArray() );
+        colorArray->pop_back();
+        colorArray->push_back( this->edgeColor );
+    }
+
+//    ( dynamic_cast<osg::ShapeDrawable*>( getChild( INDEX_CURVE )->asGeode()->getDrawable( 0 ) ) )->setColor( this->edgeColor );
+//    ( dynamic_cast<osg::ShapeDrawable*>( getChild( INDEX_CYLINDER )->asGeode()->getDrawable( 0 ) ) )->setColor( this->edgeColor );
+//    ( dynamic_cast<osg::ShapeDrawable*>( getChild( INDEX_LINE )->asGeode()->getDrawable( 0 ) ) )->setColor( this->edgeColor );
 }
 
 //Marak start

@@ -80,19 +80,6 @@ public:
 	    */
 	qlonglong getNumberOfVertigoPlane();
 
-	/**
-	     * \fn public constant isFocused
-	     * \brief Gets whether this node is focused at the moment.
-	     * \return whether this node is focused at the moment
-	     */
-	bool isFocused() const;
-
-	/**
-	     * \fn public setIsFocused(bool value)
-	     * \brief Sets whether this node is focused at the moment.
-	     * \param value whether this node is focused at the moment
-	     */
-	void setIsFocused( bool value );
 
 	/**
 	    *	\fn public removeAllEdges
@@ -166,7 +153,7 @@ public:
 		this->fixed = fixed;
 
 		if ( fixed ) {
-			setDrawableColor( 0, osg::Vec4( 1.0f, 0.0f, 0.0f, 1.0f ) );
+			setDrawableColor( osg::Vec4( 1.0f, 0.0f, 0.0f, 1.0f ) );
 		}
 		else if ( !fixed ) {
 			setDefaultColor();
@@ -232,20 +219,6 @@ public:
 	    *  \param     color   default color
 	    */
 
-
-	/**
-	    *  \fn public  showLabel(bool visible)
-	    *  \brief If true, node name will be shown.
-	    *  \param     visible     node name shown
-	    */
-	void showLabel( bool visible );
-
-	/**
-	    *  \fn public  reloadConfig
-	    *  \brief Reloads node configuration
-	    */
-	void reloadConfig();
-
 	/**
 	    *  \fn inline public  setNestedParent(Data::Node val)
 	    *  \brief Sets parent of note, if null, node has no parent
@@ -256,8 +229,6 @@ public:
 		nested_parent = val;
 	}
 
-	void setVisual( int index );
-
 	void set3D( bool value );
 
 	//volovar_zac
@@ -267,20 +238,25 @@ public:
 	void setRadialLayout( Layout::RadialLayout* rl );
 	//volovar_kon
 
+    /**
+     * void setLuaIdentifier( QString identifier )
+     * @brief Sets lua identifier
+     * @param lua identifier
+     */
+    void setLuaIdentifier( QString identifier ) {
+        this->luaIdentifier = identifier;
+    }
 
-	static const int INDEX_LABEL = 0;
-	static const int INDEX_SQUARE = 1;
-	static const int INDEX_SPHERE = 2;
+    /**
+     * QString getLuaIdentifier()
+     * @brief Gets lua identifer
+     * @return lua identifier
+     */
+    QString getLuaIdentifier() {
+        return this->luaIdentifier;
+    }
+
 private:
-
-	/**
-	    *	bool inDB
-	    *	\brief Flag if the Type is in database
-	    */
-
-
-
-public:
 
 	/**
 	    *	Node parent
@@ -288,12 +264,12 @@ public:
 	    */
 	osg::ref_ptr<Data::Node> nested_parent;
 
+    /**
+     * QString luaIdentifier
+     * @brief lua identifier
+     */
+    QString luaIdentifier;
 
-	/**
-	     * bool mIsFocused
-	     * \brief Flag whether this node is focused at the moment.
-	     */
-	bool mIsFocused;
 
 	/**
 	    *  QMap<qlonglong, osg::ref_ptr<Data::Edge> > * edges
@@ -318,43 +294,6 @@ public:
 	     * RestrictionsManager uses this to determine if the restriction can be attached to this node.
 	     */
 	bool positionCanBeRestricted;
-
-	static osg::ref_ptr<osg::Geode> createLabel( const float& scale, QString name );
-
-	/**
-	    *  \fn private static  createNodeSquare(const float & scale, osg::StateSet* bbState)
-	    *  \brief Creates node drawable - square
-	    *  \param	  scale	node scale
-	    *  \param  bbState	node stateset
-	    *  \return osg::ref_ptr node geode
-	    */
-	static osg::ref_ptr<osg::Geode> createNodeSquare( const float& scale, osg::StateSet* bbState );
-
-	/**
-	    *  \fn private static  createNodeSphere(const float & scale, osg::StateSet* bbState)
-	    *  \brief Creates node drawable - sphere
-	    *  \param	  scale	node scale
-	    *  \param  bbState	node stateset
-	    *  \return osg::ref_ptr node geode
-	    */
-	static osg::ref_ptr<osg::Geode> createNodeSphere( const float& scale, osg::StateSet* bbState );
-
-	/**
-	    *  \fn private static  createStateSet(Data::Type * type = 0)
-	    *  \brief Creates node stateset
-	    *  \param   type     node type
-	    *  \return osg::ref_ptr node stateset
-	    */
-	static osg::ref_ptr<osg::StateSet> createStateSet( Data::Type* type = 0 );
-
-	/**
-	    *  \fn private static  createLabel(const float & scale, QString name)
-	    *  \brief Creates node label from name
-	    *  \param      scale     label scale
-	    *  \param       name     label text
-	    *  \return osg::ref_ptr node label
-	    */
-//    static osg::ref_ptr<osg::Geode> createLabel( const float& scale, QString name );
 
 	/**
 	    *  \fn private static  createSquare

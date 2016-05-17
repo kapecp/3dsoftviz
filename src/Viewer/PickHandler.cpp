@@ -13,6 +13,7 @@
 #include "Core/Core.h"
 #include "Layout/LayoutThread.h"
 #include "Layout/Shape_Cube.h"
+#include "Layout/FRAlgorithm.h"
 
 #include "Util/ApplicationConfig.h"
 
@@ -165,7 +166,7 @@ bool PickHandler::handleScroll( const osgGA::GUIEventAdapter& ea, GUIActionAdapt
 {
 	if ( selectionType == SelectionType::CLUSTER && !pickedClusters.empty() ) {
 		QLinkedList<osg::ref_ptr<Data::Cluster> >::const_iterator i = pickedClusters.constBegin();
-		float scale = appConf->getValue( "Viewer.Display.NodeDistanceScale" ).toFloat();
+//		float scale = appConf->getValue( "Viewer.Display.NodeDistanceScale" ).toFloat();
 		while ( i != pickedClusters.constEnd() ) {
 			Layout::ShapeGetter_Cube* shapeGetter = ( *i )->getShapeGetter();
 			if ( shapeGetter != NULL ) {
@@ -247,6 +248,8 @@ bool PickHandler::handleKeyUp( const osgGA::GUIEventAdapter& ea, GUIActionAdapte
 
 bool PickHandler::handleKeyDown( const osgGA::GUIEventAdapter& ea, GUIActionAdapter& aa )
 {
+	static unsigned int splitviewMode = 0;
+
 	if ( ea.getKey() == osgGA::GUIEventAdapter::KEY_Control_R || ea.getKey() == osgGA::GUIEventAdapter::KEY_Control_L ) {
 		isCtrlPressed = true;
 	}
@@ -279,7 +282,7 @@ bool PickHandler::handleKeyDown( const osgGA::GUIEventAdapter& ea, GUIActionAdap
 
 	// FULLSCREEN
 	else if ( ea.getKey() == 'l' || ea.getKey() == 'L' ) {
-		bool hideToolbars = appConf->getValue( "Viewer.Fullscreen" ).toInt();
+		bool hideToolbars = ( appConf->getValue( "Viewer.Fullscreen" ).toInt() == 0 ? false : true );
 
 		if ( AppCore::Core::getInstance()->getCoreWindow()->isFullScreen() ) {
 			AppCore::Core::getInstance()->getCoreWindow()->menuBar()->show();
@@ -331,8 +334,50 @@ bool PickHandler::handleKeyDown( const osgGA::GUIEventAdapter& ea, GUIActionAdap
 			}
 		}
 
-	}
+    }
+	//split stereo 3D
+	else if ( ea.getKey() == osgGA::GUIEventAdapter::KEY_G){
+		if (splitviewMode == 0){
+			//turn on
+			osg::DisplaySettings::instance()->setStereoMode(osg::DisplaySettings::VERTICAL_SPLIT);
+			osg::DisplaySettings::instance()->setStereo(TRUE);
+			osg::DisplaySettings::instance()->setScreenDistance(Util::ApplicationConfig::get()->getValue("Display.Settings.Vuzix.Distance").toFloat());
+			osg::DisplaySettings::instance()->setScreenHeight(Util::ApplicationConfig::get()->getValue("Display.Settings.Vuzix.Height").toFloat());
+			osg::DisplaySettings::instance()->setScreenWidth(Util::ApplicationConfig::get()->getValue("Display.Settings.Vuzix.Width").toFloat());
 
+			qDebug() << "Turned on split stereo 3D - vertical split";
+		} else if (splitviewMode == 1){
+			osg::DisplaySettings::instance()->setStereoMode(osg::DisplaySettings::HORIZONTAL_SPLIT);
+			qDebug() << "Turned on split stereo 3D - horizontal split";
+		}
+		else{
+			//turn off
+			osg::DisplaySettings::instance()->setStereo(FALSE);
+			//reset to default config
+			osg::DisplaySettings::instance()->setScreenDistance(Util::ApplicationConfig::get()->getValue("Display.Settings.Default.Distance").toFloat());
+			osg::DisplaySettings::instance()->setScreenHeight(Util::ApplicationConfig::get()->getValue("Display.Settings.Default.Height").toFloat());
+			osg::DisplaySettings::instance()->setScreenWidth(Util::ApplicationConfig::get()->getValue("Display.Settings.Default.Width").toFloat());
+			osg::DisplaySettings::instance()->setEyeSeparation(Util::ApplicationConfig::get()->getValue("Display.Settings.Default.EyeSeparation").toFloat());
+
+			qDebug() << "Turned off split stereo 3D";
+		}
+		splitviewMode = (splitviewMode + 1) % 3;	//rotate modes : vertical / horizontal / off
+	}
+	//adjust eye distance, 0.001m change
+	else if (ea.getKey() == osgGA::GUIEventAdapter::KEY_H && (splitviewMode != 0)){
+		//-
+		float distance = osg::DisplaySettings::instance()->getEyeSeparation();
+		distance = distance - 0.001f;
+		osg::DisplaySettings::instance()->setEyeSeparation(distance);
+		qDebug() << "Eye distance : " << distance;
+	}
+	else if (ea.getKey() == osgGA::GUIEventAdapter::KEY_J && (splitviewMode != 0)){
+		//+
+		float distance = osg::DisplaySettings::instance()->getEyeSeparation();
+		distance = distance + 0.001f;
+		osg::DisplaySettings::instance()->setEyeSeparation(distance);
+		qDebug() << "Eye distance : " << distance;
+    }
 
 	return false;
 }
@@ -637,7 +682,13 @@ bool PickHandler::doNodePick( osg::NodePath nodePath )
 
 bool PickHandler::doEdgePick( osg::NodePath nodePath )
 {
-	Data::Edge* e = dynamic_cast<Data::Edge*>( nodePath[nodePath.size() - 1] );
+	Data::Edge* e;
+	for ( unsigned int i = 0; i < nodePath.size(); i++ ) {
+		e = dynamic_cast<Data::Edge*>( nodePath[i] );
+		if ( e != NULL ) {
+			break;
+		}
+	}
 
 	if ( e != NULL ) {
 		if ( isAltPressed && pickMode == PickMode::NONE && !isShiftPressed ) {
@@ -713,7 +764,7 @@ bool PickHandler::doClusterPick( osg::NodePath nodePath )
 
 }
 
-void PickHandler::selectAllNeighbors( QLinkedList<osg::ref_ptr<Data::Node>> nodes )
+void PickHandler::selectAllNeighbors( QLinkedList<osg::ref_ptr<Data::Node > > nodes )
 {
 	if ( nodes.count() > 0 && !isNeighborsSelection ) {
 		QLinkedList<osg::ref_ptr<Data::Node> >::const_iterator i = nodes.constBegin();
@@ -1029,7 +1080,7 @@ osg::Vec3 PickHandler::getSelectionCenterNnE()
 			z += ( *i )->getCurrentPosition().z();
 			++i;
 		}
-		return osg::Vec3( x/pickedNodesCount,y/pickedNodesCount,z/pickedNodesCount );
+		return osg::Vec3( x/static_cast<float>( pickedNodesCount ),y/static_cast<float>( pickedNodesCount ),z/static_cast<float>( pickedNodesCount ) );
 	}
 
 	//only edges selection - computes and returns center of edges selection
@@ -1040,7 +1091,7 @@ osg::Vec3 PickHandler::getSelectionCenterNnE()
 			z += ( ( *j )->getSrcNode()->getCurrentPosition().z() + ( *j )->getDstNode()->getCurrentPosition().z() )/2;
 			++j;
 		}
-		return osg::Vec3( x/pickedEdgesCount,y/pickedEdgesCount,z/pickedEdgesCount );
+		return osg::Vec3( x/static_cast<float>( pickedNodesCount ),y/static_cast<float>( pickedNodesCount ),z/static_cast<float>( pickedNodesCount ) );
 	}
 
 	//nodes and edges selection - computes and returns center of this selection
@@ -1057,7 +1108,7 @@ osg::Vec3 PickHandler::getSelectionCenterNnE()
 			z += ( *i )->getCurrentPosition().z();
 			++i;
 		}
-		return osg::Vec3( x/( pickedEdgesCount+pickedNodesCount ),y/( pickedEdgesCount+pickedNodesCount ),z/( pickedEdgesCount+pickedNodesCount ) );
+		return osg::Vec3( x/static_cast<float>( pickedEdgesCount+pickedNodesCount ),y/static_cast<float>( pickedEdgesCount+pickedNodesCount ),z/static_cast<float>( pickedEdgesCount+pickedNodesCount ) );
 	}
 
 	//if are all nodes and edges unselected, returns center of graph
