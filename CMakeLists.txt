@@ -703,7 +703,8 @@ endif()
 
 # add Leap
 if( LEAP_FOUND )
-        list( APPEND SRC ${SRC_LEAP} )
+        # WORKAROUND GARAJ comment
+        # list( APPEND SRC ${SRC_LEAP} )
 endif()
 
 # add MOUSE3D if found
