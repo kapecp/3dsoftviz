@@ -14,6 +14,7 @@
 #define NUM_HANDS 2
 
 namespace Vwr {
+class GraphNavigation;
 class MouseControl;
 }
 

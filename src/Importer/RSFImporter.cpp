@@ -10,6 +10,9 @@
 #include <string>
 #include <memory>
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wold-style-cast"
+
 namespace Importer {
 
 osg::ref_ptr<Data::Node> RSFImporter::getHyperEdge(
@@ -107,3 +110,5 @@ bool RSFImporter::import(
 }
 
 } // namespace
+
+#pragma GCC diagnostic pop

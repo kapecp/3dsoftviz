@@ -60,10 +60,20 @@ public:
 	 * @return value as float
 	 */
 	float getFloatParam( std::string name, float defaultValue );
+
+    void setIdentifier( QString identifier ) {
+        this->identifier = identifier;
+    }
+
+    QString getIdentifier() {
+        return this->identifier;
+    }
+
 private:
 	qlonglong id;
 	QString label;
 
+    QString identifier;
 	/**
 	 * @brief params Lua table
 	 */

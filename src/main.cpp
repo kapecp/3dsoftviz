@@ -19,11 +19,18 @@ Q_DECLARE_METATYPE( Qt::MouseButton )
 #include "iostream"
 #include "LuaInterface/LuaInterface.h"
 
+#include "easylogging++.h"
+// ** FOLLOWING LINE SHOULD BE USED ONCE AND ONLY ONCE IN WHOLE APPLICATION **
+// ** THE BEST PLACE TO PUT THIS LINE IS IN main.cpp RIGHT AFTER INCLUDING easylogging++.h **
+INITIALIZE_EASYLOGGINGPP
+
 //#include "dirent.h"
 
 
 int main( int argc, char* argv[] )
 {
+	LOG(INFO) << "3DSoftViz started.";
+
 	qRegisterMetaType< osg::Vec3d >( "osgVec3d" );
 	qRegisterMetaType< osg::Quat >( "osgQuat" );
 #ifdef OPENCV_FOUND
@@ -50,3 +57,4 @@ int main( int argc, char* argv[] )
 	AppCore::Core::getInstance( &app );
 	Manager::GraphManager::getInstance();
 }
+

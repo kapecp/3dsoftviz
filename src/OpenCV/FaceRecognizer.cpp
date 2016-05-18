@@ -58,10 +58,10 @@ void OpenCV::FaceRecognizer::annotateFaces( cv::Mat frame )
 		}
 		if ( detected ) {
 			// if the movement was under the threshold
-			if (	( abs( 1.0f-static_cast<float>( this->drawrect.x )/static_cast<float>( this->rect.x+face_i.x ) )<0.10f )&&
-					( abs( 1.0f-static_cast<float>( this->drawrect.y )/static_cast<float>( this->rect.y+face_i.y ) )<0.10f ) &&
-					( abs( 1.0f-static_cast<float>( this->drawrect.width )/static_cast<float>( face_i.width ) )<0.10f ) &&
-					( abs( 1.0f-static_cast<float>( this->drawrect.height )/static_cast<float>( face_i.height ) )<0.10f ) ) {
+			if (	( fabs( 1.0f-static_cast<float>( this->drawrect.x )/static_cast<float>( this->rect.x+face_i.x ) )<0.10f )&&
+					( fabs( 1.0f-static_cast<float>( this->drawrect.y )/static_cast<float>( this->rect.y+face_i.y ) )<0.10f ) &&
+					( fabs( 1.0f-static_cast<float>( this->drawrect.width )/static_cast<float>( face_i.width ) )<0.10f ) &&
+					( fabs( 1.0f-static_cast<float>( this->drawrect.height )/static_cast<float>( face_i.height ) )<0.10f ) ) {
 				//TODO conversion to INT,
 				// rectangle around the head
 				face_i.x=static_cast<int>( face_i.x-face_i.width*0.4+this->rect.x );
@@ -93,25 +93,25 @@ void OpenCV::FaceRecognizer::annotateFaces( cv::Mat frame )
 			else {
 				//TODO conversion to INT,
 				// rectangle to be drawn as the head was detected
-				this->drawrect.x=static_cast<int>( face_i.x+this->rect.x ); //-face_i.width*0.1
+				this->drawrect.x=face_i.x+this->rect.x ; //-face_i.width*0.1
 				if ( this->drawrect.x<0 ) {
 					this->drawrect.x=0;
 				}
 				if ( this->drawrect.x>frame.cols-1 ) {
 					this->drawrect.x=frame.cols-1;
 				}
-				this->drawrect.width=static_cast<int>( face_i.width ); //*1.2;
+				this->drawrect.width=face_i.width ; //*1.2;
 				if ( this->drawrect.x+this->drawrect.width>frame.cols-1 ) {
 					this->drawrect.width=frame.cols-1-this->drawrect.x;
 				}
-				this->drawrect.y=static_cast<int>( face_i.y+this->rect.y ); //-face_i.height*0.1
+				this->drawrect.y=face_i.y+this->rect.y; //-face_i.height*0.1
 				if ( this->drawrect.y<0 ) {
 					this->drawrect.y=0;
 				}
 				if ( this->drawrect.y>frame.rows-1 ) {
 					this->drawrect.y=frame.rows-1;
 				}
-				this->drawrect.height=static_cast<int>( face_i.height ); //*1.2;
+				this->drawrect.height=face_i.height; //*1.2;
 				if ( this->drawrect.y+this->drawrect.height>frame.rows-1 ) {
 					this->drawrect.height=frame.rows-1-this->drawrect.y;
 				}

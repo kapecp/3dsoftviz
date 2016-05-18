@@ -3,6 +3,11 @@
 #include "Network/Client.h"
 #include "Network/Server.h"
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wold-style-cast"
+#pragma GCC diagnostic ignored "-Wuseless-cast"
+#pragma GCC diagnostic ignored "-Wsign-conversion"
+
 namespace Network {
 
 void AddMetaNodeExecutor::execute_client()
@@ -71,3 +76,5 @@ void AddMetaNodeExecutor::execute_server()
 }
 
 }
+
+#pragma GCC diagnostic pop

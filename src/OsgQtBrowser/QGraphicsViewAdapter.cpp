@@ -19,7 +19,8 @@
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wconversion"
-
+#pragma GCC diagnostic ignored "-Wold-style-cast"
+#pragma GCC diagnostic ignored "-Wsign-conversion"
 
 namespace OsgQtBrowser {
 
@@ -405,7 +406,7 @@ void QGraphicsViewAdapter::render()
 	// paint the image with the graphics view
 	QPainter painter( &image );
 	QRectF destinationRect( 0, 0, image.width(), image.height() );
-	QRect sourceRect( 0, 0, _graphicsScene->width(), _graphicsScene->height() );
+	QRect sourceRect( 0, 0, ( int )( _graphicsScene->width() ), ( int )( _graphicsScene->height() ) );
 	_graphicsView->render( &painter, destinationRect, sourceRect );
 	painter.end();
 #else

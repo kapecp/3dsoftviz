@@ -7,6 +7,8 @@
 
 #include <vector>
 
+namespace Clustering {
+
 class Sphere
 {
 
@@ -64,5 +66,7 @@ protected:
 	void computeGeode( unsigned int rings, unsigned int sectors );
 
 };
+
+}
 
 #endif  /*SPHERE_H*/

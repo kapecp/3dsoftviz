@@ -20,14 +20,12 @@
 #define DG5U_R			0x10
 #define DG5U_L			0x11
 
-enum EfdGloveHand
-{
+enum EfdGloveHand {
 	FD_HAND_LEFT,   // left-handed glove
 	FD_HAND_RIGHT   // right-handed glove
 };
 
-enum EfdGloveTypes
-{
+enum EfdGloveTypes {
 	FD_GLOVENONE,   // no glove
 	FD_GLOVE5U,		// DG5 Ultra serial
 	FD_GLOVE5UW,	// DG5 Ultra serial, wireless
@@ -41,8 +39,7 @@ enum EfdGloveTypes
 	FD_GLOVE14U_USB	// DG14 Ultra USB
 };
 
-enum EfdSensors
-{
+enum EfdSensors {
 	FD_THUMBNEAR=0,
 	FD_THUMBFAR,
 	FD_THUMBINDEX,
@@ -64,53 +61,52 @@ enum EfdSensors
 };
 
 #ifndef FDT_BUILD
-typedef struct
-{
-	
+typedef struct {
+
 } fdGlove;
 #endif
 
-//FGLOVEAPI fdGlove *fdOpen(char *pPort, bool bOnlyAllowSingleConnection = false);	
-FGLOVEAPI fdGlove *fdOpen(char *pPort);	
-FGLOVEAPI int   fdClose(fdGlove *pFG);
-FGLOVEAPI int   fdGetGloveHand(fdGlove *pFG);
-FGLOVEAPI int   fdGetGloveType(fdGlove *pFG);
-FGLOVEAPI int   fdGetNumSensors(fdGlove *pFG);
-FGLOVEAPI void  fdGetSensorRawAll(fdGlove *pFG, unsigned short *pData);
-FGLOVEAPI unsigned short fdGetSensorRaw(fdGlove *pFG, int nSensor);
-FGLOVEAPI void  fdSetSensorRawAll(fdGlove *pFG, unsigned short *pData);
-FGLOVEAPI void  fdSetSensorRaw(fdGlove *pFG, int nSensor, unsigned short nRaw);
-FGLOVEAPI void  fdGetSensorScaledAll(fdGlove *pFG, float *pData);
-FGLOVEAPI float fdGetSensorScaled(fdGlove *pFG, int nSensor);
-FGLOVEAPI int   fdGetNumGestures(fdGlove *pFG);
-FGLOVEAPI int   fdGetGesture(fdGlove *pFG);
-FGLOVEAPI int	fdGetGestureA(fdGlove *pFG);
-FGLOVEAPI void  fdGetCalibrationAll(fdGlove *pFG, unsigned short *pUpper, unsigned short *pLower);
-FGLOVEAPI void  fdGetCalibration(fdGlove *pFG, int nSensor, unsigned short *pUpper, unsigned short *pLower);
-FGLOVEAPI void  fdSetCalibrationAll(fdGlove *pFG, unsigned short *pUpper, unsigned short *pLower);
-FGLOVEAPI void  fdSetCalibration(fdGlove *pFG, int nSensor, unsigned short nUpper, unsigned short nLower);
-FGLOVEAPI void  fdResetCalibration(fdGlove *pFG, int nSensor);
-FGLOVEAPI void  fdResetCalibrationAll(fdGlove *pFG);
-FGLOVEAPI void  fdGetSensorMaxAll(fdGlove *pFG, float *pMax);
-FGLOVEAPI float fdGetSensorMax(fdGlove *pFG, int nSensor);
-FGLOVEAPI void  fdSetSensorMaxAll(fdGlove *pFG, float *pMax);
-FGLOVEAPI void  fdSetSensorMax(fdGlove *pFG, int nSensor, float fMax);
-FGLOVEAPI void  fdGetThresholdAll(fdGlove *pFG, float *pUpper, float *pLower);
-FGLOVEAPI void  fdGetThreshold(fdGlove *pFG, int nSensor, float *pUpper, float *pLower);
-FGLOVEAPI void  fdSetThresholdAll(fdGlove *pFG, float *pUpper, float *pLower);
-FGLOVEAPI void  fdSetThreshold(fdGlove *pFG, int nSensor, float fUpper, float fLower);
-FGLOVEAPI void  fdGetGloveInfo(fdGlove *pFG, unsigned char *pData);
-FGLOVEAPI void  fdGetDriverInfo(fdGlove *pFG, unsigned char *pData);
-FGLOVEAPI void	fdSetCallback(fdGlove *pFG,void *pFunc, void *param);
-FGLOVEAPI void	fdRemoveCallback(fdGlove *pFG);
-FGLOVEAPI int	fdGetPacketRate(fdGlove *pFG);
-FGLOVEAPI bool	fdNewData(fdGlove *pFG);
-FGLOVEAPI int	fdGetFWVersionMajor(fdGlove *pFG);
-FGLOVEAPI int	fdGetFWVersionMinor(fdGlove *pFG);
-FGLOVEAPI bool	fdGetAutoCalibrate(fdGlove *pFG);
-FGLOVEAPI bool	fdSetAutoCalibrate(fdGlove *pFG, bool bAutoCalibrate);
-FGLOVEAPI bool	fdSaveCalibration(fdGlove *pFG, const char *pFileName);
-FGLOVEAPI bool	fdLoadCalibration(fdGlove *pFG, const char *pFileName);
-FGLOVEAPI int	fdScanUSB(unsigned short *aPID, int &nNumMax);
+//FGLOVEAPI fdGlove *fdOpen(char *pPort, bool bOnlyAllowSingleConnection = false);
+FGLOVEAPI fdGlove* fdOpen( char* pPort );
+FGLOVEAPI int   fdClose( fdGlove* pFG );
+FGLOVEAPI int   fdGetGloveHand( fdGlove* pFG );
+FGLOVEAPI int   fdGetGloveType( fdGlove* pFG );
+FGLOVEAPI int   fdGetNumSensors( fdGlove* pFG );
+FGLOVEAPI void  fdGetSensorRawAll( fdGlove* pFG, unsigned short* pData );
+FGLOVEAPI unsigned short fdGetSensorRaw( fdGlove* pFG, int nSensor );
+FGLOVEAPI void  fdSetSensorRawAll( fdGlove* pFG, unsigned short* pData );
+FGLOVEAPI void  fdSetSensorRaw( fdGlove* pFG, int nSensor, unsigned short nRaw );
+FGLOVEAPI void  fdGetSensorScaledAll( fdGlove* pFG, float* pData );
+FGLOVEAPI float fdGetSensorScaled( fdGlove* pFG, int nSensor );
+FGLOVEAPI int   fdGetNumGestures( fdGlove* pFG );
+FGLOVEAPI int   fdGetGesture( fdGlove* pFG );
+FGLOVEAPI int	fdGetGestureA( fdGlove* pFG );
+FGLOVEAPI void  fdGetCalibrationAll( fdGlove* pFG, unsigned short* pUpper, unsigned short* pLower );
+FGLOVEAPI void  fdGetCalibration( fdGlove* pFG, int nSensor, unsigned short* pUpper, unsigned short* pLower );
+FGLOVEAPI void  fdSetCalibrationAll( fdGlove* pFG, unsigned short* pUpper, unsigned short* pLower );
+FGLOVEAPI void  fdSetCalibration( fdGlove* pFG, int nSensor, unsigned short nUpper, unsigned short nLower );
+FGLOVEAPI void  fdResetCalibration( fdGlove* pFG, int nSensor );
+FGLOVEAPI void  fdResetCalibrationAll( fdGlove* pFG );
+FGLOVEAPI void  fdGetSensorMaxAll( fdGlove* pFG, float* pMax );
+FGLOVEAPI float fdGetSensorMax( fdGlove* pFG, int nSensor );
+FGLOVEAPI void  fdSetSensorMaxAll( fdGlove* pFG, float* pMax );
+FGLOVEAPI void  fdSetSensorMax( fdGlove* pFG, int nSensor, float fMax );
+FGLOVEAPI void  fdGetThresholdAll( fdGlove* pFG, float* pUpper, float* pLower );
+FGLOVEAPI void  fdGetThreshold( fdGlove* pFG, int nSensor, float* pUpper, float* pLower );
+FGLOVEAPI void  fdSetThresholdAll( fdGlove* pFG, float* pUpper, float* pLower );
+FGLOVEAPI void  fdSetThreshold( fdGlove* pFG, int nSensor, float fUpper, float fLower );
+FGLOVEAPI void  fdGetGloveInfo( fdGlove* pFG, unsigned char* pData );
+FGLOVEAPI void  fdGetDriverInfo( fdGlove* pFG, unsigned char* pData );
+FGLOVEAPI void	fdSetCallback( fdGlove* pFG,void* pFunc, void* param );
+FGLOVEAPI void	fdRemoveCallback( fdGlove* pFG );
+FGLOVEAPI int	fdGetPacketRate( fdGlove* pFG );
+FGLOVEAPI bool	fdNewData( fdGlove* pFG );
+FGLOVEAPI int	fdGetFWVersionMajor( fdGlove* pFG );
+FGLOVEAPI int	fdGetFWVersionMinor( fdGlove* pFG );
+FGLOVEAPI bool	fdGetAutoCalibrate( fdGlove* pFG );
+FGLOVEAPI bool	fdSetAutoCalibrate( fdGlove* pFG, bool bAutoCalibrate );
+FGLOVEAPI bool	fdSaveCalibration( fdGlove* pFG, const char* pFileName );
+FGLOVEAPI bool	fdLoadCalibration( fdGlove* pFG, const char* pFileName );
+FGLOVEAPI int	fdScanUSB( unsigned short* aPID, int& nNumMax );
 //FGLOVEAPI int	fdScanUSB();
-FGLOVEAPI bool	fdGetSerialNumber(fdGlove *pFG, char *pData);
+FGLOVEAPI bool	fdGetSerialNumber( fdGlove* pFG, char* pData );

@@ -4,6 +4,11 @@
 #include "Network/Client.h"
 #include "Data/Node.h"
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wold-style-cast"
+#pragma GCC diagnostic ignored "-Wuseless-cast"
+#pragma GCC diagnostic ignored "-Wsign-conversion"
+
 namespace Network {
 
 void MoveNodeExecutor::execute_client()
@@ -100,3 +105,5 @@ void MoveNodeExecutor::moveNode( Data::Node* node, osg::Vec3 position )
 }
 
 } // namespace Network
+
+#pragma GCC diagnostic pop
