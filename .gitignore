@@ -12,3 +12,4 @@ include/report-include.txt
 src/report-src.txt
 resources/img/textures/veolia/
 resources/kinectMaps\\*
+logs/
