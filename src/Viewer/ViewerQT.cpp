@@ -18,8 +18,8 @@ QOSG::ViewerQT::ViewerQT( QWidget* parent , const char* name , const QGLWidget* 
 
 	appConf = Util::ApplicationConfig::get();
 
-    //osg::DisplaySettings::instance()->setStereo( appConf->getValue( "Viewer.Display.Stereoscopic" ).toInt() ? true : false );
-    //osg::DisplaySettings::instance()->setStereoMode( osg::DisplaySettings::StereoMode::QUAD_BUFFER );
+	//set StereoMode at launch
+	//osg::DisplaySettings::instance()->setStereoMode( osg::DisplaySettings::StereoMode::QUAD_BUFFER );
 
 	double fovy = 60.0;
 	double nearClippingPlane = 0.01;

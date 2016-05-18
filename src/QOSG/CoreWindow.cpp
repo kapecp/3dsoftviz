@@ -94,7 +94,7 @@ CoreWindow::CoreWindow( QWidget* parent, Vwr::CoreGraph* coreGraph, QApplication
 	viewerWidget = new ViewerQT( this, 0, 0, 0, coreGraph );
 	viewerWidget->setSceneData( coreGraph->getScene() );
 
-    setCentralWidget( viewerWidget );
+	setCentralWidget( viewerWidget );
 
 	statusBar()->showMessage( "Ready" );
 

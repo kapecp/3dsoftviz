@@ -363,7 +363,7 @@ bool PickHandler::handleKeyDown( const osgGA::GUIEventAdapter& ea, GUIActionAdap
 
 			qDebug() << "Turned off split stereo 3D";
 		}
-        splitviewMode = (splitviewMode + 1) % 4;	//rotate modes : vertical / horizontal / off
+		splitviewMode = (splitviewMode + 1) % 4;	//rotate modes : quad / vertical / horizontal / off
 	}
 	//adjust eye distance, 0.001m change
 	else if (ea.getKey() == osgGA::GUIEventAdapter::KEY_H && (splitviewMode != 0)){
