@@ -243,9 +243,9 @@ void Data::OsgNode::setVisual( unsigned int index )
 void Data::OsgNode::reloadConfig()
 {
 	removeChildren( 0, 3 );
-    if(	type->getName() != "node" ) {
-        setScale( type->getScale() );
-    }
+	//if(	type->getName() != "node" ) {
+	//    setScale( type->getScale() );
+	//}
     this->insertChild( INDEX_LABEL, createLabel( this->scale, labelText ) , false );
 	this->insertChild( INDEX_SQUARE, createNodeSquare( this->scale, OsgNode::createStateSet( this->type ) ), false );
 	this->insertChild( INDEX_SPHERE, createNodeSphere( this->scale, OsgNode::createStateSet( this->type ) ), false );

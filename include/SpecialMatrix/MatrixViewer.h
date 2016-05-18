@@ -12,8 +12,12 @@
 
 #include "Data/Graph.h"
 #include "Data/Node.h"
+#include "Data/Edge.h"
 #include "Data/GraphLayout.h"
 #include "Viewer/CoreGraph.h"
+#include "Layout/LayoutThread.h"
+#include "Layout/FRAlgorithm.h"
+#include "SpecialMatrix/NodeConnections.h"
 
 namespace SpecialMatrix {
 /**
@@ -22,44 +26,36 @@ namespace SpecialMatrix {
 	*  \author Denis Illes
 	*  \date 13. 4. 2016
 	*/
-class MatrixViewer : public QWidget, public osgViewer::CompositeViewer
+class MatrixViewer
 {
 
 
 public:
 
-	/*!
-		*
-		* \param parent
-		* Rodic widgetu.
-		*
-		* \param f
-		* Znacky pre vytvaranie okna.
-		*
-		*
-		* Vytvori widget, ktory dokaze zobrazit specialne matice.
-		*
-		*/
+	MatrixViewer( Data::Graph* matrixGraph, QString fileName );
 
-	MatrixViewer( QWidget* parent = 0, Qt::WindowFlags f = 0, Vwr::CoreGraph* cg = 0 );
 
-	QWidget* addViewWidget( osgQt::GraphicsWindowQt* gwQt, osg::Group* scene );
+	void createAxis();
 
-	osgQt::GraphicsWindowQt* createGraphicsWindow( int x, int y, int w, int h, const std::string& name="", bool windowDecoration=false );
+	void adjustPositions();
 
-	osg::Group* SpecialMatrix::MatrixViewer::createScene();
-
-	osg::Drawable* SpecialMatrix::MatrixViewer::createAxis(const osg::Vec3& corner,const osg::Vec3& xdir,const osg::Vec3& ydir,const osg::Vec3& zdir);
-
-	virtual void paintEvent( QPaintEvent* event ) { frame(); }
+	/**
+	 * \fn getMatrixGraph
+	 * \brief Returns active matrix graphs.
+	 */
+	Data::Graph* getMatrixGraph()
+	{
+		return matrixGraph;
+	}
 
 protected:
 
 	QTimer _timer;
 
-	osg::ref_ptr<osgQt::GraphicsWindowQt> _gwQt;
+	Data::Graph* matrixGraph;
 
-	Data::Graph* simpleGraph;
+	SpecialMatrix::NodeConnections* connections;
+
 };
 }
 

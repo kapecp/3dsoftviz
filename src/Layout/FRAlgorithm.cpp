@@ -80,12 +80,13 @@ FRAlgorithm::FRAlgorithm( Data::Graph* graph ) :
 	this->Randomize();
 }
 
-void FRAlgorithm::SetGraph( Data::Graph* graph )
+void FRAlgorithm::SetGraph( Data::Graph* graph, bool fixedPositions )
 {
 	//pociatocne nahodne rozdelenie pozicii uzlov
 	notEnd = true;
 	this->graph = graph;
-	this->Randomize();
+	if(!fixedPositions)
+		this->Randomize();
 }
 
 void FRAlgorithm::SetParameters( float sizeFactor,float flexibility,bool useMaxDistance )
@@ -110,6 +111,7 @@ double FRAlgorithm::computeCalm()
 	double n = static_cast<double>( graph->getNodes()->count() );
 	return sizeFactor* pow( ( 4*R*R*R*PI )/( n*3 ), 1/3 );
 }
+
 /* Rozmiestni uzly na nahodne pozicie */
 void FRAlgorithm::Randomize()
 {

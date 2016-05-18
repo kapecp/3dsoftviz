@@ -109,7 +109,7 @@ public:
 	    *  \brief Sets graph data structure
 	    *  \param graph  data structure containing nodes, edges and types
 	    */
-	void SetGraph( Data::Graph* graph );
+	void SetGraph( Data::Graph* graph, bool fixedPositions = false );
 
 	/**
 	    *  \brief Sets the end status (causing the loops in run method to end)

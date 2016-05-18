@@ -1346,16 +1346,58 @@ void CoreWindow::loadSpecialMatrixFromFile()
 		}
 
 		file.close();
+
+		displaySpecialMatrix();
 	}
 }
 
 void CoreWindow::displaySpecialMatrix()
 {
-	Vwr::CoreGraph* coreGraph = new Vwr::CoreGraph();
+	QFileDialog dialog;
+	dialog.setDirectory( "../share/3dsoftviz/matrixExamples" );
 
-	SpecialMatrix::MatrixViewer* matrixViewer = new SpecialMatrix::MatrixViewer( 0, Qt::Widget, coreGraph );
-	matrixViewer->setGeometry( 100, 100, 800, 600 );
-	matrixViewer->show();
+	QString fileName = NULL;
+
+	if ( dialog.exec() ) {
+		QStringList filenames = dialog.selectedFiles();
+		fileName = filenames.at( 0 );
+	}
+
+	if ( fileName == NULL )
+		return;
+
+
+
+
+
+	Data::Graph* matrixGraph = Manager::GraphManager::getInstance()->getActiveGraph();
+	if ( matrixGraph != NULL ) {
+		Manager::GraphManager::getInstance()->closeGraph( matrixGraph );
+	}
+	matrixGraph = Manager::GraphManager::getInstance()->createNewMatrixGraph( "MatrixGraph" );
+
+	SpecialMatrix::MatrixViewer* matrixViewer = new SpecialMatrix::MatrixViewer( matrixGraph, fileName );
+
+	//nastavit spravne tlacitko play
+	play->setEnabled(false);
+	isPlaying = true;
+	this->playPause();
+	coreGraph->setNodesFreezed( false );	//rozhadze graf - nespustit start layout
+
+
+	//coreGraph->setNodesFreezed( true );
+
+	//layout->pause();
+	//coreGraph->setNodesFreezed( true );
+
+	AppCore::Core::getInstance()->restartLayoutForMatrix();
+
+
+	//coreGraph->reloadConfig();
+	/*if ( isPlaying ) {
+		layout->play();
+		coreGraph->setNodesFreezed( false );
+	}*/
 }
 
 void CoreWindow::saveLayoutToDB()

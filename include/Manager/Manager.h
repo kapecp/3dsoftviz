@@ -72,11 +72,17 @@ public:
 	Data::Graph* loadGraph( QString filepath );
 
 	/**
-	 * \fn loadGraph
-	 * \brief Loads graph from GraphML file.
+	 * \fn createNewGraph
+	 * \brief Creates new graph.
 	 */
-
 	Data::Graph* createNewGraph( QString name );
+
+
+	/**
+	 * \fn createNewMatrixGraph
+	 * \brief Creates new graph for matrix representation.
+	 */
+	Data::Graph* createNewMatrixGraph( QString name );
 
 	/**
 	 * \fn loadGraphFromGit
@@ -209,7 +215,7 @@ public:
 	 * @param path Project path of the file
 	 * @param version Index of currently vizualized version in graph
 	 */
-    void getDiffInfo( QString path, int version );
+	void getDiffInfo( QString path, int version );
 
 private:
 	/**

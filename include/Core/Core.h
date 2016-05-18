@@ -45,6 +45,12 @@ public:
 	void restartLayout();
 
 	/**
+		 * \fn restartLayoutForMatrix
+		 * \brief Restarts layouting of matrix graph.
+		 */
+	void restartLayoutForMatrix();
+
+	/**
 		 * \fn getLayoutThread
 		 * \brief Returns Layout::LayoutThread
 		 */

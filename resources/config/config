@@ -19,6 +19,7 @@ Viewer.Display.BackGround.G=190
 Viewer.Display.BackGround.R=190
 Viewer.Display.InterpolationSpeed=0.01
 Viewer.Display.NodeDistanceScale=2
+Viewer.Display.MatrixNodeSeparator=10
 Viewer.Display.NodesAlwaysOnTop=0
 Viewer.Display.Stereoscopic=0
 Viewer.Display.ViewDistance=10000.0
