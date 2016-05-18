@@ -1,16 +1,16 @@
 #include <QDebug>
 #include "LeapLib/LeapThread.h"
 
-Leap::LeapThread::LeapThread( QObject* parent, LeapCameraManipulator* cameraManipulator) : QThread( parent )
+Leap::LeapThread::LeapThread( QObject* parent, LeapCameraManipulator* cameraManipulator ) : QThread( parent )
 {
 	qDebug() << "LeapThread::LeapThread, created";
-	leapController = new LeapController(cameraManipulator);
+	leapController = new LeapController( cameraManipulator );
 }
 
 Leap::LeapThread::~LeapThread( void )
 {
 	leapController->stopListening();
-	delete(leapController);
+	delete( leapController );
 	qDebug() << "LeapThread::~LeapThread, destroyed";
 }
 

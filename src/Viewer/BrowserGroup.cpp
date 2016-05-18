@@ -58,7 +58,7 @@ void BrowserGroup::setSelectedNodes( QLinkedList<osg::ref_ptr<Data::Node> >* sel
 
 			// Get lua node model and add it to model map
 			Lua::LuaNode* luaNode = Lua::LuaGraph::getInstance()->getNodes()->value( node->getId() );
-			Lua::LuaValueMap paramsTable(luaNode->getParams().asTable());
+			Lua::LuaValueMap paramsTable( luaNode->getParams().asTable() );
 
 			// Ignore nodes without models
 			if ( paramsTable.find( "metrics" ) == paramsTable.end() ) {

@@ -89,7 +89,7 @@ CoreWindow::CoreWindow( QWidget* parent, Vwr::CoreGraph* coreGraph, QApplication
 	createActions();
 	createMenus();
 	createLeftToolBar();
-	createMetricsToolBar();    
+	createMetricsToolBar();
 
 	viewerWidget = new ViewerQT( this, 0, 0, 0, coreGraph );
 	viewerWidget->setSceneData( coreGraph->getScene() );
@@ -812,7 +812,7 @@ void CoreWindow::createMenus()
 	examples->addAction( exampleGraphVeolia );
 	examples->addAction( exampleGraphLua );
 
-	backgroundMenu = menuBar()->addMenu("Change Background");
+	backgroundMenu = menuBar()->addMenu( "Change Background" );
 	backgroundMenu->addAction( switchBackgroundSkyBoxAction );
 	backgroundMenu->addAction( switchBackgroundBlackAction );
 	backgroundMenu->addAction( switchBackgroundWhiteAction );
@@ -1649,7 +1649,7 @@ void CoreWindow::loadExampleGraphBasic100()
 
 	Manager::GraphManager::getInstance()->loadGraph( "../share/3dsoftviz/graphExamples/tree100.graphml" );
 
-		viewerWidget->getCameraManipulator()->home();
+	viewerWidget->getCameraManipulator()->home();
 
 	//treba overit ci funguje
 	if ( isPlaying ) {
@@ -1676,7 +1676,7 @@ void CoreWindow::loadExampleGraphBasic500()
 
 	Manager::GraphManager::getInstance()->loadGraph( "../share/3dsoftviz/graphExamples/tree500.graphml" );
 
-		viewerWidget->getCameraManipulator()->home();
+	viewerWidget->getCameraManipulator()->home();
 
 	//treba overit ci funguje
 	if ( isPlaying ) {
@@ -1703,7 +1703,7 @@ void CoreWindow::loadExampleGraphVeolia()
 
 	Manager::GraphManager::getInstance()->loadGraph( "../share/3dsoftviz/graphExamples/veolia.graphml" );
 
-		viewerWidget->getCameraManipulator()->home();
+	viewerWidget->getCameraManipulator()->home();
 
 	//treba overit ci funguje
 	if ( isPlaying ) {
@@ -1770,7 +1770,7 @@ void CoreWindow::loadFromGit()
 	chb_git_changeCommits->setDisabled( true );
 	QString lPath = QFileDialog::getExistingDirectory( this, tr( "Select git dir" ) );
 
-	if( Manager::GraphManager::getInstance()->getActiveEvolutionGraph() != NULL ) {
+	if ( Manager::GraphManager::getInstance()->getActiveEvolutionGraph() != NULL ) {
 		delete Manager::GraphManager::getInstance()->getActiveEvolutionGraph();
 	}
 
@@ -1780,7 +1780,7 @@ void CoreWindow::loadFromGit()
 		if ( Manager::GraphManager::getInstance()->loadEvolutionGraphFromGit( lPath ) ) {
 			qDebug() << Manager::GraphManager::getInstance()->getActiveEvolutionGraph()->getFilePath();
 //            Manager::GraphManager::getInstance()->importEvolutionGraph( lPath );
-			if( chb_git_changeCommits->isChecked() ) {
+			if ( chb_git_changeCommits->isChecked() ) {
 				Repository::Git::GitUtils::changeCommit( Manager::GraphManager::getInstance()->getActiveEvolutionGraph()->getVersion( 0 )->getCommitId(), lPath );
 //                loadFunctionCall();
 				loadLuaGraph();
@@ -1788,7 +1788,7 @@ void CoreWindow::loadFromGit()
 				Lua::LuaGraph::getInstance()->loadEvoGraph( lPath );
 
 				// ak este dana verzia nebola zanalyzovana, tak ju zanalyzuj a uloz do evolution grafu
-				if( !Manager::GraphManager::getInstance()->getActiveEvolutionGraph()->getVersion( 0 )->getIsLoaded() ) {
+				if ( !Manager::GraphManager::getInstance()->getActiveEvolutionGraph()->getVersion( 0 )->getIsLoaded() ) {
 					Repository::Git::GitLuaGraphAnalyzer analyzer = Repository::Git::GitLuaGraphAnalyzer( Lua::LuaGraph::getInstance(), Manager::GraphManager::getInstance()->getActiveEvolutionGraph() );
 					analyzer.setVersionNumber( 0 );
 					analyzer.analyze();
@@ -1802,7 +1802,8 @@ void CoreWindow::loadFromGit()
 //                Lua::LuaGraphVisualizer* visualizer = new Lua::GitGraphVisualizer( Manager::GraphManager::getInstance()->getActiveGraph(), coreGraph->getCamera() );
 //                visualizer->visualize();
 
-			} else {
+			}
+			else {
 				Manager::GraphManager::getInstance()->importEvolutionGraph( lPath );
 			}
 
@@ -1810,7 +1811,7 @@ void CoreWindow::loadFromGit()
 			evolutionSlider->setRange( 0, Manager::GraphManager::getInstance()->getActiveEvolutionGraph()->getVersions().size() - 1 );
 			QString pos = QString::number( evolutionSlider->value() + 1 );  // kedze list zacina od 0 treba pripocitat +1
 			labelEvolutionSlider->setText( "  " + pos + " . verzia" );
-			if( !chb_git_changeCommits->isChecked() ) {
+			if ( !chb_git_changeCommits->isChecked() ) {
 				b_run_evolution->setDisabled( false );
 				evolutionSlider->setEnabled( true );
 			}
@@ -1828,14 +1829,16 @@ void CoreWindow::loadFromGit()
 	}
 }
 
-void CoreWindow::loadLuaGraph() {
+void CoreWindow::loadLuaGraph()
+{
 	QString file = "";
 
 	Repository::Git::GitEvolutionGraph* evolutionGraph = Manager::GraphManager::getInstance()->getActiveEvolutionGraph();
 
-	if( evolutionGraph != NULL ) {
+	if ( evolutionGraph != NULL ) {
 		file = evolutionGraph->getFilePath();
-	} else {
+	}
+	else {
 		return;
 	}
 
@@ -1850,13 +1853,14 @@ void CoreWindow::loadLuaGraph() {
 
 	Data::Graph* currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
 
-	if( currentGraph == NULL ) {
+	if ( currentGraph == NULL ) {
 		currentGraph = Manager::GraphManager::getInstance()->createNewGraph( "LuaGraph" );
 	}
 
 }
 
-void CoreWindow::pauseLayout() {
+void CoreWindow::pauseLayout()
+{
 	if ( this-> isPlaying ) {
 		play->setIcon( QIcon( "../share/3dsoftviz/img/gui/play.png" ) );
 		isPlaying = 0;
@@ -1864,7 +1868,8 @@ void CoreWindow::pauseLayout() {
 		coreGraph->setNodesFreezed( true );
 	}
 }
-void CoreWindow::playLayout() {
+void CoreWindow::playLayout()
+{
 	if ( !this->isPlaying ) {
 		play->setIcon( QIcon( "../share/3dsoftviz/img/gui/pause.png" ) );
 		isPlaying = 1;
@@ -1874,107 +1879,125 @@ void CoreWindow::playLayout() {
 }
 
 // Dynamic background switching
-void CoreWindow::switchBackgroundSkyBox() {
-	LOG(INFO) << "CoreWindow::switchBackgroundSkyBox switching to SkyBox bg";
+void CoreWindow::switchBackgroundSkyBox()
+{
+	LOG( INFO ) << "CoreWindow::switchBackgroundSkyBox switching to SkyBox bg";
 	Data::Graph* currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
 
 	int flagPlay = 0;
-	if (this->isPlaying) {
+	if ( this->isPlaying ) {
 		flagPlay = 1;
 		pauseLayout();
 	}
-	if (coreGraph->updateBackground(0, currentGraph) == 0) {
-		LOG(INFO) << "Background successfully updated";
+	if ( coreGraph->updateBackground( 0, currentGraph ) == 0 ) {
+		LOG( INFO ) << "Background successfully updated";
 	}
 	else {
-		LOG(ERROR) << "Background bg update failed";
+		LOG( ERROR ) << "Background bg update failed";
 	}
-	if (flagPlay == 1) playLayout();
+	if ( flagPlay == 1 ) {
+		playLayout();
+	}
 }
-void CoreWindow::switchBackgroundBlack() {
-	LOG(INFO) << "CoreWindow::switchBackgroundBlack switching to black color bg";
+void CoreWindow::switchBackgroundBlack()
+{
+	LOG( INFO ) << "CoreWindow::switchBackgroundBlack switching to black color bg";
 	Data::Graph* currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
 
 	int flagPlay = 0;
-	if (this->isPlaying) {
+	if ( this->isPlaying ) {
 		flagPlay = 1;
 		pauseLayout();
 	}
-	if (coreGraph->updateBackground(-1, currentGraph) == 0) {
-		LOG(INFO) << "Background successfully updated";
+	if ( coreGraph->updateBackground( -1, currentGraph ) == 0 ) {
+		LOG( INFO ) << "Background successfully updated";
 	}
 	else {
-		LOG(ERROR) << "Background bg update failed";
+		LOG( ERROR ) << "Background bg update failed";
 	}
-	if (flagPlay == 1) playLayout();
+	if ( flagPlay == 1 ) {
+		playLayout();
+	}
 }
-void CoreWindow::switchBackgroundWhite() {
-	LOG(INFO) << "CoreWindow::switchBackgroundWhite switching to white color bg";
+void CoreWindow::switchBackgroundWhite()
+{
+	LOG( INFO ) << "CoreWindow::switchBackgroundWhite switching to white color bg";
 	Data::Graph* currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
 
 	int flagPlay = 0;
-	if (this->isPlaying) {
+	if ( this->isPlaying ) {
 		flagPlay = 1;
 		pauseLayout();
 	}
-	if (coreGraph->updateBackground(-2, currentGraph) == 0) {
-		LOG(INFO) << "Background successfully updated";
+	if ( coreGraph->updateBackground( -2, currentGraph ) == 0 ) {
+		LOG( INFO ) << "Background successfully updated";
 	}
 	else {
-		LOG(ERROR) << "Background bg update failed";
+		LOG( ERROR ) << "Background bg update failed";
 	}
-	if (flagPlay == 1) playLayout();
+	if ( flagPlay == 1 ) {
+		playLayout();
+	}
 }
-void CoreWindow::switchBackgroundSkyNoiseBox() {
-	LOG(INFO) << "CoreWindow::switchBackgroundSkyNoiseBox switching to SkyNoiseBox bg";
+void CoreWindow::switchBackgroundSkyNoiseBox()
+{
+	LOG( INFO ) << "CoreWindow::switchBackgroundSkyNoiseBox switching to SkyNoiseBox bg";
 	Data::Graph* currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
 
 	int flagPlay = 0;
-	if (this->isPlaying) {
+	if ( this->isPlaying ) {
 		flagPlay = 1;
 		pauseLayout();
 	}
-	if (coreGraph->updateBackground(1, currentGraph) == 0) {
-		LOG(INFO) << "Background successfully updated";
+	if ( coreGraph->updateBackground( 1, currentGraph ) == 0 ) {
+		LOG( INFO ) << "Background successfully updated";
 	}
 	else {
-		LOG(ERROR) << "Background bg update failed";
+		LOG( ERROR ) << "Background bg update failed";
 	}
-	if (flagPlay == 1) playLayout();
+	if ( flagPlay == 1 ) {
+		playLayout();
+	}
 }
-void CoreWindow::switchBackgroundTexture() {
-	LOG(INFO) << "CoreWindow::switchBackgroundTexture switching to Texture bg";
+void CoreWindow::switchBackgroundTexture()
+{
+	LOG( INFO ) << "CoreWindow::switchBackgroundTexture switching to Texture bg";
 	Data::Graph* currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
 
 	int flagPlay = 0;
-	if (this->isPlaying) {
+	if ( this->isPlaying ) {
 		flagPlay = 1;
 		pauseLayout();
 	}
-	if (coreGraph->updateBackground(2, currentGraph) == 0) {
-		LOG(INFO) << "Background successfully updated";
+	if ( coreGraph->updateBackground( 2, currentGraph ) == 0 ) {
+		LOG( INFO ) << "Background successfully updated";
 	}
 	else {
-		LOG(ERROR) << "Background bg update failed";
+		LOG( ERROR ) << "Background bg update failed";
 	}
-	if (flagPlay == 1) playLayout();
+	if ( flagPlay == 1 ) {
+		playLayout();
+	}
 }
-void CoreWindow::switchBackgroundOrtho2d() {
-	LOG(INFO) << "CoreWindow::switchBackgroundOrtho2d switching to Ortho2d bg";
+void CoreWindow::switchBackgroundOrtho2d()
+{
+	LOG( INFO ) << "CoreWindow::switchBackgroundOrtho2d switching to Ortho2d bg";
 	Data::Graph* currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
 
 	int flagPlay = 0;
-	if (this->isPlaying) {
+	if ( this->isPlaying ) {
 		flagPlay = 1;
 		pauseLayout();
 	}
-	if (coreGraph->updateBackground(3, currentGraph) == 0) {
-		LOG(INFO) << "Background successfully updated";
+	if ( coreGraph->updateBackground( 3, currentGraph ) == 0 ) {
+		LOG( INFO ) << "Background successfully updated";
 	}
 	else {
-		LOG(ERROR) << "Background bg update failed";
+		LOG( ERROR ) << "Background bg update failed";
 	}
-	if (flagPlay == 1) playLayout();
+	if ( flagPlay == 1 ) {
+		playLayout();
+	}
 }
 
 void CoreWindow::labelOnOff( bool )
@@ -3409,7 +3432,7 @@ void CoreWindow::startLeap()
 		return;
 	}
 
-	this->mLeapThr = new Leap::LeapThread(this,new Leap::CustomCameraManipulator(getCameraManipulator()));
+	this->mLeapThr = new Leap::LeapThread( this,new Leap::CustomCameraManipulator( getCameraManipulator() ) );
 	//CoUninitialize();
 
 	this->mLeapThr->start();
@@ -3979,7 +4002,7 @@ void CoreWindow::loadFunctionCall()
 	QString file = QFileDialog::getExistingDirectory( this, "Select lua project folder", "." );
 
 	// ak sa predchadzajucou volbou neziskala cesta ku projektu, tak ukonci metodu
-	if( file == "" ) {
+	if ( file == "" ) {
 		return;
 	}
 
@@ -4062,19 +4085,20 @@ void CoreWindow::onChange()
 		// Get last node model & display it in qt view
 		qlonglong lastNodeId = 0;
 		Repository::Git::GitEvolutionGraph* evolutionGraph = Manager::GraphManager::getInstance()->getActiveEvolutionGraph();
-		if( evolutionGraph ) {
+		if ( evolutionGraph ) {
 			QString identifier = selected->last()->getLuaIdentifier();
 //            if( evolutionGraph->getLuaNodesMapping().contains( identifier ) ) {
-			if( evolutionGraph->getMetaDataFromIdentifier( identifier )->getLuaMapping() != -1 ) {
+			if ( evolutionGraph->getMetaDataFromIdentifier( identifier )->getLuaMapping() != -1 ) {
 //                lastNodeId = evolutionGraph->getLuaNodesMapping().value( identifier );
 				lastNodeId = evolutionGraph->getMetaDataFromIdentifier( identifier )->getLuaMapping();
 			}
 
-		} else {
+		}
+		else {
 			lastNodeId = selected->last()->getId();
 		}
 
-		if( lastNodeId != 0 ) {
+		if ( lastNodeId != 0 ) {
 			Lua::LuaNode* lastLuaNode = Lua::LuaGraph::getInstance()->getNodes()->value( lastNodeId );
 			// garaj start - ak nenaslo lastLuaNode, tak sposobovalo pad softveru
 			if ( lastLuaNode ) {
@@ -4111,9 +4135,10 @@ bool CoreWindow::nextVersion()
 	evolutionSlider->setValue( value );
 	evolutionSlider->blockSignals( false );
 
-	if( !chb_git_changeCommits->isChecked() ) {
+	if ( !chb_git_changeCommits->isChecked() ) {
 		ok = Manager::GraphManager::getInstance()->nextVersion( layout );
-	} else {
+	}
+	else {
 //        qDebug() << "Treba zavolat dalsi lua stromcek";
 		QString lPath =  Manager::GraphManager::getInstance()->getActiveEvolutionGraph()->getFilePath();
 		QString commitId = Manager::GraphManager::getInstance()->getActiveEvolutionGraph()->getVersion( value )->getCommitId();
@@ -4124,7 +4149,7 @@ bool CoreWindow::nextVersion()
 		Lua::LuaGraph::getInstance()->loadEvoGraph( lPath );
 
 		Manager::GraphManager::getInstance()->getActiveGraph()->setCurrentVersion( value );
-		if( !Manager::GraphManager::getInstance()->getActiveEvolutionGraph()->getVersion( value )->getIsLoaded() ) {
+		if ( !Manager::GraphManager::getInstance()->getActiveEvolutionGraph()->getVersion( value )->getIsLoaded() ) {
 
 			Repository::Git::GitLuaGraphAnalyzer analyzer = Repository::Git::GitLuaGraphAnalyzer( Lua::LuaGraph::getInstance(), Manager::GraphManager::getInstance()->getActiveEvolutionGraph() );
 			analyzer.setVersionNumber( value );
@@ -4172,9 +4197,10 @@ bool CoreWindow::previousVersion()
 	evolutionSlider->setValue( value );
 	evolutionSlider->blockSignals( false );
 
-	if( !chb_git_changeCommits->isChecked() ) {
+	if ( !chb_git_changeCommits->isChecked() ) {
 		ok =  Manager::GraphManager::getInstance()->previousVersion( layout );
-	} else {
+	}
+	else {
 //        qDebug() << "Treba zavolat predchadzajuci lua stromcek";
 		Manager::GraphManager::getInstance()->getActiveGraph()->setCurrentVersion( value );
 		QString lPath =  Manager::GraphManager::getInstance()->getActiveEvolutionGraph()->getFilePath();
@@ -4183,7 +4209,7 @@ bool CoreWindow::previousVersion()
 		loadLuaGraph();
 		Lua::LuaGraph::getInstance()->loadEvoGraph( lPath );
 
-		if( !Manager::GraphManager::getInstance()->getActiveEvolutionGraph()->getVersion( value )->getIsLoaded() ) {
+		if ( !Manager::GraphManager::getInstance()->getActiveEvolutionGraph()->getVersion( value )->getIsLoaded() ) {
 			Repository::Git::GitLuaGraphAnalyzer analyzer = Repository::Git::GitLuaGraphAnalyzer( Lua::LuaGraph::getInstance(), Manager::GraphManager::getInstance()->getActiveEvolutionGraph() );
 			analyzer.setVersionNumber( value );
 			analyzer.analyze();
@@ -4203,7 +4229,7 @@ bool CoreWindow::previousVersion()
 	}
 
 	if ( value == evolutionSlider->minimum() ) {
-		if( !chb_git_changeCommits->isChecked() ) {
+		if ( !chb_git_changeCommits->isChecked() ) {
 			evolutionLifespanSpinBox->setDisabled( false );
 		}
 		b_previous_version->setDisabled( true );
@@ -4217,7 +4243,7 @@ void CoreWindow::runEvolution()
 		// zastav evoluciu
 		b_run_evolution->setIcon( QIcon( "../share/3dsoftviz/img/gui/play.png" ) );
 		isRunning = false;
-		if( evolutionSlider->value() != evolutionSlider->maximum() ) {
+		if ( evolutionSlider->value() != evolutionSlider->maximum() ) {
 			b_next_version->setDisabled( false );
 		}
 		b_previous_version->setDisabled( false );
@@ -4315,9 +4341,10 @@ void CoreWindow::getDiffInfo()
 }
 
 // zatial neviem ci je potrebne:D ale asi bude
-void CoreWindow::changeCommits( bool value ) {
+void CoreWindow::changeCommits( bool value )
+{
 	qDebug() << chb_git_changeCommits->isChecked();
-	if( value ) {
+	if ( value ) {
 		b_run_evolution->setEnabled( false );
 		evolutionSlider->setEnabled( false );
 		b_faster_evolution->setEnabled( false );
@@ -4325,9 +4352,10 @@ void CoreWindow::changeCommits( bool value ) {
 	}
 }
 
-void CoreWindow::showLuaStats( bool show ) {
+void CoreWindow::showLuaStats( bool show )
+{
 	chb_git_showLuaStats->setChecked( show );
-	if( Manager::GraphManager::getInstance()->getActiveEvolutionGraph() ) {
+	if ( Manager::GraphManager::getInstance()->getActiveEvolutionGraph() ) {
 		Repository::Git::GitLuaGraphVisualizer visualizer = Repository::Git::GitLuaGraphVisualizer( Manager::GraphManager::getInstance()->getActiveGraph(), Manager::GraphManager::getInstance()->getActiveEvolutionGraph(), this->coreGraph->getCamera(), show );
 		visualizer.changeNodeRepresentation();
 	}
@@ -4362,7 +4390,7 @@ void CoreWindow::createEvolutionLuaGraph()
 
 
 
-   /*
+	/*
 	Lua::LuaInterface* lua = Lua::LuaInterface::getInstance();
 
 	Data::Graph* currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
@@ -4418,7 +4446,7 @@ void CoreWindow::createEvolutionLuaGraph()
 
 	for ( QMap<qlonglong, Lua::LuaNode*>::iterator i = graph->getNodes()->begin(); i != graph->getNodes()->end(); ++i ) {
 		osg::ref_ptr<Data::Node> n = currentGraph->addNode( i.key() , i.value()->getLabel(), nodeType );
-//        setNodeParams( n, i.value(), osg::Vec4f( 1,1,1,1 ), 8 );
+	//        setNodeParams( n, i.value(), osg::Vec4f( 1,1,1,1 ), 8 );
 	}
 
 	for ( QMap<qlonglong, Lua::LuaEdge*>::iterator i = graph->getEdges()->begin(); i != graph->getEdges()->end(); ++i ) {
@@ -4442,9 +4470,9 @@ void CoreWindow::createEvolutionLuaGraph()
 			newEdge = currentGraph->addEdge( i.key(), i.value()->getLabel(), srcNode, dstNode, edgeType, false );
 		}
 		newEdge->setCamera( coreGraph->getCamera() );
-//        setEdgeParams( newEdge, i.value(), osg::Vec4f( 1,1,1,1 ) );
+	//        setEdgeParams( newEdge, i.value(), osg::Vec4f( 1,1,1,1 ) );
 	}
-//    graph->setObserver( this );
+	//    graph->setObserver( this );
 
 	QString metaNodeName = "metaNode";
 	QString metaEdgeName = "metaEdge";
@@ -4453,27 +4481,27 @@ void CoreWindow::createEvolutionLuaGraph()
 	filesAnchor->setColor( osg::Vec4( 0,0,0,0 ) );
 	functionsAnchor->setColor( osg::Vec4( 0,0,0,0 ) );
 
-//    for ( QMap<qlonglong, Lua::LuaNode*>::iterator i = graph->getNodes()->begin(); i != graph->getNodes()->end(); ++i ) {
-//        if ( i.value()->getParams().type() == 0 ) {
-//            continue;
-//        }
-//        if ( i.value()->getParams()["root"]== true ) {
-//            osg::ref_ptr<Data::Node> root = currentGraph->getNodes()->value( i.key() );
-//            osg::ref_ptr<Data::Edge> metaLink = currentGraph->addEdge( metaEdgeName, root, filesAnchor, currentGraph->getEdgeMetaType(), false );
-//            metaLink->setEdgeColor( osg::Vec4( 0,0,0,0 ) );
-//            metaLink->setInvisible( true );
-//        }
-//        if ( i.value()->getParams()["type"] == "function" ) {
-//            osg::ref_ptr<Data::Node> func = currentGraph->getNodes()->value( i.key() );
-//            osg::ref_ptr<Data::Edge> metaLink = currentGraph->addEdge( metaEdgeName, func, functionsAnchor, currentGraph->getEdgeMetaType(), false );
-//            metaLink->setEdgeColor( osg::Vec4( 0,0,0,0 ) );
-//            metaLink->setInvisible( true );
-//            metaLink->setEdgeStrength( 0.1f );
-//        }
-//    }
+	//    for ( QMap<qlonglong, Lua::LuaNode*>::iterator i = graph->getNodes()->begin(); i != graph->getNodes()->end(); ++i ) {
+	//        if ( i.value()->getParams().type() == 0 ) {
+	//            continue;
+	//        }
+	//        if ( i.value()->getParams()["root"]== true ) {
+	//            osg::ref_ptr<Data::Node> root = currentGraph->getNodes()->value( i.key() );
+	//            osg::ref_ptr<Data::Edge> metaLink = currentGraph->addEdge( metaEdgeName, root, filesAnchor, currentGraph->getEdgeMetaType(), false );
+	//            metaLink->setEdgeColor( osg::Vec4( 0,0,0,0 ) );
+	//            metaLink->setInvisible( true );
+	//        }
+	//        if ( i.value()->getParams()["type"] == "function" ) {
+	//            osg::ref_ptr<Data::Node> func = currentGraph->getNodes()->value( i.key() );
+	//            osg::ref_ptr<Data::Edge> metaLink = currentGraph->addEdge( metaEdgeName, func, functionsAnchor, currentGraph->getEdgeMetaType(), false );
+	//            metaLink->setEdgeColor( osg::Vec4( 0,0,0,0 ) );
+	//            metaLink->setInvisible( true );
+	//            metaLink->setEdgeStrength( 0.1f );
+	//        }
+	//    }
 
-//    Lua::LuaGraphVisualizer* visualizer = new Lua::SimpleGraphVisualizer( currentGraph, coreGraph->getCamera() );
-//    visualizer->visualize();
+	//    Lua::LuaGraphVisualizer* visualizer = new Lua::SimpleGraphVisualizer( currentGraph, coreGraph->getCamera() );
+	//    visualizer->visualize();
 
 	coreGraph->reloadConfig();
 	if ( isPlaying ) {
@@ -4491,7 +4519,7 @@ void CoreWindow::lightClicked()
 
 		this->coreGraph->getScene()->getOrCreateStateSet()->setMode( GL_LIGHT0,osg::StateAttribute::OFF );
 		this->coreGraph->getScene()->getOrCreateStateSet()->setMode( GL_LIGHT1,osg::StateAttribute::ON );
-	 }
+	}
 	else {
 
 		this->coreGraph->getScene()->getOrCreateStateSet()->setMode( GL_LIGHT0,osg::StateAttribute::ON );
@@ -4505,7 +4533,7 @@ void CoreWindow::shadowClicked()
 	if ( chb_shadow->isChecked() ) {
 
 		this->coreGraph->turnOnShadows();
-	 }
+	}
 	else {
 
 		this->coreGraph->turnOffShadows();
@@ -4518,7 +4546,7 @@ void CoreWindow::baseClicked()
 	if ( chb_base->isChecked() ) {
 
 		this->coreGraph->turnOnBase();
-	 }
+	}
 	else {
 
 		this->coreGraph->turnOffBase();

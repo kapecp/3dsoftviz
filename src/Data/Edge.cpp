@@ -285,7 +285,7 @@ osg::ref_ptr<osg::Geode> Data::Edge::createLabel( QString name )
 	label->setColor( osg::Vec4( 1.0f, 1.0f, 1.0f, 1.0f ) );
 
 	osg::ref_ptr<osg::Geode> geode = new osg::Geode;
-    geode->setNodeMask(geode->getNodeMask() & ~0x2);
+	geode->setNodeMask( geode->getNodeMask() & ~0x2 );
 	geode->addDrawable( label );
 
 	return geode;
@@ -351,7 +351,7 @@ osg::ref_ptr<osg::Geode> Data::Edge::createEdgeQuad( osg::StateSet* bbState )
 	nodeQuad->setStateSet( bbState );
 
 	osg::ref_ptr<osg::Geode> geode = new osg::Geode;
-    geode->setNodeMask(geode->getNodeMask() & ~0x2);
+	geode->setNodeMask( geode->getNodeMask() & ~0x2 );
 	geode->addDrawable( nodeQuad );
 
 	return geode;
@@ -375,7 +375,7 @@ osg::ref_ptr<osg::Geode> Data::Edge::createEdgeCylinder( osg::StateSet* bbState 
 	nodeCylinder->getStateSet()->setRenderBinDetails( 11, "RenderBin" );
 
 	osg::ref_ptr<osg::Geode> geode = new osg::Geode;
-    geode->setNodeMask(geode->getNodeMask() & ~0x2);
+	geode->setNodeMask( geode->getNodeMask() & ~0x2 );
 	geode->addDrawable( nodeCylinder );
 
 	return geode;
@@ -489,13 +489,14 @@ void Data::Edge::setVisual( int index )
 	setValue( static_cast<unsigned int>( index ), !isInvisible );
 }
 
-void Data::Edge::reloadColor() {
-    osg::Geometry* geometry  = getChild( INDEX_QUAD )->asGeode()->getDrawable( 0 )->asGeometry();
-    if( geometry != nullptr) {
-        osg::Vec4Array* colorArray =  dynamic_cast<osg::Vec4Array*>( geometry->getColorArray() );
-        colorArray->pop_back();
-        colorArray->push_back( this->edgeColor );
-    }
+void Data::Edge::reloadColor()
+{
+	osg::Geometry* geometry  = getChild( INDEX_QUAD )->asGeode()->getDrawable( 0 )->asGeometry();
+	if ( geometry != nullptr ) {
+		osg::Vec4Array* colorArray =  dynamic_cast<osg::Vec4Array*>( geometry->getColorArray() );
+		colorArray->pop_back();
+		colorArray->push_back( this->edgeColor );
+	}
 
 //    ( dynamic_cast<osg::ShapeDrawable*>( getChild( INDEX_CURVE )->asGeode()->getDrawable( 0 ) ) )->setColor( this->edgeColor );
 //    ( dynamic_cast<osg::ShapeDrawable*>( getChild( INDEX_CYLINDER )->asGeode()->getDrawable( 0 ) ) )->setColor( this->edgeColor );

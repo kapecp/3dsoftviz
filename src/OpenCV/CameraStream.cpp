@@ -37,7 +37,7 @@ void CameraStream::updateBackgroundImage( cv::Mat cvImg )
 	if ( cvImg.cols != mWidth || mHeight != cvImg.rows ) {
 		mWidth	= cvImg.cols;
 		mHeight = cvImg.rows;
-#ifdef WIN32		
+#ifdef WIN32
 		iplImg=cvCloneImage( &( IplImage )cvImg );
 #endif
 		// update geometry coordinates if thare are different dimensions of image,

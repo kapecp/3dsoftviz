@@ -2,7 +2,7 @@
 #include <QDebug>
 #include <QtCore/qt_windows.h>	//sleep include, TODO
 
-Leap::LeapActions::LeapActions(LeapCameraManipulator* cameraManipulator)
+Leap::LeapActions::LeapActions( LeapCameraManipulator* cameraManipulator )
 {
 	this->cameraManipulator = cameraManipulator;
 	isCameraMoving = true;
@@ -11,8 +11,8 @@ Leap::LeapActions::LeapActions(LeapCameraManipulator* cameraManipulator)
 
 Leap::LeapActions::~LeapActions()
 {
-	if (cameraManipulator != NULL){
-		delete(cameraManipulator);
+	if ( cameraManipulator != NULL ) {
+		delete( cameraManipulator );
 	}
 	qDebug() << "~LeapActions() Destructor";
 }

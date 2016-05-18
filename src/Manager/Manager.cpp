@@ -358,7 +358,8 @@ bool Manager::GraphManager::loadEvolutionGraphFromGit( QString filepath )
 	return lGit;
 }
 
-Data::Graph* Manager::GraphManager::importEvolutionGraph( QString filepath ) {
+Data::Graph* Manager::GraphManager::importEvolutionGraph( QString filepath )
+{
 	QString lName = NULL;
 	bool ok = true;
 

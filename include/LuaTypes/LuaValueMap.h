@@ -22,7 +22,7 @@ public:
 
 	LuaValueMap( Diluculum::LuaValueMap val );
 
-	LuaValueMap( const Lua::LuaValueMap& obj);
+	LuaValueMap( const Lua::LuaValueMap& obj );
 
 	~LuaValueMap();
 

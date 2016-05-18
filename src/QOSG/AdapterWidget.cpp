@@ -7,15 +7,15 @@
 namespace QOSG {
 
 AdapterWidget::AdapterWidget( QWidget* parent, const char* name , const QGLWidget* shareWidget, WindowFlags f ) :
-  #if QT_VERSION > 0x040000
-  QGLWidget(QGLFormat( QGL::DoubleBuffer | QGL::DepthBuffer | QGL::Rgba | QGL::StencilBuffer | QGL::AlphaChannel | QGL::StereoBuffers ), parent, shareWidget, f )
-  #else
-  QGLWidget(parent, shareWidget, f)
-  #endif
-  {    
-  _gw = new osgViewer::GraphicsWindowEmbedded(0,0,width(),height());
-  setFocusPolicy( Qt::StrongFocus );
-  }
+#if QT_VERSION > 0x040000
+	QGLWidget( QGLFormat( QGL::DoubleBuffer | QGL::DepthBuffer | QGL::Rgba | QGL::StencilBuffer | QGL::AlphaChannel | QGL::StereoBuffers ), parent, shareWidget, f )
+#else
+	QGLWidget( parent, shareWidget, f )
+#endif
+{
+	_gw = new osgViewer::GraphicsWindowEmbedded( 0,0,width(),height() );
+	setFocusPolicy( Qt::StrongFocus );
+}
 
 
 

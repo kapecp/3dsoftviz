@@ -29,7 +29,7 @@ INITIALIZE_EASYLOGGINGPP
 
 int main( int argc, char* argv[] )
 {
-	LOG(INFO) << "3DSoftViz started.";
+	LOG( INFO ) << "3DSoftViz started.";
 
 	qRegisterMetaType< osg::Vec3d >( "osgVec3d" );
 	qRegisterMetaType< osg::Quat >( "osgQuat" );

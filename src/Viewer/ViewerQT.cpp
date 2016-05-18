@@ -29,49 +29,45 @@ QOSG::ViewerQT::ViewerQT( QWidget* parent , const char* name , const QGLWidget* 
 	//double heigthFrustum = nearClippingPlane * tan(osg::DegreesToRadians(fovy));
 	//double widthFrustum = heigthFrustum * aspectRatio;
 
-	if( appConf->getValue( "Viewer.Display.Multiview" ).toInt() )
-	{
+	if ( appConf->getValue( "Viewer.Display.Multiview" ).toInt() ) {
 		int screenNum = appConf->getValue( "Viewer.Display.ScreenNum" ).toInt();
 		int divisionError = width() % screenNum;
 
 		//LEFT CAMERAS
 		//0, 1 = i
-		for(int i=0; i<screenNum/2; i++)
-		{
+		for ( int i=0; i<screenNum/2; i++ ) {
 			osg::ref_ptr<osg::Camera> leftCam = new osg::Camera;
-			leftCam->setViewport( new osg::Viewport( (width()/screenNum + divisionError) * i, 0, width()/screenNum + divisionError, height() ) );
+			leftCam->setViewport( new osg::Viewport( ( width()/screenNum + divisionError ) * i, 0, width()/screenNum + divisionError, height() ) );
 			leftCam->setGraphicsContext( getGraphicsWindow() );
 			leftCam->setProjectionMatrixAsPerspective( fovy, aspectRatio, nearClippingPlane, farClippingPlane );
-			leftCam->setViewMatrix(osg::Matrix::lookAt(osg::Vec3d(-10, 0, 0), osg::Vec3d(0, 0, 0), osg::Vec3d(0, 1, 0)));
-			osgViewer::Viewer::addSlave(leftCam.get(), osg::Matrix::translate( 2.0 * (screenNum/2-i), 0.0, 0.0), osg::Matrix() );
+			leftCam->setViewMatrix( osg::Matrix::lookAt( osg::Vec3d( -10, 0, 0 ), osg::Vec3d( 0, 0, 0 ), osg::Vec3d( 0, 1, 0 ) ) );
+			osgViewer::Viewer::addSlave( leftCam.get(), osg::Matrix::translate( 2.0 * ( screenNum/2-i ), 0.0, 0.0 ), osg::Matrix() );
 		}
 
 		//MIDDLE (MASTER) CAMERA
 		//2 = screenNum/2
-		getCamera()->setViewport( new osg::Viewport( (width()/screenNum + divisionError) * (screenNum/2), 0, width()/screenNum + divisionError, height() ) );
+		getCamera()->setViewport( new osg::Viewport( ( width()/screenNum + divisionError ) * ( screenNum/2 ), 0, width()/screenNum + divisionError, height() ) );
 		getCamera()->setGraphicsContext( getGraphicsWindow() );
 		getCamera()->setProjectionMatrixAsPerspective( fovy, aspectRatio, nearClippingPlane, farClippingPlane );
-		getCamera()->setViewMatrix(osg::Matrix::lookAt(osg::Vec3d(-10, 0, 0), osg::Vec3d(0, 0, 0), osg::Vec3d(0, 1, 0)));
+		getCamera()->setViewMatrix( osg::Matrix::lookAt( osg::Vec3d( -10, 0, 0 ), osg::Vec3d( 0, 0, 0 ), osg::Vec3d( 0, 1, 0 ) ) );
 
 		//RIGHT CAMERAS
 		//3, 4 = screenNum/2 + 1 + i
-		for(int i=0; i<screenNum/2; i++)
-		{
+		for ( int i=0; i<screenNum/2; i++ ) {
 			osg::ref_ptr<osg::Camera> rightCam = new osg::Camera;
-			rightCam->setViewport( new osg::Viewport( (width()/screenNum + divisionError) * (screenNum/2 + 1 + i), 0, width()/screenNum + divisionError, height() ) );
+			rightCam->setViewport( new osg::Viewport( ( width()/screenNum + divisionError ) * ( screenNum/2 + 1 + i ), 0, width()/screenNum + divisionError, height() ) );
 			rightCam->setGraphicsContext( getGraphicsWindow() );
 			rightCam->setProjectionMatrixAsPerspective( fovy, aspectRatio, nearClippingPlane, farClippingPlane );
-			rightCam->setViewMatrix(osg::Matrix::lookAt(osg::Vec3d(-10, 0, 0), osg::Vec3d(0, 0, 0), osg::Vec3d(0, 1, 0)));
-			osgViewer::Viewer::addSlave(rightCam.get(), osg::Matrix::translate(-2.0 * (i+1), 0.0, 0.0), osg::Matrix() );
+			rightCam->setViewMatrix( osg::Matrix::lookAt( osg::Vec3d( -10, 0, 0 ), osg::Vec3d( 0, 0, 0 ), osg::Vec3d( 0, 1, 0 ) ) );
+			osgViewer::Viewer::addSlave( rightCam.get(), osg::Matrix::translate( -2.0 * ( i+1 ), 0.0, 0.0 ), osg::Matrix() );
 		}
 	}
-	else
-	{
+	else {
 		getCamera()->setViewport( new osg::Viewport( 0, 0, width(), height() ) );
 		getCamera()->setGraphicsContext( getGraphicsWindow() );
 		//getCamera()->setProjectionMatrixAsFrustum(-widthFrustum/2.0, widthFrustum/2.0, -heigthFrustum/2.0, heigthFrustum/2.0, nearClippingPlane, farClippingPlane);
 		getCamera()->setProjectionMatrixAsPerspective( fovy, aspectRatio, nearClippingPlane, farClippingPlane );
-		getCamera()->setViewMatrix(osg::Matrix::lookAt(osg::Vec3d(-10, 0, 0), osg::Vec3d(0, 0, 0), osg::Vec3d(0, 1, 0)));
+		getCamera()->setViewMatrix( osg::Matrix::lookAt( osg::Vec3d( -10, 0, 0 ), osg::Vec3d( 0, 0, 0 ), osg::Vec3d( 0, 1, 0 ) ) );
 	}
 
 	getCamera()->setComputeNearFarMode( osg::CullSettings::DO_NOT_COMPUTE_NEAR_FAR );

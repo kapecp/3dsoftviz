@@ -13,9 +13,9 @@ public:
 		RIGHT, LEFT, UP, DOWN, FORWARD, BACKWARD
 	};
 
-	virtual void enableCameraMovement(Movement direction) = 0;
+	virtual void enableCameraMovement( Movement direction ) = 0;
 	virtual void disableCameraMovement() = 0;
-	virtual void rotateCamera(float py0, float px0, double throwScale, float py1, float px1) = 0;
+	virtual void rotateCamera( float py0, float px0, double throwScale, float py1, float px1 ) = 0;
 };
 }
 #endif

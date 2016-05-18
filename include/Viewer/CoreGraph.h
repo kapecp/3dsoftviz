@@ -129,7 +129,7 @@ public:
 		*         currentGraph - graph background to be updated
 		*  \return 0 - success, 1 - fail
 		*/
-	int updateBackground(int bgVal, Data::Graph* currentGraph);
+	int updateBackground( int bgVal, Data::Graph* currentGraph );
 
 	/**
 		*  \fn inline public  getCustomNodeList
@@ -270,7 +270,7 @@ public:
 	void turnOnBase();
 	void turnOffBase();
 	void createBase();
-	float compare(float a, float b);
+	float compare( float a, float b );
 	//*****
 
 public slots:
@@ -610,7 +610,7 @@ private:
 		*  osg::ref_ptr<osgShadow::ShadowedScene> shadowedScene
 		*  \brief node for shadows definition
 		*/
-		osg::ref_ptr<osgShadow::ShadowedScene> shadowedScene;
+	osg::ref_ptr<osgShadow::ShadowedScene> shadowedScene;
 
 	/**
 		* osg::Geode* baseGeode
