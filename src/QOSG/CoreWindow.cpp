@@ -1203,30 +1203,11 @@ QWidget* CoreWindow::createMoreFeaturesTab( QFrame* line )
     lMore->addRow( line );
 
     b_scale_default = new QPushButton();
-    b_scale_default->setText( "Scale graph" );
+    b_scale_default->setText( "Center graph" );
     b_scale_default->setMaximumWidth( 136 );
     lMore->addRow( b_scale_default );
     connect( b_scale_default, SIGNAL( clicked() ), this, SLOT( scaleArucoGraphToBase() ) );
 
-    b_scale_up = new QPushButton();
-    b_scale_up->setText( "+" );
-    b_scale_up->setToolTip( "Scale up" );
-    b_scale_up->setMaximumWidth( 67 );
-    connect( b_scale_up, SIGNAL( clicked() ), this, SLOT( scaleArucoGraphUp() ) );
-
-    b_scale_down = new QPushButton();
-    b_scale_down->setText( "-" );
-    b_scale_down->setMaximumWidth( 67 );
-    b_scale_down->setToolTip( "Scale down" );
-    connect( b_scale_down, SIGNAL( clicked() ), this, SLOT( scaleArucoGraphDown() ) );
-
-    lMore->addRow( b_scale_up, b_scale_down );
-
-    b_rotate_graph = new QPushButton();
-    b_rotate_graph->setText( "Rotate graph" );
-    b_rotate_graph->setMaximumWidth( 136 );
-    lMore->addRow( b_rotate_graph );
-    connect( b_rotate_graph, SIGNAL( clicked() ), this, SLOT( rotateArucoGraph() ) );
     //*****
 
 	wMore->setLayout( lMore );
@@ -4427,22 +4408,7 @@ void CoreWindow::scaleArucoGraphToBase()
     this->layout->play();
 }
 
-void CoreWindow::scaleArucoGraphUp()
-{
-    this->coreGraph->scaleGraph(2);
-}
-
-void CoreWindow::scaleArucoGraphDown()
-{
-    this->coreGraph->scaleGraph(1);
-}
-
-void CoreWindow::rotateArucoGraph()
-{
-    this->coreGraph->rotateGraph(1);
-}
-
-//works only frmo softVis to ArUco
+//works only from softVis to ArUco
 void CoreWindow::swapManipulator()
 {
     viewerWidget->setCameraManipulator(NULL);

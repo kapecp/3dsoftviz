@@ -93,7 +93,7 @@ void ArucoThread::interchangeMarkers()
 void ArucoThread::run()
 {
 	cv::Mat frame;
-	mCancel = false;
+    mCancel = false;
 
 	// test if camera is set
 	if ( mCapVideo == NULL ) {

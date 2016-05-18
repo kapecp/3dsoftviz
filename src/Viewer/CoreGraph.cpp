@@ -630,28 +630,7 @@ Vwr::CoreGraph::CoreGraph( Data::Graph* graph, osg::ref_ptr<osg::Camera> camera 
 	graphRotTransf = new osg::MatrixTransform();
 	graphGroup = new osg::Group();
     rotationMatrix = rotationMatrix.identity();
-
-	/*
-	   manipulatorGroup = new osg::Group();
-
-	   osg::ref_ptr<osgManipulator::TranslateAxisDragger> dragger = new osgManipulator::TranslateAxisDragger();
-	   dragger->setupDefaultGeometry();
-	   manipulatorGroup->addChild(dragger.get());
-
-	   osg::ref_ptr<osg::MatrixTransform> geom1 = new osg::MatrixTransform(osg::Matrixd::scale(osg::Vec3f(25,25,25)));
-	   geom1->addChild(manipulatorGroup);
-
-	   qDebug() << dragger->getMatrix().getTrans().x() << " " << dragger->getMatrix().getTrans().y();
-
-	   float scale = geom1->getBound().radius() * 1.0f;
-	   osg::Matrix mat = osg::Matrix::scale(scale, scale, scale) ;
-	   dragger->setMatrix(mat);
-
-	   dragger->setHandleEvents(false);
-	   // konec
-
-	   //root->addChild( geom1 );
-	*/
+    root->addChild(axesTransform);
 
     //jurik
     //lighting
@@ -671,19 +650,6 @@ Vwr::CoreGraph::CoreGraph( Data::Graph* graph, osg::ref_ptr<osg::Camera> camera 
     shadowedScene->setReceivesShadowTraversalMask(0x1);
     shadowedScene->setCastsShadowTraversalMask(0x2);
     root->addChild(shadowedScene);
-
-    osg::Sphere* unitSphere = new osg::Sphere( osg::Vec3(0,0,0), 1);
-        osg::ShapeDrawable* unitSphereDrawable = new osg::ShapeDrawable(unitSphere);
-        osg::Geode* unitSphereGeode = new osg::Geode();
-
-        unitSphereGeode->addDrawable(unitSphereDrawable);
-       // graphRotTransf->addChild(unitSphereGeode);
-
-        osg::Sphere* unitSphere1 = new osg::Sphere(osg::Vec3(0,0,0), 5);
-        osg::ShapeDrawable* unitSphereDrawable1 = new osg::ShapeDrawable(unitSphere1);
-        osg::Geode* unitSphereGeode1 = new osg::Geode();
-        unitSphereGeode1->addDrawable(unitSphereDrawable1);
-       // graphRotTransf->addChild(unitSphereGeode1);
 
     //node and transform for bas
     baseGeode = new osg::Geode();
@@ -1468,14 +1434,13 @@ void CoreGraph::turnAxes(bool turnOn)
 
 void CoreGraph::createBase()
 {
-
     osg::Geometry* baseGeometry = new osg::Geometry();
 
     baseGeode->addDrawable(baseGeometry);
     //invisible untill checkbox clicked
     baseGeode->setNodeMask(0x0);
     osg::Material *material = new osg::Material();
-    material->setDiffuse(osg::Material::FRONT,  osg::Vec4(0.7, 0.7, 0.7, 0.2));
+    material->setDiffuse(osg::Material::FRONT,  osg::Vec4(0.8, 0.8, 0.8, 0.2));
    // material->setEmission(osg::Material::FRONT, osg::Vec4(0, 0, 0, 1));
     baseGeode->getOrCreateStateSet()->setAttribute(material);
 
@@ -1498,25 +1463,9 @@ void CoreGraph::createBase()
 
    baseGeometry->addPrimitiveSet(base);
 
-   /*osg::Vec4Array* colors = new osg::Vec4Array;
-   colors->push_back(osg::Vec4(0.0f, 0.0f, 0.0f, 0.1f) ); //index 0 red
-   colors->push_back(osg::Vec4(0.0f, 0.0f, 0.0f, 0.1f) ); //index 1 green
-   colors->push_back(osg::Vec4(0.0f, 0.0f, 0.0f, 0.1f) ); //index 2 blue
-   colors->push_back(osg::Vec4(0.0f, 0.0f, 0.0f, 0.1f) ); //index 3 white
-   baseGeometry->setColorArray(colors);
-   baseGeometry->setColorBinding(osg::Geometry::BIND_PER_VERTEX);*/
-
    baseGeode->getOrCreateStateSet()->setMode(GL_BLEND, osg::StateAttribute::ON);
    baseGeode->getOrCreateStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
    baseGeode->getOrCreateStateSet()->setRenderBinDetails(1, "DepthSortedBin");
-
-   // TEXTURED BASE
-   /*  osg::Vec2Array* texcoords = new osg::Vec2Array(5);
-     (*texcoords)[0].set(0.0f,1.0f); // tex coord for vertex 0
-     (*texcoords)[1].set(0.0f,0.0f); // tex coord for vertex 1
-     (*texcoords)[2].set(1.0f,0.0f); // ""
-     (*texcoords)[3].set(1.0f,1.0f); // ""
-     baseGeometry->setTexCoordArray(0,texcoords);*/
 }
 
 //set aruco modelView matrix
@@ -1531,42 +1480,6 @@ void CoreGraph::recievedMVMatrix(QMatrix4x4 modelViewMatrix)
     //update base size
     baseTransform->setMatrix(osg::Matrixd::identity());
     updateBase(baseSize);
-
-    /*IplImage* image = this->getCameraStream()->getIplImage();
-    osg::Image* i= new osg::Image();
-
-    i->setImage( image->width, image->height,
-              3, GL_RGB, GL_RGB,
-              GL_UNSIGNED_BYTE,
-              ( unsigned char* ) image->imageData,
-              osg::Image::NO_DELETE, 1 );
-
-    osg::Texture2D* texture = new osg::Texture2D;
-
-      // protect from being optimized away as static state:
-      texture->setDataVariance(osg::Object::DYNAMIC);
-
-      // load an image by reading a file:
-      osg::Image* klnFace = osgDB::readImageFile("../share/3dsoftviz/img/textures/author.png");
-      if (!klnFace)
-      {
-         std::cout << " couldn't find texture, quiting." << std::endl;
-
-      }
-
-      // Assign the texture to the image we read from file:
-      texture->setImage(i);
-
-      // Create a new StateSet with default settings:
-      osg::StateSet* stateOne = new osg::StateSet();
-
-      // Assign texture unit 0 of our new StateSet to the texture
-      // we just created and enable the texture.
-      stateOne->setTextureAttributeAndModes
-         (0,texture,osg::StateAttribute::ON);
-      // Associate this state set with the Geode that contains
-      // the pyramid:
-      baseGeode->setStateSet(stateOne);*/
 }
 
 //set aruco projection matrix
@@ -1809,7 +1722,6 @@ void CoreGraph::drawAxes(){
     axesGeometry->setStateSet(stateset);
 
     axesTransform->addChild(axesGeode);
-    root->addChild(axesTransform);
 
    //base
    osg::Vec3Array* vertices = new osg::Vec3Array;
@@ -1843,48 +1755,11 @@ void CoreGraph::drawAxes(){
    axisZ->push_back(4);
    axisZ->push_back(5);
 
-
    axesGeometry->addPrimitiveSet(axisX);
    axesGeometry->addPrimitiveSet(axisY);
    axesGeometry->addPrimitiveSet(axisZ);
 
 }
 
-/*
-    IplImage* image = this->getCameraStream()->getIplImage();
-    osg::Image* i= new osg::Image();
-
-    i->setImage( image->width, image->height,
-              3, GL_RGB, GL_RGB,
-              GL_UNSIGNED_BYTE,
-              ( unsigned char* ) image->imageData,
-              osg::Image::NO_DELETE, 1 );
-
-    osg::Texture2D* texture = new osg::Texture2D;
-
-      // protect from being optimized away as static state:
-      texture->setDataVariance(osg::Object::DYNAMIC);
-
-      // load an image by reading a file:
-      osg::Image* klnFace = osgDB::readImageFile("../share/3dsoftviz/img/textures/author.png");
-      if (!klnFace)
-      {
-         std::cout << " couldn't find texture, quiting." << std::endl;
-
-      }
-
-      // Assign the texture to the image we read from file:
-      texture->setImage(i);
-
-      // Create a new StateSet with default settings:
-      osg::StateSet* stateOne = new osg::StateSet();
-
-      // Assign texture unit 0 of our new StateSet to the texture
-      // we just created and enable the texture.
-      stateOne->setTextureAttributeAndModes
-         (0,texture,osg::StateAttribute::ON);
-      // Associate this state set with the Geode that contains
-      // the pyramid:
-      baseGeode->setStateSet(stateOne);*/
 //*****
 }
