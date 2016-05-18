@@ -76,6 +76,22 @@ public:
 
     ProjectiveARViewer( QWidget* parent = 0, const char* name = 0, const QGLWidget* shareWidget = 0, WindowFlags f = 0, osgViewer::Viewer* viewerPerspective = 0 );
 
+    /**
+     * @author Viktor Kostan
+     * @brief createProjectorState - Creates a StateSet that does projective texturing of passed texture.
+     * @param texture - texture used for projective texturing
+     * @param projectorPos - projector position
+     * @param projectorDirection - projector direction
+     * @param projectorFOV - projector field of view
+     * @return Pointer to the StateSet.
+     */
+    osg::StateSet* createProjectorState(osg::Texture2D* texture, osg::Vec3 projectorPos, osg::Vec3 projectorDirection, float projectorFOV);
+    /**
+     * @author Viktor Kostan
+     * @brief createBase - Creates a geometry with two perpendicular quads and two polygons.
+     * @return Pointer to created geometry.
+     */
+    osg::Geode* createBase();
 
     /**
           *  \fn inline public  reloadConfig

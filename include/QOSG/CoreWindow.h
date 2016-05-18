@@ -693,7 +693,7 @@ void loadExampleGraphLua();
     void baseClicked();
 
     // kostan
-    void createARProjWindow();
+    void createProjARWindow();
 
 private:
 
