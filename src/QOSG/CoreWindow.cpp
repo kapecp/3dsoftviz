@@ -1238,7 +1238,7 @@ QWidget* CoreWindow::createMoreFeaturesTab( QFrame* line )
     lMore->addRow( new QLabel( tr( "Projector view" ) ) );
     b_start_projective_ar->setMaximumWidth( 136 );
     lMore->addRow( b_start_projective_ar );
-    connect( b_start_projective_ar, SIGNAL( clicked() ), this, SLOT( createARProjWindow() ) );
+    connect( b_start_projective_ar, SIGNAL( clicked() ), this, SLOT( createProjARWindow() ) );
 
     //*****
 
@@ -4541,7 +4541,7 @@ void CoreWindow::baseClicked()
 
 // kostan
 
-void CoreWindow::createARProjWindow()
+void CoreWindow::createProjARWindow()
 {
     QOSG::ProjectiveARCore::getInstance( NULL, this )->init(viewerWidget);
 }

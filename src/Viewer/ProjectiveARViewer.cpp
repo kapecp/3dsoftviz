@@ -24,7 +24,7 @@
 #include <osgViewer/Viewer>
 
 // used code from http://jotschi.de/2009/05/31/projective-textures-with-openscenegraph/
-osg::StateSet* createProjectorState(osg::Texture2D* texture, osg::Vec3 projectorPos, osg::Vec3 projectorDirection, float projectorFOV) {
+osg::StateSet* QOSG::ProjectiveARViewer::createProjectorState(osg::Texture2D* texture, osg::Vec3 projectorPos, osg::Vec3 projectorDirection, float projectorFOV) {
 
     osg::StateSet* stateset = new osg::StateSet;
 
@@ -92,7 +92,7 @@ osg::StateSet* createProjectorState(osg::Texture2D* texture, osg::Vec3 projector
     osg::Matrix mat;
     osg::Vec3 up(0.0f, 0.0f, 1.0f);
     mat = osg::Matrixd::lookAt(projectorPos, projectorPos + projectorDirection, up)
-        * osg::Matrixd::perspective(projectorFOV, 1.0, 0.1, 100/*SCENE_MAX_SIZE*/);
+        * osg::Matrixd::perspective(projectorFOV, 1.0, 0.1, SCENE_MAX_SIZE);
     texMat->setMatrix(mat);
     stateset->setTextureAttributeAndModes(1, texMat, osg::StateAttribute::ON);
 
@@ -101,7 +101,7 @@ osg::StateSet* createProjectorState(osg::Texture2D* texture, osg::Vec3 projector
 }
 
 
-osg::Geode* createBase()
+osg::Geode* QOSG::ProjectiveARViewer::createBase()
 {
     osg::Geode* baseGeode = new osg::Geode();
     osg::Geometry* baseGeometry = new osg::Geometry();
@@ -200,18 +200,16 @@ osg::Group* QOSG::ProjectiveARViewer::createProjectorScene() {
     if(!model)
         model = osgDB::readNodeFile("cessna.osgt");
 
-    if (!model)
-    {
+    if (!model){
         return NULL;
     }
 
-    // texture to render to and to use for rendering of flag.
+    // texture to render to and to use for rendering of graph.
     osg::Texture2D* texture = new osg::Texture2D;
     texture->setTextureSize(tex_width, tex_height);
     texture->setInternalFormat(GL_RGBA);
     texture->setFilter(osg::Texture2D::MIN_FILTER, osg::Texture2D::LINEAR);
     texture->setFilter(osg::Texture2D::MAG_FILTER, osg::Texture2D::LINEAR);
-
 
     // create the camera node to do the render to texture
     if (!renderCamera)
@@ -221,13 +219,11 @@ osg::Group* QOSG::ProjectiveARViewer::createProjectorScene() {
     renderCamera->setClearColor(osg::Vec4(0.0f, 0.0f, 0.0f, 1.0f));
     renderCamera->setClearMask(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-
     double fovy, aspectRatio, zNear, zFar;
     viewerPerspective->getCamera()->getProjectionMatrixAsPerspective(fovy, aspectRatio, zNear, zFar);
     renderCamera->setProjectionMatrixAsPerspective(viewerFOV, 1.0, zNear, zFar);
 
-    if(useGraph)
-    {
+    if(useGraph){
         const osg::BoundingSphere& bs = model->getBound();
         if (!bs.valid())
         {
@@ -238,40 +234,11 @@ osg::Group* QOSG::ProjectiveARViewer::createProjectorScene() {
         osg::Vec3d renderCameraRelPos(viewerRelPos * (bs.radius() / graphRadius));
 
         renderCamera->setViewMatrixAsLookAt(renderCameraRelPos + bs.center(), bs.center(), osg::Vec3(0.0f, 0.0f, 1.0f));
-
     }
-    else
-    {
+    else{
         renderCamera->setViewMatrix(viewerPerspective->getCamera()->getViewMatrix());
-        /*const osg::BoundingSphere& bs = model->getBound();
-        if (!bs.valid())
-        {
-            return NULL;
-        }
-
-        float znear = 1.0f*bs.radius();
-        float zfar = 3.0f*bs.radius();
-
-        // 1:1 aspect ratio as per flag geometry below.
-        float proj_top = 0.5f*znear;
-        float proj_right = 0.5f*znear;
-
-        znear *= 0.9f;
-        zfar *= 1.1f;
-
-        // set up projection.
-        renderCamera->setProjectionMatrixAsFrustum(-proj_right, proj_right, -proj_top, proj_top, znear, zfar);
-
-        // set view
-        renderCamera->setViewMatrixAsLookAt(bs.center() - osg::Vec3(0.0f, 2.0f, 0.0f)*bs.radius(), bs.center(), osg::Vec3(0.0f, 0.0f, 1.0f));*/
     }
     renderCamera->setReferenceFrame(osg::Transform::ABSOLUTE_RF);
-    // else: set renderCamera's projection and view matrix from the viewerPerspective
-    /*else
-    {
-        renderCamera->setProjectionMatrix(viewerPerspective->getCamera()->getProjectionMatrix());
-        renderCamera->setViewMatrix(viewerPerspective->getCamera()->getViewMatrix());
-    }*/
 
     // set viewport
     renderCamera->setViewport(0, 0, tex_width, tex_height);
@@ -282,12 +249,10 @@ osg::Group* QOSG::ProjectiveARViewer::createProjectorScene() {
     // tell the camera to use OpenGL frame buffer object where supported.
     renderCamera->setRenderTargetImplementation(renderImplementation);
 
-    {
-        // attach the texture and use it as the color buffer.
-        renderCamera->attach(osg::Camera::COLOR_BUFFER, texture,
-            0, 0, false,
-            samples, colorSamples);
-    }
+    // attach the texture and use it as the color buffer.
+    renderCamera->attach(osg::Camera::COLOR_BUFFER, texture,
+        0, 0, false,
+        samples, colorSamples);
 
     // add subgraph to render
     renderCamera->addChild(model);

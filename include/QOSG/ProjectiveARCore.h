@@ -26,7 +26,7 @@ public:
 		 * @param app QApplication
          * @return ProjectiveARCore instance
 		 */
-    static ProjectiveARCore*	getInstance( QApplication* app, QWidget* parent );
+    static ProjectiveARCore* getInstance( QApplication* app, QWidget* parent );
 
     /**
          * @brief ~ProjectiveARCore Destructor
