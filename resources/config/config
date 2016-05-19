@@ -26,7 +26,7 @@ Viewer.Display.BackGround.B=190
 Viewer.Display.BackGround.G=190
 Viewer.Display.BackGround.R=190
 Viewer.Display.InterpolationSpeed=0.01
-Viewer.Display.NodeDistanceScale=2
+Viewer.Display.NodeDistanceScale=0.5
 Viewer.Display.NodesAlwaysOnTop=0
 Viewer.Display.Stereoscopic=0
 Viewer.Display.ViewDistance=10000.0
@@ -81,7 +81,7 @@ Kinect.DepthInfoName= depthInfo
 FaceDecetion.EnableProjectionCorrection=0
 FaceDecetion.CameraDistancePar=3.5
 
-Aruco.MarkerSize=0.06
+Aruco.MarkerSize=250
 Aruco.CamDistancRatio=2.75
 Aruco.ConstDist=0.3
 Aruco.ConstHeightKoef=0.8

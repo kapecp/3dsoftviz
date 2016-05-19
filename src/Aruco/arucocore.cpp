@@ -50,6 +50,25 @@ const QMatrix4x4 ArucoCore::getDetectedMatrix( cv::Mat inputImage )
 	return matrix;
 }
 
+//jurik
+const QMatrix4x4 ArucoCore::getProjectionMatrix(cv::Mat inputImage)
+{
+    double projectionMatrix[16];
+
+    mCamParam.resize( inputImage.size() );
+    //get projection matrix via ArUco
+    mCamParam.glGetProjectionMatrix(inputImage.size(),inputImage.size(),projectionMatrix,0.01,10000.0);
+
+    QMatrix4x4 matrix(projectionMatrix);
+    return matrix;
+}
+
+float ArucoCore::getMarkerSize(){
+    return this->mMarkerSize;
+}
+
+//*****
+
 bool ArucoCore::getDetectedPosAndQuat( cv::Mat inputImage, double position[3], double quaternion[4] )
 {
 	mCamParam.resize( inputImage.size() );
