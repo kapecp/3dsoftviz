@@ -630,7 +630,9 @@ Vwr::CoreGraph::CoreGraph( Data::Graph* graph, osg::ref_ptr<osg::Camera> camera 
 	graphRotTransf = new osg::MatrixTransform();
 	graphGroup = new osg::Group();
     rotationMatrix = rotationMatrix.identity();
-   // drawAxes();
+
+
+
 
     //jurik
     //lighting
@@ -654,15 +656,11 @@ Vwr::CoreGraph::CoreGraph( Data::Graph* graph, osg::ref_ptr<osg::Camera> camera 
     //node and transform for bas
     baseGeode = new osg::Geode();
     baseTransform = new osg::MatrixTransform();
-    //node and transform for axes
-    axesGeode = new osg::Geode();
-    axesTransform = new osg::MatrixTransform();
 
     graphRotTransf->addChild( graphGroup );
     shadowedScene->addChild( graphRotTransf );
 
     createBase();
-
     if(!arucoRunning)
         updateBase(2000);
 
@@ -672,6 +670,14 @@ Vwr::CoreGraph::CoreGraph( Data::Graph* graph, osg::ref_ptr<osg::Camera> camera 
 	// Gloger: disabled skybox- using solid background (see setClearColor in ViewerQT)
 	root->addChild( createBackground() );
 	backgroundPosition = 1;
+
+    //node and transform for axes
+    axesGeode = new osg::Geode();
+    axesTransform = new osg::MatrixTransform();
+
+    root->addChild(axesTransform);
+    axesTransform->addChild(axesGeode);
+    drawAxes();
 
 	reload( graph );
 }
@@ -1720,8 +1726,6 @@ void CoreGraph::drawAxes(){
     stateset->setAttributeAndModes(linewidth,osg::StateAttribute::ON);
     stateset->setMode(GL_LIGHTING,osg::StateAttribute::OFF);
     axesGeometry->setStateSet(stateset);
-    root->addChild(axesTransform);
-    axesTransform->addChild(axesGeode);
 
    //base
    osg::Vec3Array* vertices = new osg::Vec3Array;
