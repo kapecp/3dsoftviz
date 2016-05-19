@@ -34,110 +34,110 @@ class ProjectiveARWindow : public QDialog
 
 public:
 	/**
-     * @author Autor: Viktor Košťan
-     * @brief ProjectiveARWindow - Constructor
-     * @param parent - Parent Widget
-     * @param sourceViewer - Viewer that views desired image.
-     * @param mApp - QApplication
+	 * @author Autor: Viktor Košťan
+	 * @brief ProjectiveARWindow - Constructor
+	 * @param parent - Parent Widget
+	 * @param sourceViewer - Viewer that views desired image.
+	 * @param mApp - QApplication
 	 */
-    ProjectiveARWindow( QWidget* parent, ViewerQT* sourceViewer, QApplication* mApp );
+	ProjectiveARWindow( QWidget* parent, ViewerQT* sourceViewer, QApplication* mApp );
 
-    /**
-     * @author Autor: Viktor Košťan
-     * @brief toggleToolBars - Constructor
-     * @param parent - Parent Widget
-     * @param sourceViewer - Viewer that views desired image.
-     * @param mApp - QApplication
-     */
-    void toggleToolBars();
+	/**
+	 * @author Autor: Viktor Košťan
+	 * @brief toggleToolBars - Constructor
+	 * @param parent - Parent Widget
+	 * @param sourceViewer - Viewer that views desired image.
+	 * @param mApp - QApplication
+	 */
+	void toggleToolBars();
 
 public slots:
-    void applySceneSettings();
+	void applySceneSettings();
 
 
 private:
-    /**
-        *  QOSG::ProjectiveARViewer * viewerWidget
-        *  \brief Ponter to viewer widget
-        */
-    ProjectiveARViewer* viewerWidget;
-    QApplication*	app;
+	/**
+	    *  QOSG::ProjectiveARViewer * viewerWidget
+	    *  \brief Ponter to viewer widget
+	    */
+	ProjectiveARViewer* viewerWidget;
+	QApplication*	app;
 
-    /**
-        *  QToolBar * toolBar
-        *  \brief Pointer to toolbar
-        */
-    QToolBar* toolBar;
+	/**
+	    *  QToolBar * toolBar
+	    *  \brief Pointer to toolbar
+	    */
+	QToolBar* toolBar;
 
-    /**
-        *  ToolBox * toolBox
-        *  \brief Pointer to toolbox
-        */
-    QToolBox* toolBox;
+	/**
+	    *  ToolBox * toolBox
+	    *  \brief Pointer to toolbox
+	    */
+	QToolBox* toolBox;
 
-    QDoubleSpinBox* dsb_projectorFOV;
-    QDoubleSpinBox* dsb_projectorPosX;
-    QDoubleSpinBox* dsb_projectorPosY;
-    QDoubleSpinBox* dsb_projectorPosZ;
-    QDoubleSpinBox* dsb_projectorDirX;
-    QDoubleSpinBox* dsb_projectorDirY;
-    QDoubleSpinBox* dsb_projectorDirZ;
+	QDoubleSpinBox* dsb_projectorFOV;
+	QDoubleSpinBox* dsb_projectorPosX;
+	QDoubleSpinBox* dsb_projectorPosY;
+	QDoubleSpinBox* dsb_projectorPosZ;
+	QDoubleSpinBox* dsb_projectorDirX;
+	QDoubleSpinBox* dsb_projectorDirY;
+	QDoubleSpinBox* dsb_projectorDirZ;
 
-    QDoubleSpinBox* dsb_viewerFOV;
-    QDoubleSpinBox* dsb_viewerPosX;
-    QDoubleSpinBox* dsb_viewerPosY;
-    QDoubleSpinBox* dsb_viewerPosZ;
-    QDoubleSpinBox* dsb_viewerDirX;
-    QDoubleSpinBox* dsb_viewerDirY;
-    QDoubleSpinBox* dsb_viewerDirZ;
+	QDoubleSpinBox* dsb_viewerFOV;
+	QDoubleSpinBox* dsb_viewerPosX;
+	QDoubleSpinBox* dsb_viewerPosY;
+	QDoubleSpinBox* dsb_viewerPosZ;
+	QDoubleSpinBox* dsb_viewerDirX;
+	QDoubleSpinBox* dsb_viewerDirY;
+	QDoubleSpinBox* dsb_viewerDirZ;
 
-    QDoubleSpinBox* dsb_graphPosX;
-    QDoubleSpinBox* dsb_graphPosY;
-    QDoubleSpinBox* dsb_graphPosZ;
+	QDoubleSpinBox* dsb_graphPosX;
+	QDoubleSpinBox* dsb_graphPosY;
+	QDoubleSpinBox* dsb_graphPosZ;
 
-    QDoubleSpinBox* dsb_graphRadius;
+	QDoubleSpinBox* dsb_graphRadius;
 
-    QCheckBox* chb_useMainViewer;
+	QCheckBox* chb_useMainViewer;
 
-    QPushButton* b_applyScene;
+	QPushButton* b_applyScene;
 
-    /**
-        *  \fn private  createLeftToolBar
-        *  \brief Creates left toolBar for ProjectiveARWindow
-        */
-    void createLeftToolBar();
+	/**
+	    *  \fn private  createLeftToolBar
+	    *  \brief Creates left toolBar for ProjectiveARWindow
+	    */
+	void createLeftToolBar();
 
-    /**
-     * @author Viktor Košťan
-     * @brief createSceneTab add elements to QWidget for scene configuration
-     * @param line pointer to add line
-     * @return QWidget for graph functionality
-     */
-    QWidget* createSceneTab( QFrame* line );
+	/**
+	 * @author Viktor Košťan
+	 * @brief createSceneTab add elements to QWidget for scene configuration
+	 * @param line pointer to add line
+	 * @return QWidget for graph functionality
+	 */
+	QWidget* createSceneTab( QFrame* line );
 
-    QDoubleSpinBox* createCoordSpinBox(double value, const QString& text);
+	QDoubleSpinBox* createCoordSpinBox( double value, const QString& text );
 
-    /**
-        *  \fn private  createHorizontalFrame
-        *  \brief Crate frame with horizontal label
-        *  \return QFrame * created frame
-        */
-    QFrame* createHorizontalFrame();
+	/**
+	    *  \fn private  createHorizontalFrame
+	    *  \brief Crate frame with horizontal label
+	    *  \return QFrame * created frame
+	    */
+	QFrame* createHorizontalFrame();
 
-    /**
-        *  \fn private  createLine
-        *  \brief Creates horizontal line
-        *  \return QFrame * created line
-        */
-    QFrame* createLine();
+	/**
+	    *  \fn private  createLine
+	    *  \brief Creates horizontal line
+	    *  \return QFrame * created line
+	    */
+	QFrame* createLine();
 
 
-    /**
-         * @author Autor: Michael Garaj
-         * @brief closeEvent Reimplement close event. Disconnect all conections
-         * @param event Close event
-         */
-    void closeEvent( QCloseEvent* event );
+	/**
+	     * @author Autor: Michael Garaj
+	     * @brief closeEvent Reimplement close event. Disconnect all conections
+	     * @param event Close event
+	     */
+	void closeEvent( QCloseEvent* event );
 
 };
 

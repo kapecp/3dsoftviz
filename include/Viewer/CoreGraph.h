@@ -256,15 +256,15 @@ public:
 
 	//jurik
 	/**
-	    *  \fn public  set shadow technique to shadowMap
-	    *  \brief
-	    */
+		*  \fn public  set shadow technique to shadowMap
+		*  \brief
+		*/
 	void turnOnShadows();
 
 	/**
-	    *  \fn public  set shadow technique to NULL
-	    *  \brief
-	    */
+		*  \fn public  set shadow technique to NULL
+		*  \brief
+		*/
 	void turnOffShadows();
 
 	void turnOnBase();
@@ -323,7 +323,16 @@ public slots:
 		 */
 	void setEdgeVisual( int index );
 
-    void scaleNodes(bool scaleUp);
+	void recievedMVMatrix( QMatrix4x4 modelViewMatrix );
+	/**
+		 * @author Autor: Igor Jurík
+		 * @brief update camera projection matrix from aruco
+		 */
+	void recievedPMatrix( QMatrix4x4 modelViewMatrix );
+
+	void updateBase( float size );
+
+	void setArucoRunning( bool isRunning );
 
 private:
 
@@ -622,17 +631,22 @@ private:
 
 	//jurik
 	/**
-	    *  osg::ref_ptr<osgShadow::ShadowedScene> shadowedScene
-	    *  \brief node for shadows definition
-	    */
+		*  osg::ref_ptr<osgShadow::ShadowedScene> shadowedScene
+		*  \brief node for shadows definition
+		*/
 	osg::ref_ptr<osgShadow::ShadowedScene> shadowedScene;
 
 	/**
-	    * osg::Geode* baseGeode
-	    *  \brief node base
-	    */
+		* osg::Geode* baseGeode
+		*  \brief node base
+		*/
 	osg::ref_ptr<osg::Geode> baseGeode;
-    osg::ref_ptr<osg::PositionAttitudeTransform> baseTransform;
+	osg::ref_ptr<osg::MatrixTransform> baseTransform;
+	osg::Matrixd rotationMatrix;
+	float baseSize = 250;
+	bool arucoRunning = false;
+	osg::ref_ptr<osg::Geode> axesGeode;
+	osg::ref_ptr<osg::MatrixTransform> axesTransform;
 
 	//*****
 };

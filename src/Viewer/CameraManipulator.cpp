@@ -1050,7 +1050,7 @@ void Vwr::CameraManipulator::initAutomaticMovement( osgViewer::Viewer* viewer )
 	float scale = appConf->getValue( "Viewer.Display.NodeDistanceScale" ).toFloat();
 
 	weightPoint = ( eye + cameraInterestPoint + cameraTargetPoint )/3;
-    targetDistance = alterCameraTargetPoint( viewer );
+	targetDistance = alterCameraTargetPoint( viewer );
 
 	cameraPositions = new QVector<osg::Vec3d>();
 	cameraPositions->push_back( originalEyePosition );

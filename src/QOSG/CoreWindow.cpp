@@ -98,7 +98,7 @@ CoreWindow::CoreWindow( QWidget* parent, Vwr::CoreGraph* coreGraph, QApplication
 	createMetricsToolBar();
 
 	viewerWidget = new ViewerQT( this, 0, 0, 0, coreGraph );
-    viewerWidget->setSceneData( coreGraph->getScene() );
+	viewerWidget->setSceneData( coreGraph->getScene() );
 
 	setCentralWidget( viewerWidget );
 
@@ -1214,10 +1214,10 @@ QWidget* CoreWindow::createMoreFeaturesTab( QFrame* line )
 		lMore->addRow( new QLabel( tr( "Evolution Graph" ) ) );
 		lMore->addRow( new QLabel( ( tr( "Life span:" ) ) ), evolutionLifespanSpinBox );
 		lMore->addRow( b_git_diff );
-	    lMore->addRow( chb_git_changeCommits );
-	    lMore->addRow( cb_git_evoVisualizeMethod );
-	    lMore->addRow( cb_git_authors );
-	    lMore->addRow( cb_git_files );
+		lMore->addRow( chb_git_changeCommits );
+		lMore->addRow( cb_git_evoVisualizeMethod );
+		lMore->addRow( cb_git_authors );
+		lMore->addRow( cb_git_files );
 	*/
 
 	//jurik
@@ -1249,11 +1249,11 @@ QWidget* CoreWindow::createMoreFeaturesTab( QFrame* line )
 	line = createLine();
 	lMore->addRow( line );
 
-	b_scale_default = new QPushButton();
-	b_scale_default->setText( "Center graph" );
-	b_scale_default->setMaximumWidth( 136 );
-	lMore->addRow( b_scale_default );
-	connect( b_scale_default, SIGNAL( clicked() ), this, SLOT( scaleArucoGraphToBase() ) );
+	b_start_projective_ar = new QPushButton( tr( "Start projective AR view" ) );
+	lMore->addRow( new QLabel( tr( "Projector view" ) ) );
+	b_start_projective_ar->setMaximumWidth( 136 );
+	lMore->addRow( b_start_projective_ar );
+	connect( b_start_projective_ar, SIGNAL( clicked() ), this, SLOT( createProjARWindow() ) );
 
 	//*****
 
@@ -4818,5 +4818,10 @@ void CoreWindow::swapManipulator()
 	viewerWidget->setCameraManipulator( NULL );
 }
 //*****
+
+void CoreWindow::createProjARWindow()
+{
+	QOSG::ProjectiveARCore::getInstance( NULL, this )->init( viewerWidget );
+}
 
 } // namespace QOSG
