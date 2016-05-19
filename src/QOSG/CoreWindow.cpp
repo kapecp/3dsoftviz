@@ -3424,7 +3424,10 @@ void CoreWindow::startLeap()
 		return;
 	}
 
-	this->mLeapThr = new Leap::LeapThread(this,new Leap::CustomCameraManipulator(getCameraManipulator()));
+    this->mLeapThr = new Leap::LeapThread(this,
+                                          new Leap::CustomCameraManipulator(getCameraManipulator(),
+                                                                            AppCore::Core::getInstance()->getLayoutThread(),
+                                                                            AppCore::Core::getInstance( NULL )->getCoreGraph()));
 	//CoUninitialize();
 
 	this->mLeapThr->start();
