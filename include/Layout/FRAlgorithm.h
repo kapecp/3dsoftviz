@@ -161,17 +161,17 @@ public:
 	    */
 	void setRepulsiveForceVertigo( int value );
 
-    //jurik
-    void setMaxDistance(float max_distance)
-        {
-            this->MAX_DISTANCE = max_distance;
-        }
+	//jurik
+	void setMaxDistance( float max_distance )
+	{
+		this->MAX_DISTANCE = max_distance;
+	}
 
-        float getMaxDistance()
-        {
-            return MAX_DISTANCE;
-        }
-    //*****
+	float getMaxDistance()
+	{
+		return MAX_DISTANCE;
+	}
+	//*****
 
 private:
 	Layout::RadialLayout* rl;
