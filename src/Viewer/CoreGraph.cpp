@@ -630,7 +630,7 @@ Vwr::CoreGraph::CoreGraph( Data::Graph* graph, osg::ref_ptr<osg::Camera> camera 
 	graphRotTransf = new osg::MatrixTransform();
 	graphGroup = new osg::Group();
     rotationMatrix = rotationMatrix.identity();
-    root->addChild(axesTransform);
+   // drawAxes();
 
     //jurik
     //lighting
@@ -662,7 +662,7 @@ Vwr::CoreGraph::CoreGraph( Data::Graph* graph, osg::ref_ptr<osg::Camera> camera 
     shadowedScene->addChild( graphRotTransf );
 
     createBase();
-    drawAxes();
+
     if(!arucoRunning)
         updateBase(2000);
 
@@ -1720,7 +1720,7 @@ void CoreGraph::drawAxes(){
     stateset->setAttributeAndModes(linewidth,osg::StateAttribute::ON);
     stateset->setMode(GL_LIGHTING,osg::StateAttribute::OFF);
     axesGeometry->setStateSet(stateset);
-
+    root->addChild(axesTransform);
     axesTransform->addChild(axesGeode);
 
    //base

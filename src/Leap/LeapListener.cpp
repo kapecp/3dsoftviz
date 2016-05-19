@@ -49,7 +49,7 @@ void Leap::LeapListener::onFrame( const Controller& controller )
             leapActions.rotateAruco( direction );
 
             if(gesture.type() == Gesture::TYPE_KEY_TAP){
-                qDebug()<<"rightTap";
+                //qDebug()<<"rightTap";
                     leapActions.scaleNodes(true);
             }
 		}
@@ -59,7 +59,7 @@ void Leap::LeapListener::onFrame( const Controller& controller )
             leapActions.scaleEdges( direction );
 
             if(gesture.type() == Gesture::TYPE_KEY_TAP){
-                    qDebug()<<"leftTap";
+                    //qDebug()<<"leftTap";
                     leapActions.scaleNodes(false);
             }
         }

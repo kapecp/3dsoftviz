@@ -2,6 +2,8 @@
 #include "Core/Core.h"
 #include "Viewer/CameraManipulator.h"
 #include "Viewer/MouseControl.h"
+#include "Layout/LayoutThread.h"
+#include "Layout/FRAlgorithm.h"
 
 Leap::LeapActions::LeapActions()
 {
