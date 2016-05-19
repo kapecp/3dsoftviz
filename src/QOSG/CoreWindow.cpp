@@ -820,7 +820,7 @@ void CoreWindow::createMenus()
 	examples->addAction( exampleGraphVeolia );
 	examples->addAction( exampleGraphLua );
 
-	backgroundMenu = menuBar()->addMenu("Change Background");
+	backgroundMenu = menuBar()->addMenu( "Change Background" );
 	backgroundMenu->addAction( switchBackgroundSkyBoxAction );
 	backgroundMenu->addAction( switchBackgroundBlackAction );
 	backgroundMenu->addAction( switchBackgroundWhiteAction );
@@ -1614,8 +1614,8 @@ void CoreWindow::loadFile()
 	if ( dialog.exec() ) {
 		QStringList filenames = dialog.selectedFiles();
 		fileName = filenames.at( 0 );
-		QFileInfo check_file(fileName);
-		if ( check_file.exists() && check_file.isFile() ){
+		QFileInfo check_file( fileName );
+		if ( check_file.exists() && check_file.isFile() ) {
 			//do something only if valid file was selected
 
 			// Duransky start - vynulovanie vertigo rovin pri nacitani noveho grafu
@@ -1658,7 +1658,7 @@ void CoreWindow::loadExampleGraphBasic100()
 
 	Manager::GraphManager::getInstance()->loadGraph( "../share/3dsoftviz/graphExamples/tree100.graphml" );
 
-		viewerWidget->getCameraManipulator()->home();
+	viewerWidget->getCameraManipulator()->home();
 
 	//treba overit ci funguje
 	if ( isPlaying ) {
@@ -1712,7 +1712,7 @@ void CoreWindow::loadExampleGraphVeolia()
 
 	Manager::GraphManager::getInstance()->loadGraph( "../share/3dsoftviz/graphExamples/veolia.graphml" );
 
-		viewerWidget->getCameraManipulator()->home();
+	viewerWidget->getCameraManipulator()->home();
 
 	//treba overit ci funguje
 	if ( isPlaying ) {
@@ -1889,13 +1889,14 @@ void CoreWindow::loadLuaGraph()
 
 	Data::Graph* currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
 
-	if( currentGraph == NULL ) {
+	if ( currentGraph == NULL ) {
 		currentGraph = Manager::GraphManager::getInstance()->createNewGraph( "LuaGraph" );
 	}
 
 }
 
-void CoreWindow::pauseLayout() {
+void CoreWindow::pauseLayout()
+{
 	if ( this-> isPlaying ) {
 		play->setIcon( QIcon( "../share/3dsoftviz/img/gui/play.png" ) );
 		isPlaying = 0;
@@ -1903,7 +1904,8 @@ void CoreWindow::pauseLayout() {
 		coreGraph->setNodesFreezed( true );
 	}
 }
-void CoreWindow::playLayout() {
+void CoreWindow::playLayout()
+{
 	if ( !this->isPlaying ) {
 		play->setIcon( QIcon( "../share/3dsoftviz/img/gui/pause.png" ) );
 		isPlaying = 1;
@@ -1913,7 +1915,8 @@ void CoreWindow::playLayout() {
 }
 
 // Dynamic background switching
-void CoreWindow::switchBackgroundSkyBox() {
+void CoreWindow::switchBackgroundSkyBox()
+{
 	LOG( INFO ) << "CoreWindow::switchBackgroundSkyBox switching to SkyBox bg";
 	Data::Graph* currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
 

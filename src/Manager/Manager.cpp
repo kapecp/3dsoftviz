@@ -389,11 +389,11 @@ Data::Graph* Manager::GraphManager::importEvolutionGraph( QString filepath )
 
 
 		//this->activeGraph = updater.getActiveGraph();
-		 
+
 		std::shared_ptr<Data::Graph> newGraph( updater.getActiveGraph() );
 		this->activeGraph = newGraph;
 
-		
+
 	}
 
 	// Restartnem layout
