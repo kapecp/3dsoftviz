@@ -30,7 +30,8 @@ void Lua::SimpleGraphVisualizer::visualize()
 		}
 		LuaIncidence* const incid1 = g->getIncidences()->value( i.value()->getIncidences()[0] );
 		LuaIncidence* const incid2 = g->getIncidences()->value( i.value()->getIncidences()[1] );
-		osg::ref_ptr<Data::Node> srcNode = currentGraph->getNodes()->value( incid1->getEdgeNodePair().second );
+
+        osg::ref_ptr<Data::Node> srcNode = currentGraph->getNodes()->value( incid1->getEdgeNodePair().second );
 		osg::ref_ptr<Data::Node> dstNode = currentGraph->getNodes()->value( incid2->getEdgeNodePair().second );
 		osg::ref_ptr<Data::Edge> newEdge;
 		if ( incid1->getOriented() ) {
@@ -64,13 +65,13 @@ void Lua::SimpleGraphVisualizer::visualize()
 			osg::ref_ptr<Data::Node> root = currentGraph->getNodes()->value( i.key() );
 			osg::ref_ptr<Data::Edge> metaLink = currentGraph->addEdge( metaEdgeName, root, filesAnchor, currentGraph->getEdgeMetaType(), false );
 			metaLink->setEdgeColor( osg::Vec4( 0,0,0,0 ) );
-			metaLink->setInvisible( true );
+            metaLink->setInvisible( true );
 		}
 		if ( i.value()->getParams()["type"] == "function" ) {
 			osg::ref_ptr<Data::Node> func = currentGraph->getNodes()->value( i.key() );
 			osg::ref_ptr<Data::Edge> metaLink = currentGraph->addEdge( metaEdgeName, func, functionsAnchor, currentGraph->getEdgeMetaType(), false );
 			metaLink->setEdgeColor( osg::Vec4( 0,0,0,0 ) );
-			metaLink->setInvisible( true );
+            metaLink->setInvisible( true );
 			metaLink->setEdgeStrength( 0.1f );
 		}
 	}

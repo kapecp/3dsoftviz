@@ -259,7 +259,12 @@ protected:
 		*  \brief true, if left mouse button pressed
 		*/
 	bool leftButtonPressed;
-
+    //jurik aruco movement prototype
+    //rotate graph out without camera manipulator
+    bool rightButtonPressed;
+    double initialX = 0;
+    double initialY = 0;
+    //*****
 	// Perform a pick operation.
 	bool pick( const double xMin, const double yMin, const double xMax, const double yMax, osgViewer::Viewer* viewer );
 

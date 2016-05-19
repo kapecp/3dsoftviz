@@ -1221,11 +1221,27 @@ QWidget* CoreWindow::createMoreFeaturesTab( QFrame* line )
 	lMore->addRow( chb_shadow );
 	connect( chb_shadow, SIGNAL( clicked() ), this, SLOT( shadowClicked() ) );
 
-	chb_base = new QCheckBox( "&Base" );
-	chb_base->setChecked( false );
-	lMore->addRow( chb_base );
-	connect( chb_base, SIGNAL( clicked() ), this, SLOT( baseClicked() ) );
-	//*****
+    chb_base = new QCheckBox( "&Base" );
+    chb_base->setChecked( false );
+    lMore->addRow( chb_base );
+    connect( chb_base, SIGNAL( clicked() ), this, SLOT( baseClicked() ) );
+
+    chb_axes = new QCheckBox( "&Axes" );
+    chb_axes->setChecked( false );
+    lMore->addRow( chb_axes );
+    connect( chb_axes, SIGNAL( clicked() ), this, SLOT( axesClicked() ) );
+
+
+    line = createLine();
+    lMore->addRow( line );
+
+    b_scale_default = new QPushButton();
+    b_scale_default->setText( "Center graph" );
+    b_scale_default->setMaximumWidth( 136 );
+    lMore->addRow( b_scale_default );
+    connect( b_scale_default, SIGNAL( clicked() ), this, SLOT( scaleArucoGraphToBase() ) );
+
+    //*****
 
 	wMore->setLayout( lMore );
 
@@ -4513,15 +4529,44 @@ void CoreWindow::shadowClicked()
 
 void CoreWindow::baseClicked()
 {
-	// chb_light is checked
-	if ( chb_base->isChecked() ) {
+    // chb_base is checked
+    if ( chb_base->isChecked() ) {
 
-		this->coreGraph->turnOnBase();
-	 }
-	else {
+        this->layout->pause();
+        this->coreGraph->turnOnBase();
+        this->coreGraph->scaleGraphToBase();
+        this->layout->play();
 
+     }
+    else {
 		this->coreGraph->turnOffBase();
 	}
+}
+
+void CoreWindow::axesClicked()
+{
+    // chb_axes is checked
+    if ( chb_axes->isChecked() ) {
+
+        this->coreGraph->turnAxes(true);
+     }
+    else {
+
+        this->coreGraph->turnAxes(false);
+    }
+}
+
+void CoreWindow::scaleArucoGraphToBase()
+{
+    this->layout->pause();
+    this->coreGraph->scaleGraphToBase();
+    this->layout->play();
+}
+
+//works only from softVis to ArUco
+void CoreWindow::swapManipulator()
+{
+    viewerWidget->setCameraManipulator(NULL);
 }
 //*****
 

@@ -104,8 +104,8 @@ void  OpenCV::OpenCVCore::createPermanentConnection()
 					  AppCore::Core::getInstance( mApp )->getCoreWindow()->getCameraManipulator(),
 					  SLOT( setRotationHeadFaceDet( float,float,float ) ) );
 
-	//  sending result data from aruco
-	QObject::connect( mThrAruco,
+    //  sending result data from aruco - M.Garaj(TP) first ArUco try
+    /*QObject::connect( mThrAruco,
 					  SIGNAL( sendArucoPosVec( osg::Vec3d ) ),
 					  AppCore::Core::getInstance( mApp )->getCoreWindow()->getCameraManipulator(),
 					  SLOT( updateArucoGraphPosition( osg::Vec3d ) ) );
@@ -116,8 +116,18 @@ void  OpenCV::OpenCVCore::createPermanentConnection()
 	QObject::connect( mThrAruco,
 					  SIGNAL( sendArucoPosAndQuat( osg::Quat,osg::Vec3d ) ),
 					  AppCore::Core::getInstance( mApp )->getCoreGraph(),
-					  SLOT( updateGraphPosAndRotByAruco( osg::Quat, osg::Vec3d ) ) );
+                      SLOT( updateGraphPosAndRotByAruco( osg::Quat, osg::Vec3d ) ) );*/
 
+    //jurik
+    //sending matrices via Qt
+    QObject::connect( mThrAruco,
+                      SIGNAL( sendProjectionMatrix(QMatrix4x4) ),
+                      AppCore::Core::getInstance( mApp )->getCoreGraph(),
+                      SLOT( recievedPMatrix( QMatrix4x4 ) ) );
+    QObject::connect( mThrAruco,
+                      SIGNAL( sendModelViewMatrix(QMatrix4x4) ),
+                      AppCore::Core::getInstance( mApp )->getCoreGraph(),
+                      SLOT( recievedMVMatrix( QMatrix4x4 ) ));
 
 	// updating background image
 	QObject::connect( mThrFaceRec,
@@ -312,7 +322,14 @@ void OpenCV::OpenCVCore::createConnectionAruco()
 					  SIGNAL( stopMultiMarker( bool ) ),
 					  mThrAruco,
 					  SLOT( setCancel( bool ) ) );
-
+    QObject::connect( mOpencvWindow,
+                      SIGNAL( startMarker() ),
+                      AppCore::Core::getInstance( mApp )->getCoreWindow(),
+                      SLOT( swapManipulator()) );
+    QObject::connect( mOpencvWindow,
+                      SIGNAL( arucoRunning(bool) ),
+                      AppCore::Core::getInstance( mApp )->getCoreGraph(),
+                      SLOT( setArucoRunning(bool)) );
 
 	// other seting
 	QObject::connect( mOpencvWindow->getMarkerBehindCB(),

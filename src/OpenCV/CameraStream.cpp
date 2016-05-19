@@ -91,4 +91,7 @@ void CameraStream::updateGeometryCoords( int width, int height )
 
 }
 
+IplImage* CameraStream::getIplImage(){
+    return iplImg;
+}
 } // namespace OpenCV
