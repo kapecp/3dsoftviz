@@ -72,10 +72,10 @@ public:
 	LeapCameraManipulator* cameraManipulator;
 
 	//jurik
-	void Leap::LeapActions::graphRotateSwipe( int swipeDirection );
-	void Leap::LeapActions::rotateAruco( Leap::DirectionDetector::Direction direction );
-	void Leap::LeapActions::scaleEdges( Leap::DirectionDetector::Direction direction );
-	void Leap::LeapActions::scaleNodes( bool scaleUp );
+	void graphRotateSwipe( int swipeDirection );
+	void rotateAruco( Leap::DirectionDetector::Direction direction );
+	void scaleEdges( Leap::DirectionDetector::Direction direction );
+	void scaleNodes( bool scaleUp );
 	//*****
 };
 }

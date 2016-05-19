@@ -10,6 +10,7 @@
 #include "Viewer/DataHelper.h"
 
 #include <QDebug>
+#include <QMatrix4x4>
 
 #include <osgManipulator/TranslateAxisDragger>
 
@@ -685,42 +686,41 @@ Vwr::CoreGraph::CoreGraph( Data::Graph* graph, osg::ref_ptr<osg::Camera> camera 
 	reload( graph );
 }
 
-int CoreGraph::updateBackground( int bgVal, Data::Graph* currentGraph )
-LOG( INFO ) << "CoreGraph::updateBackground - updating background";
+int CoreGraph::updateBackground( int bgVal, Data::Graph* currentGraph ) {
+	LOG( INFO ) << "CoreGraph::updateBackground - updating background";
 
-osg::Group* root = this->getScene();
-if ( root->removeChild( root->getNumChildren()-1 ) == true )
-{
+	osg::Group* root = this->getScene();
+	if ( root->removeChild( root->getNumChildren()-1 ) == true )
+	{
+		if ( bgVal == 0 ) { // default skybox
+			SkyBox* skyBox = new SkyBox;
+			root->addChild( skyBox->createSkyBox( 0 ) );
+		}
+		else if ( bgVal == 1 ) { // noise skybox
+			root->addChild( createSkyNoiseBox() );
+		}
+		#ifdef OPENCV_FOUND
+		else if ( bgVal == 2 ) {
+			root->addChild( createTextureBackground() );
+		}
+		else if ( bgVal == 3 ) {
+			root->addChild( createOrtho2dBackground() );
+		}
+		#endif
+		else if ( bgVal == -1 ) {
+			SkyBox* skyBox = new SkyBox;
+			root->addChild( skyBox->createSkyBox( -1 ) ); // black skybox
+		}
+		else if ( bgVal == -2 ) {
+			SkyBox* skyBox = new SkyBox;
+			root->addChild( skyBox->createSkyBox( -2 ) ); // white skybox
+		}
 
-	if ( bgVal == 0 ) { // default skybox
-		SkyBox* skyBox = new SkyBox;
-		root->addChild( skyBox->createSkyBox( 0 ) );
-	}
-	else if ( bgVal == 1 ) { // noise skybox
-		root->addChild( createSkyNoiseBox() );
-	}
-#ifdef OPENCV_FOUND
-	else if ( bgVal == 2 ) {
-		root->addChild( createTextureBackground() );
-	}
-	else if ( bgVal == 3 ) {
-		root->addChild( createOrtho2dBackground() );
-	}
-#endif
-	else if ( bgVal == -1 ) {
-		SkyBox* skyBox = new SkyBox;
-		root->addChild( skyBox->createSkyBox( -1 ) ); // black skybox
-	}
-	else if ( bgVal == -2 ) {
-		SkyBox* skyBox = new SkyBox;
-		root->addChild( skyBox->createSkyBox( -2 ) ); // white skybox
+		reload( currentGraph );
+		return 0;
 	}
 
-	reload( currentGraph );
-	return 0;
-}
-
-return 1;
+	return 1;
 }
 
 void CoreGraph::reload( Data::Graph* graph )
@@ -1695,10 +1695,10 @@ void CoreGraph::ratata( double initialX,double actualX,double initialY, double a
 	}
 
 	/*if(actualY > initialY +5){
-	    rotationMatrix = rotationMatrix * rotationMatrix.rotate(-0.05,osg::Vec3f(1,0,0));
+		rotationMatrix = rotationMatrix * rotationMatrix.rotate(-0.05,osg::Vec3f(1,0,0));
 	}
 	if(actualY < initialY -5){
-	    rotationMatrix = rotationMatrix * rotationMatrix.rotate(0.05,osg::Vec3f(1,0,0));
+		rotationMatrix = rotationMatrix * rotationMatrix.rotate(0.05,osg::Vec3f(1,0,0));
 	}*/
 
 	graphRotTransf->setMatrix( transfGraph * rotationMatrix );
