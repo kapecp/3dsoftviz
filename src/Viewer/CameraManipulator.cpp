@@ -537,7 +537,7 @@ bool Vwr::CameraManipulator::calcMovement()
 						_delta_frame_time / ( _ga_t0->getTime() - _ga_t1->getTime() ) :
 						1.0;
 
-	if ( buttonMask==GUIEventAdapter::RIGHT_MOUSE_BUTTON ) {
+    if ( buttonMask==GUIEventAdapter::RIGHT_MOUSE_BUTTON ) {
 
 		// rotate camera.
 

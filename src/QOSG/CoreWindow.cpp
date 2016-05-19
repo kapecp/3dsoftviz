@@ -1215,6 +1215,45 @@ QWidget* CoreWindow::createMoreFeaturesTab( QFrame* line )
 	    lMore->addRow( cb_git_authors );
 	    lMore->addRow( cb_git_files );
 	*/
+
+	//jurik
+    line = createLine();
+    lMore->addRow( line );
+    lMore->addRow( new QLabel( tr( "Light and Shadow" ) ) );
+
+    chb_light = new QCheckBox( "&Custom light" );
+    chb_light->setChecked( false );
+    lMore->addRow( chb_light );
+    connect( chb_light, SIGNAL( clicked() ), this, SLOT( lightClicked() ) );
+
+    chb_shadow = new QCheckBox( "&Shadow" );
+    chb_shadow->setChecked( false );
+    lMore->addRow( chb_shadow );
+    connect( chb_shadow, SIGNAL( clicked() ), this, SLOT( shadowClicked() ) );
+
+    chb_base = new QCheckBox( "&Base" );
+    chb_base->setChecked( false );
+    lMore->addRow( chb_base );
+    connect( chb_base, SIGNAL( clicked() ), this, SLOT( baseClicked() ) );
+
+    chb_axes = new QCheckBox( "&Axes" );
+    chb_axes->setChecked( false );
+    lMore->addRow( chb_axes );
+    connect( chb_axes, SIGNAL( clicked() ), this, SLOT( axesClicked() ) );
+
+
+    line = createLine();
+    lMore->addRow( line );
+
+    b_scale_default = new QPushButton();
+    b_scale_default->setText( "Center graph" );
+    b_scale_default->setMaximumWidth( 136 );
+    lMore->addRow( b_scale_default );
+    connect( b_scale_default, SIGNAL( clicked() ), this, SLOT( scaleArucoGraphToBase() ) );
+
+    //*****
+	
+	
 	wMore->setLayout( lMore );
 
 	return wMore;
@@ -3468,7 +3507,10 @@ void CoreWindow::startLeap()
 		return;
 	}
 
-	this->mLeapThr = new Leap::LeapThread( this,new Leap::CustomCameraManipulator( getCameraManipulator() ) );
+    this->mLeapThr = new Leap::LeapThread(this,
+                                          new Leap::CustomCameraManipulator(getCameraManipulator(),
+                                                                            AppCore::Core::getInstance()->getLayoutThread(),
+                                                                            AppCore::Core::getInstance( NULL )->getCoreGraph()));
 	//CoUninitialize();
 
 	this->mLeapThr->start();
@@ -4732,15 +4774,44 @@ void CoreWindow::shadowClicked()
 
 void CoreWindow::baseClicked()
 {
-	// chb_light is checked
-	if ( chb_base->isChecked() ) {
+    // chb_base is checked
+    if ( chb_base->isChecked() ) {
 
-		this->coreGraph->turnOnBase();
-	}
-	else {
+        this->layout->pause();
+        this->coreGraph->turnOnBase();
+        this->coreGraph->scaleGraphToBase();
+        this->layout->play();
 
+     }
+    else {
 		this->coreGraph->turnOffBase();
 	}
+}
+
+void CoreWindow::axesClicked()
+{
+    // chb_axes is checked
+    if ( chb_axes->isChecked() ) {
+
+        this->coreGraph->turnAxes(true);
+     }
+    else {
+
+        this->coreGraph->turnAxes(false);
+    }
+}
+
+void CoreWindow::scaleArucoGraphToBase()
+{
+    this->layout->pause();
+    this->coreGraph->scaleGraphToBase();
+    this->layout->play();
+}
+
+//works only from softVis to ArUco
+void CoreWindow::swapManipulator()
+{
+    viewerWidget->setCameraManipulator(NULL);
 }
 //*****
 

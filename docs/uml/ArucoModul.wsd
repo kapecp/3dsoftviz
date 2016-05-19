@@ -1,0 +1,28 @@
+// Module ArucoModul
+// Autor: Team Reality Not Found
+
+@startuml
+scale 800 width
+
+!define arcr(x) ArucoCore
+!define arth(x) ArucoThread
+!define osg(x) OSG.OSG
+!define szdqe(x) Util.SizedQueue
+!define cmrprm(x) Aruco.CameraParameters
+!define markdet(x) Aruco.MarkerDetector
+!define armkr(x) Aruco.Marker
+
+
+package ArucoModul{
+class osg() #red
+class cmrprm() #red
+class markdet() #red
+class armkr() #red
+arth() -- osg()
+arth() -- szdqe()
+arth() -- arcr()
+arcr() -- cmrprm()
+arcr() -- markdet()
+arcr() -- armkr()
+}
+@enduml

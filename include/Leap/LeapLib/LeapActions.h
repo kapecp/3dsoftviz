@@ -70,6 +70,13 @@ public:
 	bool isCameraMoving;
 
 	LeapCameraManipulator* cameraManipulator;
+
+    //jurik
+    void Leap::LeapActions::graphRotateSwipe(int swipeDirection);
+    void Leap::LeapActions::rotateAruco(Leap::DirectionDetector::Direction direction );
+    void Leap::LeapActions::scaleEdges(Leap::DirectionDetector::Direction direction );
+    void Leap::LeapActions::scaleNodes(bool scaleUp);
+    //*****
 };
 }
 

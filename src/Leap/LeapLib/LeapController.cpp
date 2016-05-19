@@ -14,6 +14,7 @@ Leap::LeapController::~LeapController()
 
 void Leap::LeapController::startListening()
 {
+    enableGesture(Leap::Gesture::TYPE_SWIPE);
 	addListener( *leapListener );
 }
 

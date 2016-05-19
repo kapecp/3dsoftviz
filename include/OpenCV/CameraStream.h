@@ -34,6 +34,8 @@ public:
 	CameraStream( osg::Geometry* geom = NULL );
 	~CameraStream();
 
+    IplImage* getIplImage();
+
 
 public slots:
 
