@@ -704,6 +704,7 @@ endif()
 
 # add Leap
 if( LEAP_FOUND )
+        # WORKAROUND GARAJ comment
 	list( APPEND SRC ${SRC_LEAP} )
 endif()
 
