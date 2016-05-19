@@ -1,68 +1,47 @@
-// Architectura projektu 3DSoftViz
-// Autor: Team Reality Not Found
-
 @startuml
 package "Architektura 3DSoftViz" {
 
-component PostgreSQL <<database>>
+[Manager] -left- [Model]
+[Model] -left- [PostgreSQL]
+[Manager] - [Importer]
+[Manager] -down- [Data]
+[Data] -left- [Layout]
+[Data] - [Clustering]
+[Data] -down- [Viewer]
+[Viewer] -left- [Core]
+[Layout] -down- [Core]
+[Core] -down- [QOSG]
+[QOSG] -up- [Viewer]
+[Viewer] -down- [QOpenCV]
+[QOSG] - [QOpenCV]
+[QOpenCV] -down- [OpenCV]
+[QOpenCV] -down- [Aruco]
+[Viewer] - [LuaGraph]
+[Viewer] - [Network]
+[Math] -left- [Viewer]
+[Kinect] -left- [Viewer]
+[Viewer] - [Leap]
+[Leap] -down- [QOSG]
+[Kinect] -down- [QOSG]
 
-component Model <<component>>
-
-component Manager <<component>>
-
-component Importer <<component>>
-
-component Clustering <<component>>
-
-component Data <<component>>
-
-component Layout <<component>>
-
-component Core <<component>>
-
-component Noise <<component>>
-
-component Viewer <<component>>
-
-component QOSG <<component>>
-
-component Kinect <<component>>
-
-component Network <<component>>
-
-component Speech <<component>>
-
-component 5dtGloves <<component>>
-
-component Aruco <<component>>
-
-component QOpenCV <<component>>
-
-component OpenCV <<component>>
-
-PostgreSQL -d- Model
-Model -d- Manager
-Manager -d- Importer
-Manager -r- Data
-Data -u- Clustering
-Data -r- Viewer
-Data -d- Layout
-Layout -d- Core
-Core -u- Viewer
-Core -r- QOSG
-QOSG -u- Viewer
-QOSG -u- Kinect
-QOSG -u- Speech
-QOSG -u- 5dtGloves
-QOSG -r- QOpenCV
-QOpenCV -u- Aruco
-QOpenCV -d- OpenCV
-QOpenCV -l- Viewer
-Viewer -d- 5dtGloves
-Viewer -d- Speech
-Viewer -d- Kinect
-Viewer -u- Noise
-Viewer -u- Network
 }
+
+@enduml
+
+
+
+@startuml
+
+[Data] <- [Layout]
+[OpenCV] <-> [Kinect]
+[Core] -left-> [Kinect]
+[Core] -left-> [OpenCV]
+[Core] -> [QOSG]
+[Core] -down-> [Layout]
+[Core] -down-> [Viewer]
+[Viewer] -up- [QOSG]
+[Data] -left- [Manager]
+[Manager] <-up- [Importer]
+[Manager] -down- [ModelDAO]
 
 @enduml

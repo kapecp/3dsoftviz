@@ -423,8 +423,49 @@ Avatar je kužeľ, ktorého kruhová podstava znázorňuje smer, ktorým sa pou�
 
 | 
 
+Záložka EVOLUTION
+-----------------
+
+|EvolutionTab|
+- Po rozkliknutí tabu Evolution (1) sa zobrazia možnosti evolúcie
+
+  2. Lifespan - možnosť ponechania vymazaných uzlov vo vizualizácii. Prednastavená hodnota 0 znamená, že vymazané uzly sa automaticky vymažú z grafu. V prípade hodnoty väčšej ako 0 vymazané uzly v grafe zotrvávajú o verzie dlhšie podľa nastavenej hodnoty
+  3. Change commits - prepínač spracovania Git repozitáru. Ak je zaškrtnutý, inicializuje sa spracovanie na úroveň grafu volaní. V opačnom prípade - na úroveň histórie Git repozitáru
+  4. Kombo box s výberom vizualizácie - prepínanie sa medzi jednotlivými možnosťami vizualizácie grafu volaní	
+	  * *LuaStat* - vizualizácia softvérových metrík pomocou analýzy Lua zdrojového kódu
+	  * *Difference* - pohľad na zmeny, ktorými softvér prešiel pri prechode na novú verziu
+	  * *Changes* - aktivovanie filtrovania nad práve aktívnou vizualizáciou	
+	
+  5. Kombo box s výberom filtra - výber vhodnej skupiny filtra
+	  * Prednastavená možnosť *All* - všetky prvky grafu sú zobrazené
+	  * *Authors* - filtrovanie podľa autorov zmien v softvéri
+	  * *Structure* - filtrovanie podľa štruktúry	
+	
+  6. Kombo box zoznamu možností - moznosti zavisia od vybraneho filtru
+	  * zoznam autorov s možnosťou zobrazenia zmien všetkých autorov - *All*
+	  * štruktúra - *Files* (zobrazí v grafe volaní len uzly reprezentujúce adresáre a súbory), *Local Functions* (zobrazí rozšírenú možnosť Files spolu s uzlami lokálnych funkcií), *Global Functions* (zobrazia sa uzly možnosti Local Functions spolu s uzlami globálnych funkcií) a *Modules* (zobrazí všetky štruktúry, ktoré sa v grafe nachádzajú)
+
+|
+
+|AnimMenu|
+- panel ovládania evolúcie
+
+1. Prechod na predchádzajúcu verziu - možnosť, kedy sa stav grafu vráti o jednu verziu dozadu
+2. Prechod na nasledujúcu verziu - možnosť, kedy sa stav grafu posunie o jednu verziu dopredu
+3. Tlačidlo informácií o verzii - zobrazí informácie o aktuálne zobrazenej verzii. Medzi zobrazené informácie patrí identifikátor, autor a dátum commitu spolu so zoznamom súborov, ktoré boli zmenené
+4. Sputenie/zastavenie animácie - aktivovanie/zastavenie automatického prechodu na novú verziu
+5. Posuvník - presun na konkrétnu verziu pomocou skokového prechodu medzi verziami
+6. Indikátor verzie - poskytuje informáciu o aktuálne zobrazenej verzii
+7. Spomalenie animácie - regulovanie rýchlosti animácie
+8. Zrýchlenie animácie - regulovanie rýchlosti animácie
+
+|
+
 Záložka MORE FEATURES
 ---------------------
+
+|btn_360|
+- zapnutie 3D myšky (musí byť aktivovaný driver)
 
 |160317235006|
 - ak je zaškrtnuté, kamera nasmerovaná na graf sa pohybuje na základe pohybu tváre, značky alebo rúk, inak sa na základe týchto akcií rotuje samotný graf
@@ -465,6 +506,11 @@ Záložka MORE FEATURES
 Ukončiť túto akciu je možné tlačidlom „StopFaceRec“ (ak používateľ zatvoril okno, môže ho vrátiť na grafický interface opätovným kliknutím na „StartCamera“ a potom pozastaviť detekciu). V prípade detegovanej tváre (detekcia je reprezentovaná zeleným obdĺžnikom) sa kamera alebo graf pohybuje vďaka pohybu tváre.
 
 | 
+
+|160518190503|
+- okno pre výber snímacieho zariadenia 
+
+|
 
 |100000000000007000000041B635012D_png|
 - prispôsobenie ľavej strany okna pre ovládanie funkcionality rozpoznávania značky
@@ -512,6 +558,16 @@ Toto prepínanie a vypnutie zobrazenia video má vplyv len na zobrazenie v rámc
 
 | 
 
+|160518190900|
+- Interakcia s vizualizáciou v obohatenej realite
+
+	* Možnosť *Custom light*, vyznačená modrou, ktorá slúži na prepínanie vlastného a základného zdroja svetla
+	* Možnosť *Shadow*, vyznačená žltou, ktorá slúži na zapínanie a vypínanie generovania tieňov
+	* Možnosť *Base*, vyznačená červenou, ktorá slúži na zobrazenie a skrytie základne
+	* Možnosť *Axes*, vyznačená ružovou, ktorá slúži na zobrazenie a skrytie pomocných osí
+	* Tlačidlo *Center graph*, vyznačené svetlo modrou, ktoré slúži na umietnetie grafu nad stred základne
+
+
 **Okno pre prácu s kinectom a arucom**
 
 |1000000000000088000000179195620E_png|
@@ -542,7 +598,30 @@ Toto prepínanie a vypnutie zobrazenia video má vplyv len na zobrazenie v rámc
 |100000000000004700000029E932FAEF_png|
 - nastavenie práce s arucom
 
-| 
+|
+
+|160518144428|
+- zobrazenie okna projekčného zobrazenia
+
+|
+
+|160518144843|
+- v projekcnom zobrazeni - Projector - spinboxy na zmenu parametrov projektora (odhora) - zorné pole, pozícia (súradnice x, y, z), smer projekcie(súradnice x, y, z)
+
+|
+
+|160518145110|
+- v projekcnom zobrazeni - Viewer - spinboxy na zmenu parametrov pozorovateľa (odhora) - zorné pole, pozícia (súradnice x, y, z), smer projekcie (súradnice x, y, z)
+
+|
+
+|160518145709|
+- v projekcnom zobrazeni - Graph - spinboxy na zmenu parametrov grafu (odhora) - pozícia (súradnice x, y, z), polomer, checkbox Place graph na potvrdenie použitia parametrov grafu (štandartne označený)
+
+|
+
+|160518145922|
+- potvrdenie zadaných parametrov scény
 
 **Hlasové príkazy pre Speech**
 
@@ -588,266 +667,218 @@ Pri označení práve jedného vrcholu v poli sa zobrazí stromová štruktúra 
 |10000201000000AD00000018AD24406D|
 - prepínanie medzi zobrazovaním jedného prehliadača pre každý uzol a zobrazovaním jedného prehliadača pre všetky vyznačené uzly
 
+|
+
+Git repozitár
+-------------
+
+|Options|
+  1. Settings / Options - zobrazenie dialógového okna s konfiguráciou
+  2. Možnosť Git - zobrazia sa možnosti konfigurácie spracovania Git repozitáru
+  3. Možnosti konfigurácie spracovania Git repozitáru
+
+	* vyčlenenie adresárov (ExcludeDirectories) - ľubovoľný počet názvov adresárov oddelených znakom ",". Pre zadanú hodnotu sa pri spracovaní Git repozitáru odignorujú všetky súbory, ktoré vo svojej relatívnej ceste obsahujú adresár spec.
+	* ExtensionFilter - funguje obrátene, pričom ponecháva len tie súbory, ktorých koncovka súboru sa zhoduje s jednou zo zadaných hodnôt. Hodnota taktiež môže obsahovať viacero koncoviek súborov, pričom musia byť oddelené znakom ","
+	
+.. |Options| image:: images/Options.PNG
+
+.. |btn_360| image:: images/btn_360.png
+
+.. |EvolutionTab| image:: images/EvolutionTab.png
+
+.. |AnimMenu| image:: images/AnimMenu.PNG
+
+.. |160518144428| image:: images/160518144428.png
+
+.. |160518145110| image:: images/160518145110.png
+
+.. |160518145709| image:: images/160518145709.png
+
+.. |160518145922| image:: images/160518145922.png
+
+.. |160518190503| image:: images/160518190503.png
 
 .. |10000000000000880000001702681B5B_png| image:: images/10000000000000880000001702681B5B.png
 
-
 .. |10000000000000880000001888E20502_png| image:: images/10000000000000880000001888E20502.png
-
 
 .. |160317235006| image:: images/160317235006.png
 
-
 .. |160321173407| image:: images/160321173407.png
-
 
 .. |160321171923| image:: images/160321171923.png
 
+.. |160518144843| image:: images/160518144843.png
+
+.. |160518190900| image:: images/160518190900.png
 
 .. |100000000000004400000018BE4E0D99_png| image:: images/100000000000004400000018BE4E0D99.png
 
-
 .. |1000000000000088000000171E96B1AF_png| image:: images/1000000000000088000000171E96B1AF.png
-
 
 .. |100000000000008A00000016BC7855D7_png| image:: images/100000000000008A00000016BC7855D7.png
 
-
 .. |10000000000000520000000F5DEEA0DC_png| image:: images/10000000000000520000000F5DEEA0DC.png
-
 
 .. |100000000000004200000018B79C9F77_png| image:: images/100000000000004200000018B79C9F77.png
 
-
 .. |10000000000000880000001866413B76_png| image:: images/10000000000000880000001866413B76.png
 
-
 .. |100000000000008800000017A7D548F8_png| image:: images/100000000000008800000017A7D548F8.png
-
 
 .. |100000000000003B0000002D6D824B16_png| image:: images/100000000000003B0000002D6D824B16.png
     :width: 0.615in
     :height: 0.4689in
 
-
 .. |100000000000005E00000017B1B1298F_png| image:: images/100000000000005E00000017B1B1298F.png
-
 
 .. |100000000000008800000017419C7E57_png| image:: images/100000000000008800000017419C7E57.png
 
-
 .. |100000000000004200000018BF35D45D_png| image:: images/100000000000004200000018BF35D45D.png
-
 
 .. |100000000000008A00000022C0AD7A66_png| image:: images/100000000000008A00000022C0AD7A66.png
 
-
 .. |100000000000004200000018CB8B89FC_png| image:: images/100000000000004200000018CB8B89FC.png
-
 
 .. |100000000000008A0000001A6E8D8B4E_png| image:: images/100000000000008A0000001A6E8D8B4E.png
 
-
 .. |100000000000008A00000022787850BE_png| image:: images/100000000000008A00000022787850BE.png
-
 
 .. |10000000000000880000001723BA0C72_png| image:: images/10000000000000880000001723BA0C72.png
 
-
 .. |100000000000007000000041B635012D_png| image:: images/100000000000007000000041B635012D.png
-
 
 .. |100000000000008F00000088EB205EFA_png| image:: images/100000000000008F00000088EB205EFA.png
     :width: 1.4874in
     :height: 1.4154in
 
-
 .. |1000000000000044000000180B304C64_png| image:: images/1000000000000044000000180B304C64.png
-
 
 .. |10000000000000440000001877C11C86_png| image:: images/10000000000000440000001877C11C86.png
 
-
 .. |10000201000000630000002915638961_png| image:: images/10000201000000630000002915638961.png
-
 
 .. |100000000000003E00000031AFCE8E36_png| image:: images/100000000000003E00000031AFCE8E36.png
 
-
 .. |100000000000008E000000470C14C2FC_png| image:: images/100000000000008E000000470C14C2FC.png
-
 
 .. |100000000000008800000017CE90E148_png| image:: images/100000000000008800000017CE90E148.png
 
-
 .. |1000000000000065000000177C91CF62_png| image:: images/1000000000000065000000177C91CF62.png
-
 
 .. |100000000000006B00000042C3F83F22_png| image:: images/100000000000006B00000042C3F83F22.png
 
-
 .. |100000000000004400000018670A8433_png| image:: images/100000000000004400000018670A8433.png
-
 
 .. |100000000000006F0000004A7D9DFA6E_png| image:: images/100000000000006F0000004A7D9DFA6E.png
 
-
 .. |10000000000000440000001864F64134_png| image:: images/10000000000000440000001864F64134.png
-
 
 .. |100000000000008800000017EFA4E2A5_png| image:: images/100000000000008800000017EFA4E2A5.png
 
-
 .. |100000000000004400000018B2CDE863_png| image:: images/100000000000004400000018B2CDE863.png
-
 
 .. |10000000000000880000001840A22079_png| image:: images/10000000000000880000001840A22079.png
 
-
 .. |1000000000000088000000177AD5BFE4_png| image:: images/1000000000000088000000177AD5BFE4.png
-
 
 .. |100000000000008800000017D9BD7C96_png| image:: images/100000000000008800000017D9BD7C96.png
 
-
 .. |10000000000000580000000F1A585785_png| image:: images/10000000000000580000000F1A585785.png
-
 
 .. |100000000000008800000017471CE907_png| image:: images/100000000000008800000017471CE907.png
 
-
 .. |100000000000004400000018BEE97164_png| image:: images/100000000000004400000018BEE97164.png
-
 
 .. |1000000000000042000000182A4D4919_png| image:: images/1000000000000042000000182A4D4919.png
 
-
 .. |10000000000000890000001632A2B069_png| image:: images/10000000000000890000001632A2B069.png
-
 
 .. |10000000000000890000004AE3E8DCFB_png| image:: images/10000000000000890000004AE3E8DCFB.png
 
-
 .. |100000000000008D00000015E609BD30_png| image:: images/100000000000008D00000015E609BD30.png
-
 
 .. |100000000000008800000017AA0AED20_png| image:: images/100000000000008800000017AA0AED20.png
 
-
 .. |100000000000008A000000220A716225_png| image:: images/100000000000008A000000220A716225.png
-
 
 .. |1000000000000088000000170254F076_png| image:: images/1000000000000088000000170254F076.png
 
-
 .. |100000000000004400000019684B8DCF_png| image:: images/100000000000004400000019684B8DCF.png
-
 
 .. |1000000000000065000000173A10D902_png| image:: images/1000000000000065000000173A10D902.png
 
-
 .. |100000000000006700000016A5463953_png| image:: images/100000000000006700000016A5463953.png
-
 
 .. |100000000000004200000018784AA636_png| image:: images/100000000000004200000018784AA636.png
 
-
 .. |100000000000004400000018C96589BC_png| image:: images/100000000000004400000018C96589BC.png
-
 
 .. |100000000000008D00000015853A8A1A_png| image:: images/100000000000008D00000015853A8A1A.png
 
-
 .. |100000000000004F0000000FEC4CF6B8_png| image:: images/100000000000004F0000000FEC4CF6B8.png
-
 
 .. |10000000000000900000001DB1EF6F8A_png| image:: images/10000000000000900000001DB1EF6F8A.png
 
-
 .. |100000000000006500000017979E34AC_png| image:: images/100000000000006500000017979E34AC.png
-
 
 .. |10000000000000650000001796A2AF29_png| image:: images/10000000000000650000001796A2AF29.png
 
-
 .. |10000000000000890000002BADD2CCC3_png| image:: images/10000000000000890000002BADD2CCC3.png
-
 
 .. |100000000000008A000000163484BBE0_png| image:: images/100000000000008A000000163484BBE0.png
 
-
 .. |1000000000000044000000181DFF8FF2_png| image:: images/1000000000000044000000181DFF8FF2.png
 
-
 .. |100000000000003D0000000F5820E584_png| image:: images/100000000000003D0000000F5820E584.png
-
 
 .. |10000000000000AD00000017929650C3_png| image:: images/10000000000000AD00000017929650C3.png
     :width: 1.8024in
     :height: 0.2398in
 
-
 .. |100000000000004400000018F5649D01_png| image:: images/100000000000004400000018F5649D01.png
-
 
 .. |100000000000008800000017413B8E7C_png| image:: images/100000000000008800000017413B8E7C.png
     :width: 1.4169in
     :height: 0.2398in
 
-
 .. |100000000000008800000018F6B763F7_png| image:: images/100000000000008800000018F6B763F7.png
-
 
 .. |100000000000004700000029E932FAEF_png| image:: images/100000000000004700000029E932FAEF.png
     :width: 0.7398in
     :height: 0.4276in
 
-
 .. |10000000000000880000001757645A7E_png| image:: images/10000000000000880000001757645A7E.png
-
 
 .. |100000000000008700000017C7ACB39F_png| image:: images/100000000000008700000017C7ACB39F.png
 
-
 .. |1000000000000044000000182D96668B_png| image:: images/1000000000000044000000182D96668B.png
-
 
 .. |100000000000006B00000016E3D0F655_png| image:: images/100000000000006B00000016E3D0F655.png
     :width: 1.115in
     :height: 0.2295in
 
-
 .. |100000000000008C000000189BBE6071_png| image:: images/100000000000008C000000189BBE6071.png
-
 
 .. |100000000000005E0000000F773D7D28_png| image:: images/100000000000005E0000000F773D7D28.png
 
-
 .. |1000000000000044000000184655EF87_png| image:: images/1000000000000044000000184655EF87.png
-
 
 .. |10000000000000440000001852E1B1B5_png| image:: images/10000000000000440000001852E1B1B5.png
 
-
 .. |1000000000000088000000195BC88C75_png| image:: images/1000000000000088000000195BC88C75.png
-
 
 .. |100000000000003600000036926EBFDC_png| image:: images/100000000000003600000036926EBFDC.png
 
-
 .. |100000000000008C00000046A4D57BEB_png| image:: images/100000000000008C00000046A4D57BEB.png
-
 
 .. |100000000000004400000018D5CD6FF3_png| image:: images/100000000000004400000018D5CD6FF3.png
 
-
 .. |10000000000000880000001733C6ADD9_png| image:: images/10000000000000880000001733C6ADD9.png
-
 
 .. |100000000000007F00000016BB966294_png| image:: images/100000000000007F00000016BB966294.png
     :width: 1.3232in
     :height: 0.2295in
-
 
 .. |1000000000000088000000179195620E_png| image:: images/1000000000000088000000179195620E.png
 

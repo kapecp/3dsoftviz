@@ -1,6 +1,12 @@
 QOSG
 ====
 
+Nove pridane triedy:
+
+   .. uml::
+      
+      !include /uml/QOSGnew.wsd
+
 CoreWindow:
 
    .. uml::

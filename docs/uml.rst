@@ -16,6 +16,7 @@ Class Diagrams
    network
    qosg
    viewer
+   git
    3dmouse
    
 AppCore:
@@ -127,7 +128,11 @@ Use-case diagrams
 Sequence diagrams
 ~~~~~~~~~~~~~~~~~
 
-	-
+.. toctree::
+   :maxdepth: 2
+   
+   gitlua
+
 
 Statechart diagrams
 ~~~~~~~~~~~~~~~~~~~
