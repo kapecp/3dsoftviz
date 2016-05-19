@@ -36,8 +36,7 @@ AppCore::Core::Core( QApplication* app )
 	int width =appConf->getValue( "UI.MainWindow.DefaultWidth" ).toInt();
 	int height= appConf->getValue( "UI.MainWindow.DefaultHeight" ).toInt();
 
-	if( appConf->getValue( "Viewer.Display.Multiview" ).toInt() )
-	{
+	if ( appConf->getValue( "Viewer.Display.Multiview" ).toInt() ) {
 		int screenNum = appConf->getValue( "Viewer.Display.ScreenNum" ).toInt();
 		width = appConf->getValue( "Viewer.Display.MaxScreenWidth" ).toInt() * screenNum;
 		height = appConf->getValue( "Viewer.Display.MaxScreenHeight" ).toInt();

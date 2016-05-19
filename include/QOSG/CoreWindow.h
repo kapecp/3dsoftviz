@@ -227,26 +227,26 @@ public slots:
 				*  \brief Show dialog to select file which will be opened
 				*/
 	void loadFile();
-/**
-	 *  \fn public  loadexampleGraphBasic500
-	 *  \brief Load basic 100 node graph
-	 */
-void loadExampleGraphBasic100();
-/**
-	*  \fn public  loadexampleGraphBasic500
-	*  \brief Load basic 500 node graph
-	*/
-void loadExampleGraphBasic500();
-/**
-	*  \fn public  loadexampleGraphVeolia
-	*  \brief Load Veolia graph
-	*/
-void loadExampleGraphVeolia();
-/**
-	*  \fn public  loadexampleGraphLua
-	*  \brief Load basic lua graph
-	*/
-void loadExampleGraphLua();
+	/**
+		 *  \fn public  loadexampleGraphBasic500
+		 *  \brief Load basic 100 node graph
+		 */
+	void loadExampleGraphBasic100();
+	/**
+		*  \fn public  loadexampleGraphBasic500
+		*  \brief Load basic 500 node graph
+		*/
+	void loadExampleGraphBasic500();
+	/**
+		*  \fn public  loadexampleGraphVeolia
+		*  \brief Load Veolia graph
+		*/
+	void loadExampleGraphVeolia();
+	/**
+		*  \fn public  loadexampleGraphLua
+		*  \brief Load basic lua graph
+		*/
+	void loadExampleGraphLua();
 	/**
 				*  \fn public  loadFromGit
 				*  \brief Show dialog to write path to git repo which will be loaded
@@ -685,14 +685,14 @@ void loadExampleGraphLua();
 	 */
 	void changeLifespan( int value );
 
-    //jurik
-    void lightClicked();
-    void shadowClicked();
-    void baseClicked();
-    void axesClicked();
-    void scaleArucoGraphToBase();
-    void swapManipulator();
-    //*****
+	//jurik
+	void lightClicked();
+	void shadowClicked();
+	void baseClicked();
+	void axesClicked();
+	void scaleArucoGraphToBase();
+	void swapManipulator();
+	//*****
 
 private:
 
@@ -1457,72 +1457,72 @@ private:
 		*/
 	bool isEBPlaying;
 
-    //jurik
-    /**
-     *CheckBox for turning on custom light
-     *@brief chb_light
-     */
-    QCheckBox* chb_light;
+	//jurik
+	/**
+	 *CheckBox for turning on custom light
+	 *@brief chb_light
+	 */
+	QCheckBox* chb_light;
 
-    /**
-     *CheckBox for casting shadows of graph
-     *@brief chb_shadow
-     */
-    QCheckBox* chb_shadow;
+	/**
+	 *CheckBox for casting shadows of graph
+	 *@brief chb_shadow
+	 */
+	QCheckBox* chb_shadow;
 
-    /**
-     *CheckBox for showing base
-     *@brief chb_base
-     */
-    QCheckBox* chb_base;
+	/**
+	 *CheckBox for showing base
+	 *@brief chb_base
+	 */
+	QCheckBox* chb_base;
 
-    QCheckBox* chb_axes;
+	QCheckBox* chb_axes;
 
-    /**
-     *CheckBox for showing base
-     *@brief chb_base
-     */
-    QCheckBox* chb_scale;
+	/**
+	 *CheckBox for showing base
+	 *@brief chb_base
+	 */
+	QCheckBox* chb_scale;
 
-    /**
-     *Button for scaling graph to ArUco base
-     *@brief b_default_scale
-     */
-    QPushButton* b_scale_default;
+	/**
+	 *Button for scaling graph to ArUco base
+	 *@brief b_default_scale
+	 */
+	QPushButton* b_scale_default;
 
-    /**
-     *Button for scaling aruco graph up
-     *@brief b_default_scale
-     */
-    QPushButton* b_scale_up;
+	/**
+	 *Button for scaling aruco graph up
+	 *@brief b_default_scale
+	 */
+	QPushButton* b_scale_up;
 
-    /**
-     *Button for scaling aruco graph down
-     *@brief b_default_scale
-     */
-    QPushButton* b_scale_down;
+	/**
+	 *Button for scaling aruco graph down
+	 *@brief b_default_scale
+	 */
+	QPushButton* b_scale_down;
 
-    /**
-     *Button for rotating aruco graph
-     *@brief b_rotate_graph
-     */
-    QPushButton* b_rotate_graph;
-    //*****
+	/**
+	 *Button for rotating aruco graph
+	 *@brief b_rotate_graph
+	 */
+	QPushButton* b_rotate_graph;
+	//*****
 
 public:
 
-    //jurik
-    void setPlaying(bool play)
-    {
-        this->isPlaying = play;
-    }
+	//jurik
+	void setPlaying( bool play )
+	{
+		this->isPlaying = play;
+	}
 
-    bool getPlaying()
-    {
-        return isPlaying;
-    }
+	bool getPlaying()
+	{
+		return isPlaying;
+	}
 
-    //*****
+	//*****
 	void setRepulsiveForceInsideCluster( double repulsiveForceInsideCluster );
 	void hideRepulsiveForceSpinBox();
 

@@ -93,7 +93,7 @@ void ArucoThread::interchangeMarkers()
 void ArucoThread::run()
 {
 	cv::Mat frame;
-    mCancel = false;
+	mCancel = false;
 
 	// test if camera is set
 	if ( mCapVideo == NULL ) {
@@ -164,18 +164,18 @@ void ArucoThread::run()
 
 					}
 				}
-                //jurik
-                //set and send modelview matrix of detected marker
-                QMatrix4x4 modelviewmatrix = aCore.getDetectedMatrix(frame.clone());
-                emit sendModelViewMatrix(modelviewmatrix);
+				//jurik
+				//set and send modelview matrix of detected marker
+				QMatrix4x4 modelviewmatrix = aCore.getDetectedMatrix( frame.clone() );
+				emit sendModelViewMatrix( modelviewmatrix );
 
-                //set and send projection matrix of detected image
-                QMatrix4x4 projectionmatrix = aCore.getProjectionMatrix(frame.clone());
-                emit sendProjectionMatrix(projectionmatrix);
+				//set and send projection matrix of detected image
+				QMatrix4x4 projectionmatrix = aCore.getProjectionMatrix( frame.clone() );
+				emit sendProjectionMatrix( projectionmatrix );
 
-                //send marker size
-                emit sendMarkerSize(aCore.getMarkerSize());
-                //*****
+				//send marker size
+				emit sendMarkerSize( aCore.getMarkerSize() );
+				//*****
 			}
 			imagesSending( aCore, frame );
 

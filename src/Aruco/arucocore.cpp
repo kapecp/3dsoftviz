@@ -51,20 +51,21 @@ const QMatrix4x4 ArucoCore::getDetectedMatrix( cv::Mat inputImage )
 }
 
 //jurik
-const QMatrix4x4 ArucoCore::getProjectionMatrix(cv::Mat inputImage)
+const QMatrix4x4 ArucoCore::getProjectionMatrix( cv::Mat inputImage )
 {
-    double projectionMatrix[16];
+	double projectionMatrix[16];
 
-    mCamParam.resize( inputImage.size() );
-    //get projection matrix via ArUco
-    mCamParam.glGetProjectionMatrix(inputImage.size(),inputImage.size(),projectionMatrix,0.01,10000.0);
+	mCamParam.resize( inputImage.size() );
+	//get projection matrix via ArUco
+	mCamParam.glGetProjectionMatrix( inputImage.size(),inputImage.size(),projectionMatrix,0.01,10000.0 );
 
-    QMatrix4x4 matrix(projectionMatrix);
-    return matrix;
+	QMatrix4x4 matrix( projectionMatrix );
+	return matrix;
 }
 
-float ArucoCore::getMarkerSize(){
-    return this->mMarkerSize;
+float ArucoCore::getMarkerSize()
+{
+	return this->mMarkerSize;
 }
 
 //*****

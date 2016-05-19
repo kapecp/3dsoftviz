@@ -129,7 +129,7 @@ public:
 		*         currentGraph - graph background to be updated
 		*  \return 0 - success, 1 - fail
 		*/
-	int updateBackground(int bgVal, Data::Graph* currentGraph);
+	int updateBackground( int bgVal, Data::Graph* currentGraph );
 
 	/**
 		*  \fn inline public  getCustomNodeList
@@ -254,36 +254,37 @@ public:
 	OpenCV::CameraStream* getCameraStream() const;
 #endif
 
-    //jurik
-    /**
-        *  \fn public  set shadow technique to shadowMap
-        *  \brief
-        */
-    void turnOnShadows();
+	//jurik
+	/**
+	    *  \fn public  set shadow technique to shadowMap
+	    *  \brief
+	    */
+	void turnOnShadows();
 
-    /**
-        *  \fn public  set shadow technique to NULL
-        *  \brief
-        */
-    void turnOffShadows();
+	/**
+	    *  \fn public  set shadow technique to NULL
+	    *  \brief
+	    */
+	void turnOffShadows();
 
-    void turnOnBase();
-    void turnOffBase();    
-    void turnAxes(bool turnOn);
-    void createBase();
-    void scaleGraphToBase();
-    void scaleGraph(int scale);
-    void rotateGraph(int direction);
-    void outputMatrix(osg::Matrixd matrix);
-    void ratata(double initialX,double actualX,double initialY, double actualY);
-    void scaleNodes(bool scaleUp);
-    float getFurthestPosition(osg::Vec3f max,osg::Vec3f min);
-    void drawAxes();
+	void turnOnBase();
+	void turnOffBase();
+	void turnAxes( bool turnOn );
+	void createBase();
+	void scaleGraphToBase();
+	void scaleGraph( int scale );
+	void rotateGraph( int direction );
+	void outputMatrix( osg::Matrixd matrix );
+	void ratata( double initialX,double actualX,double initialY, double actualY );
+	void scaleNodes( bool scaleUp );
+	float getFurthestPosition( osg::Vec3f max,osg::Vec3f min );
+	void drawAxes();
 
-    bool isArucoRunning(){
-        return arucoRunning;
-    }
-    //*****
+	bool isArucoRunning()
+	{
+		return arucoRunning;
+	}
+	//*****
 
 public slots:
 
@@ -322,23 +323,23 @@ public slots:
 		 */
 	void setEdgeVisual( int index );
 
-    //jurik
-    /**
-         * @author Autor: Igor Jurík
-         * @brief update camera modelview matrix from aruco
-         */
-    void recievedMVMatrix(QMatrix4x4 modelViewMatrix);
+	//jurik
+	/**
+	     * @author Autor: Igor Jurík
+	     * @brief update camera modelview matrix from aruco
+	     */
+	void recievedMVMatrix( QMatrix4x4 modelViewMatrix );
 
-    /**
-         * @author Autor: Igor Jurík
-         * @brief update camera projection matrix from aruco
-         */
-    void recievedPMatrix(QMatrix4x4 modelViewMatrix);
+	/**
+	     * @author Autor: Igor Jurík
+	     * @brief update camera projection matrix from aruco
+	     */
+	void recievedPMatrix( QMatrix4x4 modelViewMatrix );
 
-    void updateBase (float size);
+	void updateBase( float size );
 
-    void setArucoRunning(bool isRunning);
-    //*****
+	void setArucoRunning( bool isRunning );
+	//*****
 
 private:
 
@@ -635,27 +636,27 @@ private:
 
 	osgManipulator::Translate2DDragger* manipulator;
 
-    //jurik
-    /**
-        *  osg::ref_ptr<osgShadow::ShadowedScene> shadowedScene
-        *  \brief node for shadows definition
-        */
-        osg::ref_ptr<osgShadow::ShadowedScene> shadowedScene;
+	//jurik
+	/**
+	    *  osg::ref_ptr<osgShadow::ShadowedScene> shadowedScene
+	    *  \brief node for shadows definition
+	    */
+	osg::ref_ptr<osgShadow::ShadowedScene> shadowedScene;
 
-    /**
-        * osg::Geode* baseGeode
-        *  \brief node base
-        */
-    osg::ref_ptr<osg::Geode> baseGeode;
-    osg::ref_ptr<osg::MatrixTransform> baseTransform;
-    //osg::ref_ptr<osg::PositionAttitudeTransform> baseTransform;
-    osg::Matrixd rotationMatrix;
-    float baseSize = 250;
-    bool arucoRunning = false;
-    osg::ref_ptr<osg::Geode> axesGeode;
-    osg::ref_ptr<osg::MatrixTransform> axesTransform;
+	/**
+	    * osg::Geode* baseGeode
+	    *  \brief node base
+	    */
+	osg::ref_ptr<osg::Geode> baseGeode;
+	osg::ref_ptr<osg::MatrixTransform> baseTransform;
+	//osg::ref_ptr<osg::PositionAttitudeTransform> baseTransform;
+	osg::Matrixd rotationMatrix;
+	float baseSize = 250;
+	bool arucoRunning = false;
+	osg::ref_ptr<osg::Geode> axesGeode;
+	osg::ref_ptr<osg::MatrixTransform> axesTransform;
 
-    //*****
+	//*****
 };
 }
 

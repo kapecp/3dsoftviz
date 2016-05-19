@@ -108,21 +108,21 @@ signals:
 	*/
 	void moveMouseArucoSignal( double positionX,double positionY,bool isClick, Qt::MouseButton button );
 
-    //jurik
-    /**
-    * @author Igor Jurík
-    * @brief sendModelViewMatrix sending modelview matrix of detected marker
-    */
-    void sendModelViewMatrix(QMatrix4x4 modelviewmatrix);
+	//jurik
+	/**
+	* @author Igor Jurík
+	* @brief sendModelViewMatrix sending modelview matrix of detected marker
+	*/
+	void sendModelViewMatrix( QMatrix4x4 modelviewmatrix );
 
-    /**
-    * @author Igor Jurík
-    * @brief sendProjectionMatrix sending projection matrix of detected marker
-    */
-    void sendProjectionMatrix(QMatrix4x4 projectionmatrix);
+	/**
+	* @author Igor Jurík
+	* @brief sendProjectionMatrix sending projection matrix of detected marker
+	*/
+	void sendProjectionMatrix( QMatrix4x4 projectionmatrix );
 
-    void sendMarkerSize(float markerSize);
-    //*****
+	void sendMarkerSize( float markerSize );
+	//*****
 
 public slots:
 	/**

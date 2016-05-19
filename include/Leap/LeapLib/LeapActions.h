@@ -20,7 +20,7 @@ public:
 	/**
 	 * @brief Initializes MouseControl and sets zoomCounter to 0
 	 */
-	LeapActions(LeapCameraManipulator* cameraManipulator);
+	LeapActions( LeapCameraManipulator* cameraManipulator );
 	~LeapActions();
 
 	/**
@@ -71,12 +71,12 @@ public:
 
 	LeapCameraManipulator* cameraManipulator;
 
-    //jurik
-    void Leap::LeapActions::graphRotateSwipe(int swipeDirection);
-    void Leap::LeapActions::rotateAruco(Leap::DirectionDetector::Direction direction );
-    void Leap::LeapActions::scaleEdges(Leap::DirectionDetector::Direction direction );
-    void Leap::LeapActions::scaleNodes(bool scaleUp);
-    //*****
+	//jurik
+	void Leap::LeapActions::graphRotateSwipe( int swipeDirection );
+	void Leap::LeapActions::rotateAruco( Leap::DirectionDetector::Direction direction );
+	void Leap::LeapActions::scaleEdges( Leap::DirectionDetector::Direction direction );
+	void Leap::LeapActions::scaleNodes( bool scaleUp );
+	//*****
 };
 }
 

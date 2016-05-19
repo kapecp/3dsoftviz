@@ -116,12 +116,12 @@ QList<QString> Repository::Git::GitUtils::getModifiedLuaNodesFromVersion( Reposi
 	        }
 	    }
 	*//*
-    foreach( QString string, identifiers ) {
-        QStringList list = string.split(";");
-        qDebug() << list.at( 0 ) << "->" << list.at( 1 ) << "from" << list.at( 2 );
-    }
+foreach( QString string, identifiers ) {
+    QStringList list = string.split(";");
+    qDebug() << list.at( 0 ) << "->" << list.at( 1 ) << "from" << list.at( 2 );
+}
 *//*
-    qDebug() << "Velkost vsetkych zmien = " << identifiers.size();
+qDebug() << "Velkost vsetkych zmien = " << identifiers.size();
 */
 	return identifiers;
 }

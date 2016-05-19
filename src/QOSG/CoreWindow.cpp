@@ -820,7 +820,7 @@ void CoreWindow::createMenus()
 	examples->addAction( exampleGraphVeolia );
 	examples->addAction( exampleGraphLua );
 
-	backgroundMenu = menuBar()->addMenu("Change Background");
+	backgroundMenu = menuBar()->addMenu( "Change Background" );
 	backgroundMenu->addAction( switchBackgroundSkyBoxAction );
 	backgroundMenu->addAction( switchBackgroundBlackAction );
 	backgroundMenu->addAction( switchBackgroundWhiteAction );
@@ -1217,43 +1217,43 @@ QWidget* CoreWindow::createMoreFeaturesTab( QFrame* line )
 	*/
 
 	//jurik
-    line = createLine();
-    lMore->addRow( line );
-    lMore->addRow( new QLabel( tr( "Light and Shadow" ) ) );
+	line = createLine();
+	lMore->addRow( line );
+	lMore->addRow( new QLabel( tr( "Light and Shadow" ) ) );
 
-    chb_light = new QCheckBox( "&Custom light" );
-    chb_light->setChecked( false );
-    lMore->addRow( chb_light );
-    connect( chb_light, SIGNAL( clicked() ), this, SLOT( lightClicked() ) );
+	chb_light = new QCheckBox( "&Custom light" );
+	chb_light->setChecked( false );
+	lMore->addRow( chb_light );
+	connect( chb_light, SIGNAL( clicked() ), this, SLOT( lightClicked() ) );
 
-    chb_shadow = new QCheckBox( "&Shadow" );
-    chb_shadow->setChecked( false );
-    lMore->addRow( chb_shadow );
-    connect( chb_shadow, SIGNAL( clicked() ), this, SLOT( shadowClicked() ) );
+	chb_shadow = new QCheckBox( "&Shadow" );
+	chb_shadow->setChecked( false );
+	lMore->addRow( chb_shadow );
+	connect( chb_shadow, SIGNAL( clicked() ), this, SLOT( shadowClicked() ) );
 
-    chb_base = new QCheckBox( "&Base" );
-    chb_base->setChecked( false );
-    lMore->addRow( chb_base );
-    connect( chb_base, SIGNAL( clicked() ), this, SLOT( baseClicked() ) );
+	chb_base = new QCheckBox( "&Base" );
+	chb_base->setChecked( false );
+	lMore->addRow( chb_base );
+	connect( chb_base, SIGNAL( clicked() ), this, SLOT( baseClicked() ) );
 
-    chb_axes = new QCheckBox( "&Axes" );
-    chb_axes->setChecked( false );
-    lMore->addRow( chb_axes );
-    connect( chb_axes, SIGNAL( clicked() ), this, SLOT( axesClicked() ) );
+	chb_axes = new QCheckBox( "&Axes" );
+	chb_axes->setChecked( false );
+	lMore->addRow( chb_axes );
+	connect( chb_axes, SIGNAL( clicked() ), this, SLOT( axesClicked() ) );
 
 
-    line = createLine();
-    lMore->addRow( line );
+	line = createLine();
+	lMore->addRow( line );
 
-    b_scale_default = new QPushButton();
-    b_scale_default->setText( "Center graph" );
-    b_scale_default->setMaximumWidth( 136 );
-    lMore->addRow( b_scale_default );
-    connect( b_scale_default, SIGNAL( clicked() ), this, SLOT( scaleArucoGraphToBase() ) );
+	b_scale_default = new QPushButton();
+	b_scale_default->setText( "Center graph" );
+	b_scale_default->setMaximumWidth( 136 );
+	lMore->addRow( b_scale_default );
+	connect( b_scale_default, SIGNAL( clicked() ), this, SLOT( scaleArucoGraphToBase() ) );
 
-    //*****
-	
-	
+	//*****
+
+
 	wMore->setLayout( lMore );
 
 	return wMore;
@@ -1653,8 +1653,8 @@ void CoreWindow::loadFile()
 	if ( dialog.exec() ) {
 		QStringList filenames = dialog.selectedFiles();
 		fileName = filenames.at( 0 );
-		QFileInfo check_file(fileName);
-		if ( check_file.exists() && check_file.isFile() ){
+		QFileInfo check_file( fileName );
+		if ( check_file.exists() && check_file.isFile() ) {
 			//do something only if valid file was selected
 
 			// Duransky start - vynulovanie vertigo rovin pri nacitani noveho grafu
@@ -1697,7 +1697,7 @@ void CoreWindow::loadExampleGraphBasic100()
 
 	Manager::GraphManager::getInstance()->loadGraph( "../share/3dsoftviz/graphExamples/tree100.graphml" );
 
-		viewerWidget->getCameraManipulator()->home();
+	viewerWidget->getCameraManipulator()->home();
 
 	//treba overit ci funguje
 	if ( isPlaying ) {
@@ -1724,7 +1724,7 @@ void CoreWindow::loadExampleGraphBasic500()
 
 	Manager::GraphManager::getInstance()->loadGraph( "../share/3dsoftviz/graphExamples/tree500.graphml" );
 
-		viewerWidget->getCameraManipulator()->home();
+	viewerWidget->getCameraManipulator()->home();
 
 	//treba overit ci funguje
 	if ( isPlaying ) {
@@ -1751,7 +1751,7 @@ void CoreWindow::loadExampleGraphVeolia()
 
 	Manager::GraphManager::getInstance()->loadGraph( "../share/3dsoftviz/graphExamples/veolia.graphml" );
 
-		viewerWidget->getCameraManipulator()->home();
+	viewerWidget->getCameraManipulator()->home();
 
 	//treba overit ci funguje
 	if ( isPlaying ) {
@@ -1928,13 +1928,14 @@ void CoreWindow::loadLuaGraph()
 
 	Data::Graph* currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
 
-	if( currentGraph == NULL ) {
+	if ( currentGraph == NULL ) {
 		currentGraph = Manager::GraphManager::getInstance()->createNewGraph( "LuaGraph" );
 	}
 
 }
 
-void CoreWindow::pauseLayout() {
+void CoreWindow::pauseLayout()
+{
 	if ( this-> isPlaying ) {
 		play->setIcon( QIcon( "../share/3dsoftviz/img/gui/play.png" ) );
 		isPlaying = 0;
@@ -1942,7 +1943,8 @@ void CoreWindow::pauseLayout() {
 		coreGraph->setNodesFreezed( true );
 	}
 }
-void CoreWindow::playLayout() {
+void CoreWindow::playLayout()
+{
 	if ( !this->isPlaying ) {
 		play->setIcon( QIcon( "../share/3dsoftviz/img/gui/pause.png" ) );
 		isPlaying = 1;
@@ -1952,107 +1954,125 @@ void CoreWindow::playLayout() {
 }
 
 // Dynamic background switching
-void CoreWindow::switchBackgroundSkyBox() {
-	LOG(INFO) << "CoreWindow::switchBackgroundSkyBox switching to SkyBox bg";
+void CoreWindow::switchBackgroundSkyBox()
+{
+	LOG( INFO ) << "CoreWindow::switchBackgroundSkyBox switching to SkyBox bg";
 	Data::Graph* currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
 
 	int flagPlay = 0;
-	if (this->isPlaying) {
+	if ( this->isPlaying ) {
 		flagPlay = 1;
 		pauseLayout();
 	}
-	if (coreGraph->updateBackground(0, currentGraph) == 0) {
-		LOG(INFO) << "Background successfully updated";
+	if ( coreGraph->updateBackground( 0, currentGraph ) == 0 ) {
+		LOG( INFO ) << "Background successfully updated";
 	}
 	else {
-		LOG(ERROR) << "Background bg update failed";
+		LOG( ERROR ) << "Background bg update failed";
 	}
-	if (flagPlay == 1) playLayout();
+	if ( flagPlay == 1 ) {
+		playLayout();
+	}
 }
-void CoreWindow::switchBackgroundBlack() {
-	LOG(INFO) << "CoreWindow::switchBackgroundBlack switching to black color bg";
+void CoreWindow::switchBackgroundBlack()
+{
+	LOG( INFO ) << "CoreWindow::switchBackgroundBlack switching to black color bg";
 	Data::Graph* currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
 
 	int flagPlay = 0;
-	if (this->isPlaying) {
+	if ( this->isPlaying ) {
 		flagPlay = 1;
 		pauseLayout();
 	}
-	if (coreGraph->updateBackground(-1, currentGraph) == 0) {
-		LOG(INFO) << "Background successfully updated";
+	if ( coreGraph->updateBackground( -1, currentGraph ) == 0 ) {
+		LOG( INFO ) << "Background successfully updated";
 	}
 	else {
-		LOG(ERROR) << "Background bg update failed";
+		LOG( ERROR ) << "Background bg update failed";
 	}
-	if (flagPlay == 1) playLayout();
+	if ( flagPlay == 1 ) {
+		playLayout();
+	}
 }
-void CoreWindow::switchBackgroundWhite() {
-	LOG(INFO) << "CoreWindow::switchBackgroundWhite switching to white color bg";
+void CoreWindow::switchBackgroundWhite()
+{
+	LOG( INFO ) << "CoreWindow::switchBackgroundWhite switching to white color bg";
 	Data::Graph* currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
 
 	int flagPlay = 0;
-	if (this->isPlaying) {
+	if ( this->isPlaying ) {
 		flagPlay = 1;
 		pauseLayout();
 	}
-	if (coreGraph->updateBackground(-2, currentGraph) == 0) {
-		LOG(INFO) << "Background successfully updated";
+	if ( coreGraph->updateBackground( -2, currentGraph ) == 0 ) {
+		LOG( INFO ) << "Background successfully updated";
 	}
 	else {
-		LOG(ERROR) << "Background bg update failed";
+		LOG( ERROR ) << "Background bg update failed";
 	}
-	if (flagPlay == 1) playLayout();
+	if ( flagPlay == 1 ) {
+		playLayout();
+	}
 }
-void CoreWindow::switchBackgroundSkyNoiseBox() {
-	LOG(INFO) << "CoreWindow::switchBackgroundSkyNoiseBox switching to SkyNoiseBox bg";
+void CoreWindow::switchBackgroundSkyNoiseBox()
+{
+	LOG( INFO ) << "CoreWindow::switchBackgroundSkyNoiseBox switching to SkyNoiseBox bg";
 	Data::Graph* currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
 
 	int flagPlay = 0;
-	if (this->isPlaying) {
+	if ( this->isPlaying ) {
 		flagPlay = 1;
 		pauseLayout();
 	}
-	if (coreGraph->updateBackground(1, currentGraph) == 0) {
-		LOG(INFO) << "Background successfully updated";
+	if ( coreGraph->updateBackground( 1, currentGraph ) == 0 ) {
+		LOG( INFO ) << "Background successfully updated";
 	}
 	else {
-		LOG(ERROR) << "Background bg update failed";
+		LOG( ERROR ) << "Background bg update failed";
 	}
-	if (flagPlay == 1) playLayout();
+	if ( flagPlay == 1 ) {
+		playLayout();
+	}
 }
-void CoreWindow::switchBackgroundTexture() {
-	LOG(INFO) << "CoreWindow::switchBackgroundTexture switching to Texture bg";
+void CoreWindow::switchBackgroundTexture()
+{
+	LOG( INFO ) << "CoreWindow::switchBackgroundTexture switching to Texture bg";
 	Data::Graph* currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
 
 	int flagPlay = 0;
-	if (this->isPlaying) {
+	if ( this->isPlaying ) {
 		flagPlay = 1;
 		pauseLayout();
 	}
-	if (coreGraph->updateBackground(2, currentGraph) == 0) {
-		LOG(INFO) << "Background successfully updated";
+	if ( coreGraph->updateBackground( 2, currentGraph ) == 0 ) {
+		LOG( INFO ) << "Background successfully updated";
 	}
 	else {
-		LOG(ERROR) << "Background bg update failed";
+		LOG( ERROR ) << "Background bg update failed";
 	}
-	if (flagPlay == 1) playLayout();
+	if ( flagPlay == 1 ) {
+		playLayout();
+	}
 }
-void CoreWindow::switchBackgroundOrtho2d() {
-	LOG(INFO) << "CoreWindow::switchBackgroundOrtho2d switching to Ortho2d bg";
+void CoreWindow::switchBackgroundOrtho2d()
+{
+	LOG( INFO ) << "CoreWindow::switchBackgroundOrtho2d switching to Ortho2d bg";
 	Data::Graph* currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
 
 	int flagPlay = 0;
-	if (this->isPlaying) {
+	if ( this->isPlaying ) {
 		flagPlay = 1;
 		pauseLayout();
 	}
-	if (coreGraph->updateBackground(3, currentGraph) == 0) {
-		LOG(INFO) << "Background successfully updated";
+	if ( coreGraph->updateBackground( 3, currentGraph ) == 0 ) {
+		LOG( INFO ) << "Background successfully updated";
 	}
 	else {
-		LOG(ERROR) << "Background bg update failed";
+		LOG( ERROR ) << "Background bg update failed";
 	}
-	if (flagPlay == 1) playLayout();
+	if ( flagPlay == 1 ) {
+		playLayout();
+	}
 }
 
 void CoreWindow::labelOnOff( bool )
@@ -3487,10 +3507,10 @@ void CoreWindow::startLeap()
 		return;
 	}
 
-    this->mLeapThr = new Leap::LeapThread(this,
-                                          new Leap::CustomCameraManipulator(getCameraManipulator(),
-                                                                            AppCore::Core::getInstance()->getLayoutThread(),
-                                                                            AppCore::Core::getInstance( NULL )->getCoreGraph()));
+	this->mLeapThr = new Leap::LeapThread( this,
+										   new Leap::CustomCameraManipulator( getCameraManipulator(),
+												   AppCore::Core::getInstance()->getLayoutThread(),
+												   AppCore::Core::getInstance( NULL )->getCoreGraph() ) );
 	//CoUninitialize();
 
 	this->mLeapThr->start();
@@ -4731,7 +4751,7 @@ void CoreWindow::lightClicked()
 
 		this->coreGraph->getScene()->getOrCreateStateSet()->setMode( GL_LIGHT0,osg::StateAttribute::OFF );
 		this->coreGraph->getScene()->getOrCreateStateSet()->setMode( GL_LIGHT1,osg::StateAttribute::ON );
-	 }
+	}
 	else {
 
 		this->coreGraph->getScene()->getOrCreateStateSet()->setMode( GL_LIGHT0,osg::StateAttribute::ON );
@@ -4745,7 +4765,7 @@ void CoreWindow::shadowClicked()
 	if ( chb_shadow->isChecked() ) {
 
 		this->coreGraph->turnOnShadows();
-	 }
+	}
 	else {
 
 		this->coreGraph->turnOffShadows();
@@ -4754,44 +4774,44 @@ void CoreWindow::shadowClicked()
 
 void CoreWindow::baseClicked()
 {
-    // chb_base is checked
-    if ( chb_base->isChecked() ) {
+	// chb_base is checked
+	if ( chb_base->isChecked() ) {
 
-        this->layout->pause();
-        this->coreGraph->turnOnBase();
-        this->coreGraph->scaleGraphToBase();
-        this->layout->play();
+		this->layout->pause();
+		this->coreGraph->turnOnBase();
+		this->coreGraph->scaleGraphToBase();
+		this->layout->play();
 
-     }
-    else {
+	}
+	else {
 		this->coreGraph->turnOffBase();
 	}
 }
 
 void CoreWindow::axesClicked()
 {
-    // chb_axes is checked
-    if ( chb_axes->isChecked() ) {
+	// chb_axes is checked
+	if ( chb_axes->isChecked() ) {
 
-        this->coreGraph->turnAxes(true);
-     }
-    else {
+		this->coreGraph->turnAxes( true );
+	}
+	else {
 
-        this->coreGraph->turnAxes(false);
-    }
+		this->coreGraph->turnAxes( false );
+	}
 }
 
 void CoreWindow::scaleArucoGraphToBase()
 {
-    this->layout->pause();
-    this->coreGraph->scaleGraphToBase();
-    this->layout->play();
+	this->layout->pause();
+	this->coreGraph->scaleGraphToBase();
+	this->layout->play();
 }
 
 //works only from softVis to ArUco
 void CoreWindow::swapManipulator()
 {
-    viewerWidget->setCameraManipulator(NULL);
+	viewerWidget->setCameraManipulator( NULL );
 }
 //*****
 

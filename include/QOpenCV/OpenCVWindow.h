@@ -211,7 +211,7 @@ signals:
 
 	void setKinectCaptureImage( bool set );
 
-    void arucoRunning( bool isRunning);
+	void arucoRunning( bool isRunning );
 
 public slots:
 	/**
