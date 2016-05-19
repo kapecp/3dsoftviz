@@ -61,6 +61,7 @@ class CameraManipulator;
 namespace QOSG {
 
 class ViewerQT;
+class ProjectiveARViewer;
 }
 
 namespace Network {
@@ -685,14 +686,13 @@ public slots:
 	 */
 	void changeLifespan( int value );
 
-	//jurik
-	void lightClicked();
-	void shadowClicked();
-	void baseClicked();
-	void axesClicked();
-	void scaleArucoGraphToBase();
-	void swapManipulator();
-	//*****
+    //jurik
+    void lightClicked();
+    void shadowClicked();
+    void baseClicked();
+
+    // kostan
+    void createProjARWindow();
 
 private:
 
@@ -1457,57 +1457,34 @@ private:
 		*/
 	bool isEBPlaying;
 
-	//jurik
-	/**
-	 *CheckBox for turning on custom light
-	 *@brief chb_light
-	 */
-	QCheckBox* chb_light;
+    //jurik
+    /**
+     *CheckBox for turning on custom light
+     *@brief chb_light
+     */
+    QCheckBox* chb_light;
 
-	/**
-	 *CheckBox for casting shadows of graph
-	 *@brief chb_shadow
-	 */
-	QCheckBox* chb_shadow;
+    /**
+     *CheckBox for casting shadows of graph
+     *@brief chb_shadow
+     */
+    QCheckBox* chb_shadow;
 
-	/**
-	 *CheckBox for showing base
-	 *@brief chb_base
-	 */
-	QCheckBox* chb_base;
+    /**
+     *CheckBox for showing base
+     *@brief chb_base
+     */
+    QCheckBox* chb_base;
 
-	QCheckBox* chb_axes;
+    // kostan
 
-	/**
-	 *CheckBox for showing base
-	 *@brief chb_base
-	 */
-	QCheckBox* chb_scale;
+    /**
+     *CheckBox for showing base
+     *@brief chb_base
+     */
+    QPushButton* b_start_projective_ar;
 
-	/**
-	 *Button for scaling graph to ArUco base
-	 *@brief b_default_scale
-	 */
-	QPushButton* b_scale_default;
-
-	/**
-	 *Button for scaling aruco graph up
-	 *@brief b_default_scale
-	 */
-	QPushButton* b_scale_up;
-
-	/**
-	 *Button for scaling aruco graph down
-	 *@brief b_default_scale
-	 */
-	QPushButton* b_scale_down;
-
-	/**
-	 *Button for rotating aruco graph
-	 *@brief b_rotate_graph
-	 */
-	QPushButton* b_rotate_graph;
-	//*****
+    //*****
 
 public:
 

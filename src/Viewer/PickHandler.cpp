@@ -14,6 +14,7 @@
 #include "Layout/LayoutThread.h"
 #include "Layout/FRAlgorithm.h"
 #include "Layout/Shape_Cube.h"
+#include "Layout/FRAlgorithm.h"
 
 #include "Util/ApplicationConfig.h"
 
@@ -366,7 +367,7 @@ bool PickHandler::handleKeyDown( const osgGA::GUIEventAdapter& ea, GUIActionAdap
 			}
 		}
 
-	}
+    }
 	//split stereo 3D
 	else if ( ea.getKey() == osgGA::GUIEventAdapter::KEY_G ) {
 		if ( splitviewMode == 0 ) {
@@ -414,7 +415,28 @@ bool PickHandler::handleKeyDown( const osgGA::GUIEventAdapter& ea, GUIActionAdap
 		distance = distance + 0.001f;
 		osg::DisplaySettings::instance()->setEyeSeparation( distance );
 		qDebug() << "Eye distance : " << distance;
-	}
+    }
+    else if ( ea.getKey() == osgGA::GUIEventAdapter::KEY_O ) {
+            if(isCtrlPressed){
+                //scale down
+                coreGraph->scaleNodes(false);
+            }
+            else{
+                //scale up
+                coreGraph->scaleNodes(true);
+            }
+        }
+        else if ( ea.getKey() == osgGA::GUIEventAdapter::KEY_P ) {
+            Layout::LayoutThread* layout = AppCore::Core::getInstance()->getLayoutThread();
+            float distance = layout->getAlg()->getMaxDistance();
+
+            if(isCtrlPressed){
+                layout->getAlg()->setMaxDistance(distance * 0.8);
+            }
+            else{
+                    layout->getAlg()->setMaxDistance(distance * 1.2);
+            }
+        }
 
 	return false;
 }
