@@ -5,6 +5,13 @@
 #include "GitLib/GitVersion.h"
 #include "GitLib/GitFileDiffBlock.h"
 #include "GitLib/GitFileDiffBlockLine.h"
+#include <QDebug>
+
+#include <QStringList>
+
+#include <QStringList>
+
+#include <QDebug>
 
 Repository::Git::GitEvolutionGraphManager* Repository::Git::GitEvolutionGraphManager::instance;
 Repository::Git::GitEvolutionGraph* Repository::Git::GitEvolutionGraphManager::masterEvolutionGraph;
@@ -29,14 +36,15 @@ Repository::Git::GitEvolutionGraphManager* Repository::Git::GitEvolutionGraphMan
 
 void Repository::Git::GitEvolutionGraphManager::setEvolutionGraph( Repository::Git::GitEvolutionGraph *evolutionGraph ) {
     this->masterEvolutionGraph = evolutionGraph;
+    cloneEvolutionGraph();
 }
 
-Repository::Git::GitEvolutionGraph* Repository::Git::GitEvolutionGraphManager::getEvolutionGraphByExtension( QString extensions ) {
-    Repository::Git::GitEvolutionGraph* result = cloneEvolutionGraph();
+Repository::Git::GitEvolutionGraphManager* Repository::Git::GitEvolutionGraphManager::filterByExtension( QString extensions ) {
+//    Repository::Git::GitEvolutionGraph* result = cloneEvolutionGraph();
     QList<int> remove = QList<int>();
 
-    for( int i = 0; i < result->getVersions().size(); i++) {
-        Repository::Git::GitVersion* version = result->getVersions().at( i );
+    for( int i = 0; i < this->clonedEvolutionGraph->getVersions().size(); i++) {
+        Repository::Git::GitVersion* version = this->clonedEvolutionGraph->getVersion( i );
         QMap<QString, Repository::Git::GitFile*>* changedFiles = filterVersionByExtensions( version, extensions );
         if( changedFiles->size() > 0 ){
             version->setChangedFiles( changedFiles );
@@ -47,21 +55,22 @@ Repository::Git::GitEvolutionGraph* Repository::Git::GitEvolutionGraphManager::g
 
     if( remove.size() > 0 ) {
         for( int i = remove.size() - 1; i >= 0; i-- ) {
-            result->removeVersionAt( remove.at( i ) );
+            this->clonedEvolutionGraph->removeVersionAt( remove.at( i ) );
         }
     }
 
-    return result;
+    return instance;
 }
 
-Repository::Git::GitEvolutionGraph* Repository::Git::GitEvolutionGraphManager::getEvolutionGraphByAuthor( QString authorName ) {
-    Repository::Git::GitEvolutionGraph* result = cloneEvolutionGraph();
+Repository::Git::GitEvolutionGraphManager* Repository::Git::GitEvolutionGraphManager::filterByAuthor( QString authorName ) {
+//    Repository::Git::GitEvolutionGraph* result = cloneEvolutionGraph();
 
-    result->setVersions( filterVersionByAuthor( result, authorName ) );
+    this->clonedEvolutionGraph->setVersions( filterVersionByAuthor( this->clonedEvolutionGraph, authorName ) );
 
-    qDebug() << "Pocet verzii s autorom" << authorName << result->getVersions().size();
+//    qDebug() << "Pocet verzii s autorom" << authorName << this->clonedEvolutionGraph->getVersions().size();
 
-    return result;
+//    return result;
+    return instance;
 }
 
 QMap<QString, Repository::Git::GitFile*>* Repository::Git::GitEvolutionGraphManager::filterVersionByExtensions( Repository::Git::GitVersion *version, QString extensions ){
@@ -144,9 +153,9 @@ Repository::Git::GitVersion* Repository::Git::GitEvolutionGraphManager::cloneVer
     return result;
 }
 
-Repository::Git::GitEvolutionGraph* Repository::Git::GitEvolutionGraphManager::cloneEvolutionGraph() {
-    Repository::Git::GitEvolutionGraph* result = new Repository::Git::GitEvolutionGraph();
-    result->setFilePath( masterEvolutionGraph->getFilePath() );
+void Repository::Git::GitEvolutionGraphManager::cloneEvolutionGraph() {
+    this->clonedEvolutionGraph = new Repository::Git::GitEvolutionGraph();
+    this->clonedEvolutionGraph->setFilePath( masterEvolutionGraph->getFilePath() );
 
     QList<Repository::Git::GitVersion*> versions = QList<Repository::Git::GitVersion*>();
 
@@ -154,7 +163,65 @@ Repository::Git::GitEvolutionGraph* Repository::Git::GitEvolutionGraphManager::c
         versions.append( cloneVersion( version ) );
     }
 
-    result->setVersions( versions );
+    this->clonedEvolutionGraph->setVersions( versions );
 
+//    return result;
+}
+
+Repository::Git::GitEvolutionGraphManager* Repository::Git::GitEvolutionGraphManager::createEvolutionGraphClone() {
+    cloneEvolutionGraph();
+    return instance;
+}
+
+Repository::Git::GitEvolutionGraphManager* Repository::Git::GitEvolutionGraphManager::excludeDirectories( QString directories ) {
+    QList<int> remove = QList<int>();
+
+    for( int i = 0; i < this->clonedEvolutionGraph->getVersions().size(); i++ ) {
+        Repository::Git::GitVersion* version  = this->clonedEvolutionGraph->getVersion( i );
+        QMap<QString, Repository::Git::GitFile*>* changedFiles = filterVersionByDirectories( version, directories );
+        if( changedFiles->size() > 0 ) {
+            version->setChangedFiles( changedFiles );
+        } else {
+            remove.append( i );
+        }
+    }
+
+    if( remove.size() > 0 ) {
+        for( int i  = remove.size() - 1; i >= 0; i-- ) {
+            this->clonedEvolutionGraph->removeVersionAt( remove.at( i ) );
+        }
+    }
+
+    return instance;
+}
+
+QMap<QString, Repository::Git::GitFile*>* Repository::Git::GitEvolutionGraphManager::filterVersionByDirectories( Repository::Git::GitVersion *version, QString directories ) {
+    QMap<QString, Repository::Git::GitFile*>* result = new QMap<QString, Repository::Git::GitFile*>();
+
+    for( QMap<QString, Repository::Git::GitFile*>::iterator iterator = version->getChangedFiles()->begin(); iterator != version->getChangedFiles()->end(); ++iterator ) {
+        Repository::Git::GitFile* gitFile = iterator.value();
+
+        bool exclude = false;
+        QStringList list = directories.split( "," );
+
+        foreach( QString directory, list ) {
+            int index = gitFile->getFilepath().indexOf( directory + "/" );
+            if( index == 0 ) {
+                exclude = true;
+                break;
+            } else if( index > 0 && gitFile->getFilepath().at( index - 1 ) == '/' ) {
+                exclude = true;
+                break;
+            }
+        }
+
+        if( !exclude ) {
+            result->insert( gitFile->getIdentifier(), gitFile );
+        }
+    }
     return result;
+}
+
+Repository::Git::GitEvolutionGraph* Repository::Git::GitEvolutionGraphManager::getFilteredEvolutionGraph() {
+    return this->clonedEvolutionGraph;
 }

@@ -51,11 +51,11 @@ public:
         return this->name;
     }
 
-    void setId( int id ) {
+	void setId( qlonglong id ) {
         this->id = id;
     }
 
-    int getId() {
+	qlonglong getId() {
         return this->id;
     }
 
@@ -105,7 +105,7 @@ public:
         return this->functionRowNumber;
     }
 
-    void setFunctionRowNumber( int number ) {
+	void setFunctionRowNumber( long number ) {
         this->functionRowNumber = number;
     }
 
@@ -113,9 +113,9 @@ private:
 
     QString name;
 
-    int id;
+	qlonglong id;
 
-    int functionRowNumber;
+	long functionRowNumber;
 
     GitType type;
 
