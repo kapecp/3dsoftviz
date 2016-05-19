@@ -323,23 +323,7 @@ public slots:
 		 */
 	void setEdgeVisual( int index );
 
-	//jurik
-	/**
-	     * @author Autor: Igor Jurík
-	     * @brief update camera modelview matrix from aruco
-	     */
-	void recievedMVMatrix( QMatrix4x4 modelViewMatrix );
-
-	/**
-	     * @author Autor: Igor Jurík
-	     * @brief update camera projection matrix from aruco
-	     */
-	void recievedPMatrix( QMatrix4x4 modelViewMatrix );
-
-	void updateBase( float size );
-
-	void setArucoRunning( bool isRunning );
-	//*****
+    void scaleNodes(bool scaleUp);
 
 private:
 
@@ -648,13 +632,7 @@ private:
 	    *  \brief node base
 	    */
 	osg::ref_ptr<osg::Geode> baseGeode;
-	osg::ref_ptr<osg::MatrixTransform> baseTransform;
-	//osg::ref_ptr<osg::PositionAttitudeTransform> baseTransform;
-	osg::Matrixd rotationMatrix;
-	float baseSize = 250;
-	bool arucoRunning = false;
-	osg::ref_ptr<osg::Geode> axesGeode;
-	osg::ref_ptr<osg::MatrixTransform> axesTransform;
+    osg::ref_ptr<osg::PositionAttitudeTransform> baseTransform;
 
 	//*****
 };

@@ -5,6 +5,10 @@
 #include "QOSG/LoadGraphWindow.h"
 #include "QOSG/MessageWindows.h"
 
+#include "QOSG/ProjectiveARViewer.h"
+#include "QOSG/ProjectiveARWindow.h"
+#include "QOSG/ProjectiveARCore.h"
+
 #include "Network/Server.h"
 #include "Network/Client.h"
 
@@ -94,7 +98,7 @@ CoreWindow::CoreWindow( QWidget* parent, Vwr::CoreGraph* coreGraph, QApplication
 	createMetricsToolBar();
 
 	viewerWidget = new ViewerQT( this, 0, 0, 0, coreGraph );
-	viewerWidget->setSceneData( coreGraph->getScene() );
+    viewerWidget->setSceneData( coreGraph->getScene() );
 
 	setCentralWidget( viewerWidget );
 

@@ -9,17 +9,17 @@
 #include <math.h>
 
 QOSG::ViewerQT::ViewerQT( QWidget* parent , const char* name , const QGLWidget* shareWidget , WindowFlags f , Vwr::CoreGraph* cg ):
-	AdapterWidget( parent, name, shareWidget, f )
+    AdapterWidget( parent, name, shareWidget, f )
 {
-	this->cg = cg;
-	cg->setCamera( this->getCamera() );
+    this->cg = cg;
+    cg->setCamera( this->getCamera() );
 
-	this->mIsClicAruco=false;
+    this->mIsClicAruco=false;
 
-	appConf = Util::ApplicationConfig::get();
+    appConf = Util::ApplicationConfig::get();
 
-	//set StereoMode at launch
-	//osg::DisplaySettings::instance()->setStereoMode( osg::DisplaySettings::StereoMode::QUAD_BUFFER );
+    //osg::DisplaySettings::instance()->setStereo( ( appConf->getValue( "Viewer.Display.Stereoscopic" ).toInt() ? true : false ) );
+    //osg::DisplaySettings::instance()->setStereoMode( osg::DisplaySettings::ANAGLYPHIC );
 
 	double fovy = 60.0;
 	double nearClippingPlane = 0.01;
@@ -74,108 +74,108 @@ QOSG::ViewerQT::ViewerQT( QWidget* parent , const char* name , const QGLWidget* 
 	// Gloger: background to white color after disabling skybox
 	getCamera()->setClearColor( osg::Vec4( 0, 0, 0, 1 ) );
 
+    manipulator = new Vwr::CameraManipulator( cg );
+    QObject::connect( manipulator, SIGNAL( sendMouseRotation( osg::Quat ) ),
+                      cg, SLOT( updateGraphRotByMouse( osg::Quat ) ) );
+    QObject::connect( manipulator, SIGNAL( sendFaceDetRotation( osg::Quat ) ),
+                      cg, SLOT( updateGraphRotByFaceDet( osg::Quat ) ) );
 
-	manipulator = new Vwr::CameraManipulator( cg );
-	QObject::connect( manipulator, SIGNAL( sendMouseRotation( osg::Quat ) ),
-					  cg, SLOT( updateGraphRotByMouse( osg::Quat ) ) );
-	QObject::connect( manipulator, SIGNAL( sendFaceDetRotation( osg::Quat ) ),
-					  cg, SLOT( updateGraphRotByFaceDet( osg::Quat ) ) );
+    pickHandler = new Vwr::PickHandler( manipulator, cg );
 
-	pickHandler = new Vwr::PickHandler( manipulator, cg );
+    addEventHandler( new osgViewer::StatsHandler );
+    addEventHandler( pickHandler );
+    setCameraManipulator( manipulator );
 
-	addEventHandler( new osgViewer::StatsHandler );
-	addEventHandler( pickHandler );
-	setCameraManipulator( manipulator );
 
-	setThreadingModel( osgViewer::ViewerBase::SingleThreaded );
+    setThreadingModel( osgViewer::ViewerBase::SingleThreaded );
 
-	connect( &_timer, SIGNAL( timeout() ), this, SLOT( updateGL() ) );
+    connect( &_timer, SIGNAL( timeout() ), this, SLOT( updateGL() ) );
 
-	_timer.start( 10 );
+    _timer.start( 10 );
 }
 
 Vwr::PickHandler* QOSG::ViewerQT::getPickHandler() const
 {
-	return pickHandler;
+    return pickHandler;
 }
 
 Vwr::CameraManipulator* QOSG::ViewerQT::getCameraManipulator() const
 {
-	return manipulator;
+    return manipulator;
 }
 
 void QOSG::ViewerQT::reloadConfig()
 {
-	manipulator->setMaxSpeed( appConf->getValue( "Viewer.CameraManipulator.MaxSpeed" ).toFloat() );
-	manipulator->setTrackballSize( appConf->getValue( "Viewer.CameraManipulator.Sensitivity" ).toFloat() );
+    manipulator->setMaxSpeed( appConf->getValue( "Viewer.CameraManipulator.MaxSpeed" ).toFloat() );
+    manipulator->setTrackballSize( appConf->getValue( "Viewer.CameraManipulator.Sensitivity" ).toFloat() );
 
-	osg::DisplaySettings::instance()->setStereo( ( appConf->getValue( "Viewer.Display.Stereoscopic" ).toInt() ? true : false ) );
+    osg::DisplaySettings::instance()->setStereo( ( appConf->getValue( "Viewer.Display.Stereoscopic" ).toInt() ? true : false ) );
 }
 
 void QOSG::ViewerQT::paintGL()
 {
-	frame();
-	cg->update();
+    frame();
+    cg->update();
 }
 
 void QOSG::ViewerQT::moveMouseAruco( double positionX,double positionY,bool isClick,int windowX,int windowY ,Qt::MouseButton button )
 {
-	//qDebug() << positionX << "  " << positionY << "         " << isClick;
+    //qDebug() << positionX << "  " << positionY << "         " << isClick;
 
-	float wieverX = static_cast<float>( positionX * static_cast<float>( this->width() ) );
-	float wieverY = static_cast<float>( positionY * static_cast<float>( this->height() ) );
+    float wieverX = static_cast<float>( positionX * static_cast<float>( this->width() ) );
+    float wieverY = static_cast<float>( positionY * static_cast<float>( this->height() ) );
 
-	int screenX = static_cast<int>( positionX * this->width()  + this->x() + windowX + 8 );
-	int screenY = static_cast<int>( positionY * this->height() + this->y() + windowY + 28 );
+    int screenX = static_cast<int>( positionX * this->width()  + this->x() + windowX + 8 );
+    int screenY = static_cast<int>( positionY * this->height() + this->y() + windowY + 28 );
 
-	this->cursor().setPos( screenX, screenY );
+    this->cursor().setPos( screenX, screenY );
 
-	qDebug() << screenX << "  " << screenY ;
-	wieverY = ( static_cast<float>( this->height() ) - wieverY );
+    qDebug() << screenX << "  " << screenY ;
+    wieverY = ( static_cast<float>( this->height() ) - wieverY );
 
-	if ( isClick != mIsClicAruco ) {
-		mIsClicAruco = isClick;
+    if ( isClick != mIsClicAruco ) {
+        mIsClicAruco = isClick;
 
-		if ( isClick ) {
-			this->getEventQueue()->mouseButtonPress( wieverX, wieverY,button );
-			this->getEventQueue()->mouseMotion( wieverX, wieverY );
-		}
-		else {
-			this->getEventQueue()->mouseButtonRelease( wieverX, wieverY, button );
-			return;
-		}
-	}
-	this->getEventQueue()->mouseMotion( wieverX, wieverY );
+        if ( isClick ) {
+            this->getEventQueue()->mouseButtonPress( wieverX, wieverY,button );
+            this->getEventQueue()->mouseMotion( wieverX, wieverY );
+        }
+        else {
+            this->getEventQueue()->mouseButtonRelease( wieverX, wieverY, button );
+            return;
+        }
+    }
+    this->getEventQueue()->mouseMotion( wieverX, wieverY );
 }
 
 void QOSG::ViewerQT::moveMouseKinect( double positionX,double positionY,double speed,bool isClick,int windowX,int windowY ,Qt::MouseButton button )
 {
-	//qDebug() << positionX << "  " << positionY << "         " << isClick;
-	positionX /=640.0;
-	positionY/=480.0;
+    //qDebug() << positionX << "  " << positionY << "         " << isClick;
+    positionX /=640.0;
+    positionY/=480.0;
 
-	float wieverX = static_cast<float>( positionX * static_cast<float>( this->width() ) );
-	float wieverY = static_cast<float>( positionY * static_cast<float>( this->height() ) );
+    float wieverX = static_cast<float>( positionX * static_cast<float>( this->width() ) );
+    float wieverY = static_cast<float>( positionY * static_cast<float>( this->height() ) );
 
-	int screenX = static_cast<int>( positionX * this->width()  + this->x() + windowX + 8 );
-	int screenY = static_cast<int>( positionY * this->height() + this->y() + windowY + 28 );
+    int screenX = static_cast<int>( positionX * this->width()  + this->x() + windowX + 8 );
+    int screenY = static_cast<int>( positionY * this->height() + this->y() + windowY + 28 );
 
-	this->cursor().setPos( screenX, screenY );
+    this->cursor().setPos( screenX, screenY );
 
-	qDebug() << screenX << "  " << screenY ;
-	wieverY = ( static_cast<float>( this->height() ) - wieverY );
+    qDebug() << screenX << "  " << screenY ;
+    wieverY = ( static_cast<float>( this->height() ) - wieverY );
 
-	if ( isClick != mIsClicAruco ) {
-		mIsClicAruco = isClick;
+    if ( isClick != mIsClicAruco ) {
+        mIsClicAruco = isClick;
 
-		if ( isClick ) {
-			this->getEventQueue()->mouseButtonPress( wieverX, wieverY,button );
-			this->getEventQueue()->mouseMotion( wieverX, wieverY );
-		}
-		else {
-			this->getEventQueue()->mouseButtonRelease( wieverX, wieverY, button );
-			return;
-		}
-	}
-	this->getEventQueue()->mouseMotion( wieverX, wieverY );
+        if ( isClick ) {
+            this->getEventQueue()->mouseButtonPress( wieverX, wieverY,button );
+            this->getEventQueue()->mouseMotion( wieverX, wieverY );
+        }
+        else {
+            this->getEventQueue()->mouseButtonRelease( wieverX, wieverY, button );
+            return;
+        }
+    }
+    this->getEventQueue()->mouseMotion( wieverX, wieverY );
 }
