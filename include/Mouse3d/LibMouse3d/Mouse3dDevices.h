@@ -13,6 +13,7 @@
 #elif defined(Q_WS_X11) || defined(Q_OS_LINUX)
 	#include "Mouse3d/LibMouse3d/Unix/Mouse3dUnixDevice.h"
 #elif defined(Q_OS_MAC)
+	#include "Mouse3d/LibMouse3d/Mac/Mouse3dMacDevice.h"
 #endif
 
 namespace QOSG{
@@ -40,6 +41,9 @@ private:
 	Mouse3dUnixDevice* mouse;
 
 #elif defined(Q_OS_MAC)
+
+	Mouse3dMacDevice* mouse;
+
 #endif
 
 };

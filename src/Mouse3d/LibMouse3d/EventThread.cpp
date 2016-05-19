@@ -1,6 +1,7 @@
 #include "Mouse3d/LibMouse3d/EventThread.h"
 
 #include <QDebug>
+#include <easylogging++.h>
 
 #include "QOSG/CoreWindow.h"
 
@@ -23,7 +24,8 @@ void EventThread::run(){
 
 EventThread::~EventThread() {
 	delete mouseDevice;
-    qDebug() << "Mouse3d thread destroyed";
+
+	LOG(INFO) << "Mouse3d thread destroyed";
 }
 
 void EventThread::msleep(unsigned long msecs){
