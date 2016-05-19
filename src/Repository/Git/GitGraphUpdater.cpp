@@ -95,6 +95,12 @@ bool Repository::Git::GitGraphUpdater::import()
 	this->getActiveGraph()->addType( "authorEdge", settings );
 
 	settings = new QMap<QString, QString>;
+	/* Visualizacia pre dokument
+	settings->insert( "color.R", "0.5" );
+	settings->insert( "color.G", "0.5" );
+	settings->insert( "color.B", "0.5" );
+	settings->insert( "color.A", "1" );
+	*/
 	settings->insert( "color.R", "1" );
 	settings->insert( "color.G", "1" );
 	settings->insert( "color.B", "1" );

@@ -1,0 +1,17 @@
+<div class="single-loc-container">
+    <canvas class="chart chart-doughnut" data-data="vm.chart.data" data-options="vm.chart.options"
+            data-labels="vm.chart.labels" width="800" height="590"></canvas>
+
+    <div class="centered">
+
+        <h1 class="text-center">Ch.LOC</h1>
+
+        <!-- Custom legend -->
+        <div class="center-block custom-legend">
+            <div class="item" ng-repeat="label in vm.chart.labels">
+                <span class="marker" ng-style="{'background-color': vm.chart.colours[$index]}"></span>
+                <span class="text">{{label}}: {{vm.chart.data[$index]}}</span>
+            </div>
+        </div>
+    </div>
+</div>

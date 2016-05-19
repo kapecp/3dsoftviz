@@ -28,11 +28,21 @@ class GitFunction;
 class GitLuaGraphVisualizer
 {
 public:
-	GitLuaGraphVisualizer( Data::Graph* currentGraph, Repository::Git::GitEvolutionGraph* evolutionGraph, osg::ref_ptr<osg::Camera> camera, bool showLuaStats );
+	GitLuaGraphVisualizer( Data::Graph* currentGraph, Repository::Git::GitEvolutionGraph* evolutionGraph, osg::ref_ptr<osg::Camera> camera, int showLuaStats );
 
 	void visualize( bool next );
 
 	void changeNodeRepresentation();
+
+	void setFilterAuthor( QString filterAuthor )
+	{
+		this->filterAuthor = filterAuthor;
+	}
+
+	void setFilterFile( QString filterFile )
+	{
+		this->filterFile = filterFile;
+	}
 
 private:
 	void setNodeParams( osg::ref_ptr<Data::Node> node, Lua::LuaGraphObject* obj, osg::Vec4f defColor, float defSize );
@@ -60,7 +70,11 @@ private:
 
 	void processChangedNodesAndEdges();
 
-	void reloadNodeRepresentation( bool showLuaStats );
+	void reloadNodeRepresentation( int showLuaStats );
+
+	void filterVisualizationByAuthor( QString author );
+
+	void filterVisualizationByStructure( QString structure );
 
 	/**
 	 * Data::Graph* currentGraph
@@ -80,9 +94,17 @@ private:
 	 */
 	Lua::LuaGraph* luaGraph;
 
-	bool showLuaStats;
+	int showLuaStats;
+
+	QString filterAuthor;
+
+	QString filterFile;
 
 	osg::ref_ptr<osg::Camera> camera;
+
+	static const int LUA_STATS = 0;
+	static const int DIFFERENCE_MAP = 1;
+	static const int CHANGES = 2;
 
 }; // class
 } // namespace

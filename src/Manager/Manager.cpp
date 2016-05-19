@@ -383,14 +383,17 @@ Data::Graph* Manager::GraphManager::importEvolutionGraph( QString filepath )
 	// Ak existoval aktivny graf, tak ho zavrem a vratim nami vytvoreny graf ako aktivny
 	if ( ok ) {
 		if ( this->activeGraph != NULL ) {
+
 			this->closeGraph( this->activeGraph.get() );
 		}
 
-		/* FIX
-		 * old code: this->activeGraph = updater.getActiveGraph();
-		 */
+
+		//this->activeGraph = updater.getActiveGraph();
+		 
 		std::shared_ptr<Data::Graph> newGraph( updater.getActiveGraph() );
 		this->activeGraph = newGraph;
+
+		
 	}
 
 	// Restartnem layout
@@ -402,6 +405,8 @@ Data::Graph* Manager::GraphManager::importEvolutionGraph( QString filepath )
 
 	// Ak nenastala ziadna chyba, tak vratim aktivny graf, inak NULL
 	return ( ok ? this->activeGraph.get() : NULL );
+	//return ( ok ? this->activeGraph : NULL );
+
 }
 
 Data::Graph* Manager::GraphManager::createGraph( QString graphname )

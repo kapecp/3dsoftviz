@@ -45,7 +45,6 @@ void Repository::Git::GitEvolutionGraphManager::setEvolutionGraph( Repository::G
 
 Repository::Git::GitEvolutionGraphManager* Repository::Git::GitEvolutionGraphManager::filterByExtension( QString extensions )
 {
-//    Repository::Git::GitEvolutionGraph* result = cloneEvolutionGraph();
 	QList<int> remove = QList<int>();
 
 	for ( int i = 0; i < this->clonedEvolutionGraph->getVersions().size(); i++ ) {
