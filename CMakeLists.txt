@@ -1036,7 +1036,7 @@ endif()
 if( COMMAND cotire )
         # link ${3DSOFTVIZ_NAME}_unity target to all libraries to which ${3DSOFTVIZ_NAME} links
         set_target_properties( ${3DSOFTVIZ_NAME} PROPERTIES COTIRE_UNITY_LINK_LIBRARIES_INIT "COPY_UNITY" )
-        set_target_properties( gitlib PROPERTIES COTIRE_UNITY_LINK_LIBRARIES_INIT "COPY" )
+        # set_target_properties( gitlib PROPERTIES COTIRE_UNITY_LINK_LIBRARIES_INIT "COPY" )
 
         cotire( ${3DSOFTVIZ_NAME} CONFIGURATIONS Debug Release )
 
@@ -1094,7 +1094,7 @@ endif()
 # 3Dsoftviz executable
 add_executable( ${3DSOFTVIZ_NAME}_app ${INCL}  ${SRC_MAIN} )
 
-set_target_properties( ${3DSOFTVIZ_NAME}_app PROPERTIES OUTPUT_NAME ${3DSOFTVIZ_NAME} )
+set_target_properties( ${3DSOFTVIZ_NAME}_app PROPERTIES OUTPUT_NAME "MyApp" )
 target_compile_options( ${3DSOFTVIZ_NAME}_app PUBLIC ${FLAGS_FOR_DEBUG} )
 target_compile_definitions( ${3DSOFTVIZ_NAME}_app PUBLIC ${ALL_COMPILE_DEFINITIONS} )
 target_link_libraries( ${3DSOFTVIZ_NAME}_app ${3DSOFTVIZ_NAME} )

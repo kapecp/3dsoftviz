@@ -75,9 +75,10 @@ public:
 		return selectedNodesModels;
 	}
 
-    void setShowGit( bool value ) {
-        this->showGit = value;
-    }
+	void setShowGit( bool value )
+	{
+		this->showGit = value;
+	}
 
 private:
 
@@ -89,7 +90,7 @@ private:
 	    *  \param  models
 	    */
 	void addBrowser( const std::string& templateType, osg::Vec3 position, Diluculum::LuaValueMap models );
-    void addBrowser( const std::string& templateType, osg::Vec3 position, QMap<QString, int>* map );
+	void addBrowser( const std::string& templateType, osg::Vec3 position, QMap<QString, int>* map );
 
 	/**
 	    *  \fn private  createBorderGeode
@@ -190,7 +191,7 @@ private:
 	    */
 	double interpolate( long currentFrame, long endFrame, double startValue, double endValue );
 
-    bool showGit;
+	bool showGit;
 };
 }
 

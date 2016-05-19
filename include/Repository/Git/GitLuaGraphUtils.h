@@ -14,21 +14,22 @@ class GitEvolutionGraph;
 class GitFunction;
 class GitFile;
 
-class GitLuaGraphUtils {
+class GitLuaGraphUtils
+{
 public:
-    GitLuaGraphUtils();
+	GitLuaGraphUtils();
 
-    GitLuaGraphUtils( Lua::LuaGraph* luaGraph, Repository::Git::GitEvolutionGraph* evolutionGraph );
+	GitLuaGraphUtils( Lua::LuaGraph* luaGraph, Repository::Git::GitEvolutionGraph* evolutionGraph );
 
-    void fillMetricsMetaData();
+	void fillMetricsMetaData();
 
-    QMap<QString, int>* getMetrics( QString identifier );
+	QMap<QString, int>* getMetrics( QString identifier );
 
-    static QMap<QString, int>* compareMetrics( QMap<QString, int>* currentMetrics, QMap<QString, int>* previousMetrics );
+	static QMap<QString, int>* compareMetrics( QMap<QString, int>* currentMetrics, QMap<QString, int>* previousMetrics );
 private:
 
-    Repository::Git::GitEvolutionGraph* evolutionGraph;
-    Lua::LuaGraph* luaGraph;
+	Repository::Git::GitEvolutionGraph* evolutionGraph;
+	Lua::LuaGraph* luaGraph;
 }; // class
 } // Git namespace
 } // Repository namespace

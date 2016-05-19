@@ -33,7 +33,7 @@ QList<Repository::Git::GitVersion*> Repository::Git::GitFileLoader::getDataAbout
 	QString lGitCommand = "git log --raw --name-status --reverse --date=short --pretty=format:\"%H%n%an%n%ad\"";
 
 	// Vykona command, vystup ulozi do temp suboru a vrati cestu k temp suboru
-    QString lTmp = Git::GitUtils::makeTmpFileFromCommand( lGitCommand, lFilePath );
+	QString lTmp = Git::GitUtils::makeTmpFileFromCommand( lGitCommand, lFilePath );
 
 	QFile file( lTmp );
 
@@ -77,24 +77,24 @@ QList<Repository::Git::GitVersion*> Repository::Git::GitFileLoader::getDataAbout
 				// V pripade, ze sa nenasiel ani jeden regex, tak skontrolujeme dlzku nacitaneho riadku. Ak je rovny 40, tak ide
 				// o viacnasobne uvedenie identifikatoru a autora, vtedy precitame a zahodime. Ak nie je rovny 40, skonci vytvaranie verzie.
 				if ( A.indexIn( line ) != -1 ) {
-                    line = line.replace( A, "" );
+					line = line.replace( A, "" );
 					Repository::Git::GitFile* file = new Repository::Git::GitFile( line.mid( line.lastIndexOf( "/" ) + 1 ), line, Repository::Git::GitType::ADDED );
-                    version->addChangedFile( file );
+					version->addChangedFile( file );
 				}
 				else if ( M.indexIn( line ) != -1 ) {
-                    line = line.replace( M, "" );
+					line = line.replace( M, "" );
 					Repository::Git::GitFile* file = new Repository::Git::GitFile( line.mid( line.lastIndexOf( "/" ) + 1 ), line, Repository::Git::GitType::MODIFIED );
-                    version->addChangedFile( file );
+					version->addChangedFile( file );
 				}
 				else if ( D.indexIn( line ) != -1 ) {
-                    line = line.replace( D, "" );
+					line = line.replace( D, "" );
 					Repository::Git::GitFile* file = new Repository::Git::GitFile( line.mid( line.lastIndexOf( "/" ) + 1 ), line, Repository::Git::GitType::REMOVED );
-                    version->addChangedFile( file );
+					version->addChangedFile( file );
 				}
 				else if ( line.length() == 40 ) {
-                    version->setCommitId( line );
-                    version->setAuthor( reader.readLine() );
-                    version->setDate( reader.readLine() );
+					version->setCommitId( line );
+					version->setAuthor( reader.readLine() );
+					version->setDate( reader.readLine() );
 				}
 				else {
 					read = false;
@@ -105,7 +105,7 @@ QList<Repository::Git::GitVersion*> Repository::Git::GitFileLoader::getDataAbout
 //			version->setChangedFiles( version->getGitFilesByExtension( this->extensions ) );
 
 			// Ak je velkost zmenenych suborov vacsia ako 0, tak pridam verziu
-            if ( version->getChangedFiles()->size() ) {
+			if ( version->getChangedFiles()->size() ) {
 				versions.append( version );
 			}
 		}
@@ -296,7 +296,7 @@ void Repository::Git::GitFileLoader::getDiffInfo( Repository::Git::GitFile* gitF
 {
 	QString lCommand;
 	QString lFilePath = this->filePath;
-    QString lFile = gitFile->getFilepath();
+	QString lFile = gitFile->getFilepath();
 
 	// Ak bol pridany subor pridany, nemame jeho predchadzajucu verziu, preto nacitame celu verziu suboru
 	if ( gitFile->getType() == Repository::Git::GitType::ADDED ) {
@@ -309,7 +309,7 @@ void Repository::Git::GitFileLoader::getDiffInfo( Repository::Git::GitFile* gitF
 //    qDebug() << lCommand;
 
 	// Vykona command, vystup ulozi do temp suboru a vrati cestu k temp suboru
-    QString lTmp = Git::GitUtils::makeTmpFileFromCommand( lCommand, lFilePath );
+	QString lTmp = Git::GitUtils::makeTmpFileFromCommand( lCommand, lFilePath );
 
 	// Ak je typ suboru ADDED, tak nema predchadzajucu verziu a nacitam celu verziu suboru.
 	// Ak nie, tak nacitam diff bloky daneho suboru

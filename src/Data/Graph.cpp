@@ -25,7 +25,7 @@
 Data::Graph::Graph( qlonglong graph_id, QString name, QSqlDatabase* conn, QMap<qlonglong,osg::ref_ptr<Data::Node> >* nodes, QMap<qlonglong,osg::ref_ptr<Data::Edge> >* edges,QMap<qlonglong,osg::ref_ptr<Data::Node> >* metaNodes, QMap<qlonglong,osg::ref_ptr<Data::Edge> >* metaEdges, QMap<qlonglong,Data::Type*>* types ) :
 	graph_id( graph_id ),
 	name( name ),
-    ele_id_counter( this->getMaxEleIdFromElements() ),
+	ele_id_counter( this->getMaxEleIdFromElements() ),
 //    ele_id_counter( std::numeric_limits<qlonglong>::max() - 2 ),
 	//POZOR toto asi treba inak poriesit, teraz to predpoklada ze ziadne layouty nemame co je spravne, lenze bacha na metatypy, ktore layout mat musia !
 	layout_id_counter( 0 ),
@@ -340,7 +340,7 @@ osg::ref_ptr<Data::Node> Data::Graph::addNode( QString name, Data::Type* type, o
 	//pridame vnoreny uzol
 	this->addNestedNode( node );
 
-    this->newNodes.insert( node->getId(),node );
+	this->newNodes.insert( node->getId(),node );
 	if ( type!=NULL && type->isMeta() ) {
 		//pridame meta uzol do zoznamu
 		this->metaNodes->insert( node->getId(),node );
@@ -360,25 +360,28 @@ osg::ref_ptr<Data::Node> Data::Graph::addNode( QString name, Data::Type* type, o
 	return node;
 }
 
-osg::ref_ptr<Data::Node> Data::Graph::replaceNodeId( int oldId, int newId ) {
-    osg::ref_ptr<Data::Node> node = this->nodes->value( oldId );
-    Data::Node* newNode = nullptr;
-    if( this->nodes->remove( oldId ) ) {
-        newNode = node.release();
-    } else {
-        return nullptr;
-    }
+osg::ref_ptr<Data::Node> Data::Graph::replaceNodeId( int oldId, int newId )
+{
+	osg::ref_ptr<Data::Node> node = this->nodes->value( oldId );
+	Data::Node* newNode = nullptr;
+	if ( this->nodes->remove( oldId ) ) {
+		newNode = node.release();
+	}
+	else {
+		return nullptr;
+	}
 
 //    this->nodes->
 
 
-    if( this->nodes->contains( newId ) ) {
-        return nullptr;
-    } else {
-        osg::ref_ptr<Data::Node> result = newNode;
-        this->nodes->insert( newId, result );
-        return result;
-    }
+	if ( this->nodes->contains( newId ) ) {
+		return nullptr;
+	}
+	else {
+		osg::ref_ptr<Data::Node> result = newNode;
+		this->nodes->insert( newId, result );
+		return result;
+	}
 }
 
 osg::ref_ptr<Data::Node> Data::Graph::addNode( qlonglong id, QString name, Data::Type* type, osg::Vec3f position )
@@ -386,7 +389,7 @@ osg::ref_ptr<Data::Node> Data::Graph::addNode( qlonglong id, QString name, Data:
 	//vytvorime novy objekt uzla
 	osg::ref_ptr<Data::Node> node = new Data::Node( id, name, type, this->getNodeScaleByType( type ), this, position );
 
-    this->newNodes.insert( node->getId(), node );
+	this->newNodes.insert( node->getId(), node );
 
 	//podla typu ho priradime danemu zoznamu
 	if ( type!=NULL && type->isMeta() ) {
@@ -1390,12 +1393,12 @@ void Data::Graph::removeNode( osg::ref_ptr<Data::Node> node )
 				);
 			}
 
-            if( !this->nodes->remove( node->getId() ) ) {
-                if( !removeNodeByLuaIdentifier( node->getLuaIdentifier() ) ) {
-                    qDebug() << "Nepodarilo sa z grafu odstanit node ->" << node->getLuaIdentifier();
-                }
+			if ( !this->nodes->remove( node->getId() ) ) {
+				if ( !removeNodeByLuaIdentifier( node->getLuaIdentifier() ) ) {
+					qDebug() << "Nepodarilo sa z grafu odstanit node ->" << node->getLuaIdentifier();
+				}
 
-            }
+			}
 
 			this->metaNodes->remove( node->getId() );
 			this->newNodes.remove( node->getId() );
@@ -1476,22 +1479,23 @@ Data::Node* Data::Graph::findNodeByName( QString nodeName )
 	return lNode;
 }
 
-Data::Node* Data::Graph::findNodeByLuaIdentifier( QString identifier ) {
-    Data::Node* lNode;
-    QMap<qlonglong, osg::ref_ptr<Data::Node> >* lNodes = this->getNodes();
-    QMap<qlonglong, osg::ref_ptr<Data::Node> >::iterator it;
-    for ( it = lNodes->begin(); it != lNodes->end(); ++it ) {
-        lNode = it.value();
+Data::Node* Data::Graph::findNodeByLuaIdentifier( QString identifier )
+{
+	Data::Node* lNode;
+	QMap<qlonglong, osg::ref_ptr<Data::Node> >* lNodes = this->getNodes();
+	QMap<qlonglong, osg::ref_ptr<Data::Node> >::iterator it;
+	for ( it = lNodes->begin(); it != lNodes->end(); ++it ) {
+		lNode = it.value();
 
-        if( !QString::compare( lNode->getLuaIdentifier(), identifier ) ) {
-            break;
-        }
-    }
-    if( it == lNodes->end() ) {
-        lNode =  nullptr;
-    }
+		if ( !QString::compare( lNode->getLuaIdentifier(), identifier ) ) {
+			break;
+		}
+	}
+	if ( it == lNodes->end() ) {
+		lNode =  nullptr;
+	}
 
-    return lNode;
+	return lNode;
 }
 
 Data::Edge* Data::Graph::findEdgeByName( QString edgeName )
@@ -1515,27 +1519,27 @@ Data::Edge* Data::Graph::findEdgeByName( QString edgeName )
 
 Data::Edge* Data::Graph::findEdgeByLuaIdentifier( QString identifier )
 {
-    QStringList nodes = identifier.split("+");
-    QString newIdentifier = nodes.at( 1 ) + "+" + nodes.at( 0 );
+	QStringList nodes = identifier.split( "+" );
+	QString newIdentifier = nodes.at( 1 ) + "+" + nodes.at( 0 );
 
-    Data::Edge* lEdge;
-    QMap<qlonglong, osg::ref_ptr<Data::Edge> >* lEdges = this->getEdges();
-    QMap<qlonglong, osg::ref_ptr<Data::Edge> >::iterator it;
-    for ( it = lEdges->begin(); it != lEdges->end(); ++it ) {
-        lEdge = it.value();
+	Data::Edge* lEdge;
+	QMap<qlonglong, osg::ref_ptr<Data::Edge> >* lEdges = this->getEdges();
+	QMap<qlonglong, osg::ref_ptr<Data::Edge> >::iterator it;
+	for ( it = lEdges->begin(); it != lEdges->end(); ++it ) {
+		lEdge = it.value();
 
-        if( !QString::compare( lEdge->getLuaIdentifier(), identifier ) ) {
-            break;
-        }
-        if( !QString::compare( lEdge->getLuaIdentifier(), newIdentifier ) ) {
-            break;
-        }
-    }
+		if ( !QString::compare( lEdge->getLuaIdentifier(), identifier ) ) {
+			break;
+		}
+		if ( !QString::compare( lEdge->getLuaIdentifier(), newIdentifier ) ) {
+			break;
+		}
+	}
 
-    if ( it == lEdges->end() ) {
-        lEdge = nullptr;
-    }
-    return lEdge;
+	if ( it == lEdges->end() ) {
+		lEdge = nullptr;
+	}
+	return lEdge;
 }
 
 void Data::Graph::addEdgeOccurence( QString key )
@@ -1567,19 +1571,20 @@ bool Data::Graph::removeEdgeOccurence( QString key )
 	return false;
 }
 
-int Data::Graph::removeNodeByLuaIdentifier( QString identifier ) {
-    int count = 0;
-    QList<qlonglong> nodes = QList<qlonglong>();
-    for( QMap<qlonglong, osg::ref_ptr<Data::Node>>::iterator iterator = this->nodes->begin(); iterator != this->nodes->end(); ++iterator ) {
-        if( !QString::compare( iterator.value()->getLuaIdentifier(), identifier ) ) {
-            nodes.append( iterator.key() );
-            count++;
-        }
-    }
+int Data::Graph::removeNodeByLuaIdentifier( QString identifier )
+{
+	int count = 0;
+	QList<qlonglong> nodes = QList<qlonglong>();
+	for ( QMap<qlonglong, osg::ref_ptr<Data::Node>>::iterator iterator = this->nodes->begin(); iterator != this->nodes->end(); ++iterator ) {
+		if ( !QString::compare( iterator.value()->getLuaIdentifier(), identifier ) ) {
+			nodes.append( iterator.key() );
+			count++;
+		}
+	}
 
-    foreach( qlonglong id, nodes ) {
-        this->nodes->remove( id );
-    }
+	foreach ( qlonglong id, nodes ) {
+		this->nodes->remove( id );
+	}
 
-    return count;
+	return count;
 }

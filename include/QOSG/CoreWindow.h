@@ -105,11 +105,11 @@ public slots:
 	            */
 	void showLoadGraph();
 
-    void changeEvolutionVisualization( int  state );
+	void changeEvolutionVisualization( int  state );
 
-    void changeEvolutionFilterOption( int state );
+	void changeEvolutionFilterOption( int state );
 
-    void changeEvolutionFilterSpecificOption( int state );
+	void changeEvolutionFilterSpecificOption( int state );
 
 	/**
 	            *  \fn public  saveGraphToDB
@@ -233,11 +233,11 @@ public slots:
 	            */
 	void loadFromGit();
 
-    /**
-     * void loadLuaGraph()
-     * @brief Load lua graph without visualization
-     */
-    void loadLuaGraph();
+	/**
+	 * void loadLuaGraph()
+	 * @brief Load lua graph without visualization
+	 */
+	void loadLuaGraph();
 
 	/**
 	            *  \fn public  labelOnOff(bool checked)
@@ -564,12 +564,12 @@ public slots:
 	 */
 	void move();
 
-    /**
-     * void changeCommits( bool change );
-     * @brief Change repository commit when changing versions
-     * @param change True, if repository should change, otherwise false
-     */
-    void changeCommits( bool change );
+	/**
+	 * void changeCommits( bool change );
+	 * @brief Change repository commit when changing versions
+	 * @param change True, if repository should change, otherwise false
+	 */
+	void changeCommits( bool change );
 
 	/**
 	 * void fasterEvolution()
@@ -1020,21 +1020,21 @@ private:
 	 */
 	QTimer* evolutionTimer;
 
-    /**
-     *CheckBox for changes repository's commits
-     *@brief chb_git_changeCommits
-     */
-    QCheckBox* chb_git_changeCommits;
+	/**
+	 *CheckBox for changes repository's commits
+	 *@brief chb_git_changeCommits
+	 */
+	QCheckBox* chb_git_changeCommits;
 
-    /**
-     * QComboBox* cb_git_evoVisualizeMethod
-     * @brief cb_git_evoVisualizeMethod
-     */
-    QComboBox* cb_git_evoVisualizeMethod;
+	/**
+	 * QComboBox* cb_git_evoVisualizeMethod
+	 * @brief cb_git_evoVisualizeMethod
+	 */
+	QComboBox* cb_git_evoVisualizeMethod;
 
-    QComboBox* cb_git_authors;
+	QComboBox* cb_git_authors;
 
-    QComboBox* cb_git_files;
+	QComboBox* cb_git_files;
 
 	bool isRunning;
 
@@ -1453,13 +1453,13 @@ public:
 	 */
 	QWidget* createMoreFeaturesTab( QFrame* line );
 
-    /**
-     * @author Michael Garaj
-     * @brief createEvolutionTab add elements to QWidget for evolution functionality
-     * @param line pointer to add line
-     * @return QWidget for evolution functionality
-     */
-    QWidget* createEvolutionTab( QFrame* line );
+	/**
+	 * @author Michael Garaj
+	 * @brief createEvolutionTab add elements to QWidget for evolution functionality
+	 * @param line pointer to add line
+	 * @return QWidget for evolution functionality
+	 */
+	QWidget* createEvolutionTab( QFrame* line );
 
 	/**
 	 * @author Peter Mendel

@@ -28,81 +28,83 @@ class GitFunction;
 class GitLuaGraphVisualizer
 {
 public:
-    GitLuaGraphVisualizer( Data::Graph* currentGraph, Repository::Git::GitEvolutionGraph* evolutionGraph, osg::ref_ptr<osg::Camera> camera, int showLuaStats );
+	GitLuaGraphVisualizer( Data::Graph* currentGraph, Repository::Git::GitEvolutionGraph* evolutionGraph, osg::ref_ptr<osg::Camera> camera, int showLuaStats );
 
-    void visualize( bool next );
+	void visualize( bool next );
 
-    void changeNodeRepresentation();
+	void changeNodeRepresentation();
 
-    void setFilterAuthor( QString filterAuthor ) {
-        this->filterAuthor = filterAuthor;
-    }
+	void setFilterAuthor( QString filterAuthor )
+	{
+		this->filterAuthor = filterAuthor;
+	}
 
-    void setFilterFile( QString filterFile ) {
-        this->filterFile = filterFile;
-    }
+	void setFilterFile( QString filterFile )
+	{
+		this->filterFile = filterFile;
+	}
 
 private:
-    void setNodeParams( osg::ref_ptr<Data::Node> node, Lua::LuaGraphObject* obj, osg::Vec4f defColor, float defSize );
-    void setEdgeParams( osg::ref_ptr<Data::Edge> edge, Lua::LuaGraphObject* obj, osg::Vec4f defColor );
+	void setNodeParams( osg::ref_ptr<Data::Node> node, Lua::LuaGraphObject* obj, osg::Vec4f defColor, float defSize );
+	void setEdgeParams( osg::ref_ptr<Data::Edge> edge, Lua::LuaGraphObject* obj, osg::Vec4f defColor );
 
-    void updateCurrentGraphNodesId();
+	void updateCurrentGraphNodesId();
 
-    bool addFileToGraph( Repository::Git::GitFile* file, QString rootIdentifier );
+	bool addFileToGraph( Repository::Git::GitFile* file, QString rootIdentifier );
 
-    bool processFunctionsFromFile( Repository::Git::GitFile* file, bool next );
+	bool processFunctionsFromFile( Repository::Git::GitFile* file, bool next );
 
-    bool addFunctionToGraph( Repository::Git::GitFunction* function, QString masterIdentifier );
+	bool addFunctionToGraph( Repository::Git::GitFunction* function, QString masterIdentifier );
 
-    bool removeFunctionFromGraph( Repository::Git::GitFunction* function, QString masterIdentifier, bool next );
+	bool removeFunctionFromGraph( Repository::Git::GitFunction* function, QString masterIdentifier, bool next );
 
-    bool removeFileFromGraph( Repository::Git::GitFile* file, bool next );
+	bool removeFileFromGraph( Repository::Git::GitFile* file, bool next );
 
-    bool addModuleFromGlobalFunction( Repository::Git::GitFunction* function );
+	bool addModuleFromGlobalFunction( Repository::Git::GitFunction* function );
 
-    bool removeModuleFromGlobalFunction( Repository::Git::GitFunction* function, bool next );
+	bool removeModuleFromGlobalFunction( Repository::Git::GitFunction* function, bool next );
 
-    void addDefaultTypes();
+	void addDefaultTypes();
 
-    void addCustomTypes();
+	void addCustomTypes();
 
-    void processChangedNodesAndEdges();
+	void processChangedNodesAndEdges();
 
-    void reloadNodeRepresentation( int showLuaStats );
+	void reloadNodeRepresentation( int showLuaStats );
 
-    void filterVisualizationByAuthor( QString author );
+	void filterVisualizationByAuthor( QString author );
 
-    void filterVisualizationByStructure( QString structure );
+	void filterVisualizationByStructure( QString structure );
 
-    /**
-     * Data::Graph* currentGraph
-     * @brief Visualized graph
-     */
-    Data::Graph* currentGraph;
+	/**
+	 * Data::Graph* currentGraph
+	 * @brief Visualized graph
+	 */
+	Data::Graph* currentGraph;
 
-    /**
-     * Repository::Git::GitEvolutionGraph* evolutionGraph
-     * @brief Evolution graph
-     */
-    Repository::Git::GitEvolutionGraph* evolutionGraph;
+	/**
+	 * Repository::Git::GitEvolutionGraph* evolutionGraph
+	 * @brief Evolution graph
+	 */
+	Repository::Git::GitEvolutionGraph* evolutionGraph;
 
-    /**
-     * Lua::LuaGraph* luaGraph
-     * @brief Lua graph
-     */
-    Lua::LuaGraph* luaGraph;
+	/**
+	 * Lua::LuaGraph* luaGraph
+	 * @brief Lua graph
+	 */
+	Lua::LuaGraph* luaGraph;
 
-    int showLuaStats;
+	int showLuaStats;
 
-    QString filterAuthor;
+	QString filterAuthor;
 
-    QString filterFile;
+	QString filterFile;
 
-    osg::ref_ptr<osg::Camera> camera;
+	osg::ref_ptr<osg::Camera> camera;
 
-    static const int LUA_STATS = 0;
-    static const int DIFFERENCE_MAP = 1;
-    static const int CHANGES = 2;
+	static const int LUA_STATS = 0;
+	static const int DIFFERENCE_MAP = 1;
+	static const int CHANGES = 2;
 
 }; // class
 } // namespace

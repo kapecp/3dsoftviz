@@ -81,15 +81,15 @@ public:
 	 * \fn loadGraphFromGit
 	 * \brief Loads graph from git repo.
 	 */
-    bool loadEvolutionGraphFromGit( QString filepath );
+	bool loadEvolutionGraphFromGit( QString filepath );
 
 	/**
 	 * \fn loadGraphFromDB
 	 * \brief Loads selected graph from database.
 	 */
-    Data::Graph* loadGraphFromDB( qlonglong graphID, qlonglong layoutID );
+	Data::Graph* loadGraphFromDB( qlonglong graphID, qlonglong layoutID );
 
-    Data::Graph* importEvolutionGraph( QString filepath );
+	Data::Graph* importEvolutionGraph( QString filepath );
 
 	/**
 	 * \fn simpleGraph
@@ -208,7 +208,7 @@ public:
 	 * @param path Project path of the file
 	 * @param version Index of currently vizualized version in graph
 	 */
-    void getDiffInfo( QString path, int version );
+	void getDiffInfo( QString path, int version );
 
 private:
 	/**
