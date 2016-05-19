@@ -122,6 +122,14 @@ public:
 		 */
 	void update();
 
+	/**
+		*  \fn public updateBackground
+		*  \brief updates background (skybox, skynoise, video3d, video2dOrtho or nothing )
+		*  \param bgVal - background int value describing what background should be generated
+		*         currentGraph - graph background to be updated
+		*  \return 0 - success, 1 - fail
+		*/
+	int updateBackground(int bgVal, Data::Graph* currentGraph);
 
 	/**
 		*  \fn inline public  getCustomNodeList
@@ -574,6 +582,7 @@ private:
 	unsigned int customNodesPosition;
 
 	int prevTime;
+
 
 #ifdef OPENCV_FOUND
 	osg::ref_ptr<OpenCV::CameraStream> mCameraStream;
