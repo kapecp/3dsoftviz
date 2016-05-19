@@ -1,0 +1,28 @@
+// Module OpenCV
+// Autor: Team Reality Not Found
+
+@startuml
+scale 800 width
+
+!define cmrStrm(x) CameraStream
+!define cmSlCr(x) CamSelectCore
+!define cmSlWnd(x) CamSelectWindow
+!define cpVd(x) CapVideo
+!define fcRcg(x) FaceRecognizer
+!define cvCore(x) OpenCVCore
+!define osg(x) OSG.OSG
+!define szQe(x) Util.SizedQueue
+!define arcThr(x) ArucoModul.ArucoThread
+!define fcRcgThr(x) QOpenCV.FaceRecognitionThread
+!define fcRcgWnd(x) QOpenCV.OpenCVWindow
+
+package OpenCV{
+	class osg() #red
+	cmrStrm() -u-|> osg()
+	cmSlCr() -- cpVd()
+	fcRcg() -u- szQe()
+	cvCore() -u- arcThr()
+	cvCore() -u- fcRcgThr()
+	cvCore() -u- fcRcgWnd()
+}
+@enduml

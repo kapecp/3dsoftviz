@@ -1,0 +1,72 @@
+// Module Data
+// Autor: Team Reality Not Found
+
+@startuml
+scale 800 width
+
+!define cl(x) Cluster
+!define eg(x) Edge
+!define gr(x) Graph
+!define grLo(x) GraphLayout
+!define grSer(x) GraphSerializer
+!define grSpTr(x) GraphSpanningTree
+!define mtTp(x) MetaType
+!define nd(x) Node
+!define osgNd(x) OsgNode
+!define osgEg(x) OsgEdge
+!define tp(x) Type
+!define osg(x) OSG.OSG
+!define cb(x) Figures.Cube
+!define sph(x) Figures.Sphere
+!define shpGetCb(x) Layout.ShapeGetter_Cube
+!define radLo(x) Layout.RadialLayout
+!define restrcMng(x) Layout.RestrictionManager
+!define appCfg(x) Util.ApplicationConfig
+
+package Data{
+	class osg() #red
+	cl() --|> nd()
+	cl() -- tp()
+	cl() -- gr()
+	cl() -- cb()
+	cl() -- sph()
+	cl() -- osg()
+	cl() -- shpGetCb()
+	
+	eg() --|> osgEg()
+	eg() "*" --* "1" gr()
+	eg() -- osg()
+	eg() -- nd()
+	eg() -- tp()
+	eg() -- appCfg()
+	
+	gr() -- osg()
+	gr() "1" *-- "*" nd()
+	gr() -- tp()
+	gr() -- grLo()
+	gr() -- grSpTr()
+	gr() -- mtTp()
+	gr() -- restrcMng()
+
+	grSer() -- nd()
+	grSer() -- eg()
+	grSer() -- tp()
+	
+	mtTp() --|> tp()
+	mtTp() -- grLo()
+
+	nd() --|> osgNd()
+	nd() -- tp()
+	nd() -- osg()
+	nd() -- radLo()
+	nd() --o cl()
+	
+	osgEg() --|> osg()
+	osgEg() -- tp()
+	
+	osgNd() --|> osg()
+	osgNd() -- tp()
+	
+	tp() -- osg()
+}
+@enduml

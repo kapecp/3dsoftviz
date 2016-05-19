@@ -1,0 +1,90 @@
+// Module Network
+// Autor: Team Reality Not Found
+
+@startuml
+scale 800 width
+
+!define absEx(x) AbstractExecutor
+!define addMtNdEx(x) AddMetaNodeExecutor
+!define attAttEx(x) AttractAttentionExecutor
+!define cl(x) Client
+!define exFct(x) ExecutorFactory
+!define grEdEx(x) GraphEndExecutor
+!define grStEx(x) GraphStartExecutor
+!define hlp(x) Helper
+!define incUsEx(x) IncommingUserExecutor
+!define loEx(x) LayoutExecutor
+!define mgNdEx(x) MergeNodesExecutor
+!define msEx(x) MessageExecutor
+!define mvAvEx(x) MoveAvatarExecutor
+!define mvNdEx(x) MoveNodeExecutor
+!define nwNgEx(x) NewNodeExecutor
+!define nwEdEx(x) NewEdgeExecutor
+!define rmEgEx(x) RemoveEdgeExecutor
+!define rmNdEx(x) RemoveNodeExecutor
+!define sdGrEx(x) SendGraphExecutor
+!define sprNdEx(x) SeparateNodesExecutor
+!define srv(x) Server
+!define srvStEx(x) ServerStopExecutor
+!define stEgClEx(x) SetEdgeColorExecutor
+!define stFxNdEx(x) SetFixNodeStateExecutor
+!define stNdClEx(x) SetNodeColorExecutor
+!define stNdLbEx(x) SetNodeLabelExecutor
+!define stRstEx(x) SetRestrictionExecutor
+!define spUsEx(x) SpyUserExecutor
+!define ustRstEx(x) UnSetRestrictionExecutor
+!define uspUsEx(x) UnspyUserExecutor
+!define usEx(x) UsersExecutor
+!define wlEx(x) WelcomeExecutor
+!define crGr(x) Vwr.CoreGraph
+!define loTh(x) Layout.LayoutThread
+!define osg(x) OSG.OSG
+!define dtNd(x) Data.Node
+!define dtEg(x) Data.Edge
+
+package Network{
+	class osg() #red
+	addMtNdEx() --|> absEx()
+	attAttEx() --|> absEx()
+	cl() -l- crGr()
+	cl() -l- loTh()
+	cl() -d- osg()
+	cl() -l- dtNd()
+	exFct() -- absEx()
+	grEdEx() --|> absEx()
+	grStEx() --|> absEx()
+	hlp() -d- osg()
+	incUsEx() --|> absEx()
+	loEx() --|> absEx()
+	mgNdEx() --|> absEx()
+	msEx() --|> absEx()
+	mvAvEx() --|> absEx()
+	mvNdEx() --|> absEx()
+	mvNdEx() -d- osg()
+	mvNdEx() -- dtNd()
+	mvNdEx() --|> absEx()
+	nwNgEx() --|> absEx()
+    nwEdEx() --|> absEx()
+    rmEgEx() --|> absEx()
+	rmNdEx() --|> absEx()
+	sdGrEx() --|> absEx()
+	sprNdEx() --|> absEx()
+	srv() -d- osg()
+	srv() -r- dtEg()
+	srv() -r- dtNd()
+	srv() -r- crGr()
+	srv() -r- exFct()
+	srvStEx() --|> absEx()
+	stEgClEx() --|> absEx()
+	stFxNdEx() --|> absEx()
+	stFxNdEx() -- dtNd()
+	stNdClEx() --|> absEx()
+	stNdLbEx() --|> absEx()
+	stRstEx() --|> absEx()
+	spUsEx() --|> absEx()
+	ustRstEx() --|> absEx()
+	uspUsEx() --|> absEx()
+	usEx() --|> absEx()
+	wlEx() --|> absEx()
+}
+@enduml
