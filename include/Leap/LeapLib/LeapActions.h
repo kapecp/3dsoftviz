@@ -20,7 +20,7 @@ public:
 	/**
 	 * @brief Initializes MouseControl and sets zoomCounter to 0
 	 */
-	LeapActions(LeapCameraManipulator* cameraManipulator);
+	LeapActions( LeapCameraManipulator* cameraManipulator );
 	~LeapActions();
 
 	/**

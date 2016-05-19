@@ -227,26 +227,26 @@ public slots:
 				*  \brief Show dialog to select file which will be opened
 				*/
 	void loadFile();
-/**
-	 *  \fn public  loadexampleGraphBasic500
-	 *  \brief Load basic 100 node graph
-	 */
-void loadExampleGraphBasic100();
-/**
-	*  \fn public  loadexampleGraphBasic500
-	*  \brief Load basic 500 node graph
-	*/
-void loadExampleGraphBasic500();
-/**
-	*  \fn public  loadexampleGraphVeolia
-	*  \brief Load Veolia graph
-	*/
-void loadExampleGraphVeolia();
-/**
-	*  \fn public  loadexampleGraphLua
-	*  \brief Load basic lua graph
-	*/
-void loadExampleGraphLua();
+	/**
+		 *  \fn public  loadexampleGraphBasic500
+		 *  \brief Load basic 100 node graph
+		 */
+	void loadExampleGraphBasic100();
+	/**
+		*  \fn public  loadexampleGraphBasic500
+		*  \brief Load basic 500 node graph
+		*/
+	void loadExampleGraphBasic500();
+	/**
+		*  \fn public  loadexampleGraphVeolia
+		*  \brief Load Veolia graph
+		*/
+	void loadExampleGraphVeolia();
+	/**
+		*  \fn public  loadexampleGraphLua
+		*  \brief Load basic lua graph
+		*/
+	void loadExampleGraphLua();
 	/**
 				*  \fn public  loadFromGit
 				*  \brief Show dialog to write path to git repo which will be loaded

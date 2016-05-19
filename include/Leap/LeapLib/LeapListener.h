@@ -23,8 +23,8 @@ public:
 	 */
 	LeapActions* leapActions;
 
-	LeapListener(LeapCameraManipulator* cameraManipulator);
-	~LeapListener(void);
+	LeapListener( LeapCameraManipulator* cameraManipulator );
+	~LeapListener( void );
 
 	void onInit( const Controller& );
 	void onConnect( const Controller& );

@@ -657,9 +657,9 @@ Vwr::CoreGraph::CoreGraph( Data::Graph* graph, osg::ref_ptr<osg::Camera> camera 
 	//lighting
 	osg::Light* pLight = new osg::Light;
 	pLight->setLightNum( 1 );
-	pLight->setDiffuse( osg::Vec4(0.5f, 0.5f, 0.5f, 1.0f) );
-	pLight->setPosition( osg::Vec4(0,0,1,0) );		// w = 0 directional light
-													// w = 1 point light (position)
+	pLight->setDiffuse( osg::Vec4( 0.5f, 0.5f, 0.5f, 1.0f ) );
+	pLight->setPosition( osg::Vec4( 0,0,1,0 ) );		// w = 0 directional light
+	// w = 1 point light (position)
 	// light source
 	osg::LightSource* pLightSource = new osg::LightSource;
 	pLightSource->setLight( pLight );
@@ -667,9 +667,9 @@ Vwr::CoreGraph::CoreGraph( Data::Graph* graph, osg::ref_ptr<osg::Camera> camera 
 
 	//UMBRA
 	shadowedScene = new osgShadow::ShadowedScene;
-	shadowedScene->setReceivesShadowTraversalMask(0x1);
-	shadowedScene->setCastsShadowTraversalMask(0x2);
-	root->addChild(shadowedScene);
+	shadowedScene->setReceivesShadowTraversalMask( 0x1 );
+	shadowedScene->setCastsShadowTraversalMask( 0x2 );
+	root->addChild( shadowedScene );
 
 	graphRotTransf->addChild( graphGroup );
 	shadowedScene->addChild( graphRotTransf );
@@ -687,37 +687,38 @@ Vwr::CoreGraph::CoreGraph( Data::Graph* graph, osg::ref_ptr<osg::Camera> camera 
 	reload( graph );
 }
 
-int CoreGraph::updateBackground(int bgVal, Data::Graph* currentGraph) {
-	LOG(INFO) << "CoreGraph::updateBackground - updating background";
+int CoreGraph::updateBackground( int bgVal, Data::Graph* currentGraph )
+{
+	LOG( INFO ) << "CoreGraph::updateBackground - updating background";
 
 	osg::Group* root = this->getScene();
-	if (root->removeChild(root->getNumChildren()-1) == true) {
+	if ( root->removeChild( root->getNumChildren()-1 ) == true ) {
 
-		if (bgVal == 0) { // default skybox
+		if ( bgVal == 0 ) { // default skybox
 			SkyBox* skyBox = new SkyBox;
-			root->addChild(skyBox->createSkyBox(0));
+			root->addChild( skyBox->createSkyBox( 0 ) );
 		}
-		else if (bgVal == 1) { // noise skybox
-			root->addChild(createSkyNoiseBox());
+		else if ( bgVal == 1 ) { // noise skybox
+			root->addChild( createSkyNoiseBox() );
 		}
-		#ifdef OPENCV_FOUND
-		else if (bgVal == 2) {
-			root->addChild(createTextureBackground());
+#ifdef OPENCV_FOUND
+		else if ( bgVal == 2 ) {
+			root->addChild( createTextureBackground() );
 		}
-		else if (bgVal == 3) {
-			root->addChild(createOrtho2dBackground());
+		else if ( bgVal == 3 ) {
+			root->addChild( createOrtho2dBackground() );
 		}
-		#endif
-		else if (bgVal == -1) {
+#endif
+		else if ( bgVal == -1 ) {
 			SkyBox* skyBox = new SkyBox;
-			root->addChild(skyBox->createSkyBox(-1)); // black skybox
+			root->addChild( skyBox->createSkyBox( -1 ) ); // black skybox
 		}
-		else if (bgVal == -2) {
+		else if ( bgVal == -2 ) {
 			SkyBox* skyBox = new SkyBox;
-			root->addChild(skyBox->createSkyBox(-2)); // white skybox
+			root->addChild( skyBox->createSkyBox( -2 ) ); // white skybox
 		}
 
-		reload(currentGraph);
+		reload( currentGraph );
 		return 0;
 	}
 
@@ -838,7 +839,7 @@ void CoreGraph::reload( Data::Graph* graph )
 	}
 	qDebug()<< "maxPosition";
 	qDebug()<< maxPosition;*/
-	baseTransform->setScale(osg::Vec3(maxPosition,maxPosition,maxPosition));
+	baseTransform->setScale( osg::Vec3( maxPosition,maxPosition,maxPosition ) );
 }
 
 void CoreGraph::cleanUp()
@@ -1073,7 +1074,7 @@ osg::ref_ptr<osg::Node> CoreGraph::createBackground()
 
 	if ( background == 0 ) {
 		SkyBox* skyBox = new SkyBox;
-		return skyBox->createSkyBox(0);
+		return skyBox->createSkyBox( 0 );
 	}
 
 	// skynoise
@@ -1464,22 +1465,22 @@ void CoreGraph::addTranslateToGraphRotTransf( osg::Vec3d pos )
 void CoreGraph::turnOnShadows()
 {
 	osg::ref_ptr<osgShadow::ShadowMap> sm = new osgShadow::ShadowMap;
-	shadowedScene->setShadowTechnique(sm.get());
+	shadowedScene->setShadowTechnique( sm.get() );
 }
 
 void CoreGraph::turnOffShadows()
 {
-	shadowedScene->setShadowTechnique(NULL);
+	shadowedScene->setShadowTechnique( NULL );
 }
 
 void CoreGraph::turnOnBase()
 {
-	baseGeode->setNodeMask(0x1);
+	baseGeode->setNodeMask( 0x1 );
 }
 
 void CoreGraph::turnOffBase()
 {
-	baseGeode->setNodeMask(0x0);
+	baseGeode->setNodeMask( 0x0 );
 }
 
 void CoreGraph::createBase()
@@ -1487,54 +1488,57 @@ void CoreGraph::createBase()
 
 	osg::Geometry* baseGeometry = new osg::Geometry();
 
-	baseGeode->addDrawable(baseGeometry);
-	baseGeode->setNodeMask(0x0);
-	osg::Material *material = new osg::Material();
-	material->setDiffuse(osg::Material::FRONT,  osg::Vec4(0.5, 0.5, 0.8, 1.0));
-	material->setEmission(osg::Material::FRONT, osg::Vec4(0.5, 0.5, 0.8, 1.0));
-	baseGeode->getOrCreateStateSet()->setAttribute(material);
+	baseGeode->addDrawable( baseGeometry );
+	baseGeode->setNodeMask( 0x0 );
+	osg::Material* material = new osg::Material();
+	material->setDiffuse( osg::Material::FRONT,  osg::Vec4( 0.5, 0.5, 0.8, 1.0 ) );
+	material->setEmission( osg::Material::FRONT, osg::Vec4( 0.5, 0.5, 0.8, 1.0 ) );
+	baseGeode->getOrCreateStateSet()->setAttribute( material );
 
-	baseTransform->addChild(baseGeode);
-	shadowedScene->addChild(baseTransform);
+	baseTransform->addChild( baseGeode );
+	shadowedScene->addChild( baseTransform );
 
-   //base
-   osg::Vec3Array* vertices = new osg::Vec3Array;
-   vertices->push_back( osg::Vec3( -1, -1, -1) ); // lb
-   vertices->push_back( osg::Vec3(  1, -1, -1) ); // rb
-   vertices->push_back( osg::Vec3(  1,  1, -1) ); // rt
-   vertices->push_back( osg::Vec3( -1,  1, -1) ); // lt
-   vertices->push_back( osg::Vec3(  1,  1,  1) ); // rt1
-   vertices->push_back( osg::Vec3( -1,  1,  1) ); // lt1
-   baseGeometry->setVertexArray( vertices );
+	//base
+	osg::Vec3Array* vertices = new osg::Vec3Array;
+	vertices->push_back( osg::Vec3( -1, -1, -1 ) ); // lb
+	vertices->push_back( osg::Vec3( 1, -1, -1 ) ); // rb
+	vertices->push_back( osg::Vec3( 1,  1, -1 ) ); // rt
+	vertices->push_back( osg::Vec3( -1,  1, -1 ) ); // lt
+	vertices->push_back( osg::Vec3( 1,  1,  1 ) ); // rt1
+	vertices->push_back( osg::Vec3( -1,  1,  1 ) ); // lt1
+	baseGeometry->setVertexArray( vertices );
 
-   osg::DrawElementsUInt* base = new osg::DrawElementsUInt(osg::PrimitiveSet::QUADS, 0);
-   base->push_back(3);
-   base->push_back(2);
-   base->push_back(1);
-   base->push_back(0);
+	osg::DrawElementsUInt* base = new osg::DrawElementsUInt( osg::PrimitiveSet::QUADS, 0 );
+	base->push_back( 3 );
+	base->push_back( 2 );
+	base->push_back( 1 );
+	base->push_back( 0 );
 
-   baseGeometry->addPrimitiveSet(base);
+	baseGeometry->addPrimitiveSet( base );
 
-   osg::DrawElementsUInt* baseBehind = new osg::DrawElementsUInt(osg::PrimitiveSet::QUADS, 0);
-   base->push_back(5);
-   base->push_back(4);
-   base->push_back(2);
-   base->push_back(3);
+	osg::DrawElementsUInt* baseBehind = new osg::DrawElementsUInt( osg::PrimitiveSet::QUADS, 0 );
+	base->push_back( 5 );
+	base->push_back( 4 );
+	base->push_back( 2 );
+	base->push_back( 3 );
 
-   baseGeometry->addPrimitiveSet(baseBehind);
+	baseGeometry->addPrimitiveSet( baseBehind );
 }
 
-float CoreGraph::compare(float a, float b)
+float CoreGraph::compare( float a, float b )
 {
-	if(a < 0)
+	if ( a < 0 ) {
 		a = a* -1;
+	}
 
 	qDebug() << a;
 
-	if(a > b)
+	if ( a > b ) {
 		return a;
-	else
+	}
+	else {
 		return b;
+	}
 }
 //*****
 }

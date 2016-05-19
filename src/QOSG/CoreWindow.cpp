@@ -1685,7 +1685,7 @@ void CoreWindow::loadExampleGraphBasic500()
 
 	Manager::GraphManager::getInstance()->loadGraph( "../share/3dsoftviz/graphExamples/tree500.graphml" );
 
-		viewerWidget->getCameraManipulator()->home();
+	viewerWidget->getCameraManipulator()->home();
 
 	//treba overit ci funguje
 	if ( isPlaying ) {
@@ -1914,106 +1914,123 @@ void CoreWindow::playLayout() {
 
 // Dynamic background switching
 void CoreWindow::switchBackgroundSkyBox() {
-	LOG(INFO) << "CoreWindow::switchBackgroundSkyBox switching to SkyBox bg";
+	LOG( INFO ) << "CoreWindow::switchBackgroundSkyBox switching to SkyBox bg";
 	Data::Graph* currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
 
 	int flagPlay = 0;
-	if (this->isPlaying) {
+	if ( this->isPlaying ) {
 		flagPlay = 1;
 		pauseLayout();
 	}
-	if (coreGraph->updateBackground(0, currentGraph) == 0) {
-		LOG(INFO) << "Background successfully updated";
+	if ( coreGraph->updateBackground( 0, currentGraph ) == 0 ) {
+		LOG( INFO ) << "Background successfully updated";
 	}
 	else {
-		LOG(ERROR) << "Background bg update failed";
+		LOG( ERROR ) << "Background bg update failed";
 	}
-	if (flagPlay == 1) playLayout();
+	if ( flagPlay == 1 ) {
+		playLayout();
+	}
 }
-void CoreWindow::switchBackgroundBlack() {
-	LOG(INFO) << "CoreWindow::switchBackgroundBlack switching to black color bg";
+void CoreWindow::switchBackgroundBlack()
+{
+	LOG( INFO ) << "CoreWindow::switchBackgroundBlack switching to black color bg";
 	Data::Graph* currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
 
 	int flagPlay = 0;
-	if (this->isPlaying) {
+	if ( this->isPlaying ) {
 		flagPlay = 1;
 		pauseLayout();
 	}
-	if (coreGraph->updateBackground(-1, currentGraph) == 0) {
-		LOG(INFO) << "Background successfully updated";
+	if ( coreGraph->updateBackground( -1, currentGraph ) == 0 ) {
+		LOG( INFO ) << "Background successfully updated";
 	}
 	else {
-		LOG(ERROR) << "Background bg update failed";
+		LOG( ERROR ) << "Background bg update failed";
 	}
-	if (flagPlay == 1) playLayout();
+	if ( flagPlay == 1 ) {
+		playLayout();
+	}
 }
-void CoreWindow::switchBackgroundWhite() {
-	LOG(INFO) << "CoreWindow::switchBackgroundWhite switching to white color bg";
+void CoreWindow::switchBackgroundWhite()
+{
+	LOG( INFO ) << "CoreWindow::switchBackgroundWhite switching to white color bg";
 	Data::Graph* currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
 
 	int flagPlay = 0;
-	if (this->isPlaying) {
+	if ( this->isPlaying ) {
 		flagPlay = 1;
 		pauseLayout();
 	}
-	if (coreGraph->updateBackground(-2, currentGraph) == 0) {
-		LOG(INFO) << "Background successfully updated";
+	if ( coreGraph->updateBackground( -2, currentGraph ) == 0 ) {
+		LOG( INFO ) << "Background successfully updated";
 	}
 	else {
-		LOG(ERROR) << "Background bg update failed";
+		LOG( ERROR ) << "Background bg update failed";
 	}
-	if (flagPlay == 1) playLayout();
+	if ( flagPlay == 1 ) {
+		playLayout();
+	}
 }
-void CoreWindow::switchBackgroundSkyNoiseBox() {
-	LOG(INFO) << "CoreWindow::switchBackgroundSkyNoiseBox switching to SkyNoiseBox bg";
+void CoreWindow::switchBackgroundSkyNoiseBox()
+{
+	LOG( INFO ) << "CoreWindow::switchBackgroundSkyNoiseBox switching to SkyNoiseBox bg";
 	Data::Graph* currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
 
 	int flagPlay = 0;
-	if (this->isPlaying) {
+	if ( this->isPlaying ) {
 		flagPlay = 1;
 		pauseLayout();
 	}
-	if (coreGraph->updateBackground(1, currentGraph) == 0) {
-		LOG(INFO) << "Background successfully updated";
+	if ( coreGraph->updateBackground( 1, currentGraph ) == 0 ) {
+		LOG( INFO ) << "Background successfully updated";
 	}
 	else {
-		LOG(ERROR) << "Background bg update failed";
+		LOG( ERROR ) << "Background bg update failed";
 	}
-	if (flagPlay == 1) playLayout();
+	if ( flagPlay == 1 ) {
+		playLayout();
+	}
 }
-void CoreWindow::switchBackgroundTexture() {
-	LOG(INFO) << "CoreWindow::switchBackgroundTexture switching to Texture bg";
+void CoreWindow::switchBackgroundTexture()
+{
+	LOG( INFO ) << "CoreWindow::switchBackgroundTexture switching to Texture bg";
 	Data::Graph* currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
 
 	int flagPlay = 0;
-	if (this->isPlaying) {
+	if ( this->isPlaying ) {
 		flagPlay = 1;
 		pauseLayout();
 	}
-	if (coreGraph->updateBackground(2, currentGraph) == 0) {
-		LOG(INFO) << "Background successfully updated";
+	if ( coreGraph->updateBackground( 2, currentGraph ) == 0 ) {
+		LOG( INFO ) << "Background successfully updated";
 	}
 	else {
-		LOG(ERROR) << "Background bg update failed";
+		LOG( ERROR ) << "Background bg update failed";
 	}
-	if (flagPlay == 1) playLayout();
+	if ( flagPlay == 1 ) {
+		playLayout();
+	}
 }
-void CoreWindow::switchBackgroundOrtho2d() {
-	LOG(INFO) << "CoreWindow::switchBackgroundOrtho2d switching to Ortho2d bg";
+void CoreWindow::switchBackgroundOrtho2d()
+{
+	LOG( INFO ) << "CoreWindow::switchBackgroundOrtho2d switching to Ortho2d bg";
 	Data::Graph* currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
 
 	int flagPlay = 0;
-	if (this->isPlaying) {
+	if ( this->isPlaying ) {
 		flagPlay = 1;
 		pauseLayout();
 	}
-	if (coreGraph->updateBackground(3, currentGraph) == 0) {
-		LOG(INFO) << "Background successfully updated";
+	if ( coreGraph->updateBackground( 3, currentGraph ) == 0 ) {
+		LOG( INFO ) << "Background successfully updated";
 	}
 	else {
-		LOG(ERROR) << "Background bg update failed";
+		LOG( ERROR ) << "Background bg update failed";
 	}
-	if (flagPlay == 1) playLayout();
+	if ( flagPlay == 1 ) {
+		playLayout();
+	}
 }
 
 void CoreWindow::labelOnOff( bool )
@@ -3448,7 +3465,7 @@ void CoreWindow::startLeap()
 		return;
 	}
 
-	this->mLeapThr = new Leap::LeapThread(this,new Leap::CustomCameraManipulator(getCameraManipulator()));
+	this->mLeapThr = new Leap::LeapThread( this,new Leap::CustomCameraManipulator( getCameraManipulator() ) );
 	//CoUninitialize();
 
 	this->mLeapThr->start();
@@ -4689,7 +4706,7 @@ void CoreWindow::lightClicked()
 
 		this->coreGraph->getScene()->getOrCreateStateSet()->setMode( GL_LIGHT0,osg::StateAttribute::OFF );
 		this->coreGraph->getScene()->getOrCreateStateSet()->setMode( GL_LIGHT1,osg::StateAttribute::ON );
-	 }
+	}
 	else {
 
 		this->coreGraph->getScene()->getOrCreateStateSet()->setMode( GL_LIGHT0,osg::StateAttribute::ON );
@@ -4703,7 +4720,7 @@ void CoreWindow::shadowClicked()
 	if ( chb_shadow->isChecked() ) {
 
 		this->coreGraph->turnOnShadows();
-	 }
+	}
 	else {
 
 		this->coreGraph->turnOffShadows();
@@ -4716,7 +4733,7 @@ void CoreWindow::baseClicked()
 	if ( chb_base->isChecked() ) {
 
 		this->coreGraph->turnOnBase();
-	 }
+	}
 	else {
 
 		this->coreGraph->turnOffBase();
