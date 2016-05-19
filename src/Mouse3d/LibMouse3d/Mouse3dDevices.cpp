@@ -18,7 +18,8 @@ namespace LibMouse3d{
 
 #elif defined(Q_OS_MAC)
 
-		this->mouse = new Mouse3dMacDevice( window );
+		this->mouse = new Mouse3dMacDevice();
+		QObject::connect(mouse, SIGNAL(PassMotion(std::vector<float>&)), window, SLOT(OnMove(std::vector<float>&)));
 
 #endif
     }

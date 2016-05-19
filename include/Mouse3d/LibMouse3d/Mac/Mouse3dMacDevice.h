@@ -1,24 +1,22 @@
 #pragma once
 
+#include <QObject>
+
 #include <3dConnexionClient/ConnexionClientAPI.h>
 
-#include "QOSG/CoreWindow.h"
-
-class Mouse3dMacDevice 
-{
+class Mouse3dMacDevice : public QObject {
+	Q_OBJECT
+	
 public:
-	Mouse3dMacDevice::Mouse3dMacDevice( QOSG::CoreWindow *window );
+	Mouse3dMacDevice::Mouse3dMacDevice();
+	
 	Mouse3dMacDevice::~Mouse3dMacDevice();
 
-	void ProcessEvent(const ConnexionDeviceState *s);
-
-	unsigned char *CStringToPascalString(const char *s);
-
 	void MouseHandler(io_connect_t connection, natural_t messageType, void *messageArgument);
+	
+public slots:
+	void PassMotion( std::vector<float> &motion_vector );
 		
 private:
-	QOSG::CoreWindow *window;
-	
-	UInt16 ClientID;
-	std::map<UInt16, Mouse3dMacDevice *, LessThanClientID> ClientIDToDeviceObject;
+	UInt16 clientID;
 };

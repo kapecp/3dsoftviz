@@ -668,6 +668,7 @@ elseif( WIN32 )
 )
 elseif( APPLE )
 	list(APPEND SRC_MOUSE3D
+		src/Mouse3d/LibMouse3d/Mac/Mouse3dMacDevice.cpp
 )
 endif()
 
@@ -797,6 +798,7 @@ elseif( WIN32 )
 )
 elseif( APPLE )
 	list(APPEND HEADER_MOUSE3D
+		include/Mouse3d/LibMouse3d/Mac/Mouse3dMacDevice.h
 )
 endif()
 
