@@ -28,9 +28,6 @@
 [submodule "dependencies/osgModeling"]
 	path = dependencies/osgModeling
 	url = git@github.com:kapecp/osgmodeling.git
-[submodule "dependencies/parserlib"]
-	path = dependencies/parserlib
-	url = git@github.com:axilmar/parserlib.git
 [submodule "dependencies/igloo"]
 	path = dependencies/igloo
 	url = git@github.com:kapecp/igloo.git
