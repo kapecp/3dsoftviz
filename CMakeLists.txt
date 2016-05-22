@@ -897,6 +897,9 @@ target_include_directories( noiseutils SYSTEM PUBLIC ${DEPENDENCIES_INCLUDE_DIR}
 add_library( qtcolorpicker STATIC dependencies/qtcolorpicker/qtcolorpicker.cpp )
 target_include_directories( qtcolorpicker SYSTEM PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/qtcolorpicker )
 
+include_directories( SYSTEM dependencies/parserlib/source )
+add_library( parserlib STATIC dependencies/parserlib/source/ast.cpp dependencies/parserlib/source/parser.cpp )
+
 # ---------------------------------------------------------------
 # Build modules as libraries
 # ---------------------------------------------------------------
@@ -990,6 +993,7 @@ target_link_libraries( ${3DSOFTVIZ_NAME}
 	libnoise
 	osgModeling
 	qtcolorpicker
+	parserlib
 	${QT_LIBRARIES}
 	${OPENSCENEGRAPH_LIBRARIES}
 	${OSGVIEWER_LIBRARIES}
