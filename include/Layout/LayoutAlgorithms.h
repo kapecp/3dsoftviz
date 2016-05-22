@@ -3,6 +3,17 @@
 #include <QList>
 #include <osg/BoundingBox>
 #include <QRectF>
+#include <exception>
+
+class LayoutAlgorithmException sealed : public std::exception
+{
+private:
+    std::string errMsg;
+
+public:
+    LayoutAlgorithmException(const std::string& errorMsg);
+    const char* what() const throw();
+};
 
 namespace Layout {
 struct ElementLayout {

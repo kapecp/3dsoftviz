@@ -2,6 +2,16 @@
 #include <exception>
 #include <QVector>
 
+LayoutAlgorithmException::LayoutAlgorithmException(const std::string& errorMsg)
+    : errMsg(errMsg)
+{
+}
+
+const char* LayoutAlgorithmException::what() const throw()
+{
+    return errMsg.c_str();
+}
+
 namespace Layout {
 void LayoutAlgorithms::layoutInsideRegion( const osg::BoundingBox& elementDimension, uint elementCount, float groundTopPosition, float spacing, QList<osg::Vec3>* layouts, osg::BoundingBox* aroundRegion )
 {
@@ -122,7 +132,7 @@ void LayoutAlgorithms::layoutAroundRegion( const osg::BoundingBox& elementDimens
 	const float offsetY = region.center().y();
 
 	if ( regionWidth < elementWidth || regionDepth < elementDepth ) {
-		throw std::exception( "Region is too small for layouting even one element" );
+        throw LayoutAlgorithmException( "Region is too small for layouting even one element" );
 	}
 
 	float curWidth = regionWidth + ( regionWidth <= regionDepth ? elementIndentOffset * 2 : 0 );
