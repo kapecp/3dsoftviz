@@ -13,7 +13,7 @@ NodeGroup::NodeGroup( QMap<qlonglong, osg::ref_ptr<Data::Node> >* nodes )
 {
 	this->nodes = nodes;
 	this->appConf = Util::ApplicationConfig::get();
-	this->nodeTransforms = new QMap<qlonglong, osg::ref_ptr<osg::AutoTransform> >;
+	this->nodeTransforms = new QMap<qlonglong, osg::ref_ptr<osg::Transform> >;
 
 	initNodes();
 }
@@ -36,7 +36,7 @@ NodeGroup::~NodeGroup( void )
  */
 void NodeGroup::initNodes()
 {
-	osg::ref_ptr<osg::AutoTransform> at = new osg::AutoTransform;
+	//osg::ref_ptr<osg::AutoTransform> at = new osg::AutoTransform;
 	//at->setPosition(node->getTargetPosition() * graphScale);
 	//at->setAutoRotateMode(osg::AutoTransform::ROTATE_TO_SCREEN);
 	//at->addChild(node);
@@ -129,12 +129,11 @@ osg::ref_ptr<osg::Group> NodeGroup::getNodeGroup( osg::ref_ptr<Data::Node> node,
 	return group;
 }
 
-osg::ref_ptr<osg::AutoTransform> NodeGroup::wrapChild( osg::ref_ptr<Data::Node> node, float graphScale )
+osg::ref_ptr<osg::Transform> NodeGroup::wrapChild( osg::ref_ptr<Data::Node> node, float graphScale )
 {
-	osg::ref_ptr<osg::AutoTransform> at = new osg::AutoTransform;
+	osg::ref_ptr<osg::PositionAttitudeTransform> at = new osg::PositionAttitudeTransform;
 	//at->setPosition(node->getTargetPosition() * graphScale);
 	at->setPosition( node->restrictedTargetPosition() * graphScale );
-	at->setAutoRotateMode( osg::AutoTransform::ROTATE_TO_SCREEN );
 	at->addChild( node );
 
 	nodeTransforms->insert( node->getId(), at );
@@ -182,7 +181,15 @@ void NodeGroup::updateNodeCoordinates( float interpolationSpeed )
 		//string b = typeid (Data::Node).name();
 		//if(typeid (i.value()).name() == "aa")
 		//;
-		nodeTransforms->value( i.key() )->setPosition( ( *i )->getCurrentPosition( true, interpolationSpeed ) );
+		auto transform = nodeTransforms->value( i.key() ).get();
+		auto posAttrTransform = dynamic_cast<osg::PositionAttitudeTransform*>( transform );
+		auto autoTransform = dynamic_cast<osg::AutoTransform*>( transform );
+		if ( posAttrTransform ) {
+			posAttrTransform->setPosition( ( *i )->getCurrentPosition( true, interpolationSpeed ) );
+		}
+		else if ( autoTransform ) {
+			autoTransform->setPosition( ( *i )->getCurrentPosition( true, interpolationSpeed ) );
+		}
 
 		osg::ref_ptr<osg::AutoTransform> at = NULL;
 		at = i.value()->getOutBall();

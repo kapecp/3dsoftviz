@@ -15,6 +15,9 @@
 #include <QMap>
 #include <QStringList>
 
+#undef min
+#undef max
+
 Repository::Git::GitLuaGraphVisualizer::GitLuaGraphVisualizer( Data::Graph* currentGraph, Repository::Git::GitEvolutionGraph* evolutionGraph, osg::ref_ptr<osg::Camera> camera, int showLuaStats )
 	: currentGraph( currentGraph ), evolutionGraph( evolutionGraph ), luaGraph( Lua::LuaGraph::getInstance() ), showLuaStats( showLuaStats ), camera( camera )
 {
@@ -723,7 +726,7 @@ void Repository::Git::GitLuaGraphVisualizer::processChangedNodesAndEdges()
 
 							// Zresetujeme vizualizaciu uzla
 							node->reloadConfig();
-							node->showLabel( true );
+                            node->showLabel( true, false );
 							break;
 						case CHANGES:
 //                    node->setType( this->currentGraph->getTypesByName( "clearNode" ).at( 0 ) );
@@ -798,7 +801,7 @@ void Repository::Git::GitLuaGraphVisualizer::processChangedNodesAndEdges()
 
 								// Zresetujeme uzol
 								node->reloadConfig();
-								node->showLabel( true );
+                                node->showLabel( true, false );
 
 								break;
 							case CHANGES:
@@ -853,7 +856,7 @@ void Repository::Git::GitLuaGraphVisualizer::processChangedNodesAndEdges()
 
 								// Zresetujeme uzol
 								node->reloadConfig();
-								node->showLabel( true );
+                                node->showLabel( true, false );
 							}
 						}
 						else {
@@ -953,7 +956,7 @@ void Repository::Git::GitLuaGraphVisualizer::reloadNodeRepresentation( int showL
 //            iterator.value()->reloadConfig();
 //            qDebug() << "Setting invisible -" << iterator.value()->getLuaIdentifier();
 				iterator.value()->setInvisible( true );
-				iterator.value()->showLabel( false );
+                iterator.value()->showLabel( false, false );
 				break;
 		}
 
@@ -1073,7 +1076,7 @@ void Repository::Git::GitLuaGraphVisualizer::filterVisualizationByAuthor( QStrin
 		if ( node ) {
 //            qDebug() << identifier;
 			node->setInvisible( false );
-			node->showLabel( true );
+            node->showLabel( true, false );
 		}
 		else {
 			// ToDo mozno nejaky chybovy vypis :D a mozno nie
@@ -1167,7 +1170,7 @@ void Repository::Git::GitLuaGraphVisualizer::filterVisualizationByStructure( QSt
 		if ( node ) {
 //            qDebug() << identifier;
 			node->setInvisible( false );
-			node->showLabel( true );
+            node->showLabel( true, false );
 		}
 		else {
 			// ToDo mozno nejaky chybovy vypis :D a mozno nie
@@ -1220,7 +1223,7 @@ void Repository::Git::GitLuaGraphVisualizer::setNodeParams( osg::ref_ptr<Data::N
 	float scale = obj->getFloatParam( "size", defSize );
 	node->setScale( scale );
 	node->reloadConfig();
-	node->showLabel( true );
+    node->showLabel( true, false );
 }
 
 void Repository::Git::GitLuaGraphVisualizer::setEdgeParams( osg::ref_ptr<Data::Edge> edge, Lua::LuaGraphObject* obj, osg::Vec4f defColor )

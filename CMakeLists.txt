@@ -639,6 +639,8 @@ file( GLOB_RECURSE SRC_VIEWER	"src/Viewer/*.cpp" )
 file( GLOB_RECURSE SRC_CLUSTERING	"src/Clustering/*.cpp")
 file( GLOB SRC_REPOSITORY		"src/Repository/Git/*.cpp" )
 file( GLOB_RECURSE SRC_GITLIB   "src/Repository/Git/GitLib/*.cpp" )
+file( GLOB_RECURSE SRC_CITY		"src/City/*.cpp" )
+file( GLOB_RECURSE SRC_SHAPES	"src/Shapes/*.cpp" )
 
 # OpenCV
 file( GLOB_RECURSE SRC_OPENCV	"src/OpenCV/*.cpp" )
@@ -682,6 +684,8 @@ set( SRC
 	${SRC_VIEWER}
 	${SRC_UTIL}
 	${SRC_REPOSITORY}
+	${SRC_CITY}
+	${SRC_SHAPES}
 )
 
 if( OpenCV_FOUND )
@@ -741,6 +745,8 @@ file( GLOB_RECURSE HEADER_VIEWER	"include/Viewer/*.h" )
 file( GLOB_RECURSE HEADER_CLUSTERING	"include/Clustering/*.h")
 file( GLOB HEADER_REPOSITORY		"include/Repository/Git/*.h" )
 file( GLOB_RECURSE HEADER_GITLIB		"include/Repository/Git/GitLib/*.h" )
+file( GLOB_RECURSE HEADER_CITY		"include/City/*.h" )
+file( GLOB_RECURSE HEADER_SHAPES	"include/Shapes/*.h" )
 
 # OpenCV
 file( GLOB_RECURSE HEADER_OPENCV	"include/OpenCV/*.h" )
@@ -784,6 +790,8 @@ set( INCL
 	${HEADER_VIEWER}
 	${HEADER_UTIL}
 	${HEADER_REPOSITORY}
+	${HEADER_CITY}
+	${HEADER_SHAPES}
 )
 
 if( OpenCV_FOUND )
@@ -831,6 +839,8 @@ source_group( \\src\\LuaGraph "^.*LuaGraph/.*$")
 source_group( \\src\\LuaInterface "^.*LuaInterface/.*$")
 source_group( \\src\\LuaTypes "^.*LuaTypes/.*$")
 source_group( \\src\\Git "^.*Git/.*$" )
+source_group( \\src\\City "^.*City/.*$" )
+source_group( \\src\\Shapes "^.*Shapes/.*$" )
 
 # Group header files
 source_group( \\headers\\Clustering "^.*Clustering/.*h$")
@@ -849,6 +859,8 @@ source_group( \\headers\\LuaGraph "^.*LuaGraph/.*h$")
 source_group( \\headers\\LuaInterface "^.*LuaInterface/.*h$")
 source_group( \\headers\\LuaTypes "^.*LuaTypes/.*h$")
 source_group( \\headers\\Git "^.*Git/.*h$" )
+source_group( \\headers\\City "^.*City/.*h$" )
+source_group( \\headers\\Shapes "^.*Shapes/.*h$" )
 
 if( OpenCV_FOUND )
 	source_group( \\src\\QOpenCV "^.*QOpenCV/.*$" )

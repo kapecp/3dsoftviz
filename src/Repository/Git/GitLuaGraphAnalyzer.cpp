@@ -20,6 +20,9 @@
 #include <QList>
 #include <QTextStream>
 
+#undef min
+#undef max
+
 Repository::Git::GitLuaGraphAnalyzer::GitLuaGraphAnalyzer()
 	: luaGraph( Lua::LuaGraph::getInstance() ), evolutionGraph( nullptr ), versionNumber( -1 ), functions( new QMap<QString, Repository::Git::GitFunction*>() )
 {

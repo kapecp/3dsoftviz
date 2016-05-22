@@ -630,6 +630,7 @@ Vwr::CoreGraph::CoreGraph( Data::Graph* graph, osg::ref_ptr<osg::Camera> camera 
 	appConf = Util::ApplicationConfig::get();
 
 	root = new osg::Group();
+	hud = new Hud();
 	graphRotTransf = new osg::MatrixTransform();
 	graphGroup = new osg::Group();
 	rotationMatrix = rotationMatrix.identity();
@@ -670,6 +671,7 @@ Vwr::CoreGraph::CoreGraph( Data::Graph* graph, osg::ref_ptr<osg::Camera> camera 
 
 	graphRotTransf->addChild( graphGroup );
 	shadowedScene->addChild( graphRotTransf );
+	root->addChild( graphRotTransf );
 
 	createBase();
 	if ( !arucoRunning ) {
@@ -1047,7 +1049,6 @@ osg::ref_ptr<osg::Node> CoreGraph::createSkyNoiseBox()
 	return clearNode;
 }
 
-
 osg::ref_ptr<osg::Node> CoreGraph::createBackground()
 {
 
@@ -1256,9 +1257,34 @@ void CoreGraph::setNodeLabelsVisible( bool visible )
 	QMap<qlonglong, osg::ref_ptr<Data::Node> >::const_iterator i = in_nodes->constBegin();
 
 	while ( i != in_nodes->constEnd() ) {
-		( *i )->showLabel( visible );
+		( *i )->showLabel( visible, labelsForResidenceShowed );
 		++i;
 	}
+}
+
+void CoreGraph::showLabelsForResidence( bool state )
+{
+	this->labelsForResidenceShowed = state;
+}
+
+bool CoreGraph::isHudDisplayed() const
+{
+	return root->containsNode( hud );
+}
+
+void CoreGraph::showHud( bool state )
+{
+	if ( state && !isHudDisplayed() ) {
+		root->addChild( hud );
+	}
+	else if ( !state && isHudDisplayed() ) {
+		root->removeChild( hud );
+	}
+}
+
+Hud* CoreGraph::getHud()
+{
+	return hud;
 }
 
 void CoreGraph::reloadConfig()
@@ -1281,6 +1307,11 @@ void CoreGraph::reloadConfig()
 CoreGraph::~CoreGraph( void )
 {
 	cleanUp();
+}
+
+void CoreGraph::onResized( int width, int height )
+{
+	hud->setWindowSize( QSize( width, height ) );
 }
 
 void CoreGraph::setNodesFreezed( bool val )
@@ -1732,7 +1763,7 @@ void CoreGraph::scaleNodes( bool scaleUp )
 			}
 
 		}
-		it.value()->reloadConfig();
+        //it.value()->reloadConfig();
 		//reload(graph);
 	}
 }
