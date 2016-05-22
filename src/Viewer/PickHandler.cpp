@@ -12,7 +12,9 @@
 
 #include "Core/Core.h"
 #include "Layout/LayoutThread.h"
+#include "Layout/FRAlgorithm.h"
 #include "Layout/Shape_Cube.h"
+#include "Layout/FRAlgorithm.h"
 
 #include "Util/ApplicationConfig.h"
 
@@ -278,7 +280,39 @@ bool PickHandler::handleKeyDown( const osgGA::GUIEventAdapter& ea, GUIActionAdap
 	else if ( ea.getKey() == osgGA::GUIEventAdapter::KEY_N ) {
 		this->selectAllNeighbors( this->pickedNodes );
 	}
+	//jurik
+	else if ( ea.getKey() == osgGA::GUIEventAdapter::KEY_O ) {
+		if ( isCtrlPressed ) {
+			//scale down
+			coreGraph->scaleNodes( false );
+		}
+		else {
+			//scale up
+			coreGraph->scaleNodes( true );
+		}
+	}
+	else if ( ea.getKey() == osgGA::GUIEventAdapter::KEY_P ) {
+		Layout::LayoutThread* layout = AppCore::Core::getInstance()->getLayoutThread();
+		float distance = layout->getAlg()->getMaxDistance();
 
+		if ( isCtrlPressed ) {
+			layout->pause();
+			coreGraph->setNodesFreezed( true );
+			layout->getAlg()->setMaxDistance( distance * 0.8 );
+			coreGraph->scaleGraphToBase();
+			coreGraph->setNodesFreezed( false );
+			layout->play();
+		}
+		else {
+			layout->pause();
+			coreGraph->setNodesFreezed( true );
+			layout->getAlg()->setMaxDistance( distance * 1.2 );
+			coreGraph->scaleGraphToBase();
+			coreGraph->setNodesFreezed( false );
+			layout->play();
+		}
+	}
+	//*****
 	// FULLSCREEN
 	else if ( ea.getKey() == 'l' || ea.getKey() == 'L' ) {
 		bool hideToolbars = ( appConf->getValue( "Viewer.Fullscreen" ).toInt() == 0 ? false : true );
@@ -382,6 +416,27 @@ bool PickHandler::handleKeyDown( const osgGA::GUIEventAdapter& ea, GUIActionAdap
 		osg::DisplaySettings::instance()->setEyeSeparation( distance );
 		qDebug() << "Eye distance : " << distance;
 	}
+	else if ( ea.getKey() == osgGA::GUIEventAdapter::KEY_O ) {
+		if ( isCtrlPressed ) {
+			//scale down
+			coreGraph->scaleNodes( false );
+		}
+		else {
+			//scale up
+			coreGraph->scaleNodes( true );
+		}
+	}
+	else if ( ea.getKey() == osgGA::GUIEventAdapter::KEY_P ) {
+		Layout::LayoutThread* layout = AppCore::Core::getInstance()->getLayoutThread();
+		float distance = layout->getAlg()->getMaxDistance();
+
+		if ( isCtrlPressed ) {
+			layout->getAlg()->setMaxDistance( distance * 0.8 );
+		}
+		else {
+			layout->getAlg()->setMaxDistance( distance * 1.2 );
+		}
+	}
 
 	return false;
 }
@@ -400,6 +455,9 @@ bool PickHandler::handleRelease( const osgGA::GUIEventAdapter& ea, osgGA::GUIAct
 	// manipulator will handle it.)
 
 	leftButtonPressed = false;
+	rightButtonPressed = false;
+	initialX = 0;
+	initialY = 0;
 
 	if ( pickMode == PickMode::MULTI && isDrawingSelectionQuad ) {
 		float x, y, w, h;
@@ -487,6 +545,18 @@ bool PickHandler::handleDrag( const osgGA::GUIEventAdapter& ea, osgGA::GUIAction
 
 		return dragNode( viewer );
 	}
+	//jurik
+	else if ( rightButtonPressed && coreGraph->isArucoRunning() ) {
+
+		coreGraph->ratata( initialX,_mX,initialY,_mY );
+		if ( _mX > initialX+5 || _mX < initialX-5 ) {
+			initialX=_mX;
+		}
+		if ( _mY > initialY+5 || _mY < initialY-5 ) {
+			initialY=_mY;
+		}
+	}
+	//*****
 
 	return false;
 }
@@ -528,6 +598,12 @@ bool PickHandler::handlePush( const osgGA::GUIEventAdapter& ea, osgGA::GUIAction
 			return pick( ea.getXnormalized() - 0.00005f, ea.getYnormalized() - 0.00005f, ea.getXnormalized() + 0.00005f, ea.getYnormalized() + 0.00005f, viewer );
 
 		}
+	}
+
+	if ( ea.getButtonMask() == osgGA::GUIEventAdapter::RIGHT_MOUSE_BUTTON ) {
+		rightButtonPressed = true;
+		initialX = ea.getX();
+		initialY = ea.getY();
 	}
 
 	_mX = ea.getX();

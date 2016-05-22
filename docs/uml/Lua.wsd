@@ -1,0 +1,65 @@
+// Module Lua
+// Autor: Team Reality Not Found
+
+@startuml
+scale 800 width
+
+!define fllHprGr(x) FullHyperGraphVisualizer
+!define hprGr(x) HyperGraphVisualizer
+!define eg(x) LuaEdge
+!define gr(x) LuaGraph
+!define grObj(x) LuaGraphObject
+!define grObs(x) LuaGraphObserver
+!define grTrIt(x) LuaGraphTreeItem
+!define grTrMd(x) LuaGraphTreeModel
+!define grViz(x) LuaGraphVisualizer
+!define inc(x) LuaIncidence
+!define intf(x) LuaInterface
+!define nd(x) LuaNode
+!define smpGrViz(x) SimpleGraphVisualizer
+!define dtGr(x) Data.Graph
+!define dtTp(x) Data.Type
+!define osg(x) OSG.OSG
+!define dil(x) Diluculum.Diluculum
+
+package Lua{
+	class osg() #red
+	class dil() #red
+	fllHprGr() --|> grViz()
+	'fllHprGr() -- dtGr()
+	'fllHprGr() --osg()
+	
+	hprGr() --|> grViz()
+	'hprGr() -- dtGr()
+	'hprGr() -- osg()
+	
+	eg() --|> grObj()
+	gr() "1" *-- "*" nd()
+	gr() "1" *-- "*" eg()
+	gr() "1" *-- "*" inc()
+	gr() "0..1" -- "*" grObs()
+	gr() -- dil()
+	
+	grObj() -- dil()
+	
+	grTrMd() -- grTrIt()
+	grTrMd() -- nd()
+	grTrMd() -- dil()
+	
+	grViz() --|> grObs()
+	grViz() -- dtGr()
+	grViz() -- osg()
+	grViz() -- dtTp()
+	
+	inc() --|> grObj()
+	
+	intf() -- dil()
+	
+	nd() --|> grObj()
+	
+	smpGrViz() --|> grViz()
+	'smpGrViz() -- dtGr()
+	'smpGrViz() -- osg()
+}
+
+@enduml

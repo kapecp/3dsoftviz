@@ -161,3 +161,42 @@ void Leap::LeapActions::stopMovingForward()
 {
 	cameraManipulator->disableCameraMovement();
 }
+
+//jurik
+void Leap::LeapActions::graphRotateSwipe( int swipeDirection )
+{
+
+	cameraManipulator->graphRotateSwipe( swipeDirection );
+}
+
+void Leap::LeapActions::rotateAruco( Leap::DirectionDetector::Direction direction )
+{
+
+	switch ( direction ) {
+		case Leap::DirectionDetector::Direction::LEFT :
+			cameraManipulator->rotateArucoLeft();
+			break;
+		case Leap::DirectionDetector::Direction::RIGHT :
+			cameraManipulator->rotateArucoRight();
+			break;
+		case Leap::DirectionDetector::Direction::STEADY :
+			break;
+	}
+}
+
+void Leap::LeapActions::scaleEdges( Leap::DirectionDetector::Direction direction )
+{
+	switch ( direction ) {
+		case Leap::DirectionDetector::Direction::LEFT :
+			cameraManipulator->scaleEdgesUp();
+			break;
+		case Leap::DirectionDetector::Direction::RIGHT :
+			cameraManipulator->scaleEdgesDown();
+			break;
+	}
+}
+void Leap::LeapActions::scaleNodes( bool scaleUp )
+{
+	cameraManipulator->scaleNodes( scaleUp );
+}
+//*****

@@ -61,6 +61,7 @@ class CameraManipulator;
 namespace QOSG {
 
 class ViewerQT;
+class ProjectiveARViewer;
 }
 
 namespace Network {
@@ -689,7 +690,12 @@ public slots:
 	void lightClicked();
 	void shadowClicked();
 	void baseClicked();
-	//*****
+	void axesClicked();
+	void scaleArucoGraphToBase();
+	void swapManipulator();
+
+	// kostan
+	void createProjARWindow();
 
 private:
 
@@ -1472,10 +1478,57 @@ private:
 	 *@brief chb_base
 	 */
 	QCheckBox* chb_base;
+
+	QCheckBox* chb_axes;
+
+	/**
+	 *Button for scaling graph to ArUco base
+	 *@brief b_default_scale
+	 */
+	QPushButton* b_scale_default;
+
+	/**
+	 *Button for scaling aruco graph up
+	 *@brief b_default_scale
+	 */
+	QPushButton* b_scale_up;
+
+	/**
+	 *Button for scaling aruco graph down
+	 *@brief b_default_scale
+	 */
+	QPushButton* b_scale_down;
+
+	/**
+	 *Button for rotating aruco graph
+	 *@brief b_rotate_graph
+	 */
+	QPushButton* b_rotate_graph;
+
+	// kostan
+
+	/**
+	 *CheckBox for showing base
+	 *@brief chb_base
+	 */
+	QPushButton* b_start_projective_ar;
+
 	//*****
 
 public:
 
+	//jurik
+	void setPlaying( bool play )
+	{
+		this->isPlaying = play;
+	}
+
+	bool getPlaying()
+	{
+		return isPlaying;
+	}
+
+	//*****
 	void setRepulsiveForceInsideCluster( double repulsiveForceInsideCluster );
 	void hideRepulsiveForceSpinBox();
 

@@ -161,6 +161,17 @@ public:
 	    */
 	void setRepulsiveForceVertigo( int value );
 
+	//skalovanie dlzky hran
+	void setMaxDistance( float max_distance )
+	{
+		this->MAX_DISTANCE = max_distance;
+	}
+
+	float getMaxDistance()
+	{
+		return MAX_DISTANCE;
+	}
+
 private:
 	Layout::RadialLayout* rl;
 

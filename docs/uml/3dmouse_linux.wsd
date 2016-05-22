@@ -1,0 +1,53 @@
+@startuml
+
+' Class and namespace definitions
+
+class QThread
+class QApplication
+
+class X11
+
+namespace 3dSoftviz{
+
+    class CoreWindow
+    class Connector
+}
+
+namespace Application{
+    
+    class Application
+}
+
+namespace LibMouse3d{
+
+    class Mouse3dDevice
+    class EventThread
+
+    namespace Magellan{
+       class fixx11
+        class xdrvlib
+    }
+}
+
+
+' Basic connetions from application to mouse
+
+3dSoftviz.CoreWindow -right-> Application.Application
+3dSoftviz.CoreWindow -left-> 3dSoftviz.Connector
+LibMouse3d.Mouse3dDevice -right-> Application.Application
+3dSoftviz.Connector -down-> LibMouse3d.EventThread
+LibMouse3d.EventThread -right-> LibMouse3d.Mouse3dDevice 
+LibMouse3d.Mouse3dDevice --> LibMouse3d.Magellan.xdrvlib
+LibMouse3d.Magellan.xdrvlib -left-> LibMouse3d.Magellan.fixx11
+Application.Application --> LibMouse3d.Magellan.fixx11
+
+' Major class includes
+
+LibMouse3d.Magellan.xdrvlib -right-> X11
+
+
+' Generalizations
+
+LibMouse3d.EventThread -up-|> QThread
+Application.Application --|> QApplication
+@enduml

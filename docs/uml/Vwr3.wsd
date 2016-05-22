@@ -1,0 +1,66 @@
+// Module Vwr
+// Autor: Team Reality Not Found
+
+@startuml
+scale 800 width
+
+!define bwsGrp(x) BrowserGroup
+!define cmrMnp(x) CameraManipulator
+!define crGr(x) CoreGraph
+!define dtHlp(x) DataHelper
+!define egGrp(x) EdgeGroup
+!define msCtrl(x) MouseControl
+!define mvErtSk(x) MoveEarthySkyWithEyePointTransform
+!define ndGrp(x) NodeGroup
+!define prnNsTxGnr(x) PerlinNoiseTextureGenerator
+!define pkHnd(x) PickHandler
+!define rstMnpGpr(x) RestrictionManipulatorsGroup
+!define rstVisGrp(x) RestrictionVisualizationGroup
+!define spVstMnpCr(x) ShapeVisitor_ManipulatorCreator
+!define spVstVisCr(x) ShapeVisitor_VisualizerCreator
+!define skBx(x) SkyBox
+!define skTrf(x) SkyTransform
+!define txMtCb(x) TexMatCallback
+!define txtWrp(x) TextureWrapper
+!define osg(x) OSG.OSG
+!define luaGrTrMd(x) Lua.LuaGraphTreeModel
+!define dtNd(x) Data.Node
+!define dtEg(x) Data.Edge
+!define dtGr(x) Data.Graph
+!define dtTp(x) Data.Type
+!define dtCl(x) Data.Cluster
+!define vwrQt(x) QOSG.ViewerQT
+!define crWnd(x) QOSG.CoreWindow
+!define appCfg(x) Util.ApplicationConfig
+!define rstObs(x) Layout.RestrictionObserver
+!define shpGt(x) Layout.ShapeGetter
+!define shp(x) Layout.Shape
+!define spVst(x) Layout.ShapeVisitor
+!define sp_(x) Layout.Shapes
+
+package Vwr{
+	class osg() #red
+
+	
+	ndGrp() -- osg()
+	ndGrp() -- dtNd()
+	ndGrp() -- appCfg()
+	ndGrp() -- dtEg()
+	
+	prnNsTxGnr() -- osg()
+	
+	pkHnd() -- cmrMnp()
+	pkHnd() -- crGr()
+	pkHnd() -- dtNd()
+	pkHnd() -- dtEg()
+	pkHnd() -- dtCl()
+	pkHnd() -- appCfg()
+	
+	rstMnpGpr() --|> rstObs()
+	rstMnpGpr() -- osg()
+	rstMnpGpr() -- shp()
+	rstMnpGpr() -- shpGt()
+	
+
+	}
+@enduml

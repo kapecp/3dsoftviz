@@ -66,6 +66,14 @@ void AdapterWidget::keyPressEvent( QKeyEvent* event )
 			_gw->getEventQueue()->keyPress( osgGA::GUIEventAdapter::KEY_Shift_L );
 			break;
 		}
+		case ( Qt::Key_O ): {
+			_gw->getEventQueue()->keyPress( osgGA::GUIEventAdapter::KEY_O );
+			break;
+		}
+		case ( Qt::Key_P ): {
+			_gw->getEventQueue()->keyPress( osgGA::GUIEventAdapter::KEY_P );
+			break;
+		}
 		default: {
 			_gw->getEventQueue()->keyPress( static_cast<osgGA::GUIEventAdapter::KeySymbol>( *( event->text().toAscii().data() ) ) );
 			break;
@@ -203,6 +211,7 @@ void AdapterWidget::mouseReleaseEvent( QMouseEvent* event )
 
 void AdapterWidget::mouseMoveEvent( QMouseEvent* event )
 {
+
 	//odchytavanie udalosti mysi
 	_gw->getEventQueue()->mouseMotion( static_cast<float>( event->x() ),static_cast<float>( event->y() ) );
 }

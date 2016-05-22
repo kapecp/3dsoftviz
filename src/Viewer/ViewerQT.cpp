@@ -18,8 +18,8 @@ QOSG::ViewerQT::ViewerQT( QWidget* parent , const char* name , const QGLWidget* 
 
 	appConf = Util::ApplicationConfig::get();
 
-	//set StereoMode at launch
-	//osg::DisplaySettings::instance()->setStereoMode( osg::DisplaySettings::StereoMode::QUAD_BUFFER );
+	//osg::DisplaySettings::instance()->setStereo( ( appConf->getValue( "Viewer.Display.Stereoscopic" ).toInt() ? true : false ) );
+	//osg::DisplaySettings::instance()->setStereoMode( osg::DisplaySettings::ANAGLYPHIC );
 
 	double fovy = 60.0;
 	double nearClippingPlane = 0.01;
@@ -74,7 +74,6 @@ QOSG::ViewerQT::ViewerQT( QWidget* parent , const char* name , const QGLWidget* 
 	// Gloger: background to white color after disabling skybox
 	getCamera()->setClearColor( osg::Vec4( 0, 0, 0, 1 ) );
 
-
 	manipulator = new Vwr::CameraManipulator( cg );
 	QObject::connect( manipulator, SIGNAL( sendMouseRotation( osg::Quat ) ),
 					  cg, SLOT( updateGraphRotByMouse( osg::Quat ) ) );
@@ -86,6 +85,7 @@ QOSG::ViewerQT::ViewerQT( QWidget* parent , const char* name , const QGLWidget* 
 	addEventHandler( new osgViewer::StatsHandler );
 	addEventHandler( pickHandler );
 	setCameraManipulator( manipulator );
+
 
 	setThreadingModel( osgViewer::ViewerBase::SingleThreaded );
 

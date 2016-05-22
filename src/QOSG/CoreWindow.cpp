@@ -5,6 +5,10 @@
 #include "QOSG/LoadGraphWindow.h"
 #include "QOSG/MessageWindows.h"
 
+#include "QOSG/ProjectiveARViewer.h"
+#include "QOSG/ProjectiveARWindow.h"
+#include "QOSG/ProjectiveARCore.h"
+
 #include "Network/Server.h"
 #include "Network/Client.h"
 
@@ -1210,11 +1214,50 @@ QWidget* CoreWindow::createMoreFeaturesTab( QFrame* line )
 		lMore->addRow( new QLabel( tr( "Evolution Graph" ) ) );
 		lMore->addRow( new QLabel( ( tr( "Life span:" ) ) ), evolutionLifespanSpinBox );
 		lMore->addRow( b_git_diff );
-	    lMore->addRow( chb_git_changeCommits );
-	    lMore->addRow( cb_git_evoVisualizeMethod );
-	    lMore->addRow( cb_git_authors );
-	    lMore->addRow( cb_git_files );
+		lMore->addRow( chb_git_changeCommits );
+		lMore->addRow( cb_git_evoVisualizeMethod );
+		lMore->addRow( cb_git_authors );
+		lMore->addRow( cb_git_files );
 	*/
+
+	//jurik
+	line = createLine();
+	lMore->addRow( line );
+	lMore->addRow( new QLabel( tr( "Light and Shadow" ) ) );
+
+	chb_light = new QCheckBox( "&Custom light" );
+	chb_light->setChecked( false );
+	lMore->addRow( chb_light );
+	connect( chb_light, SIGNAL( clicked() ), this, SLOT( lightClicked() ) );
+
+	chb_shadow = new QCheckBox( "&Shadow" );
+	chb_shadow->setChecked( false );
+	lMore->addRow( chb_shadow );
+	connect( chb_shadow, SIGNAL( clicked() ), this, SLOT( shadowClicked() ) );
+
+	chb_base = new QCheckBox( "&Base" );
+	chb_base->setChecked( false );
+	lMore->addRow( chb_base );
+	connect( chb_base, SIGNAL( clicked() ), this, SLOT( baseClicked() ) );
+
+	chb_axes = new QCheckBox( "&Axes" );
+	chb_axes->setChecked( false );
+	lMore->addRow( chb_axes );
+	connect( chb_axes, SIGNAL( clicked() ), this, SLOT( axesClicked() ) );
+
+
+	line = createLine();
+	lMore->addRow( line );
+
+	b_start_projective_ar = new QPushButton( tr( "Start projective AR view" ) );
+	lMore->addRow( new QLabel( tr( "Projector view" ) ) );
+	b_start_projective_ar->setMaximumWidth( 136 );
+	lMore->addRow( b_start_projective_ar );
+	connect( b_start_projective_ar, SIGNAL( clicked() ), this, SLOT( createProjARWindow() ) );
+
+	//*****
+
+
 	wMore->setLayout( lMore );
 
 	return wMore;
@@ -3468,7 +3511,10 @@ void CoreWindow::startLeap()
 		return;
 	}
 
-	this->mLeapThr = new Leap::LeapThread( this,new Leap::CustomCameraManipulator( getCameraManipulator() ) );
+	this->mLeapThr = new Leap::LeapThread( this,
+										   new Leap::CustomCameraManipulator( getCameraManipulator(),
+												   AppCore::Core::getInstance()->getLayoutThread(),
+												   AppCore::Core::getInstance( NULL )->getCoreGraph() ) );
 	//CoUninitialize();
 
 	this->mLeapThr->start();
@@ -4732,16 +4778,50 @@ void CoreWindow::shadowClicked()
 
 void CoreWindow::baseClicked()
 {
-	// chb_light is checked
+	// chb_base is checked
 	if ( chb_base->isChecked() ) {
 
+		this->layout->pause();
 		this->coreGraph->turnOnBase();
+		this->coreGraph->scaleGraphToBase();
+		this->layout->play();
+
 	}
 	else {
-
 		this->coreGraph->turnOffBase();
 	}
 }
+
+void CoreWindow::axesClicked()
+{
+	// chb_axes is checked
+	if ( chb_axes->isChecked() ) {
+
+		this->coreGraph->turnAxes( true );
+	}
+	else {
+
+		this->coreGraph->turnAxes( false );
+	}
+}
+
+void CoreWindow::scaleArucoGraphToBase()
+{
+	this->layout->pause();
+	this->coreGraph->scaleGraphToBase();
+	this->layout->play();
+}
+
+//works only from softVis to ArUco
+void CoreWindow::swapManipulator()
+{
+	viewerWidget->setCameraManipulator( NULL );
+}
 //*****
+
+void CoreWindow::createProjARWindow()
+{
+	QOSG::ProjectiveARCore::getInstance( NULL, this )->init( viewerWidget );
+}
 
 } // namespace QOSG

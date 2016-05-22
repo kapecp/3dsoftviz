@@ -269,8 +269,21 @@ public:
 
 	void turnOnBase();
 	void turnOffBase();
+	void turnAxes( bool turnOn );
 	void createBase();
-	float compare( float a, float b );
+	void scaleGraphToBase();
+	void scaleGraph( int scale );
+	void rotateGraph( int direction );
+	void outputMatrix( osg::Matrixd matrix );
+	void ratata( double initialX,double actualX,double initialY, double actualY );
+	void scaleNodes( bool scaleUp );
+	float getFurthestPosition( osg::Vec3f max,osg::Vec3f min );
+	void drawAxes();
+
+	bool isArucoRunning()
+	{
+		return arucoRunning;
+	}
 	//*****
 
 public slots:
@@ -309,6 +322,17 @@ public slots:
 		 * @brief setEdgeType Set representation of edges
 		 */
 	void setEdgeVisual( int index );
+
+	void recievedMVMatrix( QMatrix4x4 modelViewMatrix );
+	/**
+		 * @author Autor: Igor Jurík
+		 * @brief update camera projection matrix from aruco
+		 */
+	void recievedPMatrix( QMatrix4x4 modelViewMatrix );
+
+	void updateBase( float size );
+
+	void setArucoRunning( bool isRunning );
 
 private:
 
@@ -617,7 +641,12 @@ private:
 		*  \brief node base
 		*/
 	osg::ref_ptr<osg::Geode> baseGeode;
-	osg::ref_ptr<osg::PositionAttitudeTransform> baseTransform;
+	osg::ref_ptr<osg::MatrixTransform> baseTransform;
+	osg::Matrixd rotationMatrix;
+	float baseSize = 250;
+	bool arucoRunning = false;
+	osg::ref_ptr<osg::Geode> axesGeode;
+	osg::ref_ptr<osg::MatrixTransform> axesTransform;
 
 	//*****
 };
