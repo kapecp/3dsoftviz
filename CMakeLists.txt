@@ -1365,7 +1365,7 @@ add_test( testing_gitlib_module test_gitlib_module )
 # ------------------------------ SPHINX -------------------------------
 # Find Sphinx Executable
 
-find_package(Sphinx)
+find_package(SPHINX)
 if (Sphinx_FOUND)
     if(NOT DEFINED SPHINX_THEME)
         set(SPHINX_THEME sphinx_rtd_theme)
