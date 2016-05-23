@@ -15,9 +15,6 @@
 #include <QMap>
 #include <QStringList>
 
-#undef min
-#undef max
-
 Repository::Git::GitLuaGraphVisualizer::GitLuaGraphVisualizer( Data::Graph* currentGraph, Repository::Git::GitEvolutionGraph* evolutionGraph, osg::ref_ptr<osg::Camera> camera, int showLuaStats )
 	: currentGraph( currentGraph ), evolutionGraph( evolutionGraph ), luaGraph( Lua::LuaGraph::getInstance() ), showLuaStats( showLuaStats ), camera( camera )
 {

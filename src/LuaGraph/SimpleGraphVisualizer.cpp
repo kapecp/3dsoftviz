@@ -11,9 +11,6 @@
 #include "limits"
 #include <iostream>
 
-#undef min
-#undef max
-
 Lua::SimpleGraphVisualizer::SimpleGraphVisualizer( Data::Graph* graph, osg::ref_ptr<osg::Camera> camera )
 	: Lua::LuaGraphVisualizer( graph, camera ) {}
 
