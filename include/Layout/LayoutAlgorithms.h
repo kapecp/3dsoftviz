@@ -5,7 +5,7 @@
 #include <QRectF>
 #include <exception>
 
-class LayoutAlgorithmException sealed : public std::exception
+class LayoutAlgorithmException final : public std::exception
 {
 private:
     std::string errMsg;
