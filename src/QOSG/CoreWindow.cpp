@@ -180,7 +180,7 @@ void CoreWindow::createActions()
 	loadGraph = new QAction( QIcon( "../share/3dsoftviz/img/gui/loadFromDB.png" ),"&Load graph from database", this );
 	connect( loadGraph, SIGNAL( triggered() ), this, SLOT( showLoadGraph() ) );
 
-    loadJavaProjectAction = new QAction( QIcon( "../share/3dsoftviz/img/gui/open_java.png" ),"&Load java project", this );
+	loadJavaProjectAction = new QAction( QIcon( "../share/3dsoftviz/img/gui/open_java.png" ),"&Load java project", this );
 	connect( loadJavaProjectAction, SIGNAL( triggered() ), this, SLOT( showDialogLoadJavaProject() ) );
 
 	saveGraph = new QAction( QIcon( "../share/3dsoftviz/img/gui/saveToDB.png" ),"&Save graph", this );
@@ -1230,15 +1230,15 @@ QWidget* CoreWindow::createMoreFeaturesTab( QFrame* line )
 	connect( b_start_gloves, SIGNAL( clicked() ), this, SLOT( startGlovesRecognition() ) );
 #endif
 	/*
-		line = createLine();
-		lMore->addRow( line );
-		lMore->addRow( new QLabel( tr( "Evolution Graph" ) ) );
-		lMore->addRow( new QLabel( ( tr( "Life span:" ) ) ), evolutionLifespanSpinBox );
-		lMore->addRow( b_git_diff );
-		lMore->addRow( chb_git_changeCommits );
-		lMore->addRow( cb_git_evoVisualizeMethod );
-		lMore->addRow( cb_git_authors );
-		lMore->addRow( cb_git_files );
+	    line = createLine();
+	    lMore->addRow( line );
+	    lMore->addRow( new QLabel( tr( "Evolution Graph" ) ) );
+	    lMore->addRow( new QLabel( ( tr( "Life span:" ) ) ), evolutionLifespanSpinBox );
+	    lMore->addRow( b_git_diff );
+	    lMore->addRow( chb_git_changeCommits );
+	    lMore->addRow( cb_git_evoVisualizeMethod );
+	    lMore->addRow( cb_git_authors );
+	    lMore->addRow( cb_git_files );
 	*/
 
 	//jurik
@@ -1490,11 +1490,11 @@ QString getMethodInfo( const Importer::Parsing::Method& method )
 
 void CoreWindow::loadJavaProjectAndShow( const QString& projectDir )
 {
-    planes_Vertigo.clear();
-    numberOfPlanes = 0;
-    layout->pauseAllAlg();
-    coreGraph->setNodesFreezed( true );
-    coreGraph->setInterpolationDenied( false );
+	planes_Vertigo.clear();
+	numberOfPlanes = 0;
+	layout->pauseAllAlg();
+	coreGraph->setNodesFreezed( true );
+	coreGraph->setInterpolationDenied( false );
 
 	Importer::Parsing::JavaParser javaParser;
 	Importer::Parsing::SoftTree softTree;
@@ -1644,7 +1644,7 @@ void CoreWindow::loadJavaProjectAndShow( const QString& projectDir )
 		bi.building->refresh();
 	}
 
-    viewerWidget->getCameraManipulator()->home();
+	viewerWidget->getCameraManipulator()->home();
 
 	// robime zakladnu proceduru pre restartovanie layoutu
 	AppCore::Core::getInstance()->restartLayout();
@@ -4916,7 +4916,7 @@ void CoreWindow::createEvolutionLuaGraph()
 	Data::Graph* currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
 
 	if ( currentGraph != NULL ) {
-		Manager::GraphManager::getInstance()->closeGraph( currentGraph );
+	    Manager::GraphManager::getInstance()->closeGraph( currentGraph );
 	}
 
 	currentGraph = Manager::GraphManager::getInstance()->createNewGraph( "LuaGraph" );
@@ -4965,31 +4965,31 @@ void CoreWindow::createEvolutionLuaGraph()
 	operations->addDefaultTypes( edgeType, nodeType );
 
 	for ( QMap<qlonglong, Lua::LuaNode*>::iterator i = graph->getNodes()->begin(); i != graph->getNodes()->end(); ++i ) {
-		osg::ref_ptr<Data::Node> n = currentGraph->addNode( i.key() , i.value()->getLabel(), nodeType );
+	    osg::ref_ptr<Data::Node> n = currentGraph->addNode( i.key() , i.value()->getLabel(), nodeType );
 	//        setNodeParams( n, i.value(), osg::Vec4f( 1,1,1,1 ), 8 );
 	}
 
 	for ( QMap<qlonglong, Lua::LuaEdge*>::iterator i = graph->getEdges()->begin(); i != graph->getEdges()->end(); ++i ) {
-		if ( i.value()->getIncidences().size() != 2 ) {
-			throw new std::runtime_error( "Not a simple graph" );
-		}
-		Lua::LuaIncidence* const incid1 = graph->getIncidences()->value( i.value()->getIncidences()[0] );
-		Lua::LuaIncidence* const incid2 = graph->getIncidences()->value( i.value()->getIncidences()[1] );
-		osg::ref_ptr<Data::Node> srcNode = currentGraph->getNodes()->value( incid1->getEdgeNodePair().second );
-		osg::ref_ptr<Data::Node> dstNode = currentGraph->getNodes()->value( incid2->getEdgeNodePair().second );
-		osg::ref_ptr<Data::Edge> newEdge;
-		if ( incid1->getOriented() ) {
-			if ( incid1->getOutGoing() ) {
-				newEdge = currentGraph->addEdge( i.key(), i.value()->getLabel(), dstNode, srcNode, edgeType, true );
-			}
-			else {
-				newEdge = currentGraph->addEdge( i.key(), i.value()->getLabel(), srcNode, dstNode, edgeType, true );
-			}
-		}
-		else {
-			newEdge = currentGraph->addEdge( i.key(), i.value()->getLabel(), srcNode, dstNode, edgeType, false );
-		}
-		newEdge->setCamera( coreGraph->getCamera() );
+	    if ( i.value()->getIncidences().size() != 2 ) {
+	        throw new std::runtime_error( "Not a simple graph" );
+	    }
+	    Lua::LuaIncidence* const incid1 = graph->getIncidences()->value( i.value()->getIncidences()[0] );
+	    Lua::LuaIncidence* const incid2 = graph->getIncidences()->value( i.value()->getIncidences()[1] );
+	    osg::ref_ptr<Data::Node> srcNode = currentGraph->getNodes()->value( incid1->getEdgeNodePair().second );
+	    osg::ref_ptr<Data::Node> dstNode = currentGraph->getNodes()->value( incid2->getEdgeNodePair().second );
+	    osg::ref_ptr<Data::Edge> newEdge;
+	    if ( incid1->getOriented() ) {
+	        if ( incid1->getOutGoing() ) {
+	            newEdge = currentGraph->addEdge( i.key(), i.value()->getLabel(), dstNode, srcNode, edgeType, true );
+	        }
+	        else {
+	            newEdge = currentGraph->addEdge( i.key(), i.value()->getLabel(), srcNode, dstNode, edgeType, true );
+	        }
+	    }
+	    else {
+	        newEdge = currentGraph->addEdge( i.key(), i.value()->getLabel(), srcNode, dstNode, edgeType, false );
+	    }
+	    newEdge->setCamera( coreGraph->getCamera() );
 	//        setEdgeParams( newEdge, i.value(), osg::Vec4f( 1,1,1,1 ) );
 	}
 	//    graph->setObserver( this );
@@ -5025,8 +5025,8 @@ void CoreWindow::createEvolutionLuaGraph()
 
 	coreGraph->reloadConfig();
 	if ( isPlaying ) {
-		layout->play();
-		coreGraph->setNodesFreezed( false );
+	    layout->play();
+	    coreGraph->setNodesFreezed( false );
 	}
 	*/
 }

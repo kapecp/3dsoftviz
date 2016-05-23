@@ -122,7 +122,7 @@ public:
 		 */
 	void update();
 
-    /**
+	/**
 		*  \fn public updateBackground
 		*  \brief updates background (skybox, skynoise, video3d, video2dOrtho or nothing )
 		*  \param bgVal - background int value describing what background should be generated

@@ -8,11 +8,11 @@
 class LayoutAlgorithmException final : public std::exception
 {
 private:
-    std::string errMsg;
+	std::string errMsg;
 
 public:
-    LayoutAlgorithmException(const std::string& errorMsg);
-    const char* what() const throw();
+	LayoutAlgorithmException( const std::string& errorMsg );
+	const char* what() const throw();
 };
 
 namespace Layout {

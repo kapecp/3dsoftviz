@@ -2,14 +2,14 @@
 #include <exception>
 #include <QVector>
 
-LayoutAlgorithmException::LayoutAlgorithmException(const std::string& errorMsg)
-    : errMsg(errMsg)
+LayoutAlgorithmException::LayoutAlgorithmException( const std::string& errorMsg )
+	: errMsg( errMsg )
 {
 }
 
 const char* LayoutAlgorithmException::what() const throw()
 {
-    return errMsg.c_str();
+	return errMsg.c_str();
 }
 
 namespace Layout {
@@ -132,7 +132,7 @@ void LayoutAlgorithms::layoutAroundRegion( const osg::BoundingBox& elementDimens
 	const float offsetY = region.center().y();
 
 	if ( regionWidth < elementWidth || regionDepth < elementDepth ) {
-        throw LayoutAlgorithmException( "Region is too small for layouting even one element" );
+		throw LayoutAlgorithmException( "Region is too small for layouting even one element" );
 	}
 
 	float curWidth = regionWidth + ( regionWidth <= regionDepth ? elementIndentOffset * 2 : 0 );
@@ -151,7 +151,7 @@ void LayoutAlgorithms::layoutAroundRegion( const osg::BoundingBox& elementDimens
 		const uint maxCountOnDepth = ( uint )floorf( ( curDepth + spacing ) / ( elementWidth + spacing ) );
 		const uint maxCountOnIndent = ( maxCountOnWidth + maxCountOnDepth ) * 2; // maximalny pocet elementov celkovo okolo regionu pre dane odsadenie
 		const float fillCoef = 0.5; // threshold podla ktoreho sa rozhoduje ktory algoritmus sa pouzije
-        const uint elementsCountToAddForIndent = std::min( remainedElementsCount, maxCountOnIndent ); // nesmie sa umiestnit viac ako sa zmesti a zaroven viac kolko ostava
+		const uint elementsCountToAddForIndent = std::min( remainedElementsCount, maxCountOnIndent ); // nesmie sa umiestnit viac ako sa zmesti a zaroven viac kolko ostava
 		remainedElementsCount -= elementsCountToAddForIndent;
 		if ( ( float )elementsCountToAddForIndent < ( float )maxCountOnIndent * fillCoef ) { // zaplna po stranach (spusta sa len raz pre posledne odsadenie) - najprv zaplni near, potom right, potom ...
 			uint remainedElementsCountToAddForIndent = elementsCountToAddForIndent; // pocitadlo ostavajucich elementov
@@ -168,7 +168,7 @@ void LayoutAlgorithms::layoutAroundRegion( const osg::BoundingBox& elementDimens
 				edge.maxEdgeSize = defaultMaxEdgeSize + maxEdgeResizer;
 				edge.beginAlongPos = defaultBeginAlongPos + beginAlongPosOffset;
 				const uint maxCountOnCurrentEdge = ( uint ) floorf( ( edge.maxEdgeSize + spacing ) / ( elementWidth + spacing ) ); // maximalny pocet elementov na hrane
-                const uint elemenstCountOnEdge = std::min( maxCountOnCurrentEdge, remainedElementsCountToAddForIndent ); // vezme sa bud max pocet alebo zostavajuci - ten mensi
+				const uint elemenstCountOnEdge = std::min( maxCountOnCurrentEdge, remainedElementsCountToAddForIndent ); // vezme sa bud max pocet alebo zostavajuci - ten mensi
 				edge.full = elemenstCountOnEdge == maxCountOnCurrentEdge; // ak sa vzalo tolko elementov kolko sa zmesti na hranu - oznaci sa ako full zaplnena
 				for ( uint i = 0; i < elemenstCountOnEdge; ++i ) {
 					edge.elements << Element( elementDimension, elementIndex++ );

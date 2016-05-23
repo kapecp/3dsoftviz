@@ -122,7 +122,7 @@ JavaParser::JavaParser()
 	#pragma endregion
 }
 
-bool JavaParser::Parse( const QString& javaProjectDirectory, SoftTree& softTree, const QString& errorMessage )
+bool JavaParser::Parse( const QString& javaProjectDirectory, SoftTree& softTree,  QString& errorMessage )
 {
 	QDirIterator dirIt( javaProjectDirectory, QStringList( "*.java" ), QDir::Files, QDirIterator::Subdirectories );
 	vector<CompileResult> compileResults;

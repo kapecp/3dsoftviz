@@ -109,19 +109,19 @@ public slots:
 
 	void changeEvolutionVisualization( int  state );
 
-/**
-	            *  \fn public  showDialogLoadJavaProject
-	            *  \brief Show the dialog to load java project
-	            */
+	/**
+		            *  \fn public  showDialogLoadJavaProject
+		            *  \brief Show the dialog to load java project
+		            */
 	void showDialogLoadJavaProject();
 	void changeEvolutionFilterOption( int state );
 
-/**
-	*  \fn public  loadJavaProject
-	*  \brief Load, parse java project, create visualization and make it current
-	*/
+	/**
+		*  \fn public  loadJavaProject
+		*  \brief Load, parse java project, create visualization and make it current
+		*/
 	void loadJavaProjectAndShow( const QString& projectDir );
-	
+
 	void changeEvolutionFilterSpecificOption( int state );
 
 	/**

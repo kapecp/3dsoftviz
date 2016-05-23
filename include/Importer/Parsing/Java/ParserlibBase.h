@@ -51,44 +51,44 @@ public:
 
 	/*const container& GetItems() const
 	{
-		return objects();
+	    return objects();
 	}*/
 
 	vector<T*> ToStdVector() const
 	{
-		return vector<T*>( objects().begin(), objects().end() );
+		return vector<T*>( this->objects().begin(), this->objects().end() );
 	}
 
 	const T* At( uint index ) const
 	{
-		auto iter = objects().begin();
+		auto iter = this->objects().begin();
 		advance( iter, index );
 		return *iter;
 	}
 
 	const T* First() const
 	{
-		return objects().front();
+		return this->objects().front();
 	}
 
 	uint GetCount() const
 	{
-		return objects().size();
+		return this->objects().size();
 	}
 
 	typename list<T*>::const_iterator begin() const
 	{
-		return objects().begin();
+		return this->objects().begin();
 	}
 
 	typename list<T*>::const_iterator end() const
 	{
-		return objects().end();
+		return this->objects().end();
 	}
 
 	bool Empty() const
 	{
-		return objects().empty();
+		return this->objects().empty();
 	}
 };
 
