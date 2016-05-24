@@ -33,18 +33,14 @@ AppCore::Core::Core( QApplication* app )
 	this->cg = new Vwr::CoreGraph();
 	this->cw = new QOSG::CoreWindow( 0, this->cg, app, this->thr );
 
-	int width =appConf->getNumericValue(
-				   "UI.MainWindow.DefaultWidth",
-				   std::shared_ptr<int> ( new int( 200 ) ),
-				   std::shared_ptr<int> ( NULL ),
-				   1024
-			   );
-	int height= appConf->getNumericValue(
-					"UI.MainWindow.DefaultHeight",
-					std::shared_ptr<int> ( new int( 200 ) ),
-					std::shared_ptr<int> ( NULL ),
-					768
-				);
+	int width =appConf->getValue( "UI.MainWindow.DefaultWidth" ).toInt();
+	int height= appConf->getValue( "UI.MainWindow.DefaultHeight" ).toInt();
+
+	if ( appConf->getValue( "Viewer.Display.Multiview" ).toInt() ) {
+		int screenNum = appConf->getValue( "Viewer.Display.ScreenNum" ).toInt();
+		width = appConf->getValue( "Viewer.Display.MaxScreenWidth" ).toInt() * screenNum;
+		height = appConf->getValue( "Viewer.Display.MaxScreenHeight" ).toInt();
+	}
 
 
 

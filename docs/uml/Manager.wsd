@@ -1,0 +1,20 @@
+// Module Manager
+// Autor: Team Reality Not Found
+
+@startuml
+scale 800 width
+
+!define grMng(x) GraphManager
+!define impInfHndIm(x) ImportInfoHandlerImpl
+!define db(x) Model.DB
+!define gr(x) Data.Graph
+!define impInfHnd(x) Importer.ImportInfoHandler
+
+package Manager{
+	grMng() -- db()
+	grMng() -- gr()
+	
+	impInfHndIm() --|> impInfHnd()
+}
+
+@enduml

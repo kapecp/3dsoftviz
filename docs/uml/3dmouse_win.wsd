@@ -1,0 +1,27 @@
+@startuml
+' Class and namespace definitions
+class QThread
+namespace 3dSoftviz{
+    class CoreWindow
+    class Connector
+}
+namespace LibMouse3d{
+    class Mouse3dDevice
+    class EventThread
+    namespace LibCoreMouse3d{
+        
+        class Mouse3DInput
+        class MouseParameters
+    }
+}
+' Basic connetions from application to mouse
+3dSoftviz.CoreWindow -down-> 3dSoftviz.Connector
+3dSoftviz.Connector -left-> LibMouse3d.EventThread
+LibMouse3d.EventThread -left-> LibMouse3d.Mouse3dDevice 
+LibMouse3d.LibCoreMouse3d.Mouse3DInput --> LibMouse3d.LibCoreMouse3d.MouseParameters
+LibMouse3d.Mouse3dDevice --> LibMouse3d.LibCoreMouse3d.Mouse3DInput
+' Major class includes
+LibMouse3d.LibCoreMouse3d.Mouse3DInput -right-> windows
+' Generalizations
+LibMouse3d.EventThread -up-|> QThread
+@enduml

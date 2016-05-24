@@ -22,7 +22,7 @@ public:
 
 	LuaValue( Diluculum::LuaValue val );
 
-	LuaValue( const Lua::LuaValue& obj);
+	LuaValue( const Lua::LuaValue& obj );
 
 	~LuaValue();
 

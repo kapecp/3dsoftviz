@@ -12,8 +12,8 @@ enum GitFunctionType {
 #else
 enum class GitFunctionType {
 #endif
-    GLOBALFUNCTION,
-    LOCALFUNCTION
+	GLOBALFUNCTION,
+	LOCALFUNCTION
 }; // enum
 } // namespace
 }

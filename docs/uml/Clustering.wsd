@@ -1,0 +1,23 @@
+// Module Clustering
+// Autor: Team Reality Not Found
+
+@startuml
+scale 800 width
+
+!define clr(x) Clusterer
+!define cl(x) Data.Cluster
+!define gr(x) Data.Graph
+!define nd(x) Data.Node
+!define osg(x) OSG.OSG
+!define algtype(x) AlgorithmType
+
+package Clustering{
+	class osg() #red
+	clr() -- algtype()
+	clr() -- osg()
+	clr() -- cl()
+	clr() -- gr()
+	clr() -- nd()
+}
+
+@enduml
