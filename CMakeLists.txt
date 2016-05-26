@@ -322,6 +322,33 @@ elseif()
 endif()
 
 
+# ------------------------------ DOXYGEN -------------------------------
+# Find Doxygen
+find_package(Doxygen)
+option(BUILD_DOCUMENTATION "Create and install the HTML based API documentation (requires Doxygen)" ${DOXYGEN_FOUND})
+#message( STATUS "Doxygen found: " ${DOXYGEN_EXECUTABLE} )
+
+if(BUILD_DOCUMENTATION)
+	if(NOT DOXYGEN_FOUND)
+		message(FATAL_ERROR "Doxygen is needed to build the documentation.")
+	endif()
+
+	set(doxyfile_in ${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in)
+	set(doxyfile ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile)
+
+	configure_file(${doxyfile_in} ${doxyfile} @ONLY)
+
+	add_custom_target(doxygen
+		COMMAND ${DOXYGEN_EXECUTABLE} ${doxyfile}
+		WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+		COMMENT "Generating API documentation with Doxygen"
+		VERBATIM)
+
+	install(DIRECTORY DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/html)
+	install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/html DESTINATION share/doc)
+endif()
+
+
 # ------------------------------------------------------------
 # Dependencies - External projects
 # ------------------------------------------------------------
@@ -716,6 +743,7 @@ endif()
 
 # add Leap
 if( LEAP_FOUND )
+        # WORKAROUND GARAJ comment
 	list( APPEND SRC ${SRC_LEAP} )
 endif()
 
@@ -965,19 +993,28 @@ if( COMMAND cotire )
 	cotire( gitlib CONFIGURATIONS Debug Release )
 endif()
 
-
-#leap
+#-------------------------------- leap module -------------------------------
 if( LEAP_FOUND )
-add_library( leaplib STATIC ${SRC_LEAPLIB} ${HEADER_LEAPLIB})
-target_include_directories( leaplib SYSTEM PUBLIC ${LEAP_INCLUDE_DIRS} include/Leap } )
-# target_link_libraries( leaplib ${QT_LIBRARIES} ${LEAP_LIBRARIES})
-endif()
+	add_library( leaplib STATIC ${SRC_LEAPLIB} ${HEADER_LEAPLIB})
 
-if( LEAP_FOUND )
-set(FLAGS_FOR_DEBUG3 ${FLAGS_FOR_DEBUG})
-list(APPEND FLAGS_FOR_DEBUG3 " -DLEAPLIB_LIBRARY_STATIC")
-string(REPLACE " " ";" REPLACED_FLAGS2 ${FLAGS_FOR_DEBUG3})
-target_compile_options( leaplib PUBLIC ${REPLACED_FLAGS2} )
+	target_include_directories( leaplib
+		SYSTEM PUBLIC
+		include
+		include/Leap
+		)
+
+	target_compile_definitions( leaplib PUBLIC -DLEAPLIB_LIBRARY_STATIC )
+
+	target_compile_options( leaplib PUBLIC ${FLAGS_FOR_DEBUG} )
+
+	target_link_libraries( leaplib ${QT_LIBRARIES} )
+
+	# 'leap' the module
+	if( COMMAND cotire )
+		# link leaplib_unity target to all libraries to which leaplib links
+		set_target_properties( leaplib PROPERTIES COTIRE_UNITY_LINK_LIBRARIES_INIT "COPY_UNITY" )
+		cotire( leaplib CONFIGURATIONS Debug Release )
+	endif()
 endif()
 
 # ---------------------------------------------------------------
@@ -1075,17 +1112,9 @@ if( COMMAND cotire )
 
 	cotire( ${3DSOFTVIZ_NAME} CONFIGURATIONS Debug Release )
 
-	# Work in progress:
-	# get_target_property(UVAR ${3DSOFTVIZ_NAME}_unity INCLUDE_DIRECTORIES)
-	# get_target_property(UVAR2 ${3DSOFTVIZ_NAME}_unity INTERFACE_SYSTEM_INCLUDE_DIRECTORIES)
-	# message("U1<<<<${VAR}")
-	# message("U2<<<<${VAR2}")
-if( LEAP_FOUND )
-	set_target_properties( leaplib PROPERTIES COTIRE_UNITY_LINK_LIBRARIES_INIT "COPY" )
-endif()
-if( LEAP_FOUND )
-	cotire( leaplib CONFIGURATIONS Debug Release )
-endif()
+	if( LEAP_FOUND )
+		target_link_libraries( ${3DSOFTVIZ_NAME}_unity leaplib_unity ${LEAP_LIBRARIES} )
+	endif()
 endif()
 
 # Ensure correct dependencies
@@ -1128,7 +1157,7 @@ if( USE_BUILTIN_DEPENDENCIES )
 			add_dependencies( ${3DSOFTVIZ_NAME}_unity aruco )
 		endif()
 		if( LEAP_FOUND )
-			add_dependencies( ${3DSOFTVIZ_NAME}_unity leaplib )
+			add_dependencies( ${3DSOFTVIZ_NAME}_unity leaplib_unity )
 		endif()
 
 	endif()
@@ -1196,7 +1225,7 @@ if( COMMAND cotire )
 	add_dependencies( install_unity ${3DSOFTVIZ_NAME}_app_unity )
 	add_dependencies( install_unity gitlib_unity )
 	if( LEAP_FOUND )
-	add_dependencies( install_unity leaplib )
+		add_dependencies( install_unity leaplib_unity )
 	endif()
 endif()
 
@@ -1208,12 +1237,17 @@ install( DIRECTORY resources/ DESTINATION ${INSTALL_DATA} COMPONENT Data PATTERN
 
 # Install needed .dll files for OpenNI2
 if( NITE2_FOUND AND OPENNI2_FOUND )
-	install( DIRECTORY ${NITE2_OPENNI2_DRIVER_DIRS} DESTINATION ${INSTALL_BIN}/OpenNI2 )
+	if( WIN32 )
+		install( DIRECTORY ${OPENNI2_DLL}/ DESTINATION ${INSTALL_BIN}/ )
+	else()
+		install( FILES ${OPENNI2_LIBRARY} DESTINATION ${INSTALL_BIN}/ )
+		install( FILES ${NITE2_LIBRARY} DESTINATION ${INSTALL_BIN}/ )
+	endif()
 endif()
 
 # install .dll for speech recognition
 if( SPEECHSDK_FOUND )
-	install( DIRECTORY ${SPEECHSDK_DRIVER_DIRS}/ DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/_install/bin )
+	install( DIRECTORY ${SPEECHSDK_DRIVER_DIRS}/ DESTINATION ${INSTALL_BIN}/ )
 endif()
 
 # Install needed .dll files for fglove
@@ -1228,12 +1262,11 @@ endif()
 
 # Install needed .dll files for leap
 if( LEAP_FOUND )
-
-	install( DIRECTORY ${LEAP_DRIVER_DIRS}/ DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/_install/bin )
-
-	#install( FILES ${LEAP_LIBRARIES} DESTINATION ${INSTALL_BIN}
-#			RUNTIME DESTINATION ${INSTALL_BIN}
-#   		LIBRARY DESTINATION ${INSTALL_LIB} )
+	if ( WIN32 )
+		install( DIRECTORY ${LEAP_DRIVER_DIRS}/ DESTINATION ${INSTALL_BIN}/ )
+	else()
+		install( FILES ${LEAP_LIBRARIES} DESTINATION ${INSTALL_BIN}/ )
+	endif()
 endif()
 
 # Install built in dependencies unless we are building an OSX Bundle
@@ -1386,3 +1419,40 @@ endif()
 enable_testing()
 add_test( testing_gitlib_module test_gitlib_module )
 
+
+# ------------------------------ SPHINX -------------------------------
+# Find Sphinx Executable
+
+find_package(Sphinx)
+if (Sphinx_FOUND)
+    if(NOT DEFINED SPHINX_THEME)
+        set(SPHINX_THEME sphinx_rtd_theme)
+    endif()
+
+    if(NOT DEFINED SPHINX_THEME_DIR)
+        set(SPHINX_THEME_DIR)
+    endif()
+
+    # configured documentation tools and intermediate build results
+    set(BINARY_BUILD_DIR "${CMAKE_CURRENT_BINARY_DIR}")
+
+    # Sphinx cache with pickled ReST documents
+    set(SPHINX_CACHE_DIR "${CMAKE_CURRENT_BINARY_DIR}/docs/_doctrees")
+
+    # HTML output directory
+    set(SPHINX_HTML_DIR "${CMAKE_CURRENT_BINARY_DIR}/docs/html")
+
+    configure_file(
+        "${CMAKE_CURRENT_SOURCE_DIR}/docs/conf.py.in"
+        "${BINARY_BUILD_DIR}/conf.py"
+        @ONLY)
+
+    add_custom_target(Sphinx_html
+        ${SPHINX_EXECUTABLE}
+            -q -b html
+            -c "${BINARY_BUILD_DIR}"
+            -d "${SPHINX_CACHE_DIR}"
+            "${CMAKE_CURRENT_SOURCE_DIR}/docs"
+            "${SPHINX_HTML_DIR}"
+        COMMENT "Building HTML documentation with Sphinx")
+endif()

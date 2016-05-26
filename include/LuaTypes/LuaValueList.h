@@ -22,7 +22,7 @@ public:
 
 	LuaValueList( Diluculum::LuaValueList val );
 
-	LuaValueList( const Lua::LuaValueList& obj);
+	LuaValueList( const Lua::LuaValueList& obj );
 
 	~LuaValueList();
 

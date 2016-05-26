@@ -43,14 +43,15 @@ public:
 		return this->commitId;
 	}
 
-    /**
-     * void setCommitId( QString commitId )
-     * @brief Setter of version identifier
-     * @param commitId version identifier
-     */
-    void setCommitId( QString commitId ) {
-        this->commitId = commitId;
-    }
+	/**
+	 * void setCommitId( QString commitId )
+	 * @brief Setter of version identifier
+	 * @param commitId version identifier
+	 */
+	void setCommitId( QString commitId )
+	{
+		this->commitId = commitId;
+	}
 
 	/**
 	 * void setAuthor( QString author )
@@ -97,7 +98,7 @@ public:
 	 * @brief Getter of changed files in commit
 	 * @return List of changed files in commmit
 	 */
-    QMap<QString, Repository::Git::GitFile*>* getChangedFiles()
+	QMap<QString, Repository::Git::GitFile*>* getChangedFiles()
 	{
 		return this->changedFiles;
 	}
@@ -107,7 +108,7 @@ public:
 	 * @brief Setter of changed files list
 	 * @param gitFiles List of changed files
 	 */
-    void setChangedFiles( QMap<QString, Repository::Git::GitFile*>* gitFiles )
+	void setChangedFiles( QMap<QString, Repository::Git::GitFile*>* gitFiles )
 	{
 		this->changedFiles = gitFiles;
 	}
@@ -117,7 +118,7 @@ public:
 	 * @brief Append git file to list of git files
 	 * @param file File to be appended to the list
 	 */
-    void addChangedFile( Repository::Git::GitFile* file );
+	void addChangedFile( Repository::Git::GitFile* file );
 
 	/**
 	 * QList<Repository::Git::GitFile*> getGitFilesByType( Repository::Git::GitType gitType )
@@ -125,7 +126,7 @@ public:
 	 * @param gitType Type of files
 	 * @return list of files with specifig type
 	 */
-    QMap<QString, Repository::Git::GitFile*>* getGitFilesByType( Repository::Git::GitType gitType );
+	QMap<QString, Repository::Git::GitFile*>* getGitFilesByType( Repository::Git::GitType gitType );
 
 	/**
 	 * QList<Repository::Git::GitFile*> getGitFilesByExtension( QString extension)
@@ -133,7 +134,7 @@ public:
 	 * @param extensions File extensions
 	 * @return List of files with specific file extension
 	 */
-    QMap<QString, Repository::Git::GitFile*>* getGitFilesByExtension( QString extensions );
+	QMap<QString, Repository::Git::GitFile*>* getGitFilesByExtension( QString extensions );
 
 	/**
 	 * QList<Repository::Git::GitFile*> getGitFilesByTypeAndExtension( QString extension, Repository::Git::GitType type )
@@ -142,33 +143,35 @@ public:
 	 * @param type Type of files
 	 * @return List of files with specific type and file extension
 	 */
-    QMap<QString, Repository::Git::GitFile*>* getGitFilesByTypeAndExtension( QString extensions, Repository::Git::GitType type );
+	QMap<QString, Repository::Git::GitFile*>* getGitFilesByTypeAndExtension( QString extensions, Repository::Git::GitType type );
 
-    /**
-     * void setIsLoaded( bool isLoaded )
-     * @brief Sets whether version was loaded from Lua
-     * @param isLoaded Status of version loading
-     */
-    void setIsLoaded( bool isLoaded ) {
-        this->isLoaded = isLoaded;
-    }
+	/**
+	 * void setIsLoaded( bool isLoaded )
+	 * @brief Sets whether version was loaded from Lua
+	 * @param isLoaded Status of version loading
+	 */
+	void setIsLoaded( bool isLoaded )
+	{
+		this->isLoaded = isLoaded;
+	}
 
-    /**
-     * bool getIsLoaded()
-     * @brief Returns true if version was loaded from Lua, otherwise false
-     * @return True if version was loaded from Lua, otherwise false
-     */
-    bool getIsLoaded() {
-        return this->isLoaded;
-    }
+	/**
+	 * bool getIsLoaded()
+	 * @brief Returns true if version was loaded from Lua, otherwise false
+	 * @return True if version was loaded from Lua, otherwise false
+	 */
+	bool getIsLoaded()
+	{
+		return this->isLoaded;
+	}
 
-    /**
-     * Repository::Git::GitFile* getGitFileByIdentifier( QString identifier )
-     * @brief Get the git file by its identifier
-     * @param identifier Identifier of file
-     * @return Git file with specific file identifier
-     */
-    Repository::Git::GitFile* getGitFileByIdentifier( QString identifier );
+	/**
+	 * Repository::Git::GitFile* getGitFileByIdentifier( QString identifier )
+	 * @brief Get the git file by its identifier
+	 * @param identifier Identifier of file
+	 * @return Git file with specific file identifier
+	 */
+	Repository::Git::GitFile* getGitFileByIdentifier( QString identifier );
 
 	/**
 	 * void printVersion()
@@ -196,17 +199,17 @@ private:
 	 */
 	QString date;
 
-    /**
-     * bool isLoaded
-     * @brief True if version was processed from Lua, otherwise false
-     */
-    bool isLoaded;
+	/**
+	 * bool isLoaded
+	 * @brief True if version was processed from Lua, otherwise false
+	 */
+	bool isLoaded;
 
 	/**
 	 * QList<Repository::Git::GitFile*> changedFiles
 	 * @brief List of changed files in commit
 	 */
-    QMap<QString, Repository::Git::GitFile*>* changedFiles;
+	QMap<QString, Repository::Git::GitFile*>* changedFiles;
 }; // class
 } // namespace
 }

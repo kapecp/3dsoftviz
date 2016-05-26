@@ -120,7 +120,7 @@ public:
 		return graph_id;
 	}
 
-    osg::ref_ptr<Data::Node> replaceNodeId( int oldId, int newId );
+	osg::ref_ptr<Data::Node> replaceNodeId( int oldId, int newId );
 
 	/**
 	    * \fn qlonglong setId(qlonglong graph_id)
@@ -367,13 +367,13 @@ public:
 	    */
 	void removeNode( osg::ref_ptr<Data::Node> node );
 
-    /**
-     * int removeNodeByLuaIdentifier( QString identifier )
-     * @brief Remove node find by Lua Identifier
-     * @param identifier Lua identifier of node
-     * @return Count of affected objects
-     */
-    int removeNodeByLuaIdentifier( QString identifier );
+	/**
+	 * int removeNodeByLuaIdentifier( QString identifier )
+	 * @brief Remove node find by Lua Identifier
+	 * @param identifier Lua identifier of node
+	 * @return Count of affected objects
+	 */
+	int removeNodeByLuaIdentifier( QString identifier );
 
 	/**
 	    *  \fn public  isInSameGraph(osg::ref_ptr<Data::Node> nodeA, osg::ref_ptr<Data::Node> nodeB)
@@ -665,21 +665,21 @@ public:
 	 */
 	Data::Node* findNodeByName( QString nodeName );
 
-    /**
-     * Data::Node* findNodeByLuaIdentifier( QString identifier )
-     * @brief Finds node in graph by its lua identifier. Returns node, if it was found, otherwise NULL.
-     * @param identifier Lua node identifier
-     * @return Returns node, if it was found, otherwise NULL.
-     */
-    Data::Node* findNodeByLuaIdentifier( QString identifier );
+	/**
+	 * Data::Node* findNodeByLuaIdentifier( QString identifier )
+	 * @brief Finds node in graph by its lua identifier. Returns node, if it was found, otherwise NULL.
+	 * @param identifier Lua node identifier
+	 * @return Returns node, if it was found, otherwise NULL.
+	 */
+	Data::Node* findNodeByLuaIdentifier( QString identifier );
 
-    /**
-     * Data::Node* findEdgeByLuaIdentifier( QString identifier )
-     * @brief Finds edge in graph by its lua identifier. Returns edge, if it was found, otherwise NULL.
-     * @param identifier Lua edge identifier
-     * @return Returns edge, if it was found, otherwise NULL.
-     */
-    Data::Edge* findEdgeByLuaIdentifier( QString identifier );
+	/**
+	 * Data::Node* findEdgeByLuaIdentifier( QString identifier )
+	 * @brief Finds edge in graph by its lua identifier. Returns edge, if it was found, otherwise NULL.
+	 * @param identifier Lua edge identifier
+	 * @return Returns edge, if it was found, otherwise NULL.
+	 */
+	Data::Edge* findEdgeByLuaIdentifier( QString identifier );
 
 	/**
 	 * Data::Edge* findEdgeByName( QString edgeName )
@@ -753,7 +753,7 @@ private:
 	    */
 	qlonglong incEleIdCounter()
 	{
-        return ++ele_id_counter;
+		return ++ele_id_counter;
 	}
 
 	/**

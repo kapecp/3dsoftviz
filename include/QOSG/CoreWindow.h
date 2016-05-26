@@ -65,6 +65,7 @@ class CameraManipulator;
 namespace QOSG {
 
 class ViewerQT;
+class ProjectiveARViewer;
 }
 
 namespace Network {
@@ -111,6 +112,12 @@ public slots:
 				*  \brief Show the dialog to load graph from database
 				*/
 	void showLoadGraph();
+
+	void changeEvolutionVisualization( int  state );
+
+	void changeEvolutionFilterOption( int state );
+
+	void changeEvolutionFilterSpecificOption( int state );
 
 	/**
 				*  \fn public  saveGraphToDB
@@ -227,26 +234,26 @@ public slots:
 				*  \brief Show dialog to select file which will be opened
 				*/
 	void loadFile();
-/**
-	 *  \fn public  loadexampleGraphBasic500
-	 *  \brief Load basic 100 node graph
-	 */
-void loadExampleGraphBasic100();
-/**
-	*  \fn public  loadexampleGraphBasic500
-	*  \brief Load basic 500 node graph
-	*/
-void loadExampleGraphBasic500();
-/**
-	*  \fn public  loadexampleGraphVeolia
-	*  \brief Load Veolia graph
-	*/
-void loadExampleGraphVeolia();
-/**
-	*  \fn public  loadexampleGraphLua
-	*  \brief Load basic lua graph
-	*/
-void loadExampleGraphLua();
+	/**
+		 *  \fn public  loadexampleGraphBasic500
+		 *  \brief Load basic 100 node graph
+		 */
+	void loadExampleGraphBasic100();
+	/**
+		*  \fn public  loadexampleGraphBasic500
+		*  \brief Load basic 500 node graph
+		*/
+	void loadExampleGraphBasic500();
+	/**
+		*  \fn public  loadexampleGraphVeolia
+		*  \brief Load Veolia graph
+		*/
+	void loadExampleGraphVeolia();
+	/**
+		*  \fn public  loadexampleGraphLua
+		*  \brief Load basic lua graph
+		*/
+	void loadExampleGraphLua();
 	/**
 				*  \fn public  loadFromGit
 				*  \brief Show dialog to write path to git repo which will be loaded
@@ -651,13 +658,6 @@ void loadExampleGraphLua();
 	void changeCommits( bool change );
 
 	/**
-	 * void showLuaStats( bool show )
-	 * @brief Determine if lua metrics should be visualized
-	 * @param True, if lua metrics should be visualized, otherwise false
-	 */
-	void showLuaStats( bool show );
-
-	/**
 	 * void fasterEvolution()
 	 * @brief Sets up faster evolution
 	 */
@@ -705,7 +705,12 @@ void loadExampleGraphLua();
 	void lightClicked();
 	void shadowClicked();
 	void baseClicked();
-	//*****
+	void axesClicked();
+	void scaleArucoGraphToBase();
+	void swapManipulator();
+
+	// kostan
+	void createProjARWindow();
 
 private:
 
@@ -1161,12 +1166,6 @@ private:
 	QPushButton* b_git_diff;
 
 	/**
-	 * QPushButton* b_git_lua_graph;
-	 * @brief Button which creates git lua graph
-	 */
-	QPushButton* b_git_lua_graph;
-
-	/**
 	 * QLabel * labelEvolutionSlider
 	 * @brief Shows current vizualized version
 	 */
@@ -1185,10 +1184,14 @@ private:
 	QCheckBox* chb_git_changeCommits;
 
 	/**
-	 * QCheckBox* chb_git_showLuaStats
-	 * @brief CheckBox for visualizing lua metrics
+	 * QComboBox* cb_git_evoVisualizeMethod
+	 * @brief cb_git_evoVisualizeMethod
 	 */
-	QCheckBox* chb_git_showLuaStats;
+	QComboBox* cb_git_evoVisualizeMethod;
+
+	QComboBox* cb_git_authors;
+
+	QComboBox* cb_git_files;
 
 	bool isRunning;
 
@@ -1496,10 +1499,57 @@ private:
 	 *@brief chb_base
 	 */
 	QCheckBox* chb_base;
+
+	QCheckBox* chb_axes;
+
+	/**
+	 *Button for scaling graph to ArUco base
+	 *@brief b_default_scale
+	 */
+	QPushButton* b_scale_default;
+
+	/**
+	 *Button for scaling aruco graph up
+	 *@brief b_default_scale
+	 */
+	QPushButton* b_scale_up;
+
+	/**
+	 *Button for scaling aruco graph down
+	 *@brief b_default_scale
+	 */
+	QPushButton* b_scale_down;
+
+	/**
+	 *Button for rotating aruco graph
+	 *@brief b_rotate_graph
+	 */
+	QPushButton* b_rotate_graph;
+
+	// kostan
+
+	/**
+	 *CheckBox for showing base
+	 *@brief chb_base
+	 */
+	QPushButton* b_start_projective_ar;
+
 	//*****
 
 public:
 
+	//jurik
+	void setPlaying( bool play )
+	{
+		this->isPlaying = play;
+	}
+
+	bool getPlaying()
+	{
+		return isPlaying;
+	}
+
+	//*****
 	void setRepulsiveForceInsideCluster( double repulsiveForceInsideCluster );
 	void hideRepulsiveForceSpinBox();
 
@@ -1638,6 +1688,14 @@ public:
 	 * @return QWidget for clustering functionality
 	 */
 	QWidget* createMoreFeaturesTab( QFrame* line );
+
+	/**
+	 * @author Michael Garaj
+	 * @brief createEvolutionTab add elements to QWidget for evolution functionality
+	 * @param line pointer to add line
+	 * @return QWidget for evolution functionality
+	 */
+	QWidget* createEvolutionTab( QFrame* line );
 
 	/**
 	 * @author Peter Mendel

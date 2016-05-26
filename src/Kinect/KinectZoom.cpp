@@ -115,16 +115,16 @@ int Kinect::KinectZoom::DetectContour( )
 
 	if ( contours.size()>0 ) {
 
-        //hull MUSI byt typu int !!!
-        cv::vector<std::vector<int> >hull( contours.size() );
+		//hull MUSI byt typu int !!!
+		cv::vector<std::vector<int> >hull( contours.size() );
 		cv::vector<cv::vector<cv::Vec4i> > convDef( contours.size() );
 		cv::vector<cv::vector<cv::Point> > hull_points( contours.size() );
 		cv::vector<cv::vector<cv::Point> > defect_points( contours.size() );
 
 		for ( size_t i = 0; i < contours.size(); i++ ) {
-            if ( cv::contourArea( contours[i] )>500 ) {
-                cv::convexHull( contours[i], hull[i], false );
-                cv::convexityDefects( contours[i],hull[i], convDef[i] );
+			if ( cv::contourArea( contours[i] )>500 ) {
+				cv::convexHull( contours[i], hull[i], false );
+				cv::convexityDefects( contours[i],hull[i], convDef[i] );
 
 				for ( size_t k=0; k<hull[i].size(); k++ ) {
 					auto ind=hull[i][k];
