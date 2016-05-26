@@ -294,31 +294,29 @@ endif()
 
 # ------------------------------ MOUSE3D -------------------------------
 # Find MOUSE3D
-
+find_package( MOUSE3D )
 if( WIN32 )
-
-    find_package( MOUSE3D )
-    if( MOUSE3D_FOUND )
-            include_directories( SYSTEM ${MOUSE3D_INCLUDE_DIRS} )
-            add_definitions( -DMOUSE3D_FOUND )
-            message( STATUS "3DMouse FOUND" )
-    endif()
+	if( MOUSE3D_FOUND )
+			include_directories( SYSTEM ${MOUSE3D_INCLUDE_DIRS} )
+			add_definitions( -DMOUSE3D_FOUND )
+			message( STATUS "3DMouse FOUND" )
+	endif()
 
 elseif( APPLE )
 
-    add_definitions( -DMOUSE3D_FOUND )
-    message( STATUS "3DMouse FOUND" )
+	add_definitions( -DMOUSE3D_FOUND )
+	message( STATUS "3DMouse FOUND" )
 elseif( UNIX )
 set (MOUSE3D_FOUND TRUE)
    include_directories( SYSTEM include/Mouse3d/LibMouse3d/Unix )
-    find_package( X11 REQUIRED )
+	find_package( X11 REQUIRED )
    include_directories( SYSTEM ${X11_INCLUDE_DIR} )
 
-    add_definitions( -DMOUSE3D_FOUND )
-    message( STATUS "3DMouse FOUND" )
+	add_definitions( -DMOUSE3D_FOUND )
+	message( STATUS "3DMouse FOUND" )
 
 elseif()
-    message( STATUS "3DMouse NOT FOUND" )
+	message( STATUS "3DMouse NOT FOUND" )
 endif()
 
 
@@ -676,13 +674,17 @@ file ( GLOB SRC_LEAP "src/Leap/*.cpp" )
 file ( GLOB_RECURSE SRC_LEAPLIB "src/Leap/LeapLib/*.cpp" )
 # MOUSE3D
 
-set ( SRC_MOUSE3D 
-	src/Mouse3d/Connector.cpp 
-	src/Mouse3d/LibMouse3d/EventThread.cpp 
+set ( SRC_MOUSE3D
+	src/Mouse3d/Connector.cpp
+	src/Mouse3d/LibMouse3d/EventThread.cpp
 	src/Mouse3d/LibMouse3d/Mouse3dDevices.cpp
 )
 
-if( UNIX )
+if( APPLE )
+	list(APPEND SRC_MOUSE3D
+		src/Mouse3d/LibMouse3d/Mac/Mouse3dMacDevice.cpp
+)
+elseif( UNIX )
 	list(APPEND SRC_MOUSE3D
 				src/Mouse3d/LibMouse3d/Unix/ApplicationEmitter.cpp
 				src/Mouse3d/LibMouse3d/Unix/Mouse3dUnixDevice.cpp
@@ -692,10 +694,6 @@ elseif( WIN32 )
 	list(APPEND SRC_MOUSE3D
 		src/Mouse3d/LibMouse3d/Windows/Mouse3DInput.cpp
 		src/Mouse3d/LibMouse3d/Windows/MouseParameters.cpp
-)
-elseif( APPLE )
-	list(APPEND SRC_MOUSE3D
-		src/Mouse3d/LibMouse3d/Mac/Mouse3dMacDevice.cpp
 )
 endif()
 
@@ -743,7 +741,7 @@ endif()
 
 # add Leap
 if( LEAP_FOUND )
-        # WORKAROUND GARAJ comment
+		# WORKAROUND GARAJ comment
 	list( APPEND SRC ${SRC_LEAP} )
 endif()
 
@@ -811,7 +809,11 @@ set ( HEADER_MOUSE3D
 	include/Mouse3d/LibMouse3d/Mouse3dDevices.h
 )
 
-if( UNIX )
+if( APPLE )
+	list(APPEND HEADER_MOUSE3D
+		include/Mouse3d/LibMouse3d/Mac/Mouse3dMacDevice.h
+)
+elseif( UNIX )
 	list(APPEND HEADER_MOUSE3D
 		include/Mouse3d/LibMouse3d/Unix/ApplicationEmitter.h
 		include/Mouse3d/LibMouse3d/Unix/fixx11.h
@@ -823,10 +825,6 @@ elseif( WIN32 )
 		include/Mouse3d/LibMouse3d/Windows/Mouse3DInput.h
 		include/Mouse3d/LibMouse3d/Windows/MouseParameters.h
 		include/Mouse3d/LibMouse3d/Windows/I3dMouseParams.h
-)
-elseif( APPLE )
-	list(APPEND HEADER_MOUSE3D
-		include/Mouse3d/LibMouse3d/Mac/Mouse3dMacDevice.h
 )
 endif()
 
@@ -1098,11 +1096,13 @@ if( LEAP_FOUND )
 endif()
 
 if( MOUSE3D_FOUND )
-    if ( WIN32 )
-	target_link_libraries( ${3DSOFTVIZ_NAME} ${MOUSE3D_LIBRARIES} )
-    elseif(UNIX)
-    target_link_libraries( ${3DSOFTVIZ_NAME} ${X11_LIBRARIES} )
-    endif()
+	if ( WIN32 )
+		target_link_libraries( ${3DSOFTVIZ_NAME} ${MOUSE3D_LIBRARIES} )
+	elseif( APPLE )
+		target_link_libraries( ${3DSOFTVIZ_NAME} ${MOUSE3D_LIBRARIES} )
+	elseif(UNIX)
+		target_link_libraries( ${3DSOFTVIZ_NAME} ${X11_LIBRARIES} )
+	endif()
 endif()
 
 # 'cotire' the executable
@@ -1114,6 +1114,16 @@ if( COMMAND cotire )
 
 	if( LEAP_FOUND )
 		target_link_libraries( ${3DSOFTVIZ_NAME}_unity leaplib_unity ${LEAP_LIBRARIES} )
+	endif()
+
+	if( MOUSE3D_FOUND )
+		if ( WIN32 )
+			target_link_libraries( ${3DSOFTVIZ_NAME}_unity ${MOUSE3D_LIBRARIES} )
+		elseif( APPLE )
+			target_link_libraries( ${3DSOFTVIZ_NAME}_unity ${MOUSE3D_LIBRARIES} )
+		elseif(UNIX)
+			target_link_libraries( ${3DSOFTVIZ_NAME}_unity ${X11_LIBRARIES} )
+		endif()
 	endif()
 endif()
 
@@ -1425,34 +1435,34 @@ add_test( testing_gitlib_module test_gitlib_module )
 
 find_package(Sphinx)
 if (Sphinx_FOUND)
-    if(NOT DEFINED SPHINX_THEME)
-        set(SPHINX_THEME sphinx_rtd_theme)
-    endif()
+	if(NOT DEFINED SPHINX_THEME)
+		set(SPHINX_THEME sphinx_rtd_theme)
+	endif()
 
-    if(NOT DEFINED SPHINX_THEME_DIR)
-        set(SPHINX_THEME_DIR)
-    endif()
+	if(NOT DEFINED SPHINX_THEME_DIR)
+		set(SPHINX_THEME_DIR)
+	endif()
 
-    # configured documentation tools and intermediate build results
-    set(BINARY_BUILD_DIR "${CMAKE_CURRENT_BINARY_DIR}")
+	# configured documentation tools and intermediate build results
+	set(BINARY_BUILD_DIR "${CMAKE_CURRENT_BINARY_DIR}")
 
-    # Sphinx cache with pickled ReST documents
-    set(SPHINX_CACHE_DIR "${CMAKE_CURRENT_BINARY_DIR}/docs/_doctrees")
+	# Sphinx cache with pickled ReST documents
+	set(SPHINX_CACHE_DIR "${CMAKE_CURRENT_BINARY_DIR}/docs/_doctrees")
 
-    # HTML output directory
-    set(SPHINX_HTML_DIR "${CMAKE_CURRENT_BINARY_DIR}/docs/html")
+	# HTML output directory
+	set(SPHINX_HTML_DIR "${CMAKE_CURRENT_BINARY_DIR}/docs/html")
 
-    configure_file(
-        "${CMAKE_CURRENT_SOURCE_DIR}/docs/conf.py.in"
-        "${BINARY_BUILD_DIR}/conf.py"
-        @ONLY)
+	configure_file(
+		"${CMAKE_CURRENT_SOURCE_DIR}/docs/conf.py.in"
+		"${BINARY_BUILD_DIR}/conf.py"
+		@ONLY)
 
-    add_custom_target(Sphinx_html
-        ${SPHINX_EXECUTABLE}
-            -q -b html
-            -c "${BINARY_BUILD_DIR}"
-            -d "${SPHINX_CACHE_DIR}"
-            "${CMAKE_CURRENT_SOURCE_DIR}/docs"
-            "${SPHINX_HTML_DIR}"
-        COMMENT "Building HTML documentation with Sphinx")
+	add_custom_target(Sphinx_html
+		${SPHINX_EXECUTABLE}
+			-q -b html
+			-c "${BINARY_BUILD_DIR}"
+			-d "${SPHINX_CACHE_DIR}"
+			"${CMAKE_CURRENT_SOURCE_DIR}/docs"
+			"${SPHINX_HTML_DIR}"
+		COMMENT "Building HTML documentation with Sphinx")
 endif()
