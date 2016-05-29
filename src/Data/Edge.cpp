@@ -30,6 +30,7 @@ Data::Edge::Edge( qlonglong id, QString name, Data::Graph* graph, osg::ref_ptr<D
 	this->insertChild( INDEX_CYLINDER, createEdgeCylinder( NULL ), false );
 	this->insertChild( INDEX_LINE, createEdgeLine( NULL ), false );
 	this->insertChild( INDEX_CURVE, createEdgeCurve( NULL ), false );
+	this->insertChild( INDEX_CURVE2, createEdgeCurve( NULL ), false );
 	setValue( static_cast<unsigned int>( graph->getEdgeVisual() ), true );
 
 	//updateCoordinates(getSrcNode()->getTargetPosition(), getDstNode()->getTargetPosition());
@@ -218,17 +219,55 @@ void Data::Edge::updateCoordinates( osg::Vec3 srcPos, osg::Vec3 dstPos )
 			osg::ref_ptr<osg::Vec3Array> points = new osg::Vec3Array;
 
 			if ( !edgePieces.isEmpty() ) {
+				qDebug() << "edgePieces is empty";
 				points->push_back( srcPos );
 				points->push_back( edgePieces.at( 0 )->getDstNode()->getCurrentPosition() );
 				points->push_back( edgePieces.at( 1 )->getDstNode()->getCurrentPosition() );
 				points->push_back( dstPos );
 			}
-			else {
+			else {				
 				points->push_back( cor1 );
 				points->push_back( cor2 );
 				points->push_back( cor3 );
 				points->push_back( cor4 );
 			}
+
+			osg::ref_ptr<osgModeling::BezierCurve> bezCurve =
+				new osgModeling::BezierCurve( points, 3 );
+			bezCurve->updateImplementation();
+
+			osg::ref_ptr<osg::Vec3Array> pts = bezCurve->getPath();
+
+			unsigned int profileSize = static_cast<unsigned int>( pts->size() );
+			unsigned int i, j;
+
+
+			for ( i=0; i<profileSize-1; ++i ) {
+				osg::ref_ptr<osg::DrawElementsUInt> bodySeg = new osg::DrawElementsUInt( osg::PrimitiveSet::LINES, 0 );
+				for ( j=0; j<=1; ++j ) {
+					bodySeg->push_back( j+i );
+				}
+				geometryCurve->addPrimitiveSet( bodySeg.get() );
+			}
+
+			geometryCurve->setVertexArray( pts );
+
+			osg::Vec4Array* colorArray =  dynamic_cast<osg::Vec4Array*>( geometryCurve->getColorArray() );
+
+			colorArray->pop_back();
+			colorArray->push_back( getEdgeColor() );
+		}
+	}
+
+	if ( getValue( INDEX_CURVE2 ) ) {
+		osg::Geometry* geometryCurve = getChild( INDEX_CURVE2 )->asGeode()->getDrawable( 0 )->asGeometry();
+		if ( geometryCurve != NULL ) {
+			osg::ref_ptr<osg::Vec3Array> points = new osg::Vec3Array;
+
+			points->push_back( srcPos );
+			points->push_back( srcPos + osg::Vec3f( 0.0f, 0.0f, 50.0f ) );
+			points->push_back( dstPos + osg::Vec3f( 0.0f, 0.0f, 50.0f ) );
+			points->push_back( dstPos );
 
 			osg::ref_ptr<osgModeling::BezierCurve> bezCurve =
 				new osgModeling::BezierCurve( points, 3 );
@@ -486,6 +525,7 @@ void Data::Edge::setVisual( int index )
 	setValue( INDEX_CYLINDER, false );
 	setValue( INDEX_LINE, false );
 	setValue( INDEX_CURVE, false );
+	setValue( INDEX_CURVE2, false );
 	setValue( static_cast<unsigned int>( index ), !isInvisible );
 }
 

@@ -323,7 +323,13 @@ public slots:
 		 */
 	void setEdgeVisual( int index );
 
+	/**
+		 * @brief setEdgeTypeForType Set representation of edges for specific type
+		 */
+	void setEdgeVisualForType( int index, QString edgeTypeName );
+
 	void recievedMVMatrix( QMatrix4x4 modelViewMatrix );
+
 	/**
 		 * @author Autor: Igor Jurík
 		 * @brief update camera projection matrix from aruco

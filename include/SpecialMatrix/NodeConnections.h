@@ -24,9 +24,11 @@ public:
 
 	NodeConnections();
 
+	~NodeConnections();
+
 	/**
-	 * \fn getXAxisNodes
-	 * \brief Returns QList of Nodes positioned on the X axis.
+	 * @brief getXAxisNodes
+	 * @return QList<qlonglong>* list of nodes on x axis
 	 */
 	QList<qlonglong>* getXAxisNodes()
 	{
@@ -34,8 +36,8 @@ public:
 	}
 
 	/**
-	 * \fn getYAxisNodes
-	 * \brief Returns QList of Nodes positioned on the Y axis.
+	 * @brief getYAxisNodes
+	 * @return QList<qlonglong>* list of nodes on y axis
 	 */
 	QList<qlonglong>* getYAxisNodes()
 	{
@@ -43,8 +45,8 @@ public:
 	}
 
 	/**
-	 * \fn getINodes
-	 * \brief Returns QList of i Nodes.
+	 * @brief getINodes
+	 * @return QList<qlonglong>* list of i nodes
 	 */
 	QList<qlonglong>* getINodes()
 	{
@@ -52,12 +54,47 @@ public:
 	}
 
 	/**
-	 * \fn getConnectedNodes
-	 * \brief Returns QMap of all connections in the matrix graph.
+	 * @brief getConnectedNodes
+	 * @return QMap<qlonglong, QList<qlonglong>* >* map of all connections in the matrix graph
 	 */
 	QMap<qlonglong, QList<qlonglong>* >* getConnectedNodes()
 	{
 		return connectedNodes;
+	}
+
+	/**
+	 * @brief getNodePositionsArray
+	 * @return std::vector<std::vector<qlonglong> > 2D array with info about node positions and ID
+	 */
+	std::vector<std::vector<qlonglong> > getNodePositionsArray()
+	{
+		return nodePositionsArray;
+	}
+
+	/**
+	 * @brief getNodePositionsArrayField gets the ID of node on given position
+	 * @param integer row
+	 * @param integer column
+	 * @return qlonglong ID of given node
+	 */
+	qlonglong getNodePositionsArrayField(int row, int column)
+	{
+		return nodePositionsArray[row][column];
+	}
+
+	/**
+	 * @brief setAvailabilityPosArray resizes availabilityPosArray
+	 * @param integer nodesCount
+	 */
+	void setNodePositionsArray(int nodesCount);
+
+	/**
+	 * @brief setNodePositionsArrayField sets nodePositionsArray[row][column] to nodesCount
+	 * @param integer number of nodes
+	 */
+	void setNodePositionsArrayField(int column, int row, qlonglong value)
+	{
+		nodePositionsArray[column][row] = value;
 	}
 
 private:
@@ -66,7 +103,7 @@ private:
 	QList<qlonglong>* yAxisNodes;
 	QList<qlonglong>* iNodes;
 	QMap<qlonglong, QList<qlonglong>* >* connectedNodes;
-
+	std::vector<std::vector<qlonglong> > nodePositionsArray;
 
 };
 }

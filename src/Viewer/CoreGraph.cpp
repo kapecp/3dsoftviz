@@ -1371,6 +1371,29 @@ void CoreGraph::setEdgeVisual( int index )
 	graph->setEdgeVisual( index );
 }
 
+void CoreGraph::setEdgeVisualForType( int index, QString edgeTypeName )
+{
+	QMap<qlonglong, osg::ref_ptr<Data::Edge> >::iterator iEdge = in_edges->begin();
+
+	while ( iEdge != in_edges->end() ) {
+		if(!QString::compare(iEdge.value()->getType()->getName(), edgeTypeName, Qt::CaseInsensitive)) {
+			iEdge.value()->setVisual( index );			
+		}
+		++iEdge;
+	}
+
+	/*QMap<qlonglong, osg::ref_ptr<Data::Edge> >::iterator iMetaEdge = qmetaEdges->begin();
+
+	while ( iMetaEdge != qmetaEdges->end() ) {
+		if(iEdge.value()->getType()->getName() == edgeTypeName) {
+			iMetaEdge.value()->setVisual( index );
+			++iMetaEdge;
+		}
+	}*/
+
+	graph->setEdgeVisual( index );
+}
+
 #ifdef OPENCV_FOUND
 OpenCV::CameraStream* CoreGraph::getCameraStream() const
 {

@@ -18,6 +18,7 @@
 #include "Layout/LayoutThread.h"
 #include "Layout/FRAlgorithm.h"
 #include "SpecialMatrix/NodeConnections.h"
+#include "SpecialMatrix/FileParser.h"
 
 namespace SpecialMatrix {
 /**
@@ -34,14 +35,28 @@ public:
 
 	MatrixViewer( Data::Graph* matrixGraph, QString fileName );
 
+	~MatrixViewer();
 
+	/**
+	 * @brief createAxis add nodes and edges to create x and y axis
+	 */
 	void createAxis();
 
+	/**
+	 * @brief exchangeNodes swap two axis nodes and the connected i nodes
+	 * @param osg::ref_ptr<Data::Node> srcNode
+	 * @param osg::ref_ptr<Data::Node> desNode
+	 */
+	void exchangeNodes(osg::ref_ptr<Data::Node> srcNode, osg::ref_ptr<Data::Node> desNode);
+
+	/**
+	 * @brief createEvolutionTab add elements to QWidget for evolution functionality
+	 */
 	void adjustPositions();
 
 	/**
-	 * \fn getMatrixGraph
-	 * \brief Returns active matrix graphs.
+	 * @brief getMatrixGraph
+	 * @return Data::Graph* active matrix graph
 	 */
 	Data::Graph* getMatrixGraph()
 	{
@@ -55,6 +70,8 @@ protected:
 	Data::Graph* matrixGraph;
 
 	SpecialMatrix::NodeConnections* connections;
+
+	SpecialMatrix::FileParser* fileParser;
 
 };
 }

@@ -211,11 +211,8 @@ void CoreWindow::createActions()
 	switchBackgroundOrtho2dAction = new QAction( "Ortho2d", this );
 	connect( switchBackgroundOrtho2dAction, SIGNAL( triggered() ), this, SLOT( switchBackgroundOrtho2d() ) );
 
-	loadSpecialMatrix = new QAction( QIcon( "../share/3dsoftviz/img/gui/matrix.png" ),"&Load Special Matrix from File", this );
+	loadSpecialMatrix = new QAction( QIcon( "../share/3dsoftviz/img/gui/matrix.png" ),"&Load matrix from file", this );
 	connect( loadSpecialMatrix, SIGNAL( triggered() ), this, SLOT( loadSpecialMatrixFromFile() ) );
-
-	showSpecialMatrix = new QAction( QIcon( "../share/3dsoftviz/img/gui/matrix.png" ),"&Display Special Matrix", this );
-	connect( showSpecialMatrix, SIGNAL( triggered() ), this, SLOT( displaySpecialMatrix() ) );
 
 	play = new QPushButton();
 	play->setIcon( QIcon( "../share/3dsoftviz/img/gui/pause.png" ) );
@@ -527,7 +524,7 @@ void CoreWindow::createActions()
 	connect( nodeTypeComboBox,SIGNAL( currentIndexChanged( int ) ),this,SLOT( nodeTypeComboBoxChanged( int ) ) );
 
 	edgeTypeComboBox = new QComboBox();
-	edgeTypeComboBox->insertItems( 0,( QStringList() << "Quad" << "Cylinder" << "Line" ) );
+	edgeTypeComboBox->insertItems( 0,( QStringList() << "Quad" << "Cylinder" << "Line" << "Curve" ) );
 	edgeTypeComboBox->setFocusPolicy( Qt::NoFocus );
 	connect( edgeTypeComboBox,SIGNAL( currentIndexChanged( int ) ),this,SLOT( edgeTypeComboBoxChanged( int ) ) );
 
@@ -814,9 +811,7 @@ void CoreWindow::createMenus()
 	file->addAction( load );
 	file->addAction( loadGraph );
 	file->addAction( loadGit );
-	file->addSeparator();
 	file->addAction( loadSpecialMatrix );
-	file->addAction( showSpecialMatrix );
 	file->addSeparator();
 	file->addAction( saveGraph );
 	file->addAction( saveLayout );
@@ -1411,45 +1406,8 @@ void CoreWindow::loadSpecialMatrixFromFile()
 		fileName = filenames.at( 0 );
 	}
 
-	if ( fileName != NULL ) {
-
-		QFile file(fileName);
-		if(!file.open(QIODevice::ReadOnly)) {
-			QMessageBox::information(0, "error", file.errorString());
-		}
-
-		QTextStream in(&file);
-
-		while(!in.atEnd()) {
-			QString line = in.readLine();
-			QStringList fields = line.split(",");
-			//model->appendRow(fields);
-		}
-
-		file.close();
-
-		displaySpecialMatrix();
-	}
-}
-
-void CoreWindow::displaySpecialMatrix()
-{
-	QFileDialog dialog;
-	dialog.setDirectory( "../share/3dsoftviz/matrixExamples" );
-
-	QString fileName = NULL;
-
-	if ( dialog.exec() ) {
-		QStringList filenames = dialog.selectedFiles();
-		fileName = filenames.at( 0 );
-	}
-
 	if ( fileName == NULL )
 		return;
-
-
-
-
 
 	Data::Graph* matrixGraph = Manager::GraphManager::getInstance()->getActiveGraph();
 	if ( matrixGraph != NULL ) {
@@ -1459,26 +1417,21 @@ void CoreWindow::displaySpecialMatrix()
 
 	SpecialMatrix::MatrixViewer* matrixViewer = new SpecialMatrix::MatrixViewer( matrixGraph, fileName );
 
-	//nastavit spravne tlacitko play
+	//nastavit spravne tlacitko play a vyber hran
 	play->setEnabled(false);
 	isPlaying = true;
 	this->playPause();
 	coreGraph->setNodesFreezed( false );	//rozhadze graf - nespustit start layout
-
-
-	//coreGraph->setNodesFreezed( true );
-
-	//layout->pause();
-	//coreGraph->setNodesFreezed( true );
+	edgeTypeComboBox->setEnabled(false);
 
 	AppCore::Core::getInstance()->restartLayoutForMatrix();
 
-
-	//coreGraph->reloadConfig();
-	/*if ( isPlaying ) {
-		layout->play();
-		coreGraph->setNodesFreezed( false );
-	}*/
+	//reprezentacie na default		
+	//coreGraph->setEdgeVisual(Data::Edge::INDEX_CURVE2);
+	coreGraph->setEdgeVisualForType(Data::Edge::INDEX_LINE, "axisEdgeType" );
+	coreGraph->setEdgeVisualForType(Data::Edge::INDEX_CURVE2, "iEdgeType" );
+	//axisEdgeType, iEdgeType
+	//axisNodeType, eNodeType, iFullNodeType, iHalfNodeType, nNodeType
 }
 
 void CoreWindow::saveLayoutToDB()
@@ -2326,6 +2279,9 @@ void CoreWindow::edgeTypeComboBoxChanged( int index )
 			break;
 		case 3:
 			coreGraph->setEdgeVisual( Data::Edge::INDEX_CURVE );
+			break;
+		case 4:
+			coreGraph->setEdgeVisual( Data::Edge::INDEX_CURVE2 );
 			break;
 		default:
 			qDebug() << "CoreWindow:edgeTypeComboBoxChanged do not suported index";

@@ -261,15 +261,10 @@ public slots:
     void loadLuaGraph();
 
 	/**
-				*  \fn public  loadSpecialMatrix
+				*  \fn public  loadSpecialMatrixFromFile
 				*  \brief Load special matrix from file
 				*/
 	void loadSpecialMatrixFromFile();
-	/**
-				*  \fn public  showSpecialMatrix
-				*  \brief Display special matrix
-				*/
-	void displaySpecialMatrix();
 
 	/**
 				*  \fn public  labelOnOff(bool checked)
@@ -841,12 +836,6 @@ private:
 		*  \brief Pointer to load special matrix from file
         */
 	QAction* loadSpecialMatrix;
-
-	/**
-		*  QAction * showSpecialMatrix
-		*  \brief Pointer to display special matrix
-		*/
-	QAction* showSpecialMatrix;
 
 	/**
 		*  QPushButton * play
