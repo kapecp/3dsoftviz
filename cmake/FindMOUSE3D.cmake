@@ -6,25 +6,23 @@
 #=============================================================================
 
 message("CMAKE_SYSTEM_FRAMEWORK_PATH = ${CMAKE_SYSTEM_FRAMEWORK_PATH}")
-if(APPLE) # The only platform it makes sense to check for 3DconnexionClient
- find_library(3DconnexionClient 3DconnexionClient)
- if(3DconnexionClient)
-  set(MOUSE3D_FOUND true)
-  set(MOUSE3D_INCLUDE_DIR ${3DconnexionClient})
-  set(MOUSE3D_LIBRARY ${3DconnexionClient})
- endif()
-endif()
 
 if ( WIN32)
-find_path( MOUSE3D_INCLUDE_DIR
-	NAMES si.h
-	PATHS $ENV{MOUSE3D_DIR}/Inc
-)
-find_library( MOUSE3D_LIBRARY
-	NAMES siapp
-	PATHS $ENV{MOUSE3D_DIR}/Lib/x86
-)
-
+	find_path( MOUSE3D_INCLUDE_DIR
+		NAMES si.h
+		PATHS $ENV{MOUSE3D_DIR}/Inc
+	)
+	find_library( MOUSE3D_LIBRARY
+		NAMES siapp
+		PATHS $ENV{MOUSE3D_DIR}/Lib/x86
+	)
+elseif( APPLE ) # The only platform it makes sense to check for 3DconnexionClient
+	find_library( 3DconnexionClient 3DconnexionClient )
+	if( 3DconnexionClient )
+		set( MOUSE3D_FOUND true )
+		set( MOUSE3D_INCLUDE_DIR ${3DconnexionClient} )
+		set( MOUSE3D_LIBRARY ${3DconnexionClient} )
+	endif()
 endif()
 
 include( FindPackageHandleStandardArgs )

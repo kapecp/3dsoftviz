@@ -297,24 +297,20 @@ endif()
 find_package( MOUSE3D )
 if( WIN32 )
 	if( MOUSE3D_FOUND )
-			include_directories( SYSTEM ${MOUSE3D_INCLUDE_DIRS} )
-			add_definitions( -DMOUSE3D_FOUND )
-			message( STATUS "3DMouse FOUND" )
+		include_directories( SYSTEM ${MOUSE3D_INCLUDE_DIRS} )
+		add_definitions( -DMOUSE3D_FOUND )
+		message( STATUS "3DMouse FOUND" )
 	endif()
-
 elseif( APPLE )
-
 	add_definitions( -DMOUSE3D_FOUND )
 	message( STATUS "3DMouse FOUND" )
 elseif( UNIX )
-set (MOUSE3D_FOUND TRUE)
-   include_directories( SYSTEM include/Mouse3d/LibMouse3d/Unix )
+	set (MOUSE3D_FOUND TRUE)
+	include_directories( SYSTEM include/Mouse3d/LibMouse3d/Unix )
 	find_package( X11 REQUIRED )
-   include_directories( SYSTEM ${X11_INCLUDE_DIR} )
-
+	include_directories( SYSTEM ${X11_INCLUDE_DIR} )
 	add_definitions( -DMOUSE3D_FOUND )
 	message( STATUS "3DMouse FOUND" )
-
 elseif()
 	message( STATUS "3DMouse NOT FOUND" )
 endif()
@@ -672,29 +668,29 @@ file( GLOB_RECURSE SRC_SPEECH	"src/Speech/*.cpp" )
 # Leap
 file ( GLOB SRC_LEAP "src/Leap/*.cpp" )
 file ( GLOB_RECURSE SRC_LEAPLIB "src/Leap/LeapLib/*.cpp" )
-# MOUSE3D
 
+# MOUSE3D
 set ( SRC_MOUSE3D
 	src/Mouse3d/Connector.cpp
 	src/Mouse3d/LibMouse3d/EventThread.cpp
 	src/Mouse3d/LibMouse3d/Mouse3dDevices.cpp
 )
 
-if( APPLE )
-	list(APPEND SRC_MOUSE3D
-		src/Mouse3d/LibMouse3d/Mac/Mouse3dMacDevice.cpp
-)
-elseif( UNIX )
-	list(APPEND SRC_MOUSE3D
-				src/Mouse3d/LibMouse3d/Unix/ApplicationEmitter.cpp
-				src/Mouse3d/LibMouse3d/Unix/Mouse3dUnixDevice.cpp
-				src/Mouse3d/LibMouse3d/Unix/xdrvlib.c
-)
-elseif( WIN32 )
+if( WIN32 )
 	list(APPEND SRC_MOUSE3D
 		src/Mouse3d/LibMouse3d/Windows/Mouse3DInput.cpp
 		src/Mouse3d/LibMouse3d/Windows/MouseParameters.cpp
-)
+	)
+elseif( APPLE )
+	list(APPEND SRC_MOUSE3D
+		src/Mouse3d/LibMouse3d/Mac/Mouse3dMacDevice.cpp
+	)
+elseif( UNIX )
+	list(APPEND SRC_MOUSE3D
+		src/Mouse3d/LibMouse3d/Unix/ApplicationEmitter.cpp
+		src/Mouse3d/LibMouse3d/Unix/Mouse3dUnixDevice.cpp
+		src/Mouse3d/LibMouse3d/Unix/xdrvlib.c
+	)
 endif()
 
 
@@ -802,30 +798,29 @@ file( GLOB_RECURSE HEADER_LEAPLIB	"include/Leap/LeapLib/*.h" )
 
 
 # MOUSE3D
-
 set ( HEADER_MOUSE3D
 	include/Mouse3d/Connector.h
 	include/Mouse3d/LibMouse3d/EventThread.h
 	include/Mouse3d/LibMouse3d/Mouse3dDevices.h
 )
 
-if( APPLE )
+if( WIN32 )
+	list(APPEND HEADER_MOUSE3D
+		include/Mouse3d/LibMouse3d/Windows/Mouse3DInput.h
+		include/Mouse3d/LibMouse3d/Windows/MouseParameters.h
+		include/Mouse3d/LibMouse3d/Windows/I3dMouseParams.h
+	)
+elseif( APPLE )
 	list(APPEND HEADER_MOUSE3D
 		include/Mouse3d/LibMouse3d/Mac/Mouse3dMacDevice.h
-)
+	)
 elseif( UNIX )
 	list(APPEND HEADER_MOUSE3D
 		include/Mouse3d/LibMouse3d/Unix/ApplicationEmitter.h
 		include/Mouse3d/LibMouse3d/Unix/fixx11.h
 		include/Mouse3d/LibMouse3d/Unix/Mouse3dUnixDevice.h
 		include/Mouse3d/LibMouse3d/Unix/xdrvlib.h
-)
-elseif( WIN32 )
-	list(APPEND HEADER_MOUSE3D
-		include/Mouse3d/LibMouse3d/Windows/Mouse3DInput.h
-		include/Mouse3d/LibMouse3d/Windows/MouseParameters.h
-		include/Mouse3d/LibMouse3d/Windows/I3dMouseParams.h
-)
+	)
 endif()
 
 
