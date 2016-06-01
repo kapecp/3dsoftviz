@@ -1,6 +1,8 @@
 #include "Viewer/BrowserGroup.h"
 #include "OsgQtBrowser/QWebViewImage.h"
 
+#include <QLinkedList>
+
 #include <osg/ValueObject>
 #include <osg/LineWidth>
 

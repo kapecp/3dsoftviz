@@ -5,12 +5,8 @@
 #include "GitLib/GitVersion.h"
 #include "GitLib/GitFileDiffBlock.h"
 #include "GitLib/GitFileDiffBlockLine.h"
-#include <QDebug>
 
 #include <QStringList>
-
-#include <QStringList>
-
 #include <QDebug>
 
 Repository::Git::GitEvolutionGraphManager* Repository::Git::GitEvolutionGraphManager::instance;
