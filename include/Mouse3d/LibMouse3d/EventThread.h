@@ -15,6 +15,7 @@ class Mouse3dDevices;
 *@date 23.11.2015
 *@brief LibCore class responsible for catching device activity.
 */
+
 //TODO class MOUSE3DLIB_EXPORT EventThread : public QThread{
 class EventThread : public QThread{
     Q_OBJECT

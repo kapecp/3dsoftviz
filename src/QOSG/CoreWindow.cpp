@@ -3981,13 +3981,6 @@ void CoreWindow::closeEvent( QCloseEvent* event )
 
 void QOSG::CoreWindow::OnMove(std::vector<float>& motionData){
 
-	/*qDebug() <<  "CoreWindow x=" << motionData[0] <<
-                "y=" << motionData[1] <<
-                "z=" << motionData[2] <<
-                "a=" << motionData[3] <<
-                "b=" << motionData[4] <<
-				"c=" << motionData[5];*/
-
     QOSG::ViewerQT* moveViewer = this->GetViewerQt();
 
     //right & left
@@ -4023,10 +4016,10 @@ void QOSG::CoreWindow::OnMove(std::vector<float>& motionData){
 
     float a = fabs(motionData[3]), b = fabs(motionData[4]), c = fabs(motionData[5]);
 
-	qDebug() <<  "CoreWindow: " <<
+	/*qDebug() <<  "CoreWindow: " <<
 				"a>0.001" << (a > 0.001) <<
 				" b>0.001" << (b > 0.001) <<
-				" c>0.001" << (c > 0.001);
+				" c>0.001" << (c > 0.001);*/
 
     if(a > 0.001){
          moveViewer->getCameraManipulator()->rotateCamera(0.0, 0.0, 1.0, (-1.5)*motionData[3], 0.0);

@@ -3,6 +3,8 @@
 #include <QDebug>
 #include <QX11Info>
 
+#include <easylogging++.h>
+
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 #include <X11/Xatom.h>
@@ -30,12 +32,13 @@ Mouse3dUnixDevice::~Mouse3dUnixDevice(){
 void Mouse3dUnixDevice::initMouse3d(){
 	Window xwindow = this->window->winId();
 
-	if ( !MagellanInit( this->display, xwindow ) ) {
-		qDebug() << "No driver is running. Exit ... " << endl;
+	if ( !MagellanInit( this->display, xwindow ) ) {3
+		LOG(INFO) << "[X11] Mouse3dDevice: MagellanInit() = Failure!" << endl;
+		LOG(INFO) << "[X11] Mouse3dDevice: No driver is running. Exit ... " << endl;
 		exit(EXIT_FAILURE);
 	}
 	else {
-		qDebug() << "Mouse3dDevices::Mouse3DLinux: MagellanInit() = Success!" << endl;
+		LOG(INFO) << "[X11] Mouse3dDevice: MagellanInit() = Success!" << endl;
 	}
 
 	QCoreApplication *inst = App::Application::instance();
@@ -45,7 +48,7 @@ void Mouse3dUnixDevice::initMouse3d(){
 }
 
 void Mouse3dUnixDevice::translateX11Event( XEvent *event ) {
-	qDebug() << endl << "Mouse3dDevices: eventType = " << event->type;
+	qDebug() << "[X11] Mouse3dDevice: eventType =" << event->type;
 
 	MagellanFloatEvent MagellanEvent;
 	if ( MagellanTranslateEvent( this->display, event, &MagellanEvent, 1.0, 1.0 ) == MagellanInputMotionEvent) {
@@ -63,7 +66,6 @@ void Mouse3dUnixDevice::translateX11Event( XEvent *event ) {
 		motionData[0] /= 100.0;
 		motionData[1] /= 100.0;
 		motionData[2] /= 100.0;
-
 
 //		// Rotation A,B,C normalization to <0.0 - 1.0>
 //		float normAxis = sqrt(motionData[3] * motionData[3] + motionData[4] * motionData[4] + motionData[5] * motionData[5]);
@@ -88,12 +90,12 @@ void Mouse3dUnixDevice::translateX11Event( XEvent *event ) {
 		motionData[4] /= 7000.0;
 		motionData[5] /= 7000.0;
 
-		qDebug() <<  "Mouse3dDevices: x=" << motionData[0] <<
-					"y=" << motionData[1] <<
-					"z=" << motionData[2] <<
-					"a=" << motionData[3] <<
-					"b=" << motionData[4] <<
-					"c=" << motionData[5];
+		qDebug() << "Movement: x =" << motionData[0] <<
+					"y =" << motionData[1] <<
+					"z =" << motionData[2];
+		qDebug() << "Rotation: a =" << motionData[3] <<
+					"b =" << motionData[4] <<
+					"c =" << motionData[5] << endl;
 
 		//emit Mouse3dDevices::Move3d(motionData);
 		window->OnMove(motionData);
@@ -101,11 +103,5 @@ void Mouse3dUnixDevice::translateX11Event( XEvent *event ) {
 }
 
 void Mouse3dUnixDevice::translateDummy() {
-	int rand = qrand() % 3;
-	if (rand == 0)
-		qDebug() << "Yea, Yea, I'm a dummy!";
-	else if (rand == 1)
-		qDebug() << "Pretty mad dummy I am!";
-	else if (rand == 2)
-		qDebug() << "Also, I'm out of knives!";
+	qDebug() << "[X11] Mouse3dDevice: translateDummy called";
 }

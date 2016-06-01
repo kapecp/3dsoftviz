@@ -11,7 +11,6 @@ namespace Mouse3d{
 *@brief 3dSoftViz class responsible for establishing connection with LibMouse3d.
 */
 
-
 class Connector{
 
 public:

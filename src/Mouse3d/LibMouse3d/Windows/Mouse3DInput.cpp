@@ -2,6 +2,9 @@
 #include "Mouse3d/LibMouse3d/Windows/Mouse3DInput.h"
 
 #include <QApplication>
+#include <QDebug>
+
+#include <easylogging++.h>
 
 #define LOGITECH_VENDOR_ID 0x46d
 #define _CONSTANT_INPUT_PERIOD 0
@@ -475,6 +478,13 @@ void Mouse3DInput::On3dmouseInput()
 		if (iterator != fDevice2Data.end()) {
 			hNextDevice = iterator->first;
 		}
+
+		qDebug() << "Movement: x =" << motionData[0] <<
+					"y =" << motionData[1] <<
+					"z =" << motionData[2];
+		qDebug() << "Rotation: a =" << motionData[3] <<
+					"b =" << motionData[4] <<
+					"c =" << motionData[5] << endl;
 
 		 // Pass the 3dmouse input to the view controller
 		 Move3d(hdevice, motionData);

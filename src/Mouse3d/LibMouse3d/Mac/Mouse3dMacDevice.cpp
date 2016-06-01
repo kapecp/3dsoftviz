@@ -3,10 +3,10 @@
 #include <QDebug>
 #include <QtGlobal>
 
+#include <easylogging++.h>
+
 namespace Mouse3dMacDeviceGlob{
-
 	QOSG::CoreWindow *ptr = nullptr;
-
 }
 
 Mouse3dMacDevice::Mouse3dMacDevice( QOSG::CoreWindow *window ): clientID(0) {
@@ -19,13 +19,13 @@ Mouse3dMacDevice::Mouse3dMacDevice( QOSG::CoreWindow *window ): clientID(0) {
 	uint16_t mode = kConnexionClientModeTakeOver;
 	uint32_t mask = kConnexionMaskAll;
 	this->clientID = RegisterConnexionClient(signature, name, mode, mask);
-	qDebug() << "Mouse3dDevice: Registered with ClientID=" << this->clientID;
+	LOG(INFO) << "[OSX] Mouse3dDevice: Registered with ClientID =" << this->clientID;
 }
 
 Mouse3dMacDevice::~Mouse3dMacDevice() {
 	UnregisterConnexionClient(this->clientID);
 	CleanupConnexionHandlers();
-	qDebug() << "Mouse3dDevice: Unregistered";
+	LOG(INFO) << "[OSX] Mouse3dDevice: Unregistered";
 	Mouse3dMacDeviceGlob::ptr = nullptr;
 }
 
@@ -44,12 +44,12 @@ void MouseHandler(unsigned int connection, unsigned int messageType, void *messa
 			motionData.push_back(s->axis[4]); // B
 			motionData.push_back(s->axis[5]); // C
 
-			qDebug() <<  "Mouse3dDevice: x=" << motionData[0] <<
-						"y=" << motionData[1] <<
-						"z=" << motionData[2] <<
-						"a=" << motionData[3] <<
-						"b=" << motionData[4] <<
-						"c=" << motionData[5];
+			qDebug() << "Movement: x =" << motionData[0] <<
+						"y =" << motionData[1] <<
+						"z =" << motionData[2];
+			qDebug() << "Rotation: a =" << motionData[3] <<
+						"b =" << motionData[4] <<
+						"c =" << motionData[5] << endl;
 
 			//Mouse3dMacDeviceGlob::ptr->PassMotion( motionData );
 			Mouse3dMacDeviceGlob::ptr->OnMove( motionData );

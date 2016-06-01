@@ -22,6 +22,12 @@ namespace QOSG{
 
 namespace LibMouse3d{
 
+/**
+*@author Michal Fasanek
+*@date 23.11.2015
+*@brief Class using system specific solutions for 3dMouse.
+*/
+
 class Mouse3dDevices : public QObject {
 	Q_OBJECT
 

@@ -1,7 +1,5 @@
 #include "Mouse3d/LibMouse3d/Mouse3dDevices.h"
 
-#include <QDebug>
-
 namespace LibMouse3d{
 
 	Mouse3dDevices::Mouse3dDevices( QOSG::CoreWindow *window ) :

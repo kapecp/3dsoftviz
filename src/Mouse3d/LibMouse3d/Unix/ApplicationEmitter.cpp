@@ -1,6 +1,7 @@
 ﻿#include "Mouse3d/LibMouse3d/Unix/ApplicationEmitter.h"
 
-#include <QDebug>
+//#include <QDebug>
+//#include <easylogging++.h>
 
 #include <X11/Xlib.h>
 #include "fixx11.h"
