@@ -19,7 +19,9 @@
 #include <QtWebKit/QtWebKit>
 
 #include "OsgQtBrowser/QGraphicsViewAdapter.h"
-#include "Diluculum/Types.hpp"
+#include "LuaTypes/LuaValueMap.h"
+
+#include <QMap>
 
 namespace OsgQtBrowser {
 /**
@@ -56,7 +58,9 @@ public:
 		*  \param models
 		*  \param templateType type of the template route
 		*/
-	void showTemplate( const std::string& templateName, Diluculum::LuaValueMap models, const std::string& templateType );
+	void showTemplate( const std::string& templateName, Lua::LuaValueMap models, const std::string& templateType );
+
+	void showGitTemplate( const std::string& templateName, const std::string& templateType, QMap<QString, int>* changedMetrics );
 
 	/**
 		*  \fn inline public  getQWebView
@@ -140,6 +144,8 @@ public:
 		*  \return bool
 		*/
 	virtual bool sendKeyEvent( int key, bool keyDown );
+
+	QString createGitHtml( QMap<QString, int>* changedMetrics );
 
 protected:
 

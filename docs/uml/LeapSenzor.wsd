@@ -1,0 +1,52 @@
+// Module LeapSenzor
+// Autor: Team Reality Not Found
+
+@startuml
+scale 800 width
+
+!define lpTh(x) LeapThread
+!define qThr(x) QT.QThread
+!define lp(x) Leap
+!define lpCtrl(x) LeapController
+!define lpLsnr(x) LeapListener
+!define lstnr(x) QT.Listener
+!define lpActs(x) LeapActions
+!define drctDtc(x) DirectionDetector
+!define fgrPosDtc(x) FingerPositionDetector
+!define ctrl(x) QT.Controller
+!define lpAct(x) LeapAction
+!define msCtrl(x) Vwr.MouseControl
+!define cmrMnpl(x) Vwr.CameraManipulator
+!define mth(x) Math.Math
+!define cr(x) Core.Core
+!define lpMth(x) LeapMath
+
+package LeapSenzor{
+	
+	lpTh() --|> qThr()
+	lpTh() -- lp()
+	lpTh() -- lpCtrl()
+	
+	lpLsnr() --|> lstnr()
+	lpLsnr() -- lp()
+	lpLsnr() -- lpActs()
+	lpLsnr() -- drctDtc()
+	lpLsnr() -- fgrPosDtc()
+	
+	lpCtrl() --|> ctrl()
+	lpCtrl() -- lp()
+	lpCtrl() -- lpLsnr()
+	
+	lpAct() -- drctDtc()
+	lpAct() -- msCtrl()
+	lpAct() -- cmrMnpl()
+	lpAct() -- lp()
+	lpAct() -- mth()
+	lpAct() -- cr()
+	
+	fgrPosDtc() -- lp()
+	
+	drctDtc() -- lp()
+	drctDtc() -- lpMth()
+}
+@enduml

@@ -123,7 +123,7 @@ public:
 		*  \return bool true, if event was handled
 		*/
 	bool handle( const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& aa );
-
+	using osgGA::GUIEventHandler::handle;
 
 	/**
 		*  \fn public  toggleSelectedNodesFixedState(bool isFixed)
@@ -259,7 +259,12 @@ protected:
 		*  \brief true, if left mouse button pressed
 		*/
 	bool leftButtonPressed;
-
+	//jurik aruco movement prototype
+	//rotate graph out without camera manipulator
+	bool rightButtonPressed;
+	double initialX = 0;
+	double initialY = 0;
+	//*****
 	// Perform a pick operation.
 	bool pick( const double xMin, const double yMin, const double xMax, const double yMax, osgViewer::Viewer* viewer );
 
@@ -403,7 +408,7 @@ private:
 		*  \brief Select all neighbors edges and theirs nodes of nodes collection in parameter
 		*  \param     nodes   nodes for neighbors selection
 		*/
-	void selectAllNeighbors( QLinkedList<osg::ref_ptr<Data::Node>> nodes );
+	void selectAllNeighbors( QLinkedList<osg::ref_ptr<Data::Node > > nodes );
 
 	/**
 		*  \fn private  dragNode(osgViewer::Viewer * viewer)

@@ -127,19 +127,17 @@ Data::Graph* Model::GraphDAO::getGraph( QSqlDatabase* conn, bool* error2, qlongl
 	QMap<qlonglong, int> nodeMasks;
 	QList<qlonglong> parentNodes;
 
-	graphName = Model::GraphDAO::getName( graphID, &error, conn );
-	layoutName = Model::GraphLayoutDAO::getName( conn, &error, graphID, layoutID );
-	queryNodes = Model::NodeDAO::getNodesQuery( conn, &error, graphID, layoutID, -1 );
-	queryEdges = Model::EdgeDAO::getEdgesQuery( conn, &error, graphID, layoutID );
-	positions = Model::NodeDAO::getNodesPositions( conn, &error, graphID, layoutID );
-	nodeColors = Model::NodeDAO::getColors( conn, &error, graphID, layoutID );
-	edgeColors = Model::EdgeDAO::getColors( conn, &error, graphID, layoutID );
-	nodeScales = Model::NodeDAO::getScales( conn, &error, graphID, layoutID );
-	edgeScales = Model::EdgeDAO::getScales( conn, &error, graphID, layoutID );
-	nodeMasks = Model::NodeDAO::getMasks( conn, &error, graphID, layoutID );
-	parentNodes = Model::NodeDAO::getParents( conn, &error, graphID, layoutID );
-
-	if ( !error ) {
+	if ( ( graphName = Model::GraphDAO::getName( graphID, &error, conn ), !error ) &&
+			( layoutName = Model::GraphLayoutDAO::getName( conn, &error, graphID, layoutID ), !error ) &&
+			( queryNodes = Model::NodeDAO::getNodesQuery( conn, &error, graphID, layoutID, -1 ), !error ) &&
+			( queryEdges = Model::EdgeDAO::getEdgesQuery( conn, &error, graphID, layoutID ), !error ) &&
+			( positions = Model::NodeDAO::getNodesPositions( conn, &error, graphID, layoutID ), !error ) &&
+			( nodeColors = Model::NodeDAO::getColors( conn, &error, graphID, layoutID ), !error ) &&
+			( edgeColors = Model::EdgeDAO::getColors( conn, &error, graphID, layoutID ), !error ) &&
+			( nodeScales = Model::NodeDAO::getScales( conn, &error, graphID, layoutID ), !error ) &&
+			( edgeScales = Model::EdgeDAO::getScales( conn, &error, graphID, layoutID ), !error ) &&
+			( nodeMasks = Model::NodeDAO::getMasks( conn, &error, graphID, layoutID ), !error ) &&
+			( parentNodes = Model::NodeDAO::getParents( conn, &error, graphID, layoutID ), !error ) ) {
 		qDebug() << "[Model::GraphDAO::getGraph] Data loaded from database successfully";
 
 		newGraph = new Data::Graph( graphID, graphName, 0, 0, NULL );
@@ -232,12 +230,12 @@ Data::Graph* Model::GraphDAO::getGraph( QSqlDatabase* conn, bool* error2, qlongl
 				}
 			}
 		}
+		newGraph->setEleIdCounter( maxIdEleUsed );
 	}
 	else {
 		qDebug() << "[Model::GraphDAO::getGraph] Error while loading data from database";
+		newGraph = NULL;
 	}
-
-	newGraph->setEleIdCounter( maxIdEleUsed );
 
 	*error2 = error;
 	return newGraph;

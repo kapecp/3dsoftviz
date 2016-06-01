@@ -1,11 +1,11 @@
 #include "Clustering/Figures/SpikySphere.h"
 
-SpikySphere::SpikySphere( osg::Vec3d position, float radius, osg::Vec4d color ) : ::Sphere( position, radius, color )
+Clustering::SpikySphere::SpikySphere( osg::Vec3d position, float radius, osg::Vec4d color ) : Clustering::Sphere( position, radius, color )
 {
 	addSpikes();
 }
 
-void SpikySphere::addSpikes()
+void Clustering::SpikySphere::addSpikes()
 {
 	for ( osg::Vec3Array::iterator i = sphereVertices->begin(); i != sphereVertices->end(); ++i ) {
 		osg::Vec3 sp( i->x(),i->y(),i->z() );

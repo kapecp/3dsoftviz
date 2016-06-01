@@ -40,6 +40,22 @@ public:
 		 */
 	const QMatrix4x4 getDetectedMatrix( cv::Mat inputImage );
 
+	//jurik
+	/**
+	     * @author Autor:Igor Jurík
+	     * @brief get projection matrix from camera image and send this matrix
+	     * @param inputImage Image from cammera, where marker should be detected
+	     * @param[out] result projection matrix
+	     */
+	const QMatrix4x4 getProjectionMatrix( cv::Mat inputImage );
+
+	/**
+	     * @author Autor:Igor Jurík
+	     * @brief get real size of detected marker
+	     */
+	float getMarkerSize();
+	//*****
+
 	/**
 		 * @author Autor:Dávid Durčák
 		 * @brief getDetectedPosAndQuat method that encapsule all necessary funtionality for detecting marker on input image and fill position and qauternion vectors with that informations
@@ -56,7 +72,7 @@ public:
 		 * @param inputImage Image from cammera, where markers should be detected
 		 * @param[out] number of detected markers
 		 */
-	long detect( cv::Mat inputImage );
+	std::size_t detect( cv::Mat inputImage );
 
 	/**
 			 * @author Autor:Dávid Durcák

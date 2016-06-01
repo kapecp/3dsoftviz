@@ -1,0 +1,56 @@
+@startuml
+package QOSG{
+class AdapterWidget <|-right- ViewerQT
+ViewerQT -left-o CoreWindow
+CoreWindow -down- ProjectiveARCore
+ProjectiveARCore o-- ProjectiveARWindow
+ProjectiveARWindow o-- ProjectiveARViewer
+ProjectiveARWindow --o ProjectiveAREventHandler
+ProjectiveARViewer o-up- ViewerQT
+ProjectiveARViewer -up-|> AdapterWidget
+
+class CoreWindow {
+-viewerWidget : ViewerQT*
++void createProjARWindow()
+}
+
+class ProjectiveARCore {
+{static} -mProjectiveARCore : ProjectiveARCore*
+-mProjectiveARWindow : QPointer<QOSG::ProjectiveARWindow>
+{static} +ProjectiveARCore* getInstance()
++void init()
+}
+
+class ProjectiveARWindow {
+-viewerWidget : ProjectiveARWindow*
++void toggleToolBars()
++void applySceneSettings()
+}
+
+class ProjectiveAREventHandler {
+-window : ProjectiveARWindow*
+{abstract} +bool handle()
+}
+
+class ProjectiveARViewer {
+#viewerPerspective : osgViewer::Viewer*
+-renderCamera : osg::Camera*
+-base : osg::Geode*
+-projectorPos : osg::Vec3d
+-projectorDir : osg::Vec3d
+-projectorFOV : double
+-viewerPos : osg::Vec3d
+-viewerDir : osg::Vec3d
+-viewerFOV : double
+-graphPos : osg::Vec3d
+-graphRadius : double
+-useGraph : bool
+{static} +osg::StateSet* createProjectorState()
+{static} +osg::Geode* createBase()
++void reloadConfig()
++void updateScene()
+{abstract} #void paintGL()
+-osg::Group* createProjectorScene()
+}
+}
+@enduml

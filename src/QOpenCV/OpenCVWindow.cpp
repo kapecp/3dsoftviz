@@ -6,7 +6,9 @@
 #include <QtGui/QVBoxLayout>
 #include <QtGui/QStackedLayout>
 #include <QCloseEvent>
+#include <QDebug>
 #include "OpenCV/CamSelectCore.h"
+#include <QDebug>
 
 #include "Util/ApplicationConfig.h"
 
@@ -232,7 +234,7 @@ void QOpenCV::OpenCVWindow::setMarkerDetection( bool set )
 
 void QOpenCV::OpenCVWindow::setSpeedKinect( int speed )
 {
-	double _speed=( double )( ( double )( speed/10.0 ) );
+	double _speed= speed/10.0 ;
 	emit sendSpeedKinect( _speed );
 }
 
@@ -363,6 +365,7 @@ void QOpenCV::OpenCVWindow::onMarkerStartCancel( bool checked )
 		emit setCapVideoMarker( OpenCV::CamSelectCore::getInstance()->selectCamera() );
 		emit startMarker();
 		mMarkerPB->setEnabled( true );
+		emit arucoRunning( true );
 
 		if ( Util::ApplicationConfig::get()->getValue( "Viewer.SkyBox.Noise" ).toInt() >1 ) {
 			mMarkerBackgrCB->setEnabled( true );
@@ -375,7 +378,7 @@ void QOpenCV::OpenCVWindow::onMarkerStartCancel( bool checked )
 		mUpdateCorParPB->setEnabled( false );
 		mMarkerBackgrCB->setEnabled( false );
 		emit stopMarker( true );
-
+		emit arucoRunning( false );
 	}
 }
 
@@ -424,7 +427,7 @@ void QOpenCV::OpenCVWindow::setLabel( cv::Mat image )
 		return;
 	}
 
-	QImage qimage( reinterpret_cast<uchar*>( image.data ), image.cols, image.rows,static_cast<int>( image.step ), QImage::Format_RGB888 );
+	QImage qimage( image.data, image.cols, image.rows,static_cast<int>( image.step ), QImage::Format_RGB888 );
 
 	mWindowLabel->setPixmap( QPixmap::fromImage( qimage ) );
 

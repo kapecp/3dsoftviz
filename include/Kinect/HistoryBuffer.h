@@ -12,6 +12,7 @@
 
 #include "NiTE.h"
 
+namespace Kinect {
 
 template <int BufferSize>
 /**
@@ -81,6 +82,8 @@ private:
 	 */
 	int m_size;
 };
+
+}
 
 #endif // NITE2_FOUND
 

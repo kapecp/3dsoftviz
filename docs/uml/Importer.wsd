@@ -1,0 +1,59 @@
+// Module Importer
+// Autor: Team Reality Not Found
+
+@startuml
+scale 800 width
+
+!define grMLIm(x) GraphMLImporter
+!define grOp(x) GraphOperations
+!define GXLIm(x) GXLImporter
+!define imCont(x) ImporterContext
+!define imFctr(x) ImporterFactory
+!define imIfHnd(x) ImportInfoHandler
+!define imIfHndEmp(x) ImportInfoHandlerEmpty
+!define rdNdsSt(x) ReadNodesStore
+!define RSFIm(x) RSFImporter
+!define strmIm(x) StreamImporter
+!define osg(x) OSG.OSG
+!define tp(x) Data.Type
+!define gr(x) Data.Graph
+!define nd(x) Data.Node
+
+package Importer{
+	class osg() #red
+	grMLIm() --|> strmIm()
+	grMLIm() -- imCont()
+	grMLIm() -- grOp()
+	grMLIm() -- rdNdsSt()
+	grMLIm() -- tp()
+	grMLIm() -- osg()
+	
+	grOp() -- gr()
+	grOp() -- tp()
+	
+	GXLIm() --|> strmIm()
+	GXLIm() -- imCont()
+	GXLIm() -- grOp()
+	GXLIm() -- rdNdsSt()
+	GXLIm() -- tp()
+	
+	imCont() -- gr()
+	imCont() -- imIfHnd()
+	
+	imFctr() -- strmIm()
+	
+	imIfHndEmp() --|> imIfHnd()
+	
+	rdNdsSt() -- osg()
+	rdNdsSt() -- nd()
+	
+	RSFIm() --|> strmIm()
+	RSFIm() -- osg()
+	RSFIm() -- nd()
+	RSFIm() -- imCont()
+	
+	strmIm() -- imCont
+	
+}
+
+@enduml

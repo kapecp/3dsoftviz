@@ -5,7 +5,30 @@
 
 #ifdef NITE2_FOUND
 
-Kinect::KinectHandTracker::KinectHandTracker( openni::Device* device, openni::VideoStream* m_depth )
+Kinect::KinectHandTracker::KinectHandTracker( openni::Device* device, openni::VideoStream* m_depth ) :
+	numHandsTracking( 0 ),
+	isGestureClick( false ),
+	//handZ{0, 0} //C++11
+	//getArrayHands{{0, 0}, {0, 0}} //C++11
+	slidingHand_x( 0 ),
+	slidingHand_y( 0 ),
+	slidingHand_z( 0 ),
+	slidingHand_type( nullptr ),
+	isClick( false ),
+
+	gesto_dolava( false ),
+	gesto_doprava( false ),
+	gesto_hore( false ),
+	gesto_dole( false ),
+	viewer( AppCore::Core::getInstance()->getCoreWindow()->GetViewerQt() ),
+	nav( nullptr ),
+	isCursorMovementEnable( true ),
+	mouse( new Vwr::MouseControl() ),
+	mDepth( m_depth ),
+	mDepthX( 0 ),
+	mDepthY( 0 ),
+	mDepthZ( 0 ),
+	mSpeed( 1.0 )
 {
 	// create hand tracking from device
 	m_pHandTracker.create( device );
@@ -13,12 +36,6 @@ Kinect::KinectHandTracker::KinectHandTracker( openni::Device* device, openni::Vi
 	// add automatec gesture from Openni to track
 	m_pHandTracker.startGestureDetection( nite::GESTURE_WAVE );
 	m_pHandTracker.startGestureDetection( nite::GESTURE_CLICK );
-	isClick=false;
-	isCursorMovementEnable=true;
-	mSpeed=1.0;
-	mouse = new Vwr::MouseControl();
-	mDepth=m_depth;
-	viewer = AppCore::Core::getInstance()->getCoreWindow()->GetViewerQt();
 }
 
 

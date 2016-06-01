@@ -102,7 +102,7 @@ void Kinect::KinectWindow::stopZoom()
 
 void Kinect::KinectWindow::setSpeedKinect( int speed )
 {
-	double _speed=( double )( ( double )( speed/10.0 ) );
+	double _speed= speed/10.0;
 	emit sendSpeedKinect( _speed );
 }
 
@@ -114,7 +114,7 @@ void Kinect::KinectWindow::setLabel( cv::Mat image )
 	}
 	//convert to QImage - for Label
 	cv::cvtColor( image, image, CV_BGR2RGB );
-	QImage qimage( ( uchar* ) image.data, image.cols, image.rows,( int ) image.step, QImage::Format_RGB888 );
+	QImage qimage( image.data, image.cols, image.rows, static_cast<int>( image.step ), QImage::Format_RGB888 );
 
 	mWindowLabel->setPixmap( QPixmap::fromImage( qimage ) );
 
