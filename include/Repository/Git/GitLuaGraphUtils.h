@@ -28,8 +28,9 @@ public:
 	static QMap<QString, int>* compareMetrics( QMap<QString, int>* currentMetrics, QMap<QString, int>* previousMetrics );
 private:
 
-	Repository::Git::GitEvolutionGraph* evolutionGraph;
 	Lua::LuaGraph* luaGraph;
+	Repository::Git::GitEvolutionGraph* evolutionGraph;
+
 }; // class
 } // Git namespace
 } // Repository namespace

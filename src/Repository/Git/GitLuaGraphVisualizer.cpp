@@ -97,6 +97,11 @@ void Repository::Git::GitLuaGraphVisualizer::visualize( bool next )
 				case Repository::Git::GitType::MODIFIED:
 //                this->evolutionGraph->getMetaDataFromIdentifier( iterator.value()->getIdentifier() )->decreaseChangedCount();
 					break;
+				case Repository::Git::GitType::NONE:
+					//do nothing
+					break;
+				default:
+					qDebug() << "CHYBNY TYP PRE SUBOR" << iterator.value()->getIdentifier();
 			}
 
 			processFunctionsFromFile( iterator.value(), next );
@@ -119,9 +124,11 @@ void Repository::Git::GitLuaGraphVisualizer::visualize( bool next )
 				this->evolutionGraph->getMetaDataFromIdentifier( iterator.value()->getIdentifier() )->setChangedVersion( this->currentGraph->getCurrentVersion() );
 //            this->evolutionGraph->getMetaDataFromIdentifier( iterator.value()->getIdentifier() )->increaseChangedCount();
 				break;
+			case Repository::Git::GitType::NONE:
+				//do nothing
+				break;
 			default:
 				qDebug() << "CHYBNY TYP PRE SUBOR" << iterator.value()->getIdentifier();
-				break;
 		}
 
 		// Spracuj funkcie, ktore sa zmenili v danom subore
@@ -315,9 +322,11 @@ bool Repository::Git::GitLuaGraphVisualizer::processFunctionsFromFile( Repositor
 				this->evolutionGraph->getMetaDataFromIdentifier( function->getIdentifier() )->setChangedVersion( this->currentGraph->getCurrentVersion() );
 				this->evolutionGraph->getMetaDataFromIdentifier( function->getIdentifier() )->increaseChangedCount();
 				break;
-			default:
-				qDebug() << "CHYBA V" << file->getIdentifier() << "->" << function->getIdentifier();
+			case Repository::Git::GitType::NONE :
+				//do nothing
 				break;
+			default:
+				qDebug() << "CHYBA V" << file->getIdentifier() << "->" << function->getIdentifier();				
 		}
 
 		// Pre kazdu funkciu je potrebne prejst aj jej volania
@@ -353,9 +362,11 @@ bool Repository::Git::GitLuaGraphVisualizer::processFunctionsFromFile( Repositor
 					this->evolutionGraph->getMetaDataFromIdentifier( innerFunction->getIdentifier() )->setChangedVersion( this->currentGraph->getCurrentVersion() );
 					this->evolutionGraph->getMetaDataFromIdentifier( innerFunction->getIdentifier() )->increaseChangedCount();
 					break;
+				case Repository::Git::GitType::NONE :
+					//do nothing
+					break;
 				default:
 					qDebug() << "CHYBA V" << file->getIdentifier() << "->" << function->getIdentifier() << "->"  << innerFunction->getIdentifier();
-					break;
 			}
 		}
 	}
@@ -807,6 +818,8 @@ void Repository::Git::GitLuaGraphVisualizer::processChangedNodesAndEdges()
 //                        node->setType( this->currentGraph->getTypesByName( "clearNode" ).at( 0 ) );
 //                        node->setColor( osg::Vec4f( 1, 0, 1, 0 ) );
 								break;
+							default:
+								qDebug() << "Unhandled LuaStat";								
 						}
 					}
 				}
@@ -897,11 +910,10 @@ void Repository::Git::GitLuaGraphVisualizer::processChangedNodesAndEdges()
 				}
 				break;
 			case Repository::Git::GitType::NONE:
-
+				//do nothing
 				break;
 			default:
-				qDebug() << "Unknown GitType";
-				return;
+				qDebug() << "Unknown GitType";				
 		}
 	}
 
@@ -957,6 +969,8 @@ void Repository::Git::GitLuaGraphVisualizer::reloadNodeRepresentation( int showL
 				iterator.value()->setInvisible( true );
 				iterator.value()->showLabel( false );
 				break;
+			default:
+				qDebug() << "Unhandled LuaStat";
 		}
 
 
@@ -985,6 +999,8 @@ void Repository::Git::GitLuaGraphVisualizer::reloadNodeRepresentation( int showL
 			case CHANGES:
 				iterator.value()->setInvisible( true );
 				break;
+			default:
+				qDebug() << "Unhandled LuaStat";
 		}
 	}
 
