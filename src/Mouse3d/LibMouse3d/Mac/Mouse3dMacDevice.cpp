@@ -5,7 +5,7 @@
 
 #include <easylogging++.h>
 
-namespace Mouse3dMacDeviceGlob{
+namespace Mouse3dMacDeviceGlob {
 	QOSG::CoreWindow *ptr = nullptr;
 }
 
@@ -29,7 +29,7 @@ Mouse3dMacDevice::~Mouse3dMacDevice() {
 	Mouse3dMacDeviceGlob::ptr = nullptr;
 }
 
-void MouseHandler(unsigned int connection, unsigned int messageType, void *messageArgument) {
+void Mouse3dMacDevice::MouseHandler(unsigned int connection, unsigned int messageType, void *messageArgument) {
 	if (messageType == kConnexionMsgDeviceState) {
 		ConnexionDeviceState *s;
 		s = static_cast<ConnexionDeviceState *>(messageArgument);
@@ -43,6 +43,16 @@ void MouseHandler(unsigned int connection, unsigned int messageType, void *messa
 			motionData.push_back(s->axis[3]); // A
 			motionData.push_back(s->axis[4]); // B
 			motionData.push_back(s->axis[5]); // C
+
+			// Axis X,Y,Z scaling
+			motionData[0] /= 20000.0;
+			motionData[1] /= -20000.0;
+			motionData[2] /= 20000.0;
+
+			// Rotation A,B,C scaling
+			motionData[3] /= 7000.0;
+			motionData[4] /= 7000.0;
+			motionData[5] /= 7000.0;
 
 			qDebug() << "Movement: x =" << motionData[0] <<
 						"y =" << motionData[1] <<
