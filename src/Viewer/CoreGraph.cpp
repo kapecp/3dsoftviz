@@ -1642,6 +1642,9 @@ void CoreGraph::scaleGraph( int scale )
 			graphRotTransf->setMatrix( scaleMatrix * scaleMatrix.scale( 2,2,2 ) );
 			break;
 		}
+		default:
+			//scale wont have any other value
+			qDebug() << "Unhandled scale value";
 	}
 }
 
@@ -1654,19 +1657,25 @@ void CoreGraph::rotateGraph( int direction )
 	transfGraph.setTrans( inverted.getTrans() );
 
 	switch ( direction ) {
-		case 1:
+		case 1: {
 			rotationMatrix = rotationMatrix.rotate( 0.025,0,0,1 );
 			break;
-		case -1:
+		}
+		case -1: {
 			rotationMatrix = rotationMatrix.rotate( -0.025,0,0,1 );
 			break;
+		}
 		case 2: {
 			rotationMatrix = rotationMatrix.rotate( 0.025,0,1,0 );
 			break;
 		}
-		case -2:
+		case -2: {
 			rotationMatrix = rotationMatrix.rotate( -0.025,0,1,0 );
 			break;
+		}
+		default:
+			//direction wont have any other value
+			qDebug() << "Unhandled direction value";
 	}
 
 	transfGraph = transfGraph * rotationMatrix;

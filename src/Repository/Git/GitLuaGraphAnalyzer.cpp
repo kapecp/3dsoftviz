@@ -102,7 +102,7 @@ void Repository::Git::GitLuaGraphAnalyzer::analyze()
 
 						// Typ globalnej funkcie nas nezaujima pri analyze, preto nastavim na NONE
 						function->setType( Repository::Git::GitType::NONE );
-						function->setId( pairNode->getId() );
+						function->setId( static_cast<int>(pairNode->getId()) );
 
 						// Kontrola, ze ide o globalnu funkciu, ak by nebola tak sa vypise chybova sprava
 						if ( !QString::compare( QString::fromStdString( pairNode->getParams()["type"].asString() ), "globalFunction" ) ) {
@@ -157,7 +157,7 @@ void Repository::Git::GitLuaGraphAnalyzer::analyze()
 
 							// Typ globalnej funkcie nas nezaujima pri analyze, preto nastavim na NONE
 							function->setType( Repository::Git::GitType::NONE );
-							function->setId( pairNode->getId() );
+							function->setId( static_cast<int>(pairNode->getId()) );
 
 							// Kontrola, ze ide o lokalnu funkciu, ak by nebola tak sa vypise chybova sprava
 							if ( !QString::compare( QString::fromStdString( pairNode->getParams()["type"].asString() ), "function" ) ) {
@@ -228,7 +228,7 @@ void Repository::Git::GitLuaGraphAnalyzer::analyze()
 
 									// Typ funkcie nas nezaujima pri analyze, preto nastavim na NONE
 									innerFunction->setType( Repository::Git::GitType::NONE );
-									innerFunction->setId( functionPairNode->getId() );
+									innerFunction->setId( static_cast<int>(functionPairNode->getId()) );
 
 									// Vytvorenu funkciu pridame do vsetkych funkcii pre dany subor
 									functions.insert( innerFunctionIdentifier, innerFunction );
@@ -652,8 +652,8 @@ bool Repository::Git::GitLuaGraphAnalyzer::intervalsIntersects( int firstStart, 
 int Repository::Git::GitLuaGraphAnalyzer::calculateRealResult( qlonglong luaId )
 {
 	Lua::LuaNode* node = this->luaGraph->getNodes()->value( luaId );
-	int blank = node->getParams()["metrics"].asTable()["LOC"].asTable()["lines_blank"].asNumber();
-	int nonempty = node->getParams()["metrics"].asTable()["LOC"].asTable()["lines_nonempty"].asNumber();
+	int blank = static_cast<int>(node->getParams()["metrics"].asTable()["LOC"].asTable()["lines_blank"].asNumber());
+	int nonempty = static_cast<int>(node->getParams()["metrics"].asTable()["LOC"].asTable()["lines_nonempty"].asNumber());
 
 	int realBlank = ( blank - nonempty - 1 ) / 2;
 	return nonempty + realBlank + 1;
@@ -667,7 +667,7 @@ void Repository::Git::GitLuaGraphAnalyzer::findFunctionRowsFromFile( Repository:
 		Repository::Git::GitFunction* function = iterator.value();
 		if ( function->getFunctionType() == Repository::Git::GitFunctionType::LOCALFUNCTION ) {
 			Lua::LuaNode* node = this->luaGraph->getNodes()->value( function->getId() );
-			int position = node->getParams()["position"].asNumber();
+			int position = static_cast<int>(node->getParams()["position"].asNumber());
 			min = position < min ? position : min;
 			functionToByte.insert( function->getIdentifier(), position );
 //            qDebug() << function->getIdentifier() << position;
@@ -683,8 +683,8 @@ void Repository::Git::GitLuaGraphAnalyzer::findFunctionRowsFromFile( Repository:
 	if ( ioFile.open( QIODevice::ReadOnly ) ) {
 		QTextStream reader( &ioFile );
 		QString line;
-		long count = 0;
-		long row = 0;
+		int count = 0;
+		int row = 0;
 
 		while ( !reader.atEnd() ) {
 			line = reader.readLine();

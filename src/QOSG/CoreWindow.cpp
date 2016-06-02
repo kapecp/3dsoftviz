@@ -1816,7 +1816,7 @@ void CoreWindow::loadExampleGraphLua()
 	layout->pause();
 	coreGraph->setNodesFreezed( true );
 
-	Lua::LuaGraphVisualizer* visualizer = visualizer = new Lua::SimpleGraphVisualizer( currentGraph, coreGraph->getCamera() );
+	Lua::LuaGraphVisualizer* visualizer = new Lua::SimpleGraphVisualizer( currentGraph, coreGraph->getCamera() );
 	visualizer->visualize();
 
 	coreGraph->reloadConfig();
@@ -2354,7 +2354,7 @@ void CoreWindow::setRestriction_SphereSurface()
 
 	if ( currentGraph != NULL ) {
 		osg::Vec3 position = viewerWidget->getPickHandler()->getSelectionCenter( true );
-		if ( qFuzzyCompare( static_cast<float>( position.length() ),0.0f ) ) {
+		if ( qFuzzyCompare( ( position.length() ),0.0f ) ) {
 			return;
 		}
 		osg::ref_ptr<Data::Node> centerNode;
@@ -4199,7 +4199,7 @@ void CoreWindow::loadFunctionCall()
 	layout->pause();
 	coreGraph->setNodesFreezed( true );
 
-	Lua::LuaGraphVisualizer* visualizer = visualizer = new Lua::SimpleGraphVisualizer( currentGraph, coreGraph->getCamera() );
+	Lua::LuaGraphVisualizer* visualizer = new Lua::SimpleGraphVisualizer( currentGraph, coreGraph->getCamera() );
 	visualizer->visualize();
 
 	coreGraph->reloadConfig();

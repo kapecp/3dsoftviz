@@ -141,15 +141,15 @@ private:
 
 	qlonglong luaMapping;
 
-	int firstOccurenceInGraph;
-
 	int changedVersion;
 
 	Repository::Git::GitFile* callTree;
 
-	QMap<QString, int>* metrics;
+	int firstOccurenceInGraph;
 
 	int changedCount;
+
+	QMap<QString, int>* metrics;	
 }; // class
 } // namespace
 }
