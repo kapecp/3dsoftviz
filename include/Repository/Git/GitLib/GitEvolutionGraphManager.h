@@ -18,7 +18,7 @@ class GitFileDiffBlockLine;
 class GITLIB_EXPORT GitEvolutionGraphManager
 {
 public:
-	~GitEvolutionGraphManager();
+	virtual ~GitEvolutionGraphManager();
 
 	static GitEvolutionGraphManager* getInstance();
 

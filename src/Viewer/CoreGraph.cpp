@@ -1488,7 +1488,7 @@ void CoreGraph::createBase()
 	//invisible untill checkbox clicked
 	baseGeode->setNodeMask( 0x0 );
 	osg::Material* material = new osg::Material();
-	material->setDiffuse( osg::Material::FRONT,  osg::Vec4( 0.8, 0.8, 0.8, 0.2 ) );
+	material->setDiffuse( osg::Material::FRONT,  osg::Vec4( (float)0.8, (float)0.8, (float)0.8, (float)0.2 ) );
 	// material->setEmission(osg::Material::FRONT, osg::Vec4(0, 0, 0, 1));
 	baseGeode->getOrCreateStateSet()->setAttribute( material );
 
@@ -1717,7 +1717,7 @@ void CoreGraph::scaleNodes( bool scaleUp )
 
 		if ( scaleUp ) {
 			if ( actualScale < 100 ) {
-				it.value()->setScale( actualScale * 1.2 );
+				it.value()->setScale( actualScale * (float)1.2 );
 			}
 			else {
 				it.value()->setScale( actualScale );
@@ -1725,7 +1725,7 @@ void CoreGraph::scaleNodes( bool scaleUp )
 		}
 		else {
 			if ( actualScale > 1 ) {
-				it.value()->setScale( actualScale * 0.8 );
+				it.value()->setScale( actualScale * (float)0.8 );
 			}
 			else {
 				it.value()->setScale( actualScale );
