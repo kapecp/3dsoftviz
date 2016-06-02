@@ -61,7 +61,10 @@ const QMatrix4x4 ArucoCore::getProjectionMatrix( cv::Mat inputImage )
 	//get projection matrix via ArUco
 	mCamParam.glGetProjectionMatrix( inputImage.size(),inputImage.size(),projectionMatrix,0.01,10000.0 );
 
-	QMatrix4x4 matrix( projectionMatrix );
+	QMatrix4x4 matrix( projectionMatrix[ 0], projectionMatrix[ 1], projectionMatrix[ 2], projectionMatrix[ 3],
+					   projectionMatrix[ 4], projectionMatrix[ 5], projectionMatrix[ 6], projectionMatrix[ 7],
+					   projectionMatrix[ 8], projectionMatrix[ 9], projectionMatrix[10], projectionMatrix[11],
+					   projectionMatrix[12], projectionMatrix[13], projectionMatrix[14], projectionMatrix[15]);
 	return matrix;
 }
 

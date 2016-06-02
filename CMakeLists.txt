@@ -1465,7 +1465,12 @@ target_include_directories( test_gitlib_module 	PUBLIC
 		${CMAKE_CURRENT_SOURCE_DIR}/include
 		include/Repository/Git 	)
 target_compile_options( test_gitlib_module PUBLIC ${FLAGS_FOR_DEBUG} )
-target_link_libraries( test_gitlib_module ${QT_LIBRARIES} gitlib )
+if ( Qt5Core_FOUND )
+	qt5_use_modules( test_gitlib_module Core )
+	target_link_libraries( test_gitlib_module gitlib )
+elseif( Qt4_FOUND )
+	target_link_libraries( test_gitlib_module ${QT_LIBRARIES} gitlib )
+endif()
 
 # 'cotire' the executable
 if( COMMAND cotire )
