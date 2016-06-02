@@ -5,18 +5,23 @@
 #  LEAP_LIBRARIES    - List of libraries when using LEAP.
 #  LEAP_FOUND        - True if LEAP found.
 #=============================================================================
+if( USE_LEAP_ORION )
+	set ( LEAP_DEP_DIR "leap-orion")
+else()
+	set ( LEAP_DEP_DIR "leap")
+endif()
 
 	find_path( LEAP_INCLUDE_DIR NAMES leap.h
 		PATHS
-				${CMAKE_CURRENT_SOURCE_DIR}/dependencies/leap/include )
+				${CMAKE_CURRENT_SOURCE_DIR}/dependencies/${LEAP_DEP_DIR}/include )
 
 	find_library( LEAP_LIBRARY NAMES leap
 		PATHS
-			${CMAKE_CURRENT_SOURCE_DIR}/dependencies/leap/lib )
+			${CMAKE_CURRENT_SOURCE_DIR}/dependencies/${LEAP_DEP_DIR}/lib )
 if( WIN32 )
 	find_path( LEAP_DLL
 		NAMES leap.dll
-		PATHS ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/leap/dist
+		PATHS ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/${LEAP_DEP_DIR}/dist
 	)
 endif()
 
