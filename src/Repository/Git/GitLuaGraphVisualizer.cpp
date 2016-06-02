@@ -14,6 +14,7 @@
 
 #include <QMap>
 #include <QStringList>
+#include <QDebug>
 
 #include <QDebug>
 
