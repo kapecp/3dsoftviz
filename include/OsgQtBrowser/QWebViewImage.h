@@ -38,6 +38,8 @@
 #include "OsgQtBrowser/QGraphicsViewAdapter.h"
 #include "LuaTypes/LuaValueMap.h"
 
+#include <QMap>
+
 namespace OsgQtBrowser {
 /**
 *  \class QWebViewImage
@@ -74,6 +76,8 @@ public:
 		*  \param templateType type of the template route
 		*/
 	void showTemplate( const std::string& templateName, Lua::LuaValueMap models, const std::string& templateType );
+
+	void showGitTemplate( const std::string& templateName, const std::string& templateType, QMap<QString, int>* changedMetrics );
 
 	/**
 		*  \fn inline public  getQWebView
@@ -157,6 +161,8 @@ public:
 		*  \return bool
 		*/
 	virtual bool sendKeyEvent( int key, bool keyDown );
+
+	QString createGitHtml( QMap<QString, int>* changedMetrics );
 
 protected:
 

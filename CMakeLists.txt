@@ -315,15 +315,26 @@ endif()
 # ------------------------------ MOUSE3D -------------------------------
 # Find MOUSE3D
 find_package( MOUSE3D )
-if( MOUSE3D_FOUND )
-
-	list( APPEND ALL_SYSTEM_HEADERS	${MOUSE3D_INCLUDE_DIRS} )
-
-	list( APPEND ALL_COMPILE_DEFINITIONS -DMOUSE3D_FOUND )
-	message( STATUS "3DMouse Found:" )
-	message( STATUS "MOUSE3D_INCLUDE_DIRS=${MOUSE3D_INCLUDE_DIRS}" )
-	message( STATUS "MOUSE3D_LIBRARIES=${MOUSE3D_LIBRARIES}" )
-else()
+if( WIN32 )
+	if( MOUSE3D_FOUND )
+		include_directories( SYSTEM ${MOUSE3D_INCLUDE_DIRS} )
+		add_definitions( -DMOUSE3D_FOUND )
+		message( STATUS "3DMouse FOUND" )
+	endif()
+elseif( APPLE )
+	if( MOUSE3D_FOUND )
+		include_directories( SYSTEM ${MOUSE3D_INCLUDE_DIRS} )
+		add_definitions( -DMOUSE3D_FOUND )
+		message( STATUS "3DMouse FOUND" )
+	endif()
+elseif( UNIX )
+	set (MOUSE3D_FOUND TRUE)
+	include_directories( SYSTEM include/Mouse3d/LibMouse3d/Unix )
+	find_package( X11 REQUIRED )
+	include_directories( SYSTEM ${X11_INCLUDE_DIR} )
+	add_definitions( -DMOUSE3D_FOUND )
+	message( STATUS "3DMouse FOUND" )
+elseif()
 	message( STATUS "3DMouse NOT FOUND" )
 endif()
 
@@ -641,6 +652,7 @@ endif()
 
 #-------------------------------- Source files -------------------------------
 set( SRC_MAIN "src/main.cpp" )
+file( GLOB_RECURSE SRC_APP		"src/Application/*.cpp" )
 file( GLOB_RECURSE SRC_CORE		"src/Core/*.cpp" )
 file( GLOB_RECURSE SRC_DATA		"src/Data/*.cpp" )
 file( GLOB_RECURSE SRC_IMPORTER	"src/Importer/*.cpp" )
@@ -679,12 +691,36 @@ file( GLOB_RECURSE SRC_SPEECH	"src/Speech/*.cpp" )
 # Leap
 file ( GLOB SRC_LEAP "src/Leap/*.cpp" )
 file ( GLOB_RECURSE SRC_LEAPLIB "src/Leap/LeapLib/*.cpp" )
+
 # MOUSE3D
-file ( GLOB_RECURSE SRC_MOUSE3D "src/Mouse3D/*.cpp" )
+set ( SRC_MOUSE3D
+	src/Mouse3d/Connector.cpp
+	src/Mouse3d/LibMouse3d/EventThread.cpp
+	src/Mouse3d/LibMouse3d/Mouse3dDevices.cpp
+)
+
+if( WIN32 )
+	list(APPEND SRC_MOUSE3D
+		src/Mouse3d/LibMouse3d/Windows/Mouse3DInput.cpp
+		src/Mouse3d/LibMouse3d/Windows/MouseParameters.cpp
+	)
+elseif( APPLE )
+	list(APPEND SRC_MOUSE3D
+		src/Mouse3d/LibMouse3d/Mac/Mouse3dMacDevice.cpp
+	)
+elseif( UNIX )
+	list(APPEND SRC_MOUSE3D
+		src/Mouse3d/LibMouse3d/Unix/ApplicationEmitter.cpp
+		src/Mouse3d/LibMouse3d/Unix/Mouse3dUnixDevice.cpp
+		src/Mouse3d/LibMouse3d/Unix/xdrvlib.c
+	)
+endif()
+
 
 
 # All source files
 set( SRC
+	${SRC_APP}
 	${SRC_CORE}
 	${SRC_MANAGER}
 	${SRC_DATA}
@@ -724,6 +760,7 @@ endif()
 
 # add Leap
 if( LEAP_FOUND )
+		# WORKAROUND GARAJ comment
 	list( APPEND SRC ${SRC_LEAP} )
 endif()
 
@@ -742,6 +779,7 @@ if( MSVC )
 endif()
 
 #-------------------------------- Header files -------------------------------
+file( GLOB_RECURSE HEADER_APP		"include/Application/*.h" )
 file( GLOB_RECURSE HEADER_CORE		"include/Core/*.h" )
 file( GLOB_RECURSE HEADER_DATA		"include/Data/*.h" )
 file( GLOB_RECURSE HEADER_IMPORTER	"include/Importer/*.h" )
@@ -781,11 +819,38 @@ file( GLOB_RECURSE HEADER_SPEECH	"include/Speech/*.h" )
 file( GLOB HEADER_LEAP	"include/Leap/*.h" )
 file( GLOB_RECURSE HEADER_LEAPLIB	"include/Leap/LeapLib/*.h" )
 
+
 # MOUSE3D
-file( GLOB_RECURSE HEADER_MOUSE3D	"include/Mouse3D/*.h" )
+set ( HEADER_MOUSE3D
+	include/Mouse3d/Connector.h
+	include/Mouse3d/LibMouse3d/EventThread.h
+	include/Mouse3d/LibMouse3d/Mouse3dDevices.h
+)
+
+if( WIN32 )
+	list(APPEND HEADER_MOUSE3D
+		include/Mouse3d/LibMouse3d/Windows/Mouse3DInput.h
+		include/Mouse3d/LibMouse3d/Windows/MouseParameters.h
+		include/Mouse3d/LibMouse3d/Windows/I3dMouseParams.h
+	)
+elseif( APPLE )
+	list(APPEND HEADER_MOUSE3D
+		include/Mouse3d/LibMouse3d/Mac/Mouse3dMacDevice.h
+	)
+elseif( UNIX )
+	list(APPEND HEADER_MOUSE3D
+		include/Mouse3d/LibMouse3d/Unix/ApplicationEmitter.h
+		include/Mouse3d/LibMouse3d/Unix/fixx11.h
+		include/Mouse3d/LibMouse3d/Unix/Mouse3dUnixDevice.h
+		include/Mouse3d/LibMouse3d/Unix/xdrvlib.h
+	)
+endif()
+
+
 
 # All header files
 set( INCL
+	${HEADER_APP}
 	${HEADER_CORE}
 	${HEADER_MANAGER}
 	${HEADER_DATA}
@@ -835,6 +900,7 @@ endif()
 
 #-------------------------------------- Group source files --------------------------------------
 source_group( \\src main.cpp )
+source_group( \\src\\Application "^.*Application/.*$" )
 source_group( \\src\\Network "^.*Network/.*$" )
 source_group( \\src\\Viewer "^.*Viewer/.*$" )
 source_group( \\src\\Core "^.*Core/.*$" )
@@ -852,6 +918,7 @@ source_group( \\src\\LuaTypes "^.*LuaTypes/.*$")
 source_group( \\src\\Git "^.*Git/.*$" )
 
 # Group header files
+source_group( \\headers\\Application "^.*Application/.*h$")
 source_group( \\headers\\Clustering "^.*Clustering/.*h$")
 source_group( \\headers\\Network "^.*Network/.*h$" )
 source_group( \\headers\\Viewer "^.*Viewer/.*h$" )
@@ -902,8 +969,8 @@ endif()
 
 # MOUSE3D
 if( MOUSE3D_FOUND )
-	source_group( \\src\\Mouse3D "^.*Mouse3D/.*$" )
-	source_group( \\headers\\Mouse3D "^.*Mouse3D/.*h$" )
+	source_group( \\src\\Mouse3d "^.*Mouse3d/.*$" )
+	source_group( \\headers\\Mouse3d "^.*Mouse3d/.*h$" )
 endif()
 
 # ---------------------------------------------------------------
@@ -1078,7 +1145,13 @@ if( LEAP_FOUND )
 endif()
 
 if( MOUSE3D_FOUND )
-	target_link_libraries( ${3DSOFTVIZ_NAME} ${MOUSE3D_LIBRARIES} )
+	if ( WIN32 )
+		target_link_libraries( ${3DSOFTVIZ_NAME} ${MOUSE3D_LIBRARIES} )
+	elseif( APPLE )
+		target_link_libraries( ${3DSOFTVIZ_NAME} ${MOUSE3D_LIBRARIES} )
+	elseif(UNIX)
+		target_link_libraries( ${3DSOFTVIZ_NAME} ${X11_LIBRARIES} )
+	endif()
 endif()
 
 # 'cotire' the executable
@@ -1090,6 +1163,16 @@ if( COMMAND cotire )
 
 	if( LEAP_FOUND )
 		target_link_libraries( ${3DSOFTVIZ_NAME}_unity leaplib_unity ${LEAP_LIBRARIES} )
+	endif()
+
+	if( MOUSE3D_FOUND )
+		if ( WIN32 )
+			target_link_libraries( ${3DSOFTVIZ_NAME}_unity ${MOUSE3D_LIBRARIES} )
+		elseif( APPLE )
+			target_link_libraries( ${3DSOFTVIZ_NAME}_unity ${MOUSE3D_LIBRARIES} )
+		elseif(UNIX)
+			target_link_libraries( ${3DSOFTVIZ_NAME}_unity ${X11_LIBRARIES} )
+		endif()
 	endif()
 endif()
 
@@ -1395,3 +1478,40 @@ endif()
 enable_testing()
 add_test( testing_gitlib_module test_gitlib_module )
 
+
+# ------------------------------ SPHINX -------------------------------
+# Find Sphinx Executable
+
+find_package(Sphinx)
+if (Sphinx_FOUND)
+	if(NOT DEFINED SPHINX_THEME)
+		set(SPHINX_THEME sphinx_rtd_theme)
+	endif()
+
+	if(NOT DEFINED SPHINX_THEME_DIR)
+		set(SPHINX_THEME_DIR)
+	endif()
+
+	# configured documentation tools and intermediate build results
+	set(BINARY_BUILD_DIR "${CMAKE_CURRENT_BINARY_DIR}")
+
+	# Sphinx cache with pickled ReST documents
+	set(SPHINX_CACHE_DIR "${CMAKE_CURRENT_BINARY_DIR}/docs/_doctrees")
+
+	# HTML output directory
+	set(SPHINX_HTML_DIR "${CMAKE_CURRENT_BINARY_DIR}/docs/html")
+
+	configure_file(
+		"${CMAKE_CURRENT_SOURCE_DIR}/docs/conf.py.in"
+		"${BINARY_BUILD_DIR}/conf.py"
+		@ONLY)
+
+	add_custom_target(Sphinx_html
+		${SPHINX_EXECUTABLE}
+			-q -b html
+			-c "${BINARY_BUILD_DIR}"
+			-d "${SPHINX_CACHE_DIR}"
+			"${CMAKE_CURRENT_SOURCE_DIR}/docs"
+			"${SPHINX_HTML_DIR}"
+		COMMENT "Building HTML documentation with Sphinx")
+endif()

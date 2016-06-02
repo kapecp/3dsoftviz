@@ -33,7 +33,7 @@ public:
 	 */
 	static LuaGraph* loadGraph();
 
-    static LuaGraph* loadEvoGraph( QString repoFilepath );
+	static LuaGraph* loadEvoGraph( QString repoFilepath );
 
 	/**
 	 * @brief destructor
@@ -86,9 +86,9 @@ public:
 	 */
 	void printGraph();
 
-    Lua::LuaNode* findNodeByLuaIdentifier( QString identifier );
+	Lua::LuaNode* findNodeByLuaIdentifier( QString identifier );
 
-    Lua::LuaEdge* findEdgeByLuaIdentifier( QString identifier );
+	Lua::LuaEdge* findEdgeByLuaIdentifier( QString identifier );
 private:
 	/**
 	 * @brief LuaGraph private constructor as in Singleton

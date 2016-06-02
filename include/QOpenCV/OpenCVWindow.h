@@ -214,6 +214,8 @@ signals:
 
 	void setKinectCaptureImage( bool set );
 
+	void arucoRunning( bool isRunning );
+
 public slots:
 	/**
 	     * @author Autor: David Durcak
