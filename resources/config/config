@@ -26,9 +26,8 @@ Viewer.Display.BackGround.B=190
 Viewer.Display.BackGround.G=190
 Viewer.Display.BackGround.R=190
 Viewer.Display.InterpolationSpeed=0.01
-Viewer.Display.NodeDistanceScale=2
+Viewer.Display.NodeDistanceScale=0.5
 Viewer.Display.NodesAlwaysOnTop=0
-Viewer.Display.Stereoscopic=0
 Viewer.Display.ViewDistance=10000.0
 Viewer.Display.Multiview=0
 Viewer.Display.ScreenNum=3
@@ -58,7 +57,7 @@ Viewer.Textures.MetaNode=../share/3dsoftviz/img/textures/MetaNode.png
 
 Viewer.Fullscreen=0
 
-Viewer.SkyBox.Noise=1
+Viewer.SkyBox.Noise=0
 Viewer.SkyBox.North=../share/3dsoftviz/img/skybox/default/rays_north.bmp
 Viewer.SkyBox.East=../share/3dsoftviz/img/skybox/default/rays_east.bmp
 Viewer.SkyBox.South=../share/3dsoftviz/img/skybox/default/rays_south.bmp
@@ -81,7 +80,7 @@ Kinect.DepthInfoName= depthInfo
 FaceDecetion.EnableProjectionCorrection=0
 FaceDecetion.CameraDistancePar=3.5
 
-Aruco.MarkerSize=0.06
+Aruco.MarkerSize=250
 Aruco.CamDistancRatio=2.75
 Aruco.ConstDist=0.3
 Aruco.ConstHeightKoef=0.8

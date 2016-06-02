@@ -1,0 +1,48 @@
+// Module Noise
+// Autor: Team Reality Not Found
+
+@startuml
+scale 800 width
+
+!define clr(x) Color
+!define grdClr(x) GradientColor
+!define grdPt(x) GradientPoint
+!define img(x) Image
+!define nsMp(x) NoiseMap
+!define nsMpBdr(x) NoiseMapBuilder
+!define nsMpBdrCdr(x) NoiseMapBuilderCylinder
+!define nsMpBdrPl(x) NoiseMapBuilderPlane
+!define nsMpBdrSph(x) NoiseMapBuilderSphere
+!define rndrImg(x) RendererImage
+!define rndrNrmMp(x) RendererNormalMap
+!define wrtBMP(x) WriterBMP
+!define wrtTER(x) WriterTER
+
+package Noise{
+	package Utils{
+		grdPt() -- clr()
+		grdClr() -- clr()
+		grdClr() -- grdPt()
+		
+		img() -- clr()
+		
+		nsMpBdr() -- nsMp()
+		
+		nsMpBdrCdr() --|> nsMpBdr()
+		nsMpBdrPl() --|> nsMpBdr()
+		nsMpBdrSph() --|> nsMpBdr()
+		
+		rndrImg() -- clr()
+		rndrImg() -- img()
+		rndrImg() -- grdClr()
+		rndrImg() -- nsMp()
+		
+		rndrNrmMp() -- img()
+		rndrNrmMp() -- nsMp()
+		rndrNrmMp() -- clr()
+		
+		wrtBMP() -- img()
+		wrtTER() -- nsMp()
+	}
+}
+@enduml

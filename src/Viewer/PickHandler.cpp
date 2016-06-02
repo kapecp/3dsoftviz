@@ -12,7 +12,9 @@
 
 #include "Core/Core.h"
 #include "Layout/LayoutThread.h"
+#include "Layout/FRAlgorithm.h"
 #include "Layout/Shape_Cube.h"
+#include "Layout/FRAlgorithm.h"
 
 #include "Util/ApplicationConfig.h"
 
@@ -278,7 +280,39 @@ bool PickHandler::handleKeyDown( const osgGA::GUIEventAdapter& ea, GUIActionAdap
 	else if ( ea.getKey() == osgGA::GUIEventAdapter::KEY_N ) {
 		this->selectAllNeighbors( this->pickedNodes );
 	}
+	//jurik
+	else if ( ea.getKey() == osgGA::GUIEventAdapter::KEY_O ) {
+		if ( isCtrlPressed ) {
+			//scale down
+			coreGraph->scaleNodes( false );
+		}
+		else {
+			//scale up
+			coreGraph->scaleNodes( true );
+		}
+	}
+	else if ( ea.getKey() == osgGA::GUIEventAdapter::KEY_P ) {
+		Layout::LayoutThread* layout = AppCore::Core::getInstance()->getLayoutThread();
+		float distance = layout->getAlg()->getMaxDistance();
 
+		if ( isCtrlPressed ) {
+			layout->pause();
+			coreGraph->setNodesFreezed( true );
+			layout->getAlg()->setMaxDistance( distance * 0.8f );
+			coreGraph->scaleGraphToBase();
+			coreGraph->setNodesFreezed( false );
+			layout->play();
+		}
+		else {
+			layout->pause();
+			coreGraph->setNodesFreezed( true );
+			layout->getAlg()->setMaxDistance( distance * 1.2f );
+			coreGraph->scaleGraphToBase();
+			coreGraph->setNodesFreezed( false );
+			layout->play();
+		}
+	}
+	//*****
 	// FULLSCREEN
 	else if ( ea.getKey() == 'l' || ea.getKey() == 'L' ) {
 		bool hideToolbars = ( appConf->getValue( "Viewer.Fullscreen" ).toInt() == 0 ? false : true );
@@ -335,47 +369,73 @@ bool PickHandler::handleKeyDown( const osgGA::GUIEventAdapter& ea, GUIActionAdap
 
 	}
 	//split stereo 3D
-	else if ( ea.getKey() == osgGA::GUIEventAdapter::KEY_G){
-		if (splitviewMode == 0){
+	else if ( ea.getKey() == osgGA::GUIEventAdapter::KEY_G ) {
+		if ( splitviewMode == 0 ) {
+			osg::DisplaySettings::instance()->setStereoMode( osg::DisplaySettings::StereoMode::QUAD_BUFFER );
+			osg::DisplaySettings::instance()->setStereo( TRUE );
+			qDebug() << "Turned on quad buffer stereo 3D";
+		}
+		else if ( splitviewMode == 1 ) {
 			//turn on
-			osg::DisplaySettings::instance()->setStereoMode(osg::DisplaySettings::VERTICAL_SPLIT);
-			osg::DisplaySettings::instance()->setStereo(TRUE);
-			osg::DisplaySettings::instance()->setScreenDistance(Util::ApplicationConfig::get()->getValue("Display.Settings.Vuzix.Distance").toFloat());
-			osg::DisplaySettings::instance()->setScreenHeight(Util::ApplicationConfig::get()->getValue("Display.Settings.Vuzix.Height").toFloat());
-			osg::DisplaySettings::instance()->setScreenWidth(Util::ApplicationConfig::get()->getValue("Display.Settings.Vuzix.Width").toFloat());
+			osg::DisplaySettings::instance()->setStereoMode( osg::DisplaySettings::StereoMode::VERTICAL_SPLIT );
+			osg::DisplaySettings::instance()->setScreenDistance( Util::ApplicationConfig::get()->getValue( "Display.Settings.Vuzix.Distance" ).toFloat() );
+			osg::DisplaySettings::instance()->setScreenHeight( Util::ApplicationConfig::get()->getValue( "Display.Settings.Vuzix.Height" ).toFloat() );
+			osg::DisplaySettings::instance()->setScreenWidth( Util::ApplicationConfig::get()->getValue( "Display.Settings.Vuzix.Width" ).toFloat() );
 
 			qDebug() << "Turned on split stereo 3D - vertical split";
-		} else if (splitviewMode == 1){
-			osg::DisplaySettings::instance()->setStereoMode(osg::DisplaySettings::HORIZONTAL_SPLIT);
+		}
+		else if ( splitviewMode == 2 ) {
+			osg::DisplaySettings::instance()->setStereoMode( osg::DisplaySettings::StereoMode::HORIZONTAL_SPLIT );
 			qDebug() << "Turned on split stereo 3D - horizontal split";
 		}
-		else{
+		else {
 			//turn off
-			osg::DisplaySettings::instance()->setStereo(FALSE);
+			osg::DisplaySettings::instance()->setStereo( FALSE );
 			//reset to default config
-			osg::DisplaySettings::instance()->setScreenDistance(Util::ApplicationConfig::get()->getValue("Display.Settings.Default.Distance").toFloat());
-			osg::DisplaySettings::instance()->setScreenHeight(Util::ApplicationConfig::get()->getValue("Display.Settings.Default.Height").toFloat());
-			osg::DisplaySettings::instance()->setScreenWidth(Util::ApplicationConfig::get()->getValue("Display.Settings.Default.Width").toFloat());
-			osg::DisplaySettings::instance()->setEyeSeparation(Util::ApplicationConfig::get()->getValue("Display.Settings.Default.EyeSeparation").toFloat());
+			osg::DisplaySettings::instance()->setScreenDistance( Util::ApplicationConfig::get()->getValue( "Display.Settings.Default.Distance" ).toFloat() );
+			osg::DisplaySettings::instance()->setScreenHeight( Util::ApplicationConfig::get()->getValue( "Display.Settings.Default.Height" ).toFloat() );
+			osg::DisplaySettings::instance()->setScreenWidth( Util::ApplicationConfig::get()->getValue( "Display.Settings.Default.Width" ).toFloat() );
+			osg::DisplaySettings::instance()->setEyeSeparation( Util::ApplicationConfig::get()->getValue( "Display.Settings.Default.EyeSeparation" ).toFloat() );
 
 			qDebug() << "Turned off split stereo 3D";
 		}
-		splitviewMode = (splitviewMode + 1) % 3;	//rotate modes : vertical / horizontal / off
+		splitviewMode = ( splitviewMode + 1 ) % 4;	//rotate modes : quad / vertical / horizontal / off
 	}
 	//adjust eye distance, 0.001m change
-	else if (ea.getKey() == osgGA::GUIEventAdapter::KEY_H && (splitviewMode != 0)){
+	else if ( ea.getKey() == osgGA::GUIEventAdapter::KEY_H && ( splitviewMode != 0 ) ) {
 		//-
 		float distance = osg::DisplaySettings::instance()->getEyeSeparation();
 		distance = distance - 0.001f;
-		osg::DisplaySettings::instance()->setEyeSeparation(distance);
+		osg::DisplaySettings::instance()->setEyeSeparation( distance );
 		qDebug() << "Eye distance : " << distance;
 	}
-	else if (ea.getKey() == osgGA::GUIEventAdapter::KEY_J && (splitviewMode != 0)){
+	else if ( ea.getKey() == osgGA::GUIEventAdapter::KEY_J && ( splitviewMode != 0 ) ) {
 		//+
 		float distance = osg::DisplaySettings::instance()->getEyeSeparation();
 		distance = distance + 0.001f;
-		osg::DisplaySettings::instance()->setEyeSeparation(distance);
+		osg::DisplaySettings::instance()->setEyeSeparation( distance );
 		qDebug() << "Eye distance : " << distance;
+	}
+	else if ( ea.getKey() == osgGA::GUIEventAdapter::KEY_O ) {
+		if ( isCtrlPressed ) {
+			//scale down
+			coreGraph->scaleNodes( false );
+		}
+		else {
+			//scale up
+			coreGraph->scaleNodes( true );
+		}
+	}
+	else if ( ea.getKey() == osgGA::GUIEventAdapter::KEY_P ) {
+		Layout::LayoutThread* layout = AppCore::Core::getInstance()->getLayoutThread();
+		float distance = layout->getAlg()->getMaxDistance();
+
+		if ( isCtrlPressed ) {
+			layout->getAlg()->setMaxDistance( distance * 0.8f );
+		}
+		else {
+			layout->getAlg()->setMaxDistance( distance * 1.2f );
+		}
 	}
 
 	return false;
@@ -395,6 +455,9 @@ bool PickHandler::handleRelease( const osgGA::GUIEventAdapter& ea, osgGA::GUIAct
 	// manipulator will handle it.)
 
 	leftButtonPressed = false;
+	rightButtonPressed = false;
+	initialX = 0;
+	initialY = 0;
 
 	if ( pickMode == PickMode::MULTI && isDrawingSelectionQuad ) {
 		float x, y, w, h;
@@ -482,6 +545,18 @@ bool PickHandler::handleDrag( const osgGA::GUIEventAdapter& ea, osgGA::GUIAction
 
 		return dragNode( viewer );
 	}
+	//jurik
+	else if ( rightButtonPressed && coreGraph->isArucoRunning() ) {
+
+		coreGraph->ratata( initialX,_mX,initialY,_mY );
+		if ( _mX > initialX+5 || _mX < initialX-5 ) {
+			initialX=_mX;
+		}
+		if ( _mY > initialY+5 || _mY < initialY-5 ) {
+			initialY=_mY;
+		}
+	}
+	//*****
 
 	return false;
 }
@@ -523,6 +598,12 @@ bool PickHandler::handlePush( const osgGA::GUIEventAdapter& ea, osgGA::GUIAction
 			return pick( ea.getXnormalized() - 0.00005f, ea.getYnormalized() - 0.00005f, ea.getXnormalized() + 0.00005f, ea.getYnormalized() + 0.00005f, viewer );
 
 		}
+	}
+
+	if ( ea.getButtonMask() == osgGA::GUIEventAdapter::RIGHT_MOUSE_BUTTON ) {
+		rightButtonPressed = true;
+		initialX = ea.getX();
+		initialY = ea.getY();
 	}
 
 	_mX = ea.getX();

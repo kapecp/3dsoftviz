@@ -18,7 +18,7 @@ class LEAPLIB_EXPORT LeapController:Controller
 public:
 	LeapListener* leapListener;
 
-	LeapController(LeapCameraManipulator* cameraManipulator);
+	LeapController( LeapCameraManipulator* cameraManipulator );
 	~LeapController( void );
 
 	/**

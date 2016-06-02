@@ -40,7 +40,7 @@ SkyBox::~SkyBox()
 
 }
 
-osg::TextureCubeMap* SkyBox::readCubeMap(int cubeType)
+osg::TextureCubeMap* SkyBox::readCubeMap( int cubeType )
 {
 	osg::TextureCubeMap* cubemap = new osg::TextureCubeMap;
 	try {
@@ -52,7 +52,7 @@ osg::TextureCubeMap* SkyBox::readCubeMap(int cubeType)
 		osg::Image* imageUp = nullptr;
 		osg::Image* imageDown = nullptr;
 
-		if (cubeType == -1) { // Black skybox - black cube map
+		if ( cubeType == -1 ) { // Black skybox - black cube map
 			imageEast = osgDB::readImageFile( appConf->getValue( "Viewer.SkyBox.Black" ).toStdString() );
 			imageWest = osgDB::readImageFile( appConf->getValue( "Viewer.SkyBox.Black" ).toStdString() );
 			imageNorth = osgDB::readImageFile( appConf->getValue( "Viewer.SkyBox.Black" ).toStdString() );
@@ -60,7 +60,7 @@ osg::TextureCubeMap* SkyBox::readCubeMap(int cubeType)
 			imageUp = osgDB::readImageFile( appConf->getValue( "Viewer.SkyBox.Black" ).toStdString() );
 			imageDown = osgDB::readImageFile( appConf->getValue( "Viewer.SkyBox.Black" ).toStdString() );
 		}
-		else if (cubeType == -2) { // White skybox - white cube map
+		else if ( cubeType == -2 ) { // White skybox - white cube map
 			imageEast = osgDB::readImageFile( appConf->getValue( "Viewer.SkyBox.White" ).toStdString() );
 			imageWest = osgDB::readImageFile( appConf->getValue( "Viewer.SkyBox.White" ).toStdString() );
 			imageNorth = osgDB::readImageFile( appConf->getValue( "Viewer.SkyBox.White" ).toStdString() );
@@ -130,7 +130,7 @@ public:
 };
 
 
-osg::Node* SkyBox::createSkyBox(int skyboxType)
+osg::Node* SkyBox::createSkyBox( int skyboxType )
 {
 
 	osg::StateSet* stateset = new osg::StateSet();
@@ -146,7 +146,7 @@ osg::Node* SkyBox::createSkyBox(int skyboxType)
 	osg::TexMat* tm = new osg::TexMat;
 	stateset->setTextureAttribute( 0, tm );
 
-	osg::TextureCubeMap* skymap = readCubeMap(skyboxType);
+	osg::TextureCubeMap* skymap = readCubeMap( skyboxType );
 	stateset->setTextureAttributeAndModes( 0, skymap, osg::StateAttribute::ON );
 
 	stateset->setMode( GL_LIGHTING, osg::StateAttribute::OFF );

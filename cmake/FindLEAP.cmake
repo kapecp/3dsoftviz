@@ -11,13 +11,14 @@ else()
 	set ( LEAP_DEP_DIR "leap")
 endif()
 
-	find_path( LEAP_INCLUDE_DIR NAMES leap.h
-		PATHS
-				${CMAKE_CURRENT_SOURCE_DIR}/dependencies/${LEAP_DEP_DIR}/include )
+find_path( LEAP_INCLUDE_DIR NAMES leap.h
+	PATHS
+	${CMAKE_CURRENT_SOURCE_DIR}/dependencies/${LEAP_DEP_DIR}/include )
 
-	find_library( LEAP_LIBRARY NAMES leap
-		PATHS
-			${CMAKE_CURRENT_SOURCE_DIR}/dependencies/${LEAP_DEP_DIR}/lib )
+find_library( LEAP_LIBRARY NAMES leap
+	PATHS
+	${CMAKE_CURRENT_SOURCE_DIR}/dependencies/${LEAP_DEP_DIR}/lib )
+
 if( WIN32 )
 	find_path( LEAP_DLL
 		NAMES leap.dll
