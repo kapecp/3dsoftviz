@@ -40,7 +40,7 @@
 #include <osgShadow/ShadowMap>
 #include <osgShadow/SoftShadowMap>
 
-#include "easylogging++.h"
+#include <easylogging++.h>
 
 namespace Vwr {
 

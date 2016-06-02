@@ -108,6 +108,7 @@ osg::TextureCubeMap* SkyBox::readCubeMap( int cubeType )
 class MoveEarthySkyWithEyePointTransform : public osg::Transform
 {
 public:
+//src/Viewer/SkyBox.cpp:111:  Is this a non-const reference? If so, make const or use a pointer: osg::Matrix& matrix  [runtime/references] [2]
 	virtual bool computeLocalToWorldMatrix( osg::Matrix& matrix,osg::NodeVisitor* nv ) const
 	{
 		osgUtil::CullVisitor* cv = dynamic_cast<osgUtil::CullVisitor*>( nv );

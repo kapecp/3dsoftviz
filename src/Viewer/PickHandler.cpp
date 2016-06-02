@@ -14,7 +14,6 @@
 #include "Layout/LayoutThread.h"
 #include "Layout/FRAlgorithm.h"
 #include "Layout/Shape_Cube.h"
-#include "Layout/FRAlgorithm.h"
 
 #include "Util/ApplicationConfig.h"
 

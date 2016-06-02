@@ -23,6 +23,8 @@
 #include <osgDB/ReadFile>
 #include <osgViewer/Viewer>
 
+#include <string>
+
 // used code from http://jotschi.de/2009/05/31/projective-textures-with-openscenegraph/
 osg::StateSet* QOSG::ProjectiveARViewer::createProjectorState( osg::Texture2D* texture, osg::Vec3 projectorPos, osg::Vec3 projectorDirection, float projectorFOV )
 {

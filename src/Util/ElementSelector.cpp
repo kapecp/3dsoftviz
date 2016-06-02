@@ -9,18 +9,18 @@ void Util::ElementSelector::randomElementSelector( QMap<qlonglong, osg::ref_ptr<
 	pickhandler->unselectPickedEdges();
 	pickhandler->unselectPickedNodes();
 
-	int numNodes = rand() % ( num + 1 );
+	int numNodes = random() % ( num + 1 );
 	int numEdges = num - numNodes;
 
 	for ( int x = 0; x < numNodes; x++ ) {
-		osg::ref_ptr<Data::Node> node = nodes->value( nodes->uniqueKeys().at( rand() % nodes->size() ) );
+		osg::ref_ptr<Data::Node> node = nodes->value( nodes->uniqueKeys().at( random() % nodes->size() ) );
 
 		node->setSelected( true );
 		pickhandler->addPickedNode( node );
 	}
 
 	for ( int x = 0; x < numEdges; x++ ) {
-		osg::ref_ptr<Data::Edge> edge = edges->value( edges->uniqueKeys().at( rand() % edges->size() ) );
+		osg::ref_ptr<Data::Edge> edge = edges->value( edges->uniqueKeys().at( random() % edges->size() ) );
 
 		edge->setSelected( true );
 		pickhandler->addPickedEdge( edge );
