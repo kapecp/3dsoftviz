@@ -16,7 +16,8 @@
 #include <QStringList>
 #include <QDebug>
 
-#include <QDebug>
+#include <limits>
+#include <string>
 
 Repository::Git::GitLuaGraphVisualizer::GitLuaGraphVisualizer( Data::Graph* currentGraph, Repository::Git::GitEvolutionGraph* evolutionGraph, osg::ref_ptr<osg::Camera> camera, int showLuaStats )
 	: currentGraph( currentGraph ), evolutionGraph( evolutionGraph ), luaGraph( Lua::LuaGraph::getInstance() ), showLuaStats( showLuaStats ), camera( camera )
@@ -98,6 +99,8 @@ void Repository::Git::GitLuaGraphVisualizer::visualize( bool next )
 				case Repository::Git::GitType::MODIFIED:
 //                this->evolutionGraph->getMetaDataFromIdentifier( iterator.value()->getIdentifier() )->decreaseChangedCount();
 					break;
+				case Repository::Git::GitType::NONE:
+					break;
 			}
 
 			processFunctionsFromFile( iterator.value(), next );
@@ -119,6 +122,8 @@ void Repository::Git::GitLuaGraphVisualizer::visualize( bool next )
 				this->evolutionGraph->addChangedNodeOrEdge( iterator.value()->getIdentifier(), Repository::Git::GitType::MODIFIED );
 				this->evolutionGraph->getMetaDataFromIdentifier( iterator.value()->getIdentifier() )->setChangedVersion( this->currentGraph->getCurrentVersion() );
 //            this->evolutionGraph->getMetaDataFromIdentifier( iterator.value()->getIdentifier() )->increaseChangedCount();
+				break;
+			case Repository::Git::GitType::NONE:
 				break;
 			default:
 				qDebug() << "CHYBNY TYP PRE SUBOR" << iterator.value()->getIdentifier();
@@ -316,6 +321,8 @@ bool Repository::Git::GitLuaGraphVisualizer::processFunctionsFromFile( Repositor
 				this->evolutionGraph->getMetaDataFromIdentifier( function->getIdentifier() )->setChangedVersion( this->currentGraph->getCurrentVersion() );
 				this->evolutionGraph->getMetaDataFromIdentifier( function->getIdentifier() )->increaseChangedCount();
 				break;
+			case Repository::Git::GitType::NONE:
+				break;
 			default:
 				qDebug() << "CHYBA V" << file->getIdentifier() << "->" << function->getIdentifier();
 				break;
@@ -353,6 +360,8 @@ bool Repository::Git::GitLuaGraphVisualizer::processFunctionsFromFile( Repositor
 					this->evolutionGraph->addChangedNodeOrEdge( innerFunction->getIdentifier(), Repository::Git::GitType::MODIFIED );
 					this->evolutionGraph->getMetaDataFromIdentifier( innerFunction->getIdentifier() )->setChangedVersion( this->currentGraph->getCurrentVersion() );
 					this->evolutionGraph->getMetaDataFromIdentifier( innerFunction->getIdentifier() )->increaseChangedCount();
+					break;
+				case Repository::Git::GitType::NONE:
 					break;
 				default:
 					qDebug() << "CHYBA V" << file->getIdentifier() << "->" << function->getIdentifier() << "->"  << innerFunction->getIdentifier();

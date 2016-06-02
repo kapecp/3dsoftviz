@@ -144,7 +144,7 @@ bool Repository::Git::GitGraphUpdater::import()
 		addEdgesToGraph( list );
 
 		// Aktualizujem percento spracovania
-		Manager::GraphManager::getInstance()->setProgressBarValue( int( ( double( i++ + 1 ) /  double( lAddedGitFiles.size() ) ) * 100 ) );
+		Manager::GraphManager::getInstance()->setProgressBarValue( static_cast<int>( ( static_cast<double>( i++ + 1 ) /  static_cast<double>( lAddedGitFiles.size() ) ) * 100 ) );
 	}
 
 	Data::Node* lAuthorNode = nullptr;
@@ -352,7 +352,7 @@ void Repository::Git::GitGraphUpdater::changeToVersion( int toVersion )
 		// Nastavenie aktualnej verzie grafu a aktualizacia progressbaru
 		this->setCurrentVersion( this->getCurrentVersion() + inc );
 		this->getActiveGraph()->setCurrentVersion( this->getCurrentVersion() );
-		Manager::GraphManager::getInstance()->setProgressBarValue( int( ( double( abs( i - startVersion ) ) / double( abs( toVersion - startVersion ) ) ) * 100 ) );
+		Manager::GraphManager::getInstance()->setProgressBarValue( static_cast<int>( ( static_cast<double>( abs( i - startVersion ) ) / static_cast<double>( abs( toVersion - startVersion ) ) ) * 100 ) );
 	}
 
 	// Nastavime na false, aby sa pre dalsie spracovanie mohol pridat autor a jeho hrany k zmenenych uzlom.
