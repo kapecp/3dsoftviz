@@ -25,35 +25,11 @@ public:
 
 	typedef struct
 	{
-		qlonglong xId;
-		qlonglong yId;
-	} NodeIds;
-
-	typedef struct
-	{
-		qlonglong xPos;
-		qlonglong yPos;
-	} NodePos;
-
-	typedef struct
-	{
-		QString xName;
-		QString yName;
-	} NodeNames;
-
-	typedef struct
-	{
-		NodeIds nodeIds;
-		NodePos nodePos;
-		NodeNames nodeNames;
+		qlonglong nodeId;
+		int nodePos;
+		QString nodeName;
 	} ParsedNode;
 
-	typedef struct
-	{
-		ParsedNode frstNode;
-		ParsedNode secNode;
-		ParsedNode trdNode;
-	} NodeTrio;
 
 	FileParser( QString fileName, Data::Graph* matrixGraph, SpecialMatrix::NodeConnections* connections );
 
@@ -78,14 +54,24 @@ public:
 	Data::Graph* addNormalNodesToGraph( Data::Graph* matrixGraph, QStringList fields, SpecialMatrix::NodeConnections* connections, int &nodeCounter );
 
 	/**
-	 * @brief addNormalNodesToGraph adds I-I-[EN] || [EN]-I-I edge to graph
+	 * @brief addSpecialCase1NodesToGraph adds [EN]-I-[EN] || [EN]-[EN]-I || I-[EN]-[EN] edge to graph
 	 * @param Data::Graph* matrixGraph
 	 * @param QStringList fields
 	 * @param SpecialMatrix::NodeConnections* connections
 	 * @param int &nodeCounter
 	 * @return Data::Graph* matrix graph with new nodes/edges
 	 */
-	Data::Graph* addSpecialNodesToGraph( Data::Graph* matrixGraph, QStringList fields, SpecialMatrix::NodeConnections* connections, int &nodeCounter );
+	Data::Graph* addSpecialCase1NodesToGraph( Data::Graph* matrixGraph, QStringList fields, SpecialMatrix::NodeConnections* connections, int &nodeCounter );
+
+	/**
+	 * @brief addSpecialCase2NodesToGraph adds [EN]-I-I || I-[EN]-I || I-I-[EN] edge to graph
+	 * @param Data::Graph* matrixGraph
+	 * @param QStringList fields
+	 * @param SpecialMatrix::NodeConnections* connections
+	 * @param int &nodeCounter
+	 * @return Data::Graph* matrix graph with new nodes/edges
+	 */
+	Data::Graph* addSpecialCase2NodesToGraph( Data::Graph* matrixGraph, QStringList fields, SpecialMatrix::NodeConnections* connections, int &nodeCounter );
 
 	/**
 	 * @brief getHashIdFromNodeName
@@ -102,7 +88,7 @@ public:
 	 * @param int column
 	 * @return NodePos a new position of node
 	 */
-	NodePos getAvailablePosition( SpecialMatrix::NodeConnections* connections, int row, int column );
+	osg::Vec2i getAvailablePosition( SpecialMatrix::NodeConnections* connections, int row, int column );
 
 	/**
 	 * @brief createSettings initializes the used types

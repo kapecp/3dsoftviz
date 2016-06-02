@@ -49,7 +49,7 @@ SpecialMatrix::MatrixViewer::~MatrixViewer()
 	delete fileParser;
 }
 
-void SpecialMatrix::MatrixViewer::exchangeNodes(osg::ref_ptr<Data::Node> srcNode, osg::ref_ptr<Data::Node> desNode)
+/*void SpecialMatrix::MatrixViewer::exchangeNodes(osg::ref_ptr<Data::Node> srcNode, osg::ref_ptr<Data::Node> desNode)
 {
 	if(srcNode->Data::AbsNode::getName().contains('x') && desNode->Data::AbsNode::getName().contains('y'))
 		return;
@@ -149,7 +149,7 @@ void SpecialMatrix::MatrixViewer::exchangeNodes(osg::ref_ptr<Data::Node> srcNode
 	} else {
 		connections->setNodePositionsArrayField(0, srcNodePos, desNode->getId());
 	}
-}
+}*/
 
 void SpecialMatrix::MatrixViewer::createAxis()
 {
