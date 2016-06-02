@@ -41,11 +41,11 @@ class CameraManipulator;
 
 namespace QOSG {
 /**
-    *  \class ProjectiveARViewer
-    *  \brief
-    *  \author Viktor Kostan
-    *  \date 21. 4. 2016
-    */
+	*  \class ProjectiveARViewer
+	*  \brief
+	*  \author Viktor Kostan
+	*  \date 21. 4. 2016
+	*/
 class ProjectiveARViewer : public osgViewer::Viewer, public AdapterWidget
 {
 #define SCENE_MAX_SIZE (1000)
@@ -53,26 +53,26 @@ class ProjectiveARViewer : public osgViewer::Viewer, public AdapterWidget
 public:
 
 	/*!
-	    *
-	    * \param parent
-	    * Rodic widgetu.
-	    *
-	    * \param name
-	    * Meno widgetu.
-	    *
-	    * \param shareWidget
-	    * Zdielanie widgetu.
-	    *
-	    * \param f
-	    * Znacky pre vytvaranie okna.
-	    *
-	    * \param cg
-	    * CoreGraf, ktory sa bude vykreslovat.
-	    *
-	    *
-	    * Vytvori widget, ktory dokaze zobrazit OSG grafy.
-	    *
-	    */
+		*
+		* \param parent
+		* Rodic widgetu.
+		*
+		* \param name
+		* Meno widgetu.
+		*
+		* \param shareWidget
+		* Zdielanie widgetu.
+		*
+		* \param f
+		* Znacky pre vytvaranie okna.
+		*
+		* \param cg
+		* CoreGraf, ktory sa bude vykreslovat.
+		*
+		*
+		* Vytvori widget, ktory dokaze zobrazit OSG grafy.
+		*
+		*/
 
 	ProjectiveARViewer( QWidget* parent = 0, const char* name = 0, const QGLWidget* shareWidget = 0, WindowFlags f = 0, osgViewer::Viewer* viewerPerspective = 0 );
 
@@ -94,15 +94,15 @@ public:
 	osg::Geode* createBase();
 
 	/**
-	      *  \fn inline public  reloadConfig
-	      *  \brief Reloads configuration
-	      */
+		  *  \fn inline public  reloadConfig
+		  *  \brief Reloads configuration
+		  */
 	void reloadConfig();
 
 	/**
-	    *  void updateScene()
-	    *  \brief update projector's and viewer's position, direction and field of view
-	    */
+		*  void updateScene()
+		*  \brief update projector's and viewer's position, direction and field of view
+		*/
 	void updateScene();
 
 
@@ -185,22 +185,22 @@ protected:
 
 
 	/**
-	    *  QTimer _timer
-	    *  \brief
-	    */
+		*  QTimer _timer
+		*  \brief
+		*/
 	QTimer _timer;
 
 	/**
-	    *  osgViewer::Viewer * cg
-	    *  \brief core graph
-	    */
+		*  osgViewer::Viewer * cg
+		*  \brief core graph
+		*/
 	osgViewer::Viewer* viewerPerspective;
 
 
 	/**
-	    *  \fn inline protected virtual  paintGL
-	    *  \brief Paints new frame
-	    */
+		*  \fn inline protected virtual  paintGL
+		*  \brief Paints new frame
+		*/
 
 	virtual void paintGL();
 
@@ -211,16 +211,16 @@ private:
 	osg::Camera* renderCamera;
 
 	/**
-	    *  osg::Geode* base
-	    *  \brief camera that renders model to texture
-	    */
+		*  osg::Geode* base
+		*  \brief camera that renders model to texture
+		*/
 	osg::Geode* base;
 
 
 	/**
-	    *  Util::ApplicationConfig * appConf
-	    *  \brief application configuration
-	    */
+		*  Util::ApplicationConfig * appConf
+		*  \brief application configuration
+		*/
 	Util::ApplicationConfig* appConf;
 
 	osg::Vec3d projectorPos;
@@ -229,7 +229,7 @@ private:
 
 	osg::Vec3d viewerPos;
 	osg::Vec3d viewerDir;
-	double viewerFOV;
+	float viewerFOV;
 
 	osg::Vec3d graphPos;
 	double graphRadius;
@@ -240,9 +240,9 @@ private:
 
 
 	/**
-	    *  osg::Group* createProjectorScene()
-	    *  \brief function that creates projector scene, based on viewerPos, viewerDir, viewerFOV and viewerPerspective
-	    */
+		*  osg::Group* createProjectorScene()
+		*  \brief function that creates projector scene, based on viewerPos, viewerDir, viewerFOV and viewerPerspective
+		*/
 	osg::Group* createProjectorScene();
 };
 }

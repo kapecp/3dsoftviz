@@ -1,5 +1,8 @@
 #include "LuaTypes/LuaValueMap.h"
 
+#include <string>
+#include <utility>
+
 Lua::LuaValueMap::LuaValueMap()
 {
 }

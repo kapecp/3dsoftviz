@@ -5,6 +5,8 @@
 #include "QOpenCV/CamSelectWindow.h"
 #include "OpenCV/CapVideo.h"
 
+#include <vector>
+
 OpenCV::CamSelectCore* OpenCV::CamSelectCore::mCamSelectCore;
 
 //constructor search automatically for number of active cameras and store them

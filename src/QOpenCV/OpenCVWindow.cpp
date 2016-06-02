@@ -8,7 +8,6 @@
 #include <QCloseEvent>
 #include <QDebug>
 #include "OpenCV/CamSelectCore.h"
-#include <QDebug>
 
 #include "Util/ApplicationConfig.h"
 
@@ -300,7 +299,7 @@ void QOpenCV::OpenCVWindow::onSelSubModulChange()
 	}
 	/*
 	if ( mMultiMarkerRB->isChecked() ) {
-	    mSubmodulesStackL->setCurrentIndex( 2 );
+		mSubmodulesStackL->setCurrentIndex( 2 );
 	}
 	*/
 	if ( mNoVideo->isChecked() ) {

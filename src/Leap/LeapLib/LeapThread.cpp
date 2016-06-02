@@ -1,5 +1,6 @@
+#include <easylogging++.h>
+
 #include "LeapLib/LeapThread.h"
-#include "easylogging++.h"
 
 Leap::LeapThread::LeapThread( QObject* parent, LeapCameraManipulator* cameraManipulator ) : QThread( parent )
 {

@@ -35,14 +35,14 @@
 #define MagellanInputButtonReleaseEvent 3
 
 union _MagellanInputEventUnion_ {
- int data[7];
- int button;
+	int data[7];
+	int button;
 };
 typedef union _MagellanInputEventUnion_ MagellanIntUnion;
 
 struct _MagellanIntEvent_ {
- int type;
- MagellanIntUnion u;
+	int type;
+	MagellanIntUnion u;
 };
 typedef struct _MagellanIntEvent_ MagellanIntEvent;
 
@@ -51,10 +51,10 @@ typedef struct _MagellanIntEvent_ MagellanIntEvent;
 enum _MagellanData_ { MagellanX,MagellanY,MagellanZ,MagellanA,MagellanB,MagellanC };
 
 struct _MagellanFloatEvent_ {
- int MagellanType;
- int MagellanButton;
- double MagellanData[6];
- int MagellanPeriod;
+	int MagellanType;
+	int MagellanButton;
+	double MagellanData[6];
+	int MagellanPeriod;
 };
 typedef struct _MagellanFloatEvent_ MagellanFloatEvent;
 
@@ -62,96 +62,97 @@ typedef struct _MagellanFloatEvent_ MagellanFloatEvent;
 
 int MagellanInit(
 #ifdef ParameterCheck
-Display *display,
-Window window
+	Display* display,
+	Window window
 #endif
 );
 
 int MagellanSetWindow(
 #ifdef ParameterCheck
-Display *display,
-Window window
+	Display* display,
+	Window window
 #endif
 );
 
 int MagellanApplicationSensitivity(
 #ifdef ParameterCheck
-Display *display,
-double Sensitivity
+	Display* display,
+	double Sensitivity
 #endif
 );
 
 static int MagellanErrorHandler(
 #ifdef ParameterCheck
-Display *display,
-XErrorEvent *Error
+	Display* display,
+	XErrorEvent* Error
 #endif
 );
 
 int MagellanInputEvent(
 #ifdef ParameterCheck
-Display *display,
-XEvent *Event,
-MagellanIntEvent *MagellanEvent
+	Display* display,
+	XEvent* Event,
+	MagellanIntEvent* MagellanEvent
 #endif
 );
 
 int MagellanTranslateEvent(
 #ifdef ParameterCheck
-Display *display,
-XEvent *Event,
-MagellanFloatEvent *MagellanEvent,
-double MagellanTranslationScale,
-double MagellanRotationScale
+	Display* display,
+	XEvent* Event,
+	MagellanFloatEvent* MagellanEvent,
+	double MagellanTranslationScale,
+	double MagellanRotationScale
 #endif
 );
 
 int MagellanClose(
 #ifdef ParameterCheck
-Display *display
+	Display* display
 #endif
 );
 
 Bool MagellanCheckMotionEvent(
 #ifdef ParameterCheck
-Display *display,
-XEvent *Event,
-char *Arg
+	Display* display,
+	XEvent* Event,
+	char* Arg
 #endif
 );
 
 int MagellanRemoveMotionEvents(
 #ifdef ParameterCheck
-Display *display
+	Display* display
 #endif
 );
 
 int MagellanRotationMatrix(
 #ifdef ParameterCheck
-double Rotate[4][4],
-double c,
-double b,
-double a
+	double Rotate[4][4],
+	double c,
+	double b,
+	double a
 #endif
 );
 
 int MagellanMultiplicationMatrix(
 #ifdef ParameterCheck
-double MatrixA[4][4],
-double MatrixB[4][4],
-double MatrixC[4][4] 
-#endif 
+	double MatrixA[4][4],
+	double MatrixB[4][4],
+	double MatrixC[4][4]
+#endif
 );
 
 extern Atom MagellanMotionEvent, MagellanButtonPressEvent, MagellanReleaseEvent;
 extern Window MagellanWindow;
 extern int MagellanExist;
 
-enum _CommandMessages_ { NoCommandMessage, CommandMessageApplicationWindow = 27695, 
-                                           CommandMessageApplicationSensitivity };
+enum _CommandMessages_ { NoCommandMessage, CommandMessageApplicationWindow = 27695,
+						 CommandMessageApplicationSensitivity
+					   };
 union _MagellanTypeConversion_ {
- float Float;
- short Short[ 2 ];
+	float Float;
+	short Short[ 2 ];
 };
 typedef union _MagellanTypeConversion_ MagellanTypeConversion;
 

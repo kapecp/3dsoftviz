@@ -112,23 +112,23 @@ osg::Geode* QOSG::ProjectiveARViewer::createBase()
 
 	//base
 	osg::Vec3Array* vertices = new osg::Vec3Array;
-	vertices->push_back( osg::Vec3( -1.5, -2.0, 0 ) ); // lb   floor
+	vertices->push_back( osg::Vec3( ( float )-1.5, ( float )-2.0, 0 ) ); // lb   floor
 	vertices->push_back( osg::Vec3( 0, -2.0, 0 ) );   // rb   floor
 	vertices->push_back( osg::Vec3( 0, 0, 0 ) );        // rb   screen
-	vertices->push_back( osg::Vec3( -1.5, 0, 0 ) );     // lb   screen
-	vertices->push_back( osg::Vec3( 0, 0, 2.07 ) );      // rt   screen
-	vertices->push_back( osg::Vec3( -1.5, 0, 2.07 ) );   // lt   screen
+	vertices->push_back( osg::Vec3( ( float )-1.5, 0, 0 ) );   // lb   screen
+	vertices->push_back( osg::Vec3( 0, 0, ( float )2.07 ) );    // rt   screen
+	vertices->push_back( osg::Vec3( ( float )-1.5, 0, ( float )2.07 ) ); // lt   screen
 
 	//right side
-	vertices->push_back( osg::Vec3( 0.02, -0.08, 0 ) );   // fb   rack
-	vertices->push_back( osg::Vec3( 0.02, -0.08, 0.02 ) ); // fm   rack
-	vertices->push_back( osg::Vec3( 0.02, -0.015, 0.065 ) ); // ft   rack
-	vertices->push_back( osg::Vec3( 0.02, -0.015, 0.00 ) ); // sb   rack
+	vertices->push_back( osg::Vec3( ( float )0.02, ( float )-0.08, 0 ) ); // fb   rack
+	vertices->push_back( osg::Vec3( ( float )0.02, ( float )-0.08, ( float )0.02 ) ); // fm   rack
+	vertices->push_back( osg::Vec3( ( float )0.02, ( float )-0.015, ( float )0.065 ) ); // ft   rack
+	vertices->push_back( osg::Vec3( ( float )0.02, ( float )-0.015, ( float )0.00 ) ); // sb   rack
 	//left side
-	vertices->push_back( osg::Vec3( -1.52, -0.08, 0 ) );   // fb   rack
-	vertices->push_back( osg::Vec3( -1.52, -0.08, 0.02 ) ); // fm   rack
-	vertices->push_back( osg::Vec3( -1.52, -0.015, 0.065 ) ); // ft   rack
-	vertices->push_back( osg::Vec3( -1.52, -0.015, 0.00 ) ); // sb   rack
+	vertices->push_back( osg::Vec3( ( float )-1.52, ( float )-0.08, 0 ) ); // fb   rack
+	vertices->push_back( osg::Vec3( ( float )-1.52, ( float )-0.08, ( float )0.02 ) ); // fm   rack
+	vertices->push_back( osg::Vec3( ( float )-1.52, ( float )-0.015, ( float )0.065 ) ); // ft   rack
+	vertices->push_back( osg::Vec3( ( float )-1.52, ( float )-0.015, ( float )0.00 ) ); // sb   rack
 	baseGeometry->setVertexArray( vertices );
 
 	// floor
@@ -191,8 +191,8 @@ osg::Geode* QOSG::ProjectiveARViewer::createBase()
 osg::Group* QOSG::ProjectiveARViewer::createProjectorScene()
 {
 
-	unsigned int tex_width = 2048;
-	unsigned int tex_height = 2048;
+	int tex_width = 2048;
+	int tex_height = 2048;
 	unsigned int samples = 0;
 	unsigned int colorSamples = 0;
 

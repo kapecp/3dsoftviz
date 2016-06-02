@@ -62,7 +62,7 @@ int main( int argc, char* argv[] )
 	// Thi attribute doesn't work on Qt5 and higher, may be undefined in older Qt versions.
 	// Still, so far the only cappable solution to auto-lock x11 display resource.
 	// If you try to run the application without it, you're going to have a bad time... or segmentation faults whatever.
-	QCoreApplication::setAttribute(Qt::AA_X11InitThreads);
+	QCoreApplication::setAttribute( Qt::AA_X11InitThreads );
 #endif
 
 	App::Application app( argc, argv );

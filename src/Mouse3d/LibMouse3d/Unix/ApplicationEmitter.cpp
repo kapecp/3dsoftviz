@@ -6,17 +6,20 @@
 #include <X11/Xlib.h>
 #include "fixx11.h"
 
-ApplicationEmitter::ApplicationEmitter( Mouse3dUnixDevice *device ) :
+ApplicationEmitter::ApplicationEmitter( Mouse3dUnixDevice* device ) :
 	QObject(),
-	device( device ) {
+	device( device )
+{
 	//QObject::connect( this, SIGNAL( signalDummy( )), device, SLOT( translateDummy( )));
 	//QObject::connect( this, SIGNAL( signalX11Event( XEvent * )), device, SLOT( translateX11Event( XEvent * )));
 }
 
-ApplicationEmitter::~ApplicationEmitter(){
+ApplicationEmitter::~ApplicationEmitter()
+{
 }
 
-void ApplicationEmitter::emitX11Event( XEvent *event ){
+void ApplicationEmitter::emitX11Event( XEvent* event )
+{
 	//qDebug() << "emitX11Event : eventType = " << event->type;
 	//XEvent xev = *event;
 	//emit signalDummy();

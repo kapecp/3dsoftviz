@@ -9,18 +9,18 @@
 #include "Application/Application.h"
 
 #if defined(Q_OS_WIN)
-	#include "Mouse3d/LibMouse3d/Windows/Mouse3DInput.h"
+#include "Mouse3d/LibMouse3d/Windows/Mouse3DInput.h"
 #elif defined(Q_WS_X11) || defined(Q_OS_LINUX)
-	#include "Mouse3d/LibMouse3d/Unix/Mouse3dUnixDevice.h"
+#include "Mouse3d/LibMouse3d/Unix/Mouse3dUnixDevice.h"
 #elif defined(Q_OS_MAC)
-	#include "Mouse3d/LibMouse3d/Mac/Mouse3dMacDevice.h"
+#include "Mouse3d/LibMouse3d/Mac/Mouse3dMacDevice.h"
 #endif
 
-namespace QOSG{
-    class CoreWindow;
+namespace QOSG {
+class CoreWindow;
 }
 
-namespace LibMouse3d{
+namespace LibMouse3d {
 
 /**
 *@author Michal Fasanek
@@ -28,11 +28,12 @@ namespace LibMouse3d{
 *@brief Class using system specific solutions for 3dMouse.
 */
 
-class Mouse3dDevices : public QObject {
+class Mouse3dDevices : public QObject
+{
 	Q_OBJECT
 
 public:
-	Mouse3dDevices( QOSG::CoreWindow *window );
+	Mouse3dDevices( QOSG::CoreWindow* window );
 	~Mouse3dDevices();
 
 private:

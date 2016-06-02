@@ -3,40 +3,45 @@
 #include <QDebug>
 
 #if defined(Q_WS_X11) || defined(Q_OS_LINUX)
-	#include <X11/Xlib.h>
-	#include "fixx11.h"
+#include <X11/Xlib.h>
+#include "fixx11.h"
 #endif
 
 namespace App {
 
-Application::Application( int &argc, char **argv ) : QApplication( argc, argv ) {
-	#if defined(Q_WS_X11) || defined(Q_OS_LINUX)
-		this->isEmitting = false;
-		//XInitThreads(); //crashes app
-		//XSelectInput(QX11Info::display(), DefaultRootWindow(QX11Info::display()), SubstructureNotifyMask); // possibly could improve performance, filtering xevents
-	#endif
+Application::Application( int& argc, char** argv ) : QApplication( argc, argv )
+{
+#if defined(Q_WS_X11) || defined(Q_OS_LINUX)
+	this->isEmitting = false;
+	//XInitThreads(); //crashes app
+	//XSelectInput(QX11Info::display(), DefaultRootWindow(QX11Info::display()), SubstructureNotifyMask); // possibly could improve performance, filtering xevents
+#endif
 }
 
-Application::~Application() {
+Application::~Application()
+{
 }
 
 #if defined(Q_WS_X11) || defined(Q_OS_LINUX)
-bool Application::x11EventFilter( XEvent *event ) {
+bool Application::x11EventFilter( XEvent* event )
+{
 	//qDebug() << "x11EventFilter : eventType = " << event->type;
-	if ( this->isEmitting && event->type == ClientMessage ){
+	if ( this->isEmitting && event->type == ClientMessage ) {
 		this->emitter->emitX11Event( event );
 	}
-    return false;
+	return false;
 }
 
-void Application::startEmitter( Mouse3dUnixDevice *device ){
+void Application::startEmitter( Mouse3dUnixDevice* device )
+{
 	this->emitter = new ApplicationEmitter( device );
 	//QObject::connect( emitter, SIGNAL( signalDummy( )), device, SLOT( translateDummy( )));
 	//QObject::connect( emitter, SIGNAL( signalX11Event( XEvent * )), device, SLOT( translateX11Event( XEvent * )));
 	this->isEmitting = true;
 }
 
-void Application::stopEmitter() {
+void Application::stopEmitter()
+{
 	this->isEmitting = false;
 	delete this->emitter;
 }

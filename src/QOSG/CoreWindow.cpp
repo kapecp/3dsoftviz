@@ -62,11 +62,12 @@
 #include "LuaTypes/LuaValueList.h"
 #include "LuaGraph/LuaGraphTreeModel.h"
 
-#include "easylogging++.h"
+#include <easylogging++.h>
 
 #include <iostream>
 #include <osg/ref_ptr>
 #include <string>
+#include <list>
 
 #ifdef OPENCV_FOUND
 #include "OpenCV/OpenCVCore.h"
@@ -3979,52 +3980,53 @@ void CoreWindow::closeEvent( QCloseEvent* event )
 	//QApplication::closeAllWindows();   // ????
 }
 
-void QOSG::CoreWindow::OnMove(std::vector<float>& motionData){
+void QOSG::CoreWindow::OnMove( std::vector<float>& motionData )
+{
 
 	QOSG::ViewerQT* moveViewer = this->GetViewerQt();
 
 	//right & left
-	if(motionData[0] >  0.003){
+	if ( motionData[0] >  0.003 ) {
 		moveViewer->getEventQueue()->keyPress( osgGA::GUIEventAdapter::KEY_Right );
 		moveViewer->getEventQueue()->keyRelease( osgGA::GUIEventAdapter::KEY_Right );
 	}
-	if(motionData[0] < -0.003){
+	if ( motionData[0] < -0.003 ) {
 		moveViewer->getEventQueue()->keyPress( osgGA::GUIEventAdapter::KEY_Left );
 		moveViewer->getEventQueue()->keyRelease( osgGA::GUIEventAdapter::KEY_Left );
 	}
 	//forward & back
-	if(motionData[1] >  0.003){
+	if ( motionData[1] >  0.003 ) {
 		moveViewer->getEventQueue()->keyPress( osgGA::GUIEventAdapter::KEY_Down );
 		moveViewer->getEventQueue()->keyRelease( osgGA::GUIEventAdapter::KEY_Down );
 	}
-	if(motionData[1] < -0.003){
+	if ( motionData[1] < -0.003 ) {
 		moveViewer->getEventQueue()->keyPress( osgGA::GUIEventAdapter::KEY_Up );
 		moveViewer->getEventQueue()->keyRelease( osgGA::GUIEventAdapter::KEY_Up );
 	}
 	//up & down
 	//keydown has higher threshhold because user is more likely to press it accidentaly due to weight of own hand
 	//keyup has lower threshhold because user is less likely to press it accidentaly due to weight of own hand
-	if(motionData[2] >  0.004){
+	if ( motionData[2] >  0.004 ) {
 		moveViewer->getEventQueue()->keyPress( osgGA::GUIEventAdapter::KEY_Page_Down );
 		moveViewer->getEventQueue()->keyRelease( osgGA::GUIEventAdapter::KEY_Page_Down );
 	}
-	if(motionData[2] < -0.002){
+	if ( motionData[2] < -0.002 ) {
 		moveViewer->getEventQueue()->keyPress( osgGA::GUIEventAdapter::KEY_Page_Up );
 		moveViewer->getEventQueue()->keyRelease( osgGA::GUIEventAdapter::KEY_Page_Up );
 	}
 	//rotations
 
-	double a = fabs(motionData[3]), b = fabs(motionData[4]), c = fabs(motionData[5]);
-	if(a > 0.001){
-		 moveViewer->getCameraManipulator()->rotateCamera(0.0, 0.0, 1.0, (float)(-1.5)*(float)motionData[3], 0.0);
-		 //qDebug() << "Moving A" << endl;
+	double a = fabs( motionData[3] ), b = fabs( motionData[4] ), c = fabs( motionData[5] );
+	if ( a > 0.001 ) {
+		moveViewer->getCameraManipulator()->rotateCamera( 0.0, 0.0, 1.0, ( float )( -1.5 )*( float )motionData[3], 0.0 );
+		//qDebug() << "Moving A" << endl;
 	}
-	if(b > 0.001){
-		moveViewer->getCameraManipulator()->rotateCamera(1.0, 0.00, (1.2)*(double)motionData[4], -1, -1);
+	if ( b > 0.001 ) {
+		moveViewer->getCameraManipulator()->rotateCamera( 1.0, 0.00, ( 1.2 )*( double )motionData[4], -1, -1 );
 		//qDebug() << "Moving B" << endl;
 	}
-	if(c > 0.001){
-		moveViewer->getCameraManipulator()->rotateCamera(0.0, 0.0, 1.0, 0.0, (float)(-1.5)*motionData[5]);
+	if ( c > 0.001 ) {
+		moveViewer->getCameraManipulator()->rotateCamera( 0.0, 0.0, 1.0, 0.0, ( float )( -1.5 )*motionData[5] );
 		//qDebug() << "Moving C" << endl;
 	}
 
@@ -4080,7 +4082,7 @@ void CoreWindow::startGlovesRecognition()
 void CoreWindow::startMouse3d()
 {
 
-	if ( b_start_mouse3d->text()=="Stop Mouse") {
+	if ( b_start_mouse3d->text()=="Stop Mouse" ) {
 		//this->mGloveThr->terminate();
 		//delete( this->mGloveThr );
 		delete conn;
@@ -4089,7 +4091,7 @@ void CoreWindow::startMouse3d()
 		return;
 	}
 
-	conn = new Mouse3d::Connector(this);
+	conn = new Mouse3d::Connector( this );
 	conn->CreateConnection();
 
 	//this->mGloveThr = new Fglove::FgloveThread();

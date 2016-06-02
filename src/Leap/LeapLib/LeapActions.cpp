@@ -1,6 +1,6 @@
+#include <easylogging++.h>
+
 #include "LeapLib/LeapActions.h"
-#include "easylogging++.h"
-//#include <QtCore/qt_windows.h>	//sleep include, TODO
 #include "Leap/LeapSleeper.h"
 
 Leap::LeapActions::LeapActions( LeapCameraManipulator* cameraManipulator )
@@ -30,8 +30,8 @@ void Leap::LeapActions::moveCamera( Leap::Gesture gesture )
 		return;
 	}
 
-	float absDir0 = abs( direction[0] );
-	float absDir1 = abs( direction[1] );
+	float absDir0 = std::abs( direction[0] );
+	float absDir1 = std::abs( direction[1] );
 
 	// compare direction[0] and direction[1] to find out what kind of movement are we working with
 	// >= instead of > to avoid edge case, no camera movement would happen with absDir0 equal to absDir1
@@ -66,8 +66,7 @@ void Leap::LeapActions::moveCamera( Leap::Gesture gesture )
 		}
 	}
 	//if we get here, the camera is moving
-//	Sleep( ( DWORD )gestureDuration );
-	LeapSleeper::sleep( gestureDuration );
+	LeapSleeper::sleep( ( unsigned long )gestureDuration );
 	cameraManipulator->disableCameraMovement();
 }
 
@@ -111,7 +110,7 @@ void Leap::LeapActions::rotateGraph( Leap::Gesture gesture )
 	Vector direction = swipe.direction();
 
 	// >= instead of > to avoid edge case, no rotation would happen with abs direction[0] equal to abs direction[1]
-	if ( abs( direction[0] ) >= abs( direction[1] ) ) { // horizontal movement
+	if ( std::abs( direction[0] ) >= std::abs( direction[1] ) ) { // horizontal movement
 		if ( direction[0] > 0 ) {
 			cameraManipulator->rotateCamera( 0, 0, 1, 0, 0.05f );
 		}
@@ -181,6 +180,10 @@ void Leap::LeapActions::rotateAruco( Leap::DirectionDetector::Direction directio
 			break;
 		case Leap::DirectionDetector::Direction::STEADY :
 			break;
+		case Leap::DirectionDetector::Direction::UP :
+			break;
+		case Leap::DirectionDetector::Direction::DOWN :
+			break;
 	}
 }
 
@@ -192,6 +195,12 @@ void Leap::LeapActions::scaleEdges( Leap::DirectionDetector::Direction direction
 			break;
 		case Leap::DirectionDetector::Direction::RIGHT :
 			cameraManipulator->scaleEdgesDown();
+			break;
+		case Leap::DirectionDetector::Direction::STEADY :
+			break;
+		case Leap::DirectionDetector::Direction::UP :
+			break;
+		case Leap::DirectionDetector::Direction::DOWN :
 			break;
 	}
 }

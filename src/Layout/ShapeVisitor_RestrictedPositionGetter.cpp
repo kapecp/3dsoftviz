@@ -225,7 +225,7 @@ osg::Vec3f ShapeVisitor_RestrictedPositionGetter::toSphere( const osg::Vec3f& ce
 	{
 		// create random point
 		for ( int i = 0; i < 3; ++i ) {
-			changedPointMoved[i] = static_cast<float>( rand() % 100 ) + 1.f;
+			changedPointMoved[i] = static_cast<float>( random() % 100 ) + 1.f;
 		}
 	}
 
@@ -233,7 +233,7 @@ osg::Vec3f ShapeVisitor_RestrictedPositionGetter::toSphere( const osg::Vec3f& ce
 
 	float multiplier = radiusMin;
 	if ( radiusMax > radiusMin ) {
-		float randomIncrement = ( static_cast<float>( rand() ) / static_cast<float>( RAND_MAX ) ) * ( radiusMax - radiusMin );
+		float randomIncrement = ( static_cast<float>( random() ) / static_cast<float>( RAND_MAX ) ) * ( radiusMax - radiusMin );
 		multiplier += randomIncrement;
 	}
 	changedPointMoved *= multiplier;

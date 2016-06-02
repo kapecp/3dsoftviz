@@ -16,9 +16,9 @@ public:
 	bool		IsRotate()  const;
 	ESpeed		GetSpeed()  const;
 
-	void		SetPanZoom(bool isPanZoom);
-	void		SetRotate(bool isRotate);
-	void		SetSpeed(ESpeed speed);
+	void		SetPanZoom( bool isPanZoom );
+	void		SetRotate( bool isRotate );
+	void		SetSpeed( ESpeed speed );
 
 	// I3dmouseNavigation interface
 	ENavigation			GetNavigationMode()  const;
@@ -26,15 +26,15 @@ public:
 	EPivotVisibility	GetPivotVisibility()  const;
 	bool				IsLockHorizon()  const;
 
-	void				SetLockHorizon(bool bOn);
-	void				SetNavigationMode(ENavigation navigation);
-	void				SetPivotMode(EPivot pivot);
-	void				SetPivotVisibility(EPivotVisibility visibility);
+	void				SetLockHorizon( bool bOn );
+	void				SetNavigationMode( ENavigation navigation );
+	void				SetPivotMode( EPivot pivot );
+	void				SetPivotVisibility( EPivotVisibility visibility );
 
 private:
 
-	MouseParameters (const MouseParameters&);
-	const MouseParameters& operator =(const MouseParameters&);
+	MouseParameters( const MouseParameters& );
+	const MouseParameters& operator =( const MouseParameters& );
 
 	ENavigation			fNavigation;
 	EPivot				fPivot;
