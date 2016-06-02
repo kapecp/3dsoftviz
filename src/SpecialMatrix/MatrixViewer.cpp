@@ -49,7 +49,7 @@ SpecialMatrix::MatrixViewer::~MatrixViewer()
 	delete fileParser;
 }
 
-/*void SpecialMatrix::MatrixViewer::exchangeNodes(osg::ref_ptr<Data::Node> srcNode, osg::ref_ptr<Data::Node> desNode)
+void SpecialMatrix::MatrixViewer::exchangeNodes(osg::ref_ptr<Data::Node> srcNode, osg::ref_ptr<Data::Node> desNode)
 {
 	if(srcNode->Data::AbsNode::getName().contains('x') && desNode->Data::AbsNode::getName().contains('y'))
 		return;
@@ -76,12 +76,12 @@ SpecialMatrix::MatrixViewer::~MatrixViewer()
 		srcNodePos = connections->getXAxisNodes()->indexOf(srcNode->getId())+1;
 		desNodePos = connections->getXAxisNodes()->indexOf(desNode->getId())+1;
 		connections->getXAxisNodes()->swap(srcNodePos, desNodePos);
-		diffVector = osg::Vec3f((float)diff*separator, 0.0f, 0.0f);
+		diffVector = osg::Vec3f(static_cast<float>(diff*separator), 0.0f, 0.0f);
 	} else {
 		srcNodePos = connections->getYAxisNodes()->indexOf(srcNode->getId())+1;
 		desNodePos = connections->getYAxisNodes()->indexOf(desNode->getId())+1;
 		connections->getYAxisNodes()->swap(srcNodePos, desNodePos);
-		diffVector = osg::Vec3f(0.0f, (float)diff*separator, 0.0f);
+		diffVector = osg::Vec3f(0.0f, static_cast<float>(diff*separator), 0.0f);
 	}
 
 	//Src +diff
@@ -94,15 +94,15 @@ SpecialMatrix::MatrixViewer::~MatrixViewer()
 		connections->setNodePositionsArrayField(iNodeOldPos.x(), iNodeOldPos.y(), 0);
 		//get the new position
 		finalPosVector = tempNode->getTargetPosition() + diffVector;
-		iNodeNewPos.set((int)finalPosVector.x()/separator, (int)finalPosVector.y()/separator);
+		iNodeNewPos.set(static_cast<int>(finalPosVector.x()/separator), static_cast<int>(finalPosVector.y()/separator));
 
 		//CHECK AVAIBILITY
 		foundNodeId = connections->getNodePositionsArrayField(iNodeNewPos.x(), iNodeNewPos.y());
 		if(foundNodeId) {
 			foundNode = matrixGraph->findNodeById(foundNodeId);
-			SpecialMatrix::FileParser::NodePos foundNodePos = fileParser->getAvailablePosition(connections, iNodeNewPos.x(), iNodeNewPos.y());
-			foundNode->setTargetPosition(osg::Vec3f((float)foundNodePos.xPos*separator, (float)foundNodePos.yPos*separator, 0.0f));
-			connections->setNodePositionsArrayField(foundNodePos.xPos, foundNodePos.yPos, foundNodeId);
+			osg::Vec2i foundNodePos = fileParser->getAvailablePosition(connections, iNodeNewPos.x(), iNodeNewPos.y());
+			foundNode->setTargetPosition(osg::Vec3f(static_cast<float>(foundNodePos.x()*separator), static_cast<float>(foundNodePos.y()*separator), 0.0f));
+			connections->setNodePositionsArrayField(foundNodePos.x(), foundNodePos.y(), foundNodeId);
 		}
 
 		tempNode->setTargetPosition(finalPosVector);
@@ -127,15 +127,15 @@ SpecialMatrix::MatrixViewer::~MatrixViewer()
 		connections->setNodePositionsArrayField(iNodeOldPos.x(), iNodeOldPos.y(), 0);
 		//get the new position
 		finalPosVector = tempNode->getTargetPosition() - diffVector;
-		iNodeNewPos.set((int)finalPosVector.x()/separator, (int)finalPosVector.y()/separator);
+		iNodeNewPos.set(static_cast<int>(finalPosVector.x()/separator), static_cast<float>(finalPosVector.y()/separator));
 
 		//CHECK AVAIBILITY
 		foundNodeId = connections->getNodePositionsArrayField(iNodeNewPos.x(), iNodeNewPos.y());
 		if(foundNodeId) {
 			foundNode = matrixGraph->findNodeById(foundNodeId);
-			SpecialMatrix::FileParser::NodePos foundNodePos = fileParser->getAvailablePosition(connections, iNodeNewPos.x(), iNodeNewPos.y());
-			foundNode->setTargetPosition(osg::Vec3f((float)foundNodePos.xPos*separator, (float)foundNodePos.yPos*separator, 0.0f));
-			connections->setNodePositionsArrayField(foundNodePos.xPos, foundNodePos.yPos, foundNodeId);
+			osg::Vec2i foundNodePos = fileParser->getAvailablePosition(connections, iNodeNewPos.x(), iNodeNewPos.y());
+			foundNode->setTargetPosition(osg::Vec3f(static_cast<float>(foundNodePos.x()*separator), static_cast<float>(foundNodePos.y()*separator), 0.0f));
+			connections->setNodePositionsArrayField(foundNodePos.x(), foundNodePos.y(), foundNodeId);
 		}
 
 		tempNode->setTargetPosition(finalPosVector);
@@ -149,7 +149,7 @@ SpecialMatrix::MatrixViewer::~MatrixViewer()
 	} else {
 		connections->setNodePositionsArrayField(0, srcNodePos, desNode->getId());
 	}
-}*/
+}
 
 void SpecialMatrix::MatrixViewer::createAxis()
 {

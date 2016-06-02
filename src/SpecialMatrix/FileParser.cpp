@@ -313,14 +313,14 @@ Data::Graph* SpecialMatrix::FileParser::addSpecialCase1NodesToGraph( Data::Graph
 				int endPos = xAxisNodes->indexOf(endNode.nodeId)+1;
 				int delta = abs(midPos - endPos);
 				pos.x() = (midPos > endPos) ? (midPos - delta) : (endPos - delta);
-				pos.y() = pos.x() /3;
+				pos.y() = pos.x();
 			} else {
 				//case: I - E - E
 				int midPos = yAxisNodes->indexOf(midNode.nodeId)+1;
 				int endPos = yAxisNodes->indexOf(endNode.nodeId)+1;
 				int delta = abs(midPos - endPos);
 				pos.x() = (midPos > endPos) ? (midPos - delta) : (endPos - delta);
-				pos.y() = pos.x() /3;
+				pos.y() = pos.x();
 			}
 			pos = getAvailablePosition(connections, pos.x(), pos.y());
 			nodePos = osg::Vec3f( osg::Vec3f(static_cast<float>(pos.x()*separator), static_cast<float>(pos.y()*separator), 0.0f) );
@@ -341,14 +341,14 @@ Data::Graph* SpecialMatrix::FileParser::addSpecialCase1NodesToGraph( Data::Graph
 				int endPos = xAxisNodes->indexOf(endNode.nodeId)+1;
 				int delta = abs(startPos - endPos);
 				pos.x() = (startPos > endPos) ? (startPos - delta) : (endPos - delta);
-				pos.y() = pos.x() /3;
+				pos.y() = pos.x();
 			} else {
 				//case: E - I - E
 				int startPos = yAxisNodes->indexOf(startNode.nodeId)+1;
 				int endPos = yAxisNodes->indexOf(endNode.nodeId)+1;
 				int delta = abs(startPos - endPos);
 				pos.x() = (startPos > endPos) ? (startPos - delta) : (endPos - delta);
-				pos.y() = pos.x() /3;
+				pos.y() = pos.x();
 			}
 			pos = getAvailablePosition(connections, pos.x(), pos.y());
 			nodePos = osg::Vec3f( osg::Vec3f(static_cast<float>(pos.x()*separator), static_cast<float>(pos.y()*separator), 0.0f) );
@@ -369,14 +369,14 @@ Data::Graph* SpecialMatrix::FileParser::addSpecialCase1NodesToGraph( Data::Graph
 				int midPos = xAxisNodes->indexOf(midNode.nodeId)+1;
 				int delta = abs(startPos - midPos);
 				pos.x() = (startPos > midPos) ? (startPos - delta) : (midPos - delta);
-				pos.y() = pos.x() /3;
+				pos.y() = pos.x();
 			} else {
 				//case: E - E - I
 				int startPos = yAxisNodes->indexOf(startNode.nodeId)+1;
 				int midPos = yAxisNodes->indexOf(midNode.nodeId)+1;
 				int delta = abs(startPos - midPos);
 				pos.x() = (startPos > midPos) ? (startPos - delta) : (midPos - delta);
-				pos.y() = pos.x() /3;
+				pos.y() = pos.x();
 			}
 			pos = getAvailablePosition(connections, pos.x(), pos.y());
 			nodePos = osg::Vec3f( osg::Vec3f(static_cast<float>(pos.x()*separator), static_cast<float>(pos.y()*separator), 0.0f) );

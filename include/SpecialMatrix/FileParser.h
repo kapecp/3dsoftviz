@@ -74,14 +74,6 @@ public:
 	Data::Graph* addSpecialCase2NodesToGraph( Data::Graph* matrixGraph, QStringList fields, SpecialMatrix::NodeConnections* connections, int &nodeCounter );
 
 	/**
-	 * @brief getHashIdFromNodeName
-	 * @param QString nodeName
-	 * @param char axis
-	 * @return qlonglong ID for given nodeName and axis
-	 */
-	qlonglong getHashIdFromNodeName( QString nodeName, char axis );
-
-	/**
 	 * @brief getAvailablePosition calculates a new available position
 	 * @param SpecialMatrix::NodeConnections* connections
 	 * @param int row
