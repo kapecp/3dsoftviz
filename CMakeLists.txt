@@ -150,11 +150,11 @@ if ( NOT Qt5Core_FOUND )
 endif()
 
 if ( Qt5Core_FOUND )
-	message(STATUS "Qt5 package found")
+	message(STATUS "Using Qt5 packages")
 elseif( Qt4_FOUND )
-	message(STATUS "Qt4 package found")
+	message(STATUS "Using Qt4 packages")
 else()
-	message(STATUS "No suitable Qt package found")
+	message(STATUS "No suitable Qt packages found")
 endif()
 
 # add special flag to GCC compiler when using Qt 4.6.x with GCC >4.6
@@ -932,17 +932,15 @@ target_include_directories( gitlib
 		include/Repository/Git
 )
 
+target_compile_definitions( gitlib PUBLIC -DGITLIB_LIBRARY_STATIC )
+
+target_compile_options( gitlib PUBLIC ${FLAGS_FOR_DEBUG} )
+
 if ( Qt5Core_FOUND )
 	qt5_use_modules( gitlib Core )
 elseif( Qt4_FOUND )
 	target_link_libraries( gitlib ${QT_LIBRARIES} )
 endif()
-
-target_compile_definitions( gitlib PUBLIC -DGITLIB_LIBRARY_STATIC )
-
-target_compile_options( gitlib PUBLIC ${FLAGS_FOR_DEBUG} )
-
-target_link_libraries( gitlib ${QT_LIBRARIES} )
 
 # 'cotire' the module
 if( COMMAND cotire )
