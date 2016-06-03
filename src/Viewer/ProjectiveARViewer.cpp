@@ -114,23 +114,23 @@ osg::Geode* QOSG::ProjectiveARViewer::createBase()
 
 	//base
 	osg::Vec3Array* vertices = new osg::Vec3Array;
-	vertices->push_back( osg::Vec3( ( float )-1.5, ( float )-2.0, 0 ) ); // lb   floor
-	vertices->push_back( osg::Vec3( 0, -2.0, 0 ) );   // rb   floor
+	vertices->push_back( osg::Vec3( -1.5f, -2.0f, 0 ) ); // lb   floor
+	vertices->push_back( osg::Vec3( 0, -2.0f, 0 ) );   // rb   floor
 	vertices->push_back( osg::Vec3( 0, 0, 0 ) );        // rb   screen
-	vertices->push_back( osg::Vec3( ( float )-1.5, 0, 0 ) );   // lb   screen
-	vertices->push_back( osg::Vec3( 0, 0, ( float )2.07 ) );    // rt   screen
-	vertices->push_back( osg::Vec3( ( float )-1.5, 0, ( float )2.07 ) ); // lt   screen
+	vertices->push_back( osg::Vec3( -1.5f, 0, 0 ) );   // lb   screen
+	vertices->push_back( osg::Vec3( 0, 0, 2.07f ) );    // rt   screen
+	vertices->push_back( osg::Vec3( -1.5f, 0, 2.07f ) ); // lt   screen
 
 	//right side
-	vertices->push_back( osg::Vec3( ( float )0.02, ( float )-0.08, 0 ) ); // fb   rack
-	vertices->push_back( osg::Vec3( ( float )0.02, ( float )-0.08, ( float )0.02 ) ); // fm   rack
-	vertices->push_back( osg::Vec3( ( float )0.02, ( float )-0.015, ( float )0.065 ) ); // ft   rack
-	vertices->push_back( osg::Vec3( ( float )0.02, ( float )-0.015, ( float )0.00 ) ); // sb   rack
+	vertices->push_back( osg::Vec3( 0.02f, -0.08f, 0 ) ); // fb   rack
+	vertices->push_back( osg::Vec3( 0.02f, -0.08f, 0.02f ) ); // fm   rack
+	vertices->push_back( osg::Vec3( 0.02f, -0.015f, 0.065f ) ); // ft   rack
+	vertices->push_back( osg::Vec3( 0.02f, -0.015f, 0.00f ) ); // sb   rack
 	//left side
-	vertices->push_back( osg::Vec3( ( float )-1.52, ( float )-0.08, 0 ) ); // fb   rack
-	vertices->push_back( osg::Vec3( ( float )-1.52, ( float )-0.08, ( float )0.02 ) ); // fm   rack
-	vertices->push_back( osg::Vec3( ( float )-1.52, ( float )-0.015, ( float )0.065 ) ); // ft   rack
-	vertices->push_back( osg::Vec3( ( float )-1.52, ( float )-0.015, ( float )0.00 ) ); // sb   rack
+	vertices->push_back( osg::Vec3( -1.52f, -0.08f, 0 ) ); // fb   rack
+	vertices->push_back( osg::Vec3( -1.52f, -0.08f, 0.02f ) ); // fm   rack
+	vertices->push_back( osg::Vec3( -1.52f, -0.015f, 0.065f ) ); // ft   rack
+	vertices->push_back( osg::Vec3( -1.52f, -0.015f, 0.00f ) ); // sb   rack
 	baseGeometry->setVertexArray( vertices );
 
 	// floor

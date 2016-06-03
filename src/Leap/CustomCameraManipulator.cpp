@@ -59,7 +59,7 @@ void Leap::CustomCameraManipulator::scaleEdgesUp()
 
 	layout->pause();
 	coreGraph->setNodesFreezed( true );
-	layout->getAlg()->setMaxDistance( distance * ( float )1.02 );
+	layout->getAlg()->setMaxDistance( distance * 1.02f );
 	coreGraph->scaleGraphToBase();
 	coreGraph->setNodesFreezed( false );
 	layout->play();
@@ -72,7 +72,7 @@ void Leap::CustomCameraManipulator::scaleEdgesDown()
 
 	layout->pause();
 	coreGraph->setNodesFreezed( true );
-	layout->getAlg()->setMaxDistance( distance * ( float )0.98 );
+	layout->getAlg()->setMaxDistance( distance * 0.98f );
 	coreGraph->scaleGraphToBase();
 	coreGraph->setNodesFreezed( false );
 	layout->play();
