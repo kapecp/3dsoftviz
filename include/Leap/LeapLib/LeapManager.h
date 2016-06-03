@@ -1,13 +1,13 @@
-#ifndef LEAPCAMERAMANIPULATOR_H
-#define LEAPCAMERAMANIPULATOR_H
+#ifndef LEAPMANAGER_H
+#define LEAPMANAGER_H
 #include "LeapLib/LeapExport.h"
 
 namespace Leap {
 
-class LEAPLIB_EXPORT LeapCameraManipulator
+class LEAPLIB_EXPORT LeapManager
 {
 public:
-	virtual ~LeapCameraManipulator( void ) {}
+	virtual ~LeapManager( void ) {}
 
 	enum Movement {
 		RIGHT, LEFT, UP, DOWN, FORWARD, BACKWARD

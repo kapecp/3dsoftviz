@@ -3,7 +3,7 @@
 
 #include "Leap.h"
 #include "LeapLib/LeapListener.h"
-#include "LeapLib/LeapCameraManipulator.h"
+#include "LeapLib/LeapManager.h"
 #include "LeapLib/LeapExport.h"
 
 namespace Leap {
@@ -18,7 +18,7 @@ class LEAPLIB_EXPORT LeapController:Controller
 public:
 	LeapListener* leapListener;
 
-	LeapController( LeapCameraManipulator* cameraManipulator );
+	LeapController( LeapManager* leapManager );
 	~LeapController( void );
 
 	/**

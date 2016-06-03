@@ -3,7 +3,7 @@
 #include "Leap.h"
 #include "math.h"
 #include "LeapLib/DirectionDetector.h"
-#include "LeapLib/LeapCameraManipulator.h"
+#include "LeapLib/LeapManager.h"
 #include "LeapLib/LeapExport.h"
 #include "easylogging++.h"
 
@@ -21,7 +21,7 @@ public:
 	/**
 	 * @brief Initializes MouseControl and sets zoomCounter to 0
 	 */
-	LeapActions( LeapCameraManipulator* cameraManipulator );
+	LeapActions( LeapManager* leapManager );
 	~LeapActions();
 
 	/**
@@ -72,7 +72,7 @@ public:
 	 */
 	bool isCameraMoving;
 
-	LeapCameraManipulator* cameraManipulator;
+	LeapManager* leapManager;
 
 	//jurik
 	void graphRotateSwipe( int swipeDirection );

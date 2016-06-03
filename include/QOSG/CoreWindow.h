@@ -31,7 +31,7 @@
 
 #ifdef LEAP_FOUND
 #include "LeapLib/LeapThread.h"
-#include "Leap/CustomCameraManipulator.h"
+#include "Leap/CustomLeapManager.h"
 #endif
 
 #include <qtcolorpicker.h>

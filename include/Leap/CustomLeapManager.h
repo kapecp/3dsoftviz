@@ -1,7 +1,7 @@
-#ifndef CUSTOMCAMERAMANIPULATOR_H
-#define CUSTOMCAMERAMANIPULATOR_H
+#ifndef CUSTOMLEAPMANAGER_H
+#define CUSTOMLEAPMANAGER_H
 
-#include "LeapLib/LeapCameraManipulator.h"
+#include "LeapLib/LeapManager.h"
 #include "Viewer/CameraManipulator.h"
 #include "Viewer/CoreGraph.h"
 #include "Layout/LayoutThread.h"
@@ -13,12 +13,12 @@
 
 namespace Leap {
 
-class CustomCameraManipulator : public LeapCameraManipulator
+class CustomLeapManager : public LeapManager
 {
 public:
-	CustomCameraManipulator( Vwr::CameraManipulator* cameraManipulator,Layout::LayoutThread* layout,
+	CustomLeapManager( Vwr::CameraManipulator* cameraManipulator,Layout::LayoutThread* layout,
 							 Vwr::CoreGraph* coreGraph, osg::ref_ptr<osg::Group> handsGroup = NULL );
-	~CustomCameraManipulator( void );
+	~CustomLeapManager( void );
 
 	void enableCameraMovement( Movement direction );
 	void disableCameraMovement();

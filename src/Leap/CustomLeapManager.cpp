@@ -1,6 +1,6 @@
-#include "Leap/CustomCameraManipulator.h"
+#include "Leap/CustomLeapManager.h"
 
-Leap::CustomCameraManipulator::CustomCameraManipulator(Vwr::CameraManipulator* cameraManipulator, Layout::LayoutThread* layout,
+Leap::CustomLeapManager::CustomLeapManager(Vwr::CameraManipulator* cameraManipulator, Layout::LayoutThread* layout,
 		Vwr::CoreGraph* coreGraph , osg::ref_ptr<osg::Group> handsGroup)
 {
 	this->cameraManipulator = cameraManipulator;
@@ -37,7 +37,7 @@ Leap::CustomCameraManipulator::CustomCameraManipulator(Vwr::CameraManipulator* c
 	}
 }
 
-Leap::CustomCameraManipulator::~CustomCameraManipulator( void )
+Leap::CustomLeapManager::~CustomLeapManager( void )
 {
 	//remove hands nodes here
 	if (handsGroup){
@@ -45,23 +45,23 @@ Leap::CustomCameraManipulator::~CustomCameraManipulator( void )
 	}
 }
 
-void Leap::CustomCameraManipulator::enableCameraMovement( Movement direction )
+void Leap::CustomLeapManager::enableCameraMovement( Movement direction )
 {
 	this->cameraManipulator->enableCameraMovement( static_cast<Vwr::CameraManipulator::Movement>( direction ) );
 }
 
-void Leap::CustomCameraManipulator::disableCameraMovement()
+void Leap::CustomLeapManager::disableCameraMovement()
 {
 	this->cameraManipulator->disableCameraMovement();
 }
 
-void Leap::CustomCameraManipulator::rotateCamera( float py0, float px0, double throwScale, float py1, float px1 )
+void Leap::CustomLeapManager::rotateCamera( float py0, float px0, double throwScale, float py1, float px1 )
 {
 	this->cameraManipulator->rotateCamera( py0,px0,throwScale,py1, px1 );
 }
 
 //jurik
-void Leap::CustomCameraManipulator::graphRotateSwipe( int swipeDirection )
+void Leap::CustomLeapManager::graphRotateSwipe( int swipeDirection )
 {
 	//direction -1 = LEFT, 1 = RIGHT
 	switch ( swipeDirection ) {
@@ -74,17 +74,17 @@ void Leap::CustomCameraManipulator::graphRotateSwipe( int swipeDirection )
 	}
 }
 
-void Leap::CustomCameraManipulator::rotateArucoLeft()
+void Leap::CustomLeapManager::rotateArucoLeft()
 {
 	coreGraph->rotateGraph( 1 );
 }
 
-void Leap::CustomCameraManipulator::rotateArucoRight()
+void Leap::CustomLeapManager::rotateArucoRight()
 {
 	coreGraph->rotateGraph( -1 );
 }
 
-void Leap::CustomCameraManipulator::scaleEdgesUp()
+void Leap::CustomLeapManager::scaleEdgesUp()
 {
 
 	float distance = layout->getAlg()->getMaxDistance();
@@ -97,7 +97,7 @@ void Leap::CustomCameraManipulator::scaleEdgesUp()
 	layout->play();
 }
 
-void Leap::CustomCameraManipulator::scaleEdgesDown()
+void Leap::CustomLeapManager::scaleEdgesDown()
 {
 
 	float distance = layout->getAlg()->getMaxDistance();
@@ -110,7 +110,7 @@ void Leap::CustomCameraManipulator::scaleEdgesDown()
 	layout->play();
 }
 
-void Leap::CustomCameraManipulator::scaleNodes( bool scaleUp )
+void Leap::CustomLeapManager::scaleNodes( bool scaleUp )
 {
 	if ( scaleUp ) {
 		coreGraph->scaleNodes( true );
@@ -121,7 +121,7 @@ void Leap::CustomCameraManipulator::scaleNodes( bool scaleUp )
 }
 
 //*****
-void Leap::CustomCameraManipulator::updateHands(float lx,float ly, float lz, float rx, float ry, float rz){
+void Leap::CustomLeapManager::updateHands(float lx,float ly, float lz, float rx, float ry, float rz){
 	if (this->handsGroup != NULL){
 		LOG(INFO) << "updateHands vals left: "<< lx/200.0f<< " " << ly/200.0f<< " " << lz/200.0f;
 		LOG(INFO) << "updateHands vals right: "<< rx/200.0f<< " " << ry/200.0f<< " " << rz/200.0f;

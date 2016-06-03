@@ -2,10 +2,10 @@
 #include "LeapLib/DirectionDetector.h"
 #include "LeapLib/FingerPositionDetector.h"
 
-Leap::LeapListener::LeapListener( LeapCameraManipulator* cameraManipulator )
+Leap::LeapListener::LeapListener( LeapManager* leapManager )
 {
-	leapActions = new Leap::LeapActions( cameraManipulator );
-	this->arMode = cameraManipulator->arMode;
+	leapActions = new Leap::LeapActions( leapManager );
+	this->arMode = leapManager->arMode;
 }
 
 Leap::LeapListener::~LeapListener( void )
