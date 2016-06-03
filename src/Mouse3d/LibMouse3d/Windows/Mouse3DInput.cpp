@@ -155,7 +155,7 @@ Mouse3DInput::Mouse3DInput(QWidget* widget) :
 	gMouseInput = this;
 
 #if QT_VERSION >= 0x050000
-	qApp->installNativeEventFilter(Mouse3DInput::nativeEventFilter);
+	qApp->installNativeEventFilter(this);
 #else
 	qApp->setEventFilter(Mouse3DInput::RawInputEventFilter);
 #endif
