@@ -105,7 +105,7 @@ void Repository::Git::GitLuaGraphAnalyzer::analyze()
 
 						// Typ globalnej funkcie nas nezaujima pri analyze, preto nastavim na NONE
 						function->setType( Repository::Git::GitType::NONE );
-						function->setId( static_cast<int>( pairNode->getId() ) );
+						function->setId( pairNode->getId() );
 
 						// Kontrola, ze ide o globalnu funkciu, ak by nebola tak sa vypise chybova sprava
 						if ( !QString::compare( QString::fromStdString( pairNode->getParams()["type"].asString() ), "globalFunction" ) ) {
@@ -160,7 +160,7 @@ void Repository::Git::GitLuaGraphAnalyzer::analyze()
 
 							// Typ globalnej funkcie nas nezaujima pri analyze, preto nastavim na NONE
 							function->setType( Repository::Git::GitType::NONE );
-							function->setId( static_cast<int>( pairNode->getId() ) );
+							function->setId( pairNode->getId() );
 
 							// Kontrola, ze ide o lokalnu funkciu, ak by nebola tak sa vypise chybova sprava
 							if ( !QString::compare( QString::fromStdString( pairNode->getParams()["type"].asString() ), "function" ) ) {
