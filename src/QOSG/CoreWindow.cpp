@@ -655,14 +655,14 @@ void CoreWindow::createActions()
 	b_restartLayouting->setText( "Restart Layout" );
 	connect( b_restartLayouting, SIGNAL( clicked() ), this, SLOT( restartLayouting() ) );
 
-	clusteringProgressBar = new QProgressDialog( "", "", 0, 10, this, Qt::Dialog );
+	clusteringProgressBar = new QProgressDialog( "", "Abort", 0, 10, this, Qt::Dialog );
 	clusteringProgressBar->setWindowTitle( "Clustering" );
-	clusteringProgressBar->setCancelButtonText( "Abort" );
 	Qt::WindowFlags flags = clusteringProgressBar->windowFlags();
 	flags = flags & ( ~Qt::WindowContextHelpButtonHint );
 	clusteringProgressBar->setWindowFlags( flags );
 	clusteringProgressBar->setModal( true );
 	clusteringProgressBar->setMinimumDuration( 1000 );
+	clusteringProgressBar->reset();
 
 	b_SetRestriction_Cube_Selected = new QPushButton();
 	b_SetRestriction_Cube_Selected->setText( "Restrict" );

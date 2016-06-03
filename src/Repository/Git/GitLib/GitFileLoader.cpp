@@ -197,7 +197,7 @@ void Repository::Git::GitFileLoader::readGitDiffFile( QString tmpFile, Repositor
 			Repository::Git::GitFileDiffBlockLine* blockLine;
 
 			// Podla hodnoty prveho znaku z nacitaneho riadku rozhodujem, ako dalej spracujem dany riadok
-			switch ( lLine.at( 0 ).toAscii() ) {
+			switch ( lLine.at( 0 ).TOASCII() ) {
 
 				// Ak prvy znak bol '@', tak zistim zaciatocnu poziciu pridania a pocet riadkov oblasti pridania,
 				// zaciatok mazania a pocet riadkov oblasti mazania. Nasledne tieto udaje ulozim do diff bloku.

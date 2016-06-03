@@ -3,8 +3,7 @@
 
 #include "Diluculum/LuaValue.hpp"
 
-#include "QString"
-#include "Q_LONG"
+#include <QString>
 
 namespace Lua {
 

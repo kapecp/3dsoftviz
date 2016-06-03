@@ -46,32 +46,27 @@
 
 #ifndef QTCOLORPICKER_H
 #define QTCOLORPICKER_H
-#include <QtGui/QPushButton>
-#include <QtCore/QString>
-#include <QtGui/QColor>
-
-#include <QtGui/QLabel>
-#include <QtCore/QEvent>
-#include <QtGui/QFocusEvent>
-
-#include <QtGui/QApplication>
-#include <QtGui/QDesktopWidget>
-#include <QtGui/QPainter>
-#include <QtGui/QPushButton>
-#include <QtGui/QColorDialog>
+#include <QApplication>
+#include <QColor>
+#include <QColorDialog>
+#include <QDesktopWidget>
+#include <QEvent>
+#include <QFocusEvent>
+#include <QGridLayout>
+#include <QHideEvent>
+#include <QKeyEvent>
+#include <QLabel>
+#include <QLayout>
+#include <QMouseEvent>
+#include <QPaintEvent>
+#include <QPainter>
+#include <QPixmap>
+#include <QPushButton>
+#include <QShowEvent>
+#include <QString>
+#include <QStyle>
+#include <QToolTip>
 #include <QtCore/QMap>
-#include <QtGui/QLayout>
-#include <QtGui/QStyle>
-#include <QtGui/QLabel>
-#include <QtGui/QToolTip>
-#include <QtGui/QPixmap>
-#include <QtGui/QFocusEvent>
-#include <QtGui/QPaintEvent>
-#include <QtGui/QGridLayout>
-#include <QtGui/QHideEvent>
-#include <QtGui/QKeyEvent>
-#include <QtGui/QShowEvent>
-#include <QtGui/QMouseEvent>
 
 #if defined(Q_WS_WIN)
 #  if !defined(QT_QTCOLORPICKER_EXPORT) && !defined(QT_QTCOLORPICKER_IMPORT)

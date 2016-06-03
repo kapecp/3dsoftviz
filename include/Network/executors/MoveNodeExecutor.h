@@ -1,6 +1,8 @@
 #ifndef __3DVisualMoveNodeExecutor_H__
 #define __3DVisualMoveNodeExecutor_H__
 
+#include <QByteArray>
+
 #include "Network/executors/AbstractExecutor.h"
 
 namespace Data {

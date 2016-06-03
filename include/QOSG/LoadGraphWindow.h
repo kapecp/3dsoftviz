@@ -9,9 +9,18 @@
 #ifndef QOSG_LOAD_GRAPH_WINDOW_H
 #define QOSG_LOAD_GRAPH_WINDOW_H 1
 
-#include <QDialog>
+#include <QtGlobal>
 #include <QtGui>
+
+#include <QDialog>
+#include <QHeaderView>
 #include <QMap>
+
+#if QT_VERSION >= 0x050000
+	#define SETRESIZEMODE setSectionResizeMode
+#else
+	#define SETRESIZEMODE setResizeMode
+#endif
 
 class QComboBox;
 class QLabel;

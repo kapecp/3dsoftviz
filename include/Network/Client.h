@@ -5,14 +5,16 @@
 #ifndef __3DVisualClient_H__
 #define __3DVisualClient_H__
 
-#include <QTcpSocket>
+#include <QByteArray>
+#include <QDebug>
 #include <QLinkedList>
+#include <QListWidgetItem>
+#include <QTcpSocket>
 
 // TODO: typedef inside class
 #include "Layout/RestrictionRemovalHandler_RestrictionNodesRemover.h"
 
 #include "osg/PositionAttitudeTransform"
-#include "QtGui/QListWidgetItem"
 
 namespace Data {
 class Graph;

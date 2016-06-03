@@ -4,6 +4,11 @@
 #include "MouseParameters.h"
 
 #include <QWidget>
+
+#if QT_VERSION >= 0x050000
+#include <QAbstractNativeEventFilter>
+#endif
+
 #include <vector>
 #include <map>
 
@@ -31,6 +36,9 @@
 */
 
 class Mouse3DInput : public QObject
+#if QT_VERSION >= 0x050000
+					, public QAbstractNativeEventFilter
+#endif
 {
 	Q_OBJECT
 public:
@@ -56,7 +64,12 @@ private:
 
 		bool		InitializeRawInput(HWND hwndTarget);
 
-static	bool		RawInputEventFilter(void* msg, long* result);
+#if QT_VERSION >= 0x050000
+		virtual	bool		nativeEventFilter(const QByteArray &eventType, void *message, long *result) Q_DECL_OVERRIDE;
+#else
+		static	bool		RawInputEventFilter(void* message, long* result);
+#endif
+
 
 		void		OnRawInput(UINT nInputCode, HRAWINPUT hRawInput);
 		UINT		GetRawInputBuffer(PRAWINPUT pData, PUINT pcbSize, UINT cbSizeHeader);

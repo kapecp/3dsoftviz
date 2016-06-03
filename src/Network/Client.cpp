@@ -15,7 +15,6 @@
 
 #include "Viewer/CameraManipulator.h"
 #include "Viewer/CoreGraph.h"
-#include "QDebug"
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wold-style-cast"

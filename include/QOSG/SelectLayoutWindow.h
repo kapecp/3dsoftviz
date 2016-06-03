@@ -6,6 +6,12 @@
 #include <QtGui>
 #include <QMap>
 
+#if QT_VERSION >= 0x050000
+	#define SETRESIZEMODE setSectionResizeMode
+#else
+	#define SETRESIZEMODE setResizeMode
+#endif
+
 class QComboBox;
 class QLabel;
 class QPushButton;
