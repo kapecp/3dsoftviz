@@ -82,7 +82,7 @@ namespace QOSG {
 
 CoreWindow::CoreWindow( QWidget* parent, Vwr::CoreGraph* coreGraph, QApplication* app, Layout::LayoutThread* thread ) : QMainWindow( parent )
 {
-    //inicializacia premennych
+	//inicializacia premennych
 	isPlaying = true;
 	isEBPlaying = false;
 	application = app;
@@ -1199,14 +1199,14 @@ QWidget* CoreWindow::createMoreFeaturesTab( QFrame* line )
 #endif
 
 #ifdef MOUSE3D_FOUND
-    line = createLine();
-    lMore->addRow( line );
-    lMore->addRow( new QLabel( tr( "3D Mouse" ) ) );
-    b_start_mouse3d = new QPushButton();
-    b_start_mouse3d->setText( "Start Mouse" );
-    b_start_mouse3d->setMaximumWidth( 136 );
-    lMore->addRow( b_start_mouse3d );
-    connect( b_start_mouse3d, SIGNAL( clicked() ), this, SLOT( startMouse3d() ) );
+	line = createLine();
+	lMore->addRow( line );
+	lMore->addRow( new QLabel( tr( "3D Mouse" ) ) );
+	b_start_mouse3d = new QPushButton();
+	b_start_mouse3d->setText( "Start Mouse" );
+	b_start_mouse3d->setMaximumWidth( 136 );
+	lMore->addRow( b_start_mouse3d );
+	connect( b_start_mouse3d, SIGNAL( clicked() ), this, SLOT( startMouse3d() ) );
 #endif
 
 
@@ -3981,58 +3981,52 @@ void CoreWindow::closeEvent( QCloseEvent* event )
 
 void QOSG::CoreWindow::OnMove(std::vector<float>& motionData){
 
-    QOSG::ViewerQT* moveViewer = this->GetViewerQt();
+	QOSG::ViewerQT* moveViewer = this->GetViewerQt();
 
-    //right & left
-    if(motionData[0] >  0.003){
-        moveViewer->getEventQueue()->keyPress( osgGA::GUIEventAdapter::KEY_Right );
-        moveViewer->getEventQueue()->keyRelease( osgGA::GUIEventAdapter::KEY_Right );
-    }
-    if(motionData[0] < -0.003){
-        moveViewer->getEventQueue()->keyPress( osgGA::GUIEventAdapter::KEY_Left );
-        moveViewer->getEventQueue()->keyRelease( osgGA::GUIEventAdapter::KEY_Left );
-    }
-    //forward & back
-    if(motionData[1] >  0.003){
-        moveViewer->getEventQueue()->keyPress( osgGA::GUIEventAdapter::KEY_Down );
-        moveViewer->getEventQueue()->keyRelease( osgGA::GUIEventAdapter::KEY_Down );
-    }
-    if(motionData[1] < -0.003){
-        moveViewer->getEventQueue()->keyPress( osgGA::GUIEventAdapter::KEY_Up );
-        moveViewer->getEventQueue()->keyRelease( osgGA::GUIEventAdapter::KEY_Up );
-    }
-    //up & down
-    //keydown has higher threshhold because user is more likely to press it accidentaly due to weight of own hand
-    //keyup has lower threshhold because user is less likely to press it accidentaly due to weight of own hand
-    if(motionData[2] >  0.004){
-        moveViewer->getEventQueue()->keyPress( osgGA::GUIEventAdapter::KEY_Page_Down );
-        moveViewer->getEventQueue()->keyRelease( osgGA::GUIEventAdapter::KEY_Page_Down );
-    }
-    if(motionData[2] < -0.002){
-        moveViewer->getEventQueue()->keyPress( osgGA::GUIEventAdapter::KEY_Page_Up );
-        moveViewer->getEventQueue()->keyRelease( osgGA::GUIEventAdapter::KEY_Page_Up );
-    }
-    //rotations
+	//right & left
+	if(motionData[0] >  0.003){
+		moveViewer->getEventQueue()->keyPress( osgGA::GUIEventAdapter::KEY_Right );
+		moveViewer->getEventQueue()->keyRelease( osgGA::GUIEventAdapter::KEY_Right );
+	}
+	if(motionData[0] < -0.003){
+		moveViewer->getEventQueue()->keyPress( osgGA::GUIEventAdapter::KEY_Left );
+		moveViewer->getEventQueue()->keyRelease( osgGA::GUIEventAdapter::KEY_Left );
+	}
+	//forward & back
+	if(motionData[1] >  0.003){
+		moveViewer->getEventQueue()->keyPress( osgGA::GUIEventAdapter::KEY_Down );
+		moveViewer->getEventQueue()->keyRelease( osgGA::GUIEventAdapter::KEY_Down );
+	}
+	if(motionData[1] < -0.003){
+		moveViewer->getEventQueue()->keyPress( osgGA::GUIEventAdapter::KEY_Up );
+		moveViewer->getEventQueue()->keyRelease( osgGA::GUIEventAdapter::KEY_Up );
+	}
+	//up & down
+	//keydown has higher threshhold because user is more likely to press it accidentaly due to weight of own hand
+	//keyup has lower threshhold because user is less likely to press it accidentaly due to weight of own hand
+	if(motionData[2] >  0.004){
+		moveViewer->getEventQueue()->keyPress( osgGA::GUIEventAdapter::KEY_Page_Down );
+		moveViewer->getEventQueue()->keyRelease( osgGA::GUIEventAdapter::KEY_Page_Down );
+	}
+	if(motionData[2] < -0.002){
+		moveViewer->getEventQueue()->keyPress( osgGA::GUIEventAdapter::KEY_Page_Up );
+		moveViewer->getEventQueue()->keyRelease( osgGA::GUIEventAdapter::KEY_Page_Up );
+	}
+	//rotations
 
-    float a = fabs(motionData[3]), b = fabs(motionData[4]), c = fabs(motionData[5]);
-
-	/*qDebug() <<  "CoreWindow: " <<
-				"a>0.001" << (a > 0.001) <<
-				" b>0.001" << (b > 0.001) <<
-				" c>0.001" << (c > 0.001);*/
-
-    if(a > 0.001){
-         moveViewer->getCameraManipulator()->rotateCamera(0.0, 0.0, 1.0, (-1.5)*motionData[3], 0.0);
+	double a = fabs(motionData[3]), b = fabs(motionData[4]), c = fabs(motionData[5]);
+	if(a > 0.001){
+		 moveViewer->getCameraManipulator()->rotateCamera(0.0, 0.0, 1.0, (float)(-1.5)*(float)motionData[3], 0.0);
 		 //qDebug() << "Moving A" << endl;
-    }
-    if(b > 0.001){
-        moveViewer->getCameraManipulator()->rotateCamera(1.0, 0.00, (1.2)*motionData[4], -1, -1);
+	}
+	if(b > 0.001){
+		moveViewer->getCameraManipulator()->rotateCamera(1.0, 0.00, (1.2)*(double)motionData[4], -1, -1);
 		//qDebug() << "Moving B" << endl;
-    }
-    if(c > 0.001){
-        moveViewer->getCameraManipulator()->rotateCamera(0.0, 0.0, 1.0, 0.0, (-1.5)*motionData[5]);
+	}
+	if(c > 0.001){
+		moveViewer->getCameraManipulator()->rotateCamera(0.0, 0.0, 1.0, 0.0, (float)(-1.5)*motionData[5]);
 		//qDebug() << "Moving C" << endl;
-    }
+	}
 
 }
 
@@ -4086,21 +4080,21 @@ void CoreWindow::startGlovesRecognition()
 void CoreWindow::startMouse3d()
 {
 
-    if ( b_start_mouse3d->text()=="Stop Mouse") {
-        //this->mGloveThr->terminate();
-        //delete( this->mGloveThr );
+	if ( b_start_mouse3d->text()=="Stop Mouse") {
+		//this->mGloveThr->terminate();
+		//delete( this->mGloveThr );
 		delete conn;
 
-        b_start_mouse3d->setText( "Start Mouse" );
-        return;
-    }
+		b_start_mouse3d->setText( "Start Mouse" );
+		return;
+	}
 
 	conn = new Mouse3d::Connector(this);
 	conn->CreateConnection();
 
-    //this->mGloveThr = new Fglove::FgloveThread();
-    //this->b_start_mouse3d->start();
-    b_start_mouse3d->setText( "Stop Mouse" );
+	//this->mGloveThr = new Fglove::FgloveThread();
+	//this->b_start_mouse3d->start();
+	b_start_mouse3d->setText( "Stop Mouse" );
 
 }
 
