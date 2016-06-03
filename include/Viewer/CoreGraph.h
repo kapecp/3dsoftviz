@@ -286,6 +286,10 @@ public:
 	}
 	//*****
 
+	osg::ref_ptr<osg::Group> getHandsGroup(){
+		return handsGroup;
+	}
+
 public slots:
 
 	/**
@@ -492,6 +496,8 @@ private:
 	osg::ref_ptr<osg::Group> graphGroup;
 
 	osg::ref_ptr<osg::Group> manipulatorGroup;
+
+	osg::ref_ptr<osg::Group> handsGroup;
 
 	/**
 		*  osg::ref_ptr graphRotTransf

@@ -6,6 +6,10 @@
 #include "Viewer/CoreGraph.h"
 #include "Layout/LayoutThread.h"
 #include "Layout/FRAlgorithm.h"
+#include <osg/ref_ptr>
+#include <osg/Transform>
+#include <osg/Matrix>
+#include <osg/MatrixTransform>
 
 namespace Leap {
 
@@ -13,12 +17,13 @@ class CustomCameraManipulator : public LeapCameraManipulator
 {
 public:
 	CustomCameraManipulator( Vwr::CameraManipulator* cameraManipulator,Layout::LayoutThread* layout,
-							 Vwr::CoreGraph* coreGraph );
+							 Vwr::CoreGraph* coreGraph, osg::ref_ptr<osg::Group> handsGroup = NULL );
 	~CustomCameraManipulator( void );
 
 	void enableCameraMovement( Movement direction );
 	void disableCameraMovement();
 	void rotateCamera( float py0, float px0, double throwScale, float py1, float px1 );
+	void updateHands(float lx,float ly, float lz, float rx, float ry, float rz);
 
 	//jurik
 	void graphRotateSwipe( int swipeDirection );
@@ -33,6 +38,11 @@ public:
 	Vwr::CameraManipulator* cameraManipulator;
 	Layout::LayoutThread* layout;
 	Vwr::CoreGraph* coreGraph;
+
+	osg::ref_ptr<osg::Group> handsGroup;
+
+	osg::ref_ptr<osg::MatrixTransform> transformLeft;
+	osg::ref_ptr<osg::MatrixTransform> transformRight;
 };
 }
 #endif

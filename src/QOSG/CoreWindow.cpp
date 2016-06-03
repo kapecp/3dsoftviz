@@ -1185,6 +1185,12 @@ QWidget* CoreWindow::createMoreFeaturesTab( QFrame* line )
 	b_start_leap->setMaximumWidth( 136 );
 	lMore->addRow( b_start_leap );
 	connect( b_start_leap, SIGNAL( clicked() ), this, SLOT( startLeap() ) );
+	//leapAR
+	b_start_leapAR = new QPushButton();
+	b_start_leapAR->setText( "Start LeapAR" );
+	b_start_leapAR->setMaximumWidth( 136 );
+	lMore->addRow( b_start_leapAR );
+	connect( b_start_leapAR, SIGNAL( clicked() ), this, SLOT( startLeapAR() ) );
 #endif
 
 #ifdef SPEECHSDK_FOUND
@@ -3526,11 +3532,25 @@ void CoreWindow::startLeap()
 	this->mLeapThr = new Leap::LeapThread( this,
 										   new Leap::CustomCameraManipulator( getCameraManipulator(),
 												   AppCore::Core::getInstance()->getLayoutThread(),
-												   AppCore::Core::getInstance( NULL )->getCoreGraph() ) );
+												   AppCore::Core::getInstance( NULL )->getCoreGraph()) );
 	//CoUninitialize();
 
 	this->mLeapThr->start();
 	b_start_leap->setText( "Stop Leap" );
+}
+void CoreWindow::startLeapAR()
+{
+	if ( mLeapThrAR!=NULL && b_start_leapAR->text()=="Stop LeapAR" ) {
+		delete( this->mLeapThrAR );
+		b_start_leapAR->setText( "Start LeapAR" );
+		this->mLeapThrAR=NULL;
+		return;
+	}
+
+	this->mLeapThrAR = new Leap::LeapThread(this,new Leap::CustomCameraManipulator(getCameraManipulator(), AppCore::Core::getInstance()->getLayoutThread(), AppCore::Core::getInstance( NULL )->getCoreGraph(), coreGraph->getHandsGroup()));
+
+	this->mLeapThrAR->start();
+	b_start_leapAR->setText( "Stop LeapAR" );
 }
 #endif
 

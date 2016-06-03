@@ -5,6 +5,7 @@
 #include "LeapLib/DirectionDetector.h"
 #include "LeapLib/LeapCameraManipulator.h"
 #include "LeapLib/LeapExport.h"
+#include "easylogging++.h"
 
 namespace Leap {
 
@@ -63,6 +64,8 @@ public:
 	 * Stops forward movement of camera.
 	 */
 	void stopMovingForward();
+
+	void updateARHands(Hand leftHand , Hand rightHand);
 
 	/**
 	 * @brief isCameraMoving is variable to decide whether to move camera or rotate graph

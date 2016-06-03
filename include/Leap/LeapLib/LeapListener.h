@@ -22,6 +22,7 @@ public:
 	 * @brief Class that contains Actions that should be executed after a specific gesture
 	 */
 	LeapActions* leapActions;
+	bool arMode;
 
 	LeapListener( LeapCameraManipulator* cameraManipulator );
 	~LeapListener( void );
