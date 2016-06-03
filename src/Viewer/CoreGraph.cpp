@@ -678,6 +678,11 @@ Vwr::CoreGraph::CoreGraph( Data::Graph* graph, osg::ref_ptr<osg::Camera> camera 
 
 	//******
 
+	//leap ar hands group
+	handsGroup = new osg::Group();
+	root->addChild(handsGroup);
+	//
+
 	// backgroung this must be last Node in root !!!  ( because of ortho2d background)
 	// Gloger: disabled skybox- using solid background (see setClearColor in ViewerQT)
 	root->addChild( createBackground() );

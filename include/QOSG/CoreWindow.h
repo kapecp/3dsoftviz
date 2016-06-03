@@ -31,7 +31,7 @@
 
 #ifdef LEAP_FOUND
 #include "LeapLib/LeapThread.h"
-#include "Leap/CustomCameraManipulator.h"
+#include "Leap/CustomLeapManager.h"
 #endif
 
 #include <qtcolorpicker.h>
@@ -96,6 +96,7 @@ private:
 
 #ifdef LEAP_FOUND
 	Leap::LeapThread* mLeapThr;
+	Leap::LeapThread* mLeapThrAR;
 #endif
 
 public slots:
@@ -576,6 +577,7 @@ public slots:
 
 #ifdef LEAP_FOUND
 	void startLeap();
+	void startLeapAR();
 #endif
 
 #ifdef FGLOVE_FOUND
@@ -1106,6 +1108,7 @@ private:
 	 * @brief b_start_leap
 	 */
 	QPushButton* b_start_leap;
+	QPushButton* b_start_leapAR;
 
 	/**
 	 * QPushButton start speech recognition

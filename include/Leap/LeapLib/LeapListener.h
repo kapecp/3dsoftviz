@@ -2,7 +2,7 @@
 #define LEAPLISTENER_H
 #include "Leap.h"
 #include "LeapLib/LeapActions.h"
-#include "LeapLib/LeapCameraManipulator.h"
+#include "LeapLib/LeapManager.h"
 #include "LeapLib/LeapExport.h"
 
 namespace Leap {
@@ -22,8 +22,9 @@ public:
 	 * @brief Class that contains Actions that should be executed after a specific gesture
 	 */
 	LeapActions* leapActions;
+	bool arMode;
 
-	LeapListener( LeapCameraManipulator* cameraManipulator );
+	LeapListener( LeapManager* leapManager );
 	~LeapListener( void );
 
 	void onInit( const Controller& );
