@@ -3,7 +3,7 @@
 #include <Shapes/Cuboid.h>
 #include <Util/ApplicationConfig.h>
 
-namespace Clustering {
+namespace City {
 static const float DEFAULT_RESIDENCE_SECTOR_HEIGHT = 0.2f;
 static const float DEFAULT_BUILDING_SPACING = 0.5f;
 
@@ -96,7 +96,7 @@ void Residence::refresh()
 		b->refresh();
 		attributesBuildingsNode->addChild( b );
 	}
-	attributesBuildingsNode->addChild( new Cuboid( attrRegion.xMax() - attrRegion.xMin(), RESIDENCE_SECTOR_HEIGHT, attrRegion.yMax() - attrRegion.yMin(), osg::Vec3( 0, 0, RESIDENCE_SECTOR_HEIGHT / 2 ) ) );
+    attributesBuildingsNode->addChild( new Shapes::Cuboid( attrRegion.xMax() - attrRegion.xMin(), RESIDENCE_SECTOR_HEIGHT, attrRegion.yMax() - attrRegion.yMin(), osg::Vec3( 0, 0, RESIDENCE_SECTOR_HEIGHT / 2 ) ) );
 
 	osg::BoundingBox getSetRegion = attrRegion;
 	QList<Layout::ElementLayout> getSetLayouts;
@@ -110,7 +110,7 @@ void Residence::refresh()
 		gettersSettersBuildingsNode->addChild( b );
 	}
 	osg::BoundingBox getSetPlane( getSetRegion.xMin(), getSetRegion.yMin(), 0, getSetRegion.xMax(), getSetRegion.yMax(), RESIDENCE_SECTOR_HEIGHT );
-	gettersSettersBuildingsNode->addChild( new Cuboid( getSetPlane ) );
+    gettersSettersBuildingsNode->addChild( new Shapes::Cuboid( getSetPlane ) );
 
 	osg::BoundingBox internalRegion = getSetRegion;
 	QList<Layout::ElementLayout> internalLayouts;
@@ -124,7 +124,7 @@ void Residence::refresh()
 		internalMethodsBuildingsNode->addChild( b );
 	}
 	osg::BoundingBox internalPlane( internalRegion.xMin(), internalRegion.yMin(), 0, internalRegion.xMax(), internalRegion.yMax(), RESIDENCE_SECTOR_HEIGHT );
-	internalMethodsBuildingsNode->addChild( new Cuboid( internalPlane ) );
+    internalMethodsBuildingsNode->addChild( new Shapes::Cuboid( internalPlane ) );
 
 	osg::BoundingBox interfaceRegion = internalRegion;
 	QList<Layout::ElementLayout> interfaceLayouts;
@@ -138,7 +138,7 @@ void Residence::refresh()
 		interfaceMethodsBuildingsNode->addChild( b );
 	}
 	osg::BoundingBox interfacePlane( interfaceRegion.xMin(), interfaceRegion.yMin(), 0, interfaceRegion.xMax(), interfaceRegion.yMax(), RESIDENCE_SECTOR_HEIGHT );
-	interfaceMethodsBuildingsNode->addChild( new Cuboid( interfacePlane ) );
+    interfaceMethodsBuildingsNode->addChild( new Shapes::Cuboid( interfacePlane ) );
 
 	const auto offset = interfaceRegion.center();
 	float residenceSectorOffset = 0;

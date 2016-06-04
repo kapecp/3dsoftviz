@@ -712,9 +712,9 @@ bool PickHandler::doNodePick( osg::NodePath nodePath )
 		}
 	}
 
-	Clustering::Building* b;
+    City::Building* b;
 	for ( unsigned int i = 0; i < nodePath.size(); i++ ) {
-		b = dynamic_cast<Clustering::Building*>( nodePath[i] );
+        b = dynamic_cast<City::Building*>( nodePath[i] );
 		if ( b != NULL ) {
 			break;
 		}

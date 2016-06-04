@@ -3,7 +3,7 @@
 #include <osg/Geometry>
 #include <QVector>
 
-namespace Clustering {
+namespace Shapes {
 osg::Vec3 normalize( const osg::Vec3 v )
 {
 	auto v2 = v;

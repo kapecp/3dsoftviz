@@ -5,7 +5,7 @@
 #include <QList>
 #include <osg/Material>
 
-namespace Clustering {
+namespace City {
 class Building : public osg::PositionAttitudeTransform
 {
 private:

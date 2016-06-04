@@ -9,7 +9,7 @@
 #include "Data/DbNode.h"
 #include <City/Building.h>
 
-namespace Clustering {
+namespace City {
 class Residence;
 }
 
@@ -55,14 +55,14 @@ public:
 	* \brief Gets subgraph for drawing residence of city.
 	* \return osg::ref_ptr of residence osg subgraph
 	*/
-	Clustering::Residence* getResidence();
+    City::Residence* getResidence();
 
 	/**
 	* \fn public getBuilding
 	* \brief Gets subgraph for drawing building of residence.
 	* \return osg::ref_ptr of building osg subgraph
 	*/
-	Clustering::Building* getBuilding();
+    City::Building* getBuilding();
 
 	/**
 	     * \fn public constant targetPosition

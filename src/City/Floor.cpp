@@ -3,7 +3,7 @@
 #include <Shapes/Cuboid.h>
 #include <Util/ApplicationConfig.h>
 
-namespace Clustering {
+namespace City {
 static float DEFAULT_FLOOR_MIN_HEIGHT = 0.15f;
 static float DEFAULT_FLOOR_DIVIDE_BORDER_STICK_UP = 0.1f;
 static float DEFAULT_FLOOR_DIVIDE_BORDER_HEIGHT = 0.05f;
@@ -61,9 +61,9 @@ void Floor::refresh()
 	removeChildren( 0, getNumChildren() );
 
 	if ( divideBorder ) { // ak ma mat rozdelovaci okraj poschodia
-		addChild( new Cuboid( floorDivideBorderBaseSize, FLOOR_DIVIDE_BORDER_HEIGHT, floorDivideBorderBaseSize, osg::Vec3( 0.0f, 0.0f, floorDivideBorderGroundOffset ) ) );
+        addChild( new Shapes::Cuboid( floorDivideBorderBaseSize, FLOOR_DIVIDE_BORDER_HEIGHT, floorDivideBorderBaseSize, osg::Vec3( 0.0f, 0.0f, floorDivideBorderGroundOffset ) ) );
 	}
-	addChild( new Cuboid( baseSize, floorWallHeight, baseSize, osg::Vec3( 0.0f, 0.0f, floorGroundOffset ) ) );
+    addChild( new Shapes::Cuboid( baseSize, floorWallHeight, baseSize, osg::Vec3( 0.0f, 0.0f, floorGroundOffset ) ) );
 }
 
 float Floor::getFloorMinHeight()

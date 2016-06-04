@@ -5,7 +5,7 @@
 #include <Manager/ResourceManager.h>
 #include <osgText/FadeText>
 
-namespace Clustering {
+namespace City {
 static float DEFAULT_BUILDING_DEFAULT_BASE_SIZE = 1.0f;
 static float DEFAULT_BUILDING_DEFAULT_ROOF_HEIGHT = 0.3f;
 static float DEFAULT_BUILDING_CAPTION_CHARACTER_SIZE = 3.0f;
@@ -142,7 +142,7 @@ void Building::refresh()
 	if ( triangleRoof ) { // ma mat strechu
 		auto roof = new osg::PositionAttitudeTransform();
 		roof->setPosition( pos );
-		roof->addChild( new QuadPyramide( getBaseSize(), getBaseSize(), BUILDING_DEFAULT_ROOF_HEIGHT ) );
+        roof->addChild( new Shapes::QuadPyramide( getBaseSize(), getBaseSize(), BUILDING_DEFAULT_ROOF_HEIGHT ) );
 		addChild( roof );
 	}
 

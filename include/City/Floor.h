@@ -2,7 +2,7 @@
 
 #include <osg/PositionAttitudeTransform>
 
-namespace Clustering {
+namespace City {
 class Floor : public osg::PositionAttitudeTransform
 {
 private:

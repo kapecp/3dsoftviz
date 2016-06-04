@@ -24,6 +24,7 @@ struct InvocationGraph {
 	QList<MethodInvocation> interfaceMethods;
 	QList<MethodInvocation> constructors;
 
+    // analyze methods in class and order to groups as constructors, getters/setters, internals, interfaces, ...
 	static InvocationGraph AnalyzeClass( const Class& class1 )
 	{
 		static const QString RETURN_SPACE_STR( "return " );

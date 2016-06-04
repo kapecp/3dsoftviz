@@ -5,7 +5,7 @@
 #include <QtCore/QList>
 #include <functional>
 
-namespace Clustering {
+namespace City {
 class Residence : public osg::PositionAttitudeTransform
 {
 private:

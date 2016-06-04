@@ -3,7 +3,7 @@
 #include <osg/Geometry>
 #include <QVector>
 
-namespace Clustering {
+namespace Shapes {
 Cuboid::Cuboid( float width, float height, float depth, const osg::Vec3& offset )
 	: Cuboid( osg::BoundingBox( -width / 2 + offset.x(), -depth / 2 + offset.y(), -height / 2 + offset.z(), width / 2 + offset.x(), depth / 2 + offset.y(), height / 2 + offset.z() ) )
 {

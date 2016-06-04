@@ -2,7 +2,7 @@
 
 #include <osg/Geode>
 
-namespace Clustering {
+namespace Shapes {
 class Cuboid : public osg::Geode
 {
 public:

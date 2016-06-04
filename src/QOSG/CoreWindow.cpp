@@ -1420,9 +1420,9 @@ void CoreWindow::showDialogLoadJavaProject()
 static const float MIN_MAX_BUILDING_HEIGHT_RATIO = 10;
 
 struct BuildingInfo {
-	Clustering::Building* building;
+    City::Building* building;
 	uint loc;
-	BuildingInfo( Clustering::Building* building, uint loc )
+    BuildingInfo( City::Building* building, uint loc )
 	{
 		this->building = building;
 		this->loc = loc;
@@ -1488,39 +1488,60 @@ QString getMethodInfo( const Importer::Parsing::Method& method )
 	return info;
 }
 
+uint GetCountOfClasses(const Importer::Parsing::SoftTree& softTree)
+{
+    uint classCount = 0;
+    foreach(auto n, softTree.namespaces)
+    {
+        classCount += n.classes.count();
+    }
+    return classCount;
+}
+
 void CoreWindow::loadJavaProjectAndShow( const QString& projectDir )
 {
-	planes_Vertigo.clear();
-	numberOfPlanes = 0;
-	layout->pauseAllAlg();
-	coreGraph->setNodesFreezed( true );
-	coreGraph->setInterpolationDenied( false );
+    AppCore::Core::getInstance()->messageWindows->showProgressBar();
 
+    // parse java software
 	Importer::Parsing::JavaParser javaParser;
 	Importer::Parsing::SoftTree softTree;
 	QString errorMessage;
 
 	if ( !javaParser.Parse( projectDir, softTree, errorMessage ) ) {
+        AppCore::Core::getInstance()->messageWindows->closeProgressBar();
 		QMessageBox::critical( this, "Java parse error", errorMessage, QMessageBox::Close );
 		return;
 	}
+
+    // necessary for progressbar
+    const float progressCoef = 100.0f / (float)GetCountOfClasses(softTree);
+    uint progressClassCounter = 0;
+    uint lastProgressValue = 0;
 
 	auto manager = Manager::GraphManager::getInstance();
 	auto resMgr = Manager::ResourceManager::getInstance();
 
 	auto graph = manager->createNewGraph( "SoftwareGraph" ); // zaroven nastavi graf ako aktivny
 
+    planes_Vertigo.clear();
+    numberOfPlanes = 0;
+    layout->pauseAllAlg();
+    coreGraph->setNodesFreezed( true );
+    coreGraph->setInterpolationDenied( false );
+
 	auto nodeType = graph->addType( Data::GraphLayout::NESTED_NODE_TYPE );
 	auto edgeType = graph->addType( Data::GraphLayout::NESTED_EDGE_TYPE );
 
+    // materials for buildings
 	auto white = resMgr->getMaterial( osg::Vec3( 1.0f, 1.0f, 1.0f ) );
 	auto yellow = resMgr->getMaterial( osg::Vec3( 1.0f, 1.0f, 0.0f ) );
 	auto red = resMgr->getMaterial( osg::Vec3( 0.941f, 0.502f, 0.502f ) );
 	auto green = resMgr->getMaterial( osg::Vec3( 0.565f, 0.933f, 0.565f ) );
 	auto orange = resMgr->getMaterial( osg::Vec3( 1.000f, 0.647f, 0.000f ) );
 
-	auto rootNode = graph->addNode( "", nodeType );
-	auto javaRootNode = new Clustering::Building();
+    // create java root node
+    auto rootNode = graph->addNode( "JAVA", nodeType );
+    auto javaRootNode = new City::Building();
 	javaRootNode->setBaseSize( 4 );
 	javaRootNode->setHeight( 5 );
 	javaRootNode->setLieOnGround( false );
@@ -1532,10 +1553,11 @@ void CoreWindow::loadJavaProjectAndShow( const QString& projectDir )
 	javaRootNode->refresh();
 	rootNode->setResidence( javaRootNode );
 
-	std::list<BuildingInfo> buildingsInfos;
-	for ( const auto& namespace_ : softTree.namespaces ) {
+    std::list<BuildingInfo> buildingsInfos; // necessary for building height optimization
+    for ( const auto& namespace_ : softTree.namespaces ) { // process all classes in namespaces
+        // create node for namespace
 		auto namespaceNode = graph->addNode( namespace_.name, nodeType );
-		auto javaNamespaceNode = new Clustering::Building();
+        auto javaNamespaceNode = new City::Building();
 		javaNamespaceNode->setBaseSize( 4 );
 		javaNamespaceNode->setHeight( 4 );
 		javaNamespaceNode->setLieOnGround( false );
@@ -1549,14 +1571,15 @@ void CoreWindow::loadJavaProjectAndShow( const QString& projectDir )
 
 		auto rootNamespaceEdge = graph->addEdge( QString(), rootNode, namespaceNode, edgeType, true );
 
+        // process namespace classes
 		for ( const auto& class_ : namespace_.classes ) {
 			auto classNode = graph->addNode( class_.name, nodeType );
 			auto edgeNamespaceClass = graph->addEdge( QString(), namespaceNode, classNode, edgeType, true );
-			auto residence = new Clustering::Residence();
+            auto residence = new City::Residence();
 			classNode->setResidence( residence );
 			auto ig = Importer::Parsing::InvocationGraph::AnalyzeClass( class_ );
 			for ( const auto& attribute : class_.attributes ) {
-				auto b = new Clustering::Building( attribute.name, getAttributeInfo( attribute ) );
+                auto b = new City::Building( attribute.name, getAttributeInfo( attribute ) );
 				b->setBaseSize( 1.0f );
 				b->setHeight( 0.2f );
 				b->setStateSet( new osg::StateSet() );
@@ -1566,11 +1589,11 @@ void CoreWindow::loadJavaProjectAndShow( const QString& projectDir )
 
 			for ( const auto& iggs : ig.gettersSetters ) {
 				auto& getterSetterMethod = class_.methods[iggs.callingMethodIndex];
-				QList<Clustering::Floor*> floors;
+                QList<City::Floor*> floors;
 				for ( const auto& param : getterSetterMethod.parameters ) {
-					floors << new Clustering::Floor();
+                    floors << new City::Floor();
 				}
-				auto b = new Clustering::Building( getterSetterMethod.name, getMethodInfo( getterSetterMethod ), floors );
+                auto b = new City::Building( getterSetterMethod.name, getMethodInfo( getterSetterMethod ), floors );
 				b->setBaseSize( 1.0 );
 				b->setTriangleRoof( getterSetterMethod.HasResult() );
 				b->setStateSet( new osg::StateSet() );
@@ -1581,11 +1604,11 @@ void CoreWindow::loadJavaProjectAndShow( const QString& projectDir )
 
 			for ( const auto& igin : ig.internalMethods ) {
 				auto& internalMethod = class_.methods[igin.callingMethodIndex];
-				QList<Clustering::Floor*> floors;
+                QList<City::Floor*> floors;
 				for ( const auto& param : internalMethod.parameters ) {
-					floors << new Clustering::Floor();
+                    floors << new City::Floor();
 				}
-				auto b = new Clustering::Building( internalMethod.name, getMethodInfo( internalMethod ), floors );
+                auto b = new City::Building( internalMethod.name, getMethodInfo( internalMethod ), floors );
 				b->setBaseSize( 1.0 );
 				b->setTriangleRoof( internalMethod.HasResult() );
 				b->setStateSet( new osg::StateSet() );
@@ -1596,11 +1619,11 @@ void CoreWindow::loadJavaProjectAndShow( const QString& projectDir )
 
 			for ( const auto& igif : ig.interfaceMethods ) {
 				auto& interfaceMethod = class_.methods[igif.callingMethodIndex];
-				QList<Clustering::Floor*> floors;
+                QList<City::Floor*> floors;
 				for ( const auto& param : interfaceMethod.parameters ) {
-					floors << new Clustering::Floor();
+                    floors << new City::Floor();
 				}
-				auto b = new Clustering::Building( interfaceMethod.name, getMethodInfo( interfaceMethod ), floors );
+                auto b = new City::Building( interfaceMethod.name, getMethodInfo( interfaceMethod ), floors );
 				b->setBaseSize( 1.0 );
 				b->setTriangleRoof( interfaceMethod.HasResult() );
 				b->setStateSet( new osg::StateSet() );
@@ -1611,11 +1634,11 @@ void CoreWindow::loadJavaProjectAndShow( const QString& projectDir )
 
 			for ( const auto& igc : ig.constructors ) {
 				auto& constructorMethod = class_.methods[igc.callingMethodIndex];
-				QList<Clustering::Floor*> floors;
+                QList<City::Floor*> floors;
 				for ( const auto& param : constructorMethod.parameters ) {
-					floors << new Clustering::Floor();
+                    floors << new City::Floor();
 				}
-				auto b = new Clustering::Building( constructorMethod.name, getMethodInfo( constructorMethod ), floors );
+                auto b = new City::Building( constructorMethod.name, getMethodInfo( constructorMethod ), floors );
 				b->setBaseSize( 1.0 );
 				b->setTriangleRoof( constructorMethod.HasResult() );
 				b->setStateSet( new osg::StateSet() );
@@ -1625,9 +1648,18 @@ void CoreWindow::loadJavaProjectAndShow( const QString& projectDir )
 			}
 
 			residence->refresh();
+
+            progressClassCounter++;
+            const uint progressValue = (uint)roundf((float)progressClassCounter * progressCoef);
+            if (progressValue != lastProgressValue)
+            {
+                AppCore::Core::getInstance()->messageWindows->setProgressBarValue(progressValue);
+                lastProgressValue = progressValue;
+            }
 		}
 	}
 
+    // building height optimization
 	auto minMaxLocIt = std::minmax_element( buildingsInfos.begin(), buildingsInfos.end(), []( const BuildingInfo& a, const BuildingInfo& b ) {
 		return a.loc < b.loc;
 	} );
@@ -1645,6 +1677,8 @@ void CoreWindow::loadJavaProjectAndShow( const QString& projectDir )
 	}
 
 	viewerWidget->getCameraManipulator()->home();
+
+    AppCore::Core::getInstance()->messageWindows->closeProgressBar();
 
 	// robime zakladnu proceduru pre restartovanie layoutu
 	AppCore::Core::getInstance()->restartLayout();
