@@ -1406,8 +1406,9 @@ void CoreWindow::loadSpecialMatrixFromFile()
 		fileName = filenames.at( 0 );
 	}
 
-	if ( fileName == NULL )
+	if ( fileName == NULL ) {
 		return;
+	}
 
 	Data::Graph* matrixGraph = Manager::GraphManager::getInstance()->getActiveGraph();
 	if ( matrixGraph != NULL ) {
@@ -1418,18 +1419,18 @@ void CoreWindow::loadSpecialMatrixFromFile()
 	SpecialMatrix::MatrixViewer* matrixViewer = new SpecialMatrix::MatrixViewer( matrixGraph, fileName );
 
 	//nastavit spravne tlacitko play a vyber hran
-	play->setEnabled(false);
+	play->setEnabled( false );
 	isPlaying = true;
 	this->playPause();
 	coreGraph->setNodesFreezed( false );	//rozhadze graf - nespustit start layout
-	edgeTypeComboBox->setEnabled(false);
+	edgeTypeComboBox->setEnabled( false );
 
 	AppCore::Core::getInstance()->restartLayoutForMatrix();
 
-	//reprezentacie na default		
+	//reprezentacie na default
 	//coreGraph->setEdgeVisual(Data::Edge::INDEX_CURVE2);
-	coreGraph->setEdgeVisualForType(Data::Edge::INDEX_LINE, "axisEdgeType" );
-	coreGraph->setEdgeVisualForType(Data::Edge::INDEX_CURVE2, "iEdgeType" );
+	coreGraph->setEdgeVisualForType( Data::Edge::INDEX_LINE, "axisEdgeType" );
+	coreGraph->setEdgeVisualForType( Data::Edge::INDEX_CURVE2, "iEdgeType" );
 	//axisEdgeType, iEdgeType
 	//axisNodeType, eNodeType, iFullNodeType, iHalfNodeType, nNodeType
 }

@@ -2,8 +2,8 @@
 
 SpecialMatrix::FileParser::FileParser( QString fileName, Data::Graph* matrixGraph, SpecialMatrix::NodeConnections* connections )
 {
-	createSettings(matrixGraph);
-	parseFile(matrixGraph, fileName, connections);
+	createSettings( matrixGraph );
+	parseFile( matrixGraph, fileName, connections );
 }
 
 SpecialMatrix::FileParser::~FileParser()
@@ -16,55 +16,69 @@ SpecialMatrix::FileParser::~FileParser()
 }
 
 void SpecialMatrix::FileParser::parseFile( Data::Graph* matrixGraph, QString fileName, SpecialMatrix::NodeConnections* connections )
-{	
+{
 	static int nodeCounter = 1;
-	QFile file(fileName);
-	if(!file.open(QIODevice::ReadOnly)) {
-		QMessageBox::information(0, "error", file.errorString());
+	QFile file( fileName );
+	if ( !file.open( QIODevice::ReadOnly ) ) {
+		QMessageBox::information( 0, "error", file.errorString() );
 	}
 
-	QTextStream in(&file);
+	QTextStream in( &file );
 
-	while(!in.atEnd()) {
+	while ( !in.atEnd() ) {
 		QString line = in.readLine();
-		QStringList fields = line.split('\t');
+		QStringList fields = line.split( '\t' );
 		//qDebug() << "line: "<< fields.at(0) << ", " << fields.at(1) << ", " << fields.at(2);
 
-		if((fields.at(0).contains(QRegExp("[Ee]")) && fields.at(1).contains(QRegExp("[Ii]")) && fields.at(2).contains(QRegExp("[Nn]"))))
-			matrixGraph = addNormalNodesToGraph(matrixGraph, fields, connections, nodeCounter);
-		else if((fields.at(0).contains(QRegExp("[Nn]")) && fields.at(1).contains(QRegExp("[Ii]")) && fields.at(2).contains(QRegExp("[Ee]"))))
-			matrixGraph = addNormalNodesToGraph(matrixGraph, fields, connections, nodeCounter);
+		if ( ( fields.at( 0 ).contains( QRegExp( "[Ee]" ) ) && fields.at( 1 ).contains( QRegExp( "[Ii]" ) ) && fields.at( 2 ).contains( QRegExp( "[Nn]" ) ) ) ) {
+			matrixGraph = addNormalNodesToGraph( matrixGraph, fields, connections, nodeCounter );
+		}
+		else if ( ( fields.at( 0 ).contains( QRegExp( "[Nn]" ) ) && fields.at( 1 ).contains( QRegExp( "[Ii]" ) ) && fields.at( 2 ).contains( QRegExp( "[Ee]" ) ) ) ) {
+			matrixGraph = addNormalNodesToGraph( matrixGraph, fields, connections, nodeCounter );
+		}
 
-		else if((fields.at(0).contains(QRegExp("[Ee]")) && fields.at(1).contains(QRegExp("[Ee]")) && fields.at(2).contains(QRegExp("[Ii]"))))
-			matrixGraph = addSpecialCase1NodesToGraph(matrixGraph, fields, connections, nodeCounter);
-		else if((fields.at(0).contains(QRegExp("[Ee]")) && fields.at(1).contains(QRegExp("[Ii]")) && fields.at(2).contains(QRegExp("[Ee]"))))
-			matrixGraph = addSpecialCase1NodesToGraph(matrixGraph, fields, connections, nodeCounter);
-		else if((fields.at(0).contains(QRegExp("[Ii]")) && fields.at(1).contains(QRegExp("[Ee]")) && fields.at(2).contains(QRegExp("[Ee]"))))
-			matrixGraph = addSpecialCase1NodesToGraph(matrixGraph, fields, connections, nodeCounter);
-		else if((fields.at(0).contains(QRegExp("[Nn]")) && fields.at(1).contains(QRegExp("[Nn]")) && fields.at(2).contains(QRegExp("[Ii]"))))
-			matrixGraph = addSpecialCase1NodesToGraph(matrixGraph, fields, connections, nodeCounter);
-		else if((fields.at(0).contains(QRegExp("[Nn]")) && fields.at(1).contains(QRegExp("[Ii]")) && fields.at(2).contains(QRegExp("[Nn]"))))
-			matrixGraph = addSpecialCase1NodesToGraph(matrixGraph, fields, connections, nodeCounter);
-		else if((fields.at(0).contains(QRegExp("[Ii]")) && fields.at(1).contains(QRegExp("[Nn]")) && fields.at(2).contains(QRegExp("[Nn]"))))
-			matrixGraph = addSpecialCase1NodesToGraph(matrixGraph, fields, connections, nodeCounter);
+		else if ( ( fields.at( 0 ).contains( QRegExp( "[Ee]" ) ) && fields.at( 1 ).contains( QRegExp( "[Ee]" ) ) && fields.at( 2 ).contains( QRegExp( "[Ii]" ) ) ) ) {
+			matrixGraph = addSpecialCase1NodesToGraph( matrixGraph, fields, connections, nodeCounter );
+		}
+		else if ( ( fields.at( 0 ).contains( QRegExp( "[Ee]" ) ) && fields.at( 1 ).contains( QRegExp( "[Ii]" ) ) && fields.at( 2 ).contains( QRegExp( "[Ee]" ) ) ) ) {
+			matrixGraph = addSpecialCase1NodesToGraph( matrixGraph, fields, connections, nodeCounter );
+		}
+		else if ( ( fields.at( 0 ).contains( QRegExp( "[Ii]" ) ) && fields.at( 1 ).contains( QRegExp( "[Ee]" ) ) && fields.at( 2 ).contains( QRegExp( "[Ee]" ) ) ) ) {
+			matrixGraph = addSpecialCase1NodesToGraph( matrixGraph, fields, connections, nodeCounter );
+		}
+		else if ( ( fields.at( 0 ).contains( QRegExp( "[Nn]" ) ) && fields.at( 1 ).contains( QRegExp( "[Nn]" ) ) && fields.at( 2 ).contains( QRegExp( "[Ii]" ) ) ) ) {
+			matrixGraph = addSpecialCase1NodesToGraph( matrixGraph, fields, connections, nodeCounter );
+		}
+		else if ( ( fields.at( 0 ).contains( QRegExp( "[Nn]" ) ) && fields.at( 1 ).contains( QRegExp( "[Ii]" ) ) && fields.at( 2 ).contains( QRegExp( "[Nn]" ) ) ) ) {
+			matrixGraph = addSpecialCase1NodesToGraph( matrixGraph, fields, connections, nodeCounter );
+		}
+		else if ( ( fields.at( 0 ).contains( QRegExp( "[Ii]" ) ) && fields.at( 1 ).contains( QRegExp( "[Nn]" ) ) && fields.at( 2 ).contains( QRegExp( "[Nn]" ) ) ) ) {
+			matrixGraph = addSpecialCase1NodesToGraph( matrixGraph, fields, connections, nodeCounter );
+		}
 
-		else if((fields.at(0).contains(QRegExp("[Ee]")) && fields.at(1).contains(QRegExp("[Ii]")) && fields.at(2).contains(QRegExp("[Ii]"))))
-			matrixGraph = addSpecialCase2NodesToGraph(matrixGraph, fields, connections, nodeCounter);
-		else if((fields.at(0).contains(QRegExp("[Ii]")) && fields.at(1).contains(QRegExp("[Ee]")) && fields.at(2).contains(QRegExp("[Ii]"))))
-			matrixGraph = addSpecialCase2NodesToGraph(matrixGraph, fields, connections, nodeCounter);
-		else if((fields.at(0).contains(QRegExp("[Ii]")) && fields.at(1).contains(QRegExp("[Ii]")) && fields.at(2).contains(QRegExp("[Ee]"))))
-			matrixGraph = addSpecialCase2NodesToGraph(matrixGraph, fields, connections, nodeCounter);
-		else if((fields.at(0).contains(QRegExp("[Nn]")) && fields.at(1).contains(QRegExp("[Ii]")) && fields.at(2).contains(QRegExp("[Ii]"))))
-			matrixGraph = addSpecialCase2NodesToGraph(matrixGraph, fields, connections, nodeCounter);
-		else if((fields.at(0).contains(QRegExp("[Ii]")) && fields.at(1).contains(QRegExp("[Nn]")) && fields.at(2).contains(QRegExp("[Nn]"))))
-			matrixGraph = addSpecialCase2NodesToGraph(matrixGraph, fields, connections, nodeCounter);
-		else if((fields.at(0).contains(QRegExp("[Ii]")) && fields.at(1).contains(QRegExp("[Ii]")) && fields.at(2).contains(QRegExp("[Nn]"))))
-			matrixGraph = addSpecialCase2NodesToGraph(matrixGraph, fields, connections, nodeCounter);
+		else if ( ( fields.at( 0 ).contains( QRegExp( "[Ee]" ) ) && fields.at( 1 ).contains( QRegExp( "[Ii]" ) ) && fields.at( 2 ).contains( QRegExp( "[Ii]" ) ) ) ) {
+			matrixGraph = addSpecialCase2NodesToGraph( matrixGraph, fields, connections, nodeCounter );
+		}
+		else if ( ( fields.at( 0 ).contains( QRegExp( "[Ii]" ) ) && fields.at( 1 ).contains( QRegExp( "[Ee]" ) ) && fields.at( 2 ).contains( QRegExp( "[Ii]" ) ) ) ) {
+			matrixGraph = addSpecialCase2NodesToGraph( matrixGraph, fields, connections, nodeCounter );
+		}
+		else if ( ( fields.at( 0 ).contains( QRegExp( "[Ii]" ) ) && fields.at( 1 ).contains( QRegExp( "[Ii]" ) ) && fields.at( 2 ).contains( QRegExp( "[Ee]" ) ) ) ) {
+			matrixGraph = addSpecialCase2NodesToGraph( matrixGraph, fields, connections, nodeCounter );
+		}
+		else if ( ( fields.at( 0 ).contains( QRegExp( "[Nn]" ) ) && fields.at( 1 ).contains( QRegExp( "[Ii]" ) ) && fields.at( 2 ).contains( QRegExp( "[Ii]" ) ) ) ) {
+			matrixGraph = addSpecialCase2NodesToGraph( matrixGraph, fields, connections, nodeCounter );
+		}
+		else if ( ( fields.at( 0 ).contains( QRegExp( "[Ii]" ) ) && fields.at( 1 ).contains( QRegExp( "[Nn]" ) ) && fields.at( 2 ).contains( QRegExp( "[Nn]" ) ) ) ) {
+			matrixGraph = addSpecialCase2NodesToGraph( matrixGraph, fields, connections, nodeCounter );
+		}
+		else if ( ( fields.at( 0 ).contains( QRegExp( "[Ii]" ) ) && fields.at( 1 ).contains( QRegExp( "[Ii]" ) ) && fields.at( 2 ).contains( QRegExp( "[Nn]" ) ) ) ) {
+			matrixGraph = addSpecialCase2NodesToGraph( matrixGraph, fields, connections, nodeCounter );
+		}
 	}
 	file.close();
 }
 
-Data::Graph* SpecialMatrix::FileParser::addNormalNodesToGraph( Data::Graph* matrixGraph, QStringList fields, SpecialMatrix::NodeConnections* connections, int &nodeCounter )
+Data::Graph* SpecialMatrix::FileParser::addNormalNodesToGraph( Data::Graph* matrixGraph, QStringList fields, SpecialMatrix::NodeConnections* connections, int& nodeCounter )
 {
 	//cases: E - I - N, N - I - E
 	int separator = Util::ApplicationConfig::get()->getValue( "Viewer.Display.MatrixNodeSeparator" ).toInt();
@@ -80,121 +94,126 @@ Data::Graph* SpecialMatrix::FileParser::addNormalNodesToGraph( Data::Graph* matr
 
 	//=====================start node (E||N)=====================
 	ParsedNode startNode;
-	startNode.nodeName = fields.at(0);
-	startNode.nodeId = qHash(startNode.nodeName);
+	startNode.nodeName = fields.at( 0 );
+	startNode.nodeId = qHash( startNode.nodeName );
 
-	if(startNode.nodeName.contains(QRegExp("[Nn]"))) {
-		if(!xAxisNodes->contains(startNode.nodeId)) {
+	if ( startNode.nodeName.contains( QRegExp( "[Nn]" ) ) ) {
+		if ( !xAxisNodes->contains( startNode.nodeId ) ) {
 			//insert node into xAxisNodes list only if missing
-			connections->setNodePositionsArray(++nodeCounter);
-			xAxisNodes->push_back(startNode.nodeId);
-			startNode.nodePos = xAxisNodes->indexOf(startNode.nodeId)+1;
-			nodePos = osg::Vec3f(static_cast<float>(startNode.nodePos*separator), 0.0f, 0.0f);
+			connections->setNodePositionsArray( ++nodeCounter );
+			xAxisNodes->push_back( startNode.nodeId );
+			startNode.nodePos = xAxisNodes->indexOf( startNode.nodeId )+1;
+			nodePos = osg::Vec3f( static_cast<float>( startNode.nodePos*separator ), 0.0f, 0.0f );
 			matrixGraph->addNode( startNode.nodeId, startNode.nodeName, nNodeType, nodePos );
-			connections->setNodePositionsArrayField(startNode.nodePos, 0, startNode.nodeId);
+			connections->setNodePositionsArrayField( startNode.nodePos, 0, startNode.nodeId );
 		}
 		//get list from Qmap where key is xFrstNodeId and insert I node into connectedNodes list
-		tempList = connectedNodes->value(startNode.nodeId);
-		if(tempList == nullptr)
+		tempList = connectedNodes->value( startNode.nodeId );
+		if ( tempList == nullptr ) {
 			tempList = new QList<qlonglong>;
-		tempList->push_back(qHash(fields.at(1)));
-		connectedNodes->insert(startNode.nodeId, tempList);
+		}
+		tempList->push_back( qHash( fields.at( 1 ) ) );
+		connectedNodes->insert( startNode.nodeId, tempList );
 	}
 
-	else if(startNode.nodeName.contains(QRegExp("[Ee]"))) {
-		if(!yAxisNodes->contains(startNode.nodeId)) {
+	else if ( startNode.nodeName.contains( QRegExp( "[Ee]" ) ) ) {
+		if ( !yAxisNodes->contains( startNode.nodeId ) ) {
 			//insert node into yAxisNodes list only if missing
-			connections->setNodePositionsArray(++nodeCounter);
-			yAxisNodes->push_back(startNode.nodeId);
-			startNode.nodePos = yAxisNodes->indexOf(startNode.nodeId)+1;
-			nodePos = osg::Vec3f(0.0f, static_cast<float>(startNode.nodePos*separator), 0.0f);
+			connections->setNodePositionsArray( ++nodeCounter );
+			yAxisNodes->push_back( startNode.nodeId );
+			startNode.nodePos = yAxisNodes->indexOf( startNode.nodeId )+1;
+			nodePos = osg::Vec3f( 0.0f, static_cast<float>( startNode.nodePos*separator ), 0.0f );
 			matrixGraph->addNode( startNode.nodeId, startNode.nodeName, eNodeType, nodePos );
-			connections->setNodePositionsArrayField(0, startNode.nodePos, startNode.nodeId);
+			connections->setNodePositionsArrayField( 0, startNode.nodePos, startNode.nodeId );
 		}
 		//get list from Qmap where key is xFrstNodeId and insert I node into connectedNodes list
-		tempList = connectedNodes->value(startNode.nodeId);
-		if(tempList == nullptr)
+		tempList = connectedNodes->value( startNode.nodeId );
+		if ( tempList == nullptr ) {
 			tempList = new QList<qlonglong>;
-		tempList->push_back(qHash(fields.at(1)));
-		connectedNodes->insert(startNode.nodeId, tempList);
+		}
+		tempList->push_back( qHash( fields.at( 1 ) ) );
+		connectedNodes->insert( startNode.nodeId, tempList );
 	}
 
 	//=====================end node (E||N)=====================
 	ParsedNode endNode;
-	endNode.nodeName = fields.at(2);
-	endNode.nodeId = qHash(endNode.nodeName);
+	endNode.nodeName = fields.at( 2 );
+	endNode.nodeId = qHash( endNode.nodeName );
 
-	if(endNode.nodeName.contains(QRegExp("[Nn]"))) {
-		if(!xAxisNodes->contains(endNode.nodeId)) {
+	if ( endNode.nodeName.contains( QRegExp( "[Nn]" ) ) ) {
+		if ( !xAxisNodes->contains( endNode.nodeId ) ) {
 			//insert node into xAxisNodes list only if missing
-			connections->setNodePositionsArray(++nodeCounter);
-			xAxisNodes->push_back(endNode.nodeId);
-			endNode.nodePos = xAxisNodes->indexOf(endNode.nodeId)+1;
-			nodePos = osg::Vec3f(static_cast<float>(endNode.nodePos*separator), 0.0f, 0.0f);
+			connections->setNodePositionsArray( ++nodeCounter );
+			xAxisNodes->push_back( endNode.nodeId );
+			endNode.nodePos = xAxisNodes->indexOf( endNode.nodeId )+1;
+			nodePos = osg::Vec3f( static_cast<float>( endNode.nodePos*separator ), 0.0f, 0.0f );
 			matrixGraph->addNode( endNode.nodeId, endNode.nodeName, nNodeType, nodePos );
-			connections->setNodePositionsArrayField(endNode.nodePos, 0, endNode.nodeId);
+			connections->setNodePositionsArrayField( endNode.nodePos, 0, endNode.nodeId );
 		}
 		//get list from Qmap where key is xFrstNodeId and insert I node into connectedNodes list
-		tempList = connectedNodes->value(endNode.nodeId);
-		if(tempList == nullptr)
+		tempList = connectedNodes->value( endNode.nodeId );
+		if ( tempList == nullptr ) {
 			tempList = new QList<qlonglong>;
-		tempList->push_back(qHash(fields.at(1)));
-		connectedNodes->insert(endNode.nodeId, tempList);
+		}
+		tempList->push_back( qHash( fields.at( 1 ) ) );
+		connectedNodes->insert( endNode.nodeId, tempList );
 	}
 
-	else if(endNode.nodeName.contains(QRegExp("[Ee]"))) {
-		if(!yAxisNodes->contains(endNode.nodeId)) {
+	else if ( endNode.nodeName.contains( QRegExp( "[Ee]" ) ) ) {
+		if ( !yAxisNodes->contains( endNode.nodeId ) ) {
 			//insert node into yAxisNodes list only if missing
-			connections->setNodePositionsArray(++nodeCounter);
-			yAxisNodes->push_back(endNode.nodeId);
-			endNode.nodePos = yAxisNodes->indexOf(endNode.nodeId)+1;
-			nodePos = osg::Vec3f(0.0f, static_cast<float>(endNode.nodePos*separator), 0.0f);
+			connections->setNodePositionsArray( ++nodeCounter );
+			yAxisNodes->push_back( endNode.nodeId );
+			endNode.nodePos = yAxisNodes->indexOf( endNode.nodeId )+1;
+			nodePos = osg::Vec3f( 0.0f, static_cast<float>( endNode.nodePos*separator ), 0.0f );
 			matrixGraph->addNode( endNode.nodeId, endNode.nodeName, eNodeType, nodePos );
-			connections->setNodePositionsArrayField(0, endNode.nodePos, endNode.nodeId);
+			connections->setNodePositionsArrayField( 0, endNode.nodePos, endNode.nodeId );
 		}
 		//get list from Qmap where key is xFrstNodeId and insert I node into connectedNodes list
-		tempList = connectedNodes->value(endNode.nodeId);
-		if(tempList == nullptr)
+		tempList = connectedNodes->value( endNode.nodeId );
+		if ( tempList == nullptr ) {
 			tempList = new QList<qlonglong>;
-		tempList->push_back(qHash(fields.at(1)));
-		connectedNodes->insert(endNode.nodeId, tempList);
+		}
+		tempList->push_back( qHash( fields.at( 1 ) ) );
+		connectedNodes->insert( endNode.nodeId, tempList );
 	}
 
 	//=====================middle node (I)=====================
 	ParsedNode midNode;
-	midNode.nodeName = fields.at(1);
-	midNode.nodeId = qHash(midNode.nodeName);
+	midNode.nodeName = fields.at( 1 );
+	midNode.nodeId = qHash( midNode.nodeName );
 
-	if(!iNodes->contains(midNode.nodeId)) {
+	if ( !iNodes->contains( midNode.nodeId ) ) {
 		//insert node into iNodes list only if missing
-		iNodes->push_back(midNode.nodeId);
+		iNodes->push_back( midNode.nodeId );
 		osg::Vec2i pos;
-		if(startNode.nodeName.contains(QRegExp("[Nn]"))) {
-			pos.x() = xAxisNodes->indexOf(startNode.nodeId)+1;
-			pos.y() = yAxisNodes->indexOf(endNode.nodeId)+1;
+		if ( startNode.nodeName.contains( QRegExp( "[Nn]" ) ) ) {
+			pos.x() = xAxisNodes->indexOf( startNode.nodeId )+1;
+			pos.y() = yAxisNodes->indexOf( endNode.nodeId )+1;
 
-		} else {
-			pos.x() = xAxisNodes->indexOf(endNode.nodeId)+1;
-			pos.y() = yAxisNodes->indexOf(startNode.nodeId)+1;
+		}
+		else {
+			pos.x() = xAxisNodes->indexOf( endNode.nodeId )+1;
+			pos.y() = yAxisNodes->indexOf( startNode.nodeId )+1;
 		}
 
 		//CHECK AVAIBILITY - if there is a node, move it
-		foundNodeId = connections->getNodePositionsArrayField(pos.x(), pos.y());
-		if(foundNodeId) {
-			foundNode = matrixGraph->findNodeById(foundNodeId);
-			osg::Vec2i foundNodePos = getAvailablePosition(connections, pos.x(), pos.y());
-			foundNode->setTargetPosition(osg::Vec3f(static_cast<float>(foundNodePos.x()*separator), static_cast<float>(foundNodePos.y()*separator), 0.0f));
-			connections->setNodePositionsArrayField(foundNodePos.x(), foundNodePos.y(), foundNodeId);
+		foundNodeId = connections->getNodePositionsArrayField( pos.x(), pos.y() );
+		if ( foundNodeId ) {
+			foundNode = matrixGraph->findNodeById( foundNodeId );
+			osg::Vec2i foundNodePos = getAvailablePosition( connections, pos.x(), pos.y() );
+			foundNode->setTargetPosition( osg::Vec3f( static_cast<float>( foundNodePos.x()*separator ), static_cast<float>( foundNodePos.y()*separator ), 0.0f ) );
+			connections->setNodePositionsArrayField( foundNodePos.x(), foundNodePos.y(), foundNodeId );
 		}
 
-		nodePos = osg::Vec3f( osg::Vec3f(static_cast<float>(pos.x()*separator), static_cast<float>(pos.y()*separator), 0.0f) );
+		nodePos = osg::Vec3f( osg::Vec3f( static_cast<float>( pos.x()*separator ), static_cast<float>( pos.y()*separator ), 0.0f ) );
 		matrixGraph->addNode( midNode.nodeId, midNode.nodeName, iFullNodeType, nodePos );
-		connections->setNodePositionsArrayField(pos.x(), pos.y(), midNode.nodeId);
+		connections->setNodePositionsArrayField( pos.x(), pos.y(), midNode.nodeId );
 	}
 	return matrixGraph;
 }
 
-Data::Graph* SpecialMatrix::FileParser::addSpecialCase1NodesToGraph( Data::Graph* matrixGraph, QStringList fields, SpecialMatrix::NodeConnections* connections, int &nodeCounter )
+Data::Graph* SpecialMatrix::FileParser::addSpecialCase1NodesToGraph( Data::Graph* matrixGraph, QStringList fields, SpecialMatrix::NodeConnections* connections, int& nodeCounter )
 {
 	//cases: E - I - E, E - E - I, I - E - E || N - I - N, N - N - I, I - N - N
 	int separator = Util::ApplicationConfig::get()->getValue( "Viewer.Display.MatrixNodeSeparator" ).toInt();
@@ -209,198 +228,221 @@ Data::Graph* SpecialMatrix::FileParser::addSpecialCase1NodesToGraph( Data::Graph
 
 	//=====================start node (E||N||I)=====================
 	ParsedNode startNode;
-	startNode.nodeName = fields.at(0);
-	startNode.nodeId = qHash(startNode.nodeName);
+	startNode.nodeName = fields.at( 0 );
+	startNode.nodeId = qHash( startNode.nodeName );
 
-	if(startNode.nodeName.contains(QRegExp("[Nn]"))) {
-		if(!xAxisNodes->contains(startNode.nodeId)) {
+	if ( startNode.nodeName.contains( QRegExp( "[Nn]" ) ) ) {
+		if ( !xAxisNodes->contains( startNode.nodeId ) ) {
 			//insert node into xAxisNodes list only if missing
-			connections->setNodePositionsArray(++nodeCounter);
-			xAxisNodes->push_back(startNode.nodeId);
-			startNode.nodePos = xAxisNodes->indexOf(startNode.nodeId)+1;
-			nodePos = osg::Vec3f(static_cast<float>(startNode.nodePos*separator), 0.0f, 0.0f);
+			connections->setNodePositionsArray( ++nodeCounter );
+			xAxisNodes->push_back( startNode.nodeId );
+			startNode.nodePos = xAxisNodes->indexOf( startNode.nodeId )+1;
+			nodePos = osg::Vec3f( static_cast<float>( startNode.nodePos*separator ), 0.0f, 0.0f );
 			startGraphNode = matrixGraph->addNode( startNode.nodeId, startNode.nodeName, nNodeType, nodePos );
-			connections->setNodePositionsArrayField(startNode.nodePos, 0, startNode.nodeId);
-		} else
-			startGraphNode = matrixGraph->findNodeById(startNode.nodeId);
+			connections->setNodePositionsArrayField( startNode.nodePos, 0, startNode.nodeId );
+		}
+		else {
+			startGraphNode = matrixGraph->findNodeById( startNode.nodeId );
+		}
 	}
 
-	else if(startNode.nodeName.contains(QRegExp("[Ee]"))) {
-		if(!yAxisNodes->contains(startNode.nodeId)) {
+	else if ( startNode.nodeName.contains( QRegExp( "[Ee]" ) ) ) {
+		if ( !yAxisNodes->contains( startNode.nodeId ) ) {
 			//insert node into yAxisNodes list only if missing
-			connections->setNodePositionsArray(++nodeCounter);
-			yAxisNodes->push_back(startNode.nodeId);
-			startNode.nodePos = yAxisNodes->indexOf(startNode.nodeId)+1;
-			nodePos = osg::Vec3f(0.0f, static_cast<float>(startNode.nodePos*separator), 0.0f);
+			connections->setNodePositionsArray( ++nodeCounter );
+			yAxisNodes->push_back( startNode.nodeId );
+			startNode.nodePos = yAxisNodes->indexOf( startNode.nodeId )+1;
+			nodePos = osg::Vec3f( 0.0f, static_cast<float>( startNode.nodePos*separator ), 0.0f );
 			startGraphNode = matrixGraph->addNode( startNode.nodeId, startNode.nodeName, eNodeType, nodePos );
-			connections->setNodePositionsArrayField(0, startNode.nodePos, startNode.nodeId);
-		} else
-			startGraphNode = matrixGraph->findNodeById(startNode.nodeId);
+			connections->setNodePositionsArrayField( 0, startNode.nodePos, startNode.nodeId );
+		}
+		else {
+			startGraphNode = matrixGraph->findNodeById( startNode.nodeId );
+		}
 	}
 
 	//=====================mid node (E||N||I)=====================
 	ParsedNode midNode;
-	midNode.nodeName = fields.at(1);
-	midNode.nodeId = qHash(midNode.nodeName);
+	midNode.nodeName = fields.at( 1 );
+	midNode.nodeId = qHash( midNode.nodeName );
 
-	if(midNode.nodeName.contains(QRegExp("[Nn]"))) {
-		if(!xAxisNodes->contains(midNode.nodeId)) {
+	if ( midNode.nodeName.contains( QRegExp( "[Nn]" ) ) ) {
+		if ( !xAxisNodes->contains( midNode.nodeId ) ) {
 			//insert node into xAxisNodes list only if missing
-			connections->setNodePositionsArray(++nodeCounter);
-			xAxisNodes->push_back(midNode.nodeId);
-			midNode.nodePos = xAxisNodes->indexOf(midNode.nodeId)+1;
-			nodePos = osg::Vec3f(static_cast<float>(midNode.nodePos*separator), 0.0f, 0.0f);
+			connections->setNodePositionsArray( ++nodeCounter );
+			xAxisNodes->push_back( midNode.nodeId );
+			midNode.nodePos = xAxisNodes->indexOf( midNode.nodeId )+1;
+			nodePos = osg::Vec3f( static_cast<float>( midNode.nodePos*separator ), 0.0f, 0.0f );
 			midGraphNode = matrixGraph->addNode( midNode.nodeId, midNode.nodeName, nNodeType, nodePos );
-			connections->setNodePositionsArrayField(midNode.nodePos, 0, midNode.nodeId);
-		} else
-			midGraphNode = matrixGraph->findNodeById(midNode.nodeId);
+			connections->setNodePositionsArrayField( midNode.nodePos, 0, midNode.nodeId );
+		}
+		else {
+			midGraphNode = matrixGraph->findNodeById( midNode.nodeId );
+		}
 	}
 
-	else if(midNode.nodeName.contains(QRegExp("[Ee]"))) {
-		if(!yAxisNodes->contains(midNode.nodeId)) {
+	else if ( midNode.nodeName.contains( QRegExp( "[Ee]" ) ) ) {
+		if ( !yAxisNodes->contains( midNode.nodeId ) ) {
 			//insert node into yAxisNodes list only if missing
-			connections->setNodePositionsArray(++nodeCounter);
-			yAxisNodes->push_back(midNode.nodeId);
-			midNode.nodePos = yAxisNodes->indexOf(midNode.nodeId)+1;
-			nodePos = osg::Vec3f(0.0f, static_cast<float>(midNode.nodePos*separator), 0.0f);
+			connections->setNodePositionsArray( ++nodeCounter );
+			yAxisNodes->push_back( midNode.nodeId );
+			midNode.nodePos = yAxisNodes->indexOf( midNode.nodeId )+1;
+			nodePos = osg::Vec3f( 0.0f, static_cast<float>( midNode.nodePos*separator ), 0.0f );
 			midGraphNode = matrixGraph->addNode( midNode.nodeId, midNode.nodeName, eNodeType, nodePos );
-			connections->setNodePositionsArrayField(0, midNode.nodePos, midNode.nodeId);
-		} else
-			midGraphNode = matrixGraph->findNodeById(midNode.nodeId);
+			connections->setNodePositionsArrayField( 0, midNode.nodePos, midNode.nodeId );
+		}
+		else {
+			midGraphNode = matrixGraph->findNodeById( midNode.nodeId );
+		}
 	}
 
 	//=====================end node (E||N||I)=====================
 	ParsedNode endNode;
-	endNode.nodeName = fields.at(2);
-	endNode.nodeId = qHash(endNode.nodeName);
+	endNode.nodeName = fields.at( 2 );
+	endNode.nodeId = qHash( endNode.nodeName );
 
-	if(endNode.nodeName.contains(QRegExp("[Nn]"))) {
-		if(!xAxisNodes->contains(endNode.nodeId)) {
+	if ( endNode.nodeName.contains( QRegExp( "[Nn]" ) ) ) {
+		if ( !xAxisNodes->contains( endNode.nodeId ) ) {
 			//insert node into xAxisNodes list only if missing
-			connections->setNodePositionsArray(++nodeCounter);
-			xAxisNodes->push_back(endNode.nodeId);
-			endNode.nodePos = xAxisNodes->indexOf(endNode.nodeId)+1;
-			nodePos = osg::Vec3f(static_cast<float>(endNode.nodePos*separator), 0.0f, 0.0f);
+			connections->setNodePositionsArray( ++nodeCounter );
+			xAxisNodes->push_back( endNode.nodeId );
+			endNode.nodePos = xAxisNodes->indexOf( endNode.nodeId )+1;
+			nodePos = osg::Vec3f( static_cast<float>( endNode.nodePos*separator ), 0.0f, 0.0f );
 			endGraphNode = matrixGraph->addNode( endNode.nodeId, endNode.nodeName, nNodeType, nodePos );
-			connections->setNodePositionsArrayField(endNode.nodePos, 0, endNode.nodeId);
-		} else
-			endGraphNode = matrixGraph->findNodeById(endNode.nodeId);
+			connections->setNodePositionsArrayField( endNode.nodePos, 0, endNode.nodeId );
+		}
+		else {
+			endGraphNode = matrixGraph->findNodeById( endNode.nodeId );
+		}
 	}
 
-	else if(endNode.nodeName.contains(QRegExp("[Ee]"))) {
-		if(!yAxisNodes->contains(endNode.nodeId)) {
+	else if ( endNode.nodeName.contains( QRegExp( "[Ee]" ) ) ) {
+		if ( !yAxisNodes->contains( endNode.nodeId ) ) {
 			//insert node into yAxisNodes list only if missing
-			connections->setNodePositionsArray(++nodeCounter);
-			yAxisNodes->push_back(endNode.nodeId);
-			endNode.nodePos = yAxisNodes->indexOf(endNode.nodeId)+1;
-			nodePos = osg::Vec3f(0.0f, static_cast<float>(endNode.nodePos*separator), 0.0f);
+			connections->setNodePositionsArray( ++nodeCounter );
+			yAxisNodes->push_back( endNode.nodeId );
+			endNode.nodePos = yAxisNodes->indexOf( endNode.nodeId )+1;
+			nodePos = osg::Vec3f( 0.0f, static_cast<float>( endNode.nodePos*separator ), 0.0f );
 			endGraphNode = matrixGraph->addNode( endNode.nodeId, endNode.nodeName, eNodeType, nodePos );
-			connections->setNodePositionsArrayField(0, endNode.nodePos, endNode.nodeId);
-		} else
-			endGraphNode = matrixGraph->findNodeById(endNode.nodeId);
+			connections->setNodePositionsArrayField( 0, endNode.nodePos, endNode.nodeId );
+		}
+		else {
+			endGraphNode = matrixGraph->findNodeById( endNode.nodeId );
+		}
 	}
 
 	//=====================calculate I node=====================
-	if(startNode.nodeName.contains(QRegExp("[Ii]"))) {
-		if(!iNodes->contains(startNode.nodeId)) {
+	if ( startNode.nodeName.contains( QRegExp( "[Ii]" ) ) ) {
+		if ( !iNodes->contains( startNode.nodeId ) ) {
 			//insert node into iNodes list only if missing
-			connections->setNodePositionsArray(++nodeCounter);
-			iNodes->push_back(startNode.nodeId);
+			connections->setNodePositionsArray( ++nodeCounter );
+			iNodes->push_back( startNode.nodeId );
 			osg::Vec2i pos;
-			if(midNode.nodeName.contains(QRegExp("[Nn]"))) {
+			if ( midNode.nodeName.contains( QRegExp( "[Nn]" ) ) ) {
 				//case: I - N - N
-				int midPos = xAxisNodes->indexOf(midNode.nodeId)+1;
-				int endPos = xAxisNodes->indexOf(endNode.nodeId)+1;
-				int delta = abs(midPos - endPos);
-				pos.x() = (midPos > endPos) ? (midPos - delta) : (endPos - delta);
+				int midPos = xAxisNodes->indexOf( midNode.nodeId )+1;
+				int endPos = xAxisNodes->indexOf( endNode.nodeId )+1;
+				int delta = abs( midPos - endPos );
+				pos.x() = ( midPos > endPos ) ? ( midPos - delta ) : ( endPos - delta );
 				pos.y() = pos.x();
-			} else {
+			}
+			else {
 				//case: I - E - E
-				int midPos = yAxisNodes->indexOf(midNode.nodeId)+1;
-				int endPos = yAxisNodes->indexOf(endNode.nodeId)+1;
-				int delta = abs(midPos - endPos);
-				pos.x() = (midPos > endPos) ? (midPos - delta) : (endPos - delta);
+				int midPos = yAxisNodes->indexOf( midNode.nodeId )+1;
+				int endPos = yAxisNodes->indexOf( endNode.nodeId )+1;
+				int delta = abs( midPos - endPos );
+				pos.x() = ( midPos > endPos ) ? ( midPos - delta ) : ( endPos - delta );
 				pos.y() = pos.x();
 			}
-			pos = getAvailablePosition(connections, pos.x(), pos.y());
-			nodePos = osg::Vec3f( osg::Vec3f(static_cast<float>(pos.x()*separator), static_cast<float>(pos.y()*separator), 0.0f) );
+			pos = getAvailablePosition( connections, pos.x(), pos.y() );
+			nodePos = osg::Vec3f( osg::Vec3f( static_cast<float>( pos.x()*separator ), static_cast<float>( pos.y()*separator ), 0.0f ) );
 			startGraphNode = matrixGraph->addNode( startNode.nodeId, startNode.nodeName, iHalfNodeType, nodePos );
-			connections->setNodePositionsArrayField(pos.x(), pos.y(), startNode.nodeId);
-		} else
-			startGraphNode = matrixGraph->findNodeById(startNode.nodeId);
+			connections->setNodePositionsArrayField( pos.x(), pos.y(), startNode.nodeId );
+		}
+		else {
+			startGraphNode = matrixGraph->findNodeById( startNode.nodeId );
+		}
 
-	} else if(midNode.nodeName.contains(QRegExp("[Ii]"))) {
-		if(!iNodes->contains(midNode.nodeId)) {
+	}
+	else if ( midNode.nodeName.contains( QRegExp( "[Ii]" ) ) ) {
+		if ( !iNodes->contains( midNode.nodeId ) ) {
 			//insert node into iNodes list only if missing
-			connections->setNodePositionsArray(++nodeCounter);
-			iNodes->push_back(midNode.nodeId);
+			connections->setNodePositionsArray( ++nodeCounter );
+			iNodes->push_back( midNode.nodeId );
 			osg::Vec2i pos;
-			if(startNode.nodeName.contains(QRegExp("[Nn]"))) {
+			if ( startNode.nodeName.contains( QRegExp( "[Nn]" ) ) ) {
 				//case: N - I - N
-				int startPos = xAxisNodes->indexOf(startNode.nodeId)+1;
-				int endPos = xAxisNodes->indexOf(endNode.nodeId)+1;
-				int delta = abs(startPos - endPos);
-				pos.x() = (startPos > endPos) ? (startPos - delta) : (endPos - delta);
+				int startPos = xAxisNodes->indexOf( startNode.nodeId )+1;
+				int endPos = xAxisNodes->indexOf( endNode.nodeId )+1;
+				int delta = abs( startPos - endPos );
+				pos.x() = ( startPos > endPos ) ? ( startPos - delta ) : ( endPos - delta );
 				pos.y() = pos.x();
-			} else {
+			}
+			else {
 				//case: E - I - E
-				int startPos = yAxisNodes->indexOf(startNode.nodeId)+1;
-				int endPos = yAxisNodes->indexOf(endNode.nodeId)+1;
-				int delta = abs(startPos - endPos);
-				pos.x() = (startPos > endPos) ? (startPos - delta) : (endPos - delta);
+				int startPos = yAxisNodes->indexOf( startNode.nodeId )+1;
+				int endPos = yAxisNodes->indexOf( endNode.nodeId )+1;
+				int delta = abs( startPos - endPos );
+				pos.x() = ( startPos > endPos ) ? ( startPos - delta ) : ( endPos - delta );
 				pos.y() = pos.x();
 			}
-			pos = getAvailablePosition(connections, pos.x(), pos.y());
-			nodePos = osg::Vec3f( osg::Vec3f(static_cast<float>(pos.x()*separator), static_cast<float>(pos.y()*separator), 0.0f) );
+			pos = getAvailablePosition( connections, pos.x(), pos.y() );
+			nodePos = osg::Vec3f( osg::Vec3f( static_cast<float>( pos.x()*separator ), static_cast<float>( pos.y()*separator ), 0.0f ) );
 			midGraphNode = matrixGraph->addNode( midNode.nodeId, midNode.nodeName, iHalfNodeType, nodePos );
-			connections->setNodePositionsArrayField(pos.x(), pos.y(), midNode.nodeId);
-		} else
-			midGraphNode = matrixGraph->findNodeById(midNode.nodeId);
+			connections->setNodePositionsArrayField( pos.x(), pos.y(), midNode.nodeId );
+		}
+		else {
+			midGraphNode = matrixGraph->findNodeById( midNode.nodeId );
+		}
 
-	} else if(endNode.nodeName.contains(QRegExp("[Ii]"))) {
-		if(!iNodes->contains(endNode.nodeId)) {
+	}
+	else if ( endNode.nodeName.contains( QRegExp( "[Ii]" ) ) ) {
+		if ( !iNodes->contains( endNode.nodeId ) ) {
 			//insert node into iNodes list only if missing
-			connections->setNodePositionsArray(++nodeCounter);
-			iNodes->push_back(endNode.nodeId);
+			connections->setNodePositionsArray( ++nodeCounter );
+			iNodes->push_back( endNode.nodeId );
 			osg::Vec2i pos;
-			if(startNode.nodeName.contains(QRegExp("[Nn]"))) {
+			if ( startNode.nodeName.contains( QRegExp( "[Nn]" ) ) ) {
 				//case: N - N - I
-				int startPos = xAxisNodes->indexOf(startNode.nodeId)+1;
-				int midPos = xAxisNodes->indexOf(midNode.nodeId)+1;
-				int delta = abs(startPos - midPos);
-				pos.x() = (startPos > midPos) ? (startPos - delta) : (midPos - delta);
-				pos.y() = pos.x();
-			} else {
-				//case: E - E - I
-				int startPos = yAxisNodes->indexOf(startNode.nodeId)+1;
-				int midPos = yAxisNodes->indexOf(midNode.nodeId)+1;
-				int delta = abs(startPos - midPos);
-				pos.x() = (startPos > midPos) ? (startPos - delta) : (midPos - delta);
+				int startPos = xAxisNodes->indexOf( startNode.nodeId )+1;
+				int midPos = xAxisNodes->indexOf( midNode.nodeId )+1;
+				int delta = abs( startPos - midPos );
+				pos.x() = ( startPos > midPos ) ? ( startPos - delta ) : ( midPos - delta );
 				pos.y() = pos.x();
 			}
-			pos = getAvailablePosition(connections, pos.x(), pos.y());
-			nodePos = osg::Vec3f( osg::Vec3f(static_cast<float>(pos.x()*separator), static_cast<float>(pos.y()*separator), 0.0f) );
+			else {
+				//case: E - E - I
+				int startPos = yAxisNodes->indexOf( startNode.nodeId )+1;
+				int midPos = yAxisNodes->indexOf( midNode.nodeId )+1;
+				int delta = abs( startPos - midPos );
+				pos.x() = ( startPos > midPos ) ? ( startPos - delta ) : ( midPos - delta );
+				pos.y() = pos.x();
+			}
+			pos = getAvailablePosition( connections, pos.x(), pos.y() );
+			nodePos = osg::Vec3f( osg::Vec3f( static_cast<float>( pos.x()*separator ), static_cast<float>( pos.y()*separator ), 0.0f ) );
 			endGraphNode = matrixGraph->addNode( endNode.nodeId, endNode.nodeName, iHalfNodeType, nodePos );
-			connections->setNodePositionsArrayField(pos.x(), pos.y(), endNode.nodeId);
-		} else
-			endGraphNode = matrixGraph->findNodeById(endNode.nodeId);
+			connections->setNodePositionsArrayField( pos.x(), pos.y(), endNode.nodeId );
+		}
+		else {
+			endGraphNode = matrixGraph->findNodeById( endNode.nodeId );
+		}
 	}
 
 	//same in every condition
 	edgeName = midNode.nodeName;
-	edgeName.append(startNode.nodeName);
-	edgeId = qHash(edgeName);
-	matrixGraph->addEdge(edgeId, edgeName, midGraphNode, startGraphNode, iEdgeType, false);
+	edgeName.append( startNode.nodeName );
+	edgeId = qHash( edgeName );
+	matrixGraph->addEdge( edgeId, edgeName, midGraphNode, startGraphNode, iEdgeType, false );
 
 	edgeName = midNode.nodeName;
-	edgeName.append(endNode.nodeName);
-	edgeId = qHash(edgeName);
-	matrixGraph->addEdge(edgeId, edgeName, midGraphNode, endGraphNode, iEdgeType, false);
+	edgeName.append( endNode.nodeName );
+	edgeId = qHash( edgeName );
+	matrixGraph->addEdge( edgeId, edgeName, midGraphNode, endGraphNode, iEdgeType, false );
 
 	return matrixGraph;
 }
 
-Data::Graph* SpecialMatrix::FileParser::addSpecialCase2NodesToGraph( Data::Graph* matrixGraph, QStringList fields, SpecialMatrix::NodeConnections* connections, int &nodeCounter )
+Data::Graph* SpecialMatrix::FileParser::addSpecialCase2NodesToGraph( Data::Graph* matrixGraph, QStringList fields, SpecialMatrix::NodeConnections* connections, int& nodeCounter )
 {
 	//cases: E - I - I, I - E - I, I - I - E || N - I - I, I - N - I, I - I - N
 	int separator = Util::ApplicationConfig::get()->getValue( "Viewer.Display.MatrixNodeSeparator" ).toInt();
@@ -415,232 +457,264 @@ Data::Graph* SpecialMatrix::FileParser::addSpecialCase2NodesToGraph( Data::Graph
 
 	//=====================start node (E||N||I)=====================
 	ParsedNode startNode;
-	startNode.nodeName = fields.at(0);
-	startNode.nodeId = qHash(startNode.nodeName);
+	startNode.nodeName = fields.at( 0 );
+	startNode.nodeId = qHash( startNode.nodeName );
 
-	if(startNode.nodeName.contains(QRegExp("[Nn]"))) {
-		if(!xAxisNodes->contains(startNode.nodeId)) {
+	if ( startNode.nodeName.contains( QRegExp( "[Nn]" ) ) ) {
+		if ( !xAxisNodes->contains( startNode.nodeId ) ) {
 			//insert node into xAxisNodes list only if missing
-			connections->setNodePositionsArray(++nodeCounter);
-			xAxisNodes->push_back(startNode.nodeId);
-			startNode.nodePos = xAxisNodes->indexOf(startNode.nodeId)+1;
-			nodePos = osg::Vec3f(static_cast<float>(startNode.nodePos*separator), 0.0f, 0.0f);
+			connections->setNodePositionsArray( ++nodeCounter );
+			xAxisNodes->push_back( startNode.nodeId );
+			startNode.nodePos = xAxisNodes->indexOf( startNode.nodeId )+1;
+			nodePos = osg::Vec3f( static_cast<float>( startNode.nodePos*separator ), 0.0f, 0.0f );
 			startGraphNode = matrixGraph->addNode( startNode.nodeId, startNode.nodeName, nNodeType, nodePos );
-			connections->setNodePositionsArrayField(startNode.nodePos, 0, startNode.nodeId);
-		} else
-			startGraphNode = matrixGraph->findNodeById(startNode.nodeId);
+			connections->setNodePositionsArrayField( startNode.nodePos, 0, startNode.nodeId );
+		}
+		else {
+			startGraphNode = matrixGraph->findNodeById( startNode.nodeId );
+		}
 	}
 
-	else if(startNode.nodeName.contains(QRegExp("[Ee]"))) {
-		if(!yAxisNodes->contains(startNode.nodeId)) {
+	else if ( startNode.nodeName.contains( QRegExp( "[Ee]" ) ) ) {
+		if ( !yAxisNodes->contains( startNode.nodeId ) ) {
 			//insert node into yAxisNodes list only if missing
-			connections->setNodePositionsArray(++nodeCounter);
-			yAxisNodes->push_back(startNode.nodeId);
-			startNode.nodePos = yAxisNodes->indexOf(startNode.nodeId)+1;
-			nodePos = osg::Vec3f(0.0f, static_cast<float>(startNode.nodePos*separator), 0.0f);
+			connections->setNodePositionsArray( ++nodeCounter );
+			yAxisNodes->push_back( startNode.nodeId );
+			startNode.nodePos = yAxisNodes->indexOf( startNode.nodeId )+1;
+			nodePos = osg::Vec3f( 0.0f, static_cast<float>( startNode.nodePos*separator ), 0.0f );
 			startGraphNode = matrixGraph->addNode( startNode.nodeId, startNode.nodeName, eNodeType, nodePos );
-			connections->setNodePositionsArrayField(0, startNode.nodePos, startNode.nodeId);
-		} else
-			startGraphNode = matrixGraph->findNodeById(startNode.nodeId);
+			connections->setNodePositionsArrayField( 0, startNode.nodePos, startNode.nodeId );
+		}
+		else {
+			startGraphNode = matrixGraph->findNodeById( startNode.nodeId );
+		}
 	}
 
 	//=====================mid node (E||N||I)=====================
 	ParsedNode midNode;
-	midNode.nodeName = fields.at(1);
-	midNode.nodeId = qHash(midNode.nodeName);
+	midNode.nodeName = fields.at( 1 );
+	midNode.nodeId = qHash( midNode.nodeName );
 
-	if(midNode.nodeName.contains(QRegExp("[Nn]"))) {
-		if(!xAxisNodes->contains(midNode.nodeId)) {
+	if ( midNode.nodeName.contains( QRegExp( "[Nn]" ) ) ) {
+		if ( !xAxisNodes->contains( midNode.nodeId ) ) {
 			//insert node into xAxisNodes list only if missing
-			connections->setNodePositionsArray(++nodeCounter);
-			xAxisNodes->push_back(midNode.nodeId);
-			midNode.nodePos = xAxisNodes->indexOf(midNode.nodeId)+1;
-			nodePos = osg::Vec3f(static_cast<float>(midNode.nodePos*separator), 0.0f, 0.0f);
+			connections->setNodePositionsArray( ++nodeCounter );
+			xAxisNodes->push_back( midNode.nodeId );
+			midNode.nodePos = xAxisNodes->indexOf( midNode.nodeId )+1;
+			nodePos = osg::Vec3f( static_cast<float>( midNode.nodePos*separator ), 0.0f, 0.0f );
 			midGraphNode = matrixGraph->addNode( midNode.nodeId, midNode.nodeName, nNodeType, nodePos );
-			connections->setNodePositionsArrayField(midNode.nodePos, 0, midNode.nodeId);
-		} else
-			midGraphNode = matrixGraph->findNodeById(midNode.nodeId);
+			connections->setNodePositionsArrayField( midNode.nodePos, 0, midNode.nodeId );
+		}
+		else {
+			midGraphNode = matrixGraph->findNodeById( midNode.nodeId );
+		}
 	}
 
-	else if(midNode.nodeName.contains(QRegExp("[Ee]"))) {
-		if(!yAxisNodes->contains(midNode.nodeId)) {
+	else if ( midNode.nodeName.contains( QRegExp( "[Ee]" ) ) ) {
+		if ( !yAxisNodes->contains( midNode.nodeId ) ) {
 			//insert node into yAxisNodes list only if missing
-			connections->setNodePositionsArray(++nodeCounter);
-			yAxisNodes->push_back(midNode.nodeId);
-			midNode.nodePos = yAxisNodes->indexOf(midNode.nodeId)+1;
-			nodePos = osg::Vec3f(0.0f, static_cast<float>(midNode.nodePos*separator), 0.0f);
+			connections->setNodePositionsArray( ++nodeCounter );
+			yAxisNodes->push_back( midNode.nodeId );
+			midNode.nodePos = yAxisNodes->indexOf( midNode.nodeId )+1;
+			nodePos = osg::Vec3f( 0.0f, static_cast<float>( midNode.nodePos*separator ), 0.0f );
 			midGraphNode = matrixGraph->addNode( midNode.nodeId, midNode.nodeName, eNodeType, nodePos );
-			connections->setNodePositionsArrayField(0, midNode.nodePos, midNode.nodeId);
-		} else
-			midGraphNode = matrixGraph->findNodeById(midNode.nodeId);
+			connections->setNodePositionsArrayField( 0, midNode.nodePos, midNode.nodeId );
+		}
+		else {
+			midGraphNode = matrixGraph->findNodeById( midNode.nodeId );
+		}
 	}
 
 	//=====================end node (E||N||I)=====================
 	ParsedNode endNode;
-	endNode.nodeName = fields.at(2);
-	endNode.nodeId = qHash(endNode.nodeName);
+	endNode.nodeName = fields.at( 2 );
+	endNode.nodeId = qHash( endNode.nodeName );
 
-	if(endNode.nodeName.contains(QRegExp("[Nn]"))) {
-		if(!xAxisNodes->contains(endNode.nodeId)) {
+	if ( endNode.nodeName.contains( QRegExp( "[Nn]" ) ) ) {
+		if ( !xAxisNodes->contains( endNode.nodeId ) ) {
 			//insert node into xAxisNodes list only if missing
-			connections->setNodePositionsArray(++nodeCounter);
-			xAxisNodes->push_back(endNode.nodeId);
-			endNode.nodePos = xAxisNodes->indexOf(endNode.nodeId)+1;
-			nodePos = osg::Vec3f(static_cast<float>(endNode.nodePos*separator), 0.0f, 0.0f);
+			connections->setNodePositionsArray( ++nodeCounter );
+			xAxisNodes->push_back( endNode.nodeId );
+			endNode.nodePos = xAxisNodes->indexOf( endNode.nodeId )+1;
+			nodePos = osg::Vec3f( static_cast<float>( endNode.nodePos*separator ), 0.0f, 0.0f );
 			endGraphNode = matrixGraph->addNode( endNode.nodeId, endNode.nodeName, nNodeType, nodePos );
-			connections->setNodePositionsArrayField(endNode.nodePos, 0, endNode.nodeId);
-		} else
-			endGraphNode = matrixGraph->findNodeById(endNode.nodeId);
+			connections->setNodePositionsArrayField( endNode.nodePos, 0, endNode.nodeId );
+		}
+		else {
+			endGraphNode = matrixGraph->findNodeById( endNode.nodeId );
+		}
 	}
 
-	else if(endNode.nodeName.contains(QRegExp("[Ee]"))) {
-		if(!yAxisNodes->contains(endNode.nodeId)) {
+	else if ( endNode.nodeName.contains( QRegExp( "[Ee]" ) ) ) {
+		if ( !yAxisNodes->contains( endNode.nodeId ) ) {
 			//insert node into yAxisNodes list only if missing
-			connections->setNodePositionsArray(++nodeCounter);
-			yAxisNodes->push_back(endNode.nodeId);
-			endNode.nodePos = yAxisNodes->indexOf(endNode.nodeId)+1;
-			nodePos = osg::Vec3f(0.0f, static_cast<float>(endNode.nodePos*separator), 0.0f);
+			connections->setNodePositionsArray( ++nodeCounter );
+			yAxisNodes->push_back( endNode.nodeId );
+			endNode.nodePos = yAxisNodes->indexOf( endNode.nodeId )+1;
+			nodePos = osg::Vec3f( 0.0f, static_cast<float>( endNode.nodePos*separator ), 0.0f );
 			endGraphNode = matrixGraph->addNode( endNode.nodeId, endNode.nodeName, eNodeType, nodePos );
-			connections->setNodePositionsArrayField(0, endNode.nodePos, endNode.nodeId);
-		} else
-			endGraphNode = matrixGraph->findNodeById(endNode.nodeId);
+			connections->setNodePositionsArrayField( 0, endNode.nodePos, endNode.nodeId );
+		}
+		else {
+			endGraphNode = matrixGraph->findNodeById( endNode.nodeId );
+		}
 	}
 
 	//=====================calculate I node=====================
-	if(startNode.nodeName.contains(QRegExp("[EeNn]"))) {
+	if ( startNode.nodeName.contains( QRegExp( "[EeNn]" ) ) ) {
 		//case: E/N - I - I
 		osg::Vec2i pos;
-		if(startNode.nodeName.contains(QRegExp("[Nn]"))) {
+		if ( startNode.nodeName.contains( QRegExp( "[Nn]" ) ) ) {
 			//case: N - I - I
-			pos.x() = (xAxisNodes->indexOf(startNode.nodeId)+1);
+			pos.x() = ( xAxisNodes->indexOf( startNode.nodeId )+1 );
 			pos.y() = pos.x();
-		} else {
+		}
+		else {
 			//case: E - I - I
-			pos.y() = (yAxisNodes->indexOf(startNode.nodeId)+1);
+			pos.y() = ( yAxisNodes->indexOf( startNode.nodeId )+1 );
 			pos.x() = pos.y();
 		}
 
-		if(!iNodes->contains(endNode.nodeId)) {
+		if ( !iNodes->contains( endNode.nodeId ) ) {
 			//insert node into iNodes list only if missing
-			connections->setNodePositionsArray(++nodeCounter);
-			iNodes->push_back(endNode.nodeId);
+			connections->setNodePositionsArray( ++nodeCounter );
+			iNodes->push_back( endNode.nodeId );
 
-			pos = getAvailablePosition(connections, pos.x(), pos.y());
-			nodePos = osg::Vec3f( osg::Vec3f(static_cast<float>(pos.x()*separator), static_cast<float>(pos.y()*separator), 0.0f) );
+			pos = getAvailablePosition( connections, pos.x(), pos.y() );
+			nodePos = osg::Vec3f( osg::Vec3f( static_cast<float>( pos.x()*separator ), static_cast<float>( pos.y()*separator ), 0.0f ) );
 			endGraphNode = matrixGraph->addNode( endNode.nodeId, endNode.nodeName, iHalfNodeType, nodePos );
-			connections->setNodePositionsArrayField(pos.x(), pos.y(), endNode.nodeId);
-		} else
-			endGraphNode = matrixGraph->findNodeById(endNode.nodeId);
+			connections->setNodePositionsArrayField( pos.x(), pos.y(), endNode.nodeId );
+		}
+		else {
+			endGraphNode = matrixGraph->findNodeById( endNode.nodeId );
+		}
 
-		if(!iNodes->contains(midNode.nodeId)) {
+		if ( !iNodes->contains( midNode.nodeId ) ) {
 			//insert node into iNodes list only if missing
-			connections->setNodePositionsArray(++nodeCounter);
-			iNodes->push_back(midNode.nodeId);
+			connections->setNodePositionsArray( ++nodeCounter );
+			iNodes->push_back( midNode.nodeId );
 
-			if(startNode.nodeName.contains(QRegExp("[Nn]"))) {
-				pos = getAvailablePosition(connections, pos.x(), pos.y()/2);
-			} else {
-				pos = getAvailablePosition(connections, pos.x()/2, pos.y());
+			if ( startNode.nodeName.contains( QRegExp( "[Nn]" ) ) ) {
+				pos = getAvailablePosition( connections, pos.x(), pos.y()/2 );
 			}
-			nodePos = osg::Vec3f( osg::Vec3f(static_cast<float>(pos.x()*separator), static_cast<float>(pos.y()*separator), 0.0f) );
+			else {
+				pos = getAvailablePosition( connections, pos.x()/2, pos.y() );
+			}
+			nodePos = osg::Vec3f( osg::Vec3f( static_cast<float>( pos.x()*separator ), static_cast<float>( pos.y()*separator ), 0.0f ) );
 			midGraphNode = matrixGraph->addNode( midNode.nodeId, midNode.nodeName, iHalfNodeType, nodePos );
-			connections->setNodePositionsArrayField(pos.x(), pos.y(), midNode.nodeId);
-		} else
-			midGraphNode = matrixGraph->findNodeById(midNode.nodeId);
+			connections->setNodePositionsArrayField( pos.x(), pos.y(), midNode.nodeId );
+		}
+		else {
+			midGraphNode = matrixGraph->findNodeById( midNode.nodeId );
+		}
 
-	} else if(midNode.nodeName.contains(QRegExp("[EeNn]"))) {
+	}
+	else if ( midNode.nodeName.contains( QRegExp( "[EeNn]" ) ) ) {
 		//case: I - E/N - I
 		osg::Vec2i pos;
-		if(midNode.nodeName.contains(QRegExp("[Nn]"))) {
+		if ( midNode.nodeName.contains( QRegExp( "[Nn]" ) ) ) {
 			//case: I - N - I
-			pos.x() = (xAxisNodes->indexOf(midNode.nodeId)+1);
+			pos.x() = ( xAxisNodes->indexOf( midNode.nodeId )+1 );
 			pos.y() = pos.x();
-		} else {
+		}
+		else {
 			//case: I - E - I
-			pos.y() = (yAxisNodes->indexOf(midNode.nodeId)+1);
+			pos.y() = ( yAxisNodes->indexOf( midNode.nodeId )+1 );
 			pos.x() = pos.y();
 		}
 
-		if(!iNodes->contains(endNode.nodeId)) {
+		if ( !iNodes->contains( endNode.nodeId ) ) {
 			//insert node into iNodes list only if missing
-			connections->setNodePositionsArray(++nodeCounter);
-			iNodes->push_back(endNode.nodeId);
+			connections->setNodePositionsArray( ++nodeCounter );
+			iNodes->push_back( endNode.nodeId );
 
-			pos = getAvailablePosition(connections, pos.x(), pos.y());
-			nodePos = osg::Vec3f( osg::Vec3f(static_cast<float>(pos.x()*separator), static_cast<float>(pos.y()*separator), 0.0f) );
+			pos = getAvailablePosition( connections, pos.x(), pos.y() );
+			nodePos = osg::Vec3f( osg::Vec3f( static_cast<float>( pos.x()*separator ), static_cast<float>( pos.y()*separator ), 0.0f ) );
 			endGraphNode = matrixGraph->addNode( endNode.nodeId, endNode.nodeName, iHalfNodeType, nodePos );
-			connections->setNodePositionsArrayField(pos.x(), pos.y(), endNode.nodeId);
-		} else
-			endGraphNode = matrixGraph->findNodeById(endNode.nodeId);
+			connections->setNodePositionsArrayField( pos.x(), pos.y(), endNode.nodeId );
+		}
+		else {
+			endGraphNode = matrixGraph->findNodeById( endNode.nodeId );
+		}
 
-		if(!iNodes->contains(startNode.nodeId)) {
+		if ( !iNodes->contains( startNode.nodeId ) ) {
 			//insert node into iNodes list only if missing
-			connections->setNodePositionsArray(++nodeCounter);
-			iNodes->push_back(startNode.nodeId);
+			connections->setNodePositionsArray( ++nodeCounter );
+			iNodes->push_back( startNode.nodeId );
 
-			if(midNode.nodeName.contains(QRegExp("[Nn]"))) {
-				pos = getAvailablePosition(connections, pos.x(), pos.y()/2);
-			} else {
-				pos = getAvailablePosition(connections, pos.x()/2, pos.y());
+			if ( midNode.nodeName.contains( QRegExp( "[Nn]" ) ) ) {
+				pos = getAvailablePosition( connections, pos.x(), pos.y()/2 );
 			}
-			nodePos = osg::Vec3f( osg::Vec3f(static_cast<float>(pos.x()*separator), static_cast<float>(pos.y()*separator), 0.0f) );
+			else {
+				pos = getAvailablePosition( connections, pos.x()/2, pos.y() );
+			}
+			nodePos = osg::Vec3f( osg::Vec3f( static_cast<float>( pos.x()*separator ), static_cast<float>( pos.y()*separator ), 0.0f ) );
 			startGraphNode = matrixGraph->addNode( startNode.nodeId, startNode.nodeName, iHalfNodeType, nodePos );
-			connections->setNodePositionsArrayField(pos.x(), pos.y(), startNode.nodeId);
-		} else
-			startGraphNode = matrixGraph->findNodeById(startNode.nodeId);
+			connections->setNodePositionsArrayField( pos.x(), pos.y(), startNode.nodeId );
+		}
+		else {
+			startGraphNode = matrixGraph->findNodeById( startNode.nodeId );
+		}
 
-	} else if(endNode.nodeName.contains(QRegExp("[EeNn]"))) {
+	}
+	else if ( endNode.nodeName.contains( QRegExp( "[EeNn]" ) ) ) {
 		//case: I - I - E/N
 		osg::Vec2i pos;
-		if(endNode.nodeName.contains(QRegExp("[Nn]"))) {
+		if ( endNode.nodeName.contains( QRegExp( "[Nn]" ) ) ) {
 			//case: I - I - N
-			pos.x() = (xAxisNodes->indexOf(endNode.nodeId)+1);
+			pos.x() = ( xAxisNodes->indexOf( endNode.nodeId )+1 );
 			pos.y() = pos.x();
-		} else {
+		}
+		else {
 			//case: I - I - E
-			pos.y() = (yAxisNodes->indexOf(endNode.nodeId)+1);
+			pos.y() = ( yAxisNodes->indexOf( endNode.nodeId )+1 );
 			pos.x() = pos.y();
 		}
 
-		if(!iNodes->contains(midNode.nodeId)) {
+		if ( !iNodes->contains( midNode.nodeId ) ) {
 			//insert node into iNodes list only if missing
-			connections->setNodePositionsArray(++nodeCounter);
-			iNodes->push_back(midNode.nodeId);
+			connections->setNodePositionsArray( ++nodeCounter );
+			iNodes->push_back( midNode.nodeId );
 
-			pos = getAvailablePosition(connections, pos.x(), pos.y());
-			nodePos = osg::Vec3f( osg::Vec3f(static_cast<float>(pos.x()*separator), static_cast<float>(pos.y()*separator), 0.0f) );
+			pos = getAvailablePosition( connections, pos.x(), pos.y() );
+			nodePos = osg::Vec3f( osg::Vec3f( static_cast<float>( pos.x()*separator ), static_cast<float>( pos.y()*separator ), 0.0f ) );
 			midGraphNode = matrixGraph->addNode( midNode.nodeId, midNode.nodeName, iHalfNodeType, nodePos );
-			connections->setNodePositionsArrayField(pos.x(), pos.y(), midNode.nodeId);
-		} else
-			midGraphNode = matrixGraph->findNodeById(midNode.nodeId);
+			connections->setNodePositionsArrayField( pos.x(), pos.y(), midNode.nodeId );
+		}
+		else {
+			midGraphNode = matrixGraph->findNodeById( midNode.nodeId );
+		}
 
-		if(!iNodes->contains(startNode.nodeId)) {
+		if ( !iNodes->contains( startNode.nodeId ) ) {
 			//insert node into iNodes list only if missing
-			connections->setNodePositionsArray(++nodeCounter);
-			iNodes->push_back(startNode.nodeId);
+			connections->setNodePositionsArray( ++nodeCounter );
+			iNodes->push_back( startNode.nodeId );
 
-			if(midNode.nodeName.contains(QRegExp("[Nn]"))) {
-				pos = getAvailablePosition(connections, pos.x(), pos.y()/2);
-			} else {
-				pos = getAvailablePosition(connections, pos.x()/2, pos.y());
+			if ( midNode.nodeName.contains( QRegExp( "[Nn]" ) ) ) {
+				pos = getAvailablePosition( connections, pos.x(), pos.y()/2 );
 			}
-			nodePos = osg::Vec3f( osg::Vec3f(static_cast<float>(pos.x()*separator), static_cast<float>(pos.y()*separator), 0.0f) );
+			else {
+				pos = getAvailablePosition( connections, pos.x()/2, pos.y() );
+			}
+			nodePos = osg::Vec3f( osg::Vec3f( static_cast<float>( pos.x()*separator ), static_cast<float>( pos.y()*separator ), 0.0f ) );
 			startGraphNode = matrixGraph->addNode( startNode.nodeId, startNode.nodeName, iHalfNodeType, nodePos );
-			connections->setNodePositionsArrayField(pos.x(), pos.y(), startNode.nodeId);
-		} else
-			startGraphNode = matrixGraph->findNodeById(startNode.nodeId);
+			connections->setNodePositionsArrayField( pos.x(), pos.y(), startNode.nodeId );
+		}
+		else {
+			startGraphNode = matrixGraph->findNodeById( startNode.nodeId );
+		}
 	}
 
 	//same in every condition
 	edgeName = midNode.nodeName;
-	edgeName.append(startNode.nodeName);
-	edgeId = qHash(edgeName);
-	matrixGraph->addEdge(edgeId, edgeName, midGraphNode, startGraphNode, iEdgeType, false);
+	edgeName.append( startNode.nodeName );
+	edgeId = qHash( edgeName );
+	matrixGraph->addEdge( edgeId, edgeName, midGraphNode, startGraphNode, iEdgeType, false );
 
 	edgeName = midNode.nodeName;
-	edgeName.append(endNode.nodeName);
-	edgeId = qHash(edgeName);
-	matrixGraph->addEdge(edgeId, edgeName, midGraphNode, endGraphNode, iEdgeType, false);
+	edgeName.append( endNode.nodeName );
+	edgeId = qHash( edgeName );
+	matrixGraph->addEdge( edgeId, edgeName, midGraphNode, endGraphNode, iEdgeType, false );
 
 	return matrixGraph;
 }
@@ -652,69 +726,74 @@ osg::Vec2i SpecialMatrix::FileParser::getAvailablePosition( SpecialMatrix::NodeC
 	int distance = 1, phase = 0;
 	size_t nodeCount = connections->getNodePositionsArray().size();
 	osg::Vec2i nodePos;
-	while(true) {
+	while ( true ) {
 		//if the position is taken
-		if(connections->getNodePositionsArrayField(newRow, newCol)) {
-			switch (phase) {
-			case 0:	//right
-				cornerCol += distance;
-				if(cornerCol > nodeCount) {
+		if ( connections->getNodePositionsArrayField( newRow, newCol ) ) {
+			switch ( phase ) {
+				case 0:	//right
+					cornerCol += distance;
+					if ( cornerCol > nodeCount ) {
+						++phase;
+						break;
+					}
+					while ( newCol != cornerCol ) {
+						++newCol;
+						if ( !connections->getNodePositionsArrayField( newRow, newCol ) ) {
+							break;
+						}
+					}
 					++phase;
 					break;
-				}
-				while(newCol != cornerCol) {
-					++newCol;
-					if(!connections->getNodePositionsArrayField(newRow, newCol))
+				case 1:	//down
+					cornerRow += distance;
+					if ( cornerRow > nodeCount ) {
+						++distance;
+						++phase;
 						break;
-				}
-				++phase;
-				break;
-			case 1:	//down
-				cornerRow += distance;
-				if(cornerRow > nodeCount) {
+					}
+					while ( newRow != cornerRow ) {
+						++newRow;
+						if ( !connections->getNodePositionsArrayField( newRow, newCol ) ) {
+							break;
+						}
+					}
 					++distance;
 					++phase;
 					break;
-				}
-				while(newRow != cornerRow) {
-					++newRow;
-					if(!connections->getNodePositionsArrayField(newRow, newCol))
+				case 2:	//left
+					cornerCol -= distance;
+					if ( cornerCol < 0 ) {
+						++phase;
 						break;
-				}
-				++distance;
-				++phase;
-				break;
-			case 2:	//left
-				cornerCol -= distance;
-				if(cornerCol < 0) {
+					}
+					while ( newCol != cornerCol ) {
+						--newCol;
+						if ( !connections->getNodePositionsArrayField( newRow, newCol ) ) {
+							break;
+						}
+					}
 					++phase;
 					break;
-				}
-				while(newCol != cornerCol) {
-					--newCol;
-					if(!connections->getNodePositionsArrayField(newRow, newCol))
+				case 3:	//up
+					cornerRow -= distance;
+					if ( cornerRow < 0 ) {
+						++distance;
+						++phase;
 						break;
-				}
-				++phase;
-				break;
-			case 3:	//up
-				cornerRow -= distance;
-				if(cornerRow < 0) {
+					}
+					while ( newRow != cornerRow ) {
+						--newRow;
+						if ( !connections->getNodePositionsArrayField( newRow, newCol ) ) {
+							break;
+						}
+					}
 					++distance;
 					++phase;
 					break;
-				}
-				while(newRow != cornerRow) {
-					--newRow;
-					if(!connections->getNodePositionsArrayField(newRow, newCol))
-						break;
-				}
-				++distance;
-				++phase;
-				break;
 			}
 			phase %= 4;
-		} else {
+		}
+		else {
 			//is available
 			nodePos.x() = newRow;
 			nodePos.y() = newCol;

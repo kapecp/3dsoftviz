@@ -1376,8 +1376,8 @@ void CoreGraph::setEdgeVisualForType( int index, QString edgeTypeName )
 	QMap<qlonglong, osg::ref_ptr<Data::Edge> >::iterator iEdge = in_edges->begin();
 
 	while ( iEdge != in_edges->end() ) {
-		if(!QString::compare(iEdge.value()->getType()->getName(), edgeTypeName, Qt::CaseInsensitive)) {
-			iEdge.value()->setVisual( index );			
+		if ( !QString::compare( iEdge.value()->getType()->getName(), edgeTypeName, Qt::CaseInsensitive ) ) {
+			iEdge.value()->setVisual( index );
 		}
 		++iEdge;
 	}

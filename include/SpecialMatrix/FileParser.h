@@ -23,8 +23,7 @@ class FileParser
 
 public:
 
-	typedef struct
-	{
+	typedef struct {
 		qlonglong nodeId;
 		int nodePos;
 		QString nodeName;
@@ -51,7 +50,7 @@ public:
 	 * @param int &nodeCounter
 	 * @return Data::Graph* matrix graph with new nodes/edges
 	 */
-	Data::Graph* addNormalNodesToGraph( Data::Graph* matrixGraph, QStringList fields, SpecialMatrix::NodeConnections* connections, int &nodeCounter );
+	Data::Graph* addNormalNodesToGraph( Data::Graph* matrixGraph, QStringList fields, SpecialMatrix::NodeConnections* connections, int& nodeCounter );
 
 	/**
 	 * @brief addSpecialCase1NodesToGraph adds [EN]-I-[EN] || [EN]-[EN]-I || I-[EN]-[EN] edge to graph
@@ -61,7 +60,7 @@ public:
 	 * @param int &nodeCounter
 	 * @return Data::Graph* matrix graph with new nodes/edges
 	 */
-	Data::Graph* addSpecialCase1NodesToGraph( Data::Graph* matrixGraph, QStringList fields, SpecialMatrix::NodeConnections* connections, int &nodeCounter );
+	Data::Graph* addSpecialCase1NodesToGraph( Data::Graph* matrixGraph, QStringList fields, SpecialMatrix::NodeConnections* connections, int& nodeCounter );
 
 	/**
 	 * @brief addSpecialCase2NodesToGraph adds [EN]-I-I || I-[EN]-I || I-I-[EN] edge to graph
@@ -71,7 +70,7 @@ public:
 	 * @param int &nodeCounter
 	 * @return Data::Graph* matrix graph with new nodes/edges
 	 */
-	Data::Graph* addSpecialCase2NodesToGraph( Data::Graph* matrixGraph, QStringList fields, SpecialMatrix::NodeConnections* connections, int &nodeCounter );
+	Data::Graph* addSpecialCase2NodesToGraph( Data::Graph* matrixGraph, QStringList fields, SpecialMatrix::NodeConnections* connections, int& nodeCounter );
 
 	/**
 	 * @brief getAvailablePosition calculates a new available position

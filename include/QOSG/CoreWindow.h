@@ -254,11 +254,11 @@ public slots:
 				*/
 	void loadFromGit();
 
-    /**
+	/**
 				* void loadLuaGraph()
 				* @brief Load lua graph without visualization
 				*/
-    void loadLuaGraph();
+	void loadLuaGraph();
 
 	/**
 				*  \fn public  loadSpecialMatrixFromFile
@@ -834,7 +834,7 @@ private:
 	/**
 		*  QAction * loadSpecialMatrix
 		*  \brief Pointer to load special matrix from file
-        */
+	    */
 	QAction* loadSpecialMatrix;
 
 	/**

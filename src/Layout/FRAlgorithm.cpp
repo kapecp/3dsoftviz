@@ -85,8 +85,9 @@ void FRAlgorithm::SetGraph( Data::Graph* graph, bool fixedPositions )
 	//pociatocne nahodne rozdelenie pozicii uzlov
 	notEnd = true;
 	this->graph = graph;
-	if(!fixedPositions)
+	if ( !fixedPositions ) {
 		this->Randomize();
+	}
 }
 
 void FRAlgorithm::SetParameters( float sizeFactor,float flexibility,bool useMaxDistance )

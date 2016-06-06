@@ -47,7 +47,7 @@ public:
 	 * @param osg::ref_ptr<Data::Node> srcNode
 	 * @param osg::ref_ptr<Data::Node> desNode
 	 */
-	void exchangeNodes(osg::ref_ptr<Data::Node> srcNode, osg::ref_ptr<Data::Node> desNode);
+	void exchangeNodes( osg::ref_ptr<Data::Node> srcNode, osg::ref_ptr<Data::Node> desNode );
 
 	/**
 	 * @brief createEvolutionTab add elements to QWidget for evolution functionality

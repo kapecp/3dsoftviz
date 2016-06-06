@@ -225,7 +225,7 @@ void Data::Edge::updateCoordinates( osg::Vec3 srcPos, osg::Vec3 dstPos )
 				points->push_back( edgePieces.at( 1 )->getDstNode()->getCurrentPosition() );
 				points->push_back( dstPos );
 			}
-			else {				
+			else {
 				points->push_back( cor1 );
 				points->push_back( cor2 );
 				points->push_back( cor3 );

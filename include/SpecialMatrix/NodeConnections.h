@@ -77,7 +77,7 @@ public:
 	 * @param integer column
 	 * @return qlonglong ID of given node
 	 */
-	qlonglong getNodePositionsArrayField(int row, int column)
+	qlonglong getNodePositionsArrayField( int row, int column )
 	{
 		return nodePositionsArray[row][column];
 	}
@@ -86,13 +86,13 @@ public:
 	 * @brief setAvailabilityPosArray resizes availabilityPosArray
 	 * @param integer nodesCount
 	 */
-	void setNodePositionsArray(int nodesCount);
+	void setNodePositionsArray( int nodesCount );
 
 	/**
 	 * @brief setNodePositionsArrayField sets nodePositionsArray[row][column] to nodesCount
 	 * @param integer number of nodes
 	 */
-	void setNodePositionsArrayField(int column, int row, qlonglong value)
+	void setNodePositionsArrayField( int column, int row, qlonglong value )
 	{
 		nodePositionsArray[column][row] = value;
 	}
