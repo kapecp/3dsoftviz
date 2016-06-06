@@ -36,9 +36,9 @@ osg::ref_ptr<osg::Vec3Array> DataHelper::getInitialVectors( int count )
 
 	for ( int index = 0; index < count; index++ ) {
 		double x, y, z;
-		x = lowest + ( range * static_cast<double>( rand() ) / ( RAND_MAX + 1.0 ) );
-		y = lowest + ( range * static_cast<double>( rand() ) / ( RAND_MAX + 1.0 ) );
-		z = lowest + ( range * static_cast<double>( rand() ) / ( RAND_MAX + 1.0 ) );
+		x = lowest + ( range * static_cast<double>( qrand() ) / ( RAND_MAX + 1.0 ) );
+		y = lowest + ( range * static_cast<double>( qrand() ) / ( RAND_MAX + 1.0 ) );
+		z = lowest + ( range * static_cast<double>( qrand() ) / ( RAND_MAX + 1.0 ) );
 
 		positions->push_back( osg::Vec3( static_cast<float>( x ), static_cast<float>( y ), static_cast<float>( z ) ) );
 	}
@@ -50,7 +50,7 @@ int DataHelper::getRandomNumber( int lowest, int highest )
 {
 	int range = ( highest - lowest ) + 1;
 
-	return lowest + static_cast<int>( range * rand() / ( RAND_MAX + 1.0 ) );
+	return lowest + static_cast<int>( range * qrand() / ( RAND_MAX + 1.0 ) );
 }
 
 osg::ref_ptr<osg::Vec3Array> DataHelper::getEdgeVectors( osg::ref_ptr<Data::Node> inNode, osg::ref_ptr<Data::Node> outNode )
