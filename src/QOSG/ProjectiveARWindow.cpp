@@ -4,11 +4,11 @@
 
 #include "QOSG/ViewerQT.h"
 
-#include <QtGui/QLabel>
-#include <QtGui/QRadioButton>
-#include <QtGui/QPushButton>
-#include <QtGui/QVBoxLayout>
-#include <QtGui/QFormLayout>
+#include <QLabel>
+#include <QRadioButton>
+#include <QPushButton>
+#include <QVBoxLayout>
+#include <QFormLayout>
 #include <QCloseEvent>
 #include <QDebug>
 

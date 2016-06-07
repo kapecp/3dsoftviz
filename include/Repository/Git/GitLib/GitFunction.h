@@ -57,12 +57,12 @@ public:
 		return this->name;
 	}
 
-	void setId( int id )
+	void setId( qlonglong id )
 	{
 		this->id = id;
 	}
 
-	int getId()
+	qlonglong getId()
 	{
 		return this->id;
 	}
@@ -133,7 +133,7 @@ private:
 
 	QString name;
 
-	int id;
+	qlonglong id;
 
 	int functionRowNumber;
 

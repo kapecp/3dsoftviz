@@ -1,10 +1,11 @@
-#include "LeapLib/LeapThread.h"
-#include "easylogging++.h"
+#include <easylogging++.h>
 
-Leap::LeapThread::LeapThread( QObject* parent, LeapCameraManipulator* cameraManipulator ) : QThread( parent )
+#include "LeapLib/LeapThread.h"
+
+Leap::LeapThread::LeapThread( QObject* parent, LeapManager* leapManager ) : QThread( parent )
 {
 	LOG( INFO ) << "LeapThread::LeapThread, created";
-	leapController = new LeapController( cameraManipulator );
+	leapController = new LeapController( leapManager );
 }
 
 Leap::LeapThread::~LeapThread( void )

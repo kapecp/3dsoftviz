@@ -414,7 +414,7 @@ bool Model::NodeDAO::checkIfExists( Data::Node* node, QSqlDatabase* conn )
 {
 	if ( conn==NULL || !conn->isOpen() ) { //check if we have connection
 		qDebug() << "[Model::NodeDAO::checkIfExists] Connection to DB not opened.";
-		return NULL;
+		return ( bool* )NULL;
 	}
 	else if ( node==NULL ) {
 		qDebug() << "[Model::NodeDAO::checkIfExists] Invalid parameter - node is NULL.";
@@ -436,7 +436,7 @@ bool Model::NodeDAO::checkIfExists( Data::Node* node, QSqlDatabase* conn )
 	query->bindValue( ":graph_id", node->getGraph()->getId() );
 	if ( !query->exec() ) {
 		qDebug() << "[Model::NodeDAO::checkIfExists] Could not perform query on DB: " << query->lastError().databaseText();
-		return NULL;
+		return ( bool* )NULL;
 	}
 	if ( query->next() && query->value( 0 )==1 ) {
 		return true;
@@ -450,7 +450,7 @@ bool Model::NodeDAO::removeNode( Data::Node* node, QSqlDatabase* conn )
 {
 	if ( conn==NULL || !conn->isOpen() ) { //check if we have connection
 		qDebug() << "[Model::NodeDAO::removeNode] Connection to DB not opened.";
-		return NULL;
+		return ( bool* )NULL;
 	}
 	else if ( node==NULL ) {
 		qDebug() << "[Model::NodeDAO::removeNode] Invalid parameter - node is NULL.";
@@ -481,7 +481,7 @@ bool Model::NodeDAO::removeNodes( qlonglong graphID, QSqlDatabase* conn )
 {
 	if ( conn==NULL || !conn->isOpen() ) {
 		qDebug() << "[Model::NodeDAO::removeNodes] Connection to DB not opened.";
-		return NULL;
+		return ( bool* )NULL;
 	}
 
 	QSqlQuery* query = new QSqlQuery( *conn );
@@ -507,7 +507,7 @@ bool Model::NodeDAO::removeNodes( qlonglong graphID, qlonglong layoutID, QSqlDat
 {
 	if ( conn==NULL || !conn->isOpen() ) {
 		qDebug() << "[Model::NodeDAO::removeNodes] Connection to DB not opened.";
-		return NULL;
+		return ( bool* )NULL;
 	}
 
 	QSqlQuery* query = new QSqlQuery( *conn );

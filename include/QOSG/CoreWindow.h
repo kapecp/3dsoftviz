@@ -25,29 +25,35 @@
 #include "Fglove/FgloveThread.h"
 #endif
 
+#ifdef MOUSE3D_FOUND
+#include "Mouse3d/Connector.h"
+#endif
+
 #ifdef LEAP_FOUND
 #include "LeapLib/LeapThread.h"
-#include "Leap/CustomCameraManipulator.h"
+#include "Leap/CustomLeapManager.h"
 #endif
 
 #include <qtcolorpicker.h>
 
-#ifdef __APPLE__
-#include <qstringlist.h>
+#if QT_VERSION >= 0x050000
+	#include <QtWidgets>
 #else
-#include <Qt/qstringlist.h>
 #endif
-#include <QMainWindow>
-#include <QToolBar>
+
+#include <QtGui>
+
+#include <QAction>
 #include <QApplication>
 #include <QIcon>
-#include <QAction>
+#include <QLineEdit>
+#include <QMainWindow>
 #include <QMenu>
 #include <QMenuBar>
-#include <QtGui>
-#include <QLineEdit>
-#include <QToolBox>
 #include <QString>
+#include <QStringList>
+#include <QToolBar>
+#include <QToolBox>
 
 namespace Layout {
 class LayoutThread;
@@ -90,9 +96,12 @@ private:
 
 #ifdef LEAP_FOUND
 	Leap::LeapThread* mLeapThr;
+	Leap::LeapThread* mLeapThrAR;
 #endif
 
 public slots:
+	void OnMove( std::vector<float>& motionData );
+
 	void moveMouseAruco( double positionX,double positionY,bool isClick, Qt::MouseButton button );
 
 	/**
@@ -562,9 +571,19 @@ public slots:
 #ifdef SPEECHSDK_FOUND
 	void startSpeech();
 #endif
+	/**
+	    *@brief create 3d mouse connection
+	    *
+	    *
+	    *
+	 */
+#ifdef MOUSE3D_FOUND
+	void startMouse3d();
+#endif
 
 #ifdef LEAP_FOUND
 	void startLeap();
+	void startLeapAR();
 #endif
 
 #ifdef FGLOVE_FOUND
@@ -1101,6 +1120,7 @@ private:
 	 * @brief b_start_leap
 	 */
 	QPushButton* b_start_leap;
+	QPushButton* b_start_leapAR;
 
 	/**
 	 * QPushButton start speech recognition
@@ -1113,6 +1133,12 @@ private:
 	 *@brief b_start_gloves
 	 */
 	QPushButton* b_start_gloves;
+
+	/**
+	 * QPushButton start 3d mouse recognition
+	 *@brief b_start_mouse3d
+	 */
+	QPushButton* b_start_mouse3d;
 
 	/**
 	 * QPushButton* b_previous_version
@@ -1755,6 +1781,9 @@ private:
 
 	void onChange();
 
+#ifdef MOUSE3D_FOUND
+	Mouse3d::Connector* conn;
+#endif
 };
 }
 

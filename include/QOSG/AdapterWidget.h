@@ -7,9 +7,16 @@
 
 #include <osgViewer/Viewer>
 
-#include <QtGui/QKeyEvent>
-#include <QtOpenGL/QGLWidget>
+#include <QtGlobal>
 
+#include <QKeyEvent>
+#include <QGLWidget>
+
+#if QT_VERSION >= 0x050000
+	#define TOASCII toLatin1
+#else
+	#define TOASCII toAscii
+#endif
 
 using Qt::WindowFlags;
 

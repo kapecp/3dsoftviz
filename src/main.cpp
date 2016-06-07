@@ -1,8 +1,11 @@
+#include <QtGlobal>
+
 #include <QApplication>
 
 #include "Manager/Manager.h"
 #include "Core/Core.h"
 #include "Util/Cleaner.h"
+#include "Application/Application.h"
 
 #ifdef OPENCV_FOUND
 #include <opencv2/core/core.hpp>
@@ -52,7 +55,25 @@ int main( int argc, char* argv[] )
 //      return EXIT_FAILURE;
 //    }
 
-	QApplication app( argc, argv );
+#if defined(Q_WS_X11) || defined(Q_OS_LINUX)
+	// may or may be not required for QObject::connect
+	//qRegisterMetaType<XEvent>( "XEvent" );
+
+	// Thi attribute doesn't work on Qt5 and higher, may be undefined in older Qt versions.
+	// Still, so far the only cappable solution to auto-lock x11 display resource.
+	// If you try to run the application without it, you're going to have a bad time... or segmentation faults whatever.
+	// This is needed for 3DConnecetion mouse
+	#if QT_VERSION >= 0x050000
+		// todo
+	#elseif QT_VERSION >= 0x040700
+		QCoreApplication::setAttribute(Qt::AA_X11InitThreads);
+	#else
+		// todo
+	#endif
+
+#endif
+
+	App::Application app( argc, argv );
 	new Util::Cleaner( &app );
 	AppCore::Core::getInstance( &app );
 	Manager::GraphManager::getInstance();

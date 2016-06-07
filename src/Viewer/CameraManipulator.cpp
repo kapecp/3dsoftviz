@@ -29,7 +29,9 @@
 #pragma GCC diagnostic ignored "-Wold-style-cast"
 #pragma GCC diagnostic ignored "-Wconversion"
 #pragma GCC diagnostic ignored "-Wswitch-enum"
+#if defined(__linux) || defined(__linux__) || defined(linux)
 #pragma GCC diagnostic ignored "-Wuseless-cast"
+#endif
 #pragma GCC diagnostic ignored "-Wsign-conversion"
 
 double Vwr::CameraManipulator::EYE_MOVEMENT_SPEED;

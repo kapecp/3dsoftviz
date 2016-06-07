@@ -41,7 +41,7 @@ option( USE_STRICT_COMPILE_WARNINGS "Use strict compilation warnings in debug mo
 if( USE_STRICT_COMPILE_WARNINGS )
 	if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang" OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "AppleClang")
 		# using Clang
-		set( FLAGS_FOR_DEBUG -pedantic -Wall -Wcast-align -Wcast-qual -Wchar-subscripts -Wcomment -Wconversion -Wctor-dtor-privacy -Wdisabled-optimization -Wextra -Wfloat-equal  -Wformat  -Wformat-nonliteral -Wformat-security  -Wformat-y2k -Wformat=2  -Wimport  -Winit-self -Winline -Winvalid-pch -Wlong-long -Wmissing-braces -Wmissing-declarations -Wmissing-field-initializers -Wmissing-format-attribute -Wmissing-include-dirs -Wmissing-noreturn -Wpacked  -Wparentheses -Wpointer-arith -Wredundant-decls -Wreturn-type -Wsequence-point -Wsign-compare  -Wsign-promo -Wstack-protector -Wstrict-aliasing=2 -Wstrict-overflow=5 -Wswitch -Wswitch-default -Wswitch-enum -Wtrigraphs -Wundef -Wuninitialized -Wunknown-pragmas -Wunreachable-code -Wvariadic-macros -Wvolatile-register-var -Wwrite-strings  -Wno-unused-parameter -Wno-unused )
+		set( FLAGS_FOR_DEBUG -pedantic -Wall -Wcast-align -Wcast-qual -Wchar-subscripts -Wcomment -Wconversion -Wctor-dtor-privacy -Wdisabled-optimization -Wextra -Wfloat-equal  -Wformat  -Wformat-nonliteral -Wformat-security  -Wformat-y2k -Wformat=2  -Wimport  -Winit-self -Winline -Winvalid-pch -Wlong-long -Wmissing-braces -Wmissing-declarations -Wmissing-field-initializers -Wmissing-format-attribute -Wmissing-include-dirs -Wmissing-noreturn -Wpacked  -Wparentheses -Wpointer-arith -Wredundant-decls -Wreturn-type -Wsequence-point -Wsign-compare  -Wsign-promo -Wstack-protector -Wstrict-aliasing=2 -Wstrict-overflow=5 -Wswitch -Wswitch-default -Wswitch-enum -Wtrigraphs -Wundef -Wuninitialized -Wunknown-pragmas -Wunreachable-code -Wvariadic-macros -Wvolatile-register-var -Wwrite-strings  -Wno-unused-parameter -Wno-unused -Wno-documentation-unknown-command )
 	elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR CMAKE_COMPILER_IS_GNUCXX)
 		# using GCC
 		set( FLAGS_FOR_DEBUG -pedantic -Wall -Wcast-align -Wcast-qual -Wchar-subscripts -Wcomment -Wconversion -Wctor-dtor-privacy -Wdisabled-optimization -Wextra -Wfloat-equal -Wformat -Wformat-nonliteral -Wformat-security -Wformat-y2k -Wformat=2 -Wimport -Winit-self -Winline -Winvalid-pch -Wlogical-op -Wlong-long -Wmissing-braces -Wmissing-declarations -Wmissing-field-initializers -Wmissing-format-attribute -Wmissing-include-dirs -Wmissing-noreturn -Wnoexcept -Wpacked -Wparentheses -Wpointer-arith -Wredundant-decls -Wreturn-type -Wsequence-point -Wsign-compare -Wsign-promo -Wstack-protector -Wstrict-aliasing=2 -Wstrict-null-sentinel -Wstrict-overflow=5 -Wswitch -Wswitch-default -Wswitch-enum -Wtrigraphs -Wundef -Wuninitialized -Wunknown-pragmas -Wunreachable-code -Wunsafe-loop-optimizations -Wvariadic-macros -Wvolatile-register-var -Wwrite-strings -Wold-style-cast -Woverloaded-virtual -Wuseless-cast -Wsign-conversion -Wno-unused-parameter -Wno-unused )
@@ -121,21 +121,41 @@ endif()
 # Dependencies - Searching external dependencies
 # ------------------------------------------------------------
 
+# ------------------------------ Qt -------------------------------
 set( ALL_SYSTEM_HEADERS )
 set( ALL_COMPILE_DEFINITIONS )
 
-# ------------------------------ Qt4 -------------------------------
-# Find Qt4
-find_package( Qt4 REQUIRED )
-set( QT_USE_QTOPENGL 1 )
-set( QT_USE_QTSQL 1 )
-set( QT_USE_QTWEBKIT 1 )
-set( QT_USE_QTXML 1 )
-set( QT_USE_QTNETWORK 1 )
-include( ${QT_USE_FILE} )
+set( CMAKE_AUTOMOC ON )
+set( CMAKE_INCLUDE_CURRENT_DIR ON )
 
-# autogenerate all moc files
-set( CMAKE_AUTOMOC TRUE )
+# Find Qt5
+find_package( Qt5Core QUIET )
+find_package( Qt5Widgets QUIET )
+find_package( Qt5OpenGL QUIET )
+find_package( Qt5Sql QUIET )
+find_package( Qt5WebEngine QUIET )
+find_package( Qt5WebEngineWidgets QUIET )
+find_package( Qt5Xml QUIET )
+find_package( Qt5Network QUIET )
+
+if ( NOT Qt5Core_FOUND )
+	# Find Qt4
+	find_package( Qt4 REQUIRED )
+	set( QT_USE_QTOPENGL 1 )
+	set( QT_USE_QTSQL 1 )
+	set( QT_USE_QTWEBKIT 1 )
+	set( QT_USE_QTXML 1 )
+	set( QT_USE_QTNETWORK 1 )
+	include( ${QT_USE_FILE} )
+endif()
+
+if ( Qt5Core_FOUND )
+	message(STATUS "Using Qt5 packages")
+elseif( Qt4_FOUND )
+	message(STATUS "Using Qt4 packages")
+else()
+	message(STATUS "No suitable Qt packages found")
+endif()
 
 # add special flag to GCC compiler when using Qt 4.6.x with GCC >4.6
 if( "${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" AND
@@ -266,6 +286,11 @@ find_package( Boost 1.39 REQUIRED )
 list( APPEND ALL_SYSTEM_HEADERS	${Boost_INCLUDE_DIRS}  )
 
 # ------------------------------ LEAP -------------------------------
+#enable leap orion on windows
+if( WIN32 )
+	set( USE_LEAP_ORION ON )
+endif()
+
 # Find leap
 find_package( LEAP )
 if( LEAP_FOUND )
@@ -277,7 +302,6 @@ if( LEAP_FOUND )
 	message( STATUS "LEAP Found:" )
 	message( STATUS "LEAP_INCLUDE_DIRS=${LEAP_INCLUDE_DIRS}" )
 	message( STATUS "LEAP_LIB_DIR=${LEAP_LIBRARIES}" )
-	message( STATUS "FGLOVE_DRIVER_DIRS=${FGLOVE_DRIVER_DIRS}" )
 else()
 	message( STATUS "LEAP Not Found" )
 endif()
@@ -298,15 +322,26 @@ endif()
 # ------------------------------ MOUSE3D -------------------------------
 # Find MOUSE3D
 find_package( MOUSE3D )
-if( MOUSE3D_FOUND )
-
-	list( APPEND ALL_SYSTEM_HEADERS	${MOUSE3D_INCLUDE_DIRS} )
-
-	list( APPEND ALL_COMPILE_DEFINITIONS -DMOUSE3D_FOUND )
-	message( STATUS "3DMouse Found:" )
-	message( STATUS "MOUSE3D_INCLUDE_DIRS=${MOUSE3D_INCLUDE_DIRS}" )
-	message( STATUS "MOUSE3D_LIBRARIES=${MOUSE3D_LIBRARIES}" )
-else()
+if( WIN32 )
+	if( MOUSE3D_FOUND )
+		include_directories( SYSTEM ${MOUSE3D_INCLUDE_DIRS} )
+		add_definitions( -DMOUSE3D_FOUND )
+		message( STATUS "3DMouse FOUND" )
+	endif()
+elseif( APPLE )
+	if( MOUSE3D_FOUND )
+		include_directories( SYSTEM ${MOUSE3D_INCLUDE_DIRS} )
+		add_definitions( -DMOUSE3D_FOUND )
+		message( STATUS "3DMouse FOUND" )
+	endif()
+elseif( UNIX )
+	set (MOUSE3D_FOUND TRUE)
+	include_directories( SYSTEM include/Mouse3d/LibMouse3d/Unix )
+	find_package( X11 REQUIRED )
+	include_directories( SYSTEM ${X11_INCLUDE_DIR} )
+	add_definitions( -DMOUSE3D_FOUND )
+	message( STATUS "3DMouse FOUND" )
+elseif()
 	message( STATUS "3DMouse NOT FOUND" )
 endif()
 
@@ -624,6 +659,7 @@ endif()
 
 #-------------------------------- Source files -------------------------------
 set( SRC_MAIN "src/main.cpp" )
+file( GLOB_RECURSE SRC_APP		"src/Application/*.cpp" )
 file( GLOB_RECURSE SRC_CORE		"src/Core/*.cpp" )
 file( GLOB_RECURSE SRC_DATA		"src/Data/*.cpp" )
 file( GLOB_RECURSE SRC_IMPORTER	"src/Importer/*.cpp" )
@@ -663,12 +699,36 @@ file( GLOB_RECURSE SRC_SPEECH	"src/Speech/*.cpp" )
 # Leap
 file ( GLOB SRC_LEAP "src/Leap/*.cpp" )
 file ( GLOB_RECURSE SRC_LEAPLIB "src/Leap/LeapLib/*.cpp" )
+
 # MOUSE3D
-file ( GLOB_RECURSE SRC_MOUSE3D "src/Mouse3D/*.cpp" )
+set ( SRC_MOUSE3D
+	src/Mouse3d/Connector.cpp
+	src/Mouse3d/LibMouse3d/EventThread.cpp
+	src/Mouse3d/LibMouse3d/Mouse3dDevices.cpp
+)
+
+if( WIN32 )
+	list(APPEND SRC_MOUSE3D
+		src/Mouse3d/LibMouse3d/Windows/Mouse3DInput.cpp
+		src/Mouse3d/LibMouse3d/Windows/MouseParameters.cpp
+	)
+elseif( APPLE )
+	list(APPEND SRC_MOUSE3D
+		src/Mouse3d/LibMouse3d/Mac/Mouse3dMacDevice.cpp
+	)
+elseif( UNIX )
+	list(APPEND SRC_MOUSE3D
+		src/Mouse3d/LibMouse3d/Unix/ApplicationEmitter.cpp
+		src/Mouse3d/LibMouse3d/Unix/Mouse3dUnixDevice.cpp
+		src/Mouse3d/LibMouse3d/Unix/xdrvlib.c
+	)
+endif()
+
 
 
 # All source files
 set( SRC
+	${SRC_APP}
 	${SRC_CORE}
 	${SRC_MANAGER}
 	${SRC_DATA}
@@ -709,7 +769,7 @@ endif()
 
 # add Leap
 if( LEAP_FOUND )
-        # WORKAROUND GARAJ comment
+		# WORKAROUND GARAJ comment
 	list( APPEND SRC ${SRC_LEAP} )
 endif()
 
@@ -728,6 +788,7 @@ if( MSVC )
 endif()
 
 #-------------------------------- Header files -------------------------------
+file( GLOB_RECURSE HEADER_APP		"include/Application/*.h" )
 file( GLOB_RECURSE HEADER_CORE		"include/Core/*.h" )
 file( GLOB_RECURSE HEADER_DATA		"include/Data/*.h" )
 file( GLOB_RECURSE HEADER_IMPORTER	"include/Importer/*.h" )
@@ -768,11 +829,38 @@ file( GLOB_RECURSE HEADER_SPEECH	"include/Speech/*.h" )
 file( GLOB HEADER_LEAP	"include/Leap/*.h" )
 file( GLOB_RECURSE HEADER_LEAPLIB	"include/Leap/LeapLib/*.h" )
 
+
 # MOUSE3D
-file( GLOB_RECURSE HEADER_MOUSE3D	"include/Mouse3D/*.h" )
+set ( HEADER_MOUSE3D
+	include/Mouse3d/Connector.h
+	include/Mouse3d/LibMouse3d/EventThread.h
+	include/Mouse3d/LibMouse3d/Mouse3dDevices.h
+)
+
+if( WIN32 )
+	list(APPEND HEADER_MOUSE3D
+		include/Mouse3d/LibMouse3d/Windows/Mouse3DInput.h
+		include/Mouse3d/LibMouse3d/Windows/MouseParameters.h
+		include/Mouse3d/LibMouse3d/Windows/I3dMouseParams.h
+	)
+elseif( APPLE )
+	list(APPEND HEADER_MOUSE3D
+		include/Mouse3d/LibMouse3d/Mac/Mouse3dMacDevice.h
+	)
+elseif( UNIX )
+	list(APPEND HEADER_MOUSE3D
+		include/Mouse3d/LibMouse3d/Unix/ApplicationEmitter.h
+		include/Mouse3d/LibMouse3d/Unix/fixx11.h
+		include/Mouse3d/LibMouse3d/Unix/Mouse3dUnixDevice.h
+		include/Mouse3d/LibMouse3d/Unix/xdrvlib.h
+	)
+endif()
+
+
 
 # All header files
 set( INCL
+	${HEADER_APP}
 	${HEADER_CORE}
 	${HEADER_MANAGER}
 	${HEADER_DATA}
@@ -823,6 +911,7 @@ endif()
 
 #-------------------------------------- Group source files --------------------------------------
 source_group( \\src main.cpp )
+source_group( \\src\\Application "^.*Application/.*$" )
 source_group( \\src\\Network "^.*Network/.*$" )
 source_group( \\src\\Viewer "^.*Viewer/.*$" )
 source_group( \\src\\Core "^.*Core/.*$" )
@@ -841,6 +930,7 @@ source_group( \\src\\Git "^.*Git/.*$" )
 source_group( \\src\\SpecialMatrix "^.*SpecialMatrix/.*$" )
 
 # Group header files
+source_group( \\headers\\Application "^.*Application/.*h$")
 source_group( \\headers\\Clustering "^.*Clustering/.*h$")
 source_group( \\headers\\Network "^.*Network/.*h$" )
 source_group( \\headers\\Viewer "^.*Viewer/.*h$" )
@@ -892,8 +982,8 @@ endif()
 
 # MOUSE3D
 if( MOUSE3D_FOUND )
-	source_group( \\src\\Mouse3D "^.*Mouse3D/.*$" )
-	source_group( \\headers\\Mouse3D "^.*Mouse3D/.*h$" )
+	source_group( \\src\\Mouse3d "^.*Mouse3d/.*$" )
+	source_group( \\headers\\Mouse3d "^.*Mouse3d/.*h$" )
 endif()
 
 # ---------------------------------------------------------------
@@ -905,6 +995,9 @@ target_include_directories( noiseutils SYSTEM PUBLIC ${DEPENDENCIES_INCLUDE_DIR}
 
 add_library( qtcolorpicker STATIC dependencies/qtcolorpicker/qtcolorpicker.cpp )
 target_include_directories( qtcolorpicker SYSTEM PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/qtcolorpicker )
+if ( Qt5Core_FOUND )
+	qt5_use_modules( qtcolorpicker Core Widgets )
+endif()
 
 # ---------------------------------------------------------------
 # Build modules as libraries
@@ -923,7 +1016,11 @@ target_compile_definitions( gitlib PUBLIC -DGITLIB_LIBRARY_STATIC )
 
 target_compile_options( gitlib PUBLIC ${FLAGS_FOR_DEBUG} )
 
-target_link_libraries( gitlib ${QT_LIBRARIES} )
+if ( Qt5Core_FOUND )
+	qt5_use_modules( gitlib Core )
+elseif( Qt4_FOUND )
+	target_link_libraries( gitlib ${QT_LIBRARIES} )
+endif()
 
 # 'cotire' the module
 if( COMMAND cotire )
@@ -946,7 +1043,11 @@ if( LEAP_FOUND )
 
 	target_compile_options( leaplib PUBLIC ${FLAGS_FOR_DEBUG} )
 
-	target_link_libraries( leaplib ${QT_LIBRARIES} )
+	if ( Qt5Core_FOUND )
+		qt5_use_modules( leaplib Core )
+	elseif( Qt4_FOUND )
+		target_link_libraries( leaplib ${QT_LIBRARIES} )
+	endif()
 
 	# 'leap' the module
 	if( COMMAND cotire )
@@ -991,6 +1092,18 @@ include_directories(SYSTEM ${ALL_SYSTEM_HEADERS})
 # 	PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
 # )
 
+if ( Qt5Core_FOUND )
+	qt5_use_modules( ${3DSOFTVIZ_NAME} 
+		Core 
+		Widgets 
+		OpenGL 
+		Sql 
+		WebEngine 
+		WebEngineWidgets 
+		Xml 
+		Network 
+	)
+endif()
 
 target_link_libraries( ${3DSOFTVIZ_NAME}
 	gitlib
@@ -999,11 +1112,16 @@ target_link_libraries( ${3DSOFTVIZ_NAME}
 	libnoise
 	osgModeling
 	qtcolorpicker
-	${QT_LIBRARIES}
 	${OPENSCENEGRAPH_LIBRARIES}
 	${OSGVIEWER_LIBRARIES}
 	${OSGQT_LIBRARIES}
 )
+
+if ( Qt4_FOUND )
+	target_link_libraries( ${3DSOFTVIZ_NAME}
+		${QT_LIBRARIES}
+	)
+endif()
 
 if( NOT MSVC )
 	target_link_libraries( ${3DSOFTVIZ_NAME} diluculum
@@ -1038,7 +1156,13 @@ if( LEAP_FOUND )
 endif()
 
 if( MOUSE3D_FOUND )
-	target_link_libraries( ${3DSOFTVIZ_NAME} ${MOUSE3D_LIBRARIES} )
+	if ( WIN32 )
+		target_link_libraries( ${3DSOFTVIZ_NAME} ${MOUSE3D_LIBRARIES} )
+	elseif( APPLE )
+		target_link_libraries( ${3DSOFTVIZ_NAME} ${MOUSE3D_LIBRARIES} )
+	elseif(UNIX)
+		target_link_libraries( ${3DSOFTVIZ_NAME} ${X11_LIBRARIES} )
+	endif()
 endif()
 
 # 'cotire' the executable
@@ -1050,6 +1174,16 @@ if( COMMAND cotire )
 
 	if( LEAP_FOUND )
 		target_link_libraries( ${3DSOFTVIZ_NAME}_unity leaplib_unity ${LEAP_LIBRARIES} )
+	endif()
+
+	if( MOUSE3D_FOUND )
+		if ( WIN32 )
+			target_link_libraries( ${3DSOFTVIZ_NAME}_unity ${MOUSE3D_LIBRARIES} )
+		elseif( APPLE )
+			target_link_libraries( ${3DSOFTVIZ_NAME}_unity ${MOUSE3D_LIBRARIES} )
+		elseif(UNIX)
+			target_link_libraries( ${3DSOFTVIZ_NAME}_unity ${X11_LIBRARIES} )
+		endif()
 	endif()
 endif()
 
@@ -1215,7 +1349,7 @@ if( USE_BUILTIN_DEPENDENCIES )
 	)
 endif()
 
-# Include QT4 libraries in Apple bundle and on Windows
+# Include QT libraries in Apple bundle and on Windows
 if( WIN32 OR APPLE AND OSX_BUNDLE )
 	# On Apple plugins need to be bundled
 	if( APPLE AND OSX_BUNDLE )
@@ -1342,7 +1476,12 @@ target_include_directories( test_gitlib_module 	PUBLIC
 		${CMAKE_CURRENT_SOURCE_DIR}/include
 		include/Repository/Git 	)
 target_compile_options( test_gitlib_module PUBLIC ${FLAGS_FOR_DEBUG} )
-target_link_libraries( test_gitlib_module ${QT_LIBRARIES} gitlib )
+if ( Qt5Core_FOUND )
+	qt5_use_modules( test_gitlib_module Core )
+	target_link_libraries( test_gitlib_module gitlib )
+elseif( Qt4_FOUND )
+	target_link_libraries( test_gitlib_module ${QT_LIBRARIES} gitlib )
+endif()
 
 # 'cotire' the executable
 if( COMMAND cotire )
@@ -1361,34 +1500,34 @@ add_test( testing_gitlib_module test_gitlib_module )
 
 find_package(Sphinx)
 if (Sphinx_FOUND)
-    if(NOT DEFINED SPHINX_THEME)
-        set(SPHINX_THEME sphinx_rtd_theme)
-    endif()
+	if(NOT DEFINED SPHINX_THEME)
+		set(SPHINX_THEME sphinx_rtd_theme)
+	endif()
 
-    if(NOT DEFINED SPHINX_THEME_DIR)
-        set(SPHINX_THEME_DIR)
-    endif()
+	if(NOT DEFINED SPHINX_THEME_DIR)
+		set(SPHINX_THEME_DIR)
+	endif()
 
-    # configured documentation tools and intermediate build results
-    set(BINARY_BUILD_DIR "${CMAKE_CURRENT_BINARY_DIR}")
+	# configured documentation tools and intermediate build results
+	set(BINARY_BUILD_DIR "${CMAKE_CURRENT_BINARY_DIR}")
 
-    # Sphinx cache with pickled ReST documents
-    set(SPHINX_CACHE_DIR "${CMAKE_CURRENT_BINARY_DIR}/docs/_doctrees")
+	# Sphinx cache with pickled ReST documents
+	set(SPHINX_CACHE_DIR "${CMAKE_CURRENT_BINARY_DIR}/docs/_doctrees")
 
-    # HTML output directory
-    set(SPHINX_HTML_DIR "${CMAKE_CURRENT_BINARY_DIR}/docs/html")
+	# HTML output directory
+	set(SPHINX_HTML_DIR "${CMAKE_CURRENT_BINARY_DIR}/docs/html")
 
-    configure_file(
-        "${CMAKE_CURRENT_SOURCE_DIR}/docs/conf.py.in"
-        "${BINARY_BUILD_DIR}/conf.py"
-        @ONLY)
+	configure_file(
+		"${CMAKE_CURRENT_SOURCE_DIR}/docs/conf.py.in"
+		"${BINARY_BUILD_DIR}/conf.py"
+		@ONLY)
 
-    add_custom_target(Sphinx_html
-        ${SPHINX_EXECUTABLE}
-            -q -b html
-            -c "${BINARY_BUILD_DIR}"
-            -d "${SPHINX_CACHE_DIR}"
-            "${CMAKE_CURRENT_SOURCE_DIR}/docs"
-            "${SPHINX_HTML_DIR}"
-        COMMENT "Building HTML documentation with Sphinx")
+	add_custom_target(Sphinx_html
+		${SPHINX_EXECUTABLE}
+			-q -b html
+			-c "${BINARY_BUILD_DIR}"
+			-d "${SPHINX_CACHE_DIR}"
+			"${CMAKE_CURRENT_SOURCE_DIR}/docs"
+			"${SPHINX_HTML_DIR}"
+		COMMENT "Building HTML documentation with Sphinx")
 endif()

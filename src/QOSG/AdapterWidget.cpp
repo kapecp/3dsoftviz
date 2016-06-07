@@ -75,7 +75,7 @@ void AdapterWidget::keyPressEvent( QKeyEvent* event )
 			break;
 		}
 		default: {
-			_gw->getEventQueue()->keyPress( static_cast<osgGA::GUIEventAdapter::KeySymbol>( *( event->text().toAscii().data() ) ) );
+			_gw->getEventQueue()->keyPress( static_cast<osgGA::GUIEventAdapter::KeySymbol>( *( event->text().TOASCII().data() ) ) );
 			break;
 		}
 	}
@@ -128,7 +128,7 @@ void AdapterWidget::keyReleaseEvent( QKeyEvent* event )
 			}
 		}
 		default: {
-			_gw->getEventQueue()->keyRelease( static_cast<osgGA::GUIEventAdapter::KeySymbol>( *( event->text().toAscii().data() ) ) );
+			_gw->getEventQueue()->keyRelease( static_cast<osgGA::GUIEventAdapter::KeySymbol>( *( event->text().TOASCII().data() ) ) );
 			break;
 		}
 	}

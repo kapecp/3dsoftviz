@@ -64,11 +64,12 @@
 #include "LuaTypes/LuaValueList.h"
 #include "LuaGraph/LuaGraphTreeModel.h"
 
-#include "easylogging++.h"
+#include <easylogging++.h>
 
 #include <iostream>
 #include <osg/ref_ptr>
 #include <string>
+#include <list>
 
 #ifdef OPENCV_FOUND
 #include "OpenCV/OpenCVCore.h"
@@ -660,14 +661,14 @@ void CoreWindow::createActions()
 	b_restartLayouting->setText( "Restart Layout" );
 	connect( b_restartLayouting, SIGNAL( clicked() ), this, SLOT( restartLayouting() ) );
 
-	clusteringProgressBar = new QProgressDialog( "", "", 0, 10, this, Qt::Dialog );
+	clusteringProgressBar = new QProgressDialog( "", "Abort", 0, 10, this, Qt::Dialog );
 	clusteringProgressBar->setWindowTitle( "Clustering" );
-	clusteringProgressBar->setCancelButtonText( "Abort" );
 	Qt::WindowFlags flags = clusteringProgressBar->windowFlags();
 	flags = flags & ( ~Qt::WindowContextHelpButtonHint );
 	clusteringProgressBar->setWindowFlags( flags );
 	clusteringProgressBar->setModal( true );
 	clusteringProgressBar->setMinimumDuration( 1000 );
+	clusteringProgressBar->reset();
 
 	b_SetRestriction_Cube_Selected = new QPushButton();
 	b_SetRestriction_Cube_Selected->setText( "Restrict" );
@@ -1191,6 +1192,12 @@ QWidget* CoreWindow::createMoreFeaturesTab( QFrame* line )
 	b_start_leap->setMaximumWidth( 136 );
 	lMore->addRow( b_start_leap );
 	connect( b_start_leap, SIGNAL( clicked() ), this, SLOT( startLeap() ) );
+	//leapAR
+	b_start_leapAR = new QPushButton();
+	b_start_leapAR->setText( "Start LeapAR" );
+	b_start_leapAR->setMaximumWidth( 136 );
+	lMore->addRow( b_start_leapAR );
+	connect( b_start_leapAR, SIGNAL( clicked() ), this, SLOT( startLeapAR() ) );
 #endif
 
 #ifdef SPEECHSDK_FOUND
@@ -1203,6 +1210,18 @@ QWidget* CoreWindow::createMoreFeaturesTab( QFrame* line )
 	lMore->addRow( b_start_speech );
 	connect( b_start_speech, SIGNAL( clicked() ), this, SLOT( startSpeech() ) );
 #endif
+
+#ifdef MOUSE3D_FOUND
+	line = createLine();
+	lMore->addRow( line );
+	lMore->addRow( new QLabel( tr( "3D Mouse" ) ) );
+	b_start_mouse3d = new QPushButton();
+	b_start_mouse3d->setText( "Start Mouse" );
+	b_start_mouse3d->setMaximumWidth( 136 );
+	lMore->addRow( b_start_mouse3d );
+	connect( b_start_mouse3d, SIGNAL( clicked() ), this, SLOT( startMouse3d() ) );
+#endif
+
 
 #ifdef FGLOVE_FOUND
 	line = createLine();
@@ -1850,7 +1869,7 @@ void CoreWindow::loadExampleGraphLua()
 	layout->pause();
 	coreGraph->setNodesFreezed( true );
 
-	Lua::LuaGraphVisualizer* visualizer = visualizer = new Lua::SimpleGraphVisualizer( currentGraph, coreGraph->getCamera() );
+	Lua::LuaGraphVisualizer* visualizer = new Lua::SimpleGraphVisualizer( currentGraph, coreGraph->getCamera() );
 	visualizer->visualize();
 
 	coreGraph->reloadConfig();
@@ -2391,7 +2410,7 @@ void CoreWindow::setRestriction_SphereSurface()
 
 	if ( currentGraph != NULL ) {
 		osg::Vec3 position = viewerWidget->getPickHandler()->getSelectionCenter( true );
-		if ( qFuzzyCompare( static_cast<float>( position.length() ),0.0f ) ) {
+		if ( qFuzzyCompare( ( position.length() ),0.0f ) ) {
 			return;
 		}
 		osg::ref_ptr<Data::Node> centerNode;
@@ -3561,13 +3580,27 @@ void CoreWindow::startLeap()
 	}
 
 	this->mLeapThr = new Leap::LeapThread( this,
-										   new Leap::CustomCameraManipulator( getCameraManipulator(),
+										   new Leap::CustomLeapManager( getCameraManipulator(),
 												   AppCore::Core::getInstance()->getLayoutThread(),
-												   AppCore::Core::getInstance( NULL )->getCoreGraph() ) );
+												   AppCore::Core::getInstance( NULL )->getCoreGraph()) );
 	//CoUninitialize();
 
 	this->mLeapThr->start();
 	b_start_leap->setText( "Stop Leap" );
+}
+void CoreWindow::startLeapAR()
+{
+	if ( mLeapThrAR!=NULL && b_start_leapAR->text()=="Stop LeapAR" ) {
+		delete( this->mLeapThrAR );
+		b_start_leapAR->setText( "Start LeapAR" );
+		this->mLeapThrAR=NULL;
+		return;
+	}
+
+	this->mLeapThrAR = new Leap::LeapThread(this,new Leap::CustomLeapManager(getCameraManipulator(), AppCore::Core::getInstance()->getLayoutThread(), AppCore::Core::getInstance( NULL )->getCoreGraph(), coreGraph->getHandsGroup()));
+
+	this->mLeapThrAR->start();
+	b_start_leapAR->setText( "Stop LeapAR" );
 }
 #endif
 
@@ -4016,6 +4049,58 @@ void CoreWindow::closeEvent( QCloseEvent* event )
 	//QApplication::closeAllWindows();   // ????
 }
 
+void QOSG::CoreWindow::OnMove( std::vector<float>& motionData )
+{
+
+	QOSG::ViewerQT* moveViewer = this->GetViewerQt();
+
+	//right & left
+	if ( motionData[0] >  0.003 ) {
+		moveViewer->getEventQueue()->keyPress( osgGA::GUIEventAdapter::KEY_Right );
+		moveViewer->getEventQueue()->keyRelease( osgGA::GUIEventAdapter::KEY_Right );
+	}
+	if ( motionData[0] < -0.003 ) {
+		moveViewer->getEventQueue()->keyPress( osgGA::GUIEventAdapter::KEY_Left );
+		moveViewer->getEventQueue()->keyRelease( osgGA::GUIEventAdapter::KEY_Left );
+	}
+	//forward & back
+	if ( motionData[1] >  0.003 ) {
+		moveViewer->getEventQueue()->keyPress( osgGA::GUIEventAdapter::KEY_Down );
+		moveViewer->getEventQueue()->keyRelease( osgGA::GUIEventAdapter::KEY_Down );
+	}
+	if ( motionData[1] < -0.003 ) {
+		moveViewer->getEventQueue()->keyPress( osgGA::GUIEventAdapter::KEY_Up );
+		moveViewer->getEventQueue()->keyRelease( osgGA::GUIEventAdapter::KEY_Up );
+	}
+	//up & down
+	//keydown has higher threshhold because user is more likely to press it accidentaly due to weight of own hand
+	//keyup has lower threshhold because user is less likely to press it accidentaly due to weight of own hand
+	if ( motionData[2] >  0.004 ) {
+		moveViewer->getEventQueue()->keyPress( osgGA::GUIEventAdapter::KEY_Page_Down );
+		moveViewer->getEventQueue()->keyRelease( osgGA::GUIEventAdapter::KEY_Page_Down );
+	}
+	if ( motionData[2] < -0.002 ) {
+		moveViewer->getEventQueue()->keyPress( osgGA::GUIEventAdapter::KEY_Page_Up );
+		moveViewer->getEventQueue()->keyRelease( osgGA::GUIEventAdapter::KEY_Page_Up );
+	}
+	//rotations
+
+	double a = fabs( motionData[3] ), b = fabs( motionData[4] ), c = fabs( motionData[5] );
+	if ( a > 0.001 ) {
+		moveViewer->getCameraManipulator()->rotateCamera( 0.0, 0.0, 1.0, ( float )( -1.5 )*( float )motionData[3], 0.0 );
+		//qDebug() << "Moving A" << endl;
+	}
+	if ( b > 0.001 ) {
+		moveViewer->getCameraManipulator()->rotateCamera( 1.0, 0.00, ( 1.2 )*( double )motionData[4], -1, -1 );
+		//qDebug() << "Moving B" << endl;
+	}
+	if ( c > 0.001 ) {
+		moveViewer->getCameraManipulator()->rotateCamera( 0.0, 0.0, 1.0, 0.0, ( float )( -1.5 )*motionData[5] );
+		//qDebug() << "Moving C" << endl;
+	}
+
+}
+
 void QOSG::CoreWindow::moveMouseAruco( double positionX,double positionY,bool isClick, Qt::MouseButton button )
 {
 	this->viewerWidget->moveMouseAruco( positionX,positionY,isClick,this->x(),this->y(),button );
@@ -4060,6 +4145,32 @@ void CoreWindow::startGlovesRecognition()
 }
 
 #endif
+
+
+#ifdef MOUSE3D_FOUND
+void CoreWindow::startMouse3d()
+{
+
+	if ( b_start_mouse3d->text()=="Stop Mouse" ) {
+		//this->mGloveThr->terminate();
+		//delete( this->mGloveThr );
+		delete conn;
+
+		b_start_mouse3d->setText( "Start Mouse" );
+		return;
+	}
+
+	conn = new Mouse3d::Connector( this );
+	conn->CreateConnection();
+
+	//this->mGloveThr = new Fglove::FgloveThread();
+	//this->b_start_mouse3d->start();
+	b_start_mouse3d->setText( "Stop Mouse" );
+
+}
+
+#endif
+
 
 void CoreWindow::createMetricsToolBar()
 {
@@ -4159,7 +4270,7 @@ void CoreWindow::loadFunctionCall()
 	layout->pause();
 	coreGraph->setNodesFreezed( true );
 
-	Lua::LuaGraphVisualizer* visualizer = visualizer = new Lua::SimpleGraphVisualizer( currentGraph, coreGraph->getCamera() );
+	Lua::LuaGraphVisualizer* visualizer = new Lua::SimpleGraphVisualizer( currentGraph, coreGraph->getCamera() );
 	visualizer->visualize();
 
 	coreGraph->reloadConfig();

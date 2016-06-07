@@ -23,6 +23,8 @@
 #include <osgDB/ReadFile>
 #include <osgViewer/Viewer>
 
+#include <string>
+
 // used code from http://jotschi.de/2009/05/31/projective-textures-with-openscenegraph/
 osg::StateSet* QOSG::ProjectiveARViewer::createProjectorState( osg::Texture2D* texture, osg::Vec3 projectorPos, osg::Vec3 projectorDirection, float projectorFOV )
 {
@@ -112,23 +114,23 @@ osg::Geode* QOSG::ProjectiveARViewer::createBase()
 
 	//base
 	osg::Vec3Array* vertices = new osg::Vec3Array;
-	vertices->push_back( osg::Vec3( -1.5, -2.0, 0 ) ); // lb   floor
-	vertices->push_back( osg::Vec3( 0, -2.0, 0 ) );   // rb   floor
+	vertices->push_back( osg::Vec3( -1.5f, -2.0f, 0 ) ); // lb   floor
+	vertices->push_back( osg::Vec3( 0, -2.0f, 0 ) );   // rb   floor
 	vertices->push_back( osg::Vec3( 0, 0, 0 ) );        // rb   screen
-	vertices->push_back( osg::Vec3( -1.5, 0, 0 ) );     // lb   screen
-	vertices->push_back( osg::Vec3( 0, 0, 2.07 ) );      // rt   screen
-	vertices->push_back( osg::Vec3( -1.5, 0, 2.07 ) );   // lt   screen
+	vertices->push_back( osg::Vec3( -1.5f, 0, 0 ) );   // lb   screen
+	vertices->push_back( osg::Vec3( 0, 0, 2.07f ) );    // rt   screen
+	vertices->push_back( osg::Vec3( -1.5f, 0, 2.07f ) ); // lt   screen
 
 	//right side
-	vertices->push_back( osg::Vec3( 0.02, -0.08, 0 ) );   // fb   rack
-	vertices->push_back( osg::Vec3( 0.02, -0.08, 0.02 ) ); // fm   rack
-	vertices->push_back( osg::Vec3( 0.02, -0.015, 0.065 ) ); // ft   rack
-	vertices->push_back( osg::Vec3( 0.02, -0.015, 0.00 ) ); // sb   rack
+	vertices->push_back( osg::Vec3( 0.02f, -0.08f, 0 ) ); // fb   rack
+	vertices->push_back( osg::Vec3( 0.02f, -0.08f, 0.02f ) ); // fm   rack
+	vertices->push_back( osg::Vec3( 0.02f, -0.015f, 0.065f ) ); // ft   rack
+	vertices->push_back( osg::Vec3( 0.02f, -0.015f, 0.00f ) ); // sb   rack
 	//left side
-	vertices->push_back( osg::Vec3( -1.52, -0.08, 0 ) );   // fb   rack
-	vertices->push_back( osg::Vec3( -1.52, -0.08, 0.02 ) ); // fm   rack
-	vertices->push_back( osg::Vec3( -1.52, -0.015, 0.065 ) ); // ft   rack
-	vertices->push_back( osg::Vec3( -1.52, -0.015, 0.00 ) ); // sb   rack
+	vertices->push_back( osg::Vec3( -1.52f, -0.08f, 0 ) ); // fb   rack
+	vertices->push_back( osg::Vec3( -1.52f, -0.08f, 0.02f ) ); // fm   rack
+	vertices->push_back( osg::Vec3( -1.52f, -0.015f, 0.065f ) ); // ft   rack
+	vertices->push_back( osg::Vec3( -1.52f, -0.015f, 0.00f ) ); // sb   rack
 	baseGeometry->setVertexArray( vertices );
 
 	// floor
@@ -191,8 +193,8 @@ osg::Geode* QOSG::ProjectiveARViewer::createBase()
 osg::Group* QOSG::ProjectiveARViewer::createProjectorScene()
 {
 
-	unsigned int tex_width = 2048;
-	unsigned int tex_height = 2048;
+	int tex_width = 2048;
+	int tex_height = 2048;
 	unsigned int samples = 0;
 	unsigned int colorSamples = 0;
 
@@ -221,7 +223,7 @@ osg::Group* QOSG::ProjectiveARViewer::createProjectorScene()
 	}
 
 	// set up the background color and clear mask.
-	renderCamera->setClearColor( osg::Vec4( 0.0f, 0.0f, 0.0f, 1.0f ) );
+	renderCamera->setClearColor( osg::Vec4f( 0.0f, 0.0f, 0.0f, 1.0f ) );
 	renderCamera->setClearMask( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
 	double fovy, aspectRatio, zNear, zFar;
@@ -266,10 +268,10 @@ osg::Group* QOSG::ProjectiveARViewer::createProjectorScene()
 
 	/* Enable projective texturing for all objects of base */
 	if ( useGraph ) {
-		base->setStateSet( createProjectorState( texture, viewerPos, graphPos - viewerPos, viewerFOV ) );
+		base->setStateSet( createProjectorState( texture, viewerPos, graphPos - viewerPos, static_cast<float>(viewerFOV) ) );
 	}
 	else {
-		base->setStateSet( createProjectorState( texture, viewerPos, viewerDir, viewerFOV ) );
+		base->setStateSet( createProjectorState( texture, viewerPos, viewerDir, static_cast<float>(viewerFOV) ) );
 	}
 
 	projectorScene->addChild( base );

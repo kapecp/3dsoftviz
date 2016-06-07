@@ -1,8 +1,8 @@
 #include "LeapLib/LeapController.h"
 
-Leap::LeapController::LeapController( LeapCameraManipulator* cameraManipulator )
+Leap::LeapController::LeapController( LeapManager* leapManager )
 {
-	leapListener = new Leap::LeapListener( cameraManipulator );
+	leapListener = new Leap::LeapListener( leapManager );
 }
 
 Leap::LeapController::~LeapController()

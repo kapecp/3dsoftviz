@@ -20,6 +20,9 @@
 #include <QList>
 #include <QTextStream>
 
+#include <limits>
+#include <string>
+
 Repository::Git::GitLuaGraphAnalyzer::GitLuaGraphAnalyzer()
 	: luaGraph( Lua::LuaGraph::getInstance() ), evolutionGraph( nullptr ), versionNumber( -1 ), functions( new QMap<QString, Repository::Git::GitFunction*>() )
 {
@@ -258,21 +261,21 @@ void Repository::Git::GitLuaGraphAnalyzer::analyze()
 			this->evolutionGraph->getMetaDataFromIdentifier( file->getIdentifier() )->setLastDiffVersion( version->getCommitId() );
 
 			/*
-			            for( QMap<QString, Repository::Git::GitFunction*>::iterator  iterator = file->getGitFunctions()->begin(); iterator != file->getGitFunctions()->end(); ++iterator ) {
-			                Repository::Git::GitFunction* function = iterator.value();
+						for( QMap<QString, Repository::Git::GitFunction*>::iterator  iterator = file->getGitFunctions()->begin(); iterator != file->getGitFunctions()->end(); ++iterator ) {
+							Repository::Git::GitFunction* function = iterator.value();
 
-			                qDebug() << file->getIdentifier() << "->" <<  function->getIdentifier();
+							qDebug() << file->getIdentifier() << "->" <<  function->getIdentifier();
 
-			                for( QMap<QString, Repository::Git::GitFunction*>::iterator iter = function->getFunctionCallers()->begin(); iter != function->getFunctionCallers()->end(); ++iter ) {
-			                    Repository::Git::GitFunction* innerFunction = iter.value();
-			                    qDebug() << "Caller ->" << innerFunction->getIdentifier();
-			                }
+							for( QMap<QString, Repository::Git::GitFunction*>::iterator iter = function->getFunctionCallers()->begin(); iter != function->getFunctionCallers()->end(); ++iter ) {
+								Repository::Git::GitFunction* innerFunction = iter.value();
+								qDebug() << "Caller ->" << innerFunction->getIdentifier();
+							}
 
-			                for( QMap<QString, Repository::Git::GitFunction*>::iterator iter = function->getFunctionCallees()->begin(); iter != function->getFunctionCallees()->end(); ++iter ) {
-			                    Repository::Git::GitFunction* innerFunction = iter.value();
-			                    qDebug() << "Callee ->" << innerFunction->getIdentifier();
-			                }
-			            }
+							for( QMap<QString, Repository::Git::GitFunction*>::iterator iter = function->getFunctionCallees()->begin(); iter != function->getFunctionCallees()->end(); ++iter ) {
+								Repository::Git::GitFunction* innerFunction = iter.value();
+								qDebug() << "Callee ->" << innerFunction->getIdentifier();
+							}
+						}
 			*/
 		}
 	}
@@ -362,21 +365,21 @@ void Repository::Git::GitLuaGraphAnalyzer::compareFilesAndSaveToEvolutionGraph( 
 		}
 	}
 	/*
-	    for( QMap<QString, Repository::Git::GitFunction*>::iterator  iterator = file->getGitFunctions()->begin(); iterator != file->getGitFunctions()->end(); ++iterator ) {
-	        Repository::Git::GitFunction* function = iterator.value();
+		for( QMap<QString, Repository::Git::GitFunction*>::iterator  iterator = file->getGitFunctions()->begin(); iterator != file->getGitFunctions()->end(); ++iterator ) {
+			Repository::Git::GitFunction* function = iterator.value();
 
-	        qDebug() << file->getIdentifier() << "->" <<  function->getIdentifier() << function->getTypeAsString();
+			qDebug() << file->getIdentifier() << "->" <<  function->getIdentifier() << function->getTypeAsString();
 
-	        for( QMap<QString, Repository::Git::GitFunction*>::iterator iter = function->getFunctionCallers()->begin(); iter != function->getFunctionCallers()->end(); ++iter ) {
-	            Repository::Git::GitFunction* innerFunction = iter.value();
-	            qDebug() << "Caller ->" << innerFunction->getIdentifier() << innerFunction->getTypeAsString();
-	        }
+			for( QMap<QString, Repository::Git::GitFunction*>::iterator iter = function->getFunctionCallers()->begin(); iter != function->getFunctionCallers()->end(); ++iter ) {
+				Repository::Git::GitFunction* innerFunction = iter.value();
+				qDebug() << "Caller ->" << innerFunction->getIdentifier() << innerFunction->getTypeAsString();
+			}
 
-	        for( QMap<QString, Repository::Git::GitFunction*>::iterator iter = function->getFunctionCallees()->begin(); iter != function->getFunctionCallees()->end(); ++iter ) {
-	            Repository::Git::GitFunction* innerFunction = iter.value();
-	            qDebug() << "Callee ->" << innerFunction->getIdentifier() << innerFunction->getTypeAsString();
-	        }
-	    }
+			for( QMap<QString, Repository::Git::GitFunction*>::iterator iter = function->getFunctionCallees()->begin(); iter != function->getFunctionCallees()->end(); ++iter ) {
+				Repository::Git::GitFunction* innerFunction = iter.value();
+				qDebug() << "Callee ->" << innerFunction->getIdentifier() << innerFunction->getTypeAsString();
+			}
+		}
 	*/
 //    qDebug() << file->getIdentifier();
 	if ( file->getType() == Repository::Git::GitType::REMOVED ) {
@@ -652,8 +655,8 @@ bool Repository::Git::GitLuaGraphAnalyzer::intervalsIntersects( int firstStart, 
 int Repository::Git::GitLuaGraphAnalyzer::calculateRealResult( qlonglong luaId )
 {
 	Lua::LuaNode* node = this->luaGraph->getNodes()->value( luaId );
-	int blank = node->getParams()["metrics"].asTable()["LOC"].asTable()["lines_blank"].asNumber();
-	int nonempty = node->getParams()["metrics"].asTable()["LOC"].asTable()["lines_nonempty"].asNumber();
+	int blank = static_cast<int>(node->getParams()["metrics"].asTable()["LOC"].asTable()["lines_blank"].asNumber());
+	int nonempty = static_cast<int>(node->getParams()["metrics"].asTable()["LOC"].asTable()["lines_nonempty"].asNumber());
 
 	int realBlank = ( blank - nonempty - 1 ) / 2;
 	return nonempty + realBlank + 1;
@@ -667,7 +670,7 @@ void Repository::Git::GitLuaGraphAnalyzer::findFunctionRowsFromFile( Repository:
 		Repository::Git::GitFunction* function = iterator.value();
 		if ( function->getFunctionType() == Repository::Git::GitFunctionType::LOCALFUNCTION ) {
 			Lua::LuaNode* node = this->luaGraph->getNodes()->value( function->getId() );
-			int position = node->getParams()["position"].asNumber();
+			int position = static_cast<int>(node->getParams()["position"].asNumber());
 			min = position < min ? position : min;
 			functionToByte.insert( function->getIdentifier(), position );
 //            qDebug() << function->getIdentifier() << position;
@@ -683,8 +686,8 @@ void Repository::Git::GitLuaGraphAnalyzer::findFunctionRowsFromFile( Repository:
 	if ( ioFile.open( QIODevice::ReadOnly ) ) {
 		QTextStream reader( &ioFile );
 		QString line;
-		long count = 0;
-		long row = 0;
+		int count = 0;
+		int row = 0;
 
 		while ( !reader.atEnd() ) {
 			line = reader.readLine();
@@ -696,7 +699,7 @@ void Repository::Git::GitLuaGraphAnalyzer::findFunctionRowsFromFile( Repository:
 				min = std::numeric_limits<int>::max();
 				for ( QMap<QString,int>::iterator i = functionToByte.begin(); i != functionToByte.end(); ++i ) {
 					if ( i.value() <= count ) {
-						file->getGitFunctions()->value( i.key() )->setFunctionRowNumber( row );
+						file->getGitFunctions()->value( i.key() )->setFunctionRowNumber( static_cast<int>( row ) );
 //                        qDebug() << file->getGitFunctions()->value( i.key() )->getIdentifier() << row;
 						remove.append( i.key() );
 					}

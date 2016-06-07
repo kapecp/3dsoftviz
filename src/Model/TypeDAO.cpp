@@ -25,7 +25,7 @@ bool Model::TypeDAO::checkIfExists( Data::Type* type, QSqlDatabase* conn )
 {
 	if ( conn==NULL || !conn->isOpen() ) { //check if we have connection
 		qDebug() << "[Model::TypeDAO::checkIfExists] Connection to DB not opened.";
-		return NULL;
+		return ( bool* )NULL;
 	}
 	else if ( type==NULL ) {
 		qDebug() << "[Model::TypeDAO::checkIfExists] Invalid parameter - type is NULL.";
@@ -47,7 +47,7 @@ bool Model::TypeDAO::checkIfExists( Data::Type* type, QSqlDatabase* conn )
 	query->bindValue( ":graph_id", type->getGraph()->getId() );
 	if ( !query->exec() ) {
 		qDebug() << "[Model::TypeDAO::checkIfExists] Could not perform query on DB: " << query->lastError().databaseText();
-		return NULL;
+		return ( bool* )NULL;
 	}
 	if ( query->next() && query->value( 0 )==1 ) {
 		return true;
@@ -61,7 +61,7 @@ bool Model::TypeDAO::removeType( Data::Type* type, QSqlDatabase* conn )
 {
 	if ( conn==NULL || !conn->isOpen() ) { //check if we have connection
 		qDebug() << "[Model::TypeDAO::removeType] Connection to DB not opened.";
-		return NULL;
+		return ( bool* )NULL;
 	}
 	else if ( type==NULL ) {
 		qDebug() << "[Model::TypeDAO::removeType] Invalid parameter - type is NULL.";
@@ -141,7 +141,7 @@ bool Model::TypeDAO::addType( Data::Type* type, QSqlDatabase* conn )
 	if ( !type->getGraph()->isInDB() ) {
 		if ( !Model::GraphDAO::addGraph( type->getGraph(), conn ) ) { //could not insert graph into DB
 			qDebug() << "[Model::TypeDAO::addType] Could not insert type in DB. Graph is not in DB.";
-			return NULL;
+			return ( bool* )NULL;
 		}
 	}
 
@@ -155,7 +155,7 @@ bool Model::TypeDAO::addType( Data::Type* type, QSqlDatabase* conn )
 		if ( !( static_cast<Data::MetaType*>( type ) )->getLayout()->isInDB() ) {
 			if ( !Model::GraphLayoutDAO::addLayout( ( static_cast<Data::MetaType*>( type ) )->getLayout(),conn ) ) {
 				qDebug() << "[Model::TypeDAO::addType] Could not insert metatype in DB. Layout is not in DB.";
-				return NULL;
+				return ( bool* )NULL;
 			}
 		}
 		query->prepare( "INSERT INTO nodes (\"name\", graph_id, meta, layout_id) VALUES (:type_name,:graph_id,:meta,:layout_id) RETURNING node_id" );
@@ -170,7 +170,7 @@ bool Model::TypeDAO::addType( Data::Type* type, QSqlDatabase* conn )
 
 	if ( !query->exec() ) {
 		qDebug() << "[Model::TypeDAO::addType] Could not perform query on DB: " << query->lastError().databaseText();
-		return NULL;
+		return ( bool* )NULL;
 	}
 
 	if ( query->next() ) {

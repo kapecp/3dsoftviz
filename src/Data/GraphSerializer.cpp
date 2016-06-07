@@ -15,9 +15,9 @@ osg::Vec3f GraphSerializer::getRandomPosition()
 
 	srand( static_cast<unsigned>( time( 0 ) ) );
 
-	x = lowest + ( range * static_cast<double>( rand() ) / ( RAND_MAX + 1.0 ) );
-	y = lowest + ( range * static_cast<double>( rand() ) / ( RAND_MAX + 1.0 ) );
-	z = lowest + ( range * static_cast<double>( rand() ) / ( RAND_MAX + 1.0 ) );
+	x = lowest + ( range * static_cast<double>( qrand() ) / ( RAND_MAX + 1.0 ) );
+	y = lowest + ( range * static_cast<double>( qrand() ) / ( RAND_MAX + 1.0 ) );
+	z = lowest + ( range * static_cast<double>( qrand() ) / ( RAND_MAX + 1.0 ) );
 
 	return osg::Vec3f( static_cast<float>( x ), static_cast<float>( y ), static_cast<float>( z ) );
 }

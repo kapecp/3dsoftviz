@@ -40,7 +40,7 @@
 #include <osgShadow/ShadowMap>
 #include <osgShadow/SoftShadowMap>
 
-#include "easylogging++.h"
+#include <easylogging++.h>
 
 namespace Vwr {
 
@@ -677,6 +677,11 @@ Vwr::CoreGraph::CoreGraph( Data::Graph* graph, osg::ref_ptr<osg::Camera> camera 
 	}
 
 	//******
+
+	//leap ar hands group
+	handsGroup = new osg::Group();
+	root->addChild(handsGroup);
+	//
 
 	// backgroung this must be last Node in root !!!  ( because of ortho2d background)
 	// Gloger: disabled skybox- using solid background (see setClearColor in ViewerQT)
@@ -1511,7 +1516,7 @@ void CoreGraph::createBase()
 	//invisible untill checkbox clicked
 	baseGeode->setNodeMask( 0x0 );
 	osg::Material* material = new osg::Material();
-	material->setDiffuse( osg::Material::FRONT,  osg::Vec4( 0.8, 0.8, 0.8, 0.2 ) );
+	material->setDiffuse( osg::Material::FRONT,  osg::Vec4( 0.8f, 0.8f, 0.8f, 0.2f ) );
 	// material->setEmission(osg::Material::FRONT, osg::Vec4(0, 0, 0, 1));
 	baseGeode->getOrCreateStateSet()->setAttribute( material );
 
@@ -1665,6 +1670,9 @@ void CoreGraph::scaleGraph( int scale )
 			graphRotTransf->setMatrix( scaleMatrix * scaleMatrix.scale( 2,2,2 ) );
 			break;
 		}
+		default:
+			//scale wont have any other value
+			qDebug() << "Unhandled scale value";
 	}
 }
 
@@ -1677,19 +1685,25 @@ void CoreGraph::rotateGraph( int direction )
 	transfGraph.setTrans( inverted.getTrans() );
 
 	switch ( direction ) {
-		case 1:
+		case 1: {
 			rotationMatrix = rotationMatrix.rotate( 0.025,0,0,1 );
 			break;
-		case -1:
+		}
+		case -1: {
 			rotationMatrix = rotationMatrix.rotate( -0.025,0,0,1 );
 			break;
+		}
 		case 2: {
 			rotationMatrix = rotationMatrix.rotate( 0.025,0,1,0 );
 			break;
 		}
-		case -2:
+		case -2: {
 			rotationMatrix = rotationMatrix.rotate( -0.025,0,1,0 );
 			break;
+		}
+		default:
+			//direction wont have any other value
+			qDebug() << "Unhandled direction value";
 	}
 
 	transfGraph = transfGraph * rotationMatrix;
@@ -1740,7 +1754,7 @@ void CoreGraph::scaleNodes( bool scaleUp )
 
 		if ( scaleUp ) {
 			if ( actualScale < 100 ) {
-				it.value()->setScale( actualScale * 1.2 );
+				it.value()->setScale( actualScale * 1.2f );
 			}
 			else {
 				it.value()->setScale( actualScale );
@@ -1748,7 +1762,7 @@ void CoreGraph::scaleNodes( bool scaleUp )
 		}
 		else {
 			if ( actualScale > 1 ) {
-				it.value()->setScale( actualScale * 0.8 );
+				it.value()->setScale( actualScale * 0.8f );
 			}
 			else {
 				it.value()->setScale( actualScale );

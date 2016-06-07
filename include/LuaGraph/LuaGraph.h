@@ -5,7 +5,7 @@
 #include "LuaGraph/LuaEdge.h"
 #include "LuaGraph/LuaIncidence.h"
 
-#include "Q_LONG"
+#include <QMap>
 
 namespace Lua {
 

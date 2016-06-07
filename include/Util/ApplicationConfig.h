@@ -5,16 +5,14 @@
 #ifndef UTIL_HASHMAPSINGLETON_DEF
 #define UTIL_HASHMAPSINGLETON_DEF 1
 
-#ifdef __APPLE__
-#include <qstring.h>
-#include <qstringlist.h>
-#else
-#include <Qt/qstring.h>
-#include <Qt/qstringlist.h>
-#endif
+#include <QByteArray>
+#include <QDebug>
+#include <QFile>
+#include <QMap>
+#include <QString>
+#include <QStringList>
 
 #include <osg/Vec4f>
-#include <QMap>
 #include <OpenThreads/Mutex>
 
 #include <memory>

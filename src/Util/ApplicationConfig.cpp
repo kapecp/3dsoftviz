@@ -4,7 +4,6 @@
 
 #include <QDebug>
 #include <QFile>
-#include <QDebug>
 
 Util::ApplicationConfig* Util::ApplicationConfig::_instance;
 OpenThreads::Mutex Util::ApplicationConfig::_mutex;

@@ -3,8 +3,7 @@
 
 #include "LuaGraphObject.h"
 
-#include "QList"
-#include "Q_LONG"
+#include <QList>
 
 namespace Lua {
 

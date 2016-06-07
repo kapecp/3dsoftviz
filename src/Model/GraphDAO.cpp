@@ -313,7 +313,7 @@ bool Model::GraphDAO::addGraph( Data::Graph* graph, QSqlDatabase* conn )
 	query->bindValue( ":graph_name",graph->getName() );
 	if ( !query->exec() ) {
 		qDebug() << "[Model::GraphDAO::addGraph] Could not perform query on DB: " << query->lastError().databaseText();
-		return NULL;
+		return ( bool* )NULL;
 	}
 
 	//ulozime graf do databazy podla ID

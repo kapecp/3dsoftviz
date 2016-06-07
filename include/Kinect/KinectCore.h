@@ -2,6 +2,7 @@
 #define KinectCORE_H
 
 #include <QPointer>
+#include <QApplication>
 
 namespace Kinect {
 class KinectThread;

@@ -1,6 +1,8 @@
 #ifndef __3DVisualUnspyUserExecutor_H__
 #define __3DVisualUnspyUserExecutor_H__
 
+#include <QByteArray>
+
 #include "Network/executors/AbstractExecutor.h"
 
 namespace Network {
