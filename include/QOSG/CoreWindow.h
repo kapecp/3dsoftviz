@@ -100,7 +100,7 @@ private:
 #endif
 
 public slots:
-    void OnMove(std::vector<float>& motionData);
+	void OnMove( std::vector<float>& motionData );
 
 	void moveMouseAruco( double positionX,double positionY,bool isClick, Qt::MouseButton button );
 
@@ -565,14 +565,14 @@ public slots:
 #ifdef SPEECHSDK_FOUND
 	void startSpeech();
 #endif
-    /**
-        *@brief create 3d mouse connection
-        *
-        *
-        *
-     */
+	/**
+	    *@brief create 3d mouse connection
+	    *
+	    *
+	    *
+	 */
 #ifdef MOUSE3D_FOUND
-    void startMouse3d();
+	void startMouse3d();
 #endif
 
 #ifdef LEAP_FOUND
@@ -1122,11 +1122,11 @@ private:
 	 */
 	QPushButton* b_start_gloves;
 
-    /**
-     * QPushButton start 3d mouse recognition
-     *@brief b_start_mouse3d
-     */
-    QPushButton* b_start_mouse3d;
+	/**
+	 * QPushButton start 3d mouse recognition
+	 *@brief b_start_mouse3d
+	 */
+	QPushButton* b_start_mouse3d;
 
 	/**
 	 * QPushButton* b_previous_version
@@ -1771,7 +1771,7 @@ private:
 	void onChange();
 
 #ifdef MOUSE3D_FOUND
-	Mouse3d::Connector *conn;
+	Mouse3d::Connector* conn;
 #endif
 };
 }

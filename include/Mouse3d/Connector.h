@@ -3,7 +3,7 @@
 
 #include "Mouse3d/LibMouse3d/EventThread.h"
 
-namespace Mouse3d{
+namespace Mouse3d {
 
 /**
 *@author Michal Fasanek
@@ -11,16 +11,17 @@ namespace Mouse3d{
 *@brief 3dSoftViz class responsible for establishing connection with LibMouse3d.
 */
 
-class Connector{
+class Connector
+{
 
 public:
-    //constructor
-    Connector(QOSG::CoreWindow* window);
+	//constructor
+	Connector( QOSG::CoreWindow* window );
 
-    //destructor
-    ~Connector();
+	//destructor
+	~Connector();
 
-    void CreateConnection();
+	void CreateConnection();
 
 private:
 	QOSG::CoreWindow* window;

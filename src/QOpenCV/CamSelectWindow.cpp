@@ -1,6 +1,7 @@
 #include "QOpenCV/CamSelectWindow.h"
-
 #include "OpenCV/CamSelectCore.h"
+
+#include <vector>
 
 OpenCV::CamSelectWindow::CamSelectWindow( QWidget* parent, QApplication* app, QString stringdata ): QDialog( parent )
 {

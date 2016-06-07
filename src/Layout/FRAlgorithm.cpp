@@ -137,7 +137,7 @@ osg::Vec3f FRAlgorithm::getRandomLocation()
 double FRAlgorithm::getRandomDouble()
 {
 
-	return static_cast<double>( rand() ) / static_cast<double>( RAND_MAX );
+	return static_cast<double>( qrand() ) / static_cast<double>( RAND_MAX );
 }
 
 void FRAlgorithm::PauseAlg()
@@ -591,7 +591,7 @@ void FRAlgorithm::addRepulsive( Data::Node* u, Data::Node* v, float factor )
 	//if(dist==0)
 	if ( qFuzzyCompare( dist,0.0 ) ) {
 		// pri splynuti uzlov medzi nimi vytvorime malu vzdialenost
-		vp.set( ( vp.x() + static_cast<float>( rand() % 10 ) ), ( vp.y() + static_cast<float>( rand() % 10 ) ),( vp.z() + static_cast<float>( rand() % 10 ) ) );
+		vp.set( ( vp.x() + static_cast<float>( qrand() % 10 ) ), ( vp.y() + static_cast<float>( qrand() % 10 ) ),( vp.z() + static_cast<float>( rand() % 10 ) ) );
 		dist = distance( up,vp );
 	}
 	fv = ( vp - up ); // smer sily

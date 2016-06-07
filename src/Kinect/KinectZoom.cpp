@@ -128,7 +128,7 @@ int Kinect::KinectZoom::DetectContour( )
 
 				for ( size_t k=0; k<hull[i].size(); k++ ) {
 					auto ind=hull[i][k];
-					hull_points[i].push_back( contours[i][ind] );
+					hull_points[i].push_back( contours[i][static_cast<unsigned long>( ind )] );
 				}
 
 				for ( size_t k=0; k<convDef[i].size(); k++ ) {

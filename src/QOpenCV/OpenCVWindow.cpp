@@ -292,7 +292,7 @@ void QOpenCV::OpenCVWindow::onSelSubModulChange()
 	}
 	/*
 	if ( mMultiMarkerRB->isChecked() ) {
-	    mSubmodulesStackL->setCurrentIndex( 2 );
+		mSubmodulesStackL->setCurrentIndex( 2 );
 	}
 	*/
 	if ( mNoVideo->isChecked() ) {

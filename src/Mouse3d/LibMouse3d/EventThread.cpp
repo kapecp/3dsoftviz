@@ -6,25 +6,29 @@
 
 #include "Mouse3d/LibMouse3d/Mouse3dDevices.h"
 
-namespace LibMouse3d{
+namespace LibMouse3d {
 
-EventThread::EventThread(QOSG::CoreWindow* window, QObject* parent) :
+EventThread::EventThread( QOSG::CoreWindow* window, QObject* parent ) :
 	QThread( parent ),
-	window( window ) {
+	window( window )
+{
 }
 
-void EventThread::run(){
+void EventThread::run()
+{
 	mouseDevice = new Mouse3dDevices( this->window );
-	LOG(INFO) << "Mouse3dDevices thread created";
+	LOG( INFO ) << "Mouse3dDevices thread created";
 }
 
-EventThread::~EventThread() {
+EventThread::~EventThread()
+{
 	delete mouseDevice;
-	LOG(INFO) << "Mouse3dDevices thread destroyed";
+	LOG( INFO ) << "Mouse3dDevices thread destroyed";
 }
 
-void EventThread::msleep(unsigned long msecs){
-    QThread::msleep(msecs);
+void EventThread::msleep( unsigned long msecs )
+{
+	QThread::msleep( msecs );
 }
 
 /**
