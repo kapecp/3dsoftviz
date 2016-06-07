@@ -187,9 +187,12 @@ find_package( OpenSceneGraph COMPONENTS
 )
 find_package( osgViewer )
 
+find_package( osgQt )
+
 list( APPEND ALL_SYSTEM_HEADERS
 	${OPENSCENEGRAPH_INCLUDE_DIRS}
 	${OSGVIEWER_INCLUDE_DIR}
+	${OSGQT_INCLUDE_DIR}
 )
 
 if( MSVC )
@@ -675,6 +678,7 @@ file( GLOB_RECURSE SRC_VIEWER	"src/Viewer/*.cpp" )
 file( GLOB_RECURSE SRC_CLUSTERING	"src/Clustering/*.cpp")
 file( GLOB SRC_REPOSITORY		"src/Repository/Git/*.cpp" )
 file( GLOB_RECURSE SRC_GITLIB   "src/Repository/Git/GitLib/*.cpp" )
+file( GLOB_RECURSE SRC_SPECIALMATRIX   "src/SpecialMatrix/*.cpp" )
 
 # OpenCV
 file( GLOB_RECURSE SRC_OPENCV	"src/OpenCV/*.cpp" )
@@ -742,6 +746,7 @@ set( SRC
 	${SRC_VIEWER}
 	${SRC_UTIL}
 	${SRC_REPOSITORY}
+	${SRC_SPECIALMATRIX}
 )
 
 if( OpenCV_FOUND )
@@ -802,6 +807,7 @@ file( GLOB_RECURSE HEADER_VIEWER	"include/Viewer/*.h" )
 file( GLOB_RECURSE HEADER_CLUSTERING	"include/Clustering/*.h")
 file( GLOB HEADER_REPOSITORY		"include/Repository/Git/*.h" )
 file( GLOB_RECURSE HEADER_GITLIB		"include/Repository/Git/GitLib/*.h" )
+file( GLOB_RECURSE HEADER_SPECIALMATRIX		"include/SpecialMatrix/*.h" )
 
 # OpenCV
 file( GLOB_RECURSE HEADER_OPENCV	"include/OpenCV/*.h" )
@@ -872,6 +878,7 @@ set( INCL
 	${HEADER_VIEWER}
 	${HEADER_UTIL}
 	${HEADER_REPOSITORY}
+	${HEADER_SPECIALMATRIX}
 )
 
 if( OpenCV_FOUND )
@@ -920,6 +927,7 @@ source_group( \\src\\LuaGraph "^.*LuaGraph/.*$")
 source_group( \\src\\LuaInterface "^.*LuaInterface/.*$")
 source_group( \\src\\LuaTypes "^.*LuaTypes/.*$")
 source_group( \\src\\Git "^.*Git/.*$" )
+source_group( \\src\\SpecialMatrix "^.*SpecialMatrix/.*$" )
 
 # Group header files
 source_group( \\headers\\Application "^.*Application/.*h$")
@@ -939,6 +947,7 @@ source_group( \\headers\\LuaGraph "^.*LuaGraph/.*h$")
 source_group( \\headers\\LuaInterface "^.*LuaInterface/.*h$")
 source_group( \\headers\\LuaTypes "^.*LuaTypes/.*h$")
 source_group( \\headers\\Git "^.*Git/.*h$" )
+source_group( \\headers\\SpecialMatrix "^.*SpecialMatrix/.*h$" )
 
 if( OpenCV_FOUND )
 	source_group( \\src\\QOpenCV "^.*QOpenCV/.*$" )
@@ -1105,6 +1114,7 @@ target_link_libraries( ${3DSOFTVIZ_NAME}
 	qtcolorpicker
 	${OPENSCENEGRAPH_LIBRARIES}
 	${OSGVIEWER_LIBRARIES}
+	${OSGQT_LIBRARIES}
 )
 
 if ( Qt4_FOUND )

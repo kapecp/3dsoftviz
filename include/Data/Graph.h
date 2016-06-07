@@ -666,6 +666,14 @@ public:
 	Data::Node* findNodeByName( QString nodeName );
 
 	/**
+	 * osg::ref_ptr<Data::Node> findNodeById( qlonglong nodeId )
+	 * @brief Finds node in graph by its id. Returns node, if it was found, otherwise NULL.
+	 * @param nodeId Id of the node
+	 * @return Returns node, if it was found, otherwise NULL.
+	 */
+	osg::ref_ptr<Data::Node> findNodeById( qlonglong nodeId );
+
+	/**
 	 * Data::Node* findNodeByLuaIdentifier( QString identifier )
 	 * @brief Finds node in graph by its lua identifier. Returns node, if it was found, otherwise NULL.
 	 * @param identifier Lua node identifier

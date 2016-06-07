@@ -22,6 +22,8 @@
 #include "Repository/Git/GitLuaGraphVisualizer.h"
 #include "Repository/Git/GitLuaGraphUtils.h"
 
+#include "SpecialMatrix/MatrixViewer.h"
+
 #include "Viewer/CoreGraph.h"
 #include "Viewer/CameraManipulator.h"
 #include "Viewer/PickHandler.h"
@@ -209,6 +211,9 @@ void CoreWindow::createActions()
 
 	switchBackgroundOrtho2dAction = new QAction( "Ortho2d", this );
 	connect( switchBackgroundOrtho2dAction, SIGNAL( triggered() ), this, SLOT( switchBackgroundOrtho2d() ) );
+
+	loadSpecialMatrix = new QAction( QIcon( "../share/3dsoftviz/img/gui/matrix.png" ),"&Load matrix from file", this );
+	connect( loadSpecialMatrix, SIGNAL( triggered() ), this, SLOT( loadSpecialMatrixFromFile() ) );
 
 	play = new QPushButton();
 	play->setIcon( QIcon( "../share/3dsoftviz/img/gui/pause.png" ) );
@@ -520,7 +525,7 @@ void CoreWindow::createActions()
 	connect( nodeTypeComboBox,SIGNAL( currentIndexChanged( int ) ),this,SLOT( nodeTypeComboBoxChanged( int ) ) );
 
 	edgeTypeComboBox = new QComboBox();
-	edgeTypeComboBox->insertItems( 0,( QStringList() << "Quad" << "Cylinder" << "Line" ) );
+	edgeTypeComboBox->insertItems( 0,( QStringList() << "Quad" << "Cylinder" << "Line" << "Curve" ) );
 	edgeTypeComboBox->setFocusPolicy( Qt::NoFocus );
 	connect( edgeTypeComboBox,SIGNAL( currentIndexChanged( int ) ),this,SLOT( edgeTypeComboBoxChanged( int ) ) );
 
@@ -807,6 +812,7 @@ void CoreWindow::createMenus()
 	file->addAction( load );
 	file->addAction( loadGraph );
 	file->addAction( loadGit );
+	file->addAction( loadSpecialMatrix );
 	file->addSeparator();
 	file->addAction( saveGraph );
 	file->addAction( saveLayout );
@@ -815,9 +821,6 @@ void CoreWindow::createMenus()
 
 	edit = menuBar()->addMenu( "Settings" );
 	edit->addAction( options );
-
-	help = menuBar()->addMenu( "Help" );
-	help->addAction( about );
 
 	examples = menuBar()->addMenu( "Test" );
 	examples->addAction( exampleGraphBasic100 );
@@ -832,6 +835,9 @@ void CoreWindow::createMenus()
 	backgroundMenu->addAction( switchBackgroundSkyNoiseBoxAction );
 	backgroundMenu->addAction( switchBackgroundTextureAction );
 	backgroundMenu->addAction( switchBackgroundOrtho2dAction );
+
+	help = menuBar()->addMenu( "Help" );
+	help->addAction( about );
 }
 
 QtColorPicker* CoreWindow::createColorPicker()
@@ -1407,6 +1413,46 @@ void CoreWindow::saveGraphToDB()
 	Manager::GraphManager::getInstance()->saveActiveGraphToDB();
 }
 
+void CoreWindow::loadSpecialMatrixFromFile()
+{
+	QFileDialog dialog;
+	dialog.setDirectory( "../share/3dsoftviz/matrixExamples" );
+
+	QString fileName = NULL;
+
+	if ( dialog.exec() ) {
+		QStringList filenames = dialog.selectedFiles();
+		fileName = filenames.at( 0 );
+	}
+
+	if ( fileName == NULL ) {
+		return;
+	}
+
+	Data::Graph* matrixGraph = Manager::GraphManager::getInstance()->getActiveGraph();
+	if ( matrixGraph != NULL ) {
+		Manager::GraphManager::getInstance()->closeGraph( matrixGraph );
+	}
+	matrixGraph = Manager::GraphManager::getInstance()->createNewMatrixGraph( "MatrixGraph" );
+
+	SpecialMatrix::MatrixViewer* matrixViewer = new SpecialMatrix::MatrixViewer( matrixGraph, fileName );
+
+	//nastavit spravne tlacitko play a vyber hran
+	play->setEnabled( false );
+	isPlaying = true;
+	this->playPause();
+	coreGraph->setNodesFreezed( false );	//rozhadze graf - nespustit start layout
+	edgeTypeComboBox->setEnabled( false );
+
+	AppCore::Core::getInstance()->restartLayoutForMatrix();
+
+	//reprezentacie na default
+	//coreGraph->setEdgeVisual(Data::Edge::INDEX_CURVE2);
+	coreGraph->setEdgeVisualForType( Data::Edge::INDEX_LINE, "axisEdgeType" );
+	coreGraph->setEdgeVisualForType( Data::Edge::INDEX_CURVE2, "iEdgeType" );
+	//axisEdgeType, iEdgeType
+	//axisNodeType, eNodeType, iFullNodeType, iHalfNodeType, nNodeType
+}
 
 void CoreWindow::saveLayoutToDB()
 {
@@ -2253,6 +2299,9 @@ void CoreWindow::edgeTypeComboBoxChanged( int index )
 			break;
 		case 3:
 			coreGraph->setEdgeVisual( Data::Edge::INDEX_CURVE );
+			break;
+		case 4:
+			coreGraph->setEdgeVisual( Data::Edge::INDEX_CURVE2 );
 			break;
 		default:
 			qDebug() << "CoreWindow:edgeTypeComboBoxChanged do not suported index";

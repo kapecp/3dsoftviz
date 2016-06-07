@@ -238,24 +238,24 @@ public slots:
 				*/
 	void loadFile();
 	/**
-		 *  \fn public  loadexampleGraphBasic500
-		 *  \brief Load basic 100 node graph
-		 */
+				 *  \fn public  loadexampleGraphBasic500
+				 *  \brief Load basic 100 node graph
+				 */
 	void loadExampleGraphBasic100();
 	/**
-		*  \fn public  loadexampleGraphBasic500
-		*  \brief Load basic 500 node graph
-		*/
+				*  \fn public  loadexampleGraphBasic500
+				*  \brief Load basic 500 node graph
+				*/
 	void loadExampleGraphBasic500();
 	/**
-		*  \fn public  loadexampleGraphVeolia
-		*  \brief Load Veolia graph
-		*/
+				*  \fn public  loadexampleGraphVeolia
+				*  \brief Load Veolia graph
+				*/
 	void loadExampleGraphVeolia();
 	/**
-		*  \fn public  loadexampleGraphLua
-		*  \brief Load basic lua graph
-		*/
+				*  \fn public  loadexampleGraphLua
+				*  \brief Load basic lua graph
+				*/
 	void loadExampleGraphLua();
 	/**
 				*  \fn public  loadFromGit
@@ -264,16 +264,22 @@ public slots:
 	void loadFromGit();
 
 	/**
-	 * void loadLuaGraph()
-	 * @brief Load lua graph without visualization
-	 */
+				* void loadLuaGraph()
+				* @brief Load lua graph without visualization
+				*/
 	void loadLuaGraph();
 
 	/**
-				*  \fn public  labelOnOff(bool checked)
-				*  \brief Show / hide labels
-				*  \param  checked flag if button is checked
+				*  \fn public  loadSpecialMatrixFromFile
+				*  \brief Load special matrix from file
 				*/
+	void loadSpecialMatrixFromFile();
+
+	/**
+				*  \fn public  labelOnOff(bool checked)
+	            *  \brief Show / hide labels
+	            *  \param  checked flag if button is checked
+	            */
 	void labelOnOff( bool checked );
 
 	/**
@@ -845,6 +851,12 @@ private:
 	QAction* switchBackgroundOrtho2dAction;
 
 	/**
+		*  QAction * loadSpecialMatrix
+		*  \brief Pointer to load special matrix from file
+	    */
+	QAction* loadSpecialMatrix;
+
+	/**
 		*  QPushButton * play
 		*  \brief Action for play/pause layout
 		*/
@@ -1241,7 +1253,6 @@ private:
 	 * @brief Slider for evolution graph
 	 */
 	QSlider* evolutionSlider;
-
 
 	/**
 		*  QFrame * line1

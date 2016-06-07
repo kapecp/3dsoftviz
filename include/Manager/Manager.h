@@ -72,11 +72,17 @@ public:
 	Data::Graph* loadGraph( QString filepath );
 
 	/**
-	 * \fn loadGraph
-	 * \brief Loads graph from GraphML file.
+	 * \fn createNewGraph
+	 * \brief Creates new graph.
 	 */
-
 	Data::Graph* createNewGraph( QString name );
+
+
+	/**
+	 * \fn createNewMatrixGraph
+	 * \brief Creates new graph for matrix representation.
+	 */
+	Data::Graph* createNewMatrixGraph( QString name );
 
 	/**
 	 * \fn loadGraphFromGit

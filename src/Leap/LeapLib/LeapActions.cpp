@@ -67,7 +67,7 @@ void Leap::LeapActions::moveCamera( Leap::Gesture gesture )
 	}
 	//if we get here, the camera is moving
 	LeapSleeper::sleep( ( unsigned long )gestureDuration );
-	cameraManipulator->disableCameraMovement();
+	leapManager->disableCameraMovement();
 }
 
 void Leap::LeapActions::zoomGraph( Leap::Gesture gesture )

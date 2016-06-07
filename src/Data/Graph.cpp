@@ -1542,6 +1542,21 @@ Data::Edge* Data::Graph::findEdgeByLuaIdentifier( QString identifier )
 	return lEdge;
 }
 
+osg::ref_ptr<Data::Node> Data::Graph::findNodeById( qlonglong nodeId )
+{
+	osg::ref_ptr<Data::Node> lNode;
+	QMap<qlonglong, osg::ref_ptr<Data::Node> >* allNodes = this->getNodes();
+
+	QMapIterator<qlonglong, osg::ref_ptr<Data::Node> > i( *allNodes );
+	while ( i.hasNext() ) {
+		i.next();
+		if ( i.value()->getId() == nodeId ) {
+			return i.value();
+		}
+	}
+	return nullptr;
+}
+
 void Data::Graph::addEdgeOccurence( QString key )
 {
 	int count = 0;
