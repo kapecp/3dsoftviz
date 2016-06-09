@@ -89,8 +89,10 @@ public:
 	void setNodePositionsArray( int nodesCount );
 
 	/**
-	 * @brief setNodePositionsArrayField sets nodePositionsArray[row][column] to nodesCount
-	 * @param integer number of nodes
+	 * @brief setNodePositionsArrayField sets nodePositionsArray[row][column] to value
+	 * @param integer row
+	 * @param integer column
+	 * @param qlonglong value
 	 */
 	void setNodePositionsArrayField( int column, int row, qlonglong value )
 	{

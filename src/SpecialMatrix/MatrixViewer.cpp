@@ -103,7 +103,7 @@ void SpecialMatrix::MatrixViewer::exchangeNodes( osg::ref_ptr<Data::Node> srcNod
 		foundNodeId = connections->getNodePositionsArrayField( iNodeNewPos.x(), iNodeNewPos.y() );
 		if ( foundNodeId ) {
 			foundNode = matrixGraph->findNodeById( foundNodeId );
-			osg::Vec2i foundNodePos = fileParser->getAvailablePosition( connections, iNodeNewPos.x(), iNodeNewPos.y() );
+			osg::Vec2f foundNodePos = fileParser->getAvailablePosition( connections, iNodeNewPos.x(), iNodeNewPos.y() );
 			foundNode->setTargetPosition( osg::Vec3f( static_cast<float>( foundNodePos.x()*separator ), static_cast<float>( foundNodePos.y()*separator ), 0.0f ) );
 			connections->setNodePositionsArrayField( foundNodePos.x(), foundNodePos.y(), foundNodeId );
 		}
@@ -137,7 +137,7 @@ void SpecialMatrix::MatrixViewer::exchangeNodes( osg::ref_ptr<Data::Node> srcNod
 		foundNodeId = connections->getNodePositionsArrayField( iNodeNewPos.x(), iNodeNewPos.y() );
 		if ( foundNodeId ) {
 			foundNode = matrixGraph->findNodeById( foundNodeId );
-			osg::Vec2i foundNodePos = fileParser->getAvailablePosition( connections, iNodeNewPos.x(), iNodeNewPos.y() );
+			osg::Vec2f foundNodePos = fileParser->getAvailablePosition( connections, iNodeNewPos.x(), iNodeNewPos.y() );
 			foundNode->setTargetPosition( osg::Vec3f( static_cast<float>( foundNodePos.x()*separator ), static_cast<float>( foundNodePos.y()*separator ), 0.0f ) );
 			connections->setNodePositionsArrayField( foundNodePos.x(), foundNodePos.y(), foundNodeId );
 		}
