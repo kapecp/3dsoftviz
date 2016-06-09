@@ -286,7 +286,8 @@ public:
 	}
 	//*****
 
-	osg::ref_ptr<osg::Group> getHandsGroup(){
+	osg::ref_ptr<osg::Group> getHandsGroup()
+	{
 		return handsGroup;
 	}
 

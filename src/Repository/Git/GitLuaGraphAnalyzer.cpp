@@ -655,8 +655,8 @@ bool Repository::Git::GitLuaGraphAnalyzer::intervalsIntersects( int firstStart, 
 int Repository::Git::GitLuaGraphAnalyzer::calculateRealResult( qlonglong luaId )
 {
 	Lua::LuaNode* node = this->luaGraph->getNodes()->value( luaId );
-	int blank = static_cast<int>(node->getParams()["metrics"].asTable()["LOC"].asTable()["lines_blank"].asNumber());
-	int nonempty = static_cast<int>(node->getParams()["metrics"].asTable()["LOC"].asTable()["lines_nonempty"].asNumber());
+	int blank = static_cast<int>( node->getParams()["metrics"].asTable()["LOC"].asTable()["lines_blank"].asNumber() );
+	int nonempty = static_cast<int>( node->getParams()["metrics"].asTable()["LOC"].asTable()["lines_nonempty"].asNumber() );
 
 	int realBlank = ( blank - nonempty - 1 ) / 2;
 	return nonempty + realBlank + 1;
@@ -670,7 +670,7 @@ void Repository::Git::GitLuaGraphAnalyzer::findFunctionRowsFromFile( Repository:
 		Repository::Git::GitFunction* function = iterator.value();
 		if ( function->getFunctionType() == Repository::Git::GitFunctionType::LOCALFUNCTION ) {
 			Lua::LuaNode* node = this->luaGraph->getNodes()->value( function->getId() );
-			int position = static_cast<int>(node->getParams()["position"].asNumber());
+			int position = static_cast<int>( node->getParams()["position"].asNumber() );
 			min = position < min ? position : min;
 			functionToByte.insert( function->getIdentifier(), position );
 //            qDebug() << function->getIdentifier() << position;

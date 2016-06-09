@@ -149,7 +149,7 @@ private:
 
 	int changedCount;
 
-	QMap<QString, int>* metrics;	
+	QMap<QString, int>* metrics;
 }; // class
 } // namespace
 }

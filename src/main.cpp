@@ -63,13 +63,13 @@ int main( int argc, char* argv[] )
 	// Still, so far the only cappable solution to auto-lock x11 display resource.
 	// If you try to run the application without it, you're going to have a bad time... or segmentation faults whatever.
 	// This is needed for 3DConnecetion mouse
-	#if QT_VERSION >= 0x050000
-		// todo
-	#elseif QT_VERSION >= 0x040700
-		QCoreApplication::setAttribute(Qt::AA_X11InitThreads);
-	#else
-		// todo
-	#endif
+#if QT_VERSION >= 0x050000
+	// todo
+#elseif QT_VERSION >= 0x040700
+	QCoreApplication::setAttribute( Qt::AA_X11InitThreads );
+#else
+	// todo
+#endif
 
 #endif
 

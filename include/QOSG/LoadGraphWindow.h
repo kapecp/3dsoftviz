@@ -17,9 +17,9 @@
 #include <QMap>
 
 #if QT_VERSION >= 0x050000
-	#define SETRESIZEMODE setSectionResizeMode
+#define SETRESIZEMODE setSectionResizeMode
 #else
-	#define SETRESIZEMODE setResizeMode
+#define SETRESIZEMODE setResizeMode
 #endif
 
 class QComboBox;

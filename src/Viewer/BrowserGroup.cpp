@@ -80,7 +80,7 @@ void BrowserGroup::setSelectedNodes( QLinkedList<osg::ref_ptr<Data::Node> >* sel
 			// If grouping is not enabled, then add browser for each newly selected node
 			if ( !browsersGrouping ) {
 				Lua::LuaValueMap models;
-				models.insertPair( static_cast<long>(node->getId()), luaNode->getParams() );
+				models.insertPair( static_cast<long>( node->getId() ), luaNode->getParams() );
 				if ( !this->showGit ) {
 					this->addBrowser( "single", node->getCurrentPosition(), models );
 				}
@@ -136,7 +136,7 @@ void BrowserGroup::initBrowsers()
 
 		Lua::LuaNode* luaNode = Lua::LuaGraph::getInstance()->getNodes()->value( node->getId() );
 		Lua::LuaValueMap models;
-		models.insertPair( static_cast<long>(node->getId()), luaNode->getParams() );
+		models.insertPair( static_cast<long>( node->getId() ), luaNode->getParams() );
 		this->addBrowser( "single", node->getCurrentPosition(), models );
 	}
 }
@@ -161,7 +161,7 @@ void BrowserGroup::initGroupedBrowser()
 		zSum += pos.z();
 
 		luaNode = Lua::LuaGraph::getInstance()->getNodes()->value( node->getId() );
-		models.insertPair( static_cast<long>(node->getId()), luaNode->getParams() );
+		models.insertPair( static_cast<long>( node->getId() ), luaNode->getParams() );
 	}
 
 	// Calculate centroid
@@ -274,7 +274,7 @@ void BrowserGroup::addBrowser( const std::string& templateType, osg::Vec3 positi
 	osg::Vec3Array* targets;
 	if ( this->browsersGrouping ) {
 		offset = 0;
-		targets = new osg::Vec3Array( static_cast<unsigned int>(selectedNodes->size()) );
+		targets = new osg::Vec3Array( static_cast<unsigned int>( selectedNodes->size() ) );
 
 		QLinkedList<osg::ref_ptr<Data::Node> >::iterator i;
 		Data::Node* node;

@@ -8,9 +8,9 @@
 #include <QFile>
 
 #if QT_VERSION >= 0x050000
-	#define TOASCII toLatin1
+#define TOASCII toLatin1
 #else
-	#define TOASCII toAscii
+#define TOASCII toAscii
 #endif
 
 namespace Repository {

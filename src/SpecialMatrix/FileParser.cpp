@@ -188,27 +188,27 @@ Data::Graph* SpecialMatrix::FileParser::addNormalNodesToGraph( Data::Graph* matr
 		iNodes->push_back( midNode.nodeId );
 		osg::Vec2f pos;
 		if ( startNode.nodeName.contains( QRegExp( "[Nn]" ) ) ) {
-			pos.x() = static_cast<float>(xAxisNodes->indexOf( startNode.nodeId )+1);
-			pos.y() = static_cast<float>(yAxisNodes->indexOf( endNode.nodeId )+1);
+			pos.x() = static_cast<float>( xAxisNodes->indexOf( startNode.nodeId )+1 );
+			pos.y() = static_cast<float>( yAxisNodes->indexOf( endNode.nodeId )+1 );
 
 		}
 		else {
-			pos.x() = static_cast<float>(xAxisNodes->indexOf( endNode.nodeId )+1);
-			pos.y() = static_cast<float>(yAxisNodes->indexOf( startNode.nodeId )+1);
+			pos.x() = static_cast<float>( xAxisNodes->indexOf( endNode.nodeId )+1 );
+			pos.y() = static_cast<float>( yAxisNodes->indexOf( startNode.nodeId )+1 );
 		}
 
 		//CHECK AVAIBILITY - if there is a node, move it
 		foundNodeId = connections->getNodePositionsArrayField( pos.x(), pos.y() );
 		if ( foundNodeId ) {
 			foundNode = matrixGraph->findNodeById( foundNodeId );
-			osg::Vec2f foundNodePos = getAvailablePosition( connections, static_cast<int>(pos.x()), static_cast<int>(pos.y()) );
+			osg::Vec2f foundNodePos = getAvailablePosition( connections, static_cast<int>( pos.x() ), static_cast<int>( pos.y() ) );
 			foundNode->setTargetPosition( osg::Vec3f( foundNodePos.x()*separator , foundNodePos.y()*separator , 0.0f ) );
-			connections->setNodePositionsArrayField( static_cast<int>(foundNodePos.x()), static_cast<int>(foundNodePos.y()), foundNodeId );
+			connections->setNodePositionsArrayField( static_cast<int>( foundNodePos.x() ), static_cast<int>( foundNodePos.y() ), foundNodeId );
 		}
 
 		nodePos = osg::Vec3f( osg::Vec3f( pos.x()*separator,  pos.y()*separator, 0.0f ) );
 		matrixGraph->addNode( midNode.nodeId, midNode.nodeName, iFullNodeType, nodePos );
-		connections->setNodePositionsArrayField( static_cast<int>(pos.x()), static_cast<int>(pos.y()), midNode.nodeId );
+		connections->setNodePositionsArrayField( static_cast<int>( pos.x() ), static_cast<int>( pos.y() ), midNode.nodeId );
 	}
 	return matrixGraph;
 }
@@ -340,24 +340,24 @@ Data::Graph* SpecialMatrix::FileParser::addSpecialCase1NodesToGraph( Data::Graph
 			osg::Vec2f pos;
 			if ( midNode.nodeName.contains( QRegExp( "[Nn]" ) ) ) {
 				//case: I - N - N
-				int midPos = static_cast<int>(xAxisNodes->indexOf( midNode.nodeId )+1);
-				int endPos = static_cast<int>(xAxisNodes->indexOf( endNode.nodeId )+1);
+				int midPos = static_cast<int>( xAxisNodes->indexOf( midNode.nodeId )+1 );
+				int endPos = static_cast<int>( xAxisNodes->indexOf( endNode.nodeId )+1 );
 				int delta = abs( midPos - endPos );
-				pos.x() = ( midPos > endPos ) ? static_cast<float>( (midPos - delta) ) : static_cast<float>( (endPos - delta) );
+				pos.x() = ( midPos > endPos ) ? static_cast<float>( ( midPos - delta ) ) : static_cast<float>( ( endPos - delta ) );
 				pos.y() = pos.x();
 			}
 			else {
 				//case: I - E - E
-				int midPos = static_cast<int>(yAxisNodes->indexOf( midNode.nodeId )+1);
-				int endPos = static_cast<int>(yAxisNodes->indexOf( endNode.nodeId )+1);
+				int midPos = static_cast<int>( yAxisNodes->indexOf( midNode.nodeId )+1 );
+				int endPos = static_cast<int>( yAxisNodes->indexOf( endNode.nodeId )+1 );
 				int delta = abs( midPos - endPos );
-				pos.x() = ( midPos > endPos ) ? static_cast<float>( (midPos - delta) ) : static_cast<float>( (endPos - delta) );
+				pos.x() = ( midPos > endPos ) ? static_cast<float>( ( midPos - delta ) ) : static_cast<float>( ( endPos - delta ) );
 				pos.y() = pos.x();
 			}
-			pos = getAvailablePosition( connections, static_cast<int>(pos.x()), static_cast<int>(pos.y()) );
+			pos = getAvailablePosition( connections, static_cast<int>( pos.x() ), static_cast<int>( pos.y() ) );
 			nodePos = osg::Vec3f( osg::Vec3f( pos.x()*separator, pos.y()*separator, 0.0f ) );
 			startGraphNode = matrixGraph->addNode( startNode.nodeId, startNode.nodeName, iHalfNodeType, nodePos );
-			connections->setNodePositionsArrayField( static_cast<int>(pos.x()), static_cast<int>(pos.y()), startNode.nodeId );
+			connections->setNodePositionsArrayField( static_cast<int>( pos.x() ), static_cast<int>( pos.y() ), startNode.nodeId );
 		}
 		else {
 			startGraphNode = matrixGraph->findNodeById( startNode.nodeId );
@@ -372,24 +372,24 @@ Data::Graph* SpecialMatrix::FileParser::addSpecialCase1NodesToGraph( Data::Graph
 			osg::Vec2f pos;
 			if ( startNode.nodeName.contains( QRegExp( "[Nn]" ) ) ) {
 				//case: N - I - N
-				int startPos = static_cast<int>(xAxisNodes->indexOf( startNode.nodeId )+1);
-				int endPos = static_cast<int>(xAxisNodes->indexOf( endNode.nodeId )+1);
+				int startPos = static_cast<int>( xAxisNodes->indexOf( startNode.nodeId )+1 );
+				int endPos = static_cast<int>( xAxisNodes->indexOf( endNode.nodeId )+1 );
 				int delta = abs( startPos - endPos );
-				pos.x() = ( startPos > endPos ) ? static_cast<float>( (startPos - delta) ) : static_cast<float>( (endPos - delta) );
+				pos.x() = ( startPos > endPos ) ? static_cast<float>( ( startPos - delta ) ) : static_cast<float>( ( endPos - delta ) );
 				pos.y() = pos.x();
 			}
 			else {
 				//case: E - I - E
-				int startPos = static_cast<int>(yAxisNodes->indexOf( startNode.nodeId )+1);
-				int endPos = static_cast<int>(yAxisNodes->indexOf( endNode.nodeId )+1);
+				int startPos = static_cast<int>( yAxisNodes->indexOf( startNode.nodeId )+1 );
+				int endPos = static_cast<int>( yAxisNodes->indexOf( endNode.nodeId )+1 );
 				int delta = abs( startPos - endPos );
-				pos.x() = ( startPos > endPos ) ? static_cast<float>( (startPos - delta) ) : static_cast<float>( (endPos - delta) );
+				pos.x() = ( startPos > endPos ) ? static_cast<float>( ( startPos - delta ) ) : static_cast<float>( ( endPos - delta ) );
 				pos.y() = pos.x();
 			}
-			pos = getAvailablePosition( connections, static_cast<int>(pos.x()), static_cast<int>(pos.y()) );
+			pos = getAvailablePosition( connections, static_cast<int>( pos.x() ), static_cast<int>( pos.y() ) );
 			nodePos = osg::Vec3f( osg::Vec3f( pos.x()*separator, pos.y()*separator, 0.0f ) );
 			midGraphNode = matrixGraph->addNode( midNode.nodeId, midNode.nodeName, iHalfNodeType, nodePos );
-			connections->setNodePositionsArrayField( static_cast<int>(pos.x()), static_cast<int>(pos.y()), midNode.nodeId );
+			connections->setNodePositionsArrayField( static_cast<int>( pos.x() ), static_cast<int>( pos.y() ), midNode.nodeId );
 		}
 		else {
 			midGraphNode = matrixGraph->findNodeById( midNode.nodeId );
@@ -404,24 +404,24 @@ Data::Graph* SpecialMatrix::FileParser::addSpecialCase1NodesToGraph( Data::Graph
 			osg::Vec2f pos;
 			if ( startNode.nodeName.contains( QRegExp( "[Nn]" ) ) ) {
 				//case: N - N - I
-				int startPos = static_cast<int>(xAxisNodes->indexOf( startNode.nodeId )+1);
-				int midPos = static_cast<int>(xAxisNodes->indexOf( midNode.nodeId )+1);
+				int startPos = static_cast<int>( xAxisNodes->indexOf( startNode.nodeId )+1 );
+				int midPos = static_cast<int>( xAxisNodes->indexOf( midNode.nodeId )+1 );
 				int delta = abs( startPos - midPos );
-				pos.x() = ( startPos > midPos ) ? static_cast<float>( (startPos - delta) ) : static_cast<float>( (midPos - delta) );
+				pos.x() = ( startPos > midPos ) ? static_cast<float>( ( startPos - delta ) ) : static_cast<float>( ( midPos - delta ) );
 				pos.y() = pos.x();
 			}
 			else {
 				//case: E - E - I
-				int startPos = static_cast<int>(yAxisNodes->indexOf( startNode.nodeId )+1);
-				int midPos = static_cast<int>(yAxisNodes->indexOf( midNode.nodeId )+1);
+				int startPos = static_cast<int>( yAxisNodes->indexOf( startNode.nodeId )+1 );
+				int midPos = static_cast<int>( yAxisNodes->indexOf( midNode.nodeId )+1 );
 				int delta = abs( startPos - midPos );
-				pos.x() = ( startPos > midPos ) ? static_cast<float>( (startPos - delta) ) : static_cast<float>( (midPos - delta) );
+				pos.x() = ( startPos > midPos ) ? static_cast<float>( ( startPos - delta ) ) : static_cast<float>( ( midPos - delta ) );
 				pos.y() = pos.x();
 			}
-			pos = getAvailablePosition( connections, static_cast<int>(pos.x()), static_cast<int>(pos.y()) );
+			pos = getAvailablePosition( connections, static_cast<int>( pos.x() ), static_cast<int>( pos.y() ) );
 			nodePos = osg::Vec3f( osg::Vec3f( pos.x()*separator, pos.y()*separator, 0.0f ) );
 			endGraphNode = matrixGraph->addNode( endNode.nodeId, endNode.nodeName, iHalfNodeType, nodePos );
-			connections->setNodePositionsArrayField( static_cast<int>(pos.x()), static_cast<int>(pos.y()), endNode.nodeId );
+			connections->setNodePositionsArrayField( static_cast<int>( pos.x() ), static_cast<int>( pos.y() ), endNode.nodeId );
 		}
 		else {
 			endGraphNode = matrixGraph->findNodeById( endNode.nodeId );
@@ -580,10 +580,10 @@ Data::Graph* SpecialMatrix::FileParser::addSpecialCase2NodesToGraph( Data::Graph
 			connections->setNodePositionsArray( ++nodeCounter );
 			iNodes->push_back( endNode.nodeId );
 
-			pos = getAvailablePosition( connections, static_cast<int>(pos.x()), static_cast<int>(pos.y()) );
+			pos = getAvailablePosition( connections, static_cast<int>( pos.x() ), static_cast<int>( pos.y() ) );
 			nodePos = osg::Vec3f( osg::Vec3f( pos.x()*separator, pos.y()*separator, 0.0f ) );
 			endGraphNode = matrixGraph->addNode( endNode.nodeId, endNode.nodeName, iHalfNodeType, nodePos );
-			connections->setNodePositionsArrayField( static_cast<int>(pos.x()), static_cast<int>(pos.y()), endNode.nodeId );
+			connections->setNodePositionsArrayField( static_cast<int>( pos.x() ), static_cast<int>( pos.y() ), endNode.nodeId );
 		}
 		else {
 			endGraphNode = matrixGraph->findNodeById( endNode.nodeId );
@@ -595,14 +595,14 @@ Data::Graph* SpecialMatrix::FileParser::addSpecialCase2NodesToGraph( Data::Graph
 			iNodes->push_back( midNode.nodeId );
 
 			if ( startNode.nodeName.contains( QRegExp( "[Nn]" ) ) ) {
-				pos = getAvailablePosition( connections, static_cast<int>(pos.x()), static_cast<int>(pos.y())/2 );
+				pos = getAvailablePosition( connections, static_cast<int>( pos.x() ), static_cast<int>( pos.y() )/2 );
 			}
 			else {
-				pos = getAvailablePosition( connections, static_cast<int>(pos.x())/2, static_cast<int>(pos.y()) );
+				pos = getAvailablePosition( connections, static_cast<int>( pos.x() )/2, static_cast<int>( pos.y() ) );
 			}
 			nodePos = osg::Vec3f( osg::Vec3f( pos.x()*separator, pos.y()*separator, 0.0f ) );
 			midGraphNode = matrixGraph->addNode( midNode.nodeId, midNode.nodeName, iHalfNodeType, nodePos );
-			connections->setNodePositionsArrayField( static_cast<int>(pos.x()), static_cast<int>(pos.y()), midNode.nodeId );
+			connections->setNodePositionsArrayField( static_cast<int>( pos.x() ), static_cast<int>( pos.y() ), midNode.nodeId );
 		}
 		else {
 			midGraphNode = matrixGraph->findNodeById( midNode.nodeId );
@@ -628,10 +628,10 @@ Data::Graph* SpecialMatrix::FileParser::addSpecialCase2NodesToGraph( Data::Graph
 			connections->setNodePositionsArray( ++nodeCounter );
 			iNodes->push_back( endNode.nodeId );
 
-			pos = getAvailablePosition( connections, static_cast<int>(pos.x()), static_cast<int>(pos.y()) );
+			pos = getAvailablePosition( connections, static_cast<int>( pos.x() ), static_cast<int>( pos.y() ) );
 			nodePos = osg::Vec3f( osg::Vec3f( pos.x()*separator, pos.y()*separator, 0.0f ) );
 			endGraphNode = matrixGraph->addNode( endNode.nodeId, endNode.nodeName, iHalfNodeType, nodePos );
-			connections->setNodePositionsArrayField( static_cast<int>(pos.x()), static_cast<int>(pos.y()), endNode.nodeId );
+			connections->setNodePositionsArrayField( static_cast<int>( pos.x() ), static_cast<int>( pos.y() ), endNode.nodeId );
 		}
 		else {
 			endGraphNode = matrixGraph->findNodeById( endNode.nodeId );
@@ -643,14 +643,14 @@ Data::Graph* SpecialMatrix::FileParser::addSpecialCase2NodesToGraph( Data::Graph
 			iNodes->push_back( startNode.nodeId );
 
 			if ( midNode.nodeName.contains( QRegExp( "[Nn]" ) ) ) {
-				pos = getAvailablePosition( connections, static_cast<int>(pos.x()), static_cast<int>(pos.y())/2 );
+				pos = getAvailablePosition( connections, static_cast<int>( pos.x() ), static_cast<int>( pos.y() )/2 );
 			}
 			else {
-				pos = getAvailablePosition( connections, static_cast<int>(pos.x())/2, static_cast<int>(pos.y()) );
+				pos = getAvailablePosition( connections, static_cast<int>( pos.x() )/2, static_cast<int>( pos.y() ) );
 			}
 			nodePos = osg::Vec3f( osg::Vec3f( pos.x()*separator, pos.y()*separator, 0.0f ) );
 			startGraphNode = matrixGraph->addNode( startNode.nodeId, startNode.nodeName, iHalfNodeType, nodePos );
-			connections->setNodePositionsArrayField( static_cast<int>(pos.x()), static_cast<int>(pos.y()), startNode.nodeId );
+			connections->setNodePositionsArrayField( static_cast<int>( pos.x() ), static_cast<int>( pos.y() ), startNode.nodeId );
 		}
 		else {
 			startGraphNode = matrixGraph->findNodeById( startNode.nodeId );
@@ -676,10 +676,10 @@ Data::Graph* SpecialMatrix::FileParser::addSpecialCase2NodesToGraph( Data::Graph
 			connections->setNodePositionsArray( ++nodeCounter );
 			iNodes->push_back( midNode.nodeId );
 
-			pos = getAvailablePosition( connections, static_cast<int>(pos.x()), static_cast<int>(pos.y()) );
+			pos = getAvailablePosition( connections, static_cast<int>( pos.x() ), static_cast<int>( pos.y() ) );
 			nodePos = osg::Vec3f( osg::Vec3f( pos.x()*separator, pos.y()*separator, 0.0f ) );
 			midGraphNode = matrixGraph->addNode( midNode.nodeId, midNode.nodeName, iHalfNodeType, nodePos );
-			connections->setNodePositionsArrayField( static_cast<int>(pos.x()), static_cast<int>(pos.y()), midNode.nodeId );
+			connections->setNodePositionsArrayField( static_cast<int>( pos.x() ), static_cast<int>( pos.y() ), midNode.nodeId );
 		}
 		else {
 			midGraphNode = matrixGraph->findNodeById( midNode.nodeId );
@@ -691,14 +691,14 @@ Data::Graph* SpecialMatrix::FileParser::addSpecialCase2NodesToGraph( Data::Graph
 			iNodes->push_back( startNode.nodeId );
 
 			if ( midNode.nodeName.contains( QRegExp( "[Nn]" ) ) ) {
-				pos = getAvailablePosition( connections, static_cast<int>(pos.x()), static_cast<int>(pos.y())/2 );
+				pos = getAvailablePosition( connections, static_cast<int>( pos.x() ), static_cast<int>( pos.y() )/2 );
 			}
 			else {
-				pos = getAvailablePosition( connections, static_cast<int>(pos.x())/2, static_cast<int>(pos.y()) );
+				pos = getAvailablePosition( connections, static_cast<int>( pos.x() )/2, static_cast<int>( pos.y() ) );
 			}
 			nodePos = osg::Vec3f( osg::Vec3f( pos.x()*separator, pos.y()*separator, 0.0f ) );
 			startGraphNode = matrixGraph->addNode( startNode.nodeId, startNode.nodeName, iHalfNodeType, nodePos );
-			connections->setNodePositionsArrayField( static_cast<int>(pos.x()), static_cast<int>(pos.y()), startNode.nodeId );
+			connections->setNodePositionsArrayField( static_cast<int>( pos.x() ), static_cast<int>( pos.y() ), startNode.nodeId );
 		}
 		else {
 			startGraphNode = matrixGraph->findNodeById( startNode.nodeId );
@@ -721,7 +721,7 @@ Data::Graph* SpecialMatrix::FileParser::addSpecialCase2NodesToGraph( Data::Graph
 
 osg::Vec2f SpecialMatrix::FileParser::getAvailablePosition( SpecialMatrix::NodeConnections* connections, float row, float column )
 {
-	int newRow = static_cast<int>(row), newCol = static_cast<int>(column);
+	int newRow = static_cast<int>( row ), newCol = static_cast<int>( column );
 	int cornerRow = newRow, cornerCol = newCol;
 	int distance = 1, phase = 0;
 	size_t nodeCount = connections->getNodePositionsArray().size();
@@ -795,8 +795,8 @@ osg::Vec2f SpecialMatrix::FileParser::getAvailablePosition( SpecialMatrix::NodeC
 		}
 		else {
 			//is available
-			nodePos.x() = static_cast<float>(newRow);
-			nodePos.y() = static_cast<float>(newCol);
+			nodePos.x() = static_cast<float>( newRow );
+			nodePos.y() = static_cast<float>( newCol );
 			return nodePos;
 		}
 	}

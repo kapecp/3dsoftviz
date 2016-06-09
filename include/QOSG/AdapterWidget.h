@@ -13,9 +13,9 @@
 #include <QGLWidget>
 
 #if QT_VERSION >= 0x050000
-	#define TOASCII toLatin1
+#define TOASCII toLatin1
 #else
-	#define TOASCII toAscii
+#define TOASCII toAscii
 #endif
 
 using Qt::WindowFlags;

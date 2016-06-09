@@ -19,20 +19,20 @@
 #include <QtGlobal>
 
 #if QT_VERSION >= 0x050000
-	#include <QtWebEngine>
-	#include <QWebEngineView>
-	#include <QWebEngineSettings>
+#include <QtWebEngine>
+#include <QWebEngineView>
+#include <QWebEngineSettings>
 
-	#define QWEBVIEW QWebEngineView
-	#define QWEBPAGE QWebEnginePage
-	#define QWEBSETTING QWebEngineSettings
+#define QWEBVIEW QWebEngineView
+#define QWEBPAGE QWebEnginePage
+#define QWEBSETTING QWebEngineSettings
 #else
-	#include <QtWebKit>
-	#include <QWebSettings>
+#include <QtWebKit>
+#include <QWebSettings>
 
-	#define QWEBVIEW QWebView
-	#define QWEBPAGE QWebPage
-	#define QWEBSETTING QWebSettings
+#define QWEBVIEW QWebView
+#define QWEBPAGE QWebPage
+#define QWEBSETTING QWebSettings
 #endif
 
 #include "OsgQtBrowser/QGraphicsViewAdapter.h"

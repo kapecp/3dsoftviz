@@ -4,14 +4,14 @@
 #include <QtGlobal>
 
 #if QT_VERSION >= 0x050000
-	#include <QtWebEngine>
-	#include <QWebEnginePage>
+#include <QtWebEngine>
+#include <QWebEnginePage>
 
-	#define QWEBPAGE QWebEnginePage
+#define QWEBPAGE QWebEnginePage
 #else
-	#include <QWebPage>
+#include <QWebPage>
 
-	#define QWEBPAGE QWebPage
+#define QWEBPAGE QWebPage
 #endif
 
 

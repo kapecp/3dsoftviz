@@ -37,7 +37,7 @@
 
 class Mouse3DInput : public QObject
 #if QT_VERSION >= 0x050000
-					, public QAbstractNativeEventFilter
+	, public QAbstractNativeEventFilter
 #endif
 {
 	Q_OBJECT
@@ -65,9 +65,9 @@ private:
 	bool		InitializeRawInput( HWND hwndTarget );
 
 #if QT_VERSION >= 0x050000
-		virtual	bool		nativeEventFilter(const QByteArray &eventType, void *message, long *result) Q_DECL_OVERRIDE;
+	virtual	bool		nativeEventFilter( const QByteArray& eventType, void* message, long* result ) Q_DECL_OVERRIDE;
 #else
-		static	bool		RawInputEventFilter(void* message, long* result);
+	static	bool		RawInputEventFilter( void* message, long* result );
 #endif
 
 

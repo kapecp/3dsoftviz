@@ -57,7 +57,7 @@ void Leap::LeapListener::onFrame( const Controller& controller )
 	Gesture gesture = frame.gestures()[0];
 
 
-	if (arMode){
+	if ( arMode ) {
 		for ( int i=0; i< hands.count(); ++i ) {
 			if ( hands[i].isRight() ) {
 				rightHand = hands[i];
@@ -66,8 +66,9 @@ void Leap::LeapListener::onFrame( const Controller& controller )
 				leftHand = hands[i];
 			}
 		}
-		leapActions->updateARHands(leftHand,rightHand);
-	} else {
+		leapActions->updateARHands( leftHand,rightHand );
+	}
+	else {
 		for ( int i=0; i< hands.count(); ++i ) {
 			if ( hands[i].isRight() ) {
 				direction = Leap::DirectionDetector::getPalmDirection( hands[i] );

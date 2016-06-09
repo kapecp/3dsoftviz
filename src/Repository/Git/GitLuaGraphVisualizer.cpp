@@ -328,7 +328,7 @@ bool Repository::Git::GitLuaGraphVisualizer::processFunctionsFromFile( Repositor
 				//do nothing
 				break;
 			default:
-				qDebug() << "CHYBA V" << file->getIdentifier() << "->" << function->getIdentifier();				
+				qDebug() << "CHYBA V" << file->getIdentifier() << "->" << function->getIdentifier();
 		}
 
 		// Pre kazdu funkciu je potrebne prejst aj jej volania
@@ -821,7 +821,7 @@ void Repository::Git::GitLuaGraphVisualizer::processChangedNodesAndEdges()
 //                        node->setColor( osg::Vec4f( 1, 0, 1, 0 ) );
 								break;
 							default:
-								qDebug() << "Unhandled LuaStat";								
+								qDebug() << "Unhandled LuaStat";
 						}
 					}
 				}
@@ -915,7 +915,7 @@ void Repository::Git::GitLuaGraphVisualizer::processChangedNodesAndEdges()
 				//do nothing
 				break;
 			default:
-				qDebug() << "Unknown GitType";				
+				qDebug() << "Unknown GitType";
 		}
 	}
 

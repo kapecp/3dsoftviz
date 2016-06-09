@@ -36,9 +36,9 @@ void Mouse3dUnixDevice::initMouse3d()
 	Window xwindow = this->window->winId();
 
 	if ( !MagellanInit( this->display, xwindow ) ) {
-		LOG(INFO) << "[X11] Mouse3dDevice: MagellanInit() = Failure!" << endl;
-		LOG(INFO) << "[X11] Mouse3dDevice: No driver is running. Exit ... " << endl;
-		exit(EXIT_FAILURE);
+		LOG( INFO ) << "[X11] Mouse3dDevice: MagellanInit() = Failure!" << endl;
+		LOG( INFO ) << "[X11] Mouse3dDevice: No driver is running. Exit ... " << endl;
+		exit( EXIT_FAILURE );
 	}
 	else {
 		LOG( INFO ) << "[X11] Mouse3dDevice: MagellanInit() = Success!" << endl;

@@ -47,7 +47,7 @@ const QMatrix4x4 ArucoCore::getDetectedMatrix( cv::Mat inputImage )
 	QMatrix4x4 matrix( modelViewMatrix[ 0], modelViewMatrix[ 1], modelViewMatrix[ 2], modelViewMatrix[ 3],
 					   modelViewMatrix[ 4], modelViewMatrix[ 5], modelViewMatrix[ 6], modelViewMatrix[ 7],
 					   modelViewMatrix[ 8], modelViewMatrix[ 9], modelViewMatrix[10], modelViewMatrix[11],
-					   modelViewMatrix[12], modelViewMatrix[13], modelViewMatrix[14], modelViewMatrix[15]);
+					   modelViewMatrix[12], modelViewMatrix[13], modelViewMatrix[14], modelViewMatrix[15] );
 
 	return matrix;
 }
@@ -64,7 +64,7 @@ const QMatrix4x4 ArucoCore::getProjectionMatrix( cv::Mat inputImage )
 	QMatrix4x4 matrix( projectionMatrix[ 0], projectionMatrix[ 1], projectionMatrix[ 2], projectionMatrix[ 3],
 					   projectionMatrix[ 4], projectionMatrix[ 5], projectionMatrix[ 6], projectionMatrix[ 7],
 					   projectionMatrix[ 8], projectionMatrix[ 9], projectionMatrix[10], projectionMatrix[11],
-					   projectionMatrix[12], projectionMatrix[13], projectionMatrix[14], projectionMatrix[15]);
+					   projectionMatrix[12], projectionMatrix[13], projectionMatrix[14], projectionMatrix[15] );
 	return matrix;
 }
 
