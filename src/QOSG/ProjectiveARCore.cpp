@@ -13,7 +13,6 @@ QOSG::ProjectiveARCore::ProjectiveARCore( QApplication* app, QWidget* parent )
 
     mProjectiveARWindow   = NULL;
 
-
 }
 QOSG::ProjectiveARCore::~ProjectiveARCore( void )
 {
@@ -25,6 +24,7 @@ void QOSG::ProjectiveARCore::init(ViewerQT* sourceViewer)
     if ( !mProjectiveARWindow ) {
         qDebug() << "Creating ProjectiveAR Window";
         mProjectiveARWindow =  new QOSG::ProjectiveARWindow( mParent, sourceViewer, mApp );
+        mProjectiveARViewer = mProjectiveARWindow->getViewer();
 	}
 
     mProjectiveARWindow->show();

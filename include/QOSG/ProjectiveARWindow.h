@@ -51,8 +51,21 @@ public:
      */
     void toggleToolBars();
 
+    ProjectiveARViewer* getViewer() { return viewerWidget; }
+
 public slots:
-    void applySceneSettings();
+    // functions that update Viewer's parameters
+    void updateProjectorPos();
+    void updateProjectorDir();
+    void updateProjectorFOV();
+
+    void updateViewerPos();
+    void updateViewerDir();
+    void updateViewerFOV();
+
+    void updateGraphPos();
+    void updateGraphRadius();
+    void updateUseGraphParams();
 
 
 private:
@@ -97,9 +110,7 @@ private:
 
     QDoubleSpinBox* dsb_graphRadius;
 
-    QCheckBox* chb_useMainViewer;
-
-    QPushButton* b_applyScene;
+    QCheckBox* chb_useGraphParams;
 
     /**
         *  \fn private  createLeftToolBar
@@ -138,6 +149,7 @@ private:
          * @param event Close event
          */
     void closeEvent( QCloseEvent* event );
+
 
 };
 

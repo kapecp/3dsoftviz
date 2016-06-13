@@ -7,6 +7,7 @@ class QApplication;
 
 namespace QOSG {
 class ProjectiveARWindow;
+class ProjectiveARViewer;
 }
 
 namespace QOSG {
@@ -39,6 +40,7 @@ public:
 		 */
     void init(ViewerQT* sourceViewer);
 
+    QOSG::ProjectiveARViewer *getViewer() { return mProjectiveARViewer; }
 
 private:
     /**
@@ -53,6 +55,7 @@ private:
     QWidget*                                mParent;
     QApplication*                           mApp;
     QPointer<QOSG::ProjectiveARWindow>   mProjectiveARWindow;
+    QOSG::ProjectiveARViewer   *mProjectiveARViewer;
 
 };
 }

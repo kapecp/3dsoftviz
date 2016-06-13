@@ -46,8 +46,9 @@ namespace QOSG {
     *  \author Viktor Kostan
     *  \date 21. 4. 2016
     */
-class ProjectiveARViewer : public osgViewer::Viewer, public AdapterWidget
+class ProjectiveARViewer : public AdapterWidget, public osgViewer::Viewer
 {
+Q_OBJECT
 #define SCENE_MAX_SIZE (1000)
 
 public:
@@ -180,6 +181,13 @@ public:
     {
         useGraph = use;
     }
+
+public slots:
+    /**
+      * @author Autor: Viktor Košťan
+      * @brief setViewerPosByFaceDetection Sets viewer's position based on [x,y] coords of eye and distance from camera
+      */
+    void setViewerPosByFaceDetection(float x, float y, float distance);
 
 protected:
 
