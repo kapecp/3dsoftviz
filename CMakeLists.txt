@@ -84,7 +84,7 @@ if (USE_LD_GOLD)
 		set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fuse-ld=gold -Wl,--disable-new-dtags" CACHE STRING "" FORCE)
 		set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -fuse-ld=gold -Wl,--disable-new-dtags" CACHE STRING "" FORCE)
 	else ()
-		message(WARNING "GNU gold linker isn't available, using the default system linker.")
+		message(STATUS "GNU gold linker isn't available, using the default system linker.")
 	endif ()
 endif ()
 
@@ -93,15 +93,28 @@ endif ()
 # --------------
 include( cotire )
 if(COMMAND cotire )
-		if( NOT COTIRE_MAXIMUM_NUMBER_OF_UNITY_INCLUDES )
-				include( ProcessorCount )
-				ProcessorCount( N )
+	if( NOT COTIRE_MAXIMUM_NUMBER_OF_UNITY_INCLUDES )
+		include( ProcessorCount )
+		ProcessorCount( N )
 
-				if( NOT N EQUAL 0 )
-						# set number of parallel unity builds to processor count
-						set( COTIRE_MAXIMUM_NUMBER_OF_UNITY_INCLUDES "-j${N}" )
-				endif()
+		if( NOT N EQUAL 0 )
+			# check for physical memmory
+			cmake_host_system_information(RESULT PHYSICAL_MEMORY QUERY TOTAL_PHYSICAL_MEMORY)
+			math(EXPR PHYSICAL_MEMORY_GB "${PHYSICAL_MEMORY}/1024")
+
+			# if physical memmory is less than 4GB, then split unity builds
+			# note: less than 4GB RAM causes swapping
+			if(${PHYSICAL_MEMORY_GB} LESS "4")
+				math(EXPR JOBS "${N}*2")
+			else()
+				set(JOBS ${N})
+			endif()
+
+			# set number of parallel unity builds to processor count
+			message(STATUS "Cotire parallel unity jobs: ${JOBS}")
+			set( COTIRE_MAXIMUM_NUMBER_OF_UNITY_INCLUDES "-j${JOBS}" )
 		endif()
+	endif()
 
 	set( COTIRE_VERBOSE FALSE )
 	set( COTIRE_DEBUG FALSE )
