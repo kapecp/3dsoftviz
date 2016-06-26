@@ -268,10 +268,10 @@ osg::Group* QOSG::ProjectiveARViewer::createProjectorScene()
 
 	/* Enable projective texturing for all objects of base */
 	if ( useGraph ) {
-		base->setStateSet( createProjectorState( texture, viewerPos, graphPos - viewerPos, static_cast<float>( viewerFOV ) ) );
+		base->setStateSet( createProjectorState( texture, viewerPos, graphPos - viewerPos, viewerFOV  ) );
 	}
 	else {
-		base->setStateSet( createProjectorState( texture, viewerPos, viewerDir, static_cast<float>( viewerFOV ) ) );
+		base->setStateSet( createProjectorState( texture, viewerPos, viewerDir, viewerFOV  ) );
 	}
 
 	projectorScene->addChild( base );

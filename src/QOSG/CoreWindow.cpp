@@ -4087,15 +4087,15 @@ void QOSG::CoreWindow::OnMove( std::vector<double>& motionData )
 
 	double a = fabs( motionData[3] ), b = fabs( motionData[4] ), c = fabs( motionData[5] );
 	if ( a > 0.001 ) {
-		moveViewer->getCameraManipulator()->rotateCamera( 0.0, 0.0, 1.0, ( float )( -1.5 )*( float )motionData[3], 0.0 );
+		moveViewer->getCameraManipulator()->rotateCamera( 0.0, 0.0, 1.0, -1.5f * static_cast<float>( motionData[3] ), 0.0 );
 		//qDebug() << "Moving A" << endl;
 	}
 	if ( b > 0.001 ) {
-		moveViewer->getCameraManipulator()->rotateCamera( 1.0, 0.00, ( 1.2 )*( double )motionData[4], -1, -1 );
+		moveViewer->getCameraManipulator()->rotateCamera( 1.0, 0.00, 1.2 *motionData[4], -1, -1 );
 		//qDebug() << "Moving B" << endl;
 	}
 	if ( c > 0.001 ) {
-		moveViewer->getCameraManipulator()->rotateCamera( 0.0, 0.0, 1.0, 0.0, ( float )( -1.5 )*motionData[5] );
+		moveViewer->getCameraManipulator()->rotateCamera( 0.0, 0.0, 1.0, 0.0, -1.5f * static_cast<float>( motionData[5] ) );
 		//qDebug() << "Moving C" << endl;
 	}
 
