@@ -58,7 +58,7 @@ void Mouse3dUnixDevice::translateX11Event( XEvent* event )
 	if ( MagellanTranslateEvent( this->display, event, &MagellanEvent, 1.0, 1.0 ) == MagellanInputMotionEvent ) {
 		MagellanRemoveMotionEvents( display );
 
-		std::vector<float> motionData;
+		std::vector<double> motionData;
 		motionData.push_back( MagellanEvent.MagellanData[ MagellanX ] );
 		motionData.push_back( MagellanEvent.MagellanData[ MagellanY ] );
 		motionData.push_back( MagellanEvent.MagellanData[ MagellanZ ] * -1.0 );
