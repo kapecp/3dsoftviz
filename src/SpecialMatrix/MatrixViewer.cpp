@@ -61,7 +61,7 @@ void SpecialMatrix::MatrixViewer::exchangeNodes( osg::ref_ptr<Data::Node> srcNod
 	int separator = Util::ApplicationConfig::get()->getValue( "Viewer.Display.MatrixNodeSeparator" ).toInt();
 	osg::ref_ptr<Data::Node> tempNode, foundNode;
 	osg::Vec3f diffVector, finalPosVector;
-	osg::Vec2i iNodeOldPos, iNodeNewPos;
+	osg::Vec2f iNodeOldPos, iNodeNewPos;
 	qlonglong foundNodeId;
 	int srcNodePos, desNodePos, diff;
 
