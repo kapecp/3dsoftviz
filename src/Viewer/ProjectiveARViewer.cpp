@@ -1,4 +1,5 @@
 #include "QOSG/ProjectiveARViewer.h"
+#include "QOSG/ProjectiveARWindow.h"
 
 #include "Viewer/PickHandler.h"
 #include "Viewer/CameraManipulator.h"
@@ -6,7 +7,6 @@
 #include "Util/ApplicationConfig.h"
 #include "Core/Core.h"
 
-// Kostan test
 #include <osg/Notify>
 #include <osg/MatrixTransform>
 #include <osg/ShapeDrawable>
@@ -22,6 +22,8 @@
 #include <osgDB/Registry>
 #include <osgDB/ReadFile>
 #include <osgViewer/Viewer>
+
+#include <math.h>
 
 // used code from http://jotschi.de/2009/05/31/projective-textures-with-openscenegraph/
 osg::StateSet* QOSG::ProjectiveARViewer::createProjectorState(osg::Texture2D* texture, osg::Vec3 projectorPos, osg::Vec3 projectorDirection, float projectorFOV) {
@@ -90,7 +92,6 @@ osg::StateSet* QOSG::ProjectiveARViewer::createProjectorState(osg::Texture2D* te
     /* 4. set Texture matrix*/
     osg::TexMat* texMat = new osg::TexMat;
     osg::Matrix mat;
-    osg::Vec3 up(0.0f, 0.0f, 1.0f);
     mat = osg::Matrixd::lookAt(projectorPos, projectorPos + projectorDirection, up)
         * osg::Matrixd::perspective(projectorFOV, 1.0, 0.1, SCENE_MAX_SIZE);
     texMat->setMatrix(mat);
@@ -110,23 +111,23 @@ osg::Geode* QOSG::ProjectiveARViewer::createBase()
 
     //base
     osg::Vec3Array* vertices = new osg::Vec3Array;
-    vertices->push_back(osg::Vec3(-1.5, -2.0, 0));    // lb   floor
-    vertices->push_back(osg::Vec3(0, -2.0, 0));       // rb   floor
-    vertices->push_back(osg::Vec3(0, 0, 0));            // rb   screen
-    vertices->push_back(osg::Vec3(-1.5, 0, 0));         // lb   screen
-    vertices->push_back(osg::Vec3(0, 0, 2.07));          // rt   screen
-    vertices->push_back(osg::Vec3(-1.5, 0, 2.07));       // lt   screen
+    vertices->push_back(osg::Vec3(-0.75, -1.0, 2.0));    // lb   floor
+    vertices->push_back(osg::Vec3( 0.75, -1.0, 2.0));    // rb   floor
+    vertices->push_back(osg::Vec3( 0.75, -1.0, 0));      // rb   screen
+    vertices->push_back(osg::Vec3(-0.75, -1.0, 0));      // lb   screen
+    vertices->push_back(osg::Vec3( 0.75, 1.00, 0));   // rt   screen
+    vertices->push_back(osg::Vec3(-0.75, 1.00, 0));   // lt   screen
 
     //right side
-    vertices->push_back(osg::Vec3(0.02, -0.08, 0));       // fb   rack
-    vertices->push_back(osg::Vec3(0.02, -0.08, 0.02));    // fm   rack
-    vertices->push_back(osg::Vec3(0.02, -0.015, 0.065));    // ft   rack
-    vertices->push_back(osg::Vec3(0.02, -0.015, 0.00));    // sb   rack
+    vertices->push_back(osg::Vec3(0.77, -1.0, 0.08));       // fb   rack
+    vertices->push_back(osg::Vec3(0.77, -0.98, 0.08));    // fm   rack
+    vertices->push_back(osg::Vec3(0.77, -0.935, 0.015));    // ft   rack
+    vertices->push_back(osg::Vec3(0.77, -1.00, 0.015));    // sb   rack
     //left side
-    vertices->push_back(osg::Vec3(-1.52, -0.08, 0));       // fb   rack
-    vertices->push_back(osg::Vec3(-1.52, -0.08, 0.02));    // fm   rack
-    vertices->push_back(osg::Vec3(-1.52, -0.015, 0.065));    // ft   rack
-    vertices->push_back(osg::Vec3(-1.52, -0.015, 0.00));    // sb   rack
+    vertices->push_back(osg::Vec3(-0.77, -1.0, 0.08));       // fb   rack
+    vertices->push_back(osg::Vec3(-0.77, -0.98, 0.08));    // fm   rack
+    vertices->push_back(osg::Vec3(-0.77, -0.935, 0.015));    // ft   rack
+    vertices->push_back(osg::Vec3(-0.77, -1.00, 0.015));    // sb   rack
     baseGeometry->setVertexArray(vertices);
 
     // floor
@@ -221,21 +222,25 @@ osg::Group* QOSG::ProjectiveARViewer::createProjectorScene() {
 
     double fovy, aspectRatio, zNear, zFar;
     viewerPerspective->getCamera()->getProjectionMatrixAsPerspective(fovy, aspectRatio, zNear, zFar);
-    renderCamera->setProjectionMatrixAsPerspective(viewerFOV, 1.0, zNear, zFar);
 
     if(useGraph){
-        const osg::BoundingSphere& bs = model->getBound();
-        if (!bs.valid())
-        {
+        const osg::BoundingSphere& bs = coreGraph->getNodesGroup()->getGroup()->getBound();/*viewerPerspective->getSceneData()->getBound();*/
+        if (!bs.valid()){
+            qDebug() << "[ProjectiveARViewer::createProjectorScene] Bounding sphere is not valid!";
             return NULL;
         }
+
+        // setting View Matrix
         osg::Vec3d viewerRelPos(viewerPos - graphPos);
-
         osg::Vec3d renderCameraRelPos(viewerRelPos * (bs.radius() / graphRadius));
+        renderCamera->setViewMatrixAsLookAt(renderCameraRelPos + bs.center(), bs.center(), osg::Vec3(0.0f, 1.0f, 0.0f));
 
-        renderCamera->setViewMatrixAsLookAt(renderCameraRelPos + bs.center(), bs.center(), osg::Vec3(0.0f, 0.0f, 1.0f));
+        // setting Projection Matrix (compute frustum parameters)
+        double dist = (double) (renderCameraRelPos).length();
+        renderCamera->setProjectionMatrix(createFrustumForSphere(bs.radius(), dist));
     }
     else{
+        renderCamera->setProjectionMatrixAsPerspective(viewerFOV, 1.0, zNear, zFar);
         renderCamera->setViewMatrix(viewerPerspective->getCamera()->getViewMatrix());
     }
     renderCamera->setReferenceFrame(osg::Transform::ABSOLUTE_RF);
@@ -274,9 +279,11 @@ osg::Group* QOSG::ProjectiveARViewer::createProjectorScene() {
     return projectorScene;
 }
 
-QOSG::ProjectiveARViewer::ProjectiveARViewer( QWidget* parent , const char* name , const QGLWidget* shareWidget , WindowFlags f , osgViewer::Viewer* viewerPerspective ):
+QOSG::ProjectiveARViewer::ProjectiveARViewer( QWidget* parent , const char* name , const QGLWidget* shareWidget , WindowFlags f , QOSG::ProjectiveARWindow* window, osgViewer::Viewer* viewerPerspective, Vwr::CoreGraph* coreGraph ):
     AdapterWidget( parent, name, shareWidget, f )
 {
+    this->window = window;
+    this->coreGraph = coreGraph;
     this->viewerPerspective = viewerPerspective;
 
     appConf = Util::ApplicationConfig::get();
@@ -285,19 +292,19 @@ QOSG::ProjectiveARViewer::ProjectiveARViewer( QWidget* parent , const char* name
     useGraph = false;
 
     // setup Graph (radius 0.5m)
-    graphPos = osg::Vec3d(-0.75, -0.25, 0.25);
+    graphPos = osg::Vec3d(0.0, 0.00, 0.50);
     graphRadius = 0.5;
 
     // setup Viewer
-    viewerPos = osg::Vec3d(-0.75,-1.50, 1.25);
-    viewerDir = osg::Vec3d(-0.75, 0.00, 0.75) - viewerPos;
+    viewerPos = osg::Vec3d(0.0, 0.00, 1.50);
+    viewerDir = osg::Vec3d(0.0, 0.00, 0.00) - viewerPos;
     viewerFOV = 90;
 
     this->setSceneData(createProjectorScene());
 
     // setup Projector
-    projectorPos = osg::Vec3d(-0.75,-1.50, 1.25);
-    projectorDir = osg::Vec3d(-0.75, 0.00, 0.75) - projectorPos;
+    projectorPos = osg::Vec3d(0.0, 0.00, 1.50);
+    projectorDir = osg::Vec3d(0.0, 0.00, 0.00) - projectorPos;
     projectorFOV = 30;
 
     getCamera()->setViewport( new osg::Viewport( 0,0,width(),height() ) );
@@ -306,7 +313,7 @@ QOSG::ProjectiveARViewer::ProjectiveARViewer( QWidget* parent , const char* name
     getCamera()->setComputeNearFarMode( osg::CullSettings::DO_NOT_COMPUTE_NEAR_FAR );
 
     getCamera()->setClearColor( osg::Vec4( 0, 0, 0, 1 ) );
-    getCamera()->setViewMatrixAsLookAt( projectorPos, projectorDir + projectorPos, osg::Vec3d( 0, 0, 1 ) );
+    getCamera()->setViewMatrixAsLookAt( projectorPos, projectorDir + projectorPos, osg::Vec3d( 0, 1, 0 ) );
 
 
     addEventHandler( new osgViewer::StatsHandler );
@@ -325,65 +332,87 @@ void QOSG::ProjectiveARViewer::reloadConfig()
 
 void QOSG::ProjectiveARViewer::paintGL()
 {
-    double fovy, aspectRatio, zNear, zFar;
-    viewerPerspective->getCamera()->getProjectionMatrixAsPerspective(fovy, aspectRatio, zNear, zFar);
-    renderCamera->setProjectionMatrixAsPerspective(viewerFOV, 1.0, zNear, zFar);
-
-    if(useGraph){
-        const osg::BoundingSphere& bs = viewerPerspective->getSceneData()->getBound();
-        if (!bs.valid())
-        {
-            return ;
-        }
-        osg::Vec3d viewerRelPos(viewerPos - graphPos);
-
-        osg::Vec3d renderCameraRelPos(viewerRelPos * (bs.radius()/*0.50*/ / graphRadius));
-
-        renderCamera->setViewMatrixAsLookAt(renderCameraRelPos + bs.center(), bs.center(), osg::Vec3(0.0f, 0.0f, 1.0f));
-
-        /*osg::Vec3d prevCamPos, prevCenter, prevUp;
-        viewerPerspective->getCamera()->getViewMatrixAsLookAt(prevCamPos, prevCenter, prevUp);
-        qDebug() << "viewerRelPos[" << viewerRelPos.x() << ";" << viewerRelPos.y() << ";" << viewerRelPos.z() << "]";
-        qDebug() << "graphRadius = " << graphRadius;
-        qDebug() << "cameraRelPos[" << renderCameraRelPos.x() << ";" << renderCameraRelPos.y() << ";" << renderCameraRelPos.z() << "]";
-        qDebug() << "bsRadius = " << bs.radius();
-        qDebug() << "bs.center[" << bs.center().x() << ";" << bs.center().y() << ";" << bs.center().z() << "]";
-        qDebug() << "prevCamPos[" << prevCamPos.x() << ";" << prevCamPos.y() << ";" << prevCamPos.z() << "]";
-        qDebug() << "prevCenter[" << prevCenter.x() << ";" << prevCenter.y() << ";" << prevCenter.z() << "]";
-        qDebug() << "prevCamPos[" << prevUp.x() << ";" << prevUp.y() << ";" << prevUp.z() << "]";*/
-    }
-    else{
-        renderCamera->setViewMatrix(viewerPerspective->getCamera()->getViewMatrix());
-    }
-    //useSourceCamera = true;
-
     frame();
-    //renderCamera->setViewport(viewerPerspective->getCamera()->getViewport());
 }
 
-void QOSG::ProjectiveARViewer::updateScene()
+void QOSG::ProjectiveARViewer::updateRenderCamera()
 {
-    // update viewer
+    double fovy, aspectRatio, zNear, zFar;
+    viewerPerspective->getCamera()->getProjectionMatrixAsPerspective(fovy, aspectRatio, zNear, zFar);
+
+    if(useGraph){
+        const osg::BoundingSphere& bs = coreGraph->getNodesGroup()->getGroup()->getBound();/*viewerPerspective->getSceneData()->getBound();*/
+        if (!bs.valid()){
+            qDebug() << "[ProjectiveARViewer::paintGL] Bounding sphere is not valid!";
+            return ;
+        }
+
+        // setting View Matrix
+        osg::Vec3d viewerRelPos(viewerPos - graphPos);
+        osg::Vec3d renderCameraRelPos(viewerRelPos * (bs.radius() / graphRadius));
+        renderCamera->setViewMatrixAsLookAt(renderCameraRelPos + bs.center(), bs.center(), up);
+
+        // setting Projection Matrix (compute frustum parameters)
+        double dist = (double) (renderCameraRelPos).length();
+        renderCamera->setProjectionMatrix(createFrustumForSphere(bs.radius(), dist));
+    }
+    else{
+        renderCamera->setProjectionMatrixAsPerspective(viewerFOV, 1.0, zNear, zFar);
+        renderCamera->setViewMatrix(viewerPerspective->getCamera()->getViewMatrix());
+    }
+}
+
+void QOSG::ProjectiveARViewer::updateViewer()
+{
     osg::TexMat* texMat = dynamic_cast<osg::TexMat*>(base->getStateSet()->getTextureAttribute(1,osg::StateAttribute::TEXMAT));
     osg::Matrix mat;
-    osg::Vec3d up(0.0, 0.0, 1.0);
+
     if(useGraph){
+        double dist = (double) (viewerPos - graphPos).length();
         mat = osg::Matrixd::lookAt(viewerPos, graphPos, up)
-            * osg::Matrixd::perspective(viewerFOV, 1.0, 0.1, SCENE_MAX_SIZE);
+            * createFrustumForSphere(graphRadius, dist);
     }
     else{
         mat = osg::Matrixd::lookAt(viewerPos, viewerDir + viewerPos, up)
-            * renderCamera->getProjectionMatrix();//osg::Matrixd::perspective(viewerFOV, 1.0, 0.1, SCENE_MAX_SIZE);
+            * renderCamera->getProjectionMatrix();
     }
     texMat->setMatrix(mat);
+}
 
-    // update projector
+void QOSG::ProjectiveARViewer::updateProjector()
+{
     getCamera()->setProjectionMatrixAsPerspective( projectorFOV, static_cast<double>( width() )/static_cast<double>( height() ), 0.01, SCENE_MAX_SIZE );
     getCamera()->setViewMatrixAsLookAt( projectorPos, projectorDir + projectorPos, up );
 }
 
-
-void QOSG::ProjectiveARViewer::setViewerPosByFaceDetection(float x, float y, float distance)
+void QOSG::ProjectiveARViewer::updateScene()
 {
-    qDebug() << "[ProjectiveARCore::setViewerPosByFaceDetection] Passed arguments: x=\"" << x << "\", y=\"" << y << "\", distance=\"" << distance << "\"";
+    updateRenderCamera();
+    updateViewer();
+    updateProjector();
+}
+
+
+void QOSG::ProjectiveARViewer::setViewerPosByFaceDetection(float x, float y, float z)
+{
+    //qDebug() << "[ProjectiveARViewer::setViewerPosByFaceDetection] Passed arguments: x=\"" << x << "\", y=\"" << y << "\", z=\"" << z << "\"";
+    viewerPos = osg::Vec3d(x,y,z);
+    window->setViewerPos(viewerPos.x(), viewerPos.y(), viewerPos.z());
+    updateScene();
+}
+
+osg::Matrixd QOSG::ProjectiveARViewer::createFrustumForSphere(float radius, float distance)
+{
+    // 0.1(m) is a distance where the sphere will start to disappear
+    double zNear = (distance - radius > 0.1) ? distance - radius : 0.1;
+    double zFar = distance + radius;
+    // sin(67.5°) ~ 0.92388  -> 135° = angle of horizontal and vertical field of view
+    double a = (radius / distance < 0.92388) ? zNear * ( radius / distance ) : zNear * 0.92388;
+
+    /*qDebug() << "[ProjectiveARViewer::createFrustumForSphere] dist  = " << distance;
+    qDebug() << "[ProjectiveARViewer::createFrustumForSphere] zNear = " << zNear;
+    qDebug() << "[ProjectiveARViewer::createFrustumForSphere] zFar  = " << zFar;
+    qDebug() << "[ProjectiveARViewer::createFrustumForSphere] a     = " << a;*/
+
+    return osg::Matrixd::frustum(-a, a, -a, a, zNear, zFar);
 }

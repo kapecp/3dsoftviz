@@ -3,6 +3,8 @@
 #include "QOSG/ProjectiveAREventHandler.h"
 
 #include "QOSG/ViewerQT.h"
+#include "Viewer/CoreGraph.h"
+#include "Core/Core.h"
 
 #include <QtGui/QLabel>
 #include <QtGui/QRadioButton>
@@ -14,10 +16,13 @@
 
 #include "Util/ApplicationConfig.h"
 
-QOSG::ProjectiveARWindow::ProjectiveARWindow( QWidget* parent, ViewerQT* sourceViewer, QApplication* app ) : QDialog( parent )
+QOSG::ProjectiveARWindow::ProjectiveARWindow( QWidget* parent, QApplication* app ) : QDialog( parent )
 {
     this->app = app;
-    viewerWidget = new ProjectiveARViewer( this, 0, 0, 0, sourceViewer );
+
+    ViewerQT* sourceViewer = AppCore::Core::getInstance( app )->getCoreWindow()->getViewerWidget();
+    Vwr::CoreGraph* coreGraph = AppCore::Core::getInstance( app )->getCoreGraph();
+    viewerWidget = new ProjectiveARViewer( this, 0, 0, 0, this, sourceViewer, coreGraph );
     viewerWidget->addEventHandler(new ProjectiveAREventHandler(this));
     createLeftToolBar();
 
@@ -259,6 +264,12 @@ void QOSG::ProjectiveARWindow::closeEvent( QCloseEvent* event )
 	event->accept();
 }
 
+void QOSG::ProjectiveARWindow::setViewerPos(double x, double y, double z)
+{
+    dsb_viewerPosX->setValue(x);
+    dsb_viewerPosY->setValue(y);
+    dsb_viewerPosZ->setValue(z);
+}
 
 // Update functions
 

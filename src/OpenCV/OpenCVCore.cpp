@@ -106,9 +106,9 @@ void  OpenCV::OpenCVCore::createPermanentConnection()
                       SLOT( setRotationHeadFaceDet( float,float,float ) ) );
     QOSG::CoreWindow *coreWindow = AppCore::Core::getInstance( mApp )->getCoreWindow();
     QOSG::ProjectiveARCore *projectiveARCore = QOSG::ProjectiveARCore::getInstance( mApp, coreWindow);
-    projectiveARCore->init(coreWindow->getViewerWidget());
+    //projectiveARCore->init();
     QObject::connect( mThrFaceRec,
-                      SIGNAL( sendEyesCoords( float,float,float ) ),
+                      SIGNAL( sendEyesRealCoords( float,float,float ) ),
                       projectiveARCore->getViewer(),
                       SLOT( setViewerPosByFaceDetection( float,float,float ) ) );
 

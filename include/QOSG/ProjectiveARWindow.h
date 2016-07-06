@@ -40,7 +40,7 @@ public:
      * @param sourceViewer - Viewer that views desired image.
      * @param mApp - QApplication
 	 */
-    ProjectiveARWindow( QWidget* parent, ViewerQT* sourceViewer, QApplication* mApp );
+    ProjectiveARWindow( QWidget* parent, QApplication* mApp );
 
     /**
      * @author Autor: Viktor Košťan
@@ -51,7 +51,9 @@ public:
      */
     void toggleToolBars();
 
-    ProjectiveARViewer* getViewer() { return viewerWidget; }
+    ProjectiveARViewer* getViewerWidget() { return viewerWidget; }
+
+    void setViewerPos(double x, double y, double z);
 
 public slots:
     // functions that update Viewer's parameters

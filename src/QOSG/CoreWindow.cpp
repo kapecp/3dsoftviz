@@ -4543,7 +4543,7 @@ void CoreWindow::baseClicked()
 
 void CoreWindow::createProjARWindow()
 {
-    QOSG::ProjectiveARCore::getInstance( NULL, this )->init(viewerWidget);
+    QOSG::ProjectiveARCore::getInstance( NULL, this )->init();
 }
 
 //*****

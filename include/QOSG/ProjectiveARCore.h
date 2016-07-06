@@ -38,9 +38,10 @@ public:
          * @author Autor: Viktor Košťan
          * @brief init Creates and shows ProjectiveARWindow
 		 */
-    void init(ViewerQT* sourceViewer);
+    void init();
 
     QOSG::ProjectiveARViewer *getViewer() { return mProjectiveARViewer; }
+    QOSG::ProjectiveARWindow *getWindow() { return mProjectiveARWindow; }
 
 private:
     /**
