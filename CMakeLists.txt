@@ -41,18 +41,21 @@ option( USE_STRICT_COMPILE_WARNINGS "Use strict compilation warnings in debug mo
 if( USE_STRICT_COMPILE_WARNINGS )
 	if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang" OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "AppleClang")
 		# using Clang
-		set( FLAGS_FOR_DEBUG -pedantic -Wall -Wcast-align -Wcast-qual -Wchar-subscripts -Wcomment -Wconversion -Wctor-dtor-privacy -Wdisabled-optimization -Wextra -Wfloat-equal  -Wformat  -Wformat-nonliteral -Wformat-security  -Wformat-y2k -Wformat=2  -Wimport  -Winit-self -Winline -Winvalid-pch -Wlong-long -Wmissing-braces -Wmissing-declarations -Wmissing-field-initializers -Wmissing-format-attribute -Wmissing-include-dirs -Wmissing-noreturn -Wpacked  -Wparentheses -Wpointer-arith -Wredundant-decls -Wreturn-type -Wsequence-point -Wsign-compare  -Wsign-promo -Wstack-protector -Wstrict-aliasing=2 -Wstrict-overflow=5 -Wswitch -Wswitch-default -Wswitch-enum -Wtrigraphs -Wundef -Wuninitialized -Wunknown-pragmas -Wunreachable-code -Wvariadic-macros -Wvolatile-register-var -Wwrite-strings  -Wno-unused-parameter -Wno-unused -Wno-documentation-unknown-command )
+		set( FLAGS_FOR_DEBUG
+			-Weverything
+			-Wno-c++98-compat -Wno-documentation -Wno-shadow -Wno-padded -Wno-covered-switch-default
+			-pedantic -Wall -Wcast-align -Wcast-qual -Wchar-subscripts -Wcomment -Wconversion -Wctor-dtor-privacy -Wdisabled-optimization -Wextra -Wfloat-equal  -Wformat  -Wformat-nonliteral -Wformat-security  -Wformat-y2k -Wformat=2  -Wimport  -Winit-self -Winline -Winvalid-pch -Wlong-long -Wmissing-braces -Wmissing-declarations -Wmissing-field-initializers -Wmissing-format-attribute -Wmissing-include-dirs -Wmissing-noreturn -Wpacked  -Wparentheses -Wpointer-arith -Wredundant-decls -Wreturn-type -Wsequence-point -Wsign-compare  -Wsign-promo -Wstack-protector -Wstrict-aliasing=2 -Wstrict-overflow=5 -Wswitch -Wswitch-default -Wswitch-enum -Wtrigraphs -Wundef -Wuninitialized -Wunknown-pragmas -Wunreachable-code -Wvariadic-macros -Wvolatile-register-var -Wwrite-strings  -Wno-unused-parameter -Wno-unused -Wno-documentation-unknown-command )
 	elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR CMAKE_COMPILER_IS_GNUCXX)
 		# using GCC
 		set( FLAGS_FOR_DEBUG -pedantic -Wall -Wcast-align -Wcast-qual -Wchar-subscripts -Wcomment -Wconversion -Wctor-dtor-privacy -Wdisabled-optimization -Wextra -Wfloat-equal -Wformat -Wformat-nonliteral -Wformat-security -Wformat-y2k -Wformat=2 -Wimport -Winit-self -Winline -Winvalid-pch -Wlogical-op -Wlong-long -Wmissing-braces -Wmissing-declarations -Wmissing-field-initializers -Wmissing-format-attribute -Wmissing-include-dirs -Wmissing-noreturn -Wnoexcept -Wpacked -Wparentheses -Wpointer-arith -Wredundant-decls -Wreturn-type -Wsequence-point -Wsign-compare -Wsign-promo -Wstack-protector -Wstrict-aliasing=2 -Wstrict-null-sentinel -Wstrict-overflow=5 -Wswitch -Wswitch-default -Wswitch-enum -Wtrigraphs -Wundef -Wuninitialized -Wunknown-pragmas -Wunreachable-code -Wunsafe-loop-optimizations -Wvariadic-macros -Wvolatile-register-var -Wwrite-strings -Wold-style-cast -Woverloaded-virtual -Wuseless-cast -Wsign-conversion -Wno-unused-parameter -Wno-unused )
 
 		# to suppress warnings for unused stuff use: -Wno-unused-parameter -Wno-unused-result
 		# not used:
-			# too much warnings in Qt headers: NULL vs 0 pointers: -Wzero-as-null-pointer-constant
-			# too much warnings: -Wshadow -Waggregate-return
-			# class size optimizations ( not really needed ): -Wpadded
-			# style guidelines from Scott Meyers' Effective C++ books: -Weffc++
-			# only for C: -Wold-style-definition -Wstrict-prototypes -Wmissing-prototypes
+		# too much warnings in Qt headers: NULL vs 0 pointers: -Wzero-as-null-pointer-constant
+		# too much warnings: -Wshadow -Waggregate-return
+		# class size optimizations ( not really needed ): -Wpadded
+		# style guidelines from Scott Meyers' Effective C++ books: -Weffc++
+		# only for C: -Wold-style-definition -Wstrict-prototypes -Wmissing-prototypes
 	elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
 		# using Visual Studio C++
 		set( FLAGS_FOR_DEBUG "/W3")
@@ -172,8 +175,8 @@ endif()
 
 # add special flag to GCC compiler when using Qt 4.6.x with GCC >4.6
 if( "${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" AND
-	"${QT_VERSION_MAJOR}.${QT_VERSION_MINOR}" VERSION_LESS "4.7" AND
-	${CMAKE_C_COMPILER_VERSION} VERSION_GREATER "4.6" )
+		"${QT_VERSION_MAJOR}.${QT_VERSION_MINOR}" VERSION_LESS "4.7" AND
+		${CMAKE_C_COMPILER_VERSION} VERSION_GREATER "4.6" )
 
 	set( CMAKE_CXX_FLAGS "-fpermissive" )
 endif()
@@ -274,11 +277,11 @@ if( WIN32 AND MSVC )
 
 		# find_package( SPEECHSDK )
 		# if( SPEECHSDK_FOUND )
-			# include_directories( SYSTEM ${SPEECHSDK_INCLUDE_DIRS} )
-			# add_definitions( -DSPEECHSDK_FOUND )
-			# message( STATUS "SPEECHSDK FOUND" )
+		# include_directories( SYSTEM ${SPEECHSDK_INCLUDE_DIRS} )
+		# add_definitions( -DSPEECHSDK_FOUND )
+		# message( STATUS "SPEECHSDK FOUND" )
 		# else( SPEECHSDK_FOUND )
-			# message ( STATUS "SPEECHSDK NOT FOUND" )
+		# message ( STATUS "SPEECHSDK NOT FOUND" )
 		# endif()
 
 		message( STATUS "KINECTSDK Found:" )
@@ -396,8 +399,8 @@ option( USE_BUILTIN_DEPENDENCIES "Use builtin dependencies." ON )
 # Build dependencies
 if( USE_BUILTIN_DEPENDENCIES )
 	# to use Gold linker add following flags to ExternalProject_Add command, to CMAKE_ARGS (TODO: needs more testing):
-		#-DCMAKE_EXE_LINKER_FLAGS:STRING=${CMAKE_EXE_LINKER_FLAGS}
-		#-DCMAKE_SHARED_LINKER_FLAGS:STRING=${CMAKE_SHARED_LINKER_FLAGS}
+	#-DCMAKE_EXE_LINKER_FLAGS:STRING=${CMAKE_EXE_LINKER_FLAGS}
+	#-DCMAKE_SHARED_LINKER_FLAGS:STRING=${CMAKE_SHARED_LINKER_FLAGS}
 
 	include( ExternalProject )
 
@@ -419,7 +422,7 @@ if( USE_BUILTIN_DEPENDENCIES )
 			-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
 			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
 			-C ${CMAKE_CURRENT_BINARY_DIR}/config.cmake
-	)
+		)
 
 	# add libnoise library
 	add_library( libnoise SHARED IMPORTED )
@@ -454,7 +457,7 @@ if( USE_BUILTIN_DEPENDENCIES )
 				-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
 				-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
 				-C ${CMAKE_CURRENT_BINARY_DIR}/config.cmake
-		)
+			)
 
 		add_library( aruco SHARED IMPORTED )
 		add_dependencies( aruco dep_aruco )
@@ -479,7 +482,7 @@ if( USE_BUILTIN_DEPENDENCIES )
 			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
 			-DBUILD_PLUGINS=ON
 			-C ${CMAKE_CURRENT_BINARY_DIR}/config.cmake
-	)
+		)
 
 	add_library( osgModeling SHARED IMPORTED )
 	add_dependencies( osgModeling dep_osgModeling )
@@ -503,13 +506,13 @@ if( USE_BUILTIN_DEPENDENCIES )
 			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
 			-DBUILD_TESTS=ON
 			-C ${CMAKE_CURRENT_BINARY_DIR}/config.cmake
-		# little trick:
+			# little trick:
 			# this solves building igloo twice (building normal target and building unity target)
 			# prevent building the default target (make install)
-		BUILD_COMMAND ""
+			BUILD_COMMAND ""
 			# force building the install_unity target
-		INSTALL_COMMAND "${CMAKE_COMMAND}" --build . --target install_unity# -- "-j${N}"
-	)
+			INSTALL_COMMAND "${CMAKE_COMMAND}" --build . --target install_unity# -- "-j${N}"
+		)
 
 	add_library( igloo INTERFACE IMPORTED )
 	add_dependencies( igloo dep_igloo )
@@ -526,7 +529,7 @@ if( USE_BUILTIN_DEPENDENCIES )
 				-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
 				-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
 				-C ${CMAKE_CURRENT_BINARY_DIR}/config.cmake
-		)
+			)
 
 		# add lua library
 		add_library( lua SHARED IMPORTED )
@@ -552,7 +555,7 @@ if( USE_BUILTIN_DEPENDENCIES )
 				-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
 				-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
 				-C ${CMAKE_CURRENT_BINARY_DIR}/config.cmake
-		)
+			)
 
 		# add lua library
 		add_library( lua SHARED IMPORTED )
@@ -578,7 +581,7 @@ if( USE_BUILTIN_DEPENDENCIES )
 			CMAKE_ARGS
 				-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
 				-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-		)
+			)
 
 		# add diluculum library
 		add_library( diluculum SHARED IMPORTED )
@@ -601,7 +604,7 @@ if( USE_BUILTIN_DEPENDENCIES )
 		CMAKE_ARGS
 			-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
 			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-	)
+		)
 
 	# Build leg
 	ExternalProject_Add ( dep_leg
@@ -611,7 +614,7 @@ if( USE_BUILTIN_DEPENDENCIES )
 		CMAKE_ARGS
 			-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
 			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-	)
+		)
 
 	# Build luametrics
 	ExternalProject_Add ( dep_luametrics
@@ -621,7 +624,7 @@ if( USE_BUILTIN_DEPENDENCIES )
 		CMAKE_ARGS
 			-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
 			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-	)
+		)
 
 	# Build luafilesystem
 	ExternalProject_Add ( dep_luafilesystem
@@ -631,7 +634,7 @@ if( USE_BUILTIN_DEPENDENCIES )
 		CMAKE_ARGS
 			-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
 			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-	)
+		)
 
 	# Build lualogging
 	ExternalProject_Add ( dep_lualogging
@@ -641,7 +644,7 @@ if( USE_BUILTIN_DEPENDENCIES )
 		CMAKE_ARGS
 			-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
 			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-	)
+		)
 
 	# Ensure correct order of build (dependencies between external dependencies)
 	if( MSVC OR APPLE )
@@ -724,17 +727,17 @@ if( WIN32 )
 	list(APPEND SRC_MOUSE3D
 		src/Mouse3d/LibMouse3d/Windows/Mouse3DInput.cpp
 		src/Mouse3d/LibMouse3d/Windows/MouseParameters.cpp
-	)
+		)
 elseif( APPLE )
 	list(APPEND SRC_MOUSE3D
 		src/Mouse3d/LibMouse3d/Mac/Mouse3dMacDevice.cpp
-	)
+		)
 elseif( UNIX )
 	list(APPEND SRC_MOUSE3D
 		src/Mouse3d/LibMouse3d/Unix/ApplicationEmitter.cpp
 		src/Mouse3d/LibMouse3d/Unix/Mouse3dUnixDevice.cpp
 		src/Mouse3d/LibMouse3d/Unix/xdrvlib.c
-	)
+		)
 endif()
 
 
@@ -782,7 +785,7 @@ endif()
 
 # add Leap
 if( LEAP_FOUND )
-		# WORKAROUND GARAJ comment
+	# WORKAROUND GARAJ comment
 	list( APPEND SRC ${SRC_LEAP} )
 endif()
 
@@ -855,18 +858,18 @@ if( WIN32 )
 		include/Mouse3d/LibMouse3d/Windows/Mouse3DInput.h
 		include/Mouse3d/LibMouse3d/Windows/MouseParameters.h
 		include/Mouse3d/LibMouse3d/Windows/I3dMouseParams.h
-	)
+		)
 elseif( APPLE )
 	list(APPEND HEADER_MOUSE3D
 		include/Mouse3d/LibMouse3d/Mac/Mouse3dMacDevice.h
-	)
+		)
 elseif( UNIX )
 	list(APPEND HEADER_MOUSE3D
 		include/Mouse3d/LibMouse3d/Unix/ApplicationEmitter.h
 		include/Mouse3d/LibMouse3d/Unix/fixx11.h
 		include/Mouse3d/LibMouse3d/Unix/Mouse3dUnixDevice.h
 		include/Mouse3d/LibMouse3d/Unix/xdrvlib.h
-	)
+		)
 endif()
 
 
@@ -1021,8 +1024,8 @@ add_library( gitlib STATIC ${SRC_GITLIB} ${HEADER_GITLIB})
 
 target_include_directories( gitlib
 	SYSTEM PUBLIC
-		include
-		include/Repository/Git
+	include
+	include/Repository/Git
 )
 
 target_compile_definitions( gitlib PUBLIC -DGITLIB_LIBRARY_STATIC )
@@ -1106,16 +1109,16 @@ include_directories(SYSTEM ${ALL_SYSTEM_HEADERS})
 # )
 
 if ( Qt5Core_FOUND )
-	qt5_use_modules( ${3DSOFTVIZ_NAME} 
-		Core 
-		Widgets 
-		OpenGL 
-		Sql 
-		WebEngine 
-		WebEngineWidgets 
-		Xml 
-		Network 
-	)
+	qt5_use_modules( ${3DSOFTVIZ_NAME}
+		Core
+		Widgets
+		OpenGL
+		Sql
+		WebEngine
+		WebEngineWidgets
+		Xml
+		Network
+		)
 endif()
 
 target_link_libraries( ${3DSOFTVIZ_NAME}
@@ -1133,12 +1136,12 @@ target_link_libraries( ${3DSOFTVIZ_NAME}
 if ( Qt4_FOUND )
 	target_link_libraries( ${3DSOFTVIZ_NAME}
 		${QT_LIBRARIES}
-	)
+		)
 endif()
 
 if( NOT MSVC )
 	target_link_libraries( ${3DSOFTVIZ_NAME} diluculum
-	)
+		)
 endif()
 
 if( OpenCV_FOUND )
@@ -1297,8 +1300,8 @@ install( TARGETS gitlib
 
 if( LEAP_FOUND )
 	install( TARGETS leaplib
-	ARCHIVE DESTINATION ${INSTALL_BIN} COMPONENT Runtime
-	LIBRARY DESTINATION ${INSTALL_LIB} COMPONENT Runtime )
+		ARCHIVE DESTINATION ${INSTALL_BIN} COMPONENT Runtime
+		LIBRARY DESTINATION ${INSTALL_LIB} COMPONENT Runtime )
 endif()
 
 # add custom install_unity target
@@ -1359,7 +1362,7 @@ if( USE_BUILTIN_DEPENDENCIES )
 		DESTINATION ${INSTALL_DEPS}
 		COMPONENT Dependencies
 		USE_SOURCE_PERMISSIONS
-	)
+		)
 endif()
 
 # Include QT libraries in Apple bundle and on Windows
@@ -1385,9 +1388,9 @@ if( WIN32 OR APPLE AND OSX_BUNDLE )
 	# Bundle libraries
 	install( CODE "
 		file( GLOB_RECURSE LUA_PLUGINS
-				\"\${CMAKE_INSTALL_PREFIX}/${INSTALL_DEPS}/lib/lua/*${CMAKE_SHARED_MODULE_SUFFIX}\" )
+			\"\${CMAKE_INSTALL_PREFIX}/${INSTALL_DEPS}/lib/lua/*${CMAKE_SHARED_MODULE_SUFFIX}\" )
 		file( GLOB_RECURSE BUNDLE_PLUGINS
-				\"\${CMAKE_INSTALL_PREFIX}/${INSTALL_BIN}/plugins/*${CMAKE_SHARED_LIBRARY_SUFFIX}\" )
+			\"\${CMAKE_INSTALL_PREFIX}/${INSTALL_BIN}/plugins/*${CMAKE_SHARED_LIBRARY_SUFFIX}\" )
 		include( BundleUtilities )
 		fixup_bundle( \"${BUNDLE_APP}\" \"\${BUNDLE_PLUGINS};\${LUA_PLUGINS}\" \"${BUNDLE_DIRS}\" )
 		" COMPONENT Runtime )
@@ -1486,8 +1489,8 @@ add_executable( test_gitlib_module ${TEST_RUNNER} ${SRC_GITLIB_TESTS} )
 add_dependencies( test_gitlib_module igloo )
 
 target_include_directories( test_gitlib_module 	PUBLIC
-		${CMAKE_CURRENT_SOURCE_DIR}/include
-		include/Repository/Git 	)
+	${CMAKE_CURRENT_SOURCE_DIR}/include
+	include/Repository/Git 	)
 target_compile_options( test_gitlib_module PUBLIC ${FLAGS_FOR_DEBUG} )
 if ( Qt5Core_FOUND )
 	qt5_use_modules( test_gitlib_module Core )
@@ -1537,10 +1540,10 @@ if (Sphinx_FOUND)
 
 	add_custom_target(Sphinx_html
 		${SPHINX_EXECUTABLE}
-			-q -b html
-			-c "${BINARY_BUILD_DIR}"
-			-d "${SPHINX_CACHE_DIR}"
-			"${CMAKE_CURRENT_SOURCE_DIR}/docs"
-			"${SPHINX_HTML_DIR}"
+		-q -b html
+		-c "${BINARY_BUILD_DIR}"
+		-d "${SPHINX_CACHE_DIR}"
+		"${CMAKE_CURRENT_SOURCE_DIR}/docs"
+		"${SPHINX_HTML_DIR}"
 		COMMENT "Building HTML documentation with Sphinx")
 endif()
