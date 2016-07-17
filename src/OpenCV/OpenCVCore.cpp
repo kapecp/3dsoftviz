@@ -14,6 +14,7 @@
 #include "OpenCV/CameraStream.h"
 #include "Viewer/MouseControl.h"
 #include "QOSG/ProjectiveARCore.h"
+#include "QOSG/ProjectiveARViewer.h"
 
 OpenCV::OpenCVCore* OpenCV::OpenCVCore::mOpenCVCore;
 
@@ -124,7 +125,7 @@ void  OpenCV::OpenCVCore::createPermanentConnection()
 	QObject::connect( mThrAruco,
 					  SIGNAL( sendArucoPosAndQuat( osg::Quat,osg::Vec3d ) ),
 					  AppCore::Core::getInstance( mApp )->getCoreGraph(),
-	                  SLOT( updateGraphPosAndRotByAruco( osg::Quat, osg::Vec3d ) ) );*/
+					  SLOT( updateGraphPosAndRotByAruco( osg::Quat, osg::Vec3d ) ) );*/
 
 	//jurik
 	//sending matrices via Qt
