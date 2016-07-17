@@ -7,7 +7,7 @@ class QApplication;
 
 namespace QOSG {
 class ProjectiveARWindow;
-class ViewerQT;
+class ProjectiveARViewer;
 }
 
 namespace QOSG {
@@ -34,26 +34,35 @@ public:
          */
     ~ProjectiveARCore( void );
 
-    /**
-         * @author Autor: Viktor Košťan
-         * @brief init Creates and shows ProjectiveARWindow
-         */
-    void init( ViewerQT* sourceViewer );
+	/**
+	     * @author Autor: Viktor Košťan
+	     * @brief init Creates and shows ProjectiveARWindow
+		 */
+	void init();
 
+	QOSG::ProjectiveARViewer* getViewer()
+	{
+		return mProjectiveARViewer;
+	}
+	QOSG::ProjectiveARWindow* getWindow()
+	{
+		return mProjectiveARWindow;
+	}
 
 private:
-    /**
-         * @author Autor: Viktor Košťan
-         * @brief ProjectiveARCore Costructor
-         * @param app QApplication
-         */
-    ProjectiveARCore( QApplication* app, QWidget* parent );
+	/**
+	     * @author Autor: Viktor Košťan
+	     * @brief ProjectiveARCore Costructor
+		 * @param app QApplication
+		 */
+	ProjectiveARCore( QApplication* app, QWidget* parent );
 
-    static ProjectiveARCore*	mProjectiveARCore;	// static singleton instance
+	static ProjectiveARCore*	mProjectiveARCore;	// static singleton instance
 
-    QWidget*                                mParent;
-    QApplication*                           mApp;
-    QPointer<QOSG::ProjectiveARWindow>   mProjectiveARWindow;
+	QWidget*                                mParent;
+	QApplication*                           mApp;
+	QPointer<QOSG::ProjectiveARWindow>   mProjectiveARWindow;
+	QOSG::ProjectiveARViewer*   mProjectiveARViewer;
 
 };
 }

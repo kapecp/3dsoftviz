@@ -217,3 +217,21 @@ float OpenCV::FaceRecognizer::getHeadDistance( double screenWidth )
 	return 0.0f;
 }
 
+
+// distance of the face is determined by the width of the drawn rectangle and sensor focal length
+float OpenCV::FaceRecognizer::getHeadDistanceFocal( double realFaceWidth )
+{
+	// To-do: function to compute focal length (probably some calibration)
+	// Kostan: used my webcam focal length
+	double focalLength = 749.3;
+	double imageFaceWidth = this->drawrect.width;
+
+	float distance = ( float ) focalLength * ( realFaceWidth / imageFaceWidth );
+
+	/*qDebug() << "[FaceRecognizer::getHeadDistanceFocal] focalLength=\"" << focalLength << "\"";
+	qDebug() << "[FaceRecognizer::getHeadDistanceFocal] realFaceWidth=\"" << realFaceWidth << "\"";
+	qDebug() << "[FaceRecognizer::getHeadDistanceFocal] imageFaceWidth=\"" << imageFaceWidth << "\"";
+	qDebug() << "[FaceRecognizer::getHeadDistanceFocal] distance=\"" << distance << "\"";*/
+
+	return distance;
+}

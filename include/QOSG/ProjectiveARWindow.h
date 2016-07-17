@@ -40,7 +40,7 @@ public:
 	 * @param sourceViewer - Viewer that views desired image.
 	 * @param mApp - QApplication
 	 */
-	ProjectiveARWindow( QWidget* parent, ViewerQT* sourceViewer, QApplication* mApp );
+	ProjectiveARWindow( QWidget* parent, QApplication* mApp );
 
 	/**
 	 * @author Autor: Viktor Košťan
@@ -51,8 +51,26 @@ public:
 	 */
 	void toggleToolBars();
 
+	ProjectiveARViewer* getViewerWidget()
+	{
+		return viewerWidget;
+	}
+
+	void setViewerPos( double x, double y, double z );
+
 public slots:
-	void applySceneSettings();
+	// functions that update Viewer's parameters
+	void updateProjectorPos();
+	void updateProjectorDir();
+	void updateProjectorFOV();
+
+	void updateViewerPos();
+	void updateViewerDir();
+	void updateViewerFOV();
+
+	void updateGraphPos();
+	void updateGraphRadius();
+	void updateUseGraphParams();
 
 
 private:
@@ -97,9 +115,7 @@ private:
 
 	QDoubleSpinBox* dsb_graphRadius;
 
-	QCheckBox* chb_useMainViewer;
-
-	QPushButton* b_applyScene;
+	QCheckBox* chb_useGraphParams;
 
 	/**
 	    *  \fn private  createLeftToolBar
@@ -138,6 +154,7 @@ private:
 	     * @param event Close event
 	     */
 	void closeEvent( QCloseEvent* event );
+
 
 };
 

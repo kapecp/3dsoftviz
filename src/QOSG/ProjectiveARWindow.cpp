@@ -3,21 +3,26 @@
 #include "QOSG/ProjectiveAREventHandler.h"
 
 #include "QOSG/ViewerQT.h"
+#include "Viewer/CoreGraph.h"
+#include "Core/Core.h"
 
-#include <QLabel>
-#include <QRadioButton>
-#include <QPushButton>
-#include <QVBoxLayout>
-#include <QFormLayout>
+#include <QtGui/QLabel>
+#include <QtGui/QRadioButton>
+#include <QtGui/QPushButton>
+#include <QtGui/QVBoxLayout>
+#include <QtGui/QFormLayout>
 #include <QCloseEvent>
 #include <QDebug>
 
 #include "Util/ApplicationConfig.h"
 
-QOSG::ProjectiveARWindow::ProjectiveARWindow( QWidget* parent, ViewerQT* sourceViewer, QApplication* app ) : QDialog( parent )
+QOSG::ProjectiveARWindow::ProjectiveARWindow( QWidget* parent, QApplication* app ) : QDialog( parent )
 {
 	this->app = app;
-	viewerWidget = new ProjectiveARViewer( this, 0, 0, 0, sourceViewer );
+
+	ViewerQT* sourceViewer = AppCore::Core::getInstance( app )->getCoreWindow()->getViewerWidget();
+	Vwr::CoreGraph* coreGraph = AppCore::Core::getInstance( app )->getCoreGraph();
+	viewerWidget = new ProjectiveARViewer( this, 0, 0, 0, this, sourceViewer, coreGraph );
 	viewerWidget->addEventHandler( new ProjectiveAREventHandler( this ) );
 	createLeftToolBar();
 
@@ -120,11 +125,9 @@ QWidget* QOSG::ProjectiveARWindow::createSceneTab( QFrame* line )
 
 	dsb_graphRadius = createCoordSpinBox( graphRadius, "Graph radius" );
 
-	chb_useMainViewer = new QCheckBox();
-	chb_useMainViewer->setChecked( useMainViewer );
-	chb_useMainViewer->setToolTip( "Opion to use graph position and radius" );
-
-	b_applyScene = new QPushButton( tr( "Apply scene" ) );
+	chb_useGraphParams = new QCheckBox();
+	chb_useGraphParams->setChecked( useMainViewer );
+	chb_useGraphParams->setToolTip( "Opion to use graph position and radius" );
 
 
 	// set tab layout
@@ -171,11 +174,31 @@ QWidget* QOSG::ProjectiveARWindow::createSceneTab( QFrame* line )
 	dsb_graphPosZ->setMaximumWidth( 80 );
 	lScene->addRow( new QLabel( "Radius:" ), dsb_graphRadius );
 	dsb_graphRadius->setMaximumWidth( 80 );
-	lScene->addRow( new QLabel( "Place graph:" ), chb_useMainViewer );
+	lScene->addRow( new QLabel( "Place graph:" ), chb_useGraphParams );
 	lScene->addRow( createLine() );
 
-	lScene->addRow( b_applyScene );
-	connect( b_applyScene, SIGNAL( clicked() ), this, SLOT( applySceneSettings() ) );
+	connect( dsb_projectorPosX, SIGNAL( valueChanged( double ) ), this, SLOT( updateProjectorPos() ) );
+	connect( dsb_projectorPosY, SIGNAL( valueChanged( double ) ), this, SLOT( updateProjectorPos() ) );
+	connect( dsb_projectorPosZ, SIGNAL( valueChanged( double ) ), this, SLOT( updateProjectorPos() ) );
+	connect( dsb_projectorDirX, SIGNAL( valueChanged( double ) ), this, SLOT( updateProjectorDir() ) );
+	connect( dsb_projectorDirY, SIGNAL( valueChanged( double ) ), this, SLOT( updateProjectorDir() ) );
+	connect( dsb_projectorDirZ, SIGNAL( valueChanged( double ) ), this, SLOT( updateProjectorDir() ) );
+	connect( dsb_projectorFOV, SIGNAL( valueChanged( double ) ), this, SLOT( updateProjectorFOV() ) );
+
+	connect( dsb_viewerPosX, SIGNAL( valueChanged( double ) ), this, SLOT( updateViewerPos() ) );
+	connect( dsb_viewerPosY, SIGNAL( valueChanged( double ) ), this, SLOT( updateViewerPos() ) );
+	connect( dsb_viewerPosZ, SIGNAL( valueChanged( double ) ), this, SLOT( updateViewerPos() ) );
+	connect( dsb_viewerDirX, SIGNAL( valueChanged( double ) ), this, SLOT( updateViewerDir() ) );
+	connect( dsb_viewerDirY, SIGNAL( valueChanged( double ) ), this, SLOT( updateViewerDir() ) );
+	connect( dsb_viewerDirZ, SIGNAL( valueChanged( double ) ), this, SLOT( updateViewerDir() ) );
+	connect( dsb_viewerFOV, SIGNAL( valueChanged( double ) ), this, SLOT( updateViewerFOV() ) );
+
+	connect( dsb_graphPosX, SIGNAL( valueChanged( double ) ), this, SLOT( updateGraphPos() ) );
+	connect( dsb_graphPosY, SIGNAL( valueChanged( double ) ), this, SLOT( updateGraphPos() ) );
+	connect( dsb_graphPosZ, SIGNAL( valueChanged( double ) ), this, SLOT( updateGraphPos() ) );
+	connect( dsb_graphRadius, SIGNAL( valueChanged( double ) ), this, SLOT( updateGraphRadius() ) );
+	connect( chb_useGraphParams, SIGNAL( toggled( bool ) ), this, SLOT( updateUseGraphParams() ) );
+
 
 	wScene->setLayout( lScene );
 
@@ -239,45 +262,108 @@ void QOSG::ProjectiveARWindow::closeEvent( QCloseEvent* event )
 	event->accept();
 }
 
-
-void QOSG::ProjectiveARWindow::applySceneSettings()
+void QOSG::ProjectiveARWindow::setViewerPos( double x, double y, double z )
 {
-	qDebug() << "projectorPosX " << dsb_projectorPosX->value() << "\n";
-	qDebug() << "projectorPosY " << dsb_projectorPosY->value() << "\n";
-	qDebug() << "projectorPosZ " << dsb_projectorPosZ->value() << "\n";
-	qDebug() << "projectorDirX " << dsb_projectorDirX->value() << "\n";
-	qDebug() << "projectorDirY " << dsb_projectorDirY->value() << "\n";
-	qDebug() << "projectorDirZ " << dsb_projectorDirZ->value() << "\n";
-	qDebug() << "projectorFOV " << dsb_projectorFOV->value() << "\n\n";
-	qDebug() << "viewerPosX " << dsb_viewerPosX->value() << "\n";
-	qDebug() << "viewerPosY " << dsb_viewerPosY->value() << "\n";
-	qDebug() << "viewerPosZ " << dsb_viewerPosZ->value() << "\n";
-	qDebug() << "viewerDirX " << dsb_viewerDirX->value() << "\n";
-	qDebug() << "viewerDirY " << dsb_viewerDirY->value() << "\n";
-	qDebug() << "viewerDirZ " << dsb_viewerDirZ->value() << "\n";
-	qDebug() << "viewerFOV " << dsb_viewerFOV->value() << "\n";
+	dsb_viewerPosX->setValue( x );
+	dsb_viewerPosY->setValue( y );
+	dsb_viewerPosZ->setValue( z );
+}
+
+// Update functions
+
+void QOSG::ProjectiveARWindow::updateProjectorPos()
+{
+	qDebug() << "[ProjectiveARWindow::updateProjectorPos] projectorPosX = " << dsb_projectorPosX->value();
+	qDebug() << "[ProjectiveARWindow::updateProjectorPos] projectorPosY = " << dsb_projectorPosY->value();
+	qDebug() << "[ProjectiveARWindow::updateProjectorPos] projectorPosZ = " << dsb_projectorPosZ->value();
 
 	viewerWidget->setProjectorPos( dsb_projectorPosX->value(),
 								   dsb_projectorPosY->value(),
 								   dsb_projectorPosZ->value() );
+	viewerWidget->updateScene();
+}
+
+void QOSG::ProjectiveARWindow::updateProjectorDir()
+{
+	qDebug() << "[ProjectiveARWindow::updateProjectorDir] projectorDirX = " << dsb_projectorDirX->value();
+	qDebug() << "[ProjectiveARWindow::updateProjectorDir] projectorDirY = " << dsb_projectorDirY->value();
+	qDebug() << "[ProjectiveARWindow::updateProjectorDir] projectorDirZ = " << dsb_projectorDirZ->value();
+
 	viewerWidget->setProjectorDir( dsb_projectorDirX->value(),
 								   dsb_projectorDirY->value(),
 								   dsb_projectorDirZ->value() );
+	viewerWidget->updateScene();
+}
+
+void QOSG::ProjectiveARWindow::updateProjectorFOV()
+{
+	qDebug() << "[ProjectiveARWindow::updateProjectorFOV] projectorFOV = " << dsb_projectorFOV->value();
+
 	viewerWidget->setProjectorFOV( dsb_projectorFOV->value() );
+	viewerWidget->updateScene();
+}
+
+void QOSG::ProjectiveARWindow::updateViewerPos()
+{
+	qDebug() << "[ProjectiveARWindow::updateViewerPos] viewerPosX = " << dsb_viewerPosX->value();
+	qDebug() << "[ProjectiveARWindow::updateViewerPos] viewerPosY = " << dsb_viewerPosY->value();
+	qDebug() << "[ProjectiveARWindow::updateViewerPos] viewerPosZ = " << dsb_viewerPosZ->value();
 
 	viewerWidget->setViewerPos( dsb_viewerPosX->value(),
 								dsb_viewerPosY->value(),
 								dsb_viewerPosZ->value() );
+	viewerWidget->updateScene();
+}
+
+void QOSG::ProjectiveARWindow::updateViewerDir()
+{
+	qDebug() << "[ProjectiveARWindow::updateViewerDir] viewerDirX = " << dsb_viewerDirX->value();
+	qDebug() << "[ProjectiveARWindow::updateViewerDir] viewerDirY = " << dsb_viewerDirY->value();
+	qDebug() << "[ProjectiveARWindow::updateViewerDir] viewerDirZ = " << dsb_viewerDirZ->value();
+
 	viewerWidget->setViewerDir( dsb_viewerDirX->value(),
 								dsb_viewerDirY->value(),
 								dsb_viewerDirZ->value() );
+	viewerWidget->updateScene();
+}
+void QOSG::ProjectiveARWindow::updateViewerFOV()
+{
+	qDebug() << "[ProjectiveARWindow::updateViewerFOV] viewerFOV = " << dsb_viewerFOV->value();
+
 	viewerWidget->setViewerFOV( dsb_viewerFOV->value() );
+	viewerWidget->updateScene();
+}
+
+void QOSG::ProjectiveARWindow::updateGraphPos()
+{
+	qDebug() << "[ProjectiveARWindow::updateGraphPos] graphPosX = " << dsb_graphPosX->value();
+	qDebug() << "[ProjectiveARWindow::updateGraphPos] graphPosY = " << dsb_graphPosY->value();
+	qDebug() << "[ProjectiveARWindow::updateGraphPos] graphPosZ = " << dsb_graphPosZ->value();
 
 	viewerWidget->setGraphPos( dsb_graphPosX->value(),
 							   dsb_graphPosY->value(),
 							   dsb_graphPosZ->value() );
-	viewerWidget->setGraphRadius( dsb_graphRadius->value() );
-	viewerWidget->setUseGraph( chb_useMainViewer->isChecked() );
+	viewerWidget->updateScene();
+}
 
+void QOSG::ProjectiveARWindow::updateGraphRadius()
+{
+	qDebug() << "[ProjectiveARWindow::updateGraphRadius] graphRadius = " << dsb_graphRadius->value();
+
+	viewerWidget->setGraphRadius( dsb_graphRadius->value() );
+	viewerWidget->updateScene();
+}
+
+void QOSG::ProjectiveARWindow::updateUseGraphParams()
+{
+	bool useGraphParams = chb_useGraphParams->isChecked();
+	qDebug() << "[ProjectiveARWindow::updateUseGraphParams] useGraph = " << useGraphParams;
+
+	dsb_viewerDirX->setDisabled( useGraphParams );
+	dsb_viewerDirY->setDisabled( useGraphParams );
+	dsb_viewerDirZ->setDisabled( useGraphParams );
+	dsb_viewerFOV->setDisabled( useGraphParams );
+
+	viewerWidget->setUseGraph( chb_useGraphParams->isChecked() );
 	viewerWidget->updateScene();
 }
