@@ -1638,7 +1638,7 @@ public:
 	QPushButton* remove_Planes;
 	QSpinBox* change_Forces;
 
-	static ViewerQT* getViewerWidget();
+    ViewerQT* getViewerWidget() { return viewerWidget; }//;
 
 	QLinkedList<Layout::ShapeGetter_Plane_ByThreeNodes*> planes_Vertigo;
 
