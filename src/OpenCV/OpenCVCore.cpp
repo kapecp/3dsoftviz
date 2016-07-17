@@ -13,6 +13,7 @@
 #include "OpenCV/CapVideo.h"
 #include "OpenCV/CameraStream.h"
 #include "Viewer/MouseControl.h"
+#include "QOSG/ProjectiveARCore.h"
 
 OpenCV::OpenCVCore* OpenCV::OpenCVCore::mOpenCVCore;
 
@@ -99,10 +100,17 @@ void  OpenCV::OpenCVCore::createPermanentConnection()
 	// they are still created
 
 	//  sending result data from face detection
-	QObject::connect( mThrFaceRec,
+    QObject::connect( mThrFaceRec,
 					  SIGNAL( sendEyesCoords( float,float,float ) ),
 					  AppCore::Core::getInstance( mApp )->getCoreWindow()->getCameraManipulator(),
-					  SLOT( setRotationHeadFaceDet( float,float,float ) ) );
+                      SLOT( setRotationHeadFaceDet( float,float,float ) ) );
+    QOSG::CoreWindow *coreWindow = AppCore::Core::getInstance( mApp )->getCoreWindow();
+    QOSG::ProjectiveARCore *projectiveARCore = QOSG::ProjectiveARCore::getInstance( mApp, coreWindow);
+    //projectiveARCore->init();
+    QObject::connect( mThrFaceRec,
+                      SIGNAL( sendEyesRealCoords( float,float,float ) ),
+                      projectiveARCore->getViewer(),
+                      SLOT( setViewerPosByFaceDetection( float,float,float ) ) );
 
 	//  sending result data from aruco - M.Garaj(TP) first ArUco try
 	/*QObject::connect( mThrAruco,
