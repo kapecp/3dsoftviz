@@ -699,7 +699,7 @@ void Repository::Git::GitLuaGraphAnalyzer::findFunctionRowsFromFile( Repository:
 				min = std::numeric_limits<int>::max();
 				for ( QMap<QString,int>::iterator i = functionToByte.begin(); i != functionToByte.end(); ++i ) {
 					if ( i.value() <= count ) {
-						file->getGitFunctions()->value( i.key() )->setFunctionRowNumber( row  );
+						file->getGitFunctions()->value( i.key() )->setFunctionRowNumber( row );
 //                        qDebug() << file->getGitFunctions()->value( i.key() )->getIdentifier() << row;
 						remove.append( i.key() );
 					}

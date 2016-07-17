@@ -100,7 +100,7 @@ private:
 #endif
 
 public slots:
-	void OnMove(std::vector<double>& motionData );
+	void OnMove( std::vector<double>& motionData );
 
 	void moveMouseAruco( double positionX,double positionY,bool isClick, Qt::MouseButton button );
 
@@ -1638,7 +1638,10 @@ public:
 	QPushButton* remove_Planes;
 	QSpinBox* change_Forces;
 
-    ViewerQT* getViewerWidget() { return viewerWidget; }//;
+	ViewerQT* getViewerWidget()
+	{
+		return viewerWidget;    //;
+	}
 
 	QLinkedList<Layout::ShapeGetter_Plane_ByThreeNodes*> planes_Vertigo;
 

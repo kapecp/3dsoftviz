@@ -38,10 +38,16 @@ public:
 	     * @author Autor: Viktor Košťan
 	     * @brief init Creates and shows ProjectiveARWindow
 		 */
-    void init();
+	void init();
 
-    QOSG::ProjectiveARViewer *getViewer() { return mProjectiveARViewer; }
-    QOSG::ProjectiveARWindow *getWindow() { return mProjectiveARWindow; }
+	QOSG::ProjectiveARViewer* getViewer()
+	{
+		return mProjectiveARViewer;
+	}
+	QOSG::ProjectiveARWindow* getWindow()
+	{
+		return mProjectiveARWindow;
+	}
 
 private:
 	/**
@@ -56,7 +62,7 @@ private:
 	QWidget*                                mParent;
 	QApplication*                           mApp;
 	QPointer<QOSG::ProjectiveARWindow>   mProjectiveARWindow;
-    QOSG::ProjectiveARViewer   *mProjectiveARViewer;
+	QOSG::ProjectiveARViewer*   mProjectiveARViewer;
 
 };
 }

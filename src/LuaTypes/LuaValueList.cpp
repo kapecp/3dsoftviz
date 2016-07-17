@@ -35,5 +35,5 @@ void Lua::LuaValueList::push_back( const Diluculum::LuaValue& val )
 
 Diluculum::LuaValue& Lua::LuaValueList::operator []( int index )
 {
-	return val[static_cast<size_t>(index)];
+	return val[static_cast<size_t>( index )];
 }
