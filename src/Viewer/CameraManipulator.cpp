@@ -36,7 +36,7 @@
 
 double Vwr::CameraManipulator::EYE_MOVEMENT_SPEED;
 double Vwr::CameraManipulator::TARGET_MOVEMENT_SPEED;
-float Vwr::CameraManipulator::SCREEN_MARGIN;
+double Vwr::CameraManipulator::SCREEN_MARGIN;
 
 namespace Vwr {
 
@@ -44,27 +44,27 @@ Vwr::CameraManipulator::CameraManipulator( Vwr::CoreGraph* coreGraph )
 {
 	appConf = Util::ApplicationConfig::get();
 
-	_modelScale = 1.0f;
-	_minimumZoomScale = 0.0f;
+	_modelScale = 1.0;
+	_minimumZoomScale = 0.0;
 	_allowThrow = true;
 	_thrown = false;
 
 	_vertigo = false;
 	PI = 3.141592653589793;
 
-	_distance = 1.0f;
+	_distance = 1.0;
 	_trackballSize = appConf->getValue( "Viewer.CameraManipulator.Sensitivity" ).toFloat();
 	_zoomDelta = 0.4f;
 
-	speedDecelerationFactor = 0.4f;
+	speedDecelerationFactor = 0.4;
 	maxSpeed = appConf->getValue( "Viewer.CameraManipulator.MaxSpeed" ).toFloat();
-	speedEpsilon = 0.02f;
+	speedEpsilon = 0.02;
 
 	movingAutomatically = false;
 
 	EYE_MOVEMENT_SPEED = 0.005;
 	TARGET_MOVEMENT_SPEED = 0.005;
-	SCREEN_MARGIN = 200.f;
+	SCREEN_MARGIN = 200;
 
 	ctrlPressed = false;
 	shiftPressed = false;
@@ -319,7 +319,7 @@ bool Vwr::CameraManipulator::handleRelease( const osgGA::GUIEventAdapter& ea, os
 bool Vwr::CameraManipulator::handlePush( const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& us )
 {
 	if ( ea.getButtonMask() == GUIEventAdapter::MIDDLE_MOUSE_BUTTON ) {
-		bool notNullDistance = !qFuzzyCompare( _distance,0.0f );
+		bool notNullDistance = !qFuzzyCompare( _distance,0.0 );
 		if ( notNullDistance ) {
 			lastDistance = _distance;
 
@@ -1096,15 +1096,15 @@ float Vwr::CameraManipulator::alterCameraTargetPoint( osgViewer::Viewer* viewer 
 	osg::ref_ptr<osg::Camera> camera = new osg::Camera( *( viewer->getCamera() ), osg::CopyOp::DEEP_COPY_ALL );
 	//osg::ref_ptr<osg::Camera> camera = viewer->getCamera();
 
-	float width = ( float ) camera->getViewport()->width();
-	float height = ( float ) camera->getViewport()->height();
+	double width =  camera->getViewport()->width();
+	double height =  camera->getViewport()->height();
 
 	osg::Vec3d basicVec = cameraTargetPoint - weightPoint;
-	float scale = appConf->getValue( "Viewer.Display.NodeDistanceScale" ).toFloat();
+	double scale = appConf->getValue( "Viewer.Display.NodeDistanceScale" ).toDouble();
 
 	// minimum distance from center
 
-	float dist = ( float ) basicVec.length() + 50.f * scale;
+	double dist =  basicVec.length() + 50 * scale;
 
 	osg::Vec3d eyePosition;
 
@@ -1355,7 +1355,7 @@ void Vwr::CameraManipulator::setRotationHead( float x, float y, float distance, 
 
 }
 
-void Vwr::CameraManipulator::updateProjectionAccordingFace( const float x, const float y, const float distance )
+void Vwr::CameraManipulator::updateProjectionAccordingFace( const float x, const float y, const double distance )
 {
 	double left, right, bottom, top, zNear, zFar;
 	double fovy, ratio, width, height;

@@ -166,7 +166,7 @@ bool Model::EdgeDAO::addEdgesColorToDB( QSqlDatabase* conn, QMap<qlonglong, osg:
 	return true;
 }
 
-bool Model::EdgeDAO::addEdgesScaleToDB( QSqlDatabase* conn, QMap<qlonglong, osg::ref_ptr<Data::Edge> >* edges, Data::GraphLayout* layout,  QMap<qlonglong, qlonglong> newMetaEdgeID, bool meta, float defaultScale )
+bool Model::EdgeDAO::addEdgesScaleToDB( QSqlDatabase* conn, QMap<qlonglong, osg::ref_ptr<Data::Edge> >* edges, Data::GraphLayout* layout,  QMap<qlonglong, qlonglong> newMetaEdgeID, bool meta, double defaultScale )
 {
 	QMap< qlonglong,osg::ref_ptr<Data::Edge> >::const_iterator iEdges = edges->constBegin();
 	qlonglong edgeID;

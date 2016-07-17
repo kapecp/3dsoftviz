@@ -2,8 +2,8 @@
  Client - server communication implementation inspired by http://thesmithfam.org/blog/2009/07/09/example-qt-chat-program/
  */
 
-#ifndef __3DVisualServer_H__
-#define __3DVisualServer_H__
+#ifndef Server_H
+#define Server_H
 
 #include <QByteArray>
 #include <QLinkedList>
@@ -73,7 +73,7 @@ public:
 		selected_nodes = nodes;
 	}
 
-	void sendMyView( osg::Vec3d center, osg::Quat rotation, float distance, QTcpSocket* client = NULL );
+	void sendMyView(osg::Vec3d center, osg::Quat rotation, double distance, QTcpSocket* client = NULL );
 	void sendMyView( QTcpSocket* client );
 	void sendMyView();
 
@@ -99,7 +99,7 @@ public:
 		return user_to_center != NULL;
 	}
 
-	void setMyView( osg::Vec3d center, osg::Quat rotation, float distance );
+	void setMyView(osg::Vec3d center, osg::Quat rotation, double distance );
 	void lookAt( osg::Vec3d coord );
 
 	//some getters
@@ -188,7 +188,7 @@ private:
 
 	osg::Vec3d original_center;
 	osg::Quat original_rotation;
-	float original_distance;
+	double original_distance;
 
 	QTcpSocket* getClientById( int id );
 

@@ -45,7 +45,7 @@ osg::ref_ptr<osg::AutoTransform> getCylinder( qlonglong id, osg::Vec3 position, 
 osg::Geode* test();
 osg::Vec4 getNewColor( int colorCounter );
 osg::Vec3f getMidPoint( QSet<Data::Node*> nodes );
-float getRadius( QSet<Data::Node*> nodes, osg::Vec3f midPoint );
+double getRadius( QSet<Data::Node*> nodes, osg::Vec3f midPoint );
 }
 
 namespace Util {
@@ -179,7 +179,7 @@ public:
 		return camera;
 	}
 
-	osg::ref_ptr<osg::AutoTransform> dodecahedron( qlonglong id, osg::Vec3 midpoint, float radius, osg::Vec4 color );
+	osg::ref_ptr<osg::AutoTransform> dodecahedron(qlonglong id, osg::Vec3 midpoint, double radius, osg::Vec4 color );
 
 	/**
 		*  \fn public  setEdgeLabelsVisible(bool visible)
@@ -341,7 +341,7 @@ public slots:
 		 */
 	void recievedPMatrix( QMatrix4x4 modelViewMatrix );
 
-	void updateBase( float size );
+	void updateBase(double size );
 
 	void setArucoRunning( bool isRunning );
 
@@ -656,7 +656,7 @@ private:
 	osg::ref_ptr<osg::Geode> baseGeode;
 	osg::ref_ptr<osg::MatrixTransform> baseTransform;
 	osg::Matrixd rotationMatrix;
-	float baseSize = 250;
+	double baseSize = 250;
 	bool arucoRunning = false;
 	osg::ref_ptr<osg::Geode> axesGeode;
 	osg::ref_ptr<osg::MatrixTransform> axesTransform;

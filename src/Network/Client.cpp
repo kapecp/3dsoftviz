@@ -269,7 +269,7 @@ void Client::updateUserList()
 	}
 }
 
-void Client::setMyView( osg::Vec3d center, osg::Quat rotation, float distance )
+void Client::setMyView( osg::Vec3d center, osg::Quat rotation, double distance )
 {
 	Vwr::CameraManipulator* cameraManipulator = ( ( QOSG::CoreWindow* ) cw )->getCameraManipulator();
 	cameraManipulator->setCenter( center );
@@ -401,7 +401,7 @@ void Client::centerUser( int id_user )
 	original_center = cameraManipulator->getCenter();
 	original_rotation = cameraManipulator->getRotation();
 
-	osg::Vec3 direction = original_rotation * osg::Vec3( 0, 0, 1 );
+	osg::Vec3d direction = original_rotation * osg::Vec3d( 0, 0, 1 );
 	direction *= original_distance;
 	cameraManipulator->setCenter( cameraManipulator->getCenter()+direction );
 	cameraManipulator->setDistance( 0 );

@@ -16,7 +16,7 @@ Leap::DirectionDetector::Direction Leap::DirectionDetector::getPalmDirection( Ha
 	float pitch = getPitch( hand );
 	float roll = getRoll( hand );
 
-	float absRoll = abs( roll );
+	float absRoll = std::abs( roll );
 
 	if ( absRoll < Leap::DirectionDetector::ANGLE_LIMIT ) {
 		if ( pitch > Leap::DirectionDetector::ANGLE_LIMIT ) {
@@ -27,7 +27,7 @@ Leap::DirectionDetector::Direction Leap::DirectionDetector::getPalmDirection( Ha
 		}
 	}
 
-	float absPitch = abs( pitch );
+	float absPitch = std::abs( pitch );
 
 	if ( absPitch < Leap::DirectionDetector::ANGLE_LIMIT ) {
 		if ( roll > Leap::DirectionDetector::ANGLE_LIMIT ) {

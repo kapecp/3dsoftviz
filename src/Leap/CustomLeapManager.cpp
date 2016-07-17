@@ -14,13 +14,13 @@ Leap::CustomLeapManager::CustomLeapManager( Vwr::CameraManipulator* cameraManipu
 		arMode = true;
 
 		osg::ref_ptr<osg::Geode> leftHandGeode( new osg::Geode );
-		osg::ref_ptr<osg::Sphere>  leftHandSphere = new osg::Sphere( osg::Vec3f( 0,0,0 ),0.1 );
+		osg::ref_ptr<osg::Sphere>  leftHandSphere = new osg::Sphere( osg::Vec3f( 0,0,0 ),0.1f );
 
 		osg::ref_ptr<osg::ShapeDrawable> leftHandDrawable( new osg::ShapeDrawable( leftHandSphere.get() ) );
 		leftHandGeode->addDrawable( leftHandDrawable.get() );
 
 		osg::ref_ptr<osg::Geode> rightHandGeode( new osg::Geode );
-		osg::ref_ptr<osg::Sphere> rightHandSphere = new osg::Sphere( osg::Vec3f( 0,0,0 ),0.1 );
+		osg::ref_ptr<osg::Sphere> rightHandSphere = new osg::Sphere( osg::Vec3f( 0,0,0 ),0.1f );
 		osg::ref_ptr<osg::ShapeDrawable> rightHandDrawable( new osg::ShapeDrawable( rightHandSphere.get() ) );
 		rightHandGeode->addDrawable( rightHandDrawable.get() );
 
@@ -67,9 +67,11 @@ void Leap::CustomLeapManager::graphRotateSwipe( int swipeDirection )
 	switch ( swipeDirection ) {
 		case -1: {
 			coreGraph->rotateGraph( swipeDirection );
+			break;
 		}
 		case 1: {
 			coreGraph->rotateGraph( swipeDirection );
+			break;
 		}
 	}
 }
@@ -84,6 +86,8 @@ void Leap::CustomLeapManager::rotateArucoRight()
 	coreGraph->rotateGraph( -1 );
 }
 
+#include <easylogging++.h>
+
 void Leap::CustomLeapManager::scaleEdgesUp()
 {
 
@@ -91,7 +95,7 @@ void Leap::CustomLeapManager::scaleEdgesUp()
 
 	layout->pause();
 	coreGraph->setNodesFreezed( true );
-	layout->getAlg()->setMaxDistance( distance * 1.02 );
+	layout->getAlg()->setMaxDistance( distance * 1.02f );
 	coreGraph->scaleGraphToBase();
 	coreGraph->setNodesFreezed( false );
 	layout->play();
@@ -104,7 +108,7 @@ void Leap::CustomLeapManager::scaleEdgesDown()
 
 	layout->pause();
 	coreGraph->setNodesFreezed( true );
-	layout->getAlg()->setMaxDistance( distance * 0.98 );
+	layout->getAlg()->setMaxDistance( distance * 0.98f );
 	coreGraph->scaleGraphToBase();
 	coreGraph->setNodesFreezed( false );
 	layout->play();

@@ -26,7 +26,7 @@
 #include <string>
 
 // used code from http://jotschi.de/2009/05/31/projective-textures-with-openscenegraph/
-osg::StateSet* QOSG::ProjectiveARViewer::createProjectorState( osg::Texture2D* texture, osg::Vec3 projectorPos, osg::Vec3 projectorDirection, float projectorFOV )
+osg::StateSet* QOSG::ProjectiveARViewer::createProjectorState( osg::Texture2D* texture, osg::Vec3 projectorPos, osg::Vec3 projectorDirection, double projectorFOV )
 {
 
 	osg::StateSet* stateset = new osg::StateSet;
@@ -237,7 +237,7 @@ osg::Group* QOSG::ProjectiveARViewer::createProjectorScene()
 		}
 		osg::Vec3d viewerRelPos( viewerPos - graphPos );
 
-		osg::Vec3d renderCameraRelPos( viewerRelPos * ( bs.radius() / graphRadius ) );
+		osg::Vec3d renderCameraRelPos( viewerRelPos * ( static_cast<double>(bs.radius()) / graphRadius ) );
 
 		renderCamera->setViewMatrixAsLookAt( renderCameraRelPos + bs.center(), bs.center(), osg::Vec3( 0.0f, 0.0f, 1.0f ) );
 	}
@@ -307,7 +307,7 @@ QOSG::ProjectiveARViewer::ProjectiveARViewer( QWidget* parent , const char* name
 	projectorFOV = 30;
 
 	getCamera()->setViewport( new osg::Viewport( 0,0,width(),height() ) );
-	getCamera()->setProjectionMatrixAsPerspective( projectorFOV, static_cast<double>( width() )/static_cast<double>( height() ), 0.01, appConf->getValue( "Viewer.Display.ViewDistance" ).toFloat() );
+	getCamera()->setProjectionMatrixAsPerspective( projectorFOV, static_cast<double>( width() )/static_cast<double>( height() ), 0.01, appConf->getValue( "Viewer.Display.ViewDistance" ).toDouble() );
 	getCamera()->setGraphicsContext( getGraphicsWindow() );
 	getCamera()->setComputeNearFarMode( osg::CullSettings::DO_NOT_COMPUTE_NEAR_FAR );
 
@@ -342,7 +342,7 @@ void QOSG::ProjectiveARViewer::paintGL()
 		}
 		osg::Vec3d viewerRelPos( viewerPos - graphPos );
 
-		osg::Vec3d renderCameraRelPos( viewerRelPos * ( bs.radius()*0.50 / graphRadius ) );
+		osg::Vec3d renderCameraRelPos( viewerRelPos * ( static_cast<double>( bs.radius())*0.50 / graphRadius ) );
 
 		renderCamera->setViewMatrixAsLookAt( renderCameraRelPos + bs.center(), bs.center(), osg::Vec3( 0.0f, 0.0f, 1.0f ) );
 

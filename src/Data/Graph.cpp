@@ -488,7 +488,7 @@ void Data::Graph::separateNodes( QLinkedList<osg::ref_ptr<Data::Node> >* selecte
 			QMap< qlonglong,osg::ref_ptr<Data::Edge> >::const_iterator iedge = ( *i )->getEdges()->constBegin();
 			while ( iedge != ( *i )->getEdges()->constEnd() ) {
 				osg::ref_ptr<Data::Node> connectedNode;
-				float scale = this->getEdgeScale();
+				double scale = this->getEdgeScale();
 
 				//mergedEdge ide vzdy z povodneho nodu do mergedNodu
 				connectedNode = iedge.value().get()->getSrcNode();
@@ -1164,8 +1164,8 @@ Data::Type* Data::Graph::getNodeSplitterType()
 	//vraciame typ multi uzla s nastavenymi hodnotami
 	QMap<QString, QString>* settings = new QMap<QString, QString>;
 
-	float scale = Util::ApplicationConfig::get()->getValue( "Viewer.Textures.DefaultNodeScale" ).toFloat();
-	settings->insert( "scale", QString::number( scale / 4.0f ) );
+	double scale = Util::ApplicationConfig::get()->getValue( "Viewer.Textures.DefaultNodeScale" ).toDouble();
+	settings->insert( "scale", QString::number( scale / 4.0 ) );
 	settings->insert( "textureFile", Util::ApplicationConfig::get()->getValue( "Viewer.Textures.MetaNode" ) );
 	settings->insert( "color.R", "1.0" );
 	settings->insert( "color.G", "1.0" );
@@ -1207,12 +1207,12 @@ float Data::Graph::getNodeScaleByType( Data::Type* type )
 }
 
 
-float Data::Graph::getEdgeScale()
+double Data::Graph::getEdgeScale()
 {
 	//vraciame skalu grafu potrebnu pre vnorene grafy
 	int level;
 	level = this->parent_id.size();
-	float offset = Util::ApplicationConfig::get()->getValue( "Viewer.Textures.EdgeScale" ).toFloat();
+	double offset = Util::ApplicationConfig::get()->getValue( "Viewer.Textures.EdgeScale" ).toDouble();
 
 	for ( int i=0; i<level; i++ ) {
 		//kazda dalsia uroven vnoreneho grafu je 3 krat mensia
@@ -1463,7 +1463,7 @@ osg::ref_ptr<Data::Node> Data::Graph::addFloatingRestrictionNode( QString name, 
 
 Data::Node* Data::Graph::findNodeByName( QString nodeName )
 {
-	Data::Node* lNode;
+	Data::Node* lNode = nullptr;
 	QMap<qlonglong, osg::ref_ptr<Data::Node> >* lNodes = this->getNodes();
 	QMap<qlonglong, osg::ref_ptr<Data::Node> >::iterator it;
 	for ( it = lNodes->begin(); it != lNodes->end(); ++it ) {
@@ -1481,7 +1481,7 @@ Data::Node* Data::Graph::findNodeByName( QString nodeName )
 
 Data::Node* Data::Graph::findNodeByLuaIdentifier( QString identifier )
 {
-	Data::Node* lNode;
+	Data::Node* lNode = nullptr;
 	QMap<qlonglong, osg::ref_ptr<Data::Node> >* lNodes = this->getNodes();
 	QMap<qlonglong, osg::ref_ptr<Data::Node> >::iterator it;
 	for ( it = lNodes->begin(); it != lNodes->end(); ++it ) {
@@ -1500,7 +1500,7 @@ Data::Node* Data::Graph::findNodeByLuaIdentifier( QString identifier )
 
 Data::Edge* Data::Graph::findEdgeByName( QString edgeName )
 {
-	Data::Edge* lEdge;
+	Data::Edge* lEdge = nullptr;
 	QMap<qlonglong, osg::ref_ptr<Data::Edge> >* lEdges = this->getEdges();
 	QMap<qlonglong, osg::ref_ptr<Data::Edge> >::iterator it;
 	for ( it = lEdges->begin(); it != lEdges->end(); ++it ) {
@@ -1522,7 +1522,7 @@ Data::Edge* Data::Graph::findEdgeByLuaIdentifier( QString identifier )
 	QStringList nodes = identifier.split( "+" );
 	QString newIdentifier = nodes.at( 1 ) + "+" + nodes.at( 0 );
 
-	Data::Edge* lEdge;
+	Data::Edge* lEdge = nullptr;
 	QMap<qlonglong, osg::ref_ptr<Data::Edge> >* lEdges = this->getEdges();
 	QMap<qlonglong, osg::ref_ptr<Data::Edge> >::iterator it;
 	for ( it = lEdges->begin(); it != lEdges->end(); ++it ) {

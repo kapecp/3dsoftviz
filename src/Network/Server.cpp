@@ -319,7 +319,7 @@ void Server::sendMoveNodes()
 }
 
 
-void Server::sendMyView( osg::Vec3d center, osg::Quat rotation, float distance, QTcpSocket* client )
+void Server::sendMyView( osg::Vec3d center, osg::Quat rotation, double distance, QTcpSocket* client )
 {
 
 	QByteArray block;
@@ -470,7 +470,7 @@ void Server::addAvatar( QTcpSocket* socket, QString nick )
 	avatars[socket] = avatar;
 }
 
-void Server::setMyView( osg::Vec3d center, osg::Quat rotation, float distance )
+void Server::setMyView( osg::Vec3d center, osg::Quat rotation, double distance )
 {
 	Vwr::CameraManipulator* cameraManipulator = ( ( QOSG::CoreWindow* ) cw )->getCameraManipulator();
 	cameraManipulator->setCenter( center );
@@ -509,7 +509,7 @@ void Server::centerUser( int id_user )
 	original_center = cameraManipulator->getCenter();
 	original_rotation = cameraManipulator->getRotation();
 
-	osg::Vec3 direction = original_rotation * osg::Vec3( 0, 0, 1 );
+	osg::Vec3d direction = original_rotation * osg::Vec3d( 0, 0, 1 );
 	direction *= original_distance;
 	cameraManipulator->setCenter( cameraManipulator->getCenter()+direction );
 	cameraManipulator->setDistance( 0 );

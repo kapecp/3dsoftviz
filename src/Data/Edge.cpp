@@ -20,7 +20,7 @@
 
 #include <QDebug>
 
-Data::Edge::Edge( qlonglong id, QString name, Data::Graph* graph, osg::ref_ptr<Data::Node> srcNode, osg::ref_ptr<Data::Node> dstNode, Data::Type* type, bool isOriented, float scaling, int pos, osg::ref_ptr<osg::Camera> camera )
+Data::Edge::Edge( qlonglong id, QString name, Data::Graph* graph, osg::ref_ptr<Data::Node> srcNode, osg::ref_ptr<Data::Node> dstNode, Data::Type* type, bool isOriented, double scaling, int pos, osg::ref_ptr<osg::Camera> camera )
 	:OsgEdge( id,name, graph, isOriented, type, scaling, srcNode, dstNode, camera )
 {
 	this->appConf = Util::ApplicationConfig::get();
@@ -131,7 +131,7 @@ void Data::Edge::updateCoordinates( osg::Vec3 srcPos, osg::Vec3 dstPos )
 
 	//getting setting for edge scale
 
-	osg::Vec3 x, y;
+	osg::Vec3d x, y;
 	x.set( srcPos );
 	y.set( dstPos );
 
@@ -142,12 +142,12 @@ void Data::Edge::updateCoordinates( osg::Vec3 srcPos, osg::Vec3 dstPos )
 	up.normalize();
 	up *= this->scale;
 
-	osg::Vec3 cor1 = osg::Vec3d( x.x() + up.x(), x.y() + up.y(), x.z() + up.z() );
-	osg::Vec3 cor2 = osg::Vec3d( x.x() - up.x(), x.y() - up.y(), x.z() - up.z() );
-	osg::Vec3 cor3 = osg::Vec3d( y.x() - up.x(), y.y() - up.y(), y.z() - up.z() );
-	osg::Vec3 cor4 = osg::Vec3d( y.x() + up.x(), y.y() + up.y(), y.z() + up.z() );
+	osg::Vec3d cor1 = osg::Vec3d( x.x() + up.x(), x.y() + up.y(), x.z() + up.z() );
+	osg::Vec3d cor2 = osg::Vec3d( x.x() - up.x(), x.y() - up.y(), x.z() - up.z() );
+	osg::Vec3d cor3 = osg::Vec3d( y.x() - up.x(), y.y() - up.y(), y.z() - up.z() );
+	osg::Vec3d cor4 = osg::Vec3d( y.x() + up.x(), y.y() + up.y(), y.z() + up.z() );
 	//center between coordinates (1 and 2), (3 and 4)
-	center->push_back( osg::Vec3( ( x.x() + y.x() )/2, ( x.y() + y.y() )/2, ( x.z() + y.z() )/2 ) );
+	center->push_back( osg::Vec3( static_cast<float>(( x.x() + y.x() )/2), static_cast<float>(( x.y() + y.y() )/2), static_cast<float>(( x.z() + y.z() )/2) ) );
 
 	osgText::FadeText* label = dynamic_cast<osgText::FadeText*>( getChild( INDEX_LABEL )->asGeode()->getDrawable( 0 ) );
 	if ( label != NULL ) {
@@ -161,7 +161,7 @@ void Data::Edge::updateCoordinates( osg::Vec3 srcPos, osg::Vec3 dstPos )
 		coordinates->push_back( cor3 );
 		coordinates->push_back( cor4 );
 
-		float repeatCnt = static_cast<float>( length / ( 2.f * this->scale ) );
+		float repeatCnt = static_cast<float>( length / ( 2.0 * this->scale ) );
 		//init edge-text (label) coordinates
 		edgeTexCoords->push_back( osg::Vec2( 0,1.0f ) );
 		edgeTexCoords->push_back( osg::Vec2( 0,0.0f ) );
@@ -186,7 +186,7 @@ void Data::Edge::updateCoordinates( osg::Vec3 srcPos, osg::Vec3 dstPos )
 			osg::Vec3 diff = ( y - x );
 			// CROSS product (the axis of rotation)
 			rotation->push_back( direction ^ diff );
-			angle = acos( ( direction * diff )/ diff.length() );
+			angle = acos( static_cast<double>(( direction * diff )/ diff.length() ) );
 
 			( dynamic_cast<osg::Cylinder*>( ( drawableCylinder )->getShape() ) )->setHeight( static_cast<float>( length ) );
 			( dynamic_cast<osg::Cylinder*>( ( drawableCylinder )->getShape() ) )->setRadius( 2 );

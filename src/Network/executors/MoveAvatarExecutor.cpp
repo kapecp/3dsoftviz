@@ -16,7 +16,7 @@ void MoveAvatarExecutor::execute_client()
 
 	Client* client = Client::getInstance();
 
-	float x,y,z,a,b,c,d,distance;
+	double x,y,z,a,b,c,d,distance;
 	int id;
 
 	*stream >> x >> y >> z >> a >> b >> c >> d >> distance >> id;
@@ -24,7 +24,7 @@ void MoveAvatarExecutor::execute_client()
 	osg::Vec3d center = osg::Vec3d( x-5,y,z );
 	osg::Quat rotation = osg::Quat( a,b,c,d );
 
-	osg::Vec3 direction = rotation * osg::Vec3( 0, 0, 1 );
+	osg::Vec3d direction = rotation * osg::Vec3d( 0, 0, 1 );
 	direction *= distance;
 
 	if ( client->userToSpy() != id ) {
@@ -55,7 +55,7 @@ void MoveAvatarExecutor::execute_server()
 
 	QTcpSocket* out_socket = ( QTcpSocket* ) stream->device();
 
-	float x,y,z,a,b,c,d,distance;
+	double x,y,z,a,b,c,d,distance;
 	*stream >> x >> y >> z >> a >> b >> c >> d >> distance;
 
 	QSet<QTcpSocket*> clients = server->getClients();
@@ -81,7 +81,7 @@ void MoveAvatarExecutor::execute_server()
 	osg::Vec3d center = osg::Vec3d( x-5,y,z );
 	osg::Quat rotation = osg::Quat( a,b,c,d );
 
-	osg::Vec3 direction = rotation * osg::Vec3( 0, 0, 1 );
+	osg::Vec3d direction = rotation * osg::Vec3d( 0, 0, 1 );
 	direction *= distance;
 
 	osg::PositionAttitudeTransform* PAtransform = server->getAvatarTransform( out_socket );

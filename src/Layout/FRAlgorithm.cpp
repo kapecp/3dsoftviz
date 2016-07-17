@@ -90,7 +90,7 @@ void FRAlgorithm::SetGraph( Data::Graph* graph, bool fixedPositions )
 	}
 }
 
-void FRAlgorithm::SetParameters( float sizeFactor,float flexibility,bool useMaxDistance )
+void FRAlgorithm::SetParameters( double sizeFactor,float flexibility,bool useMaxDistance )
 {
 	this->sizeFactor = sizeFactor;
 	this->flexibility = flexibility;
@@ -694,7 +694,7 @@ double FRAlgorithm::getAngleCompatibility( Data::Node* u, Data::Node* v )
 	osg::Vec3f dstPos2 = edge2->getDstNode()->restrictedTargetPosition();
 	osg::Vec3f vector2 = dstPos2 - srcPos2;
 
-	double angle = acos( ( vector1 * vector2 )/ ( ( vector1.length() )*( vector2.length() ) ) );
+	double angle = acos( static_cast<double>(( vector1 * vector2 )/ ( ( vector1.length() )*( vector2.length() ) ) ));
 	double angleCompatibility = fabs( cos( angle ) );
 	//angle =  osg::RadiansToDegrees( angle );
 
@@ -720,7 +720,7 @@ double FRAlgorithm::getPositionCompatibility( Data::Node* u, Data::Node* v )
 {
 	osg::Vec3f pos1 = u->getCurrentPosition();
 	osg::Vec3f pos2 = v->getCurrentPosition();
-	double distance = ( pos2 - pos1 ).length();
+	double distance = static_cast<double>(( pos2 - pos1 ).length());
 
 	osg::ref_ptr<Data::Edge> edge1 =  u->getEdges()->values().at( 0 )->getEdgeParent();
 	osg::ref_ptr<Data::Edge> edge2 =  v->getEdges()->values().at( 0 )->getEdgeParent();

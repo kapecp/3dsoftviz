@@ -66,7 +66,7 @@ void Leap::LeapActions::moveCamera( Leap::Gesture gesture )
 		}
 	}
 	//if we get here, the camera is moving
-	LeapSleeper::sleep( ( unsigned long )gestureDuration );
+	LeapSleeper::sleep( static_cast<unsigned long >(gestureDuration) );
 	leapManager->disableCameraMovement();
 }
 

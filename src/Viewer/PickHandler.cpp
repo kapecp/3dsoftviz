@@ -697,7 +697,7 @@ bool PickHandler::doSinglePick( osg::NodePath nodePath )
 
 bool PickHandler::doNodePick( osg::NodePath nodePath )
 {
-	Data::Node* n;
+	Data::Node* n = nullptr;
 	for ( unsigned int i = 0; i < nodePath.size(); i++ ) {
 		n = dynamic_cast<Data::Node*>( nodePath[i] );
 		if ( n != NULL ) {
@@ -761,7 +761,7 @@ bool PickHandler::doNodePick( osg::NodePath nodePath )
 
 bool PickHandler::doEdgePick( osg::NodePath nodePath )
 {
-	Data::Edge* e;
+	Data::Edge* e = nullptr;
 	for ( unsigned int i = 0; i < nodePath.size(); i++ ) {
 		e = dynamic_cast<Data::Edge*>( nodePath[i] );
 		if ( e != NULL ) {
@@ -774,7 +774,7 @@ bool PickHandler::doEdgePick( osg::NodePath nodePath )
 			osg::ref_ptr<osg::Vec3Array> coords = e->getCooridnates();
 
 			cameraManipulator->setCenter( DataHelper::getMassCenter( coords ) );
-			cameraManipulator->setDistance( Util::ApplicationConfig::get()->getValue( "Viewer.PickHandler.PickedEdgeDistance" ).toFloat() );
+			cameraManipulator->setDistance( Util::ApplicationConfig::get()->getValue( "Viewer.PickHandler.PickedEdgeDistance" ).toDouble() );
 		}
 		else if ( isAltPressed && pickMode == PickMode::NONE && isShiftPressed ) {
 			if ( appConf->getValue( "Viewer.PickHandler.SelectInterestPoints" ).toInt() == 1 ) {

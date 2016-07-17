@@ -14,8 +14,8 @@ class Cube
 
 public:
 
-	Cube( osg::Vec3d position, float radius );
-	Cube( osg::Vec3d position, float radius, osg::Vec4d color );
+	Cube( osg::Vec3d position, double radius );
+	Cube( osg::Vec3d position, double radius, osg::Vec4d color );
 
 	osg::AutoTransform* getAT()
 	{

@@ -53,8 +53,8 @@ void ShapeVisitor_RestrictedPositionGetter::visit( Shape_Intersection& shape )
 	Shape_Intersection::ShapesListType& shapes = shape.getShapes();
 
 	if ( !shapes.empty() ) {
-		float currentDistance = 1.0;
-		while ( currentDistance > 0.05 ) {
+		float currentDistance = 1.0f;
+		while ( currentDistance > 0.05f ) {
 			Shape_Intersection::ShapesListType::const_iterator it;
 			for ( it = shapes.begin(); it != shapes.end(); ++it ) {
 				( *it )->accept( *this ); // restrictedPosition_ changes here
@@ -203,9 +203,9 @@ void ShapeVisitor_RestrictedPositionGetter::visit( Shape_Cube& shape )
 
 bool ShapeVisitor_RestrictedPositionGetter::insideCube( const osg::Vec3f& center, const osg::Vec3f& surfaceX, const osg::Vec3f& surfaceY, const osg::Vec3f& surfaceZ, osg::Vec3f& point )
 {
-	double distanceX = fabs( ( center - surfaceX ).x() );
-	double distanceY = fabs( ( center - surfaceY ).y() );
-	double distanceZ = fabs( ( center - surfaceZ ).z() );
+	float distanceX = fabsf( ( center - surfaceX ).x() );
+	float distanceY = fabsf( ( center - surfaceY ).y() );
+	float distanceZ = fabsf( ( center - surfaceZ ).z() );
 
 	return ( point.x() > center.x() - distanceX && point.x() < center.x() + distanceX &&
 			 point.y() > center.y() - distanceY && point.y() < center.y() + distanceY &&

@@ -23,7 +23,7 @@ QOSG::ViewerQT::ViewerQT( QWidget* parent , const char* name , const QGLWidget* 
 
 	double fovy = 60.0;
 	double nearClippingPlane = 0.01;
-	double farClippingPlane = appConf->getValue( "Viewer.Display.ViewDistance" ).toFloat();
+	double farClippingPlane = appConf->getValue( "Viewer.Display.ViewDistance" ).toDouble();
 	double aspectRatio = static_cast<double>( width() )/static_cast<double>( height() );
 
 	//double heigthFrustum = nearClippingPlane * tan(osg::DegreesToRadians(fovy));
@@ -122,8 +122,8 @@ void QOSG::ViewerQT::moveMouseAruco( double positionX,double positionY,bool isCl
 {
 	//qDebug() << positionX << "  " << positionY << "         " << isClick;
 
-	float wieverX = static_cast<float>( positionX * static_cast<float>( this->width() ) );
-	float wieverY = static_cast<float>( positionY * static_cast<float>( this->height() ) );
+	float wieverX = static_cast<float>( positionX * this->width()  );
+	float wieverY = static_cast<float>( positionY * this->height()  );
 
 	int screenX = static_cast<int>( positionX * this->width()  + this->x() + windowX + 8 );
 	int screenY = static_cast<int>( positionY * this->height() + this->y() + windowY + 28 );
@@ -154,8 +154,8 @@ void QOSG::ViewerQT::moveMouseKinect( double positionX,double positionY,double s
 	positionX /=640.0;
 	positionY/=480.0;
 
-	float wieverX = static_cast<float>( positionX * static_cast<float>( this->width() ) );
-	float wieverY = static_cast<float>( positionY * static_cast<float>( this->height() ) );
+	float wieverX = static_cast<float>( positionX * this->width()  );
+	float wieverY = static_cast<float>( positionY * this->height() );
 
 	int screenX = static_cast<int>( positionX * this->width()  + this->x() + windowX + 8 );
 	int screenY = static_cast<int>( positionY * this->height() + this->y() + windowY + 28 );

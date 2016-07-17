@@ -131,7 +131,7 @@ osg::Vec3d CameraMath::getPointOnVector( osg::Vec3d p1, osg::Vec3d p2, double di
 	return p1 * ( 1 - distanceRatio ) + p2 * distanceRatio;
 }
 
-bool CameraMath::isInRect( osg::Vec3d point, float width, float height, float margin )
+bool CameraMath::isInRect( osg::Vec3d point, double width, double height, double margin )
 {
 	if ( point.x() < margin || point.x() >  width - margin || point.y() < margin || point.y() > height - margin ) {
 		return false;

@@ -1,6 +1,6 @@
 #include "Clustering/Figures/SpikySphere.h"
 
-Clustering::SpikySphere::SpikySphere( osg::Vec3d position, float radius, osg::Vec4d color ) : Clustering::Sphere( position, radius, color )
+Clustering::SpikySphere::SpikySphere( osg::Vec3d position, double radius, osg::Vec4d color ) : Clustering::Sphere( position, radius, color )
 {
 	addSpikes();
 }

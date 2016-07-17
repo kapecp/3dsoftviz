@@ -164,17 +164,17 @@ osg::Vec3f getMidPoint( QSet<Data::Node*> nodes )
 	return total;
 }
 
-float getRadius( QSet<Data::Node*> nodes, osg::Vec3f midPoint )
+double getRadius( QSet<Data::Node*> nodes, osg::Vec3f midPoint )
 {
 
-	float maxDistance = 0;
+	double maxDistance = 0;
 
 	QSet<Data::Node*>::const_iterator i = nodes.constBegin();
 	while ( i != nodes.constEnd() ) {
 		Data::Node* v = *i;
 		osg::Vec3f pos = v->getCurrentPosition();
 
-		float newDistance = static_cast<float>( sqrt( pow( pos.x()-midPoint.x(),2 ) + pow( pos.y()-midPoint.y(),2 ) + pow( pos.z()-midPoint.z(),2 ) ) );
+		double newDistance = sqrt( pow( static_cast<double>( pos.x()-midPoint.x() ),2 ) + pow( static_cast<double>(pos.y()-midPoint.y()),2 ) + pow( static_cast<double>(pos.z()-midPoint.z()),2 ) );
 
 		if ( newDistance > maxDistance ) {
 			maxDistance = newDistance;
@@ -383,7 +383,7 @@ osg::ref_ptr<osg::Group> CoreGraph::test2() {
 	return testGroup;
 }
 */
-osg::ref_ptr<osg::AutoTransform> CoreGraph::dodecahedron( qlonglong id, osg::Vec3 position, float radius, osg::Vec4 color )
+osg::ref_ptr<osg::AutoTransform> CoreGraph::dodecahedron( qlonglong id, osg::Vec3 position, double radius, osg::Vec4 color )
 {
 //    (±1, ±1, ±1)
 //    (0, ±1/φ, ±φ)
@@ -399,7 +399,7 @@ osg::ref_ptr<osg::AutoTransform> CoreGraph::dodecahedron( qlonglong id, osg::Vec
 	float z = midpoint.z();
 
 	float i = 1;
-	float fi = ( 1 + static_cast<float>( sqrt( 5.0f ) ) ) / 2;
+	float fi = ( 1 + sqrtf( 5.0f )  ) / 2;
 	float fi_rev = 1/fi;
 
 	osg::Geode* dodecahedronGeode = new osg::Geode();
@@ -575,7 +575,7 @@ osg::ref_ptr<osg::AutoTransform> CoreGraph::dodecahedron( qlonglong id, osg::Vec
 
 	osg::ref_ptr<osg::AutoTransform> at = new osg::AutoTransform;
 	at->setPosition( position * 1 );
-	at->setScale( radius/15 * sqrt( 75 + 30*sqrt( 5.0f ) ) );
+	at->setScale( radius/15 * sqrt( 75 + 30*sqrt( 5.0 ) ) );
 //    at->setAutoRotateMode(osg::AutoTransform::ROTATE_TO_SCREEN);
 
 	dodecahedronGeode->setUserValue( "id", QString::number( id ).toStdString() );
@@ -1122,7 +1122,7 @@ void CoreGraph::createClusterGroup( QMap<qlonglong, osg::ref_ptr<Data::Cluster> 
 		osg::ref_ptr<Data::Cluster> cluster = i.value();
 
 		osg::Vec3f midPoint = getMidPoint( cluster->getALLClusteredNodes() );
-		float radius = getRadius( cluster->getALLClusteredNodes(), midPoint );
+		double radius = getRadius( cluster->getALLClusteredNodes(), midPoint );
 
 		Clustering::Cube* cube = new Clustering::Cube( midPoint, radius, osg::Vec4d( 1,1,1,0.5 ) );
 		cube->getGeode()->setUserValue( "id", QString::number( cluster->getId() ).toStdString() );
@@ -1145,8 +1145,8 @@ void CoreGraph::updateClustersCoords()
 		osg::ref_ptr<Data::Cluster> cluster = i.value();
 
 		osg::Vec3f midPoint;
-		float radius;
-		osg::Vec3d scale;
+		float radius;		// BUG: nie je inicializovany, nizsie sa moze nenastaveny pouzit
+		osg::Vec3f scale;
 
 		osg::Vec3f lowerPoint;
 		osg::Vec3f upperPoint;
@@ -1158,7 +1158,7 @@ void CoreGraph::updateClustersCoords()
 			float distanceX = ( shapeGetter->getSurfaceNodeX()->getCurrentPosition() - midPoint ).length();
 			float distanceY = ( shapeGetter->getSurfaceNodeY()->getCurrentPosition() - midPoint ).length();
 			float distanceZ = ( shapeGetter->getSurfaceNodeZ()->getCurrentPosition() - midPoint ).length();
-			scale = osg::Vec3d( distanceX, distanceY, distanceZ );
+			scale = osg::Vec3f( distanceX, distanceY, distanceZ );
 
 			lowerPoint = osg::Vec3f( midPoint.x() - distanceX, midPoint.y() - distanceY, midPoint.z() - distanceZ );
 			upperPoint = osg::Vec3f( midPoint.x() + distanceX, midPoint.y() + distanceY, midPoint.z() + distanceZ );
@@ -1166,8 +1166,8 @@ void CoreGraph::updateClustersCoords()
 		// inak vypocitaj tvar podla zlucenych uzlov
 		else {
 			midPoint = getMidPoint( cluster->getALLClusteredNodes() );
-			radius = getRadius( cluster->getALLClusteredNodes(), midPoint );
-			scale = osg::Vec3d( radius,radius,radius );
+			radius = static_cast<float>( getRadius( cluster->getALLClusteredNodes(), midPoint ) );
+			scale = osg::Vec3f( radius,radius,radius );
 
 			lowerPoint = osg::Vec3f( midPoint.x() - radius, midPoint.y() - radius, midPoint.z() - radius );
 			upperPoint = osg::Vec3f( midPoint.x() + radius, midPoint.y() + radius, midPoint.z() + radius );
@@ -1191,7 +1191,7 @@ void CoreGraph::updateClustersCoords()
 			cluster->getSphere()->transform( midPoint, scale, color );
 		}
 		else {
-			if ( cameraInsideSphere( midPoint, radius ) ) {
+			if ( cameraInsideSphere( midPoint, radius ) ) {	// BUG: radius moze byt nenastaveny!
 				//color.w() = 1;
 				color = osg::Vec4d( 1,1,1,1 );
 			}
@@ -1452,7 +1452,7 @@ void CoreGraph::addTranslateToGraphRotTransf( osg::Vec3d pos )
 
 	osg::Vec3 massCenter = Vwr::DataHelper::getMassCenter( coordinates );
 
-	double distance = fabs( center.y() - massCenter.z() );
+	double distance = fabs( static_cast<double>(center.y() - massCenter.z()) );
 
 	ViewPortHeight = tan( ( fovy/2 )*3.14159265 / 180.0 )*fabs( distance );
 	ViewportWidth = ViewPortHeight * ar;
@@ -1570,7 +1570,7 @@ void CoreGraph::recievedPMatrix( QMatrix4x4 projectionMatrix )
 }
 
 //scale base to comfort graph size
-void CoreGraph::updateBase( float size )
+void CoreGraph::updateBase( double size )
 {
 	osg::Matrixd originalMatrix = baseTransform->getMatrix();
 	osg::Matrixd scaleMatrix( size,0,0,0,
@@ -1631,7 +1631,7 @@ void CoreGraph::scaleGraphToBase()
 		graphRotTransf->setMatrix( positionMatrix );
 
 		//scale aruco base
-		baseSize = getFurthestPosition( maxPosition,minPosition );
+		baseSize = static_cast<double>( getFurthestPosition( maxPosition,minPosition ) );
 	}
 	else {
 		osg::Vec3f minPosition( 1000,1000,1000 );

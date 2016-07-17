@@ -126,6 +126,7 @@ void AdapterWidget::keyReleaseEvent( QKeyEvent* event )
 			if ( coreWindow ) {
 				coreWindow->addSQLInput();
 			}
+			break;
 		}
 		default: {
 			_gw->getEventQueue()->keyRelease( static_cast<osgGA::GUIEventAdapter::KeySymbol>( *( event->text().TOASCII().data() ) ) );

@@ -85,7 +85,7 @@ public:
 	 * @param projectorFOV - projector field of view
 	 * @return Pointer to the StateSet.
 	 */
-	osg::StateSet* createProjectorState( osg::Texture2D* texture, osg::Vec3 projectorPos, osg::Vec3 projectorDirection, float projectorFOV );
+	osg::StateSet* createProjectorState(osg::Texture2D* texture, osg::Vec3 projectorPos, osg::Vec3 projectorDirection, double projectorFOV );
 	/**
 	 * @author Viktor Kostan
 	 * @brief createBase - Creates a geometry with two perpendicular quads and two polygons.
@@ -229,7 +229,7 @@ private:
 
 	osg::Vec3d viewerPos;
 	osg::Vec3d viewerDir;
-	float viewerFOV;
+	double viewerFOV;
 
 	osg::Vec3d graphPos;
 	double graphRadius;

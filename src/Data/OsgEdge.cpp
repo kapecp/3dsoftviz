@@ -14,7 +14,7 @@
 
 #include <QDebug>
 
-Data::OsgEdge::OsgEdge( qlonglong id, QString name, Data::Graph* graph, bool isOriented, Data::Type* type, float scaling, osg::ref_ptr<Data::Node> srcNode, osg::ref_ptr<Data::Node> dstNode,osg::ref_ptr<osg::Camera> camera )
+Data::OsgEdge::OsgEdge( qlonglong id, QString name, Data::Graph* graph, bool isOriented, Data::Type* type, double scaling, osg::ref_ptr<Data::Node> srcNode, osg::ref_ptr<Data::Node> dstNode,osg::ref_ptr<osg::Camera> camera )
 	:DbEdge( id, name, graph, isOriented, type, scaling )
 {
 	this->srcNode = srcNode;
@@ -150,7 +150,7 @@ void Data::OsgEdge::updateCoordinates( osg::Vec3 srcPos, osg::Vec3 dstPos )
 
 	//getting setting for edge scale
 
-	osg::Vec3 x, y;
+	osg::Vec3d x, y;
 	x.set( srcPos );
 	y.set( dstPos );
 
@@ -168,7 +168,7 @@ void Data::OsgEdge::updateCoordinates( osg::Vec3 srcPos, osg::Vec3 dstPos )
 	coordinates->push_back( osg::Vec3d( y.x() - up.x(), y.y() - up.y(), y.z() - up.z() ) );
 	coordinates->push_back( osg::Vec3d( y.x() + up.x(), y.y() + up.y(), y.z() + up.z() ) );
 
-	float repeatCnt = static_cast<float>( length / ( 2.f * this->scale ) );
+	float repeatCnt = static_cast<float>( length / ( 2.0 * this->scale ) );
 
 	//init edge-text (label) coordinates
 	edgeTexCoords->push_back( osg::Vec2( 0,1.0f ) );
