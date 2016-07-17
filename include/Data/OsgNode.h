@@ -55,14 +55,14 @@ public:
 	* \brief Gets subgraph for drawing residence of city.
 	* \return osg::ref_ptr of residence osg subgraph
 	*/
-    City::Residence* getResidence();
+	City::Residence* getResidence();
 
 	/**
 	* \fn public getBuilding
 	* \brief Gets subgraph for drawing building of residence.
 	* \return osg::ref_ptr of building osg subgraph
 	*/
-    City::Building* getBuilding();
+	City::Building* getBuilding();
 
 	/**
 	     * \fn public constant targetPosition

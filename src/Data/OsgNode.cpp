@@ -173,7 +173,7 @@ City::Residence* Data::OsgNode::getResidence()
 {
 	auto at = getChild( INDEX_RESIDENCE )->asTransform()->asPositionAttitudeTransform();
 	if ( at->getNumChildren() > 0 ) {
-        return dynamic_cast<City::Residence*>( at->getChild( 0 )->asTransform()->asPositionAttitudeTransform() );
+		return dynamic_cast<City::Residence*>( at->getChild( 0 )->asTransform()->asPositionAttitudeTransform() );
 	}
 	return nullptr;
 }
@@ -182,7 +182,7 @@ City::Building* Data::OsgNode::getBuilding()
 {
 	auto at = getChild( INDEX_RESIDENCE )->asTransform()->asPositionAttitudeTransform();
 	if ( at->getNumChildren() > 0 ) {
-        return dynamic_cast<City::Building*>( at->getChild( 0 )->asTransform()->asPositionAttitudeTransform() );
+		return dynamic_cast<City::Building*>( at->getChild( 0 )->asTransform()->asPositionAttitudeTransform() );
 	}
 	return nullptr;
 }
@@ -428,7 +428,7 @@ osg::ref_ptr<osg::Node> Data::OsgNode::createNodeSphere( const float& scaling, o
 
 osg::ref_ptr<osg::Node> Data::OsgNode::createNodeResidence( const float& scale )
 {
-    return new osg::PositionAttitudeTransform();
+	return new osg::PositionAttitudeTransform();
 }
 
 osg::ref_ptr<osg::Node> Data::OsgNode::createLabel( const float& scale, QString name )

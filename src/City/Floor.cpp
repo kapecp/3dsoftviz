@@ -61,9 +61,9 @@ void Floor::refresh()
 	removeChildren( 0, getNumChildren() );
 
 	if ( divideBorder ) { // ak ma mat rozdelovaci okraj poschodia
-        addChild( new Shapes::Cuboid( floorDivideBorderBaseSize, FLOOR_DIVIDE_BORDER_HEIGHT, floorDivideBorderBaseSize, osg::Vec3( 0.0f, 0.0f, floorDivideBorderGroundOffset ) ) );
+		addChild( new Shapes::Cuboid( floorDivideBorderBaseSize, FLOOR_DIVIDE_BORDER_HEIGHT, floorDivideBorderBaseSize, osg::Vec3( 0.0f, 0.0f, floorDivideBorderGroundOffset ) ) );
 	}
-    addChild( new Shapes::Cuboid( baseSize, floorWallHeight, baseSize, osg::Vec3( 0.0f, 0.0f, floorGroundOffset ) ) );
+	addChild( new Shapes::Cuboid( baseSize, floorWallHeight, baseSize, osg::Vec3( 0.0f, 0.0f, floorGroundOffset ) ) );
 }
 
 float Floor::getFloorMinHeight()

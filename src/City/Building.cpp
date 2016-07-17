@@ -142,7 +142,7 @@ void Building::refresh()
 	if ( triangleRoof ) { // ma mat strechu
 		auto roof = new osg::PositionAttitudeTransform();
 		roof->setPosition( pos );
-        roof->addChild( new Shapes::QuadPyramide( getBaseSize(), getBaseSize(), BUILDING_DEFAULT_ROOF_HEIGHT ) );
+		roof->addChild( new Shapes::QuadPyramide( getBaseSize(), getBaseSize(), BUILDING_DEFAULT_ROOF_HEIGHT ) );
 		addChild( roof );
 	}
 
