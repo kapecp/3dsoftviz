@@ -1,0 +1,5 @@
+find_program(CPPCHECK_EXECUTABLE cppcheck DOC "path to the cppcheck executable")
+mark_as_advanced(CPPCHECK_EXECUTABLE)
+
+include(FindPackageHandleStandardArgs)
+find_package_handle_standard_args(cppcheck DEFAULT_MSG CPPCHECK_EXECUTABLE)

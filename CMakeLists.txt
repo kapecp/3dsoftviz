@@ -1592,3 +1592,26 @@ if( CPPLINT_FOUND )
 	)
 endif()
 
+# ------------------------------ CPPcheck -------------------------------
+# use "make cppcheck" to check all C++ code with CPPcheck
+
+# Find cppchceck
+find_package(cppcheck)
+
+if( cppcheck_FOUND )
+	file( GLOB_RECURSE ALL_SRC_FILES ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp )
+
+	add_custom_target(
+			cppcheck
+			COMMAND cppcheck
+			--enable=warning,style,performance,portability,information,missingInclude
+			--std=c++11
+			--library=qt.cfg
+			--verbose
+			--quiet
+			-j2
+			-I ${CMAKE_CURRENT_SOURCE_DIR}/include/
+			${ALL_SRC_FILES}
+	)
+endif()
+
