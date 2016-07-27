@@ -1547,3 +1547,22 @@ if (Sphinx_FOUND)
 		"${SPHINX_HTML_DIR}"
 		COMMENT "Building HTML documentation with Sphinx")
 endif()
+
+
+# ------------------------------ ASTYLE -------------------------------
+# use "make style" to format all C++ code
+
+# Find Astyle Executable
+find_package(Astyle)
+
+if (Astyle_FOUND)
+	# Add a custom target
+	add_custom_target( "style" COMMAND
+	"${ASTYLE_EXECUTABLE}"
+	--options=${CMAKE_CURRENT_SOURCE_DIR}/astyle.options
+	${CMAKE_CURRENT_SOURCE_DIR}/include/*.h
+	${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp
+	COMMENT "Formating source code with Astyle."
+	VERBATIM
+	)
+endif()
