@@ -174,7 +174,7 @@ double getRadius( QSet<Data::Node*> nodes, osg::Vec3f midPoint )
 		Data::Node* v = *i;
 		osg::Vec3f pos = v->getCurrentPosition();
 
-		double newDistance = sqrt( pow( static_cast<double>( pos.x()-midPoint.x() ),2 ) + pow( static_cast<double>(pos.y()-midPoint.y()),2 ) + pow( static_cast<double>(pos.z()-midPoint.z()),2 ) );
+		double newDistance = sqrt( pow( static_cast<double>( pos.x()-midPoint.x() ),2 ) + pow( static_cast<double>( pos.y()-midPoint.y() ),2 ) + pow( static_cast<double>( pos.z()-midPoint.z() ),2 ) );
 
 		if ( newDistance > maxDistance ) {
 			maxDistance = newDistance;
@@ -399,7 +399,7 @@ osg::ref_ptr<osg::AutoTransform> CoreGraph::dodecahedron( qlonglong id, osg::Vec
 	float z = midpoint.z();
 
 	float i = 1;
-	float fi = ( 1 + sqrtf( 5.0f )  ) / 2;
+	float fi = ( 1 + sqrtf( 5.0f ) ) / 2;
 	float fi_rev = 1/fi;
 
 	osg::Geode* dodecahedronGeode = new osg::Geode();
@@ -1452,7 +1452,7 @@ void CoreGraph::addTranslateToGraphRotTransf( osg::Vec3d pos )
 
 	osg::Vec3 massCenter = Vwr::DataHelper::getMassCenter( coordinates );
 
-	double distance = fabs( static_cast<double>(center.y() - massCenter.z()) );
+	double distance = fabs( static_cast<double>( center.y() - massCenter.z() ) );
 
 	ViewPortHeight = tan( ( fovy/2 )*3.14159265 / 180.0 )*fabs( distance );
 	ViewportWidth = ViewPortHeight * ar;

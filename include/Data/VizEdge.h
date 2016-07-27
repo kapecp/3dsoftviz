@@ -10,7 +10,7 @@ namespace Data {
 class VizEdge : public AbsEdge
 {
 public:
-	VizEdge(qlonglong id, QString name, Data::Graph* graph, bool isOriented, Data::Type* type, double scaling );
+	VizEdge( qlonglong id, QString name, Data::Graph* graph, bool isOriented, Data::Type* type, double scaling );
 
 	/**
 		* \fn inline public constant toString

@@ -93,7 +93,7 @@ public:
 
 	void sendMyView( osg::Vec3d center, osg::Quat rotation, float distance );
 	void sendMyView();
-	void setMyView(osg::Vec3d center, osg::Quat rotation, double distance );
+	void setMyView( osg::Vec3d center, osg::Quat rotation, double distance );
 	void lookAt( osg::Vec3d coord );
 
 	void sendNewNode( QString name, osg::Vec3f position );

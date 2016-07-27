@@ -3471,9 +3471,9 @@ void CoreWindow::setRestriction_Cube_Selected()
 		QString name_sufraceNodeY = "surfaceY";
 		QString name_sufraceNodeZ = "surfaceZ";
 		osg::Vec3 positionNode1 = cluster->getCube()->getMidpoint() / scale;
-		osg::Vec3 positionNode2 = positionNode1 + osg::Vec3f( static_cast<float>( cluster->getCube()->getRadius()  / scale), 0, 0 );
-		osg::Vec3 positionNode3 = positionNode1 + osg::Vec3f( 0, static_cast<float>( cluster->getCube()->getRadius()  / scale), 0 );
-		osg::Vec3 positionNode4 = positionNode1 + osg::Vec3f( 0, 0, static_cast<float>( cluster->getCube()->getRadius()  / scale) );
+		osg::Vec3 positionNode2 = positionNode1 + osg::Vec3f( static_cast<float>( cluster->getCube()->getRadius()  / scale ), 0, 0 );
+		osg::Vec3 positionNode3 = positionNode1 + osg::Vec3f( 0, static_cast<float>( cluster->getCube()->getRadius()  / scale ), 0 );
+		osg::Vec3 positionNode4 = positionNode1 + osg::Vec3f( 0, 0, static_cast<float>( cluster->getCube()->getRadius()  / scale ) );
 
 		Layout::RestrictionRemovalHandler_RestrictionNodesRemover::NodesListType restrictionNodes;
 

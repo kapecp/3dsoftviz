@@ -147,7 +147,7 @@ void Data::Edge::updateCoordinates( osg::Vec3 srcPos, osg::Vec3 dstPos )
 	osg::Vec3d cor3 = osg::Vec3d( y.x() - up.x(), y.y() - up.y(), y.z() - up.z() );
 	osg::Vec3d cor4 = osg::Vec3d( y.x() + up.x(), y.y() + up.y(), y.z() + up.z() );
 	//center between coordinates (1 and 2), (3 and 4)
-	center->push_back( osg::Vec3( static_cast<float>(( x.x() + y.x() )/2), static_cast<float>(( x.y() + y.y() )/2), static_cast<float>(( x.z() + y.z() )/2) ) );
+	center->push_back( osg::Vec3( static_cast<float>( ( x.x() + y.x() )/2 ), static_cast<float>( ( x.y() + y.y() )/2 ), static_cast<float>( ( x.z() + y.z() )/2 ) ) );
 
 	osgText::FadeText* label = dynamic_cast<osgText::FadeText*>( getChild( INDEX_LABEL )->asGeode()->getDrawable( 0 ) );
 	if ( label != NULL ) {
@@ -186,7 +186,7 @@ void Data::Edge::updateCoordinates( osg::Vec3 srcPos, osg::Vec3 dstPos )
 			osg::Vec3 diff = ( y - x );
 			// CROSS product (the axis of rotation)
 			rotation->push_back( direction ^ diff );
-			angle = acos( static_cast<double>(( direction * diff )/ diff.length() ) );
+			angle = acos( static_cast<double>( ( direction * diff )/ diff.length() ) );
 
 			( dynamic_cast<osg::Cylinder*>( ( drawableCylinder )->getShape() ) )->setHeight( static_cast<float>( length ) );
 			( dynamic_cast<osg::Cylinder*>( ( drawableCylinder )->getShape() ) )->setRadius( 2 );

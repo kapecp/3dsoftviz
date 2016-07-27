@@ -179,7 +179,7 @@ public:
 		return camera;
 	}
 
-	osg::ref_ptr<osg::AutoTransform> dodecahedron(qlonglong id, osg::Vec3 midpoint, double radius, osg::Vec4 color );
+	osg::ref_ptr<osg::AutoTransform> dodecahedron( qlonglong id, osg::Vec3 midpoint, double radius, osg::Vec4 color );
 
 	/**
 		*  \fn public  setEdgeLabelsVisible(bool visible)
@@ -341,7 +341,7 @@ public slots:
 		 */
 	void recievedPMatrix( QMatrix4x4 modelViewMatrix );
 
-	void updateBase(double size );
+	void updateBase( double size );
 
 	void setArucoRunning( bool isRunning );
 

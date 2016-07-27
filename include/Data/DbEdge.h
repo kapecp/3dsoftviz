@@ -8,7 +8,7 @@ namespace Data {
 class DbEdge : public VizEdge
 {
 public:
-	DbEdge(qlonglong id, QString name, Data::Graph* graph, bool isOriented, Data::Type* type, double scaling );
+	DbEdge( qlonglong id, QString name, Data::Graph* graph, bool isOriented, Data::Type* type, double scaling );
 
 	/**
 		*  \fn inline public  isInDB

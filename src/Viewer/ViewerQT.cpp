@@ -122,8 +122,8 @@ void QOSG::ViewerQT::moveMouseAruco( double positionX,double positionY,bool isCl
 {
 	//qDebug() << positionX << "  " << positionY << "         " << isClick;
 
-	float wieverX = static_cast<float>( positionX * this->width()  );
-	float wieverY = static_cast<float>( positionY * this->height()  );
+	float wieverX = static_cast<float>( positionX * this->width() );
+	float wieverY = static_cast<float>( positionY * this->height() );
 
 	int screenX = static_cast<int>( positionX * this->width()  + this->x() + windowX + 8 );
 	int screenY = static_cast<int>( positionY * this->height() + this->y() + windowY + 28 );
@@ -154,7 +154,7 @@ void QOSG::ViewerQT::moveMouseKinect( double positionX,double positionY,double s
 	positionX /=640.0;
 	positionY/=480.0;
 
-	float wieverX = static_cast<float>( positionX * this->width()  );
+	float wieverX = static_cast<float>( positionX * this->width() );
 	float wieverY = static_cast<float>( positionY * this->height() );
 
 	int screenX = static_cast<int>( positionX * this->width()  + this->x() + windowX + 8 );

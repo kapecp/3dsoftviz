@@ -14,7 +14,7 @@ class OsgEdge : public DbEdge, public osg::Switch
 {
 public:
 
-	OsgEdge(qlonglong id, QString name, Data::Graph* graph, bool isOriented, Data::Type* type, double scaling, osg::ref_ptr<Data::Node> srcNode, osg::ref_ptr<Data::Node> dstNode, osg::ref_ptr<osg::Camera> camera );
+	OsgEdge( qlonglong id, QString name, Data::Graph* graph, bool isOriented, Data::Type* type, double scaling, osg::ref_ptr<Data::Node> srcNode, osg::ref_ptr<Data::Node> dstNode, osg::ref_ptr<osg::Camera> camera );
 
 	/**
 		*  \fn public  createLabel(QString name)

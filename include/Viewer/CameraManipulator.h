@@ -871,7 +871,7 @@ private:
 		 * @param y coordinate of head on vertical axis
 		 * @param distance of head from camera
 		 */
-	void updateProjectionAccordingFace(const float x, const float y, const double distance );
+	void updateProjectionAccordingFace( const float x, const float y, const double distance );
 
 
 	/**

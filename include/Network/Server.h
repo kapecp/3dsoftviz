@@ -73,7 +73,7 @@ public:
 		selected_nodes = nodes;
 	}
 
-	void sendMyView(osg::Vec3d center, osg::Quat rotation, double distance, QTcpSocket* client = NULL );
+	void sendMyView( osg::Vec3d center, osg::Quat rotation, double distance, QTcpSocket* client = NULL );
 	void sendMyView( QTcpSocket* client );
 	void sendMyView();
 
@@ -99,7 +99,7 @@ public:
 		return user_to_center != NULL;
 	}
 
-	void setMyView(osg::Vec3d center, osg::Quat rotation, double distance );
+	void setMyView( osg::Vec3d center, osg::Quat rotation, double distance );
 	void lookAt( osg::Vec3d coord );
 
 	//some getters

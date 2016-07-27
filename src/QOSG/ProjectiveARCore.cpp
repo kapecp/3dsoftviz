@@ -8,9 +8,9 @@ QOSG::ProjectiveARCore* QOSG::ProjectiveARCore::mProjectiveARCore;
 
 QOSG::ProjectiveARCore::ProjectiveARCore( QApplication* app, QWidget* parent )
 {
-    mProjectiveARCore		= this;
-    mApp                    = app;
-    mParent                 = parent;
+	mProjectiveARCore		= this;
+	mApp                    = app;
+	mParent                 = parent;
 
 	qDebug() << "Creating ProjectiveAR Window";
 	mProjectiveARWindow =  new QOSG::ProjectiveARWindow( mParent, mApp );
@@ -30,13 +30,13 @@ void QOSG::ProjectiveARCore::init()
 		mProjectiveARViewer = mProjectiveARWindow->getViewerWidget();
 	}
 
-    mProjectiveARWindow->show();
+	mProjectiveARWindow->show();
 }
 
 QOSG::ProjectiveARCore* QOSG::ProjectiveARCore::getInstance( QApplication* app, QWidget* parent )
 {
-    if ( mProjectiveARCore == NULL ) {
-        mProjectiveARCore = new QOSG::ProjectiveARCore( app, parent );
-    }
-    return mProjectiveARCore;
+	if ( mProjectiveARCore == NULL ) {
+		mProjectiveARCore = new QOSG::ProjectiveARCore( app, parent );
+	}
+	return mProjectiveARCore;
 }

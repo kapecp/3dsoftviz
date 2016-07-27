@@ -183,8 +183,8 @@ osg::Vec3f Vwr::GraphNavigation::getNodeScreenCoordinates( Data::Node* node )
 double Vwr::GraphNavigation::getDistanceToNode( osg::Vec3f mouse, osg::Vec3f node )
 {
 	// in case of big space can overflow ... test divide by 1000
-	double distX = fabs( static_cast<double>(node[0] - mouse[0] ) );
-	double distY = fabs( static_cast<double>(node[1] - mouse[1] ));
+	double distX = fabs( static_cast<double>( node[0] - mouse[0] ) );
+	double distY = fabs( static_cast<double>( node[1] - mouse[1] ) );
 
 	return distX*distX + distY*distY;
 }

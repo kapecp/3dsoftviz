@@ -52,7 +52,7 @@ public:
 		* \param pos int		first coordinate in Drawable coordinates array
 		* \param camera 	current camera used in viewer
 		*/
-	Edge(qlonglong id, QString name, Data::Graph* graph, osg::ref_ptr<Data::Node> srcNode, osg::ref_ptr<Data::Node> dstNode, Data::Type* type, bool isOriented, double scaling, int pos = 0, osg::ref_ptr<osg::Camera> camera = 0 );
+	Edge( qlonglong id, QString name, Data::Graph* graph, osg::ref_ptr<Data::Node> srcNode, osg::ref_ptr<Data::Node> dstNode, Data::Type* type, bool isOriented, double scaling, int pos = 0, osg::ref_ptr<osg::Camera> camera = 0 );
 
 	/**
 		*  \fn public destructor  ~Edge
