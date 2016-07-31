@@ -2,7 +2,10 @@
 #define VIZEDGE_H
 
 #include "Data/AbsEdge.h"
+
+#ifdef OPENCV_FOUND
 #include "opencv/cv.h"
+#endif
 
 namespace Data {
 

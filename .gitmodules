@@ -37,3 +37,6 @@
 [submodule "dependencies/easyloggingpp"]
 	path = dependencies/easyloggingpp
 	url = git@github.com:easylogging/easyloggingpp.git
+[submodule "dependencies/parserlib"]
+	path = dependencies/parserlib
+	url = git@github.com:axilmar/parserlib.git

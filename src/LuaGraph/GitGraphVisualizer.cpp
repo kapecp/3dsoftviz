@@ -129,7 +129,7 @@ void Lua::GitGraphVisualizer::visualize()
 				node->setType( currentGraph->getTypesByName( "removedNode" ).at( 0 ) );
 			}
 			node->reloadConfig();
-			node->showLabel( true );
+			node->showLabel( true, false );
 		}
 
 		osg::ref_ptr<Data::Edge> edge = currentGraph->findEdgeByLuaIdentifier( list.at( 2 ) + "+" + list.at( 1 ) );

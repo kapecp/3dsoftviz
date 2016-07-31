@@ -14,3 +14,5 @@ resources/img/textures/veolia/
 resources/kinectMaps\\*
 logs/
 3dsoftviz-techdoc/
+.DS_Store
+dependencies/.DS_Store
