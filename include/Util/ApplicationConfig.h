@@ -108,6 +108,28 @@ public:
 	);
 
 	/**
+	* \brief Gets int value from settings or default.
+	* \param[in] key Key to the value.
+	* \param[in] defaultValue Default value (if the value does not exist or is not valid).
+	* \return int value for the specified key (defaultValue if the key does not exist or the value is not a valid float value).
+	*/
+	int getIntValue(
+		QString key,
+		const int defaultValue = int()
+	);
+
+	/**
+	* \brief Gets float value from settings or default.
+	* \param[in] key Key to the value.
+	* \param[in] defaultValue Default value (if the value does not exist or is not valid).
+	* \return float value for the specified key (defaultValue if the key does not exist or the value is not a valid float value).
+	*/
+	float getFloatValue(
+		QString key,
+		const float defaultValue = float()
+	);
+
+	/**
 			 * \brief Gets color value in osg::Vec4f from settings.
 			 * Color is stored in 4 0-255 values divided by comma. Example:
 			 * 'My.Color.Value=200,128,5,6'

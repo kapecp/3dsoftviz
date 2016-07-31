@@ -14,6 +14,8 @@
 #include "Layout/LayoutThread.h"
 #include "Layout/FRAlgorithm.h"
 #include "Layout/Shape_Cube.h"
+#include "Layout/FRAlgorithm.h"
+#include "City/Residence.h"
 
 #include "Util/ApplicationConfig.h"
 
@@ -278,6 +280,10 @@ bool PickHandler::handleKeyDown( const osgGA::GUIEventAdapter& ea, GUIActionAdap
 	}
 	else if ( ea.getKey() == osgGA::GUIEventAdapter::KEY_N ) {
 		this->selectAllNeighbors( this->pickedNodes );
+	}
+	// horvath
+	else if ( ea.getKey() == 'i' || ea.getKey() == 'I' ) {
+		coreGraph->showHud( !coreGraph->isHudDisplayed() );
 	}
 	//jurik
 	else if ( ea.getKey() == osgGA::GUIEventAdapter::KEY_O ) {
@@ -627,6 +633,7 @@ bool PickHandler::pick( const double xMin, const double yMin, const double xMax,
 
 	bool result = false;
 
+	coreGraph->getHud()->setText( QString() );
 	if ( picker->containsIntersections() ) {
 		osgUtil::PolytopeIntersector::Intersections intersections = picker->getIntersections();
 
@@ -703,6 +710,19 @@ bool PickHandler::doNodePick( osg::NodePath nodePath )
 		if ( n != NULL ) {
 			break;
 		}
+	}
+
+	City::Building* b;
+	for ( unsigned int i = 0; i < nodePath.size(); i++ ) {
+		b = dynamic_cast<City::Building*>( nodePath[i] );
+		if ( b != NULL ) {
+			break;
+		}
+	}
+
+	if ( b != NULL ) {
+		b->select( true );
+		coreGraph->getHud()->setText( b->getInfo() );
 	}
 
 	if ( n != NULL ) {
@@ -1071,6 +1091,14 @@ void PickHandler::unselectPickedNodes( osg::ref_ptr<Data::Node> node )
 
 		while ( i != pickedNodes.constEnd() ) {
 			( *i )->setSelected( false );
+			auto r = ( *i )->getResidence();
+			if ( r ) {
+				r->selectAll( false );
+			}
+			auto b = ( *i )->getBuilding();
+			if ( b ) {
+				b->select( false );
+			}
 			++i;
 		}
 

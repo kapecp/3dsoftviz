@@ -24,10 +24,9 @@
 #include <QSharedPointer>
 #include <QObject>
 #include <QTime>
-
 #include "OsgQtBrowser/QWebViewImage.h"
-
 #include <osgShadow/ShadowedScene>
+#include "Hud.h"
 
 namespace Data {
 class Graph;
@@ -99,6 +98,7 @@ public:
 		 */
 	~CoreGraph( void );
 
+	void onResized( int width, int height );
 
 	/**
 		*  \fn public  reload(Data::Graph * graph = 0)
@@ -195,6 +195,13 @@ public:
 		*/
 	void setNodeLabelsVisible( bool visible );
 
+	void showLabelsForResidence( bool state );
+
+	void showHud( bool state );
+
+	bool isHudDisplayed() const;
+
+	Hud* getHud();
 
 	/**
 		*  \fn inline public constant  getNodesFreezed
@@ -492,6 +499,8 @@ private:
 		*/
 	osg::ref_ptr<osg::Group> root;
 
+	osg::ref_ptr<Vwr::Hud> hud;
+
 	osg::ref_ptr<osg::Group> testGroup;
 
 	osg::ref_ptr<osg::Group> test2();
@@ -541,6 +550,8 @@ private:
 		*  \brief true, if interpolation is denied
 		*/
 	bool interpolationDenied;
+
+	bool labelsForResidenceShowed;
 
 	/**
 		*  QLinkedList<osg::ref_ptr<osg::Node> > customNodeList

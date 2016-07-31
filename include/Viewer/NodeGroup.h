@@ -70,7 +70,7 @@ public:
 		*  \brief returns all nodes transformations
 		*  \return QMap<qlonglong,osg::ref_ptr<osg::AutoTransform> > * node transforms
 		*/
-	QMap<qlonglong, osg::ref_ptr<osg::AutoTransform> >* getNodeTransforms()
+	QMap<qlonglong, osg::ref_ptr<osg::Transform> >* getNodeTransforms()
 	{
 		return nodeTransforms;
 	}
@@ -98,7 +98,7 @@ private:
 		*  QMap<qlonglong,osg::ref_ptr<osg::AutoTransform> > * nodeTransforms
 		*  \brief node transforms
 		*/
-	QMap<qlonglong, osg::ref_ptr<osg::AutoTransform> >* nodeTransforms;
+	QMap<qlonglong, osg::ref_ptr<osg::Transform> >* nodeTransforms;
 
 	/**
 		*  osg::ref_ptr group
@@ -127,7 +127,7 @@ private:
 		*  \param      graphScale     graph scale
 		*  \return osg::ref_ptr node transform
 		*/
-	osg::ref_ptr<osg::AutoTransform> wrapChild( osg::ref_ptr<Data::Node> node, float graphScale );
+	osg::ref_ptr<osg::Transform> wrapChild( osg::ref_ptr<Data::Node> node, float graphScale );
 
 	/**
 		*  \fn private  getNodeGroup(osg::ref_ptr<Data::Node> node, osg::ref_ptr<Data::Edge> parentEdge, float graphScale)

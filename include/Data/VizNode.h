@@ -35,7 +35,7 @@ public:
 	    *  \brief Sets new scale
 	    *  \param   val   new scale for the Node
 	    */
-	void setScale( float val )
+	virtual void setScale( float val )
 	{
 		scale = val;
 	}

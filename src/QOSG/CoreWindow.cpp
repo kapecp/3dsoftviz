@@ -37,6 +37,9 @@
 #include "Data/GraphLayout.h"
 #include "Data/GraphSpanningTree.h"
 
+#include "Importer/Parsing/Java/JavaParser.h"
+#include "Importer/Parsing/SoftTree.h"
+
 #include "Layout/LayoutThread.h"
 #include "Layout/FRAlgorithm.h"
 #include "Layout/ShapeGetter_CylinderSurface_ByCamera.h"
@@ -70,6 +73,12 @@
 #include <osg/ref_ptr>
 #include <string>
 #include <list>
+
+#include <Importer/Parsing/InvocationGraph.h>
+#include <City/Residence.h>
+#include <Layout/LayoutAlgorithms.h>
+#include <Shapes/Cuboid.h>
+#include <Manager/ResourceManager.h>
 
 #ifdef OPENCV_FOUND
 #include "OpenCV/OpenCVCore.h"
@@ -174,6 +183,9 @@ void CoreWindow::createActions()
 	loadGraph = new QAction( QIcon( "../share/3dsoftviz/img/gui/loadFromDB.png" ),"&Load graph from database", this );
 	connect( loadGraph, SIGNAL( triggered() ), this, SLOT( showLoadGraph() ) );
 
+	loadJavaProjectAction = new QAction( QIcon( "../share/3dsoftviz/img/gui/open_java.png" ),"&Load java project", this );
+	connect( loadJavaProjectAction, SIGNAL( triggered() ), this, SLOT( showDialogLoadJavaProject() ) );
+
 	saveGraph = new QAction( QIcon( "../share/3dsoftviz/img/gui/saveToDB.png" ),"&Save graph", this );
 	connect( saveGraph, SIGNAL( triggered() ), this, SLOT( saveGraphToDB() ) );
 
@@ -270,6 +282,13 @@ void CoreWindow::createActions()
 	label->setCheckable( true );
 	label->setFocusPolicy( Qt::NoFocus );
 	connect( label, SIGNAL( clicked( bool ) ), this, SLOT( labelOnOff( bool ) ) );
+
+	labelResidence = new QCheckBox();
+	labelResidence->setText( "labels for residence" );
+	labelResidence->setToolTip( "&Turn on/off labels for residence" );
+	labelResidence->setCheckState( Qt::CheckState::Checked );
+	labelResidence->setFocusPolicy( Qt::NoFocus );
+	connect( labelResidence, SIGNAL( stateChanged( int ) ), this, SLOT( labelForResidenceCheckStateChanged( int ) ) );
 
 	applyColor = new QPushButton();
 	applyColor->setText( "Apply color" );
@@ -520,7 +539,7 @@ void CoreWindow::createActions()
 	le_edgeBundlingalpha->setText( "100" );
 
 	nodeTypeComboBox = new QComboBox();
-	nodeTypeComboBox->insertItems( 0,( QStringList() << "Square" << "Sphere" ) );
+	nodeTypeComboBox->insertItems( 0,( QStringList() << "Square" << "Sphere" << "Residence" ) );
 	nodeTypeComboBox->setFocusPolicy( Qt::NoFocus );
 	connect( nodeTypeComboBox,SIGNAL( currentIndexChanged( int ) ),this,SLOT( nodeTypeComboBoxChanged( int ) ) );
 
@@ -663,6 +682,7 @@ void CoreWindow::createActions()
 
 	clusteringProgressBar = new QProgressDialog( "", "Abort", 0, 10, this, Qt::Dialog );
 	clusteringProgressBar->setWindowTitle( "Clustering" );
+	clusteringProgressBar->setCancelButtonText( "Abort" );
 	Qt::WindowFlags flags = clusteringProgressBar->windowFlags();
 	flags = flags & ( ~Qt::WindowContextHelpButtonHint );
 	clusteringProgressBar->setWindowFlags( flags );
@@ -811,6 +831,7 @@ void CoreWindow::createMenus()
 	file = menuBar()->addMenu( "File" );
 	file->addAction( load );
 	file->addAction( loadGraph );
+	file->addAction( loadJavaProjectAction );
 	file->addAction( loadGit );
 	file->addAction( loadSpecialMatrix );
 	file->addSeparator();
@@ -901,6 +922,7 @@ QWidget* CoreWindow::createGraphTab( QFrame* line )
 	lGraph->addRow( applyLabel );
 	label->setMaximumWidth( 136 );
 	lGraph->addRow( label );
+	lGraph->addRow( labelResidence );
 	line = createLine();
 	lGraph->addRow( line );
 	play->setMaximumWidth( 136 );
@@ -1406,6 +1428,293 @@ void CoreWindow::showLoadGraph()
 {
 	LoadGraphWindow* loadGraph = new LoadGraphWindow( this );
 	loadGraph->show();
+}
+
+void CoreWindow::showDialogLoadJavaProject()
+{
+	QFileDialog dialog;
+	dialog.setWindowTitle( "Choose java project folder" );
+	dialog.setFileMode( QFileDialog::Directory );
+	dialog.setOption( QFileDialog::ShowDirsOnly );
+	if ( dialog.exec() ) {
+		QString directory = dialog.selectedFiles()[0];
+		loadJavaProjectAndShow( directory );
+	}
+}
+
+
+static const float MIN_MAX_BUILDING_HEIGHT_RATIO = 10;
+
+struct BuildingInfo {
+	City::Building* building;
+	uint loc;
+	BuildingInfo( City::Building* building, uint loc )
+	{
+		this->building = building;
+		this->loc = loc;
+	}
+};
+
+QString getAttributeInfo( const Importer::Parsing::Attribute& attribute )
+{
+	QString info;
+
+	info.append( "ATTRIBUTE -->\n\n" );
+	info.append( attribute.ToString( 0 ) );
+
+	return info;
+}
+
+QString getMethodInfo( const Importer::Parsing::Method& method )
+{
+	QString info;
+
+	info.append( "METHOD -->\n\n" );
+	info.append( QString( "%1 %2 %3 " )
+				 .arg( Importer::Parsing::Modifier::ToString( method.modifier ) )
+				 .arg( method.returnType )
+				 .arg( method.name ) );
+	if ( !method.parameters.empty() ) {
+		info.append( "(\n" );
+	}
+	else {
+		info.append( "()\n" );
+	}
+	foreach ( const auto& p, method.parameters ) {
+		info.append( QString( "   %1 %2,\n" )
+					 .arg( p.type )
+					 .arg( p.name ) );
+	}
+	if ( !method.parameters.empty() ) {
+		info.append( ")\n" );
+	}
+	info.append( "\n" );
+	QString methodType;
+	if ( method.name.toLower().startsWith( "get" ) ) {
+		methodType = "getter";
+	}
+	else if ( method.name.toLower().startsWith( "set" ) ) {
+		methodType = "setter";
+	}
+	else if ( method.IsConstructor() ) {
+		methodType = "constructor";
+	}
+	else if ( method.modifier == Importer::Parsing::Modifier::PUBLIC ) {
+		methodType = "interface";
+	}
+	else {
+		methodType = "internal";
+	}
+	info.append( QString( "MethodType:  %1\n" ).arg( methodType ) );
+	info.append( QString( "Visibility:  %1\n" ).arg( method.modifier == Importer::Parsing::Modifier::UNKNOWN ? Importer::Parsing::Modifier::ToString( Importer::Parsing::Modifier::PRIVATE ) : Importer::Parsing::Modifier::ToString( method.modifier ) ) );
+	info.append( QString( "Parameters:  %1\n" ).arg( method.parameters.count() ) );
+	info.append( QString( "Output:      %1\n" ).arg( method.HasResult() ? "yes" : "no" ) );
+	info.append( QString( "LineOfCodes: %1\n" ).arg( method.GetLineOfCodes() ) );
+
+	return info;
+}
+
+uint GetCountOfClasses( const Importer::Parsing::SoftTree& softTree )
+{
+	uint classCount = 0;
+	foreach ( auto n, softTree.namespaces ) {
+		classCount += n.classes.count();
+	}
+	return classCount;
+}
+
+void CoreWindow::loadJavaProjectAndShow( const QString& projectDir )
+{
+	AppCore::Core::getInstance()->messageWindows->showProgressBar();
+
+	// parse java software
+	Importer::Parsing::JavaParser javaParser;
+	Importer::Parsing::SoftTree softTree;
+	QString errorMessage;
+
+	if ( !javaParser.Parse( projectDir, softTree, errorMessage ) ) {
+		AppCore::Core::getInstance()->messageWindows->closeProgressBar();
+		QMessageBox::critical( this, "Java parse error", errorMessage, QMessageBox::Close );
+		return;
+	}
+
+	// necessary for progressbar
+	const float progressCoef = 100.0f / ( float )GetCountOfClasses( softTree );
+	uint progressClassCounter = 0;
+	uint lastProgressValue = 0;
+
+	auto manager = Manager::GraphManager::getInstance();
+	auto resMgr = Manager::ResourceManager::getInstance();
+
+	auto graph = manager->createNewGraph( "SoftwareGraph" ); // zaroven nastavi graf ako aktivny
+
+	planes_Vertigo.clear();
+	numberOfPlanes = 0;
+	layout->pauseAllAlg();
+	coreGraph->setNodesFreezed( true );
+	coreGraph->setInterpolationDenied( false );
+
+	auto nodeType = graph->addType( Data::GraphLayout::NESTED_NODE_TYPE );
+	auto edgeType = graph->addType( Data::GraphLayout::NESTED_EDGE_TYPE );
+
+	// materials for buildings
+	auto white = resMgr->getMaterial( osg::Vec3( 1.0f, 1.0f, 1.0f ) );
+	auto yellow = resMgr->getMaterial( osg::Vec3( 1.0f, 1.0f, 0.0f ) );
+	auto red = resMgr->getMaterial( osg::Vec3( 0.941f, 0.502f, 0.502f ) );
+	auto green = resMgr->getMaterial( osg::Vec3( 0.565f, 0.933f, 0.565f ) );
+	auto orange = resMgr->getMaterial( osg::Vec3( 1.000f, 0.647f, 0.000f ) );
+
+	// create java root node
+	auto rootNode = graph->addNode( "JAVA", nodeType );
+	auto javaRootNode = new City::Building();
+	javaRootNode->setBaseSize( 4 );
+	javaRootNode->setHeight( 5 );
+	javaRootNode->setLieOnGround( false );
+	auto ss = new osg::StateSet();
+	ss->setAttribute( white );
+	ss->setMode( GL_RESCALE_NORMAL, osg::StateAttribute::ON );
+	ss->setTextureAttributeAndModes( 0, resMgr->getTexture( Util::ApplicationConfig::get()->getValue( "Viewer.Textures.JavaNode" ) ), osg::StateAttribute::ON );
+	javaRootNode->setStateSet( ss );
+	javaRootNode->refresh();
+	rootNode->setResidence( javaRootNode );
+
+	std::list<BuildingInfo> buildingsInfos; // necessary for building height optimization
+	for ( const auto& namespace_ : softTree.namespaces ) { // process all classes in namespaces
+		// create node for namespace
+		auto namespaceNode = graph->addNode( namespace_.name, nodeType );
+		auto javaNamespaceNode = new City::Building();
+		javaNamespaceNode->setBaseSize( 4 );
+		javaNamespaceNode->setHeight( 4 );
+		javaNamespaceNode->setLieOnGround( false );
+		auto ss = new osg::StateSet();
+		ss->setAttribute( white );
+		ss->setMode( GL_RESCALE_NORMAL, osg::StateAttribute::ON );
+		ss->setTextureAttributeAndModes( 0, resMgr->getTexture( Util::ApplicationConfig::get()->getValue( "Viewer.Textures.JavaPackageNode" ) ), osg::StateAttribute::ON );
+		javaNamespaceNode->setStateSet( ss );
+		javaNamespaceNode->refresh();
+		namespaceNode->setResidence( javaNamespaceNode );
+
+		auto rootNamespaceEdge = graph->addEdge( QString(), rootNode, namespaceNode, edgeType, true );
+
+		// process namespace classes
+		for ( const auto& class_ : namespace_.classes ) {
+			auto classNode = graph->addNode( class_.name, nodeType );
+			auto edgeNamespaceClass = graph->addEdge( QString(), namespaceNode, classNode, edgeType, true );
+			auto residence = new City::Residence();
+			classNode->setResidence( residence );
+			auto ig = Importer::Parsing::InvocationGraph::AnalyzeClass( class_ );
+			for ( const auto& attribute : class_.attributes ) {
+				auto b = new City::Building( attribute.name, getAttributeInfo( attribute ) );
+				b->setBaseSize( 1.0f );
+				b->setHeight( 0.2f );
+				b->setStateSet( new osg::StateSet() );
+				b->getStateSet()->setAttribute( yellow );
+				residence->addAttributeBuilding( b );
+			}
+
+			for ( const auto& iggs : ig.gettersSetters ) {
+				auto& getterSetterMethod = class_.methods[iggs.callingMethodIndex];
+				QList<City::Floor*> floors;
+				for ( const auto& param : getterSetterMethod.parameters ) {
+					floors << new City::Floor();
+				}
+				auto b = new City::Building( getterSetterMethod.name, getMethodInfo( getterSetterMethod ), floors );
+				b->setBaseSize( 1.0 );
+				b->setTriangleRoof( getterSetterMethod.HasResult() );
+				b->setStateSet( new osg::StateSet() );
+				b->getStateSet()->setAttribute( yellow );
+				residence->addGetterSeterBuilding( b );
+				buildingsInfos.push_back( BuildingInfo( b, getterSetterMethod.GetLineOfCodes() ) );
+			}
+
+			for ( const auto& igin : ig.internalMethods ) {
+				auto& internalMethod = class_.methods[igin.callingMethodIndex];
+				QList<City::Floor*> floors;
+				for ( const auto& param : internalMethod.parameters ) {
+					floors << new City::Floor();
+				}
+				auto b = new City::Building( internalMethod.name, getMethodInfo( internalMethod ), floors );
+				b->setBaseSize( 1.0 );
+				b->setTriangleRoof( internalMethod.HasResult() );
+				b->setStateSet( new osg::StateSet() );
+				b->getStateSet()->setAttribute( internalMethod.modifier == Importer::Parsing::Modifier::PUBLIC ? green : ( internalMethod.modifier == Importer::Parsing::Modifier::PROTECTED ? orange : red ) ); // private, unknown = red
+				residence->addInternalBuilding( b );
+				buildingsInfos.push_back( BuildingInfo( b, internalMethod.GetLineOfCodes() ) );
+			}
+
+			for ( const auto& igif : ig.interfaceMethods ) {
+				auto& interfaceMethod = class_.methods[igif.callingMethodIndex];
+				QList<City::Floor*> floors;
+				for ( const auto& param : interfaceMethod.parameters ) {
+					floors << new City::Floor();
+				}
+				auto b = new City::Building( interfaceMethod.name, getMethodInfo( interfaceMethod ), floors );
+				b->setBaseSize( 1.0 );
+				b->setTriangleRoof( interfaceMethod.HasResult() );
+				b->setStateSet( new osg::StateSet() );
+				b->getStateSet()->setAttribute( green );
+				residence->addInterfaceBuilding( b );
+				buildingsInfos.push_back( BuildingInfo( b, interfaceMethod.GetLineOfCodes() ) );
+			}
+
+			for ( const auto& igc : ig.constructors ) {
+				auto& constructorMethod = class_.methods[igc.callingMethodIndex];
+				QList<City::Floor*> floors;
+				for ( const auto& param : constructorMethod.parameters ) {
+					floors << new City::Floor();
+				}
+				auto b = new City::Building( constructorMethod.name, getMethodInfo( constructorMethod ), floors );
+				b->setBaseSize( 1.0 );
+				b->setTriangleRoof( constructorMethod.HasResult() );
+				b->setStateSet( new osg::StateSet() );
+				b->getStateSet()->setAttribute( green );
+				residence->addInterfaceBuilding( b );
+				buildingsInfos.push_back( BuildingInfo( b, constructorMethod.GetLineOfCodes() ) );
+			}
+
+			residence->refresh();
+
+			progressClassCounter++;
+			const uint progressValue = ( uint )roundf( ( float )progressClassCounter * progressCoef );
+			if ( progressValue != lastProgressValue ) {
+				AppCore::Core::getInstance()->messageWindows->setProgressBarValue( progressValue );
+				lastProgressValue = progressValue;
+			}
+		}
+	}
+
+	// building height optimization
+	auto minMaxLocIt = std::minmax_element( buildingsInfos.begin(), buildingsInfos.end(), []( const BuildingInfo& a, const BuildingInfo& b ) {
+		return a.loc < b.loc;
+	} );
+	auto minHeightIt = std::max_element( buildingsInfos.begin(), buildingsInfos.end(), []( const BuildingInfo& a, const BuildingInfo& b ) {
+		return a.building->getMinHeight() < b.building->getMinHeight();
+	} );
+	const float minHeight = minHeightIt->building->getMinHeight();
+	const float maxHeight = minHeight * MIN_MAX_BUILDING_HEIGHT_RATIO;
+	const uint minLoc = minMaxLocIt.first->loc;
+	const uint maxLoc = minMaxLocIt.second->loc;
+	for ( auto& bi : buildingsInfos ) {
+		const float buildingHeight = minHeight + ( ( float )( bi.loc - minLoc ) / ( float )( maxLoc - minLoc ) ) * ( maxHeight - minHeight );
+		bi.building->setHeight( buildingHeight );
+		bi.building->refresh();
+	}
+
+	viewerWidget->getCameraManipulator()->home();
+
+	AppCore::Core::getInstance()->messageWindows->closeProgressBar();
+
+	// robime zakladnu proceduru pre restartovanie layoutu
+	AppCore::Core::getInstance()->restartLayout();
+
+	//treba overit ci funguje
+	if ( isPlaying ) {
+		layout->play();
+		coreGraph->setNodesFreezed( false );
+	}
+
+	nodeTypeComboBox->setCurrentIndex( 2 ); // residence
+	edgeTypeComboBox->setCurrentIndex( 2 ); // line
 }
 
 void CoreWindow::saveGraphToDB()
@@ -2164,6 +2473,11 @@ void CoreWindow::labelOnOff( bool )
 	}
 }
 
+void CoreWindow::labelForResidenceCheckStateChanged( int state )
+{
+	coreGraph->showLabelsForResidence( state == Qt::CheckState::Checked );
+}
+
 void CoreWindow::sliderValueChanged( int value )
 {
 	layout->setAlphaValue( static_cast<float>( value ) * 0.001f );
@@ -2277,6 +2591,9 @@ void CoreWindow::nodeTypeComboBoxChanged( int index )
 			break;
 		case 1:
 			coreGraph->setNodeVisual( Data::Node::INDEX_SPHERE );
+			break;
+		case 2:
+			coreGraph->setNodeVisual( Data::Node::INDEX_RESIDENCE );
 			break;
 		default:
 			qDebug() << "CoreWindow:nodeTypeComboBoxChanged do not suported index";

@@ -695,6 +695,8 @@ file( GLOB_RECURSE SRC_CLUSTERING	"src/Clustering/*.cpp")
 file( GLOB SRC_REPOSITORY		"src/Repository/Git/*.cpp" )
 file( GLOB_RECURSE SRC_GITLIB   "src/Repository/Git/GitLib/*.cpp" )
 file( GLOB_RECURSE SRC_SPECIALMATRIX   "src/SpecialMatrix/*.cpp" )
+file( GLOB_RECURSE SRC_CITY		"src/City/*.cpp" )
+file( GLOB_RECURSE SRC_SHAPES	"src/Shapes/*.cpp" )
 
 # OpenCV
 file( GLOB_RECURSE SRC_OPENCV	"src/OpenCV/*.cpp" )
@@ -763,6 +765,8 @@ set( SRC
 	${SRC_UTIL}
 	${SRC_REPOSITORY}
 	${SRC_SPECIALMATRIX}
+	${SRC_CITY}
+	${SRC_SHAPES}
 )
 
 if( OpenCV_FOUND )
@@ -824,6 +828,8 @@ file( GLOB_RECURSE HEADER_CLUSTERING	"include/Clustering/*.h")
 file( GLOB HEADER_REPOSITORY		"include/Repository/Git/*.h" )
 file( GLOB_RECURSE HEADER_GITLIB		"include/Repository/Git/GitLib/*.h" )
 file( GLOB_RECURSE HEADER_SPECIALMATRIX		"include/SpecialMatrix/*.h" )
+file( GLOB_RECURSE HEADER_CITY		"include/City/*.h" )
+file( GLOB_RECURSE HEADER_SHAPES	"include/Shapes/*.h" )
 
 # OpenCV
 file( GLOB_RECURSE HEADER_OPENCV	"include/OpenCV/*.h" )
@@ -895,6 +901,8 @@ set( INCL
 	${HEADER_UTIL}
 	${HEADER_REPOSITORY}
 	${HEADER_SPECIALMATRIX}
+	${HEADER_CITY}
+	${HEADER_SHAPES}
 )
 
 if( OpenCV_FOUND )
@@ -944,6 +952,8 @@ source_group( \\src\\LuaInterface "^.*LuaInterface/.*$")
 source_group( \\src\\LuaTypes "^.*LuaTypes/.*$")
 source_group( \\src\\Git "^.*Git/.*$" )
 source_group( \\src\\SpecialMatrix "^.*SpecialMatrix/.*$" )
+source_group( \\src\\City "^.*City/.*$" )
+source_group( \\src\\Shapes "^.*Shapes/.*$" )
 
 # Group header files
 source_group( \\headers\\Application "^.*Application/.*h$")
@@ -964,6 +974,8 @@ source_group( \\headers\\LuaInterface "^.*LuaInterface/.*h$")
 source_group( \\headers\\LuaTypes "^.*LuaTypes/.*h$")
 source_group( \\headers\\Git "^.*Git/.*h$" )
 source_group( \\headers\\SpecialMatrix "^.*SpecialMatrix/.*h$" )
+source_group( \\headers\\City "^.*City/.*h$" )
+source_group( \\headers\\Shapes "^.*Shapes/.*h$" )
 
 if( OpenCV_FOUND )
 	source_group( \\src\\QOpenCV "^.*QOpenCV/.*$" )
@@ -1014,6 +1026,9 @@ target_include_directories( qtcolorpicker SYSTEM PUBLIC ${CMAKE_CURRENT_SOURCE_D
 if ( Qt5Core_FOUND )
 	qt5_use_modules( qtcolorpicker Core Widgets )
 endif()
+
+include_directories( SYSTEM dependencies/parserlib/source )
+add_library( parserlib STATIC dependencies/parserlib/source/ast.cpp dependencies/parserlib/source/parser.cpp )
 
 # ---------------------------------------------------------------
 # Build modules as libraries
@@ -1128,6 +1143,7 @@ target_link_libraries( ${3DSOFTVIZ_NAME}
 	libnoise
 	osgModeling
 	qtcolorpicker
+	parserlib
 	${OPENSCENEGRAPH_LIBRARIES}
 	${OSGVIEWER_LIBRARIES}
 	${OSGQT_LIBRARIES}

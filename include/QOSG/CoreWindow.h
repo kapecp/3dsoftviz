@@ -118,7 +118,18 @@ public slots:
 
 	void changeEvolutionVisualization( int  state );
 
+	/**
+		            *  \fn public  showDialogLoadJavaProject
+		            *  \brief Show the dialog to load java project
+		            */
+	void showDialogLoadJavaProject();
 	void changeEvolutionFilterOption( int state );
+
+	/**
+		*  \fn public  loadJavaProject
+		*  \brief Load, parse java project, create visualization and make it current
+		*/
+	void loadJavaProjectAndShow( const QString& projectDir );
 
 	void changeEvolutionFilterSpecificOption( int state );
 
@@ -281,6 +292,8 @@ public slots:
 	            *  \param  checked flag if button is checked
 	            */
 	void labelOnOff( bool checked );
+
+	void labelForResidenceCheckStateChanged( int state );
 
 	/**
 	 * void pauseLayout( )
@@ -779,9 +792,15 @@ private:
 	QAction* loadGraph;
 
 	/**
-		*  QAction * saveLayout
-		*  \brief Pointer to save layout to database
-		*/
+	    *  QAction * loadJavaProject
+	    *  \brief Pointer to dialog to load java project
+	    */
+	QAction* loadJavaProjectAction;
+
+	/**
+	    *  QAction * saveLayout
+	    *  \brief Pointer to save layout to database
+	    */
 	QAction* saveLayout;
 
 	/**
@@ -1243,9 +1262,15 @@ private:
 	QPushButton* label;
 
 	/**
-		*  QSlider * slider
-		*  \brief Pointer to slider
-		*/
+	*  QCheckBox * labelResidence
+	*  \brief Pointer to labelResidence on/off checkbox
+	*/
+	QCheckBox* labelResidence;
+
+	/**
+	    *  QSlider * slider
+	    *  \brief Pointer to slider
+	    */
 	QSlider* slider;
 
 	/**
