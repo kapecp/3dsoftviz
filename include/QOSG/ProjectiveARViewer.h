@@ -88,7 +88,7 @@ public:
 	 * @param projectorFOV - projector field of view
 	 * @return Pointer to the StateSet.
 	 */
-	osg::StateSet* createProjectorState( osg::Texture2D* texture, osg::Vec3 projectorPos, osg::Vec3 projectorDirection, float projectorFOV );
+	osg::StateSet* createProjectorState( osg::Texture2D* texture, osg::Vec3d projectorPos, osg::Vec3d projectorDirection, double projectorFOV );
 	/**
 	 * @author Viktor Kostan
 	 * @brief createBase - Creates a geometry with two perpendicular quads and two polygons.
@@ -118,7 +118,7 @@ public:
 	{
 		return viewerDir;
 	}
-	float getViewerFOV()
+	double getViewerFOV()
 	{
 		return viewerFOV;
 	}
@@ -130,7 +130,7 @@ public:
 	{
 		return projectorDir;
 	}
-	float getProjectorFOV()
+	double getProjectorFOV()
 	{
 		return projectorFOV;
 	}
@@ -138,7 +138,7 @@ public:
 	{
 		return graphPos;
 	}
-	float getGraphRadius()
+	double getGraphRadius()
 	{
 		return graphRadius;
 	}
@@ -147,35 +147,35 @@ public:
 		return useGraph;
 	}
 	// setters
-	void setViewerPos( float x, float y, float z )
+	void setViewerPos( double x, double y, double z )
 	{
 		viewerPos.set( x, y, z );
 	}
-	void setViewerDir( float x, float y, float z )
+	void setViewerDir( double x, double y, double z )
 	{
 		viewerDir.set( x, y, z );
 	}
-	void setViewerFOV( float fov )
+	void setViewerFOV( double fov )
 	{
 		viewerFOV = fov;
 	}
-	void setProjectorPos( float x, float y, float z )
+	void setProjectorPos( double x, double y, double z )
 	{
 		projectorPos.set( x, y, z );
 	}
-	void setProjectorDir( float x, float y, float z )
+	void setProjectorDir( double x, double y, double z )
 	{
 		projectorDir.set( x, y, z );
 	}
-	void setProjectorFOV( float fov )
+	void setProjectorFOV( double fov )
 	{
 		projectorFOV = fov;
 	}
-	void setGraphPos( float x, float y, float z )
+	void setGraphPos( double x, double y, double z )
 	{
 		graphPos.set( x, y, z );
 	}
-	void setGraphRadius( float radius )
+	void setGraphRadius( double radius )
 	{
 		graphRadius = radius;
 	}
@@ -189,7 +189,7 @@ public slots:
 	  * @author Autor: Viktor Košťan
 	  * @brief setViewerPosByFaceDetection Sets viewer's position based on [x,y] coords of eye and distance from camera
 	  */
-	void setViewerPosByFaceDetection( float x, float y, float distance );
+	void setViewerPosByFaceDetection( double x, double y, double distance );
 
 protected:
 
@@ -201,15 +201,15 @@ protected:
 	QTimer _timer;
 
 	/**
-	    *  Vwr::CoreGraph * coreGraph
-	    *  \brief core graph
-	    */
+		*  Vwr::CoreGraph * coreGraph
+		*  \brief core graph
+		*/
 	Vwr::CoreGraph* coreGraph;
 
 	/**
-	    *  osgViewer::Viewer * viewerPerspective
-	    *  \brief source viewer
-	    */
+		*  osgViewer::Viewer * viewerPerspective
+		*  \brief source viewer
+		*/
 	osgViewer::Viewer* viewerPerspective;
 
 	/**
@@ -223,7 +223,7 @@ protected:
 
 private:
 
-	osg::Vec3 up = osg::Vec3( 0.0f, 1.0f, 0.0f );
+	osg::Vec3d up = osg::Vec3d( 0.0, 1.0, 0.0 );
 	QOSG::ProjectiveARWindow* window;
 
 	osg::Camera* renderCamera;
@@ -241,16 +241,16 @@ private:
 		*/
 	Util::ApplicationConfig* appConf;
 
-	osg::Vec3 projectorPos;
-	osg::Vec3 projectorDir;
-	float projectorFOV;
+	osg::Vec3d projectorPos;
+	osg::Vec3d projectorDir;
+	double projectorFOV;
 
-	osg::Vec3 viewerPos;
-	osg::Vec3 viewerDir;
-	float viewerFOV;
+	osg::Vec3d viewerPos;
+	osg::Vec3d viewerDir;
+	double viewerFOV;
 
-	osg::Vec3 graphPos;
-	float graphRadius;
+	osg::Vec3d graphPos;
+	double graphRadius;
 
 	// option to use graphPos and graphRadius, to update render camera
 	// else use viewerPerspective's camera
@@ -264,7 +264,7 @@ private:
 		*  \brief function that creates projector scene, based on viewerPos, viewerDir, viewerFOV and viewerPerspective
 		*/
 	osg::Group* createProjectorScene();
-	osg::Matrixd createFrustumForSphere( float radius, float distance );
+	osg::Matrixd createFrustumForSphere( double radius, double distance );
 };
 }
 

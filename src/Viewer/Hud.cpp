@@ -43,7 +43,7 @@ Hud::Hud()
 void Hud::setText( const QString& text )
 {
 	if ( !text.isEmpty() ) {
-		this->text->setPosition( osg::Vec3( 10.0f, ( float )size.height() - 20.0f, 1.0f ) );
+		this->text->setPosition( osg::Vec3( 10.0f, static_cast<float>( size.height() ) - 20.0f, 1.0f ) );
 	}
 	this->text->setText( text.toStdString() );
 }
@@ -51,7 +51,7 @@ void Hud::setText( const QString& text )
 void Hud::setSize( const QSize& size )
 {
 	this->size = size;
-	text->setPosition( osg::Vec3( 10.0f, ( float )size.height() - 20.0f, 1.0f ) );
+	text->setPosition( osg::Vec3( 10.0f, static_cast<float>( size.height() ) - 20.0f, 1.0f ) );
 }
 
 void Hud::setWindowSize( const QSize& size )
@@ -68,9 +68,9 @@ void Hud::refresh()
 
 	osg::Vec3Array* hudVertices = new osg::Vec3Array;
 	hudVertices->push_back( osg::Vec3( 0.0f, 0.0f, 0.8f ) );
-	hudVertices->push_back( osg::Vec3( ( float )size.width(), 0.0f, 0.8f ) );
-	hudVertices->push_back( osg::Vec3( ( float )size.width(), ( float )size.height(), 0.8f ) );
-	hudVertices->push_back( osg::Vec3( 0.0f, ( float )size.height(), 0.8f ) );
+	hudVertices->push_back( osg::Vec3( static_cast<float>( size.width() ), 0.0f, 0.8f ) );
+	hudVertices->push_back( osg::Vec3( static_cast<float>( size.width() ), static_cast<float>( size.height() ), 0.8f ) );
+	hudVertices->push_back( osg::Vec3( 0.0f, static_cast<float>( size.height() ), 0.8f ) );
 
 	osg::Vec4Array* hudColors = new osg::Vec4Array;
 	hudColors->push_back( osg::Vec4( 0.8f, 0.8f, 0.8f, 0.5f ) );

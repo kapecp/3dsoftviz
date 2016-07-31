@@ -106,7 +106,7 @@ Vwr::CameraManipulator* QOSG::ViewerQT::getCameraManipulator() const
 
 void QOSG::ViewerQT::reloadConfig()
 {
-	manipulator->setMaxSpeed( appConf->getValue( "Viewer.CameraManipulator.MaxSpeed" ).toFloat() );
+	manipulator->setMaxSpeed( appConf->getValue( "Viewer.CameraManipulator.MaxSpeed" ).toDouble() );
 	manipulator->setTrackballSize( appConf->getValue( "Viewer.CameraManipulator.Sensitivity" ).toFloat() );
 
 	osg::DisplaySettings::instance()->setStereo( ( appConf->getValue( "Viewer.Display.Stereoscopic" ).toInt() ? true : false ) );

@@ -203,7 +203,7 @@ bool PickHandler::handleScroll( const osgGA::GUIEventAdapter& ea, GUIActionAdapt
 					}
 
 					if ( isXPressed ) {
-						shapeGetter->move( shapeGetter->getDistanceX() / 5 * moveLength,0,0 );
+						shapeGetter->move( shapeGetter->getDistanceX() / 5.0 * moveLength,0,0 );
 					}
 					else if ( isYPressed ) {
 						shapeGetter->move( 0,shapeGetter->getDistanceY() / 5 * moveLength,0 );
@@ -712,7 +712,7 @@ bool PickHandler::doNodePick( osg::NodePath nodePath )
 		}
 	}
 
-	City::Building* b;
+	City::Building* b = nullptr;
 	for ( unsigned int i = 0; i < nodePath.size(); i++ ) {
 		b = dynamic_cast<City::Building*>( nodePath[i] );
 		if ( b != NULL ) {

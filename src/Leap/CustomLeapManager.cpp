@@ -130,7 +130,7 @@ void Leap::CustomLeapManager::updateHands( float lx,float ly, float lz, float rx
 	if ( this->handsGroup != NULL ) {
 		LOG( INFO ) << "updateHands vals left: "<< lx/200.0f<< " " << ly/200.0f<< " " << lz/200.0f;
 		LOG( INFO ) << "updateHands vals right: "<< rx/200.0f<< " " << ry/200.0f<< " " << rz/200.0f;
-		transformLeft->setMatrix( osg::Matrix::translate( lx/100.0f,-lz/100.0f,ly/100.0f ) );
-		transformRight->setMatrix( osg::Matrix::translate( rx/100.0f,-rz/100.0f,ry/100.0f ) );
+		transformLeft->setMatrix( osg::Matrix::translate( static_cast<double>( lx )/100.0,static_cast<double>( -lz )/100.0,static_cast<double>( ly )/100.0 ) );
+		transformRight->setMatrix( osg::Matrix::translate( static_cast<double>( rx )/100.0,static_cast<double>( -rz )/100.0,static_cast<double>( ry )/100.0 ) );
 	}
 }

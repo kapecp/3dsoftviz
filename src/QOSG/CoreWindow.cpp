@@ -1514,9 +1514,9 @@ QString getMethodInfo( const Importer::Parsing::Method& method )
 	return info;
 }
 
-uint GetCountOfClasses( const Importer::Parsing::SoftTree& softTree )
+int GetCountOfClasses( const Importer::Parsing::SoftTree& softTree )
 {
-	uint classCount = 0;
+	int classCount = 0;
 	foreach ( auto n, softTree.namespaces ) {
 		classCount += n.classes.count();
 	}
@@ -1539,9 +1539,9 @@ void CoreWindow::loadJavaProjectAndShow( const QString& projectDir )
 	}
 
 	// necessary for progressbar
-	const float progressCoef = 100.0f / ( float )GetCountOfClasses( softTree );
+	const float progressCoef = 100.0f / static_cast<float>( GetCountOfClasses( softTree ) );
 	uint progressClassCounter = 0;
-	uint lastProgressValue = 0;
+	int lastProgressValue = 0;
 
 	auto manager = Manager::GraphManager::getInstance();
 	auto resMgr = Manager::ResourceManager::getInstance();
@@ -1675,7 +1675,7 @@ void CoreWindow::loadJavaProjectAndShow( const QString& projectDir )
 			residence->refresh();
 
 			progressClassCounter++;
-			const uint progressValue = ( uint )roundf( ( float )progressClassCounter * progressCoef );
+			const int progressValue = static_cast<int>( roundf( static_cast<float>( progressClassCounter ) * progressCoef ) );
 			if ( progressValue != lastProgressValue ) {
 				AppCore::Core::getInstance()->messageWindows->setProgressBarValue( progressValue );
 				lastProgressValue = progressValue;
@@ -1695,7 +1695,7 @@ void CoreWindow::loadJavaProjectAndShow( const QString& projectDir )
 	const uint minLoc = minMaxLocIt.first->loc;
 	const uint maxLoc = minMaxLocIt.second->loc;
 	for ( auto& bi : buildingsInfos ) {
-		const float buildingHeight = minHeight + ( ( float )( bi.loc - minLoc ) / ( float )( maxLoc - minLoc ) ) * ( maxHeight - minHeight );
+		const float buildingHeight = minHeight + ( static_cast<float>( bi.loc - minLoc ) / static_cast<float>( maxLoc - minLoc ) ) * ( maxHeight - minHeight );
 		bi.building->setHeight( buildingHeight );
 		bi.building->refresh();
 	}

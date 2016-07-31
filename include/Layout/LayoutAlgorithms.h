@@ -18,7 +18,7 @@ public:
 namespace Layout {
 struct ElementLayout {
 	osg::Vec3 position;
-	float yawRotation;
+	double yawRotation;
 };
 
 class LayoutAlgorithms
@@ -33,7 +33,7 @@ public:
 	*  \return layouts positions for count elements
 	*  \return aroundRegion region dimension to cover all elements with outside spacing
 	*/
-	static void layoutInsideRegion( const osg::BoundingBox& elementDimension, uint elementCount, float groundTopPosition, float spacing, QList<osg::Vec3>* layouts, osg::BoundingBox* aroundRegion = nullptr );
+	static void layoutInsideRegion( const osg::BoundingBox& elementDimension, int elementCount, float groundTopPosition, float spacing, QList<osg::Vec3>* layouts, osg::BoundingBox* aroundRegion = nullptr );
 
 	/**
 	*  \fn layoutAroundRegion
@@ -44,6 +44,6 @@ public:
 	*  \return layouts positions for count elements
 	*  \return aroundRegion region dimension to cover all elements with outside spacing
 	*/
-	static void layoutAroundRegion( const osg::BoundingBox& elementDimension, uint elementCount, const osg::BoundingBox& region, float spacing, QList<ElementLayout>* layouts, osg::BoundingBox* aroundRegion = nullptr );
+	static void layoutAroundRegion( const osg::BoundingBox& elementDimension, int elementCount, const osg::BoundingBox& region, float spacing, QList<ElementLayout>* layouts, osg::BoundingBox* aroundRegion = nullptr );
 };
 }

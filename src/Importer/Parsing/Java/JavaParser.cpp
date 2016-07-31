@@ -26,8 +26,9 @@ void ProcessParseResult( const vector<CompileResult>& compileResults, SoftTree& 
 
 JavaParser::JavaParser()
 {
+#if defined(_WIN32) || defined(WIN32) || defined(WIN64)
 	#pragma region connect rules <-> ast
-
+#endif
 	CONNECT_RULE_AST( NodeExpressionBracketBefore, expressionBracketBefore );
 	CONNECT_RULE_AST( NodeExpressionBracketAfter, expressionBracketAfter );
 	CONNECT_RULE_AST( NodeExpressionBracketWithTextAfter, expressionBracketWithTextAfter );
@@ -119,7 +120,9 @@ JavaParser::JavaParser()
 	CONNECT_RULE_AST( NodeTypeDeclaration, typeDeclaration );
 	CONNECT_RULE_AST( SourceFileCompilationUnit, compilationUnit );
 
+#if defined(_WIN32) || defined(WIN32) || defined(WIN64)
 	#pragma endregion
+#endif
 }
 
 bool JavaParser::Parse( const QString& javaProjectDirectory, SoftTree& softTree,  QString& errorMessage )

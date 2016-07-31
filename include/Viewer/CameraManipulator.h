@@ -231,7 +231,7 @@ public:
 		*  \brief Sets maximum camera speed
 		*  \param     speed    maximum speed
 		*/
-	void setMaxSpeed( float speed )
+	void setMaxSpeed( double speed )
 	{
 		this->maxSpeed = speed;
 	}
@@ -241,7 +241,7 @@ public:
 		*  \brief Returns maximum camera speed
 		*  \return float maximum speed
 		*/
-	float getMaxSpeed()
+	double getMaxSpeed()
 	{
 		return maxSpeed;
 	}
@@ -491,7 +491,7 @@ protected:
 		*  double maxSpeed
 		*  \brief maximum speed
 		*/
-	float    maxSpeed;
+	double    maxSpeed;
 
 	/**
 		*  double forwardSpeed
@@ -871,7 +871,7 @@ private:
 		 * @param y coordinate of head on vertical axis
 		 * @param distance of head from camera
 		 */
-	void updateProjectionAccordingFace( const float x, const float y, const double distance );
+	void updateProjectionAccordingFace( const double x, const double y, const double distance );
 
 
 	/**

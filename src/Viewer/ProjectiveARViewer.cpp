@@ -26,7 +26,7 @@
 #include <math.h>
 
 // used code from http://jotschi.de/2009/05/31/projective-textures-with-openscenegraph/
-osg::StateSet* QOSG::ProjectiveARViewer::createProjectorState( osg::Texture2D* texture, osg::Vec3 projectorPos, osg::Vec3 projectorDirection, float projectorFOV )
+osg::StateSet* QOSG::ProjectiveARViewer::createProjectorState( osg::Texture2D* texture, osg::Vec3d projectorPos, osg::Vec3d projectorDirection, double projectorFOV )
 {
 
 	osg::StateSet* stateset = new osg::StateSet;
@@ -93,7 +93,7 @@ osg::StateSet* QOSG::ProjectiveARViewer::createProjectorState( osg::Texture2D* t
 
 	/* 4. set Texture matrix*/
 	osg::TexMat* texMat = new osg::TexMat;
-	osg::Matrix mat;
+	osg::Matrixd mat;
 	mat = osg::Matrixd::lookAt( projectorPos, projectorPos + projectorDirection, up )
 		  * osg::Matrixd::perspective( projectorFOV, 1.0, 0.1, SCENE_MAX_SIZE );
 	texMat->setMatrix( mat );
@@ -121,15 +121,15 @@ osg::Geode* QOSG::ProjectiveARViewer::createBase()
 	vertices->push_back( osg::Vec3( -0.75, 1.00, 0 ) ); // lt   screen
 
 	//right side
-	vertices->push_back( osg::Vec3( 0.77, -1.0, 0.08 ) );   // fb   rack
-	vertices->push_back( osg::Vec3( 0.77, -0.98, 0.08 ) ); // fm   rack
-	vertices->push_back( osg::Vec3( 0.77, -0.935, 0.015 ) ); // ft   rack
-	vertices->push_back( osg::Vec3( 0.77, -1.00, 0.015 ) ); // sb   rack
+	vertices->push_back( osg::Vec3( 0.77f, -1.0f, 0.08f ) );   // fb   rack
+	vertices->push_back( osg::Vec3( 0.77f, -0.98f, 0.08f ) ); // fm   rack
+	vertices->push_back( osg::Vec3( 0.77f, -0.935f, 0.015f ) ); // ft   rack
+	vertices->push_back( osg::Vec3( 0.77f, -1.00f, 0.015f ) ); // sb   rack
 	//left side
-	vertices->push_back( osg::Vec3( -0.77, -1.0, 0.08 ) );   // fb   rack
-	vertices->push_back( osg::Vec3( -0.77, -0.98, 0.08 ) ); // fm   rack
-	vertices->push_back( osg::Vec3( -0.77, -0.935, 0.015 ) ); // ft   rack
-	vertices->push_back( osg::Vec3( -0.77, -1.00, 0.015 ) ); // sb   rack
+	vertices->push_back( osg::Vec3( -0.77f, -1.0f, 0.08f ) );   // fb   rack
+	vertices->push_back( osg::Vec3( -0.77f, -0.98f, 0.08f ) ); // fm   rack
+	vertices->push_back( osg::Vec3( -0.77f, -0.935f, 0.015f ) ); // ft   rack
+	vertices->push_back( osg::Vec3( -0.77f, -1.00f, 0.015f ) ); // sb   rack
 	baseGeometry->setVertexArray( vertices );
 
 	// floor
@@ -192,8 +192,8 @@ osg::Geode* QOSG::ProjectiveARViewer::createBase()
 osg::Group* QOSG::ProjectiveARViewer::createProjectorScene()
 {
 
-	unsigned int tex_width = 2048;
-	unsigned int tex_height = 2048;
+	int tex_width = 2048;
+	int tex_height = 2048;
 	unsigned int samples = 0;
 	unsigned int colorSamples = 0;
 
@@ -237,12 +237,12 @@ osg::Group* QOSG::ProjectiveARViewer::createProjectorScene()
 
 		// setting View Matrix
 		osg::Vec3d viewerRelPos( viewerPos - graphPos );
-		osg::Vec3d renderCameraRelPos( viewerRelPos * ( bs.radius() / graphRadius ) );
+		osg::Vec3d renderCameraRelPos( viewerRelPos * ( static_cast<double>( bs.radius() ) / graphRadius ) );
 		renderCamera->setViewMatrixAsLookAt( renderCameraRelPos + bs.center(), bs.center(), osg::Vec3( 0.0f, 1.0f, 0.0f ) );
 
 		// setting Projection Matrix (compute frustum parameters)
-		double dist = ( double )( renderCameraRelPos ).length();
-		renderCamera->setProjectionMatrix( createFrustumForSphere( bs.radius(), dist ) );
+		double dist = renderCameraRelPos.length();
+		renderCamera->setProjectionMatrix( createFrustumForSphere( static_cast<double>( bs.radius() ) , dist ) );
 	}
 	else {
 		renderCamera->setProjectionMatrixAsPerspective( viewerFOV, 1.0, zNear, zFar );
@@ -313,7 +313,7 @@ QOSG::ProjectiveARViewer::ProjectiveARViewer( QWidget* parent , const char* name
 	projectorFOV = 30;
 
 	getCamera()->setViewport( new osg::Viewport( 0,0,width(),height() ) );
-	getCamera()->setProjectionMatrixAsPerspective( projectorFOV, static_cast<double>( width() )/static_cast<double>( height() ), 0.01, appConf->getValue( "Viewer.Display.ViewDistance" ).toFloat() );
+	getCamera()->setProjectionMatrixAsPerspective( projectorFOV, static_cast<double>( width() )/static_cast<double>( height() ), 0.01, appConf->getValue( "Viewer.Display.ViewDistance" ).toDouble() );
 	getCamera()->setGraphicsContext( getGraphicsWindow() );
 	getCamera()->setComputeNearFarMode( osg::CullSettings::DO_NOT_COMPUTE_NEAR_FAR );
 
@@ -354,12 +354,12 @@ void QOSG::ProjectiveARViewer::updateRenderCamera()
 
 		// setting View Matrix
 		osg::Vec3d viewerRelPos( viewerPos - graphPos );
-		osg::Vec3d renderCameraRelPos( viewerRelPos * ( bs.radius() / graphRadius ) );
+		osg::Vec3d renderCameraRelPos( viewerRelPos * ( static_cast<double>( bs.radius() ) / graphRadius ) );
 		renderCamera->setViewMatrixAsLookAt( renderCameraRelPos + bs.center(), bs.center(), up );
 
 		// setting Projection Matrix (compute frustum parameters)
-		double dist = ( double )( renderCameraRelPos ).length();
-		renderCamera->setProjectionMatrix( createFrustumForSphere( bs.radius(), dist ) );
+		double dist = renderCameraRelPos.length();
+		renderCamera->setProjectionMatrix( createFrustumForSphere( static_cast<double>( bs.radius() ), dist ) );
 	}
 	else {
 		renderCamera->setProjectionMatrixAsPerspective( viewerFOV, 1.0, zNear, zFar );
@@ -370,10 +370,10 @@ void QOSG::ProjectiveARViewer::updateRenderCamera()
 void QOSG::ProjectiveARViewer::updateViewer()
 {
 	osg::TexMat* texMat = dynamic_cast<osg::TexMat*>( base->getStateSet()->getTextureAttribute( 1,osg::StateAttribute::TEXMAT ) );
-	osg::Matrix mat;
+	osg::Matrixd mat;
 
 	if ( useGraph ) {
-		double dist = ( double )( viewerPos - graphPos ).length();
+		double dist = ( viewerPos - graphPos ).length();
 		mat = osg::Matrixd::lookAt( viewerPos, graphPos, up )
 			  * createFrustumForSphere( graphRadius, dist );
 	}
@@ -398,7 +398,7 @@ void QOSG::ProjectiveARViewer::updateScene()
 }
 
 
-void QOSG::ProjectiveARViewer::setViewerPosByFaceDetection( float x, float y, float z )
+void QOSG::ProjectiveARViewer::setViewerPosByFaceDetection( double x, double y, double z )
 {
 	//qDebug() << "[ProjectiveARViewer::setViewerPosByFaceDetection] Passed arguments: x=\"" << x << "\", y=\"" << y << "\", z=\"" << z << "\"";
 	viewerPos = osg::Vec3d( x,y,z );
@@ -406,7 +406,7 @@ void QOSG::ProjectiveARViewer::setViewerPosByFaceDetection( float x, float y, fl
 	updateScene();
 }
 
-osg::Matrixd QOSG::ProjectiveARViewer::createFrustumForSphere( float radius, float distance )
+osg::Matrixd QOSG::ProjectiveARViewer::createFrustumForSphere( double radius, double distance )
 {
 	// 0.1(m) is a distance where the sphere will start to disappear
 	double zNear = ( distance - radius > 0.1 ) ? distance - radius : 0.1;

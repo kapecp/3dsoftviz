@@ -119,9 +119,9 @@ public slots:
 	void changeEvolutionVisualization( int  state );
 
 	/**
-		            *  \fn public  showDialogLoadJavaProject
-		            *  \brief Show the dialog to load java project
-		            */
+					*  \fn public  showDialogLoadJavaProject
+					*  \brief Show the dialog to load java project
+					*/
 	void showDialogLoadJavaProject();
 	void changeEvolutionFilterOption( int state );
 
@@ -288,9 +288,9 @@ public slots:
 
 	/**
 				*  \fn public  labelOnOff(bool checked)
-	            *  \brief Show / hide labels
-	            *  \param  checked flag if button is checked
-	            */
+				*  \brief Show / hide labels
+				*  \param  checked flag if button is checked
+				*/
 	void labelOnOff( bool checked );
 
 	void labelForResidenceCheckStateChanged( int state );
@@ -585,10 +585,10 @@ public slots:
 	void startSpeech();
 #endif
 	/**
-	    *@brief create 3d mouse connection
-	    *
-	    *
-	    *
+		*@brief create 3d mouse connection
+		*
+		*
+		*
 	 */
 #ifdef MOUSE3D_FOUND
 	void startMouse3d();
@@ -792,15 +792,15 @@ private:
 	QAction* loadGraph;
 
 	/**
-	    *  QAction * loadJavaProject
-	    *  \brief Pointer to dialog to load java project
-	    */
+		*  QAction * loadJavaProject
+		*  \brief Pointer to dialog to load java project
+		*/
 	QAction* loadJavaProjectAction;
 
 	/**
-	    *  QAction * saveLayout
-	    *  \brief Pointer to save layout to database
-	    */
+		*  QAction * saveLayout
+		*  \brief Pointer to save layout to database
+		*/
 	QAction* saveLayout;
 
 	/**
@@ -872,7 +872,7 @@ private:
 	/**
 		*  QAction * loadSpecialMatrix
 		*  \brief Pointer to load special matrix from file
-	    */
+		*/
 	QAction* loadSpecialMatrix;
 
 	/**
@@ -1268,9 +1268,9 @@ private:
 	QCheckBox* labelResidence;
 
 	/**
-	    *  QSlider * slider
-	    *  \brief Pointer to slider
-	    */
+		*  QSlider * slider
+		*  \brief Pointer to slider
+		*/
 	QSlider* slider;
 
 	/**

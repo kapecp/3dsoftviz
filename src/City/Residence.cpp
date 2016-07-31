@@ -90,7 +90,7 @@ void Residence::refresh()
 	osg::BoundingBox attrRegion;
 	QList<osg::Vec3> attrLayouts;
 	Layout::LayoutAlgorithms::layoutInsideRegion( attributesBuildings.empty() ? zeroBoudingBox : attributesBuildings.first()->getBoundingBox(), attributesBuildings.count(), RESIDENCE_SECTOR_HEIGHT, BUILDING_SPACING, &attrLayouts, &attrRegion );
-	for ( uint i = 0; i < ( uint )attributesBuildings.count(); ++i ) {
+	for ( int i = 0; i < attributesBuildings.count(); ++i ) {
 		auto& b = attributesBuildings[i];
 		b->setPosition( attrLayouts[i] );
 		b->refresh();
@@ -101,7 +101,7 @@ void Residence::refresh()
 	osg::BoundingBox getSetRegion = attrRegion;
 	QList<Layout::ElementLayout> getSetLayouts;
 	Layout::LayoutAlgorithms::layoutAroundRegion( gettersSettersBuildings.empty() ? zeroBoudingBox : gettersSettersBuildings.first()->getBoundingBox(), gettersSettersBuildings.count(), attrRegion, BUILDING_SPACING, &getSetLayouts, &getSetRegion );
-	for ( uint i = 0; i < ( uint )gettersSettersBuildings.count(); ++i ) {
+	for ( int i = 0; i <gettersSettersBuildings.count(); ++i ) {
 		auto& b = gettersSettersBuildings[i];
 		getSetLayouts[i].position.z() += RESIDENCE_SECTOR_HEIGHT;
 		b->setPosition( getSetLayouts[i].position );
@@ -115,7 +115,7 @@ void Residence::refresh()
 	osg::BoundingBox internalRegion = getSetRegion;
 	QList<Layout::ElementLayout> internalLayouts;
 	Layout::LayoutAlgorithms::layoutAroundRegion( internalMethodsBuildings.empty() ? zeroBoudingBox : internalMethodsBuildings.first()->getBoundingBox(), internalMethodsBuildings.count(), getSetRegion, BUILDING_SPACING, &internalLayouts, &internalRegion );
-	for ( uint i = 0; i < ( uint )internalMethodsBuildings.count(); ++i ) {
+	for ( int i = 0; i < internalMethodsBuildings.count(); ++i ) {
 		auto& b = internalMethodsBuildings[i];
 		internalLayouts[i].position.z() += RESIDENCE_SECTOR_HEIGHT;
 		b->setPosition( internalLayouts[i].position );
@@ -129,7 +129,7 @@ void Residence::refresh()
 	osg::BoundingBox interfaceRegion = internalRegion;
 	QList<Layout::ElementLayout> interfaceLayouts;
 	Layout::LayoutAlgorithms::layoutAroundRegion( interfaceMethodsBuildings.empty() ? zeroBoudingBox : interfaceMethodsBuildings.first()->getBoundingBox(), interfaceMethodsBuildings.count(), internalRegion, BUILDING_SPACING, &interfaceLayouts, &interfaceRegion );
-	for ( uint i = 0; i < ( uint )interfaceMethodsBuildings.count(); ++i ) {
+	for ( int i = 0; i < interfaceMethodsBuildings.count(); ++i ) {
 		auto& b = interfaceMethodsBuildings[i];
 		interfaceLayouts[i].position.z() += RESIDENCE_SECTOR_HEIGHT;
 		b->setPosition( interfaceLayouts[i].position );
