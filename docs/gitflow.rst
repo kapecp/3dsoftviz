@@ -1,15 +1,23 @@
 Gitflow metodika
 ================
 
+Forkovanie na GitHub-e
+-------------
+Fork na GitHub-e neprenesie tag-y do forknuteho repozitara, treba ich rucne preniest,
+v novom repozitari:
+ * git remote add povodny-repozitar git@github.com:povodny-repozitar/nazov_repo.git
+ * git fetch povodny-repozitar 'refs/tags/*:refs/tags/*'
+ * git push --tags
+
 Vetvy
 -----
 
  * Master - hlavny projekt
  * Develop - branchnuta z mastra, kazdy sprint ma vlastnu Develop vetvu, na konci sprintu sa mergne spat do mastra
- * Feature - branchnuta z developu, kazdy novy kus funkcionality (task v Jire), ktory sa kodi musi mat vlastnu 
- 
+ * Feature - branchnuta z developu, kazdy novy kus funkcionality (task v Jire), ktory sa kodi musi mat vlastnu
+
 		* Feature vetvu... po dokonceni a validaci kodu sa mergne spat do Developu, NEINTERAGUJE S MASTER VETVOU
-		
+
  * Hotfix - vetva na rychly fix priamo z mastera, merguje sa do mastera AJ developu, navysuje aktualnu verziu
 
 Vzdy mergujeme cez Shell a s prepinacom **--no-ff**
@@ -30,7 +38,7 @@ Po odsuhlaseni Pull requestu sa potom pristupi k mergu.
 Commit messages
 ---------------
 
-v Commit messages pouzivame tagy na zaciatok: 
+v Commit messages pouzivame tagy na zaciatok:
 
  * [FIX] - fixli sme nejaku chybu z minula, bugfix, hotfix a podobne
  * [ADD] - pridali sme novu funkcionalitu, subor, ...
@@ -44,13 +52,13 @@ Za tym velmi strucne (a vystizne) opiseme, ake zmeny sme spravili. Message by ma
 Useful commands
 ---------------
 
- * $ git submodule update --init --recursive     	
-		* update submodulov (dependencies) 
- * $ git checkout -f meno_branch			
+ * $ git submodule update --init --recursive
+		* update submodulov (dependencies)
+ * $ git checkout -f meno_branch
 		* checkout branche aj napriek lokalnym zmenam, budu zahodene
- * $ git status						
+ * $ git status
 		* vypise vsetky vykonane zmeny
- * $ git stash / $ git stash pop				
+ * $ git stash / $ git stash pop
 		* ulozi stav projektu do stashu, z ktoreho sa da potom tento stav pop-nut, dobre na prenos zmien medzi vetvami
 
 tvorba feature branch-u:
