@@ -15,11 +15,30 @@
 #define QWEBVIEWIMAGE
 
 #include <osgWidget/Browser>
-#include <QtWebKit/QWebSettings>
-#include <QtWebKit/QtWebKit>
+
+#include <QtGlobal>
+
+#if QT_VERSION >= 0x050000
+#include <QtWebEngine>
+#include <QWebEngineView>
+#include <QWebEngineSettings>
+
+#define QWEBVIEW QWebEngineView
+#define QWEBPAGE QWebEnginePage
+#define QWEBSETTING QWebEngineSettings
+#else
+#include <QtWebKit>
+#include <QWebSettings>
+
+#define QWEBVIEW QWebView
+#define QWEBPAGE QWebPage
+#define QWEBSETTING QWebSettings
+#endif
 
 #include "OsgQtBrowser/QGraphicsViewAdapter.h"
 #include "LuaTypes/LuaValueMap.h"
+
+#include <QMap>
 
 namespace OsgQtBrowser {
 /**
@@ -58,12 +77,14 @@ public:
 		*/
 	void showTemplate( const std::string& templateName, Lua::LuaValueMap models, const std::string& templateType );
 
+	void showGitTemplate( const std::string& templateName, const std::string& templateType, QMap<QString, int>* changedMetrics );
+
 	/**
 		*  \fn inline public  getQWebView
 		*  \brief
 		*  \return QWebView *
 		*/
-	QWebView* getQWebView()
+	QWEBVIEW* getQWebView()
 	{
 		return _webView;
 	}
@@ -73,7 +94,7 @@ public:
 		*  \brief
 		*  \return QWebPage *
 		*/
-	QWebPage* getQWebPage()
+	QWEBPAGE* getQWebPage()
 	{
 		return _webPage;
 	}
@@ -141,6 +162,8 @@ public:
 		*/
 	virtual bool sendKeyEvent( int key, bool keyDown );
 
+	QString createGitHtml( QMap<QString, int>* changedMetrics );
+
 protected:
 
 
@@ -154,13 +177,13 @@ protected:
 		*  QPointer<QWebView> _webView
 		*  \brief
 		*/
-	QPointer<QWebView>              _webView;
+	QPointer<QWEBVIEW>              _webView;
 
 	/**
 		*  QPointer<QWebPage> _webPage
 		*  \brief
 		*/
-	QPointer<QWebPage>              _webPage;
+	QPointer<QWEBPAGE>              _webPage;
 };
 }
 #endif

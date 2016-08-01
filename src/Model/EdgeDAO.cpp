@@ -166,7 +166,7 @@ bool Model::EdgeDAO::addEdgesColorToDB( QSqlDatabase* conn, QMap<qlonglong, osg:
 	return true;
 }
 
-bool Model::EdgeDAO::addEdgesScaleToDB( QSqlDatabase* conn, QMap<qlonglong, osg::ref_ptr<Data::Edge> >* edges, Data::GraphLayout* layout,  QMap<qlonglong, qlonglong> newMetaEdgeID, bool meta, float defaultScale )
+bool Model::EdgeDAO::addEdgesScaleToDB( QSqlDatabase* conn, QMap<qlonglong, osg::ref_ptr<Data::Edge> >* edges, Data::GraphLayout* layout,  QMap<qlonglong, qlonglong> newMetaEdgeID, bool meta, double defaultScale )
 {
 	QMap< qlonglong,osg::ref_ptr<Data::Edge> >::const_iterator iEdges = edges->constBegin();
 	qlonglong edgeID;
@@ -266,11 +266,11 @@ bool Model::EdgeDAO::checkIfExists( Data::Edge* edge, QSqlDatabase* conn )
 	//overime ci je dana hrana ulozena v databaze
 	if ( conn==NULL || !conn->isOpen() ) { //check if we have connection
 		qDebug() << "[Model::EdgeDAO::checkIfExists] Connection to DB not opened.";
-		return NULL;
+		return ( bool* )NULL;
 	}
 	else if ( edge==NULL ) {
 		qDebug() << "[Model::EdgeDAO::checkIfExists] Invalid parameter - edge is NULL.";
-		return NULL;
+		return ( bool* )NULL;
 	}
 	else if ( edge->getGraph()==NULL ) {
 		qDebug() << "[Model::EdgeDAO::checkIfExists] Edge does not have graph assigned.";
@@ -287,7 +287,7 @@ bool Model::EdgeDAO::checkIfExists( Data::Edge* edge, QSqlDatabase* conn )
 	query->bindValue( ":graph_id", edge->getGraph()->getId() );
 	if ( !query->exec() ) {
 		qDebug() << "[Model::EdgeDAO::checkIfExists] Could not perform query on DB: " << query->lastError().databaseText();
-		return NULL;
+		return ( bool* )NULL;
 	}
 	if ( query->next() && query->value( 0 )==1 ) {
 		return true;
@@ -301,7 +301,7 @@ bool Model::EdgeDAO::removeEdge( Data::Edge* edge, QSqlDatabase* conn )
 {
 	if ( conn==NULL || !conn->isOpen() ) { //check if we have connection
 		qDebug() << "[Model::EdgeDAO::removeEdge] Connection to DB not opened.";
-		return NULL;
+		return ( bool* )NULL;
 	}
 	else if ( edge==NULL ) {
 		qDebug() << "[Model::EdgeDAO::removeEdge] Invalid parameter - edge is NULL.";
@@ -332,7 +332,7 @@ bool Model::EdgeDAO::removeEdges( qlonglong graphID, QSqlDatabase* conn )
 {
 	if ( conn==NULL || !conn->isOpen() ) {
 		qDebug() << "[Model::EdgeDAO::removeEdges] Connection to DB not opened.";
-		return NULL;
+		return ( bool* )NULL;
 	}
 
 	QSqlQuery* query = new QSqlQuery( *conn );
@@ -358,7 +358,7 @@ bool Model::EdgeDAO::removeEdges( qlonglong graphID, qlonglong layoutID, QSqlDat
 {
 	if ( conn==NULL || !conn->isOpen() ) {
 		qDebug() << "[Model::EdgeDAO::removeEdges] Connection to DB not opened.";
-		return NULL;
+		return ( bool* )NULL;
 	}
 
 	//vymazeme layout z databazy

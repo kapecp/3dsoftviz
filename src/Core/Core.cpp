@@ -33,18 +33,14 @@ AppCore::Core::Core( QApplication* app )
 	this->cg = new Vwr::CoreGraph();
 	this->cw = new QOSG::CoreWindow( 0, this->cg, app, this->thr );
 
-	int width =appConf->getNumericValue(
-				   "UI.MainWindow.DefaultWidth",
-				   std::shared_ptr<int> ( new int( 200 ) ),
-				   std::shared_ptr<int> ( NULL ),
-				   1024
-			   );
-	int height= appConf->getNumericValue(
-					"UI.MainWindow.DefaultHeight",
-					std::shared_ptr<int> ( new int( 200 ) ),
-					std::shared_ptr<int> ( NULL ),
-					768
-				);
+	int width =appConf->getValue( "UI.MainWindow.DefaultWidth" ).toInt();
+	int height= appConf->getValue( "UI.MainWindow.DefaultHeight" ).toInt();
+
+	if ( appConf->getValue( "Viewer.Display.Multiview" ).toInt() ) {
+		int screenNum = appConf->getValue( "Viewer.Display.ScreenNum" ).toInt();
+		width = appConf->getValue( "Viewer.Display.MaxScreenWidth" ).toInt() * screenNum;
+		height = appConf->getValue( "Viewer.Display.MaxScreenHeight" ).toInt();
+	}
 
 
 
@@ -62,9 +58,9 @@ void AppCore::Core::restartLayout()
 {
 	// [GrafIT][!] the layout algorithm did not end correctly, what caused more instances
 	// to be running, fixed it here + made modifications in FRAlgorithm to make correct ending possible
-	this->thr->requestEnd();
-	this->thr->wait();
-	delete this->thr;
+	//this->thr->requestEnd();
+	//this->thr->wait();
+	//delete this->thr;
 
 	this->alg->SetGraph( Manager::GraphManager::getInstance()->getActiveGraph() );
 
@@ -73,7 +69,19 @@ void AppCore::Core::restartLayout()
 	this->cw->setLayoutThread( thr );
 	this->cg->reload( Manager::GraphManager::getInstance()->getActiveGraph() );
 	this->thr->start();
-	this->thr->play();
+	//this->thr->play();
+	this->messageWindows->closeLoadingDialog();
+}
+
+void AppCore::Core::restartLayoutForMatrix()
+{
+	this->alg->SetGraph( Manager::GraphManager::getInstance()->getActiveGraph(), true );
+
+	this->alg->SetParameters( 50,0.7f,true );
+	this->thr = new Layout::LayoutThread( this->alg );
+	this->cw->setLayoutThread( thr );
+	this->cg->reload( Manager::GraphManager::getInstance()->getActiveGraph() );
+
 	this->messageWindows->closeLoadingDialog();
 }
 

@@ -110,7 +110,7 @@ public:
 	 * \returns
 	 * true, if point is in rectangle
 	 */
-	static bool isInRect( osg::Vec3d point, float width, float height, float margin );
+	static bool isInRect( osg::Vec3d point, double width, double height, double margin );
 
 
 	/*!

@@ -34,11 +34,11 @@ LoadGraphWindow::LoadGraphWindow( QWidget* parent )
 	graphsTable->setRowCount( 0 );
 	graphsTable->setColumnCount( 5 );
 	graphsTable->setHorizontalHeaderLabels( graphList );
-	graphsTable->horizontalHeader()->setResizeMode( 0, QHeaderView::Interactive );
-	graphsTable->horizontalHeader()->setResizeMode( 1, QHeaderView::Stretch );
-	graphsTable->horizontalHeader()->setResizeMode( 2, QHeaderView::ResizeToContents );
-	graphsTable->horizontalHeader()->setResizeMode( 3, QHeaderView::ResizeToContents );
-	graphsTable->horizontalHeader()->setResizeMode( 4, QHeaderView::ResizeToContents );
+	graphsTable->horizontalHeader()->SETRESIZEMODE( 0, QHeaderView::Interactive );
+	graphsTable->horizontalHeader()->SETRESIZEMODE( 1, QHeaderView::Stretch );
+	graphsTable->horizontalHeader()->SETRESIZEMODE( 2, QHeaderView::ResizeToContents );
+	graphsTable->horizontalHeader()->SETRESIZEMODE( 3, QHeaderView::ResizeToContents );
+	graphsTable->horizontalHeader()->SETRESIZEMODE( 4, QHeaderView::ResizeToContents );
 	graphsTable->verticalHeader()->hide();
 	graphsTable->setShowGrid( true );
 

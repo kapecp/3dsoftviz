@@ -24,14 +24,14 @@ public:
 	     * \params graph    Data::Graph object to fill
 	     * \params camera   camera for edges to face
 	     */
-    GitGraphVisualizer( Data::Graph* graph, osg::ref_ptr<osg::Camera> camera = 0 );
+	GitGraphVisualizer( Data::Graph* graph, osg::ref_ptr<osg::Camera> camera = 0 );
 
 	void visualize();
 
 	void onUpdate();
 
 private:
-    void setUpGraphTypes();
+	void setUpGraphTypes();
 };
 
 }

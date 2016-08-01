@@ -20,7 +20,7 @@
 
 #include <QDebug>
 
-Data::Edge::Edge( qlonglong id, QString name, Data::Graph* graph, osg::ref_ptr<Data::Node> srcNode, osg::ref_ptr<Data::Node> dstNode, Data::Type* type, bool isOriented, float scaling, int pos, osg::ref_ptr<osg::Camera> camera )
+Data::Edge::Edge( qlonglong id, QString name, Data::Graph* graph, osg::ref_ptr<Data::Node> srcNode, osg::ref_ptr<Data::Node> dstNode, Data::Type* type, bool isOriented, double scaling, int pos, osg::ref_ptr<osg::Camera> camera )
 	:OsgEdge( id,name, graph, isOriented, type, scaling, srcNode, dstNode, camera )
 {
 	this->appConf = Util::ApplicationConfig::get();
@@ -30,6 +30,7 @@ Data::Edge::Edge( qlonglong id, QString name, Data::Graph* graph, osg::ref_ptr<D
 	this->insertChild( INDEX_CYLINDER, createEdgeCylinder( NULL ), false );
 	this->insertChild( INDEX_LINE, createEdgeLine( NULL ), false );
 	this->insertChild( INDEX_CURVE, createEdgeCurve( NULL ), false );
+	this->insertChild( INDEX_CURVE2, createEdgeCurve( NULL ), false );
 	setValue( static_cast<unsigned int>( graph->getEdgeVisual() ), true );
 
 	//updateCoordinates(getSrcNode()->getTargetPosition(), getDstNode()->getTargetPosition());
@@ -130,7 +131,7 @@ void Data::Edge::updateCoordinates( osg::Vec3 srcPos, osg::Vec3 dstPos )
 
 	//getting setting for edge scale
 
-	osg::Vec3 x, y;
+	osg::Vec3d x, y;
 	x.set( srcPos );
 	y.set( dstPos );
 
@@ -141,12 +142,12 @@ void Data::Edge::updateCoordinates( osg::Vec3 srcPos, osg::Vec3 dstPos )
 	up.normalize();
 	up *= this->scale;
 
-	osg::Vec3 cor1 = osg::Vec3d( x.x() + up.x(), x.y() + up.y(), x.z() + up.z() );
-	osg::Vec3 cor2 = osg::Vec3d( x.x() - up.x(), x.y() - up.y(), x.z() - up.z() );
-	osg::Vec3 cor3 = osg::Vec3d( y.x() - up.x(), y.y() - up.y(), y.z() - up.z() );
-	osg::Vec3 cor4 = osg::Vec3d( y.x() + up.x(), y.y() + up.y(), y.z() + up.z() );
+	osg::Vec3d cor1 = osg::Vec3d( x.x() + up.x(), x.y() + up.y(), x.z() + up.z() );
+	osg::Vec3d cor2 = osg::Vec3d( x.x() - up.x(), x.y() - up.y(), x.z() - up.z() );
+	osg::Vec3d cor3 = osg::Vec3d( y.x() - up.x(), y.y() - up.y(), y.z() - up.z() );
+	osg::Vec3d cor4 = osg::Vec3d( y.x() + up.x(), y.y() + up.y(), y.z() + up.z() );
 	//center between coordinates (1 and 2), (3 and 4)
-	center->push_back( osg::Vec3( ( x.x() + y.x() )/2, ( x.y() + y.y() )/2, ( x.z() + y.z() )/2 ) );
+	center->push_back( osg::Vec3( static_cast<float>( ( x.x() + y.x() )/2 ), static_cast<float>( ( x.y() + y.y() )/2 ), static_cast<float>( ( x.z() + y.z() )/2 ) ) );
 
 	osgText::FadeText* label = dynamic_cast<osgText::FadeText*>( getChild( INDEX_LABEL )->asGeode()->getDrawable( 0 ) );
 	if ( label != NULL ) {
@@ -160,7 +161,7 @@ void Data::Edge::updateCoordinates( osg::Vec3 srcPos, osg::Vec3 dstPos )
 		coordinates->push_back( cor3 );
 		coordinates->push_back( cor4 );
 
-		float repeatCnt = static_cast<float>( length / ( 2.f * this->scale ) );
+		float repeatCnt = static_cast<float>( length / ( 2.0 * this->scale ) );
 		//init edge-text (label) coordinates
 		edgeTexCoords->push_back( osg::Vec2( 0,1.0f ) );
 		edgeTexCoords->push_back( osg::Vec2( 0,0.0f ) );
@@ -185,7 +186,7 @@ void Data::Edge::updateCoordinates( osg::Vec3 srcPos, osg::Vec3 dstPos )
 			osg::Vec3 diff = ( y - x );
 			// CROSS product (the axis of rotation)
 			rotation->push_back( direction ^ diff );
-			angle = acos( ( direction * diff )/ diff.length() );
+			angle = acos( static_cast<double>( ( direction * diff )/ diff.length() ) );
 
 			( dynamic_cast<osg::Cylinder*>( ( drawableCylinder )->getShape() ) )->setHeight( static_cast<float>( length ) );
 			( dynamic_cast<osg::Cylinder*>( ( drawableCylinder )->getShape() ) )->setRadius( 2 );
@@ -218,6 +219,7 @@ void Data::Edge::updateCoordinates( osg::Vec3 srcPos, osg::Vec3 dstPos )
 			osg::ref_ptr<osg::Vec3Array> points = new osg::Vec3Array;
 
 			if ( !edgePieces.isEmpty() ) {
+				qDebug() << "edgePieces is empty";
 				points->push_back( srcPos );
 				points->push_back( edgePieces.at( 0 )->getDstNode()->getCurrentPosition() );
 				points->push_back( edgePieces.at( 1 )->getDstNode()->getCurrentPosition() );
@@ -229,6 +231,43 @@ void Data::Edge::updateCoordinates( osg::Vec3 srcPos, osg::Vec3 dstPos )
 				points->push_back( cor3 );
 				points->push_back( cor4 );
 			}
+
+			osg::ref_ptr<osgModeling::BezierCurve> bezCurve =
+				new osgModeling::BezierCurve( points, 3 );
+			bezCurve->updateImplementation();
+
+			osg::ref_ptr<osg::Vec3Array> pts = bezCurve->getPath();
+
+			unsigned int profileSize = static_cast<unsigned int>( pts->size() );
+			unsigned int i, j;
+
+
+			for ( i=0; i<profileSize-1; ++i ) {
+				osg::ref_ptr<osg::DrawElementsUInt> bodySeg = new osg::DrawElementsUInt( osg::PrimitiveSet::LINES, 0 );
+				for ( j=0; j<=1; ++j ) {
+					bodySeg->push_back( j+i );
+				}
+				geometryCurve->addPrimitiveSet( bodySeg.get() );
+			}
+
+			geometryCurve->setVertexArray( pts );
+
+			osg::Vec4Array* colorArray =  dynamic_cast<osg::Vec4Array*>( geometryCurve->getColorArray() );
+
+			colorArray->pop_back();
+			colorArray->push_back( getEdgeColor() );
+		}
+	}
+
+	if ( getValue( INDEX_CURVE2 ) ) {
+		osg::Geometry* geometryCurve = getChild( INDEX_CURVE2 )->asGeode()->getDrawable( 0 )->asGeometry();
+		if ( geometryCurve != NULL ) {
+			osg::ref_ptr<osg::Vec3Array> points = new osg::Vec3Array;
+
+			points->push_back( srcPos );
+			points->push_back( srcPos + osg::Vec3f( 0.0f, 0.0f, 50.0f ) );
+			points->push_back( dstPos + osg::Vec3f( 0.0f, 0.0f, 50.0f ) );
+			points->push_back( dstPos );
 
 			osg::ref_ptr<osgModeling::BezierCurve> bezCurve =
 				new osgModeling::BezierCurve( points, 3 );
@@ -285,7 +324,7 @@ osg::ref_ptr<osg::Geode> Data::Edge::createLabel( QString name )
 	label->setColor( osg::Vec4( 1.0f, 1.0f, 1.0f, 1.0f ) );
 
 	osg::ref_ptr<osg::Geode> geode = new osg::Geode;
-    geode->setNodeMask(geode->getNodeMask() & ~0x2);
+	geode->setNodeMask( geode->getNodeMask() & ( unsigned int )~0x2 );
 	geode->addDrawable( label );
 
 	return geode;
@@ -351,7 +390,7 @@ osg::ref_ptr<osg::Geode> Data::Edge::createEdgeQuad( osg::StateSet* bbState )
 	nodeQuad->setStateSet( bbState );
 
 	osg::ref_ptr<osg::Geode> geode = new osg::Geode;
-    geode->setNodeMask(geode->getNodeMask() & ~0x2);
+	geode->setNodeMask( geode->getNodeMask() & ( unsigned int )~0x2 );
 	geode->addDrawable( nodeQuad );
 
 	return geode;
@@ -375,7 +414,7 @@ osg::ref_ptr<osg::Geode> Data::Edge::createEdgeCylinder( osg::StateSet* bbState 
 	nodeCylinder->getStateSet()->setRenderBinDetails( 11, "RenderBin" );
 
 	osg::ref_ptr<osg::Geode> geode = new osg::Geode;
-    geode->setNodeMask(geode->getNodeMask() & ~0x2);
+	geode->setNodeMask( 0x2 );
 	geode->addDrawable( nodeCylinder );
 
 	return geode;
@@ -401,7 +440,7 @@ osg::ref_ptr<osg::Geode> Data::Edge::createEdgeLine( osg::StateSet* bbState )
 	geode->getOrCreateStateSet()->setAttributeAndModes( linewidth,
 			osg::StateAttribute::ON );
 	geode->getOrCreateStateSet()->setMode( GL_LIGHTING, osg::StateAttribute::OFF );
-
+	geode->setNodeMask( 0x2 );
 	geode->addDrawable( nodeLine );
 
 	return geode;
@@ -486,16 +525,18 @@ void Data::Edge::setVisual( int index )
 	setValue( INDEX_CYLINDER, false );
 	setValue( INDEX_LINE, false );
 	setValue( INDEX_CURVE, false );
+	setValue( INDEX_CURVE2, false );
 	setValue( static_cast<unsigned int>( index ), !isInvisible );
 }
 
-void Data::Edge::reloadColor() {
-    osg::Geometry* geometry  = getChild( INDEX_QUAD )->asGeode()->getDrawable( 0 )->asGeometry();
-    if( geometry != nullptr) {
-        osg::Vec4Array* colorArray =  dynamic_cast<osg::Vec4Array*>( geometry->getColorArray() );
-        colorArray->pop_back();
-        colorArray->push_back( this->edgeColor );
-    }
+void Data::Edge::reloadColor()
+{
+	osg::Geometry* geometry  = getChild( INDEX_QUAD )->asGeode()->getDrawable( 0 )->asGeometry();
+	if ( geometry != nullptr ) {
+		osg::Vec4Array* colorArray =  dynamic_cast<osg::Vec4Array*>( geometry->getColorArray() );
+		colorArray->pop_back();
+		colorArray->push_back( this->edgeColor );
+	}
 
 //    ( dynamic_cast<osg::ShapeDrawable*>( getChild( INDEX_CURVE )->asGeode()->getDrawable( 0 ) ) )->setColor( this->edgeColor );
 //    ( dynamic_cast<osg::ShapeDrawable*>( getChild( INDEX_CYLINDER )->asGeode()->getDrawable( 0 ) ) )->setColor( this->edgeColor );

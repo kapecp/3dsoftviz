@@ -5,7 +5,7 @@
 #include "Importer/GraphOperations.h"
 #include "Importer/ReadNodesStore.h"
 //-----------------------------------------------------------------------------
-#include <QtXml/QXmlStreamReader>
+#include <QXmlStreamReader>
 //-----------------------------------------------------------------------------
 #include <memory>
 

@@ -52,17 +52,17 @@ void ShapeGetter_Cube::move( double lengthX, double lengthY, double lengthZ )
 
 }
 
-double ShapeGetter_Cube::getDistanceX()
+float ShapeGetter_Cube::getDistanceX()
 {
 	return ( surfaceNodeX_->getTargetPosition() - centerNode_->getTargetPosition() ).length();
 }
 
-double ShapeGetter_Cube::getDistanceY()
+float ShapeGetter_Cube::getDistanceY()
 {
 	return ( surfaceNodeY_->getTargetPosition() - centerNode_->getTargetPosition() ).length();
 }
 
-double ShapeGetter_Cube::getDistanceZ()
+float ShapeGetter_Cube::getDistanceZ()
 {
 	return ( surfaceNodeZ_->getTargetPosition() - centerNode_->getTargetPosition() ).length();
 }

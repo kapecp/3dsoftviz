@@ -9,7 +9,7 @@
 #include <osg/Depth>
 #include <osg/BlendFunc>
 
-Clustering::Cube::Cube( osg::Vec3d position, float radius, osg::Vec4d color = osg::Vec4d( 0,0,0,1 ) )
+Clustering::Cube::Cube( osg::Vec3d position, double radius, osg::Vec4d color = osg::Vec4d( 0,0,0,1 ) )
 {
 	geode = new osg::Geode();
 	geometry = new osg::Geometry();

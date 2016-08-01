@@ -66,7 +66,7 @@ void ShapeVisitor_ManipulatorCreator::createRotationManipulator( osg::Vec3 cente
 	createdDragger = new osgManipulator::TrackballDragger();
 	createdDragger->setupDefaultGeometry();
 
-	float scale =trackBallRadius* 1.6f;
+	double scale =static_cast<double>( trackBallRadius ) * 1.6;
 	createdDragger->setMatrix( osg::Matrix::scale( scale, scale, scale ) *osg::Matrix::translate( center ) );
 	createdDragger->setHandleEvents( true );
 	createdDragger->setActivationModKeyMask( osgGA::GUIEventAdapter::MODKEY_CTRL );

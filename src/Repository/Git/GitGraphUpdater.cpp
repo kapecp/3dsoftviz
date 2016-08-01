@@ -25,147 +25,154 @@ Repository::Git::GitGraphUpdater::GitGraphUpdater( int currentVersion, Repositor
 
 Repository::Git::GitGraphUpdater::~GitGraphUpdater()
 {
-    /*
+	/*
 	delete this->activeGraph;
 	delete this->evolutionGraph;
-    */
+	*/
 }
 
-bool Repository::Git::GitGraphUpdater::import() {
-    bool ok = true;
+bool Repository::Git::GitGraphUpdater::import()
+{
+	bool ok = true;
 
-    // inicializiacia default typov
-    this->getActiveGraph()->addType( "edge" );
-    this->getActiveGraph()->addType( "node" );
+	// inicializiacia default typov
+	this->getActiveGraph()->addType( "edge" );
+	this->getActiveGraph()->addType( "node" );
 
-    // inicializacia a pridanie typov hran a uzlov do aktivneho grafu
-    QMap<QString, QString>* settings = new QMap<QString, QString>;
-    settings->insert( "color.R", "1" );
-    settings->insert( "color.G", "1" );
-    settings->insert( "color.B", "0" );
-    settings->insert( "color.A", "1" );
-    settings->insert( "scale", Util::ApplicationConfig::get()->getValue( "Viewer.Textures.DefaultNodeScale" ) );
-    settings->insert( "textureFile", Util::ApplicationConfig::get()->getValue( "Viewer.Textures.Node" ) );
-    this->getActiveGraph()->addType( "file", settings );
+	// inicializacia a pridanie typov hran a uzlov do aktivneho grafu
+	QMap<QString, QString>* settings = new QMap<QString, QString>;
+	settings->insert( "color.R", "1" );
+	settings->insert( "color.G", "1" );
+	settings->insert( "color.B", "0" );
+	settings->insert( "color.A", "1" );
+	settings->insert( "scale", Util::ApplicationConfig::get()->getValue( "Viewer.Textures.DefaultNodeScale" ) );
+	settings->insert( "textureFile", Util::ApplicationConfig::get()->getValue( "Viewer.Textures.Node" ) );
+	this->getActiveGraph()->addType( "file", settings );
 
-    settings = new QMap<QString, QString>;
-    settings->insert( "color.R", "1" );
-    settings->insert( "color.G", "1" );
-    settings->insert( "color.B", "1" );
-    settings->insert( "color.A", "1" );
-    settings->insert( "scale", Util::ApplicationConfig::get()->getValue( "Viewer.Textures.DefaultNodeScale" ) );
-    settings->insert( "textureFile", Util::ApplicationConfig::get()->getValue( "Viewer.Textures.RemoveNode" ) );
-    this->getActiveGraph()->addType( "removedFile", settings );
+	settings = new QMap<QString, QString>;
+	settings->insert( "color.R", "1" );
+	settings->insert( "color.G", "1" );
+	settings->insert( "color.B", "1" );
+	settings->insert( "color.A", "1" );
+	settings->insert( "scale", Util::ApplicationConfig::get()->getValue( "Viewer.Textures.DefaultNodeScale" ) );
+	settings->insert( "textureFile", Util::ApplicationConfig::get()->getValue( "Viewer.Textures.RemoveNode" ) );
+	this->getActiveGraph()->addType( "removedFile", settings );
 
-    settings = new QMap<QString, QString>;
-    settings->insert( "color.R", "0" );
-    settings->insert( "color.G", "1" );
-    settings->insert( "color.B", "0" );
-    settings->insert( "color.A", "1" );
-    settings->insert( "scale", Util::ApplicationConfig::get()->getValue( "Viewer.Textures.DefaultNodeScale" ) );
-    settings->insert( "textureFile", Util::ApplicationConfig::get()->getValue( "Viewer.Textures.Node" ) );
-    this->getActiveGraph()->addType( "dir", settings );
+	settings = new QMap<QString, QString>;
+	settings->insert( "color.R", "0" );
+	settings->insert( "color.G", "1" );
+	settings->insert( "color.B", "0" );
+	settings->insert( "color.A", "1" );
+	settings->insert( "scale", Util::ApplicationConfig::get()->getValue( "Viewer.Textures.DefaultNodeScale" ) );
+	settings->insert( "textureFile", Util::ApplicationConfig::get()->getValue( "Viewer.Textures.Node" ) );
+	this->getActiveGraph()->addType( "dir", settings );
 
-    settings = new QMap<QString, QString>;
-    settings->insert( "color.R", "1" );
-    settings->insert( "color.G", "0" );
-    settings->insert( "color.B", "0" );
-    settings->insert( "color.A", "1" );
-    settings->insert( "scale", Util::ApplicationConfig::get()->getValue( "Viewer.Textures.DefaultNodeScale" ) );
-    settings->insert( "textureFile", Util::ApplicationConfig::get()->getValue( "Viewer.Textures.Node" ) );
-    this->getActiveGraph()->addType( "root", settings );
+	settings = new QMap<QString, QString>;
+	settings->insert( "color.R", "1" );
+	settings->insert( "color.G", "0" );
+	settings->insert( "color.B", "0" );
+	settings->insert( "color.A", "1" );
+	settings->insert( "scale", Util::ApplicationConfig::get()->getValue( "Viewer.Textures.DefaultNodeScale" ) );
+	settings->insert( "textureFile", Util::ApplicationConfig::get()->getValue( "Viewer.Textures.Node" ) );
+	this->getActiveGraph()->addType( "root", settings );
 
-    settings = new QMap<QString, QString>;
-    settings->insert( "color.R", "1" );
-    settings->insert( "color.G", "1" );
-    settings->insert( "color.B", "1" );
-    settings->insert( "color.A", "1" );
-    settings->insert( "scale", Util::ApplicationConfig::get()->getValue( "Viewer.Textures.AuthorNodeScale" ) );
-    settings->insert( "textureFile", Util::ApplicationConfig::get()->getValue( "Viewer.Textures.Author" ) );
-    this->getActiveGraph()->addType( "author", settings );
+	settings = new QMap<QString, QString>;
+	settings->insert( "color.R", "1" );
+	settings->insert( "color.G", "1" );
+	settings->insert( "color.B", "1" );
+	settings->insert( "color.A", "1" );
+	settings->insert( "scale", Util::ApplicationConfig::get()->getValue( "Viewer.Textures.AuthorNodeScale" ) );
+	settings->insert( "textureFile", Util::ApplicationConfig::get()->getValue( "Viewer.Textures.Author" ) );
+	this->getActiveGraph()->addType( "author", settings );
 
-    settings = new QMap<QString, QString>;
-    settings->insert( "color.R", "0" );
-    settings->insert( "color.G", "0" );
-    settings->insert( "color.B", "1" );
-    settings->insert( "color.A", "1" );
-    settings->insert( "scale", Util::ApplicationConfig::get()->getValue( "Viewer.Textures.DefaultNodeScale" ) );
-    settings->insert( "textureFile", Util::ApplicationConfig::get()->getValue( "Viewer.Textures.OrientedEdge" ) );
-    this->getActiveGraph()->addType( "authorEdge", settings );
+	settings = new QMap<QString, QString>;
+	settings->insert( "color.R", "0" );
+	settings->insert( "color.G", "0" );
+	settings->insert( "color.B", "1" );
+	settings->insert( "color.A", "1" );
+	settings->insert( "scale", Util::ApplicationConfig::get()->getValue( "Viewer.Textures.DefaultNodeScale" ) );
+	settings->insert( "textureFile", Util::ApplicationConfig::get()->getValue( "Viewer.Textures.OrientedEdge" ) );
+	this->getActiveGraph()->addType( "authorEdge", settings );
 
-    settings = new QMap<QString, QString>;
-    settings->insert( "color.R", "1" );
-    settings->insert( "color.G", "1" );
-    settings->insert( "color.B", "1" );
-    settings->insert( "color.A", "1" );
-    settings->insert( "scale", Util::ApplicationConfig::get()->getValue( "Viewer.Textures.DefaultNodeScale" ) );
-    settings->insert( "textureFile", Util::ApplicationConfig::get()->getValue( "Viewer.Textures.Edge" ) );
-    this->getActiveGraph()->addType( "Edge", settings );
+	settings = new QMap<QString, QString>;
+	/* Visualizacia pre dokument
+	settings->insert( "color.R", "0.5" );
+	settings->insert( "color.G", "0.5" );
+	settings->insert( "color.B", "0.5" );
+	settings->insert( "color.A", "1" );
+	*/
+	settings->insert( "color.R", "1" );
+	settings->insert( "color.G", "1" );
+	settings->insert( "color.B", "1" );
+	settings->insert( "color.A", "1" );
+	settings->insert( "scale", Util::ApplicationConfig::get()->getValue( "Viewer.Textures.DefaultNodeScale" ) );
+	settings->insert( "textureFile", Util::ApplicationConfig::get()->getValue( "Viewer.Textures.Edge" ) );
+	this->getActiveGraph()->addType( "Edge", settings );
 
-    settings = new QMap<QString, QString>;
-    settings->insert( "color.R", "0" );
-    settings->insert( "color.G", "1" );
-    settings->insert( "color.B", "1" );
-    settings->insert( "color.A", "1" );
-    settings->insert( "scale", Util::ApplicationConfig::get()->getValue( "Viewer.Textures.DefaultNodeScale" ) );
-    settings->insert( "textureFile", Util::ApplicationConfig::get()->getValue( "Viewer.Textures.Node" ) );
-    this->getActiveGraph()->addType( "newE", settings );
+	settings = new QMap<QString, QString>;
+	settings->insert( "color.R", "0" );
+	settings->insert( "color.G", "1" );
+	settings->insert( "color.B", "1" );
+	settings->insert( "color.A", "1" );
+	settings->insert( "scale", Util::ApplicationConfig::get()->getValue( "Viewer.Textures.DefaultNodeScale" ) );
+	settings->insert( "textureFile", Util::ApplicationConfig::get()->getValue( "Viewer.Textures.Node" ) );
+	this->getActiveGraph()->addType( "newE", settings );
 
-    // Ziskame pridane subory a meno autora prve verzie
-    QMap<QString, Repository::Git::GitFile*> lAddedGitFiles = *this->getEvolutionGraph()->getVersion( 0 )->getGitFilesByType( Repository::Git::GitType::ADDED );
-    QString lAuthor = this->getEvolutionGraph()->getVersion( 0 )->getAuthor();
+	// Ziskame pridane subory a meno autora prve verzie
+	QMap<QString, Repository::Git::GitFile*> lAddedGitFiles = *this->getEvolutionGraph()->getVersion( 0 )->getGitFilesByType( Repository::Git::GitType::ADDED );
+	QString lAuthor = this->getEvolutionGraph()->getVersion( 0 )->getAuthor();
 
-    int i = 0;
+	int i = 0;
 
-    // Pre kazdu cestu suboru pridam uzly a hrany na zaklade separatora '/'
-    for( QMap<QString, Repository::Git::GitFile*>::iterator iterator = lAddedGitFiles.begin(); iterator != lAddedGitFiles.end(); ++iterator ) {
-        QString line = iterator.value()->getFilepath();
+	// Pre kazdu cestu suboru pridam uzly a hrany na zaklade separatora '/'
+	for ( QMap<QString, Repository::Git::GitFile*>::iterator iterator = lAddedGitFiles.begin(); iterator != lAddedGitFiles.end(); ++iterator ) {
+		QString line = iterator.value()->getFilepath();
 
-        // Rozlozim cestu suboru na tokeny podla separatora '/'
-        QStringList list = line.split( "/" );
-        QString pom = "";
+		// Rozlozim cestu suboru na tokeny podla separatora '/'
+		QStringList list = line.split( "/" );
+		QString pom = "";
 
-        // Pre kazdy token vytvorim jeho celu cestu od korena projektu. Prva polozka v liste bude project, druha project/nieco, atd.
-        for ( int k = 0; k < list.size(); k++ ) {
-            pom += list.at( k );
-            list.replace( k, pom );
-            pom += "/";
-        }
+		// Pre kazdy token vytvorim jeho celu cestu od korena projektu. Prva polozka v liste bude project, druha project/nieco, atd.
+		for ( int k = 0; k < list.size(); k++ ) {
+			pom += list.at( k );
+			list.replace( k, pom );
+			pom += "/";
+		}
 
-        // Pridam cesty od korena projektu ako uzly a hrany do grafu
-        addNodesToGraph( list );
-        addEdgesToGraph( list );
+		// Pridam cesty od korena projektu ako uzly a hrany do grafu
+		addNodesToGraph( list );
+		addEdgesToGraph( list );
 
-        // Aktualizujem percento spracovania
-        Manager::GraphManager::getInstance()->setProgressBarValue( int( ( double( i++ + 1 ) /  double( lAddedGitFiles.size() ) ) * 100 ) );
-    }
+		// Aktualizujem percento spracovania
+		Manager::GraphManager::getInstance()->setProgressBarValue( static_cast<int>( ( static_cast<double>( i++ + 1 ) /  static_cast<double>( lAddedGitFiles.size() ) ) * 100 ) );
+	}
 
-    Data::Node* lAuthorNode = nullptr;
+	Data::Node* lAuthorNode = nullptr;
 ///*
-    lAuthorNode = this->getActiveGraph()->findNodeByName( lAuthor );
-    // Ak autor neexistuje v grafe, tak ho vytvorim
-    if ( !lAuthorNode ) {
-        lAuthorNode = this->getActiveGraph()->addNode( lAuthor, this->getActiveGraph()->getTypesByName( "author" ).at( 0 ) );
-        lAuthorNode->setLabelText( lAuthorNode->Data::AbsNode::getName() );
-        lAuthorNode->showLabel( true );
-    }
+	lAuthorNode = this->getActiveGraph()->findNodeByName( lAuthor );
+	// Ak autor neexistuje v grafe, tak ho vytvorim
+	if ( !lAuthorNode ) {
+		lAuthorNode = this->getActiveGraph()->addNode( lAuthor, this->getActiveGraph()->getTypesByName( "author" ).at( 0 ) );
+		lAuthorNode->setLabelText( lAuthorNode->Data::AbsNode::getName() );
+		lAuthorNode->showLabel( true, false );
+	}
 
-    addAuthorEdgesToGraph( lAuthor, lAddedGitFiles );
+	addAuthorEdgesToGraph( lAuthor, lAddedGitFiles );
 //*/
-    return ok;
+	return ok;
 }
 
 void Repository::Git::GitGraphUpdater::nextVersion()
 {
 	// zistime zmenene subory v dalsej verzii, s ktorymi budeme dalej pracovat
-    QMap<QString, Repository::Git::GitFile*> gitFiles = *this->getEvolutionGraph()->getVersion( this->getCurrentVersion() + 1 )->getChangedFiles();
+	QMap<QString, Repository::Git::GitFile*> gitFiles = *this->getEvolutionGraph()->getVersion( this->getCurrentVersion() + 1 )->getChangedFiles();
 	Data::Node* lAuthorNode = nullptr;
 	QString lAuthorName = nullptr;
 
 	// Ak ide o zmenu len cez jednu verziu, tak vymazem hrany od autora a uzol autora z grafu a pridam autora dalsej verzie
 	if ( !moreVersionChanged ) {
 		// Vymazanie hran od autora a vymazanie autorovho uzla
-        removeAuthorEdgesFromGraph( this->getEvolutionGraph()->getVersion( this->getCurrentVersion() )->getAuthor(), *this->getEvolutionGraph()->getVersion( this->getCurrentVersion() )->getChangedFiles() );
+		removeAuthorEdgesFromGraph( this->getEvolutionGraph()->getVersion( this->getCurrentVersion() )->getAuthor(), *this->getEvolutionGraph()->getVersion( this->getCurrentVersion() )->getChangedFiles() );
 		this->getActiveGraph()->removeNode( this->getActiveGraph()->findNodeByName( this->getEvolutionGraph()->getVersion( this->getCurrentVersion() )->getAuthor() ) );
 
 		// Ziskame meno autora
@@ -176,15 +183,15 @@ void Repository::Git::GitGraphUpdater::nextVersion()
 		if ( !lAuthorNode ) {
 			lAuthorNode = this->getActiveGraph()->addNode( lAuthorName, this->getActiveGraph()->getTypesByName( "author" ).at( 0 ) );
 			lAuthorNode->setLabelText( lAuthorNode->Data::AbsNode::getName() );
-			lAuthorNode->showLabel( true );
+			lAuthorNode->showLabel( true, false );
 		}
 	}
 
 	bool ok = true;
 
 	// Pre kazdy zmeneny subor vo verzii, zistim jeho ciastocne cesty a podla typu suboru, vykonam akciu nad tymito cestami
-    for( QMap<QString, Repository::Git::GitFile*>::iterator iterator = gitFiles.begin(); iterator != gitFiles.end(); ++iterator ) {
-        Repository::Git::GitFile* gitFile = iterator.value();
+	for ( QMap<QString, Repository::Git::GitFile*>::iterator iterator = gitFiles.begin(); iterator != gitFiles.end(); ++iterator ) {
+		Repository::Git::GitFile* gitFile = iterator.value();
 
 		QStringList lList = gitFile->getFilepath().split( "/" );
 		QString lPom = "";
@@ -235,21 +242,21 @@ void Repository::Git::GitGraphUpdater::nextVersion()
 
 	// Ak ide o zmenu len cez jednu verziu, tak pridam pre vsetky zmenene subory hrany od autora
 	if ( !moreVersionChanged ) {
-        addAuthorEdgesToGraph( lAuthorName, *this->getEvolutionGraph()->getVersion( this->getCurrentVersion() + 1 )->getChangedFiles() );
+		addAuthorEdgesToGraph( lAuthorName, *this->getEvolutionGraph()->getVersion( this->getCurrentVersion() + 1 )->getChangedFiles() );
 	}
 }
 
 void Repository::Git::GitGraphUpdater::previousVersion()
 {
 	// zistime si zmenene subory v aktualnej verzii, s ktorymi budeme dalej pracovat
-    QMap<QString, Repository::Git::GitFile*> gitFiles = *this->getEvolutionGraph()->getVersion( this->getCurrentVersion() )->getChangedFiles();
+	QMap<QString, Repository::Git::GitFile*> gitFiles = *this->getEvolutionGraph()->getVersion( this->getCurrentVersion() )->getChangedFiles();
 	Data::Node* lAuthorNode = nullptr;
 	QString lAuthorName = nullptr;
 
 	// Ak ide o zmenu len cez jednu verziu, tak vymazem hrany od autora a uzol autora z grafu a pridam autora dalsej verzie
 	if ( !moreVersionChanged ) {
 		// Vymazanie hran od autora a vymazanie autorovho uzla
-        removeAuthorEdgesFromGraph( this->getEvolutionGraph()->getVersion( this->getCurrentVersion() )->getAuthor(), *this->getEvolutionGraph()->getVersion( this->getCurrentVersion() )->getChangedFiles() );
+		removeAuthorEdgesFromGraph( this->getEvolutionGraph()->getVersion( this->getCurrentVersion() )->getAuthor(), *this->getEvolutionGraph()->getVersion( this->getCurrentVersion() )->getChangedFiles() );
 		this->getActiveGraph()->removeNode( this->getActiveGraph()->findNodeByName( this->getEvolutionGraph()->getVersion( this->getCurrentVersion() )->getAuthor() ) );
 
 		// Ziskame meno autora
@@ -260,7 +267,7 @@ void Repository::Git::GitGraphUpdater::previousVersion()
 		if ( !lAuthorNode ) {
 			lAuthorNode = this->getActiveGraph()->addNode( lAuthorName, this->getActiveGraph()->getTypesByName( "author" ).at( 0 ) );
 			lAuthorNode->setLabelText( lAuthorNode->Data::AbsNode::getName() );
-			lAuthorNode->showLabel( true );
+			lAuthorNode->showLabel( true, false );
 		}
 	}
 
@@ -268,8 +275,8 @@ void Repository::Git::GitGraphUpdater::previousVersion()
 
 	// Pre kazdy zmeneny subor vo verzii, zistim jeho ciastocne cesty a podla typu suboru, vykonam akciu nad tymito cestami
 //	foreach ( Repository::Git::GitFile* gitFile, gitFiles ) {
-    for( QMap<QString, Repository::Git::GitFile*>::iterator iterator = gitFiles.begin(); iterator != gitFiles.end(); ++iterator ) {
-        Repository::Git::GitFile* gitFile = iterator.value();
+	for ( QMap<QString, Repository::Git::GitFile*>::iterator iterator = gitFiles.begin(); iterator != gitFiles.end(); ++iterator ) {
+		Repository::Git::GitFile* gitFile = iterator.value();
 
 		QStringList lList = gitFile->getFilepath().split( "/" );
 		QString lPom = "";
@@ -306,7 +313,7 @@ void Repository::Git::GitGraphUpdater::previousVersion()
 
 	// Ak ide o zmenu len cez jednu verziu, tak pridam pre vsetky zmenene subory hrany od autora
 	if ( !moreVersionChanged ) {
-        addAuthorEdgesToGraph( lAuthorName, *this->getEvolutionGraph()->getVersion( this->getCurrentVersion() - 1 )->getChangedFiles() );
+		addAuthorEdgesToGraph( lAuthorName, *this->getEvolutionGraph()->getVersion( this->getCurrentVersion() - 1 )->getChangedFiles() );
 	}
 }
 
@@ -326,7 +333,7 @@ void Repository::Git::GitGraphUpdater::changeToVersion( int toVersion )
 	Manager::GraphManager::getInstance()->showProgressBar();
 
 	// Vymazanie hran od autora a uzla autora zaciatocnej verzie
-    removeAuthorEdgesFromGraph( this->getEvolutionGraph()->getVersion( this->getCurrentVersion() )->getAuthor(), *this->getEvolutionGraph()->getVersion( this->getCurrentVersion() )->getChangedFiles() );
+	removeAuthorEdgesFromGraph( this->getEvolutionGraph()->getVersion( this->getCurrentVersion() )->getAuthor(), *this->getEvolutionGraph()->getVersion( this->getCurrentVersion() )->getChangedFiles() );
 	this->getActiveGraph()->removeNode( this->getActiveGraph()->findNodeByName( this->getEvolutionGraph()->getVersion( this->getCurrentVersion() )->getAuthor() ) );
 
 	// Nastavime na true, aby sa pre kazdu verziu nevytvarali autory a ich hrany ku zmenenym uzlov
@@ -345,7 +352,7 @@ void Repository::Git::GitGraphUpdater::changeToVersion( int toVersion )
 		// Nastavenie aktualnej verzie grafu a aktualizacia progressbaru
 		this->setCurrentVersion( this->getCurrentVersion() + inc );
 		this->getActiveGraph()->setCurrentVersion( this->getCurrentVersion() );
-		Manager::GraphManager::getInstance()->setProgressBarValue( int( ( double( abs( i - startVersion ) ) / double( abs( toVersion - startVersion ) ) ) * 100 ) );
+		Manager::GraphManager::getInstance()->setProgressBarValue( static_cast<int>( ( static_cast<double>( abs( i - startVersion ) ) / static_cast<double>( abs( toVersion - startVersion ) ) ) * 100 ) );
 	}
 
 	// Nastavime na false, aby sa pre dalsie spracovanie mohol pridat autor a jeho hrany k zmenenych uzlom.
@@ -359,11 +366,11 @@ void Repository::Git::GitGraphUpdater::changeToVersion( int toVersion )
 	if ( !lAuthorNode ) {
 		lAuthorNode = this->getActiveGraph()->addNode( lAuthorName, this->getActiveGraph()->getTypesByName( "author" ).at( 0 ) );
 		lAuthorNode->setLabelText( lAuthorNode->Data::AbsNode::getName() );
-		lAuthorNode->showLabel( true );
+		lAuthorNode->showLabel( true, false );
 	}
 
 	// Pridam hrany od autora k zmenenych uzlom vo vyslednej verzii
-    addAuthorEdgesToGraph( lAuthorName, *this->getEvolutionGraph()->getVersion( this->getCurrentVersion() )->getChangedFiles() );
+	addAuthorEdgesToGraph( lAuthorName, *this->getEvolutionGraph()->getVersion( this->getCurrentVersion() )->getChangedFiles() );
 
 	Manager::GraphManager::getInstance()->closeProgressBar();
 }
@@ -415,24 +422,24 @@ void Repository::Git::GitGraphUpdater::addNodesToGraph( QStringList list )
 
 			// Nastavim label a pridam do mnoziny uzlov v grafe
 			lNode->setLabelText( lNodeName );
-			lNode->showLabel( true );
+			lNode->showLabel( true, false );
 		}
 		else {
 			Data::Node* node = this->getActiveGraph()->findNodeByName( lNodeName );
 			node->setType( lType );
 			node->reloadConfig();
-			node->showLabel( true );
+			node->showLabel( true, false );
 		}
 	}
 
-    // prepoj novo vzniknute uzly s rootom
-    osg::ref_ptr<Data::Node> lRoot = this->getActiveGraph()->findNodeByName( this->getEvolutionGraph()->getFilePath() );
-    if( !lRoot ) {
-        lRoot = this->activeGraph->addNode( this->getEvolutionGraph()->getFilePath(), this->getActiveGraph()->getTypesByName( "root" ).at( 0 ) );
-        lRoot->setFixed( true );
-        lRoot->setLabelText( this->getEvolutionGraph()->getFilePath() );
-        lRoot->showLabel( true );
-    }
+	// prepoj novo vzniknute uzly s rootom
+	osg::ref_ptr<Data::Node> lRoot = this->getActiveGraph()->findNodeByName( this->getEvolutionGraph()->getFilePath() );
+	if ( !lRoot ) {
+		lRoot = this->activeGraph->addNode( this->getEvolutionGraph()->getFilePath(), this->getActiveGraph()->getTypesByName( "root" ).at( 0 ) );
+		lRoot->setFixed( true );
+		lRoot->setLabelText( this->getEvolutionGraph()->getFilePath() );
+		lRoot->showLabel( true, false );
+	}
 }
 
 void Repository::Git::GitGraphUpdater::addEdgesToGraph( QStringList list )
@@ -487,38 +494,38 @@ void Repository::Git::GitGraphUpdater::addEdgesToGraph( QStringList list )
 		}
 	}
 
-    // prepojim root s prvym uzlom
-    QString lEdgeName = "root" + list.at( 0 );
-    this->getActiveGraph()->addEdgeOccurence( lEdgeName );
-    if( !this->getActiveGraph()->findEdgeByName( lEdgeName ) ) {
-        bool ok = true;
+	// prepojim root s prvym uzlom
+	QString lEdgeName = "root" + list.at( 0 );
+	this->getActiveGraph()->addEdgeOccurence( lEdgeName );
+	if ( !this->getActiveGraph()->findEdgeByName( lEdgeName ) ) {
+		bool ok = true;
 
-        if ( ok ) {
-            // Ak sa uzol nenachadza v grafe, tak skonci dalsie spracovanie
-            ok = this->getActiveGraph()->findNodeByName( this->getEvolutionGraph()->getFilePath() );
-        }
+		if ( ok ) {
+			// Ak sa uzol nenachadza v grafe, tak skonci dalsie spracovanie
+			ok = this->getActiveGraph()->findNodeByName( this->getEvolutionGraph()->getFilePath() );
+		}
 
-        if ( ok ) {
-            // Ak sa uzol nenachadza v grafe, tak skonci dalsie spracovanie
-            ok = this->getActiveGraph()->findNodeByName( list.at( 0 ) );
-        }
+		if ( ok ) {
+			// Ak sa uzol nenachadza v grafe, tak skonci dalsie spracovanie
+			ok = this->getActiveGraph()->findNodeByName( list.at( 0 ) );
+		}
 
-        bool oriented =  false;
+		bool oriented =  false;
 
-        // Ak sa obidva uzly nachadzaju v grafe, tak vytvor medzi nimi hranu.
-        if ( ok ) {
-            this->getActiveGraph()->addEdge( lEdgeName, this->getActiveGraph()->findNodeByName( this->getEvolutionGraph()->getFilePath() ), this->getActiveGraph()->findNodeByName( list.at( 0 ) ), lType, oriented );
-        }
-    }
+		// Ak sa obidva uzly nachadzaju v grafe, tak vytvor medzi nimi hranu.
+		if ( ok ) {
+			this->getActiveGraph()->addEdge( lEdgeName, this->getActiveGraph()->findNodeByName( this->getEvolutionGraph()->getFilePath() ), this->getActiveGraph()->findNodeByName( list.at( 0 ) ), lType, oriented );
+		}
+	}
 }
 
 void Repository::Git::GitGraphUpdater::addAuthorEdgesToGraph( QString authorName, QMap<QString, Repository::Git::GitFile*> gitFiles )
 {
 	// Pre kazdy subor zisti, ci existuje hrana medzi autorom a uzlom, ak nie, tak pridam hranu do grafu
-    for( QMap<QString, Repository::Git::GitFile*>::iterator iterator = gitFiles.begin(); iterator != gitFiles.end(); ++iterator ) {
-        Repository::Git::GitFile* gitFile = iterator.value();
+	for ( QMap<QString, Repository::Git::GitFile*>::iterator iterator = gitFiles.begin(); iterator != gitFiles.end(); ++iterator ) {
+		Repository::Git::GitFile* gitFile = iterator.value();
 
-        // Vyskladam nazov hrany spojenim mena autora a cesty k uzlu
+		// Vyskladam nazov hrany spojenim mena autora a cesty k uzlu
 		QString lEdgeName = authorName + gitFile->getFilepath();
 		bool exist = true;
 
@@ -538,8 +545,8 @@ void Repository::Git::GitGraphUpdater::addAuthorEdgesToGraph( QString authorName
 void Repository::Git::GitGraphUpdater::removeAuthorEdgesFromGraph( QString authorName, QMap<QString, Repository::Git::GitFile*> gitFiles )
 {
 	// Pre kazdy subor zisti, odstran hranu medzi autorom a uzlov, ak existuje v grafe
-    for( QMap<QString, Repository::Git::GitFile*>::iterator iterator = gitFiles.begin(); iterator != gitFiles.end(); ++iterator ) {
-        Repository::Git::GitFile* gitFile = iterator.value();
+	for ( QMap<QString, Repository::Git::GitFile*>::iterator iterator = gitFiles.begin(); iterator != gitFiles.end(); ++iterator ) {
+		Repository::Git::GitFile* gitFile = iterator.value();
 		// Vyskladam nazov hrany spojenim mena autora a cesty k uzlu
 		QString lEdgeName = authorName + gitFile->getFilepath();
 
@@ -577,7 +584,7 @@ void Repository::Git::GitGraphUpdater::removeNodesFromGraph( QStringList list )
 					if ( node ) {
 						node->setType( this->getActiveGraph()->getTypesByName( "removedFile" ).at( 0 ) );
 						node->reloadConfig();
-						node->showLabel( true );
+						node->showLabel( true, false );
 					}
 				}
 			}
@@ -590,33 +597,33 @@ void Repository::Git::GitGraphUpdater::removeNodesFromGraph( QStringList list )
 		}
 	}
 
-    QString lEdgeName = "root" + list.at( 0 );
+	QString lEdgeName = "root" + list.at( 0 );
 
-    // Ak je rozdiel sucasnej verzie a verzie vymazania mensi ako lifespan, tak nastavime passedLifespan na true
-    // a uzol nemoze byt vymazany.
-    bool passedLifespan = false;
-    if ( this->getEvolutionGraph()->getRemovedFiles().contains( list.at( 0 ) ) ) {
-        int difference = this->getCurrentVersion() - this->getEvolutionGraph()->getRemovedFiles().value( list.at( 0 ) );
-        if ( difference < this->getEvolutionGraph()->getLifespan() ) {
-            passedLifespan = true;
+	// Ak je rozdiel sucasnej verzie a verzie vymazania mensi ako lifespan, tak nastavime passedLifespan na true
+	// a uzol nemoze byt vymazany.
+	bool passedLifespan = false;
+	if ( this->getEvolutionGraph()->getRemovedFiles().contains( list.at( 0 ) ) ) {
+		int difference = this->getCurrentVersion() - this->getEvolutionGraph()->getRemovedFiles().value( list.at( 0 ) );
+		if ( difference < this->getEvolutionGraph()->getLifespan() ) {
+			passedLifespan = true;
 
-            // Ak ide o subor, tak zmenime obrazok uzla.
-            if ( 1 == list.size() - 1 ) {
-                Data::Node* node = this->getActiveGraph()->findNodeByName( list.at( 0 ) );
-                if ( node ) {
-                    node->setType( this->getActiveGraph()->getTypesByName( "removedFile" ).at( 0 ) );
-                    node->reloadConfig();
-                    node->showLabel( true );
-                }
-            }
-        }
-    }
+			// Ak ide o subor, tak zmenime obrazok uzla.
+			if ( 1 == list.size() - 1 ) {
+				Data::Node* node = this->getActiveGraph()->findNodeByName( list.at( 0 ) );
+				if ( node ) {
+					node->setType( this->getActiveGraph()->getTypesByName( "removedFile" ).at( 0 ) );
+					node->reloadConfig();
+					node->showLabel( true, false );
+				}
+			}
+		}
+	}
 
-    // Ak hrana v grafe uz neexistuje a sucasne lifespan uzla prekrocil treshold, tak vymaz cielovy uzol
-    if ( this->getActiveGraph()->getEdgeOccurence().value( lEdgeName ) <= 0 && !passedLifespan ) {
-        this->getActiveGraph()->removeNode( this->getActiveGraph()->findNodeByName( list.at( 0 ) ) );
-        this->getEvolutionGraph()->getRemovedFiles().remove( list.at( 0 ) );
-    }
+	// Ak hrana v grafe uz neexistuje a sucasne lifespan uzla prekrocil treshold, tak vymaz cielovy uzol
+	if ( this->getActiveGraph()->getEdgeOccurence().value( lEdgeName ) <= 0 && !passedLifespan ) {
+		this->getActiveGraph()->removeNode( this->getActiveGraph()->findNodeByName( list.at( 0 ) ) );
+		this->getEvolutionGraph()->getRemovedFiles().remove( list.at( 0 ) );
+	}
 
 }
 
@@ -645,22 +652,22 @@ void Repository::Git::GitGraphUpdater::removeEdgesFromGraph( QStringList list )
 		}
 	}
 
-    QString lEdgeName = "root" + list.at( 0 );
-    if( this->getActiveGraph()->findEdgeByName( lEdgeName ) ) {
+	QString lEdgeName = "root" + list.at( 0 );
+	if ( this->getActiveGraph()->findEdgeByName( lEdgeName ) ) {
 
-        // Ak je rozdiel sucasnej verzie a verzie vymazania mensi ako lifespan, tak nastavime passedLifespan na true
-        // a uzol nemoze byt vymazany.
-        bool passedLifespan = false;
-        int difference = this->getCurrentVersion() - this->getEvolutionGraph()->getRemovedFiles().value( list.at( 0 ) );
-        if ( difference < this->getEvolutionGraph()->getLifespan() ) {
-            passedLifespan = true;
-        }
+		// Ak je rozdiel sucasnej verzie a verzie vymazania mensi ako lifespan, tak nastavime passedLifespan na true
+		// a uzol nemoze byt vymazany.
+		bool passedLifespan = false;
+		int difference = this->getCurrentVersion() - this->getEvolutionGraph()->getRemovedFiles().value( list.at( 0 ) );
+		if ( difference < this->getEvolutionGraph()->getLifespan() ) {
+			passedLifespan = true;
+		}
 
-        // Ak hrana v grafe uz neexistuje a sucasne lifespan uzla prekrocil treshold, tak vymaz hranu
-        if ( !this->getActiveGraph()->removeEdgeOccurence( lEdgeName ) && !passedLifespan ) {
-            this->getActiveGraph()->removeEdge( this->getActiveGraph()->findEdgeByName( lEdgeName ) );
-        }
-    }
+		// Ak hrana v grafe uz neexistuje a sucasne lifespan uzla prekrocil treshold, tak vymaz hranu
+		if ( !this->getActiveGraph()->removeEdgeOccurence( lEdgeName ) && !passedLifespan ) {
+			this->getActiveGraph()->removeEdge( this->getActiveGraph()->findEdgeByName( lEdgeName ) );
+		}
+	}
 }
 
 void Repository::Git::GitGraphUpdater::modifyNodesInGraph( QStringList list )

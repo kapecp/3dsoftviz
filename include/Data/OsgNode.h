@@ -7,6 +7,11 @@
 #include <Data/Type.h>
 
 #include "Data/DbNode.h"
+#include <City/Building.h>
+
+namespace City {
+class Residence;
+}
 
 namespace Data {
 
@@ -37,6 +42,27 @@ public:
 	    *  \return osg::ref_ptr square drawable
 	    */
 	static osg::ref_ptr<osg::Drawable> createSquare( const float& scale, osg::StateSet* bbState );
+
+	/**
+	* \fn public setResidence
+	* \brief Sets subgraph for drawing residence of city.
+	* \param residence osg subgraph
+	*/
+	void setResidence( osg::Node* residence );
+
+	/**
+	* \fn public getResidence
+	* \brief Gets subgraph for drawing residence of city.
+	* \return osg::ref_ptr of residence osg subgraph
+	*/
+	City::Residence* getResidence();
+
+	/**
+	* \fn public getBuilding
+	* \brief Gets subgraph for drawing building of residence.
+	* \return osg::ref_ptr of building osg subgraph
+	*/
+	City::Building* getBuilding();
 
 	/**
 	     * \fn public constant targetPosition
@@ -201,6 +227,8 @@ public:
 		return color;
 	}
 
+	void setScale( float val ) override;
+
 	bool setInvisible( bool invisible );
 
 	void setParentBall( osg::Sphere* val )
@@ -302,7 +330,7 @@ public:
 	    *  \brief If true, node name will be shown.
 	    *  \param     visible     node name shown
 	    */
-	void showLabel( bool visible );
+	void showLabel( bool visible, bool labelsForResidence );
 
 	/**
 	     * \fn public constant isFocused
@@ -326,7 +354,7 @@ public:
 	    *  \param  bbState	node stateset
 	    *  \return osg::ref_ptr node geode
 	    */
-	static osg::ref_ptr<osg::Geode> createNodeSquare( const float& scale, osg::StateSet* bbState );
+	static osg::ref_ptr<osg::Node> createNodeSquare( const float& scale, osg::StateSet* bbState );
 
 	/**
 	    *  \fn private static  createNodeSphere(const float & scale, osg::StateSet* bbState)
@@ -335,7 +363,16 @@ public:
 	    *  \param  bbState	node stateset
 	    *  \return osg::ref_ptr node geode
 	    */
-	static osg::ref_ptr<osg::Geode> createNodeSphere( const float& scale, osg::StateSet* bbState );
+	static osg::ref_ptr<osg::Node> createNodeSphere( const float& scale, osg::StateSet* bbState );
+
+	/**
+	*  \fn private static  createNodeResidence(const float & scale, osg::StateSet* bbState)
+	*  \brief Creates node drawable - residence
+	*  \param	  scale	node scale
+	*  \param  bbState	node stateset
+	*  \return osg::ref_ptr node geode
+	*/
+	static osg::ref_ptr<osg::Node> createNodeResidence( const float& scale );
 
 	/**
 	    *  \fn private static  createStateSet(Data::Type * type = 0)
@@ -343,7 +380,7 @@ public:
 	    *  \param   type     node type
 	    *  \return osg::ref_ptr node stateset
 	    */
-	static osg::ref_ptr<osg::StateSet> createStateSet( Data::Type* type = 0 );
+	static osg::ref_ptr<osg::StateSet> createStateSet( const osg::ref_ptr<osg::Texture2D>& texture );
 
 	/**
 	    *  \fn private static  createLabel(const float & scale, QString name)
@@ -352,11 +389,12 @@ public:
 	    *  \param       name     label text
 	    *  \return osg::ref_ptr node label
 	    */
-	static osg::ref_ptr<osg::Geode> createLabel( const float& scale, QString name );
+	static osg::ref_ptr<osg::Node> createLabel( const float& scale, QString name );
 
-	static const unsigned int INDEX_LABEL = 0;
-	static const unsigned int INDEX_SQUARE = 1;
-	static const unsigned int INDEX_SPHERE = 2;
+	static const int INDEX_LABEL = 0;
+	static const int INDEX_SQUARE = 1;
+	static const int INDEX_SPHERE = 2;
+	static const int INDEX_RESIDENCE = 3;
 
 protected:
 	/**

@@ -2,15 +2,16 @@
 #include "LeapLib/DirectionDetector.h"
 #include "LeapLib/FingerPositionDetector.h"
 
-Leap::LeapListener::LeapListener(LeapCameraManipulator* cameraManipulator)
+Leap::LeapListener::LeapListener( LeapManager* leapManager )
 {
-	leapActions = new Leap::LeapActions(cameraManipulator);
+	leapActions = new Leap::LeapActions( leapManager );
+	this->arMode = leapManager->arMode;
 }
 
-Leap::LeapListener::~LeapListener(void)
+Leap::LeapListener::~LeapListener( void )
 {
-	if (leapActions != NULL){
-		delete(leapActions);
+	if ( leapActions != NULL ) {
+		delete( leapActions );
 	}
 }
 
@@ -47,20 +48,54 @@ void Leap::LeapListener::onFrame( const Controller& controller )
 	Frame frame = controller.frame();
 	HandList hands = frame.hands();
 	Leap::DirectionDetector::Direction direction;
-	bool handExtended;
+	//bool handExtended;
+	Hand leftHand;
+	Hand rightHand;
 
-	for ( int i=0; i< hands.count(); ++i ) {
-		if ( hands[i].isRight() ) {
-			direction = Leap::DirectionDetector::getPalmDirection( hands[i] );
-			leapActions->changeViewAngle( direction );
-		}
-		else {
-			handExtended = Leap::FingerPositionDetector::isHandExtended( hands[i] );
-			if ( handExtended ) {
-				leapActions->startMovingForward();
+	//jurik
+	//takin just first gesture (gestures are defined for each finger)
+	Gesture gesture = frame.gestures()[0];
+
+
+	if ( arMode ) {
+		for ( int i=0; i< hands.count(); ++i ) {
+			if ( hands[i].isRight() ) {
+				rightHand = hands[i];
 			}
 			else {
-				leapActions->stopMovingForward();
+				leftHand = hands[i];
+			}
+		}
+		leapActions->updateARHands( leftHand,rightHand );
+	}
+	else {
+		for ( int i=0; i< hands.count(); ++i ) {
+			if ( hands[i].isRight() ) {
+				direction = Leap::DirectionDetector::getPalmDirection( hands[i] );
+				//using cameramanipulator
+				//leapActions->changeViewAngle( direction );
+				//using pickhandler class
+				leapActions->rotateAruco( direction );
+
+				if ( gesture.type() == Gesture::TYPE_KEY_TAP ) {
+					leapActions->scaleNodes( true );
+				}
+			}
+			else {
+				direction = Leap::DirectionDetector::getPalmDirection( hands[i] );
+				//leapActions.changeViewAngle( direction );
+				leapActions->scaleEdges( direction );
+				if ( gesture.type() == Gesture::TYPE_KEY_TAP ) {
+					leapActions->scaleNodes( false );
+				}
+
+				/*handExtended = Leap::FingerPositionDetector::isHandExtended( hands[i] );
+				if ( handExtended ) {
+					leapActions->startMovingForward();
+				}
+				else {
+					leapActions->stopMovingForward();
+				}*/
 			}
 		}
 	}

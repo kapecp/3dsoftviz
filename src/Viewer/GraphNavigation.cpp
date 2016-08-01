@@ -50,7 +50,7 @@ void Vwr::GraphNavigation::setColorNearestNode( Data::Node* selectedNode )
 	osg::Vec3f selectedPosition = getNodeScreenCoordinates( selectedNode );
 
 	Data::Edge* closestEdge = NULL;
-	float minDistance = 0;
+	double minDistance = 0;
 	QMap<qlonglong, osg::ref_ptr<Data::Edge> >* nodeEdges = selectedNode->getEdges();
 	for ( QMap<qlonglong, osg::ref_ptr<Data::Edge> >::const_iterator iter = nodeEdges->begin(); iter != nodeEdges->end(); ++iter ) {
 		Data::Node* dstNode = ( *iter )->getOtherNode( selectedNode );
@@ -68,8 +68,8 @@ void Vwr::GraphNavigation::setColorNearestNode( Data::Node* selectedNode )
 			// TODO: Add extra conditions for "selectionMode"
 		}
 		// first edge or nearer node
-		if ( qFuzzyCompare( minDistance, 0.0f )  || ( minDistance > distance ) ) {
-			minDistance = static_cast<float>( distance );
+		if ( qFuzzyCompare( minDistance, 0.0 )  || ( minDistance > distance ) ) {
+			minDistance = distance;
 			closestEdge = ( *iter );
 		}
 	}
@@ -183,8 +183,8 @@ osg::Vec3f Vwr::GraphNavigation::getNodeScreenCoordinates( Data::Node* node )
 double Vwr::GraphNavigation::getDistanceToNode( osg::Vec3f mouse, osg::Vec3f node )
 {
 	// in case of big space can overflow ... test divide by 1000
-	double distX = fabs( node[0] - mouse[0] );
-	double distY = fabs( node[1] - mouse[1] );
+	double distX = fabs( static_cast<double>( node[0] - mouse[0] ) );
+	double distY = fabs( static_cast<double>( node[1] - mouse[1] ) );
 
 	return distX*distX + distY*distY;
 }

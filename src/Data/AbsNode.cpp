@@ -13,9 +13,8 @@ Data::AbsNode::AbsNode( qlonglong id, QString name, Data::Type* type, Data::Grap
 	this->id=id;
 	this->name=name;
 	this->type=type;
-	this->graph = graph;
-	this->type = type;
-	this->hasNestedNodes = false;
+	this->graph=graph;
+	this->hasNestedNodes=false;
 
 	settings = new QMap<QString, QString>();
 	//APA

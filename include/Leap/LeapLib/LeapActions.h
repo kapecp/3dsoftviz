@@ -3,8 +3,9 @@
 #include "Leap.h"
 #include "math.h"
 #include "LeapLib/DirectionDetector.h"
-#include "LeapLib/LeapCameraManipulator.h"
+#include "LeapLib/LeapManager.h"
 #include "LeapLib/LeapExport.h"
+#include "easylogging++.h"
 
 namespace Leap {
 
@@ -20,7 +21,7 @@ public:
 	/**
 	 * @brief Initializes MouseControl and sets zoomCounter to 0
 	 */
-	LeapActions(LeapCameraManipulator* cameraManipulator);
+	LeapActions( LeapManager* leapManager );
 	~LeapActions();
 
 	/**
@@ -64,12 +65,21 @@ public:
 	 */
 	void stopMovingForward();
 
+	void updateARHands( Hand leftHand , Hand rightHand );
+
 	/**
 	 * @brief isCameraMoving is variable to decide whether to move camera or rotate graph
 	 */
 	bool isCameraMoving;
 
-	LeapCameraManipulator* cameraManipulator;
+	LeapManager* leapManager;
+
+	//jurik
+	void graphRotateSwipe( int swipeDirection );
+	void rotateAruco( Leap::DirectionDetector::Direction direction );
+	void scaleEdges( Leap::DirectionDetector::Direction direction );
+	void scaleNodes( bool scaleUp );
+	//*****
 };
 }
 

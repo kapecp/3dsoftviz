@@ -6,11 +6,18 @@
 
 namespace QOSG {
 
-AdapterWidget::AdapterWidget( QWidget* parent, const char* name , const QGLWidget* shareWidget, WindowFlags f ) : QGLWidget( parent, shareWidget, f )
+AdapterWidget::AdapterWidget( QWidget* parent, const char* name , const QGLWidget* shareWidget, WindowFlags f ) :
+#if QT_VERSION > 0x040000
+	QGLWidget( QGLFormat( QGL::DoubleBuffer | QGL::DepthBuffer | QGL::Rgba | QGL::StencilBuffer | QGL::AlphaChannel | QGL::StereoBuffers ), parent, shareWidget, f )
+#else
+	QGLWidget( parent, shareWidget, f )
+#endif
 {
 	_gw = new osgViewer::GraphicsWindowEmbedded( 0,0,width(),height() );
 	setFocusPolicy( Qt::StrongFocus );
 }
+
+
 
 void AdapterWidget::resizeGL( int width, int height )
 {
@@ -59,8 +66,16 @@ void AdapterWidget::keyPressEvent( QKeyEvent* event )
 			_gw->getEventQueue()->keyPress( osgGA::GUIEventAdapter::KEY_Shift_L );
 			break;
 		}
+		case ( Qt::Key_O ): {
+			_gw->getEventQueue()->keyPress( osgGA::GUIEventAdapter::KEY_O );
+			break;
+		}
+		case ( Qt::Key_P ): {
+			_gw->getEventQueue()->keyPress( osgGA::GUIEventAdapter::KEY_P );
+			break;
+		}
 		default: {
-			_gw->getEventQueue()->keyPress( static_cast<osgGA::GUIEventAdapter::KeySymbol>( *( event->text().toAscii().data() ) ) );
+			_gw->getEventQueue()->keyPress( static_cast<osgGA::GUIEventAdapter::KeySymbol>( *( event->text().TOASCII().data() ) ) );
 			break;
 		}
 	}
@@ -111,9 +126,10 @@ void AdapterWidget::keyReleaseEvent( QKeyEvent* event )
 			if ( coreWindow ) {
 				coreWindow->addSQLInput();
 			}
+			break;
 		}
 		default: {
-			_gw->getEventQueue()->keyRelease( static_cast<osgGA::GUIEventAdapter::KeySymbol>( *( event->text().toAscii().data() ) ) );
+			_gw->getEventQueue()->keyRelease( static_cast<osgGA::GUIEventAdapter::KeySymbol>( *( event->text().TOASCII().data() ) ) );
 			break;
 		}
 	}
@@ -196,6 +212,7 @@ void AdapterWidget::mouseReleaseEvent( QMouseEvent* event )
 
 void AdapterWidget::mouseMoveEvent( QMouseEvent* event )
 {
+
 	//odchytavanie udalosti mysi
 	_gw->getEventQueue()->mouseMotion( static_cast<float>( event->x() ),static_cast<float>( event->y() ) );
 }

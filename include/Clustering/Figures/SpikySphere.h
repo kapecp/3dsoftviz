@@ -10,7 +10,7 @@ class SpikySphere : public Clustering::Sphere
 
 public:
 
-	SpikySphere( osg::Vec3d position, float radius, osg::Vec4d color );
+	SpikySphere( osg::Vec3d position, double radius, osg::Vec4d color );
 
 private:
 

@@ -13,6 +13,7 @@ extern "C"
 #include "Diluculum/Types.hpp"
 
 #include <sstream>
+#include <string>
 
 Lua::LuaInterface* Lua::LuaInterface::instance;
 

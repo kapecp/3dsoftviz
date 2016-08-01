@@ -1,14 +1,6 @@
 #include "QOpenCV/OpenCVWindow.h"
 
-#include <QtGui/QLabel>
-#include <QtGui/QRadioButton>
-#include <QtGui/QPushButton>
-#include <QtGui/QVBoxLayout>
-#include <QtGui/QStackedLayout>
-#include <QCloseEvent>
-#include <QDebug>
 #include "OpenCV/CamSelectCore.h"
-#include <QDebug>
 
 #include "Util/ApplicationConfig.h"
 
@@ -300,7 +292,7 @@ void QOpenCV::OpenCVWindow::onSelSubModulChange()
 	}
 	/*
 	if ( mMultiMarkerRB->isChecked() ) {
-	    mSubmodulesStackL->setCurrentIndex( 2 );
+		mSubmodulesStackL->setCurrentIndex( 2 );
 	}
 	*/
 	if ( mNoVideo->isChecked() ) {
@@ -365,6 +357,7 @@ void QOpenCV::OpenCVWindow::onMarkerStartCancel( bool checked )
 		emit setCapVideoMarker( OpenCV::CamSelectCore::getInstance()->selectCamera() );
 		emit startMarker();
 		mMarkerPB->setEnabled( true );
+		emit arucoRunning( true );
 
 		if ( Util::ApplicationConfig::get()->getValue( "Viewer.SkyBox.Noise" ).toInt() >1 ) {
 			mMarkerBackgrCB->setEnabled( true );
@@ -377,7 +370,7 @@ void QOpenCV::OpenCVWindow::onMarkerStartCancel( bool checked )
 		mUpdateCorParPB->setEnabled( false );
 		mMarkerBackgrCB->setEnabled( false );
 		emit stopMarker( true );
-
+		emit arucoRunning( false );
 	}
 }
 

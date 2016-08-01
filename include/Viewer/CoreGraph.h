@@ -24,10 +24,9 @@
 #include <QSharedPointer>
 #include <QObject>
 #include <QTime>
-
 #include "OsgQtBrowser/QWebViewImage.h"
-
 #include <osgShadow/ShadowedScene>
+#include "Hud.h"
 
 namespace Data {
 class Graph;
@@ -45,7 +44,7 @@ osg::ref_ptr<osg::AutoTransform> getCylinder( qlonglong id, osg::Vec3 position, 
 osg::Geode* test();
 osg::Vec4 getNewColor( int colorCounter );
 osg::Vec3f getMidPoint( QSet<Data::Node*> nodes );
-float getRadius( QSet<Data::Node*> nodes, osg::Vec3f midPoint );
+double getRadius( QSet<Data::Node*> nodes, osg::Vec3f midPoint );
 }
 
 namespace Util {
@@ -99,6 +98,7 @@ public:
 		 */
 	~CoreGraph( void );
 
+	void onResized( int width, int height );
 
 	/**
 		*  \fn public  reload(Data::Graph * graph = 0)
@@ -122,6 +122,14 @@ public:
 		 */
 	void update();
 
+	/**
+		*  \fn public updateBackground
+		*  \brief updates background (skybox, skynoise, video3d, video2dOrtho or nothing )
+		*  \param bgVal - background int value describing what background should be generated
+		*         currentGraph - graph background to be updated
+		*  \return 0 - success, 1 - fail
+		*/
+	int updateBackground( int bgVal, Data::Graph* currentGraph );
 
 	/**
 		*  \fn inline public  getCustomNodeList
@@ -171,7 +179,7 @@ public:
 		return camera;
 	}
 
-	osg::ref_ptr<osg::AutoTransform> dodecahedron( qlonglong id, osg::Vec3 midpoint, float radius, osg::Vec4 color );
+	osg::ref_ptr<osg::AutoTransform> dodecahedron( qlonglong id, osg::Vec3 midpoint, double radius, osg::Vec4 color );
 
 	/**
 		*  \fn public  setEdgeLabelsVisible(bool visible)
@@ -187,6 +195,13 @@ public:
 		*/
 	void setNodeLabelsVisible( bool visible );
 
+	void showLabelsForResidence( bool state );
+
+	void showHud( bool state );
+
+	bool isHudDisplayed() const;
+
+	Hud* getHud();
 
 	/**
 		*  \fn inline public constant  getNodesFreezed
@@ -261,9 +276,27 @@ public:
 
 	void turnOnBase();
 	void turnOffBase();
+	void turnAxes( bool turnOn );
 	void createBase();
-	float compare(float a, float b);
+	void scaleGraphToBase();
+	void scaleGraph( int scale );
+	void rotateGraph( int direction );
+	void outputMatrix( osg::Matrixd matrix );
+	void ratata( double initialX,double actualX,double initialY, double actualY );
+	void scaleNodes( bool scaleUp );
+	float getFurthestPosition( osg::Vec3f max,osg::Vec3f min );
+	void drawAxes();
+
+	bool isArucoRunning()
+	{
+		return arucoRunning;
+	}
 	//*****
+
+	osg::ref_ptr<osg::Group> getHandsGroup()
+	{
+		return handsGroup;
+	}
 
 public slots:
 
@@ -301,6 +334,23 @@ public slots:
 		 * @brief setEdgeType Set representation of edges
 		 */
 	void setEdgeVisual( int index );
+
+	/**
+		 * @brief setEdgeTypeForType Set representation of edges for specific type
+		 */
+	void setEdgeVisualForType( int index, QString edgeTypeName );
+
+	void recievedMVMatrix( QMatrix4x4 modelViewMatrix );
+
+	/**
+		 * @author Autor: Igor Jurík
+		 * @brief update camera projection matrix from aruco
+		 */
+	void recievedPMatrix( QMatrix4x4 modelViewMatrix );
+
+	void updateBase( double size );
+
+	void setArucoRunning( bool isRunning );
 
 private:
 
@@ -449,6 +499,8 @@ private:
 		*/
 	osg::ref_ptr<osg::Group> root;
 
+	osg::ref_ptr<Vwr::Hud> hud;
+
 	osg::ref_ptr<osg::Group> testGroup;
 
 	osg::ref_ptr<osg::Group> test2();
@@ -460,6 +512,8 @@ private:
 	osg::ref_ptr<osg::Group> graphGroup;
 
 	osg::ref_ptr<osg::Group> manipulatorGroup;
+
+	osg::ref_ptr<osg::Group> handsGroup;
 
 	/**
 		*  osg::ref_ptr graphRotTransf
@@ -496,6 +550,8 @@ private:
 		*  \brief true, if interpolation is denied
 		*/
 	bool interpolationDenied;
+
+	bool labelsForResidenceShowed;
 
 	/**
 		*  QLinkedList<osg::ref_ptr<osg::Node> > customNodeList
@@ -575,6 +631,7 @@ private:
 
 	int prevTime;
 
+
 #ifdef OPENCV_FOUND
 	osg::ref_ptr<OpenCV::CameraStream> mCameraStream;
 #endif
@@ -601,14 +658,19 @@ private:
 		*  osg::ref_ptr<osgShadow::ShadowedScene> shadowedScene
 		*  \brief node for shadows definition
 		*/
-		osg::ref_ptr<osgShadow::ShadowedScene> shadowedScene;
+	osg::ref_ptr<osgShadow::ShadowedScene> shadowedScene;
 
 	/**
 		* osg::Geode* baseGeode
 		*  \brief node base
 		*/
 	osg::ref_ptr<osg::Geode> baseGeode;
-	osg::ref_ptr<osg::PositionAttitudeTransform> baseTransform;
+	osg::ref_ptr<osg::MatrixTransform> baseTransform;
+	osg::Matrixd rotationMatrix;
+	double baseSize = 250;
+	bool arucoRunning = false;
+	osg::ref_ptr<osg::Geode> axesGeode;
+	osg::ref_ptr<osg::MatrixTransform> axesTransform;
 
 	//*****
 };

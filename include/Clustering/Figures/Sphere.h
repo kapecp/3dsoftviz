@@ -14,7 +14,7 @@ class Sphere
 
 public:
 
-	Sphere( osg::Vec3d position, float radius, osg::Vec4d color );
+	Sphere( osg::Vec3d position, double radius, osg::Vec4d color );
 
 	osg::AutoTransform* getAT()
 	{

@@ -41,18 +41,21 @@ option( USE_STRICT_COMPILE_WARNINGS "Use strict compilation warnings in debug mo
 if( USE_STRICT_COMPILE_WARNINGS )
 	if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang" OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "AppleClang")
 		# using Clang
-		set( FLAGS_FOR_DEBUG -pedantic -Wall -Wcast-align -Wcast-qual -Wchar-subscripts -Wcomment -Wconversion -Wctor-dtor-privacy -Wdisabled-optimization -Wextra -Wfloat-equal  -Wformat  -Wformat-nonliteral -Wformat-security  -Wformat-y2k -Wformat=2  -Wimport  -Winit-self -Winline -Winvalid-pch -Wlong-long -Wmissing-braces -Wmissing-declarations -Wmissing-field-initializers -Wmissing-format-attribute -Wmissing-include-dirs -Wmissing-noreturn -Wpacked  -Wparentheses -Wpointer-arith -Wredundant-decls -Wreturn-type -Wsequence-point -Wsign-compare  -Wsign-promo -Wstack-protector -Wstrict-aliasing=2 -Wstrict-overflow=5 -Wswitch -Wswitch-default -Wswitch-enum -Wtrigraphs -Wundef -Wuninitialized -Wunknown-pragmas -Wunreachable-code -Wvariadic-macros -Wvolatile-register-var -Wwrite-strings  -Wno-unused-parameter -Wno-unused )
+		set( FLAGS_FOR_DEBUG
+			-Weverything
+			-Wno-c++98-compat -Wno-documentation -Wno-shadow -Wno-padded -Wno-covered-switch-default
+			-pedantic -Wall -Wcast-align -Wcast-qual -Wchar-subscripts -Wcomment -Wconversion -Wctor-dtor-privacy -Wdisabled-optimization -Wextra -Wfloat-equal  -Wformat  -Wformat-nonliteral -Wformat-security  -Wformat-y2k -Wformat=2  -Wimport  -Winit-self -Winline -Winvalid-pch -Wlong-long -Wmissing-braces -Wmissing-declarations -Wmissing-field-initializers -Wmissing-format-attribute -Wmissing-include-dirs -Wmissing-noreturn -Wpacked  -Wparentheses -Wpointer-arith -Wredundant-decls -Wreturn-type -Wsequence-point -Wsign-compare  -Wsign-promo -Wstack-protector -Wstrict-aliasing=2 -Wstrict-overflow=5 -Wswitch -Wswitch-default -Wswitch-enum -Wtrigraphs -Wundef -Wuninitialized -Wunknown-pragmas -Wunreachable-code -Wvariadic-macros -Wvolatile-register-var -Wwrite-strings  -Wno-unused-parameter -Wno-unused -Wno-documentation-unknown-command )
 	elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR CMAKE_COMPILER_IS_GNUCXX)
 		# using GCC
 		set( FLAGS_FOR_DEBUG -pedantic -Wall -Wcast-align -Wcast-qual -Wchar-subscripts -Wcomment -Wconversion -Wctor-dtor-privacy -Wdisabled-optimization -Wextra -Wfloat-equal -Wformat -Wformat-nonliteral -Wformat-security -Wformat-y2k -Wformat=2 -Wimport -Winit-self -Winline -Winvalid-pch -Wlogical-op -Wlong-long -Wmissing-braces -Wmissing-declarations -Wmissing-field-initializers -Wmissing-format-attribute -Wmissing-include-dirs -Wmissing-noreturn -Wnoexcept -Wpacked -Wparentheses -Wpointer-arith -Wredundant-decls -Wreturn-type -Wsequence-point -Wsign-compare -Wsign-promo -Wstack-protector -Wstrict-aliasing=2 -Wstrict-null-sentinel -Wstrict-overflow=5 -Wswitch -Wswitch-default -Wswitch-enum -Wtrigraphs -Wundef -Wuninitialized -Wunknown-pragmas -Wunreachable-code -Wunsafe-loop-optimizations -Wvariadic-macros -Wvolatile-register-var -Wwrite-strings -Wold-style-cast -Woverloaded-virtual -Wuseless-cast -Wsign-conversion -Wno-unused-parameter -Wno-unused )
 
 		# to suppress warnings for unused stuff use: -Wno-unused-parameter -Wno-unused-result
 		# not used:
-			# too much warnings in Qt headers: NULL vs 0 pointers: -Wzero-as-null-pointer-constant
-			# too much warnings: -Wshadow -Waggregate-return
-			# class size optimizations ( not really needed ): -Wpadded
-			# style guidelines from Scott Meyers' Effective C++ books: -Weffc++
-			# only for C: -Wold-style-definition -Wstrict-prototypes -Wmissing-prototypes
+		# too much warnings in Qt headers: NULL vs 0 pointers: -Wzero-as-null-pointer-constant
+		# too much warnings: -Wshadow -Waggregate-return
+		# class size optimizations ( not really needed ): -Wpadded
+		# style guidelines from Scott Meyers' Effective C++ books: -Weffc++
+		# only for C: -Wold-style-definition -Wstrict-prototypes -Wmissing-prototypes
 	elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
 		# using Visual Studio C++
 		set( FLAGS_FOR_DEBUG "/W3")
@@ -84,7 +87,7 @@ if (USE_LD_GOLD)
 		set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fuse-ld=gold -Wl,--disable-new-dtags" CACHE STRING "" FORCE)
 		set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -fuse-ld=gold -Wl,--disable-new-dtags" CACHE STRING "" FORCE)
 	else ()
-		message(WARNING "GNU gold linker isn't available, using the default system linker.")
+		message(STATUS "GNU gold linker isn't available, using the default system linker.")
 	endif ()
 endif ()
 
@@ -93,15 +96,28 @@ endif ()
 # --------------
 include( cotire )
 if(COMMAND cotire )
-		if( NOT COTIRE_MAXIMUM_NUMBER_OF_UNITY_INCLUDES )
-				include( ProcessorCount )
-				ProcessorCount( N )
+	if( NOT COTIRE_MAXIMUM_NUMBER_OF_UNITY_INCLUDES )
+		include( ProcessorCount )
+		ProcessorCount( N )
 
-				if( NOT N EQUAL 0 )
-						# set number of parallel unity builds to processor count
-						set( COTIRE_MAXIMUM_NUMBER_OF_UNITY_INCLUDES "-j${N}" )
-				endif()
+		if( NOT N EQUAL 0 )
+			# check for physical memmory
+			cmake_host_system_information(RESULT PHYSICAL_MEMORY QUERY TOTAL_PHYSICAL_MEMORY)
+			math(EXPR PHYSICAL_MEMORY_GB "${PHYSICAL_MEMORY}/1024")
+
+			# if physical memmory is less than 4GB, then split unity builds
+			# note: less than 4GB RAM causes swapping
+			if(${PHYSICAL_MEMORY_GB} LESS "4")
+				math(EXPR JOBS "${N}*2")
+			else()
+				set(JOBS ${N})
+			endif()
+
+			# set number of parallel unity builds to processor count
+			message(STATUS "Cotire parallel unity jobs: ${JOBS}")
+			set( COTIRE_MAXIMUM_NUMBER_OF_UNITY_INCLUDES "-j${JOBS}" )
 		endif()
+	endif()
 
 	set( COTIRE_VERBOSE FALSE )
 	set( COTIRE_DEBUG FALSE )
@@ -121,26 +137,46 @@ endif()
 # Dependencies - Searching external dependencies
 # ------------------------------------------------------------
 
+# ------------------------------ Qt -------------------------------
 set( ALL_SYSTEM_HEADERS )
 set( ALL_COMPILE_DEFINITIONS )
 
-# ------------------------------ Qt4 -------------------------------
-# Find Qt4
-find_package( Qt4 REQUIRED )
-set( QT_USE_QTOPENGL 1 )
-set( QT_USE_QTSQL 1 )
-set( QT_USE_QTWEBKIT 1 )
-set( QT_USE_QTXML 1 )
-set( QT_USE_QTNETWORK 1 )
-include( ${QT_USE_FILE} )
+set( CMAKE_AUTOMOC ON )
+set( CMAKE_INCLUDE_CURRENT_DIR ON )
 
-# autogenerate all moc files
-set( CMAKE_AUTOMOC TRUE )
+# Find Qt5
+find_package( Qt5Core QUIET )
+find_package( Qt5Widgets QUIET )
+find_package( Qt5OpenGL QUIET )
+find_package( Qt5Sql QUIET )
+find_package( Qt5WebEngine QUIET )
+find_package( Qt5WebEngineWidgets QUIET )
+find_package( Qt5Xml QUIET )
+find_package( Qt5Network QUIET )
+
+if ( NOT Qt5Core_FOUND )
+	# Find Qt4
+	find_package( Qt4 REQUIRED )
+	set( QT_USE_QTOPENGL 1 )
+	set( QT_USE_QTSQL 1 )
+	set( QT_USE_QTWEBKIT 1 )
+	set( QT_USE_QTXML 1 )
+	set( QT_USE_QTNETWORK 1 )
+	include( ${QT_USE_FILE} )
+endif()
+
+if ( Qt5Core_FOUND )
+	message(STATUS "Using Qt5 packages")
+elseif( Qt4_FOUND )
+	message(STATUS "Using Qt4 packages")
+else()
+	message(STATUS "No suitable Qt packages found")
+endif()
 
 # add special flag to GCC compiler when using Qt 4.6.x with GCC >4.6
 if( "${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" AND
-	"${QT_VERSION_MAJOR}.${QT_VERSION_MINOR}" VERSION_LESS "4.7" AND
-	${CMAKE_C_COMPILER_VERSION} VERSION_GREATER "4.6" )
+		"${QT_VERSION_MAJOR}.${QT_VERSION_MINOR}" VERSION_LESS "4.7" AND
+		${CMAKE_C_COMPILER_VERSION} VERSION_GREATER "4.6" )
 
 	set( CMAKE_CXX_FLAGS "-fpermissive" )
 endif()
@@ -167,9 +203,12 @@ find_package( OpenSceneGraph COMPONENTS
 )
 find_package( osgViewer )
 
+find_package( osgQt )
+
 list( APPEND ALL_SYSTEM_HEADERS
 	${OPENSCENEGRAPH_INCLUDE_DIRS}
 	${OSGVIEWER_INCLUDE_DIR}
+	${OSGQT_INCLUDE_DIR}
 )
 
 if( MSVC )
@@ -238,11 +277,11 @@ if( WIN32 AND MSVC )
 
 		# find_package( SPEECHSDK )
 		# if( SPEECHSDK_FOUND )
-			# include_directories( SYSTEM ${SPEECHSDK_INCLUDE_DIRS} )
-			# add_definitions( -DSPEECHSDK_FOUND )
-			# message( STATUS "SPEECHSDK FOUND" )
+		# include_directories( SYSTEM ${SPEECHSDK_INCLUDE_DIRS} )
+		# add_definitions( -DSPEECHSDK_FOUND )
+		# message( STATUS "SPEECHSDK FOUND" )
 		# else( SPEECHSDK_FOUND )
-			# message ( STATUS "SPEECHSDK NOT FOUND" )
+		# message ( STATUS "SPEECHSDK NOT FOUND" )
 		# endif()
 
 		message( STATUS "KINECTSDK Found:" )
@@ -263,6 +302,11 @@ find_package( Boost 1.39 REQUIRED )
 list( APPEND ALL_SYSTEM_HEADERS	${Boost_INCLUDE_DIRS}  )
 
 # ------------------------------ LEAP -------------------------------
+#enable leap orion on windows
+if( WIN32 )
+	set( USE_LEAP_ORION ON )
+endif()
+
 # Find leap
 find_package( LEAP )
 if( LEAP_FOUND )
@@ -274,7 +318,6 @@ if( LEAP_FOUND )
 	message( STATUS "LEAP Found:" )
 	message( STATUS "LEAP_INCLUDE_DIRS=${LEAP_INCLUDE_DIRS}" )
 	message( STATUS "LEAP_LIB_DIR=${LEAP_LIBRARIES}" )
-	message( STATUS "FGLOVE_DRIVER_DIRS=${FGLOVE_DRIVER_DIRS}" )
 else()
 	message( STATUS "LEAP Not Found" )
 endif()
@@ -295,16 +338,54 @@ endif()
 # ------------------------------ MOUSE3D -------------------------------
 # Find MOUSE3D
 find_package( MOUSE3D )
-if( MOUSE3D_FOUND )
-
-	list( APPEND ALL_SYSTEM_HEADERS	${MOUSE3D_INCLUDE_DIRS} )
-
-	list( APPEND ALL_COMPILE_DEFINITIONS -DMOUSE3D_FOUND )
-	message( STATUS "3DMouse Found:" )
-	message( STATUS "MOUSE3D_INCLUDE_DIRS=${MOUSE3D_INCLUDE_DIRS}" )
-	message( STATUS "MOUSE3D_LIBRARIES=${MOUSE3D_LIBRARIES}" )
-else()
+if( WIN32 )
+	if( MOUSE3D_FOUND )
+		include_directories( SYSTEM ${MOUSE3D_INCLUDE_DIRS} )
+		add_definitions( -DMOUSE3D_FOUND )
+		message( STATUS "3DMouse FOUND" )
+	endif()
+elseif( APPLE )
+	if( MOUSE3D_FOUND )
+		include_directories( SYSTEM ${MOUSE3D_INCLUDE_DIRS} )
+		add_definitions( -DMOUSE3D_FOUND )
+		message( STATUS "3DMouse FOUND" )
+	endif()
+elseif( UNIX )
+	set (MOUSE3D_FOUND TRUE)
+	include_directories( SYSTEM include/Mouse3d/LibMouse3d/Unix )
+	find_package( X11 REQUIRED )
+	include_directories( SYSTEM ${X11_INCLUDE_DIR} )
+	add_definitions( -DMOUSE3D_FOUND )
+	message( STATUS "3DMouse FOUND" )
+elseif()
 	message( STATUS "3DMouse NOT FOUND" )
+endif()
+
+
+# ------------------------------ DOXYGEN -------------------------------
+# Find Doxygen
+find_package(Doxygen)
+option(BUILD_DOCUMENTATION "Create and install the HTML based API documentation (requires Doxygen)" ${DOXYGEN_FOUND})
+#message( STATUS "Doxygen found: " ${DOXYGEN_EXECUTABLE} )
+
+if(BUILD_DOCUMENTATION)
+	if(NOT DOXYGEN_FOUND)
+		message(FATAL_ERROR "Doxygen is needed to build the documentation.")
+	endif()
+
+	set(doxyfile_in ${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in)
+	set(doxyfile ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile)
+
+	configure_file(${doxyfile_in} ${doxyfile} @ONLY)
+
+	add_custom_target(doxygen
+		COMMAND ${DOXYGEN_EXECUTABLE} ${doxyfile}
+		WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+		COMMENT "Generating API documentation with Doxygen"
+		VERBATIM)
+
+	install(DIRECTORY DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/html)
+	install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/html DESTINATION share/doc)
 endif()
 
 
@@ -318,8 +399,8 @@ option( USE_BUILTIN_DEPENDENCIES "Use builtin dependencies." ON )
 # Build dependencies
 if( USE_BUILTIN_DEPENDENCIES )
 	# to use Gold linker add following flags to ExternalProject_Add command, to CMAKE_ARGS (TODO: needs more testing):
-		#-DCMAKE_EXE_LINKER_FLAGS:STRING=${CMAKE_EXE_LINKER_FLAGS}
-		#-DCMAKE_SHARED_LINKER_FLAGS:STRING=${CMAKE_SHARED_LINKER_FLAGS}
+	#-DCMAKE_EXE_LINKER_FLAGS:STRING=${CMAKE_EXE_LINKER_FLAGS}
+	#-DCMAKE_SHARED_LINKER_FLAGS:STRING=${CMAKE_SHARED_LINKER_FLAGS}
 
 	include( ExternalProject )
 
@@ -341,7 +422,7 @@ if( USE_BUILTIN_DEPENDENCIES )
 			-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
 			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
 			-C ${CMAKE_CURRENT_BINARY_DIR}/config.cmake
-	)
+		)
 
 	# add libnoise library
 	add_library( libnoise SHARED IMPORTED )
@@ -376,7 +457,7 @@ if( USE_BUILTIN_DEPENDENCIES )
 				-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
 				-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
 				-C ${CMAKE_CURRENT_BINARY_DIR}/config.cmake
-		)
+			)
 
 		add_library( aruco SHARED IMPORTED )
 		add_dependencies( aruco dep_aruco )
@@ -401,7 +482,7 @@ if( USE_BUILTIN_DEPENDENCIES )
 			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
 			-DBUILD_PLUGINS=ON
 			-C ${CMAKE_CURRENT_BINARY_DIR}/config.cmake
-	)
+		)
 
 	add_library( osgModeling SHARED IMPORTED )
 	add_dependencies( osgModeling dep_osgModeling )
@@ -425,13 +506,13 @@ if( USE_BUILTIN_DEPENDENCIES )
 			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
 			-DBUILD_TESTS=ON
 			-C ${CMAKE_CURRENT_BINARY_DIR}/config.cmake
-		# little trick:
+			# little trick:
 			# this solves building igloo twice (building normal target and building unity target)
 			# prevent building the default target (make install)
-		BUILD_COMMAND ""
+			BUILD_COMMAND ""
 			# force building the install_unity target
-		INSTALL_COMMAND "${CMAKE_COMMAND}" --build . --target install_unity# -- "-j${N}"
-	)
+			INSTALL_COMMAND "${CMAKE_COMMAND}" --build . --target install_unity# -- "-j${N}"
+		)
 
 	add_library( igloo INTERFACE IMPORTED )
 	add_dependencies( igloo dep_igloo )
@@ -448,7 +529,7 @@ if( USE_BUILTIN_DEPENDENCIES )
 				-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
 				-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
 				-C ${CMAKE_CURRENT_BINARY_DIR}/config.cmake
-		)
+			)
 
 		# add lua library
 		add_library( lua SHARED IMPORTED )
@@ -474,7 +555,7 @@ if( USE_BUILTIN_DEPENDENCIES )
 				-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
 				-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
 				-C ${CMAKE_CURRENT_BINARY_DIR}/config.cmake
-		)
+			)
 
 		# add lua library
 		add_library( lua SHARED IMPORTED )
@@ -500,7 +581,7 @@ if( USE_BUILTIN_DEPENDENCIES )
 			CMAKE_ARGS
 				-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
 				-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-		)
+			)
 
 		# add diluculum library
 		add_library( diluculum SHARED IMPORTED )
@@ -523,7 +604,7 @@ if( USE_BUILTIN_DEPENDENCIES )
 		CMAKE_ARGS
 			-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
 			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-	)
+		)
 
 	# Build leg
 	ExternalProject_Add ( dep_leg
@@ -533,7 +614,7 @@ if( USE_BUILTIN_DEPENDENCIES )
 		CMAKE_ARGS
 			-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
 			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-	)
+		)
 
 	# Build luametrics
 	ExternalProject_Add ( dep_luametrics
@@ -543,7 +624,7 @@ if( USE_BUILTIN_DEPENDENCIES )
 		CMAKE_ARGS
 			-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
 			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-	)
+		)
 
 	# Build luafilesystem
 	ExternalProject_Add ( dep_luafilesystem
@@ -553,7 +634,7 @@ if( USE_BUILTIN_DEPENDENCIES )
 		CMAKE_ARGS
 			-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
 			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-	)
+		)
 
 	# Build lualogging
 	ExternalProject_Add ( dep_lualogging
@@ -563,7 +644,7 @@ if( USE_BUILTIN_DEPENDENCIES )
 		CMAKE_ARGS
 			-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
 			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-	)
+		)
 
 	# Ensure correct order of build (dependencies between external dependencies)
 	if( MSVC OR APPLE )
@@ -594,6 +675,7 @@ endif()
 
 #-------------------------------- Source files -------------------------------
 set( SRC_MAIN "src/main.cpp" )
+file( GLOB_RECURSE SRC_APP		"src/Application/*.cpp" )
 file( GLOB_RECURSE SRC_CORE		"src/Core/*.cpp" )
 file( GLOB_RECURSE SRC_DATA		"src/Data/*.cpp" )
 file( GLOB_RECURSE SRC_IMPORTER	"src/Importer/*.cpp" )
@@ -612,6 +694,9 @@ file( GLOB_RECURSE SRC_VIEWER	"src/Viewer/*.cpp" )
 file( GLOB_RECURSE SRC_CLUSTERING	"src/Clustering/*.cpp")
 file( GLOB SRC_REPOSITORY		"src/Repository/Git/*.cpp" )
 file( GLOB_RECURSE SRC_GITLIB   "src/Repository/Git/GitLib/*.cpp" )
+file( GLOB_RECURSE SRC_SPECIALMATRIX   "src/SpecialMatrix/*.cpp" )
+file( GLOB_RECURSE SRC_CITY		"src/City/*.cpp" )
+file( GLOB_RECURSE SRC_SHAPES	"src/Shapes/*.cpp" )
 
 # OpenCV
 file( GLOB_RECURSE SRC_OPENCV	"src/OpenCV/*.cpp" )
@@ -632,12 +717,36 @@ file( GLOB_RECURSE SRC_SPEECH	"src/Speech/*.cpp" )
 # Leap
 file ( GLOB SRC_LEAP "src/Leap/*.cpp" )
 file ( GLOB_RECURSE SRC_LEAPLIB "src/Leap/LeapLib/*.cpp" )
+
 # MOUSE3D
-file ( GLOB_RECURSE SRC_MOUSE3D "src/Mouse3D/*.cpp" )
+set ( SRC_MOUSE3D
+	src/Mouse3d/Connector.cpp
+	src/Mouse3d/LibMouse3d/EventThread.cpp
+	src/Mouse3d/LibMouse3d/Mouse3dDevices.cpp
+)
+
+if( WIN32 )
+	list(APPEND SRC_MOUSE3D
+		src/Mouse3d/LibMouse3d/Windows/Mouse3DInput.cpp
+		src/Mouse3d/LibMouse3d/Windows/MouseParameters.cpp
+		)
+elseif( APPLE )
+	list(APPEND SRC_MOUSE3D
+		src/Mouse3d/LibMouse3d/Mac/Mouse3dMacDevice.cpp
+		)
+elseif( UNIX )
+	list(APPEND SRC_MOUSE3D
+		src/Mouse3d/LibMouse3d/Unix/ApplicationEmitter.cpp
+		src/Mouse3d/LibMouse3d/Unix/Mouse3dUnixDevice.cpp
+		src/Mouse3d/LibMouse3d/Unix/xdrvlib.c
+		)
+endif()
+
 
 
 # All source files
 set( SRC
+	${SRC_APP}
 	${SRC_CORE}
 	${SRC_MANAGER}
 	${SRC_DATA}
@@ -655,6 +764,9 @@ set( SRC
 	${SRC_VIEWER}
 	${SRC_UTIL}
 	${SRC_REPOSITORY}
+	${SRC_SPECIALMATRIX}
+	${SRC_CITY}
+	${SRC_SHAPES}
 )
 
 if( OpenCV_FOUND )
@@ -677,6 +789,7 @@ endif()
 
 # add Leap
 if( LEAP_FOUND )
+	# WORKAROUND GARAJ comment
 	list( APPEND SRC ${SRC_LEAP} )
 endif()
 
@@ -695,6 +808,7 @@ if( MSVC )
 endif()
 
 #-------------------------------- Header files -------------------------------
+file( GLOB_RECURSE HEADER_APP		"include/Application/*.h" )
 file( GLOB_RECURSE HEADER_CORE		"include/Core/*.h" )
 file( GLOB_RECURSE HEADER_DATA		"include/Data/*.h" )
 file( GLOB_RECURSE HEADER_IMPORTER	"include/Importer/*.h" )
@@ -713,6 +827,9 @@ file( GLOB_RECURSE HEADER_VIEWER	"include/Viewer/*.h" )
 file( GLOB_RECURSE HEADER_CLUSTERING	"include/Clustering/*.h")
 file( GLOB HEADER_REPOSITORY		"include/Repository/Git/*.h" )
 file( GLOB_RECURSE HEADER_GITLIB		"include/Repository/Git/GitLib/*.h" )
+file( GLOB_RECURSE HEADER_SPECIALMATRIX		"include/SpecialMatrix/*.h" )
+file( GLOB_RECURSE HEADER_CITY		"include/City/*.h" )
+file( GLOB_RECURSE HEADER_SHAPES	"include/Shapes/*.h" )
 
 # OpenCV
 file( GLOB_RECURSE HEADER_OPENCV	"include/OpenCV/*.h" )
@@ -734,11 +851,38 @@ file( GLOB_RECURSE HEADER_SPEECH	"include/Speech/*.h" )
 file( GLOB HEADER_LEAP	"include/Leap/*.h" )
 file( GLOB_RECURSE HEADER_LEAPLIB	"include/Leap/LeapLib/*.h" )
 
+
 # MOUSE3D
-file( GLOB_RECURSE HEADER_MOUSE3D	"include/Mouse3D/*.h" )
+set ( HEADER_MOUSE3D
+	include/Mouse3d/Connector.h
+	include/Mouse3d/LibMouse3d/EventThread.h
+	include/Mouse3d/LibMouse3d/Mouse3dDevices.h
+)
+
+if( WIN32 )
+	list(APPEND HEADER_MOUSE3D
+		include/Mouse3d/LibMouse3d/Windows/Mouse3DInput.h
+		include/Mouse3d/LibMouse3d/Windows/MouseParameters.h
+		include/Mouse3d/LibMouse3d/Windows/I3dMouseParams.h
+		)
+elseif( APPLE )
+	list(APPEND HEADER_MOUSE3D
+		include/Mouse3d/LibMouse3d/Mac/Mouse3dMacDevice.h
+		)
+elseif( UNIX )
+	list(APPEND HEADER_MOUSE3D
+		include/Mouse3d/LibMouse3d/Unix/ApplicationEmitter.h
+		include/Mouse3d/LibMouse3d/Unix/fixx11.h
+		include/Mouse3d/LibMouse3d/Unix/Mouse3dUnixDevice.h
+		include/Mouse3d/LibMouse3d/Unix/xdrvlib.h
+		)
+endif()
+
+
 
 # All header files
 set( INCL
+	${HEADER_APP}
 	${HEADER_CORE}
 	${HEADER_MANAGER}
 	${HEADER_DATA}
@@ -756,6 +900,9 @@ set( INCL
 	${HEADER_VIEWER}
 	${HEADER_UTIL}
 	${HEADER_REPOSITORY}
+	${HEADER_SPECIALMATRIX}
+	${HEADER_CITY}
+	${HEADER_SHAPES}
 )
 
 if( OpenCV_FOUND )
@@ -788,6 +935,7 @@ endif()
 
 #-------------------------------------- Group source files --------------------------------------
 source_group( \\src main.cpp )
+source_group( \\src\\Application "^.*Application/.*$" )
 source_group( \\src\\Network "^.*Network/.*$" )
 source_group( \\src\\Viewer "^.*Viewer/.*$" )
 source_group( \\src\\Core "^.*Core/.*$" )
@@ -803,8 +951,12 @@ source_group( \\src\\LuaGraph "^.*LuaGraph/.*$")
 source_group( \\src\\LuaInterface "^.*LuaInterface/.*$")
 source_group( \\src\\LuaTypes "^.*LuaTypes/.*$")
 source_group( \\src\\Git "^.*Git/.*$" )
+source_group( \\src\\SpecialMatrix "^.*SpecialMatrix/.*$" )
+source_group( \\src\\City "^.*City/.*$" )
+source_group( \\src\\Shapes "^.*Shapes/.*$" )
 
 # Group header files
+source_group( \\headers\\Application "^.*Application/.*h$")
 source_group( \\headers\\Clustering "^.*Clustering/.*h$")
 source_group( \\headers\\Network "^.*Network/.*h$" )
 source_group( \\headers\\Viewer "^.*Viewer/.*h$" )
@@ -821,6 +973,9 @@ source_group( \\headers\\LuaGraph "^.*LuaGraph/.*h$")
 source_group( \\headers\\LuaInterface "^.*LuaInterface/.*h$")
 source_group( \\headers\\LuaTypes "^.*LuaTypes/.*h$")
 source_group( \\headers\\Git "^.*Git/.*h$" )
+source_group( \\headers\\SpecialMatrix "^.*SpecialMatrix/.*h$" )
+source_group( \\headers\\City "^.*City/.*h$" )
+source_group( \\headers\\Shapes "^.*Shapes/.*h$" )
 
 if( OpenCV_FOUND )
 	source_group( \\src\\QOpenCV "^.*QOpenCV/.*$" )
@@ -855,8 +1010,8 @@ endif()
 
 # MOUSE3D
 if( MOUSE3D_FOUND )
-	source_group( \\src\\Mouse3D "^.*Mouse3D/.*$" )
-	source_group( \\headers\\Mouse3D "^.*Mouse3D/.*h$" )
+	source_group( \\src\\Mouse3d "^.*Mouse3d/.*$" )
+	source_group( \\headers\\Mouse3d "^.*Mouse3d/.*h$" )
 endif()
 
 # ---------------------------------------------------------------
@@ -868,25 +1023,35 @@ target_include_directories( noiseutils SYSTEM PUBLIC ${DEPENDENCIES_INCLUDE_DIR}
 
 add_library( qtcolorpicker STATIC dependencies/qtcolorpicker/qtcolorpicker.cpp )
 target_include_directories( qtcolorpicker SYSTEM PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/qtcolorpicker )
+if ( Qt5Core_FOUND )
+	qt5_use_modules( qtcolorpicker Core Widgets )
+endif()
+
+include_directories( SYSTEM dependencies/parserlib/source )
+add_library( parserlib STATIC dependencies/parserlib/source/ast.cpp dependencies/parserlib/source/parser.cpp )
 
 # ---------------------------------------------------------------
 # Build modules as libraries
 # ---------------------------------------------------------------
 
 #-------------------------------- gitlib module -------------------------------
-add_library( gitlib SHARED ${SRC_GITLIB} ${HEADER_GITLIB})
+add_library( gitlib STATIC ${SRC_GITLIB} ${HEADER_GITLIB})
 
 target_include_directories( gitlib
 	SYSTEM PUBLIC
-		include
-		include/Repository/Git
+	include
+	include/Repository/Git
 )
 
-target_compile_definitions( gitlib PUBLIC -DGITLIB_LIBRARY )
+target_compile_definitions( gitlib PUBLIC -DGITLIB_LIBRARY_STATIC )
 
 target_compile_options( gitlib PUBLIC ${FLAGS_FOR_DEBUG} )
 
-target_link_libraries( gitlib ${QT_LIBRARIES} )
+if ( Qt5Core_FOUND )
+	qt5_use_modules( gitlib Core )
+elseif( Qt4_FOUND )
+	target_link_libraries( gitlib ${QT_LIBRARIES} )
+endif()
 
 # 'cotire' the module
 if( COMMAND cotire )
@@ -895,29 +1060,38 @@ if( COMMAND cotire )
 	cotire( gitlib CONFIGURATIONS Debug Release )
 endif()
 
-
-#leap
+#-------------------------------- leap module -------------------------------
 if( LEAP_FOUND )
-add_library( leaplib SHARED ${SRC_LEAPLIB} ${HEADER_LEAPLIB})
-target_include_directories( leaplib SYSTEM PUBLIC ${LEAP_INCLUDE_DIRS} include/Leap } )
-target_link_libraries( leaplib ${QT_LIBRARIES} ${LEAP_LIBRARIES})
-endif()
+	add_library( leaplib STATIC ${SRC_LEAPLIB} ${HEADER_LEAPLIB})
 
-if( LEAP_FOUND )
-set(FLAGS_FOR_DEBUG3 ${FLAGS_FOR_DEBUG})
-list(APPEND FLAGS_FOR_DEBUG3 " -DLEAPLIB_LIBRARY")
-string(REPLACE " " ";" REPLACED_FLAGS2 ${FLAGS_FOR_DEBUG3})
-target_compile_options( leaplib PUBLIC ${REPLACED_FLAGS2} )
+	target_include_directories( leaplib
+		SYSTEM PUBLIC
+		include
+		include/Leap
+		)
+
+	target_compile_definitions( leaplib PUBLIC -DLEAPLIB_LIBRARY_STATIC )
+
+	target_compile_options( leaplib PUBLIC ${FLAGS_FOR_DEBUG} )
+
+	if ( Qt5Core_FOUND )
+		qt5_use_modules( leaplib Core )
+	elseif( Qt4_FOUND )
+		target_link_libraries( leaplib ${QT_LIBRARIES} )
+	endif()
+
+	# 'leap' the module
+	if( COMMAND cotire )
+		# link leaplib_unity target to all libraries to which leaplib links
+		set_target_properties( leaplib PROPERTIES COTIRE_UNITY_LINK_LIBRARIES_INIT "COPY_UNITY" )
+		cotire( leaplib CONFIGURATIONS Debug Release )
+	endif()
 endif()
 
 # ---------------------------------------------------------------
 # Build and link 3Dsoftviz
 # ---------------------------------------------------------------
 
-
-if( MSVC )
-	list( APPEND SRC ${SRC_DILUCULUM} )
-endif()
 # 3Dsoftviz library
 add_library( ${3DSOFTVIZ_NAME} STATIC ${INCL}  ${SRC} )
 
@@ -936,6 +1110,8 @@ list( APPEND ALL_SYSTEM_HEADERS ${DEPENDENCIES_INCLUDE_DIR} )
 list( APPEND ALL_SYSTEM_HEADERS ${DEPENDENCIES_INCLUDE_DIR}/libnoise )
 list( APPEND ALL_SYSTEM_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/easyloggingpp/src )
 
+list( APPEND ALL_SYSTEM_HEADERS include/Leap )
+
 # works:
 include_directories(SYSTEM ${ALL_SYSTEM_HEADERS})
 # does not work:
@@ -947,6 +1123,18 @@ include_directories(SYSTEM ${ALL_SYSTEM_HEADERS})
 # 	PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
 # )
 
+if ( Qt5Core_FOUND )
+	qt5_use_modules( ${3DSOFTVIZ_NAME}
+		Core
+		Widgets
+		OpenGL
+		Sql
+		WebEngine
+		WebEngineWidgets
+		Xml
+		Network
+		)
+endif()
 
 target_link_libraries( ${3DSOFTVIZ_NAME}
 	gitlib
@@ -955,14 +1143,21 @@ target_link_libraries( ${3DSOFTVIZ_NAME}
 	libnoise
 	osgModeling
 	qtcolorpicker
-	${QT_LIBRARIES}
+	parserlib
 	${OPENSCENEGRAPH_LIBRARIES}
 	${OSGVIEWER_LIBRARIES}
+	${OSGQT_LIBRARIES}
 )
+
+if ( Qt4_FOUND )
+	target_link_libraries( ${3DSOFTVIZ_NAME}
+		${QT_LIBRARIES}
+		)
+endif()
 
 if( NOT MSVC )
 	target_link_libraries( ${3DSOFTVIZ_NAME} diluculum
-	)
+		)
 endif()
 
 if( OpenCV_FOUND )
@@ -989,11 +1184,17 @@ endif()
 # endif()
 
 if( LEAP_FOUND )
-	target_link_libraries( ${3DSOFTVIZ_NAME} ${LEAP_LIBRARIES} )
+	target_link_libraries( ${3DSOFTVIZ_NAME} leaplib ${LEAP_LIBRARIES} )
 endif()
 
 if( MOUSE3D_FOUND )
-	target_link_libraries( ${3DSOFTVIZ_NAME} ${MOUSE3D_LIBRARIES} )
+	if ( WIN32 )
+		target_link_libraries( ${3DSOFTVIZ_NAME} ${MOUSE3D_LIBRARIES} )
+	elseif( APPLE )
+		target_link_libraries( ${3DSOFTVIZ_NAME} ${MOUSE3D_LIBRARIES} )
+	elseif(UNIX)
+		target_link_libraries( ${3DSOFTVIZ_NAME} ${X11_LIBRARIES} )
+	endif()
 endif()
 
 # 'cotire' the executable
@@ -1003,17 +1204,19 @@ if( COMMAND cotire )
 
 	cotire( ${3DSOFTVIZ_NAME} CONFIGURATIONS Debug Release )
 
-	# Work in progress:
-	# get_target_property(UVAR ${3DSOFTVIZ_NAME}_unity INCLUDE_DIRECTORIES)
-	# get_target_property(UVAR2 ${3DSOFTVIZ_NAME}_unity INTERFACE_SYSTEM_INCLUDE_DIRECTORIES)
-	# message("U1<<<<${VAR}")
-	# message("U2<<<<${VAR2}")
-if( LEAP_FOUND )
-	set_target_properties( leaplib PROPERTIES COTIRE_UNITY_LINK_LIBRARIES_INIT "COPY" )
-endif()
-if( LEAP_FOUND )
-	cotire( leaplib CONFIGURATIONS Debug Release )
-endif()
+	if( LEAP_FOUND )
+		target_link_libraries( ${3DSOFTVIZ_NAME}_unity leaplib_unity ${LEAP_LIBRARIES} )
+	endif()
+
+	if( MOUSE3D_FOUND )
+		if ( WIN32 )
+			target_link_libraries( ${3DSOFTVIZ_NAME}_unity ${MOUSE3D_LIBRARIES} )
+		elseif( APPLE )
+			target_link_libraries( ${3DSOFTVIZ_NAME}_unity ${MOUSE3D_LIBRARIES} )
+		elseif(UNIX)
+			target_link_libraries( ${3DSOFTVIZ_NAME}_unity ${X11_LIBRARIES} )
+		endif()
+	endif()
 endif()
 
 # Ensure correct dependencies
@@ -1056,7 +1259,7 @@ if( USE_BUILTIN_DEPENDENCIES )
 			add_dependencies( ${3DSOFTVIZ_NAME}_unity aruco )
 		endif()
 		if( LEAP_FOUND )
-			add_dependencies( ${3DSOFTVIZ_NAME}_unity leaplib )
+			add_dependencies( ${3DSOFTVIZ_NAME}_unity leaplib_unity )
 		endif()
 
 	endif()
@@ -1108,13 +1311,13 @@ install( TARGETS ${3DSOFTVIZ_NAME}_app
 	RUNTIME DESTINATION ${INSTALL_BIN} COMPONENT Runtime )
 
 install( TARGETS gitlib
-	RUNTIME DESTINATION ${INSTALL_BIN} COMPONENT Runtime
+	ARCHIVE DESTINATION ${INSTALL_BIN} COMPONENT Runtime
 	LIBRARY DESTINATION ${INSTALL_LIB} COMPONENT Runtime )
 
 if( LEAP_FOUND )
 	install( TARGETS leaplib
-	RUNTIME DESTINATION ${INSTALL_BIN} COMPONENT Runtime
-	LIBRARY DESTINATION ${INSTALL_LIB} COMPONENT Runtime )
+		ARCHIVE DESTINATION ${INSTALL_BIN} COMPONENT Runtime
+		LIBRARY DESTINATION ${INSTALL_LIB} COMPONENT Runtime )
 endif()
 
 # add custom install_unity target
@@ -1124,7 +1327,7 @@ if( COMMAND cotire )
 	add_dependencies( install_unity ${3DSOFTVIZ_NAME}_app_unity )
 	add_dependencies( install_unity gitlib_unity )
 	if( LEAP_FOUND )
-	add_dependencies( install_unity leaplib )
+		add_dependencies( install_unity leaplib_unity )
 	endif()
 endif()
 
@@ -1136,12 +1339,17 @@ install( DIRECTORY resources/ DESTINATION ${INSTALL_DATA} COMPONENT Data PATTERN
 
 # Install needed .dll files for OpenNI2
 if( NITE2_FOUND AND OPENNI2_FOUND )
-	install( DIRECTORY ${NITE2_OPENNI2_DRIVER_DIRS} DESTINATION ${INSTALL_BIN}/OpenNI2 )
+	if( WIN32 )
+		install( DIRECTORY ${OPENNI2_DLL}/ DESTINATION ${INSTALL_BIN}/ )
+	else()
+		install( FILES ${OPENNI2_LIBRARY} DESTINATION ${INSTALL_BIN}/ )
+		install( FILES ${NITE2_LIBRARY} DESTINATION ${INSTALL_BIN}/ )
+	endif()
 endif()
 
 # install .dll for speech recognition
 if( SPEECHSDK_FOUND )
-	install( DIRECTORY ${SPEECHSDK_DRIVER_DIRS}/ DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/_install/bin )
+	install( DIRECTORY ${SPEECHSDK_DRIVER_DIRS}/ DESTINATION ${INSTALL_BIN}/ )
 endif()
 
 # Install needed .dll files for fglove
@@ -1156,12 +1364,11 @@ endif()
 
 # Install needed .dll files for leap
 if( LEAP_FOUND )
-
-	install( DIRECTORY ${LEAP_DRIVER_DIRS}/ DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/_install/bin )
-
-	#install( FILES ${LEAP_LIBRARIES} DESTINATION ${INSTALL_BIN}
-#			RUNTIME DESTINATION ${INSTALL_BIN}
-#   		LIBRARY DESTINATION ${INSTALL_LIB} )
+	if ( WIN32 )
+		install( DIRECTORY ${LEAP_DRIVER_DIRS}/ DESTINATION ${INSTALL_BIN}/ )
+	else()
+		install( FILES ${LEAP_LIBRARIES} DESTINATION ${INSTALL_BIN}/ )
+	endif()
 endif()
 
 # Install built in dependencies unless we are building an OSX Bundle
@@ -1171,10 +1378,10 @@ if( USE_BUILTIN_DEPENDENCIES )
 		DESTINATION ${INSTALL_DEPS}
 		COMPONENT Dependencies
 		USE_SOURCE_PERMISSIONS
-	)
+		)
 endif()
 
-# Include QT4 libraries in Apple bundle and on Windows
+# Include QT libraries in Apple bundle and on Windows
 if( WIN32 OR APPLE AND OSX_BUNDLE )
 	# On Apple plugins need to be bundled
 	if( APPLE AND OSX_BUNDLE )
@@ -1197,9 +1404,9 @@ if( WIN32 OR APPLE AND OSX_BUNDLE )
 	# Bundle libraries
 	install( CODE "
 		file( GLOB_RECURSE LUA_PLUGINS
-				\"\${CMAKE_INSTALL_PREFIX}/${INSTALL_DEPS}/lib/lua/*${CMAKE_SHARED_MODULE_SUFFIX}\" )
+			\"\${CMAKE_INSTALL_PREFIX}/${INSTALL_DEPS}/lib/lua/*${CMAKE_SHARED_MODULE_SUFFIX}\" )
 		file( GLOB_RECURSE BUNDLE_PLUGINS
-				\"\${CMAKE_INSTALL_PREFIX}/${INSTALL_BIN}/plugins/*${CMAKE_SHARED_LIBRARY_SUFFIX}\" )
+			\"\${CMAKE_INSTALL_PREFIX}/${INSTALL_BIN}/plugins/*${CMAKE_SHARED_LIBRARY_SUFFIX}\" )
 		include( BundleUtilities )
 		fixup_bundle( \"${BUNDLE_APP}\" \"\${BUNDLE_PLUGINS};\${LUA_PLUGINS}\" \"${BUNDLE_DIRS}\" )
 		" COMPONENT Runtime )
@@ -1298,10 +1505,15 @@ add_executable( test_gitlib_module ${TEST_RUNNER} ${SRC_GITLIB_TESTS} )
 add_dependencies( test_gitlib_module igloo )
 
 target_include_directories( test_gitlib_module 	PUBLIC
-		${CMAKE_CURRENT_SOURCE_DIR}/include
-		include/Repository/Git 	)
+	${CMAKE_CURRENT_SOURCE_DIR}/include
+	include/Repository/Git 	)
 target_compile_options( test_gitlib_module PUBLIC ${FLAGS_FOR_DEBUG} )
-target_link_libraries( test_gitlib_module ${QT_LIBRARIES} gitlib )
+if ( Qt5Core_FOUND )
+	qt5_use_modules( test_gitlib_module Core )
+	target_link_libraries( test_gitlib_module gitlib )
+elseif( Qt4_FOUND )
+	target_link_libraries( test_gitlib_module ${QT_LIBRARIES} gitlib )
+endif()
 
 # 'cotire' the executable
 if( COMMAND cotire )
@@ -1313,4 +1525,109 @@ endif()
 #-------------------------------- run all tests -------------------------------
 enable_testing()
 add_test( testing_gitlib_module test_gitlib_module )
+
+
+# ------------------------------ SPHINX -------------------------------
+# Find Sphinx Executable
+
+find_package(Sphinx)
+if (Sphinx_FOUND)
+	if(NOT DEFINED SPHINX_THEME)
+		set(SPHINX_THEME sphinx_rtd_theme)
+	endif()
+
+	if(NOT DEFINED SPHINX_THEME_DIR)
+		set(SPHINX_THEME_DIR)
+	endif()
+
+	# configured documentation tools and intermediate build results
+	set(BINARY_BUILD_DIR "${CMAKE_CURRENT_BINARY_DIR}")
+
+	# Sphinx cache with pickled ReST documents
+	set(SPHINX_CACHE_DIR "${CMAKE_CURRENT_BINARY_DIR}/docs/_doctrees")
+
+	# HTML output directory
+	set(SPHINX_HTML_DIR "${CMAKE_CURRENT_BINARY_DIR}/docs/html")
+
+	configure_file(
+		"${CMAKE_CURRENT_SOURCE_DIR}/docs/conf.py.in"
+		"${BINARY_BUILD_DIR}/conf.py"
+		@ONLY)
+
+	add_custom_target(Sphinx_html
+		${SPHINX_EXECUTABLE}
+		-q -b html
+		-c "${BINARY_BUILD_DIR}"
+		-d "${SPHINX_CACHE_DIR}"
+		"${CMAKE_CURRENT_SOURCE_DIR}/docs"
+		"${SPHINX_HTML_DIR}"
+		COMMENT "Building HTML documentation with Sphinx")
+endif()
+
+
+# ------------------------------ ASTYLE -------------------------------
+# use "make style" to format all C++ code
+
+# Find Astyle Executable
+find_package(Astyle)
+
+if (Astyle_FOUND)
+	# Add a custom target
+	add_custom_target( "style" COMMAND
+		"${ASTYLE_EXECUTABLE}"
+		--options=${CMAKE_CURRENT_SOURCE_DIR}/astyle.options
+		${CMAKE_CURRENT_SOURCE_DIR}/include/*.h
+		${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp
+		COMMENT "Formating source code with Astyle."
+		VERBATIM
+	)
+endif()
+
+
+# ------------------------------ CPPLINT -------------------------------
+# use "make cpplint" to check all C++ code with cpplint.py
+
+# Find cpplint
+find_package(cpplint)
+
+if( CPPLINT_FOUND )
+	FILE( GLOB_RECURSE ALL_INCLUDE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/include/*.h )
+	FILE( GLOB_RECURSE ALL_SRC_FILES ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp )
+
+	add_custom_target( "cpplint"
+		COMMAND
+			"${PYTHON_EXECUTABLE}"
+			"${CPPLINT_SCRIPT}"
+			${ALL_INCLUDE_FILES}
+			${ALL_SRC_FILES}
+			2>&1 | tee cpplint-report.txt	# NOTE: this will probably work only on Linux/OSX
+		WORKING_DIRECTORY
+			"${CMAKE_CURRENT_BINARY_DIR}"
+		COMMENT "Linting code via cpplint.py"
+		VERBATIM
+	)
+endif()
+
+# ------------------------------ CPPcheck -------------------------------
+# use "make cppcheck" to check all C++ code with CPPcheck
+
+# Find cppchceck
+find_package(cppcheck)
+
+if( cppcheck_FOUND )
+	file( GLOB_RECURSE ALL_SRC_FILES ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp )
+
+	add_custom_target(
+			cppcheck
+			COMMAND cppcheck
+			--enable=warning,style,performance,portability,information,missingInclude
+			--std=c++11
+			--library=qt.cfg
+			--verbose
+			--quiet
+			-j2
+			-I ${CMAKE_CURRENT_SOURCE_DIR}/include/
+			${ALL_SRC_FILES}
+	)
+endif()
 

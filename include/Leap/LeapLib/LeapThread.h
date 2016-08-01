@@ -3,7 +3,7 @@
 
 #include "Leap.h"
 #include "LeapLib/LeapController.h"
-#include "LeapLib/LeapCameraManipulator.h"
+#include "LeapLib/LeapManager.h"
 #include "LeapLib/LeapExport.h"
 
 #include <QObject>
@@ -21,7 +21,7 @@ class LEAPLIB_EXPORT LeapThread : public QThread
 	//Q_OBJECT
 	//TODO resolve
 public:
-	LeapThread( QObject* parent=NULL, LeapCameraManipulator* cameraManipulator=NULL);
+	LeapThread( QObject* parent=NULL, LeapManager* leapManager=NULL );
 	~LeapThread( void );
 	void run();
 

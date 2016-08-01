@@ -243,8 +243,37 @@ void Manager::GraphManager::saveActiveLayoutToDB( const QString layoutName )
 		qDebug() << "[Manager::GraphManager::saveActiveLayoutToDB()] Connection to DB not opened";
 		noDatabaseFind=true;
 	}
+}
 
+Data::Graph* Manager::GraphManager::createNewMatrixGraph( QString name )
+{
+	bool ok = true;
 
+	AppCore::Core::getInstance()->thr->pauseAllAlg();
+
+	// vytvor graf
+	std::shared_ptr<Data::Graph> newGraph( NULL );
+	if ( ok ) {
+		newGraph.reset( this->createGraph( name ) );
+		ok = ( newGraph.get() != NULL );
+	}
+
+	// pridaj rozlozenie
+	if ( ok ) {
+		Data::GraphLayout* gLay = newGraph->addLayout( "new Layout" );
+		newGraph->selectLayout( gLay );
+	}
+
+	// nastav aktivny graf a zmaz predosly
+	if ( ok ) {
+		if ( this->activeGraph != NULL ) {
+			this->closeGraph( this->activeGraph.get() );
+		}
+		this->activeGraph = newGraph;
+		newGraph = nullptr;
+	}
+
+	return ( ok ? this->activeGraph.get() : NULL );
 }
 
 
@@ -253,16 +282,6 @@ Data::Graph* Manager::GraphManager::createNewGraph( QString name )
 	bool ok = true;
 
 	AppCore::Core::getInstance()->thr->pauseAllAlg();
-
-	// vytvorenie infoHandler
-	std::shared_ptr<Importer::ImportInfoHandler> infoHandler( NULL );
-	if ( ok ) {
-		infoHandler.reset( new ImportInfoHandlerImpl );
-	}
-
-	// pripona
-	QString extension;
-
 
 	// vytvor graf
 	std::shared_ptr<Data::Graph> newGraph( NULL );
@@ -296,6 +315,8 @@ Data::Graph* Manager::GraphManager::createNewGraph( QString name )
 
 	return ( ok ? this->activeGraph.get() : NULL );
 }
+
+
 
 
 
@@ -358,7 +379,8 @@ bool Manager::GraphManager::loadEvolutionGraphFromGit( QString filepath )
 	return lGit;
 }
 
-Data::Graph* Manager::GraphManager::importEvolutionGraph( QString filepath ) {
+Data::Graph* Manager::GraphManager::importEvolutionGraph( QString filepath )
+{
 	QString lName = NULL;
 	bool ok = true;
 
@@ -382,14 +404,17 @@ Data::Graph* Manager::GraphManager::importEvolutionGraph( QString filepath ) {
 	// Ak existoval aktivny graf, tak ho zavrem a vratim nami vytvoreny graf ako aktivny
 	if ( ok ) {
 		if ( this->activeGraph != NULL ) {
+
 			this->closeGraph( this->activeGraph.get() );
 		}
 
-		/* FIX
-		 * old code: this->activeGraph = updater.getActiveGraph();
-		 */
+
+		//this->activeGraph = updater.getActiveGraph();
+
 		std::shared_ptr<Data::Graph> newGraph( updater.getActiveGraph() );
 		this->activeGraph = newGraph;
+
+
 	}
 
 	// Restartnem layout
@@ -401,6 +426,8 @@ Data::Graph* Manager::GraphManager::importEvolutionGraph( QString filepath ) {
 
 	// Ak nenastala ziadna chyba, tak vratim aktivny graf, inak NULL
 	return ( ok ? this->activeGraph.get() : NULL );
+	//return ( ok ? this->activeGraph : NULL );
+
 }
 
 Data::Graph* Manager::GraphManager::createGraph( QString graphname )

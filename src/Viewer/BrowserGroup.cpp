@@ -1,10 +1,17 @@
 #include "Viewer/BrowserGroup.h"
 #include "OsgQtBrowser/QWebViewImage.h"
 
+#include <QLinkedList>
+
 #include <osg/ValueObject>
 #include <osg/LineWidth>
 
 #include <LuaGraph/LuaGraph.h>
+
+#include "GitLib/GitEvolutionGraph.h"
+#include "Manager/Manager.h"
+#include "Repository/Git/GitLuaGraphUtils.h"
+#include "GitLib/GitMetaData.h"
 
 #include <math.h>
 #include <utility>
@@ -18,7 +25,8 @@ BrowserGroup::BrowserGroup() :
 	browsersTransforms( new QList<osg::ref_ptr<osg::AutoTransform> > ),
 	connectorsTransforms( new QList<osg::ref_ptr<osg::AutoTransform> > ),
 	selectedNodes( new QLinkedList<osg::ref_ptr<Data::Node> > ),
-	selectedNodesModels( nullptr )
+	selectedNodesModels( nullptr ),
+	showGit( false )
 {
 	this->group->getOrCreateStateSet()->setMode( GL_LIGHTING,osg::StateAttribute::OFF );
 }
@@ -58,7 +66,7 @@ void BrowserGroup::setSelectedNodes( QLinkedList<osg::ref_ptr<Data::Node> >* sel
 
 			// Get lua node model and add it to model map
 			Lua::LuaNode* luaNode = Lua::LuaGraph::getInstance()->getNodes()->value( node->getId() );
-			Lua::LuaValueMap paramsTable(luaNode->getParams().asTable());
+			Lua::LuaValueMap paramsTable = luaNode->getParams().asTable();
 
 			// Ignore nodes without models
 			if ( paramsTable.find( "metrics" ) == paramsTable.end() ) {
@@ -72,9 +80,17 @@ void BrowserGroup::setSelectedNodes( QLinkedList<osg::ref_ptr<Data::Node> >* sel
 			// If grouping is not enabled, then add browser for each newly selected node
 			if ( !browsersGrouping ) {
 				Lua::LuaValueMap models;
-				models.insertPair( ( long )node->getId(), luaNode->getParams() );
+				models.insertPair( static_cast<long>( node->getId() ), luaNode->getParams() );
+				if ( !this->showGit ) {
+					this->addBrowser( "single", node->getCurrentPosition(), models );
+				}
+				else {
+					Repository::Git::GitLuaGraphUtils luaUtils = Repository::Git::GitLuaGraphUtils( Lua::LuaGraph::getInstance(), Manager::GraphManager::getInstance()->getActiveEvolutionGraph() );
 
-				this->addBrowser( "single", node->getCurrentPosition(), models );
+					QMap<QString, int>* map = luaUtils.compareMetrics( luaUtils.getMetrics( luaNode->getIdentifier() ), Manager::GraphManager::getInstance()->getActiveEvolutionGraph()->getMetaDataFromIdentifier( luaNode->getIdentifier() )->getMetric() );
+
+					this->addBrowser( "git", node->getCurrentPosition(), map );
+				}
 			}
 		}
 	}
@@ -120,7 +136,7 @@ void BrowserGroup::initBrowsers()
 
 		Lua::LuaNode* luaNode = Lua::LuaGraph::getInstance()->getNodes()->value( node->getId() );
 		Lua::LuaValueMap models;
-		models.insertPair( ( long )node->getId(), luaNode->getParams() );
+		models.insertPair( static_cast<long>( node->getId() ), luaNode->getParams() );
 		this->addBrowser( "single", node->getCurrentPosition(), models );
 	}
 }
@@ -145,7 +161,7 @@ void BrowserGroup::initGroupedBrowser()
 		zSum += pos.z();
 
 		luaNode = Lua::LuaGraph::getInstance()->getNodes()->value( node->getId() );
-		models.insertPair( ( long )node->getId(), luaNode->getParams() );
+		models.insertPair( static_cast<long>( node->getId() ), luaNode->getParams() );
 	}
 
 	// Calculate centroid
@@ -240,6 +256,90 @@ void BrowserGroup::addBrowser( const std::string& templateType, osg::Vec3 positi
 
 	// Display template in webview
 	webView->showTemplate( "metrics_template", models, templateType );
+}
+
+void BrowserGroup::addBrowser( const std::string& templateType, osg::Vec3 position, QMap<QString, int>* map )
+{
+	// qDebug() << "Adding browser";
+
+	// Create webView
+	osg::ref_ptr<OsgQtBrowser::QWebViewImage> webView = new OsgQtBrowser::QWebViewImage();
+
+	// Webview position/offset (should have same aspect ratio as 800/600)
+	float width = 240;
+	float height = 180;
+	float offset;
+
+	// Create connectors targets depending on whether grouping is enabled & setup offset
+	osg::Vec3Array* targets;
+	if ( this->browsersGrouping ) {
+		offset = 0;
+		targets = new osg::Vec3Array( static_cast<unsigned int>( selectedNodes->size() ) );
+
+		QLinkedList<osg::ref_ptr<Data::Node> >::iterator i;
+		Data::Node* node;
+		unsigned long pos = 0;
+
+		// Iterate over each selected node and add its position to array
+		for ( i = selectedNodes->begin(); i != selectedNodes->end(); ++i ) {
+			node = *i;
+			( *targets )[pos++].set( node->getCurrentPosition() );
+		}
+
+	}
+	else {
+		offset = 60;
+		targets = new osg::Vec3Array( 1 );
+		( *targets )[0].set( position );
+	}
+
+	// Setup browser pos
+	osg::Vec3 bl = osg::Vec3( -width/2, -height/2, 0 ); // Bottom left
+	osg::Vec3 br = osg::Vec3( width/2, -height/2, 0 );  // Bottom right
+	osg::Vec3 tr = osg::Vec3( width/2,  height/2, 0 );  // Top right
+	osg::Vec3 tl = osg::Vec3( -width/2,  height/2, 0 ); // Top left
+	osg::Vec3 center = osg::Vec3(
+						   position.x() + offset + width/2,
+						   position.y() + offset + height/2,
+						   position.z()
+					   );
+
+	osgWidget::GeometryHints hints( bl,
+									osg::Vec3( width, 0,  0 ),
+									osg::Vec3( 0,  width, 0 ), // Needs more experimenting
+									osg::Vec4( 0,  0,  0, 0 ) );
+
+	osg::ref_ptr<osgWidget::Browser> browser = new osgWidget::Browser;
+	browser->assign( webView, hints );
+
+	// Wrap connectors to transform
+	osg::ref_ptr<osg::AutoTransform> connectorTransform = new osg::AutoTransform;
+	connectorTransform->addChild( this->createConnectorsGeode( center, targets ) ); // Add connecting lines geode
+
+	// Wrap browser and border to transform
+	osg::ref_ptr<osg::AutoTransform> browserTransform = new osg::AutoTransform;
+	browserTransform->setPosition( center );
+	browserTransform->setAutoRotateMode( osg::AutoTransform::ROTATE_TO_SCREEN );
+	browserTransform->addChild( browser );
+	browserTransform->addChild( this->createBorderGeode( bl, br, tr, tl ) ); // Add border geode
+//	browserTransform->getOrCreateStateSet()->setMode();
+
+	// Set initial scale & set animation start frame to help us calculate interpolation value
+//	connectorTransform->setScale( 0 ); Disabled since its position is relative to graph, not current node
+//	connectorTransform->setUserValue( "frame", 0 );
+	browserTransform->setScale( 0 );
+	browserTransform->setUserValue( "frame", 0 );
+
+	// Add transform to group
+	this->group->addChild( connectorTransform );
+	this->group->addChild( browserTransform );
+
+	// Remember transform
+	this->connectorsTransforms->append( connectorTransform );
+	this->browsersTransforms->append( browserTransform );
+
+	// Display template in webview
+	webView->showGitTemplate( "metrics_template", templateType, map );
 }
 
 osg::Geode* BrowserGroup::createBorderGeode( osg::Vec3 bl, osg::Vec3 br, osg::Vec3 tr, osg::Vec3 tl )

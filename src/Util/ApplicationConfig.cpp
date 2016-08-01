@@ -4,7 +4,6 @@
 
 #include <QDebug>
 #include <QFile>
-#include <QDebug>
 
 Util::ApplicationConfig* Util::ApplicationConfig::_instance;
 OpenThreads::Mutex Util::ApplicationConfig::_mutex;
@@ -94,6 +93,35 @@ bool Util::ApplicationConfig::getBoolValue(
 	else {
 		return defaultValue;
 	}
+}
+
+int Util::ApplicationConfig::getIntValue( QString key, const int defaultValue )
+{
+	if ( !_map.contains( key ) ) {
+		return defaultValue;
+	}
+
+	QString value = getValue( key );
+	bool ok;
+	int resultValue = value.toInt( &ok );
+
+	return ok ? resultValue : defaultValue;
+}
+
+float Util::ApplicationConfig::getFloatValue(
+	QString key,
+	const float defaultValue
+)
+{
+	if ( !_map.contains( key ) ) {
+		return defaultValue;
+	}
+
+	QString value = getValue( key );
+	bool ok;
+	float resultValue = value.toFloat( &ok );
+
+	return ok ? resultValue : defaultValue;
 }
 
 osg::Vec4f Util::ApplicationConfig::getColorValue( QString key )
