@@ -157,7 +157,7 @@ void OptionsWindow::commitChanges()
 	bool running = thr->isRunning();
 
 	if ( running ) {
-		thr->pause();
+		thr->pauseAllAlg();
 	}
 
 	viewer->reloadConfig();
@@ -233,7 +233,7 @@ void OptionsWindow::applyChanges( QString path, QString data )
 		QList<QString> att = list[i].split( "," );
 
 		appConf->add( QString( "%1%2" ).arg( path ).arg( att[0] ),att[1] );
-		std::cout <<path.toStdString()<< att[0].toStdString() << "\t" << att[1].toStdString() << endl;
+		std::cout <<path.toStdString()<< att[0].toStdString() << "\t" << att[1].toStdString() << std::endl;
 	}
 
 }

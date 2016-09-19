@@ -15,8 +15,13 @@
 
 #include "Viewer/CameraManipulator.h"
 #include "Viewer/CoreGraph.h"
-#include "QDebug"
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wold-style-cast"
+#if defined(__linux) || defined(__linux__) || defined(linux)
+#pragma GCC diagnostic ignored "-Wuseless-cast"
+#endif
+#pragma GCC diagnostic ignored "-Wsign-conversion"
 
 namespace Network {
 
@@ -264,7 +269,7 @@ void Client::updateUserList()
 	}
 }
 
-void Client::setMyView( osg::Vec3d center, osg::Quat rotation, float distance )
+void Client::setMyView( osg::Vec3d center, osg::Quat rotation, double distance )
 {
 	Vwr::CameraManipulator* cameraManipulator = ( ( QOSG::CoreWindow* ) cw )->getCameraManipulator();
 	cameraManipulator->setCenter( center );
@@ -396,7 +401,7 @@ void Client::centerUser( int id_user )
 	original_center = cameraManipulator->getCenter();
 	original_rotation = cameraManipulator->getRotation();
 
-	osg::Vec3 direction = original_rotation * osg::Vec3( 0, 0, 1 );
+	osg::Vec3d direction = original_rotation * osg::Vec3d( 0, 0, 1 );
 	direction *= original_distance;
 	cameraManipulator->setCenter( cameraManipulator->getCenter()+direction );
 	cameraManipulator->setDistance( 0 );
@@ -699,7 +704,7 @@ void Client::sendSetRestriction( quint8 type, QLinkedList<osg::ref_ptr<Data::Nod
 	Layout::RestrictionRemovalHandler_RestrictionNodesRemover::NodesListType::Iterator itRN;
 
 	for ( itRN = restrictionNodes->begin(); itRN!= restrictionNodes->end(); itRN++ ) {
-		out << ( QString )( *itRN )->getName() << ( float )( *itRN )->getTargetPosition().x()<< ( float )( *itRN )->getTargetPosition().y() << ( float )( *itRN )->getTargetPosition().z();
+		out << ( QString )( ( Data::AbsNode* )( *itRN ) )->getName() << ( float )( *itRN )->getTargetPosition().x()<< ( float )( *itRN )->getTargetPosition().y() << ( float )( *itRN )->getTargetPosition().z();
 	}
 
 	out << ( int ) nodes->count();
@@ -794,3 +799,5 @@ void Client::setAvatarScale( int scale )
 }
 
 } // namespace Network
+
+#pragma GCC diagnostic pop

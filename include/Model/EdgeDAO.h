@@ -76,7 +76,7 @@ public:
 		*  \return	bool true, if color of edges was successfully added to DB
 		*/
 
-	static bool addEdgesScaleToDB( QSqlDatabase* conn, QMap<qlonglong, osg::ref_ptr<Data::Edge> >* edges, Data::GraphLayout* layout, QMap<qlonglong, qlonglong> newMetaEdgeID, bool meta, float defaultScale );
+	static bool addEdgesScaleToDB( QSqlDatabase* conn, QMap<qlonglong, osg::ref_ptr<Data::Edge> >* edges, Data::GraphLayout* layout, QMap<qlonglong, qlonglong> newMetaEdgeID, bool meta, double defaultScale );
 
 	/**
 		*  \fn public static  getEdgesQuery(QSqlDatabase* conn, bool* error, qlonglong graphID)

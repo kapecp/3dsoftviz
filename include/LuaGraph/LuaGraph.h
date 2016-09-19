@@ -5,7 +5,7 @@
 #include "LuaGraph/LuaEdge.h"
 #include "LuaGraph/LuaIncidence.h"
 
-#include "Q_LONG"
+#include <QMap>
 
 namespace Lua {
 
@@ -32,6 +32,8 @@ public:
 	 * @return representation of loaded hypergraph
 	 */
 	static LuaGraph* loadGraph();
+
+	static LuaGraph* loadEvoGraph( QString repoFilepath );
 
 	/**
 	 * @brief destructor
@@ -83,6 +85,10 @@ public:
 	 * @brief printGraph print graph in text form
 	 */
 	void printGraph();
+
+	Lua::LuaNode* findNodeByLuaIdentifier( QString identifier );
+
+	Lua::LuaEdge* findEdgeByLuaIdentifier( QString identifier );
 private:
 	/**
 	 * @brief LuaGraph private constructor as in Singleton
@@ -113,6 +119,7 @@ private:
 	 * @brief incidences map of id => LuaIncidence
 	 */
 	QMap<qlonglong, LuaIncidence*>* incidences;
+
 
 
 };

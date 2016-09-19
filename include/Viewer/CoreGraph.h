@@ -17,13 +17,16 @@
 
 #include "Data/Cluster.h"
 
+#include <osgManipulator/Translate2DDragger>
+
 #include <QMap>
 #include <QLinkedList>
 #include <QSharedPointer>
 #include <QObject>
 #include <QTime>
-
 #include "OsgQtBrowser/QWebViewImage.h"
+#include <osgShadow/ShadowedScene>
+#include "Hud.h"
 
 namespace Data {
 class Graph;
@@ -41,7 +44,7 @@ osg::ref_ptr<osg::AutoTransform> getCylinder( qlonglong id, osg::Vec3 position, 
 osg::Geode* test();
 osg::Vec4 getNewColor( int colorCounter );
 osg::Vec3f getMidPoint( QSet<Data::Node*> nodes );
-float getRadius( QSet<Data::Node*> nodes, osg::Vec3f midPoint );
+double getRadius( QSet<Data::Node*> nodes, osg::Vec3f midPoint );
 }
 
 namespace Util {
@@ -95,6 +98,7 @@ public:
 		 */
 	~CoreGraph( void );
 
+	void onResized( int width, int height );
 
 	/**
 		*  \fn public  reload(Data::Graph * graph = 0)
@@ -118,6 +122,14 @@ public:
 		 */
 	void update();
 
+	/**
+		*  \fn public updateBackground
+		*  \brief updates background (skybox, skynoise, video3d, video2dOrtho or nothing )
+		*  \param bgVal - background int value describing what background should be generated
+		*         currentGraph - graph background to be updated
+		*  \return 0 - success, 1 - fail
+		*/
+	int updateBackground( int bgVal, Data::Graph* currentGraph );
 
 	/**
 		*  \fn inline public  getCustomNodeList
@@ -167,7 +179,7 @@ public:
 		return camera;
 	}
 
-	osg::ref_ptr<osg::AutoTransform> dodecahedron( qlonglong id, osg::Vec3 midpoint, float radius, osg::Vec4 color );
+	osg::ref_ptr<osg::AutoTransform> dodecahedron( qlonglong id, osg::Vec3 midpoint, double radius, osg::Vec4 color );
 
 	/**
 		*  \fn public  setEdgeLabelsVisible(bool visible)
@@ -183,6 +195,13 @@ public:
 		*/
 	void setNodeLabelsVisible( bool visible );
 
+	void showLabelsForResidence( bool state );
+
+	void showHud( bool state );
+
+	bool isHudDisplayed() const;
+
+	Hud* getHud();
 
 	/**
 		*  \fn inline public constant  getNodesFreezed
@@ -200,6 +219,15 @@ public:
 		*  \param      val     nodes freeze state
 		*/
 	void setNodesFreezed( bool val );
+
+	bool getInterpolationDenied() const
+	{
+		return interpolationDenied;
+	}
+	void setInterpolationDenied( bool val )
+	{
+		this->interpolationDenied = val;
+	}
 
 	void setClustersOpacityAutomatic( bool automatic );
 	void setClustersOpacitySelected( bool selected );
@@ -233,6 +261,43 @@ public:
 	OpenCV::CameraStream* getCameraStream() const;
 #endif
 
+	//jurik
+	/**
+		*  \fn public  set shadow technique to shadowMap
+		*  \brief
+		*/
+	void turnOnShadows();
+
+	/**
+		*  \fn public  set shadow technique to NULL
+		*  \brief
+		*/
+	void turnOffShadows();
+
+	void turnOnBase();
+	void turnOffBase();
+	void turnAxes( bool turnOn );
+	void createBase();
+	void scaleGraphToBase();
+	void scaleGraph( int scale );
+	void rotateGraph( int direction );
+	void outputMatrix( osg::Matrixd matrix );
+	void ratata( double initialX,double actualX,double initialY, double actualY );
+	void scaleNodes( bool scaleUp );
+	float getFurthestPosition( osg::Vec3f max,osg::Vec3f min );
+	void drawAxes();
+
+	bool isArucoRunning()
+	{
+		return arucoRunning;
+	}
+	//*****
+
+	osg::ref_ptr<osg::Group> getHandsGroup()
+	{
+		return handsGroup;
+	}
+
 public slots:
 
 	/**
@@ -241,6 +306,10 @@ public slots:
 		 * @param quat Quaternion that desribe rotation of marker
 		 */
 	void updateGraphRotByAruco( const osg::Quat quat );
+
+	void updateGraphPosAndRotByAruco( const osg::Quat quat, osg::Vec3d pos );
+
+	void translateGraph( osg::Vec3d pos );
 
 	/**
 		 * @author Autor: David Durcak
@@ -256,6 +325,33 @@ public slots:
 		 */
 	void updateGraphRotByFaceDet( const osg::Quat quat );
 
+	/**
+		 * @brief setNodeType Set representation of nodes
+		 */
+	void setNodeVisual( unsigned int index );
+
+	/**
+		 * @brief setEdgeType Set representation of edges
+		 */
+	void setEdgeVisual( int index );
+
+	/**
+		 * @brief setEdgeTypeForType Set representation of edges for specific type
+		 */
+	void setEdgeVisualForType( int index, QString edgeTypeName );
+
+	void recievedMVMatrix( QMatrix4x4 modelViewMatrix );
+
+	/**
+		 * @author Autor: Igor Jurík
+		 * @brief update camera projection matrix from aruco
+		 */
+	void recievedPMatrix( QMatrix4x4 modelViewMatrix );
+
+	void updateBase( double size );
+
+	void setArucoRunning( bool isRunning );
+
 private:
 
 	/**
@@ -263,6 +359,8 @@ private:
 		 * @brief computeGraphRotTransf Update graphRotTransf MatrixTransform node for rotating a graph
 		 */
 	void computeGraphRotTransf();
+
+	void addTranslateToGraphRotTransf( osg::Vec3d pos );
 
 	/**
 		*  Vwr::EdgeGroup * edgesGroup
@@ -275,6 +373,8 @@ private:
 		*  \brief metaedge group
 		*/
 	Vwr::EdgeGroup* qmetaEdgesGroup;
+
+	Vwr::NodeGroup* refNodeGroup;
 
 
 	/**
@@ -316,6 +416,8 @@ private:
 		*  \brief graph nodes map
 		*/
 	QMap<qlonglong, osg::ref_ptr<Data::Node> >* in_nodes;
+
+	QMap<qlonglong, osg::ref_ptr<Data::Node> >* in_refnodes;
 
 	/**
 		*  QMap<qlonglong,osg::ref_ptr<Data::Edge> > * in_edges
@@ -397,6 +499,8 @@ private:
 		*/
 	osg::ref_ptr<osg::Group> root;
 
+	osg::ref_ptr<Vwr::Hud> hud;
+
 	osg::ref_ptr<osg::Group> testGroup;
 
 	osg::ref_ptr<osg::Group> test2();
@@ -406,6 +510,10 @@ private:
 		*  \brief graphGroup node
 		*/
 	osg::ref_ptr<osg::Group> graphGroup;
+
+	osg::ref_ptr<osg::Group> manipulatorGroup;
+
+	osg::ref_ptr<osg::Group> handsGroup;
 
 	/**
 		*  osg::ref_ptr graphRotTransf
@@ -438,6 +546,14 @@ private:
 	bool nodesFreezed;
 
 	/**
+		*  bool interpolationDenied
+		*  \brief true, if interpolation is denied
+		*/
+	bool interpolationDenied;
+
+	bool labelsForResidenceShowed;
+
+	/**
 		*  QLinkedList<osg::ref_ptr<osg::Node> > customNodeList
 		*  \brief list of custom nodes
 		*/
@@ -459,61 +575,62 @@ private:
 		*  int backgroundPosition
 		*  \brief background node position
 		*/
-	int backgroundPosition;
+	unsigned int backgroundPosition;
 
 	/**
 		*  int nodesPosition
 		*  \brief nodes group position
 		*/
-	int nodesPosition;
+	unsigned int nodesPosition;
 
 	/**
 		*  int edgesPosition
 		*  \brief edges group position
 		*/
-	int edgesPosition;
+	unsigned int edgesPosition;
 
 	/**
 		*  int qmetaNodesPosition
 		*  \brief metanodes group position
 		*/
-	int qmetaNodesPosition;
+	unsigned int qmetaNodesPosition;
 
 	/**
 		*  int qmetaEdgesPosition
 		*  \brief metaedges groups position
 		*/
-	int qmetaEdgesPosition;
+	unsigned int qmetaEdgesPosition;
 
 	/**
 		*  int labelsPosition
 		*  \brief labels group position
 		*/
-	int labelsPosition;
+	unsigned int labelsPosition;
 
 	/**
 		 * \brief Index of restrictionVisualisationsGroup in the root group.
 		 */
-	int restrictionVisualizationsPosition;
+	unsigned int restrictionVisualizationsPosition;
 
 	/**
 		 * \brief Index of restrictionManipulatorsGroup in the root group.
 		 */
-	int restrictionManipulatorsPosition;
+	unsigned int restrictionManipulatorsPosition;
 
 	/**
 		*  int groupsPosition
 		*  \brief browsers group position
 		*/
-	int browsersPosition;
+	unsigned int browsersPosition;
 
 	/**
 		*  int customNodesPosition
 		*  \brief custom nodes group position
 		*/
-	int customNodesPosition;
+	unsigned int customNodesPosition;
 
 	int prevTime;
+
 
 #ifdef OPENCV_FOUND
 	osg::ref_ptr<OpenCV::CameraStream> mCameraStream;
@@ -533,8 +650,30 @@ private:
 	double computeOpacity( osg::Vec3 clusterPosition );
 	bool cameraInsideSphere( osg::Vec3d midPoint, float radius );
 	bool cameraInsideCube( osg::Vec3d lowerPoint, osg::Vec3d upperPoint );
-};
 
+	osgManipulator::Translate2DDragger* manipulator;
+
+	//jurik
+	/**
+		*  osg::ref_ptr<osgShadow::ShadowedScene> shadowedScene
+		*  \brief node for shadows definition
+		*/
+	osg::ref_ptr<osgShadow::ShadowedScene> shadowedScene;
+
+	/**
+		* osg::Geode* baseGeode
+		*  \brief node base
+		*/
+	osg::ref_ptr<osg::Geode> baseGeode;
+	osg::ref_ptr<osg::MatrixTransform> baseTransform;
+	osg::Matrixd rotationMatrix;
+	double baseSize = 250;
+	bool arucoRunning = false;
+	osg::ref_ptr<osg::Geode> axesGeode;
+	osg::ref_ptr<osg::MatrixTransform> axesTransform;
+
+	//*****
+};
 }
 
 #endif

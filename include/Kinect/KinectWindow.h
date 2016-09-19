@@ -1,7 +1,17 @@
 #ifndef KINECTWINDOW_H
 #define KINECTWINDOW_H
 
+#include <QCheckBox>
+#include <QCloseEvent>
+#include <QDebug>
 #include <QDialog>
+#include <QLabel>
+#include <QPushButton>
+#include <QRadioButton>
+#include <QSlider>
+#include <QStackedLayout>
+#include <QVBoxLayout>
+
 #include <opencv2/core/core.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 

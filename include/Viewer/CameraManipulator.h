@@ -53,6 +53,24 @@ class CameraManipulator : public QObject, public KeySwitchMatrixManipulator
 public:
 	CameraManipulator( Vwr::CoreGraph* coreGraph );
 
+	/**
+	 * @brief Enum used to define what direction of movement we are using for camera movement
+	 */
+	enum Movement {
+		RIGHT, LEFT, UP, DOWN, FORWARD, BACKWARD
+	};
+
+	/**
+	 * @brief Enables camera movement to a specific direction
+	 * @param movement - direction where we want to move camera(enum Movement)
+	 */
+	void enableCameraMovement( Vwr::CameraManipulator::Movement movement );
+
+	/**
+	 * @brief Disables all camera movements
+	 */
+	void disableCameraMovement();
+
 	virtual const char* className() const
 	{
 		return "Trackball";
@@ -147,6 +165,12 @@ public:
 		_center = center;
 	}
 
+	/** Enable/disable camera functions. */
+	void setCameraActive( bool active )
+	{
+		_cameraActive = active;
+	}
+
 	/** Get the center of the trackball. */
 	const osg::Vec3d& getCenter() const
 	{
@@ -167,13 +191,13 @@ public:
 
 	/** Set the distance of the trackball. */
 
-	void setDistance( float distance )
+	void setDistance( double distance )
 	{
 		_distance = distance;
 	}
 
 	/** Get the distance of the trackball. */
-	float getDistance() const
+	double getDistance() const
 	{
 		return _distance;
 	}
@@ -207,7 +231,7 @@ public:
 		*  \brief Sets maximum camera speed
 		*  \param     speed    maximum speed
 		*/
-	void setMaxSpeed( float speed )
+	void setMaxSpeed( double speed )
 	{
 		this->maxSpeed = speed;
 	}
@@ -217,7 +241,7 @@ public:
 		*  \brief Returns maximum camera speed
 		*  \return float maximum speed
 		*/
-	float getMaxSpeed()
+	double getMaxSpeed()
 	{
 		return maxSpeed;
 	}
@@ -232,6 +256,9 @@ public:
 	void setNewPosition( osg::Vec3d cameraTargetPoint, osg::Vec3d cameraInterestPoint, std::list<osg::ref_ptr<Data::Node> > selectedCluster, std::list<osg::ref_ptr<Data::Edge> > selectedEdges );
 
 	osg::Vec3d getCameraPosition();
+
+	void rotateCamera( float py0, float px0, double throwScale, float py1, float px1 );
+	bool getDecelerateForwardRate() const;
 
 signals:
 
@@ -248,6 +275,8 @@ signals:
 		 * @param quat Quaternion that disribe rotation of face
 		 */
 	void sendFaceDetRotation( const osg::Quat quat );
+
+	void sendTranslatePosition( osg::Vec3d pos );
 
 
 
@@ -355,9 +384,9 @@ protected:
 	bool _thrown;
 
 	/**
-	    *  bool _vertigo
-	    *  \brief true, if camera is in vertigo mode
-	    */
+		*  bool _vertigo
+		*  \brief true, if camera is in vertigo mode
+		*/
 	bool _vertigo;
 
 	/**
@@ -386,6 +415,13 @@ protected:
 		*  \brief camera center
 		*/
 	osg::Vec3d   _center;
+
+	/**
+	 * bool _cameraActive
+	 * @brief enable/disable camera functions
+	 */
+
+	bool _cameraActive;
 
 	/**
 		*  osg::Vec3d _centerArucoTrans
@@ -429,7 +465,7 @@ protected:
 		*  double _distance
 		*  \brief current distance from rotation center
 		*/
-	float       _distance;
+	double       _distance;
 
 
 	/**
@@ -455,7 +491,7 @@ protected:
 		*  double maxSpeed
 		*  \brief maximum speed
 		*/
-	float    maxSpeed;
+	double    maxSpeed;
 
 	/**
 		*  double forwardSpeed
@@ -632,6 +668,8 @@ private:
 		*/
 	bool handleKeyUp( const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& us );
 
+	bool handleKeyDownGraph( const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& us );
+
 	void notifyClients();
 	void notifyServer();
 
@@ -779,7 +817,7 @@ private:
 		*  \brief minimum distance of selected cluster from screen in t=0.5
 		*/
 
-	static float SCREEN_MARGIN;
+	static double SCREEN_MARGIN;
 
 	/**
 		*  \fn private  alterWeights(osgViewer::Viewer* viewer, std::list<osg::ref_ptr<Data::Node> > selectedCluster)
@@ -833,7 +871,7 @@ private:
 		 * @param y coordinate of head on vertical axis
 		 * @param distance of head from camera
 		 */
-	void updateProjectionAccordingFace( const float x, const float y, const float distance );
+	void updateProjectionAccordingFace( const double x, const double y, const double distance );
 
 
 	/**

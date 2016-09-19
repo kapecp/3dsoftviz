@@ -30,6 +30,7 @@ void Lua::SimpleGraphVisualizer::visualize()
 		}
 		LuaIncidence* const incid1 = g->getIncidences()->value( i.value()->getIncidences()[0] );
 		LuaIncidence* const incid2 = g->getIncidences()->value( i.value()->getIncidences()[1] );
+
 		osg::ref_ptr<Data::Node> srcNode = currentGraph->getNodes()->value( incid1->getEdgeNodePair().second );
 		osg::ref_ptr<Data::Node> dstNode = currentGraph->getNodes()->value( incid2->getEdgeNodePair().second );
 		osg::ref_ptr<Data::Edge> newEdge;

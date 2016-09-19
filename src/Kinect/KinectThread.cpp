@@ -6,7 +6,7 @@
 #include "Kinect/KinectZoom.h"
 
 #include "QDebug"
-
+#include <string>
 
 Kinect::KinectThread::KinectThread( QObject* parent ) : QThread( parent )
 {
@@ -17,6 +17,7 @@ Kinect::KinectThread::KinectThread( QObject* parent ) : QThread( parent )
 	isOpen=false;
 	mSetImageEnable=true;
 	isZoomEnable=true;
+	isMarkerDetectEnable=false;
 
 	// timer setting
 	clickTimer = new QTimer();
@@ -33,13 +34,13 @@ Kinect::KinectThread::~KinectThread( void )
 {
 }
 
-bool Kinect::KinectThread::inicializeKinect()
+void Kinect::KinectThread::inicializeKinect()
 {
 	// create Openni connection
 	mKinect = new Kinect::KinectRecognition();
 	isOpen=mKinect->isOpenOpenni(); // checl if open
 
-	qDebug() <<isOpen ;
+	qDebug() << "Kinect Thread inicialize. Kinect isOpen=" << isOpen ;
 	if ( isOpen ) {
 		// color data for Kinect windows
 		color.create( mKinect->device, openni::SENSOR_COLOR );
@@ -53,11 +54,11 @@ bool Kinect::KinectThread::inicializeKinect()
 		kht = new KinectHandTracker( &mKinect->device,&m_depth );
 #endif
 	}
-	return isOpen;
 }
 
 void Kinect::KinectThread::closeActionOpenni()
 {
+	qDebug() << "Close Openni";
 	mKinect->closeOpenni();
 }
 
@@ -69,6 +70,11 @@ void Kinect::KinectThread::setCancel( bool set )
 void Kinect::KinectThread::setImageSend( bool set )
 {
 	mSetImageEnable=set;
+}
+
+void Kinect::KinectThread::setImageSendToMarkerDetection( bool set )
+{
+	isMarkerDetectEnable = set;
 }
 
 void Kinect::KinectThread::pause()
@@ -87,6 +93,12 @@ void Kinect::KinectThread::setZoomUpdate( bool set )
 void Kinect::KinectThread::setSpeedKinect( double set )
 {
 	mSpeed=set;
+}
+
+void Kinect::KinectThread::setCaptureImage( bool set )
+{
+	qDebug() << "captureImage set to " << set;
+	captureImage = set;
 }
 
 void Kinect::KinectThread::clickTimerTimeout()
@@ -148,7 +160,10 @@ void Kinect::KinectThread::run()
 	    /////////end////////////*/
 	Kinect::KinectZoom* zoom = new Kinect::KinectZoom();
 	cv::Mat frame;
+	cv::Mat depth;
 
+	//if set true, it will capture first frame of kinect stream and save color frame, depth frame and depth matrix in to specific location
+	bool test = false;
 	// check if is close
 	while ( !mCancel ) {
 		//check if is sending image enabling
@@ -157,6 +172,39 @@ void Kinect::KinectThread::run()
 			color.readFrame( &colorFrame );
 			//convert for sending
 			frame=mKinect->colorImageCvMat( colorFrame );
+			cv::cvtColor( frame, frame, CV_BGR2RGB );
+			m_depth.readFrame( &depthFrame );
+
+			//if set true, it will capture the first frame of kinect stream and save color frame, depth frame and depth matrix in to specific location
+			if ( captureImage ) {
+				depth = mKinect->depthImageCvMat( depthFrame );
+
+				std::string file = Util::ApplicationConfig::get()->getValue( "Kinect.OutputFolder" ).toStdString();
+
+
+				//save color frame
+				cv::imwrite( file + "\\" + Util::ApplicationConfig::get()->getValue( "Kinect.ColourImageName" ).toStdString()  + ".jpeg", frame );
+
+				//save depth matrix
+				std::ofstream fout( file + "\\" + Util::ApplicationConfig::get()->getValue( "Kinect.DepthInfoName" ).toStdString() + ".txt" );
+				if ( !fout ) {
+					qDebug() <<"File Not Opened";
+				}
+
+				for ( int i=0; i<depth.rows; i++ ) {
+					for ( int j=0; j < depth.cols; j++ ) {
+						fout << depth.at<uint16_t>( i,j )<<"\t";
+					}
+					fout << "\n";
+				}
+
+				cv::normalize( depth, depth, 0,255, CV_MINMAX, CV_8UC1 );
+				//save depth frame
+				cv::imwrite( file + "\\" + Util::ApplicationConfig::get()->getValue( "Kinect.DepthImageName" ).toStdString() + ".jpg", depth );
+
+				fout.close();
+				captureImage =  false;
+			}
 
 #ifdef NITE2_FOUND
 			//set parameters for changes movement and cursor
@@ -166,8 +214,6 @@ void Kinect::KinectThread::run()
 			kht->getAllGestures();
 			kht->getAllHands();
 #endif
-			// start highlighting neighbour nodes
-			nav->navigate( 2 );
 			//////////////End/////////////
 
 			//	cap >> frame; // get a new frame from camera
@@ -248,9 +294,9 @@ void Kinect::KinectThread::run()
 							line( frame, cv::Point2i( 30, 30 ), cv::Point2i( 30, 30 ), cv::Scalar( 0, 0, 0 ), 5 ,8 );
 							if ( ( int )kht->slidingHand_x != 0 ) {
 								putText( frame, kht->slidingHand_type, cvPoint( ( int )kht->slidingHand_x,( int )kht->slidingHand_y ), cv::FONT_HERSHEY_COMPLEX_SMALL, 0.8, cvScalar( 0,0,250 ), 1, CV_AA );
-								emit sendSliderCoords( ( kht->slidingHand_x/kht->handTrackerFrame.getDepthFrame().getWidth()-0.5 )*( -200 ),
-													   ( kht->slidingHand_y/kht->handTrackerFrame.getDepthFrame().getHeight()-0.5 )*( 200 ),
-													   ( kht->slidingHand_z/kht->handTrackerFrame.getDepthFrame().getHeight()-0.5 )*200 );
+								emit sendSliderCoords( ( kht->slidingHand_x / static_cast<float>( kht->handTrackerFrame.getDepthFrame().getWidth() ) - 0.5f ) * ( -200.0f ),
+													   ( kht->slidingHand_y / static_cast<float>( kht->handTrackerFrame.getDepthFrame().getHeight() ) - 0.5f ) * ( 200.0f ),
+													   ( kht->slidingHand_z / static_cast<float>( kht->handTrackerFrame.getDepthFrame().getHeight() ) - 0.5f ) * ( 200.0f ) );
 							}
 						}
 						// if hand is closed and zomm enabled - compute zoom
@@ -261,6 +307,10 @@ void Kinect::KinectThread::run()
 				}
 				// cursor enabled => move cursor
 				else {
+					// start highlighting neighbour nodes
+					//nav->setSelectionMode( 2 );
+					nav->navigate();
+
 					// detect click gesture
 					if ( wasTimerReset ) {
 						// if main hand closed and timer inactive, start timer

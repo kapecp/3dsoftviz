@@ -1,4 +1,5 @@
 #include "Viewer/DataHelper.h"
+#include "Data/Node.h"
 
 #include <osg/ShapeDrawable>
 #include <osgDB/ReadFile>
@@ -6,6 +7,8 @@
 #include <cstdlib>
 #include <sstream>
 #include <iostream>
+
+#include <QMap>
 
 namespace Vwr {
 
@@ -23,21 +26,21 @@ osg::ref_ptr<osg::Geode> DataHelper::getSphereGeode( osg::Vec3 center, float rad
 
 osg::ref_ptr<osg::Vec3Array> DataHelper::getInitialVectors( int count )
 {
-	float lowest = 1.f;
-	float highest = 100.f;
-	float range = ( highest - lowest ) + 1.f;
+	double lowest = 1.0;
+	double highest = 100.0;
+	double range = ( highest - lowest ) + 1.0;
 
 	osg::ref_ptr<osg::Vec3Array> positions = new osg::Vec3Array();
 
-	srand( ( unsigned )time( 0 ) );
+	srand( static_cast<unsigned int>( time( 0 ) ) );
 
 	for ( int index = 0; index < count; index++ ) {
-		float x, y, z;
-		x = lowest + static_cast<float>( range * static_cast<float>( rand() ) / ( static_cast<float>( RAND_MAX ) + 1.0f ) );
-		y = lowest + static_cast<float>( range * static_cast<float>( rand() ) / ( static_cast<float>( RAND_MAX ) + 1.0f ) );
-		z = lowest + static_cast<float>( range * static_cast<float>( rand() ) / ( static_cast<float>( RAND_MAX ) + 1.0f ) );
+		double x, y, z;
+		x = lowest + ( range * static_cast<double>( qrand() ) / ( RAND_MAX + 1.0 ) );
+		y = lowest + ( range * static_cast<double>( qrand() ) / ( RAND_MAX + 1.0 ) );
+		z = lowest + ( range * static_cast<double>( qrand() ) / ( RAND_MAX + 1.0 ) );
 
-		positions->push_back( osg::Vec3( x, y, z ) );
+		positions->push_back( osg::Vec3( static_cast<float>( x ), static_cast<float>( y ), static_cast<float>( z ) ) );
 	}
 
 	return positions;
@@ -47,18 +50,18 @@ int DataHelper::getRandomNumber( int lowest, int highest )
 {
 	int range = ( highest - lowest ) + 1;
 
-	return lowest + static_cast<int>( range * rand() / ( RAND_MAX + 1.0 ) );
+	return lowest + static_cast<int>( range * qrand() / ( RAND_MAX + 1.0 ) );
 }
 
 osg::ref_ptr<osg::Vec3Array> DataHelper::getEdgeVectors( osg::ref_ptr<Data::Node> inNode, osg::ref_ptr<Data::Node> outNode )
 {
 	osg::ref_ptr<osg::Vec3Array> edgeVectors = new osg::Vec3Array;
 
-	edgeVectors->push_back( osg::Vec3( inNode->restrictedTargetPosition() ) );
+	edgeVectors->push_back( inNode->restrictedTargetPosition() );
 
 	edgeVectors->push_back( osg::Vec3( inNode->restrictedTargetPosition().x() - 0.5f, inNode->restrictedTargetPosition().y(), inNode->restrictedTargetPosition().z() ) );
 	edgeVectors->push_back( osg::Vec3( outNode->restrictedTargetPosition().x() - 0.5f, outNode->restrictedTargetPosition().y(), outNode->restrictedTargetPosition().z() ) );
-	edgeVectors->push_back( osg::Vec3( outNode->restrictedTargetPosition() ) );
+	edgeVectors->push_back( outNode->restrictedTargetPosition() );
 
 	return edgeVectors;
 }
@@ -176,7 +179,7 @@ void DataHelper::generateCylinder( QMap<qlonglong, osg::ref_ptr<Data::Node> >* n
 			//std::cout << "\n";
 
 			// spravime hranu medzi dvoma uzlami podstavy
-			osg::ref_ptr<Data::Edge> edge = new Data::Edge( id, QString::fromStdString( out.str() ), NULL, nodes->value( j*pocetUzlovNaPodstave + i + startN ), nodes->value( to ), types->value( 2 ), getRandomNumber( 0,1 ), 2 );
+			osg::ref_ptr<Data::Edge> edge = new Data::Edge( id, QString::fromStdString( out.str() ), NULL, nodes->value( j*pocetUzlovNaPodstave + i + startN ), nodes->value( to ), types->value( 2 ), ( getRandomNumber( 0,1 ) ? true : false ), 2 );
 			edge->linkNodes( edges );
 			id++;
 
@@ -537,9 +540,9 @@ osg::Vec3f DataHelper::getMassCenter( osg::ref_ptr<osg::Vec3Array> coordinates )
 
 
 
-	long unsigned int num = coordinates->size();
+	std::size_t num = coordinates->size();
 
-	for ( long unsigned int i = 0; i < num; i++ ) {
+	for ( std::size_t i = 0; i < num; i++ ) {
 		x += coordinates->at( i ).x();
 		y += coordinates->at( i ).y();
 		z += coordinates->at( i ).z();

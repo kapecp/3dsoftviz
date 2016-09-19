@@ -1,0 +1,47 @@
+// Module Kinect
+// Autor: Team Reality Not Found
+
+@startuml
+scale 800 width
+
+!define cr(x) KinectCore
+!define hndTr(x) KinectHandTracker
+!define rcg(x) KinectRecogcnition
+!define thr(x) KinectThread
+!define wnd(x) QOpenCV.OpenCVWindow
+!define zm(x) KinectZoom
+!define plAlg(x) PlaneAlgorithm
+!define rsc(x) Ransac
+!define vct(x) Vector3
+!define hstrBuff(x) HistoryBuffer
+!define msCnt(x) Vwr.MouseControl
+!define vwrQT(x) QOSG.ViewerQT
+!define openNI(x) OpenNI.OpenNI
+!define nite(x) NITE.NITE
+
+package Kinect{
+	class openNI() #red
+	class nite() #red
+	cr() -- thr()
+	cr() -- wnd()
+	
+	hndTr() -- openNI()
+	hndTr() -- nite()
+	hndTr() -- hstrBuff()
+	hndTr() -- msCnt()
+	
+	rcg() -- openNI()
+	
+	thr() -- openNI()
+	thr() -- hndTr()
+	thr() -- rcg()
+	
+	wnd() -- thr()
+	
+	zm() -- openNI()
+	zm() -- vwrQT()
+	
+	plAlg() -- vct()
+	rsc() -- plAlg()
+}
+@enduml

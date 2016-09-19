@@ -54,7 +54,7 @@ public:
 		*  \param       useMaxDistance
 		*/
 
-	void SetParameters( float sizeFactor,float flexibility,bool useMaxDistance );
+	void SetParameters( double sizeFactor,float flexibility,bool useMaxDistance );
 
 	/**
 		*  \fn public  Randomize
@@ -109,7 +109,7 @@ public:
 		*  \brief Sets graph data structure
 		*  \param graph  data structure containing nodes, edges and types
 		*/
-	void SetGraph( Data::Graph* graph );
+	void SetGraph( Data::Graph* graph, bool fixedPositions = false );
 
 	/**
 		*  \brief Sets the end status (causing the loops in run method to end)
@@ -117,9 +117,60 @@ public:
 	void RequestEnd();
 
 	/**
-	    *  \brief Sets the repulsive force multiplier between two nodes in one vertigo plane
-	    */
+		*  \fn public  RunAlg
+		*  \brief Play edge bundling algorithm
+		*/
+	void RunAlgEdgeBundling();
+
+	/**
+		*  \fn public  StopAlgEdgeBundling
+		*  \brief stop edge bundling algorithm
+		*/
+	void StopAlgEdgeBundling();
+
+	/**
+		*  \fn inline public  SetAlphaEdgeBundlingValue(float val)
+		*  \brief Sets multiplicity of forces in edge bundling algorithm
+		*  \param	  val  multipliciter of forces
+		*/
+	void SetAlphaEdgeBundlingValue( float val )
+	{
+		ALPHA_EDGEBUNDLING = val;
+	}
+
+	/**
+		*  \fn inline public  getAngle
+		*  \brief returns  angle compatibility (0.0 - 1.0) of edges splitted by param nodes
+		*/
+	double getAngleCompatibility( Data::Node* u, Data::Node* v );
+
+	/**
+		*  \fn inline public  getScaleCompatibility
+		*  \brief returns  scale compatibility (0.0 - 1.0) of edges splitted by param nodes (returns 1.0 if edges have equal length)
+		*/
+	double getScaleCompatibility( Data::Node* u, Data::Node* v );
+
+	/**
+		*  \fn inline public  getPositionCompatibility
+		*  \brief returns  position compatibility (0.0 - 1.0) of edges splitted by param nodes (returns 1.0 if edges have equal length)
+		*/
+	double getPositionCompatibility( Data::Node* u, Data::Node* v );
+
+	/**
+		*  \brief Sets the repulsive force multiplier between two nodes in one vertigo plane
+		*/
 	void setRepulsiveForceVertigo( int value );
+
+	//skalovanie dlzky hran
+	void setMaxDistance( float max_distance )
+	{
+		this->MAX_DISTANCE = max_distance;
+	}
+
+	float getMaxDistance()
+	{
+		return MAX_DISTANCE;
+	}
 
 private:
 	Layout::RadialLayout* rl;
@@ -158,7 +209,19 @@ private:
 		*  float MAX_DISTANCE
 		*  \brief maximal distance of nodes, when repulsive force is aplied
 		*/
-	float MAX_DISTANCE;
+	double MAX_DISTANCE;
+
+	/**
+		*  float MIN_MOVEMENT_EDGEBUNDLING
+		*  \brief minimal distance between two meta nodes during edge bundling alg, when forces are aplified
+		*/
+	float MIN_MOVEMENT_EDGEBUNDLING;
+
+	/**
+		*  float ALPHA_EDGEBUNDLING
+		*  \brief multipliciter of forces
+		*/
+	float ALPHA_EDGEBUNDLING;
 
 	/**
 		*  enum State
@@ -180,7 +243,7 @@ private:
 		*  float sizeFactor
 		*  \brief size of graph layout
 		*/
-	float sizeFactor;
+	double sizeFactor;
 
 	/**
 		*  double K
@@ -199,6 +262,13 @@ private:
 		*  \brief actual status of the algorithm
 		*/
 	FRAlgorithm::State state;
+
+	/**
+		*  FRAlgorithm::State stateEdgeBundling
+		*  \brief actual status of the edge bundling algorithm
+		*/
+	FRAlgorithm::State stateEdgeBundling;
+
 	/**
 		*  bool useMaxDistance
 		*  \brief constaint using maximal distance of nodes, when repulsive force is aplied
@@ -285,9 +355,9 @@ private:
 	double dist;
 
 	/**
-	    *  int repulsiveForceVertigo
-	    *  \brief repulsive force multiplier between two nodes in one vertigo plane
-	    */
+		*  int repulsiveForceVertigo
+		*  \brief repulsive force multiplier between two nodes in one vertigo plane
+		*/
 	int repulsiveForceVertigo;
 
 	/**
@@ -318,10 +388,27 @@ private:
 		*  \brief Adds attractive force between node U and meta node
 		*  \param   u  node U
 		*  \param   meta meta node
-		*  \param   factor  multiplicer of attaractive force
+		*  \param   factor  multiplicer of attractive force
 		*/
 	void addMetaAttractive( Data::Node* u, Data::Node* meta, float factor );
 
+	/**
+		*  \fn private  addNeighbourAttractive(Data::Node* meta, Data::Node* neighbour, float factor)
+		*  \brief Adds attractive force between meta node and his neighbour
+		*  \param   meta	meta node
+		*  \param   neighbour   neighbour node
+		*  \param   factor  multiplicer of attractive force
+		*/
+	void addNeighbourAttractive( Data::Node* meta, Data::Node* neighbour, float factor );
+
+	/**
+		*  \fn private  addSameIndexAttractive(Data::Node* meta1, Data::Node* meta2, float factor)
+		*  \brief Adds attractive force between two meta nodes with same index
+		*  \param   meta1	first meta node
+		*  \param   meta2   second meta node
+		*  \param   factor  multiplicer of attractive force
+		*/
+	void addSameIndexAttractive( Data::Node* meta1, Data::Node* meta2, float factor );
 	/**
 		*  \fn private  addRepulsive(Data::Node* u, Data::Node* v, float factor)
 		*  \brief Adds repulsive force between two nodes into node U

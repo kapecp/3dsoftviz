@@ -1,6 +1,7 @@
 #include "Clustering/Figures/Sphere.h"
 
 #include <vector>
+#include <algorithm>
 #include <QDebug>
 #include <osg/Depth>
 #include <osg/BlendFunc>
@@ -15,7 +16,7 @@
 
 #include <math.h>
 
-::Sphere::Sphere( osg::Vec3d position, float radius, osg::Vec4d color )
+Clustering::Sphere::Sphere( osg::Vec3d position, double radius, osg::Vec4d color )
 {
 	init();
 	computeGeode( 20, 20 );
@@ -23,7 +24,7 @@
 	at->addChild( sphereGeode );
 }
 
-void ::Sphere::init()
+void Clustering::Sphere::init()
 {
 	midPoint = osg::Vec3d( 0,0,0 );
 	sphereGeode = new osg::Geode();
@@ -35,7 +36,7 @@ void ::Sphere::init()
 	at = new osg::AutoTransform;
 }
 
-void ::Sphere::computeGeode( unsigned int rings, unsigned int sectors )
+void Clustering::Sphere::computeGeode( unsigned int rings, unsigned int sectors )
 {
 	float radius = 1;
 	float const R = 1.0f/static_cast<float>( rings-1 );
@@ -47,9 +48,9 @@ void ::Sphere::computeGeode( unsigned int rings, unsigned int sectors )
 	// Establish texture coordinates, vertex list, and normals
 	for ( r = 0; r < rings; r++ ) {
 		for ( s = 0; s < sectors; s++ ) {
-			float const y = static_cast<float>( sin( -sqrt( M_PI ) + M_PI * r * R ) );
-			float const x = static_cast<float>( cos( 2*M_PI * s * S ) ) * static_cast<float>( sin( M_PI * r * R ) );
-			float const z = static_cast<float>( sin( 2*M_PI * s * S ) ) * static_cast<float>( sin( M_PI * r * R ) );
+			float const y = static_cast<float>( sin( -sqrt( M_PI ) + M_PI * static_cast<double>( r * R ) ) );
+			float const x = static_cast<float>( cos( 2*M_PI * static_cast<double>( s * S ) ) ) * static_cast<float>( sin( M_PI * static_cast<double>( r * R ) ) );
+			float const z = static_cast<float>( sin( 2*M_PI * static_cast<double>( s * S ) ) ) * static_cast<float>( sin( M_PI * static_cast<double>( r * R ) ) );
 
 			sphereTexCoords->push_back( osg::Vec2( static_cast<float>( s ) * R, static_cast<float>( r ) * R ) );
 			sphereVertices->push_back( osg::Vec3( x * radius, y * radius, z * radius ) );
@@ -83,7 +84,7 @@ void ::Sphere::computeGeode( unsigned int rings, unsigned int sectors )
 	sphereGeometry->setColorArray( colors );
 }
 
-void ::Sphere::transform( osg::Vec3d position, osg::Vec3d scale, osg::Vec4d color )
+void Clustering::Sphere::transform( osg::Vec3d position, osg::Vec3d scale, osg::Vec4d color )
 {
 	osg::StateSet* ss = sphereGeometry->getOrCreateStateSet();
 

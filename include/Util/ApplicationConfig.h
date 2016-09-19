@@ -5,15 +5,14 @@
 #ifndef UTIL_HASHMAPSINGLETON_DEF
 #define UTIL_HASHMAPSINGLETON_DEF 1
 
-#ifdef __APPLE__
-#include <qstring.h>
-#include <qstringlist.h>
-#else
-#include <Qt/qstring.h>
-#include <Qt/qstringlist.h>
-#endif
-
+#include <QByteArray>
+#include <QDebug>
+#include <QFile>
 #include <QMap>
+#include <QString>
+#include <QStringList>
+
+#include <osg/Vec4f>
 #include <OpenThreads/Mutex>
 
 #include <memory>
@@ -91,12 +90,11 @@ public:
 			 * \param[in] defaultValue Default value (if the value does not exist or is not valid).
 			 * \return Numeric value for the specified key (defaultValue if the key does not exist or the value is not a valid number).
 			 */
-	long getNumericValue(
-		QString key,
-		std::auto_ptr<long> minValue,
-		std::auto_ptr<long> maxValue,
-		const long defaultValue
-	);
+	int getNumericValue( QString key,
+						 std::shared_ptr<int> minValue,
+						 std::shared_ptr<int> maxValue,
+						 const int defaultValue
+					   );
 
 	/**
 			 * \brief Gets boolean value from settings.
@@ -110,12 +108,47 @@ public:
 	);
 
 	/**
+	* \brief Gets int value from settings or default.
+	* \param[in] key Key to the value.
+	* \param[in] defaultValue Default value (if the value does not exist or is not valid).
+	* \return int value for the specified key (defaultValue if the key does not exist or the value is not a valid float value).
+	*/
+	int getIntValue(
+		QString key,
+		const int defaultValue = int()
+	);
+
+	/**
+	* \brief Gets float value from settings or default.
+	* \param[in] key Key to the value.
+	* \param[in] defaultValue Default value (if the value does not exist or is not valid).
+	* \return float value for the specified key (defaultValue if the key does not exist or the value is not a valid float value).
+	*/
+	float getFloatValue(
+		QString key,
+		const float defaultValue = float()
+	);
+
+	/**
+			 * \brief Gets color value in osg::Vec4f from settings.
+			 * Color is stored in 4 0-255 values divided by comma. Example:
+			 * 'My.Color.Value=200,128,5,6'
+			 * Where format is: 'R,G,B,A'
+			 * Value is then transformed to osg::Vec4f to 0-1 format
+			 *
+			 * \param[in] key Key to the value
+			 *
+			 * \returns Color value
+			 *
+			 */
+	osg::Vec4f getColorValue( QString key );
+
+	/**
 			*  \fn public  getList
 			*  \brief
 			*  \return QStringList
 			*/
 	QStringList getList();
-
 
 	/**
 			*  \fn public  saveConfig

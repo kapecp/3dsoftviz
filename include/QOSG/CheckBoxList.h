@@ -14,6 +14,7 @@
 #define CHECKBOXLIST_H 1
 
 #include <QtGui>
+#include <QComboBox>
 
 namespace QOSG {
 class CheckBoxList: public QComboBox

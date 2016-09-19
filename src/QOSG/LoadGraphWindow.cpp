@@ -34,11 +34,11 @@ LoadGraphWindow::LoadGraphWindow( QWidget* parent )
 	graphsTable->setRowCount( 0 );
 	graphsTable->setColumnCount( 5 );
 	graphsTable->setHorizontalHeaderLabels( graphList );
-	graphsTable->horizontalHeader()->setResizeMode( 0, QHeaderView::Interactive );
-	graphsTable->horizontalHeader()->setResizeMode( 1, QHeaderView::Stretch );
-	graphsTable->horizontalHeader()->setResizeMode( 2, QHeaderView::ResizeToContents );
-	graphsTable->horizontalHeader()->setResizeMode( 3, QHeaderView::ResizeToContents );
-	graphsTable->horizontalHeader()->setResizeMode( 4, QHeaderView::ResizeToContents );
+	graphsTable->horizontalHeader()->SETRESIZEMODE( 0, QHeaderView::Interactive );
+	graphsTable->horizontalHeader()->SETRESIZEMODE( 1, QHeaderView::Stretch );
+	graphsTable->horizontalHeader()->SETRESIZEMODE( 2, QHeaderView::ResizeToContents );
+	graphsTable->horizontalHeader()->SETRESIZEMODE( 3, QHeaderView::ResizeToContents );
+	graphsTable->horizontalHeader()->SETRESIZEMODE( 4, QHeaderView::ResizeToContents );
 	graphsTable->verticalHeader()->hide();
 	graphsTable->setShowGrid( true );
 
@@ -72,13 +72,29 @@ void LoadGraphWindow::createGraphTable()
 	QMap<qlonglong, Data::Graph*>::iterator iterGraph;
 
 	QMap<qlonglong, Data::Graph*> graphs = Model::GraphDAO::getGraphs( db->tmpGetConn(), &error );
+	if ( error ) {
+		qDebug() << "[QOSG::LoadGraphWindow::createGraphTable] Failed getting graphs.";
+		return;
+	}
 	graphsCount = graphs.count();
 
 	numberOfGraphs->setText( tr( "%1 graph(s) found" ).arg( graphsCount ) );
 	graphsTable->setRowCount( graphsCount );
 	nodes = Model::NodeDAO::getListOfNodes( db->tmpGetConn(), &error );
+	if ( error ) {
+		qDebug() << "[QOSG::LoadGraphWindow::createGraphTable] Failed getting list of nodes.";
+		return;
+	}
 	edges = Model::EdgeDAO::getListOfEdges( db->tmpGetConn(), &error );
+	if ( error ) {
+		qDebug() << "[QOSG::LoadGraphWindow::createGraphTable] Failed getting list of edges.";
+		return;
+	}
 	layouts = Model::GraphLayoutDAO::getListOfLayouts( db->tmpGetConn(), &error );
+	if ( error ) {
+		qDebug() << "[QOSG::LoadGraphWindow::createGraphTable] Failed getting list of layouts.";
+		return;
+	}
 
 	qDebug() << "[QOSG::LoadGraphWindow::createGraphTable] total number of nodes in DB: " << nodes.count();
 	qDebug() << "[QOSG::LoadGraphWindow::createGraphTable] total number of edges in DB: " << edges.count();

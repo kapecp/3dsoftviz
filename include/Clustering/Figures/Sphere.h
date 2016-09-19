@@ -7,12 +7,14 @@
 
 #include <vector>
 
+namespace Clustering {
+
 class Sphere
 {
 
 public:
 
-	Sphere( osg::Vec3d position, float radius, osg::Vec4d color );
+	Sphere( osg::Vec3d position, double radius, osg::Vec4d color );
 
 	osg::AutoTransform* getAT()
 	{
@@ -64,5 +66,7 @@ protected:
 	void computeGeode( unsigned int rings, unsigned int sectors );
 
 };
+
+}
 
 #endif  /*SPHERE_H*/

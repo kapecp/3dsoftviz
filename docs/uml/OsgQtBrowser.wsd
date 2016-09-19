@@ -1,0 +1,24 @@
+// Module OsgQtBrowser
+// Autor: Team Reality Not Found
+
+@startuml
+scale 800 width
+
+!define mQKyEt(x) MyQKeyEvent
+!define mQPtEt(x) MyQPointerEvent
+!define qGrphVwAd(x) QGraphicsViewAdapter
+!define qWbVwImg(x) QWebViewImage
+!define osg(x) OSG.OSG
+!define luaGrTrIm(x) Lua.LuaGraphTreeItem
+!define luaGrTrMdl(x) Lua.LuaGraphTreeModel
+
+package OsgQtBrowser{
+	class osg() #red
+	qGrphVwAd() -- osg()
+	qWbVwImg() -- luaGrTrIm()
+	qWbVwImg() -- qGrphVwAd()
+	qWbVwImg() -- osg()
+	class mQKyEt()
+	class mQPtEt()
+}
+@enduml

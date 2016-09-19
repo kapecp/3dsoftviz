@@ -1,13 +1,17 @@
 #include "Viewer/GraphNavigation.h"
+#include "Viewer/PickHandler.h"
+
 #include "QDebug"
 
-Vwr::GraphNavigation::GraphNavigation()
+Vwr::GraphNavigation::GraphNavigation() :
+	isNavEnabled( true ),
+	viewer( AppCore::Core::getInstance()->getCoreWindow()->GetViewerQt() ),
+	camMath( nullptr ),
+	tempSelectedNode( nullptr ),
+	tempSelectedEdge( nullptr ),
+	previousLastSelectedNode( nullptr ),
+	selectionMode( 2 )
 {
-	isNavEnabled = true;
-	tempSelectedNode = NULL;
-	tempSelectedEdge = NULL;
-	previousLastSelectedNode = NULL;
-	viewer = AppCore::Core::getInstance()->getCoreWindow()->GetViewerQt();
 }
 
 Vwr::GraphNavigation::~GraphNavigation()
@@ -19,7 +23,7 @@ Vwr::GraphNavigation::~GraphNavigation()
 void Vwr::GraphNavigation::setColorConectedNodes( Data::Node* selectedNode )
 {
 	QMap<qlonglong, osg::ref_ptr<Data::Edge> >* nodeEdges = selectedNode->getEdges();
-	for ( QMap<qlonglong, osg::ref_ptr<Data::Edge> >::const_iterator iter = nodeEdges->begin(); iter != nodeEdges->end(); iter++ ) {
+	for ( QMap<qlonglong, osg::ref_ptr<Data::Edge> >::const_iterator iter = nodeEdges->begin(); iter != nodeEdges->end(); ++iter ) {
 		// get dest node and possition
 		Data::Node* dstNode = ( *iter )->getOtherNode( selectedNode );
 		// set temp color for node and edge
@@ -31,7 +35,7 @@ void Vwr::GraphNavigation::setColorConectedNodes( Data::Node* selectedNode )
 void Vwr::GraphNavigation::restoreColorConectedNodes( Data::Node* selectedNode )
 {
 	QMap<qlonglong, osg::ref_ptr<Data::Edge> >* nodeEdges = selectedNode->getEdges();
-	for ( QMap<qlonglong, osg::ref_ptr<Data::Edge> >::const_iterator iter = nodeEdges->begin(); iter != nodeEdges->end(); iter++ ) {
+	for ( QMap<qlonglong, osg::ref_ptr<Data::Edge> >::const_iterator iter = nodeEdges->begin(); iter != nodeEdges->end(); ++iter ) {
 		// get dest node and possition
 		Data::Node* dstNode = ( *iter )->getOtherNode( selectedNode );
 		// restore default color for node and edge
@@ -40,18 +44,18 @@ void Vwr::GraphNavigation::restoreColorConectedNodes( Data::Node* selectedNode )
 	}
 }
 
-void Vwr::GraphNavigation::setColorNearestNode( Data::Node* selectedNode, int selectionMode )
+void Vwr::GraphNavigation::setColorNearestNode( Data::Node* selectedNode )
 {
 	osg::Vec3f mousePosition = getMouseScreenCoordinates( );
 	osg::Vec3f selectedPosition = getNodeScreenCoordinates( selectedNode );
 
 	Data::Edge* closestEdge = NULL;
-	float minDistance = 0;
+	double minDistance = 0;
 	QMap<qlonglong, osg::ref_ptr<Data::Edge> >* nodeEdges = selectedNode->getEdges();
-	for ( QMap<qlonglong, osg::ref_ptr<Data::Edge> >::const_iterator iter = nodeEdges->begin(); iter != nodeEdges->end(); iter++ ) {
+	for ( QMap<qlonglong, osg::ref_ptr<Data::Edge> >::const_iterator iter = nodeEdges->begin(); iter != nodeEdges->end(); ++iter ) {
 		Data::Node* dstNode = ( *iter )->getOtherNode( selectedNode );
 		osg::Vec3f nodePosition = getNodeScreenCoordinates( dstNode );
-		double distance;
+		double distance = 0;
 		// distance to node
 		if ( selectionMode == 1 ) {
 			distance = getDistanceToNode( mousePosition, nodePosition );
@@ -60,8 +64,11 @@ void Vwr::GraphNavigation::setColorNearestNode( Data::Node* selectedNode, int se
 		else if ( selectionMode == 2 ) {
 			distance = getDistanceToEdge( mousePosition, selectedPosition ,nodePosition );
 		}
+		else {
+			// TODO: Add extra conditions for "selectionMode"
+		}
 		// first edge or nearer node
-		if ( ( minDistance == 0 ) || ( minDistance > distance ) ) {
+		if ( qFuzzyCompare( minDistance, 0.0 )  || ( minDistance > distance ) ) {
 			minDistance = distance;
 			closestEdge = ( *iter );
 		}
@@ -94,7 +101,7 @@ void Vwr::GraphNavigation::clear()
 	tempSelectedEdge = NULL;
 }
 
-void Vwr::GraphNavigation::navigate( int selectionMode )
+void Vwr::GraphNavigation::navigate( )
 {
 	// if there is no selected node, restore default colors
 	if ( viewer->getPickHandler()->getSelectedNodes()->isEmpty() ) {
@@ -113,7 +120,7 @@ void Vwr::GraphNavigation::navigate( int selectionMode )
 			previousLastSelectedNode = lastSelectedNode;
 		}
 
-		setColorNearestNode( lastSelectedNode, selectionMode );
+		setColorNearestNode( lastSelectedNode );
 	}
 }
 
@@ -141,12 +148,12 @@ void Vwr::GraphNavigation::removeLastSelectedNode()
 osg::Vec3f Vwr::GraphNavigation::getMouseScreenCoordinates( )
 {
 	// get mouse coordinates in viewer
-	float mouseX = viewer->cursor().pos().x() - viewer->window()->pos().x() - 10;
-	float mouseY = viewer->cursor().pos().y() - viewer->window()->pos().y() - 30;
+	float mouseX = static_cast<float>( viewer->cursor().pos().x() ) - static_cast<float>( viewer->window()->pos().x() ) - 10.0f;
+	float mouseY = static_cast<float>( viewer->cursor().pos().y() ) - static_cast<float>( viewer->window()->pos().y() ) - 30.0f;
 
 	// get coordinates inside viewer and invert y
-	float xN = static_cast<float>( mouseX - viewer->pos().x() );
-	float yN = static_cast<float>( viewer->height() + viewer->pos().y() - mouseY );
+	float xN = mouseX - static_cast<float>( viewer->pos().x() );
+	float yN = static_cast<float>( viewer->height() ) + static_cast<float>( viewer->pos().y() ) - mouseY ;
 
 	return osg::Vec3f( xN, yN, 1.0f );
 }
@@ -176,8 +183,8 @@ osg::Vec3f Vwr::GraphNavigation::getNodeScreenCoordinates( Data::Node* node )
 double Vwr::GraphNavigation::getDistanceToNode( osg::Vec3f mouse, osg::Vec3f node )
 {
 	// in case of big space can overflow ... test divide by 1000
-	double distX = abs( node[0] - mouse[0] );
-	double distY = abs( node[1] - mouse[1] );
+	double distX = fabs( static_cast<double>( node[0] - mouse[0] ) );
+	double distY = fabs( static_cast<double>( node[1] - mouse[1] ) );
 
 	return distX*distX + distY*distY;
 }

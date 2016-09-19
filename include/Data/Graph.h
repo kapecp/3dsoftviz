@@ -10,12 +10,14 @@
 
 #include "Data/Type.h"
 #include "Data/Edge.h"
+#include "Data/Node.h"
 #include "Data/MetaType.h"
 
 #include "Layout/RestrictionsManager.h"
 
 #include <QString>
 #include <QSqlDatabase>
+#include <QMap>
 
 #define METASTRENGTH 1.0f
 
@@ -104,7 +106,7 @@ public:
 		*/
 	static float getMetaStrength()
 	{
-		return static_cast<float>( METASTRENGTH );
+		return METASTRENGTH;
 	}
 
 
@@ -117,6 +119,8 @@ public:
 	{
 		return graph_id;
 	}
+
+	osg::ref_ptr<Data::Node> replaceNodeId( int oldId, int newId );
 
 	/**
 		* \fn qlonglong setId(qlonglong graph_id)
@@ -347,9 +351,14 @@ public:
 	float getNodeScale();
 
 	/**
+		*  \return scale of node
+		*/
+	float getNodeScaleByType( Data::Type* type );
+
+	/**
 		*  \return scale of nested edge
 		*/
-	float getEdgeScale();
+	double getEdgeScale();
 
 	/**
 		*  \fn public  removeNode(osg::ref_ptr<Data::Node> node)
@@ -357,6 +366,14 @@ public:
 		*  \param      node   the Node to be removed from the Graph
 		*/
 	void removeNode( osg::ref_ptr<Data::Node> node );
+
+	/**
+	 * int removeNodeByLuaIdentifier( QString identifier )
+	 * @brief Remove node find by Lua Identifier
+	 * @param identifier Lua identifier of node
+	 * @return Count of affected objects
+	 */
+	int removeNodeByLuaIdentifier( QString identifier );
 
 	/**
 		*  \fn public  isInSameGraph(osg::ref_ptr<Data::Node> nodeA, osg::ref_ptr<Data::Node> nodeB)
@@ -377,6 +394,20 @@ public:
 		*  \return osg::ref_ptr the added Edge
 		*/
 	void addMultiEdge( QString name, osg::ref_ptr<Data::Node> srcNode, osg::ref_ptr<Data::Node> dstNode, Data::Type* type, bool isOriented, osg::ref_ptr<Data::Edge> replacedSingleEdge );
+
+	/**
+		*  \fn public  splitEdge(QString name, osg::ref_ptr<Data::Node> srcNode, osg::ref_ptr<Data::Node> dstNode, bool isOriented, int splitCount)
+		*  \brief Split edge between source and destination node using meta nodes
+		*  \param   name	 name of the Edge
+		*  \param   srcNode	starting Node of the Edge
+		*  \param   dstNode	 ending Node of the Edge
+		*  \param   isOriented   true, if the Edge is oriented
+		*  \param   nodeType   type of nodes splitting edge
+		*  \param   edgeType   type of new edges
+		*  \param   splitCount   count of new edges instead of original one
+		*  \return  QList<osg::ref_ptr<Data::Edge> >	the added edges
+		*/
+	QList<osg::ref_ptr<Data::Edge> > splitEdge( QString name, osg::ref_ptr<Data::Node> srcNode, osg::ref_ptr<Data::Node> dstNode, bool isOriented, Data::Type* nodeType, Data::Type* edgeType, int splitCount );
 
 	/**
 		*  \fn public isParralel(osg::ref_ptr<Data::Node> srcNode, osg::ref_ptr<Data::Node> dstNode)
@@ -488,6 +519,25 @@ public:
 		frozen = val;
 	}
 
+	unsigned int getNodeVisual()
+	{
+		return nodeVisual;
+	}
+
+	void setNodeVisual( unsigned int index )
+	{
+		nodeVisual = index;
+	}
+
+	int getEdgeVisual()
+	{
+		return edgeVisual;
+	}
+
+	void setEdgeVisual( int index )
+	{
+		edgeVisual = index;
+	}
 
 	/**
 		*  \fn inline public  isInDB
@@ -544,11 +594,25 @@ public:
 	Data::Type* getNodeMultiType();
 
 	/**
+		*  \fn public  getNodeSplitterType
+		*  \brief Returns SplitterType for splitter-Nodes (used for splitting edges)
+		*  \return Data::Type * SplitterType for the Nodes
+		*/
+	Data::Type* getNodeSplitterType();
+
+	/**
 		*  \fn public  getEdgeMetaType
 		*  \brief Returns MetaType for meta-Edges
 		*  \return Data::Type * MetaType for the Edges
 		*/
 	Data::Type* getEdgeMetaType();
+
+	/**
+		*  \fn public  getEdgePieceType
+		*  \brief Returns MetaType for piece of edge
+		*  \return Data::Type * MetaType for the Edges
+		*/
+	Data::Type* getEdgePieceType();
 
 	/**
 		 * \brief Gets type of nodes used to manipulate the restrictions.
@@ -578,6 +642,114 @@ public:
 	void setEleIdCounter( qlonglong number )
 	{
 		ele_id_counter = number;
+	}
+
+	/**
+		*  \fn inline public  splitEdges
+		*  \brief Split every edge in graph using metanodes.
+		*  \param   splitCount   count of new edges instead of original one
+		*/
+	void splitAllEdges( int splitCount );
+
+	/**
+		*  \fn inline public  restoreSplittedEdges
+		*  \brief Restore all splitted edges in graph. Splitted edges are substituted by  original edges.
+		*/
+	void restoreSplittedEdges();
+
+	/**
+	 * Data::Node* findNodeByName( QString nodeName )
+	 * @brief Finds node in graph by its path. Returns node, if it was found, otherwise NULL.
+	 * @param nodeName Path of the file
+	 * @return Returns node, if it was found, otherwise NULL.
+	 */
+	Data::Node* findNodeByName( QString nodeName );
+
+	/**
+	 * osg::ref_ptr<Data::Node> findNodeById( qlonglong nodeId )
+	 * @brief Finds node in graph by its id. Returns node, if it was found, otherwise NULL.
+	 * @param nodeId Id of the node
+	 * @return Returns node, if it was found, otherwise NULL.
+	 */
+	osg::ref_ptr<Data::Node> findNodeById( qlonglong nodeId );
+
+	/**
+	 * Data::Node* findNodeByLuaIdentifier( QString identifier )
+	 * @brief Finds node in graph by its lua identifier. Returns node, if it was found, otherwise NULL.
+	 * @param identifier Lua node identifier
+	 * @return Returns node, if it was found, otherwise NULL.
+	 */
+	Data::Node* findNodeByLuaIdentifier( QString identifier );
+
+	/**
+	 * Data::Node* findEdgeByLuaIdentifier( QString identifier )
+	 * @brief Finds edge in graph by its lua identifier. Returns edge, if it was found, otherwise NULL.
+	 * @param identifier Lua edge identifier
+	 * @return Returns edge, if it was found, otherwise NULL.
+	 */
+	Data::Edge* findEdgeByLuaIdentifier( QString identifier );
+
+	/**
+	 * Data::Edge* findEdgeByName( QString edgeName )
+	 * @brief Finds edge in graph by its name. Returns node, if it was found, otherwise NULL.
+	 * @param edgeName Name of edge
+	 * @return Returns edge, if it was found, otherwise NULL.
+	 */
+	Data::Edge* findEdgeByName( QString edgeName );
+
+	/**
+	 * QMap<QString, int> getEdgeOccurence()
+	 * @brief Getter for map of edge occurences in the graph.
+	 * @return Map of edge occurences in the graph.
+	 */
+	QMap<QString, int> getEdgeOccurence()
+	{
+		return this->edgeOccurence;
+	}
+
+	/**
+	 * void setEdgeOccurence( QMap<QString, int> edgeOccurence )
+	 * @brief Setter of map of edge occurences in the graph.
+	 * @param edgeOccurence Map of edge occurences in the graph
+	 */
+	void setEdgeOccurence( QMap<QString, int> edgeOccurence )
+	{
+		this->edgeOccurence = edgeOccurence;
+	}
+
+	/**
+	 * bool addEdgeOccurence( QString key )
+	 * @brief Icrements the count of specific edge name occurence
+	 * @param key Name of edge
+	 */
+	void addEdgeOccurence( QString key );
+
+	/**
+	 * bool removeEdgeOccurence( QString key )
+	 * @brief Decrements the count of specific edge name occurence
+	 * @param key Name of edge
+	 * @return Returns true, if edge count not equals 0, otherwise false.
+	 */
+	bool removeEdgeOccurence( QString key );
+
+	/**
+	 * int getCurrentVersion()
+	 * @brief Getter of current index of vizualized version in graph
+	 * @return current index of vizualized version in graph
+	 */
+	int getCurrentVersion()
+	{
+		return this->currentVersion;
+	}
+
+	/**
+	 * void setCurrentVersion( int currentVersion )
+	 * @brief Setter of current index of vizualized version in graph
+	 * @param currentVersion Current index of vizualized version in graph
+	 */
+	void setCurrentVersion( int currentVersion )
+	{
+		this->currentVersion =  currentVersion;
 	}
 
 private:
@@ -752,6 +924,30 @@ private:
 		*  \brief Flag if the Graph is frozen or not (used by layout algorithm)
 		*/
 	bool frozen;
+
+	/**
+		*  int nodeVisual
+		*  \brief index of visual representation of node
+		*/
+	unsigned int nodeVisual;
+
+	/**
+		*  int edgeVisual
+		*  \brief index of visual representation of edge
+		*/
+	int edgeVisual;
+
+	/**
+	 * QMap<QString, int> edgeOccurence
+	 * @brief Map of edge names as keys and value is edge occurence in graph
+	 */
+	QMap<QString, int> edgeOccurence;
+
+	/**
+	 * int currentVersion
+	 * @brief Index of currently vizualized version
+	 */
+	int currentVersion;
 
 	/**
 		*  QMap<qlonglong,osg::ref_ptr<Data::Edge> > edgesByType

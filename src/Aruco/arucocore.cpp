@@ -1,9 +1,10 @@
 #include "Aruco/arucocore.h"
 #include "Util/ApplicationConfig.h"
-#include "QDebug"
+#include <QDebug>
 #include "opencv2/imgproc/imgproc.hpp"
 
-
+#include "opencv2/highgui/highgui.hpp"
+#include "opencv2/calib3d/calib3d.hpp"
 
 namespace ArucoModul {
 
@@ -34,7 +35,7 @@ bool ArucoCore::setCameraParameters( const QString markerDesFile )
 
 const QMatrix4x4 ArucoCore::getDetectedMatrix( cv::Mat inputImage )
 {
-	double modelViewMatrix[16];
+	qreal modelViewMatrix[16];
 
 	mCamParam.resize( inputImage.size() );
 	mCamImage = inputImage;		//updateImage( inputImage );
@@ -43,9 +44,36 @@ const QMatrix4x4 ArucoCore::getDetectedMatrix( cv::Mat inputImage )
 	this->detectMarkers();
 	this->getMatrix( modelViewMatrix );
 
-	QMatrix4x4 matrix( modelViewMatrix );
+	QMatrix4x4 matrix( modelViewMatrix[ 0], modelViewMatrix[ 1], modelViewMatrix[ 2], modelViewMatrix[ 3],
+					   modelViewMatrix[ 4], modelViewMatrix[ 5], modelViewMatrix[ 6], modelViewMatrix[ 7],
+					   modelViewMatrix[ 8], modelViewMatrix[ 9], modelViewMatrix[10], modelViewMatrix[11],
+					   modelViewMatrix[12], modelViewMatrix[13], modelViewMatrix[14], modelViewMatrix[15] );
+
 	return matrix;
 }
+
+//jurik
+const QMatrix4x4 ArucoCore::getProjectionMatrix( cv::Mat inputImage )
+{
+	double projectionMatrix[16];
+
+	mCamParam.resize( inputImage.size() );
+	//get projection matrix via ArUco
+	mCamParam.glGetProjectionMatrix( inputImage.size(),inputImage.size(),projectionMatrix,0.01,10000.0 );
+
+	QMatrix4x4 matrix( projectionMatrix[ 0], projectionMatrix[ 1], projectionMatrix[ 2], projectionMatrix[ 3],
+					   projectionMatrix[ 4], projectionMatrix[ 5], projectionMatrix[ 6], projectionMatrix[ 7],
+					   projectionMatrix[ 8], projectionMatrix[ 9], projectionMatrix[10], projectionMatrix[11],
+					   projectionMatrix[12], projectionMatrix[13], projectionMatrix[14], projectionMatrix[15] );
+	return matrix;
+}
+
+float ArucoCore::getMarkerSize()
+{
+	return this->mMarkerSize;
+}
+
+//*****
 
 bool ArucoCore::getDetectedPosAndQuat( cv::Mat inputImage, double position[3], double quaternion[4] )
 {
@@ -66,9 +94,9 @@ bool ArucoCore::getDetectedPosAndQuat( cv::Mat inputImage, double position[3], d
 
 }
 
-long ArucoCore::detect( cv::Mat inputImage )
+std::size_t ArucoCore::detect( cv::Mat inputImage )
 {
-	mCamParam.resize( inputImage.size() );
+	//mCamParam.resize( inputImage.size() );
 
 	mCamImage = inputImage;
 
@@ -140,6 +168,83 @@ cv::Mat ArucoCore::getDetImage()
 	}
 
 	return mCamImage;	// return image with augmented information
+}
+
+cv::Mat ArucoCore::getDetectedRectangleImage()
+{
+	//for each marker, draw info and cube from markers
+	//qDebug() << "Pocet markerov je = " << mMarkers.size();
+	for ( unsigned int i = 0; i < mMarkers.size(); i++ ) {
+		mMarkers[i].draw( mCamImage, cv::Scalar( 0,0,255 ), 2 );
+
+		//draw a 3d rectangle from markers if there is 3d info
+		if ( mCamParam.isValid() &&  !qFuzzyCompare( mMarkerSize,-1.0f ) ) {
+			drawCube( mCamImage, mMarkers, mCamParam );
+		}
+	}
+
+	return mCamImage; //return image with augmented information
+}
+
+void ArucoCore::drawCube( cv::Mat& Image, vector<aruco::Marker>& m,const aruco::CameraParameters& CP )
+{
+
+	qDebug() << "Velkost vektora markerov " << m.size();
+
+	cv::Point2f* pointArray = static_cast<cv::Point2f*>( malloc( ( m.size()+1 )*sizeof( cv::Point2f ) ) );
+	cv::Point2f* pointArray2 = static_cast<cv::Point2f*>( malloc( ( m.size()+1 )*sizeof( cv::Point2f ) ) );
+
+	//for each marker  compute his 2d representation on frame
+	for ( unsigned int i = 0; i < m.size(); i++ ) {
+		cv::Mat objectPoints( 2, 3, CV_32FC1 );
+		objectPoints.at<float>( 0,0 )=0;
+		objectPoints.at<float>( 0,1 )=0;
+		objectPoints.at<float>( 0,2 )=0;
+
+		objectPoints.at<float>( 1,0 )=0;
+		objectPoints.at<float>( 1,1 )=0;
+		objectPoints.at<float>( 1,2 )=0.05f;
+
+		vector<cv::Point2f> imagePoint;
+		cv::projectPoints( objectPoints, m[i].Rvec, m[i].Tvec, CP.CameraMatrix, CP.Distorsion, imagePoint );
+		pointArray[i] = imagePoint[0];
+		pointArray2[i] = imagePoint[1];
+	}
+
+	//if we detect 2 markers, draw a line
+	if ( m.size() == 2 ) {
+		qDebug() << "Vykreslujem ciaru";
+		cv::line( Image, pointArray[0], pointArray[1], cv::Scalar( 0,255,255 ), 2, CV_AA );
+	}
+
+	//if we detect 3 markers, compute the 4th point and draw a rectangle
+	if ( m.size() == 3 ) {
+		qDebug() << "Vykreslujem stvorec alebo obdlznik";
+		//compute the 4th point
+		pointArray[3].x = pointArray[2].x + ( pointArray[0].x - pointArray[1].x );
+		pointArray[3].y = pointArray[0].y + ( pointArray[2].y - pointArray[1].y );
+
+		pointArray2[3].x = pointArray2[2].x + ( pointArray2[0].x - pointArray2[1].x );
+		pointArray2[3].y = pointArray2[0].y + ( pointArray2[2].y - pointArray2[1].y );
+
+
+		//cv::rectangle(Image, pointArray[2], pointArray[0], cv::Scalar(0,255,255), CV_FILLED,8,0);
+
+		cv::line( Image, pointArray[0], pointArray[1], cv::Scalar( 0,0,255 ), 1, CV_AA );
+		cv::line( Image, pointArray[1], pointArray[2], cv::Scalar( 0,0,255 ), 1, CV_AA );
+		cv::line( Image, pointArray[3], pointArray[0], cv::Scalar( 0,0,255 ), 1, CV_AA );
+		cv::line( Image, pointArray[3], pointArray[2], cv::Scalar( 0,0,255 ), 1, CV_AA );
+
+		cv::line( Image, pointArray2[0], pointArray2[1], cv::Scalar( 0,255,255 ), 1, CV_AA );
+		cv::line( Image, pointArray2[1], pointArray2[2], cv::Scalar( 0,255,255 ), 1, CV_AA );
+		cv::line( Image, pointArray2[3], pointArray2[0], cv::Scalar( 0,255,255 ), 1, CV_AA );
+		cv::line( Image, pointArray2[3], pointArray2[2], cv::Scalar( 0,255,255 ), 1, CV_AA );
+
+		cv::line( Image, pointArray[0], pointArray2[0], cv::Scalar( 255,0,255 ), 1, CV_AA );
+		cv::line( Image, pointArray[1], pointArray2[1], cv::Scalar( 255,0,255 ), 1, CV_AA );
+		cv::line( Image, pointArray[2], pointArray2[2], cv::Scalar( 255,0,255 ), 1, CV_AA );
+		cv::line( Image, pointArray[3], pointArray2[3], cv::Scalar( 255,0,255 ), 1, CV_AA );
+	}
 }
 
 } // namespace ArucoModul

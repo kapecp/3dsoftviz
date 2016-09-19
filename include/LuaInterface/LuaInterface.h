@@ -67,7 +67,7 @@ public:
 	     * \param name  name of variable
 	     * \return int  value of given variable
 	     */
-	long int getInt( QString name );
+	int getInt( QString name );
 
 	/**
 	     * \fn getInt
@@ -77,7 +77,7 @@ public:
 	     * \param args      names of table and indexes to access nested variable
 	     * \return int  value of given variable
 	     */
-	long int getInt( unsigned int length, QString args[] );
+	int getInt( unsigned int length, QString args[] );
 
 	/**
 	     * \fn getDouble
@@ -125,6 +125,13 @@ public:
 	     * \return Diluculum::LuaState  lua state from Diluculum library
 	     */
 	Diluculum::LuaState* getLuaState() const;
+
+	/**
+		 * \fn doString
+		 * \brief returns Diluculum::LuaValueList, performs Diluculum::doString with LuaInterface, instead of LuaState
+		 * \return Diluculum::LuaValueList from Diluculum library
+		 */
+	Diluculum::LuaValueList doString( const std::string& what );
 
 
 

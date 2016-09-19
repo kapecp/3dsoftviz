@@ -73,6 +73,14 @@ public:
 		 * @return float head distance
 		 */
 	float getHeadDistance( double screenWidth );
+
+	/**
+		 * @author Autor: Viktor Kostan
+		 * @brief OpenCV::FaceRecognizer::getHeadDistanceFocal
+		 * @param realFaceWidth - Width of user's face in meters (real width)
+		 * @return float head distance
+		 */
+	float getHeadDistanceFocal( double realFaceWidth );
 	/**
 		 * @author Autor: Marek Jakab
 		 * @brief detected Find out the occurence of face in the image

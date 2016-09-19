@@ -1,10 +1,14 @@
 #include "Aruco/arucothread.h"
 #include "Aruco/arucocore.h"
 #include "Util/ApplicationConfig.h"
+
 #include <QDebug>
 #include <QFileInfo>
 
+#include <opencv2/imgproc/imgproc.hpp>
+
 #include "OpenCV/CapVideo.h"
+#include <cv.h>
 
 namespace ArucoModul {
 
@@ -19,7 +23,10 @@ ArucoThread::ArucoThread( QObject* parent )
 	mUpdCorPar		= false;
 	mSendImgEnabled	= true;
 	mSendBackgrImgEnabled = false;
+	mMultiMarkerEnabled = false;
 	mRatioCamCoef	= 0;
+	mCamDistRatio = 0;
+	mHalfRatioCoef = 0;
 	mGrM			= 0;
 	mMoM			= 1;
 	boolQueue = new Util::SizedQueue( 5, 0.0 );
@@ -49,6 +56,11 @@ void ArucoThread::setPositionOfMarker( bool behind )
 void ArucoThread::setCorEnabling( bool corEnabled )
 {
 	mCorEnabled = corEnabled;
+}
+
+void ArucoThread::setMultiMarker( bool set )
+{
+	mMultiMarkerEnabled = set;
 }
 
 void ArucoThread::setSendImgEnabling( bool sendImgEnabled )
@@ -88,6 +100,7 @@ void ArucoThread::run()
 		qDebug() << "[ArucoThread::run()]  Camera is not set";
 		return;
 	}
+
 	// prepare parameters for correction
 	const double width  = mCapVideo->getWidth();
 	const double height = mCapVideo->getHeight();
@@ -117,41 +130,59 @@ void ArucoThread::run()
 
 			frame = mCapVideo->queryFrame();		// get image from camera
 
-			// add image to aruco and get position vector and rotation quaternion
-			//markerDetected = aCore.getDetectedPosAndQuat( frame, actPosArray, actQuatArray );
 			aCore.detect( frame.clone() );
 
-			// graph controll
-			markerDetected = aCore.getPosAndQuat( mGrM, actPosArray, actQuatArray );
-			if ( markerDetected ) {
-
-				// test if marker was detect (if not, all number in matrix are not range)
-				if ( actPosArray[2] > 0.0  &&  actPosArray[2] < 10.0
-						&&   actQuatArray[0] >= -1.0  &&  actQuatArray[0] <= 1.0 ) {
-
-					graphControlling( actPosArray, actQuatArray );
-
-				}
+//			bool vypis = true;
+			if ( mMultiMarkerEnabled ) {
+				//TODO funkcionalita ku detekcii viacerych markerov
+				//if(vypis && aCore.detect(frame.clone()) != 0)
+				//qDebug() << aCore.getDetectedMatrix(frame.clone());
 			}
+			else {
+				// graph controll
+				markerDetected = aCore.getPosAndQuat( mGrM, actPosArray, actQuatArray );
+				if ( markerDetected ) {
 
-			// mouse controll
-			markerDetected = aCore.getPosAndQuat( mMoM, actPosArray, actQuatArray );
-			if ( markerDetected ) {
+					// test if marker was detect (if not, all number in matrix are not range)
+					if ( actPosArray[2] > 0.0  &&  actPosArray[2] < 10.0
+							&&   actQuatArray[0] >= -1.0  &&  actQuatArray[0] <= 1.0 ) {
 
-				// test if marker was detect (if not, all number in matrix are not range)
-				if ( actPosArray[2] > 0.0  &&  actPosArray[2] < 10.0
-						&&   actQuatArray[0] >= -1.0  &&  actQuatArray[0] <= 1.0 ) {
+						graphControlling( actPosArray, actQuatArray );
 
-					mouseControlling( actPosArray, actQuatArray );
-
+					}
 				}
-			}
 
+				// mouse controll
+				markerDetected = aCore.getPosAndQuat( mMoM, actPosArray, actQuatArray );
+				if ( markerDetected ) {
+
+					// test if marker was detect (if not, all number in matrix are not range)
+					if ( actPosArray[2] > 0.0  &&  actPosArray[2] < 10.0
+							&&   actQuatArray[0] >= -1.0  &&  actQuatArray[0] <= 1.0 ) {
+
+						mouseControlling( actPosArray, actQuatArray );
+
+					}
+				}
+				//jurik
+				//set and send modelview matrix of detected marker
+				QMatrix4x4 modelviewmatrix = aCore.getDetectedMatrix( frame.clone() );
+				emit sendModelViewMatrix( modelviewmatrix );
+
+				//set and send projection matrix of detected image
+				QMatrix4x4 projectionmatrix = aCore.getProjectionMatrix( frame.clone() );
+				emit sendProjectionMatrix( projectionmatrix );
+
+				//send marker size
+				emit sendMarkerSize( aCore.getMarkerSize() );
+				//*****
+			}
 			imagesSending( aCore, frame );
 
 			if ( ! mCancel ) {
 				msleep( 50 );
 			}
+
 
 		}
 	}
@@ -187,6 +218,8 @@ void ArucoThread::graphControlling( const double actPosArray[3], const double ac
 		correctQuatAndPos( actPos, actQuat );
 	}
 
+
+
 	// normalizin from [0,0] in top left corner to [1,1] in roght bottom corner
 	double absZ		= actPosArray[2]  < 0.0 ? - actPosArray[2]	:  actPosArray[2];		// distance of marker
 	double halfSize = absZ / mCamDistRatio;
@@ -200,8 +233,11 @@ void ArucoThread::graphControlling( const double actPosArray[3], const double ac
 	actPos.x() = normX;
 	actPos.y() = normY;
 
-	emit sendArucoPosVec( actPos );
-	emit sendArucoRorQuat( actQuat );
+
+
+	//emit sendArucoPosVec( actPos );
+	//emit sendArucoRorQuat( actQuat );
+	emit sendArucoPosAndQuat( actQuat, actPos );
 }
 
 void ArucoThread::mouseControlling( const double actPosArray[3], const double actQuatArray[4] )
@@ -237,6 +273,7 @@ void ArucoThread::mouseControlling( const double actPosArray[3], const double ac
 void ArucoThread::imagesSending( ArucoCore& aCore, const cv::Mat frame ) const
 {
 
+
 	if ( mSendBackgrImgEnabled && !frame.empty() ) {
 		if ( ! mMarkerIsBehind ) {
 			cv::flip( frame, frame, 1 );
@@ -246,7 +283,13 @@ void ArucoThread::imagesSending( ArucoCore& aCore, const cv::Mat frame ) const
 		emit pushBackgrImage( frame.clone() );
 	}
 
-	cv::Mat image = aCore.getDetImage();
+	cv::Mat image;
+	if ( mMultiMarkerEnabled ) {
+		image = aCore.getDetectedRectangleImage();
+	}
+	else {
+		image = aCore.getDetImage();
+	}
 
 	if ( mSendImgEnabled ) {
 		if ( ! mMarkerIsBehind ) {
@@ -254,9 +297,24 @@ void ArucoThread::imagesSending( ArucoCore& aCore, const cv::Mat frame ) const
 		}
 		cv::cvtColor( image, image, CV_BGR2RGB );
 
+
+		if ( mSendBackgrImgEnabled ) {
+			//if you comment this, background image will be without the augmented reality
+			emit pushBackgrImage( image.clone() );
+		}
+
 		emit pushImagemMat( image.clone() );
 
 	}
+}
+
+void ArucoThread::detectMarkerFromImage( cv::Mat image )
+{
+	ArucoCore aCore;
+	aCore.detect( image );
+	cv::Mat frame;
+	frame = aCore.getDetectedRectangleImage();
+	emit pushImageFromKinect( frame.clone() );
 }
 
 void ArucoThread::computeCorQuatAndPos( const double position[3], const double rotation[4] )

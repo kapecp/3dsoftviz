@@ -38,7 +38,7 @@ public:
 	 * @param z world coordinate Z of hand
 	 * @param mainHand define if this is main hand
 	 */
-	void Kinect::KinectZoom::calcHandDepthFrame( cv::Mat frame,openni::VideoStream* m_depth, float x, float y, float z, bool mainHand );
+	void calcHandDepthFrame( cv::Mat frame,openni::VideoStream* m_depth, float x, float y, float z, bool mainHand );
 
 	/**
 	 * @brief zoom start scroll mouse based on hand depth

@@ -17,7 +17,7 @@ LayoutThread::~LayoutThread( void )
 
 void LayoutThread::run()
 {
-	this->sleep( appConf->getValue( "Layout.Thread.StartSleepTime" ).toLong() );
+	this->sleep( static_cast<unsigned long>( appConf->getValue( "Layout.Thread.StartSleepTime" ).toLong() ) );
 	alg->Run();
 }
 void LayoutThread::pause()
@@ -47,6 +47,24 @@ void LayoutThread::requestEnd()
 Layout::FRAlgorithm* LayoutThread::getAlg()
 {
 	return alg;
+}
+void LayoutThread::playEdgeBundling()
+{
+	alg->RunAlgEdgeBundling();
+}
+void LayoutThread::stopEdgeBundling()
+{
+	alg->StopAlgEdgeBundling();
+}
+void LayoutThread::setAlphaEdgeBundlingValue( float val )
+{
+	alg->SetAlphaEdgeBundlingValue( val );
+}
+void LayoutThread::pauseAllAlg()
+{
+	//order is important
+	alg->StopAlgEdgeBundling();
+	alg->PauseAlg();
 }
 
 } // namespace Layout

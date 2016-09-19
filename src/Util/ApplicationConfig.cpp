@@ -2,6 +2,7 @@
 
 #include "OpenThreads/Mutex"
 
+#include <QDebug>
 #include <QFile>
 
 Util::ApplicationConfig* Util::ApplicationConfig::_instance;
@@ -42,11 +43,11 @@ QString Util::ApplicationConfig::getValue( QString key )
 }
 
 
-long Util::ApplicationConfig::getNumericValue(
+int Util::ApplicationConfig::getNumericValue(
 	QString key,
-	std::auto_ptr<long> minValue,
-	std::auto_ptr<long> maxValue,
-	const long defaultValue
+	std::shared_ptr<int> minValue,
+	std::shared_ptr<int> maxValue,
+	const int defaultValue
 )
 {
 	if ( !_map.contains( key ) ) {
@@ -55,7 +56,7 @@ long Util::ApplicationConfig::getNumericValue(
 
 	QString value = getValue( key );
 	bool ok = true;
-	long result = value.toLong( &ok );
+	int result = value.toInt( &ok );
 
 	if ( !ok ) {
 		return defaultValue;
@@ -92,6 +93,52 @@ bool Util::ApplicationConfig::getBoolValue(
 	else {
 		return defaultValue;
 	}
+}
+
+int Util::ApplicationConfig::getIntValue( QString key, const int defaultValue )
+{
+	if ( !_map.contains( key ) ) {
+		return defaultValue;
+	}
+
+	QString value = getValue( key );
+	bool ok;
+	int resultValue = value.toInt( &ok );
+
+	return ok ? resultValue : defaultValue;
+}
+
+float Util::ApplicationConfig::getFloatValue(
+	QString key,
+	const float defaultValue
+)
+{
+	if ( !_map.contains( key ) ) {
+		return defaultValue;
+	}
+
+	QString value = getValue( key );
+	bool ok;
+	float resultValue = value.toFloat( &ok );
+
+	return ok ? resultValue : defaultValue;
+}
+
+osg::Vec4f Util::ApplicationConfig::getColorValue( QString key )
+{
+	if ( !_map.contains( key ) ) {
+		qDebug() << "Error: key '" + key + "' is not present in application config. Caused by UtilApplicationConfig::getColorValue(key)";
+	}
+
+	QString value = this->getValue( key );
+	QStringList parts = value.split( "," );
+
+	return osg::Vec4f(
+			   parts[0].toFloat() / 255,
+			   parts[1].toFloat() / 255,
+			   parts[2].toFloat() / 255,
+			   parts[3].toFloat() / 255
+		   );
 }
 
 Util::ApplicationConfig* Util::ApplicationConfig::get()

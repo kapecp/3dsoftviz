@@ -1,0 +1,102 @@
+@startuml
+class GitEvolutionGraph {
+-QString filePath
+-Int lifespan
+-QList<GitVersion*> versions
+-QMap<QString, int> removedFiles
++GitEvolutionGraph()
++GitEvolutionGraph(QStirng filePath)
++printRemovedFiles()
++removeRemovedFiles(QString name)
++addRemovedFiles(QStringList list, int version)
++QMap<QString, int> getRemovedFiles()
++setLifespan(int lifespan)
++int getLifespan()
++GitVersion* getVersion(int position)
++setVersions(QList<GitVersion*> versions)
+}
+
+class GitVersion {
+-QStirng commitId
+-QString author
+-QString date
+-QList<GitFile*> changedFiles
++GitVersion()
++GitVersion(QStirng commitId)
++QList<GitFile*> getGitFilesByTypeAndExtension(QString extension, GitType type) 
++QList<GitFile*> getGitFilesByType(GitType type)
++QList<GitFile*> getGitFilesByExtension(QString extension)
++printVersion()
++addChangedFile(GitFile* file)
++setChangedFiles(QList<GitFile*> gitFiles)
++QList<GitFile*> getChangedFiles()
++QString getDate()
++setDate(QString date)
++QString getAuthor()
++setAuthor(QString author)
++QString getCommitId()
++setCommitId(QString commitId)
+}
+
+class GitFile {
+-QString filename
+-QString filepath
+-GitType type
+-QList<GitFileDiffBlock*> gitFileDiffBlocks
++GitFile()
++GitFile(QString filename, QString filepath, GitType type)
++printContent()
++setGitFileDiffBlocks(QList<GitFileDiffBlock*> gitFileDiffBlocks)
++addGitFileDiffBlock(GitFileDiffBlock* block)
++QList<GitFileDiffBlock*> getGitFileDiffBlocks()
++QString getTypeAsString()
++GitType getType()
++QString getFilepath()
++Qstring getFilename()
+}
+
+class GitFileDiffBlock {
+-int addStart
+-int addCount
+-int removeStart
+-int removeCount
+-QList<GitFileDiffBlockLine*> gitFileDiffBlockLines
++GitFileDiffBlock()
++setAddStart(int addStart)
++int getAddStart()
++setAddCount(int addCount)
++int getAddCount()
++setRemoveStart(int removeStart)
++int getRemoveStart()
++setRemoveCount(int removeCount)
++int getRemoveCount()
++incAddCount()
++QList<GitFileDiffBlockLine*> getGitFileDiffBlockLines()
++addGitFileDiffBlockLine(GitFileDiffBlockLine* line)
++printDiffBlockLines()
++printInfo()
++printCurrentInfo()
++printPreviousInfo()
+}
+
+class GitFileDiffBlockLine {
+-QString line
+-int lineNumber
+-GitType type
++GitFileDiffBlockLine()
++GitFileDiffBlockLine(QString line, int lineNumber, GitType type)
++setLine(QString line)
++QString getLine()
++setLineNumber(int lineNumber)
++int getLineNumber()
++setLineNumber()
++GitType getLineType()
++QString getLineTypeAsString()
+}
+
+GitEvolutionGraph *-- GitVersion
+GitVersion *-- GitFile
+GitFile *-- GitFileDiffBlock
+GitFileDiffBlock *-- GitFileDiffBlockLine
+
+@enduml

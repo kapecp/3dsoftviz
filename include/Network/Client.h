@@ -2,17 +2,19 @@
  Client - server communication implementation inspired by http://thesmithfam.org/blog/2009/07/09/example-qt-chat-program/
  */
 
-#ifndef __3DVisualClient_H__
-#define __3DVisualClient_H__
+#ifndef Client_H
+#define Client_H
 
-#include <QTcpSocket>
+#include <QByteArray>
+#include <QDebug>
 #include <QLinkedList>
+#include <QListWidgetItem>
+#include <QTcpSocket>
 
 // TODO: typedef inside class
 #include "Layout/RestrictionRemovalHandler_RestrictionNodesRemover.h"
 
 #include "osg/PositionAttitudeTransform"
-#include "QtGui/QListWidgetItem"
 
 namespace Data {
 class Graph;
@@ -91,7 +93,7 @@ public:
 
 	void sendMyView( osg::Vec3d center, osg::Quat rotation, float distance );
 	void sendMyView();
-	void setMyView( osg::Vec3d center, osg::Quat rotation, float distance );
+	void setMyView( osg::Vec3d center, osg::Quat rotation, double distance );
 	void lookAt( osg::Vec3d coord );
 
 	void sendNewNode( QString name, osg::Vec3f position );
@@ -171,7 +173,7 @@ private:
 
 	osg::Vec3d original_center;
 	osg::Quat original_rotation;
-	float original_distance;
+	double original_distance;
 
 	ExecutorFactory* executorFactory;
 

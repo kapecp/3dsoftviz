@@ -2,6 +2,13 @@
 #include "Manager/Manager.h"
 #include "Network/Server.h"
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wold-style-cast"
+#if defined(__linux) || defined(__linux__) || defined(linux)
+#pragma GCC diagnostic ignored "-Wuseless-cast"
+#endif
+#pragma GCC diagnostic ignored "-Wsign-conversion"
+
 namespace Network {
 
 void SetNodeLabelExecutor::execute_client()
@@ -16,7 +23,7 @@ void SetNodeLabelExecutor::execute_client()
 	QMap<qlonglong, osg::ref_ptr<Data::Node> >* nodes = currentGraph -> getNodes();
 	if ( nodes->contains( id ) ) {
 		Data::Node* node = *nodes->find( id );
-		node->setName( label );
+		( ( Data::AbsNode* )node )->setName( label );
 		node->setLabelText( label );
 		node->reloadConfig();
 	}
@@ -35,7 +42,7 @@ void SetNodeLabelExecutor::execute_server()
 	QMap<qlonglong, osg::ref_ptr<Data::Node> >* nodes = currentGraph -> getNodes();
 	if ( nodes->contains( id ) ) {
 		Data::Node* node = *nodes->find( id );
-		node->setName( label );
+		( ( Data::AbsNode* )node )->setName( label );
 		node->setLabelText( label );
 		node->reloadConfig();
 	}
@@ -46,3 +53,5 @@ void SetNodeLabelExecutor::execute_server()
 }
 
 } // namespace Network
+
+#pragma GCC diagnostic pop
