@@ -5,12 +5,16 @@
 
 Data::AbsNode::AbsNode( qlonglong id, QString name, Data::Type* type, Data::Graph* graph )
 {
+	this->nodeBetweeness = 0;
+	this->nodeCloseness = 0;
+	this->nodeDegree = 0;
+	this->nodeMatched = false;
+
 	this->id=id;
 	this->name=name;
 	this->type=type;
-	this->graph = graph;
-	this->type = type;
-	this->hasNestedNodes = false;
+	this->graph=graph;
+	this->hasNestedNodes=false;
 
 	settings = new QMap<QString, QString>();
 	//APA

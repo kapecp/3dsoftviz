@@ -40,18 +40,42 @@ SkyBox::~SkyBox()
 
 }
 
-
-osg::TextureCubeMap* SkyBox::readCubeMap()
+osg::TextureCubeMap* SkyBox::readCubeMap( int cubeType )
 {
 	osg::TextureCubeMap* cubemap = new osg::TextureCubeMap;
 	try {
 		Util::ApplicationConfig* appConf = Util::ApplicationConfig::get();
-		osg::Image* imageEast = osgDB::readImageFile( appConf->getValue( "Viewer.SkyBox.East" ).toStdString() );
-		osg::Image* imageWest = osgDB::readImageFile( appConf->getValue( "Viewer.SkyBox.West" ).toStdString() );
-		osg::Image* imageNorth = osgDB::readImageFile( appConf->getValue( "Viewer.SkyBox.North" ).toStdString() );
-		osg::Image* imageSouth = osgDB::readImageFile( appConf->getValue( "Viewer.SkyBox.South" ).toStdString() );
-		osg::Image* imageUp = osgDB::readImageFile( appConf->getValue( "Viewer.SkyBox.Up" ).toStdString() );
-		osg::Image* imageDown = osgDB::readImageFile( appConf->getValue( "Viewer.SkyBox.Down" ).toStdString() );
+		osg::Image* imageEast = nullptr;
+		osg::Image* imageWest = nullptr;
+		osg::Image* imageSouth = nullptr;
+		osg::Image* imageNorth = nullptr;
+		osg::Image* imageUp = nullptr;
+		osg::Image* imageDown = nullptr;
+
+		if ( cubeType == -1 ) { // Black skybox - black cube map
+			imageEast = osgDB::readImageFile( appConf->getValue( "Viewer.SkyBox.Black" ).toStdString() );
+			imageWest = osgDB::readImageFile( appConf->getValue( "Viewer.SkyBox.Black" ).toStdString() );
+			imageNorth = osgDB::readImageFile( appConf->getValue( "Viewer.SkyBox.Black" ).toStdString() );
+			imageSouth = osgDB::readImageFile( appConf->getValue( "Viewer.SkyBox.Black" ).toStdString() );
+			imageUp = osgDB::readImageFile( appConf->getValue( "Viewer.SkyBox.Black" ).toStdString() );
+			imageDown = osgDB::readImageFile( appConf->getValue( "Viewer.SkyBox.Black" ).toStdString() );
+		}
+		else if ( cubeType == -2 ) { // White skybox - white cube map
+			imageEast = osgDB::readImageFile( appConf->getValue( "Viewer.SkyBox.White" ).toStdString() );
+			imageWest = osgDB::readImageFile( appConf->getValue( "Viewer.SkyBox.White" ).toStdString() );
+			imageNorth = osgDB::readImageFile( appConf->getValue( "Viewer.SkyBox.White" ).toStdString() );
+			imageSouth = osgDB::readImageFile( appConf->getValue( "Viewer.SkyBox.White" ).toStdString() );
+			imageUp = osgDB::readImageFile( appConf->getValue( "Viewer.SkyBox.White" ).toStdString() );
+			imageDown = osgDB::readImageFile( appConf->getValue( "Viewer.SkyBox.White" ).toStdString() );
+		}
+		else { // Default skybox
+			imageEast = osgDB::readImageFile( appConf->getValue( "Viewer.SkyBox.East" ).toStdString() );
+			imageWest = osgDB::readImageFile( appConf->getValue( "Viewer.SkyBox.West" ).toStdString() );
+			imageNorth = osgDB::readImageFile( appConf->getValue( "Viewer.SkyBox.North" ).toStdString() );
+			imageSouth = osgDB::readImageFile( appConf->getValue( "Viewer.SkyBox.South" ).toStdString() );
+			imageUp = osgDB::readImageFile( appConf->getValue( "Viewer.SkyBox.Up" ).toStdString() );
+			imageDown = osgDB::readImageFile( appConf->getValue( "Viewer.SkyBox.Down" ).toStdString() );
+		}
 
 		if ( imageWest && imageEast && imageDown && imageUp && imageSouth && imageNorth ) {
 			cubemap->setImage( osg::TextureCubeMap::POSITIVE_X, imageWest );
@@ -84,6 +108,7 @@ osg::TextureCubeMap* SkyBox::readCubeMap()
 class MoveEarthySkyWithEyePointTransform : public osg::Transform
 {
 public:
+//src/Viewer/SkyBox.cpp:111:  Is this a non-const reference? If so, make const or use a pointer: osg::Matrix& matrix  [runtime/references] [2]
 	virtual bool computeLocalToWorldMatrix( osg::Matrix& matrix,osg::NodeVisitor* nv ) const
 	{
 		osgUtil::CullVisitor* cv = dynamic_cast<osgUtil::CullVisitor*>( nv );
@@ -106,7 +131,7 @@ public:
 };
 
 
-osg::Node* SkyBox::createSkyBox()
+osg::Node* SkyBox::createSkyBox( int skyboxType )
 {
 
 	osg::StateSet* stateset = new osg::StateSet();
@@ -122,7 +147,7 @@ osg::Node* SkyBox::createSkyBox()
 	osg::TexMat* tm = new osg::TexMat;
 	stateset->setTextureAttribute( 0, tm );
 
-	osg::TextureCubeMap* skymap = readCubeMap();
+	osg::TextureCubeMap* skymap = readCubeMap( skyboxType );
 	stateset->setTextureAttributeAndModes( 0, skymap, osg::StateAttribute::ON );
 
 	stateset->setMode( GL_LIGHTING, osg::StateAttribute::OFF );

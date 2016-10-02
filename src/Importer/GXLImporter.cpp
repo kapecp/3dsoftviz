@@ -132,10 +132,10 @@ bool GXLImporter::parseGraph( void )
 				( xml_->name() == "graph" )
 			) {
 				if ( ok ) {
-					if ( static_cast<bool>( currentNode ) ) {
+					if ( currentNode ) {
 						context_->getGraph().createNestedGraph( currentNode );
 					}
-					else if ( static_cast<bool>( currentEdge ) ) {
+					else if ( currentEdge ) {
 						// moznost pridania vnoreneho grafu do hrany
 					}
 					else {
@@ -201,7 +201,7 @@ bool GXLImporter::parseGraph( void )
 				( xml_->name() == "node" )
 			) {
 				if ( ok ) {
-					ok = currentNode;
+					ok = currentNode != nullptr;
 
 					context_->getInfoHandler().reportError( ok, "Node end without matched node begin." );
 				}
@@ -317,7 +317,7 @@ bool GXLImporter::parseGraph( void )
 				( xml_->name() == "edge" )
 			) {
 				if ( ok ) {
-					ok = currentEdge;
+					ok = currentEdge != nullptr;
 
 					context_->getInfoHandler().reportError( ok, "Edge end without matched edge begin." );
 				}

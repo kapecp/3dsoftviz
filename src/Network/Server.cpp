@@ -16,22 +16,32 @@
 
 #include "Util/ApplicationConfig.h"
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wold-style-cast"
+#if defined(__linux) || defined(__linux__) || defined(linux)
+#pragma GCC diagnostic ignored "-Wuseless-cast"
+#endif
+#pragma GCC diagnostic ignored "-Wsign-conversion"
+
 namespace Network {
 
 Server* Server::instance;
 
-Server::Server( QObject* parent ) : QTcpServer( parent )
+Server::Server( QObject* parent ) :
+	QTcpServer( parent ),
+
+	cw( parent ),
+	thread( nullptr ),
+	coreGraph( nullptr ),
+	executorFactory( new ExecutorFactory() ),
+	graphScale( Util::ApplicationConfig::get()->getValue( "Viewer.Display.NodeDistanceScale" ).toFloat() ),
+	user_to_spy( nullptr ),
+	user_to_center( nullptr ),
+	original_distance( 0 ),
+	blockSize( 0 ),
+	avatarScale( 1 )
 {
 	instance = this;
-	cw = parent;
-	Util::ApplicationConfig* conf = Util::ApplicationConfig::get();
-	graphScale = conf->getValue( "Viewer.Display.NodeDistanceScale" ).toFloat();
-	executorFactory = new ExecutorFactory();
-	user_to_spy = NULL;
-	user_to_center = NULL;
-
-	blockSize = 0;
-	avatarScale = 1;
 }
 
 Server* Server::getInstance()
@@ -309,7 +319,7 @@ void Server::sendMoveNodes()
 }
 
 
-void Server::sendMyView( osg::Vec3d center, osg::Quat rotation, float distance, QTcpSocket* client )
+void Server::sendMyView( osg::Vec3d center, osg::Quat rotation, double distance, QTcpSocket* client )
 {
 
 	QByteArray block;
@@ -460,7 +470,7 @@ void Server::addAvatar( QTcpSocket* socket, QString nick )
 	avatars[socket] = avatar;
 }
 
-void Server::setMyView( osg::Vec3d center, osg::Quat rotation, float distance )
+void Server::setMyView( osg::Vec3d center, osg::Quat rotation, double distance )
 {
 	Vwr::CameraManipulator* cameraManipulator = ( ( QOSG::CoreWindow* ) cw )->getCameraManipulator();
 	cameraManipulator->setCenter( center );
@@ -499,7 +509,7 @@ void Server::centerUser( int id_user )
 	original_center = cameraManipulator->getCenter();
 	original_rotation = cameraManipulator->getRotation();
 
-	osg::Vec3 direction = original_rotation * osg::Vec3( 0, 0, 1 );
+	osg::Vec3d direction = original_rotation * osg::Vec3d( 0, 0, 1 );
 	direction *= original_distance;
 	cameraManipulator->setCenter( cameraManipulator->getCenter()+direction );
 	cameraManipulator->setDistance( 0 );
@@ -929,3 +939,5 @@ void Server::setAvatarScale( int scale )
 }
 
 } // namespace Network
+
+#pragma GCC diagnostic pop

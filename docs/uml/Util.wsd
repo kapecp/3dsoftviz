@@ -1,0 +1,28 @@
+// Module Util
+// Autor: Team Reality Not Found
+
+@startuml
+scale 800 width
+
+!define adpIO(x) Adapter_iostream_to_QIODevice
+!define appCfg(x) ApplicationConfig
+!define clr(x) Cleaner
+!define elSlc(x) ElementSelector
+!define szdQe(x) SizedQueue
+!define osg(x) OSG.OSG
+!define nd(x) Data.Node
+!define eg(x) Data.Edge
+!define pkHnd(x) Vwr.PickHandler
+
+package Util{
+	class osg() #red
+	elSlc() -u- osg()
+	elSlc() -u- nd()
+	elSlc() -u- eg()
+	elSlc() -u- pkHnd()
+	class adpIO()
+	class appCfg()
+	class clr()
+	class szdQe()
+}
+@enduml

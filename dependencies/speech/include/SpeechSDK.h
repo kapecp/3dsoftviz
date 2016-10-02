@@ -1,7 +1,7 @@
 #ifdef SPEECHSDK_EXPORTS
-#define SPEECHSDK_API __declspec(dllexport) 
+#define SPEECHSDK_API __declspec(dllexport)
 #else
-#define SPEECHSDK_API __declspec(dllimport) 
+#define SPEECHSDK_API __declspec(dllimport)
 #endif
 
 //------------------------------------------------------------------------------
@@ -32,47 +32,47 @@
 #include <sapi.h>
 #include <sphelper.h>
 
-namespace SpeechSDK{
+namespace SpeechSDK {
 /// <summary>
 /// Main application class for SpeechBasics sample.
 /// </summary>
 class SpeechSDKClass
 {
 public:
-    SPEECHSDK_API SpeechSDKClass(LPCWSTR name);
+	SPEECHSDK_API SpeechSDKClass( LPCWSTR name );
 	SPEECHSDK_API ~SpeechSDKClass();
 
 	SPEECHSDK_API int initRecognition();
 	SPEECHSDK_API void stopRecognition();
 	SPEECHSDK_API void cancelRecognition();
-	
-    //static LRESULT CALLBACK MessageRouter(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
-    SPEECHSDK_API HRESULT CreateFirstConnected(int i);
+
+	//static LRESULT CALLBACK MessageRouter(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
+	SPEECHSDK_API HRESULT CreateFirstConnected( int i );
 	SPEECHSDK_API LPCWSTR recognize();
-    SPEECHSDK_API LPCWSTR ProcessSpeech();
-	
+	SPEECHSDK_API LPCWSTR ProcessSpeech();
+
 private:
-	void setGrammarName(LPCWSTR name);
-	static void setFileName(LPCWSTR name);
+	void setGrammarName( LPCWSTR name );
+	static void setFileName( LPCWSTR name );
 	HRESULT InitializeAudioStream();
 	HRESULT StartSpeechRecognition();
 	static bool cancel;
 	// Speech grammar
-    ISpRecoGrammar* m_pSpeechGrammar;
-    LPCWSTR GrammarFileName;
-    // Current Kinect sensor
-    INuiSensor* m_pNuiSensor;
-    // Audio stream captured from Kinect.
-    KinectAudioStream* m_pKinectAudioStream;
-    // Stream given to speech recognition engine
-    ISpStream* m_pSpeechStream;
-    // Speech recognizer
-    ISpRecognizer* m_pSpeechRecognizer;
-    // Speech recognizer context
-    ISpRecoContext* m_pSpeechContext;
-    // Event triggered when we detect speech recognition
-    HANDLE m_hSpeechEvent;
-    HRESULT CreateSpeechRecognizer();
-    HRESULT LoadSpeechGrammar();
+	ISpRecoGrammar* m_pSpeechGrammar;
+	LPCWSTR GrammarFileName;
+	// Current Kinect sensor
+	INuiSensor* m_pNuiSensor;
+	// Audio stream captured from Kinect.
+	KinectAudioStream* m_pKinectAudioStream;
+	// Stream given to speech recognition engine
+	ISpStream* m_pSpeechStream;
+	// Speech recognizer
+	ISpRecognizer* m_pSpeechRecognizer;
+	// Speech recognizer context
+	ISpRecoContext* m_pSpeechContext;
+	// Event triggered when we detect speech recognition
+	HANDLE m_hSpeechEvent;
+	HRESULT CreateSpeechRecognizer();
+	HRESULT LoadSpeechGrammar();
 };
 }

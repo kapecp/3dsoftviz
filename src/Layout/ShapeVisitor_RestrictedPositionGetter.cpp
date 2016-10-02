@@ -27,15 +27,15 @@ void ShapeVisitor_RestrictedPositionGetter::visit( Shape_Composite& shape )
 {
 	Shape_Composite::ShapesListType& shapes = shape.getShapes();
 
-	if ( shapes.size() > 0 ) {
+	if ( !shapes.empty() ) {
 		osg::Vec3f restrictedPositionWithMinDistance;
-		float minDistanceFound;
+		float minDistanceFound = 0;
 		for ( Shape_Composite::ShapesListType::const_iterator it = shapes.begin(); it != shapes.end(); ++it ) {
 			( *it )->accept( *this ); // restrictedPosition_ changes here
 
 			float currentDistance = ( mOriginalPosition - mRestrictedPosition ).length();
 
-			if ( ( currentDistance < minDistanceFound ) || ( it == shapes.begin() ) ) {
+			if ( ( it == shapes.begin() ) || ( ( currentDistance < minDistanceFound ) || ( it == shapes.begin() ) ) ) {
 				restrictedPositionWithMinDistance = mRestrictedPosition;
 				minDistanceFound = currentDistance;
 			}
@@ -52,9 +52,9 @@ void ShapeVisitor_RestrictedPositionGetter::visit( Shape_Intersection& shape )
 {
 	Shape_Intersection::ShapesListType& shapes = shape.getShapes();
 
-	if ( shapes.size() > 0 ) {
-		float currentDistance = 1.0;
-		while ( currentDistance > 0.05 ) {
+	if ( !shapes.empty() ) {
+		float currentDistance = 1.0f;
+		while ( currentDistance > 0.05f ) {
 			Shape_Intersection::ShapesListType::const_iterator it;
 			for ( it = shapes.begin(); it != shapes.end(); ++it ) {
 				( *it )->accept( *this ); // restrictedPosition_ changes here
@@ -203,9 +203,9 @@ void ShapeVisitor_RestrictedPositionGetter::visit( Shape_Cube& shape )
 
 bool ShapeVisitor_RestrictedPositionGetter::insideCube( const osg::Vec3f& center, const osg::Vec3f& surfaceX, const osg::Vec3f& surfaceY, const osg::Vec3f& surfaceZ, osg::Vec3f& point )
 {
-	double distanceX = abs( ( center - surfaceX ).x() );
-	double distanceY = abs( ( center - surfaceY ).y() );
-	double distanceZ = abs( ( center - surfaceZ ).z() );
+	float distanceX = fabsf( ( center - surfaceX ).x() );
+	float distanceY = fabsf( ( center - surfaceY ).y() );
+	float distanceZ = fabsf( ( center - surfaceZ ).z() );
 
 	return ( point.x() > center.x() - distanceX && point.x() < center.x() + distanceX &&
 			 point.y() > center.y() - distanceY && point.y() < center.y() + distanceY &&
@@ -225,7 +225,7 @@ osg::Vec3f ShapeVisitor_RestrictedPositionGetter::toSphere( const osg::Vec3f& ce
 	{
 		// create random point
 		for ( int i = 0; i < 3; ++i ) {
-			changedPointMoved[i] = static_cast<float>( rand() % 100 ) + 1.f;
+			changedPointMoved[i] = static_cast<float>( qrand() % 100 ) + 1.f;
 		}
 	}
 
@@ -233,7 +233,7 @@ osg::Vec3f ShapeVisitor_RestrictedPositionGetter::toSphere( const osg::Vec3f& ce
 
 	float multiplier = radiusMin;
 	if ( radiusMax > radiusMin ) {
-		float randomIncrement = ( static_cast<float>( rand() ) / static_cast<float>( RAND_MAX ) ) * ( radiusMax - radiusMin );
+		float randomIncrement = ( static_cast<float>( qrand() ) / static_cast<float>( RAND_MAX ) ) * ( radiusMax - radiusMin );
 		multiplier += randomIncrement;
 	}
 	changedPointMoved *= multiplier;
@@ -256,9 +256,9 @@ float median( float A, float B, float C )
 
 osg::Vec3f ShapeVisitor_RestrictedPositionGetter::toCube( const osg::Vec3f& center, const osg::Vec3f& surfaceX, const osg::Vec3f& surfaceY, const osg::Vec3f& surfaceZ, const osg::Vec3f& point )
 {
-	float distanceX = abs( ( center - surfaceX ).x() );
-	float distanceY = abs( ( center - surfaceY ).y() );
-	float distanceZ = abs( ( center - surfaceZ ).z() );
+	float distanceX = std::fabs( ( center - surfaceX ).x() );
+	float distanceY = std::fabs( ( center - surfaceY ).y() );
+	float distanceZ = std::fabs( ( center - surfaceZ ).z() );
 
 	//  nearest_point_on_box(x, y, z, box_min_x, box_min_y, box_min_z, box_max_x, box_max_y, box_max_z)
 	float x = /*point.x() -*/ median( point.x(), center.x() - distanceX, center.x() + distanceX );

@@ -5,8 +5,24 @@
 #include "QOSG/LoadGraphWindow.h"
 #include "QOSG/MessageWindows.h"
 
+#include "QOSG/ProjectiveARViewer.h"
+#include "QOSG/ProjectiveARWindow.h"
+#include "QOSG/ProjectiveARCore.h"
+
 #include "Network/Server.h"
 #include "Network/Client.h"
+
+#include "GitLib/GitEvolutionGraph.h"
+#include "GitLib/GitVersion.h"
+#include "GitLib/GitUtils.h"
+#include "GitLib/GitEvolutionGraphManager.h"
+#include "GitLib/GitMetaData.h"
+#include "GitLib/GitMetrics.h"
+#include "Repository/Git/GitLuaGraphAnalyzer.h"
+#include "Repository/Git/GitLuaGraphVisualizer.h"
+#include "Repository/Git/GitLuaGraphUtils.h"
+
+#include "SpecialMatrix/MatrixViewer.h"
 
 #include "Viewer/CoreGraph.h"
 #include "Viewer/CameraManipulator.h"
@@ -20,6 +36,9 @@
 
 #include "Data/GraphLayout.h"
 #include "Data/GraphSpanningTree.h"
+
+#include "Importer/Parsing/Java/JavaParser.h"
+#include "Importer/Parsing/SoftTree.h"
 
 #include "Layout/LayoutThread.h"
 #include "Layout/FRAlgorithm.h"
@@ -43,12 +62,23 @@
 #include "LuaGraph/FullHyperGraphVisualizer.h"
 #include "LuaGraph/HyperGraphVisualizer.h"
 #include "LuaGraph/SimpleGraphVisualizer.h"
+#include "LuaGraph/GitGraphVisualizer.h"
 
-#include "Diluculum/LuaState.hpp"
-#include <LuaGraph/LuaGraphTreeModel.h>
+#include "LuaTypes/LuaValueList.h"
+#include "LuaGraph/LuaGraphTreeModel.h"
+
+#include <easylogging++.h>
 
 #include <iostream>
 #include <osg/ref_ptr>
+#include <string>
+#include <list>
+
+#include <Importer/Parsing/InvocationGraph.h>
+#include <City/Residence.h>
+#include <Layout/LayoutAlgorithms.h>
+#include <Shapes/Cuboid.h>
+#include <Manager/ResourceManager.h>
 
 #ifdef OPENCV_FOUND
 #include "OpenCV/OpenCVCore.h"
@@ -57,7 +87,6 @@
 #ifdef OPENCV_FOUND
 #ifdef OPENNI2_FOUND
 #include "Kinect/KinectCore.h"
-#include "Kinect/RansacSurface/Ransac.h"
 #endif
 #endif
 
@@ -148,8 +177,14 @@ void CoreWindow::createActions()
 	load = new QAction( QIcon( "../share/3dsoftviz/img/gui/open.png" ),"&Load graph from file", this );
 	connect( load, SIGNAL( triggered() ), this, SLOT( loadFile() ) );
 
+	loadGit = new QAction( QIcon( "../share/3dsoftviz/img/gui/git_open.png" ), "&Load graph from git", this );
+	connect( loadGit, SIGNAL( triggered() ), this, SLOT( loadFromGit() ) );
+
 	loadGraph = new QAction( QIcon( "../share/3dsoftviz/img/gui/loadFromDB.png" ),"&Load graph from database", this );
 	connect( loadGraph, SIGNAL( triggered() ), this, SLOT( showLoadGraph() ) );
+
+	loadJavaProjectAction = new QAction( QIcon( "../share/3dsoftviz/img/gui/open_java.png" ),"&Load java project", this );
+	connect( loadJavaProjectAction, SIGNAL( triggered() ), this, SLOT( showDialogLoadJavaProject() ) );
 
 	saveGraph = new QAction( QIcon( "../share/3dsoftviz/img/gui/saveToDB.png" ),"&Save graph", this );
 	connect( saveGraph, SIGNAL( triggered() ), this, SLOT( saveGraphToDB() ) );
@@ -158,6 +193,39 @@ void CoreWindow::createActions()
 	connect( saveLayout, SIGNAL( triggered() ), this, SLOT( saveLayoutToDB() ) );
 
 	about = new QAction( "About", this );
+
+	exampleGraphBasic100 = new QAction( "Basic Example (100 nodes)", this );
+	connect( exampleGraphBasic100, SIGNAL( triggered() ), this, SLOT( loadExampleGraphBasic100() ) );
+
+	exampleGraphBasic500 = new QAction( "Basic Example (500 nodes)", this );
+	connect( exampleGraphBasic500, SIGNAL( triggered() ), this, SLOT( loadExampleGraphBasic500() ) );
+
+	exampleGraphVeolia = new QAction( "Veolia Example", this );
+	connect( exampleGraphVeolia, SIGNAL( triggered() ), this, SLOT( loadExampleGraphVeolia() ) );
+
+	exampleGraphLua = new QAction( "Lua Example", this );
+	connect( exampleGraphLua, SIGNAL( triggered() ), this, SLOT( loadExampleGraphLua() ) );
+
+	switchBackgroundSkyBoxAction = new QAction( "Sky Box", this );
+	connect( switchBackgroundSkyBoxAction, SIGNAL( triggered() ), this, SLOT( switchBackgroundSkyBox() ) );
+
+	switchBackgroundBlackAction = new QAction( "Black", this );
+	connect( switchBackgroundBlackAction, SIGNAL( triggered() ), this, SLOT( switchBackgroundBlack() ) );
+
+	switchBackgroundWhiteAction = new QAction( "White", this );
+	connect( switchBackgroundWhiteAction, SIGNAL( triggered() ), this, SLOT( switchBackgroundWhite() ) );
+
+	switchBackgroundSkyNoiseBoxAction = new QAction( "Sky Noise Box", this );
+	connect( switchBackgroundSkyNoiseBoxAction, SIGNAL( triggered() ), this, SLOT( switchBackgroundSkyNoiseBox() ) );
+
+	switchBackgroundTextureAction = new QAction( "Texture", this );
+	connect( switchBackgroundTextureAction, SIGNAL( triggered() ), this, SLOT( switchBackgroundTexture() ) );
+
+	switchBackgroundOrtho2dAction = new QAction( "Ortho2d", this );
+	connect( switchBackgroundOrtho2dAction, SIGNAL( triggered() ), this, SLOT( switchBackgroundOrtho2d() ) );
+
+	loadSpecialMatrix = new QAction( QIcon( "../share/3dsoftviz/img/gui/matrix.png" ),"&Load matrix from file", this );
+	connect( loadSpecialMatrix, SIGNAL( triggered() ), this, SLOT( loadSpecialMatrixFromFile() ) );
 
 	play = new QPushButton();
 	play->setIcon( QIcon( "../share/3dsoftviz/img/gui/pause.png" ) );
@@ -215,6 +283,13 @@ void CoreWindow::createActions()
 	label->setFocusPolicy( Qt::NoFocus );
 	connect( label, SIGNAL( clicked( bool ) ), this, SLOT( labelOnOff( bool ) ) );
 
+	labelResidence = new QCheckBox();
+	labelResidence->setText( "labels for residence" );
+	labelResidence->setToolTip( "&Turn on/off labels for residence" );
+	labelResidence->setCheckState( Qt::CheckState::Checked );
+	labelResidence->setFocusPolicy( Qt::NoFocus );
+	connect( labelResidence, SIGNAL( stateChanged( int ) ), this, SLOT( labelForResidenceCheckStateChanged( int ) ) );
+
 	applyColor = new QPushButton();
 	applyColor->setText( "Apply color" );
 	applyColor->setToolTip( "Apply selected color" );
@@ -256,7 +331,8 @@ void CoreWindow::createActions()
 
 	loadFunctionCallButton->setToolTip( "Load function calls" );
 	loadFunctionCallButton->setFocusPolicy( Qt::NoFocus );
-	connect( loadFunctionCallButton, SIGNAL( clicked() ), this, SLOT( loadFunctionCall() ) );
+//    QString empty = "";
+	connect( loadFunctionCallButton, SIGNAL( clicked() ), this, SLOT( loadFunctionCall( ) ) );
 
 	browsersGroupingButton = new QPushButton();
 	browsersGroupingButton->setIcon( QIcon( "../share/3dsoftviz/img/gui/grouping.png" ) );
@@ -463,12 +539,12 @@ void CoreWindow::createActions()
 	le_edgeBundlingalpha->setText( "100" );
 
 	nodeTypeComboBox = new QComboBox();
-	nodeTypeComboBox->insertItems( 0,( QStringList() << "Square" << "Sphere" ) );
+	nodeTypeComboBox->insertItems( 0,( QStringList() << "Square" << "Sphere" << "Residence" ) );
 	nodeTypeComboBox->setFocusPolicy( Qt::NoFocus );
 	connect( nodeTypeComboBox,SIGNAL( currentIndexChanged( int ) ),this,SLOT( nodeTypeComboBoxChanged( int ) ) );
 
 	edgeTypeComboBox = new QComboBox();
-	edgeTypeComboBox->insertItems( 0,( QStringList() << "Quad" << "Cylinder" << "Line" ) );
+	edgeTypeComboBox->insertItems( 0,( QStringList() << "Quad" << "Cylinder" << "Line" << "Curve" ) );
 	edgeTypeComboBox->setFocusPolicy( Qt::NoFocus );
 	connect( edgeTypeComboBox,SIGNAL( currentIndexChanged( int ) ),this,SLOT( edgeTypeComboBoxChanged( int ) ) );
 
@@ -604,7 +680,7 @@ void CoreWindow::createActions()
 	b_restartLayouting->setText( "Restart Layout" );
 	connect( b_restartLayouting, SIGNAL( clicked() ), this, SLOT( restartLayouting() ) );
 
-	clusteringProgressBar = new QProgressDialog( "", "", 0, 10, this, Qt::Dialog );
+	clusteringProgressBar = new QProgressDialog( "", "Abort", 0, 10, this, Qt::Dialog );
 	clusteringProgressBar->setWindowTitle( "Clustering" );
 	clusteringProgressBar->setCancelButtonText( "Abort" );
 	Qt::WindowFlags flags = clusteringProgressBar->windowFlags();
@@ -612,6 +688,7 @@ void CoreWindow::createActions()
 	clusteringProgressBar->setWindowFlags( flags );
 	clusteringProgressBar->setModal( true );
 	clusteringProgressBar->setMinimumDuration( 1000 );
+	clusteringProgressBar->reset();
 
 	b_SetRestriction_Cube_Selected = new QPushButton();
 	b_SetRestriction_Cube_Selected->setText( "Restrict" );
@@ -636,6 +713,100 @@ void CoreWindow::createActions()
 	line3 = createLine();
 	// hide
 	setVisibleClusterSection( false );
+
+	// garaj start
+	b_previous_version = new QPushButton();
+	b_previous_version->setText( "<<" );
+	b_previous_version->setToolTip( "Previous version" );
+	b_previous_version->setFocusPolicy( Qt::NoFocus );
+	b_previous_version->setMaximumWidth( 30 );
+	b_previous_version->setDisabled( true );
+	connect( b_previous_version, SIGNAL( clicked() ), this, SLOT( previousVersion() ) );
+
+	b_next_version = new QPushButton();
+	b_next_version->setText( ">>" );
+	b_next_version->setToolTip( "Next version" );
+	b_next_version->setFocusPolicy( Qt::NoFocus );
+	b_next_version->setMaximumWidth( 30 );
+	b_next_version->setDisabled( true );
+	connect( b_next_version, SIGNAL( clicked() ), this, SLOT( nextVersion() ) );
+
+	b_run_evolution = new QPushButton();
+	b_run_evolution->setIcon( QIcon( "../share/3dsoftviz/img/gui/play.png" ) );
+	b_run_evolution->setToolTip( "&Run" );
+	b_run_evolution->setFocusPolicy( Qt::NoFocus );
+	b_run_evolution->setMaximumWidth( 30 );
+	b_run_evolution->setDisabled( true );
+	connect( b_run_evolution, SIGNAL( clicked() ), this, SLOT( runEvolution() ) );
+
+	b_faster_evolution = new QPushButton();
+	b_faster_evolution->setText( "+" );
+	b_faster_evolution->setToolTip( "Faster evolution" );
+	b_faster_evolution->setFocusPolicy( Qt::NoFocus );
+	b_faster_evolution->setMaximumWidth( 20 );
+	b_faster_evolution->setMaximumHeight( 20 );
+	connect( b_faster_evolution, SIGNAL( clicked() ), this, SLOT( fasterEvolution() ) );
+
+	b_slower_evolution = new QPushButton();
+	b_slower_evolution->setText( "-" );
+	b_slower_evolution->setToolTip( "Slower evolution" );
+	b_slower_evolution->setFocusPolicy( Qt::NoFocus );
+	b_slower_evolution->setMaximumWidth( 20 );
+	b_slower_evolution->setMaximumHeight( 20 );
+	connect( b_slower_evolution, SIGNAL( clicked() ), this, SLOT( slowerEvolution() ) );
+
+	b_git_diff = new QPushButton();
+	b_git_diff->setText( "Diff info" );
+	b_git_diff->setToolTip( "Get node Diff info" );
+	b_git_diff->setFocusPolicy( Qt::NoFocus );
+	connect( b_git_diff, SIGNAL( clicked() ), this, SLOT( getDiffInfo() ) );
+
+
+	b_info_version = new QPushButton();
+	b_info_version->setText( "i" );
+	b_info_version->setToolTip( "Show info" );
+	b_info_version->setFocusPolicy( Qt::NoFocus );
+	b_info_version->setMaximumWidth( 30 );
+	b_info_version->setDisabled( false );
+	connect( b_info_version, SIGNAL( clicked() ), this, SLOT( showInfo() ) );
+
+	evolutionSlider = new QSlider( Qt::Horizontal, this );
+	evolutionSlider->setRange( 0, 400 );
+	evolutionSlider->setTickPosition( QSlider::NoTicks );
+	evolutionSlider->setValue( 0 );
+	evolutionSlider->setFocusPolicy( Qt::NoFocus );
+	evolutionSlider->setDisabled( true );
+	connect( evolutionSlider, SIGNAL( valueChanged( int ) ), this, SLOT( sliderVersionValueChanged( int ) ) );
+
+	labelEvolutionSlider =  new QLabel( this );
+	labelEvolutionSlider->setAlignment( Qt::AlignHCenter );
+
+	evolutionLifespanSpinBox = new QSpinBox();
+	evolutionLifespanSpinBox->setMinimum( 0 );
+	connect( evolutionLifespanSpinBox, SIGNAL( valueChanged( int ) ), this, SLOT( changeLifespan( int ) ) );
+
+	evolutionTimer = new QTimer( this );
+	connect( evolutionTimer, SIGNAL( timeout() ), this, SLOT( move() ) );
+
+	chb_git_changeCommits = new QCheckBox( tr( "Change commits" ) );
+	chb_git_changeCommits->setChecked( true );
+	connect( chb_git_changeCommits, SIGNAL( clicked( bool ) ), this, SLOT( changeCommits( bool ) ) );
+
+	cb_git_evoVisualizeMethod = new QComboBox();
+	cb_git_evoVisualizeMethod->insertItems( 0, ( QStringList() << "LuaStats" << "Difference" << "Changes" ) );
+	cb_git_evoVisualizeMethod->setFocusPolicy( Qt::NoFocus );
+	connect( cb_git_evoVisualizeMethod, SIGNAL( currentIndexChanged( int ) ), this, SLOT( changeEvolutionVisualization( int ) ) );
+
+	cb_git_authors = new QComboBox();
+	cb_git_authors->insertItems( 0, ( QStringList() << "All" << "Authors" << "Structure" ) );
+	cb_git_authors->setFocusPolicy( Qt::NoFocus );
+	connect( cb_git_authors, SIGNAL( currentIndexChanged( int ) ), this, SLOT( changeEvolutionFilterOption( int ) ) );
+
+	cb_git_files = new QComboBox();
+	cb_git_files->insertItems( 0, ( QStringList() << "All" ) );
+	cb_git_files->setFocusPolicy( Qt::NoFocus );
+	connect( cb_git_files, SIGNAL( currentIndexChanged( int ) ), this, SLOT( changeEvolutionFilterSpecificOption( int ) ) );
+	// garaj end
 }
 
 void CoreWindow::setVisibleClusterSection( bool visible )
@@ -660,6 +831,9 @@ void CoreWindow::createMenus()
 	file = menuBar()->addMenu( "File" );
 	file->addAction( load );
 	file->addAction( loadGraph );
+	file->addAction( loadJavaProjectAction );
+	file->addAction( loadGit );
+	file->addAction( loadSpecialMatrix );
 	file->addSeparator();
 	file->addAction( saveGraph );
 	file->addAction( saveLayout );
@@ -668,6 +842,20 @@ void CoreWindow::createMenus()
 
 	edit = menuBar()->addMenu( "Settings" );
 	edit->addAction( options );
+
+	examples = menuBar()->addMenu( "Test" );
+	examples->addAction( exampleGraphBasic100 );
+	examples->addAction( exampleGraphBasic500 );
+	examples->addAction( exampleGraphVeolia );
+	examples->addAction( exampleGraphLua );
+
+	backgroundMenu = menuBar()->addMenu( "Change Background" );
+	backgroundMenu->addAction( switchBackgroundSkyBoxAction );
+	backgroundMenu->addAction( switchBackgroundBlackAction );
+	backgroundMenu->addAction( switchBackgroundWhiteAction );
+	backgroundMenu->addAction( switchBackgroundSkyNoiseBoxAction );
+	backgroundMenu->addAction( switchBackgroundTextureAction );
+	backgroundMenu->addAction( switchBackgroundOrtho2dAction );
 
 	help = menuBar()->addMenu( "Help" );
 	help->addAction( about );
@@ -734,6 +922,7 @@ QWidget* CoreWindow::createGraphTab( QFrame* line )
 	lGraph->addRow( applyLabel );
 	label->setMaximumWidth( 136 );
 	lGraph->addRow( label );
+	lGraph->addRow( labelResidence );
 	line = createLine();
 	lGraph->addRow( line );
 	play->setMaximumWidth( 136 );
@@ -1013,11 +1202,6 @@ QWidget* CoreWindow::createMoreFeaturesTab( QFrame* line )
 	b_start_kinect->setMaximumWidth( 136 );
 	lMore->addRow( b_start_kinect );
 	connect( b_start_kinect, SIGNAL( clicked() ), this, SLOT( createKinectWindow() ) );
-	b_start_ransac = new QPushButton();
-	b_start_ransac->setText( "Start calculate surface" );
-	b_start_ransac->setMaximumWidth( 136 );
-	lMore->addRow( b_start_ransac );
-	connect( b_start_ransac, SIGNAL( clicked() ), this, SLOT( calculateRansac() ) );
 #endif
 #endif
 
@@ -1030,6 +1214,12 @@ QWidget* CoreWindow::createMoreFeaturesTab( QFrame* line )
 	b_start_leap->setMaximumWidth( 136 );
 	lMore->addRow( b_start_leap );
 	connect( b_start_leap, SIGNAL( clicked() ), this, SLOT( startLeap() ) );
+	//leapAR
+	b_start_leapAR = new QPushButton();
+	b_start_leapAR->setText( "Start LeapAR" );
+	b_start_leapAR->setMaximumWidth( 136 );
+	lMore->addRow( b_start_leapAR );
+	connect( b_start_leapAR, SIGNAL( clicked() ), this, SLOT( startLeapAR() ) );
 #endif
 
 #ifdef SPEECHSDK_FOUND
@@ -1043,6 +1233,18 @@ QWidget* CoreWindow::createMoreFeaturesTab( QFrame* line )
 	connect( b_start_speech, SIGNAL( clicked() ), this, SLOT( startSpeech() ) );
 #endif
 
+#ifdef MOUSE3D_FOUND
+	line = createLine();
+	lMore->addRow( line );
+	lMore->addRow( new QLabel( tr( "3D Mouse" ) ) );
+	b_start_mouse3d = new QPushButton();
+	b_start_mouse3d->setText( "Start Mouse" );
+	b_start_mouse3d->setMaximumWidth( 136 );
+	lMore->addRow( b_start_mouse3d );
+	connect( b_start_mouse3d, SIGNAL( clicked() ), this, SLOT( startMouse3d() ) );
+#endif
+
+
 #ifdef FGLOVE_FOUND
 	line = createLine();
 	lMore->addRow( line );
@@ -1053,6 +1255,74 @@ QWidget* CoreWindow::createMoreFeaturesTab( QFrame* line )
 	lMore->addRow( b_start_gloves );
 	connect( b_start_gloves, SIGNAL( clicked() ), this, SLOT( startGlovesRecognition() ) );
 #endif
+	/*
+		line = createLine();
+		lMore->addRow( line );
+		lMore->addRow( new QLabel( tr( "Evolution Graph" ) ) );
+		lMore->addRow( new QLabel( ( tr( "Life span:" ) ) ), evolutionLifespanSpinBox );
+		lMore->addRow( b_git_diff );
+		lMore->addRow( chb_git_changeCommits );
+		lMore->addRow( cb_git_evoVisualizeMethod );
+		lMore->addRow( cb_git_authors );
+		lMore->addRow( cb_git_files );
+	*/
+
+	//jurik
+	line = createLine();
+	lMore->addRow( line );
+	lMore->addRow( new QLabel( tr( "Light and Shadow" ) ) );
+
+	chb_light = new QCheckBox( "&Custom light" );
+	chb_light->setChecked( false );
+	lMore->addRow( chb_light );
+	connect( chb_light, SIGNAL( clicked() ), this, SLOT( lightClicked() ) );
+
+	chb_shadow = new QCheckBox( "&Shadow" );
+	chb_shadow->setChecked( false );
+	lMore->addRow( chb_shadow );
+	connect( chb_shadow, SIGNAL( clicked() ), this, SLOT( shadowClicked() ) );
+
+	chb_base = new QCheckBox( "&Base" );
+	chb_base->setChecked( false );
+	lMore->addRow( chb_base );
+	connect( chb_base, SIGNAL( clicked() ), this, SLOT( baseClicked() ) );
+
+	chb_axes = new QCheckBox( "&Axes" );
+	chb_axes->setChecked( false );
+	lMore->addRow( chb_axes );
+	connect( chb_axes, SIGNAL( clicked() ), this, SLOT( axesClicked() ) );
+
+
+	line = createLine();
+	lMore->addRow( line );
+
+	b_start_projective_ar = new QPushButton( tr( "Start projective AR view" ) );
+	lMore->addRow( new QLabel( tr( "Projector view" ) ) );
+	b_start_projective_ar->setMaximumWidth( 136 );
+	lMore->addRow( b_start_projective_ar );
+	connect( b_start_projective_ar, SIGNAL( clicked() ), this, SLOT( createProjARWindow() ) );
+
+	//*****
+
+
+	wMore->setLayout( lMore );
+
+	return wMore;
+}
+
+QWidget* CoreWindow::createEvolutionTab( QFrame* line )
+{
+	QWidget* wMore = new QWidget();
+	QFormLayout* lMore = new QFormLayout( wMore );
+	lMore->setContentsMargins( 1,1,1,1 );
+	lMore->setSpacing( 2 );
+
+	lMore->addRow( new QLabel( ( tr( "Life span:" ) ) ), evolutionLifespanSpinBox );
+//    lMore->addRow( b_git_diff );
+	lMore->addRow( chb_git_changeCommits );
+	lMore->addRow( cb_git_evoVisualizeMethod );
+	lMore->addRow( cb_git_authors );
+	lMore->addRow( cb_git_files );
 
 	wMore->setLayout( lMore );
 
@@ -1072,7 +1342,7 @@ void CoreWindow::createGraphSlider()
 void CoreWindow::createSelectionComboBox()
 {
 	selectionTypeComboBox = new QComboBox();
-	selectionTypeComboBox->insertItems( 0,( QStringList() << "All" << "Node" << "Edge" << "Cluster" ) );
+	selectionTypeComboBox->insertItems( 0, ( QStringList() << "All" << "Node" << "Edge" << "Cluster" ) );
 	selectionTypeComboBox->setFocusPolicy( Qt::NoFocus );
 	connect( selectionTypeComboBox,SIGNAL( currentIndexChanged( int ) ),this,SLOT( selectionTypeComboBoxChanged( int ) ) );
 }
@@ -1089,6 +1359,8 @@ void CoreWindow::createLeftToolBar()
 
 	QWidget* wClustering = createClusteringTab( line );
 
+	QWidget* wEvolution = createEvolutionTab( line );
+
 	QWidget* wMore = createMoreFeaturesTab( line );
 
 	toolBox = new QToolBox();
@@ -1098,6 +1370,7 @@ void CoreWindow::createLeftToolBar()
 	toolBox->addItem( wConstraints, tr( "Constraints" ) );
 	toolBox->addItem( wClustering, tr( "Clustering" ) );
 	toolBox->addItem( wManage, tr( "Connections" ) );
+	toolBox->addItem( wEvolution, tr( "Evolution" ) );
 	toolBox->addItem( wMore, tr( "More features" ) );
 	toolBar = new QToolBar( "Tools",this );
 
@@ -1157,11 +1430,338 @@ void CoreWindow::showLoadGraph()
 	loadGraph->show();
 }
 
+void CoreWindow::showDialogLoadJavaProject()
+{
+	QFileDialog dialog;
+	dialog.setWindowTitle( "Choose java project folder" );
+	dialog.setFileMode( QFileDialog::Directory );
+	dialog.setOption( QFileDialog::ShowDirsOnly );
+	if ( dialog.exec() ) {
+		QString directory = dialog.selectedFiles()[0];
+		loadJavaProjectAndShow( directory );
+	}
+}
+
+
+static const float MIN_MAX_BUILDING_HEIGHT_RATIO = 10;
+
+struct BuildingInfo {
+	City::Building* building;
+	uint loc;
+	BuildingInfo( City::Building* building, uint loc )
+	{
+		this->building = building;
+		this->loc = loc;
+	}
+};
+
+QString getAttributeInfo( const Importer::Parsing::Attribute& attribute )
+{
+	QString info;
+
+	info.append( "ATTRIBUTE -->\n\n" );
+	info.append( attribute.ToString( 0 ) );
+
+	return info;
+}
+
+QString getMethodInfo( const Importer::Parsing::Method& method )
+{
+	QString info;
+
+	info.append( "METHOD -->\n\n" );
+	info.append( QString( "%1 %2 %3 " )
+				 .arg( Importer::Parsing::Modifier::ToString( method.modifier ) )
+				 .arg( method.returnType )
+				 .arg( method.name ) );
+	if ( !method.parameters.empty() ) {
+		info.append( "(\n" );
+	}
+	else {
+		info.append( "()\n" );
+	}
+	foreach ( const auto& p, method.parameters ) {
+		info.append( QString( "   %1 %2,\n" )
+					 .arg( p.type )
+					 .arg( p.name ) );
+	}
+	if ( !method.parameters.empty() ) {
+		info.append( ")\n" );
+	}
+	info.append( "\n" );
+	QString methodType;
+	if ( method.name.toLower().startsWith( "get" ) ) {
+		methodType = "getter";
+	}
+	else if ( method.name.toLower().startsWith( "set" ) ) {
+		methodType = "setter";
+	}
+	else if ( method.IsConstructor() ) {
+		methodType = "constructor";
+	}
+	else if ( method.modifier == Importer::Parsing::Modifier::PUBLIC ) {
+		methodType = "interface";
+	}
+	else {
+		methodType = "internal";
+	}
+	info.append( QString( "MethodType:  %1\n" ).arg( methodType ) );
+	info.append( QString( "Visibility:  %1\n" ).arg( method.modifier == Importer::Parsing::Modifier::UNKNOWN ? Importer::Parsing::Modifier::ToString( Importer::Parsing::Modifier::PRIVATE ) : Importer::Parsing::Modifier::ToString( method.modifier ) ) );
+	info.append( QString( "Parameters:  %1\n" ).arg( method.parameters.count() ) );
+	info.append( QString( "Output:      %1\n" ).arg( method.HasResult() ? "yes" : "no" ) );
+	info.append( QString( "LineOfCodes: %1\n" ).arg( method.GetLineOfCodes() ) );
+
+	return info;
+}
+
+int GetCountOfClasses( const Importer::Parsing::SoftTree& softTree )
+{
+	int classCount = 0;
+	foreach ( auto n, softTree.namespaces ) {
+		classCount += n.classes.count();
+	}
+	return classCount;
+}
+
+void CoreWindow::loadJavaProjectAndShow( const QString& projectDir )
+{
+	AppCore::Core::getInstance()->messageWindows->showProgressBar();
+
+	// parse java software
+	Importer::Parsing::JavaParser javaParser;
+	Importer::Parsing::SoftTree softTree;
+	QString errorMessage;
+
+	if ( !javaParser.Parse( projectDir, softTree, errorMessage ) ) {
+		AppCore::Core::getInstance()->messageWindows->closeProgressBar();
+		QMessageBox::critical( this, "Java parse error", errorMessage, QMessageBox::Close );
+		return;
+	}
+
+	// necessary for progressbar
+	const float progressCoef = 100.0f / static_cast<float>( GetCountOfClasses( softTree ) );
+	uint progressClassCounter = 0;
+	int lastProgressValue = 0;
+
+	auto manager = Manager::GraphManager::getInstance();
+	auto resMgr = Manager::ResourceManager::getInstance();
+
+	auto graph = manager->createNewGraph( "SoftwareGraph" ); // zaroven nastavi graf ako aktivny
+
+	planes_Vertigo.clear();
+	numberOfPlanes = 0;
+	layout->pauseAllAlg();
+	coreGraph->setNodesFreezed( true );
+	coreGraph->setInterpolationDenied( false );
+
+	auto nodeType = graph->addType( Data::GraphLayout::NESTED_NODE_TYPE );
+	auto edgeType = graph->addType( Data::GraphLayout::NESTED_EDGE_TYPE );
+
+	// materials for buildings
+	auto white = resMgr->getMaterial( osg::Vec3( 1.0f, 1.0f, 1.0f ) );
+	auto yellow = resMgr->getMaterial( osg::Vec3( 1.0f, 1.0f, 0.0f ) );
+	auto red = resMgr->getMaterial( osg::Vec3( 0.941f, 0.502f, 0.502f ) );
+	auto green = resMgr->getMaterial( osg::Vec3( 0.565f, 0.933f, 0.565f ) );
+	auto orange = resMgr->getMaterial( osg::Vec3( 1.000f, 0.647f, 0.000f ) );
+
+	// create java root node
+	auto rootNode = graph->addNode( "JAVA", nodeType );
+	auto javaRootNode = new City::Building();
+	javaRootNode->setBaseSize( 4 );
+	javaRootNode->setHeight( 5 );
+	javaRootNode->setLieOnGround( false );
+	auto ss = new osg::StateSet();
+	ss->setAttribute( white );
+	ss->setMode( GL_RESCALE_NORMAL, osg::StateAttribute::ON );
+	ss->setTextureAttributeAndModes( 0, resMgr->getTexture( Util::ApplicationConfig::get()->getValue( "Viewer.Textures.JavaNode" ) ), osg::StateAttribute::ON );
+	javaRootNode->setStateSet( ss );
+	javaRootNode->refresh();
+	rootNode->setResidence( javaRootNode );
+
+	std::list<BuildingInfo> buildingsInfos; // necessary for building height optimization
+	for ( const auto& namespace_ : softTree.namespaces ) { // process all classes in namespaces
+		// create node for namespace
+		auto namespaceNode = graph->addNode( namespace_.name, nodeType );
+		auto javaNamespaceNode = new City::Building();
+		javaNamespaceNode->setBaseSize( 4 );
+		javaNamespaceNode->setHeight( 4 );
+		javaNamespaceNode->setLieOnGround( false );
+		auto ss = new osg::StateSet();
+		ss->setAttribute( white );
+		ss->setMode( GL_RESCALE_NORMAL, osg::StateAttribute::ON );
+		ss->setTextureAttributeAndModes( 0, resMgr->getTexture( Util::ApplicationConfig::get()->getValue( "Viewer.Textures.JavaPackageNode" ) ), osg::StateAttribute::ON );
+		javaNamespaceNode->setStateSet( ss );
+		javaNamespaceNode->refresh();
+		namespaceNode->setResidence( javaNamespaceNode );
+
+		auto rootNamespaceEdge = graph->addEdge( QString(), rootNode, namespaceNode, edgeType, true );
+
+		// process namespace classes
+		for ( const auto& class_ : namespace_.classes ) {
+			auto classNode = graph->addNode( class_.name, nodeType );
+			auto edgeNamespaceClass = graph->addEdge( QString(), namespaceNode, classNode, edgeType, true );
+			auto residence = new City::Residence();
+			classNode->setResidence( residence );
+			auto ig = Importer::Parsing::InvocationGraph::AnalyzeClass( class_ );
+			for ( const auto& attribute : class_.attributes ) {
+				auto b = new City::Building( attribute.name, getAttributeInfo( attribute ) );
+				b->setBaseSize( 1.0f );
+				b->setHeight( 0.2f );
+				b->setStateSet( new osg::StateSet() );
+				b->getStateSet()->setAttribute( yellow );
+				residence->addAttributeBuilding( b );
+			}
+
+			for ( const auto& iggs : ig.gettersSetters ) {
+				auto& getterSetterMethod = class_.methods[iggs.callingMethodIndex];
+				QList<City::Floor*> floors;
+				for ( const auto& param : getterSetterMethod.parameters ) {
+					floors << new City::Floor();
+				}
+				auto b = new City::Building( getterSetterMethod.name, getMethodInfo( getterSetterMethod ), floors );
+				b->setBaseSize( 1.0 );
+				b->setTriangleRoof( getterSetterMethod.HasResult() );
+				b->setStateSet( new osg::StateSet() );
+				b->getStateSet()->setAttribute( yellow );
+				residence->addGetterSeterBuilding( b );
+				buildingsInfos.push_back( BuildingInfo( b, getterSetterMethod.GetLineOfCodes() ) );
+			}
+
+			for ( const auto& igin : ig.internalMethods ) {
+				auto& internalMethod = class_.methods[igin.callingMethodIndex];
+				QList<City::Floor*> floors;
+				for ( const auto& param : internalMethod.parameters ) {
+					floors << new City::Floor();
+				}
+				auto b = new City::Building( internalMethod.name, getMethodInfo( internalMethod ), floors );
+				b->setBaseSize( 1.0 );
+				b->setTriangleRoof( internalMethod.HasResult() );
+				b->setStateSet( new osg::StateSet() );
+				b->getStateSet()->setAttribute( internalMethod.modifier == Importer::Parsing::Modifier::PUBLIC ? green : ( internalMethod.modifier == Importer::Parsing::Modifier::PROTECTED ? orange : red ) ); // private, unknown = red
+				residence->addInternalBuilding( b );
+				buildingsInfos.push_back( BuildingInfo( b, internalMethod.GetLineOfCodes() ) );
+			}
+
+			for ( const auto& igif : ig.interfaceMethods ) {
+				auto& interfaceMethod = class_.methods[igif.callingMethodIndex];
+				QList<City::Floor*> floors;
+				for ( const auto& param : interfaceMethod.parameters ) {
+					floors << new City::Floor();
+				}
+				auto b = new City::Building( interfaceMethod.name, getMethodInfo( interfaceMethod ), floors );
+				b->setBaseSize( 1.0 );
+				b->setTriangleRoof( interfaceMethod.HasResult() );
+				b->setStateSet( new osg::StateSet() );
+				b->getStateSet()->setAttribute( green );
+				residence->addInterfaceBuilding( b );
+				buildingsInfos.push_back( BuildingInfo( b, interfaceMethod.GetLineOfCodes() ) );
+			}
+
+			for ( const auto& igc : ig.constructors ) {
+				auto& constructorMethod = class_.methods[igc.callingMethodIndex];
+				QList<City::Floor*> floors;
+				for ( const auto& param : constructorMethod.parameters ) {
+					floors << new City::Floor();
+				}
+				auto b = new City::Building( constructorMethod.name, getMethodInfo( constructorMethod ), floors );
+				b->setBaseSize( 1.0 );
+				b->setTriangleRoof( constructorMethod.HasResult() );
+				b->setStateSet( new osg::StateSet() );
+				b->getStateSet()->setAttribute( green );
+				residence->addInterfaceBuilding( b );
+				buildingsInfos.push_back( BuildingInfo( b, constructorMethod.GetLineOfCodes() ) );
+			}
+
+			residence->refresh();
+
+			progressClassCounter++;
+			const int progressValue = static_cast<int>( roundf( static_cast<float>( progressClassCounter ) * progressCoef ) );
+			if ( progressValue != lastProgressValue ) {
+				AppCore::Core::getInstance()->messageWindows->setProgressBarValue( progressValue );
+				lastProgressValue = progressValue;
+			}
+		}
+	}
+
+	// building height optimization
+	auto minMaxLocIt = std::minmax_element( buildingsInfos.begin(), buildingsInfos.end(), []( const BuildingInfo& a, const BuildingInfo& b ) {
+		return a.loc < b.loc;
+	} );
+	auto minHeightIt = std::max_element( buildingsInfos.begin(), buildingsInfos.end(), []( const BuildingInfo& a, const BuildingInfo& b ) {
+		return a.building->getMinHeight() < b.building->getMinHeight();
+	} );
+	const float minHeight = minHeightIt->building->getMinHeight();
+	const float maxHeight = minHeight * MIN_MAX_BUILDING_HEIGHT_RATIO;
+	const uint minLoc = minMaxLocIt.first->loc;
+	const uint maxLoc = minMaxLocIt.second->loc;
+	for ( auto& bi : buildingsInfos ) {
+		const float buildingHeight = minHeight + ( static_cast<float>( bi.loc - minLoc ) / static_cast<float>( maxLoc - minLoc ) ) * ( maxHeight - minHeight );
+		bi.building->setHeight( buildingHeight );
+		bi.building->refresh();
+	}
+
+	viewerWidget->getCameraManipulator()->home();
+
+	AppCore::Core::getInstance()->messageWindows->closeProgressBar();
+
+	// robime zakladnu proceduru pre restartovanie layoutu
+	AppCore::Core::getInstance()->restartLayout();
+
+	//treba overit ci funguje
+	if ( isPlaying ) {
+		layout->play();
+		coreGraph->setNodesFreezed( false );
+	}
+
+	nodeTypeComboBox->setCurrentIndex( 2 ); // residence
+	edgeTypeComboBox->setCurrentIndex( 2 ); // line
+}
+
 void CoreWindow::saveGraphToDB()
 {
 	Manager::GraphManager::getInstance()->saveActiveGraphToDB();
 }
 
+void CoreWindow::loadSpecialMatrixFromFile()
+{
+	QFileDialog dialog;
+	dialog.setDirectory( "../share/3dsoftviz/matrixExamples" );
+
+	QString fileName = NULL;
+
+	if ( dialog.exec() ) {
+		QStringList filenames = dialog.selectedFiles();
+		fileName = filenames.at( 0 );
+	}
+
+	if ( fileName == NULL ) {
+		return;
+	}
+
+	Data::Graph* matrixGraph = Manager::GraphManager::getInstance()->getActiveGraph();
+	if ( matrixGraph != NULL ) {
+		Manager::GraphManager::getInstance()->closeGraph( matrixGraph );
+	}
+	matrixGraph = Manager::GraphManager::getInstance()->createNewMatrixGraph( "MatrixGraph" );
+
+	SpecialMatrix::MatrixViewer* matrixViewer = new SpecialMatrix::MatrixViewer( matrixGraph, fileName );
+
+	//nastavit spravne tlacitko play a vyber hran
+	play->setEnabled( false );
+	isPlaying = true;
+	this->playPause();
+	coreGraph->setNodesFreezed( false );	//rozhadze graf - nespustit start layout
+	edgeTypeComboBox->setEnabled( false );
+
+	AppCore::Core::getInstance()->restartLayoutForMatrix();
+
+	//reprezentacie na default
+	//coreGraph->setEdgeVisual(Data::Edge::INDEX_CURVE2);
+	coreGraph->setEdgeVisualForType( Data::Edge::INDEX_LINE, "axisEdgeType" );
+	coreGraph->setEdgeVisualForType( Data::Edge::INDEX_CURVE2, "iEdgeType" );
+	//axisEdgeType, iEdgeType
+	//axisNodeType, eNodeType, iFullNodeType, iHalfNodeType, nNodeType
+}
 
 void CoreWindow::saveLayoutToDB()
 {
@@ -1184,7 +1784,7 @@ void CoreWindow::saveLayoutToDB()
 
 void CoreWindow::sqlQuery()
 {
-	std::cout << lineEdit->text().toStdString() << endl;
+	std::cout << lineEdit->text().toStdString() << std::endl;
 }
 
 void CoreWindow::showMetrics()
@@ -1214,16 +1814,10 @@ void CoreWindow::showMetrics()
 void CoreWindow::playPause()
 {
 	if ( isPlaying ) {
-		play->setIcon( QIcon( "../share/3dsoftviz/img/gui/play.png" ) );
-		isPlaying = 0;
-		layout->pause();
-		coreGraph->setNodesFreezed( true );
+		pauseLayout();
 	}
 	else {
-		play->setIcon( QIcon( "../share/3dsoftviz/img/gui/pause.png" ) );
-		isPlaying = 1;
-		coreGraph->setNodesFreezed( false );
-		layout->play();
+		playLayout();
 	}
 }
 
@@ -1430,9 +2024,45 @@ void CoreWindow::loadFile()
 {
 
 	QFileDialog dialog;
-	dialog.setDirectory( "../share/3dsoftviz" );
+	dialog.setDirectory( "../share/3dsoftviz/graphExamples" );
 
+	QString fileName = NULL;
 
+	if ( dialog.exec() ) {
+		QStringList filenames = dialog.selectedFiles();
+		fileName = filenames.at( 0 );
+		QFileInfo check_file( fileName );
+		if ( check_file.exists() && check_file.isFile() ) {
+			//do something only if valid file was selected
+
+			// Duransky start - vynulovanie vertigo rovin pri nacitani noveho grafu
+			planes_Vertigo.clear();
+			numberOfPlanes = 0;
+			// Duransky end - vynulovanie vertigo rovin pri nacitani noveho grafu
+
+			//treba overit
+			layout->pauseAllAlg();
+			coreGraph->setNodesFreezed( true );
+			coreGraph->setInterpolationDenied( false );
+
+			Manager::GraphManager::getInstance()->loadGraph( fileName );
+			viewerWidget->getCameraManipulator()->home();
+
+			//treba overit ci funguje
+			if ( isPlaying ) {
+				layout->play();
+				coreGraph->setNodesFreezed( false );
+			}
+
+			//reprezentacie na default
+			nodeTypeComboBoxChanged( nodeTypeComboBox->currentIndex() );
+			edgeTypeComboBoxChanged( edgeTypeComboBox->currentIndex() );
+		}
+	}
+}
+
+void CoreWindow::loadExampleGraphBasic100()
+{
 	// Duransky start - vynulovanie vertigo rovin pri nacitani noveho grafu
 	planes_Vertigo.clear();
 	numberOfPlanes = 0;
@@ -1443,18 +2073,9 @@ void CoreWindow::loadFile()
 	coreGraph->setNodesFreezed( true );
 	coreGraph->setInterpolationDenied( false );
 
-	QString fileName =NULL;
+	Manager::GraphManager::getInstance()->loadGraph( "../share/3dsoftviz/graphExamples/tree100.graphml" );
 
-	if ( dialog.exec() ) {
-		QStringList filenames = dialog.selectedFiles();
-		fileName = filenames.at( 0 );
-	}
-
-	if ( fileName != NULL ) {
-		Manager::GraphManager::getInstance()->loadGraph( fileName );
-
-		viewerWidget->getCameraManipulator()->home();
-	}
+	viewerWidget->getCameraManipulator()->home();
 
 	//treba overit ci funguje
 	if ( isPlaying ) {
@@ -1466,6 +2087,370 @@ void CoreWindow::loadFile()
 	nodeTypeComboBoxChanged( nodeTypeComboBox->currentIndex() );
 	edgeTypeComboBoxChanged( edgeTypeComboBox->currentIndex() );
 
+}
+void CoreWindow::loadExampleGraphBasic500()
+{
+	// Duransky start - vynulovanie vertigo rovin pri nacitani noveho grafu
+	planes_Vertigo.clear();
+	numberOfPlanes = 0;
+	// Duransky end - vynulovanie vertigo rovin pri nacitani noveho grafu
+
+	//treba overit
+	layout->pauseAllAlg();
+	coreGraph->setNodesFreezed( true );
+	coreGraph->setInterpolationDenied( false );
+
+	Manager::GraphManager::getInstance()->loadGraph( "../share/3dsoftviz/graphExamples/tree500.graphml" );
+
+	viewerWidget->getCameraManipulator()->home();
+
+	//treba overit ci funguje
+	if ( isPlaying ) {
+		layout->play();
+		coreGraph->setNodesFreezed( false );
+	}
+
+	//reprezentacie na default
+	nodeTypeComboBoxChanged( nodeTypeComboBox->currentIndex() );
+	edgeTypeComboBoxChanged( edgeTypeComboBox->currentIndex() );
+
+}
+void CoreWindow::loadExampleGraphVeolia()
+{
+	// Duransky start - vynulovanie vertigo rovin pri nacitani noveho grafu
+	planes_Vertigo.clear();
+	numberOfPlanes = 0;
+	// Duransky end - vynulovanie vertigo rovin pri nacitani noveho grafu
+
+	//treba overit
+	layout->pauseAllAlg();
+	coreGraph->setNodesFreezed( true );
+	coreGraph->setInterpolationDenied( false );
+
+	Manager::GraphManager::getInstance()->loadGraph( "../share/3dsoftviz/graphExamples/veolia.graphml" );
+
+	viewerWidget->getCameraManipulator()->home();
+
+	//treba overit ci funguje
+	if ( isPlaying ) {
+		layout->play();
+		coreGraph->setNodesFreezed( false );
+	}
+
+	//reprezentacie na default
+	nodeTypeComboBoxChanged( nodeTypeComboBox->currentIndex() );
+	edgeTypeComboBoxChanged( edgeTypeComboBox->currentIndex() );
+
+}
+void CoreWindow::loadExampleGraphLua()
+{
+
+	// Duransky start - vynulovanie vertigo rovin pri nacitani noveho grafu
+	planes_Vertigo.clear();
+	numberOfPlanes = 0;
+	// Duransky end - vynulovanie vertigo rovin pri nacitani noveho grafu
+
+	//treba overit
+	layout->pauseAllAlg();
+	coreGraph->setNodesFreezed( true );
+	coreGraph->setInterpolationDenied( false );
+
+	QString file = "../lib/lua/leg";
+
+	Lua::LuaInterface* lua = Lua::LuaInterface::getInstance();
+
+	Lua::LuaValueList path;
+	path.push_back( file.toStdString() );
+	QString createGraph[] = {"function_call_graph", "extractGraph"};
+
+	lua->callFunction( 2, createGraph, path.getValue() );
+	lua->doString( "getGraph = function_call_graph.getGraph" );
+	Lua::LuaInterface::getInstance()->doString( "getFullGraph = getGraph" );
+
+	Data::Graph* currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
+
+	if ( currentGraph != NULL ) {
+		Manager::GraphManager::getInstance()->closeGraph( currentGraph );
+	}
+	currentGraph = Manager::GraphManager::getInstance()->createNewGraph( "LuaGraph" );
+
+
+	layout->pause();
+	coreGraph->setNodesFreezed( true );
+
+	Lua::LuaGraphVisualizer* visualizer = new Lua::SimpleGraphVisualizer( currentGraph, coreGraph->getCamera() );
+	visualizer->visualize();
+
+	coreGraph->reloadConfig();
+	if ( isPlaying ) {
+		layout->play();
+		coreGraph->setNodesFreezed( false );
+	}
+	//reprezentacie na default
+	nodeTypeComboBoxChanged( nodeTypeComboBox->currentIndex() );
+	edgeTypeComboBoxChanged( edgeTypeComboBox->currentIndex() );
+}
+
+void CoreWindow::loadFromGit()
+{
+	chb_git_changeCommits->setDisabled( true );
+	QString lPath = QFileDialog::getExistingDirectory( this, tr( "Select git dir" ) );
+
+	if ( Manager::GraphManager::getInstance()->getActiveEvolutionGraph() != NULL ) {
+		delete Manager::GraphManager::getInstance()->getActiveEvolutionGraph();
+	}
+
+//    Manager::GraphManager::getInstance()->createNewGraph( "new graph" );
+
+	if ( lPath != "" ) {
+		if ( Manager::GraphManager::getInstance()->loadEvolutionGraphFromGit( lPath ) ) {
+			qDebug() << Manager::GraphManager::getInstance()->getActiveEvolutionGraph()->getFilePath();
+//            Manager::GraphManager::getInstance()->importEvolutionGraph( lPath );
+			if ( chb_git_changeCommits->isChecked() ) {
+				Repository::Git::GitUtils::changeCommit( Manager::GraphManager::getInstance()->getActiveEvolutionGraph()->getVersion( 0 )->getCommitId(), lPath );
+//                loadFunctionCall();
+				loadLuaGraph();
+
+				Lua::LuaGraph::getInstance()->loadEvoGraph( lPath );
+
+				// ak este dana verzia nebola zanalyzovana, tak ju zanalyzuj a uloz do evolution grafu
+				if ( !Manager::GraphManager::getInstance()->getActiveEvolutionGraph()->getVersion( 0 )->getIsLoaded() ) {
+					Repository::Git::GitLuaGraphAnalyzer analyzer = Repository::Git::GitLuaGraphAnalyzer( Lua::LuaGraph::getInstance(), Manager::GraphManager::getInstance()->getActiveEvolutionGraph() );
+					analyzer.setVersionNumber( 0 );
+					analyzer.analyze();
+				}
+
+				layout->pause();
+				coreGraph->setNodesFreezed( true );
+
+//                qDebug() << "Current index = " << this->cb_git_evoVisualizeMethod->currentIndex() << this->cb_git_evoVisualizeMethod->itemText(this->cb_git_evoVisualizeMethod->currentIndex());
+				Repository::Git::GitLuaGraphVisualizer visualizer = Repository::Git::GitLuaGraphVisualizer( Manager::GraphManager::getInstance()->getActiveGraph(), Manager::GraphManager::getInstance()->getActiveEvolutionGraph(), this->coreGraph->getCamera(), this->cb_git_evoVisualizeMethod->currentIndex() );
+				visualizer.setFilterAuthor( cb_git_authors->currentText() );
+				visualizer.setFilterFile( cb_git_files->currentText() );
+				visualizer.visualize( true );
+//                Lua::LuaGraphVisualizer* visualizer = new Lua::GitGraphVisualizer( Manager::GraphManager::getInstance()->getActiveGraph(), coreGraph->getCamera() );
+//                visualizer->visualize();
+
+			}
+			else {
+				Manager::GraphManager::getInstance()->importEvolutionGraph( lPath );
+			}
+
+			evolutionSlider->setValue( 0 );
+			evolutionSlider->setRange( 0, Manager::GraphManager::getInstance()->getActiveEvolutionGraph()->getVersions().size() - 1 );
+			QString pos = QString::number( evolutionSlider->value() + 1 );  // kedze list zacina od 0 treba pripocitat +1
+			labelEvolutionSlider->setText( "  " + pos + " . verzia" );
+			if ( !chb_git_changeCommits->isChecked() ) {
+				b_run_evolution->setDisabled( false );
+				evolutionSlider->setEnabled( true );
+			}
+			b_next_version->setDisabled( false );
+			Manager::GraphManager::getInstance()->getActiveGraph()->setCurrentVersion( 0 );
+
+			//
+			if ( cb_git_authors->currentIndex() != 0 ) {
+				if ( cb_git_authors->currentText() == "Authors" ) {
+					QString currentText = cb_git_files->currentText();
+
+					Repository::Git::GitMetrics metrics = Repository::Git::GitMetrics( Manager::GraphManager::getInstance()->getActiveEvolutionGraph() );
+					QStringList list = QStringList( "All" );
+
+					int newCurrentIndex = 0;
+
+					int iter = 1;
+					foreach ( QString item ,metrics.getAuthorList( Manager::GraphManager::getInstance()->getActiveGraph()->getCurrentVersion() + 1 ) ) {
+						list << item;
+						if ( item == currentText ) {
+							newCurrentIndex = iter;
+						}
+						iter++;
+					}
+					cb_git_files->clear();
+					cb_git_files->insertItems( 0, list );
+					cb_git_files->setCurrentIndex( newCurrentIndex );
+				}
+			}
+			//
+		}
+		viewerWidget->getCameraManipulator()->home();
+	}
+
+	if ( isPlaying ) {
+		labelOnOff( true );
+		layout->play();
+		coreGraph->setNodesFreezed( false );
+	}
+}
+
+void CoreWindow::loadLuaGraph()
+{
+	QString file = "";
+
+	Repository::Git::GitEvolutionGraph* evolutionGraph = Manager::GraphManager::getInstance()->getActiveEvolutionGraph();
+
+	if ( evolutionGraph != NULL ) {
+		file = evolutionGraph->getFilePath();
+	}
+	else {
+		return;
+	}
+
+	Lua::LuaInterface* lua = Lua::LuaInterface::getInstance();
+
+	Lua::LuaValueList path;
+	path.push_back( file.toStdString() );
+	QString createGraph[] = {"function_call_graph", "extractGraph"};
+	lua->callFunction( 2, createGraph, path.getValue() );
+	lua->doString( "getGraph = function_call_graph.getGraph" );
+	Lua::LuaInterface::getInstance()->doString( "getFullGraph = getGraph" );
+
+	Data::Graph* currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
+
+	if ( currentGraph == NULL ) {
+		currentGraph = Manager::GraphManager::getInstance()->createNewGraph( "LuaGraph" );
+	}
+
+}
+
+void CoreWindow::pauseLayout()
+{
+	if ( this-> isPlaying ) {
+		play->setIcon( QIcon( "../share/3dsoftviz/img/gui/play.png" ) );
+		isPlaying = 0;
+		layout->pause();
+		coreGraph->setNodesFreezed( true );
+	}
+}
+void CoreWindow::playLayout()
+{
+	if ( !this->isPlaying ) {
+		play->setIcon( QIcon( "../share/3dsoftviz/img/gui/pause.png" ) );
+		isPlaying = 1;
+		coreGraph->setNodesFreezed( false );
+		layout->play();
+	}
+}
+
+// Dynamic background switching
+void CoreWindow::switchBackgroundSkyBox()
+{
+	LOG( INFO ) << "CoreWindow::switchBackgroundSkyBox switching to SkyBox bg";
+	Data::Graph* currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
+
+	int flagPlay = 0;
+	if ( this->isPlaying ) {
+		flagPlay = 1;
+		pauseLayout();
+	}
+	if ( coreGraph->updateBackground( 0, currentGraph ) == 0 ) {
+		LOG( INFO ) << "Background successfully updated";
+	}
+	else {
+		LOG( ERROR ) << "Background bg update failed";
+	}
+	if ( flagPlay == 1 ) {
+		playLayout();
+	}
+}
+void CoreWindow::switchBackgroundBlack()
+{
+	LOG( INFO ) << "CoreWindow::switchBackgroundBlack switching to black color bg";
+	Data::Graph* currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
+
+	int flagPlay = 0;
+	if ( this->isPlaying ) {
+		flagPlay = 1;
+		pauseLayout();
+	}
+	if ( coreGraph->updateBackground( -1, currentGraph ) == 0 ) {
+		LOG( INFO ) << "Background successfully updated";
+	}
+	else {
+		LOG( ERROR ) << "Background bg update failed";
+	}
+	if ( flagPlay == 1 ) {
+		playLayout();
+	}
+}
+void CoreWindow::switchBackgroundWhite()
+{
+	LOG( INFO ) << "CoreWindow::switchBackgroundWhite switching to white color bg";
+	Data::Graph* currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
+
+	int flagPlay = 0;
+	if ( this->isPlaying ) {
+		flagPlay = 1;
+		pauseLayout();
+	}
+	if ( coreGraph->updateBackground( -2, currentGraph ) == 0 ) {
+		LOG( INFO ) << "Background successfully updated";
+	}
+	else {
+		LOG( ERROR ) << "Background bg update failed";
+	}
+	if ( flagPlay == 1 ) {
+		playLayout();
+	}
+}
+void CoreWindow::switchBackgroundSkyNoiseBox()
+{
+	LOG( INFO ) << "CoreWindow::switchBackgroundSkyNoiseBox switching to SkyNoiseBox bg";
+	Data::Graph* currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
+
+	int flagPlay = 0;
+	if ( this->isPlaying ) {
+		flagPlay = 1;
+		pauseLayout();
+	}
+	if ( coreGraph->updateBackground( 1, currentGraph ) == 0 ) {
+		LOG( INFO ) << "Background successfully updated";
+	}
+	else {
+		LOG( ERROR ) << "Background bg update failed";
+	}
+	if ( flagPlay == 1 ) {
+		playLayout();
+	}
+}
+void CoreWindow::switchBackgroundTexture()
+{
+	LOG( INFO ) << "CoreWindow::switchBackgroundTexture switching to Texture bg";
+	Data::Graph* currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
+
+	int flagPlay = 0;
+	if ( this->isPlaying ) {
+		flagPlay = 1;
+		pauseLayout();
+	}
+	if ( coreGraph->updateBackground( 2, currentGraph ) == 0 ) {
+		LOG( INFO ) << "Background successfully updated";
+	}
+	else {
+		LOG( ERROR ) << "Background bg update failed";
+	}
+	if ( flagPlay == 1 ) {
+		playLayout();
+	}
+}
+void CoreWindow::switchBackgroundOrtho2d()
+{
+	LOG( INFO ) << "CoreWindow::switchBackgroundOrtho2d switching to Ortho2d bg";
+	Data::Graph* currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
+
+	int flagPlay = 0;
+	if ( this->isPlaying ) {
+		flagPlay = 1;
+		pauseLayout();
+	}
+	if ( coreGraph->updateBackground( 3, currentGraph ) == 0 ) {
+		LOG( INFO ) << "Background successfully updated";
+	}
+	else {
+		LOG( ERROR ) << "Background bg update failed";
+	}
+	if ( flagPlay == 1 ) {
+		playLayout();
+	}
 }
 
 void CoreWindow::labelOnOff( bool )
@@ -1483,9 +2468,14 @@ void CoreWindow::labelOnOff( bool )
 
 		nodeLabelsVisible = edgeLabelsVisible = !state;
 
-		coreGraph->setEdgeLabelsVisible( !state );
+//		coreGraph->setEdgeLabelsVisible( !state );
 		coreGraph->setNodeLabelsVisible( !state );
 	}
+}
+
+void CoreWindow::labelForResidenceCheckStateChanged( int state )
+{
+	coreGraph->showLabelsForResidence( state == Qt::CheckState::Checked );
 }
 
 void CoreWindow::sliderValueChanged( int value )
@@ -1602,6 +2592,9 @@ void CoreWindow::nodeTypeComboBoxChanged( int index )
 		case 1:
 			coreGraph->setNodeVisual( Data::Node::INDEX_SPHERE );
 			break;
+		case 2:
+			coreGraph->setNodeVisual( Data::Node::INDEX_RESIDENCE );
+			break;
 		default:
 			qDebug() << "CoreWindow:nodeTypeComboBoxChanged do not suported index";
 			break;
@@ -1623,6 +2616,9 @@ void CoreWindow::edgeTypeComboBoxChanged( int index )
 			break;
 		case 3:
 			coreGraph->setEdgeVisual( Data::Edge::INDEX_CURVE );
+			break;
+		case 4:
+			coreGraph->setEdgeVisual( Data::Edge::INDEX_CURVE2 );
 			break;
 		default:
 			qDebug() << "CoreWindow:edgeTypeComboBoxChanged do not suported index";
@@ -1731,7 +2727,7 @@ void CoreWindow::setRestriction_SphereSurface()
 
 	if ( currentGraph != NULL ) {
 		osg::Vec3 position = viewerWidget->getPickHandler()->getSelectionCenter( true );
-		if ( qFuzzyCompare( static_cast<float>( position.length() ),0.0f ) ) {
+		if ( qFuzzyCompare( ( position.length() ),0.0f ) ) {
 			return;
 		}
 		osg::ref_ptr<Data::Node> centerNode;
@@ -2276,7 +3272,7 @@ void CoreWindow::startEdgeBundling()
 			while ( iNode != currentGraph->getNodes()->end() ) {
 				( *iNode )->setFixed( true );
 				( *iNode )->setDefaultColor();
-				iNode++;
+				++iNode;
 			}
 
 			//select all meta nodes and fix them
@@ -2284,12 +3280,12 @@ void CoreWindow::startEdgeBundling()
 			while ( iNode != currentGraph->getMetaNodes()->end() ) {
 				( *iNode )->setFixed( true );
 				( *iNode )->setDefaultColor();
-				iNode++;
+				++iNode;
 			}
 
 			//split edges
 			QString alpha = le_edgeBundlingalpha->text();
-			layout->setAlphaEdgeBundlingValue( alpha.toInt() );
+			layout->setAlphaEdgeBundlingValue( alpha.toFloat() );
 			int splitCount = 3;
 			currentGraph->splitAllEdges( splitCount );
 		}
@@ -2785,16 +3781,16 @@ void CoreWindow::setRestriction_Cube_Selected()
 		osg::ref_ptr<Data::Node> surfaceNodeY;
 		osg::ref_ptr<Data::Node> surfaceNodeZ;
 
-		float scale = Util::ApplicationConfig::get()->getValue( "Viewer.Display.NodeDistanceScale" ).toFloat();
+		double scale = Util::ApplicationConfig::get()->getValue( "Viewer.Display.NodeDistanceScale" ).toDouble();
 
 		QString name_centerNode = "center";
 		QString name_sufraceNodeX = "surfaceX";
 		QString name_sufraceNodeY = "surfaceY";
 		QString name_sufraceNodeZ = "surfaceZ";
 		osg::Vec3 positionNode1 = cluster->getCube()->getMidpoint() / scale;
-		osg::Vec3 positionNode2 = positionNode1 + osg::Vec3f( static_cast<float>( cluster->getCube()->getRadius() ) / scale, 0, 0 );
-		osg::Vec3 positionNode3 = positionNode1 + osg::Vec3f( 0, static_cast<float>( cluster->getCube()->getRadius() ) / scale, 0 );
-		osg::Vec3 positionNode4 = positionNode1 + osg::Vec3f( 0, 0, static_cast<float>( cluster->getCube()->getRadius() ) / scale );
+		osg::Vec3 positionNode2 = positionNode1 + osg::Vec3f( static_cast<float>( cluster->getCube()->getRadius()  / scale ), 0, 0 );
+		osg::Vec3 positionNode3 = positionNode1 + osg::Vec3f( 0, static_cast<float>( cluster->getCube()->getRadius()  / scale ), 0 );
+		osg::Vec3 positionNode4 = positionNode1 + osg::Vec3f( 0, 0, static_cast<float>( cluster->getCube()->getRadius()  / scale ) );
 
 		Layout::RestrictionRemovalHandler_RestrictionNodesRemover::NodesListType restrictionNodes;
 
@@ -2860,12 +3856,6 @@ void CoreWindow::createKinectWindow()
 
 	OpenCV::OpenCVCore::getInstance( NULL, this )->opencvInit();
 }
-
-void CoreWindow::calculateRansac()
-{
-	Kinect::Ransac* ransac= new Kinect::Ransac();
-	ransac->calculate();
-}
 #endif
 #endif
 
@@ -2906,11 +3896,28 @@ void CoreWindow::startLeap()
 		return;
 	}
 
-	this->mLeapThr = new Leap::LeapThread();
+	this->mLeapThr = new Leap::LeapThread( this,
+										   new Leap::CustomLeapManager( getCameraManipulator(),
+												   AppCore::Core::getInstance()->getLayoutThread(),
+												   AppCore::Core::getInstance( NULL )->getCoreGraph() ) );
 	//CoUninitialize();
 
 	this->mLeapThr->start();
 	b_start_leap->setText( "Stop Leap" );
+}
+void CoreWindow::startLeapAR()
+{
+	if ( mLeapThrAR!=NULL && b_start_leapAR->text()=="Stop LeapAR" ) {
+		delete( this->mLeapThrAR );
+		b_start_leapAR->setText( "Start LeapAR" );
+		this->mLeapThrAR=NULL;
+		return;
+	}
+
+	this->mLeapThrAR = new Leap::LeapThread( this,new Leap::CustomLeapManager( getCameraManipulator(), AppCore::Core::getInstance()->getLayoutThread(), AppCore::Core::getInstance( NULL )->getCoreGraph(), coreGraph->getHandsGroup() ) );
+
+	this->mLeapThrAR->start();
+	b_start_leapAR->setText( "Stop LeapAR" );
 }
 #endif
 
@@ -3352,11 +4359,63 @@ QOSG::ViewerQT* CoreWindow::GetViewerQt()
 
 void CoreWindow::closeEvent( QCloseEvent* event )
 {
-
+	delete Manager::GraphManager::getInstance()->getActiveEvolutionGraph();
 #ifdef OPENCV_FOUND
 	delete OpenCV::OpenCVCore::getInstance( NULL, this );
 #endif
 	//QApplication::closeAllWindows();   // ????
+}
+
+void QOSG::CoreWindow::OnMove( std::vector<double>& motionData )
+{
+
+	QOSG::ViewerQT* moveViewer = this->GetViewerQt();
+
+	//right & left
+	if ( motionData[0] >  0.003 ) {
+		moveViewer->getEventQueue()->keyPress( osgGA::GUIEventAdapter::KEY_Right );
+		moveViewer->getEventQueue()->keyRelease( osgGA::GUIEventAdapter::KEY_Right );
+	}
+	if ( motionData[0] < -0.003 ) {
+		moveViewer->getEventQueue()->keyPress( osgGA::GUIEventAdapter::KEY_Left );
+		moveViewer->getEventQueue()->keyRelease( osgGA::GUIEventAdapter::KEY_Left );
+	}
+	//forward & back
+	if ( motionData[1] >  0.003 ) {
+		moveViewer->getEventQueue()->keyPress( osgGA::GUIEventAdapter::KEY_Down );
+		moveViewer->getEventQueue()->keyRelease( osgGA::GUIEventAdapter::KEY_Down );
+	}
+	if ( motionData[1] < -0.003 ) {
+		moveViewer->getEventQueue()->keyPress( osgGA::GUIEventAdapter::KEY_Up );
+		moveViewer->getEventQueue()->keyRelease( osgGA::GUIEventAdapter::KEY_Up );
+	}
+	//up & down
+	//keydown has higher threshhold because user is more likely to press it accidentaly due to weight of own hand
+	//keyup has lower threshhold because user is less likely to press it accidentaly due to weight of own hand
+	if ( motionData[2] >  0.004 ) {
+		moveViewer->getEventQueue()->keyPress( osgGA::GUIEventAdapter::KEY_Page_Down );
+		moveViewer->getEventQueue()->keyRelease( osgGA::GUIEventAdapter::KEY_Page_Down );
+	}
+	if ( motionData[2] < -0.002 ) {
+		moveViewer->getEventQueue()->keyPress( osgGA::GUIEventAdapter::KEY_Page_Up );
+		moveViewer->getEventQueue()->keyRelease( osgGA::GUIEventAdapter::KEY_Page_Up );
+	}
+	//rotations
+
+	double a = fabs( motionData[3] ), b = fabs( motionData[4] ), c = fabs( motionData[5] );
+	if ( a > 0.001 ) {
+		moveViewer->getCameraManipulator()->rotateCamera( 0.0, 0.0, 1.0, -1.5f * static_cast<float>( motionData[3] ), 0.0 );
+		//qDebug() << "Moving A" << endl;
+	}
+	if ( b > 0.001 ) {
+		moveViewer->getCameraManipulator()->rotateCamera( 1.0, 0.00, 1.2 *motionData[4], -1, -1 );
+		//qDebug() << "Moving B" << endl;
+	}
+	if ( c > 0.001 ) {
+		moveViewer->getCameraManipulator()->rotateCamera( 0.0, 0.0, 1.0, 0.0, -1.5f * static_cast<float>( motionData[5] ) );
+		//qDebug() << "Moving C" << endl;
+	}
+
 }
 
 void QOSG::CoreWindow::moveMouseAruco( double positionX,double positionY,bool isClick, Qt::MouseButton button )
@@ -3404,6 +4463,32 @@ void CoreWindow::startGlovesRecognition()
 
 #endif
 
+
+#ifdef MOUSE3D_FOUND
+void CoreWindow::startMouse3d()
+{
+
+	if ( b_start_mouse3d->text()=="Stop Mouse" ) {
+		//this->mGloveThr->terminate();
+		//delete( this->mGloveThr );
+		delete conn;
+
+		b_start_mouse3d->setText( "Start Mouse" );
+		return;
+	}
+
+	conn = new Mouse3d::Connector( this );
+	conn->CreateConnection();
+
+	//this->mGloveThr = new Fglove::FgloveThread();
+	//this->b_start_mouse3d->start();
+	b_start_mouse3d->setText( "Stop Mouse" );
+
+}
+
+#endif
+
+
 void CoreWindow::createMetricsToolBar()
 {
 	metricsToolBar = new QToolBar( "Metrics visualizations",this );
@@ -3420,9 +4505,16 @@ void CoreWindow::createMetricsToolBar()
 	metricsToolBar->setMovable( false );
 	showMetrics();
 
-	addToolBar( Qt::RightToolBarArea,metricsToolBar );
+	addToolBar( Qt::RightToolBarArea, metricsToolBar );
 
-	toolBar = new QToolBar( "Metrics filter",this );
+	QWidget* xGraph = new QWidget();
+
+	QFormLayout* lGraph = new QFormLayout( xGraph );
+	lGraph->setContentsMargins( 1,1,1,1 );
+	lGraph->setSpacing( 2 );
+	lGraph->setAlignment( Qt::AlignHCenter );
+
+	toolBar = new QToolBar( "Metrics filter", this );
 #if QT_VERSION >= 0x040700
 	filterNodesEdit->setPlaceholderText( "nodes filter" );
 #endif
@@ -3431,26 +4523,58 @@ void CoreWindow::createMetricsToolBar()
 	filterEdgesEdit->setPlaceholderText( "edges filter" );
 #endif
 	toolBar->addWidget( filterEdgesEdit );
+	lGraph->addRow( toolBar );
+
+	// evolution part start
+	toolBar = new QToolBar( "Evolution graph controls", this );
+	QToolBar* toolBar1= new QToolBar( "Evolution graph controls" ,this );
+	toolBar1->addWidget( b_previous_version );
+	toolBar1->addWidget( b_next_version );
+	toolBar1->addWidget( b_info_version );
+	toolBar1->addWidget( b_run_evolution );
+
+	frame = createHorizontalFrame();
+	frame->setMinimumHeight( 50 );
+	frame->backgroundRole();
+	frame->layout()->setAlignment( Qt::AlignVCenter );
+
+	toolBar1->addWidget( frame );
+	frame->layout()->addWidget( evolutionSlider );
+	frame->layout()->addWidget( labelEvolutionSlider );
+
+	toolBar1->addWidget( b_slower_evolution );
+	toolBar1->addWidget( b_faster_evolution );
+	toolBar1->layout()->setAlignment( Qt::AlignHCenter );
+	lGraph->addRow( toolBar1 );
+	xGraph->setLayout( lGraph );
+	// evolution part end
+
+	toolBar->addWidget( xGraph );
+
 	addToolBar( Qt::BottomToolBarArea, toolBar );
-	toolBar->setMovable( true );
+
+	isRunning = false;
 }
 
 void CoreWindow::loadFunctionCall()
 {
 	QString file = QFileDialog::getExistingDirectory( this, "Select lua project folder", "." );
+
+	// ak sa predchadzajucou volbou neziskala cesta ku projektu, tak ukonci metodu
 	if ( file == "" ) {
 		return;
 	}
+
 	std::cout << "You selected " << file.toStdString() << std::endl;
 	Lua::LuaInterface* lua = Lua::LuaInterface::getInstance();
 
 
-	Diluculum::LuaValueList path;
+	Lua::LuaValueList path;
 	path.push_back( file.toStdString() );
 	QString createGraph[] = {"function_call_graph", "extractGraph"};
-	lua->callFunction( 2, createGraph, path );
-	lua->getLuaState()->doString( "getGraph = function_call_graph.getGraph" );
-	Lua::LuaInterface::getInstance()->getLuaState()->doString( "getFullGraph = getGraph" );
+	lua->callFunction( 2, createGraph, path.getValue() );
+	lua->doString( "getGraph = function_call_graph.getGraph" );
+	Lua::LuaInterface::getInstance()->doString( "getFullGraph = getGraph" );
 
 	Data::Graph* currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
 
@@ -3458,6 +4582,7 @@ void CoreWindow::loadFunctionCall()
 		Manager::GraphManager::getInstance()->closeGraph( currentGraph );
 	}
 	currentGraph = Manager::GraphManager::getInstance()->createNewGraph( "LuaGraph" );
+
 
 	layout->pause();
 	coreGraph->setNodesFreezed( true );
@@ -3479,24 +4604,24 @@ void CoreWindow::filterGraph()
 
 	Lua::LuaInterface* lua = Lua::LuaInterface::getInstance();
 
-	Diluculum::LuaValueList query;
+	Lua::LuaValueList query;
 	query.push_back( nodesQueryText );
 	QString validNodesQuery[] = {"logical_filter", "validNodeQuery"};
-	if ( lua->callFunction( 2, validNodesQuery, query )[0] == false ) {
+	if ( lua->callFunction( 2, validNodesQuery, query.getValue() )[0] == false ) {
 		AppCore::Core::getInstance()->messageWindows->showMessageBox( "Upozornenie","Neplatny vyraz filtra vrcholov",false );
 		return;
 	}
 	query[0] = edgesQueryText;
 	QString validEdgesQuery[] = {"logical_filter", "validEdgeQuery"};
-	if ( lua->callFunction( 2, validEdgesQuery, query )[0] == false ) {
+	if ( lua->callFunction( 2, validEdgesQuery, query.getValue() )[0] == false ) {
 		AppCore::Core::getInstance()->messageWindows->showMessageBox( "Upozornenie","Neplatny vyraz filtra hran",false );
 		return;
 	}
 	query[0] = nodesQueryText;
 	query.push_back( edgesQueryText );
-	lua->getLuaState()->doString( "getGraph = logical_filter.getGraph" );
+	lua->doString( "getGraph = logical_filter.getGraph" );
 	QString filterGraph[] = {"logical_filter", "filterGraph"};
-	lua->callFunction( 2, filterGraph, query );
+	lua->callFunction( 2, filterGraph, query.getValue() );
 }
 
 void CoreWindow::onChange()
@@ -3511,16 +4636,43 @@ void CoreWindow::onChange()
 	// <Change> Gloger start: added support for multiple node selection using browser visualization
 	QLinkedList<osg::ref_ptr<Data::Node> >* selected = viewerWidget->getPickHandler()->getSelectedNodes();
 
+	if ( cb_git_evoVisualizeMethod->currentText() == "Difference" ) {
+		coreGraph->getBrowsersGroup()->setShowGit( true );
+	}
+	else {
+		coreGraph->getBrowsersGroup()->setShowGit( false );
+	}
+
 	coreGraph->getBrowsersGroup()->setSelectedNodes( selected );
 	// qDebug() << "Selected nodes count: " << selected->size();
 
 
 	if ( selected->size() > 0 ) {
 		// Get last node model & display it in qt view
-		qlonglong lastNodeId = selected->last()->getId();
-		Lua::LuaNode* lastLuaNode = Lua::LuaGraph::getInstance()->getNodes()->value( lastNodeId );
-		Lua::LuaGraphTreeModel* lastLuaModel = new Lua::LuaGraphTreeModel( lastLuaNode );
-		luaGraphTreeView->setModel( lastLuaModel );
+		qlonglong lastNodeId = 0;
+		Repository::Git::GitEvolutionGraph* evolutionGraph = Manager::GraphManager::getInstance()->getActiveEvolutionGraph();
+		if ( evolutionGraph ) {
+			QString identifier = selected->last()->getLuaIdentifier();
+//            if( evolutionGraph->getLuaNodesMapping().contains( identifier ) ) {
+			if ( evolutionGraph->getMetaDataFromIdentifier( identifier )->getLuaMapping() != -1 ) {
+//                lastNodeId = evolutionGraph->getLuaNodesMapping().value( identifier );
+				lastNodeId = evolutionGraph->getMetaDataFromIdentifier( identifier )->getLuaMapping();
+			}
+
+		}
+		else {
+			lastNodeId = selected->last()->getId();
+		}
+
+		if ( lastNodeId != 0 ) {
+			Lua::LuaNode* lastLuaNode = Lua::LuaGraph::getInstance()->getNodes()->value( lastNodeId );
+			// garaj start - ak nenaslo lastLuaNode, tak sposobovalo pad softveru
+			if ( lastLuaNode ) {
+				Lua::LuaGraphTreeModel* lastLuaModel = new Lua::LuaGraphTreeModel( lastLuaNode );
+				luaGraphTreeView->setModel( lastLuaModel );
+			}
+		}
+		// garaj end
 	}
 
 
@@ -3530,6 +4682,623 @@ void CoreWindow::onChange()
 void CoreWindow::browsersGroupingClicked( bool checked )
 {
 	this->coreGraph->getBrowsersGroup()->setBrowsersGrouping( checked );
+}
+
+bool CoreWindow::nextVersion()
+{
+
+	if ( !isRunning ) {
+		b_previous_version->setDisabled( false );
+	}
+
+	bool ok = true;
+	int value = evolutionSlider->value();
+	evolutionLifespanSpinBox->setDisabled( true );
+	value++;
+	QString pos =  QString::number( value + 1 );  // kedze list zacina od 0 treba pripocitat +1
+	labelEvolutionSlider->setText( "  " + pos + " . verzia" );
+	evolutionSlider->blockSignals( true );
+	evolutionSlider->setValue( value );
+	evolutionSlider->blockSignals( false );
+
+	if ( !chb_git_changeCommits->isChecked() ) {
+		ok = Manager::GraphManager::getInstance()->nextVersion( layout );
+	}
+	else {
+		// ulozim si udaje o metrikach zo stareho lua graphu
+		Repository::Git::GitLuaGraphUtils luaUtils = Repository::Git::GitLuaGraphUtils( Lua::LuaGraph::getInstance(), Manager::GraphManager::getInstance()->getActiveEvolutionGraph() );
+		luaUtils.fillMetricsMetaData();
+//        qDebug() << "Treba zavolat dalsi lua stromcek";
+		QString lPath =  Manager::GraphManager::getInstance()->getActiveEvolutionGraph()->getFilePath();
+		QString commitId = Manager::GraphManager::getInstance()->getActiveEvolutionGraph()->getVersion( value )->getCommitId();
+		Repository::Git::GitUtils::changeCommit( commitId, lPath );
+		//        loadFunctionCall();
+		loadLuaGraph();
+
+		Lua::LuaGraph::getInstance()->loadEvoGraph( lPath );
+
+		Manager::GraphManager::getInstance()->getActiveGraph()->setCurrentVersion( value );
+		if ( !Manager::GraphManager::getInstance()->getActiveEvolutionGraph()->getVersion( value )->getIsLoaded() ) {
+
+			Repository::Git::GitLuaGraphAnalyzer analyzer = Repository::Git::GitLuaGraphAnalyzer( Lua::LuaGraph::getInstance(), Manager::GraphManager::getInstance()->getActiveEvolutionGraph() );
+			analyzer.setVersionNumber( value );
+			analyzer.analyze();
+		}
+
+		layout->pause();
+		coreGraph->setNodesFreezed( true );
+
+		Repository::Git::GitLuaGraphVisualizer visualizer = Repository::Git::GitLuaGraphVisualizer( Manager::GraphManager::getInstance()->getActiveGraph(), Manager::GraphManager::getInstance()->getActiveEvolutionGraph(), this->coreGraph->getCamera(), this->cb_git_evoVisualizeMethod->currentIndex() );
+		visualizer.setFilterAuthor( cb_git_authors->currentText() );
+		visualizer.setFilterFile( cb_git_files->currentText() );
+		visualizer.visualize( true );
+
+		//
+		if ( cb_git_authors->currentIndex() != 0 ) {
+			if ( cb_git_authors->currentText() == "Authors" ) {
+				QString currentText = cb_git_files->currentText();
+
+				Repository::Git::GitMetrics metrics = Repository::Git::GitMetrics( Manager::GraphManager::getInstance()->getActiveEvolutionGraph() );
+				QStringList list = QStringList( "All" );
+
+				int newCurrentIndex = 0;
+
+				int iter = 1;
+				foreach ( QString item ,metrics.getAuthorList( Manager::GraphManager::getInstance()->getActiveGraph()->getCurrentVersion() + 1 ) ) {
+					list << item;
+					if ( item == currentText ) {
+						newCurrentIndex = iter;
+					}
+					iter++;
+				}
+				cb_git_files->clear();
+				cb_git_files->insertItems( 0, list );
+				cb_git_files->setCurrentIndex( newCurrentIndex );
+			}
+		}
+		//
+
+		coreGraph->reloadConfig();
+		if ( isPlaying ) {
+			layout->play();
+			coreGraph->setNodesFreezed( false );
+		}
+
+	}
+
+	if ( value == evolutionSlider->maximum() ) {
+		b_next_version->setDisabled( true );
+	}
+
+
+	return ok;
+}
+
+bool CoreWindow::previousVersion()
+{
+
+	if ( !isRunning ) {
+		b_next_version->setDisabled( false );
+	}
+
+	bool ok = true;
+	int value = evolutionSlider->value();
+	value--;
+	QString pos =  QString::number( value + 1 );  // kedze list zacina od 0 treba pripocitat +1
+	labelEvolutionSlider->setText( "  " + pos + " . verzia" );
+	evolutionSlider->blockSignals( true );
+	evolutionSlider->setValue( value );
+	evolutionSlider->blockSignals( false );
+
+	if ( !chb_git_changeCommits->isChecked() ) {
+		ok =  Manager::GraphManager::getInstance()->previousVersion( layout );
+	}
+	else {
+		// ulozim si udaje o metrikach zo stareho lua graphu
+		Repository::Git::GitLuaGraphUtils luaUtils = Repository::Git::GitLuaGraphUtils( Lua::LuaGraph::getInstance(), Manager::GraphManager::getInstance()->getActiveEvolutionGraph() );
+		luaUtils.fillMetricsMetaData();
+//        qDebug() << "Treba zavolat predchadzajuci lua stromcek";
+		Manager::GraphManager::getInstance()->getActiveGraph()->setCurrentVersion( value );
+		QString lPath =  Manager::GraphManager::getInstance()->getActiveEvolutionGraph()->getFilePath();
+		QString commitId = Manager::GraphManager::getInstance()->getActiveEvolutionGraph()->getVersion( value )->getCommitId();
+		Repository::Git::GitUtils::changeCommit( commitId, lPath );
+		loadLuaGraph();
+		Lua::LuaGraph::getInstance()->loadEvoGraph( lPath );
+
+		if ( !Manager::GraphManager::getInstance()->getActiveEvolutionGraph()->getVersion( value )->getIsLoaded() ) {
+			Repository::Git::GitLuaGraphAnalyzer analyzer = Repository::Git::GitLuaGraphAnalyzer( Lua::LuaGraph::getInstance(), Manager::GraphManager::getInstance()->getActiveEvolutionGraph() );
+			analyzer.setVersionNumber( value );
+			analyzer.analyze();
+		}
+
+		layout->pause();
+		coreGraph->setNodesFreezed( true );
+
+//        qDebug() << "Current index = " << this->cb_git_evoVisualizeMethod->currentIndex() << this->cb_git_evoVisualizeMethod->itemText(this->cb_git_evoVisualizeMethod->currentIndex());
+		Repository::Git::GitLuaGraphVisualizer visualizer = Repository::Git::GitLuaGraphVisualizer( Manager::GraphManager::getInstance()->getActiveGraph(), Manager::GraphManager::getInstance()->getActiveEvolutionGraph(), this->coreGraph->getCamera(), this->cb_git_evoVisualizeMethod->currentIndex() );
+		visualizer.visualize( false );
+
+		coreGraph->reloadConfig();
+		if ( isPlaying ) {
+			layout->play();
+			coreGraph->setNodesFreezed( false );
+		}
+	}
+
+	if ( value == evolutionSlider->minimum() ) {
+		if ( !chb_git_changeCommits->isChecked() ) {
+			evolutionLifespanSpinBox->setDisabled( false );
+		}
+		b_previous_version->setDisabled( true );
+	}
+
+	return ok;
+}
+void CoreWindow::runEvolution()
+{
+	if ( isRunning ) {
+		// zastav evoluciu
+		b_run_evolution->setIcon( QIcon( "../share/3dsoftviz/img/gui/play.png" ) );
+		isRunning = false;
+		if ( evolutionSlider->value() != evolutionSlider->maximum() ) {
+			b_next_version->setDisabled( false );
+		}
+		b_previous_version->setDisabled( false );
+		evolutionTimer->stop();
+	}
+	else {
+		evolutionSlider->setDisabled( false );
+		// zacni evoluciu
+		b_run_evolution->setIcon( QIcon( "../share/3dsoftviz/img/gui/pause.png" ) );
+		isRunning = true;
+		b_next_version->setDisabled( true );
+		b_previous_version->setDisabled( true );
+		evolutionTimer->start( 500 );
+	}
+
+}
+
+void CoreWindow::move()
+{
+	int cursor = evolutionSlider->value();
+	int size = evolutionSlider->maximum();
+
+	if ( cursor == ( size ) ) {
+		this->runEvolution();
+	}
+	else {
+		nextVersion();
+	}
+
+	if ( isPlaying ) {
+		layout->play();
+	}
+}
+
+void CoreWindow::fasterEvolution()
+{
+	int interval =  evolutionTimer->interval();
+	if ( interval - 100 > 0 ) {
+		evolutionTimer->setInterval( interval - 100 );
+	}
+}
+
+void CoreWindow::slowerEvolution()
+{
+	int interval =  evolutionTimer->interval();
+	evolutionTimer->setInterval( interval + 100 );
+}
+
+void CoreWindow::showInfo()
+{
+	Manager::GraphManager::getInstance()->getActiveEvolutionGraph()->getVersion( evolutionSlider->value() )->printVersion();
+}
+
+void CoreWindow::sliderVersionValueChanged( int value )
+{
+	QString pos = QString::number( value + 1 );
+	labelEvolutionSlider->setText( "  " + pos + " . verzia" );
+	evolutionSlider->blockSignals( true );
+	Manager::GraphManager::getInstance()->changeToVersion( layout, value );
+	evolutionSlider->setValue( value );
+	evolutionSlider->blockSignals( false );
+
+	evolutionLifespanSpinBox->setDisabled( true );
+
+	if ( !isRunning ) {
+		b_next_version->setDisabled( false );
+		b_previous_version->setDisabled( false );
+	}
+
+	if ( value == evolutionSlider->maximum() ) {
+		b_next_version->setDisabled( true );
+	}
+
+	if ( value == evolutionSlider->minimum() ) {
+		evolutionLifespanSpinBox->setDisabled( false );
+		b_previous_version->setDisabled( true );
+	}
+}
+
+void CoreWindow::changeLifespan( int value )
+{
+	Manager::GraphManager::getInstance()->getActiveEvolutionGraph()->setLifespan( value );
+}
+
+void CoreWindow::getDiffInfo()
+{
+	QLinkedList<osg::ref_ptr<Data::Node>>* selectedNodes = viewerWidget->getPickHandler()->getSelectedNodes();
+
+	if ( selectedNodes->size() != 0 ) {
+		foreach ( osg::ref_ptr<Data::Node> node, *selectedNodes ) {
+			int version = evolutionSlider->value();
+			Manager::GraphManager::getInstance()->getDiffInfo( node.get()->Data::AbsNode::getName(), version );
+		}
+	}
+}
+
+// zatial neviem ci je potrebne:D ale asi bude
+void CoreWindow::changeCommits( bool value )
+{
+	qDebug() << chb_git_changeCommits->isChecked();
+	if ( value ) {
+		b_run_evolution->setEnabled( false );
+		evolutionSlider->setEnabled( false );
+		b_faster_evolution->setEnabled( false );
+		b_slower_evolution->setEnabled( false );
+	}
+}
+
+void CoreWindow::changeEvolutionVisualization( int state )
+{
+	if ( state == 2 ) {
+		b_next_version->setDisabled( true );
+		b_previous_version->setDisabled( true );
+
+	}
+	else {
+		b_next_version->setDisabled( false );
+		b_previous_version->setDisabled( false );
+	}
+
+	if ( Manager::GraphManager::getInstance()->getActiveEvolutionGraph() ) {
+		if ( state == 2 ) {
+			if ( cb_git_authors->currentText() != "All" ) {
+				QString currentText = cb_git_files->currentText();
+				QStringList list;
+				int newCurrentIndex = 0;
+				Repository::Git::GitMetrics metrics = Repository::Git::GitMetrics( Manager::GraphManager::getInstance()->getActiveEvolutionGraph() );
+
+				if ( cb_git_authors->currentText() == "Authors" ) {
+
+					list = QStringList( "All" );
+
+					newCurrentIndex = 0;
+
+					int iter = 1;
+					foreach ( QString item, metrics.getAuthorList( Manager::GraphManager::getInstance()->getActiveGraph()->getCurrentVersion() + 1 ) ) {
+						list << item;
+						if ( item == currentText ) {
+							newCurrentIndex = iter;
+						}
+						iter++;
+					}
+				}
+				else if ( cb_git_authors->currentText() == "Structure" ) {
+					list = QStringList() << "Files" << "Local Functions" << "Global Functions" << "Modules";
+
+					newCurrentIndex = 3;
+
+					int iter = 0;
+					foreach ( QString item, list ) {
+						if ( item == currentText ) {
+							newCurrentIndex = iter;
+							break;
+						}
+						iter++;
+					}
+				}
+
+				cb_git_files->clear();
+				cb_git_files->insertItems( 0, list );
+				cb_git_files->setCurrentIndex( newCurrentIndex );
+			}
+		}
+
+		Repository::Git::GitLuaGraphVisualizer visualizer = Repository::Git::GitLuaGraphVisualizer( Manager::GraphManager::getInstance()->getActiveGraph(), Manager::GraphManager::getInstance()->getActiveEvolutionGraph(), this->coreGraph->getCamera(), state );
+		visualizer.setFilterAuthor( cb_git_authors->currentText() );
+		visualizer.setFilterFile( cb_git_files->currentText() );
+		visualizer.changeNodeRepresentation();
+	}
+}
+
+void CoreWindow::changeEvolutionFilterOption( int state )
+{
+	if ( Manager::GraphManager::getInstance()->getActiveEvolutionGraph() ) {
+		if ( state != 0 ) {
+			QString currentText = cb_git_files->currentText();
+			QStringList list;
+			int newCurrentIndex = 0;
+			Repository::Git::GitMetrics metrics = Repository::Git::GitMetrics( Manager::GraphManager::getInstance()->getActiveEvolutionGraph() );
+
+			if ( state == 1 ) {
+				list = QStringList( "All" );
+
+				newCurrentIndex = 0;
+
+				int iter = 1;
+				foreach ( QString item ,metrics.getAuthorList( Manager::GraphManager::getInstance()->getActiveGraph()->getCurrentVersion() + 1 ) ) {
+					list << item;
+					if ( item == currentText ) {
+						newCurrentIndex = iter;
+					}
+					iter++;
+				}
+
+			}
+			else if ( state == 2 ) {
+				list = QStringList() << "Files" << "Local Functions" << "Global Functions" << "Modules";
+
+				newCurrentIndex = 3;
+
+				int iter = 0;
+				foreach ( QString item, list ) {
+					if ( item == currentText ) {
+						newCurrentIndex = iter;
+						break;
+					}
+					iter++;
+				}
+			}
+
+			cb_git_files->clear();
+			cb_git_files->insertItems( 0, list );
+			cb_git_files->setCurrentIndex( newCurrentIndex );
+
+			Repository::Git::GitLuaGraphVisualizer visualizer = Repository::Git::GitLuaGraphVisualizer( Manager::GraphManager::getInstance()->getActiveGraph(), Manager::GraphManager::getInstance()->getActiveEvolutionGraph(), this->coreGraph->getCamera(), cb_git_evoVisualizeMethod->currentIndex() );
+			visualizer.setFilterAuthor( cb_git_authors->currentText() );
+			visualizer.setFilterFile( cb_git_files->currentText() );
+			visualizer.changeNodeRepresentation();
+		}
+	}
+
+}
+
+void CoreWindow::changeEvolutionFilterSpecificOption( int state )
+{
+	if ( Manager::GraphManager::getInstance()->getActiveEvolutionGraph() ) {
+		Repository::Git::GitLuaGraphVisualizer visualizer = Repository::Git::GitLuaGraphVisualizer( Manager::GraphManager::getInstance()->getActiveGraph(), Manager::GraphManager::getInstance()->getActiveEvolutionGraph(), this->coreGraph->getCamera(), cb_git_evoVisualizeMethod->currentIndex() );
+		visualizer.setFilterAuthor( cb_git_authors->currentText() );
+		visualizer.setFilterFile( cb_git_files->currentText() );
+		visualizer.changeNodeRepresentation();
+	}
+}
+
+
+
+void CoreWindow::createEvolutionLuaGraph()
+{
+	QString file = Manager::GraphManager::getInstance()->getActiveEvolutionGraph()->getFilePath();
+
+	Repository::Git::GitUtils::changeCommit( Manager::GraphManager::getInstance()->getActiveEvolutionGraph()->getVersion( 0 )->getCommitId(), file );
+
+	std::cout << "You selected " << file.toStdString() << std::endl;
+	Lua::LuaInterface* lua = Lua::LuaInterface::getInstance();
+
+
+	Lua::LuaValueList path;
+	path.push_back( file.toStdString() );
+	QString createGraph[] = {"function_call_graph", "extractGraph"};
+	lua->callFunction( 2, createGraph, path.getValue() );
+	lua->doString( "getGraph = function_call_graph.getGraph" );
+	Lua::LuaInterface::getInstance()->doString( "getFullGraph = getGraph" );
+
+	Data::Graph* currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
+
+
+
+
+	Lua::LuaGraphVisualizer* visualizer = new Lua::GitGraphVisualizer( currentGraph, coreGraph->getCamera() );
+	visualizer->visualize();
+
+
+
+	/*
+	Lua::LuaInterface* lua = Lua::LuaInterface::getInstance();
+
+	Data::Graph* currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
+
+	if ( currentGraph != NULL ) {
+		Manager::GraphManager::getInstance()->closeGraph( currentGraph );
+	}
+
+	currentGraph = Manager::GraphManager::getInstance()->createNewGraph( "LuaGraph" );
+
+	layout->pause();
+	coreGraph->setNodesFreezed( true );
+
+	Lua::LuaGraph* graph = Lua::LuaGraph::getInstance();
+
+	Lua::LuaEdge* edge = new Lua::LuaEdge();
+	edge->setId( 12 );
+	edge->setLabel( "hrana" );
+	graph->getEdges()->insert( 12, edge );
+	edge->addIncidence( 21 );
+	edge->addIncidence( 22 );
+
+	Lua::LuaIncidence* incidence1 = new Lua::LuaIncidence();
+	incidence1->setId( 21 );
+	incidence1->setLabel( "incidence1" );
+
+	Lua::LuaIncidence* incidence2 = new Lua::LuaIncidence();
+	incidence2->setId( 22 );
+	incidence2->setLabel( "incidence2" );
+
+	Lua::LuaNode* node1 = new Lua::LuaNode();
+	node1->setId( 1 );
+	node1->setLabel( "Ahoj" );
+	graph->getNodes()->insert( 1, node1 );
+	node1->addIncidence( 21 );
+
+	Lua::LuaNode* node2 = new Lua::LuaNode();
+	node2->setId( 2 );
+	node2->setLabel( "Hallo" );
+	graph->getNodes()->insert( 2, node2 );
+	node2->addIncidence( 22 );
+
+	incidence1->setEdgeNode( 12, 1 );
+	incidence2->setEdgeNode( 12, 2 );
+	graph->getIncidences()->insert( 21, incidence1 );
+	graph->getIncidences()->insert( 22, incidence2 );
+
+	Data::Type* nodeType;
+	Data::Type* edgeType;
+
+	Importer::GraphOperations* operations = new Importer::GraphOperations( *currentGraph );
+	operations->addDefaultTypes( edgeType, nodeType );
+
+	for ( QMap<qlonglong, Lua::LuaNode*>::iterator i = graph->getNodes()->begin(); i != graph->getNodes()->end(); ++i ) {
+		osg::ref_ptr<Data::Node> n = currentGraph->addNode( i.key() , i.value()->getLabel(), nodeType );
+	//        setNodeParams( n, i.value(), osg::Vec4f( 1,1,1,1 ), 8 );
+	}
+
+	for ( QMap<qlonglong, Lua::LuaEdge*>::iterator i = graph->getEdges()->begin(); i != graph->getEdges()->end(); ++i ) {
+		if ( i.value()->getIncidences().size() != 2 ) {
+			throw new std::runtime_error( "Not a simple graph" );
+		}
+		Lua::LuaIncidence* const incid1 = graph->getIncidences()->value( i.value()->getIncidences()[0] );
+		Lua::LuaIncidence* const incid2 = graph->getIncidences()->value( i.value()->getIncidences()[1] );
+		osg::ref_ptr<Data::Node> srcNode = currentGraph->getNodes()->value( incid1->getEdgeNodePair().second );
+		osg::ref_ptr<Data::Node> dstNode = currentGraph->getNodes()->value( incid2->getEdgeNodePair().second );
+		osg::ref_ptr<Data::Edge> newEdge;
+		if ( incid1->getOriented() ) {
+			if ( incid1->getOutGoing() ) {
+				newEdge = currentGraph->addEdge( i.key(), i.value()->getLabel(), dstNode, srcNode, edgeType, true );
+			}
+			else {
+				newEdge = currentGraph->addEdge( i.key(), i.value()->getLabel(), srcNode, dstNode, edgeType, true );
+			}
+		}
+		else {
+			newEdge = currentGraph->addEdge( i.key(), i.value()->getLabel(), srcNode, dstNode, edgeType, false );
+		}
+		newEdge->setCamera( coreGraph->getCamera() );
+	//        setEdgeParams( newEdge, i.value(), osg::Vec4f( 1,1,1,1 ) );
+	}
+	//    graph->setObserver( this );
+
+	QString metaNodeName = "metaNode";
+	QString metaEdgeName = "metaEdge";
+	osg::ref_ptr<Data::Node> filesAnchor = currentGraph->addNode( std::numeric_limits<qlonglong>::max(), metaNodeName, currentGraph->getNodeMetaType(), osg::Vec3( 0, 0, 500 ) );
+	osg::ref_ptr<Data::Node> functionsAnchor = currentGraph->addNode( std::numeric_limits<qlonglong>::max() - 1, metaNodeName, currentGraph->getNodeMetaType(), osg::Vec3( 0, 0, -500 ) );
+	filesAnchor->setColor( osg::Vec4( 0,0,0,0 ) );
+	functionsAnchor->setColor( osg::Vec4( 0,0,0,0 ) );
+
+	//    for ( QMap<qlonglong, Lua::LuaNode*>::iterator i = graph->getNodes()->begin(); i != graph->getNodes()->end(); ++i ) {
+	//        if ( i.value()->getParams().type() == 0 ) {
+	//            continue;
+	//        }
+	//        if ( i.value()->getParams()["root"]== true ) {
+	//            osg::ref_ptr<Data::Node> root = currentGraph->getNodes()->value( i.key() );
+	//            osg::ref_ptr<Data::Edge> metaLink = currentGraph->addEdge( metaEdgeName, root, filesAnchor, currentGraph->getEdgeMetaType(), false );
+	//            metaLink->setEdgeColor( osg::Vec4( 0,0,0,0 ) );
+	//            metaLink->setInvisible( true );
+	//        }
+	//        if ( i.value()->getParams()["type"] == "function" ) {
+	//            osg::ref_ptr<Data::Node> func = currentGraph->getNodes()->value( i.key() );
+	//            osg::ref_ptr<Data::Edge> metaLink = currentGraph->addEdge( metaEdgeName, func, functionsAnchor, currentGraph->getEdgeMetaType(), false );
+	//            metaLink->setEdgeColor( osg::Vec4( 0,0,0,0 ) );
+	//            metaLink->setInvisible( true );
+	//            metaLink->setEdgeStrength( 0.1f );
+	//        }
+	//    }
+
+	//    Lua::LuaGraphVisualizer* visualizer = new Lua::SimpleGraphVisualizer( currentGraph, coreGraph->getCamera() );
+	//    visualizer->visualize();
+
+	coreGraph->reloadConfig();
+	if ( isPlaying ) {
+		layout->play();
+		coreGraph->setNodesFreezed( false );
+	}
+	*/
+}
+
+//jurik
+void CoreWindow::lightClicked()
+{
+	// chb_light is checked
+	if ( chb_light->isChecked() ) {
+
+		this->coreGraph->getScene()->getOrCreateStateSet()->setMode( GL_LIGHT0,osg::StateAttribute::OFF );
+		this->coreGraph->getScene()->getOrCreateStateSet()->setMode( GL_LIGHT1,osg::StateAttribute::ON );
+	}
+	else {
+
+		this->coreGraph->getScene()->getOrCreateStateSet()->setMode( GL_LIGHT0,osg::StateAttribute::ON );
+		this->coreGraph->getScene()->getOrCreateStateSet()->setMode( GL_LIGHT1,osg::StateAttribute::OFF );
+	}
+}
+
+void CoreWindow::shadowClicked()
+{
+	// chb_light is checked
+	if ( chb_shadow->isChecked() ) {
+
+		this->coreGraph->turnOnShadows();
+	}
+	else {
+
+		this->coreGraph->turnOffShadows();
+	}
+}
+
+void CoreWindow::baseClicked()
+{
+	// chb_base is checked
+	if ( chb_base->isChecked() ) {
+
+		this->layout->pause();
+		this->coreGraph->turnOnBase();
+		this->coreGraph->scaleGraphToBase();
+		this->layout->play();
+
+	}
+	else {
+		this->coreGraph->turnOffBase();
+	}
+}
+
+void CoreWindow::axesClicked()
+{
+	// chb_axes is checked
+	if ( chb_axes->isChecked() ) {
+
+		this->coreGraph->turnAxes( true );
+	}
+	else {
+
+		this->coreGraph->turnAxes( false );
+	}
+}
+
+void CoreWindow::scaleArucoGraphToBase()
+{
+	this->layout->pause();
+	this->coreGraph->scaleGraphToBase();
+	this->layout->play();
+}
+
+//works only from softVis to ArUco
+void CoreWindow::swapManipulator()
+{
+	viewerWidget->setCameraManipulator( NULL );
+}
+//*****
+
+void CoreWindow::createProjARWindow()
+{
+	QOSG::ProjectiveARCore::getInstance( NULL, this )->init( );
 }
 
 } // namespace QOSG

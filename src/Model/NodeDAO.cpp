@@ -42,7 +42,7 @@ bool Model::NodeDAO::addNodesToDB( QSqlDatabase* conn, QMap<qlonglong, osg::ref_
 
 		query->prepare( "INSERT INTO nodes (node_id, name, type_id, graph_id, meta, fixed, parent_id) VALUES (:node_id, :name, :type_id, :graph_id, :meta, :fixed, :parent_id)" );
 		query->bindValue( ":node_id", iNodes.value()->getId() );
-		query->bindValue( ":name", ( ( Data::AbsNode* )iNodes.value() )->getName() );
+		query->bindValue( ":name", ( static_cast<Data::AbsNode*>( iNodes.value() ) )->getName() );
 		query->bindValue( ":type_id", iNodes.value()->getType()->getId() );
 		query->bindValue( ":graph_id", iNodes.value()->getGraph()->getId() );
 		query->bindValue( ":meta", false );
@@ -101,7 +101,7 @@ bool Model::NodeDAO::addMetaNodesToDB( QSqlDatabase* conn, QMap<qlonglong, osg::
 
 		query->prepare( "INSERT INTO nodes (node_id, name, type_id, graph_id, meta, fixed, layout_id, parent_id) VALUES (:node_id, :name, :type_id, :graph_id, :meta, :fixed, :layout_id, :parent_id)" );
 		query->bindValue( ":node_id", nodeID );
-		query->bindValue( ":name", ( ( Data::AbsNode* )iNodes.value() )->getName() );
+		query->bindValue( ":name", ( static_cast<Data::AbsNode*>( iNodes.value() ) )->getName() );
 		query->bindValue( ":type_id", iNodes.value()->getType()->getId() );
 		query->bindValue( ":graph_id", iNodes.value()->getGraph()->getId() );
 		query->bindValue( ":meta", true );
@@ -308,14 +308,15 @@ QSqlQuery* Model::NodeDAO::getNodesQuery( QSqlDatabase* conn, bool* error, qlong
 {
 	*error = FALSE;
 	QSqlQuery* query;
-	query = new QSqlQuery( *conn );
 
 	//check if we have connection
 	if ( conn==NULL || !conn->isOpen() ) {
 		qDebug() << "[Model::NodeDAO::getNodes] Connection to DB not opened.";
 		*error = TRUE;
-		return query;
+		return NULL;
 	}
+
+	query = new QSqlQuery( *conn );
 
 	//vyberame z databazy vsetky uzly podla ID grafu, layoutu a nadradeneho uzla
 	query->prepare( "SELECT * "
@@ -341,7 +342,6 @@ QMap<qlonglong, osg::Vec3f> Model::NodeDAO::getNodesPositions( QSqlDatabase* con
 	QMap<qlonglong, osg::Vec3f> positions;
 	*error = FALSE;
 	QSqlQuery* query;
-	query = new QSqlQuery( *conn );
 	osg::Vec3f position;
 	qlonglong nodeId;
 
@@ -351,6 +351,8 @@ QMap<qlonglong, osg::Vec3f> Model::NodeDAO::getNodesPositions( QSqlDatabase* con
 		*error = TRUE;
 		return positions;
 	}
+
+	query = new QSqlQuery( *conn );
 
 	//vyberame z databazy pozicie uzlov podla ID grafu a layoutu
 	query->prepare( "SELECT * "
@@ -412,7 +414,7 @@ bool Model::NodeDAO::checkIfExists( Data::Node* node, QSqlDatabase* conn )
 {
 	if ( conn==NULL || !conn->isOpen() ) { //check if we have connection
 		qDebug() << "[Model::NodeDAO::checkIfExists] Connection to DB not opened.";
-		return NULL;
+		return ( bool* )NULL;
 	}
 	else if ( node==NULL ) {
 		qDebug() << "[Model::NodeDAO::checkIfExists] Invalid parameter - node is NULL.";
@@ -434,7 +436,7 @@ bool Model::NodeDAO::checkIfExists( Data::Node* node, QSqlDatabase* conn )
 	query->bindValue( ":graph_id", node->getGraph()->getId() );
 	if ( !query->exec() ) {
 		qDebug() << "[Model::NodeDAO::checkIfExists] Could not perform query on DB: " << query->lastError().databaseText();
-		return NULL;
+		return ( bool* )NULL;
 	}
 	if ( query->next() && query->value( 0 )==1 ) {
 		return true;
@@ -448,7 +450,7 @@ bool Model::NodeDAO::removeNode( Data::Node* node, QSqlDatabase* conn )
 {
 	if ( conn==NULL || !conn->isOpen() ) { //check if we have connection
 		qDebug() << "[Model::NodeDAO::removeNode] Connection to DB not opened.";
-		return NULL;
+		return ( bool* )NULL;
 	}
 	else if ( node==NULL ) {
 		qDebug() << "[Model::NodeDAO::removeNode] Invalid parameter - node is NULL.";
@@ -479,7 +481,7 @@ bool Model::NodeDAO::removeNodes( qlonglong graphID, QSqlDatabase* conn )
 {
 	if ( conn==NULL || !conn->isOpen() ) {
 		qDebug() << "[Model::NodeDAO::removeNodes] Connection to DB not opened.";
-		return NULL;
+		return ( bool* )NULL;
 	}
 
 	QSqlQuery* query = new QSqlQuery( *conn );
@@ -505,7 +507,7 @@ bool Model::NodeDAO::removeNodes( qlonglong graphID, qlonglong layoutID, QSqlDat
 {
 	if ( conn==NULL || !conn->isOpen() ) {
 		qDebug() << "[Model::NodeDAO::removeNodes] Connection to DB not opened.";
-		return NULL;
+		return ( bool* )NULL;
 	}
 
 	QSqlQuery* query = new QSqlQuery( *conn );
@@ -625,9 +627,29 @@ QMap<qlonglong, osg::Vec4f> Model::NodeDAO::getColors( QSqlDatabase* conn, bool*
 	QMap<qlonglong, QString>::iterator iter_a;
 
 	nodeColorR = getSettings( conn, &error2, graphID, layoutID, "color_r" );
+	if ( error2 ) {
+		qDebug() << "[Model::NodeDAO::getColors] Could not get color_r setting";
+		*error = error2;
+		return colors;
+	}
 	nodeColorG = getSettings( conn, &error2, graphID, layoutID, "color_g" );
+	if ( error2 ) {
+		qDebug() << "[Model::NodeDAO::getColors] Could not get color_g setting";
+		*error = error2;
+		return colors;
+	}
 	nodeColorB = getSettings( conn, &error2, graphID, layoutID, "color_b" );
+	if ( error2 ) {
+		qDebug() << "[Model::NodeDAO::getColors] Could not get color_b setting";
+		*error = error2;
+		return colors;
+	}
 	nodeColorA = getSettings( conn, &error2, graphID, layoutID, "color_a" );
+	if ( error2 ) {
+		qDebug() << "[Model::NodeDAO::getColors] Could not get color_a setting";
+		*error = error2;
+		return colors;
+	}
 
 	//nacitavame z databazy farby podla ID grafu a layoutu
 	for ( iter_r = nodeColorR.begin(); iter_r != nodeColorR.end(); ++iter_r ) {
@@ -656,15 +678,18 @@ QMap<qlonglong, float> Model::NodeDAO::getScales( QSqlDatabase* conn, bool* erro
 	QMap<qlonglong, QString>::iterator iter;
 
 	nodeScale = getSettings( conn, &error2, graphID, layoutID, "scale" );
+	if ( !error2 ) {
+		//nacitavame z databazy velkost layoutu a rozlozenia grafu
+		for ( iter = nodeScale.begin(); iter != nodeScale.end(); ++iter ) {
+			id = iter.key();
 
-	//nacitavame z databazy velkost layoutu a rozlozenia grafu
-	for ( iter = nodeScale.begin(); iter != nodeScale.end(); ++iter ) {
-		id = iter.key();
-
-		float scale = iter.value().toFloat();
-		scales.insert( id, scale );
+			float scale = iter.value().toFloat();
+			scales.insert( id, scale );
+		}
 	}
-
+	else {
+		qDebug() << "[Model::NodeDAO::getScales] Could not get scale setting";
+	}
 	*error = error2;
 
 	return scales;
@@ -681,13 +706,17 @@ QMap<qlonglong, int> Model::NodeDAO::getMasks( QSqlDatabase* conn, bool* error, 
 	QMap<qlonglong, QString>::iterator iter;
 
 	nodeMask = getSettings( conn, &error2, graphID, layoutID, "mask" );
+	if ( !error2 ) {
+		//nacitavame z databazy masky uzlov
+		for ( iter = nodeMask.begin(); iter != nodeMask.end(); ++iter ) {
+			id = iter.key();
 
-	//nacitavame z databazy masky uzlov
-	for ( iter = nodeMask.begin(); iter != nodeMask.end(); ++iter ) {
-		id = iter.key();
-
-		int mask = iter.value().toInt();
-		masks.insert( id, mask );
+			int mask = iter.value().toInt();
+			masks.insert( id, mask );
+		}
+	}
+	else {
+		qDebug() << "[Model::NodeDAO::getMasks] Could not get mask setting";
 	}
 
 	*error = error2;
@@ -707,11 +736,15 @@ QList<qlonglong> Model::NodeDAO::getParents( QSqlDatabase* conn, bool* error, ql
 	QMap<qlonglong, QString>::iterator iter;
 
 	nodeParents = getSettings( conn, &error2, graphID, layoutID, "is_parent" );
-
-	//nacitavame z databazy rodicovske/nadradene uzly
-	for ( iter = nodeParents.begin(); iter != nodeParents.end(); ++iter ) {
-		id = iter.key();
-		parents << id;
+	if ( !error2 ) {
+		//nacitavame z databazy rodicovske/nadradene uzly
+		for ( iter = nodeParents.begin(); iter != nodeParents.end(); ++iter ) {
+			id = iter.key();
+			parents << id;
+		}
+	}
+	else {
+		qDebug() << "[Model::NodeDAO::getParents] Could not get is_parent setting";
 	}
 
 	*error = error2;

@@ -1,7 +1,7 @@
 #include "Data/VizEdge.h"
 #include <QTextStream>
 
-Data::VizEdge::VizEdge( qlonglong id, QString name, Data::Graph* graph, bool isOriented, Data::Type* type, float scaling )
+Data::VizEdge::VizEdge( qlonglong id, QString name, Data::Graph* graph, bool isOriented, Data::Type* type, double scaling )
 	:AbsEdge( id,name, graph, isOriented, type )
 {
 	this->isInvisible = false;

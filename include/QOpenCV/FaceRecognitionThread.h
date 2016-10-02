@@ -52,6 +52,15 @@ signals:
 			 */
 	void sendEyesCoords( float x, float y, float distance );
 
+	/**
+	         * @author Autor: Viktor Kostan
+	         * @brief sendEyesRealCoords - Sends coords for monocular viewing. Sended real-world coords are in meters relative to camera ( [0,0,0] is in focal ).
+	         * @param x % distance from middle on X axis
+	         * @param y % distance from middle on Y axis
+	         * @param y % distance from middle on Y axis
+	         */
+	void sendEyesRealCoords( float x, float y, float z );
+
 public slots:
 	/**
 			 * @author Autor: Marek Jakab

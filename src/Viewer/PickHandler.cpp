@@ -12,7 +12,10 @@
 
 #include "Core/Core.h"
 #include "Layout/LayoutThread.h"
+#include "Layout/FRAlgorithm.h"
 #include "Layout/Shape_Cube.h"
+#include "Layout/FRAlgorithm.h"
+#include "City/Residence.h"
 
 #include "Util/ApplicationConfig.h"
 
@@ -165,7 +168,7 @@ bool PickHandler::handleScroll( const osgGA::GUIEventAdapter& ea, GUIActionAdapt
 {
 	if ( selectionType == SelectionType::CLUSTER && !pickedClusters.empty() ) {
 		QLinkedList<osg::ref_ptr<Data::Cluster> >::const_iterator i = pickedClusters.constBegin();
-		float scale = appConf->getValue( "Viewer.Display.NodeDistanceScale" ).toFloat();
+//		float scale = appConf->getValue( "Viewer.Display.NodeDistanceScale" ).toFloat();
 		while ( i != pickedClusters.constEnd() ) {
 			Layout::ShapeGetter_Cube* shapeGetter = ( *i )->getShapeGetter();
 			if ( shapeGetter != NULL ) {
@@ -200,7 +203,7 @@ bool PickHandler::handleScroll( const osgGA::GUIEventAdapter& ea, GUIActionAdapt
 					}
 
 					if ( isXPressed ) {
-						shapeGetter->move( shapeGetter->getDistanceX() / 5 * moveLength,0,0 );
+						shapeGetter->move( shapeGetter->getDistanceX() / 5.0 * moveLength,0,0 );
 					}
 					else if ( isYPressed ) {
 						shapeGetter->move( 0,shapeGetter->getDistanceY() / 5 * moveLength,0 );
@@ -247,6 +250,8 @@ bool PickHandler::handleKeyUp( const osgGA::GUIEventAdapter& ea, GUIActionAdapte
 
 bool PickHandler::handleKeyDown( const osgGA::GUIEventAdapter& ea, GUIActionAdapter& aa )
 {
+	static unsigned int splitviewMode = 0;
+
 	if ( ea.getKey() == osgGA::GUIEventAdapter::KEY_Control_R || ea.getKey() == osgGA::GUIEventAdapter::KEY_Control_L ) {
 		isCtrlPressed = true;
 	}
@@ -276,10 +281,46 @@ bool PickHandler::handleKeyDown( const osgGA::GUIEventAdapter& ea, GUIActionAdap
 	else if ( ea.getKey() == osgGA::GUIEventAdapter::KEY_N ) {
 		this->selectAllNeighbors( this->pickedNodes );
 	}
+	// horvath
+	else if ( ea.getKey() == 'i' || ea.getKey() == 'I' ) {
+		coreGraph->showHud( !coreGraph->isHudDisplayed() );
+	}
+	//jurik
+	else if ( ea.getKey() == osgGA::GUIEventAdapter::KEY_O ) {
+		if ( isCtrlPressed ) {
+			//scale down
+			coreGraph->scaleNodes( false );
+		}
+		else {
+			//scale up
+			coreGraph->scaleNodes( true );
+		}
+	}
+	else if ( ea.getKey() == osgGA::GUIEventAdapter::KEY_P ) {
+		Layout::LayoutThread* layout = AppCore::Core::getInstance()->getLayoutThread();
+		float distance = layout->getAlg()->getMaxDistance();
 
+		if ( isCtrlPressed ) {
+			layout->pause();
+			coreGraph->setNodesFreezed( true );
+			layout->getAlg()->setMaxDistance( distance * 0.8f );
+			coreGraph->scaleGraphToBase();
+			coreGraph->setNodesFreezed( false );
+			layout->play();
+		}
+		else {
+			layout->pause();
+			coreGraph->setNodesFreezed( true );
+			layout->getAlg()->setMaxDistance( distance * 1.2f );
+			coreGraph->scaleGraphToBase();
+			coreGraph->setNodesFreezed( false );
+			layout->play();
+		}
+	}
+	//*****
 	// FULLSCREEN
 	else if ( ea.getKey() == 'l' || ea.getKey() == 'L' ) {
-		bool hideToolbars = appConf->getValue( "Viewer.Fullscreen" ).toInt();
+		bool hideToolbars = ( appConf->getValue( "Viewer.Fullscreen" ).toInt() == 0 ? false : true );
 
 		if ( AppCore::Core::getInstance()->getCoreWindow()->isFullScreen() ) {
 			AppCore::Core::getInstance()->getCoreWindow()->menuBar()->show();
@@ -332,7 +373,75 @@ bool PickHandler::handleKeyDown( const osgGA::GUIEventAdapter& ea, GUIActionAdap
 		}
 
 	}
+	//split stereo 3D
+	else if ( ea.getKey() == osgGA::GUIEventAdapter::KEY_G ) {
+		if ( splitviewMode == 0 ) {
+			osg::DisplaySettings::instance()->setStereoMode( osg::DisplaySettings::StereoMode::QUAD_BUFFER );
+			osg::DisplaySettings::instance()->setStereo( TRUE );
+			qDebug() << "Turned on quad buffer stereo 3D";
+		}
+		else if ( splitviewMode == 1 ) {
+			//turn on
+			osg::DisplaySettings::instance()->setStereoMode( osg::DisplaySettings::StereoMode::VERTICAL_SPLIT );
+			osg::DisplaySettings::instance()->setScreenDistance( Util::ApplicationConfig::get()->getValue( "Display.Settings.Vuzix.Distance" ).toFloat() );
+			osg::DisplaySettings::instance()->setScreenHeight( Util::ApplicationConfig::get()->getValue( "Display.Settings.Vuzix.Height" ).toFloat() );
+			osg::DisplaySettings::instance()->setScreenWidth( Util::ApplicationConfig::get()->getValue( "Display.Settings.Vuzix.Width" ).toFloat() );
 
+			qDebug() << "Turned on split stereo 3D - vertical split";
+		}
+		else if ( splitviewMode == 2 ) {
+			osg::DisplaySettings::instance()->setStereoMode( osg::DisplaySettings::StereoMode::HORIZONTAL_SPLIT );
+			qDebug() << "Turned on split stereo 3D - horizontal split";
+		}
+		else {
+			//turn off
+			osg::DisplaySettings::instance()->setStereo( FALSE );
+			//reset to default config
+			osg::DisplaySettings::instance()->setScreenDistance( Util::ApplicationConfig::get()->getValue( "Display.Settings.Default.Distance" ).toFloat() );
+			osg::DisplaySettings::instance()->setScreenHeight( Util::ApplicationConfig::get()->getValue( "Display.Settings.Default.Height" ).toFloat() );
+			osg::DisplaySettings::instance()->setScreenWidth( Util::ApplicationConfig::get()->getValue( "Display.Settings.Default.Width" ).toFloat() );
+			osg::DisplaySettings::instance()->setEyeSeparation( Util::ApplicationConfig::get()->getValue( "Display.Settings.Default.EyeSeparation" ).toFloat() );
+
+			qDebug() << "Turned off split stereo 3D";
+		}
+		splitviewMode = ( splitviewMode + 1 ) % 4;	//rotate modes : quad / vertical / horizontal / off
+	}
+	//adjust eye distance, 0.001m change
+	else if ( ea.getKey() == osgGA::GUIEventAdapter::KEY_H && ( splitviewMode != 0 ) ) {
+		//-
+		float distance = osg::DisplaySettings::instance()->getEyeSeparation();
+		distance = distance - 0.001f;
+		osg::DisplaySettings::instance()->setEyeSeparation( distance );
+		qDebug() << "Eye distance : " << distance;
+	}
+	else if ( ea.getKey() == osgGA::GUIEventAdapter::KEY_J && ( splitviewMode != 0 ) ) {
+		//+
+		float distance = osg::DisplaySettings::instance()->getEyeSeparation();
+		distance = distance + 0.001f;
+		osg::DisplaySettings::instance()->setEyeSeparation( distance );
+		qDebug() << "Eye distance : " << distance;
+	}
+	else if ( ea.getKey() == osgGA::GUIEventAdapter::KEY_O ) {
+		if ( isCtrlPressed ) {
+			//scale down
+			coreGraph->scaleNodes( false );
+		}
+		else {
+			//scale up
+			coreGraph->scaleNodes( true );
+		}
+	}
+	else if ( ea.getKey() == osgGA::GUIEventAdapter::KEY_P ) {
+		Layout::LayoutThread* layout = AppCore::Core::getInstance()->getLayoutThread();
+		float distance = layout->getAlg()->getMaxDistance();
+
+		if ( isCtrlPressed ) {
+			layout->getAlg()->setMaxDistance( distance * 0.8f );
+		}
+		else {
+			layout->getAlg()->setMaxDistance( distance * 1.2f );
+		}
+	}
 
 	return false;
 }
@@ -351,6 +460,9 @@ bool PickHandler::handleRelease( const osgGA::GUIEventAdapter& ea, osgGA::GUIAct
 	// manipulator will handle it.)
 
 	leftButtonPressed = false;
+	rightButtonPressed = false;
+	initialX = 0;
+	initialY = 0;
 
 	if ( pickMode == PickMode::MULTI && isDrawingSelectionQuad ) {
 		float x, y, w, h;
@@ -438,6 +550,18 @@ bool PickHandler::handleDrag( const osgGA::GUIEventAdapter& ea, osgGA::GUIAction
 
 		return dragNode( viewer );
 	}
+	//jurik
+	else if ( rightButtonPressed && coreGraph->isArucoRunning() ) {
+
+		coreGraph->ratata( initialX,_mX,initialY,_mY );
+		if ( _mX > initialX+5 || _mX < initialX-5 ) {
+			initialX=_mX;
+		}
+		if ( _mY > initialY+5 || _mY < initialY-5 ) {
+			initialY=_mY;
+		}
+	}
+	//*****
 
 	return false;
 }
@@ -481,6 +605,12 @@ bool PickHandler::handlePush( const osgGA::GUIEventAdapter& ea, osgGA::GUIAction
 		}
 	}
 
+	if ( ea.getButtonMask() == osgGA::GUIEventAdapter::RIGHT_MOUSE_BUTTON ) {
+		rightButtonPressed = true;
+		initialX = ea.getX();
+		initialY = ea.getY();
+	}
+
 	_mX = ea.getX();
 	_mY = ea.getY();
 	return false;
@@ -503,6 +633,7 @@ bool PickHandler::pick( const double xMin, const double yMin, const double xMax,
 
 	bool result = false;
 
+	coreGraph->getHud()->setText( QString() );
 	if ( picker->containsIntersections() ) {
 		osgUtil::PolytopeIntersector::Intersections intersections = picker->getIntersections();
 
@@ -573,12 +704,25 @@ bool PickHandler::doSinglePick( osg::NodePath nodePath )
 
 bool PickHandler::doNodePick( osg::NodePath nodePath )
 {
-	Data::Node* n;
+	Data::Node* n = nullptr;
 	for ( unsigned int i = 0; i < nodePath.size(); i++ ) {
 		n = dynamic_cast<Data::Node*>( nodePath[i] );
 		if ( n != NULL ) {
 			break;
 		}
+	}
+
+	City::Building* b = nullptr;
+	for ( unsigned int i = 0; i < nodePath.size(); i++ ) {
+		b = dynamic_cast<City::Building*>( nodePath[i] );
+		if ( b != NULL ) {
+			break;
+		}
+	}
+
+	if ( b != NULL ) {
+		b->select( true );
+		coreGraph->getHud()->setText( b->getInfo() );
 	}
 
 	if ( n != NULL ) {
@@ -637,14 +781,20 @@ bool PickHandler::doNodePick( osg::NodePath nodePath )
 
 bool PickHandler::doEdgePick( osg::NodePath nodePath )
 {
-	Data::Edge* e = dynamic_cast<Data::Edge*>( nodePath[nodePath.size() - 1] );
+	Data::Edge* e = nullptr;
+	for ( unsigned int i = 0; i < nodePath.size(); i++ ) {
+		e = dynamic_cast<Data::Edge*>( nodePath[i] );
+		if ( e != NULL ) {
+			break;
+		}
+	}
 
 	if ( e != NULL ) {
 		if ( isAltPressed && pickMode == PickMode::NONE && !isShiftPressed ) {
 			osg::ref_ptr<osg::Vec3Array> coords = e->getCooridnates();
 
 			cameraManipulator->setCenter( DataHelper::getMassCenter( coords ) );
-			cameraManipulator->setDistance( Util::ApplicationConfig::get()->getValue( "Viewer.PickHandler.PickedEdgeDistance" ).toFloat() );
+			cameraManipulator->setDistance( Util::ApplicationConfig::get()->getValue( "Viewer.PickHandler.PickedEdgeDistance" ).toDouble() );
 		}
 		else if ( isAltPressed && pickMode == PickMode::NONE && isShiftPressed ) {
 			if ( appConf->getValue( "Viewer.PickHandler.SelectInterestPoints" ).toInt() == 1 ) {
@@ -713,7 +863,7 @@ bool PickHandler::doClusterPick( osg::NodePath nodePath )
 
 }
 
-void PickHandler::selectAllNeighbors( QLinkedList<osg::ref_ptr<Data::Node>> nodes )
+void PickHandler::selectAllNeighbors( QLinkedList<osg::ref_ptr<Data::Node > > nodes )
 {
 	if ( nodes.count() > 0 && !isNeighborsSelection ) {
 		QLinkedList<osg::ref_ptr<Data::Node> >::const_iterator i = nodes.constBegin();
@@ -941,6 +1091,14 @@ void PickHandler::unselectPickedNodes( osg::ref_ptr<Data::Node> node )
 
 		while ( i != pickedNodes.constEnd() ) {
 			( *i )->setSelected( false );
+			auto r = ( *i )->getResidence();
+			if ( r ) {
+				r->selectAll( false );
+			}
+			auto b = ( *i )->getBuilding();
+			if ( b ) {
+				b->select( false );
+			}
 			++i;
 		}
 
@@ -1029,7 +1187,7 @@ osg::Vec3 PickHandler::getSelectionCenterNnE()
 			z += ( *i )->getCurrentPosition().z();
 			++i;
 		}
-		return osg::Vec3( x/pickedNodesCount,y/pickedNodesCount,z/pickedNodesCount );
+		return osg::Vec3( x/static_cast<float>( pickedNodesCount ),y/static_cast<float>( pickedNodesCount ),z/static_cast<float>( pickedNodesCount ) );
 	}
 
 	//only edges selection - computes and returns center of edges selection
@@ -1040,7 +1198,7 @@ osg::Vec3 PickHandler::getSelectionCenterNnE()
 			z += ( ( *j )->getSrcNode()->getCurrentPosition().z() + ( *j )->getDstNode()->getCurrentPosition().z() )/2;
 			++j;
 		}
-		return osg::Vec3( x/pickedEdgesCount,y/pickedEdgesCount,z/pickedEdgesCount );
+		return osg::Vec3( x/static_cast<float>( pickedNodesCount ),y/static_cast<float>( pickedNodesCount ),z/static_cast<float>( pickedNodesCount ) );
 	}
 
 	//nodes and edges selection - computes and returns center of this selection
@@ -1057,7 +1215,7 @@ osg::Vec3 PickHandler::getSelectionCenterNnE()
 			z += ( *i )->getCurrentPosition().z();
 			++i;
 		}
-		return osg::Vec3( x/( pickedEdgesCount+pickedNodesCount ),y/( pickedEdgesCount+pickedNodesCount ),z/( pickedEdgesCount+pickedNodesCount ) );
+		return osg::Vec3( x/static_cast<float>( pickedEdgesCount+pickedNodesCount ),y/static_cast<float>( pickedEdgesCount+pickedNodesCount ),z/static_cast<float>( pickedEdgesCount+pickedNodesCount ) );
 	}
 
 	//if are all nodes and edges unselected, returns center of graph

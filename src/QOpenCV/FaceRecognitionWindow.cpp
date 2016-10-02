@@ -1,18 +1,9 @@
 #include "QOpenCV/FaceRecognitionWindow.h"
 
-#include <QtGui/QPushButton>
-#include <QtGui/QLabel>
-#include <QtGui/QRadioButton>
-#include <QtGui/QCheckBox>
-#include <QtGui/QVBoxLayout>
-#include <QtGui/QStackedLayout>
-#include <QCloseEvent>
 #include "OpenCV/CamSelectCore.h"
 
 #include "Util/ApplicationConfig.h"
 #include <opencv2/imgproc/imgproc.hpp>
-#include <QDebug>
-
 
 QOpenCV::FaceRecognitionWindow::FaceRecognitionWindow( QWidget* parent, QApplication* app )
 	: QDialog( parent )
@@ -312,7 +303,7 @@ void QOpenCV::FaceRecognitionWindow::setLabel( cv::Mat image )
 		return;
 	}
 
-	QImage qimage( reinterpret_cast<uchar*>( image.data ), image.cols, image.rows,static_cast<int>( image.step ), QImage::Format_RGB888 );
+	QImage qimage( image.data, image.cols, image.rows,static_cast<int>( image.step ), QImage::Format_RGB888 );
 
 	mWindowLabel->setPixmap( QPixmap::fromImage( qimage ) );
 

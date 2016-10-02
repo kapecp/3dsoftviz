@@ -45,7 +45,7 @@ public:
 		 * @param width Camera width
 		 * @param height Camera height
 		 */
-	void setCam( int dev_id, int width, int height );
+	void setCam( std::vector<OpenCV::CapVideo*>::size_type dev_id, int width, int height );
 
 private:
 	CamSelectCore();
@@ -58,7 +58,7 @@ private:
 	/**
 		 * @brief device_id Specific camera ID for selection
 		 */
-	int device_id;
+	std::vector<OpenCV::CapVideo*>::size_type device_id;
 	/**
 		 * @brief mCamSelectCore Instance for Singleton
 		 */

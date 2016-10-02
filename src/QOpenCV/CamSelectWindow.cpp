@@ -1,13 +1,7 @@
 #include "QOpenCV/CamSelectWindow.h"
-
-#include <QtGui/QLabel>
-#include <QtGui/QTreeView>
-#include <QtGui/QVBoxLayout>
-#include <QtGui/QPushButton>
-#include <QtGui/QStandardItemModel>
-#include <QDebug>
-
 #include "OpenCV/CamSelectCore.h"
+
+#include <vector>
 
 OpenCV::CamSelectWindow::CamSelectWindow( QWidget* parent, QApplication* app, QString stringdata ): QDialog( parent )
 {
@@ -85,7 +79,7 @@ void OpenCV::CamSelectWindow::commitChanges()
 		return;
 	}
 	int row = view->currentIndex().row();
-	OpenCV::CamSelectCore::getInstance()->setCam( row,
+	OpenCV::CamSelectCore::getInstance()->setCam( static_cast<std::vector<OpenCV::CapVideo*>::size_type>( row ),
 			model->item( row, 2 )->text().toInt(),
 			model->item( row, 2 )->text().toInt() );
 	this->close();

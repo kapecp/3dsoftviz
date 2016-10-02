@@ -3,8 +3,7 @@
 
 #include "LuaGraphObject.h"
 
-#include "QPair"
-#include "Q_LONG"
+#include <QPair>
 
 namespace Lua {
 

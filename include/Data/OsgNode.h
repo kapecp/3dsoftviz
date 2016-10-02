@@ -1,10 +1,17 @@
 #ifndef OSGNODE_H
 #define OSGNODE_H
 
+#include <osg/AutoTransform>
 #include <osg/Geode>
+#include <osg/Switch>
 #include <Data/Type.h>
 
 #include "Data/DbNode.h"
+#include <City/Building.h>
+
+namespace City {
+class Residence;
+}
 
 namespace Data {
 
@@ -37,12 +44,25 @@ public:
 	static osg::ref_ptr<osg::Drawable> createSquare( const float& scale, osg::StateSet* bbState );
 
 	/**
-	    *  \fn private static  createStateSet(Data::Type * type = 0)
-	    *  \brief Creates node stateset
-	    *  \param   type     node type
-	    *  \return osg::ref_ptr node stateset
-	    */
-	static osg::ref_ptr<osg::StateSet> createStateSet( Data::Type* type = 0 );
+	* \fn public setResidence
+	* \brief Sets subgraph for drawing residence of city.
+	* \param residence osg subgraph
+	*/
+	void setResidence( osg::Node* residence );
+
+	/**
+	* \fn public getResidence
+	* \brief Gets subgraph for drawing residence of city.
+	* \return osg::ref_ptr of residence osg subgraph
+	*/
+	City::Residence* getResidence();
+
+	/**
+	* \fn public getBuilding
+	* \brief Gets subgraph for drawing building of residence.
+	* \return osg::ref_ptr of building osg subgraph
+	*/
+	City::Building* getBuilding();
 
 	/**
 	     * \fn public constant targetPosition
@@ -193,7 +213,7 @@ public:
 		this->color = color;
 
 		if ( !selected ) {
-			setDrawableColor( 0, color );
+			setDrawableColor( color );
 		}
 	}
 
@@ -206,6 +226,8 @@ public:
 	{
 		return color;
 	}
+
+	void setScale( float val ) override;
 
 	bool setInvisible( bool invisible );
 
@@ -232,10 +254,10 @@ public:
 	void setSelected( bool selected )
 	{
 		if ( selected ) {
-			setDrawableColor( 0, osg::Vec4( 0.0f, 0.1f, 1.0f, 1.0f ) );    // color of selected node
+			setDrawableColor( osg::Vec4( 0.0f, 0.1f, 1.0f, 1.0f ) );    // color of selected node
 		}
 		else {
-			setDrawableColor( 0, color );
+			setDrawableColor( color );
 		}
 
 		this->selected = selected;
@@ -269,10 +291,9 @@ public:
 	/**
 	    *  \fn private  setDrawableColor(int pos, osg::Vec4 color)
 	    *  \brief Sets drawble color
-	    *  \param     pos     drawable position
 	    *  \param     color     drawable color
 	    */
-	void setDrawableColor( int pos, osg::Vec4 color );
+	void setDrawableColor( osg::Vec4 color );
 
 	/**
 	    *  \fn inline public  setUsingInterpolation(bool val)
@@ -291,9 +312,89 @@ public:
 	    */
 	void setSelectedWith( osg::Vec4 selColor )
 	{
-		setDrawableColor( 0, selColor );  // color of selected node
+		setDrawableColor( selColor );  // color of selected node
 		this->selected = true;
 	}
+
+	void setVisual( unsigned int index );
+
+
+	/**
+	    *  \fn public  reloadConfig
+	    *  \brief Reloads node configuration
+	    */
+	void reloadConfig();
+
+	/**
+	    *  \fn public  showLabel(bool visible)
+	    *  \brief If true, node name will be shown.
+	    *  \param     visible     node name shown
+	    */
+	void showLabel( bool visible, bool labelsForResidence );
+
+	/**
+	     * \fn public constant isFocused
+	     * \brief Gets whether this node is focused at the moment.
+	     * \return whether this node is focused at the moment
+	     */
+	bool isFocused() const;
+
+	/**
+	     * \fn public setIsFocused(bool value)
+	     * \brief Sets whether this node is focused at the moment.
+	     * \param value whether this node is focused at the moment
+	     */
+	void setIsFocused( bool value );
+
+
+	/**
+	    *  \fn private static  createNodeSquare(const float & scale, osg::StateSet* bbState)
+	    *  \brief Creates node drawable - square
+	    *  \param	  scale	node scale
+	    *  \param  bbState	node stateset
+	    *  \return osg::ref_ptr node geode
+	    */
+	static osg::ref_ptr<osg::Node> createNodeSquare( const float& scale, osg::StateSet* bbState );
+
+	/**
+	    *  \fn private static  createNodeSphere(const float & scale, osg::StateSet* bbState)
+	    *  \brief Creates node drawable - sphere
+	    *  \param	  scale	node scale
+	    *  \param  bbState	node stateset
+	    *  \return osg::ref_ptr node geode
+	    */
+	static osg::ref_ptr<osg::Node> createNodeSphere( const float& scale, osg::StateSet* bbState );
+
+	/**
+	*  \fn private static  createNodeResidence(const float & scale, osg::StateSet* bbState)
+	*  \brief Creates node drawable - residence
+	*  \param	  scale	node scale
+	*  \param  bbState	node stateset
+	*  \return osg::ref_ptr node geode
+	*/
+	static osg::ref_ptr<osg::Node> createNodeResidence( const float& scale );
+
+	/**
+	    *  \fn private static  createStateSet(Data::Type * type = 0)
+	    *  \brief Creates node stateset
+	    *  \param   type     node type
+	    *  \return osg::ref_ptr node stateset
+	    */
+	static osg::ref_ptr<osg::StateSet> createStateSet( const osg::ref_ptr<osg::Texture2D>& texture );
+
+	/**
+	    *  \fn private static  createLabel(const float & scale, QString name)
+	    *  \brief Creates node label from name
+	    *  \param      scale     label scale
+	    *  \param       name     label text
+	    *  \return osg::ref_ptr node label
+	    */
+	static osg::ref_ptr<osg::Node> createLabel( const float& scale, QString name );
+
+	static const int INDEX_LABEL = 0;
+	static const int INDEX_SQUARE = 1;
+	static const int INDEX_SPHERE = 2;
+	static const int INDEX_RESIDENCE = 3;
 
 protected:
 	/**
@@ -367,6 +468,12 @@ protected:
 	osg::Geode* ball;
 
 	osg::ref_ptr<osg::AutoTransform> outBall;
+
+	/**
+	     * bool mIsFocused
+	     * \brief Flag whether this node is focused at the moment.
+	     */
+	bool mIsFocused;
 
 };
 }

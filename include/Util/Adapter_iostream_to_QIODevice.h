@@ -50,6 +50,7 @@ public:
 	{
 		return true;
 	}
+	using QIODevice::open;
 
 	/**
 	 * \brief Close method provided for compatibility with QIODevice.
@@ -144,12 +145,14 @@ protected:
 		throw "not implemented";
 
 	}
+	using QIODevice::readLineData;
 
 	/***/
 	virtual qint64 writeData( const char /* *data*/, qint64 /*len*/ )
 	{
 		throw "not implemented";
 	}
+	using QIODevice::writeData;
 
 private:
 

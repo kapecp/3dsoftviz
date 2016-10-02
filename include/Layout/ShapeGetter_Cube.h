@@ -28,9 +28,9 @@ public:
 	virtual  QSet<Data::Node*> getNodesOfShape();
 
 	void move( double lengthX, double lengthY, double lengthZ );
-	double getDistanceX();
-	double getDistanceY();
-	double getDistanceZ();
+	float getDistanceX();
+	float getDistanceY();
+	float getDistanceZ();
 
 	osg::ref_ptr<Data::Node> getCenterNode()
 	{

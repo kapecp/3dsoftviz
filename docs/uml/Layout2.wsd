@@ -1,0 +1,80 @@
+// Module Layout
+// Autor: Team Reality Not Found
+
+@startuml
+scale 3000 width
+
+!define frAlg(x) FRAlgorithm
+!define loThr(x) LayoutThread
+!define rdlLo(x) RadialLayout
+!define rstrRmvHndRmv(x) RestrictionRemovalHandler_RestrictionNodesRemover
+!define rstrRmvHnd(x) RestrictionRemovalHandler
+!define rstrMng(x) RestrictionsManager
+!define rstrObs(x) RestrictionsObserver
+!define sp(x) Shape
+!define spAbsCb(x) Shape_AbstractCube
+!define spAbsSph(x) Shape_AbstractSphere
+!define spCmps(x) Shape_Composite
+!define spCnSfr(x) Shape_ConeSurface
+!define spCb(x) Shape_Cube
+!define spCldSrf(x) Shape_CylinderSurface
+!define spInts(x) Shape_Intersection
+!define spNl(x) Shape_Null
+!define spPln(x) Shape_Plane
+!define spSph(x) Shape_Sphere
+!define spSphSrf(x) Shape_SphereSurface
+!define shpGt(x) ShapeGetter
+!define crcTrNds(x) ShapeGetter_Circle_ByThreeNodes
+!define cnSrfCmr(x) ShapeGetter_ConeSurface_ByCamera
+!define cnst(x) ShapeGetter_Const
+!define cb(x) ShapeGetter_Cube
+!define cldrSrfCmr(x) ShapeGetter_CylinderSurface_ByCamera
+!define plnTrNd(x) ShapeGetter_Plane_ByThreeNodes
+!define spArnNd(x) ShapeGetter_Sphere_AroundNode
+!define spTwNd(x) ShapeGetter_SphereSurface_ByTwoNodes
+!define spPlnTrNd(x) ShapeGetter_SpherePlane_ByThreeNodes
+!define spSfrTwNd(x) ShapeGetter_SphereSurface_ByTwoNodes
+!define spVst(x) ShapeVisitor
+!define cmprt(x) ShapeVisitor_Comparator
+!define dstFrFc(x) ShapeVisitor_DistanceFromFocusGetter
+!define rstrPst(x) ShapeVisitor_RestrictedPositionGetter
+!define dtGr(x) Data.Graph
+!define osg(x) OSG.OSG
+!define dtNd(x) Data.Node
+!define dtEg(x) Data.Edge
+!define appCfg(x) Util.ApplicationConfig
+!define dtGrSpTr(x) Data.GraphSpanningTree
+!define vwrRstrV(x) Vwr.RestrictionVisualizationsGroup
+!define vwrRstrM(x) Vwr.RestrictionManipulatorsGroup
+!define vwrQT(x) QOSG.ViewerQT
+
+package Layout{
+	class osg() #red
+
+
+	
+	cldrSrfCmr() --|> shpGt()
+	cldrSrfCmr() -- vwrQT()
+	cldrSrfCmr() -- dtNd()
+	
+	plnTrNd() --|> shpGt()
+	plnTrNd() -- dtNd()
+	plnTrNd() -- osg()
+	
+	spArnNd() --|> shpGt()
+	spArnNd() -- osg()
+	spArnNd() -- dtNd()
+	
+	spTwNd() --|> shpGt()
+	spTwNd() -- dtNd()
+	spTwNd() -- osg()
+
+	spPlnTrNd() --|> shpGt()
+	spPlnTrNd() -- dtNd()
+
+	spSfrTwNd() --|> shpGt()
+	spSfrTwNd() -- dtNd()
+	
+
+	}
+@enduml

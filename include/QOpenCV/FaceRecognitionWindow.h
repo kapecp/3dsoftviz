@@ -1,7 +1,16 @@
 #ifndef FACERECOGNITIONWINDOW_H
 #define FACERECOGNITIONWINDOW_H
 
+#include <QCheckBox>
+#include <QCloseEvent>
+#include <QDebug>
 #include <QDialog>
+#include <QLabel>
+#include <QPushButton>
+#include <QRadioButton>
+#include <QStackedLayout>
+#include <QVBoxLayout>
+
 #include <opencv2/core/core.hpp>
 
 

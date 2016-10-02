@@ -1,0 +1,21 @@
+// Module AppCore
+// Autor: Team Reality Not Found
+
+@startuml
+scale 800 width
+
+!define cr(x) Core
+!define cw(x) QOSG.CoreWindow
+!define lth(x) Layout.LayoutThread
+!define mswn(x) QOSG.MessageWindows
+!define crgr(x) Vwr.CoreGraph
+!define fraalg(x) Layout.FRAlgorithm
+
+package AppCore{
+cr() -- cw()
+cr() -- lth()
+cr() -- mswn()
+cr() -- crgr()
+cr() -- fraalg()
+}
+@enduml

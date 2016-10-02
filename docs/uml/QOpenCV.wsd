@@ -1,0 +1,16 @@
+// Module QOpenCV
+// Autor: Team Reality Not Found
+
+@startuml
+scale 800 width
+
+!define cpVd(x) OpenCV.CapVideo
+!define fcRcgThr(x) FaceRecognitionThread
+!define fcRcgWnd(x) QOpenCV.OpenCVWindow
+
+package QOpenCV{
+
+	fcRcgThr() -- cpVd()
+	fcRcgWnd() -- cpVd()
+}
+@enduml

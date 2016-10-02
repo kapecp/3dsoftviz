@@ -110,7 +110,7 @@ void RadialLayout::update()
 				if ( mSelectedNodes.contains( node ) ) { //set attributes of current node
 					node->setColor( color ); //for debugging
 					node->setLayerID( lastLayerID ); //because repulsive forces
-					node->setRadialLayout( reinterpret_cast<RadialLayout*>( this ) ); //because repulsive forces
+					node->setRadialLayout( this ); //because repulsive forces
 					pickedNodes.insert( node );
 				}
 			}
@@ -143,7 +143,7 @@ void RadialLayout::update()
 		QSharedPointer<Layout::Shape_Intersection> circle = shape.dynamicCast<Shape_Intersection>();
 		if ( sphere != NULL ) { //shape is sphere
 			sphere->setRenderType( mRenderType );
-			if ( static_cast<float>( depth ) / static_cast<float>( maxDepth ) <= mVisibleSpheres && mVisibleSpheres > 0.0 ) {
+			if ( static_cast<float>( depth ) / static_cast<float>( maxDepth ) <= mVisibleSpheres && mVisibleSpheres > 0.0f ) {
 				sphere->setAlpha( mAlpha );
 			}
 			else {
@@ -152,7 +152,7 @@ void RadialLayout::update()
 		}
 		if ( circle != NULL ) { //shape is circle
 			circle->setRenderType( mRenderType );
-			if ( static_cast<float>( depth )/static_cast<float>( maxDepth ) <= mVisibleSpheres && mVisibleSpheres > 0.0 ) {
+			if ( static_cast<float>( depth )/static_cast<float>( maxDepth ) <= mVisibleSpheres && mVisibleSpheres > 0.0f ) {
 				circle->setAlpha( mAlpha );
 			}
 			else {

@@ -25,3 +25,18 @@
 [submodule "dependencies/lua"]
 	path = dependencies/lua
 	url = https://github.com/LuaDist/lua.git
+[submodule "dependencies/osgModeling"]
+	path = dependencies/osgModeling
+	url = git@github.com:kapecp/osgmodeling.git
+[submodule "dependencies/igloo"]
+	path = dependencies/igloo
+	url = git@github.com:kapecp/igloo.git
+[submodule "dependencies/lualogging"]	
+	path = dependencies/lualogging	
+	url = https://github.com/LuaDist/lualogging.git
+[submodule "dependencies/easyloggingpp"]
+	path = dependencies/easyloggingpp
+	url = git@github.com:easylogging/easyloggingpp.git
+[submodule "dependencies/parserlib"]
+	path = dependencies/parserlib
+	url = git@github.com:axilmar/parserlib.git
