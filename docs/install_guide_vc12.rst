@@ -157,8 +157,11 @@ Postup inštalácie
 
           OPENCV_DIR premenná
 
+
  #. Naklonovať projekt 3DSoftViz cez git shell (*%3DSoftViz%*)
  #. Cez command line prejsť do naklonovaného projektu a zavolať *git submodule --init --recursive*
+ #. Nainštalovať Debugging Tools for Windows.
+ #. Naklonovať projekt 3DSoftViz cez git shell (*%3DSoftViz%*)
  #. Vytvoriť v priečinku *%3DSoftViz%* priečinky _build a _install
  #. Spustiť QtCreator. Tools > Options... > Build and Run:
  
