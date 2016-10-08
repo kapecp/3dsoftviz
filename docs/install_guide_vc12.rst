@@ -155,7 +155,7 @@ Postup inštalácie
           :align:   center
 
           OPENCV_DIR premenná
-
+ #. Nainštalovať Debugging Tools for Windows.
  #. Naklónovať projekt 3DSoftViz cez git shell (*%3DSoftViz%*)
  #. Vytvoriť v priečinku *%3DSoftViz%* priečinky _build a _install
  #. Spustiť QtCreator. Tools > Options... > Build and Run:
