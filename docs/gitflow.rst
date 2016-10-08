@@ -38,7 +38,7 @@ Po odsuhlaseni Pull requestu sa potom pristupi k mergu.
 Commit messages
 ---------------
 
-v Commit messages pouzivame tagy na zaciatok:
+v Commit messages pouzivame tagy a ID ulohy na zaciatok:
 
  * [FIX] - fixli sme nejaku chybu z minula, bugfix, hotfix a podobne
  * [ADD] - pridali sme novu funkcionalitu, subor, ...
@@ -48,6 +48,7 @@ v Commit messages pouzivame tagy na zaciatok:
  * [TEST] - pre testy
 
 Za tym velmi strucne (a vystizne) opiseme, ake zmeny sme spravili. Message by mali byt kratke, no pokryvat vsetko, co sme v commite spravili.
+Napr. *[DOC] #3654 Pridanie uvadzania ID ulohy do gitflow metodiky*
 
 Useful commands
 ---------------
