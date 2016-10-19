@@ -9,6 +9,16 @@ je to Python script
 
 	- pokial by bol problem spustat, mozem to riesit ja
 
+ako pouzivat (Windows)
+--------------------
+1)	Stiahnut a nainstalovat python (napr. verziu `2.7 <https://www.python.org/downloads/>`)
+2)	Ako administratorspustit prikaz: pip install cpplint
+3)	Najst si lokaciu kde to nainstalovalo. Pravdepodobne: c:\Python27\Scripts\cpplint.exe
+	a tuto lokaciu zapisat do jednotlivych batch suborov (set cpplint_path= c:\Python27\Scripts\cpplint.exe):
+	- 3dsoftviz/include/cpplint.bat
+	- 3dsoftviz/src/cpplint.bat
+4)	spustit cpplint.bat v jednotlivych priecinkoch. Vystupom je subor report.txt nachadzajuci sa v rovnakom priecinku ako batch subor.
+	
 ako pouzivat (Linux)
 --------------------
 

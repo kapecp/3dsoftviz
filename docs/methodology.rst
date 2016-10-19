@@ -8,6 +8,7 @@ Metodiky
    cppcheck
    cpplint
    codereview
+   astyle
    plantuml
    gitflow
    sphinx

@@ -10,9 +10,9 @@ Ako pouzivat
 
 1)	v Edit->Preferences nastavit:
 		General: check "Force checking all #ifdef configurations"
-		Paths: pridat cestu do "RealityNotFound/include"
+		Paths: pridat cestu do "3dsoftviz/include"
 		Advanced: check "Show inconclusive errors"		!!! toto hlasi dost false-positive, ALE obcas najde dolezite veci !!!
-2)	Check->Directory	a vybrat "RealityNotFound/src"
+2)	Check->Directory	a vybrat "3dsoftviz/src"
 
 poznamky k reportom:	!!! ak je nieco nejasne, treba sa opytat !!!
 
