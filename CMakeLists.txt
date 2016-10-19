@@ -666,6 +666,16 @@ if( USE_BUILTIN_DEPENDENCIES )
 			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
 		)
 
+	# Build luasocket
+	ExternalProject_Add ( dep_mobdebug
+		PREFIX mobdebug
+		SOURCE_DIR ${DEP_SOURCE}/mobdebug
+		BINARY_DIR mobdebug
+		CMAKE_ARGS
+			-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
+			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
+		)
+
 	# Ensure correct order of build (dependencies between external dependencies)
 	if( MSVC OR APPLE )
 		add_dependencies( dep_lpeg dep_lua )
@@ -674,6 +684,7 @@ if( USE_BUILTIN_DEPENDENCIES )
 		add_dependencies( dep_luafilesystem dep_lua )
 		add_dependencies( dep_StackTracePlus dep_lua )
 		add_dependencies( dep_luasocket dep_lua )
+		add_dependencies( dep_mobdebug dep_lua )
 	else()
 		add_dependencies( dep_lpeg dep_luajit )
 		add_dependencies( dep_diluculum dep_luajit )
@@ -682,6 +693,7 @@ if( USE_BUILTIN_DEPENDENCIES )
 		add_dependencies( dep_luafilesystem dep_luajit )
 		add_dependencies( dep_StackTracePlus dep_luajit )
 		add_dependencies( dep_luasocket dep_luajit )
+		add_dependencies( dep_mobdebug dep_luajit )
 	endif()
 
 	# path to include directory where external dependencies deploy headers
@@ -1253,7 +1265,7 @@ endif()
 if( USE_BUILTIN_DEPENDENCIES )
 
 	# dependencies of non-unity build
-	add_dependencies( ${3DSOFTVIZ_NAME} libnoise osgModeling gitlib dep_luametrics dep_leg dep_lpeg dep_luafilesystem igloo dep_lualogging dep_StackTracePlus dep_luasocket )
+	add_dependencies( ${3DSOFTVIZ_NAME} libnoise osgModeling gitlib dep_luametrics dep_leg dep_lpeg dep_luafilesystem igloo dep_lualogging dep_StackTracePlus dep_luasocket dep_mobdebug )
 
 	if( MSVC OR APPLE )
 		add_dependencies( ${3DSOFTVIZ_NAME} dep_lua )
@@ -1271,7 +1283,7 @@ if( USE_BUILTIN_DEPENDENCIES )
 
 	# dependencies of unity build
 	if (COMMAND cotire)
-		add_dependencies( ${3DSOFTVIZ_NAME}_unity libnoise osgModeling gitlib_unity dep_luametrics dep_leg dep_lpeg dep_luafilesystem igloo dep_lualogging dep_StackTracePlus dep_luasocket )
+		add_dependencies( ${3DSOFTVIZ_NAME}_unity libnoise osgModeling gitlib_unity dep_luametrics dep_leg dep_lpeg dep_luafilesystem igloo dep_lualogging dep_StackTracePlus dep_luasocket dep_mobdebug )
 
 		if( MSVC OR APPLE )
 			add_dependencies( ${3DSOFTVIZ_NAME}_unity dep_lua )
