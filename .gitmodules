@@ -40,3 +40,6 @@
 [submodule "dependencies/parserlib"]
 	path = dependencies/parserlib
 	url = git@github.com:axilmar/parserlib.git
+[submodule "dependencies/StackTracePlus"]
+	path = dependencies/StackTracePlus
+	url = git@github.com:LuaDist/StackTracePlus.git
