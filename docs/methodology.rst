@@ -7,6 +7,7 @@ Metodiky
    cpp-howto
    cppcheck
    cpplint
+   codereview
    plantuml
    gitflow
    sphinx
