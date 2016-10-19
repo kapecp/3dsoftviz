@@ -46,3 +46,6 @@
 [submodule "dependencies/luasocket"]
 	path = dependencies/luasocket
 	url = git@github.com:LuaDist/luasocket.git
+[submodule "dependencies/mobdebug"]
+	path = dependencies/mobdebug
+	url = git@github.com:LuaDist/mobdebug.git
