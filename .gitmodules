@@ -43,3 +43,6 @@
 [submodule "dependencies/StackTracePlus"]
 	path = dependencies/StackTracePlus
 	url = git@github.com:LuaDist/StackTracePlus.git
+[submodule "dependencies/luasocket"]
+	path = dependencies/luasocket
+	url = git@github.com:LuaDist/luasocket.git
