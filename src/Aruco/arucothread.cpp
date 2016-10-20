@@ -61,6 +61,7 @@ void ArucoThread::setCorEnabling( bool corEnabled )
 void ArucoThread::setMultiMarker( bool set )
 {
 	mMultiMarkerEnabled = set;
+    qDebug() << mMultiMarkerEnabled;
 }
 
 void ArucoThread::setSendImgEnabling( bool sendImgEnabled )
@@ -133,70 +134,86 @@ void ArucoThread::run()
             int         markerArraySize = 0;
             markerArraySize = aCore.detect( frame.clone() );
 
-//			bool vypis = true;
+
 			if ( mMultiMarkerEnabled ) {
-				//TODO funkcionalita ku detekcii viacerych markerov
-                //qDebug() << markerArraySize;
+                //reset base marker index for this run
+                aCore.setBaseMarkerIndex(-1);
 
                 // for each detected marker get Pos and Quad
                 QVector<osg::Vec3f> actPosArr(5);
                 QVector<osg::Quat> actQuatArr(5);
+
                 for(int i = 0; i< markerArraySize; i++){
                     int curMarkerId = aCore.getPosAndQuat( i, actPosArray, actQuatArray );
 
                     actPosArr[i] = osg::Vec3f( actPosArray[0], actPosArray[1], actPosArray[2] );
-                    actQuatArr[i] = osg::Quat( actQuatArray[1],  actQuatArray[3],  actQuatArray[2],  -actQuatArray[0] );
+                    actQuatArr[i] = osg::Quat( actQuatArray[0],  actQuatArray[1],  actQuatArray[2], actQuatArray[3] );
 
-                    qDebug() << i << " : ID [" << curMarkerId << "] " << actPosArr[i].x() << " / " << actQuatArr[i].x();
+                   // qDebug() << i << " : ID [" << curMarkerId << "] " << actPosArr[i].x() << " / " << actQuatArr[i].x();
+
+                    //it this is base marker
+                    if( curMarkerId == 789 ){
+                        // set this marker as Base marker
+                        aCore.setBaseMarkerIndex(i);
+
+                        graphControlling( actPosArr[i], actQuatArr[i] );
+                    }
                 }
-
 			}
 			else {
+                // single marker -> set control marker index to 0
+                aCore.setBaseMarkerIndex(0);
 				// graph controll
 				markerDetected = aCore.getPosAndQuat( mGrM, actPosArray, actQuatArray );
+
 				if ( markerDetected ) {
 
 					// test if marker was detect (if not, all number in matrix are not range)
 					if ( actPosArray[2] > 0.0  &&  actPosArray[2] < 10.0
 							&&   actQuatArray[0] >= -1.0  &&  actQuatArray[0] <= 1.0 ) {
 
-						graphControlling( actPosArray, actQuatArray );
-
+                        graphControlling(
+                            osg::Vec3f( actPosArray[0], actPosArray[1], actPosArray[2] ),
+                            osg::Quat( actQuatArray[0],  actQuatArray[1],  actQuatArray[2], actQuatArray[3] )
+                        );
 					}
 				}
 
 				// mouse controll
 				markerDetected = aCore.getPosAndQuat( mMoM, actPosArray, actQuatArray );
-				if ( markerDetected ) {
+
+                if ( markerDetected ) {
 
 					// test if marker was detect (if not, all number in matrix are not range)
 					if ( actPosArray[2] > 0.0  &&  actPosArray[2] < 10.0
 							&&   actQuatArray[0] >= -1.0  &&  actQuatArray[0] <= 1.0 ) {
 
-						mouseControlling( actPosArray, actQuatArray );
-
+                        mouseControlling(
+                            osg::Vec3f( actPosArray[0], actPosArray[1], actPosArray[2] ),
+                            osg::Quat( actQuatArray[0],  actQuatArray[1],  actQuatArray[2], actQuatArray[3] )
+                        );
 					}
 				}
-				//jurik
-				//set and send modelview matrix of detected marker
-				QMatrix4x4 modelviewmatrix = aCore.getDetectedMatrix( frame.clone() );
-				emit sendModelViewMatrix( modelviewmatrix );
+            }
 
-				//set and send projection matrix of detected image
-				QMatrix4x4 projectionmatrix = aCore.getProjectionMatrix( frame.clone() );
-				emit sendProjectionMatrix( projectionmatrix );
+            //jurik
+            //set and send modelview matrix of detected marker
+            QMatrix4x4 modelviewmatrix = aCore.getDetectedMatrix( frame.clone() );
+            emit sendModelViewMatrix( modelviewmatrix );
 
-				//send marker size
-				emit sendMarkerSize( aCore.getMarkerSize() );
-				//*****
-			}
+            //set and send projection matrix of detected image
+            QMatrix4x4 projectionmatrix = aCore.getProjectionMatrix( frame.clone() );
+            emit sendProjectionMatrix( projectionmatrix );
+
+            //send marker size
+            emit sendMarkerSize( aCore.getMarkerSize() );
+            //*****
+
 			imagesSending( aCore, frame );
 
 			if ( ! mCancel ) {
 				msleep( 50 );
 			}
-
-
 		}
 	}
 
@@ -204,7 +221,9 @@ void ArucoThread::run()
 	mCapVideo = NULL;
 }
 
-void ArucoThread::graphControlling( const double actPosArray[3], const double actQuatArray[4] )
+//JMA - rewrite to use vector as input
+//void ArucoThread::graphControlling( const double actPosArray[3], const double actQuatArray[4] )
+void ArucoThread::graphControlling( const osg::Vec3f actPosArray, const osg::Quat actQuatArray )
 {
 
 	// can be corection parameters updated
@@ -253,7 +272,8 @@ void ArucoThread::graphControlling( const double actPosArray[3], const double ac
 	emit sendArucoPosAndQuat( actQuat, actPos );
 }
 
-void ArucoThread::mouseControlling( const double actPosArray[3], const double actQuatArray[4] )
+//void ArucoThread::mouseControlling( const double actPosArray[3], const double actQuatArray[4] )
+void ArucoThread::mouseControlling( const osg::Vec3f actPosArray, const osg::Quat actQuatArray )
 {
 	osg::Vec3d actPos( actPosArray[0], -actPosArray[1] * mHalfRatioCoef, -actPosArray[2] );
 
@@ -330,7 +350,9 @@ void ArucoThread::detectMarkerFromImage( cv::Mat image )
 	emit pushImageFromKinect( frame.clone() );
 }
 
-void ArucoThread::computeCorQuatAndPos( const double position[3], const double rotation[4] )
+//void ArucoThread::computeCorQuatAndPos( const double position[3], const double rotation[4] )
+void ArucoThread::computeCorQuatAndPos( const osg::Vec3f position, const osg::Quat rotation )
+
 {
 	qDebug() << "ARUCO: comput cor par done>";
 	// set corection translation

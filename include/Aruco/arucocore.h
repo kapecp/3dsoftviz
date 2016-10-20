@@ -38,7 +38,7 @@ public:
 		 * @param inputImage Image from cammera, where marker should be detected
 		 * @param[out] result model view matrix
 		 */
-	const QMatrix4x4 getDetectedMatrix( cv::Mat inputImage );
+    const QMatrix4x4 getDetectedMatrix( cv::Mat inputImage );
 
 	//jurik
 	/**
@@ -97,10 +97,17 @@ public:
 		*/
 	cv::Mat getDetectedRectangleImage();
 
+    /**
+        * @author Autor:Juraj Marak
+        * @brief  set/get for base marker index
+        */
+    int getBaseMarkerIndex() const;
+    void setBaseMarkerIndex(int baseMarkerIndex);
+
 private:
-	/**
-		 * @author Autor: Martina Tregerova
-		 * @brief getMatrix Fills the field with information about marker position given from aruco.
+    /**
+         * @author Autor: Martina Tregerova
+         * @brief getMatrix Fills the field with information about marker position given from aruco.
 		 * @param modelviewmatrix double* the field that needs to be filled
 		 * @note The need to send a field will be changed, too.
 		 */
@@ -151,6 +158,11 @@ private:
 	 * @brief real marker size
 	 */
 	float					mMarkerSize;
+
+    /**
+     * @brief base marker index
+     */
+    int					mBaseMarkerIndex;
 
 };
 } // end ArucoModul namespace
