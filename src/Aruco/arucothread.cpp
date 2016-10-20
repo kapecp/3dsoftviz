@@ -23,7 +23,7 @@ ArucoThread::ArucoThread( QObject* parent )
 	mUpdCorPar		= false;
 	mSendImgEnabled	= true;
 	mSendBackgrImgEnabled = false;
-	mMultiMarkerEnabled = false;
+    mMultiMarkerEnabled = true;
 	mRatioCamCoef	= 0;
 	mCamDistRatio = 0;
 	mHalfRatioCoef = 0;
@@ -130,13 +130,26 @@ void ArucoThread::run()
 
 			frame = mCapVideo->queryFrame();		// get image from camera
 
-			aCore.detect( frame.clone() );
+            int         markerArraySize = 0;
+            markerArraySize = aCore.detect( frame.clone() );
 
 //			bool vypis = true;
 			if ( mMultiMarkerEnabled ) {
 				//TODO funkcionalita ku detekcii viacerych markerov
-				//if(vypis && aCore.detect(frame.clone()) != 0)
-				//qDebug() << aCore.getDetectedMatrix(frame.clone());
+                //qDebug() << markerArraySize;
+
+                // for each detected marker get Pos and Quad
+                QVector<osg::Vec3f> actPosArr(5);
+                QVector<osg::Quat> actQuatArr(5);
+                for(int i = 0; i< markerArraySize; i++){
+                    int curMarkerId = aCore.getPosAndQuat( i, actPosArray, actQuatArray );
+
+                    actPosArr[i] = osg::Vec3f( actPosArray[0], actPosArray[1], actPosArray[2] );
+                    actQuatArr[i] = osg::Quat( actQuatArray[1],  actQuatArray[3],  actQuatArray[2],  -actQuatArray[0] );
+
+                    qDebug() << i << " : ID [" << curMarkerId << "] " << actPosArr[i].x() << " / " << actQuatArr[i].x();
+                }
+
 			}
 			else {
 				// graph controll
