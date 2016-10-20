@@ -20,9 +20,14 @@ QCheckBox*	QOpenCV::OpenCVWindow::getMarkerBehindCB() const
 	return mMarkerBehindCB;
 }
 
+QCheckBox*	QOpenCV::OpenCVWindow::getMultiMarkerEnableCB() const
+{
+    return mMultiMarkerEnableCB;
+}
+
 QCheckBox*	QOpenCV::OpenCVWindow::getCorEnabledCB() const
 {
-	return mCorEnabledCB;
+    return mCorEnabledCB;
 }
 
 QPushButton*	QOpenCV::OpenCVWindow::getUpdateCorParPB() const
@@ -60,7 +65,8 @@ void QOpenCV::OpenCVWindow::configureWindow()
 	mMarkerBackgrCB	= new QCheckBox( tr( "Background" ) );
 	mFaceDetBackgrCB = new QCheckBox( tr( "Background" ) );
 	mMarkerBehindCB	= new QCheckBox( tr( "Marker is behind" ) );
-	mCorEnabledCB = new QCheckBox( tr( "Correction" ) );
+    mCorEnabledCB = new QCheckBox( tr( "Correction" ) );
+    mMultiMarkerEnableCB = new QCheckBox( tr( "Multiple markers" ) );
 	mDisableCursorCB = new QCheckBox( tr( "Turn off cursor" ) );
 	mDisableZoomCursorCB = new QCheckBox( tr( "Turn off zoom" ) );
 	mEnableMarkerDetectCB = new QCheckBox( tr( "Turn on Marker Detection" ) );
@@ -103,7 +109,7 @@ void QOpenCV::OpenCVWindow::configureWindow()
 	mFaceRecRB->setChecked( true );
 	arucoSubPageLayout->addWidget( mFaceRecRB );
 	arucoSubPageLayout->addWidget( mMarkerRB );
-	//arucoSubPageLayout->addWidget( mMultiMarkerRB );
+    //arucoSubPageLayout->addWidget( mMultiMarkerRB );
 	arucoSubPageLayout->addWidget( mNoVideo );
 	arucoSubPageLayout->addLayout( mSubmodulesStackL );
 
@@ -118,7 +124,7 @@ void QOpenCV::OpenCVWindow::configureWindow()
 
 	mSubmodulesStackL->addWidget( arucoFaceRecPageWid );
 	mSubmodulesStackL->addWidget( arucoMarkerPageWid );
-	//mSubmodulesStackL->addWidget( arucoMultiMarkerPageWid );
+    //mSubmodulesStackL->addWidget( arucoMultiMarkerPageWid );
 
 	kinectPageWid->setLayout( kinectPageLayout );
 	arucoPageWid->setLayout( arucoPageLayout );
@@ -142,12 +148,13 @@ void QOpenCV::OpenCVWindow::configureWindow()
 
 	arucoMarkerPageLayout->addWidget( mMarkerBackgrCB );
 	arucoMarkerPageLayout->addWidget( mMarkerBehindCB );
-	arucoMarkerPageLayout->addWidget( mCorEnabledCB );
+    arucoMarkerPageLayout->addWidget( mCorEnabledCB );
+    arucoMarkerPageLayout->addWidget( mMultiMarkerEnableCB );
 	arucoMarkerPageLayout->addWidget( mUpdateCorParPB );
 	arucoMarkerPageLayout->addWidget( mInterchangeMarkersPB );
 	arucoMarkerPageLayout->addWidget( mMarkerPB );
 
-	//arucoMultiMarkerPageLayout->addWidget( mMultiMarkerPB );
+    //arucoMultiMarkerPageLayout->addWidget( mMultiMarkerPB );
 
 	if ( Util::ApplicationConfig::get()->getValue( "Viewer.SkyBox.Noise" ).toInt() < 2 ) {
 		mMarkerBackgrCB->setDisabled( true );
@@ -167,6 +174,7 @@ void QOpenCV::OpenCVWindow::configureWindow()
 	mMarkerBackgrCB->setEnabled( false );
 	mMarkerBehindCB->setEnabled( false );
 	mCorEnabledCB->setEnabled( false );
+    mMultiMarkerEnableCB->setEnabled( true );
 	mEnableMarkerDetectCB->setEnabled( true );
 
 	mMultiMarkerPB->setCheckable( true );
@@ -178,7 +186,7 @@ void QOpenCV::OpenCVWindow::configureWindow()
 	connect( mKinectRB, SIGNAL( clicked() ), this, SLOT( onSelModulChange() ) );
 	connect( mArucoRB, SIGNAL( clicked() ), this, SLOT( onSelModulChange() ) );
 	connect( mFaceRecRB, SIGNAL( clicked() ), this, SLOT( onSelSubModulChange() ) );
-	connect( mMarkerRB, SIGNAL( clicked() ), this, SLOT( onSelSubModulChange() ) );
+    connect( mMarkerRB, SIGNAL( clicked() ), this, SLOT( onSelSubModulChange() ) );
 	connect( mMultiMarkerRB, SIGNAL( clicked() ), this, SLOT( onSelSubModulChange() ) );
 
 	connect( mNoVideo,	 SIGNAL( clicked() ), this, SLOT( onSelSubModulChange() ) );
@@ -196,7 +204,6 @@ void QOpenCV::OpenCVWindow::configureWindow()
 
 	connect( mDisableCursorCB, SIGNAL( clicked() ), this, SLOT( stopMovingCursor() ) );
 	connect( mDisableZoomCursorCB, SIGNAL( clicked( bool ) ), this, SLOT( stopZoom() ) );
-
 }
 
 void QOpenCV::OpenCVWindow::stopMovingCursor()
@@ -290,11 +297,11 @@ void QOpenCV::OpenCVWindow::onSelSubModulChange()
 	if ( mMarkerRB->isChecked() ) {
 		mSubmodulesStackL->setCurrentIndex( 1 );
 	}
-	/*
+    /*
 	if ( mMultiMarkerRB->isChecked() ) {
 		mSubmodulesStackL->setCurrentIndex( 2 );
 	}
-	*/
+    */
 	if ( mNoVideo->isChecked() ) {
 		emit sendImgFaceRec( false );
 		emit sendImgMarker( false );
