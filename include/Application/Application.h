@@ -1,4 +1,7 @@
-﻿#pragma once
+﻿#ifndef APPLICATION_H
+#define APPLICATION_H
+
+#pragma once
 
 #include <QApplication>
 
@@ -34,3 +37,5 @@ private:
 
 };
 } //App
+
+#endif // application_h
