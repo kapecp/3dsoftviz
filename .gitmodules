@@ -52,3 +52,6 @@
 [submodule "dependencies/luacov"]
 	path = dependencies/luacov
 	url = git@github.com:LuaDist/luacov.git
+[submodule "dependencies/luacheck"]
+	path = dependencies/luacheck
+	url = git@github.com:LuaDist/luacheck.git
