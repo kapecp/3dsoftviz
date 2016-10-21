@@ -58,3 +58,6 @@
 [submodule "dependencies/lua_cliargs"]
 	path = dependencies/lua_cliargs
 	url = git@github.com:LuaDist/lua_cliargs.git
+[submodule "dependencies/luasystem"]
+	path = dependencies/luasystem
+	url = git@github.com:LuaDist/luasystem.git
