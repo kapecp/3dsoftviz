@@ -55,3 +55,6 @@
 [submodule "dependencies/luacheck"]
 	path = dependencies/luacheck
 	url = git@github.com:LuaDist/luacheck.git
+[submodule "dependencies/lua_cliargs"]
+	path = dependencies/lua_cliargs
+	url = git@github.com:LuaDist/lua_cliargs.git
