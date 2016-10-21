@@ -49,3 +49,6 @@
 [submodule "dependencies/mobdebug"]
 	path = dependencies/mobdebug
 	url = git@github.com:LuaDist/mobdebug.git
+[submodule "dependencies/luacov"]
+	path = dependencies/luacov
+	url = git@github.com:LuaDist/luacov.git
