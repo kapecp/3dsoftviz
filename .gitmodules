@@ -61,3 +61,6 @@
 [submodule "dependencies/luasystem"]
 	path = dependencies/luasystem
 	url = git@github.com:LuaDist/luasystem.git
+[submodule "dependencies/dkjson"]
+	path = dependencies/dkjson
+	url = git@github.com:LuaDist/dkjson.git

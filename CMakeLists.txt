@@ -716,6 +716,16 @@ if( USE_BUILTIN_DEPENDENCIES )
 			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
 		)
 
+	# Build dkjson
+	ExternalProject_Add ( dep_dkjson
+		PREFIX dkjson
+		SOURCE_DIR ${DEP_SOURCE}/dkjson
+		BINARY_DIR dkjson
+		CMAKE_ARGS
+			-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
+			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
+		)
+
 	# Ensure correct order of build (dependencies between external dependencies)
 	if( MSVC OR APPLE )
 		add_dependencies( dep_lpeg dep_lua )
@@ -729,6 +739,7 @@ if( USE_BUILTIN_DEPENDENCIES )
 		add_dependencies( dep_luacheck dep_lua )
 		add_dependencies( dep_lua_cliargs dep_lua )
 		add_dependencies( dep_luasystem dep_lua )
+		add_dependencies( dep_dkjson dep_lua )
 	else()
 		add_dependencies( dep_lpeg dep_luajit )
 		add_dependencies( dep_diluculum dep_luajit )
@@ -742,6 +753,7 @@ if( USE_BUILTIN_DEPENDENCIES )
 		add_dependencies( dep_luacheck dep_luajit )
 		add_dependencies( dep_lua_cliargs dep_luajit )
 		add_dependencies( dep_luasystem dep_luajit )
+		add_dependencies( dep_dkjson dep_luajit )
 	endif()
 
 	# path to include directory where external dependencies deploy headers
@@ -1313,7 +1325,7 @@ endif()
 if( USE_BUILTIN_DEPENDENCIES )
 
 	# dependencies of non-unity build
-	add_dependencies( ${3DSOFTVIZ_NAME} libnoise osgModeling gitlib dep_luametrics dep_leg dep_lpeg dep_luafilesystem igloo dep_lualogging dep_StackTracePlus dep_luasocket dep_mobdebug dep_luacov dep_luacheck dep_lua_cliargs dep_luasystem )
+	add_dependencies( ${3DSOFTVIZ_NAME} libnoise osgModeling gitlib dep_luametrics dep_leg dep_lpeg dep_luafilesystem igloo dep_lualogging dep_StackTracePlus dep_luasocket dep_mobdebug dep_luacov dep_luacheck dep_lua_cliargs dep_luasystem dep_dkjson )
 
 	if( MSVC OR APPLE )
 		add_dependencies( ${3DSOFTVIZ_NAME} dep_lua )
@@ -1331,7 +1343,7 @@ if( USE_BUILTIN_DEPENDENCIES )
 
 	# dependencies of unity build
 	if (COMMAND cotire)
-		add_dependencies( ${3DSOFTVIZ_NAME}_unity libnoise osgModeling gitlib_unity dep_luametrics dep_leg dep_lpeg dep_luafilesystem igloo dep_lualogging dep_StackTracePlus dep_luasocket dep_mobdebug dep_luacov dep_luacheck dep_lua_cliargs dep_luasystem )
+		add_dependencies( ${3DSOFTVIZ_NAME}_unity libnoise osgModeling gitlib_unity dep_luametrics dep_leg dep_lpeg dep_luafilesystem igloo dep_lualogging dep_StackTracePlus dep_luasocket dep_mobdebug dep_luacov dep_luacheck dep_lua_cliargs dep_luasystem dep_dkjson )
 
 		if( MSVC OR APPLE )
 			add_dependencies( ${3DSOFTVIZ_NAME}_unity dep_lua )
