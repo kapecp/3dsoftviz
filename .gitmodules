@@ -79,3 +79,6 @@
 [submodule "dependencies/mediator_lua"]
 	path = dependencies/mediator_lua
 	url = git@github.com:LuaDist/mediator_lua.git
+[submodule "dependencies/busted"]
+	path = dependencies/busted
+	url = git@github.com:LuaDist/busted.git
