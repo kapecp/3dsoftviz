@@ -67,3 +67,6 @@
 [submodule "dependencies/say"]
 	path = dependencies/say
 	url = git@github.com:LuaDist/say.git
+[submodule "dependencies/luassert"]
+	path = dependencies/luassert
+	url = git@github.com:LuaDist/luassert.git
