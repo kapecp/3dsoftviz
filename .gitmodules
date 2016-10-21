@@ -64,3 +64,6 @@
 [submodule "dependencies/dkjson"]
 	path = dependencies/dkjson
 	url = git@github.com:LuaDist/dkjson.git
+[submodule "dependencies/say"]
+	path = dependencies/say
+	url = git@github.com:LuaDist/say.git
