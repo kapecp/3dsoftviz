@@ -13,3 +13,4 @@ Metodiky
    gitflow
    sphinx
    tfs
+   logging
