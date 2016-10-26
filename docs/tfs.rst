@@ -51,10 +51,12 @@ Vytváranie exportov z TFS
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Navod na stranke: https://msdn.microsoft.com/en-us/library/dd286627(v=vs.110).aspx 
+
 URL: https://tfs.fiit.stuba.sk:8443/tfs/ 
+
 Login: ako do AIS-u
 
-Pred prvým exportom je potrebné si vytvoriť quory, ktoré vráti stav úloh v danom šprinte.
+Pred prvým exportom je potrebné si vytvoriť query, ktoré vráti stav úloh v danom šprinte.
 Návod na vytvorenie quory:
 
 .. image:: /images/create_query_tfs.png
