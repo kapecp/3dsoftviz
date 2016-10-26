@@ -14,3 +14,4 @@ Metodiky
    sphinx
    tfs
    logging
+   igloo
