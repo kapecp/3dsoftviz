@@ -102,7 +102,7 @@ private:
 		*  \brief
 		*  \param app
 		*/
-	Core( QApplication* app );
+    Core( QApplication* app );
 
 	/**
 		*  Layout::FRAlgorithm * alg

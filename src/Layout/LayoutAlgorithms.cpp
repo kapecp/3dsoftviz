@@ -23,15 +23,18 @@ void LayoutAlgorithms::layoutInsideRegion( const osg::BoundingBox& elementDimens
 	const float elementConstOffsetX = -elementDimension.xMin();
 	const float elementConstOffsetY = -elementDimension.yMin();
 	const float elementConstOffsetZ = -elementDimension.zMin() + groundTopPosition;
-	uint limit = 1;
-	uint xNum = 0;
-	uint yNum = 0;
+
+
 	float xMax;
 	float yMax;
 	if ( elementCount > 0 ) {
+        uint xNum = 0;
+        uint yNum = 0;
+        uint limit = 1;
 		xMax = -FLT_MAX;
 		yMax = -FLT_MAX;
-		for ( int i = 0; i < elementCount; ++i ) {
+
+        for ( int i = 0; i < elementCount; ++i ) {
 			osg::Vec3 pos( xNum * offsetX + elementConstOffsetX, yNum * offsetY + elementConstOffsetY, elementConstOffsetZ );
 			if ( xMax < pos.x() ) {
 				xMax = pos.x();

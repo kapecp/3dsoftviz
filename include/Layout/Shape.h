@@ -10,8 +10,15 @@ class ShapeVisitor;
  */
 class Shape
 {
+
 public:
-	virtual ~Shape() {}
+    virtual ~Shape() {}
+
+    Shape( bool invisible, RenderType renderType_, float alpha_ ){
+        this->invisible = invisible;
+        this->renderType_ = renderType_;
+        this->alpha_ = alpha_;
+    }
 
 	/**
 	 * [visitor pattern]
@@ -52,13 +59,11 @@ public:
 	}
 	//volovar_kon
 
+
 private:
 	bool invisible;
-
-	//volovar zac
 	RenderType renderType_;
 	float alpha_;
-	//volovar kon
 
 }; // class
 

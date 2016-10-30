@@ -94,7 +94,7 @@ public:
 		settings = val;
 	}
 
-	bool isParentNode()
+    bool isParentNode()
 	{
 		return hasNestedNodes;
 	}
@@ -104,7 +104,7 @@ public:
 		hasNestedNodes = true;
 	}
 
-	float getNodeBetweeness()
+    float getNodeBetweeness()
 	{
 		return nodeBetweeness;
 	}
@@ -114,7 +114,7 @@ public:
 		this->nodeBetweeness = nodeBetweeness;
 	}
 
-	float getNodeCloseness()
+    float getNodeCloseness()
 	{
 		return nodeCloseness;
 	}
@@ -124,7 +124,7 @@ public:
 		this->nodeCloseness = nodeCloseness;
 	}
 
-	float getNodeDegree()
+    float getNodeDegree()
 	{
 		return nodeDegree;
 	}
@@ -134,7 +134,7 @@ public:
 		this->nodeDegree = nodeDegree;
 	}
 
-	bool isNodeMatched()
+    bool isNodeMatched()
 	{
 		return nodeMatched;
 	}
@@ -148,7 +148,7 @@ public:
 		removableByUser = b;
 	}
 
-	bool isRemovableByUser()
+    bool isRemovableByUser()
 	{
 		return removableByUser;
 	}
