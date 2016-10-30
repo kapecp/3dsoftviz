@@ -13,7 +13,7 @@
 namespace ArucoModul {
 
 ArucoThread::ArucoThread( QObject* parent )
-	: QThread( parent )
+    : QThread( parent )
 {
 	mCapVideo		= NULL;
 	mCancel			= false;
@@ -123,10 +123,7 @@ void ArucoThread::run()
 	if ( camParametersOk ) {
 		while ( ! mCancel ) {	// doing aruco work in loop
 
-			// variables for result from aruco
-			double		 actPosArray[3];			// x, y, z
-			double		 actQuatArray[4];		// angle(w), x, y, z
-			bool		 markerDetected;
+
 
 			frame = mCapVideo->queryFrame();		// get image from camera
 
@@ -139,6 +136,11 @@ void ArucoThread::run()
 				//qDebug() << aCore.getDetectedMatrix(frame.clone());
 			}
 			else {
+                // variables for result from aruco
+                double		 actPosArray[3];			// x, y, z
+                double		 actQuatArray[4];		// angle(w), x, y, z
+                bool		 markerDetected;
+
 				// graph controll
 				markerDetected = aCore.getPosAndQuat( mGrM, actPosArray, actQuatArray );
 				if ( markerDetected ) {
