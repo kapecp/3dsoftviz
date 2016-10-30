@@ -105,7 +105,7 @@ void Model::GraphDAO::getNestedGraph( qlonglong parentID, Data::Graph** graph, Q
 Data::Graph* Model::GraphDAO::getGraph( QSqlDatabase* conn, bool* error2, qlonglong graphID, qlonglong layoutID )
 {
 	Data::Graph* newGraph;
-	Data::GraphLayout* newLayout;
+
 	QSqlQuery* queryNodes;
 	QSqlQuery* queryEdges;
 	QString graphName, layoutName, nodeName, edgeName;
@@ -141,7 +141,7 @@ Data::Graph* Model::GraphDAO::getGraph( QSqlDatabase* conn, bool* error2, qlongl
 		qDebug() << "[Model::GraphDAO::getGraph] Data loaded from database successfully";
 
 		newGraph = new Data::Graph( graphID, graphName, 0, 0, NULL );
-		newLayout = new Data::GraphLayout( layoutID, newGraph, layoutName, conn );
+        Data::GraphLayout* newLayout = new Data::GraphLayout( layoutID, newGraph, layoutName, conn );
 		newGraph->selectLayout( newLayout );
 
 		Data::Type* typeNode = newGraph->addType( "node" );

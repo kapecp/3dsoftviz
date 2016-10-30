@@ -83,9 +83,8 @@ void SelectLayoutWindow::createLayoutTable()
 
 void SelectLayoutWindow::loadLayout()
 {
-	qlonglong layoutID;
-
 	if ( layoutsTable->rowCount() > 0 ) {
+        qlonglong layoutID;
 		layoutID = layoutsTable->item( layoutsTable->currentRow(), 0 )->text().toLongLong();
 
 		Manager::GraphManager* manager = Manager::GraphManager::getInstance();
@@ -103,12 +102,11 @@ void SelectLayoutWindow::loadLayout()
 
 void SelectLayoutWindow::removeLayout()
 {
-	qlonglong layoutID;
 	Manager::GraphManager* manager = Manager::GraphManager::getInstance();
 	Model::DB* db = manager->getDB();
 
 	if ( layoutsTable->rowCount() > 0 ) {
-		layoutID = layoutsTable->item( layoutsTable->currentRow(), 0 )->text().toLongLong();
+        qlonglong layoutID = layoutsTable->item( layoutsTable->currentRow(), 0 )->text().toLongLong();
 
 		qDebug() << "[QOSG::SelectLayoutWindow::removeLayout] Selected layout ID: " << layoutID;
 

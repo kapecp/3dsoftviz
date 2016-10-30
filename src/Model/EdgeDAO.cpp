@@ -466,7 +466,7 @@ QMap<qlonglong, osg::Vec4f> Model::EdgeDAO::getColors( QSqlDatabase* conn, bool*
 	*error = FALSE;
 	bool error2 = false;
 	osg::Vec4f color;
-	qlonglong id;
+    qlonglong id;
 	QMap<qlonglong, osg::Vec4f> colors;
 
 	QMap<qlonglong, QString> edgeColorR;

@@ -671,7 +671,7 @@ QMap<qlonglong, float> Model::NodeDAO::getScales( QSqlDatabase* conn, bool* erro
 {
 	*error = FALSE;
 	bool error2 = false;
-	qlonglong id;
+    qlonglong id;
 	QMap<qlonglong, float> scales;
 
 	QMap<qlonglong, QString> nodeScale;
@@ -679,6 +679,7 @@ QMap<qlonglong, float> Model::NodeDAO::getScales( QSqlDatabase* conn, bool* erro
 
 	nodeScale = getSettings( conn, &error2, graphID, layoutID, "scale" );
 	if ( !error2 ) {
+        qlonglong id;
 		//nacitavame z databazy velkost layoutu a rozlozenia grafu
 		for ( iter = nodeScale.begin(); iter != nodeScale.end(); ++iter ) {
 			id = iter.key();
