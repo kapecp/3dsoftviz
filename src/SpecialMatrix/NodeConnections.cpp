@@ -18,7 +18,7 @@ SpecialMatrix::NodeConnections::~NodeConnections()
 	delete xAxisNodes;
 	delete yAxisNodes;
 	delete iNodes;
-	for ( size_t i = 0; i<connectedNodes->size(); ++i ) {
+	for ( int i = 0; i<connectedNodes->size(); ++i ) {
 		delete connectedNodes->value( i );
 	}
 	delete connectedNodes;

@@ -1,5 +1,3 @@
-
-
 #include "Viewer/CameraManipulator.h"
 
 #include "Viewer/CoreGraph.h"
@@ -24,15 +22,18 @@
 #include <cmath>
 #include <list>
 
+#if defined(__linux) || defined(__linux__) || defined(linux)
 #pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuseless-cast"
+#pragma GCC diagnostic ignored "-Wsign-conversion"
 #pragma GCC diagnostic ignored "-Wswitch-enum"
 #pragma GCC diagnostic ignored "-Wold-style-cast"
 #pragma GCC diagnostic ignored "-Wconversion"
 #pragma GCC diagnostic ignored "-Wswitch-enum"
-#if defined(__linux) || defined(__linux__) || defined(linux)
-#pragma GCC diagnostic ignored "-Wuseless-cast"
 #endif
-#pragma GCC diagnostic ignored "-Wsign-conversion"
+
+#pragma warning(push)
+#pragma warning(disable:4244)
 
 double Vwr::CameraManipulator::EYE_MOVEMENT_SPEED;
 double Vwr::CameraManipulator::TARGET_MOVEMENT_SPEED;
@@ -1490,4 +1491,6 @@ void Vwr::CameraManipulator::disableCameraMovement()
 
 } // namespace Vwr
 
+#if defined(__linux) || defined(__linux__) || defined(linux)
 #pragma GCC diagnostic pop
+#endif
