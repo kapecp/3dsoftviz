@@ -1593,8 +1593,17 @@ find_package(cpplint)
 if( CPPLINT_FOUND )
 	FILE( GLOB_RECURSE ALL_INCLUDE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/include/*.h )
 	FILE( GLOB_RECURSE ALL_SRC_FILES ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp )
-
-	add_custom_target( "cpplint"
+	if( WIN32 )
+		add_custom_target( "cpplint"
+			COMMAND
+				${CMAKE_CURRENT_SOURCE_DIR}/cpplint.bat	# NOTE: this will probably work only on Linux/OSX
+			WORKING_DIRECTORY
+				"${CMAKE_CURRENT_BINARY_DIR}"
+			COMMENT "Linting code via cpplint.py"
+			VERBATIM
+		)
+	else()
+		add_custom_target( "cpplint"
 		COMMAND
 			"${PYTHON_EXECUTABLE}"
 			"${CPPLINT_SCRIPT}"
@@ -1606,6 +1615,7 @@ if( CPPLINT_FOUND )
 		COMMENT "Linting code via cpplint.py"
 		VERBATIM
 	)
+	endif()
 endif()
 
 # ------------------------------ CPPcheck -------------------------------
@@ -1616,18 +1626,28 @@ find_package(cppcheck)
 
 if( cppcheck_FOUND )
 	file( GLOB_RECURSE ALL_SRC_FILES ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp )
-
-	add_custom_target(
-			cppcheck
-			COMMAND cppcheck
-			--enable=warning,style,performance,portability,information,missingInclude
-			--std=c++11
-			--library=qt.cfg
-			--verbose
-			--quiet
-			-j2
-			-I ${CMAKE_CURRENT_SOURCE_DIR}/include/
-			${ALL_SRC_FILES}
-	)
+	if( WIN32 )
+		add_custom_target( cppcheck
+			COMMAND
+				${CMAKE_CURRENT_SOURCE_DIR}/run_cppcheck.bat	# NOTE: this will probably work only on Linux/OSX
+			WORKING_DIRECTORY
+				"${CMAKE_CURRENT_BINARY_DIR}"
+			COMMENT "Linting code via cpplint.py"
+			VERBATIM
+		)
+	else()
+		add_custom_target(
+				cppcheck
+				COMMAND cppcheck
+				--enable=warning,style,performance,portability,information,missingInclude
+				--std=c++11
+				--library=qt.cfg
+				--verbose
+				--quiet
+				-j2
+				-I ${CMAKE_CURRENT_SOURCE_DIR}/include/
+				${ALL_SRC_FILES}
+		)
+	endif()
 endif()
 
