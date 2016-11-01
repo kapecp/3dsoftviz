@@ -2,6 +2,9 @@
 
 #include <QtGui>
 
+#pragma warning(push)
+#pragma warning(disable:4244)
+
 SpecialMatrix::FileParser::FileParser( QString fileName, Data::Graph* matrixGraph, SpecialMatrix::NodeConnections* connections )
 {
 	createSettings( matrixGraph );
@@ -726,7 +729,7 @@ osg::Vec2f SpecialMatrix::FileParser::getAvailablePosition( SpecialMatrix::NodeC
 	int newRow = static_cast<int>( row ), newCol = static_cast<int>( column );
 	int cornerRow = newRow, cornerCol = newCol;
 	int distance = 1, phase = 0;
-	size_t nodeCount = connections->getNodePositionsArray().size();
+	int nodeCount = ( int ) connections->getNodePositionsArray().size();
 	osg::Vec2f nodePos;
 	while ( true ) {
 		//if the position is taken

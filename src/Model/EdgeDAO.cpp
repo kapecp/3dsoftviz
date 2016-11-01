@@ -8,9 +8,11 @@
 #include "Data/GraphLayout.h"
 
 #include <QDebug>
+
+#if defined(__linux) || defined(__linux__) || defined(linux)
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wfloat-equal"
-
+#endif
 
 Model::EdgeDAO::EdgeDAO( void )
 {
@@ -629,4 +631,7 @@ bool Model::EdgeDAO::addSetings( QSqlDatabase* conn, qlonglong graphID, qlonglon
 
 	return true;
 }
+
+#if defined(__linux) || defined(__linux__) || defined(linux)
 #pragma GCC diagnostic pop
+#endif

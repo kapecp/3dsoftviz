@@ -16,12 +16,12 @@
 #include "Viewer/CameraManipulator.h"
 #include "Viewer/CoreGraph.h"
 
+#if defined(__linux) || defined(__linux__) || defined(linux)
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wold-style-cast"
-#if defined(__linux) || defined(__linux__) || defined(linux)
 #pragma GCC diagnostic ignored "-Wuseless-cast"
-#endif
 #pragma GCC diagnostic ignored "-Wsign-conversion"
+#endif
 
 namespace Network {
 
@@ -251,7 +251,8 @@ void Client::sendMyView( osg::Vec3d center, osg::Quat rotation, float distance )
 void Client::sendMyView()
 {
 	Vwr::CameraManipulator* cameraManipulator = ( ( QOSG::CoreWindow* ) cw )->getCameraManipulator();
-	this->sendMyView( cameraManipulator->getCenter(), cameraManipulator->getRotation(), cameraManipulator->getDistance() );
+	this->sendMyView( cameraManipulator->getCenter(), cameraManipulator->getRotation(),
+					  ( float ) cameraManipulator->getDistance() );
 }
 
 void Client::updateUserList()
@@ -800,4 +801,6 @@ void Client::setAvatarScale( int scale )
 
 } // namespace Network
 
+#if defined(__linux) || defined(__linux__) || defined(linux)
 #pragma GCC diagnostic pop
+#endif

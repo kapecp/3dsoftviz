@@ -209,7 +209,7 @@ private:
 		*  float MAX_DISTANCE
 		*  \brief maximal distance of nodes, when repulsive force is aplied
 		*/
-	double MAX_DISTANCE;
+	float MAX_DISTANCE;
 
 	/**
 		*  float MIN_MOVEMENT_EDGEBUNDLING

@@ -2,12 +2,13 @@
 #include "Manager/Manager.h"
 #include "Network/Server.h"
 
+#if defined(__linux) || defined(__linux__) || defined(linux)
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wold-style-cast"
-#if defined(__linux) || defined(__linux__) || defined(linux)
 #pragma GCC diagnostic ignored "-Wuseless-cast"
-#endif
 #pragma GCC diagnostic ignored "-Wsign-conversion"
+#endif
+
 
 namespace Network {
 
@@ -72,4 +73,6 @@ void RemoveNodeExecutor::execute_server()
 
 } // namespace Network
 
+#if defined(__linux) || defined(__linux__) || defined(linux)
 #pragma GCC diagnostic pop
+#endif
