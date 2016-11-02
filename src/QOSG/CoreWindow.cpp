@@ -4370,7 +4370,7 @@ void CoreWindow::closeEvent( QCloseEvent* event )
 	//QApplication::closeAllWindows();   // ????
 }
 
-void QOSG::CoreWindow::OnMove( std::vector<double>& motionData )
+void QOSG::CoreWindow::OnMove( const std::vector<double>& motionData )
 {
 
 	QOSG::ViewerQT* moveViewer = this->GetViewerQt();

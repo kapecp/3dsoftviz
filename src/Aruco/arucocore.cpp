@@ -186,7 +186,7 @@ cv::Mat ArucoCore::getDetectedRectangleImage()
 	return mCamImage; //return image with augmented information
 }
 
-void ArucoCore::drawCube( cv::Mat& Image, vector<aruco::Marker>& m,const aruco::CameraParameters& CP )
+void ArucoCore::drawCube( cv::Mat& Image, const vector<aruco::Marker>& m,const aruco::CameraParameters& CP )
 {
 
     //qDebug() << "Velkost vektora markerov " << m.size();
