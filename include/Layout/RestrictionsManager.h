@@ -70,7 +70,7 @@ public:
 	 * computed
 	 * \return the distance of the node from the focus point
 	 */
-	float distanceFromFocus( Data::Node& node );
+    float distanceFromFocus( Data::Node& node );
 
 	/**
 	 * \brief Computes the restricted position for the node.

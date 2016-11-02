@@ -35,12 +35,12 @@ public:
 	 * in the composite shape and uses the nearest restricted position to the
 	 * original position.
 	 */
-	virtual void visit( Shape_Composite& shape );
+    virtual void visit( Shape_Composite& shape );
 
 	/**
 	 * \brief Finds the nearest point on the plane.
 	 */
-	virtual void visit( Shape_Plane& shape );
+    virtual void visit( Shape_Plane& shape );
 
 
 

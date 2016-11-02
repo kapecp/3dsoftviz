@@ -92,7 +92,7 @@ public:
 
 private:
 	/**
-		*  QOSG::CoreWindow * cw
+        *  QOSG::CoreWindow * cw
 		*  \brief instance of CoreWindow
 		*/
 	QOSG::CoreWindow* cw;
@@ -102,7 +102,7 @@ private:
 		*  \brief
 		*  \param app
 		*/
-	Core( QApplication* app );
+    explicit Core( QApplication* app );
 
 	/**
 		*  Layout::FRAlgorithm * alg
