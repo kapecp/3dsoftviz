@@ -15,11 +15,11 @@ ako pouzivat v QTCreatore (Windows)
 3)	Najdi lokaciu kde sa to nainstalovalo. Pravdepodobne: c:/Python27/Scripts/cpplint.exe
 	V cpplint.bat (root adresar projektu) zmen set cpplint_path= ../cpplint.exe  na celu cestu ku cpplint.exe
 4)	Spusti QTCreator
-4)	Projects -> Build & Run -> Build
-5)	V Build Settings -> Edit Build configuration klikni Add -> clone selected a zadaj "cpplint"
-6)	V Build steps rozklikni Details a v Targets oznac "cpplint". Ak su oznacene aj ine targety, tak ich je potrebne odznacit(Vysledok: Make: jom.exe cpplint).
-7)	Klikni na kladivko v lavom dolnom rohu (Build).
-8)	Vystupom je subor cpplint-report.txt v podadresari _build
+5)	Projects -> Build & Run -> Build
+6)	V Build Settings -> Edit Build configuration klikni Add -> clone selected a zadaj "cpplint"
+7)	V Build steps rozklikni Details a v Targets oznac "cpplint". Ak su oznacene aj ine targety, tak ich je potrebne odznacit(Vysledok: Make: jom.exe cpplint).
+8)	Klikni na kladivko v lavom dolnom rohu (Build).
+9)	Vystupom je subor cpplint-report.txt v podadresari _build
 
 	
 ako pouzivat (Linux)

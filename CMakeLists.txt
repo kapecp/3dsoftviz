@@ -366,9 +366,9 @@ endif()
 # Find Doxygen
 find_package(Doxygen)
 option(BUILD_DOCUMENTATION "Create and install the HTML based API documentation (requires Doxygen)" ${DOXYGEN_FOUND})
-#message( STATUS "Doxygen found: " ${DOXYGEN_EXECUTABLE} )
+message( STATUS "Doxygen found: " ${DOXYGEN_EXECUTABLE} )
 
-if(BUILD_DOCUMENTATION)
+if(DOXYGEN_FOUND)
 	if(NOT DOXYGEN_FOUND)
 		message(FATAL_ERROR "Doxygen is needed to build the documentation.")
 	endif()
