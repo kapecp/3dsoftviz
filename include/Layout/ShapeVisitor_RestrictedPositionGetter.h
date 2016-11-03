@@ -44,7 +44,7 @@ public:
 	/**
 		 * \brief Finds the restricted position using intersection of the shapes contained in the intersection shape.
 		 */
-    virtual void visit( Shape_Intersection& shape );
+	virtual void visit( Shape_Intersection& shape );
 
 	/**
 	 * \brief Finds the nearest point on the plane.
@@ -90,7 +90,7 @@ private: // private methods
 
 	osg::Vec3f toCube( const osg::Vec3f& center, const osg::Vec3f& surfaceX, const osg::Vec3f& surfaceY, const osg::Vec3f& surfaceZ, const osg::Vec3f& point );
 
-    bool insideCube( const osg::Vec3f& center, const osg::Vec3f& surfaceX, const osg::Vec3f& surfaceY, const osg::Vec3f& surfaceZ, const osg::Vec3f& point );
+	bool insideCube( const osg::Vec3f& center, const osg::Vec3f& surfaceX, const osg::Vec3f& surfaceY, const osg::Vec3f& surfaceZ, const osg::Vec3f& point );
 
 private: // visitor context
 	osg::Vec3f mOriginalPosition;
