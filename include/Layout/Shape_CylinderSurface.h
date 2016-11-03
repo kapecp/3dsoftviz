@@ -23,7 +23,7 @@ public:
 	/**
 	 * [visitor pattern]
 	 */
-    virtual void accept( ShapeVisitor& visitor );
+	virtual void accept( ShapeVisitor& visitor );
 
 	osg::Vec3f firstBaseCenter() const;
 	osg::Vec3f secondBaseCenter() const;

@@ -37,14 +37,14 @@ public:
 	 * @param colorFrame depth videoframe
 	 * @return converted gray cv::Mat
 	 */
-    cv::Mat depthImageCvMat( const openni::VideoFrameRef& colorFrame );
+	cv::Mat depthImageCvMat( const openni::VideoFrameRef& colorFrame );
 
 	/**
 	 * @brief convert videoframe getting from classing frame
 	 * @param colorFrame color videoframe
 	 * @return converted RGB cv::Mat
 	 */
-    cv::Mat colorImageCvMat( const openni::VideoFrameRef& colorFrame );
+	cv::Mat colorImageCvMat( const openni::VideoFrameRef& colorFrame );
 
 	/**
 	 * @brief convert videoframe getting from classing frame

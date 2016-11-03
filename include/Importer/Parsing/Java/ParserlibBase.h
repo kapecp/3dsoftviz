@@ -24,12 +24,12 @@ template <typename T, bool _OPTIONAL = false>
 class AstValue : public ast_ptr <T, _OPTIONAL>
 {
 public:
-    explicit AstValue( T* obj = 0 )
+	explicit AstValue( T* obj = 0 )
 		: ast_ptr<T, _OPTIONAL>( obj )
 	{
 	}
 
-    explicit AstValue( const ast_ptr<T, _OPTIONAL>& src )
+	explicit AstValue( const ast_ptr<T, _OPTIONAL>& src )
 		: ast_ptr<T, _OPTIONAL>( src )
 	{
 	}

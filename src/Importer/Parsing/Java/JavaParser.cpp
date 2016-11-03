@@ -10,8 +10,8 @@
 
 namespace Importer {
 namespace Parsing {
-using namespace std;
-using namespace parserlib;
+//using namespace std;
+//using namespace parserlib;
 
 struct CompileResult {
 	QString file;
@@ -141,20 +141,20 @@ bool JavaParser::Parse( const QString& javaProjectDirectory, SoftTree& softTree,
 			continue;
 		}
 		QString fileContent = QTextStream( &f ).readAll();
-		string fileContentStd = fileContent.toStdString();
-		input input( fileContentStd.begin(), fileContentStd.end() );
+		auto fileContentStd = fileContent.toStdString();
+		parserlib::input input( fileContentStd.begin(), fileContentStd.end() );
 		bool pass = false;
-		error_list errors;
+		parserlib::error_list errors;
 		try {
-			pass = parse( input, compilationUnit, whitespace, errors, cr.astRoot );
+			pass = parserlib::parse( input, compilationUnit, whitespace, errors, cr.astRoot );
 		}
-		catch ( exception& ex ) {
+		catch ( std::exception& ex ) {
 			cr.errorMessage = ex.what();
 			compileResults.push_back( cr );
 			continue;
 		}
 		if ( !pass ) {
-			ostringstream oss;
+			std::ostringstream oss;
 			oss << "    found " << errors.size() << " " << ( errors.size() > 1 ? "errors" : "error" ) << ": ";
 			errors.sort();
 			for ( auto it = errors.begin(); it != errors.end(); ++it ) {
