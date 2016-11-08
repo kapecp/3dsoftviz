@@ -10,7 +10,7 @@ namespace Fglove {
 class FgloveThread : public QThread
 {
 public:
-	FgloveThread( QObject* parent = NULL );
+	explicit FgloveThread( QObject* parent = NULL );
 	~FgloveThread( void );
 	void run();
 

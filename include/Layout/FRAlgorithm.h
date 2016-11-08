@@ -43,7 +43,7 @@ public:
 		*  \brief Creates new FRAlgorithm object and sets input graph
 		*  \param  graph  Graph to which layout will be setted
 		*/
-	FRAlgorithm( Data::Graph* graph );
+	explicit FRAlgorithm( Data::Graph* graph );
 
 	/**
 		*  \fn public  SetParameters(float sizeFactor,float flexibility,int animationSpeed,bool useMaxDistance)
