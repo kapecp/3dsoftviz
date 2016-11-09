@@ -140,3 +140,45 @@ Statechart diagrams
 Camera Movement:
 
 .. image:: /images/cameramove.png
+
+
+
+Object diagrams
+~~~~~~~~~~~~~~~~~~~
+Graph structure layer0:
+
+   .. uml::
+      
+      !include /uml/Graph.structure.layer0.wsd
+
+Graph structure layer1:
+
+   .. uml::
+      
+      !include /uml/Graph.structure.layer1.wsd
+
+Graph structure layer2:
+
+   .. uml::
+      
+      !include /uml/Graph.structure.layer2.wsd
+	  
+Graph structure layer3-Node:
+
+   .. uml::
+      
+      !include /uml/Graph.structure.layer3.Node.wsd
+
+Graph structure layer3-Edge:
+
+   .. uml::
+      
+      !include /uml/Graph.structure.layer3.Edge.wsd
+	  
+Graph structure layer3-LeapAR:
+
+   .. uml::
+      
+      !include /uml/Graph.structure.layer3.handsGroup.wsd
+
+	  

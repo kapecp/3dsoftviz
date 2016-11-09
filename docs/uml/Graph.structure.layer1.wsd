@@ -1,0 +1,75 @@
+// Module Graph.structure.layer1
+// Autor: Aug_RealityKings
+
+
+
+@startuml
+object "root:osg::Group" as obj1
+object "pLightSource:osg::Light" as obj2
+object "shadowedScene:osgShadow::ShadowedScene" as obj3
+object "axesTransform:osg::MatrixTransform" as obj4
+object "graphRotTransf:osg::MatrixTransform" as obj5
+object "handsGroup:osg::Group" as obj6
+object "clearNode:osg::ClearNode" as obj7
+object "clearNode:osg::ClearNode" as obj8
+object "clearNode:osg::ClearNode" as obj9
+
+object "graphRotTransf:osg::MatrixTransform" as obj10
+object "graphGroup:osg::Group" as obj11
+
+object "axesGeode:osg::Geode" as obj12
+
+object "graphGroup:osg::Group" as obj13
+
+object "tm:osg::TexMat" as obj14
+object "transform:osg::Transform" as obj15
+object "geode:osg::Geode" as obj16
+
+object "transform:osg::Transform" as obj17
+object "geode:osg::Geode" as obj18
+
+object "ProjectionMatrixHUD:osg::Projection" as obj19
+object "ModelViewMatrixHUD:osg::MatrixTransform" as obj20
+object "GeodeHUD:osg::Geode" as obj21
+
+obj1 o-- obj2
+obj1 o-- obj3
+obj1 o-- obj4
+obj1 o-- obj5
+obj1 o-- obj6
+obj1 o-- obj7
+obj1 o-- obj8
+obj1 o-- obj9
+
+obj3 o-- obj10
+obj10 o-- obj11
+
+obj4 o-- obj12
+obj5 o-- obj13
+
+obj7 o-- obj14
+obj7 o-- obj15
+obj15 o-- obj16
+
+obj8 o-- obj17
+obj17 o-- obj18
+
+obj9 o-- obj19
+obj19 o-- obj20
+obj20 o-- obj21
+
+
+
+note top of obj7
+background:SkyBox
+end note
+
+note top of obj8
+background:TextureBackground
+end note
+
+note top of obj9
+background:Ortho2dBackground
+end note
+
+@enduml
