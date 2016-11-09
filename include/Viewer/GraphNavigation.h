@@ -17,7 +17,7 @@ public:
 	 * @brief GraphNavigation
 	 */
 	GraphNavigation();
-	~GraphNavigation();
+    ~GraphNavigation();
 
 	void clear();
 	void navigate();
