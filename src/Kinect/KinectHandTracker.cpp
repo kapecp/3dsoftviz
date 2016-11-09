@@ -8,8 +8,8 @@
 Kinect::KinectHandTracker::KinectHandTracker( openni::Device* device, openni::VideoStream* m_depth ) :
 	numHandsTracking( 0 ),
 	isGestureClick( false ),
-	//handZ{0, 0} //C++11
-	//getArrayHands{{0, 0}, {0, 0}} //C++11
+    //handZ{0, 0}, //C++11
+    //getArrayHands{{0, 0}, {0, 0}}, //C++11
 	slidingHand_x( 0 ),
 	slidingHand_y( 0 ),
 	slidingHand_z( 0 ),

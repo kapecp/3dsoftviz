@@ -135,7 +135,7 @@ void Vwr::GraphNavigation::selectNearestNode()
 	}
 }
 
-void Vwr::GraphNavigation::removeLastSelectedNode() const
+void Vwr::GraphNavigation::removeLastSelectedNode()
 {
 	// if there is no selected node, it can not be removed
 	if ( !viewer->getPickHandler()->getSelectedNodes()->isEmpty() ) {

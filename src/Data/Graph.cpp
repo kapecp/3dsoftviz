@@ -84,7 +84,8 @@ Data::Graph::Graph( qlonglong graph_id, QString name, qlonglong layout_id_counte
 	types( new QMap<qlonglong,Data::Type*>() ),
 	frozen( false ),
 	nodeVisual( Data::Node::INDEX_SQUARE ),
-	edgeVisual( Data::Edge::INDEX_QUAD )
+    edgeVisual( Data::Edge::INDEX_QUAD )
+    //restrictionsManager_(nullptr)
 {
 	this->edgeOccurence = QMap<QString, int>();
 	this->currentVersion = 0;
@@ -560,7 +561,7 @@ void Data::Graph::closeNestedGraph()
 		)
 	);
 	//nastavime obmedzovac pre zobrazenie vnoreneho grafu
-	restrictionsManager_.setRestrictions( this->nestetSubGraphs.last(), shapeGetter );
+    restrictionsManager_.setRestrictions( this->nestetSubGraphs.last(), shapeGetter );
 
 	this->nestedNodes.clear();
 	this->nestetSubGraphs.removeLast();

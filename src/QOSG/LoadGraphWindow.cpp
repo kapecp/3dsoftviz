@@ -62,8 +62,7 @@ void LoadGraphWindow::createGraphTable()
 {
 	Manager::GraphManager* manager = Manager::GraphManager::getInstance();
 	Model::DB* db = manager->getDB();
-	bool error = false;
-	qlonglong id;
+    bool error = false;
 	int graphsCount,row;
 	QList<qlonglong> nodes;
 	QList<qlonglong> edges;
@@ -101,7 +100,7 @@ void LoadGraphWindow::createGraphTable()
 	qDebug() << "[QOSG::LoadGraphWindow::createGraphTable] total number of layouts in DB: " << layouts.count();
 
 	for ( iterGraph = graphs.begin(), row=0; iterGraph != graphs.end(); ++iterGraph, row++ ) {
-		id = iterGraph.key();
+        qlonglong id = iterGraph.key();
 
 		name = graphs.value( id )->getName();
 

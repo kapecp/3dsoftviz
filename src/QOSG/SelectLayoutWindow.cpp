@@ -57,8 +57,7 @@ void SelectLayoutWindow::createLayoutTable()
 	bool error = false;
 	qlonglong layoutsCount, row;
 	QString name;
-	QMap<qlonglong, QString>::iterator iterLayout;
-	qlonglong layoutID;
+    QMap<qlonglong, QString>::iterator iterLayout;
 
 	QMap<qlonglong, QString> layouts = Model::GraphLayoutDAO::getLayoutsNames( graphID, db->tmpGetConn(), &error );
 	layoutsCount = layouts.count();
@@ -67,7 +66,7 @@ void SelectLayoutWindow::createLayoutTable()
 	layoutsTable->setRowCount( static_cast<int>( layoutsCount ) );
 
 	for ( iterLayout = layouts.begin(), row=0; iterLayout != layouts.end(); ++iterLayout, row++ ) {
-		layoutID = iterLayout.key();
+        qlonglong layoutID = iterLayout.key();
 
 		name = layouts.value( layoutID );
 

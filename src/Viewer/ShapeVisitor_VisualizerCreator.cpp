@@ -141,7 +141,7 @@ void ShapeVisitor_VisualizerCreator::visit( Layout::Shape_Plane& shape )
 	createdVisualizer_ = geode;
 }
 
-osg::Geometry* ShapeVisitor_VisualizerCreator::createGridGeometry( int size, unsigned int noOfLines, osg::Vec3f center )
+osg::Geometry* ShapeVisitor_VisualizerCreator::createGridGeometry( int size, int noOfLines, osg::Vec3f center )
 {
 
 	osg::Geometry* geom = new osg::Geometry();

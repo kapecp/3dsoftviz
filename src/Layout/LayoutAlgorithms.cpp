@@ -107,7 +107,7 @@ struct Edge {
 };
 
 struct IndentEdges : public QVector<Edge> {
-	IndentEdges( int count ) : QVector<Edge>( count ) {}
+    explicit IndentEdges( int count ) : QVector<Edge>( count ) {}
 };
 
 void LayoutAlgorithms::layoutAroundRegion( const osg::BoundingBox& elementDimension, int elementCount, const osg::BoundingBox& region, float spacing, QList<ElementLayout>* layouts, osg::BoundingBox* aroundRegion )
@@ -141,7 +141,7 @@ void LayoutAlgorithms::layoutAroundRegion( const osg::BoundingBox& elementDimens
 	float curWidth = regionWidth + ( regionWidth <= regionDepth ? elementIndentOffset * 2 : 0 );
 	float curDepth = regionDepth + ( regionWidth > regionDepth ? elementIndentOffset * 2 : 0 );
 	QList<IndentEdges> indents;
-	IndentEdges* curIndent = nullptr;
+
 	IndentEdges* prevIndent = nullptr;
 	int remainedElementsCount = elementCount;
 	int elementIndex = 0;
@@ -149,7 +149,7 @@ void LayoutAlgorithms::layoutAroundRegion( const osg::BoundingBox& elementDimens
 	// analyza - na ktorej stene bude kolko elementov
 	while ( remainedElementsCount > 0 ) {
 		indents << IndentEdges( EDGES_COUNT ); // nove odsadenie od regionu (jedno obkolesenie kvadrov - 4 strany)
-		curIndent = &indents.last();
+        IndentEdges* curIndent = &indents.last();
 		const int maxCountOnWidth = static_cast<int>( floorf( ( curWidth + spacing ) / ( elementWidth + spacing ) ) ); // maximalny pocet elementov na sirku a hlbku
 		const int maxCountOnDepth = static_cast<int>( floorf( ( curDepth + spacing ) / ( elementWidth + spacing ) ) );
 		const int maxCountOnIndent = ( maxCountOnWidth + maxCountOnDepth ) * 2; // maximalny pocet elementov celkovo okolo regionu pre dane odsadenie
