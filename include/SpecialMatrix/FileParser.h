@@ -79,7 +79,7 @@ public:
 	 * @param int column
 	 * @return NodePos a new position of node
 	 */
-	osg::Vec2f getAvailablePosition( SpecialMatrix::NodeConnections* connections, float row, float column );
+	osg::Vec2f getAvailablePosition( SpecialMatrix::NodeConnections* connections, int row, int column );
 
 	/**
 	 * @brief createSettings initializes the used types

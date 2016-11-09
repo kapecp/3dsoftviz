@@ -59,12 +59,12 @@ QuadPyramide::QuadPyramide( float baseWidth, float baseDepth, float height, cons
 	for ( GLuint i = 0; i < sizeof( qs ) / sizeof( GLuint ); ++i ) {
 		vertices << vs[qs[i]];
 		normals << ns[4];
-		quads << triangles.count() + i;
+		quads << static_cast<unsigned int>( triangles.count() ) + i ;
 	}
 
 	auto geom = new osg::Geometry;
-	geom->setVertexArray( new osg::Vec3Array( vertices.count(), vertices.data() ) );
-	geom->setNormalArray( new osg::Vec3Array( normals.count(), normals.data() ) );
+	geom->setVertexArray( new osg::Vec3Array( static_cast<unsigned int>( vertices.count() ), vertices.data() ) );
+	geom->setNormalArray( new osg::Vec3Array( static_cast<unsigned int>( normals.count() ), normals.data() ) );
 	geom->setNormalBinding( osg::Geometry::BIND_PER_VERTEX );
 	for ( int i = 0; i < triangles.count(); i += 3 ) {
 		geom->addPrimitiveSet( new osg::DrawElementsUInt( osg::PrimitiveSet::TRIANGLES, 3, triangles.data() + i ) );

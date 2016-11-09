@@ -28,7 +28,7 @@ Building::Building( const QString& name, const QString& info, const QList<Floor*
 		f->setDivideBorder( false );
 		floors << f;
 	}
-	minBuildingHeight = Floor::getFloorMinHeight() * floors.count();
+	minBuildingHeight = Floor::getFloorMinHeight() * static_cast<float>( floors.count() );
 	buildingHeight = minBuildingHeight;
 	for ( const auto& f : floors ) {
 		f->setBaseSize( BUILDING_DEFAULT_BASE_SIZE );
@@ -38,7 +38,7 @@ Building::Building( const QString& name, const QString& info, const QList<Floor*
 void Building::setHeight( float height )
 {
 	buildingHeight = 0.0f;
-	const float floorHeight = height / floors.count();
+	const float floorHeight = height / static_cast<float>( floors.count() );
 	for ( auto& f : floors ) {
 		f->setFloorHeight( floorHeight );
 		buildingHeight += f->getFloorHeight();
