@@ -793,7 +793,6 @@ if( USE_BUILTIN_DEPENDENCIES )
 		set( WHICH_LUA dep_luajit )
 	endif()
 	add_dependencies( dep_lpeg ${WHICH_LUA} )
-	add_dependencies( dep_diluculum ${WHICH_LUA} )
 	add_dependencies( dep_leg ${WHICH_LUA} )
 	add_dependencies( dep_luametrics ${WHICH_LUA} )
 	add_dependencies( dep_luafilesystem ${WHICH_LUA} )
@@ -811,6 +810,9 @@ if( USE_BUILTIN_DEPENDENCIES )
 	add_dependencies( dep_penlight ${WHICH_LUA} )
 	add_dependencies( dep_mediator_lua ${WHICH_LUA} )
 	add_dependencies( dep_busted ${WHICH_LUA} )
+	if( NOT MSVC )
+		add_dependencies( dep_diluculum ${WHICH_LUA} )
+	endif()
 
 
 	# path to include directory where external dependencies deploy headers
