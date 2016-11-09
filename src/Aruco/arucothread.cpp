@@ -13,7 +13,7 @@
 namespace ArucoModul {
 
 ArucoThread::ArucoThread( QObject* parent )
-    : QThread( parent )
+	: QThread( parent )
 {
 	mCapVideo		= NULL;
 	mCancel			= false;

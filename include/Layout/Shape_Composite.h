@@ -16,10 +16,10 @@ class Shape_Composite : public Shape
 {
 
 public:
-    Shape_Composite ( ShapesListType shapes_, int compositeType ){
-       this->shapes_ = shapes_;
-       this->compositeType = compositeType;
-    }
+//    Shape_Composite ( ShapesListType shapes_, int compositeType ){
+//       this->shapes_ = shapes_;
+//       this->compositeType = compositeType;
+//    }
 
 	class CompositeType
 	{

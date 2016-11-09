@@ -699,7 +699,7 @@ void Vwr::CameraManipulator::trackball( osg::Vec3& axis,float& angle, float p1x,
  */
 float Vwr::CameraManipulator::tb_project_to_sphere( float r, float x, float y )
 {
-	float d, t, z;
+	float d, z;
 
 
 	d =( float ) sqrt( x*x + y*y );
@@ -708,7 +708,7 @@ float Vwr::CameraManipulator::tb_project_to_sphere( float r, float x, float y )
 		z = ( float )sqrt( r*r - d*d );
 	}                            /* On hyperbola */
 	else {
-		t =( float ) r / 1.41421356237309504880f;
+		float t =( float ) r / 1.41421356237309504880f;
 		z = t*t / d;
 	}
 	return z;
@@ -1236,16 +1236,13 @@ void Vwr::CameraManipulator::computeViewMetrics( osgViewer::Viewer* viewer, std:
 
 void Vwr::CameraManipulator::setRotationHeadKinect( float x, float y, float distance )
 {
-
-	osg::Vec3	axis;
-	float	angle;
-	double	throwScale;
-
 	x /= 100;
 	y /= 100;
 
 	if ( ( -1.0f <= x && x <= 1.0f ) && ( -1.0f <= y && y <= 1.0f ) ) {
-
+        float	angle;
+        osg::Vec3	axis;
+        double	throwScale;
 		throwScale = ( _thrown && _ga_t0.valid() && _ga_t1.valid() ) ?
 					 _delta_frame_time / ( _ga_t0->getTime() - _ga_t1->getTime() ) :
 					 1.0;
@@ -1270,16 +1267,14 @@ void Vwr::CameraManipulator::setRotationHeadKinect( float x, float y, float dist
 
 void Vwr::CameraManipulator::setRotationHeadFaceDet( float x, float y, float distance )
 {
-
-	osg::Vec3	axis;
-	float	angle;
-	double	throwScale;
-
 	x /= 100;
 	y /= 100;
 
 	if ( ( -1.0f <= x && x <= 1.0f ) && ( -1.0f <= y && y <= 1.0f ) ) {
 
+        osg::Vec3	axis;
+        float	angle;
+        double	throwScale;
 		throwScale = ( _thrown && _ga_t0.valid() && _ga_t1.valid() ) ?
 					 _delta_frame_time / ( _ga_t0->getTime() - _ga_t1->getTime() ) :
 					 1.0;
@@ -1399,7 +1394,6 @@ void Vwr::CameraManipulator::updateArucoGraphPosition( osg::Vec3d pos )
 	//str += " " + QString::number( pos.z(), 'f', 2);
 	//qDebug() << ": " << str;
 
-	double distArc =  pos.z()  < 0.0 ? - pos.z()	:  pos.z();		// distance of marker
 	double distGra = _distance < 0.0 ? -_distance	: _distance;	// distance of graph
 	if ( distGra < 1.0 ) {
 		distGra = 1.0;

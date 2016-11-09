@@ -16,13 +16,8 @@ class ShapeVisitor_ManipulatorCreator: public Layout::ShapeVisitor
 {
 
 public:
-    ShapeVisitor_ManipulatorCreator(osgManipulator::Dragger* createdDragger, osg::MatrixTransform* createdSelection, int type ) {
-        this->createdDragger = createdDragger;
-        this->createdSelection = createdSelection;
-        this->type = type;
-    }
 
-	class ManipulatorType
+    class ManipulatorType
 	{
 	public:
 

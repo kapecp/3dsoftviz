@@ -40,7 +40,7 @@ Data::Graph::Graph( qlonglong graph_id, QString name, QSqlDatabase* conn, QMap<q
 	types( types ),
 	frozen( false ),
 	nodeVisual( Data::Node::INDEX_SQUARE ),
-	edgeVisual( Data::Edge::INDEX_QUAD )
+    edgeVisual( Data::Edge::INDEX_QUAD )
 {
 	foreach ( qlonglong i,nodes->keys() ) {
 		this->nodesByType.insert( nodes->value( i )->getType()->getId(),nodes->value( i ) );

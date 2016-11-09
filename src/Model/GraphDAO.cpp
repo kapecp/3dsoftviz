@@ -66,9 +66,8 @@ QMap<qlonglong, Data::Graph*> Model::GraphDAO::getGraphs( QSqlDatabase* conn, bo
 void Model::GraphDAO::getNestedGraph( qlonglong parentID, Data::Graph** graph, QSqlDatabase* conn, bool* error2, qlonglong graphID, qlonglong layoutID, qlonglong* maxIdEleUsed, QMap<qlonglong, osg::Vec3f>* positions, QMap<qlonglong, Data::Node*>* nodes, Data::Type* typeNode, Data::Type* typeMetaNode, QList<qlonglong>* parentNodes )
 {
 
-	qlonglong nodeID;
-	QString nodeName;
 
+	QString nodeName;
 	osg::Vec3f position;
 	QSqlQuery* queryNestedNodes;
 
@@ -77,7 +76,7 @@ void Model::GraphDAO::getNestedGraph( qlonglong parentID, Data::Graph** graph, Q
 	//TODO pridat vnorenym nodom atributy - scale, farbu, ...
 	//nacitavame rekurzivne vnorene grafy
 	while ( queryNestedNodes->next() ) {
-		nodeID = queryNestedNodes->value( 0 ).toLongLong();
+        qlonglong nodeID = queryNestedNodes->value( 0 ).toLongLong();
 		nodeName = queryNestedNodes->value( 1 ).toString();
 		Data::Type* type = queryNestedNodes->value( 4 ).toBool() ? typeMetaNode : typeNode;
 		if ( *maxIdEleUsed < nodeID ) {
