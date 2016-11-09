@@ -738,7 +738,6 @@ elseif( UNIX )
 	list(APPEND SRC_MOUSE3D
 		src/Mouse3d/LibMouse3d/Unix/ApplicationEmitter.cpp
 		src/Mouse3d/LibMouse3d/Unix/Mouse3dUnixDevice.cpp
-		src/Mouse3d/LibMouse3d/Unix/xdrvlib.c
 		)
 endif()
 
@@ -872,9 +871,7 @@ elseif( APPLE )
 elseif( UNIX )
 	list(APPEND HEADER_MOUSE3D
 		include/Mouse3d/LibMouse3d/Unix/ApplicationEmitter.h
-		include/Mouse3d/LibMouse3d/Unix/fixx11.h
 		include/Mouse3d/LibMouse3d/Unix/Mouse3dUnixDevice.h
-		include/Mouse3d/LibMouse3d/Unix/xdrvlib.h
 		)
 endif()
 
@@ -1021,6 +1018,9 @@ endif()
 add_library( noiseutils STATIC dependencies/noiseutils/noiseutils.cpp )
 target_include_directories( noiseutils SYSTEM PUBLIC ${DEPENDENCIES_INCLUDE_DIR}/libnoise dependencies/noiseutils dependencies/libnoise/src )
 
+add_library( mouse3d STATIC dependencies/mouse3d/xdrvlib.c )
+target_include_directories(mouse3d SYSTEM PUBLIC dependecies/mouse3d)
+
 add_library( qtcolorpicker STATIC dependencies/qtcolorpicker/qtcolorpicker.cpp )
 target_include_directories( qtcolorpicker SYSTEM PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/qtcolorpicker )
 if ( Qt5Core_FOUND )
@@ -1112,6 +1112,9 @@ list( APPEND ALL_SYSTEM_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/easylog
 
 list( APPEND ALL_SYSTEM_HEADERS include/Leap )
 
+if( UNIX )
+	list( APPEND ALL_SYSTEM_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/mouse3d )
+endif()
 # works:
 include_directories(SYSTEM ${ALL_SYSTEM_HEADERS})
 # does not work:
@@ -1148,7 +1151,11 @@ target_link_libraries( ${3DSOFTVIZ_NAME}
 	${OSGVIEWER_LIBRARIES}
 	${OSGQT_LIBRARIES}
 )
-
+if ( UNIX )
+	target_link_libraries(${3DSOFTVIZ_NAME}
+		mouse3d
+		)
+endif()
 if ( Qt4_FOUND )
 	target_link_libraries( ${3DSOFTVIZ_NAME}
 		${QT_LIBRARIES}

@@ -5,7 +5,7 @@
 #  MOUSE3D_FOUND        - True if MOUSE3D found.
 #=============================================================================
 
-message("CMAKE_SYSTEM_FRAMEWORK_PATH = ${CMAKE_SYSTEM_FRAMEWORK_PATH}")
+#message("CMAKE_SYSTEM_FRAMEWORK_PATH = ${CMAKE_SYSTEM_FRAMEWORK_PATH}")
 
 if ( WIN32)
 	find_path( MOUSE3D_INCLUDE_DIR
