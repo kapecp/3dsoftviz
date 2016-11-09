@@ -1019,7 +1019,7 @@ add_library( noiseutils STATIC dependencies/noiseutils/noiseutils.cpp )
 target_include_directories( noiseutils SYSTEM PUBLIC ${DEPENDENCIES_INCLUDE_DIR}/libnoise dependencies/noiseutils dependencies/libnoise/src )
 
 add_library( mouse3d STATIC dependencies/mouse3d/xdrvlib.c )
-target_include_directories(mouse3d SYSTEM PUBLIC dependecies/mouse3d)
+target_include_directories(mouse3d SYSTEM PUBLIC dependencies/mouse3d)
 
 add_library( qtcolorpicker STATIC dependencies/qtcolorpicker/qtcolorpicker.cpp )
 target_include_directories( qtcolorpicker SYSTEM PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/qtcolorpicker )
@@ -1115,6 +1115,7 @@ list( APPEND ALL_SYSTEM_HEADERS include/Leap )
 if( UNIX )
 	list( APPEND ALL_SYSTEM_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/mouse3d )
 endif()
+
 # works:
 include_directories(SYSTEM ${ALL_SYSTEM_HEADERS})
 # does not work:
@@ -1151,20 +1152,17 @@ target_link_libraries( ${3DSOFTVIZ_NAME}
 	${OSGVIEWER_LIBRARIES}
 	${OSGQT_LIBRARIES}
 )
-if ( UNIX )
-	target_link_libraries(${3DSOFTVIZ_NAME}
-		mouse3d
-		)
+
+if( UNIX )
+	target_link_libraries( ${3DSOFTVIZ_NAME} mouse3d )
 endif()
+
 if ( Qt4_FOUND )
-	target_link_libraries( ${3DSOFTVIZ_NAME}
-		${QT_LIBRARIES}
-		)
+	target_link_libraries( ${3DSOFTVIZ_NAME} ${QT_LIBRARIES} )
 endif()
 
 if( NOT MSVC )
-	target_link_libraries( ${3DSOFTVIZ_NAME} diluculum
-		)
+	target_link_libraries( ${3DSOFTVIZ_NAME} diluculum )
 endif()
 
 if( OpenCV_FOUND )
