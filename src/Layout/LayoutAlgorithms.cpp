@@ -104,7 +104,7 @@ struct Edge {
 };
 
 struct IndentEdges : public QVector<Edge> {
-	IndentEdges( int count ) : QVector<Edge>( count ) {}
+	explicit IndentEdges( int count ) : QVector<Edge>( count ) {}
 };
 
 void LayoutAlgorithms::layoutAroundRegion( const osg::BoundingBox& elementDimension, int elementCount, const osg::BoundingBox& region, float spacing, QList<ElementLayout>* layouts, osg::BoundingBox* aroundRegion )
