@@ -34,7 +34,7 @@ class ArucoThread : public QThread
 	Q_OBJECT
 
 public:
-	ArucoThread( QObject* parent = 0 );
+    ArucoThread( QObject* parent = 0 );
 	~ArucoThread( void );
 
 	/**
@@ -221,7 +221,7 @@ private:
 	* @author Dávid Durčák
 	* @brief imagesSending Pripare images for sending and emiting them
 	*/
-	void imagesSending( ArucoCore& aCore, const cv::Mat frame ) const;
+    void imagesSending( ArucoCore& aCore, const cv::Mat frame ) const;
 
 	/**
 	* @author Dávid Durčák

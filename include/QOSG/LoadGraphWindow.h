@@ -45,7 +45,7 @@ public:
 		*
 		*  \param  parent	Parent window
 		*/
-	LoadGraphWindow( QWidget* parent );
+	explicit LoadGraphWindow( QWidget* parent );
 
 private:
 	/**

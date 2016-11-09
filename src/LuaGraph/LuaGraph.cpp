@@ -24,12 +24,16 @@ Diluculum::LuaValueList luaCallback( const Diluculum::LuaValueList& params )
 	return Diluculum::LuaValueList();
 }
 
+#if defined(__linux) || defined(__linux__) || defined(linux)
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wconversion"
+#endif
 
 DILUCULUM_WRAP_FUNCTION( luaCallback )
 
+#if defined(__linux) || defined(__linux__) || defined(linux)
 #pragma GCC diagnostic pop
+#endif
 
 Lua::LuaGraph::LuaGraph()
 {

@@ -146,7 +146,7 @@ protected:
 
 	virtual void paintGL();
 
-	virtual void resizeGL( int width, int height ) override;
+	void resizeGL( int width, int height ) override;
 
 private:
 

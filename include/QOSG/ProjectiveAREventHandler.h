@@ -7,7 +7,7 @@ namespace QOSG {
 class ProjectiveAREventHandler : public osgGA::GUIEventHandler
 {
 public:
-	ProjectiveAREventHandler( ProjectiveARWindow* window )
+	explicit ProjectiveAREventHandler( ProjectiveARWindow* window )
 	{
 		this->window = window;
 	}

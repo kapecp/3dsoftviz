@@ -15,7 +15,7 @@ namespace MathModule {
 class DjikstraAlg
 {
 public:
-	DjikstraAlg( Data::Graph* graph );
+	explicit DjikstraAlg( Data::Graph* graph );
 	~DjikstraAlg( void );
 
 	QMap<qlonglong, qlonglong > execute( Data::Node* node );

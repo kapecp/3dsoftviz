@@ -3,7 +3,6 @@
 
 #include <QMap>
 #include <QString>
-#include <QMap>
 
 namespace Data {
 class Node;

@@ -8,8 +8,11 @@
 #include "Data/GraphLayout.h"
 
 #include <QDebug>
+
+#if defined(__linux) || defined(__linux__) || defined(linux)
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wfloat-equal"
+#endif
 
 Model::NodeDAO::NodeDAO( void )
 {
@@ -864,4 +867,7 @@ bool Model::NodeDAO::addSettings( QSqlDatabase* conn, qlonglong graphID, qlonglo
 
 	return true;
 }
+
+#if defined(__linux) || defined(__linux__) || defined(linux)
 #pragma GCC diagnostic pop
+#endif

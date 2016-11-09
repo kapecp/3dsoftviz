@@ -5,6 +5,9 @@
 
 #include <QDebug>
 
+#pragma warning(push)
+#pragma warning(disable:4244)
+
 SpecialMatrix::MatrixViewer::MatrixViewer( Data::Graph* matrixGraph, QString fileName )
 {
 	this->matrixGraph = matrixGraph;
@@ -64,6 +67,15 @@ void SpecialMatrix::MatrixViewer::exchangeNodes( osg::ref_ptr<Data::Node> srcNod
 	osg::Vec2f iNodeOldPos, iNodeNewPos;
 	qlonglong foundNodeId;
 	int srcNodePos, desNodePos, diff;
+
+	if ( srcNode->Data::AbsNode::getName().contains( 'x' ) ) {
+		srcNodePos = connections->getXAxisNodes()->indexOf( srcNode->getId() )+1;
+		desNodePos = connections->getXAxisNodes()->indexOf( desNode->getId() )+1;
+	}
+	else {
+		srcNodePos = connections->getYAxisNodes()->indexOf( srcNode->getId() )+1;
+		desNodePos = connections->getYAxisNodes()->indexOf( desNode->getId() )+1;
+	}
 
 	if ( desNodePos < srcNodePos ) {
 		tempNode = desNode;
