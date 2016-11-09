@@ -251,8 +251,11 @@ void Client::sendMyView( osg::Vec3d center, osg::Quat rotation, float distance )
 void Client::sendMyView()
 {
 	Vwr::CameraManipulator* cameraManipulator = ( ( QOSG::CoreWindow* ) cw )->getCameraManipulator();
-	this->sendMyView( cameraManipulator->getCenter(), cameraManipulator->getRotation(),
-					  ( float ) cameraManipulator->getDistance() );
+
+//	this->sendMyView( cameraManipulator->getCenter(), cameraManipulator->getRotation(),  ( float ) cameraManipulator->getDistance() );
+
+	this->sendMyView( cameraManipulator->getCenter(), cameraManipulator->getRotation(), static_cast<float>( cameraManipulator->getDistance() ) );
+//>>>>>>> Stashed changes
 }
 
 void Client::updateUserList()

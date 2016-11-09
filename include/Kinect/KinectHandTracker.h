@@ -73,7 +73,7 @@ public:
 	float slidingHand_x;
 	float slidingHand_y;
 	float slidingHand_z;
-	char* slidingHand_type;
+	const char* slidingHand_type;
 
 	/**
 	 * @brief getAllGestures

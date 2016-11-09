@@ -132,7 +132,7 @@ private:
 	 * @param m vector of detected markers
 	 * @param CP default camera parameters
 	 */
-    void drawCube( cv::Mat& Image, const vector<aruco::Marker>& m, const aruco::CameraParameters& CP );
+	void drawCube( cv::Mat& Image, const vector<aruco::Marker>& m, const aruco::CameraParameters& CP );
 
 	/**
 	 * @brief frame
