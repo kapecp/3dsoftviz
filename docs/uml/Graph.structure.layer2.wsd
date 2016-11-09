@@ -1,0 +1,101 @@
+// Module Graph.structure.layer2
+// Autor: Aug_RealityKings
+
+
+
+@startuml
+object "graphGroup:osg::Group" as obj1
+object "nodesGroup:osg::Group" as obj2
+object "edgesGroup:osg::Group" as obj3
+object "qmetaNodesGroup:osg::Group" as obj4
+object "qmetaEdgesGroup:osg::Group" as obj5
+object "labels:osg::Group" as obj6
+object "restrictionVisualizationsGroup:osg::Group" as obj7
+object "restrictionManipulatorsGroup:osg::Group" as obj8
+object "browsersGroup:osg::Group" as obj9
+object "clustersGroup:osg::Group" as obj10
+
+object "at:osg::PositionAttitudeTransform" as obj11
+object "g:osg::Group" as obj12
+object "at:osg::PositionAttitudeTransform" as obj13
+
+object "edge:Data::Edge" as obj14
+
+object "at:osg::PositionAttitudeTransform" as obj15
+object "g:osg::Group" as obj16
+object "at:osg::PositionAttitudeTransform" as obj17
+
+object "edge:Data::Edge" as obj18
+
+object "geode:osg::Geode" as obj19
+object "label:osgText::FadeText" as obj20
+
+
+object "visualizerWrapper:osg::Group" as obj21
+object "visualizer:osg::Node" as obj22
+
+object "osg::Switch" as obj23
+object "dragger:osgManipulator::Dragger" as obj24
+object "selection:osg::MatrixTransform" as obj25
+
+object "connectorTransform:osg::AutoTransform" as obj26
+object "linesGeode:osg::Geode" as obj27
+object "browserTransform:osg::AutoTransform" as obj28
+object "position:osg::Vec3" as obj29
+object "browser:osgWidget::Browser" as obj30
+object "geode:osg::Geode" as obj31
+
+object "cube:Clustering::Cube" as obj32
+object "at:osg::AutoTransform" as obj33
+object "spehere:Clustering::Cube" as obj34
+object "sphereGeode:osg::Geode" as obj35
+object "at:osg::AutoTransform" as obj36
+object "geode:osg::Geode" as obj37
+
+obj1 o-- obj2
+obj1 o-- obj3
+obj1 o-- obj4
+obj1 o-- obj5
+obj1 o-- obj6
+obj1 o-- obj7
+obj1 o-- obj8
+obj1 o-- obj9
+obj1 o-- obj10
+
+obj2 o-- obj11
+obj2 o-- obj12
+obj12 o-- obj13
+
+obj3 o-- obj14
+
+obj4 o-- obj15
+obj4 o-- obj16
+obj16 o-- obj17
+
+obj5 o-- obj18
+
+obj6 o-- obj19
+obj19 o-- obj20
+
+obj7 o-- obj21
+obj21 o-- obj22
+
+obj8 o-- obj23
+obj23 o-- obj24
+obj23 o-- obj25
+
+obj9 o-- obj26
+obj26 o-- obj27
+obj9 o-- obj28
+obj28 o-- obj29
+obj28 o-- obj30
+obj28 o-- obj31
+
+obj10 o-- obj32
+obj32 o-- obj33
+obj33 o-- obj34
+obj10 o-- obj35
+obj35 o-- obj36
+obj36 o-- obj37
+
+@enduml
