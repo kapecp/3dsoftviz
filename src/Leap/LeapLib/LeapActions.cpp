@@ -26,7 +26,8 @@ void Leap::LeapActions::moveCamera( Leap::Gesture gesture )
 	float gestureDuration = static_cast<float>( gesture.duration() )/1000.0f;
 
 	//skip zero movement gesture
-	if ( direction[0] == 0.0f && direction[1] == 0.0f && direction[2] == 0.0f ) {
+	//if ( static_cast<int>(direction[0]) == 0.0f && static_cast<int>(direction[1]) == 0.0f && static_cast<int>(direction[2]) == 0.0f ) {
+	if ( static_cast<int>( direction[0] ) == 0 && static_cast<int>( direction[1] ) == 0 && static_cast<int>( direction[2] ) == 0 ) {
 		return;
 	}
 
@@ -147,6 +148,8 @@ void Leap::LeapActions::changeViewAngle( Leap::DirectionDetector::Direction dire
 		case Leap::DirectionDetector::Direction::STEADY :
 			// stuff
 			break;
+		default :
+			break;
 	}
 
 }
@@ -184,6 +187,8 @@ void Leap::LeapActions::rotateAruco( Leap::DirectionDetector::Direction directio
 			break;
 		case Leap::DirectionDetector::Direction::DOWN :
 			break;
+		default :
+			break;
 	}
 }
 
@@ -201,6 +206,8 @@ void Leap::LeapActions::scaleEdges( Leap::DirectionDetector::Direction direction
 		case Leap::DirectionDetector::Direction::UP :
 			break;
 		case Leap::DirectionDetector::Direction::DOWN :
+			break;
+		default :
 			break;
 	}
 }

@@ -48,9 +48,9 @@ void Clustering::Sphere::computeGeode( unsigned int rings, unsigned int sectors 
 	// Establish texture coordinates, vertex list, and normals
 	for ( r = 0; r < rings; r++ ) {
 		for ( s = 0; s < sectors; s++ ) {
-			float const y = static_cast<float>( sin( -sqrt( M_PI ) + M_PI * static_cast<double>( r * R ) ) );
-			float const x = static_cast<float>( cos( 2*M_PI * static_cast<double>( s * S ) ) ) * static_cast<float>( sin( M_PI * static_cast<double>( r * R ) ) );
-			float const z = static_cast<float>( sin( 2*M_PI * static_cast<double>( s * S ) ) ) * static_cast<float>( sin( M_PI * static_cast<double>( r * R ) ) );
+			float const y = static_cast<float>( sin( -sqrt( M_PI ) + M_PI * static_cast<double>( static_cast<float>( r ) * R ) ) );
+			float const x = static_cast<float>( cos( 2*M_PI * static_cast<double>( static_cast<float>( s ) * S ) ) ) * static_cast<float>( sin( M_PI * static_cast<double>( static_cast<float>( r ) * R ) ) );
+			float const z = static_cast<float>( sin( 2*M_PI * static_cast<double>( static_cast<float>( s ) * S ) ) ) * static_cast<float>( sin( M_PI * static_cast<double>( static_cast<float>( r ) * R ) ) );
 
 			sphereTexCoords->push_back( osg::Vec2( static_cast<float>( s ) * R, static_cast<float>( r ) * R ) );
 			sphereVertices->push_back( osg::Vec3( x * radius, y * radius, z * radius ) );

@@ -44,7 +44,7 @@ public:
 	{
 	}
 
-    explicit AstList( const ast_list<T>& src )
+	explicit AstList( const ast_list<T>& src )
 		: ast_list<T>( src )
 	{
 	}
@@ -105,7 +105,7 @@ public:
 	{
 	}
 
-    explicit NodeTerm( const ast_node& n )
+	explicit NodeTerm( const ast_node& n )
 		: ast_node( n )
 	{
 	}
@@ -144,7 +144,7 @@ public:
 	{
 	}
 
-    explicit NodeContainer( const ast_container& src )
+	explicit NodeContainer( const ast_container& src )
 		: ast_container( src )
 	{
 	}

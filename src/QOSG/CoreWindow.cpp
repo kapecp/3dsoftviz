@@ -55,6 +55,7 @@
 #include "Core/Core.h"
 
 #include "QDebug"
+#include "QString"
 
 #include "LuaGraph/LuaGraph.h"
 #include "LuaInterface/LuaInterface.h"
