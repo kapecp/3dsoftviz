@@ -1017,10 +1017,10 @@ endif()
 
 add_library( noiseutils STATIC dependencies/noiseutils/noiseutils.cpp )
 target_include_directories( noiseutils SYSTEM PUBLIC ${DEPENDENCIES_INCLUDE_DIR}/libnoise dependencies/noiseutils dependencies/libnoise/src )
-
-add_library( mouse3d STATIC dependencies/mouse3d/xdrvlib.c )
-target_include_directories(mouse3d SYSTEM PUBLIC dependencies/mouse3d)
-
+if ( UNIX )
+	add_library( mouse3d STATIC dependencies/mouse3d/xdrvlib.c )
+	target_include_directories(mouse3d SYSTEM PUBLIC dependencies/mouse3d)
+endif()
 add_library( qtcolorpicker STATIC dependencies/qtcolorpicker/qtcolorpicker.cpp )
 target_include_directories( qtcolorpicker SYSTEM PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/qtcolorpicker )
 if ( Qt5Core_FOUND )
