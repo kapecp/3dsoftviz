@@ -1172,7 +1172,7 @@ endif()
 
 add_library( noiseutils STATIC dependencies/noiseutils/noiseutils.cpp )
 target_include_directories( noiseutils SYSTEM PUBLIC ${DEPENDENCIES_INCLUDE_DIR}/libnoise dependencies/noiseutils dependencies/libnoise/src )
-if ( UNIX )
+if ( UNIX AND NOT APPLE )
 	add_library( mouse3d STATIC dependencies/mouse3d/xdrvlib.c )
 	target_include_directories(mouse3d SYSTEM PUBLIC dependencies/mouse3d)
 endif()
@@ -1267,7 +1267,7 @@ list( APPEND ALL_SYSTEM_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/easylog
 
 list( APPEND ALL_SYSTEM_HEADERS include/Leap )
 
-if( UNIX )
+if( UNIX AND NOT APPLE )
 	list( APPEND ALL_SYSTEM_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/mouse3d )
 endif()
 
@@ -1308,7 +1308,7 @@ target_link_libraries( ${3DSOFTVIZ_NAME}
 	${OSGQT_LIBRARIES}
 )
 
-if( UNIX )
+if( UNIX AND NOT APPLE )
 	target_link_libraries( ${3DSOFTVIZ_NAME} mouse3d )
 endif()
 
@@ -1352,7 +1352,7 @@ if( MOUSE3D_FOUND )
 		target_link_libraries( ${3DSOFTVIZ_NAME} ${MOUSE3D_LIBRARIES} )
 	elseif( APPLE )
 		target_link_libraries( ${3DSOFTVIZ_NAME} ${MOUSE3D_LIBRARIES} )
-	elseif(UNIX)
+	elseif( UNIX )
 		target_link_libraries( ${3DSOFTVIZ_NAME} ${X11_LIBRARIES} )
 	endif()
 endif()
@@ -1373,7 +1373,7 @@ if( COMMAND cotire )
 			target_link_libraries( ${3DSOFTVIZ_NAME}_unity ${MOUSE3D_LIBRARIES} )
 		elseif( APPLE )
 			target_link_libraries( ${3DSOFTVIZ_NAME}_unity ${MOUSE3D_LIBRARIES} )
-		elseif(UNIX)
+		elseif( UNIX )
 			target_link_libraries( ${3DSOFTVIZ_NAME}_unity ${X11_LIBRARIES} )
 		endif()
 	endif()
