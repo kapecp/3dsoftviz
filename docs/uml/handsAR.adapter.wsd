@@ -1,0 +1,32 @@
+// Module hand2
+// Autor: Aug_RealityKings
+
+
+@startuml
+class "QOSG::CoreWindow" as cls1
+class "Leap::LeapThread" as cls2
+class "Leap::LeapController" as cls3
+class "Leap::LeapListener" as cls4
+class "Leap::LeapActions" as cls5
+class "Leap::Controller" as cls6
+class "Leap::Frame" as cls7
+class "Leap::HandList" as cls8
+class "Leap::Hand" as cls9
+
+
+
+
+
+cls1 o-- cls2
+cls2 o-- cls3
+cls3 o-- cls4
+cls4 o-- cls5
+cls6 <.. cls4
+cls7 <.. cls4
+cls7 o-- cls8
+cls8 o-- cls9
+
+
+
+
+@enduml
