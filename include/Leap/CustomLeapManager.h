@@ -6,6 +6,7 @@
 #include "Viewer/CoreGraph.h"
 #include "Layout/LayoutThread.h"
 #include "Layout/FRAlgorithm.h"
+#include "HandModule/HandPalm.h"
 #include <osg/ref_ptr>
 #include <osg/Transform>
 #include <osg/Matrix>
