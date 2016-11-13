@@ -9,32 +9,37 @@ Leap::CustomLeapManager::CustomLeapManager( Vwr::CameraManipulator* cameraManipu
 	this->handsGroup = handsGroup;
 	arMode = false;
 
-	//init hand nodes here
-	if ( this->handsGroup != NULL ) {
-		arMode = true;
+    //init handPalms here
+    // TODO upravit navrh.. manager v sebe nemoze mat ako atributy transformacne matice
+    if ( this->handsGroup != NULL ) {
+        arMode = true;
 
-		osg::ref_ptr<osg::Geode> leftHandGeode( new osg::Geode );
-		osg::ref_ptr<osg::Sphere>  leftHandSphere = new osg::Sphere( osg::Vec3f( 0,0,0 ),0.1f );
+        osg::ref_ptr<osg::Geode> leftHandGeode( new osg::Geode );
+        osg::ref_ptr<osg::Sphere>  leftHandSphere = new osg::Sphere( osg::Vec3f( 0,0,0 ),0.1f );
 
-		osg::ref_ptr<osg::ShapeDrawable> leftHandDrawable( new osg::ShapeDrawable( leftHandSphere.get() ) );
-		leftHandGeode->addDrawable( leftHandDrawable.get() );
+        osg::ref_ptr<osg::ShapeDrawable> leftHandDrawable( new osg::ShapeDrawable( leftHandSphere.get() ) );
+        leftHandGeode->addDrawable( leftHandDrawable.get() );
 
-		osg::ref_ptr<osg::Geode> rightHandGeode( new osg::Geode );
-		osg::ref_ptr<osg::Sphere> rightHandSphere = new osg::Sphere( osg::Vec3f( 0,0,0 ),0.1f );
-		osg::ref_ptr<osg::ShapeDrawable> rightHandDrawable( new osg::ShapeDrawable( rightHandSphere.get() ) );
-		rightHandGeode->addDrawable( rightHandDrawable.get() );
+        osg::ref_ptr<osg::Geode> rightHandGeode( new osg::Geode );
+        osg::ref_ptr<osg::Sphere> rightHandSphere = new osg::Sphere( osg::Vec3f( 0,0,0 ),0.1f );
+        osg::ref_ptr<osg::ShapeDrawable> rightHandDrawable( new osg::ShapeDrawable( rightHandSphere.get() ) );
+        rightHandGeode->addDrawable( rightHandDrawable.get() );
 
-		transformLeft = new osg::MatrixTransform();
-		transformRight = new osg::MatrixTransform();
-		transformLeft->addChild( leftHandGeode.get() );
-		transformRight->addChild( rightHandGeode.get() );
+        transformLeft = new osg::MatrixTransform();
+        transformRight = new osg::MatrixTransform();
+        transformLeft->addChild( leftHandGeode.get() );
+        transformRight->addChild( rightHandGeode.get() );
 
-		transformLeft->setMatrix( osg::Matrix::translate( -0.5,0,-0.5 ) );
-		transformRight->setMatrix( osg::Matrix::translate( 0.5,0,-0.5 ) );
+        transformLeft->setMatrix( osg::Matrix::translate( -0.5,0,-0.5 ) );
+        transformRight->setMatrix( osg::Matrix::translate( 0.5,0,-0.5 ) );
 
-		handsGroup->insertChild( 0,transformLeft.get() );
-		handsGroup->insertChild( 1,transformRight.get() );
-	}
+        HandPalm *rightPalm = new HandPalm(transformRight);
+        HandPalm *leftPalm = new HandPalm(transformLeft);
+
+        handsGroup->insertChild(0, rightPalm);
+        handsGroup->insertChild(1, leftPalm);
+    }
+
 }
 
 Leap::CustomLeapManager::~CustomLeapManager( void )
@@ -136,3 +141,5 @@ void Leap::CustomLeapManager::updateHands( float lx,float ly, float lz, float rx
 		transformRight->setMatrix( osg::Matrix::translate( static_cast<double>( rx )/100.0,static_cast<double>( -rz )/100.0,static_cast<double>( ry )/100.0 ) );
 	}
 }
+
+void initPalms();
