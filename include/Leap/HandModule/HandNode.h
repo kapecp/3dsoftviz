@@ -4,15 +4,18 @@
 #ifndef HANDNODE_H
 #define HANDNODE_H
 
-#include <Data/OsgNode.h>
+
 #include <osg/ref_ptr>
 #include <osg/Matrix>
 #include <osg/MatrixTransform>
 
-class HandNode : public OsgNode {
+namespace Leap {
+
+class HandNode{
 public:
     HandNode();
     osg::ref_ptr<osg::MatrixTransform> matrixTransform;
     virtual void initStructure();
 };
+}
 #endif // HANDNODE_H
