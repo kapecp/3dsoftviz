@@ -8,10 +8,12 @@
 #include "Leap/HandModule/Joint.h"
 #include <list>
 
-class HandPalm : HandNode {
+namespace Leap {
+class HandPalm : public HandNode {
 public:
     HandPalm(osg::ref_ptr<osg::MatrixTransform> matrixTransform);
     void initStructure();
     std::list<Joint*> coreJoints;
 };
+}
 #endif // HANDPALM_H

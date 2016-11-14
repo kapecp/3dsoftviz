@@ -1,15 +1,17 @@
 /**
  * Created by Patrik Berger on 13.11.2016.
  */
+#include <easylogging++.h>
 #include "Leap/HandModule/HandPalm.h"
 
 
-HandPalm::HandPalm(osg::ref_ptr<osg::MatrixTransform> matrixTransform) {
+Leap::HandPalm::HandPalm(osg::ref_ptr<osg::MatrixTransform> matrixTransform) {
     this->matrixTransform = matrixTransform;
     this->initStructure();
 }
 
-void HandPalm::initStructure() {
+void Leap::HandPalm::initStructure() {
+    LOG( INFO ) << "Leap/HandleModule/HandPalm/initStrucure()";
     if (this->coreJoints.empty()) {
         int i = 0;
 

@@ -5,8 +5,8 @@
 #define JOINT_H
 
 #include "Leap/HandModule/HandNode.h"
-
-class Joint : HandNode {
+namespace Leap {
+class Joint : public HandNode {
 public:
     Joint(int level, int position);
     void initStructure();
@@ -17,4 +17,5 @@ private:
     // 0-5, vyjadruje, v ktorom prste dany klb je
     int position;
 };
+}
 #endif // JOINT_H

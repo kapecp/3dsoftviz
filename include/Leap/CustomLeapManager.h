@@ -24,7 +24,7 @@ public:
 	void enableCameraMovement( Movement direction );
 	void disableCameraMovement();
 	void rotateCamera( float py0, float px0, double throwScale, float py1, float px1 );
-	void updateHands( float lx,float ly, float lz, float rx, float ry, float rz );
+    void updateHands( Leap::Hand leftHand, Leap::Hand rightHand );
 
 	//jurik
 	void graphRotateSwipe( int swipeDirection );
@@ -42,8 +42,6 @@ public:
 
 	osg::ref_ptr<osg::Group> handsGroup;
 
-	osg::ref_ptr<osg::MatrixTransform> transformLeft;
-	osg::ref_ptr<osg::MatrixTransform> transformRight;
 };
 }
 #endif

@@ -25,8 +25,8 @@ Leap::CustomLeapManager::CustomLeapManager( Vwr::CameraManipulator* cameraManipu
         osg::ref_ptr<osg::ShapeDrawable> rightHandDrawable( new osg::ShapeDrawable( rightHandSphere.get() ) );
         rightHandGeode->addDrawable( rightHandDrawable.get() );
 
-        transformLeft = new osg::MatrixTransform();
-        transformRight = new osg::MatrixTransform();
+        osg::ref_ptr<osg::MatrixTransform> transformLeft = new osg::MatrixTransform();
+        osg::ref_ptr<osg::MatrixTransform> transformRight = new osg::MatrixTransform();
         transformLeft->addChild( leftHandGeode.get() );
         transformRight->addChild( rightHandGeode.get() );
 
@@ -36,8 +36,8 @@ Leap::CustomLeapManager::CustomLeapManager( Vwr::CameraManipulator* cameraManipu
         HandPalm *rightPalm = new HandPalm(transformRight);
         HandPalm *leftPalm = new HandPalm(transformLeft);
 
-        handsGroup->insertChild(0, rightPalm);
-        handsGroup->insertChild(1, leftPalm);
+        handsGroup->insertChild(0, rightPalm->matrixTransform);
+        handsGroup->insertChild(1, leftPalm->matrixTransform);
     }
 
 }
@@ -132,13 +132,21 @@ void Leap::CustomLeapManager::scaleNodes( bool scaleUp )
 }
 
 //*****
-void Leap::CustomLeapManager::updateHands( float lx,float ly, float lz, float rx, float ry, float rz )
-{
+void Leap::CustomLeapManager::updateHands( Leap::Hand leftHand, Leap::Hand rightHand )
+{        
+        Leap::Vector lVector = Leap::Vector(0.0f,0.0f,0.0f);
+        if ( leftHand.isValid() ) {
+            lVector = leftHand.palmPosition();
+        }
+        Leap::Vector rVector = Leap::Vector(0.0f,0.0f,0.0f);
+        if ( rightHand.isValid() ) {
+            rVector = rightHand.palmPosition();
+        }
 	if ( this->handsGroup != NULL ) {
-		LOG( INFO ) << "updateHands vals left: "<< lx/200.0f<< " " << ly/200.0f<< " " << lz/200.0f;
-		LOG( INFO ) << "updateHands vals right: "<< rx/200.0f<< " " << ry/200.0f<< " " << rz/200.0f;
-		transformLeft->setMatrix( osg::Matrix::translate( static_cast<double>( lx )/100.0,static_cast<double>( -lz )/100.0,static_cast<double>( ly )/100.0 ) );
-		transformRight->setMatrix( osg::Matrix::translate( static_cast<double>( rx )/100.0,static_cast<double>( -rz )/100.0,static_cast<double>( ry )/100.0 ) );
+        osg::MatrixTransform* rightPalm = dynamic_cast<osg::MatrixTransform*> (handsGroup->getChild(1));
+        osg::MatrixTransform* leftPalm = dynamic_cast<osg::MatrixTransform*> (handsGroup->getChild(0));
+        rightPalm->setMatrix( osg::Matrix::translate( static_cast<double>( lVector.x )/100.0,static_cast<double>( -lVector.z )/100.0,static_cast<double>( lVector.y )/100.0 ) );
+        leftPalm->setMatrix( osg::Matrix::translate( static_cast<double>( rVector.x )/100.0,static_cast<double>( -rVector.z )/100.0,static_cast<double>( rVector.y )/100.0 ) );
 	}
 }
 
