@@ -7,6 +7,7 @@
 
 #include "QDebug"
 #include <string>
+#include <time.h>
 
 Kinect::KinectThread::KinectThread( QObject* parent ) : QThread( parent )
 {
@@ -149,6 +150,8 @@ void Kinect::KinectThread::clickTimerStop()
 
 void Kinect::KinectThread::run()
 {
+    struct tm timeinfo;
+    char currtime[80];
 	// flag for timer
 	bool wasTimerReset = true;
 	mCancel=false;
@@ -182,18 +185,25 @@ void Kinect::KinectThread::run()
 
 			//if set true, it will capture the first frame of kinect stream and save color frame, depth frame and depth matrix in to specific location
 			if ( captureImage ) {
+
+                time_t now = std::time(0);
+                timeinfo = *localtime(&now);
+                strftime(currtime,80,"%Y-%m-%d %I:%M:%S",&timeinfo);
+
+                std::string strTime(currtime);
+                std::replace( strTime.begin(), strTime.end(), ':', '_');
+
 				depth = mKinect->depthImageCvMat( depthFrame );
 
-				std::string file = Util::ApplicationConfig::get()->getValue( "Kinect.OutputFolder" ).toStdString();
-
+                std::string file = Util::ApplicationConfig::get()->getValue( "Kinect.OutputFolder" ).toStdString();
 
 				//save color frame
-				cv::imwrite( file + "\\" + Util::ApplicationConfig::get()->getValue( "Kinect.ColourImageName" ).toStdString()  + ".jpeg", frame );
+                cv::imwrite(file + "\\" +Util::ApplicationConfig::get()->getValue( "Kinect.ColourImageName" ).toStdString() + strTime + ".jpeg" , frame );
 
 				//save depth matrix
-				std::ofstream fout( file + "\\" + Util::ApplicationConfig::get()->getValue( "Kinect.DepthInfoName" ).toStdString() + ".txt" );
-				if ( !fout ) {
-					qDebug() <<"File Not Opened";
+                std::ofstream fout( file + "\\" +Util::ApplicationConfig::get()->getValue( "Kinect.DepthInfoName" ).toStdString() + strTime + ".txt" );
+                if ( !fout ) {
+                    qDebug() <<"File Not Opened";
 				}
 
 				for ( int i=0; i<depth.rows; i++ ) {
@@ -205,7 +215,7 @@ void Kinect::KinectThread::run()
 
 				cv::normalize( depth, depth, 0,255, CV_MINMAX, CV_8UC1 );
 				//save depth frame
-				cv::imwrite( file + "\\" + Util::ApplicationConfig::get()->getValue( "Kinect.DepthImageName" ).toStdString() + ".jpg", depth );
+                cv::imwrite( file + "\\" + Util::ApplicationConfig::get()->getValue( "Kinect.DepthImageName" ).toStdString() + strTime + ".jpg", depth );
 
 				fout.close();
 				captureImage =  false;
