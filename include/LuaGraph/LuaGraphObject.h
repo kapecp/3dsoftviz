@@ -1,7 +1,7 @@
 #ifndef LUAGRAPHOBJECT_H
 #define LUAGRAPHOBJECT_H
 
-#include "Diluculum/LuaValue.hpp"
+#include "LuaTypes/LuaValue.h"
 
 #include <QString>
 
@@ -44,13 +44,13 @@ public:
 	 * @brief getParams getter for params
 	 * @return params
 	 */
-	Diluculum::LuaValue getParams() const;
+	Lua::LuaValue getParams() const;
 
 	/**
 	 * @brief setParams setter for params
 	 * @param value new params
 	 */
-	void setParams( const Diluculum::LuaValue& value );
+	void setParams( const Lua::LuaValue& value );
 
 	/**
 	 * @brief getFloatParam return float value from params table
@@ -78,7 +78,7 @@ private:
 	/**
 	 * @brief params Lua table
 	 */
-	Diluculum::LuaValue params;
+	Lua::LuaValue params;
 };
 
 }
