@@ -108,7 +108,7 @@ void Repository::Git::GitLuaGraphAnalyzer::analyze()
 						function->setId( pairNode->getId() );
 
 						// Kontrola, ze ide o globalnu funkciu, ak by nebola tak sa vypise chybova sprava
-						if ( !QString::compare( QString::fromStdString( pairNode->getParams()["type"].asString() ), "globalFunction" ) ) {
+						if ( !QString::compare( QString::fromStdString( pairNode->getParams().getValue()["type"].asString() ), "globalFunction" ) ) {
 							function->setFunctionType( Repository::Git::GitFunctionType::GLOBALFUNCTION );
 						}
 						else {
@@ -140,7 +140,7 @@ void Repository::Git::GitLuaGraphAnalyzer::analyze()
 					pairNode = this->luaGraph->getNodes()->value( otherIncidence->getEdgeNodePair().second );
 
 					// Pokracujeme v spracovani len ak ide o hranu s lokalnou funkciou
-					if ( !QString::compare( QString::fromStdString( pairNode->getParams()["type"].asString() ), "function" ) ) {
+					if ( !QString::compare( QString::fromStdString( pairNode->getParams().getValue()["type"].asString() ), "function" ) ) {
 						// Ziskam identifikator lokalnej funkcie
 						QString functionIdentifier = pairNode->getIdentifier();
 
@@ -163,7 +163,7 @@ void Repository::Git::GitLuaGraphAnalyzer::analyze()
 							function->setId( pairNode->getId() );
 
 							// Kontrola, ze ide o lokalnu funkciu, ak by nebola tak sa vypise chybova sprava
-							if ( !QString::compare( QString::fromStdString( pairNode->getParams()["type"].asString() ), "function" ) ) {
+							if ( !QString::compare( QString::fromStdString( pairNode->getParams().getValue()["type"].asString() ), "function" ) ) {
 								function->setFunctionType( Repository::Git::GitFunctionType::LOCALFUNCTION );
 							}
 							else {
@@ -211,7 +211,7 @@ void Repository::Git::GitLuaGraphAnalyzer::analyze()
 									QStringList list = innerFunctionIdentifier.split( ";" );
 
 									// Zistim akeho typu je funkcia(lokalna, globalna) a podla toho nastavim funkciu
-									if ( !QString::compare( QString::fromStdString( functionPairNode->getParams()["type"].asString() ), "function" ) ) {
+									if ( !QString::compare( QString::fromStdString( functionPairNode->getParams().getValue()["type"].asString() ), "function" ) ) {
 										// Meno funkcie sa sklada za cesty suboru, v ktorom sa nachadza funckia(1) a nazvu funkcie (2)
 										innerFunction->setName( list.at( 1 ) + ";" + list.at( 2 ) );
 										innerFunction->setFunctionType( Repository::Git::GitFunctionType::LOCALFUNCTION );
@@ -655,8 +655,8 @@ bool Repository::Git::GitLuaGraphAnalyzer::intervalsIntersects( int firstStart, 
 int Repository::Git::GitLuaGraphAnalyzer::calculateRealResult( qlonglong luaId )
 {
 	Lua::LuaNode* node = this->luaGraph->getNodes()->value( luaId );
-	int blank = static_cast<int>( node->getParams()["metrics"].asTable()["LOC"].asTable()["lines_blank"].asNumber() );
-	int nonempty = static_cast<int>( node->getParams()["metrics"].asTable()["LOC"].asTable()["lines_nonempty"].asNumber() );
+	int blank = static_cast<int>( node->getParams().getValue()["metrics"].asTable()["LOC"].asTable()["lines_blank"].asNumber() );
+	int nonempty = static_cast<int>( node->getParams().getValue()["metrics"].asTable()["LOC"].asTable()["lines_nonempty"].asNumber() );
 
 	int realBlank = ( blank - nonempty - 1 ) / 2;
 	return nonempty + realBlank + 1;
@@ -670,7 +670,7 @@ void Repository::Git::GitLuaGraphAnalyzer::findFunctionRowsFromFile( Repository:
 		Repository::Git::GitFunction* function = iterator.value();
 		if ( function->getFunctionType() == Repository::Git::GitFunctionType::LOCALFUNCTION ) {
 			Lua::LuaNode* node = this->luaGraph->getNodes()->value( function->getId() );
-			int position = static_cast<int>( node->getParams()["position"].asNumber() );
+			int position = static_cast<int>( node->getParams().getValue()["position"].asNumber() );
 			min = position < min ? position : min;
 			functionToByte.insert( function->getIdentifier(), position );
 //            qDebug() << function->getIdentifier() << position;

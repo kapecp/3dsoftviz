@@ -4,6 +4,7 @@
 #include "LuaGraph/LuaNode.h"
 #include "LuaGraph/LuaEdge.h"
 #include "LuaGraph/LuaIncidence.h"
+#include "LuaTypes/LuaValueList.h"
 
 #include <QMap>
 
@@ -131,6 +132,6 @@ private:
  * @param params
  * @return
  */
-Diluculum::LuaValueList luaCallback( const Diluculum::LuaValueList& params );
+Lua::LuaValueList luaCallback( const Lua::LuaValueList& params );
 
 #endif // LUAGRAPH_H

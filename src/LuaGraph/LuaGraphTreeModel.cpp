@@ -47,6 +47,10 @@
 #include "LuaGraph/LuaGraphTreeItem.h"
 #include "LuaGraph/LuaNode.h"
 
+#include "LuaTypes/LuaValue.h"
+#include "LuaTypes/LuaValueList.h"
+#include "LuaTypes/LuaValueMap.h"
+
 Lua::LuaGraphTreeModel::LuaGraphTreeModel( const Lua::LuaNode* node, QObject* parent )
 	: QAbstractItemModel( parent )
 {
@@ -167,25 +171,25 @@ void Lua::LuaGraphTreeModel::setupModelData( const Lua::LuaNode* node, LuaGraphT
 {
 	parent->appendChild( new LuaGraphTreeItem( QList<QVariant>() << "id" << node->getId(), parent ) );
 	parent->appendChild( new LuaGraphTreeItem( QList<QVariant>() << "label" << node->getLabel(), parent ) );
-	Diluculum::LuaValue luaParams = node->getParams();
+	Lua::LuaValue luaParams = node->getParams();
 	loadLuaModel( "params", luaParams, parent );
 }
 
-void Lua::LuaGraphTreeModel::loadLuaModel( QString name, const Diluculum::LuaValue value, LuaGraphTreeItem* parent )
+void Lua::LuaGraphTreeModel::loadLuaModel( QString name, const Lua::LuaValue value, LuaGraphTreeItem* parent )
 {
-	if ( value.type() == 5 ) {
+	if ( value.getValue().type() == 5 ) {
 		LuaGraphTreeItem* newParent = new LuaGraphTreeItem( QList<QVariant>() << name << "", parent );
 		parent->appendChild( newParent );
-		Diluculum::LuaValueMap tableValue = value.asTable();
-		for ( Diluculum::LuaValueMap::iterator i = tableValue.begin(); i != tableValue.end(); ++i ) {
+		Lua::LuaValueMap tableValue = value.getValue().asTable();
+		for ( auto i = tableValue.begin(); i != tableValue.end(); ++i ) {
 			loadLuaModel( QString::fromStdString( i->first.asString() ), i->second, newParent );
 		}
 	}
 	else {
 		Lua::LuaInterface* lua = Lua::LuaInterface::getInstance();
-		Diluculum::LuaValueList param;
-		param.push_back( value );
-		std::string textValue = lua->callFunction( "tostring", param )[0].asString();
+		Lua::LuaValueList param;
+		param.push_back( value.getValue() );
+		std::string textValue = lua->callFunction( "tostring", param.getValue() )[0].asString();
 		QList<QVariant> list = QList<QVariant>() << name << QString::fromStdString( textValue );
 		parent->appendChild( new LuaGraphTreeItem( list, parent ) );
 	}
