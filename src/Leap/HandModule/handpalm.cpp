@@ -5,8 +5,8 @@
 #include "Leap/HandModule/HandPalm.h"
 
 
-Leap::HandPalm::HandPalm(osg::ref_ptr<osg::MatrixTransform> matrixTransform) {
-    this->matrixTransform = matrixTransform;
+Leap::HandPalm::HandPalm(float radius) {
+    this->generateGeometry(radius);
     this->initStructure();
 }
 
@@ -16,16 +16,9 @@ void Leap::HandPalm::initStructure() {
         int i = 0;
 
         // Create core joints
-        for(i = 0; i <= 5; i++) {
+        for(i = 0; i < 5; i++) {
             Joint* joint = new Joint(0, i);
-            // TODO calculate joint's matrixTransform - !create enum / table for consts!
-            // joint->matrixTransform...
             this->coreJoints.push_back(joint);
-        }
-
-        // Create fingers
-        for (Joint* coreJoint : this->coreJoints) {
-            coreJoint->initStructure();
         }
     }
 }
