@@ -10,34 +10,17 @@ Leap::CustomLeapManager::CustomLeapManager( Vwr::CameraManipulator* cameraManipu
 	arMode = false;
 
     //init handPalms here
-    // TODO upravit navrh.. manager v sebe nemoze mat ako atributy transformacne matice
     if ( this->handsGroup != NULL ) {
         arMode = true;
 
-        osg::ref_ptr<osg::Geode> leftHandGeode( new osg::Geode );
-        osg::ref_ptr<osg::Sphere>  leftHandSphere = new osg::Sphere( osg::Vec3f( 0,0,0 ),0.1f );
+        HandPalm *rightPalm = new HandPalm(0.1f);
+        HandPalm *leftPalm = new HandPalm(0.1f);
 
-        osg::ref_ptr<osg::ShapeDrawable> leftHandDrawable( new osg::ShapeDrawable( leftHandSphere.get() ) );
-        leftHandGeode->addDrawable( leftHandDrawable.get() );
+        rightPalm->matrixTransform->setMatrix(osg::Matrix::translate( -0.5,0,-0.5 ));
+        leftPalm->matrixTransform->setMatrix(osg::Matrix::translate( 0.5,0,-0.5 ));
 
-        osg::ref_ptr<osg::Geode> rightHandGeode( new osg::Geode );
-        osg::ref_ptr<osg::Sphere> rightHandSphere = new osg::Sphere( osg::Vec3f( 0,0,0 ),0.1f );
-        osg::ref_ptr<osg::ShapeDrawable> rightHandDrawable( new osg::ShapeDrawable( rightHandSphere.get() ) );
-        rightHandGeode->addDrawable( rightHandDrawable.get() );
-
-        osg::ref_ptr<osg::MatrixTransform> transformLeft = new osg::MatrixTransform();
-        osg::ref_ptr<osg::MatrixTransform> transformRight = new osg::MatrixTransform();
-        transformLeft->addChild( leftHandGeode.get() );
-        transformRight->addChild( rightHandGeode.get() );
-
-        transformLeft->setMatrix( osg::Matrix::translate( -0.5,0,-0.5 ) );
-        transformRight->setMatrix( osg::Matrix::translate( 0.5,0,-0.5 ) );
-
-        HandPalm *rightPalm = new HandPalm(transformRight);
-        HandPalm *leftPalm = new HandPalm(transformLeft);
-
-        handsGroup->insertChild(0, rightPalm->matrixTransform);
-        handsGroup->insertChild(1, leftPalm->matrixTransform);
+        handsGroup->insertChild(0, rightPalm);
+        handsGroup->insertChild(1, leftPalm);
     }
 
 }
@@ -134,20 +117,37 @@ void Leap::CustomLeapManager::scaleNodes( bool scaleUp )
 //*****
 void Leap::CustomLeapManager::updateHands( Leap::Hand leftHand, Leap::Hand rightHand )
 {        
-        Leap::Vector lVector = Leap::Vector(0.0f,0.0f,0.0f);
-        if ( leftHand.isValid() ) {
-            lVector = leftHand.palmPosition();
-        }
-        Leap::Vector rVector = Leap::Vector(0.0f,0.0f,0.0f);
-        if ( rightHand.isValid() ) {
-            rVector = rightHand.palmPosition();
-        }
+    Leap::Vector lVector = Leap::Vector(0.0f,0.0f,0.0f);
+    if ( leftHand.isValid() ) {
+        lVector = leftHand.palmPosition();
+    }
+    Leap::Vector rVector = Leap::Vector(0.0f,0.0f,0.0f);
+    if ( rightHand.isValid() ) {
+        rVector = rightHand.palmPosition();
+    }
+
 	if ( this->handsGroup != NULL ) {
-        osg::MatrixTransform* rightPalm = dynamic_cast<osg::MatrixTransform*> (handsGroup->getChild(1));
-        osg::MatrixTransform* leftPalm = dynamic_cast<osg::MatrixTransform*> (handsGroup->getChild(0));
-        rightPalm->setMatrix( osg::Matrix::translate( static_cast<double>( lVector.x )/100.0,static_cast<double>( -lVector.z )/100.0,static_cast<double>( lVector.y )/100.0 ) );
-        leftPalm->setMatrix( osg::Matrix::translate( static_cast<double>( rVector.x )/100.0,static_cast<double>( -rVector.z )/100.0,static_cast<double>( rVector.y )/100.0 ) );
+        HandPalm* rightPalm = static_cast<HandPalm*>(handsGroup->getChild(0));
+        HandPalm* leftPalm = static_cast<HandPalm*>(handsGroup->getChild(1));
+
+        rightPalm->matrixTransform->setMatrix(
+                    osg::Matrix::translate( static_cast<double>( lVector.x )/100.0,static_cast<double>( -lVector.z )/100.0,
+                                            static_cast<double>( lVector.y )/100.0 ));
+        leftPalm->matrixTransform->setMatrix(
+                    osg::Matrix::translate( static_cast<double>( rVector.x )/100.0,static_cast<double>( -rVector.z )/100.0,
+                                            static_cast<double>( rVector.y )/100.0 ) );
+
+        this->updateFingers(rightPalm, rightHand.fingers());
+        this->updateFingers(leftPalm, leftHand.fingers());
 	}
 }
 
-void initPalms();
+void Leap::CustomLeapManager::updateFingers(HandPalm* palm, Leap::FingerList fingers) {
+    //TODO
+    for (Joint* joint : palm->coreJoints) {
+//        joint->matrixTransform->setMatrix(
+//                    osg::Matrix::translate( static_cast<double>( lVector.x )/100.0,static_cast<double>( -lVector.z )/100.0,
+//                                            static_cast<double>( lVector.y )/100.0 )
+//                    );
+    }
+}

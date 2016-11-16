@@ -11,8 +11,9 @@
 namespace Leap {
 class HandPalm : public HandNode {
 public:
-    HandPalm(osg::ref_ptr<osg::MatrixTransform> matrixTransform);
+    HandPalm(float radius);
     void initStructure();
+
     std::list<Joint*> coreJoints;
 };
 }

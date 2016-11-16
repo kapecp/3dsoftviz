@@ -8,14 +8,17 @@
 #include <osg/ref_ptr>
 #include <osg/Matrix>
 #include <osg/MatrixTransform>
+#include <osg/Node>
 
 namespace Leap {
 
-class HandNode{
+class HandNode : public osg::Node{
 public:
     HandNode();
-    osg::ref_ptr<osg::MatrixTransform> matrixTransform;
+    void generateGeometry(float radius);
     virtual void initStructure();
+
+    osg::ref_ptr<osg::MatrixTransform> matrixTransform;
 };
 }
 #endif // HANDNODE_H
