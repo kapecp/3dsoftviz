@@ -8,9 +8,11 @@
 namespace Leap {
 class Joint : public HandNode {
 public:
-    Joint(int level, int position);
+    Joint(int level, int position, osg::ref_ptr<osg::Group> fingerJointGroup);
     void initStructure();
+
     Joint* nextJoint;
+    osg::ref_ptr<osg::Group> fingerJointGroup;
 private:
     // 0-3, vyjadruje kolky klb prsta objekt predstavuje
     int level;
