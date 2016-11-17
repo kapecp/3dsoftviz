@@ -6,6 +6,8 @@
 #include <Diluculum/LuaWrappers.hpp>
 #include "Diluculum/Types.hpp"
 #include <Diluculum/LuaExceptions.hpp>
+#include "LuaTypes/LuaValueList.h"
+#include "LuaTypes/LuaState.h"
 
 namespace Diluculum {
 class LuaState;
@@ -108,7 +110,7 @@ public:
 	     * \params params   function input parameters
 	     * \return Diluculum::LuaValueList  returned value/s
 	     */
-	Diluculum::LuaValueList callFunction( QString funcName, Diluculum::LuaValueList params = Diluculum::LuaValueList() );
+	Lua::LuaValueList callFunction( QString funcName, Lua::LuaValueList params = Lua::LuaValueList() );
 
 	/**
 	     * \fn callFunction
@@ -118,22 +120,22 @@ public:
 	     * \params params   function input parameters
 	     * \return Diluculum::LuaValueList  returned value/s
 	     */
-	Diluculum::LuaValueList callFunction( unsigned int length, QString args[],
-										  Diluculum::LuaValueList params = Diluculum::LuaValueList() );
+	Lua::LuaValueList callFunction( unsigned int length, QString args[],
+										  Lua::LuaValueList params = Lua::LuaValueList() );
 
 	/**
 	     * \fn getLuaState
 	     * \brief returns Diluculum::LuaState to access Diluculum functions (table iteration, callback registration)
 	     * \return Diluculum::LuaState  lua state from Diluculum library
 	     */
-	Diluculum::LuaState* getLuaState() const;
+	Lua::LuaState getLuaState() const;
 
 	/**
 		 * \fn doString
 		 * \brief returns Diluculum::LuaValueList, performs Diluculum::doString with LuaInterface, instead of LuaState
 		 * \return Diluculum::LuaValueList from Diluculum library
 		 */
-	Diluculum::LuaValueList doString( const std::string& what );
+	Lua::LuaValueList doString( const std::string& what );
 
 
 
@@ -152,7 +154,7 @@ private:
 	    *  Diluculum::LuaState *luaState
 	    *  \brief underlying Diluculum::LuaState
 	    */
-	Diluculum::LuaState* luaState;
+	Lua::LuaState luaState;
 };
 
 }
