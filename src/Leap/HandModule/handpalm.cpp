@@ -5,9 +5,13 @@
 #include "Leap/HandModule/HandPalm.h"
 
 
-Leap::HandPalm::HandPalm(float radius) {
+
+Leap::HandPalm::HandPalm(float radius,  osg::ref_ptr<osg::Group> handsGroup) {
+    palmGroup = new osg::Group();
     this->generateGeometry(radius);
     this->initStructure();
+
+    handsGroup->addChild(palmGroup);
 }
 
 void Leap::HandPalm::initStructure() {
@@ -19,6 +23,7 @@ void Leap::HandPalm::initStructure() {
         for(i = 0; i < 5; i++) {
             Joint* joint = new Joint(0, i);
             this->coreJoints.push_back(joint);
+            palmGroup->addChild(dynamic_cast<osg::Node*>(joint));
         }
     }
 }
