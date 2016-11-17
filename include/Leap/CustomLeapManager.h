@@ -1,6 +1,7 @@
 #ifndef CUSTOMLEAPMANAGER_H
 #define CUSTOMLEAPMANAGER_H
 
+#include "Leap.h"
 #include "LeapLib/LeapManager.h"
 #include "Viewer/CameraManipulator.h"
 #include "Viewer/CoreGraph.h"
@@ -26,6 +27,7 @@ public:
 	void rotateCamera( float py0, float px0, double throwScale, float py1, float px1 );
     void updateHands( Leap::Hand leftHand, Leap::Hand rightHand );
     void updateFingers(HandPalm* palm, Leap::FingerList fingers);
+    void updateFinger(Joint*  joint, Leap::Finger finger);
 
 	//jurik
 	void graphRotateSwipe( int swipeDirection );
@@ -42,6 +44,7 @@ public:
 	Vwr::CoreGraph* coreGraph;
 
 	osg::ref_ptr<osg::Group> handsGroup;
+
 
 };
 }

@@ -1,4 +1,5 @@
 #include "Leap/CustomLeapManager.h"
+#include <easylogging++.h>
 
 Leap::CustomLeapManager::CustomLeapManager( Vwr::CameraManipulator* cameraManipulator, Layout::LayoutThread* layout,
 		Vwr::CoreGraph* coreGraph , osg::ref_ptr<osg::Group> handsGroup )
@@ -12,15 +13,15 @@ Leap::CustomLeapManager::CustomLeapManager( Vwr::CameraManipulator* cameraManipu
     //init handPalms here
     if ( this->handsGroup != NULL ) {
         arMode = true;
+        HandPalm *rightPalm = new HandPalm(0.1f, handsGroup);
+        HandPalm *leftPalm = new HandPalm(0.1f, handsGroup);
 
-        HandPalm *rightPalm = new HandPalm(0.1f);
-        HandPalm *leftPalm = new HandPalm(0.1f);
 
-        rightPalm->matrixTransform->setMatrix(osg::Matrix::translate( -0.5,0,-0.5 ));
-        leftPalm->matrixTransform->setMatrix(osg::Matrix::translate( 0.5,0,-0.5 ));
+        rightPalm->setMatrix(osg::Matrix::translate( -0.5,0,-0.5 ));
+        leftPalm->setMatrix(osg::Matrix::translate( 0.5,0,-0.5 ));
 
-        handsGroup->insertChild(0, rightPalm);
-        handsGroup->insertChild(1, leftPalm);
+        handsGroup->insertChild(0, dynamic_cast<osg::Node*> (rightPalm));
+        handsGroup->insertChild(1, dynamic_cast<osg::Node*> (leftPalm));
     }
 
 }
@@ -126,28 +127,37 @@ void Leap::CustomLeapManager::updateHands( Leap::Hand leftHand, Leap::Hand right
         rVector = rightHand.palmPosition();
     }
 
-	if ( this->handsGroup != NULL ) {
-        HandPalm* rightPalm = static_cast<HandPalm*>(handsGroup->getChild(0));
-        HandPalm* leftPalm = static_cast<HandPalm*>(handsGroup->getChild(1));
+    if ( this->handsGroup != NULL ) {
+        HandPalm* rightPalm = dynamic_cast<HandPalm*>(handsGroup->getChild(0));
+        HandPalm* leftPalm = dynamic_cast<HandPalm*>(handsGroup->getChild(1));
 
-        rightPalm->matrixTransform->setMatrix(
+        leftPalm->setMatrix(
                     osg::Matrix::translate( static_cast<double>( lVector.x )/100.0,static_cast<double>( -lVector.z )/100.0,
                                             static_cast<double>( lVector.y )/100.0 ));
-        leftPalm->matrixTransform->setMatrix(
+        rightPalm->setMatrix(
                     osg::Matrix::translate( static_cast<double>( rVector.x )/100.0,static_cast<double>( -rVector.z )/100.0,
                                             static_cast<double>( rVector.y )/100.0 ) );
 
         this->updateFingers(rightPalm, rightHand.fingers());
         this->updateFingers(leftPalm, leftHand.fingers());
-	}
+    }
 }
 
 void Leap::CustomLeapManager::updateFingers(HandPalm* palm, Leap::FingerList fingers) {
-    //TODO
-    for (Joint* joint : palm->coreJoints) {
-//        joint->matrixTransform->setMatrix(
-//                    osg::Matrix::translate( static_cast<double>( lVector.x )/100.0,static_cast<double>( -lVector.z )/100.0,
-//                                            static_cast<double>( lVector.y )/100.0 )
-//                    );
+    int i = 0;
+    std::list<Joint*>::iterator it = palm->coreJoints.begin();
+    for(i = 0; i < fingers.count(); i++)
+    {
+       updateFinger((*it), fingers[i]);
+       std::next(it, 1);
     }
+
+}
+
+void Leap::CustomLeapManager::updateFinger(Joint*  joint, Leap::Finger finger) {
+    //TODO zaciatky prstov su uz v scene ale len na pozici 0,0,0(palmGroup) - treba im nastavit poziciu
+
+    finger.bone(1)->prevJoint();
+    LOG (INFO) << "Leap/CustomLeapManager/updateFinger() " + std::to_string(finger.type());
+
 }
