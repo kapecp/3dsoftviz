@@ -16,12 +16,8 @@ Leap::CustomLeapManager::CustomLeapManager( Vwr::CameraManipulator* cameraManipu
         HandPalm *rightPalm = new HandPalm(0.1f, handsGroup);
         HandPalm *leftPalm = new HandPalm(0.1f, handsGroup);
 
-
         rightPalm->setMatrix(osg::Matrix::translate( -0.5,0,-0.5 ));
         leftPalm->setMatrix(osg::Matrix::translate( 0.5,0,-0.5 ));
-
-        handsGroup->insertChild(0, dynamic_cast<osg::Node*> (rightPalm));
-        handsGroup->insertChild(1, dynamic_cast<osg::Node*> (leftPalm));
     }
 
 }
@@ -144,20 +140,26 @@ void Leap::CustomLeapManager::updateHands( Leap::Hand leftHand, Leap::Hand right
 }
 
 void Leap::CustomLeapManager::updateFingers(HandPalm* palm, Leap::FingerList fingers) {
+
+//    int i = 0;
+//    std::list<Joint*>::iterator it = palm->coreJoints.begin();
+//    for(i = 0; i < fingers.count(); i++)
+//    {
+//       updateFinger((*it), fingers[i]);
+//       std::next(it, 1);
+//    }
+
     int i = 0;
-    std::list<Joint*>::iterator it = palm->coreJoints.begin();
-    for(i = 0; i < fingers.count(); i++)
-    {
-       updateFinger((*it), fingers[i]);
-       std::next(it, 1);
+    for(i = 0; i < fingers.count(); i++) {
+        updateFinger(static_cast<Joint*>(palm->getChild(i)), fingers[i]);
     }
 
 }
 
-void Leap::CustomLeapManager::updateFinger(Joint*  joint, Leap::Finger finger) {
+void Leap::CustomLeapManager::updateFinger(Joint* joint, Leap::Finger finger) {
     //TODO zaciatky prstov su uz v scene ale len na pozici 0,0,0(palmGroup) - treba im nastavit poziciu
 
-    finger.bone(1)->prevJoint();
+//    finger.bone(1)->prevJoint();
     LOG (INFO) << "Leap/CustomLeapManager/updateFinger() " + std::to_string(finger.type());
 
 }

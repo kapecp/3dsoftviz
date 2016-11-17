@@ -15,8 +15,7 @@ public:
     HandPalm(float radius, osg::ref_ptr<osg::Group> handsGroup );
     void initStructure();
 
-    std::list<Joint*> coreJoints;
-    osg::ref_ptr<osg::Group> palmGroup;
+    osg::ref_ptr<osg::Group> fingerGroup;
 };
 }
 #endif // HANDPALM_H

@@ -6,24 +6,24 @@
 
 
 
-Leap::HandPalm::HandPalm(float radius,  osg::ref_ptr<osg::Group> handsGroup) {
-    palmGroup = new osg::Group();
+Leap::HandPalm::HandPalm(float radius, osg::ref_ptr<osg::Group> handsGroup) {
+    this->fingerGroup = new osg::Group();
     this->generateGeometry(radius);
     this->initStructure();
 
-    handsGroup->addChild(palmGroup);
+    handsGroup->addChild(this->fingerGroup);
 }
 
 void Leap::HandPalm::initStructure() {
     LOG( INFO ) << "Leap/HandleModule/HandPalm/initStrucure()";
-    if (this->coreJoints.empty()) {
+    if (this->fingerGroup.get()->getNumChildren() == 0) {
         int i = 0;
 
-        // Create core joints
+        // Create finger joint groups
         for(i = 0; i < 5; i++) {
-            Joint* joint = new Joint(0, i);
-            this->coreJoints.push_back(joint);
-            palmGroup->addChild(dynamic_cast<osg::Node*>(joint));
+            osg::ref_ptr<osg::Group> fingerJointGroup = new osg::Group();
+            Joint* joint = new Joint(0, i, fingerJointGroup);
+            this->fingerGroup->addChild(fingerJointGroup);
         }
     }
 }
