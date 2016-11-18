@@ -122,16 +122,20 @@ void Leap::CustomLeapManager::updateHands( Leap::Hand leftHand, Leap::Hand right
     if ( rightHand.isValid() ) {
         rVector = rightHand.palmPosition();
     }
+//    LOG (INFO) << lVector.toString() << ' ';
 
     if ( this->handsGroup != NULL ) {
-        HandPalm* rightPalm = dynamic_cast<HandPalm*>(handsGroup->getChild(0));
-        HandPalm* leftPalm = dynamic_cast<HandPalm*>(handsGroup->getChild(1));
+        //0 a 2 z dovodu ze v grupe je palmNode, fingerGroup, palmNode, fingerGroup
+        HandPalm* rightPalm = static_cast<HandPalm*>(handsGroup->getChild(0));
+        HandPalm* leftPalm = static_cast<HandPalm*>(handsGroup->getChild(2));
 
         leftPalm->setMatrix(
-                    osg::Matrix::translate( static_cast<double>( lVector.x )/100.0,static_cast<double>( -lVector.z )/100.0,
+                    osg::Matrix::translate( static_cast<double>( lVector.x )/100.0,
+                                            static_cast<double>( -lVector.z )/100.0,
                                             static_cast<double>( lVector.y )/100.0 ));
         rightPalm->setMatrix(
-                    osg::Matrix::translate( static_cast<double>( rVector.x )/100.0,static_cast<double>( -rVector.z )/100.0,
+                    osg::Matrix::translate( static_cast<double>( rVector.x )/100.0,
+                                            static_cast<double>( -rVector.z )/100.0,
                                             static_cast<double>( rVector.y )/100.0 ) );
 
         this->updateFingers(rightPalm, rightHand.fingers());
@@ -140,26 +144,37 @@ void Leap::CustomLeapManager::updateHands( Leap::Hand leftHand, Leap::Hand right
 }
 
 void Leap::CustomLeapManager::updateFingers(HandPalm* palm, Leap::FingerList fingers) {
-
-//    int i = 0;
-//    std::list<Joint*>::iterator it = palm->coreJoints.begin();
-//    for(i = 0; i < fingers.count(); i++)
-//    {
-//       updateFinger((*it), fingers[i]);
-//       std::next(it, 1);
-//    }
-
     int i = 0;
-    for(i = 0; i < fingers.count(); i++) {
-        updateFinger(static_cast<Joint*>(palm->getChild(i)), fingers[i]);
+    // odstranene fingers.count(), aby sa pozicie klbov zobrazili na 0,0,0, ked nieje zachytavana ruka
+    for(i = 0; i < 5; i++) {
+        updateFinger(static_cast<osg::Group*>(palm->fingerGroup->getChild(i)->asGroup()), fingers[i]);
     }
 
 }
 
-void Leap::CustomLeapManager::updateFinger(Joint* joint, Leap::Finger finger) {
-    //TODO zaciatky prstov su uz v scene ale len na pozici 0,0,0(palmGroup) - treba im nastavit poziciu
+void Leap::CustomLeapManager::updateFinger(osg::Group*  fingerGroup, Leap::Finger fingerLeap) {
+    // vykreslenie klbov zapastia
+    //
+    Joint* joint = static_cast<Joint*>(fingerGroup->getChild(0));
+    Leap::Vector posVector = Leap::Vector(0.0f,0.0f,0.0f);
+    if(fingerLeap.bone(static_cast<Leap::Bone::Type>(0)).isValid()){
+       posVector = fingerLeap.bone(static_cast<Leap::Bone::Type>(0)).prevJoint();
+    }
+    joint->setMatrix(osg::Matrix::translate( static_cast<double>( posVector.x )/100.0,
+                                             static_cast<double>( -posVector.z )/100.0,
+                                             static_cast<double>( posVector.y )/100.0 ));
+    // vykreslenie prstov
+    int i = 0;
+    for(i = 0; i < 4; i++) {
+        Joint* joint = static_cast<Joint*>(fingerGroup->getChild(i+1));
 
-//    finger.bone(1)->prevJoint();
-    LOG (INFO) << "Leap/CustomLeapManager/updateFinger() " + std::to_string(finger.type());
+        Leap::Vector posVector = Leap::Vector(0.0f,0.0f,0.0f);
+        if(fingerLeap.bone(static_cast<Leap::Bone::Type>(i)).isValid()){
+           posVector = fingerLeap.bone(static_cast<Leap::Bone::Type>(i)).nextJoint();
+        }
+        joint->setMatrix(osg::Matrix::translate( static_cast<double>( posVector.x )/100.0,
+                                                 static_cast<double>( -posVector.z )/100.0,
+                                             static_cast<double>( posVector.y )/100.0 ));
+    }
 
 }

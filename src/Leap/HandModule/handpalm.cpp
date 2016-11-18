@@ -11,6 +11,8 @@ Leap::HandPalm::HandPalm(float radius, osg::ref_ptr<osg::Group> handsGroup) {
     this->generateGeometry(radius);
     this->initStructure();
 
+    // pridanie nodu dlane a groupy prstov do sceny
+    handsGroup->addChild(static_cast<osg::Node*> (this));
     handsGroup->addChild(this->fingerGroup);
 }
 
@@ -23,7 +25,7 @@ void Leap::HandPalm::initStructure() {
         for(i = 0; i < 5; i++) {
             osg::ref_ptr<osg::Group> fingerJointGroup = new osg::Group();
             Joint* joint = new Joint(0, i, fingerJointGroup);
-            this->fingerGroup->addChild(fingerJointGroup);
+            this->fingerGroup->insertChild(i,fingerJointGroup);
         }
     }
 }

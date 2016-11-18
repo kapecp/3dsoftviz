@@ -14,14 +14,13 @@ Leap::Joint::Joint(int level, int position, osg::ref_ptr<osg::Group> fingerJoint
     this->fingerJointGroup = fingerJointGroup;
     this->generateGeometry(RADIUS);
     initStructure();
+    this->fingerJointGroup->addChild(static_cast<osg::Node*> (this));
 }
 
 void Leap::Joint::initStructure() {
 
     if (this->nextJoint == NULL) {
         if (this->level != 4) {
-//            LOG( INFO ) << "Leap/HandleModule/Joint/initStrucure()   level: " + std::to_string(this->level)
-//            + " position: " + std::to_string(position);
             this->nextJoint = new Joint(this->level + 1, this->position, this->fingerJointGroup);
         }
     }
