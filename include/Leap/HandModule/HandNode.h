@@ -17,8 +17,6 @@ public:
     HandNode();
     void generateGeometry(float radius);
     virtual void initStructure();
-
-//    osg::ref_ptr<osg::MatrixTransform> matrixTransform;
 };
 }
 #endif // HANDNODE_H
