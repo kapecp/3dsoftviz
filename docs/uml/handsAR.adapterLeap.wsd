@@ -1,0 +1,57 @@
+// Module handsARAdapter
+// Autor: Aug_RealityKings
+
+
+@startuml
+class "Leap::Hand" as cls1 {
+  FingerList fingers()
+  Vector palmPosition()
+  float palmWidth()
+  Vector palmNormal()
+  Vector direction()
+  Matrix basis()
+  Vector sphereCenter()
+  float sphereRadius()
+}
+
+class "Leap::FingerList" as cls2 {
+	Finger operator[]()
+	FingerList fingerType(Finger::Type type)
+}
+
+class "Leap::Finger" as cls3 {
+	Finger bone(Finger::Type boneIx)
+	FingerList fingerType(Bone::Typee type)
+}
+
+class "Leap::Bone" as cls4 {
+	Vector prevJoint()
+	Vector nextJoint()
+	Vector direction()
+	Vector length()
+	Vector width()
+}
+
+enum TypeFinger {
+  TYPE_THUMB 
+  TYPE_INDEX 
+  TYPE_MIDDLE
+  TYPE_RING  
+  TYPE_PINKY 
+}
+
+enum TypeBone  {
+TYPE_METACARPAL
+TYPE_PROXIMAL
+TYPE_INTERMEDIATE
+TYPE_DISTAL 
+}
+
+cls1 o-- cls2
+cls2 o-- cls3
+cls3 o-- cls4
+cls3 -- TypeFinger
+cls4 -- TypeBone
+
+
+@enduml

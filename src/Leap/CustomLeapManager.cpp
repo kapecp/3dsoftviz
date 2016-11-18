@@ -73,6 +73,8 @@ void Leap::CustomLeapManager::graphRotateSwipe( int swipeDirection )
 			coreGraph->rotateGraph( swipeDirection );
 			break;
 		}
+		default:
+			break;
 	}
 }
 

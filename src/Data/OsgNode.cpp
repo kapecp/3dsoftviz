@@ -379,7 +379,7 @@ osg::ref_ptr<osg::Node> Data::OsgNode::createNodeSquare( const float& scaling, o
 	nodeQuad->setStateSet( bbState );
 
 	osg::ref_ptr<osg::Geode> geode = new osg::Geode;
-	geode->setNodeMask( geode->getNodeMask() & ( unsigned int )~0x2 );
+	geode->setNodeMask( geode->getNodeMask() & static_cast<unsigned int>( ~0x2 ) );
 	geode->addDrawable( nodeQuad );
 
 	osg::ref_ptr<osg::AutoTransform> at = new osg::AutoTransform();
@@ -466,7 +466,7 @@ osg::ref_ptr<osg::Node> Data::OsgNode::createLabel( const float& scale, QString 
 //    label->setBackdropOffset(0.05f);
 
 	osg::ref_ptr<osg::Geode> geode = new osg::Geode;
-	geode->setNodeMask( geode->getNodeMask() & ( unsigned int )~0x2 );
+	geode->setNodeMask( geode->getNodeMask() & static_cast<unsigned int>( ~0x2 ) );
 	geode->addDrawable( label );
 
 	osg::ref_ptr<osg::AutoTransform> at = new osg::AutoTransform();
