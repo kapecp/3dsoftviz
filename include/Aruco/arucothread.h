@@ -15,6 +15,7 @@
 
 namespace ArucoModul {
 class ArucoCore;
+class ArControlClass;
 }
 
 namespace OpenCV {
@@ -295,6 +296,8 @@ private:
 	OpenCV::CapVideo*	mCapVideo; // Cap video instanc, that managed camera and provides frames
 	Util::SizedQueue* boolQueue;
 
+    //JMA
+   ArControlClass* mArControlClass;
 
 };
 } // ArucoModul namespace
