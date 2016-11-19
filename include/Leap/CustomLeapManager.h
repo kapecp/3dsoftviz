@@ -27,7 +27,8 @@ public:
 	void rotateCamera( float py0, float px0, double throwScale, float py1, float px1 );
     void updateHands( Leap::Hand leftHand, Leap::Hand rightHand );
     void updateFingers(HandPalm* palm, Leap::FingerList fingers);
-    void updateFinger(osg::Group*  fingerGroup, Leap::Finger finger);
+    void updateJoints(osg::Group*  fingerGroup, Leap::Finger finger);
+    void updateBones(osg::Group*  fingerGroup, Leap::Finger finger);
 
 	//jurik
 	void graphRotateSwipe( int swipeDirection );

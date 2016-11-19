@@ -12,6 +12,7 @@ Leap::HandBone::HandBone(int type, osg::ref_ptr<osg::Group> boneGroup) {
     this->boneGroup = boneGroup;
     this->generateGeometry(CYLINDER_RADIUS);
     this->boneGroup->addChild(static_cast<osg::Node*> (this));
+
 }
 
 void Leap::HandBone::generateGeometry(float radius) {

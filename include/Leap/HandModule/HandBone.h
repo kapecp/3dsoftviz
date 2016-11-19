@@ -15,6 +15,7 @@ public:
     Joint* prevJoint;
     osg::ref_ptr<osg::Group> boneGroup;
 
+
 private:
     //      TYPE_METACARPAL = 0,   /**< Bone connected to the wrist inside the palm */
     //      TYPE_PROXIMAL = 1,     /**< Bone connecting to the palm */
