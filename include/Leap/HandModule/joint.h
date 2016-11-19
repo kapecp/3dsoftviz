@@ -10,6 +10,7 @@ class Joint : public HandNode {
 public:
     Joint(int level, int position, osg::ref_ptr<osg::Group> fingerJointGroup);
     void initStructure();
+    void generateGeometry(float radius);
 
     Joint* nextJoint;
     osg::ref_ptr<osg::Group> fingerJointGroup;

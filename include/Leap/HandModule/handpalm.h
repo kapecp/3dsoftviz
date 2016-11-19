@@ -6,6 +6,7 @@
 
 #include "Leap/HandModule/HandNode.h"
 #include "Leap/HandModule/Joint.h"
+#include "Leap/HandModule/HandBone.h"
 #include <list>
 #include <osg/Group>
 

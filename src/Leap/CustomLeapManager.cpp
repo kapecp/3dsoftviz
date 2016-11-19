@@ -73,8 +73,6 @@ void Leap::CustomLeapManager::rotateArucoRight()
 	coreGraph->rotateGraph( -1 );
 }
 
-#include <easylogging++.h>
-
 void Leap::CustomLeapManager::scaleEdgesUp()
 {
 
@@ -159,10 +157,12 @@ void Leap::CustomLeapManager::updateFinger(osg::Group*  fingerGroup, Leap::Finge
     Leap::Vector posVector = Leap::Vector(0.0f,0.0f,0.0f);
     if(fingerLeap.bone(static_cast<Leap::Bone::Type>(0)).isValid()){
        posVector = fingerLeap.bone(static_cast<Leap::Bone::Type>(0)).prevJoint();
+
+       joint->setMatrix(osg::Matrix::translate( static_cast<double>( posVector.x )/100.0,
+                                                static_cast<double>( -posVector.z )/100.0,
+                                                static_cast<double>( posVector.y )/100.0 ));
     }
-    joint->setMatrix(osg::Matrix::translate( static_cast<double>( posVector.x )/100.0,
-                                             static_cast<double>( -posVector.z )/100.0,
-                                             static_cast<double>( posVector.y )/100.0 ));
+
     // vykreslenie prstov
     int i = 0;
     for(i = 0; i < 4; i++) {
@@ -171,10 +171,12 @@ void Leap::CustomLeapManager::updateFinger(osg::Group*  fingerGroup, Leap::Finge
         Leap::Vector posVector = Leap::Vector(0.0f,0.0f,0.0f);
         if(fingerLeap.bone(static_cast<Leap::Bone::Type>(i)).isValid()){
            posVector = fingerLeap.bone(static_cast<Leap::Bone::Type>(i)).nextJoint();
+
+           joint->setMatrix(osg::Matrix::translate( static_cast<double>( posVector.x )/100.0,
+                                                    static_cast<double>( -posVector.z )/100.0,
+                                                static_cast<double>( posVector.y )/100.0 ));
         }
-        joint->setMatrix(osg::Matrix::translate( static_cast<double>( posVector.x )/100.0,
-                                                 static_cast<double>( -posVector.z )/100.0,
-                                             static_cast<double>( posVector.y )/100.0 ));
+
     }
 
 }
