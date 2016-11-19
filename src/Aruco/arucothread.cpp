@@ -1,5 +1,6 @@
 #include "Aruco/arucothread.h"
 #include "Aruco/arucocore.h"
+#include "Aruco/arControlObject.h"
 #include "Util/ApplicationConfig.h"
 
 #include <QDebug>
@@ -31,6 +32,8 @@ ArucoThread::ArucoThread( QObject* parent )
 	mMoM			= 1;
 	boolQueue = new Util::SizedQueue( 5, 0.0 );
 
+    //JMA
+    mArControlClass = new ArControlClass();
 }
 
 ArucoThread::~ArucoThread( void )
@@ -134,20 +137,13 @@ void ArucoThread::run()
             int         markerArraySize = 0;
             markerArraySize = aCore.detect( frame.clone() );
 
-
+            //JMA
 			if ( mMultiMarkerEnabled ) {
                 //reset base marker index for this run
                 aCore.setBaseMarkerIndex(-1);
 
-                // for each detected marker get Pos and Quad
-                QVector<osg::Vec3f> actPosArr(5);
-                QVector<osg::Quat> actQuatArr(5);
-
                 for(int i = 0; i< markerArraySize; i++){
                     int curMarkerId = aCore.getPosAndQuat( i, actPosArray, actQuatArray );
-
-                    actPosArr[i] = osg::Vec3f( actPosArray[0], actPosArray[1], actPosArray[2] );
-                    actQuatArr[i] = osg::Quat( actQuatArray[0],  actQuatArray[1],  actQuatArray[2], actQuatArray[3] );
 
                    // qDebug() << i << " : ID [" << curMarkerId << "] " << actPosArr[i].x() << " / " << actQuatArr[i].x();
 
@@ -156,7 +152,15 @@ void ArucoThread::run()
                         // set this marker as Base marker
                         aCore.setBaseMarkerIndex(i);
 
-                        graphControlling( actPosArr[i], actQuatArr[i] );
+                        graphControlling(
+                            osg::Vec3f( actPosArray[0], actPosArray[1], actPosArray[2] ),
+                            osg::Quat( actQuatArray[0],  actQuatArray[1],  actQuatArray[2], actQuatArray[3] )
+                        );
+                    }
+                    else{
+                        mArControlClass->updateObjectPosition(
+                            osg::Vec3f( actPosArray[0], actPosArray[1], actPosArray[2] )
+                        );
                     }
                 }
 			}

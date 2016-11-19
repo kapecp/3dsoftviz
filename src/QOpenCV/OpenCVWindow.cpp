@@ -366,7 +366,7 @@ void QOpenCV::OpenCVWindow::onMarkerStartCancel( bool checked )
 		mMarkerPB->setEnabled( true );
 		emit arucoRunning( true );
 
-		if ( Util::ApplicationConfig::get()->getValue( "Viewer.SkyBox.Noise" ).toInt() >1 ) {
+        if ( Util::ApplicationConfig::get()->getValue( "Viewer.SkyBox.Noise" ).toInt() ==0 ) {
 			mMarkerBackgrCB->setEnabled( true );
 		}
 	}
