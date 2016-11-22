@@ -108,7 +108,8 @@ void ArucoThread::run()
 	// prepare parameters for correction
 	const double width  = mCapVideo->getWidth();
 	const double height = mCapVideo->getHeight();
-	mCamDistRatio  = Util::ApplicationConfig::get()->getValue( "Aruco.CamDistancRatio" ).toDouble();
+
+    mCamDistRatio  = Util::ApplicationConfig::get()->getValue( "Aruco.CamDistancRatio" ).toDouble();
 	mRatioCamCoef  = ( 1 - height/width ) / mCamDistRatio;
 	mHalfRatioCoef = 0.5 + width / ( 2*height );
 
@@ -166,11 +167,11 @@ void ArucoThread::run()
                         //*****
 
                         //tmp
-                        mArControlClass->updateObjectPositionAruco(
+                      /*  mArControlClass->updateObjectPositionAruco(
                             osg::Vec3f( actPosArray[0], actPosArray[1], actPosArray[2] ),
                             modelviewmatrix
                         );
-
+*/
                     }
                     else{
                         QMatrix4x4 modelviewmatrix = aCore.getDetectedMatrix( i, frame.clone() );
