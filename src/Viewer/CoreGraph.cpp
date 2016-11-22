@@ -1835,7 +1835,7 @@ float CoreGraph::getFurthestPosition( osg::Vec3f max,osg::Vec3f min )
 
 void CoreGraph::setArucoRunning( bool isRunning )
 {
-	this->arucoRunning = isRunning;
+    this->arucoRunning = isRunning;
 }
 
 void CoreGraph::drawAxes()

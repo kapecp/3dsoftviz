@@ -2,8 +2,11 @@
 #define ARCONTROLOBJECT_H
 
 #include <osg/Vec3f>
+#include "Data/Node.h"
 
-
+namespace Data {
+class Graph;
+}
 namespace ArucoModul {
 
 //concrete objects
@@ -18,7 +21,7 @@ private:
     int id;
     osg::Vec3f position;
     bool focused;
-
+    osg::ref_ptr<Data::Node> focusedNode;
 };
 
 
@@ -28,7 +31,7 @@ class ArControlClass : public QObject
 
 public:
     ArControlClass();
-    void updateObjectPosition( osg::Vec3f position );
+    void updateObjectPositionAruco(osg::Vec3f position, QMatrix4x4 modelViewMatrix );
 
 private:
     ArucoModul::ArControlObject* controlObject;

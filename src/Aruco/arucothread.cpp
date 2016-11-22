@@ -152,19 +152,38 @@ void ArucoThread::run()
                         // set this marker as Base marker
                         aCore.setBaseMarkerIndex(i);
 
-                        graphControlling(
+                        //jurik
+                        //set and send modelview matrix of detected marker
+                        QMatrix4x4 modelviewmatrix = aCore.getDetectedMatrix( i, frame.clone() );
+                        emit sendModelViewMatrix( modelviewmatrix );
+
+                        //set and send projection matrix of detected image
+                        QMatrix4x4 projectionmatrix = aCore.getProjectionMatrix( frame.clone() );
+                        emit sendProjectionMatrix( projectionmatrix );
+
+                        //send marker size
+                        emit sendMarkerSize( aCore.getMarkerSize() );
+                        //*****
+
+                        //tmp
+                        mArControlClass->updateObjectPositionAruco(
                             osg::Vec3f( actPosArray[0], actPosArray[1], actPosArray[2] ),
-                            osg::Quat( actQuatArray[0],  actQuatArray[1],  actQuatArray[2], actQuatArray[3] )
+                            modelviewmatrix
                         );
+
                     }
                     else{
-                        mArControlClass->updateObjectPosition(
-                            osg::Vec3f( actPosArray[0], actPosArray[1], actPosArray[2] )
+                        QMatrix4x4 modelviewmatrix = aCore.getDetectedMatrix( i, frame.clone() );
+
+                        mArControlClass->updateObjectPositionAruco(
+                            osg::Vec3f( actPosArray[0], actPosArray[1], actPosArray[2] ),
+                            modelviewmatrix
                         );
                     }
                 }
 			}
 			else {
+                /*
                 // single marker -> set control marker index to 0
                 aCore.setBaseMarkerIndex(0);
 				// graph controll
@@ -198,20 +217,8 @@ void ArucoThread::run()
                         );
 					}
 				}
+                */
             }
-
-            //jurik
-            //set and send modelview matrix of detected marker
-            QMatrix4x4 modelviewmatrix = aCore.getDetectedMatrix( frame.clone() );
-            emit sendModelViewMatrix( modelviewmatrix );
-
-            //set and send projection matrix of detected image
-            QMatrix4x4 projectionmatrix = aCore.getProjectionMatrix( frame.clone() );
-            emit sendProjectionMatrix( projectionmatrix );
-
-            //send marker size
-            emit sendMarkerSize( aCore.getMarkerSize() );
-            //*****
 
 			imagesSending( aCore, frame );
 
@@ -226,6 +233,50 @@ void ArucoThread::run()
 }
 
 //JMA - rewrite to use vector as input
+osg::Vec3d ArucoThread::normalizePos( const osg::Vec3f actPosArray, const osg::Quat actQuatArray )
+{
+
+    // can be corection parameters updated
+    if ( mUpdCorPar ) {
+        computeCorQuatAndPos( actPosArray, actQuatArray );
+    }
+
+    osg::Vec3d actPos( -actPosArray[0], -actPosArray[1], -actPosArray[2] );
+
+    osg::Quat  actQuat;
+
+    //  forward/backward,   left/right,  around,   w
+    if ( mMarkerIsBehind ) {
+        actQuat.set( actQuatArray[1], -actQuatArray[3],  actQuatArray[2],  actQuatArray[0] );
+    }
+    else {
+        actQuat.set( actQuatArray[1],  actQuatArray[3],  actQuatArray[2],  -actQuatArray[0] );
+    }
+
+
+    if ( mCorEnabled ) {
+        correctQuatAndPos( actPos, actQuat );
+    }
+
+
+
+    // normalizin from [0,0] in top left corner to [1,1] in roght bottom corner
+    double absZ		= actPosArray[2]  < 0.0 ? - actPosArray[2]	:  actPosArray[2];		// distance of marker
+    double halfSize = absZ / mCamDistRatio;
+
+    double normX = actPos.x() / halfSize;							// horizontal
+    double normY = actPos.y() / halfSize;		// vertical
+
+    // correct Y centering, because of camerra different ration aruco top max y value is less than bottom one
+    normX = normX - 0.1 - 0.01/absZ;
+
+    actPos.x() = normX;
+    actPos.y() = normY;
+
+    return actPos;
+}
+
+
 //void ArucoThread::graphControlling( const double actPosArray[3], const double actQuatArray[4] )
 void ArucoThread::graphControlling( const osg::Vec3f actPosArray, const osg::Quat actQuatArray )
 {
