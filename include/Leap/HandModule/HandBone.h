@@ -14,6 +14,7 @@ public:
     Joint* nextJoint;
     Joint* prevJoint;
     osg::ref_ptr<osg::Group> boneGroup;
+    bool drawed;
 
 
 private:

@@ -4,7 +4,7 @@
 #include "Leap/HandModule/HandBone.h"
 #include <easylogging++.h>
 
-const float CYLINDER_RADIUS = 0.05f;
+const float CYLINDER_RADIUS = 0.03f;
 const float HEIGHT = 0.2f;
 
 Leap::HandBone::HandBone(int type, osg::ref_ptr<osg::Group> boneGroup) {
@@ -12,6 +12,7 @@ Leap::HandBone::HandBone(int type, osg::ref_ptr<osg::Group> boneGroup) {
     this->boneGroup = boneGroup;
     this->generateGeometry(CYLINDER_RADIUS);
     this->boneGroup->addChild(static_cast<osg::Node*> (this));
+//    this->drawed = false;
 
 }
 
