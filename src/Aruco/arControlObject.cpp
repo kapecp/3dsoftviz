@@ -15,9 +15,10 @@
 namespace ArucoModul {
 
 
-ArControlObject::ArControlObject( int id, osg::Vec3f position )
+ArControlObject::ArControlObject( int id, osg::Vec3f position, qlonglong nodeToPick )
 {
     this->id = id;
+    this->nodeToPick = nodeToPick;
     this->position = position;
     this->focused = false;
 }
@@ -26,25 +27,22 @@ void ArControlObject::updatePosition( osg::Vec3f position ){
     this->position = position;
    // qDebug() << position.x() << " / " << position.y() << " / " << position.z();
 
-    if ( this->focused ){
-        this->focusedNode->setTargetPosition(this->position);
-    }
-    else{
+    if ( !this->focused ){
         Data::Graph* currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
         QMap<qlonglong, osg::ref_ptr<Data::Node> >* allNodes = currentGraph->getNodes();
         QList<qlonglong> keys = allNodes->keys();
 
         // JMA tmp doaround
-        this->focusedNode = allNodes->value( keys.first() );
+        this->focusedNode = allNodes->value( keys.at(this->nodeToPick) );
 
         this->focused = true;
         this->focusedNode->setColor( osg::Vec4( 0.0f,1.0f,1.0f,0.5f ) );
 
         this->focusedNode -> setUsingInterpolation( false );
-      //  this->focusedNode->setTargetPosition(this->position);
-        this->focusedNode->setCurrentPosition(this->position);
-
     }
+
+    this->focusedNode->setTargetPosition(this->position);
+
 }
 
 
@@ -52,10 +50,9 @@ void ArControlObject::updatePosition( osg::Vec3f position ){
 
 ArControlClass::ArControlClass()
 {
-    this->controlObject = NULL;
 }
 
-void ArControlClass::updateObjectPositionAruco( osg::Vec3f position, QMatrix4x4 modelViewMatrix ){
+void ArControlClass::updateObjectPositionAruco( qlonglong object_id, QMatrix4x4 modelViewMatrix ){
     QOSG::ViewerQT* viewer;
     viewer = AppCore::Core::getInstance()->getCoreWindow()->GetViewerQt();
 
@@ -73,11 +70,11 @@ void ArControlClass::updateObjectPositionAruco( osg::Vec3f position, QMatrix4x4 
     // ani srnky netusia preco /2 ... ale takto to ide :D :D --- TMP JMA
     targetPosition.set( osg::Vec3f(targetPosition.x()/2, targetPosition.y()/2,targetPosition.z()/2) );
 
-    if( controlObject == NULL ){
-        controlObject = new ArControlObject( 1, targetPosition);
+    if( controlObjects.value(object_id) == NULL ){
+        controlObjects.insert(object_id, new ArControlObject(object_id, targetPosition, controlObjects.keys().length()));
     }
     else{
-        controlObject->updatePosition( targetPosition );
+        controlObjects.value(object_id)->updatePosition( targetPosition );
     }
 }
 

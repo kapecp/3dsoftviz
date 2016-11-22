@@ -165,20 +165,11 @@ void ArucoThread::run()
                         //send marker size
                         emit sendMarkerSize( aCore.getMarkerSize() );
                         //*****
-
-                        //tmp
-                      /*  mArControlClass->updateObjectPositionAruco(
-                            osg::Vec3f( actPosArray[0], actPosArray[1], actPosArray[2] ),
-                            modelviewmatrix
-                        );
-*/
                     }
                     else{
-                        QMatrix4x4 modelviewmatrix = aCore.getDetectedMatrix( i, frame.clone() );
-
                         mArControlClass->updateObjectPositionAruco(
-                            osg::Vec3f( actPosArray[0], actPosArray[1], actPosArray[2] ),
-                            modelviewmatrix
+                            i,
+                            aCore.getDetectedMatrix( i, frame.clone() )
                         );
                     }
                 }
