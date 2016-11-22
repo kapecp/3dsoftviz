@@ -33,7 +33,7 @@ bool ArucoCore::setCameraParameters( const QString markerDesFile )
 	}
 }
 
-const QMatrix4x4 ArucoCore::getDetectedMatrix(cv::Mat inputImage)
+const QMatrix4x4 ArucoCore::getDetectedMatrix(int markerId, cv::Mat inputImage)
 {
 	qreal modelViewMatrix[16];
 
@@ -42,7 +42,7 @@ const QMatrix4x4 ArucoCore::getDetectedMatrix(cv::Mat inputImage)
 
 	// get result model view matrix from imput image
     //this->detectMarkers();
-	this->getMatrix( modelViewMatrix );
+    this->getMatrix( markerId, modelViewMatrix );
 
 	QMatrix4x4 matrix( modelViewMatrix[ 0], modelViewMatrix[ 1], modelViewMatrix[ 2], modelViewMatrix[ 3],
 					   modelViewMatrix[ 4], modelViewMatrix[ 5], modelViewMatrix[ 6], modelViewMatrix[ 7],
@@ -146,14 +146,16 @@ void ArucoCore::detectMarkers()
 					   mMarkerSize );
 }
 
-int ArucoCore::getMatrix( double* modelviewmatrix )
+int ArucoCore::getMatrix( int markerId, double* modelviewmatrix )
 {
-    if ( mMarkers.size() > 0 && mBaseMarkerIndex != -1 ) {
-        mMarkers[mBaseMarkerIndex].glGetModelViewMatrix( modelviewmatrix );
+    if ( mMarkers.size() > 0 && markerId != -1 ) {
+        mMarkers[markerId].glGetModelViewMatrix( modelviewmatrix );
 		return 0;
 	}
 	return -1;
 }
+
+
 
 cv::Mat ArucoCore::getDetImage()
 {
@@ -247,7 +249,7 @@ void ArucoCore::drawCube( cv::Mat& Image, const vector<aruco::Marker>& m,const a
 	}
 }
 
-int ArucoCore::getBaseMarkerIndex() const
+int ArucoCore::getBaseMarkerIndex()
 {
     return mBaseMarkerIndex;
 }

@@ -38,7 +38,7 @@ public:
 		 * @param inputImage Image from cammera, where marker should be detected
 		 * @param[out] result model view matrix
 		 */
-    const QMatrix4x4 getDetectedMatrix( cv::Mat inputImage );
+    const QMatrix4x4 getDetectedMatrix(int markerId, cv::Mat inputImage );
 
 	//jurik
 	/**
@@ -101,7 +101,7 @@ public:
         * @author Autor:Juraj Marak
         * @brief  set/get for base marker index
         */
-    int getBaseMarkerIndex() const;
+    int getBaseMarkerIndex();
     void setBaseMarkerIndex(int baseMarkerIndex);
 
 private:
@@ -111,11 +111,12 @@ private:
 		 * @param modelviewmatrix double* the field that needs to be filled
 		 * @note The need to send a field will be changed, too.
 		 */
-	int getMatrix( double* modelviewmatrix );
+    int getMatrix(int markerId, double* modelviewmatrix );
 	/**
 		 * @author Autor: Martina Tregerova
 		 * @brief updateImage updates the camera matrix with each update.
-		 * @param ImputImage cv::Mat the camera matrix
+         * @param Detected marker id,
+         *        ImputImage cv::Mat the camera matrix
 		 * @note The need to send the image will be changed too.
 		 */
 	void updateImage( cv::Mat inputImage );
