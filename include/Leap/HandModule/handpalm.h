@@ -13,10 +13,14 @@
 namespace Leap {
 class HandPalm : public HandNode {
 public:
-    HandPalm(float radius, osg::ref_ptr<osg::Group> handsGroup );
+    HandPalm(float radius, osg::ref_ptr<osg::Group> handsGroup, int colorSwitch);
     void initStructure();
+    void generateGeometry(float radius, int colorSwitch);
 
     osg::ref_ptr<osg::Group> fingerGroup;
+    // 1 = GREEN JOINTS
+    // 2 = BLUE JOINTS
+    int colorSwitch;
 };
 }
 #endif // HANDPALM_H

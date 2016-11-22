@@ -6,12 +6,13 @@
 
 const float RADIUS = 0.07f;
 
-Leap::Joint::Joint(int level, int position, osg::ref_ptr<osg::Group> fingerJointGroup) {
+Leap::Joint::Joint(int level, int position, osg::ref_ptr<osg::Group> fingerJointGroup, int colorSwitch) {
     this->level = level;
     this->position = position;
+    this->colorSwitch = colorSwitch;
     this->nextJoint = NULL;
     this->fingerJointGroup = fingerJointGroup;
-    this->generateGeometry(RADIUS);
+    this->generateGeometry(RADIUS, colorSwitch);
     this->fingerJointGroup->addChild(static_cast<osg::Node*> (this));
     initStructure();  
 }
@@ -19,16 +20,17 @@ Leap::Joint::Joint(int level, int position, osg::ref_ptr<osg::Group> fingerJoint
 void Leap::Joint::initStructure() {
     if (this->nextJoint == NULL) {
         if (this->level != 4) {
-            this->nextJoint = new Joint(this->level + 1, this->position, this->fingerJointGroup);
+            this->nextJoint = new Joint(this->level + 1, this->position, this->fingerJointGroup, this->colorSwitch);
         }
     }
 }
 
-void Leap::Joint::generateGeometry(float radius) {
+void Leap::Joint::generateGeometry(float radius, int colorSwitch) {
     osg::ref_ptr<osg::Geode> handGeode( new osg::Geode );
     osg::ref_ptr<osg::Sphere> handSphere = new osg::Sphere( osg::Vec3f( 0.0f,0.0f,0.0f ), radius );
 
     osg::ref_ptr<osg::ShapeDrawable> handDrawable( new osg::ShapeDrawable( handSphere.get() ) );
+    this->setColor(colorSwitch, handDrawable);
     handGeode->addDrawable( handDrawable.get() );
 
     this->addChild( handGeode.get() );
