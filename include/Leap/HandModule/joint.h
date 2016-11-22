@@ -8,10 +8,11 @@
 namespace Leap {
 class Joint : public HandNode {
 public:
-    Joint(int level, int position, osg::ref_ptr<osg::Group> fingerJointGroup);
+    Joint(int level, int position, osg::ref_ptr<osg::Group> fingerJointGroup, int colorSwitch);
     void initStructure();
-    void generateGeometry(float radius);
+    void generateGeometry(float radius, int colorSwitch);
 
+    int colorSwitch;
     Joint* nextJoint;
     osg::ref_ptr<osg::Group> fingerJointGroup;
 private:

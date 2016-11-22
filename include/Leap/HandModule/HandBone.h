@@ -9,7 +9,7 @@ namespace Leap {
 class HandBone : public HandNode {
 public:
     HandBone(int type, osg::ref_ptr<osg::Group> boneGroup);
-    void generateGeometry(float radius);
+    void generateGeometry(float radius, int colorSwitch);
 
     Joint* nextJoint;
     Joint* prevJoint;

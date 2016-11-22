@@ -4,11 +4,10 @@
 #include <easylogging++.h>
 #include "Leap/HandModule/HandPalm.h"
 
-
-
-Leap::HandPalm::HandPalm(float radius, osg::ref_ptr<osg::Group> handsGroup) {
+Leap::HandPalm::HandPalm(float radius, osg::ref_ptr<osg::Group> handsGroup, int colorSwitch) {
     this->fingerGroup = new osg::Group();
-    this->generateGeometry(radius);
+    this->colorSwitch = colorSwitch;
+    this->generateGeometry(radius, colorSwitch);
     this->initStructure();
 
     // pridanie nodu dlane a groupy prstov do sceny
@@ -25,7 +24,7 @@ void Leap::HandPalm::initStructure() {
         // Create finger joint and bone groups
         for(i = 0; i < 5; i++) {
             osg::ref_ptr<osg::Group> fingerJointGroup = new osg::Group();
-            Joint* joint = new Joint(0, i, fingerJointGroup);
+            Joint* joint = new Joint(0, i, fingerJointGroup, this->colorSwitch);
             this->fingerGroup->insertChild(i, fingerJointGroup);
 
 			// elementy vo finger groupe v takomto poradi: {5x jointGroup, 5x boneGroup}
@@ -37,4 +36,16 @@ void Leap::HandPalm::initStructure() {
 			}
         }
     }
+}
+
+void Leap::HandPalm::generateGeometry(float radius, int colorSwitch) {
+    osg::ref_ptr<osg::Geode> handGeode( new osg::Geode );
+    osg::ref_ptr<osg::Sphere> handSphere = new osg::Sphere( osg::Vec3f( 0.0f,0.0f,0.0f ), radius );
+
+    osg::ref_ptr<osg::ShapeDrawable> handDrawable( new osg::ShapeDrawable( handSphere.get() ) );
+    this->setColor(colorSwitch, handDrawable);
+
+    handGeode->addDrawable( handDrawable.get() );
+
+    this->addChild( handGeode.get() );
 }

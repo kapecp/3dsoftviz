@@ -15,7 +15,8 @@ namespace Leap {
 class HandNode: public osg::MatrixTransform{
 public:
     HandNode();
-    virtual void generateGeometry(float radius);
+    void setColor(int colorSwitch, osg::ref_ptr<osg::ShapeDrawable> handDrawable);
+    virtual void generateGeometry(float radius, int colorSwitch);
     virtual void initStructure();
 };
 }

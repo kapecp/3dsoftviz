@@ -13,8 +13,8 @@ Leap::CustomLeapManager::CustomLeapManager( Vwr::CameraManipulator* cameraManipu
     //init handPalms here
     if ( this->handsGroup != NULL ) {
         arMode = true;
-        HandPalm *rightPalm = new HandPalm(0.1f, handsGroup);
-        HandPalm *leftPalm = new HandPalm(0.1f, handsGroup);
+        HandPalm *rightPalm = new HandPalm(0.1f, handsGroup, 1);
+        HandPalm *leftPalm = new HandPalm(0.1f, handsGroup, 2);
 
         rightPalm->setMatrix(osg::Matrix::translate( -0.5,0,-0.5 ));
         leftPalm->setMatrix(osg::Matrix::translate( 0.5,0,-0.5 ));
@@ -182,7 +182,7 @@ void Leap::CustomLeapManager::updateJoints(osg::Group*  fingerGroup, Leap::Finge
 
     }
 }
-void Leap::CustomLeapManager::updateBones(osg::Group*  fingerGroup, Leap::Finger fingerLeap) {
+void Leap::CustomLeapManager::updateBones(osg::Group* fingerGroup, Leap::Finger fingerLeap) {
     int i = 0;
 
     for(i = 0; i < 4; i++) {
