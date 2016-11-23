@@ -168,7 +168,7 @@ void ArucoThread::run()
                     }
                     else{
                         mArControlClass->updateObjectPositionAruco(
-                            i,
+                            curMarkerId,
                             aCore.getDetectedMatrix( i, frame.clone() )
                         );
                     }
