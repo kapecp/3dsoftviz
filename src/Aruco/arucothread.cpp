@@ -24,6 +24,7 @@ ArucoThread::ArucoThread( QObject* parent )
 	mUpdCorPar		= false;
 	mSendImgEnabled	= true;
 	mSendBackgrImgEnabled = false;
+    //JMA
     mMultiMarkerEnabled = true;
 	mRatioCamCoef	= 0;
 	mCamDistRatio = 0;
@@ -169,7 +170,8 @@ void ArucoThread::run()
                     else{
                         mArControlClass->updateObjectPositionAruco(
                             curMarkerId,
-                            aCore.getDetectedMatrix( i, frame.clone() )
+                            aCore.getDetectedMatrix( i, frame.clone() ),
+                            mMarkerIsBehind
                         );
                     }
                 }
