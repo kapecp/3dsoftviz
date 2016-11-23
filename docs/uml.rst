@@ -202,6 +202,13 @@ Navrh modelu ruky layer1:
 
    .. uml::
       
-      !include /uml/hand2.wsd	  
+      !include /uml/hand2.wsd
+	  
+Implementovany model ruky :
+
+   .. uml::
+      
+      !include /uml/handModel.wsd	  
+	  
 
 	  
