@@ -263,6 +263,20 @@ if( NITE2_FOUND )
 else( NITE2_FOUND )
 	message ( STATUS "NITE2 NOT FOUND" )
 endif()
+# ------------------------------ FREENECT2 -------------------------------
+find_package( FREENECT2 )
+if( FREENECT2_FOUND )
+
+	list( APPEND ALL_SYSTEM_HEADERS	${FREENECT2_INCLUDE_DIRS} )
+
+	list( APPEND ALL_COMPILE_DEFINITIONS  -DFREENECT2_FOUND )
+
+	message( STATUS "FREENECT2 Found:" )
+	message( STATUS "FREENECT2_INCLUDE_DIRS=${FREENECT2_INCLUDE_DIRS}" )
+	message( STATUS "FREENECT2_LIBRARIES=${FREENECT2_LIBRARIES}" )
+else( FREENECT2_FOUND )
+	message( STATUS "FREENECT2 NOT FOUND" )
+endif()
 
 
 # ------------------------------- KINECT SDK ----------------------------------
@@ -1171,6 +1185,10 @@ endif()
 
 if( OPENNI2_FOUND )
 	target_link_libraries( ${3DSOFTVIZ_NAME} ${OPENNI2_LIBRARIES} )
+endif()
+
+if( FREENECT2_FOUND )
+	target_link_libraries( ${3DSOFTVIZ_NAME} ${FREENECT2_LIBRARIES} )
 endif()
 
 if( NITE2_FOUND )
