@@ -175,12 +175,23 @@ Graph structure layer3-Edge:
       
       !include /uml/Graph.structure.layer3.Edge.wsd
 	  
-Graph structure layer3-LeapAR:
+Graph structure layer3-handsGroup:
 
    .. uml::
       
       !include /uml/Graph.structure.layer3.handsGroup.wsd
 
+LeapAR Adapter:
+
+   .. uml::
+      
+      !include /uml/handsAR.adapter.wsd
+Api leap library:
+
+   .. uml::
+      
+      !include /uml/handsAR.adapterLeap.wsd
+	  
 Navrh modelu ruky layer0:
 
    .. uml::
@@ -191,6 +202,13 @@ Navrh modelu ruky layer1:
 
    .. uml::
       
-      !include /uml/hand2.wsd	  
+      !include /uml/hand2.wsd
+	  
+Implementovany model ruky :
+
+   .. uml::
+      
+      !include /uml/handModel.wsd	  
+	  
 
 	  
