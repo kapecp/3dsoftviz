@@ -218,5 +218,5 @@ void Leap::LeapActions::scaleNodes( bool scaleUp )
 
 void Leap::LeapActions::updateARHands( Leap::Hand leftHand, Leap::Hand rightHand )
 {
-    leapManager->updateHands( leftHand, rightHand );
+	leapManager->updateHands( leftHand, rightHand );
 }

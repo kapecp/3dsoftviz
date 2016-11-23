@@ -11,16 +11,17 @@
 #include <osg/Group>
 
 namespace Leap {
-class HandPalm : public HandNode {
+class HandPalm : public HandNode
+{
 public:
-    HandPalm(float radius, osg::ref_ptr<osg::Group> handsGroup, int colorSwitch);
-    void initStructure();
-    void generateGeometry(float radius, int colorSwitch);
+	HandPalm( float radius, osg::ref_ptr<osg::Group> handsGroup, int colorSwitch );
+	void initStructure();
+	void generateGeometry( float radius, int colorSwitch );
 
-    osg::ref_ptr<osg::Group> fingerGroup;
-    // 1 = GREEN JOINTS
-    // 2 = BLUE JOINTS
-    int colorSwitch;
+	osg::ref_ptr<osg::Group> fingerGroup;
+	// 1 = GREEN JOINTS
+	// 2 = BLUE JOINTS
+	int colorSwitch;
 	osg::ref_ptr<osg::Group> interFingerBoneGroup;
 };
 }

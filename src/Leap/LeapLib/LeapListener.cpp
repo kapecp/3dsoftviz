@@ -6,7 +6,7 @@ Leap::LeapListener::LeapListener( LeapManager* leapManager )
 {
 	leapActions = new Leap::LeapActions( leapManager );
 	this->arMode = leapManager->arMode;
-    LOG( INFO ) << "Leap/LeapLib/LeapListener Constructor";
+	LOG( INFO ) << "Leap/LeapLib/LeapListener Constructor";
 }
 
 Leap::LeapListener::~LeapListener( void )
