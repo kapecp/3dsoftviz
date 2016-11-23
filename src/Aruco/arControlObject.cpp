@@ -38,7 +38,8 @@ void ArControlObject::updatePosition( osg::Vec3f position ){
         this->focused = true;
         this->focusedNode->setColor( osg::Vec4( 0.0f,1.0f,1.0f,0.5f ) );
 
-        this->focusedNode -> setUsingInterpolation( false );
+        this->focusedNode->setUsingInterpolation( false );
+        this->focusedNode->setIgnoreByLayout( true );
     }
 
     this->focusedNode->setTargetPosition(this->position);
