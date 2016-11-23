@@ -6,7 +6,6 @@
 
 
 #include <osg/ref_ptr>
-#include <osg/Matrix>
 #include <osg/MatrixTransform>
 
 
