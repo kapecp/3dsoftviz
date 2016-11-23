@@ -1890,5 +1890,10 @@ void CoreGraph::drawAxes()
 
 }
 
+//JMA
+osg::Vec3f CoreGraph::getGrafRotTransVec(){
+        return graphRotTransf->getMatrix().getTrans();
+    }
+
 //*****
 }
