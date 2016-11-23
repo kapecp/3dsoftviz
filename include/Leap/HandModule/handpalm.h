@@ -21,6 +21,7 @@ public:
     // 1 = GREEN JOINTS
     // 2 = BLUE JOINTS
     int colorSwitch;
+	osg::ref_ptr<osg::Group> interFingerBoneGroup;
 };
 }
 #endif // HANDPALM_H

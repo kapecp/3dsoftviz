@@ -28,7 +28,8 @@ public:
     void updateHands( Leap::Hand leftHand, Leap::Hand rightHand );
     void updateFingers(HandPalm* palm, Leap::FingerList fingers);
     void updateJoints(osg::Group*  fingerGroup, Leap::Finger finger);
-    void updateBones(osg::Group*  fingerGroup, Leap::Finger finger);
+    void updateFingerBones(osg::Group*  fingerGroup, Leap::Finger finger);
+    void updateInterFingerBones(osg::Group*  interFingerBoneGroup, Leap::FingerList fingers);
 
 	//jurik
 	void graphRotateSwipe( int swipeDirection );
