@@ -37,8 +37,9 @@ Kinect::KinectThread::~KinectThread( void )
 void Kinect::KinectThread::inicializeKinect()
 {
 	// create Openni connection
-	mKinect = new Kinect::KinectRecognition();
-	isOpen=mKinect->isOpenOpenni(); // checl if open
+    delete mKinect;
+    mKinect = new Kinect::KinectRecognition();
+    isOpen=mKinect->isOpenOpenni(); // check if open
 
 	qDebug() << "Kinect Thread inicialize. Kinect isOpen=" << isOpen ;
 	if ( isOpen ) {

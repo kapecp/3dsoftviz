@@ -232,7 +232,9 @@ osg::Group* QOSG::ProjectiveARViewer::createProjectorScene()
 		const osg::BoundingSphere& bs = coreGraph->getNodesGroup()->getGroup()->getBound();/*viewerPerspective->getSceneData()->getBound();*/
 		if ( !bs.valid() ) {
 			qDebug() << "[ProjectiveARViewer::createProjectorScene] Bounding sphere is not valid!";
-			return NULL;
+            //free(texture);
+            delete texture;
+            return NULL;
 		}
 
 		// setting View Matrix

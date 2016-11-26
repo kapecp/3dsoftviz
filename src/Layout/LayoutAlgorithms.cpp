@@ -84,10 +84,12 @@ struct Element {
 	{
 		this->boundingBox = boundingBox;
 		this->index = index;
+        //this->layout =
 	}
 	osg::BoundingBox boundingBox;
 	int index;
-	ElementLayout layout;
+    //ElementLayout layout = new const Layout::ElementLayout;
+    ElementLayout layout;
 };
 
 struct Edge {
