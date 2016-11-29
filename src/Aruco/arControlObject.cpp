@@ -15,27 +15,39 @@
 namespace ArucoModul {
 
 
-ArControlObject::ArControlObject( int id, osg::Vec3f position, qlonglong nodeToPick )
+ArControlObject::ArControlObject( int id, osg::Vec3f position )
 {
     this->id = id;
-    this->nodeToPick = nodeToPick;
     this->position = position;
     this->focused = false;
     this->lost = false;
 
-    //try to connect to object on create
+    //Create lost timer
+    this->timer = new QTimer(0);
+    this->timer->setInterval(3000);
+    this->timer->setSingleShot(true);
+
+    //Move to own thread ... needed by lost timer
+    QThread *m_workerThread = new QThread();
+        this->moveToThread(m_workerThread);
+        this->timer->moveToThread(m_workerThread);
+        connect(this->timer, SIGNAL(timeout()), this, SLOT(timerEvent()));
+        m_workerThread->start();
+
     updatePosition( this->position );
 }
 
-//JMA TODO nejak spustit
-void ArControlObject::setObjectAsLost(){
-    qDebug() << "LOST MARKER TRACK";
+void ArControlObject::timerEvent()
+{
+    qDebug() << "LOST MARKER TRACK" ;
     this->lost = true;
     this->focusedNode->setDefaultColor();
+    this->focusedNode->setUsingInterpolation( true );
+    this->focusedNode->setIgnoreByLayout( false );
 }
+
 void ArControlObject::updatePosition( osg::Vec3f position ){
     this->position = position;
-   // qDebug() << position.x() << " / " << position.y() << " / " << position.z();
 
     if ( !this->focused ){
         Data::Graph* currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
@@ -43,16 +55,18 @@ void ArControlObject::updatePosition( osg::Vec3f position ){
 
         for(auto e : allNodes->keys())
         {
-            // not already used and marker near node, pick it
+             // not already used and marker near node, pick it
             if( !allNodes->value(e)->isIgnoredByLayout() && chckIfNearPosition( allNodes->value(e)->getTargetPosition() ) ){
                 this->focused = true;
 
                 this->focusedNode = allNodes->value(e);
-                this->focusedNode->setColor( osg::Vec4( 0.0f,1.0f,1.0f,0.5f ) );
+                this->focusedNode->setDrawableColor( osg::Vec4( 0.0f,1.0f,0.0f,1.0f ) );
                 this->focusedNode->setUsingInterpolation( false );
                 this->focusedNode->setIgnoreByLayout( true );
-
                 this->focusedNode->setTargetPosition(this->position);
+
+                //restart kill timer
+                QMetaObject::invokeMethod(this->timer, "start",Qt::QueuedConnection);
 
                 break;
             }
@@ -60,17 +74,27 @@ void ArControlObject::updatePosition( osg::Vec3f position ){
     }
     else{
         this->focusedNode->setTargetPosition(this->position);
+        //restart kill timer
+        QMetaObject::invokeMethod(this->timer, "start",Qt::QueuedConnection);
     }
 }
 
 bool ArControlObject::chckIfNearPosition( osg::Vec3f target ){
-    qDebug() << (this->position - target).length();
-   if( (this->position - target).length() < 50.0f ){
+   if( (this->position - target).length() < 25.0f ){
        return true;
    }
    return false;
-   //return true;
 }
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -95,28 +119,29 @@ void ArControlClass::updateObjectPositionAruco( qlonglong object_id, QMatrix4x4 
     osg::Vec3f targetPosition = transMVM.getTrans();
 
     // ani srnky netusia preco /2 ... ale takto to ide :D :D
-    // -arucoBaseDist.z lebo jurik min+50 nad base
+    // arucoBaseDist -> translation of graph group ower the base
     // if marker is not behind, reverse coordinates
     if( !reverse ){
         // TO DO - nefunguje ani jurikova base ... zistit co je problem
-        targetPosition.set( osg::Vec3f(-targetPosition.x()/2, -targetPosition.y()/2, -(targetPosition.z()-arucoBaseDist.z()) /2 ) );
+        targetPosition.set( (targetPosition - arucoBaseDist).operator /(-2) );
     }
     else{
-        targetPosition.set( osg::Vec3f(targetPosition.x()/2, targetPosition.y()/2, (targetPosition.z()-arucoBaseDist.z()) /2 ) );
+        //position of second marker in world coordinate system
+        targetPosition.set( (targetPosition - arucoBaseDist).operator /(2) );
     }
 
     if( controlObjects.value(object_id) != NULL){
         //if object is lost, destroy and create new
         if( controlObjects.value(object_id)->isLost() ){
             controlObjects.remove(object_id);
-            controlObjects.insert(object_id, new ArControlObject(object_id, targetPosition, controlObjects.keys().length()));
+            controlObjects.insert(object_id, new ArControlObject(object_id, targetPosition));
         }
         else{
             controlObjects.value(object_id)->updatePosition( targetPosition );
         }
     }
     else{
-        controlObjects.insert(object_id, new ArControlObject(object_id, targetPosition, controlObjects.keys().length()));
+        controlObjects.insert(object_id, new ArControlObject(object_id, targetPosition));
     }
 
 }

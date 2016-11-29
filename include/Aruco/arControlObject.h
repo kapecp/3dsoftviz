@@ -4,6 +4,7 @@
 #include <osg/Vec3f>
 #include "Data/Node.h"
 #include "Core/Core.h"
+#include <QTimer>
 
 namespace Data {
 class Graph;
@@ -13,15 +14,17 @@ namespace ArucoModul {
 //concrete objects
 class ArControlObject : public QObject
 {
+    Q_OBJECT
 
 public:
-    ArControlObject(int id, osg::Vec3f position , qlonglong nodeToPick);
+    ArControlObject(int id, osg::Vec3f position );
     void updatePosition( osg::Vec3f position );
     bool isLost(){
         return this->lost;
     }
 
-    void setObjectAsLost();
+public slots:
+    void timerEvent();
 
 private:
     int id;
@@ -30,9 +33,12 @@ private:
     bool focused;
     bool lost;
 
+    QTimer* timer;
+
     osg::ref_ptr<Data::Node> focusedNode;
 
     bool chckIfNearPosition( osg::Vec3f target );
+
 };
 
 
