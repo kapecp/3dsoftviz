@@ -44,6 +44,14 @@ void ArControlObject::timerEvent()
     this->focusedNode->setDefaultColor();
     this->focusedNode->setUsingInterpolation( true );
     this->focusedNode->setIgnoreByLayout( false );
+
+    //SELECTION MODE - ONLY PICKED NODE
+    /*
+    for(auto j : this->focusedNode->getEdges()->keys()){
+        this->focusedNode->getEdges()->value(j)->getOtherNode( this->focusedNode )->setIgnoreByLayout( false );
+        this->focusedNode->getEdges()->value(j)->getOtherNode( this->focusedNode )->setDefaultColor();
+    }
+    */
 }
 
 void ArControlObject::updatePosition( osg::Vec3f position ){
@@ -64,6 +72,14 @@ void ArControlObject::updatePosition( osg::Vec3f position ){
                 this->focusedNode->setUsingInterpolation( false );
                 this->focusedNode->setIgnoreByLayout( true );
                 this->focusedNode->setTargetPosition(this->position);
+
+                //SELECTION MODE - ONLY PICKED NODE
+                /*
+                for(auto j : this->focusedNode->getEdges()->keys()){
+                    this->focusedNode->getEdges()->value(j)->getOtherNode( this->focusedNode )->setIgnoreByLayout( true );
+                    this->focusedNode->getEdges()->value(j)->getOtherNode( this->focusedNode )->setDrawableColor( osg::Vec4( 0.0f,1.0f,0.0f,0.2f ) );
+                }
+                */
 
                 //restart kill timer
                 QMetaObject::invokeMethod(this->timer, "start",Qt::QueuedConnection);
