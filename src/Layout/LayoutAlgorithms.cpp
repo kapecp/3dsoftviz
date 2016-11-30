@@ -87,6 +87,7 @@ struct Element {
 	}
 	osg::BoundingBox boundingBox;
 	int index;
+    // Ignore cppcheck warning: Member variable 'Element::layout' is not initialized in the constructor.
     ElementLayout layout;
 };
 
