@@ -215,26 +215,8 @@ void Leap::LeapActions::scaleNodes( bool scaleUp )
 {
 	leapManager->scaleNodes( scaleUp );
 }
-//*****
+
 void Leap::LeapActions::updateARHands( Leap::Hand leftHand, Leap::Hand rightHand )
 {
-	float lx,ly,lz;
-	float rx,ry,rz;
-	lx = ly = lz = rx = ry = rz = 0.0f;
-	if ( leftHand.isValid() ) {
-		Leap::Vector lVector = leftHand.palmPosition();
-		lx = lVector.x;
-		ly = lVector.y;
-		lz = lVector.z;
-	}
-	if ( rightHand.isValid() ) {
-		Leap::Vector rVector = rightHand.palmPosition();
-		rx = rVector.x;
-		ry = rVector.y;
-		rz = rVector.z;
-	}
-
-	LOG( INFO ) << "updateARHands left : " << lx << " "<< ly << " "<< lz;
-	LOG( INFO ) << "updateARHands right : " << rx << " "<< ry << " "<< rz;
-	leapManager->updateHands( lx,ly,lz,rx,ry,rz );
+	leapManager->updateHands( leftHand, rightHand );
 }

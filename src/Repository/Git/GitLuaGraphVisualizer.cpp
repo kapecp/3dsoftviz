@@ -400,7 +400,7 @@ bool Repository::Git::GitLuaGraphVisualizer::addFunctionToGraph( Repository::Git
 		this->evolutionGraph->getMetaDataFromIdentifier( function->getIdentifier() )->setFirstOccurence( this->currentGraph->getCurrentVersion() );
 
 		// Ak ide o lokalnu funkciu, tak ju pomocou meta hrany pritiahnem k meta uzlu pre lokalne funkcie
-		if ( !QString::compare( QString::fromStdString( luaNode->getParams()["type"].asString() ), "function" ) ) {
+		if ( !QString::compare( QString::fromStdString( luaNode->getParams().getValue()["type"].asString() ), "function" ) ) {
 			QString metaEdge = "meta+" + luaNode->getIdentifier();
 			osg::ref_ptr<Data::Edge> metaLink = this->currentGraph->addEdge( metaEdge, node, this->currentGraph->getMetaNodes()->value( std::numeric_limits<qlonglong>::max() - 1 ), this->currentGraph->getEdgeMetaType(), false );
 			metaLink->setLuaIdentifier( metaEdge );

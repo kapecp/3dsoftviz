@@ -6,6 +6,7 @@ Leap::LeapListener::LeapListener( LeapManager* leapManager )
 {
 	leapActions = new Leap::LeapActions( leapManager );
 	this->arMode = leapManager->arMode;
+	LOG( INFO ) << "Leap/LeapLib/LeapListener Constructor";
 }
 
 Leap::LeapListener::~LeapListener( void )
@@ -45,6 +46,7 @@ void Leap::LeapListener::onExit( const Controller& controller )
 
 void Leap::LeapListener::onFrame( const Controller& controller )
 {
+//    LOG( INFO ) << "Leap/LeapLib/LeapListener onFrame()";
 	Frame frame = controller.frame();
 	HandList hands = frame.hands();
 	Leap::DirectionDetector::Direction direction;

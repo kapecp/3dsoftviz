@@ -17,7 +17,7 @@ public:
 	virtual void enableCameraMovement( Movement direction ) = 0;
 	virtual void disableCameraMovement() = 0;
 	virtual void rotateCamera( float py0, float px0, double throwScale, float py1, float px1 ) = 0;
-	virtual void updateHands( float lx,float ly, float lz, float rx, float ry, float rz ) = 0;
+	virtual void updateHands( Leap::Hand leftHand, Leap::Hand rightHand ) = 0;
 	//jurik
 	virtual void graphRotateSwipe( int swipeDirection ) = 0;
 	virtual void scaleNodes( bool scaleUp ) = 0;

@@ -224,7 +224,6 @@ if( OpenCV_FOUND )
 	endif()
 
 	#list( APPEND ALL_SYSTEM_HEADERS	${OpenCV_INCLUDE_DIRS} )
-
 	list( APPEND ALL_COMPILE_DEFINITIONS -DOPENCV_FOUND )
 
 	message( STATUS "OpenCV Found:" )
@@ -262,6 +261,20 @@ if( NITE2_FOUND )
 	message( STATUS "NITE2_LIBRARIES=${NITE2_LIBRARIES}" )
 else( NITE2_FOUND )
 	message ( STATUS "NITE2 NOT FOUND" )
+endif()
+# ------------------------------ FREENECT2 -------------------------------
+find_package( FREENECT2 )
+if( FREENECT2_FOUND )
+
+	list( APPEND ALL_SYSTEM_HEADERS	${FREENECT2_INCLUDE_DIRS} )
+
+	list( APPEND ALL_COMPILE_DEFINITIONS  -DFREENECT2_FOUND )
+
+	message( STATUS "FREENECT2 Found:" )
+	message( STATUS "FREENECT2_INCLUDE_DIRS=${FREENECT2_INCLUDE_DIRS}" )
+	message( STATUS "FREENECT2_LIBRARIES=${FREENECT2_LIBRARIES}" )
+else( FREENECT2_FOUND )
+	message( STATUS "FREENECT2 NOT FOUND" )
 endif()
 
 
@@ -717,6 +730,7 @@ file( GLOB_RECURSE SRC_SPEECH	"src/Speech/*.cpp" )
 # Leap
 file ( GLOB SRC_LEAP "src/Leap/*.cpp" )
 file ( GLOB_RECURSE SRC_LEAPLIB "src/Leap/LeapLib/*.cpp" )
+file ( GLOB_RECURSE SRC_HANDMODULE "src/Leap/HandModule/*.cpp" )
 
 # MOUSE3D
 set ( SRC_MOUSE3D
@@ -789,7 +803,9 @@ endif()
 # add Leap
 if( LEAP_FOUND )
 	# WORKAROUND GARAJ comment
-	list( APPEND SRC ${SRC_LEAP} )
+        list( APPEND SRC ${SRC_LEAP} )
+        list( APPEND SRC ${SRC_HANDMODULE} )
+
 endif()
 
 # add MOUSE3D if found
@@ -849,7 +865,7 @@ file( GLOB_RECURSE HEADER_SPEECH	"include/Speech/*.h" )
 # LEAP
 file( GLOB HEADER_LEAP	"include/Leap/*.h" )
 file( GLOB_RECURSE HEADER_LEAPLIB	"include/Leap/LeapLib/*.h" )
-
+file( GLOB_RECURSE HEADER_HANDMODULE	"include/Leap/HandModule/*.h" )
 
 # MOUSE3D
 set ( HEADER_MOUSE3D
@@ -922,7 +938,8 @@ endif()
 
 # LEAP
 if( LEAP_FOUND )
-	list( APPEND INCL ${HEADER_LEAP} )
+        list( APPEND INCL ${HEADER_LEAP} )
+        list( APPEND INCL ${HEADER_HANDMODULE} )
 endif()
 
 # MOUSE3D
@@ -1062,7 +1079,7 @@ endif()
 
 #-------------------------------- leap module -------------------------------
 if( LEAP_FOUND )
-	add_library( leaplib STATIC ${SRC_LEAPLIB} ${HEADER_LEAPLIB})
+        add_library( leaplib STATIC ${SRC_LEAPLIB} ${HEADER_LEAPLIB})
 
 	target_include_directories( leaplib
 		SYSTEM PUBLIC
@@ -1171,6 +1188,10 @@ endif()
 
 if( OPENNI2_FOUND )
 	target_link_libraries( ${3DSOFTVIZ_NAME} ${OPENNI2_LIBRARIES} )
+endif()
+
+if( FREENECT2_FOUND )
+	target_link_libraries( ${3DSOFTVIZ_NAME} ${FREENECT2_LIBRARIES} )
 endif()
 
 if( NITE2_FOUND )
