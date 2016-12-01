@@ -328,33 +328,24 @@ if( LEAP_FOUND )
 
 	list( APPEND ALL_SYSTEM_HEADERS	${LEAP_INCLUDE_DIRS} )
 
-	message( STATUS "LEAP Found:" )
+	message( STATUS "LEAP Found" )
 	message( STATUS "LEAP_INCLUDE_DIRS=${LEAP_INCLUDE_DIRS}" )
 	message( STATUS "LEAP_LIB_DIR=${LEAP_LIBRARIES}" )
 else()
-	message( STATUS "LEAP Not Found" )
+	message( STATUS "LEAP NOT FOUND" )
 endif()
 
 # ------------------------------ PLC -------------------------------
 
-find_package(PCL 1.3)
-list( APPEND ALL_SYSTEM_HEADERS	${PCL_INCLUDE_DIRS} )
-link_directories(${PCL_LIBRARY_DIRS})
-message( STATUS "TU" )
-#link_directories(${PCL_LIBRARY_DIRS})
-#add_definitions(${PCL_DEFINITIONS})
-#if( PLC_FOUND )
-#
-#	list( APPEND ALL_COMPILE_DEFINITIONS -DPLC_FOUND )
-#
-#	list( APPEND ALL_SYSTEM_HEADERS	${PLC_INCLUDE_DIRS} )
-#
-#	message( STATUS "PLC Found:" )
-#	message( STATUS "PLC_INCLUDE_DIRS=${LEAP_INCLUDE_DIRS}" )
-#	#message( STATUS "LEAP_LIB_DIR=${LEAP_LIBRARIES}" )
-#else()
-#	message( STATUS "PLC Not Found" )
-#endif()
+find_package(PCL 1.8)
+if ( PCL_FOUND )
+	list( APPEND ALL_SYSTEM_HEADERS	${PCL_INCLUDE_DIRS} )
+	link_directories(${PCL_LIBRARY_DIRS})
+	message( STATUS "PCL FOUND" )
+else()
+	message( STATUS "PCL NOT FOUND" )
+endif()
+
 
 # ------------------------------ FGLOVE -------------------------------
 # Find fglove
@@ -1230,7 +1221,7 @@ endif()
 #	target_link_libraries( ${3DSOFTVIZ_NAME} ${FGLOVE_LIBRARIES} )
 # endif()
 if ( PCL_FOUND )
-	target_link_libraries(${3DSOFTVIZ_NAME} PCL_common_LIBRARIES)
+	target_link_libraries( ${3DSOFTVIZ_NAME} ${PCL_COMMON_LIBRARIES} )
 endif()
 
 if( LEAP_FOUND )
