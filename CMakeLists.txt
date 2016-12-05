@@ -335,12 +335,13 @@ else()
 	message( STATUS "LEAP NOT FOUND" )
 endif()
 
-# ------------------------------ PLC -------------------------------
-
+# ------------------------------ PCL ----------------------------------
+# find PCL
 find_package(PCL 1.8)
 if ( PCL_FOUND )
 	list( APPEND ALL_SYSTEM_HEADERS	${PCL_INCLUDE_DIRS} )
 	link_directories(${PCL_LIBRARY_DIRS})
+	add_definitions(${PCL_DEFINITIONS})
 	message( STATUS "PCL FOUND" )
 else()
 	message( STATUS "PCL NOT FOUND" )
