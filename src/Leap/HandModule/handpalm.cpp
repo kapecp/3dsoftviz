@@ -2,7 +2,7 @@
  * Created by Patrik Berger on 13.11.2016.
  */
 #include <easylogging++.h>
-#include "Leap/HandModule/HandPalm.h"
+#include "Leap/HandModule/handpalm.h"
 
 const int TYPE_MIDDLE = 2; /*< The middle finger */
 const int TYPE_RING = 3; /*< The ring finger */

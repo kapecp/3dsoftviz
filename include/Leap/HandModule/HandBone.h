@@ -5,7 +5,7 @@
 #define BONE_H
 
 #include "Leap/HandModule/HandNode.h"
-#include "Leap/HandModule/Joint.h"
+#include "Leap/HandModule/joint.h"
 
 namespace Leap {
 class HandBone : public HandNode
