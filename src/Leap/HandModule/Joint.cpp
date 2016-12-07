@@ -1,7 +1,7 @@
 /**
  * Created by Patrik Berger on 13.11.2016.
  */
-#include "Leap/HandModule/joint.h"
+#include "Leap/HandModule/Joint.h"
 #include <easylogging++.h>
 
 const float RADIUS = 0.07f;
