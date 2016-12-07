@@ -177,7 +177,7 @@ void Kinect::KinectThread::run()
 			frame=mKinect->colorImageCvMat( colorFrame );
 			cv::cvtColor( frame, frame, CV_BGR2RGB );
 			m_depth.readFrame( &depthFrame );
-
+			depth = mKinect->depthImageCvMat( depthFrame );
 			//if set true, it will capture the first frame of kinect stream and save color frame, depth frame and depth matrix in to specific location
 			if ( captureImage ) {
 
@@ -215,6 +215,7 @@ void Kinect::KinectThread::run()
 				fout.close();
 				captureImage =  false;
 			}
+
 
 #ifdef NITE2_FOUND
 			//set parameters for changes movement and cursor
