@@ -17,7 +17,7 @@ class ShapeVisitor_ManipulatorCreator: public Layout::ShapeVisitor
 
 public:
 
-    class ManipulatorType
+	class ManipulatorType
 	{
 	public:
 

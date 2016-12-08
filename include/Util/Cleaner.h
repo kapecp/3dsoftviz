@@ -55,7 +55,7 @@ public:
 	*
 	*  \date 27. 4. 2010
 	*/
-    explicit Cleaner( QApplication* app );
+	explicit Cleaner( QApplication* app );
 
 
 };

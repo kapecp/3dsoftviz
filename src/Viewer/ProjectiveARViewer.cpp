@@ -225,7 +225,7 @@ osg::Group* QOSG::ProjectiveARViewer::createProjectorScene()
 		const osg::BoundingSphere& bs = coreGraph->getNodesGroup()->getGroup()->getBound();/*viewerPerspective->getSceneData()->getBound();*/
 		if ( !bs.valid() ) {
 			qDebug() << "[ProjectiveARViewer::createProjectorScene] Bounding sphere is not valid!";
-            return NULL;
+			return NULL;
 		}
 
 		// setting View Matrix
@@ -252,12 +252,12 @@ osg::Group* QOSG::ProjectiveARViewer::createProjectorScene()
 	// tell the camera to use OpenGL frame buffer object where supported.
 	renderCamera->setRenderTargetImplementation( renderImplementation );
 
-    // texture to render to and to use for rendering of graph.
-    osg::Texture2D* texture = new osg::Texture2D;
-    texture->setTextureSize( tex_width, tex_height );
-    texture->setInternalFormat( GL_RGBA );
-    texture->setFilter( osg::Texture2D::MIN_FILTER, osg::Texture2D::LINEAR );
-    texture->setFilter( osg::Texture2D::MAG_FILTER, osg::Texture2D::LINEAR );
+	// texture to render to and to use for rendering of graph.
+	osg::Texture2D* texture = new osg::Texture2D;
+	texture->setTextureSize( tex_width, tex_height );
+	texture->setInternalFormat( GL_RGBA );
+	texture->setFilter( osg::Texture2D::MIN_FILTER, osg::Texture2D::LINEAR );
+	texture->setFilter( osg::Texture2D::MAG_FILTER, osg::Texture2D::LINEAR );
 
 	// attach the texture and use it as the color buffer.
 	renderCamera->attach( osg::Camera::COLOR_BUFFER, texture,

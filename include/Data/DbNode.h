@@ -18,7 +18,7 @@ public:
 	    *  \brief Returns if the Node is already in database or not
 	    *  \return bool true, if the Node is in database
 	    */
-    bool isInDB() const
+	bool isInDB() const
 	{
 		return inDB;
 	}

@@ -20,9 +20,9 @@ class LuaValueList
 public:
 	LuaValueList();
 
-    explicit LuaValueList( Diluculum::LuaValueList val );
+	explicit LuaValueList( Diluculum::LuaValueList val );
 
-    explicit LuaValueList( const Lua::LuaValueList& obj );
+	explicit LuaValueList( const Lua::LuaValueList& obj );
 
 	~LuaValueList();
 

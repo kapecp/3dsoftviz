@@ -28,13 +28,13 @@ void LayoutAlgorithms::layoutInsideRegion( const osg::BoundingBox& elementDimens
 	float xMax;
 	float yMax;
 	if ( elementCount > 0 ) {
-        uint xNum = 0;
-        uint yNum = 0;
-        uint limit = 1;
+		uint xNum = 0;
+		uint yNum = 0;
+		uint limit = 1;
 		xMax = -FLT_MAX;
 		yMax = -FLT_MAX;
 
-        for ( int i = 0; i < elementCount; ++i ) {
+		for ( int i = 0; i < elementCount; ++i ) {
 			osg::Vec3 pos( xNum * offsetX + elementConstOffsetX, yNum * offsetY + elementConstOffsetY, elementConstOffsetZ );
 			if ( xMax < pos.x() ) {
 				xMax = pos.x();
@@ -87,8 +87,8 @@ struct Element {
 	}
 	osg::BoundingBox boundingBox;
 	int index;
-    // Ignore cppcheck warning: Member variable 'Element::layout' is not initialized in the constructor.
-    ElementLayout layout;
+	// Ignore cppcheck warning: Member variable 'Element::layout' is not initialized in the constructor.
+	ElementLayout layout;
 };
 
 struct Edge {
@@ -108,7 +108,7 @@ struct Edge {
 };
 
 struct IndentEdges : public QVector<Edge> {
-    explicit IndentEdges( int count ) : QVector<Edge>( count ) {}
+	explicit IndentEdges( int count ) : QVector<Edge>( count ) {}
 };
 
 void LayoutAlgorithms::layoutAroundRegion( const osg::BoundingBox& elementDimension, int elementCount, const osg::BoundingBox& region, float spacing, QList<ElementLayout>* layouts, osg::BoundingBox* aroundRegion )
@@ -150,7 +150,7 @@ void LayoutAlgorithms::layoutAroundRegion( const osg::BoundingBox& elementDimens
 	// analyza - na ktorej stene bude kolko elementov
 	while ( remainedElementsCount > 0 ) {
 		indents << IndentEdges( EDGES_COUNT ); // nove odsadenie od regionu (jedno obkolesenie kvadrov - 4 strany)
-        IndentEdges* curIndent = &indents.last();
+		IndentEdges* curIndent = &indents.last();
 		const int maxCountOnWidth = static_cast<int>( floorf( ( curWidth + spacing ) / ( elementWidth + spacing ) ) ); // maximalny pocet elementov na sirku a hlbku
 		const int maxCountOnDepth = static_cast<int>( floorf( ( curDepth + spacing ) / ( elementWidth + spacing ) ) );
 		const int maxCountOnIndent = ( maxCountOnWidth + maxCountOnDepth ) * 2; // maximalny pocet elementov celkovo okolo regionu pre dane odsadenie

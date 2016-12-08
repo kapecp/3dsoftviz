@@ -30,8 +30,8 @@ void QOpenCV::FaceRecognitionThread::run()
 
 	if ( mCapVideo == NULL ) {
 		qDebug() << "[FaceRecognitionThread::run()]  Camera is not set";
-        delete mFaceRecognizer;
-        return;
+		delete mFaceRecognizer;
+		return;
 	}
 
 	while ( !mCancel ) {

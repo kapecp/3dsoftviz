@@ -29,7 +29,7 @@ public:
 	{
 	}
 
-    explicit AstValue( const ast_ptr<T, _OPTIONAL>& src )
+	explicit AstValue( const ast_ptr<T, _OPTIONAL>& src )
 		: ast_ptr<T, _OPTIONAL>( src )
 	{
 	}
@@ -44,7 +44,7 @@ public:
 	{
 	}
 
-    explicit AstList( const ast_list<T>& src )
+	explicit AstList( const ast_list<T>& src )
 		: ast_list<T>( src )
 	{
 	}
@@ -105,12 +105,12 @@ public:
 	{
 	}
 
-    explicit NodeTerm( const ast_node& n )
+	explicit NodeTerm( const ast_node& n )
 		: ast_node( n )
 	{
 	}
 
-    explicit NodeTerm( const QString& val )
+	explicit NodeTerm( const QString& val )
 		: ast_node(), value( val )
 	{
 	}
@@ -144,7 +144,7 @@ public:
 	{
 	}
 
-    explicit NodeContainer( const ast_container& src )
+	explicit NodeContainer( const ast_container& src )
 		: ast_container( src )
 	{
 	}

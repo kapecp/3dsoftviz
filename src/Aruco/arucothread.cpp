@@ -136,10 +136,10 @@ void ArucoThread::run()
 				//qDebug() << aCore.getDetectedMatrix(frame.clone());
 			}
 			else {
-                // variables for result from aruco
-                double		 actPosArray[3];			// x, y, z
-                double		 actQuatArray[4];		// angle(w), x, y, z
-                bool		 markerDetected;
+				// variables for result from aruco
+				double		 actPosArray[3];			// x, y, z
+				double		 actQuatArray[4];		// angle(w), x, y, z
+				bool		 markerDetected;
 
 				// graph controll
 				markerDetected = aCore.getPosAndQuat( mGrM, actPosArray, actQuatArray );

@@ -8,8 +8,8 @@
 Kinect::KinectHandTracker::KinectHandTracker( openni::Device* device, openni::VideoStream* m_depth ) :
 	numHandsTracking( 0 ),
 	isGestureClick( false ),
-    //handZ{0, 0}, //C++11
-    //getArrayHands{{0, 0}, {0, 0}}, //C++11
+	//handZ{0, 0}, //C++11
+	//getArrayHands{{0, 0}, {0, 0}}, //C++11
 	slidingHand_x( 0 ),
 	slidingHand_y( 0 ),
 	slidingHand_z( 0 ),
@@ -37,13 +37,13 @@ Kinect::KinectHandTracker::KinectHandTracker( openni::Device* device, openni::Vi
 	m_pHandTracker.startGestureDetection( nite::GESTURE_WAVE );
 	m_pHandTracker.startGestureDetection( nite::GESTURE_CLICK );
 
-    handZ[0] = 0.0f;
-    handZ[1] = 0.0f;
+	handZ[0] = 0.0f;
+	handZ[1] = 0.0f;
 
-    getArrayHands[0][0] = 0.0f;
-    getArrayHands[0][1] = 0.0f;
-    getArrayHands[1][0] = 0.0f;
-    getArrayHands[1][1] = 0.0f;
+	getArrayHands[0][0] = 0.0f;
+	getArrayHands[0][1] = 0.0f;
+	getArrayHands[1][0] = 0.0f;
+	getArrayHands[1][1] = 0.0f;
 
 }
 

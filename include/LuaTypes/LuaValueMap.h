@@ -20,9 +20,9 @@ class LuaValueMap
 public:
 	LuaValueMap();
 
-    LuaValueMap( Diluculum::LuaValueMap val );
+	LuaValueMap( Diluculum::LuaValueMap val );
 
-    LuaValueMap( const Lua::LuaValueMap& obj );
+	LuaValueMap( const Lua::LuaValueMap& obj );
 
 	~LuaValueMap();
 

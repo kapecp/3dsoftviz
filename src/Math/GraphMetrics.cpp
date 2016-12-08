@@ -12,9 +12,9 @@ void GraphMetrics::computeGraphMetrics( Data::Graph* activeGraph )
 	QMutableMapIterator<qlonglong, osg::ref_ptr<Data::Node> > i( *activeGraph->getNodes() );
 
 	int numVertices = activeGraph->getNodes()->size();
-    QVector<QLinkedList<osg::ref_ptr<Data::Node> > >**   paths;
+	QVector<QLinkedList<osg::ref_ptr<Data::Node> > >**   paths;
 
-    paths = new QVector<QLinkedList<osg::ref_ptr<Data::Node> > >* [numVertices]();
+	paths = new QVector<QLinkedList<osg::ref_ptr<Data::Node> > >* [numVertices]();
 
 	int idx = 0;
 
@@ -99,7 +99,7 @@ void GraphMetrics::computeGraphMetrics( Data::Graph* activeGraph )
 				}
 			}
 		}
-        delete[] paths;
+		delete[] paths;
 		i.value()->setNodeBetweeness( sum / ( static_cast<float>( numVertices - 1 ) * static_cast<float>( numVertices - 2 ) )	);
 
 		float base = i.value()->isNodeMatched() ? regexpWeigth : 0;

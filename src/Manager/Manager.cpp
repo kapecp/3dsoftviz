@@ -527,7 +527,7 @@ bool Manager::GraphManager::nextVersion( Layout::LayoutThread* layout )
 	lActiveGraph->setCurrentVersion( currentVersion + 1 );
 	layout->play();
 
-    delete lUpdater;
+	delete lUpdater;
 	return ok;
 }
 
@@ -551,8 +551,8 @@ bool Manager::GraphManager::previousVersion( Layout::LayoutThread* layout )
 	lActiveGraph->setCurrentVersion( currentVersion - 1 );
 	layout->play();
 
-    delete lUpdater;
-    return ok;
+	delete lUpdater;
+	return ok;
 }
 
 bool Manager::GraphManager::changeToVersion( Layout::LayoutThread* layout, int toVersion )
@@ -575,7 +575,7 @@ bool Manager::GraphManager::changeToVersion( Layout::LayoutThread* layout, int t
 	lActiveGraph->setCurrentVersion( toVersion );
 	layout->play();
 
-    delete lUpdater;
+	delete lUpdater;
 	return ok;
 }
 

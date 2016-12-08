@@ -25,7 +25,7 @@ public:
 	    *  \brief Gets node scale
 	    *  \return float size of the scale
 	    */
-    float getScale() const
+	float getScale() const
 	{
 		return scale;
 	}
@@ -40,7 +40,7 @@ public:
 		scale = val;
 	}
 
-    float getOverallWeight() const
+	float getOverallWeight() const
 	{
 		return overallWeight;
 	}
