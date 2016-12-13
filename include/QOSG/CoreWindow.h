@@ -139,6 +139,11 @@ public slots:
 				*/
 	void saveGraphToDB();
 
+	/**
+				*  \fn public  loadLuaModuleGraph()
+				*  \brief load module graph
+				*/
+	void loadLuaModuleGraph();
 
 	/**
 				*  \fn public  loadFunctionCall()
@@ -268,6 +273,11 @@ public slots:
 				*  \brief Load basic lua graph
 				*/
 	void loadExampleGraphLua();
+	/**
+				*  \fn public  loadExampleModuleGraph
+				*  \brief Load basic lua module graph
+				*/
+	void loadExampleModuleGraph();
 	/**
 				*  \fn public  loadFromGit
 				*  \brief Show dialog to write path to git repo which will be loaded
@@ -836,6 +846,11 @@ private:
 		*  \brief Pointer to load basic lua graph from file
 		*/
 	QAction* exampleGraphLua;
+	/**
+		*  QAction * exampleModuleGraph
+		*  \brief Pointer to load basic lua module graph from file
+		*/
+	QAction* exampleModuleGraph;
 
 	/**
 	 * QAction * switchBackgroundSkyBoxAction
@@ -868,6 +883,12 @@ private:
 	 *@brief Action to switch/change background to Ortho2d background (only OpenCV)
 	 */
 	QAction* switchBackgroundOrtho2dAction;
+
+	/**
+		*  QAction * loadModuleGraphAction
+		*  \brief Pointer to load lua module graph from lua project
+		*/
+	QAction* loadModuleGraphAction;
 
 	/**
 		*  QAction * loadSpecialMatrix

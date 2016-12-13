@@ -31,6 +31,7 @@ Data::OsgNode::OsgNode( qlonglong id, QString name, Data::Type* type, Data::Grap
 	insertChild( INDEX_SQUARE, createNodeSquare( this->scale, OsgNode::createStateSet( this->type->getTypeTexture() ) ) , false );
 	insertChild( INDEX_SPHERE, createNodeSphere( this->scale, OsgNode::createStateSet( this->type->getTypeTexture() ) ), false );
 	insertChild( INDEX_RESIDENCE,  createNodeResidence( this->scale ), false );
+	insertChild( INDEX_MODULE,  createNodeModule( this->scale ), false );
 	setValue( graph->getNodeVisual(), true );
 
 	this->square = createNode( this->scale * 4, OsgNode::createStateSet( this->type->getTypeTexture() ) );
@@ -192,6 +193,13 @@ void Data::OsgNode::setResidence( osg::Node* residence )
 	auto at = getChild( INDEX_RESIDENCE )->asTransform()->asPositionAttitudeTransform();
 	at->removeChildren( 0, at->getNumChildren() );
 	at->addChild( residence );
+}
+
+void Data::OsgNode::setModule( osg::Node* module )
+{
+	auto at = getChild( INDEX_MODULE )->asTransform()->asPositionAttitudeTransform();
+	at->removeChildren( 0, at->getNumChildren() );
+	at->addChild( module );
 }
 
 osg::Vec3f Data::OsgNode::getCurrentPosition( bool calculateNew, float interpolationSpeed )
@@ -427,6 +435,11 @@ osg::ref_ptr<osg::Node> Data::OsgNode::createNodeSphere( const float& scaling, o
 }
 
 osg::ref_ptr<osg::Node> Data::OsgNode::createNodeResidence( const float& scale )
+{
+	return new osg::PositionAttitudeTransform();
+}
+
+osg::ref_ptr<osg::Node> Data::OsgNode::createNodeModule( const float& scale )
 {
 	return new osg::PositionAttitudeTransform();
 }
