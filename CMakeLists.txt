@@ -852,6 +852,7 @@ file( GLOB_RECURSE SRC_GITLIB   "src/Repository/Git/GitLib/*.cpp" )
 file( GLOB_RECURSE SRC_SPECIALMATRIX   "src/SpecialMatrix/*.cpp" )
 file( GLOB_RECURSE SRC_CITY		"src/City/*.cpp" )
 file( GLOB_RECURSE SRC_SHAPES	"src/Shapes/*.cpp" )
+file( GLOB_RECURSE SRC_MODULEGRAPH	"src/ModuleGraph/*.cpp" )
 
 # OpenCV
 file( GLOB_RECURSE SRC_OPENCV	"src/OpenCV/*.cpp" )
@@ -922,6 +923,7 @@ set( SRC
 	${SRC_SPECIALMATRIX}
 	${SRC_CITY}
 	${SRC_SHAPES}
+	${SRC_MODULEGRAPH}
 )
 
 if( OpenCV_FOUND )
@@ -985,6 +987,7 @@ file( GLOB_RECURSE HEADER_GITLIB		"include/Repository/Git/GitLib/*.h" )
 file( GLOB_RECURSE HEADER_SPECIALMATRIX		"include/SpecialMatrix/*.h" )
 file( GLOB_RECURSE HEADER_CITY		"include/City/*.h" )
 file( GLOB_RECURSE HEADER_SHAPES	"include/Shapes/*.h" )
+file( GLOB_RECURSE HEADER_MODULEGRAPH	"include/ModuleGraph/*.h" )
 
 # OpenCV
 file( GLOB_RECURSE HEADER_OPENCV	"include/OpenCV/*.h" )
@@ -1058,6 +1061,7 @@ set( INCL
 	${HEADER_SPECIALMATRIX}
 	${HEADER_CITY}
 	${HEADER_SHAPES}
+	${HEADER_MODULEGRAPH}
 )
 
 if( OpenCV_FOUND )
@@ -1109,6 +1113,7 @@ source_group( \\src\\Git "^.*Git/.*$" )
 source_group( \\src\\SpecialMatrix "^.*SpecialMatrix/.*$" )
 source_group( \\src\\City "^.*City/.*$" )
 source_group( \\src\\Shapes "^.*Shapes/.*$" )
+source_group( \\src\\ModuleGraph "^.*ModuleGraph/.*$" )
 
 # Group header files
 source_group( \\headers\\Application "^.*Application/.*h$")
@@ -1131,6 +1136,7 @@ source_group( \\headers\\Git "^.*Git/.*h$" )
 source_group( \\headers\\SpecialMatrix "^.*SpecialMatrix/.*h$" )
 source_group( \\headers\\City "^.*City/.*h$" )
 source_group( \\headers\\Shapes "^.*Shapes/.*h$" )
+source_group( \\headers\\ModuleGraph "^.*ModuleGraph/.*h$" )
 
 if( OpenCV_FOUND )
 	source_group( \\src\\QOpenCV "^.*QOpenCV/.*$" )
