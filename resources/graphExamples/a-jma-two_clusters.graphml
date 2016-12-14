@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- This file was written by the JAVA GraphML Library.-->
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
+  <graph id="G">
+	<node id="n1"/>
+	<node id="n2"/>
+	<node id="n0"/>
+	<node id="n11"/>
+	<node id="n12"/>
+	<node id="n13"/>
+	<node id="n14"/>
+	<node id="n15"/>
+	<node id="n21"/>
+	<node id="n22"/>
+	<node id="n23"/>
+	<node id="n24"/>
+	<node id="n25"/>
+	<edge source="n0" target="n1"/>
+    <edge source="n0" target="n2"/>
+	<edge source="n1" target="n11"/>
+	<edge source="n1" target="n12"/>
+	<edge source="n1" target="n13"/>
+	<edge source="n1" target="n14"/>
+	<edge source="n1" target="n15"/>
+	<edge source="n2" target="n21"/>
+	<edge source="n2" target="n22"/>
+	<edge source="n2" target="n23"/>
+	<edge source="n2" target="n24"/>
+	<edge source="n2" target="n25"/>
+  </graph>
+</graphml>
