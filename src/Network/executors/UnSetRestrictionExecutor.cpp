@@ -3,12 +3,12 @@
 #include "Network/Server.h"
 #include "Network/Client.h"
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wold-style-cast"
 #if defined(__linux) || defined(__linux__) || defined(linux)
+#pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wuseless-cast"
-#endif
+#pragma GCC diagnostic ignored "-Wold-style-cast"
 #pragma GCC diagnostic ignored "-Wsign-conversion"
+#endif
 
 namespace Network {
 
@@ -79,4 +79,6 @@ void UnSetRestrictionExecutor::execute_server()
 
 } // namespace Network
 
+#if defined(__linux) || defined(__linux__) || defined(linux)
 #pragma GCC diagnostic pop
+#endif

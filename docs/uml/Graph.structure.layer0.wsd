@@ -1,0 +1,58 @@
+// Module Graph.structure.layer1
+// Autor: Aug_RealityKings
+
+
+
+@startuml
+object "viewerWidget:ViewerQT::ViewerQT:osgViewer::Viewer" as obj1
+object "root:osg::Group" as obj2
+object "cam:osg::Camera" as obj3
+object "viewport:osg::Viewport" as obj4
+object "graphicsContext :osgViewer::GraphicsWindow" as obj5
+object "viewMatrix:osg::Matrixd" as obj6
+object "leftCam:osg::Camera" as obj7
+object "viewport:osg::Viewport" as obj8
+object "graphicsContext:osgViewer::GraphicsWindow" as obj9
+object "viewMatrix:osg::Matrixd" as obj10
+object "middleCam:osg::Camera" as obj11
+object "viewport:osg::Viewport" as obj12
+object "graphicsContext:osgViewer::GraphicsWindow" as obj13
+object "viewMatrix:osg::Matrixd" as obj14
+object "rightCam:osg::Camera" as obj15
+object "viewport:osg::Viewport" as obj16
+object "graphicsContext:osgViewer::GraphicsWindow" as obj17
+object "viewMatrix:osg::Matrixd" as obj18
+		
+		
+obj1 o-- obj2
+obj1 o-- obj3
+obj1 o-- obj7
+obj1 o-- obj11
+obj1 o-- obj15
+
+obj3 o-- obj4
+obj3 o-- obj5
+obj3 o-- obj6
+
+obj7 o-- obj8
+obj7 o-- obj9
+obj7 o-- obj10
+
+obj11 o-- obj12
+obj11 o-- obj13
+obj11 o-- obj14
+
+obj15 o-- obj16
+obj15 o-- obj17
+obj15 o-- obj18
+
+
+
+
+note "Viewer.Display.Multiview" as N1
+obj7 .. N1
+obj11 .. N1
+obj15 .. N1
+
+
+@enduml

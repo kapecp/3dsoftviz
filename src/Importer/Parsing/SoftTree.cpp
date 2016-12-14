@@ -64,7 +64,7 @@ bool Method::HasResult() const
 
 uint Method::GetLineOfCodes() const
 {
-	return content.count( '\n' );
+	return static_cast<unsigned int>( content.count( '\n' ) );
 }
 
 // Class

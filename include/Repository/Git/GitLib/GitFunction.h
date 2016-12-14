@@ -28,7 +28,7 @@ public:
 
 	bool removeFunctionCallee( GitFunction* callee )
 	{
-		return this->functionCallees->remove( callee->getIdentifier() );
+		return !!this->functionCallees->remove( callee->getIdentifier() );
 	}
 
 	void addFunctionCaller( GitFunction* caller )
@@ -38,7 +38,7 @@ public:
 
 	bool removeFunctionCaller( GitFunction* caller )
 	{
-		return this->functionCallers->remove( caller->getIdentifier() );
+		return !!this->functionCallers->remove( caller->getIdentifier() );
 	}
 
 	QString getTypeAsString();

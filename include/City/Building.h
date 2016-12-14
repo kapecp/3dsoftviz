@@ -3,7 +3,9 @@
 #include <osg/PositionAttitudeTransform>
 #include "Floor.h"
 #include <QList>
+#include <QString>
 #include <osg/Material>
+#include <osg/BoundingBox>
 
 namespace City {
 class Building : public osg::PositionAttitudeTransform

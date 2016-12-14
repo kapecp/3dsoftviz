@@ -15,7 +15,7 @@
 #include "LuaInterface/LuaInterface.h"
 #include "LuaTypes/LuaValueList.h"
 #include "OsgQtBrowser/QLogWebPage.h"
-
+#include <QDebug>
 namespace OsgQtBrowser {
 
 QWebViewImage::QWebViewImage()

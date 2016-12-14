@@ -127,6 +127,47 @@ local function split(str, pat)
    return t
 end
 
+local function splitAndGetLast(str, pat)
+  local splitted = split(str, pat)
+  return splitted[#splitted]
+end
+
+local function splitAndGetFirst(str, pat)
+  local splitted = split(str, pat)
+  return splitted[1]
+end
+
+
+local function deepCopy(t)
+    if type(t) ~= "table" then 
+      return t 
+    end
+    local meta = getmetatable(t)
+    local target = {}
+    for k, v in pairs(t) do
+        if type(v) == "table" then
+            target[k] = deepCopy(v)
+        else
+            target[k] = v
+        end
+    end
+    setmetatable(target, meta)
+    return target
+end
+
+local function shallowCopy(t)
+    if type(t) ~= "table" then
+      return t 
+    end
+    local meta = getmetatable(t)
+    local target = {}
+    for k, v in pairs(t) do 
+      target[k] = v 
+    end
+    setmetatable(target, meta)
+    return target
+end
+
 
 local function tblPrint(s, l, i) -- recursive Print (structure, limit, indent)
 	l = (l) or 100
@@ -236,6 +277,8 @@ return
   logger = logger,
   logging = logging,
   split  = split,
+  splitAndGetFirst = splitAndGetFirst,
+  splitAndGetLast = splitAndGetLast,
   trim = trim,
   lowerCase = lowerCase,
   firstToUpper = firstToUpper,
@@ -248,6 +291,8 @@ return
   isDir = isDir,
   isFile = isFile,
   isDirEmpty = isDirEmpty,
+  deepCopy = deepCopy,
+  shallowCopy = shallowCopy,
   tblPrint = tblPrint,
   printStructure = printStructure,
   printKey = printKey,

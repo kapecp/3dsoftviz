@@ -344,11 +344,15 @@ void OpenCV::OpenCVCore::createConnectionAruco()
 	QObject::connect( mOpencvWindow->getMarkerBehindCB(),
 					  SIGNAL( clicked( bool ) ),
 					  mThrAruco,
-					  SLOT( setPositionOfMarker( bool ) ) );
+                      SLOT( setPositionOfMarker( bool ) ) );
 	QObject::connect( mOpencvWindow->getCorEnabledCB(),
 					  SIGNAL( clicked( bool ) ),
 					  mThrAruco,
 					  SLOT( setCorEnabling( bool ) ) );
+    QObject::connect( mOpencvWindow->getMultiMarkerEnableCB(),
+                      SIGNAL( clicked( bool ) ),
+                      mThrAruco,
+                      SLOT( setMultiMarker( bool ) ) );
 	QObject::connect( mOpencvWindow->getUpdateCorParPB(),
 					  SIGNAL( clicked() ),
 					  mThrAruco,
