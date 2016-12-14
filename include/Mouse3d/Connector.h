@@ -16,7 +16,7 @@ class Connector
 
 public:
 	//constructor
-	Connector( QOSG::CoreWindow* window );
+	explicit Connector( QOSG::CoreWindow* window );
 
 	//destructor
 	~Connector();

@@ -40,6 +40,9 @@ typedef QMap<QSharedPointer<ShapeGetter>, QSharedPointer<RestrictionRemovalHandl
 class RestrictionsManager
 {
 public:
+	//RestrictionsManager(){
+	//}
+
 	virtual ~RestrictionsManager() {}
 
 	/**

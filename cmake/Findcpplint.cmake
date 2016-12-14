@@ -2,9 +2,16 @@
 find_package(PythonInterp)
 
 find_file(CPPLINT_SCRIPT
-	NAMES cpplint.py
+
+	NAMES cpplint.py cpplint cpplint.exe
 	PATHS
+
+	NAMES cpplint.py cpplint.exe
+	PATHS 
+		c:/Python27/Scripts
+    
 		/usr/local/bin
+		c:/Python27/Scripts
 )
 
 mark_as_advanced(CPPLINT_SCRIPT)

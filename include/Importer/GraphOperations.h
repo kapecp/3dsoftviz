@@ -21,7 +21,7 @@ public:
 	 * \brief Creates a new object over the specified graph.
 	 * \param[in] graph Graph to perform the operations on.
 	 */
-	GraphOperations(
+	explicit GraphOperations(
 		Data::Graph& graph
 	);
 

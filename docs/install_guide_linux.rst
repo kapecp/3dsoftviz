@@ -59,9 +59,10 @@ Návod pre Linux
 6. Pridanie Kinectu do projectu
 
 	* Nainštalovať `NiTE <https://drive.google.com/drive/folders/0Bx3FU7Baa_8pdEJESGRJcU1vN1U>`_ – pridať systémové premenné
-	* Nainštalovať `OpenNI <https://drive.google.com/drive/folders/0Bx3FU7Baa_8pajVqcHhnOWRJa1k>`_ – pridať systémové premenné
-	
-	
+	* Nainštalovať `OpenNI <https://drive.google.com/drive/folders/0Bx3FU7Baa_8pajVqcHhnOWRJa1k>`_ alebo cez sudo apt-get install – pridať systémové premenné
+	* Naištalovať Freenect2 - postupovať podľa <https://github.com/OpenKinect/libfreenect2/blob/master/README.md#linux`_ -je potrebné aby fungoval aj OpenNI test
+	.. note:: Ak je potrebný prístup k knižniciam kvôli vývoju tak je potrebné nastaviť premenné FREENECT2_INCLUDE a FREENECT2_LIBRARY
+
 	.. note:: Pre použitie je nutný Kinect for XBOX
 	
 .. attention:: Na OSX, ak je found OpenNI2 a NiTE2, aplikacia crashne pri spustani s chybovou hlaskou:

@@ -3,7 +3,6 @@
 
 #include <QMap>
 #include <QString>
-#include <QMap>
 
 namespace Data {
 class Node;
@@ -94,7 +93,7 @@ public:
 		settings = val;
 	}
 
-	bool isParentNode()
+	bool isParentNode() const
 	{
 		return hasNestedNodes;
 	}
@@ -104,7 +103,7 @@ public:
 		hasNestedNodes = true;
 	}
 
-	float getNodeBetweeness()
+	float getNodeBetweeness() const
 	{
 		return nodeBetweeness;
 	}
@@ -114,7 +113,7 @@ public:
 		this->nodeBetweeness = nodeBetweeness;
 	}
 
-	float getNodeCloseness()
+	float getNodeCloseness() const
 	{
 		return nodeCloseness;
 	}
@@ -124,7 +123,7 @@ public:
 		this->nodeCloseness = nodeCloseness;
 	}
 
-	float getNodeDegree()
+	float getNodeDegree() const
 	{
 		return nodeDegree;
 	}
@@ -134,7 +133,7 @@ public:
 		this->nodeDegree = nodeDegree;
 	}
 
-	bool isNodeMatched()
+	bool isNodeMatched() const
 	{
 		return nodeMatched;
 	}
@@ -148,7 +147,7 @@ public:
 		removableByUser = b;
 	}
 
-	bool isRemovableByUser()
+	bool isRemovableByUser() const
 	{
 		return removableByUser;
 	}

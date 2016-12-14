@@ -66,7 +66,7 @@ void BrowserGroup::setSelectedNodes( QLinkedList<osg::ref_ptr<Data::Node> >* sel
 
 			// Get lua node model and add it to model map
 			Lua::LuaNode* luaNode = Lua::LuaGraph::getInstance()->getNodes()->value( node->getId() );
-			Lua::LuaValueMap paramsTable = luaNode->getParams().asTable();
+			Lua::LuaValueMap paramsTable = luaNode->getParams().getValue().asTable();
 
 			// Ignore nodes without models
 			if ( paramsTable.find( "metrics" ) == paramsTable.end() ) {
@@ -80,7 +80,7 @@ void BrowserGroup::setSelectedNodes( QLinkedList<osg::ref_ptr<Data::Node> >* sel
 			// If grouping is not enabled, then add browser for each newly selected node
 			if ( !browsersGrouping ) {
 				Lua::LuaValueMap models;
-				models.insertPair( static_cast<long>( node->getId() ), luaNode->getParams() );
+				models.insertPair( static_cast<long>( node->getId() ), luaNode->getParams().getValue() );
 				if ( !this->showGit ) {
 					this->addBrowser( "single", node->getCurrentPosition(), models );
 				}
@@ -136,7 +136,7 @@ void BrowserGroup::initBrowsers()
 
 		Lua::LuaNode* luaNode = Lua::LuaGraph::getInstance()->getNodes()->value( node->getId() );
 		Lua::LuaValueMap models;
-		models.insertPair( static_cast<long>( node->getId() ), luaNode->getParams() );
+		models.insertPair( static_cast<long>( node->getId() ), luaNode->getParams().getValue() );
 		this->addBrowser( "single", node->getCurrentPosition(), models );
 	}
 }
@@ -161,7 +161,7 @@ void BrowserGroup::initGroupedBrowser()
 		zSum += pos.z();
 
 		luaNode = Lua::LuaGraph::getInstance()->getNodes()->value( node->getId() );
-		models.insertPair( static_cast<long>( node->getId() ), luaNode->getParams() );
+		models.insertPair( static_cast<long>( node->getId() ), luaNode->getParams().getValue() );
 	}
 
 	// Calculate centroid

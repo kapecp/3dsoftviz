@@ -574,7 +574,9 @@ double MatrixR[4][4];
  MatrixR[0][3] = MatrixR[1][3] = MatrixR[2][3] = MatrixR[3][0] = MatrixR[3][1] = MatrixR[3][2] = 0.0;
  MatrixR[3][3] = 1.0;
 
- memcpy( MatrixA, MatrixR, sizeof(MatrixA) );
+
+ double sizeMatrixA = sizeof(MatrixA);
+ memcpy( MatrixA, MatrixR, sizeMatrixA );
  return TRUE;
 }
 

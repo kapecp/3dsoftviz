@@ -37,28 +37,28 @@ public:
 	 * @param colorFrame depth videoframe
 	 * @return converted gray cv::Mat
 	 */
-	cv::Mat depthImageCvMat( openni::VideoFrameRef& colorFrame );
+	cv::Mat depthImageCvMat( const openni::VideoFrameRef& colorFrame );
 
 	/**
 	 * @brief convert videoframe getting from classing frame
 	 * @param colorFrame color videoframe
 	 * @return converted RGB cv::Mat
 	 */
-	cv::Mat colorImageCvMat( openni::VideoFrameRef& colorFrame );
+	cv::Mat colorImageCvMat( const openni::VideoFrameRef& colorFrame );
 
 	/**
 	 * @brief convert videoframe getting from classing frame
 	 * @param colorFrame color videoframe
 	 * @return converterd QImage
 	 */
-	QImage colorImageQImage( openni::VideoFrameRef& colorFrame );
+	QImage colorImageQImage( const openni::VideoFrameRef& colorFrame );
 
 	/**
 	 * @brief convert depth videoframe to QImage
 	 * @param colorFrame depth videoframe
 	 * @return coverted colofrmae to QImage
 	 */
-	QImage deptImageQImage( openni::VideoFrameRef& colorFrame );
+	QImage deptImageQImage( const openni::VideoFrameRef& colorFrame );
 
 	/**
 	 * @brief open status of openni

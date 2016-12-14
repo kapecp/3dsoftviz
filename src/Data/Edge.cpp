@@ -324,7 +324,7 @@ osg::ref_ptr<osg::Geode> Data::Edge::createLabel( QString name )
 	label->setColor( osg::Vec4( 1.0f, 1.0f, 1.0f, 1.0f ) );
 
 	osg::ref_ptr<osg::Geode> geode = new osg::Geode;
-	geode->setNodeMask( geode->getNodeMask() & ( unsigned int )~0x2 );
+	geode->setNodeMask( geode->getNodeMask() & static_cast<unsigned int>( ~0x2 ) );
 	geode->addDrawable( label );
 
 	return geode;
@@ -390,7 +390,7 @@ osg::ref_ptr<osg::Geode> Data::Edge::createEdgeQuad( osg::StateSet* bbState )
 	nodeQuad->setStateSet( bbState );
 
 	osg::ref_ptr<osg::Geode> geode = new osg::Geode;
-	geode->setNodeMask( geode->getNodeMask() & ( unsigned int )~0x2 );
+	geode->setNodeMask( geode->getNodeMask() & static_cast<unsigned int>( ~0x2 ) );
 	geode->addDrawable( nodeQuad );
 
 	return geode;

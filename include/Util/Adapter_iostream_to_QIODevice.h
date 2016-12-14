@@ -23,7 +23,7 @@ public:
 	 * \brief Creates a new adapter over the specified stream.
 	 * \param[] stream Stream to use by the adapter.
 	 */
-	Adapter_iostream_to_QIODevice(
+	explicit Adapter_iostream_to_QIODevice(
 		std::iostream& stream
 	) : stream_( stream )
 	{

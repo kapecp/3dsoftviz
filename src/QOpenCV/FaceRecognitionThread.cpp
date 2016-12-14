@@ -30,6 +30,7 @@ void QOpenCV::FaceRecognitionThread::run()
 
 	if ( mCapVideo == NULL ) {
 		qDebug() << "[FaceRecognitionThread::run()]  Camera is not set";
+		delete mFaceRecognizer;
 		return;
 	}
 
@@ -66,8 +67,8 @@ void QOpenCV::FaceRecognitionThread::run()
 			//  0.1481m - face width avg (15yr - 40yr)
 			float focalLength = 749.3f;
 			float distance = mFaceRecognizer->getHeadDistanceFocal( 0.1481 );
-			float x = ( float ) -mFaceRecognizer->getEyesCoords().x * ( mCapVideo->getWidth()/200 ) * ( distance / focalLength );
-			float y = ( float ) -mFaceRecognizer->getEyesCoords().y * ( mCapVideo->getHeight()/200 ) * ( distance / focalLength );
+			float x = static_cast<float>( -mFaceRecognizer->getEyesCoords().x * ( mCapVideo->getWidth()/200 ) ) * ( distance / focalLength );
+			float y = static_cast<float>( -mFaceRecognizer->getEyesCoords().y * ( mCapVideo->getHeight()/200 ) ) * ( distance / focalLength );
 			emit sendEyesRealCoords( x, y, distance );
 		}
 		msleep( 80 );

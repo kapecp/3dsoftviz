@@ -149,6 +149,5 @@ void Residence::refresh()
 	gettersSettersBuildingsNode->setPosition( osg::Vec3( -offset.x(), -offset.y(), residenceSectorOffset ) );
 	residenceSectorOffset += RESIDENCE_SECTOR_HEIGHT;
 	attributesBuildingsNode->setPosition( osg::Vec3( -offset.x(), -offset.y(), residenceSectorOffset ) );
-	residenceSectorOffset += RESIDENCE_SECTOR_HEIGHT;
 }
 }

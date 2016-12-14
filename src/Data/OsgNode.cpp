@@ -31,6 +31,7 @@ Data::OsgNode::OsgNode( qlonglong id, QString name, Data::Type* type, Data::Grap
 	insertChild( INDEX_SQUARE, createNodeSquare( this->scale, OsgNode::createStateSet( this->type->getTypeTexture() ) ) , false );
 	insertChild( INDEX_SPHERE, createNodeSphere( this->scale, OsgNode::createStateSet( this->type->getTypeTexture() ) ), false );
 	insertChild( INDEX_RESIDENCE,  createNodeResidence( this->scale ), false );
+	insertChild( INDEX_MODULE,  createNodeModule( this->scale ), false );
 	setValue( graph->getNodeVisual(), true );
 
 	this->square = createNode( this->scale * 4, OsgNode::createStateSet( this->type->getTypeTexture() ) );
@@ -192,6 +193,13 @@ void Data::OsgNode::setResidence( osg::Node* residence )
 	auto at = getChild( INDEX_RESIDENCE )->asTransform()->asPositionAttitudeTransform();
 	at->removeChildren( 0, at->getNumChildren() );
 	at->addChild( residence );
+}
+
+void Data::OsgNode::setModule( osg::Node* module )
+{
+	auto at = getChild( INDEX_MODULE )->asTransform()->asPositionAttitudeTransform();
+	at->removeChildren( 0, at->getNumChildren() );
+	at->addChild( module );
 }
 
 osg::Vec3f Data::OsgNode::getCurrentPosition( bool calculateNew, float interpolationSpeed )
@@ -379,7 +387,7 @@ osg::ref_ptr<osg::Node> Data::OsgNode::createNodeSquare( const float& scaling, o
 	nodeQuad->setStateSet( bbState );
 
 	osg::ref_ptr<osg::Geode> geode = new osg::Geode;
-	geode->setNodeMask( geode->getNodeMask() & ( unsigned int )~0x2 );
+	geode->setNodeMask( geode->getNodeMask() & static_cast<unsigned int>( ~0x2 ) );
 	geode->addDrawable( nodeQuad );
 
 	osg::ref_ptr<osg::AutoTransform> at = new osg::AutoTransform();
@@ -431,6 +439,11 @@ osg::ref_ptr<osg::Node> Data::OsgNode::createNodeResidence( const float& scale )
 	return new osg::PositionAttitudeTransform();
 }
 
+osg::ref_ptr<osg::Node> Data::OsgNode::createNodeModule( const float& scale )
+{
+	return new osg::PositionAttitudeTransform();
+}
+
 osg::ref_ptr<osg::Node> Data::OsgNode::createLabel( const float& scale, QString name )
 {
 	//vytvorenie popisu uzla
@@ -466,7 +479,7 @@ osg::ref_ptr<osg::Node> Data::OsgNode::createLabel( const float& scale, QString 
 //    label->setBackdropOffset(0.05f);
 
 	osg::ref_ptr<osg::Geode> geode = new osg::Geode;
-	geode->setNodeMask( geode->getNodeMask() & ( unsigned int )~0x2 );
+	geode->setNodeMask( geode->getNodeMask() & static_cast<unsigned int>( ~0x2 ) );
 	geode->addDrawable( label );
 
 	osg::ref_ptr<osg::AutoTransform> at = new osg::AutoTransform();

@@ -19,6 +19,11 @@ namespace Layout {
 class ShapeVisitor_DistanceFromFocusGetter : public ShapeVisitor
 {
 public:
+//    ShapeVisitor_DistanceFromFocusGetter( osg::Vec3f mPosition, float mDistanceFromFocus ) {
+//        this->mPosition = mPosition;
+//        this->mDistanceFromFocus = mDistanceFromFocus;
+//    }
+
 	virtual ~ShapeVisitor_DistanceFromFocusGetter() {}
 
 	void setPosition( const osg::Vec3f& position );

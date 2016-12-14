@@ -1,0 +1,10 @@
+diff a/src/Aruco/arucothread.cpp b/src/Aruco/arucothread.cpp	(rejected hunks)
+@@ -13,7 +13,7 @@
+ namespace ArucoModul {
+ 
+ ArucoThread::ArucoThread( QObject* parent )
+-	: QThread( parent )
++    : QThread( parent )
+ {
+ 	mCapVideo		= NULL;
+ 	mCancel			= false;

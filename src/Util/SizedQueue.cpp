@@ -42,11 +42,11 @@ int SizedQueue::getAvgBasedOnValue( float& x, float& y )
 	// threshold implementation
 	int retval=0;
 
-	if ( fabsf( ( this->presum.first-this->sum.first ) /  this->stack.size() ) > this->threshold ) {
+	if ( fabsf( ( this->presum.first-this->sum.first ) /  static_cast<float>( this->stack.size() ) ) > this->threshold ) {
 		this->presum.first=this->sum.first;
 		retval=1;
 	}
-	if ( fabsf( ( this->presum.second-this->sum.second ) / this->stack.size() ) > this->threshold ) {
+	if ( fabsf( ( this->presum.second-this->sum.second ) / static_cast<float>( this->stack.size() ) ) > this->threshold ) {
 		this->presum.second=this->sum.second;
 		retval=1;
 	}
@@ -73,7 +73,7 @@ int SizedQueue::getAvgBasedOnValue( float& x )
 	// threshold implementation
 	int retval=0;
 
-	if ( fabsf( ( this->presum.first-this->sum.first ) / this->stack.size() ) > this->threshold ) {
+	if ( fabsf( ( this->presum.first-this->sum.first ) / static_cast<float>( this->stack.size() ) ) > this->threshold ) {
 		this->presum.first=this->sum.first;
 		retval=1;
 	}

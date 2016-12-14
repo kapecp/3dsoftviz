@@ -2,6 +2,9 @@
 *  CoreGraph.h
 *  Projekt 3DVisual
 */
+#ifndef COREGRAPH_H
+#define COREGRAPH_H
+
 #ifndef VIEWER_CORE_GRAPH_DEF
 #define VIEWER_CORE_GRAPH_DEF 1
 
@@ -298,6 +301,9 @@ public:
 		return handsGroup;
 	}
 
+
+    //JMA
+    osg::Vec3f getGrafRotTransVec();
 public slots:
 
 	/**
@@ -677,3 +683,4 @@ private:
 }
 
 #endif
+#endif // COREGRAPH_H

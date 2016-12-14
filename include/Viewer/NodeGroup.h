@@ -36,7 +36,7 @@ public:
 		*  \brief Creates node group
 		*  \param  nodes    nodes to wrap
 		*/
-	NodeGroup( QMap<qlonglong, osg::ref_ptr<Data::Node> >* nodes );
+	explicit NodeGroup( QMap<qlonglong, osg::ref_ptr<Data::Node> >* nodes );
 
 	/**
 		*  \fn public destructor  ~NodeGroup

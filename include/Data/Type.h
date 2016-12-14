@@ -150,7 +150,7 @@ public:
 		*  \brief Returns true, if the Type is already in database
 		*  \return bool true, if the Type is in database
 		*/
-	bool isInDB()
+	bool isInDB() const
 	{
 		return inDB;
 	}

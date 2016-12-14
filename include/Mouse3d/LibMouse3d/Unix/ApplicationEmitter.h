@@ -3,7 +3,8 @@
 #include <QObject>
 
 #include "Mouse3d/LibMouse3d/Unix/Mouse3dUnixDevice.h"
-
+class Mouse3dUnixDevice;
+class ApplicationEmitter;
 class ApplicationEmitter : public QObject
 {
 	Q_OBJECT

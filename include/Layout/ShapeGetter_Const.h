@@ -14,7 +14,7 @@ class ShapeGetter_Const : public ShapeGetter
 
 public:
 
-	ShapeGetter_Const(
+	explicit ShapeGetter_Const(
 		QSharedPointer<Shape> shape
 	);
 
