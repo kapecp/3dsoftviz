@@ -11,7 +11,7 @@ private:
 	std::string errMsg;
 
 public:
-	LayoutAlgorithmException( const std::string& errorMsg );
+	explicit LayoutAlgorithmException( const std::string& errorMsg );
 	const char* what() const throw();
 };
 

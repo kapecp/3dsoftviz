@@ -224,7 +224,6 @@ if( OpenCV_FOUND )
 	endif()
 
 	#list( APPEND ALL_SYSTEM_HEADERS	${OpenCV_INCLUDE_DIRS} )
-
 	list( APPEND ALL_COMPILE_DEFINITIONS -DOPENCV_FOUND )
 
 	message( STATUS "OpenCV Found:" )
@@ -262,6 +261,20 @@ if( NITE2_FOUND )
 	message( STATUS "NITE2_LIBRARIES=${NITE2_LIBRARIES}" )
 else( NITE2_FOUND )
 	message ( STATUS "NITE2 NOT FOUND" )
+endif()
+# ------------------------------ FREENECT2 -------------------------------
+find_package( FREENECT2 )
+if( FREENECT2_FOUND )
+
+	list( APPEND ALL_SYSTEM_HEADERS	${FREENECT2_INCLUDE_DIRS} )
+
+	list( APPEND ALL_COMPILE_DEFINITIONS  -DFREENECT2_FOUND )
+
+	message( STATUS "FREENECT2 Found:" )
+	message( STATUS "FREENECT2_INCLUDE_DIRS=${FREENECT2_INCLUDE_DIRS}" )
+	message( STATUS "FREENECT2_LIBRARIES=${FREENECT2_LIBRARIES}" )
+else( FREENECT2_FOUND )
+	message( STATUS "FREENECT2 NOT FOUND" )
 endif()
 
 
@@ -873,6 +886,7 @@ file( GLOB_RECURSE SRC_SPEECH	"src/Speech/*.cpp" )
 # Leap
 file ( GLOB SRC_LEAP "src/Leap/*.cpp" )
 file ( GLOB_RECURSE SRC_LEAPLIB "src/Leap/LeapLib/*.cpp" )
+file ( GLOB_RECURSE SRC_HANDMODULE "src/Leap/HandModule/*.cpp" )
 
 # MOUSE3D
 set ( SRC_MOUSE3D
@@ -894,7 +908,6 @@ elseif( UNIX )
 	list(APPEND SRC_MOUSE3D
 		src/Mouse3d/LibMouse3d/Unix/ApplicationEmitter.cpp
 		src/Mouse3d/LibMouse3d/Unix/Mouse3dUnixDevice.cpp
-		src/Mouse3d/LibMouse3d/Unix/xdrvlib.c
 		)
 endif()
 
@@ -947,7 +960,9 @@ endif()
 # add Leap
 if( LEAP_FOUND )
 	# WORKAROUND GARAJ comment
-	list( APPEND SRC ${SRC_LEAP} )
+        list( APPEND SRC ${SRC_LEAP} )
+        list( APPEND SRC ${SRC_HANDMODULE} )
+
 endif()
 
 # add MOUSE3D if found
@@ -1008,7 +1023,7 @@ file( GLOB_RECURSE HEADER_SPEECH	"include/Speech/*.h" )
 # LEAP
 file( GLOB HEADER_LEAP	"include/Leap/*.h" )
 file( GLOB_RECURSE HEADER_LEAPLIB	"include/Leap/LeapLib/*.h" )
-
+file( GLOB_RECURSE HEADER_HANDMODULE	"include/Leap/HandModule/*.h" )
 
 # MOUSE3D
 set ( HEADER_MOUSE3D
@@ -1030,9 +1045,7 @@ elseif( APPLE )
 elseif( UNIX )
 	list(APPEND HEADER_MOUSE3D
 		include/Mouse3d/LibMouse3d/Unix/ApplicationEmitter.h
-		include/Mouse3d/LibMouse3d/Unix/fixx11.h
 		include/Mouse3d/LibMouse3d/Unix/Mouse3dUnixDevice.h
-		include/Mouse3d/LibMouse3d/Unix/xdrvlib.h
 		)
 endif()
 
@@ -1084,7 +1097,8 @@ endif()
 
 # LEAP
 if( LEAP_FOUND )
-	list( APPEND INCL ${HEADER_LEAP} )
+        list( APPEND INCL ${HEADER_LEAP} )
+        list( APPEND INCL ${HEADER_HANDMODULE} )
 endif()
 
 # MOUSE3D
@@ -1181,7 +1195,10 @@ endif()
 
 add_library( noiseutils STATIC dependencies/noiseutils/noiseutils.cpp )
 target_include_directories( noiseutils SYSTEM PUBLIC ${DEPENDENCIES_INCLUDE_DIR}/libnoise dependencies/noiseutils dependencies/libnoise/src )
-
+if ( UNIX AND NOT APPLE )
+	add_library( mouse3d STATIC dependencies/mouse3d/xdrvlib.c )
+	target_include_directories(mouse3d SYSTEM PUBLIC dependencies/mouse3d)
+endif()
 add_library( qtcolorpicker STATIC dependencies/qtcolorpicker/qtcolorpicker.cpp )
 target_include_directories( qtcolorpicker SYSTEM PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/qtcolorpicker )
 if ( Qt5Core_FOUND )
@@ -1223,7 +1240,7 @@ endif()
 
 #-------------------------------- leap module -------------------------------
 if( LEAP_FOUND )
-	add_library( leaplib STATIC ${SRC_LEAPLIB} ${HEADER_LEAPLIB})
+        add_library( leaplib STATIC ${SRC_LEAPLIB} ${HEADER_LEAPLIB})
 
 	target_include_directories( leaplib
 		SYSTEM PUBLIC
@@ -1273,6 +1290,10 @@ list( APPEND ALL_SYSTEM_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/easylog
 
 list( APPEND ALL_SYSTEM_HEADERS include/Leap )
 
+if( UNIX AND NOT APPLE )
+	list( APPEND ALL_SYSTEM_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/mouse3d )
+endif()
+
 # works:
 include_directories(SYSTEM ${ALL_SYSTEM_HEADERS})
 # does not work:
@@ -1310,15 +1331,16 @@ target_link_libraries( ${3DSOFTVIZ_NAME}
 	${OSGQT_LIBRARIES}
 )
 
+if( UNIX AND NOT APPLE )
+	target_link_libraries( ${3DSOFTVIZ_NAME} mouse3d )
+endif()
+
 if ( Qt4_FOUND )
-	target_link_libraries( ${3DSOFTVIZ_NAME}
-		${QT_LIBRARIES}
-		)
+	target_link_libraries( ${3DSOFTVIZ_NAME} ${QT_LIBRARIES} )
 endif()
 
 if( NOT MSVC )
-	target_link_libraries( ${3DSOFTVIZ_NAME} diluculum
-		)
+	target_link_libraries( ${3DSOFTVIZ_NAME} diluculum )
 endif()
 
 if( OpenCV_FOUND )
@@ -1327,6 +1349,10 @@ endif()
 
 if( OPENNI2_FOUND )
 	target_link_libraries( ${3DSOFTVIZ_NAME} ${OPENNI2_LIBRARIES} )
+endif()
+
+if( FREENECT2_FOUND )
+	target_link_libraries( ${3DSOFTVIZ_NAME} ${FREENECT2_LIBRARIES} )
 endif()
 
 if( NITE2_FOUND )
@@ -1353,7 +1379,7 @@ if( MOUSE3D_FOUND )
 		target_link_libraries( ${3DSOFTVIZ_NAME} ${MOUSE3D_LIBRARIES} )
 	elseif( APPLE )
 		target_link_libraries( ${3DSOFTVIZ_NAME} ${MOUSE3D_LIBRARIES} )
-	elseif(UNIX)
+	elseif( UNIX )
 		target_link_libraries( ${3DSOFTVIZ_NAME} ${X11_LIBRARIES} )
 	endif()
 endif()
@@ -1374,7 +1400,7 @@ if( COMMAND cotire )
 			target_link_libraries( ${3DSOFTVIZ_NAME}_unity ${MOUSE3D_LIBRARIES} )
 		elseif( APPLE )
 			target_link_libraries( ${3DSOFTVIZ_NAME}_unity ${MOUSE3D_LIBRARIES} )
-		elseif(UNIX)
+		elseif( UNIX )
 			target_link_libraries( ${3DSOFTVIZ_NAME}_unity ${X11_LIBRARIES} )
 		endif()
 	endif()
@@ -1754,8 +1780,17 @@ find_package(cpplint)
 if( CPPLINT_FOUND )
 	FILE( GLOB_RECURSE ALL_INCLUDE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/include/*.h )
 	FILE( GLOB_RECURSE ALL_SRC_FILES ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp )
-
-	add_custom_target( "cpplint"
+	if( WIN32 )
+		add_custom_target( "cpplint"
+			COMMAND
+				${CMAKE_CURRENT_SOURCE_DIR}/cpplint.bat	# NOTE: this will probably work only on Linux/OSX
+			WORKING_DIRECTORY
+				"${CMAKE_CURRENT_BINARY_DIR}"
+			COMMENT "Linting code via cpplint.py"
+			VERBATIM
+		)
+	else()
+		add_custom_target( "cpplint"
 		COMMAND
 			"${PYTHON_EXECUTABLE}"
 			"${CPPLINT_SCRIPT}"
@@ -1767,6 +1802,7 @@ if( CPPLINT_FOUND )
 		COMMENT "Linting code via cpplint.py"
 		VERBATIM
 	)
+	endif()
 endif()
 
 # ------------------------------ CPPcheck -------------------------------
@@ -1777,18 +1813,28 @@ find_package(cppcheck)
 
 if( cppcheck_FOUND )
 	file( GLOB_RECURSE ALL_SRC_FILES ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp )
-
-	add_custom_target(
-			cppcheck
-			COMMAND cppcheck
-			--enable=warning,style,performance,portability,information,missingInclude
-			--std=c++11
-			--library=qt.cfg
-			--verbose
-			--quiet
-			-j2
-			-I ${CMAKE_CURRENT_SOURCE_DIR}/include/
-			${ALL_SRC_FILES}
-	)
+	if( WIN32 )
+		add_custom_target( cppcheck
+			COMMAND
+				${CMAKE_CURRENT_SOURCE_DIR}/run_cppcheck.bat	# NOTE: this will probably work only on Linux/OSX
+			WORKING_DIRECTORY
+				"${CMAKE_CURRENT_BINARY_DIR}"
+			COMMENT "Linting code via cpplint.py"
+			VERBATIM
+		)
+	else()
+		add_custom_target(
+				cppcheck
+				COMMAND cppcheck
+				--enable=warning,style,performance,portability,information,missingInclude
+				--std=c++11
+				--library=qt.cfg
+				--verbose
+				--quiet
+				-j2
+				-I ${CMAKE_CURRENT_SOURCE_DIR}/include/
+				${ALL_SRC_FILES}
+		)
+	endif()
 endif()
 

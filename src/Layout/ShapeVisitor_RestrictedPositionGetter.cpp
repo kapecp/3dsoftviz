@@ -201,7 +201,7 @@ void ShapeVisitor_RestrictedPositionGetter::visit( Shape_Cube& shape )
 	}
 }
 
-bool ShapeVisitor_RestrictedPositionGetter::insideCube( const osg::Vec3f& center, const osg::Vec3f& surfaceX, const osg::Vec3f& surfaceY, const osg::Vec3f& surfaceZ, osg::Vec3f& point )
+bool ShapeVisitor_RestrictedPositionGetter::insideCube( const osg::Vec3f& center, const osg::Vec3f& surfaceX, const osg::Vec3f& surfaceY, const osg::Vec3f& surfaceZ, const osg::Vec3f& point )
 {
 	float distanceX = fabsf( ( center - surfaceX ).x() );
 	float distanceY = fabsf( ( center - surfaceY ).y() );

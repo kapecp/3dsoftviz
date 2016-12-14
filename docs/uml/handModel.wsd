@@ -1,0 +1,35 @@
+// Module handModel
+// Autor: Aug_RealityKings
+
+@startuml
+object "handsGroup::osg::Group" as obj1
+object "handPalm::HandPalm" as obj2
+object "fingerGroup::osg::Group" as obj3
+object "interFingerBoneGroup::osg::Group" as obj4
+
+object "fingerJointGroup::osg::Group" as obj5
+object "fingerBoneGroup::osg::Group" as obj6
+
+object "handBone::HandBone" as obj7
+
+object "joint::Joint" as obj8
+object "handBone::HandBone" as obj9
+
+
+
+obj1 o-- "2" obj2
+obj1 o-- "2" obj3
+obj1 o-- "2" obj4
+
+obj3 o-- "5" obj5
+obj3 o-- "5" obj6
+
+obj4 o-- "3" obj7
+
+obj5 o-- "5" obj8
+
+obj6 o-- "4" obj9
+
+
+
+@enduml

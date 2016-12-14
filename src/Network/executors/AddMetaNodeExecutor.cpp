@@ -3,12 +3,12 @@
 #include "Network/Client.h"
 #include "Network/Server.h"
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wold-style-cast"
 #if defined(__linux) || defined(__linux__) || defined(linux)
+#pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wuseless-cast"
-#endif
+#pragma GCC diagnostic ignored "-Wold-style-cast"
 #pragma GCC diagnostic ignored "-Wsign-conversion"
+#endif
 
 namespace Network {
 
@@ -79,4 +79,6 @@ void AddMetaNodeExecutor::execute_server()
 
 }
 
+#if defined(__linux) || defined(__linux__) || defined(linux)
 #pragma GCC diagnostic pop
+#endif
