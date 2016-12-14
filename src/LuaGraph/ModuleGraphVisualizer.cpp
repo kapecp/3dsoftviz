@@ -66,23 +66,23 @@ void Lua::ModuleGraphVisualizer::visualize()
 	functionsAnchor->setColor( osg::Vec4( 0,0,0,0 ) );
 
 	for ( QMap<qlonglong, Lua::LuaNode*>::iterator i = g->getNodes()->begin(); i != g->getNodes()->end(); ++i ) {
-		if ( i.value()->getParams().type() == 0 ) {
+		if ( i.value()->getParams().getValue().type() == 0 ) {
 			continue;
 		}
-		if ( i.value()->getParams()["root"] == true ) {
+		if ( i.value()->getParams().getValue()["root"] == true ) {
 			osg::ref_ptr<Data::Node> root = currentGraph->getNodes()->value( i.key() );
 			osg::ref_ptr<Data::Edge> metaLink = currentGraph->addEdge( metaEdgeName, root, filesAnchor, currentGraph->getEdgeMetaType(), false );
 			metaLink->setEdgeColor( osg::Vec4( 0,0,0,0 ) );
 			metaLink->setInvisible( true );
 		}
-		if ( i.value()->getParams()["type"] == "function" ) {
+		if ( i.value()->getParams().getValue()["type"] == "function" ) {
 			osg::ref_ptr<Data::Node> func = currentGraph->getNodes()->value( i.key() );
 			osg::ref_ptr<Data::Edge> metaLink = currentGraph->addEdge( metaEdgeName, func, functionsAnchor, currentGraph->getEdgeMetaType(), false );
 			metaLink->setEdgeColor( osg::Vec4( 0,0,0,0 ) );
 			metaLink->setInvisible( true );
 			metaLink->setEdgeStrength( 0.1f );
 		}
-		if ( i.value()->getParams()["type"] == "directory" ) {
+		if ( i.value()->getParams().getValue()["type"] == "directory" ) {
 			osg::ref_ptr<Data::Node> fileNode = currentGraph->getNodes()->value( i.key() );
 
 			auto module = new ModuleGraph::Module();
@@ -92,7 +92,7 @@ void Lua::ModuleGraphVisualizer::visualize()
 			module->refresh();
 			fileNode->setModule(module);
 		}
-		if ( i.value()->getParams()["type"] == "file" ) {
+		if ( i.value()->getParams().getValue()["type"] == "file" ) {
 			osg::ref_ptr<Data::Node> fileNode = currentGraph->getNodes()->value( i.key() );
 
 			auto module = new ModuleGraph::Module();
