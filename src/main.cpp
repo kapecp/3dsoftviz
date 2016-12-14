@@ -14,6 +14,7 @@ Q_DECLARE_METATYPE( cv::Mat )
 
 #include <osg/Vec3d>
 #include <osg/Quat>
+#include <pcl/common/colors.h>;
 
 Q_DECLARE_METATYPE( osg::Vec3d )
 Q_DECLARE_METATYPE( osg::Quat )

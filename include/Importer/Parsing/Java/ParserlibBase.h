@@ -24,12 +24,12 @@ template <typename T, bool _OPTIONAL = false>
 class AstValue : public ast_ptr <T, _OPTIONAL>
 {
 public:
-	AstValue( T* obj = 0 )
+	explicit AstValue( T* obj = 0 )
 		: ast_ptr<T, _OPTIONAL>( obj )
 	{
 	}
 
-	AstValue( const ast_ptr<T, _OPTIONAL>& src )
+	explicit AstValue( const ast_ptr<T, _OPTIONAL>& src )
 		: ast_ptr<T, _OPTIONAL>( src )
 	{
 	}
@@ -44,7 +44,7 @@ public:
 	{
 	}
 
-	AstList( const ast_list<T>& src )
+	explicit AstList( const ast_list<T>& src )
 		: ast_list<T>( src )
 	{
 	}
@@ -105,12 +105,12 @@ public:
 	{
 	}
 
-	NodeTerm( const ast_node& n )
+	explicit NodeTerm( const ast_node& n )
 		: ast_node( n )
 	{
 	}
 
-	NodeTerm( const QString& val )
+	explicit NodeTerm( const QString& val )
 		: ast_node(), value( val )
 	{
 	}
@@ -144,7 +144,7 @@ public:
 	{
 	}
 
-	NodeContainer( const ast_container& src )
+	explicit NodeContainer( const ast_container& src )
 		: ast_container( src )
 	{
 	}

@@ -1,5 +1,3 @@
-
-
 #include "Viewer/CameraManipulator.h"
 
 #include "Viewer/CoreGraph.h"
@@ -24,15 +22,18 @@
 #include <cmath>
 #include <list>
 
+#if defined(__linux) || defined(__linux__) || defined(linux)
 #pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuseless-cast"
+#pragma GCC diagnostic ignored "-Wsign-conversion"
 #pragma GCC diagnostic ignored "-Wswitch-enum"
 #pragma GCC diagnostic ignored "-Wold-style-cast"
 #pragma GCC diagnostic ignored "-Wconversion"
 #pragma GCC diagnostic ignored "-Wswitch-enum"
-#if defined(__linux) || defined(__linux__) || defined(linux)
-#pragma GCC diagnostic ignored "-Wuseless-cast"
 #endif
-#pragma GCC diagnostic ignored "-Wsign-conversion"
+
+#pragma warning(push)
+#pragma warning(disable:4244)
 
 double Vwr::CameraManipulator::EYE_MOVEMENT_SPEED;
 double Vwr::CameraManipulator::TARGET_MOVEMENT_SPEED;
@@ -408,7 +409,7 @@ void Vwr::CameraManipulator::addMouseEvent( const GUIEventAdapter& ea )
 
 void Vwr::CameraManipulator::setByMatrix( const osg::Matrixd& matrix )
 {
-	_center = osg::Vec3( 0.0f,0.0f,-_distance )*matrix;
+	_center = osg::Vec3( 0.0f,0.0f,-static_cast<float>( _distance ) )*matrix;
 	_rotation = matrix.getRotate();
 }
 
@@ -562,7 +563,7 @@ bool Vwr::CameraManipulator::calcMovement()
 
 		// pan model.
 
-		float scale = -0.3f * _distance * static_cast<float>( throwScale );
+		float scale = -0.3f * static_cast<float>( _distance ) * static_cast<float>( throwScale );
 
 		osg::Matrix rotation_matrix;
 		rotation_matrix.makeRotate( _rotation );
@@ -580,7 +581,7 @@ bool Vwr::CameraManipulator::calcMovement()
 
 		// zoom model.
 
-		float fd = _distance;
+		float fd = static_cast<float>( _distance );
 		float scale = 1.0f+ dy * static_cast<float>( throwScale );
 		if ( fd*scale>_modelScale*_minimumZoomScale ) {
 			if ( _distance * scale < 10000 ) {
@@ -1139,7 +1140,7 @@ float Vwr::CameraManipulator::alterCameraTargetPoint( osgViewer::Viewer* viewer 
 
 	/*cout << "Altered target: " << eyePosition.x() << " " << eyePosition.y() << " " << eyePosition.z() << "\n";*/
 
-	return dist;
+	return static_cast<float>( dist );
 }
 
 void Vwr::CameraManipulator::alterWeights( osgViewer::Viewer* viewer, std::list<osg::ref_ptr<Data::Node> > selectedCluster )
@@ -1207,7 +1208,7 @@ void Vwr::CameraManipulator::notifyServer()
 {
 	Network::Client* client = Network::Client::getInstance();
 	if ( client->isConnected() ) {
-		client->sendMyView( _center,_rotation, _distance );
+		client->sendMyView( _center,_rotation, static_cast<float>( _distance ) );
 	}
 }
 
@@ -1383,7 +1384,7 @@ void Vwr::CameraManipulator::updateProjectionAccordingFace( const double x, cons
 osg::Vec3d Vwr::CameraManipulator::getCameraPosition()
 {
 	osg::Vec3d center = getCenter();
-	float distance = getDistance();
+	float distance = static_cast<float>( getDistance() ) ;
 	osg::Quat rotation = getRotation();
 
 	osg::Vec3 direction = rotation * osg::Vec3( 0, 0, 1 );
@@ -1490,4 +1491,6 @@ void Vwr::CameraManipulator::disableCameraMovement()
 
 } // namespace Vwr
 
+#if defined(__linux) || defined(__linux__) || defined(linux)
 #pragma GCC diagnostic pop
+#endif

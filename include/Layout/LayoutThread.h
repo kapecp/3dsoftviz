@@ -31,7 +31,7 @@ public:
 		 * \brief Constructor of thread for layout algorithm.
 		 *
 		 */
-	LayoutThread( Layout::FRAlgorithm* alg );
+	explicit LayoutThread( Layout::FRAlgorithm* alg );
 
 	/**
 		 *

@@ -21,12 +21,12 @@ void Repository::Git::GitLuaGraphUtils::fillMetricsMetaData()
 	for ( QMap<qlonglong, Lua::LuaNode*>::iterator iterator = this->luaGraph->getNodes()->begin(); iterator != this->luaGraph->getNodes()->end(); ++iterator ) {
 		Lua::LuaNode* luaNode = iterator.value();
 
-		if ( luaNode->getParams()["type"].asString() == "function" ) {
-			int lines = static_cast<int>( luaNode->getParams()["metrics"].asTable()["LOC"].asTable()["lines"].asNumber() );
-			int linesBlank = static_cast<int>( luaNode->getParams()["metrics"].asTable()["LOC"].asTable()["lines_blank"].asNumber() );
-			int linesCode = static_cast<int>( luaNode->getParams()["metrics"].asTable()["LOC"].asTable()["lines_code"].asNumber() );
-			int linesComment = static_cast<int>( luaNode->getParams()["metrics"].asTable()["LOC"].asTable()["lines_comment"].asNumber() );
-			int linesNonEmpty = static_cast<int>( luaNode->getParams()["metrics"].asTable()["LOC"].asTable()["lines_nonempty"].asNumber() );
+		if ( luaNode->getParams().getValue()["type"].asString() == "function" ) {
+			int lines = static_cast<int>( luaNode->getParams().getValue()["metrics"].asTable()["LOC"].asTable()["lines"].asNumber() );
+			int linesBlank = static_cast<int>( luaNode->getParams().getValue()["metrics"].asTable()["LOC"].asTable()["lines_blank"].asNumber() );
+			int linesCode = static_cast<int>( luaNode->getParams().getValue()["metrics"].asTable()["LOC"].asTable()["lines_code"].asNumber() );
+			int linesComment = static_cast<int>( luaNode->getParams().getValue()["metrics"].asTable()["LOC"].asTable()["lines_comment"].asNumber() );
+			int linesNonEmpty = static_cast<int>( luaNode->getParams().getValue()["metrics"].asTable()["LOC"].asTable()["lines_nonempty"].asNumber() );
 
 			this->evolutionGraph->getMetaDataFromIdentifier( luaNode->getIdentifier() )->insertMetrics( "lines", lines );
 			this->evolutionGraph->getMetaDataFromIdentifier( luaNode->getIdentifier() )->insertMetrics( "linesBlank", linesBlank );
@@ -43,11 +43,11 @@ QMap<QString, int>* Repository::Git::GitLuaGraphUtils::getMetrics( QString ident
 
 	Lua::LuaNode* luaNode = this->luaGraph->findNodeByLuaIdentifier( identifier );
 	if ( luaNode ) {
-		resultMap->insert( "lines", static_cast<int>( luaNode->getParams()["metrics"].asTable()["LOC"].asTable()["lines"].asNumber() ) );
-		resultMap->insert( "linesBlank", static_cast<int>( luaNode->getParams()["metrics"].asTable()["LOC"].asTable()["lines_blank"].asNumber() ) );
-		resultMap->insert( "linesCode", static_cast<int>( luaNode->getParams()["metrics"].asTable()["LOC"].asTable()["lines_code"].asNumber() ) );
-		resultMap->insert( "linesComment", static_cast<int>( luaNode->getParams()["metrics"].asTable()["LOC"].asTable()["lines_comment"].asNumber() ) );
-		resultMap->insert( "linesNonEmpty", static_cast<int>( luaNode->getParams()["metrics"].asTable()["LOC"].asTable()["lines_nonempty"].asNumber() ) );
+		resultMap->insert( "lines", static_cast<int>( luaNode->getParams().getValue()["metrics"].asTable()["LOC"].asTable()["lines"].asNumber() ) );
+		resultMap->insert( "linesBlank", static_cast<int>( luaNode->getParams().getValue()["metrics"].asTable()["LOC"].asTable()["lines_blank"].asNumber() ) );
+		resultMap->insert( "linesCode", static_cast<int>( luaNode->getParams().getValue()["metrics"].asTable()["LOC"].asTable()["lines_code"].asNumber() ) );
+		resultMap->insert( "linesComment", static_cast<int>( luaNode->getParams().getValue()["metrics"].asTable()["LOC"].asTable()["lines_comment"].asNumber() ) );
+		resultMap->insert( "linesNonEmpty", static_cast<int>( luaNode->getParams().getValue()["metrics"].asTable()["LOC"].asTable()["lines_nonempty"].asNumber() ) );
 	}
 
 	return resultMap;
