@@ -108,6 +108,17 @@ function pGraph:findNodeByName(name)
   end
   return occurrences
 end
+
+-- get all nodes with selected type
+function pGraph:findNodeByType(typeName)
+  local occurrence = {}
+  for i,node in pairs(self.nodes) do
+    if node.data.type and (node.data.type == typeName) then
+      table.insert(occurrence, node)
+    end
+  end
+  return occurrence
+end
  
  
 -- get all ids for nodes with selected name
@@ -120,6 +131,19 @@ function pGraph:findNodeIdsByName(name)
   end
   return occurrence_ids
 end
+
+-- get node with selected id
+function pGraph:findNodeById(id)
+  local occurrence = {}
+  for i,node in pairs(self.nodes) do
+    if node.id and (node.id == id) then
+      return node
+    end
+  end
+  return nil
+end
+
+
 
 -----------------------------------------------
 -- Return

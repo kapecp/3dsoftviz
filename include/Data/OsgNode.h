@@ -44,6 +44,13 @@ public:
 	static osg::ref_ptr<osg::Drawable> createSquare( const float& scale, osg::StateSet* bbState );
 
 	/**
+	* \fn public setModule
+	* \brief Sets subgraph for drawing modules.
+	* \param module osg subgraph
+	*/
+	void setModule( osg::Node* module );
+
+	/**
 	* \fn public setResidence
 	* \brief Sets subgraph for drawing residence of city.
 	* \param residence osg subgraph
@@ -375,6 +382,14 @@ public:
 	static osg::ref_ptr<osg::Node> createNodeResidence( const float& scale );
 
 	/**
+	*  \fn private static  createNodeModule(const float & scale, osg::StateSet* bbState)
+	*  \brief Creates node drawable - module
+	*  \param	  scale	node scale
+	*  \param  bbState	node stateset
+	*  \return osg::ref_ptr node geode
+	*/
+	static osg::ref_ptr<osg::Node> createNodeModule( const float& scale );
+	/**
 	    *  \fn private static  createStateSet(Data::Type * type = 0)
 	    *  \brief Creates node stateset
 	    *  \param   type     node type
@@ -395,6 +410,7 @@ public:
 	static const int INDEX_SQUARE = 1;
 	static const int INDEX_SPHERE = 2;
 	static const int INDEX_RESIDENCE = 3;
+	static const int INDEX_MODULE = 4;
 
 protected:
 	/**
