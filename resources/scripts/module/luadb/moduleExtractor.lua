@@ -9,7 +9,6 @@ local filestree     = require "luadb.extraction.filestree"
 local modules       = require "luadb.extraction.modules"
 local lfs           = require "lfs"
 local logger        = utils.logger
-local debug         = require "dbg2"
 
 
 local function getFilesTree(graph, path)
@@ -210,7 +209,6 @@ local function extract(sourcePath)
   --assignGlobalCalls(graph)
   
   clearTmpVars(graph)
-  debug.Save("graph", graph)
   return graph
 end
 

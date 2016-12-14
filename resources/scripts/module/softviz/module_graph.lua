@@ -5,7 +5,6 @@
 -----------------------------------------------
 local utils              = require "luadb.utils"
 local moduleExtractor    = require "luadb.moduleExtractor"
-local debug              = require "dbg2"
 
 ----------------------------------------------
 -- Local graph stored after extraction
