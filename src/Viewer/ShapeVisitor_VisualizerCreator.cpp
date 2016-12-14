@@ -148,7 +148,9 @@ osg::Geometry* ShapeVisitor_VisualizerCreator::createGridGeometry( unsigned int 
 	osg::Vec3Array* positionsOfLines = new osg::Vec3Array;
 
 	geom->setVertexArray( positionsOfLines );
+
 	int sizeNegative = ( -1 ) * size;
+
 
 	// position of borders
 	osg::Vec3f dif1( static_cast<osg::Vec3f::value_type>( sizeNegative/2 ), static_cast<osg::Vec3f::value_type>( size/2 ), -10 ); // top left

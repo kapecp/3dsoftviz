@@ -193,6 +193,7 @@ void Kinect::KinectThread::run()
                 std::string strTime(currtime);
                 std::replace( strTime.begin(), strTime.end(), ':', '_');
 
+
 				depth = mKinect->depthImageCvMat( depthFrame );
 
                 std::string file = Util::ApplicationConfig::get()->getValue( "Kinect.OutputFolder" ).toStdString();

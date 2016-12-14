@@ -24,7 +24,7 @@ template <typename T, bool _OPTIONAL = false>
 class AstValue : public ast_ptr <T, _OPTIONAL>
 {
 public:
-	AstValue( T* obj = 0 )
+	explicit AstValue( T* obj = 0 )
 		: ast_ptr<T, _OPTIONAL>( obj )
 	{
 	}

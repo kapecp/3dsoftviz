@@ -12,6 +12,7 @@ local logger        = utils.logger
 local debug         = require "dbg2"
 
 
+
 local function getFilesTree(graph, path)
   filestree.extract(path, graph)
 end
@@ -211,6 +212,7 @@ local function extract(sourcePath)
   
   clearTmpVars(graph)
   debug.Save("graph", graph)
+
   return graph
 end
 
