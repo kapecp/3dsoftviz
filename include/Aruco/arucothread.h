@@ -298,7 +298,7 @@ private:
 
     //JMA
    ArControlClass* mArControlClass;
-   osg::Vec3d ArucoThread::normalizePos( const osg::Vec3f actPosArray, const osg::Quat actQuatArray );
+   osg::Vec3d normalizePos( const osg::Vec3f actPosArray, const osg::Quat actQuatArray );
 
 
 };
