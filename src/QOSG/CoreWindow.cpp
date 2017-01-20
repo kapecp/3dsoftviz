@@ -1352,7 +1352,8 @@ void CoreWindow::createGraphSlider()
 
 void CoreWindow::createSelectionComboBox()
 {
-	selectionTypeComboBox = new QComboBox();
+    selectionTypeComboBox = nullptr;
+    selectionTypeComboBox = new QComboBox();
 	selectionTypeComboBox->insertItems( 0, ( QStringList() << "All" << "Node" << "Edge" << "Cluster" ) );
 	selectionTypeComboBox->setFocusPolicy( Qt::NoFocus );
 	connect( selectionTypeComboBox,SIGNAL( currentIndexChanged( int ) ),this,SLOT( selectionTypeComboBoxChanged( int ) ) );
