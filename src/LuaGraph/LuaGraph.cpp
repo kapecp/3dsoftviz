@@ -233,7 +233,8 @@ Lua::LuaGraph* Lua::LuaGraph::loadEvoGraph( QString repoFilepath )
 				}
 				else {
 					qDebug() << "Uzol" << nodeId << "neobsahuje LABEL";
-					return NULL;
+                    delete incidence;
+                    return NULL;
 				}
 			}
 
@@ -245,7 +246,8 @@ Lua::LuaGraph* Lua::LuaGraph::loadEvoGraph( QString repoFilepath )
 				}
 				else {
 					qDebug() << "Uzol" << nodeId << "neobsahuje LABEL";
-					return NULL;
+                    delete incidence;
+                    return NULL;
 				}
 			}
 			Lua::LuaNode* node = new Lua::LuaNode();

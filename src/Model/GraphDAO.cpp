@@ -145,12 +145,13 @@ Data::Graph* Model::GraphDAO::getGraph( QSqlDatabase* conn, bool* error2, qlongl
 		Data::Type* typeEdge = newGraph->addType( "edge" );
 		Data::Type* typeMetaNode = newGraph->getNodeMetaType();
 		Data::Type* typeMetaEdge = newGraph->getEdgeMetaType();
+        Data::Type* type;
 
 		//nacitavame vrcholy grafu z databazy
 		while ( queryNodes->next() ) {
             qlonglong nodeID = queryNodes->value( 0 ).toLongLong();
 			nodeName = queryNodes->value( 1 ).toString();
-            Data::Type* type = queryNodes->value( 4 ).toBool() ? typeMetaNode : typeNode;
+            type = queryNodes->value( 4 ).toBool() ? typeMetaNode : typeNode;
 			//isFixed = queryNodes->value(5).toBool();
 
 			if ( maxIdEleUsed < nodeID ) {
