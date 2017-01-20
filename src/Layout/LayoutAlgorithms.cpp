@@ -22,16 +22,15 @@ void LayoutAlgorithms::layoutInsideRegion( const osg::BoundingBox& elementDimens
 	const float offsetY = depth + spacing;
 	const float elementConstOffsetX = -elementDimension.xMin();
 	const float elementConstOffsetY = -elementDimension.yMin();
-	const float elementConstOffsetZ = -elementDimension.zMin() + groundTopPosition;
-	uint limit = 1;
-	uint xNum = 0;
-	uint yNum = 0;
+    const float elementConstOffsetZ = -elementDimension.zMin() + groundTopPosition;
 	float xMax;
 	float yMax;
 	if ( elementCount > 0 ) {
 		xMax = -FLT_MAX;
 		yMax = -FLT_MAX;
 		for ( int i = 0; i < elementCount; ++i ) {
+            uint xNum = 0;
+            uint yNum = 0;
 			osg::Vec3 pos( static_cast<float>( xNum ) * offsetX + elementConstOffsetX, static_cast<float>( yNum ) * offsetY + elementConstOffsetY, elementConstOffsetZ );
 			if ( xMax < pos.x() ) {
 				xMax = pos.x();
@@ -40,6 +39,7 @@ void LayoutAlgorithms::layoutInsideRegion( const osg::BoundingBox& elementDimens
 				yMax = pos.y();
 			}
 			*layouts << pos;
+            uint limit = 1;
 			if ( xNum == limit ) {
 				if ( yNum == limit ) {
 					limit++;
@@ -137,8 +137,7 @@ void LayoutAlgorithms::layoutAroundRegion( const osg::BoundingBox& elementDimens
 
 	float curWidth = regionWidth + ( regionWidth <= regionDepth ? elementIndentOffset * 2 : 0 );
 	float curDepth = regionDepth + ( regionWidth > regionDepth ? elementIndentOffset * 2 : 0 );
-	QList<IndentEdges> indents;
-	IndentEdges* curIndent = nullptr;
+    QList<IndentEdges> indents;
 	IndentEdges* prevIndent = nullptr;
 	int remainedElementsCount = elementCount;
 	int elementIndex = 0;
@@ -146,6 +145,7 @@ void LayoutAlgorithms::layoutAroundRegion( const osg::BoundingBox& elementDimens
 	// analyza - na ktorej stene bude kolko elementov
 	while ( remainedElementsCount > 0 ) {
 		indents << IndentEdges( EDGES_COUNT ); // nove odsadenie od regionu (jedno obkolesenie kvadrov - 4 strany)
+        IndentEdges* curIndent = nullptr;
 		curIndent = &indents.last();
 		const int maxCountOnWidth = static_cast<int>( floorf( ( curWidth + spacing ) / ( elementWidth + spacing ) ) ); // maximalny pocet elementov na sirku a hlbku
 		const int maxCountOnDepth = static_cast<int>( floorf( ( curDepth + spacing ) / ( elementWidth + spacing ) ) );
