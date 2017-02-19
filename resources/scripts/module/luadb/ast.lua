@@ -88,6 +88,16 @@ local function getFunctionsCalls(AST)
 end
 
 
+local function getModuleReferences(AST)
+  return AST.metrics.moduleReferences
+end
+
+
+local function getModuleCalls(AST)
+  return AST.metrics.moduleCalls
+end
+
+
 -- return first occurrency of node name
 local function getName(node, maxdepth)
   node = metrics_utils. TagItem_recursive("Name", node, maxdepth)
@@ -106,5 +116,7 @@ return
   getFunctions = getFunctions,
   getFunctionsCalls = getFunctionsCalls,
   getChildNodesByTag = getChildNodesByTag,
-  getParentNodesByTag = getParentNodesByTag
+  getParentNodesByTag = getParentNodesByTag,
+  getModuleReferences = getModuleReferences,
+  getModuleCalls = getModuleCalls
 }

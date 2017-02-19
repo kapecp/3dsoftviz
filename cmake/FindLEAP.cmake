@@ -11,11 +11,11 @@ else()
 	set ( LEAP_DEP_DIR "leap")
 endif()
 
-find_path( LEAP_INCLUDE_DIR NAMES leap.h
+find_path( LEAP_INCLUDE_DIR NAMES leap.h Leap.h
 	PATHS
 	${CMAKE_CURRENT_SOURCE_DIR}/dependencies/${LEAP_DEP_DIR}/include )
 
-find_library( LEAP_LIBRARY NAMES leap
+find_library( LEAP_LIBRARY NAMES leap libLeap.so
 	PATHS
 	${CMAKE_CURRENT_SOURCE_DIR}/dependencies/${LEAP_DEP_DIR}/lib )
 

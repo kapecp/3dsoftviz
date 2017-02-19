@@ -26,7 +26,8 @@ void Leap::LeapActions::moveCamera( Leap::Gesture gesture )
 	float gestureDuration = static_cast<float>( gesture.duration() )/1000.0f;
 
 	//skip zero movement gesture
-	if ( direction[0] == 0.0f && direction[1] == 0.0f && direction[2] == 0.0f ) {
+	//if ( static_cast<int>(direction[0]) == 0.0f && static_cast<int>(direction[1]) == 0.0f && static_cast<int>(direction[2]) == 0.0f ) {
+	if ( static_cast<int>( direction[0] ) == 0 && static_cast<int>( direction[1] ) == 0 && static_cast<int>( direction[2] ) == 0 ) {
 		return;
 	}
 
@@ -147,6 +148,8 @@ void Leap::LeapActions::changeViewAngle( Leap::DirectionDetector::Direction dire
 		case Leap::DirectionDetector::Direction::STEADY :
 			// stuff
 			break;
+		default :
+			break;
 	}
 
 }
@@ -184,6 +187,8 @@ void Leap::LeapActions::rotateAruco( Leap::DirectionDetector::Direction directio
 			break;
 		case Leap::DirectionDetector::Direction::DOWN :
 			break;
+		default :
+			break;
 	}
 }
 
@@ -202,32 +207,16 @@ void Leap::LeapActions::scaleEdges( Leap::DirectionDetector::Direction direction
 			break;
 		case Leap::DirectionDetector::Direction::DOWN :
 			break;
+		default :
+			break;
 	}
 }
 void Leap::LeapActions::scaleNodes( bool scaleUp )
 {
 	leapManager->scaleNodes( scaleUp );
 }
-//*****
+
 void Leap::LeapActions::updateARHands( Leap::Hand leftHand, Leap::Hand rightHand )
 {
-	float lx,ly,lz;
-	float rx,ry,rz;
-	lx = ly = lz = rx = ry = rz = 0.0f;
-	if ( leftHand.isValid() ) {
-		Leap::Vector lVector = leftHand.palmPosition();
-		lx = lVector.x;
-		ly = lVector.y;
-		lz = lVector.z;
-	}
-	if ( rightHand.isValid() ) {
-		Leap::Vector rVector = rightHand.palmPosition();
-		rx = rVector.x;
-		ry = rVector.y;
-		rz = rVector.z;
-	}
-
-	LOG( INFO ) << "updateARHands left : " << lx << " "<< ly << " "<< lz;
-	LOG( INFO ) << "updateARHands right : " << rx << " "<< ry << " "<< rz;
-	leapManager->updateHands( lx,ly,lz,rx,ry,rz );
+	leapManager->updateHands( leftHand, rightHand );
 }

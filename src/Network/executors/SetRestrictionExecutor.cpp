@@ -7,12 +7,12 @@
 #include "Network/Server.h"
 #include "Network/Client.h"
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wold-style-cast"
 #if defined(__linux) || defined(__linux__) || defined(linux)
+#pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wuseless-cast"
-#endif
+#pragma GCC diagnostic ignored "-Wold-style-cast"
 #pragma GCC diagnostic ignored "-Wsign-conversion"
+#endif
 
 namespace Network {
 
@@ -76,8 +76,9 @@ void SetRestrictionExecutor::execute_client()
 			shapeGetter = new Layout::ShapeGetter_Plane_ByThreeNodes( node1, node2, node3 );
 			break;
 		default:
-			return;
-			break;
+            delete nodesToRestrict;
+            return;
+            break;
 	}
 
 	cw->setRestrictionToSelectedNodes(
@@ -162,6 +163,7 @@ void SetRestrictionExecutor::execute_server()
 			shapeGetter = new Layout::ShapeGetter_Plane_ByThreeNodes( node1, node2, node3 );
 			break;
 		default:
+            delete nodesToRestrict;
 			return;
 			break;
 	}
@@ -185,4 +187,6 @@ void SetRestrictionExecutor::execute_server()
 
 } // namespace Network
 
+#if defined(__linux) || defined(__linux__) || defined(linux)
 #pragma GCC diagnostic pop
+#endif

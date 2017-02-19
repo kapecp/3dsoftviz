@@ -224,7 +224,6 @@ if( OpenCV_FOUND )
 	endif()
 
 	#list( APPEND ALL_SYSTEM_HEADERS	${OpenCV_INCLUDE_DIRS} )
-
 	list( APPEND ALL_COMPILE_DEFINITIONS -DOPENCV_FOUND )
 
 	message( STATUS "OpenCV Found:" )
@@ -262,6 +261,20 @@ if( NITE2_FOUND )
 	message( STATUS "NITE2_LIBRARIES=${NITE2_LIBRARIES}" )
 else( NITE2_FOUND )
 	message ( STATUS "NITE2 NOT FOUND" )
+endif()
+# ------------------------------ FREENECT2 -------------------------------
+find_package( FREENECT2 )
+if( FREENECT2_FOUND )
+
+	list( APPEND ALL_SYSTEM_HEADERS	${FREENECT2_INCLUDE_DIRS} )
+
+	list( APPEND ALL_COMPILE_DEFINITIONS  -DFREENECT2_FOUND )
+
+	message( STATUS "FREENECT2 Found:" )
+	message( STATUS "FREENECT2_INCLUDE_DIRS=${FREENECT2_INCLUDE_DIRS}" )
+	message( STATUS "FREENECT2_LIBRARIES=${FREENECT2_LIBRARIES}" )
+else( FREENECT2_FOUND )
+	message( STATUS "FREENECT2 NOT FOUND" )
 endif()
 
 
@@ -646,19 +659,174 @@ if( USE_BUILTIN_DEPENDENCIES )
 			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
 		)
 
+	# Build StackTracePlus
+	ExternalProject_Add ( dep_StackTracePlus
+		PREFIX StackTracePlus
+		SOURCE_DIR ${DEP_SOURCE}/StackTracePlus
+		BINARY_DIR StackTracePlus
+		CMAKE_ARGS
+			-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
+			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
+		)
+
+	# Build luasocket
+	ExternalProject_Add ( dep_luasocket
+		PREFIX luasocket
+		SOURCE_DIR ${DEP_SOURCE}/luasocket
+		BINARY_DIR luasocket
+		CMAKE_ARGS
+			-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
+			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
+		)
+
+	# Build mobdebug
+	ExternalProject_Add ( dep_mobdebug
+		PREFIX mobdebug
+		SOURCE_DIR ${DEP_SOURCE}/mobdebug
+		BINARY_DIR mobdebug
+		CMAKE_ARGS
+			-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
+			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
+		)
+
+	# Build luacov
+	ExternalProject_Add ( dep_luacov
+		PREFIX luacov
+		SOURCE_DIR ${DEP_SOURCE}/luacov
+		BINARY_DIR luacov
+		CMAKE_ARGS
+			-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
+			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
+		)
+
+	# Build luacheck
+	ExternalProject_Add ( dep_luacheck
+		PREFIX luacheck
+		SOURCE_DIR ${DEP_SOURCE}/luacheck
+		BINARY_DIR luacheck
+		CMAKE_ARGS
+			-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
+			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
+		)
+
+	# Build lua_cliargs
+	ExternalProject_Add ( dep_lua_cliargs
+		PREFIX lua_cliargs
+		SOURCE_DIR ${DEP_SOURCE}/lua_cliargs
+		BINARY_DIR lua_cliargs
+		CMAKE_ARGS
+			-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
+			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
+		)
+
+	# Build luasystem
+	ExternalProject_Add ( dep_luasystem
+		PREFIX luasystem
+		SOURCE_DIR ${DEP_SOURCE}/luasystem
+		BINARY_DIR luasystem
+		CMAKE_ARGS
+			-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
+			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
+		)
+
+	# Build dkjson
+	ExternalProject_Add ( dep_dkjson
+		PREFIX dkjson
+		SOURCE_DIR ${DEP_SOURCE}/dkjson
+		BINARY_DIR dkjson
+		CMAKE_ARGS
+			-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
+			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
+		)
+
+	# Build say
+	ExternalProject_Add ( dep_say
+		PREFIX say
+		SOURCE_DIR ${DEP_SOURCE}/say
+		BINARY_DIR say
+		CMAKE_ARGS
+			-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
+			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
+		)
+
+	# Build luassert
+	ExternalProject_Add ( dep_luassert
+		PREFIX luassert
+		SOURCE_DIR ${DEP_SOURCE}/luassert
+		BINARY_DIR luassert
+		CMAKE_ARGS
+			-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
+			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
+		)
+
+	# Build lua-term
+	ExternalProject_Add ( dep_lua-term
+		PREFIX lua-term
+		SOURCE_DIR ${DEP_SOURCE}/lua-term
+		BINARY_DIR lua-term
+		CMAKE_ARGS
+			-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
+			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
+		)
+
+	# Build penlight
+	ExternalProject_Add ( dep_penlight
+		PREFIX penlight
+		SOURCE_DIR ${DEP_SOURCE}/penlight
+		BINARY_DIR penlight
+		CMAKE_ARGS
+			-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
+			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
+		)
+
+	# Build mediator_lua
+	ExternalProject_Add ( dep_mediator_lua
+		PREFIX mediator_lua
+		SOURCE_DIR ${DEP_SOURCE}/mediator_lua
+		BINARY_DIR mediator_lua
+		CMAKE_ARGS
+			-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
+			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
+		)
+
+	# Build busted
+	ExternalProject_Add ( dep_busted
+		PREFIX busted
+		SOURCE_DIR ${DEP_SOURCE}/busted
+		BINARY_DIR busted
+		CMAKE_ARGS
+			-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
+			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
+		)	
+
 	# Ensure correct order of build (dependencies between external dependencies)
 	if( MSVC OR APPLE )
-		add_dependencies( dep_lpeg dep_lua )
-		add_dependencies( dep_leg dep_lpeg )
-		add_dependencies( dep_luametrics dep_leg )
-		add_dependencies( dep_luafilesystem dep_lua )
+		set( WHICH_LUA dep_lua )
 	else()
-		add_dependencies( dep_lpeg dep_luajit )
-		add_dependencies( dep_diluculum dep_luajit )
-		add_dependencies( dep_leg dep_lpeg )
-		add_dependencies( dep_luametrics dep_leg )
-		add_dependencies( dep_luafilesystem dep_luajit )
+		set( WHICH_LUA dep_luajit )
 	endif()
+	add_dependencies( dep_lpeg ${WHICH_LUA} )
+	add_dependencies( dep_leg ${WHICH_LUA} )
+	add_dependencies( dep_luametrics ${WHICH_LUA} )
+	add_dependencies( dep_luafilesystem ${WHICH_LUA} )
+	add_dependencies( dep_StackTracePlus ${WHICH_LUA} )
+	add_dependencies( dep_luasocket ${WHICH_LUA} )
+	add_dependencies( dep_mobdebug ${WHICH_LUA} )
+	add_dependencies( dep_luacov ${WHICH_LUA} )
+	add_dependencies( dep_luacheck ${WHICH_LUA} )
+	add_dependencies( dep_lua_cliargs ${WHICH_LUA} )
+	add_dependencies( dep_luasystem ${WHICH_LUA} )
+	add_dependencies( dep_dkjson ${WHICH_LUA} )
+	add_dependencies( dep_say ${WHICH_LUA} )
+	add_dependencies( dep_luassert ${WHICH_LUA} )
+	add_dependencies( dep_lua-term ${WHICH_LUA} )
+	add_dependencies( dep_penlight ${WHICH_LUA} )
+	add_dependencies( dep_mediator_lua ${WHICH_LUA} )
+	add_dependencies( dep_busted ${WHICH_LUA} )
+	if( NOT MSVC )
+		add_dependencies( dep_diluculum ${WHICH_LUA} )
+	endif()
+
 
 	# path to include directory where external dependencies deploy headers
 	set( DEPENDENCIES_INCLUDE_DIR ${DEP_BIN}/include )
@@ -697,6 +865,7 @@ file( GLOB_RECURSE SRC_GITLIB   "src/Repository/Git/GitLib/*.cpp" )
 file( GLOB_RECURSE SRC_SPECIALMATRIX   "src/SpecialMatrix/*.cpp" )
 file( GLOB_RECURSE SRC_CITY		"src/City/*.cpp" )
 file( GLOB_RECURSE SRC_SHAPES	"src/Shapes/*.cpp" )
+file( GLOB_RECURSE SRC_MODULEGRAPH	"src/ModuleGraph/*.cpp" )
 
 # OpenCV
 file( GLOB_RECURSE SRC_OPENCV	"src/OpenCV/*.cpp" )
@@ -717,6 +886,7 @@ file( GLOB_RECURSE SRC_SPEECH	"src/Speech/*.cpp" )
 # Leap
 file ( GLOB SRC_LEAP "src/Leap/*.cpp" )
 file ( GLOB_RECURSE SRC_LEAPLIB "src/Leap/LeapLib/*.cpp" )
+file ( GLOB_RECURSE SRC_HANDMODULE "src/Leap/HandModule/*.cpp" )
 
 # MOUSE3D
 set ( SRC_MOUSE3D
@@ -738,7 +908,6 @@ elseif( UNIX )
 	list(APPEND SRC_MOUSE3D
 		src/Mouse3d/LibMouse3d/Unix/ApplicationEmitter.cpp
 		src/Mouse3d/LibMouse3d/Unix/Mouse3dUnixDevice.cpp
-		src/Mouse3d/LibMouse3d/Unix/xdrvlib.c
 		)
 endif()
 
@@ -767,6 +936,7 @@ set( SRC
 	${SRC_SPECIALMATRIX}
 	${SRC_CITY}
 	${SRC_SHAPES}
+	${SRC_MODULEGRAPH}
 )
 
 if( OpenCV_FOUND )
@@ -790,7 +960,9 @@ endif()
 # add Leap
 if( LEAP_FOUND )
 	# WORKAROUND GARAJ comment
-	list( APPEND SRC ${SRC_LEAP} )
+        list( APPEND SRC ${SRC_LEAP} )
+        list( APPEND SRC ${SRC_HANDMODULE} )
+
 endif()
 
 # add MOUSE3D if found
@@ -830,6 +1002,7 @@ file( GLOB_RECURSE HEADER_GITLIB		"include/Repository/Git/GitLib/*.h" )
 file( GLOB_RECURSE HEADER_SPECIALMATRIX		"include/SpecialMatrix/*.h" )
 file( GLOB_RECURSE HEADER_CITY		"include/City/*.h" )
 file( GLOB_RECURSE HEADER_SHAPES	"include/Shapes/*.h" )
+file( GLOB_RECURSE HEADER_MODULEGRAPH	"include/ModuleGraph/*.h" )
 
 # OpenCV
 file( GLOB_RECURSE HEADER_OPENCV	"include/OpenCV/*.h" )
@@ -850,7 +1023,7 @@ file( GLOB_RECURSE HEADER_SPEECH	"include/Speech/*.h" )
 # LEAP
 file( GLOB HEADER_LEAP	"include/Leap/*.h" )
 file( GLOB_RECURSE HEADER_LEAPLIB	"include/Leap/LeapLib/*.h" )
-
+file( GLOB_RECURSE HEADER_HANDMODULE	"include/Leap/HandModule/*.h" )
 
 # MOUSE3D
 set ( HEADER_MOUSE3D
@@ -872,9 +1045,7 @@ elseif( APPLE )
 elseif( UNIX )
 	list(APPEND HEADER_MOUSE3D
 		include/Mouse3d/LibMouse3d/Unix/ApplicationEmitter.h
-		include/Mouse3d/LibMouse3d/Unix/fixx11.h
 		include/Mouse3d/LibMouse3d/Unix/Mouse3dUnixDevice.h
-		include/Mouse3d/LibMouse3d/Unix/xdrvlib.h
 		)
 endif()
 
@@ -903,6 +1074,7 @@ set( INCL
 	${HEADER_SPECIALMATRIX}
 	${HEADER_CITY}
 	${HEADER_SHAPES}
+	${HEADER_MODULEGRAPH}
 )
 
 if( OpenCV_FOUND )
@@ -925,7 +1097,8 @@ endif()
 
 # LEAP
 if( LEAP_FOUND )
-	list( APPEND INCL ${HEADER_LEAP} )
+        list( APPEND INCL ${HEADER_LEAP} )
+        list( APPEND INCL ${HEADER_HANDMODULE} )
 endif()
 
 # MOUSE3D
@@ -954,6 +1127,7 @@ source_group( \\src\\Git "^.*Git/.*$" )
 source_group( \\src\\SpecialMatrix "^.*SpecialMatrix/.*$" )
 source_group( \\src\\City "^.*City/.*$" )
 source_group( \\src\\Shapes "^.*Shapes/.*$" )
+source_group( \\src\\ModuleGraph "^.*ModuleGraph/.*$" )
 
 # Group header files
 source_group( \\headers\\Application "^.*Application/.*h$")
@@ -976,6 +1150,7 @@ source_group( \\headers\\Git "^.*Git/.*h$" )
 source_group( \\headers\\SpecialMatrix "^.*SpecialMatrix/.*h$" )
 source_group( \\headers\\City "^.*City/.*h$" )
 source_group( \\headers\\Shapes "^.*Shapes/.*h$" )
+source_group( \\headers\\ModuleGraph "^.*ModuleGraph/.*h$" )
 
 if( OpenCV_FOUND )
 	source_group( \\src\\QOpenCV "^.*QOpenCV/.*$" )
@@ -1020,7 +1195,10 @@ endif()
 
 add_library( noiseutils STATIC dependencies/noiseutils/noiseutils.cpp )
 target_include_directories( noiseutils SYSTEM PUBLIC ${DEPENDENCIES_INCLUDE_DIR}/libnoise dependencies/noiseutils dependencies/libnoise/src )
-
+if ( UNIX AND NOT APPLE )
+	add_library( mouse3d STATIC dependencies/mouse3d/xdrvlib.c )
+	target_include_directories(mouse3d SYSTEM PUBLIC dependencies/mouse3d)
+endif()
 add_library( qtcolorpicker STATIC dependencies/qtcolorpicker/qtcolorpicker.cpp )
 target_include_directories( qtcolorpicker SYSTEM PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/qtcolorpicker )
 if ( Qt5Core_FOUND )
@@ -1062,7 +1240,7 @@ endif()
 
 #-------------------------------- leap module -------------------------------
 if( LEAP_FOUND )
-	add_library( leaplib STATIC ${SRC_LEAPLIB} ${HEADER_LEAPLIB})
+        add_library( leaplib STATIC ${SRC_LEAPLIB} ${HEADER_LEAPLIB})
 
 	target_include_directories( leaplib
 		SYSTEM PUBLIC
@@ -1112,6 +1290,10 @@ list( APPEND ALL_SYSTEM_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/easylog
 
 list( APPEND ALL_SYSTEM_HEADERS include/Leap )
 
+if( UNIX AND NOT APPLE )
+	list( APPEND ALL_SYSTEM_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/mouse3d )
+endif()
+
 # works:
 include_directories(SYSTEM ${ALL_SYSTEM_HEADERS})
 # does not work:
@@ -1149,15 +1331,16 @@ target_link_libraries( ${3DSOFTVIZ_NAME}
 	${OSGQT_LIBRARIES}
 )
 
+if( UNIX AND NOT APPLE )
+	target_link_libraries( ${3DSOFTVIZ_NAME} mouse3d )
+endif()
+
 if ( Qt4_FOUND )
-	target_link_libraries( ${3DSOFTVIZ_NAME}
-		${QT_LIBRARIES}
-		)
+	target_link_libraries( ${3DSOFTVIZ_NAME} ${QT_LIBRARIES} )
 endif()
 
 if( NOT MSVC )
-	target_link_libraries( ${3DSOFTVIZ_NAME} diluculum
-		)
+	target_link_libraries( ${3DSOFTVIZ_NAME} diluculum )
 endif()
 
 if( OpenCV_FOUND )
@@ -1166,6 +1349,10 @@ endif()
 
 if( OPENNI2_FOUND )
 	target_link_libraries( ${3DSOFTVIZ_NAME} ${OPENNI2_LIBRARIES} )
+endif()
+
+if( FREENECT2_FOUND )
+	target_link_libraries( ${3DSOFTVIZ_NAME} ${FREENECT2_LIBRARIES} )
 endif()
 
 if( NITE2_FOUND )
@@ -1192,7 +1379,7 @@ if( MOUSE3D_FOUND )
 		target_link_libraries( ${3DSOFTVIZ_NAME} ${MOUSE3D_LIBRARIES} )
 	elseif( APPLE )
 		target_link_libraries( ${3DSOFTVIZ_NAME} ${MOUSE3D_LIBRARIES} )
-	elseif(UNIX)
+	elseif( UNIX )
 		target_link_libraries( ${3DSOFTVIZ_NAME} ${X11_LIBRARIES} )
 	endif()
 endif()
@@ -1213,7 +1400,7 @@ if( COMMAND cotire )
 			target_link_libraries( ${3DSOFTVIZ_NAME}_unity ${MOUSE3D_LIBRARIES} )
 		elseif( APPLE )
 			target_link_libraries( ${3DSOFTVIZ_NAME}_unity ${MOUSE3D_LIBRARIES} )
-		elseif(UNIX)
+		elseif( UNIX )
 			target_link_libraries( ${3DSOFTVIZ_NAME}_unity ${X11_LIBRARIES} )
 		endif()
 	endif()
@@ -1229,7 +1416,7 @@ endif()
 if( USE_BUILTIN_DEPENDENCIES )
 
 	# dependencies of non-unity build
-	add_dependencies( ${3DSOFTVIZ_NAME} libnoise osgModeling gitlib dep_luametrics dep_leg dep_lpeg dep_luafilesystem igloo dep_lualogging)
+	add_dependencies( ${3DSOFTVIZ_NAME} libnoise osgModeling gitlib dep_luametrics dep_leg dep_lpeg dep_luafilesystem igloo dep_lualogging dep_StackTracePlus dep_luasocket dep_mobdebug dep_luacov dep_luacheck dep_lua_cliargs dep_luasystem dep_dkjson dep_say dep_luassert dep_lua-term dep_penlight dep_mediator_lua dep_busted )
 
 	if( MSVC OR APPLE )
 		add_dependencies( ${3DSOFTVIZ_NAME} dep_lua )
@@ -1247,7 +1434,7 @@ if( USE_BUILTIN_DEPENDENCIES )
 
 	# dependencies of unity build
 	if (COMMAND cotire)
-		add_dependencies( ${3DSOFTVIZ_NAME}_unity libnoise osgModeling gitlib_unity dep_luametrics dep_leg dep_lpeg dep_luafilesystem igloo dep_lualogging)
+		add_dependencies( ${3DSOFTVIZ_NAME}_unity libnoise osgModeling gitlib_unity dep_luametrics dep_leg dep_lpeg dep_luafilesystem igloo dep_lualogging dep_StackTracePlus dep_luasocket dep_mobdebug dep_luacov dep_luacheck dep_lua_cliargs dep_luasystem dep_dkjson dep_say dep_luassert dep_lua-term dep_penlight dep_mediator_lua dep_busted )
 
 		if( MSVC OR APPLE )
 			add_dependencies( ${3DSOFTVIZ_NAME}_unity dep_lua )
@@ -1593,8 +1780,17 @@ find_package(cpplint)
 if( CPPLINT_FOUND )
 	FILE( GLOB_RECURSE ALL_INCLUDE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/include/*.h )
 	FILE( GLOB_RECURSE ALL_SRC_FILES ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp )
-
-	add_custom_target( "cpplint"
+	if( WIN32 )
+		add_custom_target( "cpplint"
+			COMMAND
+				${CMAKE_CURRENT_SOURCE_DIR}/cpplint.bat	# NOTE: this will probably work only on Linux/OSX
+			WORKING_DIRECTORY
+				"${CMAKE_CURRENT_BINARY_DIR}"
+			COMMENT "Linting code via cpplint.py"
+			VERBATIM
+		)
+	else()
+		add_custom_target( "cpplint"
 		COMMAND
 			"${PYTHON_EXECUTABLE}"
 			"${CPPLINT_SCRIPT}"
@@ -1606,6 +1802,7 @@ if( CPPLINT_FOUND )
 		COMMENT "Linting code via cpplint.py"
 		VERBATIM
 	)
+	endif()
 endif()
 
 # ------------------------------ CPPcheck -------------------------------
@@ -1616,18 +1813,28 @@ find_package(cppcheck)
 
 if( cppcheck_FOUND )
 	file( GLOB_RECURSE ALL_SRC_FILES ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp )
-
-	add_custom_target(
-			cppcheck
-			COMMAND cppcheck
-			--enable=warning,style,performance,portability,information,missingInclude
-			--std=c++11
-			--library=qt.cfg
-			--verbose
-			--quiet
-			-j2
-			-I ${CMAKE_CURRENT_SOURCE_DIR}/include/
-			${ALL_SRC_FILES}
-	)
+	if( WIN32 )
+		add_custom_target( cppcheck
+			COMMAND
+				${CMAKE_CURRENT_SOURCE_DIR}/run_cppcheck.bat	# NOTE: this will probably work only on Linux/OSX
+			WORKING_DIRECTORY
+				"${CMAKE_CURRENT_BINARY_DIR}"
+			COMMENT "Linting code via cpplint.py"
+			VERBATIM
+		)
+	else()
+		add_custom_target(
+				cppcheck
+				COMMAND cppcheck
+				--enable=warning,style,performance,portability,information,missingInclude
+				--std=c++11
+				--library=qt.cfg
+				--verbose
+				--quiet
+				-j2
+				-I ${CMAKE_CURRENT_SOURCE_DIR}/include/
+				${ALL_SRC_FILES}
+		)
+	endif()
 endif()
 

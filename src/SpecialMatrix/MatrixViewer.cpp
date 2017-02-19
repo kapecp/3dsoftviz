@@ -5,6 +5,9 @@
 
 #include <QDebug>
 
+#pragma warning(push)
+#pragma warning(disable:4244)
+
 SpecialMatrix::MatrixViewer::MatrixViewer( Data::Graph* matrixGraph, QString fileName )
 {
 	this->matrixGraph = matrixGraph;
@@ -65,6 +68,15 @@ void SpecialMatrix::MatrixViewer::exchangeNodes( osg::ref_ptr<Data::Node> srcNod
 	qlonglong foundNodeId;
 	int srcNodePos, desNodePos, diff;
 
+	if ( srcNode->Data::AbsNode::getName().contains( 'x' ) ) {
+		srcNodePos = connections->getXAxisNodes()->indexOf( srcNode->getId() )+1;
+		desNodePos = connections->getXAxisNodes()->indexOf( desNode->getId() )+1;
+	}
+	else {
+		srcNodePos = connections->getYAxisNodes()->indexOf( srcNode->getId() )+1;
+		desNodePos = connections->getYAxisNodes()->indexOf( desNode->getId() )+1;
+	}
+
 	if ( desNodePos < srcNodePos ) {
 		tempNode = desNode;
 		desNode = srcNode;
@@ -93,24 +105,25 @@ void SpecialMatrix::MatrixViewer::exchangeNodes( osg::ref_ptr<Data::Node> srcNod
 		//get the nodes connected to scrNode
 		tempNode = matrixGraph->findNodeById( connToSrcNodes->indexOf( i ) );
 		//get the old position of the iNode, and delete from the positionArray
-		iNodeOldPos.set( tempNode->getTargetPosition().x()/separator, tempNode->getTargetPosition().y()/separator );
-		connections->setNodePositionsArrayField( iNodeOldPos.x(), iNodeOldPos.y(), 0 );
+		iNodeOldPos.set( tempNode->getTargetPosition().x()/static_cast<float>( separator ), tempNode->getTargetPosition().y()/static_cast<float>( separator ) );
+		connections->setNodePositionsArrayField( static_cast<int>( iNodeOldPos.x() ), static_cast<int>( iNodeOldPos.y() ), 0 );
 		//get the new position
 		finalPosVector = tempNode->getTargetPosition() + diffVector;
-		iNodeNewPos.set( static_cast<int>( finalPosVector.x()/separator ), static_cast<int>( finalPosVector.y()/separator ) );
+		//iNodeNewPos.set( static_cast<int>( finalPosVector.x()/static_cast<float>(separator)) , static_cast<int>( finalPosVector.y()/static_cast<float>(separator))  );//zaokruhlenie??
+		iNodeNewPos.set( static_cast<float>( static_cast<int>( finalPosVector.x()/static_cast<float>( separator ) ) ) , static_cast<float>( static_cast<int>( finalPosVector.y()/static_cast<float>( separator ) ) ) );
 
 		//CHECK AVAIBILITY
-		foundNodeId = connections->getNodePositionsArrayField( iNodeNewPos.x(), iNodeNewPos.y() );
+		foundNodeId = connections->getNodePositionsArrayField( static_cast<int>( iNodeNewPos.x() ), static_cast<int>( iNodeNewPos.y() ) );
 		if ( foundNodeId ) {
 			foundNode = matrixGraph->findNodeById( foundNodeId );
-			osg::Vec2f foundNodePos = fileParser->getAvailablePosition( connections, iNodeNewPos.x(), iNodeNewPos.y() );
-			foundNode->setTargetPosition( osg::Vec3f( static_cast<float>( foundNodePos.x()*separator ), static_cast<float>( foundNodePos.y()*separator ), 0.0f ) );
-			connections->setNodePositionsArrayField( foundNodePos.x(), foundNodePos.y(), foundNodeId );
+			osg::Vec2f foundNodePos = fileParser->getAvailablePosition( connections, static_cast<int>( iNodeNewPos.x() ), static_cast<int>( iNodeNewPos.y() ) );
+			foundNode->setTargetPosition( osg::Vec3f( foundNodePos.x()*static_cast<float>( separator ),  foundNodePos.y()*static_cast<float>( separator ), 0.0f ) );
+			connections->setNodePositionsArrayField( static_cast<int>( foundNodePos.x() ), static_cast<int>( foundNodePos.y() ), foundNodeId );
 		}
 
 		tempNode->setTargetPosition( finalPosVector );
 		tempNode->setRestrictedTargetPosition( tempNode->getTargetPosition() );
-		connections->setNodePositionsArrayField( iNodeNewPos.x(), iNodeNewPos.y(), tempNode->getId() );
+		connections->setNodePositionsArrayField( static_cast<int>( iNodeNewPos.x() ), static_cast<int>( iNodeNewPos.y() ), tempNode->getId() );
 	}
 	srcNode->setTargetPosition( srcNode->getTargetPosition() + diffVector );
 	srcNode->setRestrictedTargetPosition( srcNode->getTargetPosition() );
@@ -127,24 +140,24 @@ void SpecialMatrix::MatrixViewer::exchangeNodes( osg::ref_ptr<Data::Node> srcNod
 		//get the nodes connected to scrNode
 		tempNode = matrixGraph->findNodeById( connToDesNodes->indexOf( i ) );
 		//get the old position of the iNode, and delete from the positionArray
-		iNodeOldPos.set( tempNode->getTargetPosition().x()/separator, tempNode->getTargetPosition().y()/separator );
-		connections->setNodePositionsArrayField( iNodeOldPos.x(), iNodeOldPos.y(), 0 );
+		iNodeOldPos.set( static_cast<float>( static_cast<int>( tempNode->getTargetPosition().x() )/separator ),static_cast<float>( static_cast<int>( tempNode->getTargetPosition().y() )/separator ) );
+		connections->setNodePositionsArrayField( static_cast<int>( iNodeOldPos.x() ), static_cast<int>( iNodeOldPos.y() ), 0 );
 		//get the new position
 		finalPosVector = tempNode->getTargetPosition() - diffVector;
-		iNodeNewPos.set( static_cast<int>( finalPosVector.x()/separator ), static_cast<float>( finalPosVector.y()/separator ) );
+		iNodeNewPos.set( static_cast<float>( static_cast<int>( finalPosVector.x()/static_cast<float>( separator ) ) ), static_cast<float>( static_cast<int>( finalPosVector.y()/static_cast<float>( separator ) ) ) );
 
 		//CHECK AVAIBILITY
-		foundNodeId = connections->getNodePositionsArrayField( iNodeNewPos.x(), iNodeNewPos.y() );
+		foundNodeId = connections->getNodePositionsArrayField( static_cast<int>( iNodeNewPos.x() ), static_cast<int>( iNodeNewPos.y() ) );
 		if ( foundNodeId ) {
 			foundNode = matrixGraph->findNodeById( foundNodeId );
-			osg::Vec2f foundNodePos = fileParser->getAvailablePosition( connections, iNodeNewPos.x(), iNodeNewPos.y() );
-			foundNode->setTargetPosition( osg::Vec3f( static_cast<float>( foundNodePos.x()*separator ), static_cast<float>( foundNodePos.y()*separator ), 0.0f ) );
-			connections->setNodePositionsArrayField( foundNodePos.x(), foundNodePos.y(), foundNodeId );
+			osg::Vec2f foundNodePos = fileParser->getAvailablePosition( connections, static_cast<int>( iNodeNewPos.x() ), static_cast<int>( iNodeNewPos.y() ) );
+			foundNode->setTargetPosition( osg::Vec3f( foundNodePos.x()*static_cast<float>( separator ),  foundNodePos.y()*static_cast<float>( separator ), 0.0f ) );
+			connections->setNodePositionsArrayField( static_cast<int>( foundNodePos.x() ), static_cast<int>( foundNodePos.y() ), foundNodeId );
 		}
 
 		tempNode->setTargetPosition( finalPosVector );
 		tempNode->setRestrictedTargetPosition( tempNode->getTargetPosition() );
-		connections->setNodePositionsArrayField( iNodeNewPos.x(), iNodeNewPos.y(), tempNode->getId() );
+		connections->setNodePositionsArrayField( static_cast<int>( iNodeNewPos.x() ), static_cast<int>( iNodeNewPos.y() ), tempNode->getId() );
 	}
 	desNode->setTargetPosition( desNode->getTargetPosition() - diffVector );
 	desNode->setRestrictedTargetPosition( desNode->getTargetPosition() );
@@ -181,8 +194,8 @@ void SpecialMatrix::MatrixViewer::createAxis()
 	Data::Type* axisEdgeType = matrixGraph->addType( "axisEdgeType", settings );
 
 	osg::ref_ptr<Data::Node> center = matrixGraph->addNode( qHash( "Center" ), "Center", axisNodeType, osg::Vec3f( 0.0f, 0.0f, 0.0f ) );
-	osg::ref_ptr<Data::Node> xAxis = matrixGraph->addNode( qHash( "xAxis" ), "xAxis", axisNodeType, osg::Vec3f( ( float )xNodesCount*separator, 0.0f, 0.0f ) );
-	osg::ref_ptr<Data::Node> yAxis = matrixGraph->addNode( qHash( "yAxis" ), "yAxis", axisNodeType, osg::Vec3f( 0.0f, ( float )yNodesCount*separator, 0.0f ) );
+	osg::ref_ptr<Data::Node> xAxis = matrixGraph->addNode( qHash( "xAxis" ), "xAxis", axisNodeType, osg::Vec3f( static_cast<float>( xNodesCount )*separator, 0.0f, 0.0f ) );
+	osg::ref_ptr<Data::Node> yAxis = matrixGraph->addNode( qHash( "yAxis" ), "yAxis", axisNodeType, osg::Vec3f( 0.0f, static_cast<float>( yNodesCount )*separator, 0.0f ) );
 
 	matrixGraph->addEdge( qHash( "xAxisEdge" ), "xAxisEdge", center, xAxis, axisEdgeType, false );
 	matrixGraph->addEdge( qHash( "yAxisEdge" ), "yAxisEdge", center, yAxis, axisEdgeType, false );

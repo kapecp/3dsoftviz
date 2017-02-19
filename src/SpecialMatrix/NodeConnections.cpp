@@ -18,17 +18,17 @@ SpecialMatrix::NodeConnections::~NodeConnections()
 	delete xAxisNodes;
 	delete yAxisNodes;
 	delete iNodes;
-	for ( size_t i = 0; i<connectedNodes->size(); ++i ) {
-		delete connectedNodes->value( i );
+	for ( size_t i = 0; i<static_cast<unsigned long>( connectedNodes->size() ); ++i ) {
+		delete connectedNodes->value( static_cast<long>( i ) );
 	}
 	delete connectedNodes;
 }
 
 void SpecialMatrix::NodeConnections::setNodePositionsArray( int nodesCount )
 {
-	nodePositionsArray.resize( nodesCount );
+	nodePositionsArray.resize( static_cast<unsigned long>( nodesCount ) );
 	for ( int i = 0; i < nodesCount; ++i ) {
-		nodePositionsArray[i].resize( nodesCount, 0 );
+		nodePositionsArray[static_cast<unsigned long>( i )].resize( static_cast<unsigned long>( nodesCount ), 0 );
 	}
 }
 

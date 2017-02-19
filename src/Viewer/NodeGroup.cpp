@@ -60,7 +60,7 @@ void NodeGroup::initNodes()
 		osg::ref_ptr<osg::Group> g = getNodeGroup( i.value(), NULL, graphScale );
 
 		if ( g != NULL ) {
-			g->setNodeMask( g->getNodeMask() & ( unsigned int )~0x2 );
+			g->setNodeMask( g->getNodeMask() & static_cast< unsigned int >( ~0x2 ) );
 			nodeGroup->addChild( g );
 		}
 

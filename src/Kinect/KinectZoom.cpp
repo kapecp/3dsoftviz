@@ -56,7 +56,8 @@ void Kinect::KinectZoom::calcHandDepthFrame( cv::Mat frame,openni::VideoStream* 
 
 	cv::Rect rect;
 	rect.x = static_cast<int>( x1 );
-	rect.y = frame.rows - static_cast<int>( y1 );
+	//rect.y = frame.rows - static_cast<int>( y1 );
+	rect.y = depthImage.rows - static_cast<int>( y1 );
 	rect.width = abs( static_cast<int>( x1-x2 ) );
 	rect.height = abs( static_cast<int>( y1-y2 ) );
 

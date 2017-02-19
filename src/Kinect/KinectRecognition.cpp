@@ -39,7 +39,7 @@ Kinect::KinectRecognition::~KinectRecognition()
 	openni::OpenNI::shutdown();
 }
 
-cv::Mat Kinect::KinectRecognition::colorImageCvMat( openni::VideoFrameRef& colorFrame )
+cv::Mat Kinect::KinectRecognition::colorImageCvMat( const openni::VideoFrameRef& colorFrame )
 {
 	cv::Mat frame;
 	// read specific data from color frame
@@ -52,7 +52,7 @@ cv::Mat Kinect::KinectRecognition::colorImageCvMat( openni::VideoFrameRef& color
 	return frame;
 }
 
-cv::Mat Kinect::KinectRecognition::depthImageCvMat( openni::VideoFrameRef& depthFrame )
+cv::Mat Kinect::KinectRecognition::depthImageCvMat( const openni::VideoFrameRef& depthFrame )
 {
 	cv::Mat frame;
 	//read specific data from depth frame
@@ -65,7 +65,7 @@ cv::Mat Kinect::KinectRecognition::depthImageCvMat( openni::VideoFrameRef& depth
 	return frame;
 }
 
-QImage Kinect::KinectRecognition::colorImageQImage( openni::VideoFrameRef& colorFrame )
+QImage Kinect::KinectRecognition::colorImageQImage( const openni::VideoFrameRef& colorFrame )
 {
 	// create QImage from videframeref
 	QImage image = QImage( static_cast<const uchar*>( colorFrame.getData() ),
@@ -77,7 +77,7 @@ QImage Kinect::KinectRecognition::colorImageQImage( openni::VideoFrameRef& color
 
 }
 
-QImage Kinect::KinectRecognition::deptImageQImage( openni::VideoFrameRef& colorFrame )
+QImage Kinect::KinectRecognition::deptImageQImage( const openni::VideoFrameRef& colorFrame )
 {
 	cv::Mat depthMat = depthImageCvMat( colorFrame );
 	QImage image = QImage( depthMat.data,

@@ -7,6 +7,7 @@ Graph.Metrics.NodeDegreeWeigth=0.2
 Graph.Metrics.Regexp=*.com
 Graph.Metrics.RgexpWeigth=1
 Graph.Metrics.ViewMetrics=0
+
 City.Floor.MinHeight=0.15
 City.Floor.DivideBorderStickUp=0.1
 City.Floor.DivideBorderHeight=0.1
@@ -16,6 +17,11 @@ City.Building.CaptionCharacterSize=3.0
 City.Building.CaptionOffset=0.3
 City.Residence.SectorPlaneHeight=0.2
 City.Residence.BuildingSpacing=0.5
+
+GraphModule.Module.ModuleWidth=5
+GraphModule.Module.ModuleHeigth=7
+GraphModule.Module.ModuleDepth=6
+
 GraphMLParser.edgeTypeAttribute=relation
 GraphMLParser.nodeTypeAttribute=type
 
@@ -80,20 +86,20 @@ Viewer.SkyBox.Down=../share/3dsoftviz/img/skybox/default/rays_down.bmp
 Viewer.SkyBox.Black=../share/3dsoftviz/img/skybox/black/rays_all.bmp
 Viewer.SkyBox.White=../share/3dsoftviz/img/skybox/white/rays_all.bmp
 
-Kinect.Surface.LOG= ../share/3dsoftviz/kinectMaps/log.txt
-Kinect.Surface.DATA= ../share/3dsoftviz/kinectMaps/file4.txt
+Kinect.Surface.LOG=../share/3dsoftviz/kinectMaps/log.txt
+Kinect.Surface.DATA=../share/3dsoftviz/kinectMaps/file4.txt
 
 Kinect.RegionRotationTreshold=0.65
 Kinect.RegionRotationStep=0.05
-Kinect.OutputFolder= ../../resources/kinectMaps
-Kinect.DepthImageName= depthImage
-Kinect.ColourImageName= Image
-Kinect.DepthInfoName= depthInfo
+Kinect.OutputFolder=../../resources/kinectMaps
+Kinect.DepthImageName=depthImage
+Kinect.ColourImageName=Image
+Kinect.DepthInfoName=depthInfo
 
 FaceDecetion.EnableProjectionCorrection=0
 FaceDecetion.CameraDistancePar=3.5
 
-Aruco.MarkerSize=250
+Aruco.MarkerSize=60
 Aruco.CamDistancRatio=2.75
 Aruco.ConstDist=0.3
 Aruco.ConstHeightKoef=0.8
@@ -114,5 +120,5 @@ Display.Settings.Vuzix.Distance=3.048
 Display.Settings.Vuzix.Height=0.93
 Display.Settings.Vuzix.Width=1.66
 
-Git.ExtensionFilter= lua
+Git.ExtensionFilter=lua
 Git.ExcludeDirectories=spec

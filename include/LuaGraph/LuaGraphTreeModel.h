@@ -45,13 +45,11 @@
 #include <QModelIndex>
 #include <QVariant>
 
+#include "LuaTypes/LuaValue.h"
+
 namespace Lua {
 class LuaNode;
 class LuaGraphTreeItem;
-}
-
-namespace Diluculum {
-class LuaValue;
 }
 
 namespace Lua {
@@ -88,7 +86,7 @@ public:
 private:
 	void setupModelData( const Lua::LuaNode* node, LuaGraphTreeItem* parent );
 
-	void loadLuaModel( QString name, const Diluculum::LuaValue value, LuaGraphTreeItem* parent );
+	void loadLuaModel( QString name, const Lua::LuaValue value, LuaGraphTreeItem* parent );
 
 	Lua::LuaGraphTreeItem* rootItem;
 };
