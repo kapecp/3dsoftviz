@@ -276,6 +276,12 @@ private slots:
 	void onKinectStartCancel( bool checked );
 
 	/**
+		 * @author Autor: Lukas Hagara
+		 * @brief onMarkerlessStartCancel Start or stop Markerless Tracking
+		 * @param checked - Indicates, whether the button is pressed
+		 */
+	void onMarkerlessStartCancel( bool checked );
+	/**
 	     * @author Autor: David Durcak
 	     * @brief onUpdateCorPar  Disabling mUpdateCorParPB, until corrections parameter are not updated
 	     */
@@ -351,6 +357,7 @@ private:
 	QRadioButton*    mFaceRecRB;
 	QRadioButton*    mMarkerRB;
 	QRadioButton*    mMultiMarkerRB;
+	QRadioButton*	mMarkerlessRB;
 
 	QPushButton*     mFaceRecPB;
 	QPushButton*     mMarkerPB;
@@ -360,6 +367,7 @@ private:
 	QPushButton*		mUpdateCorParPB;
 	QPushButton*		mInterchangeMarkersPB;
 	QPushButton*     mKinectSnapshotPB;
+	QPushButton*	 mMarkerlessPB;
 
 	QStackedLayout*  mModulesStackL;
 	QStackedLayout*  mSubmodulesStackL;
