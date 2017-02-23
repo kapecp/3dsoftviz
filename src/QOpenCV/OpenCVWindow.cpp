@@ -370,6 +370,22 @@ void QOpenCV::OpenCVWindow::onFaceRecStartCancel( bool checked )
 	}
 }
 
+void QOpenCV::OpenCVWindow::onMarkerlessStartCancel( bool checked )
+{
+	qDebug() << "onMarkerlessStartCancel:" << checked;
+
+	if ( checked ) {
+		mMarkerlessPB->setEnabled( false );
+		mMarkerlessPB->setText( tr( "Stop Markerless" ) );
+		emit setCapVideoMarkerless( OpenCV::CamSelectCore::getInstance()->selectCamera() );
+		emit startMarkerless();
+		mMarkerlessPB->setEnabled( true );
+	} else {
+		mMarkerlessPB->setEnabled( false );
+		emit stopMarkerless( true );
+	}
+}
+
 void QOpenCV::OpenCVWindow::onMarkerStartCancel( bool checked )
 {
 	if ( checked ) {
@@ -397,28 +413,16 @@ void QOpenCV::OpenCVWindow::onMarkerStartCancel( bool checked )
 	}
 }
 
-void QOpenCV::OpenCVWindow::onMarkerlessStartCancel( bool checked )
-{
-	qDebug() << "onMarkerlessStartCancel" << checked;
-
-	if ( checked ) {
-		mMarkerlessPB->setEnabled( false );
-		mMarkerlessPB->setText( tr( "Stop Markerless" ) );
-		emit setCapVideoMarker( OpenCV::CamSelectCore::getInstance()->selectCamera() );
-//		emit startMarkerless();
-		mMarkerlessPB->setEnabled( true );
-//		emit markerlessRunning( true );
-	} else {
-		mMarkerlessPB->setEnabled( false );
-//		emit stopMarkerless();
-//		emit markerlessRunning( false );
-	}
-}
-
 void QOpenCV::OpenCVWindow::onFaceRecThrFinished()
 {
 	mFaceRecPB->setText( tr( "Start FaceRec" ) );
 	mFaceRecPB->setEnabled( true );
+}
+
+void QOpenCV::OpenCVWindow::onMarkerlessThreadFinished()
+{
+	mMarkerlessPB->setText( tr( "Start Markerless" ) );
+	mMarkerlessPB->setEnabled( true );
 }
 
 void QOpenCV::OpenCVWindow::onMarkerThrFinished()
@@ -449,7 +453,6 @@ void QOpenCV::OpenCVWindow::onMultiMarkerStartCancel( bool checked )
 		mMultiMarkerPB->setText( tr( "Start Aruco" ) );
 		emit stopMultiMarker( true );
 		emit setMultiMarker( false );
-
 	}
 }
 

@@ -121,6 +121,12 @@ signals:
 	void stopFaceRec( bool set );
 
 	/**
+		 * @author Lukas Hagara
+		 * @brief stopMarkerless Signal for canceling MarkerlessTracking thread
+		 */
+	void stopMarkerless( bool set );
+
+	/**
 	     * @author Autor: David Durcak
 	     * @brief startMarker Signal for starting Aruco thread
 	     */
@@ -146,6 +152,12 @@ signals:
 	void startFaceRec();
 
 	/**
+		 * @author Lukas Hagara
+		 * @brief startMarkerless Signal for starting MarkerlessTracking thread
+		 */
+	void startMarkerless();
+
+	/**
 	     * @author Autor: Michael Garaj
 	     * @brief setMultiMarker Signal for setting MultiMarker in Aruco thread
 	     * @param set cancel if true
@@ -158,6 +170,12 @@ signals:
 	     * @param capVideo camera object
 	     */
 	void setCapVideoFaceRec( OpenCV::CapVideo* capVideo );
+
+	/**
+		 * @brief setCapVideoMarkerless Signal for setting the camera in MarkerlessTrackingThread
+		 * @param capVideo camera object
+		 */
+	void setCapVideoMarkerless( OpenCV::CapVideo* capVideo );
 
 	/**
 	     * @author Autor: Michael Garaj
@@ -237,6 +255,12 @@ public slots:
 	void onFaceRecThrFinished();
 
 	/**
+	 * @author Autor: Lukas Hagara
+	 * @brief onMarkerlessThreadFinished When Markerless tracking thread finishes, enable mMarkerlessPB button
+	 */
+	void onMarkerlessThreadFinished();
+
+	/**
 	     * @author Autor: David Durcak
 	     * @brief onMarkerThrFinished When Aruco thread finished, update mMarkerStartCancelPB button
 	     */
@@ -277,8 +301,8 @@ private slots:
 
 	/**
 		 * @author Autor: Lukas Hagara
-		 * @brief onMarkerlessStartCancel Start or stop Markerless Tracking
-		 * @param checked - Indicates, whether the button is pressed
+		 * @brief onMarkerlessStartCancel Start or stop Markerless Tracking thread
+		 * @param checked If true, thread will start
 		 */
 	void onMarkerlessStartCancel( bool checked );
 	/**
