@@ -7,7 +7,7 @@
 
 #include <osg/ref_ptr>
 #include <osg/MatrixTransform>
-
+#include <osg/ShapeDrawable>
 
 namespace Leap {
 
