@@ -2,6 +2,7 @@
 
 
 #include "OpenCV/CapVideo.h"
+#include "OpenCV/MarkerlessTracker.h"
 #include "QDebug"
 
 QOpenCV::MarkerlessTrackingThread::MarkerlessTrackingThread( QObject* parent )
@@ -21,6 +22,7 @@ void QOpenCV::MarkerlessTrackingThread::run()
 	qDebug() << "QOpenCV::MarkerlessTrackingThread::run";
 	mCancel = false;
 	cv::Mat image;
+	OpenCV::MarkerlessTracker* markerlessTracker = new OpenCV::MarkerlessTracker();
 
 	if ( mCapVideo == NULL ) {
 		qDebug() << "QOpenCV::MarkerlessTrackingThread::run Camera is NULL";
@@ -33,6 +35,8 @@ void QOpenCV::MarkerlessTrackingThread::run()
 		cv::cvtColor( image, image, CV_BGR2RGB );
 		cv::flip( image, image, 1 );
 
+		markerlessTracker->track(image);
+
 		if ( !image.empty() && image.data ) {
 			emit pushImage( image.clone() );
 		}
@@ -43,6 +47,7 @@ void QOpenCV::MarkerlessTrackingThread::run()
 
 	mCapVideo->release();
 	mCapVideo = NULL;
+	delete markerlessTracker;
 }
 
 void QOpenCV::MarkerlessTrackingThread::setCancel( bool set )
