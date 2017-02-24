@@ -43,6 +43,10 @@ OpenCV::OpenCVCore::~OpenCVCore( void )
 			mThrFaceRec->setSendImgEnabled( false );
 		}
 
+		if ( mThrMarkerless != NULL ) {
+			mThrMarkerless->setCancel( true );
+		}
+
 		if ( mThrAruco != NULL ) {
 			mThrAruco->setCancel( true );
 			mThrAruco->setSendImgEnabling( false );
@@ -95,6 +99,7 @@ void OpenCV::OpenCVCore::opencvInit()
 	}
 
 	createConnectionFaceRec();
+	createConnectionMarkerless();
 	createConnectionAruco();
 
 #ifdef OPENNI2_FOUND
@@ -287,7 +292,6 @@ void OpenCV::OpenCVCore::createConnectionFaceRec()
 //------------------------------------------------------
 void OpenCV::OpenCVCore::createConnectionMarkerless()
 {
-	// basic thread signals - start,cancel,stop
 	QObject::connect( mOpencvWindow,
 					  SIGNAL( startMarkerless() ),
 					  mThrMarkerless,
@@ -304,6 +308,10 @@ void OpenCV::OpenCVCore::createConnectionMarkerless()
 					  SIGNAL( setCapVideoMarkerless( OpenCV::CapVideo* ) ),
 					  mThrMarkerless,
 					  SLOT( setCapVideo( OpenCV::CapVideo* ) ) );
+	QObject::connect( mThrMarkerless,
+					  SIGNAL( pushImage( cv::Mat ) ),
+					  mOpencvWindow,
+					  SLOT( setLabel( cv::Mat ) ) );
 }
 //------------------------------------------------------
 

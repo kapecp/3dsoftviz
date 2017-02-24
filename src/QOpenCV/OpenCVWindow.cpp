@@ -189,6 +189,7 @@ void QOpenCV::OpenCVWindow::configureWindow()
 
 	mMultiMarkerPB->setCheckable( true );
 	mFaceRecPB->setCheckable( true );
+	mMarkerlessPB->setCheckable( true );
 	mMarkerPB->setCheckable( true );
 	mKinectPB->setCheckable( true );
 
@@ -350,6 +351,8 @@ void QOpenCV::OpenCVWindow::onCorParUpdated()
 
 void QOpenCV::OpenCVWindow::onFaceRecStartCancel( bool checked )
 {
+	qDebug() << "OpenCVWindow::onFaceRecStartCancel:" << checked;
+
 	if ( checked ) {
 		mFaceRecPB->setEnabled( false );
 		mFaceRecPB->setText( tr( "Stop FaceRec" ) );
@@ -372,7 +375,7 @@ void QOpenCV::OpenCVWindow::onFaceRecStartCancel( bool checked )
 
 void QOpenCV::OpenCVWindow::onMarkerlessStartCancel( bool checked )
 {
-	qDebug() << "onMarkerlessStartCancel:" << checked;
+	qDebug() << "OpenCVWindow::onMarkerlessStartCancel:" << checked;
 
 	if ( checked ) {
 		mMarkerlessPB->setEnabled( false );

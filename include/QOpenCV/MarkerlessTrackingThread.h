@@ -24,9 +24,9 @@ public:
 
 	void run();
 
-//signals:
+signals:
 
-	//nic zatial
+	void pushImage( cv::Mat Image );
 
 public slots:
 
