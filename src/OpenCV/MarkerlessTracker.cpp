@@ -1,6 +1,6 @@
 #include "Opencv/MarkerlessTracker.h"
 
-//#include "stdafx.h" nvm k comu to je
+//#include "stdafx.h"
 
 #include <QDebug>
 
@@ -17,7 +17,7 @@ OpenCV::MarkerlessTracker::~MarkerlessTracker()
 
 RNG rng(12345);
 
-void OpenCV::MarkerlessTracker::track( cv::Mat& img) {
+void OpenCV::MarkerlessTracker::track( cv::Mat& img ) {
 
 //	Mat img = imread("img_test.jpg");
 	resize(img, img, Size(img.cols / 4, img.rows / 4));
@@ -78,13 +78,14 @@ void OpenCV::MarkerlessTracker::track( cv::Mat& img) {
 	}
 
 	/// Show your results
-//	namedWindow("Hough Circle Transform Demo", CV_WINDOW_AUTOSIZE);
-//	imshow("Hough Circle Transform Demo", img_circles);
 	img = img_circles;
 
-	// /Masks and histogram
 /*
- *
+	namedWindow("Hough Circle Transform Demo", CV_WINDOW_AUTOSIZE);
+	imshow("Hough Circle Transform Demo", img_circles);
+
+	// /Masks and histogram
+
 	/// Separate the image in 3 places ( B, G and R )
 	vector<Mat> bgr_planes;
 	split(img, bgr_planes);
@@ -97,13 +98,13 @@ void OpenCV::MarkerlessTracker::track( cv::Mat& img) {
 	const float* histRange = { range };
 
 	bool uniform = true; bool accumulate = false;
-//	imshow("color_test", img);
+	imshow("color_test", img);
 
 	for (size_t i = 0; i < mask_vector.size(); i++)
 	{
 		Mat masked_image;
 		img.copyTo(masked_image, mask_vector[i]);
-//		imshow("mask_" + std::to_string(i), masked_image);
+		imshow("mask_" + std::to_string(i), masked_image);
 		Mat b_hist, g_hist, r_hist, gray_hist;
 
 		/// Compute the histograms:
@@ -143,18 +144,14 @@ void OpenCV::MarkerlessTracker::track( cv::Mat& img) {
 		}
 
 		/// Display
-//		imshow("Histogram_" + std::to_string(i), histImage);
-//		imshow("Histogram_gray_" + std::to_string(i), histImageGray);
-//		cvWaitKey(0);
+		imshow("Histogram_" + std::to_string(i), histImage);
+		imshow("Histogram_gray_" + std::to_string(i), histImageGray);
+		cvWaitKey(0);
 
 	}
 
-*/
-
 	//// CIRCLES ////
-
-
-//	cvWaitKey(0);
+	cvWaitKey(0);
 	return;
-
+*/
 }

@@ -289,7 +289,7 @@ void OpenCV::OpenCVCore::createConnectionFaceRec()
 					  mThrFaceRec,
 					  SLOT( setCapVideo( OpenCV::CapVideo* ) ) );
 }
-//------------------------------------------------------
+
 void OpenCV::OpenCVCore::createConnectionMarkerless()
 {
 	QObject::connect( mOpencvWindow,
@@ -313,7 +313,6 @@ void OpenCV::OpenCVCore::createConnectionMarkerless()
 					  mOpencvWindow,
 					  SLOT( setLabel( cv::Mat ) ) );
 }
-//------------------------------------------------------
 
 void OpenCV::OpenCVCore::createConnectionAruco()
 {

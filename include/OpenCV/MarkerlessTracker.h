@@ -7,6 +7,11 @@ namespace OpenCV {
 
 class MarkerlessTracker;
 
+/**
+	 * @author Autor: Lukas Hagara
+	 * @brief The MarkerlessTracker class
+	 * @date 24.2.2017
+	 */
 class MarkerlessTracker
 {
 
@@ -15,7 +20,12 @@ public:
 	MarkerlessTracker();
 	~MarkerlessTracker();
 
-	void track( cv::Mat& img);
+	/**
+	 * @author Autor: Lukas Hagara
+	 * @brief track white circles on image
+	 * @param img to track objects on
+	 */
+	void track( cv::Mat& img );
 
 };
 }

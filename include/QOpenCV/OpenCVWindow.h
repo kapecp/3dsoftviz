@@ -305,6 +305,7 @@ private slots:
 		 * @param checked If true, thread will start
 		 */
 	void onMarkerlessStartCancel( bool checked );
+
 	/**
 	     * @author Autor: David Durcak
 	     * @brief onUpdateCorPar  Disabling mUpdateCorParPB, until corrections parameter are not updated
