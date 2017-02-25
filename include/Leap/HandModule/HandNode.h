@@ -9,6 +9,10 @@
 #include <osg/MatrixTransform>
 #include <osg/ShapeDrawable>
 
+namespace osg {
+class ShapeDrawable;
+}
+
 namespace Leap {
 
 class HandNode: public osg::MatrixTransform

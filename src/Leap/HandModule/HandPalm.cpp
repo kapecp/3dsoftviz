@@ -12,10 +12,8 @@ const int TYPE_RING = 3; /*< The ring finger */
 const int BONE_COUNT = 4; /*< The ring finger */
 
 Leap::HandPalm::HandPalm( float radius, osg::ref_ptr<osg::Group> handsGroup, int colorSwitch )
+	: fingerGroup( new osg::Group() ), interFingerBoneGroup( new osg::Group() ), colorSwitch( colorSwitch )
 {
-	this->fingerGroup = new osg::Group();
-	this->colorSwitch = colorSwitch;
-	this->interFingerBoneGroup = new osg::Group();
 	this->generateGeometry( radius, colorSwitch );
 	this->initStructure();
 
@@ -52,15 +50,15 @@ void Leap::HandPalm::initStructure()
 					HandBone* handBone = new HandBone( j, fingerBoneGroup );
 				}
 			}
-			this->fingerGroup->insertChild( i, fingerJointGroup );
+			this->fingerGroup->insertChild( static_cast<unsigned int>( i ) , fingerJointGroup );
 
 			// elementy vo finger groupe v takomto poradi: {5x jointGroup, 5x boneGroup}
-			this->fingerGroup->insertChild( i+5, fingerBoneGroup );
+			this->fingerGroup->insertChild( static_cast<unsigned int>( i+5 ), fingerBoneGroup );
 
 		}
 		// pridanie kosti medzi prstami
 		// 4-ta je kost v zapesti
-		for ( i = 0; i < 4; i++ ) {
+		for ( i = 0; i < BONE_COUNT; i++ ) {
 			HandBone* handBone = new HandBone( i, this->interFingerBoneGroup );
 		}
 	}
