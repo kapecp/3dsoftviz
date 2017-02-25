@@ -697,8 +697,6 @@ Vwr::CoreGraph::CoreGraph( Data::Graph* graph, osg::ref_ptr<osg::Camera> camera 
 
 int CoreGraph::updateBackground( int bgVal, Data::Graph* currentGraph )
 {
-	LOG( INFO ) << "CoreGraph::updateBackground - updating background";
-
 	osg::Group* root = this->getScene();
 	if ( root->removeChild( root->getNumChildren()-1 ) == true ) {
 		if ( bgVal == 0 ) { // default skybox

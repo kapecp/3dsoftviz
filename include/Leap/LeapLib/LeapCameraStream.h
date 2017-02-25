@@ -8,7 +8,6 @@ namespace Leap {
 
 class LeapCameraStream : public osg::Image
 {
-
 public:
 	LeapCameraStream( );
 	~LeapCameraStream();

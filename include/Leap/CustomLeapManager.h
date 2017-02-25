@@ -89,7 +89,6 @@ public:
 	void scaleEdgesDown();
 	//*****
 
-
 	Vwr::CameraManipulator* cameraManipulator;
 	Layout::LayoutThread* layout;
 	Vwr::CoreGraph* coreGraph;

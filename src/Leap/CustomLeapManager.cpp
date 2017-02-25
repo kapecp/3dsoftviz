@@ -163,27 +163,7 @@ void Leap::CustomLeapManager::updateHands( Leap::Hand leftHand, Leap::Hand right
 			// update kosti medzi prstamu
 			this->updateInterFingerBones( rightPalm->interFingerBoneGroup, rightHand.fingers() );
 		}
-
-//        LOG (INFO) << "direction "+ std::to_string(this->direction[0]) + " " +
-//                std::to_string(this->direction[1]) + " " +
-//                std::to_string(this->direction[2]);
-//        LOG (INFO) << "eye "+ std::to_string(this->eye[0]) + " " +
-//                std::to_string(this->eye[1]) + " " +
-//                std::to_string(this->eye[2]);
-//        LOG (INFO) << "center "+ std::to_string(this->center[0]) + " " +
-//                std::to_string(this->center[1]) + " " +
-//                std::to_string(this->center[2]);
-
-
 	}
-
-//    osg::RefMatrixd* boneMatrix = new osg::RefMatrixd();
-//    boneMatrix->makeIdentity();
-//    ->preMult( osg::Matrix::rotate( osg::Vec3f( 0.0f,0.0f,1.0f ) ,
-//                             osg::Vec3f( static_cast<osg::Vec3f::value_type>( dirVector.x/100.0f ),
-//                                         static_cast<osg::Vec3f::value_type>( -( dirVector.z/100.0f ) ) ,
-//                                         static_cast<osg::Vec3f::value_type>( dirVector.y/100.0f ) ) ) );
-//    this->handsGroup->asTransform()->t
 }
 
 void Leap::CustomLeapManager::updateFingers( HandPalm* palm, Leap::FingerList fingers )
@@ -277,7 +257,6 @@ void Leap::CustomLeapManager::updateFingerBones( osg::Group*  fingerBoneGroup, L
 
 			bone->setMatrix( *boneMatrix );
 		}
-
 	}
 }
 

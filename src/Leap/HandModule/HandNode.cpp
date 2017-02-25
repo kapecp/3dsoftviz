@@ -5,7 +5,6 @@
 #include "Leap/HandModule/HandNode.h"
 #include <osg/ShapeDrawable>
 
-
 Leap::HandNode::HandNode() {}
 
 void Leap::HandNode::initStructure() {}

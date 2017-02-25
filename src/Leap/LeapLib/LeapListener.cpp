@@ -51,7 +51,6 @@ void Leap::LeapListener::onExit( const Controller& controller )
 }
 void Leap::LeapListener::onImages( const Controller& controller )
 {
-
 	ImageList images = controller.images();
 	Image image = images[0];
 
@@ -65,8 +64,6 @@ void Leap::LeapListener::onImages( const Controller& controller )
 
 void Leap::LeapListener::onFrame( const Controller& controller )
 {
-
-//    LOG( INFO ) << "Leap/LeapLib/LeapListener onFrame()";
 	Frame frame = controller.frame();
 	HandList hands = frame.hands();
 	Leap::DirectionDetector::Direction direction;
