@@ -55,12 +55,12 @@ public:
 	     */
 	QCheckBox*	getCorEnabledCB() const;
 
-    /**
-         * @author Autor: Juraj Marak
-         * @brief getMultiMarkerEnableCB Return mMultiMarkerEnableCB
-         * @return QCheckBox*
-         */
-    QCheckBox*	getMultiMarkerEnableCB() const;
+	/**
+	     * @author Autor: Juraj Marak
+	     * @brief getMultiMarkerEnableCB Return mMultiMarkerEnableCB
+	     * @return QCheckBox*
+	     */
+	QCheckBox*	getMultiMarkerEnableCB() const;
 
 	/**
 	     * @author Autor: David Durcak
@@ -402,7 +402,7 @@ private:
 	QCheckBox*		mFaceDetBackgrCB;
 	QCheckBox*		mMarkerBehindCB;
 	QCheckBox*		mCorEnabledCB;
-    QCheckBox*	    mMultiMarkerEnableCB;
+	QCheckBox*	    mMultiMarkerEnableCB;
 	QCheckBox*       mDisableCursorCB;
 	QCheckBox*       mDisableZoomCursorCB;
 	QCheckBox*       mEnableMarkerDetectCB;

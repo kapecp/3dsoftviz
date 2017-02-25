@@ -3,14 +3,13 @@
 
 #include <QThread>
 
-#include "opencv2/highgui/highgui.hpp" //boh vie naco toto je
+#include "opencv2/core/mat.hpp"
 
 namespace OpenCV {
 class CapVideo;
 }
 
-namespace QOpenCV
-{
+namespace QOpenCV {
 
 /**
  * @brief The MarkerlessTrackingThread class
@@ -23,7 +22,7 @@ class MarkerlessTrackingThread : public QThread
 
 public:
 
-	MarkerlessTrackingThread( QObject* parent = 0 );
+	MarkerlessTrackingThread();
 	~MarkerlessTrackingThread( void );
 
 	/**

@@ -1,14 +1,12 @@
 #include "QOpenCV/MarkerlessTrackingThread.h"
 
-
+#include "easylogging++.h"
 #include "OpenCV/CapVideo.h"
 #include "OpenCV/MarkerlessTracker.h"
-#include "QDebug"
 
-QOpenCV::MarkerlessTrackingThread::MarkerlessTrackingThread( QObject* parent )
-	: QThread( parent )
+QOpenCV::MarkerlessTrackingThread::MarkerlessTrackingThread()
 {
-	mCapVideo	= NULL;
+	mCapVideo	= nullptr;
 	mCancel		= false;
 }
 
@@ -18,7 +16,7 @@ QOpenCV::MarkerlessTrackingThread::~MarkerlessTrackingThread( void )
 
 void QOpenCV::MarkerlessTrackingThread::run()
 {
-	qDebug() << "QOpenCV::MarkerlessTrackingThread::run";
+	LOG( INFO ) << "QOpenCV::MarkerlessTrackingThread::run";
 
 	//initialization
 	mCancel = false;
@@ -27,7 +25,7 @@ void QOpenCV::MarkerlessTrackingThread::run()
 
 	//no camera was set
 	if ( mCapVideo == NULL ) {
-		qDebug() << "QOpenCV::MarkerlessTrackingThread::run Camera is NULL";
+		LOG( INFO ) << "QOpenCV::MarkerlessTrackingThread::run Camera is NULL";
 		return;
 	}
 
@@ -41,7 +39,7 @@ void QOpenCV::MarkerlessTrackingThread::run()
 		cv::flip( image, image, 1 );
 
 		//track on the current image
-		markerlessTracker->track(image);
+		markerlessTracker->track( image );
 
 		//push the image
 		if ( !image.empty() && image.data ) {
@@ -49,7 +47,7 @@ void QOpenCV::MarkerlessTrackingThread::run()
 		}
 
 		//zZz
-		msleep(40);
+		msleep( 40 );
 
 	}
 
@@ -64,7 +62,7 @@ void QOpenCV::MarkerlessTrackingThread::setCancel( bool set )
 	mCancel = set;
 }
 
-void QOpenCV::MarkerlessTrackingThread::setCapVideo( OpenCV::CapVideo *capVideo )
+void QOpenCV::MarkerlessTrackingThread::setCapVideo( OpenCV::CapVideo* capVideo )
 {
 	mCapVideo = capVideo;
 }

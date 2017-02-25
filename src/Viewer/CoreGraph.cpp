@@ -1660,7 +1660,7 @@ void CoreGraph::scaleGraphToBase()
 		//translate to aruco center graph
 		osg::Matrixd positionMatrix = graphRotTransf->getMatrix();
 		positionMatrix.setTrans( centerGraph );
-        graphRotTransf->setMatrix( positionMatrix );
+		graphRotTransf->setMatrix( positionMatrix );
 
 		//scale aruco base
 		baseSize = static_cast<double>( getFurthestPosition( maxPosition,minPosition ) );
@@ -1836,7 +1836,7 @@ float CoreGraph::getFurthestPosition( osg::Vec3f max,osg::Vec3f min )
 
 void CoreGraph::setArucoRunning( bool isRunning )
 {
-    this->arucoRunning = isRunning;
+	this->arucoRunning = isRunning;
 }
 
 void CoreGraph::drawAxes()
@@ -1892,9 +1892,10 @@ void CoreGraph::drawAxes()
 }
 
 //JMA
-osg::Vec3f CoreGraph::getGrafRotTransVec(){
-        return graphRotTransf->getMatrix().getTrans();
-    }
+osg::Vec3f CoreGraph::getGrafRotTransVec()
+{
+	return graphRotTransf->getMatrix().getTrans();
+}
 
 //*****
 }

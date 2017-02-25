@@ -258,15 +258,17 @@ public:
 		return this->luaIdentifier;
 	}
 
-    //JMA
-    bool isIgnoredByLayout(){
-        return this->ignoreByLayout;
-    }
+	//JMA
+	bool isIgnoredByLayout()
+	{
+		return this->ignoreByLayout;
+	}
 
-    //JMA
-    void setIgnoreByLayout( bool flag ){
-        this->ignoreByLayout = flag;
-    }
+	//JMA
+	void setIgnoreByLayout( bool flag )
+	{
+		this->ignoreByLayout = flag;
+	}
 
 private:
 
@@ -327,8 +329,8 @@ private:
 	Layout::RadialLayout* radialLayout;
 	//volovak_kon
 
-    //JMA
-    bool ignoreByLayout;
+	//JMA
+	bool ignoreByLayout;
 
 };
 }
