@@ -17,6 +17,7 @@
 #include "Viewer/BrowserGroup.h"
 #include "Data/Edge.h"
 #include "Data/Node.h"
+#include "Leap/LeapLib/LeapCameraStream.h"
 
 #include "Data/Cluster.h"
 
@@ -133,6 +134,14 @@ public:
 		*  \return 0 - success, 1 - fail
 		*/
 	int updateBackground( int bgVal, Data::Graph* currentGraph );
+
+	/**
+	    *  \fn public updateBackgroundStream
+	    *  \brief updates background with data from leap sensor
+	    *  \param image data - one frame(image) from leap sensor
+	    *  \return 0 - success, 1 - fail
+	   */
+	int updateBackgroundStream( unsigned char* buffer );
 
 	/**
 		*  \fn inline public  getCustomNodeList
@@ -263,6 +272,7 @@ public:
 #ifdef OPENCV_FOUND
 	OpenCV::CameraStream* getCameraStream() const;
 #endif
+	Leap::LeapCameraStream* getLeapCameraStream() const;
 
 	//jurik
 	/**
@@ -302,8 +312,9 @@ public:
 	}
 
 
-    //JMA
-    osg::Vec3f getGrafRotTransVec();
+	//JMA
+	osg::Vec3f getGrafRotTransVec();
+
 public slots:
 
 	/**
@@ -477,6 +488,13 @@ private:
 		*  \return osg::ref_ptr node
 		*/
 	osg::ref_ptr<osg::Node> createSkyNoiseBox();
+	/**
+	    *  \fn private  createLeapBackground
+	    *  \brief creates background from leap video
+	    *  \return osg::ref_ptr node
+	   */
+    osg::ref_ptr<osg::Node> createLeapBackground();
+
 
 #ifdef OPENCV_FOUND
 	/**
@@ -641,7 +659,7 @@ private:
 #ifdef OPENCV_FOUND
 	osg::ref_ptr<OpenCV::CameraStream> mCameraStream;
 #endif
-
+	osg::ref_ptr<Leap::LeapCameraStream> leapCameraStream;
 	bool clustersOpacityAutomatic;
 	bool clustersOpacitySelected;
 	double clustersOpacity;
