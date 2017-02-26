@@ -5,20 +5,18 @@
 Leap::LeapCameraStream::LeapCameraStream( ) :
 	osg::Image()
 {
-    default_buffer = nullptr;
+    allocateImage(640, 240, 1, GL_INTENSITY8, GL_LUMINANCE, 1);
+    setPixelBufferObject(new osg::PixelBufferObject(this));
     setImage( 640, 240, 1, GL_INTENSITY8, GL_LUMINANCE, GL_UNSIGNED_BYTE,
-			  nullptr,osg::Image::NO_DELETE, 1 );
+              nullptr, osg::Image::NO_DELETE, 1 );
 }
 
 Leap::LeapCameraStream::~LeapCameraStream() {}
 
 void Leap::LeapCameraStream::updateBackgroundImage( unsigned char* buffer )
 {
-	if ( default_buffer == nullptr ) {
-		default_buffer = buffer;
-	}
 	setImage( 640, 240, 1, GL_INTENSITY8, GL_LUMINANCE, GL_UNSIGNED_BYTE,
-			  default_buffer,osg::Image::NO_DELETE, 1 );
+              buffer,osg::Image::NO_DELETE, 1 );
 }
 
 
