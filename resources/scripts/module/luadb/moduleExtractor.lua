@@ -102,11 +102,10 @@ local function mergeModules(graph)
               local connection = hypergraph.edge.new()
               
               if edge.to[1].id == node1.id then
-                connection.label = "RequireCallMerged"
+                connection.label = "requireCallMerged"
                 connection:addSource(edge.from[1])
                 connection:addTarget(mergedModule)
                 connection:setAsOriented()
-                --print("adjusting edge to new node")
                 graph:addEdge(connection)
                 break
               end              
@@ -117,11 +116,10 @@ local function mergeModules(graph)
               local connection = hypergraph.edge.new()
               
               if edge.to[1].id == node2.id then
-                connection.label = "RequireCallMerged"
+                connection.label = "requireCallMerged"
                 connection:addSource(edge.from[1])
                 connection:addTarget(mergedModule)
                 connection:setAsOriented()
-                --print("adjusting edge to new node")
                 graph:addEdge(connection)
                 break
               end              
@@ -162,11 +160,10 @@ local function connectModuleImplementations(graph)
           --if they are the same, connect them
           if fileName == moduleName then
             local connection = hypergraph.edge.new()
-            connection.label = "Implements"
+            connection.label = "implements"
             connection:addSource(fileNode)
             connection:addTarget(moduleNode)
             connection:setAsOriented()
-            --print("adjusting edge to new node")
             graph:addEdge(connection)
           end
         end
@@ -175,9 +172,38 @@ local function connectModuleImplementations(graph)
   end
 end
 
+--to do
 local function mergeUnassignedVariables(graph)
 end
 
+local function connectModuleInterfaces(graph)
+  local interfaces = graph:findNodeByType('interface')
+  --newNode.data.metrics.filePath
+  local modules = graph:findNodeByType('module')
+  
+  --local fileName = utils.splitAndGetFirst(fileNode.data.name, "%.")          
+  --local moduleName = moduleNode.data.name
+  
+  for _,interface in pairs(interfaces) do
+    -- get from fullpath only filename without extension
+    local interfacePath = utils.splitAndGetLast(interface.data.metrics.filePath, "%/")    
+    interfacePath = utils.splitAndGetFirst(interfacePath, "%.")
+    
+    for _,mod in pairs(modules) do
+      local moduleName = mod.data.name
+      if interfacePath == moduleName then
+        local connection = hypergraph.edge.new()
+        connection.label = "provides"
+        connection:addSource(mod)
+        connection:addTarget(interface)
+        connection:setAsOriented()        
+        graph:addEdge(connection)
+        
+        interface.data.metrics.filePath = nil
+      end      
+    end        
+  end
+end
   
 
 local function clearTmpVars(graph)
@@ -204,6 +230,7 @@ local function extract(sourcePath)
   connectModuleImplementations(graph)
   --mergeUnassignedVariables(graph)
   --mergeModules(graph)
+  connectModuleInterfaces(graph)
   
   --connectModuleCalls(graph)
   --assignGlobalCalls(graph)

@@ -133,7 +133,7 @@ local function isTableConstructorAfterReturn(simpleExp)
   return false
 end
 
--- return final values after return statement
+-- return table of final values after return statement
 local function getModuleReturnValues(AST)  
   local lastStats = metrics_utils.searchForTagArray_recursive("LastStat", AST, nil)
   local lastLastStat = lastStats[#lastStats]
@@ -157,8 +157,21 @@ local function getModuleReturnValues(AST)
     return tbl
   end  
   -- it has no return at the end (might still be old fashioned: module 'moduleName')
-  return nil
+  return {}
 end
+
+-- return table of local functions
+local function getLocalFunctions(AST)
+  local tbl = metrics_utils.searchForTagArray_recursive("LocalFunction", AST, nil)
+  return tbl
+end
+
+-- return table of global functions
+local function getGlobalFunctions(AST)
+  local tbl = metrics_utils.searchForTagArray_recursive("GlobalFunction", AST, nil)
+  return tbl
+end
+
 
 -- return true if variable is local
 local function isVariableLocal(AST, variableName)
@@ -198,6 +211,7 @@ return
   getModuleReferences = getModuleReferences,
   getModuleCalls = getModuleCalls,
   getModuleReturnValues = getModuleReturnValues,
-  isFinalModuleReturn = isFinalModuleReturn,
+  getLocalFunctions = getLocalFunctions,
+  getGlobalFunctions = getGlobalFunctions,
   isVariableLocal = isVariableLocal
 }
