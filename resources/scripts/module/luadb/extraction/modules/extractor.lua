@@ -7,6 +7,8 @@ local hypergraph = require "luadb.hypergraph"
 local utils      = require "luadb.utils"
 local ast        = require "luadb.ast"
 local logger     = utils.logger
+local debug      = require "dbg2"
+local mutils     = require "metrics.utils"
 
 local function getModuleNodeByModulePath(nodes, modulePath)
   for i,mod in pairs(nodes) do
@@ -94,7 +96,28 @@ end
 local function extract(fileName, graph)
   local graph = graph or hypergraph.graph.new()
   local AST   = ast.getAST(fileName)
+  
+  local tempp = ast.getModuleReturnValues(AST)
+  if (tempp ~= nil) then
+    for j,k in pairs(tempp) do
+      print(j .. " " .. k.text)
+    end
+  end
+  
+
+  
+  --[[
+  local laststat = mutils.searchForTagArray_recursive("LastStat", AST, nil)
+  for j,k in pairs(laststat) do
+    print(j .. " " .. k.text)
+  end
+  local lastret = laststat[#laststat]
+  ]]--
+  
+  
+  --debug.Save("nodes", localassign)
   local nodes = extractModules(AST, graph, fileName)
+  --debug.Save("nodes", nodes)
   local edges = extractModuleCalls(AST, graph, nodes)
   --debug.Save("edges", edges)
   return { nodes = nodes, edges = edges }

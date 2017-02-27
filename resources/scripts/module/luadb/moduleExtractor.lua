@@ -1,6 +1,6 @@
 -----------------------------------------------
--- Main Extractor
--- @release 2014/04/18, Tomas Filcak
+-- Main Module Extractor
+-- @release 2016/12/2, Denis Illes
 -----------------------------------------------
 
 local hypergraph    = require "luadb.hypergraph"

@@ -97,12 +97,90 @@ local function getModuleCalls(AST)
   return AST.metrics.moduleCalls
 end
 
-
 -- return first occurrency of node name
 local function getName(node, maxdepth)
   node = metrics_utils. TagItem_recursive("Name", node, maxdepth)
   if node then return node['str'] end
   return nil
+end
+
+-- return true if module is returning something
+local function isModuleLastReturn(lastStat)
+  local parentNode = lastStat.parent
+  if (parentNode.order == 1 and parentNode.position == 1) then
+    return true
+  end
+  return false
+end
+
+-- return true if module is returning one or more tables
+local function isTableAfterReturn(simpleExp)
+  for _,prefixExp in pairs(simpleExp.data) do
+    if (prefixExp.tag == '_PrefixExp') then
+      return true
+    end    
+  end
+  return false
+end
+
+-- return true if module is returning a contructed table
+local function isTableConstructorAfterReturn(simpleExp)
+  for _,tblConstr in pairs(simpleExp.data) do
+    if (tblConstr.tag == 'TableConstructor') then
+      return true
+    end    
+  end
+  return false
+end
+
+-- return final values after return statement
+local function getModuleReturnValues(AST)  
+  local lastStats = metrics_utils.searchForTagArray_recursive("LastStat", AST, nil)
+  local lastLastStat = lastStats[#lastStats]
+  -- is module returning something?
+  if (isModuleLastReturn(lastLastStat) == true) then
+    local simpleExps = metrics_utils.getSimpleExpsFromLastStat(lastLastStat)
+    local simpleExpsCount = #simpleExps
+    local tbl = {}
+    
+    for _,simpleExp in pairs(simpleExps) do      
+      -- is it returning an existing table or creating one after the return statement?
+      if (isTableConstructorAfterReturn(simpleExp) == true) then
+        -- get IDs from table constructor
+        tbl = metrics_utils.getIDsFromSimpleExp(simpleExp)                
+      else
+        -- get Names of returning tables
+        local tempTbl = metrics_utils.getNamesFromSimpleExp(simpleExp)
+        table.insert(tbl, unpack(tempTbl))        
+      end      
+    end        
+    return tbl
+  end  
+  -- it has no return at the end (might still be old fashioned: module 'moduleName')
+  return nil
+end
+
+-- return true if variable is local
+local function isVariableLocal(AST, variableName)
+  -- tag: [LocalAssign][NameList][Name][ID]
+  local localAssigns = metrics_utils.searchForTagArray_recursive("LocalAssign", AST, nil)
+  -- for every LocalAssign
+  for _,localAssign in pairs(localAssigns) do
+    local nameLists = metrics_utils.getNameListsFromLocalAssign(localAssign)
+    -- for every NameList
+    for _,nameList in pairs(nameLists) do
+      local names = metrics_utils.getNamesFromNameList(nameList)
+      -- for every Name
+      for _,name in pairs(names) do
+        local tempName = name.str or name.text
+        -- check if equals
+        if(tempName == variableName) then          
+          return true
+        end
+      end     
+    end   
+  end
+  return false
 end
 
 -----------------------------------------------
@@ -118,5 +196,8 @@ return
   getChildNodesByTag = getChildNodesByTag,
   getParentNodesByTag = getParentNodesByTag,
   getModuleReferences = getModuleReferences,
-  getModuleCalls = getModuleCalls
+  getModuleCalls = getModuleCalls,
+  getModuleReturnValues = getModuleReturnValues,
+  isFinalModuleReturn = isFinalModuleReturn,
+  isVariableLocal = isVariableLocal
 }
