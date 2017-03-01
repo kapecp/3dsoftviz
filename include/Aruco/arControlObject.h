@@ -52,7 +52,7 @@ public:
 
 private:
     QOSG::ViewerQT* viewer;
-    Vwr::CoreGraph* coreGraph;
+	Vwr::CoreGraph* coreGraph;
 
     QMap<qlonglong, ArucoModul::ArControlObject*> controlObjects;
 };
