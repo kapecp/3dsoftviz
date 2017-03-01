@@ -8,7 +8,7 @@
 #include "Data/Graph.h"
 #include "Data/Node.h"
 #include "Core/Core.h"
-
+#include "Viewer/CoreGraph.h"
 
 
 
@@ -117,7 +117,7 @@ bool ArControlObject::chckIfNearPosition( osg::Vec3f target ){
 ArControlClass::ArControlClass()
 {
     viewer = AppCore::Core::getInstance()->getCoreWindow()->GetViewerQt();
-    coreGraph = AppCore::Core::getInstance()->getCoreGraph();
+	coreGraph = AppCore::Core::getInstance()->getCoreGraph();
 }
 
 void ArControlClass::updateObjectPositionAruco( qlonglong object_id, QMatrix4x4 modelViewMatrix, bool reverse ){
@@ -128,7 +128,7 @@ void ArControlClass::updateObjectPositionAruco( qlonglong object_id, QMatrix4x4 
                             modelViewMatrix.operator()( 3,0 ),modelViewMatrix.operator()( 3,1 ),modelViewMatrix.operator()( 3,2 ),modelViewMatrix.operator()( 3,3 ) );
 
     // transformation vector user to move graph over aruco shadow base (jurik)
-    osg::Vec3f arucoBaseDist = coreGraph->getGrafRotTransVec();
+	osg::Vec3f arucoBaseDist = coreGraph->getGrafRotTransVec();
 
     osg::Matrixd baseMVM = viewer->getCamera()->getViewMatrix();
     osg::Matrixd transMVM = markerMVM.operator *(baseMVM.inverse(baseMVM));
