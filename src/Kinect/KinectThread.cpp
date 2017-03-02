@@ -38,12 +38,7 @@ Kinect::KinectThread::~KinectThread( void )
 void Kinect::KinectThread::inicializeKinect()
 {
 
-
     // create Openni connection
-    // Cppcheck warning fix:(warning) Possible leak in public function. The pointer 'mKinect' is not deallocated before it is allocated.
-    if ( mKinect != nullptr ) {
-        delete mKinect;
-    }
 	mKinect = new Kinect::KinectRecognition();
 	isOpen=mKinect->isOpenOpenni(); // checl if open
 
