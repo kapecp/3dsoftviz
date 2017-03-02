@@ -138,9 +138,9 @@ void Leap::CustomLeapManager::updateHands( Leap::Hand leftHand, Leap::Hand right
 			HandPalm* leftPalm = static_cast<HandPalm*>( handsGroup->getChild( 3 ) );
 
 			leftPalm->setMatrix(
-                osg::Matrix::translate( static_cast<double>( lVector.x /100.0),
-                                        static_cast<double>( -lVector.z /100.0),
-                                        static_cast<double>( lVector.y /100.0 )));
+				osg::Matrix::translate( static_cast<double>( lVector.x /100.0 ),
+										static_cast<double>( -lVector.z /100.0 ),
+										static_cast<double>( lVector.y /100.0 ) ) );
 			// update prstov lavej ruky
 			this->updateFingers( leftPalm, leftHand.fingers() );
 			// update kosti medzi prstamu
@@ -155,9 +155,9 @@ void Leap::CustomLeapManager::updateHands( Leap::Hand leftHand, Leap::Hand right
 			HandPalm* rightPalm = static_cast<HandPalm*>( handsGroup->getChild( 0 ) );
 
 			rightPalm->setMatrix(
-                osg::Matrix::translate( static_cast<double>( rVector.x )/100.0,
-                                        static_cast<double>( -rVector.z )/100.0,
-                                        static_cast<double>( rVector.y )/100.0 ) );
+				osg::Matrix::translate( static_cast<double>( rVector.x )/100.0,
+										static_cast<double>( -rVector.z )/100.0,
+										static_cast<double>( rVector.y )/100.0 ) );
 			// update prstov pravej ruky
 			this->updateFingers( rightPalm, rightHand.fingers() );
 			// update kosti medzi prstamu

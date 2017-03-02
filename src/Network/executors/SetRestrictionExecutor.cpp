@@ -76,9 +76,9 @@ void SetRestrictionExecutor::execute_client()
 			shapeGetter = new Layout::ShapeGetter_Plane_ByThreeNodes( node1, node2, node3 );
 			break;
 		default:
-            delete nodesToRestrict;
-            return;
-            break;
+			delete nodesToRestrict;
+			return;
+			break;
 	}
 
 	cw->setRestrictionToSelectedNodes(
@@ -163,7 +163,7 @@ void SetRestrictionExecutor::execute_server()
 			shapeGetter = new Layout::ShapeGetter_Plane_ByThreeNodes( node1, node2, node3 );
 			break;
 		default:
-            delete nodesToRestrict;
+			delete nodesToRestrict;
 			return;
 			break;
 	}

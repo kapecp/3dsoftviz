@@ -57,7 +57,7 @@ void SelectLayoutWindow::createLayoutTable()
 	bool error = false;
 	qlonglong layoutsCount, row;
 	QString name;
-    QMap<qlonglong, QString>::iterator iterLayout;
+	QMap<qlonglong, QString>::iterator iterLayout;
 
 	QMap<qlonglong, QString> layouts = Model::GraphLayoutDAO::getLayoutsNames( graphID, db->tmpGetConn(), &error );
 	layoutsCount = layouts.count();
@@ -66,7 +66,7 @@ void SelectLayoutWindow::createLayoutTable()
 	layoutsTable->setRowCount( static_cast<int>( layoutsCount ) );
 
 	for ( iterLayout = layouts.begin(), row=0; iterLayout != layouts.end(); ++iterLayout, row++ ) {
-        qlonglong layoutID = iterLayout.key();
+		qlonglong layoutID = iterLayout.key();
 
 		name = layouts.value( layoutID );
 
@@ -83,7 +83,7 @@ void SelectLayoutWindow::createLayoutTable()
 void SelectLayoutWindow::loadLayout()
 {
 	if ( layoutsTable->rowCount() > 0 ) {
-        qlonglong layoutID = layoutsTable->item( layoutsTable->currentRow(), 0 )->text().toLongLong();
+		qlonglong layoutID = layoutsTable->item( layoutsTable->currentRow(), 0 )->text().toLongLong();
 
 		Manager::GraphManager* manager = Manager::GraphManager::getInstance();
 
@@ -104,7 +104,7 @@ void SelectLayoutWindow::removeLayout()
 	Model::DB* db = manager->getDB();
 
 	if ( layoutsTable->rowCount() > 0 ) {
-        qlonglong layoutID = layoutsTable->item( layoutsTable->currentRow(), 0 )->text().toLongLong();
+		qlonglong layoutID = layoutsTable->item( layoutsTable->currentRow(), 0 )->text().toLongLong();
 
 		qDebug() << "[QOSG::SelectLayoutWindow::removeLayout] Selected layout ID: " << layoutID;
 

@@ -12,7 +12,7 @@ ArucoCore::ArucoCore()
 {
 
 	mMarkerSize = Util::ApplicationConfig::get()->getValue( "Aruco.MarkerSize" ).toFloat();
-    mBaseMarkerIndex = 0;
+	mBaseMarkerIndex = 0;
 
 }
 

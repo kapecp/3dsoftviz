@@ -52,11 +52,9 @@ public:
 	void updateObjectPositionAruco( qlonglong object_id, QMatrix4x4 modelViewMatrix , bool reverse );
 
 private:
-<<<<<<< HEAD
-    QOSG::ViewerQT* viewer;
-=======
+
 	QOSG::ViewerQT* viewer;
->>>>>>> feature/tracking_balls
+
 	Vwr::CoreGraph* coreGraph;
 
 	QMap<qlonglong, ArucoModul::ArControlObject*> controlObjects;

@@ -296,15 +296,10 @@ private:
 	OpenCV::CapVideo*	mCapVideo; // Cap video instanc, that managed camera and provides frames
 	Util::SizedQueue* boolQueue;
 
-<<<<<<< HEAD
-    //JMA
-   ArControlClass* mArControlClass;
-   osg::Vec3d normalizePos( const osg::Vec3f actPosArray, const osg::Quat actQuatArray );//ArucoThread::
-=======
 	//JMA
 	ArControlClass* mArControlClass;
-	osg::Vec3d normalizePos( const osg::Vec3f actPosArray, const osg::Quat actQuatArray );
->>>>>>> feature/tracking_balls
+	osg::Vec3d normalizePos( const osg::Vec3f actPosArray, const osg::Quat actQuatArray );//ArucoThread::
+
 
 
 };

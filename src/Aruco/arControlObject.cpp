@@ -117,55 +117,9 @@ bool ArControlObject::chckIfNearPosition( osg::Vec3f target )
 
 ArControlClass::ArControlClass()
 {
-<<<<<<< HEAD
-    viewer = AppCore::Core::getInstance()->getCoreWindow()->GetViewerQt();
-	coreGraph = AppCore::Core::getInstance()->getCoreGraph();
-}
-
-void ArControlClass::updateObjectPositionAruco( qlonglong object_id, QMatrix4x4 modelViewMatrix, bool reverse ){
-
-    osg::Matrixd markerMVM( modelViewMatrix.operator()( 0,0 ),modelViewMatrix.operator()( 0,1 ),modelViewMatrix.operator()( 0,2 ),modelViewMatrix.operator()( 0,3 ),
-                            modelViewMatrix.operator()( 1,0 ),modelViewMatrix.operator()( 1,1 ),modelViewMatrix.operator()( 1,2 ),modelViewMatrix.operator()( 1,3 ),
-                            modelViewMatrix.operator()( 2,0 ),modelViewMatrix.operator()( 2,1 ),modelViewMatrix.operator()( 2,2 ),modelViewMatrix.operator()( 2,3 ),
-                            modelViewMatrix.operator()( 3,0 ),modelViewMatrix.operator()( 3,1 ),modelViewMatrix.operator()( 3,2 ),modelViewMatrix.operator()( 3,3 ) );
-
-    // transformation vector user to move graph over aruco shadow base (jurik)
-	osg::Vec3f arucoBaseDist = coreGraph->getGrafRotTransVec();
-
-    osg::Matrixd baseMVM = viewer->getCamera()->getViewMatrix();
-    osg::Matrixd transMVM = markerMVM.operator *(baseMVM.inverse(baseMVM));
-    osg::Vec3f targetPosition = transMVM.getTrans();
-
-    // ani srnky netusia preco /2 ... ale takto to ide :D :D
-    // arucoBaseDist -> translation of graph group ower the base
-    // if marker is not behind, reverse coordinates
-    if( !reverse ){
-        // TO DO - nefunguje ani jurikova base ... zistit co je problem
-        targetPosition.set( (targetPosition - arucoBaseDist).operator /(-2) );
-    }
-    else{
-        //position of second marker in world coordinate system
-        targetPosition.set( (targetPosition - arucoBaseDist).operator /(2) );
-    }
-
-    if( controlObjects.value(object_id) != NULL){
-        //if object is lost, destroy and create new
-        if( controlObjects.value(object_id)->isLost() ){
-            controlObjects.remove(object_id);
-            controlObjects.insert(object_id, new ArControlObject(object_id, targetPosition));
-        }
-        else{
-            controlObjects.value(object_id)->updatePosition( targetPosition );
-        }
-    }
-    else{
-        controlObjects.insert(object_id, new ArControlObject(object_id, targetPosition));
-    }
-=======
 	viewer = AppCore::Core::getInstance()->getCoreWindow()->GetViewerQt();
 	coreGraph = AppCore::Core::getInstance()->getCoreGraph();
 }
-
 void ArControlClass::updateObjectPositionAruco( qlonglong object_id, QMatrix4x4 modelViewMatrix, bool reverse )
 {
 
@@ -206,8 +160,6 @@ void ArControlClass::updateObjectPositionAruco( qlonglong object_id, QMatrix4x4 
 	else {
 		controlObjects.insert( object_id, new ArControlObject( object_id, targetPosition ) );
 	}
->>>>>>> feature/tracking_balls
-
 }
 
 } // namespace ArucoModul

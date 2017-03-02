@@ -738,7 +738,7 @@ int CoreGraph::updateBackgroundStream( unsigned char* buffer )
 {
 //	LOG( INFO ) << "CoreGraph::updateBackgroundStream - updating background";
 	if ( leapCameraStream != nullptr ) {
-        leapCameraStream->dirty();
+		leapCameraStream->dirty();
 		leapCameraStream->updateBackgroundImage( buffer );
 	}
 	return 1;
