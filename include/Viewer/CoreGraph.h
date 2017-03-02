@@ -315,6 +315,7 @@ public:
 	//JMA
 	osg::Vec3f getGrafRotTransVec();
 
+
 public slots:
 
 	/**

@@ -98,7 +98,7 @@ double Lua::LuaInterface::getDouble( unsigned int length, QString args[] )
 
 Lua::LuaValueList Lua::LuaInterface::callFunction( QString funcName, Lua::LuaValueList params )
 {
-	return Lua::LuaValueList(( *luaState.getValue() )[funcName.toStdString()]( params.getValue() ));
+	return Lua::LuaValueList( ( *luaState.getValue() )[funcName.toStdString()]( params.getValue() ) );
 }
 
 Lua::LuaValueList Lua::LuaInterface::callFunction( unsigned int length, QString args[], Lua::LuaValueList params )
