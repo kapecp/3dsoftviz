@@ -1,4 +1,5 @@
 #include "LeapLib/LeapCameraStream.h"
+#include "HandModule/HandTrackerAdapter.h"
 #include <easylogging++.h>
 #include <string>
 
@@ -15,8 +16,11 @@ Leap::LeapCameraStream::~LeapCameraStream() {}
 
 void Leap::LeapCameraStream::updateBackgroundImage( unsigned char* buffer )
 {
+    HandTrackerAdapter *adapter = new HandTrackerAdapter();
+    cv::Mat mat = adapter->convertBuffer(buffer);
+    cv::Mat mat2 = mat.clone();
 	setImage( 640, 240, 1, GL_INTENSITY8, GL_LUMINANCE, GL_UNSIGNED_BYTE,
-			  buffer,osg::Image::NO_DELETE, 1 );
+              mat2.data,osg::Image::NO_DELETE, 1 );
 }
 
 
