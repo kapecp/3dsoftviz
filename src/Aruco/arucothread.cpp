@@ -130,8 +130,6 @@ void ArucoThread::run()
 		while ( ! mCancel ) {	// doing aruco work in loop
 
 			// variables for result from aruco
-			double		 actPosArray[3];			// x, y, z
-			double		 actQuatArray[4];		// angle(w), x, y, z
 			bool		 markerDetected;
 
 			frame = mCapVideo->queryFrame();		// get image from camera
@@ -145,6 +143,8 @@ void ArucoThread::run()
                 aCore.setBaseMarkerIndex(-1);
 
                 for(int i = 0; i< markerArraySize; i++){
+                    double		 actPosArray[3];			// x, y, z
+                    double		 actQuatArray[4];		// angle(w), x, y, z
                     int curMarkerId = aCore.getPosAndQuat( i, actPosArray, actQuatArray );
 
                    // qDebug() << i << " : ID [" << curMarkerId << "] " << actPosArr[i].x() << " / " << actQuatArr[i].x();
