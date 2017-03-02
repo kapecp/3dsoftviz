@@ -8,7 +8,7 @@
 #include "Data/Graph.h"
 #include "Data/Node.h"
 #include "Core/Core.h"
-
+#include "Viewer/CoreGraph.h"
 
 
 
