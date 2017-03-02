@@ -1,7 +1,7 @@
 Logovanie s knižnicou Easylogging++
-=====================
+===================================
 Úrovne logovania
------------------------------
+----------------
 
 	Easylogging++ poskytuje tieto úrovne logovania:
 	
@@ -16,7 +16,7 @@ Logovanie s knižnicou Easylogging++
 		* Unknown 	Nepoužívame.
 	
 Čo a ako treba logovať
------------------------------
+----------------------
 
 	Čo je potrebné logovať:
 		* Začiatok každej metódy

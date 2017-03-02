@@ -249,7 +249,7 @@ void ShapeVisitor_VisualizerCreator::visualizeSphere( Layout::Shape_AbstractSphe
 			break;
 		case Layout::Shape_AbstractSphere::CIRCLE:
 			break;
-        default:
+		default:
 			return;
 	}
 	//volovar koniec zmeny

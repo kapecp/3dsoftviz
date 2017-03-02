@@ -19,7 +19,7 @@ void ModuleGraph::Module::refresh()
 {
 	removeChildren( 0, getNumChildren() );
 
-	addChild(new Shapes::Cuboid(length, heigth, width, osg::Vec3( 0.0f, 0.0f, 0.0f )));
+	addChild( new Shapes::Cuboid( length, heigth, width, osg::Vec3( 0.0f, 0.0f, 0.0f ) ) );
 }
 
 float ModuleGraph::Module::getLength()
@@ -37,20 +37,20 @@ float ModuleGraph::Module::getHeigth()
 }
 
 
-void ModuleGraph::Module::setLength(float newLength)
+void ModuleGraph::Module::setLength( float newLength )
 {
 	length = newLength;
 }
-void ModuleGraph::Module::setWidth(float newWidth)
+void ModuleGraph::Module::setWidth( float newWidth )
 {
 	width = newWidth;
 }
-void ModuleGraph::Module::setHeigth(float newHeigth)
+void ModuleGraph::Module::setHeigth( float newHeigth )
 {
 	heigth = newHeigth;
 }
 
-void ModuleGraph::Module::setModuleSize(float newLength, float newWidth, float newHeigth)
+void ModuleGraph::Module::setModuleSize( float newLength, float newWidth, float newHeigth )
 {
 	length = newLength;
 	width = newWidth;

@@ -15,7 +15,7 @@ namespace Lua {
 	 * \author Hagara Lukas
 	 * \date 17.11.2016
 	 */
-class LuaState 
+class LuaState
 {
 public:
 	LuaState();
@@ -42,7 +42,7 @@ public:
 
 private:
 	Diluculum::LuaState* val;
-	
+
 };
 }
 

@@ -3,6 +3,8 @@
  */
 #include "Leap/HandModule/HandBone.h"
 #include <easylogging++.h>
+#include <osg/ShapeDrawable>
+#include <osg/Geode>
 
 const float CYLINDER_RADIUS = 0.03f;
 const float HEIGHT = 0.2f;

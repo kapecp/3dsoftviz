@@ -99,7 +99,7 @@ void GraphMetrics::computeGraphMetrics( Data::Graph* activeGraph )
 				}
 			}
 		}
-        delete[] paths;
+		delete[] paths;
 		i.value()->setNodeBetweeness( sum / ( static_cast<float>( numVertices - 1 ) * static_cast<float>( numVertices - 2 ) )	);
 
 		float base = i.value()->isNodeMatched() ? regexpWeigth : 0;

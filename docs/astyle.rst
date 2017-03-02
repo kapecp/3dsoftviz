@@ -2,7 +2,7 @@ AStyle
 =======
 		
 Ako pouzivat v QTCreatore (Windows)
-----------------------
+-----------------------------------
 1)	Stiahni  `AStyle <https://sourceforge.net/projects/astyle/?source=typ_redirect>`_ do priecinku s programmi tykajucim sa projektu $ASTYLE_PATH.
 1)	Pridaj cestu k astyle-u do systemovej premennej PATH: $ASTYLE_PATH/bin (napr. d:/timak/AStyle/bin)
 3)	Spusti QTCreator

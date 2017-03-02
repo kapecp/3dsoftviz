@@ -10,7 +10,8 @@ namespace ModuleGraph {
 	*  \date 9. 11. 2016
 	*/
 
-class Module : public osg::PositionAttitudeTransform {
+class Module : public osg::PositionAttitudeTransform
+{
 
 public:
 
@@ -18,10 +19,10 @@ public:
 	float getLength();
 	float getWidth();
 	float getHeigth();
-	void setLength(float newLength);
-	void setWidth(float newWidth);
-	void setHeigth(float newHeigth);
-	void setModuleSize(float newLength, float newWidth, float newHeigth);
+	void setLength( float newLength );
+	void setWidth( float newWidth );
+	void setHeigth( float newHeigth );
+	void setModuleSize( float newLength, float newWidth, float newHeigth );
 	void refresh();
 
 private:

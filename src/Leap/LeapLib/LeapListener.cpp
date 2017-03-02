@@ -1,6 +1,12 @@
 #include "LeapLib//LeapListener.h"
 #include "LeapLib/DirectionDetector.h"
 #include "LeapLib/FingerPositionDetector.h"
+#include "osg/Image"
+#include "CustomLeapManager.h"
+
+//#include "osg/Image"
+#include "osgDB/WriteFile"
+#include <stdio.h>
 
 Leap::LeapListener::LeapListener( LeapManager* leapManager )
 {
@@ -43,10 +49,21 @@ void Leap::LeapListener::onExit( const Controller& controller )
 {
 
 }
+void Leap::LeapListener::onImages( const Controller& controller )
+{
+	ImageList images = controller.images();
+	Image image = images[0];
+
+	if ( image.data() == NULL ) {
+		return;
+	}
+	Leap::CustomLeapManager* manager = dynamic_cast<Leap::CustomLeapManager*>( this->leapActions->leapManager );
+
+	manager->updateCoreGraphBackground( image.data() );
+}
 
 void Leap::LeapListener::onFrame( const Controller& controller )
 {
-//    LOG( INFO ) << "Leap/LeapLib/LeapListener onFrame()";
 	Frame frame = controller.frame();
 	HandList hands = frame.hands();
 	Leap::DirectionDetector::Direction direction;

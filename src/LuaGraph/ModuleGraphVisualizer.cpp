@@ -90,14 +90,14 @@ void Lua::ModuleGraphVisualizer::visualize()
 			ss->setAttribute( white );
 			module->setStateSet( ss );
 			module->refresh();
-			fileNode->setModule(module);
+			fileNode->setModule( module );
 		}
 		if ( i.value()->getParams().getValue()["type"] == "file" ) {
 			osg::ref_ptr<Data::Node> fileNode = currentGraph->getNodes()->value( i.key() );
 
 			auto module = new ModuleGraph::Module();
 			module->refresh();
-			fileNode->setModule(module);
+			fileNode->setModule( module );
 		}
 
 	}

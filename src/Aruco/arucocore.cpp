@@ -12,7 +12,7 @@ ArucoCore::ArucoCore()
 {
 
 	mMarkerSize = Util::ApplicationConfig::get()->getValue( "Aruco.MarkerSize" ).toFloat();
-    mBaseMarkerIndex = 0;
+	mBaseMarkerIndex = 0;
 
 }
 
@@ -34,7 +34,7 @@ bool ArucoCore::setCameraParameters( const QString markerDesFile )
 	}
 }
 
-const QMatrix4x4 ArucoCore::getDetectedMatrix(int markerId, cv::Mat inputImage)
+const QMatrix4x4 ArucoCore::getDetectedMatrix( int markerId, cv::Mat inputImage )
 {
 	qreal modelViewMatrix[16];
 
@@ -42,8 +42,8 @@ const QMatrix4x4 ArucoCore::getDetectedMatrix(int markerId, cv::Mat inputImage)
 	mCamImage = inputImage;		//updateImage( inputImage );
 
 	// get result model view matrix from imput image
-    //this->detectMarkers();
-    this->getMatrix( markerId, modelViewMatrix );
+	//this->detectMarkers();
+	this->getMatrix( markerId, modelViewMatrix );
 
 	QMatrix4x4 matrix( modelViewMatrix[ 0], modelViewMatrix[ 1], modelViewMatrix[ 2], modelViewMatrix[ 3],
 					   modelViewMatrix[ 4], modelViewMatrix[ 5], modelViewMatrix[ 6], modelViewMatrix[ 7],
@@ -110,12 +110,12 @@ int ArucoCore::getPosAndQuat( unsigned int markerNum, double position[3], double
 {
 	// markerNum is counted from 0
 	if ( mMarkers.size() > markerNum ) {
-        mMarkers[markerNum].OgreGetPoseParameters( position, quaternion );
-        return mMarkers[markerNum].id;
+		mMarkers[markerNum].OgreGetPoseParameters( position, quaternion );
+		return mMarkers[markerNum].id;
 
 	}
 	else {
-        return 0;
+		return 0;
 	}
 
 }
@@ -142,15 +142,15 @@ void ArucoCore::detectMarkers()
 {
 	//detect markers
 	mMDetector.detect( mCamImage,
-                       mMarkers,
+					   mMarkers,
 					   mCamParam, //mCamParam.CameraMatrix, cv::Mat(),   // optionaly, dont needed now
 					   mMarkerSize );
 }
 
 int ArucoCore::getMatrix( int markerId, double* modelviewmatrix )
 {
-    if ( mMarkers.size() > 0 && markerId != -1 ) {
-        mMarkers[markerId].glGetModelViewMatrix( modelviewmatrix );
+	if ( mMarkers.size() > 0 && markerId != -1 ) {
+		mMarkers[markerId].glGetModelViewMatrix( modelviewmatrix );
 		return 0;
 	}
 	return -1;
@@ -192,7 +192,7 @@ cv::Mat ArucoCore::getDetectedRectangleImage()
 void ArucoCore::drawCube( cv::Mat& Image, const vector<aruco::Marker>& m,const aruco::CameraParameters& CP )
 {
 
-    //qDebug() << "Velkost vektora markerov " << m.size();
+	//qDebug() << "Velkost vektora markerov " << m.size();
 
 	cv::Point2f* pointArray = static_cast<cv::Point2f*>( malloc( ( m.size()+1 )*sizeof( cv::Point2f ) ) );
 	cv::Point2f* pointArray2 = static_cast<cv::Point2f*>( malloc( ( m.size()+1 )*sizeof( cv::Point2f ) ) );
@@ -216,13 +216,13 @@ void ArucoCore::drawCube( cv::Mat& Image, const vector<aruco::Marker>& m,const a
 
 	//if we detect 2 markers, draw a line
 	if ( m.size() == 2 ) {
-        //qDebug() << "Vykreslujem ciaru";
+		//qDebug() << "Vykreslujem ciaru";
 		cv::line( Image, pointArray[0], pointArray[1], cv::Scalar( 0,255,255 ), 2, CV_AA );
 	}
 
 	//if we detect 3 markers, compute the 4th point and draw a rectangle
 	if ( m.size() == 3 ) {
-        //qDebug() << "Vykreslujem stvorec alebo obdlznik";
+		//qDebug() << "Vykreslujem stvorec alebo obdlznik";
 		//compute the 4th point
 		pointArray[3].x = pointArray[2].x + ( pointArray[0].x - pointArray[1].x );
 		pointArray[3].y = pointArray[0].y + ( pointArray[2].y - pointArray[1].y );
@@ -252,12 +252,12 @@ void ArucoCore::drawCube( cv::Mat& Image, const vector<aruco::Marker>& m,const a
 
 int ArucoCore::getBaseMarkerIndex()
 {
-    return mBaseMarkerIndex;
+	return mBaseMarkerIndex;
 }
 
-void ArucoCore::setBaseMarkerIndex(int baseMarkerIndex)
+void ArucoCore::setBaseMarkerIndex( int baseMarkerIndex )
 {
-    mBaseMarkerIndex = baseMarkerIndex;
+	mBaseMarkerIndex = baseMarkerIndex;
 }
 
 } // namespace ArucoModul
