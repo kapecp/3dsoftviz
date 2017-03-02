@@ -2,7 +2,7 @@ Gitflow metodika
 ================
 
 Forkovanie na GitHub-e
--------------
+----------------------
 Fork na GitHub-e neprenesie tag-y do forknuteho repozitara, treba ich rucne preniest,
 v novom repozitari:
  * git remote add povodny-repozitar git@github.com:povodny-repozitar/nazov_repo.git

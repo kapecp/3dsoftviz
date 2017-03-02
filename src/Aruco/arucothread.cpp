@@ -130,8 +130,6 @@ void ArucoThread::run()
 		while ( ! mCancel ) {	// doing aruco work in loop
 
 			// variables for result from aruco
-			double		 actPosArray[3];			// x, y, z
-			double		 actQuatArray[4];		// angle(w), x, y, z
 			bool		 markerDetected;
 
 			frame = mCapVideo->queryFrame();		// get image from camera
@@ -141,6 +139,7 @@ void ArucoThread::run()
 
 			//JMA
 			if ( mMultiMarkerEnabled ) {
+<<<<<<< HEAD
 				//reset base marker index for this run
 				aCore.setBaseMarkerIndex( -1 );
 
@@ -175,6 +174,44 @@ void ArucoThread::run()
 						);
 					}
 				}
+=======
+                //reset base marker index for this run
+                aCore.setBaseMarkerIndex(-1);
+
+                for(int i = 0; i< markerArraySize; i++){
+                    double		 actPosArray[3];			// x, y, z
+                    double		 actQuatArray[4];		// angle(w), x, y, z
+                    int curMarkerId = aCore.getPosAndQuat( i, actPosArray, actQuatArray );
+
+                   // qDebug() << i << " : ID [" << curMarkerId << "] " << actPosArr[i].x() << " / " << actQuatArr[i].x();
+
+                    //it this is base marker
+                    if( curMarkerId == 789 ){
+                        // set this marker as Base marker
+                        aCore.setBaseMarkerIndex(i);
+
+                        //jurik
+                        //set and send modelview matrix of detected marker
+                        QMatrix4x4 modelviewmatrix = aCore.getDetectedMatrix( i, frame.clone() );
+                        emit sendModelViewMatrix( modelviewmatrix );
+
+                        //set and send projection matrix of detected image
+                        QMatrix4x4 projectionmatrix = aCore.getProjectionMatrix( frame.clone() );
+                        emit sendProjectionMatrix( projectionmatrix );
+
+                        //send marker size
+                        emit sendMarkerSize( aCore.getMarkerSize() );
+                        //*****
+                    }
+                    else{
+                        mArControlClass->updateObjectPositionAruco(
+                            curMarkerId,
+                            aCore.getDetectedMatrix( i, frame.clone() ),
+                            mMarkerIsBehind
+                        );
+                    }
+                }
+>>>>>>> e51590a00ba98642de7299c0299c79e7e9b8aa70
 			}
 			else {
 				/*
