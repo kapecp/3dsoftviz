@@ -73,6 +73,7 @@ void NewNodeExecutor::execute_server()
 	}
 
 	server->sendNewNode( newNode );
+	delete operations;
 }
 
 } // namespace Network

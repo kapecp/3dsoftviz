@@ -7,6 +7,7 @@
 #include "Kinect/KinectThread.h"
 #include "QOpenCV/FaceRecognitionThread.h"
 #include "QOpenCV/FaceRecognitionWindow.h"
+#include "QOpenCV/MarkerlessTrackingThread.h"
 #include "QOpenCV/OpenCVWindow.h"
 #include "Viewer/CameraManipulator.h"
 #include "OpenCV/CamSelectCore.h"
@@ -26,10 +27,11 @@ OpenCV::OpenCVCore::OpenCVCore( QApplication* app, QWidget* parent )
 
 	mArucoThrsCreated	= false;
 	mKinectThrsCreated = false;
-	mOpencvWindow   = NULL;
-	mThrFaceRec		= NULL;
-	mThrAruco		= NULL;
-	mThrKinect      = NULL;
+	mOpencvWindow   =  nullptr;
+	mThrFaceRec		=  nullptr;
+	mThrMarkerless	=  nullptr;
+	mThrAruco		=  nullptr;
+	mThrKinect      =  nullptr;
 
 
 }
@@ -39,6 +41,10 @@ OpenCV::OpenCVCore::~OpenCVCore( void )
 		if ( mThrFaceRec != NULL ) {
 			mThrFaceRec->setCancel( true );
 			mThrFaceRec->setSendImgEnabled( false );
+		}
+
+		if ( mThrMarkerless != NULL ) {
+			mThrMarkerless->setCancel( true );
 		}
 
 		if ( mThrAruco != NULL ) {
@@ -54,6 +60,11 @@ OpenCV::OpenCVCore::~OpenCVCore( void )
 		if ( mThrFaceRec != NULL ) {
 			mThrFaceRec->wait();
 			mThrFaceRec->deleteLater();
+		}
+
+		if ( mThrMarkerless != NULL ) {
+			mThrMarkerless->wait();
+			mThrMarkerless->deleteLater();
 		}
 
 		if ( mThrAruco != NULL ) {
@@ -72,6 +83,7 @@ void OpenCV::OpenCVCore::opencvInit()
 		mArucoThrsCreated = true;
 		mThrAruco = new ArucoModul::ArucoThread();
 		mThrFaceRec	= new QOpenCV::FaceRecognitionThread();
+		mThrMarkerless = new QOpenCV::MarkerlessTrackingThread();
 
 #ifdef OPENNI2_FOUND
 		mThrKinect = new Kinect::KinectThread();
@@ -87,6 +99,7 @@ void OpenCV::OpenCVCore::opencvInit()
 	}
 
 	createConnectionFaceRec();
+	createConnectionMarkerless();
 	createConnectionAruco();
 
 #ifdef OPENNI2_FOUND
@@ -258,7 +271,6 @@ void OpenCV::OpenCVCore::createConnectionFaceRec()
 					  SLOT( setSendBackgrImgEnabled( bool ) ) );
 
 
-
 	// start, stop
 	QObject::connect( mOpencvWindow,
 					  SIGNAL( startFaceRec() ),
@@ -276,12 +288,31 @@ void OpenCV::OpenCVCore::createConnectionFaceRec()
 					  SIGNAL( setCapVideoFaceRec( OpenCV::CapVideo* ) ),
 					  mThrFaceRec,
 					  SLOT( setCapVideo( OpenCV::CapVideo* ) ) );
-
-
-
-
 }
 
+void OpenCV::OpenCVCore::createConnectionMarkerless()
+{
+	QObject::connect( mOpencvWindow,
+					  SIGNAL( startMarkerless() ),
+					  mThrMarkerless,
+					  SLOT( start() ) );
+	QObject::connect( mOpencvWindow,
+					  SIGNAL( stopMarkerless( bool ) ),
+					  mThrMarkerless,
+					  SLOT( setCancel( bool ) ) );
+	QObject::connect( mThrMarkerless,
+					  SIGNAL( finished() ),
+					  mOpencvWindow,
+					  SLOT( onMarkerlessThreadFinished() ) );
+	QObject::connect( mOpencvWindow,
+					  SIGNAL( setCapVideoMarkerless( OpenCV::CapVideo* ) ),
+					  mThrMarkerless,
+					  SLOT( setCapVideo( OpenCV::CapVideo* ) ) );
+	QObject::connect( mThrMarkerless,
+					  SIGNAL( pushImage( cv::Mat ) ),
+					  mOpencvWindow,
+					  SLOT( setLabel( cv::Mat ) ) );
+}
 
 void OpenCV::OpenCVCore::createConnectionAruco()
 {
@@ -344,15 +375,15 @@ void OpenCV::OpenCVCore::createConnectionAruco()
 	QObject::connect( mOpencvWindow->getMarkerBehindCB(),
 					  SIGNAL( clicked( bool ) ),
 					  mThrAruco,
-                      SLOT( setPositionOfMarker( bool ) ) );
+					  SLOT( setPositionOfMarker( bool ) ) );
 	QObject::connect( mOpencvWindow->getCorEnabledCB(),
 					  SIGNAL( clicked( bool ) ),
 					  mThrAruco,
 					  SLOT( setCorEnabling( bool ) ) );
-    QObject::connect( mOpencvWindow->getMultiMarkerEnableCB(),
-                      SIGNAL( clicked( bool ) ),
-                      mThrAruco,
-                      SLOT( setMultiMarker( bool ) ) );
+	QObject::connect( mOpencvWindow->getMultiMarkerEnableCB(),
+					  SIGNAL( clicked( bool ) ),
+					  mThrAruco,
+					  SLOT( setMultiMarker( bool ) ) );
 	QObject::connect( mOpencvWindow->getUpdateCorParPB(),
 					  SIGNAL( clicked() ),
 					  mThrAruco,

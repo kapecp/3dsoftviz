@@ -28,7 +28,7 @@ import os
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
-extensions = ['sphinxcontrib.exceltable','sphinx.ext.autodoc',
+extensions = ['sphinx.ext.autodoc',
    'sphinxcontrib.plantuml','sphinx.ext.graphviz']
 
 # Add any paths that contain templates here, relative to this directory.

@@ -77,10 +77,11 @@ int main( int argc, char* argv[] )
 	new Util::Cleaner( &app );
 	try {
 		AppCore::Core::getInstance( &app );
-	} catch ( std::runtime_error& e) {
+	}
+	catch ( std::runtime_error& e ) {
 		LOG( ERROR ) << e.what();
 
-		auto res = Lua::LuaInterface::getInstance()->doString("print(debug.traceback())");
+		auto res = Lua::LuaInterface::getInstance()->doString( "print(debug.traceback())" );
 		// TODO/BUG: debug.traceback() does not return anything, somehow the traceback is empty
 		// maybe Diluculum changes something during exception handling...
 		// this way we could obtain the results from debug.traceback()

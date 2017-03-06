@@ -55,12 +55,12 @@ public:
 	     */
 	QCheckBox*	getCorEnabledCB() const;
 
-    /**
-         * @author Autor: Juraj Marak
-         * @brief getMultiMarkerEnableCB Return mMultiMarkerEnableCB
-         * @return QCheckBox*
-         */
-    QCheckBox*	getMultiMarkerEnableCB() const;
+	/**
+	     * @author Autor: Juraj Marak
+	     * @brief getMultiMarkerEnableCB Return mMultiMarkerEnableCB
+	     * @return QCheckBox*
+	     */
+	QCheckBox*	getMultiMarkerEnableCB() const;
 
 	/**
 	     * @author Autor: David Durcak
@@ -121,6 +121,12 @@ signals:
 	void stopFaceRec( bool set );
 
 	/**
+		 * @author Lukas Hagara
+		 * @brief stopMarkerless Signal for canceling MarkerlessTracking thread
+		 */
+	void stopMarkerless( bool set );
+
+	/**
 	     * @author Autor: David Durcak
 	     * @brief startMarker Signal for starting Aruco thread
 	     */
@@ -146,6 +152,12 @@ signals:
 	void startFaceRec();
 
 	/**
+		 * @author Lukas Hagara
+		 * @brief startMarkerless Signal for starting MarkerlessTracking thread
+		 */
+	void startMarkerless();
+
+	/**
 	     * @author Autor: Michael Garaj
 	     * @brief setMultiMarker Signal for setting MultiMarker in Aruco thread
 	     * @param set cancel if true
@@ -158,6 +170,12 @@ signals:
 	     * @param capVideo camera object
 	     */
 	void setCapVideoFaceRec( OpenCV::CapVideo* capVideo );
+
+	/**
+		 * @brief setCapVideoMarkerless Signal for setting the camera in MarkerlessTrackingThread
+		 * @param capVideo camera object
+		 */
+	void setCapVideoMarkerless( OpenCV::CapVideo* capVideo );
 
 	/**
 	     * @author Autor: Michael Garaj
@@ -237,6 +255,12 @@ public slots:
 	void onFaceRecThrFinished();
 
 	/**
+	 * @author Autor: Lukas Hagara
+	 * @brief onMarkerlessThreadFinished When Markerless tracking thread finishes, enable mMarkerlessPB button
+	 */
+	void onMarkerlessThreadFinished();
+
+	/**
 	     * @author Autor: David Durcak
 	     * @brief onMarkerThrFinished When Aruco thread finished, update mMarkerStartCancelPB button
 	     */
@@ -274,6 +298,13 @@ private slots:
 	     * @param checked If true, thread will start
 	     */
 	void onKinectStartCancel( bool checked );
+
+	/**
+		 * @author Autor: Lukas Hagara
+		 * @brief onMarkerlessStartCancel Start or stop Markerless Tracking thread
+		 * @param checked If true, thread will start
+		 */
+	void onMarkerlessStartCancel( bool checked );
 
 	/**
 	     * @author Autor: David Durcak
@@ -351,6 +382,7 @@ private:
 	QRadioButton*    mFaceRecRB;
 	QRadioButton*    mMarkerRB;
 	QRadioButton*    mMultiMarkerRB;
+	QRadioButton*	mMarkerlessRB;
 
 	QPushButton*     mFaceRecPB;
 	QPushButton*     mMarkerPB;
@@ -360,6 +392,7 @@ private:
 	QPushButton*		mUpdateCorParPB;
 	QPushButton*		mInterchangeMarkersPB;
 	QPushButton*     mKinectSnapshotPB;
+	QPushButton*	 mMarkerlessPB;
 
 	QStackedLayout*  mModulesStackL;
 	QStackedLayout*  mSubmodulesStackL;
@@ -369,7 +402,7 @@ private:
 	QCheckBox*		mFaceDetBackgrCB;
 	QCheckBox*		mMarkerBehindCB;
 	QCheckBox*		mCorEnabledCB;
-    QCheckBox*	    mMultiMarkerEnableCB;
+	QCheckBox*	    mMultiMarkerEnableCB;
 	QCheckBox*       mDisableCursorCB;
 	QCheckBox*       mDisableZoomCursorCB;
 	QCheckBox*       mEnableMarkerDetectCB;
