@@ -1,10 +1,10 @@
 #include "LuaGraph/LuaGraph.h"
+#include "LuaTypes/LuaValue.h"
+#include "LuaTypes/LuaValueList.h"
+#include "LuaTypes/LuaValueMap.h"
 
 #include "LuaGraph/LuaGraphObserver.h"
 #include "LuaInterface/LuaInterface.h"
-
-#include <Diluculum/LuaWrappers.hpp>
-#include "Diluculum/LuaState.hpp"
 
 #include <sstream>
 #include <iostream>
@@ -14,22 +14,26 @@
 
 Lua::LuaGraph* Lua::LuaGraph::instance;
 
-Diluculum::LuaValueList luaCallback( const Diluculum::LuaValueList& params )
+Lua::LuaValueList luaCallback( const Lua::LuaValueList& params )
 {
 	std::cout << "C callback" << std::endl;
 	if ( !Lua::LuaGraph::hasObserver() ) {
-		return Diluculum::LuaValueList();
+		return Lua::LuaValueList().getValue();
 	}
 	Lua::LuaGraph::getInstance()->getObserver()->onUpdate();
-	return Diluculum::LuaValueList();
+	return Lua::LuaValueList().getValue();
 }
 
+#if defined(__linux) || defined(__linux__) || defined(linux)
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wconversion"
+#endif
 
-DILUCULUM_WRAP_FUNCTION( luaCallback )
+LUA_WRAP_FUNCTION( luaCallback )
 
+#if defined(__linux) || defined(__linux__) || defined(linux)
 #pragma GCC diagnostic pop
+#endif
 
 Lua::LuaGraph::LuaGraph()
 {
@@ -38,8 +42,7 @@ Lua::LuaGraph::LuaGraph()
 	incidences = new QMap<qlonglong, Lua::LuaIncidence*>();
 	observer = NULL;
 	Lua::LuaInterface* lua = Lua::LuaInterface::getInstance();
-	Diluculum::LuaState* ls = lua->getLuaState();
-	( *ls )["graphChangedCallback"] = DILUCULUM_WRAPPER_FUNCTION( luaCallback );
+	( *( lua->getLuaState().getValue() ) )["graphChangedCallback"] = LUA_WRAPPER_FUNCTION( luaCallback );
 }
 Lua::LuaGraphObserver* Lua::LuaGraph::getObserver() const
 {
@@ -93,12 +96,9 @@ Lua::LuaGraph* Lua::LuaGraph::loadGraph()
 	Lua::LuaGraph* result = Lua::LuaGraph::getInstance();
 	result->clearGraph();
 
-	Diluculum::LuaState* ls = lua->getLuaState();
+	Lua::LuaValueMap edges = ( *( lua->getLuaState().getValue() ) )["getGraph"]()[0].asTable();
 
-	Diluculum::LuaValueMap edges = ( *ls )["getGraph"]()[0].asTable();
-
-	for ( Diluculum::LuaValueMap::iterator iterator = edges.begin(); iterator != edges.end(); ++iterator ) {
-
+	for ( auto iterator = edges.begin(); iterator != edges.end(); ++iterator ) {
 		qlonglong id = iterator->first.asTable()["id"].asInteger();
 
 		Lua::LuaEdge* edge = new Lua::LuaEdge();
@@ -115,8 +115,8 @@ Lua::LuaGraph* Lua::LuaGraph::loadGraph()
 		result->edges->insert( id, edge );
 
 
-		Diluculum::LuaValueMap incidences = iterator->second.asTable();
-		for ( Diluculum::LuaValueMap::iterator iterator2 = incidences.begin(); iterator2 != incidences.end(); ++iterator2 ) {
+		Lua::LuaValueMap incidences = iterator->second.asTable();
+		for ( auto iterator2 = incidences.begin(); iterator2 != incidences.end(); ++iterator2 ) {
 			qlonglong id2 = iterator2->first.asTable()["id"].asInteger();
 			edge->addIncidence( id2 );
 			Lua::LuaIncidence* incidence = new Lua::LuaIncidence();
@@ -172,13 +172,11 @@ Lua::LuaGraph* Lua::LuaGraph::loadEvoGraph( QString repoFilepath )
 	Lua::LuaGraph* result = Lua::LuaGraph::getInstance();
 	result->clearGraph();
 
-	Diluculum::LuaState* ls = lua->getLuaState();
-
-	Diluculum::LuaValueMap edges = ( *ls )["getGraph"]()[0].asTable();
+	Lua::LuaValueMap edges = ( *( lua->getLuaState().getValue() ) )["getGraph"]()[0].asTable();
 
 	QList<qlonglong> unusedNodes = QList<qlonglong>();
 
-	for ( Diluculum::LuaValueMap::iterator iterator = edges.begin(); iterator != edges.end(); ++iterator ) {
+	for ( auto iterator = edges.begin(); iterator != edges.end(); ++iterator ) {
 		// cast nastavenia Edge
 		qlonglong edgeId = iterator->first.asTable()["id"].asInteger();
 		Lua::LuaEdge* edge = new Lua::LuaEdge();
@@ -194,8 +192,8 @@ Lua::LuaGraph* Lua::LuaGraph::loadEvoGraph( QString repoFilepath )
 
 		result->edges->insert( edgeId, edge );
 
-		Diluculum::LuaValueMap incidences = iterator->second.asTable();
-		for ( Diluculum::LuaValueMap::iterator iterator2 = incidences.begin(); iterator2 != incidences.end(); ++iterator2 ) {
+		Lua::LuaValueMap incidences = iterator->second.asTable();
+		for ( auto iterator2 = incidences.begin(); iterator2 != incidences.end(); ++iterator2 ) {
 
 			// cast nastavenia Incidence
 			qlonglong incidenceId = iterator2->first.asTable()["id"].asInteger();
@@ -235,6 +233,7 @@ Lua::LuaGraph* Lua::LuaGraph::loadEvoGraph( QString repoFilepath )
 				}
 				else {
 					qDebug() << "Uzol" << nodeId << "neobsahuje LABEL";
+					delete incidence;
 					return NULL;
 				}
 			}
@@ -247,6 +246,7 @@ Lua::LuaGraph* Lua::LuaGraph::loadEvoGraph( QString repoFilepath )
 				}
 				else {
 					qDebug() << "Uzol" << nodeId << "neobsahuje LABEL";
+					delete incidence;
 					return NULL;
 				}
 			}
@@ -278,7 +278,7 @@ Lua::LuaGraph* Lua::LuaGraph::loadEvoGraph( QString repoFilepath )
 
 	foreach ( qlonglong nodeId, unusedNodes ) {
 		Lua::LuaNode* node = result->nodes->find( nodeId ).value();
-		QString nodeType = QString::fromStdString( node->getParams()["type"].asString() );
+		QString nodeType = QString::fromStdString( node->getParams().getValue()["type"].asString() );
 		bool isPartOfModule = false;
 		foreach ( qlonglong incidenceId, node->getIncidences() ) {
 			Lua::LuaEdge* edge = result->edges->find( result->incidences->value( incidenceId )->getEdgeNodePair().first ).value();
@@ -292,7 +292,7 @@ Lua::LuaGraph* Lua::LuaGraph::loadEvoGraph( QString repoFilepath )
 			}
 
 			Lua::LuaNode* otherNode = result->nodes->find( incidence->getEdgeNodePair().second ).value();
-			QString type = QString::fromStdString( otherNode->getParams()["type"].asString() );
+			QString type = QString::fromStdString( otherNode->getParams().getValue()["type"].asString() );
 			if ( !QString::compare( type, "globalModule" ) ) {
 				QString identifier = nodeType + ";" + otherNode->getLabel() + ";" + node->getLabel();
 				node->setIdentifier( identifier );

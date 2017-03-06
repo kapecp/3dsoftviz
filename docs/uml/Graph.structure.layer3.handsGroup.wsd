@@ -1,0 +1,29 @@
+// Module Graph.structure.layer3.handsGroup
+// Autor: Aug_RealityKings
+
+
+
+@startuml
+
+object "handsGroup:osg::Group" as obj1
+object "transformLeft:osg::MatrixTransform" as obj2
+object "leftHandGeode:osg::Geode" as obj3
+object "leftHandDrawable:osg::ShapeDrawable" as obj4
+object "leftHandSphere:osg::Sphere" as obj5
+object "transformRight:osg::MatrixTransform" as obj6
+object "rightHandGeode:osg::Geode" as obj7
+object "rightHandDrawable:osg::ShapeDrawable" as obj8
+object "rightHandSphere:osg::Sphere" as obj9
+
+obj1 o-- obj2
+obj1 o-- obj6
+
+obj2 o-- obj3
+obj3 o-- obj4
+obj4 o-- obj5
+
+obj6 o-- obj7
+obj7 o-- obj8
+obj8 o-- obj9
+
+@enduml

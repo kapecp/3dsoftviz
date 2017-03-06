@@ -77,6 +77,10 @@ Data::Node::Node( qlonglong id, QString name, Data::Type* type, float scaling, D
 	layerID = 0;  //node is not on layer of radial layout
 	radialLayout = NULL;  //node does not belong to radial layout
 	//volovar_kon
+
+	//jma_zac
+	this->ignoreByLayout = false;
+	//jma_kon
 }
 
 Data::Node::~Node( void )

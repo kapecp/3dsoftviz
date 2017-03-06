@@ -140,3 +140,75 @@ Statechart diagrams
 Camera Movement:
 
 .. image:: /images/cameramove.png
+
+
+
+Object diagrams
+~~~~~~~~~~~~~~~~~~~
+Graph structure layer0:
+
+   .. uml::
+      
+      !include /uml/Graph.structure.layer0.wsd
+
+Graph structure layer1:
+
+   .. uml::
+      
+      !include /uml/Graph.structure.layer1.wsd
+
+Graph structure layer2:
+
+   .. uml::
+      
+      !include /uml/Graph.structure.layer2.wsd
+	  
+Graph structure layer3-Node:
+
+   .. uml::
+      
+      !include /uml/Graph.structure.layer3.Node.wsd
+
+Graph structure layer3-Edge:
+
+   .. uml::
+      
+      !include /uml/Graph.structure.layer3.Edge.wsd
+	  
+Graph structure layer3-handsGroup:
+
+   .. uml::
+      
+      !include /uml/Graph.structure.layer3.handsGroup.wsd
+
+LeapAR Adapter:
+
+   .. uml::
+      
+      !include /uml/handsAR.adapter.wsd
+Api leap library:
+
+   .. uml::
+      
+      !include /uml/handsAR.adapterLeap.wsd
+	  
+Navrh modelu ruky layer0:
+
+   .. uml::
+      
+      !include /uml/hand1.wsd
+	  
+Navrh modelu ruky layer1:
+
+   .. uml::
+      
+      !include /uml/hand2.wsd
+	  
+Implementovany model ruky :
+
+   .. uml::
+      
+      !include /uml/handModel.wsd	  
+	  
+
+	  

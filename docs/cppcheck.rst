@@ -1,18 +1,30 @@
 CppCheck
 ========
-
+Stiahni a extrahuj:
 http://cppcheck.sourceforge.net
 
 pouzite cppcheck v 1.70
 
-Ako pouzivat
-------------
+Ako pouzivat v default GUI
+--------------------------
 
 1)	v Edit->Preferences nastavit:
 		General: check "Force checking all #ifdef configurations"
-		Paths: pridat cestu do "RealityNotFound/include"
+		Paths: pridat cestu do "3dsoftviz/include"
 		Advanced: check "Show inconclusive errors"		!!! toto hlasi dost false-positive, ALE obcas najde dolezite veci !!!
-2)	Check->Directory	a vybrat "RealityNotFound/src"
+2)	Check->Directory	a vybrat "3dsoftviz/src"
+
+Ako pouzivat v QTCreatore (Windows)
+-----------------------------------
+1)	Pridaj cestu k cppcheck-u do systemovej premennej PATH: (napr. d:/timak/cppcheck)
+2)	V run_cppcheck.bat (root adresar projektu) zmen set cppcheck_path= ../cppcheck.exe  na celu cestu k cppcheck.exe
+3)	Spusti QTCreator
+4)	Projects -> Build & Run -> Build
+5)	V Build Settings -> Edit Build configuration klikni Add -> clone selected a zadaj "cppcheck"
+6)	V Build steps rozklikni Details a v Targets oznac "cppcheck". Ak su oznacene aj ine targety, tak ich je potrebne odznacit(Vysledok: Make: jom.exe cppcheck).
+7)	Klikni na kladivko v lavom dolnom rohu (Build).
+8)	Vystupom je subor cppcheck-report.txt v podadresari _build
+
 
 poznamky k reportom:	!!! ak je nieco nejasne, treba sa opytat !!!
 

@@ -15,6 +15,7 @@
 
 namespace ArucoModul {
 class ArucoCore;
+class ArControlClass;
 }
 
 namespace OpenCV {
@@ -207,7 +208,8 @@ private:
 	* @param actPosArray[3] const array that describe position of marker by vector (x,y,z)
 	* @param actQuatArray[4] const array that describe orientation of marker by quaternion (w,x,y,z)
 	*/
-	void graphControlling( const double actPosArray[3], const double actQuatArray[4] );
+	//void graphControlling( const double actPosArray[3], const double actQuatArray[4] );
+	void graphControlling( const osg::Vec3f actPosArray, const osg::Quat actQuatArray );
 
 	/**
 	* @author Dávid Durčák
@@ -215,7 +217,8 @@ private:
 	* @param actPosArray[3] const array that describe position of marker by vector (x,y,z)
 	* @param actQuatArray[4] const array that describe orientation of marker by quaternion (w,x,y,z)
 	*/
-	void mouseControlling( const double actPosArray[3], const double actQuatArray[4] );
+	//void mouseControlling( const double actPosArray[3], const double actQuatArray[4] );
+	void mouseControlling( const osg::Vec3f actPosArray, const osg::Quat actQuatArray );
 
 	/**
 	* @author Dávid Durčák
@@ -229,7 +232,9 @@ private:
 	* @param position[3] array that describe position of marker by vector (x,y,z)
 	* @param quaternion[4] array that describe orientation of marker by quaternion (w,x,y,z)
 	*/
-	void computeCorQuatAndPos( const double position[3], const double rotation[4] );
+	//void computeCorQuatAndPos( const double position[3], const double rotation[4] );
+	void computeCorQuatAndPos( const osg::Vec3f position, const osg::Quat rotation );
+
 
 	/**
 	* @author Dávid Durčák
@@ -290,6 +295,11 @@ private:
 
 	OpenCV::CapVideo*	mCapVideo; // Cap video instanc, that managed camera and provides frames
 	Util::SizedQueue* boolQueue;
+
+	//JMA
+	ArControlClass* mArControlClass;
+	osg::Vec3d normalizePos( const osg::Vec3f actPosArray, const osg::Quat actQuatArray );//ArucoThread::
+
 
 
 };

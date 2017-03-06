@@ -34,7 +34,7 @@ class KinectThread : public QThread
 
 public:
 
-	KinectThread( QObject* parent=0 );
+	explicit KinectThread( QObject* parent=0 );
 
 	~KinectThread( void );
 

@@ -39,7 +39,7 @@ class Client : public QObject
 
 public:
 
-	Client( QObject* parent=0 );
+	explicit Client( QObject* parent=0 );
 
 	static Client* getInstance();
 

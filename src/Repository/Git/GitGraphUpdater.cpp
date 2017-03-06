@@ -477,12 +477,22 @@ void Repository::Git::GitGraphUpdater::addEdgesToGraph( QStringList list )
 		if ( !exist ) {
 			if ( ok ) {
 				// Ak sa uzol nenachadza v grafe, tak skonci dalsie spracovanie
-				ok = this->getActiveGraph()->findNodeByName( lNodeNameFrom );
+				if ( this->getActiveGraph()->findNodeByName( lNodeNameFrom ) != nullptr ) {
+					ok = true;
+				}
+				else {
+					ok = false;
+				}
 			}
 
 			if ( ok ) {
 				// Ak sa uzol nenachadza v grafe, tak skonci dalsie spracovanie
-				ok = this->getActiveGraph()->findNodeByName( lNodeNameTo );
+				if ( this->getActiveGraph()->findNodeByName( lNodeNameTo ) != nullptr ) {
+					ok = true;
+				}
+				else {
+					ok = false;
+				}
 			}
 
 			bool oriented =  false;
@@ -502,12 +512,22 @@ void Repository::Git::GitGraphUpdater::addEdgesToGraph( QStringList list )
 
 		if ( ok ) {
 			// Ak sa uzol nenachadza v grafe, tak skonci dalsie spracovanie
-			ok = this->getActiveGraph()->findNodeByName( this->getEvolutionGraph()->getFilePath() );
+			if ( this->getActiveGraph()->findNodeByName( this->getEvolutionGraph()->getFilePath() ) != nullptr ) {
+				ok = true;
+			}
+			else {
+				ok = false;
+			}
 		}
 
 		if ( ok ) {
 			// Ak sa uzol nenachadza v grafe, tak skonci dalsie spracovanie
-			ok = this->getActiveGraph()->findNodeByName( list.at( 0 ) );
+			if ( this->getActiveGraph()->findNodeByName( list.at( 0 ) ) != nullptr ) {
+				ok = true;
+			}
+			else {
+				ok = false;
+			}
 		}
 
 		bool oriented =  false;
@@ -531,7 +551,12 @@ void Repository::Git::GitGraphUpdater::addAuthorEdgesToGraph( QString authorName
 
 		if ( exist ) {
 			// Ak sa uzol k danemu suboru nachadza v grafe, tak je true, inak false.
-			exist = this->getActiveGraph()->findNodeByName( gitFile->getFilepath() );
+			if ( this->getActiveGraph()->findNodeByName( gitFile->getFilepath() ) != nullptr ) {
+				exist = true;
+			}
+			else {
+				exist = false;
+			}
 		}
 
 		// Ak sa cielovy uzol nachadza v grafe a v grafe neexistuje dana hrana

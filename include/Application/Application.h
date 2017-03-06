@@ -1,4 +1,7 @@
-﻿#pragma once
+﻿#ifndef APPLICATION_H
+#define APPLICATION_H
+
+#pragma once
 
 #include <QApplication>
 
@@ -6,7 +9,8 @@
 #include "Mouse3d/LibMouse3d/Unix/Mouse3dUnixDevice.h"
 #include "Mouse3d/LibMouse3d/Unix/ApplicationEmitter.h"
 #endif
-
+class Mouse3dUnixDevice;
+class ApplicationEmitter;
 namespace App {
 
 class Application : public QApplication
@@ -34,3 +38,5 @@ private:
 
 };
 } //App
+
+#endif // application_h

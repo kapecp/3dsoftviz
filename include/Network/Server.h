@@ -37,7 +37,7 @@ class Server : public QTcpServer
 	Q_OBJECT
 
 public:
-	Server( QObject* parent=0 );
+	explicit Server( QObject* parent=0 );
 
 	static Server* getInstance();
 
