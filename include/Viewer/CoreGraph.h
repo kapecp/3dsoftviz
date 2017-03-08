@@ -315,6 +315,7 @@ public:
 	//JMA
 	osg::Vec3f getGrafRotTransVec();
 
+
 public slots:
 
 	/**
@@ -493,7 +494,7 @@ private:
 	    *  \brief creates background from leap video
 	    *  \return osg::ref_ptr node
 	   */
-    osg::ref_ptr<osg::Node> createLeapBackground();
+	osg::ref_ptr<osg::Node> createLeapBackground();
 
 
 #ifdef OPENCV_FOUND
