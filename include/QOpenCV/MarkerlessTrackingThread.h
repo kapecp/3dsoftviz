@@ -2,8 +2,8 @@
 #define MARKERLESSTRACKINGTHREAD_H
 
 #include <QThread>
-
-#include "opencv2/core/mat.hpp"
+#include "opencv2/core/core.hpp"
+#include <opencv2/core/mat.hpp>
 
 namespace OpenCV {
 class CapVideo;
