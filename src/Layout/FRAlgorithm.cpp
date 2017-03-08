@@ -311,14 +311,14 @@ bool FRAlgorithm::iterate()
 		for ( int i = 0; i < graph->getNodes()->count(); ++i,++j ) {
 			// pre vsetky uzly..
 			k = graph->getNodes()->begin();
-            for ( int h = 0; h < graph->getNodes()->count(); ++h,++k ) { // pre vsetky uzly..
-                if ( !j.value()->equals( k.value() ) ) {
+			for ( int h = 0; h < graph->getNodes()->count(); ++h,++k ) { // pre vsetky uzly..
+				if ( !j.value()->equals( k.value() ) ) {
 					// odpudiva sila beznej velkosti
 
-                    //JMA ignore node cond
-                 //   if( !j.value()->isIgnoredByLayout() && !k.value()->isIgnoredByLayout() ){
-                        addRepulsive( j.value(), k.value(), 1 );
-                 //   }
+					//JMA ignore node cond
+					//   if( !j.value()->isIgnoredByLayout() && !k.value()->isIgnoredByLayout() ){
+					addRepulsive( j.value(), k.value(), 1 );
+					//   }
 				}
 			}
 		}
@@ -331,10 +331,10 @@ bool FRAlgorithm::iterate()
 			// pre vsetky hrany..
 			// pritazliva sila beznej velkosti
 
-            //JMA ignore node cond
-           // if( !j.value()->getSrcNode()->isIgnoredByLayout() && !j.value()->getDstNode()->isIgnoredByLayout() ){
-                addAttractive( j.value(), 1 );
-          //  }
+			//JMA ignore node cond
+			// if( !j.value()->getSrcNode()->isIgnoredByLayout() && !j.value()->getDstNode()->isIgnoredByLayout() ){
+			addAttractive( j.value(), 1 );
+			//  }
 		}
 	}
 	if ( state == PAUSED && stateEdgeBundling == PAUSED ) {
@@ -378,7 +378,7 @@ bool FRAlgorithm::iterate()
 		j = graph->getNodes()->begin();
 		for ( int i = 0; i < graph->getNodes()->count(); ++i,++j ) {
 			// pre vsetky uzly..
-            if ( !j.value()->isFixed() ) {
+			if ( !j.value()->isFixed() ) {
 				last = j.value()->targetPosition();
 				bool fo = applyForces( j.value() );
 				changed = changed || fo;
@@ -460,13 +460,13 @@ bool FRAlgorithm::applyForces( Data::Node* node )
 	}
 
 	// [GrafIT][.] using restrictions (modified and optimized for speed by Peter Sivak)
-    //JMA ignore cond
-    if( !node->isIgnoredByLayout() ){
-        node->setTargetPosition( node->targetPositionConstRef() + fv );   // Compute target position
-    }
+	//JMA ignore cond
+	if ( !node->isIgnoredByLayout() ) {
+		node->setTargetPosition( node->targetPositionConstRef() + fv );   // Compute target position
+	}
 
-    //node->setTargetPosition( node->targetPositionConstRef() + fv );   // Compute target position
-    graph->getRestrictionsManager().applyRestriction( *node );        // Compute restricted target position
+	//node->setTargetPosition( node->targetPositionConstRef() + fv );   // Compute target position
+	graph->getRestrictionsManager().applyRestriction( *node );        // Compute restricted target position
 
 	for ( edgeIt=node->getEdges()->begin(); edgeIt!=node->getEdges()->end(); ++edgeIt ) {
 		if ( ( *edgeIt )->isShared_X() ) {

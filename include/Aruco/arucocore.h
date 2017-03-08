@@ -38,7 +38,7 @@ public:
 		 * @param inputImage Image from cammera, where marker should be detected
 		 * @param[out] result model view matrix
 		 */
-    const QMatrix4x4 getDetectedMatrix(int markerId, cv::Mat inputImage );
+	const QMatrix4x4 getDetectedMatrix( int markerId, cv::Mat inputImage );
 
 	//jurik
 	/**
@@ -80,10 +80,10 @@ public:
 			 * @param markerNum  number of marker, that we want position and orientation for. MarkerNum is counted from 0
 			 * @param position[3] output array that will describe positio of marker by vector (x,y,z)
 			 * @param quaternion[4] output array that will describe orientation of marker by quaternion (w,x,y,z)
-             * @param[out] true if least markerNum of markers were found --JMA OLD
-             * @param[out] marker id if least markerNum of markers were found
+	         * @param[out] true if least markerNum of markers were found --JMA OLD
+	         * @param[out] marker id if least markerNum of markers were found
 			 */
-    int getPosAndQuat( unsigned int markerNum, double position[3], double quaternion[4] );
+	int getPosAndQuat( unsigned int markerNum, double position[3], double quaternion[4] );
 
 	/**
 		 * @author Autor:Dávid Durčák
@@ -97,26 +97,26 @@ public:
 		*/
 	cv::Mat getDetectedRectangleImage();
 
-    /**
-        * @author Autor:Juraj Marak
-        * @brief  set/get for base marker index
-        */
-    int getBaseMarkerIndex();
-    void setBaseMarkerIndex(int baseMarkerIndex);
+	/**
+	    * @author Autor:Juraj Marak
+	    * @brief  set/get for base marker index
+	    */
+	int getBaseMarkerIndex();
+	void setBaseMarkerIndex( int baseMarkerIndex );
 
 private:
-    /**
-         * @author Autor: Martina Tregerova
-         * @brief getMatrix Fills the field with information about marker position given from aruco.
+	/**
+	     * @author Autor: Martina Tregerova
+	     * @brief getMatrix Fills the field with information about marker position given from aruco.
 		 * @param modelviewmatrix double* the field that needs to be filled
 		 * @note The need to send a field will be changed, too.
 		 */
-    int getMatrix(int markerId, double* modelviewmatrix );
+	int getMatrix( int markerId, double* modelviewmatrix );
 	/**
 		 * @author Autor: Martina Tregerova
 		 * @brief updateImage updates the camera matrix with each update.
-         * @param Detected marker id,
-         *        ImputImage cv::Mat the camera matrix
+	     * @param Detected marker id,
+	     *        ImputImage cv::Mat the camera matrix
 		 * @note The need to send the image will be changed too.
 		 */
 	void updateImage( cv::Mat inputImage );
@@ -160,10 +160,10 @@ private:
 	 */
 	float					mMarkerSize;
 
-    /**
-     * @brief base marker index
-     */
-    int					mBaseMarkerIndex;
+	/**
+	 * @brief base marker index
+	 */
+	int					mBaseMarkerIndex;
 
 };
 } // end ArucoModul namespace

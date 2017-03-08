@@ -45,7 +45,7 @@ Na inštaláciu potrebujeme klonovať projekt `3DSoftViz <https://github.com/dom
 
 Postup inštalácie
 *****************
-**Uvedené programy neinštalovať do Program Files, PATH nesmie obsahovať medzeru!**
+**Uvedené programy neinštalovať do Program Files, PATH nesmie obsahovať medzeru! Idealne vsetky programy, kniznice, atd. dat do jedneho adresara.**
  #. Nainštalovať CMake. (Cesta je v dokumente označená ako *%CMAKE_DIR%*)
  #. Nainštalovať Qt (*%QT_DIR%*)
  #. Nainštalovať QtCreator do zložky Qt
@@ -97,6 +97,18 @@ Postup inštalácie
 
           Nainštalovaný SW
 
+ #. Otvorit subor environment.txt a upravit v nom cesty k programom a knizniciam, ktore sa nachadzaju na zaciatku suboru.
+	
+		.. _image_path_var:
+		.. figure::  \images\install_guide\update\PATH_POWERSHELL.png
+			:align:	center
+		
+			Pozadovane premenne, ktore treba nastavit
+			
+	#. Spustit powershell ako spravca .
+	#. Skopirovat do powershellu obsah celeho suboru.	
+	#. Vynechat pridavanie systemovych premennych cez RapidEE (nasledujuci krok) a vykonat len kontrolu, ci sa cesty spravne nastavili.
+ 
  #. Nainštalovať a otvoriť RapidEE, v ktorom sa vykonajú tieto zmeny **(ako správca!)**:
 
     #. do PATH pridať premenné:

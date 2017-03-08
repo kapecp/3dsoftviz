@@ -14,30 +14,31 @@ namespace ArucoModul {
 //concrete objects
 class ArControlObject : public QObject
 {
-    Q_OBJECT
+	Q_OBJECT
 
 public:
-    ArControlObject(int id, osg::Vec3f position );
-    void updatePosition( osg::Vec3f position );
-    bool isLost(){
-        return this->lost;
-    }
+	ArControlObject( int id, osg::Vec3f position );
+	void updatePosition( osg::Vec3f position );
+	bool isLost()
+	{
+		return this->lost;
+	}
 
 public slots:
-    void timerEvent();
+	void timerEvent();
 
 private:
-    int id;
-    qlonglong nodeToPick;
-    osg::Vec3f position;
-    bool focused;
-    bool lost;
+	int id;
+	qlonglong nodeToPick;
+	osg::Vec3f position;
+	bool focused;
+	bool lost;
 
-    QTimer* timer;
+	QTimer* timer;
 
-    osg::ref_ptr<Data::Node> focusedNode;
+	osg::ref_ptr<Data::Node> focusedNode;
 
-    bool chckIfNearPosition( osg::Vec3f target );
+	bool chckIfNearPosition( osg::Vec3f target );
 
 };
 
@@ -47,14 +48,16 @@ class ArControlClass : public QObject
 {
 
 public:
-    ArControlClass();
-    void updateObjectPositionAruco(qlonglong object_id, QMatrix4x4 modelViewMatrix , bool reverse);
+	ArControlClass();
+	void updateObjectPositionAruco( qlonglong object_id, QMatrix4x4 modelViewMatrix , bool reverse );
 
 private:
-    QOSG::ViewerQT* viewer;
-    Vwr::CoreGraph* coreGraph;
 
-    QMap<qlonglong, ArucoModul::ArControlObject*> controlObjects;
+	QOSG::ViewerQT* viewer;
+
+	Vwr::CoreGraph* coreGraph;
+
+	QMap<qlonglong, ArucoModul::ArControlObject*> controlObjects;
 };
 
 } // end ArucoModul namespace

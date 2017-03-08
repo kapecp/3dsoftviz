@@ -63,7 +63,6 @@ void LoadGraphWindow::createGraphTable()
 	Manager::GraphManager* manager = Manager::GraphManager::getInstance();
 	Model::DB* db = manager->getDB();
 	bool error = false;
-	qlonglong id;
 	int graphsCount,row;
 	QList<qlonglong> nodes;
 	QList<qlonglong> edges;
@@ -101,7 +100,7 @@ void LoadGraphWindow::createGraphTable()
 	qDebug() << "[QOSG::LoadGraphWindow::createGraphTable] total number of layouts in DB: " << layouts.count();
 
 	for ( iterGraph = graphs.begin(), row=0; iterGraph != graphs.end(); ++iterGraph, row++ ) {
-		id = iterGraph.key();
+		qlonglong id = iterGraph.key();
 
 		name = graphs.value( id )->getName();
 
@@ -123,10 +122,8 @@ void LoadGraphWindow::createGraphTable()
 
 void LoadGraphWindow::loadGraph()
 {
-	qlonglong graphID;
-
 	if ( graphsTable->rowCount() > 0 ) {
-		graphID = graphsTable->item( graphsTable->currentRow(), 0 )->text().toLongLong();
+		qlonglong graphID = graphsTable->item( graphsTable->currentRow(), 0 )->text().toLongLong();
 
 		qDebug() << "[QOSG::LoadGraphWindow::loadGraph] Selected graph ID: " << graphID;
 
@@ -142,13 +139,12 @@ void LoadGraphWindow::loadGraph()
 
 void LoadGraphWindow::renameGraph()
 {
-	qlonglong graphID;
 	Manager::GraphManager* manager = Manager::GraphManager::getInstance();
 	Model::DB* db = manager->getDB();
 	bool ok;
 
 	if ( graphsTable->rowCount() > 0 ) {
-		graphID = graphsTable->item( graphsTable->currentRow(), 0 )->text().toLongLong();
+		qlonglong graphID = graphsTable->item( graphsTable->currentRow(), 0 )->text().toLongLong();
 
 		qDebug() << "[QOSG::LoadGraphWindow::renameGraph] Selected graph ID: " << graphID;
 
@@ -171,12 +167,11 @@ void LoadGraphWindow::renameGraph()
 
 void LoadGraphWindow::removeGraph()
 {
-	qlonglong graphID;
 	Manager::GraphManager* manager = Manager::GraphManager::getInstance();
 	Model::DB* db = manager->getDB();
 
 	if ( graphsTable->rowCount() > 0 ) {
-		graphID = graphsTable->item( graphsTable->currentRow(), 0 )->text().toLongLong();
+		qlonglong graphID = graphsTable->item( graphsTable->currentRow(), 0 )->text().toLongLong();
 
 		qDebug() << "[QOSG::LoadGraphWindow::removeGraph] Selected graph ID: " << graphID;
 
