@@ -26,7 +26,7 @@ $pathString="${pathString};$qtCreator"
 $pathString="${pathString};${osq}\build\bin"
 $pathString="${pathString};${osq}\ThirdParty\VC12\x86\bin"
 # Open cv
-$pathString="${pathString};${opencv}"
+$pathString="${pathString};${opencv}\build\x86\vc12\bin"
 
 #Vytvaranie premmennych-------------------------------------------------------------------
 # CMAKE_INCLUDE_PATH
