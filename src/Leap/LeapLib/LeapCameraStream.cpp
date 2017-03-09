@@ -18,10 +18,8 @@ void Leap::LeapCameraStream::updateBackgroundImage( unsigned char* buffer )
 {
     HandTrackerAdapter *adapter = new HandTrackerAdapter();
     cv::Mat mat = adapter->convertBuffer(buffer);
-//    cv::Mat mat2 = mat.clone();
-    buffer = mat.data;
-	setImage( 640, 240, 1, GL_INTENSITY8, GL_LUMINANCE, GL_UNSIGNED_BYTE,
-              buffer,osg::Image::NO_DELETE, 1 );
+    setImage( 640, 240, 1, GL_INTENSITY8, GL_LUMINANCE, GL_UNSIGNED_BYTE,
+              mat.data,osg::Image::NO_DELETE, 1 );
 }
 
 
