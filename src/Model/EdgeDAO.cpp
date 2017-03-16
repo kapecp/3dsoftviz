@@ -468,7 +468,6 @@ QMap<qlonglong, osg::Vec4f> Model::EdgeDAO::getColors( QSqlDatabase* conn, bool*
 	*error = FALSE;
 	bool error2 = false;
 	osg::Vec4f color;
-	qlonglong id;
 	QMap<qlonglong, osg::Vec4f> colors;
 
 	QMap<qlonglong, QString> edgeColorR;
@@ -507,7 +506,8 @@ QMap<qlonglong, osg::Vec4f> Model::EdgeDAO::getColors( QSqlDatabase* conn, bool*
 
 	//nacitavame ulozene farby v databaze
 	for ( iter_r = edgeColorR.begin(); iter_r != edgeColorR.end(); ++iter_r ) {
-		id = iter_r.key();
+
+		qlonglong id = iter_r.key();
 		iter_g = edgeColorG.find( id );
 		iter_b = edgeColorB.find( id );
 		iter_a = edgeColorA.find( id );
@@ -523,7 +523,6 @@ QMap<qlonglong, float> Model::EdgeDAO::getScales( QSqlDatabase* conn, bool* erro
 {
 	*error = FALSE;
 	bool error2 = false;
-	qlonglong id;
 	QMap<qlonglong, float> scales;
 
 	QMap<qlonglong, QString> edgeScale;
@@ -538,7 +537,7 @@ QMap<qlonglong, float> Model::EdgeDAO::getScales( QSqlDatabase* conn, bool* erro
 
 	//nacitavame z databazy velkosti jednotlivych prvkov
 	for ( iter = edgeScale.begin(); iter != edgeScale.end(); ++iter ) {
-		id = iter.key();
+		qlonglong id = iter.key();
 
 		float scale = iter.value().toFloat();
 		scales.insert( id, scale );
