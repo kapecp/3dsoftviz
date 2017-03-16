@@ -8,6 +8,7 @@
 
 #include <opencv2/imgproc/imgproc.hpp>
 
+#include "OpenCV/MarkerlessTracker.h"
 #include "OpenCV/CapVideo.h"
 #include <cv.h>
 
@@ -24,6 +25,7 @@ ArucoThread::ArucoThread( QObject* parent )
 	mUpdCorPar		= false;
 	mSendImgEnabled	= true;
 	mSendBackgrImgEnabled = false;
+	mMarkerlessTrackerEnabled = false;
 	//JMA
 	mMultiMarkerEnabled = true;
 	mRatioCamCoef	= 0;
@@ -35,6 +37,7 @@ ArucoThread::ArucoThread( QObject* parent )
 
 	//JMA
 	mArControlClass = new ArControlClass();
+	mMarkerlessTracker = new OpenCV::MarkerlessTracker();
 }
 
 ArucoThread::~ArucoThread( void )
@@ -213,7 +216,9 @@ void ArucoThread::run()
 				}
 				*/
 			}
-
+			if ( mMarkerlessTrackerEnabled ){
+				mMarkerlessTracker->track(frame);
+			}
 			imagesSending( aCore, frame );
 
 			if ( ! mCancel ) {
