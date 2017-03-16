@@ -1,14 +1,13 @@
-# Cesty---------------------------------------------------------------------------------
-# cesta k projektu
-$timak = "C:\Timak"
-$osq = "${timak}\OpenSceneGraph"
-$opencv = "${timak}\opencv-2.4.10"
-$boost = "${timak}\boost_1_57_0"
-$qtCreator = "${timak}\qt\qtcreator-4.2.1"
-$openNi2 = "${timak}\OpenNI2"
-$nite2 = "${timak}\NiTE2"
+# Rucne nastavenie ciest---------------------------------------------------------------------------------
 
-
+$timak = "C:\Timak" # cesta k projektu 
+$osq = "${timak}\OpenSceneGraph" # doplnit cestu k OpenSceneGraph
+$opencv = "${timak}\opencv-2.4.10" #doplnit cestu k OpenCv
+$boost = "${timak}\boost_1_57_0" #doplnit cestu k boost knizniciam
+$qtCreator = "cesta do QT creator" # doplnit cestu ku Qt creatoru 
+$openNi2 = "${timak}\OpenNI2"  # doplnit cestu k OpeNI2
+$nite2 = "${timak}\NiTE2" # doplnit cestu k NiTE2
+#koniec rucneho nastavenia
 
 
 # Pridavanie do PATH--------------------------------------------------------------------
@@ -16,8 +15,6 @@ $pathString = ""
 $cmake_include_path = ""
 $cmake_library_path = ""
 
-# Cmake
-$pathString="${timak}\Cmake\bin"
 # Qt
 $pathString="${pathString};${timak}\Qt\bin"
 # Qt Creator
