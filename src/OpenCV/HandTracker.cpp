@@ -50,17 +50,18 @@ cv::Mat OpenCV::HandTracker::findHand( cv::Mat mask )
     int threshold_down = 50;
     int threshold_up = 150;
 
-    threshold(tempMask, tempMask, threshold_down, threshold_up, cv::THRESH_BINARY);
-    GaussianBlur(tempMask, tempMask, cv::Size(3, 1), 2.5, 2.5);
+    threshold(tempMask, tempMask, 30, threshold_up, cv::THRESH_BINARY);
+    GaussianBlur(tempMask, tempMask, cv::Size(3, 3), 2.5, 2.5);
 
     Canny(tempMask,tempMask,threshold_down, threshold_up,3);
+    threshold(tempMask, tempMask, 30, threshold_up, cv::THRESH_BINARY);
 
     findContours( tempMask,contours, hierarchy, CV_RETR_EXTERNAL, cv::CHAIN_APPROX_SIMPLE, cv::Point() );
 
     for(int i=0;i<contours.size();i++)
     {
                 //Ignore all small insignificant areas
-                if(contourArea(contours[i])>=5000)
+                if(contourArea(contours[i])>=1500)
                 {
                     LOG (INFO) << "Size of area: " + std::to_string(contourArea(contours[i]));
                     //Draw contour
