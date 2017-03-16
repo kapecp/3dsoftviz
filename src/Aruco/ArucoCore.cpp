@@ -1,4 +1,4 @@
-#include "Aruco/arucocore.h"
+#include "Aruco/ArucoCore.h"
 #include "Util/ApplicationConfig.h"
 #include <QDebug>
 #include "opencv2/imgproc/imgproc.hpp"

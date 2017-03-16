@@ -1,5 +1,5 @@
-#include "Aruco/arucothread.h"
-#include "Aruco/arucocore.h"
+#include "Aruco/ArucoThread.h"
+#include "Aruco/ArucoCore.h"
 #include "Aruco/arControlObject.h"
 #include "Util/ApplicationConfig.h"
 
