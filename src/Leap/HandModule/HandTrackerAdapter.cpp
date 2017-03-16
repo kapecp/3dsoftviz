@@ -12,11 +12,9 @@ Leap::HandTrackerAdapter::~HandTrackerAdapter()
 
 }
 
-cv::Mat Leap::HandTrackerAdapter::convertBuffer( unsigned char* buffer )
+void Leap::HandTrackerAdapter::trackHands( unsigned char* buffer, float depth)
 {
     cv::Mat matrix(240, 640, CV_8UC1, &buffer[0]);
     OpenCV::HandTracker *tracker = new OpenCV::HandTracker();
-    tracker->findHand(matrix);
-
-    return matrix;
+    tracker->findHand(matrix, depth);
 }

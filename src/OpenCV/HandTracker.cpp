@@ -39,7 +39,7 @@ std::pair<cv::Point,double> OpenCV::HandTracker::circleFromPoints(cv::Point p1, 
 
 
 // find contours of segmented hand and count fingers
-cv::Mat OpenCV::HandTracker::findHand( cv::Mat mask )
+cv::Mat OpenCV::HandTracker::findHand( cv::Mat mask, float depth )
 {
     cv::vector<cv::vector<cv::Point> > contours;
     cv::vector<cv::Vec4i> hierarchy;

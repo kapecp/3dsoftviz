@@ -19,7 +19,7 @@ public:
     ~HandTracker();
     double dist(cv::Point x,cv::Point y);
     std::pair<cv::Point,double> circleFromPoints(cv::Point p1, cv::Point p2, cv::Point p3);
-    cv::Mat findHand( cv::Mat mask );
+    cv::Mat findHand( cv::Mat mask, float depth);
 };
 }
 

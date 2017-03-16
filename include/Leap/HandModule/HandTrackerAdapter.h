@@ -16,8 +16,8 @@ public:
 
     ~HandTrackerAdapter();
 
-    // converts buffer data to its cv::Mat representation
-    cv::Mat convertBuffer( unsigned char* buffer );
+    // uses opencv to find hand in image buffer
+    void trackHands( unsigned char* buffer,float depth);
 
 };
 }

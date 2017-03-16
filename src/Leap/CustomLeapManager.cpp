@@ -5,6 +5,7 @@
 #include "Layout/LayoutThread.h"
 #include "Layout/FRAlgorithm.h"
 #include "HandModule/HandPalm.h"
+#include "HandModule/HandTrackerAdapter.h"
 
 #include <easylogging++.h>
 #include <math.h>
@@ -366,8 +367,15 @@ void Leap::CustomLeapManager::updateInterFingerWristBone( osg::Group*  interFing
 
 }
 
-int Leap::CustomLeapManager::updateCoreGraphBackground( const unsigned char* buffer )
+int Leap::CustomLeapManager::updateCoreGraphBackground( const unsigned char* buffer , float depth)
 {
-	this->coreGraph->updateBackgroundStream( ( unsigned char* )buffer );
+    Leap::HandTrackerAdapter *adapter = new Leap::HandTrackerAdapter();
+    adapter->trackHands(( unsigned char* )buffer, depth);
+
+    this->coreGraph->updateBackgroundStream( ( unsigned char* )buffer );
 	return 1;
+}
+
+float Leap::CustomLeapManager::getHandsDepthInformation(float leftHandPosition, float rightHandPosition) {
+    return leftHandPosition > rightHandPosition ? leftHandPosition : rightHandPosition;
 }

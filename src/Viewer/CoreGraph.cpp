@@ -739,11 +739,11 @@ int CoreGraph::updateBackgroundStream( unsigned char* buffer )
 //	LOG( INFO ) << "CoreGraph::updateBackgroundStream - updating background";
 	if ( leapCameraStream != nullptr ) {
 		leapCameraStream->dirty();
-		leapCameraStream->updateBackgroundImage( buffer );
+        leapCameraStream->updateBackgroundImage( buffer);
 	}
 	return 1;
 
-	// TODO onImages vyskusat pridat, uprava obrazkov z leapu cez shader correction?, returny success/fail
+    // TODO return success/fail
 }
 
 
