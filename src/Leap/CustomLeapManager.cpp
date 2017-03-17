@@ -17,7 +17,7 @@ Leap::CustomLeapManager::CustomLeapManager( Vwr::CameraManipulator* cameraManipu
 		Vwr::CoreGraph* coreGraph , osg::ref_ptr<osg::Group> handsGroup )
 	:cameraManipulator( cameraManipulator ), layout( layout ), coreGraph( coreGraph ), handsGroup( handsGroup )
 {
-	this->coreGraph->getCamera()->getViewMatrixAsLookAt( this->eye, this->center, this->up );
+    this->cameraManipulator->rotateForLeapBackgroundSync();
 	arMode = false;
 	//init handPalms here
 	if ( this->handsGroup != nullptr ) {
