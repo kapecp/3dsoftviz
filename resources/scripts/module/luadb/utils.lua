@@ -137,22 +137,22 @@ local function splitAndGetFirst(str, pat)
   return splitted[1]
 end
 
-
 local function deepCopy(t)
-    if type(t) ~= "table" then 
-      return t 
-    end
-    local meta = getmetatable(t)
-    local target = {}
-    for k, v in pairs(t) do
-        if type(v) == "table" then
-            target[k] = deepCopy(v)
-        else
-            target[k] = v
+    local lookup_table = {}
+    local function _copy(t)
+        if type(t) ~= "table" then
+          return t
+        elseif lookup_table[t] then
+            return lookup_table[t]
         end
+        local new_table = {}
+        lookup_table[t] = new_table
+        for index, value in pairs(t) do
+            new_table[_copy(index)] = _copy(value)
+        end
+        return setmetatable(new_table, getmetatable(t))
     end
-    setmetatable(target, meta)
-    return target
+    return _copy(t)
 end
 
 local function shallowCopy(t)

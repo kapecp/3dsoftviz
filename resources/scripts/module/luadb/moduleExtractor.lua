@@ -6,208 +6,220 @@
 local hypergraph    = require "luadb.hypergraph"
 local utils         = require "luadb.utils"
 local filestree     = require "luadb.extraction.filestree"
+local functioncalls = require "luadb.extraction.functioncalls"
 local modules       = require "luadb.extraction.modules"
 local lfs           = require "lfs"
 local logger        = utils.logger
 
+-----------------------------------------------
+-- Helper functions
+-----------------------------------------------
+local function getFunctionWithName(functionsList, name)
+  for i,functionNode in pairs(functionsList) do
+      if functionNode.data.name == name then return functionNode end
+  end
+  return nil
+end
 
+local function registerGlobalModule(graph, moduleName, moduleFunctionCall)
+  graph.globalModuleNodes = graph.globalModuleNodes or {} 
+  local globalModuleNodes = graph.globalModuleNodes
+  
+  -- add global module node
+  if not globalModuleNodes[moduleName] then
+    local newGlobalModuleNode = hypergraph.node.new()
+    newGlobalModuleNode.meta  = newGlobalModuleNode.meta or {}
+    newGlobalModuleNode.functionNodes = newGlobalModuleNode.functionNodes or {}
+    newGlobalModuleNode.data.name = "module " .. moduleName
+    newGlobalModuleNode.data.type = "module"
+
+    globalModuleNodes = globalModuleNodes or {}
+    globalModuleNodes[moduleName] = newGlobalModuleNode
+    graph:addNode(newGlobalModuleNode) 
+  end
+  
+  -- add global module node function
+  local moduleNode = globalModuleNodes[moduleName]
+  local functionNode = getFunctionWithName(moduleNode.functionNodes, moduleFunctionCall)
+  if not functionNode then
+    local newFunctionNode = hypergraph.node.new()
+    newFunctionNode.meta  = newFunctionNode.meta or {}
+    newFunctionNode.data.name = moduleFunctionCall
+    newFunctionNode.data.type = "global function"
+    table.insert(moduleNode.functionNodes, newFunctionNode)
+    functionNode = newFunctionNode
+    graph:addNode(newFunctionNode)
+  end
+  
+  -- connect global module node with his function node
+  local connection = hypergraph.edge.new()
+  connection.label = "declares"
+  connection:addSource(globalModuleNodes[moduleName])
+  connection:addTarget(functionNode)
+  connection:setAsOriented()
+  graph:addEdge(connection)
+end
+
+local function getGlobalModuleFunctions(graph, moduleName)
+  local globalNodes = graph.globalModuleNodes or {}
+  if globalNodes[moduleName] and globalNodes[moduleName].functionNodes then
+    return globalNodes[moduleName].functionNodes
+  else
+    return {}  
+  end
+end
+
+
+-----------------------------------------------
+-- Main functions
+-----------------------------------------------
 local function getFilesTree(graph, path)
   filestree.extract(path, graph)
 end
 
-
-local function getModules(graph, luaFileNodes)  
+local function getModuleFromFile(graph)
+  local luaFileNodes = graph.luaFileNodes
   for i,luaFileNode in pairs(luaFileNodes) do
-    -- for every lua file do the following
-    local modules = modules.extract(luaFileNode.data.path, graph)
-    --luaFileNode.moduleNodes = modules.nodes //no need for now
-    --luaFileNode.moduleCalls = modules.edges //no need for now
+    local moduleName = utils.splitAndGetFirst(luaFileNode.data.name, "%.")
     
-    -- connect all variables to file node
-    for _,moduleNode in pairs(modules.nodes) do
-      if moduleNode.data.type == "variable" then
-        local connection = hypergraph.edge.new()
-        connection.label = "InFile"
-        connection:addSource(luaFileNode)
-        connection:addTarget(moduleNode)
-        connection:setAsOriented()
-        graph:addEdge(connection)
-      end
-    end    
-
-  end
-  --debug.Save("graph", graph)
-end
-
-local function mergeModuleMetrics(metrics1, metrics2)
-  local tempTable = utils.shallowCopy(metrics1)
-  for key,value in pairs(metrics2) do 
-    if tempTable[key] == nil then
-      tempTable[key] = value    
-    elseif type(metrics1[key]) == "number" then
-      tempTable[key] = tempTable[key] + value
-    end
-  end
-  return tempTable
-end
-
-
-local function mergeModules(graph)  
-  local addedNodeIds = {}
-  for i,node1 in pairs(graph.nodes) do
-    --get only module types
-    if node1.data.type == "module" then
-      for j,node2 in pairs(graph.nodes) do
-        local haveToAdd = false;
-        -- dont compare the same nodes
-        if i < j and node2.data.type == "module" then
-          --print("i = "..i)
-          --print("j = "..j)
-          if node2.data.modulePath == node1.data.modulePath then
-            --duplicate found can start merging
-            print("found module duplicate = ".. node1.data.modulePath)
-            
-            local mergedModule = {}
-                        
-            local sameModules = graph:findNodeByType("mergedModule")
-
-            --search through graph if partialy mergedModule exists
-            local found = false
-            for _,node in pairs(sameModules) do
-              assert(node.data.type == "mergedModule")
-              if node.data.modulePath == node1.data.modulePath then
-                mergedModule = graph:findNodeById(node.id)
-                found = true
-                break                
-              end
-            end
-            
-            if not found then
-              print("we have to add it")
-              mergedModule = hypergraph.node.new()            
-              mergedModule.data = utils.shallowCopy(node1.data)
-              --print("i = " .. i .. ", j = " .. j)
-              --print("Before: " .. node1.data.name)
-              mergedModule.data.type = "mergedModule"
-              mergedModule.data.name = "merged_" .. mergedModule.data.name
-              --print("After: " .. node1.data.name)
-              --there were no mergedModules -> create new one                
-              haveToAdd = true
-              table.insert(addedNodeIds, node1.id)
-              graph:addNode(mergedModule) 
-            end
-            
-            --search through all edges in graph
-            for key,edge in pairs(graph.edges) do
-              local connection = hypergraph.edge.new()
-              
-              if edge.to[1].id == node1.id then
-                connection.label = "requireCallMerged"
-                connection:addSource(edge.from[1])
-                connection:addTarget(mergedModule)
-                connection:setAsOriented()
-                graph:addEdge(connection)
-                break
-              end              
-            end
-            
-            --search through all edges in graph
-            for key,edge in pairs(graph.edges) do
-              local connection = hypergraph.edge.new()
-              
-              if edge.to[1].id == node2.id then
-                connection.label = "requireCallMerged"
-                connection:addSource(edge.from[1])
-                connection:addTarget(mergedModule)
-                connection:setAsOriented()
-                graph:addEdge(connection)
-                break
-              end              
-            end
-            
-            -- check if node was already merged
-            local alreadyAdded = false
-            for _,id in pairs(addedNodeIds) do
-              if id == node2.id then
-                alreadyAdded = true
-                break                
-              end
-            end
-            
-            -- if not -> merge
-            if not alreadyAdded then              
-              --merge node2 and node1 metrics into mergedModule
-              mergedModule.data.metrics = mergeModuleMetrics(mergedModule.data.metrics, node2.data.metrics)
-              table.insert(addedNodeIds, node2.id)
-            end
-          end
-        end
-      end
-    end
-  end
-end
-
-local function connectModuleImplementations(graph)
-  for i,moduleNode in pairs(graph.nodes) do
-    --get only module types for i cycle
-    if moduleNode.data.type == "module" then
-      for j,fileNode in pairs(graph.nodes) do
-        --get only file types for j cycle
-        if fileNode.data.type == "file" then
-          local fileName = utils.splitAndGetFirst(fileNode.data.name, "%.")          
-          local moduleName = moduleNode.data.name
-          
-          --if they are the same, connect them
-          if fileName == moduleName then
-            local connection = hypergraph.edge.new()
-            connection.label = "implements"
-            connection:addSource(fileNode)
-            connection:addTarget(moduleNode)
-            connection:setAsOriented()
-            graph:addEdge(connection)
-          end
-        end
-      end
-    end
-  end
-end
-
---to do
-local function mergeUnassignedVariables(graph)
-end
-
-local function connectModuleInterfaces(graph)
-  local interfaces = graph:findNodeByType('interface')
-  --newNode.data.metrics.filePath
-  local modules = graph:findNodeByType('module')
-  
-  --local fileName = utils.splitAndGetFirst(fileNode.data.name, "%.")          
-  --local moduleName = moduleNode.data.name
-  
-  for _,interface in pairs(interfaces) do
-    -- get from fullpath only filename without extension
-    local interfacePath = utils.splitAndGetLast(interface.data.metrics.filePath, "%/")    
-    interfacePath = utils.splitAndGetFirst(interfacePath, "%.")
+    local newModuleNode = hypergraph.node.new()
+    newModuleNode.meta  = luaFileNode.meta or {}
+    newModuleNode.data.name = "module " .. moduleName    --scanner.lua
+    newModuleNode.data.type = "module"
     
-    for _,mod in pairs(modules) do
-      local moduleName = mod.data.name
-      if interfacePath == moduleName then
-        local connection = hypergraph.edge.new()
-        connection.label = "provides"
-        connection:addSource(mod)
-        connection:addTarget(interface)
-        connection:setAsOriented()        
-        graph:addEdge(connection)
-        
-        interface.data.metrics.filePath = nil
-      end      
-    end        
+    graph:addNode(newModuleNode)
+    
+    graph.globalModuleNodes = graph.globalModuleNodes or {} 
+    local globalModuleNodes = graph.globalModuleNodes
+    globalModuleNodes[moduleName] = newModuleNode
+    
+    -- connect module node with his file node
+    local connection = hypergraph.edge.new()
+    connection.label = "implements"
+    connection:addSource(luaFileNode)
+    connection:addTarget(globalModuleNodes[moduleName])
+    connection:setAsOriented()
+    graph:addEdge(connection)    
+  end  
+end
+
+local function getAssignsAndReturnValues(graph)
+  
+end
+
+
+local function getFunctionCalls(graph)
+  local luaFileNodes = graph.luaFileNodes
+  graph.globalModuleNodes = graph.globalModuleNodes or {} 
+  local globalModuleNodes = graph.globalModuleNodes
+      
+  for i,luaFileNode in pairs(luaFileNodes) do
+    local functionCalls = functioncalls.extract(luaFileNode.data.path, graph)
+    luaFileNode.functionNodes = functionCalls.nodes
+    luaFileNode.functionCalls = functionCalls.edges
+    
+    local moduleName = utils.splitAndGetFirst(luaFileNode.data.name, "%.")
+    
+    -- connect all function nodes to file node
+    for j,functionNode in pairs(luaFileNode.functionNodes) do
+      local connection = hypergraph.edge.new()
+      connection.label = "declares"
+      connection:addSource(globalModuleNodes[moduleName])
+      connection:addTarget(functionNode)
+      connection:setAsOriented()
+      graph:addEdge(connection)
+    end
+    
+    -- connect all root function calls to module file node
+    for k,functionCallEdge in pairs(luaFileNode.functionCalls) do
+      if utils.isEmpty(functionCallEdge.from) then
+      functionCallEdge.label = "calls"
+      functionCallEdge:addSource(globalModuleNodes[moduleName])
+      end
+    end
   end
 end
+
+local function connectModuleCalls(graph)
+  local moduleCalls = graph.moduleCalls or {}
+  local globalCalls = graph.globalCalls or {}
+  local luaFileNodes = graph.luaFileNodes or {}
+  
+  for moduleFunctionCall,edges in pairs(moduleCalls) do
+    
+    local functionNodes = {}
+    local moduleName = edges[1].meta.calledFunctionModule
+    local modulePath = edges[1].meta.calledFunctionModulePath
+    
+    -- get all function nodes for searched module file
+    for i,luaFileNode in pairs(luaFileNodes) do
+      if luaFileNode.data.path:find(modulePath) and getFunctionWithName(luaFileNode.functionNodes, moduleFunctionCall) ~= nil then 
+        functionNodes = luaFileNode.functionNodes
+      end
+    end
+    
+    -- found global module usage
+    if utils.isEmpty(functionNodes) then
+      registerGlobalModule(graph, moduleName, moduleFunctionCall)
+      functionNodes = getGlobalModuleFunctions(graph, moduleName)
+    end
+    
+    -- assign target node to module function call edge
+    local functionNode = getFunctionWithName(functionNodes, moduleFunctionCall)
+    if functionNode then
+      for j,moduleFunctionCallEdge in pairs(edges) do
+        -- add target connection for each module function call
+        moduleFunctionCallEdge:addTarget(functionNode)
+      end
+    end
+    
+  end
+end
+
+local function assignGlobalCalls(graph)
+  local globalCalls = graph.globalCalls or {}
+  
+  for globalFunctionCall,edges in pairs(globalCalls) do
+    local functionNode = nil
+    local parts = utils.split(globalFunctionCall, "%.")
+    if table.getn(parts) == 2 then
+      local moduleName = parts[1]
+      local moduleCall = parts[2]
+      registerGlobalModule(graph, moduleName, moduleCall)
+      local functionNodes = getGlobalModuleFunctions(graph, moduleName)
+      functionNode = getFunctionWithName(functionNodes, moduleCall)
+    else
+      local newGlobalFunctionNode = hypergraph.node.new()
+      newGlobalFunctionNode.meta  = newGlobalFunctionNode.meta or {}
+      newGlobalFunctionNode.data.name = globalFunctionCall
+      newGlobalFunctionNode.data.type = "global function"
+      graph:addNode(newGlobalFunctionNode)
+      functionNode = newGlobalFunctionNode
+    end
+    
+    for i,globalFunctionCallEdge in pairs(edges) do
+      -- add target connection for each global function call
+      globalFunctionCallEdge:addTarget(functionNode)
+    end
+    
+  end
+end
+
+local function getAssignsAndReturnValues(graph)
+  local luaFileNodes = graph.luaFileNodes
+  for i,luaFileNode in pairs(luaFileNodes) do
+    local extractedNodes = modules.extract(luaFileNode, graph)
+  end
+  
+end
+
   
 
 local function clearTmpVars(graph)
+  graph.globalCalls = nil
+  graph.moduleCalls = nil
   graph.luaFileNodes = nil
+  graph.globalModuleNodes = nil
 end
 
 -----------------------------------------------
@@ -219,22 +231,20 @@ local function extract(sourcePath)
   assert(not utils.isDirEmpty(sourcePath), "directory is empty")
   
   local label = "ExtractionGraph"
-  local description = "hierarchical function calls graph"
+  local description = "hierarchical hybrid graph"
   local graph = hypergraph.graph.new({ description =  description, label = label })
   local sourceDirectory = sourcePath or lfs.currentdir()
   
-  --get lua files in dir recursively and save as graph.luaFileNodes[]
   getFilesTree(graph, sourceDirectory)
+  
+  getModuleFromFile(graph)
+  
+  getFunctionCalls(graph, graph.luaFileNodes)
+  connectModuleCalls(graph)
+  assignGlobalCalls(graph)
+  
+  getAssignsAndReturnValues(graph)
     
-  getModules(graph, graph.luaFileNodes)
-  connectModuleImplementations(graph)
-  --mergeUnassignedVariables(graph)
-  --mergeModules(graph)
-  connectModuleInterfaces(graph)
-  
-  --connectModuleCalls(graph)
-  --assignGlobalCalls(graph)
-  
   clearTmpVars(graph)
   return graph
 end

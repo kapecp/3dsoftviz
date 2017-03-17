@@ -30,7 +30,7 @@ local function extractFilesTree(graph, path, parent)
     if file ~= "." and file ~= ".." and not utils.isHidden(file) then
       local fullPath = path..'/'..file
       local attr = lfs.attributes (fullPath)
-      assert (type(attr) == "table")
+      assert(type(attr) == "table")
       
       -- new node
       local newNode = hypergraph.node.new()
@@ -51,7 +51,7 @@ local function extractFilesTree(graph, path, parent)
       
       -- new edge
       local newEdge = hypergraph.edge.new()
-      newEdge.label = "Subfile"
+      newEdge.label = "contains"
       newEdge:addSource(parent)
       newEdge:addTarget(newNode)
       newEdge:setAsOriented()
