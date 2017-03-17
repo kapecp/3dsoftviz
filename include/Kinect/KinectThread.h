@@ -121,6 +121,12 @@ public slots:
 	void setSpeedKinect( double set );
 
 	/**
+	 * @brief Perform markerless tracking on image (true/false)
+	 * @param set
+	 */
+	void setMarkerlessTracking( bool set );
+
+	/**
 	 * @brief inicialize openni and nite for handtracking and add device
 	 */
 	void inicializeKinect();
@@ -151,6 +157,11 @@ private:
 	 * @brief status for sending image and processing
 	 */
 	bool mSetImageEnable;
+
+	/**
+	 * @brief flag for enabling markerless tracking
+	 */
+	bool mMarkerlessTrackingEnabled;
 
 	/**
 	 * @brief status of OpenNI device

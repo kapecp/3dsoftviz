@@ -206,6 +206,12 @@ void OpenCV::OpenCVCore::createConnectionKinect()
 					  mThrKinect,
 					  SLOT( setSpeedKinect( double ) ) );
 
+	//enable/disable markerless tracking
+	QObject::connect( mOpencvWindow,
+					  SIGNAL( setKinectMarkerlessDetection( bool ) ),
+					  mThrKinect,
+					  SLOT( setMarkerlessTracking( bool ) ) );
+
 	//edit for speed movement
 	QObject::connect( mOpencvWindow,
 					  SIGNAL( inicializeKinect() ),
@@ -359,6 +365,10 @@ void OpenCV::OpenCVCore::createConnectionAruco()
 					  SIGNAL( setMultiMarker( bool ) ),
 					  mThrAruco,
 					  SLOT( setMultiMarker( bool ) ) );
+	QObject::connect( mOpencvWindow,
+					  SIGNAL( setCameraMarkerlessDetection( bool ) ),
+					  mThrAruco,
+					  SLOT( setMarkerlessTracking( bool ) ) );
 
 	// aruco mouse Controll
 	QObject::connect( mOpencvWindow->getInterchangeMarkersPB(),

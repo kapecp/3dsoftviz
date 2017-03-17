@@ -25,7 +25,7 @@ ArucoThread::ArucoThread( QObject* parent )
 	mUpdCorPar		= false;
 	mSendImgEnabled	= true;
 	mSendBackgrImgEnabled = false;
-	mMarkerlessTrackerEnabled = false;
+	mMarkerlessTrackingEnabled = false;
 	//JMA
 	mMultiMarkerEnabled = true;
 	mRatioCamCoef	= 0;
@@ -69,6 +69,11 @@ void ArucoThread::setMultiMarker( bool set )
 {
 	mMultiMarkerEnabled = set;
 	qDebug() << mMultiMarkerEnabled;
+}
+
+void ArucoThread::setMarkerlessTracking( bool set )
+{
+	mMarkerlessTrackingEnabled = set;
 }
 
 void ArucoThread::setSendImgEnabling( bool sendImgEnabled )
@@ -216,7 +221,7 @@ void ArucoThread::run()
 				}
 				*/
 			}
-			if ( mMarkerlessTrackerEnabled ){
+			if ( mMarkerlessTrackingEnabled ){
 				mMarkerlessTracker->track(frame);
 			}
 			imagesSending( aCore, frame );

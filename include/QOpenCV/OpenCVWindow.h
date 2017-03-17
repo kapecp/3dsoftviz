@@ -202,6 +202,18 @@ signals:
 	void setKinectMarkerDetection( bool send );
 
 	/**
+	 * @brief switch markerless detection on kinect
+	 * @param set (on/off)
+	 */
+	void setKinectMarkerlessDetection( bool set );
+
+	/**
+	 * @brief switch markerless detection on camera
+	 * @param set (on/off)
+	 */
+	void setCameraMarkerlessDetection( bool set );
+
+	/**
 	 * @brief change of speed movement for hand
 	 * @param send speed for movement
 	 */
@@ -329,6 +341,18 @@ private slots:
 	 */
 	void setMarkerDetection( bool set );
 
+	/**
+	 * @brief private SLOT for switching markerless tracking on camera
+	 * @param set (on/off)
+	 */
+	void setMarkerlessDetectionCamera( bool set );
+
+	/**
+	 * @brief private SLOT for switching markerless tracking on kinect
+	 * @param set (on/off)
+	 */
+	void setMarkerlessDetectionKinect( bool set );
+
 private:
 	/**
 	     * @author Autor: Michael Garaj
@@ -365,14 +389,17 @@ private:
 	QStackedLayout*  mSubmodulesStackL;
 
 	QCheckBox*		mNoVideo;
-	QCheckBox*		mMarkerBackgrCB;
-	QCheckBox*		mFaceDetBackgrCB;
-	QCheckBox*		mMarkerBehindCB;
-	QCheckBox*		mCorEnabledCB;
-	QCheckBox*	    mMultiMarkerEnableCB;
+	QCheckBox*		 mMarkerBackgrCB;
+	QCheckBox*		 mFaceDetBackgrCB;
+	QCheckBox*		 mMarkerBehindCB;
+	QCheckBox*		 mCorEnabledCB;
+	QCheckBox*	     mMultiMarkerEnableCB;
+	QCheckBox*		 mEnableMarkerlessKinectCB;
+
 	QCheckBox*       mDisableCursorCB;
 	QCheckBox*       mDisableZoomCursorCB;
 	QCheckBox*       mEnableMarkerDetectCB;
+	QCheckBox*		 mEnableMarkerlessCameraCB;
 
 	QSlider*         mSpeed;
 };

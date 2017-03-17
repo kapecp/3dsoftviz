@@ -19,6 +19,7 @@ Kinect::KinectThread::KinectThread( QObject* parent ) : QThread( parent )
 	mSetImageEnable=true;
 	isZoomEnable=true;
 	isMarkerDetectEnable=false;
+	mMarkerlessTrackingEnabled=false;
 
 	// timer setting
 	clickTimer = new QTimer();
@@ -79,6 +80,11 @@ void Kinect::KinectThread::setImageSendToMarkerDetection( bool set )
 	isMarkerDetectEnable = set;
 }
 
+void Kinect::KinectThread::setMarkerlessTracking( bool set )
+{
+	mMarkerlessTrackingEnabled = set;
+}
+
 void Kinect::KinectThread::pause()
 {
 	mCancel=true;
@@ -96,7 +102,6 @@ void Kinect::KinectThread::setSpeedKinect( double set )
 {
 	mSpeed=set;
 }
-
 void Kinect::KinectThread::setCaptureImage( bool set )
 {
 	qDebug() << "captureImage set to " << set;
