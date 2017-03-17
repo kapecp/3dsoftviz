@@ -9,11 +9,12 @@ local moduleExtractor    = require "luadb.moduleExtractor"
 ----------------------------------------------
 -- Local graph stored after extraction
 local graph = {}
+local astManager = {}
 
 ----------------------------------------------
 -- Increment function for generating of ids
+local a = 0
 local function inc()
-  a = a or 0
   a = a + 1
   return a
 end
@@ -65,9 +66,9 @@ local function setNodeColor(node)
   
   if node.params.type == 'interface' then 
     node.params.colorA = 1
-    node.params.colorR = 1
-    node.params.colorG = 1
-    node.params.colorB = 1
+    node.params.colorR = 0
+    node.params.colorG = 0
+    node.params.colorB = 0
   end
   
 end
@@ -145,7 +146,7 @@ local function setEdgeColor(edge)
     edge.params.colorR = 0.8
     edge.params.colorG = 1
     edge.params.colorB = 0.8
-  elseif edge.params.type == 'reprezents' then
+  elseif edge.params.type == 'represents' then
     edge.params.colorA = 1
     edge.params.colorR = 0.8
     edge.params.colorG = 1
@@ -222,10 +223,12 @@ end
 -- @param absolutePath path to project being analysed
 local function extractGraph(absolutePath)
   graph = {}
+  astManager = AST_MANAGER
+  
   utils.logger:setLevel(utils.logging.INFO)
 
   utils.logger:info("started extraction")
-  local extractedGraph = moduleExtractor.extract(absolutePath)
+  local extractedGraph = moduleExtractor.extract(absolutePath, astManager)
   utils.logger:info("extraction successfully finished")
   
   --extractedGraph:printNodes()
@@ -254,10 +257,19 @@ end
 -- Function for retreiving extracted graph
 local function getGraph()
   print"getting hybrid graph"
-  --debug.Save("graph", graph)
   return graph
+end
+
+-------------------------------------
+-- Function for retreiving extracted graph
+local function getASTManager()
+  print"getting AST Manager"
+  return astManager
 end
 -------------------------------------
 -- Public interface of module
-return {extractGraph = extractGraph,
-  getGraph = getGraph}
+return {
+  extractGraph = extractGraph,
+  getGraph = getGraph,
+  getASTManager = getASTManager
+}

@@ -85,17 +85,13 @@ local function searchForTagArray_recursive_helper(tagname, node, maxdepth, tbl)
   end
     
   for j,l in pairs(node.data) do
-    if (type(l) == "table") then
-      
       if (l.tag == tagname) then
         table.insert(tbl or {}, l)
       elseif (l.data ~= nil) then
         if (maxdepth == nil or maxdepth > 0) then
           tbl = searchForTagArray_recursive_helper(tagname, l, maxdepth, tbl)      
         end
-      end	
-      
-    end
+      end    
   end
   return tbl
 end

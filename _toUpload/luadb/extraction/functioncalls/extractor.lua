@@ -94,10 +94,17 @@ local function extractFunctionCalls(AST, graph, nodes)
 end
 
 
-local function extract(fileName, graph)
+local function extract(luaFileNode, graph, astManager)
+  local path = luaFileNode.data.path
   local graph = graph or hypergraph.graph.new()
-  local AST   = ast.getAST(fileName)
-  local nodes = extractFunctions(AST, graph, fileName)
+    
+  local AST = astManager:findASTByPath(path)
+  if(AST == nil) then
+    AST = ast.getAST(path)
+    astManager:addAST(AST, path)
+  end
+   
+  local nodes = extractFunctions(AST, graph, path)
   local edges = extractFunctionCalls(AST, graph, nodes)
   return { nodes = nodes, edges = edges }
 end

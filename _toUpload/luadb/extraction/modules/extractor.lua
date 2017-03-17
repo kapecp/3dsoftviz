@@ -374,16 +374,18 @@ end
 
 
 
-local function extract(luaFileNode, graph)
+local function extract(luaFileNode, graph, astManager)
   local path = luaFileNode.data.path
   local fileName = luaFileNode.data.name
   print(fileName)
   local graph = graph or hypergraph.graph.new()
-  local AST   = ast.getAST(path)
-    
-  --local ret = ast.getModuleReturnValues(AST)
-  --local assigns = ast.getAssigns(AST)
   
+  local AST = astManager:findASTByPath(path)
+  if(AST == nil) then
+    AST = ast.getAST(path)
+    astManager:addAST(AST, path)
+  end
+    
   
   --local locAssigns = ast.getLocalAssigns(AST)
   --[[
