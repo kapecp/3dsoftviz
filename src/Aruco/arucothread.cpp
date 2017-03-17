@@ -35,6 +35,7 @@ ArucoThread::ArucoThread( QObject* parent )
 
 	//JMA
 	mArControlClass = new ArControlClass();
+    mMarkerlessTracker = new OpenCV::MarkerlessTracker();
 }
 
 ArucoThread::~ArucoThread( void )
@@ -352,10 +353,8 @@ void ArucoThread::mouseControlling( const osg::Vec3f actPosArray, const osg::Qua
 
 }
 
-void ArucoThread::imagesSending( ArucoCore& aCore, const cv::Mat frame ) const
+void ArucoThread::imagesSending( ArucoCore& aCore, cv::Mat frame ) const
 {
-
-
 	if ( mSendBackgrImgEnabled && !frame.empty() ) {
 		if ( ! mMarkerIsBehind ) {
 			cv::flip( frame, frame, 1 );
@@ -372,6 +371,9 @@ void ArucoThread::imagesSending( ArucoCore& aCore, const cv::Mat frame ) const
 	else {
 		image = aCore.getDetImage();
 	}
+
+    //JMA TMP TODO RELOCATE
+    mMarkerlessTracker->track( image );
 
 	if ( mSendImgEnabled ) {
 		if ( ! mMarkerIsBehind ) {

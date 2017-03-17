@@ -13,6 +13,8 @@
 
 #include "Util/SizedQueue.h"
 
+#include <OpenCV/MarkerlessTracker.h>
+
 namespace ArucoModul {
 class ArucoCore;
 class ArControlClass;
@@ -20,6 +22,7 @@ class ArControlClass;
 
 namespace OpenCV {
 class CapVideo;
+class MarkerlessTracker;
 }
 
 namespace ArucoModul {
@@ -224,7 +227,7 @@ private:
 	* @author Dávid Durčák
 	* @brief imagesSending Pripare images for sending and emiting them
 	*/
-	void imagesSending( ArucoCore& aCore, const cv::Mat frame ) const;
+    void imagesSending( ArucoCore& aCore, cv::Mat frame ) const;
 
 	/**
 	* @author Dávid Durčák
@@ -299,7 +302,7 @@ private:
 	//JMA
 	ArControlClass* mArControlClass;
 	osg::Vec3d normalizePos( const osg::Vec3f actPosArray, const osg::Quat actQuatArray );//ArucoThread::
-
+    OpenCV::MarkerlessTracker* mMarkerlessTracker;
 
 
 };
