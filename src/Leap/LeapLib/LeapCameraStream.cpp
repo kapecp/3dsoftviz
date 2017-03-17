@@ -15,8 +15,8 @@ Leap::LeapCameraStream::~LeapCameraStream() {}
 
 void Leap::LeapCameraStream::updateBackgroundImage( unsigned char* buffer )
 {
-	setImage( 640, 240, 1, GL_INTENSITY8, GL_LUMINANCE, GL_UNSIGNED_BYTE,
-			  buffer,osg::Image::NO_DELETE, 1 );
+    setImage( 640, 240, 1, GL_INTENSITY8, GL_LUMINANCE, GL_UNSIGNED_BYTE,
+              buffer,osg::Image::NO_DELETE, 1 );
 }
 
 
