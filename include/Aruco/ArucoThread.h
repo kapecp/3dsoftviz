@@ -310,8 +310,6 @@ private:
 	//JMA
 	ArControlClass* mArControlClass;
 	osg::Vec3d normalizePos( const osg::Vec3f actPosArray, const osg::Quat actQuatArray );//ArucoThread::
-    OpenCV::MarkerlessTracker* mMarkerlessTracker;
-
 
 };
 } // ArucoModul namespace
