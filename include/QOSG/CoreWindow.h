@@ -355,6 +355,14 @@ public slots:
 	 * @param TODO
 	 */
 	void switchBackgroundOrtho2d();
+
+    /**
+     * void switchBackgroundLeap(  )
+     * @brief TODO
+     * @param TODO
+     */
+    void switchBackgroundLeap();
+
 	/**
 				*  \fn public  sliderValueChanged(int value)
 				*  \brief Slider value is changed
@@ -877,6 +885,12 @@ private:
 	 *@brief Action to switch/change background to Texture background (only OpenCV)
 	 */
 	QAction* switchBackgroundTextureAction;
+
+    /**
+     * QAction * switchBackgroundLeapAction
+     *@brief Action to switch/change background to leap background
+     */
+    QAction* switchBackgroundLeapAction;
 
 	/**
 	 * QAction * switchBackgroundOrtho2dAction

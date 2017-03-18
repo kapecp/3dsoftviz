@@ -221,9 +221,7 @@ void ArucoThread::run()
 				}
 				*/
 			}
-			if ( mMarkerlessTrackingEnabled ){
-				mMarkerlessTracker->track(frame);
-			}
+
 			imagesSending( aCore, frame );
 
 			if ( ! mCancel ) {
@@ -362,10 +360,8 @@ void ArucoThread::mouseControlling( const osg::Vec3f actPosArray, const osg::Qua
 
 }
 
-void ArucoThread::imagesSending( ArucoCore& aCore, const cv::Mat frame ) const
+void ArucoThread::imagesSending( ArucoCore& aCore, cv::Mat frame ) const
 {
-
-
 	if ( mSendBackgrImgEnabled && !frame.empty() ) {
 		if ( ! mMarkerIsBehind ) {
 			cv::flip( frame, frame, 1 );
@@ -381,6 +377,10 @@ void ArucoThread::imagesSending( ArucoCore& aCore, const cv::Mat frame ) const
 	}
 	else {
 		image = aCore.getDetImage();
+	}
+
+	if ( mMarkerlessTrackingEnabled ){
+		mMarkerlessTracker->track(frame);
 	}
 
 	if ( mSendImgEnabled ) {
