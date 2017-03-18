@@ -2499,7 +2499,7 @@ void CoreWindow::switchBackgroundOrtho2d()
 		flagPlay = 1;
 		pauseLayout();
 	}
-	if ( coreGraph->updateBackground( 3, currentGraph ) == 0 ) {
+    if ( coreGraph->updateBackground( 4, currentGraph ) == 0 ) {
 		LOG( INFO ) << "Background successfully updated";
 	}
 	else {
