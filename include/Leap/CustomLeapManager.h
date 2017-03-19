@@ -31,6 +31,8 @@ public:
 	void disableCameraMovement();
 	void rotateCamera( float py0, float px0, double throwScale, float py1, float px1 );
 
+    Leap::Vector recalculateDepthNode(Leap::Vector vector);
+
 	/**
 	 Method Used by LeapLib/LeapActions class. Update position of palms and call methods updateFingers()
 	 and updateInterFingerBones().

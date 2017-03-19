@@ -62,7 +62,7 @@ cv::Mat OpenCV::HandTracker::findHand( cv::Mat mask, float depth )
 
     float brightness = summ[0]/((pow(2,8)-1)*mask.rows * mask.cols) * 2;
 //    LOG (INFO) << "brightness: " + std::to_string(brightness);
-    LOG (INFO) << "Depth: " + std::to_string(depth);
+//    LOG (INFO) << "Depth: " + std::to_string(depth);
 
     int threshold_down = 50;
     int threshold_up = 150;
@@ -86,7 +86,7 @@ cv::Mat OpenCV::HandTracker::findHand( cv::Mat mask, float depth )
                 //Ignore all small insignificant areas
                 if(contourArea(contours[i])>=1500)
                 {
-                    LOG (INFO) << "Size of area: " + std::to_string(contourArea(contours[i]));
+//                    LOG (INFO) << "Size of area: " + std::to_string(contourArea(contours[i]));
                     //Draw contour
                     cv::vector<cv::vector<cv::Point> > tcontours;
                     tcontours.push_back(contours[i]);
