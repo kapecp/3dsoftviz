@@ -24,7 +24,7 @@ void Leap::LeapActions::moveCamera( Leap::Gesture gesture )
 	SwipeGesture swipe = gesture;
 	Vector direction = swipe.direction();
 	float gestureDuration = static_cast<float>( gesture.duration() )/1000.0f;
-
+    LOG( INFO ) << direction;
 	//skip zero movement gesture
 	//if ( static_cast<int>(direction[0]) == 0.0f && static_cast<int>(direction[1]) == 0.0f && static_cast<int>(direction[2]) == 0.0f ) {
 	if ( static_cast<int>( direction[0] ) == 0 && static_cast<int>( direction[1] ) == 0 && static_cast<int>( direction[2] ) == 0 ) {

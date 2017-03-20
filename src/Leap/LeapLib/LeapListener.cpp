@@ -32,7 +32,7 @@ void Leap::LeapListener::onConnect( const Controller& controller )
 	// we put our gestures here to initialize them
 	controller.enableGesture( Gesture::TYPE_CIRCLE );
 	controller.enableGesture( Gesture::TYPE_KEY_TAP );
-	//controller.enableGesture(Gesture::TYPE_SCREEN_TAP);
+    controller.enableGesture( Gesture::TYPE_SCREEN_TAP );
 	controller.enableGesture( Gesture::TYPE_SWIPE );
 
 	controller.config().setFloat( "Gesture.Swipe.MinLength",60.0f );
@@ -67,7 +67,8 @@ void Leap::LeapListener::onFrame( const Controller& controller )
 	Frame frame = controller.frame();
 	HandList hands = frame.hands();
 	Leap::DirectionDetector::Direction direction;
-	//bool handExtended;
+    bool leftHandExtended;
+    bool rightHandExtended;
 	Hand leftHand;
 	Hand rightHand;
 
@@ -91,31 +92,17 @@ void Leap::LeapListener::onFrame( const Controller& controller )
 		for ( int i=0; i< hands.count(); ++i ) {
 			if ( hands[i].isRight() ) {
 				direction = Leap::DirectionDetector::getPalmDirection( hands[i] );
-				//using cameramanipulator
-				//leapActions->changeViewAngle( direction );
-				//using pickhandler class
-				leapActions->rotateAruco( direction );
-
-                if ( gesture.type() == Gesture::TYPE_KEY_TAP ) {
-					leapActions->scaleNodes( true );
-				}
+                //leapActions->rotateAruco( direction );
+                rightHandExtended = Leap::FingerPositionDetector::isHandExtended( hands[i] );
 			}
 			else {
 				direction = Leap::DirectionDetector::getPalmDirection( hands[i] );
-				//leapActions.changeViewAngle( direction );
-				leapActions->scaleEdges( direction );
-                if ( gesture.type() == Gesture::TYPE_KEY_TAP ) {
-                    leapActions->scaleNodes( false );
-				}
 
-				/*handExtended = Leap::FingerPositionDetector::isHandExtended( hands[i] );
-				if ( handExtended ) {
-					leapActions->startMovingForward();
-				}
-				else {
-					leapActions->stopMovingForward();
-				}*/
+                //leapActions->scaleEdges( direction );
+                leftHandExtended = Leap::FingerPositionDetector::isHandExtended( hands[i] );
+
 			}
+
 		}
 	}
 
@@ -137,25 +124,27 @@ void Leap::LeapListener::onFrame( const Controller& controller )
 	          }
 	          case Gesture::TYPE_SWIPE:
 	          {
-                if(firstHand.isRight()){
                     if(leapActions->isCameraMoving){
-                        LOG( INFO ) << "GESTO....moveCamera().";
-						leapActions->moveCamera(gesture);
+                        if (rightHandExtended){
+                            LOG( INFO ) << "GESTO....moveCamera().";
+                            leapActions->moveCamera(gesture);
+                        }
                     }
                     else{
-                        LOG( INFO ) << "GESTO....rotateGraph().";
-					  leapActions->rotateGraph(gesture);
+                        if (rightHandExtended){
+                            LOG( INFO ) << "GESTO....rotateGraph().";
+                            leapActions->rotateGraph(gesture);
+                        }
                     }
-	            }
 	            break;
               }
 	          case Gesture::TYPE_KEY_TAP:
 	          {
-                if(firstHand.isLeft()){
-                    LOG( INFO ) << "GESTO....onKeyTap().";
-					leapActions->onKeyTap(gesture);
+
+                LOG( INFO ) << "GESTO....onKeyTap().";
+                leapActions->onKeyTap(gesture);
 	            break;
-                }
+
               }
 	          case Gesture::TYPE_SCREEN_TAP:
 	          {
