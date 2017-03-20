@@ -96,13 +96,13 @@ void Leap::LeapActions::onKeyTap( Leap::Gesture gesture )
 	isCameraMoving = !isCameraMoving;
 	LOG( INFO ) << "KeyTapGesture";
 }
-/*
-void LeapActions::onScreenTap( Leap::Gesture gesture )
+
+void Leap::LeapActions::onScreenTap( Leap::Gesture gesture )
 {
 	// screen tap gesture
 	LOG(INFO) << "ScreenTapGesture";
 }
-*/
+
 void Leap::LeapActions::rotateGraph( Leap::Gesture gesture )
 {
 

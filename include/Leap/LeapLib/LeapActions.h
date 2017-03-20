@@ -46,7 +46,7 @@ public:
 	// These methods should not have names onSwipe, onXXX. They are placeholders for further functionality.
 	// The names should correspond to the functionality provided by the method i.e. moveGraph();
 	void onKeyTap( Gesture gesture );
-	//void onScreenTap( Gesture::gesture );
+    void onScreenTap( Gesture gesture );
 
 	/**
 	 * @brief Leap::LeapActions::changeViewAngle

@@ -96,7 +96,7 @@ void Leap::LeapListener::onFrame( const Controller& controller )
 				//using pickhandler class
 				leapActions->rotateAruco( direction );
 
-				if ( gesture.type() == Gesture::TYPE_KEY_TAP ) {
+                if ( gesture.type() == Gesture::TYPE_KEY_TAP ) {
 					leapActions->scaleNodes( true );
 				}
 			}
@@ -104,8 +104,8 @@ void Leap::LeapListener::onFrame( const Controller& controller )
 				direction = Leap::DirectionDetector::getPalmDirection( hands[i] );
 				//leapActions.changeViewAngle( direction );
 				leapActions->scaleEdges( direction );
-				if ( gesture.type() == Gesture::TYPE_KEY_TAP ) {
-					leapActions->scaleNodes( false );
+                if ( gesture.type() == Gesture::TYPE_KEY_TAP ) {
+                    leapActions->scaleNodes( false );
 				}
 
 				/*handExtended = Leap::FingerPositionDetector::isHandExtended( hands[i] );
@@ -120,7 +120,7 @@ void Leap::LeapListener::onFrame( const Controller& controller )
 	}
 
 	//std::cout << "id: " << frame.id();
-	/*
+
 	    const GestureList gestures = frame.gestures();
 	      for (int g = 0; g < gestures.count(); ++g) {
 	        Gesture gesture = gestures[g];
@@ -131,35 +131,43 @@ void Leap::LeapListener::onFrame( const Controller& controller )
 	        switch (gesture.type()) {
 	          case Gesture::TYPE_CIRCLE:
 	          {
+                LOG( INFO ) << "GESTO....zoomGraph().";
 				leapActions->zoomGraph(gesture);
 	            break;
 	          }
 	          case Gesture::TYPE_SWIPE:
 	          {
-	            if(firstHand.isRight()){
-					if(leapActions->isCameraMoving)
+                if(firstHand.isRight()){
+                    if(leapActions->isCameraMoving){
+                        LOG( INFO ) << "GESTO....moveCamera().";
 						leapActions->moveCamera(gesture);
-	                else
+                    }
+                    else{
+                        LOG( INFO ) << "GESTO....rotateGraph().";
 					  leapActions->rotateGraph(gesture);
+                    }
 	            }
 	            break;
-	          }
+              }
 	          case Gesture::TYPE_KEY_TAP:
 	          {
-	            if(firstHand.isLeft())
+                if(firstHand.isLeft()){
+                    LOG( INFO ) << "GESTO....onKeyTap().";
 					leapActions->onKeyTap(gesture);
 	            break;
-	          }
+                }
+              }
 	          case Gesture::TYPE_SCREEN_TAP:
 	          {
+                LOG( INFO ) << "GESTO....onScreenTap().";
 				leapActions->onScreenTap(gesture);
 	            break;
-	          }
+              }
 	          default:
-	            qDebug() << "Unknown gesture type.";
+                 LOG( INFO ) << "Unknown gesture type.";
 	            break;
 	        }
-	      }*/
+          }
 
 
 }
@@ -171,7 +179,7 @@ void Leap::LeapListener::onFocusGained( const Controller& controller )
 
 void Leap::LeapListener::onFocusLost( const Controller& controller )
 {
-
+     LOG( INFO ) << "Focus lost.";
 }
 
 void Leap::LeapListener::onDeviceChange( const Controller& controller )
