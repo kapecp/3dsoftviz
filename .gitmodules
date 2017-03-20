@@ -16,6 +16,7 @@
 [submodule "dependencies/luametrics"]
 	path = dependencies/luametrics
 	url = https://github.com/LuaDist/luametrics.git
+	ignore = dirty
 [submodule "dependencies/aruco"]
 	path = dependencies/aruco
 	url = git@github.com:LuaDist/aruco.git
