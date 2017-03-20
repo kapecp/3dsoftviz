@@ -56,7 +56,7 @@ local function getFileNodeByFilePath(graph, filePath)
   return nil
 end
 
-local function extractAssigns(AST, graph, fileName, nodes, edges)
+local function extractAssigns(AST, AST_ID, graph, fileName, nodes, edges)
   local nodes = nodes or {}
   local edges = edges or {}
   
@@ -91,7 +91,8 @@ local function extractAssigns(AST, graph, fileName, nodes, edges)
     --varNode.data.metrics = localAssign.idNode.data.metrics
     varNode.data.name = localAssign.idNode.text
     varNode.data.type = "local variable"
-    varNode.data.position = localAssign.idNode.position    
+    varNode.data.position = localAssign.idNode.position
+    varNode.data.astID = AST_ID
     graph:addNode(varNode)
     table.insert(nodes, varNode)
     
@@ -110,7 +111,8 @@ local function extractAssigns(AST, graph, fileName, nodes, edges)
     --assignNode.data.metrics = node.data or {}
     assignNode.data.name = nodeName
     assignNode.data.type = "N/A"
-    assignNode.data.position = node.position or {}    
+    assignNode.data.position = node.position or {}
+    assignNode.data.astID = AST_ID
     graph:addNode(assignNode)
     table.insert(nodes, assignNode)
     
@@ -145,7 +147,8 @@ local function extractAssigns(AST, graph, fileName, nodes, edges)
     --varNode.data.metrics = globalAssign.idNode.data.metrics
     varNode.data.name = globalAssign.idNode.text
     varNode.data.type = "global variable"
-    varNode.data.position = globalAssign.idNode.position    
+    varNode.data.position = globalAssign.idNode.position
+    varNode.data.astID = AST_ID
     graph:addNode(varNode)
     table.insert(nodes, varNode)
     
@@ -163,7 +166,8 @@ local function extractAssigns(AST, graph, fileName, nodes, edges)
     --assignNode.data.metrics = node.data.metrics or {}
     assignNode.data.name = nodeName
     assignNode.data.type = "something"
-    assignNode.data.position = node.position or {}    
+    assignNode.data.position = node.position or {}
+    assignNode.data.astID = AST_ID
     graph:addNode(assignNode)
     table.insert(nodes, assignNode)
     
@@ -180,7 +184,7 @@ local function extractAssigns(AST, graph, fileName, nodes, edges)
 end
 
 
-local function extractRequireCalls(AST, graph, fileName, nodes, edges)
+local function extractRequireCalls(AST, AST_ID, graph, fileName, nodes, edges)
   local nodes = nodes or {}
   local edges = edges or {}
   local requireCalls = ast.getRequireCalls(AST)
@@ -200,7 +204,8 @@ local function extractRequireCalls(AST, graph, fileName, nodes, edges)
     --varNode.data.metrics = localRequireCall.node.data.metrics
     varNode.data.name = localRequireCall.fullVarName
     varNode.data.type = "local variable"
-    varNode.data.position = localRequireCall.node.position    
+    varNode.data.position = localRequireCall.node.position
+    varNode.data.astID = AST_ID
     graph:addNode(varNode)
     table.insert(nodes, varNode)
     
@@ -223,7 +228,8 @@ local function extractRequireCalls(AST, graph, fileName, nodes, edges)
       requiredNode.data.name = requiredNode_temp
       
       requiredNode.data.type = "module"
-      requiredNode.data.position = localRequireCall.node.position 
+      requiredNode.data.position = localRequireCall.node.position
+      requiredNode.data.astID = AST_ID
       graph:addNode(requiredNode)
       table.insert(nodes, requiredNode)
       globalModuleNodes[requiredNode.data.name] = requiredNode
@@ -246,7 +252,8 @@ local function extractRequireCalls(AST, graph, fileName, nodes, edges)
     --varNode.data.metrics = globalRequireCall.node.data.metrics
     varNode.data.name = globalRequireCall.fullVarName
     varNode.data.type = "global variable"
-    varNode.data.position = globalRequireCall.node.position    
+    varNode.data.position = globalRequireCall.node.position
+    varNode.data.astID = AST_ID
     graph:addNode(varNode)
     table.insert(nodes, varNode)
     
@@ -267,7 +274,8 @@ local function extractRequireCalls(AST, graph, fileName, nodes, edges)
       --requiredNode.data.metrics = globalRequireCall.node.metrics
       requiredNode.data.name = globalRequireCall.moduleName
       requiredNode.data.type = "module"
-      requiredNode.data.position = globalRequireCall.node.position 
+      requiredNode.data.position = globalRequireCall.node.position
+      requiredNode.data.astID = AST_ID
       graph:addNode(requiredNode)
       table.insert(nodes, requiredNode)
       globalModuleNodes[requiredNode.data.name] = requiredNode
@@ -286,7 +294,7 @@ local function extractRequireCalls(AST, graph, fileName, nodes, edges)
   return nodes, edges
 end
 
-local function extraModuleReturnValues(AST, graph, fileName, nodes, edges)
+local function extraModuleReturnValues(AST, AST_ID, graph, fileName, nodes, edges)
   local nodes = nodes or {}
   local edges = edges or {}
   local returnValues = ast.getModuleReturnValues(AST)
@@ -302,7 +310,8 @@ local function extraModuleReturnValues(AST, graph, fileName, nodes, edges)
     retNode.meta = {}
     retNode.data.name = "return"
     retNode.data.type = "interface"
-    --retNode.data.position = ? 
+    --retNode.data.position = ?
+    retNode.data.astID = AST_ID
     graph:addNode(retNode)
     table.insert(nodes, retNode)
     
@@ -326,7 +335,8 @@ local function extraModuleReturnValues(AST, graph, fileName, nodes, edges)
     interfaceNode.meta = {}
     interfaceNode.data.name = idName
     interfaceNode.data.type = "interface"
-    interfaceNode.data.position = retValue.node.position 
+    interfaceNode.data.position = retValue.node.position
+    interfaceNode.data.astID = AST_ID
     graph:addNode(interfaceNode)
     table.insert(nodes, interfaceNode)
     
@@ -362,28 +372,30 @@ end
 
 
 
-local function extractNodesAndEdges(AST, graph, fileName)
+local function extractNodesAndEdges(AST, AST_ID, graph, fileName)
   local nodes = {}
   local edges = {}
-  nodes, edges = extractAssigns(AST, graph, fileName, nodes, edges)
-  nodes, edges = extractRequireCalls(AST, graph, fileName, nodes, edges)
-  nodes, edges = extraModuleReturnValues(AST, graph, fileName, nodes, edges)
+  nodes, edges = extractAssigns(AST, AST_ID, graph, fileName, nodes, edges)
+  nodes, edges = extractRequireCalls(AST, AST_ID, graph, fileName, nodes, edges)
+  nodes, edges = extraModuleReturnValues(AST, AST_ID, graph, fileName, nodes, edges)
   
   return nodes, edges
 end
 
 
 
-local function extract(luaFileNode, graph)
+local function extract(luaFileNode, graph, astManager)
   local path = luaFileNode.data.path
   local fileName = luaFileNode.data.name
   print(fileName)
   local graph = graph or hypergraph.graph.new()
-  local AST   = ast.getAST(path)
-    
-  --local ret = ast.getModuleReturnValues(AST)
-  --local assigns = ast.getAssigns(AST)
   
+  local AST, AST_ID = astManager:findASTByPath(path)
+  if(AST == nil) then
+    AST = ast.getAST(path)
+    AST_ID = astManager:addAST(AST, path)
+  end
+    
   
   --local locAssigns = ast.getLocalAssigns(AST)
   --[[
@@ -426,7 +438,7 @@ local function extract(luaFileNode, graph)
   ]]--
   
   --debug.Save("nodes", localassign)
-  local nodes, edges = extractNodesAndEdges(AST, graph, fileName)
+  local nodes, edges = extractNodesAndEdges(AST, AST_ID, graph, fileName)
   --local nodes = extractNodes(AST, graph, fileName)
   --local edges = extractEdges(AST, graph, nodes)
   return { nodes = nodes, edges = edges }

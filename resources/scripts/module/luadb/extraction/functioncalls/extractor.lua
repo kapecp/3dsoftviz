@@ -9,7 +9,7 @@ local ast        = require "luadb.ast"
 local logger     = utils.logger
 
 
-local function extractFunctions(AST, graph, path)
+local function extractFunctions(AST, AST_ID, graph, path)
   local nodes = {}
   local functions = ast.getFunctions(AST)
   logger:debug("importing nodes")
@@ -22,6 +22,7 @@ local function extractFunctions(AST, graph, path)
 	  newNode.data.position = func.position
     newNode.data.type = "function"
     newNode.data.modulePath = path
+    newNode.data.astId = AST_ID
     graph:addNode(newNode)
     table.insert(nodes, newNode)
   end
@@ -94,10 +95,17 @@ local function extractFunctionCalls(AST, graph, nodes)
 end
 
 
-local function extract(fileName, graph)
+local function extract(luaFileNode, graph, astManager)
+  local path = luaFileNode.data.path
   local graph = graph or hypergraph.graph.new()
-  local AST   = ast.getAST(fileName)
-  local nodes = extractFunctions(AST, graph, fileName)
+    
+  local AST, AST_ID = astManager:findASTByPath(path)
+  if(AST == nil) then
+    AST = ast.getAST(path)
+    AST_ID = astManager:addAST(AST, path)
+  end
+   
+  local nodes = extractFunctions(AST, AST_ID, graph, path)
   local edges = extractFunctionCalls(AST, graph, nodes)
   return { nodes = nodes, edges = edges }
 end

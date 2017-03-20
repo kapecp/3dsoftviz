@@ -103,18 +103,13 @@ local function getModuleFromFile(graph)
   end  
 end
 
-local function getAssignsAndReturnValues(graph)
-  
-end
-
-
-local function getFunctionCalls(graph)
+local function getFunctionCalls(graph, astManager)
   local luaFileNodes = graph.luaFileNodes
   graph.globalModuleNodes = graph.globalModuleNodes or {} 
   local globalModuleNodes = graph.globalModuleNodes
       
   for i,luaFileNode in pairs(luaFileNodes) do
-    local functionCalls = functioncalls.extract(luaFileNode.data.path, graph)
+    local functionCalls = functioncalls.extract(luaFileNode, graph, astManager)
     luaFileNode.functionNodes = functionCalls.nodes
     luaFileNode.functionCalls = functionCalls.edges
     
@@ -205,10 +200,10 @@ local function assignGlobalCalls(graph)
   end
 end
 
-local function getAssignsAndReturnValues(graph)
+local function getAssignsAndReturnValues(graph, astManager)
   local luaFileNodes = graph.luaFileNodes
   for i,luaFileNode in pairs(luaFileNodes) do
-    local extractedNodes = modules.extract(luaFileNode, graph)
+    local extractedNodes = modules.extract(luaFileNode, graph, astManager)
   end
   
 end
@@ -226,7 +221,7 @@ end
 -- Extract
 -----------------------------------------------
 
-local function extract(sourcePath)
+local function extract(sourcePath, astManager)
   assert(sourcePath and utils.isDir(sourcePath), "wrong path passed")
   assert(not utils.isDirEmpty(sourcePath), "directory is empty")
   
@@ -239,11 +234,11 @@ local function extract(sourcePath)
   
   getModuleFromFile(graph)
   
-  getFunctionCalls(graph, graph.luaFileNodes)
+  getFunctionCalls(graph, astManager)
   connectModuleCalls(graph)
   assignGlobalCalls(graph)
   
-  getAssignsAndReturnValues(graph)
+  getAssignsAndReturnValues(graph, astManager)
     
   clearTmpVars(graph)
   return graph

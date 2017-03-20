@@ -5,15 +5,17 @@
 -----------------------------------------------
 local utils              = require "luadb.utils"
 local moduleExtractor    = require "luadb.moduleExtractor"
+local astManager         = require "luadb.manager.AST"
 
 ----------------------------------------------
--- Local graph stored after extraction
+-- Local graph and AST manager stored after extraction
 local graph = {}
+local astMan = astManager.new()
 
 ----------------------------------------------
 -- Increment function for generating of ids
+local a = 0
 local function inc()
-  a = a or 0
   a = a + 1
   return a
 end
@@ -21,26 +23,55 @@ end
 --------------------------------------------------
 -- Set color for node based on node type
 local function setNodeColor(node)
-  if node.params.type == 'file' or node.params.type == 'globalModule' then 
+  if node.params.type == 'directory' then 
+    node.params.colorA = 1
+    node.params.colorR = 1
+    node.params.colorG = 1
+    node.params.colorB = 0
+  end
+  
+  if node.params.type == 'file' then 
     node.params.colorA = 1
     node.params.colorR = 1
     node.params.colorG = 0
     node.params.colorB = 1
   end
-
-  if node.params.type == 'directory' then 
+  
+  if node.params.type == 'module' then 
     node.params.colorA = 1
-    node.params.colorR = 0
-    node.params.colorG = 1
+    node.params.colorR = 1
+    node.params.colorG = 0
     node.params.colorB = 1
   end
-
-  if node.params.type == 'globalFunction' then 
+  
+  if node.params.type == 'global function' then 
     node.params.colorA = 1
     node.params.colorR = 0
     node.params.colorG = 0
     node.params.colorB = 1
   end
+  
+  if node.params.type == 'local variable' then 
+    node.params.colorA = 1
+    node.params.colorR = 0
+    node.params.colorG = 1
+    node.params.colorB = 0
+  end
+  
+  if node.params.type == 'global variable' then 
+    node.params.colorA = 1
+    node.params.colorR = 0
+    node.params.colorG = 1
+    node.params.colorB = 0
+  end
+  
+  if node.params.type == 'interface' then 
+    node.params.colorA = 1
+    node.params.colorR = 0
+    node.params.colorG = 0
+    node.params.colorB = 0
+  end
+  
 end
 
 ----------------------------------------------
@@ -81,17 +112,42 @@ end
 --------------------------------------------------
 -- Set color for edge based on edge type
 local function setEdgeColor(edge)
-  if edge.params.type == 'function call' then
+  if edge.params.type == 'calls' then
     edge.params.colorA = 1
     edge.params.colorR = 0.8
     edge.params.colorG = 0.8
-    edge.params.colorB = 1
-  elseif edge.params.type == 'in file' then
+    edge.params.colorB = 1  
+  elseif edge.params.type == 'contains' then
     edge.params.colorA = 1
-    edge.params.colorR = 1
-    edge.params.colorG = 0.8
+    edge.params.colorR = 0.8
+    edge.params.colorG = 1
     edge.params.colorB = 0.8
-  elseif edge.params.type == 'in directory' then
+  elseif edge.params.type == 'requires' then
+    edge.params.colorA = 1
+    edge.params.colorR = 0.8
+    edge.params.colorG = 1
+    edge.params.colorB = 0.8
+  elseif edge.params.type == 'implements' then
+    edge.params.colorA = 1
+    edge.params.colorR = 0.8
+    edge.params.colorG = 1
+    edge.params.colorB = 0.8
+  elseif edge.params.type == 'provides' then
+    edge.params.colorA = 1
+    edge.params.colorR = 0.8
+    edge.params.colorG = 1
+    edge.params.colorB = 0.8
+  elseif edge.params.type == 'initializes' then
+    edge.params.colorA = 1
+    edge.params.colorR = 0.8
+    edge.params.colorG = 1
+    edge.params.colorB = 0.8
+  elseif edge.params.type == 'declares' then
+    edge.params.colorA = 1
+    edge.params.colorR = 0.8
+    edge.params.colorG = 1
+    edge.params.colorB = 0.8
+  elseif edge.params.type == 'represents' then
     edge.params.colorA = 1
     edge.params.colorR = 0.8
     edge.params.colorG = 1
@@ -115,16 +171,16 @@ local function extractEdge(v, existingedges, nodes)
     local edge = {type = "edge", id = inc(), params = {origid = v.id, count = 1, edgeStrength = 2}}
     local incid1 = {type = "edge_part", id = inc(), label = ''}
     local incid2 = {type = "edge_part", id = inc(), label = ''}
-    if v.from[1].data.type == 'function' or (v.from[1].data.type == 'file' and v.to[1].data.type == 'globalFunction') then
-      edge.params.type = "function call"
+    if v.from[1].data.type == 'function' or (v.from[1].data.type == 'file' and v.to[1].data.type == 'global function') then
+      edge.params.type = "calls"
       incid1.direction = 'in'
       incid2.direction = 'out'
     end
     if v.from[1].data.type == 'file' then 
-      edge.params.type = 'in file'
+      edge.params.type = 'contains'
     end
     if v.from[1].data.type == 'directory' then 
-      edge.params.type = 'in directory'
+      edge.params.type = 'contains'
     end
 
     edge.label = edge.params.type
@@ -168,10 +224,11 @@ end
 -- @param absolutePath path to project being analysed
 local function extractGraph(absolutePath)
   graph = {}
+  
   utils.logger:setLevel(utils.logging.INFO)
 
   utils.logger:info("started extraction")
-  local extractedGraph = moduleExtractor.extract(absolutePath)
+  local extractedGraph = moduleExtractor.extract(absolutePath, astMan)
   utils.logger:info("extraction successfully finished")
   
   --extractedGraph:printNodes()
@@ -199,11 +256,20 @@ end
 -------------------------------------
 -- Function for retreiving extracted graph
 local function getGraph()
-  print"getting function graph"
-  --debug.Save("graph", graph)
+  print("getting hybrid graph")
   return graph
+end
+
+-------------------------------------
+-- Function for retreiving extracted graph
+local function getASTManager()
+  print("getting AST Manager")
+  return astMan
 end
 -------------------------------------
 -- Public interface of module
-return {extractGraph = extractGraph,
-  getGraph = getGraph}
+return {
+  extractGraph = extractGraph,
+  getGraph = getGraph,
+  getASTManager = getASTManager
+}
