@@ -47,7 +47,8 @@ void OpenCV::MarkerlessTracker::track( cv::Mat& frame )
 void OpenCV::MarkerlessTracker::findCirclesInFrame( cv::Mat& frame,
                                                     cv::vector<cv::Vec3f>& circlesReal
                                                    ){
-    cv::Mat frame_gray;
+//	cv::resize(frame,frame,cv::Size(frame.rows/4,frame.cols/4));
+	cv::Mat frame_gray;
     cv::cvtColor( frame, frame_gray, CV_BGR2GRAY );
     cv::Mat frame_bilateral;
     cv::bilateralFilter( frame_gray, frame_bilateral, 15, 30, 7.5);
@@ -89,10 +90,10 @@ void OpenCV::MarkerlessTracker::findCirclesInFrame( cv::Mat& frame,
     // Show your results
     frame = img_circles;
 
-    /*
+	/*
     cv::imwrite( "C:/DevTools/ImageStreams/circle_masked.jpg", frame_masked );
     cv::imwrite( "C:/DevTools/ImageStreams/circle_detected.jpg", img_circles );
-    */
+	*/
 }
 
 //JMA

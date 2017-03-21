@@ -16,6 +16,7 @@
 #include <opencv2/core/core.hpp>
 #include "Viewer/GraphNavigation.h"
 #include "Viewer/MouseControl.h"
+#include "OpenCV/MarkerlessTracker.h"
 
 namespace Kinect {
 
@@ -147,6 +148,7 @@ private:
 	bool clickTimerFirstRun;
 	Vwr::GraphNavigation* nav;
 	Vwr::MouseControl* mouse;
+	OpenCV::MarkerlessTracker* kTracker;
 	// Marak end
 	/**
 	 * @brief information about status thread

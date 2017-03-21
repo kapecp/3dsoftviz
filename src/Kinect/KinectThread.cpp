@@ -30,6 +30,7 @@ Kinect::KinectThread::KinectThread( QObject* parent ) : QThread( parent )
 
 	nav = new Vwr::GraphNavigation();
 	mouse = new Vwr::MouseControl();
+	kTracker = new OpenCV::MarkerlessTracker();
 }
 
 Kinect::KinectThread::~KinectThread( void )
@@ -362,7 +363,11 @@ void Kinect::KinectThread::run()
 			//}
 #endif
 			// resize, send a msleep for next frame
+
 			cv::resize( frame, frame,cv::Size( 320,240 ),0,0,cv::INTER_LINEAR );
+			if ( mMarkerlessTrackingEnabled ){
+				kTracker->track(frame);
+			}
 			emit pushImage( frame );
 			msleep( 20 );
 		}

@@ -221,7 +221,6 @@ void ArucoThread::run()
 				}
 				*/
 			}
-
 			imagesSending( aCore, frame );
 
 			if ( ! mCancel ) {
@@ -380,7 +379,7 @@ void ArucoThread::imagesSending( ArucoCore& aCore, cv::Mat frame ) const
 	}
 
 	if ( mMarkerlessTrackingEnabled ){
-		mMarkerlessTracker->track(frame);
+		mMarkerlessTracker->track(image);
 	}
 
 	if ( mSendImgEnabled ) {
