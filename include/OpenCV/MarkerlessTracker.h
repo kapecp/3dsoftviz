@@ -3,7 +3,7 @@
 
 #include <opencv2/opencv.hpp>
 #include "Aruco/arControlObject.h"
-#include "Aruco/arucocore.h"
+#include "Aruco/ArucoCore.h"
 #include <aruco/aruco.h>
 
 
@@ -47,27 +47,29 @@ private:
      * @author Autor: Juraj Marak
      * @brief detect circles in frame
      */
-    void OpenCV::MarkerlessTracker::findCirclesInFrame(cv::Mat& frame,
+	void findCirclesInFrame(cv::Mat& frame,
                                                         cv::vector<cv::Vec3f> &circlesReal
                                                        );
-    /**
+	//OpenCV::MarkerlessTracker::
+	/**
      * @author Autor: Juraj Marak
      * @brief estimate pose of circle based on frame position
      */
-    void OpenCV::MarkerlessTracker::estimatePoseCircle( osg::Vec2f framePosition,
+	void estimatePoseCircle( osg::Vec2f framePosition,
                                                         float circleRadiusReal,
                                                         float circleRadiusFrame,
                                                         aruco::CameraParameters mCamParam,
                                                         cv::Mat& rvec, cv::Mat& tvec
                                                        );
-    /**
+  //OpenCV::MarkerlessTracker::
+	/**
      * @author Autor: Autor: Juraj Marak
      * @brief calculate MVMatrix from estimated pose
      */
-    void OpenCV::MarkerlessTracker::calculateMVMatrixFromPose( cv::Mat rvec, cv::Mat tvec,
+	void calculateMVMatrixFromPose( cv::Mat rvec, cv::Mat tvec,
                                                                QMatrix4x4& mVMatrix
                                                               );
-
+//OpenCV::MarkerlessTracker::
 };
 }
 
