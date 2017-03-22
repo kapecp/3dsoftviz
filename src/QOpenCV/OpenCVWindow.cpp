@@ -52,6 +52,7 @@ void QOpenCV::OpenCVWindow::configureWindow()
 	mFaceRecRB = new QRadioButton( tr( "Face Recognition" ) );
 	mMarkerRB = new QRadioButton( tr( "Marker" ) );
 	mMultiMarkerRB = new QRadioButton( tr( "Multi Marker" ) );
+	mLightDetRB = new QRadioButton( tr( "Light Detection") );
 
 	mFaceRecPB = new QPushButton( tr( "Start Face Recognition" ) );
 	mMarkerPB = new QPushButton( tr( "Start Marker Detection" ) );
@@ -60,6 +61,7 @@ void QOpenCV::OpenCVWindow::configureWindow()
 	mKinectSnapshotPB = new QPushButton( tr( "Kinect Snapshot" ) );
 	mUpdateCorParPB	= new QPushButton( tr( "Update cor. param." ) );
 	mInterchangeMarkersPB = new QPushButton( tr( "Change Markers" ) );
+	mLightDetPB = new QPushButton( tr( "Start Light Detection") );
 
 	mNoVideo = new QCheckBox( tr( "NoVideo" ) );
 	mMarkerBackgrCB	= new QCheckBox( tr( "Background" ) );
@@ -98,6 +100,7 @@ void QOpenCV::OpenCVWindow::configureWindow()
 	QWidget* kinectPageWid =  new QWidget;
 	QWidget* arucoPageWid =  new QWidget;
 	QWidget* arucoFaceRecPageWid = new QWidget;
+	QWidget* arucoLightDetPageWid = new QWidget;
 	QWidget* arucoMarkerPageWid = new QWidget;
 	QWidget* arucoMultiMarkerPageWid = new QWidget;
 	QWidget* arucoSubPageWid = new QWidget;
@@ -105,6 +108,7 @@ void QOpenCV::OpenCVWindow::configureWindow()
 	QVBoxLayout*	kinectPageLayout	= new QVBoxLayout;
 	QVBoxLayout*	arucoPageLayout	= new QVBoxLayout;
 	QVBoxLayout* arucoFaceRecPageLayout = new QVBoxLayout;
+	QVBoxLayout* arucoLightDetPageLayout = new QVBoxLayout;
 	QVBoxLayout* arucoMarkerPageLayout = new QVBoxLayout;
 	QVBoxLayout* arucoMultiMarkerPageLayout = new QVBoxLayout;
 	QVBoxLayout* arucoSubPageLayout = new QVBoxLayout;
@@ -112,6 +116,7 @@ void QOpenCV::OpenCVWindow::configureWindow()
 	mFaceRecRB->setChecked( true );
 	arucoSubPageLayout->addWidget( mFaceRecRB );
 	arucoSubPageLayout->addWidget( mMarkerRB );
+	arucoSubPageLayout->addWidget( mLightDetRB );
 	//arucoSubPageLayout->addWidget( mMultiMarkerRB );
 	arucoSubPageLayout->addWidget( mNoVideo );
 	arucoSubPageLayout->addLayout( mSubmodulesStackL );
@@ -119,6 +124,7 @@ void QOpenCV::OpenCVWindow::configureWindow()
 	kinectPageLayout->setAlignment( Qt::AlignBottom );
 	arucoPageLayout->setAlignment( Qt::AlignBottom );
 	arucoFaceRecPageLayout->setAlignment( Qt::AlignBottom );
+	arucoLightDetPageLayout->setAlignment( Qt::AlignBottom );
 	arucoMarkerPageLayout->setAlignment( Qt::AlignBottom );
 	arucoMultiMarkerPageLayout->setAlignment( Qt::AlignBottom );
 
@@ -126,12 +132,14 @@ void QOpenCV::OpenCVWindow::configureWindow()
 	mModulesStackL->addWidget( arucoSubPageWid );
 
 	mSubmodulesStackL->addWidget( arucoFaceRecPageWid );
+	mSubmodulesStackL->addWidget( arucoLightDetPageWid );
 	mSubmodulesStackL->addWidget( arucoMarkerPageWid );
 	//mSubmodulesStackL->addWidget( arucoMultiMarkerPageWid );
 
 	kinectPageWid->setLayout( kinectPageLayout );
 	arucoPageWid->setLayout( arucoPageLayout );
 	arucoFaceRecPageWid->setLayout( arucoFaceRecPageLayout );
+	arucoLightDetPageWid->setLayout( arucoLightDetPageLayout );
 	arucoMarkerPageWid->setLayout( arucoMarkerPageLayout );
 	arucoMultiMarkerPageWid->setLayout( arucoMultiMarkerPageLayout );
 	arucoSubPageWid->setLayout( arucoSubPageLayout );
@@ -149,6 +157,8 @@ void QOpenCV::OpenCVWindow::configureWindow()
 
 	arucoFaceRecPageLayout->addWidget( mFaceDetBackgrCB );
 	arucoFaceRecPageLayout->addWidget( mFaceRecPB );
+
+	arucoLightDetPageLayout->addWidget( mLightDetPB );
 
 	arucoMarkerPageLayout->addWidget( mMarkerBackgrCB );
 	arucoMarkerPageLayout->addWidget( mMarkerBehindCB );
@@ -188,11 +198,13 @@ void QOpenCV::OpenCVWindow::configureWindow()
 	mFaceRecPB->setCheckable( true );
 	mMarkerPB->setCheckable( true );
 	mKinectPB->setCheckable( true );
+	mLightDetPB->setCheckable( true );
 
 	//set up signals to slots
 	connect( mKinectRB, SIGNAL( clicked() ), this, SLOT( onSelModulChange() ) );
 	connect( mArucoRB, SIGNAL( clicked() ), this, SLOT( onSelModulChange() ) );
 	connect( mFaceRecRB, SIGNAL( clicked() ), this, SLOT( onSelSubModulChange() ) );
+	connect( mLightDetRB, SIGNAL( clicked() ), this, SLOT( onSelSubModulChange() ) );
 	connect( mMarkerRB, SIGNAL( clicked() ), this, SLOT( onSelSubModulChange() ) );
 	connect( mMultiMarkerRB, SIGNAL( clicked() ), this, SLOT( onSelSubModulChange() ) );
 
@@ -201,6 +213,7 @@ void QOpenCV::OpenCVWindow::configureWindow()
 	connect( mUpdateCorParPB, SIGNAL( clicked() ), this, SLOT( onUpdateCorPar() ) );
 	connect( mMarkerPB,  SIGNAL( clicked( bool ) ), this, SLOT( onMarkerStartCancel( bool ) ) );
 	connect( mFaceRecPB, SIGNAL( clicked( bool ) ), this, SLOT( onFaceRecStartCancel( bool ) ) );
+	connect( mLightDetPB, SIGNAL( clicked( bool ) ), this, SLOT( onLightDetStartCancel( bool ) ) );
 	connect( mMultiMarkerPB, SIGNAL( clicked( bool ) ), this, SLOT( onMultiMarkerStartCancel( bool ) ) );
 	connect( mKinectPB, SIGNAL( clicked( bool ) ), this, SLOT( onKinectStartCancel( bool ) ) );
 	connect( mKinectSnapshotPB, SIGNAL( clicked() ), this, SLOT( onKinectSnapshotPBClicked() ) );
@@ -306,6 +319,10 @@ void QOpenCV::OpenCVWindow::onSelModulChange()
 	if ( mArucoRB->isChecked() ) {
 		mModulesStackL->setCurrentIndex( 1 );
 	}
+
+	if ( mLightDetRB->isChecked() ) {
+		mModulesStackL->setCurrentIndex( 2 );
+	}
 }
 
 void QOpenCV::OpenCVWindow::onSelSubModulChange()
@@ -328,6 +345,7 @@ void QOpenCV::OpenCVWindow::onSelSubModulChange()
 		emit setMultiMarker( false );
 	}
 	else {
+
 		// face recognition
 		if ( mFaceRecRB->isChecked() ) {
 			emit sendImgMarker( false );
@@ -376,6 +394,23 @@ void QOpenCV::OpenCVWindow::onFaceRecStartCancel( bool checked )
 	}
 }
 
+void QOpenCV::OpenCVWindow::onLightDetStartCancel(bool checked){
+    qDebug() << "OpenCVWindow::onLightDetStartCancel:" << checked;
+
+    if ( checked ) {
+        mLightDetPB->setEnabled( false );
+        mLightDetPB->setText( tr( "Stop Light Det." ) );
+        emit setCapVideoFaceRec( OpenCV::CamSelectCore::getInstance()->selectCamera() );
+        emit startLightDet();
+        mLightDetPB->setEnabled( true );
+    }
+    else {
+        mLightDetPB->setEnabled( false );
+        emit stopLightDet( true );
+
+    }
+}
+
 void QOpenCV::OpenCVWindow::onMarkerStartCancel( bool checked )
 {
 	if ( checked ) {
@@ -407,6 +442,11 @@ void QOpenCV::OpenCVWindow::onFaceRecThrFinished()
 {
 	mFaceRecPB->setText( tr( "Start FaceRec" ) );
 	mFaceRecPB->setEnabled( true );
+}
+
+void QOpenCV::OpenCVWindow::onLightDetThrFinished(){
+    mLightDetPB->setText( tr( "Start Light Det." ) );
+    mLightDetPB->setEnabled( true );
 }
 
 void QOpenCV::OpenCVWindow::onMarkerThrFinished()

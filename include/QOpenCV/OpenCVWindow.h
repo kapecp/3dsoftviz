@@ -77,6 +77,14 @@ public:
 	QPushButton*	getInterchangeMarkersPB() const;
 
 signals:
+
+	/**
+	     * @author Autor: Marek Karas
+	     * @brief sendImgLightDet Signal for enagling or disabling sending actual image from LightDetectionThread
+	     * @param send
+	     */
+	void sendImgLightDet( bool send );
+
 	/**
 	     * @author Autor: David Durcak
 	     * @brief sendImgFaceRec Signal for enagling or disabling sending actual image from FaceDetection thread
@@ -90,6 +98,13 @@ signals:
 	     * @param send
 	     */
 	void sendImgMarker( bool send );
+
+	/**
+	     * @author Autor: Marek Karas
+	     * @brief sendBackgrImgLightDet Signal for enagling or disabling sending actual image from LightDetectionThread to background
+	     * @param send
+	     */
+	void sendBackgrImgLightDet( bool send );
 
 	/**
 	     * @author Autor: David Durcak
@@ -112,10 +127,16 @@ signals:
 	     */
 	void stopMarker( bool set );
 
+	/**
+	     * @author Autor: Marek Karas
+	     * @brief stopLightDet Signal for canceling Light Detection thread
+	     * @param set cancel if true
+	     */
+	void stopLightDet( bool set );
 
 	/**
 	     * @author Autor: David Durcak
-	     * @brief stopFaceRec Signal for canceling FaceDetection thread
+	     * @brief stopFaceRec Signal for canceling LightDetectionThread
 	     * @param set cancel if true
 	     */
 	void stopFaceRec( bool set );
@@ -146,6 +167,12 @@ signals:
 	void startFaceRec();
 
 	/**
+	     * @author Autor: Marek Karas
+	     * @brief startLightDet Signal for starting Light Detecton thread
+	     */
+	void startLightDet();
+
+	/**
 	     * @author Autor: Michael Garaj
 	     * @brief setMultiMarker Signal for setting MultiMarker in Aruco thread
 	     * @param set cancel if true
@@ -158,6 +185,13 @@ signals:
 	     * @param capVideo camera object
 	     */
 	void setCapVideoFaceRec( OpenCV::CapVideo* capVideo );
+
+	/**
+	     * @author Autor: Marek Karas
+	     * @brief setCapVideoLightDet Signal for setting camera in LightDetectionThread
+	     * @param capVideo camera object
+	     */
+	void setCapVideoLightDet( OpenCV::CapVideo* capVideo );
 
 	/**
 	     * @author Autor: Michael Garaj
@@ -249,6 +283,12 @@ public slots:
 	void onFaceRecThrFinished();
 
 	/**
+	     * @author Autor: Marek Karas
+	     * @brief onLightDetThrFinished When LightDetectionThread finished, enable mLightDetStartCancelPB button
+	     */
+	void onLightDetThrFinished();
+
+	/**
 	     * @author Autor: David Durcak
 	     * @brief onMarkerThrFinished When Aruco thread finished, update mMarkerStartCancelPB button
 	     */
@@ -299,6 +339,13 @@ private slots:
 	     * @param checked If true, thread will start
 	     */
 	void onFaceRecStartCancel( bool checked );
+
+	/**
+	     * @author Autor: Marek Karas
+	     * @brief onLightDetStartCancel Start or stop LightDetectionThread
+	     * @param checked If true, thread will start
+	     */
+	void onLightDetStartCancel( bool checked );
 
 	/**
 	     * @author Autor: David Durcak
@@ -375,6 +422,8 @@ private:
 	QRadioButton*    mFaceRecRB;
 	QRadioButton*    mMarkerRB;
 	QRadioButton*    mMultiMarkerRB;
+	QRadioButton*    mLightDetRB;
+
 
 	QPushButton*     mFaceRecPB;
 	QPushButton*     mMarkerPB;
@@ -384,6 +433,8 @@ private:
 	QPushButton*		mUpdateCorParPB;
 	QPushButton*		mInterchangeMarkersPB;
 	QPushButton*     mKinectSnapshotPB;
+	QPushButton*     mLightDetPB;
+
 
 	QStackedLayout*  mModulesStackL;
 	QStackedLayout*  mSubmodulesStackL;

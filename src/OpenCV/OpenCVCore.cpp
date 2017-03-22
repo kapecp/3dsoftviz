@@ -7,6 +7,7 @@
 #include "Kinect/KinectThread.h"
 #include "QOpenCV/FaceRecognitionThread.h"
 #include "QOpenCV/FaceRecognitionWindow.h"
+#include "QOpenCV/LightDetectionThread.h"
 #include "QOpenCV/OpenCVWindow.h"
 #include "Viewer/CameraManipulator.h"
 #include "OpenCV/CamSelectCore.h"
@@ -28,6 +29,7 @@ OpenCV::OpenCVCore::OpenCVCore( QApplication* app, QWidget* parent )
 	mKinectThrsCreated = false;
 	mOpencvWindow   =  nullptr;
 	mThrFaceRec		=  nullptr;
+	mThrLightDet	=  nullptr;
 	mThrAruco		=  nullptr;
 	mThrKinect      =  nullptr;
 
@@ -36,6 +38,11 @@ OpenCV::OpenCVCore::OpenCVCore( QApplication* app, QWidget* parent )
 OpenCV::OpenCVCore::~OpenCVCore( void )
 {
 	if ( mArucoThrsCreated ) {
+		if ( mThrLightDet != NULL ) {
+			mThrLightDet->setCancel( true );
+			mThrLightDet->setSendImgEnabled( false );
+		}
+
 		if ( mThrFaceRec != NULL ) {
 			mThrFaceRec->setCancel( true );
 			mThrFaceRec->setSendImgEnabled( false );
@@ -49,6 +56,11 @@ OpenCV::OpenCVCore::~OpenCVCore( void )
 		if ( mOpencvWindow != NULL ) {
 			mOpencvWindow->disconnect();
 			mOpencvWindow->deleteLater();
+		}
+
+		if ( mThrLightDet != NULL ) {
+			mThrLightDet->wait();
+			mThrLightDet->deleteLater();
 		}
 
 		if ( mThrFaceRec != NULL ) {
@@ -86,6 +98,7 @@ void OpenCV::OpenCVCore::opencvInit()
 		mOpencvWindow =  new QOpenCV::OpenCVWindow( mParent, mApp );
 	}
 
+	createConnectionLightDet();
 	createConnectionFaceRec();
 	createConnectionAruco();
 
@@ -398,6 +411,43 @@ void OpenCV::OpenCVCore::createConnectionMultiAruco()
 					  SIGNAL( pushImagemMat( cv::Mat ) ),
 					  mOpencvWindow,
 					  SLOT( setLabel( cv::Mat ) ) );
+}
+
+void OpenCV::OpenCVCore::createConnectionLightDet()
+{
+    // send actual image
+    QObject::connect( mOpencvWindow,
+                      SIGNAL( sendImgFaceRec( bool ) ),
+                      mThrFaceRec,
+                      SLOT( setSendImgEnabled( bool ) ) );
+    QObject::connect( mThrFaceRec,
+                      SIGNAL( pushImage( cv::Mat ) ),
+                      mOpencvWindow,
+                      SLOT( setLabel( cv::Mat ) ) );
+    // send actual image to background
+    QObject::connect( mOpencvWindow,
+                      SIGNAL( sendBackgrImgFaceRec( bool ) ),
+                      mThrFaceRec,
+                      SLOT( setSendBackgrImgEnabled( bool ) ) );
+
+
+    // start, stop
+    QObject::connect( mOpencvWindow,
+                      SIGNAL( startFaceRec() ),
+                      mThrFaceRec,
+                      SLOT( start() ) );
+    QObject::connect( mOpencvWindow,
+                      SIGNAL( stopFaceRec( bool ) ),
+                      mThrFaceRec,
+                      SLOT( setCancel( bool ) ) );
+    QObject::connect( mThrFaceRec,
+                      SIGNAL( finished() ),
+                      mOpencvWindow,
+                      SLOT( onFaceRecThrFinished() ) );
+    QObject::connect( mOpencvWindow,
+                      SIGNAL( setCapVideoFaceRec( OpenCV::CapVideo* ) ),
+                      mThrFaceRec,
+                      SLOT( setCapVideo( OpenCV::CapVideo* ) ) );
 }
 
 OpenCV::OpenCVCore* OpenCV::OpenCVCore::getInstance( QApplication* app, QWidget* parent )
