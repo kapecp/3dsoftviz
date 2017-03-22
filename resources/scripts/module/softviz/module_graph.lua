@@ -103,7 +103,7 @@ local function setEdgeColor(edge)
   if(colorTable[edgeType]) then
     edge.params.color = colorTable[edgeType]
   else
-    node.params.color = {A = 1, R = 1, G = 1, B = 1}
+    edge.params.color = {A = 1, R = 1, G = 1, B = 1}
   end
 end
 
