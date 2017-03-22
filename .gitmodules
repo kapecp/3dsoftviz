@@ -31,8 +31,8 @@
 [submodule "dependencies/igloo"]
 	path = dependencies/igloo
 	url = git@github.com:kapecp/igloo.git
-[submodule "dependencies/lualogging"]	
-	path = dependencies/lualogging	
+[submodule "dependencies/lualogging"]
+	path = dependencies/lualogging
 	url = https://github.com/LuaDist/lualogging.git
 [submodule "dependencies/easyloggingpp"]
 	path = dependencies/easyloggingpp
@@ -82,3 +82,6 @@
 [submodule "dependencies/busted"]
 	path = dependencies/busted
 	url = git@github.com:LuaDist/busted.git
+[submodule "dependencies/luacomments"]
+	path = dependencies/luacomments
+	url = https://github.com/LuaDist/luacomments.git
