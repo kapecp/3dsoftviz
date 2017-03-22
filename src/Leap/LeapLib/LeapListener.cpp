@@ -67,15 +67,14 @@ void Leap::LeapListener::onFrame( const Controller& controller )
 	Frame frame = controller.frame();
 	HandList hands = frame.hands();
 	Leap::DirectionDetector::Direction direction;
-    bool leftHandExtended;
-    bool rightHandExtended;
+    bool leftHandExtended = false;
+    bool rightHandExtended = false;
 	Hand leftHand;
 	Hand rightHand;
 
 	//jurik
 	//takin just first gesture (gestures are defined for each finger)
 	Gesture gesture = frame.gestures()[0];
-
 
 	if ( arMode ) {
 		for ( int i=0; i< hands.count(); ++i ) {
@@ -106,64 +105,49 @@ void Leap::LeapListener::onFrame( const Controller& controller )
 		}
 	}
 
-	//std::cout << "id: " << frame.id();
+    const GestureList gestures = frame.gestures();
+    for (int g = 0; g < gestures.count(); ++g) {
+        Gesture gesture = gestures[g];
 
-	    const GestureList gestures = frame.gestures();
-	      for (int g = 0; g < gestures.count(); ++g) {
-	        Gesture gesture = gestures[g];
+        HandList hands = gesture.hands();
+        Hand firstHand = hands[0];
 
-	        HandList hands = gesture.hands();
-	        Hand firstHand = hands[0];
+        switch (gesture.type()) {
+        case Gesture::TYPE_CIRCLE:
+        {
+            LOG( INFO ) << "GESTO CIRCLE....zoomGraph().";
+            leapActions->zoomGraph(gesture);
+            break;
+        }
+        case Gesture::TYPE_SWIPE:
+        {
 
-	        switch (gesture.type()) {
-	          case Gesture::TYPE_CIRCLE:
-	          {
-                LOG( INFO ) << "GESTO....zoomGraph().";
-				leapActions->zoomGraph(gesture);
-	            break;
-	          }
-	          case Gesture::TYPE_SWIPE:
-	          {
-                    if(leapActions->isCameraMoving){
-                        if (rightHandExtended){
-                            LOG( INFO ) << "GESTO....moveCamera().";
-                            leapActions->moveCamera(gesture);
-                        }
-                    }
-                    else{
-                        if (rightHandExtended){
-                            LOG( INFO ) << "GESTO....rotateGraph().";
-                            leapActions->rotateGraph(gesture);
-                        }
-                    }
-	            break;
-              }
-	          case Gesture::TYPE_KEY_TAP:
-	          {
-
-                LOG( INFO ) << "GESTO....onKeyTap().";
-                leapActions->onKeyTap(gesture);
-	            break;
-
-              }
-	          case Gesture::TYPE_SCREEN_TAP:
-	          {
-                LOG( INFO ) << "GESTO....onScreenTap().";
-				leapActions->onScreenTap(gesture);
-	            break;
-              }
-	          default:
-                 LOG( INFO ) << "Unknown gesture type.";
-	            break;
-	        }
-          }
-
-
+            LOG( INFO ) << "GESTO swipe ....rotateGraph().";
+            leapActions->rotateGraph(gesture);
+            break;
+        }
+        case Gesture::TYPE_KEY_TAP:
+        {
+            LOG( INFO ) << "GESTO KEY_TAP....onKeyTap().";
+            leapActions->onKeyTap(gesture);
+            break;
+        }
+        case Gesture::TYPE_SCREEN_TAP:
+        {
+            LOG( INFO ) << "GESTO SCREEN_TAP....onScreenTap().";
+            leapActions->onScreenTap(gesture);
+            break;
+        }
+        default:
+            LOG( INFO ) << "Unknown gesture type.";
+            break;
+        }
+    }
 }
 
 void Leap::LeapListener::onFocusGained( const Controller& controller )
 {
-
+     LOG( INFO ) << "Focus gained.";
 }
 
 void Leap::LeapListener::onFocusLost( const Controller& controller )
@@ -184,10 +168,10 @@ void Leap::LeapListener::onDeviceChange( const Controller& controller )
 
 void Leap::LeapListener::onServiceConnect( const Controller& controller )
 {
-
+     LOG( INFO ) << "Service connected.";
 }
 
 void Leap::LeapListener::onServiceDisconnect( const Controller& controller )
 {
-
+     LOG( INFO ) << "Service disconnect.";
 }

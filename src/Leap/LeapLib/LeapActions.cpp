@@ -110,21 +110,26 @@ void Leap::LeapActions::rotateGraph( Leap::Gesture gesture )
 	SwipeGesture swipe = gesture;
 	Vector direction = swipe.direction();
 
+    LOG ( INFO ) << "[LeapActions::rotateGraph] LeapVektor direction[x,y,z]: [" +
+                  std::to_string(direction.x)  +", "+
+                  std::to_string(direction.y) + ", "+
+                  std::to_string(direction.z) + "]";
+
 	// >= instead of > to avoid edge case, no rotation would happen with abs direction[0] equal to abs direction[1]
 	if ( std::abs( direction[0] ) >= std::abs( direction[1] ) ) { // horizontal movement
 		if ( direction[0] > 0 ) {
-			leapManager->rotateCamera( 0, 0, 1, 0, 0.05f );
+            leapManager->rotateCamera( 0, 0, 1, 0, 0.01f );
 		}
 		else if ( direction[0] < 0 ) {
-			leapManager->rotateCamera( 0, 0, 1, 0, -0.05f );
+            leapManager->rotateCamera( 0, 0, 1, 0, -0.01f );
 		}
 	}
 	else { // vertical movement
 		if ( direction[1] > 0 ) {
-			leapManager->rotateCamera( 0, 0 ,1, 0.05f, 0 );
+            leapManager->rotateCamera( 0, 0 ,1, 0.01f, 0 );
 		}
 		else if ( direction[1] < 0 ) {
-			leapManager->rotateCamera( 0, 0, 1, -0.05f, 0 );
+            leapManager->rotateCamera( 0, 0, 1, -0.01f, 0 );
 		}
 	}
 }
