@@ -5,11 +5,13 @@
 -----------------------------------------------
 local utils              = require "luadb.utils"
 local moduleExtractor    = require "luadb.moduleExtractor"
+local artifactsExtractor = require "luadb.extraction.extractor"
 local astManager         = require "luadb.manager.AST"
 
 ----------------------------------------------
 -- Local graph and AST manager stored after extraction
 local graph = {}
+local colorTable = {}
 local astMan = astManager.new()
 
 ----------------------------------------------
@@ -20,58 +22,43 @@ local function inc()
   return a
 end
 
+----------------------------------------------
+-- Initialize colours for nodes and edges
+local function addColour(typ, ARGB)
+  colorTable[typ] = ARGB
+end
+
+local function setColorTable()
+  colorTable = {
+    --nodes
+    ['directory']       = {A = 1, R = 1, G = 1, B = 0},
+    ['file']            = {A = 1, R = 1, G = 0, B = 1},
+    ['module']          = {A = 1, R = 1, G = 0, B = 1},
+    ['global function'] = {A = 1, R = 0, G = 0, B = 1},
+    ['local variable']  = {A = 1, R = 0, G = 1, B = 0},
+    ['global variable'] = {A = 1, R = 0, G = 1, B = 0},
+    ['interface']       = {A = 1, R = 0, G = 0, B = 0},
+    --edges
+    ['calls']           = {A = 1, R = 0.8, G = 0.8, B = 1},
+    ['contains']        = {A = 1, R = 0.8, G = 1, B = 0.8},
+    ['requires']        = {A = 1, R = 1, G = 0.8, B = 1},
+    ['implements']      = {A = 1, R = 1, G = 0.8, B = 1},
+    ['provides']        = {A = 1, R = 1, G = 0.8, B = 1},
+    ['initializes']     = {A = 1, R = 1, G = 0.8, B = 1},
+    ['declares']        = {A = 1, R = 1, G = 0.8, B = 1},
+    ['represents']      = {A = 1, R = 1, G = 0.8, B = 1}
+  }
+end
+
 --------------------------------------------------
 -- Set color for node based on node type
 local function setNodeColor(node)
-  if node.params.type == 'directory' then 
-    node.params.colorA = 1
-    node.params.colorR = 1
-    node.params.colorG = 1
-    node.params.colorB = 0
+  local nodeType = node.params.type
+  if(colorTable[nodeType]) then
+    node.params.color = colorTable[nodeType]
+  else
+    node.params.color = {A = 1, R = 1, G = 1, B = 1}
   end
-  
-  if node.params.type == 'file' then 
-    node.params.colorA = 1
-    node.params.colorR = 1
-    node.params.colorG = 0
-    node.params.colorB = 1
-  end
-  
-  if node.params.type == 'module' then 
-    node.params.colorA = 1
-    node.params.colorR = 1
-    node.params.colorG = 0
-    node.params.colorB = 1
-  end
-  
-  if node.params.type == 'global function' then 
-    node.params.colorA = 1
-    node.params.colorR = 0
-    node.params.colorG = 0
-    node.params.colorB = 1
-  end
-  
-  if node.params.type == 'local variable' then 
-    node.params.colorA = 1
-    node.params.colorR = 0
-    node.params.colorG = 1
-    node.params.colorB = 0
-  end
-  
-  if node.params.type == 'global variable' then 
-    node.params.colorA = 1
-    node.params.colorR = 0
-    node.params.colorG = 1
-    node.params.colorB = 0
-  end
-  
-  if node.params.type == 'interface' then 
-    node.params.colorA = 1
-    node.params.colorR = 0
-    node.params.colorG = 0
-    node.params.colorB = 0
-  end
-  
 end
 
 ----------------------------------------------
@@ -86,7 +73,7 @@ end
 -- @return minComplexity, maxComplexity, minLines, maxLines
 local function extractNode(v, nodes, minComplexity, maxComplexity, minLines, maxLines)
   local origname = v.data.name or v.id
-  local newnode = {type = "node", id = inc(), label = origname, params={size = 8, name = origname, origid = v.id, type = v.data.type, path = v.data.path, modulePath = v.data.modulePath, colorA = 1, colorR = 1, colorG = 1, colorB = 1, position = v.data.position}}
+  local newnode = {type = "node", id = inc(), label = origname, params={size = 8, name = origname, origid = v.id, type = v.data.type, path = v.data.path, modulePath = v.data.modulePath, position = v.data.position}}
   if newnode.id == 1 then newnode.params.root = true end
   nodes[v] = newnode
   setNodeColor(newnode)
@@ -112,46 +99,11 @@ end
 --------------------------------------------------
 -- Set color for edge based on edge type
 local function setEdgeColor(edge)
-  if edge.params.type == 'calls' then
-    edge.params.colorA = 1
-    edge.params.colorR = 0.8
-    edge.params.colorG = 0.8
-    edge.params.colorB = 1  
-  elseif edge.params.type == 'contains' then
-    edge.params.colorA = 1
-    edge.params.colorR = 0.8
-    edge.params.colorG = 1
-    edge.params.colorB = 0.8
-  elseif edge.params.type == 'requires' then
-    edge.params.colorA = 1
-    edge.params.colorR = 0.8
-    edge.params.colorG = 1
-    edge.params.colorB = 0.8
-  elseif edge.params.type == 'implements' then
-    edge.params.colorA = 1
-    edge.params.colorR = 0.8
-    edge.params.colorG = 1
-    edge.params.colorB = 0.8
-  elseif edge.params.type == 'provides' then
-    edge.params.colorA = 1
-    edge.params.colorR = 0.8
-    edge.params.colorG = 1
-    edge.params.colorB = 0.8
-  elseif edge.params.type == 'initializes' then
-    edge.params.colorA = 1
-    edge.params.colorR = 0.8
-    edge.params.colorG = 1
-    edge.params.colorB = 0.8
-  elseif edge.params.type == 'declares' then
-    edge.params.colorA = 1
-    edge.params.colorR = 0.8
-    edge.params.colorG = 1
-    edge.params.colorB = 0.8
-  elseif edge.params.type == 'represents' then
-    edge.params.colorA = 1
-    edge.params.colorR = 0.8
-    edge.params.colorG = 1
-    edge.params.colorB = 0.8
+  local edgeType = edge.params.type
+  if(colorTable[edgeType]) then
+    edge.params.color = colorTable[edgeType]
+  else
+    node.params.color = {A = 1, R = 1, G = 1, B = 1}
   end
 end
 
@@ -206,13 +158,13 @@ local function doVisualMapping(nodes, minComplexity, maxComplexity, minLines, ma
       if n.params.metrics ~= nil then
         n.params.size = minSize + (n.params.metrics.LOC.lines - minLines) / (maxLines - minLines) * (maxSize - minSize)
         local complexRatio = (n.params.metrics.cyclomatic.upperBound - minComplexity) / (maxComplexity - minComplexity) 
-        n.params.colorG = 1 - complexRatio
-        n.params.colorR = complexRatio
-        n.params.colorB = 0
+        n.params.color.G = 1 - complexRatio
+        n.params.color.R = complexRatio
+        n.params.color.B = 0
       else
-        n.params.colorG = 0
-        n.params.colorR = 0
-        n.params.colorB = 1
+        n.params.color.G = 0
+        n.params.color.R = 0
+        n.params.color.B = 1
       end
     end
   end
@@ -222,17 +174,25 @@ end
 -- Extract function call graph from project and
 -- convert it to format for importing to 3DSoftviz
 -- @param absolutePath path to project being analysed
-local function extractGraph(absolutePath)
+local function extractGraph(absolutePath, graphPicker)
   graph = {}
   
   utils.logger:setLevel(utils.logging.INFO)
 
   utils.logger:info("started extraction")
-  local extractedGraph = moduleExtractor.extract(absolutePath, astMan)
+  local extractedGraph
+  -- for now, it's still nil
+  if(graphPicker == "functioncall") then
+    extractedGraph = artifactsExtractor.extract(absolutePath, astMan)
+  else
+    extractedGraph = moduleExtractor.extract(absolutePath, astMan)
+  end  
   utils.logger:info("extraction successfully finished")
   
   --extractedGraph:printNodes()
   --extractedGraph:printEdges()
+  
+  setColorTable()
 
   local nodes = {}
   local minComplexity, maxComplexity
