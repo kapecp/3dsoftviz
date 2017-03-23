@@ -2,22 +2,22 @@
 
 
 #include "OpenCV/CapVideo.h"
-#include "OpenCV/FaceRecognizer.h"
+#include "OpenCV/LightDetector.h"
 #include "opencv2/imgproc/imgproc.hpp"
 #include <QDebug>
 
-QOpenCV::LightDetectionThread::LightDetectionThread( QObject* parent )
+/*QOpenCV::LightDetectionThread::LightDetectionThread( QObject* parent )
         : QThread( parent )
 {
     mCapVideo		= NULL;
     mCancel			= false;
     mSendImgEnabled	= true;
-}
+}*/
 
 
-QOpenCV::LightDetectionThread::~LightDetectionThread( void )
+/*QOpenCV::LightDetectionThread::~LightDetectionThread( void )
 {
-}
+}*/
 
 // in a loop, capture frame from camera and detect faces
 // send eyes coordinates to change view
@@ -25,11 +25,11 @@ void QOpenCV::LightDetectionThread::run()
 {
     mCancel = false;
     cv::Mat image;
-    OpenCV::LightDetector*	mLightDetector = new OpenCV::LightDetector();
+    //OpenCV::LightDetector*	mLightDetector = new OpenCV::LightDetector();
 
     if ( mCapVideo == NULL ) {
         qDebug() << "[FaceRecognitionThread::run()]  Camera is not set";
-        delete mLightDetector;
+        //delete mLightDetector;
         return;
     }
 
@@ -48,7 +48,7 @@ void QOpenCV::LightDetectionThread::run()
         // show image
         if ( mSendImgEnabled && !image.empty() ) {
             if ( image.data ) {
-                emit pushImage( image.clone() );    // ???
+                //emit pushImage( image.clone() );    // ???
             }
         }
 
@@ -56,7 +56,7 @@ void QOpenCV::LightDetectionThread::run()
     }
     mCapVideo->release();
     mCapVideo = NULL;
-    delete mLightDetector;
+    //delete mLightDetector;
 }
 
 void QOpenCV::LightDetectionThread::setCancel( bool set )

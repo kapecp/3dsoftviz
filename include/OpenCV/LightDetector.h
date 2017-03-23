@@ -24,6 +24,13 @@ namespace OpenCV {
         ~LightDetector();
 
     private:
+        int fisheye_x;
+        int fisheye_y;
+        int fisheye_r;
+
+        void Threshold(int, void*);
+
+        cv::Mat CircleMask(cv::Mat src, cv::Point center, int radius);
 
     };
 }

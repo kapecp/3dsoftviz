@@ -14,9 +14,9 @@ namespace QOpenCV
 
 {
 /**
-	 * @brief Class FaceRecognitionThread
-	 * @author Autor: Marek Jakab
-	 * @date 18.11.2013
+         * @brief Class Light Detection Thread
+         * @author Autor: Marek Karas
+         * @date 22.03.2017
 	 */
     class LightDetectionThread : public QThread
     {

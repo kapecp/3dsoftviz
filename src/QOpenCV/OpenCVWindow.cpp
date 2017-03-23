@@ -132,8 +132,8 @@ void QOpenCV::OpenCVWindow::configureWindow()
 	mModulesStackL->addWidget( arucoSubPageWid );
 
 	mSubmodulesStackL->addWidget( arucoFaceRecPageWid );
-	mSubmodulesStackL->addWidget( arucoLightDetPageWid );
 	mSubmodulesStackL->addWidget( arucoMarkerPageWid );
+    mSubmodulesStackL->addWidget( arucoLightDetPageWid );
 	//mSubmodulesStackL->addWidget( arucoMultiMarkerPageWid );
 
 	kinectPageWid->setLayout( kinectPageLayout );
@@ -157,7 +157,6 @@ void QOpenCV::OpenCVWindow::configureWindow()
 
 	arucoFaceRecPageLayout->addWidget( mFaceDetBackgrCB );
 	arucoFaceRecPageLayout->addWidget( mFaceRecPB );
-
 	arucoLightDetPageLayout->addWidget( mLightDetPB );
 
 	arucoMarkerPageLayout->addWidget( mMarkerBackgrCB );
@@ -319,10 +318,6 @@ void QOpenCV::OpenCVWindow::onSelModulChange()
 	if ( mArucoRB->isChecked() ) {
 		mModulesStackL->setCurrentIndex( 1 );
 	}
-
-	if ( mLightDetRB->isChecked() ) {
-		mModulesStackL->setCurrentIndex( 2 );
-	}
 }
 
 void QOpenCV::OpenCVWindow::onSelSubModulChange()
@@ -339,7 +334,13 @@ void QOpenCV::OpenCVWindow::onSelSubModulChange()
 		mSubmodulesStackL->setCurrentIndex( 2 );
 	}
 	*/
+
+	if ( mLightDetRB->isChecked() ) {
+        mSubmodulesStackL->setCurrentIndex( 2 );
+	}
+
 	if ( mNoVideo->isChecked() ) {
+		emit sendImgLightDet( false );
 		emit sendImgFaceRec( false );
 		emit sendImgMarker( false );
 		emit setMultiMarker( false );
@@ -355,6 +356,9 @@ void QOpenCV::OpenCVWindow::onSelSubModulChange()
 		if ( mMarkerRB->isChecked() ) {
 			emit sendImgFaceRec( false );
 			emit sendImgMarker( true );
+		}
+		if ( mLightDetRB->isChecked() ) {
+			emit sendImgLightDet( true );
 		}
 	}
 }
