@@ -335,6 +335,17 @@ if( LEAP_FOUND )
 else()
 	message( STATUS "LEAP Not Found" )
 endif()
+# ------------------------------ PCL ----------------------------------
+# find PCL
+find_package(PCL 1.8)
+if ( PCL_FOUND )
+        list( APPEND ALL_SYSTEM_HEADERS	${PCL_INCLUDE_DIRS} )
+	link_directories(${PCL_LIBRARY_DIRS})
+	add_definitions(${PCL_DEFINITIONS})
+	message( STATUS "PCL FOUND" )
+else()
+        message( STATUS "PCL NOT FOUND" )
+endif()
 
 # ------------------------------ FGLOVE -------------------------------
 # Find fglove
@@ -1370,7 +1381,9 @@ endif()
 # if( FGLOVE_FOUND )
 #	target_link_libraries( ${3DSOFTVIZ_NAME} ${FGLOVE_LIBRARIES} )
 # endif()
-
+if ( PCL_FOUND )
+        target_link_libraries( ${3DSOFTVIZ_NAME} ${PCL_COMMON_LIBRARIES} )
+endif()
 if( LEAP_FOUND )
 	target_link_libraries( ${3DSOFTVIZ_NAME} leaplib ${LEAP_LIBRARIES} )
 endif()
