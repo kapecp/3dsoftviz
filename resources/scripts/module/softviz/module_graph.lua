@@ -12,6 +12,7 @@ local astManager         = require "luadb.manager.AST"
 -- Local graph and AST manager stored after extraction
 local graph = {}
 local colorTable = {}
+local incidTable = {}
 local astMan = astManager.new()
 
 ----------------------------------------------
@@ -23,12 +24,16 @@ local function inc()
 end
 
 ----------------------------------------------
--- Initialize colours for nodes and edges
-local function addColour(typ, ARGB)
+-- Initialize colours and incidence labels for nodes and edges
+local function addColor(typ, ARGB)
   colorTable[typ] = ARGB
 end
 
-local function setColorTable()
+local function addIncidLabel(typ, InsOut)
+  incidTable[typ] = InsOut
+end
+
+local function setSwitchTable()
   colorTable = {
     --nodes
     ['directory']       = {A = 1, R = 1, G = 1, B = 0},
@@ -40,6 +45,7 @@ local function setColorTable()
     ['interface']       = {A = 1, R = 0, G = 0, B = 0},
     --edges
     ['calls']           = {A = 1, R = 0.8, G = 0.8, B = 1},
+    ['assigns']         = {A = 1, R = 0.8, G = 1, B = 0.8},
     ['contains']        = {A = 1, R = 0.8, G = 1, B = 0.8},
     ['requires']        = {A = 1, R = 1, G = 0.8, B = 1},
     ['implements']      = {A = 1, R = 1, G = 0.8, B = 1},
@@ -48,6 +54,27 @@ local function setColorTable()
     ['declares']        = {A = 1, R = 1, G = 0.8, B = 1},
     ['represents']      = {A = 1, R = 1, G = 0.8, B = 1}
   }
+  
+  incidTable = {
+    ['calls']           = {ins = 'callee', out = 'caller'},
+    ['assigns']         = {ins = 'assignee', out = 'assigner'},
+    ['contains']        = {ins = 'containee', out = 'container'},
+    ['requires']        = {ins = 'requiree', out = 'requirer'},
+    ['implements']      = {ins = 'implementee', out = 'implementer'},
+    ['provides']        = {ins = 'providee', out = 'provider'},
+    ['initializes']     = {ins = 'initializee', out = 'initializer'},
+    ['declares']        = {ins = 'declaree', out = 'declarer'},
+    ['represents']      = {ins = 'representee', out = 'representer'}
+  }
+end
+
+--------------------------------------------------
+-- Set incidences based on edge type
+local function setIncidence(edge)
+  local edgeType = edge.params.type
+  local incid1 = {type = 'edge_part', id = inc(), direction = 'in', label = incidTable[edgeType].ins}
+  local incid2 = {type = 'edge_part', id = inc(), direction = 'out', label = incidTable[edgeType].out}
+  return incid1, incid2
 end
 
 --------------------------------------------------
@@ -73,14 +100,28 @@ end
 -- @return minComplexity, maxComplexity, minLines, maxLines
 local function extractNode(v, nodes, minComplexity, maxComplexity, minLines, maxLines)
   local origname = v.data.name or v.id
-  local newnode = {type = "node", id = inc(), label = origname, params={size = 8, name = origname, origid = v.id, type = v.data.type, path = v.data.path, modulePath = v.data.modulePath, position = v.data.position}}
-  if newnode.id == 1 then newnode.params.root = true end
-  nodes[v] = newnode
-  setNodeColor(newnode)
+  local newnode = {
+    type = "node",
+    id = inc(),
+    label = origname,
+    params = {
+      size = 8,
+      name = origname,
+      origid = v.id,
+      type = v.data.type,
+      path = v.data.path,
+      modulePath = v.data.modulePath,
+      position = v.data.position
+    }
+  }
+  if(newnode.id == 1)then 
+    newnode.params.root = true 
+  end
+  nodes[v] = newnode  
  
-  if v.data.type == 'function' then
+  if(v.data.type == 'function') then
     newnode.params.tag = v.data.tag       
-    if v.data.metrics ~= nil then
+    if(v.data.metrics ~= nil) then
       newnode.params.metrics = {}
       newnode.params.metrics.halstead = v.data.metrics.halstead
       newnode.params.metrics.cyclomatic = v.data.metrics.cyclomatic
@@ -93,6 +134,7 @@ local function extractNode(v, nodes, minComplexity, maxComplexity, minLines, max
       maxLines = (maxLines and (maxLines > newnode.params.metrics.LOC.lines and maxLines)) or newnode.params.metrics.LOC.lines
     end
   end
+  setNodeColor(newnode)
   return minComplexity, maxComplexity, minLines, maxLines
 end
 
@@ -114,13 +156,28 @@ end
 -- @param existingedges table with already converted edges
 -- @param nodes table of extracted nodes
 local function extractEdge(v, existingedges, nodes)
-  if #v.from ~= 1 then print('from', #v.from, v.id, v.from[1], v.from[2]) end 
-  if #v.to ~= 1 then print('to', #v.to, v.id, v.to[1], v.to[2]) end    
+  if(#v.from ~= 1) then print('from', #v.from, v.id, v.from[1], v.from[2]) end 
+  if(#v.to ~= 1) then print('to', #v.to, v.id, v.to[1], v.to[2]) end    
   local ind = v.from[1].id .. "|" .. v.to[1].id
-  if existingedges[ind] ~= nil then
+  if(existingedges[ind] ~= nil) then
     existingedges[ind].params.count = existingedges[ind].params.count + 1
   else
-    local edge = {type = "edge", id = inc(), params = {origid = v.id, count = 1, edgeStrength = 2}}
+    local edge = {
+      type = "edge",
+      id = inc(),
+      params = {
+        origid = v.id,
+        count = 1,
+        edgeStrength = 2
+      }
+    }
+    if(v.label ~= nil) then
+      edge.params.type = v.label
+    end
+    
+    local incid1, incid2 = setIncidence(edge)
+    
+     --[[
     local incid1 = {type = "edge_part", id = inc(), label = ''}
     local incid2 = {type = "edge_part", id = inc(), label = ''}
     if v.from[1].data.type == 'function' or (v.from[1].data.type == 'file' and v.to[1].data.type == 'global function') then
@@ -128,20 +185,27 @@ local function extractEdge(v, existingedges, nodes)
       incid1.direction = 'in'
       incid2.direction = 'out'
     end
+       
     if v.from[1].data.type == 'file' then 
       edge.params.type = 'contains'
     end
     if v.from[1].data.type == 'directory' then 
       edge.params.type = 'contains'
     end
-
+    --]]
     edge.label = edge.params.type
-    if v.from[1].data.modulePath ~= v.to[1].data.modulePath then
+    if(v.from[1].data.modulePath ~= v.to[1].data.modulePath) then
       edge.params.edgeStrength = 0.1
-    elseif v.from[1].data.modulePath ~= nil then
+    elseif(v.from[1].data.modulePath ~= nil) then
       edge.params.edgeStrength = 0.5
     end 
-    graph[edge] = {[incid1] = nodes[v.from[1]], [incid2] = nodes[v.to[1]]}
+    graph[edge] = {
+      [incid1] = nodes[v.to[1]],
+      [incid2] = nodes[v.from[1]]
+    }
+    
+    utils.logger:debug(nodes[v.from[1]].params.type .. " - " .. incid2.label .. " - " .. edge.params.type .. " - " .. incid1.label .. " - " .. nodes[v.to[1]].params.type)
+  
     existingedges[ind] = edge
     setEdgeColor(edge)
   end
@@ -154,8 +218,8 @@ local function doVisualMapping(nodes, minComplexity, maxComplexity, minLines, ma
   local minSize = 8
   local maxSize = 100
   for k, n in pairs(nodes) do
-    if n.params.type == 'function' then
-      if n.params.metrics ~= nil then
+    if(n.params.type == 'function') then
+      if(n.params.metrics ~= nil) then
         n.params.size = minSize + (n.params.metrics.LOC.lines - minLines) / (maxLines - minLines) * (maxSize - minSize)
         local complexRatio = (n.params.metrics.cyclomatic.upperBound - minComplexity) / (maxComplexity - minComplexity) 
         n.params.color.G = 1 - complexRatio
@@ -192,7 +256,7 @@ local function extractGraph(absolutePath, graphPicker)
   --extractedGraph:printNodes()
   --extractedGraph:printEdges()
   
-  setColorTable()
+  setSwitchTable()
 
   local nodes = {}
   local minComplexity, maxComplexity
@@ -202,7 +266,7 @@ local function extractGraph(absolutePath, graphPicker)
     minComplexity, maxComplexity, minLines, maxLines = extractNode(v, nodes, minComplexity, maxComplexity, minLines, maxLines)
   end
 
-  print("complexity", minComplexity, maxComplexity, minLines, maxLines)
+  utils.logger:info("complexity", minComplexity, maxComplexity, minLines, maxLines)
 
   local existingedges = {}
 
@@ -216,14 +280,14 @@ end
 -------------------------------------
 -- Function for retreiving extracted graph
 local function getGraph()
-  print("getting hybrid graph")
+  utils.logger:info("getting hybrid graph")
   return graph
 end
 
 -------------------------------------
 -- Function for retreiving extracted graph
 local function getASTManager()
-  print("getting AST Manager")
+  utils.logger:info("getting AST Manager")
   return astMan
 end
 -------------------------------------

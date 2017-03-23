@@ -15,6 +15,10 @@ local logger        = utils.logger
 -- Helper functions
 -----------------------------------------------
 local function getFunctionWithName(functionsList, name)
+  if (functionsList == nil) then
+    local sth = functionsList 
+  end
+  
   for i,functionNode in pairs(functionsList) do
       if functionNode.data.name == name then return functionNode end
   end
@@ -30,7 +34,7 @@ local function registerGlobalModule(graph, moduleName, moduleFunctionCall)
     local newGlobalModuleNode = hypergraph.node.new()
     newGlobalModuleNode.meta  = newGlobalModuleNode.meta or {}
     newGlobalModuleNode.functionNodes = newGlobalModuleNode.functionNodes or {}
-    newGlobalModuleNode.data.name = "module " .. moduleName
+    newGlobalModuleNode.data.name = moduleName
     newGlobalModuleNode.data.type = "module"
 
     globalModuleNodes = globalModuleNodes or {}
@@ -80,11 +84,18 @@ end
 local function getModuleFromFile(graph)
   local luaFileNodes = graph.luaFileNodes
   for i,luaFileNode in pairs(luaFileNodes) do
-    local moduleName = utils.splitAndGetFirst(luaFileNode.data.name, "%.")
+    local moduleName = utils.splitAndGetFirst(luaFileNode.data.name, "%.")  --scanner.lua -> scanner
+    --[[
+    local moduleName = luaFileNode.data.path
+    local moduleName1 = utils.splitAndGetLast(moduleName, "%\\")
+    local moduleName2 = utils.splitAndGetFirst(moduleName1,  "%.")
+    moduleName = moduleName2:gsub("/", ".")
+    ]]--
     
     local newModuleNode = hypergraph.node.new()
     newModuleNode.meta  = luaFileNode.meta or {}
-    newModuleNode.data.name = "module " .. moduleName    --scanner.lua
+    newModuleNode.functionNodes = newModuleNode.functionNodes or {}
+    newModuleNode.data.name = moduleName
     newModuleNode.data.type = "module"
     
     graph:addNode(newModuleNode)
@@ -109,6 +120,7 @@ local function getFunctionCalls(graph, astManager)
   local globalModuleNodes = graph.globalModuleNodes
       
   for i,luaFileNode in pairs(luaFileNodes) do
+    print(luaFileNode.data.path)
     local functionCalls = functioncalls.extract(luaFileNode, graph, astManager)
     luaFileNode.functionNodes = functionCalls.nodes
     luaFileNode.functionCalls = functionCalls.edges

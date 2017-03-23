@@ -98,7 +98,7 @@ local function extractAssigns(AST, AST_ID, graph, fileName, nodes, edges)
     
     logger:debug('adding var init edge')
     local newEdge = hypergraph.edge.new()
-    newEdge.label = "inicializes"
+    newEdge.label = "initializes"
     newEdge:addSource(globalModuleNodes[moduleName])
     newEdge:addTarget(varNode)
     newEdge:setAsOriented()
@@ -154,7 +154,7 @@ local function extractAssigns(AST, AST_ID, graph, fileName, nodes, edges)
     
     logger:debug('adding var init edge')
     local newEdge = hypergraph.edge.new()
-    newEdge.label = "inicializes"
+    newEdge.label = "initializes"
     newEdge:addSource(globalModuleNodes[moduleName])
     newEdge:addTarget(varNode)
     newEdge:setAsOriented()
@@ -211,7 +211,7 @@ local function extractRequireCalls(AST, AST_ID, graph, fileName, nodes, edges)
     
     logger:debug('adding var init edge')
     local newEdge = hypergraph.edge.new()
-    newEdge.label = "inicializes"
+    newEdge.label = "initializes"
     newEdge:addSource(globalModuleNodes[moduleName])
     newEdge:addTarget(varNode)
     newEdge:setAsOriented()
@@ -259,7 +259,7 @@ local function extractRequireCalls(AST, AST_ID, graph, fileName, nodes, edges)
     
     logger:debug('adding var init edge')
     local newEdge = hypergraph.edge.new()
-    newEdge.label = "inicializes"
+    newEdge.label = "initializes"
     newEdge:addSource(globalModuleNodes[moduleName])
     newEdge:addTarget(varNode)
     newEdge:setAsOriented()
@@ -387,7 +387,7 @@ end
 local function extract(luaFileNode, graph, astManager)
   local path = luaFileNode.data.path
   local fileName = luaFileNode.data.name
-  print(fileName)
+  --print(fileName)
   local graph = graph or hypergraph.graph.new()
   
   local AST, AST_ID = astManager:findASTByPath(path)
