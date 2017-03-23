@@ -149,6 +149,12 @@ void Vwr::CameraManipulator::getUsage( osg::ApplicationUsage& usage ) const
 	usage.addKeyboardMouseBinding( "Trackball: -","When in stereo, reduce the fusion distance" );
 }
 
+void Vwr::CameraManipulator::rotateForLeapBackgroundSync( )
+{
+    _rotation = osg::Quat(0.0,-1.0,0.0,0.0);
+    _center = osg::Vec3d(0.0,0.0,-5.0);
+}
+
 bool Vwr::CameraManipulator::handle( const GUIEventAdapter& ea, GUIActionAdapter& us )
 {
 	switch ( ea.getEventType() ) {
