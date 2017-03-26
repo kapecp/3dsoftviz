@@ -1,7 +1,8 @@
-#include "Aruco/arucocore.h"
+#include "Aruco/ArucoCore.h"
 #include "Util/ApplicationConfig.h"
 #include <QDebug>
 #include "opencv2/imgproc/imgproc.hpp"
+#include "OpenCV/MarkerlessTracker.h"
 
 #include "opencv2/highgui/highgui.hpp"
 #include "opencv2/calib3d/calib3d.hpp"

@@ -15,7 +15,6 @@ class KinectThread;
 
 namespace QOpenCV {
 class FaceRecognitionThread;
-class MarkerlessTrackingThread;
 //class FaceRecognitionWindow;
 class OpenCVWindow;
 }
@@ -76,12 +75,6 @@ private:
 	void createConnectionFaceRec();
 
 	/**
-		 * @author Autor: Lukas Hagara
-		 * @brief createConnectionMarkerless Create connection for controlling Markerless Tracking thread from Face/Marker detection window
-		 */
-	void createConnectionMarkerless();
-
-	/**
 		 * @author Autor: David Durcak
 		 * @brief createConnectionAruco Create conections for cotrollig Aruco thread from Face Detection window
 		 */
@@ -109,7 +102,6 @@ private:
 	QApplication*					mApp;
 	ArucoModul::ArucoThread*			mThrAruco;
 	QOpenCV::FaceRecognitionThread*	mThrFaceRec;
-	QOpenCV::MarkerlessTrackingThread* mThrMarkerless;
 	Kinect::KinectThread* mThrKinect;
 	//QPointer<QOpenCV::FaceRecognitionWindow> mOpencvDialog;
 	QPointer<QOpenCV::OpenCVWindow> mOpencvWindow;

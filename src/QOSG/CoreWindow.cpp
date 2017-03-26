@@ -229,6 +229,9 @@ void CoreWindow::createActions()
 	switchBackgroundOrtho2dAction = new QAction( "Ortho2d", this );
 	connect( switchBackgroundOrtho2dAction, SIGNAL( triggered() ), this, SLOT( switchBackgroundOrtho2d() ) );
 
+    switchBackgroundLeapAction = new QAction( "Leap", this );
+    connect( switchBackgroundLeapAction, SIGNAL( triggered() ), this, SLOT( switchBackgroundLeap() ) );
+
 	loadSpecialMatrix = new QAction( QIcon( "../share/3dsoftviz/img/gui/matrix.png" ),"&Load matrix from file", this );
 	connect( loadSpecialMatrix, SIGNAL( triggered() ), this, SLOT( loadSpecialMatrixFromFile() ) );
 
@@ -866,6 +869,7 @@ void CoreWindow::createMenus()
 	backgroundMenu->addAction( switchBackgroundWhiteAction );
 	backgroundMenu->addAction( switchBackgroundSkyNoiseBoxAction );
 	backgroundMenu->addAction( switchBackgroundTextureAction );
+    backgroundMenu->addAction( switchBackgroundLeapAction );
 	backgroundMenu->addAction( switchBackgroundOrtho2dAction );
 
 	help = menuBar()->addMenu( "Help" );
@@ -2504,6 +2508,27 @@ void CoreWindow::switchBackgroundOrtho2d()
 	if ( flagPlay == 1 ) {
 		playLayout();
 	}
+}
+
+void CoreWindow::switchBackgroundLeap()
+{
+    LOG( INFO ) << "CoreWindow::switchBackgroundLeap switching to leap bg";
+    Data::Graph* currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
+
+    int flagPlay = 0;
+    if ( this->isPlaying ) {
+        flagPlay = 1;
+        pauseLayout();
+    }
+    if ( coreGraph->updateBackground( 4, currentGraph ) == 0 ) {
+        LOG( INFO ) << "Background successfully updated";
+    }
+    else {
+        LOG( ERROR ) << "Background bg update failed";
+    }
+    if ( flagPlay == 1 ) {
+        playLayout();
+    }
 }
 
 void CoreWindow::labelOnOff( bool )
