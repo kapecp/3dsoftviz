@@ -7,25 +7,39 @@
 // constructor loads classifier file with learned faces and set start parameters
 OpenCV::LightDetector::LightDetector()
 {
-    a = 0;
+    mfisheyeCenter =  cv::Point(256,256);
+    mFisheyeRadius = 256;
 }
 
 OpenCV::LightDetector::~LightDetector()
 {
 }
 
-cv::Mat LightDetector::CircleMask(cv::Mat src, cv::Point center, int radius) {
+cv::Mat OpenCV::LightDetector::CircleMask( cv::Mat src ) {
     cv::Mat out;
-    cv::Mat mask = cv::Mat::zeros(src.size(), CV_8U);
-    circle(mask, center, radius, CV_RGB(255,255,255), CV_FILLED);
+    cv::Mat mask = cv::Mat::zeros( src.size(), CV_8U );
+    circle(mask, this->mfisheyeCenter, this->mFisheyeRadius, CV_RGB(255,255,255), CV_FILLED);
     src.copyTo(out, mask);
     return out;
 }
 
+void OpenCV::LightDetector::DrawBoundary( cv::Mat src ) {
+    circle(src, this->mfisheyeCenter, this->mFisheyeRadius, CV_RGB(255,0,0));
+}
 
-void LightDetector::Threshold(int, void*) {
+void OpenCV::LightDetector::setFisheyeCenter( cv::Point center ) {
+    mfisheyeCenter = center;
+}
 
-    // mask
+void OpenCV::LightDetector::setFisheyeRadius( int radius ) {
+    mFisheyeRadius = radius;
+}
+
+
+
+void OpenCV::LightDetector::Threshold( int, void* ) {
+
+    /*// mask
     src_thre = CircleMask(src_gray, Point(fisheye_x, shot_center_y), shot_radius);
 
     // threshold
@@ -39,6 +53,6 @@ void LightDetector::Threshold(int, void*) {
     morphologyEx(src_thre, src_thre, MORPH_CLOSE, kernel, Point(-1, -1), 1);
 
     imshow("morph", src_thre);
-    LightEstimation_FindLights(0, 0);
+    LightEstimation_FindLights(0, 0);*/
 }
 

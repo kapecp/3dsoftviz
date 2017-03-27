@@ -14,6 +14,7 @@
 #include <QSlider>
 #include <QStackedLayout>
 #include <QVBoxLayout>
+#include <QtGui/QLineEdit>
 
 namespace OpenCV {
 class CapVideo;
@@ -269,6 +270,14 @@ signals:
 
 	void arucoRunning( bool isRunning );
 
+	void sendFishEyeCenterX( int value );
+
+	void sendFishEyeCenterY( int value );
+
+	void sendFishEyeRadius( int value );
+
+    void sendCamResolution( int width, int height );
+
 public slots:
 	/**
 	     * @author Autor: David Durcak
@@ -299,6 +308,8 @@ public slots:
 	    * @brief setLabel Draw image on label
 	    */
 	void setLabel( cv::Mat image );
+
+    void receiveCamResolution( int width, int height );
 
 private slots:
 	/**
@@ -400,6 +411,36 @@ private slots:
 	 */
 	void setMarkerlessDetectionKinect( bool set );
 
+    /**
+    * @brief private SLOT for setting up fisheye
+    * @param value X axis offset in pixels
+    */
+    void onFisheyeXChanged(int value);
+
+    /**
+    * @brief private SLOT for setting up fisheye
+    * @param value Y axis offset in pixels
+    */
+    void onFisheyeYChanged(int value);
+
+    /**
+    * @brief private SLOT for setting up fisheye
+    * @param value Radius in pixels
+    */
+    void onFisheyeRChanged(int value);
+
+    /**
+    * @brief private SLOT for setting up camera width
+    * @param value width in pixels
+    */
+    void onCamWidthChanged( const QString &text );
+
+    /**
+    * @brief private SLOT for setting up camera width
+    * @param value width in pixels
+    */
+    void onCamHeightChanged( const QString &text );
+
 private:
 	/**
 	     * @author Autor: Michael Garaj
@@ -453,6 +494,15 @@ private:
 	QCheckBox*		 mEnableMarkerlessCameraCB;
 
 	QSlider*         mSpeed;
+
+	// fisheye x,y,radius sliders
+	QSlider*		 mFisheyeXS;
+	QSlider*		 mFisheyeYS;
+	QSlider*		 mFisheyeRS;
+
+    QValidator*      mCamValidator;
+    QLineEdit*       mCamWidth;
+    QLineEdit*       mCamHeight;
 };
 
 }

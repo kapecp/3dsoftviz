@@ -1,3 +1,4 @@
+#include <QtGui/QIntValidator>
 #include "QOpenCV/OpenCVWindow.h"
 
 #include "OpenCV/CamSelectCore.h"
@@ -76,14 +77,45 @@ void QOpenCV::OpenCVWindow::configureWindow()
 	mEnableMarkerDetectCB = new QCheckBox( tr( "Turn on Marker Detection" ) );
 	mEnableMarkerlessCameraCB = new QCheckBox( tr( "Turn on Markerless Detection" ) );
 
-	mSpeed =  new QSlider( Qt::Vertical );
+	mSpeed =  new QSlider( Qt::Horizontal );
 	mSpeed->setRange( 5,20 );
 	mSpeed->setValue( 10 );
 	mSpeed->setPageStep( 1 );
 	mSpeed->setFocusPolicy( Qt::NoFocus );
-	mSpeed->setToolTip( "Modify speed of movement" );
+	mSpeed->setToolTip( tr( "Modify speed of movement" ) );
 
-	mModulesStackL = new QStackedLayout;
+    mFisheyeXS = new QSlider( Qt::Horizontal );
+    mFisheyeXS->setRange( 0,512 );
+    mFisheyeXS->setValue( 256 );
+    mFisheyeXS->setPageStep( 1 );
+    mFisheyeXS->setFocusPolicy( Qt::NoFocus );
+    mFisheyeXS->setToolTip( tr( "Adjust the center of fisheye lens for calculations" ) );
+
+    mFisheyeYS = new QSlider( Qt::Horizontal );
+    mFisheyeYS->setRange( 0,512 );
+    mFisheyeYS->setValue( 256 );
+    mFisheyeYS->setPageStep( 1 );
+    mFisheyeYS->setFocusPolicy( Qt::NoFocus );
+    mFisheyeYS->setToolTip( tr( "Adjust the center of fisheye lens for calculations" ) );
+
+    mFisheyeRS = new QSlider( Qt::Horizontal );
+    mFisheyeRS->setRange( 0,512 );
+    mFisheyeRS->setValue( 256 );
+    mFisheyeRS->setPageStep( 1 );
+    mFisheyeRS->setFocusPolicy( Qt::NoFocus );
+    mFisheyeRS->setToolTip( tr( "Adjust the radius of fisheye lens for calculations" ) );
+
+    mCamValidator = new QIntValidator(100, 10000, this);
+
+    mCamWidth = new QLineEdit( tr ("Enter width") );
+    mCamWidth->setMaxLength(5);
+    mCamWidth->setValidator( mCamValidator );
+
+    mCamHeight = new QLineEdit( tr ("Enter height") );
+    mCamHeight->setMaxLength(5);
+    mCamHeight->setValidator( mCamValidator );
+
+    mModulesStackL = new QStackedLayout;
 	mSubmodulesStackL = new QStackedLayout;
 
 	QHBoxLayout* mainLayout		= new QHBoxLayout;
@@ -157,7 +189,14 @@ void QOpenCV::OpenCVWindow::configureWindow()
 
 	arucoFaceRecPageLayout->addWidget( mFaceDetBackgrCB );
 	arucoFaceRecPageLayout->addWidget( mFaceRecPB );
-	arucoLightDetPageLayout->addWidget( mLightDetPB );
+
+    // light detection panel
+    arucoLightDetPageLayout->addWidget( mFisheyeXS );
+    arucoLightDetPageLayout->addWidget( mFisheyeYS );
+    arucoLightDetPageLayout->addWidget( mFisheyeRS );
+    arucoLightDetPageLayout->addWidget( mCamWidth );
+    arucoLightDetPageLayout->addWidget( mCamHeight );
+    arucoLightDetPageLayout->addWidget( mLightDetPB );
 
 	arucoMarkerPageLayout->addWidget( mMarkerBackgrCB );
 	arucoMarkerPageLayout->addWidget( mMarkerBehindCB );
@@ -226,6 +265,12 @@ void QOpenCV::OpenCVWindow::configureWindow()
 	connect( mDisableZoomCursorCB, SIGNAL( clicked( bool ) ), this, SLOT( stopZoom() ) );
 	connect( mEnableMarkerlessKinectCB, SIGNAL( clicked( bool ) ), this, SLOT( setMarkerlessDetectionKinect( bool ) ) );
 
+    connect( mFisheyeXS, SIGNAL( valueChanged( int ) ), this, SLOT( onFisheyeXChanged( int ) ) );
+    connect( mFisheyeYS, SIGNAL( valueChanged( int ) ), this, SLOT( onFisheyeYChanged( int ) ) );
+    connect( mFisheyeRS, SIGNAL( valueChanged( int ) ), this, SLOT( onFisheyeRChanged( int ) ) );
+
+    connect( mCamWidth, SIGNAL( textEdited( const QString & ) ), this, SLOT( onCamWidthChanged( const QString & ) ) );
+    connect( mCamHeight, SIGNAL( textEdited( const QString & ) ), this, SLOT( onCamHeightChanged( const QString & ) ) );
 }
 
 void QOpenCV::OpenCVWindow::stopMovingCursor()
@@ -309,6 +354,26 @@ void QOpenCV::OpenCVWindow::onMarkerBackgrCBClicked( bool checked )
 	}
 }
 
+void QOpenCV::OpenCVWindow::onFisheyeXChanged( int value ) {
+    emit sendFishEyeCenterX( value );
+}
+
+void QOpenCV::OpenCVWindow::onFisheyeYChanged( int value ) {
+    emit sendFishEyeCenterY( value );
+}
+
+void QOpenCV::OpenCVWindow::onFisheyeRChanged( int value ) {
+    emit sendFishEyeRadius( value );
+}
+
+void QOpenCV::OpenCVWindow::onCamWidthChanged( const QString &text ) {
+    qDebug() << "camera width input " << text;
+}
+
+void QOpenCV::OpenCVWindow::onCamHeightChanged( const QString &text ) {
+    qDebug() << "camera height input " << text;
+}
+
 void QOpenCV::OpenCVWindow::onSelModulChange()
 {
 	if ( mKinectRB->isChecked() ) {
@@ -351,14 +416,18 @@ void QOpenCV::OpenCVWindow::onSelSubModulChange()
 		if ( mFaceRecRB->isChecked() ) {
 			emit sendImgMarker( false );
 			emit sendImgFaceRec( true );
+            emit sendImgLightDet( false );
 		}
 		// marker
 		if ( mMarkerRB->isChecked() ) {
 			emit sendImgFaceRec( false );
 			emit sendImgMarker( true );
+            emit sendImgLightDet( false );
 		}
 		if ( mLightDetRB->isChecked() ) {
 			emit sendImgLightDet( true );
+            emit sendImgMarker( false );
+            emit sendImgFaceRec( false );
 		}
 	}
 }
@@ -404,14 +473,14 @@ void QOpenCV::OpenCVWindow::onLightDetStartCancel(bool checked){
     if ( checked ) {
         mLightDetPB->setEnabled( false );
         mLightDetPB->setText( tr( "Stop Light Det." ) );
-        emit setCapVideoFaceRec( OpenCV::CamSelectCore::getInstance()->selectCamera() );
+        emit setCapVideoLightDet( OpenCV::CamSelectCore::getInstance()->selectCamera() );
         emit startLightDet();
         mLightDetPB->setEnabled( true );
     }
     else {
         mLightDetPB->setEnabled( false );
         emit stopLightDet( true );
-
+        mLightDetPB->setEnabled( true );
     }
 }
 
@@ -496,4 +565,8 @@ void QOpenCV::OpenCVWindow::setLabel( cv::Mat image )
 	mWindowLabel->setPixmap( QPixmap::fromImage( qimage ) );
 
 	image.~Mat();
+}
+
+void QOpenCV::OpenCVWindow::receiveCamResolution( int width, int height ) {
+
 }

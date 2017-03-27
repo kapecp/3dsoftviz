@@ -14,10 +14,10 @@ namespace QOpenCV
 
 {
 /**
-         * @brief Class Light Detection Thread
-         * @author Autor: Marek Karas
-         * @date 22.03.2017
-	 */
+    * @brief Class Light Detection Thread
+    * @author Autor: Marek Karas
+    * @date 22.03.2017
+    */
     class LightDetectionThread : public QThread
     {
     Q_OBJECT
@@ -35,7 +35,7 @@ namespace QOpenCV
 
     signals:
         /**
-                 * @author Autor: Marek Jakab
+                 * @author Autor: Marek Karas
                  * @brief pushImage Send image to FaceRecognitionWindow
                  * @param Image cv::Mat
                  */
@@ -44,34 +44,53 @@ namespace QOpenCV
 
     public slots:
         /**
-                 * @author Autor: Marek Jakab
+                 * @author Autor: Marek Karas
                  * @brief setCancel Sets cancel=true
                  */
         void setCancel( bool );
 
         /**
-        * @author Dávid Durčák
-        * @brief setSendImgEnabling Set emiting of actual frame.
-        * @param sendImgEnabled
-*/
+                * @author Marek Karas
+                * @brief setSendImgEnabling Set emiting of actual frame.
+                * @param sendImgEnabled
+                */
         void setSendImgEnabled( bool sendImgEnabled );
 
         void setSendBackgrImgEnabled( bool sendBackgrImgEnabled );
 
 
-
         /**
-                * @author Dávid Durčák
+                * @author Marek Karas
                 * @brief setCapVideo Set member mCapVideo.
                 * @param capVideo
         */
         void setCapVideo( OpenCV::CapVideo* capVideo );
+
+        /**
+                * @author Autor: Marek Karas
+                * @brief setOffsetX Sets offset for mFisheyeX
+                */
+        void setFishEyeCenterX( int );
+
+        /**
+                * @author Autor: Marek Karas
+                * @brief setOffsetY Sets offset for mFisheyeY
+                */
+        void setFishEyeCenterY( int );
+
+        /**
+                * @author Autor: Marek Karas
+                * @brief setRadius Sets value for mFisheyeR
+                */
+        void setFishEyeRadius( int );
 
     private:
         /**
              * @brief mCapVideo CapVideo object representing camera
              */
         OpenCV::CapVideo*		mCapVideo;
+
+        OpenCV::LightDetector*	mLightDetector;
         /**
              * @brief mCancel if the thread was canceled
              */
@@ -79,6 +98,9 @@ namespace QOpenCV
         bool					mSendImgEnabled;
         bool					mSendBackgrImgEnabled;
 
+        int                     mFisheyeX;
+        int                     mFisheyeY;
+        int                     mFisheyeR;
     };
 }
 

@@ -7,6 +7,7 @@
 
 #include <QDebug>
 
+
 // constructor sets basic camera settings
 OpenCV::CapVideo::CapVideo( int device_id, int width, int height )
 {
@@ -29,6 +30,13 @@ void OpenCV::CapVideo::startCamera( int width,int height )
 		this->height = static_cast<int>( this->capture.get( CV_CAP_PROP_FRAME_HEIGHT ) );
 		return;
 	}
+}
+
+void OpenCV::CapVideo::setCaptureProperties( int width, int height ) {
+	this->capture.set( CV_CAP_PROP_FRAME_WIDTH, width );
+	this->capture.set( CV_CAP_PROP_FRAME_HEIGHT, height );
+	this->width  = static_cast<int>( this->capture.get( CV_CAP_PROP_FRAME_WIDTH ) );
+	this->height = static_cast<int>( this->capture.get( CV_CAP_PROP_FRAME_HEIGHT ) );
 }
 
 //release camera
