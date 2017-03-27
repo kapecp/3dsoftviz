@@ -17,11 +17,13 @@ local function extractFunctions(AST, AST_ID, graph, path)
   for i,func in pairs(functions) do
     logger:debug('adding node '..func.name)
     local newNode = hypergraph.node.new()
+    newNode.meta  = newNode.meta or {}
     newNode.data.metrics = func.metrics
     newNode.data.name = func.name
-	  newNode.data.position = func.position
-    newNode.data.type = "function"
-    newNode.data.modulePath = path
+    newNode.data.position = func.position
+    newNode.data.tag = func.tag
+    newNode.meta.type = "function"
+    newNode.meta.modulePath = path
     newNode.data.astId = AST_ID
     graph:addNode(newNode)
     table.insert(nodes, newNode)
@@ -77,6 +79,8 @@ local function extractFunctionCalls(AST, graph, nodes)
       newEdge.meta.calleeFunction = getCalleeFunctionName(call)
       newEdge.meta.calledFunction = calledFunction
       newEdge.data.text = call.text
+      newEdge.data.position = call.position
+      newEdge.data.tag = call.tag
       newEdge:addSource(hypergraph.node.findByName(nodes, newEdge.meta.calleeFunction))
       newEdge:addTarget(hypergraph.node.findByName(nodes, calledFunction))
               
@@ -94,7 +98,16 @@ local function extractFunctionCalls(AST, graph, nodes)
   return edges
 end
 
+-- the old extract function from private LuaDB
+local function extract_old(fileName, graph)
+  local graph = graph or hypergraph.graph.new()
+  local AST   = ast.getAST(fileName)
+  local nodes = extractFunctions(AST, graph, fileName)
+  local edges = extractFunctionCalls(AST, graph, nodes)
+  return { nodes = nodes, edges = edges }
+end
 
+-- Denis' new extract function from 3DSoftViz's LuaDB module
 local function extract(luaFileNode, graph, astManager)
   local path = luaFileNode.data.path
   local graph = graph or hypergraph.graph.new()
@@ -110,13 +123,38 @@ local function extract(luaFileNode, graph, astManager)
   return { nodes = nodes, edges = edges }
 end
 
+
+-----------------------------------------------
+-- @author Michael Scholtz
+-----------------------------------------------
+local function extractFromString(string, graph)
+  local graph = graph or hypergraph.graph.new()
+  local AST   = ast.getASTFromString(string)
+  local nodes = extractFunctions(AST, graph, "source:string")
+  local edges = extractFunctionCalls(AST, graph, nodes)
+  return { nodes = nodes, edges = edges }
+end
+
+-----------------------------------------------
+-- @author Michael Scholtz
+-----------------------------------------------
+local function extractFromAST(ast, graph)
+  local graph = graph or hypergraph.graph.new()
+  local nodes = extractFunctions(ast, graph, "source:ast")
+  local edges = extractFunctionCalls(ast, graph, nodes)
+  return { nodes = nodes, edges = edges }
+end
+
+
 -----------------------------------------------
 -- Return
 -----------------------------------------------
 
 return
 {
-  extract      = extract,
+  extract = extract,
+  extractFromString = extractFromString,
+  extractFromAST = extractFromAST,
   extractNodes = extractFunctions,
   extractEdges = extractFunctionCalls
 }

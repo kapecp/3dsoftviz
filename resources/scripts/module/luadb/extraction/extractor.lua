@@ -60,7 +60,7 @@ local function registerGlobalModule(graph, moduleName, moduleFunctionCall)
     newGlobalModuleNode.meta  = newGlobalModuleNode.meta or {}
     newGlobalModuleNode.functionNodes = newGlobalModuleNode.functionNodes or {}
     newGlobalModuleNode.data.name = moduleName
-    newGlobalModuleNode.data.type = "globalModule"
+    newGlobalModuleNode.meta.type = "globalModule"
 
     globalModuleNodes = globalModuleNodes or {}
     globalModuleNodes[moduleName] = newGlobalModuleNode
@@ -74,7 +74,7 @@ local function registerGlobalModule(graph, moduleName, moduleFunctionCall)
     local newFunctionNode = hypergraph.node.new()
     newFunctionNode.meta  = newFunctionNode.meta or {}
     newFunctionNode.data.name = moduleFunctionCall
-    newFunctionNode.data.type = "globalFunction"
+    newFunctionNode.meta.type = "globalFunction"
     table.insert(moduleNode.functionNodes, newFunctionNode)
     functionNode = newFunctionNode
     graph:addNode(newFunctionNode)
@@ -152,7 +152,7 @@ local function assignGlobalCalls(graph)
       local newGlobalFunctionNode = hypergraph.node.new()
       newGlobalFunctionNode.meta  = newGlobalFunctionNode.meta or {}
       newGlobalFunctionNode.data.name = globalFunctionCall
-      newGlobalFunctionNode.data.type = "globalFunction"
+      newGlobalFunctionNode.meta.type = "globalFunction"
       graph:addNode(newGlobalFunctionNode)
       functionNode = newGlobalFunctionNode
     end
