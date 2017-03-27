@@ -157,7 +157,7 @@ end
 -- @param nodes table of extracted nodes
 local function extractEdge(v, existingedges, nodes)
   if(#v.from ~= 1) then print('from', #v.from, v.id, v.from[1], v.from[2]) end 
-  if(#v.to ~= 1) then print('to', #v.to, v.id, v.to[1], v.to[2]) end    
+  if(#v.to ~= 1) then print('to', #v.to, v.id, v.to[1], v.to[2]) end  
   local ind = v.from[1].id .. "|" .. v.to[1].id
   if(existingedges[ind] ~= nil) then
     existingedges[ind].params.count = existingedges[ind].params.count + 1
@@ -202,8 +202,7 @@ local function extractEdge(v, existingedges, nodes)
     graph[edge] = {
       [incid1] = nodes[v.to[1]],
       [incid2] = nodes[v.from[1]]
-    }
-    
+    }    
     utils.logger:debug(nodes[v.from[1]].params.type .. " - " .. incid2.label .. " - " .. edge.params.type .. " - " .. incid1.label .. " - " .. nodes[v.to[1]].params.type)
   
     existingedges[ind] = edge

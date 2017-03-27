@@ -175,11 +175,17 @@ local function getModuleReturnValues(AST)
           if (not utils.isEmpty(names)) then
             name = names[1].text
           end
-          
-          local temp = {["name"] = name,
-                        ["id"] = id,
-                        ["node"] = field}
-          table.insert(tbl, temp)
+          local idNode = {
+            ["name"] = id,
+            ["type"] = "interface",
+            ["node"] = field
+          }
+          local assignedNode = {
+            ["name"] = name,
+            ["type"] = "N/A",
+            ["node"] = field
+          }
+          table.insert(tbl, {["idNode"] = idNode, ["assignedNode"] = assignedNode})
         end
       elseif(isFunctionAfterSimpleExp(simpleExp) == true) then
         -- get functions after return statement
@@ -191,19 +197,24 @@ local function getModuleReturnValues(AST)
           if (not utils.isEmpty(parLists)) then
             parList = parLists[1].text
           end
-          
-          local temp = {["functionName"] = "function(" .. parList .. ")",                        
-                        ["node"] = func}
-          table.insert(tbl, temp)          
+          local idNode = {
+            ["name"] = "function(" .. parList .. ")",
+            ["type"] = "interface",
+            ["node"] = func
+          }
+          table.insert(tbl, {["idNode"] = idNode, ["assignedNode"] = nil})
         end       
         
       else
         -- get tables after return statement
         local names = lookup.getNamesFromSimpleExp(simpleExp)
         local name = names[1].text
-        local temp = {["name"] = name,                        
-                      ["node"] = simpleExp}
-        table.insert(tbl, temp)        
+        local idNode = {
+          ["name"] = name,
+          ["type"] = "interface",
+          ["node"] = simpleExp
+        }
+        table.insert(tbl, {["idNode"] = idNode, ["assignedNode"] = nil})
       end      
     end
     
@@ -247,15 +258,22 @@ local function extractLocalRequireCalls(prefixExps)
           local args = lookup.getArgsFromPrefixExp(prefixExp)
           
            -- in case of "local require = require"
-          if (not utils.isEmpty(args)) then
-            local fullModuleName = string.gsub(args[1].text, "\"", "")
+          if (not utils.isEmpty(args)) then            
+            local fullModuleName = args[1].text:gsub("/", "."):gsub("\"", ""):gsub("'", "")
             local moduleName = utils.splitAndGetLast(fullModuleName, "%.")    --only grammar from leg.grammar
-            local temp = {["varName"] = name.text, 
-                          ["fullVarName"] = "local " .. name.text, 
-                          ["moduleName"] = moduleName, 
-                          ["fullModuleName"] = fullModuleName,
-                          ["node"] = localAssign}
-            table.insert(localRequires, temp)
+            local idNode = {
+              ["name"] = name.text,
+              ["fullName"] = "local " .. name.text,
+              ["type"] = "local variable",
+              ["node"] = localAssign
+            }
+            local assignedNode = {
+              ["name"] = moduleName,
+              ["fullName"] = fullModuleName,
+              ["type"] = "module",
+              ["node"] = localAssign
+            }            
+            table.insert(localRequires, {["idNode"] = idNode, ["assignedNode"] = assignedNode})
           end
           
         end        
@@ -274,12 +292,16 @@ local function extractGlobalRequireCalls(prefixExps)
     
     if (functionCall.tag == "FunctionCall") then      
       local args = lookup.getArgsFromPrefixExp(prefixExp)
-      local fullModuleName = string.gsub(args[1].text, "\"", "")
+      local fullModuleName = args[1].text:gsub("/", "."):gsub("\"", ""):gsub("'", "")
       local moduleName = utils.splitAndGetLast(fullModuleName, "%.")    --only grammar from leg.grammar
-      local temp = {["moduleName"] = moduleName,
-                    ["fullModuleName"] = fullModuleName,
-                    ["node"] = functionCall}
-      table.insert(globalRequires, temp)
+      
+      local assignedNode = {
+        ["name"] = moduleName,
+        ["fullName"] = fullModuleName,
+        ["type"] = "module",
+        ["node"] = functionCall
+      }
+      table.insert(globalRequires, {["idNode"] = nil, ["assignedNode"] = assignedNode})
     end      
         
   end
@@ -355,7 +377,14 @@ local function getLocalAssigns(AST)
       for _,simpleExp in pairs(simpleExps) do      
       
         if (isTableConstructorAfterSimpleExp(simpleExp) == true) then
-          globNames = lookup.getTableConstructorsFromSimpleExp(simpleExp)
+          local tableNode = lookup.getTableConstructorsFromSimpleExp(simpleExp)          
+          local assignedNode = {
+            ["name"] = tableNode[1].text,
+            ["fullName"] = tableNode[1].text,
+            ["type"] = "N/A",
+            ["node"] = tableNode
+          }
+          table.insert(globNames, assignedNode)
           
         elseif(isFunctionAfterSimpleExp(simpleExp) == true) then
           -- get functions
@@ -368,13 +397,17 @@ local function getLocalAssigns(AST)
               parList = parLists[1].text
             end
             
-            local temp = {["functionName"] = "function(" .. parList .. ")",                        
-                          ["node"] = func}
-            table.insert(globNames, temp)   
+            local assignedNode = {
+              ["name"] = "function(" .. parList .. ")",
+              ["fullName"] = "function(" .. parList .. ")",
+              ["type"] = "N/A",
+              ["node"] = func
+            }            
+            table.insert(globNames, assignedNode)
             
           end
         end
-      end
+      end    
     end
     
     --remove require calls
@@ -385,12 +418,27 @@ local function getLocalAssigns(AST)
       end      
     end
     
-    
+    local idNode, assignedNode
     for i=1, #locNames, 1 do
-      local temp = {['idNode'] = locNames[i],
-                    ['assignedNode'] = globNames[i]}
-      table.insert(tbl, temp)
-      --print(i .. ": " .. locNames[i].text .. " = " .. globNames[i].text)
+      idNode = {
+        ["name"] = locNames[i].text,
+        ["fullName"] = locNames[i].text,
+        ["type"] = "local variable",
+        ["node"] = locNames[i]
+      }
+      if(globNames[i] == nil) then assignedNode = nil
+      elseif(globNames[i].type == nil) then
+        assignedNode = {
+          ["name"] = globNames[i].text,
+          ["fullName"] = globNames[i].text,
+          ["type"] = "N/A",
+          ["node"] = globNames[i]
+        }
+      else
+        assignedNode = globNames[i]
+      end       
+      if(assignedNode and assignedNode.fullName:len() > 20) then assignedNode.name = assignedNode.fullName:sub(0, 15) .. "..." end
+      table.insert(tbl, {["idNode"] = idNode, ["assignedNode"] = assignedNode})
     end
   end
   return tbl  
@@ -436,7 +484,14 @@ local function getAssigns(AST)
       for _,simpleExp in pairs(simpleExps) do      
       
         if (isTableConstructorAfterSimpleExp(simpleExp) == true) then
-          globNames = lookup.getTableConstructorsFromSimpleExp(simpleExp)
+          local tableNode = lookup.getTableConstructorsFromSimpleExp(simpleExp)          
+          local assignedNode = {
+            ["name"] = tableNode[1].text,
+            ["fullName"] = tableNode[1].text,
+            ["type"] = "N/A",
+            ["node"] = tableNode
+          }
+          table.insert(globNames, assignedNode)
           
         elseif(isFunctionAfterSimpleExp(simpleExp) == true) then
           -- get functions
@@ -449,9 +504,13 @@ local function getAssigns(AST)
               parList = parLists[1].text
             end
             
-            local temp = {["functionName"] = "function(" .. parList .. ")",                        
-                          ["node"] = func}
-            table.insert(globNames, temp)   
+            local assignedNode = {
+              ["name"] = "function(" .. parList .. ")",
+              ["fullName"] = "function(" .. parList .. ")",
+              ["type"] = "N/A",
+              ["node"] = func
+            }            
+            table.insert(globNames, assignedNode)
             
           end
         end
@@ -466,12 +525,27 @@ local function getAssigns(AST)
       end      
     end
     
-    
+    local idNode, assignedNode
     for i=1, #locNames, 1 do
-      local temp = {['idNode'] = locNames[i],
-                    ['assignedNode'] = globNames[i]}
-      table.insert(tbl, temp)
-      --print(i .. ": " .. locNames[i].text .. " = " .. globNames[i].text)
+      idNode = {
+        ["name"] = locNames[i].text,
+        ["fullName"] = locNames[i].text,
+        ["type"] = "global variable",
+        ["node"] = locNames[i]
+      }
+      if(globNames[i] == nil) then assignedNode = nil
+      elseif(globNames[i].type == nil) then
+        assignedNode = {
+          ["name"] = globNames[i].text,
+          ["fullName"] = globNames[i].text,
+          ["type"] = "N/A",
+          ["node"] = globNames[i]
+        }
+      else
+        assignedNode = globNames[i]
+      end
+      if(assignedNode and assignedNode.fullName:len() > 20) then assignedNode.name = assignedNode.fullName:sub(0, 15) .. "..." end
+      table.insert(tbl, {["idNode"] = idNode, ["assignedNode"] = assignedNode})
     end
 
   end
