@@ -710,11 +710,11 @@ int CoreGraph::updateBackground( int bgVal, Data::Graph* currentGraph )
 		else if ( bgVal == 2 ) {
 			root->addChild( createTextureBackground() );
 		}
-		else if ( bgVal == 4 ) {
+        else if ( bgVal == 3 ) {
 			root->addChild( createOrtho2dBackground() );
 		}
 #endif
-		else if ( bgVal == 3 ) {
+        else if ( bgVal == 4 ) {
 			root->addChild( createLeapBackground() ); // leap
 		}
 		else if ( bgVal == -1 ) {
@@ -739,11 +739,11 @@ int CoreGraph::updateBackgroundStream( unsigned char* buffer )
 //	LOG( INFO ) << "CoreGraph::updateBackgroundStream - updating background";
 	if ( leapCameraStream != nullptr ) {
 		leapCameraStream->dirty();
-		leapCameraStream->updateBackgroundImage( buffer );
+        leapCameraStream->updateBackgroundImage( buffer);
 	}
 	return 1;
 
-	// TODO onImages vyskusat pridat, uprava obrazkov z leapu cez shader correction?, returny success/fail
+    // TODO return success/fail
 }
 
 
@@ -1169,13 +1169,14 @@ osg::ref_ptr<osg::Node> CoreGraph::createBackground()
 		return createTextureBackground();
 	}
 
-	// video from leap in ortho2d
-	if ( background == 3 ) {
+    if ( background == 3 ) {
+        return createOrtho2dBackground();
+    }
+
+    if ( background == 4 ) {
 		return createLeapBackground();
 	}
-	if ( background == 4 ) {
-		return createOrtho2dBackground();
-	}
+
 #endif
 
 	return NULL;
