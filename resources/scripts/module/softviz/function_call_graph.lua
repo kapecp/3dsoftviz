@@ -69,6 +69,12 @@ local function extractNode(v, nodes, minComplexity, maxComplexity, minLines, max
       newnode.params.metrics.LOC = v.data.metrics.LOC
       newnode.params.metrics.infoflow = v.data.metrics.infoflow
 
+      --! BUG - `used_nodes` have `parent` -> cyclic AST -> crash in Diluculum
+      newnode.params.metrics.infoflow.used_nodes = nil
+      --! BUG - `hypergraphnode` points to an ATS node, which have `parent` -> cyclic AST -> crash in Diluculum
+      newnode.params.metrics.infoflow.hypergraphnode = nil
+      newnode.params.metrics.LOC.hypergraphnode = nil
+
       minComplexity = (minComplexity and (minComplexity < newnode.params.metrics.cyclomatic.upperBound and minComplexity)) or newnode.params.metrics.cyclomatic.upperBound
       maxComplexity = (maxComplexity and (maxComplexity > newnode.params.metrics.cyclomatic.upperBound and maxComplexity)) or newnode.params.metrics.cyclomatic.upperBound
       minLines = (minLines and (minLines < newnode.params.metrics.LOC.lines and minLines)) or newnode.params.metrics.LOC.lines
