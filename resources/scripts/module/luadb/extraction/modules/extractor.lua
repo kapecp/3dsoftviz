@@ -274,7 +274,9 @@ local function extractNodesAndEdges(AST, AST_ID, graph, fileName)
 end
 
 
-
+-----------------------------------------------
+-- Extract
+-----------------------------------------------
 local function extract(luaFileNode, graph, astManager)
   local path = luaFileNode.data.path
   local fileName = luaFileNode.data.name
