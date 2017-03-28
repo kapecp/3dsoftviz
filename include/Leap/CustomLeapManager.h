@@ -32,6 +32,7 @@ public:
 	void rotateCamera( float py0, float px0, double throwScale, float py1, float px1 );
 
     Leap::Vector recalculateDepthNode(Leap::Vector vector, float diff);
+    Leap::Vector changeHandUpDirectionAxis(Leap::Vector vector);
 
 	/**
 	 Method Used by LeapLib/LeapActions class. Update position of palms and call methods updateFingers()
@@ -102,6 +103,7 @@ public:
 	osg::Vec3d center;
 	osg::Vec3d up;
 	osg::Vec3d direction;
+    char upDirectionAxis;
 };
 }
 #endif
