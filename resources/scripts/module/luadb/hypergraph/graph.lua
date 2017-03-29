@@ -158,6 +158,17 @@ function pGraph:findNodeIdsByName(name)
   return occurrence_ids
 end
 
+-- get all edges with selected source ID and selected label
+function pGraph:findEdgesBySource(sourceID, label)
+  local occurrences = {}
+  for i,edge in pairs(self.edges) do
+    if (edge.label == label) and (edge.from[1].id == sourceID) then
+      table.insert(occurrences, edge)
+    end
+  end
+  return occurrences
+end
+
 -- get all edges with selected label
 function pGraph:findEdgesByLabel(label)
   local occurrence = {}
