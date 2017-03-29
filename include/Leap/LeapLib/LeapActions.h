@@ -65,8 +65,6 @@ public:
 	 */
 	void stopMovingForward();
 
-	void updateARHands( Hand leftHand , Hand rightHand );
-
 	/**
 	 * @brief isCameraMoving is variable to decide whether to move camera or rotate graph
 	 */
