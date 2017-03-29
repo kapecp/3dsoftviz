@@ -9,7 +9,7 @@ local ast        = require "luadb.ast"
 local logger     = utils.logger
 
 
-local function extractFunctions(AST, AST_ID, graph, path)
+local function extractFunctions(AST, graph, path)
   local nodes = {}
   local functions = ast.getFunctions(AST)
   logger:debug("importing nodes")
@@ -17,14 +17,13 @@ local function extractFunctions(AST, AST_ID, graph, path)
   for i,func in pairs(functions) do
     logger:debug('adding node '..func.name)
     local newNode = hypergraph.node.new()
-    newNode.meta  = newNode.meta or {}
+    newNode.meta = newNode.meta or {}
     newNode.meta.type = "function"
     newNode.meta.modulePath = path
     newNode.data.metrics = func.metrics
     newNode.data.name = func.name
     newNode.data.position = func.position
     newNode.data.tag = func.tag
-    newNode.data.astId = AST_ID
     graph:addNode(newNode)
     table.insert(nodes, newNode)
   end
@@ -98,27 +97,12 @@ local function extractFunctionCalls(AST, graph, nodes)
   return edges
 end
 
--- the old extract function from private LuaDB
-local function extract_old(fileName, graph)
-  local graph = graph or hypergraph.graph.new()
-  local AST   = ast.getAST(fileName)
-  local nodes = extractFunctions(AST, graph, fileName)
-  local edges = extractFunctionCalls(AST, graph, nodes)
-  return { nodes = nodes, edges = edges }
-end
-
--- Denis' new extract function from 3DSoftViz's LuaDB module
-local function extract(luaFileNode, graph, astManager)
+-- extract function from 3DSoftViz's LuaDB module
+local function extract(luaFileNode, graph)  
   local path = luaFileNode.data.path
   local graph = graph or hypergraph.graph.new()
-    
-  local AST, AST_ID = astManager:findASTByPath(path)
-  if(AST == nil) then
-    AST = ast.getAST(path)
-    AST_ID = astManager:addAST(AST, path)
-  end
-   
-  local nodes = extractFunctions(AST, AST_ID, graph, path)
+  local AST = ast.getAST(path)
+  local nodes = extractFunctions(AST, graph, path)
   local edges = extractFunctionCalls(AST, graph, nodes)
   return { nodes = nodes, edges = edges }
 end

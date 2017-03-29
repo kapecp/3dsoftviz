@@ -18,14 +18,14 @@ end
 
 local function getFunctionCalls(graph, luaFileNodes)  
   for i,luaFileNode in pairs(luaFileNodes) do
-    local functionCalls = functioncalls.extract(luaFileNode.data.path, graph)
+    local functionCalls = functioncalls.extract(luaFileNode, graph)
     luaFileNode.functionNodes = functionCalls.nodes
     luaFileNode.functionCalls = functionCalls.edges
     
     -- connect all function nodes to file node
     for j,functionNode in pairs(luaFileNode.functionNodes) do
       local connection = hypergraph.edge.new()
-      connection.label = "FunctionDeclaration"
+      connection.label = "declares"
       connection:addSource(luaFileNode)
       connection:addTarget(functionNode)
       graph:addEdge(connection)
@@ -34,7 +34,7 @@ local function getFunctionCalls(graph, luaFileNodes)
     -- connect all root function calls to module file node
     for k,functionCallEdge in pairs(luaFileNode.functionCalls) do
       if utils.isEmpty(functionCallEdge.from) then
-      functionCallEdge.label = "FunctionCall"
+      functionCallEdge.label = "calls"
       functionCallEdge:addSource(luaFileNode)
       end
     end
@@ -58,7 +58,7 @@ local function registerGlobalModule(graph, moduleName, moduleFunctionCall)
   if not globalModuleNodes[moduleName] then
     local newGlobalModuleNode = hypergraph.node.new()
     newGlobalModuleNode.meta  = newGlobalModuleNode.meta or {}
-    newGlobalModuleNode.meta.type = "globalModule"
+    newGlobalModuleNode.meta.type = "module"
     newGlobalModuleNode.functionNodes = newGlobalModuleNode.functionNodes or {}
     newGlobalModuleNode.data.name = moduleName
 
@@ -73,7 +73,7 @@ local function registerGlobalModule(graph, moduleName, moduleFunctionCall)
   if not functionNode then
     local newFunctionNode = hypergraph.node.new()
     newFunctionNode.meta  = newFunctionNode.meta or {}
-    newFunctionNode.meta.type = "globalFunction"
+    newFunctionNode.meta.type = "global function"
     newFunctionNode.data.name = moduleFunctionCall
     table.insert(moduleNode.functionNodes, newFunctionNode)
     functionNode = newFunctionNode
@@ -82,7 +82,7 @@ local function registerGlobalModule(graph, moduleName, moduleFunctionCall)
   
   -- connect global module node with his function node
   local connection = hypergraph.edge.new()
-  connection.label = "FunctionDeclaration"
+  connection.label = "declares"
   connection:addSource(globalModuleNodes[moduleName])
   connection:addTarget(functionNode)
   graph:addEdge(connection)
@@ -151,7 +151,7 @@ local function assignGlobalCalls(graph)
     else
       local newGlobalFunctionNode = hypergraph.node.new()
       newGlobalFunctionNode.meta  = newGlobalFunctionNode.meta or {}
-      newGlobalFunctionNode.meta.type = "globalFunction"
+      newGlobalFunctionNode.meta.type = "global function"
       newGlobalFunctionNode.data.name = globalFunctionCall
       graph:addNode(newGlobalFunctionNode)
       functionNode = newGlobalFunctionNode
