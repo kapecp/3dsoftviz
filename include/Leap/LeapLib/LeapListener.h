@@ -1,8 +1,9 @@
 #ifndef LEAPLISTENER_H
 #define LEAPLISTENER_H
 #include "Leap.h"
-#include "LeapLib/LeapActions.h"
+#include "LeapLib/LeapGestureHandler.h"
 #include "LeapLib/LeapManager.h"
+#include "CustomLeapManager.h"
 #include "LeapLib/LeapExport.h"
 
 namespace Leap {
@@ -21,7 +22,9 @@ public:
 	/**
 	 * @brief Class that contains Actions that should be executed after a specific gesture
 	 */
-	LeapActions* leapActions;
+
+    LeapGestureHandler* leapGestureHandler;
+    CustomLeapManager* leapManager;
 	bool arMode;
 
 	LeapListener( LeapManager* leapManager );
