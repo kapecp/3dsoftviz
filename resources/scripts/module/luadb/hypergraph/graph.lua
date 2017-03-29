@@ -59,6 +59,23 @@ function pGraph:addEdge(edge)
   end
 end
 
+-------------------------------- Remove functions
+--[[
+function pGraph:removeNode(node)
+  table.insert(self.nodes, node)
+  if self.NodeMapper then
+    self.NodeMapper:save(node)
+  end
+end
+
+
+function pGraph:removeEdge(edge)
+  table.insert(self.edges, edge)
+  if self.EdgeMapper then
+    self.EdgeMapper:save(edge)
+  end
+end
+--]]
 -------------------------------- Print functions
 
 function pGraph:printNodes()
@@ -150,6 +167,17 @@ function pGraph:findEdgesBySource(sourceID, label)
     end
   end
   return occurrences
+end
+
+-- get all edges with selected label
+function pGraph:findEdgeByLabel(label)
+  local occurrence = {}
+  for i,edge in pairs(self.edges) do
+    if edge.label and (edge.label == label) then
+      table.insert(occurrence, edge)
+    end
+  end
+  return occurrence
 end
 
 -----------------------------------------------

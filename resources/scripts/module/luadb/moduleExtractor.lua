@@ -216,11 +216,44 @@ local function getAssignsAndReturnValues(graph, astManager)
   local luaFileNodes = graph.luaFileNodes
   for i,luaFileNode in pairs(luaFileNodes) do
     local extractedNodes = modules.extract(luaFileNode, graph, astManager)
-  end
-  
+  end  
 end
 
-  
+local function connectFunctionsToVariables(graph)
+  local wantedEdges = {}
+  local assignEdges = graph:findEdgeByLabel("assigns")  
+  for i,edge in pairs(assignEdges) do
+    if(edge.to[1].data.name == "{}") then
+      table.insert(wantedEdges, edge)
+    end
+  end
+  -- edge.from[1] is a local/global variable like 'local ret = {}'
+  local functions = graph:findNodeByType("function")
+  -- functions[1] is like 'ret.Save()'
+  for _,func in pairs(functions) do
+    local funcDotName = utils.splitAndGetFirst(func.data.name, "%.")
+    
+    for _,edge in pairs(wantedEdges) do
+      local variableName = edge.from[1].data.name
+      if(variableName == funcDotName) then
+        local connection = hypergraph.edge.new()
+        connection.label = "contains"
+        connection:addSource(edge.from[1])
+        connection:addTarget(func)
+        connection:setAsOriented()
+        graph:addEdge(connection)
+        --[[
+        if(edge.to[1] ~= nil) then
+          --delete the node and edge
+          edge.to[1] = nil
+          edge = nil
+        end
+        --]]
+      end
+    end
+  end  
+end
+
 
 local function clearTmpVars(graph)
   graph.globalCalls = nil
@@ -232,7 +265,6 @@ end
 -----------------------------------------------
 -- Extract
 -----------------------------------------------
-
 local function extract(sourcePath, astManager)
   assert(sourcePath and utils.isDir(sourcePath), "wrong path passed")
   assert(not utils.isDirEmpty(sourcePath), "directory is empty")
@@ -251,6 +283,8 @@ local function extract(sourcePath, astManager)
   assignGlobalCalls(graph)
   
   getAssignsAndReturnValues(graph, astManager)
+  connectFunctionsToVariables(graph)
+  
     
   clearTmpVars(graph)
   return graph
