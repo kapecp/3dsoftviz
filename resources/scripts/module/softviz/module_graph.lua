@@ -108,9 +108,9 @@ local function extractNode(v, nodes, minComplexity, maxComplexity, minLines, max
       size = 8,
       name = origname,
       origid = v.id,
-      type = v.data.type,
+      type = v.meta.type,
       path = v.data.path,
-      modulePath = v.data.modulePath,
+      modulePath = v.meta.modulePath,
       position = v.data.position
     }
   }
@@ -119,7 +119,7 @@ local function extractNode(v, nodes, minComplexity, maxComplexity, minLines, max
   end
   nodes[v] = newnode  
  
-  if(v.data.type == 'function') then
+  if(v.meta.type == 'function') then
     newnode.params.tag = v.data.tag       
     if(v.data.metrics ~= nil) then
       newnode.params.metrics = {}
@@ -127,6 +127,12 @@ local function extractNode(v, nodes, minComplexity, maxComplexity, minLines, max
       newnode.params.metrics.cyclomatic = v.data.metrics.cyclomatic
       newnode.params.metrics.LOC = v.data.metrics.LOC
       newnode.params.metrics.infoflow = v.data.metrics.infoflow
+      
+      --! BUG - `used_nodes` have `parent` -> cyclic AST -> crash in Diluculum
+      newnode.params.metrics.infoflow.used_nodes = nil
+      --! BUG - `hypergraphnode` points to an ATS node, which have `parent` -> cyclic AST -> crash in Diluculum
+      newnode.params.metrics.infoflow.hypergraphnode = nil
+      newnode.params.metrics.LOC.hypergraphnode = nil
 
       minComplexity = (minComplexity and (minComplexity < newnode.params.metrics.cyclomatic.upperBound and minComplexity)) or newnode.params.metrics.cyclomatic.upperBound
       maxComplexity = (maxComplexity and (maxComplexity > newnode.params.metrics.cyclomatic.upperBound and maxComplexity)) or newnode.params.metrics.cyclomatic.upperBound
@@ -156,7 +162,7 @@ end
 -- @param existingedges table with already converted edges
 -- @param nodes table of extracted nodes
 local function extractEdge(v, existingedges, nodes)
-  if(#v.from ~= 1) then print('from', #v.from, v.id, v.from[1], v.from[2]) end 
+  if(#v.from ~= 1) then print('from', #v.from, v.id, v.from[1], v.from[2]) end
   if(#v.to ~= 1) then print('to', #v.to, v.id, v.to[1], v.to[2]) end  
   local ind = v.from[1].id .. "|" .. v.to[1].id
   if(existingedges[ind] ~= nil) then
@@ -194,9 +200,9 @@ local function extractEdge(v, existingedges, nodes)
     end
     --]]
     edge.label = edge.params.type
-    if(v.from[1].data.modulePath ~= v.to[1].data.modulePath) then
+    if(v.from[1].meta.modulePath ~= v.to[1].meta.modulePath) then
       edge.params.edgeStrength = 0.1
-    elseif(v.from[1].data.modulePath ~= nil) then
+    elseif(v.from[1].meta.modulePath ~= nil) then
       edge.params.edgeStrength = 0.5
     end 
     graph[edge] = {

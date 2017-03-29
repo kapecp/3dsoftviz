@@ -32,10 +32,10 @@ local function registerGlobalModule(graph, moduleName, moduleFunctionCall)
   -- add global module node
   if not globalModuleNodes[moduleName] then
     local newGlobalModuleNode = hypergraph.node.new()
-    newGlobalModuleNode.meta  = newGlobalModuleNode.meta or {}
-    newGlobalModuleNode.functionNodes = newGlobalModuleNode.functionNodes or {}
+    newGlobalModuleNode.meta  = newGlobalModuleNode.meta or {}    
+    newGlobalModuleNode.meta.type = "module"    
     newGlobalModuleNode.data.name = moduleName
-    newGlobalModuleNode.data.type = "module"
+    newGlobalModuleNode.functionNodes = newGlobalModuleNode.functionNodes or {}
 
     globalModuleNodes = globalModuleNodes or {}
     globalModuleNodes[moduleName] = newGlobalModuleNode
@@ -49,7 +49,7 @@ local function registerGlobalModule(graph, moduleName, moduleFunctionCall)
     local newFunctionNode = hypergraph.node.new()
     newFunctionNode.meta  = newFunctionNode.meta or {}
     newFunctionNode.data.name = moduleFunctionCall
-    newFunctionNode.data.type = "global function"
+    newFunctionNode.meta.type = "global function"
     table.insert(moduleNode.functionNodes, newFunctionNode)
     functionNode = newFunctionNode
     graph:addNode(newFunctionNode)
@@ -94,9 +94,9 @@ local function getModuleFromFile(graph)
     
     local newModuleNode = hypergraph.node.new()
     newModuleNode.meta  = luaFileNode.meta or {}
-    newModuleNode.functionNodes = newModuleNode.functionNodes or {}
+    newModuleNode.meta.type = "module"
     newModuleNode.data.name = moduleName
-    newModuleNode.data.type = "module"
+    newModuleNode.functionNodes = newModuleNode.functionNodes or {}
     
     graph:addNode(newModuleNode)
     
@@ -198,8 +198,8 @@ local function assignGlobalCalls(graph)
     else
       local newGlobalFunctionNode = hypergraph.node.new()
       newGlobalFunctionNode.meta  = newGlobalFunctionNode.meta or {}
+      newGlobalFunctionNode.meta.type = "global function"
       newGlobalFunctionNode.data.name = globalFunctionCall
-      newGlobalFunctionNode.data.type = "global function"
       graph:addNode(newGlobalFunctionNode)
       functionNode = newGlobalFunctionNode
     end
