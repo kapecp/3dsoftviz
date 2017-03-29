@@ -3,6 +3,7 @@
 #include "Leap.h"
 #include "LeapLib/LeapGestureHandler.h"
 #include "LeapLib/LeapManager.h"
+#include "CustomLeapManager.h"
 #include "LeapLib/LeapExport.h"
 
 namespace Leap {
@@ -21,8 +22,9 @@ public:
 	/**
 	 * @brief Class that contains Actions that should be executed after a specific gesture
 	 */
+
     LeapGestureHandler* leapGestureHandler;
-    LeapManager* leapManager;
+    CustomLeapManager* leapManager;
 	bool arMode;
 
 	LeapListener( LeapManager* leapManager );

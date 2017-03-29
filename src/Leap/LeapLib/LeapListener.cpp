@@ -10,16 +10,16 @@
 
 Leap::LeapListener::LeapListener( LeapManager* leapManager )
 {
-    this->leapGestureHandler = new LeapGestureHandler(leapManager); // TODO dava divny error po pridani tohto
-    this->leapManager = leapManager;
+    this->leapGestureHandler = new Leap::LeapGestureHandler( leapManager );
+    this->leapManager = dynamic_cast<Leap::CustomLeapManager*>( leapManager );
 	this->arMode = leapManager->arMode;
 	LOG( INFO ) << "Leap/LeapLib/LeapListener Constructor";
 }
 
 Leap::LeapListener::~LeapListener( void )
 {
-    if ( leapManager != NULL ) {
-        delete( leapManager );
+    if ( leapGestureHandler != NULL ) {
+        delete( leapGestureHandler );
 	}
 }
 
@@ -58,7 +58,7 @@ void Leap::LeapListener::onImages( const Controller& controller )
 	if ( image.data() == NULL ) {
 		return;
 	}
-    dynamic_cast<Leap::CustomLeapManager*>(leapManager)->updateCoreGraphBackground( image.data() ); // toto eventualne pretypovat v konstruktore
+    leapManager->updateCoreGraphBackground( image.data() );
 }
 
 void Leap::LeapListener::onFrame( const Controller& controller )
@@ -85,6 +85,7 @@ void Leap::LeapListener::onFrame( const Controller& controller )
 			}
 		}
         leapManager->updateHands( leftHand, rightHand );
+        //leapActions->updateARHands( leftHand,rightHand );
 	}
 	else {
 		for ( int i=0; i< hands.count(); ++i ) {
@@ -103,45 +104,8 @@ void Leap::LeapListener::onFrame( const Controller& controller )
 
 		}
 	}
+    leapGestureHandler->handleGestures(frame);
 
-//    const GestureList gestures = frame.gestures();
-//    for (int g = 0; g < gestures.count(); ++g) {
-//        Gesture gesture = gestures[g];
-
-//        HandList hands = gesture.hands();
-//        Hand firstHand = hands[0];
-
-//        switch (gesture.type()) {
-//        case Gesture::TYPE_CIRCLE:
-//        {
-//            LOG( INFO ) << "GESTO CIRCLE....zoomGraph().";
-//            leapActions->zoomGraph(gesture);
-//            break;
-//        }
-//        case Gesture::TYPE_SWIPE:
-//        {
-
-//            LOG( INFO ) << "GESTO swipe ....rotateGraph().";
-//            leapActions->rotateGraph(gesture);
-//            break;
-//        }
-//        case Gesture::TYPE_KEY_TAP:
-//        {
-//            LOG( INFO ) << "GESTO KEY_TAP....onKeyTap().";
-//            leapActions->onKeyTap(gesture);
-//            break;
-//        }
-//        case Gesture::TYPE_SCREEN_TAP:
-//        {
-//            LOG( INFO ) << "GESTO SCREEN_TAP....onScreenTap().";
-//            leapActions->onScreenTap(gesture);
-//            break;
-//        }
-//        default:
-//            LOG( INFO ) << "Unknown gesture type.";
-//            break;
-//        }
-//    }
 }
 
 void Leap::LeapListener::onFocusGained( const Controller& controller )

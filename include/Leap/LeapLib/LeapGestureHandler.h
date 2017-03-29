@@ -1,20 +1,24 @@
-#ifndef CUSTOMLEAPMANAGER_H
-#define CUSTOMLEAPMANAGER_H
-
+#ifndef LEAPGESTUREHANDLER_H
+#define LEAPGESTUREHANDLER_H
 #include "Leap.h"
+#include "LeapLib/LeapManager.h"
 #include "LeapLib/LeapActions.h"
 
-#include <osg/Group>
-#include <osg/ref_ptr>
+#include "easylogging++.h"
+
 namespace Leap {
-class LeapGestureHandler
-{
+
+class LeapGestureHandler{
 public:
-    LeapActions* leapActions;
 
     LeapGestureHandler( LeapManager* leapManager );
-    ~LeapGestureHandler( void );
-    void processGestures(Frame frame);
+    ~LeapGestureHandler();
+    void handleGestures( Frame frame );
+
+    LeapManager* leapManager;
+    LeapActions* leapActions;
 };
 }
-#endif
+
+
+#endif // LEAPGESTUREHANDLER_H

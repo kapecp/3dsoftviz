@@ -220,4 +220,3 @@ void Leap::LeapActions::scaleNodes( bool scaleUp )
 {
 	leapManager->scaleNodes( scaleUp );
 }
-

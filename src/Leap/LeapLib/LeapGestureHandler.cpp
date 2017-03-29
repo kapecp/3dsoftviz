@@ -1,29 +1,61 @@
-#include "LeapLib//LeapGestureHandler.h"
-#include "LeapLib/DirectionDetector.h"
-#include "LeapLib/LeapActions.h"
-#include "osg/Image"
-#include "CustomLeapManager.h"
+#include <easylogging++.h>
 
-//#include "osg/Image"
-#include "osgDB/WriteFile"
-#include <stdio.h>
+#include "LeapLib/LeapGestureHandler.h"
+#include "LeapLib/LeapActions.h"
 
 Leap::LeapGestureHandler::LeapGestureHandler( LeapManager* leapManager )
 {
     leapActions = new Leap::LeapActions( leapManager );
-    //this->arMode = leapManager->arMode;
-    LOG( INFO ) << "Leap/LeapLib/LeapGestureHandler Constructor";
+	this->leapManager = leapManager;
+    LOG( INFO ) << "LeapGestureHandler() Constructor";
 }
 
-Leap::LeapGestureHandler::~LeapGestureHandler( void )
+Leap::LeapGestureHandler::~LeapGestureHandler()
 {
-    if ( leapActions != NULL ) {
-        delete( leapActions );
+	if ( leapManager != NULL ) {
+		delete( leapManager );
+	}
+    LOG( INFO ) << "~LeapGestureHandler() Destructor";
+}
+
+void Leap::LeapGestureHandler::handleGestures( Frame frame )
+{
+    const GestureList gestures = frame.gestures();
+    for (int g = 0; g < gestures.count(); ++g) {
+        Gesture gesture = gestures[g];
+
+        HandList hands = gesture.hands();
+        Hand firstHand = hands[0];
+
+        switch (gesture.type()) {
+        case Gesture::TYPE_CIRCLE:
+        {
+            LOG( INFO ) << "GESTO CIRCLE....zoomGraph().";
+            leapActions->zoomGraph(gesture);
+            break;
+        }
+        case Gesture::TYPE_SWIPE:
+        {
+
+            LOG( INFO ) << "GESTO swipe ....rotateGraph().";
+            leapActions->rotateGraph(gesture);
+            break;
+        }
+        case Gesture::TYPE_KEY_TAP:
+        {
+            LOG( INFO ) << "GESTO KEY_TAP....onKeyTap().";
+            leapActions->onKeyTap(gesture);
+            break;
+        }
+        case Gesture::TYPE_SCREEN_TAP:
+        {
+            LOG( INFO ) << "GESTO SCREEN_TAP....onScreenTap().";
+            leapActions->onScreenTap(gesture);
+            break;
+        }
+        default:
+            LOG( INFO ) << "Unknown gesture type.";
+            break;
+        }
     }
 }
-
-void Leap::LeapGestureHandler::processGestures(Frame frame){
-    LOG(INFO) << "MELISKO TO JE";
-}
-
-
