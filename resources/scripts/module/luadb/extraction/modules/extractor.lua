@@ -15,9 +15,9 @@ local logger     = utils.logger
 
 local function createNode(name, type, pos, astID, nodeID)
   local node = hypergraph.node.new()
-  node.meta = {}
+  node.meta = {}  
+  node.meta.type = type
   node.data.name = name
-  node.data.type = type
   node.data.position = pos
   node.data.astID = astID
   node.data.nodeID = nodeID
@@ -34,7 +34,7 @@ local function createEdge(label, sourceNode, targetNode, isOriented)
 end
 
 local function findNodeByNameAndType(name, nodeType, graph)
-  local nodes = graph:findNodeByType(nodeType)
+  local nodes = graph:findNodesByType(nodeType)
   for _,node in pairs(nodes) do
     if(node.data.name == name) then
       print("found in " .. nodeType)
@@ -65,7 +65,7 @@ end
 
 local function getModuleNodeByModulePath(nodes, modulePath)
   for i,mod in pairs(nodes) do
-    if mod.data.type == "module" then
+    if mod.meta.type == "module" then
       if mod.data.modulePath == modulePath then
         return mod   
       end
@@ -75,7 +75,7 @@ local function getModuleNodeByModulePath(nodes, modulePath)
 end
 
 local function getFileNodeByFilePath(graph, filePath)
-  local files = graph:findNodeByType('file')
+  local files = graph:findNodesByType('file')
   for i,file in pairs(files) do    
     if file.data.path == filePath then
       return file   
@@ -274,9 +274,7 @@ local function extractNodesAndEdges(AST, AST_ID, graph, fileName)
 end
 
 
------------------------------------------------
--- Extract
------------------------------------------------
+
 local function extract(luaFileNode, graph, astManager)
   local path = luaFileNode.data.path
   local fileName = luaFileNode.data.name

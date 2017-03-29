@@ -21,7 +21,8 @@ local function extractFilesTree(graph, path, parent)
     local newNode = hypergraph.node.new()
     newNode.data.name = getNameFromPath(path, "/")
     newNode.data.path = path
-    newNode.data.type = "directory"
+    newNode.meta = newNode.meta or {}
+    newNode.meta.type = "directory"
     graph:addNode(newNode)
     parent = newNode
   end
@@ -38,13 +39,13 @@ local function extractFilesTree(graph, path, parent)
       if attr.mode == "directory" then
         newNode.data.name = file
         newNode.data.path = fullPath
-        newNode.data.type = "directory"
+        newNode.meta.type = "directory"
         -- recursive call
         extractFilesTree(graph, fullPath, newNode)
       else
         newNode.data.name = file
         newNode.data.path = fullPath
-        newNode.data.type = "file"
+        newNode.meta.type = "file"
         graph.luaFileNodes = graph.luaFileNodes or {}
         if utils.isLuaFile(file) then table.insert(graph.luaFileNodes,newNode) end
       end

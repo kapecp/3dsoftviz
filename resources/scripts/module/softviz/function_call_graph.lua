@@ -21,25 +21,26 @@ end
 --------------------------------------------------
 -- Set color for node based on node type
 local function setNodeColor(node)
-  if node.params.type == 'file' or node.params.type == 'globalModule' then 
-    node.params.colorA = 1
-    node.params.colorR = 1
-    node.params.colorG = 0
-    node.params.colorB = 1
+  node.params.color = {}
+  if node.params.type == 'file' or node.params.type == 'module' then 
+    node.params.color.A = 1
+    node.params.color.R = 1
+    node.params.color.G = 0
+    node.params.color.B = 1
   end
 
   if node.params.type == 'directory' then 
-    node.params.colorA = 1
-    node.params.colorR = 0
-    node.params.colorG = 1
-    node.params.colorB = 1
+    node.params.color.A = 1
+    node.params.color.R = 0
+    node.params.color.G = 1
+    node.params.color.B = 1
   end
 
-  if node.params.type == 'globalFunction' then 
-    node.params.colorA = 1
-    node.params.colorR = 0
-    node.params.colorG = 0
-    node.params.colorB = 1
+  if node.params.type == 'global function' then 
+    node.params.color.A = 1
+    node.params.color.R = 0
+    node.params.color.G = 0
+    node.params.color.B = 1
   end
 end
 
@@ -55,12 +56,12 @@ end
 -- @return minComplexity, maxComplexity, minLines, maxLines
 local function extractNode(v, nodes, minComplexity, maxComplexity, minLines, maxLines)
   local origname = v.data.name or v.id
-  local newnode = {type = "node", id = inc(), label = origname, params={size = 8, name = origname, origid = v.id, type = v.data.type, path = v.data.path, modulePath = v.data.modulePath, colorA = 1, colorR = 1, colorG = 1, colorB = 1, position = v.data.position}}
+  local newnode = {type = "node", id = inc(), label = origname, params={size = 8, name = origname, origid = v.id, type = v.meta.type, path = v.data.path, modulePath = v.meta.modulePath, color = {A = 1, R = 1, G = 1, B = 1}, position = v.data.position}}
   if newnode.id == 1 then newnode.params.root = true end
   nodes[v] = newnode
   setNodeColor(newnode)
  
-  if v.data.type == 'function' then
+  if v.meta.type == 'function' then
     newnode.params.tag = v.data.tag       
     if v.data.metrics ~= nil then
       newnode.params.metrics = {}
@@ -68,6 +69,12 @@ local function extractNode(v, nodes, minComplexity, maxComplexity, minLines, max
       newnode.params.metrics.cyclomatic = v.data.metrics.cyclomatic
       newnode.params.metrics.LOC = v.data.metrics.LOC
       newnode.params.metrics.infoflow = v.data.metrics.infoflow
+
+      --! BUG - `used_nodes` have `parent` -> cyclic AST -> crash in Diluculum
+      newnode.params.metrics.infoflow.used_nodes = nil
+      --! BUG - `hypergraphnode` points to an ATS node, which have `parent` -> cyclic AST -> crash in Diluculum
+      newnode.params.metrics.infoflow.hypergraphnode = nil
+      newnode.params.metrics.LOC.hypergraphnode = nil
 
       minComplexity = (minComplexity and (minComplexity < newnode.params.metrics.cyclomatic.upperBound and minComplexity)) or newnode.params.metrics.cyclomatic.upperBound
       maxComplexity = (maxComplexity and (maxComplexity > newnode.params.metrics.cyclomatic.upperBound and maxComplexity)) or newnode.params.metrics.cyclomatic.upperBound
@@ -81,21 +88,22 @@ end
 --------------------------------------------------
 -- Set color for edge based on edge type
 local function setEdgeColor(edge)
-  if edge.params.type == 'function call' then
-    edge.params.colorA = 1
-    edge.params.colorR = 0.8
-    edge.params.colorG = 0.8
-    edge.params.colorB = 1
-  elseif edge.params.type == 'in file' then
-    edge.params.colorA = 1
-    edge.params.colorR = 1
-    edge.params.colorG = 0.8
-    edge.params.colorB = 0.8
-  elseif edge.params.type == 'in directory' then
-    edge.params.colorA = 1
-    edge.params.colorR = 0.8
-    edge.params.colorG = 1
-    edge.params.colorB = 0.8
+  edge.params.color = {}
+  if edge.params.type == 'calls' then
+    edge.params.color.A = 1
+    edge.params.color.R = 0.8
+    edge.params.color.G = 0.8
+    edge.params.color.B = 1
+  elseif edge.params.type == 'contains' then
+    edge.params.color.A = 1
+    edge.params.color.R = 1
+    edge.params.color.G = 0.8
+    edge.params.color.B = 0.8
+  elseif edge.params.type == 'contains' then
+    edge.params.color.A = 1
+    edge.params.color.R = 0.8
+    edge.params.color.G = 1
+    edge.params.color.B = 0.8
   end
 end
 
@@ -115,22 +123,22 @@ local function extractEdge(v, existingedges, nodes)
     local edge = {type = "edge", id = inc(), params = {origid = v.id, count = 1, edgeStrength = 2}}
     local incid1 = {type = "edge_part", id = inc(), label = ''}
     local incid2 = {type = "edge_part", id = inc(), label = ''}
-    if v.from[1].data.type == 'function' or (v.from[1].data.type == 'file' and v.to[1].data.type == 'globalFunction') then
-      edge.params.type = "function call"
+    if v.from[1].meta.type == 'function' or (v.from[1].meta.type == 'file' and v.to[1].meta.type == 'globalFunction') then
+      edge.params.type = "calls"
       incid1.direction = 'in'
       incid2.direction = 'out'
     end
-    if v.from[1].data.type == 'file' then 
-      edge.params.type = 'in file'
+    if v.from[1].meta.type == 'file' then 
+      edge.params.type = 'contains'
     end
-    if v.from[1].data.type == 'directory' then 
-      edge.params.type = 'in directory'
+    if v.from[1].meta.type == 'directory' then 
+      edge.params.type = 'contains'
     end
 
     edge.label = edge.params.type
-    if v.from[1].data.modulePath ~= v.to[1].data.modulePath then
+    if v.from[1].meta.modulePath ~= v.to[1].meta.modulePath then
       edge.params.edgeStrength = 0.1
-    elseif v.from[1].data.modulePath ~= nil then
+    elseif v.from[1].meta.modulePath ~= nil then
       edge.params.edgeStrength = 0.5
     end 
     graph[edge] = {[incid1] = nodes[v.from[1]], [incid2] = nodes[v.to[1]]}
@@ -150,13 +158,14 @@ local function doVisualMapping(nodes, minComplexity, maxComplexity, minLines, ma
       if n.params.metrics ~= nil then
         n.params.size = minSize + (n.params.metrics.LOC.lines - minLines) / (maxLines - minLines) * (maxSize - minSize)
         local complexRatio = (n.params.metrics.cyclomatic.upperBound - minComplexity) / (maxComplexity - minComplexity) 
-        n.params.colorG = 1 - complexRatio
-        n.params.colorR = complexRatio
-        n.params.colorB = 0
+        n.params.color.G = 1 - complexRatio
+        n.params.color.R = complexRatio
+        n.params.color.B = 0
+        
       else
-        n.params.colorG = 0
-        n.params.colorR = 0
-        n.params.colorB = 1
+        n.params.color.G = 0
+        n.params.color.R = 0
+        n.params.color.B = 1
       end
     end
   end
