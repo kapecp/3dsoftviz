@@ -109,7 +109,7 @@ end
 
 
 -- get all nodes with selected name
-function pGraph:findNodeByName(name)
+function pGraph:findNodesByName(name)
   local occurrences = {}
   for i,node in pairs(self.nodes) do
     if node.data.name and (node.data.name == name) then
@@ -129,7 +129,6 @@ function pGraph:findNodesByType(type)
   end
   return occurrences
 end
-
  
 -- get all ids for nodes with selected name
 function pGraph:findNodeIdsByName(name)
@@ -140,17 +139,6 @@ function pGraph:findNodeIdsByName(name)
     end
   end
   return occurrence_ids
-end
-
--- get node with selected id
-function pGraph:findNodeById(id)
-  local occurrence = {}
-  for i,node in pairs(self.nodes) do
-    if node.id and (node.id == id) then
-      return node
-    end
-  end
-  return nil
 end
 
 -- get all edges with selected source ID and selected label

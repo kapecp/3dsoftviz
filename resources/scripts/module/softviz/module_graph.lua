@@ -108,7 +108,7 @@ local function extractNode(v, nodes, minComplexity, maxComplexity, minLines, max
       size = 8,
       name = origname,
       origid = v.id,
-      type = v.data.type,
+      type = v.meta.type,
       path = v.data.path,
       modulePath = v.data.modulePath,
       position = v.data.position

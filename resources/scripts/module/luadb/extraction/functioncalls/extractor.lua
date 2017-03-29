@@ -18,12 +18,12 @@ local function extractFunctions(AST, AST_ID, graph, path)
     logger:debug('adding node '..func.name)
     local newNode = hypergraph.node.new()
     newNode.meta  = newNode.meta or {}
+    newNode.meta.type = "function"
+    newNode.meta.modulePath = path
     newNode.data.metrics = func.metrics
     newNode.data.name = func.name
     newNode.data.position = func.position
     newNode.data.tag = func.tag
-    newNode.meta.type = "function"
-    newNode.meta.modulePath = path
     newNode.data.astId = AST_ID
     graph:addNode(newNode)
     table.insert(nodes, newNode)
