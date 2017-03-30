@@ -155,6 +155,16 @@ void Vwr::CameraManipulator::rotateForLeapBackgroundSync( )
     _center = osg::Vec3d(0.0,0.0,-5.0);
 }
 
+void Vwr::CameraManipulator::changeFovForLeapBackgroundSync( )
+{
+    double fovy = 60.0;
+    double nearClippingPlane = 0.01;
+    double farClippingPlane = appConf->getValue( "Viewer.Display.ViewDistance" ).toDouble();
+    double aspectRatio = static_cast<double>( 640 )/static_cast<double>( 240 );
+
+    this->coreGraph->getCamera()->setProjectionMatrixAsPerspective( fovy, aspectRatio, nearClippingPlane, farClippingPlane );
+}
+
 bool Vwr::CameraManipulator::handle( const GUIEventAdapter& ea, GUIActionAdapter& us )
 {
 	switch ( ea.getEventType() ) {

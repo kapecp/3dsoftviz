@@ -94,8 +94,9 @@ signals:
 	* @author Dávid Durčák
 	* @brief pushBackgrImage signal that emit image for background
 	* @param image emited image matrix
+    * @param determines whether to track hands in the image
 	*/
-	void pushBackgrImage( cv::Mat image ) const;
+    void pushBackgrImage( cv::Mat image, bool trackHands ) const;
 
 	/**
 	* @author Dávid Durčák

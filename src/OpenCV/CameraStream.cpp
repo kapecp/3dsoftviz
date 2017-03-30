@@ -3,7 +3,6 @@
 #include <opencv2/highgui/highgui.hpp>
 #include "Util/ApplicationConfig.h"
 
-
 namespace OpenCV {
 
 CameraStream::CameraStream( osg::Geometry* geom ) :
@@ -21,13 +20,14 @@ CameraStream::CameraStream( osg::Geometry* geom ) :
 	cv::Mat cvImg;			// gray on Linux
 #endif
 
-	updateBackgroundImage( cvImg );
+    this->tracker = new OpenCV::HandTracker();
+    updateBackgroundImage( cvImg , false);
 
 }
 
 CameraStream::~CameraStream() {}
 
-void CameraStream::updateBackgroundImage( cv::Mat cvImg )
+void CameraStream::updateBackgroundImage( cv::Mat cvImg , bool trackHands)
 {
 	if ( cvImg.empty() ) {
 		qDebug() << "CameraStream::updateBackgroundImage(): warning, cvImg is empty!";
@@ -51,6 +51,10 @@ void CameraStream::updateBackgroundImage( cv::Mat cvImg )
 	// There will be probably needed refactoring on MAC OS
 #ifdef WIN32
 	cvCopy( &static_cast<IplImage>( cvImg ), iplImg, NULL );
+
+    if (trackHands) {
+        this->tracker->findHand(cvImg, 0);
+    }
 
 	setImage( iplImg->width, iplImg->height,
 			  3, GL_RGB, GL_RGB,

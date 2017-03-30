@@ -3,6 +3,7 @@
 
 #include "Leap.h"
 #include "LeapLib/LeapManager.h"
+#include "HandModule/HandTrackerAdapter.h"
 
 #include <osg/Group>
 #include <osg/ref_ptr>
@@ -96,6 +97,7 @@ public:
 	Vwr::CameraManipulator* cameraManipulator;
 	Layout::LayoutThread* layout;
 	Vwr::CoreGraph* coreGraph;
+    HandTrackerAdapter *handtrackerAdapter;
 
 	osg::ref_ptr<osg::Group> handsGroup;
 	osg::Vec3d eye;

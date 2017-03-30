@@ -4,6 +4,7 @@
 #include <osg/Group>
 #include <osg/ref_ptr>
 #include <opencv2/core/core.hpp>
+#include "OpenCV/HandTracker.h"
 
 namespace Leap {
 
@@ -19,6 +20,8 @@ public:
     // uses opencv to find hand in image buffer
     void trackHands( unsigned char* buffer,float depth);
 
+private:
+    OpenCV::HandTracker *tracker;
 };
 }
 

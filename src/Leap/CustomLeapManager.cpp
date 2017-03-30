@@ -5,7 +5,6 @@
 #include "Layout/LayoutThread.h"
 #include "Layout/FRAlgorithm.h"
 #include "HandModule/HandPalm.h"
-#include "HandModule/HandTrackerAdapter.h"
 
 #include <easylogging++.h>
 #include <math.h>
@@ -17,7 +16,10 @@ Leap::CustomLeapManager::CustomLeapManager( Vwr::CameraManipulator* cameraManipu
 		Vwr::CoreGraph* coreGraph , osg::ref_ptr<osg::Group> handsGroup )
 	:cameraManipulator( cameraManipulator ), layout( layout ), coreGraph( coreGraph ), handsGroup( handsGroup )
 {
+    this->adapter = new Leap::HandTrackerAdapter();
     this->cameraManipulator->rotateForLeapBackgroundSync();
+    this->cameraManipulator->changeFovForLeapBackgroundSync();
+
 	arMode = false;
 	//init handPalms here
 	if ( this->handsGroup != nullptr ) {
@@ -121,15 +123,14 @@ void Leap::CustomLeapManager::scaleNodes( bool scaleUp )
 
 Leap::Vector Leap::CustomLeapManager::recalculateDepthNode(Leap::Vector vector){
 
-    float mid = 300;
-    float diff = vector.y - mid;
-    if (diff > 0){
-        vector.y = vector.y + diff*2.3;
-        vector.y = vector.y + vector.x*0.4;
-    }else{
-        vector.y = vector.y + diff*2.0;
-        ;
-    }
+//    float mid = 300;
+//    float diff = vector.y - mid;
+//    if (diff > 0){
+//        vector.y = vector.y + diff*2.3;
+//        vector.y = vector.y + vector.x*0.4;
+//    }else{
+//        vector.y = vector.y + diff*2.0;
+//    }
     return vector;
 }
 void Leap::CustomLeapManager::updateHands( Leap::Hand leftHand, Leap::Hand rightHand )
@@ -398,9 +399,7 @@ void Leap::CustomLeapManager::updateInterFingerWristBone( osg::Group*  interFing
 
 int Leap::CustomLeapManager::updateCoreGraphBackground( const unsigned char* buffer , float depth)
 {
-    Leap::HandTrackerAdapter *adapter = new Leap::HandTrackerAdapter();
-    adapter->trackHands(( unsigned char* )buffer, depth);
-
+    this->adapter->trackHands(( unsigned char* )buffer, depth);
     this->coreGraph->updateBackgroundStream( ( unsigned char* )buffer );
 	return 1;
 }

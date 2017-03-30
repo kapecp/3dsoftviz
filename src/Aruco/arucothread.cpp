@@ -362,7 +362,7 @@ void ArucoThread::imagesSending( ArucoCore& aCore, const cv::Mat frame ) const
 		}
 		cv::cvtColor( frame, frame,CV_BGR2RGB );
 
-		emit pushBackgrImage( frame.clone() );
+        emit pushBackgrImage( frame.clone(), true );
 	}
 
 	cv::Mat image;
@@ -382,7 +382,7 @@ void ArucoThread::imagesSending( ArucoCore& aCore, const cv::Mat frame ) const
 
 		if ( mSendBackgrImgEnabled ) {
 			//if you comment this, background image will be without the augmented reality
-			emit pushBackgrImage( image.clone() );
+            emit pushBackgrImage( image.clone(), false );
 		}
 
 		emit pushImagemMat( image.clone() );

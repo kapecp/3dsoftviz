@@ -8,6 +8,7 @@
 
 #ifdef OPENCV_FOUND
 #include <opencv2/core/core.hpp>
+#include "OpenCV/HandTracker.h"
 
 #endif
 
@@ -43,9 +44,10 @@ public slots:
 		* @author Dávid Durčák
 		* @brief updateBackgroundImage Slot set cvImg as internal image data and call dirty() and updateGeometryCoords()
 		* @param cvImg opencv image
+        * @param determines whether to track hands in the image
 		*/
 #ifdef OPENCV_FOUND
-	void updateBackgroundImage( cv::Mat cvImg );
+    void updateBackgroundImage( cv::Mat cvImg , bool trackHands);
 #endif
 
 private:
@@ -62,6 +64,7 @@ private:
 	int				mHeight; // data about rows cv:Mat
 	osg::Geometry*	mGeom; // Geometry for vertex array and update
 	IplImage*		iplImg; // image for background
+    HandTracker *tracker;
 };
 }
 

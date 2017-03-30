@@ -315,6 +315,8 @@ public slots:
 
     void rotateForLeapBackgroundSync();
 
+    void changeFovForLeapBackgroundSync();
+
 protected:
 
 	virtual ~CameraManipulator();
