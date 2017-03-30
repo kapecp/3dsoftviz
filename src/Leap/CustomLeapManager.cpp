@@ -16,9 +16,7 @@ Leap::CustomLeapManager::CustomLeapManager( Vwr::CameraManipulator* cameraManipu
 		Vwr::CoreGraph* coreGraph , osg::ref_ptr<osg::Group> handsGroup )
 	:cameraManipulator( cameraManipulator ), layout( layout ), coreGraph( coreGraph ), handsGroup( handsGroup )
 {
-    this->adapter = new Leap::HandTrackerAdapter();
-    this->cameraManipulator->rotateForLeapBackgroundSync();
-    this->cameraManipulator->changeFovForLeapBackgroundSync();
+    this->handtrackerAdapter = new Leap::HandTrackerAdapter();
 
 	arMode = false;
 	//init handPalms here
@@ -440,7 +438,7 @@ void Leap::CustomLeapManager::updateInterFingerWristBone( osg::Group*  interFing
 
 int Leap::CustomLeapManager::updateCoreGraphBackground( const unsigned char* buffer , float depth)
 {
-    this->adapter->trackHands(( unsigned char* )buffer, depth);
+    this->handtrackerAdapter->trackHands(( unsigned char* )buffer, depth);
     this->coreGraph->updateBackgroundStream( ( unsigned char* )buffer );
 	return 1;
 }
