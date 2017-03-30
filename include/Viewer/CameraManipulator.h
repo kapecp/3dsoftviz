@@ -313,10 +313,6 @@ public slots:
 		 */
 	void setCameraCanRot( bool cameraCanRot );
 
-    void rotateForLeapBackgroundSync();
-
-    void changeFovForLeapBackgroundSync();
-
 protected:
 
 	virtual ~CameraManipulator();
