@@ -75,7 +75,8 @@ public:
 	//jurik
 	void graphRotateSwipe( int swipeDirection );
 	void rotateAruco( Leap::DirectionDetector::Direction direction );
-	void scaleEdges( Leap::DirectionDetector::Direction direction );
+    void scaleEdges( Leap::DirectionDetector::Direction direction );
+    void scaleGraph( Vector* deltaVelocity );
 	void scaleNodes( bool scaleUp );
 	//*****
 };

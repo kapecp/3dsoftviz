@@ -88,23 +88,8 @@ void Leap::LeapListener::onFrame( const Controller& controller )
         //leapActions->updateARHands( leftHand,rightHand );
 	}
 	else {
-		for ( int i=0; i< hands.count(); ++i ) {
-			if ( hands[i].isRight() ) {
-				direction = Leap::DirectionDetector::getPalmDirection( hands[i] );
-                //leapActions->rotateAruco( direction );
-                rightHandExtended = Leap::FingerPositionDetector::isHandExtended( hands[i] );
-			}
-			else {
-				direction = Leap::DirectionDetector::getPalmDirection( hands[i] );
-
-                //leapActions->scaleEdges( direction );
-                leftHandExtended = Leap::FingerPositionDetector::isHandExtended( hands[i] );
-
-			}
-
-		}
-	}
-    leapGestureHandler->handleGestures(frame);
+        leapGestureHandler->handleGestures(frame);
+    }
 
 }
 

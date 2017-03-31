@@ -197,24 +197,31 @@ void Leap::LeapActions::rotateAruco( Leap::DirectionDetector::Direction directio
 	}
 }
 
+void Leap::LeapActions::scaleGraph( Vector* deltaVelocity ){
+        LOG ( INFO ) << "[delta vel[x,y,z]: [" +
+                      std::to_string(deltaVelocity->x)  +", "+
+                      std::to_string(deltaVelocity->y) + ", "+
+                      std::to_string(deltaVelocity->z) + "]";
+}
+
 void Leap::LeapActions::scaleEdges( Leap::DirectionDetector::Direction direction )
 {
-	switch ( direction ) {
-		case Leap::DirectionDetector::Direction::LEFT :
-			leapManager->scaleEdgesUp();
-			break;
-		case Leap::DirectionDetector::Direction::RIGHT :
-			leapManager->scaleEdgesDown();
-			break;
-		case Leap::DirectionDetector::Direction::STEADY :
-			break;
-		case Leap::DirectionDetector::Direction::UP :
-			break;
-		case Leap::DirectionDetector::Direction::DOWN :
-			break;
-		default :
-			break;
-	}
+    switch ( direction ) {
+        case Leap::DirectionDetector::Direction::LEFT :
+            leapManager->scaleEdgesUp();
+            break;
+        case Leap::DirectionDetector::Direction::RIGHT :
+            leapManager->scaleEdgesDown();
+            break;
+        case Leap::DirectionDetector::Direction::STEADY :
+            break;
+        case Leap::DirectionDetector::Direction::UP :
+            break;
+        case Leap::DirectionDetector::Direction::DOWN :
+            break;
+        default :
+            break;
+    }
 }
 void Leap::LeapActions::scaleNodes( bool scaleUp )
 {
