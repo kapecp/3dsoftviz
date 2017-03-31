@@ -360,30 +360,6 @@ void QOpenCV::OpenCVWindow::onFaceRecStartCancel( bool checked )
 
 }
 
-//void QOpenCV::OpenCVWindow::onFaceRecStartCancel( bool checked )
-//{
-//	qDebug() << "OpenCVWindow::onFaceRecStartCancel:" << checked;
-
-//	if ( checked ) {
-//		mFaceRecPB->setEnabled( false );
-//		mFaceRecPB->setText( tr( "Stop FaceRec" ) );
-//		emit setCapVideoFaceRec( OpenCV::CamSelectCore::getInstance()->selectCamera() );
-//		emit startFaceRec();
-//		mFaceRecPB->setEnabled( true );
-
-//		if ( Util::ApplicationConfig::get()->getValue( "Viewer.SkyBox.Noise" ).toInt() >1 ) {
-//			mFaceDetBackgrCB->setEnabled( true );
-
-//		}
-//	}
-//	else {
-//		mFaceRecPB->setEnabled( false );
-//		mFaceDetBackgrCB->setEnabled( false );
-//		emit stopFaceRec( true );
-
-//	}
-//}
-
 void QOpenCV::OpenCVWindow::onMarkerStartCancel( bool checked )
 {
 	if ( checked ) {
@@ -412,33 +388,6 @@ void QOpenCV::OpenCVWindow::onMarkerStartCancel( bool checked )
 	mInterchangeMarkersPB->setEnabled( checked );
 
 }
-
-//void QOpenCV::OpenCVWindow::onMarkerStartCancel( bool checked )
-//{
-//	if ( checked ) {
-//		mMarkerPB->setEnabled( false );
-//		mMarkerPB->setText( tr( "Stop Marker" ) );
-//		mMarkerBehindCB->setEnabled( true );
-//		mUpdateCorParPB->setEnabled( true );
-//		emit setCapVideoMarker( OpenCV::CamSelectCore::getInstance()->selectCamera() );
-//		emit startMarker();
-//		mMarkerPB->setEnabled( true );
-//		emit arucoRunning( true );
-
-//		if ( Util::ApplicationConfig::get()->getValue( "Viewer.SkyBox.Noise" ).toInt() ==0 ) {
-//			mMarkerBackgrCB->setEnabled( true );
-//		}
-//	}
-//	else {
-//		mMarkerPB->setEnabled( false );
-//		mMarkerBehindCB->setEnabled( false );
-//		mCorEnabledCB->setEnabled( false );
-//		mUpdateCorParPB->setEnabled( false );
-//		mMarkerBackgrCB->setEnabled( false );
-//		emit stopMarker( true );
-//		emit arucoRunning( false );
-//	}
-//}
 
 void QOpenCV::OpenCVWindow::onFaceRecThrFinished()
 {
