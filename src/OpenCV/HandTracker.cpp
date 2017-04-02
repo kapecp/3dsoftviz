@@ -37,6 +37,16 @@ std::pair<cv::Point,double> OpenCV::HandTracker::circleFromPoints(cv::Point p1, 
     return std::make_pair(cv::Point(centerx,centery),radius);
 }
 
+void OpenCV::HandTracker::getParameterValues(int *threshold, int *areaSize,
+                                             float brightness, float depth){
+    if(depth > 380){
+        *threshold = 50;
+    }
+    else{
+        *threshold = 160 - (depth/4);
+    }
+}
+
 
 // find contours of segmented hand and count fingers
 cv::Mat OpenCV::HandTracker::findHand( cv::Mat mask, float depth )
@@ -47,10 +57,23 @@ cv::Mat OpenCV::HandTracker::findHand( cv::Mat mask, float depth )
 
     cv::vector<std::pair<cv::Point,double> > palm_centers;
 
+    cv::Scalar summ = sum(mask);
+
+
+    float brightness = summ[0]/((pow(2,8)-1)*mask.rows * mask.cols) * 2;
+//    LOG (INFO) << "brightness: " + std::to_string(brightness);
+//    LOG (INFO) << "Depth: " + std::to_string(depth);
+
     int threshold_down = 50;
     int threshold_up = 150;
 
-    threshold(tempMask, tempMask, 30, threshold_up, cv::THRESH_BINARY);
+    int thresholdValue =0;
+    int areaSize = 0;
+
+    getParameterValues(&thresholdValue, &areaSize, brightness, depth);
+//    LOG (INFO) << std::to_string(areaSize);
+
+    threshold(tempMask, tempMask, thresholdValue, threshold_up, cv::THRESH_BINARY);
     GaussianBlur(tempMask, tempMask, cv::Size(3, 3), 2.5, 2.5);
 
     Canny(tempMask,tempMask,threshold_down, threshold_up,3);
@@ -63,7 +86,7 @@ cv::Mat OpenCV::HandTracker::findHand( cv::Mat mask, float depth )
                 //Ignore all small insignificant areas
                 if(contourArea(contours[i])>=1500)
                 {
-                    LOG (INFO) << "Size of area: " + std::to_string(contourArea(contours[i]));
+//                    LOG (INFO) << "Size of area: " + std::to_string(contourArea(contours[i]));
                     //Draw contour
                     cv::vector<cv::vector<cv::Point> > tcontours;
                     tcontours.push_back(contours[i]);
