@@ -95,6 +95,8 @@ public:
 		 */
 	void release();
 
+	void setAutoExposure( double value );
+
 private:
 	/**
 		 * @brief device_id Camera ID

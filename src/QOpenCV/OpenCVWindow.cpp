@@ -75,7 +75,8 @@ void QOpenCV::OpenCVWindow::configureWindow()
 	mDisableCursorCB = new QCheckBox( tr( "Turn off cursor" ) );
 	mDisableZoomCursorCB = new QCheckBox( tr( "Turn off zoom" ) );
 	mEnableMarkerDetectCB = new QCheckBox( tr( "Turn on Marker Detection" ) );
-	mEnableMarkerlessCameraCB = new QCheckBox( tr( "Turn on Markerless Detection" ) );
+    mEnableMarkerlessCameraCB = new QCheckBox( tr( "Turn on Markerless Detection" ) );
+    mLightDetectShowProcessingCB = new QCheckBox( tr( "Show frame processing" ) );
 
 	mSpeed =  new QSlider( Qt::Horizontal );
 	mSpeed->setRange( 5,20 );
@@ -104,16 +105,6 @@ void QOpenCV::OpenCVWindow::configureWindow()
     mFisheyeRS->setPageStep( 1 );
     mFisheyeRS->setFocusPolicy( Qt::NoFocus );
     mFisheyeRS->setToolTip( tr( "Adjust the radius of fisheye lens for calculations" ) );
-
-    mCamValidator = new QIntValidator(100, 10000, this);
-
-    mCamWidth = new QLineEdit( tr ("Enter width") );
-    mCamWidth->setMaxLength(5);
-    mCamWidth->setValidator( mCamValidator );
-
-    mCamHeight = new QLineEdit( tr ("Enter height") );
-    mCamHeight->setMaxLength(5);
-    mCamHeight->setValidator( mCamValidator );
 
     mModulesStackL = new QStackedLayout;
 	mSubmodulesStackL = new QStackedLayout;
@@ -194,8 +185,7 @@ void QOpenCV::OpenCVWindow::configureWindow()
     arucoLightDetPageLayout->addWidget( mFisheyeXS );
     arucoLightDetPageLayout->addWidget( mFisheyeYS );
     arucoLightDetPageLayout->addWidget( mFisheyeRS );
-    arucoLightDetPageLayout->addWidget( mCamWidth );
-    arucoLightDetPageLayout->addWidget( mCamHeight );
+    arucoLightDetPageLayout->addWidget( mLightDetectShowProcessingCB );
     arucoLightDetPageLayout->addWidget( mLightDetPB );
 
 	arucoMarkerPageLayout->addWidget( mMarkerBackgrCB );
@@ -231,6 +221,7 @@ void QOpenCV::OpenCVWindow::configureWindow()
 	mEnableMarkerlessKinectCB->setEnabled( true );
 	mEnableMarkerDetectCB->setEnabled( true );
 	mEnableMarkerlessCameraCB->setEnabled( true );
+    mLightDetectShowProcessingCB->setEnabled( true );
 
 	mMultiMarkerPB->setCheckable( true );
 	mFaceRecPB->setCheckable( true );
@@ -264,13 +255,12 @@ void QOpenCV::OpenCVWindow::configureWindow()
 	connect( mDisableCursorCB, SIGNAL( clicked() ), this, SLOT( stopMovingCursor() ) );
 	connect( mDisableZoomCursorCB, SIGNAL( clicked( bool ) ), this, SLOT( stopZoom() ) );
 	connect( mEnableMarkerlessKinectCB, SIGNAL( clicked( bool ) ), this, SLOT( setMarkerlessDetectionKinect( bool ) ) );
+    connect( mLightDetectShowProcessingCB, SIGNAL( clicked( bool ) ), this, SLOT( onLightDetShowProcessingCBClicked( bool ) ) );
 
     connect( mFisheyeXS, SIGNAL( valueChanged( int ) ), this, SLOT( onFisheyeXChanged( int ) ) );
     connect( mFisheyeYS, SIGNAL( valueChanged( int ) ), this, SLOT( onFisheyeYChanged( int ) ) );
     connect( mFisheyeRS, SIGNAL( valueChanged( int ) ), this, SLOT( onFisheyeRChanged( int ) ) );
 
-    connect( mCamWidth, SIGNAL( textEdited( const QString & ) ), this, SLOT( onCamWidthChanged( const QString & ) ) );
-    connect( mCamHeight, SIGNAL( textEdited( const QString & ) ), this, SLOT( onCamHeightChanged( const QString & ) ) );
 }
 
 void QOpenCV::OpenCVWindow::stopMovingCursor()
@@ -354,6 +344,13 @@ void QOpenCV::OpenCVWindow::onMarkerBackgrCBClicked( bool checked )
 	}
 }
 
+
+void QOpenCV::OpenCVWindow::onLightDetShowProcessingCBClicked( bool checked )
+{
+    qDebug() << "onLightDetShowProcessingCBClicked " << checked;
+    emit sendShowProcessingCB( checked );
+}
+
 void QOpenCV::OpenCVWindow::onFisheyeXChanged( int value ) {
     emit sendFishEyeCenterX( value );
 }
@@ -364,14 +361,6 @@ void QOpenCV::OpenCVWindow::onFisheyeYChanged( int value ) {
 
 void QOpenCV::OpenCVWindow::onFisheyeRChanged( int value ) {
     emit sendFishEyeRadius( value );
-}
-
-void QOpenCV::OpenCVWindow::onCamWidthChanged( const QString &text ) {
-    qDebug() << "camera width input " << text;
-}
-
-void QOpenCV::OpenCVWindow::onCamHeightChanged( const QString &text ) {
-    qDebug() << "camera height input " << text;
 }
 
 void QOpenCV::OpenCVWindow::onSelModulChange()

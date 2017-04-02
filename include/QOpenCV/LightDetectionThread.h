@@ -84,6 +84,9 @@ namespace QOpenCV
                 */
         void setFishEyeRadius( int );
 
+
+        void setShowProcessing( bool );
+
     private:
         /**
              * @brief mCapVideo CapVideo object representing camera
@@ -97,6 +100,7 @@ namespace QOpenCV
         bool					mCancel;
         bool					mSendImgEnabled;
         bool					mSendBackgrImgEnabled;
+        bool                    mShowProcessing;
 
         int                     mFisheyeX;
         int                     mFisheyeY;

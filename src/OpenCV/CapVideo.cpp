@@ -39,6 +39,10 @@ void OpenCV::CapVideo::setCaptureProperties( int width, int height ) {
 	this->height = static_cast<int>( this->capture.get( CV_CAP_PROP_FRAME_HEIGHT ) );
 }
 
+void OpenCV::CapVideo::setAutoExposure( double value ) {
+	this->capture.set( CV_CAP_PROP_AUTO_EXPOSURE, value );
+}
+
 //release camera
 void OpenCV::CapVideo::release()
 {

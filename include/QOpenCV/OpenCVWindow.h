@@ -276,7 +276,12 @@ signals:
 
 	void sendFishEyeRadius( int value );
 
-    void sendCamResolution( int width, int height );
+    /**
+     * @author Autor: Marek Karas
+     * @brief sendShowProcessingCB Signal to to switch displayed camera stream
+     * @param set (camera stream/ processing stream)
+     */
+    void sendShowProcessingCB( bool set );
 
 public slots:
 	/**
@@ -430,16 +435,10 @@ private slots:
     void onFisheyeRChanged(int value);
 
     /**
-    * @brief private SLOT for setting up camera width
-    * @param value width in pixels
+    * @brief private SLOT for switching displayed frames
+    * @param set (camera stream/ processing stream)
     */
-    void onCamWidthChanged( const QString &text );
-
-    /**
-    * @brief private SLOT for setting up camera width
-    * @param value width in pixels
-    */
-    void onCamHeightChanged( const QString &text );
+    void onLightDetShowProcessingCBClicked( bool checked );
 
 private:
 	/**
@@ -487,6 +486,7 @@ private:
 	QCheckBox*		 mCorEnabledCB;
 	QCheckBox*	     mMultiMarkerEnableCB;
 	QCheckBox*		 mEnableMarkerlessKinectCB;
+    QCheckBox*		 mLightDetectShowProcessingCB;
 
 	QCheckBox*       mDisableCursorCB;
 	QCheckBox*       mDisableZoomCursorCB;
@@ -499,10 +499,6 @@ private:
 	QSlider*		 mFisheyeXS;
 	QSlider*		 mFisheyeYS;
 	QSlider*		 mFisheyeRS;
-
-    QValidator*      mCamValidator;
-    QLineEdit*       mCamWidth;
-    QLineEdit*       mCamHeight;
 };
 
 }

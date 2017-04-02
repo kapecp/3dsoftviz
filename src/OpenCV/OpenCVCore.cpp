@@ -465,6 +465,12 @@ void OpenCV::OpenCVCore::createConnectionLightDet()
                       SIGNAL( sendFishEyeRadius( int ) ),
                       mThrLightDet,
                       SLOT( setFishEyeRadius( int ) ) );
+
+
+    QObject::connect( mOpencvWindow,
+                      SIGNAL( sendShowProcessingCB( bool ) ),
+                      mThrLightDet,
+                      SLOT( setShowProcessing( bool ) ) );
 }
 
 OpenCV::OpenCVCore* OpenCV::OpenCVCore::getInstance( QApplication* app, QWidget* parent )
