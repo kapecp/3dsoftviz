@@ -19,6 +19,7 @@ Kinect::KinectThread::KinectThread( QObject* parent ) : QThread( parent )
 	mSetImageEnable=true;
 	isZoomEnable=true;
 	isMarkerDetectEnable=false;
+	mMarkerlessTrackingEnabled=false;
 
 	// timer setting
 	clickTimer = new QTimer();
@@ -29,6 +30,7 @@ Kinect::KinectThread::KinectThread( QObject* parent ) : QThread( parent )
 
 	nav = new Vwr::GraphNavigation();
 	mouse = new Vwr::MouseControl();
+	kTracker = new OpenCV::MarkerlessTracker();
 }
 
 Kinect::KinectThread::~KinectThread( void )
@@ -79,6 +81,11 @@ void Kinect::KinectThread::setImageSendToMarkerDetection( bool set )
 	isMarkerDetectEnable = set;
 }
 
+void Kinect::KinectThread::setMarkerlessTracking( bool set )
+{
+	mMarkerlessTrackingEnabled = set;
+}
+
 void Kinect::KinectThread::pause()
 {
 	mCancel=true;
@@ -96,7 +103,6 @@ void Kinect::KinectThread::setSpeedKinect( double set )
 {
 	mSpeed=set;
 }
-
 void Kinect::KinectThread::setCaptureImage( bool set )
 {
 	qDebug() << "captureImage set to " << set;
@@ -357,7 +363,11 @@ void Kinect::KinectThread::run()
 			//}
 #endif
 			// resize, send a msleep for next frame
+
 			cv::resize( frame, frame,cv::Size( 320,240 ),0,0,cv::INTER_LINEAR );
+			if ( mMarkerlessTrackingEnabled ){
+				kTracker->track(frame);
+			}
 			emit pushImage( frame );
 			msleep( 20 );
 		}

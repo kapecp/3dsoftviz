@@ -46,9 +46,9 @@ Na inštaláciu potrebujeme klonovať projekt `3DSoftViz <https://github.com/dom
 Postup inštalácie
 *****************
 **Uvedené programy neinštalovať do Program Files, PATH nesmie obsahovať medzeru! Idealne vsetky programy, kniznice, atd. dat do jedneho adresara.**
- #. Nainštalovať CMake. (Cesta je v dokumente označená ako *%CMAKE_DIR%*)
+ #. Nainštalovať CMake. (Cesta je v dokumente označená ako *%CMAKE_DIR%*). Pri inštalácií zvoliť "Add CMake to the system for all users". 
  #. Nainštalovať Qt (*%QT_DIR%*)
- #. Nainštalovať QtCreator do zložky Qt
+ #. Nainštalovať QtCreator.
  #. Vytvoriť zložku OpenSceneGraph (*%OSG_DIR%*)
  #. V prípade stiahnutia zbuildovaných súborov OSG (mega.nz)
 
