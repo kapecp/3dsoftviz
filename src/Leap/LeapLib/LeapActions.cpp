@@ -196,19 +196,32 @@ void Leap::LeapActions::rotateAruco( Leap::DirectionDetector::Direction directio
 	}
 }
 
-void Leap::LeapActions::scaleGraph( Leap::DirectionDetector::Direction direction ){
+//void Leap::LeapActions::scaleGraph( Leap::DirectionDetector::Direction direction ){
 
+//    LOG (INFO) << direction;
+//    switch (direction) {
+//        case Leap::DirectionDetector::Direction::UP :
+//            LOG (INFO) << "ScaleNodesUp";
+//            leapManager->scaleGraph(true);
+//            break;
+//        case Leap::DirectionDetector::Direction::DOWN :
+//            LOG (INFO) << "ScaleNodesDown";
+//            leapManager->scaleGraph(false);
+//            break;
+//        }
+//}
 
-    switch (direction) {
-        case Leap::DirectionDetector::Direction::UP :
-            LOG (INFO) << "ScaleNodesUp";
+void Leap::LeapActions::scaleGraph(Vector *vec ){
+    double vectorValue =vec->x+vec->y+vec->z;
+    if ( vectorValue<-150 || vectorValue >150){
+        if((vec->x+vec->y+vec->z)>0){
+            LOG (INFO) << "ScaleGraphUp";
             leapManager->scaleGraph(true);
-            break;
-        case Leap::DirectionDetector::Direction::DOWN :
-            LOG (INFO) << "ScaleNodesUp";
+        }else{
+            LOG (INFO) << "ScaleGraphDown";
             leapManager->scaleGraph(false);
-            break;
         }
+    }
 }
 
 void Leap::LeapActions::scaleEdges( Leap::DirectionDetector::Direction direction )

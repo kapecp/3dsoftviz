@@ -1790,15 +1790,16 @@ void CoreGraph::scaleGraphToBase()
 
 void CoreGraph::scaleGraph( int scale )
 {
+    LOG ( INFO ) << "HERE";
 	osg::Matrixd scaleMatrix = graphRotTransf->getMatrix();
 	//outputMatrix( scaleMatrix);
 	switch ( scale ) {
 		case 1: {
-            graphRotTransf->setMatrix( scaleMatrix * scaleMatrix.scale( 0.9,0.9,0.9 ) );
+            graphRotTransf->setMatrix( scaleMatrix * scaleMatrix.scale( 0.8,0.8,0.8 ) );
 			break;
 		}
 		case 2: {
-            graphRotTransf->setMatrix( scaleMatrix * scaleMatrix.scale( 1.1,1.1,1.1 ) );
+            graphRotTransf->setMatrix( scaleMatrix * scaleMatrix.scale( 1.2,1.2,1.2 ) );
 			break;
 		}
 		default:

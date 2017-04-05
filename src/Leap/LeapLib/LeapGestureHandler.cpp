@@ -68,11 +68,11 @@ void Leap::LeapGestureHandler::handleGestures( Frame frame )
         }
     }
     // check if both hands are active
-    if(rightHand.isValid() && !rightHandExtended){
-            this->setStartFrame(frame);
-            LOG(INFO)<<rightHandDirection;
-            //UP,DOWN,LEFT,RIGHT,STEADY
-            leapActions->scaleGraph(rightHandDirection);
+//    if(rightHand.isValid() && !rightHandExtended){
+//            this->setStartFrame(frame);
+//            LOG(INFO)<<rightHandDirection;
+//            //UP,DOWN,LEFT,RIGHT,STEADY
+//            leapActions->scaleGraph(rightHandDirection);
 
 //            Leap::Vector leftHandMovement = leftHand.translation(*startFrame);
 //            Leap::Vector rightHandMovement = rightHand.translation(*startFrame);
@@ -82,20 +82,15 @@ void Leap::LeapGestureHandler::handleGestures( Frame frame )
 //            //LOG(INFO) << "xdiff:",std::to_string(xDiff) , " yDiff:" ,std::to_string(yDiff), " zDiff:" , std::to_string(zDiff) ;
 //            printf("%g  %g  %g\n", leftHandMovement.x, leftHandMovement.y, leftHandMovement.z);
             //Concurrency::wait(250);
-    }
-    else {
-        std::cout<<"RightHand is not valid or extended." << std::endl;
-    }
-
-//    if(leftHandVelocity->x !=0 && rightHandVelocity->x != 0 ){
-//        if(!leftHandExtended && !rightHandExtended){
-//            deltaVelocity = new Vector(rightHandVelocity->x - leftHandVelocity->x,rightHandVelocity->y - leftHandVelocity->y,rightHandVelocity->z - leftHandVelocity->z);
-//            std::cout<< "Obe ruky a paste.";
-//            leapActions->scaleGraph( deltaVelocity );
-//            Concurrency::wait(350);
-
-//        }
 //    }
+    if(leftHandVelocity->x !=0 && rightHandVelocity->x != 0 ){
+        if(!leftHandExtended && !rightHandExtended){
+            deltaVelocity = new Vector(rightHandVelocity->x - leftHandVelocity->x,rightHandVelocity->y - leftHandVelocity->y,rightHandVelocity->z - leftHandVelocity->z);
+            leapActions->scaleGraph( deltaVelocity );
+            Concurrency::wait(100);
+
+        }
+    }
 
 
 //    const GestureList gestures = frame.gestures();
