@@ -17,6 +17,12 @@ public:
 
     LeapManager* leapManager;
     LeapActions* leapActions;
+private:
+    Frame* startFrame;
+    bool isStartFrameSet;
+    int frameCounter;
+
+    void setStartFrame(Frame frame);
 };
 }
 

@@ -87,6 +87,7 @@ public:
 	void rotateArucoRight();
 	void scaleEdgesUp();
 	void scaleEdgesDown();
+    void scaleGraph(bool scaleUp);
 	//*****
 
 	Vwr::CameraManipulator* cameraManipulator;

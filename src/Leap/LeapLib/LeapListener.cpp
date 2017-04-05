@@ -64,8 +64,7 @@ void Leap::LeapListener::onImages( const Controller& controller )
 void Leap::LeapListener::onFrame( const Controller& controller )
 {
 	Frame frame = controller.frame();
-	HandList hands = frame.hands();
-	Leap::DirectionDetector::Direction direction;
+    HandList hands = frame.hands();
     bool leftHandExtended = false;
     bool rightHandExtended = false;
 	Hand leftHand;

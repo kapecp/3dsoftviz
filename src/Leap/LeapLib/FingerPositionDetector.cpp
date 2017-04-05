@@ -5,10 +5,10 @@ bool Leap::FingerPositionDetector::isHandExtended( Hand hand )
 	FingerList fingers = hand.fingers();
 
 	for ( int i=0; i < fingers.count(); ++i ) {
-		if ( !fingers[i].isExtended() ) {
-			return false;
+        if ( fingers[i].isExtended() ) {
+            return true;
 		}
 	}
 
-	return true;
+    return false;
 }

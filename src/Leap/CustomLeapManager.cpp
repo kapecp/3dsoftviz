@@ -371,3 +371,12 @@ int Leap::CustomLeapManager::updateCoreGraphBackground( const unsigned char* buf
 	this->coreGraph->updateBackgroundStream( ( unsigned char* )buffer );
 	return 1;
 }
+
+void Leap::CustomLeapManager::scaleGraph(bool scaleUp){
+    if(scaleUp){
+        this->coreGraph->scaleGraph(2);
+    }else{
+        this->coreGraph->scaleGraph(1);
+    }
+
+}
