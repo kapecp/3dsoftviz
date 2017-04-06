@@ -19,10 +19,10 @@ class ArControlObject : public QObject
 public:
 	ArControlObject( int id, osg::Vec3f position );
 	void updatePosition( osg::Vec3f position );
-	bool isLost()
-	{
-		return this->lost;
-	}
+    bool isFocused()
+    {
+        return this->focused;
+    }
 
 public slots:
 	void timerEvent();
@@ -32,14 +32,17 @@ private:
 	qlonglong nodeToPick;
 	osg::Vec3f position;
 	bool focused;
-	bool lost;
 
 	QTimer* timer;
 
 	osg::ref_ptr<Data::Node> focusedNode;
 
 	bool chckIfNearPosition( osg::Vec3f target );
-
+    void doAssignNode( osg::ref_ptr<Data::Node> node);
+    void doUnAssignNode( osg::ref_ptr<Data::Node> node);
+    bool assignNodeByPosition();
+    bool assignNodeByMatric();
+    bool assignNodeByEdgeCount();
 };
 
 

@@ -20,94 +20,129 @@ ArControlObject::ArControlObject( int id, osg::Vec3f position )
 	this->id = id;
 	this->position = position;
 	this->focused = false;
-	this->lost = false;
 
-	//Create lost timer
-	this->timer = new QTimer( 0 );
-	this->timer->setInterval( 3000 );
-	this->timer->setSingleShot( true );
+        //Create lost timer
+        this->timer = new QTimer( 0 );
+        this->timer->setInterval( 3000 );
+        this->timer->setSingleShot( true );
 
-	//Move to own thread ... needed by lost timer
-	QThread* m_workerThread = new QThread();
-	this->moveToThread( m_workerThread );
-	this->timer->moveToThread( m_workerThread );
-	connect( this->timer, SIGNAL( timeout() ), this, SLOT( timerEvent() ) );
-	m_workerThread->start();
+        //Move to own thread ... needed by lost timer
+        QThread* m_workerThread = new QThread();
+        this->moveToThread( m_workerThread );
+        this->timer->moveToThread( m_workerThread );
+        connect( this->timer, SIGNAL( timeout() ), this, SLOT( timerEvent() ) );
+        m_workerThread->start();
 
-	updatePosition( this->position );
+    //assignNodeByPosition();
+    //assignNodeByMatric();
+    assignNodeByEdgeCount();
 }
 
 void ArControlObject::timerEvent()
 {
 	qDebug() << "LOST MARKER TRACK" ;
-	this->lost = true;
-	this->focusedNode->setDefaultColor();
-	this->focusedNode->setUsingInterpolation( true );
-	this->focusedNode->setIgnoreByLayout( false );
-
-	//SELECTION MODE - ONLY PICKED NODE
-	/*
-	for(auto j : this->focusedNode->getEdges()->keys()){
-	    this->focusedNode->getEdges()->value(j)->getOtherNode( this->focusedNode )->setIgnoreByLayout( false );
-	    this->focusedNode->getEdges()->value(j)->getOtherNode( this->focusedNode )->setDefaultColor();
-	}
-	*/
+    doUnAssignNode( this->focusedNode );
 }
 
 void ArControlObject::updatePosition( osg::Vec3f position )
 {
 	this->position = position;
-
-	if ( !this->focused ) {
-		Data::Graph* currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
-		QMap<qlonglong, osg::ref_ptr<Data::Node> >* allNodes = currentGraph->getNodes();
-
-		for ( auto e : allNodes->keys() ) {
-			// not already used and marker near node, pick it
-			if ( !allNodes->value( e )->isIgnoredByLayout() && chckIfNearPosition( allNodes->value( e )->getTargetPosition() ) ) {
-				this->focused = true;
-
-				this->focusedNode = allNodes->value( e );
-				this->focusedNode->setDrawableColor( osg::Vec4( 0.0f,1.0f,0.0f,1.0f ) );
-				this->focusedNode->setUsingInterpolation( false );
-				this->focusedNode->setIgnoreByLayout( true );
-				this->focusedNode->setTargetPosition( this->position );
-
-				//SELECTION MODE - ONLY PICKED NODE
-				/*
-				for(auto j : this->focusedNode->getEdges()->keys()){
-				    this->focusedNode->getEdges()->value(j)->getOtherNode( this->focusedNode )->setIgnoreByLayout( true );
-				    this->focusedNode->getEdges()->value(j)->getOtherNode( this->focusedNode )->setDrawableColor( osg::Vec4( 0.0f,1.0f,0.0f,0.2f ) );
-				}
-				*/
-
-				//restart kill timer
-				QMetaObject::invokeMethod( this->timer, "start",Qt::QueuedConnection );
-
-				break;
-			}
-		}
-	}
-	else {
-		this->focusedNode->setTargetPosition( this->position );
-		//restart kill timer
-		QMetaObject::invokeMethod( this->timer, "start",Qt::QueuedConnection );
-	}
+    this->focusedNode->setTargetPosition( position );
+    //restart kill timer
+    QMetaObject::invokeMethod( this->timer, "start",Qt::QueuedConnection );
 }
+
+void ArControlObject::doAssignNode( osg::ref_ptr<Data::Node> node){
+    this->focused = true;
+    this->focusedNode = node;
+
+    node->setDrawableColor( osg::Vec4( 0.0f,1.0f,0.0f,1.0f ) );
+    node->setUsingInterpolation( false );
+    node->setIgnoreByLayout( true );
+    node->setTargetPosition( this->position );
+
+    //SELECTION MODE - ONLY PICKED NODE
+    /*
+    for(auto j : node->getEdges()->keys()){
+        node->getEdges()->value(j)->getOtherNode( node )->setIgnoreByLayout( true );
+        node->getEdges()->value(j)->getOtherNode( node )->setDrawableColor( osg::Vec4( 0.0f,1.0f,0.0f,0.2f ) );
+    }
+    */
+}
+
+void ArControlObject::doUnAssignNode( osg::ref_ptr<Data::Node> node ){
+    this->focused = false;
+    this->focusedNode = NULL;
+
+    node->setDefaultColor();
+    node->setUsingInterpolation( true );
+    node->setIgnoreByLayout( false );
+
+    //SELECTION MODE - ONLY PICKED NODE
+    /*
+    for(auto j : this->focusedNode->getEdges()->keys()){
+        node->getEdges()->value(j)->getOtherNode( node )->setIgnoreByLayout( false );
+        node->getEdges()->value(j)->getOtherNode( node )->setDefaultColor();
+    }
+    */
+}
+
+bool ArControlObject::assignNodeByPosition()
+{
+    Data::Graph* currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
+    QMap<qlonglong, osg::ref_ptr<Data::Node> >* allNodes = currentGraph->getNodes();
+
+    for ( auto e : allNodes->keys() ) {
+        // not already used and marker near node, pick it
+        if ( !allNodes->value( e )->isIgnoredByLayout() && chckIfNearPosition( allNodes->value( e )->getTargetPosition() ) ) {
+            doAssignNode( allNodes->value( e ) );
+            updatePosition( this->position );
+            return true;
+        }
+    }
+    return false;
+}
+
+bool ArControlObject::assignNodeByMatric()
+{
+    return false;
+}
+
+bool ArControlObject::assignNodeByEdgeCount()
+{
+    int most_edges_count = 0;
+    osg::ref_ptr<Data::Node> most_edges_node_ref = NULL;
+
+    Data::Graph* currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
+    QMap<qlonglong, osg::ref_ptr<Data::Node> >* allNodes = currentGraph->getNodes();
+
+    for ( auto e : allNodes->keys() ) {
+        if ( !allNodes->value( e )->isIgnoredByLayout() && allNodes->value( e )->getEdges()->count() > most_edges_count ) {
+           most_edges_count = allNodes->value( e )->getEdges()->count();
+           most_edges_node_ref = allNodes->value( e );
+        }
+    }
+
+    if(most_edges_node_ref != NULL){
+        doAssignNode( most_edges_node_ref );
+        updatePosition( this->position );
+        return true;
+    }
+    else{
+        qDebug() << "Unable to assign more nodes...";
+        return false;
+    }
+}
+
+
 
 bool ArControlObject::chckIfNearPosition( osg::Vec3f target )
 {
-	if ( ( this->position - target ).length() < 25.0f ) {
-		return true;
-	}
-	return false;
+    if ( ( this->position - target ).length() < 25.0f ) {
+        return true;
+    }
+    return false;
 }
-
-
-
-
-
-
 
 
 
@@ -149,16 +184,28 @@ void ArControlClass::updateObjectPositionAruco( qlonglong object_id, QMatrix4x4 
 
 	if ( controlObjects.value( object_id ) != NULL ) {
 		//if object is lost, destroy and create new
-		if ( controlObjects.value( object_id )->isLost() ) {
+        if ( !controlObjects.value( object_id )->isFocused() ) {
 			controlObjects.remove( object_id );
-			controlObjects.insert( object_id, new ArControlObject( object_id, targetPosition ) );
+
+            ArControlObject* newControlObject = new ArControlObject( object_id, targetPosition );
+            if(newControlObject->isFocused()){
+                //sucesfully assigned to graph node
+                controlObjects.insert( object_id,  newControlObject);
+            }
+
 		}
 		else {
 			controlObjects.value( object_id )->updatePosition( targetPosition );
 		}
 	}
 	else {
-		controlObjects.insert( object_id, new ArControlObject( object_id, targetPosition ) );
+
+        ArControlObject* newControlObject = new ArControlObject( object_id, targetPosition );
+        if(newControlObject->isFocused()){
+            //sucesfully assigned to graph node
+            controlObjects.insert( object_id,  newControlObject);
+        }
+
 	}
 }
 
