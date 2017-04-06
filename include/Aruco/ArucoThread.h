@@ -197,6 +197,13 @@ public slots:
 	void setMultiMarker( bool set );
 
 	/**
+	 * @author Lukas Hagara
+	 * @brief Perform markerless tracking on image (true/false)
+	 * @param set
+	 */
+	void setMarkerlessTracking( bool set );
+
+	/**
 	* @author Michael Garaj
 	* @brief detectMarkerFromImage Detect markers from kinect image
 	* @param set
@@ -284,6 +291,7 @@ private:
 	bool		mSendImgEnabled;	// if true, of emiting actual frame is enabled
 	bool		mSendBackgrImgEnabled;
 	bool		mMultiMarkerEnabled;
+	bool		mMarkerlessTrackingEnabled;
 
 	unsigned int	mGrM;				// number of marker for graph controll
 	unsigned int	mMoM;				// number of marker for mouse controll
@@ -298,12 +306,10 @@ private:
 
 	OpenCV::CapVideo*	mCapVideo; // Cap video instanc, that managed camera and provides frames
 	Util::SizedQueue* boolQueue;
-
+	OpenCV::MarkerlessTracker* mMarkerlessTracker; //markerless tracker instance, that finds balls in frame
 	//JMA
 	ArControlClass* mArControlClass;
 	osg::Vec3d normalizePos( const osg::Vec3f actPosArray, const osg::Quat actQuatArray );//ArucoThread::
-    OpenCV::MarkerlessTracker* mMarkerlessTracker;
-
 
 };
 } // ArucoModul namespace

@@ -59,7 +59,11 @@ void Leap::LeapListener::onImages( const Controller& controller )
 	}
 	Leap::CustomLeapManager* manager = dynamic_cast<Leap::CustomLeapManager*>( this->leapActions->leapManager );
 
-	manager->updateCoreGraphBackground( image.data() );
+    Frame frame = controller.frame();
+    HandList hands = frame.hands();
+    float depth = manager->getHandsDepthInformation(hands[0].palmPosition().y, hands[1].palmPosition().y);
+
+    manager->updateCoreGraphBackground( image.data(), depth);
 }
 
 void Leap::LeapListener::onFrame( const Controller& controller )
