@@ -637,6 +637,8 @@ Vwr::CoreGraph::CoreGraph( Data::Graph* graph, osg::ref_ptr<osg::Camera> camera 
 	rotationMatrix = rotationMatrix.identity();
 
 
+	lightsGroup = new osg::Group();
+	root->addChild( lightsGroup );
 
 	//jurik
 	//lighting
@@ -648,7 +650,9 @@ Vwr::CoreGraph::CoreGraph( Data::Graph* graph, osg::ref_ptr<osg::Camera> camera 
 	// light source
 	osg::LightSource* pLightSource = new osg::LightSource;
 	pLightSource->setLight( pLight );
-	root->addChild( pLightSource );
+	//root->addChild( pLightSource );
+
+	lightsGroup->addChild( pLightSource );
 
 	//shadow scene
 	//http://trac.openscenegraph.org/projects/osg//wiki/Support/ProgrammingGuide/osgShadow
@@ -1998,4 +2002,13 @@ osg::Vec3f CoreGraph::getGrafRotTransVec()
 }
 
 //*****
+
+void CoreGraph::setLightCoords( osg::Vec4d coords )
+{
+	osg::LightSource* ls = dynamic_cast<osg::LightSource* >( lightsGroup->getChild( 0 ) );
+	if ( ls != NULL ) {
+		ls->getLight()->setPosition( coords );
+	}
+}
+
 }

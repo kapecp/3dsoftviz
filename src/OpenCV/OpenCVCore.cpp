@@ -84,7 +84,7 @@ void OpenCV::OpenCVCore::opencvInit()
 		mArucoThrsCreated = true;
 		mThrAruco = new ArucoModul::ArucoThread();
 		mThrFaceRec	= new QOpenCV::FaceRecognitionThread();
-        mThrLightDet = new QOpenCV::LightDetectionThread();
+		mThrLightDet = new QOpenCV::LightDetectionThread();
 
 #ifdef OPENNI2_FOUND
 		mThrKinect = new Kinect::KinectThread();
@@ -166,6 +166,12 @@ void  OpenCV::OpenCVCore::createPermanentConnection()
 					  SIGNAL( moveMouseArucoSignal( double,double,bool,Qt::MouseButton ) ),
 					  AppCore::Core::getInstance()->getCoreWindow(),
 					  SLOT( moveMouseAruco( double,double,bool,Qt::MouseButton ) ) );
+
+	// updating lights
+	QObject::connect( mThrLightDet,
+					  SIGNAL( sendLightCoords( osg::Vec4d ) ),
+					  AppCore::Core::getInstance( mApp )->getCoreGraph(),
+					  SLOT( setLightCoords( osg::Vec4d ) ) );
 
 }
 
@@ -416,61 +422,61 @@ void OpenCV::OpenCVCore::createConnectionMultiAruco()
 
 void OpenCV::OpenCVCore::createConnectionLightDet()
 {
-    // send actual image
-    QObject::connect( mOpencvWindow,
-                      SIGNAL( sendImgLightDet( bool ) ),
-                      mThrLightDet,
-                      SLOT( setSendImgEnabled( bool ) ) );
-    QObject::connect( mThrLightDet,
-                      SIGNAL( pushImage( cv::Mat ) ),
-                      mOpencvWindow,
-                      SLOT( setLabel( cv::Mat ) ) );
-    // send actual image to background
-    QObject::connect( mOpencvWindow,
-                      SIGNAL( sendBackgrImgLightDet( bool ) ),
-                      mThrLightDet,
-                      SLOT( setSendBackgrImgEnabled( bool ) ) );
+	// send actual image
+	QObject::connect( mOpencvWindow,
+					  SIGNAL( sendImgLightDet( bool ) ),
+					  mThrLightDet,
+					  SLOT( setSendImgEnabled( bool ) ) );
+	QObject::connect( mThrLightDet,
+					  SIGNAL( pushImage( cv::Mat ) ),
+					  mOpencvWindow,
+					  SLOT( setLabel( cv::Mat ) ) );
+	// send actual image to background
+	QObject::connect( mOpencvWindow,
+					  SIGNAL( sendBackgrImgLightDet( bool ) ),
+					  mThrLightDet,
+					  SLOT( setSendBackgrImgEnabled( bool ) ) );
 
 
-    // start, stop
-    QObject::connect( mOpencvWindow,
-                      SIGNAL( startLightDet() ),
-                      mThrLightDet,
-                      SLOT( start() ) );
-    QObject::connect( mOpencvWindow,
-                      SIGNAL( stopLightDet( bool ) ),
-                      mThrLightDet,
-                      SLOT( setCancel( bool ) ) );
-    QObject::connect( mThrLightDet,
-                      SIGNAL( finished() ),
-                      mOpencvWindow,
-                      SLOT( onFaceRecThrFinished() ) );
-    QObject::connect( mOpencvWindow,
-                      SIGNAL( setCapVideoLightDet( OpenCV::CapVideo* ) ),
-                      mThrLightDet,
-                      SLOT( setCapVideo( OpenCV::CapVideo* ) ) );
+	// start, stop
+	QObject::connect( mOpencvWindow,
+					  SIGNAL( startLightDet() ),
+					  mThrLightDet,
+					  SLOT( start() ) );
+	QObject::connect( mOpencvWindow,
+					  SIGNAL( stopLightDet( bool ) ),
+					  mThrLightDet,
+					  SLOT( setCancel( bool ) ) );
+	QObject::connect( mThrLightDet,
+					  SIGNAL( finished() ),
+					  mOpencvWindow,
+					  SLOT( onFaceRecThrFinished() ) );
+	QObject::connect( mOpencvWindow,
+					  SIGNAL( setCapVideoLightDet( OpenCV::CapVideo* ) ),
+					  mThrLightDet,
+					  SLOT( setCapVideo( OpenCV::CapVideo* ) ) );
 
-    // adjusting fisheye calculations
-    QObject::connect( mOpencvWindow,
-                      SIGNAL( sendFishEyeCenterX( int ) ),
-                      mThrLightDet,
-                      SLOT( setFishEyeCenterX( int ) ) );
+	// adjusting fisheye calculations
+	QObject::connect( mOpencvWindow,
+					  SIGNAL( sendFishEyeCenterX( int ) ),
+					  mThrLightDet,
+					  SLOT( setFishEyeCenterX( int ) ) );
 
-    QObject::connect( mOpencvWindow,
-                      SIGNAL( sendFishEyeCenterY( int ) ),
-                      mThrLightDet,
-                      SLOT( setFishEyeCenterY( int ) ) );
+	QObject::connect( mOpencvWindow,
+					  SIGNAL( sendFishEyeCenterY( int ) ),
+					  mThrLightDet,
+					  SLOT( setFishEyeCenterY( int ) ) );
 
-    QObject::connect( mOpencvWindow,
-                      SIGNAL( sendFishEyeRadius( int ) ),
-                      mThrLightDet,
-                      SLOT( setFishEyeRadius( int ) ) );
+	QObject::connect( mOpencvWindow,
+					  SIGNAL( sendFishEyeRadius( int ) ),
+					  mThrLightDet,
+					  SLOT( setFishEyeRadius( int ) ) );
 
 
-    QObject::connect( mOpencvWindow,
-                      SIGNAL( sendShowProcessingCB( bool ) ),
-                      mThrLightDet,
-                      SLOT( setShowProcessing( bool ) ) );
+	QObject::connect( mOpencvWindow,
+					  SIGNAL( sendShowProcessingCB( bool ) ),
+					  mThrLightDet,
+					  SLOT( setShowProcessing( bool ) ) );
 }
 
 OpenCV::OpenCVCore* OpenCV::OpenCVCore::getInstance( QApplication* app, QWidget* parent )

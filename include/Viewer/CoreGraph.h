@@ -141,7 +141,7 @@ public:
 	    *  \param image data - one frame(image) from leap sensor
 	    *  \return 0 - success, 1 - fail
 	   */
-    int updateBackgroundStream( unsigned char* buffer );
+	int updateBackgroundStream( unsigned char* buffer );
 
 	/**
 		*  \fn inline public  getCustomNodeList
@@ -369,6 +369,8 @@ public slots:
 	void updateBase( double size );
 
 	void setArucoRunning( bool isRunning );
+
+	void setLightCoords( osg::Vec4d coords );
 
 private:
 
@@ -698,6 +700,8 @@ private:
 	osg::ref_ptr<osg::MatrixTransform> axesTransform;
 
 	//*****
+
+	osg::ref_ptr<osg::Group> lightsGroup;
 };
 }
 

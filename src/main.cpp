@@ -13,11 +13,13 @@ Q_DECLARE_METATYPE( cv::Mat )
 #endif
 
 #include <osg/Vec3d>
+#include <osg/Vec4d>
 #include <osg/Quat>
 
 Q_DECLARE_METATYPE( osg::Vec3d )
 Q_DECLARE_METATYPE( osg::Quat )
 Q_DECLARE_METATYPE( Qt::MouseButton )
+Q_DECLARE_METATYPE( osg::Vec4d )
 
 #include "iostream"
 #include "LuaInterface/LuaInterface.h"
@@ -35,6 +37,7 @@ int main( int argc, char* argv[] )
 	LOG( INFO ) << "3DSoftViz started.";
 
 	qRegisterMetaType< osg::Vec3d >( "osgVec3d" );
+	qRegisterMetaType< osg::Vec4d >( "osgVec4d" );
 	qRegisterMetaType< osg::Quat >( "osgQuat" );
 #ifdef OPENCV_FOUND
 	qRegisterMetaType<cv::Mat>( "Mat" );

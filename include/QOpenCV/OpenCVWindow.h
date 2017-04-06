@@ -276,12 +276,12 @@ signals:
 
 	void sendFishEyeRadius( int value );
 
-    /**
-     * @author Autor: Marek Karas
-     * @brief sendShowProcessingCB Signal to to switch displayed camera stream
-     * @param set (camera stream/ processing stream)
-     */
-    void sendShowProcessingCB( bool set );
+	/**
+	 * @author Autor: Marek Karas
+	 * @brief sendShowProcessingCB Signal to to switch displayed camera stream
+	 * @param set (camera stream/ processing stream)
+	 */
+	void sendShowProcessingCB( bool set );
 
 public slots:
 	/**
@@ -314,7 +314,7 @@ public slots:
 	    */
 	void setLabel( cv::Mat image );
 
-    void receiveCamResolution( int width, int height );
+	void receiveCamResolution( int width, int height );
 
 private slots:
 	/**
@@ -416,29 +416,29 @@ private slots:
 	 */
 	void setMarkerlessDetectionKinect( bool set );
 
-    /**
-    * @brief private SLOT for setting up fisheye
-    * @param value X axis offset in pixels
-    */
-    void onFisheyeXChanged(int value);
+	/**
+	* @brief private SLOT for setting up fisheye
+	* @param value X axis offset in pixels
+	*/
+	void onFisheyeXChanged( int value );
 
-    /**
-    * @brief private SLOT for setting up fisheye
-    * @param value Y axis offset in pixels
-    */
-    void onFisheyeYChanged(int value);
+	/**
+	* @brief private SLOT for setting up fisheye
+	* @param value Y axis offset in pixels
+	*/
+	void onFisheyeYChanged( int value );
 
-    /**
-    * @brief private SLOT for setting up fisheye
-    * @param value Radius in pixels
-    */
-    void onFisheyeRChanged(int value);
+	/**
+	* @brief private SLOT for setting up fisheye
+	* @param value Radius in pixels
+	*/
+	void onFisheyeRChanged( int value );
 
-    /**
-    * @brief private SLOT for switching displayed frames
-    * @param set (camera stream/ processing stream)
-    */
-    void onLightDetShowProcessingCBClicked( bool checked );
+	/**
+	* @brief private SLOT for switching displayed frames
+	* @param set (camera stream/ processing stream)
+	*/
+	void onLightDetShowProcessingCBClicked( bool checked );
 
 private:
 	/**
@@ -486,7 +486,7 @@ private:
 	QCheckBox*		 mCorEnabledCB;
 	QCheckBox*	     mMultiMarkerEnableCB;
 	QCheckBox*		 mEnableMarkerlessKinectCB;
-    QCheckBox*		 mLightDetectShowProcessingCB;
+	QCheckBox*		 mLightDetectShowProcessingCB;
 
 	QCheckBox*       mDisableCursorCB;
 	QCheckBox*       mDisableZoomCursorCB;
