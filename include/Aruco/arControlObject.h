@@ -5,6 +5,7 @@
 #include "Data/Node.h"
 #include "Core/Core.h"
 #include <QTimer>
+#include "Aruco/ArAssignmentStrategy.h"
 
 namespace Data {
 class Graph;
@@ -17,7 +18,7 @@ class ArControlObject : public QObject
 	Q_OBJECT
 
 public:
-	ArControlObject( int id, osg::Vec3f position );
+    ArControlObject( int id, osg::Vec3f position, ArAssignmentStrategy* _assignmentStrategy );
 	void updatePosition( osg::Vec3f position );
     bool isFocused()
     {
@@ -37,12 +38,10 @@ private:
 
 	osg::ref_ptr<Data::Node> focusedNode;
 
-	bool chckIfNearPosition( osg::Vec3f target );
     void doAssignNode( osg::ref_ptr<Data::Node> node);
     void doUnAssignNode( osg::ref_ptr<Data::Node> node);
-    bool assignNodeByPosition();
-    bool assignNodeByMatric();
-    bool assignNodeByEdgeCount();
+
+    ArAssignmentStrategy* _assignmentStrategy;
 };
 
 
@@ -61,6 +60,8 @@ private:
 	Vwr::CoreGraph* coreGraph;
 
 	QMap<qlonglong, ArucoModul::ArControlObject*> controlObjects;
+
+    ArAssignmentStrategy* _assignmentStrategy;
 };
 
 } // end ArucoModul namespace

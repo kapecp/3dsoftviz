@@ -1,4 +1,5 @@
 #include "Aruco/arControlObject.h"
+
 #include "Util/ApplicationConfig.h"
 #include <QDebug>
 #include <QMap>
@@ -15,8 +16,10 @@
 namespace ArucoModul {
 
 
-ArControlObject::ArControlObject( int id, osg::Vec3f position )
+ArControlObject::ArControlObject(int id, osg::Vec3f position, ArAssignmentStrategy *_assignmentStrategy)
 {
+    this->_assignmentStrategy = _assignmentStrategy;
+
 	this->id = id;
 	this->position = position;
 	this->focused = false;
@@ -33,9 +36,13 @@ ArControlObject::ArControlObject( int id, osg::Vec3f position )
         connect( this->timer, SIGNAL( timeout() ), this, SLOT( timerEvent() ) );
         m_workerThread->start();
 
-    //assignNodeByPosition();
-    //assignNodeByMatric();
-    assignNodeByEdgeCount();
+
+        this->focusedNode = this->_assignmentStrategy->assign( this->position );
+        if(this->focusedNode != NULL){
+            this->focused = true;
+            doAssignNode( this->focusedNode );
+            updatePosition( this->position );
+        }
 }
 
 void ArControlObject::timerEvent()
@@ -53,9 +60,6 @@ void ArControlObject::updatePosition( osg::Vec3f position )
 }
 
 void ArControlObject::doAssignNode( osg::ref_ptr<Data::Node> node){
-    this->focused = true;
-    this->focusedNode = node;
-
     node->setDrawableColor( osg::Vec4( 0.0f,1.0f,0.0f,1.0f ) );
     node->setUsingInterpolation( false );
     node->setIgnoreByLayout( true );
@@ -87,64 +91,6 @@ void ArControlObject::doUnAssignNode( osg::ref_ptr<Data::Node> node ){
     */
 }
 
-bool ArControlObject::assignNodeByPosition()
-{
-    Data::Graph* currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
-    QMap<qlonglong, osg::ref_ptr<Data::Node> >* allNodes = currentGraph->getNodes();
-
-    for ( auto e : allNodes->keys() ) {
-        // not already used and marker near node, pick it
-        if ( !allNodes->value( e )->isIgnoredByLayout() && chckIfNearPosition( allNodes->value( e )->getTargetPosition() ) ) {
-            doAssignNode( allNodes->value( e ) );
-            updatePosition( this->position );
-            return true;
-        }
-    }
-    return false;
-}
-
-bool ArControlObject::assignNodeByMatric()
-{
-    return false;
-}
-
-bool ArControlObject::assignNodeByEdgeCount()
-{
-    int most_edges_count = 0;
-    osg::ref_ptr<Data::Node> most_edges_node_ref = NULL;
-
-    Data::Graph* currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
-    QMap<qlonglong, osg::ref_ptr<Data::Node> >* allNodes = currentGraph->getNodes();
-
-    for ( auto e : allNodes->keys() ) {
-        if ( !allNodes->value( e )->isIgnoredByLayout() && allNodes->value( e )->getEdges()->count() > most_edges_count ) {
-           most_edges_count = allNodes->value( e )->getEdges()->count();
-           most_edges_node_ref = allNodes->value( e );
-        }
-    }
-
-    if(most_edges_node_ref != NULL){
-        doAssignNode( most_edges_node_ref );
-        updatePosition( this->position );
-        return true;
-    }
-    else{
-        qDebug() << "Unable to assign more nodes...";
-        return false;
-    }
-}
-
-
-
-bool ArControlObject::chckIfNearPosition( osg::Vec3f target )
-{
-    if ( ( this->position - target ).length() < 25.0f ) {
-        return true;
-    }
-    return false;
-}
-
-
 
 
 
@@ -154,6 +100,8 @@ ArControlClass::ArControlClass()
 {
 	viewer = AppCore::Core::getInstance()->getCoreWindow()->GetViewerQt();
 	coreGraph = AppCore::Core::getInstance()->getCoreGraph();
+
+    _assignmentStrategy = new ArAssignmentStrategyEdgeCount();
 }
 void ArControlClass::updateObjectPositionAruco( qlonglong object_id, QMatrix4x4 modelViewMatrix, bool reverse )
 {
@@ -187,7 +135,7 @@ void ArControlClass::updateObjectPositionAruco( qlonglong object_id, QMatrix4x4 
         if ( !controlObjects.value( object_id )->isFocused() ) {
 			controlObjects.remove( object_id );
 
-            ArControlObject* newControlObject = new ArControlObject( object_id, targetPosition );
+            ArControlObject* newControlObject = new ArControlObject( object_id, targetPosition, _assignmentStrategy );
             if(newControlObject->isFocused()){
                 //sucesfully assigned to graph node
                 controlObjects.insert( object_id,  newControlObject);
@@ -200,7 +148,7 @@ void ArControlClass::updateObjectPositionAruco( qlonglong object_id, QMatrix4x4 
 	}
 	else {
 
-        ArControlObject* newControlObject = new ArControlObject( object_id, targetPosition );
+        ArControlObject* newControlObject = new ArControlObject( object_id, targetPosition, _assignmentStrategy );
         if(newControlObject->isFocused()){
             //sucesfully assigned to graph node
             controlObjects.insert( object_id,  newControlObject);
