@@ -6,6 +6,7 @@
 #include "Core/Core.h"
 #include <QTimer>
 #include "Aruco/ArAssignmentStrategy.h"
+#include "Aruco/ArSelectionLayoutStrategy.h"
 
 namespace Data {
 class Graph;
@@ -18,7 +19,7 @@ class ArControlObject : public QObject
 	Q_OBJECT
 
 public:
-    ArControlObject( int id, osg::Vec3f position, ArAssignmentStrategy* _assignmentStrategy );
+    ArControlObject( int id, osg::Vec3f position, ArAssignmentStrategy* _assignmentStrategy, ArSelectionLayoutStrategy* _selectionLayoutStrategy );
 	void updatePosition( osg::Vec3f position );
     bool isFocused()
     {
@@ -30,7 +31,6 @@ public slots:
 
 private:
 	int id;
-	qlonglong nodeToPick;
 	osg::Vec3f position;
 	bool focused;
 
@@ -38,10 +38,9 @@ private:
 
 	osg::ref_ptr<Data::Node> focusedNode;
 
-    void doAssignNode( osg::ref_ptr<Data::Node> node);
-    void doUnAssignNode( osg::ref_ptr<Data::Node> node);
 
     ArAssignmentStrategy* _assignmentStrategy;
+    ArSelectionLayoutStrategy* _selectionLayoutStrategy;
 };
 
 
@@ -62,6 +61,7 @@ private:
 	QMap<qlonglong, ArucoModul::ArControlObject*> controlObjects;
 
     ArAssignmentStrategy* _assignmentStrategy;
+    ArSelectionLayoutStrategy* _selectionLayoutStrategy;
 };
 
 } // end ArucoModul namespace

@@ -15,10 +15,13 @@
 
 namespace ArucoModul {
 
-
-ArControlObject::ArControlObject(int id, osg::Vec3f position, ArAssignmentStrategy *_assignmentStrategy)
+/*
+ * ArControlObject
+ */
+ArControlObject::ArControlObject(int id, osg::Vec3f position, ArAssignmentStrategy *_assignmentStrategy, ArSelectionLayoutStrategy *_selectionLayoutStrategy)
 {
     this->_assignmentStrategy = _assignmentStrategy;
+    this->_selectionLayoutStrategy = _selectionLayoutStrategy;
 
 	this->id = id;
 	this->position = position;
@@ -40,7 +43,7 @@ ArControlObject::ArControlObject(int id, osg::Vec3f position, ArAssignmentStrate
         this->focusedNode = this->_assignmentStrategy->assign( this->position );
         if(this->focusedNode != NULL){
             this->focused = true;
-            doAssignNode( this->focusedNode );
+            this->_selectionLayoutStrategy->setSelectionLayout( this->focusedNode );
             updatePosition( this->position );
         }
 }
@@ -48,60 +51,34 @@ ArControlObject::ArControlObject(int id, osg::Vec3f position, ArAssignmentStrate
 void ArControlObject::timerEvent()
 {
 	qDebug() << "LOST MARKER TRACK" ;
-    doUnAssignNode( this->focusedNode );
+    this->_selectionLayoutStrategy->resetSelectionLayout( this->focusedNode );
+    this->focused = false;
+    this->focusedNode = NULL;
 }
 
 void ArControlObject::updatePosition( osg::Vec3f position )
 {
 	this->position = position;
     this->focusedNode->setTargetPosition( position );
+
     //restart kill timer
     QMetaObject::invokeMethod( this->timer, "start",Qt::QueuedConnection );
 }
 
-void ArControlObject::doAssignNode( osg::ref_ptr<Data::Node> node){
-    node->setDrawableColor( osg::Vec4( 0.0f,1.0f,0.0f,1.0f ) );
-    node->setUsingInterpolation( false );
-    node->setIgnoreByLayout( true );
-    node->setTargetPosition( this->position );
-
-    //SELECTION MODE - ONLY PICKED NODE
-    /*
-    for(auto j : node->getEdges()->keys()){
-        node->getEdges()->value(j)->getOtherNode( node )->setIgnoreByLayout( true );
-        node->getEdges()->value(j)->getOtherNode( node )->setDrawableColor( osg::Vec4( 0.0f,1.0f,0.0f,0.2f ) );
-    }
-    */
-}
-
-void ArControlObject::doUnAssignNode( osg::ref_ptr<Data::Node> node ){
-    this->focused = false;
-    this->focusedNode = NULL;
-
-    node->setDefaultColor();
-    node->setUsingInterpolation( true );
-    node->setIgnoreByLayout( false );
-
-    //SELECTION MODE - ONLY PICKED NODE
-    /*
-    for(auto j : this->focusedNode->getEdges()->keys()){
-        node->getEdges()->value(j)->getOtherNode( node )->setIgnoreByLayout( false );
-        node->getEdges()->value(j)->getOtherNode( node )->setDefaultColor();
-    }
-    */
-}
 
 
 
 
-
-
+/*
+ * ArControlClass
+ */
 ArControlClass::ArControlClass()
 {
 	viewer = AppCore::Core::getInstance()->getCoreWindow()->GetViewerQt();
 	coreGraph = AppCore::Core::getInstance()->getCoreGraph();
 
     _assignmentStrategy = new ArAssignmentStrategyEdgeCount();
+    _selectionLayoutStrategy = new ArSelectionLayoutStrategyNodeOnly();
 }
 void ArControlClass::updateObjectPositionAruco( qlonglong object_id, QMatrix4x4 modelViewMatrix, bool reverse )
 {
@@ -135,7 +112,7 @@ void ArControlClass::updateObjectPositionAruco( qlonglong object_id, QMatrix4x4 
         if ( !controlObjects.value( object_id )->isFocused() ) {
 			controlObjects.remove( object_id );
 
-            ArControlObject* newControlObject = new ArControlObject( object_id, targetPosition, _assignmentStrategy );
+            ArControlObject* newControlObject = new ArControlObject( object_id, targetPosition, _assignmentStrategy, _selectionLayoutStrategy );
             if(newControlObject->isFocused()){
                 //sucesfully assigned to graph node
                 controlObjects.insert( object_id,  newControlObject);
@@ -148,7 +125,7 @@ void ArControlClass::updateObjectPositionAruco( qlonglong object_id, QMatrix4x4 
 	}
 	else {
 
-        ArControlObject* newControlObject = new ArControlObject( object_id, targetPosition, _assignmentStrategy );
+        ArControlObject* newControlObject = new ArControlObject( object_id, targetPosition, _assignmentStrategy, _selectionLayoutStrategy );
         if(newControlObject->isFocused()){
             //sucesfully assigned to graph node
             controlObjects.insert( object_id,  newControlObject);
