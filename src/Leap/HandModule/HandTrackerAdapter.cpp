@@ -1,6 +1,7 @@
 #include "Leap/HandModule/HandTrackerAdapter.h"
 
 #include <vector>
+#include <easylogging++.h>
 
 Leap::HandTrackerAdapter::HandTrackerAdapter()
 {

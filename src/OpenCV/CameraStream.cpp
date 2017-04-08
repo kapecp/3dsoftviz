@@ -2,26 +2,22 @@
 #include <QDebug>
 #include <opencv2/highgui/highgui.hpp>
 #include "Util/ApplicationConfig.h"
+#include <easylogging++.h>
+#include <thread>
 
 namespace OpenCV {
 
-CameraStream::CameraStream( osg::Geometry* geom ) :
+CameraStream::CameraStream( ) :
 	QObject(),
-	osg::Image(),
-
-	mWidth( 0 ),
-	mHeight( 0 ),
-	mGeom( geom ),
-	iplImg( nullptr )
+    osg::Image(),
+    threadCount(0)
 {
 #ifdef WIN32
-	cv::Mat cvImg( 480,640, CV_8UC3, CV_RGB( 0,0,0 ) ); // Black on Win
-#else
-	cv::Mat cvImg;			// gray on Linux
+    this->image = cv::Mat( 480,640, CV_8UC3, CV_RGB( 0,0,0 ) ); // Black on Win
 #endif
 
     this->tracker = new OpenCV::HandTracker();
-    updateBackgroundImage( cvImg , false);
+    updateBackgroundImage( this->image , false);
 
 }
 
@@ -29,74 +25,40 @@ CameraStream::~CameraStream() {}
 
 void CameraStream::updateBackgroundImage( cv::Mat cvImg , bool trackHands)
 {
+
 	if ( cvImg.empty() ) {
 		qDebug() << "CameraStream::updateBackgroundImage(): warning, cvImg is empty!";
 		return;
-	}
-
-	if ( cvImg.cols != mWidth || mHeight != cvImg.rows ) {
-		mWidth	= cvImg.cols;
-		mHeight = cvImg.rows;
-#ifdef WIN32
-		iplImg=cvCloneImage( &static_cast<IplImage>( cvImg ) );
-#endif
-		// update geometry coordinates if thare are different dimensions of image,
-		// becasuse probebly changed it ratio of sides
-		if ( mGeom != NULL ) {
-			updateGeometryCoords( mWidth, mHeight );
-		}
-	}
-
-
-	// There will be probably needed refactoring on MAC OS
-#ifdef WIN32
-	cvCopy( &static_cast<IplImage>( cvImg ), iplImg, NULL );
-
-    if (trackHands) {
-        this->tracker->findHand(cvImg, 0);
     }
 
-	setImage( iplImg->width, iplImg->height,
-			  3, GL_RGB, GL_RGB,
-			  GL_UNSIGNED_BYTE,
-			  ( unsigned char* ) iplImg->imageData,
-			  osg::Image::NO_DELETE, 1 );
+    if (trackHands) {
+        this->trackMutex.lock();
+        threadCount++;
+        //LOG (INFO) << "this->image " + std::to_string(this->image.channels()) + " cvImage: " + std::to_string(cvImg.channels());
+        this->image = cvImg.clone();
+        this->image = this->tracker->findHand(this->image, 0);
 
-	cvImg.~Mat();
+        setImage( this->image.cols, this->image.rows,
+              this->image.channels(), GL_INTENSITY8, GL_LUMINANCE, GL_UNSIGNED_BYTE,
+              this->image.data,
+              osg::Image::NO_DELETE, 1 );
 
-#else
-	cv::Mat img = cvImg.clone();
+        //LOG (INFO) << "Num of threads: " + std::to_string(threadCount);
+        threadCount--;
+        this->trackMutex.unlock();
+    }
+    else {
+        this->image = cvImg.clone();
+        setImage( this->image.cols, this->image.rows,
+              this->image.channels(), GL_RGB, GL_RGB, GL_UNSIGNED_BYTE,
+              this->image.data,
+              osg::Image::NO_DELETE, 1 );
+    }
+    cvImg.~Mat();
 
-	setImage( img.cols, img.rows,
-			  8, img.channels(), GL_RGB,
-			  GL_UNSIGNED_BYTE,
-			  img.data,
-			  NO_DELETE, 1 );
 
-	//cvImg.~Mat();  // must be tested on linux for memory leaks
-#endif
 
-	dirty();
-
+    dirty();
 }
 
-void CameraStream::updateGeometryCoords( int width, int height )
-{
-	float x;
-	x = static_cast<float>( width ) / static_cast<float>( height );
-
-	osg::Vec3Array* coords = static_cast<osg::Vec3Array*>( mGeom->getVertexArray() );
-	( *coords )[0].set( -x, 1.5f, -1.0f );
-	( *coords )[1].set( x, 1.5f, -1.0f );
-	( *coords )[2].set( x, 1.5f,  1.0f );
-	( *coords )[3].set( -x, 1.5f,  1.0f );
-
-	mGeom->dirtyDisplayList();  // update changes
-
-}
-
-IplImage* CameraStream::getIplImage()
-{
-	return iplImg;
-}
 } // namespace OpenCV

@@ -438,8 +438,10 @@ void Leap::CustomLeapManager::updateInterFingerWristBone( osg::Group*  interFing
 
 int Leap::CustomLeapManager::updateCoreGraphBackground( const unsigned char* buffer , float depth)
 {
-    this->handtrackerAdapter->trackHands(( unsigned char* )buffer, depth);
-    this->coreGraph->updateBackgroundStream( ( unsigned char* )buffer );
+    if (this->coreGraph->isLeapStreamActive()) {
+        this->handtrackerAdapter->trackHands(( unsigned char* )buffer, depth);
+        this->coreGraph->updateBackgroundStream( ( unsigned char* )buffer );
+    }
 	return 1;
 }
 

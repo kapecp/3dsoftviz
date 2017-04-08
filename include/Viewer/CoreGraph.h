@@ -370,6 +370,8 @@ public slots:
 
 	void setArucoRunning( bool isRunning );
 
+    bool isLeapStreamActive();
+
 private:
 
 	/**
