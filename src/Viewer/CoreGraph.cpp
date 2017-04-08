@@ -13,7 +13,7 @@
 #include <QDebug>
 #include <QMatrix4x4>
 
-#include <osgManipulator/TranslateAxisDragger>
+#include <osgManipulator/RotateCylinderDragger>
 
 #include "Network/Server.h"
 #include "Data/Graph.h"
@@ -636,7 +636,20 @@ Vwr::CoreGraph::CoreGraph( Data::Graph* graph, osg::ref_ptr<osg::Camera> camera 
 	graphGroup = new osg::Group();
 	rotationMatrix = rotationMatrix.identity();
 
+//----------------------------------------------------------------------------------------------------------------------
 
+    manipulator = new osgManipulator::RotateCylinderDragger();
+    manipulator->setupDefaultGeometry();
+//    dragger->setAxisLineWidth(5.0f);
+//    dragger->setPickCylinderRadius(0.05f);
+//    dragger->setConeHeight(0.2f);
+
+    root->addChild(manipulator);
+
+    graphGroup->addChild(manipulator);
+    manipulator->addTransformUpdating(graphRotTransf);
+
+    LOG(INFO) << "EJ";
 
 	//jurik
 	//lighting
@@ -673,6 +686,13 @@ Vwr::CoreGraph::CoreGraph( Data::Graph* graph, osg::ref_ptr<osg::Camera> camera 
 	graphRotTransf->addChild( graphGroup );
 	shadowedScene->addChild( graphRotTransf );
 	root->addChild( graphRotTransf );
+//--------------------------------------------------------------------------------------------
+    float scale = graphRotTransf->getBound().radius() * 2.0f;
+    graphRotTransf->getBounds();
+    osg::Matrix mat = osg::Matrix::scale(scale, scale, scale) * osg::Matrix::translate(graphRotTransf->getBound().center());
+    manipulator->setMatrix(mat);
+
+    manipulator->setHandleEvents(true);
 
 	createBase();
 	if ( !arucoRunning ) {
@@ -818,7 +838,7 @@ void CoreGraph::reload( Data::Graph* graph )
 
 	    dragger->setHandleEvents(true);
 	    // konec
-	*/
+    */
 	this->restrictionVisualizationsGroup = QSharedPointer<Vwr::RestrictionVisualizationsGroup> ( new Vwr::RestrictionVisualizationsGroup );
 	graphGroup->addChild( restrictionVisualizationsGroup->getGroup() );
 	restrictionVisualizationsPosition = currentPos++;
@@ -847,6 +867,10 @@ void CoreGraph::reload( Data::Graph* graph )
 	// Set browsers to be always on top
 	this->browsersGroup->getGroup()->getOrCreateStateSet()->setMode( GL_DEPTH_TEST, osg::StateAttribute::OFF );
 	this->browsersGroup->getGroup()->getOrCreateStateSet()->setRenderBinDetails( 100,"RenderBin" );
+
+    float scale = graphRotTransf->getBound().radius() * 1.5f;
+    osg::Matrix mat = osg::Matrix::scale(scale, scale, scale) * osg::Matrix::translate(graphRotTransf->getBound().center());
+    manipulator->setMatrix(mat);
 }
 
 void CoreGraph::cleanUp()

@@ -21,7 +21,7 @@
 
 #include "Data/Cluster.h"
 
-#include <osgManipulator/Translate2DDragger>
+#include <osgManipulator/RotateCylinderDragger>
 
 #include <QMap>
 #include <QLinkedList>
@@ -676,7 +676,7 @@ private:
 	bool cameraInsideSphere( osg::Vec3d midPoint, float radius );
 	bool cameraInsideCube( osg::Vec3d lowerPoint, osg::Vec3d upperPoint );
 
-	osgManipulator::Translate2DDragger* manipulator;
+    osgManipulator::RotateCylinderDragger* manipulator;
 
 	//jurik
 	/**
