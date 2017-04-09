@@ -16,12 +16,16 @@
 #include "Viewer/CameraManipulator.h"
 #include "Viewer/CoreGraph.h"
 
-#if defined(__linux) || defined(__linux__) || defined(linux)
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wold-style-cast"
-#pragma GCC diagnostic ignored "-Wuseless-cast"
-#pragma GCC diagnostic ignored "-Wsign-conversion"
-#endif
+#include <leathers/push>
+#include <leathers/old-style-cast>
+#include <leathers/sign-conversion>
+
+//#if defined(__linux) || defined(__linux__) || defined(linux)
+//#pragma GCC diagnostic push
+//#pragma GCC diagnostic ignored "-Wold-style-cast"
+//#pragma GCC diagnostic ignored "-Wuseless-cast"
+//#pragma GCC diagnostic ignored "-Wsign-conversion"
+//#endif
 
 namespace Network {
 
@@ -786,8 +790,8 @@ void Client::sendAttractAttention( bool attention )
 	}
 	QByteArray block;
 	QDataStream out( &block,QIODevice::WriteOnly );
-	out << ( quint16 )0 << ( quint8 ) AttractAttentionExecutor::INSTRUCTION_NUMBER << ( bool ) attention;
 
+	out << ( quint16 )0 << ( quint8 ) AttractAttentionExecutor::INSTRUCTION_NUMBER << ( bool ) attention;
 	out.device()->seek( 0 );
 	out << ( quint16 )( block.size() - sizeof( quint16 ) );
 
@@ -804,6 +808,8 @@ void Client::setAvatarScale( int scale )
 
 } // namespace Network
 
-#if defined(__linux) || defined(__linux__) || defined(linux)
-#pragma GCC diagnostic pop
-#endif
+#include <leathers/pop>
+
+//#if defined(__linux) || defined(__linux__) || defined(linux)
+//#pragma GCC diagnostic pop
+//#endif

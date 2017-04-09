@@ -22,18 +22,24 @@
 #include <cmath>
 #include <list>
 
-#if defined(__linux) || defined(__linux__) || defined(linux)
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wuseless-cast"
-#pragma GCC diagnostic ignored "-Wsign-conversion"
-#pragma GCC diagnostic ignored "-Wswitch-enum"
-#pragma GCC diagnostic ignored "-Wold-style-cast"
-#pragma GCC diagnostic ignored "-Wconversion"
-#pragma GCC diagnostic ignored "-Wswitch-enum"
-#endif
+#include <leathers/push>
+#include <leathers/sign-conversion>
+#include <leathers/switch-enum>
+#include <leathers/old-style-cast>
+#include <leathers/conversion>
 
-#pragma warning(push)
-#pragma warning(disable:4244)
+//#if defined(__linux) || defined(__linux__) || defined(linux)
+//#pragma GCC diagnostic push
+//#pragma GCC diagnostic ignored "-Wuseless-cast"
+//#pragma GCC diagnostic ignored "-Wsign-conversion"
+//#pragma GCC diagnostic ignored "-Wswitch-enum"
+//#pragma GCC diagnostic ignored "-Wold-style-cast"
+//#pragma GCC diagnostic ignored "-Wconversion"
+//#pragma GCC diagnostic ignored "-Wswitch-enum"
+//#endif
+
+//#pragma warning(push)
+//#pragma warning(disable:4244)
 
 double Vwr::CameraManipulator::EYE_MOVEMENT_SPEED;
 double Vwr::CameraManipulator::TARGET_MOVEMENT_SPEED;
@@ -151,8 +157,8 @@ void Vwr::CameraManipulator::getUsage( osg::ApplicationUsage& usage ) const
 
 void Vwr::CameraManipulator::rotateForLeapBackgroundSync( )
 {
-    _rotation = osg::Quat(0.0,-1.0,0.0,0.0);
-    _center = osg::Vec3d(0.0,0.0,-5.0);
+	_rotation = osg::Quat(0.0,-1.0,0.0,0.0);
+	_center = osg::Vec3d(0.0,0.0,-5.0);
 }
 
 bool Vwr::CameraManipulator::handle( const GUIEventAdapter& ea, GUIActionAdapter& us )
@@ -1497,6 +1503,8 @@ void Vwr::CameraManipulator::disableCameraMovement()
 
 } // namespace Vwr
 
-#if defined(__linux) || defined(__linux__) || defined(linux)
-#pragma GCC diagnostic pop
-#endif
+#include <leathers/pop>
+
+//#if defined(__linux) || defined(__linux__) || defined(linux)
+//#pragma GCC diagnostic pop
+//#endif
