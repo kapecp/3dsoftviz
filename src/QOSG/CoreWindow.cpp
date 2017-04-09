@@ -557,6 +557,14 @@ void CoreWindow::createActions()
 	edgeTypeComboBox->setFocusPolicy( Qt::NoFocus );
 	connect( edgeTypeComboBox,SIGNAL( currentIndexChanged( int ) ),this,SLOT( edgeTypeComboBoxChanged( int ) ) );
 
+//	-------------------------------------------------------------------------------------------------------------------------------------------------------
+//	-------------------------------------------------------------------------------------------------------------------------------------------------------
+	chb_dragger_scale = new QCheckBox( "Dragger_scale" );
+	connect( chb_dragger_scale, SIGNAL( clicked( bool ) ), this, SLOT( toggleDragger( bool ) ) );
+
+	chb_dragger_rotation = new QCheckBox( "Dragger_rotation" );
+	connect( chb_dragger_rotation, SIGNAL( clicked( bool ) ), this, SLOT( toggleDragger( bool ) ) );
+
 	b_start_server = new QPushButton();
 	b_start_server->setText( "Host session" );
 	connect( b_start_server, SIGNAL( clicked() ), this, SLOT( start_server() ) );
@@ -947,6 +955,9 @@ QWidget* CoreWindow::createGraphTab( QFrame* line )
 	lGraph->addRow( nodeTypeComboBox );
 	edgeTypeComboBox->setMaximumWidth( 136 );
 	lGraph->addRow( edgeTypeComboBox );
+
+	lGraph->addRow( chb_dragger_scale );
+	lGraph->addRow( chb_dragger_rotation );
 
 	wGraph->setLayout( lGraph );
 
@@ -3978,7 +3989,14 @@ void CoreWindow::startLeapAR()
 }
 #endif
 
+void CoreWindow::toggleDragger( bool set )
+{
 
+	coreGraph->toggleDragger( 0, chb_dragger_scale->isChecked() );
+
+	coreGraph->toggleDragger( 1, chb_dragger_rotation->isChecked() );
+
+}
 
 void CoreWindow::toggleSpyWatch()
 {

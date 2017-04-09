@@ -581,6 +581,8 @@ public slots:
 	void send_message();
 	void create_facewindow();
 
+	void toggleDragger( bool set );
+
 #ifdef OPENCV_FOUND
 #ifdef OPENNI2_FOUND
 	/**
@@ -1536,6 +1538,9 @@ private:
 		*  \brief Pointer to comobox of edge types
 		*/
 	QComboBox* edgeTypeComboBox;
+
+	QCheckBox* chb_dragger_scale;
+	QCheckBox* chb_dragger_rotation;
 
 	/**
 		*  bool isEBPlaying

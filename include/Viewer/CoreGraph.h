@@ -21,7 +21,7 @@
 
 #include "Data/Cluster.h"
 
-#include <osgManipulator/RotateCylinderDragger>
+#include <osgManipulator/Dragger>
 
 #include <QMap>
 #include <QLinkedList>
@@ -103,6 +103,8 @@ public:
 	~CoreGraph( void );
 
 	void onResized( int width, int height );
+
+	void toggleDragger( int dragger_no, bool set );
 
 	/**
 		*  \fn public  reload(Data::Graph * graph = 0)
@@ -676,7 +678,8 @@ private:
 	bool cameraInsideSphere( osg::Vec3d midPoint, float radius );
 	bool cameraInsideCube( osg::Vec3d lowerPoint, osg::Vec3d upperPoint );
 
-    osgManipulator::RotateCylinderDragger* manipulator;
+	osgManipulator::Dragger* manipulator_scale;
+	osgManipulator::Dragger* manipulator_rotation;
 
 	//jurik
 	/**
