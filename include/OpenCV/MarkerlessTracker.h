@@ -69,6 +69,24 @@ private:
 	void calculateMVMatrixFromPose( cv::Mat rvec, cv::Mat tvec,
                                                                QMatrix4x4& mVMatrix
                                                               );
+	/**
+	 * @author Autor: Marek Rostar
+	 * @brief get positions of points  edge image
+	 * @param edge img
+	 */
+	std::vector<cv::Point2f> getPointPositions(cv::Mat binaryImage);
+	/**
+	 * @author Autor: Marek Rostar
+	 * @brief calculate center and radius for circle fited through 3 points from edge img
+	 * @param points from edge img, center radius
+	 */
+	inline void getCircle(cv::Point2f& p1,cv::Point2f& p2,cv::Point2f& p3, cv::Point2f& center, float& radius);
+	/**
+	 * @author Autor: Marek Rostar
+	 * @brief Chceck the inlier count in fitted circle
+	 * @param edge img center, radius and found inliers
+	 */
+	float verifyCircle(cv::Mat dt, cv::Point2f center, float radius, std::vector<cv::Point2f> & inlierSet);
 //OpenCV::MarkerlessTracker::
 };
 }
