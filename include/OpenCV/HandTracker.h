@@ -7,6 +7,8 @@
 
 #include "Core/Core.h"
 
+#define NSAMPLES 7
+
 namespace OpenCV {
 
 class HandTracker
@@ -20,7 +22,16 @@ public:
     double dist(cv::Point x,cv::Point y);
     std::pair<cv::Point,double> circleFromPoints(cv::Point p1, cv::Point p2, cv::Point p3);
     void getParameterValues(int *threshold, int *areaSize, float brightness, float depth);
+    void initTrackbars();
+    void normalizeColors();
+    cv::Mat produceBinaries(cv::Mat m);
     cv::Mat findHand( cv::Mat mask, float depth);
+
+
+    int avgColor[NSAMPLES][3];
+    int c_lower[NSAMPLES][3];
+    int c_upper[NSAMPLES][3];
+    std::vector<cv::Mat> bwList;
 };
 }
 

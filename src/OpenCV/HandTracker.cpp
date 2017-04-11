@@ -6,6 +6,7 @@
 
 OpenCV::HandTracker::HandTracker()
 {
+    initTrackbars();
 }
 
 OpenCV::HandTracker::~HandTracker()
@@ -48,9 +49,94 @@ void OpenCV::HandTracker::getParameterValues(int *threshold, int *areaSize,
 }
 
 
+void OpenCV::HandTracker::initTrackbars()
+{
+    for (int i = 0; i < NSAMPLES; i++)
+    {
+        c_lower[i][0] = 12;
+        c_upper[i][0] = 7;
+        c_lower[i][1] = 30;
+        c_upper[i][1] = 40;
+        c_lower[i][2] = 80;
+        c_upper[i][2] = 80;
+        avgColor[i][0] = 13;
+        avgColor[i][1] = 90;
+        avgColor[i][2] = 130;
+    }
+
+}
+
+
+void OpenCV::HandTracker::normalizeColors()
+{
+    // copy all boundries read from trackbar
+    // to all of the different boundries
+    for (int i = 1; i < NSAMPLES; i++)
+    {
+        for (int j = 0; j < 3; j++)
+        {
+            c_lower[i][j] = c_lower[0][j];
+            c_upper[i][j] = c_upper[0][j];
+        }
+    }
+    // normalize all boundries so that
+    // threshold is whithin 0-255
+    for (int i = 0; i < NSAMPLES; i++)
+    {
+        if ((avgColor[i][0] - c_lower[i][0]) < 0)
+        {
+            c_lower[i][0] = avgColor[i][0];
+        }
+        if ((avgColor[i][1] - c_lower[i][1]) < 0)
+        {
+            c_lower[i][1] = avgColor[i][1];
+        }
+        if ((avgColor[i][2] - c_lower[i][2]) < 0)
+        {
+            c_lower[i][2] = avgColor[i][2];
+        }
+        if ((avgColor[i][0] + c_upper[i][0]) > 255)
+        {
+            c_upper[i][0] = 255 - avgColor[i][0];
+        }
+        if ((avgColor[i][1] + c_upper[i][1]) > 255)
+        {
+            c_upper[i][1] = 255 - avgColor[i][1];
+        }
+        if ((avgColor[i][2] + c_upper[i][2]) > 255)
+        {
+            c_upper[i][2] = 255 - avgColor[i][2];
+        }
+    }
+}
+
+cv::Mat OpenCV::HandTracker::produceBinaries(cv::Mat m)
+{
+    cv::Scalar lowerBound;
+    cv::Scalar upperBound;
+    cv::Mat foo  = m.clone();
+    for (int i = 0; i < NSAMPLES; i++)
+    {
+        normalizeColors();
+        lowerBound = cv::Scalar(avgColor[i][0] - c_lower[i][0], avgColor[i][1] - c_lower[i][1], avgColor[i][2] - c_lower[i][2]);
+        upperBound = cv::Scalar(avgColor[i][0] + c_upper[i][0], avgColor[i][1] + c_upper[i][1], avgColor[i][2] + c_upper[i][2]);
+//        LOG (INFO) << "lowerBound: " + std::to_string(lowerBound);
+//        LOG (INFO) << "upperBound: " + std::to_string(upperBound);
+        bwList.push_back(cv::Mat(m.rows, m.cols, CV_8U));
+        inRange(m, lowerBound, upperBound, bwList[i]);
+    }
+    bwList[0].copyTo(m);
+    for (int i = 1; i < NSAMPLES; i++) {
+        m += bwList[i];
+    }
+
+//    medianBlur(m, m, 7);
+    return m;
+}
 // find contours of segmented hand and count fingers
 cv::Mat OpenCV::HandTracker::findHand( cv::Mat mask, float depth )
 {
+
     cv::vector<cv::vector<cv::Point> > contours;
     cv::vector<cv::Vec4i> hierarchy;
     cv::Mat tempMask = mask.clone();
@@ -72,8 +158,11 @@ cv::Mat OpenCV::HandTracker::findHand( cv::Mat mask, float depth )
     LOG (INFO) << "Channels/type input" + std::to_string(tempMask.channels()) + " "+ std::to_string(tempMask.type());
 
     if (tempMask.type() != 0) {
-        cvtColor( tempMask, tempMask, CV_RGB2GRAY );
-        threshold(tempMask, tempMask, 50, threshold_up, cv::THRESH_BINARY);
+        cvtColor( tempMask, tempMask, CV_RGB2HLS );
+//        threshold(tempMask, tempMask, 105, threshold_up, cv::THRESH_BINARY);
+        tempMask = produceBinaries(tempMask);
+        LOG (INFO) << "chanels: " + std::to_string(tempMask.channels());
+        cvtColor( tempMask, tempMask, CV_HLS2RGB );
     }
 
 //    GaussianBlur(tempMask, tempMask, cv::Size(3, 3), 2.5, 2.5);
