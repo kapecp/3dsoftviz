@@ -5,7 +5,7 @@
 #include <QObject>
 #include <osg/Image>
 #include <osg/Geometry>
-#include <mutex>
+#include <QMutex>
 
 #ifdef OPENCV_FOUND
 #include <opencv2/core/core.hpp>
@@ -51,8 +51,7 @@ private:
 
     cv::Mat image;
     HandTracker *tracker;
-    std::mutex trackMutex;
-    int threadCount;
+    QMutex trackMutex;
 };
 }
 

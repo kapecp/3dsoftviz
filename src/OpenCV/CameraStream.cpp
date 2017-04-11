@@ -9,8 +9,7 @@ namespace OpenCV {
 
 CameraStream::CameraStream( ) :
 	QObject(),
-    osg::Image(),
-    threadCount(0)
+    osg::Image()
 {
 #ifdef WIN32
     this->image = cv::Mat( 480,640, CV_8UC3, CV_RGB( 0,0,0 ) ); // Black on Win
@@ -33,8 +32,6 @@ void CameraStream::updateBackgroundImage( cv::Mat cvImg , bool trackHands)
 
     if (trackHands) {
         this->trackMutex.lock();
-        threadCount++;
-        //LOG (INFO) << "this->image " + std::to_string(this->image.channels()) + " cvImage: " + std::to_string(cvImg.channels());
         this->image = cvImg.clone();
         this->image = this->tracker->findHand(this->image, 0);
 
@@ -43,8 +40,6 @@ void CameraStream::updateBackgroundImage( cv::Mat cvImg , bool trackHands)
               this->image.data,
               osg::Image::NO_DELETE, 1 );
 
-        //LOG (INFO) << "Num of threads: " + std::to_string(threadCount);
-        threadCount--;
         this->trackMutex.unlock();
     }
     else {
