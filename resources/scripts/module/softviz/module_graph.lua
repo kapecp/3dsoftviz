@@ -1,10 +1,10 @@
 -----------------------------------------------
---
---
---
+-- Module graph - module for extracting 
+-- module graph from given project and import into 3DSoftViz 
+-- @release 2016/12/02, Denis Illes
 -----------------------------------------------
 local utils              = require "luadb.utils"
-local moduleExtractor    = require "luadb.moduleExtractor"
+local moduleExtractor    = require "luadb.extraction.moduleExtractor"
 local artifactsExtractor = require "luadb.extraction.extractor"
 local astManager         = require "luadb.manager.AST"
 
@@ -182,23 +182,7 @@ local function extractEdge(v, existingedges, nodes)
     end
     
     local incid1, incid2 = setIncidence(edge)
-    
-     --[[
-    local incid1 = {type = "edge_part", id = inc(), label = ''}
-    local incid2 = {type = "edge_part", id = inc(), label = ''}
-    if v.from[1].data.type == 'function' or (v.from[1].data.type == 'file' and v.to[1].data.type == 'global function') then
-      edge.params.type = "calls"
-      incid1.direction = 'in'
-      incid2.direction = 'out'
-    end
-       
-    if v.from[1].data.type == 'file' then 
-      edge.params.type = 'contains'
-    end
-    if v.from[1].data.type == 'directory' then 
-      edge.params.type = 'contains'
-    end
-    --]]
+
     edge.label = edge.params.type
     if(v.from[1].meta.modulePath ~= v.to[1].meta.modulePath) then
       edge.params.edgeStrength = 0.1
@@ -243,6 +227,7 @@ end
 -- Extract function call graph from project and
 -- convert it to format for importing to 3DSoftviz
 -- @param absolutePath path to project being analysed
+-- @param graphPicker name of desired graph to be extracted
 local function extractGraph(absolutePath, graphPicker)
   graph = {}
   

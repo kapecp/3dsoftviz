@@ -85,18 +85,12 @@ local function getModuleFromFile(graph)
   local luaFileNodes = graph.luaFileNodes
   for i,luaFileNode in pairs(luaFileNodes) do
     local moduleName = utils.splitAndGetFirst(luaFileNode.data.name, "%.")  --scanner.lua -> scanner
-    --[[
-    local moduleName = luaFileNode.data.path
-    local moduleName1 = utils.splitAndGetLast(moduleName, "%\\")
-    local moduleName2 = utils.splitAndGetFirst(moduleName1,  "%.")
-    moduleName = moduleName2:gsub("/", ".")
-    ]]--
-    
+        
     local newModuleNode = hypergraph.node.new()
-    newModuleNode.meta  = luaFileNode.meta or {}
+    newModuleNode.meta  = {}
     newModuleNode.meta.type = "module"
     newModuleNode.data.name = moduleName
-    newModuleNode.functionNodes = newModuleNode.functionNodes or {}
+    newModuleNode.functionNodes = {}
     
     graph:addNode(newModuleNode)
     

@@ -37,7 +37,6 @@ local function findNodeByNameAndType(name, nodeType, graph)
   local nodes = graph:findNodesByType(nodeType)
   for _,node in pairs(nodes) do
     if(node.data.name == name) then
-      print("found in " .. nodeType)
       return node
     end
   end
@@ -269,7 +268,6 @@ local function extractNodesAndEdges(AST, AST_ID, graph, fileName)
   nodes, edges = extractAssigns(AST, AST_ID, graph, fileName, nodes, edges)
   nodes, edges = extractRequireCalls(AST, AST_ID, graph, fileName, nodes, edges)
   nodes, edges = extraModuleReturnValues(AST, AST_ID, graph, fileName, nodes, edges)
-  
   return nodes, edges
 end
 
@@ -278,7 +276,7 @@ end
 local function extract(luaFileNode, graph, astManager)
   local path = luaFileNode.data.path
   local fileName = luaFileNode.data.name
-  --print(fileName)
+  
   local graph = graph or hypergraph.graph.new()
   
   local AST, AST_ID = astManager:findASTByPath(path)
@@ -286,52 +284,9 @@ local function extract(luaFileNode, graph, astManager)
     AST = ast.getAST(path)
     AST_ID = astManager:addAST(AST, path)
   end
-    
   
-  --local locAssigns = ast.getLocalAssigns(AST)
-  --[[
-  for i,j in pairs(locAssigns) do
-    local name
-    if (not j.AssignedNode) then
-      name = ""
-    elseif (j.AssignedNode.text) then
-      name = j.AssignedNode.text
-    else
-      --is function
-      name = j.AssignedNode.FunctionName
-    end
-    
-    print(i .. ": " .. j.IDNode.text .. " = " .. name)
-  end
-  ]]--
-  --[[
-  local assigns = ast.getAssigns(AST)
-  for i,j in pairs(assigns) do
-    local name
-    if (not j.AssignedNode) then
-      name = ""
-    elseif (j.AssignedNode.text) then
-      name = j.AssignedNode.text
-    else
-      --is function
-      name = j.AssignedNode.FunctionName
-    end
-    
-    print(i .. ": " .. j.IDNode.text .. " = " .. name)
-  end
-  ]]--
-
-  --[[
-  local requireCalls = ast.getRequireCalls(AST)
-  
-  local reqCallLoc = requireCalls.localRequires
-  local reqCallGlob = requireCalls.globalRequires
-  ]]--
-  
-  --debug.Save("nodes", localassign)
   local nodes, edges = extractNodesAndEdges(AST, AST_ID, graph, fileName)
-  --local nodes = extractNodes(AST, graph, fileName)
-  --local edges = extractEdges(AST, graph, nodes)
+
   return { nodes = nodes, edges = edges }
 end
 
