@@ -5,3 +5,7 @@ OpenCV::TrackerBall::TrackerBall()
 {
 
 }
+OpenCV::TrackerBall::~TrackerBall()
+{
+
+}

@@ -4,6 +4,7 @@
 #include <opencv2/opencv.hpp>
 #include "Aruco/arControlObject.h"
 #include "Aruco/ArucoCore.h"
+#include "OpenCV/TrackerBall.h"
 #include <aruco/aruco.h>
 
 
@@ -42,14 +43,13 @@ private:
     ArucoModul::ArControlClass* mArControlClass;
     ArucoModul::ArucoCore* aCore;
     aruco::CameraParameters mCamParam;
+	std::vector<TrackerBall> tBalls;
 
     /**
      * @author Autor: Juraj Marak
      * @brief detect circles in frame
      */
-	void findCirclesInFrame(cv::Mat& frame,
-                                                        cv::vector<cv::Vec3f> &circlesReal
-                                                       );
+	void findCirclesInFrame(cv::Mat& frame);
 	//OpenCV::MarkerlessTracker::
 	/**
      * @author Autor: Juraj Marak
