@@ -149,6 +149,9 @@ void ArControlClass::setNodeAssignmentStrategy( int strategy )
         case 1 :
             _assignmentStrategy = new ArAssignmentStrategyEdgeCount();
         break;
+        case 2 :
+            _assignmentStrategy = new ArAssignmentStrategyNearest();
+        break;
     }
     qDebug() << "set" << strategy;
 

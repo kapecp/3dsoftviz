@@ -47,5 +47,17 @@ class ArAssignmentStrategyEdgeCount: public ArAssignmentStrategy
         osg::ref_ptr<Data::Node> pickNodeToAssign( osg::Vec3f position );
 };
 
+
+
+
+
+class ArAssignmentStrategyNearest: public ArAssignmentStrategy
+{
+    public:
+        ArAssignmentStrategyNearest(): ArAssignmentStrategy(){}
+    private:
+        osg::ref_ptr<Data::Node> pickNodeToAssign( osg::Vec3f position );
+};
+
 }
 #endif // ARASSIGNMENTSTRATEGY_H

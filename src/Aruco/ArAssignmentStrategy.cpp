@@ -79,4 +79,35 @@ osg::ref_ptr<Data::Node> ArAssignmentStrategyEdgeCount::pickNodeToAssign( osg::V
 }
 
 
+
+
+
+/*
+ * ArAssignmentStrategyNearest
+ */
+osg::ref_ptr<Data::Node> ArAssignmentStrategyNearest::pickNodeToAssign( osg::Vec3f position )
+{
+    float min_node_distace = 999999;
+    osg::ref_ptr<Data::Node> most_nearest_node_ref = NULL;
+
+    Data::Graph* currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
+    QMap<qlonglong, osg::ref_ptr<Data::Node> >* allNodes = currentGraph->getNodes();
+
+    for ( auto e : allNodes->keys() ) {
+        float node_distance = ( position -  allNodes->value( e )->getTargetPosition() ).length();
+        if ( !allNodes->value( e )->isIgnoredByLayout() && node_distance < min_node_distace ) {
+           min_node_distace = node_distance;
+           most_nearest_node_ref = allNodes->value( e );
+        }
+    }
+
+    if(most_nearest_node_ref != NULL){
+        return most_nearest_node_ref;
+    }
+    else{
+        qDebug() << "Unable to assign more nodes...";
+        return NULL;
+    }
+}
+
 }

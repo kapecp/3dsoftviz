@@ -125,10 +125,12 @@ void QOpenCV::OpenCVWindow::configureWindow()
     arNSPosition = new QRadioButton(tr("Select node by position"));
         arNSPosition->setChecked(true);
     arNSMostEdges = new QRadioButton(tr("Select node with most edges"));
+    arNSNearest = new QRadioButton(tr("Select nearest node automatically"));
 
     QVBoxLayout *arNodeSelectionVBox = new QVBoxLayout;
         arNodeSelectionVBox->addWidget(arNSPosition);
         arNodeSelectionVBox->addWidget(arNSMostEdges);
+        arNodeSelectionVBox->addWidget(arNSNearest);
         arNodeSelectionVBox->addStretch(1);
 
     QGroupBox *arNodeSelectionGroupBox = new QGroupBox(tr("Node selection method"));
@@ -138,6 +140,7 @@ void QOpenCV::OpenCVWindow::configureWindow()
 
     connect( arNSPosition, SIGNAL( clicked( bool ) ), this, SLOT( onArInteractionSelectionClicked( bool ) ) );
     connect( arNSMostEdges, SIGNAL( clicked( bool ) ), this, SLOT( onArInteractionSelectionClicked( bool ) ) );
+    connect( arNSNearest, SIGNAL( clicked( bool ) ), this, SLOT( onArInteractionSelectionClicked( bool ) ) );
 
     //behaviour
     arNBSingle = new QRadioButton(tr("Single node movement"));
@@ -512,6 +515,9 @@ void QOpenCV::OpenCVWindow::onArInteractionSelectionClicked(bool state)
     }
     else if(arNSMostEdges->isChecked()){
         emit setArInteractionSelection(1);
+    }
+    else if(arNSNearest->isChecked()){
+        emit setArInteractionSelection(2);
     }
 }
 

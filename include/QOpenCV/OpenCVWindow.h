@@ -433,6 +433,7 @@ private:
 
     //Ar interaction RBs
     QRadioButton *arNSPosition;
+    QRadioButton *arNSNearest;
     QRadioButton *arNSMostEdges;
     QRadioButton *arNBSingle;
     QRadioButton *arNBCluster;
