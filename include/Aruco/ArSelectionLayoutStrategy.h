@@ -19,10 +19,10 @@ class ArSelectionLayoutStrategy: public QObject
     public:
         ArSelectionLayoutStrategy();
         void setSelectionLayout( osg::ref_ptr<Data::Node> node );
-        void resetSelectionLayout( osg::ref_ptr<Data::Node> node );
+        void resetSelectionLayout( osg::ref_ptr<Data::Node> node, bool isReturnNode = true );
     private:
         virtual void setSelectedNodeLayoutOptions( osg::ref_ptr<Data::Node> node ) = 0;
-        virtual void resetSelectedNodeLayoutOptions( osg::ref_ptr<Data::Node> node ) = 0;
+        virtual void resetSelectedNodeLayoutOptions( osg::ref_ptr<Data::Node> node, bool isReturnNode = true) = 0;
 };
 
 
@@ -33,8 +33,9 @@ class ArSelectionLayoutStrategyNodeOnly: public ArSelectionLayoutStrategy
     public:
         ArSelectionLayoutStrategyNodeOnly(): ArSelectionLayoutStrategy(){}
     private:
+        osg::Vec3f original_position;
         void setSelectedNodeLayoutOptions( osg::ref_ptr<Data::Node> node );
-        void resetSelectedNodeLayoutOptions( osg::ref_ptr<Data::Node> node );
+        void resetSelectedNodeLayoutOptions( osg::ref_ptr<Data::Node> node, bool isReturnNode = true );
 };
 
 class ArSelectionLayoutStrategyNodeCluster: public ArSelectionLayoutStrategy
@@ -43,7 +44,7 @@ class ArSelectionLayoutStrategyNodeCluster: public ArSelectionLayoutStrategy
         ArSelectionLayoutStrategyNodeCluster(): ArSelectionLayoutStrategy(){}
     private:
         void setSelectedNodeLayoutOptions( osg::ref_ptr<Data::Node> node );
-        void resetSelectedNodeLayoutOptions( osg::ref_ptr<Data::Node> node );
+        void resetSelectedNodeLayoutOptions( osg::ref_ptr<Data::Node> node, bool isReturnNode = true );
 };
 
 }

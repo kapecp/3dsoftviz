@@ -22,8 +22,8 @@ ArSelectionLayoutStrategy::ArSelectionLayoutStrategy()
 void ArSelectionLayoutStrategy::setSelectionLayout(osg::ref_ptr<Data::Node> node){
     setSelectedNodeLayoutOptions( node );
 }
-void ArSelectionLayoutStrategy::resetSelectionLayout(osg::ref_ptr<Data::Node> node){
-    resetSelectedNodeLayoutOptions( node );
+void ArSelectionLayoutStrategy::resetSelectionLayout(osg::ref_ptr<Data::Node> node, bool isReturnNode ){
+    resetSelectedNodeLayoutOptions( node, isReturnNode );
 }
 
 
@@ -34,6 +34,8 @@ void ArSelectionLayoutStrategy::resetSelectionLayout(osg::ref_ptr<Data::Node> no
  * ArSelectionLayoutStrategyNodeOnly
  */
 void ArSelectionLayoutStrategyNodeOnly::setSelectedNodeLayoutOptions( osg::ref_ptr<Data::Node> node ){
+    this->original_position = node->getTargetPosition();
+
     node->setDrawableColor( osg::Vec4( 0.0f,1.0f,0.0f,1.0f ) );
     node->setUsingInterpolation( false );
     node->setIgnoreByLayout( true );
@@ -43,7 +45,11 @@ void ArSelectionLayoutStrategyNodeOnly::setSelectedNodeLayoutOptions( osg::ref_p
         node->getEdges()->value(j)->getOtherNode( node )->setDrawableColor( osg::Vec4( 0.0f,1.0f,0.0f,0.2f ) );
     }
 }
-void ArSelectionLayoutStrategyNodeOnly::resetSelectedNodeLayoutOptions( osg::ref_ptr<Data::Node> node ){
+void ArSelectionLayoutStrategyNodeOnly::resetSelectedNodeLayoutOptions( osg::ref_ptr<Data::Node> node, bool isReturnNode ){
+    if(isReturnNode){
+        node->setTargetPosition(this->original_position);
+    }
+
     node->setDefaultColor();
     node->setUsingInterpolation( true );
     node->setIgnoreByLayout( false );
@@ -66,7 +72,7 @@ void ArSelectionLayoutStrategyNodeCluster::setSelectedNodeLayoutOptions( osg::re
     node->setUsingInterpolation( false );
     node->setIgnoreByLayout( true );
 }
-void ArSelectionLayoutStrategyNodeCluster::resetSelectedNodeLayoutOptions( osg::ref_ptr<Data::Node> node ){
+void ArSelectionLayoutStrategyNodeCluster::resetSelectedNodeLayoutOptions( osg::ref_ptr<Data::Node> node, bool isReturnNode ){
     node->setDefaultColor();
     node->setUsingInterpolation( true );
     node->setIgnoreByLayout( false );

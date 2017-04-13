@@ -376,6 +376,16 @@ void OpenCV::OpenCVCore::createConnectionAruco()
 					  mThrAruco,
 					  SLOT( interchangeMarkers() ) );
 
+
+    // ar interaction node selection / behviour connects
+    QObject::connect( mOpencvWindow,
+                      SIGNAL( setArInteractionSelection( int ) ),
+                      mThrAruco,
+                      SLOT( setArInteractionSelection( int ) ) );
+    QObject::connect( mOpencvWindow,
+                      SIGNAL( setArInteractionBehaviour( int ) ),
+                      mThrAruco,
+                      SLOT( setArInteractionBehaviour( int ) ) );
 }
 
 void OpenCV::OpenCVCore::createConnectionMultiAruco()

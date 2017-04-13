@@ -39,9 +39,12 @@ ArControlObject::ArControlObject(int id, osg::Vec3f position, ArAssignmentStrate
         connect( this->timer, SIGNAL( timeout() ), this, SLOT( timerEvent() ) );
         m_workerThread->start();
 
+        qDebug() << "asigning";
 
         this->focusedNode = this->_assignmentStrategy->assign( this->position );
         if(this->focusedNode != NULL){
+            qDebug() << "focused";
+
             this->focused = true;
             this->_selectionLayoutStrategy->setSelectionLayout( this->focusedNode );
             updatePosition( this->position );
@@ -77,11 +80,12 @@ ArControlClass::ArControlClass()
 	viewer = AppCore::Core::getInstance()->getCoreWindow()->GetViewerQt();
 	coreGraph = AppCore::Core::getInstance()->getCoreGraph();
 
-    _assignmentStrategy = new ArAssignmentStrategyEdgeCount();
+    _assignmentStrategy = new ArAssignmentStrategyPosition();
     _selectionLayoutStrategy = new ArSelectionLayoutStrategyNodeOnly();
 }
 void ArControlClass::updateObjectPositionAruco( qlonglong object_id, QMatrix4x4 modelViewMatrix, bool reverse )
 {
+    qDebug() << "updateObjectPositionAruco";
 
 	osg::Matrixd markerMVM( modelViewMatrix.operator()( 0,0 ),modelViewMatrix.operator()( 0,1 ),modelViewMatrix.operator()( 0,2 ),modelViewMatrix.operator()( 0,3 ),
 							modelViewMatrix.operator()( 1,0 ),modelViewMatrix.operator()( 1,1 ),modelViewMatrix.operator()( 1,2 ),modelViewMatrix.operator()( 1,3 ),
@@ -106,10 +110,11 @@ void ArControlClass::updateObjectPositionAruco( qlonglong object_id, QMatrix4x4 
 		//position of second marker in world coordinate system
 		targetPosition.set( ( targetPosition - arucoBaseDist ).operator /( 2 ) );
 	}
-
 	if ( controlObjects.value( object_id ) != NULL ) {
 		//if object is lost, destroy and create new
         if ( !controlObjects.value( object_id )->isFocused() ) {
+            qDebug() << "reinsert object";
+
 			controlObjects.remove( object_id );
 
             ArControlObject* newControlObject = new ArControlObject( object_id, targetPosition, _assignmentStrategy, _selectionLayoutStrategy );
@@ -120,11 +125,12 @@ void ArControlClass::updateObjectPositionAruco( qlonglong object_id, QMatrix4x4 
 
 		}
 		else {
+            qDebug() << "update object";
 			controlObjects.value( object_id )->updatePosition( targetPosition );
 		}
 	}
 	else {
-
+qDebug() << "new object";
         ArControlObject* newControlObject = new ArControlObject( object_id, targetPosition, _assignmentStrategy, _selectionLayoutStrategy );
         if(newControlObject->isFocused()){
             //sucesfully assigned to graph node
@@ -134,4 +140,40 @@ void ArControlClass::updateObjectPositionAruco( qlonglong object_id, QMatrix4x4 
 	}
 }
 
+void ArControlClass::setNodeAssignmentStrategy( int strategy )
+{
+    switch(strategy){
+        case 0 :
+            _assignmentStrategy = new ArAssignmentStrategyPosition();
+        break;
+        case 1 :
+            _assignmentStrategy = new ArAssignmentStrategyEdgeCount();
+        break;
+    }
+    qDebug() << "set" << strategy;
+
+    // potencionalne zbytocne, kedze kazdy objekt v mape uz je assignuty
+    for(auto e : controlObjects.keys())
+    {
+      controlObjects.value(e)->setNodeAssignmentStrategy(_assignmentStrategy);
+    }
+
+}
+void ArControlClass::setNodeBehaviourStrategy( int strategy )
+{
+    switch(strategy){
+        case 0 :
+            _selectionLayoutStrategy = new ArSelectionLayoutStrategyNodeOnly();
+        break;
+        case 1 :
+            _selectionLayoutStrategy = new ArSelectionLayoutStrategyNodeCluster();
+        break;
+    }
+    qDebug() << "set" << strategy;
+
+    for(auto e : controlObjects.keys())
+    {
+      controlObjects.value(e)->setNodeBehaviourStrategy(_selectionLayoutStrategy);
+    }
+}
 } // namespace ArucoModul

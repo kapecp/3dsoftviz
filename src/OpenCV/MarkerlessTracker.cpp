@@ -2,9 +2,9 @@
 #include <aruco.h>
 #include <opencv2/imgproc/imgproc.hpp>
 
-OpenCV::MarkerlessTracker::MarkerlessTracker()
+OpenCV::MarkerlessTracker::MarkerlessTracker( ArucoModul::ArControlClass* arControlClass )
 {
-    mArControlClass = new ArucoModul::ArControlClass();
+    mArControlClass = arControlClass;
 
     QString filename = "../share/3dsoftviz/config/camera.yml";
     mCamParam.readFromXMLFile( filename.toStdString() );
@@ -39,7 +39,9 @@ void OpenCV::MarkerlessTracker::track( cv::Mat& frame )
         QMatrix4x4 mVMatrix;
         calculateMVMatrixFromPose( rvec, tvec, mVMatrix);
 
-        mArControlClass->updateObjectPositionAruco( 1, mVMatrix, true);
+        if(mArControlClass != NULL){
+            mArControlClass->updateObjectPositionAruco( 1, mVMatrix, true);
+        }
     }
 
 }

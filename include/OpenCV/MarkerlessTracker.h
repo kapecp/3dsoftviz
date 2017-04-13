@@ -25,7 +25,7 @@ class MarkerlessTracker : public QObject
 
 public:
 
-	MarkerlessTracker();
+    MarkerlessTracker(ArucoModul::ArControlClass* arControlClass);
 	~MarkerlessTracker();
 
 	/**

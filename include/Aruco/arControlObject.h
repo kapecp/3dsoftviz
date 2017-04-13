@@ -25,6 +25,16 @@ public:
     {
         return this->focused;
     }
+    void setNodeAssignmentStrategy( ArAssignmentStrategy* strategy ){
+        this->_assignmentStrategy = strategy;
+    }
+    void setNodeBehaviourStrategy( ArSelectionLayoutStrategy* strategy ){
+        if(this->isFocused()){
+            _selectionLayoutStrategy->resetSelectionLayout(this->focusedNode, false);
+            this->_selectionLayoutStrategy = strategy;
+            _selectionLayoutStrategy->setSelectionLayout(this->focusedNode);
+         }
+    }
 
 public slots:
 	void timerEvent();
@@ -51,7 +61,8 @@ class ArControlClass : public QObject
 public:
 	ArControlClass();
 	void updateObjectPositionAruco( qlonglong object_id, QMatrix4x4 modelViewMatrix , bool reverse );
-
+    void setNodeAssignmentStrategy( int strategy );
+    void setNodeBehaviourStrategy( int strategy );
 private:
 
 	QOSG::ViewerQT* viewer;

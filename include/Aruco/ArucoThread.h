@@ -210,6 +210,18 @@ public slots:
 	*/
 	void detectMarkerFromImage( cv::Mat image );
 
+    /**
+     * @brief setArInteractionSelection
+     * @param flag
+     * @author Juraj Marak
+     */
+    void setArInteractionSelection( int flag );
+    /**
+     * @brief setArInteractionBehviour
+     * @param flag
+     * @author Juraj Marak
+     */
+    void setArInteractionBehaviour( int flag );
 private:
 
 	/**
