@@ -34,7 +34,7 @@ public:
 	 * @brief track white circles on image
 	 * @param img to track objects on
 	 */
-    void track(cv::Mat& frame );
+	void track(cv::Mat& frame );
 
 private:
     /**
