@@ -551,7 +551,7 @@ void CoreWindow::createActions()
 	le_edgeBundlingalpha->setText( "100" );
 
 	nodeTypeComboBox = new QComboBox();
-	nodeTypeComboBox->insertItems( 0,( QStringList() << "Square" << "Sphere" << "Residence" << "Module" ) );
+	nodeTypeComboBox->insertItems( 0,( QStringList() << "Square" << "Sphere" << "Residence" ) );
 	nodeTypeComboBox->setFocusPolicy( Qt::NoFocus );
 	connect( nodeTypeComboBox,SIGNAL( currentIndexChanged( int ) ),this,SLOT( nodeTypeComboBoxChanged( int ) ) );
 
@@ -2178,11 +2178,11 @@ void CoreWindow::loadExampleGraphLua()
 
 	Lua::LuaValueList path;
 	path.push_back( file.toStdString() );
-	QString createGraph[] = {"function_call_graph", "extractGraph"};
+	path.push_back( "functionCall graph" );
+	QString createGraph[] = {"graph_importer", "extractGraph"};
 
 	lua->callFunction( 2, createGraph, path );
-	lua->doString( "getGraph = function_call_graph.getGraph" );
-	Lua::LuaInterface::getInstance()->doString( "getFullGraph = getGraph" );
+	lua->doString( "getGraph = graph_importer.getGraph" );
 
 	Data::Graph* currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
 
@@ -2216,10 +2216,10 @@ void CoreWindow::loadExampleModuleGraph()
 
 	Lua::LuaValueList path;
 	path.push_back( file.toStdString() );
-	QString createGraph[] = {"module_graph", "extractGraph"};
+	path.push_back( "module graph" );
+	QString createGraph[] = {"graph_importer", "extractGraph"};
 	lua->callFunction( 2, createGraph, path.getValue() );
-	lua->doString( "getGraph = module_graph.getGraph" );
-	Lua::LuaInterface::getInstance()->doString( "getFullGraph = getGraph" );
+	lua->doString( "getGraph = graph_importer.getGraph" );
 
 	Data::Graph* currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
 
@@ -2356,10 +2356,10 @@ void CoreWindow::loadLuaGraph()
 
 	Lua::LuaValueList path;
 	path.push_back( file.toStdString() );
-	QString createGraph[] = {"function_call_graph", "extractGraph"};
+	path.push_back( "functionCall graph" );
+	QString createGraph[] = {"graph_importer", "extractGraph"};
 	lua->callFunction( 2, createGraph, path );
-	lua->doString( "getGraph = function_call_graph.getGraph" );
-	Lua::LuaInterface::getInstance()->doString( "getFullGraph = getGraph" );
+	lua->doString( "getGraph = graph_importer.getGraph" );
 
 	Data::Graph* currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
 
@@ -2672,9 +2672,6 @@ void CoreWindow::nodeTypeComboBoxChanged( int index )
 			break;
 		case 2:
 			coreGraph->setNodeVisual( Data::Node::INDEX_RESIDENCE );
-			break;
-		case 3:
-			coreGraph->setNodeVisual( Data::Node::INDEX_MODULE );
 			break;
 		default:
 			qDebug() << "CoreWindow:nodeTypeComboBoxChanged do not suported index";
@@ -4653,10 +4650,11 @@ void CoreWindow::loadLuaModuleGraph()
 
 	Lua::LuaValueList path;
 	path.push_back( file.toStdString() );
-	QString createGraph[] = {"module_graph", "extractGraph"};
+	path.push_back( "moonscript graph" );
+	QString createGraph[] = {"graph_importer", "extractGraph"};
 	lua->callFunction( 2, createGraph, path.getValue() );
-	lua->doString( "getGraph = module_graph.getGraph" );
-	Lua::LuaInterface::getInstance()->doString( "getFullGraph = getGraph" );
+	lua->doString( "getGraph = graph_importer.getGraph" );
+
 
 	Data::Graph* currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
 
@@ -4676,12 +4674,20 @@ void CoreWindow::loadLuaModuleGraph()
 	Lua::LuaGraphVisualizer* visualizer = new Lua::ModuleGraphVisualizer( currentGraph, coreGraph->getCamera() );
 	visualizer->visualize();
 
+	AppCore::Core::getInstance()->restartLayout();
+	//coreGraph->reloadConfig();
+
 	//spusti rozmiestnovaci algoritmus
-	coreGraph->reloadConfig();
 	if ( isPlaying ) {
 		layout->play();
 		coreGraph->setNodesFreezed( false );
 	}
+
+	//nodeTypeComboBoxChanged( nodeTypeComboBox->currentIndex() );
+	//edgeTypeComboBoxChanged( edgeTypeComboBox->currentIndex() );
+	nodeTypeComboBox->setCurrentIndex( 2 ); // 2 == residence == module
+	edgeTypeComboBox->setCurrentIndex( 0 ); // 2 == line
+
 	delete visualizer;
 }
 
@@ -4700,10 +4706,10 @@ void CoreWindow::loadFunctionCall()
 
 	Lua::LuaValueList path;
 	path.push_back( file.toStdString() );
-	QString createGraph[] = {"function_call_graph", "extractGraph"};
+	path.push_back( "functionCall graph" );
+	QString createGraph[] = {"graph_importer", "extractGraph"};
 	lua->callFunction( 2, createGraph, path );
-	lua->doString( "getGraph = function_call_graph.getGraph" );
-	Lua::LuaInterface::getInstance()->doString( "getFullGraph = getGraph" );
+	lua->doString( "getGraph = graph_importer.getGraph" );
 
 	Data::Graph* currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
 
@@ -5218,10 +5224,10 @@ void CoreWindow::createEvolutionLuaGraph()
 
 	Lua::LuaValueList path;
 	path.push_back( file.toStdString() );
-	QString createGraph[] = {"function_call_graph", "extractGraph"};
+	path.push_back( "functionCall graph" );
+	QString createGraph[] = {"graph_importer", "extractGraph"};
 	lua->callFunction( 2, createGraph, path );
-	lua->doString( "getGraph = function_call_graph.getGraph" );
-	Lua::LuaInterface::getInstance()->doString( "getFullGraph = getGraph" );
+	lua->doString( "getGraph = graph_importer.getGraph" );
 
 	Data::Graph* currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
 

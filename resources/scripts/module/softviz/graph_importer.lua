@@ -3,10 +3,11 @@
 -- module graph from given project and import into 3DSoftViz 
 -- @release 2016/12/02, Denis Illes
 -----------------------------------------------
-local utils              = require "luadb.utils"
-local moduleExtractor    = require "luadb.extraction.moduleExtractor"
-local artifactsExtractor = require "luadb.extraction.extractor"
-local astManager         = require "luadb.manager.AST"
+local utils               = require "luadb.utils"
+local moduleExtractor     = require "luadb.extraction.moduleExtractor"
+local artifactsExtractor  = require "luadb.extraction.extractor"
+local moonscriptExtractor = require "luameg"
+local astManager          = require "luadb.manager.AST"
 
 ----------------------------------------------
 -- Local graph and AST manager stored after extraction
@@ -36,6 +37,7 @@ end
 local function setSwitchTable()
   colorTable = {
     --nodes
+    ['project']         = {A = 1, R = 1, G = 1, B = 0},
     ['directory']       = {A = 1, R = 1, G = 1, B = 0},
     ['file']            = {A = 1, R = 1, G = 0, B = 1},
     ['module']          = {A = 1, R = 1, G = 0, B = 1},
@@ -43,6 +45,9 @@ local function setSwitchTable()
     ['local variable']  = {A = 1, R = 0, G = 1, B = 0},
     ['global variable'] = {A = 1, R = 0, G = 1, B = 0},
     ['interface']       = {A = 1, R = 0, G = 0, B = 0},
+    ['argument']        = {A = 1, R = 0, G = 1, B = 1},
+    ['method']          = {A = 1, R = 0, G = 1, B = 0},
+    ['class']           = {A = 1, R = 1, G = 0, B = 0},
     --edges
     ['calls']           = {A = 1, R = 0.8, G = 0.8, B = 1},
     ['assigns']         = {A = 1, R = 0.8, G = 1, B = 0.8},
@@ -52,7 +57,8 @@ local function setSwitchTable()
     ['provides']        = {A = 1, R = 1, G = 0.8, B = 1},
     ['initializes']     = {A = 1, R = 1, G = 0.8, B = 1},
     ['declares']        = {A = 1, R = 1, G = 0.8, B = 1},
-    ['represents']      = {A = 1, R = 1, G = 0.8, B = 1}
+    ['represents']      = {A = 1, R = 1, G = 0.8, B = 1},
+    ['has']             = {A = 1, R = 1, G = 0.8, B = 1}
   }
   
   incidTable = {
@@ -64,7 +70,9 @@ local function setSwitchTable()
     ['provides']        = {ins = 'providee', out = 'provider'},
     ['initializes']     = {ins = 'initializee', out = 'initializer'},
     ['declares']        = {ins = 'declaree', out = 'declarer'},
-    ['represents']      = {ins = 'representee', out = 'representer'}
+    ['represents']      = {ins = 'representee', out = 'representer'},
+    ['extends']         = {ins = 'extendee', out = 'extender'},
+    ['has']             = {ins = 'has', out = 'has'}
   }
 end
 
@@ -236,10 +244,12 @@ local function extractGraph(absolutePath, graphPicker)
   utils.logger:info("started extraction")
   local extractedGraph
   -- for now, it's still nil
-  if(graphPicker == "functioncall") then
+  if(graphPicker == "functionCall graph") then
     extractedGraph = artifactsExtractor.extract(absolutePath, astMan)
-  else
+  elseif(graphPicker == "module graph") then    
     extractedGraph = moduleExtractor.extract(absolutePath, astMan)
+  elseif(graphPicker == "moonscript graph") then
+    extractedGraph = moonscriptExtractor.getGraphProject(absolutePath, astMan)
   end  
   utils.logger:info("extraction successfully finished")
   
