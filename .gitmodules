@@ -85,3 +85,6 @@
 [submodule "dependencies/luacomments"]
 	path = dependencies/luacomments
 	url = https://github.com/LuaDist/luacomments.git
+[submodule ".\\dependencies/luameg"]
+	path = .\\dependencies/luameg
+	url = git@github.com:matuSte/UMLtoSRC.git
