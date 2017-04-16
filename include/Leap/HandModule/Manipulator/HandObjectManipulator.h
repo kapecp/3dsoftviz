@@ -10,6 +10,8 @@
 
 namespace Leap {
 
+class HandMapper;
+
 class HandObjectManipulator
 {
 

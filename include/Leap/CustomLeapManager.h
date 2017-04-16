@@ -20,6 +20,7 @@ class LayoutThread;
 namespace Leap {
 
 class HandPalm;
+class HandObjectManipulator;
 
 class CustomLeapManager : public LeapManager
 {

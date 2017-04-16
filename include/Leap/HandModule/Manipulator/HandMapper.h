@@ -5,9 +5,14 @@
 #include <osg/ref_ptr>
 #include <opencv2/core/core.hpp>
 #include "OpenCV/HandTracker.h"
+#include "Viewer/CoreGraph.h"
 
 namespace Vwr {
 class CoreGraph;
+}
+
+namespace OpenCV {
+class HandTracker;
 }
 
 namespace Leap {
