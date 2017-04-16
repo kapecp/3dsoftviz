@@ -3,15 +3,9 @@
 #include "Network/Client.h"
 
 #include <leathers/push>
+#include <leathers/useless-cast>
 #include <leathers/old-style-cast>
 #include <leathers/sign-conversion>
-
-//#if defined(__linux) || defined(__linux__) || defined(linux)
-//#pragma GCC diagnostic push
-//#pragma GCC diagnostic ignored "-Wuseless-cast"
-//#pragma GCC diagnostic ignored "-Wold-style-cast"
-//#pragma GCC diagnostic ignored "-Wsign-conversion"
-//#endif
 
 namespace Network {
 
@@ -68,7 +62,3 @@ void UnspyUserExecutor::execute_server()
 } // namespace Network
 
 #include <leathers/pop>
-
-//#if defined(__linux) || defined(__linux__) || defined(linux)
-//#pragma GCC diagnostic pop
-//#endif

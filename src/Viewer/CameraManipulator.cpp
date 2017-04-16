@@ -23,23 +23,12 @@
 #include <list>
 
 #include <leathers/push>
+#include <leathers/useless-cast>
 #include <leathers/sign-conversion>
 #include <leathers/switch-enum>
 #include <leathers/old-style-cast>
 #include <leathers/conversion>
-
-//#if defined(__linux) || defined(__linux__) || defined(linux)
-//#pragma GCC diagnostic push
-//#pragma GCC diagnostic ignored "-Wuseless-cast"
-//#pragma GCC diagnostic ignored "-Wsign-conversion"
-//#pragma GCC diagnostic ignored "-Wswitch-enum"
-//#pragma GCC diagnostic ignored "-Wold-style-cast"
-//#pragma GCC diagnostic ignored "-Wconversion"
-//#pragma GCC diagnostic ignored "-Wswitch-enum"
-//#endif
-
-//#pragma warning(push)
-//#pragma warning(disable:4244)
+#include <leathers/double-promotion>
 
 double Vwr::CameraManipulator::EYE_MOVEMENT_SPEED;
 double Vwr::CameraManipulator::TARGET_MOVEMENT_SPEED;
@@ -1504,7 +1493,3 @@ void Vwr::CameraManipulator::disableCameraMovement()
 } // namespace Vwr
 
 #include <leathers/pop>
-
-//#if defined(__linux) || defined(__linux__) || defined(linux)
-//#pragma GCC diagnostic pop
-//#endif

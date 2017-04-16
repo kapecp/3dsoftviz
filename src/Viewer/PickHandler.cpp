@@ -32,11 +32,6 @@
 #include <leathers/push>
 #include <leathers/switch-enum>
 
-//#if defined(__linux) || defined(__linux__) || defined(linux)
-//#pragma GCC diagnostic push
-//#pragma GCC diagnostic ignored "-Wswitch-enum"
-//#endif
-
 namespace Vwr {
 
 PickHandler::PickHandler( Vwr::CameraManipulator* cameraManipulator, Vwr::CoreGraph* coreGraph )
@@ -1282,7 +1277,3 @@ osg::ref_ptr<Data::Node> PickHandler::getPickedNodeWithMinEdgeCount()
 } // namespace Vwr
 
 #include <leathers/pop>
-
-//#if defined(__linux) || defined(__linux__) || defined(linux)
-//#pragma GCC diagnostic pop
-//#endif

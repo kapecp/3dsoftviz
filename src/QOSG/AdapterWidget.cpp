@@ -1,10 +1,8 @@
 #include "QOSG/AdapterWidget.h"
 #include "QOSG/CoreWindow.h"
 
-#if defined(__linux) || defined(__linux__) || defined(linux)
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wswitch-enum"
-#endif
+#include <leathers/push>
+#include <leathers/switch-enum>
 
 namespace QOSG {
 
@@ -228,6 +226,4 @@ void AdapterWidget::wheelEvent( QWheelEvent* event )
 
 } // namespace QOSG
 
-#if defined(__linux) || defined(__linux__) || defined(linux)
-#pragma GCC diagnostic pop
-#endif
+#include <leathers/pop>
