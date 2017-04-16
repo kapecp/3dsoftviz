@@ -36,7 +36,7 @@ void CameraStream::updateBackgroundImage( cv::Mat cvImg , bool trackHands)
         this->image = this->tracker->findHand(this->image, 0);
 
         setImage( this->image.cols, this->image.rows,
-              this->image.channels(), GL_INTENSITY8, GL_LUMINANCE, GL_UNSIGNED_BYTE,
+              this->image.channels(),GL_RGB, GL_RGB, GL_UNSIGNED_BYTE,
               this->image.data,
               osg::Image::NO_DELETE, 1 );
 
