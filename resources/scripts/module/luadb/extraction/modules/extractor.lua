@@ -13,14 +13,20 @@ local logger     = utils.logger
 -- Helper functions
 -----------------------------------------------
 
-local function createNode(name, type, pos, astID, nodeID)
+local function createNode(name, type, astID, astNode)
   local node = hypergraph.node.new()
   node.meta = {}  
   node.meta.type = type
   node.data.name = name
-  node.data.position = pos
   node.data.astID = astID
-  node.data.nodeID = nodeID
+  node.data.astNodeID = -1
+  if(astNode ~= nil) then
+    node.data.metrics = astNode.metrics
+    node.data.position = astNode.position
+    node.data.tag = astNode.tag
+    node.data.astNodeID = astNode.nodeid
+  end
+
   return node
 end
 
@@ -31,6 +37,16 @@ local function createEdge(label, sourceNode, targetNode, isOriented)
   edge:addTarget(targetNode)
   if(isOriented == true) then edge:setAsOriented() end
   return edge
+end
+
+local function addIdsToModuleNode(AST, AST_ID, graph, path)
+  local modules = graph:findNodesByType("module")
+  for i,mod in pairs(modules) do
+    if mod.data.path == path then
+      mod.data.astID = AST_ID
+      mod.data.astNodeID = AST.nodeid
+    end
+  end
 end
 
 local function findNodeByNameAndType(name, nodeType, graph)
@@ -58,7 +74,7 @@ end
 
 local function getEnvironmentNode(graph)
   local _GNode = findNodeByNameAndType("_G", "global variable", graph)
-  if(_GNode == nil) then _GNode = createNode("_G", "global variable", 0, astID) end
+  if(_GNode == nil) then _GNode = createNode("_G", "global variable", astID) end
   return _GNode
 end
 
@@ -97,7 +113,7 @@ local function addAssignsToGraph(graph, assigns, AST_ID, fileName, nodes, edges)
     --assignedNode.(name|fullName|type|node)
     local nodeName, node
     logger:debug('adding variable node '..i)
-    local varNode = createNode(assign.idNode.name, assign.idNode.type, assign.idNode.node.position, AST_ID)
+    local varNode = createNode(assign.idNode.name, assign.idNode.type, AST_ID, assign.idNode.node)
     graph:addNode(varNode)
     table.insert(nodes, varNode)
     
@@ -107,7 +123,7 @@ local function addAssignsToGraph(graph, assigns, AST_ID, fileName, nodes, edges)
     table.insert(edges, newEdge)
     
     if(assign.assignedNode ~= nil) then
-      local assignNode = createNode(assign.assignedNode.name or "", assign.assignedNode.type or "N/A", assign.assignedNode.node.position or 0, AST_ID)
+      local assignNode = createNode(assign.assignedNode.name or "", assign.assignedNode.type or "N/A", AST_ID, assign.assignedNode.node)
       graph:addNode(assignNode)
       table.insert(nodes, assignNode)
       
@@ -139,7 +155,7 @@ local function addRequireNodesToGraph(graph, requires, AST_ID, fileName, nodes, 
       --case of global require -> connect to _G
       idNode = getEnvironmentNode(graph)      
     else
-      idNode = createNode(req.idNode.fullName, req.idNode.type, req.idNode.node.position, AST_ID)
+      idNode = createNode(req.idNode.fullName, req.idNode.type, AST_ID, req.idNode.node)
     end
     logger:debug('adding local variable node '..i)
     graph:addNode(idNode)
@@ -153,7 +169,7 @@ local function addRequireNodesToGraph(graph, requires, AST_ID, fileName, nodes, 
     local moduleNode = globalModuleNodes[req.assignedNode.fullName]
     if (moduleNode == nil) then
       logger:debug('adding module node '..i)
-      moduleNode = createNode(req.assignedNode.fullName, req.assignedNode.type, req.assignedNode.node.position, AST_ID)      
+      moduleNode = createNode(req.assignedNode.fullName, req.assignedNode.type, AST_ID, req.assignedNode.node)      
       graph:addNode(moduleNode)
       table.insert(nodes, moduleNode)
       globalModuleNodes[moduleNode.data.name] = moduleNode
@@ -182,7 +198,7 @@ local function addModuleReturnValuesToGraph(graph, returns, AST_ID, fileName, no
   if (not utils.isEmpty(returns)) then
     -- add returns node
     logger:debug('adding returns node')
-    retNode = createNode("Returns", "interface", 0, AST_ID)
+    retNode = createNode("Returns", "interface", AST_ID)
     graph:addNode(retNode)
     table.insert(nodes, retNode)
     
@@ -199,7 +215,7 @@ local function addModuleReturnValuesToGraph(graph, returns, AST_ID, fileName, no
   for _,retValue in pairs(returns) do
     --retValue.(idNode|assignedNode)
     --assignedNode.(name|type|node)
-    interfaceNode = createNode(retValue.idNode.name, retValue.idNode.type, retValue.idNode.node.position, AST_ID)
+    interfaceNode = createNode(retValue.idNode.name, retValue.idNode.type, AST_ID, retValue.idNode.node)
     graph:addNode(interfaceNode)
     table.insert(nodes, interfaceNode)
     
@@ -284,6 +300,9 @@ local function extract(luaFileNode, graph, astManager)
     AST = ast.getAST(path)
     AST_ID = astManager:addAST(AST, path)
   end
+  
+  --add astID and astNodeID(root) to 'module' nodes
+  addIdsToModuleNode(AST, AST_ID, graph, path)
   
   local nodes, edges = extractNodesAndEdges(AST, AST_ID, graph, fileName)
 

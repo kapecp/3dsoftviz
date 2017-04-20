@@ -79,9 +79,17 @@ end
 --------------------------------------------------
 -- Set incidences based on edge type
 local function setIncidence(edge)
+  local incid1, incid2
   local edgeType = edge.params.type
-  local incid1 = {type = 'edge_part', id = inc(), direction = 'in', label = incidTable[edgeType].ins}
-  local incid2 = {type = 'edge_part', id = inc(), direction = 'out', label = incidTable[edgeType].out}
+  if(incidTable[edgeType]) then
+    incid1 = {type = 'edge_part', id = inc(), direction = 'in', label = incidTable[edgeType].ins}
+    incid2 = {type = 'edge_part', id = inc(), direction = 'out', label = incidTable[edgeType].out}
+  else
+    utils.logger:debug("Incidences for this edge type not set, " .. edgeType)
+    incid1 = {type = 'edge_part', id = inc(), direction = 'in', label = ''}
+    incid2 = {type = 'edge_part', id = inc(), direction = 'out', label = ''}
+  end
+  
   return incid1, incid2
 end
 
@@ -92,6 +100,7 @@ local function setNodeColor(node)
   if(colorTable[nodeType]) then
     node.params.color = colorTable[nodeType]
   else
+    utils.logger:debug("Colours for this node type not set, " .. nodeType)
     node.params.color = {A = 1, R = 1, G = 1, B = 1}
   end
 end
@@ -115,11 +124,13 @@ local function extractNode(v, nodes, minComplexity, maxComplexity, minLines, max
     params = {
       size = 8,
       name = origname,
-      origid = v.id,
+      origId = v.id,
       type = v.meta.type,
       path = v.data.path,
       modulePath = v.meta.modulePath,
-      position = v.data.position
+      position = v.data.position,
+      astId = v.data.astID,
+      astNodeId = v.data.astNodeID
     }
   }
   if(newnode.id == 1)then 
@@ -159,6 +170,7 @@ local function setEdgeColor(edge)
   if(colorTable[edgeType]) then
     edge.params.color = colorTable[edgeType]
   else
+    utils.logger:debug("Colours for this edge type not set, " .. edgeType)
     edge.params.color = {A = 1, R = 1, G = 1, B = 1}
   end
 end
@@ -180,7 +192,7 @@ local function extractEdge(v, existingedges, nodes)
       type = "edge",
       id = inc(),
       params = {
-        origid = v.id,
+        origId = v.id,
         count = 1,
         edgeStrength = 2
       }
@@ -280,7 +292,7 @@ end
 -------------------------------------
 -- Function for retreiving extracted graph
 local function getGraph()
-  utils.logger:info("getting hybrid graph")
+  utils.logger:info("getting graph")
   return graph
 end
 

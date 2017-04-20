@@ -8,8 +8,17 @@ local utils      = require "luadb.utils"
 local ast        = require "luadb.ast"
 local logger     = utils.logger
 
+local function addIdsToFileNode(AST, AST_ID, graph, path)
+  local files = graph:findNodesByType("file")
+  for i,file in pairs(files) do
+    if file.data.path == path then
+      file.data.astID = AST_ID
+      file.data.astNodeID = AST.nodeid
+    end
+  end
+end
 
-local function extractFunctions(AST, graph, path)
+local function extractFunctions(AST, AST_ID, graph, path)
   local nodes = {}
   local functions = ast.getFunctions(AST)
   logger:debug("importing nodes")
@@ -24,6 +33,8 @@ local function extractFunctions(AST, graph, path)
     newNode.data.name = func.name
     newNode.data.position = func.position
     newNode.data.tag = func.tag
+    newNode.data.astID = AST_ID
+    newNode.data.astNodeID = func.nodeid
     graph:addNode(newNode)
     table.insert(nodes, newNode)
   end
@@ -98,11 +109,21 @@ local function extractFunctionCalls(AST, graph, nodes)
 end
 
 -- extract function from 3DSoftViz's LuaDB module
-local function extract(luaFileNode, graph)  
+local function extract(luaFileNode, graph, astManager)  
   local path = luaFileNode.data.path
+  
   local graph = graph or hypergraph.graph.new()
-  local AST = ast.getAST(path)
-  local nodes = extractFunctions(AST, graph, path)
+  
+  local AST, AST_ID = astManager:findASTByPath(path)
+  if(AST == nil) then
+    AST = ast.getAST(path)
+    AST_ID = astManager:addAST(AST, path)
+  end
+  
+  --add astID and astNodeID(root) to 'file' nodes
+  addIdsToFileNode(AST, AST_ID, graph, path)
+  
+  local nodes = extractFunctions(AST, AST_ID, graph, path)
   local edges = extractFunctionCalls(AST, graph, nodes)
   return { nodes = nodes, edges = edges }
 end

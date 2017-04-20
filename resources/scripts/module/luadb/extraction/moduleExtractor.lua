@@ -35,6 +35,9 @@ local function registerGlobalModule(graph, moduleName, moduleFunctionCall)
     newGlobalModuleNode.meta  = newGlobalModuleNode.meta or {}    
     newGlobalModuleNode.meta.type = "module"    
     newGlobalModuleNode.data.name = moduleName
+    newGlobalModuleNode.data.path = ""
+    newGlobalModuleNode.data.astID = -1
+    newGlobalModuleNode.data.astNodeID = -1
     newGlobalModuleNode.functionNodes = newGlobalModuleNode.functionNodes or {}
 
     globalModuleNodes = globalModuleNodes or {}
@@ -48,8 +51,10 @@ local function registerGlobalModule(graph, moduleName, moduleFunctionCall)
   if not functionNode then
     local newFunctionNode = hypergraph.node.new()
     newFunctionNode.meta  = newFunctionNode.meta or {}
-    newFunctionNode.data.name = moduleFunctionCall
     newFunctionNode.meta.type = "global function"
+    newFunctionNode.data.name = moduleFunctionCall
+    newFunctionNode.data.astID = -1
+    newFunctionNode.data.astNodeID = -1
     table.insert(moduleNode.functionNodes, newFunctionNode)
     functionNode = newFunctionNode
     graph:addNode(newFunctionNode)
@@ -84,12 +89,14 @@ end
 local function getModuleFromFile(graph)
   local luaFileNodes = graph.luaFileNodes
   for i,luaFileNode in pairs(luaFileNodes) do
+    local modulePath = luaFileNode.data.path
     local moduleName = utils.splitAndGetFirst(luaFileNode.data.name, "%.")  --scanner.lua -> scanner
         
     local newModuleNode = hypergraph.node.new()
     newModuleNode.meta  = {}
     newModuleNode.meta.type = "module"
     newModuleNode.data.name = moduleName
+    newModuleNode.data.path = modulePath
     newModuleNode.functionNodes = {}
     
     graph:addNode(newModuleNode)
@@ -113,8 +120,7 @@ local function getFunctionCalls(graph, astManager)
   graph.globalModuleNodes = graph.globalModuleNodes or {} 
   local globalModuleNodes = graph.globalModuleNodes
       
-  for i,luaFileNode in pairs(luaFileNodes) do
-    print(luaFileNode.data.path)
+  for i,luaFileNode in pairs(luaFileNodes) do    
     local functionCalls = functioncalls.extract(luaFileNode, graph, astManager)
     luaFileNode.functionNodes = functionCalls.nodes
     luaFileNode.functionCalls = functionCalls.edges
@@ -194,6 +200,8 @@ local function assignGlobalCalls(graph)
       newGlobalFunctionNode.meta  = newGlobalFunctionNode.meta or {}
       newGlobalFunctionNode.meta.type = "global function"
       newGlobalFunctionNode.data.name = globalFunctionCall
+      newGlobalFunctionNode.data.astID = -1
+      newGlobalFunctionNode.data.astNodeId = -1
       graph:addNode(newGlobalFunctionNode)
       functionNode = newGlobalFunctionNode
     end
@@ -237,13 +245,6 @@ local function connectFunctionsToVariables(graph)
         connection:addTarget(func)
         connection:setAsOriented()
         graph:addEdge(connection)
-        --[[
-        if(edge.to[1] ~= nil) then
-          --delete the node and edge
-          edge.to[1] = nil
-          edge = nil
-        end
-        --]]
       end
     end
   end  

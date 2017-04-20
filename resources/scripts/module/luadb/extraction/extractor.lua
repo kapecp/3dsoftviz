@@ -16,9 +16,11 @@ local function getFilesTree(graph, path)
 end
 
 
-local function getFunctionCalls(graph, luaFileNodes)  
+local function getFunctionCalls(graph, astManager)  
+  local luaFileNodes = graph.luaFileNodes
+
   for i,luaFileNode in pairs(luaFileNodes) do
-    local functionCalls = functioncalls.extract(luaFileNode, graph)
+    local functionCalls = functioncalls.extract(luaFileNode, graph, astManager)
     luaFileNode.functionNodes = functionCalls.nodes
     luaFileNode.functionCalls = functionCalls.edges
     
@@ -59,8 +61,12 @@ local function registerGlobalModule(graph, moduleName, moduleFunctionCall)
     local newGlobalModuleNode = hypergraph.node.new()
     newGlobalModuleNode.meta  = newGlobalModuleNode.meta or {}
     newGlobalModuleNode.meta.type = "module"
-    newGlobalModuleNode.functionNodes = newGlobalModuleNode.functionNodes or {}
     newGlobalModuleNode.data.name = moduleName
+    newGlobalModuleNode.data.path = ""
+    newGlobalModuleNode.data.astID = -1
+    newGlobalModuleNode.data.astNodeID = -1
+    newGlobalModuleNode.functionNodes = newGlobalModuleNode.functionNodes or {}
+
 
     globalModuleNodes = globalModuleNodes or {}
     globalModuleNodes[moduleName] = newGlobalModuleNode
@@ -75,6 +81,8 @@ local function registerGlobalModule(graph, moduleName, moduleFunctionCall)
     newFunctionNode.meta  = newFunctionNode.meta or {}
     newFunctionNode.meta.type = "global function"
     newFunctionNode.data.name = moduleFunctionCall
+    newFunctionNode.data.astID = -1
+    newFunctionNode.data.astNodeID = -1
     table.insert(moduleNode.functionNodes, newFunctionNode)
     functionNode = newFunctionNode
     graph:addNode(newFunctionNode)
@@ -85,6 +93,7 @@ local function registerGlobalModule(graph, moduleName, moduleFunctionCall)
   connection.label = "declares"
   connection:addSource(globalModuleNodes[moduleName])
   connection:addTarget(functionNode)
+  connection:setAsOriented()
   graph:addEdge(connection)
 end
 
@@ -153,6 +162,8 @@ local function assignGlobalCalls(graph)
       newGlobalFunctionNode.meta  = newGlobalFunctionNode.meta or {}
       newGlobalFunctionNode.meta.type = "global function"
       newGlobalFunctionNode.data.name = globalFunctionCall
+      newGlobalFunctionNode.data.astID = -1
+      newGlobalFunctionNode.data.astNodeId = -1
       graph:addNode(newGlobalFunctionNode)
       functionNode = newGlobalFunctionNode
     end
@@ -177,7 +188,7 @@ end
 -- Extract
 -----------------------------------------------
 
-local function extract(sourcePath)
+local function extract(sourcePath, astManager)
   assert(sourcePath and utils.isDir(sourcePath), "wrong path passed")
   assert(not utils.isDirEmpty(sourcePath), "directory is empty")
   
@@ -187,7 +198,7 @@ local function extract(sourcePath)
   local sourceDirectory = sourcePath or lfs.currentdir()
   
   getFilesTree(graph, sourceDirectory)
-  getFunctionCalls(graph, graph.luaFileNodes)
+  getFunctionCalls(graph, astManager)
 
   connectModuleCalls(graph)
   assignGlobalCalls(graph)
