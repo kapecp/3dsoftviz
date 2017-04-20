@@ -372,6 +372,8 @@ public slots:
 
     bool isLeapStreamActive();
 
+    bool isCameraStreamActive();
+
 private:
 
 	/**

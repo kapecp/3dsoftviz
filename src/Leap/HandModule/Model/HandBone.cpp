@@ -1,7 +1,7 @@
 /**
  * Created by Patrik Berger on 19.11.2016.
  */
-#include "Leap/HandModule/HandBone.h"
+#include "Leap/HandModule/Model/HandBone.h"
 #include <easylogging++.h>
 #include <osg/ShapeDrawable>
 #include <osg/Geode>

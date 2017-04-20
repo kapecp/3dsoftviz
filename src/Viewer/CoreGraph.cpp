@@ -1946,6 +1946,9 @@ bool CoreGraph::isLeapStreamActive() {
     return this->leapCameraStream != nullptr;
 }
 
+bool CoreGraph::isCameraStreamActive() {
+    return this->mCameraStream != nullptr;
+}
 
 void CoreGraph::drawAxes()
 {
