@@ -8,7 +8,7 @@ local utils      = require "luadb.utils"
 local ast        = require "luadb.ast"
 local logger     = utils.logger
 
-local function addIdsToFileNode(AST, AST_ID, graph, path)
+local function addIdsToFileNode(AST, graph, path, AST_ID)
   local files = graph:findNodesByType("file")
   for i,file in pairs(files) do
     if file.data.path == path then
@@ -18,7 +18,7 @@ local function addIdsToFileNode(AST, AST_ID, graph, path)
   end
 end
 
-local function extractFunctions(AST, AST_ID, graph, path)
+local function extractFunctions(AST, graph, path, AST_ID)
   local nodes = {}
   local functions = ast.getFunctions(AST)
   logger:debug("importing nodes")
@@ -121,9 +121,9 @@ local function extract(luaFileNode, graph, astManager)
   end
   
   --add astID and astNodeID(root) to 'file' nodes
-  addIdsToFileNode(AST, AST_ID, graph, path)
+  addIdsToFileNode(AST, graph, path, AST_ID)
   
-  local nodes = extractFunctions(AST, AST_ID, graph, path)
+  local nodes = extractFunctions(AST, graph, path, AST_ID)
   local edges = extractFunctionCalls(AST, graph, nodes)
   return { nodes = nodes, edges = edges }
 end

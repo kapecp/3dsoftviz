@@ -97,6 +97,8 @@ local function getModuleFromFile(graph)
     newModuleNode.meta.type = "module"
     newModuleNode.data.name = moduleName
     newModuleNode.data.path = modulePath
+    newModuleNode.data.astID = -1
+    newModuleNode.data.astNodeId = -1
     newModuleNode.functionNodes = {}
     
     graph:addNode(newModuleNode)
