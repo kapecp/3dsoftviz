@@ -35,6 +35,8 @@ public:
     CameraStream( );
 	~CameraStream();
 
+    cv::vector<cv::Point> handPointList;
+
 public slots:
 
 	/**

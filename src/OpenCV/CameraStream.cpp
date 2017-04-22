@@ -33,7 +33,7 @@ void CameraStream::updateBackgroundImage( cv::Mat cvImg , bool trackHands)
     if (trackHands) {
         this->trackMutex.lock();
         this->image = cvImg.clone();
-        this->image = this->tracker->findHand(this->image, 0);
+        this->image = this->tracker->findHand(this->image, this->handPointList);
 
         setImage( this->image.cols, this->image.rows,
               this->image.channels(),GL_RGB, GL_RGB, GL_UNSIGNED_BYTE,

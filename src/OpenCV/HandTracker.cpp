@@ -80,7 +80,7 @@ cv::Mat OpenCV::HandTracker::produceBinaries(cv::Mat m){
 }
 
 // find contours of segmented hand and count fingers
-cv::Mat OpenCV::HandTracker::findHand( cv::Mat mask, float depth )
+cv::Mat OpenCV::HandTracker::findHand( cv::Mat mask, cv::vector<cv::Point> pointList )
 {
 
     cv::vector<cv::vector<cv::Point> > contours;
@@ -204,6 +204,7 @@ cv::Mat OpenCV::HandTracker::findHand( cv::Mat mask, float depth )
                             //Draw the palm center and the palm circle
                             //The size of the palm gives the depth of the hand
                             if (radius > 0){
+                                pointList.push_back(palm_center);
                                 circle(mask,palm_center,5,cv::Scalar(144,144,255),3);
                                 circle(mask,palm_center,radius,cv::Scalar(144,144,255),2);
                             }
@@ -235,6 +236,7 @@ cv::Mat OpenCV::HandTracker::findHand( cv::Mat mask, float depth )
                                     if(std::min(Xdist,Ydist)/std::max(Xdist,Ydist)<=0.8)
                                     {
                                         if((Xdist>=0.1*radius&&Xdist<=1.3*radius&&Xdist<Ydist)||(Ydist>=0.1*radius&&Ydist<=1.3*radius&&Xdist>Ydist)){
+                                            pointList.push_back(ptEnd);
                                             line( mask, ptEnd, ptFar, cv::Scalar(255,255,255), 1 );
                                             circle(mask,ptEnd,5,cv::Scalar(200,200,255),2);
                                             no_of_fingers++;

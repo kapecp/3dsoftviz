@@ -11,10 +11,6 @@ namespace Vwr {
 class CoreGraph;
 }
 
-namespace OpenCV {
-class HandTracker;
-}
-
 namespace Leap {
 
 class HandMapper
@@ -26,13 +22,14 @@ public:
 
     ~HandMapper();
 
-    // uses opencv to find hand in image buffer
-    void trackHands( unsigned char* buffer,float depth);
     Leap::Vector recalculateDepthNode(Leap::Vector vector, float diff);
 
-private:
-    OpenCV::HandTracker *tracker;
-    Vwr::CoreGraph* coreGraph;
+
+
+private:  
+    float calculateAveragePalmFingerDistance(cv::vector<cv::Point> pointList);
+
+    Vwr::CoreGraph* coreGraph;   
 };
 }
 
