@@ -457,10 +457,6 @@ private:
 	QApplication*	mApp;
 	QLabel*			mWindowLabel;
 
-	QRadioButton*	mKinectRB;
-	QRadioButton*	mArucoRB;
-	QRadioButton*    mFaceRecRB;
-	QRadioButton*    mMarkerRB;
 	QRadioButton*    mMultiMarkerRB;
 	QRadioButton*    mLightDetRB;
 
@@ -476,22 +472,26 @@ private:
 	QPushButton*     mLightDetPB;
 
 
-	QStackedLayout*  mModulesStackL;
-	QStackedLayout*  mSubmodulesStackL;
+	QVBoxLayout*  mSubmodulesStackL;
+//	---------------------------------------------
 
-	QCheckBox*		mNoVideo;
+	QCheckBox*		mMarkerNoVideo;
+	QCheckBox*		mFaceNoVideo;
 	QCheckBox*		 mMarkerBackgrCB;
 	QCheckBox*		 mFaceDetBackgrCB;
 	QCheckBox*		 mMarkerBehindCB;
 	QCheckBox*		 mCorEnabledCB;
 	QCheckBox*	     mMultiMarkerEnableCB;
-	QCheckBox*		 mEnableMarkerlessKinectCB;
+
 	QCheckBox*		 mLightDetectShowProcessingCB;
+	QCheckBox*		 mEnableMarkerlessCameraCB;
+	QCheckBox*		 mRefEnableFaceRecCB;
+	QCheckBox*		 mRefEnableMarkerlessCB;
 
 	QCheckBox*       mDisableCursorCB;
 	QCheckBox*       mDisableZoomCursorCB;
 	QCheckBox*       mEnableMarkerDetectCB;
-	QCheckBox*		 mEnableMarkerlessCameraCB;
+	QCheckBox*		 mEnableMarkerlessKinectCB;
 
 	QSlider*         mSpeed;
 

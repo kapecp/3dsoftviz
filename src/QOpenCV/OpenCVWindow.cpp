@@ -48,34 +48,33 @@ void QOpenCV::OpenCVWindow::configureWindow()
 
 	mWindowLabel = new QLabel( "", this, 0 );
 
-	mKinectRB = new QRadioButton( tr( "Kinect" ) );
-	mArucoRB = new QRadioButton( tr( "Aruco" ) );
-	mFaceRecRB = new QRadioButton( tr( "Face Recognition" ) );
-	mMarkerRB = new QRadioButton( tr( "Marker" ) );
 	mMultiMarkerRB = new QRadioButton( tr( "Multi Marker" ) );
 	mLightDetRB = new QRadioButton( tr( "Light Detection" ) );
 
-	mFaceRecPB = new QPushButton( tr( "Start Face Recognition" ) );
-	mMarkerPB = new QPushButton( tr( "Start Marker Detection" ) );
-	mMultiMarkerPB = new QPushButton( tr( "Start MultiMarker" ) );
 	mKinectPB = new QPushButton( tr( "Start Kinect" ) );
 	mKinectSnapshotPB = new QPushButton( tr( "Kinect Snapshot" ) );
 	mUpdateCorParPB	= new QPushButton( tr( "Update cor. param." ) );
 	mInterchangeMarkersPB = new QPushButton( tr( "Change Markers" ) );
 	mLightDetPB = new QPushButton( tr( "Start Light Detection" ) );
 
-	mNoVideo = new QCheckBox( tr( "NoVideo" ) );
+	mMarkerNoVideo = new QCheckBox( tr( "NoVideo" ) );
+	mFaceNoVideo  = new QCheckBox( tr( "NoVideo" ) );
+
 	mMarkerBackgrCB	= new QCheckBox( tr( "Background" ) );
 	mFaceDetBackgrCB = new QCheckBox( tr( "Background" ) );
 	mMarkerBehindCB	= new QCheckBox( tr( "Marker is behind" ) );
 	mCorEnabledCB = new QCheckBox( tr( "Correction" ) );
 	mMultiMarkerEnableCB = new QCheckBox( tr( "Multiple markers" ) );
-	mEnableMarkerlessKinectCB = new QCheckBox( tr( "Turn on Markerless Detection" ) );
+	mEnableMarkerlessCameraCB = new QCheckBox( tr( "Turn on Markerless Detection" ) );
+
+	mRefEnableFaceRecCB = new QCheckBox( tr( "Face Recognition" ) );
+	mRefEnableMarkerlessCB = new QCheckBox( tr( "Tracking" ) );
 
 	mDisableCursorCB = new QCheckBox( tr( "Turn off cursor" ) );
 	mDisableZoomCursorCB = new QCheckBox( tr( "Turn off zoom" ) );
 	mEnableMarkerDetectCB = new QCheckBox( tr( "Turn on Marker Detection" ) );
-	mEnableMarkerlessCameraCB = new QCheckBox( tr( "Turn on Markerless Detection" ) );
+	mEnableMarkerlessKinectCB = new QCheckBox( tr( "Turn on Markerless Detection" ) );
+
 	mLightDetectShowProcessingCB = new QCheckBox( tr( "Show frame processing" ) );
 
 	mSpeed =  new QSlider( Qt::Horizontal );
@@ -106,19 +105,15 @@ void QOpenCV::OpenCVWindow::configureWindow()
 	mFisheyeRS->setFocusPolicy( Qt::NoFocus );
 	mFisheyeRS->setToolTip( tr( "Adjust the radius of fisheye lens for calculations" ) );
 
-	mModulesStackL = new QStackedLayout;
-	mSubmodulesStackL = new QStackedLayout;
+	mSubmodulesStackL = new QVBoxLayout;
 
 	QHBoxLayout* mainLayout		= new QHBoxLayout;
 	QVBoxLayout* buttonLayout	= new QVBoxLayout;
 
-#ifdef OPENNI2_FOUND
-	mKinectRB->setChecked( true );
-	buttonLayout->addWidget( mKinectRB );
-#endif
-
-	buttonLayout->addWidget( mArucoRB );
-	buttonLayout->addLayout( mModulesStackL );
+//#ifdef OPENNI2_FOUND
+//	mKinectRB->setChecked( true );
+//	buttonLayout->addWidget( mKinectRB );
+//#endif
 
 	QWidget* kinectPageWid =  new QWidget;
 	QWidget* arucoPageWid =  new QWidget;
@@ -128,7 +123,11 @@ void QOpenCV::OpenCVWindow::configureWindow()
 	QWidget* arucoMultiMarkerPageWid = new QWidget;
 	QWidget* arucoSubPageWid = new QWidget;
 
-	QVBoxLayout*	kinectPageLayout	= new QVBoxLayout;
+	kinectPageWid->setStyleSheet("background-color: lightblue");
+	arucoFaceRecPageWid->setStyleSheet("background-color: lightblue");
+	arucoMarkerPageWid->setStyleSheet("background-color: lightblue");
+
+	QVBoxLayout*	kinectPageLayout = new QVBoxLayout;
 	QVBoxLayout*	arucoPageLayout	= new QVBoxLayout;
 	QVBoxLayout* arucoFaceRecPageLayout = new QVBoxLayout;
 	QVBoxLayout* arucoLightDetPageLayout = new QVBoxLayout;
@@ -136,12 +135,6 @@ void QOpenCV::OpenCVWindow::configureWindow()
 	QVBoxLayout* arucoMultiMarkerPageLayout = new QVBoxLayout;
 	QVBoxLayout* arucoSubPageLayout = new QVBoxLayout;
 
-	mFaceRecRB->setChecked( true );
-	arucoSubPageLayout->addWidget( mFaceRecRB );
-	arucoSubPageLayout->addWidget( mMarkerRB );
-	arucoSubPageLayout->addWidget( mLightDetRB );
-	//arucoSubPageLayout->addWidget( mMultiMarkerRB );
-	arucoSubPageLayout->addWidget( mNoVideo );
 	arucoSubPageLayout->addLayout( mSubmodulesStackL );
 
 	kinectPageLayout->setAlignment( Qt::AlignBottom );
@@ -151,13 +144,13 @@ void QOpenCV::OpenCVWindow::configureWindow()
 	arucoMarkerPageLayout->setAlignment( Qt::AlignBottom );
 	arucoMultiMarkerPageLayout->setAlignment( Qt::AlignBottom );
 
-	mModulesStackL->addWidget( kinectPageWid );
-	mModulesStackL->addWidget( arucoSubPageWid );
+	buttonLayout->addWidget( kinectPageWid );
+	buttonLayout->addWidget( arucoSubPageWid );
 
 	mSubmodulesStackL->addWidget( arucoFaceRecPageWid );
 	mSubmodulesStackL->addWidget( arucoMarkerPageWid );
 	mSubmodulesStackL->addWidget( arucoLightDetPageWid );
-	//mSubmodulesStackL->addWidget( arucoMultiMarkerPageWid );
+
 
 	kinectPageWid->setLayout( kinectPageLayout );
 	arucoPageWid->setLayout( arucoPageLayout );
@@ -178,8 +171,9 @@ void QOpenCV::OpenCVWindow::configureWindow()
 
 	//arucoPageLayout->addWidget( mMultiMarkerPB );
 
+	arucoFaceRecPageLayout->addWidget( mRefEnableFaceRecCB );
+	arucoFaceRecPageLayout->addWidget( mFaceNoVideo );
 	arucoFaceRecPageLayout->addWidget( mFaceDetBackgrCB );
-	arucoFaceRecPageLayout->addWidget( mFaceRecPB );
 
 	// light detection panel
 	arucoLightDetPageLayout->addWidget( mFisheyeXS );
@@ -188,6 +182,8 @@ void QOpenCV::OpenCVWindow::configureWindow()
 	arucoLightDetPageLayout->addWidget( mLightDetectShowProcessingCB );
 	arucoLightDetPageLayout->addWidget( mLightDetPB );
 
+	arucoMarkerPageLayout->addWidget( mRefEnableMarkerlessCB );
+	arucoMarkerPageLayout->addWidget( mMarkerNoVideo );
 	arucoMarkerPageLayout->addWidget( mMarkerBackgrCB );
 	arucoMarkerPageLayout->addWidget( mMarkerBehindCB );
 	arucoMarkerPageLayout->addWidget( mCorEnabledCB );
@@ -195,7 +191,6 @@ void QOpenCV::OpenCVWindow::configureWindow()
 	arucoMarkerPageLayout->addWidget( mEnableMarkerlessCameraCB );
 	arucoMarkerPageLayout->addWidget( mUpdateCorParPB );
 	arucoMarkerPageLayout->addWidget( mInterchangeMarkersPB );
-	arucoMarkerPageLayout->addWidget( mMarkerPB );
 
 	//arucoMultiMarkerPageLayout->addWidget( mMultiMarkerPB );
 
@@ -213,53 +208,56 @@ void QOpenCV::OpenCVWindow::configureWindow()
 	//set up Widgets
 	mUpdateCorParPB->setEnabled( false );
 
+	mFaceNoVideo->setEnabled( false );
 	mFaceDetBackgrCB->setEnabled( false );
+
+	mMarkerNoVideo->setEnabled( false );
 	mMarkerBackgrCB->setEnabled( false );
 	mMarkerBehindCB->setEnabled( false );
 	mCorEnabledCB->setEnabled( false );
-	mMultiMarkerEnableCB->setEnabled( true );
+	mMultiMarkerEnableCB->setEnabled( false );
+	mEnableMarkerlessCameraCB->setEnabled( false );
+
 	mEnableMarkerlessKinectCB->setEnabled( true );
 	mEnableMarkerDetectCB->setEnabled( true );
-	mEnableMarkerlessCameraCB->setEnabled( true );
+
 	mLightDetectShowProcessingCB->setEnabled( true );
 
-	mMultiMarkerPB->setCheckable( true );
-	mFaceRecPB->setCheckable( true );
-	mMarkerPB->setCheckable( true );
+	mRefEnableFaceRecCB->setEnabled( true );
+	mRefEnableMarkerlessCB->setEnabled( true );
+
+//	mMultiMarkerPB->setCheckable( true );
 	mKinectPB->setCheckable( true );
 	mLightDetPB->setCheckable( true );
 
-	//set up signals to slots
-	connect( mKinectRB, SIGNAL( clicked() ), this, SLOT( onSelModulChange() ) );
-	connect( mArucoRB, SIGNAL( clicked() ), this, SLOT( onSelModulChange() ) );
-	connect( mFaceRecRB, SIGNAL( clicked() ), this, SLOT( onSelSubModulChange() ) );
-	connect( mLightDetRB, SIGNAL( clicked() ), this, SLOT( onSelSubModulChange() ) );
-	connect( mMarkerRB, SIGNAL( clicked() ), this, SLOT( onSelSubModulChange() ) );
-	connect( mMultiMarkerRB, SIGNAL( clicked() ), this, SLOT( onSelSubModulChange() ) );
-
-	connect( mNoVideo,	 SIGNAL( clicked() ), this, SLOT( onSelSubModulChange() ) );
-
-	connect( mUpdateCorParPB, SIGNAL( clicked() ), this, SLOT( onUpdateCorPar() ) );
-	connect( mMarkerPB,  SIGNAL( clicked( bool ) ), this, SLOT( onMarkerStartCancel( bool ) ) );
-	connect( mFaceRecPB, SIGNAL( clicked( bool ) ), this, SLOT( onFaceRecStartCancel( bool ) ) );
-	connect( mLightDetPB, SIGNAL( clicked( bool ) ), this, SLOT( onLightDetStartCancel( bool ) ) );
-	connect( mMultiMarkerPB, SIGNAL( clicked( bool ) ), this, SLOT( onMultiMarkerStartCancel( bool ) ) );
+	//BUTTONS - set up signals to slots
 	connect( mKinectPB, SIGNAL( clicked( bool ) ), this, SLOT( onKinectStartCancel( bool ) ) );
 	connect( mKinectSnapshotPB, SIGNAL( clicked() ), this, SLOT( onKinectSnapshotPBClicked() ) );
 
-	connect( mMarkerBackgrCB, SIGNAL( clicked( bool ) ), this, SLOT( onMarkerBackgrCBClicked( bool ) ) );
-	connect( mFaceDetBackgrCB, SIGNAL( clicked( bool ) ), this, SLOT( onFaceDetBackgrCBClicked( bool ) ) );
-	connect( mEnableMarkerDetectCB, SIGNAL( clicked( bool ) ), this, SLOT( setMarkerDetection( bool ) ) );
-	connect( mEnableMarkerlessCameraCB, SIGNAL( clicked( bool ) ), this, SLOT( setMarkerlessDetectionCamera( bool ) ) );
+	connect( mUpdateCorParPB, SIGNAL( clicked() ), this, SLOT( onUpdateCorPar() ) );
 
+	//RADIOBUTTONS - set up signals to slots
+	connect( mMultiMarkerRB, SIGNAL( clicked() ), this, SLOT( onSelSubModulChange() ) );
+
+	//CHECKBOXES - set up signals to slots
 	connect( mDisableCursorCB, SIGNAL( clicked() ), this, SLOT( stopMovingCursor() ) );
 	connect( mDisableZoomCursorCB, SIGNAL( clicked( bool ) ), this, SLOT( stopZoom() ) );
+	connect( mEnableMarkerDetectCB, SIGNAL( clicked( bool ) ), this, SLOT( setMarkerDetection( bool ) ) );
 	connect( mEnableMarkerlessKinectCB, SIGNAL( clicked( bool ) ), this, SLOT( setMarkerlessDetectionKinect( bool ) ) );
 	connect( mLightDetectShowProcessingCB, SIGNAL( clicked( bool ) ), this, SLOT( onLightDetShowProcessingCBClicked( bool ) ) );
 
 	connect( mFisheyeXS, SIGNAL( valueChanged( int ) ), this, SLOT( onFisheyeXChanged( int ) ) );
 	connect( mFisheyeYS, SIGNAL( valueChanged( int ) ), this, SLOT( onFisheyeYChanged( int ) ) );
 	connect( mFisheyeRS, SIGNAL( valueChanged( int ) ), this, SLOT( onFisheyeRChanged( int ) ) );
+
+	connect( mRefEnableFaceRecCB, SIGNAL( clicked( bool ) ), this, SLOT( onFaceRecStartCancel( bool ) ) );
+	connect( mFaceNoVideo,	 SIGNAL( clicked() ), this, SLOT( onSelSubModulChange() ) );
+	connect( mFaceDetBackgrCB, SIGNAL( clicked( bool ) ), this, SLOT( onFaceDetBackgrCBClicked( bool ) ) );
+
+	connect( mMarkerNoVideo,	 SIGNAL( clicked() ), this, SLOT( onSelSubModulChange() ) );
+	connect( mMarkerBackgrCB, SIGNAL( clicked( bool ) ), this, SLOT( onMarkerBackgrCBClicked( bool ) ) );
+	connect( mEnableMarkerlessCameraCB, SIGNAL( clicked( bool ) ), this, SLOT( setMarkerlessDetectionCamera( bool ) ) );
+	connect( mRefEnableMarkerlessCB, SIGNAL( clicked( bool ) ), this, SLOT( onMarkerStartCancel( bool ) ) );
 
 }
 
@@ -368,59 +366,23 @@ void QOpenCV::OpenCVWindow::onFisheyeRChanged( int value )
 
 void QOpenCV::OpenCVWindow::onSelModulChange()
 {
-	if ( mKinectRB->isChecked() ) {
-		mModulesStackL->setCurrentIndex( 0 );
-	}
 
-	if ( mArucoRB->isChecked() ) {
-		mModulesStackL->setCurrentIndex( 1 );
-	}
 }
 
-void QOpenCV::OpenCVWindow::onSelSubModulChange()
+void QOpenCV::OpenCVWindow::onSelSubModulChange() //---------------------------------------------------------
 {
-	if ( mFaceRecRB->isChecked() ) {
-		mSubmodulesStackL->setCurrentIndex( 0 );
-	}
-
-	if ( mMarkerRB->isChecked() ) {
-		mSubmodulesStackL->setCurrentIndex( 1 );
-	}
-	/*
-	if ( mMultiMarkerRB->isChecked() ) {
-		mSubmodulesStackL->setCurrentIndex( 2 );
-	}
-	*/
-
-	if ( mLightDetRB->isChecked() ) {
-		mSubmodulesStackL->setCurrentIndex( 2 );
-	}
-
-	if ( mNoVideo->isChecked() ) {
-		emit sendImgLightDet( false );
-		emit sendImgFaceRec( false );
+	if ( mMarkerNoVideo->isChecked() ) {
 		emit sendImgMarker( false );
 		emit setMultiMarker( false );
 	}
 	else {
+		emit sendImgMarker( true );
+	}
 
-		// face recognition
-		if ( mFaceRecRB->isChecked() ) {
-			emit sendImgMarker( false );
-			emit sendImgFaceRec( true );
-			emit sendImgLightDet( false );
-		}
-		// marker
-		if ( mMarkerRB->isChecked() ) {
-			emit sendImgFaceRec( false );
-			emit sendImgMarker( true );
-			emit sendImgLightDet( false );
-		}
-		if ( mLightDetRB->isChecked() ) {
-			emit sendImgLightDet( true );
-			emit sendImgMarker( false );
-			emit sendImgFaceRec( false );
-		}
+	if ( mFaceNoVideo->isChecked() ) {
+		emit sendImgFaceRec( false );
+	} else {
+		emit sendImgFaceRec( true );
 	}
 }
 
@@ -440,11 +402,9 @@ void QOpenCV::OpenCVWindow::onFaceRecStartCancel( bool checked )
 	qDebug() << "OpenCVWindow::onFaceRecStartCancel:" << checked;
 
 	if ( checked ) {
-		mFaceRecPB->setEnabled( false );
-		mFaceRecPB->setText( tr( "Stop FaceRec" ) );
+
 		emit setCapVideoFaceRec( OpenCV::CamSelectCore::getInstance()->selectCamera() );
 		emit startFaceRec();
-		mFaceRecPB->setEnabled( true );
 
 		if ( Util::ApplicationConfig::get()->getValue( "Viewer.SkyBox.Noise" ).toInt() >1 ) {
 			mFaceDetBackgrCB->setEnabled( true );
@@ -452,11 +412,14 @@ void QOpenCV::OpenCVWindow::onFaceRecStartCancel( bool checked )
 		}
 	}
 	else {
-		mFaceRecPB->setEnabled( false );
+
 		mFaceDetBackgrCB->setEnabled( false );
 		emit stopFaceRec( true );
 
 	}
+
+	mFaceNoVideo->setEnabled( checked );
+
 }
 
 void QOpenCV::OpenCVWindow::onLightDetStartCancel( bool checked )
@@ -480,13 +443,9 @@ void QOpenCV::OpenCVWindow::onLightDetStartCancel( bool checked )
 void QOpenCV::OpenCVWindow::onMarkerStartCancel( bool checked )
 {
 	if ( checked ) {
-		mMarkerPB->setEnabled( false );
-		mMarkerPB->setText( tr( "Stop Marker" ) );
-		mMarkerBehindCB->setEnabled( true );
-		mUpdateCorParPB->setEnabled( true );
+
 		emit setCapVideoMarker( OpenCV::CamSelectCore::getInstance()->selectCamera() );
 		emit startMarker();
-		mMarkerPB->setEnabled( true );
 		emit arucoRunning( true );
 
 		if ( Util::ApplicationConfig::get()->getValue( "Viewer.SkyBox.Noise" ).toInt() ==0 ) {
@@ -494,20 +453,25 @@ void QOpenCV::OpenCVWindow::onMarkerStartCancel( bool checked )
 		}
 	}
 	else {
-		mMarkerPB->setEnabled( false );
-		mMarkerBehindCB->setEnabled( false );
+
 		mCorEnabledCB->setEnabled( false );
-		mUpdateCorParPB->setEnabled( false );
 		mMarkerBackgrCB->setEnabled( false );
 		emit stopMarker( true );
 		emit arucoRunning( false );
 	}
+
+	mMarkerNoVideo->setEnabled( checked );
+	mMarkerBehindCB->setEnabled( checked );
+	mUpdateCorParPB->setEnabled( checked );
+	mMultiMarkerEnableCB->setEnabled( checked );
+	mEnableMarkerlessCameraCB->setEnabled( checked );
+	mInterchangeMarkersPB->setEnabled( checked );
+
 }
 
 void QOpenCV::OpenCVWindow::onFaceRecThrFinished()
 {
-	mFaceRecPB->setText( tr( "Start FaceRec" ) );
-	mFaceRecPB->setEnabled( true );
+
 }
 
 void QOpenCV::OpenCVWindow::onLightDetThrFinished()
@@ -518,8 +482,7 @@ void QOpenCV::OpenCVWindow::onLightDetThrFinished()
 
 void QOpenCV::OpenCVWindow::onMarkerThrFinished()
 {
-	mMarkerPB->setText( tr( "Start Marker" ) );
-	mMarkerPB->setEnabled( true );
+
 }
 
 void QOpenCV::OpenCVWindow::closeEvent( QCloseEvent* event )
@@ -533,7 +496,7 @@ void QOpenCV::OpenCVWindow::closeEvent( QCloseEvent* event )
 
 void QOpenCV::OpenCVWindow::onMultiMarkerStartCancel( bool checked )
 {
-	qDebug() << "checked = " << checked;
+	qDebug() << "OpenCVWindow::onMultiMarkerStartCancel " << checked;
 	if ( checked ) {
 		mMultiMarkerPB->setText( tr( "Stop Aruco" ) );
 		emit setMultiMarker( true );
