@@ -23,6 +23,7 @@ public:
 	float radius;
 	float lastInlierPerc;
 	int id;
+	bool found;
 
 };
 }

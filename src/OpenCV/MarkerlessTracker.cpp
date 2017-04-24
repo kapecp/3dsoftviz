@@ -138,111 +138,51 @@ void OpenCV::MarkerlessTracker::findCirclesInFrame( cv::Mat& frame ){
 	cv::Mat dt;
 	cv::distanceTransform(255-mask, dt, CV_DIST_L1, 3);
 	cv::Point3f aktual;
-	int numOfBalls= tBalls.size();
-	std::cout << "number of balls " << numOfBalls << std::endl;
-	if (numOfBalls!=0){
-		for(int i=0;i<numOfBalls;i++){
-			bool found=false;
-			if(tBalls.at(i).history.size()>=5){
-				tBalls.at(i).history.erase(tBalls.at(i).history.begin());
-			}
-			float minCirclePercentage = 0.5f;
-			for(int g=0;g<tBalls.at(i).history.size();g++){
-				if(found){
-					break;
+//	int numOfBalls= tBalls.size();
+	/*int numOfBalls= 0;
+	for(int i=0;i<tBalls.size();i++){
+		if(tBalls.at(i).found){
+			numOfBalls+=1;
+		}
+	}*/
+//	std::cout << "number of balls " << numOfBalls << std::endl;
+	if (tBalls.size()!=0){
+		for(int i=0;i<tBalls.size();i++){
+			if(tBalls.at(i).found){
+				tBalls.at(i).found=false;
+
+				bool found=false;
+				if(tBalls.at(i).history.size()>=5){
+					tBalls.at(i).history.erase(tBalls.at(i).history.begin());
 				}
-				aktual= tBalls.at(i).history.at(g);
-
-				cv::Point2f center;
-				float radius;
-				for (int l = 0; l <10 ; ++l) {
-					for (int j = 0; j < 10 ; j++) {
-						center.x=aktual.x+j;
-						for (int k = 0; k < 10 ; k++) {
-							center.y=aktual.y+k;
-
-							std::vector<cv::Point2f> inlierSet;
-							radius=aktual.z+l;
-							float cPerc = verifyCircle(dt, center, radius, inlierSet);
-
-							if (cPerc >= minCirclePercentage && radius>50) {
-								//                            std::cout << "history circle with " << cPerc * 100.0f << " % inlier" << std::endl;
-								//                            std::cout << "circle: " << "center: " << center << " radius: " << radius << std::endl;
-								// first step would be to approximate the circle iteratively from ALL INLIER to obtain a better circle center
-								// but that's a TODO
-
-
-								cv::circle(frame, center, radius, cv::Scalar(255, 255, 0), 1);
-
-								// accept circle => remove it from the edge list
-								cv::circle(mask, center, radius, cv::Scalar(0), 10);
-
-								//update edge positions and distance transform
-								edgePositions = getPointPositions(mask);
-								cv::distanceTransform(255 - mask, dt, CV_DIST_L1, 3);
-								tBalls.at(i).history.push_back(cv::Point3f(center.x,center.y,radius));
-								tBalls.at(i).cent=center;
-								tBalls.at(i).radius=radius;
-								tBalls.at(i).lastInlierPerc=cPerc;
-								found =true;
-
-							}
-							radius=aktual.z-l;
-							cPerc = verifyCircle(dt, center, radius, inlierSet);
-
-							if (cPerc >= minCirclePercentage && radius>50 && !found) {
-								//                            std::cout << "history circle with " << cPerc * 100.0f << " % inlier" << std::endl;
-								//                            std::cout << "circle: " << "center: " << center << " radius: " << radius << std::endl;
-								// first step would be to approximate the circle iteratively from ALL INLIER to obtain a better circle center
-								// but that's a TODO
-
-
-								cv::circle(frame, center, radius, cv::Scalar(255, 255, 0), 1);
-
-								// accept circle => remove it from the edge list
-								cv::circle(mask, center, radius, cv::Scalar(0), 10);
-
-								//update edge positions and distance transform
-								edgePositions = getPointPositions(mask);
-								cv::distanceTransform(255 - mask, dt, CV_DIST_L1, 3);
-								tBalls.at(i).history.push_back(cv::Point3f(center.x,center.y,radius));
-								tBalls.at(i).cent=center;
-								tBalls.at(i).radius=radius;
-								tBalls.at(i).lastInlierPerc=cPerc;
-								found =true;
-
-							}
-							if(found){
-								break;
-							}
-						}
-						if(found){
-							break;
-						}
-					}
+				float minCirclePercentage = 0.5f;
+				for(int g=0;g<tBalls.at(i).history.size();g++){
 					if(found){
 						break;
 					}
-				}
-				if(!found) {
-					for (int l = 0; l < 10; ++l) {
-						for (int j = 1; j < 10; j++) {
-							center.x = aktual.x - j;
-							for (int k = 1; k < 10; k++) {
-								center.y = aktual.y - k;
+					aktual= tBalls.at(i).history.at(g);
+
+					cv::Point2f center;
+					float radius;
+					for (int l = 0; l <10 ; ++l) {
+						for (int j = 0; j < 10 ; j++) {
+							center.x=aktual.x+j;
+							for (int k = 0; k < 10 ; k++) {
+								center.y=aktual.y+k;
 
 								std::vector<cv::Point2f> inlierSet;
-								radius = aktual.z + l;
+								radius=aktual.z+l;
 								float cPerc = verifyCircle(dt, center, radius, inlierSet);
-								//                        std::cout << "history circle with " << cPerc * 100.0f << " % inlier" << std::endl;
-								//                        std::cout << "circle: " << "center: " << center << " radius: " << radius << std::endl;
-								if (cPerc >= minCirclePercentage && radius > 50) {
 
+								if (cPerc >= minCirclePercentage && radius>50) {
+									//                            std::cout << "history circle with " << cPerc * 100.0f << " % inlier" << std::endl;
+									//                            std::cout << "circle: " << "center: " << center << " radius: " << radius << std::endl;
 									// first step would be to approximate the circle iteratively from ALL INLIER to obtain a better circle center
 									// but that's a TODO
 
 
 									cv::circle(frame, center, radius, cv::Scalar(255, 255, 0), 1);
+									cv::circle(frame, center, 5, cv::Scalar(255, 0, 0), 3);
 
 									// accept circle => remove it from the edge list
 									cv::circle(mask, center, radius, cv::Scalar(0), 10);
@@ -250,35 +190,38 @@ void OpenCV::MarkerlessTracker::findCirclesInFrame( cv::Mat& frame ){
 									//update edge positions and distance transform
 									edgePositions = getPointPositions(mask);
 									cv::distanceTransform(255 - mask, dt, CV_DIST_L1, 3);
-									tBalls.at(i).history.push_back(cv::Point3f(center.x, center.y, radius));
+									tBalls.at(i).history.push_back(cv::Point3f(center.x,center.y,radius));
 									tBalls.at(i).cent=center;
 									tBalls.at(i).radius=radius;
 									tBalls.at(i).lastInlierPerc=cPerc;
-									found = true;
+									tBalls.at(i).found =true;
+									found =true;
+
 								}
-								radius = aktual.z - l;
+								radius=aktual.z-l;
 								cPerc = verifyCircle(dt, center, radius, inlierSet);
-								//                                                    std::cout << "history circle with " << cPerc * 100.0f << " % inlier" << std::endl;
-								//                                                    std::cout << "circle: " << "center: " << center << " radius: " << radius << std::endl;
-								if (cPerc >= minCirclePercentage && radius > 50 && !found) {
 
+								if (cPerc >= minCirclePercentage && radius>50 && !found) {
+									//                            std::cout << "history circle with " << cPerc * 100.0f << " % inlier" << std::endl;
+									//                            std::cout << "circle: " << "center: " << center << " radius: " << radius << std::endl;
 									// first step would be to approximate the circle iteratively from ALL INLIER to obtain a better circle center
 									// but that's a TODO
 
 
 									cv::circle(frame, center, radius, cv::Scalar(255, 255, 0), 1);
-
+									cv::circle(frame, center, 5, cv::Scalar(255, 0, 0), 3);
 									// accept circle => remove it from the edge list
 									cv::circle(mask, center, radius, cv::Scalar(0), 10);
 
 									//update edge positions and distance transform
 									edgePositions = getPointPositions(mask);
 									cv::distanceTransform(255 - mask, dt, CV_DIST_L1, 3);
-									tBalls.at(i).history.push_back(cv::Point3f(center.x, center.y, radius));
+									tBalls.at(i).history.push_back(cv::Point3f(center.x,center.y,radius));
 									tBalls.at(i).cent=center;
 									tBalls.at(i).radius=radius;
 									tBalls.at(i).lastInlierPerc=cPerc;
-									found = true;
+									tBalls.at(i).found =true;
+									found =true;
 
 								}
 								if(found){
@@ -288,17 +231,93 @@ void OpenCV::MarkerlessTracker::findCirclesInFrame( cv::Mat& frame ){
 							if(found){
 								break;
 							}
-
 						}
 						if(found){
 							break;
 						}
 					}
-				}
+					if(!found) {
+						for (int l = 0; l < 10; ++l) {
+							for (int j = 1; j < 10; j++) {
+								center.x = aktual.x - j;
+								for (int k = 1; k < 10; k++) {
+									center.y = aktual.y - k;
 
+									std::vector<cv::Point2f> inlierSet;
+									radius = aktual.z + l;
+									float cPerc = verifyCircle(dt, center, radius, inlierSet);
+									//                        std::cout << "history circle with " << cPerc * 100.0f << " % inlier" << std::endl;
+									//                        std::cout << "circle: " << "center: " << center << " radius: " << radius << std::endl;
+									if (cPerc >= minCirclePercentage && radius > 50) {
+
+										// first step would be to approximate the circle iteratively from ALL INLIER to obtain a better circle center
+										// but that's a TODO
+
+
+										cv::circle(frame, center, radius, cv::Scalar(255, 255, 0), 1);
+										cv::circle(frame, center, 5, cv::Scalar(255, 0, 0), 3);
+										// accept circle => remove it from the edge list
+										cv::circle(mask, center, radius, cv::Scalar(0), 10);
+
+										//update edge positions and distance transform
+										edgePositions = getPointPositions(mask);
+										cv::distanceTransform(255 - mask, dt, CV_DIST_L1, 3);
+										tBalls.at(i).history.push_back(cv::Point3f(center.x, center.y, radius));
+										tBalls.at(i).cent=center;
+										tBalls.at(i).radius=radius;
+										tBalls.at(i).lastInlierPerc=cPerc;
+										tBalls.at(i).found =true;
+										found = true;
+									}
+									radius = aktual.z - l;
+									cPerc = verifyCircle(dt, center, radius, inlierSet);
+									//                                                    std::cout << "history circle with " << cPerc * 100.0f << " % inlier" << std::endl;
+									//                                                    std::cout << "circle: " << "center: " << center << " radius: " << radius << std::endl;
+									if (cPerc >= minCirclePercentage && radius > 50 && !found) {
+
+										// first step would be to approximate the circle iteratively from ALL INLIER to obtain a better circle center
+										// but that's a TODO
+
+
+										cv::circle(frame, center, radius, cv::Scalar(255, 255, 0), 1);
+										cv::circle(frame, center, 5, cv::Scalar(255, 0, 0), 3);
+										// accept circle => remove it from the edge list
+										cv::circle(mask, center, radius, cv::Scalar(0), 10);
+
+										//update edge positions and distance transform
+										edgePositions = getPointPositions(mask);
+										cv::distanceTransform(255 - mask, dt, CV_DIST_L1, 3);
+										tBalls.at(i).history.push_back(cv::Point3f(center.x, center.y, radius));
+										tBalls.at(i).cent=center;
+										tBalls.at(i).radius=radius;
+										tBalls.at(i).found =true;
+										tBalls.at(i).lastInlierPerc=cPerc;
+										found = true;
+
+									}
+									if(found){
+										break;
+									}
+								}
+								if(found){
+									break;
+								}
+
+							}
+							if(found){
+								break;
+							}
+						}
+					}
+
+				}
+			if(found){
+				for(int k=1;k<tBalls.at(i).history.size();k++){
+					cv::line(frame,cv::Point(tBalls.at(i).history.at(k).x,tBalls.at(i).history.at(k).y),cv::Point(tBalls.at(i).history.at(k-1).x,tBalls.at(i).history.at(k-1).y),cv::Scalar(0,0,255),k);
+				}
+			}
 			}
 		}
-
 	}
 	unsigned int nIterations = 0;
 	unsigned int maxIterations =2000;
@@ -325,13 +344,14 @@ void OpenCV::MarkerlessTracker::findCirclesInFrame( cv::Mat& frame ){
 		//verify or falsify the circle by inlier counting:
 		float cPerc = verifyCircle(dt, center, radius, inlierSet);
 
-		if (cPerc >= minCirclePercentage && radius>50) {
+		if (cPerc >= minCirclePercentage && radius>60) {
 			//                std::cout << "accepted circle with " << cPerc * 100.0f << " % inlier" << std::endl;
 			// first step would be to approximate the circle iteratively from ALL INLIER to obtain a better circle center
 			// but that's a TODO
 
 			//                std::cout << "circle: " << "center: " << center << " radius: " << radius << std::endl;
 			cv::circle(frame, center, radius, cv::Scalar(255, 255, 0), 1);
+			cv::circle(frame, center, 5, cv::Scalar(255, 0, 0), 3);
 
 			// accept circle => remove it from the edge list
 			cv::circle(mask, center, radius, cv::Scalar(0), 10);
@@ -342,30 +362,35 @@ void OpenCV::MarkerlessTracker::findCirclesInFrame( cv::Mat& frame ){
 			bool check= false;
 			for(int i=0;i<tBalls.size()&&!check;i++){
 				if ((abs(tBalls.at(i).cent.x-center.x)<50) &&(abs(tBalls.at(i).cent.y-center.y)<50) && (abs(tBalls.at(i).radius-radius)<50)){
-				cv::Point3f location;
-				location.x=tBalls.at(i).cent.x;
-				location.y=tBalls.at(i).cent.y;
-				location.z=tBalls.at(i).radius;
-				tBalls.at(i).history.push_back( location );
-				tBalls.at(i).cent=center;
-				tBalls.at(i).radius=radius;
-				tBalls.at(i).lastInlierPerc=cPerc;
-				check=true;
+					cv::Point3f location;
+					location.x=tBalls.at(i).cent.x;
+					location.y=tBalls.at(i).cent.y;
+					location.z=tBalls.at(i).radius;
+					tBalls.at(i).history.push_back( location );
+					tBalls.at(i).cent=center;
+					tBalls.at(i).radius=radius;
+					tBalls.at(i).lastInlierPerc=cPerc;
+					tBalls.at(i).found =true;
+					for(int k=1;k<tBalls.at(i).history.size();k++){
+						cv::line(frame,cv::Point(tBalls.at(i).history.at(k).x,tBalls.at(i).history.at(k).y),cv::Point(tBalls.at(i).history.at(k-1).x,tBalls.at(i).history.at(k-1).y),cv::Scalar(0,0,255),k);
+					}
+					check=true;
 				}
 			}
 			if(!check){
-			TrackerBall help;
-			help.cent=center;
-			help.radius=radius;
-			help.lastInlierPerc=cPerc;
-			help.id=tBalls.size()+1;
-			cv::Point3f location;
-			location.x=center.x;
-			location.y=center.y;
-			location.z=radius;
-			help.history.push_back(location);
+				TrackerBall help;
+				help.cent=center;
+				help.radius=radius;
+				help.lastInlierPerc=cPerc;
+				help.id=tBalls.size()+1;
+				cv::Point3f location;
+				location.x=center.x;
+				location.y=center.y;
+				location.z=radius;
+				help.found =true;
+				help.history.push_back(location);
 
-			tBalls.push_back(help);
+				tBalls.push_back(help);
 			}
 		}
 
