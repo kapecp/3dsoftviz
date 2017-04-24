@@ -44,6 +44,7 @@ void Leap::HandObjectManipulator::updateHands( Leap::Hand leftHand, Leap::Hand r
         //ziskanie pozicie dlane
         lVector = leftHand.palmPosition();
 
+
         diffLeftHand = lVector.y - mid;
         lVector = this->mapper->recalculateDepthNode(lVector, diffLeftHand);
         lVector = changeHandUpDirectionAxis(lVector);
@@ -64,6 +65,7 @@ void Leap::HandObjectManipulator::updateHands( Leap::Hand leftHand, Leap::Hand r
         Leap::Vector rVector = Leap::Vector( this->center[0]-0.5,this->center[1],this->center[2] );
         //ziskanie pozicie dlane
         rVector = rightHand.palmPosition();
+        LOG(INFO) << "leftHand position: " + std::to_string(rVector.y);
 
         diffRightHand = rVector.y - mid;
         rVector = this->mapper->recalculateDepthNode(rVector, diffRightHand);

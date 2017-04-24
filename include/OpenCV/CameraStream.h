@@ -35,7 +35,7 @@ public:
     CameraStream( );
 	~CameraStream();
 
-    cv::vector<cv::Point> handPointList;
+    cv::vector<cv::vector<cv::Point>> contourPointList;
 
 public slots:
 

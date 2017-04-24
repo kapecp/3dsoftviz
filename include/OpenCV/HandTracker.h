@@ -22,7 +22,7 @@ public:
     std::pair<cv::Point,double> circleFromPoints(cv::Point p1, cv::Point p2, cv::Point p3);
     void getParameterValues(int *threshold, int *areaSize, float brightness, float depth);
     cv::Mat produceBinaries(cv::Mat m);
-    cv::Mat findHand( cv::Mat mask, cv::vector<cv::Point> pointList);
+    cv::vector<cv::vector<cv::Point>> findHand( cv::Mat mask);
 
 
 };
