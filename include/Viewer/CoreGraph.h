@@ -702,6 +702,7 @@ private:
 	//*****
 
 	osg::ref_ptr<osg::Group> lightsGroup;
+	osg::ref_ptr<osg::Group> markerGroup;
 };
 }
 

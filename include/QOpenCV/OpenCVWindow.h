@@ -458,8 +458,6 @@ private:
 	QLabel*			mWindowLabel;
 
 	QRadioButton*    mMultiMarkerRB;
-	QRadioButton*    mLightDetRB;
-
 
 	QPushButton*     mFaceRecPB;
 	QPushButton*     mMarkerPB;
@@ -499,6 +497,9 @@ private:
 	QSlider*		 mFisheyeXS;
 	QSlider*		 mFisheyeYS;
 	QSlider*		 mFisheyeRS;
+	QCheckBox*		mLightNoVideo;
+	QCheckBox*		mEnableLightDetCB;
+
 };
 
 }

@@ -640,6 +640,12 @@ Vwr::CoreGraph::CoreGraph( Data::Graph* graph, osg::ref_ptr<osg::Camera> camera 
 	lightsGroup = new osg::Group();
 	root->addChild( lightsGroup );
 
+	markerGroup = new osg::Group();
+	root->addChild( markerGroup );
+
+	osg::ref_ptr<osg::AutoTransform> marker = getSphere( 0, osg::Vec3( 0,0,1 ), 100.0, osg::Vec4( 1.0, 0.0, 0.0, 1.0 ) );
+	markerGroup->addChild( marker );
+
 	//jurik
 	//lighting
 	osg::Light* pLight = new osg::Light;
@@ -2006,8 +2012,12 @@ osg::Vec3f CoreGraph::getGrafRotTransVec()
 void CoreGraph::setLightCoords( osg::Vec4d coords )
 {
 	osg::LightSource* ls = dynamic_cast<osg::LightSource* >( lightsGroup->getChild( 0 ) );
+	osg::AutoTransform* marker = dynamic_cast<osg::AutoTransform* > ( markerGroup->getChild( 0 ) );
+
+	//qDebug() << "base size " << baseSize;
 	if ( ls != NULL ) {
 		ls->getLight()->setPosition( coords );
+		marker->setPosition( osg::Vec3( coords.x()*10*baseSize, coords.y()*10*baseSize, coords.z()*10*baseSize ) );
 	}
 }
 
