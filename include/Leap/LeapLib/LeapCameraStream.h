@@ -7,6 +7,10 @@
 #include <opencv2/core/core.hpp>
 #include "OpenCV/HandTracker.h"
 
+namespace OpenCV {
+ class HandTracker;
+}
+
 namespace Leap {
 
 class LeapCameraStream : public osg::Image
