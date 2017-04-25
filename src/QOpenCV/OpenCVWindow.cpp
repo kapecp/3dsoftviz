@@ -100,7 +100,7 @@ void QOpenCV::OpenCVWindow::configureWindow()
 	mFisheyeYS->setToolTip( tr( "Adjust the center of fisheye lens for calculations" ) );
 
 	mFisheyeRS = new QSlider( Qt::Horizontal );
-	mFisheyeRS->setRange( 0,100 );
+	mFisheyeRS->setRange( 0,200 );
 	mFisheyeRS->setValue( 50 );
 	mFisheyeRS->setPageStep( 1 );
 	mFisheyeRS->setFocusPolicy( Qt::NoFocus );

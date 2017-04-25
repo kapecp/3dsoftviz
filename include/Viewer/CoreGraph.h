@@ -703,6 +703,9 @@ private:
 
 	osg::ref_ptr<osg::Group> lightsGroup;
 	osg::ref_ptr<osg::Group> markerGroup;
+	uint uniqueLightNumber = 0;
+
+	osg::ref_ptr<osg::LightSource> getLight( int id );
 };
 }
 

@@ -613,6 +613,28 @@ void CoreGraph::setClustersShapeBoundary( int value )
 	this->clustersShapeBoundary = value;
 }
 
+osg::ref_ptr<osg::LightSource> CoreGraph::getLight( int id ) {
+	// already exists
+	if ( lightsGroup->getNumChildren() >= id ) {
+		return dynamic_cast<osg::LightSource*> ( lightsGroup->getChild( id ) );
+	}
+
+	// light
+	osg::Light* pLight = new osg::Light;
+	pLight->setLightNum( ++uniqueLightNumber );
+	pLight->setDiffuse( osg::Vec4( 1.0f, 1.0f, 1.0f, 1.0f ) );
+	pLight->setPosition( osg::Vec4( 0,0,1,0 ) );		// w = 0 directional light
+	// w = 1 point light (position)
+
+	// light source
+	osg::LightSource* pLightSource = new osg::LightSource;
+	pLightSource->setLight( pLight );
+
+	lightsGroup->addChild( pLightSource );
+
+	return pLightSource;
+}
+
 Vwr::CoreGraph::CoreGraph( Data::Graph* graph, osg::ref_ptr<osg::Camera> camera )
 {
 	this->graph = graph;
@@ -649,7 +671,7 @@ Vwr::CoreGraph::CoreGraph( Data::Graph* graph, osg::ref_ptr<osg::Camera> camera 
 	//jurik
 	//lighting
 	osg::Light* pLight = new osg::Light;
-	pLight->setLightNum( 1 );
+	pLight->setLightNum( ++uniqueLightNumber );
 	pLight->setDiffuse( osg::Vec4( 1.0f, 1.0f, 1.0f, 1.0f ) );
 	pLight->setPosition( osg::Vec4( 0,0,1,0 ) );		// w = 0 directional light
 	// w = 1 point light (position)

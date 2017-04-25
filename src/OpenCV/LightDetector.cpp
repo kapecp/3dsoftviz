@@ -1,8 +1,10 @@
 #include "OpenCV/LightDetector.h"
 #include <osg/Vec4d>
-#include <opencv2/core/core_c.h>
-#include <opencv2/core/core.hpp>
+#include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
+#include <opencv2/core/core.hpp>
+//#include <opencv\cv.hpp>
+
 #include <opencv2/features2d/features2d.hpp>
 
 #include <QDebug>
@@ -12,6 +14,7 @@ OpenCV::LightDetector::LightDetector()
 {
 	mfisheyeCenter =  cv::Point( 256,256 );
 	mFisheyeRadius = 256;
+	mFisheyeDisrotion = 1.0;
 	mKernel = cv::getStructuringElement( cv::MORPH_ELLIPSE, cv::Size( 5, 5 ) );
 }
 
@@ -19,17 +22,26 @@ OpenCV::LightDetector::~LightDetector()
 {
 }
 
-void OpenCV::LightDetector::CircleMask( cv::Mat& src )
+void OpenCV::LightDetector::CircleMask( cv::Mat& src, cv::Point center, int radius )
 {
-	cv::Mat out = src.clone();
-	cv::Mat mask = cv::Mat::zeros( src.size(), CV_8U );
-	cv::circle( out, this->mfisheyeCenter, this->mFisheyeRadius, CV_RGB( 255,255,255 ), CV_FILLED );
-	out.copyTo( src, mask );
+	cv::Mat mask( src.size(), CV_8U, cv::Scalar( 255 ) );
+	cv::circle( mask, center, radius, cv::Scalar( 0 ), CV_FILLED );
+	src.setTo( cv::Scalar( 0 ), mask );
 }
 
 void OpenCV::LightDetector::DrawBoundary( cv::Mat src )
 {
-	cv::circle( src, this->mfisheyeCenter, this->mFisheyeRadius, CV_RGB( 255,0,0 ) );
+	int circles = 5;
+	double disort = 2;
+	double frac = pow( disort, circles );
+	double tmp;
+	qDebug() << "radius " << this->mFisheyeRadius;
+
+	for ( int i = 1; i <= circles; ++i ) {
+		tmp = (double) i / circles * this->mFisheyeRadius;
+		qDebug() << "i " << i << " tmp " << tmp;
+		cv::circle( src, this->mfisheyeCenter, (int)tmp, CV_RGB( 255,0,0 ) );
+	}
 }
 
 void OpenCV::LightDetector::DrawLightContours( cv::Mat src )
@@ -54,9 +66,11 @@ void OpenCV::LightDetector::setFisheyeRadius( int radius )
 
 void OpenCV::LightDetector::ProcessFrame( cv::Mat& frame )
 {
-	cv::Mat mask( frame.size(), CV_8U, cv::Scalar( 255 ) );
+	/*cv::Mat mask( frame.size(), CV_8U, cv::Scalar( 255 ) );
 	cv::circle( mask, this->mfisheyeCenter, this->mFisheyeRadius, cv::Scalar( 0 ), CV_FILLED );
-	frame.setTo( cv::Scalar( 0 ), mask );
+	frame.setTo( cv::Scalar( 0 ), mask );*/
+
+	CircleMask( frame, this->mfisheyeCenter, this->mFisheyeRadius );
 
 
 	// threshold - get the bright spots
@@ -75,7 +89,7 @@ void OpenCV::LightDetector::ProcessFrame( cv::Mat& frame )
 	mContourCenters.clear();
 
 	// find separate contours
-	cv::findContours( frame, mContours, cv::RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE, cv::Point( 0, 0 ) );
+	cv::findContours( frame.clone(), mContours, cv::RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE, cv::Point( 0, 0 ) );
 
 	for ( uint i = 0; i < mContours.size(); i++ ) {
 		mMoments.push_back( cv::moments( mContours[i], true ) );

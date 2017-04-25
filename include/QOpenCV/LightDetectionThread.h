@@ -108,9 +108,11 @@ private:
 	bool					mSendBackgrImgEnabled;
 	bool					mShowProcessing;
 
-	int						mFisheyeX;
-	int						mFisheyeY;
-	int						mFisheyeR;
+	int						mCapVideoWidth;
+	int						mCapVideoHeight;
+	int						mFishEyeCenterX;
+	int						mFishEyeCenterY;
+	int						mFishEyeRadius;
 };
 }
 
