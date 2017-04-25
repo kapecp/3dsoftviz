@@ -28,7 +28,7 @@ cv::vector<cv::Point> Leap::HandMapper::getHandPointList(cv::vector<cv::vector<c
     return cv::vector<cv::Point>();
 }
 
-float Leap::HandMapper::calculateAveragePalmFingerDistance(cv::vector<cv::Point> handPointList) {
+float Leap::HandMapper::calculateAveragePalmFingerDistance(cv::vector<cv::Point> handPointList, int imageWidth, int imageHeight) {
     float averageDst = 0;
 
     if (handPointList.size() == 0) {
@@ -36,10 +36,14 @@ float Leap::HandMapper::calculateAveragePalmFingerDistance(cv::vector<cv::Point>
     }
 
     cv::Point palmCenter = handPointList[0];
+    palmCenter.x /= imageWidth;
+    palmCenter.y /= imageHeight;
 
     for (int n = 1; n < handPointList.size(); n++)
     {
         cv::Point fingerTip = handPointList[n];
+        fingerTip.x /= imageWidth;
+        fingerTip.y /= imageHeight;
         averageDst += cv::norm(palmCenter-fingerTip);
     }
 
@@ -49,6 +53,19 @@ float Leap::HandMapper::calculateAveragePalmFingerDistance(cv::vector<cv::Point>
 Leap::Vector Leap::HandMapper::recalculateDepthNode(Leap::Vector vector, float diff){
 
     if (this->coreGraph->isLeapStreamActive()) {
+        cv::vector<cv::vector<cv::Point>> contourPointList =
+                this->coreGraph->getLeapCameraStream()->contourPointList;
+        float averageDst = this->calculateAveragePalmFingerDistance(
+                    this->getHandPointList(contourPointList),
+                    this->coreGraph->getLeapCameraStream()->getImageWidth(),
+                    this->coreGraph->getLeapCameraStream()->getImageHeight());
+
+//        LOG( INFO ) << "Point count: " + std::to_string(pointList.size());
+        if (averageDst != 0) {
+
+            LOG( INFO ) << "Average distance: " + std::to_string(averageDst);
+        }
+
         if (diff > 0){
             vector.y = vector.y + diff*2.3;
 
@@ -60,7 +77,10 @@ Leap::Vector Leap::HandMapper::recalculateDepthNode(Leap::Vector vector, float d
     else if (this->coreGraph->isCameraStreamActive()) {
         cv::vector<cv::vector<cv::Point>> contourPointList =
                 this->coreGraph->getCameraStream()->contourPointList;
-        float averageDst = this->calculateAveragePalmFingerDistance(this->getHandPointList(contourPointList));
+        float averageDst = this->calculateAveragePalmFingerDistance(
+                    this->getHandPointList(contourPointList),
+                    this->coreGraph->getCameraStream()->getImageWidth(),
+                    this->coreGraph->getCameraStream()->getImageHeight());
 
 //        LOG( INFO ) << "Point count: " + std::to_string(pointList.size());
         if (averageDst != 0) {

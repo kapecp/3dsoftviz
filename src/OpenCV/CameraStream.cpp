@@ -22,6 +22,14 @@ CameraStream::CameraStream( ) :
 
 CameraStream::~CameraStream() {}
 
+int CameraStream::getImageWidth() {
+    return this->image.cols;
+}
+
+int CameraStream::getImageHeight() {
+    return this->image.rows;
+}
+
 void CameraStream::updateBackgroundImage( cv::Mat cvImg , bool trackHands)
 {
 
