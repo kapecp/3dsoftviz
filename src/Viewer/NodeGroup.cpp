@@ -214,4 +214,48 @@ void NodeGroup::freezeNodePositions()
 	}
 }
 
+void NodeGroup::reorganizeNodesToFormModuleCity()
+{
+//	QMap<qlonglong, osg::ref_ptr<Data::Node> >* nodes;
+//	QMap<qlonglong, osg::ref_ptr<osg::Transform> >* nodeTransforms;
+//	osg::ref_ptr<osg::Group> group;
+	osg::ref_ptr<Data::Node> firstNode;
+	osg::ref_ptr<Data::Node> secondNode;
+	int counter = 0;
+	QMap<qlonglong, osg::ref_ptr<Data::Node>>::iterator i;
+	for ( i = nodes->begin();
+		  i != nodes->end();
+		  ++i ) {
+		++counter;
+
+		if(counter == 1) {
+			firstNode = *i;
+			std::cout << "got first node with id: " << firstNode->getId() << std::endl;
+		}
+		if(counter == 2) {
+			secondNode = *i;
+			std::cout << "got second node with id: " << secondNode->getId() << std::endl;
+			break;
+		}
+
+	}
+	osg::ref_ptr<osg::Transform> firstNodeTransform = nodeTransforms->value(firstNode->getId());
+	//osg::ref_ptr<osg::Transform> secondNodeTransform = nodeTransforms->value(secondNode->getId());
+	std::cout << "got its transform Matrix with this many children : " << firstNodeTransform->getNumChildren() << std::endl;
+	std::cout << "and its parent has this many children : " << firstNodeTransform->getParent(0)->getNumChildren() << std::endl;
+
+	int indexInGroup = group->getChildIndex(firstNodeTransform);
+	group->removeChild(indexInGroup);
+	secondNode->addChild(firstNodeTransform);
+	firstNode->setIgnoreByLayout( true );
+	firstNode->setInModule( true );
+	std::cout << "node: " << firstNode->AbsNode::getName().toStdString() << "was successfully moved" << std::endl;
+	std::cout << "into node: " << secondNode->AbsNode::getName().toStdString() << std::endl;
+}
+
+void NodeGroup::reorganizeNodesToFormModuleGraph()
+{
+
+}
+
 } // namespace Vwr

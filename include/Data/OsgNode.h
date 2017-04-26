@@ -11,6 +11,7 @@
 
 namespace City {
 class Residence;
+class Module;
 }
 
 namespace Data {
@@ -44,18 +45,24 @@ public:
 	static osg::ref_ptr<osg::Drawable> createSquare( const float& scale, osg::StateSet* bbState );
 
 	/**
-	* \fn public setModule
-	* \brief Sets subgraph for drawing modules.
-	* \param module osg subgraph
-	*/
-	void setModule( osg::Node* module );
-
-	/**
 	* \fn public setResidence
 	* \brief Sets subgraph for drawing residence of city.
 	* \param residence osg subgraph
 	*/
 	void setResidence( osg::Node* residence );
+
+	/**
+	* \fn public isInModule
+	* \brief Checks node for nested module nodes.
+	* \return boolean true if node is module
+	*/
+	bool isInModule() { return inModule; }
+
+	/**
+	* \fn public setInModule
+	* \brief Sets bool if node is nested or not.
+	*/
+	void setInModule( bool state ) { inModule = state; }
 
 	/**
 	* \fn public getResidence
@@ -410,7 +417,6 @@ public:
 	static const int INDEX_SQUARE = 1;
 	static const int INDEX_SPHERE = 2;
 	static const int INDEX_RESIDENCE = 3;
-	static const int INDEX_MODULE = 4;
 
 protected:
 	/**
@@ -474,6 +480,12 @@ protected:
 	    *  \brief node interpolation usage
 	    */
 	bool usingInterpolation;
+
+	/**
+		*  bool inModule
+		*  \brief node is part of module node
+		*/
+	bool inModule;
 
 	/**
 	    *  osg::Sphere nested ball

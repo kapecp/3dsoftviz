@@ -12,6 +12,7 @@
 #include <osg/BlendFunc>
 #include <osgText/FadeText>
 #include "City/Residence.h"
+#include "City/Module.h"
 
 #include <QTextStream>
 #include <Shapes/Cuboid.h>
@@ -31,7 +32,6 @@ Data::OsgNode::OsgNode( qlonglong id, QString name, Data::Type* type, Data::Grap
 	insertChild( INDEX_SQUARE, createNodeSquare( this->scale, OsgNode::createStateSet( this->type->getTypeTexture() ) ) , false );
 	insertChild( INDEX_SPHERE, createNodeSphere( this->scale, OsgNode::createStateSet( this->type->getTypeTexture() ) ), false );
 	insertChild( INDEX_RESIDENCE,  createNodeResidence( this->scale ), false );
-	insertChild( INDEX_MODULE,  createNodeModule( this->scale ), false );
 	setValue( graph->getNodeVisual(), true );
 
 	this->square = createNode( this->scale * 4, OsgNode::createStateSet( this->type->getTypeTexture() ) );
@@ -40,6 +40,7 @@ Data::OsgNode::OsgNode( qlonglong id, QString name, Data::Type* type, Data::Grap
 	this->force = osg::Vec3f();
 	this->velocity = osg::Vec3f( 0,0,0 );
 	this->selected = false;
+	this->inModule = false;
 
 	this->usingInterpolation = true;
 
@@ -195,13 +196,6 @@ void Data::OsgNode::setResidence( osg::Node* residence )
 	at->addChild( residence );
 }
 
-void Data::OsgNode::setModule( osg::Node* module )
-{
-	auto at = getChild( INDEX_MODULE )->asTransform()->asPositionAttitudeTransform();
-	at->removeChildren( 0, at->getNumChildren() );
-	at->addChild( module );
-}
-
 osg::Vec3f Data::OsgNode::getCurrentPosition( bool calculateNew, float interpolationSpeed )
 {
 	//zisime aktualnu poziciu uzla v danom okamihu
@@ -314,6 +308,11 @@ void Data::OsgNode::showLabel( bool visible, bool labelsForResidence )
 	auto residence = getResidence();
 	if ( residence ) {
 		residence->showLabels( visible && labelsForResidence );
+	}
+	auto building = getBuilding();
+	if ( building && inModule ) {
+		setValue( INDEX_LABEL, false );
+		building->showLabel( visible && labelsForResidence );
 	}
 }
 
@@ -435,11 +434,6 @@ osg::ref_ptr<osg::Node> Data::OsgNode::createNodeSphere( const float& scaling, o
 }
 
 osg::ref_ptr<osg::Node> Data::OsgNode::createNodeResidence( const float& scale )
-{
-	return new osg::PositionAttitudeTransform();
-}
-
-osg::ref_ptr<osg::Node> Data::OsgNode::createNodeModule( const float& scale )
 {
 	return new osg::PositionAttitudeTransform();
 }

@@ -784,7 +784,6 @@ void CoreGraph::reload( Data::Graph* graph )
 	nodesPosition = currentPos++;
 
 	this->edgesGroup = new Vwr::EdgeGroup( in_edges );
-	//this->edgesGroup = new Vwr::EdgeGroup(in_edges, 10);
 	graphGroup->addChild( edgesGroup->getGroup() );
 	edgesPosition = currentPos++;
 
@@ -793,7 +792,6 @@ void CoreGraph::reload( Data::Graph* graph )
 	qmetaNodesPosition = currentPos++;
 
 	this->qmetaEdgesGroup = new Vwr::EdgeGroup( qmetaEdges );
-	//this->qmetaEdgesGroup = new Vwr::EdgeGroup(qmetaEdges, 10);
 	graphGroup->addChild( qmetaEdgesGroup->getGroup() );
 	qmetaEdgesPosition = currentPos++;
 
@@ -1350,7 +1348,15 @@ void CoreGraph::synchronize()
 
 void CoreGraph::setEdgeLabelsVisible( bool visible )
 {
-	graphGroup->getChild( labelsPosition )->setNodeMask( visible );
+	//changed old code - Illes
+	//graphGroup->getChild( labelsPosition )->setNodeMask( visible );
+
+	QMap<qlonglong, osg::ref_ptr<Data::Edge> >::const_iterator i = in_edges->constBegin();
+
+	while ( i != in_edges->constEnd() ) {
+		( *i )->showLabel( visible );
+		++i;
+	}
 }
 
 void CoreGraph::setNodeLabelsVisible( bool visible )
@@ -1995,6 +2001,21 @@ void CoreGraph::drawAxes()
 osg::Vec3f CoreGraph::getGrafRotTransVec()
 {
 	return graphRotTransf->getMatrix().getTrans();
+}
+
+void CoreGraph::reorganizeNodesForModuleGraph()
+{
+	//this->in_nodes is Vwr::NodeGroup
+	//this->in_nodes->doMagic()
+
+}
+
+void CoreGraph::reorganizeNodesForModuleCity()
+{
+	this->nodesGroup->reorganizeNodesToFormModuleCity();
+	//this->nodesGroup is Vwr::NodeGroup
+	//this->nodesGroup->doMagic()
+
 }
 
 //*****

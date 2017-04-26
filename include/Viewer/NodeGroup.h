@@ -86,6 +86,20 @@ public:
 		return group;
 	}
 
+	/**
+		 *  \author Autor: Denis Illes
+		 *  \fn public	reorganizeNodesToFormModuleCity
+		 *  \brief Moved certain nodes to correct place for city
+		 */
+	void NodeGroup::reorganizeNodesToFormModuleCity();
+
+	/**
+		 *  \author Autor: Denis Illes
+		 *  \fn public	reorganizeNodesToFormModuleGraph
+		 *  \brief Moved certain nodes to correct place for graph
+		 */
+	void NodeGroup::reorganizeNodesToFormModuleGraph();
+
 private:
 
 	/**
