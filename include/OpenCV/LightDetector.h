@@ -5,6 +5,7 @@
 #include <opencv2/objdetect/objdetect.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 #include <osg/Vec4d>
+#include <OpenCV/TrackedLight.h>
 
 
 namespace OpenCV {
@@ -48,31 +49,21 @@ public:
 
 private:
 
-	cv::Mat												mKernel;
+	cv::Mat													mKernel;
 
-	cv::Mat												mProcessedImage;
+	cv::Mat													mProcessedImage;
 
-	cv::Point2f											mfisheyeCenter;
+	cv::Point2f												mfisheyeCenter;
 
-	double												mFisheyeRadius;
+	float													mFisheyeRadius;
 
-	double												mFisheyeAngle;
+	float													mFisheyeAngle;
 
-	std::vector< std::tuple< cv::Point3d, float, bool > > mLightsProjected;
+	std::vector< OpenCV::TrackedLight >						mLights;
 
-	//std::vector< cv::Point3d >							mLights3D;
+	int														mLightCount;
 
-	std::vector< std::vector< cv::Point > >				mContours;
-
-	//std::vector< cv::Moments >							mMoments;
-
-	std::vector<std::pair< cv::Point2f , float > >		mLights2D;
-
-	//std::vector< cv::Point2f >							mContourCenters;
-
-	//std::vector< float >								mContourRadius;
-
-	int													mLightCount;
+	std::vector< std::vector< cv::Point > >					mContours;
 };
 }
 

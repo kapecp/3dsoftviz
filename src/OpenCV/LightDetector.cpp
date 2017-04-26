@@ -13,6 +13,8 @@
 OpenCV::LightDetector::LightDetector()
 {
 	mKernel = cv::getStructuringElement( cv::MORPH_ELLIPSE, cv::Size( 5, 5 ) );
+	for (int i = 0; i < 8; i++)
+		mLights.push_back( TrackedLight() );
 }
 
 OpenCV::LightDetector::~LightDetector()
@@ -40,7 +42,7 @@ void OpenCV::LightDetector::DrawBoundary( cv::Mat src )
 {
 	int circles = 5;
 	for ( int i = 1; i <= circles; ++i ) {
-		cv::circle( src, this->mfisheyeCenter, (int) easeOutQuad( i, 0, this->mFisheyeRadius, circles ) , CV_RGB( 255,255,255 ) );
+		cv::circle( src, this->mfisheyeCenter, (int) easeOutQuad( i, 0, static_cast< float >( this->mFisheyeRadius ), circles ) , CV_RGB( 255,255,255 ) );
 	}
 }
 
@@ -57,7 +59,7 @@ void OpenCV::LightDetector::DrawLightContours( cv::Mat src )
 void OpenCV::LightDetector::DrawLightCircles( cv::Mat src )
 {
 	for ( size_t i = 0; i< mLightCount; i++ ) {
-		cv::circle(src, mLights2D[i].first, (int) mLights2D[i].second , CV_RGB( 0, 255, 0 ) );
+		cv::circle(src, mLights[i].framePosition, (int) mLights[i].radius , CV_RGB( 0, 255, 0 ) );
 	}
 }
 
@@ -68,10 +70,12 @@ void OpenCV::LightDetector::setFisheyeCenter( cv::Point center )
 
 void OpenCV::LightDetector::setFisheyeRadius( int radius )
 {
-	mFisheyeRadius = static_cast< double >( radius );
+	mFisheyeRadius = static_cast< float >( radius );
 }
 
-bool Light2DRadiusCompare ( std::pair< cv::Point2f, float > i, std::pair< cv::Point2f, float > j ) { return ( i.second > j.second ); }
+bool Light2DRadiusCompare ( OpenCV::TrackedLight i, OpenCV::TrackedLight j ) {
+	return ( i.radius > j.radius );
+}
 
 void OpenCV::LightDetector::ProcessFrame( cv::Mat& frame )
 {
@@ -86,22 +90,15 @@ void OpenCV::LightDetector::ProcessFrame( cv::Mat& frame )
 
 	// reset data
 	mContours.clear();
-	//mLights3D.clear();
-	//mMoments.clear();
-	mLights2D.clear();
-	//mContourCenters.clear();
-	//mContourRadius.clear();
+	mLightCount = 0;
 
 	// find separate contours
 	cv::findContours( frame.clone(), mContours, cv::RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE, cv::Point( 0, 0 ) );
-	mLightCount = 0;
 
 	for ( size_t i = 0; i < mContours.size(); ++i ) {
-
-		mLights2D.push_back( std::pair< cv::Point2f, float >() );
-		cv::minEnclosingCircle(mContours[i], mLights2D[i].first , mLights2D[i].second);
-		mLightCount++;
+		cv::minEnclosingCircle(mContours[i], mLights[i].framePosition, mLights[i].radius );
 		//qDebug() << "center x " << mLights2D[i].first.x << " y " << mLights2D[i].first.y << " r " << mLights2D[i].second;
+		mLightCount++;
 	}
 
 	// only 8 lights
@@ -111,24 +108,15 @@ void OpenCV::LightDetector::ProcessFrame( cv::Mat& frame )
 	//qDebug() << "count " << mLightCount;
 	//qDebug() << "=======";
 
-	std::sort ( mLights2D.begin(), mLights2D.end(), Light2DRadiusCompare);
+	std::sort ( mLights.begin(), mLights.end(), Light2DRadiusCompare);
 
-
-/*
-	cv::Point2d offset;
+	cv::Point2f center = static_cast< cv::Point2f > (mfisheyeCenter);
 	//  Get the mass centers:
-	for ( uint i = 0; i < mContours.size(); i++ ) {
-		//mc[i] = Point2d(mu[i].m10 / mu[i].m00, mu[i].m01 / mu[i].m00);
-		mContourCenters.push_back( cv::Point2d( mMoments[i].m10 / mMoments[i].m00, mMoments[i].m01 / mMoments[i].m00 ) );
-		offset = mContourCenters[i] - mfisheyeCenter;
-		offset.x /= mFisheyeRadius;
-		offset.y /= mFisheyeRadius;
-		mLights3D.push_back( cv::Point3d( offset.x, offset.y, ( 1.0 - ( offset.x * offset.x ) - ( offset.y * offset.y ) ) ) );
-	}*/
-
-	//printf("radius %d\n", shot_radius);
-
-	//LigthEstimation_ProjectLights(mc, est_lights, Point(shot_center_x, shot_center_y), shot_radius);
+	for ( size_t i = 0; i < 8; i++ ) {
+		mLights[i].MapToHemisphere( center, mFisheyeRadius );
+		mLights[i].active = (i < mLightCount);
+		//qDebug() << "center x " << mLights[i].hemispherePosition.x() << " y " << mLights[i].hemispherePosition.y() << " z " << mLights[i].hemispherePosition.z() << " r " << mLights[i].radius;
+	}
 }
 
 osg::Vec4d OpenCV::LightDetector::getLight( int index )
