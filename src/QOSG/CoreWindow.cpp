@@ -560,10 +560,10 @@ void CoreWindow::createActions()
 //	-------------------------------------------------------------------------------------------------------------------------------------------------------
 //	-------------------------------------------------------------------------------------------------------------------------------------------------------
 	chb_dragger_scale = new QCheckBox( "Dragger_scale" );
-	connect( chb_dragger_scale, SIGNAL( clicked( bool ) ), this, SLOT( toggleDragger( bool ) ) );
+    connect( chb_dragger_scale, SIGNAL( clicked( bool ) ), this, SLOT( toggleDraggerScale( bool ) ) );
 
 	chb_dragger_rotation = new QCheckBox( "Dragger_rotation" );
-	connect( chb_dragger_rotation, SIGNAL( clicked( bool ) ), this, SLOT( toggleDragger( bool ) ) );
+    connect( chb_dragger_rotation, SIGNAL( clicked( bool ) ), this, SLOT( toggleDraggerRotation( bool ) ) );
 
 	b_start_server = new QPushButton();
 	b_start_server->setText( "Host session" );
@@ -3989,13 +3989,28 @@ void CoreWindow::startLeapAR()
 }
 #endif
 
-void CoreWindow::toggleDragger( bool set )
+void CoreWindow::toggleDraggerRotation( bool set )
 {
+    if (chb_dragger_rotation->isChecked()){
+            coreGraph->toggleDragger( 0, false);
+            coreGraph->toggleDragger( 1, chb_dragger_rotation->isChecked() );
+            chb_dragger_scale->setChecked(false);
+    } else {
+        coreGraph->toggleDragger( 0, false);
+        coreGraph->toggleDragger( 1, false);
+    }
+}
 
-	coreGraph->toggleDragger( 0, chb_dragger_scale->isChecked() );
-
-	coreGraph->toggleDragger( 1, chb_dragger_rotation->isChecked() );
-
+void CoreWindow::toggleDraggerScale( bool set )
+{
+    if (chb_dragger_scale->isChecked()){
+        coreGraph->toggleDragger( 0, chb_dragger_scale->isChecked() );
+        coreGraph->toggleDragger( 1, false );
+        chb_dragger_rotation->setChecked(false);
+    } else {
+        coreGraph->toggleDragger( 0, false);
+        coreGraph->toggleDragger( 1, false);
+    }
 }
 
 void CoreWindow::toggleSpyWatch()

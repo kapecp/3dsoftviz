@@ -15,6 +15,9 @@
 
 #include <osgManipulator/TabBoxDragger>
 #include <osgManipulator/TrackballDragger>
+#include <osgManipulator/ScaleAxisDragger>
+#include <osgManipulator/Command>
+#include <osgManipulator/Constraint>
 
 #include "Network/Server.h"
 #include "Data/Graph.h"
@@ -43,6 +46,37 @@
 #include <osgShadow/SoftShadowMap>
 
 #include <easylogging++.h>
+
+
+class PlaneConstraint : public osgManipulator::Constraint
+{
+public:
+        PlaneConstraint() {}
+
+        virtual bool constrain(osgManipulator::TranslateInLineCommand& command) const
+        {
+            return true;
+        }
+        virtual bool constrain(osgManipulator::TranslateInPlaneCommand& command) const
+        {
+            //command.setTranslation(osg::Vec3(0.0f,0.0f,0.0f));
+            return true;
+        }
+        virtual bool constrain(osgManipulator::Scale1DCommand& command) const
+        {
+            //command.setScale(1.0f);
+            return true;
+        }
+        virtual bool constrain(osgManipulator::Scale2DCommand& command) const
+        {
+            //command.setScale(osg::Vec2d(1.0,1.0));
+            return true;
+        }
+        virtual bool constrain(osgManipulator::ScaleUniformCommand& command) const
+        {
+            return true;
+        }
+};
 
 namespace Vwr {
 
@@ -677,8 +711,9 @@ Vwr::CoreGraph::CoreGraph( Data::Graph* graph, osg::ref_ptr<osg::Camera> camera 
 	//    dragger->setPickCylinderRadius(0.05f);
 	//    dragger->setConeHeight(0.2f);
 
-
-	manipulator_scale = new osgManipulator::TabBoxDragger();
+    manipulator_scale = new osgManipulator::TabBoxDragger();
+    PlaneConstraint *planeConstrain = new PlaneConstraint();
+    manipulator_scale->addConstraint(planeConstrain);
 	manipulator_rotation = new osgManipulator::TrackballDragger();
 
 	manipulator_scale->setupDefaultGeometry();
@@ -687,15 +722,13 @@ Vwr::CoreGraph::CoreGraph( Data::Graph* graph, osg::ref_ptr<osg::Camera> camera 
 	root->addChild(manipulator_scale);
 	root->addChild(manipulator_rotation);
 
-	manipulator_scale->addTransformUpdating(graphRotTransf);
-	manipulator_rotation->addTransformUpdating(graphRotTransf);
+    manipulator_scale->addTransformUpdating(graphRotTransf);
+    manipulator_rotation->addTransformUpdating(graphRotTransf);
 
 	float scale = graphRotTransf->getBound().radius() * 2.0f;
 	osg::Matrix mat_rot = osg::Matrix::scale(scale, scale, scale) * osg::Matrix::translate(graphRotTransf->getBound().center());
-	scale = graphRotTransf->getBound().radius() * 2.0f;
-	osg::Matrix mat_scale = osg::Matrix::scale(scale, scale, scale) * osg::Matrix::translate(graphRotTransf->getBound().center());
 
-	manipulator_scale->setMatrix(mat_scale);
+    manipulator_scale->setMatrix(mat_rot);
 	manipulator_rotation->setMatrix(mat_rot);
 
 	manipulator_scale->setHandleEvents(false);
@@ -780,7 +813,14 @@ void CoreGraph::toggleDragger( int dragger_no, bool set )
 	} else
 
 	if ( dragger_no == 1 ) {
-
+        root->removeChild(manipulator_rotation);
+        manipulator_rotation = new osgManipulator::TrackballDragger();
+        manipulator_rotation->setupDefaultGeometry();
+        root->addChild(manipulator_rotation);
+        manipulator_rotation->addTransformUpdating(graphRotTransf);
+        float scale = graphRotTransf->getBound().radius() * 1.3f;
+        osg::Matrix mat_rot = osg::Matrix::scale(scale, scale, scale) * osg::Matrix::translate(graphRotTransf->getBound().center());
+        manipulator_rotation->setMatrix(mat_rot);
 		manipulator_rotation->setHandleEvents(set);
 		manipulator_rotation->setNodeMask(set? 0xffffffff : 0x0);
 
