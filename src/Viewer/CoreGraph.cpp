@@ -665,7 +665,7 @@ Vwr::CoreGraph::CoreGraph( Data::Graph* graph, osg::ref_ptr<osg::Camera> camera 
 	markerGroup = new osg::Group();
 	root->addChild( markerGroup );
 
-	osg::ref_ptr<osg::AutoTransform> marker = getSphere( 0, osg::Vec3( 0,0,1 ), 100.0, osg::Vec4( 1.0, 0.0, 0.0, 1.0 ) );
+	osg::ref_ptr<osg::AutoTransform> marker = getSphere( 0, osg::Vec3( 0,0,1000 ), 100.0, osg::Vec4( 1.0, 0.0, 0.0, 1.0 ) );
 	markerGroup->addChild( marker );
 
 	//jurik
@@ -673,8 +673,9 @@ Vwr::CoreGraph::CoreGraph( Data::Graph* graph, osg::ref_ptr<osg::Camera> camera 
 	osg::Light* pLight = new osg::Light;
 	pLight->setLightNum( ++uniqueLightNumber );
 	pLight->setDiffuse( osg::Vec4( 1.0f, 1.0f, 1.0f, 1.0f ) );
-	pLight->setPosition( osg::Vec4( 0,0,1,0 ) );		// w = 0 directional light
+	pLight->setPosition( osg::Vec4( 0.0, 0.0, 1000.0, 1.0 ) );		// w = 0 directional light
 	// w = 1 point light (position)
+
 	// light source
 	osg::LightSource* pLightSource = new osg::LightSource;
 	pLightSource->setLight( pLight );
@@ -2030,6 +2031,23 @@ osg::Vec3f CoreGraph::getGrafRotTransVec()
 }
 
 //*****
+
+void CoreGraph::turnOnCustomLights() {
+
+	getScene()->getOrCreateStateSet()->setMode( GL_LIGHT0,osg::StateAttribute::OFF );
+
+	for ( int i = 1; i < 8 && i <= uniqueLightNumber; ++i ) {
+		getScene()->getOrCreateStateSet()->setMode( GL_LIGHT0 + i ,osg::StateAttribute::ON );
+	}
+}
+
+void CoreGraph::turnOffCustomLights() {
+	getScene()->getOrCreateStateSet()->setMode( GL_LIGHT0,osg::StateAttribute::ON );
+
+	for ( int i = 1; i < 8 && i <= uniqueLightNumber; ++i ) {
+		getScene()->getOrCreateStateSet()->setMode( GL_LIGHT0 + i ,osg::StateAttribute::OFF );
+	}
+}
 
 void CoreGraph::setLightCoords( osg::Vec4d coords )
 {

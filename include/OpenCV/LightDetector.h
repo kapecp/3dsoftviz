@@ -28,9 +28,11 @@ public:
 
 	void DrawLightContours( cv::Mat src );
 
+	void DrawLightCircles( cv::Mat src );
+
 	void Threshold( int, void* );
 
-	void setFisheyeCenter( cv::Point2d );
+	void setFisheyeCenter( cv::Point );
 
 	void setFisheyeRadius( int );
 
@@ -46,23 +48,31 @@ public:
 
 private:
 
-	cv::Mat                                 mKernel;
+	cv::Mat												mKernel;
 
-	cv::Mat                                 mProcessedImage;
+	cv::Mat												mProcessedImage;
 
-	cv::Point2d                               mfisheyeCenter;
+	cv::Point2f											mfisheyeCenter;
 
-	double                                     mFisheyeRadius;
+	double												mFisheyeRadius;
 
-	double									mFisheyeDisrotion;
+	double												mFisheyeAngle;
 
-	std::vector< cv::Point3d >              mLights3D;
+	std::vector< std::tuple< cv::Point3d, float, bool > > mLightsProjected;
 
-	std::vector< std::vector< cv::Point > > mContours;
+	//std::vector< cv::Point3d >							mLights3D;
 
-	std::vector< cv::Moments >              mMoments;
+	std::vector< std::vector< cv::Point > >				mContours;
 
-	std::vector< cv::Point2d >                mContourCenters;
+	//std::vector< cv::Moments >							mMoments;
+
+	std::vector<std::pair< cv::Point2f , float > >		mLights2D;
+
+	//std::vector< cv::Point2f >							mContourCenters;
+
+	//std::vector< float >								mContourRadius;
+
+	int													mLightCount;
 };
 }
 

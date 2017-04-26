@@ -42,15 +42,15 @@ void QOpenCV::LightDetectionThread::run()
 	mCapVideo->setCaptureProperties( 640, 480 );
 	mCapVideo->setAutoExposure( 0.0 );
 
-	qDebug() << "camera height " << mCapVideoHeight;
-	qDebug() << "camera width " << mCapVideoWidth;
-
 	// initialize Fisheye lens properties
 	mCapVideoWidth = mCapVideo->getWidth();
 	mCapVideoHeight = mCapVideo->getHeight();
 	mFishEyeCenterX = mCapVideoWidth / 2;
 	mFishEyeCenterY = mCapVideoHeight / 2;
 	mFishEyeRadius = mCapVideoWidth / 2;
+
+	qDebug() << "camera height " << mCapVideoHeight;
+	qDebug() << "camera width " << mCapVideoWidth;
 
 	// initialize LightDetector
 	mLightDetector->setFisheyeCenter( cv::Point( mFishEyeCenterX , mFishEyeCenterY ) );
@@ -59,24 +59,28 @@ void QOpenCV::LightDetectionThread::run()
 	while ( !mCancel ) {
 		// get image from camera
 		image = mCapVideo->queryFrame();
+
 		// mirror image
 		cv::flip( image, image, 1 );
-		//
 		cv::cvtColor( image, imageGray, CV_BGR2GRAY );
-		cv::cvtColor( image, image, CV_BGR2RGB );
-		//
 		mLightDetector->ProcessFrame( imageGray );
-		mLightDetector->DrawBoundary( image );
-		mLightDetector->DrawLightContours( image );
 
+		//
 		sendLightCoords( mLightDetector->getLight( 0 ) );
 		// show image
 		if ( mSendImgEnabled && !image.empty() ) {
+
+			// camera
 			if ( !mShowProcessing ) {
 				if ( image.data ) {
+					cv::cvtColor( image, image, CV_BGR2RGB );
+					mLightDetector->DrawBoundary( image );
+					mLightDetector->DrawLightContours( image );
+					mLightDetector->DrawLightCircles( image );
 					emit pushImage( image.clone() );
 				}
 			}
+			// processing
 			else {
 				if ( imageGray.data ) {
 					// must convert to RGB
@@ -127,7 +131,7 @@ void QOpenCV::LightDetectionThread::setFishEyeCenterX( int offset )
 	//qDebug() << "X offset = " << offset;
 	mFishEyeCenterX = mCapVideoWidth * offset / 100;
 	if ( mLightDetector != nullptr ) {
-		mLightDetector->setFisheyeCenter( cv::Point2d( static_cast<double>( mFishEyeCenterX ), static_cast<double>( mFishEyeCenterY ) ) );
+		mLightDetector->setFisheyeCenter( cv::Point( mFishEyeCenterX, mFishEyeCenterY ) );
 	}
 }
 
@@ -135,7 +139,7 @@ void QOpenCV::LightDetectionThread::setFishEyeCenterY( int offset )
 {
 	mFishEyeCenterY = mCapVideoHeight * offset / 100;
 	if ( mLightDetector != nullptr ) {
-		mLightDetector->setFisheyeCenter( cv::Point2d( static_cast<double>( mFishEyeCenterX ), static_cast<double>( mFishEyeCenterY ) ) );
+		mLightDetector->setFisheyeCenter( cv::Point( mFishEyeCenterX, mFishEyeCenterY ) );
 	}
 }
 

@@ -316,6 +316,12 @@ public:
 	osg::Vec3f getGrafRotTransVec();
 
 
+	// Karas
+
+	void turnOnCustomLights();
+	void turnOffCustomLights();
+
+
 public slots:
 
 	/**

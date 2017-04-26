@@ -5358,7 +5358,17 @@ void CoreWindow::createEvolutionLuaGraph()
 void CoreWindow::lightClicked()
 {
 	// chb_light is checked
-	if ( chb_light->isChecked() ) {
+	if ( chb_shadow->isChecked() ) {
+
+		this->coreGraph->turnOnCustomLights();
+	}
+	else {
+
+		this->coreGraph->turnOffCustomLights();
+	}
+
+	// chb_light is checked
+	/*if ( chb_light->isChecked() ) {
 
 		this->coreGraph->getScene()->getOrCreateStateSet()->setMode( GL_LIGHT0,osg::StateAttribute::OFF );
 		this->coreGraph->getScene()->getOrCreateStateSet()->setMode( GL_LIGHT1,osg::StateAttribute::ON );
@@ -5367,7 +5377,7 @@ void CoreWindow::lightClicked()
 
 		this->coreGraph->getScene()->getOrCreateStateSet()->setMode( GL_LIGHT0,osg::StateAttribute::ON );
 		this->coreGraph->getScene()->getOrCreateStateSet()->setMode( GL_LIGHT1,osg::StateAttribute::OFF );
-	}
+	}*/
 }
 
 void CoreWindow::shadowClicked()
