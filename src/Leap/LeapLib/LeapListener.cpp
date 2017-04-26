@@ -58,7 +58,13 @@ void Leap::LeapListener::onImages( const Controller& controller )
 	if ( image.data() == NULL ) {
 		return;
 	}
-    leapManager->updateCoreGraphBackground( image.data() );
+
+    Frame frame = controller.frame();
+    HandList hands = frame.hands();
+    float depth = this->leapManager->getHandsDepthInformation(hands[0].palmPosition().y, hands[1].palmPosition().y);
+
+    this->leapManager->updateCoreGraphBackground( image.data(), depth);
+
 }
 
 void Leap::LeapListener::onFrame( const Controller& controller )
