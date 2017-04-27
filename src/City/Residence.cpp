@@ -92,6 +92,7 @@ void Residence::refresh()
 	Layout::LayoutAlgorithms::layoutInsideRegion( attributesBuildings.empty() ? zeroBoudingBox : attributesBuildings.first()->getBoundingBox(), attributesBuildings.count(), RESIDENCE_SECTOR_HEIGHT, BUILDING_SPACING, &attrLayouts, &attrRegion );
 	for ( int i = 0; i < attributesBuildings.count(); ++i ) {
 		auto& b = attributesBuildings[i];
+		std::cout << "AttrNode[" << i << "] has position: (" << attrLayouts[i].x() << ", " << attrLayouts[i].y() << ", " << attrLayouts[i].z() << ")" << std::endl;
 		b->setPosition( attrLayouts[i] );
 		b->refresh();
 		attributesBuildingsNode->addChild( b );
@@ -113,32 +114,32 @@ void Residence::refresh()
 	gettersSettersBuildingsNode->addChild( new Shapes::Cuboid( getSetPlane ) );
 
 	osg::BoundingBox internalRegion = getSetRegion;
-	QList<Layout::ElementLayout> internalLayouts;
-	Layout::LayoutAlgorithms::layoutAroundRegion( internalMethodsBuildings.empty() ? zeroBoudingBox : internalMethodsBuildings.first()->getBoundingBox(), internalMethodsBuildings.count(), getSetRegion, BUILDING_SPACING, &internalLayouts, &internalRegion );
-	for ( int i = 0; i < internalMethodsBuildings.count(); ++i ) {
-		auto& b = internalMethodsBuildings[i];
-		internalLayouts[i].position.z() += RESIDENCE_SECTOR_HEIGHT;
-		b->setPosition( internalLayouts[i].position );
-		b->setAttitude( osg::Quat( internalLayouts[i].yawRotation, osg::Vec3( 0.0f, 0.0f, 1.0f ) ) );
-		b->refresh();
-		internalMethodsBuildingsNode->addChild( b );
-	}
-	osg::BoundingBox internalPlane( internalRegion.xMin(), internalRegion.yMin(), 0, internalRegion.xMax(), internalRegion.yMax(), RESIDENCE_SECTOR_HEIGHT );
-	internalMethodsBuildingsNode->addChild( new Shapes::Cuboid( internalPlane ) );
+//	QList<Layout::ElementLayout> internalLayouts;
+//	Layout::LayoutAlgorithms::layoutAroundRegion( internalMethodsBuildings.empty() ? zeroBoudingBox : internalMethodsBuildings.first()->getBoundingBox(), internalMethodsBuildings.count(), getSetRegion, BUILDING_SPACING, &internalLayouts, &internalRegion );
+//	for ( int i = 0; i < internalMethodsBuildings.count(); ++i ) {
+//		auto& b = internalMethodsBuildings[i];
+//		internalLayouts[i].position.z() += RESIDENCE_SECTOR_HEIGHT;
+//		b->setPosition( internalLayouts[i].position );
+//		b->setAttitude( osg::Quat( internalLayouts[i].yawRotation, osg::Vec3( 0.0f, 0.0f, 1.0f ) ) );
+//		b->refresh();
+//		internalMethodsBuildingsNode->addChild( b );
+//	}
+//	osg::BoundingBox internalPlane( internalRegion.xMin(), internalRegion.yMin(), 0, internalRegion.xMax(), internalRegion.yMax(), RESIDENCE_SECTOR_HEIGHT );
+//	internalMethodsBuildingsNode->addChild( new Shapes::Cuboid( internalPlane ) );
 
 	osg::BoundingBox interfaceRegion = internalRegion;
-	QList<Layout::ElementLayout> interfaceLayouts;
-	Layout::LayoutAlgorithms::layoutAroundRegion( interfaceMethodsBuildings.empty() ? zeroBoudingBox : interfaceMethodsBuildings.first()->getBoundingBox(), interfaceMethodsBuildings.count(), internalRegion, BUILDING_SPACING, &interfaceLayouts, &interfaceRegion );
-	for ( int i = 0; i < interfaceMethodsBuildings.count(); ++i ) {
-		auto& b = interfaceMethodsBuildings[i];
-		interfaceLayouts[i].position.z() += RESIDENCE_SECTOR_HEIGHT;
-		b->setPosition( interfaceLayouts[i].position );
-		b->setAttitude( osg::Quat( interfaceLayouts[i].yawRotation, osg::Vec3( 0.0f, 0.0f, 1.0f ) ) );
-		b->refresh();
-		interfaceMethodsBuildingsNode->addChild( b );
-	}
-	osg::BoundingBox interfacePlane( interfaceRegion.xMin(), interfaceRegion.yMin(), 0, interfaceRegion.xMax(), interfaceRegion.yMax(), RESIDENCE_SECTOR_HEIGHT );
-	interfaceMethodsBuildingsNode->addChild( new Shapes::Cuboid( interfacePlane ) );
+//	QList<Layout::ElementLayout> interfaceLayouts;
+//	Layout::LayoutAlgorithms::layoutAroundRegion( interfaceMethodsBuildings.empty() ? zeroBoudingBox : interfaceMethodsBuildings.first()->getBoundingBox(), interfaceMethodsBuildings.count(), internalRegion, BUILDING_SPACING, &interfaceLayouts, &interfaceRegion );
+//	for ( int i = 0; i < interfaceMethodsBuildings.count(); ++i ) {
+//		auto& b = interfaceMethodsBuildings[i];
+//		interfaceLayouts[i].position.z() += RESIDENCE_SECTOR_HEIGHT;
+//		b->setPosition( interfaceLayouts[i].position );
+//		b->setAttitude( osg::Quat( interfaceLayouts[i].yawRotation, osg::Vec3( 0.0f, 0.0f, 1.0f ) ) );
+//		b->refresh();
+//		interfaceMethodsBuildingsNode->addChild( b );
+//	}
+//	osg::BoundingBox interfacePlane( interfaceRegion.xMin(), interfaceRegion.yMin(), 0, interfaceRegion.xMax(), interfaceRegion.yMax(), RESIDENCE_SECTOR_HEIGHT );
+//	interfaceMethodsBuildingsNode->addChild( new Shapes::Cuboid( interfacePlane ) );
 
 	const auto offset = interfaceRegion.center();
 	float residenceSectorOffset = 0;
@@ -150,5 +151,6 @@ void Residence::refresh()
 	residenceSectorOffset += RESIDENCE_SECTOR_HEIGHT;
 	attributesBuildingsNode->setPosition( osg::Vec3( -offset.x(), -offset.y(), residenceSectorOffset ) );
 	residenceSectorOffset += RESIDENCE_SECTOR_HEIGHT;
+
 }
 }

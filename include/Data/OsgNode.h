@@ -65,6 +65,27 @@ public:
 	void setInModule( bool state ) { inModule = state; }
 
 	/**
+	* \fn public getModule
+	* \brief Gets subgraph for drawing module of city.
+	* \return osg::ref_ptr<> of module osg subgraph
+	*/
+	City::Module* getModule();
+
+	/**
+	* \fn public setModule
+	* \brief Sets subgraph for drawing module of city.
+	* \param module osg subgraph
+	*/
+	void setModule( City::Module* module );
+
+	/**
+	* \fn public getResidenceAsPAT
+	* \brief Gets subgraph for drawing residence of city.
+	* \return osg::ref_ptr<PAT> of residence osg subgraph
+	*/
+	osg::ref_ptr<osg::PositionAttitudeTransform> getResidenceAsPAT();
+
+	/**
 	* \fn public getResidence
 	* \brief Gets subgraph for drawing residence of city.
 	* \return osg::ref_ptr of residence osg subgraph

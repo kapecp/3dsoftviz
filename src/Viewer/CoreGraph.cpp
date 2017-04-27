@@ -22,6 +22,12 @@
 #include "Clustering/Figures/Cube.h"
 #include "Clustering/Figures/Sphere.h"
 
+//will delete soon
+#include "Layout/LayoutAlgorithms.h"
+#include <Shapes/Cuboid.h>
+//end
+#include "City/Module.h"
+
 #include "Util/ApplicationConfig.h"
 
 #ifdef OPENCV_FOUND
@@ -2012,9 +2018,144 @@ void CoreGraph::reorganizeNodesForModuleGraph()
 
 void CoreGraph::reorganizeNodesForModuleCity()
 {
-	this->nodesGroup->reorganizeNodesToFormModuleCity();
-	//this->nodesGroup is Vwr::NodeGroup
-	//this->nodesGroup->doMagic()
+	osg::ref_ptr<osg::Group> graphNodesGroup = this->nodesGroup->getGroup();
+	QMap<qlonglong, osg::ref_ptr<Data::Node> >* graphNodes = this->graph->getNodes();
+
+	Lua::LuaGraph* luaGraph = Lua::LuaGraph::getInstance();
+
+
+	//iterate through all LuaNodes and search for "module" type node
+	QMap<qlonglong, Lua::LuaNode*>::iterator node_iter;
+	for ( node_iter = luaGraph->getNodes()->begin();
+		  node_iter != luaGraph->getNodes()->end();
+		  ++node_iter ) {
+
+		if(node_iter.value()->getParams().getValue()["type"] == "module") {
+			auto moduleGraphNode = graphNodes->value( node_iter.key() );
+			osg::ref_ptr<City::Module> cityModulePAT = new City::Module();
+
+			//get and iterate over every edge where SRC or DST is moduleNode
+			QMap<qlonglong, osg::ref_ptr<Data::Edge> >* moduleEdges = moduleGraphNode->getEdges();
+
+			QMap<qlonglong, osg::ref_ptr<Data::Edge> >::iterator edge_iter;
+			for ( edge_iter = moduleEdges->begin();
+				  edge_iter != moduleEdges->end();
+				  ++edge_iter ) {
+				auto moduleGraphEdge = edge_iter.value();
+
+				if(moduleGraphEdge->getSrcNode() == moduleGraphNode && moduleGraphEdge->AbsEdge::getName() == "declares") {
+					//funcNode should be type "function" or "global function"
+					auto funcGraphNode = moduleGraphEdge->getDstNode();
+					cityModulePAT->addFunctionNode(funcGraphNode);
+
+					//get parent PAT for funcNode and move it from nodesGroup to be one of moduleNode's child
+					auto funcGraphNodePAT = cityModulePAT->getNodeParentPAT(funcGraphNode);
+					graphNodesGroup->removeChild(funcGraphNodePAT);
+
+					//set attributes for FRA and city layout
+					funcGraphNode->setIgnoreByLayout( true );
+					funcGraphNode->setInModule( true );
+
+				}
+
+				if(moduleGraphEdge->getSrcNode() == moduleGraphNode && moduleGraphEdge->AbsEdge::getName() == "provides") {
+					//intrfNode should be type "interface"
+					auto intrfGraphNode = moduleGraphEdge->getDstNode();
+					cityModulePAT->addInterfaceNode(intrfGraphNode);
+
+					//get parent PAT for intrfNode and move it from nodesGroup to be one of moduleNode's child
+					auto intrfGraphNodePAT = cityModulePAT->getNodeParentPAT(intrfGraphNode);
+					graphNodesGroup->removeChild(intrfGraphNodePAT);
+
+					//set attributes for FRA and city layout
+					intrfGraphNode->setIgnoreByLayout( true );
+					intrfGraphNode->setInModule( true );
+
+				}
+
+				if(moduleGraphEdge->getSrcNode() == moduleGraphNode && moduleGraphEdge->AbsEdge::getName() == "initializes") {
+					//funcNode should be type "local variable" or "global variable"
+					auto varGraphNode = moduleGraphEdge->getDstNode();
+					cityModulePAT->addVariableNode(varGraphNode);
+
+					//get parent PAT for varNode and move it from nodesGroup to be one of moduleNode's child
+					auto varGraphNodePAT = cityModulePAT->getNodeParentPAT(varGraphNode);
+					graphNodesGroup->removeChild(varGraphNodePAT);
+
+					//set attributes for FRA and city layout
+					varGraphNode->setIgnoreByLayout( true );
+					varGraphNode->setInModule( true );
+
+				}
+
+			}
+
+
+
+			//std::cout << "ModuleNode: " << moduleNode->AbsNode::getName().toStdString() << std::endl;
+			//std::cout << "  has this many function children: " << functionNodeIds.length() << std::endl;
+
+			//setNodePositionsForModuleCity(moduleNodeId, functionNodeIds, variableNodeIds, otherNodeIds, interfaceNodeIds);
+
+			moduleGraphNode->setModule(cityModulePAT);
+			cityModulePAT->refresh();
+
+
+		}
+	}
+
+}
+
+void CoreGraph::setNodePositionsForModuleCity( qlonglong moduleNodeId, QList<qlonglong> functionNodeIds, QList<qlonglong> variableNodeIds, QList<qlonglong> otherNodeIds, QList<qlonglong> interfaceNodeIds )
+{
+	if( functionNodeIds.empty() ||  variableNodeIds.isEmpty()) {
+		return;
+	}
+	static const osg::BoundingBox zeroBoudingBox( 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f );
+
+	const float RESIDENCE_SECTOR_HEIGHT = 3.5f;
+	const float BUILDING_SPACING = 0.5f;
+
+	QMap<qlonglong, osg::ref_ptr<Data::Node> >* graphNodes = this->graph->getNodes();
+	QMap<qlonglong, osg::ref_ptr<osg::Transform> >* graphNodeTransforms = this->nodesGroup->getNodeTransforms();
+	osg::ref_ptr<Data::Node> moduleNode = graphNodes->value(moduleNodeId);
+
+	auto firstFuncNode = graphNodes->value(functionNodeIds.first());
+	auto firstFuncBuilding = firstFuncNode->getBuilding();
+	int indexInModuleNode;
+
+	osg::BoundingBox funcRegion;
+	QList<osg::Vec3> funcLayouts;
+
+	Layout::LayoutAlgorithms::layoutInsideRegion( functionNodeIds.empty() ? zeroBoudingBox : firstFuncBuilding->getBoundingBox(), functionNodeIds.count(), RESIDENCE_SECTOR_HEIGHT, BUILDING_SPACING, &funcLayouts, &funcRegion );
+	for ( int i = 0; i < functionNodeIds.count(); ++i ) {
+		std::cout << "FuncNode[" << i << "] has position: (" << funcLayouts[i].x() << ", " << funcLayouts[i].y() << ", " << funcLayouts[i].z() << ")" << std::endl;
+		auto funcNodeTransform = graphNodeTransforms->value(graphNodes->value(functionNodeIds[i])->getId())->asTransform()->asPositionAttitudeTransform();
+		funcNodeTransform->setPosition(funcLayouts[i]);
+	}
+
+	auto firstVarNode = graphNodes->value(variableNodeIds.first());
+	auto firstVarBuilding = firstVarNode->getBuilding();
+
+	osg::BoundingBox varRegion = funcRegion;
+	QList<Layout::ElementLayout> varLayouts;
+
+	Layout::LayoutAlgorithms::layoutAroundRegion( variableNodeIds.empty() ? zeroBoudingBox : firstVarBuilding->getBoundingBox(), variableNodeIds.count(), funcRegion, BUILDING_SPACING, &varLayouts, &varRegion );
+	for ( int i = 0; i <variableNodeIds.count(); ++i ) {
+		auto varNodeTransform = graphNodeTransforms->value(graphNodes->value(variableNodeIds[i])->getId())->asTransform()->asPositionAttitudeTransform();
+		varNodeTransform->setPosition( varLayouts[i].position + osg::Vec3( 0.0f, 0.0f, RESIDENCE_SECTOR_HEIGHT ) );
+		varNodeTransform->setAttitude( osg::Quat( varLayouts[i].yawRotation, osg::Vec3( 0.0f, 0.0f, 1.0f ) ) );
+		indexInModuleNode = moduleNode->getChildIndex(varNodeTransform);
+//		auto& b = gettersSettersBuildings[i];
+//		getSetLayouts[i].position.z() += RESIDENCE_SECTOR_HEIGHT;
+//		b->setPosition( getSetLayouts[i].position );
+//		b->setAttitude( osg::Quat( getSetLayouts[i].yawRotation, osg::Vec3( 0.0f, 0.0f, 1.0f ) ) );
+//		b->refresh();
+//		gettersSettersBuildingsNode->addChild( b );
+	}
+	osg::BoundingBox varPlane( varRegion.xMin(), varRegion.yMin(), 0, varRegion.xMax(), varRegion.yMax(), RESIDENCE_SECTOR_HEIGHT );
+	moduleNode->getResidenceAsPAT()->insertChild( indexInModuleNode+1, new Shapes::Cuboid( varPlane ) );
+	//osg::Group::insertChild( unsigned int index, Node * child ) The new child node is inserted into the child list before the node at the specified index
 
 }
 

@@ -171,6 +171,26 @@ osg::ref_ptr<osg::Drawable> Data::OsgNode::createSquare( const float& scale, osg
 	return nodeRect;
 }
 
+City::Module* Data::OsgNode::getModule()
+{
+	auto at = getChild( INDEX_RESIDENCE )->asTransform()->asPositionAttitudeTransform();
+	return ( at != nullptr ) ? dynamic_cast<City::Module*>(at->asTransform()->asPositionAttitudeTransform()) : nullptr;
+}
+
+void Data::OsgNode::setModule( City::Module* module )
+{
+	auto building = getBuilding();
+	removeChild( INDEX_RESIDENCE );
+	insertChild( INDEX_RESIDENCE, module, true );
+	setResidence( building );
+}
+
+osg::ref_ptr<osg::PositionAttitudeTransform> Data::OsgNode::getResidenceAsPAT()
+{
+	auto at = getChild( INDEX_RESIDENCE )->asTransform()->asPositionAttitudeTransform();
+	return ( at != nullptr ) ? at->asTransform()->asPositionAttitudeTransform() : nullptr;
+}
+
 City::Residence* Data::OsgNode::getResidence()
 {
 	auto at = getChild( INDEX_RESIDENCE )->asTransform()->asPositionAttitudeTransform();
@@ -309,9 +329,10 @@ void Data::OsgNode::showLabel( bool visible, bool labelsForResidence )
 	if ( residence ) {
 		residence->showLabels( visible && labelsForResidence );
 	}
+	//add something like if getModule() ->  module->showLabels()
 	auto building = getBuilding();
 	if ( building && inModule ) {
-		setValue( INDEX_LABEL, false );
+		setValue( INDEX_LABEL, false );	//must be here, else module will have 2 labels
 		building->showLabel( visible && labelsForResidence );
 	}
 }

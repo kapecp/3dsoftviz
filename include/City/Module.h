@@ -14,36 +14,33 @@ private:
 	osg::ref_ptr<Data::Node> moduleNode;
 
 	QList<osg::ref_ptr<Data::Node>> interfaceNodes;
-	QList<osg::ref_ptr<City::Building>> interfaceBuildings;
-	osg::ref_ptr<osg::PositionAttitudeTransform> interfaceBuildingPAT;
+	osg::ref_ptr<osg::PositionAttitudeTransform> interfacesPAT;
 
 	QList<osg::ref_ptr<Data::Node>> functionNodes;
-	QList<osg::ref_ptr<City::Building>> functionBuildings;
-	osg::ref_ptr<osg::PositionAttitudeTransform> functionBuildingPAT;
+	osg::ref_ptr<osg::PositionAttitudeTransform> functionsPAT;
 
 	QList<osg::ref_ptr<Data::Node>> variableNodes;
-	QList<osg::ref_ptr<City::Building>> variableBuildings;
-	osg::ref_ptr<osg::PositionAttitudeTransform> variableBuildingPAT;
+	osg::ref_ptr<osg::PositionAttitudeTransform> variablesPAT;
 
-	QList<osg::ref_ptr<Data::Node>> otherNodes;
-	QList<osg::ref_ptr<City::Building>> otherBuildings;
-	osg::ref_ptr<osg::PositionAttitudeTransform> otherBuildingPAT;
+	QMap<osg::ref_ptr<Data::Node>, osg::ref_ptr<Data::Node>> otherNodes;
 
 public:
 	Module();
-	void addInterfaceBuilding( osg::ref_ptr<City::Building> interfaceBuilding, osg::ref_ptr<Data::Node> interfaceNode );
-	void addFunctionBuilding( osg::ref_ptr<City::Building> functionBuilding, osg::ref_ptr<Data::Node> functionNode );
-	void addVariableBuilding( osg::ref_ptr<City::Building> variableBuilding, osg::ref_ptr<Data::Node> variableNode );
-	void addOtherBuilding( osg::ref_ptr<City::Building> otherBuilding, osg::ref_ptr<Data::Node> otherNode );
-	osg::ref_ptr<osg::PositionAttitudeTransform> getInterfaceBuildingPAT() { return interfaceBuildingPAT; }
-	osg::ref_ptr<osg::PositionAttitudeTransform> getFunctionBuildingPAT() { return functionBuildingPAT; }
-	osg::ref_ptr<osg::PositionAttitudeTransform> getVariableBuildingPAT() { return variableBuildingPAT; }
-	osg::ref_ptr<osg::PositionAttitudeTransform> getOtherBuildingPAT() { return otherBuildingPAT; }
+	void addInterfaceNode( osg::ref_ptr<Data::Node> interfaceNode );
+	void addFunctionNode( osg::ref_ptr<Data::Node> functionNode );
+	void addVariableNode( osg::ref_ptr<Data::Node> variableNode );
+	void addOtherNode( osg::ref_ptr<Data::Node> parentNode, osg::ref_ptr<Data::Node> otherNode );
+	osg::ref_ptr<osg::PositionAttitudeTransform> getInterfaceBuildingPAT() { return interfacesPAT; }
+	osg::ref_ptr<osg::PositionAttitudeTransform> getFunctionBuildingPAT() { return functionsPAT; }
+	osg::ref_ptr<osg::PositionAttitudeTransform> getVariableBuildingPAT() { return variablesPAT; }
+
+	osg::ref_ptr<osg::PositionAttitudeTransform> getNodeParentPAT( osg::ref_ptr<Data::Node> node );
 
 	void setModuleNode( osg::ref_ptr<Data::Node> moduleNode ) { this->moduleNode = moduleNode; }
 	void showLabels( bool state );
 	void selectAll( bool state );
 	void refresh();
 	void updateNodesPosition();
+
 };
 }
