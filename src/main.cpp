@@ -22,10 +22,16 @@ Q_DECLARE_METATYPE( Qt::MouseButton )
 #include "iostream"
 #include "LuaInterface/LuaInterface.h"
 
+#include <leathers/push>
+#include <leathers/exit-time-destructors>
+#include <leathers/global-constructors>
+
 #include "easylogging++.h"
 // ** FOLLOWING LINE SHOULD BE USED ONCE AND ONLY ONCE IN WHOLE APPLICATION **
 // ** THE BEST PLACE TO PUT THIS LINE IS IN main.cpp RIGHT AFTER INCLUDING easylogging++.h **
 INITIALIZE_EASYLOGGINGPP
+
+#include <leathers/pop>
 
 //#include "dirent.h"
 

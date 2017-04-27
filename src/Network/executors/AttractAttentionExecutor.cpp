@@ -2,12 +2,10 @@
 #include "Network/Server.h"
 #include "Network/Client.h"
 
-#if defined(__linux) || defined(__linux__) || defined(linux)
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wold-style-cast"
-#pragma GCC diagnostic ignored "-Wuseless-cast"
-#pragma GCC diagnostic ignored "-Wsign-conversion"
-#endif
+#include <leathers/push>
+#include <leathers/old-style-cast>
+#include <leathers/useless-cast>
+#include <leathers/sign-conversion>
 
 namespace Network {
 
@@ -58,6 +56,4 @@ void AttractAttentionExecutor::execute_server()
 
 }
 
-#if defined(__linux) || defined(__linux__) || defined(linux)
-#pragma GCC diagnostic pop
-#endif
+#include <leathers/pop>
