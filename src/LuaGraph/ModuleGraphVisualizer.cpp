@@ -128,7 +128,7 @@ void Lua::ModuleGraphVisualizer::visualize()
 		}
 		else if ( i.value()->getParams().getValue()["type"] == "module" ) {
 
-			adjustBuildingForNode(graphNode, 20.0f, 4.0f, true, white, "");
+			adjustBuildingForNode(graphNode, 20.0f, 2.0f, true, black, "");
 		}
 		else if ( i.value()->getParams().getValue()["type"] == "function" ) {
 			//connect every function node to functionsAnchor with invisible edge

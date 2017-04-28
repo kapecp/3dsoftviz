@@ -9,18 +9,13 @@ static const float DEFAULT_BUILDING_SPACING = 0.5f;
 
 City::Module::Module()
 {	
-	interfacesPAT = new osg::PositionAttitudeTransform();
 	functionsPAT = new osg::PositionAttitudeTransform();
 	variablesPAT = new osg::PositionAttitudeTransform();
-	addChild( interfacesPAT );
+	interfacesPAT = new osg::PositionAttitudeTransform();
 	addChild( functionsPAT );
 	addChild( variablesPAT );
+	addChild( interfacesPAT );
 	getOrCreateStateSet()->setMode( GL_RESCALE_NORMAL, osg::StateAttribute::ON );
-}
-
-void City::Module::addInterfaceNode( osg::ref_ptr<Data::Node> interfaceNode )
-{	
-	interfaceNodes << interfaceNode;
 }
 
 void City::Module::addFunctionNode( osg::ref_ptr<Data::Node> functionNode )
@@ -33,6 +28,11 @@ void City::Module::addVariableNode( osg::ref_ptr<Data::Node> variableNode )
 	variableNodes << variableNode;
 }
 
+void City::Module::addInterfaceNode( osg::ref_ptr<Data::Node> interfaceNode )
+{
+	interfaceNodes << interfaceNode;
+}
+
 void City::Module::addOtherNode( osg::ref_ptr<Data::Node> parentNode, osg::ref_ptr<Data::Node> otherNode )
 {
 	otherNodes.insert(parentNode, otherNode);
@@ -43,6 +43,10 @@ osg::ref_ptr<osg::PositionAttitudeTransform> City::Module::getNodeParentPAT( osg
 	return node->getParent(0)->asTransform()->asPositionAttitudeTransform();
 }
 
+void City::Module::addBuilding( osg::ref_ptr<City::Building> building )
+{
+	insertChild( 0, building );
+}
 
 /*
 void Module::showLabels( bool state )
@@ -73,6 +77,41 @@ void City::Module::refresh()
 	functionsPAT->removeChildren( 0, functionsPAT->getNumChildren() );
 	variablesPAT->removeChildren( 0, variablesPAT->getNumChildren() );
 
+	osg::BoundingBox funcRegion;
+	QList<osg::Vec3> funcLayouts;
+	Layout::LayoutAlgorithms::layoutInsideRegion( functionNodes.empty() ? zeroBoudingBox : functionNodes.first()->getBuilding()->getBoundingBox(), functionNodes.count(), DEFAULT_MODULE_SECTOR_HEIGHT, DEFAULT_BUILDING_SPACING, &funcLayouts, &funcRegion );
+	for ( int i = 0; i < functionNodes.count(); ++i ) {
+		auto funcNodePAT = getNodeParentPAT( functionNodes[i] );
+		funcNodePAT->setPosition( funcLayouts[i] );
+		//std::cout << "funcNodePAT[" << i << "] has position: (" << funcLayouts[i].x() << ", " << funcLayouts[i].y() << ", " << funcLayouts[i].z() << ")" << std::endl;
+		functionsPAT->addChild( funcNodePAT );
+	}
+	functionsPAT->addChild( new Shapes::Cuboid( funcRegion.xMax() - funcRegion.xMin(), DEFAULT_MODULE_SECTOR_HEIGHT, funcRegion.yMax() - funcRegion.yMin(), osg::Vec3( 0, 0, DEFAULT_MODULE_SECTOR_HEIGHT / 2 ) ) );
+
+	osg::BoundingBox varRegion = funcRegion;
+	QList<Layout::ElementLayout> varLayouts;
+	Layout::LayoutAlgorithms::layoutAroundRegion( variableNodes.empty() ? zeroBoudingBox : variableNodes.first()->getBuilding()->getBoundingBox(), variableNodes.count(), funcRegion, DEFAULT_BUILDING_SPACING, &varLayouts, &varRegion );
+	for ( int i = 0; i < variableNodes.count(); ++i ) {
+		auto varNodePAT = getNodeParentPAT( variableNodes[i] );
+		varNodePAT->setPosition( varLayouts[i].position + osg::Vec3( 0.0f, 0.0f, DEFAULT_MODULE_SECTOR_HEIGHT ) );
+		varNodePAT->setAttitude( osg::Quat( varLayouts[i].yawRotation, osg::Vec3( 0.0f, 0.0f, 1.0f ) ) );
+		variablesPAT->addChild( varNodePAT );
+	}
+	osg::BoundingBox varPlane( varRegion.xMin(), varRegion.yMin(), 0, varRegion.xMax(), varRegion.yMax(), DEFAULT_MODULE_SECTOR_HEIGHT );
+	variablesPAT->addChild( new Shapes::Cuboid( varPlane ) );
+
+	osg::BoundingBox intrfcRegion = varRegion;
+	QList<Layout::ElementLayout> intrfcLayouts;
+	Layout::LayoutAlgorithms::layoutAroundRegion( interfaceNodes.empty() ? zeroBoudingBox : interfaceNodes.first()->getBuilding()->getBoundingBox(), interfaceNodes.count(), varRegion, DEFAULT_BUILDING_SPACING, &intrfcLayouts, &intrfcRegion );
+	for ( int i = 0; i < interfaceNodes.count(); ++i ) {
+		auto intrfcNodePAT = getNodeParentPAT( interfaceNodes[i] );
+		intrfcNodePAT->setPosition( intrfcLayouts[i].position + osg::Vec3( 0.0f, 0.0f, DEFAULT_MODULE_SECTOR_HEIGHT ) );
+		intrfcNodePAT->setAttitude( osg::Quat( intrfcLayouts[i].yawRotation, osg::Vec3( 0.0f, 0.0f, 1.0f ) ) );
+		interfacesPAT->addChild( intrfcNodePAT );
+	}
+	osg::BoundingBox intrfcPlane( intrfcRegion.xMin(), intrfcRegion.yMin(), 0, intrfcRegion.xMax(), intrfcRegion.yMax(), DEFAULT_MODULE_SECTOR_HEIGHT );
+	variablesPAT->addChild( new Shapes::Cuboid( intrfcPlane ) );
+
 //	for every node in interfaceNodes:
 //		auto interfaceNodePAT = getNodeParentPAT(node);
 //		interfacesPAT->addChild(interfaceNodePAT);
@@ -83,7 +122,14 @@ void City::Module::refresh()
 //		auto parentNode = node.key
 //		parentNode->addChild(otherNodePat)
 
-
+	const auto offset = intrfcRegion.center();
+	float moduleSectorOffset = 0;
+	interfacesPAT->setPosition( osg::Vec3( -offset.x(), -offset.y(), moduleSectorOffset ) );
+	moduleSectorOffset += DEFAULT_MODULE_SECTOR_HEIGHT;
+	variablesPAT->setPosition( osg::Vec3( -offset.x(), -offset.y(), moduleSectorOffset ) );
+	moduleSectorOffset += DEFAULT_MODULE_SECTOR_HEIGHT;
+	functionsPAT->setPosition( osg::Vec3( -offset.x(), -offset.y(), moduleSectorOffset ) );
+	moduleSectorOffset += DEFAULT_MODULE_SECTOR_HEIGHT;
 }
 
 void City::Module::updateNodesPosition()

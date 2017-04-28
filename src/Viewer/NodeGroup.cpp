@@ -178,6 +178,12 @@ void NodeGroup::updateNodeCoordinates( float interpolationSpeed )
 
 	while ( i != nodes->constEnd() ) {
 
+		//Illes have to be updated
+		if ( i.value()->isInModule() ) {
+			++i;
+			continue;
+		}
+
 		//string a = typeid (i.value()).name();
 		//string b = typeid (Data::Node).name();
 		//if(typeid (i.value()).name() == "aa")

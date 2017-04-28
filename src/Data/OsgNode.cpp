@@ -179,10 +179,11 @@ City::Module* Data::OsgNode::getModule()
 
 void Data::OsgNode::setModule( City::Module* module )
 {
-	auto building = getBuilding();
+	osg::ref_ptr<City::Building> building = getBuilding();
+	module->addBuilding( building );
 	removeChild( INDEX_RESIDENCE );
-	insertChild( INDEX_RESIDENCE, module, true );
-	setResidence( building );
+	insertChild( INDEX_RESIDENCE, module );
+	setValue( INDEX_RESIDENCE, true );
 }
 
 osg::ref_ptr<osg::PositionAttitudeTransform> Data::OsgNode::getResidenceAsPAT()

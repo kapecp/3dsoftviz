@@ -2023,7 +2023,6 @@ void CoreGraph::reorganizeNodesForModuleCity()
 
 	Lua::LuaGraph* luaGraph = Lua::LuaGraph::getInstance();
 
-
 	//iterate through all LuaNodes and search for "module" type node
 	QMap<qlonglong, Lua::LuaNode*>::iterator node_iter;
 	for ( node_iter = luaGraph->getNodes()->begin();
@@ -2043,14 +2042,14 @@ void CoreGraph::reorganizeNodesForModuleCity()
 				  ++edge_iter ) {
 				auto moduleGraphEdge = edge_iter.value();
 
-				if(moduleGraphEdge->getSrcNode() == moduleGraphNode && moduleGraphEdge->AbsEdge::getName() == "declares") {
+				if( moduleGraphEdge->getSrcNode() == moduleGraphNode && moduleGraphEdge->AbsEdge::getName() == "declares" ) {
 					//funcNode should be type "function" or "global function"
 					auto funcGraphNode = moduleGraphEdge->getDstNode();
-					cityModulePAT->addFunctionNode(funcGraphNode);
+					cityModulePAT->addFunctionNode( funcGraphNode );
 
-					//get parent PAT for funcNode and move it from nodesGroup to be one of moduleNode's child
-					auto funcGraphNodePAT = cityModulePAT->getNodeParentPAT(funcGraphNode);
-					graphNodesGroup->removeChild(funcGraphNodePAT);
+					//get parent PAT for funcNode and remove it from nodesGroup (will be added when called refresh())
+					auto funcGraphNodePAT = cityModulePAT->getNodeParentPAT( funcGraphNode );
+					graphNodesGroup->removeChild( funcGraphNodePAT );
 
 					//set attributes for FRA and city layout
 					funcGraphNode->setIgnoreByLayout( true );
@@ -2058,14 +2057,29 @@ void CoreGraph::reorganizeNodesForModuleCity()
 
 				}
 
-				if(moduleGraphEdge->getSrcNode() == moduleGraphNode && moduleGraphEdge->AbsEdge::getName() == "provides") {
+				if( moduleGraphEdge->getSrcNode() == moduleGraphNode && moduleGraphEdge->AbsEdge::getName() == "initializes" ) {
+					//funcNode should be type "local variable" or "global variable"
+					auto varGraphNode = moduleGraphEdge->getDstNode();
+					cityModulePAT->addVariableNode( varGraphNode );
+
+					//get parent PAT for varNode and move it from nodesGroup (will be added when called refresh())
+					auto varGraphNodePAT = cityModulePAT->getNodeParentPAT( varGraphNode );
+					graphNodesGroup->removeChild( varGraphNodePAT );
+
+					//set attributes for FRA and city layout
+					varGraphNode->setIgnoreByLayout( true );
+					varGraphNode->setInModule( true );
+
+				}
+
+				if( moduleGraphEdge->getSrcNode() == moduleGraphNode && moduleGraphEdge->AbsEdge::getName() == "provides" ) {
 					//intrfNode should be type "interface"
 					auto intrfGraphNode = moduleGraphEdge->getDstNode();
-					cityModulePAT->addInterfaceNode(intrfGraphNode);
+					cityModulePAT->addInterfaceNode( intrfGraphNode );
 
-					//get parent PAT for intrfNode and move it from nodesGroup to be one of moduleNode's child
-					auto intrfGraphNodePAT = cityModulePAT->getNodeParentPAT(intrfGraphNode);
-					graphNodesGroup->removeChild(intrfGraphNodePAT);
+					//get parent PAT for intrfNode and move it from nodesGroup (will be added when called refresh())
+					auto intrfGraphNodePAT = cityModulePAT->getNodeParentPAT( intrfGraphNode );
+					graphNodesGroup->removeChild( intrfGraphNodePAT );
 
 					//set attributes for FRA and city layout
 					intrfGraphNode->setIgnoreByLayout( true );
@@ -2073,20 +2087,8 @@ void CoreGraph::reorganizeNodesForModuleCity()
 
 				}
 
-				if(moduleGraphEdge->getSrcNode() == moduleGraphNode && moduleGraphEdge->AbsEdge::getName() == "initializes") {
-					//funcNode should be type "local variable" or "global variable"
-					auto varGraphNode = moduleGraphEdge->getDstNode();
-					cityModulePAT->addVariableNode(varGraphNode);
 
-					//get parent PAT for varNode and move it from nodesGroup to be one of moduleNode's child
-					auto varGraphNodePAT = cityModulePAT->getNodeParentPAT(varGraphNode);
-					graphNodesGroup->removeChild(varGraphNodePAT);
 
-					//set attributes for FRA and city layout
-					varGraphNode->setIgnoreByLayout( true );
-					varGraphNode->setInModule( true );
-
-				}
 
 			}
 
@@ -2097,8 +2099,11 @@ void CoreGraph::reorganizeNodesForModuleCity()
 
 			//setNodePositionsForModuleCity(moduleNodeId, functionNodeIds, variableNodeIds, otherNodeIds, interfaceNodeIds);
 
-			moduleGraphNode->setModule(cityModulePAT);
+			std::cout << "[START] ModuleGraphNode: " << moduleGraphNode->AbsNode::getName().toStdString() << std::endl;
+			moduleGraphNode->setModule( cityModulePAT );
+			std::cout << "[CHECK]" << std::endl;
 			cityModulePAT->refresh();
+			std::cout << "[END] ModuleGraphNode: " << moduleGraphNode->AbsNode::getName().toStdString() << std::endl << std::endl;
 
 
 		}
