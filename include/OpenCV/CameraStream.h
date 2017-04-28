@@ -34,7 +34,10 @@ public:
 		*/
     CameraStream( );
 	~CameraStream();
+    int getImageWidth();
+    int getImageHeight();
 
+    bool calibrated;
     cv::vector<cv::vector<cv::Point>> contourPointList;
 
 public slots:

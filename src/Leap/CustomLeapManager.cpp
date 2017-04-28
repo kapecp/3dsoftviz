@@ -130,7 +130,7 @@ void Leap::CustomLeapManager::updateHands( Leap::Hand leftHand, Leap::Hand right
         HandPalm* rightPalm = static_cast<HandPalm*>( handsGroup->getChild( 0 ) );
 
         this->handObjectManipulator->updateHands(leftHand, rightHand, leftPalm,
-                                                 rightPalm, this->cameraManipulator->getCameraPosition());
+                                                 rightPalm);
     }
 
 }
