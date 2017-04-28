@@ -3,6 +3,7 @@
 
 #include <QThread>
 #include <osg/Vec4d>
+#include <OpenCV/TrackedLight.h>
 #include "opencv2/highgui/highgui.hpp"
 
 namespace OpenCV {
@@ -43,10 +44,10 @@ signals:
 	void pushBackgrImage( cv::Mat image );
 	/**
 			 * @author Autor: Marek Karas
-			 * @brief sendLightCoords asdfghjkl
+			 * @brief sendLightCoords Sets up light and its properties in the scene.
 			 * @param Image cv::Mat
 			 */
-	void sendLightCoords( osg::Vec4d );
+	void sendLightCoords( OpenCV::TrackedLight tlight );
 
 public slots:
 	/**

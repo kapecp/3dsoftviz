@@ -28,7 +28,7 @@ public:
 
 	int id;
 	bool found;
-	std::vector<cv::Point3f> history;
+	//std::vector<cv::Point3f> history;
 };
 }
 #endif

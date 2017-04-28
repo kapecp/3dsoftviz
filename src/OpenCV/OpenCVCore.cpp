@@ -7,6 +7,7 @@
 #include "Kinect/KinectThread.h"
 #include "QOpenCV/FaceRecognitionThread.h"
 #include "QOpenCV/FaceRecognitionWindow.h"
+#include "OpenCV/TrackedLight.h"
 #include "QOpenCV/LightDetectionThread.h"
 #include "QOpenCV/OpenCVWindow.h"
 #include "Viewer/CameraManipulator.h"
@@ -169,9 +170,9 @@ void  OpenCV::OpenCVCore::createPermanentConnection()
 
 	// updating lights
 	QObject::connect( mThrLightDet,
-					  SIGNAL( sendLightCoords( osg::Vec4d ) ),
+					  SIGNAL( sendLightCoords( OpenCV::TrackedLight ) ),
 					  AppCore::Core::getInstance( mApp )->getCoreGraph(),
-					  SLOT( setLightCoords( osg::Vec4d ) ) );
+					  SLOT( setLightCoords( OpenCV::TrackedLight ) ) );
 
 }
 

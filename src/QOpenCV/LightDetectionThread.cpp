@@ -94,7 +94,7 @@ void QOpenCV::LightDetectionThread::run()
 			emit pushBackgrImage( image.clone() );
 		}
 
-		msleep( 160 );
+		msleep( 20 );
 	}
 	mCapVideo->release();
 	mCapVideo = NULL;

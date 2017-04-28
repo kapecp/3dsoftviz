@@ -45,7 +45,9 @@ public:
 
 	cv::Point3d MapToHemisphere( cv::Point2d offset );
 
-	osg::Vec4d getLight( int index );
+	OpenCV::TrackedLight getLight( int index );
+
+	int getLightNum();
 
 private:
 
@@ -59,7 +61,8 @@ private:
 
 	float													mFisheyeAngle;
 
-	std::vector< OpenCV::TrackedLight >						mLights;
+	QVector< OpenCV::TrackedLight >							mLights;
+
 
 	int														mLightCount;
 

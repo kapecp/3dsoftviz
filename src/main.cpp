@@ -6,6 +6,7 @@
 #include "Core/Core.h"
 #include "Util/Cleaner.h"
 #include "Application/Application.h"
+#include "OpenCV/TrackedLight.h"
 
 #ifdef OPENCV_FOUND
 #include <opencv2/core/core.hpp>
@@ -19,7 +20,8 @@ Q_DECLARE_METATYPE( cv::Mat )
 Q_DECLARE_METATYPE( osg::Vec3d )
 Q_DECLARE_METATYPE( osg::Quat )
 Q_DECLARE_METATYPE( Qt::MouseButton )
-Q_DECLARE_METATYPE( osg::Vec4d )
+//Q_DECLARE_METATYPE( osg::Vec4d )
+Q_DECLARE_METATYPE( OpenCV::TrackedLight )
 
 #include "iostream"
 #include "LuaInterface/LuaInterface.h"
@@ -37,13 +39,14 @@ int main( int argc, char* argv[] )
 	LOG( INFO ) << "3DSoftViz started.";
 
 	qRegisterMetaType< osg::Vec3d >( "osgVec3d" );
-	qRegisterMetaType< osg::Vec4d >( "osgVec4d" );
+	//qRegisterMetaType< osg::Vec4d >( "osgVec4d" );
 	qRegisterMetaType< osg::Quat >( "osgQuat" );
 #ifdef OPENCV_FOUND
 	qRegisterMetaType<cv::Mat>( "Mat" );
 #endif
 	qRegisterMetaType<Qt::MouseButton>( "MouseButton" );
 
+	qRegisterMetaType<OpenCV::TrackedLight>( "TrackedLight" );
 //    DIR *dir;
 //    struct dirent *ent;
 //    if ((dir = opendir (".")) != NULL) {

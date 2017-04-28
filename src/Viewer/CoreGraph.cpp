@@ -665,20 +665,22 @@ Vwr::CoreGraph::CoreGraph( Data::Graph* graph, osg::ref_ptr<osg::Camera> camera 
 	markerGroup = new osg::Group();
 	root->addChild( markerGroup );
 
+	//osg::ref_ptr< osg::PositionAttitudeTransform > lightTransform = new osg::PositionAttitudeTransform();
+
 	osg::ref_ptr<osg::AutoTransform> marker = getSphere( 0, osg::Vec3( 0,0,1000 ), 100.0, osg::Vec4( 1.0, 0.0, 0.0, 1.0 ) );
 	markerGroup->addChild( marker );
 
 	//jurik
 	//lighting
-	osg::Light* pLight = new osg::Light;
-	pLight->setLightNum( ++uniqueLightNumber );
-	pLight->setDiffuse( osg::Vec4( 1.0f, 1.0f, 1.0f, 1.0f ) );
-	pLight->setPosition( osg::Vec4( 0.0, 0.0, 1000.0, 1.0 ) );		// w = 0 directional light
+	//osg::Light* pLight = new osg::Light;
+	//pLight->setLightNum( ++uniqueLightNumber );
+	//pLight->setDiffuse( osg::Vec4( 1.0f, 1.0f, 1.0f, 1.0f ) );
+	//pLight->setPosition( osg::Vec4( 0.0, 0.0, 1000.0, 1.0 ) );		// w = 0 directional light
 	// w = 1 point light (position)
 
 	// light source
-	osg::LightSource* pLightSource = new osg::LightSource;
-	pLightSource->setLight( pLight );
+	osg::LightSource* pLightSource = getLight( 1 );  //new osg::LightSource;
+	//pLightSource->setLight( pLight );
 	//root->addChild( pLightSource );
 
 	lightsGroup->addChild( pLightSource );
@@ -2042,6 +2044,7 @@ void CoreGraph::turnOnCustomLights() {
 }
 
 void CoreGraph::turnOffCustomLights() {
+
 	getScene()->getOrCreateStateSet()->setMode( GL_LIGHT0,osg::StateAttribute::ON );
 
 	for ( int i = 1; i < 8 && i <= uniqueLightNumber; ++i ) {
@@ -2049,15 +2052,15 @@ void CoreGraph::turnOffCustomLights() {
 	}
 }
 
-void CoreGraph::setLightCoords( osg::Vec4d coords )
+void CoreGraph::setLightCoords( OpenCV::TrackedLight tlight )
 {
 	osg::LightSource* ls = dynamic_cast<osg::LightSource* >( lightsGroup->getChild( 0 ) );
 	osg::AutoTransform* marker = dynamic_cast<osg::AutoTransform* > ( markerGroup->getChild( 0 ) );
 
 	//qDebug() << "base size " << baseSize;
 	if ( ls != NULL ) {
-		ls->getLight()->setPosition( coords );
-		marker->setPosition( osg::Vec3( coords.x()*10*baseSize, coords.y()*10*baseSize, coords.z()*10*baseSize ) );
+		ls->getLight()->setPosition( tlight.hemispherePosition*10*baseSize );
+		marker->setPosition( osg::Vec3( tlight.hemispherePosition.x()*10*baseSize, tlight.hemispherePosition.y()*10*baseSize, tlight.hemispherePosition.z()*10*baseSize ) );
 	}
 }
 

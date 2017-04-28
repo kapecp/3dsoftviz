@@ -18,6 +18,7 @@
 #include "Data/Edge.h"
 #include "Data/Node.h"
 #include "Leap/LeapLib/LeapCameraStream.h"
+#include "OpenCV/TrackedLight.h"
 
 #include "Data/Cluster.h"
 
@@ -376,7 +377,7 @@ public slots:
 
 	void setArucoRunning( bool isRunning );
 
-	void setLightCoords( osg::Vec4d coords );
+	void setLightCoords( OpenCV::TrackedLight tlight );
 
 private:
 

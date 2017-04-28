@@ -95,7 +95,11 @@ void OpenCV::LightDetector::ProcessFrame( cv::Mat& frame )
 	// find separate contours
 	cv::findContours( frame.clone(), mContours, cv::RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE, cv::Point( 0, 0 ) );
 
-	for ( size_t i = 0; i < mContours.size(); ++i ) {
+	// enclosing circles for contours
+	for ( int i = 0; i < mContours.size(); ++i ) {
+		if ( mLights.size() <= i)
+			mLights.push_back( OpenCV::TrackedLight() );
+
 		cv::minEnclosingCircle(mContours[i], mLights[i].framePosition, mLights[i].radius );
 		//qDebug() << "center x " << mLights2D[i].first.x << " y " << mLights2D[i].first.y << " r " << mLights2D[i].second;
 		mLightCount++;
@@ -110,21 +114,24 @@ void OpenCV::LightDetector::ProcessFrame( cv::Mat& frame )
 
 	std::sort ( mLights.begin(), mLights.end(), Light2DRadiusCompare);
 
-	cv::Point2f center = static_cast< cv::Point2f > (mfisheyeCenter);
-	//  Get the mass centers:
-	for ( size_t i = 0; i < 8; i++ ) {
-		mLights[i].MapToHemisphere( center, mFisheyeRadius );
-		mLights[i].active = (i < mLightCount);
+	// calculate position on hemisphere
+	for ( int i = 0; i < 8; i++ ) {
+		mLights[i].MapToHemisphere( mfisheyeCenter, mFisheyeRadius );
+		mLights[i].active = (i <= mLightCount);
 		//qDebug() << "center x " << mLights[i].hemispherePosition.x() << " y " << mLights[i].hemispherePosition.y() << " z " << mLights[i].hemispherePosition.z() << " r " << mLights[i].radius;
 	}
 }
 
-osg::Vec4d OpenCV::LightDetector::getLight( int index )
+int OpenCV::LightDetector::getLightNum() {
+	return mLightCount;
+}
+
+OpenCV::TrackedLight OpenCV::LightDetector::getLight( int index )
 {
-	/*if ( mLights3D.size() > index ) {
-		qDebug() << "light x: " << mLights3D[index].x << " y: " << mLights3D[index].y << " z: " << mLights3D[index].z;
-		return osg::Vec4d( mLights3D[index].x, mLights3D[index].y, mLights3D[index].z, 0 );
-	}*/
-	return osg::Vec4d( 0, 0, 1, 0 );
+	if ( mLightCount > index ) {
+		//qDebug() << "center x " << mLights[index].hemispherePosition.x() << " y " << mLights[index].hemispherePosition.y() << " z " << mLights[index].hemispherePosition.z() << " r " << mLights[index].radius;
+		return mLights[index];
+	}
+	return OpenCV::TrackedLight();
 }
 
