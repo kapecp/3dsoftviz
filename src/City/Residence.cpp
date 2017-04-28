@@ -92,7 +92,6 @@ void Residence::refresh()
 	Layout::LayoutAlgorithms::layoutInsideRegion( attributesBuildings.empty() ? zeroBoudingBox : attributesBuildings.first()->getBoundingBox(), attributesBuildings.count(), RESIDENCE_SECTOR_HEIGHT, BUILDING_SPACING, &attrLayouts, &attrRegion );
 	for ( int i = 0; i < attributesBuildings.count(); ++i ) {
 		auto& b = attributesBuildings[i];
-		std::cout << "AttrNode[" << i << "] has position: (" << attrLayouts[i].x() << ", " << attrLayouts[i].y() << ", " << attrLayouts[i].z() << ")" << std::endl;
 		b->setPosition( attrLayouts[i] );
 		b->refresh();
 		attributesBuildingsNode->addChild( b );
