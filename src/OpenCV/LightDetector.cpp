@@ -12,7 +12,6 @@
 // constructor loads classifier file with learned faces and set start parameters
 OpenCV::LightDetector::LightDetector()
 {
-	mKernel = cv::getStructuringElement( cv::MORPH_ELLIPSE, cv::Size( 5, 5 ) );
 	for (int i = 0; i < 8; i++)
 		mLights.push_back( TrackedLight() );
 }
@@ -73,6 +72,14 @@ void OpenCV::LightDetector::setFisheyeRadius( int radius )
 	mFisheyeRadius = static_cast< float >( radius );
 }
 
+void OpenCV::LightDetector::setKernelOpen( int size ) {
+	mKernelOpen = cv::getStructuringElement( cv::MORPH_ELLIPSE, cv::Size( size , size ) );
+}
+
+void OpenCV::LightDetector::setKernelClose( int size ) {
+	mKernelClose = cv::getStructuringElement( cv::MORPH_ELLIPSE, cv::Size( size , size ) );
+}
+
 bool Light2DRadiusCompare ( OpenCV::TrackedLight i, OpenCV::TrackedLight j ) {
 	return ( i.radius > j.radius );
 }
@@ -85,8 +92,8 @@ void OpenCV::LightDetector::ProcessFrame( cv::Mat& frame )
 	cv::threshold( frame, frame, 230, 255, cv::THRESH_BINARY );
 
 	// clean up thresholded image
-	cv::morphologyEx( frame, frame, cv::MORPH_OPEN, this->mKernel, cv::Point( -1, -1 ), 1 ) ;
-	cv::morphologyEx( frame, frame, cv::MORPH_CLOSE, this->mKernel, cv::Point( -1, -1 ), 1 );
+	cv::morphologyEx( frame, frame, cv::MORPH_OPEN, this->mKernelOpen, cv::Point( -1, -1 ), 1 ) ;
+	cv::morphologyEx( frame, frame, cv::MORPH_CLOSE, this->mKernelClose, cv::Point( -1, -1 ), 1 );
 
 	// reset data
 	mContours.clear();

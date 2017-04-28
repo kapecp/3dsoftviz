@@ -613,6 +613,10 @@ void CoreGraph::setClustersShapeBoundary( int value )
 	this->clustersShapeBoundary = value;
 }
 
+void CoreGraph::setLightPosition( int index, osg::Vec3 position ) {
+
+}
+
 osg::ref_ptr<osg::LightSource> CoreGraph::getLight( int id ) {
 	// already exists
 	if ( lightsGroup->getNumChildren() >= id ) {
@@ -623,7 +627,7 @@ osg::ref_ptr<osg::LightSource> CoreGraph::getLight( int id ) {
 	osg::Light* pLight = new osg::Light;
 	pLight->setLightNum( ++uniqueLightNumber );
 	pLight->setDiffuse( osg::Vec4( 1.0f, 1.0f, 1.0f, 1.0f ) );
-	pLight->setPosition( osg::Vec4( 0,0,1,0 ) );		// w = 0 directional light
+	pLight->setPosition( osg::Vec4( 0,0,0,1 ) );		// w = 0 directional light
 	// w = 1 point light (position)
 
 	// light source
@@ -660,15 +664,29 @@ Vwr::CoreGraph::CoreGraph( Data::Graph* graph, osg::ref_ptr<osg::Camera> camera 
 
 
 	lightsGroup = new osg::Group();
-	root->addChild( lightsGroup );
+	//root->addChild( lightsGroup );
 
 	markerGroup = new osg::Group();
-	root->addChild( markerGroup );
+	//root->addChild( markerGroup );
 
-	//osg::ref_ptr< osg::PositionAttitudeTransform > lightTransform = new osg::PositionAttitudeTransform();
+	lightTranformGroup = new osg::Group();
+	root->addChild( lightTranformGroup );
 
-	osg::ref_ptr<osg::AutoTransform> marker = getSphere( 0, osg::Vec3( 0,0,1000 ), 100.0, osg::Vec4( 1.0, 0.0, 0.0, 1.0 ) );
-	markerGroup->addChild( marker );
+	osg::ref_ptr< osg::PositionAttitudeTransform > pLightTransform = new osg::PositionAttitudeTransform();
+
+	osg::ref_ptr<osg::AutoTransform> pLightMarker = getSphere( 0, osg::Vec3( 0,0,0 ), 100.0, osg::Vec4( 1.0, 0.0, 0.0, 1.0 ) );
+	markerGroup->addChild( pLightMarker );
+
+	osg::ref_ptr<osg::LightSource> pLightSource = getLight( 1 );  //new osg::LightSource;
+	//markerGroup->addChild( marker );
+
+	pLightTransform->setPosition( osg::Vec3( 0,0,1000 ) );
+	pLightTransform->addChild( pLightSource );
+	pLightTransform->addChild( pLightMarker );
+
+	lightTranformGroup->addChild( pLightTransform );
+
+	root->addChild( lightTranformGroup );
 
 	//jurik
 	//lighting
@@ -679,11 +697,14 @@ Vwr::CoreGraph::CoreGraph( Data::Graph* graph, osg::ref_ptr<osg::Camera> camera 
 	// w = 1 point light (position)
 
 	// light source
-	osg::LightSource* pLightSource = getLight( 1 );  //new osg::LightSource;
+
+
+
 	//pLightSource->setLight( pLight );
 	//root->addChild( pLightSource );
 
-	lightsGroup->addChild( pLightSource );
+	//lightsGroup->addChild( pLightSource );
+
 
 	//shadow scene
 	//http://trac.openscenegraph.org/projects/osg//wiki/Support/ProgrammingGuide/osgShadow
@@ -2054,13 +2075,29 @@ void CoreGraph::turnOffCustomLights() {
 
 void CoreGraph::setLightCoords( OpenCV::TrackedLight tlight )
 {
-	osg::LightSource* ls = dynamic_cast<osg::LightSource* >( lightsGroup->getChild( 0 ) );
-	osg::AutoTransform* marker = dynamic_cast<osg::AutoTransform* > ( markerGroup->getChild( 0 ) );
+	//osg::LightSource* ls = dynamic_cast<osg::LightSource* >( lightsGroup->getChild( 0 ) );
+	//osg::AutoTransform* marker = dynamic_cast<osg::AutoTransform* > ( markerGroup->getChild( 0 ) );
+	osg::PositionAttitudeTransform* ls = dynamic_cast< osg::PositionAttitudeTransform* > ( lightTranformGroup->getChild( 0 ) );
 
 	//qDebug() << "base size " << baseSize;
 	if ( ls != NULL ) {
-		ls->getLight()->setPosition( tlight.hemispherePosition*10*baseSize );
-		marker->setPosition( osg::Vec3( tlight.hemispherePosition.x()*10*baseSize, tlight.hemispherePosition.y()*10*baseSize, tlight.hemispherePosition.z()*10*baseSize ) );
+		ls->setPosition( osg::Vec3( tlight.hemispherePosition.x()*10*baseSize, tlight.hemispherePosition.y()*10*baseSize, tlight.hemispherePosition.z()*10*baseSize ) );
+		//ls->getLight()->setPosition( tlight.hemispherePosition*10*baseSize );
+		//marker->setPosition( osg::Vec3( tlight.hemispherePosition.x()*10*baseSize, tlight.hemispherePosition.y()*10*baseSize, tlight.hemispherePosition.z()*10*baseSize ) );
+	}
+}
+
+void CoreGraph::setShowLightMarkers( bool set ) {
+	qDebug() << "show light markers " << set;
+
+	if ( set ) {
+		for ( int i = 0; i < markerGroup->getNumChildren(); ++i) {
+			markerGroup->getChild( i )->setNodeMask( 0x1 );
+		}
+	} else {
+		for ( int i = 0; i < markerGroup->getNumChildren(); ++i) {
+			markerGroup->getChild( i )->setNodeMask( 0x0 );
+		}
 	}
 }
 

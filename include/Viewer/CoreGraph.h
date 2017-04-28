@@ -379,6 +379,8 @@ public slots:
 
 	void setLightCoords( OpenCV::TrackedLight tlight );
 
+	void setShowLightMarkers( bool set );
+
 private:
 
 	/**
@@ -708,7 +710,19 @@ private:
 
 	//*****
 
+	/**
+	 * @brief lightsGroup all lightsouces
+	 */
 	osg::ref_ptr<osg::Group> lightsGroup;
+
+	/**
+	 * @brief lightTranformGroup all PositionAttitudeTransforms for lights with their markers
+	 */
+	osg::ref_ptr<osg::Group> lightTranformGroup;
+
+	/**
+	 * @brief markerGroup all markers for visualisation of light sources
+	 */
 	osg::ref_ptr<osg::Group> markerGroup;
 	uint uniqueLightNumber = 0;
 

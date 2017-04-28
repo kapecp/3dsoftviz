@@ -283,6 +283,13 @@ signals:
 	 */
 	void sendShowProcessingCB( bool set );
 
+	/**
+	 * @author Autor: Marek Karas
+	 * @brief sendShowLightMarkers Signal to show markers indicating light position in scene
+	 * @param set markers visible on/of
+	 */
+	void sendShowLightMarkers( bool set );
+
 public slots:
 	/**
 	     * @author Autor: David Durcak
@@ -440,6 +447,12 @@ private slots:
 	*/
 	void onLightDetShowProcessingCBClicked( bool checked );
 
+	/**
+	 * @brief onEnableLightMarkersCBClicked private slot for switching markers indicating light position
+	 * @param checked marker visibility ( on / off )
+	 */
+	void onEnableLightMarkersCBClicked( bool checked );
+
 private:
 	/**
 	     * @author Autor: Michael Garaj
@@ -499,6 +512,7 @@ private:
 	QSlider*		 mFisheyeRS;
 	QCheckBox*		mLightNoVideo;
 	QCheckBox*		mEnableLightDetCB;
+	QCheckBox*		mEnableLightMarkersCB;
 
 };
 

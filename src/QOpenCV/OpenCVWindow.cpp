@@ -77,6 +77,7 @@ void QOpenCV::OpenCVWindow::configureWindow()
 	mLightDetectShowProcessingCB = new QCheckBox( tr( "Show frame processing" ) );
 	mEnableLightDetCB = new QCheckBox( tr( "Ligh Detection" ) );
 	mLightNoVideo  = new QCheckBox( tr( "NoVideo" ) );
+	mEnableLightMarkersCB = new QCheckBox( tr( "Show light markers" ) );
 
 	mSpeed =  new QSlider( Qt::Horizontal );
 	mSpeed->setRange( 5,20 );
@@ -184,6 +185,7 @@ void QOpenCV::OpenCVWindow::configureWindow()
 	arucoLightDetPageLayout->addWidget( mFisheyeYS );
 	arucoLightDetPageLayout->addWidget( mFisheyeRS );
 	arucoLightDetPageLayout->addWidget( mLightDetectShowProcessingCB );
+	arucoLightDetPageLayout->addWidget( mEnableLightMarkersCB );
 
 	arucoMarkerPageLayout->addWidget( mRefEnableMarkerlessCB );
 	arucoMarkerPageLayout->addWidget( mMarkerNoVideo );
@@ -261,6 +263,7 @@ void QOpenCV::OpenCVWindow::configureWindow()
 	connect( mEnableLightDetCB, SIGNAL( clicked( bool ) ), this, SLOT( onLightDetStartCancel( bool ) ) );
 	connect( mLightNoVideo, SIGNAL( clicked( ) ), this, SLOT( onSelSubModulChange() ) );
 	connect( mLightDetectShowProcessingCB, SIGNAL( clicked( bool ) ), this, SLOT( onLightDetShowProcessingCBClicked( bool ) ) );
+	connect( mEnableLightMarkersCB, SIGNAL( clicked( bool ) ), this, SLOT( onEnableLightMarkersCBClicked( bool ) ) );
 
 	//SLIDERS
 	connect( mFisheyeXS, SIGNAL( valueChanged( int ) ), this, SLOT( onFisheyeXChanged( int ) ) );
@@ -369,6 +372,10 @@ void QOpenCV::OpenCVWindow::onFisheyeYChanged( int value )
 void QOpenCV::OpenCVWindow::onFisheyeRChanged( int value )
 {
 	emit sendFishEyeRadius( value );
+}
+
+void QOpenCV::OpenCVWindow::onEnableLightMarkersCBClicked( bool checked ) {
+	emit sendShowLightMarkers( checked );
 }
 
 void QOpenCV::OpenCVWindow::onSelModulChange()

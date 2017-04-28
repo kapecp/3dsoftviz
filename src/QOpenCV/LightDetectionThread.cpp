@@ -56,12 +56,17 @@ void QOpenCV::LightDetectionThread::run()
 	mLightDetector->setFisheyeCenter( cv::Point( mFishEyeCenterX , mFishEyeCenterY ) );
 	mLightDetector->setFisheyeRadius( mFishEyeRadius );
 
+	//  2% of resolution for morphology open to erase small noise
+	mLightDetector->setKernelOpen( mCapVideoHeight * 2 / 100 );
+	// 10% of resolution for morphology close to fill holes and merge small lights
+	mLightDetector->setKernelClose( mCapVideoHeight * 15 / 100 );
+
 	while ( !mCancel ) {
 		// get image from camera
 		image = mCapVideo->queryFrame();
 
 		// mirror image
-		cv::flip( image, image, 1 );
+		//cv::flip( image, image, 1 );
 		cv::cvtColor( image, imageGray, CV_BGR2GRAY );
 		mLightDetector->ProcessFrame( imageGray );
 

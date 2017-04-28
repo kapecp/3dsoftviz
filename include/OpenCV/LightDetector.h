@@ -37,6 +37,10 @@ public:
 
 	void setFisheyeRadius( int );
 
+	void setKernelOpen( int size );
+
+	void setKernelClose( int size );
+
 	void CircleMask( cv::Mat& src, cv::Point center, int radius );
 
 	void ProcessFrame( cv::Mat& frame );
@@ -51,7 +55,9 @@ public:
 
 private:
 
-	cv::Mat													mKernel;
+	cv::Mat													mKernelOpen;
+
+	cv::Mat													mKernelClose;
 
 	cv::Mat													mProcessedImage;
 

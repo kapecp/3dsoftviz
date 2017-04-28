@@ -478,6 +478,11 @@ void OpenCV::OpenCVCore::createConnectionLightDet()
 					  SIGNAL( sendShowProcessingCB( bool ) ),
 					  mThrLightDet,
 					  SLOT( setShowProcessing( bool ) ) );
+
+	QObject::connect( mOpencvWindow,
+					  SIGNAL( sendShowLightMarkers( bool ) ),
+					  AppCore::Core::getInstance( mApp )->getCoreGraph(),
+					  SLOT( setShowLightMarkers( bool ) ) );
 }
 
 OpenCV::OpenCVCore* OpenCV::OpenCVCore::getInstance( QApplication* app, QWidget* parent )
