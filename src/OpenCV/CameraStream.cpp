@@ -9,7 +9,7 @@ namespace OpenCV {
 
 CameraStream::CameraStream( ) :
 	QObject(),
-    osg::Image(), calibrated(false)
+    osg::Image()
 {
 #ifdef WIN32
     this->image = cv::Mat( 480,640, CV_8UC3, CV_RGB( 0,0,0 ) ); // Black on Win
@@ -22,13 +22,6 @@ CameraStream::CameraStream( ) :
 
 CameraStream::~CameraStream() {}
 
-int CameraStream::getImageWidth(){
-    return this->image.cols;
-}
-int CameraStream::getImageHeight(){
-    return this->image.rows;
-}
-
 void CameraStream::updateBackgroundImage( cv::Mat cvImg , bool trackHands)
 {
 
@@ -37,7 +30,7 @@ void CameraStream::updateBackgroundImage( cv::Mat cvImg , bool trackHands)
 		return;
     }
 
-    if (trackHands && !this->calibrated) {
+    if (trackHands) {
         this->trackMutex.lock();
         this->image = cvImg.clone();
         this->contourPointList = this->tracker->findHand(this->image);

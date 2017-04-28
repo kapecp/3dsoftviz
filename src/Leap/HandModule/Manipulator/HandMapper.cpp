@@ -8,7 +8,7 @@
 #endif
 
 Leap::HandMapper::HandMapper(Vwr::CoreGraph* coreGraph)
-    :coreGraph(coreGraph), cameraOffset(0)
+    :coreGraph(coreGraph)
 {
 }
 
@@ -20,7 +20,7 @@ Leap::HandMapper::~HandMapper()
 cv::vector<cv::Point> Leap::HandMapper::getHandPointList(cv::vector<cv::vector<cv::Point>> contourPointList) {
     for (int n = 0; n < contourPointList.size(); n++)
     {
-        if (contourPointList[n].size() > 3 && contourPointList[n].size() < 7) {
+        if (contourPointList[n].size() > 4 && contourPointList[n].size() < 7) {
             return contourPointList[n];
         }
     }
@@ -28,23 +28,18 @@ cv::vector<cv::Point> Leap::HandMapper::getHandPointList(cv::vector<cv::vector<c
     return cv::vector<cv::Point>();
 }
 
-float Leap::HandMapper::calculateAveragePalmFingerDistance(cv::vector<cv::Point> handPointList,
-                                                           int imageWidth, int imageHeight) {
+float Leap::HandMapper::calculateAveragePalmFingerDistance(cv::vector<cv::Point> handPointList) {
     float averageDst = 0;
 
     if (handPointList.size() == 0) {
         return averageDst;
     }
 
-    cv::Point2f palmCenter = static_cast<cv::Point2f>(handPointList[0]);
-    palmCenter.x /= imageWidth;
-    palmCenter.y /= imageHeight;
+    cv::Point palmCenter = handPointList[0];
 
     for (int n = 1; n < handPointList.size(); n++)
     {
-        cv::Point2f fingerTip = static_cast<cv::Point2f>(handPointList[n]);
-        fingerTip.x /= imageWidth;
-        fingerTip.y /= imageHeight;
+        cv::Point fingerTip = handPointList[n];
         averageDst += cv::norm(palmCenter-fingerTip);
     }
 
@@ -63,56 +58,16 @@ Leap::Vector Leap::HandMapper::recalculateDepthNode(Leap::Vector vector, float d
         }
     }
     else if (this->coreGraph->isCameraStreamActive()) {
-         this->coreGraph->getCameraStream()->calibrated = true;
-//        LOG(INFO) << "calibrated";
-        // 2000  a 11
-        // este zmensit y - aby scale sedel
-        vector.y = vector.y - 680.0;
-//        vector.z = vector.z * 1.0;
-//        vector.x = vector.x * 1.0;
+        cv::vector<cv::vector<cv::Point>> contourPointList =
+                this->coreGraph->getCameraStream()->contourPointList;
+        float averageDst = this->calculateAveragePalmFingerDistance(this->getHandPointList(contourPointList));
 
-        diff -= 100;
-                   // 400+ ruka
-        if (diff > 0){
-            vector.y = vector.y + diff*-0.2;
-        } // ruka 0 - 400
-        else{
-            vector.y = vector.y + diff*-0.2;
+//        LOG( INFO ) << "Point count: " + std::to_string(pointList.size());
+        if (averageDst != 0) {
+
+            LOG( INFO ) << "Average distance: " + std::to_string(averageDst);
         }
-
-
-//        float averageDst = 0;
-//        if (!this->coreGraph->getCameraStream()->calibrated) {
-//            cv::vector<cv::vector<cv::Point>> contourPointList =
-//                    this->coreGraph->getCameraStream()->contourPointList;
-//            averageDst = this->calculateAveragePalmFingerDistance(
-//                    this->getHandPointList(contourPointList),
-//                    this->coreGraph->getCameraStream()->getImageWidth(),
-//                    this->coreGraph->getCameraStream()->getImageHeight());
-//        }
-
-////        LOG( INFO ) << "Point count: " + std::to_string(pointList.size());
-//        if (this->cameraOffset !=0 || averageDst != 0) {
-//            this->coreGraph->getCameraStream()->calibrated = true;
-////            LOG(INFO) << "calibrated";
-//            //this->cameraOffset = averageDst * vector.y;
-//            if (averageDst != 0){
-//                this->cameraOffset = averageDst;
-//            }
-
-//            diff -= 100;
-//            // 400+ ruka
-////            if (diff > 0){
-////                vector.y = vector.y + diff*this->cameraOffset*1.3;
-////            } // ruka 0 - 400
-////            else{
-////                vector.y = vector.y + diff*this->cameraOffset*1.2;
-////            }
-//            LOG( INFO ) << "Hand scene position y PRED: " + std::to_string(vector.y);
-
-//            LOG( INFO ) << "Hand scene position y PO: " + std::to_string(vector.y);
-//        }
-//        //TODO edit vector based on average distance
+        //TODO edit vector based on average distance
     }
 
     return vector;

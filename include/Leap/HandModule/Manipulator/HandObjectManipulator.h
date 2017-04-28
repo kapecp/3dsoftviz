@@ -27,7 +27,7 @@ public:
      * @param leftHand - Leap representation of left hand (sensor output data).
      * @param rightHand - Leap representation of right hand (sensor output data).
      */
-    void updateHands( Leap::Hand leftHand, Leap::Hand rightHand, HandPalm* leftPalm, HandPalm* rightPalm);
+    void updateHands( Leap::Hand leftHand, Leap::Hand rightHand, HandPalm* leftPalm, HandPalm* rightPalm, osg::Vec3d cameraCenter );
 
     /**
      Method used in updateHands(). Iterates over fingers and for each call methods: updateJoints() and

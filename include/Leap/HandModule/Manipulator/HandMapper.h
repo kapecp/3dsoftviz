@@ -27,11 +27,9 @@ public:
 
 
 private:  
-    float calculateAveragePalmFingerDistance(cv::vector<cv::Point> pointList,
-                                             int imageWidth, int imageHeight);
+    float calculateAveragePalmFingerDistance(cv::vector<cv::Point> pointList);
     cv::vector<cv::Point> getHandPointList(cv::vector<cv::vector<cv::Point>> contourPointList);
     Vwr::CoreGraph* coreGraph;   
-    float cameraOffset;
 };
 }
 
