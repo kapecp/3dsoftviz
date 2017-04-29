@@ -3,8 +3,7 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/core/core.hpp>
-//#include <opencv\cv.hpp>
-
+#include <math.h>
 #include <opencv2/features2d/features2d.hpp>
 
 #include <QDebug>
@@ -12,6 +11,8 @@
 // constructor loads classifier file with learned faces and set start parameters
 OpenCV::LightDetector::LightDetector()
 {
+	mFrameMeanColor = osg::Vec4 ( 0.3, 0.3, 0.3, 1.0 );
+
 	for (int i = 0; i < 8; i++)
 		mLights.push_back( TrackedLight() );
 }
@@ -51,7 +52,7 @@ void OpenCV::LightDetector::DrawLightContours( cv::Mat src )
 void OpenCV::LightDetector::DrawLightCircles( cv::Mat src )
 {
 	for ( size_t i = 0; i< mLightCount; i++ ) {
-		cv::circle(src, mLights[i].framePosition, (int) mLights[i].radius , CV_RGB( 0, 255, 0 ) );
+		cv::circle(src, mLights[i].positionFrame, (int) mLights[i].radius , CV_RGB( 0, 255, 0 ) );
 	}
 }
 
@@ -78,7 +79,7 @@ bool Light2DRadiusCompare ( OpenCV::TrackedLight i, OpenCV::TrackedLight j ) {
 }
 
 osg::Vec4 OpenCV::LightDetector::getAverageFrameColor() {
-	return mFrameMean;
+	return mFrameMeanColor;
 }
 
 void OpenCV::LightDetector::ProcessFrame(cv::Mat& frame , cv::Mat frameGray )
@@ -90,13 +91,16 @@ void OpenCV::LightDetector::ProcessFrame(cv::Mat& frame , cv::Mat frameGray )
 	// mask grey
 	frameGray.setTo( cv::Scalar( 0 ), mask );
 
+	// average frame color
 	cv::Scalar mean = cv::mean( frame, mask );
 	mean /= 255;
 	//qDebug() << "image mean " << mean.val[0] << " " << mean.val[1] << " " << mean.val[2] << " " << mean.val[3] << " " ;
-	mFrameMean.r() = static_cast< float > ( mean[0] );
-	mFrameMean.g() = static_cast< float > ( mean[1] );
-	mFrameMean.b() = static_cast< float > ( mean[2] );
-	mFrameMean.a() = static_cast< float > ( mean[3] );
+	mFrameMeanColor.r() = static_cast< float > ( mean[0] );
+	mFrameMeanColor.g() = static_cast< float > ( mean[1] );
+	mFrameMeanColor.b() = static_cast< float > ( mean[2] );
+	//mFrameMean.a() = static_cast< float > ( mean[3] );
+	mFrameSurface = M_PI * this->mFisheyeRadius * this->mFisheyeRadius;
+
 
 	// threshold - get the bright spots
 	cv::threshold( frameGray, frameGray, 230, 255, cv::THRESH_BINARY );
@@ -117,7 +121,7 @@ void OpenCV::LightDetector::ProcessFrame(cv::Mat& frame , cv::Mat frameGray )
 		if ( mLights.size() <= i)
 			mLights.push_back( OpenCV::TrackedLight() );
 
-		cv::minEnclosingCircle(mContours[i], mLights[i].framePosition, mLights[i].radius );
+		cv::minEnclosingCircle(mContours[i], mLights[i].positionFrame, mLights[i].radius );
 		//qDebug() << "center x " << mLights2D[i].first.x << " y " << mLights2D[i].first.y << " r " << mLights2D[i].second;
 		mLightCount++;
 	}
@@ -133,7 +137,9 @@ void OpenCV::LightDetector::ProcessFrame(cv::Mat& frame , cv::Mat frameGray )
 
 	// calculate position on hemisphere
 	for ( int i = 0; i < 8; i++ ) {
-		mLights[i].MapToHemisphere( mfisheyeCenter, mFisheyeRadius );
+		mLights[i].extractColor( frame );
+		mLights[i].findIntensity( mFrameSurface );
+		mLights[i].mapFrameToHemishere( mfisheyeCenter, mFisheyeRadius );
 		//qDebug() << "center x " << mLights[i].hemispherePosition.x() << " y " << mLights[i].hemispherePosition.y() << " z " << mLights[i].hemispherePosition.z() << " r " << mLights[i].radius;
 	}
 }

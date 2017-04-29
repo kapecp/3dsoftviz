@@ -645,9 +645,9 @@ int CoreGraph::getOrCreateLight( int index ) {
 	pLightSource->setLight( pLight );
 	lightSources[ index ] = pLightSource;
 
-
+	// ball indicating lights color
 	osg::ref_ptr<osg::AutoTransform> pLightMarker = getSphere( 0, osg::Vec3( 0, 0, 0 ), 50.0, osg::Vec4( 1.0, 1.0, 1.0, 1.0 ) );
-	//markerGroup->addChild( pLightMarker );
+	pLightMarker->setNodeMask( 0x0 );
 	lightMarkerTransforms[ index ] = pLightMarker;
 
 	osg::ref_ptr< osg::PositionAttitudeTransform > pLightPAT = new osg::PositionAttitudeTransform();
@@ -691,14 +691,15 @@ Vwr::CoreGraph::CoreGraph( Data::Graph* graph, osg::ref_ptr<osg::Camera> camera 
 
 	lightsGroup = new osg::Group();
 
-	int lid = getOrCreateLight( 0 );
-	setLightType( lid, false );
-	setLightPosition( lid, osg::Vec3( 0, 0, 10000 ) );
+	//int lid = getOrCreateLight( 0 );
+	//setLightType( lid, false );
+	//setLightPosition( lid, osg::Vec3( 0, 0, 10000 ) );
+	//setLightActive( lid, true );
 
 	root->addChild( lightsGroup );
 
 	lightModel = new osg::LightModel();
-	setAmbientLightColor( osg::Vec4( 1, 0.3, 0.3, 1 ) );
+	setAmbientLightColor( osg::Vec4( 0.3, 0.3, 0.3, 1 ) );
 
 	//shadow scene
 	//http://trac.openscenegraph.org/projects/osg//wiki/Support/ProgrammingGuide/osgShadow
@@ -2050,17 +2051,18 @@ osg::Vec3f CoreGraph::getGrafRotTransVec()
 //*****
 
 void CoreGraph::turnOnCustomLights() {
-	setLightType( 0, true );
+	//setLightType( 0, true );
 }
 
 void CoreGraph::turnOffCustomLights() {
+	if (lightsGroup->getNumChildren()) {
+		setLightActive( 0, true );
+		setLightPosition( 0, osg::Vec3( 0, 0, 10000 ) );
+		setLightDiffuseColor( 0, osg::Vec4( 1, 1, 1, 1 ) );
+		setLightType( 0, false );
 
-	setLightActive( 0, true );
-	setLightPosition( 0, osg::Vec3( 0, 0, 10000 ) );
-	setLightDiffuseColor( 0, osg::Vec4( 1, 1, 1, 1 ) );
-	setLightType( 0, false );
-
-	setAmbientLightColor( osg::Vec4( 0.3, 0.3, 0.3, 1 ) );
+		setAmbientLightColor( osg::Vec4( 0.3, 0.3, 0.3, 1 ) );
+	}
 
 	for ( int i = 1; i < 8 && i <= uniqueLightNumber; ++i ) {
 		setLightActive( i, false );
@@ -2069,11 +2071,12 @@ void CoreGraph::turnOffCustomLights() {
 
 void CoreGraph::setLightCoords( OpenCV::TrackedLight tlight )
 {
-	qDebug() << "incoming light id " << tlight.id;
+	//qDebug() << "incoming light id " << tlight.id;
 
 	int lid = getOrCreateLight( tlight.id );
 	setLightActive( lid, tlight.active );
-	setLightPosition( lid, tlight.hemispherePosition*10*baseSize );
+	setLightPosition( lid, tlight.positionHemisphere()*10*baseSize );
+	setLightDiffuseColor( lid, tlight.color() );
 }
 
 void CoreGraph::setShowLightMarkers( bool set ) {
@@ -2091,7 +2094,7 @@ void CoreGraph::setShowLightMarkers( bool set ) {
 }
 
 void CoreGraph::setAmbientLightColor( osg::Vec4 color ) {
-	qDebug() << "amb color r" << color.r() << " g " << color.g() << " b " << color.b() << " a " << color.a();
+	//qDebug() << "amb color r" << color.r() << " g " << color.g() << " b " << color.b() << " a " << color.a();
 	lightModel->setAmbientIntensity( color );
 	root->getOrCreateStateSet()->setAttributeAndModes( lightModel, osg::StateAttribute::ON );
 }

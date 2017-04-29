@@ -15,20 +15,45 @@ namespace OpenCV {
 class TrackedLight
 {
 public:
+
 	TrackedLight();
+
 	~TrackedLight();
-	static int			unique_id;
 
-	void MapToHemisphere( cv::Point2f fisheye_center, float fisheye_radius );
+	osg::Vec3			positionHemisphere()		const { return _positionHemisphere; }
 
-	cv::Point2f			framePosition;
-	osg::Vec3f			hemispherePosition;
-	osg::Vec4f			color;
-	float				radius;
-	bool				active;
+	osg::Vec4			color()						const { return _color; }
+
+	float				colorIntensity()			const { return _colorIntensity; }
+
+	float				surface()					const { return _surface; }
+
+	void mapFrameToHemishere( cv::Point2f fisheye_center, float fisheye_radius );
+
+	void extractColor( cv::Mat &frame );
+
+	void findIntensity( float frame_area );
 
 	int					id;
-	bool				found;
+
+	bool				active;
+
+	cv::Point2f			positionFrame;
+
+	float				radius;
+
+private:
+
+	static int			unique_id;
+
+	float				_surface;
+
+	osg::Vec3f			_positionHemisphere;
+
+	osg::Vec4f			_color;
+
+	float				_colorIntensity;
+
 	//std::vector<cv::Point3f> history;
 };
 

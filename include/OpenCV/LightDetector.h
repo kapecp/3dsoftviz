@@ -31,8 +31,6 @@ public:
 
 	void DrawLightCircles( cv::Mat src );
 
-	void Threshold( int, void* );
-
 	void setFisheyeCenter( cv::Point );
 
 	void setFisheyeRadius( int );
@@ -41,10 +39,7 @@ public:
 
 	void setKernelClose( int size );
 
-
 	void ProcessFrame( cv::Mat& frame, cv::Mat frameGray );
-
-	void ProjectLights( std::vector<cv::Point2d> input, std::vector<cv::Point3d>& output, cv::Point center, int radius, int lens_angle );
 
 	cv::Point3d MapToHemisphere( cv::Point2d offset );
 
@@ -56,25 +51,25 @@ public:
 
 private:
 
-	cv::Mat													mKernelOpen;
+	cv::Mat											mKernelOpen;
 
-	cv::Mat													mKernelClose;
+	cv::Mat											mKernelClose;
 
-	cv::Mat													mProcessedImage;
+	cv::Point2f										mfisheyeCenter;
 
-	cv::Point2f												mfisheyeCenter;
+	float											mFisheyeRadius;
 
-	float													mFisheyeRadius;
+	float											mFisheyeAngle;
 
-	float													mFisheyeAngle;
+	QVector< OpenCV::TrackedLight >					mLights;
 
-	QVector< OpenCV::TrackedLight >							mLights;
+	int												mLightCount;
 
-	int														mLightCount;
+	osg::Vec4										mFrameMeanColor;
 
-	osg::Vec4												mFrameMean;
+	float											mFrameSurface;
 
-	std::vector< std::vector< cv::Point > >					mContours;
+	std::vector< std::vector< cv::Point > >			mContours;
 };
 }
 

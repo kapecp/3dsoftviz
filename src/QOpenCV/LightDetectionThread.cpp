@@ -67,7 +67,9 @@ void QOpenCV::LightDetectionThread::run()
 
 		// mirror image
 		//cv::flip( image, image, 1 );
+
 		cv::cvtColor( image, imageGray, CV_BGR2GRAY );
+		cv::cvtColor( image, image, CV_BGR2RGB );
 		mLightDetector->ProcessFrame( image, imageGray );
 
 		// send lights
@@ -75,12 +77,12 @@ void QOpenCV::LightDetectionThread::run()
 			sendLightCoords( mLightDetector->getLight( i ) );
 
 		emit sendAmbientLightColor( mLightDetector->getAverageFrameColor() );
+
 		// show image
 		if ( mSendImgEnabled && !image.empty() ) {
 			// camera
 			if ( !mShowProcessing ) {
 				if ( image.data ) {
-					cv::cvtColor( image, image, CV_BGR2RGB );
 					mLightDetector->DrawBoundary( image );
 					mLightDetector->DrawLightContours( image );
 					mLightDetector->DrawLightCircles( image );
@@ -97,9 +99,9 @@ void QOpenCV::LightDetectionThread::run()
 			}
 		}
 
-		if ( mSendBackgrImgEnabled && !image.empty() ) {
+		/*if ( mSendBackgrImgEnabled && !image.empty() ) {
 			emit pushBackgrImage( image.clone() );
-		}
+		}*/
 
 		msleep( 20 );
 	}
