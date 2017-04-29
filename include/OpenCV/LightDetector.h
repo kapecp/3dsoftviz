@@ -41,15 +41,16 @@ public:
 
 	void setKernelClose( int size );
 
-	void CircleMask( cv::Mat& src, cv::Point center, int radius );
 
-	void ProcessFrame( cv::Mat& frame );
+	void ProcessFrame( cv::Mat& frame, cv::Mat frameGray );
 
 	void ProjectLights( std::vector<cv::Point2d> input, std::vector<cv::Point3d>& output, cv::Point center, int radius, int lens_angle );
 
 	cv::Point3d MapToHemisphere( cv::Point2d offset );
 
 	OpenCV::TrackedLight getLight( int index );
+
+	osg::Vec4 getAverageFrameColor();
 
 	int getLightNum();
 
@@ -69,8 +70,9 @@ private:
 
 	QVector< OpenCV::TrackedLight >							mLights;
 
-
 	int														mLightCount;
+
+	osg::Vec4												mFrameMean;
 
 	std::vector< std::vector< cv::Point > >					mContours;
 };

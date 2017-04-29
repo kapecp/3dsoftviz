@@ -20,13 +20,6 @@ OpenCV::LightDetector::~LightDetector()
 {
 }
 
-void OpenCV::LightDetector::CircleMask( cv::Mat& src, cv::Point center, int radius )
-{
-	cv::Mat mask( src.size(), CV_8U, cv::Scalar( 255 ) );
-	cv::circle( mask, center, radius, cv::Scalar( 0 ), CV_FILLED );
-	src.setTo( cv::Scalar( 0 ), mask );
-}
-
 double easeInQuad ( double t, double b, double c, double d ) {
 	t /= d;
 	return c*t*t + b;
@@ -84,23 +77,40 @@ bool Light2DRadiusCompare ( OpenCV::TrackedLight i, OpenCV::TrackedLight j ) {
 	return ( i.radius > j.radius );
 }
 
-void OpenCV::LightDetector::ProcessFrame( cv::Mat& frame )
+osg::Vec4 OpenCV::LightDetector::getAverageFrameColor() {
+	return mFrameMean;
+}
+
+void OpenCV::LightDetector::ProcessFrame(cv::Mat& frame , cv::Mat frameGray )
 {
-	CircleMask( frame, this->mfisheyeCenter, this->mFisheyeRadius );
+	// circle mask
+	cv::Mat mask( frameGray.size(), CV_8U, cv::Scalar( 255 ) );
+	cv::circle( mask, this->mfisheyeCenter, this->mFisheyeRadius, cv::Scalar( 0 ), CV_FILLED );
+
+	// mask grey
+	frameGray.setTo( cv::Scalar( 0 ), mask );
+
+	cv::Scalar mean = cv::mean( frame, mask );
+	mean /= 255;
+	//qDebug() << "image mean " << mean.val[0] << " " << mean.val[1] << " " << mean.val[2] << " " << mean.val[3] << " " ;
+	mFrameMean.r() = static_cast< float > ( mean[0] );
+	mFrameMean.g() = static_cast< float > ( mean[1] );
+	mFrameMean.b() = static_cast< float > ( mean[2] );
+	mFrameMean.a() = static_cast< float > ( mean[3] );
 
 	// threshold - get the bright spots
-	cv::threshold( frame, frame, 230, 255, cv::THRESH_BINARY );
+	cv::threshold( frameGray, frameGray, 230, 255, cv::THRESH_BINARY );
 
 	// clean up thresholded image
-	cv::morphologyEx( frame, frame, cv::MORPH_OPEN, this->mKernelOpen, cv::Point( -1, -1 ), 1 ) ;
-	cv::morphologyEx( frame, frame, cv::MORPH_CLOSE, this->mKernelClose, cv::Point( -1, -1 ), 1 );
+	cv::morphologyEx( frameGray, frameGray, cv::MORPH_OPEN, this->mKernelOpen, cv::Point( -1, -1 ), 1 ) ;
+	cv::morphologyEx( frameGray, frameGray, cv::MORPH_CLOSE, this->mKernelClose, cv::Point( -1, -1 ), 1 );
 
 	// reset data
 	mContours.clear();
 	mLightCount = 0;
 
 	// find separate contours
-	cv::findContours( frame.clone(), mContours, cv::RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE, cv::Point( 0, 0 ) );
+	cv::findContours( frameGray.clone(), mContours, cv::RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE, cv::Point( 0, 0 ) );
 
 	// enclosing circles for contours
 	for ( int i = 0; i < mContours.size(); ++i ) {
@@ -124,7 +134,6 @@ void OpenCV::LightDetector::ProcessFrame( cv::Mat& frame )
 	// calculate position on hemisphere
 	for ( int i = 0; i < 8; i++ ) {
 		mLights[i].MapToHemisphere( mfisheyeCenter, mFisheyeRadius );
-		mLights[i].active = (i <= mLightCount);
 		//qDebug() << "center x " << mLights[i].hemispherePosition.x() << " y " << mLights[i].hemispherePosition.y() << " z " << mLights[i].hemispherePosition.z() << " r " << mLights[i].radius;
 	}
 }
@@ -135,10 +144,13 @@ int OpenCV::LightDetector::getLightNum() {
 
 OpenCV::TrackedLight OpenCV::LightDetector::getLight( int index )
 {
+	mLights[index].id = index;
 	if ( mLightCount > index ) {
+		mLights[index].active = true;
 		//qDebug() << "center x " << mLights[index].hemispherePosition.x() << " y " << mLights[index].hemispherePosition.y() << " z " << mLights[index].hemispherePosition.z() << " r " << mLights[index].radius;
-		return mLights[index];
+	} else {
+		mLights[index].active = false;
 	}
-	return OpenCV::TrackedLight();
+	return mLights[index];
 }
 

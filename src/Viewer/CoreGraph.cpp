@@ -614,33 +614,59 @@ void CoreGraph::setClustersShapeBoundary( int value )
 }
 
 void CoreGraph::setLightPosition( int index, osg::Vec3 position ) {
-
+	lightTranforms[ index ]->setPosition( position );
 }
 
-osg::ref_ptr<osg::LightSource> CoreGraph::getLight( int id ) {
+void CoreGraph::setLightDiffuseColor( int index, osg::Vec4 color ) {
+	lightSources[ index ]->getLight()->setDiffuse( color );
+}
+
+void CoreGraph::setLightActive( int index, bool active ) {
+	getScene()->getOrCreateStateSet()->setMode( GL_LIGHT0 + index , active ? osg::StateAttribute::ON : osg::StateAttribute::OFF );
+}
+
+
+
+int CoreGraph::getOrCreateLight( int index ) {
 	// already exists
-	if ( lightsGroup->getNumChildren() >= id ) {
-		return dynamic_cast<osg::LightSource*> ( lightsGroup->getChild( id ) );
+	if ( lightsGroup->getNumChildren() > index ) {
+		return index;
 	}
 
 	// light
 	osg::Light* pLight = new osg::Light;
-	pLight->setLightNum( ++uniqueLightNumber );
+	pLight->setLightNum( uniqueLightNumber++ );
 	pLight->setDiffuse( osg::Vec4( 1.0f, 1.0f, 1.0f, 1.0f ) );
-	pLight->setPosition( osg::Vec4( 0,0,0,1 ) );		// w = 0 directional light
-	// w = 1 point light (position)
+	pLight->setPosition( osg::Vec4( 0, 0, 0, 1 ) );		// w = 0 directional light
+														// w = 1 point light (position)
 
 	// light source
 	osg::LightSource* pLightSource = new osg::LightSource;
 	pLightSource->setLight( pLight );
+	lightSources[ index ] = pLightSource;
 
-	lightsGroup->addChild( pLightSource );
 
-	return pLightSource;
+	osg::ref_ptr<osg::AutoTransform> pLightMarker = getSphere( 0, osg::Vec3( 0, 0, 0 ), 50.0, osg::Vec4( 1.0, 1.0, 1.0, 1.0 ) );
+	//markerGroup->addChild( pLightMarker );
+	lightMarkerTransforms[ index ] = pLightMarker;
+
+	osg::ref_ptr< osg::PositionAttitudeTransform > pLightPAT = new osg::PositionAttitudeTransform();
+	pLightPAT->addChild( pLightSource );
+	pLightPAT->addChild( pLightMarker );
+	lightTranforms[ index ] = pLightPAT;
+
+	lightsGroup->addChild( pLightPAT );
+
+	// index of the last child
+	return index;
+}
+
+void CoreGraph::setLightType( int index, bool isPointLight ) {
+	lightSources[ index ]->getLight()->setPosition( osg::Vec4( 0, 0, 0, isPointLight ? 1 : 0 ) );
 }
 
 Vwr::CoreGraph::CoreGraph( Data::Graph* graph, osg::ref_ptr<osg::Camera> camera )
-{
+{	
 	this->graph = graph;
 	this->camera = ( ( camera == 0 ) ? ( static_cast<osg::ref_ptr<osg::Camera> >( new osg::Camera ) ) : ( camera ) );
 
@@ -664,47 +690,15 @@ Vwr::CoreGraph::CoreGraph( Data::Graph* graph, osg::ref_ptr<osg::Camera> camera 
 
 
 	lightsGroup = new osg::Group();
-	//root->addChild( lightsGroup );
 
-	markerGroup = new osg::Group();
-	//root->addChild( markerGroup );
+	int lid = getOrCreateLight( 0 );
+	setLightType( lid, false );
+	setLightPosition( lid, osg::Vec3( 0, 0, 10000 ) );
 
-	lightTranformGroup = new osg::Group();
-	root->addChild( lightTranformGroup );
+	root->addChild( lightsGroup );
 
-	osg::ref_ptr< osg::PositionAttitudeTransform > pLightTransform = new osg::PositionAttitudeTransform();
-
-	osg::ref_ptr<osg::AutoTransform> pLightMarker = getSphere( 0, osg::Vec3( 0,0,0 ), 100.0, osg::Vec4( 1.0, 0.0, 0.0, 1.0 ) );
-	markerGroup->addChild( pLightMarker );
-
-	osg::ref_ptr<osg::LightSource> pLightSource = getLight( 1 );  //new osg::LightSource;
-	//markerGroup->addChild( marker );
-
-	pLightTransform->setPosition( osg::Vec3( 0,0,1000 ) );
-	pLightTransform->addChild( pLightSource );
-	pLightTransform->addChild( pLightMarker );
-
-	lightTranformGroup->addChild( pLightTransform );
-
-	root->addChild( lightTranformGroup );
-
-	//jurik
-	//lighting
-	//osg::Light* pLight = new osg::Light;
-	//pLight->setLightNum( ++uniqueLightNumber );
-	//pLight->setDiffuse( osg::Vec4( 1.0f, 1.0f, 1.0f, 1.0f ) );
-	//pLight->setPosition( osg::Vec4( 0.0, 0.0, 1000.0, 1.0 ) );		// w = 0 directional light
-	// w = 1 point light (position)
-
-	// light source
-
-
-
-	//pLightSource->setLight( pLight );
-	//root->addChild( pLightSource );
-
-	//lightsGroup->addChild( pLightSource );
-
+	lightModel = new osg::LightModel();
+	setAmbientLightColor( osg::Vec4( 1, 0.3, 0.3, 1 ) );
 
 	//shadow scene
 	//http://trac.openscenegraph.org/projects/osg//wiki/Support/ProgrammingGuide/osgShadow
@@ -2056,49 +2050,50 @@ osg::Vec3f CoreGraph::getGrafRotTransVec()
 //*****
 
 void CoreGraph::turnOnCustomLights() {
-
-	getScene()->getOrCreateStateSet()->setMode( GL_LIGHT0,osg::StateAttribute::OFF );
-
-	for ( int i = 1; i < 8 && i <= uniqueLightNumber; ++i ) {
-		getScene()->getOrCreateStateSet()->setMode( GL_LIGHT0 + i ,osg::StateAttribute::ON );
-	}
+	setLightType( 0, true );
 }
 
 void CoreGraph::turnOffCustomLights() {
 
-	getScene()->getOrCreateStateSet()->setMode( GL_LIGHT0,osg::StateAttribute::ON );
+	setLightActive( 0, true );
+	setLightPosition( 0, osg::Vec3( 0, 0, 10000 ) );
+	setLightDiffuseColor( 0, osg::Vec4( 1, 1, 1, 1 ) );
+	setLightType( 0, false );
+
+	setAmbientLightColor( osg::Vec4( 0.3, 0.3, 0.3, 1 ) );
 
 	for ( int i = 1; i < 8 && i <= uniqueLightNumber; ++i ) {
-		getScene()->getOrCreateStateSet()->setMode( GL_LIGHT0 + i ,osg::StateAttribute::OFF );
+		setLightActive( i, false );
 	}
 }
 
 void CoreGraph::setLightCoords( OpenCV::TrackedLight tlight )
 {
-	//osg::LightSource* ls = dynamic_cast<osg::LightSource* >( lightsGroup->getChild( 0 ) );
-	//osg::AutoTransform* marker = dynamic_cast<osg::AutoTransform* > ( markerGroup->getChild( 0 ) );
-	osg::PositionAttitudeTransform* ls = dynamic_cast< osg::PositionAttitudeTransform* > ( lightTranformGroup->getChild( 0 ) );
+	qDebug() << "incoming light id " << tlight.id;
 
-	//qDebug() << "base size " << baseSize;
-	if ( ls != NULL ) {
-		ls->setPosition( osg::Vec3( tlight.hemispherePosition.x()*10*baseSize, tlight.hemispherePosition.y()*10*baseSize, tlight.hemispherePosition.z()*10*baseSize ) );
-		//ls->getLight()->setPosition( tlight.hemispherePosition*10*baseSize );
-		//marker->setPosition( osg::Vec3( tlight.hemispherePosition.x()*10*baseSize, tlight.hemispherePosition.y()*10*baseSize, tlight.hemispherePosition.z()*10*baseSize ) );
-	}
+	int lid = getOrCreateLight( tlight.id );
+	setLightActive( lid, tlight.active );
+	setLightPosition( lid, tlight.hemispherePosition*10*baseSize );
 }
 
 void CoreGraph::setShowLightMarkers( bool set ) {
 	qDebug() << "show light markers " << set;
 
 	if ( set ) {
-		for ( int i = 0; i < markerGroup->getNumChildren(); ++i) {
-			markerGroup->getChild( i )->setNodeMask( 0x1 );
+		for ( int i = 0; i < lightsGroup->getNumChildren(); ++i) {
+			lightMarkerTransforms[i]->setNodeMask( 0x1 );
 		}
 	} else {
-		for ( int i = 0; i < markerGroup->getNumChildren(); ++i) {
-			markerGroup->getChild( i )->setNodeMask( 0x0 );
+		for ( int i = 0; i < lightsGroup->getNumChildren(); ++i) {
+			lightMarkerTransforms[i]->setNodeMask( 0x0 );
 		}
 	}
+}
+
+void CoreGraph::setAmbientLightColor( osg::Vec4 color ) {
+	qDebug() << "amb color r" << color.r() << " g " << color.g() << " b " << color.b() << " a " << color.a();
+	lightModel->setAmbientIntensity( color );
+	root->getOrCreateStateSet()->setAttributeAndModes( lightModel, osg::StateAttribute::ON );
 }
 
 }

@@ -9,6 +9,7 @@
 #define VIEWER_CORE_GRAPH_DEF 1
 
 #include <osg/ref_ptr>
+#include <osg/LightModel>
 
 #include "Viewer/RestrictionVisualizationsGroup.h"
 #include "Viewer/RestrictionManipulatorsGroup.h"
@@ -381,6 +382,8 @@ public slots:
 
 	void setShowLightMarkers( bool set );
 
+	void setAmbientLightColor(osg::Vec4 color);
+
 private:
 
 	/**
@@ -710,15 +713,16 @@ private:
 
 	//*****
 
-	/**
-	 * @brief lightsGroup all lightsouces
-	 */
-	osg::ref_ptr<osg::Group> lightsGroup;
+	osg::ref_ptr< osg::LightModel >									lightModel;
 
+	osg::ref_ptr< osg::LightSource >								lightSources[8];
+	osg::ref_ptr< osg::PositionAttitudeTransform >					lightTranforms[8];
+	osg::ref_ptr< osg::AutoTransform >								lightMarkerTransforms[8];
 	/**
 	 * @brief lightTranformGroup all PositionAttitudeTransforms for lights with their markers
 	 */
-	osg::ref_ptr<osg::Group> lightTranformGroup;
+	osg::ref_ptr<osg::Group> lightsGroup;
+
 
 	/**
 	 * @brief markerGroup all markers for visualisation of light sources
@@ -726,7 +730,27 @@ private:
 	osg::ref_ptr<osg::Group> markerGroup;
 	uint uniqueLightNumber = 0;
 
-	osg::ref_ptr<osg::LightSource> getLight( int id );
+	int getOrCreateLight( int id );
+
+	void setLightPosition( int index, osg::Vec3 position );
+
+	void setLightDiffuseColor( int index, osg::Vec4 color );
+
+	/**
+	 * @brief setLightActive enable or disable GL light
+	 * @param index light to be enabled (GL lights from 0 to 8 exclusive)
+	 * @param active on/off
+	 */
+	void setLightActive( int index, bool active );
+
+	/**
+	 * @brief setLightType sets GL light to directional light or point light, point light has position,
+	 *  where directional light acts as light infinitely far away with specified direction
+	 * @param index light to be turned (GL lights from 0 to 8 exclusive)
+	 * @param isPointLight 0 spot light, 1 point light
+	 */
+	void setLightType(int index, bool isPointLight );
+
 };
 }
 

@@ -15,10 +15,10 @@ namespace QOpenCV
 
 {
 /**
-    * @brief Class Light Detection Thread
-    * @author Autor: Marek Karas
-    * @date 22.03.2017
-    */
+ * @brief Class Light Detection Thread
+ * @author Autor: Marek Karas
+ * @date 22.03.2017
+ */
 class LightDetectionThread : public QThread
 {
 	Q_OBJECT
@@ -29,24 +29,29 @@ public:
 	~LightDetectionThread( void );
 
 	/**
-	     * @author Autor: Marek Jakab
-	     * @brief run Starts thread
-	     */
+	 * @author Autor: Marek Jakab
+	 * @brief run Starts thread
+	 */
 	void run();
 
 signals:
 	/**
 	 * @author Autor: Marek Karas
-			 * @brief pushImage Send image to OpenCVWindow
+	 * @brief pushImage Send image to OpenCVWindow
 	 * @param Image cv::Mat
 	 */
 	void pushImage( cv::Mat Image );
+
+
 	void pushBackgrImage( cv::Mat image );
+
+	void sendAmbientLightColor( osg::Vec4 color );
+
 	/**
-			 * @author Autor: Marek Karas
-			 * @brief sendLightCoords Sets up light and its properties in the scene.
-			 * @param Image cv::Mat
-			 */
+	 * @author Autor: Marek Karas
+	 * @brief sendLightCoords Sets up light and its properties in the scene.
+	 * @param Image cv::Mat
+	 */
 	void sendLightCoords( OpenCV::TrackedLight tlight );
 
 public slots:

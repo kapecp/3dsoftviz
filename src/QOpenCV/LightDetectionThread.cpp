@@ -68,13 +68,15 @@ void QOpenCV::LightDetectionThread::run()
 		// mirror image
 		//cv::flip( image, image, 1 );
 		cv::cvtColor( image, imageGray, CV_BGR2GRAY );
-		mLightDetector->ProcessFrame( imageGray );
+		mLightDetector->ProcessFrame( image, imageGray );
 
-		//
-		sendLightCoords( mLightDetector->getLight( 0 ) );
+		// send lights
+		for ( int i = 0; i < mLightDetector->getLightNum(); ++i )
+			sendLightCoords( mLightDetector->getLight( i ) );
+
+		emit sendAmbientLightColor( mLightDetector->getAverageFrameColor() );
 		// show image
 		if ( mSendImgEnabled && !image.empty() ) {
-
 			// camera
 			if ( !mShowProcessing ) {
 				if ( image.data ) {

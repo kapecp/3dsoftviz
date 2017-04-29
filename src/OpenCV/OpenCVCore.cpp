@@ -174,6 +174,11 @@ void  OpenCV::OpenCVCore::createPermanentConnection()
 					  AppCore::Core::getInstance( mApp )->getCoreGraph(),
 					  SLOT( setLightCoords( OpenCV::TrackedLight ) ) );
 
+	QObject::connect( mThrLightDet,
+					  SIGNAL( sendAmbientLightColor( osg::Vec4 ) ),
+					  AppCore::Core::getInstance( mApp )->getCoreGraph(),
+					  SLOT( setAmbientLightColor( osg::Vec4 ) ) );
+
 }
 
 void OpenCV::OpenCVCore::createConnectionKinect()

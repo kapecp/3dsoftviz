@@ -17,18 +17,20 @@ class TrackedLight
 public:
 	TrackedLight();
 	~TrackedLight();
+	static int			unique_id;
 
 	void MapToHemisphere( cv::Point2f fisheye_center, float fisheye_radius );
 
 	cv::Point2f			framePosition;
-	osg::Vec4f			hemispherePosition;
+	osg::Vec3f			hemispherePosition;
 	osg::Vec4f			color;
 	float				radius;
 	bool				active;
 
-	int id;
-	bool found;
+	int					id;
+	bool				found;
 	//std::vector<cv::Point3f> history;
 };
+
 }
 #endif
