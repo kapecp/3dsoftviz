@@ -64,17 +64,16 @@ Leap::Vector Leap::HandMapper::recalculateDepthNode(Leap::Vector vector, float d
     }
     else if (this->coreGraph->isCameraStreamActive()) {
          this->coreGraph->getCameraStream()->calibrated = true;
-//        LOG(INFO) << "calibrated";
-        // 2000  a 11
-        // este zmensit y - aby scale sedel
+
+        // ofset to make hands bigger
         vector.y = vector.y - 680.0;
-//        vector.z = vector.z * 1.0;
-//        vector.x = vector.x * 1.0;
+        // compesation of camera and leap offset
+        vector.z = vector.z - 50;
 
         diff -= 100;
                    // 400+ ruka
         if (diff > 0){
-            vector.y = vector.y + diff*-0.2;
+            vector.y = vector.y + diff*-0.4;
         } // ruka 0 - 400
         else{
             vector.y = vector.y + diff*-0.2;
