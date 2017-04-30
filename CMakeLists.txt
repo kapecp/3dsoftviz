@@ -144,15 +144,17 @@ set( ALL_COMPILE_DEFINITIONS )
 set( CMAKE_AUTOMOC ON )
 set( CMAKE_INCLUDE_CURRENT_DIR ON )
 
+find_package( OpenGL REQUIRED)
+
 
 # Find Qt4
-find_package( Qt4 REQUIRED )
-set( QT_USE_QTOPENGL 1 )
-set( QT_USE_QTSQL 1 )
-set( QT_USE_QTWEBKIT 1 )
-set( QT_USE_QTXML 1 )
-set( QT_USE_QTNETWORK 1 )
-include( ${QT_USE_FILE} )
+#find_package( Qt4 COMPONENTS QtCore QtGui QtOpenGL QtSql QtWebKit QtXml QtNetwork REQUIRED)
+#set( QT_USE_QTOPENGL 1 )
+#set( QT_USE_QTSQL 1 )
+#set( QT_USE_QTWEBKIT 1 )
+#set( QT_USE_QTXML 1 )
+#set( QT_USE_QTNETWORK 1 )
+#include( ${QT_USE_FILE} )
 
 if ( NOT Qt4_FOUND )
 	# Find Qt5
@@ -1211,8 +1213,12 @@ if ( UNIX AND NOT APPLE )
 	add_library( mouse3d STATIC dependencies/mouse3d/xdrvlib.c )
 	target_include_directories(mouse3d SYSTEM PUBLIC dependencies/mouse3d)
 endif()
+
 add_library( qtcolorpicker STATIC dependencies/qtcolorpicker/qtcolorpicker.cpp )
 target_include_directories( qtcolorpicker SYSTEM PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/qtcolorpicker )
+if (Qt4_FOUND )
+	target_link_libraries( qtcolorpicker Qt4::QtCore)
+endif()
 if ( Qt5Core_FOUND )
 	qt5_use_modules( qtcolorpicker Core Widgets )
 endif()
@@ -1240,7 +1246,8 @@ target_compile_options( gitlib PUBLIC ${FLAGS_FOR_DEBUG} )
 if ( Qt5Core_FOUND )
 	qt5_use_modules( gitlib Core )
 elseif( Qt4_FOUND )
-	target_link_libraries( gitlib ${QT_LIBRARIES} )
+#	target_link_libraries( gitlib ${QT_LIBRARIES} )
+	target_link_libraries( qtcolorpicker Qt4::QtCore )
 endif()
 
 # 'cotire' the module
@@ -1349,8 +1356,15 @@ if( UNIX AND NOT APPLE )
 endif()
 
 if ( Qt4_FOUND )
-	target_link_libraries( ${3DSOFTVIZ_NAME} ${QT_LIBRARIES} )
+#	target_link_libraries( ${3DSOFTVIZ_NAME} ${QT_LIBRARIES} )
+target_link_libraries( ${3DSOFTVIZ_NAME} Qt4::QtCore Qt4::QtGui Qt4::QtOpenGL Qt4::QtSql Qt4::QtWebKit Qt4::QtXml Qt4::QtNetwork ${OPENGL_LIBRARIES} )
+
 endif()
+
+if ( Qt5Core_FOUND )
+	target_link_libraries( ${3DSOFTVIZ_NAME} ${OPENGL_LIBRARIES} )
+endif()
+
 
 if( NOT MSVC )
 	target_link_libraries( ${3DSOFTVIZ_NAME} diluculum )

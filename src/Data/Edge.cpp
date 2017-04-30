@@ -194,6 +194,8 @@ void Data::Edge::updateCoordinates( osg::Vec3 srcPos, osg::Vec3 dstPos )
 			( dynamic_cast<osg::Cylinder*>( ( drawableCylinder )->getShape() ) )->setRotation( osg::Quat( angle, osg::Vec3( rotation->at( 0 ).x(), rotation->at( 0 ).y(), rotation->at( 0 ).z() ) ) );
 			drawableCylinder->setColor( getEdgeColor() );
 			drawableCylinder->dirtyDisplayList();
+			drawableCylinder->dirtyBound();
+			this->dirtyBound();
 		}
 	}
 

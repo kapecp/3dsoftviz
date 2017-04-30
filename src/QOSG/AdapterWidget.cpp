@@ -4,17 +4,40 @@
 #include <leathers/push>
 #include <leathers/switch-enum>
 
+#include <easylogging++.h>
+
 namespace QOSG {
 
-AdapterWidget::AdapterWidget( QWidget* parent, const char* name , const QGLWidget* shareWidget, WindowFlags f ) :
+AdapterWidget::AdapterWidget(const QGLFormat & format, QWidget* parent, const char* name , const QGLWidget* shareWidget, WindowFlags f ) :
 #if QT_VERSION > 0x040000
-	QGLWidget( QGLFormat( QGL::DoubleBuffer | QGL::DepthBuffer | QGL::Rgba | QGL::StencilBuffer | QGL::AlphaChannel | QGL::StereoBuffers ), parent, shareWidget, f )
+	QGLWidget(format , parent, shareWidget, f )
 #else
 	QGLWidget( parent, shareWidget, f )
 #endif
 {
 	_gw = new osgViewer::GraphicsWindowEmbedded( 0,0,width(),height() );
 	setFocusPolicy( Qt::StrongFocus );
+}
+
+void AdapterWidget::initializeGL()
+{
+  // Set up the rendering context, define display lists etc.:
+
+		qDebug() << "OpenGL Versions Supported: " << QGLFormat::openGLVersionFlags();
+		qDebug() << "Current Context:" << this->format();
+
+		auto context = this->context();
+
+		qDebug() << "Context valid: " << context->isValid();
+		qDebug() << "Really used OpenGl: " << context->format().majorVersion() << "." << context->format().minorVersion();
+		qDebug() << "Profile: " << context->format().profile();
+
+		qDebug() << "OpenGl information: VENDOR:       " << (const char*)glGetString(GL_VENDOR);
+		qDebug() << "                    RENDERDER:    " << (const char*)glGetString(GL_RENDERER);
+		qDebug() << "                    VERSION:      " << (const char*)glGetString(GL_VERSION);
+		qDebug() << "                    GLSL VERSION: " << (const char*)glGetString(GL_SHADING_LANGUAGE_VERSION);
+		qDebug() << "endstuff\n";
+
 }
 
 

@@ -50,7 +50,7 @@ public:
 		*
 		*/
 
-	explicit AdapterWidget( QWidget* parent = 0, const char*   name = 0, const QGLWidget* shareWidget = 0, WindowFlags f = 0 );
+	explicit AdapterWidget(const QGLFormat &format, QWidget* parent = 0, const char*   name = 0, const QGLWidget* shareWidget = 0, WindowFlags f = 0 );
 
 
 	/*!
@@ -91,6 +91,7 @@ protected:
 		*/
 	void init();
 
+	void initializeGL();
 
 	/**
 		*  \fn protected virtual  resizeGL( int width, int height )
