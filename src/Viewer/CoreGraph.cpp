@@ -1795,11 +1795,11 @@ void CoreGraph::scaleGraph( int scale )
 	//outputMatrix( scaleMatrix);
 	switch ( scale ) {
 		case 1: {
-			graphRotTransf->setMatrix( scaleMatrix * scaleMatrix.scale( 0.5,0.5,0.5 ) );
+            graphRotTransf->setMatrix( scaleMatrix * scaleMatrix.scale( 0.9,0.9,0.9 ) );
 			break;
 		}
 		case 2: {
-			graphRotTransf->setMatrix( scaleMatrix * scaleMatrix.scale( 2,2,2 ) );
+            graphRotTransf->setMatrix( scaleMatrix * scaleMatrix.scale( 1.1,1.1,1.1 ) );
 			break;
 		}
 		default:
@@ -1994,7 +1994,16 @@ void CoreGraph::drawAxes()
 //JMA
 osg::Vec3f CoreGraph::getGrafRotTransVec()
 {
-	return graphRotTransf->getMatrix().getTrans();
+    return graphRotTransf->getMatrix().getTrans();
+}
+osg::Vec3f CoreGraph::getGrafRotTransScale()
+{
+    return graphRotTransf->getMatrix().getScale();
+}
+
+void CoreGraph::onSetGraphZoom(int flag)
+{
+    this->scaleGraph(flag);
 }
 
 //*****

@@ -160,6 +160,16 @@ void QOpenCV::OpenCVWindow::configureWindow()
     connect( arNBSingle, SIGNAL( clicked( bool ) ), this, SLOT( onArInteractionBehaviourClicked( bool ) ) );
     connect( arNBCluster, SIGNAL( clicked( bool ) ), this, SLOT( onArInteractionBehaviourClicked( bool ) ) );
 
+
+    QPushButton *mArInteractionGraphZoomIn = new QPushButton( tr( "+" ) );
+    QPushButton *mArInteractionGraphZoomOut = new QPushButton( tr( "-" ) );
+    arInteractionSubPageLayout->addWidget( mArInteractionGraphZoomIn );
+    arInteractionSubPageLayout->addWidget( mArInteractionGraphZoomOut );
+
+    connect( mArInteractionGraphZoomIn,  SIGNAL( clicked( bool ) ), this, SLOT( applyGraphZoomIn( bool ) ) );
+    connect( mArInteractionGraphZoomOut,  SIGNAL( clicked( bool ) ), this, SLOT( applyGraphZoomOut( bool ) ) );
+
+
 //JMA interaction RB groups
 
 	kinectPageLayout->setAlignment( Qt::AlignBottom );
@@ -529,4 +539,14 @@ void QOpenCV::OpenCVWindow::onArInteractionBehaviourClicked(bool state)
     else if(arNBCluster->isChecked()){
         emit setArInteractionBehaviour(1);
     }
+}
+
+void QOpenCV::OpenCVWindow::applyGraphZoomIn(bool state)
+{
+    emit setArGraphZoom(2);
+}
+
+void QOpenCV::OpenCVWindow::applyGraphZoomOut(bool state)
+{
+    emit setArGraphZoom(1);
 }

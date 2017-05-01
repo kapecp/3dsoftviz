@@ -314,7 +314,7 @@ public:
 
 	//JMA
 	osg::Vec3f getGrafRotTransVec();
-
+    osg::Vec3f getGrafRotTransScale();
 
 public slots:
 
@@ -369,6 +369,8 @@ public slots:
 	void updateBase( double size );
 
 	void setArucoRunning( bool isRunning );
+
+    void onSetGraphZoom(int flag);
 
 private:
 

@@ -249,6 +249,13 @@ signals:
      */
     void setArInteractionBehaviour( int flag );
 
+    /**
+     * @brief setArGraphZoom
+     * @param flag
+     * @author Juraj Marak
+     */
+    void setArGraphZoom( int flag );
+
 
 public slots:
 	/**
@@ -380,6 +387,11 @@ private slots:
      * @author Juraj Marak
      */
     void onArInteractionBehaviourClicked(bool state);
+
+    void applyGraphZoomIn(bool state);
+    void applyGraphZoomOut(bool state);
+
+
 private:
 	/**
 	     * @author Autor: Michael Garaj

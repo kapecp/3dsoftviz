@@ -152,7 +152,6 @@ void  OpenCV::OpenCVCore::createPermanentConnection()
 					  SIGNAL( moveMouseArucoSignal( double,double,bool,Qt::MouseButton ) ),
 					  AppCore::Core::getInstance()->getCoreWindow(),
 					  SLOT( moveMouseAruco( double,double,bool,Qt::MouseButton ) ) );
-
 }
 
 void OpenCV::OpenCVCore::createConnectionKinect()
@@ -285,6 +284,11 @@ void OpenCV::OpenCVCore::createConnectionFaceRec()
 
 void OpenCV::OpenCVCore::createConnectionAruco()
 {
+    //JMA AR GRAPH ZOOMING
+    QObject::connect( mOpencvWindow,
+                      SIGNAL( setArGraphZoom( int ) ),
+                      AppCore::Core::getInstance( mApp )->getCoreGraph(),
+                      SLOT( onSetGraphZoom( int ) ) );
 	// send actual image
 	QObject::connect( mOpencvWindow,
 					  SIGNAL( sendImgMarker( bool ) ),

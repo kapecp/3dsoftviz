@@ -94,8 +94,9 @@ void ArControlClass::updateObjectPositionAruco( qlonglong object_id, QMatrix4x4 
 
 	// transformation vector user to move graph over aruco shadow base (jurik)
 	osg::Vec3f arucoBaseDist = coreGraph->getGrafRotTransVec();
+    osg::Vec3f graphScale = coreGraph->getGrafRotTransScale();
 
-	osg::Matrixd baseMVM = viewer->getCamera()->getViewMatrix();
+    osg::Matrixd baseMVM = viewer->getCamera()->getViewMatrix();
 	osg::Matrixd transMVM = markerMVM.operator *( baseMVM.inverse( baseMVM ) );
 	osg::Vec3f targetPosition = transMVM.getTrans();
 
@@ -104,11 +105,11 @@ void ArControlClass::updateObjectPositionAruco( qlonglong object_id, QMatrix4x4 
 	// if marker is not behind, reverse coordinates
 	if ( !reverse ) {
 		// TO DO - nefunguje ani jurikova base ... zistit co je problem
-		targetPosition.set( ( targetPosition - arucoBaseDist ).operator /( -2 ) );
+        targetPosition.set( ( targetPosition - arucoBaseDist ).operator /(-2*graphScale.x()));
 	}
 	else {
 		//position of second marker in world coordinate system
-		targetPosition.set( ( targetPosition - arucoBaseDist ).operator /( 2 ) );
+        targetPosition.set( ( targetPosition - arucoBaseDist ).operator /(2*graphScale.x()));
 	}
 	if ( controlObjects.value( object_id ) != NULL ) {
 		//if object is lost, destroy and create new
