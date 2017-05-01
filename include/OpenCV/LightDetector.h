@@ -31,6 +31,8 @@ public:
 
 	void DrawLightCircles( cv::Mat src );
 
+	void setFisheyeAngle( int angle );
+
 	void setFisheyeCenter( cv::Point );
 
 	void setFisheyeRadius( int );
@@ -41,15 +43,19 @@ public:
 
 	void ProcessFrame( cv::Mat& frame, cv::Mat frameGray );
 
-	cv::Point3d MapToHemisphere( cv::Point2d offset );
-
 	OpenCV::TrackedLight getLight( int index );
 
-	osg::Vec4 getAverageFrameColor();
+	// simple getters
 
-	int getLightNum();
+	osg::Vec4 getAverageColor() const { return mFrameMeanColor; }
+
+	float getAverageColorIntensity() const { return mFrameMeanColorIntensity; }
+
+	int getLightNum() const { return mLightCount; }
 
 private:
+
+	void calculateSurface();
 
 	cv::Mat											mKernelOpen;
 
@@ -66,6 +72,8 @@ private:
 	int												mLightCount;
 
 	osg::Vec4										mFrameMeanColor;
+
+	float											mFrameMeanColorIntensity;
 
 	float											mFrameSurface;
 

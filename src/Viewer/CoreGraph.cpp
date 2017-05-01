@@ -43,6 +43,8 @@
 
 #include <easylogging++.h>
 
+#include <osgDB/FileUtils>
+
 namespace Vwr {
 
 /*
@@ -662,7 +664,62 @@ int CoreGraph::getOrCreateLight( int index ) {
 }
 
 void CoreGraph::setLightType( int index, bool isPointLight ) {
+	// seems to be broken
 	lightSources[ index ]->getLight()->setPosition( osg::Vec4( 0, 0, 0, isPointLight ? 1 : 0 ) );
+}
+
+void CoreGraph::useSphereMappingShader( osg::ref_ptr< osg::StateSet > state ) {
+
+	/* based on https://www.clicktorelease.com/blog/creating-spherical-environment-mapping-shader/  */
+	/* 1. Load image to be used for sphere mapping */
+	osg::Texture2D *texture = new osg::Texture2D();
+	osg::Image* foo = osgDB::readImageFile( "foo2.jpg" );
+	if ( foo == NULL ) {
+		printf( "Error: Image \"foo2.jpg\" has not been read!\n" );
+	}
+	texture->setImage( foo );
+
+	/* 2. Load the Shaders */
+	osg::ref_ptr<osg::Program> projProg( new osg::Program );
+	const std::string vertexSource =
+		"#version 400 compatibility\n"
+		"out vec2  vN;\n"
+		"void main() \n"
+		"{ \n"
+		"	gl_Position  = ftransform();\n"
+		"	vec3 n       = normalize(gl_NormalMatrix * gl_Normal);\n"
+		"	vec4 p       = gl_ModelViewMatrix * gl_Vertex;\n"
+		"	vec3 e       = p.xyz;\n"
+		"	vec3 r       = reflect(e, n);\n"
+		"	float m      = 2.0 * sqrt( pow( r.x, 2. ) + pow( r.y, 2. ) + pow( r.z + 1., 2. ) );\n"
+		"	vN           = r.xy / m + 0.5;\n"
+		"} \n";
+	osg::ref_ptr<osg::Shader> projvertexShader( new osg::Shader(
+				osg::Shader::VERTEX, vertexSource ) );
+
+	const std::string fragmentSource =
+		"#version 400 compatibility\n"
+		"uniform sampler2D tMatCap; \n"
+		"uniform vec3  BaseColor;\n"
+		"uniform float MixRatio;\n"
+		"in vec2 vN; \n"
+		"void main() \n"
+		"{ \n"
+		"	vec3 base = texture2D( tMatCap, vN ).rgb;\n"
+		"	gl_FragColor = vec4( base, 1.0 );\n"
+		"} \n";
+	osg::ref_ptr<osg::Shader> projfragShader( new osg::Shader(
+				osg::Shader::FRAGMENT, fragmentSource ) );
+
+	projProg->addShader( projvertexShader.get() );
+	projProg->addShader( projfragShader.get() );
+	/* 3. Set texture as shader uniform */
+	osg::Uniform* texUniform = new osg::Uniform( osg::Uniform::SAMPLER_2D, "tMatCap" );
+	texUniform->set( 0 );
+	state->addUniform( texUniform );
+	state->setTextureAttributeAndModes(0,texture,osg::StateAttribute::ON);
+	/* 4. Activate shader for this state set */
+	state->setAttributeAndModes(projProg, osg::StateAttribute::ON);
 }
 
 Vwr::CoreGraph::CoreGraph( Data::Graph* graph, osg::ref_ptr<osg::Camera> camera )
@@ -688,15 +745,22 @@ Vwr::CoreGraph::CoreGraph( Data::Graph* graph, osg::ref_ptr<osg::Camera> camera 
 	graphGroup = new osg::Group();
 	rotationMatrix = rotationMatrix.identity();
 
-
 	lightsGroup = new osg::Group();
 
-	//int lid = getOrCreateLight( 0 );
-	//setLightType( lid, false );
-	//setLightPosition( lid, osg::Vec3( 0, 0, 10000 ) );
-	//setLightActive( lid, true );
+	int lid = getOrCreateLight( 0 );
+	setLightPosition( lid, osg::Vec3( 0, 0, 100 * baseSize ) );
+	setLightDiffuseColor( lid, osg::Vec4( 1, 1, 1, 1 ) );
+	setLightActive( lid, true );
 
 	root->addChild( lightsGroup );
+
+
+	/*
+	osg::ref_ptr<osg::AutoTransform> test = getSphere( 0, osg::Vec3( 0, 0, 0 ), 100.0, osg::Vec4( 1.0, 1.0, 1.0, 1.0 ) );
+	useSphereMappingShader( test->getOrCreateStateSet() );
+	root->addChild( test );
+	*/
+
 
 	lightModel = new osg::LightModel();
 	setAmbientLightColor( osg::Vec4( 0.3, 0.3, 0.3, 1 ) );
@@ -707,7 +771,6 @@ Vwr::CoreGraph::CoreGraph( Data::Graph* graph, osg::ref_ptr<osg::Camera> camera 
 	shadowedScene->setReceivesShadowTraversalMask( 0x1 );
 	shadowedScene->setCastsShadowTraversalMask( 0x2 );
 	root->addChild( shadowedScene );
-
 
 	//node and transform for axes
 	axesGeode = new osg::Geode();
@@ -1699,7 +1762,7 @@ void CoreGraph::createBase()
 	//invisible untill checkbox clicked
 	baseGeode->setNodeMask( 0x0 );
 	osg::Material* material = new osg::Material();
-	material->setDiffuse( osg::Material::FRONT,  osg::Vec4( 0.8f, 0.8f, 0.8f, 0.2f ) );
+	material->setDiffuse( osg::Material::FRONT,  osg::Vec4( 0.8f, 0.8f, 0.8f, 1.0f ) );
 	// material->setEmission(osg::Material::FRONT, osg::Vec4(0, 0, 0, 1));
 	baseGeode->getOrCreateStateSet()->setAttribute( material );
 
@@ -2051,22 +2114,23 @@ osg::Vec3f CoreGraph::getGrafRotTransVec()
 //*****
 
 void CoreGraph::turnOnCustomLights() {
-	//setLightType( 0, true );
+	// Detection thread will activate needed lights
 }
 
 void CoreGraph::turnOffCustomLights() {
-	if (lightsGroup->getNumChildren()) {
-		setLightActive( 0, true );
-		setLightPosition( 0, osg::Vec3( 0, 0, 10000 ) );
-		setLightDiffuseColor( 0, osg::Vec4( 1, 1, 1, 1 ) );
-		setLightType( 0, false );
 
-		setAmbientLightColor( osg::Vec4( 0.3, 0.3, 0.3, 1 ) );
-	}
+	// will reset scene to default ligh
 
-	for ( int i = 1; i < 8 && i <= uniqueLightNumber; ++i ) {
+	for ( int i = 1; 0 < 8 && i <= uniqueLightNumber; ++i ) {
 		setLightActive( i, false );
 	}
+
+	int lid = getOrCreateLight( 0 );
+	setLightPosition( lid, osg::Vec3( 0, 0, 100 * baseSize ) );
+	setLightDiffuseColor( lid, osg::Vec4( 1, 1, 1, 1 ) );
+	setLightActive( lid, true );
+
+	setAmbientLightColor( osg::Vec4( 0.3, 0.3, 0.3, 1 ) );
 }
 
 void CoreGraph::setLightCoords( OpenCV::TrackedLight tlight )
@@ -2075,8 +2139,8 @@ void CoreGraph::setLightCoords( OpenCV::TrackedLight tlight )
 
 	int lid = getOrCreateLight( tlight.id );
 	setLightActive( lid, tlight.active );
-	setLightPosition( lid, tlight.positionHemisphere()*10*baseSize );
-	setLightDiffuseColor( lid, tlight.color() );
+	setLightPosition( lid, tlight.positionHemisphere()* baseSize * roomSize );
+	setLightDiffuseColor( lid, tlight.color() /* * tlight.colorIntensity()*/ );
 }
 
 void CoreGraph::setShowLightMarkers( bool set ) {

@@ -713,27 +713,35 @@ private:
 
 	//*****
 
+	int roomSize = 100;
+
 	osg::ref_ptr< osg::LightModel >									lightModel;
 
 	osg::ref_ptr< osg::LightSource >								lightSources[8];
 	osg::ref_ptr< osg::PositionAttitudeTransform >					lightTranforms[8];
 	osg::ref_ptr< osg::AutoTransform >								lightMarkerTransforms[8];
+
 	/**
 	 * @brief lightTranformGroup all PositionAttitudeTransforms for lights with their markers
 	 */
 	osg::ref_ptr<osg::Group> lightsGroup;
 
-
-	/**
-	 * @brief markerGroup all markers for visualisation of light sources
-	 */
-	osg::ref_ptr<osg::Group> markerGroup;
 	uint uniqueLightNumber = 0;
 
 	int getOrCreateLight( int id );
 
+	/**
+	 * @brief setLightPosition changes the position of the light
+	 * @param index light to be altered (GL lights from 0 to 8 exclusive)
+	 * @param position desired position
+	 */
 	void setLightPosition( int index, osg::Vec3 position );
 
+	/**
+	 * @brief setLightDiffuseColor sets the diffuse component of the light
+	 * @param index light to be altered (GL lights from 0 to 8 exclusive)
+	 * @param color desired light color
+	 */
 	void setLightDiffuseColor( int index, osg::Vec4 color );
 
 	/**
@@ -750,6 +758,12 @@ private:
 	 * @param isPointLight 0 spot light, 1 point light
 	 */
 	void setLightType(int index, bool isPointLight );
+
+	/**
+	 * @brief useSphereMappingShader changes state set to use custom shader which renders objects using spherical map (environment mapping)
+	 * @param state state to be altered
+	 */
+	void useSphereMappingShader( osg::ref_ptr< osg::StateSet > state );
 
 };
 }

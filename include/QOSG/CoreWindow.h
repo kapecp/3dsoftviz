@@ -743,7 +743,7 @@ public slots:
 	void changeLifespan( int value );
 
 	//jurik
-	void lightClicked();
+	void lightClicked(bool checked);
 	void shadowClicked();
 	void baseClicked();
 	void axesClicked();

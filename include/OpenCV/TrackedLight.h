@@ -28,7 +28,7 @@ public:
 
 	float				surface()					const { return _surface; }
 
-	void mapFrameToHemishere( cv::Point2f fisheye_center, float fisheye_radius );
+	void mapFrameToHemishere(cv::Point2f fisheye_center, float fisheye_radius , const float fisheye_angle);
 
 	void extractColor( cv::Mat &frame );
 
