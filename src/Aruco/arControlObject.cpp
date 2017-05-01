@@ -10,7 +10,7 @@
 #include "Data/Node.h"
 #include "Core/Core.h"
 #include "Viewer/CoreGraph.h"
-
+#include "Viewer/PickHandler.h"
 
 
 namespace ArucoModul {
@@ -45,6 +45,9 @@ ArControlObject::ArControlObject(int id, osg::Vec3f position, ArAssignmentStrate
         if(this->focusedNode != NULL){
             qDebug() << "focused";
 
+       //     AppCore::Core::getInstance()->getCoreWindow()->GetViewerQt()->getPickHandler()->addPickedNode(this->focusedNode);
+      //      AppCore::Core::getInstance()->getCoreWindow()->forceOnChange();
+
             this->focused = true;
             this->_selectionLayoutStrategy->setSelectionLayout( this->focusedNode );
             updatePosition( this->position );
@@ -56,6 +59,10 @@ void ArControlObject::timerEvent()
 	qDebug() << "LOST MARKER TRACK" ;
     this->_selectionLayoutStrategy->resetSelectionLayout( this->focusedNode );
     this->focused = false;
+
+ //   AppCore::Core::getInstance()->getCoreWindow()->GetViewerQt()->getPickHandler()->unselectPickedNodes(this->focusedNode);
+ //   AppCore::Core::getInstance()->getCoreWindow()->forceOnChange();
+
     this->focusedNode = NULL;
 }
 
