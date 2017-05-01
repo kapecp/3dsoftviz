@@ -1,6 +1,6 @@
 # Custom for project
-_build
-_install
+*_build
+*_install
 _qt-creator-build
 /_qt-creator-build
 qtcreator-build

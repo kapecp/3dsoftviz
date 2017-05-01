@@ -3,6 +3,7 @@
 
 #include <QPointer>
 
+
 class QApplication;
 
 namespace QOSG {
@@ -63,6 +64,8 @@ private:
 	QApplication*                           mApp;
 	QOSG::ProjectiveARWindow*   mProjectiveARWindow;
 	QOSG::ProjectiveARViewer*   mProjectiveARViewer;
+
+
 
 };
 }

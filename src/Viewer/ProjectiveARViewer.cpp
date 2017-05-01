@@ -26,7 +26,10 @@
 #include <math.h>
 
 // used code from http://jotschi.de/2009/05/31/projective-textures-with-openscenegraph/
-osg::StateSet* QOSG::ProjectiveARViewer::createProjectorState( osg::Texture2D* texture, osg::Vec3d projectorPos, osg::Vec3d projectorDirection, double projectorFOV )
+osg::StateSet* QOSG::ProjectiveARViewer::createProjectorState( osg::Texture2D* texture
+		, osg::Vec3d projectorPos
+		, osg::Vec3d projectorDirection
+		, double projectorFOV )
 {
 
 	osg::StateSet* stateset = new osg::StateSet;
@@ -284,8 +287,14 @@ osg::Group* QOSG::ProjectiveARViewer::createProjectorScene()
 	return projectorScene;
 }
 
-QOSG::ProjectiveARViewer::ProjectiveARViewer( QWidget* parent , const char* name , const QGLWidget* shareWidget , WindowFlags f , QOSG::ProjectiveARWindow* window, osgViewer::Viewer* viewerPerspective, Vwr::CoreGraph* coreGraph ):
-	AdapterWidget( parent, name, shareWidget, f )
+QOSG::ProjectiveARViewer::ProjectiveARViewer( QWidget* parent
+		, const char* name
+		, const QGLWidget* shareWidget
+		, WindowFlags f
+		, QOSG::ProjectiveARWindow* window
+		, osgViewer::Viewer* viewerPerspective
+		, Vwr::CoreGraph* coreGraph )
+		: AdapterWidget( parent, name, shareWidget, f )
 {
 	this->window = window;
 	this->coreGraph = coreGraph;
@@ -392,6 +401,11 @@ void QOSG::ProjectiveARViewer::updateProjector()
 
 void QOSG::ProjectiveARViewer::updateScene()
 {
+	//
+	//	sem pridat nastavenie base
+	//
+
+
 	updateRenderCamera();
 	updateViewer();
 	updateProjector();
