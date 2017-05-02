@@ -12,30 +12,23 @@ class Ball : public osg::PositionAttitudeTransform
 {
 private:
 	QString name;
-	QString info;
-	QList<osg::ref_ptr<Floor>> floors;
-	float minBuildingHeight;
-	float buildingHeight;
-	bool triangleRoof;
+	float minBaseSize;
+	float baseSize;
 	bool lieOnGround;
 	osg::ref_ptr<osg::Geode> label;
 	bool labelVisible;
 	osg::ref_ptr<osg::Material> lastMaterial;
 
 public:
-	Ball( const QString& name = QString(), const QString& info = QString(), const QList<Floor*>& inputFloors = QList<Floor*>() );
-	void setHeight( float height );
-	float getHeight( bool includeRoof = false ) const;
+	Ball( const QString& name = QString() );
 	void setBaseSize( float size );
 	float getBaseSize() const;
-	void setTriangleRoof( bool state );
 	void setLieOnGround( bool state );
 	void setLabel( const QString& name );
 	void showLabel( bool state );
-	const QString& getInfo() const;
 	osg::BoundingBox getBoundingBox() const;
 	void refresh();
 	void select( bool selected );
-	float getMinHeight() const;
+	float getMinBaseSize() const;
 };
 }

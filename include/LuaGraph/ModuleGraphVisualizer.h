@@ -5,6 +5,7 @@
 
 #include "City/Module.h"
 #include "City/Building.h"
+#include "City/Ball.h"
 
 namespace Lua {
 
@@ -28,6 +29,8 @@ private:
 	void reloadGraph();
 
 	void adjustBuildingForNode(osg::ref_ptr<Data::Node> node, float baseSize, float height, bool lieOnGround, osg::ref_ptr<osg::Material> colour, QString textureName);
+
+	void adjustBallForNode(osg::ref_ptr<Data::Node> node, float baseSize, bool lieOnGround, osg::ref_ptr<osg::Material> colour);
 
 };
 

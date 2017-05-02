@@ -27,6 +27,7 @@ void Lua::ModuleGraphVisualizer::visualize()
 	const float DEFAULT_NODE_BASE_SIZE = 4.0f;
 	const float DEFAULT_NODE_HEIGHT = 4.0f;
 	const float DEFAULT_NODE_MAX_HEIGHT = 10.0f;
+	const float DEFAULT_BALL_SIZE = 1.0f;
 
 	float maxFuncNodeSize = 0.0f;
 
@@ -143,6 +144,7 @@ void Lua::ModuleGraphVisualizer::visualize()
 	const float NODE_BASE_SIZE = config->getFloatValue( "City.Building.LuaNodeBaseSize", DEFAULT_NODE_BASE_SIZE );
 	const float NODE_HEIGHT = config->getFloatValue( "City.Building.LuaNodeHeight", DEFAULT_NODE_HEIGHT );
 	const float NODE_MAX_HEIGHT = config->getFloatValue( "City.Building.LuaNodeMaxHeight", DEFAULT_NODE_MAX_HEIGHT );
+	const float BALL_SIZE = config->getFloatValue( "City.Ball.DefaultBaseSize", DEFAULT_BALL_SIZE );
 
 	//iterate through all nodes and adjust visual form
 	QMap<qlonglong, Lua::LuaNode*>::iterator i;
@@ -181,8 +183,8 @@ void Lua::ModuleGraphVisualizer::visualize()
 		else if ( i.value()->getParams().getValue()["type"] == "interface" ) {
 			adjustBuildingForNode( graphNode, NODE_BASE_SIZE, NODE_HEIGHT, true, green, "" );
 		}
-		else {
-			adjustBuildingForNode( graphNode, NODE_BASE_SIZE, NODE_HEIGHT, true, black, "" );
+		else {			
+			adjustBallForNode( graphNode, BALL_SIZE, false, black );
 		}
 	}
 }
@@ -253,4 +255,19 @@ void Lua::ModuleGraphVisualizer::adjustBuildingForNode(osg::ref_ptr<Data::Node> 
 		building->getStateSet()->setTextureAttributeAndModes( 0, resMgr->getTexture( Util::ApplicationConfig::get()->getValue( textureName ) ), osg::StateAttribute::ON );
 	building->refresh();
 	node->setResidence( building );
+}
+
+void Lua::ModuleGraphVisualizer::adjustBallForNode(osg::ref_ptr<Data::Node> node, float baseSize, bool lieOnGround, osg::ref_ptr<osg::Material> colour)
+{
+	auto resMgr = Manager::ResourceManager::getInstance();
+
+	auto ball = new City::Ball();
+	ball->setLabel(node->AbsNode::getName());
+	ball->setBaseSize( baseSize );
+	ball->setLieOnGround( lieOnGround );
+	ball->setStateSet( new osg::StateSet() );
+	ball->getStateSet()->setAttribute( colour );
+	ball->getStateSet()->setMode( GL_RESCALE_NORMAL, osg::StateAttribute::ON );
+	ball->refresh();
+	node->setResidence( ball );
 }

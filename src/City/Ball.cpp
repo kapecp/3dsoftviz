@@ -1,72 +1,33 @@
 #include "City/Ball.h"
-#include <Shapes/QuadPyramide.h>
+#include <osg/ShapeDrawable>
 #include <Util/ApplicationConfig.h>
 #include <Data/OsgNode.h>
 #include <Manager/ResourceManager.h>
 #include <osgText/FadeText>
 
 namespace City {
-static float DEFAULT_BALL_DEFAULT_BASE_SIZE = 1.0f;
-static float DEFAULT_BALL_DEFAULT_ROOF_HEIGHT = 0.3f;
+static float DEFAULT_BALL_BASE_SIZE = 1.0f;
 static float DEFAULT_BALL_CAPTION_CHARACTER_SIZE = 3.0f;
 static float DEFAULT_BALL_CAPTION_OFFSET = 0.3f;
 
-Ball::Ball( const QString& name, const QString& info, const QList<Floor*>& inputFloors )
+Ball::Ball( const QString& name )
 {
-	const float BALL_DEFAULT_BASE_SIZE = Util::ApplicationConfig::get()->getFloatValue( "City.Building.DefaultBaseSize", DEFAULT_BALL_DEFAULT_BASE_SIZE );
+	const float BALL_BASE_SIZE = Util::ApplicationConfig::get()->getFloatValue( "City.Ball.DefaultBaseSize", DEFAULT_BALL_BASE_SIZE );
 
 	setLabel( name );
-	this->info = info;
-	for ( auto f : inputFloors ) {
-		floors << f;
-	}
-	this->triangleRoof = false;
 	this->lieOnGround = true;
 	this->labelVisible = false;
-	if ( floors.empty() ) {
-		auto f = new Floor();
-		f->setDivideBorder( false );
-		floors << f;
-	}
-	minBuildingHeight = Floor::getFloorMinHeight() * static_cast<float>( floors.count() );
-	buildingHeight = minBuildingHeight;
-	for ( const auto& f : floors ) {
-		f->setBaseSize( BALL_DEFAULT_BASE_SIZE );
-	}
-}
-
-void Ball::setHeight( float height )
-{
-	buildingHeight = 0.0f;
-	const float floorHeight = height / static_cast<float>( floors.count() );
-	for ( auto& f : floors ) {
-		f->setFloorHeight( floorHeight );
-		buildingHeight += f->getFloorHeight();
-	}
-}
-
-float Ball::getHeight( bool includeRoof ) const
-{
-	const float BALL_DEFAULT_ROOF_HEIGHT = Util::ApplicationConfig::get()->getFloatValue( "City.Building.DefaultRoofHeight", DEFAULT_BALL_DEFAULT_ROOF_HEIGHT );
-
-	return buildingHeight + ( includeRoof && triangleRoof ? BALL_DEFAULT_ROOF_HEIGHT : 0.0f );
+	baseSize = minBaseSize = BALL_BASE_SIZE;
 }
 
 void Ball::setBaseSize( float size )
 {
-	for ( auto& f : floors ) {
-		f->setBaseSize( size );
-	}
+	baseSize = size;
 }
 
 float Ball::getBaseSize() const
 {
-	return floors.first()->getBaseSize();
-}
-
-void Ball::setTriangleRoof( bool state )
-{
-	triangleRoof = state;
+	return baseSize;
 }
 
 void Ball::setLieOnGround( bool state )
@@ -84,7 +45,7 @@ void Ball::setLabel( const QString& name )
 	label.release();
 	if ( !name.isEmpty() ) {
 		auto config = Util::ApplicationConfig::get();
-		const float BALL_CAPTION_CHARACTER_SIZE = config->getFloatValue( "City.Building.CaptionCharacterSize", DEFAULT_BALL_CAPTION_CHARACTER_SIZE );
+		const float BALL_CAPTION_CHARACTER_SIZE = config->getFloatValue( "City.Ball.CaptionCharacterSize", DEFAULT_BALL_CAPTION_CHARACTER_SIZE );
 
 		label = new osg::Geode();
 		auto text = new osgText::FadeText();
@@ -111,43 +72,38 @@ void Ball::showLabel( bool state )
 	labelVisible = state;
 }
 
-const QString& Ball::getInfo() const
-{
-	return info;
-}
 
 osg::BoundingBox Ball::getBoundingBox() const
 {
 	const float BALL_BASE_SIZE_HALF = getBaseSize() / 2;
-	return osg::BoundingBox( -BALL_BASE_SIZE_HALF, -BALL_BASE_SIZE_HALF, 0, BALL_BASE_SIZE_HALF, BALL_BASE_SIZE_HALF, getHeight() );
+	return osg::BoundingBox( -BALL_BASE_SIZE_HALF, -BALL_BASE_SIZE_HALF, 0, BALL_BASE_SIZE_HALF, BALL_BASE_SIZE_HALF, getBaseSize() );
 }
 
 void Ball::refresh()
 {
 	// nacitanie konfiguracii z aplikacie
 	auto config = Util::ApplicationConfig::get();
-	const float BALL_DEFAULT_ROOF_HEIGHT = config->getFloatValue( "City.Building.DefaultRoofHeight", DEFAULT_BALL_DEFAULT_ROOF_HEIGHT );
-	const float BALL_CAPTION_OFFSET = config->getFloatValue( "City.Building.CaptionOffset", DEFAULT_BALL_CAPTION_OFFSET );
+	const float BALL_CAPTION_OFFSET = config->getFloatValue( "City.Ball.CaptionOffset", DEFAULT_BALL_CAPTION_OFFSET );
 
 	// vymazanie starej geometrie
 	removeChildren( 0, getNumChildren() );
 
-	osg::Vec3 pos( 0.0f, 0.0f, lieOnGround ? 0.0f : -getHeight() / 2.0f );
-	for ( auto& f : floors ) { // generovanie geometrie poschodi
-		f->setPosition( pos );
-		pos.z() += f->getFloorHeight();
-		f->refresh();
-		addChild( f );
-	}
-	if ( triangleRoof ) { // ma mat strechu
-		auto roof = new osg::PositionAttitudeTransform();
-		roof->setPosition( pos );
-		roof->addChild( new Shapes::QuadPyramide( getBaseSize(), getBaseSize(), BALL_DEFAULT_ROOF_HEIGHT ) );
-		addChild( roof );
-	}
+	auto ball = new osg::PositionAttitudeTransform();
+
+	osg::Sphere* sphere = new osg::Sphere;
+	sphere->setRadius( getBaseSize() );
+
+	osg::ref_ptr<osg::ShapeDrawable> nodeSphere = new osg::ShapeDrawable;
+	nodeSphere->setShape( sphere );
+
+	osg::ref_ptr<osg::Geode> geode = new osg::Geode;
+	geode->addDrawable( nodeSphere );
+
+	ball->addChild( geode );
+	addChild( ball );
 
 	if ( label.valid() ) { // ma nastaveny label
-		static_cast<osgText::TextBase*>( label->asGeode()->getDrawable( 0 ) )->setPosition( osg::Vec3( 0.0f, 0.0f, getHeight( true ) + BALL_CAPTION_OFFSET ) );
+		static_cast<osgText::TextBase*>( label->asGeode()->getDrawable( 0 ) )->setPosition( osg::Vec3( 0.0f, 0.0f, getBaseSize() + BALL_CAPTION_OFFSET ) );
 		if ( labelVisible ) {
 			addChild( label );
 		}
@@ -169,8 +125,8 @@ void Ball::select( bool selected )
 	}
 }
 
-float Ball::getMinHeight() const
+float Ball::getMinBaseSize() const
 {
-	return minBuildingHeight;
+	return minBaseSize;
 }
 }

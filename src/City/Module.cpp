@@ -44,16 +44,13 @@ osg::ref_ptr<osg::PositionAttitudeTransform> City::Module::getNodeParentPAT( osg
 	return node->getParent(0)->asTransform()->asPositionAttitudeTransform();
 }
 
-void City::Module::addBuilding( osg::ref_ptr<City::Building> building )
-{
-	insertChild( 0, building );
-}
-
-
 void City::Module::showLabels( bool state )
 {
 	forEachList( [state]( osg::ref_ptr<Data::Node> node ) {
-		node->getBuilding()->showLabel( state );
+		auto building = node->getBuilding();
+		if ( building ) { building->showLabel( state ); }
+		auto ball = node->getModuleBall();
+		if ( ball ) { ball->showLabel( state ); }
 	} );
 }
 
@@ -61,7 +58,10 @@ void City::Module::selectAll( bool state )
 {
 	if ( !state ) {
 		forEachList( [state]( osg::ref_ptr<Data::Node> node ) {
-			node->getBuilding()->select( state );
+			auto building = node->getBuilding();
+			if ( building ) { building->select( state ); }
+			auto ball = node->getModuleBall();
+			if ( ball ) { ball->select( state ); }
 		} );
 	}
 

@@ -179,8 +179,6 @@ City::Module* Data::OsgNode::getModule()
 
 void Data::OsgNode::setModule( City::Module* module )
 {
-	//osg::ref_ptr<City::Building> building = getBuilding();
-	//module->addBuilding( building );
 	removeChild( INDEX_RESIDENCE );
 	insertChild( INDEX_RESIDENCE, module );
 	setValue( INDEX_RESIDENCE, true );
@@ -219,6 +217,15 @@ City::Building* Data::OsgNode::getBuilding()
 	auto at = getChild( INDEX_RESIDENCE )->asTransform()->asPositionAttitudeTransform();
 	if ( at->getNumChildren() > 0 ) {
 		return dynamic_cast<City::Building*>( at->getChild( 0 )->asTransform()->asPositionAttitudeTransform() );
+	}
+	return nullptr;
+}
+
+City::Ball* Data::OsgNode::getModuleBall()
+{
+	auto at = getChild( INDEX_RESIDENCE )->asTransform()->asPositionAttitudeTransform();
+	if ( at->getNumChildren() > 0 ) {
+		return dynamic_cast<City::Ball*>( at->getChild( 0 )->asTransform()->asPositionAttitudeTransform() );
 	}
 	return nullptr;
 }

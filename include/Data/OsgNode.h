@@ -6,8 +6,9 @@
 #include <osg/Switch>
 #include <Data/Type.h>
 
-#include "Data/DbNode.h"
+#include <Data/DbNode.h>
 #include <City/Building.h>
+#include <City/Ball.h>
 
 namespace City {
 class Residence;
@@ -112,6 +113,13 @@ public:
 	* \return osg::ref_ptr of residence osg subgraph
 	*/
 	City::Residence* getResidence();
+
+	/**
+	* \fn public getModuleBall
+	* \brief Gets subgraph for drawing ball of module.
+	* \return osg::ref_ptr of ball osg subgraph
+	*/
+	City::Ball* getModuleBall();
 
 	/**
 	* \fn public getBuilding
