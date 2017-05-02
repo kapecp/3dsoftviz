@@ -35,7 +35,7 @@ void Leap::HandObjectManipulator::updateHands( Leap::Hand leftHand, Leap::Hand r
     float diffLeftHand;
     float diffRightHand;
 
-    this->center = osg::Vec3f(0.0f,0.0f,0.0f);;
+    this->center = osg::Vec3f(0.0f,0.0f,0.0f);
     this->direction = osg::Vec3f(0.0f,5.0f,0.0f);
 
     // update lavej ruky
@@ -46,11 +46,10 @@ void Leap::HandObjectManipulator::updateHands( Leap::Hand leftHand, Leap::Hand r
 
 
         diffLeftHand = lVector.y - mid;
-        LOG(INFO) << " model position pred y:" + std::to_string( lVector.y );
         lVector = this->mapper->recalculateDepthNode(lVector, diffLeftHand);
         lVector = changeHandUpDirectionAxis(lVector);
 
-        LOG(INFO) << " model position po y:" + std::to_string( lVector.y );
+
 
         leftPalm->setMatrix(
                 osg::Matrix::translate( static_cast<double>(this->center[0]) + this->direction[0] + static_cast<double>( lVector.x )/100.0,
@@ -68,7 +67,6 @@ void Leap::HandObjectManipulator::updateHands( Leap::Hand leftHand, Leap::Hand r
         Leap::Vector rVector = Leap::Vector( this->center[0]-0.5,this->center[1],this->center[2] );
         //ziskanie pozicie dlane
         rVector = rightHand.palmPosition();
-//        LOG(INFO) << "leftHand position pred: " + std::to_string(rVector.y);
 
         diffRightHand = rVector.y - mid;
         rVector = this->mapper->recalculateDepthNode(rVector, diffRightHand);
