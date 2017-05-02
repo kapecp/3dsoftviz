@@ -1,12 +1,12 @@
 -----------------------------------------------
--- INIT luadb AST Manager
+-- INIT luadb Graph Manager
 -- @release 2017/03/17, Denis Illes
 -----------------------------------------------
 
-local astManager = require "luadb.manager.AST.manager"
-local utils      = require "luadb.utils"
+local graphManager = require "luadb.manager.graph.manager"
+local utils        = require "luadb.utils"
 
-utils.logger:info('require AST manager - done.')
+utils.logger:info('require graph manager - done.')
 
 -----------------------------------------------
 -- Return
@@ -14,5 +14,5 @@ utils.logger:info('require AST manager - done.')
 
 return
 {
-  new = astManager.new
+  new = graphManager.new
 }

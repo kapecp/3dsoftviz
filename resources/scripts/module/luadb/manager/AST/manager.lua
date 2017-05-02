@@ -58,9 +58,6 @@ function pASTManager:addAST(AST, path)
     path = path
   }
   table.insert(self.AST, ASTNode)
-  if self.EdgeMapper then
-    self.EdgeMapper:save(ASTNode)
-  end
   return ASTNode.id
 end
 
@@ -76,6 +73,48 @@ function pASTManager:printASTs()
       print("AST with ID: "..ast['id'])
     end
   end
+end
+
+-----------------------------------------------
+-- Remove functions
+-----------------------------------------------
+
+-- remove AST by id
+function pASTManager:removeASTByID(astID)
+  for index,ast in pairs(self.AST) do
+    if ast.id == astID then
+      self.AST[index] = nil
+      utils.logger:debug('AST with ID = ' .. astID ..' deleted from ASTManager')
+      return true
+    end
+  end
+  return false
+end
+
+-- remove AST by root of AST
+function pASTManager:removeAST(ast)
+  local removed = false
+  for index,ast in pairs(self.AST) do
+    if type(ast) == "table" and ast.root == ast then
+      self.AST[index] = nil
+      utils.logger:debug('AST deleted from ASTManager')
+      removed = true
+    end
+  end
+  return removed
+end
+
+--remove AST by path
+function pASTManager:removeASTByPath(path)
+  local removed = false
+  for index,ast in pairs(self.AST) do
+    if ast.path == path then
+      self.AST[index] = nil
+      utils.logger:debug('AST with path = ' .. path ..' deleted from ASTManager')
+      removed = true
+    end
+  end
+  return removed
 end
 
 -----------------------------------------------
@@ -96,7 +135,7 @@ end
 function pASTManager:findASTByPath(path)  
   for _,ast in pairs(self.AST) do
     if ast.path == path then
-      utils.logger:debug('AST found, no need to extract')
+      utils.logger:debug('AST with path = ' .. path ..' found. No need to extract')
       return ast.root, ast.id
     end
   end
