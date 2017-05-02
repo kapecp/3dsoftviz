@@ -166,17 +166,17 @@ local function addRequireNodesToGraph(graph, requires, AST_ID, fileName, nodes, 
     graph:addEdge(newEdge)    
     table.insert(edges, newEdge)
         
-    local moduleNode = globalModuleNodes[req.assignedNode.fullName]
+    local moduleNode = globalModuleNodes[req.assignedNode.name]
     if (moduleNode == nil) then
       logger:debug('adding module node '..i)
-      moduleNode = createNode(req.assignedNode.fullName, req.assignedNode.type, AST_ID, req.assignedNode.node)      
+      moduleNode = createNode(req.assignedNode.name, req.assignedNode.type, AST_ID, req.assignedNode.node)      
       graph:addNode(moduleNode)
       table.insert(nodes, moduleNode)
       globalModuleNodes[moduleNode.data.name] = moduleNode
     end
     
     logger:debug('adding requires edge')
-    local newEdge = createEdge("requires", idNode, globalModuleNodes[req.assignedNode.fullName], true)    
+    local newEdge = createEdge("requires", idNode, globalModuleNodes[req.assignedNode.name], true)    
     
     graph:addEdge(newEdge)
     table.insert(edges, newEdge)
