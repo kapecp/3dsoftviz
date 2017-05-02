@@ -57,7 +57,7 @@ void QWebViewImage::showTemplate( const std::string& templateName, Lua::LuaValue
 	params.push_back( models.getValue() );
 
 	// Call slt2 renderer
-	std::string html = lua->callFunction( 2, renderer, params.getValue() )[0].asString();
+	std::string html = lua->callFunction( 2, renderer, params )[0].asString();
 	// qDebug() << html.c_str();
 
 	// Create relative webview dir url
@@ -102,6 +102,27 @@ void QWebViewImage::showGitTemplate( const std::string& templateName, const std:
 	_webView->setHtml( createGitHtml( changedMetrics ), baseUrl );
 }
 
+void QWebViewImage::showMoonscriptTemplate( const std::string& templateName, const std::string& templateType, QString luaNodeId )
+{
+	qDebug() << templateName.c_str() << templateType.c_str();
+
+	// Initialize lua interface to call slt2 renderer
+	Lua::LuaInterface* lua = Lua::LuaInterface::getInstance();
+
+	QString renderer[] = {"slt2_renderer", "getClassDiagramSvg"};
+
+	// Prepare parameters to be passed to functions
+	Lua::LuaValueList params;
+	params.push_back( luaNodeId.toStdString() );
+
+	// Call luameg/plantuml/classDiagram to get text from created svg
+	std::string svg = lua->callFunction( 2, renderer, params )[0].asString();
+	QString qSvg = QString::fromStdString( svg );
+
+	// Set html and baseUrl working directory
+	_webView->setHtml( createHtmlFromSVG( qSvg ) );
+}
+
 void QWebViewImage::focusBrowser( bool focus )
 {
 //	QFocusEvent event( focus ? QEvent::FocusIn : QEvent::FocusOut, Qt::OtherFocusReason );
@@ -135,6 +156,20 @@ bool QWebViewImage::sendKeyEvent( int key, bool keyDown )
 {
 	//return QWebViewImage::_adapter->sendKeyEvent( key, keyDown );
 	return false;
+}
+
+QString QWebViewImage::createHtmlFromSVG( QString svg )
+{
+	//delete first line: <?xml version="1.0" encoding="UTF-8" standalone="no"?>
+	QString svg_cropped = svg.mid(svg.indexOf(">")+1, -1);
+	QString html = "";
+	html += "<html>\n";
+	html += "<body>\n";
+	html += svg_cropped + "\n";
+	html += "</body>\n";
+	html += "</html>\n";
+	qDebug() << html;
+	return html;
 }
 
 QString QWebViewImage::createGitHtml( QMap<QString, int>* changedMetrics )

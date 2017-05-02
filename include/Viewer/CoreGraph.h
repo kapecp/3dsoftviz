@@ -655,17 +655,6 @@ private:
 	unsigned int restrictionManipulatorsPosition;
 
 	/**
-		 * \author Autor: Denis Illes
-		 * \brief New positions for nodes in module.
-		 * \param qlonglong moduleNodeId module node id
-		 * \param QList<qlonglong> functionNodeIds list of function node ids
-		 * \param QList<qlonglong> variableNodeIds list of variable node ids
-		 * \param QList<qlonglong> otherNodeIds list of unspecified node ids
-		 * \param QList<qlonglong> interfaceNodeIds list of interface node ids
-		 */
-	void setNodePositionsForModuleCity( qlonglong moduleNodeId, QList<qlonglong> functionNodeIds, QList<qlonglong> variableNodeIds, QList<qlonglong> otherNodeIds, QList<qlonglong> interfaceNodeIds );
-
-	/**
 		*  int groupsPosition
 		*  \brief browsers group position
 		*/

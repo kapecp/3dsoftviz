@@ -22,12 +22,29 @@ Lua::ModuleGraphVisualizer::ModuleGraphVisualizer( Data::Graph* graph, osg::ref_
 
 void Lua::ModuleGraphVisualizer::visualize()
 {
+	const float DEFAULT_FILE_BASE_SIZE = 5.0f;
+	const float DEFAULT_FILE_HEIGHT = 5.0f;
+	const float DEFAULT_NODE_BASE_SIZE = 4.0f;
+	const float DEFAULT_NODE_HEIGHT = 4.0f;
+	const float DEFAULT_NODE_MAX_HEIGHT = 10.0f;
+
+	float maxFuncNodeSize = 0.0f;
+
+
 	//insert every node and edge from Lua::LuaGraph to Data::Graph
 	auto nodeType = currentGraph->addType( Data::GraphLayout::NESTED_NODE_TYPE );
 	auto edgeType = currentGraph->addType( Data::GraphLayout::NESTED_EDGE_TYPE );
 
 	Lua::LuaGraph* luaGraph = Lua::LuaGraph::loadGraph();
 	luaGraph->printGraph();
+
+	//adding invisible anchor nodes
+	QString metaNodeName = "metaNode";
+	QString metaEdgeName = "metaEdge";
+	auto filesAnchor = currentGraph->addNode( std::numeric_limits<qlonglong>::max(), metaNodeName, currentGraph->getNodeMetaType(), osg::Vec3( 0, 0, 500 ) );
+	auto functionsAnchor = currentGraph->addNode( std::numeric_limits<qlonglong>::max() - 1, metaNodeName, currentGraph->getNodeMetaType(), osg::Vec3( 0, 0, -500 ) );
+	filesAnchor->setColor( osg::Vec4( 0,0,0,0 ) );
+	functionsAnchor->setColor( osg::Vec4( 0,0,0,0 ) );
 
 	//adding nodes
 	QMap<qlonglong, Lua::LuaNode*>::iterator node_iter;
@@ -37,6 +54,38 @@ void Lua::ModuleGraphVisualizer::visualize()
 		osg::ref_ptr<Data::Node> n = currentGraph->addNode( node_iter.key() , node_iter.value()->getLabel(), nodeType );
 		n->setLuaIdentifier(node_iter.value()->getIdentifier());
 		setNodeParams( n, node_iter.value(), osg::Vec4f( 1,1,1,1 ), 8 );
+
+		if ( node_iter.value()->getParams().getValue()["root"] == true ) {
+			//connect root node to filesAnchor with invisible edge
+			auto metaLink = currentGraph->addEdge( metaEdgeName, n, filesAnchor, currentGraph->getEdgeMetaType(), false );
+			metaLink->setEdgeColor( osg::Vec4( 0,0,0,0 ) );
+			metaLink->setInvisible( true );
+		}
+		else if ( node_iter.value()->getParams().getValue()["type"] == "directory" ) {
+			//connect directory node to filesAnchor with invisible edge
+			auto metaLink = currentGraph->addEdge( metaEdgeName, n, filesAnchor, currentGraph->getEdgeMetaType(), false );
+			metaLink->setEdgeColor( osg::Vec4( 0,0,0,0 ) );
+			metaLink->setInvisible( true );
+		}
+		else if ( node_iter.value()->getParams().getValue()["type"] == "file" ) {
+			//connect file node to filesAnchor with invisible edge
+			auto metaLink = currentGraph->addEdge( metaEdgeName, n, filesAnchor, currentGraph->getEdgeMetaType(), false );
+			metaLink->setEdgeColor( osg::Vec4( 0,0,0,0 ) );
+			metaLink->setInvisible( true );
+		}
+		else if ( node_iter.value()->getParams().getValue()["type"] == "function" ) {
+			//connect function node to functionsAnchor with invisible edge
+			auto metaLink = currentGraph->addEdge( metaEdgeName, n, functionsAnchor, currentGraph->getEdgeMetaType(), false );
+			metaLink->setEdgeColor( osg::Vec4( 0,0,0,0 ) );
+			metaLink->setInvisible( true );
+			metaLink->setEdgeStrength( 0.1f );
+
+			//find max function node size
+			float funcNodeSize = node_iter.value()->getFloatParam( "size", 4.0f );
+			if (funcNodeSize > maxFuncNodeSize ) {
+				maxFuncNodeSize = funcNodeSize;
+			}
+		}
 	}
 
 	//adding edges
@@ -84,13 +133,16 @@ void Lua::ModuleGraphVisualizer::visualize()
 	auto green = resMgr->getMaterial( osg::Vec3( 0.565f, 0.933f, 0.565f ) );
 	auto orange = resMgr->getMaterial( osg::Vec3( 1.000f, 0.647f, 0.000f ) );
 
-	//adding invisible anchor nodes
-	QString metaNodeName = "metaNode";
-	QString metaEdgeName = "metaEdge";
-	auto filesAnchor = currentGraph->addNode( std::numeric_limits<qlonglong>::max(), metaNodeName, currentGraph->getNodeMetaType(), osg::Vec3( 0, 0, 500 ) );
-	auto functionsAnchor = currentGraph->addNode( std::numeric_limits<qlonglong>::max() - 1, metaNodeName, currentGraph->getNodeMetaType(), osg::Vec3( 0, 0, -500 ) );
-	filesAnchor->setColor( osg::Vec4( 0,0,0,0 ) );
-	functionsAnchor->setColor( osg::Vec4( 0,0,0,0 ) );
+
+
+	// nacitanie konfiguracii z aplikacie
+	auto config = Util::ApplicationConfig::get();
+
+	const float FILE_BASE_SIZE = config->getFloatValue( "City.Building.LuaFileBaseSize", DEFAULT_FILE_BASE_SIZE );
+	const float FILE_HEIGHT = config->getFloatValue( "City.Building.LuaFileHeight", DEFAULT_FILE_HEIGHT );
+	const float NODE_BASE_SIZE = config->getFloatValue( "City.Building.LuaNodeBaseSize", DEFAULT_NODE_BASE_SIZE );
+	const float NODE_HEIGHT = config->getFloatValue( "City.Building.LuaNodeHeight", DEFAULT_NODE_HEIGHT );
+	const float NODE_MAX_HEIGHT = config->getFloatValue( "City.Building.LuaNodeMaxHeight", DEFAULT_NODE_MAX_HEIGHT );
 
 	//iterate through all nodes and adjust visual form
 	QMap<qlonglong, Lua::LuaNode*>::iterator i;
@@ -101,62 +153,36 @@ void Lua::ModuleGraphVisualizer::visualize()
 		if(graphNode == nullptr) {
 			continue;
 		}
-		if ( i.value()->getParams().getValue()["root"] == true ) {
-			//connect root node to filesAnchor with invisible edge
-			auto metaLink = currentGraph->addEdge( metaEdgeName, graphNode, filesAnchor, currentGraph->getEdgeMetaType(), false );
-			metaLink->setEdgeColor( osg::Vec4( 0,0,0,0 ) );
-			metaLink->setInvisible( true );
-
-			adjustBuildingForNode(graphNode, 5.0f, 5.0f, false, white, "Viewer.Textures.ProjectNode");
-
+		if ( i.value()->getParams().getValue()["root"] == true ) {			
+			adjustBuildingForNode( graphNode, FILE_BASE_SIZE, FILE_HEIGHT, false, white, "Viewer.Textures.ProjectNode" );
+			graphNode->adjustLabelForModule( 50.0f );
 		}
 		else if ( i.value()->getParams().getValue()["type"] == "directory" ) {
-			auto metaLink = currentGraph->addEdge( metaEdgeName, graphNode, filesAnchor, currentGraph->getEdgeMetaType(), false );
-			metaLink->setEdgeColor( osg::Vec4( 0,0,0,0 ) );
-			metaLink->setInvisible( true );
-
-			adjustBuildingForNode(graphNode, 1.0f, 10.0f, false, white, "Viewer.Textures.FolderNode");
-
-
+			adjustBuildingForNode( graphNode, FILE_BASE_SIZE, FILE_HEIGHT, false, white, "Viewer.Textures.FolderNode" );
+			graphNode->adjustLabelForModule( 50.0f );
 		}
 		else if ( i.value()->getParams().getValue()["type"] == "file" ) {
-			auto metaLink = currentGraph->addEdge( metaEdgeName, graphNode, filesAnchor, currentGraph->getEdgeMetaType(), false );
-			metaLink->setEdgeColor( osg::Vec4( 0,0,0,0 ) );
-			metaLink->setInvisible( true );
-
-			adjustBuildingForNode(graphNode, 10.0f, 1.0f, false, white, "Viewer.Textures.LuaFileNode");
-		}
-		else if ( i.value()->getParams().getValue()["type"] == "module" ) {
-
-			adjustBuildingForNode(graphNode, 20.0f, 2.0f, true, black, "");
+			adjustBuildingForNode( graphNode, FILE_BASE_SIZE, FILE_HEIGHT, false, white, "Viewer.Textures.LuaFileNode" );
+			graphNode->adjustLabelForModule( 50.0f );
 		}
 		else if ( i.value()->getParams().getValue()["type"] == "function" ) {
-			//connect every function node to functionsAnchor with invisible edge
-			auto metaLink = currentGraph->addEdge( metaEdgeName, graphNode, functionsAnchor, currentGraph->getEdgeMetaType(), false );
-			metaLink->setEdgeColor( osg::Vec4( 0,0,0,0 ) );
-			metaLink->setInvisible( true );
-			metaLink->setEdgeStrength( 0.1f );
-
-			adjustBuildingForNode(graphNode, 4.0f, 4.0f, true, red, "");
+			float funcNodeSize = ( i.value()->getFloatParam( "size", 4.0f ) * NODE_MAX_HEIGHT ) / maxFuncNodeSize;
+			adjustBuildingForNode( graphNode, NODE_BASE_SIZE, funcNodeSize, true, red, "" );
 		}
 		else if ( i.value()->getParams().getValue()["type"] == "global function" ) {
-
-			adjustBuildingForNode(graphNode, 4.0f, 4.0f, true, orange, "");
+			adjustBuildingForNode( graphNode, NODE_BASE_SIZE, NODE_HEIGHT, true, orange, "" );
 		}
 		else if ( i.value()->getParams().getValue()["type"] == "local variable" ) {
-
-			adjustBuildingForNode(graphNode, 4.0f, 4.0f, true, yellow, "");
+			adjustBuildingForNode( graphNode, NODE_BASE_SIZE, NODE_HEIGHT, true, yellow, "" );
 		}
 		else if ( i.value()->getParams().getValue()["type"] == "global variable" ) {
-
-			adjustBuildingForNode(graphNode, 4.0f, 4.0f, true, yellow, "");
+			adjustBuildingForNode( graphNode, NODE_BASE_SIZE, NODE_HEIGHT, true, yellow, "" );
 		}
 		else if ( i.value()->getParams().getValue()["type"] == "interface" ) {
-
-			adjustBuildingForNode(graphNode, 4.0f, 4.0f, true, green, "");
+			adjustBuildingForNode( graphNode, NODE_BASE_SIZE, NODE_HEIGHT, true, green, "" );
 		}
 		else {
-			adjustBuildingForNode(graphNode, 4.0f, 4.0f, true, black, "");
+			adjustBuildingForNode( graphNode, NODE_BASE_SIZE, NODE_HEIGHT, true, black, "" );
 		}
 	}
 }

@@ -179,17 +179,30 @@ City::Module* Data::OsgNode::getModule()
 
 void Data::OsgNode::setModule( City::Module* module )
 {
-	osg::ref_ptr<City::Building> building = getBuilding();
-	module->addBuilding( building );
+	//osg::ref_ptr<City::Building> building = getBuilding();
+	//module->addBuilding( building );
 	removeChild( INDEX_RESIDENCE );
 	insertChild( INDEX_RESIDENCE, module );
 	setValue( INDEX_RESIDENCE, true );
 }
 
+void Data::OsgNode::adjustLabelForModule( float scale )
+{
+	osg::ref_ptr<osg::Node> newLabel = createLabel( scale , labelText );
+	replaceChild( getLabel(), newLabel );
+}
+
+osg::ref_ptr<osg::Node> Data::OsgNode::getLabel()
+{
+	auto at = getChild( INDEX_LABEL )->asNode();
+	return at ? at->asNode() : nullptr;
+}
+
 osg::ref_ptr<osg::PositionAttitudeTransform> Data::OsgNode::getResidenceAsPAT()
 {
 	auto at = getChild( INDEX_RESIDENCE )->asTransform()->asPositionAttitudeTransform();
-	return ( at != nullptr ) ? at->asTransform()->asPositionAttitudeTransform() : nullptr;
+	return at ? at->asTransform()->asPositionAttitudeTransform() : nullptr;
+
 }
 
 City::Residence* Data::OsgNode::getResidence()
@@ -215,6 +228,12 @@ void Data::OsgNode::setResidence( osg::Node* residence )
 	auto at = getChild( INDEX_RESIDENCE )->asTransform()->asPositionAttitudeTransform();
 	at->removeChildren( 0, at->getNumChildren() );
 	at->addChild( residence );
+}
+
+void Data::OsgNode::clearResidence( int fromIndex )
+{
+	auto at = getChild( INDEX_RESIDENCE )->asTransform()->asPositionAttitudeTransform();
+	at->removeChildren( fromIndex, at->getNumChildren() );
 }
 
 osg::Vec3f Data::OsgNode::getCurrentPosition( bool calculateNew, float interpolationSpeed )
@@ -330,12 +349,16 @@ void Data::OsgNode::showLabel( bool visible, bool labelsForResidence )
 	if ( residence ) {
 		residence->showLabels( visible && labelsForResidence );
 	}
-	//add something like if getModule() ->  module->showLabels()
-	auto building = getBuilding();
-	if ( building && inModule ) {
-		setValue( INDEX_LABEL, false );	//must be here, else module will have 2 labels
-		building->showLabel( visible && labelsForResidence );
+
+	//if it's in module node -> turn off Data::Note labels and turn on City::Building labels
+	if (inModule ) {
+		setValue( INDEX_LABEL, false );
 	}
+	auto module = getModule();
+	if ( module ) {
+		module->showLabels( visible && labelsForResidence );
+	}
+
 }
 
 osg::ref_ptr<osg::StateSet> Data::OsgNode::createStateSet( const osg::ref_ptr<osg::Texture2D>& texture )

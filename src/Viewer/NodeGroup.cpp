@@ -174,14 +174,18 @@ void NodeGroup::synchronizeNodes()
 
 void NodeGroup::updateNodeCoordinates( float interpolationSpeed )
 {
-	QMap<qlonglong, osg::ref_ptr<Data::Node> >::const_iterator i = nodes->constBegin();
-
-	while ( i != nodes->constEnd() ) {
+	QMap<qlonglong, osg::ref_ptr<Data::Node> >::iterator i;
+	for ( i = nodes->begin();
+		  i != nodes->end();
+		  ++i ) {
 
 		//Illes have to be updated
 		if ( i.value()->isInModule() ) {
-			++i;
 			continue;
+		}
+		auto modulePAT = i.value()->getModule();
+		if ( modulePAT ) {
+			modulePAT->updateNodesPosition();
 		}
 
 		//string a = typeid (i.value()).name();
@@ -205,8 +209,41 @@ void NodeGroup::updateNodeCoordinates( float interpolationSpeed )
 			i.value()->getOutBall()->setPosition( ( *i )->getCurrentPosition( true, interpolationSpeed ) );
 		}
 
-		++i;
 	}
+
+//	QMap<qlonglong, osg::ref_ptr<Data::Node> >::const_iterator i = nodes->constBegin();
+
+//	while ( i != nodes->constEnd() ) {
+
+//		//Illes have to be updated
+//		if ( i.value()->isInModule() ) {
+//			++i;
+//			continue;
+//		}
+
+//		//string a = typeid (i.value()).name();
+//		//string b = typeid (Data::Node).name();
+//		//if(typeid (i.value()).name() == "aa")
+//		//;
+//		auto transform = nodeTransforms->value( i.key() ).get();
+//		auto posAttrTransform = dynamic_cast<osg::PositionAttitudeTransform*>( transform );
+//		auto autoTransform = dynamic_cast<osg::AutoTransform*>( transform );
+//		if ( posAttrTransform ) {
+//			posAttrTransform->setPosition( ( *i )->getCurrentPosition( true, interpolationSpeed ) );
+//		}
+//		else if ( autoTransform ) {
+//			autoTransform->setPosition( ( *i )->getCurrentPosition( true, interpolationSpeed ) );
+//		}
+
+//		osg::ref_ptr<osg::AutoTransform> at = NULL;
+//		at = i.value()->getOutBall();
+
+//		if ( at!=NULL ) {
+//			i.value()->getOutBall()->setPosition( ( *i )->getCurrentPosition( true, interpolationSpeed ) );
+//		}
+
+//		++i;
+//	}
 }
 
 void NodeGroup::freezeNodePositions()
@@ -220,16 +257,4 @@ void NodeGroup::freezeNodePositions()
 		++i;
 	}
 }
-
-void NodeGroup::reorganizeNodesToFormModuleCity()
-{
-
-
-}
-
-void NodeGroup::reorganizeNodesToFormModuleGraph()
-{
-
-}
-
 } // namespace Vwr

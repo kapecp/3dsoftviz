@@ -45,6 +45,27 @@ public:
 	static osg::ref_ptr<osg::Drawable> createSquare( const float& scale, osg::StateSet* bbState );
 
 	/**
+		*  \fn public adjustLabelForModule
+		*  \brief Creates new label geometry
+		*  \param  scale   float
+		*/
+	void Data::OsgNode::adjustLabelForModule( float scale );
+
+	/**
+	* \fn public getLabel
+	* \brief Gets label for drawing.
+	* \return osg::ref_ptr<> of module osg subgraph
+	*/
+	osg::ref_ptr<osg::Node> getLabel();
+
+	/**
+	* \fn public clearResidence
+	* \brief Clears subgraph for residence of city.
+	* \param fromIndex delete from child at given index
+	*/
+	void clearResidence( int fromIndex = 0 );
+
+	/**
 	* \fn public setResidence
 	* \brief Sets subgraph for drawing residence of city.
 	* \param residence osg subgraph
@@ -81,7 +102,7 @@ public:
 	/**
 	* \fn public getResidenceAsPAT
 	* \brief Gets subgraph for drawing residence of city.
-	* \return osg::ref_ptr<PAT> of residence osg subgraph
+	* \return osg::ref_ptr of residence osg subgraph
 	*/
 	osg::ref_ptr<osg::PositionAttitudeTransform> getResidenceAsPAT();
 

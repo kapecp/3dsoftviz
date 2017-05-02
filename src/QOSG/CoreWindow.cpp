@@ -1794,7 +1794,7 @@ void CoreWindow::loadSpecialMatrixFromFile()
 	//reprezentacie na default
 	//coreGraph->setEdgeVisual(Data::Edge::INDEX_CURVE2);
 	coreGraph->setEdgeVisualForType( Data::Edge::INDEX_LINE, "axisEdgeType" );
-	coreGraph->setEdgeVisualForType( Data::Edge::INDEX_CURVE2, "iEdgeType" );
+	coreGraph->setEdgeVisualForType( Data::Edge::INDEX_MATRIX_CURVE, "iEdgeType" );
 	//axisEdgeType, iEdgeType
 	//axisNodeType, eNodeType, iFullNodeType, iHalfNodeType, nNodeType
 	delete matrixViewer;
@@ -2732,7 +2732,7 @@ void CoreWindow::edgeTypeComboBoxChanged( int index )
 			coreGraph->setEdgeVisual( Data::Edge::INDEX_CURVE );
 			break;
 		case 4:
-			coreGraph->setEdgeVisual( Data::Edge::INDEX_CURVE2 );
+			coreGraph->setEdgeVisual( Data::Edge::INDEX_MATRIX_CURVE );
 			break;
 		default:
 			qDebug() << "CoreWindow:edgeTypeComboBoxChanged do not suported index";
@@ -4700,7 +4700,8 @@ void CoreWindow::loadLuaModuleGraph()
 	funcArgs.push_back( "module graph" );
 	QString createGraph[] = {"graph_importer", "extractGraph"};
 	lua->callFunction( 2, createGraph, funcArgs );
-	lua->doString( "getGraph = graph_importer.getGraph" );
+	lua->doString( "getGraph = graph_importer.getGraph" ); // Lua::LuaGraph::loadGraph() vzdy funkciu getGraph
+	lua->doString( "getLuadbGraph = graph_importer.getLuadbGraph" );
 
 
 	Data::Graph* currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
@@ -4721,11 +4722,14 @@ void CoreWindow::loadLuaModuleGraph()
 	Lua::LuaGraphVisualizer* visualizer = new Lua::ModuleGraphVisualizer( currentGraph, coreGraph->getCamera() );
 	visualizer->visualize();
 
-	AppCore::Core::getInstance()->restartLayout();
-	//zavola coreGraph->reload();
+	AppCore::Core::getInstance()->restartLayout(); //zavola coreGraph->reload();
+
+
+	coreGraph->reorganizeNodesForModuleCity();
 
 	//coreGraph->reorganizeNodesForModuleGraph();
-	coreGraph->reorganizeNodesForModuleCity();
+
+	edgeTypeComboBox->setEnabled( false );
 
 	//spusti rozmiestnovaci algoritmus
 	if ( isPlaying ) {
@@ -4736,7 +4740,7 @@ void CoreWindow::loadLuaModuleGraph()
 	//nodeTypeComboBoxChanged( nodeTypeComboBox->currentIndex() );
 	//edgeTypeComboBoxChanged( edgeTypeComboBox->currentIndex() );
 	nodeTypeComboBox->setCurrentIndex( 2 ); // 2 == residence == module
-	edgeTypeComboBox->setCurrentIndex( 0 ); // 2 == line
+	edgeTypeComboBox->setCurrentIndex( 2 ); // 2 == line
 
 
 	delete visualizer;
@@ -4761,6 +4765,7 @@ void CoreWindow::loadMoonscriptGraph()
 	QString createGraph[] = {"graph_importer", "extractGraph"};
 	lua->callFunction( 2, createGraph, funcArgs );
 	lua->doString( "getGraph = graph_importer.getGraph" );
+	lua->doString( "getLuadbGraph = graph_importer.getLuadbGraph" );
 
 	Data::Graph* currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
 
