@@ -53,21 +53,19 @@ void City::Module::addBuilding( osg::ref_ptr<City::Building> building )
 void City::Module::showLabels( bool state )
 {
 	forEachList( [state]( osg::ref_ptr<Data::Node> node ) {
-		node->getBuilding()->showLabel(state);
+		node->getBuilding()->showLabel( state );
 	} );
 }
 
-
-/*
-void Module::selectAll( bool state )
+void City::Module::selectAll( bool state )
 {
 	if ( !state ) {
-		forEachBuilding( [state]( Building& b ) {
-			b.select( state );
+		forEachList( [state]( osg::ref_ptr<Data::Node> node ) {
+			node->getBuilding()->select( state );
 		} );
 	}
+
 }
-*/
 
 void City::Module::refresh()
 {

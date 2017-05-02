@@ -45,6 +45,7 @@ public:
 	void addBuilding( osg::ref_ptr<City::Building> building );
 
 	void setModuleNode( osg::ref_ptr<Data::Node> moduleNode ) { this->moduleNode = moduleNode; }
+	osg::ref_ptr<Data::Node> getModuleNode() { return moduleNode; }
 	void showLabels( bool state );
 	void selectAll( bool state );
 	void refresh();

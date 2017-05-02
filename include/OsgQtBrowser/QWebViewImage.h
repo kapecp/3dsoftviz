@@ -167,8 +167,6 @@ public:
 
 	QString createGitHtml( QMap<QString, int>* changedMetrics );
 
-	QString createHtmlFromSVG( QString svg );
-
 protected:
 
 

@@ -722,6 +722,17 @@ bool PickHandler::doNodePick( osg::NodePath nodePath )
 		}
 	}
 
+	//for module graph: have to get from building - through residencePAT - to Data::Node
+	if ( b != NULL ) {
+		osg::ref_ptr<osg::PositionAttitudeTransform> PAT = b->getParent(0)->asTransform()->asPositionAttitudeTransform();
+		if ( PAT != NULL ) {
+			Data::Node* node = dynamic_cast<Data::Node*>(PAT->getParent(0)->asSwitch());
+			if ( node != NULL ) {
+				n = node;
+			}
+		}
+	}
+
 	if ( b != NULL ) {
 		b->select( true );
 		coreGraph->getHud()->setText( b->getInfo() );
@@ -1096,6 +1107,10 @@ void PickHandler::unselectPickedNodes( osg::ref_ptr<Data::Node> node )
 			auto r = ( *i )->getResidence();
 			if ( r ) {
 				r->selectAll( false );
+			}
+			auto m = ( *i )->getModule();
+			if ( m ) {
+				m->selectAll( false );
 			}
 			auto b = ( *i )->getBuilding();
 			if ( b ) {

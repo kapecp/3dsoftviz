@@ -120,7 +120,7 @@ void QWebViewImage::showMoonscriptTemplate( const std::string& templateName, con
 	QString qSvg = QString::fromStdString( svg );
 
 	// Set html and baseUrl working directory
-	_webView->setHtml( createHtmlFromSVG( qSvg ) );
+	_webView->setHtml( qSvg );
 }
 
 void QWebViewImage::focusBrowser( bool focus )
@@ -156,20 +156,6 @@ bool QWebViewImage::sendKeyEvent( int key, bool keyDown )
 {
 	//return QWebViewImage::_adapter->sendKeyEvent( key, keyDown );
 	return false;
-}
-
-QString QWebViewImage::createHtmlFromSVG( QString svg )
-{
-	//delete first line: <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-	QString svg_cropped = svg.mid(svg.indexOf(">")+1, -1);
-	QString html = "";
-	html += "<html>\n";
-	html += "<body>\n";
-	html += svg_cropped + "\n";
-	html += "</body>\n";
-	html += "</html>\n";
-	qDebug() << html;
-	return html;
 }
 
 QString QWebViewImage::createGitHtml( QMap<QString, int>* changedMetrics )
