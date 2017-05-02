@@ -12,15 +12,18 @@ City.Floor.MinHeight=0.15
 City.Floor.DivideBorderStickUp=0.1
 City.Floor.DivideBorderHeight=0.1
 City.Building.DefaultBaseSize=1.0
+City.Building.LuaFileBaseSize=40.0
+City.Building.LuaFileHeight=40.0
+City.Building.LuaNodeBaseSize=4.0
+City.Building.LuaNodeHeight=4.0
+City.Building.LuaNodeMaxHeight=10
 City.Building.DefaultRoofHeight=0.3
 City.Building.CaptionCharacterSize=3.0
 City.Building.CaptionOffset=0.3
 City.Residence.SectorPlaneHeight=0.2
 City.Residence.BuildingSpacing=0.5
-
-GraphModule.Module.ModuleWidth=5
-GraphModule.Module.ModuleHeigth=7
-GraphModule.Module.ModuleDepth=6
+City.Module.SectorPlaneHeight=2.0
+City.Module.BuildingSpacing=2.5
 
 GraphMLParser.edgeTypeAttribute=relation
 GraphMLParser.nodeTypeAttribute=type

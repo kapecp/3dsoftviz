@@ -249,24 +249,24 @@ end
 -- @param absolutePath path to project being analysed
 -- @param graphPicker name of desired graph to be extracted
 local function extractGraph(absolutePath, graphPicker)
-  graph = {}
+  local luadbGraph = {}
   
   utils.logger:setLevel(utils.logging.INFO)
 
   utils.logger:info("started extraction")
-  local extractedGraph
   -- for now, it's still nil
   if(graphPicker == "functionCall graph") then
-    extractedGraph = artifactsExtractor.extract(absolutePath, astMan)
+    luadbGraph = artifactsExtractor.extract(absolutePath, astMan)
   elseif(graphPicker == "module graph") then    
-    extractedGraph = moduleExtractor.extract(absolutePath, astMan)
+    luadbGraph = moduleExtractor.extract(absolutePath, astMan)
   elseif(graphPicker == "moonscript graph") then
-    extractedGraph = moonscriptExtractor.getGraphProject(absolutePath, astMan)
-  end  
+    luadbGraph = moonscriptExtractor.getGraphProject(absolutePath, astMan)
+  end
+  graphManager:addGraph(luadbGraph)
   utils.logger:info("extraction successfully finished")
   
-  --extractedGraph:printNodes()
-  --extractedGraph:printEdges()
+  --luadbGraph:printNodes()
+  --luadbGraph:printEdges()
   
   setSwitchTable()
 
@@ -274,7 +274,7 @@ local function extractGraph(absolutePath, graphPicker)
   local minComplexity, maxComplexity
   local minLines, maxLines
 
-  for _, v in ipairs(extractedGraph.nodes) do
+  for _, v in ipairs(luadbGraph.nodes) do
     minComplexity, maxComplexity, minLines, maxLines = extractNode(v, nodes, minComplexity, maxComplexity, minLines, maxLines)
   end
 
@@ -282,7 +282,7 @@ local function extractGraph(absolutePath, graphPicker)
 
   local existingedges = {}
 
-  for _, v in ipairs(extractedGraph.edges) do
+  for _, v in ipairs(luadbGraph.edges) do
     extractEdge(v, existingedges, nodes)
   end
   
@@ -302,6 +302,7 @@ local function getASTManager()
   utils.logger:info("getting AST Manager")
   return astMan
 end
+
 -------------------------------------
 -- Public interface of module
 return {

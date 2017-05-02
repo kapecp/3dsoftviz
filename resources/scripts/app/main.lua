@@ -2,6 +2,8 @@ graph_importer = require "softviz/graph_importer"
 logical_filter = require "softviz/logical_filter"
 slt2_renderer = require "softviz/slt2_renderer"
 
+graphManager = require "luadb.manager.graph".new()
+
 
 -- support for better stac trace repports
 local STP = require "StackTracePlus"
