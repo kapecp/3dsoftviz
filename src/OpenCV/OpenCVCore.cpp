@@ -311,6 +311,11 @@ void OpenCV::OpenCVCore::createConnectionFaceRec()
 
 void OpenCV::OpenCVCore::createConnectionAruco()
 {
+    //JMA AR GRAPH ZOOMING
+    QObject::connect( mOpencvWindow,
+                      SIGNAL( setArGraphZoom( int ) ),
+                      AppCore::Core::getInstance( mApp )->getCoreGraph(),
+                      SLOT( onSetGraphZoom( int ) ) );
 	// send actual image
 	QObject::connect( mOpencvWindow,
 					  SIGNAL( sendImgMarker( bool ) ),
@@ -402,6 +407,16 @@ void OpenCV::OpenCVCore::createConnectionAruco()
 					  mThrAruco,
 					  SLOT( interchangeMarkers() ) );
 
+
+    // ar interaction node selection / behviour connects
+    QObject::connect( mOpencvWindow,
+                      SIGNAL( setArInteractionSelection( int ) ),
+                      mThrAruco,
+                      SLOT( setArInteractionSelection( int ) ) );
+    QObject::connect( mOpencvWindow,
+                      SIGNAL( setArInteractionBehaviour( int ) ),
+                      mThrAruco,
+                      SLOT( setArInteractionBehaviour( int ) ) );
 }
 
 void OpenCV::OpenCVCore::createConnectionMultiAruco()

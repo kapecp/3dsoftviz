@@ -47,6 +47,8 @@ void QOpenCV::OpenCVWindow::configureWindow()
 	setWindowTitle( tr( "Kinect and Aruco Window" ) );
 
 	mWindowLabel = new QLabel( "", this, 0 );
+	
+	mEnableARInteractionCB = new QCheckBox( tr( "AR interaction" ) );
 
 	mMultiMarkerRB = new QRadioButton( tr( "Multi Marker" ) );
 
@@ -117,15 +119,22 @@ void QOpenCV::OpenCVWindow::configureWindow()
 //	buttonLayout->addWidget( mKinectRB );
 //#endif
 
+	//buttonLayout->addWidget( mArucoRB );
+   // buttonLayout->addWidget( mArInteractionRB );
+	//buttonLayout->addLayout( mModulesStackL );
+
 	QWidget* kinectPageWid =  new QWidget;
 	QWidget* arucoPageWid =  new QWidget;
+	QWidget* arucoInteractionPageWid =  new QWidget;
 	QWidget* arucoFaceRecPageWid = new QWidget;
 	QWidget* arucoLightDetPageWid = new QWidget;
 	QWidget* arucoMarkerPageWid = new QWidget;
 	QWidget* arucoMultiMarkerPageWid = new QWidget;
 	QWidget* arucoSubPageWid = new QWidget;
+    QWidget* arInteractionSubPageWid = new QWidget;
 
 	kinectPageWid->setStyleSheet("background-color: lightblue");
+	arucoInteractionPageWid->setStyleSheet("background-color: lightblue");
 	arucoFaceRecPageWid->setStyleSheet("background-color: lightblue");
 	arucoMarkerPageWid->setStyleSheet("background-color: lightblue");
 	arucoLightDetPageWid->setStyleSheet("background-color: lightblue");
@@ -137,8 +146,61 @@ void QOpenCV::OpenCVWindow::configureWindow()
 	QVBoxLayout* arucoMarkerPageLayout = new QVBoxLayout;
 	QVBoxLayout* arucoMultiMarkerPageLayout = new QVBoxLayout;
 	QVBoxLayout* arucoSubPageLayout = new QVBoxLayout;
+    QVBoxLayout* arInteractionSubPageLayout = new QVBoxLayout;
 
 	arucoSubPageLayout->addLayout( mSubmodulesStackL );
+
+//JMA interaction RB groups
+    //selection
+    arNSPosition = new QRadioButton(tr("Select node by position"));
+        arNSPosition->setChecked(true);
+    arNSMostEdges = new QRadioButton(tr("Select node with most edges"));
+    arNSNearest = new QRadioButton(tr("Select nearest node automatically"));
+
+    QVBoxLayout *arNodeSelectionVBox = new QVBoxLayout;
+        arNodeSelectionVBox->addWidget(arNSPosition);
+        arNodeSelectionVBox->addWidget(arNSMostEdges);
+        arNodeSelectionVBox->addWidget(arNSNearest);
+        arNodeSelectionVBox->addStretch(1);
+
+    QGroupBox *arNodeSelectionGroupBox = new QGroupBox(tr("Node selection method"));
+        arNodeSelectionGroupBox->setLayout(arNodeSelectionVBox);
+
+    arInteractionSubPageLayout->addWidget( arNodeSelectionGroupBox );
+
+    connect( arNSPosition, SIGNAL( clicked( bool ) ), this, SLOT( onArInteractionSelectionClicked( bool ) ) );
+    connect( arNSMostEdges, SIGNAL( clicked( bool ) ), this, SLOT( onArInteractionSelectionClicked( bool ) ) );
+    connect( arNSNearest, SIGNAL( clicked( bool ) ), this, SLOT( onArInteractionSelectionClicked( bool ) ) );
+
+    //behaviour
+    arNBSingle = new QRadioButton(tr("Single node movement"));
+        arNBSingle->setChecked(true);
+    arNBCluster = new QRadioButton(tr("Cluster movement"));
+
+    QVBoxLayout *arNodeBehaviourVBox = new QVBoxLayout;
+        arNodeBehaviourVBox->addWidget(arNBSingle);
+        arNodeBehaviourVBox->addWidget(arNBCluster);
+        arNodeBehaviourVBox->addStretch(1);
+
+    QGroupBox *arNodeBehaviourGroupBox = new QGroupBox(tr("Node behaviour method"));
+        arNodeBehaviourGroupBox->setLayout(arNodeBehaviourVBox);
+
+    arInteractionSubPageLayout->addWidget( arNodeBehaviourGroupBox );
+
+    connect( arNBSingle, SIGNAL( clicked( bool ) ), this, SLOT( onArInteractionBehaviourClicked( bool ) ) );
+    connect( arNBCluster, SIGNAL( clicked( bool ) ), this, SLOT( onArInteractionBehaviourClicked( bool ) ) );
+
+
+    QPushButton *mArInteractionGraphZoomIn = new QPushButton( tr( "+" ) );
+    QPushButton *mArInteractionGraphZoomOut = new QPushButton( tr( "-" ) );
+    arInteractionSubPageLayout->addWidget( mArInteractionGraphZoomIn );
+    arInteractionSubPageLayout->addWidget( mArInteractionGraphZoomOut );
+
+    connect( mArInteractionGraphZoomIn,  SIGNAL( clicked( bool ) ), this, SLOT( applyGraphZoomIn( bool ) ) );
+    connect( mArInteractionGraphZoomOut,  SIGNAL( clicked( bool ) ), this, SLOT( applyGraphZoomOut( bool ) ) );
+
+
+//JMA interaction RB groups
 
 	kinectPageLayout->setAlignment( Qt::AlignBottom );
 	arucoPageLayout->setAlignment( Qt::AlignBottom );
@@ -150,9 +212,15 @@ void QOpenCV::OpenCVWindow::configureWindow()
 	buttonLayout->addWidget( kinectPageWid );
 	buttonLayout->addWidget( arucoSubPageWid );
 
-	mSubmodulesStackL->addWidget( arucoFaceRecPageWid );
+	//	mModulesStackL->addWidget( kinectPageWid );
+	//	mModulesStackL->addWidget( arucoSubPageWid );
+	//    mModulesStackL->addWidget( arInteractionSubPageWid );
+
+
+	//mSubmodulesStackL->addWidget( arucoFaceRecPageWid );
 	mSubmodulesStackL->addWidget( arucoMarkerPageWid );
 	mSubmodulesStackL->addWidget( arucoLightDetPageWid );
+	mSubmodulesStackL->addWidget( arInteractionSubPageWid );
 
 
 	kinectPageWid->setLayout( kinectPageLayout );
@@ -162,6 +230,7 @@ void QOpenCV::OpenCVWindow::configureWindow()
 	arucoMarkerPageWid->setLayout( arucoMarkerPageLayout );
 	arucoMultiMarkerPageWid->setLayout( arucoMultiMarkerPageLayout );
 	arucoSubPageWid->setLayout( arucoSubPageLayout );
+    arInteractionSubPageWid->setLayout( arInteractionSubPageLayout );
 
 	//set up page layouts
 	kinectPageLayout->addWidget( mDisableCursorCB );
@@ -229,6 +298,8 @@ void QOpenCV::OpenCVWindow::configureWindow()
 	mEnableLightDetCB->setEnabled( true );
 	mLightDetectShowProcessingCB->setEnabled( true );
 
+	//connect( mArucoRB, SIGNAL( clicked() ), this, SLOT( onSelModulChange() ) );
+	connect( mEnableARInteractionCB, SIGNAL( clicked() ), this, SLOT( onSelModulChange() ) );
 	mRefEnableFaceRecCB->setEnabled( true );
 	mRefEnableMarkerlessCB->setEnabled( true );
 
@@ -380,7 +451,6 @@ void QOpenCV::OpenCVWindow::onEnableLightMarkersCBClicked( bool checked ) {
 
 void QOpenCV::OpenCVWindow::onSelModulChange()
 {
-
 }
 
 void QOpenCV::OpenCVWindow::onSelSubModulChange() //---------------------------------------------------------
@@ -544,7 +614,35 @@ void QOpenCV::OpenCVWindow::setLabel( cv::Mat image )
 	image.~Mat();
 }
 
-void QOpenCV::OpenCVWindow::receiveCamResolution( int width, int height )
+void QOpenCV::OpenCVWindow::onArInteractionSelectionClicked(bool state)
 {
+    if(arNSPosition->isChecked()){
+        emit setArInteractionSelection(0);
+    }
+    else if(arNSMostEdges->isChecked()){
+        emit setArInteractionSelection(1);
+    }
+    else if(arNSNearest->isChecked()){
+        emit setArInteractionSelection(2);
+    }
+}
 
+void QOpenCV::OpenCVWindow::onArInteractionBehaviourClicked(bool state)
+{
+    if(arNBSingle->isChecked()){
+        emit setArInteractionBehaviour(0);
+    }
+    else if(arNBCluster->isChecked()){
+        emit setArInteractionBehaviour(1);
+    }
+}
+
+void QOpenCV::OpenCVWindow::applyGraphZoomIn(bool state)
+{
+    emit setArGraphZoom(2);
+}
+
+void QOpenCV::OpenCVWindow::applyGraphZoomOut(bool state)
+{
+    emit setArGraphZoom(1);
 }

@@ -316,6 +316,7 @@ public:
 
 	//JMA
 	osg::Vec3f getGrafRotTransVec();
+    osg::Vec3f getGrafRotTransScale();
 
 
 	// Karas
@@ -377,6 +378,8 @@ public slots:
 	void updateBase( double size );
 
 	void setArucoRunning( bool isRunning );
+
+    void onSetGraphZoom(int flag);
 
 	void setLightCoords( OpenCV::TrackedLight tlight );
 
