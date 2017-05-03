@@ -32,6 +32,7 @@
 #include <QTime>
 #include "OsgQtBrowser/QWebViewImage.h"
 #include <osgShadow/ShadowedScene>
+#include <osgShadow/SoftShadowMap>
 #include "Hud.h"
 
 namespace Data {
@@ -698,6 +699,7 @@ private:
 		*  \brief node for shadows definition
 		*/
 	osg::ref_ptr<osgShadow::ShadowedScene> shadowedScene;
+	osg::ref_ptr<osgShadow::SoftShadowMap> ssm;
 
 	/**
 		* osg::Geode* baseGeode
