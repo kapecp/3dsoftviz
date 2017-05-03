@@ -765,6 +765,8 @@ private:
 	 */
 	void useSphereMappingShader( osg::ref_ptr< osg::StateSet > state );
 
+	void useSphereMappingDomeShader( osg::ref_ptr< osg::StateSet > state );
+
 };
 }
 
