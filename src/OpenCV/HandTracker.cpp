@@ -48,18 +48,49 @@ void OpenCV::HandTracker::getParameterValues(int *threshold, int *areaSize,
 }
 
 
+cv::Mat OpenCV::HandTracker::produceBinaries(cv::Mat m){
+    // range of skin color
+    cv::Scalar lowerBound  = cv::Scalar(0,133,77);
+    cv::Scalar upperBound  = cv::Scalar(255,173,127);
+
+    cv::Scalar blackColor  = cv::Scalar(0,133,77);
+
+    cv::Mat tmp;
+    // tracking skin
+    GaussianBlur(m, m, cv::Size(3, 3), 2.5, 2.5);
+    cvtColor( m, m, CV_RGB2YCrCb);
+    inRange(m, lowerBound, upperBound, tmp);
+    // set background to black
+    m.setTo(blackColor, ~tmp);
+    cvtColor( m, m, CV_YCrCb2RGB);
+    //transform to binary
+    cvtColor( m, m, CV_RGB2GRAY);
+    threshold(m, m, 50, 255, CV_THRESH_BINARY);
+    int erosion_size = 6;
+    cv::Mat element = getStructuringElement(cv::MORPH_CROSS,
+           cv::Size(2 * erosion_size + 1, 2 * erosion_size + 1),
+           cv::Point(erosion_size, erosion_size) );
+
+    // Apply erosion or dilation on the image
+    erode(m,m,element);
+    dilate(m, m, cv::Mat(), cv::Point(-1, -1), 2, 1, 1);
+
+    cvtColor( m, m, CV_GRAY2RGB);
+    return m;
+}
+
 // find contours of segmented hand and count fingers
-cv::Mat OpenCV::HandTracker::findHand( cv::Mat mask, float depth )
+cv::vector<cv::vector<cv::Point>> OpenCV::HandTracker::findHand( cv::Mat mask )
 {
+
     cv::vector<cv::vector<cv::Point> > contours;
+    cv::vector<cv::vector<cv::Point>> pointList;
     cv::vector<cv::Vec4i> hierarchy;
     cv::Mat tempMask = mask.clone();
-
+    cv::Mat hslMat;
     cv::vector<std::pair<cv::Point,double> > palm_centers;
 
     cv::Scalar summ = sum(mask);
-
-
     float brightness = summ[0]/((pow(2,8)-1)*mask.rows * mask.cols) * 2;
 //    LOG (INFO) << "brightness: " + std::to_string(brightness);
 //    LOG (INFO) << "Depth: " + std::to_string(depth);
@@ -70,22 +101,29 @@ cv::Mat OpenCV::HandTracker::findHand( cv::Mat mask, float depth )
     int thresholdValue =0;
     int areaSize = 0;
 
-    getParameterValues(&thresholdValue, &areaSize, brightness, depth);
-//    LOG (INFO) << std::to_string(areaSize);
+    //getParameterValues(&thresholdValue, &areaSize, brightness, depth);
+//    LOG (INFO) << "Channels/type input START" + std::to_string(tempMask.channels()) + " "+ std::to_string(tempMask.type());
 
-    threshold(tempMask, tempMask, thresholdValue, threshold_up, cv::THRESH_BINARY);
-    GaussianBlur(tempMask, tempMask, cv::Size(3, 3), 2.5, 2.5);
+    if (tempMask.type() != 0) {
 
-    Canny(tempMask,tempMask,threshold_down, threshold_up,3);
-    threshold(tempMask, tempMask, 30, threshold_up, cv::THRESH_BINARY);
+        tempMask = produceBinaries(tempMask);
+
+        cvtColor( tempMask, tempMask, CV_RGB2GRAY );
+    }
+
+//    GaussianBlur(tempMask, tempMask, cv::Size(3, 3), 2.5, 2.5);
+
+//    Canny(tempMask,tempMask,threshold_down, threshold_up,3);
+//    threshold(tempMask, tempMask, 30, threshold_up, cv::THRESH_BINARY);
 
     findContours( tempMask,contours, hierarchy, CV_RETR_EXTERNAL, cv::CHAIN_APPROX_SIMPLE, cv::Point() );
 
     for(int i=0;i<contours.size();i++)
     {
                 //Ignore all small insignificant areas
-                if(contourArea(contours[i])>=1500)
+                if(contourArea(contours[i])>=5000)
                 {
+                    cv::vector<cv::Point> contourPoints;
 //                    LOG (INFO) << "Size of area: " + std::to_string(contourArea(contours[i]));
                     //Draw contour
                     cv::vector<cv::vector<cv::Point> > tcontours;
@@ -168,6 +206,7 @@ cv::Mat OpenCV::HandTracker::findHand( cv::Mat mask, float depth )
                             //Draw the palm center and the palm circle
                             //The size of the palm gives the depth of the hand
                             if (radius > 0){
+                                contourPoints.push_back(palm_center);
                                 circle(mask,palm_center,5,cv::Scalar(144,144,255),3);
                                 circle(mask,palm_center,radius,cv::Scalar(144,144,255),2);
                             }
@@ -199,6 +238,7 @@ cv::Mat OpenCV::HandTracker::findHand( cv::Mat mask, float depth )
                                     if(std::min(Xdist,Ydist)/std::max(Xdist,Ydist)<=0.8)
                                     {
                                         if((Xdist>=0.1*radius&&Xdist<=1.3*radius&&Xdist<Ydist)||(Ydist>=0.1*radius&&Ydist<=1.3*radius&&Xdist>Ydist)){
+                                            contourPoints.push_back(ptEnd);
                                             line( mask, ptEnd, ptFar, cv::Scalar(255,255,255), 1 );
                                             circle(mask,ptEnd,5,cv::Scalar(200,200,255),2);
                                             no_of_fingers++;
@@ -208,7 +248,8 @@ cv::Mat OpenCV::HandTracker::findHand( cv::Mat mask, float depth )
                             }
                         }
                     }
+                    pointList.push_back(contourPoints);
                 }
             }
-    return mask;
+    return pointList;
 }

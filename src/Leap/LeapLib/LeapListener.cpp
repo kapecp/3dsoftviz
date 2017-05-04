@@ -1,4 +1,5 @@
 #include "LeapLib//LeapListener.h"
+
 #include "LeapLib/DirectionDetector.h"
 #include "LeapLib/FingerPositionDetector.h"
 #include "osg/Image"
@@ -61,10 +62,9 @@ void Leap::LeapListener::onImages( const Controller& controller )
 
     Frame frame = controller.frame();
     HandList hands = frame.hands();
-    float depth = this->leapManager->getHandsDepthInformation(hands[0].palmPosition().y, hands[1].palmPosition().y);
 
-    this->leapManager->updateCoreGraphBackground( image.data(), depth);
 
+    this->leapManager->updateCoreGraphBackground( image.data(), 0);
 }
 
 void Leap::LeapListener::onFrame( const Controller& controller )

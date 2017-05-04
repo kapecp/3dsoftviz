@@ -372,6 +372,10 @@ public slots:
 
 	void setArucoRunning( bool isRunning );
 
+    bool isLeapStreamActive();
+
+    bool isCameraStreamActive();
+
 private:
 
 	/**
