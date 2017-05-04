@@ -2,7 +2,7 @@
  * Created by Patrik Berger on 13.11.2016.
  */
 #include <easylogging++.h>
-#include "Leap/HandModule/HandPalm.h"
+#include "Leap/HandModule/Model/HandPalm.h"
 #include <osg/ShapeDrawable>
 #include <osg/Geode>
 #include <osg/Shape>

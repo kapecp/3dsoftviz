@@ -1299,7 +1299,9 @@ endif()
 list( APPEND ALL_SYSTEM_HEADERS ${DEPENDENCIES_INCLUDE_DIR} )
 list( APPEND ALL_SYSTEM_HEADERS ${DEPENDENCIES_INCLUDE_DIR}/libnoise )
 list( APPEND ALL_SYSTEM_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/easyloggingpp/src )
+list( APPEND ALL_SYSTEM_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/qtcolorpicker/ )
 list( APPEND ALL_SYSTEM_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/leathers/Source )
+
 
 list( APPEND ALL_SYSTEM_HEADERS include/Leap )
 
@@ -1309,6 +1311,7 @@ endif()
 
 # works:
 include_directories(SYSTEM ${ALL_SYSTEM_HEADERS})
+
 # does not work:
 #list(REMOVE_DUPLICATES ALL_SYSTEM_HEADERS)
 # target_include_directories( ${3DSOFTVIZ_NAME}

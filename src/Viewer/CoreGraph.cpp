@@ -699,6 +699,9 @@ int CoreGraph::updateBackground( int bgVal, Data::Graph* currentGraph )
 {
 	osg::Group* root = this->getScene();
 	if ( root->removeChild( root->getNumChildren()-1 ) == true ) {
+        leapCameraStream = nullptr;
+        mCameraStream = nullptr;
+
 		if ( bgVal == 0 ) { // default skybox
 			SkyBox* skyBox = new SkyBox;
 			root->addChild( skyBox->createSkyBox( 0 ) );
@@ -975,7 +978,7 @@ osg::ref_ptr<osg::Node> CoreGraph::createTextureBackground()
 
 
 	// texture
-	mCameraStream = new OpenCV::CameraStream( geom );
+    mCameraStream = new OpenCV::CameraStream( );
 	mCameraStream->setDataVariance( osg::Object::DYNAMIC );
 
 	osg::ref_ptr<osg::Texture2D> skymap = new osg::Texture2D( mCameraStream );
@@ -1937,6 +1940,14 @@ float CoreGraph::getFurthestPosition( osg::Vec3f max,osg::Vec3f min )
 void CoreGraph::setArucoRunning( bool isRunning )
 {
 	this->arucoRunning = isRunning;
+}
+
+bool CoreGraph::isLeapStreamActive() {
+    return this->leapCameraStream != nullptr;
+}
+
+bool CoreGraph::isCameraStreamActive() {
+    return this->mCameraStream != nullptr;
 }
 
 void CoreGraph::drawAxes()
