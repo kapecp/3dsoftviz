@@ -36,14 +36,16 @@ float Leap::HandMapper::calculateAveragePalmFingerDistance(cv::vector<cv::Point>
         return averageDst;
     }
 
-    cv::Point2f palmCenter = static_cast<cv::Point2f>(handPointList[0]);
-    palmCenter.x /= imageWidth;
+	cv::Point2f palmCenter;
+	palmCenter = cv::Point2f(static_cast<float>(handPointList[0].x),static_cast<float>(handPointList[0].y));
+	palmCenter.x /= imageWidth;
     palmCenter.y /= imageHeight;
 
     for (int n = 1; n < handPointList.size(); n++)
     {
-        cv::Point2f fingerTip = static_cast<cv::Point2f>(handPointList[n]);
-        fingerTip.x /= imageWidth;
+		cv::Point2f fingerTip;
+		fingerTip = cv::Point2f(static_cast<float>(handPointList[n].x),static_cast<float>(handPointList[n].y));
+		fingerTip.x /= imageWidth;
         fingerTip.y /= imageHeight;
         averageDst += cv::norm(palmCenter-fingerTip);
     }
