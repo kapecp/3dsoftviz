@@ -41,6 +41,7 @@
 #include <osgShadow/ShadowMap>
 #include <osgShadow/SoftShadowMap>
 #include <QOSG/GhostSoftShadowMap.h>
+#include <osg/BlendFunc>
 
 #include <easylogging++.h>
 
@@ -683,13 +684,15 @@ void CoreGraph::useSphereMappingShader( osg::ref_ptr< osg::StateSet > state ) {
 	/* 2. Load the Shaders */
 	osg::ref_ptr<osg::Program> projProg( new osg::Program );
 	const std::string vertexSource =
-		"#version 400 compatibility\n"
+//		"#version 400 compatibility\n"
 		"out vec2  vN;\n"
+//		"void DynamicShadow( in vec4 ecPosition );"
 		"void main() \n"
 		"{ \n"
 		"	gl_Position  = ftransform();\n"
 		"	vec3 n       = normalize(gl_NormalMatrix * gl_Normal);\n"
 		"	vec4 p       = gl_ModelViewMatrix * gl_Vertex;\n"
+//		"	DynamicShadow( p );"
 		"	vec3 e       = p.xyz;\n"
 		"	vec3 r       = reflect(e, n);\n"
 		"	float m      = 2.0 * sqrt( pow( r.x, 2. ) + pow( r.y, 2. ) + pow( r.z + 1., 2. ) );\n"
@@ -821,14 +824,15 @@ Vwr::CoreGraph::CoreGraph( Data::Graph* graph, osg::ref_ptr<osg::Camera> camera 
 
 
 	//*
-	//osg::ref_ptr<osg::AutoTransform> test = getSphere( 0, osg::Vec3( -100, 0, 0 ), 100.0, osg::Vec4( 1.0, 1.0, 1.0, 1.0 ) );
+	osg::ref_ptr<osg::AutoTransform> test = getSphere( 0, osg::Vec3( -100, 0, 0 ), 100.0, osg::Vec4( 1.0, 1.0, 1.0, 1.0 ) );
 	//osg::ref_ptr<osg::AutoTransform> test2 = getSphere( 0, osg::Vec3( 100, 0, 0 ), 100.0, osg::Vec4( 1.0, 1.0, 1.0, 1.0 ) );
-	//useSphereMappingShader( test->getOrCreateStateSet() );
+	useSphereMappingShader( test->getOrCreateStateSet() );
 	//useSphereMappingDomeShader( test2->getOrCreateStateSet() );
-	//root->addChild( test );
+	root->addChild( test );
 	//root->addChild( test2 );
 	//*/
 
+	root->getOrCreateStateSet()->addUniform( new osg::Uniform("ghostObject", false));
 
 	lightModel = new osg::LightModel();
 	setAmbientLightColor( osg::Vec4( 0.3, 0.3, 0.3, 1 ) );
@@ -1793,8 +1797,8 @@ void CoreGraph::turnOnShadows()
 {
 	//osg::ref_ptr<osgShadow::SoftShadowMap> sm = new osgShadow::SoftShadowMap;
 	osg::ref_ptr<osgShadow::GhostSoftShadowMap> sm = new osgShadow::GhostSoftShadowMap;
-	//sm->setBias(0.1);
-	//sm->setSoftnessWidth(0.1);
+	sm->setBias(0.01);
+	sm->setSoftnessWidth(0.012);
 	shadowedScene->setShadowTechnique( sm.get() );
 }
 
@@ -1854,9 +1858,15 @@ void CoreGraph::createBase()
 
 	baseGeometry->addPrimitiveSet( base );
 
-	//baseGeode->getOrCreateStateSet()->setMode( GL_BLEND, osg::StateAttribute::ON );
-	baseGeode->getOrCreateStateSet()->setRenderingHint( osg::StateSet::OPAQUE_BIN );
+	//baseGeode->getOrCreateStateSet()->setRenderingHint( osg::StateSet::OPAQUE_BIN );
 	//baseGeode->getOrCreateStateSet()->setRenderBinDetails( 1, "DepthSortedBin" );
+
+
+	baseGeode->getOrCreateStateSet()->addUniform( new osg::Uniform("ghostObject", true));
+	baseGeode->getOrCreateStateSet()->setMode( GL_BLEND, osg::StateAttribute::ON );
+
+	//baseGeode->getOrCreateStateSet()->setAttributeAndModes( new osg::BlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA), osg::StateAttribute::ON );
+	//osg::BlendFunc blendFunc = new
 }
 
 //set aruco modelView matrix
@@ -2243,7 +2253,7 @@ void CoreGraph::setAmbientLightColor( osg::Vec4 color ) {
 	//qDebug() << "amb color r" << color.r() << " g " << color.g() << " b " << color.b() << " a " << color.a();
 	lightModel->setAmbientIntensity( color );
 	root->getOrCreateStateSet()->setAttributeAndModes( lightModel, osg::StateAttribute::ON );
-	shadowedScene->dirty();
+	//	shadowedScene->dirty();
 }
 
 }
