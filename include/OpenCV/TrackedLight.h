@@ -38,9 +38,13 @@ public:
 
 	bool				active;
 
+	// cirlce aproximation position
 	cv::Point2f			positionFrame;
 
 	float				radius;
+
+	// bounding box
+	cv::Rect			bbox;
 
 private:
 

@@ -40,6 +40,7 @@
 #include <osgShadow/ShadowedScene>
 #include <osgShadow/ShadowMap>
 #include <osgShadow/SoftShadowMap>
+#include <QOSG/GhostSoftShadowMap.h>
 
 #include <easylogging++.h>
 
@@ -1790,7 +1791,8 @@ void CoreGraph::addTranslateToGraphRotTransf( osg::Vec3d pos )
 //jurik
 void CoreGraph::turnOnShadows()
 {
-	osg::ref_ptr<osgShadow::SoftShadowMap> sm = new osgShadow::SoftShadowMap;
+	//osg::ref_ptr<osgShadow::SoftShadowMap> sm = new osgShadow::SoftShadowMap;
+	osg::ref_ptr<osgShadow::GhostSoftShadowMap> sm = new osgShadow::GhostSoftShadowMap;
 	//sm->setBias(0.1);
 	//sm->setSoftnessWidth(0.1);
 	shadowedScene->setShadowTechnique( sm.get() );
@@ -2241,6 +2243,7 @@ void CoreGraph::setAmbientLightColor( osg::Vec4 color ) {
 	//qDebug() << "amb color r" << color.r() << " g " << color.g() << " b " << color.b() << " a " << color.a();
 	lightModel->setAmbientIntensity( color );
 	root->getOrCreateStateSet()->setAttributeAndModes( lightModel, osg::StateAttribute::ON );
+	shadowedScene->dirty();
 }
 
 }

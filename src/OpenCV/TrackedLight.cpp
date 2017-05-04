@@ -18,7 +18,7 @@ OpenCV::TrackedLight::~TrackedLight()
 }
 
 void OpenCV::TrackedLight::extractColor( cv::Mat &frame ) {
-	int x = positionFrame.x - radius;
+	/*int x = positionFrame.x - radius;
 	int y = positionFrame.y - radius;
 	int w = radius * 2;
 	int h = w;
@@ -31,12 +31,13 @@ void OpenCV::TrackedLight::extractColor( cv::Mat &frame ) {
 	h = h < 0 ? 0 : h;
 
 	cv::Rect roi( x, y, w, h);
-	cv::Mat roiMAT( frame, roi );
+	cv::Mat roiMAT( frame, roi );*/
+	cv::Mat roiMAT( frame, bbox );
 	cv::Scalar mean = cv::mean( roiMAT );
 
 	// debug
-	//cv::rectangle( frame, roi, mean );
-
+	//cv::rectangle( frame, roi, mean, -1, 8 , 0 );
+	cv::rectangle( frame, bbox, mean, -1, 8 , 0 );
 	mean /= 255;
 
 	_color.r() = static_cast < float > ( mean.val[0] );
