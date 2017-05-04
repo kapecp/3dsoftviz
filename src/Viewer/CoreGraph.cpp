@@ -670,6 +670,8 @@ void CoreGraph::setLightType( int index, bool isPointLight ) {
 	lightSources[ index ]->getLight()->setPosition( osg::Vec4( 0, 0, 0, isPointLight ? 1 : 0 ) );
 }
 
+
+/// sphere mapping shader, possible to shade every object by image of a sphere...
 void CoreGraph::useSphereMappingShader( osg::ref_ptr< osg::StateSet > state ) {
 
 	/* based on https://www.clicktorelease.com/blog/creating-spherical-environment-mapping-shader/  */
@@ -726,6 +728,8 @@ void CoreGraph::useSphereMappingShader( osg::ref_ptr< osg::StateSet > state ) {
 	state->setAttributeAndModes(projProg, osg::StateAttribute::ON);
 }
 
+/// bit unfinished shader that should make reflections based on fisheye image from camera
+/// requires to be rewritten using better projection math - lookup stereographic projection
 void CoreGraph::useSphereMappingDomeShader( osg::ref_ptr< osg::StateSet > state ) {
 
 	/* based on https://www.clicktorelease.com/blog/creating-spherical-environment-mapping-shader/  */
@@ -824,11 +828,11 @@ Vwr::CoreGraph::CoreGraph( Data::Graph* graph, osg::ref_ptr<osg::Camera> camera 
 
 
 	//*
-	osg::ref_ptr<osg::AutoTransform> test = getSphere( 0, osg::Vec3( -100, 0, 0 ), 100.0, osg::Vec4( 1.0, 1.0, 1.0, 1.0 ) );
+	//osg::ref_ptr<osg::AutoTransform> test = getSphere( 0, osg::Vec3( -100, 0, 0 ), 100.0, osg::Vec4( 1.0, 1.0, 1.0, 1.0 ) );
 	//osg::ref_ptr<osg::AutoTransform> test2 = getSphere( 0, osg::Vec3( 100, 0, 0 ), 100.0, osg::Vec4( 1.0, 1.0, 1.0, 1.0 ) );
-	useSphereMappingShader( test->getOrCreateStateSet() );
+	//useSphereMappingShader( test->getOrCreateStateSet() );
 	//useSphereMappingDomeShader( test2->getOrCreateStateSet() );
-	root->addChild( test );
+	//root->addChild( test );
 	//root->addChild( test2 );
 	//*/
 
