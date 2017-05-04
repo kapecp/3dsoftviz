@@ -5,8 +5,8 @@
 
 #include <QDebug>
 
-#pragma warning(push)
-#pragma warning(disable:4244)
+#include <leathers/push>
+#include <leathers/conversion>
 
 SpecialMatrix::MatrixViewer::MatrixViewer( Data::Graph* matrixGraph, QString fileName )
 {
@@ -220,3 +220,5 @@ void SpecialMatrix::MatrixViewer::adjustPositions()
 		i.value()->setRestrictedTargetPosition( targetPos );
 	}
 }
+
+#include <leathers/pop>

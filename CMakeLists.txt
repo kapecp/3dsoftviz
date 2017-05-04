@@ -155,15 +155,15 @@ set( QT_USE_QTNETWORK 1 )
 include( ${QT_USE_FILE} )
 
 if ( NOT Qt4_FOUND )
-    # Find Qt5
-    find_package( Qt5Core QUIET )
-    find_package( Qt5Widgets QUIET )
-    find_package( Qt5OpenGL QUIET )
-    find_package( Qt5Sql QUIET )
-    find_package( Qt5WebEngine QUIET )
-    find_package( Qt5WebEngineWidgets QUIET )
-    find_package( Qt5Xml QUIET )
-    find_package( Qt5Network QUIET )
+	# Find Qt5
+	find_package( Qt5Core QUIET )
+	find_package( Qt5Widgets QUIET )
+	find_package( Qt5OpenGL QUIET )
+	find_package( Qt5Sql QUIET )
+	find_package( Qt5WebEngine QUIET )
+	find_package( Qt5WebEngineWidgets QUIET )
+	find_package( Qt5Xml QUIET )
+	find_package( Qt5Network QUIET )
 endif()
 
 if ( Qt5Core_FOUND )
@@ -334,6 +334,17 @@ if( LEAP_FOUND )
 	message( STATUS "LEAP_LIB_DIR=${LEAP_LIBRARIES}" )
 else()
 	message( STATUS "LEAP Not Found" )
+endif()
+# ------------------------------ PCL ----------------------------------
+# find PCL
+find_package(PCL 1.8)
+if ( PCL_FOUND )
+		list( APPEND ALL_SYSTEM_HEADERS	${PCL_INCLUDE_DIRS} )
+	link_directories(${PCL_LIBRARY_DIRS})
+	add_definitions(${PCL_DEFINITIONS})
+	message( STATUS "PCL FOUND" )
+else()
+		message( STATUS "PCL NOT FOUND" )
 endif()
 
 # ------------------------------ FGLOVE -------------------------------
@@ -798,7 +809,7 @@ if( USE_BUILTIN_DEPENDENCIES )
 		CMAKE_ARGS
 			-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
 			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-		)	
+		)
 
 	# Ensure correct order of build (dependencies between external dependencies)
 	if( MSVC OR APPLE )
@@ -961,8 +972,8 @@ endif()
 # add Leap
 if( LEAP_FOUND )
 	# WORKAROUND GARAJ comment
-        list( APPEND SRC ${SRC_LEAP} )
-        list( APPEND SRC ${SRC_HANDMODULE} )
+		list( APPEND SRC ${SRC_LEAP} )
+		list( APPEND SRC ${SRC_HANDMODULE} )
 
 endif()
 
@@ -1098,8 +1109,8 @@ endif()
 
 # LEAP
 if( LEAP_FOUND )
-        list( APPEND INCL ${HEADER_LEAP} )
-        list( APPEND INCL ${HEADER_HANDMODULE} )
+		list( APPEND INCL ${HEADER_LEAP} )
+		list( APPEND INCL ${HEADER_HANDMODULE} )
 endif()
 
 # MOUSE3D
@@ -1241,7 +1252,7 @@ endif()
 
 #-------------------------------- leap module -------------------------------
 if( LEAP_FOUND )
-        add_library( leaplib STATIC ${SRC_LEAPLIB} ${HEADER_LEAPLIB})
+		add_library( leaplib STATIC ${SRC_LEAPLIB} ${HEADER_LEAPLIB})
 
 	target_include_directories( leaplib
 		SYSTEM PUBLIC
@@ -1289,6 +1300,8 @@ list( APPEND ALL_SYSTEM_HEADERS ${DEPENDENCIES_INCLUDE_DIR} )
 list( APPEND ALL_SYSTEM_HEADERS ${DEPENDENCIES_INCLUDE_DIR}/libnoise )
 list( APPEND ALL_SYSTEM_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/easyloggingpp/src )
 list( APPEND ALL_SYSTEM_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/qtcolorpicker/ )
+list( APPEND ALL_SYSTEM_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/leathers/Source )
+
 
 list( APPEND ALL_SYSTEM_HEADERS include/Leap )
 
@@ -1372,7 +1385,9 @@ endif()
 # if( FGLOVE_FOUND )
 #	target_link_libraries( ${3DSOFTVIZ_NAME} ${FGLOVE_LIBRARIES} )
 # endif()
-
+if ( PCL_FOUND )
+		target_link_libraries( ${3DSOFTVIZ_NAME} ${PCL_COMMON_LIBRARIES} )
+endif()
 if( LEAP_FOUND )
 	target_link_libraries( ${3DSOFTVIZ_NAME} leaplib ${LEAP_LIBRARIES} )
 endif()

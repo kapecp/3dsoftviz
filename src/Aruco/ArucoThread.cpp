@@ -1,5 +1,5 @@
-#include "Aruco/arucothread.h"
-#include "Aruco/arucocore.h"
+#include "Aruco/ArucoThread.h"
+#include "Aruco/ArucoCore.h"
 #include "Aruco/arControlObject.h"
 #include "Util/ApplicationConfig.h"
 
@@ -8,6 +8,7 @@
 
 #include <opencv2/imgproc/imgproc.hpp>
 
+#include "OpenCV/MarkerlessTracker.h"
 #include "OpenCV/CapVideo.h"
 #include <cv.h>
 
@@ -24,6 +25,7 @@ ArucoThread::ArucoThread( QObject* parent )
 	mUpdCorPar		= false;
 	mSendImgEnabled	= true;
 	mSendBackgrImgEnabled = false;
+	mMarkerlessTrackingEnabled = false;
 	//JMA
 	mMultiMarkerEnabled = true;
 	mRatioCamCoef	= 0;
@@ -35,6 +37,7 @@ ArucoThread::ArucoThread( QObject* parent )
 
 	//JMA
 	mArControlClass = new ArControlClass();
+	mMarkerlessTracker = new OpenCV::MarkerlessTracker();
 }
 
 ArucoThread::~ArucoThread( void )
@@ -66,6 +69,11 @@ void ArucoThread::setMultiMarker( bool set )
 {
 	mMultiMarkerEnabled = set;
 	qDebug() << mMultiMarkerEnabled;
+}
+
+void ArucoThread::setMarkerlessTracking( bool set )
+{
+	mMarkerlessTrackingEnabled = set;
 }
 
 void ArucoThread::setSendImgEnabling( bool sendImgEnabled )
@@ -213,7 +221,6 @@ void ArucoThread::run()
 				}
 				*/
 			}
-
 			imagesSending( aCore, frame );
 
 			if ( ! mCancel ) {
@@ -352,10 +359,8 @@ void ArucoThread::mouseControlling( const osg::Vec3f actPosArray, const osg::Qua
 
 }
 
-void ArucoThread::imagesSending( ArucoCore& aCore, const cv::Mat frame ) const
+void ArucoThread::imagesSending( ArucoCore& aCore, cv::Mat frame ) const
 {
-
-
 	if ( mSendBackgrImgEnabled && !frame.empty() ) {
 		if ( ! mMarkerIsBehind ) {
 			cv::flip( frame, frame, 1 );
@@ -371,6 +376,10 @@ void ArucoThread::imagesSending( ArucoCore& aCore, const cv::Mat frame ) const
 	}
 	else {
 		image = aCore.getDetImage();
+	}
+
+	if ( mMarkerlessTrackingEnabled ){
+		mMarkerlessTracker->track(image);
 	}
 
 	if ( mSendImgEnabled ) {

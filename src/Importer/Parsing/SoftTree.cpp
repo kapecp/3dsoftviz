@@ -10,11 +10,14 @@ namespace Parsing {
 
 QString Modifier::ToString( ModifierEnum modifier )
 {
+#include <leathers/push>
+#include <leathers/exit-time-destructors>
 	static const std::map<ModifierEnum, QString> enumToStr {
 		{ PUBLIC, "public" },
 		{ PROTECTED, "protected" },
 		{ PRIVATE, "private" }
 	};
+#include <leathers/pop>
 
 	auto found = enumToStr.find( modifier );
 	return found != enumToStr.end() ? found->second : QString();

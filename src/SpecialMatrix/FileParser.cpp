@@ -2,8 +2,8 @@
 
 #include <QtGui>
 
-#pragma warning(push)
-#pragma warning(disable:4244)
+#include <leathers/push>
+#include <leathers/conversion>
 
 SpecialMatrix::FileParser::FileParser( QString fileName, Data::Graph* matrixGraph, SpecialMatrix::NodeConnections* connections )
 {
@@ -866,3 +866,4 @@ void SpecialMatrix::FileParser::createSettings( Data::Graph* matrixGraph )
 	iEdgeType = matrixGraph->addType( "iEdgeType", settings );
 }
 
+#include <leathers/pop>
