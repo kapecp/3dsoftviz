@@ -18,26 +18,10 @@ OpenCV::TrackedLight::~TrackedLight()
 }
 
 void OpenCV::TrackedLight::extractColor( cv::Mat &frame ) {
-	/*int x = positionFrame.x - radius;
-	int y = positionFrame.y - radius;
-	int w = radius * 2;
-	int h = w;
-
-	x = x < 0 ? 0 : x;
-	y = y < 0 ? 0 : y;
-	w = ( x + w < frame.cols ) ? w : frame.cols - x;
-	h = ( y + h < frame.rows ) ? h : frame.rows - y;
-	w = w < 0 ? 0 : w;
-	h = h < 0 ? 0 : h;
-
-	cv::Rect roi( x, y, w, h);
-	cv::Mat roiMAT( frame, roi );*/
 	cv::Mat roiMAT( frame, bbox );
 	cv::Scalar mean = cv::mean( roiMAT );
-
 	// debug
-	//cv::rectangle( frame, roi, mean, -1, 8 , 0 );
-	cv::rectangle( frame, bbox, mean, -1, 8 , 0 );
+	//cv::rectangle( frame, bbox, mean, -1, 8 , 0 );
 	mean /= 255;
 
 	_color.r() = static_cast < float > ( mean.val[0] );
@@ -47,10 +31,10 @@ void OpenCV::TrackedLight::extractColor( cv::Mat &frame ) {
 	//qDebug() << "extract color "  << _color.r() << " " << _color.g() << " " << _color.b();
 }
 
-void OpenCV::TrackedLight::findIntensity( float frame_area ) {
+void OpenCV::TrackedLight::findIntensity( float frame_area, osg::Vec4 frame_color ) {
 
 	_surface = M_PI * radius * radius;
-	_colorIntensity = _surface / frame_area;
+	_colorIntensity = (_surface / frame_area) * 0.8 + 0.2 * std::abs(_color.length() - frame_color.length() );
 	//qDebug() << "intensity "  << _colorIntensity << " radius " << radius;
 }
 

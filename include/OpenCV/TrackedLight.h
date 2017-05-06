@@ -32,7 +32,7 @@ public:
 
 	void extractColor( cv::Mat &frame );
 
-	void findIntensity( float frame_area );
+	void findIntensity(float frame_area , osg::Vec4 frame_color);
 
 	int					id;
 

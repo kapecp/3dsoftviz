@@ -32,6 +32,7 @@
 #include <QTime>
 #include "OsgQtBrowser/QWebViewImage.h"
 #include <osgShadow/ShadowedScene>
+#include <QOSG/GhostSoftShadowMap.h>
 #include "Hud.h"
 
 namespace Data {
@@ -701,6 +702,11 @@ private:
 		*  \brief node for shadows definition
 		*/
 	osg::ref_ptr<osgShadow::ShadowedScene> shadowedScene;
+	/**
+	 * @brief ghostSoftShadowMap custom shadowmap shader, which can cast shadows onto transparent objects
+	 * used to cast shadow on base geode
+	 */
+	osg::ref_ptr<osgShadow::GhostSoftShadowMap> ghostSoftShadowMap;
 
 	/**
 		* osg::Geode* baseGeode

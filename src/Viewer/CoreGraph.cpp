@@ -843,6 +843,8 @@ Vwr::CoreGraph::CoreGraph( Data::Graph* graph, osg::ref_ptr<osg::Camera> camera 
 
 	//shadow scene
 	//http://trac.openscenegraph.org/projects/osg//wiki/Support/ProgrammingGuide/osgShadow
+
+	ghostSoftShadowMap = new osgShadow::GhostSoftShadowMap();
 	shadowedScene = new osgShadow::ShadowedScene;
 	shadowedScene->setReceivesShadowTraversalMask( 0x1 );
 	shadowedScene->setCastsShadowTraversalMask( 0x2 );
@@ -1800,10 +1802,9 @@ void CoreGraph::addTranslateToGraphRotTransf( osg::Vec3d pos )
 void CoreGraph::turnOnShadows()
 {
 	//osg::ref_ptr<osgShadow::SoftShadowMap> sm = new osgShadow::SoftShadowMap;
-	osg::ref_ptr<osgShadow::GhostSoftShadowMap> sm = new osgShadow::GhostSoftShadowMap;
-	sm->setBias(0.01);
-	sm->setSoftnessWidth(0.012);
-	shadowedScene->setShadowTechnique( sm.get() );
+	//sm->setBias(0.01);
+	ghostSoftShadowMap->setSoftnessWidth(0.012);
+	shadowedScene->setShadowTechnique( ghostSoftShadowMap.get() );
 }
 
 void CoreGraph::turnOffShadows()
@@ -1839,7 +1840,7 @@ void CoreGraph::createBase()
 	//invisible untill checkbox clicked
 	baseGeode->setNodeMask( 0x0 );
 	osg::Material* material = new osg::Material();
-	material->setDiffuse( osg::Material::FRONT,  osg::Vec4( 0.8f, 0.8f, 0.8f, 1.0f ) );
+	material->setDiffuse( osg::Material::FRONT,  osg::Vec4( 0.5f, 0.5f, 0.5f, 1.0f ) );
 	// material->setEmission(osg::Material::FRONT, osg::Vec4(0, 0, 0, 1));
 	baseGeode->getOrCreateStateSet()->setAttribute( material );
 
@@ -2234,7 +2235,10 @@ void CoreGraph::setLightCoords( OpenCV::TrackedLight tlight )
 	int lid = getOrCreateLight( tlight.id );
 	setLightActive( lid, tlight.active );
 	setLightPosition( lid, tlight.positionHemisphere()* baseSize * roomSize );
-	setLightDiffuseColor( lid, tlight.color() * 0.7 /* * tlight.colorIntensity()*/ );
+	setLightDiffuseColor( lid, tlight.color() * tlight.colorIntensity() );
+	if ( lid == 0 ) {
+		ghostSoftShadowMap->setLight( lightSources[0] );
+	}
 }
 
 // show markers indicating lights

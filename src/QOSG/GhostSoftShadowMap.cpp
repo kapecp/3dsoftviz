@@ -95,19 +95,16 @@ static const char fragmentCustomSoftShaderSource_noBaseTexture[] =
     "  } \n"
 // apply shadow, modulo the ambient bias
     //"  gl_FragColor = gl_Color * (osgShadow_ambientBias.x + shadow * osgShadow_ambientBias.y); \n"
-    "  if (ghostObject) \n" // ghost object - only shadows
-    "  {"
-    "    if ( shadow ) \n"
-    "      gl_FragColor = gl_Color * (osgShadow_ambientBias.x + shadow * osgShadow_ambientBias.y); \n"
-    "    else \n"
-    "      gl_FragColor.w = 0; \n"
-    "    gl_FragColor.w = 1 - gl_FragColor.w; \n"
-    "  } \n"
-    "  else \n"
-    "  { \n"
-    "    gl_FragColor.xyz = gl_Color.xyz * (osgShadow_ambientBias.x + shadow * osgShadow_ambientBias.y); \n"
-    "    gl_FragColor.w = gl_Color.w; \n"
-    "  } \n"
+	"  if (ghostObject) \n" // ghost object - only shadows
+	"  {"
+	"    gl_FragColor.xyz = gl_Color.xyz * (osgShadow_ambientBias.x + shadow * osgShadow_ambientBias.y); \n"
+	"    gl_FragColor.w =  1 - (osgShadow_ambientBias.x + shadow * osgShadow_ambientBias.y); \n"
+	"  } \n"
+	"  else \n"
+	"  { \n"
+	"    gl_FragColor.xyz = gl_Color.xyz * (osgShadow_ambientBias.x + shadow * osgShadow_ambientBias.y); \n"
+	"    gl_FragColor.w = gl_Color.w; \n"
+	"  } \n"
     "} \n";
 
 
@@ -171,20 +168,17 @@ static const char fragmentCustomSoftShaderSource_withBaseTexture[] =
     "  vec4 color = gl_Color * texture2D( osgShadow_baseTexture, gl_TexCoord[0].xy ); \n"
 // apply shadow, modulo the ambient bias
     //"  gl_FragColor = color * (osgShadow_ambientBias.x + shadow * osgShadow_ambientBias.y); \n"
-    "  if (ghostObject) \n" // ghost object - only shadows
-    "  {"
-    "    if ( shadow ) \n"
-    "      gl_FragColor = color * (osgShadow_ambientBias.x + shadow * osgShadow_ambientBias.y); \n"
-    "    else \n"
-    "      gl_FragColor.w = 0; \n"
-    "    gl_FragColor.w = 1 - gl_FragColor.w; \n"
-    "  } \n"
-    "  else \n"
-    "  { \n"
-    "    gl_FragColor.xyz = color.xyz * (osgShadow_ambientBias.x + shadow * osgShadow_ambientBias.y); \n"
-    "    gl_FragColor.w = color.w; \n"
-    "  } \n"
-    "} \n";
+	"  if (ghostObject) \n" // ghost object - only shadows
+	"  {"
+	"    gl_FragColor.xyz = color.xyz * (osgShadow_ambientBias.x + shadow * osgShadow_ambientBias.y); \n"
+	"    gl_FragColor.w =  1 - (osgShadow_ambientBias.x + shadow * osgShadow_ambientBias.y); \n"
+	"  } \n"
+	"  else \n"
+	"  { \n"
+	"    gl_FragColor.xyz = color.xyz * (osgShadow_ambientBias.x + shadow * osgShadow_ambientBias.y); \n"
+	"    gl_FragColor.w = color.w; \n"
+	"  } \n"
+	"} \n";
 
 
 

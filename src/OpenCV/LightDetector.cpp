@@ -140,14 +140,14 @@ void OpenCV::LightDetector::ProcessFrame(cv::Mat& frame , cv::Mat frameGray )
 	// calculate position on hemisphere
 	for ( int i = 0; i < mLightCount; i++ ) {
 		mLights[i].extractColor( frame );
-		mLights[i].findIntensity( mFrameSurface );
-		mFrameMeanColorIntensity -= mLights[i].colorIntensity();
+		mLights[i].findIntensity( mFrameSurface, mFrameMeanColor );
+		//mFrameMeanColorIntensity -= mLights[i].colorIntensity();
 		mLights[i].mapFrameToHemishere( mfisheyeCenter, mFisheyeRadius, mFisheyeAngle );
 		//qDebug() << "center x " << mLights[i].hemispherePosition.x() << " y " << mLights[i].hemispherePosition.y() << " z " << mLights[i].hemispherePosition.z() << " r " << mLights[i].radius;
 	}
 
 	//qDebug() << "frame intensity " << mFrameMeanColorIntensity;
-	mFrameMeanColorIntensity = (mFrameMeanColorIntensity < 0 ) ? 0 : mFrameMeanColorIntensity;
+	//mFrameMeanColorIntensity = (mFrameMeanColorIntensity < 0 ) ? 0 : mFrameMeanColorIntensity;
 }
 
 OpenCV::TrackedLight OpenCV::LightDetector::getLight( int index )
