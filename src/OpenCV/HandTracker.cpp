@@ -90,10 +90,6 @@ cv::vector<cv::vector<cv::Point>> OpenCV::HandTracker::findHand( cv::Mat mask )
     cv::Mat hslMat;
     cv::vector<std::pair<cv::Point,double> > palm_centers;
 
-    cv::Scalar summ = sum(mask);
-    float brightness = summ[0]/((pow(2,8)-1)*mask.rows * mask.cols) * 2;
-//    LOG (INFO) << "brightness: " + std::to_string(brightness);
-//    LOG (INFO) << "Depth: " + std::to_string(depth);
 
     int threshold_down = 50;
     int threshold_up = 150;

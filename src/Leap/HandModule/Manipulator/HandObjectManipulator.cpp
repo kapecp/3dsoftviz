@@ -29,7 +29,7 @@ Leap::Vector Leap::HandObjectManipulator::changeHandUpDirectionAxis(Leap::Vector
 }
 
 void Leap::HandObjectManipulator::updateHands( Leap::Hand leftHand, Leap::Hand rightHand,
-                                               HandPalm* leftPalm, HandPalm* rightPalm )
+                                               HandPalm* leftPalm, HandPalm* rightPalm, osg::ref_ptr<osg::Camera> camera )
 {
     float mid = 300;
     float diffLeftHand;
@@ -37,6 +37,7 @@ void Leap::HandObjectManipulator::updateHands( Leap::Hand leftHand, Leap::Hand r
 
     this->center = osg::Vec3f(0.0f,0.0f,0.0f);
     this->direction = osg::Vec3f(0.0f,5.0f,0.0f);
+
 
     // update lavej ruky
     if ( leftHand.isValid() ) {
@@ -55,6 +56,18 @@ void Leap::HandObjectManipulator::updateHands( Leap::Hand leftHand, Leap::Hand r
                 osg::Matrix::translate( static_cast<double>(this->center[0]) + this->direction[0] + static_cast<double>( lVector.x )/100.0,
                 static_cast<double>(this->center[1])+this->direction[1] +static_cast<double>( lVector.y )/100.0,
                 static_cast<double>(this->center[2])+this->direction[2] +static_cast<double>( lVector.z )/100.0 ));
+
+         osg::Viewport* viewport = camera->getViewport();
+         osg::Matrix win = camera->getViewport()->computeWindowMatrix();
+         osg::Matrix view = camera->getViewMatrix();
+         osg::Matrix proj = camera->getProjectionMatrix();
+         osg::Matrix model = leftPalm->getWorldMatrices()[0];
+         osg::Vec3 world_coords = osg::Vec3( static_cast<double>(this->center[0]) + this->direction[0] + static_cast<double>( lVector.x )/100.0,
+                 static_cast<double>(this->center[1])+this->direction[1] +static_cast<double>( lVector.y )/100.0,
+                 static_cast<double>(this->center[2])+this->direction[2] +static_cast<double>( lVector.z )/100.0 );
+         osg::Vec3 screen_coords = world_coords * view * proj * win;
+        screen_coords.set(((screen_coords.x() / viewport->width()) * 640) , (screen_coords.y() / viewport->height()) * 480, screen_coords.z());
+        LOG (INFO) << "0: " + std::to_string(screen_coords.x()) + " 1: " + std::to_string(screen_coords.y()) + " 2: " + std::to_string(screen_coords.z());
 
         // update prstov lavej ruky
         this->updateFingers( leftPalm, leftHand.fingers(), diffLeftHand );
