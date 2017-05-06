@@ -32,15 +32,19 @@ public:
 
 	void extractColor( cv::Mat &frame );
 
-	void findIntensity( float frame_area );
+	void findIntensity(float frame_area , osg::Vec4 frame_color);
 
 	int					id;
 
 	bool				active;
 
+	// cirlce aproximation position
 	cv::Point2f			positionFrame;
 
 	float				radius;
+
+	// bounding box
+	cv::Rect			bbox;
 
 private:
 

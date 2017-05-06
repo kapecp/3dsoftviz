@@ -118,6 +118,7 @@ void OpenCV::LightDetector::ProcessFrame(cv::Mat& frame , cv::Mat frameGray )
 		if ( mLights.size() <= i)
 			mLights.push_back( OpenCV::TrackedLight() );
 
+		mLights[i].bbox = cv::boundingRect(mContours[i]);
 		cv::minEnclosingCircle(mContours[i], mLights[i].positionFrame, mLights[i].radius );
 		mLightCount++;
 	}
@@ -126,9 +127,10 @@ void OpenCV::LightDetector::ProcessFrame(cv::Mat& frame , cv::Mat frameGray )
 	if (mLightCount > 7)
 		mLightCount = 7;
 
+	// only biggest lights interest us
 	std::sort ( mLights.begin(), mLights.end(), Light2DRadiusCompare);
 
-	// no light abolute dark or something
+	// no light detected -> scene is dark -> fake light in center which will shade graph with 10% scene global color
 	if ( mLightCount == 0 ) {
 		mLights[0].positionFrame = cv::Point2f( 0, 0 );
 		mLights[0].radius = mFisheyeRadius / 100;
@@ -138,14 +140,14 @@ void OpenCV::LightDetector::ProcessFrame(cv::Mat& frame , cv::Mat frameGray )
 	// calculate position on hemisphere
 	for ( int i = 0; i < mLightCount; i++ ) {
 		mLights[i].extractColor( frame );
-		mLights[i].findIntensity( mFrameSurface );
-		mFrameMeanColorIntensity -= mLights[i].colorIntensity();
+		mLights[i].findIntensity( mFrameSurface, mFrameMeanColor );
+		//mFrameMeanColorIntensity -= mLights[i].colorIntensity();
 		mLights[i].mapFrameToHemishere( mfisheyeCenter, mFisheyeRadius, mFisheyeAngle );
 		//qDebug() << "center x " << mLights[i].hemispherePosition.x() << " y " << mLights[i].hemispherePosition.y() << " z " << mLights[i].hemispherePosition.z() << " r " << mLights[i].radius;
 	}
 
-	qDebug() << "frame intensity " << mFrameMeanColorIntensity;
-	mFrameMeanColorIntensity = (mFrameMeanColorIntensity < 0 ) ? 0 : mFrameMeanColorIntensity;
+	//qDebug() << "frame intensity " << mFrameMeanColorIntensity;
+	//mFrameMeanColorIntensity = (mFrameMeanColorIntensity < 0 ) ? 0 : mFrameMeanColorIntensity;
 }
 
 OpenCV::TrackedLight OpenCV::LightDetector::getLight( int index )

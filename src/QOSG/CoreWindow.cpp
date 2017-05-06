@@ -5441,4 +5441,7 @@ void CoreWindow::createProjARWindow()
 	QOSG::ProjectiveARCore::getInstance( NULL, this )->init( );
 }
 
+void CoreWindow::forceOnChange(){
+    this->onChange();
+}
 } // namespace QOSG

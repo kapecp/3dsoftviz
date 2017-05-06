@@ -32,7 +32,7 @@
 #include <QTime>
 #include "OsgQtBrowser/QWebViewImage.h"
 #include <osgShadow/ShadowedScene>
-#include <osgShadow/SoftShadowMap>
+#include <QOSG/GhostSoftShadowMap.h>
 #include "Hud.h"
 
 namespace Data {
@@ -317,6 +317,7 @@ public:
 
 	//JMA
 	osg::Vec3f getGrafRotTransVec();
+    osg::Vec3f getGrafRotTransScale();
 
 
 	// Karas
@@ -378,6 +379,8 @@ public slots:
 	void updateBase( double size );
 
 	void setArucoRunning( bool isRunning );
+
+    void onSetGraphZoom(int flag);
 
 	void setLightCoords( OpenCV::TrackedLight tlight );
 
@@ -699,7 +702,11 @@ private:
 		*  \brief node for shadows definition
 		*/
 	osg::ref_ptr<osgShadow::ShadowedScene> shadowedScene;
-	osg::ref_ptr<osgShadow::SoftShadowMap> ssm;
+	/**
+	 * @brief ghostSoftShadowMap custom shadowmap shader, which can cast shadows onto transparent objects
+	 * used to cast shadow on base geode
+	 */
+	osg::ref_ptr<osgShadow::GhostSoftShadowMap> ghostSoftShadowMap;
 
 	/**
 		* osg::Geode* baseGeode

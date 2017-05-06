@@ -40,6 +40,8 @@
 #include <osgShadow/ShadowedScene>
 #include <osgShadow/ShadowMap>
 #include <osgShadow/SoftShadowMap>
+#include <QOSG/GhostSoftShadowMap.h>
+#include <osg/BlendFunc>
 
 #include <easylogging++.h>
 
@@ -668,6 +670,8 @@ void CoreGraph::setLightType( int index, bool isPointLight ) {
 	lightSources[ index ]->getLight()->setPosition( osg::Vec4( 0, 0, 0, isPointLight ? 1 : 0 ) );
 }
 
+
+/// sphere mapping shader, possible to shade every object by image of a sphere...
 void CoreGraph::useSphereMappingShader( osg::ref_ptr< osg::StateSet > state ) {
 
 	/* based on https://www.clicktorelease.com/blog/creating-spherical-environment-mapping-shader/  */
@@ -682,13 +686,15 @@ void CoreGraph::useSphereMappingShader( osg::ref_ptr< osg::StateSet > state ) {
 	/* 2. Load the Shaders */
 	osg::ref_ptr<osg::Program> projProg( new osg::Program );
 	const std::string vertexSource =
-		"#version 400 compatibility\n"
+//		"#version 400 compatibility\n"
 		"out vec2  vN;\n"
+//		"void DynamicShadow( in vec4 ecPosition );"
 		"void main() \n"
 		"{ \n"
 		"	gl_Position  = ftransform();\n"
 		"	vec3 n       = normalize(gl_NormalMatrix * gl_Normal);\n"
 		"	vec4 p       = gl_ModelViewMatrix * gl_Vertex;\n"
+//		"	DynamicShadow( p );"
 		"	vec3 e       = p.xyz;\n"
 		"	vec3 r       = reflect(e, n);\n"
 		"	float m      = 2.0 * sqrt( pow( r.x, 2. ) + pow( r.y, 2. ) + pow( r.z + 1., 2. ) );\n"
@@ -722,6 +728,8 @@ void CoreGraph::useSphereMappingShader( osg::ref_ptr< osg::StateSet > state ) {
 	state->setAttributeAndModes(projProg, osg::StateAttribute::ON);
 }
 
+/// bit unfinished shader that should make reflections based on fisheye image from camera
+/// requires to be rewritten using better projection math - lookup stereographic projection
 void CoreGraph::useSphereMappingDomeShader( osg::ref_ptr< osg::StateSet > state ) {
 
 	/* based on https://www.clicktorelease.com/blog/creating-spherical-environment-mapping-shader/  */
@@ -828,12 +836,15 @@ Vwr::CoreGraph::CoreGraph( Data::Graph* graph, osg::ref_ptr<osg::Camera> camera 
 	//root->addChild( test2 );
 	//*/
 
+	root->getOrCreateStateSet()->addUniform( new osg::Uniform("ghostObject", false));
 
 	lightModel = new osg::LightModel();
 	setAmbientLightColor( osg::Vec4( 0.3, 0.3, 0.3, 1 ) );
 
 	//shadow scene
 	//http://trac.openscenegraph.org/projects/osg//wiki/Support/ProgrammingGuide/osgShadow
+
+	ghostSoftShadowMap = new osgShadow::GhostSoftShadowMap();
 	shadowedScene = new osgShadow::ShadowedScene;
 	shadowedScene->setReceivesShadowTraversalMask( 0x1 );
 	shadowedScene->setCastsShadowTraversalMask( 0x2 );
@@ -1790,11 +1801,10 @@ void CoreGraph::addTranslateToGraphRotTransf( osg::Vec3d pos )
 //jurik
 void CoreGraph::turnOnShadows()
 {
-	osg::ref_ptr<osgShadow::SoftShadowMap> sm = new osgShadow::SoftShadowMap;
-	ssm = sm;
-	//sm->setBias(0.1);
-	//sm->setSoftnessWidth(0.1);
-	shadowedScene->setShadowTechnique( ssm.get() );
+	//osg::ref_ptr<osgShadow::SoftShadowMap> sm = new osgShadow::SoftShadowMap;
+	//sm->setBias(0.01);
+	ghostSoftShadowMap->setSoftnessWidth(0.012);
+	shadowedScene->setShadowTechnique( ghostSoftShadowMap.get() );
 }
 
 void CoreGraph::turnOffShadows()
@@ -1831,7 +1841,7 @@ void CoreGraph::createBase()
 	//invisible untill checkbox clicked
 	baseGeode->setNodeMask( 0x0 );
 	osg::Material* material = new osg::Material();
-	material->setDiffuse( osg::Material::FRONT,  osg::Vec4( 0.8f, 0.8f, 0.8f, 1.0f ) );
+	material->setDiffuse( osg::Material::FRONT,  osg::Vec4( 0.5f, 0.5f, 0.5f, 1.0f ) );
 	// material->setEmission(osg::Material::FRONT, osg::Vec4(0, 0, 0, 1));
 	baseGeode->getOrCreateStateSet()->setAttribute( material );
 
@@ -1854,9 +1864,15 @@ void CoreGraph::createBase()
 
 	baseGeometry->addPrimitiveSet( base );
 
-	//baseGeode->getOrCreateStateSet()->setMode( GL_BLEND, osg::StateAttribute::ON );
-	baseGeode->getOrCreateStateSet()->setRenderingHint( osg::StateSet::OPAQUE_BIN );
+	//baseGeode->getOrCreateStateSet()->setRenderingHint( osg::StateSet::OPAQUE_BIN );
 	//baseGeode->getOrCreateStateSet()->setRenderBinDetails( 1, "DepthSortedBin" );
+
+
+	baseGeode->getOrCreateStateSet()->addUniform( new osg::Uniform("ghostObject", true));
+	baseGeode->getOrCreateStateSet()->setMode( GL_BLEND, osg::StateAttribute::ON );
+
+	//baseGeode->getOrCreateStateSet()->setAttributeAndModes( new osg::BlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA), osg::StateAttribute::ON );
+	//osg::BlendFunc blendFunc = new
 }
 
 //set aruco modelView matrix
@@ -1978,11 +1994,11 @@ void CoreGraph::scaleGraph( int scale )
 	//outputMatrix( scaleMatrix);
 	switch ( scale ) {
 		case 1: {
-			graphRotTransf->setMatrix( scaleMatrix * scaleMatrix.scale( 0.5,0.5,0.5 ) );
+            graphRotTransf->setMatrix( scaleMatrix * scaleMatrix.scale( 0.9,0.9,0.9 ) );
 			break;
 		}
 		case 2: {
-			graphRotTransf->setMatrix( scaleMatrix * scaleMatrix.scale( 2,2,2 ) );
+            graphRotTransf->setMatrix( scaleMatrix * scaleMatrix.scale( 1.1,1.1,1.1 ) );
 			break;
 		}
 		default:
@@ -2177,7 +2193,16 @@ void CoreGraph::drawAxes()
 //JMA
 osg::Vec3f CoreGraph::getGrafRotTransVec()
 {
-	return graphRotTransf->getMatrix().getTrans();
+    return graphRotTransf->getMatrix().getTrans();
+}
+osg::Vec3f CoreGraph::getGrafRotTransScale()
+{
+    return graphRotTransf->getMatrix().getScale();
+}
+
+void CoreGraph::onSetGraphZoom(int flag)
+{
+    this->scaleGraph(flag);
 }
 
 //*****
@@ -2217,7 +2242,10 @@ void CoreGraph::setLightCoords( OpenCV::TrackedLight tlight )
 	}
 	setLightActive( lid, tlight.active );
 	setLightPosition( lid, tlight.positionHemisphere()* baseSize * roomSize );
-	setLightDiffuseColor( lid, tlight.color() * 0.7 /* * tlight.colorIntensity()*/ );
+	setLightDiffuseColor( lid, tlight.color() * tlight.colorIntensity() );
+	if ( lid == 0 ) {
+		ghostSoftShadowMap->setLight( lightSources[0] );
+	}
 }
 
 // show markers indicating lights
@@ -2240,6 +2268,7 @@ void CoreGraph::setAmbientLightColor( osg::Vec4 color ) {
 	//qDebug() << "amb color r" << color.r() << " g " << color.g() << " b " << color.b() << " a " << color.a();
 	lightModel->setAmbientIntensity( color );
 	root->getOrCreateStateSet()->setAttributeAndModes( lightModel, osg::StateAttribute::ON );
+	//	shadowedScene->dirty();
 }
 
 }
