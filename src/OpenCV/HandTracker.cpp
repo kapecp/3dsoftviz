@@ -80,11 +80,11 @@ cv::Mat OpenCV::HandTracker::produceBinaries(cv::Mat m){
 }
 
 // find contours of segmented hand and count fingers
-cv::vector<cv::vector<cv::Point>> OpenCV::HandTracker::findHand( cv::Mat mask )
+cv::vector<std::pair<cv::Point,double>> OpenCV::HandTracker::findHand( cv::Mat mask )
 {
 
     cv::vector<cv::vector<cv::Point> > contours;
-    cv::vector<cv::vector<cv::Point>> pointList;
+    cv::vector<std::pair<cv::Point,double>> palmAndRadiusList;
     cv::vector<cv::Vec4i> hierarchy;
     cv::Mat tempMask = mask.clone();
     cv::Mat hslMat;
@@ -119,7 +119,7 @@ cv::vector<cv::vector<cv::Point>> OpenCV::HandTracker::findHand( cv::Mat mask )
                 //Ignore all small insignificant areas
                 if(contourArea(contours[i])>=5000)
                 {
-                    cv::vector<cv::Point> contourPoints;
+
 //                    LOG (INFO) << "Size of area: " + std::to_string(contourArea(contours[i]));
                     //Draw contour
                     cv::vector<cv::vector<cv::Point> > tcontours;
@@ -202,9 +202,12 @@ cv::vector<cv::vector<cv::Point>> OpenCV::HandTracker::findHand( cv::Mat mask )
                             //Draw the palm center and the palm circle
                             //The size of the palm gives the depth of the hand
                             if (radius > 0){
-                                contourPoints.push_back(palm_center);
+//                                LOG(INFO) << "x: " + std::to_string(palm_center.x) + " y: " + std::to_string(palm_center.y);
+//                                LOG(INFO) << "radius: " + std::to_string(radius);
                                 circle(mask,palm_center,5,cv::Scalar(144,144,255),3);
                                 circle(mask,palm_center,radius,cv::Scalar(144,144,255),2);
+                                std::pair<cv::Point,double> palmAndRadius = std::make_pair(cv::Point(palm_center.x,palm_center.y),radius);
+                                palmAndRadiusList.push_back(palmAndRadius);
                             }
 
                             //Detect fingers by finding points that form an almost isosceles triangle with certain thesholds
@@ -234,7 +237,6 @@ cv::vector<cv::vector<cv::Point>> OpenCV::HandTracker::findHand( cv::Mat mask )
                                     if(std::min(Xdist,Ydist)/std::max(Xdist,Ydist)<=0.8)
                                     {
                                         if((Xdist>=0.1*radius&&Xdist<=1.3*radius&&Xdist<Ydist)||(Ydist>=0.1*radius&&Ydist<=1.3*radius&&Xdist>Ydist)){
-                                            contourPoints.push_back(ptEnd);
                                             line( mask, ptEnd, ptFar, cv::Scalar(255,255,255), 1 );
                                             circle(mask,ptEnd,5,cv::Scalar(200,200,255),2);
                                             no_of_fingers++;
@@ -244,8 +246,8 @@ cv::vector<cv::vector<cv::Point>> OpenCV::HandTracker::findHand( cv::Mat mask )
                             }
                         }
                     }
-                    pointList.push_back(contourPoints);
+
                 }
             }
-    return pointList;
+    return palmAndRadiusList;
 }

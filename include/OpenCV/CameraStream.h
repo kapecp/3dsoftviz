@@ -38,7 +38,7 @@ public:
     int getImageHeight();
 
     bool calibrated;
-    cv::vector<cv::vector<cv::Point>> contourPointList;
+    cv::vector<std::pair<cv::Point,double>> palmAndRadiusList;
 
 public slots:
 

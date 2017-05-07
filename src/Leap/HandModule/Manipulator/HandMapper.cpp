@@ -8,8 +8,10 @@
 #endif
 
 Leap::HandMapper::HandMapper(Vwr::CoreGraph* coreGraph)
-    :coreGraph(coreGraph), cameraOffset(0)
+    :coreGraph(coreGraph), cameraOffset(cv::Point(0,0)), calibrationCounter(0),
+      calibrationLastPoint(cv::Point(0,0))
 {
+
 }
 
 Leap::HandMapper::~HandMapper()
@@ -65,12 +67,11 @@ Leap::Vector Leap::HandMapper::recalculateDepthNode(Leap::Vector vector, float d
         }
     }
     else if (this->coreGraph->isCameraStreamActive()) {
-         this->coreGraph->getCameraStream()->calibrated = true;
 
         // ofset to make hands bigger
         vector.y = vector.y - 680.0;
         // compesation of camera and leap offset
-        vector.z = vector.z - 50;
+        vector.z = vector.z ;
 
         diff -= 100;
                    // 400+ ruka
@@ -82,40 +83,54 @@ Leap::Vector Leap::HandMapper::recalculateDepthNode(Leap::Vector vector, float d
         }
 
 
-//        float averageDst = 0;
-//        if (!this->coreGraph->getCameraStream()->calibrated) {
-//            cv::vector<cv::vector<cv::Point>> contourPointList =
-//                    this->coreGraph->getCameraStream()->contourPointList;
-//            averageDst = this->calculateAveragePalmFingerDistance(
-//                    this->getHandPointList(contourPointList),
-//                    this->coreGraph->getCameraStream()->getImageWidth(),
-//                    this->coreGraph->getCameraStream()->getImageHeight());
-//        }
 
-////        LOG( INFO ) << "Point count: " + std::to_string(pointList.size());
-//        if (this->cameraOffset !=0 || averageDst != 0) {
-//            this->coreGraph->getCameraStream()->calibrated = true;
-////            LOG(INFO) << "calibrated";
-//            //this->cameraOffset = averageDst * vector.y;
-//            if (averageDst != 0){
-//                this->cameraOffset = averageDst;
-//            }
+        cv::vector<std::pair<cv::Point,double>> palmAndRadiusList =
+                           this->coreGraph->getCameraStream()->palmAndRadiusList;
 
-//            diff -= 100;
-//            // 400+ ruka
-////            if (diff > 0){
-////                vector.y = vector.y + diff*this->cameraOffset*1.3;
-////            } // ruka 0 - 400
-////            else{
-////                vector.y = vector.y + diff*this->cameraOffset*1.2;
-////            }
-//            LOG( INFO ) << "Hand scene position y PRED: " + std::to_string(vector.y);
 
-//            LOG( INFO ) << "Hand scene position y PO: " + std::to_string(vector.y);
-//        }
-//        //TODO edit vector based on average distance
+  if(!this->coreGraph->getCameraStream()->calibrated){
+        if(std::abs(this->nodeScreenCoords.x() - this->calibrationLastPoint.x) < 10 &&
+           std::abs(this->nodeScreenCoords.y() - this->calibrationLastPoint.y) < 10){
+            this->calibrationCounter += 1;
+        }else{
+            this->calibrationCounter = 0;
+        }
+        this->calibrationLastPoint.x = this->nodeScreenCoords.x();
+        this->calibrationLastPoint.y = this->nodeScreenCoords.y();
+//        LOG (INFO) << std::to_string(this->calibrationCounter);
+    }
+
+    if(this->calibrationCounter > 100000){
+        LOG (INFO) << std::to_string(this->calibrationCounter);
+    }
+
+
+        // if is palm found and hand is still in leap stream and palm radius is higher than threshold
+        if(palmAndRadiusList.size() > 0 && this->calibrationCounter > 50000 && palmAndRadiusList[0].second > 40){
+            if(!this->coreGraph->getCameraStream()->calibrated){
+//                LOG (INFO) << "this->nodeScreenCoords 0: " + std::to_string(palmPointList[0].x) + " 1: " + std::to_string(palmPointList[0].y);
+                this->cameraOffset = cv::Point(int(this->nodeScreenCoords.x()) - palmAndRadiusList[0].first.x, int(this->nodeScreenCoords.y()) - palmAndRadiusList[0].first.y  );
+//                LOG (INFO) << "radius: " + std::to_string(palmAndRadiusList[0].second);
+            }
+            this->coreGraph->getCameraStream()->calibrated = true;
+//            LOG (INFO) << "this->nodeScreenCoords 0: " + std::to_string(palmPointList[0].x) + " 1: " + std::to_string(palmPointList[0].y);
+        }
+
+        if( this->coreGraph->getCameraStream()->calibrated){
+            LOG (INFO) << "x: " + std::to_string(this->cameraOffset.x) +  " y: " + std::to_string(this->cameraOffset.y);
+//            float depthOffset = this->cameraOffset.x >= 0 ? vector.y/8 : -vector.y/8 ;
+            float depthOffset = vector.y/400 * this->cameraOffset.x/3;
+            // TODO depth offset spravit zavysli od this->cameraOffset.x
+
+            vector.x += this->cameraOffset.x * 1.2  + depthOffset;
+            vector.z += vector.y/20 ;
+        }
+
     }
 
     return vector;
 }
 
+void Leap::HandMapper::setNodeScreenCoords(osg::Vec3 nodeScreenCoords){
+    this->nodeScreenCoords = nodeScreenCoords;
+}

@@ -65,9 +65,9 @@ void Leap::HandObjectManipulator::updateHands( Leap::Hand leftHand, Leap::Hand r
          osg::Vec3 world_coords = osg::Vec3( static_cast<double>(this->center[0]) + this->direction[0] + static_cast<double>( lVector.x )/100.0,
                  static_cast<double>(this->center[1])+this->direction[1] +static_cast<double>( lVector.y )/100.0,
                  static_cast<double>(this->center[2])+this->direction[2] +static_cast<double>( lVector.z )/100.0 );
-         osg::Vec3 screen_coords = world_coords * view * proj * win;
-        screen_coords.set(((screen_coords.x() / viewport->width()) * 640) , (screen_coords.y() / viewport->height()) * 480, screen_coords.z());
-        LOG (INFO) << "0: " + std::to_string(screen_coords.x()) + " 1: " + std::to_string(screen_coords.y()) + " 2: " + std::to_string(screen_coords.z());
+         osg::Vec3 screenCoords = world_coords * view * proj * win;
+        screenCoords.set(((screenCoords.x() / viewport->width()) * 640) , (screenCoords.y() / viewport->height()) * 480, screenCoords.z());
+        this->mapper->setNodeScreenCoords(screenCoords);
 
         // update prstov lavej ruky
         this->updateFingers( leftPalm, leftHand.fingers(), diffLeftHand );
