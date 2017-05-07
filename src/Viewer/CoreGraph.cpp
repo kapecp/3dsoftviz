@@ -1810,7 +1810,7 @@ void CoreGraph::turnOnShadows()
 void CoreGraph::turnOffShadows()
 {
 	shadowedScene->setShadowTechnique( NULL );
-	ssm = NULL;
+	ghostSoftShadowMap = NULL;
 }
 
 void CoreGraph::turnOnBase()
@@ -2234,12 +2234,6 @@ void CoreGraph::setLightCoords( OpenCV::TrackedLight tlight )
 	//qDebug() << "incoming light id " << tlight.id;
 
 	int lid = getOrCreateLight( tlight.id );
-	if (ssm != NULL && lid == 0 ) {
-		if (tlight.active)
-			ssm->setLight( lightSources[lid] );
-		else
-			ssm == NULL;
-	}
 	setLightActive( lid, tlight.active );
 	setLightPosition( lid, tlight.positionHemisphere()* baseSize * roomSize );
 	setLightDiffuseColor( lid, tlight.color() * tlight.colorIntensity() );
