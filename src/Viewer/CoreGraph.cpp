@@ -1810,7 +1810,7 @@ void CoreGraph::turnOnShadows()
 void CoreGraph::turnOffShadows()
 {
 	shadowedScene->setShadowTechnique( NULL );
-	ghostSoftShadowMap = NULL;
+	//ghostSoftShadowMap = NULL;
 }
 
 void CoreGraph::turnOnBase()
