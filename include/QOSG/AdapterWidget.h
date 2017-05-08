@@ -11,6 +11,8 @@
 
 #include <QKeyEvent>
 #include <QGLWidget>
+#include <QOpenGLWidget>
+#include <QOpenGLFunctions>
 
 #if QT_VERSION >= 0x050000
 #define TOASCII toLatin1
@@ -27,7 +29,9 @@ namespace QOSG {
 	*  \author Adam Pazitnaj
 	*  \date 29. 4. 2010
 	*/
-class AdapterWidget : public QGLWidget
+//class AdapterWidget : public QGLWidget
+
+class AdapterWidget : public QOpenGLWidget, protected QOpenGLFunctions
 {
 
 public:

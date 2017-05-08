@@ -9,8 +9,11 @@
 namespace QOSG {
 
 AdapterWidget::AdapterWidget(const QGLFormat & format, QWidget* parent, const char* name , const QGLWidget* shareWidget, WindowFlags f ) :
-#if QT_VERSION > 0x040000
+#if QT_VERSION > 0x050000
+		QOpenGLWidget(parent, f )
+#elif QT_VERSION > 0x040000
 	QGLWidget(format , parent, shareWidget, f )
+
 #else
 	QGLWidget( parent, shareWidget, f )
 #endif
@@ -21,6 +24,7 @@ AdapterWidget::AdapterWidget(const QGLFormat & format, QWidget* parent, const ch
 
 void AdapterWidget::initializeGL()
 {
+	this->initializeOpenGLFunctions();
   // Set up the rendering context, define display lists etc.:
 
 		qDebug() << "OpenGL Versions Supported: " << QGLFormat::openGLVersionFlags();
