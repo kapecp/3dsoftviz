@@ -53,5 +53,12 @@ public:
 private:
 	void forEachList( std::function<void( osg::ref_ptr<Data::Node> )> func );
 
+	void addBuildingPATPosition( osg::ref_ptr<Data::Node> node );
+	void addParentPATPosition( osg::ref_ptr<Data::Node> node );
+	void addGroupPATPosition( osg::ref_ptr<Data::Node> node );
+	void addModulePATPosition( osg::ref_ptr<Data::Node> node );
+	void addVariableNodeParentPATPosition( osg::ref_ptr<Data::Node> varNode, osg::ref_ptr<Data::Node> otherNode );
+
+
 };
 }

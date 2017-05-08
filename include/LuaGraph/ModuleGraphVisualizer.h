@@ -32,6 +32,8 @@ private:
 
 	void adjustBallForNode(osg::ref_ptr<Data::Node> node, float baseSize, bool lieOnGround, osg::ref_ptr<osg::Material> colour);
 
+	QStringList hierarchyEdges = QStringList() << "provides" << "initializes" << "declares";
+	QStringList arcEdges = QStringList() << "calls" << "requires" << "represents" << "contains";
 };
 
 }

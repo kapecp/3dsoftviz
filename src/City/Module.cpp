@@ -88,6 +88,9 @@ void City::Module::refresh()
 	Layout::LayoutAlgorithms::layoutInsideRegion( variableNodes.empty() ? zeroBoudingBox : variableNodes.first()->getBuilding()->getBoundingBox(), variableNodes.count(), MODULE_SECTOR_HEIGHT, BUILDING_SPACING, &varLayouts, &varRegion );
 	for ( int i = 0; i < variableNodes.count(); ++i ) {
 		auto varNodePAT = getNodeParentPAT( variableNodes[i] );
+		auto varNodeBuilding = variableNodes[i]->getBuilding();
+		float baseSize = varNodeBuilding->getBaseSize();
+		float height = varNodeBuilding->getHeight();
 		varNodePAT->setPosition( varLayouts[i] );
 		variablesPAT->addChild( varNodePAT );
 
@@ -96,7 +99,7 @@ void City::Module::refresh()
 			std::cout << "found something" << std::endl;
 			std::cout << "    -> {" << variableNodes[i]->AbsNode::getName().toStdString() << ", " <<  otherNode->AbsNode::getName().toStdString() << "}" << std::endl;
 			auto otherNodePAT = getNodeParentPAT( otherNode );
-			otherNodePAT->setPosition( varNodePAT->getPosition() + osg::Vec3( 0.0f, 0.0f, 10.0f ) );
+			otherNodePAT->setPosition( varNodePAT->getPosition() + osg::Vec3( baseSize/2, baseSize/2, height + 10.0f ) );
 			variableNodes[i]->getResidenceAsPAT()->addChild( otherNodePAT );
 		}
 	}
@@ -181,27 +184,31 @@ void City::Module::decompose()
 
 void City::Module::updateNodesPosition()
 {
-	auto config = Util::ApplicationConfig::get();
-	float interpolationSpeed = config->getValue( "Viewer.Display.InterpolationSpeed" ).toFloat();
-
 	for ( auto varNode : variableNodes ) {
-		auto varNodePAT = getNodeParentPAT( varNode );
-		varNode->setCurrentPosition( varNodePAT->getPosition() + moduleNode->getCurrentPosition( true, interpolationSpeed ) );
+		addBuildingPATPosition( varNode );
+		addParentPATPosition( varNode );
+		addGroupPATPosition( varNode );
+		addModulePATPosition( varNode );
 	}
 
-	for ( auto otherNode : otherNodes ) {
-		auto otherNodePAT = getNodeParentPAT( otherNode );
-		otherNode->setCurrentPosition( otherNodePAT->getPosition() + moduleNode->getCurrentPosition( true, interpolationSpeed ) );
+	for ( auto varNode : otherNodes.keys() ) {
+		//it's map <varNode, otherNode>
+		auto otherNode = otherNodes.value(varNode);
+		addVariableNodeParentPATPosition( varNode, otherNode );
 	}
 
 	for ( auto funcNode : functionNodes ) {
-		auto funcNodePAT = getNodeParentPAT( funcNode );
-		funcNode->setCurrentPosition( funcNodePAT->getPosition() + moduleNode->getCurrentPosition( true, interpolationSpeed ) );
+		addBuildingPATPosition( funcNode );
+		addParentPATPosition( funcNode );
+		addGroupPATPosition( funcNode );
+		addModulePATPosition( funcNode );
 	}
 
 	for ( auto intrfcNode : interfaceNodes ) {
-		auto intrfcNodePAT = getNodeParentPAT( intrfcNode );
-		intrfcNode->setCurrentPosition( intrfcNodePAT->getPosition() + moduleNode->getCurrentPosition( true, interpolationSpeed ) );
+		addBuildingPATPosition( intrfcNode );
+		addParentPATPosition( intrfcNode );
+		addGroupPATPosition( intrfcNode );
+		addModulePATPosition( intrfcNode );
 	}
 }
 
@@ -220,3 +227,39 @@ void City::Module::forEachList( std::function<void( osg::ref_ptr<Data::Node> nod
 		func( node );
 	}
 }
+
+void City::Module::addBuildingPATPosition( osg::ref_ptr<Data::Node> node) {
+	auto nodeBuilding = node->getBuilding();
+	float height = nodeBuilding->getHeight();
+	node->setCurrentPosition( osg::Vec3( 0.0f, 0.0f, height ) );
+}
+
+void City::Module::addParentPATPosition( osg::ref_ptr<Data::Node> node ) {
+	auto nodeParentPAT = getNodeParentPAT( node );
+	node->setCurrentPosition( node->getCurrentPosition() + nodeParentPAT->getPosition() );
+}
+
+void City::Module::addGroupPATPosition( osg::ref_ptr<Data::Node> node ) {
+	auto nodeParentPAT = getNodeParentPAT( node );
+	auto nodeGroupPAT = nodeParentPAT->getParent( 0 )->asTransform()->asPositionAttitudeTransform();
+	node->setCurrentPosition( node->getCurrentPosition() + nodeGroupPAT->getPosition() );
+}
+
+void City::Module::addModulePATPosition( osg::ref_ptr<Data::Node> node ) {
+	auto config = Util::ApplicationConfig::get();
+	float interpolationSpeed = config->getValue( "Viewer.Display.InterpolationSpeed" ).toFloat();
+
+	node->setCurrentPosition( node->getCurrentPosition() + moduleNode->getCurrentPosition( true, interpolationSpeed ) );
+}
+
+void City::Module::addVariableNodeParentPATPosition( osg::ref_ptr<Data::Node> varNode, osg::ref_ptr<Data::Node> otherNode ) {
+	auto otherNodeParentPAT = getNodeParentPAT( otherNode );
+	otherNode->setCurrentPosition( varNode->getCurrentPosition() + otherNodeParentPAT->getPosition() - osg::Vec3( 0.0f, 0.0f, 5.0f ));
+}
+
+
+
+
+
+
+

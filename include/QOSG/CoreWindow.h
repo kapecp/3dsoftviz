@@ -1296,6 +1296,12 @@ private:
 	bool isRunning;
 
 	/**
+		*  bool graphView
+		*  \brief True if loaded graph is shown as graph (not city) - in case of moduleGraph
+		*/
+	bool graphView;
+
+	/**
 	 *CheckBox for mapinulation camera or object
 	 *@brief chb_camera_rot
 	 */

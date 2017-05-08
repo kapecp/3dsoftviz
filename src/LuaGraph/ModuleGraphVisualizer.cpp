@@ -33,8 +33,7 @@ void Lua::ModuleGraphVisualizer::visualize()
 
 
 	//insert every node and edge from Lua::LuaGraph to Data::Graph
-	auto nodeType = currentGraph->addType( Data::GraphLayout::NESTED_NODE_TYPE );
-	auto edgeType = currentGraph->addType( Data::GraphLayout::NESTED_EDGE_TYPE );
+	auto nodeType = currentGraph->addType( Data::GraphLayout::NESTED_NODE_TYPE );	
 
 	Lua::LuaGraph* luaGraph = Lua::LuaGraph::loadGraph();
 	luaGraph->printGraph();
@@ -89,6 +88,10 @@ void Lua::ModuleGraphVisualizer::visualize()
 		}
 	}
 
+	auto nestedEdgeType = currentGraph->addType( Data::GraphLayout::NESTED_EDGE_TYPE );
+	auto hierarchyEdgeType = currentGraph->addType( Data::GraphLayout::HIERARCHY_EDGE_TYPE );
+	auto arcEdgeType = currentGraph->addType( Data::GraphLayout::ARC_EDGE_TYPE );
+
 	//adding edges
 	QMap<qlonglong, Lua::LuaEdge*>::iterator edge_iter;
 	for ( edge_iter = luaGraph->getEdges()->begin();
@@ -97,6 +100,19 @@ void Lua::ModuleGraphVisualizer::visualize()
 		if ( edge_iter.value()->getIncidences().size() != 2 ) {
 			throw new std::runtime_error( "Not a simple graph" );
 		}
+
+		//set the correct edge type
+		Data::Type* edgeType;
+		if (hierarchyEdges.contains( edge_iter.value()->getLabel() ) ) {
+			edgeType = hierarchyEdgeType;
+		}
+		else if ( arcEdges.contains( edge_iter.value()->getLabel() ) ) {
+			edgeType = arcEdgeType;
+		}
+		else {
+			edgeType = nestedEdgeType;
+		}
+
 		LuaIncidence* const incid1 = luaGraph->getIncidences()->value( edge_iter.value()->getIncidences()[0] );
 		LuaIncidence* const incid2 = luaGraph->getIncidences()->value( edge_iter.value()->getIncidences()[1] );
 

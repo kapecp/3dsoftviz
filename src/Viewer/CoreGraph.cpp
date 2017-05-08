@@ -1518,13 +1518,13 @@ void CoreGraph::setEdgeVisual( int index )
 
 void CoreGraph::setEdgeVisualForType( int index, QString edgeTypeName )
 {
-	QMap<qlonglong, osg::ref_ptr<Data::Edge> >::iterator iEdge = in_edges->begin();
+	QMap<qlonglong, osg::ref_ptr<Data::Edge> >::iterator edge = in_edges->begin();
 
-	while ( iEdge != in_edges->end() ) {
-		if ( !QString::compare( iEdge.value()->getType()->getName(), edgeTypeName, Qt::CaseInsensitive ) ) {
-			iEdge.value()->setVisual( index );
+	while ( edge != in_edges->end() ) {
+		if ( !QString::compare( edge.value()->getType()->getName(), edgeTypeName, Qt::CaseInsensitive ) ) {
+			edge.value()->setVisual( index );
 		}
-		++iEdge;
+		++edge;
 	}
 
 	/*QMap<qlonglong, osg::ref_ptr<Data::Edge> >::iterator iMetaEdge = qmetaEdges->begin();
@@ -1537,6 +1537,19 @@ void CoreGraph::setEdgeVisualForType( int index, QString edgeTypeName )
 	}*/
 
 	graph->setEdgeVisual( index );
+}
+
+void CoreGraph::setEdgeHiddenForType( bool hidden, QString edgeTypeName )
+{
+	QMap<qlonglong, osg::ref_ptr<Data::Edge> >::iterator edge = in_edges->begin();
+
+	while ( edge != in_edges->end() ) {
+		if ( !QString::compare( edge.value()->getType()->getName(), edgeTypeName, Qt::CaseInsensitive ) ) {
+			edge.value()->setInvisible( hidden );
+			if ( hidden) { edge.value()->setScale( 0 ); } else { edge.value()->setScale( 2 ); };
+		}
+		++edge;
+	}
 }
 
 #ifdef OPENCV_FOUND
@@ -2073,6 +2086,7 @@ void CoreGraph::reorganizeNodesForModuleGraph()
 			std::cout << "[DONE] decompose" << std::endl;
 		}
 	}
+	//setEdgeVisualForType(Data::Edge::INDEX_LINE, Data::GraphLayout::ARC_EDGE_TYPE );
 
 }
 
@@ -2187,7 +2201,8 @@ void CoreGraph::reorganizeNodesForModuleCity()
 			cityModulePAT->refresh();
 			std::cout << "[END] ModuleGraphNode: " << moduleGraphNode->AbsNode::getName().toStdString() << std::endl << std::endl;
 		}
-	}
+	}	
+	//setEdgeVisualForType(Data::Edge::INDEX_MATRIX_CURVE, Data::GraphLayout::ARC_EDGE_TYPE );
 }
 
 

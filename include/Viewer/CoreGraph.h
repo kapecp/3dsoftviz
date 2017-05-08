@@ -20,6 +20,7 @@
 #include "Leap/LeapLib/LeapCameraStream.h"
 
 #include "Data/Cluster.h"
+#include "Data/GraphLayout.h"
 
 #include <osgManipulator/Translate2DDragger>
 
@@ -357,6 +358,11 @@ public slots:
 		 * @brief setEdgeTypeForType Set representation of edges for specific type
 		 */
 	void setEdgeVisualForType( int index, QString edgeTypeName );
+
+	/**
+		 * @brief setEdgeHiddenForType Set invisibility of edges for specific type
+		 */
+	void setEdgeHiddenForType( bool hidden, QString edgeTypeName );
 
 	void recievedMVMatrix( QMatrix4x4 modelViewMatrix );
 

@@ -31,7 +31,6 @@ Data::Edge::Edge( qlonglong id, QString name, Data::Graph* graph, osg::ref_ptr<D
 	this->insertChild( INDEX_LINE, createEdgeLine( NULL ), false );
 	this->insertChild( INDEX_CURVE, createEdgeCurve( NULL ), false );
 	this->insertChild( INDEX_MATRIX_CURVE, createEdgeCurve( NULL ), false );
-	this->insertChild( INDEX_HIERARCHY, createEdgeCurve( NULL ), false );
 	setValue( static_cast<unsigned int>( graph->getEdgeVisual() ), true );
 
 	//updateCoordinates(getSrcNode()->getTargetPosition(), getDstNode()->getTargetPosition());
@@ -266,8 +265,8 @@ void Data::Edge::updateCoordinates( osg::Vec3 srcPos, osg::Vec3 dstPos )
 			osg::ref_ptr<osg::Vec3Array> points = new osg::Vec3Array;
 
 			points->push_back( srcPos );
-			points->push_back( srcPos + osg::Vec3f( 0.0f, 0.0f, 50.0f ) );
-			points->push_back( dstPos + osg::Vec3f( 0.0f, 0.0f, 50.0f ) );
+			points->push_back( srcPos + osg::Vec3f( 0.0f, 0.0f, 25.0f ) );
+			points->push_back( dstPos + osg::Vec3f( 0.0f, 0.0f, 25.0f ) );
 			points->push_back( dstPos );
 
 			osg::ref_ptr<osgModeling::BezierCurve> bezCurve =
@@ -296,7 +295,6 @@ void Data::Edge::updateCoordinates( osg::Vec3 srcPos, osg::Vec3 dstPos )
 			colorArray->push_back( getEdgeColor() );
 		}
 	}
-
 
 }
 

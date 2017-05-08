@@ -570,7 +570,7 @@ void CoreWindow::createActions()
 	connect( edgeTypeComboBox, SIGNAL( currentIndexChanged( int ) ), this, SLOT( edgeTypeComboBoxChanged( int ) ) );
 
 	b_switchGraphView = new QPushButton();
-	b_switchGraphView->setText( "Graph layout" );
+	b_switchGraphView->setText( "City layout" );
 	b_switchGraphView->setToolTip( "&Change graph layout" );
 	b_switchGraphView->setFocusPolicy( Qt::NoFocus );
 	b_switchGraphView->setEnabled( false );
@@ -2259,12 +2259,20 @@ void CoreWindow::loadExampleModuleGraph()
 	Lua::LuaGraphVisualizer* visualizer = new Lua::ModuleGraphVisualizer( currentGraph, coreGraph->getCamera() );
 	visualizer->visualize();
 
+	graphView = true;
+	b_switchGraphView->setEnabled( true );
+
+	AppCore::Core::getInstance()->restartLayout(); //zavola coreGraph->reload();
+
 	//spusti rozmiestnovaci algoritmus
-	coreGraph->reloadConfig();
 	if ( isPlaying ) {
 		layout->play();
 		coreGraph->setNodesFreezed( false );
 	}
+
+	nodeTypeComboBox->setCurrentIndex( 2 ); // 2 == residence == module
+	edgeTypeComboBox->setCurrentIndex( 2 ); // 2 == line
+
 	delete visualizer;
 }
 
@@ -4673,13 +4681,22 @@ void CoreWindow::createMetricsToolBar()
 
 void CoreWindow::switchGraphView()
 {
-	if(b_switchGraphView->text().compare("City layout") == 0) {
-		b_switchGraphView->setText( "Graph layout" );
-		//DO_STUFF()
-	} else {
+	if ( graphView ) {
+		//graph shown as graph
+		coreGraph->reorganizeNodesForModuleCity();
+		edgeTypeComboBox->setEnabled( false );
 		b_switchGraphView->setText( "City layout" );
-		//DO_STUFF()
+	} else {
+		//graph show as city
+		coreGraph->reorganizeNodesForModuleGraph();
+		edgeTypeComboBox->setEnabled( true );
+		b_switchGraphView->setText( "Graph layout" );
 	}
+	graphView = !graphView;
+
+	pauseLayout();
+	playLayout();
+
 }
 
 void CoreWindow::loadLuaModuleGraph()
@@ -4701,8 +4718,6 @@ void CoreWindow::loadLuaModuleGraph()
 	QString createGraph[] = {"graph_importer", "extractGraph"};
 	lua->callFunction( 2, createGraph, funcArgs );
 	lua->doString( "getGraph = graph_importer.getGraph" ); // Lua::LuaGraph::loadGraph() vzdy funkciu getGraph
-	lua->doString( "getLuadbGraph = graph_importer.getLuadbGraph" );
-
 
 	Data::Graph* currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
 
@@ -4722,26 +4737,18 @@ void CoreWindow::loadLuaModuleGraph()
 	Lua::LuaGraphVisualizer* visualizer = new Lua::ModuleGraphVisualizer( currentGraph, coreGraph->getCamera() );
 	visualizer->visualize();
 
+	graphView = true;
+	b_switchGraphView->setEnabled( true );
+
 	AppCore::Core::getInstance()->restartLayout(); //zavola coreGraph->reload();
-
-
-	coreGraph->reorganizeNodesForModuleCity();
-
-	//coreGraph->reorganizeNodesForModuleGraph();
-
-	edgeTypeComboBox->setEnabled( false );
 
 	//spusti rozmiestnovaci algoritmus
 	if ( isPlaying ) {
 		layout->play();
-		//coreGraph->setNodesFreezed( false );
+		coreGraph->setNodesFreezed( false );
 	}
-	b_switchGraphView->setEnabled( true );
-	//nodeTypeComboBoxChanged( nodeTypeComboBox->currentIndex() );
-	//edgeTypeComboBoxChanged( edgeTypeComboBox->currentIndex() );
 	nodeTypeComboBox->setCurrentIndex( 2 ); // 2 == residence == module
 	edgeTypeComboBox->setCurrentIndex( 2 ); // 2 == line
-
 
 	delete visualizer;
 }
