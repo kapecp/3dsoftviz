@@ -29,6 +29,11 @@ int CameraStream::getImageHeight(){
     return this->image.rows;
 }
 
+void CameraStream::requestCalibration(){
+    this->calibrated = false;
+}
+
+
 void CameraStream::updateBackgroundImage( cv::Mat cvImg , bool trackHands)
 {
 

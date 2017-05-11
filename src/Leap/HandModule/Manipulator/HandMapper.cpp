@@ -70,58 +70,52 @@ Leap::Vector Leap::HandMapper::recalculateDepthNode(Leap::Vector vector, float d
 
         // ofset to make hands bigger
         vector.y = vector.y - 680.0;
-        // compesation of camera and leap offset
-        vector.z = vector.z ;
 
         diff -= 100;
-                   // 400+ ruka
+        // hand is further than 400
         if (diff > 0){
             vector.y = vector.y + diff*-0.4;
-        } // ruka 0 - 400
+        } // hand closer than 400
         else{
             vector.y = vector.y + diff*-0.2;
         }
-
-
-
+        // retrieve palm position and palm radius
         cv::vector<std::pair<cv::Point,double>> palmAndRadiusList =
                            this->coreGraph->getCameraStream()->palmAndRadiusList;
 
+        // check if model of leap hand is not moving for certain time interval
+          if(!this->coreGraph->getCameraStream()->calibrated){
+                if(std::abs(this->nodeScreenCoords.x() - this->calibrationLastPoint.x) < 10 &&
+                   std::abs(this->nodeScreenCoords.y() - this->calibrationLastPoint.y) < 10){
+                    this->calibrationCounter += 1;
+                }else{
+                    this->calibrationCounter = 0;
+                }
+                this->calibrationLastPoint.x = this->nodeScreenCoords.x();
+                this->calibrationLastPoint.y = this->nodeScreenCoords.y();
+         }
 
-  if(!this->coreGraph->getCameraStream()->calibrated){
-        if(std::abs(this->nodeScreenCoords.x() - this->calibrationLastPoint.x) < 10 &&
-           std::abs(this->nodeScreenCoords.y() - this->calibrationLastPoint.y) < 10){
-            this->calibrationCounter += 1;
-        }else{
-            this->calibrationCounter = 0;
+        // keep calibrationCounter from overflow
+        if(this->calibrationCounter > 100000){
+            if(this->calibrationCounter > 1000000 ){
+                this->calibrationCounter = 100000;
+            }
+
         }
-        this->calibrationLastPoint.x = this->nodeScreenCoords.x();
-        this->calibrationLastPoint.y = this->nodeScreenCoords.y();
-//        LOG (INFO) << std::to_string(this->calibrationCounter);
-    }
 
-    if(this->calibrationCounter > 100000){
-        LOG (INFO) << std::to_string(this->calibrationCounter);
-    }
-
-
-        // if is palm found and hand is still in leap stream and palm radius is higher than threshold
+        // if is palm found and hand is still in leap stream and palm radius is higher than threshold calibrate
         if(palmAndRadiusList.size() > 0 && this->calibrationCounter > 50000 && palmAndRadiusList[0].second > 40){
             if(!this->coreGraph->getCameraStream()->calibrated){
-//                LOG (INFO) << "this->nodeScreenCoords 0: " + std::to_string(palmPointList[0].x) + " 1: " + std::to_string(palmPointList[0].y);
                 this->cameraOffset = cv::Point(int(this->nodeScreenCoords.x()) - palmAndRadiusList[0].first.x, int(this->nodeScreenCoords.y()) - palmAndRadiusList[0].first.y  );
-//                LOG (INFO) << "radius: " + std::to_string(palmAndRadiusList[0].second);
             }
             this->coreGraph->getCameraStream()->calibrated = true;
-//            LOG (INFO) << "this->nodeScreenCoords 0: " + std::to_string(palmPointList[0].x) + " 1: " + std::to_string(palmPointList[0].y);
+            this->calibrationCounter = 0;
         }
 
         if( this->coreGraph->getCameraStream()->calibrated){
-            LOG (INFO) << "x: " + std::to_string(this->cameraOffset.x) +  " y: " + std::to_string(this->cameraOffset.y);
-//            float depthOffset = this->cameraOffset.x >= 0 ? vector.y/8 : -vector.y/8 ;
             float depthOffset = vector.y/400 * this->cameraOffset.x/3;
-            // TODO depth offset spravit zavysli od this->cameraOffset.x
 
+            // calculate hand position based on offsets
             vector.x += this->cameraOffset.x * 1.2  + depthOffset;
             vector.z += vector.y/20 ;
         }

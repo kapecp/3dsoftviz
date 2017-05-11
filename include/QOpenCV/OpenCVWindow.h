@@ -83,6 +83,7 @@ signals:
 	     * @param send
 	     */
 	void sendImgFaceRec( bool send );
+    void sendRecalibrateHand();
 
 	/**
 	     * @author Autor: David Durcak
@@ -321,7 +322,9 @@ private slots:
 	     * @brief onMarkerBackgrCBClicked Slot for enabling video backgroung from Aruco and disabling from FaceRecongition
 	     * @param checked
 	     */
-	void onMarkerBackgrCBClicked( bool checked );
+    void onMarkerBackgrCBClicked(bool checked);
+
+    void onmRecalibrateHandPBClicked();
 
 	/**
 	 * @brief private SLOT for turn OFF cursor
@@ -380,6 +383,7 @@ private:
 	QPushButton*		mUpdateCorParPB;
 	QPushButton*		mInterchangeMarkersPB;
 	QPushButton*     mKinectSnapshotPB;
+    QPushButton*		mRecalibrateHandPB;
 
 	QVBoxLayout*  mSubmodulesStackL;
 //	---------------------------------------------

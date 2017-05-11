@@ -53,6 +53,7 @@ void QOpenCV::OpenCVWindow::configureWindow()
 	mKinectSnapshotPB = new QPushButton( tr( "Kinect Snapshot" ) );
 	mUpdateCorParPB	= new QPushButton( tr( "Update cor. param." ) );
 	mInterchangeMarkersPB = new QPushButton( tr( "Change Markers" ) );
+    mRecalibrateHandPB = new QPushButton( tr( "Recalibrate hand mapping" ) );
 
 	mMarkerNoVideo = new QCheckBox( tr( "NoVideo" ) );
 	mFaceNoVideo  = new QCheckBox( tr( "NoVideo" ) );
@@ -152,6 +153,7 @@ void QOpenCV::OpenCVWindow::configureWindow()
 	arucoMarkerPageLayout->addWidget( mEnableMarkerlessCameraCB );
 	arucoMarkerPageLayout->addWidget( mUpdateCorParPB );
 	arucoMarkerPageLayout->addWidget( mInterchangeMarkersPB );
+    arucoMarkerPageLayout->addWidget( mRecalibrateHandPB );
 
 	//arucoMultiMarkerPageLayout->addWidget( mMultiMarkerPB );
 
@@ -183,6 +185,7 @@ void QOpenCV::OpenCVWindow::configureWindow()
 	mEnableMarkerDetectCB->setEnabled( true );
 	mRefEnableFaceRecCB->setEnabled( true );
 	mRefEnableMarkerlessCB->setEnabled( true );
+    mRecalibrateHandPB->setEnabled( false);
 
 //	mMultiMarkerPB->setCheckable( true );
 	mKinectPB->setCheckable( true );
@@ -192,6 +195,7 @@ void QOpenCV::OpenCVWindow::configureWindow()
 	connect( mKinectSnapshotPB, SIGNAL( clicked() ), this, SLOT( onKinectSnapshotPBClicked() ) );
 
 	connect( mUpdateCorParPB, SIGNAL( clicked() ), this, SLOT( onUpdateCorPar() ) );
+    connect( mRecalibrateHandPB, SIGNAL( clicked() ), this, SLOT( onmRecalibrateHandPBClicked() ) );
 
 	//RADIOBUTTONS - set up signals to slots
 	connect( mMultiMarkerRB, SIGNAL( clicked() ), this, SLOT( onSelSubModulChange() ) );
@@ -294,6 +298,10 @@ void QOpenCV::OpenCVWindow::onMarkerBackgrCBClicked( bool checked )
 	}
 }
 
+void QOpenCV::OpenCVWindow::onmRecalibrateHandPBClicked(){
+emit sendRecalibrateHand();
+}
+
 void QOpenCV::OpenCVWindow::onSelModulChange()
 {
 
@@ -386,6 +394,7 @@ void QOpenCV::OpenCVWindow::onMarkerStartCancel( bool checked )
 	mMultiMarkerEnableCB->setEnabled( checked );
 	mEnableMarkerlessCameraCB->setEnabled( checked );
 	mInterchangeMarkersPB->setEnabled( checked );
+    mRecalibrateHandPB->setEnabled( checked );
 
 }
 

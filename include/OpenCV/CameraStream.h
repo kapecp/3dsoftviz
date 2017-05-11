@@ -50,6 +50,9 @@ public slots:
 		*/
 #ifdef OPENCV_FOUND
     void updateBackgroundImage( cv::Mat cvImg , bool trackHands);
+
+    void requestCalibration();
+
 #endif
 
 private:
