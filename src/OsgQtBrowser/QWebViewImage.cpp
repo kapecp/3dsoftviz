@@ -23,6 +23,8 @@ QWebViewImage::QWebViewImage()
 	// make sure we have a valid QApplication before we start creating widgets.
 	OsgQtBrowser::QGraphicsViewAdapter::getOrCreateQApplication();
 
+
+
 	_webView = new QWEBVIEW;
 
 	_webPage = new QLogWebPage;

@@ -1834,7 +1834,8 @@ void CoreWindow::playPause()
 	}
 }
 
-void CoreWindow::noSelectClicked( bool checked )
+void CoreWindow::
+noSelectClicked( bool checked )
 {
 	viewerWidget->getPickHandler()->setPickMode( Vwr::PickHandler::PickMode::NONE );
 	singleSelect->setChecked( false );
@@ -2255,7 +2256,7 @@ void CoreWindow::loadFromGit()
 
 //    Manager::GraphManager::getInstance()->createNewGraph( "new graph" );
 
-	if ( lPath != "" ) {
+    if ( lPath != "" ) {
 		if ( Manager::GraphManager::getInstance()->loadEvolutionGraphFromGit( lPath ) ) {
 			qDebug() << Manager::GraphManager::getInstance()->getActiveEvolutionGraph()->getFilePath();
 //            Manager::GraphManager::getInstance()->importEvolutionGraph( lPath );
@@ -2615,7 +2616,7 @@ void CoreWindow::selectionTypeComboBoxChanged( int index )
 	switch ( index ) {
 		case 0:
 			viewerWidget->getPickHandler()->setSelectionType( Vwr::PickHandler::SelectionType::ALL );
-			label->setChecked( edgeLabelsVisible & nodeLabelsVisible );
+			label->setChecked( edgeLabelsVisible & nodeLabelsVisible );            
 			break;
 		case 1:
 			viewerWidget->getPickHandler()->setSelectionType( Vwr::PickHandler::SelectionType::NODE );
@@ -2634,6 +2635,7 @@ void CoreWindow::selectionTypeComboBoxChanged( int index )
 			break;
 
 	}
+    selectionTypeComboBox->setCurrentIndex(index);
 }
 
 void CoreWindow::nodeTypeComboBoxChanged( int index )
@@ -2835,6 +2837,7 @@ void CoreWindow::setRestriction_Sphere()
 		osg::Vec3 position = viewerWidget->getPickHandler()->getSelectionCenter( true );
 		osg::ref_ptr<Data::Node> centerNode;
 		osg::ref_ptr<Data::Node> surfaceNode;
+
 
 		QString name_centerNode = "center";
 		QString name_sufraceNode = "surface";
@@ -5405,5 +5408,7 @@ void CoreWindow::createProjARWindow()
 {
 	QOSG::ProjectiveARCore::getInstance( NULL, this )->init( );
 }
+
+
 
 } // namespace QOSG
