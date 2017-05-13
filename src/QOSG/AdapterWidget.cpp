@@ -48,6 +48,15 @@ void AdapterWidget::initializeGL()
 
 void AdapterWidget::resizeGL( int width, int height )
 {
+	// FIX: for HiDPI displays
+	// without this fix, OpenGL context on retina displays is small,
+	// causing to display a small OpenGL context only in the lower-left corner
+	// (1/4 of the desired size)
+	// NOTE: on non-retina displays devicePixelRatio() is 1, on retina 2
+	width *= QApplication::desktop()->devicePixelRatio();
+	height *= QApplication::desktop()->devicePixelRatio();
+	// end FIX
+
 	//zmena velkosti widgetu
 	_gw->getEventQueue()->windowResize( 0, 0, width, height );
 	_gw->resized( 0,0,width,height );
