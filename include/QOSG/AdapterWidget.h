@@ -29,9 +29,13 @@ namespace QOSG {
 	*  \author Adam Pazitnaj
 	*  \date 29. 4. 2010
 	*/
-//class AdapterWidget : public QGLWidget
+//
 
-class AdapterWidget : public QOpenGLWidget, protected QOpenGLFunctions
+#if QT_VERSION > 0x050000
+	class AdapterWidget : public QOpenGLWidget, protected QOpenGLFunctions
+#elif QT_VERSION > 0x040000
+	class AdapterWidget : public QGLWidget
+#endif
 {
 
 public:

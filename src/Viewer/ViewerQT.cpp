@@ -89,7 +89,13 @@ QOSG::ViewerQT::ViewerQT(const QGLFormat & format, QWidget* parent , const char*
 
 	setThreadingModel( osgViewer::ViewerBase::SingleThreaded );
 
+#if QT_VERSION > 0x050000
+	connect( &_timer, SIGNAL( timeout() ), this, SLOT( update() ) );
+#elif QT_VERSION > 0x040000
 	connect( &_timer, SIGNAL( timeout() ), this, SLOT( updateGL() ) );
+#endif
+
+
 
 	_timer.start( 10 );
 }
