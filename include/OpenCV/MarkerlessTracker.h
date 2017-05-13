@@ -44,6 +44,7 @@ private:
     ArucoModul::ArucoCore* aCore;
     aruco::CameraParameters mCamParam;
 	std::vector<TrackerBall> tBalls;
+	int framenum;
 
     /**
      * @author Autor: Juraj Marak
@@ -78,13 +79,18 @@ private:
 	/**
 	 * @author Autor: Marek Rostar
 	 * @brief calculate center and radius for circle fited through 3 points from edge img
-	 * @param points from edge img, center radius
+	 * @param points from edge img
+	 * @param center
+	 * @param radius
 	 */
 	inline void getCircle(cv::Point2f& p1,cv::Point2f& p2,cv::Point2f& p3, cv::Point2f& center, float& radius);
 	/**
 	 * @author Autor: Marek Rostar
 	 * @brief Chceck the inlier count in fitted circle
-	 * @param edge img center, radius and found inliers
+	 * @param edge img
+	 * @param center
+	 * @param radius
+	 * @param found inliers
 	 */
 	float verifyCircle(cv::Mat dt, cv::Point2f center, float radius, std::vector<cv::Point2f> & inlierSet);
 //OpenCV::MarkerlessTracker::
