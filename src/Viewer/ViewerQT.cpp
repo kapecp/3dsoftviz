@@ -21,7 +21,7 @@ QOSG::ViewerQT::ViewerQT(const QGLFormat & format, QWidget* parent , const char*
 	//osg::DisplaySettings::instance()->setStereo( ( appConf->getValue( "Viewer.Display.Stereoscopic" ).toInt() ? true : false ) );
 	//osg::DisplaySettings::instance()->setStereoMode( osg::DisplaySettings::ANAGLYPHIC );
 
-	double fovy = 60.0;
+    double fovy = 60.0;
 	double nearClippingPlane = 0.01;
 	double farClippingPlane = appConf->getValue( "Viewer.Display.ViewDistance" ).toDouble();
 	double aspectRatio = static_cast<double>( width() )/static_cast<double>( height() );

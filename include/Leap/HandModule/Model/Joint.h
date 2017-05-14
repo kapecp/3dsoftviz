@@ -4,7 +4,7 @@
 #ifndef JOINT_H
 #define JOINT_H
 
-#include "Leap/HandModule/HandNode.h"
+#include "Leap/HandModule/Model/HandNode.h"
 namespace Leap {
 class Joint : public HandNode
 {

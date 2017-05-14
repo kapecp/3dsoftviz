@@ -1,7 +1,7 @@
 /**
  * Created by Patrik Berger on 13.11.2016.
  */
-#include "Leap/HandModule/Joint.h"
+#include "Leap/HandModule/Model/Joint.h"
 #include <easylogging++.h>
 #include <osg/ShapeDrawable>
 #include <osg/Geode>
