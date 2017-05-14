@@ -137,28 +137,18 @@ endif()
 # Dependencies - Searching external dependencies
 # ------------------------------------------------------------
 
-# ------------------------------ Qt -------------------------------
 set( ALL_SYSTEM_HEADERS )
 set( ALL_COMPILE_DEFINITIONS )
 
+
+# ------------------------------ Qt -------------------------------
 set( CMAKE_AUTOMOC ON )
 set( CMAKE_INCLUDE_CURRENT_DIR ON )
 
-find_package( OpenGL REQUIRED)
+# Find Qt5
+find_package( Qt5Core QUIET )
 
-
-# Find Qt4
-#find_package( Qt4 COMPONENTS QtCore QtGui QtOpenGL QtSql QtWebKit QtXml QtNetwork REQUIRED)
-#set( QT_USE_QTOPENGL 1 )
-#set( QT_USE_QTSQL 1 )
-#set( QT_USE_QTWEBKIT 1 )
-#set( QT_USE_QTXML 1 )
-#set( QT_USE_QTNETWORK 1 )
-#include( ${QT_USE_FILE} )
-
-if ( NOT Qt4_FOUND )
-	# Find Qt5
-	find_package( Qt5Core QUIET )
+if ( Qt5Core_FOUND )
 	find_package( Qt5Widgets QUIET )
 	find_package( Qt5OpenGL QUIET )
 	find_package( Qt5Sql QUIET )
@@ -166,6 +156,15 @@ if ( NOT Qt4_FOUND )
 	find_package( Qt5WebEngineWidgets QUIET )
 	find_package( Qt5Xml QUIET )
 	find_package( Qt5Network QUIET )
+else()
+	# Find Qt4
+	find_package( Qt4 COMPONENTS QtCore QtGui QtOpenGL QtSql QtWebKit QtXml QtNetwork REQUIRED)
+	set( QT_USE_QTOPENGL 1 )
+	set( QT_USE_QTSQL 1 )
+	set( QT_USE_QTWEBKIT 1 )
+	set( QT_USE_QTXML 1 )
+	set( QT_USE_QTNETWORK 1 )
+	include( ${QT_USE_FILE} )
 endif()
 
 if ( Qt5Core_FOUND )
@@ -185,6 +184,10 @@ if( "${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" AND
 endif()
 
 # ------------------------------ OpenSceneGraph -------------------------------
+
+# Find OpenGL
+find_package( OpenGL REQUIRED)
+
 # Find OpenSceneGraph
 find_package( OpenSceneGraph COMPONENTS
 	osgGA
@@ -1207,13 +1210,17 @@ endif()
 # 3rd party sources
 # ---------------------------------------------------------------
 
+# noiseutils library
 add_library( noiseutils STATIC dependencies/noiseutils/noiseutils.cpp )
 target_include_directories( noiseutils SYSTEM PUBLIC ${DEPENDENCIES_INCLUDE_DIR}/libnoise dependencies/noiseutils dependencies/libnoise/src )
+
+# mouse3d library
 if ( UNIX AND NOT APPLE )
 	add_library( mouse3d STATIC dependencies/mouse3d/xdrvlib.c )
 	target_include_directories(mouse3d SYSTEM PUBLIC dependencies/mouse3d)
 endif()
 
+# qtcolorpicker library
 add_library( qtcolorpicker STATIC dependencies/qtcolorpicker/qtcolorpicker.cpp )
 target_include_directories( qtcolorpicker SYSTEM PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/qtcolorpicker )
 if (Qt4_FOUND )
@@ -1223,6 +1230,7 @@ if ( Qt5Core_FOUND )
 	qt5_use_modules( qtcolorpicker Core Widgets )
 endif()
 
+# parserlib library
 include_directories( SYSTEM dependencies/parserlib/source )
 add_library( parserlib STATIC dependencies/parserlib/source/ast.cpp dependencies/parserlib/source/parser.cpp )
 
@@ -1247,7 +1255,7 @@ if ( Qt5Core_FOUND )
 	qt5_use_modules( gitlib Core )
 elseif( Qt4_FOUND )
 #	target_link_libraries( gitlib ${QT_LIBRARIES} )
-	target_link_libraries( qtcolorpicker Qt4::QtCore )
+	target_link_libraries( gitlib Qt4::QtCore )
 endif()
 
 # 'cotire' the module
