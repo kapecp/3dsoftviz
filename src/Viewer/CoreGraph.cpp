@@ -699,8 +699,8 @@ int CoreGraph::updateBackground( int bgVal, Data::Graph* currentGraph )
 {
 	osg::Group* root = this->getScene();
 	if ( root->removeChild( root->getNumChildren()-1 ) == true ) {
-        leapCameraStream = nullptr;
-        mCameraStream = nullptr;
+		leapCameraStream = nullptr;
+		mCameraStream = nullptr;
 
 		if ( bgVal == 0 ) { // default skybox
 			SkyBox* skyBox = new SkyBox;
@@ -713,11 +713,11 @@ int CoreGraph::updateBackground( int bgVal, Data::Graph* currentGraph )
 		else if ( bgVal == 2 ) {
 			root->addChild( createTextureBackground() );
 		}
-        else if ( bgVal == 3 ) {
+		else if ( bgVal == 3 ) {
 			root->addChild( createOrtho2dBackground() );
 		}
 #endif
-        else if ( bgVal == 4 ) {
+		else if ( bgVal == 4 ) {
 			root->addChild( createLeapBackground() ); // leap
 		}
 		else if ( bgVal == -1 ) {
@@ -742,11 +742,11 @@ int CoreGraph::updateBackgroundStream( unsigned char* buffer )
 //	LOG( INFO ) << "CoreGraph::updateBackgroundStream - updating background";
 	if ( leapCameraStream != nullptr ) {
 		leapCameraStream->dirty();
-        leapCameraStream->updateBackgroundImage( buffer);
+		leapCameraStream->updateBackgroundImage( buffer );
 	}
 	return 1;
 
-    // TODO return success/fail
+	// TODO return success/fail
 }
 
 
@@ -978,7 +978,7 @@ osg::ref_ptr<osg::Node> CoreGraph::createTextureBackground()
 
 
 	// texture
-    mCameraStream = new OpenCV::CameraStream( );
+	mCameraStream = new OpenCV::CameraStream( );
 	mCameraStream->setDataVariance( osg::Object::DYNAMIC );
 
 	osg::ref_ptr<osg::Texture2D> skymap = new osg::Texture2D( mCameraStream );
@@ -1172,11 +1172,11 @@ osg::ref_ptr<osg::Node> CoreGraph::createBackground()
 		return createTextureBackground();
 	}
 
-    if ( background == 3 ) {
-        return createOrtho2dBackground();
-    }
+	if ( background == 3 ) {
+		return createOrtho2dBackground();
+	}
 
-    if ( background == 4 ) {
+	if ( background == 4 ) {
 		return createLeapBackground();
 	}
 
@@ -1942,12 +1942,14 @@ void CoreGraph::setArucoRunning( bool isRunning )
 	this->arucoRunning = isRunning;
 }
 
-bool CoreGraph::isLeapStreamActive() {
-    return this->leapCameraStream != nullptr;
+bool CoreGraph::isLeapStreamActive()
+{
+	return this->leapCameraStream != nullptr;
 }
 
-bool CoreGraph::isCameraStreamActive() {
-    return this->mCameraStream != nullptr;
+bool CoreGraph::isCameraStreamActive()
+{
+	return this->mCameraStream != nullptr;
 }
 
 void CoreGraph::drawAxes()

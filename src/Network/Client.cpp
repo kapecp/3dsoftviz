@@ -751,7 +751,7 @@ void Client::setAttention( int user )
 {
 	QListWidgetItem* item = this->getItemById( user );
 	if ( item != NULL ) {
-        item->setIcon( QIcon( "../share/3dsoftviz/img/gui/attention.png" ) );
+		item->setIcon( QIcon( "../share/3dsoftviz/img/gui/attention.png" ) );
 	}
 }
 

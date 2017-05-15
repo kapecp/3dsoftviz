@@ -10,19 +10,19 @@
 #include <math.h>
 
 Leap::CustomLeapManager::CustomLeapManager( Vwr::CameraManipulator* cameraManipulator, Layout::LayoutThread* layout,
-		Vwr::CoreGraph* coreGraph , osg::ref_ptr<osg::Group> handsGroup )
-    :cameraManipulator( cameraManipulator ), layout( layout ), coreGraph( coreGraph ), handsGroup( handsGroup )
-{    
+		Vwr::CoreGraph* coreGraph, osg::ref_ptr<osg::Group> handsGroup )
+	:cameraManipulator( cameraManipulator ), layout( layout ), coreGraph( coreGraph ), handsGroup( handsGroup )
+{
 	arMode = false;
-    this->handObjectManipulator = new Leap::HandObjectManipulator(new Leap::HandMapper(this->coreGraph), 'y');
+	this->handObjectManipulator = new Leap::HandObjectManipulator( new Leap::HandMapper( this->coreGraph ), 'y' );
 	//init handPalms here
 	if ( this->handsGroup != nullptr ) {
 		arMode = true;
 		HandPalm* rightPalm = new HandPalm( 0.1f, handsGroup, 1 );
 		HandPalm* leftPalm = new HandPalm( 0.1f, handsGroup, 2 );
 
-        rightPalm->setMatrix( osg::Matrix::translate( -0.5,0,0 ) );
-        leftPalm->setMatrix( osg::Matrix::translate( 0.5,0,0 ) );
+		rightPalm->setMatrix( osg::Matrix::translate( -0.5,0,0 ) );
+		leftPalm->setMatrix( osg::Matrix::translate( 0.5,0,0 ) );
 
 	}
 }
@@ -114,24 +114,24 @@ void Leap::CustomLeapManager::scaleNodes( bool scaleUp )
 	}
 }
 
-int Leap::CustomLeapManager::updateCoreGraphBackground( const unsigned char* buffer , float depth)
+int Leap::CustomLeapManager::updateCoreGraphBackground( const unsigned char* buffer, float depth )
 {
-    if (this->coreGraph->isLeapStreamActive()) {
-        this->coreGraph->updateBackgroundStream( ( unsigned char* )buffer );
-    }
-    return 1;
+	if ( this->coreGraph->isLeapStreamActive() ) {
+		this->coreGraph->updateBackgroundStream( ( unsigned char* )buffer );
+	}
+	return 1;
 }
 
 void Leap::CustomLeapManager::updateHands( Leap::Hand leftHand, Leap::Hand rightHand )
 {
-    if ( this->handsGroup != NULL ) {
-        //0 a 3 z dovodu ze v grupe je palmNode, fingerGroup, palmNode, fingerGroup
-        HandPalm* leftPalm = static_cast<HandPalm*>( handsGroup->getChild( 3 ) );
-        HandPalm* rightPalm = static_cast<HandPalm*>( handsGroup->getChild( 0 ) );
+	if ( this->handsGroup != NULL ) {
+		//0 a 3 z dovodu ze v grupe je palmNode, fingerGroup, palmNode, fingerGroup
+		HandPalm* leftPalm = static_cast<HandPalm*>( handsGroup->getChild( 3 ) );
+		HandPalm* rightPalm = static_cast<HandPalm*>( handsGroup->getChild( 0 ) );
 
-        this->handObjectManipulator->updateHands(leftHand, rightHand, leftPalm,
-                                                 rightPalm);
-    }
+		this->handObjectManipulator->updateHands( leftHand, rightHand, leftPalm,
+				rightPalm );
+	}
 
 }
 

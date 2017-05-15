@@ -7,7 +7,7 @@
 #include "Leap/HandModule/Model/HandNode.h"
 #include "Leap/HandModule/Model/Joint.h"
 #include "Leap/HandModule/Model/HandBone.h"
-#include <list>
+
 #include <osg/Group>
 
 namespace Leap {

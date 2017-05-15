@@ -1,9 +1,11 @@
 #ifndef LEAPLISTENER_H
 #define LEAPLISTENER_H
-#include "Leap.h"
+
 #include "LeapLib/LeapActions.h"
 #include "LeapLib/LeapManager.h"
 #include "LeapLib/LeapExport.h"
+
+#include "Leap.h"
 
 namespace Leap {
 
