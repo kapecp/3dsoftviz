@@ -352,7 +352,7 @@ void OpenCV::MarkerlessTracker::findCirclesInFrame( cv::Mat& frame ){ //trackuje
 	}*/
 	framenum+=1;//pocitaj o ktory frame sa jedna
 	if(framenum>=5){ //a je piaty abo vyssi fame ak spra ransacna cely obraz
-		frameum=0;
+		framenum=0;
 		while (nIterations<=maxIterations) { //vyber nahodne body z hraoveho obrazu
 			unsigned int idx1 = rand() % edgePositions.size();
 			unsigned int idx2 = rand() % edgePositions.size();
