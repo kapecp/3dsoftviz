@@ -3,7 +3,7 @@
 #include "LeapLib/DirectionDetector.h"
 #include "LeapLib/FingerPositionDetector.h"
 #include "osg/Image"
-#include "CustomLeapManager.h"
+#include "Leap/CustomLeapManager.h"
 
 //#include "osg/Image"
 #include "osgDB/WriteFile"

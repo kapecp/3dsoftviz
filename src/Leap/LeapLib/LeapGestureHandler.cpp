@@ -89,12 +89,25 @@ void Leap::LeapGestureHandler::handleGestures( Frame frame )
             ignoreGestures = true;
             deltaVelocity = new Vector(rightHandVelocity->x - leftHandVelocity->x,rightHandVelocity->y - leftHandVelocity->y,rightHandVelocity->z - leftHandVelocity->z);
             leapActions->scaleGraph( deltaVelocity );
-            Concurrency::wait(100);
+			Concurrency::wait(50);
 
         }
     }
 
     if (!ignoreGestures){
+
+		for (int i = 0; i < hands.count(); i++) {
+
+			if (Leap::FingerPositionDetector::isIndexFingerExtended(hands[i])) {
+
+
+				leapActions->selectNode( hands[i] );
+
+			}
+
+		}
+
+
         const GestureList gestures = frame.gestures();
         for (int g = 0; g < gestures.count(); ++g) {
             Gesture gesture = gestures[g];

@@ -6,6 +6,9 @@
 #include "LeapLib/LeapManager.h"
 #include "LeapLib/LeapExport.h"
 #include "easylogging++.h"
+#include "HandModule/Model/HandPalm.h"
+//#include "osg/Group"
+//#include "osg/ref_ptr"
 
 namespace Leap {
 
@@ -78,6 +81,7 @@ public:
     void scaleEdges( Leap::DirectionDetector::Direction direction );
     void scaleGraph(Leap::Vector *vec );
 	void scaleNodes( bool scaleUp );
+	void selectNode( Leap::Hand hand );
     //void scaleGraph(bool scaleUp);
 	//*****
 };

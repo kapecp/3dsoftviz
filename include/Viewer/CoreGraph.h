@@ -271,6 +271,10 @@ public:
 		return browsersGroup;
 	}
 
+	Data::Graph* getGraph()
+	{
+		return graph;
+	}
 #ifdef OPENCV_FOUND
 	OpenCV::CameraStream* getCameraStream() const;
 #endif

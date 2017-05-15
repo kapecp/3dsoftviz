@@ -247,3 +247,9 @@ void Leap::LeapActions::scaleNodes( bool scaleUp )
 {
 	leapManager->scaleNodes( scaleUp );
 }
+
+void Leap::LeapActions::selectNode( Leap::Hand hand )
+{
+	leapManager->selectNode( hand.isRight() );
+
+}

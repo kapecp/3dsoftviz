@@ -143,6 +143,32 @@ void Leap::CustomLeapManager::scaleGraph(bool scaleUp){
     }
 }
 
-//float Leap::CustomLeapManager::getHandsDepthInformation(float leftHandPosition, float rightHandPosition) {
-//    return leftHandPosition > rightHandPosition ? leftHandPosition : rightHandPosition;
-//}
+void Leap::CustomLeapManager::selectNode(bool right){
+
+//	Treba vyriesit scale ruky, pretoze vzhladom na graf je moc mala a teda je takmer nemozne pretnut ruku s grafom.
+
+//	if ( coreGraph->getHandsGroup() != NULL && coreGraph->getGraph() != NULL) {
+
+//		LOG( INFO ) << "Leap::CustomLeapManager::selectNode";
+
+//		HandPalm* palm = static_cast<HandPalm*>( coreGraph->getHandsGroup()->getChild( right ? 0 : 3 ) );
+
+//		Leap::Joint* tip =  static_cast<Leap::Joint*>( palm->fingerGroup->getChild( static_cast<unsigned int>( 1 ) )->asGroup()->getChild( 0 ));
+//		LOG( INFO ) << coreGraph->getGraph()->getNodes()->count();
+//		foreach (osg::ref_ptr<Data::Node> node, coreGraph->getGraph()->getNodes()->values()) {
+
+//			LOG( INFO ) << node.get()->getCurrentPosition().x();
+//			LOG( INFO ) << tip->getBound().center().x();
+
+//			if ( tip->getBound().intersects(node.get()->getBound())){
+//				LOG( INFO ) << "Intersection";
+//			}
+
+//		}
+//		LOG( INFO ) << tip->getBound().radius();
+
+//	}
+
+
+
+}
