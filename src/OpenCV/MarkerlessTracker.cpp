@@ -127,7 +127,7 @@ void OpenCV::MarkerlessTracker::findCirclesInFrame( cv::Mat& frame ){ //trackuje
 	cv::findContours( mask, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE, cv::Point(0, 0) ); //transfrmacia hran na kontury
 	cv::Mat drawing;
 	drawing =cv::Mat::zeros(mask.size(),CV_8UC1);
-	for( int i = 0; i< contours.size(); i++ ) //vytvoreni hranovho obrazka
+	for( int i = 0; i< contours.size(); i++ ) //vytvoreni hranoveho obrazka
 	{
 		cv::Scalar color = cv::Scalar( 255, 255, 255 );
 		cv::drawContours( drawing, contours, i, color, 1, 8, hierarchy, 0, cv::Point() );
