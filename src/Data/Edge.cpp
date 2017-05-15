@@ -25,7 +25,7 @@ Data::Edge::Edge( qlonglong id, QString name, Data::Graph* graph, osg::ref_ptr<D
 {
 	this->appConf = Util::ApplicationConfig::get();
 
-	this->insertChild( INDEX_LABEL, createLabel( name ) , false );
+	this->insertChild( INDEX_LABEL, createLabel( name ), false );
 	this->insertChild( INDEX_QUAD, createEdgeQuad( createStateSet( this->type ) ), false );
 	this->insertChild( INDEX_CYLINDER, createEdgeCylinder( NULL ), false );
 	this->insertChild( INDEX_LINE, createEdgeLine( NULL ), false );

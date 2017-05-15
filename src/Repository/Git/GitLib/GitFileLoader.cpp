@@ -239,7 +239,7 @@ void Repository::Git::GitFileLoader::readGitDiffFile( QString tmpFile, Repositor
 						lLine = lLine.replace( regex, "" );
 					}
 
-					blockLine = new Repository::Git::GitFileDiffBlockLine( lLine, addPos++ , Repository::Git::GitType::ADDED );
+					blockLine = new Repository::Git::GitFileDiffBlockLine( lLine, addPos++, Repository::Git::GitType::ADDED );
 					diffBlock->addGitFileDiffBlockLine( blockLine );
 
 					break;
@@ -254,7 +254,7 @@ void Repository::Git::GitFileLoader::readGitDiffFile( QString tmpFile, Repositor
 						lLine = lLine.replace( regex, "" );
 					}
 
-					blockLine = new Repository::Git::GitFileDiffBlockLine( lLine, removePos++ , Repository::Git::GitType::REMOVED );
+					blockLine = new Repository::Git::GitFileDiffBlockLine( lLine, removePos++, Repository::Git::GitType::REMOVED );
 					diffBlock->addGitFileDiffBlockLine( blockLine );
 
 					break;
@@ -270,7 +270,7 @@ void Repository::Git::GitFileLoader::readGitDiffFile( QString tmpFile, Repositor
 					}
 
 					removePos++;
-					blockLine = new Repository::Git::GitFileDiffBlockLine( lLine, addPos++ , Repository::Git::GitType::NONE );
+					blockLine = new Repository::Git::GitFileDiffBlockLine( lLine, addPos++, Repository::Git::GitType::NONE );
 					diffBlock->addGitFileDiffBlockLine( blockLine );
 
 					break;

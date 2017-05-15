@@ -18,7 +18,7 @@ Leap::LeapListener::LeapListener( LeapManager* leapManager )
 Leap::LeapListener::~LeapListener( void )
 {
 	if ( leapActions != NULL ) {
-		delete( leapActions );
+		delete ( leapActions );
 	}
 }
 
@@ -62,7 +62,7 @@ void Leap::LeapListener::onImages( const Controller& controller )
 	Frame frame = controller.frame();
 	HandList hands = frame.hands();
 
-	manager->updateCoreGraphBackground( image.data(), 0);
+	manager->updateCoreGraphBackground( image.data(), 0 );
 }
 
 void Leap::LeapListener::onFrame( const Controller& controller )

@@ -74,7 +74,7 @@ public:
 		*
 		*/
 
-	ViewerQT(const QGLFormat &format, QWidget* parent = 0, const char* name = 0, const QGLWidget* shareWidget = 0, WindowFlags f = 0, Vwr::CoreGraph* cg = 0 );
+	ViewerQT( const QGLFormat& format, QWidget* parent = 0, const char* name = 0, const QGLWidget* shareWidget = 0, WindowFlags f = 0, Vwr::CoreGraph* cg = 0 );
 
 
 	/**

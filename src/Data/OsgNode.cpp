@@ -27,8 +27,8 @@ Data::OsgNode::OsgNode( qlonglong id, QString name, Data::Type* type, Data::Grap
 	this->setParentBall( NULL );
 
 
-	insertChild( INDEX_LABEL, createLabel( this->type->getScale(), labelText ) , false );
-	insertChild( INDEX_SQUARE, createNodeSquare( this->scale, OsgNode::createStateSet( this->type->getTypeTexture() ) ) , false );
+	insertChild( INDEX_LABEL, createLabel( this->type->getScale(), labelText ), false );
+	insertChild( INDEX_SQUARE, createNodeSquare( this->scale, OsgNode::createStateSet( this->type->getTypeTexture() ) ), false );
 	insertChild( INDEX_SPHERE, createNodeSphere( this->scale, OsgNode::createStateSet( this->type->getTypeTexture() ) ), false );
 	insertChild( INDEX_RESIDENCE,  createNodeResidence( this->scale ), false );
 	insertChild( INDEX_MODULE,  createNodeModule( this->scale ), false );
@@ -299,7 +299,7 @@ void Data::OsgNode::setVisual( unsigned int index )
 void Data::OsgNode::reloadConfig()
 {
 	removeChildren( 0, 4 );
-	this->insertChild( INDEX_LABEL, createLabel( this->type->getScale(), labelText ) , false );
+	this->insertChild( INDEX_LABEL, createLabel( this->type->getScale(), labelText ), false );
 	this->insertChild( INDEX_SQUARE, createNodeSquare( this->scale, OsgNode::createStateSet( this->type->getTypeTexture() ) ), false );
 	this->insertChild( INDEX_SPHERE, createNodeSphere( this->scale, OsgNode::createStateSet( this->type->getTypeTexture() ) ), false );
 	this->insertChild( INDEX_RESIDENCE, createNodeResidence( this->scale ), false );

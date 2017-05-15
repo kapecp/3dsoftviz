@@ -18,7 +18,7 @@ class HandObjectManipulator
 
 public:
 
-	HandObjectManipulator(HandMapper *mapper, char upDirectionAxis);
+	HandObjectManipulator( HandMapper* mapper, char upDirectionAxis );
 
 	~HandObjectManipulator();
 
@@ -28,7 +28,7 @@ public:
 	 * @param leftHand - Leap representation of left hand (sensor output data).
 	 * @param rightHand - Leap representation of right hand (sensor output data).
 	 */
-	void updateHands( Leap::Hand leftHand, Leap::Hand rightHand, HandPalm* leftPalm, HandPalm* rightPalm);
+	void updateHands( Leap::Hand leftHand, Leap::Hand rightHand, HandPalm* leftPalm, HandPalm* rightPalm );
 
 	/**
 	 Method used in updateHands(). Iterates over fingers and for each call methods: updateJoints() and
@@ -36,7 +36,7 @@ public:
 	 * @param palm - sphere representation of palm containing groups of figer joints and bones
 	 * @param fingers - Leap representation of fingers (sensor output data).
 	 */
-	void updateFingers( HandPalm* palm, Leap::FingerList fingers, float diff);
+	void updateFingers( HandPalm* palm, Leap::FingerList fingers, float diff );
 
 	/**
 	Method used in updateFingers(). Render joints of single finger.
@@ -68,14 +68,14 @@ public:
 	 */
 	void updateInterFingerWristBone( osg::Group*  interFingerBoneGroup, Leap::FingerList fingers, float diff );
 
-	Leap::Vector changeHandUpDirectionAxis(Leap::Vector vector);
+	Leap::Vector changeHandUpDirectionAxis( Leap::Vector vector );
 
-	void setHandMapper( HandMapper *mapper);
+	void setHandMapper( HandMapper* mapper );
 private:
 	osg::Vec3d center;
 	osg::Vec3d up;
 	osg::Vec3d direction;
-	HandMapper *mapper;
+	HandMapper* mapper;
 	char upDirectionAxis;
 };
 }

@@ -96,9 +96,9 @@ void QOpenCV::OpenCVWindow::configureWindow()
 	QWidget* arucoMultiMarkerPageWid = new QWidget;
 	QWidget* arucoSubPageWid = new QWidget;
 
-	kinectPageWid->setStyleSheet("background-color: lightblue");
-	arucoFaceRecPageWid->setStyleSheet("background-color: lightblue");
-	arucoMarkerPageWid->setStyleSheet("background-color: lightblue");
+	kinectPageWid->setStyleSheet( "background-color: lightblue" );
+	arucoFaceRecPageWid->setStyleSheet( "background-color: lightblue" );
+	arucoMarkerPageWid->setStyleSheet( "background-color: lightblue" );
 
 	QVBoxLayout*	kinectPageLayout = new QVBoxLayout;
 	QVBoxLayout*	arucoPageLayout	= new QVBoxLayout;
@@ -317,7 +317,8 @@ void QOpenCV::OpenCVWindow::onSelSubModulChange() //----------------------------
 
 		emit sendImgFaceRec( false );
 
-	} else {
+	}
+	else {
 
 		emit sendImgFaceRec( true );
 

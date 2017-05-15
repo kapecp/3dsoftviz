@@ -77,7 +77,7 @@ public:
 		*
 		*/
 
-	ProjectiveARViewer(const QGLFormat & format, QWidget* parent = 0, const char* name = 0, const QGLWidget* shareWidget = 0, WindowFlags f = 0, QOSG::ProjectiveARWindow* window = 0, osgViewer::Viewer* viewerPerspective = 0, Vwr::CoreGraph* coreGraph = 0 );
+	ProjectiveARViewer( const QGLFormat& format, QWidget* parent = 0, const char* name = 0, const QGLWidget* shareWidget = 0, WindowFlags f = 0, QOSG::ProjectiveARWindow* window = 0, osgViewer::Viewer* viewerPerspective = 0, Vwr::CoreGraph* coreGraph = 0 );
 
 	/**
 	 * @author Viktor Kostan

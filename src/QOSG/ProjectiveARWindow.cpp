@@ -7,18 +7,18 @@
 #include "Core/Core.h"
 
 #if QT_VERSION > 0x050000
-	#include <QLabel>
-	#include <QRadioButton>
-	#include <QPushButton>
-	#include <QVBoxLayout>
-	#include <QFormLayout>
+#include <QLabel>
+#include <QRadioButton>
+#include <QPushButton>
+#include <QVBoxLayout>
+#include <QFormLayout>
 
 #elif QT_VERSION > 0x040000
-	#include <QtGui/QLabel>
-	#include <QtGui/QRadioButton>
-	#include <QtGui/QPushButton>
-	#include <QtGui/QVBoxLayout>
-	#include <QtGui/QFormLayout>
+#include <QtGui/QLabel>
+#include <QtGui/QRadioButton>
+#include <QtGui/QPushButton>
+#include <QtGui/QVBoxLayout>
+#include <QtGui/QFormLayout>
 #endif
 
 
@@ -35,10 +35,10 @@ QOSG::ProjectiveARWindow::ProjectiveARWindow( QWidget* parent, QApplication* app
 	Vwr::CoreGraph* coreGraph = AppCore::Core::getInstance( app )->getCoreGraph();
 
 
-	QGLFormat format(QGL::DoubleBuffer | QGL::DepthBuffer | QGL::Rgba | QGL::StencilBuffer | QGL::AlphaChannel | QGL::StereoBuffers );
+	QGLFormat format( QGL::DoubleBuffer | QGL::DepthBuffer | QGL::Rgba | QGL::StencilBuffer | QGL::AlphaChannel | QGL::StereoBuffers );
 	format.setVersion( 2, 1 );
 
-	viewerWidget = new ProjectiveARViewer(format, this, 0, 0, 0, this, sourceViewer, coreGraph );
+	viewerWidget = new ProjectiveARViewer( format, this, 0, 0, 0, this, sourceViewer, coreGraph );
 	viewerWidget->addEventHandler( new ProjectiveAREventHandler( this ) );
 	createLeftToolBar();
 

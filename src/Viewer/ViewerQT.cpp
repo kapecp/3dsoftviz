@@ -8,8 +8,8 @@
 
 #include <math.h>
 
-QOSG::ViewerQT::ViewerQT(const QGLFormat & format, QWidget* parent , const char* name , const QGLWidget* shareWidget , WindowFlags f , Vwr::CoreGraph* cg ):
-	AdapterWidget(format, parent, name, shareWidget, f )
+QOSG::ViewerQT::ViewerQT( const QGLFormat& format, QWidget* parent, const char* name, const QGLWidget* shareWidget, WindowFlags f, Vwr::CoreGraph* cg ):
+	AdapterWidget( format, parent, name, shareWidget, f )
 {
 	this->cg = cg;
 	cg->setCamera( this->getCamera() );
@@ -21,7 +21,7 @@ QOSG::ViewerQT::ViewerQT(const QGLFormat & format, QWidget* parent , const char*
 	//osg::DisplaySettings::instance()->setStereo( ( appConf->getValue( "Viewer.Display.Stereoscopic" ).toInt() ? true : false ) );
 	//osg::DisplaySettings::instance()->setStereoMode( osg::DisplaySettings::ANAGLYPHIC );
 
-    double fovy = 60.0;
+	double fovy = 60.0;
 	double nearClippingPlane = 0.01;
 	double farClippingPlane = appConf->getValue( "Viewer.Display.ViewDistance" ).toDouble();
 	double aspectRatio = static_cast<double>( width() )/static_cast<double>( height() );
@@ -130,7 +130,7 @@ void QOSG::ViewerQT::resizeGL( int width, int height )
 	cg->onResized( width, height );
 }
 
-void QOSG::ViewerQT::moveMouseAruco( double positionX,double positionY,bool isClick,int windowX,int windowY ,Qt::MouseButton button )
+void QOSG::ViewerQT::moveMouseAruco( double positionX,double positionY,bool isClick,int windowX,int windowY,Qt::MouseButton button )
 {
 	//qDebug() << positionX << "  " << positionY << "         " << isClick;
 
@@ -160,7 +160,7 @@ void QOSG::ViewerQT::moveMouseAruco( double positionX,double positionY,bool isCl
 	this->getEventQueue()->mouseMotion( wieverX, wieverY );
 }
 
-void QOSG::ViewerQT::moveMouseKinect( double positionX,double positionY,double speed,bool isClick,int windowX,int windowY ,Qt::MouseButton button )
+void QOSG::ViewerQT::moveMouseKinect( double positionX,double positionY,double speed,bool isClick,int windowX,int windowY,Qt::MouseButton button )
 {
 	//qDebug() << positionX << "  " << positionY << "         " << isClick;
 	positionX /=640.0;

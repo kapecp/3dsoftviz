@@ -140,13 +140,13 @@ void  OpenCV::OpenCVCore::createPermanentConnection()
 
 	// updating background image
 	QObject::connect( mThrFaceRec,
-                      SIGNAL( pushBackgrImage( cv::Mat, bool ) ),
+					  SIGNAL( pushBackgrImage( cv::Mat, bool ) ),
 					  AppCore::Core::getInstance( mApp )->getCoreGraph()->getCameraStream(),
-                      SLOT( updateBackgroundImage( cv::Mat, bool ) ) );
+					  SLOT( updateBackgroundImage( cv::Mat, bool ) ) );
 	QObject::connect( mThrAruco,
-                      SIGNAL( pushBackgrImage( cv::Mat, bool ) ),
+					  SIGNAL( pushBackgrImage( cv::Mat, bool ) ),
 					  AppCore::Core::getInstance( mApp )->getCoreGraph()->getCameraStream(),
-                      SLOT( updateBackgroundImage( cv::Mat, bool ) ) );
+					  SLOT( updateBackgroundImage( cv::Mat, bool ) ) );
 
 	QObject::connect( mThrAruco,
 					  SIGNAL( moveMouseArucoSignal( double,double,bool,Qt::MouseButton ) ),

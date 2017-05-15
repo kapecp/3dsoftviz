@@ -57,7 +57,7 @@ public:
 	Vwr::CameraManipulator* cameraManipulator;
 	Layout::LayoutThread* layout;
 	Vwr::CoreGraph* coreGraph;
-	HandObjectManipulator *handObjectManipulator;
+	HandObjectManipulator* handObjectManipulator;
 
 	osg::ref_ptr<osg::Group> handsGroup;
 };

@@ -111,11 +111,11 @@ CoreWindow::CoreWindow( QWidget* parent, Vwr::CoreGraph* coreGraph, QApplication
 	createLeftToolBar();
 	createMetricsToolBar();
 
-	QGLFormat format(QGL::DoubleBuffer | QGL::DepthBuffer | QGL::Rgba | QGL::StencilBuffer | QGL::AlphaChannel | QGL::StereoBuffers );
+	QGLFormat format( QGL::DoubleBuffer | QGL::DepthBuffer | QGL::Rgba | QGL::StencilBuffer | QGL::AlphaChannel | QGL::StereoBuffers );
 	format.setVersion( 2, 1 );
 //	format.setProfile( QGLFormat::CoreProfile ); // Requires >=Qt-4.8.0
 
-	viewerWidget = new ViewerQT(format, this, 0, 0, 0, coreGraph );
+	viewerWidget = new ViewerQT( format, this, 0, 0, 0, coreGraph );
 	viewerWidget->setSceneData( coreGraph->getScene() );
 
 	setCentralWidget( viewerWidget );
@@ -2319,7 +2319,7 @@ void CoreWindow::loadFromGit()
 					int newCurrentIndex = 0;
 
 					int iter = 1;
-					foreach ( QString item ,metrics.getAuthorList( Manager::GraphManager::getInstance()->getActiveGraph()->getCurrentVersion() + 1 ) ) {
+					foreach ( QString item,metrics.getAuthorList( Manager::GraphManager::getInstance()->getActiveGraph()->getCurrentVersion() + 1 ) ) {
 						list << item;
 						if ( item == currentText ) {
 							newCurrentIndex = iter;
@@ -3625,7 +3625,7 @@ bool CoreWindow::add_NodeClick()
 
 	osg::ref_ptr<Data::Node> newNode;
 	if ( !client->isConnected() ) {
-		newNode = currentGraph->addNode( "newNode", nodeType , position );
+		newNode = currentGraph->addNode( "newNode", nodeType, position );
 		Network::Server* server = Network::Server::getInstance();
 		server->sendNewNode( newNode );
 	}
@@ -3954,7 +3954,7 @@ void CoreWindow::startSpeech()
 			this->mSpeechThr->terminate();
 			this->mSpeechThr->wait();
 		}
-		delete( this->mSpeechThr );
+		delete ( this->mSpeechThr );
 		b_start_speech->setText( "Start Speech" );
 		this->mSpeechThr=NULL;
 		return;
@@ -3962,7 +3962,7 @@ void CoreWindow::startSpeech()
 	this->mSpeechThr = new Speech::KinectSpeechThread();
 	CoUninitialize();
 	if ( this->mSpeechThr->initializeSpeech()==1 ) {
-		delete( this->mSpeechThr );
+		delete ( this->mSpeechThr );
 		this->mSpeechThr=NULL;
 		return;
 	}
@@ -3976,7 +3976,7 @@ void CoreWindow::startLeap()
 {
 	if ( mLeapThr!=NULL && b_start_leap->text()=="Stop Leap" ) {
 		//this->mLeapThr->cancel=true;
-		delete( this->mLeapThr );
+		delete ( this->mLeapThr );
 		b_start_leap->setText( "Start Leap" );
 		this->mLeapThr=NULL;
 		return;
@@ -3994,7 +3994,7 @@ void CoreWindow::startLeap()
 void CoreWindow::startLeapAR()
 {
 	if ( mLeapThrAR!=NULL && b_start_leapAR->text()=="Stop LeapAR" ) {
-		delete( this->mLeapThrAR );
+		delete ( this->mLeapThrAR );
 		b_start_leapAR->setText( "Start LeapAR" );
 		this->mLeapThrAR=NULL;
 		return;
@@ -4390,7 +4390,7 @@ void CoreWindow::change_Vertigo_Planes_Distance( int value )
 
 	int nOfPlane = 0;
 	QLinkedList<Layout::ShapeGetter_Plane_ByThreeNodes*>::const_iterator it = planes_Vertigo.constBegin();
-	for ( it; it != planes_Vertigo.constEnd(); ++it , ++nOfPlane ) {
+	for ( it; it != planes_Vertigo.constEnd(); ++it, ++nOfPlane ) {
 
 		// ziskanie troch uzlov, ktore urcuju rovinu - obmedzenie
 		QSet<Data::Node*> nodesOfPlane = ( *it )->getNodesOfShape();
@@ -4533,7 +4533,7 @@ void CoreWindow::startGlovesRecognition()
 	// terminating fgloveThread
 	if ( this->mGloveThr!=NULL && ( b_start_gloves->text()=="Stop Gloves" ) ) {
 		this->mGloveThr->terminate();
-		delete( this->mGloveThr );
+		delete ( this->mGloveThr );
 
 		b_start_gloves->setText( "Start Gloves" );
 		this->mGloveThr=NULL;
@@ -4613,7 +4613,7 @@ void CoreWindow::createMetricsToolBar()
 
 	// evolution part start
 	toolBar = new QToolBar( "Evolution graph controls", this );
-	QToolBar* toolBar1= new QToolBar( "Evolution graph controls" ,this );
+	QToolBar* toolBar1= new QToolBar( "Evolution graph controls",this );
 	toolBar1->addWidget( b_previous_version );
 	toolBar1->addWidget( b_next_version );
 	toolBar1->addWidget( b_info_version );
@@ -4878,7 +4878,7 @@ bool CoreWindow::nextVersion()
 				int newCurrentIndex = 0;
 
 				int iter = 1;
-				foreach ( QString item ,metrics.getAuthorList( Manager::GraphManager::getInstance()->getActiveGraph()->getCurrentVersion() + 1 ) ) {
+				foreach ( QString item,metrics.getAuthorList( Manager::GraphManager::getInstance()->getActiveGraph()->getCurrentVersion() + 1 ) ) {
 					list << item;
 					if ( item == currentText ) {
 						newCurrentIndex = iter;
@@ -5161,7 +5161,7 @@ void CoreWindow::changeEvolutionFilterOption( int state )
 				newCurrentIndex = 0;
 
 				int iter = 1;
-				foreach ( QString item ,metrics.getAuthorList( Manager::GraphManager::getInstance()->getActiveGraph()->getCurrentVersion() + 1 ) ) {
+				foreach ( QString item,metrics.getAuthorList( Manager::GraphManager::getInstance()->getActiveGraph()->getCurrentVersion() + 1 ) ) {
 					list << item;
 					if ( item == currentText ) {
 						newCurrentIndex = iter;

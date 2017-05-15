@@ -32,9 +32,9 @@ namespace QOSG {
 //
 
 #if QT_VERSION > 0x050000
-	class AdapterWidget : public QOpenGLWidget, protected QOpenGLFunctions
+class AdapterWidget : public QOpenGLWidget, protected QOpenGLFunctions
 #elif QT_VERSION > 0x040000
-	class AdapterWidget : public QGLWidget
+class AdapterWidget : public QGLWidget
 #endif
 {
 
@@ -58,7 +58,7 @@ public:
 		*
 		*/
 
-	explicit AdapterWidget(const QGLFormat &format, QWidget* parent = 0, const char*   name = 0, const QGLWidget* shareWidget = 0, WindowFlags f = 0 );
+	explicit AdapterWidget( const QGLFormat& format, QWidget* parent = 0, const char*   name = 0, const QGLWidget* shareWidget = 0, WindowFlags f = 0 );
 
 
 	/*!
