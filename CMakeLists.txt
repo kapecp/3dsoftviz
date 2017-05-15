@@ -150,6 +150,7 @@ find_package( Qt5Core QUIET )
 
 if ( Qt5Core_FOUND )
 	find_package( Qt5Widgets QUIET )
+	find_package( Qt5Gui QUIET )
 	find_package( Qt5OpenGL QUIET )
 	find_package( Qt5Sql QUIET )
 	find_package( Qt5WebEngine QUIET )
@@ -1337,16 +1338,16 @@ include_directories(SYSTEM ${ALL_SYSTEM_HEADERS})
 # )
 
 if ( Qt5Core_FOUND )
-	qt5_use_modules( ${3DSOFTVIZ_NAME}
-		Core
-		Widgets
-		OpenGL
-		Sql
-		WebEngine
-		WebEngineWidgets
-		Xml
-		Network
-		)
+	target_link_libraries( ${3DSOFTVIZ_NAME}
+		Qt5::Core Qt5::Gui Qt5::Widgets Qt5::OpenGL Qt5::Sql Qt5::WebEngine Qt5::WebEngineWidgets Qt5::Xml Qt5::Network
+		${OPENGL_LIBRARIES} )
+endif()
+
+if ( Qt4_FOUND )
+#	target_link_libraries( ${3DSOFTVIZ_NAME} ${QT_LIBRARIES} )
+	target_link_libraries( ${3DSOFTVIZ_NAME}
+		Qt4::QtCore Qt4::QtGui Qt4::QtOpenGL Qt4::QtSql Qt4::QtWebKit Qt4::QtXml Qt4::QtNetwork
+		${OPENGL_LIBRARIES} )
 endif()
 
 target_link_libraries( ${3DSOFTVIZ_NAME}
@@ -1365,17 +1366,6 @@ target_link_libraries( ${3DSOFTVIZ_NAME}
 if( UNIX AND NOT APPLE )
 	target_link_libraries( ${3DSOFTVIZ_NAME} mouse3d )
 endif()
-
-if ( Qt4_FOUND )
-#	target_link_libraries( ${3DSOFTVIZ_NAME} ${QT_LIBRARIES} )
-target_link_libraries( ${3DSOFTVIZ_NAME} Qt4::QtCore Qt4::QtGui Qt4::QtOpenGL Qt4::QtSql Qt4::QtWebKit Qt4::QtXml Qt4::QtNetwork ${OPENGL_LIBRARIES} )
-
-endif()
-
-if ( Qt5Core_FOUND )
-	target_link_libraries( ${3DSOFTVIZ_NAME} ${OPENGL_LIBRARIES} )
-endif()
-
 
 if( NOT MSVC )
 	target_link_libraries( ${3DSOFTVIZ_NAME} diluculum )
@@ -1736,8 +1726,8 @@ target_include_directories( test_gitlib_module 	PUBLIC
 	include/Repository/Git 	)
 target_compile_options( test_gitlib_module PUBLIC ${FLAGS_FOR_DEBUG} )
 if ( Qt5Core_FOUND )
-	qt5_use_modules( test_gitlib_module Core )
-	target_link_libraries( test_gitlib_module gitlib )
+#	qt5_use_modules( test_gitlib_module Core )
+	target_link_libraries( test_gitlib_module Qt5::Core gitlib )
 elseif( Qt4_FOUND )
 	target_link_libraries( test_gitlib_module ${QT_LIBRARIES} gitlib )
 endif()

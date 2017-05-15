@@ -1,9 +1,10 @@
 #ifndef CUSTOMLEAPMANAGER_H
 #define CUSTOMLEAPMANAGER_H
 
-#include "Leap.h"
-#include "LeapLib/LeapManager.h"
 #include "HandModule/Manipulator/HandObjectManipulator.h"
+#include "LeapLib/LeapManager.h"
+
+#include "Leap.h"
 
 #include <osg/Group>
 #include <osg/ref_ptr>
@@ -42,7 +43,7 @@ public:
 	void updateHands( Leap::Hand leftHand, Leap::Hand rightHand );
 
 	//berger
-    int updateCoreGraphBackground( const unsigned char* buffer, float depth );
+	int updateCoreGraphBackground( const unsigned char* buffer, float depth );
 
 	//jurik
 	void graphRotateSwipe( int swipeDirection );
@@ -56,7 +57,7 @@ public:
 	Vwr::CameraManipulator* cameraManipulator;
 	Layout::LayoutThread* layout;
 	Vwr::CoreGraph* coreGraph;
-    HandObjectManipulator *handObjectManipulator;
+	HandObjectManipulator *handObjectManipulator;
 
 	osg::ref_ptr<osg::Group> handsGroup;
 };

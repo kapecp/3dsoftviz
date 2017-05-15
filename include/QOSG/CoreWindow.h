@@ -356,12 +356,12 @@ public slots:
 	 */
 	void switchBackgroundOrtho2d();
 
-    /**
-     * void switchBackgroundLeap(  )
-     * @brief TODO
-     * @param TODO
-     */
-    void switchBackgroundLeap();
+	/**
+	 * void switchBackgroundLeap(  )
+	 * @brief TODO
+	 * @param TODO
+	 */
+	void switchBackgroundLeap();
 
 	/**
 				*  \fn public  sliderValueChanged(int value)
@@ -886,11 +886,11 @@ private:
 	 */
 	QAction* switchBackgroundTextureAction;
 
-    /**
-     * QAction * switchBackgroundLeapAction
-     *@brief Action to switch/change background to leap background
-     */
-    QAction* switchBackgroundLeapAction;
+	/**
+	 * QAction * switchBackgroundLeapAction
+	 *@brief Action to switch/change background to leap background
+	 */
+	QAction* switchBackgroundLeapAction;
 
 	/**
 	 * QAction * switchBackgroundOrtho2dAction

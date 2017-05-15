@@ -1,6 +1,7 @@
 #include "SpecialMatrix/FileParser.h"
 
 #include <QtGui>
+#include <QMessageBox>
 
 #include <leathers/push>
 #include <leathers/conversion>

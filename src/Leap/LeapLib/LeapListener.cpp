@@ -1,11 +1,11 @@
 #include "LeapLib//LeapListener.h"
+
 #include "LeapLib/DirectionDetector.h"
 #include "LeapLib/FingerPositionDetector.h"
-#include "osg/Image"
+
 #include "CustomLeapManager.h"
 
-//#include "osg/Image"
-#include "osgDB/WriteFile"
+//#include "osgDB/WriteFile"
 #include <stdio.h>
 
 Leap::LeapListener::LeapListener( LeapManager* leapManager )
@@ -59,10 +59,10 @@ void Leap::LeapListener::onImages( const Controller& controller )
 	}
 	Leap::CustomLeapManager* manager = dynamic_cast<Leap::CustomLeapManager*>( this->leapActions->leapManager );
 
-    Frame frame = controller.frame();
-    HandList hands = frame.hands();
+	Frame frame = controller.frame();
+	HandList hands = frame.hands();
 
-    manager->updateCoreGraphBackground( image.data(), 0);
+	manager->updateCoreGraphBackground( image.data(), 0);
 }
 
 void Leap::LeapListener::onFrame( const Controller& controller )
@@ -124,45 +124,45 @@ void Leap::LeapListener::onFrame( const Controller& controller )
 
 	//std::cout << "id: " << frame.id();
 	/*
-	    const GestureList gestures = frame.gestures();
-	      for (int g = 0; g < gestures.count(); ++g) {
-	        Gesture gesture = gestures[g];
+		const GestureList gestures = frame.gestures();
+		  for (int g = 0; g < gestures.count(); ++g) {
+			Gesture gesture = gestures[g];
 
-	        HandList hands = gesture.hands();
-	        Hand firstHand = hands[0];
+			HandList hands = gesture.hands();
+			Hand firstHand = hands[0];
 
-	        switch (gesture.type()) {
-	          case Gesture::TYPE_CIRCLE:
-	          {
+			switch (gesture.type()) {
+			  case Gesture::TYPE_CIRCLE:
+			  {
 				leapActions->zoomGraph(gesture);
-	            break;
-	          }
-	          case Gesture::TYPE_SWIPE:
-	          {
-	            if(firstHand.isRight()){
+				break;
+			  }
+			  case Gesture::TYPE_SWIPE:
+			  {
+				if(firstHand.isRight()){
 					if(leapActions->isCameraMoving)
 						leapActions->moveCamera(gesture);
-	                else
+					else
 					  leapActions->rotateGraph(gesture);
-	            }
-	            break;
-	          }
-	          case Gesture::TYPE_KEY_TAP:
-	          {
-	            if(firstHand.isLeft())
+				}
+				break;
+			  }
+			  case Gesture::TYPE_KEY_TAP:
+			  {
+				if(firstHand.isLeft())
 					leapActions->onKeyTap(gesture);
-	            break;
-	          }
-	          case Gesture::TYPE_SCREEN_TAP:
-	          {
+				break;
+			  }
+			  case Gesture::TYPE_SCREEN_TAP:
+			  {
 				leapActions->onScreenTap(gesture);
-	            break;
-	          }
-	          default:
-	            qDebug() << "Unknown gesture type.";
-	            break;
-	        }
-	      }*/
+				break;
+			  }
+			  default:
+				qDebug() << "Unknown gesture type.";
+				break;
+			}
+		  }*/
 
 
 }

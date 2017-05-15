@@ -1,11 +1,14 @@
 /**
  * Created by Patrik Berger on 13.11.2016.
  */
-#include <easylogging++.h>
+
 #include "Leap/HandModule/Model/HandPalm.h"
+
 #include <osg/ShapeDrawable>
 #include <osg/Geode>
 #include <osg/Shape>
+
+#include <easylogging++.h>
 
 const int TYPE_MIDDLE = 2; /*< The middle finger */
 const int TYPE_RING = 3; /*< The ring finger */
