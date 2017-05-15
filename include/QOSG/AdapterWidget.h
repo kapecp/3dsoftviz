@@ -11,9 +11,10 @@
 
 #include <QKeyEvent>
 #include <QGLWidget>
+#if QT_VERSION > 0x050000
 #include <QOpenGLWidget>
 #include <QOpenGLFunctions>
-
+#endif
 #if QT_VERSION >= 0x050000
 #define TOASCII toLatin1
 #else

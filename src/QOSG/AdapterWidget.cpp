@@ -24,7 +24,9 @@ AdapterWidget::AdapterWidget( const QGLFormat& format, QWidget* parent, const ch
 
 void AdapterWidget::initializeGL()
 {
+#if QT_VERSION > 0x050000
 	this->initializeOpenGLFunctions();
+#endif
 	// Set up the rendering context, define display lists etc.:
 
 	qDebug() << "OpenGL Versions Supported: " << QGLFormat::openGLVersionFlags();
@@ -53,8 +55,10 @@ void AdapterWidget::resizeGL( int width, int height )
 	// causing to display a small OpenGL context only in the lower-left corner
 	// (1/4 of the desired size)
 	// NOTE: on non-retina displays devicePixelRatio() is 1, on retina 2
+#if QT_VERSION > 0x050000
 	width *= QApplication::desktop()->devicePixelRatio();
 	height *= QApplication::desktop()->devicePixelRatio();
+#endif
 	// end FIX
 
 	//zmena velkosti widgetu
