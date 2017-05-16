@@ -14,6 +14,7 @@
 #include <QSlider>
 #include <QStackedLayout>
 #include <QVBoxLayout>
+#include <QGroupBox>
 
 namespace OpenCV {
 class CapVideo;
@@ -148,7 +149,7 @@ signals:
 
 	/**
 	     * @author Autor: Michael Garaj
-	     * @brief setMultiMarker Signal for setting MultiMarker in Aruco thread
+         * @brief  Signal for setting MultiMarker in Aruco thread
 	     * @param set cancel if true
 	     */
 	void setMultiMarker( bool set );
@@ -235,6 +236,27 @@ signals:
 	void setKinectCaptureImage( bool set );
 
 	void arucoRunning( bool isRunning );
+
+    /**
+     * @brief setArInteractionSelection
+     * @param flag
+     * @author Juraj Marak
+     */
+    void setArInteractionSelection( int flag );
+    /**
+     * @brief setArInteractionBehviour
+     * @param flag
+     * @author Juraj Marak
+     */
+    void setArInteractionBehaviour( int flag );
+
+    /**
+     * @brief setArGraphZoom
+     * @param flag
+     * @author Juraj Marak
+     */
+    void setArGraphZoom( int flag );
+
 
 public slots:
 	/**
@@ -356,6 +378,23 @@ private slots:
 	 */
 	void setMarkerlessDetectionKinect( bool set );
 
+    /**
+     * @brief onArInteractionSelectionClicked
+     * @param state
+     * @author Juraj Marak
+     */
+    void onArInteractionSelectionClicked(bool state);
+    /**
+     * @brief onArInteractionSelectionClicked
+     * @param state
+     * @author Juraj Marak
+     */
+    void onArInteractionBehaviourClicked(bool state);
+
+    void applyGraphZoomIn(bool state);
+    void applyGraphZoomOut(bool state);
+
+
 private:
 	/**
 	     * @author Autor: Michael Garaj
@@ -372,6 +411,12 @@ private:
 
 	QApplication*	mApp;
 	QLabel*			mWindowLabel;
+
+	QRadioButton*	mKinectRB;
+	QRadioButton*	mArucoRB;
+    QRadioButton*   mArInteractionRB;
+	QRadioButton*    mFaceRecRB;
+	QRadioButton*    mMarkerRB;
 
 	QRadioButton*    mMultiMarkerRB;
 
@@ -405,6 +450,13 @@ private:
 	QCheckBox*		 mEnableMarkerlessKinectCB;
 
 	QSlider*         mSpeed;
+
+    //Ar interaction RBs
+    QRadioButton *arNSPosition;
+    QRadioButton *arNSNearest;
+    QRadioButton *arNSMostEdges;
+    QRadioButton *arNBSingle;
+    QRadioButton *arNBCluster;
 };
 
 }
