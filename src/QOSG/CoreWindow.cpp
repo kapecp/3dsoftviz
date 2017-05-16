@@ -242,6 +242,8 @@ void CoreWindow::createActions()
 	loadModuleGraphAction = new QAction( QIcon( "../share/3dsoftviz/img/gui/module.png" ),"&Load module graph", this );
 	connect( loadModuleGraphAction, SIGNAL( triggered() ), this, SLOT( loadLuaModuleGraph() ) );
 
+	loadMoonscriptAction = new QAction( QIcon( "../share/3dsoftviz/img/gui/moonscript.png" ),"&Load moonscript graph", this );
+	connect( loadMoonscriptAction, SIGNAL( triggered() ), this, SLOT( loadMoonscriptGraph() ) );
 
 	play = new QPushButton();
 	play->setIcon( QIcon( "../share/3dsoftviz/img/gui/pause.png" ) );
@@ -292,12 +294,19 @@ void CoreWindow::createActions()
 	separate->setFocusPolicy( Qt::NoFocus );
 	connect( separate, SIGNAL( clicked() ), this, SLOT( separateNodes() ) );
 
-	label = new QPushButton();
-	label->setIcon( QIcon( "../share/3dsoftviz/img/gui/label.png" ) );
-	label->setToolTip( "&Turn on/off labels" );
-	label->setCheckable( true );
-	label->setFocusPolicy( Qt::NoFocus );
-	connect( label, SIGNAL( clicked( bool ) ), this, SLOT( labelOnOff( bool ) ) );
+	nodesLabel = new QPushButton();
+	nodesLabel->setIcon( QIcon( "../share/3dsoftviz/img/gui/nodes_label.png" ) );
+	nodesLabel->setToolTip( "&Turn on/off node labels" );
+	nodesLabel->setCheckable( true );
+	nodesLabel->setFocusPolicy( Qt::NoFocus );
+	connect( nodesLabel, SIGNAL( clicked( bool ) ), this, SLOT( nodeLabelOnOff( bool ) ) );
+
+	edgesLabel = new QPushButton();
+	edgesLabel->setIcon( QIcon( "../share/3dsoftviz/img/gui/edges_label.png" ) );
+	edgesLabel->setToolTip( "&Turn on/off edge labels" );
+	edgesLabel->setCheckable( true );
+	edgesLabel->setFocusPolicy( Qt::NoFocus );
+	connect( edgesLabel, SIGNAL( clicked( bool ) ), this, SLOT( edgeLabelOnOff( bool ) ) );
 
 	labelResidence = new QCheckBox();
 	labelResidence->setText( "labels for residence" );
@@ -555,14 +564,21 @@ void CoreWindow::createActions()
 	le_edgeBundlingalpha->setText( "100" );
 
 	nodeTypeComboBox = new QComboBox();
-	nodeTypeComboBox->insertItems( 0,( QStringList() << "Square" << "Sphere" << "Residence" << "Module" ) );
+	nodeTypeComboBox->insertItems( 0,( QStringList() << "Square" << "Sphere" << "Residence" ) );
 	nodeTypeComboBox->setFocusPolicy( Qt::NoFocus );
-	connect( nodeTypeComboBox,SIGNAL( currentIndexChanged( int ) ),this,SLOT( nodeTypeComboBoxChanged( int ) ) );
+	connect( nodeTypeComboBox, SIGNAL( currentIndexChanged( int ) ), this, SLOT( nodeTypeComboBoxChanged( int ) ) );
 
 	edgeTypeComboBox = new QComboBox();
 	edgeTypeComboBox->insertItems( 0,( QStringList() << "Quad" << "Cylinder" << "Line" << "Curve" ) );
 	edgeTypeComboBox->setFocusPolicy( Qt::NoFocus );
-	connect( edgeTypeComboBox,SIGNAL( currentIndexChanged( int ) ),this,SLOT( edgeTypeComboBoxChanged( int ) ) );
+	connect( edgeTypeComboBox, SIGNAL( currentIndexChanged( int ) ), this, SLOT( edgeTypeComboBoxChanged( int ) ) );
+
+	b_switchGraphView = new QPushButton();
+	b_switchGraphView->setText( "City layout" );
+	b_switchGraphView->setToolTip( "&Change graph layout" );
+	b_switchGraphView->setFocusPolicy( Qt::NoFocus );
+	b_switchGraphView->setEnabled( false );
+	connect( b_switchGraphView, SIGNAL( clicked() ), this, SLOT( switchGraphView() ) );
 
 //	-------------------------------------------------------------------------------------------------------------------------------------------------------
 //	-------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -857,6 +873,7 @@ void CoreWindow::createMenus()
 	file->addAction( loadGraph );
 	file->addAction( loadJavaProjectAction );
 	file->addAction( loadModuleGraphAction );
+	file->addAction( loadMoonscriptAction );
 	file->addAction( loadGit );
 	file->addAction( loadSpecialMatrix );
 	file->addSeparator();
@@ -913,12 +930,11 @@ QWidget* CoreWindow::createGraphTab( QFrame* line )
 	noSelect->setMinimumWidth( 68 );
 	singleSelect->setMaximumWidth( 68 );
 	lGraph->addRow( noSelect,singleSelect );
-	//multiSelect->setMinimumWidth(68);
-	lGraph->addRow( multiSelect,center );
 	multiSelect->setMinimumWidth( 68 );
 	center->setMaximumWidth( 68 );
-	lGraph->addRow( selectionTypeComboBox );
+	lGraph->addRow( multiSelect,center );
 	selectionTypeComboBox->setMaximumWidth( 136 );
+	lGraph->addRow( selectionTypeComboBox );
 	line = createLine();
 	lGraph->addRow( line );
 	addMeta->setMinimumWidth( 68 );
@@ -926,7 +942,7 @@ QWidget* CoreWindow::createGraphTab( QFrame* line )
 	lGraph->addRow( addMeta,removeMeta );
 	fix->setMinimumWidth( 68 );
 	unFix->setMaximumWidth( 68 );
-	lGraph->addRow( fix,unFix );
+	lGraph->addRow( fix, unFix );
 	line = createLine();
 	lGraph->addRow( line );
 	add_Edge->setMaximumWidth( 136 );
@@ -947,8 +963,9 @@ QWidget* CoreWindow::createGraphTab( QFrame* line )
 	lGraph->addRow( le_applyLabel );
 	applyLabel->setMaximumWidth( 136 );
 	lGraph->addRow( applyLabel );
-	label->setMaximumWidth( 136 );
-	lGraph->addRow( label );
+	nodesLabel->setMinimumWidth( 68 );
+	edgesLabel->setMaximumWidth( 68 );
+	lGraph->addRow( nodesLabel,edgesLabel );
 	lGraph->addRow( labelResidence );
 	line = createLine();
 	lGraph->addRow( line );
@@ -963,6 +980,9 @@ QWidget* CoreWindow::createGraphTab( QFrame* line )
 	lGraph->addRow( nodeTypeComboBox );
 	edgeTypeComboBox->setMaximumWidth( 136 );
 	lGraph->addRow( edgeTypeComboBox );
+	lGraph->addRow( line );
+	b_switchGraphView->setMaximumWidth( 136 );
+	lGraph->addRow( b_switchGraphView );
 
 	lGraph->addRow( chb_dragger_scale );
 	lGraph->addRow( chb_dragger_rotation );
@@ -1789,7 +1809,7 @@ void CoreWindow::loadSpecialMatrixFromFile()
 	//reprezentacie na default
 	//coreGraph->setEdgeVisual(Data::Edge::INDEX_CURVE2);
 	coreGraph->setEdgeVisualForType( Data::Edge::INDEX_LINE, "axisEdgeType" );
-	coreGraph->setEdgeVisualForType( Data::Edge::INDEX_CURVE2, "iEdgeType" );
+	coreGraph->setEdgeVisualForType( Data::Edge::INDEX_MATRIX_CURVE, "iEdgeType" );
 	//axisEdgeType, iEdgeType
 	//axisNodeType, eNodeType, iFullNodeType, iHalfNodeType, nNodeType
 	delete matrixViewer;
@@ -2191,13 +2211,13 @@ void CoreWindow::loadExampleGraphLua()
 
 	Lua::LuaInterface* lua = Lua::LuaInterface::getInstance();
 
-	Lua::LuaValueList path;
-	path.push_back( file.toStdString() );
-	QString createGraph[] = {"function_call_graph", "extractGraph"};
+	Lua::LuaValueList funcArgs;
+	funcArgs.push_back( file.toStdString() );
+	funcArgs.push_back( "functionCall graph" );
+	QString createGraph[] = {"graph_importer", "extractGraph"};
 
-	lua->callFunction( 2, createGraph, path );
-	lua->doString( "getGraph = function_call_graph.getGraph" );
-	Lua::LuaInterface::getInstance()->doString( "getFullGraph = getGraph" );
+	lua->callFunction( 2, createGraph, funcArgs );
+	lua->doString( "getGraph = graph_importer.getGraph" );
 
 	Data::Graph* currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
 
@@ -2229,12 +2249,12 @@ void CoreWindow::loadExampleModuleGraph()
 	QString file = "../lib/lua/leg";
 	Lua::LuaInterface* lua = Lua::LuaInterface::getInstance();
 
-	Lua::LuaValueList path;
-	path.push_back( file.toStdString() );
-	QString createGraph[] = {"module_graph", "extractGraph"};
-	lua->callFunction( 2, createGraph, path.getValue() );
-	lua->doString( "getGraph = module_graph.getGraph" );
-	Lua::LuaInterface::getInstance()->doString( "getFullGraph = getGraph" );
+	Lua::LuaValueList funcArgs;
+	funcArgs.push_back( file.toStdString() );
+	funcArgs.push_back( "module graph" );
+	QString createGraph[] = {"graph_importer", "extractGraph"};
+	lua->callFunction( 2, createGraph, funcArgs );
+	lua->doString( "getGraph = graph_importer.getGraph" );
 
 	Data::Graph* currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
 
@@ -2254,12 +2274,20 @@ void CoreWindow::loadExampleModuleGraph()
 	Lua::LuaGraphVisualizer* visualizer = new Lua::ModuleGraphVisualizer( currentGraph, coreGraph->getCamera() );
 	visualizer->visualize();
 
+	graphView = true;
+	b_switchGraphView->setEnabled( true );
+
+	AppCore::Core::getInstance()->restartLayout(); //zavola coreGraph->reload();
+
 	//spusti rozmiestnovaci algoritmus
-	coreGraph->reloadConfig();
 	if ( isPlaying ) {
 		layout->play();
 		coreGraph->setNodesFreezed( false );
 	}
+
+	nodeTypeComboBox->setCurrentIndex( 2 ); // 2 == residence == module
+	edgeTypeComboBox->setCurrentIndex( 2 ); // 2 == line
+
 	delete visualizer;
 }
 
@@ -2348,7 +2376,7 @@ void CoreWindow::loadFromGit()
 	}
 
 	if ( isPlaying ) {
-		labelOnOff( true );
+		nodeLabelOnOff( true );
 		layout->play();
 		coreGraph->setNodesFreezed( false );
 	}
@@ -2369,12 +2397,12 @@ void CoreWindow::loadLuaGraph()
 
 	Lua::LuaInterface* lua = Lua::LuaInterface::getInstance();
 
-	Lua::LuaValueList path;
-	path.push_back( file.toStdString() );
-	QString createGraph[] = {"function_call_graph", "extractGraph"};
-	lua->callFunction( 2, createGraph, path );
-	lua->doString( "getGraph = function_call_graph.getGraph" );
-	Lua::LuaInterface::getInstance()->doString( "getFullGraph = getGraph" );
+	Lua::LuaValueList funcArgs;
+	funcArgs.push_back( file.toStdString() );
+	funcArgs.push_back( "functionCall graph" );
+	QString createGraph[] = {"graph_importer", "extractGraph"};
+	lua->callFunction( 2, createGraph, funcArgs );
+	lua->doString( "getGraph = graph_importer.getGraph" );
 
 	Data::Graph* currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
 
@@ -2546,9 +2574,10 @@ void CoreWindow::switchBackgroundLeap()
 	}
 }
 
-void CoreWindow::labelOnOff( bool )
+void CoreWindow::nodeLabelOnOff( bool )
 {
-	if ( viewerWidget->getPickHandler()->getSelectionType() == Vwr::PickHandler::SelectionType::EDGE ) {
+	/* changed old code - Illes
+	 if ( viewerWidget->getPickHandler()->getSelectionType() == Vwr::PickHandler::SelectionType::EDGE ) {
 		edgeLabelsVisible = !edgeLabelsVisible;
 		coreGraph->setEdgeLabelsVisible( edgeLabelsVisible );
 	}
@@ -2561,9 +2590,24 @@ void CoreWindow::labelOnOff( bool )
 
 		nodeLabelsVisible = edgeLabelsVisible = !state;
 
-//		coreGraph->setEdgeLabelsVisible( !state );
-		coreGraph->setNodeLabelsVisible( !state );
-	}
+	//		coreGraph->setEdgeLabelsVisible( !state );
+	*/
+	bool state = nodeLabelsVisible;
+
+	nodeLabelsVisible = !state;
+
+	coreGraph->setNodeLabelsVisible( !state );
+
+}
+
+void CoreWindow::edgeLabelOnOff( bool )
+{
+	bool state = edgeLabelsVisible;
+
+	edgeLabelsVisible = !state;
+
+	coreGraph->setEdgeLabelsVisible( !state );
+
 }
 
 void CoreWindow::labelForResidenceCheckStateChanged( int state )
@@ -2655,19 +2699,19 @@ void CoreWindow::selectionTypeComboBoxChanged( int index )
 	switch ( index ) {
 		case 0:
 			viewerWidget->getPickHandler()->setSelectionType( Vwr::PickHandler::SelectionType::ALL );
-			label->setChecked( edgeLabelsVisible & nodeLabelsVisible );
+			nodesLabel->setChecked( edgeLabelsVisible & nodeLabelsVisible );
 			break;
 		case 1:
 			viewerWidget->getPickHandler()->setSelectionType( Vwr::PickHandler::SelectionType::NODE );
-			label->setChecked( nodeLabelsVisible );
+			nodesLabel->setChecked( nodeLabelsVisible );
 			break;
 		case 2:
 			viewerWidget->getPickHandler()->setSelectionType( Vwr::PickHandler::SelectionType::EDGE );
-			label->setChecked( edgeLabelsVisible );
+			nodesLabel->setChecked( edgeLabelsVisible );
 			break;
 		case 3:
 			viewerWidget->getPickHandler()->setSelectionType( Vwr::PickHandler::SelectionType::CLUSTER );
-			label->setChecked( edgeLabelsVisible & nodeLabelsVisible );
+			nodesLabel->setChecked( edgeLabelsVisible & nodeLabelsVisible );
 			break;
 		default:
 			qDebug() << "CoreWindow:selectionTypeComboBoxChanged do not suported index";
@@ -2687,9 +2731,6 @@ void CoreWindow::nodeTypeComboBoxChanged( int index )
 			break;
 		case 2:
 			coreGraph->setNodeVisual( Data::Node::INDEX_RESIDENCE );
-			break;
-		case 3:
-			coreGraph->setNodeVisual( Data::Node::INDEX_MODULE );
 			break;
 		default:
 			qDebug() << "CoreWindow:nodeTypeComboBoxChanged do not suported index";
@@ -2714,7 +2755,7 @@ void CoreWindow::edgeTypeComboBoxChanged( int index )
 			coreGraph->setEdgeVisual( Data::Edge::INDEX_CURVE );
 			break;
 		case 4:
-			coreGraph->setEdgeVisual( Data::Edge::INDEX_CURVE2 );
+			coreGraph->setEdgeVisual( Data::Edge::INDEX_MATRIX_CURVE );
 			break;
 		default:
 			qDebug() << "CoreWindow:edgeTypeComboBoxChanged do not suported index";
@@ -4677,6 +4718,27 @@ void CoreWindow::createMetricsToolBar()
 	isRunning = false;
 }
 
+void CoreWindow::switchGraphView()
+{
+	if ( graphView ) {
+		//graph shown as graph
+		coreGraph->reorganizeNodesForModuleCity();
+		edgeTypeComboBox->setEnabled( false );
+		b_switchGraphView->setText( "City layout" );
+	}
+	else {
+		//graph show as city
+		coreGraph->reorganizeNodesForModuleGraph();
+		edgeTypeComboBox->setEnabled( true );
+		b_switchGraphView->setText( "Graph layout" );
+	}
+	graphView = !graphView;
+
+	pauseLayout();
+	playLayout();
+
+}
+
 void CoreWindow::loadLuaModuleGraph()
 {
 
@@ -4690,12 +4752,12 @@ void CoreWindow::loadLuaModuleGraph()
 	std::cout << "You selected " << file.toStdString() << std::endl;
 	Lua::LuaInterface* lua = Lua::LuaInterface::getInstance();
 
-	Lua::LuaValueList path;
-	path.push_back( file.toStdString() );
-	QString createGraph[] = {"module_graph", "extractGraph"};
-	lua->callFunction( 2, createGraph, path.getValue() );
-	lua->doString( "getGraph = module_graph.getGraph" );
-	Lua::LuaInterface::getInstance()->doString( "getFullGraph = getGraph" );
+	Lua::LuaValueList funcArgs;
+	funcArgs.push_back( file.toStdString() );
+	funcArgs.push_back( "module graph" );
+	QString createGraph[] = {"graph_importer", "extractGraph"};
+	lua->callFunction( 2, createGraph, funcArgs );
+	lua->doString( "getGraph = graph_importer.getGraph" ); // Lua::LuaGraph::loadGraph() vzdy funkciu getGraph
 
 	Data::Graph* currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
 
@@ -4715,7 +4777,57 @@ void CoreWindow::loadLuaModuleGraph()
 	Lua::LuaGraphVisualizer* visualizer = new Lua::ModuleGraphVisualizer( currentGraph, coreGraph->getCamera() );
 	visualizer->visualize();
 
+	graphView = true;
+	b_switchGraphView->setEnabled( true );
+
+	AppCore::Core::getInstance()->restartLayout(); //zavola coreGraph->reload();
+
 	//spusti rozmiestnovaci algoritmus
+	if ( isPlaying ) {
+		layout->play();
+		coreGraph->setNodesFreezed( false );
+	}
+	nodeTypeComboBox->setCurrentIndex( 2 ); // 2 == residence == module
+	edgeTypeComboBox->setCurrentIndex( 2 ); // 2 == line
+
+	delete visualizer;
+}
+
+void CoreWindow::loadMoonscriptGraph()
+{
+	QString file = QFileDialog::getExistingDirectory( this, "Select moonscript project folder", "." );
+
+	// ak sa predchadzajucou volbou neziskala cesta ku projektu, tak ukonci metodu
+	if ( file == "" ) {
+		return;
+	}
+
+	std::cout << "You selected " << file.toStdString() << std::endl;
+	Lua::LuaInterface* lua = Lua::LuaInterface::getInstance();
+
+
+	Lua::LuaValueList funcArgs;
+	funcArgs.push_back( file.toStdString() );
+	funcArgs.push_back( "moonscript graph" );
+	QString createGraph[] = {"graph_importer", "extractGraph"};
+	lua->callFunction( 2, createGraph, funcArgs );
+	lua->doString( "getGraph = graph_importer.getGraph" );
+	lua->doString( "getLuadbGraph = graph_importer.getLuadbGraph" );
+
+	Data::Graph* currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
+
+	if ( currentGraph != NULL ) {
+		Manager::GraphManager::getInstance()->closeGraph( currentGraph );
+	}
+	currentGraph = Manager::GraphManager::getInstance()->createNewGraph( "MoonscriptGraph" );
+
+
+	layout->pause();
+	coreGraph->setNodesFreezed( true );
+
+	Lua::LuaGraphVisualizer* visualizer = new Lua::SimpleGraphVisualizer( currentGraph, coreGraph->getCamera() );
+	visualizer->visualize();
+
 	coreGraph->reloadConfig();
 	if ( isPlaying ) {
 		layout->play();
@@ -4737,12 +4849,12 @@ void CoreWindow::loadFunctionCall()
 	Lua::LuaInterface* lua = Lua::LuaInterface::getInstance();
 
 
-	Lua::LuaValueList path;
-	path.push_back( file.toStdString() );
-	QString createGraph[] = {"function_call_graph", "extractGraph"};
-	lua->callFunction( 2, createGraph, path );
-	lua->doString( "getGraph = function_call_graph.getGraph" );
-	Lua::LuaInterface::getInstance()->doString( "getFullGraph = getGraph" );
+	Lua::LuaValueList funcArgs;
+	funcArgs.push_back( file.toStdString() );
+	funcArgs.push_back( "functionCall graph" );
+	QString createGraph[] = {"graph_importer", "extractGraph"};
+	lua->callFunction( 2, createGraph, funcArgs );
+	lua->doString( "getGraph = graph_importer.getGraph" );
 
 	Data::Graph* currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
 
@@ -5255,12 +5367,12 @@ void CoreWindow::createEvolutionLuaGraph()
 	Lua::LuaInterface* lua = Lua::LuaInterface::getInstance();
 
 
-	Lua::LuaValueList path;
-	path.push_back( file.toStdString() );
-	QString createGraph[] = {"function_call_graph", "extractGraph"};
-	lua->callFunction( 2, createGraph, path );
-	lua->doString( "getGraph = function_call_graph.getGraph" );
-	Lua::LuaInterface::getInstance()->doString( "getFullGraph = getGraph" );
+	Lua::LuaValueList funcArgs;
+	funcArgs.push_back( file.toStdString() );
+	funcArgs.push_back( "functionCall graph" );
+	QString createGraph[] = {"graph_importer", "extractGraph"};
+	lua->callFunction( 2, createGraph, funcArgs );
+	lua->doString( "getGraph = graph_importer.getGraph" );
 
 	Data::Graph* currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
 

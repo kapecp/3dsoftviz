@@ -1,3 +1,4 @@
+
 #ifndef CUSTOMLEAPMANAGER_H
 #define CUSTOMLEAPMANAGER_H
 
@@ -66,3 +67,8 @@ public:
 };
 }
 #endif
+
+	Contact GitHub API Training Shop Blog About
+
+	© 2017 GitHub, Inc. Terms Privacy Security Status Help
+

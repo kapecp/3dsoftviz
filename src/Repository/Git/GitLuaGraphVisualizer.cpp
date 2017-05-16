@@ -1232,10 +1232,10 @@ void Repository::Git::GitLuaGraphVisualizer::setNodeParams( osg::ref_ptr<Data::N
 	node->setType( this->currentGraph->getTypesByName( "node" ).at( 0 ) );
 	node->setLabelText( obj->getLabel() );
 	node->Data::AbsNode::setName( obj->getLabel() );
-	float r = obj->getFloatParam( "colorR", defColor.r() );
-	float g = obj->getFloatParam( "colorG", defColor.g() );
-	float b = obj->getFloatParam( "colorB", defColor.b() );
-	float a = obj->getFloatParam( "colorA", defColor.a() );
+	float r = obj->getFloatParam( "color", "R", defColor.r() );
+	float g = obj->getFloatParam( "color", "G", defColor.g() );
+	float b = obj->getFloatParam( "color", "B", defColor.b() );
+	float a = obj->getFloatParam( "color", "A", defColor.a() );
 	node->setColor( osg::Vec4( r,g,b,a ) );
 	float scale = obj->getFloatParam( "size", defSize );
 	node->setScale( scale );
@@ -1248,10 +1248,10 @@ void Repository::Git::GitLuaGraphVisualizer::setEdgeParams( osg::ref_ptr<Data::E
 
 	// Nastavenie Lua udajov pre hranu
 	edge->Data::AbsEdge::setName( obj->getLabel() );
-	float r = obj->getFloatParam( "colorR", defColor.r() );// * 0.6;
-	float g = obj->getFloatParam( "colorG", defColor.g() );// * 0.6;
-	float b = obj->getFloatParam( "colorB", defColor.b() );// * 0.6;
-	float a = obj->getFloatParam( "colorA", defColor.a() );
+	float r = obj->getFloatParam( "color", "R", defColor.r() );// * 0.6;
+	float g = obj->getFloatParam( "color", "G", defColor.g() );// * 0.6;
+	float b = obj->getFloatParam( "color", "B", defColor.b() );// * 0.6;
+	float a = obj->getFloatParam( "color", "A", defColor.a() );
 	edge->setEdgeColor( osg::Vec4( r,g,b,a ) );
 	edge->setEdgeStrength( obj->getFloatParam( "edgeStrength", 1 ) );
 	edge->reloadColor();
