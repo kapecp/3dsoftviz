@@ -50,7 +50,7 @@ public:
 		*  \brief Creates new label geometry
 		*  \param  scale   float
 		*/
-	void Data::OsgNode::adjustLabelForModule( float scale );
+	void adjustLabelForModule( float scale );
 
 	/**
 	* \fn public getLabel
