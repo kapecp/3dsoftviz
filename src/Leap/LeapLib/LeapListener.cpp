@@ -12,8 +12,8 @@
 
 Leap::LeapListener::LeapListener( LeapManager* leapManager )
 {
-    this->leapGestureHandler = new Leap::LeapGestureHandler( leapManager );
-    this->leapManager = dynamic_cast<Leap::CustomLeapManager*>( leapManager );
+	this->leapGestureHandler = new Leap::LeapGestureHandler( leapManager );
+	this->leapManager = dynamic_cast<Leap::CustomLeapManager*>( leapManager );
 	this->arMode = leapManager->arMode;
 	LOG( INFO ) << "Leap/LeapLib/LeapListener Constructor";
 }
@@ -21,8 +21,8 @@ Leap::LeapListener::LeapListener( LeapManager* leapManager )
 Leap::LeapListener::~LeapListener( void )
 {
 
-    if ( leapGestureHandler != NULL ) {
-        delete( leapGestureHandler );
+	if ( leapGestureHandler != NULL ) {
+		delete( leapGestureHandler );
 	}
 }
 
@@ -36,7 +36,7 @@ void Leap::LeapListener::onConnect( const Controller& controller )
 	// we put our gestures here to initialize them
 	controller.enableGesture( Gesture::TYPE_CIRCLE );
 	controller.enableGesture( Gesture::TYPE_KEY_TAP );
-    controller.enableGesture( Gesture::TYPE_SCREEN_TAP );
+	controller.enableGesture( Gesture::TYPE_SCREEN_TAP );
 	controller.enableGesture( Gesture::TYPE_SWIPE );
 
 	controller.config().setFloat( "Gesture.Swipe.MinLength",60.0f );
@@ -65,16 +65,16 @@ void Leap::LeapListener::onImages( const Controller& controller )
 	Frame frame = controller.frame();
 	HandList hands = frame.hands();
 
-    this->leapManager->updateCoreGraphBackground( image.data(), 0);
+	this->leapManager->updateCoreGraphBackground( image.data(), 0 );
 
 }
 
 void Leap::LeapListener::onFrame( const Controller& controller )
 {
 	Frame frame = controller.frame();
-    HandList hands = frame.hands();
-    bool leftHandExtended = false;
-    bool rightHandExtended = false;
+	HandList hands = frame.hands();
+	bool leftHandExtended = false;
+	bool rightHandExtended = false;
 	Hand leftHand;
 	Hand rightHand;
 
@@ -91,8 +91,8 @@ void Leap::LeapListener::onFrame( const Controller& controller )
 				leftHand = hands[i];
 			}
 		}
-        leapManager->updateHands( leftHand, rightHand );
-        //leapActions->updateARHands( leftHand,rightHand );
+		leapManager->updateHands( leftHand, rightHand );
+		//leapActions->updateARHands( leftHand,rightHand );
 	}
 	else {
 //<<<<<<< HEAD
@@ -170,20 +170,20 @@ void Leap::LeapListener::onFrame( const Controller& controller )
 //		  }*/
 
 
-        leapGestureHandler->handleGestures(frame);
-    }
+		leapGestureHandler->handleGestures( frame );
+	}
 
 
 }
 
 void Leap::LeapListener::onFocusGained( const Controller& controller )
 {
-     LOG( INFO ) << "Focus gained.";
+	LOG( INFO ) << "Focus gained.";
 }
 
 void Leap::LeapListener::onFocusLost( const Controller& controller )
 {
-     LOG( INFO ) << "Focus lost.";
+	LOG( INFO ) << "Focus lost.";
 }
 
 void Leap::LeapListener::onDeviceChange( const Controller& controller )
@@ -199,10 +199,10 @@ void Leap::LeapListener::onDeviceChange( const Controller& controller )
 
 void Leap::LeapListener::onServiceConnect( const Controller& controller )
 {
-     LOG( INFO ) << "Service connected.";
+	LOG( INFO ) << "Service connected.";
 }
 
 void Leap::LeapListener::onServiceDisconnect( const Controller& controller )
 {
-     LOG( INFO ) << "Service disconnect.";
+	LOG( INFO ) << "Service disconnect.";
 }

@@ -129,21 +129,24 @@ void Leap::CustomLeapManager::updateHands( Leap::Hand leftHand, Leap::Hand right
 		HandPalm* leftPalm = static_cast<HandPalm*>( handsGroup->getChild( 3 ) );
 		HandPalm* rightPalm = static_cast<HandPalm*>( handsGroup->getChild( 0 ) );
 
-        this->handObjectManipulator->updateHands(leftHand, rightHand, leftPalm,
-                                                 rightPalm,this->coreGraph->getCamera());
-    }
+		this->handObjectManipulator->updateHands( leftHand, rightHand, leftPalm,
+				rightPalm,this->coreGraph->getCamera() );
+	}
 
 }
 
-void Leap::CustomLeapManager::scaleGraph(bool scaleUp){
-    if(scaleUp){
-        this->coreGraph->scaleGraph(2);
-    }else{
-        this->coreGraph->scaleGraph(1);
-    }
+void Leap::CustomLeapManager::scaleGraph( bool scaleUp )
+{
+	if ( scaleUp ) {
+		this->coreGraph->scaleGraph( 2 );
+	}
+	else {
+		this->coreGraph->scaleGraph( 1 );
+	}
 }
 
-void Leap::CustomLeapManager::selectNode(bool right){
+void Leap::CustomLeapManager::selectNode( bool right )
+{
 
 //	Treba vyriesit scale ruky, pretoze vzhladom na graf je moc mala a teda je takmer nemozne pretnut ruku s grafom.
 

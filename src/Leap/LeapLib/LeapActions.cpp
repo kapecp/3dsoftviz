@@ -13,7 +13,7 @@ Leap::LeapActions::LeapActions( LeapManager* leapManager )
 Leap::LeapActions::~LeapActions()
 {
 	if ( leapManager != NULL ) {
-		delete ( leapManager );
+		delete( leapManager );
 	}
 	LOG( INFO ) << "~LeapActions() Destructor";
 }
@@ -24,7 +24,7 @@ void Leap::LeapActions::moveCamera( Leap::Gesture gesture )
 	SwipeGesture swipe = gesture;
 	Vector direction = swipe.direction();
 	float gestureDuration = static_cast<float>( gesture.duration() )/1000.0f;
-    LOG( INFO ) << direction;
+	LOG( INFO ) << direction;
 	//skip zero movement gesture
 	//if ( static_cast<int>(direction[0]) == 0.0f && static_cast<int>(direction[1]) == 0.0f && static_cast<int>(direction[2]) == 0.0f ) {
 	if ( static_cast<int>( direction[0] ) == 0 && static_cast<int>( direction[1] ) == 0 && static_cast<int>( direction[2] ) == 0 ) {
@@ -100,7 +100,7 @@ void Leap::LeapActions::onKeyTap( Leap::Gesture gesture )
 void Leap::LeapActions::onScreenTap( Leap::Gesture gesture )
 {
 	// screen tap gesture
-	LOG(INFO) << "ScreenTapGesture";
+	LOG( INFO ) << "ScreenTapGesture";
 }
 
 void Leap::LeapActions::rotateGraph( Leap::Gesture gesture )
@@ -110,26 +110,26 @@ void Leap::LeapActions::rotateGraph( Leap::Gesture gesture )
 	SwipeGesture swipe = gesture;
 	Vector direction = swipe.direction();
 
-    LOG ( INFO ) << "[LeapActions::rotateGraph] LeapVektor direction[x,y,z]: [" +
-                  std::to_string(direction.x)  +", "+
-                  std::to_string(direction.y) + ", "+
-                  std::to_string(direction.z) + "]";
+	LOG( INFO ) << "[LeapActions::rotateGraph] LeapVektor direction[x,y,z]: [" +
+				std::to_string( direction.x )  +", "+
+				std::to_string( direction.y ) + ", "+
+				std::to_string( direction.z ) + "]";
 
 	// >= instead of > to avoid edge case, no rotation would happen with abs direction[0] equal to abs direction[1]
 	if ( std::abs( direction[0] ) >= std::abs( direction[1] ) ) { // horizontal movement
 		if ( direction[0] > 0 ) {
-            leapManager->rotateCamera( 0, 0, 1, 0, 0.01f );
+			leapManager->rotateCamera( 0, 0, 1, 0, 0.01f );
 		}
 		else if ( direction[0] < 0 ) {
-            leapManager->rotateCamera( 0, 0, 1, 0, -0.01f );
+			leapManager->rotateCamera( 0, 0, 1, 0, -0.01f );
 		}
 	}
 	else { // vertical movement
 		if ( direction[1] > 0 ) {
-            leapManager->rotateCamera( 0, 0 ,1, 0.01f, 0 );
+			leapManager->rotateCamera( 0, 0 ,1, 0.01f, 0 );
 		}
 		else if ( direction[1] < 0 ) {
-            leapManager->rotateCamera( 0, 0, 1, -0.01f, 0 );
+			leapManager->rotateCamera( 0, 0, 1, -0.01f, 0 );
 		}
 	}
 }
@@ -211,37 +211,39 @@ void Leap::LeapActions::rotateAruco( Leap::DirectionDetector::Direction directio
 //        }
 //}
 
-void Leap::LeapActions::scaleGraph(Vector *vec ){
-    double vectorValue =vec->x+vec->y+vec->z;
-    if ( vectorValue<-150 || vectorValue >150){
-        if((vec->x+vec->y+vec->z)>0){
-            LOG (INFO) << "ScaleGraphUp";
-            leapManager->scaleGraph(true);
-        }else{
-            LOG (INFO) << "ScaleGraphDown";
-            leapManager->scaleGraph(false);
-        }
-    }
+void Leap::LeapActions::scaleGraph( Vector* vec )
+{
+	double vectorValue =vec->x+vec->y+vec->z;
+	if ( vectorValue<-150 || vectorValue >150 ) {
+		if ( ( vec->x+vec->y+vec->z )>0 ) {
+			LOG( INFO ) << "ScaleGraphUp";
+			leapManager->scaleGraph( true );
+		}
+		else {
+			LOG( INFO ) << "ScaleGraphDown";
+			leapManager->scaleGraph( false );
+		}
+	}
 }
 
 void Leap::LeapActions::scaleEdges( Leap::DirectionDetector::Direction direction )
 {
-    switch ( direction ) {
-        case Leap::DirectionDetector::Direction::LEFT :
-            leapManager->scaleEdgesUp();
-            break;
-        case Leap::DirectionDetector::Direction::RIGHT :
-            leapManager->scaleEdgesDown();
-            break;
-        case Leap::DirectionDetector::Direction::STEADY :
-            break;
-        case Leap::DirectionDetector::Direction::UP :
-            break;
-        case Leap::DirectionDetector::Direction::DOWN :
-            break;
-        default :
-            break;
-    }
+	switch ( direction ) {
+		case Leap::DirectionDetector::Direction::LEFT :
+			leapManager->scaleEdgesUp();
+			break;
+		case Leap::DirectionDetector::Direction::RIGHT :
+			leapManager->scaleEdgesDown();
+			break;
+		case Leap::DirectionDetector::Direction::STEADY :
+			break;
+		case Leap::DirectionDetector::Direction::UP :
+			break;
+		case Leap::DirectionDetector::Direction::DOWN :
+			break;
+		default :
+			break;
+	}
 }
 void Leap::LeapActions::scaleNodes( bool scaleUp )
 {

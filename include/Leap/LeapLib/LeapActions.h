@@ -49,7 +49,7 @@ public:
 	// These methods should not have names onSwipe, onXXX. They are placeholders for further functionality.
 	// The names should correspond to the functionality provided by the method i.e. moveGraph();
 	void onKeyTap( Gesture gesture );
-    void onScreenTap( Gesture gesture );
+	void onScreenTap( Gesture gesture );
 
 	/**
 	 * @brief Leap::LeapActions::changeViewAngle
@@ -80,11 +80,11 @@ public:
 	//jurik
 	void graphRotateSwipe( int swipeDirection );
 	void rotateAruco( Leap::DirectionDetector::Direction direction );
-    void scaleEdges( Leap::DirectionDetector::Direction direction );
-    void scaleGraph(Leap::Vector *vec );
+	void scaleEdges( Leap::DirectionDetector::Direction direction );
+	void scaleGraph( Leap::Vector* vec );
 	void scaleNodes( bool scaleUp );
 	void selectNode( Leap::Hand hand );
-    //void scaleGraph(bool scaleUp);
+	//void scaleGraph(bool scaleUp);
 	//*****
 };
 }

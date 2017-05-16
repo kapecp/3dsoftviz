@@ -589,8 +589,8 @@ public slots:
 	void send_message();
 	void create_facewindow();
 
-    void toggleDraggerScale( bool set );
-    void toggleDraggerRotation( bool set );
+	void toggleDraggerScale( bool set );
+	void toggleDraggerRotation( bool set );
 
 #ifdef OPENCV_FOUND
 #ifdef OPENNI2_FOUND

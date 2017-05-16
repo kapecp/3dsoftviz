@@ -8,21 +8,22 @@
 #include "Leap.h"
 namespace Leap {
 
-class LeapGestureHandler{
+class LeapGestureHandler
+{
 public:
 
-    LeapGestureHandler( LeapManager* leapManager );
-    ~LeapGestureHandler();
-    void handleGestures( Frame frame );
+	LeapGestureHandler( LeapManager* leapManager );
+	~LeapGestureHandler();
+	void handleGestures( Frame frame );
 
-    LeapManager* leapManager;
-    LeapActions* leapActions;
+	LeapManager* leapManager;
+	LeapActions* leapActions;
 private:
-    Frame* startFrame;
-    bool isStartFrameSet;
-    int frameCounter;
+	Frame* startFrame;
+	bool isStartFrameSet;
+	int frameCounter;
 
-    void setStartFrame(Frame frame);
+	void setStartFrame( Frame frame );
 };
 }
 

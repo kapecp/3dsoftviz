@@ -27,9 +27,9 @@ public:
 	virtual void rotateArucoRight() = 0;
 	virtual void scaleEdgesUp() = 0;
 	virtual void scaleEdgesDown() = 0;
-	virtual void scaleGraph( bool scaleUp) = 0 ;
+	virtual void scaleGraph( bool scaleUp ) = 0 ;
 
-	virtual void selectNode(bool right) = 0;
+	virtual void selectNode( bool right ) = 0;
 	//*****
 };
 }

@@ -567,10 +567,10 @@ void CoreWindow::createActions()
 //	-------------------------------------------------------------------------------------------------------------------------------------------------------
 //	-------------------------------------------------------------------------------------------------------------------------------------------------------
 	chb_dragger_scale = new QCheckBox( "Dragger_scale" );
-    connect( chb_dragger_scale, SIGNAL( clicked( bool ) ), this, SLOT( toggleDraggerScale( bool ) ) );
+	connect( chb_dragger_scale, SIGNAL( clicked( bool ) ), this, SLOT( toggleDraggerScale( bool ) ) );
 
 	chb_dragger_rotation = new QCheckBox( "Dragger_rotation" );
-    connect( chb_dragger_rotation, SIGNAL( clicked( bool ) ), this, SLOT( toggleDraggerRotation( bool ) ) );
+	connect( chb_dragger_rotation, SIGNAL( clicked( bool ) ), this, SLOT( toggleDraggerRotation( bool ) ) );
 
 	b_start_server = new QPushButton();
 	b_start_server->setText( "Host session" );
@@ -3965,7 +3965,7 @@ void CoreWindow::startSpeech()
 			this->mSpeechThr->terminate();
 			this->mSpeechThr->wait();
 		}
-		delete ( this->mSpeechThr );
+		delete( this->mSpeechThr );
 		b_start_speech->setText( "Start Speech" );
 		this->mSpeechThr=NULL;
 		return;
@@ -3973,7 +3973,7 @@ void CoreWindow::startSpeech()
 	this->mSpeechThr = new Speech::KinectSpeechThread();
 	CoUninitialize();
 	if ( this->mSpeechThr->initializeSpeech()==1 ) {
-		delete ( this->mSpeechThr );
+		delete( this->mSpeechThr );
 		this->mSpeechThr=NULL;
 		return;
 	}
@@ -3987,7 +3987,7 @@ void CoreWindow::startLeap()
 {
 	if ( mLeapThr!=NULL && b_start_leap->text()=="Stop Leap" ) {
 		//this->mLeapThr->cancel=true;
-		delete ( this->mLeapThr );
+		delete( this->mLeapThr );
 		b_start_leap->setText( "Start Leap" );
 		this->mLeapThr=NULL;
 		return;
@@ -4005,7 +4005,7 @@ void CoreWindow::startLeap()
 void CoreWindow::startLeapAR()
 {
 	if ( mLeapThrAR!=NULL && b_start_leapAR->text()=="Stop LeapAR" ) {
-		delete ( this->mLeapThrAR );
+		delete( this->mLeapThrAR );
 		b_start_leapAR->setText( "Start LeapAR" );
 		this->mLeapThrAR=NULL;
 		return;
@@ -4020,26 +4020,28 @@ void CoreWindow::startLeapAR()
 
 void CoreWindow::toggleDraggerRotation( bool set )
 {
-    if (chb_dragger_rotation->isChecked()){
-            coreGraph->toggleDragger( 0, false);
-            coreGraph->toggleDragger( 1, chb_dragger_rotation->isChecked() );
-            chb_dragger_scale->setChecked(false);
-    } else {
-        coreGraph->toggleDragger( 0, false);
-        coreGraph->toggleDragger( 1, false);
-    }
+	if ( chb_dragger_rotation->isChecked() ) {
+		coreGraph->toggleDragger( 0, false );
+		coreGraph->toggleDragger( 1, chb_dragger_rotation->isChecked() );
+		chb_dragger_scale->setChecked( false );
+	}
+	else {
+		coreGraph->toggleDragger( 0, false );
+		coreGraph->toggleDragger( 1, false );
+	}
 }
 
 void CoreWindow::toggleDraggerScale( bool set )
 {
-    if (chb_dragger_scale->isChecked()){
-        coreGraph->toggleDragger( 0, chb_dragger_scale->isChecked() );
-        coreGraph->toggleDragger( 1, false );
-        chb_dragger_rotation->setChecked(false);
-    } else {
-        coreGraph->toggleDragger( 0, false);
-        coreGraph->toggleDragger( 1, false);
-    }
+	if ( chb_dragger_scale->isChecked() ) {
+		coreGraph->toggleDragger( 0, chb_dragger_scale->isChecked() );
+		coreGraph->toggleDragger( 1, false );
+		chb_dragger_rotation->setChecked( false );
+	}
+	else {
+		coreGraph->toggleDragger( 0, false );
+		coreGraph->toggleDragger( 1, false );
+	}
 }
 
 void CoreWindow::toggleSpyWatch()
@@ -4566,7 +4568,7 @@ void CoreWindow::startGlovesRecognition()
 	// terminating fgloveThread
 	if ( this->mGloveThr!=NULL && ( b_start_gloves->text()=="Stop Gloves" ) ) {
 		this->mGloveThr->terminate();
-		delete ( this->mGloveThr );
+		delete( this->mGloveThr );
 
 		b_start_gloves->setText( "Start Gloves" );
 		this->mGloveThr=NULL;

@@ -31,12 +31,13 @@ int CameraStream::getImageHeight()
 	return this->image.rows;
 }
 
-void CameraStream::requestCalibration(){
-    this->calibrated = false;
+void CameraStream::requestCalibration()
+{
+	this->calibrated = false;
 }
 
 
-void CameraStream::updateBackgroundImage( cv::Mat cvImg , bool trackHands)
+void CameraStream::updateBackgroundImage( cv::Mat cvImg , bool trackHands )
 
 {
 
@@ -45,10 +46,10 @@ void CameraStream::updateBackgroundImage( cv::Mat cvImg , bool trackHands)
 		return;
 	}
 
-    if (trackHands && !this->calibrated) {
-        this->trackMutex.lock();
-        this->image = cvImg.clone();
-        this->palmAndRadiusList = this->tracker->findHand(this->image);
+	if ( trackHands && !this->calibrated ) {
+		this->trackMutex.lock();
+		this->image = cvImg.clone();
+		this->palmAndRadiusList = this->tracker->findHand( this->image );
 
 		setImage( this->image.cols, this->image.rows,
 				  this->image.channels(),GL_RGB, GL_RGB, GL_UNSIGNED_BYTE,

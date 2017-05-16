@@ -52,9 +52,9 @@ public:
 	void rotateArucoRight();
 	void scaleEdgesUp();
 	void scaleEdgesDown();
-    void scaleGraph(bool scaleUp);
+	void scaleGraph( bool scaleUp );
 
-	void selectNode(bool right);
+	void selectNode( bool right );
 	//*****
 
 	Vwr::CameraManipulator* cameraManipulator;

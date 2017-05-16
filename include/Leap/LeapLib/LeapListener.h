@@ -27,8 +27,8 @@ public:
 	 * @brief Class that contains Actions that should be executed after a specific gesture
 	 */
 
-    LeapGestureHandler* leapGestureHandler;
-    CustomLeapManager* leapManager;
+	LeapGestureHandler* leapGestureHandler;
+	CustomLeapManager* leapManager;
 	bool arMode;
 
 	LeapListener( LeapManager* leapManager );

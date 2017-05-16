@@ -32,34 +32,34 @@ public:
 		* @author Dávid Durčák
 		* @brief CameraStream constructor
 		*/
-    CameraStream( );
+	CameraStream( );
 	~CameraStream();
-    int getImageWidth();
-    int getImageHeight();
+	int getImageWidth();
+	int getImageHeight();
 
-    bool calibrated;
-    cv::vector<std::pair<cv::Point,double>> palmAndRadiusList;
+	bool calibrated;
+	cv::vector<std::pair<cv::Point,double>> palmAndRadiusList;
 
 public slots:
 
 	/**
 		* @author Dávid Durčák
-        * @brief updateBackgroundImage Slot set cvImg as internal image data and call dirty()
+	    * @brief updateBackgroundImage Slot set cvImg as internal image data and call dirty()
 		* @param cvImg opencv image
-        * @param determines whether to track hands in the image
+	    * @param determines whether to track hands in the image
 		*/
 #ifdef OPENCV_FOUND
-    void updateBackgroundImage( cv::Mat cvImg , bool trackHands);
+	void updateBackgroundImage( cv::Mat cvImg , bool trackHands );
 
-    void requestCalibration();
+	void requestCalibration();
 
 #endif
 
 private:
 
-    cv::Mat image;
-    HandTracker *tracker;
-    QMutex trackMutex;
+	cv::Mat image;
+	HandTracker* tracker;
+	QMutex trackMutex;
 };
 }
 

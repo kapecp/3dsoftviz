@@ -322,15 +322,15 @@ Lua::LuaGraph* Lua::LuaGraph::loadEvoGraph( QString repoFilepath )
 Lua::LuaGraph::~LuaGraph()
 {
 	for ( QMap<qlonglong, Lua::LuaNode*>::iterator i = nodes->begin(); i != nodes->end(); ++i ) {
-		delete ( *i );
+		delete( *i );
 	}
 
 	for ( QMap<qlonglong, Lua::LuaEdge*>::iterator i = edges->begin(); i != edges->end(); ++i ) {
-		delete ( *i );
+		delete( *i );
 	}
 
 	for ( QMap<qlonglong, Lua::LuaIncidence*>::iterator i = incidences->begin(); i != incidences->end(); ++i ) {
-		delete ( *i );
+		delete( *i );
 	}
 	delete nodes;
 	delete incidences;
