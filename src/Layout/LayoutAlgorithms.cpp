@@ -122,7 +122,7 @@ void LayoutAlgorithms::layoutAroundRegion( const osg::BoundingBox& elementDimens
 	const float offsetY = region.center().y();
 
 	if ( regionWidth < elementWidth || regionDepth < elementDepth ) {
-		throw std::exception( "Region is too small for layouting even one element" );
+//		throw std::exception( "Region is too small for layouting even one element" );
 	}
 
 	float curWidth = regionWidth + ( regionWidth <= regionDepth ? elementIndentOffset * 2 : 0 );

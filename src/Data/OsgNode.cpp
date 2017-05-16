@@ -192,8 +192,8 @@ void Data::OsgNode::adjustLabelForModule( float scale )
 
 osg::ref_ptr<osg::Node> Data::OsgNode::getLabel()
 {
-	auto at = getChild( INDEX_LABEL )->asNode();
-	return at ? at->asNode() : nullptr;
+	auto at = getChild( INDEX_LABEL );
+	return at ? at : nullptr;
 }
 
 osg::ref_ptr<osg::PositionAttitudeTransform> Data::OsgNode::getResidenceAsPAT()
