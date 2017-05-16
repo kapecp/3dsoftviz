@@ -4,7 +4,7 @@
 #include "LeapLib/LeapActions.h"
 #include "LeapLib/DirectionDetector.h"
 #include "LeapLib/FingerPositionDetector.h"
-#include <concrt.h> // TODO zmaz..
+//#include <concrt.h> // TODO zmaz..
 
 Leap::LeapGestureHandler::LeapGestureHandler( LeapManager* leapManager )
 {
@@ -89,7 +89,7 @@ void Leap::LeapGestureHandler::handleGestures( Frame frame )
             ignoreGestures = true;
             deltaVelocity = new Vector(rightHandVelocity->x - leftHandVelocity->x,rightHandVelocity->y - leftHandVelocity->y,rightHandVelocity->z - leftHandVelocity->z);
             leapActions->scaleGraph( deltaVelocity );
-			Concurrency::wait(50);
+//			Concurrency::wait(50);
 
         }
     }
