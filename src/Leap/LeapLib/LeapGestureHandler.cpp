@@ -4,7 +4,7 @@
 #include "LeapLib/LeapActions.h"
 #include "LeapLib/DirectionDetector.h"
 #include "LeapLib/FingerPositionDetector.h"
-//#include <concrt.h> // TODO zmaz..
+
 
 Leap::LeapGestureHandler::LeapGestureHandler( LeapManager* leapManager )
 {

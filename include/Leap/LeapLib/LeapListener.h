@@ -2,9 +2,6 @@
 #define LEAPLISTENER_H
 
 
-//#include "LeapLib/LeapActions.h"
-
-#include "Leap.h"
 #include "LeapLib/LeapGestureHandler.h"
 
 #include "LeapLib/LeapManager.h"

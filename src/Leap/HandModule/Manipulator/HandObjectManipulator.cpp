@@ -31,7 +31,7 @@ Leap::Vector Leap::HandObjectManipulator::changeHandUpDirectionAxis( Leap::Vecto
 }
 
 void Leap::HandObjectManipulator::updateHands( Leap::Hand leftHand, Leap::Hand rightHand,
-		HandPalm* leftPalm, HandPalm* rightPalm )
+                                               HandPalm* leftPalm, HandPalm* rightPalm, osg::ref_ptr<osg::Camera> camera )
 {
 	float mid = 300;
 	float diffLeftHand;
@@ -40,11 +40,12 @@ void Leap::HandObjectManipulator::updateHands( Leap::Hand leftHand, Leap::Hand r
 	this->center = osg::Vec3f( 0.0f,0.0f,0.0f );
 	this->direction = osg::Vec3f( 0.0f,5.0f,0.0f );
 
-	// update lavej ruky
-	if ( leftHand.isValid() ) {
-		Leap::Vector lVector = Leap::Vector( this->center[0]+0.5,this->center[1],this->center[2] );
-		//ziskanie pozicie dlane
-		lVector = leftHand.palmPosition();
+    // update lavej ruky
+    if ( leftHand.isValid() ) {
+        Leap::Vector lVector = Leap::Vector( this->center[0]+0.5,this->center[1],this->center[2] );
+        //ziskanie pozicie dlane
+        lVector = leftHand.palmPosition();
+
 
 
 		diffLeftHand = lVector.y - mid;
@@ -58,11 +59,23 @@ void Leap::HandObjectManipulator::updateHands( Leap::Hand leftHand, Leap::Hand r
 									static_cast<double>( this->center[1] )+this->direction[1] +static_cast<double>( lVector.y )/100.0,
 									static_cast<double>( this->center[2] )+this->direction[2] +static_cast<double>( lVector.z )/100.0 ) );
 
-		// update prstov lavej ruky
-		this->updateFingers( leftPalm, leftHand.fingers(), diffLeftHand );
-		// update kosti medzi prstamu
-		this->updateInterFingerBones( leftPalm->interFingerBoneGroup, leftHand.fingers(), diffLeftHand );
-	}
+         osg::Viewport* viewport = camera->getViewport();
+         osg::Matrix win = camera->getViewport()->computeWindowMatrix();
+         osg::Matrix view = camera->getViewMatrix();
+         osg::Matrix proj = camera->getProjectionMatrix();
+         osg::Matrix model = leftPalm->getWorldMatrices()[0];
+         osg::Vec3 world_coords = osg::Vec3( static_cast<double>(this->center[0]) + this->direction[0] + static_cast<double>( lVector.x )/100.0,
+                 static_cast<double>(this->center[1])+this->direction[1] +static_cast<double>( lVector.y )/100.0,
+                 static_cast<double>(this->center[2])+this->direction[2] +static_cast<double>( lVector.z )/100.0 );
+         osg::Vec3 screenCoords = world_coords * view * proj * win;
+        screenCoords.set(((screenCoords.x() / viewport->width()) * 640) , (screenCoords.y() / viewport->height()) * 480, screenCoords.z());
+        this->mapper->setNodeScreenCoords(screenCoords);
+
+        // update prstov lavej ruky
+        this->updateFingers( leftPalm, leftHand.fingers(), diffLeftHand );
+        // update kosti medzi prstamu
+        this->updateInterFingerBones( leftPalm->interFingerBoneGroup, leftHand.fingers(), diffLeftHand );
+    }
 
 	// update pravej ruky
 	if ( rightHand.isValid() ) {

@@ -1,11 +1,11 @@
 #ifndef LEAPGESTUREHANDLER_H
 #define LEAPGESTUREHANDLER_H
-#include "Leap.h"
+
 #include "LeapLib/LeapManager.h"
 #include "LeapLib/LeapActions.h"
 
 #include "easylogging++.h"
-
+#include "Leap.h"
 namespace Leap {
 
 class LeapGestureHandler{
