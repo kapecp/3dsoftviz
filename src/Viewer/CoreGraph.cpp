@@ -716,11 +716,11 @@ int CoreGraph::updateBackground( int bgVal, Data::Graph* currentGraph )
 		else if ( bgVal == 2 ) {
 			root->addChild( createTextureBackground() );
 		}
-        else if ( bgVal == 3 ) {
+		else if ( bgVal == 3 ) {
 			root->addChild( createOrtho2dBackground() );
 		}
 #endif
-        else if ( bgVal == 4 ) {
+		else if ( bgVal == 4 ) {
 			root->addChild( createLeapBackground() ); // leap
 		}
 		else if ( bgVal == -1 ) {
@@ -745,11 +745,11 @@ int CoreGraph::updateBackgroundStream( unsigned char* buffer )
 //	LOG( INFO ) << "CoreGraph::updateBackgroundStream - updating background";
 	if ( leapCameraStream != nullptr ) {
 		leapCameraStream->dirty();
-        leapCameraStream->updateBackgroundImage( buffer);
+		leapCameraStream->updateBackgroundImage( buffer );
 	}
 	return 1;
 
-    // TODO return success/fail
+	// TODO return success/fail
 }
 
 
@@ -1173,11 +1173,11 @@ osg::ref_ptr<osg::Node> CoreGraph::createBackground()
 		return createTextureBackground();
 	}
 
-    if ( background == 3 ) {
-        return createOrtho2dBackground();
-    }
+	if ( background == 3 ) {
+		return createOrtho2dBackground();
+	}
 
-    if ( background == 4 ) {
+	if ( background == 4 ) {
 		return createLeapBackground();
 	}
 
@@ -1546,7 +1546,12 @@ void CoreGraph::setEdgeHiddenForType( bool hidden, QString edgeTypeName )
 	while ( edge != in_edges->end() ) {
 		if ( !QString::compare( edge.value()->getType()->getName(), edgeTypeName, Qt::CaseInsensitive ) ) {
 			edge.value()->setInvisible( hidden );
-			if ( hidden) { edge.value()->setScale( 0 ); } else { edge.value()->setScale( 2 ); };
+			if ( hidden ) {
+				edge.value()->setScale( 0 );
+			}
+			else {
+				edge.value()->setScale( 2 );
+			};
 		}
 		++edge;
 	}
@@ -2024,7 +2029,7 @@ osg::Vec3f CoreGraph::getGrafRotTransVec()
 
 void CoreGraph::reorganizeNodesForModuleGraph()
 {
-	std::cout << std::endl << "CoreGraph::reorganizeNodesForModuleGraph() started" << std::endl;
+	qDebug() << "CoreGraph::reorganizeNodesForModuleGraph() started";
 	osg::ref_ptr<osg::Group> graphNodesGroup = this->nodesGroup->getGroup();
 	QMap<qlonglong, osg::ref_ptr<Data::Node> >* graphNodes = this->graph->getNodes();
 
@@ -2033,57 +2038,47 @@ void CoreGraph::reorganizeNodesForModuleGraph()
 	//iterate through all LuaNodes and search for "module" type node
 	QMap<qlonglong, Lua::LuaNode*>::iterator node_iter;
 	for ( node_iter = luaGraph->getNodes()->begin();
-		  node_iter != luaGraph->getNodes()->end();
-		  ++node_iter ) {
+			node_iter != luaGraph->getNodes()->end();
+			++node_iter ) {
 
-		if(node_iter.value()->getParams().getValue()["type"] == "module") {
+		if ( node_iter.value()->getParams().getValue()["type"] == "module" ) {
 			auto moduleGraphNode = graphNodes->value( node_iter.key() );
 			osg::ref_ptr<City::Module> cityModulePAT = moduleGraphNode->getModule();
 
-			std::cout << "[START] adding other nodes to this->nodesGroup" << std::endl;
 			QMap<osg::ref_ptr<Data::Node>, osg::ref_ptr<Data::Node>> otherNodes = cityModulePAT->getOtherNodes();
 			QMap<osg::ref_ptr<Data::Node>, osg::ref_ptr<Data::Node>>::iterator other_iter;
 			for ( other_iter = otherNodes.begin();
-				  other_iter != otherNodes.end();
-				  ++other_iter ) {
+					other_iter != otherNodes.end();
+					++other_iter ) {
 				osg::ref_ptr<Data::Node> otherNode = other_iter.value();
 				otherNode->setInModule( false );
 				otherNode->setIgnoreByLayout( false );
 				auto otherNodePAT = cityModulePAT->getNodeParentPAT( otherNode );
 				graphNodesGroup->addChild( otherNodePAT );
 			}
-			std::cout << "[DONE] adding other nodes to this->nodesGroup" << std::endl;
 
-			std::cout << "[START] adding variable nodes to this->nodesGroup" << std::endl;
 			for ( auto varNode : cityModulePAT->getVariableNodes() ) {
 				varNode->setInModule( false );
 				varNode->setIgnoreByLayout( false );
 				auto varNodePAT = cityModulePAT->getNodeParentPAT( varNode );
 				graphNodesGroup->addChild( varNodePAT );
 			}
-			std::cout << "[DONE] adding variable nodes to this->nodesGroup" << std::endl;
 
-			std::cout << "[START] adding function nodes to this->nodesGroup" << std::endl;
 			for ( auto funcNode : cityModulePAT->getFunctionNodes() ) {
 				funcNode->setInModule( false );
 				funcNode->setIgnoreByLayout( false );
 				auto funcNodePAT = cityModulePAT->getNodeParentPAT( funcNode );
 				graphNodesGroup->addChild( funcNodePAT );
 			}
-			std::cout << "[DONE] adding function nodes to this->nodesGroup" << std::endl;
 
-			std::cout << "[START] adding interface nodes to this->nodesGroup" << std::endl;
 			for ( auto intrfcNode : cityModulePAT->getInterfaceNodes() ) {
 				intrfcNode->setInModule( false );
 				intrfcNode->setIgnoreByLayout( false );
 				auto intrfcNodePAT = cityModulePAT->getNodeParentPAT( intrfcNode );
 				graphNodesGroup->addChild( intrfcNodePAT );
 			}
-			std::cout << "[DONE] adding interface nodes to this->nodesGroup" << std::endl;
 
-			std::cout << "[START] decompose" << std::endl;
 			cityModulePAT->decompose();
-			std::cout << "[DONE] decompose" << std::endl;
 		}
 	}
 	//setEdgeVisualForType(Data::Edge::INDEX_LINE, Data::GraphLayout::ARC_EDGE_TYPE );
@@ -2092,6 +2087,7 @@ void CoreGraph::reorganizeNodesForModuleGraph()
 
 void CoreGraph::reorganizeNodesForModuleCity()
 {
+	qDebug() << "CoreGraph::reorganizeNodesForModuleCity() started";
 	osg::ref_ptr<osg::Group> graphNodesGroup = this->nodesGroup->getGroup();
 	QMap<qlonglong, osg::ref_ptr<Data::Node> >* graphNodes = this->graph->getNodes();
 
@@ -2100,10 +2096,10 @@ void CoreGraph::reorganizeNodesForModuleCity()
 	//iterate through all LuaNodes and search for "module" type node
 	QMap<qlonglong, Lua::LuaNode*>::iterator node_iter;
 	for ( node_iter = luaGraph->getNodes()->begin();
-		  node_iter != luaGraph->getNodes()->end();
-		  ++node_iter ) {
+			node_iter != luaGraph->getNodes()->end();
+			++node_iter ) {
 
-		if(node_iter.value()->getParams().getValue()["type"] == "module") {
+		if ( node_iter.value()->getParams().getValue()["type"] == "module" ) {
 			auto moduleGraphNode = graphNodes->value( node_iter.key() );
 			osg::ref_ptr<City::Module> cityModulePAT = new City::Module();
 
@@ -2112,11 +2108,11 @@ void CoreGraph::reorganizeNodesForModuleCity()
 
 			QMap<qlonglong, osg::ref_ptr<Data::Edge> >::iterator edge_iter;
 			for ( edge_iter = moduleEdges->begin();
-				  edge_iter != moduleEdges->end();
-				  ++edge_iter ) {
+					edge_iter != moduleEdges->end();
+					++edge_iter ) {
 				auto moduleGraphEdge = edge_iter.value();
 
-				if( moduleGraphEdge->getSrcNode() == moduleGraphNode && moduleGraphEdge->AbsEdge::getName() == "declares" ) {
+				if ( moduleGraphEdge->getSrcNode() == moduleGraphNode && moduleGraphEdge->AbsEdge::getName() == "declares" ) {
 					//funcNode should be type "function" or "global function"
 					auto funcGraphNode = moduleGraphEdge->getDstNode();
 					cityModulePAT->addFunctionNode( funcGraphNode );
@@ -2131,7 +2127,7 @@ void CoreGraph::reorganizeNodesForModuleCity()
 
 				}
 
-				if( moduleGraphEdge->getSrcNode() == moduleGraphNode && moduleGraphEdge->AbsEdge::getName() == "initializes" ) {
+				if ( moduleGraphEdge->getSrcNode() == moduleGraphNode && moduleGraphEdge->AbsEdge::getName() == "initializes" ) {
 					//funcNode should be type "local variable" or "global variable"
 					auto varGraphNode = moduleGraphEdge->getDstNode();
 					cityModulePAT->addVariableNode( varGraphNode );
@@ -2149,11 +2145,11 @@ void CoreGraph::reorganizeNodesForModuleCity()
 
 					QMap<qlonglong, osg::ref_ptr<Data::Edge> >::iterator edge_iter;
 					for ( edge_iter = varEdges->begin();
-						  edge_iter != varEdges->end();
-						  ++edge_iter ) {
+							edge_iter != varEdges->end();
+							++edge_iter ) {
 						auto varGraphEdge = edge_iter.value();
 
-						if( varGraphEdge->getSrcNode() == varGraphNode && varGraphEdge->AbsEdge::getName() == "assigns" ) {
+						if ( varGraphEdge->getSrcNode() == varGraphNode && varGraphEdge->AbsEdge::getName() == "assigns" ) {
 							//otherNode should be type "other"
 							auto otherGraphNode = varGraphEdge->getDstNode();
 							cityModulePAT->addOtherNode( varGraphNode, otherGraphNode );
@@ -2171,7 +2167,7 @@ void CoreGraph::reorganizeNodesForModuleCity()
 
 				}
 
-				if( moduleGraphEdge->getSrcNode() == moduleGraphNode && moduleGraphEdge->AbsEdge::getName() == "provides" ) {
+				if ( moduleGraphEdge->getSrcNode() == moduleGraphNode && moduleGraphEdge->AbsEdge::getName() == "provides" ) {
 					//intrfNode should be type "interface"
 					auto intrfGraphNode = moduleGraphEdge->getDstNode();
 					cityModulePAT->addInterfaceNode( intrfGraphNode );
@@ -2185,23 +2181,12 @@ void CoreGraph::reorganizeNodesForModuleCity()
 					intrfGraphNode->setInModule( true );
 				}
 			}
-
-
-
-			//std::cout << "ModuleNode: " << moduleNode->AbsNode::getName().toStdString() << std::endl;
-			//std::cout << "  has this many function children: " << functionNodeIds.length() << std::endl;
-
-			//setNodePositionsForModuleCity(moduleNodeId, functionNodeIds, variableNodeIds, otherNodeIds, interfaceNodeIds);
-
-			std::cout << "[START] ModuleGraphNode: " << moduleGraphNode->AbsNode::getName().toStdString() << std::endl;		
 			moduleGraphNode->setModule( cityModulePAT );
 			moduleGraphNode->adjustLabelForModule( 50.0f );
-			std::cout << "[CHECK]" << std::endl;
 			cityModulePAT->setModuleNode( moduleGraphNode );
 			cityModulePAT->refresh();
-			std::cout << "[END] ModuleGraphNode: " << moduleGraphNode->AbsNode::getName().toStdString() << std::endl << std::endl;
 		}
-	}	
+	}
 	//setEdgeVisualForType(Data::Edge::INDEX_MATRIX_CURVE, Data::GraphLayout::ARC_EDGE_TYPE );
 }
 

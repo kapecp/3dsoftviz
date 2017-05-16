@@ -174,7 +174,7 @@ osg::ref_ptr<osg::Drawable> Data::OsgNode::createSquare( const float& scale, osg
 City::Module* Data::OsgNode::getModule()
 {
 	auto at = getChild( INDEX_RESIDENCE )->asTransform()->asPositionAttitudeTransform();
-	return ( at != nullptr ) ? dynamic_cast<City::Module*>(at->asTransform()->asPositionAttitudeTransform()) : nullptr;
+	return ( at != nullptr ) ? dynamic_cast<City::Module*>( at->asTransform()->asPositionAttitudeTransform() ) : nullptr;
 }
 
 void Data::OsgNode::setModule( City::Module* module )
@@ -358,7 +358,7 @@ void Data::OsgNode::showLabel( bool visible, bool labelsForResidence )
 	}
 
 	//if it's in module node -> turn off Data::Note labels and turn on City::Building labels
-	if (inModule ) {
+	if ( inModule ) {
 		setValue( INDEX_LABEL, false );
 	}
 	auto module = getModule();

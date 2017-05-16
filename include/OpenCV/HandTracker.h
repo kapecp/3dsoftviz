@@ -14,13 +14,13 @@ class HandTracker
 
 public:
 
-    HandTracker();
+	HandTracker();
 
-    ~HandTracker();
-    double dist(cv::Point x,cv::Point y);
-    std::pair<cv::Point,double> circleFromPoints(cv::Point p1, cv::Point p2, cv::Point p3);
-    void getParameterValues(int *threshold, int *areaSize, float brightness, float depth);
-    cv::Mat findHand( cv::Mat mask, float depth);
+	~HandTracker();
+	double dist( cv::Point x,cv::Point y );
+	std::pair<cv::Point,double> circleFromPoints( cv::Point p1, cv::Point p2, cv::Point p3 );
+	void getParameterValues( int* threshold, int* areaSize, float brightness, float depth );
+	cv::Mat findHand( cv::Mat mask, float depth );
 };
 }
 

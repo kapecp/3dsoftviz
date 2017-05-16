@@ -1377,7 +1377,8 @@ void Data::Graph::removeEdge( osg::ref_ptr<Data::Edge> edge )
 	}
 }
 
-void Data::Graph::removeNode( osg::ref_ptr<Data::Node> node, bool keepEdges ) {
+void Data::Graph::removeNode( osg::ref_ptr<Data::Node> node, bool keepEdges )
+{
 	//odstranenie uzla vratane relevantnych zoznamov
 	if ( node!=NULL && node->getGraph()==this ) {
 		if ( !node->isInDB() || Model::NodeDAO::removeNode( node, this->conn ) ) {
@@ -1404,7 +1405,7 @@ void Data::Graph::removeNode( osg::ref_ptr<Data::Node> node, bool keepEdges ) {
 			this->nodesByType.remove( node->getType()->getId(), node );
 			this->metaNodesByType.remove( node->getType()->getId(), node );
 
-			if (!keepEdges) {
+			if ( !keepEdges ) {
 				node->removeAllEdges();
 			}
 

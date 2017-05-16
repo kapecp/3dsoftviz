@@ -732,18 +732,18 @@ bool PickHandler::doNodePick( osg::NodePath nodePath )
 
 	//for module graph: have to get from building - through residencePAT - to Data::Node
 	if ( b != NULL ) {
-		osg::ref_ptr<osg::PositionAttitudeTransform> buildingPAT = b->getParent(0)->asTransform()->asPositionAttitudeTransform();
+		osg::ref_ptr<osg::PositionAttitudeTransform> buildingPAT = b->getParent( 0 )->asTransform()->asPositionAttitudeTransform();
 		if ( buildingPAT != NULL ) {
-			Data::Node* node = dynamic_cast<Data::Node*>(buildingPAT->getParent(0)->asSwitch());
+			Data::Node* node = dynamic_cast<Data::Node*>( buildingPAT->getParent( 0 )->asSwitch() );
 			if ( node != NULL ) {
 				n = node;
 			}
 		}
 	}
 	if ( ball != NULL ) {
-		osg::ref_ptr<osg::PositionAttitudeTransform> ballPAT = ball->getParent(0)->asTransform()->asPositionAttitudeTransform();
+		osg::ref_ptr<osg::PositionAttitudeTransform> ballPAT = ball->getParent( 0 )->asTransform()->asPositionAttitudeTransform();
 		if ( ballPAT != NULL ) {
-			Data::Node* node = dynamic_cast<Data::Node*>(ballPAT->getParent(0)->asSwitch());
+			Data::Node* node = dynamic_cast<Data::Node*>( ballPAT->getParent( 0 )->asSwitch() );
 			if ( node != NULL ) {
 				n = node;
 			}

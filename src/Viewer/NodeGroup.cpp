@@ -176,8 +176,8 @@ void NodeGroup::updateNodeCoordinates( float interpolationSpeed )
 {
 	QMap<qlonglong, osg::ref_ptr<Data::Node> >::iterator i;
 	for ( i = nodes->begin();
-		  i != nodes->end();
-		  ++i ) {
+			i != nodes->end();
+			++i ) {
 
 		//Illes have to be updated
 		if ( i.value()->isInModule() ) {

@@ -12,12 +12,12 @@ class HandTrackerAdapter
 
 public:
 
-    HandTrackerAdapter();
+	HandTrackerAdapter();
 
-    ~HandTrackerAdapter();
+	~HandTrackerAdapter();
 
-    // uses opencv to find hand in image buffer
-    void trackHands( unsigned char* buffer,float depth);
+	// uses opencv to find hand in image buffer
+	void trackHands( unsigned char* buffer,float depth );
 
 };
 }

@@ -151,8 +151,8 @@ void Vwr::CameraManipulator::getUsage( osg::ApplicationUsage& usage ) const
 
 void Vwr::CameraManipulator::rotateForLeapBackgroundSync( )
 {
-    _rotation = osg::Quat(0.0,-1.0,0.0,0.0);
-    _center = osg::Vec3d(0.0,0.0,-5.0);
+	_rotation = osg::Quat( 0.0,-1.0,0.0,0.0 );
+	_center = osg::Vec3d( 0.0,0.0,-5.0 );
 }
 
 bool Vwr::CameraManipulator::handle( const GUIEventAdapter& ea, GUIActionAdapter& us )

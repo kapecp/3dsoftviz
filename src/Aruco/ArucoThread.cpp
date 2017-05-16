@@ -378,8 +378,8 @@ void ArucoThread::imagesSending( ArucoCore& aCore, cv::Mat frame ) const
 		image = aCore.getDetImage();
 	}
 
-	if ( mMarkerlessTrackingEnabled ){
-		mMarkerlessTracker->track(image);
+	if ( mMarkerlessTrackingEnabled ) {
+		mMarkerlessTracker->track( image );
 	}
 
 	if ( mSendImgEnabled ) {

@@ -365,8 +365,8 @@ void Kinect::KinectThread::run()
 			// resize, send a msleep for next frame
 
 			cv::resize( frame, frame,cv::Size( 320,240 ),0,0,cv::INTER_LINEAR );
-			if ( mMarkerlessTrackingEnabled ){
-				kTracker->track(frame);
+			if ( mMarkerlessTrackingEnabled ) {
+				kTracker->track( frame );
 			}
 			emit pushImage( frame );
 			msleep( 20 );

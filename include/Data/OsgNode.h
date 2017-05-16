@@ -78,13 +78,19 @@ public:
 	* \brief Checks node for nested module nodes.
 	* \return boolean true if node is module
 	*/
-	bool isInModule() { return inModule; }
+	bool isInModule()
+	{
+		return inModule;
+	}
 
 	/**
 	* \fn public setInModule
 	* \brief Sets bool if node is nested or not.
 	*/
-	void setInModule( bool state ) { inModule = state; }
+	void setInModule( bool state )
+	{
+		inModule = state;
+	}
 
 	/**
 	* \fn public getModule

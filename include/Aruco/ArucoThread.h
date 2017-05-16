@@ -234,7 +234,7 @@ private:
 	* @author Dávid Durčák
 	* @brief imagesSending Pripare images for sending and emiting them
 	*/
-    void imagesSending( ArucoCore& aCore, cv::Mat frame ) const;
+	void imagesSending( ArucoCore& aCore, cv::Mat frame ) const;
 
 	/**
 	* @author Dávid Durčák

@@ -33,42 +33,42 @@ public:
 	 * @brief track white circles on image
 	 * @param img to track objects on
 	 */
-    void track(cv::Mat& frame );
+	void track( cv::Mat& frame );
 
 private:
-    /**
-     * @author Autor: Juraj Marak
-     */
-    ArucoModul::ArControlClass* mArControlClass;
-    ArucoModul::ArucoCore* aCore;
-    aruco::CameraParameters mCamParam;
+	/**
+	 * @author Autor: Juraj Marak
+	 */
+	ArucoModul::ArControlClass* mArControlClass;
+	ArucoModul::ArucoCore* aCore;
+	aruco::CameraParameters mCamParam;
 
-    /**
-     * @author Autor: Juraj Marak
-     * @brief detect circles in frame
-     */
-	void findCirclesInFrame(cv::Mat& frame,
-                                                        cv::vector<cv::Vec3f> &circlesReal
-                                                       );
+	/**
+	 * @author Autor: Juraj Marak
+	 * @brief detect circles in frame
+	 */
+	void findCirclesInFrame( cv::Mat& frame,
+							 cv::vector<cv::Vec3f>& circlesReal
+						   );
 	//OpenCV::MarkerlessTracker::
 	/**
-     * @author Autor: Juraj Marak
-     * @brief estimate pose of circle based on frame position
-     */
+	 * @author Autor: Juraj Marak
+	 * @brief estimate pose of circle based on frame position
+	 */
 	void estimatePoseCircle( osg::Vec2f framePosition,
-                                                        float circleRadiusReal,
-                                                        float circleRadiusFrame,
-                                                        aruco::CameraParameters mCamParam,
-                                                        cv::Mat& rvec, cv::Mat& tvec
-                                                       );
-  //OpenCV::MarkerlessTracker::
+							 float circleRadiusReal,
+							 float circleRadiusFrame,
+							 aruco::CameraParameters mCamParam,
+							 cv::Mat& rvec, cv::Mat& tvec
+						   );
+	//OpenCV::MarkerlessTracker::
 	/**
-     * @author Autor: Autor: Juraj Marak
-     * @brief calculate MVMatrix from estimated pose
-     */
+	 * @author Autor: Autor: Juraj Marak
+	 * @brief calculate MVMatrix from estimated pose
+	 */
 	void calculateMVMatrixFromPose( cv::Mat rvec, cv::Mat tvec,
-                                                               QMatrix4x4& mVMatrix
-                                                              );
+									QMatrix4x4& mVMatrix
+								  );
 //OpenCV::MarkerlessTracker::
 };
 }

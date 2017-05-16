@@ -142,7 +142,7 @@ public:
 	    *  \param image data - one frame(image) from leap sensor
 	    *  \return 0 - success, 1 - fail
 	   */
-    int updateBackgroundStream( unsigned char* buffer );
+	int updateBackgroundStream( unsigned char* buffer );
 
 	/**
 		*  \fn inline public  getCustomNodeList

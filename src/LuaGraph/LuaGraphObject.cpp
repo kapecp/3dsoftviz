@@ -51,7 +51,7 @@ float Lua::LuaGraphObject::getFloatParam( std::string tableName, std::string key
 		return defaultValue;
 	}
 	Lua::LuaValue tableFromParams;
-	tableFromParams.setValue(params.getValue()[tableName].asTable());
+	tableFromParams.setValue( params.getValue()[tableName].asTable() );
 
 	if ( tableFromParams.getValue().type() == 0 ) {
 		return defaultValue;

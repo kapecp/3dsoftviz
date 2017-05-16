@@ -313,7 +313,7 @@ public slots:
 		 */
 	void setCameraCanRot( bool cameraCanRot );
 
-    void rotateForLeapBackgroundSync();
+	void rotateForLeapBackgroundSync();
 
 protected:
 

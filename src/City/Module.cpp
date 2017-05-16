@@ -8,9 +8,9 @@ static const float DEFAULT_MODULE_SECTOR_HEIGHT = 3.5f;
 static const float DEFAULT_BUILDING_SPACING = 0.5f;
 
 City::Module::Module()
-{	
+{
 	variablesPAT = new osg::PositionAttitudeTransform();
-	functionsPAT = new osg::PositionAttitudeTransform();	
+	functionsPAT = new osg::PositionAttitudeTransform();
 	interfacesPAT = new osg::PositionAttitudeTransform();
 	addChild( variablesPAT );
 	addChild( functionsPAT );
@@ -36,21 +36,25 @@ void City::Module::addInterfaceNode( osg::ref_ptr<Data::Node> interfaceNode )
 
 void City::Module::addOtherNode( osg::ref_ptr<Data::Node> parentNode, osg::ref_ptr<Data::Node> otherNode )
 {
-	otherNodes.insert(parentNode, otherNode);
+	otherNodes.insert( parentNode, otherNode );
 }
 
 osg::ref_ptr<osg::PositionAttitudeTransform> City::Module::getNodeParentPAT( osg::ref_ptr<Data::Node> node )
 {
-	return node->getParent(0)->asTransform()->asPositionAttitudeTransform();
+	return node->getParent( 0 )->asTransform()->asPositionAttitudeTransform();
 }
 
 void City::Module::showLabels( bool state )
 {
 	forEachList( [state]( osg::ref_ptr<Data::Node> node ) {
 		auto building = node->getBuilding();
-		if ( building ) { building->showLabel( state ); }
+		if ( building ) {
+			building->showLabel( state );
+		}
 		auto ball = node->getModuleBall();
-		if ( ball ) { ball->showLabel( state ); }
+		if ( ball ) {
+			ball->showLabel( state );
+		}
 	} );
 }
 
@@ -59,9 +63,13 @@ void City::Module::selectAll( bool state )
 	if ( !state ) {
 		forEachList( [state]( osg::ref_ptr<Data::Node> node ) {
 			auto building = node->getBuilding();
-			if ( building ) { building->select( state ); }
+			if ( building ) {
+				building->select( state );
+			}
 			auto ball = node->getModuleBall();
-			if ( ball ) { ball->select( state ); }
+			if ( ball ) {
+				ball->select( state );
+			}
 		} );
 	}
 
@@ -95,9 +103,9 @@ void City::Module::refresh()
 		variablesPAT->addChild( varNodePAT );
 
 		auto otherNode = otherNodes.value( variableNodes[i] );
-		if( otherNode ) {
-			std::cout << "found something" << std::endl;
-			std::cout << "    -> {" << variableNodes[i]->AbsNode::getName().toStdString() << ", " <<  otherNode->AbsNode::getName().toStdString() << "}" << std::endl;
+		if ( otherNode ) {
+			//std::cout << "found something" << std::endl;
+			//std::cout << "    -> {" << variableNodes[i]->AbsNode::getName().toStdString() << ", " <<  otherNode->AbsNode::getName().toStdString() << "}" << std::endl;
 			auto otherNodePAT = getNodeParentPAT( otherNode );
 			otherNodePAT->setPosition( varNodePAT->getPosition() + osg::Vec3( baseSize/2, baseSize/2, height + 10.0f ) );
 			variableNodes[i]->getResidenceAsPAT()->addChild( otherNodePAT );
@@ -171,7 +179,7 @@ void City::Module::decompose()
 
 	//add Building to moduleNode
 	auto building = new City::Building();
-	building->setLabel(moduleNode->AbsNode::getName());
+	building->setLabel( moduleNode->AbsNode::getName() );
 	building->setBaseSize( NODE_BASE_SIZE );
 	building->setHeight( NODE_HEIGHT );
 	building->setLieOnGround( false );
@@ -193,7 +201,7 @@ void City::Module::updateNodesPosition()
 
 	for ( auto varNode : otherNodes.keys() ) {
 		//it's map <varNode, otherNode>
-		auto otherNode = otherNodes.value(varNode);
+		auto otherNode = otherNodes.value( varNode );
 		addVariableNodeParentPATPosition( varNode, otherNode );
 	}
 
@@ -228,33 +236,38 @@ void City::Module::forEachList( std::function<void( osg::ref_ptr<Data::Node> nod
 	}
 }
 
-void City::Module::addBuildingPATPosition( osg::ref_ptr<Data::Node> node) {
+void City::Module::addBuildingPATPosition( osg::ref_ptr<Data::Node> node )
+{
 	auto nodeBuilding = node->getBuilding();
 	float height = nodeBuilding->getHeight();
 	node->setCurrentPosition( osg::Vec3( 0.0f, 0.0f, height ) );
 }
 
-void City::Module::addParentPATPosition( osg::ref_ptr<Data::Node> node ) {
+void City::Module::addParentPATPosition( osg::ref_ptr<Data::Node> node )
+{
 	auto nodeParentPAT = getNodeParentPAT( node );
 	node->setCurrentPosition( node->getCurrentPosition() + nodeParentPAT->getPosition() );
 }
 
-void City::Module::addGroupPATPosition( osg::ref_ptr<Data::Node> node ) {
+void City::Module::addGroupPATPosition( osg::ref_ptr<Data::Node> node )
+{
 	auto nodeParentPAT = getNodeParentPAT( node );
 	auto nodeGroupPAT = nodeParentPAT->getParent( 0 )->asTransform()->asPositionAttitudeTransform();
 	node->setCurrentPosition( node->getCurrentPosition() + nodeGroupPAT->getPosition() );
 }
 
-void City::Module::addModulePATPosition( osg::ref_ptr<Data::Node> node ) {
+void City::Module::addModulePATPosition( osg::ref_ptr<Data::Node> node )
+{
 	auto config = Util::ApplicationConfig::get();
 	float interpolationSpeed = config->getValue( "Viewer.Display.InterpolationSpeed" ).toFloat();
 
 	node->setCurrentPosition( node->getCurrentPosition() + moduleNode->getCurrentPosition( true, interpolationSpeed ) );
 }
 
-void City::Module::addVariableNodeParentPATPosition( osg::ref_ptr<Data::Node> varNode, osg::ref_ptr<Data::Node> otherNode ) {
+void City::Module::addVariableNodeParentPATPosition( osg::ref_ptr<Data::Node> varNode, osg::ref_ptr<Data::Node> otherNode )
+{
 	auto otherNodeParentPAT = getNodeParentPAT( otherNode );
-	otherNode->setCurrentPosition( varNode->getCurrentPosition() + otherNodeParentPAT->getPosition() - osg::Vec3( 0.0f, 0.0f, 5.0f ));
+	otherNode->setCurrentPosition( varNode->getCurrentPosition() + otherNodeParentPAT->getPosition() - osg::Vec3( 0.0f, 0.0f, 5.0f ) );
 }
 
 

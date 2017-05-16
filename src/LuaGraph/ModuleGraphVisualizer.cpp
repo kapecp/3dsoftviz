@@ -33,7 +33,7 @@ void Lua::ModuleGraphVisualizer::visualize()
 
 
 	//insert every node and edge from Lua::LuaGraph to Data::Graph
-	auto nodeType = currentGraph->addType( Data::GraphLayout::NESTED_NODE_TYPE );	
+	auto nodeType = currentGraph->addType( Data::GraphLayout::NESTED_NODE_TYPE );
 
 	Lua::LuaGraph* luaGraph = Lua::LuaGraph::loadGraph();
 	luaGraph->printGraph();
@@ -49,10 +49,10 @@ void Lua::ModuleGraphVisualizer::visualize()
 	//adding nodes
 	QMap<qlonglong, Lua::LuaNode*>::iterator node_iter;
 	for ( node_iter = luaGraph->getNodes()->begin();
-		  node_iter != luaGraph->getNodes()->end();
-		  ++node_iter ) {
+			node_iter != luaGraph->getNodes()->end();
+			++node_iter ) {
 		osg::ref_ptr<Data::Node> n = currentGraph->addNode( node_iter.key() , node_iter.value()->getLabel(), nodeType );
-		n->setLuaIdentifier(node_iter.value()->getIdentifier());
+		n->setLuaIdentifier( node_iter.value()->getIdentifier() );
 		setNodeParams( n, node_iter.value(), osg::Vec4f( 1,1,1,1 ), 8 );
 
 		if ( node_iter.value()->getParams().getValue()["root"] == true ) {
@@ -82,7 +82,7 @@ void Lua::ModuleGraphVisualizer::visualize()
 
 			//find max function node size
 			float funcNodeSize = node_iter.value()->getFloatParam( "size", 4.0f );
-			if (funcNodeSize > maxFuncNodeSize ) {
+			if ( funcNodeSize > maxFuncNodeSize ) {
 				maxFuncNodeSize = funcNodeSize;
 			}
 		}
@@ -95,15 +95,15 @@ void Lua::ModuleGraphVisualizer::visualize()
 	//adding edges
 	QMap<qlonglong, Lua::LuaEdge*>::iterator edge_iter;
 	for ( edge_iter = luaGraph->getEdges()->begin();
-		  edge_iter != luaGraph->getEdges()->end();
-		  ++edge_iter ) {
+			edge_iter != luaGraph->getEdges()->end();
+			++edge_iter ) {
 		if ( edge_iter.value()->getIncidences().size() != 2 ) {
 			throw new std::runtime_error( "Not a simple graph" );
 		}
 
 		//set the correct edge type
 		Data::Type* edgeType;
-		if (hierarchyEdges.contains( edge_iter.value()->getLabel() ) ) {
+		if ( hierarchyEdges.contains( edge_iter.value()->getLabel() ) ) {
 			edgeType = hierarchyEdgeType;
 		}
 		else if ( arcEdges.contains( edge_iter.value()->getLabel() ) ) {
@@ -130,7 +130,7 @@ void Lua::ModuleGraphVisualizer::visualize()
 		else {
 			newEdge = currentGraph->addEdge( edge_iter.key(), edge_iter.value()->getLabel(), srcNode, dstNode, edgeType, false );
 		}
-		newEdge->setLuaIdentifier(edge_iter.value()->getIdentifier());
+		newEdge->setLuaIdentifier( edge_iter.value()->getIdentifier() );
 		newEdge->setCamera( camera );
 		setEdgeParams( newEdge, edge_iter.value(), osg::Vec4f( 1,1,1,1 ) );
 	}
@@ -165,13 +165,13 @@ void Lua::ModuleGraphVisualizer::visualize()
 	//iterate through all nodes and adjust visual form
 	QMap<qlonglong, Lua::LuaNode*>::iterator i;
 	for ( i = luaGraph->getNodes()->begin();
-		  i != luaGraph->getNodes()->end();
-		  ++i ) {
+			i != luaGraph->getNodes()->end();
+			++i ) {
 		auto graphNode = currentGraph->getNodes()->value( i.key() );
-		if(graphNode == nullptr) {
+		if ( graphNode == nullptr ) {
 			continue;
 		}
-		if ( i.value()->getParams().getValue()["root"] == true ) {			
+		if ( i.value()->getParams().getValue()["root"] == true ) {
 			adjustBuildingForNode( graphNode, FILE_BASE_SIZE, FILE_HEIGHT, false, white, "Viewer.Textures.ProjectNode" );
 			graphNode->adjustLabelForModule( 50.0f );
 		}
@@ -199,7 +199,7 @@ void Lua::ModuleGraphVisualizer::visualize()
 		else if ( i.value()->getParams().getValue()["type"] == "interface" ) {
 			adjustBuildingForNode( graphNode, NODE_BASE_SIZE, NODE_HEIGHT, true, green, "" );
 		}
-		else {			
+		else {
 			adjustBallForNode( graphNode, BALL_SIZE, false, black );
 		}
 	}
@@ -226,59 +226,60 @@ void Lua::ModuleGraphVisualizer::deleteReturnsNode()
 
 	QMap<qlonglong, Lua::LuaNode*>::iterator i;
 	for ( i = luaGraph->getNodes()->begin();
-		  i != luaGraph->getNodes()->end();
-		  ++i ) {
-		if( i.value()->getParams().getValue()["type"] == "interface" && i.value()->getLabel() == "Returns") {
+			i != luaGraph->getNodes()->end();
+			++i ) {
+		if ( i.value()->getParams().getValue()["type"] == "interface" && i.value()->getLabel() == "Returns" ) {
 			auto returnsNode = currentGraph->getNodes()->value( i.key() );
 
 			osg::ref_ptr<Data::Node> moduleNode;
-			QMap<qlonglong, osg::ref_ptr<Data::Edge>> *edges = returnsNode->getEdges();
-			for(auto edge : edges->values()) {
+			QMap<qlonglong, osg::ref_ptr<Data::Edge>>* edges = returnsNode->getEdges();
+			for ( auto edge : edges->values() ) {
 				//first loop to find module node
-				if(edge->getDstNode() == returnsNode) {
+				if ( edge->getDstNode() == returnsNode ) {
 					moduleNode = edge->getSrcNode();
 				}
 			}
 
-			for(auto edge : edges->values()) {
+			for ( auto edge : edges->values() ) {
 				//find other interface nodes
-				if(edge->getSrcNode() == returnsNode) {
-					returnsNode->removeEdge(edge);
-					moduleNode->addEdge(edge);
-					edge->setSrcNode(moduleNode);
+				if ( edge->getSrcNode() == returnsNode ) {
+					returnsNode->removeEdge( edge );
+					moduleNode->addEdge( edge );
+					edge->setSrcNode( moduleNode );
 					//edge->linkNodes(currentGraph->getEdges());
 				}
-			}			
-			currentGraph->removeNode(returnsNode);
+			}
+			currentGraph->removeNode( returnsNode );
 		}
 	}
 }
 
 
-void Lua::ModuleGraphVisualizer::adjustBuildingForNode(osg::ref_ptr<Data::Node> node, float baseSize, float height, bool lieOnGround, osg::ref_ptr<osg::Material> colour, QString textureName)
+void Lua::ModuleGraphVisualizer::adjustBuildingForNode( osg::ref_ptr<Data::Node> node, float baseSize, float height, bool lieOnGround, osg::ref_ptr<osg::Material> colour, QString textureName )
 {
 	auto resMgr = Manager::ResourceManager::getInstance();
 
 	auto building = new City::Building();
-	building->setLabel(node->AbsNode::getName());
+	building->setLabel( node->AbsNode::getName() );
 	building->setBaseSize( baseSize );
 	building->setHeight( height );
 	building->setLieOnGround( lieOnGround );
 	building->setStateSet( new osg::StateSet() );
 	building->getStateSet()->setAttribute( colour );
 	building->getStateSet()->setMode( GL_RESCALE_NORMAL, osg::StateAttribute::ON );
-	if(!textureName.isEmpty())
+	if ( !textureName.isEmpty() ) {
 		building->getStateSet()->setTextureAttributeAndModes( 0, resMgr->getTexture( Util::ApplicationConfig::get()->getValue( textureName ) ), osg::StateAttribute::ON );
+	}
 	building->refresh();
 	node->setResidence( building );
 }
 
-void Lua::ModuleGraphVisualizer::adjustBallForNode(osg::ref_ptr<Data::Node> node, float baseSize, bool lieOnGround, osg::ref_ptr<osg::Material> colour)
+void Lua::ModuleGraphVisualizer::adjustBallForNode( osg::ref_ptr<Data::Node> node, float baseSize, bool lieOnGround, osg::ref_ptr<osg::Material> colour )
 {
 	auto resMgr = Manager::ResourceManager::getInstance();
 
 	auto ball = new City::Ball();
-	ball->setLabel(node->AbsNode::getName());
+	ball->setLabel( node->AbsNode::getName() );
 	ball->setBaseSize( baseSize );
 	ball->setLieOnGround( lieOnGround );
 	ball->setStateSet( new osg::StateSet() );
