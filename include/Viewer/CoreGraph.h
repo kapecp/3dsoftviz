@@ -21,7 +21,7 @@
 
 #include "Data/Cluster.h"
 
-#include <osgManipulator/Translate2DDragger>
+#include <osgManipulator/Dragger>
 
 #include <QMap>
 #include <QLinkedList>
@@ -104,6 +104,8 @@ public:
 
 	void onResized( int width, int height );
 
+	void toggleDragger( int dragger_no, bool set );
+
 	/**
 		*  \fn public  reload(Data::Graph * graph = 0)
 		*  \brief
@@ -141,7 +143,7 @@ public:
 	    *  \param image data - one frame(image) from leap sensor
 	    *  \return 0 - success, 1 - fail
 	   */
-    int updateBackgroundStream( unsigned char* buffer );
+	int updateBackgroundStream( unsigned char* buffer );
 
 	/**
 		*  \fn inline public  getCustomNodeList
@@ -269,6 +271,10 @@ public:
 		return browsersGroup;
 	}
 
+	Data::Graph* getGraph()
+	{
+		return graph;
+	}
 #ifdef OPENCV_FOUND
 	OpenCV::CameraStream* getCameraStream() const;
 #endif
@@ -370,9 +376,9 @@ public slots:
 
 	void setArucoRunning( bool isRunning );
 
-    bool isLeapStreamActive();
+	bool isLeapStreamActive();
 
-    bool isCameraStreamActive();
+	bool isCameraStreamActive();
 
 private:
 
@@ -680,7 +686,8 @@ private:
 	bool cameraInsideSphere( osg::Vec3d midPoint, float radius );
 	bool cameraInsideCube( osg::Vec3d lowerPoint, osg::Vec3d upperPoint );
 
-	osgManipulator::Translate2DDragger* manipulator;
+	osgManipulator::Dragger* manipulator_scale;
+	osgManipulator::Dragger* manipulator_rotation;
 
 	//jurik
 	/**

@@ -5,6 +5,15 @@
 #include "Model/GraphDAO.h"
 #include "Manager/Manager.h"
 
+#include <QPushButton>
+#include <QLabel>
+#include <QTableWidget>
+#include <QHBoxLayout>
+#include <QGridLayout>
+#include <QHeaderView>
+#include <QMessageBox>
+#include <QPushButton>
+
 namespace QOSG {
 
 SelectLayoutWindow::SelectLayoutWindow( QWidget* parent, qlonglong graphID )

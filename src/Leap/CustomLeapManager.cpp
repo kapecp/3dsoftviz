@@ -10,19 +10,19 @@
 #include <math.h>
 
 Leap::CustomLeapManager::CustomLeapManager( Vwr::CameraManipulator* cameraManipulator, Layout::LayoutThread* layout,
-		Vwr::CoreGraph* coreGraph , osg::ref_ptr<osg::Group> handsGroup )
-    :cameraManipulator( cameraManipulator ), layout( layout ), coreGraph( coreGraph ), handsGroup( handsGroup )
-{    
+		Vwr::CoreGraph* coreGraph, osg::ref_ptr<osg::Group> handsGroup )
+	:cameraManipulator( cameraManipulator ), layout( layout ), coreGraph( coreGraph ), handsGroup( handsGroup )
+{
 	arMode = false;
-    this->handObjectManipulator = new Leap::HandObjectManipulator(new Leap::HandMapper(this->coreGraph), 'y');
+	this->handObjectManipulator = new Leap::HandObjectManipulator( new Leap::HandMapper( this->coreGraph ), 'y' );
 	//init handPalms here
 	if ( this->handsGroup != nullptr ) {
 		arMode = true;
 		HandPalm* rightPalm = new HandPalm( 0.1f, handsGroup, 1 );
 		HandPalm* leftPalm = new HandPalm( 0.1f, handsGroup, 2 );
 
-        rightPalm->setMatrix( osg::Matrix::translate( -0.5,0,0 ) );
-        leftPalm->setMatrix( osg::Matrix::translate( 0.5,0,0 ) );
+		rightPalm->setMatrix( osg::Matrix::translate( -0.5,0,0 ) );
+		leftPalm->setMatrix( osg::Matrix::translate( 0.5,0,0 ) );
 
 	}
 }
@@ -114,20 +114,20 @@ void Leap::CustomLeapManager::scaleNodes( bool scaleUp )
 	}
 }
 
-int Leap::CustomLeapManager::updateCoreGraphBackground( const unsigned char* buffer , float depth)
+int Leap::CustomLeapManager::updateCoreGraphBackground( const unsigned char* buffer, float depth )
 {
-    if (this->coreGraph->isLeapStreamActive()) {
-        this->coreGraph->updateBackgroundStream( ( unsigned char* )buffer );
-    }
-    return 1;
+	if ( this->coreGraph->isLeapStreamActive() ) {
+		this->coreGraph->updateBackgroundStream( ( unsigned char* )buffer );
+	}
+	return 1;
 }
 
 void Leap::CustomLeapManager::updateHands( Leap::Hand leftHand, Leap::Hand rightHand )
 {
-    if ( this->handsGroup != NULL ) {
-        //0 a 3 z dovodu ze v grupe je palmNode, fingerGroup, palmNode, fingerGroup
-        HandPalm* leftPalm = static_cast<HandPalm*>( handsGroup->getChild( 3 ) );
-        HandPalm* rightPalm = static_cast<HandPalm*>( handsGroup->getChild( 0 ) );
+	if ( this->handsGroup != NULL ) {
+		//0 a 3 z dovodu ze v grupe je palmNode, fingerGroup, palmNode, fingerGroup
+		HandPalm* leftPalm = static_cast<HandPalm*>( handsGroup->getChild( 3 ) );
+		HandPalm* rightPalm = static_cast<HandPalm*>( handsGroup->getChild( 0 ) );
 
         this->handObjectManipulator->updateHands(leftHand, rightHand, leftPalm,
                                                  rightPalm,this->coreGraph->getCamera());
@@ -135,3 +135,40 @@ void Leap::CustomLeapManager::updateHands( Leap::Hand leftHand, Leap::Hand right
 
 }
 
+void Leap::CustomLeapManager::scaleGraph(bool scaleUp){
+    if(scaleUp){
+        this->coreGraph->scaleGraph(2);
+    }else{
+        this->coreGraph->scaleGraph(1);
+    }
+}
+
+void Leap::CustomLeapManager::selectNode(bool right){
+
+//	Treba vyriesit scale ruky, pretoze vzhladom na graf je moc mala a teda je takmer nemozne pretnut ruku s grafom.
+
+//	if ( coreGraph->getHandsGroup() != NULL && coreGraph->getGraph() != NULL) {
+
+//		LOG( INFO ) << "Leap::CustomLeapManager::selectNode";
+
+//		HandPalm* palm = static_cast<HandPalm*>( coreGraph->getHandsGroup()->getChild( right ? 0 : 3 ) );
+
+//		Leap::Joint* tip =  static_cast<Leap::Joint*>( palm->fingerGroup->getChild( static_cast<unsigned int>( 1 ) )->asGroup()->getChild( 0 ));
+//		LOG( INFO ) << coreGraph->getGraph()->getNodes()->count();
+//		foreach (osg::ref_ptr<Data::Node> node, coreGraph->getGraph()->getNodes()->values()) {
+
+//			LOG( INFO ) << node.get()->getCurrentPosition().x();
+//			LOG( INFO ) << tip->getBound().center().x();
+
+//			if ( tip->getBound().intersects(node.get()->getBound())){
+//				LOG( INFO ) << "Intersection";
+//			}
+
+//		}
+//		LOG( INFO ) << tip->getBound().radius();
+
+//	}
+
+
+
+}

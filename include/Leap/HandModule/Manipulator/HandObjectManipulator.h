@@ -1,13 +1,14 @@
 #ifndef HANDOBJECTMANIPULATOR_H
 #define HANDOBJECTMANIPULATOR_H
 
-#include <osg/Group>
-#include <osg/ref_ptr>
-#include <opencv2/core/core.hpp>
-#include "OpenCV/HandTracker.h"
 #include "Leap/HandModule/Manipulator/HandMapper.h"
 #include "Leap/HandModule/Model/HandPalm.h"
 #include "osg/Camera"
+
+#include "OpenCV/HandTracker.h"
+
+#include <osg/Group>
+#include <opencv2/core/core.hpp>
 
 namespace Leap {
 
@@ -17,7 +18,6 @@ class HandObjectManipulator
 {
 
 public:
-
     HandObjectManipulator(HandMapper *mapper, char upDirectionAxis);
 
     ~HandObjectManipulator();
@@ -71,12 +71,13 @@ public:
     Leap::Vector changeHandUpDirectionAxis(Leap::Vector vector);
 
     void setHandMapper( HandMapper *mapper);
+
 private:
-    osg::Vec3d center;
-    osg::Vec3d up;
-    osg::Vec3d direction;
-    HandMapper *mapper;
-    char upDirectionAxis;
+	osg::Vec3d center;
+	osg::Vec3d up;
+	osg::Vec3d direction;
+	HandMapper* mapper;
+	char upDirectionAxis;
 };
 }
 

@@ -42,7 +42,7 @@ void Lua::GitGraphVisualizer::visualize()
 
 		// ak sa uzol v grafe nenachadza, tak ho pridame do grafu a nastavime mu LuaIdentifier
 		if ( !n ) {
-			n = currentGraph->addNode( i.key() , i.value()->getLabel(), nodeType );
+			n = currentGraph->addNode( i.key(), i.value()->getLabel(), nodeType );
 			n->setLuaIdentifier( i.value()->getIdentifier() );
 		}
 

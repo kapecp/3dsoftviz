@@ -1,11 +1,8 @@
 #ifndef HANDMAPPER_H
 #define HANDMAPPER_H
 
-#include <osg/Group>
-#include <osg/ref_ptr>
+#include "Leap.h"
 #include <opencv2/core/core.hpp>
-#include "OpenCV/HandTracker.h"
-#include "Viewer/CoreGraph.h"
 
 namespace Vwr {
 class CoreGraph;
@@ -18,10 +15,11 @@ class HandMapper
 
 public:
 
-    HandMapper(Vwr::CoreGraph* coreGraph);
+	HandMapper( Vwr::CoreGraph* coreGraph );
 
-    ~HandMapper();
+	~HandMapper();
 
+<<<<<<< HEAD
     Leap::Vector recalculateDepthNode(Leap::Vector vector, float diff);
     void setNodeScreenCoords(osg::Vec3 nodeScreenCoords);
 
@@ -35,6 +33,18 @@ private:
     osg::Vec3 nodeScreenCoords;
     unsigned long calibrationCounter;
     cv::Point calibrationLastPoint;
+=======
+	Leap::Vector recalculateDepthNode( Leap::Vector vector, float diff );
+
+
+
+private:
+	float calculateAveragePalmFingerDistance( cv::vector<cv::Point> pointList,
+			int imageWidth, int imageHeight );
+	cv::vector<cv::Point> getHandPointList( cv::vector<cv::vector<cv::Point>> contourPointList );
+	Vwr::CoreGraph* coreGraph;
+	float cameraOffset;
+>>>>>>> 42681eec6f5d3863a6af7f978295a617be8b2ef4
 };
 }
 

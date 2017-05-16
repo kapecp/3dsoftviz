@@ -123,7 +123,7 @@ void Vwr::CameraManipulator::home( double /*currentTime*/ )
 	_thrown = false;
 }
 
-void Vwr::CameraManipulator::home( const GUIEventAdapter& ea ,GUIActionAdapter& us )
+void Vwr::CameraManipulator::home( const GUIEventAdapter& ea,GUIActionAdapter& us )
 {
 	home( ea.getTime() );
 	us.requestRedraw();
@@ -762,8 +762,8 @@ bool Vwr::CameraManipulator::handleKeyUp( const osgGA::GUIEventAdapter& ea, osgG
 			break;
 		case osgGA::GUIEventAdapter::KEY_V: {
 			// Set camera position (use for debug & setting specific camera position)
-			_center.set( 15.9042 , -277.226 , -372.165 );
-			_rotation.set( 0.467275 , -0.0320081 , 0.0985734 , 0.878017 );
+			_center.set( 15.9042, -277.226, -372.165 );
+			_rotation.set( 0.467275, -0.0320081, 0.0985734, 0.878017 );
 			break;
 		}
 		default:

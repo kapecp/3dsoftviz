@@ -17,12 +17,13 @@ class TrackerBall
 public:
 	TrackerBall();
 	~TrackerBall();
-	void findBall(cv::Mat image);
+	void findBall( cv::Mat image );
 	std::vector<cv::Point3f> history;
 	cv::Point2f cent;
 	float radius;
 	float lastInlierPerc;
 	int id;
+	int numOfFramesnfound;
 	bool found;
 
 };

@@ -11,7 +11,7 @@ Leap::LeapThread::LeapThread( QObject* parent, LeapManager* leapManager ) : QThr
 Leap::LeapThread::~LeapThread( void )
 {
 	leapController->stopListening();
-	delete( leapController );
+	delete ( leapController );
 	LOG( INFO ) << "LeapThread::~LeapThread, destroyed";
 }
 

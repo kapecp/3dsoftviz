@@ -7,6 +7,9 @@
 
 #include <QtGui>
 
+#include <QProgressDialog>
+#include <QMessageBox>
+
 #include <QString>
 
 namespace QOSG {

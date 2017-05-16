@@ -1,11 +1,14 @@
 #include "Leap/HandModule/Manipulator/HandMapper.h"
 
+#include "Viewer/CoreGraph.h"
+
 #include <vector>
 #include <easylogging++.h>
 
 #ifdef OPENCV_FOUND
 #include "OpenCV/CameraStream.h"
 #endif
+
 
 Leap::HandMapper::HandMapper(Vwr::CoreGraph* coreGraph)
     :coreGraph(coreGraph), cameraOffset(cv::Point(0,0)), calibrationCounter(0),
@@ -19,41 +22,42 @@ Leap::HandMapper::~HandMapper()
 
 }
 
-cv::vector<cv::Point> Leap::HandMapper::getHandPointList(cv::vector<cv::vector<cv::Point>> contourPointList) {
-    for (int n = 0; n < contourPointList.size(); n++)
-    {
-        if (contourPointList[n].size() > 3 && contourPointList[n].size() < 7) {
-            return contourPointList[n];
-        }
-    }
+cv::vector<cv::Point> Leap::HandMapper::getHandPointList( cv::vector<cv::vector<cv::Point>> contourPointList )
+{
+	for ( int n = 0; n < contourPointList.size(); n++ ) {
+		if ( contourPointList[n].size() > 3 && contourPointList[n].size() < 7 ) {
+			return contourPointList[n];
+		}
+	}
 
-    return cv::vector<cv::Point>();
+	return cv::vector<cv::Point>();
 }
 
-float Leap::HandMapper::calculateAveragePalmFingerDistance(cv::vector<cv::Point> handPointList,
-                                                           int imageWidth, int imageHeight) {
-    float averageDst = 0;
+float Leap::HandMapper::calculateAveragePalmFingerDistance( cv::vector<cv::Point> handPointList,
+		int imageWidth, int imageHeight )
+{
+	float averageDst = 0;
 
-    if (handPointList.size() == 0) {
-        return averageDst;
-    }
+	if ( handPointList.size() == 0 ) {
+		return averageDst;
+	}
 
 	cv::Point2f palmCenter;
-	palmCenter = cv::Point2f(static_cast<float>(handPointList[0].x),static_cast<float>(handPointList[0].y));
+	palmCenter = cv::Point2f( static_cast<float>( handPointList[0].x ),static_cast<float>( handPointList[0].y ) );
 	palmCenter.x /= imageWidth;
-    palmCenter.y /= imageHeight;
+	palmCenter.y /= imageHeight;
 
-    for (int n = 1; n < handPointList.size(); n++)
-    {
+	for ( int n = 1; n < handPointList.size(); n++ ) {
 		cv::Point2f fingerTip;
-		fingerTip = cv::Point2f(static_cast<float>(handPointList[n].x),static_cast<float>(handPointList[n].y));
+		fingerTip = cv::Point2f( static_cast<float>( handPointList[n].x ),static_cast<float>( handPointList[n].y ) );
 		fingerTip.x /= imageWidth;
-        fingerTip.y /= imageHeight;
-        averageDst += cv::norm(palmCenter-fingerTip);
-    }
+		fingerTip.y /= imageHeight;
+		averageDst += cv::norm( palmCenter-fingerTip );
+	}
 
-    return averageDst / (handPointList.size() - 1);
+	return averageDst / ( handPointList.size() - 1 );
 }
+
 
 Leap::Vector Leap::HandMapper::recalculateDepthNode(Leap::Vector vector, float diff){
 
@@ -119,10 +123,9 @@ Leap::Vector Leap::HandMapper::recalculateDepthNode(Leap::Vector vector, float d
             vector.x += this->cameraOffset.x * 1.2  + depthOffset;
             vector.z += vector.y/20 ;
         }
-
     }
 
-    return vector;
+	return vector;
 }
 
 void Leap::HandMapper::setNodeScreenCoords(osg::Vec3 nodeScreenCoords){

@@ -356,12 +356,12 @@ public slots:
 	 */
 	void switchBackgroundOrtho2d();
 
-    /**
-     * void switchBackgroundLeap(  )
-     * @brief TODO
-     * @param TODO
-     */
-    void switchBackgroundLeap();
+	/**
+	 * void switchBackgroundLeap(  )
+	 * @brief TODO
+	 * @param TODO
+	 */
+	void switchBackgroundLeap();
 
 	/**
 				*  \fn public  sliderValueChanged(int value)
@@ -588,6 +588,9 @@ public slots:
 	void start_client();
 	void send_message();
 	void create_facewindow();
+
+    void toggleDraggerScale( bool set );
+    void toggleDraggerRotation( bool set );
 
 #ifdef OPENCV_FOUND
 #ifdef OPENNI2_FOUND
@@ -886,11 +889,11 @@ private:
 	 */
 	QAction* switchBackgroundTextureAction;
 
-    /**
-     * QAction * switchBackgroundLeapAction
-     *@brief Action to switch/change background to leap background
-     */
-    QAction* switchBackgroundLeapAction;
+	/**
+	 * QAction * switchBackgroundLeapAction
+	 *@brief Action to switch/change background to leap background
+	 */
+	QAction* switchBackgroundLeapAction;
 
 	/**
 	 * QAction * switchBackgroundOrtho2dAction
@@ -1550,6 +1553,9 @@ private:
 		*  \brief Pointer to comobox of edge types
 		*/
 	QComboBox* edgeTypeComboBox;
+
+	QCheckBox* chb_dragger_scale;
+	QCheckBox* chb_dragger_rotation;
 
 	/**
 		*  bool isEBPlaying

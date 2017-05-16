@@ -43,7 +43,7 @@ signals:
 			 */
 	void pushImage( cv::Mat Image );
 
-    void pushBackgrImage( cv::Mat image , bool trackHands );
+	void pushBackgrImage( cv::Mat image, bool trackHands );
 
 	/**
 			 * @author Autor: Marek Jakab
