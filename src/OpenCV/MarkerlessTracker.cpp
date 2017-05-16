@@ -40,13 +40,13 @@ float OpenCV::MarkerlessTracker::verifyCircle(cv::Mat dt, cv::Point2f center, fl
 			if ( cX >= 0 )
 				if ( cY < dt.rows )
 					if ( cY >= 0 )
-						if ( dt.at<float>( cY,cX ) < maxInlierDist ) {
+						if ( dt.at<float>(static_cast<int>(cY),static_cast<int>(cX) ) < maxInlierDist ) {
 							inlier++;
 							inlierSet.push_back( cv::Point2f( cX,cY ) );
 						}
 	}
 
-	return ( float )inlier/float( counter );
+	return static_cast<float>(inlier)/ static_cast<float>( counter );
 }
 
 
@@ -78,11 +78,11 @@ std::vector<cv::Point2f> OpenCV::MarkerlessTracker::getPointPositions( cv::Mat b
 {
 	std::vector<cv::Point2f> pointPositions;
 	//unsigned char* rowPtr = binaryImage.ptr<unsigned char>(y);
-	for ( unsigned int y=0; y<binaryImage.rows; ++y ) {
-		for ( unsigned int x = 0; x < binaryImage.cols; ++x ) {
+	for (  int y=0; y<binaryImage.rows; ++y ) {
+		for (  int x = 0; x < binaryImage.cols; ++x ) {
 			//if(rowPtr[x] > 0) pointPositions.push_back(cv::Point2i(x,y));
 			if ( binaryImage.at < unsigned char > ( y, x ) > 0 ) {
-				pointPositions.push_back( cv::Point2f( x, y ) );
+				pointPositions.push_back( cv::Point2f(static_cast<float>( x ),static_cast<float>( y ) ) );
 			}
 		}                   //
 	}
@@ -105,7 +105,7 @@ void OpenCV::MarkerlessTracker::track( cv::Mat& frame )
 	// TODO assign ids to circles, backtrack them
 	for ( size_t i = 0; i < tBalls.size(); i++ ) {
 		//(x,y,radius)
-		cv::Point3f circle( cvRound( tBalls.at( i ).cent.x ), cvRound( tBalls.at( i ).cent.y ), cvRound( tBalls.at( i ).radius ) );
+		cv::Point3f circle(static_cast<float>( cvRound( tBalls.at( i ).cent.x )), static_cast<float>( cvRound( tBalls.at( i ).cent.y ) ), static_cast<float>( cvRound( tBalls.at( i ).radius ) ) );
 
 		cv::Mat rvec( 3, 1, CV_32FC1 );
 		cv::Mat tvec( 3, 1, CV_32FC1 );
@@ -135,10 +135,10 @@ void OpenCV::MarkerlessTracker::findCirclesInFrame( cv::Mat& frame ){ //trackuje
 	cv::findContours( mask, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE, cv::Point(0, 0) ); //transfrmacia hran na kontury
 	cv::Mat drawing;
 	drawing =cv::Mat::zeros(mask.size(),CV_8UC1);
-	for( int i = 0; i< contours.size(); i++ ) //vytvoreni hranoveho obrazka
+	for( unsigned int i = 0; i< contours.size(); i++ ) //vytvoreni hranoveho obrazka
 	{
 		cv::Scalar color = cv::Scalar( 255, 255, 255 );
-		cv::drawContours( drawing, contours, i, color, 1, 8, hierarchy, 0, cv::Point() );
+		cv::drawContours( drawing, contours,static_cast<int>( i ), color, 1, 8, hierarchy, 0, cv::Point() );
 	}
 	mask=drawing;
 	std::vector<cv::Point2f> edgePositions;
@@ -155,7 +155,7 @@ void OpenCV::MarkerlessTracker::findCirclesInFrame( cv::Mat& frame ){ //trackuje
 	}*/
 //	std::cout << "number of balls " << numOfBalls << std::endl;
 	if (tBalls.size()!=0){ //prechod histriou
-		for(int i=0;i<tBalls.size();i++){
+		for(unsigned int i=0;i<tBalls.size();i++){
 			if(tBalls.at(i).found){ //hladaj glicku k bola predtym najdena
 				tBalls.at(i).found=false;
 
@@ -164,7 +164,7 @@ void OpenCV::MarkerlessTracker::findCirclesInFrame( cv::Mat& frame ){ //trackuje
 					tBalls.at(i).history.erase(tBalls.at(i).history.begin());//odstran nadbytcne zaznami v historii pre guliku
 				}
 				float minCirclePercentage = 0.5f;
-				for(int g=0;g<tBalls.at(i).history.size();g++){
+				for(unsigned int g=0;g<tBalls.at(i).history.size();g++){
 					if(found){ //hladaj len pokial gulicka nebola nadena
 						break;
 					}
@@ -174,13 +174,13 @@ void OpenCV::MarkerlessTracker::findCirclesInFrame( cv::Mat& frame ){ //trackuje
 					float radius;
 					for (int l = 0; l <10 ; ++l) { //upravuj hodnoty polomeru
 						for (int j = 0; j < 10 ; j++) { //hodnou x
-							center.x=aktual.x+j;
+							center.x=aktual.x+static_cast<float>( j );
 							for (int k = 0; k < 10 ; k++) { //hodnotu y
 
-								center.y=aktual.y+k;
+								center.y=aktual.y+static_cast<float>( k );
 
 								std::vector<cv::Point2f> inlierSet;
-								radius=aktual.z+l;
+								radius=aktual.z+static_cast<float>( l );
 
 								float cPerc = verifyCircle(dt, center, radius, inlierSet); //ziskajfunkciou pecento bodov z fitovaneho kruhu
 
@@ -192,14 +192,14 @@ void OpenCV::MarkerlessTracker::findCirclesInFrame( cv::Mat& frame ){ //trackuje
 									// but that's a TODO
 
 
-									cv::circle(frame, center, radius, cv::Scalar(255, 255, 0), 1); //vykresli kruh pre gulicku
+									cv::circle(frame, center, static_cast<int>( radius ), cv::Scalar(255, 255, 0), 1); //vykresli kruh pre gulicku
 									cv::circle(frame, center, 5, cv::Scalar(255, 0, 0), 3); //vykresli kruh pre stred
 
-									cv::circle( frame, center, radius, cv::Scalar( 255, 255, 0 ), 1 );
+									cv::circle( frame, center, static_cast<int>( radius ), cv::Scalar( 255, 255, 0 ), 1 );
 									cv::circle( frame, center, 5, cv::Scalar( 255, 0, 0 ), 3 );
 
 									// accept circle => remove it from the edge list
-									cv::circle( mask, center, radius, cv::Scalar( 0 ), 10 );
+									cv::circle( mask, center, static_cast<int>( radius ), cv::Scalar( 0 ), 10 );
 
 									//update edge positions and distance transform
 									edgePositions = getPointPositions(mask);
@@ -213,7 +213,7 @@ void OpenCV::MarkerlessTracker::findCirclesInFrame( cv::Mat& frame ){ //trackuje
 									found =true;
 
 								}
-								radius=aktual.z-l; //zmena adius zaporna inac rovnaky proces ako napisan vyssie
+								radius=aktual.z-static_cast<float>( l ); //zmena adius zaporna inac rovnaky proces ako napisan vyssie
 								cPerc = verifyCircle(dt, center, radius, inlierSet);
 
 								if ( cPerc >= minCirclePercentage && radius>50 && !found ) {
@@ -223,10 +223,10 @@ void OpenCV::MarkerlessTracker::findCirclesInFrame( cv::Mat& frame ){ //trackuje
 									// but that's a TODO
 
 
-									cv::circle( frame, center, radius, cv::Scalar( 255, 255, 0 ), 1 );
+									cv::circle( frame, center,static_cast<int>( radius ), cv::Scalar( 255, 255, 0 ), 1 );
 									cv::circle( frame, center, 5, cv::Scalar( 255, 0, 0 ), 3 );
 									// accept circle => remove it from the edge list
-									cv::circle( mask, center, radius, cv::Scalar( 0 ), 10 );
+									cv::circle( mask, center,static_cast<int>( radius ), cv::Scalar( 0 ), 10 );
 
 									//update edge positions and distance transform
 									edgePositions = getPointPositions(mask);
@@ -256,12 +256,12 @@ void OpenCV::MarkerlessTracker::findCirclesInFrame( cv::Mat& frame ){ //trackuje
 						for (int l = 0; l < 10; ++l) {
 							for (int j = 1; j < 10; j++) {
 
-								center.x = aktual.x - j;
+								center.x = aktual.x -static_cast<float>( j );
 								for ( int k = 1; k < 10; k++ ) {
-									center.y = aktual.y - k;
+									center.y = aktual.y - static_cast<float>( k );
 
 									std::vector<cv::Point2f> inlierSet;
-									radius = aktual.z + l;
+									radius = aktual.z + static_cast<float>( l );
 									float cPerc = verifyCircle( dt, center, radius, inlierSet );
 									//                        std::cout << "history circle with " << cPerc * 100.0f << " % inlier" << std::endl;
 									//                        std::cout << "circle: " << "center: " << center << " radius: " << radius << std::endl;
@@ -271,10 +271,10 @@ void OpenCV::MarkerlessTracker::findCirclesInFrame( cv::Mat& frame ){ //trackuje
 										// but that's a TODO
 
 
-										cv::circle( frame, center, radius, cv::Scalar( 255, 255, 0 ), 1 );
+										cv::circle( frame, center,static_cast<int>( radius ), cv::Scalar( 255, 255, 0 ), 1 );
 										cv::circle( frame, center, 5, cv::Scalar( 255, 0, 0 ), 3 );
 										// accept circle => remove it from the edge list
-										cv::circle( mask, center, radius, cv::Scalar( 0 ), 10 );
+										cv::circle( mask, center,static_cast<int>( radius ), cv::Scalar( 0 ), 10 );
 
 										//update edge positions and distance transform
 										edgePositions = getPointPositions(mask);
@@ -287,7 +287,7 @@ void OpenCV::MarkerlessTracker::findCirclesInFrame( cv::Mat& frame ){ //trackuje
 										tBalls.at(i).numOfFramesnfound =0;
 										found = true;
 									}
-									radius = aktual.z - l;
+									radius = aktual.z - static_cast<float>( l );
 									cPerc = verifyCircle( dt, center, radius, inlierSet );
 									//                                                    std::cout << "history circle with " << cPerc * 100.0f << " % inlier" << std::endl;
 									//                                                    std::cout << "circle: " << "center: " << center << " radius: " << radius << std::endl;
@@ -297,10 +297,10 @@ void OpenCV::MarkerlessTracker::findCirclesInFrame( cv::Mat& frame ){ //trackuje
 										// but that's a TODO
 
 
-										cv::circle( frame, center, radius, cv::Scalar( 255, 255, 0 ), 1 );
+										cv::circle( frame, center, static_cast<int>( radius ), cv::Scalar( 255, 255, 0 ), 1 );
 										cv::circle( frame, center, 5, cv::Scalar( 255, 0, 0 ), 3 );
 										// accept circle => remove it from the edge list
-										cv::circle( mask, center, radius, cv::Scalar( 0 ), 10 );
+										cv::circle( mask, center,static_cast<int>( radius ), cv::Scalar( 0 ), 10 );
 
 										//update edge positions and distance transform
 										edgePositions = getPointPositions(mask);
@@ -332,8 +332,8 @@ void OpenCV::MarkerlessTracker::findCirclesInFrame( cv::Mat& frame ){ //trackuje
 
 				}
 			if(found){//ak bola gulica najdena tak sa vykresl historia
-				for(int k=1;k<tBalls.at(i).history.size();k++){
-					cv::line(frame,cv::Point(tBalls.at(i).history.at(k).x,tBalls.at(i).history.at(k).y),cv::Point(tBalls.at(i).history.at(k-1).x,tBalls.at(i).history.at(k-1).y),cv::Scalar(0,0,255),k);
+				for(unsigned int k=1;k<tBalls.at(i).history.size();k++){
+					cv::line(frame,cv::Point(static_cast<int>( tBalls.at(i).history.at(k).x ),static_cast<int>( tBalls.at(i).history.at(k).y )),cv::Point(static_cast<int>( tBalls.at(i).history.at(k-1).x ),static_cast<int>( tBalls.at(i).history.at(k-1).y )),cv::Scalar(0,0,255),static_cast<int>( k ));
 				}
 			}
 			}
@@ -354,9 +354,9 @@ void OpenCV::MarkerlessTracker::findCirclesInFrame( cv::Mat& frame ){ //trackuje
 	if(framenum>=2){ //a je piaty abo vyssi fame ak spra ransacna cely obraz
 		framenum=0;
 		while (nIterations<=maxIterations) { //vyber nahodne body z hraoveho obrazu
-			unsigned int idx1 = rand() % edgePositions.size();
-			unsigned int idx2 = rand() % edgePositions.size();
-			unsigned int idx3 = rand() % edgePositions.size();
+			unsigned int idx1 = static_cast<unsigned int>( rand() ) % static_cast<unsigned int>( edgePositions.size() );
+			unsigned int idx2 = static_cast<unsigned int>( rand() ) % static_cast<unsigned int>( edgePositions.size() );
+			unsigned int idx3 = static_cast<unsigned int>( rand() ) % static_cast<unsigned int>( edgePositions.size() );
 			if (idx1 == idx2) continue;
 			if (idx1 == idx3) continue;
 			if (idx3 == idx2) continue;
@@ -379,17 +379,17 @@ void OpenCV::MarkerlessTracker::findCirclesInFrame( cv::Mat& frame ){ //trackuje
 				// but that's a TODO
 
 				//                std::cout << "circle: " << "center: " << center << " radius: " << radius << std::endl;
-				cv::circle(frame, center, radius, cv::Scalar(255, 255, 0), 1);
+				cv::circle(frame, center,static_cast<int>( radius ), cv::Scalar(255, 255, 0), 1);
 				cv::circle(frame, center, 5, cv::Scalar(255, 0, 0), 3);
 
 				// accept circle => remove it from the edge list
-				cv::circle(mask, center, radius, cv::Scalar(0), 10);
+				cv::circle(mask, center, static_cast<int>( radius ), cv::Scalar(0), 10);
 
 				//update edge positions and distance transform
 				edgePositions = getPointPositions(mask);
 				cv::distanceTransform(255 - mask, dt, CV_DIST_L1, 3);
 				bool check= false;
-				for(int i=0;i<tBalls.size()&&!check;i++){	//skontroluj ci sa gulicka nachadza tam kde sa nachadzala nejaka predchadzajuca gulicka
+				for(unsigned int i=0;i<tBalls.size()&&!check;i++){	//skontroluj ci sa gulicka nachadza tam kde sa nachadzala nejaka predchadzajuca gulicka
 					if ((abs(tBalls.at(i).cent.x-center.x)<50) &&(abs(tBalls.at(i).cent.y-center.y)<50) && (abs(tBalls.at(i).radius-radius)<50) && (!tBalls.at(i).found)){
 						cv::Point3f location;
 						location.x=tBalls.at(i).cent.x;
@@ -401,8 +401,8 @@ void OpenCV::MarkerlessTracker::findCirclesInFrame( cv::Mat& frame ){ //trackuje
 						tBalls.at(i).lastInlierPerc=cPerc;
 						tBalls.at(i).found =true;
 						tBalls.at(i).numOfFramesnfound =0;
-						for(int k=1;k<tBalls.at(i).history.size();k++){
-							cv::line(frame,cv::Point(tBalls.at(i).history.at(k).x,tBalls.at(i).history.at(k).y),cv::Point(tBalls.at(i).history.at(k-1).x,tBalls.at(i).history.at(k-1).y),cv::Scalar(0,0,255),k);
+						for(unsigned int k=1;k<tBalls.at(i).history.size();k++){
+							cv::line(frame,cv::Point(static_cast<int>( tBalls.at(i).history.at(k).x ),static_cast<int>( tBalls.at(i).history.at(k).y )),cv::Point(static_cast<int>( tBalls.at(i).history.at(k-1).x ),static_cast<int>( tBalls.at(i).history.at(k-1).y )),cv::Scalar(0,0,255),static_cast<int>( k ));
 						}
 						check=true;
 					}
@@ -412,7 +412,7 @@ void OpenCV::MarkerlessTracker::findCirclesInFrame( cv::Mat& frame ){ //trackuje
 					help.cent=center;
 					help.radius=radius;
 					help.lastInlierPerc=cPerc;
-					help.id=tBalls.size()+1;
+					help.id=static_cast<int>( tBalls.size()+1 );
 					cv::Point3f location;
 					location.x=center.x;
 					location.y=center.y;
@@ -432,7 +432,7 @@ void OpenCV::MarkerlessTracker::findCirclesInFrame( cv::Mat& frame ){ //trackuje
 			// prevent cases where no fircle could be extracted (because three points collinear or sth.)
 			// filter NaN values
 			if ((center.x == center.x) && (center.y == center.y) && (radius == radius)) {
-				cv::circle(tmp, center, radius, cv::Scalar(255));
+				cv::circle(tmp, center,static_cast<int>(  radius ), cv::Scalar(255));
 				//            cv::namedWindow("RANSAC"); cv::imshow("RANSAC", tmp);
 			} else {
 				//                std::cout << "circle illegal" << std::endl;
