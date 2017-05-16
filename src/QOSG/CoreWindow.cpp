@@ -564,6 +564,14 @@ void CoreWindow::createActions()
 	edgeTypeComboBox->setFocusPolicy( Qt::NoFocus );
 	connect( edgeTypeComboBox,SIGNAL( currentIndexChanged( int ) ),this,SLOT( edgeTypeComboBoxChanged( int ) ) );
 
+//	-------------------------------------------------------------------------------------------------------------------------------------------------------
+//	-------------------------------------------------------------------------------------------------------------------------------------------------------
+	chb_dragger_scale = new QCheckBox( "Dragger_scale" );
+    connect( chb_dragger_scale, SIGNAL( clicked( bool ) ), this, SLOT( toggleDraggerScale( bool ) ) );
+
+	chb_dragger_rotation = new QCheckBox( "Dragger_rotation" );
+    connect( chb_dragger_rotation, SIGNAL( clicked( bool ) ), this, SLOT( toggleDraggerRotation( bool ) ) );
+
 	b_start_server = new QPushButton();
 	b_start_server->setText( "Host session" );
 	connect( b_start_server, SIGNAL( clicked() ), this, SLOT( start_server() ) );
@@ -955,6 +963,9 @@ QWidget* CoreWindow::createGraphTab( QFrame* line )
 	lGraph->addRow( nodeTypeComboBox );
 	edgeTypeComboBox->setMaximumWidth( 136 );
 	lGraph->addRow( edgeTypeComboBox );
+
+	lGraph->addRow( chb_dragger_scale );
+	lGraph->addRow( chb_dragger_rotation );
 
 	wGraph->setLayout( lGraph );
 
@@ -4007,7 +4018,29 @@ void CoreWindow::startLeapAR()
 }
 #endif
 
+void CoreWindow::toggleDraggerRotation( bool set )
+{
+    if (chb_dragger_rotation->isChecked()){
+            coreGraph->toggleDragger( 0, false);
+            coreGraph->toggleDragger( 1, chb_dragger_rotation->isChecked() );
+            chb_dragger_scale->setChecked(false);
+    } else {
+        coreGraph->toggleDragger( 0, false);
+        coreGraph->toggleDragger( 1, false);
+    }
+}
 
+void CoreWindow::toggleDraggerScale( bool set )
+{
+    if (chb_dragger_scale->isChecked()){
+        coreGraph->toggleDragger( 0, chb_dragger_scale->isChecked() );
+        coreGraph->toggleDragger( 1, false );
+        chb_dragger_rotation->setChecked(false);
+    } else {
+        coreGraph->toggleDragger( 0, false);
+        coreGraph->toggleDragger( 1, false);
+    }
+}
 
 void CoreWindow::toggleSpyWatch()
 {
