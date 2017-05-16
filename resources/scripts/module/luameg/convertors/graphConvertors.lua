@@ -57,9 +57,12 @@ local function convertGraphToImportGraph(graph)
 			newNode.params.path = vNode.data.path
 		end
 
-
-		-- sem doplnit dalsie parametre pre dalsie uzly podla potreby
-
+		-- automaticke skopirovanie dat z atributu data do newNode.params. Vynechaju sa uz skopirovane atributy.
+		for kKey, vValue in pairs(vNode.data) do
+			if kKey ~= "name" and kKey ~= "type" and kKey ~= "path" then
+			--	newNode.params[kKey] = vValue		-- ak bude treba preniest vsetky data, odkomentovat. Zatial netreba, k datam sa pristupuje cez id.
+			end
+		end
 
 		-- ulozenie uzla do zoznamu
 		nodes[vNode] = newNode		

@@ -4,9 +4,11 @@
 --------------------------
 
 local classDiagram = require "luameg.plantuml.classDiagram"
+local sequenceDiagram = require "luameg.plantuml.sequenceDiagram"
 
 return {
 	getClassPlantuml = classDiagram.getPlantUmlFromNode,
 	getClassDiagramSvg = classDiagram.getImageFromNode,
-	getClassJsonData = classDiagram.getJsonDataFromNode
+	getClassJsonData = classDiagram.getJsonDataFromNode,
+	getSequenceDiagramSvg = sequenceDiagram.getSVGDiagram
 }

@@ -13,12 +13,14 @@ local luadb = require 'luadb.hypergraph'
 -- @param astNodeId - [number] nodeid from AST tree. Write to data.astNodeID
 -- @param refToAstText - [table] This table contains ids to ast nodes where is same text as in this node. 
 --           It is used in changing text of this node. Then is replace text on all nodes from this table.
+-- @param visibility - [string] visibility of element in node (for methods and properties)
 -- @return [table] new luadb node
-local function createNode(type, name, astNodeId, refToAstText)
+local function createNode(type, name, astNodeId, refToAstText, visibility)
 	local node = luadb.node.new()
 	node.meta = node.meta or {}
 	node.meta.type = type
 	node.data.name = name
+	node.data.visibility = visibility
 	node.data.refToAstText = refToAstText
 	--node.data.astID = astId  -- nech sa astID doplni mimo tohto submodulu
 	node.data.astNodeID = astNodeId
@@ -184,6 +186,31 @@ local function getAstNodesByPath(ast, path, inKey, maxDepth)
 	return dataOut
 end
 
+----------
+-- Check if ast contain node folowed by path. Same as function getAstNodesByPath
+-- Example path: { "*", "ClassDecl", "Statement", "*", "Value", "*", "Name" }
+-- @name isAstNodesByPath
+-- @author Matus Stefanik
+-- @param ast - [table] ast tree or subtree from luameg. Nodes must have ["data"] as list of childrens.
+-- @param path - [table] path of needed types (or 'inKey'). Path support special character '*' for all
+--         types. Examples: {"*", "ClassDecl"} return all ClassDecl nodes.
+-- @param inKey - [string] (optional) default is "key". What parameter is comparing with path.
+-- @param maxDepth - [number] (optional) max depth to search. Default is nil as infinite.
+-- @return [boolean] true if node exist described by path and in maxDepth
+local function isAstNodesByPath(ast, path, inKey, maxDepth)
+	local dataOut = {}
+	local index = 1
+	local maxDepth = maxDepth or nil
+	local inKey = inKey or "key"
+
+	local result = getAstNodesByPath(ast, path, inKey, maxDepth)
+	if #result > 0 then
+		return true
+	end
+
+	return false
+end
+
 ---------------------------
 -- @name isValueInTree
 -- @author Matus Stefanik
@@ -221,116 +248,134 @@ end
 -- @author Matus Stefanik
 -- @param ast - [table] ast from luameg (moonscript)
 -- @return [table] list of nodes of all classes from AST with all methods and properties
---    { ["astNode"]=astNodeWithClass, ["name"]=astNode, ["extends"]=astNode, ["properties"]={astNode}, ["methods"]={["astNode"]=classLine, ["name"]=astNode, ["args"]={astNode} } }
-local function getAllClasses(ast) 
+--    { ["astNode"]=astNodeWithClass, ["name"]=astNode, ["extends"]=astNode, ["properties"]={["astNode"]=astNode, ["visibility"]=text}, ["methods"]={["astNode"]=classLine, ["name"]=astNode, ["visibility"]=text, ["args"]={astNode} } }
+local function getAllClasses(ast)
 	local out = {["astNode"]=nil, ["name"]=nil, ["extends"]=nil, ["properties"]=nil, ["methods"]=nil}
 
 	if ast == nil then
 		return out
 	end
 
-	-- ziska vsetky podstromy kde su definovane triedy (uzly ClassDecl)
-	local classDeclTree = getChildNode(ast, "ClassDecl", "key", 14)
+	-- vsetky ast uzly classDecl
+	local classDeclTree = getAstNodesByPath(ast, {"*", "ClassDecl"}, "key", 14)
 
-	for i=1, #classDeclTree do
-		local classNameTree = {}
-		local classLinesTree = {}
-		local props = {}
-		local methods = {}
-		local extendedClass = {}
-		local extendedClassTree = {}
+	for k, astClassDecl in pairs(classDeclTree) do
+		local outClassData = {}
+		outClassData["methods"] = {}
+		outClassData["properties"] = {}
 
-		-- mnozina vsetkych properties v triede
+		-- mnozina vsetkych properties v triede - pomocna mnozina kvoli duplicitam
 		local setProps = {}
 
-		-- v classNameTree bude meno triedy (malo by byt len jedno v danom bloku/podstromu ClassDecl)
-		classNameTree = getChildNode(classDeclTree[i], "Name", "key", 3)
+		outClassData["astNode"] = astClassDecl
 
-		-- v classLinesTree budu podstromy vsetkych metod a properties v danom bloku/podstromu ClassDecl
-		-- classLinesTree = getChildNode(classDeclTree[i], "KeyValue", "key")
-		classLinesTree = getChildNode(classDeclTree[i], "ClassLine", "key")
+		-- class name
+		local astClassName = getAstNodesByPath(astClassDecl, {"ClassDecl", "Assignable", "Name"}, "key", 3)
+		outClassData["name"] = astClassName[1]
 
-
-		-- ziskanie extends class
-		for qq=1, #classDeclTree[i]["data"] do
-			if classDeclTree[i]["data"][qq]["key"] == "Exp" then
-				extendedClassTree = getChildNode(classDeclTree[i]["data"][qq], "Name", "key", 6)
-			end
+		-- extended class name
+		local isAstExtendedClassName = isAstNodesByPath(astClassDecl, {"ClassDecl", "EXTENDS"}, "key", 2)
+		if isAstExtendedClassName == true then
+			local astExtendedClassName = getAstNodesByPath(astClassDecl, {"ClassDecl", "Exp", "Value", "*", "Name"}, "key", 6)
+			outClassData["extends"] = astExtendedClassName[1]
 		end
 
-		-- prevod tabulky extendedClass na string alebo nil. extendedClass by mal obsahovat iba jeden element
-		if #extendedClassTree > 0 then
-			extendedClass = extendedClassTree[1]["text"]
-		else
-			extendedClass = nil
-		end
+		-- jednotlive class line uzly
+		local astClassLines = getAstNodesByPath(astClassDecl, {"ClassDecl", "ClassBlock", "ClassLine"})
+		for _, astClassLine in pairs(astClassLines) do
 
-		-- ziskanie nazvu triedy. Nazov by mal byt iba jeden.
-		if (#classNameTree > 0) then
+			-- nazov hodnoty v class line
+			local astKeyName = getAstNodesByPath(astClassLine, {"ClassLine", "KeyValueList", "KeyValue", "KeyName"})
+			local astStatementName = getAstNodesByPath(astClassLine, {"ClassLine", "Statement", "ExpList", "*", "Callable", "Name"})
+			local astStatementSelfName = getAstNodesByPath(astClassLine, {"ClassLine", "Statement", "ExpList", "*", "Callable", "SelfName"})
+			local isAssignInStatement = isAstNodesByPath(astClassLine, {"ClassLine", "Statement", "Assign"}, "key", 4)
 
-			for j=1, #classLinesTree do
-				
-				local methodsArgsTrees2 = {}
-				local methodsArgsTrees = {}
-				local methodsArgs = {}
+			-- metody obsahuju FunLit (uzol obsahujuci argumenty), clenske premenne ho neobsahuju
+			local astFunLit_arguments = getAstNodesByPath(astClassLine, {"ClassLine", "*", "FunLit"}, "key", 9)
+			if astFunLit_arguments ~= nil and #astFunLit_arguments > 0 then
+				-- classLine obsahuje metodu (bud s argumentami alebo bez)
 
-				methodsArgsTrees = getChildNode(classLinesTree[j], "FunLit", "key")
+				local outMethods = {}
+				outMethods["astNode"] = astClassLine
+				outMethods["args"] = {}
 
-				-- ziskanie vsetkych metod
-				if #methodsArgsTrees > 0 then
-					methodsArgsTrees2 = getChildNode(methodsArgsTrees[1], "FnArgDef", "key")
-					for k=1, #methodsArgsTrees2 do
-						table.insert(methodsArgs, methodsArgsTrees2[k]["data"][1])
-					end
-
-					local methodd = {}
-					methodd = getChildNode(classLinesTree[j], "KeyName", "key")
-					if #methodd > 0 then
-						table.insert(methods, {["name"] = methodd[1], ["astNode"] = classLinesTree[j], ["args"] = methodsArgs})
-
-						--if methodd[1]["text"] == "new" then
-						--	-- vsetky selfname na lavej strane od Assign v Statement, v konstruktore new()
-						local stmsTree = {}
-						stmsTree = getChildNode(classLinesTree[j], "Statement", "key")
-						for k=1, #stmsTree do
-							local selfNameTree ={}
-							local expListTree ={}
-							expListTree = getChildNode(stmsTree[k], "ExpList", "key")
-							if #expListTree > 0 then
-								selfNameTree = getChildNode(expListTree[1], "SelfName", "key")
-								if #selfNameTree > 0 then
-									local t = selfNameTree[1]["text"]:gsub('%W', '')
-									if #t ~= 0 then
-										if setProps[t] == nil or setProps[t] ~= true then
-											setProps[t] = true
-											table.insert(props, selfNameTree[1])
-										end
-									end
-								end
-							end
-						end
-						--end
-					end
+				-- name and visibility. Visibility sa urcuje podla toho co je pod ClassLine: KeyValueList alebo Statement,
+				--  a ak Statement, tak musi obsahovat Assign
+				if astKeyName[1] ~= nil and #astKeyName > 0 then
+					outMethods["visibility"] = "public"
+					outMethods["name"] = astKeyName[1]
+				elseif isAssignInStatement == true and astStatementName[1] ~= nil and #astStatementName > 0 then
+					outMethods["visibility"] = "private"
+					outMethods["name"] = astStatementName[1]
+				elseif isAssignInStatement == true and astStatementSelfName[1] ~= nil and #astStatementSelfName > 0 then
+					outMethods["visibility"] = "public"
+					outMethods["name"] = astStatementSelfName[1]
 				else
-					-- ziskanie vsetkych properties
-					local propss = {}
-					propss = getChildNode(classLinesTree[j], "KeyName", "key")
-					if #propss ~= 0 then
-						local t = propss[1]["text"]:gsub('%W', '')
-						if #t ~= 0 then
-							if setProps[t] == nil or setProps[t] ~= true then
-								setProps[t] = true
-								table.insert(props, propss[1])
+					-- error
+					print("Unknow method name in extractorClass !")
+					outMethods["name"] = "unknow"
+					outMethods["visibility"] = "public"
+				end
+
+				local astFnArgDefs = getAstNodesByPath(astFunLit_arguments[1], {"FunLit", "*", "FnArgDef"}, "key", 4)
+					
+				for _, astFnArgDef in pairs(astFnArgDefs) do
+
+					-- potomok uzla obsahujuci nazov argumentu
+					local childNode = astFnArgDef["data"][1]
+					
+					table.insert(outMethods["args"], childNode)
+
+					if childNode.key == "SelfName" then
+						local childNodeName = childNode.text:gsub("@", "")
+						if setProps[childNodeName] == nil and #childNodeName > 0 then
+							setProps[childNodeName] = true
+							table.insert(outClassData.properties, {["astNode"]=childNode, ["visibility"]="public"})
+						end
+					end
+				end
+
+				table.insert(outClassData["methods"], outMethods)
+
+
+				local astStatements = getAstNodesByPath(astClassLine, {"ClassLine", "*", "Statement"})
+				for _, astStatement in pairs(astStatements) do 
+					local isAssign = isAstNodesByPath(astStatement, {"Statement", "Assign"}, "key", 2)
+					if isAssign == true then
+						local astSelfName = getAstNodesByPath(astStatement, {"Statement", "ExpList", "Exp", "*", "Callable", "SelfName"})
+						if #astSelfName > 0 then
+							local name = astSelfName[1].text:gsub('@', '')
+							if setProps[name] == nil and #name > 0 then
+								setProps[name] = true
+								table.insert(outClassData["properties"], {["astNode"]=astSelfName[1], ["visibility"]="public"})
 							end
 						end
 					end
 				end
+
+			else
+				-- classLine obsahuje clensku premennu
+				if astKeyName[1] ~= nil and #astKeyName > 0 then
+					local propName = astKeyName[1].text:gsub("@", "")
+					if setProps[propName] == nil and #propName > 0 then
+						setProps[propName] = true
+						table.insert(outClassData["properties"], {["astNode"]=astKeyName[1], ["visibility"]="public"})
+					end
+				elseif isAssignInStatement == true and astStatementName[1] ~= nil and #astStatementName > 0 then
+					local propName = astStatementName[1].text:gsub("@", "")
+					if setProps[propName] == nil and #propName > 0 then
+						setProps[propName] = true
+						table.insert(outClassData["properties"], {["astNode"]=astStatementName[1], ["visibility"]="private"})
+					end
+				end
+
 			end
 
-			table.insert(out, {["astNode"]=classDeclTree[i], ["name"]=classNameTree[1], ["extends"]=extendedClassTree[1], ["properties"]=props, ["methods"]=methods})
-		end
-		
-	end
+
+		end  -- koniec classLine
+
+		table.insert(out, outClassData)
+	end  -- koniec classDecl
 
 	return out
 end
@@ -419,7 +464,7 @@ local function getGraph(ast, nodes)
 				table.insert(refToAstText, v.nodeid)
 			end
 
-			nodeClass = createNode("class", className, nodeClassAstNodeId, refToAstText)
+			nodeClass = createNode("class", className, nodeClassAstNodeId, refToAstText, nil)
 
 			table.insert(out.nodes, nodeClass)
 		else
@@ -442,7 +487,7 @@ local function getGraph(ast, nodes)
 					table.insert(refToAstText, v.nodeid)
 				end
 				
-				nodeExtended = createNode("class", nodeExtendedName, nodeExtendedAstNodeId, refToAstText)
+				nodeExtended = createNode("class", nodeExtendedName, nodeExtendedAstNodeId, refToAstText, nil)
 				table.insert(out.nodes, nodeExtended)
 			else 
 				nodeExtended = nodeExtended[1]		-- zoberiem len prvy vyskyt
@@ -456,16 +501,17 @@ local function getGraph(ast, nodes)
 		-- methods
 		for j=1, #classes[i]["methods"] do
 
-			local nodeMethodName = classes[i]["methods"][j]["name"]["text"]
+			local nodeMethodName = classes[i]["methods"][j]["name"]["text"]:gsub("@", "")
 			local nodeMethodAstNodeId = classes[i]["methods"][j]["astNode"]["nodeid"]
-			local nodeMethod = createNode("method", nodeMethodName, nodeMethodAstNodeId, nil)
+			local nodeMethodVisibility = classes[i]["methods"][j]["visibility"]
+			local nodeMethod = createNode("method", nodeMethodName, nodeMethodAstNodeId, nil, nodeMethodVisibility)
 			
 			-- arguments
 			for k=1, #classes[i]["methods"][j]["args"] do
 
-				local nodeArgName = classes[i]["methods"][j]["args"][k]["text"]
+				local nodeArgName = classes[i]["methods"][j]["args"][k]["text"]:gsub('@', '')
 				local nodeArgAstNodeId = classes[i]["methods"][j]["args"][k]["nodeid"]
-				local nodeArg = createNode("argument", nodeArgName, nodeArgAstNodeId, nil)
+				local nodeArg = createNode("argument", nodeArgName, nodeArgAstNodeId, nil, nil)
 
 				local edgeArg = createEdge("has", nodeMethod, nodeArg, true)
 
@@ -482,9 +528,10 @@ local function getGraph(ast, nodes)
 		-- properties
 		for j=1, #classes[i]["properties"] do
 
-			local nodePropName = classes[i]["properties"][j]["text"]:gsub('%W', '')
-			local nodePropAstNodeId = classes[i]["properties"][j]["nodeid"]
-			local nodeProp = createNode("property", nodePropName, nodePropAstNodeId, nil)
+			local nodePropName = classes[i]["properties"][j]["astNode"]["text"]:gsub('@', '')
+			local nodePropAstNodeId = classes[i]["properties"][j]["astNode"]["nodeid"]
+			local nodePropVisibility = classes[i]["properties"][j]["visibility"]
+			local nodeProp = createNode("property", nodePropName, nodePropAstNodeId, nil, nodePropVisibility)
 
 			local edge = createEdge("contains", nodeClass, nodeProp, true)
 
