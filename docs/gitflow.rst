@@ -2,7 +2,7 @@ Gitflow metodika
 ================
 
 Forkovanie na GitHub-e
--------------
+----------------------
 Fork na GitHub-e neprenesie tag-y do forknuteho repozitara, treba ich rucne preniest,
 v novom repozitari:
  * git remote add povodny-repozitar git@github.com:povodny-repozitar/nazov_repo.git
@@ -13,8 +13,9 @@ Vetvy
 -----
 
  * Master - hlavny projekt
- * Develop - branchnuta z mastra, kazdy sprint ma vlastnu Develop vetvu, na konci sprintu sa mergne spat do mastra
- * Feature - branchnuta z developu, kazdy novy kus funkcionality (task v Jire), ktory sa kodi musi mat vlastnu
+ * Develop - branchnuta z mastra, kazdy sprint ma vlastnu Develop vetvu, na konci sprintu sa mergne spat do mastra, 
+	**!!! pred mergom treba spravit komplet build (nie len unity)**
+ * Feature - branchnuta z developu, kazdy novy kus funkcionality (task v issue tracking nastroji), ktory sa kodi musi mat vlastnu
 
 		* Feature vetvu... po dokonceni a validaci kodu sa mergne spat do Developu, NEINTERAGUJE S MASTER VETVOU
 
@@ -35,10 +36,14 @@ Pull request sa robi z GUI GitHubu (pravy horny roh), alebo $ git request-pull {
 
 Po odsuhlaseni Pull requestu sa potom pristupi k mergu.
 
+|Branching|
+Obrazok ilustruje vytvorenie feature branch z develop vetvy, implementaciu rozdelenu do znazornenych commitov, nasledny pull request predstavujuci
+ziadost o code review a finalny merge do develop vetvy daneho sprintu.
+
 Commit messages
 ---------------
 
-v Commit messages pouzivame tagy na zaciatok:
+v Commit messages pouzivame tagy a ID ulohy na zaciatok:
 
  * [FIX] - fixli sme nejaku chybu z minula, bugfix, hotfix a podobne
  * [ADD] - pridali sme novu funkcionalitu, subor, ...
@@ -48,6 +53,8 @@ v Commit messages pouzivame tagy na zaciatok:
  * [TEST] - pre testy
 
 Za tym velmi strucne (a vystizne) opiseme, ake zmeny sme spravili. Message by mali byt kratke, no pokryvat vsetko, co sme v commite spravili.
+**!!! vseobecny tvar: "[tag] #taskId Popis vykonanej zmeny" **
+Napr. *[DOC] #3654 Pridanie uvadzania ID ulohy do gitflow metodiky*
 
 Useful commands
 ---------------
@@ -61,19 +68,19 @@ Useful commands
  * $ git stash / $ git stash pop
 		* ulozi stav projektu do stashu, z ktoreho sa da potom tento stav pop-nut, dobre na prenos zmien medzi vetvami
 
-tvorba feature branch-u:
+Tvorba feature branch-u:
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
  * $ git checkout -b "feature/meno-feature" develop	//Switched to a new branch "feature/meno-feature"
 
-mergovanie hotoveho feature:
+Mergovanie hotoveho feature:
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
  * $ git checkout develop				      	//Switched to branch 'develop'
  * $ git merge --no-ff meno-feature
  * $ git push origin develop
 
-tvorba hotfix branch-u:
+Tvorba hotfix branch-u:
 ~~~~~~~~~~~~~~~~~~~~~~~
 
  * $ git checkout -b "hotfix/nazov-co-fixujem" master	//Switched to a new branch "hotfix-{cislo_verzie}"
@@ -84,3 +91,5 @@ Uzatvorenie Hotfix branchu:
 
  * $ git checkout develop					//Switched to branch 'develop'
  * $ git merge --no-ff "hotfix/nazov-co-fixujem"
+ 
+ .. |Branching| image:: /images/branching.png

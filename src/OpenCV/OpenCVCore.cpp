@@ -3,7 +3,7 @@
 #include <opencv2/core/core.hpp>
 
 #include "Core/Core.h"
-#include "Aruco/arucothread.h"
+#include "Aruco/ArucoThread.h"
 #include "Kinect/KinectThread.h"
 #include "QOpenCV/FaceRecognitionThread.h"
 #include "QOpenCV/FaceRecognitionWindow.h"
@@ -26,10 +26,10 @@ OpenCV::OpenCVCore::OpenCVCore( QApplication* app, QWidget* parent )
 
 	mArucoThrsCreated	= false;
 	mKinectThrsCreated = false;
-	mOpencvWindow   = NULL;
-	mThrFaceRec		= NULL;
-	mThrAruco		= NULL;
-	mThrKinect      = NULL;
+	mOpencvWindow   =  nullptr;
+	mThrFaceRec		=  nullptr;
+	mThrAruco		=  nullptr;
+	mThrKinect      =  nullptr;
 
 
 }
@@ -206,6 +206,12 @@ void OpenCV::OpenCVCore::createConnectionKinect()
 					  mThrKinect,
 					  SLOT( setSpeedKinect( double ) ) );
 
+	//enable/disable markerless tracking
+	QObject::connect( mOpencvWindow,
+					  SIGNAL( setKinectMarkerlessDetection( bool ) ),
+					  mThrKinect,
+					  SLOT( setMarkerlessTracking( bool ) ) );
+
 	//edit for speed movement
 	QObject::connect( mOpencvWindow,
 					  SIGNAL( inicializeKinect() ),
@@ -258,7 +264,6 @@ void OpenCV::OpenCVCore::createConnectionFaceRec()
 					  SLOT( setSendBackgrImgEnabled( bool ) ) );
 
 
-
 	// start, stop
 	QObject::connect( mOpencvWindow,
 					  SIGNAL( startFaceRec() ),
@@ -276,12 +281,7 @@ void OpenCV::OpenCVCore::createConnectionFaceRec()
 					  SIGNAL( setCapVideoFaceRec( OpenCV::CapVideo* ) ),
 					  mThrFaceRec,
 					  SLOT( setCapVideo( OpenCV::CapVideo* ) ) );
-
-
-
-
 }
-
 
 void OpenCV::OpenCVCore::createConnectionAruco()
 {
@@ -349,6 +349,10 @@ void OpenCV::OpenCVCore::createConnectionAruco()
 					  SIGNAL( clicked( bool ) ),
 					  mThrAruco,
 					  SLOT( setCorEnabling( bool ) ) );
+	QObject::connect( mOpencvWindow->getMultiMarkerEnableCB(),
+					  SIGNAL( clicked( bool ) ),
+					  mThrAruco,
+					  SLOT( setMultiMarker( bool ) ) );
 	QObject::connect( mOpencvWindow->getUpdateCorParPB(),
 					  SIGNAL( clicked() ),
 					  mThrAruco,
@@ -361,6 +365,10 @@ void OpenCV::OpenCVCore::createConnectionAruco()
 					  SIGNAL( setMultiMarker( bool ) ),
 					  mThrAruco,
 					  SLOT( setMultiMarker( bool ) ) );
+	QObject::connect( mOpencvWindow,
+					  SIGNAL( setCameraMarkerlessDetection( bool ) ),
+					  mThrAruco,
+					  SLOT( setMarkerlessTracking( bool ) ) );
 
 	// aruco mouse Controll
 	QObject::connect( mOpencvWindow->getInterchangeMarkersPB(),

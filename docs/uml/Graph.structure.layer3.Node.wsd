@@ -1,0 +1,70 @@
+// Module Graph.structure.layer3
+// Autor: Aug_RealityKings
+
+
+
+@startuml
+object "node:Data::Node:osg::Switch" as obj1
+object "mTargetPosition:osg::Vec3f" as obj2
+object "currentPosition:osg::Vec3f" as obj3
+object "mRestrictedTargetPosition:osg::Vec3f" as obj4
+object "square:osg::Drawable" as obj5
+object "force:osg::Vec3f" as obj6
+object "velocity:osg::Vec3f" as obj7
+object "color:osg::Vec4" as obj8
+object "label:osg::AutoTransform" as obj9
+object "geode:osg::Geode" as obj10
+object "square:osg::AutoTransform" as obj11
+object "geode:osg::Geode" as obj12
+object "sphere:osg::AutoTransform" as obj13
+object "geode:osg::Geode" as obj14
+object "residence:osg::PositionAttitudeTransform" as obj15
+object "square:osg::Geometry" as obj16
+
+object "label:osgText::FadeText" as obj17
+object "nodeQuad:osg::Geometry" as obj18
+object "nodeSphere:osg::ShapeDrawable" as obj19
+object "sphere:osg::Sphere" as obj20
+
+obj1 o-- obj2
+obj1 o-- obj3
+obj1 o-- obj4
+obj1 o-- obj5
+obj1 o-- obj6
+obj1 o-- obj7
+obj1 o-- obj8
+obj1 o-- obj9
+obj1 o-- obj11
+obj1 o-- obj13
+obj1 o-- obj15
+obj1 o-- obj16
+
+
+obj9 o-- obj10
+obj11 o-- obj12
+obj13 o-- obj14
+
+
+obj10 o-- obj17
+obj12 o-- obj18
+obj14 o-- obj19
+obj19 o-- obj20
+
+note top of obj9
+V pripade moznosti: INDEX_LABEL
+end note
+
+note top of obj11
+V pripade moznosti: INDEX_SQUARE
+end note
+
+note top of obj13
+V pripade moznosti: INDEX_SPHERE
+end note
+
+note top of obj15
+V pripade moznosti: INDEX_RESIDENCE
+end note
+
+
+@enduml

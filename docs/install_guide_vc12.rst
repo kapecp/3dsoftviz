@@ -17,10 +17,11 @@ Tento návod bol úspešne otestovaný na operačných systémoch Windows 7, 8, 
 
 Potrebný softvér
 ****************
- 
+
+**Uvedené programy neinštalovať do Program Files, PATH nesmie obsahovať medzeru!** 
 Na inštaláciu potrebujeme klonovať projekt `3DSoftViz <https://github.com/dominikhorniak/RealityNotFound>`_ (Tím č.4 klonuje z `/cimox/3dsoftviz <https://github.com/cimox/3dsoftviz>`_) z Githubu a stiahnuť nasledovné:
 
-  - CMake `(v3.5.0) <https://cmake.org/files/v3.5/cmake-3.5.0-win32-x86.msi>`_
+  - CMake `(v3.6.2) <https://cmake.org/files/v3.6/cmake-3.6.2-win64-x64.msi>`_
   - OpenSceneGraph *(jeden z nasledujúcich)*
 
     - OpenSceneGraph `(source) <https://github.com/openscenegraph/OpenSceneGraph>`_ - iba zdrojové súbory -> treba buildnúť (cca 40-60min)
@@ -44,10 +45,10 @@ Na inštaláciu potrebujeme klonovať projekt `3DSoftViz <https://github.com/dom
 
 Postup inštalácie
 *****************
-
- #. Nainštalovať CMake. (Cesta je v dokumente označená ako *%CMAKE_DIR%*)
+**Uvedené programy neinštalovať do Program Files, PATH nesmie obsahovať medzeru! Idealne vsetky programy, kniznice, atd. dat do jedneho adresara.**
+ #. Nainštalovať CMake. (Cesta je v dokumente označená ako *%CMAKE_DIR%*). Pri inštalácií zvoliť "Add CMake to the system for all users". 
  #. Nainštalovať Qt (*%QT_DIR%*)
- #. Nainštalovať QtCreator do zložky Qt
+ #. Nainštalovať QtCreator.
  #. Vytvoriť zložku OpenSceneGraph (*%OSG_DIR%*)
  #. V prípade stiahnutia zbuildovaných súborov OSG (mega.nz)
 
@@ -96,7 +97,19 @@ Postup inštalácie
 
           Nainštalovaný SW
 
- #. Nainštalovať a otvoriť RapidEE, v ktorom sa vykonajú tieto zmeny:
+ #. Otvorit subor environment.txt a upravit v nom cesty k programom a knizniciam, ktore sa nachadzaju na zaciatku suboru.
+	
+		.. _image_path_var:
+		.. figure::  \images\install_guide\update\PATH_POWERSHELL.png
+			:align:	center
+		
+			Pozadovane premenne, ktore treba nastavit
+			
+	#. Spustit powershell ako spravca .
+	#. Skopirovat do powershellu obsah celeho suboru.	
+	#. Vynechat pridavanie systemovych premennych cez RapidEE (nasledujuci krok) a vykonat len kontrolu, ci sa cesty spravne nastavili.
+ 
+ #. Nainštalovať a otvoriť RapidEE, v ktorom sa vykonajú tieto zmeny **(ako správca!)**:
 
     #. do PATH pridať premenné:
 
@@ -156,7 +169,13 @@ Postup inštalácie
 
           OPENCV_DIR premenná
 
+ #. Nainštalovať Debugging Tools for Windows.
  #. Naklónovať projekt 3DSoftViz cez git shell (*%3DSoftViz%*)
+=======
+
+ #. Naklonovať projekt 3DSoftViz cez git shell (*%3DSoftViz%*)
+ #. Cez command line prejsť do naklonovaného projektu a zavolať *git submodule --init --recursive*
+
  #. Vytvoriť v priečinku *%3DSoftViz%* priečinky _build a _install
  #. Spustiť QtCreator. Tools > Options... > Build and Run:
  
@@ -214,7 +233,7 @@ Postup inštalácie
 
           QtC build config
 
- #. Stačiť Build (kladivko vľavo dole)
+ #. Stačiť Build (kladivko vľavo dole - potreba spraviť znova po každej následnej úprave systémových premenných)
  #. Po úspešnom zbuildovaní vybrať Projects > Build & Run > Run, v časti Run pridať Add > Custom Executable a nastaviť:
  
     #. executable: *%3DSoftViz%*/_install/bin/3DSoftviz.exe
@@ -235,6 +254,9 @@ Postup inštalácie
           QtC run config
 
  #. Spustiť program pomocou zeleného tlačidla Run
+ 
+ **V prípade, že aplikácia ihneď po spustení crashne, napriek úspešnému buildu, jedná sa pravdepodobne o problém s grafickou kartou.
+ Na notebookoch, ktoré majú externú grafickú kartu NVidia, je v tomto prípade treba cez NVidia Control Panel nastaviť jej použitie pre 3DSoftViz.exe**
 
 Rozšírenie 3DSoftviz o Kinect
 -----------------------------

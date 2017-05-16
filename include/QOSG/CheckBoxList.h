@@ -23,7 +23,7 @@ class CheckBoxList: public QComboBox
 	Q_OBJECT
 
 public:
-	CheckBoxList( QWidget* widget = 0 );
+	explicit CheckBoxList( QWidget* widget = 0 );
 	virtual ~CheckBoxList();
 	bool eventFilter( QObject* object, QEvent* event );
 	virtual void paintEvent( QPaintEvent* );

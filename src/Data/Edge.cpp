@@ -30,7 +30,7 @@ Data::Edge::Edge( qlonglong id, QString name, Data::Graph* graph, osg::ref_ptr<D
 	this->insertChild( INDEX_CYLINDER, createEdgeCylinder( NULL ), false );
 	this->insertChild( INDEX_LINE, createEdgeLine( NULL ), false );
 	this->insertChild( INDEX_CURVE, createEdgeCurve( NULL ), false );
-	this->insertChild( INDEX_CURVE2, createEdgeCurve( NULL ), false );
+	this->insertChild( INDEX_MATRIX_CURVE, createEdgeCurve( NULL ), false );
 	setValue( static_cast<unsigned int>( graph->getEdgeVisual() ), true );
 
 	//updateCoordinates(getSrcNode()->getTargetPosition(), getDstNode()->getTargetPosition());
@@ -259,14 +259,14 @@ void Data::Edge::updateCoordinates( osg::Vec3 srcPos, osg::Vec3 dstPos )
 		}
 	}
 
-	if ( getValue( INDEX_CURVE2 ) ) {
-		osg::Geometry* geometryCurve = getChild( INDEX_CURVE2 )->asGeode()->getDrawable( 0 )->asGeometry();
+	if ( getValue( INDEX_MATRIX_CURVE ) ) {
+		osg::Geometry* geometryCurve = getChild( INDEX_MATRIX_CURVE )->asGeode()->getDrawable( 0 )->asGeometry();
 		if ( geometryCurve != NULL ) {
 			osg::ref_ptr<osg::Vec3Array> points = new osg::Vec3Array;
 
 			points->push_back( srcPos );
-			points->push_back( srcPos + osg::Vec3f( 0.0f, 0.0f, 50.0f ) );
-			points->push_back( dstPos + osg::Vec3f( 0.0f, 0.0f, 50.0f ) );
+			points->push_back( srcPos + osg::Vec3f( 0.0f, 0.0f, 25.0f ) );
+			points->push_back( dstPos + osg::Vec3f( 0.0f, 0.0f, 25.0f ) );
 			points->push_back( dstPos );
 
 			osg::ref_ptr<osgModeling::BezierCurve> bezCurve =
@@ -296,7 +296,6 @@ void Data::Edge::updateCoordinates( osg::Vec3 srcPos, osg::Vec3 dstPos )
 		}
 	}
 
-
 }
 
 osg::ref_ptr<osg::Geode> Data::Edge::createLabel( QString name )
@@ -324,7 +323,7 @@ osg::ref_ptr<osg::Geode> Data::Edge::createLabel( QString name )
 	label->setColor( osg::Vec4( 1.0f, 1.0f, 1.0f, 1.0f ) );
 
 	osg::ref_ptr<osg::Geode> geode = new osg::Geode;
-	geode->setNodeMask( geode->getNodeMask() & ( unsigned int )~0x2 );
+	geode->setNodeMask( geode->getNodeMask() & static_cast<unsigned int>( ~0x2 ) );
 	geode->addDrawable( label );
 
 	return geode;
@@ -390,7 +389,7 @@ osg::ref_ptr<osg::Geode> Data::Edge::createEdgeQuad( osg::StateSet* bbState )
 	nodeQuad->setStateSet( bbState );
 
 	osg::ref_ptr<osg::Geode> geode = new osg::Geode;
-	geode->setNodeMask( geode->getNodeMask() & ( unsigned int )~0x2 );
+	geode->setNodeMask( geode->getNodeMask() & static_cast<unsigned int>( ~0x2 ) );
 	geode->addDrawable( nodeQuad );
 
 	return geode;
@@ -525,7 +524,7 @@ void Data::Edge::setVisual( int index )
 	setValue( INDEX_CYLINDER, false );
 	setValue( INDEX_LINE, false );
 	setValue( INDEX_CURVE, false );
-	setValue( INDEX_CURVE2, false );
+	setValue( INDEX_MATRIX_CURVE, false );
 	setValue( static_cast<unsigned int>( index ), !isInvisible );
 }
 

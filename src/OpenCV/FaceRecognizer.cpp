@@ -226,7 +226,11 @@ float OpenCV::FaceRecognizer::getHeadDistanceFocal( double realFaceWidth )
 	double focalLength = 749.3;
 	double imageFaceWidth = this->drawrect.width;
 
-	float distance = ( float ) focalLength * ( realFaceWidth / imageFaceWidth );
+//<<<<<<< Updated upstream
+	//float distance = ( float )( focalLength * ( realFaceWidth / imageFaceWidth ) );
+//=======
+	float distance = static_cast<float>( focalLength * ( realFaceWidth / imageFaceWidth ) );
+//>>>>>>> Stashed changes
 
 	/*qDebug() << "[FaceRecognizer::getHeadDistanceFocal] focalLength=\"" << focalLength << "\"";
 	qDebug() << "[FaceRecognizer::getHeadDistanceFocal] realFaceWidth=\"" << realFaceWidth << "\"";

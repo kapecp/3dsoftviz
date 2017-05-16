@@ -14,5 +14,7 @@ utils.logger:info('require function calls extractor - done.')
 
 return
 {
-  extract = funcCallsExtractor.extract
+  extract = funcCallsExtractor.extract,
+  extractFromString = funcCallsExtractor.extractFromString,
+  extractFromAST = funcCallsExtractor.extractFromAST
 }

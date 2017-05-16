@@ -20,6 +20,11 @@ QCheckBox*	QOpenCV::OpenCVWindow::getMarkerBehindCB() const
 	return mMarkerBehindCB;
 }
 
+QCheckBox*	QOpenCV::OpenCVWindow::getMultiMarkerEnableCB() const
+{
+	return mMultiMarkerEnableCB;
+}
+
 QCheckBox*	QOpenCV::OpenCVWindow::getCorEnabledCB() const
 {
 	return mCorEnabledCB;
@@ -61,9 +66,13 @@ void QOpenCV::OpenCVWindow::configureWindow()
 	mFaceDetBackgrCB = new QCheckBox( tr( "Background" ) );
 	mMarkerBehindCB	= new QCheckBox( tr( "Marker is behind" ) );
 	mCorEnabledCB = new QCheckBox( tr( "Correction" ) );
+	mMultiMarkerEnableCB = new QCheckBox( tr( "Multiple markers" ) );
+	mEnableMarkerlessKinectCB = new QCheckBox( tr( "Turn on Markerless Detection" ) );
+
 	mDisableCursorCB = new QCheckBox( tr( "Turn off cursor" ) );
 	mDisableZoomCursorCB = new QCheckBox( tr( "Turn off zoom" ) );
 	mEnableMarkerDetectCB = new QCheckBox( tr( "Turn on Marker Detection" ) );
+	mEnableMarkerlessCameraCB = new QCheckBox( tr( "Turn on Markerless Detection" ) );
 
 	mSpeed =  new QSlider( Qt::Vertical );
 	mSpeed->setRange( 5,20 );
@@ -131,6 +140,7 @@ void QOpenCV::OpenCVWindow::configureWindow()
 	kinectPageLayout->addWidget( mDisableCursorCB );
 	kinectPageLayout->addWidget( mDisableZoomCursorCB );
 	kinectPageLayout->addWidget( mEnableMarkerDetectCB );
+	kinectPageLayout->addWidget( mEnableMarkerlessKinectCB );
 	kinectPageLayout->addWidget( mSpeed );
 	kinectPageLayout->addWidget( mKinectSnapshotPB );
 	kinectPageLayout->addWidget( mKinectPB );
@@ -143,6 +153,8 @@ void QOpenCV::OpenCVWindow::configureWindow()
 	arucoMarkerPageLayout->addWidget( mMarkerBackgrCB );
 	arucoMarkerPageLayout->addWidget( mMarkerBehindCB );
 	arucoMarkerPageLayout->addWidget( mCorEnabledCB );
+	arucoMarkerPageLayout->addWidget( mMultiMarkerEnableCB );
+	arucoMarkerPageLayout->addWidget( mEnableMarkerlessCameraCB );
 	arucoMarkerPageLayout->addWidget( mUpdateCorParPB );
 	arucoMarkerPageLayout->addWidget( mInterchangeMarkersPB );
 	arucoMarkerPageLayout->addWidget( mMarkerPB );
@@ -167,7 +179,10 @@ void QOpenCV::OpenCVWindow::configureWindow()
 	mMarkerBackgrCB->setEnabled( false );
 	mMarkerBehindCB->setEnabled( false );
 	mCorEnabledCB->setEnabled( false );
+	mMultiMarkerEnableCB->setEnabled( true );
+	mEnableMarkerlessKinectCB->setEnabled( true );
 	mEnableMarkerDetectCB->setEnabled( true );
+	mEnableMarkerlessCameraCB->setEnabled( true );
 
 	mMultiMarkerPB->setCheckable( true );
 	mFaceRecPB->setCheckable( true );
@@ -193,9 +208,11 @@ void QOpenCV::OpenCVWindow::configureWindow()
 	connect( mMarkerBackgrCB, SIGNAL( clicked( bool ) ), this, SLOT( onMarkerBackgrCBClicked( bool ) ) );
 	connect( mFaceDetBackgrCB, SIGNAL( clicked( bool ) ), this, SLOT( onFaceDetBackgrCBClicked( bool ) ) );
 	connect( mEnableMarkerDetectCB, SIGNAL( clicked( bool ) ), this, SLOT( setMarkerDetection( bool ) ) );
+	connect( mEnableMarkerlessCameraCB, SIGNAL( clicked( bool ) ), this, SLOT( setMarkerlessDetectionCamera( bool ) ) );
 
 	connect( mDisableCursorCB, SIGNAL( clicked() ), this, SLOT( stopMovingCursor() ) );
 	connect( mDisableZoomCursorCB, SIGNAL( clicked( bool ) ), this, SLOT( stopZoom() ) );
+	connect( mEnableMarkerlessKinectCB, SIGNAL( clicked( bool ) ), this, SLOT( setMarkerlessDetectionKinect( bool ) ) );
 
 }
 
@@ -222,6 +239,16 @@ void QOpenCV::OpenCVWindow::stopZoom()
 void QOpenCV::OpenCVWindow::setMarkerDetection( bool set )
 {
 	emit setKinectMarkerDetection( set );
+}
+
+void QOpenCV::OpenCVWindow::setMarkerlessDetectionCamera( bool set )
+{
+	emit setCameraMarkerlessDetection( set );
+}
+
+void QOpenCV::OpenCVWindow::setMarkerlessDetectionKinect( bool set )
+{
+	emit setKinectMarkerlessDetection( set );
 }
 
 void QOpenCV::OpenCVWindow::setSpeedKinect( int speed )
@@ -327,6 +354,8 @@ void QOpenCV::OpenCVWindow::onCorParUpdated()
 
 void QOpenCV::OpenCVWindow::onFaceRecStartCancel( bool checked )
 {
+	qDebug() << "OpenCVWindow::onFaceRecStartCancel:" << checked;
+
 	if ( checked ) {
 		mFaceRecPB->setEnabled( false );
 		mFaceRecPB->setText( tr( "Stop FaceRec" ) );
@@ -359,7 +388,7 @@ void QOpenCV::OpenCVWindow::onMarkerStartCancel( bool checked )
 		mMarkerPB->setEnabled( true );
 		emit arucoRunning( true );
 
-		if ( Util::ApplicationConfig::get()->getValue( "Viewer.SkyBox.Noise" ).toInt() >1 ) {
+		if ( Util::ApplicationConfig::get()->getValue( "Viewer.SkyBox.Noise" ).toInt() ==0 ) {
 			mMarkerBackgrCB->setEnabled( true );
 		}
 	}
@@ -408,7 +437,6 @@ void QOpenCV::OpenCVWindow::onMultiMarkerStartCancel( bool checked )
 		mMultiMarkerPB->setText( tr( "Start Aruco" ) );
 		emit stopMultiMarker( true );
 		emit setMultiMarker( false );
-
 	}
 }
 

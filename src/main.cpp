@@ -75,7 +75,21 @@ int main( int argc, char* argv[] )
 
 	App::Application app( argc, argv );
 	new Util::Cleaner( &app );
-	AppCore::Core::getInstance( &app );
+	try {
+		AppCore::Core::getInstance( &app );
+	}
+	catch ( std::runtime_error& e ) {
+		LOG( ERROR ) << e.what();
+
+		auto res = Lua::LuaInterface::getInstance()->doString( "print(debug.traceback())" );
+		// TODO/BUG: debug.traceback() does not return anything, somehow the traceback is empty
+		// maybe Diluculum changes something during exception handling...
+		// this way we could obtain the results from debug.traceback()
+		// LOG( ERROR ) << res.at(0).asString();
+		// see http://stackoverflow.com/questions/12256455/print-stacktrace-from-c-code-with-embedded-lua
+		// for possible solution
+	}
+
 	Manager::GraphManager::getInstance();
 }
 

@@ -1,11 +1,18 @@
 #include "LeapLib//LeapListener.h"
 #include "LeapLib/DirectionDetector.h"
 #include "LeapLib/FingerPositionDetector.h"
+#include "osg/Image"
+#include "CustomLeapManager.h"
+
+//#include "osg/Image"
+#include "osgDB/WriteFile"
+#include <stdio.h>
 
 Leap::LeapListener::LeapListener( LeapManager* leapManager )
 {
 	leapActions = new Leap::LeapActions( leapManager );
 	this->arMode = leapManager->arMode;
+	LOG( INFO ) << "Leap/LeapLib/LeapListener Constructor";
 }
 
 Leap::LeapListener::~LeapListener( void )
@@ -41,6 +48,22 @@ void Leap::LeapListener::onDisconnect( const Controller& controller )
 void Leap::LeapListener::onExit( const Controller& controller )
 {
 
+}
+void Leap::LeapListener::onImages( const Controller& controller )
+{
+	ImageList images = controller.images();
+	Image image = images[0];
+
+	if ( image.data() == NULL ) {
+		return;
+	}
+	Leap::CustomLeapManager* manager = dynamic_cast<Leap::CustomLeapManager*>( this->leapActions->leapManager );
+
+	Frame frame = controller.frame();
+	HandList hands = frame.hands();
+	float depth = manager->getHandsDepthInformation( hands[0].palmPosition().y, hands[1].palmPosition().y );
+
+	manager->updateCoreGraphBackground( image.data(), depth );
 }
 
 void Leap::LeapListener::onFrame( const Controller& controller )

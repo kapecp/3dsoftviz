@@ -31,8 +31,8 @@
 [submodule "dependencies/igloo"]
 	path = dependencies/igloo
 	url = git@github.com:kapecp/igloo.git
-[submodule "dependencies/lualogging"]	
-	path = dependencies/lualogging	
+[submodule "dependencies/lualogging"]
+	path = dependencies/lualogging
 	url = https://github.com/LuaDist/lualogging.git
 [submodule "dependencies/easyloggingpp"]
 	path = dependencies/easyloggingpp
@@ -40,3 +40,51 @@
 [submodule "dependencies/parserlib"]
 	path = dependencies/parserlib
 	url = git@github.com:axilmar/parserlib.git
+[submodule "dependencies/StackTracePlus"]
+	path = dependencies/StackTracePlus
+	url = git@github.com:LuaDist/StackTracePlus.git
+[submodule "dependencies/luasocket"]
+	path = dependencies/luasocket
+	url = git@github.com:LuaDist/luasocket.git
+[submodule "dependencies/mobdebug"]
+	path = dependencies/mobdebug
+	url = git@github.com:LuaDist/mobdebug.git
+[submodule "dependencies/luacov"]
+	path = dependencies/luacov
+	url = git@github.com:LuaDist/luacov.git
+[submodule "dependencies/luacheck"]
+	path = dependencies/luacheck
+	url = git@github.com:LuaDist/luacheck.git
+[submodule "dependencies/lua_cliargs"]
+	path = dependencies/lua_cliargs
+	url = git@github.com:LuaDist/lua_cliargs.git
+[submodule "dependencies/luasystem"]
+	path = dependencies/luasystem
+	url = git@github.com:LuaDist/luasystem.git
+[submodule "dependencies/dkjson"]
+	path = dependencies/dkjson
+	url = git@github.com:LuaDist/dkjson.git
+[submodule "dependencies/say"]
+	path = dependencies/say
+	url = git@github.com:LuaDist/say.git
+[submodule "dependencies/luassert"]
+	path = dependencies/luassert
+	url = git@github.com:LuaDist/luassert.git
+[submodule "dependencies/lua-term"]
+	path = dependencies/lua-term
+	url = git@github.com:LuaDist/lua-term.git
+[submodule "dependencies/penlight"]
+	path = dependencies/penlight
+	url = git@github.com:LuaDist/penlight.git
+[submodule "dependencies/mediator_lua"]
+	path = dependencies/mediator_lua
+	url = git@github.com:LuaDist/mediator_lua.git
+[submodule "dependencies/busted"]
+	path = dependencies/busted
+	url = git@github.com:LuaDist/busted.git
+[submodule "dependencies/luacomments"]
+	path = dependencies/luacomments
+	url = https://github.com/LuaDist/luacomments.git
+[submodule ".\\dependencies/luameg"]
+	path = .\\dependencies/luameg
+	url = git@github.com:matuSte/UMLtoSRC.git

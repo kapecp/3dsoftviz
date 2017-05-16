@@ -66,9 +66,9 @@ Cuboid::Cuboid( const osg::BoundingBox& boundingBox )
 	}
 
 	auto geom = new osg::Geometry;
-	geom->setVertexArray( new osg::Vec3Array( vertices.count(), vertices.data() ) );
-	geom->setNormalArray( new osg::Vec3Array( normals.count(), normals.data() ) );
-	geom->setTexCoordArray( 0, new osg::Vec2Array( coords.count(), coords.data() ) );
+	geom->setVertexArray( new osg::Vec3Array( static_cast<unsigned int>( vertices.count() ), vertices.data() ) );
+	geom->setNormalArray( new osg::Vec3Array( static_cast<unsigned int>( normals.count() ), normals.data() ) );
+	geom->setTexCoordArray( 0, new osg::Vec2Array( static_cast<unsigned int>( coords.count() ), coords.data() ) );
 	geom->setNormalBinding( osg::Geometry::BIND_PER_VERTEX );
 	for ( int i = 0; i < quads.count(); i += 4 ) {
 		geom->addPrimitiveSet( new osg::DrawElementsUInt( osg::PrimitiveSet::QUADS, 4, quads.data() + i ) );

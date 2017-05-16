@@ -1,7 +1,8 @@
 #ifndef LUAGRAPHOBJECT_H
 #define LUAGRAPHOBJECT_H
 
-#include "Diluculum/LuaValue.hpp"
+#include "LuaTypes/LuaValue.h"
+#include "LuaTypes/LuaValueMap.h"
 
 #include <QString>
 
@@ -44,13 +45,13 @@ public:
 	 * @brief getParams getter for params
 	 * @return params
 	 */
-	Diluculum::LuaValue getParams() const;
+	Lua::LuaValue getParams() const;
 
 	/**
 	 * @brief setParams setter for params
 	 * @param value new params
 	 */
-	void setParams( const Diluculum::LuaValue& value );
+	void setParams( const Lua::LuaValue& value );
 
 	/**
 	 * @brief getFloatParam return float value from params table
@@ -59,6 +60,15 @@ public:
 	 * @return value as float
 	 */
 	float getFloatParam( std::string name, float defaultValue );
+
+	/**
+	 * @brief getFloatParam return float value from a table from params table
+	 * @param tableName key in the params table
+	 * @param name key in the params table
+	 * @param defaultValue value to be returned if key is not in the table
+	 * @return value as float
+	 */
+	float getFloatParam( std::string tableName, std::string key, float defaultValue );
 
 	void setIdentifier( QString identifier )
 	{
@@ -78,7 +88,7 @@ private:
 	/**
 	 * @brief params Lua table
 	 */
-	Diluculum::LuaValue params;
+	Lua::LuaValue params;
 };
 
 }

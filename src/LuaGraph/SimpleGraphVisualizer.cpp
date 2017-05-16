@@ -58,16 +58,16 @@ void Lua::SimpleGraphVisualizer::visualize()
 	functionsAnchor->setColor( osg::Vec4( 0,0,0,0 ) );
 
 	for ( QMap<qlonglong, Lua::LuaNode*>::iterator i = g->getNodes()->begin(); i != g->getNodes()->end(); ++i ) {
-		if ( i.value()->getParams().type() == 0 ) {
+		if ( i.value()->getParams().getValue().type() == 0 ) {
 			continue;
 		}
-		if ( i.value()->getParams()["root"]== true ) {
+		if ( i.value()->getParams().getValue()["root"]== true ) {
 			osg::ref_ptr<Data::Node> root = currentGraph->getNodes()->value( i.key() );
 			osg::ref_ptr<Data::Edge> metaLink = currentGraph->addEdge( metaEdgeName, root, filesAnchor, currentGraph->getEdgeMetaType(), false );
 			metaLink->setEdgeColor( osg::Vec4( 0,0,0,0 ) );
 			metaLink->setInvisible( true );
 		}
-		if ( i.value()->getParams()["type"] == "function" ) {
+		if ( i.value()->getParams().getValue()["type"] == "function" ) {
 			osg::ref_ptr<Data::Node> func = currentGraph->getNodes()->value( i.key() );
 			osg::ref_ptr<Data::Edge> metaLink = currentGraph->addEdge( metaEdgeName, func, functionsAnchor, currentGraph->getEdgeMetaType(), false );
 			metaLink->setEdgeColor( osg::Vec4( 0,0,0,0 ) );

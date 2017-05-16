@@ -8,8 +8,11 @@
 #include "Data/GraphLayout.h"
 
 #include <QDebug>
+
+#if defined(__linux) || defined(__linux__) || defined(linux)
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wfloat-equal"
+#endif
 
 Model::NodeDAO::NodeDAO( void )
 {
@@ -21,8 +24,6 @@ Model::NodeDAO::~NodeDAO( void )
 
 bool Model::NodeDAO::addNodesToDB( QSqlDatabase* conn, QMap<qlonglong, osg::ref_ptr<Data::Node> >* nodes )
 {
-	qlonglong parentId;
-
 	//check if we have connection
 	if ( conn==NULL || !conn->isOpen() ) {
 		qDebug() << "[Model::NodeDAO::addNodesToDB] Connection to DB not opened.";
@@ -35,7 +36,7 @@ bool Model::NodeDAO::addNodesToDB( QSqlDatabase* conn, QMap<qlonglong, osg::ref_
 
 	//ukladame vsetky uzly do databazy
 	while ( iNodes != nodes->constEnd() ) {
-		parentId = -1;
+		qlonglong parentId = -1;
 		if ( iNodes.value()->getParentNode() != NULL ) {
 			parentId = iNodes.value()->getParentNode()->getId();
 		}
@@ -64,8 +65,6 @@ bool Model::NodeDAO::addNodesToDB( QSqlDatabase* conn, QMap<qlonglong, osg::ref_
 
 bool Model::NodeDAO::addMetaNodesToDB( QSqlDatabase* conn, QMap<qlonglong, osg::ref_ptr<Data::Node> >* nodes, Data::GraphLayout* layout, QMap<qlonglong, qlonglong> newMetaNodeID )
 {
-	qlonglong parentId;
-
 	//check if we have connection
 	if ( conn==NULL || !conn->isOpen() ) {
 		qDebug() << "[Model::NodeDAO::addMetaNodesToDB] Connection to DB not opened.";
@@ -75,11 +74,11 @@ bool Model::NodeDAO::addMetaNodesToDB( QSqlDatabase* conn, QMap<qlonglong, osg::
 	QMap< qlonglong,osg::ref_ptr<Data::Node> >::const_iterator iNodes = nodes->constBegin();
 
 	QSqlQuery* query = new QSqlQuery( *conn );
-	qlonglong nodeID;
 	QMap<qlonglong, qlonglong>::iterator nodeIdIter;
 
 	//ukladame vsetky meta-uzly do databazy
 	while ( iNodes != nodes->constEnd() ) {
+		qlonglong nodeID;
 		if ( newMetaNodeID.contains( iNodes.value()->getId() ) ) {
 			nodeIdIter = newMetaNodeID.find( iNodes.value()->getId() );
 			nodeID = nodeIdIter.value();
@@ -88,7 +87,7 @@ bool Model::NodeDAO::addMetaNodesToDB( QSqlDatabase* conn, QMap<qlonglong, osg::
 			qDebug() << "[Model::NodeDAO::addMetaNodesToDB] Node ID: " << iNodes.value()->getId() <<  " mismatch";
 		}
 
-		parentId = -1;
+		qlonglong parentId = -1;
 		if ( iNodes.value()->getParentNode() != NULL ) {
 			if ( newMetaNodeID.contains( iNodes.value()->getParentNode()->getId() ) ) {
 				nodeIdIter = newMetaNodeID.find( iNodes.value()->getParentNode()->getId() );
@@ -343,7 +342,6 @@ QMap<qlonglong, osg::Vec3f> Model::NodeDAO::getNodesPositions( QSqlDatabase* con
 	*error = FALSE;
 	QSqlQuery* query;
 	osg::Vec3f position;
-	qlonglong nodeId;
 
 	//check if we have connection
 	if ( conn==NULL || !conn->isOpen() ) {
@@ -369,7 +367,7 @@ QMap<qlonglong, osg::Vec3f> Model::NodeDAO::getNodesPositions( QSqlDatabase* con
 	}
 
 	while ( query->next() ) {
-		nodeId = query->value( 1 ).toLongLong();
+		qlonglong nodeId = query->value( 1 ).toLongLong();
 		position = osg::Vec3f( query->value( 2 ).toFloat(), query->value( 3 ).toFloat(), query->value( 4 ).toFloat() );
 
 		positions.insert( nodeId, position );
@@ -614,7 +612,7 @@ QMap<qlonglong, osg::Vec4f> Model::NodeDAO::getColors( QSqlDatabase* conn, bool*
 	*error = FALSE;
 	bool error2 = false;
 	osg::Vec4f color;
-	qlonglong id;
+
 	QMap<qlonglong, osg::Vec4f> colors;
 
 	QMap<qlonglong, QString> nodeColorR;
@@ -653,7 +651,7 @@ QMap<qlonglong, osg::Vec4f> Model::NodeDAO::getColors( QSqlDatabase* conn, bool*
 
 	//nacitavame z databazy farby podla ID grafu a layoutu
 	for ( iter_r = nodeColorR.begin(); iter_r != nodeColorR.end(); ++iter_r ) {
-		id = iter_r.key();
+		qlonglong id = iter_r.key();
 		iter_g = nodeColorG.find( id );
 		iter_b = nodeColorB.find( id );
 		iter_a = nodeColorA.find( id );
@@ -671,7 +669,6 @@ QMap<qlonglong, float> Model::NodeDAO::getScales( QSqlDatabase* conn, bool* erro
 {
 	*error = FALSE;
 	bool error2 = false;
-	qlonglong id;
 	QMap<qlonglong, float> scales;
 
 	QMap<qlonglong, QString> nodeScale;
@@ -681,7 +678,7 @@ QMap<qlonglong, float> Model::NodeDAO::getScales( QSqlDatabase* conn, bool* erro
 	if ( !error2 ) {
 		//nacitavame z databazy velkost layoutu a rozlozenia grafu
 		for ( iter = nodeScale.begin(); iter != nodeScale.end(); ++iter ) {
-			id = iter.key();
+			qlonglong id = iter.key();
 
 			float scale = iter.value().toFloat();
 			scales.insert( id, scale );
@@ -699,7 +696,6 @@ QMap<qlonglong, int> Model::NodeDAO::getMasks( QSqlDatabase* conn, bool* error, 
 {
 	*error = FALSE;
 	bool error2 = false;
-	qlonglong id;
 	QMap<qlonglong, int> masks;
 
 	QMap<qlonglong, QString> nodeMask;
@@ -709,7 +705,7 @@ QMap<qlonglong, int> Model::NodeDAO::getMasks( QSqlDatabase* conn, bool* error, 
 	if ( !error2 ) {
 		//nacitavame z databazy masky uzlov
 		for ( iter = nodeMask.begin(); iter != nodeMask.end(); ++iter ) {
-			id = iter.key();
+			qlonglong id = iter.key();
 
 			int mask = iter.value().toInt();
 			masks.insert( id, mask );
@@ -729,7 +725,6 @@ QList<qlonglong> Model::NodeDAO::getParents( QSqlDatabase* conn, bool* error, ql
 	*error = FALSE;
 	bool error2 = false;
 	//bool isParent;
-	qlonglong id;
 	QList<qlonglong> parents;
 
 	QMap<qlonglong, QString> nodeParents;
@@ -739,7 +734,7 @@ QList<qlonglong> Model::NodeDAO::getParents( QSqlDatabase* conn, bool* error, ql
 	if ( !error2 ) {
 		//nacitavame z databazy rodicovske/nadradene uzly
 		for ( iter = nodeParents.begin(); iter != nodeParents.end(); ++iter ) {
-			id = iter.key();
+			qlonglong id = iter.key();
 			parents << id;
 		}
 	}
@@ -864,4 +859,7 @@ bool Model::NodeDAO::addSettings( QSqlDatabase* conn, qlonglong graphID, qlonglo
 
 	return true;
 }
+
+#if defined(__linux) || defined(__linux__) || defined(linux)
 #pragma GCC diagnostic pop
+#endif

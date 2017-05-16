@@ -2,6 +2,9 @@
 *  CoreGraph.h
 *  Projekt 3DVisual
 */
+#ifndef COREGRAPH_H
+#define COREGRAPH_H
+
 #ifndef VIEWER_CORE_GRAPH_DEF
 #define VIEWER_CORE_GRAPH_DEF 1
 
@@ -14,8 +17,10 @@
 #include "Viewer/BrowserGroup.h"
 #include "Data/Edge.h"
 #include "Data/Node.h"
+#include "Leap/LeapLib/LeapCameraStream.h"
 
 #include "Data/Cluster.h"
+#include "Data/GraphLayout.h"
 
 #include <osgManipulator/Translate2DDragger>
 
@@ -130,6 +135,14 @@ public:
 		*  \return 0 - success, 1 - fail
 		*/
 	int updateBackground( int bgVal, Data::Graph* currentGraph );
+
+	/**
+	    *  \fn public updateBackgroundStream
+	    *  \brief updates background with data from leap sensor
+	    *  \param image data - one frame(image) from leap sensor
+	    *  \return 0 - success, 1 - fail
+	   */
+	int updateBackgroundStream( unsigned char* buffer );
 
 	/**
 		*  \fn inline public  getCustomNodeList
@@ -260,6 +273,7 @@ public:
 #ifdef OPENCV_FOUND
 	OpenCV::CameraStream* getCameraStream() const;
 #endif
+	Leap::LeapCameraStream* getLeapCameraStream() const;
 
 	//jurik
 	/**
@@ -297,6 +311,11 @@ public:
 	{
 		return handsGroup;
 	}
+
+
+	//JMA
+	osg::Vec3f getGrafRotTransVec();
+
 
 public slots:
 
@@ -340,6 +359,11 @@ public slots:
 		 */
 	void setEdgeVisualForType( int index, QString edgeTypeName );
 
+	/**
+		 * @brief setEdgeHiddenForType Set invisibility of edges for specific type
+		 */
+	void setEdgeHiddenForType( bool hidden, QString edgeTypeName );
+
 	void recievedMVMatrix( QMatrix4x4 modelViewMatrix );
 
 	/**
@@ -351,6 +375,18 @@ public slots:
 	void updateBase( double size );
 
 	void setArucoRunning( bool isRunning );
+
+	/**
+		 * @author Autor: Denis Illes
+		 * @brief move certain nodes to module node
+		 */
+	void reorganizeNodesForModuleGraph();
+
+	/**
+		 * @author Autor: Denis Illes
+		 * @brief move nodes from module node back to default place
+		 */
+	void reorganizeNodesForModuleCity();
 
 private:
 
@@ -471,6 +507,13 @@ private:
 		*  \return osg::ref_ptr node
 		*/
 	osg::ref_ptr<osg::Node> createSkyNoiseBox();
+	/**
+	    *  \fn private  createLeapBackground
+	    *  \brief creates background from leap video
+	    *  \return osg::ref_ptr node
+	   */
+	osg::ref_ptr<osg::Node> createLeapBackground();
+
 
 #ifdef OPENCV_FOUND
 	/**
@@ -635,7 +678,7 @@ private:
 #ifdef OPENCV_FOUND
 	osg::ref_ptr<OpenCV::CameraStream> mCameraStream;
 #endif
-
+	osg::ref_ptr<Leap::LeapCameraStream> leapCameraStream;
 	bool clustersOpacityAutomatic;
 	bool clustersOpacitySelected;
 	double clustersOpacity;
@@ -677,3 +720,4 @@ private:
 }
 
 #endif
+#endif // COREGRAPH_H
