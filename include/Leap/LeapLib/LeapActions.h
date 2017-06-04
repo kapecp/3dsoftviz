@@ -6,6 +6,9 @@
 #include "LeapLib/LeapManager.h"
 #include "LeapLib/LeapExport.h"
 #include "easylogging++.h"
+#include "HandModule/Model/HandPalm.h"
+//#include "osg/Group"
+//#include "osg/ref_ptr"
 
 namespace Leap {
 
@@ -46,7 +49,7 @@ public:
 	// These methods should not have names onSwipe, onXXX. They are placeholders for further functionality.
 	// The names should correspond to the functionality provided by the method i.e. moveGraph();
 	void onKeyTap( Gesture gesture );
-	//void onScreenTap( Gesture::gesture );
+	void onScreenTap( Gesture gesture );
 
 	/**
 	 * @brief Leap::LeapActions::changeViewAngle
@@ -65,7 +68,7 @@ public:
 	 */
 	void stopMovingForward();
 
-	void updateARHands( Hand leftHand , Hand rightHand );
+	void updateARHands( Hand leftHand, Hand rightHand );
 
 	/**
 	 * @brief isCameraMoving is variable to decide whether to move camera or rotate graph
@@ -78,7 +81,10 @@ public:
 	void graphRotateSwipe( int swipeDirection );
 	void rotateAruco( Leap::DirectionDetector::Direction direction );
 	void scaleEdges( Leap::DirectionDetector::Direction direction );
+	void scaleGraph( Leap::Vector* vec );
 	void scaleNodes( bool scaleUp );
+	void selectNode( Leap::Hand hand );
+	//void scaleGraph(bool scaleUp);
 	//*****
 };
 }

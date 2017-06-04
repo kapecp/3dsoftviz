@@ -14,7 +14,7 @@ Lua::LuaGraphVisualizer::LuaGraphVisualizer( Data::Graph* graph, osg::ref_ptr<os
 	this->camera = camera;
 	Importer::GraphOperations* operations = new Importer::GraphOperations( *currentGraph );
 	operations->addDefaultTypes( edgeType, nodeType );
-    delete operations;
+	delete operations;
 }
 
 void Lua::LuaGraphVisualizer::setNodeParams( osg::ref_ptr<Data::Node> node, Lua::LuaGraphObject* obj, osg::Vec4f defColor, float defSize )

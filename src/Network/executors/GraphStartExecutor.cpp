@@ -18,7 +18,7 @@ void GraphStartExecutor::execute_client()
 	client->thread->pauseAllAlg();
 	client->coreGraph->setNodesFreezed( true );
 	client->currentGraph->setFrozen( true );
-    delete operations;
+	delete operations;
 }
 
 void GraphStartExecutor::execute_server()

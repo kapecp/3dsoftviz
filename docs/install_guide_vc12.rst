@@ -46,9 +46,9 @@ Na inštaláciu potrebujeme klonovať projekt `3DSoftViz <https://github.com/dom
 Postup inštalácie
 *****************
 **Uvedené programy neinštalovať do Program Files, PATH nesmie obsahovať medzeru! Idealne vsetky programy, kniznice, atd. dat do jedneho adresara.**
- #. Nainštalovať CMake. (Cesta je v dokumente označená ako *%CMAKE_DIR%*)
+ #. Nainštalovať CMake. (Cesta je v dokumente označená ako *%CMAKE_DIR%*). Pri inštalácií zvoliť "Add CMake to the system for all users". 
  #. Nainštalovať Qt (*%QT_DIR%*)
- #. Nainštalovať QtCreator do zložky Qt
+ #. Nainštalovať QtCreator.
  #. Vytvoriť zložku OpenSceneGraph (*%OSG_DIR%*)
  #. V prípade stiahnutia zbuildovaných súborov OSG (mega.nz)
 
@@ -364,3 +364,26 @@ Nastavenie debuggera v QtCreator
  #. Pridať do QtCreator Tools > Options > Build & Run > záložka Kits pre vytvorený profil položku Debugger (x86)
  #. Spustiť CMake (-DCMAKE_BUILD_TYPE=Debug)
  #. Zvoliť možnosť Debug (vľavo dole medzi Run a Build)
+ 
+Portable zip s projektom (Windows)
+----------------------------------
+ 
+ #. Pri builde projektu treba nastavit build install_unity a CMAKE_BUILD_TYPE = Release.
+ #. Nastavenie v Qt Creator 4.2 a vyssie	
+
+       .. _image_qt_build_type_release:
+       .. figure::  \images\install_guide\QT_BUILD_TYPE_RELEASE.png
+          :align:   center
+
+          Qt creator build
+  
+ #. V starsich verziach treba kliknut na Run CMake a do pola argumentov zadat: -DCMAKE_BUILD_TYPE=Release
+ #. Build projektu.
+ #. Stiahnut `_install.zip <https://1drv.ms/u/s!AvqXfRZpazpdhg2RSja0kCSNLuWA>`_ . V zipe su popridavane dll subory, ktore program potrebuje.
+ #. Rozbalit zip na disk.
+ #. Do rozbaleneho priecinku nakopirovat obsah z adresara "3dsoftviz/_install/" (po buildovani)
+ #. Spustit  _install/bin/3DSoftviz.exe.
+ 
+ 
+ 
+ 

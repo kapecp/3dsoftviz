@@ -11,7 +11,10 @@
 
 #include <QKeyEvent>
 #include <QGLWidget>
-
+#if QT_VERSION > 0x050000
+#include <QOpenGLWidget>
+#include <QOpenGLFunctions>
+#endif
 #if QT_VERSION >= 0x050000
 #define TOASCII toLatin1
 #else
@@ -27,7 +30,13 @@ namespace QOSG {
 	*  \author Adam Pazitnaj
 	*  \date 29. 4. 2010
 	*/
+//
+
+#if QT_VERSION > 0x050000
+class AdapterWidget : public QOpenGLWidget, protected QOpenGLFunctions
+#elif QT_VERSION > 0x040000
 class AdapterWidget : public QGLWidget
+#endif
 {
 
 public:
@@ -50,7 +59,7 @@ public:
 		*
 		*/
 
-	explicit AdapterWidget( QWidget* parent = 0, const char*   name = 0, const QGLWidget* shareWidget = 0, WindowFlags f = 0 );
+	explicit AdapterWidget( const QGLFormat& format, QWidget* parent = 0, const char*   name = 0, const QGLWidget* shareWidget = 0, WindowFlags f = 0 );
 
 
 	/*!
@@ -91,6 +100,7 @@ protected:
 		*/
 	void init();
 
+	void initializeGL();
 
 	/**
 		*  \fn protected virtual  resizeGL( int width, int height )

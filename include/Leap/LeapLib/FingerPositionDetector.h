@@ -19,6 +19,9 @@ public:
 	 * @return true if the hand has all fingers extended.
 	 */
 	static bool isHandExtended( Hand hand );
+
+
+	static bool isIndexFingerExtended( Hand hand );
 };
 
 }

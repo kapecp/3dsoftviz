@@ -16,6 +16,7 @@
 #include <opencv2/core/core.hpp>
 #include "Viewer/GraphNavigation.h"
 #include "Viewer/MouseControl.h"
+#include "OpenCV/MarkerlessTracker.h"
 
 namespace Kinect {
 
@@ -121,6 +122,12 @@ public slots:
 	void setSpeedKinect( double set );
 
 	/**
+	 * @brief Perform markerless tracking on image (true/false)
+	 * @param set
+	 */
+	void setMarkerlessTracking( bool set );
+
+	/**
 	 * @brief inicialize openni and nite for handtracking and add device
 	 */
 	void inicializeKinect();
@@ -141,6 +148,7 @@ private:
 	bool clickTimerFirstRun;
 	Vwr::GraphNavigation* nav;
 	Vwr::MouseControl* mouse;
+	OpenCV::MarkerlessTracker* kTracker;
 	// Marak end
 	/**
 	 * @brief information about status thread
@@ -151,6 +159,11 @@ private:
 	 * @brief status for sending image and processing
 	 */
 	bool mSetImageEnable;
+
+	/**
+	 * @brief flag for enabling markerless tracking
+	 */
+	bool mMarkerlessTrackingEnabled;
 
 	/**
 	 * @brief status of OpenNI device

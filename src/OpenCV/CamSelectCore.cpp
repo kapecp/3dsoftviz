@@ -93,9 +93,9 @@ int OpenCV::CamSelectCore::countCameras()
 
 void OpenCV::CamSelectCore::setCam( std::vector<OpenCV::CapVideo*>::size_type dev_id, int width, int height )
 {
-    //camlist[dev_id]->startCamera( width,height );
+	//camlist[dev_id]->startCamera( width,height );
 
-    //jma tmp workaround
-    camlist[dev_id]->startCamera( 640,480 );
+	//jma tmp workaround
+	camlist[dev_id]->startCamera( 640,480 );
 	this->device_id=dev_id;
 }

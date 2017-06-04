@@ -99,7 +99,7 @@ QList<Repository::Git::GitVersion*> Repository::Git::GitEvolutionGraphManager::f
 {
 	QList<Repository::Git::GitVersion*> versions = QList<Repository::Git::GitVersion*>();
 
-	foreach ( Repository::Git::GitVersion* version , evolutionGraph->getVersions() ) {
+	foreach ( Repository::Git::GitVersion* version, evolutionGraph->getVersions() ) {
 		if ( !QString::compare( version->getAuthor(), author ) ) {
 			versions.append( version );
 		}

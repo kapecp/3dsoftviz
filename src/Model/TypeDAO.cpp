@@ -13,6 +13,9 @@
 
 #include <QDebug>
 
+#include <leathers/push>
+#include <leathers/old-style-cast>
+
 Model::TypeDAO::TypeDAO( void )
 {
 }
@@ -224,3 +227,5 @@ QMap<QString,QString> Model::TypeDAO::getSettings( Data::Type* type, QSqlDatabas
 
 	return settings;
 }
+
+#include <leathers/pop>

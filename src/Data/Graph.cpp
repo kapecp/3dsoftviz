@@ -84,8 +84,8 @@ Data::Graph::Graph( qlonglong graph_id, QString name, qlonglong layout_id_counte
 	types( new QMap<qlonglong,Data::Type*>() ),
 	frozen( false ),
 	nodeVisual( Data::Node::INDEX_SQUARE ),
-    edgeVisual( Data::Edge::INDEX_QUAD ),
-    restrictionsManager_()
+	edgeVisual( Data::Edge::INDEX_QUAD ),
+	restrictionsManager_()
 {
 	this->edgeOccurence = QMap<QString, int>();
 	this->currentVersion = 0;

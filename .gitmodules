@@ -82,3 +82,6 @@
 [submodule "dependencies/busted"]
 	path = dependencies/busted
 	url = git@github.com:LuaDist/busted.git
+[submodule "dependencies/leathers"]
+	path = dependencies/leathers
+	url = git@github.com:kapecp/leathers.git

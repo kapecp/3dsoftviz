@@ -30,8 +30,8 @@ void QOpenCV::FaceRecognitionThread::run()
 
 	if ( mCapVideo == NULL ) {
 		qDebug() << "[FaceRecognitionThread::run()]  Camera is not set";
-        delete mFaceRecognizer;
-        return;
+		delete mFaceRecognizer;
+		return;
 	}
 
 	while ( !mCancel ) {
@@ -53,7 +53,7 @@ void QOpenCV::FaceRecognitionThread::run()
 			}
 		}
 		if ( mSendBackgrImgEnabled && !image.empty() ) {
-			emit pushBackgrImage( image.clone() );
+			emit pushBackgrImage( image.clone(), false );
 		}
 
 		// when face was detected along with movement (implemented with threshold)

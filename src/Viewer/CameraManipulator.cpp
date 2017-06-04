@@ -22,18 +22,13 @@
 #include <cmath>
 #include <list>
 
-#if defined(__linux) || defined(__linux__) || defined(linux)
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wuseless-cast"
-#pragma GCC diagnostic ignored "-Wsign-conversion"
-#pragma GCC diagnostic ignored "-Wswitch-enum"
-#pragma GCC diagnostic ignored "-Wold-style-cast"
-#pragma GCC diagnostic ignored "-Wconversion"
-#pragma GCC diagnostic ignored "-Wswitch-enum"
-#endif
-
-#pragma warning(push)
-#pragma warning(disable:4244)
+#include <leathers/push>
+#include <leathers/useless-cast>
+#include <leathers/sign-conversion>
+#include <leathers/switch-enum>
+#include <leathers/old-style-cast>
+#include <leathers/conversion>
+#include <leathers/double-promotion>
 
 double Vwr::CameraManipulator::EYE_MOVEMENT_SPEED;
 double Vwr::CameraManipulator::TARGET_MOVEMENT_SPEED;
@@ -128,7 +123,7 @@ void Vwr::CameraManipulator::home( double /*currentTime*/ )
 	_thrown = false;
 }
 
-void Vwr::CameraManipulator::home( const GUIEventAdapter& ea ,GUIActionAdapter& us )
+void Vwr::CameraManipulator::home( const GUIEventAdapter& ea,GUIActionAdapter& us )
 {
 	home( ea.getTime() );
 	us.requestRedraw();
@@ -767,8 +762,8 @@ bool Vwr::CameraManipulator::handleKeyUp( const osgGA::GUIEventAdapter& ea, osgG
 			break;
 		case osgGA::GUIEventAdapter::KEY_V: {
 			// Set camera position (use for debug & setting specific camera position)
-			_center.set( 15.9042 , -277.226 , -372.165 );
-			_rotation.set( 0.467275 , -0.0320081 , 0.0985734 , 0.878017 );
+			_center.set( 15.9042, -277.226, -372.165 );
+			_rotation.set( 0.467275, -0.0320081, 0.0985734, 0.878017 );
 			break;
 		}
 		default:
@@ -1491,6 +1486,4 @@ void Vwr::CameraManipulator::disableCameraMovement()
 
 } // namespace Vwr
 
-#if defined(__linux) || defined(__linux__) || defined(linux)
-#pragma GCC diagnostic pop
-#endif
+#include <leathers/pop>

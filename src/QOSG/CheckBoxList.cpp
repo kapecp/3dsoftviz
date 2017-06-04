@@ -13,6 +13,10 @@
 #include "QOSG/CheckBoxList.h"
 #include <QtGui>
 #include <QItemDelegate>
+#include <QApplication>
+#include <QCheckBox>
+#include <QAbstractItemView>
+#include <QStylePainter>
 
 namespace QOSG {
 

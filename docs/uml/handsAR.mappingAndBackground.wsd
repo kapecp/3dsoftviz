@@ -1,0 +1,60 @@
+// Module handsARAdapter
+// Autor: Aug_RealityKings
+
+
+@startuml
+
+class "Leap::LeapListener" as cls1 {	
+	void onImages( const Controller& controller )
+}
+class "Leap::CustomLeapManager" as cls2 {	
+	int updateCoreGraphBackground( const unsigned char* buffer , float depth)
+}
+
+class "Leap::HandObjectManipulator" as cls3 {	
+	void updateHands(Leap::Hand leftHand, Leap::Hand rightHand, HandPalm* leftPalm, HandPalm* rightPalm, osg::ref_ptr<osg::Camera> camera)
+	void updateFingers( HandPalm* palm, Leap::FingerList fingers, float diff)
+	void updateJoints( osg::Group* fingerJointGroup, Leap::Finger fingerLeap, int fingerPosition, float diff )
+	void updateFingerBones( osg::Group*  fingerBoneGroup, Leap::Finger fingerLeap, float diff )
+	void updateInterFingerBones( osg::Group*  interFingerBoneGroup, Leap::FingerList fingers, float diff )
+	void updateInterFingerWristBone( osg::Group*  interFingerBoneGroup, Leap::FingerList fingers, float diff )
+}
+
+class "Leap::HandPalm" as cls4 {
+  osg::ref_ptr<osg::Group> fingerGroup
+  osg::ref_ptr<osg::Group> interFingerBoneGroup
+}
+
+class "Vwr::CoreGraph" as cls5 {
+  int updateBackgroundStream( unsigned char* buffer )
+}
+
+class "OpenCV::CameraStream" as cls6 {
+  void updateBackgroundImage( cv::Mat cvImg , bool trackHands)
+}
+
+class "Leap::LeapCameraStream" as cls7 {
+  void updateBackgroundImage( unsigned char* buffer )
+}
+
+class "Leap::HandMapper" as cls8 {
+  Leap::Vector recalculateDepthNode(Leap::Vector vector, float diff)
+}
+
+class "OpenCV::HandTracker" as cls9 {
+  cv::vector<std::pair<cv::Point,double>> findHand( cv::Mat mask )
+}
+
+cls1 ..> cls2
+cls2 ..> cls3
+cls3 --> cls4
+cls2 ..> cls5
+cls5 o-- cls6
+cls5 o-- cls7
+
+cls6 ..> cls9
+cls8 --> cls6
+cls3 ..> cls8
+
+
+@enduml

@@ -5,8 +5,8 @@
 
 #include <QDebug>
 
-#pragma warning(push)
-#pragma warning(disable:4244)
+#include <leathers/push>
+#include <leathers/conversion>
 
 SpecialMatrix::MatrixViewer::MatrixViewer( Data::Graph* matrixGraph, QString fileName )
 {
@@ -110,7 +110,7 @@ void SpecialMatrix::MatrixViewer::exchangeNodes( osg::ref_ptr<Data::Node> srcNod
 		//get the new position
 		finalPosVector = tempNode->getTargetPosition() + diffVector;
 		//iNodeNewPos.set( static_cast<int>( finalPosVector.x()/static_cast<float>(separator)) , static_cast<int>( finalPosVector.y()/static_cast<float>(separator))  );//zaokruhlenie??
-		iNodeNewPos.set( static_cast<float>( static_cast<int>( finalPosVector.x()/static_cast<float>( separator ) ) ) , static_cast<float>( static_cast<int>( finalPosVector.y()/static_cast<float>( separator ) ) ) );
+		iNodeNewPos.set( static_cast<float>( static_cast<int>( finalPosVector.x()/static_cast<float>( separator ) ) ), static_cast<float>( static_cast<int>( finalPosVector.y()/static_cast<float>( separator ) ) ) );
 
 		//CHECK AVAIBILITY
 		foundNodeId = connections->getNodePositionsArrayField( static_cast<int>( iNodeNewPos.x() ), static_cast<int>( iNodeNewPos.y() ) );
@@ -220,3 +220,5 @@ void SpecialMatrix::MatrixViewer::adjustPositions()
 		i.value()->setRestrictedTargetPosition( targetPos );
 	}
 }
+
+#include <leathers/pop>

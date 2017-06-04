@@ -1,0 +1,35 @@
+// Module handsARAdapter
+// Autor: Aug_RealityKings
+
+
+@startuml
+
+class "Leap::LeapListener" as cls1 {	
+	void onFrame(const Controller& controller)
+}
+class "Leap::CustomLeapManager" as cls2 {	
+	void updateHands(Leap::Hand leftHand, Leap::Hand rightHand)
+}
+
+class "Leap::HandObjectManipulator" as cls3 {	
+	void updateHands(Leap::Hand leftHand, Leap::Hand rightHand, HandPalm* leftPalm, HandPalm* rightPalm, osg::ref_ptr<osg::Camera> camera)
+	void updateFingers( HandPalm* palm, Leap::FingerList fingers, float diff)
+	void updateJoints( osg::Group* fingerJointGroup, Leap::Finger fingerLeap, int fingerPosition, float diff )
+	void updateFingerBones( osg::Group*  fingerBoneGroup, Leap::Finger fingerLeap, float diff )
+	void updateInterFingerBones( osg::Group*  interFingerBoneGroup, Leap::FingerList fingers, float diff )
+	void updateInterFingerWristBone( osg::Group*  interFingerBoneGroup, Leap::FingerList fingers, float diff )
+}
+
+class "Leap::HandPalm" as cls4 {
+  osg::ref_ptr<osg::Group> fingerGroup
+  osg::ref_ptr<osg::Group> interFingerBoneGroup
+}
+
+
+
+cls1 ..> cls2
+cls2 ..> cls3
+cls3 --> cls4
+
+
+@enduml

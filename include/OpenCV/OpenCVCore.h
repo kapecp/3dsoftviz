@@ -53,7 +53,6 @@ public:
 		 */
 	void opencvInit();
 
-
 private:
 	/**
 		 * @author Autor: David Durcak
@@ -87,10 +86,10 @@ private:
 	void createConnectionMultiAruco();
 
 	/**
-	 * @author Matej Marconak
-	 * @brief create Connection Kinect
-	 * @brief create SLOT and SIGNAL for comunication between THREAD and Window,CameraManipulator
-	 */
+		 * @author Matej Marconak
+		 * @brief create Connection Kinect
+		 * @brief create SLOT and SIGNAL for comunication between THREAD and Window,CameraManipulator
+		 */
 	void createConnectionKinect();
 
 

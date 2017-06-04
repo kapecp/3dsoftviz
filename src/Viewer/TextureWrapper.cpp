@@ -10,9 +10,15 @@
 
 namespace Vwr {
 
+#include <leathers/push>
+#include <leathers/exit-time-destructors>
+#include <leathers/global-constructors>
+
 osg::ref_ptr<osg::Texture2D> TextureWrapper::nodeTexture;
 osg::ref_ptr<osg::Texture2D> TextureWrapper::edgeTexture;
 osg::ref_ptr<osg::Texture2D> TextureWrapper::orientedEdgeTexture;
+
+#include <leathers/pop>
 
 osg::ref_ptr<osg::Texture2D> TextureWrapper::getNodeTexture()
 {

@@ -97,7 +97,7 @@ private:
 #ifdef LEAP_FOUND
 	Leap::LeapThread* mLeapThr;
 	Leap::LeapThread* mLeapThrAR;
-#endif
+#endif 
 
 public slots:
 	void OnMove( const std::vector<double>& motionData );
@@ -355,6 +355,14 @@ public slots:
 	 * @param TODO
 	 */
 	void switchBackgroundOrtho2d();
+
+	/**
+	 * void switchBackgroundLeap(  )
+	 * @brief TODO
+	 * @param TODO
+	 */
+	void switchBackgroundLeap();
+
 	/**
 				*  \fn public  sliderValueChanged(int value)
 				*  \brief Slider value is changed
@@ -580,6 +588,9 @@ public slots:
 	void start_client();
 	void send_message();
 	void create_facewindow();
+
+	void toggleDraggerScale( bool set );
+	void toggleDraggerRotation( bool set );
 
 #ifdef OPENCV_FOUND
 #ifdef OPENNI2_FOUND
@@ -877,6 +888,12 @@ private:
 	 *@brief Action to switch/change background to Texture background (only OpenCV)
 	 */
 	QAction* switchBackgroundTextureAction;
+
+	/**
+	 * QAction * switchBackgroundLeapAction
+	 *@brief Action to switch/change background to leap background
+	 */
+	QAction* switchBackgroundLeapAction;
 
 	/**
 	 * QAction * switchBackgroundOrtho2dAction
@@ -1537,6 +1554,9 @@ private:
 		*/
 	QComboBox* edgeTypeComboBox;
 
+	QCheckBox* chb_dragger_scale;
+	QCheckBox* chb_dragger_rotation;
+
 	/**
 		*  bool isEBPlaying
 		*  \brief Flag if edge bundling is running
@@ -1599,7 +1619,8 @@ private:
 	//*****
 
 public:
-
+    //JMA
+    void forceOnChange();
 	//jurik
 	void setPlaying( bool play )
 	{

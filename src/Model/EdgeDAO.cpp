@@ -9,10 +9,9 @@
 
 #include <QDebug>
 
-#if defined(__linux) || defined(__linux__) || defined(linux)
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wfloat-equal"
-#endif
+#include <leathers/push>
+#include <leathers/float-equal>
+#include <leathers/old-style-cast>
 
 Model::EdgeDAO::EdgeDAO( void )
 {
@@ -467,7 +466,7 @@ QMap<qlonglong, osg::Vec4f> Model::EdgeDAO::getColors( QSqlDatabase* conn, bool*
 {
 	*error = FALSE;
 	bool error2 = false;
-    osg::Vec4f color;
+	osg::Vec4f color;
 	QMap<qlonglong, osg::Vec4f> colors;
 
 	QMap<qlonglong, QString> edgeColorR;
@@ -507,7 +506,7 @@ QMap<qlonglong, osg::Vec4f> Model::EdgeDAO::getColors( QSqlDatabase* conn, bool*
 	//nacitavame ulozene farby v databaze
 	for ( iter_r = edgeColorR.begin(); iter_r != edgeColorR.end(); ++iter_r ) {
 
-        qlonglong id = iter_r.key();
+		qlonglong id = iter_r.key();
 		iter_g = edgeColorG.find( id );
 		iter_b = edgeColorB.find( id );
 		iter_a = edgeColorA.find( id );
@@ -522,7 +521,7 @@ QMap<qlonglong, osg::Vec4f> Model::EdgeDAO::getColors( QSqlDatabase* conn, bool*
 QMap<qlonglong, float> Model::EdgeDAO::getScales( QSqlDatabase* conn, bool* error, qlonglong graphID, qlonglong layoutID )
 {
 	*error = FALSE;
-    bool error2 = false;
+	bool error2 = false;
 	QMap<qlonglong, float> scales;
 
 	QMap<qlonglong, QString> edgeScale;
@@ -537,7 +536,7 @@ QMap<qlonglong, float> Model::EdgeDAO::getScales( QSqlDatabase* conn, bool* erro
 
 	//nacitavame z databazy velkosti jednotlivych prvkov
 	for ( iter = edgeScale.begin(); iter != edgeScale.end(); ++iter ) {
-        qlonglong id = iter.key();
+		qlonglong id = iter.key();
 
 		float scale = iter.value().toFloat();
 		scales.insert( id, scale );
@@ -634,6 +633,4 @@ bool Model::EdgeDAO::addSetings( QSqlDatabase* conn, qlonglong graphID, qlonglon
 	return true;
 }
 
-#if defined(__linux) || defined(__linux__) || defined(linux)
-#pragma GCC diagnostic pop
-#endif
+#include <leathers/pop>

@@ -13,6 +13,8 @@
 
 #include "Util/SizedQueue.h"
 
+#include <OpenCV/MarkerlessTracker.h>
+
 namespace ArucoModul {
 class ArucoCore;
 class ArControlClass;
@@ -20,6 +22,7 @@ class ArControlClass;
 
 namespace OpenCV {
 class CapVideo;
+class MarkerlessTracker;
 }
 
 namespace ArucoModul {
@@ -94,8 +97,9 @@ signals:
 	* @author Dávid Durčák
 	* @brief pushBackgrImage signal that emit image for background
 	* @param image emited image matrix
+	* @param determines whether to track hands in the image
 	*/
-	void pushBackgrImage( cv::Mat image ) const;
+	void pushBackgrImage( cv::Mat image, bool trackHands ) const;
 
 	/**
 	* @author Dávid Durčák
@@ -194,12 +198,31 @@ public slots:
 	void setMultiMarker( bool set );
 
 	/**
+	 * @author Lukas Hagara
+	 * @brief Perform markerless tracking on image (true/false)
+	 * @param set
+	 */
+	void setMarkerlessTracking( bool set );
+
+	/**
 	* @author Michael Garaj
 	* @brief detectMarkerFromImage Detect markers from kinect image
 	* @param set
 	*/
 	void detectMarkerFromImage( cv::Mat image );
 
+    /**
+     * @brief setArInteractionSelection
+     * @param flag
+     * @author Juraj Marak
+     */
+    void setArInteractionSelection( int flag );
+    /**
+     * @brief setArInteractionBehviour
+     * @param flag
+     * @author Juraj Marak
+     */
+    void setArInteractionBehaviour( int flag );
 private:
 
 	/**
@@ -208,8 +231,8 @@ private:
 	* @param actPosArray[3] const array that describe position of marker by vector (x,y,z)
 	* @param actQuatArray[4] const array that describe orientation of marker by quaternion (w,x,y,z)
 	*/
-    //void graphControlling( const double actPosArray[3], const double actQuatArray[4] );
-      void graphControlling( const osg::Vec3f actPosArray, const osg::Quat actQuatArray );
+	//void graphControlling( const double actPosArray[3], const double actQuatArray[4] );
+	void graphControlling( const osg::Vec3f actPosArray, const osg::Quat actQuatArray );
 
 	/**
 	* @author Dávid Durčák
@@ -217,14 +240,14 @@ private:
 	* @param actPosArray[3] const array that describe position of marker by vector (x,y,z)
 	* @param actQuatArray[4] const array that describe orientation of marker by quaternion (w,x,y,z)
 	*/
-    //void mouseControlling( const double actPosArray[3], const double actQuatArray[4] );
-      void mouseControlling( const osg::Vec3f actPosArray, const osg::Quat actQuatArray );
+	//void mouseControlling( const double actPosArray[3], const double actQuatArray[4] );
+	void mouseControlling( const osg::Vec3f actPosArray, const osg::Quat actQuatArray );
 
 	/**
 	* @author Dávid Durčák
 	* @brief imagesSending Pripare images for sending and emiting them
 	*/
-	void imagesSending( ArucoCore& aCore, const cv::Mat frame ) const;
+	void imagesSending( ArucoCore& aCore, cv::Mat frame ) const;
 
 	/**
 	* @author Dávid Durčák
@@ -232,8 +255,8 @@ private:
 	* @param position[3] array that describe position of marker by vector (x,y,z)
 	* @param quaternion[4] array that describe orientation of marker by quaternion (w,x,y,z)
 	*/
-    //void computeCorQuatAndPos( const double position[3], const double rotation[4] );
-    void computeCorQuatAndPos( const osg::Vec3f position, const osg::Quat rotation );
+	//void computeCorQuatAndPos( const double position[3], const double rotation[4] );
+	void computeCorQuatAndPos( const osg::Vec3f position, const osg::Quat rotation );
 
 
 	/**
@@ -281,6 +304,7 @@ private:
 	bool		mSendImgEnabled;	// if true, of emiting actual frame is enabled
 	bool		mSendBackgrImgEnabled;
 	bool		mMultiMarkerEnabled;
+	bool		mMarkerlessTrackingEnabled;
 
 	unsigned int	mGrM;				// number of marker for graph controll
 	unsigned int	mMoM;				// number of marker for mouse controll
@@ -295,11 +319,10 @@ private:
 
 	OpenCV::CapVideo*	mCapVideo; // Cap video instanc, that managed camera and provides frames
 	Util::SizedQueue* boolQueue;
-
-    //JMA
-   ArControlClass* mArControlClass;
-   osg::Vec3d normalizePos( const osg::Vec3f actPosArray, const osg::Quat actQuatArray );//ArucoThread::
-
+	OpenCV::MarkerlessTracker* mMarkerlessTracker; //markerless tracker instance, that finds balls in frame
+	//JMA
+	ArControlClass* mArControlClass;
+	osg::Vec3d normalizePos( const osg::Vec3f actPosArray, const osg::Quat actQuatArray );//ArucoThread::
 
 };
 } // ArucoModul namespace

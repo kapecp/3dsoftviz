@@ -5,6 +5,8 @@
 #include "Data/Node.h"
 #include "Core/Core.h"
 #include <QTimer>
+#include "Aruco/ArAssignmentStrategy.h"
+#include "Aruco/ArSelectionLayoutStrategy.h"
 
 namespace Data {
 class Graph;
@@ -14,31 +16,41 @@ namespace ArucoModul {
 //concrete objects
 class ArControlObject : public QObject
 {
-    Q_OBJECT
+	Q_OBJECT
 
 public:
-    ArControlObject(int id, osg::Vec3f position );
-    void updatePosition( osg::Vec3f position );
-    bool isLost(){
-        return this->lost;
+    ArControlObject( int id, osg::Vec3f position, ArAssignmentStrategy* _assignmentStrategy, ArSelectionLayoutStrategy* _selectionLayoutStrategy );
+	void updatePosition( osg::Vec3f position );
+    bool isFocused()
+    {
+        return this->focused;
+    }
+    void setNodeAssignmentStrategy( ArAssignmentStrategy* strategy ){
+        this->_assignmentStrategy = strategy;
+    }
+    void setNodeBehaviourStrategy( ArSelectionLayoutStrategy* strategy ){
+        if(this->isFocused()){
+            _selectionLayoutStrategy->resetSelectionLayout(this->focusedNode, false);
+            this->_selectionLayoutStrategy = strategy;
+            _selectionLayoutStrategy->setSelectionLayout(this->focusedNode);
+         }
     }
 
 public slots:
-    void timerEvent();
+	void timerEvent();
 
 private:
-    int id;
-    qlonglong nodeToPick;
-    osg::Vec3f position;
-    bool focused;
-    bool lost;
+	int id;
+	osg::Vec3f position;
+	bool focused;
 
-    QTimer* timer;
+	QTimer* timer;
 
-    osg::ref_ptr<Data::Node> focusedNode;
+	osg::ref_ptr<Data::Node> focusedNode;
 
-    bool chckIfNearPosition( osg::Vec3f target );
 
+    ArAssignmentStrategy* _assignmentStrategy;
+    ArSelectionLayoutStrategy* _selectionLayoutStrategy;
 };
 
 
@@ -47,14 +59,20 @@ class ArControlClass : public QObject
 {
 
 public:
-    ArControlClass();
-    void updateObjectPositionAruco(qlonglong object_id, QMatrix4x4 modelViewMatrix , bool reverse);
-
+	ArControlClass();
+	void updateObjectPositionAruco( qlonglong object_id, QMatrix4x4 modelViewMatrix , bool reverse );
+    void setNodeAssignmentStrategy( int strategy );
+    void setNodeBehaviourStrategy( int strategy );
 private:
-    QOSG::ViewerQT* viewer;
+
+	QOSG::ViewerQT* viewer;
+
 	Vwr::CoreGraph* coreGraph;
 
-    QMap<qlonglong, ArucoModul::ArControlObject*> controlObjects;
+	QMap<qlonglong, ArucoModul::ArControlObject*> controlObjects;
+
+    ArAssignmentStrategy* _assignmentStrategy;
+    ArSelectionLayoutStrategy* _selectionLayoutStrategy;
 };
 
 } // end ArucoModul namespace
