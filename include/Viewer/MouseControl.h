@@ -123,7 +123,7 @@ private:
 
 	// Marak start
 	QList< osg::Vec2 >* mouseHistory;
-	osg::Vec2 getMouseAvgPosition( osg::Vec2 lastPos , int max );
+	osg::Vec2 getMouseAvgPosition( osg::Vec2 lastPos, int max );
 	// Marak end
 
 };

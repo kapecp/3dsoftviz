@@ -50,6 +50,14 @@ void QOpenCV::OpenCVWindow::configureWindow()
 	
 	mEnableARInteractionCB = new QCheckBox( tr( "AR interaction" ) );
 
+
+/*=======
+	mKinectRB = new QRadioButton( tr( "Kinect" ) );
+	mArucoRB = new QRadioButton( tr( "Aruco" ) );
+    mArInteractionRB = new QRadioButton( tr( "AR Interaction" ) );
+	mFaceRecRB = new QRadioButton( tr( "Face Recognition" ) );
+	mMarkerRB = new QRadioButton( tr( "Marker" ) );*/
+
 	mMultiMarkerRB = new QRadioButton( tr( "Multi Marker" ) );
 
 	mKinectPB = new QPushButton( tr( "Start Kinect" ) );
@@ -57,6 +65,7 @@ void QOpenCV::OpenCVWindow::configureWindow()
 	mUpdateCorParPB	= new QPushButton( tr( "Update cor. param." ) );
 	mInterchangeMarkersPB = new QPushButton( tr( "Change Markers" ) );
 	mLightDetPB = new QPushButton( tr( "Start Light Detection" ) );
+	mRecalibrateHandPB = new QPushButton( tr( "Recalibrate hand mapping" ) );
 
 	mMarkerNoVideo = new QCheckBox( tr( "NoVideo" ) );
 	mFaceNoVideo  = new QCheckBox( tr( "NoVideo" ) );
@@ -114,14 +123,15 @@ void QOpenCV::OpenCVWindow::configureWindow()
 	QHBoxLayout* mainLayout		= new QHBoxLayout;
 	QVBoxLayout* buttonLayout	= new QVBoxLayout;
 
-//#ifdef OPENNI2_FOUND
-//	mKinectRB->setChecked( true );
-//	buttonLayout->addWidget( mKinectRB );
-//#endif
+/*#ifdef OPENNI2_FOUND
+	mKinectRB->setChecked( true );
+	buttonLayout->addWidget( mKinectRB );
+#endif
+ marak gui
+	buttonLayout->addWidget( mArucoRB );
+    buttonLayout->addWidget( mArInteractionRB );
+	buttonLayout->addLayout( mModulesStackL );*/
 
-	//buttonLayout->addWidget( mArucoRB );
-   // buttonLayout->addWidget( mArInteractionRB );
-	//buttonLayout->addLayout( mModulesStackL );
 
 	QWidget* kinectPageWid =  new QWidget;
 	QWidget* arucoPageWid =  new QWidget;
@@ -209,15 +219,17 @@ void QOpenCV::OpenCVWindow::configureWindow()
 	arucoMarkerPageLayout->setAlignment( Qt::AlignBottom );
 	arucoMultiMarkerPageLayout->setAlignment( Qt::AlignBottom );
 
+
 	buttonLayout->addWidget( kinectPageWid );
 	buttonLayout->addWidget( arucoSubPageWid );
 
-	//	mModulesStackL->addWidget( kinectPageWid );
-	//	mModulesStackL->addWidget( arucoSubPageWid );
-	//    mModulesStackL->addWidget( arInteractionSubPageWid );
+/*	mModulesStackL->addWidget( kinectPageWid );
+	mModulesStackL->addWidget( arucoSubPageWid );
+    mModulesStackL->addWidget( arInteractionSubPageWid ); marak gui*/
 
 
-	//mSubmodulesStackL->addWidget( arucoFaceRecPageWid );
+
+	mSubmodulesStackL->addWidget( arucoFaceRecPageWid );
 	mSubmodulesStackL->addWidget( arucoMarkerPageWid );
 	mSubmodulesStackL->addWidget( arucoLightDetPageWid );
 	mSubmodulesStackL->addWidget( arInteractionSubPageWid );
@@ -265,6 +277,7 @@ void QOpenCV::OpenCVWindow::configureWindow()
 	arucoMarkerPageLayout->addWidget( mEnableMarkerlessCameraCB );
 	arucoMarkerPageLayout->addWidget( mUpdateCorParPB );
 	arucoMarkerPageLayout->addWidget( mInterchangeMarkersPB );
+	arucoMarkerPageLayout->addWidget( mRecalibrateHandPB );
 
 	//arucoMultiMarkerPageLayout->addWidget( mMultiMarkerPB );
 
@@ -302,16 +315,34 @@ void QOpenCV::OpenCVWindow::configureWindow()
 	connect( mEnableARInteractionCB, SIGNAL( clicked() ), this, SLOT( onSelModulChange() ) );
 	mRefEnableFaceRecCB->setEnabled( true );
 	mRefEnableMarkerlessCB->setEnabled( true );
+	mRecalibrateHandPB->setEnabled( false );
 
 //	mMultiMarkerPB->setCheckable( true );
 	mKinectPB->setCheckable( true );
 	mLightDetPB->setCheckable( true );
 
+
 	//BUTTONS - set up signals to slots
+	//set up signals to slots
+/*	connect( mKinectRB, SIGNAL( clicked() ), this, SLOT( onSelModulChange() ) );
+	connect( mArucoRB, SIGNAL( clicked() ), this, SLOT( onSelModulChange() ) );
+    connect( mArInteractionRB, SIGNAL( clicked() ), this, SLOT( onSelModulChange() ) );
+
+	connect( mFaceRecRB, SIGNAL( clicked() ), this, SLOT( onSelSubModulChange() ) );
+	connect( mMarkerRB, SIGNAL( clicked() ), this, SLOT( onSelSubModulChange() ) );
+	connect( mMultiMarkerRB, SIGNAL( clicked() ), this, SLOT( onSelSubModulChange() ) );
+
+	connect( mNoVideo,	 SIGNAL( clicked() ), this, SLOT( onSelSubModulChange() ) );
+
+	connect( mUpdateCorParPB, SIGNAL( clicked() ), this, SLOT( onUpdateCorPar() ) );
+	connect( mMarkerPB,  SIGNAL( clicked( bool ) ), this, SLOT( onMarkerStartCancel( bool ) ) );
+	connect( mFaceRecPB, SIGNAL( clicked( bool ) ), this, SLOT( onFaceRecStartCancel( bool ) ) );
+	connect( mMultiMarkerPB, SIGNAL( clicked( bool ) ), this, SLOT( onMultiMarkerStartCancel( bool ) ) ); marak gui*/
 	connect( mKinectPB, SIGNAL( clicked( bool ) ), this, SLOT( onKinectStartCancel( bool ) ) );
 	connect( mKinectSnapshotPB, SIGNAL( clicked() ), this, SLOT( onKinectSnapshotPBClicked() ) );
 
 	connect( mUpdateCorParPB, SIGNAL( clicked() ), this, SLOT( onUpdateCorPar() ) );
+	connect( mRecalibrateHandPB, SIGNAL( clicked() ), this, SLOT( onmRecalibrateHandPBClicked() ) );
 
 	//RADIOBUTTONS - set up signals to slots
 	connect( mMultiMarkerRB, SIGNAL( clicked() ), this, SLOT( onSelSubModulChange() ) );
@@ -423,12 +454,25 @@ void QOpenCV::OpenCVWindow::onMarkerBackgrCBClicked( bool checked )
 	}
 }
 
+void QOpenCV::OpenCVWindow::onmRecalibrateHandPBClicked()
+{
+	emit sendRecalibrateHand();
+}
+
+void QOpenCV::OpenCVWindow::onSelModulChange()
 
 void QOpenCV::OpenCVWindow::onLightDetShowProcessingCBClicked( bool checked )
 {
 	qDebug() << "onLightDetShowProcessingCBClicked " << checked;
 	emit sendShowProcessingCB( checked );
 }
+
+	/*if ( mArucoRB->isChecked() ) {
+		mModulesStackL->setCurrentIndex( 1 );
+	}
+    if ( mArInteractionRB->isChecked() ) {
+        mModulesStackL->setCurrentIndex( 2 );
+    } marak gui*/
 
 void QOpenCV::OpenCVWindow::onFisheyeXChanged( int value )
 {
@@ -465,7 +509,10 @@ void QOpenCV::OpenCVWindow::onSelSubModulChange() //----------------------------
 
 	if ( mFaceNoVideo->isChecked() ) {
 		emit sendImgFaceRec( false );
-	} else {
+
+	}
+	else {
+
 		emit sendImgFaceRec( true );
 	}
 
@@ -556,6 +603,7 @@ void QOpenCV::OpenCVWindow::onMarkerStartCancel( bool checked )
 	mMultiMarkerEnableCB->setEnabled( checked );
 	mEnableMarkerlessCameraCB->setEnabled( checked );
 	mInterchangeMarkersPB->setEnabled( checked );
+	mRecalibrateHandPB->setEnabled( checked );
 
 }
 

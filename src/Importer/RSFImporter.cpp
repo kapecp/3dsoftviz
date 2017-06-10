@@ -10,10 +10,8 @@
 #include <string>
 #include <memory>
 
-#if defined(__linux) || defined(__linux__) || defined(linux)
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wold-style-cast"
-#endif
+#include <leathers/push>
+#include <leathers/old-style-cast>
 
 namespace Importer {
 
@@ -113,7 +111,5 @@ bool RSFImporter::import(
 
 } // namespace
 
-#if defined(__linux) || defined(__linux__) || defined(linux)
-#pragma GCC diagnostic pop
-#endif
+#include <leathers/pop>
 

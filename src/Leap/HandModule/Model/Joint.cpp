@@ -1,11 +1,13 @@
 /**
  * Created by Patrik Berger on 13.11.2016.
  */
-#include "Leap/HandModule/Joint.h"
-#include <easylogging++.h>
+#include "Leap/HandModule/Model/Joint.h"
+
 #include <osg/ShapeDrawable>
 #include <osg/Geode>
 #include <osg/Shape>
+
+#include <easylogging++.h>
 
 const float RADIUS = 0.07f;
 

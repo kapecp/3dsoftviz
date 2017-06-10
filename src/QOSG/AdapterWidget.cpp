@@ -1,16 +1,19 @@
 #include "QOSG/AdapterWidget.h"
 #include "QOSG/CoreWindow.h"
 
-#if defined(__linux) || defined(__linux__) || defined(linux)
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wswitch-enum"
-#endif
+#include <leathers/push>
+#include <leathers/switch-enum>
+
+#include <easylogging++.h>
 
 namespace QOSG {
 
-AdapterWidget::AdapterWidget( QWidget* parent, const char* name , const QGLWidget* shareWidget, WindowFlags f ) :
-#if QT_VERSION > 0x040000
-	QGLWidget( QGLFormat( QGL::DoubleBuffer | QGL::DepthBuffer | QGL::Rgba | QGL::StencilBuffer | QGL::AlphaChannel | QGL::StereoBuffers ), parent, shareWidget, f )
+AdapterWidget::AdapterWidget( const QGLFormat& format, QWidget* parent, const char* name, const QGLWidget* shareWidget, WindowFlags f ) :
+#if QT_VERSION > 0x050000
+	QOpenGLWidget( parent, f )
+#elif QT_VERSION > 0x040000
+	QGLWidget( format, parent, shareWidget, f )
+
 #else
 	QGLWidget( parent, shareWidget, f )
 #endif
@@ -19,10 +22,45 @@ AdapterWidget::AdapterWidget( QWidget* parent, const char* name , const QGLWidge
 	setFocusPolicy( Qt::StrongFocus );
 }
 
+void AdapterWidget::initializeGL()
+{
+#if QT_VERSION > 0x050000
+	this->initializeOpenGLFunctions();
+#endif
+	// Set up the rendering context, define display lists etc.:
+
+	qDebug() << "OpenGL Versions Supported: " << QGLFormat::openGLVersionFlags();
+	qDebug() << "Current Context:" << this->format();
+
+	auto context = this->context();
+
+	qDebug() << "Context valid: " << context->isValid();
+	qDebug() << "Really used OpenGl: " << context->format().majorVersion() << "." << context->format().minorVersion();
+	qDebug() << "Profile: " << context->format().profile();
+
+	qDebug() << "OpenGl information: VENDOR:       " << ( const char* )glGetString( GL_VENDOR );
+	qDebug() << "                    RENDERDER:    " << ( const char* )glGetString( GL_RENDERER );
+	qDebug() << "                    VERSION:      " << ( const char* )glGetString( GL_VERSION );
+	qDebug() << "                    GLSL VERSION: " << ( const char* )glGetString( GL_SHADING_LANGUAGE_VERSION );
+	qDebug() << "endstuff\n";
+
+}
+
 
 
 void AdapterWidget::resizeGL( int width, int height )
 {
+	// FIX: for HiDPI displays
+	// without this fix, OpenGL context on retina displays is small,
+	// causing to display a small OpenGL context only in the lower-left corner
+	// (1/4 of the desired size)
+	// NOTE: on non-retina displays devicePixelRatio() is 1, on retina 2
+#if QT_VERSION > 0x050000
+	width *= QApplication::desktop()->devicePixelRatio();
+	height *= QApplication::desktop()->devicePixelRatio();
+#endif
+	// end FIX
+
 	//zmena velkosti widgetu
 	_gw->getEventQueue()->windowResize( 0, 0, width, height );
 	_gw->resized( 0,0,width,height );
@@ -228,6 +266,4 @@ void AdapterWidget::wheelEvent( QWheelEvent* event )
 
 } // namespace QOSG
 
-#if defined(__linux) || defined(__linux__) || defined(linux)
-#pragma GCC diagnostic pop
-#endif
+#include <leathers/pop>
