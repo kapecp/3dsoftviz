@@ -228,11 +228,20 @@ void QOpenCV::OpenCVWindow::configureWindow()
     mModulesStackL->addWidget( arInteractionSubPageWid ); marak gui*/
 
 
+	mToolBox = new QToolBox();
+	mToolBox->setSizePolicy( QSizePolicy( QSizePolicy::Minimum, QSizePolicy::Minimum ) );
+	mToolBox->setMinimumWidth( 163 );
+	mToolBox->addItem( arucoFaceRecPageWid, tr( "Face Recognition" ) );
+	mToolBox->addItem( arucoMarkerPageWid, tr( "Marker Tracking" ) );
+	mToolBox->addItem( arucoLightDetPageWid, tr( "Light Detection" ) );
+	mToolBox->addItem( arInteractionSubPageWid, tr( "Interaction" ) );
 
-	mSubmodulesStackL->addWidget( arucoFaceRecPageWid );
-	mSubmodulesStackL->addWidget( arucoMarkerPageWid );
-	mSubmodulesStackL->addWidget( arucoLightDetPageWid );
-	mSubmodulesStackL->addWidget( arInteractionSubPageWid );
+	buttonLayout->addWidget( mToolBox );
+
+	//mSubmodulesStackL->addWidget( arucoFaceRecPageWid );
+	//mSubmodulesStackL->addWidget( arucoMarkerPageWid );
+	//mSubmodulesStackL->addWidget( arucoLightDetPageWid );
+	//mSubmodulesStackL->addWidget( arInteractionSubPageWid );
 
 
 	kinectPageWid->setLayout( kinectPageLayout );
@@ -460,6 +469,15 @@ void QOpenCV::OpenCVWindow::onmRecalibrateHandPBClicked()
 }
 
 void QOpenCV::OpenCVWindow::onSelModulChange()
+{
+	/*if ( mArucoRB->isChecked() ) {
+		mModulesStackL->setCurrentIndex( 1 );
+	}
+	if ( mArInteractionRB->isChecked() ) {
+		mModulesStackL->setCurrentIndex( 2 );
+	} marak gui*/
+
+}
 
 void QOpenCV::OpenCVWindow::onLightDetShowProcessingCBClicked( bool checked )
 {
@@ -467,12 +485,6 @@ void QOpenCV::OpenCVWindow::onLightDetShowProcessingCBClicked( bool checked )
 	emit sendShowProcessingCB( checked );
 }
 
-	/*if ( mArucoRB->isChecked() ) {
-		mModulesStackL->setCurrentIndex( 1 );
-	}
-    if ( mArInteractionRB->isChecked() ) {
-        mModulesStackL->setCurrentIndex( 2 );
-    } marak gui*/
 
 void QOpenCV::OpenCVWindow::onFisheyeXChanged( int value )
 {
@@ -491,10 +503,6 @@ void QOpenCV::OpenCVWindow::onFisheyeRChanged( int value )
 
 void QOpenCV::OpenCVWindow::onEnableLightMarkersCBClicked( bool checked ) {
 	emit sendShowLightMarkers( checked );
-}
-
-void QOpenCV::OpenCVWindow::onSelModulChange()
-{
 }
 
 void QOpenCV::OpenCVWindow::onSelSubModulChange() //---------------------------------------------------------

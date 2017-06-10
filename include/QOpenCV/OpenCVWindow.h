@@ -15,6 +15,7 @@
 #include <QStackedLayout>
 #include <QVBoxLayout>
 #include <QGroupBox>
+#include <qtoolbox.h>
 
 namespace OpenCV {
 class CapVideo;
@@ -509,16 +510,13 @@ private:
 	QApplication*	mApp;
 	QLabel*			mWindowLabel;
 
-<<<<<<<
 
-=======
 	QRadioButton*	mKinectRB;
 	QRadioButton*	mArucoRB;
-    QRadioButton*   mArInteractionRB;
+	QRadioButton*   mArInteractionRB;
 	QRadioButton*    mFaceRecRB;
 	QRadioButton*    mMarkerRB;
 
->>>>>>>
 	QRadioButton*    mMultiMarkerRB;
 
 	QPushButton*     mFaceRecPB;
@@ -572,6 +570,8 @@ private:
 	QCheckBox*		mEnableLightDetCB;
 	QCheckBox*		mEnableLightMarkersCB;
 
+
+	QToolBox*		mToolBox;
 };
 
 }
