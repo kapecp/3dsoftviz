@@ -28,8 +28,8 @@ Data::OsgNode::OsgNode( qlonglong id, QString name, Data::Type* type, Data::Grap
 	this->setParentBall( NULL );
 
 
-	insertChild( INDEX_LABEL, createLabel( this->type->getScale(), labelText ) , false );
-	insertChild( INDEX_SQUARE, createNodeSquare( this->scale, OsgNode::createStateSet( this->type->getTypeTexture() ) ) , false );
+	insertChild( INDEX_LABEL, createLabel( this->type->getScale(), labelText ), false );
+	insertChild( INDEX_SQUARE, createNodeSquare( this->scale, OsgNode::createStateSet( this->type->getTypeTexture() ) ), false );
 	insertChild( INDEX_SPHERE, createNodeSphere( this->scale, OsgNode::createStateSet( this->type->getTypeTexture() ) ), false );
 	insertChild( INDEX_RESIDENCE,  createNodeResidence( this->scale ), false );
 	setValue( graph->getNodeVisual(), true );
@@ -192,8 +192,8 @@ void Data::OsgNode::adjustLabelForModule( float scale )
 
 osg::ref_ptr<osg::Node> Data::OsgNode::getLabel()
 {
-	auto at = getChild( INDEX_LABEL )->asNode();
-	return at ? at->asNode() : nullptr;
+	auto at = getChild( INDEX_LABEL );
+	return at ? at : nullptr;
 }
 
 osg::ref_ptr<osg::PositionAttitudeTransform> Data::OsgNode::getResidenceAsPAT()
@@ -340,7 +340,7 @@ void Data::OsgNode::setVisual( unsigned int index )
 void Data::OsgNode::reloadConfig()
 {
 	removeChildren( 0, 4 );
-	this->insertChild( INDEX_LABEL, createLabel( this->type->getScale(), labelText ) , false );
+	this->insertChild( INDEX_LABEL, createLabel( this->type->getScale(), labelText ), false );
 	this->insertChild( INDEX_SQUARE, createNodeSquare( this->scale, OsgNode::createStateSet( this->type->getTypeTexture() ) ), false );
 	this->insertChild( INDEX_SPHERE, createNodeSphere( this->scale, OsgNode::createStateSet( this->type->getTypeTexture() ) ), false );
 	this->insertChild( INDEX_RESIDENCE, createNodeResidence( this->scale ), false );

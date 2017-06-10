@@ -14,17 +14,27 @@ local logger        = utils.logger
 -----------------------------------------------
 -- Helper functions
 -----------------------------------------------
+
+----------------------------------------------
+-- Find function in functionList
+-- @param functionList table of functions
+-- @return name name of searched function
 local function getFunctionWithName(functionsList, name)
-  if (functionsList == nil) then
-    local sth = functionsList 
-  end
-  
-  for i,functionNode in pairs(functionsList) do
-      if functionNode.data.name == name then return functionNode end
+  if functionsList ~= nil then
+    for i,functionNode in pairs(functionsList) do
+      if functionNode.data.name == name then
+        return functionNode
+      end
+    end
   end
   return nil
 end
 
+----------------------------------------------
+-- Create module node (if not found) and connects with function
+-- @param graph luadb type of graph
+-- @param moduleName name of module
+-- @param moduleFunctionCall
 local function registerGlobalModule(graph, moduleName, moduleFunctionCall)
   graph.globalModuleNodes = graph.globalModuleNodes or {} 
   local globalModuleNodes = graph.globalModuleNodes
@@ -69,6 +79,11 @@ local function registerGlobalModule(graph, moduleName, moduleFunctionCall)
   graph:addEdge(connection)
 end
 
+----------------------------------------------
+-- Find and return table of function of a module
+-- @param graph luadb type of graph
+-- @param moduleName name of searched module
+-- @return table of functions or empty table
 local function getGlobalModuleFunctions(graph, moduleName)
   local globalNodes = graph.globalModuleNodes or {}
   if globalNodes[moduleName] and globalNodes[moduleName].functionNodes then
@@ -82,10 +97,19 @@ end
 -----------------------------------------------
 -- Main functions
 -----------------------------------------------
+
+----------------------------------------------
+-- Extract files tree
+-- save as graph.luaFilesNodes
+-- @param graph luadb type of graph
+-- @param path absolute path
 local function getFilesTree(graph, path)
   filestree.extract(path, graph)
 end
 
+----------------------------------------------
+-- Create modules from lua files
+-- @param graph luadb type of graph
 local function getModuleFromFile(graph)
   local luaFileNodes = graph.luaFileNodes
   for i,luaFileNode in pairs(luaFileNodes) do
@@ -117,6 +141,10 @@ local function getModuleFromFile(graph)
   end  
 end
 
+----------------------------------------------
+-- Extract function calls
+-- @param graph luadb type of graph
+-- @param astManager manager of ASTs
 local function getFunctionCalls(graph, astManager)
   local luaFileNodes = graph.luaFileNodes
   graph.globalModuleNodes = graph.globalModuleNodes or {} 
@@ -149,6 +177,9 @@ local function getFunctionCalls(graph, astManager)
   end
 end
 
+----------------------------------------------
+-- Connect function with required modules
+-- @param graph luadb type of graph
 local function connectModuleCalls(graph)
   local moduleCalls = graph.moduleCalls or {}
   local globalCalls = graph.globalCalls or {}
@@ -185,6 +216,9 @@ local function connectModuleCalls(graph)
   end
 end
 
+----------------------------------------------
+-- Assign connection of global function calls
+-- @param graph luadb type of graph
 local function assignGlobalCalls(graph)
   local globalCalls = graph.globalCalls or {}
   
@@ -216,6 +250,10 @@ local function assignGlobalCalls(graph)
   end
 end
 
+----------------------------------------------
+-- Extract nodes and edges to create a module graph
+-- @param graph luadb type of graph
+-- @param astManager manager of ASTs
 local function getAssignsAndReturnValues(graph, astManager)
   local luaFileNodes = graph.luaFileNodes
   for i,luaFileNode in pairs(luaFileNodes) do
@@ -224,6 +262,9 @@ local function getAssignsAndReturnValues(graph, astManager)
   
 end
 
+----------------------------------------------
+-- Join variable and function nodes if belongs to its table
+-- @param graph luadb type of graph
 local function connectFunctionsToVariables(graph)
   local wantedEdges = {}
   local assignEdges = graph:findEdgesByLabel("assigns")  
@@ -252,6 +293,9 @@ local function connectFunctionsToVariables(graph)
   end  
 end
 
+----------------------------------------------
+-- Clear unused tables from luadb graph 
+-- @param graph luadb type of graph
 local function clearTmpVars(graph)
   graph.globalCalls = nil
   graph.moduleCalls = nil
@@ -263,6 +307,11 @@ end
 -- Extract
 -----------------------------------------------
 
+----------------------------------------------
+-- Extract module graph from given project path
+-- @param sourcePath string of absolute path
+-- @param astManager manager of ASTs
+-- @return graph luadb type of graph
 local function extract(sourcePath, astManager)
   assert(sourcePath and utils.isDir(sourcePath), "wrong path passed")
   assert(not utils.isDirEmpty(sourcePath), "directory is empty")

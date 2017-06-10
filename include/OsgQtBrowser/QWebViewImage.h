@@ -80,6 +80,13 @@ public:
 
 	void showGitTemplate( const std::string& templateName, const std::string& templateType, QMap<QString, int>* changedMetrics );
 
+	/**
+		*  \fn public showMoonscriptTemplate
+		*  \brief
+		*  \param templateName name of the template file
+		*  \param templateType type of the template route
+		*  \param luaNodeId node id as QString
+		*/
 	void showMoonscriptTemplate( const std::string& templateName, const std::string& templateType, QString luaNodeId );
 
 	/**

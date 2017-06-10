@@ -254,13 +254,14 @@ local function extractGraph(absolutePath, graphPicker)
   utils.logger:setLevel(utils.logging.INFO)
 
   utils.logger:info("started extraction")
-  -- for now, it's still nil
   if(graphPicker == "functionCall graph") then
     luadbGraph = artifactsExtractor.extract(absolutePath, astMan)
   elseif(graphPicker == "module graph") then    
     luadbGraph = moduleExtractor.extract(absolutePath, astMan)
   elseif(graphPicker == "moonscript graph") then
     luadbGraph = moonscriptExtractor.getGraphProject(absolutePath, astMan)
+  else
+    utils.logger:info("graphPicker set to unknown value")
   end
   graphManager:addGraph(luadbGraph)
   utils.logger:info("extraction successfully finished")

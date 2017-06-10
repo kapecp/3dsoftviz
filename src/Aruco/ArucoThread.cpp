@@ -37,7 +37,7 @@ ArucoThread::ArucoThread( QObject* parent )
 
 	//JMA
 	mArControlClass = new ArControlClass();
-	mMarkerlessTracker = new OpenCV::MarkerlessTracker();
+    mMarkerlessTracker = new OpenCV::MarkerlessTracker( mArControlClass );
 }
 
 ArucoThread::~ArucoThread( void )
@@ -367,7 +367,7 @@ void ArucoThread::imagesSending( ArucoCore& aCore, cv::Mat frame ) const
 		}
 		cv::cvtColor( frame, frame,CV_BGR2RGB );
 
-		emit pushBackgrImage( frame.clone() );
+		emit pushBackgrImage( frame.clone(), true );
 	}
 
 	cv::Mat image;
@@ -391,7 +391,7 @@ void ArucoThread::imagesSending( ArucoCore& aCore, cv::Mat frame ) const
 
 		if ( mSendBackgrImgEnabled ) {
 			//if you comment this, background image will be without the augmented reality
-			emit pushBackgrImage( image.clone() );
+			emit pushBackgrImage( image.clone(), false );
 		}
 
 		emit pushImagemMat( image.clone() );
@@ -501,6 +501,25 @@ void ArucoThread::printMat( const osg::Matrixd mat, const QString name ) const
 	str += " " + QString::number( mat( 3,2 ), 'f', 2 );
 	str += " " + QString::number( mat( 3,3 ), 'f', 2 );
 	qDebug() << ": " << str;
+}
+
+/**
+ * @brief setArInteractionSelection
+ * @param flag
+ * @author Juraj Marak
+ */
+void ArucoThread::setArInteractionSelection( int flag )
+{
+    mArControlClass->setNodeAssignmentStrategy( flag );
+}
+/**
+ * @brief setArInteractionBehviour
+ * @param flag
+ * @author Juraj Marak
+ */
+void ArucoThread::setArInteractionBehaviour( int flag )
+{
+    mArControlClass->setNodeBehaviourStrategy( flag );
 }
 
 } // namespace ArucoModul

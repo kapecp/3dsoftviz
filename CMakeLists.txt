@@ -137,16 +137,17 @@ endif()
 # Dependencies - Searching external dependencies
 # ------------------------------------------------------------
 
-# ------------------------------ Qt -------------------------------
 set( ALL_SYSTEM_HEADERS )
 set( ALL_COMPILE_DEFINITIONS )
 
+
+# ------------------------------ Qt -------------------------------
 set( CMAKE_AUTOMOC ON )
 set( CMAKE_INCLUDE_CURRENT_DIR ON )
 
 
 # Find Qt4
-find_package( Qt4 REQUIRED )
+find_package( Qt4 COMPONENTS QtCore QtGui QtOpenGL QtSql QtWebKit QtXml QtNetwork REQUIRED)
 set( QT_USE_QTOPENGL 1 )
 set( QT_USE_QTSQL 1 )
 set( QT_USE_QTWEBKIT 1 )
@@ -158,6 +159,7 @@ if ( NOT Qt4_FOUND )
     # Find Qt5
     find_package( Qt5Core QUIET )
     find_package( Qt5Widgets QUIET )
+    find_package( Qt5Gui QUIET )
     find_package( Qt5OpenGL QUIET )
     find_package( Qt5Sql QUIET )
     find_package( Qt5WebEngine QUIET )
@@ -183,6 +185,10 @@ if( "${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" AND
 endif()
 
 # ------------------------------ OpenSceneGraph -------------------------------
+
+# Find OpenGL
+find_package( OpenGL REQUIRED)
+
 # Find OpenSceneGraph
 find_package( OpenSceneGraph COMPONENTS
 	osgGA
@@ -339,12 +345,12 @@ endif()
 # find PCL
 find_package(PCL 1.8)
 if ( PCL_FOUND )
-        list( APPEND ALL_SYSTEM_HEADERS	${PCL_INCLUDE_DIRS} )
+		list( APPEND ALL_SYSTEM_HEADERS	${PCL_INCLUDE_DIRS} )
 	link_directories(${PCL_LIBRARY_DIRS})
 	add_definitions(${PCL_DEFINITIONS})
 	message( STATUS "PCL FOUND" )
 else()
-        message( STATUS "PCL NOT FOUND" )
+		message( STATUS "PCL NOT FOUND" )
 endif()
 
 # ------------------------------ FGLOVE -------------------------------
@@ -811,6 +817,7 @@ if( USE_BUILTIN_DEPENDENCIES )
 			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
 		)
 
+
 	# Build luacomments
 	ExternalProject_Add ( dep_luacomments
 		PREFIX luacomments
@@ -820,6 +827,7 @@ if( USE_BUILTIN_DEPENDENCIES )
 			-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
 			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
 		)
+
 
 	# Ensure correct order of build (dependencies between external dependencies)
 	if( MSVC OR APPLE )
@@ -981,8 +989,8 @@ endif()
 # add Leap
 if( LEAP_FOUND )
 	# WORKAROUND GARAJ comment
-        list( APPEND SRC ${SRC_LEAP} )
-        list( APPEND SRC ${SRC_HANDMODULE} )
+		list( APPEND SRC ${SRC_LEAP} )
+		list( APPEND SRC ${SRC_HANDMODULE} )
 
 endif()
 
@@ -1116,8 +1124,8 @@ endif()
 
 # LEAP
 if( LEAP_FOUND )
-        list( APPEND INCL ${HEADER_LEAP} )
-        list( APPEND INCL ${HEADER_HANDMODULE} )
+		list( APPEND INCL ${HEADER_LEAP} )
+		list( APPEND INCL ${HEADER_HANDMODULE} )
 endif()
 
 # MOUSE3D
@@ -1210,18 +1218,27 @@ endif()
 # 3rd party sources
 # ---------------------------------------------------------------
 
+# noiseutils library
 add_library( noiseutils STATIC dependencies/noiseutils/noiseutils.cpp )
 target_include_directories( noiseutils SYSTEM PUBLIC ${DEPENDENCIES_INCLUDE_DIR}/libnoise dependencies/noiseutils dependencies/libnoise/src )
+
+# mouse3d library
 if ( UNIX AND NOT APPLE )
 	add_library( mouse3d STATIC dependencies/mouse3d/xdrvlib.c )
 	target_include_directories(mouse3d SYSTEM PUBLIC dependencies/mouse3d)
 endif()
+
+# qtcolorpicker library
 add_library( qtcolorpicker STATIC dependencies/qtcolorpicker/qtcolorpicker.cpp )
 target_include_directories( qtcolorpicker SYSTEM PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/qtcolorpicker )
+if (Qt4_FOUND )
+	target_link_libraries( qtcolorpicker Qt4::QtCore)
+endif()
 if ( Qt5Core_FOUND )
 	qt5_use_modules( qtcolorpicker Core Widgets )
 endif()
 
+# parserlib library
 include_directories( SYSTEM dependencies/parserlib/source )
 add_library( parserlib STATIC dependencies/parserlib/source/ast.cpp dependencies/parserlib/source/parser.cpp )
 
@@ -1245,7 +1262,8 @@ target_compile_options( gitlib PUBLIC ${FLAGS_FOR_DEBUG} )
 if ( Qt5Core_FOUND )
 	qt5_use_modules( gitlib Core )
 elseif( Qt4_FOUND )
-	target_link_libraries( gitlib ${QT_LIBRARIES} )
+#	target_link_libraries( gitlib ${QT_LIBRARIES} )
+	target_link_libraries( gitlib Qt4::QtCore )
 endif()
 
 # 'cotire' the module
@@ -1257,7 +1275,7 @@ endif()
 
 #-------------------------------- leap module -------------------------------
 if( LEAP_FOUND )
-        add_library( leaplib STATIC ${SRC_LEAPLIB} ${HEADER_LEAPLIB})
+		add_library( leaplib STATIC ${SRC_LEAPLIB} ${HEADER_LEAPLIB})
 
 	target_include_directories( leaplib
 		SYSTEM PUBLIC
@@ -1304,6 +1322,9 @@ endif()
 list( APPEND ALL_SYSTEM_HEADERS ${DEPENDENCIES_INCLUDE_DIR} )
 list( APPEND ALL_SYSTEM_HEADERS ${DEPENDENCIES_INCLUDE_DIR}/libnoise )
 list( APPEND ALL_SYSTEM_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/easyloggingpp/src )
+list( APPEND ALL_SYSTEM_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/qtcolorpicker/ )
+list( APPEND ALL_SYSTEM_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/leathers/Source )
+
 
 list( APPEND ALL_SYSTEM_HEADERS include/Leap )
 
@@ -1313,6 +1334,7 @@ endif()
 
 # works:
 include_directories(SYSTEM ${ALL_SYSTEM_HEADERS})
+
 # does not work:
 #list(REMOVE_DUPLICATES ALL_SYSTEM_HEADERS)
 # target_include_directories( ${3DSOFTVIZ_NAME}
@@ -1323,16 +1345,16 @@ include_directories(SYSTEM ${ALL_SYSTEM_HEADERS})
 # )
 
 if ( Qt5Core_FOUND )
-	qt5_use_modules( ${3DSOFTVIZ_NAME}
-		Core
-		Widgets
-		OpenGL
-		Sql
-		WebEngine
-		WebEngineWidgets
-		Xml
-		Network
-		)
+	target_link_libraries( ${3DSOFTVIZ_NAME}
+		Qt5::Core Qt5::Gui Qt5::Widgets Qt5::OpenGL Qt5::Sql Qt5::WebEngine Qt5::WebEngineWidgets Qt5::Xml Qt5::Network
+		${OPENGL_LIBRARIES} )
+endif()
+
+if ( Qt4_FOUND )
+#	target_link_libraries( ${3DSOFTVIZ_NAME} ${QT_LIBRARIES} )
+	target_link_libraries( ${3DSOFTVIZ_NAME}
+		Qt4::QtCore Qt4::QtGui Qt4::QtOpenGL Qt4::QtSql Qt4::QtWebKit Qt4::QtXml Qt4::QtNetwork
+		${OPENGL_LIBRARIES} )
 endif()
 
 target_link_libraries( ${3DSOFTVIZ_NAME}
@@ -1350,10 +1372,6 @@ target_link_libraries( ${3DSOFTVIZ_NAME}
 
 if( UNIX AND NOT APPLE )
 	target_link_libraries( ${3DSOFTVIZ_NAME} mouse3d )
-endif()
-
-if ( Qt4_FOUND )
-	target_link_libraries( ${3DSOFTVIZ_NAME} ${QT_LIBRARIES} )
 endif()
 
 if( NOT MSVC )
@@ -1387,7 +1405,7 @@ endif()
 #	target_link_libraries( ${3DSOFTVIZ_NAME} ${FGLOVE_LIBRARIES} )
 # endif()
 if ( PCL_FOUND )
-        target_link_libraries( ${3DSOFTVIZ_NAME} ${PCL_COMMON_LIBRARIES} )
+		target_link_libraries( ${3DSOFTVIZ_NAME} ${PCL_COMMON_LIBRARIES} )
 endif()
 if( LEAP_FOUND )
 	target_link_libraries( ${3DSOFTVIZ_NAME} leaplib ${LEAP_LIBRARIES} )
@@ -1715,8 +1733,8 @@ target_include_directories( test_gitlib_module 	PUBLIC
 	include/Repository/Git 	)
 target_compile_options( test_gitlib_module PUBLIC ${FLAGS_FOR_DEBUG} )
 if ( Qt5Core_FOUND )
-	qt5_use_modules( test_gitlib_module Core )
-	target_link_libraries( test_gitlib_module gitlib )
+#	qt5_use_modules( test_gitlib_module Core )
+	target_link_libraries( test_gitlib_module Qt5::Core gitlib )
 elseif( Qt4_FOUND )
 	target_link_libraries( test_gitlib_module ${QT_LIBRARIES} gitlib )
 endif()

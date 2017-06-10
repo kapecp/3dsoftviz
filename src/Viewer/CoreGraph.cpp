@@ -13,7 +13,11 @@
 #include <QDebug>
 #include <QMatrix4x4>
 
-#include <osgManipulator/TranslateAxisDragger>
+#include <osgManipulator/TabBoxDragger>
+#include <osgManipulator/TrackballDragger>
+#include <osgManipulator/ScaleAxisDragger>
+#include <osgManipulator/Command>
+#include <osgManipulator/Constraint>
 
 #include "Network/Server.h"
 #include "Data/Graph.h"
@@ -48,6 +52,37 @@
 #include <osgShadow/SoftShadowMap>
 
 #include <easylogging++.h>
+
+
+class PlaneConstraint : public osgManipulator::Constraint
+{
+public:
+	PlaneConstraint() {}
+
+	virtual bool constrain( osgManipulator::TranslateInLineCommand& command ) const
+	{
+		return true;
+	}
+	virtual bool constrain( osgManipulator::TranslateInPlaneCommand& command ) const
+	{
+		//command.setTranslation(osg::Vec3(0.0f,0.0f,0.0f));
+		return true;
+	}
+	virtual bool constrain( osgManipulator::Scale1DCommand& command ) const
+	{
+		//command.setScale(1.0f);
+		return true;
+	}
+	virtual bool constrain( osgManipulator::Scale2DCommand& command ) const
+	{
+		//command.setScale(osg::Vec2d(1.0,1.0));
+		return true;
+	}
+	virtual bool constrain( osgManipulator::ScaleUniformCommand& command ) const
+	{
+		return true;
+	}
+};
 
 namespace Vwr {
 
@@ -309,54 +344,54 @@ osg::ref_ptr<osg::Group> CoreGraph::test2() {
 //    }
 
 //    qDebug() << "***** INIT test2 ";
-    testGroup = new osg::Group;
+	testGroup = new osg::Group;
 
-    if (graph != NULL) {
+	if (graph != NULL) {
 
 //    Manager::GraphManager * manager = Manager::GraphManager::getInstance();
 //    QMap<qlonglong, Data::Type*> * types = manager->getActiveGraph()->getTypes();
 //    Data::Type * type = types->value(1);
 
-    QMap<qlonglong, osg::ref_ptr<Data::Cluster> > clusters = Clustering::Clusterer::getInstance().getClusters();
+	QMap<qlonglong, osg::ref_ptr<Data::Cluster> > clusters = Clustering::Clusterer::getInstance().getClusters();
 
-    QMap<qlonglong, osg::ref_ptr<Data::Cluster> >::iterator i;
+	QMap<qlonglong, osg::ref_ptr<Data::Cluster> >::iterator i;
 //int tempID = 0;
-    for (i = clusters.begin(); i != clusters.end(); i++)
-    {
-        osg::ref_ptr<Data::Cluster> cluster = i.value();
+	for (i = clusters.begin(); i != clusters.end(); i++)
+	{
+		osg::ref_ptr<Data::Cluster> cluster = i.value();
 
-    //    osg::ref_ptr<Data::Cluster> cluster = node->getCluster();
+	//    osg::ref_ptr<Data::Cluster> cluster = node->getCluster();
 
-     //   osg::ref_ptr<Data::Cluster> cluster = new Data::Cluster(tempID++, "name", type, graph->getNodeScale(), graph, osg::Vec3f(0,0,0));
+	 //   osg::ref_ptr<Data::Cluster> cluster = new Data::Cluster(tempID++, "name", type, graph->getNodeScale(), graph, osg::Vec3f(0,0,0));
 
-    //    qDebug() << "***** test2 cluster " << cluster->getId() << " count: " << cluster->getClusteredNodesCount();
+	//    qDebug() << "***** test2 cluster " << cluster->getId() << " count: " << cluster->getClusteredNodesCount();
 
-    //    testGroup->addChild(getSphere(osg::Vec3( cluster->getId() * 10, cluster->getId() * 10, cluster->getId() * 10)));
+	//    testGroup->addChild(getSphere(osg::Vec3( cluster->getId() * 10, cluster->getId() * 10, cluster->getId() * 10)));
 
-        osg::Vec3f midPoint;
-        float radius;
+		osg::Vec3f midPoint;
+		float radius;
 
-        // ak je na tomto clusteri zaregistrovany obmedzovac, vezmi jeho tvar
-        if (cluster->getShapeGetter() != NULL) {
-            midPoint = cluster->getShapeGetter()->getCenterNode()->getCurrentPosition(true);
-            radius = (midPoint - cluster->getShapeGetter()->getSurfaceNode()->getCurrentPosition(true)).length();
-        }
-        // inak vypocitaj tvar podla zlucenych uzlov
-        else {
-            midPoint = getMidPoint(cluster->getALLClusteredNodes());
-            radius = getRadius(cluster->getALLClusteredNodes(), midPoint);
-        }
+		// ak je na tomto clusteri zaregistrovany obmedzovac, vezmi jeho tvar
+		if (cluster->getShapeGetter() != NULL) {
+			midPoint = cluster->getShapeGetter()->getCenterNode()->getCurrentPosition(true);
+			radius = (midPoint - cluster->getShapeGetter()->getSurfaceNode()->getCurrentPosition(true)).length();
+		}
+		// inak vypocitaj tvar podla zlucenych uzlov
+		else {
+			midPoint = getMidPoint(cluster->getALLClusteredNodes());
+			radius = getRadius(cluster->getALLClusteredNodes(), midPoint);
+		}
 
-        int nodesCount = cluster->getClusteredNodesCount();
+		int nodesCount = cluster->getClusteredNodesCount();
 
-        osg::Vec4 color = cluster->getColor();
-        if (clustersOpacityAutomatic) {
-            color.w() = computeOpacity(midPoint);
-        } else {
-            color.w() = clustersOpacity;
-        }
+		osg::Vec4 color = cluster->getColor();
+		if (clustersOpacityAutomatic) {
+			color.w() = computeOpacity(midPoint);
+		} else {
+			color.w() = clustersOpacity;
+		}
 
-        // todo refactoring
+		// todo refactoring
 
 //        if (nodesCount > clustersRangeMin && nodesCount <= clusters1Value) {
 //            if (cameraInsideCube(midPoint, getRadius(cluster->getALLClusteredNodes(), midPoint))) {
@@ -364,15 +399,15 @@ osg::ref_ptr<osg::Group> CoreGraph::test2() {
 //            }
 //            testGroup->addChild(getCube(cluster->getId(), midPoint, getRadius(cluster->getALLClusteredNodes(), midPoint), color));
 //        } else if (nodesCount > clusters1Value && nodesCount <= clustersMiddleValue) {
-            if (cameraInsideCube(midPoint, radius)) {
-                color.w() = 1;
-            }
-            Cube * cube = new Cube(midPoint, radius, color);
-            cube->getGeode()->setUserValue("id", QString::number(cluster->getId()).toStdString());
+			if (cameraInsideCube(midPoint, radius)) {
+				color.w() = 1;
+			}
+			Cube * cube = new Cube(midPoint, radius, color);
+			cube->getGeode()->setUserValue("id", QString::number(cluster->getId()).toStdString());
 
-            cluster->setCube(cube);
+			cluster->setCube(cube);
 
-            testGroup->addChild(cube->getAT());
+			testGroup->addChild(cube->getAT());
 //        } else if (nodesCount > clustersMiddleValue && nodesCount <= clusters2Value) {
 //            if (cameraInsideSphere(midPoint, getRadius(cluster->getALLClusteredNodes(), midPoint))) {
 //                color.w() = 1;
@@ -384,10 +419,10 @@ osg::ref_ptr<osg::Group> CoreGraph::test2() {
 //            }
 //            testGroup->addChild(getSphere(cluster->getId(), midPoint, getRadius(cluster->getALLClusteredNodes(), midPoint), color));
 //        }
-    }
+	}
 
-    }
-    return testGroup;
+	}
+	return testGroup;
 }
 */
 osg::ref_ptr<osg::AutoTransform> CoreGraph::dodecahedron( qlonglong id, osg::Vec3 position, double radius, osg::Vec4 color )
@@ -566,13 +601,13 @@ osg::ref_ptr<osg::AutoTransform> CoreGraph::dodecahedron( qlonglong id, osg::Vec
 	osg::ref_ptr<osg::StateSet> ss = dodecahedronGeometry->getOrCreateStateSet();
 	/*
 	// only wireframe (outline / contour)
-	    osg::ref_ptr<osg::PolygonMode> pm = new osg::PolygonMode(osg::PolygonMode::FRONT_AND_BACK, osg::PolygonMode::LINE);
-	    ss->setAttributeAndModes(pm.get(), osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE);
+		osg::ref_ptr<osg::PolygonMode> pm = new osg::PolygonMode(osg::PolygonMode::FRONT_AND_BACK, osg::PolygonMode::LINE);
+		ss->setAttributeAndModes(pm.get(), osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE);
 
 	// line width
-	    osg::LineWidth* linewidth = new osg::LineWidth();
-	    linewidth->setWidth(20.0f);
-	    ss->setAttributeAndModes(linewidth, osg::StateAttribute::ON);
+		osg::LineWidth* linewidth = new osg::LineWidth();
+		linewidth->setWidth(20.0f);
+		ss->setAttributeAndModes(linewidth, osg::StateAttribute::ON);
 	*/
 
 // transparent
@@ -642,7 +677,7 @@ Vwr::CoreGraph::CoreGraph( Data::Graph* graph, osg::ref_ptr<osg::Camera> camera 
 	graphGroup = new osg::Group();
 	rotationMatrix = rotationMatrix.identity();
 
-
+	LOG( INFO ) << "EJ";
 
 	//jurik
 	//lighting
@@ -676,9 +711,43 @@ Vwr::CoreGraph::CoreGraph( Data::Graph* graph, osg::ref_ptr<osg::Camera> camera 
 	baseGeode = new osg::Geode();
 	baseTransform = new osg::MatrixTransform();
 
+//	--------------------------------------------------------------------------------------------------------------
+
+	//    dragger->setAxisLineWidth(5.0f);
+	//    dragger->setPickCylinderRadius(0.05f);
+	//    dragger->setConeHeight(0.2f);
+
+	manipulator_scale = new osgManipulator::TabBoxDragger();
+	PlaneConstraint* planeConstrain = new PlaneConstraint();
+	manipulator_scale->addConstraint( planeConstrain );
+	manipulator_rotation = new osgManipulator::TrackballDragger();
+
+	manipulator_scale->setupDefaultGeometry();
+	manipulator_rotation->setupDefaultGeometry();
+
+	root->addChild( manipulator_scale );
+	root->addChild( manipulator_rotation );
+
+	manipulator_scale->addTransformUpdating( graphRotTransf );
+	manipulator_rotation->addTransformUpdating( graphRotTransf );
+
+	float scale = graphRotTransf->getBound().radius() * 2.0f;
+	osg::Matrix mat_rot = osg::Matrix::scale( scale, scale, scale ) * osg::Matrix::translate( graphRotTransf->getBound().center() );
+
+	manipulator_scale->setMatrix( mat_rot );
+	manipulator_rotation->setMatrix( mat_rot );
+
+	manipulator_scale->setHandleEvents( false );
+	manipulator_rotation->setHandleEvents( false );
+
+	manipulator_scale->setNodeMask( 0x0 );
+	manipulator_rotation->setNodeMask( 0x0 );
+
 	graphRotTransf->addChild( graphGroup );
 	shadowedScene->addChild( graphRotTransf );
 	root->addChild( graphRotTransf );
+
+//	-------------------------------------------------------------------------------
 
 	createBase();
 	if ( !arucoRunning ) {
@@ -705,6 +774,9 @@ int CoreGraph::updateBackground( int bgVal, Data::Graph* currentGraph )
 {
 	osg::Group* root = this->getScene();
 	if ( root->removeChild( root->getNumChildren()-1 ) == true ) {
+		leapCameraStream = nullptr;
+		mCameraStream = nullptr;
+
 		if ( bgVal == 0 ) { // default skybox
 			SkyBox* skyBox = new SkyBox;
 			root->addChild( skyBox->createSkyBox( 0 ) );
@@ -739,6 +811,32 @@ int CoreGraph::updateBackground( int bgVal, Data::Graph* currentGraph )
 	return 1;
 }
 
+void CoreGraph::toggleDragger( int dragger_no, bool set )
+{
+
+	if ( dragger_no == 0 ) {
+
+		manipulator_scale->setHandleEvents( set );
+		manipulator_scale->setNodeMask( set? 0xffffffff : 0x0 );
+
+	}
+	else
+
+		if ( dragger_no == 1 ) {
+			root->removeChild( manipulator_rotation );
+			manipulator_rotation = new osgManipulator::TrackballDragger();
+			manipulator_rotation->setupDefaultGeometry();
+			root->addChild( manipulator_rotation );
+			manipulator_rotation->addTransformUpdating( graphRotTransf );
+			float scale = graphRotTransf->getBound().radius() * 1.3f;
+			osg::Matrix mat_rot = osg::Matrix::scale( scale, scale, scale ) * osg::Matrix::translate( graphRotTransf->getBound().center() );
+			manipulator_rotation->setMatrix( mat_rot );
+			manipulator_rotation->setHandleEvents( set );
+			manipulator_rotation->setNodeMask( set? 0xffffffff : 0x0 );
+
+		}
+
+}
 
 int CoreGraph::updateBackgroundStream( unsigned char* buffer )
 {
@@ -807,21 +905,21 @@ void CoreGraph::reload( Data::Graph* graph )
 	//zaciatok
 
 	/*
-	    osg::ref_ptr<osgManipulator::TranslateAxisDragger> dragger = new osgManipulator::TranslateAxisDragger();
-	    dragger->setupDefaultGeometry();
-	    graphGroup->addChild(dragger.get());
+		osg::ref_ptr<osgManipulator::TranslateAxisDragger> dragger = new osgManipulator::TranslateAxisDragger();
+		dragger->setupDefaultGeometry();
+		graphGroup->addChild(dragger.get());
 
-	    osg::ref_ptr<osg::MatrixTransform> geom1 = new osg::MatrixTransform(osg::Matrixd::scale(osg::Vec3f(1,1,1)));
-	    geom1->addChild(graphGroup);
+		osg::ref_ptr<osg::MatrixTransform> geom1 = new osg::MatrixTransform(osg::Matrixd::scale(osg::Vec3f(1,1,1)));
+		geom1->addChild(graphGroup);
 
-	    qDebug() << dragger->getMatrix().getTrans().x() << " " << dragger->getMatrix().getTrans().y();
+		qDebug() << dragger->getMatrix().getTrans().x() << " " << dragger->getMatrix().getTrans().y();
 
-	    float scale = geom1->getBound().radius() * 1.0f;
-	    osg::Matrix mat = osg::Matrix::scale(scale, scale, scale) * osg::Matrix::translate(geom1->getBound().center());
-	    dragger->setMatrix(mat);
+		float scale = geom1->getBound().radius() * 1.0f;
+		osg::Matrix mat = osg::Matrix::scale(scale, scale, scale) * osg::Matrix::translate(geom1->getBound().center());
+		dragger->setMatrix(mat);
 
-	    dragger->setHandleEvents(true);
-	    // konec
+		dragger->setHandleEvents(true);
+		// konec
 	*/
 	this->restrictionVisualizationsGroup = QSharedPointer<Vwr::RestrictionVisualizationsGroup> ( new Vwr::RestrictionVisualizationsGroup );
 	graphGroup->addChild( restrictionVisualizationsGroup->getGroup() );
@@ -851,6 +949,11 @@ void CoreGraph::reload( Data::Graph* graph )
 	// Set browsers to be always on top
 	this->browsersGroup->getGroup()->getOrCreateStateSet()->setMode( GL_DEPTH_TEST, osg::StateAttribute::OFF );
 	this->browsersGroup->getGroup()->getOrCreateStateSet()->setRenderBinDetails( 100,"RenderBin" );
+
+	float scale = graphRotTransf->getBound().radius() * 1.5f;
+	osg::Matrix mat = osg::Matrix::scale( scale, scale, scale ) * osg::Matrix::translate( graphRotTransf->getBound().center() );
+	manipulator_scale->setMatrix( mat );
+	manipulator_rotation->setMatrix( mat );
 }
 
 void CoreGraph::cleanUp()
@@ -979,7 +1082,7 @@ osg::ref_ptr<osg::Node> CoreGraph::createTextureBackground()
 
 
 	// texture
-	mCameraStream = new OpenCV::CameraStream( geom );
+	mCameraStream = new OpenCV::CameraStream( );
 	mCameraStream->setDataVariance( osg::Object::DYNAMIC );
 
 	osg::ref_ptr<osg::Texture2D> skymap = new osg::Texture2D( mCameraStream );
@@ -1821,15 +1924,16 @@ void CoreGraph::scaleGraphToBase()
 
 void CoreGraph::scaleGraph( int scale )
 {
+	LOG( INFO ) << "HERE";
 	osg::Matrixd scaleMatrix = graphRotTransf->getMatrix();
 	//outputMatrix( scaleMatrix);
 	switch ( scale ) {
 		case 1: {
-			graphRotTransf->setMatrix( scaleMatrix * scaleMatrix.scale( 0.5,0.5,0.5 ) );
+			graphRotTransf->setMatrix( scaleMatrix * scaleMatrix.scale( 0.8,0.8,0.8 ) );
 			break;
 		}
 		case 2: {
-			graphRotTransf->setMatrix( scaleMatrix * scaleMatrix.scale( 2,2,2 ) );
+			graphRotTransf->setMatrix( scaleMatrix * scaleMatrix.scale( 1.2,1.2,1.2 ) );
 			break;
 		}
 		default:
@@ -1894,10 +1998,10 @@ void CoreGraph::ratata( double initialX,double actualX,double initialY, double a
 	}
 
 	/*if(actualY > initialY +5){
-	    rotationMatrix = rotationMatrix * rotationMatrix.rotate(-0.05,osg::Vec3f(1,0,0));
+		rotationMatrix = rotationMatrix * rotationMatrix.rotate(-0.05,osg::Vec3f(1,0,0));
 	}
 	if(actualY < initialY -5){
-	    rotationMatrix = rotationMatrix * rotationMatrix.rotate(0.05,osg::Vec3f(1,0,0));
+		rotationMatrix = rotationMatrix * rotationMatrix.rotate(0.05,osg::Vec3f(1,0,0));
 	}*/
 
 	graphRotTransf->setMatrix( transfGraph * rotationMatrix );
@@ -1969,6 +2073,16 @@ void CoreGraph::setArucoRunning( bool isRunning )
 	this->arucoRunning = isRunning;
 }
 
+bool CoreGraph::isLeapStreamActive()
+{
+	return this->leapCameraStream != nullptr;
+}
+
+bool CoreGraph::isCameraStreamActive()
+{
+	return this->mCameraStream != nullptr;
+}
+
 void CoreGraph::drawAxes()
 {
 
@@ -2024,7 +2138,16 @@ void CoreGraph::drawAxes()
 //JMA
 osg::Vec3f CoreGraph::getGrafRotTransVec()
 {
-	return graphRotTransf->getMatrix().getTrans();
+    return graphRotTransf->getMatrix().getTrans();
+}
+osg::Vec3f CoreGraph::getGrafRotTransScale()
+{
+    return graphRotTransf->getMatrix().getScale();
+}
+
+void CoreGraph::onSetGraphZoom(int flag)
+{
+    this->scaleGraph(flag);
 }
 
 void CoreGraph::reorganizeNodesForModuleGraph()
@@ -2035,7 +2158,7 @@ void CoreGraph::reorganizeNodesForModuleGraph()
 
 	Lua::LuaGraph* luaGraph = Lua::LuaGraph::getInstance();
 
-	//iterate through all LuaNodes and search for "module" type node
+	// iterate through all LuaNodes and search for "module" type node
 	QMap<qlonglong, Lua::LuaNode*>::iterator node_iter;
 	for ( node_iter = luaGraph->getNodes()->begin();
 			node_iter != luaGraph->getNodes()->end();
@@ -2093,7 +2216,7 @@ void CoreGraph::reorganizeNodesForModuleCity()
 
 	Lua::LuaGraph* luaGraph = Lua::LuaGraph::getInstance();
 
-	//iterate through all LuaNodes and search for "module" type node
+	// iterate through all LuaNodes and search for "module" type node
 	QMap<qlonglong, Lua::LuaNode*>::iterator node_iter;
 	for ( node_iter = luaGraph->getNodes()->begin();
 			node_iter != luaGraph->getNodes()->end();
@@ -2103,7 +2226,7 @@ void CoreGraph::reorganizeNodesForModuleCity()
 			auto moduleGraphNode = graphNodes->value( node_iter.key() );
 			osg::ref_ptr<City::Module> cityModulePAT = new City::Module();
 
-			//get and iterate over every edge where SRC or DST is moduleNode
+			// get and iterate over every edge where SRC or DST is moduleNode
 			QMap<qlonglong, osg::ref_ptr<Data::Edge> >* moduleEdges = moduleGraphNode->getEdges();
 
 			QMap<qlonglong, osg::ref_ptr<Data::Edge> >::iterator edge_iter;
@@ -2113,34 +2236,34 @@ void CoreGraph::reorganizeNodesForModuleCity()
 				auto moduleGraphEdge = edge_iter.value();
 
 				if ( moduleGraphEdge->getSrcNode() == moduleGraphNode && moduleGraphEdge->AbsEdge::getName() == "declares" ) {
-					//funcNode should be type "function" or "global function"
+					// funcNode should be type "function" or "global function"
 					auto funcGraphNode = moduleGraphEdge->getDstNode();
 					cityModulePAT->addFunctionNode( funcGraphNode );
 
-					//get parent PAT for funcNode and remove it from nodesGroup (will be added when called refresh())
+					// get parent PAT for funcNode and remove it from nodesGroup (will be added when called refresh())
 					auto funcGraphNodePAT = cityModulePAT->getNodeParentPAT( funcGraphNode );
 					graphNodesGroup->removeChild( funcGraphNodePAT );
 
-					//set attributes for FRA and city layout
+					// set attributes for FRA and city layout
 					funcGraphNode->setIgnoreByLayout( true );
 					funcGraphNode->setInModule( true );
 
 				}
 
 				if ( moduleGraphEdge->getSrcNode() == moduleGraphNode && moduleGraphEdge->AbsEdge::getName() == "initializes" ) {
-					//funcNode should be type "local variable" or "global variable"
+					// funcNode should be type "local variable" or "global variable"
 					auto varGraphNode = moduleGraphEdge->getDstNode();
 					cityModulePAT->addVariableNode( varGraphNode );
 
-					//get parent PAT for varNode and move it from nodesGroup (will be added when called refresh())
+					// get parent PAT for varNode and move it from nodesGroup (will be added when called refresh())
 					auto varGraphNodePAT = cityModulePAT->getNodeParentPAT( varGraphNode );
 					graphNodesGroup->removeChild( varGraphNodePAT );
 
-					//set attributes for FRA and city layout
+					// set attributes for FRA and city layout
 					varGraphNode->setIgnoreByLayout( true );
 					varGraphNode->setInModule( true );
 
-					//get and iterate over every edge where SRC or DST is moduleNode
+					// get and iterate over every edge where SRC or DST is moduleNode
 					QMap<qlonglong, osg::ref_ptr<Data::Edge> >* varEdges = varGraphNode->getEdges();
 
 					QMap<qlonglong, osg::ref_ptr<Data::Edge> >::iterator edge_iter;
@@ -2150,15 +2273,15 @@ void CoreGraph::reorganizeNodesForModuleCity()
 						auto varGraphEdge = edge_iter.value();
 
 						if ( varGraphEdge->getSrcNode() == varGraphNode && varGraphEdge->AbsEdge::getName() == "assigns" ) {
-							//otherNode should be type "other"
+							// otherNode should be type "other"
 							auto otherGraphNode = varGraphEdge->getDstNode();
 							cityModulePAT->addOtherNode( varGraphNode, otherGraphNode );
 
-							//get parent PAT for otherNode and remove it from nodesGroup (will be added when called refresh())
+							// get parent PAT for otherNode and remove it from nodesGroup (will be added when called refresh())
 							auto otherGraphNodePAT = cityModulePAT->getNodeParentPAT( otherGraphNode );
 							graphNodesGroup->removeChild( otherGraphNodePAT );
 
-							//set attributes for FRA and city layout
+							// set attributes for FRA and city layout
 							otherGraphNode->setIgnoreByLayout( true );
 							otherGraphNode->setInModule( true );
 
@@ -2168,11 +2291,11 @@ void CoreGraph::reorganizeNodesForModuleCity()
 				}
 
 				if ( moduleGraphEdge->getSrcNode() == moduleGraphNode && moduleGraphEdge->AbsEdge::getName() == "provides" ) {
-					//intrfNode should be type "interface"
+					// intrfNode should be type "interface"
 					auto intrfGraphNode = moduleGraphEdge->getDstNode();
 					cityModulePAT->addInterfaceNode( intrfGraphNode );
 
-					//get parent PAT for intrfNode and move it from nodesGroup (will be added when called refresh())
+					// get parent PAT for intrfNode and move it from nodesGroup (will be added when called refresh())
 					auto intrfGraphNodePAT = cityModulePAT->getNodeParentPAT( intrfGraphNode );
 					graphNodesGroup->removeChild( intrfGraphNodePAT );
 

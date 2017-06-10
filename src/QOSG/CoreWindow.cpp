@@ -111,7 +111,11 @@ CoreWindow::CoreWindow( QWidget* parent, Vwr::CoreGraph* coreGraph, QApplication
 	createLeftToolBar();
 	createMetricsToolBar();
 
-	viewerWidget = new ViewerQT( this, 0, 0, 0, coreGraph );
+	QGLFormat format( QGL::DoubleBuffer | QGL::DepthBuffer | QGL::Rgba | QGL::StencilBuffer | QGL::AlphaChannel | QGL::StereoBuffers );
+	format.setVersion( 2, 1 );
+//	format.setProfile( QGLFormat::CoreProfile ); // Requires >=Qt-4.8.0
+
+	viewerWidget = new ViewerQT( format, this, 0, 0, 0, coreGraph );
 	viewerWidget->setSceneData( coreGraph->getScene() );
 
 	setCentralWidget( viewerWidget );
@@ -576,6 +580,14 @@ void CoreWindow::createActions()
 	b_switchGraphView->setEnabled( false );
 	connect( b_switchGraphView, SIGNAL( clicked() ), this, SLOT( switchGraphView() ) );
 
+//	-------------------------------------------------------------------------------------------------------------------------------------------------------
+//	-------------------------------------------------------------------------------------------------------------------------------------------------------
+	chb_dragger_scale = new QCheckBox( "Dragger_scale" );
+	connect( chb_dragger_scale, SIGNAL( clicked( bool ) ), this, SLOT( toggleDraggerScale( bool ) ) );
+
+	chb_dragger_rotation = new QCheckBox( "Dragger_rotation" );
+	connect( chb_dragger_rotation, SIGNAL( clicked( bool ) ), this, SLOT( toggleDraggerRotation( bool ) ) );
+
 	b_start_server = new QPushButton();
 	b_start_server->setText( "Host session" );
 	connect( b_start_server, SIGNAL( clicked() ), this, SLOT( start_server() ) );
@@ -971,6 +983,9 @@ QWidget* CoreWindow::createGraphTab( QFrame* line )
 	lGraph->addRow( line );
 	b_switchGraphView->setMaximumWidth( 136 );
 	lGraph->addRow( b_switchGraphView );
+
+	lGraph->addRow( chb_dragger_scale );
+	lGraph->addRow( chb_dragger_rotation );
 
 	wGraph->setLayout( lGraph );
 
@@ -2243,19 +2258,19 @@ void CoreWindow::loadExampleModuleGraph()
 
 	Data::Graph* currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
 
-	//zavriem aktualny graf
+	// zavri aktualny graf
 	if ( currentGraph != NULL ) {
 		Manager::GraphManager::getInstance()->closeGraph( currentGraph );
 	}
 
-	//vytvorim novy graf
+	// vytvor novy graf
 	currentGraph = Manager::GraphManager::getInstance()->createNewGraph( "LuaModuleGraph" );
 
-	//zastav rozmiestnovaci algoritmus
+	// zastav rozmiestnovaci algoritmus
 	layout->pause();
 	coreGraph->setNodesFreezed( true );
 
-	//vizualizuj nacitany lua graf
+	// vizualizuj nacitany lua graf
 	Lua::LuaGraphVisualizer* visualizer = new Lua::ModuleGraphVisualizer( currentGraph, coreGraph->getCamera() );
 	visualizer->visualize();
 
@@ -2264,7 +2279,7 @@ void CoreWindow::loadExampleModuleGraph()
 
 	AppCore::Core::getInstance()->restartLayout(); //zavola coreGraph->reload();
 
-	//spusti rozmiestnovaci algoritmus
+	// spusti rozmiestnovaci algoritmus
 	if ( isPlaying ) {
 		layout->play();
 		coreGraph->setNodesFreezed( false );
@@ -2343,7 +2358,7 @@ void CoreWindow::loadFromGit()
 					int newCurrentIndex = 0;
 
 					int iter = 1;
-					foreach ( QString item ,metrics.getAuthorList( Manager::GraphManager::getInstance()->getActiveGraph()->getCurrentVersion() + 1 ) ) {
+					foreach ( QString item,metrics.getAuthorList( Manager::GraphManager::getInstance()->getActiveGraph()->getCurrentVersion() + 1 ) ) {
 						list << item;
 						if ( item == currentText ) {
 							newCurrentIndex = iter;
@@ -3662,7 +3677,7 @@ bool CoreWindow::add_NodeClick()
 
 	osg::ref_ptr<Data::Node> newNode;
 	if ( !client->isConnected() ) {
-		newNode = currentGraph->addNode( "newNode", nodeType , position );
+		newNode = currentGraph->addNode( "newNode", nodeType, position );
 		Network::Server* server = Network::Server::getInstance();
 		server->sendNewNode( newNode );
 	}
@@ -4044,7 +4059,31 @@ void CoreWindow::startLeapAR()
 }
 #endif
 
+void CoreWindow::toggleDraggerRotation( bool set )
+{
+	if ( chb_dragger_rotation->isChecked() ) {
+		coreGraph->toggleDragger( 0, false );
+		coreGraph->toggleDragger( 1, chb_dragger_rotation->isChecked() );
+		chb_dragger_scale->setChecked( false );
+	}
+	else {
+		coreGraph->toggleDragger( 0, false );
+		coreGraph->toggleDragger( 1, false );
+	}
+}
 
+void CoreWindow::toggleDraggerScale( bool set )
+{
+	if ( chb_dragger_scale->isChecked() ) {
+		coreGraph->toggleDragger( 0, chb_dragger_scale->isChecked() );
+		coreGraph->toggleDragger( 1, false );
+		chb_dragger_rotation->setChecked( false );
+	}
+	else {
+		coreGraph->toggleDragger( 0, false );
+		coreGraph->toggleDragger( 1, false );
+	}
+}
 
 void CoreWindow::toggleSpyWatch()
 {
@@ -4427,7 +4466,7 @@ void CoreWindow::change_Vertigo_Planes_Distance( int value )
 
 	int nOfPlane = 0;
 	QLinkedList<Layout::ShapeGetter_Plane_ByThreeNodes*>::const_iterator it = planes_Vertigo.constBegin();
-	for ( it; it != planes_Vertigo.constEnd(); ++it , ++nOfPlane ) {
+	for ( it; it != planes_Vertigo.constEnd(); ++it, ++nOfPlane ) {
 
 		// ziskanie troch uzlov, ktore urcuju rovinu - obmedzenie
 		QSet<Data::Node*> nodesOfPlane = ( *it )->getNodesOfShape();
@@ -4650,7 +4689,7 @@ void CoreWindow::createMetricsToolBar()
 
 	// evolution part start
 	toolBar = new QToolBar( "Evolution graph controls", this );
-	QToolBar* toolBar1= new QToolBar( "Evolution graph controls" ,this );
+	QToolBar* toolBar1= new QToolBar( "Evolution graph controls",this );
 	toolBar1->addWidget( b_previous_version );
 	toolBar1->addWidget( b_next_version );
 	toolBar1->addWidget( b_info_version );
@@ -4682,13 +4721,13 @@ void CoreWindow::createMetricsToolBar()
 void CoreWindow::switchGraphView()
 {
 	if ( graphView ) {
-		//graph shown as graph
+		// graph shown as graph
 		coreGraph->reorganizeNodesForModuleCity();
 		edgeTypeComboBox->setEnabled( false );
 		b_switchGraphView->setText( "City layout" );
 	}
 	else {
-		//graph show as city
+		// graph show as city
 		coreGraph->reorganizeNodesForModuleGraph();
 		edgeTypeComboBox->setEnabled( true );
 		b_switchGraphView->setText( "Graph layout" );
@@ -4722,19 +4761,19 @@ void CoreWindow::loadLuaModuleGraph()
 
 	Data::Graph* currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
 
-	//zavriem aktualny graf
+	// zavri aktualny graf
 	if ( currentGraph != NULL ) {
 		Manager::GraphManager::getInstance()->closeGraph( currentGraph );
 	}
 
-	//vytvorim novy graf
+	// vytvor novy graf
 	currentGraph = Manager::GraphManager::getInstance()->createNewGraph( "LuaModuleGraph" );
 
-	//zastav rozmiestnovaci algoritmus
+	// zastav rozmiestnovaci algoritmus
 	layout->pause();
 	coreGraph->setNodesFreezed( true );
 
-	//vizualizuj nacitany lua graf
+	// vizualizuj nacitany lua graf
 	Lua::LuaGraphVisualizer* visualizer = new Lua::ModuleGraphVisualizer( currentGraph, coreGraph->getCamera() );
 	visualizer->visualize();
 
@@ -4743,7 +4782,7 @@ void CoreWindow::loadLuaModuleGraph()
 
 	AppCore::Core::getInstance()->restartLayout(); //zavola coreGraph->reload();
 
-	//spusti rozmiestnovaci algoritmus
+	// spusti rozmiestnovaci algoritmus
 	if ( isPlaying ) {
 		layout->play();
 		coreGraph->setNodesFreezed( false );
@@ -4986,7 +5025,7 @@ bool CoreWindow::nextVersion()
 				int newCurrentIndex = 0;
 
 				int iter = 1;
-				foreach ( QString item ,metrics.getAuthorList( Manager::GraphManager::getInstance()->getActiveGraph()->getCurrentVersion() + 1 ) ) {
+				foreach ( QString item,metrics.getAuthorList( Manager::GraphManager::getInstance()->getActiveGraph()->getCurrentVersion() + 1 ) ) {
 					list << item;
 					if ( item == currentText ) {
 						newCurrentIndex = iter;
@@ -5269,7 +5308,7 @@ void CoreWindow::changeEvolutionFilterOption( int state )
 				newCurrentIndex = 0;
 
 				int iter = 1;
-				foreach ( QString item ,metrics.getAuthorList( Manager::GraphManager::getInstance()->getActiveGraph()->getCurrentVersion() + 1 ) ) {
+				foreach ( QString item,metrics.getAuthorList( Manager::GraphManager::getInstance()->getActiveGraph()->getCurrentVersion() + 1 ) ) {
 					list << item;
 					if ( item == currentText ) {
 						newCurrentIndex = iter;
@@ -5543,4 +5582,7 @@ void CoreWindow::createProjARWindow()
 	QOSG::ProjectiveARCore::getInstance( NULL, this )->init( );
 }
 
+void CoreWindow::forceOnChange(){
+    this->onChange();
+}
 } // namespace QOSG

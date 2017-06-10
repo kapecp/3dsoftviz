@@ -23,14 +23,14 @@ Kinect::KinectThread::KinectThread( QObject* parent ) : QThread( parent )
 
 	// timer setting
 	clickTimer = new QTimer();
-	connect( clickTimer ,SIGNAL( timeout() ), this, SLOT( clickTimerTimeout() ) );
-	connect( this ,SIGNAL( signalClickTimerStop() ), this, SLOT( clickTimerStop() ) );
-	connect( this ,SIGNAL( signalClickTimerStart() ), this, SLOT( clickTimerStart() ) );
+	connect( clickTimer,SIGNAL( timeout() ), this, SLOT( clickTimerTimeout() ) );
+	connect( this,SIGNAL( signalClickTimerStop() ), this, SLOT( clickTimerStop() ) );
+	connect( this,SIGNAL( signalClickTimerStart() ), this, SLOT( clickTimerStart() ) );
 	clickTimerFirstRun = true;
 
 	nav = new Vwr::GraphNavigation();
 	mouse = new Vwr::MouseControl();
-	kTracker = new OpenCV::MarkerlessTracker();
+    kTracker = new OpenCV::MarkerlessTracker( NULL );
 }
 
 Kinect::KinectThread::~KinectThread( void )
@@ -200,7 +200,7 @@ void Kinect::KinectThread::run()
 				std::string file = Util::ApplicationConfig::get()->getValue( "Kinect.OutputFolder" ).toStdString();
 
 				//save color frame
-				cv::imwrite( file + "\\" +Util::ApplicationConfig::get()->getValue( "Kinect.ColourImageName" ).toStdString() + strTime + ".jpeg" , frame );
+				cv::imwrite( file + "\\" +Util::ApplicationConfig::get()->getValue( "Kinect.ColourImageName" ).toStdString() + strTime + ".jpeg", frame );
 
 				//save depth matrix
 				std::ofstream fout( file + "\\" +Util::ApplicationConfig::get()->getValue( "Kinect.DepthInfoName" ).toStdString() + strTime + ".txt" );
@@ -309,7 +309,7 @@ void Kinect::KinectThread::run()
 					else {
 						// if hand not closed - rotate
 						if ( numFingers[0] != 0 ) {
-							line( frame, cv::Point2i( 30, 30 ), cv::Point2i( 30, 30 ), cv::Scalar( 0, 0, 0 ), 5 ,8 );
+							line( frame, cv::Point2i( 30, 30 ), cv::Point2i( 30, 30 ), cv::Scalar( 0, 0, 0 ), 5,8 );
 							if ( static_cast<int>( kht->slidingHand_x ) != 0 ) {
 								putText( frame, kht->slidingHand_type, cvPoint( static_cast<int>( kht->slidingHand_x ),static_cast<int>( kht->slidingHand_y ) ), cv::FONT_HERSHEY_COMPLEX_SMALL, 0.8, cvScalar( 0,0,250 ), 1, CV_AA );
 								emit sendSliderCoords( ( kht->slidingHand_x / static_cast<float>( kht->handTrackerFrame.getDepthFrame().getWidth() ) - 0.5f ) * ( -200.0f ),

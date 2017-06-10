@@ -82,9 +82,9 @@
 [submodule "dependencies/busted"]
 	path = dependencies/busted
 	url = git@github.com:LuaDist/busted.git
+[submodule "dependencies/leathers"]
+	path = dependencies/leathers
+	url = git@github.com:kapecp/leathers.git
 [submodule "dependencies/luacomments"]
 	path = dependencies/luacomments
 	url = https://github.com/LuaDist/luacomments.git
-[submodule ".\\dependencies/luameg"]
-	path = .\\dependencies/luameg
-	url = git@github.com:matuSte/UMLtoSRC.git

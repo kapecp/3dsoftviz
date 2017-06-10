@@ -3,6 +3,7 @@
 #include "Data/Edge.h"
 #include "Util/ApplicationConfig.h"
 #include "LuaGraph/LuaGraph.h"
+#include "City/Module.h"
 
 #include <osg/ShapeDrawable>
 

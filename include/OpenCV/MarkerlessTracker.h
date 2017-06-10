@@ -4,6 +4,7 @@
 #include <opencv2/opencv.hpp>
 #include "Aruco/arControlObject.h"
 #include "Aruco/ArucoCore.h"
+#include "OpenCV/TrackerBall.h"
 #include <aruco/aruco.h>
 
 
@@ -25,7 +26,7 @@ class MarkerlessTracker : public QObject
 
 public:
 
-	MarkerlessTracker();
+    MarkerlessTracker(ArucoModul::ArControlClass* arControlClass);
 	~MarkerlessTracker();
 
 	/**
@@ -42,14 +43,16 @@ private:
 	ArucoModul::ArControlClass* mArControlClass;
 	ArucoModul::ArucoCore* aCore;
 	aruco::CameraParameters mCamParam;
+	std::vector<TrackerBall> tBalls;
+	int framenum;
+
 
 	/**
 	 * @author Autor: Juraj Marak
 	 * @brief detect circles in frame
 	 */
-	void findCirclesInFrame( cv::Mat& frame,
-							 cv::vector<cv::Vec3f>& circlesReal
-						   );
+	void findCirclesInFrame( cv::Mat& frame );
+
 	//OpenCV::MarkerlessTracker::
 	/**
 	 * @author Autor: Juraj Marak
@@ -69,6 +72,30 @@ private:
 	void calculateMVMatrixFromPose( cv::Mat rvec, cv::Mat tvec,
 									QMatrix4x4& mVMatrix
 								  );
+
+	/**
+	 * @author Autor: Marek Rostar
+	 * @brief get positions of points  edge image
+	 * @param edge img
+	 */
+	std::vector<cv::Point2f> getPointPositions( cv::Mat binaryImage );
+	/**
+	 * @author Autor: Marek Rostar
+	 * @brief calculate center and radius for circle fited through 3 points from edge img
+	 * @param points from edge img
+	 * @param center
+	 * @param radius
+	 */
+	inline void getCircle( cv::Point2f& p1,cv::Point2f& p2,cv::Point2f& p3, cv::Point2f& center, float& radius );
+	/**
+	 * @author Autor: Marek Rostar
+	 * @brief Chceck the inlier count in fitted circle
+	 * @param edge img
+	 * @param center
+	 * @param radius
+	 * @param found inliers
+	 */
+	float verifyCircle( cv::Mat dt, cv::Point2f center, float radius, std::vector<cv::Point2f>& inlierSet );
 //OpenCV::MarkerlessTracker::
 };
 }

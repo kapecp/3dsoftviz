@@ -53,7 +53,7 @@ void QOpenCV::FaceRecognitionThread::run()
 			}
 		}
 		if ( mSendBackgrImgEnabled && !image.empty() ) {
-			emit pushBackgrImage( image.clone() );
+			emit pushBackgrImage( image.clone(), false );
 		}
 
 		// when face was detected along with movement (implemented with threshold)

@@ -53,7 +53,6 @@ public:
 		 */
 	void opencvInit();
 
-
 private:
 	/**
 		 * @author Autor: David Durcak

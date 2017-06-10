@@ -13,6 +13,13 @@ local logger     = utils.logger
 -- Helper functions
 -----------------------------------------------
 
+----------------------------------------------
+-- Create new luadb node
+-- @param name node name
+-- @param type node type
+-- @param astID id of node in AST
+-- @param astNode table of node AST information
+-- @return new node
 local function createNode(name, type, astID, astNode)
   local node = hypergraph.node.new()
   node.meta = {}  
@@ -30,6 +37,13 @@ local function createNode(name, type, astID, astNode)
   return node
 end
 
+----------------------------------------------
+-- Create new luadb edge
+-- @param label edge name
+-- @param sourceNode source node
+-- @param targetNode target node
+-- @param isOriented boolean, is edge oriented
+-- @return new edge
 local function createEdge(label, sourceNode, targetNode, isOriented)
   local edge = hypergraph.edge.new()
   edge.label = label
@@ -39,6 +53,12 @@ local function createEdge(label, sourceNode, targetNode, isOriented)
   return edge
 end
 
+----------------------------------------------
+-- Add astID and astNodeID to module nodes
+-- @param AST tree of parsed file
+-- @param AST_ID id of the current AST
+-- @param graph luadb type of graph
+-- @param path absolute path of parsed file
 local function addIdsToModuleNode(AST, AST_ID, graph, path)
   local modules = graph:findNodesByType("module")
   for i,mod in pairs(modules) do
@@ -49,6 +69,12 @@ local function addIdsToModuleNode(AST, AST_ID, graph, path)
   end
 end
 
+----------------------------------------------
+-- Find node by name and type
+-- @param name name of searched node
+-- @param nodeType type of searched node
+-- @param graph luadb type of graph
+-- @return node or nil
 local function findNodeByNameAndType(name, nodeType, graph)
   local nodes = graph:findNodesByType(nodeType)
   for _,node in pairs(nodes) do
@@ -59,6 +85,11 @@ local function findNodeByNameAndType(name, nodeType, graph)
   return nil
 end
 
+----------------------------------------------
+-- Find represents node for interface node
+-- @param name name of interface node
+-- @param graph luadb type of graph
+-- @return node which represents the interface node or nil
 local function getRepresentsNodeByName(name, graph)
   local globVar = findNodeByNameAndType(name, "global variable", graph)
   if(globVar) then return globVar end
@@ -72,12 +103,21 @@ local function getRepresentsNodeByName(name, graph)
   return nil
 end
 
+----------------------------------------------
+-- Find (or create of not found) and return environment node
+-- @param graph luadb type of graph
+-- @return environment (_G) node
 local function getEnvironmentNode(graph)
   local _GNode = findNodeByNameAndType("_G", "global variable", graph)
   if(_GNode == nil) then _GNode = createNode("_G", "global variable", astID) end
   return _GNode
 end
 
+----------------------------------------------
+-- Find and return module node from path
+-- @param nodes table of nodes
+-- @param modulePath absolute path of module
+-- @return module node or empty table
 local function getModuleNodeByModulePath(nodes, modulePath)
   for i,mod in pairs(nodes) do
     if mod.meta.type == "module" then
@@ -89,6 +129,11 @@ local function getModuleNodeByModulePath(nodes, modulePath)
   return {}
 end
 
+----------------------------------------------
+-- Find and return file node from path
+-- @param graph luadb type of graph
+-- @param filePath absolute path of file
+-- @return file node or nil
 local function getFileNodeByFilePath(graph, filePath)
   local files = graph:findNodesByType('file')
   for i,file in pairs(files) do    
@@ -99,6 +144,15 @@ local function getFileNodeByFilePath(graph, filePath)
   return nil
 end
 
+----------------------------------------------
+-- Add nodes and edges from assign calls into passed tables
+-- @param graph luadb type of graph
+-- @param assigns table of structured assign calls
+-- @param AST_ID id of the current AST
+-- @param fileName name of parsed file
+-- @param nodes table of nodes
+-- @param edges table of edges
+-- @return extracted nodes and edges
 local function addAssignsToGraph(graph, assigns, AST_ID, fileName, nodes, edges)
   local assigns = assigns or {}  
   local nodes = nodes or {}
@@ -136,7 +190,15 @@ local function addAssignsToGraph(graph, assigns, AST_ID, fileName, nodes, edges)
   return nodes, edges
 end
 
-
+----------------------------------------------
+-- Add nodes and edges from require calls into passed tables
+-- @param graph luadb type of graph
+-- @param requires table of structured require calls
+-- @param AST_ID id of the current AST
+-- @param fileName name of parsed file
+-- @param nodes table of nodes
+-- @param edges table of edges
+-- @return extracted nodes and edges
 local function addRequireNodesToGraph(graph, requires, AST_ID, fileName, nodes, edges)
   local requires = requires or {}  
   local nodes = nodes or {}
@@ -185,6 +247,15 @@ local function addRequireNodesToGraph(graph, requires, AST_ID, fileName, nodes, 
   return nodes, edges  
 end
 
+----------------------------------------------
+-- Add nodes and edges from return values into passed tables
+-- @param graph luadb type of graph
+-- @param returns table of structured return values
+-- @param AST_ID id of the current AST
+-- @param fileName name of parsed file
+-- @param nodes table of nodes
+-- @param edges table of edges
+-- @return extracted nodes and edges
 local function addModuleReturnValuesToGraph(graph, returns, AST_ID, fileName, nodes, edges)
   local returns = returns or {}  
   local nodes = nodes or {}
@@ -249,6 +320,16 @@ end
 -----------------------------------------------
 -- Main functions
 -----------------------------------------------
+
+----------------------------------------------
+-- Extract nodes and edges from assign calls
+-- @param AST tree of parsed file
+-- @param AST_ID id of the current AST
+-- @param graph luadb type of graph
+-- @param fileName name of parsed file
+-- @param nodes table of nodes
+-- @param edges table of edges
+-- @return extracted nodes and edges
 local function extractAssigns(AST, AST_ID, graph, fileName, nodes, edges)
   local nodes = nodes or {}
   local edges = edges or {}
@@ -259,6 +340,15 @@ local function extractAssigns(AST, AST_ID, graph, fileName, nodes, edges)
   return nodes, edges
 end
 
+----------------------------------------------
+-- Extract nodes and edges from require calls
+-- @param AST tree of parsed file
+-- @param AST_ID id of the current AST
+-- @param graph luadb type of graph
+-- @param fileName name of parsed file
+-- @param nodes table of nodes
+-- @param edges table of edges
+-- @return extracted nodes and edges
 local function extractRequireCalls(AST, AST_ID, graph, fileName, nodes, edges)
   local nodes = nodes or {}
   local edges = edges or {}
@@ -268,6 +358,15 @@ local function extractRequireCalls(AST, AST_ID, graph, fileName, nodes, edges)
   return nodes, edges
 end
 
+----------------------------------------------
+-- Extract nodes and edges from return values
+-- @param AST tree of parsed file
+-- @param AST_ID id of the current AST
+-- @param graph luadb type of graph
+-- @param fileName name of parsed file
+-- @param nodes table of nodes
+-- @param edges table of edges
+-- @return extracted nodes and edges
 local function extraModuleReturnValues(AST, AST_ID, graph, fileName, nodes, edges)
   local nodes = nodes or {}
   local edges = edges or {}
@@ -276,8 +375,13 @@ local function extraModuleReturnValues(AST, AST_ID, graph, fileName, nodes, edge
   return nodes, edges
 end
 
-
-
+----------------------------------------------
+-- Extract nodes and edges
+-- @param AST tree of parsed file
+-- @param AST_ID id of the current AST
+-- @param graph luadb type of graph
+-- @param fileName name of parsed file
+-- @return extracted nodes and edges
 local function extractNodesAndEdges(AST, AST_ID, graph, fileName)
   local nodes = {}
   local edges = {}
@@ -288,7 +392,16 @@ local function extractNodesAndEdges(AST, AST_ID, graph, fileName)
 end
 
 
+-----------------------------------------------
+-- Extract
+-----------------------------------------------
 
+----------------------------------------------
+-- Extract module artefacts
+-- @param luaFileNode file node
+-- @param graph luadb type of graph
+-- @param astManager manager of ASTs
+-- @return table of nodes and edges
 local function extract(luaFileNode, graph, astManager)
   local path = luaFileNode.data.path
   local fileName = luaFileNode.data.name
