@@ -62,7 +62,7 @@ void Vwr::GraphNavigation::setColorNearestNode( Data::Node* selectedNode )
 		}
 		// distance to edge
 		else if ( selectionMode == 2 ) {
-			distance = getDistanceToEdge( mousePosition, selectedPosition ,nodePosition );
+			distance = getDistanceToEdge( mousePosition, selectedPosition,nodePosition );
 		}
 		else {
 			// TODO: Add extra conditions for "selectionMode"

@@ -25,7 +25,7 @@ Data::Edge::Edge( qlonglong id, QString name, Data::Graph* graph, osg::ref_ptr<D
 {
 	this->appConf = Util::ApplicationConfig::get();
 
-	this->insertChild( INDEX_LABEL, createLabel( name ) , false );
+	this->insertChild( INDEX_LABEL, createLabel( name ), false );
 	this->insertChild( INDEX_QUAD, createEdgeQuad( createStateSet( this->type ) ), false );
 	this->insertChild( INDEX_CYLINDER, createEdgeCylinder( NULL ), false );
 	this->insertChild( INDEX_LINE, createEdgeLine( NULL ), false );
@@ -194,6 +194,8 @@ void Data::Edge::updateCoordinates( osg::Vec3 srcPos, osg::Vec3 dstPos )
 			( dynamic_cast<osg::Cylinder*>( ( drawableCylinder )->getShape() ) )->setRotation( osg::Quat( angle, osg::Vec3( rotation->at( 0 ).x(), rotation->at( 0 ).y(), rotation->at( 0 ).z() ) ) );
 			drawableCylinder->setColor( getEdgeColor() );
 			drawableCylinder->dirtyDisplayList();
+			drawableCylinder->dirtyBound();
+			this->dirtyBound();
 		}
 	}
 

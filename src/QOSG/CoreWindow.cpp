@@ -111,7 +111,11 @@ CoreWindow::CoreWindow( QWidget* parent, Vwr::CoreGraph* coreGraph, QApplication
 	createLeftToolBar();
 	createMetricsToolBar();
 
-	viewerWidget = new ViewerQT( this, 0, 0, 0, coreGraph );
+	QGLFormat format( QGL::DoubleBuffer | QGL::DepthBuffer | QGL::Rgba | QGL::StencilBuffer | QGL::AlphaChannel | QGL::StereoBuffers );
+	format.setVersion( 2, 1 );
+//	format.setProfile( QGLFormat::CoreProfile ); // Requires >=Qt-4.8.0
+
+	viewerWidget = new ViewerQT( format, this, 0, 0, 0, coreGraph );
 	viewerWidget->setSceneData( coreGraph->getScene() );
 
 	setCentralWidget( viewerWidget );
@@ -229,8 +233,8 @@ void CoreWindow::createActions()
 	switchBackgroundOrtho2dAction = new QAction( "Ortho2d", this );
 	connect( switchBackgroundOrtho2dAction, SIGNAL( triggered() ), this, SLOT( switchBackgroundOrtho2d() ) );
 
-    switchBackgroundLeapAction = new QAction( "Leap", this );
-    connect( switchBackgroundLeapAction, SIGNAL( triggered() ), this, SLOT( switchBackgroundLeap() ) );
+	switchBackgroundLeapAction = new QAction( "Leap", this );
+	connect( switchBackgroundLeapAction, SIGNAL( triggered() ), this, SLOT( switchBackgroundLeap() ) );
 
 	loadSpecialMatrix = new QAction( QIcon( "../share/3dsoftviz/img/gui/matrix.png" ),"&Load matrix from file", this );
 	connect( loadSpecialMatrix, SIGNAL( triggered() ), this, SLOT( loadSpecialMatrixFromFile() ) );
@@ -560,6 +564,14 @@ void CoreWindow::createActions()
 	edgeTypeComboBox->setFocusPolicy( Qt::NoFocus );
 	connect( edgeTypeComboBox,SIGNAL( currentIndexChanged( int ) ),this,SLOT( edgeTypeComboBoxChanged( int ) ) );
 
+//	-------------------------------------------------------------------------------------------------------------------------------------------------------
+//	-------------------------------------------------------------------------------------------------------------------------------------------------------
+	chb_dragger_scale = new QCheckBox( "Dragger_scale" );
+	connect( chb_dragger_scale, SIGNAL( clicked( bool ) ), this, SLOT( toggleDraggerScale( bool ) ) );
+
+	chb_dragger_rotation = new QCheckBox( "Dragger_rotation" );
+	connect( chb_dragger_rotation, SIGNAL( clicked( bool ) ), this, SLOT( toggleDraggerRotation( bool ) ) );
+
 	b_start_server = new QPushButton();
 	b_start_server->setText( "Host session" );
 	connect( b_start_server, SIGNAL( clicked() ), this, SLOT( start_server() ) );
@@ -869,7 +881,7 @@ void CoreWindow::createMenus()
 	backgroundMenu->addAction( switchBackgroundWhiteAction );
 	backgroundMenu->addAction( switchBackgroundSkyNoiseBoxAction );
 	backgroundMenu->addAction( switchBackgroundTextureAction );
-    backgroundMenu->addAction( switchBackgroundLeapAction );
+	backgroundMenu->addAction( switchBackgroundLeapAction );
 	backgroundMenu->addAction( switchBackgroundOrtho2dAction );
 
 	help = menuBar()->addMenu( "Help" );
@@ -951,6 +963,9 @@ QWidget* CoreWindow::createGraphTab( QFrame* line )
 	lGraph->addRow( nodeTypeComboBox );
 	edgeTypeComboBox->setMaximumWidth( 136 );
 	lGraph->addRow( edgeTypeComboBox );
+
+	lGraph->addRow( chb_dragger_scale );
+	lGraph->addRow( chb_dragger_rotation );
 
 	wGraph->setLayout( lGraph );
 
@@ -2315,7 +2330,7 @@ void CoreWindow::loadFromGit()
 					int newCurrentIndex = 0;
 
 					int iter = 1;
-					foreach ( QString item ,metrics.getAuthorList( Manager::GraphManager::getInstance()->getActiveGraph()->getCurrentVersion() + 1 ) ) {
+					foreach ( QString item,metrics.getAuthorList( Manager::GraphManager::getInstance()->getActiveGraph()->getCurrentVersion() + 1 ) ) {
 						list << item;
 						if ( item == currentText ) {
 							newCurrentIndex = iter;
@@ -2512,23 +2527,23 @@ void CoreWindow::switchBackgroundOrtho2d()
 
 void CoreWindow::switchBackgroundLeap()
 {
-    LOG( INFO ) << "CoreWindow::switchBackgroundLeap switching to leap bg";
-    Data::Graph* currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
+	LOG( INFO ) << "CoreWindow::switchBackgroundLeap switching to leap bg";
+	Data::Graph* currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
 
-    int flagPlay = 0;
-    if ( this->isPlaying ) {
-        flagPlay = 1;
-        pauseLayout();
-    }
-    if ( coreGraph->updateBackground( 4, currentGraph ) == 0 ) {
-        LOG( INFO ) << "Background successfully updated";
-    }
-    else {
-        LOG( ERROR ) << "Background bg update failed";
-    }
-    if ( flagPlay == 1 ) {
-        playLayout();
-    }
+	int flagPlay = 0;
+	if ( this->isPlaying ) {
+		flagPlay = 1;
+		pauseLayout();
+	}
+	if ( coreGraph->updateBackground( 4, currentGraph ) == 0 ) {
+		LOG( INFO ) << "Background successfully updated";
+	}
+	else {
+		LOG( ERROR ) << "Background bg update failed";
+	}
+	if ( flagPlay == 1 ) {
+		playLayout();
+	}
 }
 
 void CoreWindow::labelOnOff( bool )
@@ -3621,7 +3636,7 @@ bool CoreWindow::add_NodeClick()
 
 	osg::ref_ptr<Data::Node> newNode;
 	if ( !client->isConnected() ) {
-		newNode = currentGraph->addNode( "newNode", nodeType , position );
+		newNode = currentGraph->addNode( "newNode", nodeType, position );
 		Network::Server* server = Network::Server::getInstance();
 		server->sendNewNode( newNode );
 	}
@@ -4003,7 +4018,31 @@ void CoreWindow::startLeapAR()
 }
 #endif
 
+void CoreWindow::toggleDraggerRotation( bool set )
+{
+	if ( chb_dragger_rotation->isChecked() ) {
+		coreGraph->toggleDragger( 0, false );
+		coreGraph->toggleDragger( 1, chb_dragger_rotation->isChecked() );
+		chb_dragger_scale->setChecked( false );
+	}
+	else {
+		coreGraph->toggleDragger( 0, false );
+		coreGraph->toggleDragger( 1, false );
+	}
+}
 
+void CoreWindow::toggleDraggerScale( bool set )
+{
+	if ( chb_dragger_scale->isChecked() ) {
+		coreGraph->toggleDragger( 0, chb_dragger_scale->isChecked() );
+		coreGraph->toggleDragger( 1, false );
+		chb_dragger_rotation->setChecked( false );
+	}
+	else {
+		coreGraph->toggleDragger( 0, false );
+		coreGraph->toggleDragger( 1, false );
+	}
+}
 
 void CoreWindow::toggleSpyWatch()
 {
@@ -4386,7 +4425,7 @@ void CoreWindow::change_Vertigo_Planes_Distance( int value )
 
 	int nOfPlane = 0;
 	QLinkedList<Layout::ShapeGetter_Plane_ByThreeNodes*>::const_iterator it = planes_Vertigo.constBegin();
-	for ( it; it != planes_Vertigo.constEnd(); ++it , ++nOfPlane ) {
+	for ( it; it != planes_Vertigo.constEnd(); ++it, ++nOfPlane ) {
 
 		// ziskanie troch uzlov, ktore urcuju rovinu - obmedzenie
 		QSet<Data::Node*> nodesOfPlane = ( *it )->getNodesOfShape();
@@ -4609,7 +4648,7 @@ void CoreWindow::createMetricsToolBar()
 
 	// evolution part start
 	toolBar = new QToolBar( "Evolution graph controls", this );
-	QToolBar* toolBar1= new QToolBar( "Evolution graph controls" ,this );
+	QToolBar* toolBar1= new QToolBar( "Evolution graph controls",this );
 	toolBar1->addWidget( b_previous_version );
 	toolBar1->addWidget( b_next_version );
 	toolBar1->addWidget( b_info_version );
@@ -4874,7 +4913,7 @@ bool CoreWindow::nextVersion()
 				int newCurrentIndex = 0;
 
 				int iter = 1;
-				foreach ( QString item ,metrics.getAuthorList( Manager::GraphManager::getInstance()->getActiveGraph()->getCurrentVersion() + 1 ) ) {
+				foreach ( QString item,metrics.getAuthorList( Manager::GraphManager::getInstance()->getActiveGraph()->getCurrentVersion() + 1 ) ) {
 					list << item;
 					if ( item == currentText ) {
 						newCurrentIndex = iter;
@@ -5157,7 +5196,7 @@ void CoreWindow::changeEvolutionFilterOption( int state )
 				newCurrentIndex = 0;
 
 				int iter = 1;
-				foreach ( QString item ,metrics.getAuthorList( Manager::GraphManager::getInstance()->getActiveGraph()->getCurrentVersion() + 1 ) ) {
+				foreach ( QString item,metrics.getAuthorList( Manager::GraphManager::getInstance()->getActiveGraph()->getCurrentVersion() + 1 ) ) {
 					list << item;
 					if ( item == currentText ) {
 						newCurrentIndex = iter;

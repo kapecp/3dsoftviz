@@ -15,6 +15,7 @@
 #include <QStackedLayout>
 #include <QVBoxLayout>
 #include <QGroupBox>
+#include <qtoolbox.h>
 
 namespace OpenCV {
 class CapVideo;
@@ -92,6 +93,7 @@ signals:
 	     * @param send
 	     */
 	void sendImgFaceRec( bool send );
+	void sendRecalibrateHand();
 
 	/**
 	     * @author Autor: David Durcak
@@ -412,6 +414,8 @@ private slots:
 	     */
 	void onMarkerBackgrCBClicked( bool checked );
 
+	void onmRecalibrateHandPBClicked();
+
 	/**
 	 * @brief private SLOT for turn OFF cursor
 	 */
@@ -506,6 +510,13 @@ private:
 	QApplication*	mApp;
 	QLabel*			mWindowLabel;
 
+
+	QRadioButton*	mKinectRB;
+	QRadioButton*	mArucoRB;
+	QRadioButton*   mArInteractionRB;
+	QRadioButton*    mFaceRecRB;
+	QRadioButton*    mMarkerRB;
+
 	QRadioButton*    mMultiMarkerRB;
 
 	QPushButton*     mFaceRecPB;
@@ -516,6 +527,7 @@ private:
 	QPushButton*		mUpdateCorParPB;
 	QPushButton*		mInterchangeMarkersPB;
 	QPushButton*     mKinectSnapshotPB;
+	QPushButton*		mRecalibrateHandPB;
 	QPushButton*     mLightDetPB;
 
 
@@ -558,6 +570,8 @@ private:
 	QCheckBox*		mEnableLightDetCB;
 	QCheckBox*		mEnableLightMarkersCB;
 
+
+	QToolBox*		mToolBox;
 };
 
 }

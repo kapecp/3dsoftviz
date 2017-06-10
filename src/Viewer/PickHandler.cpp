@@ -29,10 +29,8 @@
 
 #include <string>
 
-#if defined(__linux) || defined(__linux__) || defined(linux)
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wswitch-enum"
-#endif
+#include <leathers/push>
+#include <leathers/switch-enum>
 
 namespace Vwr {
 
@@ -1278,6 +1276,4 @@ osg::ref_ptr<Data::Node> PickHandler::getPickedNodeWithMinEdgeCount()
 
 } // namespace Vwr
 
-#if defined(__linux) || defined(__linux__) || defined(linux)
-#pragma GCC diagnostic pop
-#endif
+#include <leathers/pop>

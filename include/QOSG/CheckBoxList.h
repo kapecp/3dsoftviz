@@ -13,7 +13,7 @@
 #ifndef CHECKBOXLIST_H
 #define CHECKBOXLIST_H 1
 
-#include <QtGui>
+//#include <QtGui>
 #include <QComboBox>
 
 namespace QOSG {

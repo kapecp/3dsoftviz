@@ -1,11 +1,14 @@
 /**
  * Created by Patrik Berger on 13.11.2016.
  */
-#include <easylogging++.h>
-#include "Leap/HandModule/HandPalm.h"
+
+#include "Leap/HandModule/Model/HandPalm.h"
+
 #include <osg/ShapeDrawable>
 #include <osg/Geode>
 #include <osg/Shape>
+
+#include <easylogging++.h>
 
 const int TYPE_MIDDLE = 2; /*< The middle finger */
 const int TYPE_RING = 3; /*< The ring finger */
@@ -38,19 +41,19 @@ void Leap::HandPalm::initStructure()
 
 			// vynechanie klbov a kosti zapestia stredneho prstu a prstennika
 			if ( i == TYPE_MIDDLE || i == TYPE_RING ) {
-				Joint* joint = new Joint( 1 , i, fingerJointGroup, this->colorSwitch );
+				Joint* joint = new Joint( 1, i, fingerJointGroup, this->colorSwitch );
 				for ( j = 0; j < BONE_COUNT-1; j++ ) {
 					HandBone* handBone = new HandBone( j, fingerBoneGroup );
 				}
 			}
 			else {
-				Joint* joint = new Joint( 0 , i, fingerJointGroup, this->colorSwitch );
+				Joint* joint = new Joint( 0, i, fingerJointGroup, this->colorSwitch );
 				// vygeneruje 4 kosti pre dany prst
 				for ( j = 0; j < BONE_COUNT; j++ ) {
 					HandBone* handBone = new HandBone( j, fingerBoneGroup );
 				}
 			}
-			this->fingerGroup->insertChild( static_cast<unsigned int>( i ) , fingerJointGroup );
+			this->fingerGroup->insertChild( static_cast<unsigned int>( i ), fingerJointGroup );
 
 			// elementy vo finger groupe v takomto poradi: {5x jointGroup, 5x boneGroup}
 			this->fingerGroup->insertChild( static_cast<unsigned int>( i+5 ), fingerBoneGroup );
