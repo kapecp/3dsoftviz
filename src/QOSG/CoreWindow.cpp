@@ -2258,19 +2258,19 @@ void CoreWindow::loadExampleModuleGraph()
 
 	Data::Graph* currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
 
-	//zavriem aktualny graf
+	// zavri aktualny graf
 	if ( currentGraph != NULL ) {
 		Manager::GraphManager::getInstance()->closeGraph( currentGraph );
 	}
 
-	//vytvorim novy graf
+	// vytvor novy graf
 	currentGraph = Manager::GraphManager::getInstance()->createNewGraph( "LuaModuleGraph" );
 
-	//zastav rozmiestnovaci algoritmus
+	// zastav rozmiestnovaci algoritmus
 	layout->pause();
 	coreGraph->setNodesFreezed( true );
 
-	//vizualizuj nacitany lua graf
+	// vizualizuj nacitany lua graf
 	Lua::LuaGraphVisualizer* visualizer = new Lua::ModuleGraphVisualizer( currentGraph, coreGraph->getCamera() );
 	visualizer->visualize();
 
@@ -2279,7 +2279,7 @@ void CoreWindow::loadExampleModuleGraph()
 
 	AppCore::Core::getInstance()->restartLayout(); //zavola coreGraph->reload();
 
-	//spusti rozmiestnovaci algoritmus
+	// spusti rozmiestnovaci algoritmus
 	if ( isPlaying ) {
 		layout->play();
 		coreGraph->setNodesFreezed( false );
@@ -4721,13 +4721,13 @@ void CoreWindow::createMetricsToolBar()
 void CoreWindow::switchGraphView()
 {
 	if ( graphView ) {
-		//graph shown as graph
+		// graph shown as graph
 		coreGraph->reorganizeNodesForModuleCity();
 		edgeTypeComboBox->setEnabled( false );
 		b_switchGraphView->setText( "City layout" );
 	}
 	else {
-		//graph show as city
+		// graph show as city
 		coreGraph->reorganizeNodesForModuleGraph();
 		edgeTypeComboBox->setEnabled( true );
 		b_switchGraphView->setText( "Graph layout" );
@@ -4761,19 +4761,19 @@ void CoreWindow::loadLuaModuleGraph()
 
 	Data::Graph* currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
 
-	//zavriem aktualny graf
+	// zavri aktualny graf
 	if ( currentGraph != NULL ) {
 		Manager::GraphManager::getInstance()->closeGraph( currentGraph );
 	}
 
-	//vytvorim novy graf
+	// vytvor novy graf
 	currentGraph = Manager::GraphManager::getInstance()->createNewGraph( "LuaModuleGraph" );
 
-	//zastav rozmiestnovaci algoritmus
+	// zastav rozmiestnovaci algoritmus
 	layout->pause();
 	coreGraph->setNodesFreezed( true );
 
-	//vizualizuj nacitany lua graf
+	// vizualizuj nacitany lua graf
 	Lua::LuaGraphVisualizer* visualizer = new Lua::ModuleGraphVisualizer( currentGraph, coreGraph->getCamera() );
 	visualizer->visualize();
 
@@ -4782,7 +4782,7 @@ void CoreWindow::loadLuaModuleGraph()
 
 	AppCore::Core::getInstance()->restartLayout(); //zavola coreGraph->reload();
 
-	//spusti rozmiestnovaci algoritmus
+	// spusti rozmiestnovaci algoritmus
 	if ( isPlaying ) {
 		layout->play();
 		coreGraph->setNodesFreezed( false );

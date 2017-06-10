@@ -2158,7 +2158,7 @@ void CoreGraph::reorganizeNodesForModuleGraph()
 
 	Lua::LuaGraph* luaGraph = Lua::LuaGraph::getInstance();
 
-	//iterate through all LuaNodes and search for "module" type node
+	// iterate through all LuaNodes and search for "module" type node
 	QMap<qlonglong, Lua::LuaNode*>::iterator node_iter;
 	for ( node_iter = luaGraph->getNodes()->begin();
 			node_iter != luaGraph->getNodes()->end();
@@ -2216,7 +2216,7 @@ void CoreGraph::reorganizeNodesForModuleCity()
 
 	Lua::LuaGraph* luaGraph = Lua::LuaGraph::getInstance();
 
-	//iterate through all LuaNodes and search for "module" type node
+	// iterate through all LuaNodes and search for "module" type node
 	QMap<qlonglong, Lua::LuaNode*>::iterator node_iter;
 	for ( node_iter = luaGraph->getNodes()->begin();
 			node_iter != luaGraph->getNodes()->end();
@@ -2226,7 +2226,7 @@ void CoreGraph::reorganizeNodesForModuleCity()
 			auto moduleGraphNode = graphNodes->value( node_iter.key() );
 			osg::ref_ptr<City::Module> cityModulePAT = new City::Module();
 
-			//get and iterate over every edge where SRC or DST is moduleNode
+			// get and iterate over every edge where SRC or DST is moduleNode
 			QMap<qlonglong, osg::ref_ptr<Data::Edge> >* moduleEdges = moduleGraphNode->getEdges();
 
 			QMap<qlonglong, osg::ref_ptr<Data::Edge> >::iterator edge_iter;
@@ -2236,34 +2236,34 @@ void CoreGraph::reorganizeNodesForModuleCity()
 				auto moduleGraphEdge = edge_iter.value();
 
 				if ( moduleGraphEdge->getSrcNode() == moduleGraphNode && moduleGraphEdge->AbsEdge::getName() == "declares" ) {
-					//funcNode should be type "function" or "global function"
+					// funcNode should be type "function" or "global function"
 					auto funcGraphNode = moduleGraphEdge->getDstNode();
 					cityModulePAT->addFunctionNode( funcGraphNode );
 
-					//get parent PAT for funcNode and remove it from nodesGroup (will be added when called refresh())
+					// get parent PAT for funcNode and remove it from nodesGroup (will be added when called refresh())
 					auto funcGraphNodePAT = cityModulePAT->getNodeParentPAT( funcGraphNode );
 					graphNodesGroup->removeChild( funcGraphNodePAT );
 
-					//set attributes for FRA and city layout
+					// set attributes for FRA and city layout
 					funcGraphNode->setIgnoreByLayout( true );
 					funcGraphNode->setInModule( true );
 
 				}
 
 				if ( moduleGraphEdge->getSrcNode() == moduleGraphNode && moduleGraphEdge->AbsEdge::getName() == "initializes" ) {
-					//funcNode should be type "local variable" or "global variable"
+					// funcNode should be type "local variable" or "global variable"
 					auto varGraphNode = moduleGraphEdge->getDstNode();
 					cityModulePAT->addVariableNode( varGraphNode );
 
-					//get parent PAT for varNode and move it from nodesGroup (will be added when called refresh())
+					// get parent PAT for varNode and move it from nodesGroup (will be added when called refresh())
 					auto varGraphNodePAT = cityModulePAT->getNodeParentPAT( varGraphNode );
 					graphNodesGroup->removeChild( varGraphNodePAT );
 
-					//set attributes for FRA and city layout
+					// set attributes for FRA and city layout
 					varGraphNode->setIgnoreByLayout( true );
 					varGraphNode->setInModule( true );
 
-					//get and iterate over every edge where SRC or DST is moduleNode
+					// get and iterate over every edge where SRC or DST is moduleNode
 					QMap<qlonglong, osg::ref_ptr<Data::Edge> >* varEdges = varGraphNode->getEdges();
 
 					QMap<qlonglong, osg::ref_ptr<Data::Edge> >::iterator edge_iter;
@@ -2273,15 +2273,15 @@ void CoreGraph::reorganizeNodesForModuleCity()
 						auto varGraphEdge = edge_iter.value();
 
 						if ( varGraphEdge->getSrcNode() == varGraphNode && varGraphEdge->AbsEdge::getName() == "assigns" ) {
-							//otherNode should be type "other"
+							// otherNode should be type "other"
 							auto otherGraphNode = varGraphEdge->getDstNode();
 							cityModulePAT->addOtherNode( varGraphNode, otherGraphNode );
 
-							//get parent PAT for otherNode and remove it from nodesGroup (will be added when called refresh())
+							// get parent PAT for otherNode and remove it from nodesGroup (will be added when called refresh())
 							auto otherGraphNodePAT = cityModulePAT->getNodeParentPAT( otherGraphNode );
 							graphNodesGroup->removeChild( otherGraphNodePAT );
 
-							//set attributes for FRA and city layout
+							// set attributes for FRA and city layout
 							otherGraphNode->setIgnoreByLayout( true );
 							otherGraphNode->setInModule( true );
 
@@ -2291,11 +2291,11 @@ void CoreGraph::reorganizeNodesForModuleCity()
 				}
 
 				if ( moduleGraphEdge->getSrcNode() == moduleGraphNode && moduleGraphEdge->AbsEdge::getName() == "provides" ) {
-					//intrfNode should be type "interface"
+					// intrfNode should be type "interface"
 					auto intrfGraphNode = moduleGraphEdge->getDstNode();
 					cityModulePAT->addInterfaceNode( intrfGraphNode );
 
-					//get parent PAT for intrfNode and move it from nodesGroup (will be added when called refresh())
+					// get parent PAT for intrfNode and move it from nodesGroup (will be added when called refresh())
 					auto intrfGraphNodePAT = cityModulePAT->getNodeParentPAT( intrfGraphNode );
 					graphNodesGroup->removeChild( intrfGraphNodePAT );
 

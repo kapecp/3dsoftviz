@@ -18,7 +18,6 @@ City::Module::Module()
 	getOrCreateStateSet()->setMode( GL_RESCALE_NORMAL, osg::StateAttribute::ON );
 }
 
-
 void City::Module::addVariableNode( osg::ref_ptr<Data::Node> variableNode )
 {
 	variableNodes << variableNode;
@@ -77,20 +76,19 @@ void City::Module::selectAll( bool state )
 
 void City::Module::refresh()
 {
-	// nacitanie konfiguracii z aplikacie
+	// load config
 	auto config = Util::ApplicationConfig::get();
 	const float MODULE_SECTOR_HEIGHT = config->getFloatValue( "City.Module.SectorPlaneHeight", DEFAULT_MODULE_SECTOR_HEIGHT );
 	const float BUILDING_SPACING = config->getFloatValue( "City.Module.BuildingSpacing", DEFAULT_BUILDING_SPACING );
 
 	static const osg::BoundingBox zeroBoudingBox( 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f );
 
-	// vymazanie starej geometrie vsetkych regionov
+	// delete old geometry
 	variablesPAT->removeChildren( 0, variablesPAT->getNumChildren() );
 	functionsPAT->removeChildren( 0, functionsPAT->getNumChildren() );
 	interfacesPAT->removeChildren( 0, interfacesPAT->getNumChildren() );
 
-
-
+	// calculate positions for variable nodes
 	osg::BoundingBox varRegion;
 	QList<osg::Vec3> varLayouts;
 	Layout::LayoutAlgorithms::layoutInsideRegion( variableNodes.empty() ? zeroBoudingBox : variableNodes.first()->getBuilding()->getBoundingBox(), variableNodes.count(), MODULE_SECTOR_HEIGHT, BUILDING_SPACING, &varLayouts, &varRegion );
@@ -104,8 +102,7 @@ void City::Module::refresh()
 
 		auto otherNode = otherNodes.value( variableNodes[i] );
 		if ( otherNode ) {
-			//std::cout << "found something" << std::endl;
-			//std::cout << "    -> {" << variableNodes[i]->AbsNode::getName().toStdString() << ", " <<  otherNode->AbsNode::getName().toStdString() << "}" << std::endl;
+			// if variable node has something assigned
 			auto otherNodePAT = getNodeParentPAT( otherNode );
 			otherNodePAT->setPosition( varNodePAT->getPosition() + osg::Vec3( baseSize/2, baseSize/2, height + 10.0f ) );
 			variableNodes[i]->getResidenceAsPAT()->addChild( otherNodePAT );
@@ -113,6 +110,7 @@ void City::Module::refresh()
 	}
 	variablesPAT->addChild( new Shapes::Cuboid( varRegion.xMax() - varRegion.xMin(), MODULE_SECTOR_HEIGHT, varRegion.yMax() - varRegion.yMin(), osg::Vec3( 0, 0, MODULE_SECTOR_HEIGHT / 2 ) ) );
 
+	// calculate positions for function nodes
 	osg::BoundingBox funcRegion = varRegion;
 	QList<Layout::ElementLayout> funcLayouts;
 	Layout::LayoutAlgorithms::layoutAroundRegion( functionNodes.empty() ? zeroBoudingBox : functionNodes.first()->getBuilding()->getBoundingBox(), functionNodes.count(), varRegion, BUILDING_SPACING, &funcLayouts, &funcRegion );
@@ -126,6 +124,7 @@ void City::Module::refresh()
 	osg::BoundingBox funcPlane( funcRegion.xMin(), funcRegion.yMin(), 0, funcRegion.xMax(), funcRegion.yMax(), MODULE_SECTOR_HEIGHT );
 	functionsPAT->addChild( new Shapes::Cuboid( funcPlane ) );
 
+	// calculate positions for interface nodes
 	osg::BoundingBox intrfcRegion = funcPlane;
 	QList<Layout::ElementLayout> intrfcLayouts;
 	Layout::LayoutAlgorithms::layoutAroundRegion( interfaceNodes.empty() ? zeroBoudingBox : interfaceNodes.first()->getBuilding()->getBoundingBox(), interfaceNodes.count(), funcRegion, BUILDING_SPACING, &intrfcLayouts, &intrfcRegion );

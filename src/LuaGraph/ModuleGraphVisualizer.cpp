@@ -31,15 +31,13 @@ void Lua::ModuleGraphVisualizer::visualize()
 
 	float maxFuncNodeSize = 0.0f;
 
-
-
-	//insert every node and edge from Lua::LuaGraph to Data::Graph
+	// insert every node and edge from Lua::LuaGraph to Data::Graph
 	auto nodeType = currentGraph->addType( Data::GraphLayout::NESTED_NODE_TYPE );
 
 	Lua::LuaGraph* luaGraph = Lua::LuaGraph::loadGraph();
 	luaGraph->printGraph();
 
-	//adding invisible anchor nodes
+	// adding invisible anchor nodes
 	QString metaNodeName = "metaNode";
 	QString metaEdgeName = "metaEdge";
 	auto filesAnchor = currentGraph->addNode( std::numeric_limits<qlonglong>::max(), metaNodeName, currentGraph->getNodeMetaType(), osg::Vec3( 0, 0, 500 ) );
@@ -47,7 +45,7 @@ void Lua::ModuleGraphVisualizer::visualize()
 	filesAnchor->setColor( osg::Vec4( 0,0,0,0 ) );
 	functionsAnchor->setColor( osg::Vec4( 0,0,0,0 ) );
 
-	//adding nodes
+	// adding nodes
 	QMap<qlonglong, Lua::LuaNode*>::iterator node_iter;
 	for ( node_iter = luaGraph->getNodes()->begin();
 			node_iter != luaGraph->getNodes()->end();
@@ -57,31 +55,31 @@ void Lua::ModuleGraphVisualizer::visualize()
 		setNodeParams( n, node_iter.value(), osg::Vec4f( 1,1,1,1 ), 8 );
 
 		if ( node_iter.value()->getParams().getValue()["root"] == true ) {
-			//connect root node to filesAnchor with invisible edge
+			// connect root node to filesAnchor with invisible edge
 			auto metaLink = currentGraph->addEdge( metaEdgeName, n, filesAnchor, currentGraph->getEdgeMetaType(), false );
 			metaLink->setEdgeColor( osg::Vec4( 0,0,0,0 ) );
 			metaLink->setInvisible( true );
 		}
 		else if ( node_iter.value()->getParams().getValue()["type"] == "directory" ) {
-			//connect directory node to filesAnchor with invisible edge
+			// connect directory node to filesAnchor with invisible edge
 			auto metaLink = currentGraph->addEdge( metaEdgeName, n, filesAnchor, currentGraph->getEdgeMetaType(), false );
 			metaLink->setEdgeColor( osg::Vec4( 0,0,0,0 ) );
 			metaLink->setInvisible( true );
 		}
 		else if ( node_iter.value()->getParams().getValue()["type"] == "file" ) {
-			//connect file node to filesAnchor with invisible edge
+			// connect file node to filesAnchor with invisible edge
 			auto metaLink = currentGraph->addEdge( metaEdgeName, n, filesAnchor, currentGraph->getEdgeMetaType(), false );
 			metaLink->setEdgeColor( osg::Vec4( 0,0,0,0 ) );
 			metaLink->setInvisible( true );
 		}
 		else if ( node_iter.value()->getParams().getValue()["type"] == "function" ) {
-			//connect function node to functionsAnchor with invisible edge
+			// connect function node to functionsAnchor with invisible edge
 			auto metaLink = currentGraph->addEdge( metaEdgeName, n, functionsAnchor, currentGraph->getEdgeMetaType(), false );
 			metaLink->setEdgeColor( osg::Vec4( 0,0,0,0 ) );
 			metaLink->setInvisible( true );
 			metaLink->setEdgeStrength( 0.1f );
 
-			//find max function node size
+			// find max function node size
 			float funcNodeSize = node_iter.value()->getFloatParam( "size", 4.0f );
 			if ( funcNodeSize > maxFuncNodeSize ) {
 				maxFuncNodeSize = funcNodeSize;
@@ -94,7 +92,7 @@ void Lua::ModuleGraphVisualizer::visualize()
 	auto hierarchyEdgeType = currentGraph->addType( Data::GraphLayout::HIERARCHY_EDGE_TYPE );
 	auto arcEdgeType = currentGraph->addType( Data::GraphLayout::ARC_EDGE_TYPE );
 
-	//adding edges
+	// adding edges
 	QMap<qlonglong, Lua::LuaEdge*>::iterator edge_iter;
 	for ( edge_iter = luaGraph->getEdges()->begin();
 			edge_iter != luaGraph->getEdges()->end();
@@ -103,7 +101,7 @@ void Lua::ModuleGraphVisualizer::visualize()
 			throw new std::runtime_error( "Not a simple graph" );
 		}
 
-		//set the correct edge type
+		// set the correct edge type
 		Data::Type* edgeType;
 		if ( hierarchyEdges.contains( edge_iter.value()->getLabel() ) ) {
 			edgeType = hierarchyEdgeType;
@@ -140,7 +138,7 @@ void Lua::ModuleGraphVisualizer::visualize()
 	luaGraph->setObserver( this );
 
 
-	//delete unwanted node - interface node 'Returns'
+	// delete unwanted node - interface node 'Returns'
 	deleteReturnsNode();
 
 	auto resMgr = Manager::ResourceManager::getInstance();
@@ -154,7 +152,7 @@ void Lua::ModuleGraphVisualizer::visualize()
 
 
 
-	// nacitanie konfiguracii z aplikacie
+	// load config file
 	auto config = Util::ApplicationConfig::get();
 
 	const float FILE_BASE_SIZE = config->getFloatValue( "City.Building.LuaFileBaseSize", DEFAULT_FILE_BASE_SIZE );
@@ -164,7 +162,7 @@ void Lua::ModuleGraphVisualizer::visualize()
 	const float NODE_MAX_HEIGHT = config->getFloatValue( "City.Building.LuaNodeMaxHeight", DEFAULT_NODE_MAX_HEIGHT );
 	const float BALL_SIZE = config->getFloatValue( "City.Ball.DefaultBaseSize", DEFAULT_BALL_SIZE );
 
-	//iterate through all nodes and adjust visual form
+	// iterate through all nodes and adjust visual form
 	QMap<qlonglong, Lua::LuaNode*>::iterator i;
 	for ( i = luaGraph->getNodes()->begin();
 			i != luaGraph->getNodes()->end();
@@ -209,7 +207,7 @@ void Lua::ModuleGraphVisualizer::visualize()
 
 void Lua::ModuleGraphVisualizer::onUpdate()
 {
-	std::cout << "SimpleGraph update called" << std::endl;
+	std::cout << "ModuleGraph update called" << std::endl;
 	Lua::LuaGraph* g = Lua::LuaGraph::loadGraph();
 	for ( QMap<qlonglong, Lua::LuaNode*>::iterator i = g->getNodes()->begin(); i != g->getNodes()->end(); ++i ) {
 		osg::ref_ptr<Data::Node> n = currentGraph->getNodes()->value( i.key() );
@@ -236,19 +234,19 @@ void Lua::ModuleGraphVisualizer::deleteReturnsNode()
 			osg::ref_ptr<Data::Node> moduleNode;
 			QMap<qlonglong, osg::ref_ptr<Data::Edge>>* edges = returnsNode->getEdges();
 			for ( auto edge : edges->values() ) {
-				//first loop to find module node
+				// first loop to find module node
 				if ( edge->getDstNode() == returnsNode ) {
 					moduleNode = edge->getSrcNode();
 				}
 			}
 
 			for ( auto edge : edges->values() ) {
-				//find other interface nodes
+				// find other interface nodes
 				if ( edge->getSrcNode() == returnsNode ) {
 					returnsNode->removeEdge( edge );
 					moduleNode->addEdge( edge );
 					edge->setSrcNode( moduleNode );
-					//edge->linkNodes(currentGraph->getEdges());
+					// edge->linkNodes(currentGraph->getEdges());
 				}
 			}
 			currentGraph->removeNode( returnsNode );
