@@ -43,12 +43,12 @@ public:
 	void updateHands( Leap::Hand leftHand, Leap::Hand rightHand );
 
 	//berger
-    /**
-     * @brief updateCoreGraphBackground - send stream from leap to background image
-     * @param buffer - image
-     * @param depth - not used anymore
-     * @return
-     */
+	/**
+	 * @brief updateCoreGraphBackground - send stream from leap to background image
+	 * @param buffer - image
+	 * @param depth - not used anymore
+	 * @return
+	 */
 	int updateCoreGraphBackground( const unsigned char* buffer, float depth );
 
 	//jurik
@@ -66,13 +66,13 @@ public:
 	Vwr::CameraManipulator* cameraManipulator;
 	Layout::LayoutThread* layout;
 	Vwr::CoreGraph* coreGraph;
-    /**
-     * @brief handObjectManipulator - object for updating hand model position
-     */
+	/**
+	 * @brief handObjectManipulator - object for updating hand model position
+	 */
 	HandObjectManipulator* handObjectManipulator;
-    /**
-     * @brief handsGroup - hands nodes and bones hierachy
-     */
+	/**
+	 * @brief handsGroup - hands nodes and bones hierachy
+	 */
 	osg::ref_ptr<osg::Group> handsGroup;
 };
 }

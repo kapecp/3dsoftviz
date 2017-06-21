@@ -22,7 +22,7 @@ Leap::LeapListener::~LeapListener( void )
 {
 
 	if ( leapGestureHandler != NULL ) {
-		delete( leapGestureHandler );
+		delete ( leapGestureHandler );
 	}
 }
 

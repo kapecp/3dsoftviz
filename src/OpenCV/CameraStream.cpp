@@ -37,7 +37,7 @@ void CameraStream::requestCalibration()
 }
 
 
-void CameraStream::updateBackgroundImage( cv::Mat cvImg , bool trackHands )
+void CameraStream::updateBackgroundImage( cv::Mat cvImg, bool trackHands )
 
 {
 

@@ -68,7 +68,7 @@ void Leap::HandObjectManipulator::updateHands( Leap::Hand leftHand, Leap::Hand r
 											static_cast<double>( this->center[1] )+this->direction[1] +static_cast<double>( lVector.y )/100.0,
 											static_cast<double>( this->center[2] )+this->direction[2] +static_cast<double>( lVector.z )/100.0 );
 		osg::Vec3 screenCoords = world_coords * view * proj * win;
-		screenCoords.set( ( ( screenCoords.x() / viewport->width() ) * 640 ) , ( screenCoords.y() / viewport->height() ) * 480, screenCoords.z() );
+		screenCoords.set( ( ( screenCoords.x() / viewport->width() ) * 640 ), ( screenCoords.y() / viewport->height() ) * 480, screenCoords.z() );
 		this->mapper->setNodeScreenCoords( screenCoords );
 
 		// update prstov lavej ruky
@@ -201,7 +201,7 @@ void Leap::HandObjectManipulator::updateFingerBones( osg::Group*  fingerBoneGrou
 			// rotation of bone
 			if ( dirVector.x != 0 || dirVector.y !=0 || dirVector.z !=0 ) {
 				boneMatrix->preMult( osg::Matrix::rotate( osg::Vec3f( 0.0f,0.0f,1.0f ),
-									 osg::Vec3f( dirVector.x/100.0f ,dirVector.y/100.0f ,dirVector.z/100.0f ) ) );
+									 osg::Vec3f( dirVector.x/100.0f,dirVector.y/100.0f,dirVector.z/100.0f ) ) );
 			}
 			// scaling of bone
 			boneMatrix->preMult( osg::Matrix::scale( 1.0,1.0,( static_cast<double>( length )/100.0 )/static_cast<double>( bone->HEIGHT ) ) );
@@ -265,7 +265,7 @@ void Leap::HandObjectManipulator::updateInterFingerBones( osg::Group*  interFing
 			boneMatrix->preMult( osg::Matrix::rotate( osg::Vec3f( 0.0f,0.0f,1.0f ),
 								 osg::Vec3f( arrayOfInterFingerBonesRotations[i].x/100.0f,
 											 arrayOfInterFingerBonesRotations[i].y/100.0f,
-											 arrayOfInterFingerBonesRotations[i].z/100.0f) ) );
+											 arrayOfInterFingerBonesRotations[i].z/100.0f ) ) );
 		}
 		// scaling of bone
 		boneMatrix->preMult( osg::Matrix::scale( 1.0,1.0,( static_cast<double>( arrayInterFingerBonesLengths[i] ) ) ) );
@@ -316,7 +316,7 @@ void Leap::HandObjectManipulator::updateInterFingerWristBone( osg::Group*  inter
 
 	// rotation of bone
 	boneMatrix->preMult( osg::Matrix::rotate( osg::Vec3f( 0.0f,0.0f,1.0f ),
-						 osg::Vec3f( boneDirection.x/100.0f, boneDirection.y/100.0f, boneDirection.z/100.0f) ) );
+						 osg::Vec3f( boneDirection.x/100.0f, boneDirection.y/100.0f, boneDirection.z/100.0f ) ) );
 	// scaling of bone
 	boneMatrix->preMult( osg::Matrix::scale( 1.0,1.0,static_cast<double>( boneLength ) ) );
 
