@@ -1,7 +1,8 @@
-function_call_graph = require "softviz/function_call_graph"
-module_graph = require "softviz/module_graph"
+graph_importer = require "softviz/graph_importer"
 logical_filter = require "softviz/logical_filter"
 slt2_renderer = require "softviz/slt2_renderer"
+
+graphManager = require "luadb.manager.graph".new()
 
 
 -- support for better stac trace repports

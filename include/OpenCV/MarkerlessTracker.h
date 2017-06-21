@@ -65,12 +65,14 @@ private:
 	 */
 	int framenum;
 
+
 	/**
 	 * @author Autor: Juraj Marak
 	 * @brief detect circles in frame
 	 * @param cv::Mat to find circles in
 	 */
 	void findCirclesInFrame( cv::Mat& frame );
+
 	//OpenCV::MarkerlessTracker::
 	/**
 	 * @author Autor: Juraj Marak
@@ -90,6 +92,7 @@ private:
 	void calculateMVMatrixFromPose( cv::Mat rvec, cv::Mat tvec,
 									QMatrix4x4& mVMatrix
 								  );
+
 	/**
 	 * @author Autor: Marek Rostar
 	 * @brief get positions of points  edge image

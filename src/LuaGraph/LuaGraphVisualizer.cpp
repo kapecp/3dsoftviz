@@ -29,10 +29,10 @@ void Lua::LuaGraphVisualizer::setNodeParams( osg::ref_ptr<Data::Node> node, Lua:
 //	}
 
 	node->Data::AbsNode::setName( obj->getLabel() );
-	float r = obj->getFloatParam( "colorR", defColor.r() );
-	float g = obj->getFloatParam( "colorG", defColor.g() );
-	float b = obj->getFloatParam( "colorB", defColor.b() );
-	float a = obj->getFloatParam( "colorA", defColor.a() );
+	float r = obj->getFloatParam( "color", "R", defColor.r() );
+	float g = obj->getFloatParam( "color", "G", defColor.g() );
+	float b = obj->getFloatParam( "color", "B", defColor.b() );
+	float a = obj->getFloatParam( "color", "A", defColor.a() );
 	node->setColor( osg::Vec4( r,g,b,a ) );
 	float scale = obj->getFloatParam( "size", defSize );
 	node->setScale( scale );
@@ -43,11 +43,10 @@ void Lua::LuaGraphVisualizer::setEdgeParams( osg::ref_ptr<Data::Edge> edge, Lua:
 {
 	//( ( Data::AbsEdge* )edge )->setName( obj->getLabel() );
 	( dynamic_cast<Data::AbsEdge*>( edge.get() ) )->setName( obj->getLabel() );
-
-	float r = obj->getFloatParam( "colorR", defColor.r() );
-	float g = obj->getFloatParam( "colorG", defColor.g() );
-	float b = obj->getFloatParam( "colorB", defColor.b() );
-	float a = obj->getFloatParam( "colorA", defColor.a() );
+	float r = obj->getFloatParam( "color", "R", defColor.r() );
+	float g = obj->getFloatParam( "color", "G", defColor.g() );
+	float b = obj->getFloatParam( "color", "B", defColor.b() );
+	float a = obj->getFloatParam( "color", "A", defColor.a() );
 	edge->setEdgeColor( osg::Vec4( r,g,b,a ) );
 	edge->setEdgeStrength( obj->getFloatParam( "edgeStrength", 1 ) );
 

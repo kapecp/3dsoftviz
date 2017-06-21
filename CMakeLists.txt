@@ -817,6 +817,18 @@ if( USE_BUILTIN_DEPENDENCIES )
 			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
 		)
 
+
+	# Build luacomments
+	ExternalProject_Add ( dep_luacomments
+		PREFIX luacomments
+		SOURCE_DIR ${DEP_SOURCE}/luacomments
+		BINARY_DIR luacomments
+		CMAKE_ARGS
+			-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
+			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
+		)
+
+
 	# Ensure correct order of build (dependencies between external dependencies)
 	if( MSVC OR APPLE )
 		set( WHICH_LUA dep_lua )
@@ -841,6 +853,7 @@ if( USE_BUILTIN_DEPENDENCIES )
 	add_dependencies( dep_penlight ${WHICH_LUA} )
 	add_dependencies( dep_mediator_lua ${WHICH_LUA} )
 	add_dependencies( dep_busted ${WHICH_LUA} )
+	add_dependencies( dep_luacomments ${WHICH_LUA} )
 	if( NOT MSVC )
 		add_dependencies( dep_diluculum ${WHICH_LUA} )
 	endif()
@@ -883,7 +896,6 @@ file( GLOB_RECURSE SRC_GITLIB   "src/Repository/Git/GitLib/*.cpp" )
 file( GLOB_RECURSE SRC_SPECIALMATRIX   "src/SpecialMatrix/*.cpp" )
 file( GLOB_RECURSE SRC_CITY		"src/City/*.cpp" )
 file( GLOB_RECURSE SRC_SHAPES	"src/Shapes/*.cpp" )
-file( GLOB_RECURSE SRC_MODULEGRAPH	"src/ModuleGraph/*.cpp" )
 
 # OpenCV
 file( GLOB_RECURSE SRC_OPENCV	"src/OpenCV/*.cpp" )
@@ -954,7 +966,6 @@ set( SRC
 	${SRC_SPECIALMATRIX}
 	${SRC_CITY}
 	${SRC_SHAPES}
-	${SRC_MODULEGRAPH}
 )
 
 if( OpenCV_FOUND )
@@ -1020,7 +1031,6 @@ file( GLOB_RECURSE HEADER_GITLIB		"include/Repository/Git/GitLib/*.h" )
 file( GLOB_RECURSE HEADER_SPECIALMATRIX		"include/SpecialMatrix/*.h" )
 file( GLOB_RECURSE HEADER_CITY		"include/City/*.h" )
 file( GLOB_RECURSE HEADER_SHAPES	"include/Shapes/*.h" )
-file( GLOB_RECURSE HEADER_MODULEGRAPH	"include/ModuleGraph/*.h" )
 
 # OpenCV
 file( GLOB_RECURSE HEADER_OPENCV	"include/OpenCV/*.h" )
@@ -1092,7 +1102,6 @@ set( INCL
 	${HEADER_SPECIALMATRIX}
 	${HEADER_CITY}
 	${HEADER_SHAPES}
-	${HEADER_MODULEGRAPH}
 )
 
 if( OpenCV_FOUND )
@@ -1145,7 +1154,6 @@ source_group( \\src\\Git "^.*Git/.*$" )
 source_group( \\src\\SpecialMatrix "^.*SpecialMatrix/.*$" )
 source_group( \\src\\City "^.*City/.*$" )
 source_group( \\src\\Shapes "^.*Shapes/.*$" )
-source_group( \\src\\ModuleGraph "^.*ModuleGraph/.*$" )
 
 # Group header files
 source_group( \\headers\\Application "^.*Application/.*h$")
@@ -1168,7 +1176,6 @@ source_group( \\headers\\Git "^.*Git/.*h$" )
 source_group( \\headers\\SpecialMatrix "^.*SpecialMatrix/.*h$" )
 source_group( \\headers\\City "^.*City/.*h$" )
 source_group( \\headers\\Shapes "^.*Shapes/.*h$" )
-source_group( \\headers\\ModuleGraph "^.*ModuleGraph/.*h$" )
 
 if( OpenCV_FOUND )
 	source_group( \\src\\QOpenCV "^.*QOpenCV/.*$" )
@@ -1446,7 +1453,7 @@ endif()
 if( USE_BUILTIN_DEPENDENCIES )
 
 	# dependencies of non-unity build
-	add_dependencies( ${3DSOFTVIZ_NAME} libnoise osgModeling gitlib dep_luametrics dep_leg dep_lpeg dep_luafilesystem igloo dep_lualogging dep_StackTracePlus dep_luasocket dep_mobdebug dep_luacov dep_luacheck dep_lua_cliargs dep_luasystem dep_dkjson dep_say dep_luassert dep_lua-term dep_penlight dep_mediator_lua dep_busted )
+	add_dependencies( ${3DSOFTVIZ_NAME} libnoise osgModeling gitlib dep_luametrics dep_leg dep_lpeg dep_luafilesystem igloo dep_lualogging dep_StackTracePlus dep_luasocket dep_mobdebug dep_luacov dep_luacheck dep_lua_cliargs dep_luasystem dep_dkjson dep_say dep_luassert dep_lua-term dep_penlight dep_mediator_lua dep_busted dep_luacomments )
 
 	if( MSVC OR APPLE )
 		add_dependencies( ${3DSOFTVIZ_NAME} dep_lua )
@@ -1464,7 +1471,7 @@ if( USE_BUILTIN_DEPENDENCIES )
 
 	# dependencies of unity build
 	if (COMMAND cotire)
-		add_dependencies( ${3DSOFTVIZ_NAME}_unity libnoise osgModeling gitlib_unity dep_luametrics dep_leg dep_lpeg dep_luafilesystem igloo dep_lualogging dep_StackTracePlus dep_luasocket dep_mobdebug dep_luacov dep_luacheck dep_lua_cliargs dep_luasystem dep_dkjson dep_say dep_luassert dep_lua-term dep_penlight dep_mediator_lua dep_busted )
+		add_dependencies( ${3DSOFTVIZ_NAME}_unity libnoise osgModeling gitlib_unity dep_luametrics dep_leg dep_lpeg dep_luafilesystem igloo dep_lualogging dep_StackTracePlus dep_luasocket dep_mobdebug dep_luacov dep_luacheck dep_lua_cliargs dep_luasystem dep_dkjson dep_say dep_luassert dep_lua-term dep_penlight dep_mediator_lua dep_busted dep_luacomments )
 
 		if( MSVC OR APPLE )
 			add_dependencies( ${3DSOFTVIZ_NAME}_unity dep_lua )
