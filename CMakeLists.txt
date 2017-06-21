@@ -38,6 +38,8 @@ set(CMAKE_CXX_STANDARD 11)
 
 # Warnings for Debug mode
 option( USE_STRICT_COMPILE_WARNINGS "Use strict compilation warnings in debug mode." ON )
+
+cmake_policy(SET CMP0054 NEW)
 if( USE_STRICT_COMPILE_WARNINGS )
 	if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang" OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "AppleClang")
 		# using Clang
