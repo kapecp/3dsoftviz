@@ -14,15 +14,15 @@ namespace ArucoModul {
 
 class ArSelectionLayoutStrategy: public QObject
 {
-    Q_OBJECT
+	Q_OBJECT
 
-    public:
-        ArSelectionLayoutStrategy();
-        void setSelectionLayout( osg::ref_ptr<Data::Node> node );
-        void resetSelectionLayout( osg::ref_ptr<Data::Node> node, bool isReturnNode = true );
-    private:
-        virtual void setSelectedNodeLayoutOptions( osg::ref_ptr<Data::Node> node ) = 0;
-        virtual void resetSelectedNodeLayoutOptions( osg::ref_ptr<Data::Node> node, bool isReturnNode = true) = 0;
+public:
+	ArSelectionLayoutStrategy();
+	void setSelectionLayout( osg::ref_ptr<Data::Node> node );
+	void resetSelectionLayout( osg::ref_ptr<Data::Node> node, bool isReturnNode = true );
+private:
+	virtual void setSelectedNodeLayoutOptions( osg::ref_ptr<Data::Node> node ) = 0;
+	virtual void resetSelectedNodeLayoutOptions( osg::ref_ptr<Data::Node> node, bool isReturnNode = true ) = 0;
 };
 
 
@@ -30,21 +30,21 @@ class ArSelectionLayoutStrategy: public QObject
 
 class ArSelectionLayoutStrategyNodeOnly: public ArSelectionLayoutStrategy
 {
-    public:
-        ArSelectionLayoutStrategyNodeOnly(): ArSelectionLayoutStrategy(){}
-    private:
-        osg::Vec3f original_position;
-        void setSelectedNodeLayoutOptions( osg::ref_ptr<Data::Node> node );
-        void resetSelectedNodeLayoutOptions( osg::ref_ptr<Data::Node> node, bool isReturnNode = true );
+public:
+	ArSelectionLayoutStrategyNodeOnly(): ArSelectionLayoutStrategy() {}
+private:
+	osg::Vec3f original_position;
+	void setSelectedNodeLayoutOptions( osg::ref_ptr<Data::Node> node );
+	void resetSelectedNodeLayoutOptions( osg::ref_ptr<Data::Node> node, bool isReturnNode = true );
 };
 
 class ArSelectionLayoutStrategyNodeCluster: public ArSelectionLayoutStrategy
 {
-    public:
-        ArSelectionLayoutStrategyNodeCluster(): ArSelectionLayoutStrategy(){}
-    private:
-        void setSelectedNodeLayoutOptions( osg::ref_ptr<Data::Node> node );
-        void resetSelectedNodeLayoutOptions( osg::ref_ptr<Data::Node> node, bool isReturnNode = true );
+public:
+	ArSelectionLayoutStrategyNodeCluster(): ArSelectionLayoutStrategy() {}
+private:
+	void setSelectedNodeLayoutOptions( osg::ref_ptr<Data::Node> node );
+	void resetSelectedNodeLayoutOptions( osg::ref_ptr<Data::Node> node, bool isReturnNode = true );
 };
 
 }

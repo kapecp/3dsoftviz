@@ -49,7 +49,7 @@ public slots:
 	    * @param determines whether to track hands in the image
 		*/
 #ifdef OPENCV_FOUND
-	void updateBackgroundImage( cv::Mat cvImg , bool trackHands );
+	void updateBackgroundImage( cv::Mat cvImg, bool trackHands );
 
 	void requestCalibration();
 

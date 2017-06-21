@@ -2138,16 +2138,16 @@ void CoreGraph::drawAxes()
 //JMA
 osg::Vec3f CoreGraph::getGrafRotTransVec()
 {
-    return graphRotTransf->getMatrix().getTrans();
+	return graphRotTransf->getMatrix().getTrans();
 }
 osg::Vec3f CoreGraph::getGrafRotTransScale()
 {
-    return graphRotTransf->getMatrix().getScale();
+	return graphRotTransf->getMatrix().getScale();
 }
 
-void CoreGraph::onSetGraphZoom(int flag)
+void CoreGraph::onSetGraphZoom( int flag )
 {
-    this->scaleGraph(flag);
+	this->scaleGraph( flag );
 }
 
 void CoreGraph::reorganizeNodesForModuleGraph()

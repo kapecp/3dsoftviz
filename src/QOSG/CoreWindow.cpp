@@ -4006,7 +4006,7 @@ void CoreWindow::startSpeech()
 			this->mSpeechThr->terminate();
 			this->mSpeechThr->wait();
 		}
-		delete( this->mSpeechThr );
+		delete ( this->mSpeechThr );
 		b_start_speech->setText( "Start Speech" );
 		this->mSpeechThr=NULL;
 		return;
@@ -4014,7 +4014,7 @@ void CoreWindow::startSpeech()
 	this->mSpeechThr = new Speech::KinectSpeechThread();
 	CoUninitialize();
 	if ( this->mSpeechThr->initializeSpeech()==1 ) {
-		delete( this->mSpeechThr );
+		delete ( this->mSpeechThr );
 		this->mSpeechThr=NULL;
 		return;
 	}
@@ -4028,7 +4028,7 @@ void CoreWindow::startLeap()
 {
 	if ( mLeapThr!=NULL && b_start_leap->text()=="Stop Leap" ) {
 		//this->mLeapThr->cancel=true;
-		delete( this->mLeapThr );
+		delete ( this->mLeapThr );
 		b_start_leap->setText( "Start Leap" );
 		this->mLeapThr=NULL;
 		return;
@@ -4046,7 +4046,7 @@ void CoreWindow::startLeap()
 void CoreWindow::startLeapAR()
 {
 	if ( mLeapThrAR!=NULL && b_start_leapAR->text()=="Stop LeapAR" ) {
-		delete( this->mLeapThrAR );
+		delete ( this->mLeapThrAR );
 		b_start_leapAR->setText( "Start LeapAR" );
 		this->mLeapThrAR=NULL;
 		return;
@@ -4609,7 +4609,7 @@ void CoreWindow::startGlovesRecognition()
 	// terminating fgloveThread
 	if ( this->mGloveThr!=NULL && ( b_start_gloves->text()=="Stop Gloves" ) ) {
 		this->mGloveThr->terminate();
-		delete( this->mGloveThr );
+		delete ( this->mGloveThr );
 
 		b_start_gloves->setText( "Start Gloves" );
 		this->mGloveThr=NULL;
@@ -5582,7 +5582,8 @@ void CoreWindow::createProjARWindow()
 	QOSG::ProjectiveARCore::getInstance( NULL, this )->init( );
 }
 
-void CoreWindow::forceOnChange(){
-    this->onChange();
+void CoreWindow::forceOnChange()
+{
+	this->onChange();
 }
 } // namespace QOSG

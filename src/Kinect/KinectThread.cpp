@@ -30,7 +30,7 @@ Kinect::KinectThread::KinectThread( QObject* parent ) : QThread( parent )
 
 	nav = new Vwr::GraphNavigation();
 	mouse = new Vwr::MouseControl();
-    kTracker = new OpenCV::MarkerlessTracker( NULL );
+	kTracker = new OpenCV::MarkerlessTracker( NULL );
 }
 
 Kinect::KinectThread::~KinectThread( void )

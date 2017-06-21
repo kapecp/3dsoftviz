@@ -97,7 +97,7 @@ private:
 #ifdef LEAP_FOUND
 	Leap::LeapThread* mLeapThr;
 	Leap::LeapThread* mLeapThrAR;
-#endif 
+#endif
 
 public slots:
 	void OnMove( const std::vector<double>& motionData );
@@ -1660,8 +1660,8 @@ private:
 	//*****
 
 public:
-    //JMA
-    void forceOnChange();
+	//JMA
+	void forceOnChange();
 	//jurik
 	void setPlaying( bool play )
 	{

@@ -26,7 +26,7 @@ class MarkerlessTracker : public QObject
 
 public:
 
-    MarkerlessTracker(ArucoModul::ArControlClass* arControlClass);
+	MarkerlessTracker( ArucoModul::ArControlClass* arControlClass );
 	~MarkerlessTracker();
 
 	/**
@@ -40,16 +40,36 @@ private:
 	/**
 	 * @author Autor: Juraj Marak
 	 */
+
+	/**
+	 * @brief variable with control class controlling certain aspects of nodes in graph through aruco
+	 */
 	ArucoModul::ArControlClass* mArControlClass;
+	/**
+	 * @brief variable with core parts of aruco, responsible for processing the image
+	 */
 	ArucoModul::ArucoCore* aCore;
+
+	/**
+	 * @brief parameters of camera for aruco
+	 */
 	aruco::CameraParameters mCamParam;
+
+	/**
+	 * @brief vector of tracker balls used for markerless tracking
+	 */
 	std::vector<TrackerBall> tBalls;
+
+	/**
+	 * @brief number of current frame used for optimalization, by running RANSAC only in certain frames
+	 */
 	int framenum;
 
 
 	/**
 	 * @author Autor: Juraj Marak
 	 * @brief detect circles in frame
+	 * @param cv::Mat to find circles in
 	 */
 	void findCirclesInFrame( cv::Mat& frame );
 
@@ -76,7 +96,8 @@ private:
 	/**
 	 * @author Autor: Marek Rostar
 	 * @brief get positions of points  edge image
-	 * @param edge img
+	 * @param cv::Mat containing edge img
+	 * @return std::vector of cv::Point2f containing edge positions of points
 	 */
 	std::vector<cv::Point2f> getPointPositions( cv::Mat binaryImage );
 	/**
@@ -94,6 +115,7 @@ private:
 	 * @param center
 	 * @param radius
 	 * @param found inliers
+	 * @return float  percentage of inliers of fitted circle
 	 */
 	float verifyCircle( cv::Mat dt, cv::Point2f center, float radius, std::vector<cv::Point2f>& inlierSet );
 //OpenCV::MarkerlessTracker::

@@ -321,7 +321,7 @@ public:
 
 	//JMA
 	osg::Vec3f getGrafRotTransVec();
-    osg::Vec3f getGrafRotTransScale();
+	osg::Vec3f getGrafRotTransScale();
 
 public slots:
 
@@ -387,7 +387,7 @@ public slots:
 	bool isLeapStreamActive();
 
 	bool isCameraStreamActive();
-  void onSetGraphZoom(int flag);
+	void onSetGraphZoom( int flag );
 
 	/**
 		 * @author Autor: Denis Illes
