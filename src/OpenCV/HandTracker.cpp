@@ -116,7 +116,7 @@ cv::vector<std::pair<cv::Point,double>> OpenCV::HandTracker::findHand( cv::Mat m
 
 	findContours( tempMask,contours, hierarchy, CV_RETR_EXTERNAL, cv::CHAIN_APPROX_SIMPLE, cv::Point() );
 
-	for ( int i=0; i<contours.size(); i++ ) {
+	for ( unsigned long i=0; i<contours.size(); i++ ) {
 		//Ignore all small insignificant areas
 		if ( contourArea( contours[i] )>=5000 ) {
 
@@ -147,7 +147,7 @@ cv::vector<std::pair<cv::Point,double>> OpenCV::HandTracker::findHand( cv::Mat m
 				convexityDefects( tcontours[0], hullsI[0], defects );
 				if ( defects.size()>=3 ) {
 					cv::vector<cv::Point> palm_points;
-					for ( int j=0; j<defects.size(); j++ ) {
+					for ( unsigned long j=0; j<defects.size(); j++ ) {
 						int startidx=defects[j][0];
 						cv::Point ptStart( tcontours[0][startidx] );
 						int endidx=defects[j][1];
@@ -167,7 +167,7 @@ cv::vector<std::pair<cv::Point,double>> OpenCV::HandTracker::findHand( cv::Mat m
 					rough_palm_center.y/=defects.size()*3;
 					cv::Point closest_pt=palm_points[0];
 					cv::vector<std::pair<double,int> > distvec;
-					for ( int i=0; i<palm_points.size(); i++ ) {
+					for ( unsigned long i=0; i<palm_points.size(); i++ ) {
 						distvec.push_back( std::make_pair( dist( rough_palm_center,palm_points[i] ),i ) );
 					}
 					sort( distvec.begin(),distvec.end() );
@@ -175,7 +175,7 @@ cv::vector<std::pair<cv::Point,double>> OpenCV::HandTracker::findHand( cv::Mat m
 					//Keep choosing 3 points till you find a circle with a valid radius
 					//As there is a high chance that the closes points might be in a linear line or too close that it forms a very large circle
 					std::pair<cv::Point,double> soln_circle;
-					for ( int i=0; i+2<distvec.size(); i++ ) {
+					for ( unsigned long i=0; i+2<distvec.size(); i++ ) {
 						cv::Point p1=palm_points[distvec[i+0].second];
 						cv::Point p2=palm_points[distvec[i+1].second];
 						cv::Point p3=palm_points[distvec[i+2].second];
@@ -193,7 +193,7 @@ cv::vector<std::pair<cv::Point,double>> OpenCV::HandTracker::findHand( cv::Mat m
 
 					cv::Point palm_center;
 					double radius=0;
-					for ( int i=0; i<palm_centers.size(); i++ ) {
+					for ( unsigned long i=0; i<palm_centers.size(); i++ ) {
 						palm_center+=palm_centers[i].first;
 						radius+=palm_centers[i].second;
 					}
@@ -214,7 +214,7 @@ cv::vector<std::pair<cv::Point,double>> OpenCV::HandTracker::findHand( cv::Mat m
 
 					//Detect fingers by finding points that form an almost isosceles triangle with certain thesholds
 					int no_of_fingers=0;
-					for ( int j=0; j<defects.size(); j++ ) {
+					for ( unsigned long j=0; j<defects.size(); j++ ) {
 						int startidx=defects[j][0];
 						cv::Point ptStart( tcontours[0][startidx] );
 						int endidx=defects[j][1];

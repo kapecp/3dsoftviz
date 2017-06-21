@@ -19,22 +19,24 @@ class ArControlObject : public QObject
 	Q_OBJECT
 
 public:
-    ArControlObject( int id, osg::Vec3f position, ArAssignmentStrategy* _assignmentStrategy, ArSelectionLayoutStrategy* _selectionLayoutStrategy );
+	ArControlObject( int id, osg::Vec3f position, ArAssignmentStrategy* _assignmentStrategy, ArSelectionLayoutStrategy* _selectionLayoutStrategy );
 	void updatePosition( osg::Vec3f position );
-    bool isFocused()
-    {
-        return this->focused;
-    }
-    void setNodeAssignmentStrategy( ArAssignmentStrategy* strategy ){
-        this->_assignmentStrategy = strategy;
-    }
-    void setNodeBehaviourStrategy( ArSelectionLayoutStrategy* strategy ){
-        if(this->isFocused()){
-            _selectionLayoutStrategy->resetSelectionLayout(this->focusedNode, false);
-            this->_selectionLayoutStrategy = strategy;
-            _selectionLayoutStrategy->setSelectionLayout(this->focusedNode);
-         }
-    }
+	bool isFocused()
+	{
+		return this->focused;
+	}
+	void setNodeAssignmentStrategy( ArAssignmentStrategy* strategy )
+	{
+		this->_assignmentStrategy = strategy;
+	}
+	void setNodeBehaviourStrategy( ArSelectionLayoutStrategy* strategy )
+	{
+		if ( this->isFocused() ) {
+			_selectionLayoutStrategy->resetSelectionLayout( this->focusedNode, false );
+			this->_selectionLayoutStrategy = strategy;
+			_selectionLayoutStrategy->setSelectionLayout( this->focusedNode );
+		}
+	}
 
 public slots:
 	void timerEvent();
@@ -49,8 +51,8 @@ private:
 	osg::ref_ptr<Data::Node> focusedNode;
 
 
-    ArAssignmentStrategy* _assignmentStrategy;
-    ArSelectionLayoutStrategy* _selectionLayoutStrategy;
+	ArAssignmentStrategy* _assignmentStrategy;
+	ArSelectionLayoutStrategy* _selectionLayoutStrategy;
 };
 
 
@@ -60,9 +62,9 @@ class ArControlClass : public QObject
 
 public:
 	ArControlClass();
-	void updateObjectPositionAruco( qlonglong object_id, QMatrix4x4 modelViewMatrix , bool reverse );
-    void setNodeAssignmentStrategy( int strategy );
-    void setNodeBehaviourStrategy( int strategy );
+	void updateObjectPositionAruco( qlonglong object_id, QMatrix4x4 modelViewMatrix, bool reverse );
+	void setNodeAssignmentStrategy( int strategy );
+	void setNodeBehaviourStrategy( int strategy );
 private:
 
 	QOSG::ViewerQT* viewer;
@@ -71,8 +73,8 @@ private:
 
 	QMap<qlonglong, ArucoModul::ArControlObject*> controlObjects;
 
-    ArAssignmentStrategy* _assignmentStrategy;
-    ArSelectionLayoutStrategy* _selectionLayoutStrategy;
+	ArAssignmentStrategy* _assignmentStrategy;
+	ArSelectionLayoutStrategy* _selectionLayoutStrategy;
 };
 
 } // end ArucoModul namespace

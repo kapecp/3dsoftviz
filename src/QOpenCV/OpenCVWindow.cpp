@@ -48,12 +48,12 @@ void QOpenCV::OpenCVWindow::configureWindow()
 	mWindowLabel = new QLabel( "", this, 0 );
 
 
-/*=======
-	mKinectRB = new QRadioButton( tr( "Kinect" ) );
-	mArucoRB = new QRadioButton( tr( "Aruco" ) );
-    mArInteractionRB = new QRadioButton( tr( "AR Interaction" ) );
-	mFaceRecRB = new QRadioButton( tr( "Face Recognition" ) );
-	mMarkerRB = new QRadioButton( tr( "Marker" ) );*/
+	/*=======
+		mKinectRB = new QRadioButton( tr( "Kinect" ) );
+		mArucoRB = new QRadioButton( tr( "Aruco" ) );
+	    mArInteractionRB = new QRadioButton( tr( "AR Interaction" ) );
+		mFaceRecRB = new QRadioButton( tr( "Face Recognition" ) );
+		mMarkerRB = new QRadioButton( tr( "Marker" ) );*/
 
 	mMultiMarkerRB = new QRadioButton( tr( "Multi Marker" ) );
 
@@ -93,14 +93,14 @@ void QOpenCV::OpenCVWindow::configureWindow()
 	QHBoxLayout* mainLayout		= new QHBoxLayout;
 	QVBoxLayout* buttonLayout	= new QVBoxLayout;
 
-/*#ifdef OPENNI2_FOUND
-	mKinectRB->setChecked( true );
-	buttonLayout->addWidget( mKinectRB );
-#endif
- marak gui
-	buttonLayout->addWidget( mArucoRB );
-    buttonLayout->addWidget( mArInteractionRB );
-	buttonLayout->addLayout( mModulesStackL );*/
+	/*#ifdef OPENNI2_FOUND
+		mKinectRB->setChecked( true );
+		buttonLayout->addWidget( mKinectRB );
+	#endif
+	 marak gui
+		buttonLayout->addWidget( mArucoRB );
+	    buttonLayout->addWidget( mArInteractionRB );
+		buttonLayout->addLayout( mModulesStackL );*/
 
 
 	QWidget* kinectPageWid =  new QWidget;
@@ -109,7 +109,7 @@ void QOpenCV::OpenCVWindow::configureWindow()
 	QWidget* arucoMarkerPageWid = new QWidget;
 	QWidget* arucoMultiMarkerPageWid = new QWidget;
 	QWidget* arucoSubPageWid = new QWidget;
-    QWidget* arInteractionSubPageWid = new QWidget;
+	QWidget* arInteractionSubPageWid = new QWidget;
 
 	kinectPageWid->setStyleSheet( "background-color: lightblue" );
 	arucoFaceRecPageWid->setStyleSheet( "background-color: lightblue" );
@@ -121,58 +121,58 @@ void QOpenCV::OpenCVWindow::configureWindow()
 	QVBoxLayout* arucoMarkerPageLayout = new QVBoxLayout;
 	QVBoxLayout* arucoMultiMarkerPageLayout = new QVBoxLayout;
 	QVBoxLayout* arucoSubPageLayout = new QVBoxLayout;
-    QVBoxLayout* arInteractionSubPageLayout = new QVBoxLayout;
+	QVBoxLayout* arInteractionSubPageLayout = new QVBoxLayout;
 
 	arucoSubPageLayout->addLayout( mSubmodulesStackL );
 
 //JMA interaction RB groups
-    //selection
-    arNSPosition = new QRadioButton(tr("Select node by position"));
-        arNSPosition->setChecked(true);
-    arNSMostEdges = new QRadioButton(tr("Select node with most edges"));
-    arNSNearest = new QRadioButton(tr("Select nearest node automatically"));
+	//selection
+	arNSPosition = new QRadioButton( tr( "Select node by position" ) );
+	arNSPosition->setChecked( true );
+	arNSMostEdges = new QRadioButton( tr( "Select node with most edges" ) );
+	arNSNearest = new QRadioButton( tr( "Select nearest node automatically" ) );
 
-    QVBoxLayout *arNodeSelectionVBox = new QVBoxLayout;
-        arNodeSelectionVBox->addWidget(arNSPosition);
-        arNodeSelectionVBox->addWidget(arNSMostEdges);
-        arNodeSelectionVBox->addWidget(arNSNearest);
-        arNodeSelectionVBox->addStretch(1);
+	QVBoxLayout* arNodeSelectionVBox = new QVBoxLayout;
+	arNodeSelectionVBox->addWidget( arNSPosition );
+	arNodeSelectionVBox->addWidget( arNSMostEdges );
+	arNodeSelectionVBox->addWidget( arNSNearest );
+	arNodeSelectionVBox->addStretch( 1 );
 
-    QGroupBox *arNodeSelectionGroupBox = new QGroupBox(tr("Node selection method"));
-        arNodeSelectionGroupBox->setLayout(arNodeSelectionVBox);
+	QGroupBox* arNodeSelectionGroupBox = new QGroupBox( tr( "Node selection method" ) );
+	arNodeSelectionGroupBox->setLayout( arNodeSelectionVBox );
 
-    arInteractionSubPageLayout->addWidget( arNodeSelectionGroupBox );
+	arInteractionSubPageLayout->addWidget( arNodeSelectionGroupBox );
 
-    connect( arNSPosition, SIGNAL( clicked( bool ) ), this, SLOT( onArInteractionSelectionClicked( bool ) ) );
-    connect( arNSMostEdges, SIGNAL( clicked( bool ) ), this, SLOT( onArInteractionSelectionClicked( bool ) ) );
-    connect( arNSNearest, SIGNAL( clicked( bool ) ), this, SLOT( onArInteractionSelectionClicked( bool ) ) );
+	connect( arNSPosition, SIGNAL( clicked( bool ) ), this, SLOT( onArInteractionSelectionClicked( bool ) ) );
+	connect( arNSMostEdges, SIGNAL( clicked( bool ) ), this, SLOT( onArInteractionSelectionClicked( bool ) ) );
+	connect( arNSNearest, SIGNAL( clicked( bool ) ), this, SLOT( onArInteractionSelectionClicked( bool ) ) );
 
-    //behaviour
-    arNBSingle = new QRadioButton(tr("Single node movement"));
-        arNBSingle->setChecked(true);
-    arNBCluster = new QRadioButton(tr("Cluster movement"));
+	//behaviour
+	arNBSingle = new QRadioButton( tr( "Single node movement" ) );
+	arNBSingle->setChecked( true );
+	arNBCluster = new QRadioButton( tr( "Cluster movement" ) );
 
-    QVBoxLayout *arNodeBehaviourVBox = new QVBoxLayout;
-        arNodeBehaviourVBox->addWidget(arNBSingle);
-        arNodeBehaviourVBox->addWidget(arNBCluster);
-        arNodeBehaviourVBox->addStretch(1);
+	QVBoxLayout* arNodeBehaviourVBox = new QVBoxLayout;
+	arNodeBehaviourVBox->addWidget( arNBSingle );
+	arNodeBehaviourVBox->addWidget( arNBCluster );
+	arNodeBehaviourVBox->addStretch( 1 );
 
-    QGroupBox *arNodeBehaviourGroupBox = new QGroupBox(tr("Node behaviour method"));
-        arNodeBehaviourGroupBox->setLayout(arNodeBehaviourVBox);
+	QGroupBox* arNodeBehaviourGroupBox = new QGroupBox( tr( "Node behaviour method" ) );
+	arNodeBehaviourGroupBox->setLayout( arNodeBehaviourVBox );
 
-    arInteractionSubPageLayout->addWidget( arNodeBehaviourGroupBox );
+	arInteractionSubPageLayout->addWidget( arNodeBehaviourGroupBox );
 
-    connect( arNBSingle, SIGNAL( clicked( bool ) ), this, SLOT( onArInteractionBehaviourClicked( bool ) ) );
-    connect( arNBCluster, SIGNAL( clicked( bool ) ), this, SLOT( onArInteractionBehaviourClicked( bool ) ) );
+	connect( arNBSingle, SIGNAL( clicked( bool ) ), this, SLOT( onArInteractionBehaviourClicked( bool ) ) );
+	connect( arNBCluster, SIGNAL( clicked( bool ) ), this, SLOT( onArInteractionBehaviourClicked( bool ) ) );
 
 
-    QPushButton *mArInteractionGraphZoomIn = new QPushButton( tr( "+" ) );
-    QPushButton *mArInteractionGraphZoomOut = new QPushButton( tr( "-" ) );
-    arInteractionSubPageLayout->addWidget( mArInteractionGraphZoomIn );
-    arInteractionSubPageLayout->addWidget( mArInteractionGraphZoomOut );
+	QPushButton* mArInteractionGraphZoomIn = new QPushButton( tr( "+" ) );
+	QPushButton* mArInteractionGraphZoomOut = new QPushButton( tr( "-" ) );
+	arInteractionSubPageLayout->addWidget( mArInteractionGraphZoomIn );
+	arInteractionSubPageLayout->addWidget( mArInteractionGraphZoomOut );
 
-    connect( mArInteractionGraphZoomIn,  SIGNAL( clicked( bool ) ), this, SLOT( applyGraphZoomIn( bool ) ) );
-    connect( mArInteractionGraphZoomOut,  SIGNAL( clicked( bool ) ), this, SLOT( applyGraphZoomOut( bool ) ) );
+	connect( mArInteractionGraphZoomIn,  SIGNAL( clicked( bool ) ), this, SLOT( applyGraphZoomIn( bool ) ) );
+	connect( mArInteractionGraphZoomOut,  SIGNAL( clicked( bool ) ), this, SLOT( applyGraphZoomOut( bool ) ) );
 
 
 //JMA interaction RB groups
@@ -187,9 +187,9 @@ void QOpenCV::OpenCVWindow::configureWindow()
 	buttonLayout->addWidget( kinectPageWid );
 	buttonLayout->addWidget( arucoSubPageWid );
 
-/*	mModulesStackL->addWidget( kinectPageWid );
-	mModulesStackL->addWidget( arucoSubPageWid );
-    mModulesStackL->addWidget( arInteractionSubPageWid ); marak gui*/
+	/*	mModulesStackL->addWidget( kinectPageWid );
+		mModulesStackL->addWidget( arucoSubPageWid );
+	    mModulesStackL->addWidget( arInteractionSubPageWid ); marak gui*/
 
 
 
@@ -202,7 +202,7 @@ void QOpenCV::OpenCVWindow::configureWindow()
 	arucoMarkerPageWid->setLayout( arucoMarkerPageLayout );
 	arucoMultiMarkerPageWid->setLayout( arucoMultiMarkerPageLayout );
 	arucoSubPageWid->setLayout( arucoSubPageLayout );
-    arInteractionSubPageWid->setLayout( arInteractionSubPageLayout );
+	arInteractionSubPageWid->setLayout( arInteractionSubPageLayout );
 
 	//set up page layouts
 	kinectPageLayout->addWidget( mDisableCursorCB );
@@ -268,20 +268,20 @@ void QOpenCV::OpenCVWindow::configureWindow()
 
 	//BUTTONS - set up signals to slots
 	//set up signals to slots
-/*	connect( mKinectRB, SIGNAL( clicked() ), this, SLOT( onSelModulChange() ) );
-	connect( mArucoRB, SIGNAL( clicked() ), this, SLOT( onSelModulChange() ) );
-    connect( mArInteractionRB, SIGNAL( clicked() ), this, SLOT( onSelModulChange() ) );
+	/*	connect( mKinectRB, SIGNAL( clicked() ), this, SLOT( onSelModulChange() ) );
+		connect( mArucoRB, SIGNAL( clicked() ), this, SLOT( onSelModulChange() ) );
+	    connect( mArInteractionRB, SIGNAL( clicked() ), this, SLOT( onSelModulChange() ) );
 
-	connect( mFaceRecRB, SIGNAL( clicked() ), this, SLOT( onSelSubModulChange() ) );
-	connect( mMarkerRB, SIGNAL( clicked() ), this, SLOT( onSelSubModulChange() ) );
-	connect( mMultiMarkerRB, SIGNAL( clicked() ), this, SLOT( onSelSubModulChange() ) );
+		connect( mFaceRecRB, SIGNAL( clicked() ), this, SLOT( onSelSubModulChange() ) );
+		connect( mMarkerRB, SIGNAL( clicked() ), this, SLOT( onSelSubModulChange() ) );
+		connect( mMultiMarkerRB, SIGNAL( clicked() ), this, SLOT( onSelSubModulChange() ) );
 
-	connect( mNoVideo,	 SIGNAL( clicked() ), this, SLOT( onSelSubModulChange() ) );
+		connect( mNoVideo,	 SIGNAL( clicked() ), this, SLOT( onSelSubModulChange() ) );
 
-	connect( mUpdateCorParPB, SIGNAL( clicked() ), this, SLOT( onUpdateCorPar() ) );
-	connect( mMarkerPB,  SIGNAL( clicked( bool ) ), this, SLOT( onMarkerStartCancel( bool ) ) );
-	connect( mFaceRecPB, SIGNAL( clicked( bool ) ), this, SLOT( onFaceRecStartCancel( bool ) ) );
-	connect( mMultiMarkerPB, SIGNAL( clicked( bool ) ), this, SLOT( onMultiMarkerStartCancel( bool ) ) ); marak gui*/
+		connect( mUpdateCorParPB, SIGNAL( clicked() ), this, SLOT( onUpdateCorPar() ) );
+		connect( mMarkerPB,  SIGNAL( clicked( bool ) ), this, SLOT( onMarkerStartCancel( bool ) ) );
+		connect( mFaceRecPB, SIGNAL( clicked( bool ) ), this, SLOT( onFaceRecStartCancel( bool ) ) );
+		connect( mMultiMarkerPB, SIGNAL( clicked( bool ) ), this, SLOT( onMultiMarkerStartCancel( bool ) ) ); marak gui*/
 	connect( mKinectPB, SIGNAL( clicked( bool ) ), this, SLOT( onKinectStartCancel( bool ) ) );
 	connect( mKinectSnapshotPB, SIGNAL( clicked() ), this, SLOT( onKinectSnapshotPBClicked() ) );
 
@@ -400,9 +400,9 @@ void QOpenCV::OpenCVWindow::onSelModulChange()
 	/*if ( mArucoRB->isChecked() ) {
 		mModulesStackL->setCurrentIndex( 1 );
 	}
-    if ( mArInteractionRB->isChecked() ) {
-        mModulesStackL->setCurrentIndex( 2 );
-    } marak gui*/
+	if ( mArInteractionRB->isChecked() ) {
+	    mModulesStackL->setCurrentIndex( 2 );
+	} marak gui*/
 
 }
 
@@ -547,35 +547,35 @@ void QOpenCV::OpenCVWindow::setLabel( cv::Mat image )
 	image.~Mat();
 }
 
-void QOpenCV::OpenCVWindow::onArInteractionSelectionClicked(bool state)
+void QOpenCV::OpenCVWindow::onArInteractionSelectionClicked( bool state )
 {
-    if(arNSPosition->isChecked()){
-        emit setArInteractionSelection(0);
-    }
-    else if(arNSMostEdges->isChecked()){
-        emit setArInteractionSelection(1);
-    }
-    else if(arNSNearest->isChecked()){
-        emit setArInteractionSelection(2);
-    }
+	if ( arNSPosition->isChecked() ) {
+		emit setArInteractionSelection( 0 );
+	}
+	else if ( arNSMostEdges->isChecked() ) {
+		emit setArInteractionSelection( 1 );
+	}
+	else if ( arNSNearest->isChecked() ) {
+		emit setArInteractionSelection( 2 );
+	}
 }
 
-void QOpenCV::OpenCVWindow::onArInteractionBehaviourClicked(bool state)
+void QOpenCV::OpenCVWindow::onArInteractionBehaviourClicked( bool state )
 {
-    if(arNBSingle->isChecked()){
-        emit setArInteractionBehaviour(0);
-    }
-    else if(arNBCluster->isChecked()){
-        emit setArInteractionBehaviour(1);
-    }
+	if ( arNBSingle->isChecked() ) {
+		emit setArInteractionBehaviour( 0 );
+	}
+	else if ( arNBCluster->isChecked() ) {
+		emit setArInteractionBehaviour( 1 );
+	}
 }
 
-void QOpenCV::OpenCVWindow::applyGraphZoomIn(bool state)
+void QOpenCV::OpenCVWindow::applyGraphZoomIn( bool state )
 {
-    emit setArGraphZoom(2);
+	emit setArGraphZoom( 2 );
 }
 
-void QOpenCV::OpenCVWindow::applyGraphZoomOut(bool state)
+void QOpenCV::OpenCVWindow::applyGraphZoomOut( bool state )
 {
-    emit setArGraphZoom(1);
+	emit setArGraphZoom( 1 );
 }

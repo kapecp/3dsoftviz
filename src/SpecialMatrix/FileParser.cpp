@@ -738,7 +738,7 @@ osg::Vec2f SpecialMatrix::FileParser::getAvailablePosition( SpecialMatrix::NodeC
 	int newRow =  row, newCol =  column ;
 	int cornerRow = newRow, cornerCol = newCol;
 	int distance = 1, phase = 0;
-	int nodeCount = ( int ) connections->getNodePositionsArray().size();
+	int nodeCount = static_cast<int>( connections->getNodePositionsArray().size() );
 	osg::Vec2f nodePos;
 	while ( true ) {
 		//if the position is taken
