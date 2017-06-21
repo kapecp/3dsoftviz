@@ -24,7 +24,7 @@ Leap::HandMapper::~HandMapper()
 
 cv::vector<cv::Point> Leap::HandMapper::getHandPointList( cv::vector<cv::vector<cv::Point>> contourPointList )
 {
-	for ( int n = 0; n < contourPointList.size(); n++ ) {
+	for ( std::size_t n = 0; n < contourPointList.size(); n++ ) {
 		if ( contourPointList[n].size() > 3 && contourPointList[n].size() < 7 ) {
 			return contourPointList[n];
 		}
@@ -47,7 +47,7 @@ float Leap::HandMapper::calculateAveragePalmFingerDistance( cv::vector<cv::Point
 	palmCenter.x /= imageWidth;
 	palmCenter.y /= imageHeight;
 
-	for ( int n = 1; n < handPointList.size(); n++ ) {
+	for ( std::size_t n = 1; n < handPointList.size(); n++ ) {
 		cv::Point2f fingerTip;
 		fingerTip = cv::Point2f( static_cast<float>( handPointList[n].x ),static_cast<float>( handPointList[n].y ) );
 		fingerTip.x /= imageWidth;
@@ -64,26 +64,26 @@ Leap::Vector Leap::HandMapper::recalculateDepthNode( Leap::Vector vector, float 
 
 	if ( this->coreGraph->isLeapStreamActive() ) {
 		if ( diff > 0 ) {
-			vector.y = vector.y + diff*2.3;
+			vector.y = vector.y + diff*2.3f;
 
-			vector.y = vector.y + vector.x*0.4;
+			vector.y = vector.y + vector.x*0.4f;
 		}
 		else {
-			vector.y = vector.y + diff*2.0;
+			vector.y = vector.y + diff*2.0f;
 		}
 	}
 	else if ( this->coreGraph->isCameraStreamActive() ) {
 
 		// ofset to make hands bigger
-		vector.y = vector.y - 680.0;
+		vector.y = vector.y - 680.0f;
 
 		diff -= 100;
 		// hand is further than 400
 		if ( diff > 0 ) {
-			vector.y = vector.y + diff*-0.4;
+			vector.y = vector.y + diff*-0.4f;
 		} // hand closer than 400
 		else {
-			vector.y = vector.y + diff*-0.2;
+			vector.y = vector.y + diff*-0.2f;
 		}
 		// retrieve palm position and palm radius
 		cv::vector<std::pair<cv::Point,double>> palmAndRadiusList =
@@ -123,7 +123,7 @@ Leap::Vector Leap::HandMapper::recalculateDepthNode( Leap::Vector vector, float 
 			float depthOffset = vector.y/400 * this->cameraOffset.x/3;
 
 			// calculate hand position based on offsets
-			vector.x += this->cameraOffset.x * 1.2  + depthOffset;
+			vector.x += this->cameraOffset.x * 1.2f  + depthOffset;
 			vector.z += vector.y/20 ;
 		}
 	}
