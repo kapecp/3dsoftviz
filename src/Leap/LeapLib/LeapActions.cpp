@@ -13,7 +13,7 @@ Leap::LeapActions::LeapActions( LeapManager* leapManager )
 Leap::LeapActions::~LeapActions()
 {
 	if ( leapManager != NULL ) {
-		delete( leapManager );
+		delete ( leapManager );
 	}
 	LOG( INFO ) << "~LeapActions() Destructor";
 }
@@ -126,7 +126,7 @@ void Leap::LeapActions::rotateGraph( Leap::Gesture gesture )
 	}
 	else { // vertical movement
 		if ( direction[1] > 0 ) {
-			leapManager->rotateCamera( 0, 0 ,1, 0.01f, 0 );
+			leapManager->rotateCamera( 0, 0,1, 0.01f, 0 );
 		}
 		else if ( direction[1] < 0 ) {
 			leapManager->rotateCamera( 0, 0, 1, -0.01f, 0 );

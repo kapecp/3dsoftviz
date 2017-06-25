@@ -114,11 +114,10 @@ void OpenCV::MarkerlessTracker::track( cv::Mat& frame )
 		QMatrix4x4 mVMatrix;
 		calculateMVMatrixFromPose( rvec, tvec, mVMatrix );
 
-
-        if(mArControlClass != NULL){
-            mArControlClass->updateObjectPositionAruco( 1, mVMatrix, true);
-        }
-    }
+		if ( mArControlClass != NULL ) {
+			mArControlClass->updateObjectPositionAruco( 1, mVMatrix, true );
+		}
+	}
 
 }
 

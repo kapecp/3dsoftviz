@@ -20,6 +20,7 @@
 #include "Leap/LeapLib/LeapCameraStream.h"
 
 #include "Data/Cluster.h"
+#include "Data/GraphLayout.h"
 
 #include <osgManipulator/Dragger>
 
@@ -320,7 +321,7 @@ public:
 
 	//JMA
 	osg::Vec3f getGrafRotTransVec();
-    osg::Vec3f getGrafRotTransScale();
+	osg::Vec3f getGrafRotTransScale();
 
 public slots:
 
@@ -364,6 +365,11 @@ public slots:
 		 */
 	void setEdgeVisualForType( int index, QString edgeTypeName );
 
+	/**
+		 * @brief setEdgeHiddenForType Set invisibility of edges for specific type
+		 */
+	void setEdgeHiddenForType( bool hidden, QString edgeTypeName );
+
 	void recievedMVMatrix( QMatrix4x4 modelViewMatrix );
 
 	/**
@@ -377,10 +383,24 @@ public slots:
 	void setArucoRunning( bool isRunning );
 
 
+
 	bool isLeapStreamActive();
 
 	bool isCameraStreamActive();
-  void onSetGraphZoom(int flag);
+	void onSetGraphZoom( int flag );
+
+	/**
+		 * @author Autor: Denis Illes
+		 * @brief move certain nodes to module node
+		 */
+	void reorganizeNodesForModuleGraph();
+
+	/**
+		 * @author Autor: Denis Illes
+		 * @brief move nodes from module node back to default place
+		 */
+	void reorganizeNodesForModuleCity();
+
 
 private:
 

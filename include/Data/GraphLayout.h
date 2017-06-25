@@ -129,6 +129,18 @@ public:
 	    */
 	static const QString HYPER_NODE_TYPE;
 
+	/**
+		*  const QString HIERARCHY_EDGE_TYPE
+		*  \brief Constant identifier of HierarchyType name used for hierarchy edges in moduleGraph by MetaSettings of the GraphLayout
+		*/
+	static const QString HIERARCHY_EDGE_TYPE;
+
+	/**
+		*  const QString ARC_EDGE_TYPE
+		*  \brief Constant identifier of ArcType name used for arc edges in moduleGraph by MetaSettings of the GraphLayout
+		*/
+	static const QString ARC_EDGE_TYPE;
+
 	static const QString RESTRICTION_NODE_TYPE;
 
 

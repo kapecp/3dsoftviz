@@ -20,7 +20,7 @@ Leap::LeapGestureHandler::LeapGestureHandler( LeapManager* leapManager )
 Leap::LeapGestureHandler::~LeapGestureHandler()
 {
 	if ( leapManager != NULL ) {
-		delete( leapManager );
+		delete ( leapManager );
 	}
 	LOG( INFO ) << "~LeapGestureHandler() Destructor";
 }

@@ -14,13 +14,13 @@ namespace ArucoModul {
 
 class ArAssignmentStrategy: public QObject
 {
-    Q_OBJECT
+	Q_OBJECT
 
-    public:
-        ArAssignmentStrategy();
-        osg::ref_ptr<Data::Node> assign(osg::Vec3f position);
-    private:
-        virtual osg::ref_ptr<Data::Node> pickNodeToAssign( osg::Vec3f position ) = 0;
+public:
+	ArAssignmentStrategy();
+	osg::ref_ptr<Data::Node> assign( osg::Vec3f position );
+private:
+	virtual osg::ref_ptr<Data::Node> pickNodeToAssign( osg::Vec3f position ) = 0;
 };
 
 
@@ -28,11 +28,11 @@ class ArAssignmentStrategy: public QObject
 
 class ArAssignmentStrategyPosition: public ArAssignmentStrategy
 {
-    public:
-        ArAssignmentStrategyPosition(): ArAssignmentStrategy(){}
-    private:
-        osg::ref_ptr<Data::Node> pickNodeToAssign( osg::Vec3f position );
-        bool chckIfNearPosition(osg::Vec3f source, osg::Vec3f target );
+public:
+	ArAssignmentStrategyPosition(): ArAssignmentStrategy() {}
+private:
+	osg::ref_ptr<Data::Node> pickNodeToAssign( osg::Vec3f position );
+	bool chckIfNearPosition( osg::Vec3f source, osg::Vec3f target );
 };
 
 
@@ -41,10 +41,10 @@ class ArAssignmentStrategyPosition: public ArAssignmentStrategy
 
 class ArAssignmentStrategyEdgeCount: public ArAssignmentStrategy
 {
-    public:
-        ArAssignmentStrategyEdgeCount(): ArAssignmentStrategy(){}
-    private:
-        osg::ref_ptr<Data::Node> pickNodeToAssign( osg::Vec3f position );
+public:
+	ArAssignmentStrategyEdgeCount(): ArAssignmentStrategy() {}
+private:
+	osg::ref_ptr<Data::Node> pickNodeToAssign( osg::Vec3f position );
 };
 
 
@@ -53,10 +53,10 @@ class ArAssignmentStrategyEdgeCount: public ArAssignmentStrategy
 
 class ArAssignmentStrategyNearest: public ArAssignmentStrategy
 {
-    public:
-        ArAssignmentStrategyNearest(): ArAssignmentStrategy(){}
-    private:
-        osg::ref_ptr<Data::Node> pickNodeToAssign( osg::Vec3f position );
+public:
+	ArAssignmentStrategyNearest(): ArAssignmentStrategy() {}
+private:
+	osg::ref_ptr<Data::Node> pickNodeToAssign( osg::Vec3f position );
 };
 
 }

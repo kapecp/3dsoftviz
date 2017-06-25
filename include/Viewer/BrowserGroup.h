@@ -12,6 +12,7 @@
 #include "OsgQtBrowser/QWebViewImage.h"
 #include "Data/Node.h"
 #include "LuaGraph/LuaNode.h"
+#include "LuaGraph/LuaGraph.h"
 #include "LuaTypes/LuaValueMap.h"
 #include "LuaGraph/LuaGraphTreeModel.h"
 
@@ -91,6 +92,7 @@ private:
 	    */
 	void addBrowser( const std::string& templateType, osg::Vec3 position, Lua::LuaValueMap models );
 	void addBrowser( const std::string& templateType, osg::Vec3 position, QMap<QString, int>* map );
+	void addBrowser( const std::string& templateType, osg::Vec3 position, QString luaNodeId );
 
 	/**
 	    *  \fn private  createBorderGeode

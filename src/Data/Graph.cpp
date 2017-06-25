@@ -1372,8 +1372,47 @@ void Data::Graph::removeEdge( osg::ref_ptr<Data::Edge> edge )
 			this->newEdges.remove( edge->getId() );
 			this->edgesByType.remove( edge->getType()->getId(),edge );
 			this->metaEdgesByType.remove( edge->getType()->getId(),edge );
-
 			edge->unlinkNodes();
+		}
+	}
+}
+
+void Data::Graph::removeNode( osg::ref_ptr<Data::Node> node, bool keepEdges )
+{
+	//odstranenie uzla vratane relevantnych zoznamov
+	if ( node!=NULL && node->getGraph()==this ) {
+		if ( !node->isInDB() || Model::NodeDAO::removeNode( node, this->conn ) ) {
+
+			// remove restrictions:
+			{
+				QSet<Data::Node*> nodes;
+				nodes.insert( node.get() );
+				restrictionsManager_.setRestrictions(
+					nodes,
+					QSharedPointer<Layout::ShapeGetter> ( NULL )
+				);
+			}
+
+			if ( !this->nodes->remove( node->getId() ) ) {
+				if ( !removeNodeByLuaIdentifier( node->getLuaIdentifier() ) ) {
+					qDebug() << "Nepodarilo sa z grafu odstanit node ->" << node->getLuaIdentifier();
+				}
+
+			}
+
+			this->metaNodes->remove( node->getId() );
+			this->newNodes.remove( node->getId() );
+			this->nodesByType.remove( node->getType()->getId(), node );
+			this->metaNodesByType.remove( node->getType()->getId(), node );
+
+			if ( !keepEdges ) {
+				node->removeAllEdges();
+			}
+
+			//zistime ci nahodou dany uzol nie je aj typom a osetrime specialny pripad ked uzol je sam sebe typom (v DB to znamena, ze uzol je ROOT uzlom/typom, teda uz nemoze mat ziaden iny typ)
+			if ( this->types->contains( node->getId() ) ) {
+				this->removeType( this->types->value( node->getId() ) );
+			}
 		}
 	}
 }
@@ -1403,8 +1442,8 @@ void Data::Graph::removeNode( osg::ref_ptr<Data::Node> node )
 
 			this->metaNodes->remove( node->getId() );
 			this->newNodes.remove( node->getId() );
-			this->nodesByType.remove( node->getType()->getId(),node );
-			this->metaNodesByType.remove( node->getType()->getId(),node );
+			this->nodesByType.remove( node->getType()->getId(), node );
+			this->metaNodesByType.remove( node->getType()->getId(), node );
 
 			node->removeAllEdges();
 

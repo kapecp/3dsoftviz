@@ -37,7 +37,7 @@ ArucoThread::ArucoThread( QObject* parent )
 
 	//JMA
 	mArControlClass = new ArControlClass();
-    mMarkerlessTracker = new OpenCV::MarkerlessTracker( mArControlClass );
+	mMarkerlessTracker = new OpenCV::MarkerlessTracker( mArControlClass );
 }
 
 ArucoThread::~ArucoThread( void )
@@ -510,7 +510,7 @@ void ArucoThread::printMat( const osg::Matrixd mat, const QString name ) const
  */
 void ArucoThread::setArInteractionSelection( int flag )
 {
-    mArControlClass->setNodeAssignmentStrategy( flag );
+	mArControlClass->setNodeAssignmentStrategy( flag );
 }
 /**
  * @brief setArInteractionBehviour
@@ -519,7 +519,7 @@ void ArucoThread::setArInteractionSelection( int flag )
  */
 void ArucoThread::setArInteractionBehaviour( int flag )
 {
-    mArControlClass->setNodeBehaviourStrategy( flag );
+	mArControlClass->setNodeBehaviourStrategy( flag );
 }
 
 } // namespace ArucoModul

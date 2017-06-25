@@ -3,7 +3,7 @@
 -- @release 2013/12/03, Tomas Filcak
 -----------------------------------------------
 
-local lfs           = require "lfs"
+local lfs = require "lfs"
 require "logging"
 
 -----------------------------------------------
@@ -51,7 +51,7 @@ end
 
 local function isArray(var)
   if type(var) ~= "table" then return nil end
-  
+
   local count = 0
   for key,value in pairs(var) do
     if type(key) ~= "number" then return false else count = count + 1 end
@@ -137,22 +137,22 @@ local function splitAndGetFirst(str, pat)
   return splitted[1]
 end
 
-
 local function deepCopy(t)
-    if type(t) ~= "table" then 
-      return t 
-    end
-    local meta = getmetatable(t)
-    local target = {}
-    for k, v in pairs(t) do
-        if type(v) == "table" then
-            target[k] = deepCopy(v)
-        else
-            target[k] = v
+    local lookup_table = {}
+    local function _copy(t)
+        if type(t) ~= "table" then
+          return t
+        elseif lookup_table[t] then
+            return lookup_table[t]
         end
+        local new_table = {}
+        lookup_table[t] = new_table
+        for index, value in pairs(t) do
+            new_table[_copy(index)] = _copy(value)
+        end
+        return setmetatable(new_table, getmetatable(t))
     end
-    setmetatable(target, meta)
-    return target
+    return _copy(t)
 end
 
 local function shallowCopy(t)
@@ -172,12 +172,12 @@ end
 local function tblPrint(s, l, i) -- recursive Print (structure, limit, indent)
 	l = (l) or 100
 	i = i or "" -- default item limit, indent string
-	if (l < 1) then 
+	if (l < 1) then
 		print "ERROR: Item limit reached."
 		return l-1
 	end
 	local ts = type(s)
-	if (ts ~= "table") then 
+	if (ts ~= "table") then
 		print (i,ts,s)
 		return l - 1
 	end
@@ -241,7 +241,7 @@ end
 local function serializeTable(val, name, skipnewlines, depth)
     skipnewlines = skipnewlines or true
     depth = depth or 0
-    
+
     -- indent text by depth value
     local tmp = string.rep(" ", depth)
 
