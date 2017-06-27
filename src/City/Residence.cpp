@@ -5,7 +5,7 @@
 
 namespace City {
 static const float DEFAULT_RESIDENCE_SECTOR_HEIGHT = 0.2f;
-static const float DEFAULT_BUILDING_SPACING = 0.5f;
+static const float DEFAULT_BUILDING_SPACING2 = 0.5f;
 
 void Residence::forEachBuilding( std::function<void( Building& b )> func )
 {
@@ -79,7 +79,7 @@ void Residence::refresh()
 	// nacitanie konfiguracii z aplikacie
 	auto config = Util::ApplicationConfig::get();
 	const float RESIDENCE_SECTOR_HEIGHT = config->getFloatValue( "City.Residence.SectorPlaneHeight", DEFAULT_RESIDENCE_SECTOR_HEIGHT );
-	const float BUILDING_SPACING = config->getFloatValue( "City.Residence.BuildingSpacing", DEFAULT_BUILDING_SPACING );
+	const float BUILDING_SPACING = config->getFloatValue( "City.Residence.BuildingSpacing", DEFAULT_BUILDING_SPACING2 );
 
 	// vymazanie starej geometrie vsetkych regionov
 	attributesBuildingsNode->removeChildren( 0, attributesBuildingsNode->getNumChildren() );
@@ -150,5 +150,6 @@ void Residence::refresh()
 	residenceSectorOffset += RESIDENCE_SECTOR_HEIGHT;
 	attributesBuildingsNode->setPosition( osg::Vec3( -offset.x(), -offset.y(), residenceSectorOffset ) );
 	residenceSectorOffset += RESIDENCE_SECTOR_HEIGHT;
+
 }
 }

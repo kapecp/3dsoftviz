@@ -1,4 +1,4 @@
-﻿#include "Application/Application.h"
+#include "Application/Application.h"
 
 #include <QDebug>
 

@@ -180,7 +180,7 @@ public:
 	static const int INDEX_CYLINDER = 2;
 	static const int INDEX_LINE = 3;
 	static const int INDEX_CURVE = 4;
-	static const int INDEX_CURVE2 = 5;
+	static const int INDEX_MATRIX_CURVE = 5;
 private:
 	/**
 		*  QList<osg::ref_ptr<Data::Edge> > edgePieces

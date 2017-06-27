@@ -295,7 +295,7 @@ osg::Group* QOSG::ProjectiveARViewer::createProjectorScene()
 
 		// setting Projection Matrix (compute frustum parameters)
 		double dist = renderCameraRelPos.length();
-		renderCamera->setProjectionMatrix( createFrustumForSphere( static_cast<double>( bs.radius() ) , dist ) );
+		renderCamera->setProjectionMatrix( createFrustumForSphere( static_cast<double>( bs.radius() ), dist ) );
 	}
 	else {
 		renderCamera->setProjectionMatrixAsPerspective( viewerFOV, 1.0, zNear, zFar );
@@ -337,14 +337,8 @@ osg::Group* QOSG::ProjectiveARViewer::createProjectorScene()
 	return projectorScene;
 }
 
-QOSG::ProjectiveARViewer::ProjectiveARViewer( QWidget* parent
-		, const char* name
-		, const QGLWidget* shareWidget
-		, WindowFlags f
-		, QOSG::ProjectiveARWindow* window
-		, osgViewer::Viewer* viewerPerspective
-		, Vwr::CoreGraph* coreGraph )
-		: AdapterWidget( parent, name, shareWidget, f )
+QOSG::ProjectiveARViewer::ProjectiveARViewer( const QGLFormat& format, QWidget* parent, const char* name, const QGLWidget* shareWidget, WindowFlags f, QOSG::ProjectiveARWindow* window, osgViewer::Viewer* viewerPerspective, Vwr::CoreGraph* coreGraph ):
+	AdapterWidget( format, parent, name, shareWidget, f )
 {
 	this->window = window;
 	this->coreGraph = coreGraph;
