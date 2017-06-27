@@ -1407,7 +1407,7 @@ endif()
 #	target_link_libraries( ${3DSOFTVIZ_NAME} ${FGLOVE_LIBRARIES} )
 # endif()
 if ( PCL_FOUND )
-		target_link_libraries( ${3DSOFTVIZ_NAME} ${PCL_COMMON_LIBRARIES} )
+		target_link_libraries( ${3DSOFTVIZ_NAME} ${PCL_LIBRARIES} ) # povodne ${PCL_COMMON_LIBRARIES}
 endif()
 if( LEAP_FOUND )
 	target_link_libraries( ${3DSOFTVIZ_NAME} leaplib ${LEAP_LIBRARIES} )
