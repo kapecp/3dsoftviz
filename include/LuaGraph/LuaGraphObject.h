@@ -2,6 +2,7 @@
 #define LUAGRAPHOBJECT_H
 
 #include "LuaTypes/LuaValue.h"
+#include "LuaTypes/LuaValueMap.h"
 
 #include <QString>
 
@@ -59,6 +60,15 @@ public:
 	 * @return value as float
 	 */
 	float getFloatParam( std::string name, float defaultValue );
+
+	/**
+	 * @brief getFloatParam return float value from a table from params table
+	 * @param tableName key in the params table
+	 * @param name key in the params table
+	 * @param defaultValue value to be returned if key is not in the table
+	 * @return value as float
+	 */
+	float getFloatParam( std::string tableName, std::string key, float defaultValue );
 
 	void setIdentifier( QString identifier )
 	{

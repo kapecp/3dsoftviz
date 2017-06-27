@@ -37,6 +37,7 @@
 
 #include "OsgQtBrowser/QGraphicsViewAdapter.h"
 #include "LuaTypes/LuaValueMap.h"
+#include "LuaGraph/LuaGraph.h"
 
 #include <QMap>
 
@@ -78,6 +79,15 @@ public:
 	void showTemplate( const std::string& templateName, Lua::LuaValueMap models, const std::string& templateType );
 
 	void showGitTemplate( const std::string& templateName, const std::string& templateType, QMap<QString, int>* changedMetrics );
+
+	/**
+		*  \fn public showMoonscriptTemplate
+		*  \brief
+		*  \param templateName name of the template file
+		*  \param templateType type of the template route
+		*  \param luaNodeId node id as QString
+		*/
+	void showMoonscriptTemplate( const std::string& templateName, const std::string& templateType, QString luaNodeId );
 
 	/**
 		*  \fn inline public  getQWebView

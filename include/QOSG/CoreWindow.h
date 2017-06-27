@@ -146,6 +146,12 @@ public slots:
 	void loadLuaModuleGraph();
 
 	/**
+				*  \fn public  loadMoonscriptGraph()
+				*  \brief load moonscript graph
+				*/
+	void loadMoonscriptGraph();
+
+	/**
 				*  \fn public  loadFunctionCall()
 				*  \brief load function call clicked
 				*/
@@ -297,11 +303,18 @@ public slots:
 	void loadSpecialMatrixFromFile();
 
 	/**
-				*  \fn public  labelOnOff(bool checked)
-				*  \brief Show / hide labels
+				*  \fn public  nodeLabelOnOff(bool checked)
+				*  \brief Show / hide node labels
 				*  \param  checked flag if button is checked
 				*/
-	void labelOnOff( bool checked );
+	void nodeLabelOnOff( bool checked );
+
+	/**
+				*  \fn public  edgeLabelOnOff(bool checked)
+				*  \brief Show / hide edge labels
+				*  \param  checked flag if button is checked
+				*/
+	void edgeLabelOnOff( bool checked );
 
 	void labelForResidenceCheckStateChanged( int state );
 
@@ -356,12 +369,12 @@ public slots:
 	 */
 	void switchBackgroundOrtho2d();
 
-    /**
-     * void switchBackgroundLeap(  )
-     * @brief TODO
-     * @param TODO
-     */
-    void switchBackgroundLeap();
+	/**
+	 * void switchBackgroundLeap(  )
+	 * @brief TODO
+	 * @param TODO
+	 */
+	void switchBackgroundLeap();
 
 	/**
 				*  \fn public  sliderValueChanged(int value)
@@ -448,6 +461,12 @@ public slots:
 				*  \param  index
 				*/
 	void edgeTypeComboBoxChanged( int index );
+
+	/**
+				*  \fn private  switchGraphView
+				*  \brief Switches graph layout
+				*/
+	void switchGraphView();
 
 	/**
 				*  \fn public  applyColorClick
@@ -588,6 +607,9 @@ public slots:
 	void start_client();
 	void send_message();
 	void create_facewindow();
+
+	void toggleDraggerScale( bool set );
+	void toggleDraggerRotation( bool set );
 
 #ifdef OPENCV_FOUND
 #ifdef OPENNI2_FOUND
@@ -886,11 +908,11 @@ private:
 	 */
 	QAction* switchBackgroundTextureAction;
 
-    /**
-     * QAction * switchBackgroundLeapAction
-     *@brief Action to switch/change background to leap background
-     */
-    QAction* switchBackgroundLeapAction;
+	/**
+	 * QAction * switchBackgroundLeapAction
+	 *@brief Action to switch/change background to leap background
+	 */
+	QAction* switchBackgroundLeapAction;
 
 	/**
 	 * QAction * switchBackgroundOrtho2dAction
@@ -903,6 +925,12 @@ private:
 		*  \brief Pointer to load lua module graph from lua project
 		*/
 	QAction* loadModuleGraphAction;
+
+	/**
+		*  QAction * loadMoonscriptAction
+		*  \brief Pointer to load moonscript graph from moonscript project
+		*/
+	QAction* loadMoonscriptAction;
 
 	/**
 		*  QAction * loadSpecialMatrix
@@ -1138,6 +1166,10 @@ private:
 	QPushButton* b_UnsetRestrictionFromAll;
 
 	/**
+		 * \brief Button for switching graph layouts.
+		 */
+	QPushButton* b_switchGraphView;
+	/**
 		*  QAction * create new Edge
 		*  \brief Action for adding Edge
 		*/
@@ -1267,6 +1299,12 @@ private:
 	bool isRunning;
 
 	/**
+		*  bool graphView
+		*  \brief True if loaded graph is shown as graph (not city) - in case of moduleGraph
+		*/
+	bool graphView;
+
+	/**
 	 *CheckBox for mapinulation camera or object
 	 *@brief chb_camera_rot
 	 */
@@ -1291,10 +1329,16 @@ private:
 	QAction* loadGit;
 
 	/**
-		*  QPushButton * label
-		*  \brief Pointer to labelOn/labelOff button
+		*  QPushButton * nodes_label
+		*  \brief Pointer to nodes_labelOn/nodes_labelOff button
 		*/
-	QPushButton* label;
+	QPushButton* nodesLabel;
+
+	/**
+		*  QPushButton * edges_label
+		*  \brief Pointer to edges_labelOn/edges_labelOff button
+		*/
+	QPushButton* edgesLabel;
 
 	/**
 	*  QCheckBox * labelResidence
@@ -1551,6 +1595,9 @@ private:
 		*/
 	QComboBox* edgeTypeComboBox;
 
+	QCheckBox* chb_dragger_scale;
+	QCheckBox* chb_dragger_rotation;
+
 	/**
 		*  bool isEBPlaying
 		*  \brief Flag if edge bundling is running
@@ -1613,7 +1660,8 @@ private:
 	//*****
 
 public:
-
+	//JMA
+	void forceOnChange();
 	//jurik
 	void setPlaying( bool play )
 	{

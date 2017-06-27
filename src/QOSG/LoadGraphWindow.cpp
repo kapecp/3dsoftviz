@@ -10,6 +10,15 @@
 
 #include "QOSG/SelectLayoutWindow.h"
 
+#include <QPushButton>
+#include <QLabel>
+#include <QTableWidget>
+#include <QHBoxLayout>
+#include <QGridLayout>
+#include <QInputDialog>
+#include <QLineEdit>
+#include <QMessageBox>
+
 namespace QOSG {
 
 LoadGraphWindow::LoadGraphWindow( QWidget* parent )

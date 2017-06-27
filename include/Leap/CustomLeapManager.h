@@ -1,8 +1,11 @@
+
 #ifndef CUSTOMLEAPMANAGER_H
 #define CUSTOMLEAPMANAGER_H
 
-#include "Leap.h"
+#include "HandModule/Manipulator/HandObjectManipulator.h"
 #include "LeapLib/LeapManager.h"
+
+#include "Leap.h"
 
 #include <osg/Group>
 #include <osg/ref_ptr>
@@ -19,6 +22,7 @@ class LayoutThread;
 namespace Leap {
 
 class HandPalm;
+class HandObjectManipulator;
 
 class CustomLeapManager : public LeapManager
 {
@@ -31,8 +35,6 @@ public:
 	void disableCameraMovement();
 	void rotateCamera( float py0, float px0, double throwScale, float py1, float px1 );
 
-    Leap::Vector recalculateDepthNode(Leap::Vector vector, float diff);
-
 	/**
 	 Method Used by LeapLib/LeapActions class. Update position of palms and call methods updateFingers()
 	 and updateInterFingerBones().
@@ -41,48 +43,14 @@ public:
 	 */
 	void updateHands( Leap::Hand leftHand, Leap::Hand rightHand );
 
-	/**
-	 Method used in updateHands(). Iterates over fingers and for each call methods: updateJoints() and
-	 updateFingerBones().
-	 * @param palm - sphere representation of palm containing groups of figer joints and bones
-	 * @param fingers - Leap representation of fingers (sensor output data).
-	 */
-    void updateFingers( HandPalm* palm, Leap::FingerList fingers, float diff);
-
-	/**
-	Method used in updateFingers(). Render joints of single finger.
-	 * @param fingerGroup - Group cointaining sphere representation of joints of single finger
-	 * @param finger - Leap representation of single finger (sensor output data).
-	 * @param fingerPosition - Value representing index of position of finger (from THUMB to PINKY)
-	 */
-    void updateJoints( osg::Group*  fingerGroup, Leap::Finger finger, int fingerPosition, float diff );
-
-	/**
-	Method used in updateFingers(). Render bones of single finger.
-	 * @param fingerGroup - Group cointaining cylinder representation of bones and of single finger
-	 * @param finger - Leap representation of single finger (sensor output data).
-	 * @param fingerPosition - Value representing index of position of finger (from THUMB to PINKY)
-	 */
-    void updateFingerBones( osg::Group*  fingerGroup, Leap::Finger finger, float diff );
-
-	/**
-	Method used in updateHands(). Render bones between fingers. Call method updateInterFingerWristBone().
-	 * @param interFingerBoneGroup - Group cointaining cylinder representation of bones between fingers.
-	 * @param fingers - Leap representation all fingers (sensor output data).
-	 */
-    void updateInterFingerBones( osg::Group*  interFingerBoneGroup, Leap::FingerList fingers, float diff );
-
-	/**
-	Method used in updateFingerBones(). Render wrist bone.
-	 * @param interFingerBoneGroup - Group cointaining cylinder representation of bones between fingers.
-	 * @param fingers - Leap representation all fingers (sensor output data).
-	 */
-    void updateInterFingerWristBone( osg::Group*  interFingerBoneGroup, Leap::FingerList fingers, float diff );
-
 	//berger
-    int updateCoreGraphBackground( const unsigned char* buffer, float depth );
-
-    float getHandsDepthInformation(float leftHandPosition, float rightHandPosition);
+	/**
+	 * @brief updateCoreGraphBackground - send stream from leap to background image
+	 * @param buffer - image
+	 * @param depth - not used anymore
+	 * @return
+	 */
+	int updateCoreGraphBackground( const unsigned char* buffer, float depth );
 
 	//jurik
 	void graphRotateSwipe( int swipeDirection );
@@ -91,17 +59,23 @@ public:
 	void rotateArucoRight();
 	void scaleEdgesUp();
 	void scaleEdgesDown();
+	void scaleGraph( bool scaleUp );
+
+	void selectNode( bool right );
 	//*****
 
 	Vwr::CameraManipulator* cameraManipulator;
 	Layout::LayoutThread* layout;
 	Vwr::CoreGraph* coreGraph;
-
+	/**
+	 * @brief handObjectManipulator - object for updating hand model position
+	 */
+	HandObjectManipulator* handObjectManipulator;
+	/**
+	 * @brief handsGroup - hands nodes and bones hierachy
+	 */
 	osg::ref_ptr<osg::Group> handsGroup;
-	osg::Vec3d eye;
-	osg::Vec3d center;
-	osg::Vec3d up;
-	osg::Vec3d direction;
 };
 }
 #endif
+

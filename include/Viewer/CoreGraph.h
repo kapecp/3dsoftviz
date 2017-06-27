@@ -20,8 +20,9 @@
 #include "Leap/LeapLib/LeapCameraStream.h"
 
 #include "Data/Cluster.h"
+#include "Data/GraphLayout.h"
 
-#include <osgManipulator/Translate2DDragger>
+#include <osgManipulator/Dragger>
 
 #include <QMap>
 #include <QLinkedList>
@@ -104,6 +105,8 @@ public:
 
 	void onResized( int width, int height );
 
+	void toggleDragger( int dragger_no, bool set );
+
 	/**
 		*  \fn public  reload(Data::Graph * graph = 0)
 		*  \brief
@@ -141,7 +144,7 @@ public:
 	    *  \param image data - one frame(image) from leap sensor
 	    *  \return 0 - success, 1 - fail
 	   */
-    int updateBackgroundStream( unsigned char* buffer );
+	int updateBackgroundStream( unsigned char* buffer );
 
 	/**
 		*  \fn inline public  getCustomNodeList
@@ -269,6 +272,10 @@ public:
 		return browsersGroup;
 	}
 
+	Data::Graph* getGraph()
+	{
+		return graph;
+	}
 #ifdef OPENCV_FOUND
 	OpenCV::CameraStream* getCameraStream() const;
 #endif
@@ -314,7 +321,7 @@ public:
 
 	//JMA
 	osg::Vec3f getGrafRotTransVec();
-
+	osg::Vec3f getGrafRotTransScale();
 
 public slots:
 
@@ -358,6 +365,11 @@ public slots:
 		 */
 	void setEdgeVisualForType( int index, QString edgeTypeName );
 
+	/**
+		 * @brief setEdgeHiddenForType Set invisibility of edges for specific type
+		 */
+	void setEdgeHiddenForType( bool hidden, QString edgeTypeName );
+
 	void recievedMVMatrix( QMatrix4x4 modelViewMatrix );
 
 	/**
@@ -369,6 +381,26 @@ public slots:
 	void updateBase( double size );
 
 	void setArucoRunning( bool isRunning );
+
+
+
+	bool isLeapStreamActive();
+
+	bool isCameraStreamActive();
+	void onSetGraphZoom( int flag );
+
+	/**
+		 * @author Autor: Denis Illes
+		 * @brief move certain nodes to module node
+		 */
+	void reorganizeNodesForModuleGraph();
+
+	/**
+		 * @author Autor: Denis Illes
+		 * @brief move nodes from module node back to default place
+		 */
+	void reorganizeNodesForModuleCity();
+
 
 private:
 
@@ -676,7 +708,8 @@ private:
 	bool cameraInsideSphere( osg::Vec3d midPoint, float radius );
 	bool cameraInsideCube( osg::Vec3d lowerPoint, osg::Vec3d upperPoint );
 
-	osgManipulator::Translate2DDragger* manipulator;
+	osgManipulator::Dragger* manipulator_scale;
+	osgManipulator::Dragger* manipulator_rotation;
 
 	//jurik
 	/**

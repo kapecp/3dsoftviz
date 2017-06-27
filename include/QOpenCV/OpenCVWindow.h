@@ -14,6 +14,7 @@
 #include <QSlider>
 #include <QStackedLayout>
 #include <QVBoxLayout>
+#include <QGroupBox>
 
 namespace OpenCV {
 class CapVideo;
@@ -83,6 +84,7 @@ signals:
 	     * @param send
 	     */
 	void sendImgFaceRec( bool send );
+	void sendRecalibrateHand();
 
 	/**
 	     * @author Autor: David Durcak
@@ -147,7 +149,7 @@ signals:
 
 	/**
 	     * @author Autor: Michael Garaj
-	     * @brief setMultiMarker Signal for setting MultiMarker in Aruco thread
+	     * @brief  Signal for setting MultiMarker in Aruco thread
 	     * @param set cancel if true
 	     */
 	void setMultiMarker( bool set );
@@ -234,6 +236,27 @@ signals:
 	void setKinectCaptureImage( bool set );
 
 	void arucoRunning( bool isRunning );
+
+	/**
+	 * @brief setArInteractionSelection
+	 * @param flag
+	 * @author Juraj Marak
+	 */
+	void setArInteractionSelection( int flag );
+	/**
+	 * @brief setArInteractionBehviour
+	 * @param flag
+	 * @author Juraj Marak
+	 */
+	void setArInteractionBehaviour( int flag );
+
+	/**
+	 * @brief setArGraphZoom
+	 * @param flag
+	 * @author Juraj Marak
+	 */
+	void setArGraphZoom( int flag );
+
 
 public slots:
 	/**
@@ -323,6 +346,8 @@ private slots:
 	     */
 	void onMarkerBackgrCBClicked( bool checked );
 
+	void onmRecalibrateHandPBClicked();
+
 	/**
 	 * @brief private SLOT for turn OFF cursor
 	 */
@@ -353,6 +378,23 @@ private slots:
 	 */
 	void setMarkerlessDetectionKinect( bool set );
 
+	/**
+	 * @brief onArInteractionSelectionClicked
+	 * @param state
+	 * @author Juraj Marak
+	 */
+	void onArInteractionSelectionClicked( bool state );
+	/**
+	 * @brief onArInteractionSelectionClicked
+	 * @param state
+	 * @author Juraj Marak
+	 */
+	void onArInteractionBehaviourClicked( bool state );
+
+	void applyGraphZoomIn( bool state );
+	void applyGraphZoomOut( bool state );
+
+
 private:
 	/**
 	     * @author Autor: Michael Garaj
@@ -372,8 +414,10 @@ private:
 
 	QRadioButton*	mKinectRB;
 	QRadioButton*	mArucoRB;
+	QRadioButton*   mArInteractionRB;
 	QRadioButton*    mFaceRecRB;
 	QRadioButton*    mMarkerRB;
+
 	QRadioButton*    mMultiMarkerRB;
 
 	QPushButton*     mFaceRecPB;
@@ -384,24 +428,35 @@ private:
 	QPushButton*		mUpdateCorParPB;
 	QPushButton*		mInterchangeMarkersPB;
 	QPushButton*     mKinectSnapshotPB;
+	QPushButton*		mRecalibrateHandPB;
 
-	QStackedLayout*  mModulesStackL;
-	QStackedLayout*  mSubmodulesStackL;
+	QVBoxLayout*  mSubmodulesStackL;
+//	---------------------------------------------
 
-	QCheckBox*		mNoVideo;
+	QCheckBox*		mMarkerNoVideo;
+	QCheckBox*		mFaceNoVideo;
 	QCheckBox*		 mMarkerBackgrCB;
 	QCheckBox*		 mFaceDetBackgrCB;
 	QCheckBox*		 mMarkerBehindCB;
 	QCheckBox*		 mCorEnabledCB;
 	QCheckBox*	     mMultiMarkerEnableCB;
-	QCheckBox*		 mEnableMarkerlessKinectCB;
+	QCheckBox*		 mEnableMarkerlessCameraCB;
+	QCheckBox*		 mRefEnableFaceRecCB;
+	QCheckBox*		 mRefEnableMarkerlessCB;
 
 	QCheckBox*       mDisableCursorCB;
 	QCheckBox*       mDisableZoomCursorCB;
 	QCheckBox*       mEnableMarkerDetectCB;
-	QCheckBox*		 mEnableMarkerlessCameraCB;
+	QCheckBox*		 mEnableMarkerlessKinectCB;
 
 	QSlider*         mSpeed;
+
+	//Ar interaction RBs
+	QRadioButton* arNSPosition;
+	QRadioButton* arNSNearest;
+	QRadioButton* arNSMostEdges;
+	QRadioButton* arNBSingle;
+	QRadioButton* arNBCluster;
 };
 
 }

@@ -361,6 +361,14 @@ public:
 	double getEdgeScale();
 
 	/**
+		*  \fn public  removeNode(osg::ref_ptr<Data::Node> node, bool removeOnlyFromGraph)
+		*  \brief Removes a Node from the Graph
+		*  \param      node   the Node to be removed from the Graph
+		*  \param      keepEdges   boolean to check if edges should be deleted aswell
+		*/
+	void removeNode( osg::ref_ptr<Data::Node> node, bool keepEdges );
+
+	/**
 		*  \fn public  removeNode(osg::ref_ptr<Data::Node> node)
 		*  \brief Removes a Node from the Graph
 		*  \param      node   the Node to be removed from the Graph

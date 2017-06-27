@@ -210,5 +210,17 @@ Implementovany model ruky :
       
       !include /uml/handModel.wsd	  
 	  
+Volania pri update ruk v scene pri LeapAR:
+
+   .. uml::
+      
+      !include /uml/handsAR.handsUpdate.wsd	  
+	  
+Mapovanie ruk a update pozadia pri LeapAR :
+
+   .. uml::
+      
+      !include /uml/handsAR.mappingAndBackground.wsd	  
+	  
 
 	  
