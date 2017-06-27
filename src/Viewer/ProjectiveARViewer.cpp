@@ -23,6 +23,26 @@
 #include <osgDB/ReadFile>
 #include <osgViewer/Viewer>
 
+#include <pcl/common/time.h> //fps calculations
+#include <pcl/common/angles.h>
+#include <pcl/io/openni2_grabber.h>
+#include <pcl/io/obj_io.h>
+#include <pcl/visualization/pcl_visualizer.h>
+#include <pcl/visualization/boost.h>
+#include <pcl/visualization/image_viewer.h>
+#include <pcl/console/print.h>
+#include <pcl/console/parse.h>
+#include <pcl/console/time.h>
+#include <pcl/filters/voxel_grid.h>
+#include <pcl/surface/mls.h>
+#include <pcl/surface/poisson.h>
+#include <pcl/surface/grid_projection.h>
+#include <pcl/point_types.h>
+#include <pcl/io/pcd_io.h>
+#include <pcl/kdtree/kdtree_flann.h>
+#include <pcl/features/normal_3d.h>
+#include <pcl/surface/gp3.h>
+
 #include <math.h>
 
 // used code from http://jotschi.de/2009/05/31/projective-textures-with-openscenegraph/
@@ -78,7 +98,7 @@ osg::StateSet* QOSG::ProjectiveARViewer::createProjectorState( osg::Texture2D* t
 		"void main() \n"
 		"{ \n"
 		"	vec4 dividedCoord = projCoord / projCoord.w; \n"
-		"	vec2 texCoord = dividedCoord.st + vec2(0.5f, 0.5f); \n"
+		"	vec2 texCoord = dividedCoord.st + vec2(0.5, 0.5); \n"
 		"	vec4 color = texture2D(projectionMap, texCoord); \n"
 		"	gl_FragColor = color * gl_Color; \n"
 		"} \n";
@@ -107,88 +127,118 @@ osg::StateSet* QOSG::ProjectiveARViewer::createProjectorState( osg::Texture2D* t
 }
 
 
-osg::Geode* QOSG::ProjectiveARViewer::createBase()
+osg::Node* QOSG::ProjectiveARViewer::createBase()
 {
-	osg::Geode* baseGeode = new osg::Geode();
-	osg::Geometry* baseGeometry = new osg::Geometry();
+    osg::Geode* baseGeode = new osg::Geode();
+    osg::Geometry* baseGeometry = new osg::Geometry();
 
-	baseGeode->addDrawable( baseGeometry );
+    baseGeode->addDrawable( baseGeometry );
 
-	//base
-	osg::Vec3Array* vertices = new osg::Vec3Array;
-	vertices->push_back( osg::Vec3( -0.75, -1.0, 2.0 ) ); // lb   floor
-	vertices->push_back( osg::Vec3( 0.75, -1.0, 2.0 ) ); // rb   floor
-	vertices->push_back( osg::Vec3( 0.75, -1.0, 0 ) );   // rb   screen
-	vertices->push_back( osg::Vec3( -0.75, -1.0, 0 ) );  // lb   screen
-	vertices->push_back( osg::Vec3( 0.75, 1.00, 0 ) ); // rt   screen
-	vertices->push_back( osg::Vec3( -0.75, 1.00, 0 ) ); // lt   screen
+    pcl::PointCloud<pcl::PointXYZ>::Ptr sourceCloud(new pcl::PointCloud<pcl::PointXYZ>);
+    pcl::PolygonMesh triangles;
 
-	//right side
-	vertices->push_back( osg::Vec3( 0.77f, -1.0f, 0.08f ) );   // fb   rack
-	vertices->push_back( osg::Vec3( 0.77f, -0.98f, 0.08f ) ); // fm   rack
-	vertices->push_back( osg::Vec3( 0.77f, -0.935f, 0.015f ) ); // ft   rack
-	vertices->push_back( osg::Vec3( 0.77f, -1.00f, 0.015f ) ); // sb   rack
-	//left side
-	vertices->push_back( osg::Vec3( -0.77f, -1.0f, 0.08f ) );   // fb   rack
-	vertices->push_back( osg::Vec3( -0.77f, -0.98f, 0.08f ) ); // fm   rack
-	vertices->push_back( osg::Vec3( -0.77f, -0.935f, 0.015f ) ); // ft   rack
-	vertices->push_back( osg::Vec3( -0.77f, -1.00f, 0.015f ) ); // sb   rack
-	baseGeometry->setVertexArray( vertices );
-
-	// floor
-	osg::DrawElementsUInt* floor = new osg::DrawElementsUInt( osg::PrimitiveSet::QUADS, 0 );
-	floor->push_back( 3 );
-	floor->push_back( 2 );
-	floor->push_back( 1 );
-	floor->push_back( 0 );
-
-	baseGeometry->addPrimitiveSet( floor );
-
-	// screen
-	osg::DrawElementsUInt* screen = new osg::DrawElementsUInt( osg::PrimitiveSet::QUADS, 0 );
-	screen->push_back( 5 );
-	screen->push_back( 4 );
-	screen->push_back( 2 );
-	screen->push_back( 3 );
-
-	baseGeometry->addPrimitiveSet( screen );
-
-	// rack
-	osg::DrawElementsUInt* frontBotRack = new osg::DrawElementsUInt( osg::PrimitiveSet::QUADS, 0 );
-	frontBotRack->push_back( 6 );
-	frontBotRack->push_back( 7 );
-	frontBotRack->push_back( 11 );
-	frontBotRack->push_back( 10 );
-
-	baseGeometry->addPrimitiveSet( frontBotRack );
-
-	osg::DrawElementsUInt* frontTopRack = new osg::DrawElementsUInt( osg::PrimitiveSet::QUADS, 0 );
-	frontTopRack->push_back( 7 );
-	frontTopRack->push_back( 8 );
-	frontTopRack->push_back( 12 );
-	frontTopRack->push_back( 11 );
-
-	baseGeometry->addPrimitiveSet( frontTopRack );
-
-	osg::DrawElementsUInt* sideRightRack = new osg::DrawElementsUInt( osg::PrimitiveSet::QUADS, 0 );
-	sideRightRack->push_back( 6 );
-	sideRightRack->push_back( 7 );
-	sideRightRack->push_back( 8 );
-	sideRightRack->push_back( 9 );
-
-	baseGeometry->addPrimitiveSet( sideRightRack );
-
-	osg::DrawElementsUInt* sideLeftRack = new osg::DrawElementsUInt( osg::PrimitiveSet::QUADS, 0 );
-	sideLeftRack->push_back( 10 );
-	sideLeftRack->push_back( 11 );
-	sideLeftRack->push_back( 12 );
-	sideLeftRack->push_back( 13 );
-
-	baseGeometry->addPrimitiveSet( sideLeftRack );
+    {
+        using namespace pcl;
+        using namespace std;
 
 
+        boost::function<void(const PointCloud<PointXYZ>::ConstPtr&)> function = [&sourceCloud](const PointCloud<PointXYZ>::ConstPtr &cloud)
+        {
+            *sourceCloud = *cloud;
+        };
 
-	return baseGeode;
+        io::OpenNI2Grabber* grabber = new io::OpenNI2Grabber();
+        grabber->registerCallback(function);
+        grabber->start();
+        boost::this_thread::sleep(boost::posix_time::seconds(1));
+        grabber->stop();
+    }
+
+    if (!sourceCloud) {
+        std::cerr << "nepodarilo sa poincloud vybrat" << std::endl;
+        exit(1);
+    }
+
+    pcl::PointCloud<pcl::PointXYZ>::Ptr cloudecek(new pcl::PointCloud<pcl::PointXYZ>);
+    pcl::PointCloud<pcl::PointXYZ> cloud_filtered;
+    pcl::PointCloud<pcl::PointXYZ> clo;
+
+    if (sourceCloud) {
+
+        pcl::copyPointCloud(*sourceCloud, *cloudecek);
+        pcl::VoxelGrid<pcl::PointXYZ> sor;
+        sor.setInputCloud(cloudecek);
+        sor.setLeafSize(0.01f, 0.01f, 0.01f);
+        sor.filter(cloud_filtered);
+
+        *cloudecek = cloud_filtered;
+
+        // Normal estimation
+        pcl::NormalEstimation<pcl::PointXYZ, pcl::Normal> n;
+        pcl::PointCloud<pcl::Normal>::Ptr normals(new pcl::PointCloud<pcl::Normal>);
+        pcl::search::KdTree<pcl::PointXYZ>::Ptr tree(new pcl::search::KdTree<pcl::PointXYZ>);
+        tree->setInputCloud(cloudecek);
+        n.setInputCloud(cloudecek);
+        n.setSearchMethod(tree);
+        n.setKSearch(20);
+        n.compute(*normals);
+
+        // Concatenate the XYZ and normal fields*
+        pcl::PointCloud<pcl::PointNormal>::Ptr cloud_with_normals(new pcl::PointCloud<pcl::PointNormal>);
+        pcl::concatenateFields(*cloudecek, *normals, *cloud_with_normals);
+        // cloud_with_normals = cloud + normals
+
+        // Create search tree*
+        pcl::search::KdTree<pcl::PointNormal>::Ptr tree2(new pcl::search::KdTree<pcl::PointNormal>);
+        tree2->setInputCloud(cloud_with_normals);
+
+        // Initialize objects
+        pcl::Poisson<pcl::PointNormal> p;
+
+        // vs druhe min cas / prijatelna kvalita
+
+        // POISSON RECONSTRUCTION
+        p.setDepth(8);
+        p.setInputCloud(cloud_with_normals);
+        p.reconstruct(triangles);
+
+        pcl::fromPCLPointCloud2(triangles.cloud, clo);
+    }
+
+    // push verts and indices to geode
+
+    // verts
+    osg::ref_ptr<osg::Vec3Array> verts (new osg::Vec3Array);
+    for (auto elm : clo.points) {
+        verts->push_back(osg::Vec3(elm.x, elm.y, elm.z));
+    }
+
+    // indices
+    for (auto elm : triangles.polygons) {
+        osg::DrawElementsUInt *face = new osg::DrawElementsUInt(osg::PrimitiveSet::TRIANGLES, 0);
+        for (auto e : elm.vertices) {
+            face->push_back(e);
+        }
+        baseGeometry->addPrimitiveSet(face);
+    }
+
+    baseGeometry->setVertexArray(verts.get());
+//  test
+//	baseGeode = dynamic_cast<osg::Geode *>(osgDB::readNodeFile("test.osg"));
+
+    // rotate geometry
+	osg::MatrixTransform *mt = new osg::MatrixTransform;
+	osg::Matrixf *rm = new osg::Matrixf;
+	rm->makeRotate(osg::inDegrees(50.0f), osg::Vec3f(1.0f, 0.0f, 0.0f),
+				   osg::inDegrees(180.0f),  osg::Vec3f(0.0f, 1.0f, 0.0f),
+				   osg::inDegrees(0.0f),   osg::Vec3f(0.0f, 0.0f, 1.0f));
+	mt->setMatrix(*rm);
+	mt->addChild(baseGeode);
+
+//  test
+//	osgDB::writeNodeFile(*mt, "transform.osg");
+
+	return mt;
 }
 
 
