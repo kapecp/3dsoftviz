@@ -73,8 +73,9 @@ void QOpenCV::LightDetectionThread::run()
 		mLightDetector->ProcessFrame( image, imageGray );
 
 		// send lights
-		for ( int i = 0; i < mLightDetector->getLightNum(); i++ )
+		for ( int i = 0; i < mLightDetector->getLightNum(); i++ ) {
 			sendLightCoords( mLightDetector->getLight( i ) );
+		}
 
 		emit sendAmbientLightColor( mLightDetector->getAverageColor() * mLightDetector->getAverageColorIntensity() );
 

@@ -323,7 +323,7 @@ public:
 
 	//JMA
 	osg::Vec3f getGrafRotTransVec();
-    osg::Vec3f getGrafRotTransScale();
+	osg::Vec3f getGrafRotTransScale();
 
 
 	// Karas
@@ -390,13 +390,13 @@ public slots:
 	bool isLeapStreamActive();
 
 	bool isCameraStreamActive();
-  void onSetGraphZoom(int flag);
+	void onSetGraphZoom( int flag );
 
 	void setLightCoords( OpenCV::TrackedLight tlight );
 
 	void setShowLightMarkers( bool set );
 
-	void setAmbientLightColor(osg::Vec4 color);
+	void setAmbientLightColor( osg::Vec4 color );
 
 private:
 
@@ -777,7 +777,7 @@ private:
 	 * @param index light to be turned (GL lights from 0 to 8 exclusive)
 	 * @param isPointLight 0 spot light, 1 point light
 	 */
-	void setLightType(int index, bool isPointLight );
+	void setLightType( int index, bool isPointLight );
 
 	/**
 	 * @brief useSphereMappingShader changes state set to use custom shader which renders objects using spherical map (environment mapping)

@@ -652,21 +652,25 @@ void CoreGraph::setClustersShapeBoundary( int value )
 	this->clustersShapeBoundary = value;
 }
 
-void CoreGraph::setLightPosition( int index, osg::Vec3 position ) {
+void CoreGraph::setLightPosition( int index, osg::Vec3 position )
+{
 	lightTranforms[ index ]->setPosition( position );
 }
 
-void CoreGraph::setLightDiffuseColor( int index, osg::Vec4 color ) {
+void CoreGraph::setLightDiffuseColor( int index, osg::Vec4 color )
+{
 	lightSources[ index ]->getLight()->setDiffuse( color );
 }
 
-void CoreGraph::setLightActive( int index, bool active ) {
+void CoreGraph::setLightActive( int index, bool active )
+{
 	getScene()->getOrCreateStateSet()->setMode( GL_LIGHT0 + index , active ? osg::StateAttribute::ON : osg::StateAttribute::OFF );
 }
 
 
 
-int CoreGraph::getOrCreateLight( int index ) {
+int CoreGraph::getOrCreateLight( int index )
+{
 	// already exists
 	if ( lightsGroup->getNumChildren() > index ) {
 		return index;
@@ -677,7 +681,7 @@ int CoreGraph::getOrCreateLight( int index ) {
 	pLight->setLightNum( uniqueLightNumber++ );
 	pLight->setDiffuse( osg::Vec4( 1.0f, 1.0f, 1.0f, 1.0f ) );
 	pLight->setPosition( osg::Vec4( 0, 0, 0, 1 ) );		// w = 0 directional light
-														// w = 1 point light (position)
+	// w = 1 point light (position)
 
 	// light source
 	osg::LightSource* pLightSource = new osg::LightSource;
@@ -700,7 +704,8 @@ int CoreGraph::getOrCreateLight( int index ) {
 	return index;
 }
 
-void CoreGraph::setLightType( int index, bool isPointLight ) {
+void CoreGraph::setLightType( int index, bool isPointLight )
+{
 	// seems to be broken
 	lightSources[ index ]->getLight()->setPosition( osg::Vec4( 0, 0, 0, isPointLight ? 1 : 0 ) );
 }
@@ -708,11 +713,12 @@ void CoreGraph::setLightType( int index, bool isPointLight ) {
 
 /// sphere mapping shader, possible to shade every object by image of a sphere...
 /// designed to grab image from ball tracker and then call dirty to update shader texture
-void CoreGraph::useSphereMappingShader( osg::ref_ptr< osg::StateSet > state ) {
+void CoreGraph::useSphereMappingShader( osg::ref_ptr< osg::StateSet > state )
+{
 
 	/* based on https://www.clicktorelease.com/blog/creating-spherical-environment-mapping-shader/  */
 	/* 1. Load image to be used for sphere mapping */
-	osg::Texture2D *texture = new osg::Texture2D();
+	osg::Texture2D* texture = new osg::Texture2D();
 	osg::Image* foo = osgDB::readImageFile( "foo2.jpg" );
 	if ( foo == NULL ) {
 		printf( "Error: Image \"foo2.jpg\" has not been read!\n" );
@@ -759,18 +765,19 @@ void CoreGraph::useSphereMappingShader( osg::ref_ptr< osg::StateSet > state ) {
 	osg::Uniform* texUniform = new osg::Uniform( osg::Uniform::SAMPLER_2D, "tMatCap" );
 	texUniform->set( 0 );
 	state->addUniform( texUniform );
-	state->setTextureAttributeAndModes(0,texture,osg::StateAttribute::ON);
+	state->setTextureAttributeAndModes( 0,texture,osg::StateAttribute::ON );
 	/* 4. Activate shader for this state set */
-	state->setAttributeAndModes(projProg, osg::StateAttribute::ON);
+	state->setAttributeAndModes( projProg, osg::StateAttribute::ON );
 }
 
 /// bit unfinished shader that should make reflections based on fisheye image from camera
 /// requires to be rewritten using better projection math - lookup stereographic projection
-void CoreGraph::useSphereMappingDomeShader( osg::ref_ptr< osg::StateSet > state ) {
+void CoreGraph::useSphereMappingDomeShader( osg::ref_ptr< osg::StateSet > state )
+{
 
 	/* based on https://www.clicktorelease.com/blog/creating-spherical-environment-mapping-shader/  */
 	/* 1. Load image to be used for sphere mapping */
-	osg::Texture2D *texture = new osg::Texture2D();
+	osg::Texture2D* texture = new osg::Texture2D();
 	osg::Image* foo = osgDB::readImageFile( "foo3.jpg" );
 	if ( foo == NULL ) {
 		printf( "Error: Image \"foo2.jpg\" has not been read!\n" );
@@ -825,13 +832,13 @@ void CoreGraph::useSphereMappingDomeShader( osg::ref_ptr< osg::StateSet > state 
 	osg::Uniform* texUniform = new osg::Uniform( osg::Uniform::SAMPLER_2D, "tMatCap" );
 	texUniform->set( 0 );
 	state->addUniform( texUniform );
-	state->setTextureAttributeAndModes(0,texture,osg::StateAttribute::ON);
+	state->setTextureAttributeAndModes( 0,texture,osg::StateAttribute::ON );
 	/* 4. Activate shader for this state set */
-	state->setAttributeAndModes(projProg, osg::StateAttribute::ON);
+	state->setAttributeAndModes( projProg, osg::StateAttribute::ON );
 }
 
 Vwr::CoreGraph::CoreGraph( Data::Graph* graph, osg::ref_ptr<osg::Camera> camera )
-{	
+{
 	this->graph = graph;
 	this->camera = ( ( camera == 0 ) ? ( static_cast<osg::ref_ptr<osg::Camera> >( new osg::Camera ) ) : ( camera ) );
 
@@ -875,7 +882,7 @@ Vwr::CoreGraph::CoreGraph( Data::Graph* graph, osg::ref_ptr<osg::Camera> camera 
 	//*/
 
 
-	root->getOrCreateStateSet()->addUniform( new osg::Uniform("ghostObject", false));
+	root->getOrCreateStateSet()->addUniform( new osg::Uniform( "ghostObject", false ) );
 
 	lightModel = new osg::LightModel();
 	setAmbientLightColor( osg::Vec4( 0.3, 0.3, 0.3, 1 ) );
@@ -1910,7 +1917,7 @@ void CoreGraph::turnOnShadows()
 {
 	//osg::ref_ptr<osgShadow::SoftShadowMap> sm = new osgShadow::SoftShadowMap;
 	//sm->setBias(0.01);
-	ghostSoftShadowMap->setSoftnessWidth(0.012);
+	ghostSoftShadowMap->setSoftnessWidth( 0.012 );
 	shadowedScene->setShadowTechnique( ghostSoftShadowMap.get() );
 }
 
@@ -1975,7 +1982,7 @@ void CoreGraph::createBase()
 	//baseGeode->getOrCreateStateSet()->setRenderBinDetails( 1, "DepthSortedBin" );
 
 
-	baseGeode->getOrCreateStateSet()->addUniform( new osg::Uniform("ghostObject", true));
+	baseGeode->getOrCreateStateSet()->addUniform( new osg::Uniform( "ghostObject", true ) );
 	baseGeode->getOrCreateStateSet()->setMode( GL_BLEND, osg::StateAttribute::ON );
 
 	//baseGeode->getOrCreateStateSet()->setAttributeAndModes( new osg::BlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA), osg::StateAttribute::ON );
@@ -2311,26 +2318,28 @@ void CoreGraph::drawAxes()
 //JMA
 osg::Vec3f CoreGraph::getGrafRotTransVec()
 {
-    return graphRotTransf->getMatrix().getTrans();
+	return graphRotTransf->getMatrix().getTrans();
 }
 osg::Vec3f CoreGraph::getGrafRotTransScale()
 {
-    return graphRotTransf->getMatrix().getScale();
+	return graphRotTransf->getMatrix().getScale();
 }
 
-void CoreGraph::onSetGraphZoom(int flag)
+void CoreGraph::onSetGraphZoom( int flag )
 {
-    this->scaleGraph(flag);
+	this->scaleGraph( flag );
 }
 
 //*****
 
-void CoreGraph::turnOnCustomLights() {
+void CoreGraph::turnOnCustomLights()
+{
 	// Detection thread will activate needed lights
 }
 
 // reset scene to basic lighing
-void CoreGraph::turnOffCustomLights() {
+void CoreGraph::turnOffCustomLights()
+{
 
 	// will reset scene to default ligh
 
@@ -2361,22 +2370,25 @@ void CoreGraph::setLightCoords( OpenCV::TrackedLight tlight )
 }
 
 // show markers indicating lights
-void CoreGraph::setShowLightMarkers( bool set ) {
+void CoreGraph::setShowLightMarkers( bool set )
+{
 	qDebug() << "show light markers " << set;
 
 	if ( set ) {
-		for ( int i = 0; i < lightsGroup->getNumChildren(); ++i) {
+		for ( int i = 0; i < lightsGroup->getNumChildren(); ++i ) {
 			lightMarkerTransforms[i]->setNodeMask( 0x1 );
 		}
-	} else {
-		for ( int i = 0; i < lightsGroup->getNumChildren(); ++i) {
+	}
+	else {
+		for ( int i = 0; i < lightsGroup->getNumChildren(); ++i ) {
 			lightMarkerTransforms[i]->setNodeMask( 0x0 );
 		}
 	}
 }
 
 // set ambient light color
-void CoreGraph::setAmbientLightColor( osg::Vec4 color ) {
+void CoreGraph::setAmbientLightColor( osg::Vec4 color )
+{
 	//qDebug() << "amb color r" << color.r() << " g " << color.g() << " b " << color.b() << " a " << color.a();
 	lightModel->setAmbientIntensity( color );
 	root->getOrCreateStateSet()->setAttributeAndModes( lightModel, osg::StateAttribute::ON );

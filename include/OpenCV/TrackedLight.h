@@ -20,19 +20,31 @@ public:
 
 	~TrackedLight();
 
-	osg::Vec3			positionHemisphere()		const { return _positionHemisphere; }
+	osg::Vec3			positionHemisphere()		const
+	{
+		return _positionHemisphere;
+	}
 
-	osg::Vec4			color()						const { return _color; }
+	osg::Vec4			color()						const
+	{
+		return _color;
+	}
 
-	float				colorIntensity()			const { return _colorIntensity; }
+	float				colorIntensity()			const
+	{
+		return _colorIntensity;
+	}
 
-	float				surface()					const { return _surface; }
+	float				surface()					const
+	{
+		return _surface;
+	}
 
-	void mapFrameToHemishere(cv::Point2f fisheye_center, float fisheye_radius , const float fisheye_angle);
+	void mapFrameToHemishere( cv::Point2f fisheye_center, float fisheye_radius , const float fisheye_angle );
 
-	void extractColor( cv::Mat &frame );
+	void extractColor( cv::Mat& frame );
 
-	void findIntensity(float frame_area , osg::Vec4 frame_color);
+	void findIntensity( float frame_area , osg::Vec4 frame_color );
 
 	int					id;
 

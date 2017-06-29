@@ -47,11 +47,20 @@ public:
 
 	// simple getters
 
-	osg::Vec4 getAverageColor() const { return mFrameMeanColor; }
+	osg::Vec4 getAverageColor() const
+	{
+		return mFrameMeanColor;
+	}
 
-	float getAverageColorIntensity() const { return mFrameMeanColorIntensity; }
+	float getAverageColorIntensity() const
+	{
+		return mFrameMeanColorIntensity;
+	}
 
-	int getLightNum() const { return mLightCount; }
+	int getLightNum() const
+	{
+		return mLightCount;
+	}
 
 private:
 

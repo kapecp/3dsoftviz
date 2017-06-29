@@ -100,7 +100,7 @@ public slots:
 	* @author Autor: Marek Karas
 	* @brief setFishEyeAngle Sets value for mFishEyeAngle
 	*/
-	void setFishEyeAngle(int );
+	void setFishEyeAngle( int );
 
 	void setShowProcessing( bool );
 

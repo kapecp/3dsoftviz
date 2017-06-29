@@ -1305,7 +1305,7 @@ QWidget* CoreWindow::createMoreFeaturesTab( QFrame* line )
 	chb_light = new QCheckBox( "&Custom light" );
 	chb_light->setChecked( false );
 	lMore->addRow( chb_light );
-	connect( chb_light, SIGNAL( clicked(bool) ), this, SLOT( lightClicked( bool ) ) );
+	connect( chb_light, SIGNAL( clicked( bool ) ), this, SLOT( lightClicked( bool ) ) );
 
 	chb_shadow = new QCheckBox( "&Shadow" );
 	chb_shadow->setChecked( false );
@@ -5480,7 +5480,8 @@ void CoreWindow::createProjARWindow()
 	QOSG::ProjectiveARCore::getInstance( NULL, this )->init( );
 }
 
-void CoreWindow::forceOnChange(){
-    this->onChange();
+void CoreWindow::forceOnChange()
+{
+	this->onChange();
 }
 } // namespace QOSG
