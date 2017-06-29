@@ -73,7 +73,7 @@ void QOpenCV::LightDetectionThread::run()
 		mLightDetector->ProcessFrame( image, imageGray );
 
 		// send lights
-		for ( int i = 0; i < mLightDetector->getLightNum(); ++i )
+		for ( int i = 0; i < mLightDetector->getLightNum(); i++ )
 			sendLightCoords( mLightDetector->getLight( i ) );
 
 		emit sendAmbientLightColor( mLightDetector->getAverageColor() * mLightDetector->getAverageColorIntensity() );
@@ -157,5 +157,13 @@ void QOpenCV::LightDetectionThread::setFishEyeRadius( int radius )
 	mFishEyeRadius = mCapVideoWidth * radius / 100;
 	if ( mLightDetector != nullptr ) {
 		mLightDetector->setFisheyeRadius( mFishEyeRadius );
+	}
+}
+
+void QOpenCV::LightDetectionThread::setFishEyeAngle( int angle )
+{
+	mFishEyeAngle = angle;
+	if ( mLightDetector != nullptr ) {
+		mLightDetector->setFisheyeAngle( mFishEyeAngle );
 	}
 }

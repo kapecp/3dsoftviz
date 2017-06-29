@@ -299,6 +299,8 @@ signals:
 
 	void sendFishEyeRadius( int value );
 
+	void sendFishEyeAngle( int value );
+
 	/**
 	 * @author Autor: Marek Karas
 	 * @brief sendShowProcessingCB Signal to to switch displayed camera stream
@@ -482,6 +484,13 @@ private slots:
 	void onFisheyeRChanged( int value );
 
 	/**
+	* @brief private SLOT for setting up fisheye
+	* @param value Fisheye angle in degrees (0..180)
+	*/
+	void onFisheyeAngleChanged( int value );
+
+
+	/**
 	* @brief private SLOT for switching displayed frames
 	* @param set (camera stream/ processing stream)
 	*/
@@ -566,6 +575,7 @@ private:
 	QSlider*		 mFisheyeXS;
 	QSlider*		 mFisheyeYS;
 	QSlider*		 mFisheyeRS;
+	QSlider*		 mFisheyeAngle;
 	QCheckBox*		mLightNoVideo;
 	QCheckBox*		mEnableLightDetCB;
 	QCheckBox*		mEnableLightMarkersCB;

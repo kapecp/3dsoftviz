@@ -118,6 +118,13 @@ void QOpenCV::OpenCVWindow::configureWindow()
 	mFisheyeRS->setFocusPolicy( Qt::NoFocus );
 	mFisheyeRS->setToolTip( tr( "Adjust the radius of fisheye lens for calculations" ) );
 
+	mFisheyeAngle = new QSlider( Qt::Horizontal );
+	mFisheyeAngle->setRange( 0,180 );
+	mFisheyeAngle->setValue( 180 );
+	mFisheyeAngle->setPageStep( 1 );
+	mFisheyeAngle->setFocusPolicy( Qt::NoFocus );
+	mFisheyeAngle->setToolTip( tr( "Adjust the angle of fisheye lens for calculations" ) );
+
 	mSubmodulesStackL = new QVBoxLayout;
 
 	QHBoxLayout* mainLayout		= new QHBoxLayout;
@@ -274,6 +281,7 @@ void QOpenCV::OpenCVWindow::configureWindow()
 	arucoLightDetPageLayout->addWidget( mFisheyeXS );
 	arucoLightDetPageLayout->addWidget( mFisheyeYS );
 	arucoLightDetPageLayout->addWidget( mFisheyeRS );
+	arucoLightDetPageLayout->addWidget( mFisheyeAngle );
 	arucoLightDetPageLayout->addWidget( mLightDetectShowProcessingCB );
 	arucoLightDetPageLayout->addWidget( mEnableLightMarkersCB );
 
@@ -380,6 +388,7 @@ void QOpenCV::OpenCVWindow::configureWindow()
 	connect( mFisheyeXS, SIGNAL( valueChanged( int ) ), this, SLOT( onFisheyeXChanged( int ) ) );
 	connect( mFisheyeYS, SIGNAL( valueChanged( int ) ), this, SLOT( onFisheyeYChanged( int ) ) );
 	connect( mFisheyeRS, SIGNAL( valueChanged( int ) ), this, SLOT( onFisheyeRChanged( int ) ) );
+	connect( mFisheyeAngle, SIGNAL( valueChanged( int ) ), this, SLOT( onFisheyeAngleChanged( int ) ) );
 }
 
 void QOpenCV::OpenCVWindow::stopMovingCursor()
@@ -499,6 +508,11 @@ void QOpenCV::OpenCVWindow::onFisheyeYChanged( int value )
 void QOpenCV::OpenCVWindow::onFisheyeRChanged( int value )
 {
 	emit sendFishEyeRadius( value );
+}
+
+void QOpenCV::OpenCVWindow::onFisheyeAngleChanged( int value )
+{
+	emit sendFishEyeAngle( value );
 }
 
 void QOpenCV::OpenCVWindow::onEnableLightMarkersCBClicked( bool checked ) {

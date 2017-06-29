@@ -501,6 +501,10 @@ void OpenCV::OpenCVCore::createConnectionLightDet()
 					  mThrLightDet,
 					  SLOT( setFishEyeRadius( int ) ) );
 
+	QObject::connect( mOpencvWindow,
+					  SIGNAL( sendFishEyeAngle( int ) ),
+					  mThrLightDet,
+					  SLOT( setFishEyeAngle( int ) ) );
 
 	QObject::connect( mOpencvWindow,
 					  SIGNAL( sendShowProcessingCB( bool ) ),

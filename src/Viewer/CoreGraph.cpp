@@ -707,6 +707,7 @@ void CoreGraph::setLightType( int index, bool isPointLight ) {
 
 
 /// sphere mapping shader, possible to shade every object by image of a sphere...
+/// designed to grab image from ball tracker and then call dirty to update shader texture
 void CoreGraph::useSphereMappingShader( osg::ref_ptr< osg::StateSet > state ) {
 
 	/* based on https://www.clicktorelease.com/blog/creating-spherical-environment-mapping-shader/  */
@@ -855,6 +856,7 @@ Vwr::CoreGraph::CoreGraph( Data::Graph* graph, osg::ref_ptr<osg::Camera> camera 
 	LOG( INFO ) << "EJ";
 	lightsGroup = new osg::Group();
 
+	// default while light from the top
 	int lid = getOrCreateLight( 0 );
 	setLightPosition( lid, osg::Vec3( 0, 0, 100 * baseSize ) );
 	setLightDiffuseColor( lid, osg::Vec4( 1, 1, 1, 1 ) );
@@ -871,6 +873,7 @@ Vwr::CoreGraph::CoreGraph( Data::Graph* graph, osg::ref_ptr<osg::Camera> camera 
 	//root->addChild( test );
 	//root->addChild( test2 );
 	//*/
+
 
 	root->getOrCreateStateSet()->addUniform( new osg::Uniform("ghostObject", false));
 

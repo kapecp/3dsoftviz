@@ -131,9 +131,10 @@ void OpenCV::LightDetector::ProcessFrame(cv::Mat& frame , cv::Mat frameGray )
 	std::sort ( mLights.begin(), mLights.end(), Light2DRadiusCompare);
 
 	// no light detected -> scene is dark -> fake light in center which will shade graph with 10% scene global color
-	if ( mLightCount == 0 ) {
+	if ( mLightCount < 1 ) {
+		mLights[0].active = true;
 		mLights[0].positionFrame = cv::Point2f( 0, 0 );
-		mLights[0].radius = mFisheyeRadius / 100;
+		mLights[0].radius = mFisheyeRadius / 10;
 		mLightCount = 1;
 	}
 

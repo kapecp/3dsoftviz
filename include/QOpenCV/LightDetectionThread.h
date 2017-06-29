@@ -80,22 +80,27 @@ public slots:
 
 	/**
 	* @author Autor: Marek Karas
-	* @brief setOffsetX Sets offset for mFisheyeX
+	* @brief setFishEyeCenterX Sets offset for mFishEyeCenterX
 	*/
 	void setFishEyeCenterX( int );
 
 	/**
 	* @author Autor: Marek Karas
-	* @brief setOffsetY Sets offset for mFisheyeY
+	* @brief setFishEyeCenterY Sets offset for mFishEyeCenterY
 	*/
 	void setFishEyeCenterY( int );
 
 	/**
 	* @author Autor: Marek Karas
-	* @brief setRadius Sets value for mFisheyeR
+	* @brief setFishEyeRadius Sets value for mFishEyeRadius
 	*/
 	void setFishEyeRadius( int );
 
+	/**
+	* @author Autor: Marek Karas
+	* @brief setFishEyeAngle Sets value for mFishEyeAngle
+	*/
+	void setFishEyeAngle(int );
 
 	void setShowProcessing( bool );
 
@@ -119,6 +124,7 @@ private:
 	int						mFishEyeCenterX;
 	int						mFishEyeCenterY;
 	int						mFishEyeRadius;
+	int						mFishEyeAngle;
 };
 }
 
