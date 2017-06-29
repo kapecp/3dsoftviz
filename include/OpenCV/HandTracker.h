@@ -15,6 +15,7 @@ public:
 
 	HandTracker();
 
+
 	~HandTracker();
 	/**
 	 * @brief dist calculate distance between two points
@@ -51,6 +52,7 @@ public:
 	 * @return
 	 */
 	cv::vector<std::pair<cv::Point,double>> findHand( cv::Mat mask );
+
 
 
 };

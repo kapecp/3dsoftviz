@@ -8,7 +8,7 @@ Leap::LeapController::LeapController( LeapManager* leapManager )
 Leap::LeapController::~LeapController()
 {
 	if ( leapListener != NULL ) {
-		delete( leapListener );
+		delete ( leapListener );
 	}
 }
 

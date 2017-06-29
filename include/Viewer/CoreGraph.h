@@ -22,6 +22,7 @@
 #include "OpenCV/TrackedLight.h"
 
 #include "Data/Cluster.h"
+#include "Data/GraphLayout.h"
 
 #include <osgManipulator/Dragger>
 
@@ -374,6 +375,11 @@ public slots:
 		 */
 	void setEdgeVisualForType( int index, QString edgeTypeName );
 
+	/**
+		 * @brief setEdgeHiddenForType Set invisibility of edges for specific type
+		 */
+	void setEdgeHiddenForType( bool hidden, QString edgeTypeName );
+
 	void recievedMVMatrix( QMatrix4x4 modelViewMatrix );
 
 	/**
@@ -387,6 +393,7 @@ public slots:
 	void setArucoRunning( bool isRunning );
 
 
+
 	bool isLeapStreamActive();
 
 	bool isCameraStreamActive();
@@ -397,6 +404,19 @@ public slots:
 	void setShowLightMarkers( bool set );
 
 	void setAmbientLightColor( osg::Vec4 color );
+
+	/**
+		 * @author Autor: Denis Illes
+		 * @brief move certain nodes to module node
+		 */
+	void reorganizeNodesForModuleGraph();
+
+	/**
+		 * @author Autor: Denis Illes
+		 * @brief move nodes from module node back to default place
+		 */
+	void reorganizeNodesForModuleCity();
+
 
 private:
 

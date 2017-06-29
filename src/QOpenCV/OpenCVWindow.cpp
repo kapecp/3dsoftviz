@@ -483,7 +483,7 @@ void QOpenCV::OpenCVWindow::onSelModulChange()
 		mModulesStackL->setCurrentIndex( 1 );
 	}
 	if ( mArInteractionRB->isChecked() ) {
-		mModulesStackL->setCurrentIndex( 2 );
+	    mModulesStackL->setCurrentIndex( 2 );
 	} marak gui*/
 
 }

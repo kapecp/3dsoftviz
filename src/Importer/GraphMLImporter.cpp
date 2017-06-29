@@ -107,7 +107,7 @@ bool GraphMLImporter::processGraph_Nodes(
 		Data::Type* newNodeType;
 		newNodeType = NULL;
 		QDomNodeList nodeDataList = nodeElement.elementsByTagName( "data" );
-		for ( unsigned int j = 0; j < nodeDataList.length(); j++ ) {
+		for ( int j = 0; j < nodeDataList.length(); j++ ) {
 			QDomNode nodeData = nodeDataList.item( static_cast<int>( j ) );
 			if ( !nodeData.isNull() && nodeData.isElement() ) {
 				QDomElement nodeDataElement = nodeData.toElement();
@@ -238,7 +238,7 @@ bool GraphMLImporter::processGraph_Edges(
 		Data::Type* newEdgeType;
 		newEdgeType = NULL;
 		QDomNodeList edgeDataList = edgeElement.elementsByTagName( "data" );
-		for ( unsigned int j = 0; j < edgeDataList.length(); j++ ) {
+		for ( int j = 0; j < edgeDataList.length(); j++ ) {
 			QDomNode edgeData = edgeDataList.item( static_cast<int>( j ) );
 			if ( !edgeData.isNull() && edgeData.isElement() ) {
 				QDomElement edgeDataElement = edgeData.toElement();

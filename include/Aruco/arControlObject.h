@@ -62,7 +62,7 @@ class ArControlClass : public QObject
 
 public:
 	ArControlClass();
-	void updateObjectPositionAruco( qlonglong object_id, QMatrix4x4 modelViewMatrix , bool reverse );
+	void updateObjectPositionAruco( qlonglong object_id, QMatrix4x4 modelViewMatrix, bool reverse );
 	void setNodeAssignmentStrategy( int strategy );
 	void setNodeBehaviourStrategy( int strategy );
 private:

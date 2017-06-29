@@ -6,11 +6,13 @@
 #include <osg/Switch>
 #include <Data/Type.h>
 
-#include "Data/DbNode.h"
+#include <Data/DbNode.h>
 #include <City/Building.h>
+#include <City/Ball.h>
 
 namespace City {
 class Residence;
+class Module;
 }
 
 namespace Data {
@@ -44,11 +46,25 @@ public:
 	static osg::ref_ptr<osg::Drawable> createSquare( const float& scale, osg::StateSet* bbState );
 
 	/**
-	* \fn public setModule
-	* \brief Sets subgraph for drawing modules.
-	* \param module osg subgraph
+		*  \fn public adjustLabelForModule
+		*  \brief Creates new label geometry
+		*  \param  scale   float
+		*/
+	void adjustLabelForModule( float scale );
+
+	/**
+	* \fn public getLabel
+	* \brief Gets label for drawing.
+	* \return osg::ref_ptr<> of module osg subgraph
 	*/
-	void setModule( osg::Node* module );
+	osg::ref_ptr<osg::Node> getLabel();
+
+	/**
+	* \fn public clearResidence
+	* \brief Clears subgraph for residence of city.
+	* \param fromIndex delete from child at given index
+	*/
+	void clearResidence( int fromIndex = 0 );
 
 	/**
 	* \fn public setResidence
@@ -58,11 +74,58 @@ public:
 	void setResidence( osg::Node* residence );
 
 	/**
+	* \fn public isInModule
+	* \brief Checks node for nested module nodes.
+	* \return boolean true if node is module
+	*/
+	bool isInModule()
+	{
+		return inModule;
+	}
+
+	/**
+	* \fn public setInModule
+	* \brief Sets bool if node is nested or not.
+	*/
+	void setInModule( bool state )
+	{
+		inModule = state;
+	}
+
+	/**
+	* \fn public getModule
+	* \brief Gets subgraph for drawing module of city.
+	* \return osg::ref_ptr<> of module osg subgraph
+	*/
+	City::Module* getModule();
+
+	/**
+	* \fn public setModule
+	* \brief Sets subgraph for drawing module of city.
+	* \param module osg subgraph
+	*/
+	void setModule( City::Module* module );
+
+	/**
+	* \fn public getResidenceAsPAT
+	* \brief Gets subgraph for drawing residence of city.
+	* \return osg::ref_ptr of residence osg subgraph
+	*/
+	osg::ref_ptr<osg::PositionAttitudeTransform> getResidenceAsPAT();
+
+	/**
 	* \fn public getResidence
 	* \brief Gets subgraph for drawing residence of city.
 	* \return osg::ref_ptr of residence osg subgraph
 	*/
 	City::Residence* getResidence();
+
+	/**
+	* \fn public getModuleBall
+	* \brief Gets subgraph for drawing ball of module.
+	* \return osg::ref_ptr of ball osg subgraph
+	*/
+	City::Ball* getModuleBall();
 
 	/**
 	* \fn public getBuilding
@@ -410,7 +473,6 @@ public:
 	static const int INDEX_SQUARE = 1;
 	static const int INDEX_SPHERE = 2;
 	static const int INDEX_RESIDENCE = 3;
-	static const int INDEX_MODULE = 4;
 
 protected:
 	/**
@@ -474,6 +536,12 @@ protected:
 	    *  \brief node interpolation usage
 	    */
 	bool usingInterpolation;
+
+	/**
+		*  bool inModule
+		*  \brief node is part of module node
+		*/
+	bool inModule;
 
 	/**
 	    *  osg::Sphere nested ball

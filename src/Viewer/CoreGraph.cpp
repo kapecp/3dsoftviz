@@ -26,6 +26,12 @@
 #include "Clustering/Figures/Cube.h"
 #include "Clustering/Figures/Sphere.h"
 
+//will delete soon
+#include "Layout/LayoutAlgorithms.h"
+#include <Shapes/Cuboid.h>
+//end
+#include "City/Module.h"
+
 #include "Util/ApplicationConfig.h"
 
 #ifdef OPENCV_FOUND
@@ -1085,7 +1091,6 @@ void CoreGraph::reload( Data::Graph* graph )
 	nodesPosition = currentPos++;
 
 	this->edgesGroup = new Vwr::EdgeGroup( in_edges );
-	//this->edgesGroup = new Vwr::EdgeGroup(in_edges, 10);
 	graphGroup->addChild( edgesGroup->getGroup() );
 	edgesPosition = currentPos++;
 
@@ -1094,7 +1099,6 @@ void CoreGraph::reload( Data::Graph* graph )
 	qmetaNodesPosition = currentPos++;
 
 	this->qmetaEdgesGroup = new Vwr::EdgeGroup( qmetaEdges );
-	//this->qmetaEdgesGroup = new Vwr::EdgeGroup(qmetaEdges, 10);
 	graphGroup->addChild( qmetaEdgesGroup->getGroup() );
 	qmetaEdgesPosition = currentPos++;
 
@@ -1656,7 +1660,15 @@ void CoreGraph::synchronize()
 
 void CoreGraph::setEdgeLabelsVisible( bool visible )
 {
-	graphGroup->getChild( labelsPosition )->setNodeMask( visible );
+	//changed old code - Illes
+	//graphGroup->getChild( labelsPosition )->setNodeMask( visible );
+
+	QMap<qlonglong, osg::ref_ptr<Data::Edge> >::const_iterator i = in_edges->constBegin();
+
+	while ( i != in_edges->constEnd() ) {
+		( *i )->showLabel( visible );
+		++i;
+	}
 }
 
 void CoreGraph::setNodeLabelsVisible( bool visible )
@@ -1812,13 +1824,13 @@ void CoreGraph::setEdgeVisual( int index )
 
 void CoreGraph::setEdgeVisualForType( int index, QString edgeTypeName )
 {
-	QMap<qlonglong, osg::ref_ptr<Data::Edge> >::iterator iEdge = in_edges->begin();
+	QMap<qlonglong, osg::ref_ptr<Data::Edge> >::iterator edge = in_edges->begin();
 
-	while ( iEdge != in_edges->end() ) {
-		if ( !QString::compare( iEdge.value()->getType()->getName(), edgeTypeName, Qt::CaseInsensitive ) ) {
-			iEdge.value()->setVisual( index );
+	while ( edge != in_edges->end() ) {
+		if ( !QString::compare( edge.value()->getType()->getName(), edgeTypeName, Qt::CaseInsensitive ) ) {
+			edge.value()->setVisual( index );
 		}
-		++iEdge;
+		++edge;
 	}
 
 	/*QMap<qlonglong, osg::ref_ptr<Data::Edge> >::iterator iMetaEdge = qmetaEdges->begin();
@@ -1831,6 +1843,24 @@ void CoreGraph::setEdgeVisualForType( int index, QString edgeTypeName )
 	}*/
 
 	graph->setEdgeVisual( index );
+}
+
+void CoreGraph::setEdgeHiddenForType( bool hidden, QString edgeTypeName )
+{
+	QMap<qlonglong, osg::ref_ptr<Data::Edge> >::iterator edge = in_edges->begin();
+
+	while ( edge != in_edges->end() ) {
+		if ( !QString::compare( edge.value()->getType()->getName(), edgeTypeName, Qt::CaseInsensitive ) ) {
+			edge.value()->setInvisible( hidden );
+			if ( hidden ) {
+				edge.value()->setScale( 0 );
+			}
+			else {
+				edge.value()->setScale( 2 );
+			};
+		}
+		++edge;
+	}
 }
 
 #ifdef OPENCV_FOUND
@@ -2329,6 +2359,170 @@ void CoreGraph::onSetGraphZoom( int flag )
 {
 	this->scaleGraph( flag );
 }
+
+void CoreGraph::reorganizeNodesForModuleGraph()
+{
+	qDebug() << "CoreGraph::reorganizeNodesForModuleGraph() started";
+	osg::ref_ptr<osg::Group> graphNodesGroup = this->nodesGroup->getGroup();
+	QMap<qlonglong, osg::ref_ptr<Data::Node> >* graphNodes = this->graph->getNodes();
+
+	Lua::LuaGraph* luaGraph = Lua::LuaGraph::getInstance();
+
+	// iterate through all LuaNodes and search for "module" type node
+	QMap<qlonglong, Lua::LuaNode*>::iterator node_iter;
+	for ( node_iter = luaGraph->getNodes()->begin();
+			node_iter != luaGraph->getNodes()->end();
+			++node_iter ) {
+
+		if ( node_iter.value()->getParams().getValue()["type"] == "module" ) {
+			auto moduleGraphNode = graphNodes->value( node_iter.key() );
+			osg::ref_ptr<City::Module> cityModulePAT = moduleGraphNode->getModule();
+
+			QMap<osg::ref_ptr<Data::Node>, osg::ref_ptr<Data::Node>> otherNodes = cityModulePAT->getOtherNodes();
+			QMap<osg::ref_ptr<Data::Node>, osg::ref_ptr<Data::Node>>::iterator other_iter;
+			for ( other_iter = otherNodes.begin();
+					other_iter != otherNodes.end();
+					++other_iter ) {
+				osg::ref_ptr<Data::Node> otherNode = other_iter.value();
+				otherNode->setInModule( false );
+				otherNode->setIgnoreByLayout( false );
+				auto otherNodePAT = cityModulePAT->getNodeParentPAT( otherNode );
+				graphNodesGroup->addChild( otherNodePAT );
+			}
+
+			for ( auto varNode : cityModulePAT->getVariableNodes() ) {
+				varNode->setInModule( false );
+				varNode->setIgnoreByLayout( false );
+				auto varNodePAT = cityModulePAT->getNodeParentPAT( varNode );
+				graphNodesGroup->addChild( varNodePAT );
+			}
+
+			for ( auto funcNode : cityModulePAT->getFunctionNodes() ) {
+				funcNode->setInModule( false );
+				funcNode->setIgnoreByLayout( false );
+				auto funcNodePAT = cityModulePAT->getNodeParentPAT( funcNode );
+				graphNodesGroup->addChild( funcNodePAT );
+			}
+
+			for ( auto intrfcNode : cityModulePAT->getInterfaceNodes() ) {
+				intrfcNode->setInModule( false );
+				intrfcNode->setIgnoreByLayout( false );
+				auto intrfcNodePAT = cityModulePAT->getNodeParentPAT( intrfcNode );
+				graphNodesGroup->addChild( intrfcNodePAT );
+			}
+
+			cityModulePAT->decompose();
+		}
+	}
+	//setEdgeVisualForType(Data::Edge::INDEX_LINE, Data::GraphLayout::ARC_EDGE_TYPE );
+
+}
+
+void CoreGraph::reorganizeNodesForModuleCity()
+{
+	qDebug() << "CoreGraph::reorganizeNodesForModuleCity() started";
+	osg::ref_ptr<osg::Group> graphNodesGroup = this->nodesGroup->getGroup();
+	QMap<qlonglong, osg::ref_ptr<Data::Node> >* graphNodes = this->graph->getNodes();
+
+	Lua::LuaGraph* luaGraph = Lua::LuaGraph::getInstance();
+
+	// iterate through all LuaNodes and search for "module" type node
+	QMap<qlonglong, Lua::LuaNode*>::iterator node_iter;
+	for ( node_iter = luaGraph->getNodes()->begin();
+			node_iter != luaGraph->getNodes()->end();
+			++node_iter ) {
+
+		if ( node_iter.value()->getParams().getValue()["type"] == "module" ) {
+			auto moduleGraphNode = graphNodes->value( node_iter.key() );
+			osg::ref_ptr<City::Module> cityModulePAT = new City::Module();
+
+			// get and iterate over every edge where SRC or DST is moduleNode
+			QMap<qlonglong, osg::ref_ptr<Data::Edge> >* moduleEdges = moduleGraphNode->getEdges();
+
+			QMap<qlonglong, osg::ref_ptr<Data::Edge> >::iterator edge_iter;
+			for ( edge_iter = moduleEdges->begin();
+					edge_iter != moduleEdges->end();
+					++edge_iter ) {
+				auto moduleGraphEdge = edge_iter.value();
+
+				if ( moduleGraphEdge->getSrcNode() == moduleGraphNode && moduleGraphEdge->AbsEdge::getName() == "declares" ) {
+					// funcNode should be type "function" or "global function"
+					auto funcGraphNode = moduleGraphEdge->getDstNode();
+					cityModulePAT->addFunctionNode( funcGraphNode );
+
+					// get parent PAT for funcNode and remove it from nodesGroup (will be added when called refresh())
+					auto funcGraphNodePAT = cityModulePAT->getNodeParentPAT( funcGraphNode );
+					graphNodesGroup->removeChild( funcGraphNodePAT );
+
+					// set attributes for FRA and city layout
+					funcGraphNode->setIgnoreByLayout( true );
+					funcGraphNode->setInModule( true );
+
+				}
+
+				if ( moduleGraphEdge->getSrcNode() == moduleGraphNode && moduleGraphEdge->AbsEdge::getName() == "initializes" ) {
+					// funcNode should be type "local variable" or "global variable"
+					auto varGraphNode = moduleGraphEdge->getDstNode();
+					cityModulePAT->addVariableNode( varGraphNode );
+
+					// get parent PAT for varNode and move it from nodesGroup (will be added when called refresh())
+					auto varGraphNodePAT = cityModulePAT->getNodeParentPAT( varGraphNode );
+					graphNodesGroup->removeChild( varGraphNodePAT );
+
+					// set attributes for FRA and city layout
+					varGraphNode->setIgnoreByLayout( true );
+					varGraphNode->setInModule( true );
+
+					// get and iterate over every edge where SRC or DST is moduleNode
+					QMap<qlonglong, osg::ref_ptr<Data::Edge> >* varEdges = varGraphNode->getEdges();
+
+					QMap<qlonglong, osg::ref_ptr<Data::Edge> >::iterator edge_iter;
+					for ( edge_iter = varEdges->begin();
+							edge_iter != varEdges->end();
+							++edge_iter ) {
+						auto varGraphEdge = edge_iter.value();
+
+						if ( varGraphEdge->getSrcNode() == varGraphNode && varGraphEdge->AbsEdge::getName() == "assigns" ) {
+							// otherNode should be type "other"
+							auto otherGraphNode = varGraphEdge->getDstNode();
+							cityModulePAT->addOtherNode( varGraphNode, otherGraphNode );
+
+							// get parent PAT for otherNode and remove it from nodesGroup (will be added when called refresh())
+							auto otherGraphNodePAT = cityModulePAT->getNodeParentPAT( otherGraphNode );
+							graphNodesGroup->removeChild( otherGraphNodePAT );
+
+							// set attributes for FRA and city layout
+							otherGraphNode->setIgnoreByLayout( true );
+							otherGraphNode->setInModule( true );
+
+						}
+					}
+
+				}
+
+				if ( moduleGraphEdge->getSrcNode() == moduleGraphNode && moduleGraphEdge->AbsEdge::getName() == "provides" ) {
+					// intrfNode should be type "interface"
+					auto intrfGraphNode = moduleGraphEdge->getDstNode();
+					cityModulePAT->addInterfaceNode( intrfGraphNode );
+
+					// get parent PAT for intrfNode and move it from nodesGroup (will be added when called refresh())
+					auto intrfGraphNodePAT = cityModulePAT->getNodeParentPAT( intrfGraphNode );
+					graphNodesGroup->removeChild( intrfGraphNodePAT );
+
+					//set attributes for FRA and city layout
+					intrfGraphNode->setIgnoreByLayout( true );
+					intrfGraphNode->setInModule( true );
+				}
+			}
+			moduleGraphNode->setModule( cityModulePAT );
+			moduleGraphNode->adjustLabelForModule( 50.0f );
+			cityModulePAT->setModuleNode( moduleGraphNode );
+			cityModulePAT->refresh();
+		}
+	}
+	//setEdgeVisualForType(Data::Edge::INDEX_MATRIX_CURVE, Data::GraphLayout::ARC_EDGE_TYPE );
+}
+
 
 //*****
 

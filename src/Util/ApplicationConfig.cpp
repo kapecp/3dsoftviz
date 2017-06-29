@@ -5,8 +5,12 @@
 #include <QDebug>
 #include <QFile>
 
+#include <leathers/push>
+#include <leathers/exit-time-destructors>
+#include <leathers/global-constructors>
 Util::ApplicationConfig* Util::ApplicationConfig::_instance;
 OpenThreads::Mutex Util::ApplicationConfig::_mutex;
+#include <leathers/pop>
 
 Util::ApplicationConfig::ApplicationConfig( void )
 {

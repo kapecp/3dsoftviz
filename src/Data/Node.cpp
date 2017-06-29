@@ -184,9 +184,9 @@ QSet<Data::Node*> Data::Node::getIncidentNodes() const
 
 void Data::Node::setDefaultColor()
 {
-//   float r = type->getSettings()->value( "color.R" ).toFloat();
-//   float g = type->getSettings()->value( "color.G" ).toFloat();
-	//  float b = type->getSettings()->value( "color.B" ).toFloat();
+//  float r = type->getSettings()->value( "color.R" ).toFloat();
+//  float g = type->getSettings()->value( "color.G" ).toFloat();
+//  float b = type->getSettings()->value( "color.B" ).toFloat();
 //  float a = type->getSettings()->value( "color.A" ).toFloat();
 
 	this->setDrawableColor( color );

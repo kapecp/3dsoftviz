@@ -1,3 +1,4 @@
+
 #ifndef CUSTOMLEAPMANAGER_H
 #define CUSTOMLEAPMANAGER_H
 
@@ -77,3 +78,4 @@ public:
 };
 }
 #endif
+
