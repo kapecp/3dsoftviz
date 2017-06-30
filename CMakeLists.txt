@@ -26,11 +26,7 @@ set( 3DSOFTVIZ_DOMAIN "${3DSOFTVIZ_DOMAIN_FIRST}.${3DSOFTVIZ_DOMAIN_SECOND}" )
 
 
 
-#
-# moja uprava
-set (OSGQT_INCLUDE_DIR "D:/Bakalarka/OpenSceneGraph/install/include")
-#
-#
+
 
 
 
