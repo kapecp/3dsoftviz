@@ -21,7 +21,8 @@ local function extractFilesTree(graph, path, parent)
     local newNode = hypergraph.node.new()
     newNode.data.name = getNameFromPath(path, "/")
     newNode.data.path = path
-    newNode.data.type = "directory"
+    newNode.meta = newNode.meta or {}
+    newNode.meta.type = "directory"
     graph:addNode(newNode)
     parent = newNode
   end
@@ -30,7 +31,7 @@ local function extractFilesTree(graph, path, parent)
     if file ~= "." and file ~= ".." and not utils.isHidden(file) then
       local fullPath = path..'/'..file
       local attr = lfs.attributes (fullPath)
-      assert (type(attr) == "table")
+      assert(type(attr) == "table")
       
       -- new node
       local newNode = hypergraph.node.new()
@@ -38,20 +39,20 @@ local function extractFilesTree(graph, path, parent)
       if attr.mode == "directory" then
         newNode.data.name = file
         newNode.data.path = fullPath
-        newNode.data.type = "directory"
+        newNode.meta.type = "directory"
         -- recursive call
         extractFilesTree(graph, fullPath, newNode)
       else
         newNode.data.name = file
         newNode.data.path = fullPath
-        newNode.data.type = "file"
+        newNode.meta.type = "file"
         graph.luaFileNodes = graph.luaFileNodes or {}
         if utils.isLuaFile(file) then table.insert(graph.luaFileNodes,newNode) end
       end
       
       -- new edge
       local newEdge = hypergraph.edge.new()
-      newEdge.label = "Subfile"
+      newEdge.label = "contains"
       newEdge:addSource(parent)
       newEdge:addTarget(newNode)
       newEdge:setAsOriented()

@@ -121,7 +121,7 @@ public:
 	     * \return Diluculum::LuaValueList  returned value/s
 	     */
 	Lua::LuaValueList callFunction( unsigned int length, QString args[],
-										  Lua::LuaValueList params = Lua::LuaValueList() );
+									Lua::LuaValueList params = Lua::LuaValueList() );
 
 	/**
 	     * \fn getLuaState

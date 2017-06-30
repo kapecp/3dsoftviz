@@ -17,6 +17,7 @@
 class QListWidget;
 class QListWidgetItem;
 class QStackedWidget;
+class QTreeView;
 
 namespace Vwr {
 class CoreGraph;

@@ -125,3 +125,11 @@ for /r %TargetDir% %%f in (*.h *.cpp) do (set FilesAll=!FilesAll! %%f)
 echo %TargetDir%
 %cpplint_path%  %FilesAll% >> report.txt 2>&1
 ::::--------------------------------
+set TargetDir= !mypath!include\Leap\
+echo Dir: %TargetDir%  >> cpplint-report.txt
+echo ---- >> cpplint-report.txt
+set FilesAll= 
+for /r %TargetDir% %%f in (*.h *.cpp) do (set FilesAll=!FilesAll! %%f)
+echo cppplint %TargetDir%
+%cpplint_path%  %FilesAll% >> cpplint-report.txt 2>&1
+::::--------------------------------

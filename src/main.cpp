@@ -22,10 +22,16 @@ Q_DECLARE_METATYPE( Qt::MouseButton )
 #include "iostream"
 #include "LuaInterface/LuaInterface.h"
 
+#include <leathers/push>
+#include <leathers/exit-time-destructors>
+#include <leathers/global-constructors>
+
 #include "easylogging++.h"
 // ** FOLLOWING LINE SHOULD BE USED ONCE AND ONLY ONCE IN WHOLE APPLICATION **
 // ** THE BEST PLACE TO PUT THIS LINE IS IN main.cpp RIGHT AFTER INCLUDING easylogging++.h **
 INITIALIZE_EASYLOGGINGPP
+
+#include <leathers/pop>
 
 //#include "dirent.h"
 
@@ -77,10 +83,11 @@ int main( int argc, char* argv[] )
 	new Util::Cleaner( &app );
 	try {
 		AppCore::Core::getInstance( &app );
-	} catch ( std::runtime_error& e) {
+	}
+	catch ( std::runtime_error& e ) {
 		LOG( ERROR ) << e.what();
 
-		auto res = Lua::LuaInterface::getInstance()->doString("print(debug.traceback())");
+		auto res = Lua::LuaInterface::getInstance()->doString( "print(debug.traceback())" );
 		// TODO/BUG: debug.traceback() does not return anything, somehow the traceback is empty
 		// maybe Diluculum changes something during exception handling...
 		// this way we could obtain the results from debug.traceback()

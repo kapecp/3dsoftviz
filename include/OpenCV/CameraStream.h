@@ -5,9 +5,11 @@
 #include <QObject>
 #include <osg/Image>
 #include <osg/Geometry>
+#include <QMutex>
 
 #ifdef OPENCV_FOUND
 #include <opencv2/core/core.hpp>
+#include "OpenCV/HandTracker.h"
 
 #endif
 
@@ -29,39 +31,35 @@ public:
 	/**
 		* @author Dávid Durčák
 		* @brief CameraStream constructor
-		* @param geom Geometry for updating it's vertexArray according ratio of image
 		*/
-	CameraStream( osg::Geometry* geom = NULL );
+	CameraStream( );
 	~CameraStream();
+	int getImageWidth();
+	int getImageHeight();
 
-	IplImage* getIplImage();
-
+	bool calibrated;
+	cv::vector<std::pair<cv::Point,double>> palmAndRadiusList;
 
 public slots:
 
 	/**
 		* @author Dávid Durčák
-		* @brief updateBackgroundImage Slot set cvImg as internal image data and call dirty() and updateGeometryCoords()
+	    * @brief updateBackgroundImage Slot set cvImg as internal image data and call dirty()
 		* @param cvImg opencv image
+	    * @param determines whether to track hands in the image
 		*/
 #ifdef OPENCV_FOUND
-	void updateBackgroundImage( cv::Mat cvImg );
+	void updateBackgroundImage( cv::Mat cvImg, bool trackHands );
+
+	void requestCalibration();
+
 #endif
 
 private:
 
-	/**
-		* @author Dávid Durčák
-		* @brief updateGeometryCoords Update mGeom's vertexArray according ratio of image, given by width and height
-		* @param width image' width
-		* @param height image' height
-		*/
-	void updateGeometryCoords( int width, int height );
-
-	int				mWidth; // data about cols cv:Mat
-	int				mHeight; // data about rows cv:Mat
-	osg::Geometry*	mGeom; // Geometry for vertex array and update
-	IplImage*		iplImg; // image for background
+	cv::Mat image;
+	HandTracker* tracker;
+	QMutex trackMutex;
 };
 }
 

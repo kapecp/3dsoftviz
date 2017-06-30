@@ -230,4 +230,12 @@ for /r %TargetDir% %%f in (*.h *.cpp) do (set FilesAll=!FilesAll! %%f)
 echo cppplint %TargetDir%
 %cpplint_path%  %FilesAll% >> cpplint-report.txt 2>&1
 ::::--------------------------------
+set TargetDir= !mypath!src\Leap\
+echo Dir: %TargetDir% >> cppcheck-report.txt
+echo ---- >> cppcheck-report.txt
+set FilesAll= 
+for /r %TargetDir% %%f in (*.h *.cpp) do (set FilesAll=!FilesAll! %%f)
+echo cppcheck %TargetDir%
+%cppcheck_path% --enable=warning,style,performance,portability,information,missingInclude --std=c++11 --library=qt.cfg --verbose --quiet -j2 -I !mypath!include/ !FilesAll! >> cppcheck-report.txt 2>&1
+::::--------------------------------------
 EXIT 0

@@ -17,10 +17,12 @@
 #include "Viewer/BrowserGroup.h"
 #include "Data/Edge.h"
 #include "Data/Node.h"
+#include "Leap/LeapLib/LeapCameraStream.h"
 
 #include "Data/Cluster.h"
+#include "Data/GraphLayout.h"
 
-#include <osgManipulator/Translate2DDragger>
+#include <osgManipulator/Dragger>
 
 #include <QMap>
 #include <QLinkedList>
@@ -103,6 +105,8 @@ public:
 
 	void onResized( int width, int height );
 
+	void toggleDragger( int dragger_no, bool set );
+
 	/**
 		*  \fn public  reload(Data::Graph * graph = 0)
 		*  \brief
@@ -133,6 +137,14 @@ public:
 		*  \return 0 - success, 1 - fail
 		*/
 	int updateBackground( int bgVal, Data::Graph* currentGraph );
+
+	/**
+	    *  \fn public updateBackgroundStream
+	    *  \brief updates background with data from leap sensor
+	    *  \param image data - one frame(image) from leap sensor
+	    *  \return 0 - success, 1 - fail
+	   */
+	int updateBackgroundStream( unsigned char* buffer );
 
 	/**
 		*  \fn inline public  getCustomNodeList
@@ -260,9 +272,14 @@ public:
 		return browsersGroup;
 	}
 
+	Data::Graph* getGraph()
+	{
+		return graph;
+	}
 #ifdef OPENCV_FOUND
 	OpenCV::CameraStream* getCameraStream() const;
 #endif
+	Leap::LeapCameraStream* getLeapCameraStream() const;
 
 	//jurik
 	/**
@@ -302,8 +319,10 @@ public:
 	}
 
 
-    //JMA
-    osg::Vec3f getGrafRotTransVec();
+	//JMA
+	osg::Vec3f getGrafRotTransVec();
+	osg::Vec3f getGrafRotTransScale();
+
 public slots:
 
 	/**
@@ -346,6 +365,11 @@ public slots:
 		 */
 	void setEdgeVisualForType( int index, QString edgeTypeName );
 
+	/**
+		 * @brief setEdgeHiddenForType Set invisibility of edges for specific type
+		 */
+	void setEdgeHiddenForType( bool hidden, QString edgeTypeName );
+
 	void recievedMVMatrix( QMatrix4x4 modelViewMatrix );
 
 	/**
@@ -357,6 +381,26 @@ public slots:
 	void updateBase( double size );
 
 	void setArucoRunning( bool isRunning );
+
+
+
+	bool isLeapStreamActive();
+
+	bool isCameraStreamActive();
+	void onSetGraphZoom( int flag );
+
+	/**
+		 * @author Autor: Denis Illes
+		 * @brief move certain nodes to module node
+		 */
+	void reorganizeNodesForModuleGraph();
+
+	/**
+		 * @author Autor: Denis Illes
+		 * @brief move nodes from module node back to default place
+		 */
+	void reorganizeNodesForModuleCity();
+
 
 private:
 
@@ -477,6 +521,13 @@ private:
 		*  \return osg::ref_ptr node
 		*/
 	osg::ref_ptr<osg::Node> createSkyNoiseBox();
+	/**
+	    *  \fn private  createLeapBackground
+	    *  \brief creates background from leap video
+	    *  \return osg::ref_ptr node
+	   */
+	osg::ref_ptr<osg::Node> createLeapBackground();
+
 
 #ifdef OPENCV_FOUND
 	/**
@@ -641,7 +692,7 @@ private:
 #ifdef OPENCV_FOUND
 	osg::ref_ptr<OpenCV::CameraStream> mCameraStream;
 #endif
-
+	osg::ref_ptr<Leap::LeapCameraStream> leapCameraStream;
 	bool clustersOpacityAutomatic;
 	bool clustersOpacitySelected;
 	double clustersOpacity;
@@ -657,7 +708,8 @@ private:
 	bool cameraInsideSphere( osg::Vec3d midPoint, float radius );
 	bool cameraInsideCube( osg::Vec3d lowerPoint, osg::Vec3d upperPoint );
 
-	osgManipulator::Translate2DDragger* manipulator;
+	osgManipulator::Dragger* manipulator_scale;
+	osgManipulator::Dragger* manipulator_rotation;
 
 	//jurik
 	/**

@@ -76,7 +76,7 @@ void Model::GraphDAO::getNestedGraph( qlonglong parentID, Data::Graph** graph, Q
 	//TODO pridat vnorenym nodom atributy - scale, farbu, ...
 	//nacitavame rekurzivne vnorene grafy
 	while ( queryNestedNodes->next() ) {
-        qlonglong nodeID = queryNestedNodes->value( 0 ).toLongLong();
+		qlonglong nodeID = queryNestedNodes->value( 0 ).toLongLong();
 		nodeName = queryNestedNodes->value( 1 ).toString();
 		Data::Type* type = queryNestedNodes->value( 4 ).toBool() ? typeMetaNode : typeNode;
 		if ( *maxIdEleUsed < nodeID ) {
@@ -103,14 +103,14 @@ void Model::GraphDAO::getNestedGraph( qlonglong parentID, Data::Graph** graph, Q
 
 Data::Graph* Model::GraphDAO::getGraph( QSqlDatabase* conn, bool* error2, qlonglong graphID, qlonglong layoutID )
 {
-    Data::Graph* newGraph;
+	Data::Graph* newGraph;
 	QSqlQuery* queryNodes;
 	QSqlQuery* queryEdges;
 	QString graphName, layoutName, nodeName, edgeName;
-    bool error = false;
+	bool error = false;
 	//TODO repair of getting Graph
 	//bool isFixed;
-    qlonglong maxIdEleUsed = 0;
+	qlonglong maxIdEleUsed = 0;
 	QMap<qlonglong, Data::Node*> nodes;
 	QMap<qlonglong, Data::Node*>::iterator iNodes1;
 	QMap<qlonglong, Data::Node*>::iterator iNodes2;
@@ -136,22 +136,22 @@ Data::Graph* Model::GraphDAO::getGraph( QSqlDatabase* conn, bool* error2, qlongl
 			( parentNodes = Model::NodeDAO::getParents( conn, &error, graphID, layoutID ), !error ) ) {
 		qDebug() << "[Model::GraphDAO::getGraph] Data loaded from database successfully";
 
-        newGraph = new Data::Graph( graphID, graphName, 0, 0, NULL );
+		newGraph = new Data::Graph( graphID, graphName, 0, 0, NULL );
 
-        Data::GraphLayout* newLayout = new Data::GraphLayout( layoutID, newGraph, layoutName, conn );
+		Data::GraphLayout* newLayout = new Data::GraphLayout( layoutID, newGraph, layoutName, conn );
 		newGraph->selectLayout( newLayout );
 
 		Data::Type* typeNode = newGraph->addType( "node" );
 		Data::Type* typeEdge = newGraph->addType( "edge" );
 		Data::Type* typeMetaNode = newGraph->getNodeMetaType();
 		Data::Type* typeMetaEdge = newGraph->getEdgeMetaType();
-        Data::Type* type;
+		Data::Type* type;
 
 		//nacitavame vrcholy grafu z databazy
 		while ( queryNodes->next() ) {
-            qlonglong nodeID = queryNodes->value( 0 ).toLongLong();
+			qlonglong nodeID = queryNodes->value( 0 ).toLongLong();
 			nodeName = queryNodes->value( 1 ).toString();
-            type = queryNodes->value( 4 ).toBool() ? typeMetaNode : typeNode;
+			type = queryNodes->value( 4 ).toBool() ? typeMetaNode : typeNode;
 			//isFixed = queryNodes->value(5).toBool();
 
 			if ( maxIdEleUsed < nodeID ) {
@@ -162,7 +162,7 @@ Data::Graph* Model::GraphDAO::getGraph( QSqlDatabase* conn, bool* error2, qlongl
 				position = positions.value( nodeID );
 			}
 
-            Data::Node* newNode = newGraph->addNode( nodeID, nodeName, type, position );
+			Data::Node* newNode = newGraph->addNode( nodeID, nodeName, type, position );
 
 			//vsetky uzly nastavime fixed, aby sme zachovali layout
 			//hodnota, ktora je ulozena v DB - premenna isFixed
@@ -194,12 +194,12 @@ Data::Graph* Model::GraphDAO::getGraph( QSqlDatabase* conn, bool* error2, qlongl
 
 		//nacitame hrany z databazy
 		while ( queryEdges->next() ) {
-            qlonglong edgeID = queryEdges->value( 0 ).toLongLong();
+			qlonglong edgeID = queryEdges->value( 0 ).toLongLong();
 			edgeName = queryEdges->value( 1 ).toString();
-            qlonglong nodeID1 = queryEdges->value( 3 ).toLongLong();
-            qlonglong nodeID2 = queryEdges->value( 4 ).toLongLong();
+			qlonglong nodeID1 = queryEdges->value( 3 ).toLongLong();
+			qlonglong nodeID2 = queryEdges->value( 4 ).toLongLong();
 			type = queryEdges->value( 6 ).toBool() ? typeMetaEdge : typeEdge;
-            bool isOriented = queryEdges->value( 5 ).toBool();
+			bool isOriented = queryEdges->value( 5 ).toBool();
 
 			if ( maxIdEleUsed < edgeID ) {
 				maxIdEleUsed = edgeID + 1;

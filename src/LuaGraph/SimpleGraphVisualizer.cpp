@@ -20,7 +20,7 @@ void Lua::SimpleGraphVisualizer::visualize()
 	g->printGraph();
 
 	for ( QMap<qlonglong, Lua::LuaNode*>::iterator i = g->getNodes()->begin(); i != g->getNodes()->end(); ++i ) {
-		osg::ref_ptr<Data::Node> n = currentGraph->addNode( i.key() , i.value()->getLabel(), nodeType );
+		osg::ref_ptr<Data::Node> n = currentGraph->addNode( i.key(), i.value()->getLabel(), nodeType );
 		setNodeParams( n, i.value(), osg::Vec4f( 1,1,1,1 ), 8 );
 	}
 

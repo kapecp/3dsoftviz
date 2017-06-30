@@ -24,16 +24,13 @@ Lua::LuaValueList luaCallback( const Lua::LuaValueList& params )
 	return Lua::LuaValueList().getValue();
 }
 
-#if defined(__linux) || defined(__linux__) || defined(linux)
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wconversion"
-#endif
+#include <leathers/push>
+#include <leathers/conversion>
+#include <leathers/missing-prototypes>
 
 LUA_WRAP_FUNCTION( luaCallback )
 
-#if defined(__linux) || defined(__linux__) || defined(linux)
-#pragma GCC diagnostic pop
-#endif
+#include <leathers/pop>
 
 Lua::LuaGraph::LuaGraph()
 {
@@ -42,7 +39,7 @@ Lua::LuaGraph::LuaGraph()
 	incidences = new QMap<qlonglong, Lua::LuaIncidence*>();
 	observer = NULL;
 	Lua::LuaInterface* lua = Lua::LuaInterface::getInstance();
-	( *(lua->getLuaState().getValue()) )["graphChangedCallback"] = LUA_WRAPPER_FUNCTION( luaCallback );
+	( *( lua->getLuaState().getValue() ) )["graphChangedCallback"] = LUA_WRAPPER_FUNCTION( luaCallback );
 }
 Lua::LuaGraphObserver* Lua::LuaGraph::getObserver() const
 {
@@ -96,7 +93,7 @@ Lua::LuaGraph* Lua::LuaGraph::loadGraph()
 	Lua::LuaGraph* result = Lua::LuaGraph::getInstance();
 	result->clearGraph();
 
-	Lua::LuaValueMap edges = ( *(lua->getLuaState().getValue()) )["getGraph"]()[0].asTable();
+	Lua::LuaValueMap edges = ( *( lua->getLuaState().getValue() ) )["getGraph"]()[0].asTable();
 
 	for ( auto iterator = edges.begin(); iterator != edges.end(); ++iterator ) {
 		qlonglong id = iterator->first.asTable()["id"].asInteger();
@@ -172,7 +169,7 @@ Lua::LuaGraph* Lua::LuaGraph::loadEvoGraph( QString repoFilepath )
 	Lua::LuaGraph* result = Lua::LuaGraph::getInstance();
 	result->clearGraph();
 
-	Lua::LuaValueMap edges = ( *(lua->getLuaState().getValue()) )["getGraph"]()[0].asTable();
+	Lua::LuaValueMap edges = ( *( lua->getLuaState().getValue() ) )["getGraph"]()[0].asTable();
 
 	QList<qlonglong> unusedNodes = QList<qlonglong>();
 
@@ -233,8 +230,8 @@ Lua::LuaGraph* Lua::LuaGraph::loadEvoGraph( QString repoFilepath )
 				}
 				else {
 					qDebug() << "Uzol" << nodeId << "neobsahuje LABEL";
-                    delete incidence;
-                    return NULL;
+					delete incidence;
+					return NULL;
 				}
 			}
 
@@ -246,8 +243,8 @@ Lua::LuaGraph* Lua::LuaGraph::loadEvoGraph( QString repoFilepath )
 				}
 				else {
 					qDebug() << "Uzol" << nodeId << "neobsahuje LABEL";
-                    delete incidence;
-                    return NULL;
+					delete incidence;
+					return NULL;
 				}
 			}
 			Lua::LuaNode* node = new Lua::LuaNode();
@@ -325,15 +322,15 @@ Lua::LuaGraph* Lua::LuaGraph::loadEvoGraph( QString repoFilepath )
 Lua::LuaGraph::~LuaGraph()
 {
 	for ( QMap<qlonglong, Lua::LuaNode*>::iterator i = nodes->begin(); i != nodes->end(); ++i ) {
-		delete( *i );
+		delete ( *i );
 	}
 
 	for ( QMap<qlonglong, Lua::LuaEdge*>::iterator i = edges->begin(); i != edges->end(); ++i ) {
-		delete( *i );
+		delete ( *i );
 	}
 
 	for ( QMap<qlonglong, Lua::LuaIncidence*>::iterator i = incidences->begin(); i != incidences->end(); ++i ) {
-		delete( *i );
+		delete ( *i );
 	}
 	delete nodes;
 	delete incidences;

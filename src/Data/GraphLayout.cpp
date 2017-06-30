@@ -8,6 +8,10 @@
 #include "Data/Graph.h"
 #include "Model/GraphLayoutDAO.h"
 
+#include <leathers/push>
+#include <leathers/exit-time-destructors>
+#include <leathers/global-constructors>
+
 //nastavenie konstantnych typov jednotlivych prvkov grafu
 const QString Data::GraphLayout::META_NODE_TYPE = QString( "META_NODE_TYPE" );
 const QString Data::GraphLayout::MULTI_NODE_TYPE = QString( "MULTI_NODE_TYPE" );
@@ -23,6 +27,10 @@ const QString Data::GraphLayout::NESTED_META_EDGE_TYPE= QString( "NESTED_META_ED
 const QString Data::GraphLayout::RESTRICTION_NODE_TYPE = QString( "RESTRICTION_NODE_TYPE" );
 const QString Data::GraphLayout::MERGED_NODE_TYPE = QString( "MERGED_NODE_TYPE" );
 const QString Data::GraphLayout::MERGED_EDGE_TYPE = QString( "MERGED_EDGE_TYPE" );
+const QString Data::GraphLayout::HIERARCHY_EDGE_TYPE = QString( "HIERARCHY_EDGE_TYPE" );
+const QString Data::GraphLayout::ARC_EDGE_TYPE = QString( "ARC_EDGE_TYPE" );
+
+#include <leathers/pop>
 
 Data::GraphLayout::GraphLayout( qlonglong layout_id, Data::Graph* graph, QString name, QSqlDatabase* conn )
 {
