@@ -670,7 +670,7 @@ void CoreGraph::setLightDiffuseColor( int index, osg::Vec4 color )
 
 void CoreGraph::setLightActive( int index, bool active )
 {
-	getScene()->getOrCreateStateSet()->setMode( GL_LIGHT0 + index , active ? osg::StateAttribute::ON : osg::StateAttribute::OFF );
+	getScene()->getOrCreateStateSet()->setMode( GL_LIGHT0 + index, active ? osg::StateAttribute::ON : osg::StateAttribute::OFF );
 }
 
 

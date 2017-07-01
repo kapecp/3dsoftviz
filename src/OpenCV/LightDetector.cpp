@@ -27,7 +27,7 @@ void OpenCV::LightDetector::DrawBoundary( cv::Mat src )
 {
 	int circles = 8;
 	for ( int i = 1; i <= circles; ++i ) {
-		cv::circle( src, this->mfisheyeCenter, ( int ) MathModule::EaseOutQuadratic( i, 0, this->mFisheyeRadius, circles ) , CV_RGB( 255,255,255 ) );
+		cv::circle( src, this->mfisheyeCenter, ( int ) MathModule::EaseOutQuadratic( i, 0, this->mFisheyeRadius, circles ), CV_RGB( 255,255,255 ) );
 	}
 }
 
@@ -37,14 +37,14 @@ void OpenCV::LightDetector::DrawLightContours( cv::Mat src )
 	for ( uint i = 0; i< mContours.size(); i++ ) {
 		//printf("contour:%d  size:%.2lf pos: x:%.2lf y:%.2lf, projected: x:%.2lf y:%.2lf z:%.2lf\n", i, contourArea(contours[i]), mc[i].x,mc[i].y, est_lights[i].x, est_lights[i].y, est_lights[i].z);
 		cv::Scalar color = cv::Scalar( rng.uniform( 0, 255 ), rng.uniform( 0, 255 ), rng.uniform( 0, 255 ) );
-		cv::drawContours( src, mContours, static_cast< int >( i ) , color, 2, 8, cv::noArray(), 0, cv::Point() );
+		cv::drawContours( src, mContours, static_cast< int >( i ), color, 2, 8, cv::noArray(), 0, cv::Point() );
 	}
 }
 
 void OpenCV::LightDetector::DrawLightCircles( cv::Mat src )
 {
 	for ( size_t i = 0; i< mLightCount; i++ ) {
-		cv::circle( src, mLights[i].positionFrame, ( int ) mLights[i].radius , CV_RGB( 0, 255, 0 ) );
+		cv::circle( src, mLights[i].positionFrame, ( int ) mLights[i].radius, CV_RGB( 0, 255, 0 ) );
 	}
 }
 
@@ -71,12 +71,12 @@ void OpenCV::LightDetector::calculateSurface()
 
 void OpenCV::LightDetector::setKernelOpen( int size )
 {
-	mKernelOpen = cv::getStructuringElement( cv::MORPH_ELLIPSE, cv::Size( size , size ) );
+	mKernelOpen = cv::getStructuringElement( cv::MORPH_ELLIPSE, cv::Size( size, size ) );
 }
 
 void OpenCV::LightDetector::setKernelClose( int size )
 {
-	mKernelClose = cv::getStructuringElement( cv::MORPH_ELLIPSE, cv::Size( size , size ) );
+	mKernelClose = cv::getStructuringElement( cv::MORPH_ELLIPSE, cv::Size( size, size ) );
 }
 
 bool Light2DRadiusCompare( OpenCV::TrackedLight i, OpenCV::TrackedLight j )
@@ -84,11 +84,11 @@ bool Light2DRadiusCompare( OpenCV::TrackedLight i, OpenCV::TrackedLight j )
 	return ( i.radius > j.radius );
 }
 
-void OpenCV::LightDetector::ProcessFrame( cv::Mat& frame , cv::Mat frameGray )
+void OpenCV::LightDetector::ProcessFrame( cv::Mat& frame, cv::Mat frameGray )
 {
 	// circle mask
 	cv::Mat mask( frameGray.size(), CV_8U, cv::Scalar( 255 ) );
-	cv::circle( mask, this->mfisheyeCenter, ( int )( ( float ) this->mFisheyeRadius * 0.8f ) , cv::Scalar( 0 ), CV_FILLED );
+	cv::circle( mask, this->mfisheyeCenter, ( int )( ( float ) this->mFisheyeRadius * 0.8f ), cv::Scalar( 0 ), CV_FILLED );
 
 	// average frame color
 	cv::Scalar mean = cv::mean( frame, mask );

@@ -50,7 +50,7 @@ void Lua::ModuleGraphVisualizer::visualize()
 	for ( node_iter = luaGraph->getNodes()->begin();
 			node_iter != luaGraph->getNodes()->end();
 			++node_iter ) {
-		osg::ref_ptr<Data::Node> n = currentGraph->addNode( node_iter.key() , node_iter.value()->getLabel(), nodeType );
+		osg::ref_ptr<Data::Node> n = currentGraph->addNode( node_iter.key(), node_iter.value()->getLabel(), nodeType );
 		n->setLuaIdentifier( node_iter.value()->getIdentifier() );
 		setNodeParams( n, node_iter.value(), osg::Vec4f( 1,1,1,1 ), 8 );
 

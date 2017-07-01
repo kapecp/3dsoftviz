@@ -186,7 +186,7 @@ void Data::OsgNode::setModule( City::Module* module )
 
 void Data::OsgNode::adjustLabelForModule( float scale )
 {
-	osg::ref_ptr<osg::Node> newLabel = createLabel( scale , labelText );
+	osg::ref_ptr<osg::Node> newLabel = createLabel( scale, labelText );
 	replaceChild( getLabel(), newLabel );
 }
 

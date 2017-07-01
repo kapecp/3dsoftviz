@@ -54,7 +54,7 @@ void QOpenCV::LightDetectionThread::run()
 	qDebug() << "camera width " << mCapVideoWidth;
 
 	// initialize LightDetector
-	mLightDetector->setFisheyeCenter( cv::Point( mFishEyeCenterX , mFishEyeCenterY ) );
+	mLightDetector->setFisheyeCenter( cv::Point( mFishEyeCenterX, mFishEyeCenterY ) );
 	mLightDetector->setFisheyeRadius( mFishEyeRadius );
 
 	//  2% of resolution for morphology open to erase small noise
